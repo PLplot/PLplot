@@ -7649,7 +7649,9 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            If <literal><parameter>pause</parameter></literal> = 1 there
+	    will be a pause on end-of-page for those drivers which support
+	    this.  Otherwise not.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7725,7 +7727,7 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Number of windows in x direction (i.e., number of window columns).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7736,7 +7738,7 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Number of windows in y direction (i.e., number of window rows).
 	  </para>
 	</listitem>
       </varlistentry>
