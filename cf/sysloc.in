@@ -505,16 +505,18 @@ fi
 # On some systems the linker doesn't return an error code to the shell if
 # you try to link with nonexistant libraries, so need to handle these
 # explicitly.
+#
+# Note: using Autoconf-2.3, these tests do not work right when LIBS is set.
+# So save the value and set it to null temporarily, restoring when done.
 # ----------------------------------------------------------------------------
 
 if test -z "$EXTRA_LIBS"; then
     EXTRA_LIBS=
+    SAVE_LIBS=$LIBS
+    LIBS=
     case $system in 
 	CRAY* ) 
 	    EXTRA_LIBS="$EXTRA_LIBS -lm"
-	;;
-	Linux* )
-	    EXTRA_LIBS="$EXTRA_LIBS -lieee -lm"
 	;;
 	* ) 	
 	    AC_CHECK_LIB(Xbsd,   main, [EXTRA_LIBS="$EXTRA_LIBS -lXbsd"])
@@ -524,7 +526,9 @@ if test -z "$EXTRA_LIBS"; then
 	    AC_CHECK_LIB(m,      main, [EXTRA_LIBS="$EXTRA_LIBS -lm"])
 	;;
     esac
+    LIBS=$SAVE_LIBS
 fi
+
 LIBS="$LIBS $EXTRA_LIBS"
 
 AC_SUBST(INCS)
@@ -537,113 +541,115 @@ AC_SUBST(LIBS)
 # This is really a mess.
 # ----------------------------------------------------------------------------
 
-AC_MSG_CHECKING(how to make shared libraries)
+if test "$with_shlib" = "yes"; then
+    AC_MSG_CHECKING(how to make shared libraries)
 
-SA=".sa"
-SO=".so"
-LDSHARED="ld"
-SHLIB_LIBS=$LIBS
+    SA=".sa"
+    SO=".so"
+    LDSHARED="ld"
+    SHLIB_LIBS=$LIBS
 
-if test "$with_gcc" = "yes"; then
-    SHLIB_CCFLAGS=-fpic
-    SHLIB_CXXFLAGS=-fpic
-    SHLIB_BUILD="gcc -shared -fpic -o"
-else
-    SHLIB_CCFLAGS=
-    SHLIB_CXXFLAGS=
-    SHLIB_BUILD=
-fi
-
-case "$system" in 
-    SunOS-4* ) 
-	SHLIB_F77FLAGS=-pic
-# Commented out for now
-#	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
-#	SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
-	AC_MSG_RESULT(okay)
-	if test "$with_gcc" = "no"; then
-	    SHLIB_CCFLAGS=-pic
-	    SHLIB_CXXFLAGS=-pic
-	    SHLIB_BUILD="ld -assert pure-text -o"
-	fi
-    ;;
-    Linux* )
-	# Should do something to make sure this is an ELF system, as
-	# don't have patience for DLL...
-	AC_MSG_RESULT([Assuming Linux ELF.  If not, reconfigure --without-shlib])
-	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+    if test "$with_gcc" = "yes"; then
+	SHLIB_CCFLAGS=-fpic
+	SHLIB_CXXFLAGS=-fpic
 	SHLIB_BUILD="gcc -shared -fpic -o"
+    else
+	SHLIB_CCFLAGS=
+	SHLIB_CXXFLAGS=
+	SHLIB_BUILD=
+    fi
 
-	SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
-
-	# Hmm, would be good to replace that trailing .0 with the
-	# compilation number or some such.  Have to think about that.
-    ;;
-    HP-UX-* )
-	SO=".sl"
-	SHLIB_F77FLAGS="+z"
-	AC_MSG_RESULT(okay)
-	if test "$with_gcc" = "no"; then
-	    SHLIB_CCFLAGS=+z
-	    SHLIB_CXXFLAGS=+z
-	    SHLIB_F77FLAGS=+z
-	    SHLIB_BUILD="ld -b -o"
-	else
-	    AC_MSG_RESULT(warning: shared libs on HP with gcc is experimental)
-	fi
-	LDSHARED="ld -b"
-    ;;
-    AIX-* )
-	SO=".a"
-	SHLIB_F77FLAGS=-fpic
-	if test "$with_gcc" = "no"; then
+    case "$system" in 
+	SunOS-4* ) 
+	    SHLIB_F77FLAGS=-pic
+	    # Forget version numbers for now
+	    #	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	    #	SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	    AC_MSG_RESULT(okay)
-	    SHLIB_CCFLAGS=-fpic
-	    SHLIB_CXXFLAGS=-fpic
-	    SHLIB_BUILD="ar q"
-	    if test "$enable_cxx" = "yes"; then
-		SHLIB_LIBS="-L/usr/lpp/xlC/lib -lC $LIBS"
+	    if test "$with_gcc" = "no"; then
+		SHLIB_CCFLAGS=-pic
+		SHLIB_CXXFLAGS=-pic
+		SHLIB_BUILD="ld -assert pure-text -o"
 	    fi
-	else
+	;;
+	Linux* )
+	    # Should do something to make sure this is an ELF system, as
+	    # don't have patience for DLL...
+	    AC_MSG_RESULT([Assuming Linux ELF.  Otherwise, reconfigure --without-shlib])
+	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	    SHLIB_BUILD="gcc -shared -fpic -o"
+
+	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
+
+	    # Hmm, would be good to replace that trailing .0 with the
+	    # compilation number or some such.  Have to think about that.
+	;;
+	HP-UX-* )
+	    SO=".sl"
+	    SHLIB_F77FLAGS="+z"
+	    AC_MSG_RESULT(okay)
+	    if test "$with_gcc" = "no"; then
+		SHLIB_CCFLAGS=+z
+		SHLIB_CXXFLAGS=+z
+		SHLIB_F77FLAGS=+z
+		SHLIB_BUILD="ld -b -o"
+	    else
+		AC_MSG_RESULT(warning: shared libs on HP with gcc is experimental)
+	    fi
+	    LDSHARED="ld -b"
+	;;
+	AIX-* )
+	    SO=".a"
+	    SHLIB_F77FLAGS=-fpic
+	    if test "$with_gcc" = "no"; then
+		AC_MSG_RESULT(okay)
+		SHLIB_CCFLAGS=-fpic
+		SHLIB_CXXFLAGS=-fpic
+		SHLIB_BUILD="ar q"
+		if test "$enable_cxx" = "yes"; then
+		    SHLIB_LIBS="-L/usr/lpp/xlC/lib -lC $LIBS"
+		fi
+	    else
+		with_shlib=no
+	    fi
+	;;
+
+	# The rest are probably broken.  Someone please fix them.
+	# Remove the 'with_shlib=no' line, comments, and go wild.
+
+	SunOS-5* )
 	    with_shlib=no
-	fi
-    ;;
-
-    # The rest are probably broken.  Someone please fix them.
-    # Remove the 'with_shlib=no' line, comments, and go wild.
-
-    SunOS-5* )
-	with_shlib=no
-	AC_MSG_RESULT(unknown)
-#	SHLIB_CCFLAGS="-K pic"
-#	SHLIB_F77FLAGS="-K pic"
-#	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -G"
-    ;;
-    OSF-1.* )
-	with_shlib=no
-	AC_MSG_RESULT(unknown)
-#	SHLIB_CCFLAGS=-fpic
-#	SHLIB_F77FLAGS=-fpic
-#	SHLIB_BUILD="$CC -shared"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -shared -expect_unresolved \"*\""
-    ;;
-    IRIX-5.* )
-	with_shlib=no
-	AC_MSG_RESULT(unknown)
-#	SHLIB_CCFLAGS=-KPIC
-#	SHLIB_F77FLAGS=-KPIC
-#	SHLIB_BUILD="$CC -shared"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -shared"
-    ;;
-    * )
-	with_shlib=no
-	AC_MSG_RESULT(unknown)
-    ;;
-esac
+	    AC_MSG_RESULT(unknown)
+	    #	SHLIB_CCFLAGS="-K pic"
+	    #	SHLIB_F77FLAGS="-K pic"
+	    #	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
+	    #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	    LDSHARED="ld -G"
+	;;
+	OSF-1.* )
+	    with_shlib=no
+	    AC_MSG_RESULT(unknown)
+	    #	SHLIB_CCFLAGS=-fpic
+	    #	SHLIB_F77FLAGS=-fpic
+	    #	SHLIB_BUILD="$CC -shared"
+	    #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	    LDSHARED="ld -shared -expect_unresolved \"*\""
+	;;
+	IRIX-5.* )
+	    with_shlib=no
+	    AC_MSG_RESULT(unknown)
+	    #	SHLIB_CCFLAGS=-KPIC
+	    #	SHLIB_F77FLAGS=-KPIC
+	    #	SHLIB_BUILD="$CC -shared"
+	    #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	    LDSHARED="ld -shared"
+	;;
+	* )
+	    with_shlib=no
+	    AC_MSG_RESULT(unknown)
+	;;
+    esac
+fi
 
 AC_SUBST(SHLIB_BUILD)
 AC_SUBST(SA)
