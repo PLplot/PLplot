@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -14,14 +14,20 @@
 
 ## yticks ([y_interval [, num_minor])
 ##
-## set the yticks interval, and the number of minor ticks between major yticks.
+## Set the xticks interval, and the number of minor ticks between major xticks.
+##
 ## No arguments makes it automatic (default).
+##    Set y_interval = 0 for default ticks
+##    Set y_interval = -1 to disable ticks (and tick labels)
+##    Set y_interval = -2 to disable ticks labels,
+##    Set num_minor = 0 to disable minor ticks.
+##    Set num_minor = -1 for default minor ticks.
 
 function yticks (int, num)
 
   global __pl
 
-  __pl_strm = __pl_init;
+  strm = __pl_init;
   
   if (nargin >= 3)
     help yticks;
@@ -29,16 +35,24 @@ function yticks (int, num)
   endif
 
   if (nargin == 0)
-    __pl.yticks(__pl_strm,1) = 0;
-    __pl.yticks(__pl_strm,2) = 0;
+    __pl.yticks(strm,1) = 0;
+    __pl.yticks(strm,2) = 0;
+    __pl.yticks(strm,3) = 1;
+    __pl.yticks(strm,4) = 1;
   endif
 
   if (nargin == 2)
-    __pl.yticks(__pl_strm,2) = num;
+    __pl.yticks(strm,2) = num+1;
   endif
 
   if (nargin >= 1)
-    __pl.yticks(__pl_strm,1) = int;
+    if (int == -1)
+      __pl.yticks(strm,3) = 0;
+    elseif (int == -2)
+      __pl.yticks(strm,4) = 0;
+    else
+      __pl.yticks(strm,1) = int;
+    endif
   endif
 
   if (automatic_replot)
