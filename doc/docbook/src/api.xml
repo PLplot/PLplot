@@ -6477,7 +6477,7 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            First dimension of arrays "a" and "defined".
+            First dimension of array "a".
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6488,21 +6488,22 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            Second dimension of arrays "a" and "defined".
+            Second dimension of array "a".
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>defined</parameter> 
-	  (<literal>const char *</literal>, input)
+	  (<literal>PLINT (*) (PLFLT, PLFLT)</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Contains pointer to array of flags, 1 = data is valid, 0 = data is not
-	    valid. This array determines which sections of the data is to be
-	    plotted. This argument can be NULL if all the values are valid.
-	    Must have been declared as char defined[nx][ny].
+	    User function specifying regions excluded from the shading
+            plot.  This function accepts x and y coordinates as input
+            arguments and must return 0 if the point is in the excluded
+            region or 1 otherwise. This argument can be NULL if all the
+            values are valid. 
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6767,7 +6768,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>defined</parameter> 
-	  (<literal>const char *</literal>, input)
+	  (<literal>PLINT (*) (PLFLT, PLFLT)</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7021,7 +7022,7 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            First dimension of arrays "a" and "defined".
+            First dimension of array "a".
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7032,21 +7033,22 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            Second dimension of arrays "a" and "defined".
+            Second dimension of array "a".
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>defined</parameter> 
-	  (<literal>const char *</literal>, input)
+	  (<literal>PLINT (*) (PLFLT, PLFLT)</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Contains pointer to array of flags, 1 = data is valid, 0 = data is not
-	    valid. This array determines which sections of the data is to be
-	    plotted. This argument can be NULL if all the values are valid.
-	    Must have been declared as char defined[nx][ny].
+	    User function specifying regions excluded from the shading
+            plot.  This function accepts x and y coordinates as input
+            arguments and must return 0 if the point is in the excluded
+            region or 1 otherwise. This argument can be NULL if all the
+            values are valid. 
 	  </para>
 	</listitem>
       </varlistentry>
