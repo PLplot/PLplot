@@ -1,8 +1,17 @@
 You must add the plplot_octave script installation directory to Octave
-LOADPATH *before* the standard Octave LOADPATH. The best way is to
-create a ~/.octaverc file. By default
+LOADPATH *before* the standard Octave LOADPATH. The best way to do this
+is to create a .octaverc file in your home directory. By default
 
 LOADPATH ="<install-directory>/share/plplot_octave//:"
+
+If you also want to use Octave's standard plotting package, gnuplot, you
+must set LOADPATH as:
+
+LOADPATH ="<install-directory>/share/plplot_octave//:\
+	<install-directory>/share/octave//:"
+
+and use the command "toggle_plplot_use" to switch between the two plot packages.
+Read the INSTALL file for more details.
 
 Then, invoke Octave and create a vector, say
 
@@ -47,10 +56,10 @@ close the previous window
 
 	closefig(0)
 
-and read the online help
+read the online help
 
 	help plot
-	help help __pl_opt
+	help __pl_opt
 
 and try it! Bellow is a short description of the available commands.
 You also have access to the PLplot API, 
@@ -66,6 +75,7 @@ You also have access to the PLplot API,
 NOTES: - You don't need to specify vector or matrix dimensions.
        - When setting Octave variable "automatic_replot = 1", changes take
 	 effect immediately, otherwise they only take effect at the next plot.
+	 (This does not yet apply to all plot kinds).
 
 
 --- Plot window control
@@ -101,7 +111,7 @@ plot3		-- Three-dimensional analogue of plot.
 surf		-- Surface plot
 surfc		-- surf() with contour at base xy plane.
 surfl		-- surf() with lighting.
-shading		-- Specifies how the surf() surface is plotted.
+shading		-- Specifies how the surface in the surf plots is done.
 
 --- Plot control and decorations
 top_title,
@@ -122,13 +132,15 @@ autostyle	-- If set increases line style after each plot.
 legend		-- Sets the legend position and mode.
 grid		-- Turn on/off grid lines at major/minor ticks.
 
-axis		-- Sets the axis limits.
+axis		-- Sets the axis limits, plot scales and axis decoration.
 axis_set	-- Return current axis status.
 
 plclg,
 plclearplot	-- Clear the plot window.
 fig_state	-- save/restore current figure axis and hold state.
 shg		-- Show the graph window. 
+stopdraw	-- Stop drawing plots, but still store them.
+drawnow		-- Plot all stored plots.
 
 --- Interative plots
 stripc,
@@ -174,7 +186,7 @@ pldef		-- set your defaults.
 plsetopt	-- set/view/reset/aplly plplot options.
 plimage		-- display octave images.
 
-use_plplot	-- Use/stop using plplot. Not working!
-plplot_octave_path -- set or return octave_plplot scripts directory path.
+toggle_plplot_use	-- use plplot or gnuplot.
+plplot_octave_path	-- set or return octave_plplot scripts directory path.
 
 plplot_stub	-- Definition of all implemented plplot API functions.
