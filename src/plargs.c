@@ -1775,12 +1775,8 @@ opt_plserver(char *opt, char *optarg, void *client_data)
 static int
 opt_plwindow(char *opt, char *optarg, void *client_data)
 {
-#ifndef macintosh
-    char *strdup();
-
-/* jc:    plsc->plwindow = optarg; */
-    plsc->plwindow = strdup(optarg);	/* jc: somehow the original string is lost */
-#endif
+    plsc->plwindow = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
+    strcpy (plsc->plwindow, optarg);
     return 0;
 }
 
