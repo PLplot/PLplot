@@ -56,7 +56,9 @@ plplotcmodule_p_double.c plplotc.py: plplotcmodule.i plplotcapi.i
 plplotcmodule_double.c: plplotcmodule_p_double.c makedocstrings.py
 	$(PYTHON) makedocstrings.py plplotcmodule_p_double.c plplotcmodule_double.c
 
-plplotcmodule_p_single.c plplotc.py: plplotcmodule.i plplotcapi.i
+### Note plplotc.py generated here as well, but it is identical to the
+### one generated above and we cannot mention it as a duplicate target here.
+plplotcmodule_p_single.c: plplotcmodule.i plplotcapi.i
 	$(SWIG) -python -o plplotcmodule_p_single.c -c++ \
 	plplotcmodule.i
 
@@ -68,7 +70,8 @@ ourexecpythondir = $(pythondir)
 libplplot = ../../src/libplplot$(LIB_TAG).la
 
 # PYTHON_NUM_DIR only required until we quit supporting python 1.5
-AM_CPPFLAGS = $(INCLTDL) -I/$(PYTHON_INC_DIR) -I/$(PYTHON_NUM_DIR)
+# X_CFLAGS required (on some platforms, e.g., netbsd) by plplot_widgetmodule.c
+AM_CPPFLAGS = $(INCLTDL) -I/$(PYTHON_INC_DIR) -I/$(PYTHON_NUM_DIR) $(X_CFLAGS)
 
 UNDERSCORE_plplotcmodule_la_LDFLAGS  = \
 	-rpath $(ourexecpythondir) \
