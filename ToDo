@@ -4,8 +4,6 @@ Areas currently under development
 
  - The manual needs BADLY to be updated.
 
- - Exercise Tcl/TK driver using direct widget control!
-
  - Install custom colormaps under X.  The current scheme will work even
    for multiple plplot apps, as long as there are enough colors for just
    one of the colormaps and the plplot apps use the same color schemes
@@ -15,7 +13,18 @@ Areas currently under development
    in use by existing apps (such as the window manager) if reasonable
    in order to reduce flicker.  Not sure how to do that, though.
 
- - finish cmap1 dialog for TK driver
+ - improve color dialogs for TK driver:
+
+   . use custom color map to make allocation easier and faster (big one)
+   . add arrows to end of cmap1 control point location sliders
+   . change so that colors are allocated dynamically when editing color
+   . inform client side that colors have been changed (right now only
+     plserver side knows about it)
+   . put in a better file selector for palette files
+   . rewrite palette tools in itcl
+   . add a way to pick direction in hue to use when interpolating between
+     colors
+   . fix cmap0 tool so that setting the background (color 0) works
 
  - fix 2d function plotter API's: Most general function in each
    category should accept transformer function and transformer data, to work
@@ -30,8 +39,6 @@ Areas currently under development
 
  - Give file familying a good workout, since it is most probably busted in
    some respect or another.
-
- - See if ps output files work with up(1).
 
  - Various color drivers should be upgraded to work similar to the tek
    driver, with support for setting the color palette from the user
@@ -80,9 +87,6 @@ Areas currently under development
 
  - figure out why plrender is barfing on my old metafiles under ~/data
 
- - find bug in contour plotter?  (spurious; unfortunately I didn't
-   keep the data that caused it -- from Monte-4 run)
-
  - add support for shared libs on SunOS, AIX
 
  - check out shared library support under SAS/C -- supposed to be easy
@@ -112,31 +116,44 @@ Areas currently under development
 Things planned for sometime in the future.
 ----------------------------------------------
 
-o CGM driver.  Shouldn't be too hard, just haven't gotten around to it yet.
-Any volunteers?  Should I assume the presence of a CGM library?  Or should
-I carry my own routines to do low-level operations to the CGM file?
-(Here I could borrow from a freely distributable package that deals with
-CGM files).
+ - CGM driver.  Shouldn't be too hard, just haven't gotten around to it
+   yet.  Any volunteers?  Should I assume the presence of a CGM library?
+   Or should I carry my own routines to do low-level operations to the CGM
+   file?  (Here I could borrow from a freely distributable package that
+   deals with CGM files).
 
-o graphical entities to be "objectized", so they are easier to manipulate
-from plrender.  Likely candidates: plot, string, character, tick, axis, 
-line, etc.
+ - graphical entities to be "objectized", so they are easier to manipulate
+   from plrender.  Likely candidates: plot, string, character, tick, axis,
+   line, etc.
 
-o Better use of driver intelligence, esp. for text -- the postscript driver
-should be capable of using postscript fonts instead of the Hershey fonts.
+ - Better use of driver intelligence, esp. for text -- the postscript driver
+   should be capable of using postscript fonts instead of the Hershey fonts.
 
-o Explicit support for plotting points, lines in 3d space.
+ - Explicit support for plotting points, lines in 3d space.
 
-o Cloned streams, for plotting to multiple devices simultaneously.
+ - Cloned streams, for plotting to multiple devices simultaneously.
 
-o Fully document the plplot-driver interface.
+ - Fully document the plplot-driver interface.
 
-o Japanese plplot/TK extensions?
+ - Japanese plplot/TK extensions?
 
-o Japanese font extensions?
+ - Japanese font extensions?
 
-o Need developers to adopt the DOS, OS/2 ports, since original developers
-no longer use those systems.  Also looking for an individual to adopt this
-port.
+ - Need developers to adopt the DOS, OS/2 ports, since original developers
+   no longer use those systems.  Also looking for an individual to adopt
+   the Amiga port.
 
+
+BUGS
+----
+
+The following are known bugs or failings of PLplot, that are unlikely to
+be fixed any time soon.
+
+ - ps output files do not work with up(1).  
+
+ - The contour plotter has a bug that causes it to occasionally fail for
+   some data sets.  One known example is if there is no x-dependence.
+   If you experience problems with other data try to work up a demo and
+   send it to me and then maybe I can track down the problem.
 
