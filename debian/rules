@@ -57,14 +57,11 @@ config-stamp: autotools-stamp
                     --enable-gnome --with-double --disable-linuxvga    \
                     --infodir=/usr/share/info --with-freetype          \
                     --without-rpath --with-prebuiltdoc                 \
-                    --with-ltdlsystem
+                    --with-pthread --with-ltdlsystem
 	( octver=`egrep "^OCTAVE_VERSION =" Makefile                   \
               | sed "s/OCTAVE_VERSION = *//" | sed 's/ *$$//'`       ; \
-          next=`echo $$octver                                          \
-              | perl -ne '/(\d+\.\d+\.)(\d+)/;print($$1,$$2+1)'`     ; \
           octpkgver=`echo $$octver | sed 's/\.[0-9]*$$//'`           ; \
-          pv=octave$$octpkgver                                       ; \
-          echo "octave:Depends=$$pv (>= $$octver), $$pv (<< $$next)"   \
+          echo "octave:Depends=octave$$octpkgver (>= $$octver)"        \
               > debian/octave-plplot.substvars )
 	touch config-stamp
 
