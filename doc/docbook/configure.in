@@ -1,6 +1,6 @@
 
 AC_INIT(src/plplotdoc.xml.in)
-AM_INIT_AUTOMAKE(plplotdoc, 0.4.2)
+AM_INIT_AUTOMAKE(plplotdoc, 0.4.3)
 
 dnl Web site Installation
 
@@ -40,6 +40,14 @@ AC_ARG_WITH(rcp-command, [
   [RCP="scp"])
 AC_SUBST(RCP)
 
+dnl Website of the PLplot project
+
+AC_ARG_WITH(plplot-website, [
+  --with-plplot-website=NAME          PLplot web site],
+  [PLPLOT_WEBSITE="$withval"],
+  [PLPLOT_WEBSITE="plplot.sf.net"])
+AC_SUBST(PLPLOT_WEBSITE)
+      
 
 dnl Controlling were the HTML files should go
 
@@ -450,5 +458,5 @@ AC_SUBST(TARGETS)
 AC_OUTPUT([Makefile
            src/Makefile src/plplotdoc.xml src/plplotdoc-html.dsl 
            src/plplotdoc-print.dsl 
-           bin/Makefile 
+           bin/Makefile bin/api2man.pl
            www/index.html.in])

@@ -157,7 +157,7 @@
 <!ENTITY plw3d '<link linkend="plw3d"><function>plw3d</function></link>'>
 <!ENTITY plwid '<link linkend="plwid"><function>plwid</function></link>'>
 <!ENTITY plwind '<link linkend="plwind"><function>plwind</function></link>'>
-<!ENTITY plxormod '<link linkend="plxormod"><function>plxormod</function></link>'>
+<!ENTITY PLplot-website '@PLPLOT_WEBSITE@'>
 <!ENTITY % Math-Entities SYSTEM "math.ent">
 %Math-Entities;
 <!ENTITY % Inline-Entities SYSTEM "inline.ent">

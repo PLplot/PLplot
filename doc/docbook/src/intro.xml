@@ -154,7 +154,7 @@ interactive driver is being developed. </para>
       to make the desired PLplot calls.  Example programs in C, C++, and
       Fortran are included as a guide.
       Plots generated from the example programs are shown 
-      <ulink url="http://plplot.sf.net/examples/index.html">here</ulink>.
+      <ulink url="http://&PLplot-website;/examples/index.html">here</ulink>.
     </para>
     <para>
       You will then need to compile your program and link it with the
