@@ -2602,9 +2602,50 @@ plgesc(char *p_esc)
     *p_esc = plsc->esc;
 }
 
+/* Set the FCI (font characterization integer) for unicode-enabled device
+ * drivers.  
+ */
+void
+c_plsfci(unsigned int fci)
+{
+    plsc->fci = fci;
+}
+
+/* Get the FCI (font characterization integer) for unicode-enabled device
+ * drivers.  
+ */
+void
+c_plgfci(unsigned int *pfci)
+{
+   *pfci = plsc->fci;
+}
+/* Store hex value shifted to the left by hexdigit hexadecimal digits 
+ * into pre-existing FCI. 
+ */
+void
+plP_hex2fci(unsigned char hexvalue, char hexdigit, unsigned int *pfci)
+{
+   unsigned int mask;
+   hexdigit = MIN(hexdigit, (char) 0x6);
+   mask = ~ ((((unsigned int) 0xf) << (4*hexdigit)));
+   *pfci = (*pfci & mask & 
+		(((unsigned int) hexvalue) << (4*hexdigit)));
+}
+
+/* Retrieve hex value from FCI that is masked and shifted to the
+ * right by hexdigit hexadecimal digits. */
+void
+plP_fci2hex(unsigned int fci, unsigned char *phexvalue, char hexdigit)
+{
+   unsigned int mask;
+   hexdigit = MIN(hexdigit, (char) 0x6);
+   mask = (((unsigned int) 0xf) << ((unsigned int) (4*hexdigit)));
+   *phexvalue = (unsigned char) ((fci & mask) >> 
+				 ((unsigned int) (4*hexdigit)));
+}
+
 /* Get the current library version number */
 /* Note: you MUST have allocated space for this (80 characters is safe) */
-
 void
 c_plgver(char *p_ver)
 {

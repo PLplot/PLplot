@@ -454,6 +454,7 @@ typedef struct {
 #define    plgdiori	c_plgdiori
 #define    plgdiplt	c_plgdiplt
 #define    plgfam	c_plgfam
+#define    plgfci	c_plgfci
 #define    plgfnam	c_plgfnam
 #define    plglevel	c_plglevel
 #define    plgpage	c_plgpage
@@ -512,6 +513,7 @@ typedef struct {
 #define    plsesc	c_plsesc
 #define    plsetopt	c_plsetopt
 #define    plsfam	c_plsfam
+#define    plsfci	c_plsfci
 #define    plsfnam	c_plsfnam
 #define    plshade	c_plshade
 #define    plshade1	c_plshade1
@@ -810,6 +812,11 @@ c_plgdiori(PLFLT *p_rot);
 
 void
 c_plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax);
+
+/* Get FCI (font characterization integer) */
+
+void
+c_plgfci(unsigned int *pfci);
 
 /* Get family file parameters */
 
@@ -1166,6 +1173,11 @@ c_plsesc(char esc);
 
 void
 c_plsfam(PLINT fam, PLINT num, PLINT bmax);
+
+/* Set FCI (font characterization integer) */
+
+void
+c_plsfci(unsigned int fci);
 
 /* Set the output file name. */
 
