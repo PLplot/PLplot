@@ -4,7 +4,7 @@
 
   Copyright (C) 1992, 2001  Geoffrey Furnish  
   Copyright (C) 1992, 1993, 1994, 1995, 2001  Maurice LeBrun
-  Copyright (C) 2000, 2001, 2002, 2004  Alan W. Irwin 
+  Copyright (C) 2000, 2001, 2002, 2004, 2005  Alan W. Irwin 
   Copyright (C) 2001, 2002  Joao Cardoso  
   Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
   Copyright (C) 2004  Thomas J. Duck
@@ -37,6 +37,7 @@
 
 #include <string.h>
 #include <time.h>
+#include "plunicode-type1.h"
 
 
 /* Device info */
@@ -55,7 +56,7 @@ static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);
 static void  fill_polygon	(PLStream *pls);
 static void  proc_str           (PLStream *, EscText *);
-static void  esc_purge          (char *, const char *);
+static void  esc_purge          (char *, unsigned char *);
 
 static char  outbuf[128];
 static int text = 0;
@@ -65,33 +66,10 @@ static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (tex
 			      {"color", DRV_INT, &color, "Use color (color=0|1)"},
 			      {NULL, DRV_INT, NULL, NULL}};
 
-/*--------------------------------------------------------------------------*\
- * adobe_symbol_enc (in)
- *
- * Transforms the character in from the PLplot Greek convention into the
- * Adobe encoding for the Symbol font.
-\*--------------------------------------------------------------------------*/
-
-static char adobe_symbol_enc (char in) 
-{
-  char retval = in;
-  
-  switch (in) {
-  case 'C': retval = 'X'; break;
-  case 'Y': retval = 'H'; break;
-  case 'H': retval = 'Q'; break;
-  case 'Q': retval = 'Y'; break;
-  case 'X': retval = 'C'; break;
-  case 'c': retval = 'x'; break;    
-  case 'y': retval = 'h'; break;
-  case 'h': retval = 'q'; break;
-  case 'q': retval = 'y'; break;
-  case 'x': retval = 'c'; break;
-  }
-    
-  return retval;
-}
-
+static unsigned char 
+plunicode2type1 (const unsigned int index,
+		 const Unicode_to_Type1_table lookup[], 
+		 const int number_of_entries);
 
 /* text > 0 uses some postscript tricks, namely a transformation matrix
    that scales, rotates (with slanting) and offsets text strings.
@@ -172,8 +150,11 @@ ps_init(PLStream *pls)
     PLFLT pxlx = YPSSIZE/LPAGE_X;
     PLFLT pxly = XPSSIZE/LPAGE_Y;
 
-    if (text)
-      pls->dev_text = 1; /* want to draw text */
+    if (text) 
+     {
+	pls->dev_text = 1; /* want to draw text */
+	pls->dev_unicode = 1; /* want unicode */
+     }
 
     pls->dev_fill0 = 1;		/* Can do solid fills */
 
@@ -709,6 +690,7 @@ ps_getdate(void)
  * proc_str()
  *
  * Prints postscript strings.
+ * N.B. Now unicode only, no string access!
  *
 \*--------------------------------------------------------------------------*/
 
@@ -719,8 +701,8 @@ proc_str (PLStream *pls, EscText *args)
   PLFLT theta, shear;  /* Rotation angle and shear from the matrix */
   PLFLT ft_ht, offset; /* Font height and offset */
   PSDev *dev = (PSDev *) pls->dev;
-  char *font, *ofont, str[128], esc, *strp;
-  const char *cur_str;
+  char *font, *ofont, esc;
+  unsigned char *strp, str[128], *cur_strp, cur_str[128];
   float font_factor = 1.4;
   int symbol;
   PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
@@ -729,6 +711,58 @@ proc_str (PLStream *pls, EscText *args)
 
   int i=0; /* String index */
 
+  const unsigned int *cur_text;
+  const unsigned int *cur_text_limit;
+  short text_len;
+
+   /* unicode only! so test for it. */
+   if (args->unicode_array_len>0)
+     {
+	int j;
+	int nlookup;
+	const Unicode_to_Type1_table *lookup;
+	const unsigned int *cur_text;
+	/* translate from unicode into type 1 font index. */
+	/*
+	 * Choose the font family, series and shape. Currently not fully 
+	 * supported by plplot
+	 *
+	 * For plplot:
+	 *   1: Normal font
+	 *   2: Roman font
+	 *   3: Italic font
+	 *   4: cursive
+	 */
+	switch (pls->cfont) {
+	 case 1: ofont = "Helvetica"; break;
+	 case 2: ofont = "Times-Roman"; break;
+	 case 3: ofont = "Times-Italic"; break;
+	 case 4: ofont = "Symbol"; break; /* Temporary */
+	   /*case 4: ofont = "ZapfChancery"; break; /* there is no script (cursive) 
+						     * font in the standard 35 
+						     * postscript fonts.  
+						     * ZapfChancery is the 
+						     * fanciest. 
+						     */
+	 default:  ofont = "Helvetica";
+	}
+
+	if (pls->cfont == 4) {
+	   nlookup = number_of_entries_in_unicode_to_symbol_table;
+	   lookup = unicode_to_symbol_lookup_table;
+	}
+	
+	else {
+	   nlookup = number_of_entries_in_unicode_to_standard_table;
+	   lookup = unicode_to_standard_lookup_table;
+	}
+	cur_text =  args->unicode_array;
+	for (j=0; j < args->unicode_array_len; j++) {
+	   cur_str[j] = plunicode2type1(cur_text[j], lookup, nlookup);
+	}
+	cur_str[j] = '\0';
+	
+	  
   /* finish previous polyline */
 
   dev->xold = PL_UNDEFINED;
@@ -737,28 +771,6 @@ proc_str (PLStream *pls, EscText *args)
   /* Determine the font height */
   ft_ht = pls->chrht * 72.0/25.4; /* ft_ht in points, ht is in mm */
 
-  /*
-   * Choose the font family, series and shape. Currently not fully 
-   * supported by plplot
-   *
-   * For plplot:
-   *   1: Normal font
-   *   2: Roman font
-   *   3: Italic font
-   *   4: cursive
-   */
-  switch (pls->cfont) {
-    case 1: ofont = "Helvetica"; break;
-    case 2: ofont = "Times-Roman"; break;
-    case 3: ofont = "Times-Italic"; break;
-    case 4: ofont = "ZapfChancery"; break; /* there is no script (cursive) 
-					    * font in the standard 35 
-					    * postscript fonts.  
-					    * ZapfChancery is the 
-					    * fanciest. 
-					    */
-    default:  ofont = "Helvetica";
-  }
 
   /* The transform matrix has only rotations and shears; extract them */
   theta = acos(t[0]) * 180. / PI;  /* Determine the rotation (in degrees)... */
@@ -804,8 +816,6 @@ proc_str (PLStream *pls, EscText *args)
 
   plgesc(&esc);
 
-  cur_str = args->string;
-
   /* move to string reference point */
   fprintf(OF, " %d %d M\n", args->x, args->y );
 
@@ -817,7 +827,7 @@ proc_str (PLStream *pls, EscText *args)
    * thus be wrong if there are font change escape sequences in the string 
    */
 
-  esc_purge(str, args->string);
+  esc_purge(str, cur_str);
 
   fprintf(OF, "/%s %.3f SF\n", ofont,font_factor * ENLARGE * ft_ht);    
 
@@ -841,24 +851,26 @@ proc_str (PLStream *pls, EscText *args)
   do {
 
     strp = str;
+    cur_strp = cur_str;
     font = ofont;
     symbol = 0;
 
-    if (*cur_str == esc) {
-      cur_str++;
+    if (*cur_strp == esc) {
+      cur_strp++;
 
-      if (*cur_str == esc) { /* <esc><esc> */
-	*strp++ = *cur_str++;
+      if (*cur_strp == esc) { /* <esc><esc> */
+	*strp++ = *cur_strp++;
       }
-      else switch (*cur_str) {
+      else switch (*cur_strp) {
 
         case 'f':
-	cur_str++;
-	switch (*cur_str) {
+	cur_strp++;
+	switch (*cur_strp) {
 	case 'n': font = "Helvetica"; break;
 	case 'r': font = "Times-Roman"; break;
 	case 'i': font = "Times-Italic"; break;
-	case 's': font = "ZapfChancery"; break;  /* there is no script
+	case 's': font = "Symbol"; break;  /* Temporary.*/
+	/*case 's': font = "ZapfChancery"; break;  /* there is no script
 						  * (cursive) font in the 
 						  * standard 35 postscript 
 						  * fonts.  ZapfChancery is 
@@ -866,29 +878,21 @@ proc_str (PLStream *pls, EscText *args)
 						  */
 	default:  font = "Helvetica";
 	}
-	cur_str++;
+	cur_strp++;
 	break;
 
       case 'd':
 	if(up>0.) scale *= 1.25;  /* Subscript scaling parameter */
 	else scale *= 0.8;  /* Subscript scaling parameter */
 	up -= font_factor * ENLARGE * ft_ht / 2.;
-	cur_str++;
+	cur_strp++;
 	break;
 
       case 'u':
 	if(up<0.) scale *= 1.25;  /* Subscript scaling parameter */
 	else scale *= 0.8;  /* Subscript scaling parameter */
 	up += font_factor * ENLARGE * ft_ht / 2.;
-	cur_str++;
-	break;
-
-      case 'g':
-	cur_str++;
-	ofont = font;
-	*strp++ = adobe_symbol_enc (*cur_str++);
-	symbol = 1;
-	font = "Symbol";
+	cur_strp++;
 	break;
 
 	/* ignore the next sequences */
@@ -897,12 +901,12 @@ proc_str (PLStream *pls, EscText *args)
       case '-':
       case 'b':
 	plwarn("'+', '-', and 'b' text escape sequences not processed.");
-	cur_str++;
+	cur_strp++;
 	break;
 
       case '(':
 	plwarn("'g(...)' text escape sequence not processed.");
-	while (*cur_str++ != ')');
+	while (*cur_strp++ != ')');
 	break;
       }
     }
@@ -910,10 +914,10 @@ proc_str (PLStream *pls, EscText *args)
     /* copy from current to next token, adding a postscript escape 
      * char \ if necessary 
      */
-    while(!symbol && *cur_str && *cur_str != esc) {
-      if (*cur_str == '(' || *cur_str == ')')
+    while(!symbol && *cur_strp && *cur_strp != esc) {
+      if (*cur_strp == '(' || *cur_strp == ')')
 	*strp++ = '\\';
-      *strp++ = *cur_str++;
+      *strp++ = *cur_strp++;
     }
     *strp = '\0';
 
@@ -936,7 +940,7 @@ proc_str (PLStream *pls, EscText *args)
     /* back to baseline */
     if (up!=0.) fprintf(OF, "grestore (%s) stringwidth rmoveto\n", str);
 
-  }while(*cur_str);
+  }while(*cur_strp);
 
   fprintf(OF, "grestore\n");
 
@@ -952,10 +956,11 @@ proc_str (PLStream *pls, EscText *args)
   dev->lly = MIN(dev->lly, args->y - 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
   dev->urx = MAX(dev->urx, args->x + 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
   dev->ury = MAX(dev->ury, args->y + 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
+     }
 }
 
 static void
-esc_purge(char *dstr, const char *sstr) {
+esc_purge(char *dstr, unsigned char *sstr) {
   char esc;
 
   plgesc(&esc);
@@ -987,6 +992,51 @@ esc_purge(char *dstr, const char *sstr) {
   }
   *dstr = '\0';
 }
+
+/*--------------------------------------------------------------------------*\
+ *  unsigned char plunicode2type1 (const unsigned int index, 
+ *       const Unicode_to_Type1_table lookup[], const int number_of_entries)
+ *
+ *  Function takes an input unicode index, looks through the lookup
+ *  table (which must be sorted by unsigned int Unicode), then returns the 
+ *  corresponding Type1 code in the lookup table.  If the Unicode index is
+ *  not present the returned value is 0 (which is normally undefined
+ *  for Type 1 fonts and thus results in a blank character being printed
+ *  according to p. 201 of BLUEBOOK.PDF.
+\*--------------------------------------------------------------------------*/
+
+static unsigned char 
+plunicode2type1 (const unsigned int index,
+		 const Unicode_to_Type1_table lookup[],
+		 const int nlookup)
+{
+   int jlo = -1, jmid, jhi = nlookup;
+   while (jhi - jlo > 1) 
+     {
+	/* Note that although jlo or jhi can be just outside valid
+	 * range (see initialization above) because of while condition
+	 * jlo < jmid < jhi and jmid must be in valid range.
+	 */
+	jmid = (jlo+jhi)/2;
+	if (index > lookup[jmid].Unicode)
+	  jlo = jmid;
+	else if (index < lookup[jmid].Unicode)
+	  jhi = jmid;
+	else
+	  /* We have found it!
+	   * index == lookup[jlo].Unicode 
+	   */
+	  return (lookup[jmid].Type1);
+     }
+   /* jlo is invalid or it is valid and index > lookup[jlo].Unicode.
+    * jhi is invalid or it is valid and index < lookup[jhi].Unicode.
+    * All these conditions together imply index cannot be found in lookup.
+    * Mark with 1 (which is usually not defined in type 1 fonts) since 0
+    * implies end of string.
+    */
+   return(1);
+}
+
 
 #else
 int 
