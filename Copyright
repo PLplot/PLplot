@@ -1,7 +1,38 @@
-The PLplot library, source code, and associated utilities may be
-distributed under the terms of the GNU Library General Public License
-(LGPL), except as noted below.  The text of this license is given in the
-file COPYING.LIB in the distribution directory.
+The PLplot package may be distributed under the following terms:
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free
+    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+The text of this license is given in the file COPYING.LIB in the
+distribution directory.  Exceptions are noted below.
+
+The intent behind distributing PLplot under the LGPL is to ensure that it
+continues to evolve in a positive way, while remaining freely
+distributable.  The package is considered a "library" even though there
+are associated programs, such as plrender, pltek, plserver, and pltcl.
+The ties between these programs and the library are so great that I
+consider them as part of the library, so distribution under the terms of
+the LGPL makes sense.  Software developers are allowed and encouraged to
+use PLplot as an integral part of their product, even a commercial
+product.  Under the conditions of the LGPL, however, the PLplot source
+code must remain freely available, including any modifications you make to
+it (if you distribute a program based on the modified library).  Please
+read the full license for more info.
+
+
+Additional Copyrights
+---------------------
 
 The startup code used in argument handling (utils/plrender.c and
 src/plargs.c) is partially derived from "xterm.c" of the X11R5
@@ -36,13 +67,4 @@ restriction on distribution.
 Any file that has a explicit copyright notice may be distributed under
 the terms of both the LGPL and whatever stated conditions accompany the
 copyright.
-
-Notes: the intent behind these licenses is to ensure that PLplot continues
-to evolve in a positive way, while remaining freely distributable.
-Placing the library under the LGPL enables software developers to use the
-PLplot library as an integral part of their product, even a commercial
-product.  Under the conditions of the LGPL, however, the source code to
-the library must remain freely available.  This means that if you modify
-the library to better suit your purposes, you are required to distribute
-those changes freely to the general PLplot user community.
 
