@@ -38,8 +38,7 @@
   <title>The PLplot X Driver Family</title>
 
   <para>
-    There are several drivers for working with the MIT X Windows
-    system. Beginning with PLplot 5.0, the following drivers are supported.
+    Drivers for use with the X-Windows system are described in this chapter.  Each of the drivers has a list of options, and these may be set as outlined in <xref linkend="arguments"/>.
   </para>
 
   <sect1 id="xwin-driver">
@@ -57,6 +56,18 @@
       The Xwin driver displays plots one page at a time.  The pager
       is advanced by pressing the Enter key.
     </para> 
+
+    <para>
+      The available driver options are:
+      <itemizedlist>
+        <listitem><para>sync: Synchronized X server operation (0|1)</para></listitem>
+	<listitem><para>nobuffered: Sets unbuffered operation (0|1)</para></listitem>
+	<listitem><para>noinitcolors: Sets cmap0 allocation (0|1)</para></listitem>
+	<listitem><para>defvis: Use the Default Visual (0|1)</para></listitem>
+	<listitem><para>usepth: Use pthreads (0|1)</para></listitem>
+      </itemizedlist>
+    </para>
+
   </sect1>
 
   <sect1 id="gcw-driver">
@@ -66,8 +77,8 @@
       The GCW (Gnome Canvas Widget) driver produces high-quality output
       in a Gnome window, but renders slower than the Xwin driver.  The
       GCW driver can also be used to embed plots in Gnome applications,
-      and this is described in the section on Embedding Plots in Gnome
-      Applications.  The GCW driver is unicode enabled.
+      and this is described in <xref linkend="gnome-gui"/>.  The GCW 
+      driver is unicode enabled.
     </para>
 
     <para>
@@ -81,7 +92,20 @@
 	<listitem><para>q : Quits</para></listitem>
       </itemizedlist>
     </para>
-      </sect1>
+
+    <para>
+      The available driver options are:
+      <itemizedlist>
+        <listitem><para>aa: Use antialiased canvas (aa=0|1)</para></listitem>
+	<listitem><para>text: Use truetype fonts (text=0|1)</para></listitem>
+	<listitem><para>hrshsym: Use Hershey symbol set (hrshsym=0|1)</para></listitem>
+	<listitem><para>fast: Use fast (but somewhat buggy) rendering (fast=0|1)</para></listitem>
+	<listitem><para>pixmap: Use pixmap for plotting shades (pixmap=0|1)</para></listitem>
+      </itemizedlist>
+
+    </para>
+
+  </sect1>
 
   <sect1 id="tk-driver">
     <title>The Tk Driver</title>
@@ -99,9 +123,7 @@
   <title>The PLplot Output Driver Family</title>
 
   <para>
-    There are several drivers which produce output files to be displayed by
-    another system.  Beginning with PLplot 5.0, the following drivers are 
-    supported.
+    Drivers which produce output files are described in this chapter.  Each of the drivers has a list of options, and these may be set as outlined in <xref linkend="arguments"/>.
   </para>
 
   <sect1 id="postscript-driver">
@@ -113,6 +135,12 @@
     </para>
 
     <para>
+      The available driver options are:
+      <itemizedlist>
+        <listitem><para>text: Use Postscript text (text=0|1)</para></listitem>
+	<listitem><para>color: Use color (color=0|1)</para></listitem>
+	<listitem><para>hrshsym: Use Hershey symbol set (hrshsym=0|1)</para></listitem>
+      </itemizedlist>
     </para>
 
   </sect1>
@@ -127,6 +155,16 @@
     </para>
 
     <para>
+      The available driver options are:
+      <itemizedlist>
+        <listitem><para>optimise: Optimise PNG palette when possible</para></listitem>
+	<listitem><para>def_black15: Define idx 15 as black. If the background is "whiteish" (from "-bg" option), force index 15 (traditionally white) to be "black"</para></listitem>
+	<listitem><para>swp_red15: Swap index 1 (usually red) and 1 (usually white); always done after "black15"; quite useful for quick changes to web pages</para></listitem>
+	<listitem><para>8bit: Palette (8 bit) mode</para></listitem>
+	<listitem><para>24bit: Truecolor (24 bit) mode</para></listitem>
+	<listitem><para>text: Use driver text (FreeType)</para></listitem>
+	<listitem><para>smooth: Turn text smoothing on (1) or off (0)</para></listitem>
+      </itemizedlist>
     </para>
 
   </sect1>
