@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1995/07/27 21:17:06  furnish
+ * Revision 1.12  1995/10/22 17:46:24  mjl
+ * Removed call to plParseOpts, as this is now done in pltclMain(), and removed
+ * automatic call to plinit().  Now users can/need-to call plinit() as required
+ * by the application.  You can use the new plglevel accessor function to
+ * determine what state the package is in (e.g. whether plinit has already been
+ * called) to build stand-alone plot modules.
+ *
+ * Revision 1.11  1995/07/27  21:17:06  furnish
  * Improvement of arg parsing for use in extended shells.
  *
  * Revision 1.10  1995/06/01  21:47:10  mjl
@@ -87,8 +94,6 @@ extern void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty);
 int
 main(int argc, char **argv)
 {
-    (void) plParseOpts(&argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
-
     exit(pltclMain(argc, argv, NULL, AppInit));
 }
 
@@ -199,10 +204,6 @@ AppInit(Tcl_Interp *interp)
 
     Tcl_CreateCommand(interp, "pr_prompt", prPromptCmd,
                       (ClientData) NULL, (void (*)(ClientData)) NULL);
-
-/* Initialize graphics package */
-
-    plinit();
 
 /* Custom prompt, to make sure we are in text mode when entering commands */
 
