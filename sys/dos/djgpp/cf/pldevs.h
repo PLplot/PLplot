@@ -35,8 +35,10 @@
 #undef PLD_tk
 #undef PLD_tiff
 #undef PLD_bmp
+#undef PLD_jpg
 #undef PLD_jpeg
-
+#undef PLD_png
+  
 #define PLD_gnusvga
 #define PLD_hp7470
 #define PLD_hp7580
