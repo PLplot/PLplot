@@ -1,13 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/07/31 07:56:51  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
+   Revision 1.11  1993/08/03 03:26:52  mjl
+   Additions to support new MGR and LinuxVGA drivers.
 
+ * Revision 1.10  1993/07/31  07:56:51  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.9  1993/07/28  05:49:10  mjl
  * Modified table entries for xterm driver, added new ones for tek4107
  * terminal & file driver.
@@ -224,6 +227,38 @@ static PLDispatchTable dispatch_table[] = {
 	plD_tidy_tk,
 	plD_state_tk,
 	plD_esc_tk
+    },
+#endif
+
+#ifdef LINUXVGA
+    {
+	"Linux console VGA Screen",
+	"lxvga",
+	1,
+	plD_init_lxvga,
+	plD_line_lxvga,
+	plD_polyline_lxvga,
+	plD_eop_lxvga,
+	plD_bop_lxvga,
+	plD_tidy_lxvga,
+	plD_state_lxvga,
+	plD_esc_lxvga
+    },
+#endif
+
+#ifdef MGR
+    {
+	"MGR Window",
+	"mgr",
+	1,
+	plD_init_mgr,
+	plD_line_mgr,
+	plD_polyline_mgr,
+	plD_eop_mgr,
+	plD_bop_mgr,
+	plD_tidy_mgr,
+	plD_state_mgr,
+	plD_esc_mgr
     },
 #endif
 
