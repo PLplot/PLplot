@@ -1,9 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/01/23 05:37:43  mjl
-   Elimination of many function prototypes (and a few added), caused by
-   many routines becoming static in reorganization.
+   Revision 1.11  1993/02/23 04:54:45  mjl
+   Added support data structures and constant definitions for plplot options
+   handling code.  Added function prototypes for new functions and deleted
+   a couple.  Eliminated case of VOID == char since that should never be
+   necessary with ANSI C.
 
+ * Revision 1.10  1993/01/23  05:37:43  mjl
+ * Elimination of many function prototypes (and a few added), caused by
+ * many routines becoming static in reorganization.
+ *
  * Revision 1.8  1992/11/07  08:03:26  mjl
  * Added prototypes for a couple new set/get routines (gscale/sscale).
  *
@@ -39,7 +45,8 @@
     Copyright (C) 1992 by 
     Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
 
-    Macros and prototypes for the PLPLOT package.
+    Macros and prototypes for the PLPLOT package.  This header file must 
+    be included before all others, including system header files.
 
     This software may be freely copied, modified and redistributed without
     fee provided that this copyright notice is preserved intact on all
@@ -60,6 +67,7 @@
 #define __PLPLOT_H__
 
 #define _POSIX_SOURCE
+#define PLPLOT_VERSION "4.99a"
 
 /*----------------------------------------------------------------------*\
 *    USING PLPLOT
@@ -93,10 +101,6 @@
 * #define PL_NEED_SIZE_T
 *	On some systems, size_t is not defined in the usual place (stdlib.h),
 *	and you must include stddef.h to get it.
-*
-* #define PL_NO_VOID
-*	In case there's still a compiler out there somewhere in the void,
-*	with no void.  
 *
 \*----------------------------------------------------------------------*/
 
@@ -235,6 +239,10 @@ typedef short PLSHORT;
 #define U_LONG unsigned long
 #endif
 
+/* For passing user data, as with X's XtPointer */
+
+typedef void* PLPointer;
+
 /*----------------------------------------------------------------------*\
 *                       Utility macros
 \*----------------------------------------------------------------------*/
@@ -292,11 +300,9 @@ typedef short PLSHORT;
 *                       PLPLOT control macros
 \*----------------------------------------------------------------------*/
 
-#ifdef PL_NO_VOID
-#define VOID char
-#else
+/* All ANSI compilers support void, so VOID should really be eliminated */
+
 #define VOID void
-#endif
 
 /* Some constants */
 
@@ -338,6 +344,23 @@ typedef short PLSHORT;
 /*----------------------------------------------------------------------*\
 * Complex data types
 \*----------------------------------------------------------------------*/
+
+/* Plplot Option table & support constants */
+
+#define PL_PARSE_ARG		0x01
+#define PL_PARSE_NODELETE	0x02
+
+#define PL_PARSE_FULL		0
+#define PL_PARSE_PARTIAL	1
+#define PL_PARSE_QUIET		2
+
+typedef struct {
+    char *opt;
+    int  (*handler)	(char *, char *);
+    int  flags;
+    char *syntax;
+    char *desc;
+} PLOptionTable;
 
 /* Plplot Key structure */
 
@@ -461,7 +484,6 @@ typedef struct {
 
 #define    pladv	c_pladv
 #define    plaxes	c_plaxes
-#define    plbeg	c_plbeg
 #define    plbin	c_plbin
 #define    plbox	c_plbox
 #define    plbox3	c_plbox3
@@ -491,6 +513,7 @@ typedef struct {
 #define    plgzax	c_plgzax
 #define    plhist	c_plhist
 #define    plhls        c_plhls
+#define    plinit	c_plinit
 #define    pljoin	c_pljoin
 #define    pllab	c_pllab
 #define    plline	c_plline
@@ -514,6 +537,8 @@ typedef struct {
 #define    plscm1f1	c_plscm1f1
 #define    plscol0	c_plscol0
 #define    plscolor	c_plscolor
+#define    plsdev	c_plsdev
+#define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
 #define    plsfnam	c_plsfnam
 #define    plslpb	c_plslpb
@@ -523,6 +548,7 @@ typedef struct {
 #define    plspage	c_plspage
 #define    plspause	c_plspause
 #define    plsstrm	c_plsstrm
+#define    plssub	c_plssub
 #define    plssym	c_plssym
 #define    plstar	c_plstar
 #define    plstart	c_plstart
@@ -547,7 +573,6 @@ typedef struct {
 
 #define    c_pladv	pladv
 #define    c_plaxes	plaxes
-#define    c_plbeg	plbeg
 #define    c_plbin	plbin
 #define    c_plbox	plbox
 #define    c_plbox3	plbox3
@@ -576,6 +601,7 @@ typedef struct {
 #define    c_plgzax	plgzax
 #define    c_plhist	plhist
 #define    c_plhls	plhls       
+#define    c_plinit	plinit
 #define    c_pljoin	pljoin
 #define    c_pllab	pllab
 #define    c_plline	plline
@@ -599,6 +625,8 @@ typedef struct {
 #define    c_plscm1f1	plscm1f1
 #define    c_plscol0	plscol0
 #define    c_plscolor	plscolor
+#define    c_plsdev	plsdev
+#define    c_plsesc	plsesc
 #define    c_plsfam	plsfam
 #define    c_plsfnam	plsfnam
 #define    c_plslpb	plslpb
@@ -608,6 +636,7 @@ typedef struct {
 #define    c_plspage	plspage
 #define    c_plspause	plspause
 #define    c_plsstrm	plsstrm
+#define    c_plssub	plssub
 #define    c_plssym	plssym
 #define    c_plstar	plstar
 #define    c_plstart	plstart
@@ -645,8 +674,6 @@ void c_pladv	(PLINT);
 void c_plaxes	(PLFLT, PLFLT, char *, PLFLT, PLINT, char *,
 		 PLFLT, PLINT);
 
-void c_plbeg	(PLINT, PLINT, PLINT);
-
 void c_plbin	(PLINT, PLFLT *, PLFLT *, PLINT);
 
 void c_plbox	(char *, PLFLT, PLINT, char *, PLFLT, PLINT);
@@ -661,15 +688,15 @@ void c_plcol	(PLINT);
 
 void c_plcont	(PLFLT **, PLINT, PLINT, PLINT, PLINT, 
 		 PLINT, PLINT, PLFLT *, PLINT, 
-		 void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *, void *),
-		 void *);
+		 void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		 PLPointer);
 
-void plcontf	(PLFLT (*) (PLINT, PLINT, void *),
-		 void *,
+void plcontf	(PLFLT (*) (PLINT, PLINT, PLPointer),
+		 PLPointer,
 		 PLINT, PLINT, PLINT, PLINT,
 		 PLINT, PLINT, PLFLT *, PLINT,
-		 void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, void *),
-		 void *);
+		 void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		 PLPointer);
 
 void c_plend	(void);
 
@@ -712,6 +739,8 @@ void c_plgzax	(PLINT *, PLINT *);
 void c_plhist	(PLINT, PLFLT *, PLFLT, PLFLT, PLINT, PLINT);
 
 void c_plhls	(PLFLT, PLFLT, PLFLT);
+
+void c_plinit	(void);
 
 void c_pljoin	(PLFLT, PLFLT, PLFLT, PLFLT);
 
@@ -761,6 +790,10 @@ void c_plscol0	(PLINT icol0, PLINT r, PLINT g, PLINT b);
 
 void c_plscolor	(PLINT color);
 
+void c_plsdev	(char *);
+
+void c_plsesc	(char);
+
 void c_plsfam	(PLINT, PLINT, PLINT);
 
 void c_plsfnam	(char *);
@@ -778,6 +811,8 @@ void c_plspage 	(PLFLT, PLFLT, PLINT, PLINT, PLINT, PLINT);
 void c_plspause	(PLINT);
 
 void c_plsstrm	(PLINT);
+
+void c_plssub	(PLINT, PLINT);
 
 void c_plssym	(PLFLT, PLFLT);
 
@@ -845,6 +880,23 @@ PLFLT plf2eval	(PLINT, PLINT, void *);
 
 PLFLT plf2evalr (PLINT, PLINT, void *);
 
+	/* Command line parsing utilities */
+
+void  plSyntax	(void);
+
+void  plHelp	(void);
+
+void  plNotes	(void);
+
+int   plParseInternalOpts (int *, char **, PLINT);
+
+int   plParseOpts	(int *, char **, PLINT, PLOptionTable *,
+			 void (*) (char *));
+
+	/* Miscellaneous */
+
+void  plgesc	(char *);
+
 	/* Nice way to allocate space for a vectored 2d grid */
 
 void  Alloc2dGrid (PLFLT ***, PLINT, PLINT);
@@ -889,12 +941,6 @@ void  sbase	(PLFLT, PLFLT, PLFLT, PLFLT);
 void  gnms	(PLINT *);
 
 void  snms	(PLINT);
-
-void  gdev	(PLINT *, PLINT *, PLINT *);
-
-void  sdev	(PLINT, PLINT, PLINT);
-
-void  smod	(PLINT);
 
 void  gcurr	(PLINT *, PLINT *);
 
@@ -1014,6 +1060,8 @@ void  drawor_poly (PLFLT *x, PLFLT *y, PLINT n);
 
 void  setphy	(PLINT, PLINT, PLINT, PLINT);
 
+void  setsub	(void);
+
 void  gmark	(PLINT *pmar[], PLINT *pspa[], PLINT *pnms);
 
 void  gcure	(PLINT **pcur, PLINT **ppen, PLINT **ptim, PLINT **pala);
@@ -1021,8 +1069,6 @@ void  gcure	(PLINT **pcur, PLINT **ppen, PLINT **ptim, PLINT **pala);
 void  gradv	(void);
 
 void  grclr	(void);
-
-void  grbeg	(PLINT dev);
 
 void  grcol	(void);
 
