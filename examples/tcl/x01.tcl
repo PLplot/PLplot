@@ -1,16 +1,21 @@
 # $Id$
 # $Log$
-# Revision 1.1  1994/06/25 20:34:24  mjl
+# Revision 1.2  1994/06/30 18:47:52  mjl
+# Minor label and commenting changes.
+#
+# Revision 1.1  1994/06/25  20:34:24  mjl
 # Demo program 1.  Now fully reproduces x01c plots.
 #
 #----------------------------------------------------------------------------
-# PLPLOT TCL demo #1
+# PLplot Tcl demo #1
 #
 # After sourcing, just type "1".
 #----------------------------------------------------------------------------
 
 proc 1 {} {
     global xscale yscale xoff yoff
+
+    plssub 2 2
 
 # First plot
 
@@ -72,7 +77,7 @@ proc plot1 {} {
     plcol 1
     plenv $xoff $xmax $yoff $ymax 0 0
     plcol 6
-    pllab "(x)" "(y)" "#frPLPLOT Example 1 - y=x#u2"
+    pllab "(x)" "(y)" "#frPLplot Example 1 - y=x#u2"
 
     # plot the data points
 
@@ -91,7 +96,7 @@ proc plot2 {} {
     plcol 1
     plenv -2 10 -.4 1.2 0 1
     plcol 2
-    pllab "(x)" "sin(x)/x" "#frPLPLOT Example 1 - Sinc Function"
+    pllab "(x)" "sin(x)/x" "#frPLplot Example 1 - Sinc Function"
 
     # Fill up the array
 
@@ -140,7 +145,7 @@ proc plot3 {} {
     plstyl 0 $mark $space
 
     plcol 3
-    pllab "Angle (degrees)" "sine" "#frPLPLOT Example 1 - Sine function"
+    pllab "Angle (degrees)" "sine" "#frPLplot Example 1 - Sine function"
 
     matrix x f 101
     matrix y f 101
