@@ -25,12 +25,33 @@ if enable_python
 
 examples_pythondir = $(DATA_DIR)/examples/python
 
+# This list contains standalone scripts which are executable.
 dist_examples_python_SCRIPTS = \
 	prova.py \
 	pythondemos.py \
+	x01 \
+	x02 \
+	x03 \
+	x04 \
+	x05 \
+	x06 \
+	x07 \
+	x08 \
+	x09 \
+	x10 \
+	x11 \
+	x12 \
+	x13 \
+	x14 \
+	x15 \
+	x16 \
+	x17 \
+	x18 \
+	x22 \
 	xw14.py \
 	xw17.py
 
+# This list contains python modules that can be imported.
 dist_examples_python_DATA = \
 	README.pythondemos \
 	qplplot.py \
