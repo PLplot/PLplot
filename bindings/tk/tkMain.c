@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/06/23 22:39:10  mjl
+ * Revision 1.2  1994/06/30 18:45:05  mjl
+ * Minor changes to pass gcc -Wall without warnings and other cleaning up.
+ *
+ * Revision 1.1  1994/06/23  22:39:10  mjl
  * Handles nearly all the important setup for extended wish's.  Taken from
  * tkMain.c of Tk 3.6, and modified minimally to support my needs.
  *
@@ -48,11 +51,8 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header$ SPRITE (Berkeley)";
-#endif
-
 #include <stdio.h>
+#include <stdlib.h>
 #include <tcl.h>
 #include <tk.h>
 

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1994/06/23 22:33:53  mjl
+ * Revision 1.27  1994/06/30 18:45:02  mjl
+ * Minor changes to pass gcc -Wall without warnings and other cleaning up.
+ *
+ * Revision 1.26  1994/06/23  22:33:53  mjl
  * Fixed bug introduced in last update concerning exit handling for DP style
  * communication.
  *
@@ -41,9 +44,6 @@
 static char *client_name;	/* Name of client main window */
 static char *auto_path;		/* addition to auto_path */
 static int child;		/* set if child of TK driver */
-static int pass_thru;		/* Skip normal error termination when set */
-static char *cmdbuf = NULL;	/* Buffer to hold evalled commands */
-static int cmdbuf_len = 100;	/* Initial command buffer length */
 static int dp;			/* set if using Tcl-DP to communicate */
 static char *client_host;	/* Host id for client */
 static char *client_port;	/* Communications port id for client */

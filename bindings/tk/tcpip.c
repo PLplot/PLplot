@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/05/14 05:42:52  mjl
+ * Revision 1.6  1994/06/30 18:45:04  mjl
+ * Minor changes to pass gcc -Wall without warnings and other cleaning up.
+ *
+ * Revision 1.5  1994/05/14  05:42:52  mjl
  * Fixed the call to pl_UnRead the header -- a bogus argument was causing
  * spurious packet transmission failures.
  *
@@ -284,7 +287,7 @@ pl_Read (fd, buffer, numReq)
 }
 
 /*----------------------------------------------------------------------*\
-*  This part for Tcl-DP only
+ *  This part for Tcl-DP only
 \*----------------------------------------------------------------------*/
 
 #ifdef TCL_DP
@@ -297,12 +300,12 @@ pl_Read (fd, buffer, numReq)
 #include <sys/socket.h>
 
 /*----------------------------------------------------------------------*\
-* plHost_ID
-*
-* Tcl command -- return the IP address for the current host.  
-*
-* Derived from source code in "UNIX Network Programming" by W. Richard
-* Stevens, Prentice Hall, 1990.
+ * plHost_ID
+ *
+ * Tcl command -- return the IP address for the current host.  
+ *
+ * Derived from source code in "UNIX Network Programming" by W. Richard
+ * Stevens, Prentice Hall, 1990.
 \*----------------------------------------------------------------------*/
 
 static char *
