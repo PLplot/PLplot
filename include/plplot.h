@@ -1,8 +1,13 @@
 /* $Id$
-   $Log$
-   Revision 1.33  1993/08/11 19:27:12  mjl
-   Changed prototypes for plHelp() and plSyntax().
-
+ * $Log$
+ * Revision 1.34  1993/08/18 19:09:19  mjl
+ * Fixed function prototypes for driver interface functions.  Added macro
+ * PL_NOTSET for use in plsdidev() to leave specific variables unaltered by
+ * the function call.  May be supported by other functions later.
+ *
+ * Revision 1.33  1993/08/11  19:27:12  mjl
+ * Changed prototypes for plHelp() and plSyntax().
+ *
  * Revision 1.32  1993/08/09  22:18:00  mjl
  * Added function prototypes for pleop(), plbop(), eliminated them for plclr()
  * and plpage().  Inserted defines to translate from the latter in case
@@ -224,6 +229,11 @@ typedef struct {
     unsigned int height;
 } PLWindow;
 
+/* Macro used (in some cases) to ignore value of argument */
+/* I don't plan on changing the value so you can hard-code it */
+
+#define PL_NOTSET (-42)
+
 /* See plcont.c for examples of the following */
 
 /*
@@ -354,6 +364,9 @@ typedef struct {
 #define    plfont	c_plfont
 #define    plfontld	c_plfontld
 #define    plgchr	c_plgchr
+#define    plgdidev	c_plgdidev
+#define    plgdiori	c_plgdiori
+#define    plgdiplt	c_plgdiplt
 #define    plgfam	c_plgfam
 #define    plgfnam	c_plgfnam
 #define    plgpage	c_plgpage
@@ -453,6 +466,9 @@ typedef struct {
 #define    c_plfont	plfont
 #define    c_plfontld	plfontld
 #define    c_plgchr	plgchr
+#define    c_plgdidev	plgdidev
+#define    c_plgdiori	plgdiori
+#define    c_plgdiplt	plgdiplt
 #define    c_plgfam	plgfam
 #define    c_plgfnam	plgfnam
 #define    c_plgpage	plgpage
@@ -576,6 +592,10 @@ void plcontf	(PLFLT (*) (PLINT, PLINT, PLPointer),
 
 void c_plcpstrm	(PLINT, PLINT);
 
+void pldid2pc	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+
+void pldip2dc	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+
 void c_plend	(void);
 
 void c_plend1	(void);
@@ -600,7 +620,13 @@ void c_plfontld	(PLINT);
 
 void c_plgchr	(PLFLT *, PLFLT *);
 
-void c_plgfam	( PLINT *, PLINT *, PLINT *);
+void c_plgdidev	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+
+void c_plgdiori	(PLFLT *);
+
+void c_plgdiplt	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+
+void c_plgfam	(PLINT *, PLINT *, PLINT *);
 
 void c_plgfnam	(char *);
 
@@ -680,15 +706,15 @@ void c_plscolor	(PLINT);
 
 void c_plsdev	(char *);
 
-void c_plsdiplt	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void c_plsdiplz	(PLFLT, PLFLT, PLFLT, PLFLT);
-
 void c_plsdidev	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 void c_plsdimap	(PLINT, PLINT, PLINT, PLINT, PLFLT, PLFLT);
 
 void c_plsdiori	(PLFLT);
+
+void c_plsdiplt	(PLFLT, PLFLT, PLFLT, PLFLT);
+
+void c_plsdiplz	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 void c_plsesc	(char);
 
@@ -756,12 +782,6 @@ void c_plwid	(PLINT);
 void c_plwind	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 	/* The rest for use from C only */
-
-void plgdiplt	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void plgdidev	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void plgdiori	(PLFLT *);
 
 void plgFileDevs(char ***, char ***, int *);
 
