@@ -64,6 +64,19 @@ if (code) { abort_session(pls, "Unable to write to PDFstrm"); }
 /*--------------------------------------------------------------------------*/
 /* Function prototypes */
 
+/* Driver entry and dispatch setup */
+
+void plD_dispatch_init_tk	( PLDispatchTable *pdt );
+
+void plD_init_tk		(PLStream *);
+void plD_line_tk		(PLStream *, short, short, short, short);
+void plD_polyline_tk		(PLStream *, short *, short *, PLINT);
+void plD_eop_tk			(PLStream *);
+void plD_bop_tk			(PLStream *);
+void plD_tidy_tk		(PLStream *);
+void plD_state_tk		(PLStream *, PLINT);
+void plD_esc_tk			(PLStream *, PLINT, void *);
+
 /* various */
 
 static void  init		(PLStream *pls);
@@ -113,6 +126,22 @@ static int   LookupTkKeyEvent	(PLStream *pls, Tcl_Interp *interp,
 				 int argc, char **argv);
 static int   LookupTkButtonEvent(PLStream *pls, Tcl_Interp *interp,
 				 int argc, char **argv);
+
+void plD_dispatch_init_tk( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "Tcl/TK Window";
+    pdt->pl_DevName  = "tk";
+    pdt->pl_type     = plDevType_Interactive;
+    pdt->pl_seq      = 7;
+    pdt->pl_init     = (plD_init_fp)     plD_init_tk;
+    pdt->pl_line     = (plD_line_fp)     plD_line_tk;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_tk;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_tk;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_tk;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_tk;
+    pdt->pl_state    = (plD_state_fp)    plD_state_tk;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_tk;
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_init_dp()
