@@ -78,7 +78,17 @@ if enable_java
 
 # Use javaJAVA for gcj support once gcc-3.2 use becomes
 # widespread.
-ourexecjava_DATA = README.javaAPI $(javafiles)
+
+JAVAROOT = .
+
+noinst_JAVA = $(javafiles)
+plplotjavaexecdir = $(DATA_DIR)/java/
+plplotjavaexec_DATA = plplot.jar
+
+plplot.jar: $(javafiles)
+	jar -cf plplot.jar plplot/core/*.class
+
+#ourexecjava_DATA = README.javaAPI $(javafiles)
 
 execjavawrapper_LTLIBRARIES = plplotjavac_wrap.la
 
@@ -90,10 +100,12 @@ endif
 
 install-exec-hook:
 if enable_java
-	( cd $(DESTDIR)$(execjavawrapperdir) ; \
-	  rm -f plplotjavac_wrap*.a plplotjavac_wrap*.la ; \
-	  cd $(DESTDIR)$(DATA_DIR) ; \
-	  javac -classpath java -d java java/plplot/core/*.java)
+#	( cd $(DESTDIR)$(execjavawrapperdir) ; \
+#	  rm -f plplotjavac_wrap*.a plplotjavac_wrap*.la ; \
+#	  cd $(DESTDIR)$(DATA_DIR) ; \
+#	  javac -classpath java -d java java/plplot/core/*.java ; \
+#	  cd java; jar -c -f plplot.jar plplot/core/*.class)
+
 endif
 
 MAINTAINERCLEANFILES = $(swiggenfiles)

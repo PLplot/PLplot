@@ -42,14 +42,9 @@ javafiles = \
 	x19.java \
 	x22.java
 
-javademos = README.javademos $(javafiles)
+javademos = README.javademos $(javafiles) Makefile.examples
 
 if enable_java
-
-# Must have "exec" in the name.
-ourexecjavadir = $(DATA_DIR)/java/plplot/examples
-
-ourexecjava_DATA = $(javademos)
 
 # Duplicate this so the source appears in the examples/java directory for
 # the user to read
@@ -58,14 +53,9 @@ examples_java_DATA = $(javademos)
 
 endif
 
-### Use install-hook to compile the java files that have been installed.
+install-data-hook:
+	( cd $(DESTDIR)$(examples_javadir) ; mv -f Makefile.examples Makefile )
 
-install-exec-hook:
-if enable_java
-	( cd $(DESTDIR)$(DATA_DIR) ; \
-	  javac -classpath java -d java java/plplot/examples/*.java; \
-	  cd java; jar -c -f plplot.jar plplot/*; rm -rf plplot )
-endif
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = $(javademos)

@@ -110,6 +110,8 @@ if test "$enable_java" = yes; then
    fi
 ### Directory for Java wrapper library.
    test -z "$JAVAWRAPPER_DIR" && JAVAWRAPPER_DIR="$LIB_DIR/${PACKAGE}${VERSION}/java"
+### Directory for Java bindings .jar file
+   test -z "$JAVADATA_DIR" && JAVADATA_DIR="$DATA_DIR/java"
 
 ### bindings/java/config.java.in requires JAVAWRAPPER_HARDDIR
 ### The symbolic exec_prefix must be replaced by the actual exec_prefix.
@@ -117,12 +119,16 @@ if test "$enable_java" = yes; then
 ### bindings/java/config.java.in needs the complete name of the
 ### plplotjavac_wrap DLL.
    PL_GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
+### examples/java/Makefile.examples.in requires JAVADATA_HARDDIR
+### The symbolic exec_prefix must be replaced by the actual exec_prefix.
+   PL_EXPAND_EXPRESSION(JAVADATA_HARDDIR, $JAVADATA_DIR)
 fi
 
 AC_SUBST(JAVAINCCMD)
 AC_SUBST(enable_java)
 AC_SUBST(JAVAWRAPPER_DIR)
 AC_SUBST(JAVAWRAPPER_HARDDIR)
+AC_SUBST(JAVADATA_HARDDIR)
 AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
 
 AM_CONDITIONAL(enable_java, [test "$enable_java" = yes])
@@ -131,4 +137,5 @@ AC_CONFIG_FILES([
     bindings/java/Makefile
     bindings/java/config.java
     examples/java/Makefile
+    examples/java/Makefile.examples
 ])

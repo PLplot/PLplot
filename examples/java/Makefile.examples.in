@@ -1,9 +1,9 @@
-# examples/Makefile.examples.in for PLplot
+# examples.class/Makefile.examples.in for PLplot
 ###
 ### Process this file with configure to produce Makefile.examples
 ###
-# Copyright (C) 2004  Alan W. Irwin
-# 
+# Copyright (C) 2004  Andrew Ross
+#
 # This file is part of PLplot.
 #
 # PLplot is free software; you can redistribute it and/or modify
@@ -19,18 +19,42 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-# This Makefile should not be used in the build tree.  It is meant for use
-# only in the install tree.  It is first configured, then installed 
-# (with the name Makefile) in the _installed_ examples directory as a 
-# convenience to the user for building all the examples without having 
-# to invoke make in the individual sub-directories of examples.
+JAVAC = javac
+PLPLOT_CLASSPATH = @JAVADATA_HARDDIR@/plplot.jar
 
-SUBDIRS = c c++ f77 tk java
-all clean: 
-	target=`echo $@`; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  if test -d "$$subdir"; then \
-	    echo "Making $$target in $$subdir"; \
-	    (cd $$subdir && $(MAKE) $$target); \
-	  fi; \
-	done
+examples_jar = plplot-examples.jar
+
+example_classes = \
+		 x01.class \
+		 x02.class \
+		 x03.class \
+		 x04.class \
+		 x05.class \
+		 x06.class \
+		 x07.class \
+		 x08.class \
+		 x09.class \
+		 x10.class \
+		 x11.class \
+		 x12.class \
+		 x13.class \
+		 x14.class \
+		 x15.class \
+		 x16.class \
+		 x17.class \
+		 x18.class \
+		 x19.class \
+		 x22.class
+
+all: $(examples_jar)
+
+$(examples_jar): $(example_classes)
+	jar -cf $(examples_jar) plplot/examples/*.class
+
+clean:
+	rm -rf plplot $(examples_jar)
+
+.java.class:
+	$(JAVAC) $< -d . -classpath $(PLPLOT_CLASSPATH)
+
+.SUFFIXES: .java .class
