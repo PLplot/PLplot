@@ -1,3 +1,26 @@
+2003-09-01  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* Commit (with a few changes) C++ interface upgrade (at least 13 new
+	  PLplot library calls are now available) donated by Andrew Ross
+	  <andrewr@coriolis.greenend.org.uk> under the LGPL. The Plplot
+	  initialization has now been separated which allows plplot commands
+	  that are supposed to be done before init (such as command-line
+	  option processing) to work for the first time.  This constitutes a
+	  backwards-incompatible change that will be signalled by a new
+	  libplplotcxx library major version number.
+
+	* Commit (with a few changes) extended set of C++ examples donated
+	  by Andrew Ross <andrewr@coriolis.greenend.org.uk> under the LGPL.
+	  These examples test the interface by attempting to mimic the
+	  results of the corresponding C examples.
+
+	* x01cc.c: Change this one old (but still interesting) C++ example
+	  to use the updated interface.
+
+	* examples/c++/Makefile.am: extend the install to the new examples,
+	  create symlink for lena.pgm (so x20 works), and use install-hook
+	  (no more .samename) for post-install changes.
+
 2003-02-01  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* sysloc.in: Remove unneeded cruft.  This is a substantial (28 per
