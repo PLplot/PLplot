@@ -953,7 +953,7 @@ fi
 if test "$with_csa" = "yes"; then
 #make test on simple NaN operations (nan+1. e.g.)
 	AC_DEFINE(WITH_CSA, [], [Define if csa is desired])
-	CSALIBS='$(top_builddir)/lib/csa/libcsa.la'
+	CSALIBS='$(top_builddir)/lib/csa/libcsirocsa.la'
 fi
 
 # ----------------------------------------------------------------------------
@@ -965,11 +965,11 @@ if test "$with_qhull" = "yes"; then
     AC_CHECK_LIB(qhull, qh_new_qhull, [
         AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
         QHULLLIBS="-lqhull"
-        NNLIBS='$(top_builddir)/lib/nn/libnn.la' ], [ with_qhull="no" ])
+        NNLIBS='$(top_builddir)/lib/nn/libcsironn.la' ], [ with_qhull="no" ])
 fi
 
 # ----------------------------------------------------------------------------
-# CFLAGS to use ieee because of NaN issues in libnn and libcsa
+# CFLAGS to use ieee because of NaN issues in libcsironn and libcsirocsa
 # ----------------------------------------------------------------------------
 
 if test "$with_qhull" = "yes" -o "$with_csa" = "yes"; then

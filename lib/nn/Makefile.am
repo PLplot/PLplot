@@ -20,10 +20,10 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-lib_LTLIBRARIES = libnn.la
-libnn_la_SOURCES = delaunay.c hash.c istack.c linear.c \
-                       nnai.c nnpi.c nncommon.c
-libnn_la_LDFLAGS = -version 0:0:0 $(RPATH) -no-undefined $(QHULLLIBS) -lm
+lib_LTLIBRARIES = libcsironn.la
+libcsironn_la_SOURCES = delaunay.c hash.c istack.c linear.c \
+                        nnai.c nnpi.c nncommon.c
+libcsironn_la_LDFLAGS = -version 0:0:0 $(RPATH) -no-undefined $(QHULLLIBS) -lm
 AM_CPPFLAGS = -I.
 
 docdir = $(DOCDIR)

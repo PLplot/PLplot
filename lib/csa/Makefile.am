@@ -20,9 +20,9 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-lib_LTLIBRARIES = libcsa.la
-libcsa_la_SOURCES = csa.c
-libcsa_la_LDFLAGS = -version 0:0:0 -lm
+lib_LTLIBRARIES = libcsirocsa.la
+libcsirocsa_la_SOURCES = csa.c
+libcsirocsa_la_LDFLAGS = -version 0:0:0 -lm
 AM_CPPFLAGS = -I.
 
 docdir = $(DOCDIR)
