@@ -1,7 +1,10 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.9  1994/08/11 01:43:07  furnish
+ * Revision 1.10  1995/03/21 19:40:32  mjl
+ * Added interpreter to tclMatrix struct for more robust resource recovery.
+ *
+ * Revision 1.9  1994/08/11  01:43:07  furnish
  * Implement redim methods for the C++ shadow class.  Somebody still
  * needs to do it in the Tcl code :-).
  *
@@ -39,21 +42,38 @@
  * Header file for new Tcl matrix command.
  */
 
-/*----------------------------------------------------------------------*\
- *
- * tclMatrix.h --
- *
- *	Contains declarations for Tcl "Matrix" command.
- *	C functions that need access to the matrix data will need
- *	to include this file.
- *
- * Maurice LeBrun
- * IFS, University of Texas at Austin
- * 13-Jun-1994
-\*----------------------------------------------------------------------*/
+/*
+    tclMatrix.h
+
+    Copyright 1994, 1995
+    Maurice LeBrun			mjl@dino.ph.utexas.edu
+    Institute for Fusion Studies	University of Texas at Austin
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free
+    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	
+    Contains declarations for Tcl "Matrix" command.
+    C functions that need access to the matrix data will need
+    to include this file.
+*/
 
 #ifndef __TCLMATRIX_H__
 #define __TCLMATRIX_H__
+
+#include <tcl.h>
 
 #ifdef DOUBLE
 typedef double Mat_float;
@@ -71,7 +91,7 @@ enum { TYPE_FLOAT, TYPE_INT };
 
 /* Arrays are column dominant (normal C ordering) */
 /* Array elements are stored contiguously */
-/* Require dimension <= 3, floats for simplicity */
+/* Require dimension <= 3 for simplicity */
 
 #define MAX_ARRAY_DIM 3
 
@@ -85,14 +105,17 @@ enum { TYPE_FLOAT, TYPE_INT };
 
 typedef struct {
     int type;			/* Data type */
-				/* For now only float/double are supported */
     int len;			/* Total length of array */
     int dim;			/* Number of dimensions */
     int n[MAX_ARRAY_DIM];	/* Holds array length in each dimension */
-    char name[20];		/* Matrix operator name */
+    int tracing;		/* Set if not persistent */
 
-    Mat_float *fdata;		/* Floating point data */
-    Mat_int   *idata;		/* Integer data */
+    char *name;			/* Matrix operator name, malloc'ed */
+
+    Mat_float *fdata;		/* Floating point data, malloc'ed */
+    Mat_int   *idata;		/* Integer data, malloc'ed */
+
+    Tcl_Interp *interp;		/* Interpreter where command is installed */
 
 /* These do the put/get operations for each supported type */
 
@@ -112,8 +135,8 @@ typedef struct {
 
 // Start by setting up some important macros.
 
-// Okay, HP C++ has exceptions, but most other compilers don't.  Will
-// embellish this as necessary.
+// HP C++ has exceptions, but most other compilers don't.  Will embellish
+// this as necessary.
 */
 
 #ifdef throw
