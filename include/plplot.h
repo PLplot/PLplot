@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1993/08/28 06:35:37  mjl
+ * Revision 1.38  1993/09/08 02:34:44  mjl
+ * Added function prototype for plGetName, moved some others from plstream.h
+ * into here.
+ *
+ * Revision 1.37  1993/08/28  06:35:37  mjl
  * Added client_data variable to PLOptionTable definition.
  *
  * Revision 1.36  1993/08/26  21:18:16  mjl
@@ -849,6 +853,12 @@ int   plSetInternalOpt	(char *, char *);
 void  plgesc	(char *);
 
 void  pl_cmd	(PLINT, void *);
+
+void  plGetName	(char *, char *, char *, char **);
+
+PLINT plGetInt	(char *);
+
+PLFLT plGetFlt	(char *);
 
 	/* Nice way to allocate space for a vectored 2d grid */
 
