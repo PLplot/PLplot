@@ -9,6 +9,32 @@
 # Based on prior work by Maurice.
 # -----------------------------------------------------------------------------
 
+# Need to figure this out in a more conclusive manner.  Someone out
+# there might be using icc or pgicc or something.
+with_gcc := yes
+
+ifeq ($(with_gcc),yes)
+# Need to figure out if this is GCC version 3 or not.
+gcc_major := $(shell gcc -v 2>&1 | grep version | \
+			cut '-d ' -f 3 | cut -d. -f 1 )
+gcc_v3 := $(shell expr $gcc_major \>= 3)
+
+ifeq ($(gcc_v3),1)
+define compile-c-and-emit-deps
+$(CC) $(1) -MD -MF $(3:$(2).o=.d.$(2)) -MP -c $(2).c -o $(3)
+endef
+automatic_deps := yes
+else
+define compile-c-and-emit-deps
+$(CC) $(1) -c $(2).c -o $(3)
+endef
+automatic_deps := not_yet
+endif
+
+else
+# Define the simple forms.
+endif
+
 # -----------------------------------------------------------------------------
 # Set up inference rules appropriate for building both archive and shared
 # libraries. 
@@ -18,7 +44,7 @@
 	$(CXX) $(CXX_FLAGS) $<
 
 .c.o:
-	$(CC) $(CC_FLAGS) $<
+	$(call compile-c-and-emit-deps,$(CC_FLAGS),$*,$@)
 
 .f.o:
 	$(F77) $(F77_FLAGS) $<
@@ -27,7 +53,7 @@ shared/%.o : %.f
 	$(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) $*.f -o $@
 
 shared/%.o : %.c
-	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) $*.c -o $@
+	$(call compile-c-and-emit-deps,$(SHLIB_CCFLAGS) $(CC_FLAGS),$*,$@)
 
 shared/%.o : %.cc
 	$(CXX) $(SHLIB_CXXFLAGS) $(CXX_FLAGS) $*.cc -o $@
