@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.57  1996/06/26 21:35:14  furnish
+ * Revision 1.58  1996/10/11 23:12:28  furnish
+ * Fix problem with background configuration, evident with itcl 2.1.  Fix
+ * contibuted by Vince Darley.
+ *
+ * Revision 1.57  1996/06/26  21:35:14  furnish
  * Various hacks to support Tcl 7.5 and Tk 4.1.
  *
  * Revision 1.56  1996/02/24  05:06:30  shouman
@@ -304,15 +308,29 @@ static Tk_ConfigSpec configSpecs[] = {
     {TK_CONFIG_BORDER, "-background", "background", "Background",
 	DEF_PLFRAME_BG_COLOR, Tk_Offset(PlFrame, border),
 	TK_CONFIG_COLOR_ONLY},
+/*
     {TK_CONFIG_COLOR, (char *) NULL, (char *) NULL, (char *) NULL,
 	(char *) NULL, Tk_Offset(PlFrame, bgColor),
 	TK_CONFIG_COLOR_ONLY},
+	*/
+#ifndef	MAC_TCL	    
+    {TK_CONFIG_COLOR, "-plbg", (char *) NULL, (char *) NULL,
+	DEF_PLFRAME_BG_COLOR, Tk_Offset(PlFrame, bgColor),
+	TK_CONFIG_COLOR_ONLY},
+#endif
     {TK_CONFIG_BORDER, "-background", "background", "Background",
 	DEF_PLFRAME_BG_MONO, Tk_Offset(PlFrame, border),
 	TK_CONFIG_MONO_ONLY},
+/*
     {TK_CONFIG_COLOR, (char *) NULL, (char *) NULL, (char *) NULL,
 	(char *) NULL, Tk_Offset(PlFrame, bgColor),
 	TK_CONFIG_MONO_ONLY},
+	*/
+#ifndef	MAC_TCL	    
+    {TK_CONFIG_COLOR, "-plbg", (char *) NULL, (char *) NULL,
+	DEF_PLFRAME_BG_MONO, Tk_Offset(PlFrame,	bgColor),
+	TK_CONFIG_MONO_ONLY},
+#endif
     {TK_CONFIG_SYNONYM, "-bd", "borderWidth", (char *) NULL,
 	(char *) NULL, 0, 0},
     {TK_CONFIG_SYNONYM, "-bg", "background", (char *) NULL,
