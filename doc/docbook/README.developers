@@ -257,19 +257,24 @@ of volunteer-maintained DocBook packages which are discussed at
 http://sources.redhat.com/docbook-tools.  These come highly recommended by
 the KDE2 documentation project and can be accessed from
 ftp://sourceware.cygnus.com/pub/docbook-tools/new-trials/RPMS.  (Note this
-site has high traffic so you may have to use a mirror.) The current set of
+site has high traffic so you may have to use a mirror such as
+ftp://ftp.kde.org/pub/kde/devel/docbook/RPMS/.) The current set of
 Cygnus rpm's that allow building the DocBook documentation are
-(NOTE THIS PACKAGE LIST CHANGED SIGNIFICANTLY AS OF 2000 21 DECEMBER)
 
 docbook-dtd31-sgml-1.0-6.noarch.rpm
 docbook-dtd41-sgml-1.0-6.noarch.rpm
-docbook-dtd41-xml-1.0-3.noarch.rpm    (CHANGE)
-docbook-style-dsssl-1.59-2.noarch.rpm (CHANGE)
+docbook-dtd41-xml-1.0-3.noarch.rpm
+docbook-style-dsssl-1.59-2.noarch.rpm
 docbook-utils-0.6-1.noarch.rpm
 jade-1.2.1-6.i386.rpm
-jadetex-2.20-5.noarch.rpm             (CHANGE)
+jadetex-2.20-6.noarch.rpm
 perl-SGMLSpm-1.03ii-3.noarch.rpm
-sgml-common-0.5-1.noarch.rpm          (CHANGE)
+sgml-common-0.5-1.noarch.rpm
+
+(AS OF 2001 January 10, note new jadetex since late December, but also
+please be aware the package versions change from week to week as they get
+refined.  This is the exact set of current version numbers that work for
+AWI, but in general later versions should work as well.)
 
 You also need the following RedHat 6.2 packages:
 
