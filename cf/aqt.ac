@@ -49,6 +49,9 @@ if test "$enable_aqt" = "yes"; then
 	    AC_MSG_RESULT([found in $AQTINCDIR])
         fi ])
     fi
+fi
+
+if test "$enable_aqt" = "yes"; then
     if test "$AQTINCDIR" = "/usr/include"; then
         AQTINCDIR=default
     fi
@@ -56,9 +59,6 @@ if test "$enable_aqt" = "yes"; then
     AQTINCPATH=""
     PL_ADD_TO_INCS($AQTINCDIR, AQTINCCMD, AQTINCPATH)
 
-fi
-
-if test "$enable_aqt" = "yes"; then
     if test -z "$AQTLIBDIR"; then
         AC_CHECK_LIB(aquaterm, aqtInit, [ AQTLIBDIR=default ], [
         libdirs="\
@@ -78,6 +78,9 @@ if test "$enable_aqt" = "yes"; then
 
         fi ], -lobjc)
     fi
+fi
+
+if test "$enable_aqt" = "yes"; then
     if test "$AQTLIBDIR" = "default"; then
         AQTLIBDIR=/usr/lib
     fi
