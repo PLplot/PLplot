@@ -28,7 +28,7 @@
 
 /*static*/ PyObject *pl_cont( PyObject *self, PyObject *args )
 {
-    PyObject *zop, *cop, *xop, *yop;
+    PyObject *zop, *xop, *yop;
     PLfGrid2 grid;
     PLFLT **z, *clev;	
     PLINT nx, ny, nlev;
@@ -42,7 +42,6 @@
 
     PLINT kx=0, lx=0, ky=0, ly=0;
     int argc = PyTuple_Size( args );
-    PyObject *op, *levelop, *f;
     PyObject *o;
 
     PyAssert( i < argc, "Invalid arg list for plcont" );
