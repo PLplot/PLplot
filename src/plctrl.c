@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/04/08 12:33:22  mjl
+ * Revision 1.15  1994/04/25 19:08:28  mjl
+ * Lots of fixes/improvements to plscmap1l to support TK palette
+ * manipulators.  New function plRGB_HLS added.
+ *
+ * Revision 1.14  1994/04/08  12:33:22  mjl
  * Changed exit handler behavior.  Now it is called /prior/ to the stream
  * cleanup, which is more useful.  Also it is passed the error message and
  * is expected to return (if it returns) an exit code.  Prototype is:
@@ -59,10 +63,11 @@
 
 /* Static functions */
 
-static void	strcat_delim	(char *);
-static int	(*exit_handler) (char *);
-static void	plHLS_RGB	(PLFLT h, PLFLT l, PLFLT s,
-				 PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
+static void
+strcat_delim(char *dirspec);
+
+static int
+(*exit_handler) (char *errormsg);
 
 /* Stream pointer.  */
 /* Fetched by some routines to directly set plplot state data */
@@ -245,7 +250,7 @@ c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
 * plscmap0n()
 *
 * Set number of colors in cmap 0
-* Can only be called once, prior to cmap 0 initialization.
+* Must be <= 16, and the driver is not guaranteed to support all of these.
 \*----------------------------------------------------------------------*/
 
 void
@@ -253,10 +258,6 @@ c_plscmap0n(PLINT ncol0)
 {
     plgpls(&plsc);
 
-    if (plsc->ncol0 > 0) {
-	plabort("plscmap0n: Must be called before cmap 0 allocation");
-	return;
-    }
     if (ncol0 > 16 || ncol0 < 1) {
 	plabort("plscmap0n: Number of colors must be between 1 and 16");
 	return;
@@ -269,7 +270,8 @@ c_plscmap0n(PLINT ncol0)
 * plscmap1n()
 *
 * Set number of colors in cmap 1
-* Can only be called once, prior to cmap 1 initialization.
+* Note that the driver is allowed to disregard this number.
+* In particular, most use far fewer.
 \*----------------------------------------------------------------------*/
 
 void
@@ -277,10 +279,6 @@ c_plscmap1n(PLINT ncol1)
 {
     plgpls(&plsc);
 
-    if (plsc->ncol1 > 0) {
-	plabort("plscmap1n: Must be called before cmap 1 allocation");
-	return;
-    }
     if (ncol1 > 256 || ncol1 < 1) {
 	plabort("plscmap1n: Number of colors must be between 1 and 256");
 	return;
@@ -293,7 +291,7 @@ c_plscmap1n(PLINT ncol1)
 * plscmap0()
 *
 * Set color map 0 colors by 8 bit RGB values
-* Note -- this sets the entire map.  ncol0 is set ONLY if not already set.
+* This also sets the number of colors.
 \*----------------------------------------------------------------------*/
 
 void
@@ -303,20 +301,11 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 
     plgpls(&plsc);
 
-    if (plsc->level == 0) {
-	plabort("plscmap0: Must be called before plinit");
+    if (ncol0 > 16 || ncol0 < 1) {
+	plabort("plscmap0n: Number of colors must be between 1 and 16");
 	return;
     }
-
-    if (plsc->ncol0 == 0)
-	plscmap0n(ncol0);
-
-    else {
-	if (ncol0 != plsc->ncol0) {
-	    plabort("plscmap0: Must set entire color map");
-	    return;
-	}
-    }
+    plsc->ncol0 = ncol0;
 
     for (i = 0; i < plsc->ncol0; i++) {
 	if ((r[i] < 0 || r[i] > 255) ||
@@ -344,8 +333,7 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 * plscmap1()
 *
 * Set color map 1 colors by 8 bit RGB values
-* Note -- this sets the entire map, including ncol1.
-* May be called at any time.
+* This also sets the number of colors.
 \*----------------------------------------------------------------------*/
 
 void
@@ -355,15 +343,12 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 
     plgpls(&plsc);
 
-    if (plsc->ncol1 == 0)
-	plscmap1n(ncol1);
-
-    else {
-	if (ncol1 != plsc->ncol1) {
-	    plabort("plscmap1: Must set entire color map");
-	    return;
-	}
+    if (ncol1 > 256 || ncol1 < 1) {
+	plabort("plscmap1n: Number of colors must be between 1 and 256");
+	return;
     }
+
+    plsc->ncol1 = ncol1;
 
     for (i = 0; i < plsc->ncol1; i++) {
 	if ((r[i] < 0 || r[i] > 255) ||
@@ -390,15 +375,16 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 * plscmap1l()
 *
 * Set color map 1 colors using a piece-wise linear relationship between
-* intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
-* May be called at any time.
+* position in the color map (from 0 to 1) and position in HLS or RGB color
+* space.  May be called at any time.
 *
 * The idea here is to specify a number of control points that specify the
-* mapping between HLS (or RGB) and palette 1 value.  Between these points,
-* linear interpolation is used.  This gives a smooth variation of color
-* with intensity.  Any number of control points may be specified, located
-* at arbitrary intensities, although typically 2 - 4 are enough.  Another
-* way of stating this is that we are traversing a given number of lines
+* mapping between HLS (or RGB or CMY) and palette 1 value.  Between these
+* points, linear interpolation is used.  By mapping position in the color
+* map to function value, this gives a smooth variation of color with
+* intensity.  Any number of control points may be specified, located at
+* arbitrary intensities, although typically 2 - 4 are enough.  Another way
+* of stating this is that we are traversing a given number of lines
 * through HLS (or RGB) space as we move through cmap 1 entries.  The
 * control points at the minimum and maximum intensity (0 and 1) must
 * always be specified.  By adding more control points you can get more
@@ -411,7 +397,7 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 *
 * Each control point must specify the position in cmap 1 as well as
 * three coordinates in HLS or RGB space.  The first point MUST correspond
-* to intensity = 0, and the last to intensity = 1.
+* to position = 0, and the last to position = 1.
 *
 * Bounds on RGB coordinates:
 *	R,G,B		[0, 1]		magnitude
@@ -422,21 +408,22 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 *	saturation	[0, 1]		magnitude
 *
 * The inputs are:
-*	itype		0: RGB, 1: HLS
+*	itype		0: HLS, 1: RGB
 *	npts		number of control points
-*	intensity[]	intensity for each control point
+*	pos[]		position for each control point
 *	coord1[]	first coordinate for each control point
 *	coord2[]	second coordinate for each control point
 *	coord3[]	third coordinate for each control point 
 \*----------------------------------------------------------------------*/
 
 void
-c_plscmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
+c_plscmap1l(PLINT itype, PLINT npts, PLFLT *pos,
 	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3)
 {
     int i, n;
     PLFLT icmap1, delta;
     PLFLT h, l, s, r, g, b;
+    PLINT r1, g1, b1;
 
     plgpls(&plsc);
 
@@ -445,31 +432,63 @@ c_plscmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
 	return;
     }
 
-    if ( (intensity[0] != 0) || (intensity[npts-1] != 1)) {
-	plabort("plscmap1l: First and last control points must lie on boundary");
+    if ( (pos[0] != 0) || (pos[npts-1] != 1)) {
+	plabort("plscmap1l: First, last control points must lie on boundary");
+	return;
+    }
+
+    if ( npts > 32 ) {
+	plabort("plscmap1l: Maximum of 32 control points allowed");
 	return;
     }
 
     if (plsc->ncol1 == 0)
 	plsc->ncol1 = 256;
 
+/* Save control points */
+
+    plsc->ncp1 = npts;
+
+    for (n = 0; n < npts; n++) {
+
+	if (itype == 0) {
+	    h = coord1[n];
+	    l = coord2[n];
+	    s = coord3[n];
+	}
+	else {
+	    r = coord1[n];
+	    g = coord2[n];
+	    b = coord3[n];
+	    plRGB_HLS(r, g, b, &h, &l, &s);
+	}
+
+	plsc->cmap1cp[n].h = h;
+	plsc->cmap1cp[n].l = l;
+	plsc->cmap1cp[n].s = s;
+	plsc->cmap1cp[n].i = pos[n];
+    }
+
+/* Now bin up cmap 1 space and assign colors to make inverse mapping easy */
+/* Always do interpolation in HLS space */
+
     for (n = 0; n < npts-1; n++) {
+
 	for (i = 0; i < plsc->ncol1; i++) {
 	    icmap1 = (double) i / (plsc->ncol1 - 1.0);
-	    if ( ! (intensity[n] <= icmap1 && icmap1 <= intensity[n+1]) )
+	    if ( ! (pos[n] <= icmap1 && icmap1 <= pos[n+1]) )
 		continue;
 
-	    delta = (icmap1 - intensity[n]) / (intensity[n+1] - intensity[n]);
-	    r = coord1[n] + (coord1[n+1] - coord1[n]) * delta;
-	    g = coord2[n] + (coord2[n+1] - coord2[n]) * delta;
-	    b = coord3[n] + (coord3[n+1] - coord3[n]) * delta;
+	    delta = (icmap1 - pos[n]) / (pos[n+1] - pos[n]);
 
-	    if (itype == 0) {
-		h = r;
-		l = g;
-		s = b;
-		plHLS_RGB(h, l, s, &r, &g, &b);
-	    }
+	    h = plsc->cmap1cp[n].h +
+		(plsc->cmap1cp[n+1].h - plsc->cmap1cp[n].h) * delta;
+	    l = plsc->cmap1cp[n].l +
+		(plsc->cmap1cp[n+1].l - plsc->cmap1cp[n].l) * delta;
+	    s = plsc->cmap1cp[n].s +
+		(plsc->cmap1cp[n+1].s - plsc->cmap1cp[n].s) * delta;
+
+	    plHLS_RGB(h, l, s, &r, &g, &b);
 
 	    plsc->cmap1[i].r = MAX(0, MIN(255, (int) (256. * r)));
 	    plsc->cmap1[i].g = MAX(0, MIN(255, (int) (256. * g)));
@@ -559,8 +578,7 @@ plCmap0_init(void)
 void
 plCmap1_init(void)
 {
-    int vertex;
-    PLFLT i[4], h[4], l[4], s[4];
+    PLFLT i[4], h[4], l[4], s[4], vertex;
 
     plgpls(&plsc);
 
@@ -569,25 +587,30 @@ plCmap1_init(void)
     if (plsc->cmap1set)
 	return;
 
-/* Locations of control points */
+/* Positions of control points */
 
     i[0] = 0;		/* left boundary */
     i[1] = 0.45;	/* just before center */
     i[2] = 0.55;	/* just after center */
     i[3] = 1;		/* right boundary */
 
-/* Pick default vertex of HLS double cone to match bg color if possible */
-/* If not set, bg is assumed to be black by default */
+/* For center control points, pick black or white, whichever is closer to bg */
+/* Be carefult to pick just short of top or bottom else hue info is lost */
 
     vertex = ((float) plsc->bgcolor.r + (float) plsc->bgcolor.g +
-	      (float) plsc->bgcolor.b) / 3. / 256. + 0.5;
+	      (float) plsc->bgcolor.b) / 3. / 255.;
+
+    if (vertex < 0.5)
+	vertex = 0.01;
+    else
+	vertex = 0.99;
 
 /* Set hue */
 
     h[0] = 260;		/* low: blue-violet */
     h[1] = 260;		/* only change as we go over vertex */
-    h[2] = 20;		/* high: red */
-    h[3] = 20;		/* keep fixed */
+    h[2] = 0;		/* high: red */
+    h[3] = 0;		/* keep fixed */
 
 /* Set lightness */
 
@@ -725,15 +748,17 @@ value(double n1, double n2, double hue)
 * void plHLS_RGB()
 *
 * Convert HLS color to RGB color.
-* Bounds on each coordinate:
+* Bounds on HLS (input):
 *	hue		[0., 360.]	degrees
 *	lightness	[0., 1.]	magnitude
 *	saturation	[0., 1.]	magnitude
 *
 * Hue is always mapped onto the interval [0., 360.] regardless of input.
+* Bounds on RGB (output) is always [0., 1.].  Convert to RGB color values
+* by multiplying by 2**nbits (nbits typically 8).
 \*----------------------------------------------------------------------*/
 
-static void
+void
 plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 {
     PLFLT r, g, b;
@@ -749,6 +774,60 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
     *p_r = value(m1, m2, h + 120.);
     *p_g = value(m1, m2, h);
     *p_b = value(m1, m2, h - 120.);
+}
+
+/*----------------------------------------------------------------------*\
+* void plRGB_HLS()
+*
+* Convert RGB color to HLS color.
+* Bounds on RGB (input) is always [0., 1.].  
+* Bounds on HLS (output):
+*	hue		[0., 360.]	degrees
+*	lightness	[0., 1.]	magnitude
+*	saturation	[0., 1.]	magnitude
+\*----------------------------------------------------------------------*/
+
+void
+plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
+{
+    PLFLT h, l, s, d, rc, gc, bc, rgb_min, rgb_max;
+
+    rgb_min = MIN( r, MIN( g, b ));
+    rgb_max = MAX( r, MAX( g, b ));
+
+    l = (rgb_min+rgb_max) / 2.0;
+
+    if (rgb_min == rgb_max) {
+	s = 1;
+	h = 0;
+    } 
+    else {
+	d = rgb_max - rgb_min;
+	if (l < 0.5)
+	    s = 0.5 * d / l;
+	else 
+	    s = 0.5* d / (1.-l);
+
+	rc = (rgb_max-r) / d;
+	gc = (rgb_max-g) / d;
+	bc = (rgb_max-b) / d;
+
+	if (r == rgb_max)
+	    h = bc-gc;
+	else if (g == rgb_max)
+	    h = rc-bc+2;
+	else
+	    h = gc-rc-2;
+
+	h = h*60;
+	if (h <  0)
+	    h = h+360;
+	else if (h >= 360)
+	    h = h-360;
+    }
+    *p_h = h;
+    *p_l = l;
+    *p_s = s;
 }
 
 /*----------------------------------------------------------------------*\
