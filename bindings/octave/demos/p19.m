@@ -92,4 +92,6 @@ function p19
   stripc_del(id1);
   stripc_del(id2);
   stripc_del(id3);
+  
+  closefig(1);
 endfunction
