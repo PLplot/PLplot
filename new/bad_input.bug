@@ -1,0 +1,36 @@
+From furnish@dino.ph.utexas.edu Mon Aug 10 19:00 CDT 1992
+Received: by dino.ph.utexas.edu
+	(16.8/16.2) id AA19608; Mon, 10 Aug 92 19:00:14 -0500
+From: Geoffrey Furnish <furnish@dino.ph.utexas.edu>
+Return-Path: <furnish@dino.ph.utexas.edu>
+Subject: another bug in plplot
+To: mjl@dino.ph.utexas.edu
+Date: Mon, 10 Aug 92 19:00:13 CDT
+Mailer: Elm [revision: 70.30]
+Status: RO
+
+that I'm too sick to find.
+
+If you plot a flat function:
+
+	No problem when output is X window.
+
+	crash if output device is plmetafile
+
+What xdb says is:
+floating point exception (no ignore) at 0x00055070
+(file unknown): wcpcy +0x00000088: (line unknown)
+>
+
+isn't wcpcy a plplot routine?
+
+I sure wish you had debugging versions of the libs installed.  I had
+to build debuggable utils and step through the code.  Eventually I
+found it was dying in plbox.  The thought of compiling plplot with
+debug just so I could track this bug has left me nonplussed.
+
+All this time I've thought there was a bug in my program...
+--
+Geoffrey Furnish		furnish@dino.ph.utexas.edu
+Institute for Fusion Studies, University of Texas at Austin
+
