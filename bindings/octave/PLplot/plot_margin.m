@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -28,6 +28,10 @@ function ost = plot_margin(st)
 
   if (nargin == 1)
     __pl.margin(n) = st;
+  endif
+
+  if (automatic_replot)
+    __pl_plotit;
   endif
 
 endfunction
