@@ -113,7 +113,7 @@ case $device in
    cgm)
       dsuffix=cgm
       export dsuffix
-      options="-fam -fflen 2"
+      options=
       export options
       ;;
    xfig)
