@@ -1,8 +1,0 @@
-  plgzax(digmax, digits)
-  **********************
-
-  plgzax
-
-  Identical to plgxax, except that arguments are flags for z axis. See the
-  description of plgxax for more detail.
-

@@ -1,9 +1,0 @@
-  plend()
-  *******
-
-  plend
-
-  Ends a plotting session, tidies up all the output files, switches
-  interactive devices back into text mode and frees up any memory that was
-  allocated. Must be called before end of program.
-
