@@ -31,8 +31,8 @@ as close ties to the underlying graphics library.  The plframe widget can
 be created, mapped, and destroyed basically just like a TK frame widget.
 In addition, it supports numerous widget commands.
 
-      The default PLPLOT/TK interface looks like a window with a top-level menu
-bar, containing any number of frames devoted to plotting.  These child
+      The default PLPLOT/TK interface looks like a window with a top-level 
+menu bar, containing any number of frames devoted to plotting.  These child
 windows contain a bar with an end-of-plot indicator, a "Plot" menu, a forward
 page button (also a back page button when plrender is being used), and a
 region for issuing status or prompt messages (initially containing the main
@@ -83,7 +83,7 @@ Also supported are some alternate configurations:
 
 (b) the server creates widgets, then calls functions to do the actual
       plotting.  This is in fact the easiest configuration since all the
-      work being done in one process, but has the disadvantage that the
+      work is done in one process, but has the disadvantage that the
       user interface goes "dead" while the calculation is proceeding.
 
       By offloading the GUI-building code into a simple script language, it 

@@ -17,7 +17,7 @@
 # Neither is a particularly attractive solution.
 #
 # The alternative is to just provide a way for the user to substitute
-# a different plopts proc, and I have chosen this approach.  Just copy
+# a different plconfig proc, and I have chosen this approach.  Just copy
 # this file, modify it to your tastes, and put it in plserver's search
 # path for TCL procs:
 #
