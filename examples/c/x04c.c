@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1995/03/16 23:18:50  mjl
+ * Revision 1.10  1995/04/12 08:18:53  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.9  1995/03/16  23:18:50  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  *
  * Revision 1.8  1995/01/06  07:59:17  mjl
@@ -13,12 +17,6 @@
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
  * uniform comments, and other minor changes.
- *
- * Revision 1.6  1994/03/30  07:21:47  mjl
- * Changes to all C example programs: special handling for malloc re: header
- * files eliminated, include of stdio.h and stdlib.h eliminated (now done
- * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
- * simpler builds by the general user, some cleaning up also.
 */
 
 /*	x04c.c
@@ -26,7 +24,7 @@
 	Log plot demo.
 */
 
-#include <plplot.h>
+#include <plcdemos.h>
 
 void plot1(int type);
 
@@ -47,6 +45,8 @@ main(int argc, char *argv[])
 
     plinit();
     plfont(2);
+
+/* Make log plots using two different styles. */
 
     plot1(0);
     plot1(1);

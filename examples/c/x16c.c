@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1995/03/16 23:18:58  mjl
+ * Revision 1.6  1995/04/12 08:19:01  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.5  1995/03/16  23:18:58  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  *
  * Revision 1.4  1994/06/30  17:57:58  mjl
@@ -30,7 +34,7 @@
 	20 Mar 1994
 */
 
-#include <plplot.h>
+#include <plcdemos.h>
 
 #define NCONTR	30		/* Number of contours */
 #define XPTS    35		/* Data points in x */
@@ -40,18 +44,6 @@
 #define YSPA    2./(YPTS-1)
 
 static PLFLT clevel[NCONTR];
-
-/* Utility macros */
-
-#ifndef PI
-#define PI	3.1415926535897932384
-#endif
-#ifndef MAX
-#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
-#endif
-#ifndef MIN
-#define MIN(a,b)    (((a) < (b)) ? (a) : (b))
-#endif
 
 /* Transformation function */
 

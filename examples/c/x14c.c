@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1995/03/16 23:18:57  mjl
+ * Revision 1.13  1995/04/12 08:19:00  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.12  1995/03/16  23:18:57  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  *
  * Revision 1.11  1994/08/25  04:02:32  mjl
@@ -34,11 +38,7 @@
 	IFS, University of Texas at Austin
 */
 
-#include <plplot.h>
-
-#ifndef ROUND
-#define ROUND(a)    (PLINT)((a)<0. ? ((a)-.5) : ((a)+.5))
-#endif
+#include <plcdemos.h>
 
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
@@ -69,7 +69,7 @@ main(void)
 /* Select either TK or DP driver and use a small window */
 /* The geometry strings MUST be in writable memory */
 
-    char driver[] = "tk";
+    char driver[] = "dp";
     char geometry_master[] = "500x410+100+200";
     char geometry_slave[]  = "500x410+650+200";
 
@@ -79,7 +79,7 @@ main(void)
 
 /* Set up first stream */
 
-    plSetInternalOpt("geometry", geometry_master);
+    plSetOpt("geometry", geometry_master);
 
     plsdev(driver);
     plssub(2, 2);
@@ -91,7 +91,7 @@ main(void)
 
 /* Turn off pause to make this a slave (must follow master) */
 
-    plSetInternalOpt("geometry", geometry_slave);
+    plSetOpt("geometry", geometry_slave);
     plspause(0);
     plsdev(driver);
     plinit();

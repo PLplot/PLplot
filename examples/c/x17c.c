@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1995/03/16 23:18:59  mjl
+ * Revision 1.4  1995/04/12 08:19:02  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.3  1995/03/16  23:18:59  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  *
  * Revision 1.2  1994/08/05  09:28:42  mjl
@@ -8,10 +12,7 @@
  *
  * Revision 1.1  1994/04/08  12:08:54  mjl
  * Preliminary stab at a strip chart demo (doesn't work yet).
- *
 */
-
-/* Demonstration program for PLPLOT: */
 
 /* Plots a simple stripchart.
  * Eventually I want a really cool demo here: slowly evolving plots of
@@ -20,8 +21,7 @@
  * that are continually updated.
  */
 
-#include <plplot.h>
-#include <math.h>
+#include <plcdemos.h>
 
 /* Data declarations for stripcharts. */
 
@@ -61,15 +61,6 @@ plstripa(PLINT id, PLFLT x, PLFLT y);
 void
 plstripd(PLINT id);
 
-/* Miscellaneous */
-
-#ifndef MAX
-#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
-#endif
-#ifndef MIN
-#define MIN(a,b)    (((a) < (b)) ? (a) : (b))
-#endif
-
 /*--------------------------------------------------------------------------*\
  * main program
 \*--------------------------------------------------------------------------*/
@@ -90,8 +81,8 @@ main(int argc, char *argv[])
 
     (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
-    plSetInternalOpt("db", "");
-    plSetInternalOpt("np", "");
+    plSetOpt("db", "");
+    plSetOpt("np", "");
 
 /* Initialize plplot */
 

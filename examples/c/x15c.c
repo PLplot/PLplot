@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1995/03/16 23:18:57  mjl
+ * Revision 1.9  1995/04/12 08:19:01  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.8  1995/03/16  23:18:57  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  *
  * Revision 1.7  1995/01/17  09:09:52  mjl
@@ -11,18 +15,6 @@
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
  * uniform comments, and other minor changes.
- *
- * Revision 1.5  1994/04/08  12:07:55  mjl
- * Changed to only pattern shade.
- *
- * Revision 1.4  1994/03/30  07:22:00  mjl
- * Changes to all C example programs: special handling for malloc re: header
- * files eliminated, include of stdio.h and stdlib.h eliminated (now done
- * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
- * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.3  1993/12/06  22:38:16  mjl
- * Added #include <stdio.h> to pick up definition of NULL under SunOS.
 */
 
 /*	x15c.c
@@ -34,24 +26,12 @@
 	31 Aug 1993
 */
 
-#include <plplot.h>
+#include <plcdemos.h>
 
 #define XPTS    35		/* Data points in x */
 #define YPTS    46		/* Datat points in y */
 
 PLFLT z[XPTS][YPTS], zmin, zmax;
-
-/* Utility macros */
-
-#ifndef PI
-#define PI	3.1415926535897932384
-#endif
-#ifndef MAX
-#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
-#endif
-#ifndef MIN
-#define MIN(a,b)    (((a) < (b)) ? (a) : (b))
-#endif
 
 /* Function prototypes */
 

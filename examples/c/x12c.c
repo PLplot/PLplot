@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1995/03/16 23:18:55  mjl
+ * Revision 1.9  1995/04/12 08:18:59  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.8  1995/03/16  23:18:55  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  *
  * Revision 1.7  1994/06/30  17:57:49  mjl
@@ -21,7 +25,7 @@
 	Bar chart demo.
 */
 
-#include <plplot.h>
+#include <plcdemos.h>
 
 void
 plfbox(PLFLT x0, PLFLT y0);
@@ -76,7 +80,7 @@ main(int argc, char *argv[])
 	plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string);
     }
 
-    /* Don't forget to call PLEND to finish off! */
+/* Don't forget to call plend() to finish off! */
 
     plend();
     exit(0);

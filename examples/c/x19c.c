@@ -1,12 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1995/03/16 23:19:00  mjl
+ * Revision 1.3  1995/04/12 08:19:03  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.2  1995/03/16  23:19:00  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  *
  * Revision 1.1  1994/07/29  20:14:45  mjl
  * Demo for generating world map backgrounds.
  * Contributed by Wesley Ebisuzaki.
- *
 */
 
 /*	x19c.c
@@ -15,13 +18,7 @@
 	Contributed by Wesley Ebisuzaki.
 */
 
-#include <plplot.h>
-
-/* define pi if not defined by math.h */
-
-#ifndef PI
-#define PI 3.1416
-#endif
+#include <plcdemos.h>
 
 /*--------------------------------------------------------------------------*\
  * mapform
@@ -56,19 +53,19 @@ main(int argc, char **argv)
     PLFLT minx, maxx, miny, maxy;
     int c;
 
-    /* Parse and process command line arguments */
+/* Parse and process command line arguments */
 
     (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
-    /* Longitude (x) and latitude (y) */
+/* Longitude (x) and latitude (y) */
 
     miny = -70;
     maxy = 80;
 
     plinit();
 
-    /* Cartesian plots */
-    /* Most of world */
+/* Cartesian plots */
+/* Most of world */
 
     minx = 190;
     maxx = 190+360;
@@ -77,7 +74,7 @@ main(int argc, char **argv)
     plenv(minx, maxx, miny, maxy, 1, -1);
     plmap(NULL, "usaglobe", minx, maxx, miny, maxy);
 
-    /* The Americas */
+/* The Americas */
 
     minx = 190;
     maxx = 340;
@@ -86,7 +83,7 @@ main(int argc, char **argv)
     plenv(minx, maxx, miny, maxy, 1, -1);
     plmap(NULL, "usaglobe", minx, maxx, miny, maxy);
 
-    /* Polar, Northern hemisphere */
+/* Polar, Northern hemisphere */
 
     minx = 0;
     maxx = 360;

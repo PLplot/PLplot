@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1995/03/16 23:21:50  mjl
+ * Revision 1.15  1995/04/12 08:18:51  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.14  1995/03/16  23:21:50  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  * Changed locate code to new syntax (using a PLGraphicsIn).  Added a command
  * line option "-locate" to turn on the locate code (off by default).  This
@@ -25,12 +29,6 @@
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
  * uniform comments, and other minor changes.
- *
- * Revision 1.8  1994/03/30  07:21:44  mjl
- * Changes to all C example programs: special handling for malloc re: header
- * files eliminated, include of stdio.h and stdlib.h eliminated (now done
- * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
- * simpler builds by the general user, some cleaning up also.
 */
 
 /*	x01c.c
@@ -38,7 +36,7 @@
 	Simple line plot and multiple windows demo.
 */
 
-#include <plplot.h>
+#include <plcdemos.h>
 #include <plevent.h>
 
 /* Variables and data arrays used by plot generators */

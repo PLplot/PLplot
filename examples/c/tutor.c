@@ -1,16 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1995/03/16 23:18:48  mjl
+ * Revision 1.9  1995/04/12 08:18:50  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.8  1995/03/16  23:18:48  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
- *
- * Revision 1.7  1994/07/12  19:17:31  mjl
- * Minor cleaning up.
- *
- * Revision 1.6  1994/03/30  07:21:43  mjl
- * Changes to all C example programs: special handling for malloc re: header
- * files eliminated, include of stdio.h and stdlib.h eliminated (now done
- * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
- * simpler builds by the general user, some cleaning up also.
 */
 
 /*
@@ -42,7 +37,7 @@
  * of each of the M lines.) 
  */
 
-#include "plplot.h"
+#include <plcdemos.h>
 
 static int
 error(char *str);
@@ -57,34 +52,34 @@ error(char *str);
 int
 main(int argc, char *argv[])
 {
-    /* ==============  Begin variable definition section. ============= */
+/* ==============  Begin variable definition section. ============= */
 
-    /*
-     * i, j, and k are counting variables used in loops and such. M is the
-     * number of lines to be plotted and N is the number of sample points
-     * for each line.
-     */
+/*
+ * i, j, and k are counting variables used in loops and such. M is the
+ * number of lines to be plotted and N is the number of sample points
+ * for each line.
+ */
 
     int i, j, k, M, N, leglen;
 
-    /*
-     * x is a pointer to an array containing the N x-coordinate values.  y
-     * points to an array of M pointers each of which points to an array
-     * containing the N y-coordinate values for that line.
-     */
+/*
+ * x is a pointer to an array containing the N x-coordinate values.  y
+ * points to an array of M pointers each of which points to an array
+ * containing the N y-coordinate values for that line.
+ */
 
     PLFLT *x, **y;
 
-    /* Define storage for the min and max values of the data. */
+/* Define storage for the min and max values of the data. */
 
     float xmin, xmax, ymin, ymax, xdiff, ydiff;
 
-    /* Define storage for the filename and define the input file pointer. */
+/* Define storage for the filename and define the input file pointer. */
 
     char filename[80], string[80], tmpstr[80];
     FILE *datafile;
 
-    /* Here are the character strings that appear in the plot legend. */
+/* Here are the character strings that appear in the plot legend. */
 
     static char *legend[] =
     {
@@ -93,30 +88,30 @@ main(int argc, char *argv[])
 	"Llamas",
 	NULL};			/* Make sure last element is NULL */
 
-    /* ==============  Read in data from input file. ============= */
+/* ==============  Read in data from input file. ============= */
 
 /* Parse and process command line arguments */
 
     (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
-    /* First prompt the user for the input data file name */
+/* First prompt the user for the input data file name */
 
     printf("Enter input data file name. ");
     scanf("%s", filename);
 
-    /* and open the file. */
+/* and open the file. */
 
     datafile = fopen(filename, "r");
     if (datafile == NULL)	/* error opening input file */
 	error("Error opening input file.");
 
-    /* Read in values of M and N */
+/* Read in values of M and N */
 
     k = fscanf(datafile, "%d %d", &M, &N);
     if (k != 2)			/* something's wrong */
 	error("Error while reading data file.");
 
-    /* Allocate memory for all the arrays. */
+/* Allocate memory for all the arrays. */
 
     x = (float *) malloc(N * sizeof(float));
     if (x == NULL)
@@ -130,7 +125,7 @@ main(int argc, char *argv[])
 	    error("Out of memory!");
     }
 
-    /* Now read in all the data. */
+/* Now read in all the data. */
 
     for (i = 0; i < N; i++) {	/* N points */
 	k = fscanf(datafile, "%f", &x[i]);
@@ -143,10 +138,10 @@ main(int argc, char *argv[])
 	}
     }
 
-    /* ==============  Graph the data. ============= */
+/* ==============  Graph the data. ============= */
 
-    /* Set graph to portrait orientation. (Default is landscape.) */
-    /* (Portrait is usually desired for inclusion in TeX documents.) */
+/* Set graph to portrait orientation. (Default is landscape.) */
+/* (Portrait is usually desired for inclusion in TeX documents.) */
 
     plsori(1);
 
@@ -154,32 +149,32 @@ main(int argc, char *argv[])
 
     plinit();
 
-    /* 
-     * We must call pladv() to advance to the first (and only) subpage.
-     * You might want to use plenv() instead of the pladv(), plvpor(),
-     * plwind() sequence.
-     */
+/* 
+ * We must call pladv() to advance to the first (and only) subpage.
+ * You might want to use plenv() instead of the pladv(), plvpor(),
+ * plwind() sequence.
+ */
 
     pladv(0);
 
-    /*
-     * Set up the viewport.  This is the window into which the data is
-     * plotted.  The size of the window can be set with a call to
-     * plvpor(), which sets the size in terms of normalized subpage
-     * coordinates.  I want to plot the lines on the upper half of the
-     * page and I want to leave room to the right of the figure for
-     * labelling the lines. We must also leave room for the title and
-     * labels with plvpor().  Normally a call to plvsta() can be used
-     * instead.
-     */
+/*
+ * Set up the viewport.  This is the window into which the data is
+ * plotted.  The size of the window can be set with a call to
+ * plvpor(), which sets the size in terms of normalized subpage
+ * coordinates.  I want to plot the lines on the upper half of the
+ * page and I want to leave room to the right of the figure for
+ * labelling the lines. We must also leave room for the title and
+ * labels with plvpor().  Normally a call to plvsta() can be used
+ * instead.
+ */
 
     plvpor(0.15, 0.70, 0.5, 0.9);
 
-    /*
-     * We now need to define the size of the window in user coordinates.
-     * To do this, we first need to determine the range of the data
-     * values.
-     */
+/*
+ * We now need to define the size of the window in user coordinates.
+ * To do this, we first need to determine the range of the data
+ * values.
+ */
 
     xmin = xmax = x[0];
     ymin = ymax = y[0][0];
@@ -196,45 +191,45 @@ main(int argc, char *argv[])
 	}
     }
 
-    /* 
-     * Now set the size of the window. Leave a small border around the
-     * data.
-     */
+/* 
+ * Now set the size of the window. Leave a small border around the
+ * data.
+ */
 
     xdiff = (xmax - xmin) / 20.;
     ydiff = (ymax - ymin) / 20.;
     plwind(xmin - xdiff, xmax + xdiff, ymin - ydiff, ymax + ydiff);
 
-    /* 
-     * Call plbox() to draw the axes (see the PLPLOT manual for
-     * information about the option strings.)
-     */
+/* 
+ * Call plbox() to draw the axes (see the PLPLOT manual for
+ * information about the option strings.)
+ */
 
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
 
-    /* 
-     * Label the axes and title the graph.  The string "#gm" plots the
-     * Greek letter mu, all the Greek letters are available, see the
-     * Plplot manual.
-     */
+/* 
+ * Label the axes and title the graph.  The string "#gm" plots the
+ * Greek letter mu, all the Greek letters are available, see the
+ * Plplot manual.
+ */
 
     pllab("Time (weeks)", "Height (#gmparsecs)", "Specimen Growth Rate");
 
-    /*
-     * Plot the data.  plpoin() draws a symbol at each point.  plline()
-     * connects all the points.
-     */
+/*
+ * Plot the data.  plpoin() draws a symbol at each point.  plline()
+ * connects all the points.
+ */
 
     for (i = 0; i < M; i++) {
 	plpoin(N, x, y[i], i + OFFSET);
 	plline(N, x, y[i]);
     }
 
-    /*
-     * Draw legend to the right of the chart.  Things get a little messy
-     * here.  You may want to remove this section if you don't want a
-     * legend drawn.  First find length of longest string.
-     */
+/*
+ * Draw legend to the right of the chart.  Things get a little messy
+ * here.  You may want to remove this section if you don't want a
+ * legend drawn.  First find length of longest string.
+ */
 
     leglen = 0;
     for (i = 0; i < M; i++) {
@@ -245,11 +240,11 @@ main(int argc, char *argv[])
 	    leglen = j;
     }
 
-    /* 
-     * Now build the string.  The string consists of an element from the
-     * legend string array, padded with spaces, followed by one of the
-     * symbols used in plpoin above.
-     */
+/* 
+ * Now build the string.  The string consists of an element from the
+ * legend string array, padded with spaces, followed by one of the
+ * symbols used in plpoin above.
+ */
 
     for (i = 0; i < M; i++) {
 	if (legend[i] == NULL)
@@ -262,26 +257,26 @@ main(int argc, char *argv[])
 	    string[k] = '\0';
 	}
 
-	/* pad an extra space */
+    /* pad an extra space */
 
 	strcat(string, " ");
 	j = strlen(string);
 
-	/* insert the ASCII value of the symbol plotted with plpoin() */
+    /* insert the ASCII value of the symbol plotted with plpoin() */
 
 	string[j] = i + OFFSET;
 	string[j + 1] = '\0';
 
-	/* plot the string */
+    /* plot the string */
 
 	plmtex("rv", 1., 1. - (double) (i + 1) / (M + 1), 0., string);
     }
 
-    /*  Tell plplot we are done with this page. */
+/*  Tell plplot we are done with this page. */
 
     pladv(0);			/* advance page */
 
-    /* Don't forget to call PLEND to finish off! */
+/* Don't forget to call plend() to finish off! */
 
     plend();
     exit(0);

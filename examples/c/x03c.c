@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1995/03/16 23:18:50  mjl
+ * Revision 1.11  1995/04/12 08:18:53  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.10  1995/03/16  23:18:50  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  *
  * Revision 1.9  1994/06/30  17:57:13  mjl
@@ -8,7 +12,6 @@
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
  * uniform comments, and other minor changes.
- *
 */
 
 /*	x03c.c
@@ -16,11 +19,7 @@
 	Polar plot demo.
 */
 
-#include <plplot.h>
-
-#ifndef ROUND
-#define ROUND(a)    (PLINT)((a)<0. ? ((a)-.5) : ((a)+.5))
-#endif
+#include <plcdemos.h>
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -60,7 +59,7 @@ main(int argc, char *argv[])
 	    y[j] = 0.1 * i * y0[j];
 	}
 
-/* Draw circles for polar grid */
+    /* Draw circles for polar grid */
 
 	plline(361, x, y);
     }
@@ -71,18 +70,17 @@ main(int argc, char *argv[])
 	dx = cos(dtr * theta);
 	dy = sin(dtr * theta);
 
-/* Draw radial spokes for polar grid */
+    /* Draw radial spokes for polar grid */
 
 	pljoin(0.0, 0.0, dx, dy);
 	sprintf(text, "%d", ROUND(theta));
 
-/* Write labels for angle */
+    /* Write labels for angle */
 
 	if (dx >= 0)
 	    plptex(dx, dy, dx, dy, -0.15, text);
-	else {
+	else
 	    plptex(dx, dy, -dx, -dy, 1.15, text);
-	}
     }
 
 /* Draw the graph */

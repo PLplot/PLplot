@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1995/03/16 23:18:59  mjl
+ * Revision 1.8  1995/04/12 08:19:03  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.7  1995/03/16  23:18:59  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  *
  * Revision 1.6  1994/08/10  01:13:12  mjl
@@ -30,22 +34,13 @@
 	3-d line and point plot demo.  Adapted from x08c.c.
 */
 
-#include <plplot.h>
+#include <plcdemos.h>
 
-#ifndef PI
-#define PI 3.1415927
-#endif
+static int opt[] = { 1, 0, 1, 0 };
+static PLFLT alt[] = {20.0, 35.0, 50.0, 65.0};
+static PLFLT az[] = {30.0, 40.0, 50.0, 60.0};
 
-static int opt[] =
-{ 1, 0, 1, 0 };
-
-static PLFLT alt[] =
-{20.0, 35.0, 50.0, 65.0};
-
-static PLFLT az[] =
-{30.0, 40.0, 50.0, 60.0};
-
-void test_poly();
+void test_poly(int k);
 
 /*--------------------------------------------------------------------------*\
  * main

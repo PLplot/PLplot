@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1995/03/16 23:18:55  mjl
+ * Revision 1.11  1995/04/12 08:18:58  mjl
+ * Changes to all C demos: now include "plcdemos.h" to get all startup
+ * definitions and includes that are useful to share between them.
+ *
+ * Revision 1.10  1995/03/16  23:18:55  mjl
  * All example C programs: changed plParseInternalOpts() call to plParseOpts().
  *
  * Revision 1.9  1994/06/30  17:57:46  mjl
@@ -21,19 +25,14 @@
 	Mesh plot demo.
 */
 
-#include <plplot.h>
+#include <plcdemos.h>
 
 #define XPTS    35		/* Data points in x */
 #define YPTS    46		/* Datat points in y */
 
-static int opt[] =
-{1, 2, 3, 3};
-
-static PLFLT alt[] =
-{60.0, 20.0, 60.0, 60.0};
-
-static PLFLT az[] =
-{30.0, 60.0, 120.0, 160.0};
+static int opt[] = {1, 2, 3, 3};
+static PLFLT alt[] = {60.0, 20.0, 60.0, 60.0};
+static PLFLT az[] = {30.0, 60.0, 120.0, 160.0};
 
 static char *title[4] =
 {
@@ -42,12 +41,6 @@ static char *title[4] =
     "#frPLplot Example 11 - Alt=60, Az=120, Opt=3",
     "#frPLplot Example 11 - Alt=60, Az=160, Opt=3"
 };
-
-/* Utility macros */
-
-#ifndef PI
-#define PI	3.1415926535897932384
-#endif
 
 /*--------------------------------------------------------------------------*\
  * main
