@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.39  1994/07/25 06:44:22  mjl
+ * Revision 1.40  1994/09/23 07:39:14  mjl
+ * Incorrect order of calls to freeing malloc'ed memory at exit fixed, found
+ * by Brent Townshend.
+ *
+ * Revision 1.39  1994/07/25  06:44:22  mjl
  * Wrapped the include of unistd.h in a HAVE_UNISTD_H.
  *
  * Revision 1.38  1994/07/19  22:31:41  mjl
@@ -52,7 +56,7 @@
  *
  *	This module implements "plframe" widgets for the Tk toolkit.
  *	These are frames that have extra logic to allow them to be
- *	interfaced with the PLPlot X driver.  These are then drawn
+ *	interfaced with the PLplot X driver.  These are then drawn
  *	into and respond to keyboard and mouse events.
  *
  * Maurice LeBrun
@@ -135,9 +139,9 @@ typedef struct {
     /* control stuff */
 
     int tkwin_initted;		/* Set first time widget is mapped */
-    PLStream *plsc;		/* PLPlot stream pointer */
-    PLINT ipls;			/* PLPlot stream number */
-    PLINT ipls_save;		/* PLPlot stream number, save files */
+    PLStream *plsc;		/* PLplot stream pointer */
+    PLINT ipls;			/* PLplot stream number */
+    PLINT ipls_save;		/* PLplot stream number, save files */
 
     PLRDev *plr;		/* Renderer state information.  Malloc'ed */
     XColor *bgColor;		/* Background color */
@@ -459,7 +463,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     c = argv[1][0];
     length = strlen(argv[1]);
 
-/* cmd -- issue a command to the PLPlot library */
+/* cmd -- issue a command to the PLplot library */
 
     if ((c == 'c') && (strncmp(argv[1], "cmd", length) == 0)) {
 	result = Cmd(interp, plFramePtr, argc-2, argv+2);
@@ -508,7 +512,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	result = Orient(interp, plFramePtr, argc-2, argv+2);
     }
 
-/* openlink -- Open the data link */
+/* openlink -- Open a binary data link (FIFO or socket) */
 
     else if ((c == 'o') && (strncmp(argv[1], "openlink", length) == 0)) {
 	if (argc < 3) {
@@ -672,15 +676,15 @@ DestroyPlFrame(ClientData clientData)
     pdf_close(plr->pdfs);
     ckfree((char *) plFramePtr->plr->iodev);
 
+/* Tell PLplot to clean up */
+
+    plsstrm( plFramePtr->ipls );
+    plend1();
+
 /* Delete main data structures */
 
     ckfree((char *) plFramePtr->plr);
     ckfree((char *) plFramePtr);
-
-/* Tell PLPlot to clean up */
-
-    plsstrm( plFramePtr->ipls );
-    plend1();
 }
 
 /*
@@ -769,7 +773,7 @@ PlFrameEventProc(ClientData clientData, register XEvent *eventPtr)
  *	None.
  *
  * Side effects:
- *	PLPlot internal parameters and device driver are initialized.
+ *	PLplot internal parameters and device driver are initialized.
  *
  *---------------------------------------------------------------------------
  */
@@ -783,7 +787,7 @@ PlFrameInit(ClientData clientData)
 /* Set up window parameters and arrange for window to be refreshed */
 
     plFramePtr->flags &= REFRESH_PENDING;
-    plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
+    plFramePtr->flags |= UPDATE_V_SCROLLBAR | UPDATE_H_SCROLLBAR;
 
 /* First-time initialization */
 
@@ -899,7 +903,7 @@ DisplayPlFrame(ClientData clientData)
 
 /* If not mapped yet, return and cancel pending refresh */
 
-    if ((plFramePtr->tkwin == NULL) || !Tk_IsMapped(tkwin)) {
+    if ((plFramePtr->tkwin == NULL) || ! Tk_IsMapped(tkwin)) {
 	plFramePtr->flags &= ~REFRESH_PENDING;
 	return;
     }
@@ -913,8 +917,8 @@ DisplayPlFrame(ClientData clientData)
 
 /* Redraw border if necessary */
 
-    if ((plFramePtr->border != NULL)
-	    && (plFramePtr->relief != TK_RELIEF_FLAT)) {
+    if ((plFramePtr->border != NULL) &&
+	(plFramePtr->relief != TK_RELIEF_FLAT)) {
 	Tk_Draw3DRectangle(plFramePtr->display, Tk_WindowId(tkwin),
 		plFramePtr->border, 0, 0, Tk_Width(tkwin), Tk_Height(tkwin),
 		plFramePtr->borderWidth, plFramePtr->relief);
@@ -975,7 +979,7 @@ DisplayPlFrame(ClientData clientData)
  * Cmd
  *
  * Processes "cmd" widget command.
- * Handles commands that go more or less directly to the PLPlot library.
+ * Handles commands that go more or less directly to the PLplot library.
  * Most of these come out of the PLplot Tcl API support file.
 \*----------------------------------------------------------------------*/
 
@@ -989,7 +993,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int result = TCL_OK;
     char cmdlist[] = "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
 
-/* no option -- return list of available PLPlot commands */
+/* no option -- return list of available PLplot commands */
 
     if (argc == 0) 
 	return plTclCmd(cmdlist, interp, argc, argv);
@@ -1185,7 +1189,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     }
 
 /* plscol1 -- set color of control point in cmap1 */
-/* first arg is the color number, the next two are the color in hex and pos */
+/* first arg is the control point, the next two are the color in hex and pos */
 
     else if ((c3 == 's') && (strncmp(argv[0], "plscol1", length) == 0)) {
 	int i = atoi(argv[1]), status;
@@ -1244,7 +1248,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
     }
 
-/* unrecognized, give it to plTclCmd to take care of */
+/* unrecognized, so give it to plTclCmd to take care of */
 
     else 
 	result = plTclCmd(cmdlist, interp, argc, argv);
@@ -1296,8 +1300,8 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	return TCL_ERROR;
     }
 
-/* Set background color.  Need to store in the PLPlot stream structure */
-/* since redraws are handled from the PLPlot X driver. */
+/* Set background color.  Need to store in the PLplot stream structure */
+/* since redraws are handled from the PLplot X driver. */
 
     Tk_SetBackgroundFromBorder(plFramePtr->tkwin, plFramePtr->border);
 
@@ -1460,8 +1464,8 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
  * Openlink
  *
  * Processes "openlink" widget command.
- * Opens channel (FIFO or socket) for data transfer between client and
- * server.
+ * Opens channel (FIFO or socket) for binary data transfer between client
+ * and server.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1664,11 +1668,6 @@ Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
  * output it in metafile form here, plpr must invoke plrender to drive the
  * output to the appropriate file type.  The script is responsible for the
  * deletion of the plot metafile.
- *
- * This way of printing is reasonably flexible while retaining a measure
- * of security.  Methods involving setting up the command to print from
- * the Tcl side are not recommended at present since the print command
- * could be changed to something dangerous (like an rm *).
 \*----------------------------------------------------------------------*/
 
 static int
@@ -2051,7 +2050,7 @@ xScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     plsdiplt(xl, yl, xr, yr);
 
-    plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
+    plFramePtr->flags |= UPDATE_V_SCROLLBAR | UPDATE_H_SCROLLBAR;
     return(Redraw(interp, plFramePtr, argc, argv));
 }
 
@@ -2085,7 +2084,7 @@ yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     plsdiplt(xl, yl, xr, yr);
 
-    plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
+    plFramePtr->flags |= UPDATE_V_SCROLLBAR | UPDATE_H_SCROLLBAR;
     return(Redraw(interp, plFramePtr, argc, argv));
 }
 
