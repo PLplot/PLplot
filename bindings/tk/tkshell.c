@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/07/25 06:44:27  mjl
+ * Revision 1.23  1994/07/26 21:14:36  mjl
+ * Improvements to the way PLplot looks for various files.  Now more
+ * consistent and flexible.  In particular, environmentals can be set for
+ * locations of each directory (for Tcl, binary, and library files).
+ * Contributed by Mark Olesen.
+ *
+ * Revision 1.22  1994/07/25  06:44:27  mjl
  * Wrapped the include of unistd.h in a HAVE_UNISTD_H.
  *
  * Revision 1.21  1994/07/22  22:21:16  mjl
@@ -111,7 +117,10 @@ Pltk_Init( Tcl_Interp *interp )
 /*----------------------------------------------------------------------*\
  * pls_auto_path
  *
- * Sets up auto_path variable
+ * Sets up auto_path variable.  
+ * Directories are added to the FRONT of autopath.  Therefore, they are
+ * searched in reverse order of how they are listed below.
+ *
  * Note: there is no harm in adding extra directories, even if they don't
  * actually exist (aside from a slight increase in processing time when
  * the autoloaded proc is first found).
@@ -143,8 +152,7 @@ pls_auto_path(Tcl_Interp *interp)
 
 /* Add $HOME/tcl */
 
-    dn = getenv("HOME");
-    if (dn != NULL) {
+    if ((dn = getenv("HOME")) != NULL) {
 	plGetName(dn, "tcl", "", &ptr);
 	Tcl_SetVar(interp, "dir", ptr, 0);
 	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
@@ -156,10 +164,26 @@ pls_auto_path(Tcl_Interp *interp)
 #endif
     }
 
-/* Add $(PLPLOT_DIR)/tcl */
+/* Add PL_TCL_ENV = $(PL_TCL) */
 
-    dn = getenv("PLPLOT_DIR");
-    if (dn != NULL) {
+#if defined (PL_TCL_ENV)
+    if ((dn = getenv(PL_TCL_ENV)) != NULL) {
+	plGetName(dn, "", "", &ptr);
+	Tcl_SetVar(interp, "dir", ptr, 0);
+	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
+	    return TCL_ERROR;
+#ifdef DEBUG
+	fprintf(stderr, "adding %s to auto_path\n", ptr);
+	path = Tcl_GetVar(interp, "auto_path", 0);
+	fprintf(stderr, "auto_path is %s\n", path);
+#endif
+    }
+#endif  /* PL_TCL_ENV */
+
+/* Add PL_HOME_ENV/tcl = $(PL_HOME_ENV)/tcl */
+
+#if defined (PL_HOME_ENV)
+    if ((dn = getenv(PL_HOME_ENV)) != NULL) {
 	plGetName(dn, "tcl", "", &ptr);
 	Tcl_SetVar(interp, "dir", ptr, 0);
 	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
@@ -170,6 +194,7 @@ pls_auto_path(Tcl_Interp *interp)
 	fprintf(stderr, "auto_path is %s\n", path);
 #endif
     }
+#endif  /* PL_HOME_ENV */
 
 /* Add cwd */
 

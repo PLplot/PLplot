@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/07/24 07:41:46  mjl
+ * Revision 1.26  1994/07/26 21:14:38  mjl
+ * Improvements to the way PLplot looks for various files.  Now more
+ * consistent and flexible.  In particular, environmentals can be set for
+ * locations of each directory (for Tcl, binary, and library files).
+ * Contributed by Mark Olesen.
+ *
+ * Revision 1.25  1994/07/24  07:41:46  mjl
  * Eliminated some more system-dependent stuff, in view of plConfig.h
  * providing us with the _POSIX_SOURCE define (or not).
  *
@@ -19,24 +25,6 @@
  * PLStream *plsc declaration for easier access to PLplot state info (only
  * plcore.h, which declares the real plsc, doesn't see this declaration).
  * Now includes plstream.h.
- *
- * Revision 1.20  1994/05/20  22:25:14  mjl
- * Switched order of inclusion of plplot.h with system-specific defines to
- * ensure that all sick hacks are made before too much damage occurs
- * (specifically to fix a problem on the Cray, caddr_t again, sigh).
- *
- * Revision 1.19  1994/05/10  21:51:04  mjl
- * Added prototype for new function plcmap1_calc().
- *
- * Revision 1.18  1994/04/08  12:13:14  mjl
- * Removed PLESC tag defs (now in plplot.h) and unsigned var defs (now in
- * pdf.h).
- *
- * Revision 1.17  1994/03/23  07:05:51  mjl
- * Cruft elimination, including stuff that was for dealing with non-ANSI
- * or marginally ANSI compliant compilers (special treatment for malloc
- * includes, etc).  New function prototypes, and new defines for PLSTATE
- * settings governing changes to cmap 1 and/or the color palette.
 */
 
 /*
@@ -249,6 +237,50 @@ typedef signed char SCHAR;
 #define PL_XFONT	"plxtnd4.fnt"
 #define PL_SFONT	"plstnd4.fnt"
 #endif
+
+/* ////////////////////////////////////////////////////////////////
+// The following PLPLOT_xxx environment variables are defined:
+//	PLPLOT_BIN      # where to find executables
+//	PLPLOT_LIB      # where to find font files
+//	PLPLOT_TCL      # where to find tcl scripts
+//
+//	PLPLOT_HOME     # basename of plplot hierarchy
+//
+// search order:
+//	1)	the most specific possible locators, one of
+//			$(PLPLOT_BIN)
+//			$(PLPLOT_LIB)
+//			$(PLPLOT_TCL)
+//		as appropriate
+//
+//	2)	the current directory
+//
+//	3)	one of  $(PLPLOT_HOME)/bin
+//			$(PLPLOT_HOME)/lib
+//			$(PLPLOT_HOME)/tcl
+//		as appropriate
+//
+//	4)	as appropriate, the compile-time (Makefile)
+//		BIN_DIR, LIB_DIR, TCL_DIR
+//
+//  8 Jun 1994  mj olesen (olesen@weber.me.queensu.ca)
+//
+// Other notes:
+//
+// In addition to the directories above, the following are also used:
+//
+// Font search path: PLFONTDEV (see plfont.c).  This is checked last,
+// and is a system-dependent hardwired location.
+//
+// Tcl search path: $HOME/tcl is searched before the install location,
+// TCL_DIR.
+//
+/////////////////////////////////////////////////////////////////// */
+
+#define PLPLOT_BIN_ENV          "PLPLOT_BIN"
+#define PLPLOT_LIB_ENV          "PLPLOT_LIB"
+#define PLPLOT_TCL_ENV          "PLPLOT_TCL"
+#define PLPLOT_HOME_ENV         "PLPLOT_HOME"
 
 /*----------------------------------------------------------------------*\
  *		Function Prototypes

@@ -1,15 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/07/02 21:32:47  mjl
- * Some changes to the default font directories under MSDOS, submitted
- * by Neal Holtz.
- *
- * Revision 1.13  1994/06/30  18:22:09  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
+ * Revision 1.15  1994/07/26 21:14:44  mjl
+ * Improvements to the way PLplot looks for various files.  Now more
+ * consistent and flexible.  In particular, environmentals can be set for
+ * locations of each directory (for Tcl, binary, and library files).
+ * Contributed by Mark Olesen.
  *
  * Revision 1.12  1994/05/24  19:56:56  mjl
  * Changed INSTALL_DIR to LIB_DIR for locating fonts.
@@ -24,115 +19,50 @@
  *
  * Revision 1.10  1994/01/15  17:28:45  mjl
  * Changed to new PDF function call syntax.
+ *
+ * Revision 1.9  1993/09/08  02:40:16  mjl
+ * Added search of INSTALL_DIR, passed in from makefile.  Directories
+ * now can be specified without the trailing slash, and the path name
+ * is built up correctly (I hope) on Unix, Amiga, and MS-DOS (so special
+ * handling for passing strings with a trailing backslash is gone).
 */
 
 /*	plfont.c
-*
-*	Font management code.
-*
-* The current directory is always searched for the fonts first, followed
-* by a system-dependent (and perhaps site-dependent) search path.
-* Directory names can be given with or without the trailing slash.  Each
-* system has three hard-wired devices (may be a logical name) that are
-* searched (default value listed below).  The value for LIB_DIR is
-* set from the makefile.
-*
-* Unix:
-*	current directory
-*	$(HOME)/lib
-*	$(PLPLOT_DIR)
-*	LIB_DIR
-*	PLFONTDEV1	(/usr/local/lib)
-*	PLFONTDEV2	(/usr/local/lib/plplot
-*	PLFONTDEV3	(/usr/local/plplot)
-*
-* VMS:
-*	current directory
-*	LIB_DIR
-*	PLFONTDEV1	(lib:)
-*	PLFONTDEV2	(sys$login:)
-*	PLFONTDEV3	(sys$sysroot:[sysfont.plplot])
-*
-* Amiga:
-*	current directory
-*	$(PLPLOT_DIR)
-*	LIB_DIR
-*	PLFONTDEV1	(fonts:plplot)
-*	PLFONTDEV2	(plfonts:) 
+ *
+ *	Font management code.
+ *	See the description of plfontopen() for the search path used in
+ *	finding the font files.
 */
 
 #include "plplotP.h"
 #include "pdf.h"
+#include <string.h>
 
- /* MSDOS search path */
+/* An additional hardwired location is sometimes useful */
 
-#ifdef MSDOS
-#define PLFONTENV "PLPLOT_DIR"	/* C> set PLPLOT_DIR=dir_name_for_fonts */
-#endif
-
- /* Unix search path */
-
-#ifdef __unix
-#define HOME_LIB
-#define PLFONTENV  "PLPLOT_DIR"
-
-#ifndef PLFONTDEV1
-#define PLFONTDEV1 "/usr/local/lib"
-#endif
-#ifndef PLFONTDEV2
-#define PLFONTDEV2 "/usr/local/lib/plplot"
-#endif
-#ifndef PLFONTDEV3
-#define PLFONTDEV3 "/usr/local/plplot"
-#endif
+#if defined(AMIGA)
+#ifndef PLFONTDEV
+#define PLFONTDEV  "fonts:plplot"
 #endif
 
- /* VMS search path */
-
-#ifdef vms
-#ifndef PLFONTDEV1
-#define PLFONTDEV1 "lib:"
-#endif
-#ifndef PLFONTDEV2
-#define PLFONTDEV2 "sys$login:"
-#endif
-#ifndef PLFONTDEV3
-#define PLFONTDEV3 "sys$sysroot:[sysfont.plplot]"
-#endif
+#elif defined(GNU386)
+#ifndef PLFONTDEV
+#define PLFONTDEV "c:/lib"
 #endif
 
- /* Amiga search path */
-
-#ifdef AMIGA
-#define PLFONTENV  "PLPLOT_DIR"
-#ifndef PLFONTDEV1
-#define PLFONTDEV1  "fonts:plplot"
-#endif
-#ifndef PLFONTDEV2
-#define PLFONTDEV2  "plfonts:"
-#endif
+#elif defined(MSDOS)
+#ifndef PLFONTDEV
+#define PLFONTDEV "c:\\lib"
 #endif
 
-#ifdef GNU386
-#include <stddef.h>
-#ifndef PLFONTDEV1
-#define PLFONTDEV1 "c:/lib"
-#endif
-#ifndef PLFONTDEV2
-#define PLFONTDEV2 "d:/util/plplot/lib"
-#endif
+#else
+
+/* Anything else is assumed to be Unix */
+
+#ifndef PLFONTDEV
+#define PLFONTDEV "/usr/local/lib"
 #endif
 
-/* A/IX system 3 doesn't like you to call getenv() from a C program
-   linked with a fortran main, so we can only use hard-coded location */
-
-#ifdef AIX_3_0
-#ifdef PLFONTENV
-#undef PLFONTENV
-#endif
-#ifdef HOME_LIB
-#undef HOME_LIB
-#endif
 #endif
 
 /* Function prototypes. */
@@ -186,7 +116,7 @@ plfntld(PLINT fnt)
     numberchars = bffrleng & 0xff;
     bffrleng = numberfonts * numberchars;
     fntlkup = (short int *) malloc(bffrleng * sizeof(short int));
-    if ( ! fntlkup) 
+    if ( ! fntlkup)
 	plexit("plfntld: Out of memory while allocating font buffer.");
 
     pdf_rd_2nbytes(pdfs, (U_SHORT *) fntlkup, bffrleng);
@@ -195,7 +125,7 @@ plfntld(PLINT fnt)
 
     pdf_rd_2bytes(pdfs, (U_SHORT *) &indxleng);
     fntindx = (short int *) malloc(indxleng * sizeof(short int));
-    if ( ! fntindx) 
+    if ( ! fntindx)
 	plexit("plfntld: Out of memory while allocating font buffer.");
 
     pdf_rd_2nbytes(pdfs, (U_SHORT *) fntindx, indxleng);
@@ -205,7 +135,7 @@ plfntld(PLINT fnt)
 
     pdf_rd_2bytes(pdfs, (U_SHORT *) &bffrleng);
     fntbffr = (SCHAR *) malloc(2 * bffrleng * sizeof(SCHAR));
-    if ( ! fntbffr) 
+    if ( ! fntbffr)
 	plexit("plfntld: Out of memory while allocating font buffer.");
 
     fread((void *) fntbffr, (size_t) sizeof(SCHAR),
@@ -220,7 +150,12 @@ plfntld(PLINT fnt)
  * FILE *plfontopen(fn)
  *
  * Return file pointer to font file.
- * Lots of locations checked; see documentation for plfntld().
+ * Locations checked:
+ *	PLPLOT_LIB_ENV = $(PLPLOT_LIB)
+ *	current directory
+ *	PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib
+ *	LIB_DIR
+ *	PLFONTDEV
 \*----------------------------------------------------------------------*/
 
 static FILE *
@@ -229,66 +164,60 @@ plfontopen(char *fn)
     FILE *file;
     char *fs = NULL, *dn = NULL;
 
+/****	search PLPLOT_LIB_ENV = $(PLPLOT_LIB)	****/
+
+#if defined(PLPLOT_LIB_ENV)
+    if ((dn = getenv(PLPLOT_LIB_ENV)) != NULL) {
+        plGetName(dn, "", fn, &fs);
+
+        if ((file = fopen(fs, "rb")) != NULL)
+            goto done;
+
+        fprintf(stderr, PLPLOT_LIB_ENV"=\"%s\"\n", dn); /* what IS set? */
+    }
+#endif  /* PLPLOT_LIB_ENV */
+
 /****	search current directory	****/
 
     if ((file = fopen(fn, "rb")) != NULL)
-	goto done;
+        goto done;
 
-/**** 	search $(HOME)/lib	****/
+/****	search PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib	****/
 
-#ifdef HOME_LIB
-    if ((dn = getenv("HOME")) != NULL) {
-	plGetName(dn, "lib", fn, &fs);
+#if defined (PLPLOT_HOME_ENV)
+    if ((dn = getenv(PLPLOT_HOME_ENV)) != NULL) {
+        plGetName(dn, "lib", fn, &fs);
 
-	if ((file = fopen(fs, "rb")) != NULL)
-	    goto done;
+        if ((file = fopen(fs, "rb")) != NULL)
+            goto done;
+        fprintf(stderr, PLPLOT_HOME_ENV"=\"%s\"\n",dn); /* what IS set? */
     }
-#endif
+#endif  /* PLPLOT_HOME_ENV/lib */
 
-/****	search $(PLPLOT_DIR)	****/
+/**** 	search installed location	****/
 
-#ifdef PLFONTENV
-    if ((dn = getenv(PLFONTENV)) != NULL) {
-	plGetName(dn, "", fn, &fs);
-
-	if ((file = fopen(fs, "rb")) != NULL)
-	    goto done;
-    }
-#endif
-
-/**** 	search devices		****/
-
-#ifdef LIB_DIR
+#if defined (LIB_DIR)
     plGetName(LIB_DIR, "", fn, &fs);
 
     if ((file = fopen(fs, "rb")) != NULL)
-	goto done;
-#endif
+        goto done;
+#endif  /* LIB_DIR */
 
-#ifdef PLFONTDEV1
-    plGetName(PLFONTDEV1, "", fn, &fs);
+/**** 	search hardwired location	****/
 
-    if ((file = fopen(fs, "rb")) != NULL)
-	goto done;
-#endif
-
-#ifdef PLFONTDEV2
-    plGetName(PLFONTDEV2, "", fn, &fs);
+#ifdef PLFONTDEV
+    plGetName(PLFONTDEV, "", fn, &fs);
 
     if ((file = fopen(fs, "rb")) != NULL)
 	goto done;
-#endif
-
-#ifdef PLFONTDEV3
-    plGetName(PLFONTDEV3, "", fn, &fs);
-
-    if ((file = fopen(fs, "rb")) != NULL)
-	goto done;
-#endif
+#endif	/* PLFONTDEV */
 
 /**** 	not found, give up 	****/
 
-    fprintf(stderr, "\nUnable to open font file: %s.\n", fn);
+    fprintf(stderr, "\nCannot open font file: %s\n", fn);
+#if defined (LIB_DIR)
+    fprintf(stderr, "lib dir=\"" LIB_DIR "\"\n" );      /* what WAS set? */
+#endif  /* LIB_DIR */
     plexit("");
 
  done:

@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1994/07/25 06:44:31  mjl
+ * Revision 1.22  1994/07/26 21:14:41  mjl
+ * Improvements to the way PLplot looks for various files.  Now more
+ * consistent and flexible.  In particular, environmentals can be set for
+ * locations of each directory (for Tcl, binary, and library files).
+ * Contributed by Mark Olesen.
+ *
+ * Revision 1.21  1994/07/25  06:44:31  mjl
  * Wrapped the include of unistd.h in a HAVE_UNISTD_H.
  *
  * Revision 1.20  1994/06/30  18:22:03  mjl
@@ -980,8 +986,9 @@ pl_cmd(PLINT op, void *ptr)
  * char *plFindCommand
  *
  * Looks for the specified executable file.  Search path:
+ *	PLPLOT_BIN_ENV = $(PLPLOT_BIN)
  *	current directory
- *	$(PLPLOT_DIR)
+ *	PLPLOT_HOME_ENV/bin = $(PLPLOT_HOME)/bin
  *	BIN_DIR
  *
  * The caller must free the returned pointer (points to malloc'ed memory)
@@ -993,23 +1000,37 @@ plFindCommand(char *fn)
 {
     char *fs = NULL, *dn;
 
+/* PLPLOT_BIN_ENV = $(PLPLOT_BIN) */
+
+#if defined(PLPLOT_BIN_ENV)
+    if ((dn = getenv(PLPLOT_BIN_ENV)) != NULL) {
+        plGetName(dn, "", fn, &fs);
+        if ( ! plFindName(fs))
+            return fs;
+        fprintf(stderr, PLPLOT_BIN_ENV"=\"%s\"\n", dn); /* what IS set? */
+    }
+#endif  /* PLPLOT_BIN_ENV */
+
 /* Current directory */
 
     plGetName(".", "", fn, &fs);
     if ( ! plFindName(fs))
 	return fs;
 
-/* $(PLPLOT_DIR) */
+/* PLPLOT_HOME_ENV/bin = $(PLPLOT_HOME)/bin */
 
-    if ((dn = getenv("PLPLOT_DIR")) != NULL) {
-	plGetName(dn, "", fn, &fs);
-	if ( ! plFindName(fs))
-	    return fs;
+#if defined(PLPLOT_HOME_ENV)
+    if ((dn = getenv(PLPLOT_HOME_ENV)) != NULL) {
+        plGetName(dn, "bin", fn, &fs);
+        if ( ! plFindName(fs))
+            return fs;
+        fprintf(stderr, PLPLOT_HOME_ENV"=\"%s\"\n",dn); /* what IS set? */
     }
+#endif  /* PLPLOT_HOME_ENV */
 
 /* BIN_DIR */
 
-#ifdef BIN_DIR
+#if defined (BIN_DIR)
     plGetName(BIN_DIR, "", fn, &fs);
     if ( ! plFindName(fs))
 	return fs;
@@ -1019,6 +1040,9 @@ plFindCommand(char *fn)
 
     free_mem(fs);
     fprintf(stderr, "plFindCommand: cannot locate command: %s\n", fn);
+#if defined (BIN_DIR)
+    fprintf(stderr, "bin dir=\"" BIN_DIR "\"\n" );      /* what WAS set? */
+#endif  /* BIN_DIR */
     return NULL;
 }
 
@@ -1146,16 +1170,14 @@ static void
 strcat_delim(char *dirspec)
 {
     int ldirspec = strlen(dirspec);
-#ifdef MSDOS
+#if defined (MSDOS)
     if (dirspec[ldirspec-1] != '\\')
 	strcat(dirspec, "\\");
-#endif
-#ifdef __unix
-    if (dirspec[ldirspec-1] != '/')
-	strcat(dirspec, "/");
-#endif
-#ifdef AMIGA
+#elif defined (AMIGA)
     if (dirspec[ldirspec-1] != '/' && dirspec[ldirspec-1] != ':')
+	strcat(dirspec, "/");
+#else           /* unix is the default */
+    if (dirspec[ldirspec-1] != '/')
 	strcat(dirspec, "/");
 #endif
 }
@@ -1174,7 +1196,7 @@ plGetInt(char *s)
     char line[256];
 
     while (i++ < 10) {
-	printf(s);
+	fprintf(stdout, s);
 	fgets(line, sizeof(line), stdin);
 #ifdef MSDOS
 	m = atoi(line);
@@ -1182,7 +1204,7 @@ plGetInt(char *s)
 #else
 	if (sscanf(line, "%d", &m) == 1)
 	    return (m);
-	printf("No value or value out of range; please try again\n");
+	fprintf(stdout, "No value or value out of range; please try again\n");
 #endif
     }
     plexit("Too many tries.");
@@ -1203,7 +1225,7 @@ plGetFlt(char *s)
     char line[256];
 
     while (i++ < 10) {
-	printf(s);
+	fprintf(stdout, s);
 	fgets(line, sizeof(line), stdin);
 #ifdef MSDOS
 	m = atof(line);
@@ -1211,7 +1233,7 @@ plGetFlt(char *s)
 #else
 	if (sscanf(line, "%f", &m) == 1)
 	    return (m);
-	printf("No value or value out of range; please try again\n");
+	fprintf(stdout, "No value or value out of range; please try again\n");
 #endif
     }
     plexit("Too many tries.");
