@@ -42,6 +42,8 @@
     (process-children)
     (literal ">")))
 
+(define %html-ext% ".html")
+
 </style-specification-body>
 </style-specification>
 <external-specification id="docbook" document="dbstyle">
