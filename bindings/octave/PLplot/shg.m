@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ function shg ()
   if (nargin != 0)
     warning ("shg: ignoring extra arguments");
   endif
+
+  __pl_init;
 
   plreplot;plflush;pleop;
 

@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -24,6 +24,8 @@ function text(x,y,string)
     help text
     return
   endif
+
+  __pl_init;
 
   [xr, xc] = size(x);
   [yr, yc] = size(y);

@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -22,6 +22,8 @@
 ## with only one argument, uses the mouse to define begin and end points
 
 function arrow (coord, mag, rot, col)
+
+  __pl_init;
 
   if (nargin == 1)	# col
 

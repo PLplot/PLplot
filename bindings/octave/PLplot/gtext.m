@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -32,7 +32,9 @@ function gtext(string, just, orient)
     help gtext
     return
   endif
-  
+
+  __pl_init;
+
   if (nargin == 1)
     just = 0.5;
     orient = 0;

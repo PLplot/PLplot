@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -16,6 +16,8 @@
 ## plot an array of arrows (partly emulates matlab quiver)
 
 function arrows( X, Y, dx, dy)
+
+  __pl_init;
 
   if(0)
     of = do_fortran_indexing; do_fortran_indexing = 1;

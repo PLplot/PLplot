@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -19,6 +19,8 @@
 ## see also: stripc_add, stripc
 
 function stripc_del(id)
+
+  __pl_init;
 
   plstripd(id);
 
