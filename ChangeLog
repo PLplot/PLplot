@@ -1,5 +1,11 @@
 2002-12-11  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
+	* configure.ac: Drop ".so" suffix from records in created drivers.db.
+	  Apparently, this makes libtldl work properly on OSF1, and it
+	  still also works properly on Linux with this change.
+
+2002-12-11  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
 	* src/plcore.c: reactivate release of libltdl resources in plend.
 
 	* bindings/octave/demos/x??c.m: plend ==> plend1.
