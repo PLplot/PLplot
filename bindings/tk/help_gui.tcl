@@ -122,11 +122,12 @@ commands in the following order:
 
 	 user-specified directory(s)	(set by -auto_load argument)
 	 Current directory
-	 $(PLPLOT_DIR)/tcl
-	 $HOME/tcl
+	 ${PLPLOT_DIR}/tcl
+	 ${HOME}/tcl
 	 INSTALL_DIR/tcl
 
-INSTALL_DIR is set from the makefile, typically /usr/local/plplot.
+where HOME and PLPLOT_DIR are environmentals, and INSTALL_DIR is
+set during installation (typically /usr/local/plplot).
 
 I'll probably think of more later..
 } normal
