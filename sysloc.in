@@ -874,24 +874,6 @@ EOF`])
         AC_MSG_RESULT($OCTAVE_OCT_DIR)
 
     fi
-
-    if test "$enable_octave" = "yes"; then
-       OCTAVEINCCMD=`$MKOCTFILE -p INCFLAGS`
-       # These link flags exist for octave version 2.1.50 and are concatanated
-       # together in the script to form LINK_DEPS (which unfortunately is
-       # not exported so we have to do our own concatanation to make the
-       # equivalent of LINK_DEPS here, OCTAVELIBCMD, which is needed by libtool.
-       # For earlier versions of octave (such as 2.1.35), these flags are
-       # not available so that the resulting OCTAVELIBCMD is empty, but
-       # libtool (on Linux at least) works in that special case as well.
-       OCTAVELIBCMD=`$MKOCTFILE -p LFLAGS && \
-                     $MKOCTFILE -p LIBOCTAVE && \
-                     $MKOCTFILE -p LIBCRUFT && \
-                     $MKOCTFILE -p LIBOCTINTERP && \
-                     $MKOCTFILE -p BLAS_LIBS && \
-                     $MKOCTFILE -p FFTW_LIBS`
-       OCTAVELIBCMD=`echo $OCTAVELIBCMD |scripts/process-link-line`
-    fi
 fi
 AC_SUBST(MATWRAP)
 AC_SUBST(MKOCTFILE)
@@ -899,8 +881,6 @@ AC_SUBST(OCTAVE_VERSION)
 AC_SUBST(OCTAVE_OCT_DIR)
 AC_SUBST(OCTAVE_M_DIR)
 AC_SUBST(PLPLOT_OCTAVE_DIR)
-AC_SUBST(OCTAVEINCCMD)
-AC_SUBST(OCTAVELIBCMD)
 
 # -----------------------------------------------------------------------
 # Python include and machdep directories
