@@ -30,11 +30,19 @@ current plot, all from a menu.  Help menu entries also available, as well
 as forward/backward page button (only plrender has the backward page
 button) and end of plot indicator.  Colors and fonts are
 user-customizable.  Entire layout designed to be user-customizable
-although this aspect has not been well tested.  You are encouraged to read
-the file doc/Xauthority before using this driver.  You can get the Tcl/TK
-package by anonymous ftp from sprite.berkeley.edu in the tcl subdirectory
-(or from harbor.ecn.purdue.edu in directory pub/tcl).  Also consult with
-the comp.lang.tcl newsgroup on Usenet.
+although this aspect has not been well tested.  
+
+You can get the Tcl/TK package by anonymous ftp from sprite.berkeley.edu
+in the tcl subdirectory (or from harbor.ecn.purdue.edu in directory
+pub/tcl).  Also consult with the comp.lang.tcl newsgroup on Usenet.  The
+most recent version is Tcl 7.0 and TK 3.3, and if you are just starting
+out make sure to get that.  The previous release was Tcl 6.7 and TK 3.2,
+and the plplot/TK driver will work with that as well.  Note: to build, you
+need to have the Tcl/TK header files where they can be found by the C
+compiler (/usr/local/include is a good place).  The Tcl/TK package uses
+"xauth" style security in order to make using it a bit safer (against
+hacking).  There are some notes on setting this up in the file Xauthority
+in the doc directory.
 
 o Changed all plplot source files to include plplotP.h (private) rather
 than plplot.h.  Rationalized namespace -- all externally-visible plplot
