@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/04/26 19:57:52  mjl
-   Fixes to allow (once again) output to stdout and plrender to function as
-   a filter.  A type flag was added to handle file vs stream differences.
+   Revision 1.9  1993/07/02 07:25:30  mjl
+   Added variables for dealing with X driver, TK driver, driver interface.
 
+ * Revision 1.8  1993/04/26  19:57:52  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+ *
  * Revision 1.7  1993/03/17  17:03:09  mjl
  * Fixed some subtle pointer vs pointer-to-pointer bugs in some infrequently
  * used functions.
@@ -46,6 +49,7 @@
 *  Define the PLDev data structure.
 *
 *  These are all quantities that must be saved on a per-device basis.
+*  This is obsolete and will be discarded soon.
 \*----------------------------------------------------------------------*/
 
 typedef struct {
@@ -89,11 +93,6 @@ typedef struct {
 * FamilyName	Output family name (i.e. stem)
 * FileName	Output file name
 * output_type	0 for file, 1 for stream
-*
-* plbuf_enable	Set if driver needs to use the plot buffer
-* plbuf_read	Set if reading from the plot buffer
-* plbuf_write	Set if writing to the plot buffer
-* plbufFile	Plot buffer file pointer
 *
 * orientset	Set if orientation was specified
 * fileset	Set if file name or file pointer was specified
@@ -145,14 +144,85 @@ typedef struct {
 *
 ***********************************************************************
 *
-* The X-based drivers support a user-supplied event handler, that
-* can be used to take various actions depending on input.  Currently
-* only a keyboard event handler is supported.
+* The following pointer is for drivers that require device-specific 
+* data.  At initialization the driver should malloc the necessary
+* space and set pls->dev to point to this area.  This way there can
+* be multiple streams using the same driver without conflict.
 *
-* KeyEH		(void *) Keyboard event handler
-* KeyEH_data	(void *) pointer to client data to pass
+* dev		void*	pointer to device-specific data
 *
 ***********************************************************************
+*
+* User-supplied event handlers for use by interactive drivers (e.g. X).
+* Can be used to take various actions depending on input.  Currently
+* only a keyboard event handler is supported.
+*
+* KeyEH		void*	Keyboard event handler
+* KeyEH_data	void*	pointer to client data to pass
+*
+***********************************************************************
+*
+* Stuff used by Xlib driver
+*
+* geometry	char*	window geometry
+* display	char*	display for graphics window
+*
+* window_id	long	X-window window ID
+*
+***********************************************************************
+*
+* These are for support of the TK driver.
+*
+* plserver	char*	name of server
+* plwindow	char*	name of reference server window
+* tcl_cmd	char*	TCL command(s) to eval on startup
+* auto_path	char*	Additional directories to autoload
+* bufmax	int	number of bytes sent before output buffer is flushed
+*
+***********************************************************************
+*
+* Variables for use by the plot buffer
+*
+* plbuf_enable	int	Set if driver needs to use the plot buffer
+* plbuf_read	int	Set if reading from the plot buffer
+* plbuf_write	int	Set if writing to the plot buffer
+* plbufFile	FILE	Plot buffer file pointer
+*
+***********************************************************************
+*
+* Driver interface
+*
+* diplt		PLINT	Set to change window into plot space
+* didev		PLINT	Set to change window into device space
+* diori		PLINT	Set to change orientation
+*
+* dipxax 	PLFLT	Plot window transformation:
+* dipxb 	PLFLT	  x' = dipxax * x + dipxb
+* dipyay 	PLFLT
+* dipyb 	PLFLT	  y' = dipyay * y + dipyb
+* dipxmin	PLFLT	
+* dipymin	PLFLT	Min, max coordinates
+* dipxmax	PLFLT	  (save to do zooming)
+* dipymax	PLFLT	
+*
+* didxax 	PLFLT	Device window transformation:
+* didxb 	PLFLT	  x' = didxax * x + didxb
+* didyay 	PLFLT
+* didyb 	PLFLT	  y' = didyay * y + didyb
+*
+* dioxax	PLFLT	Orientation transformation:
+* dioxay	PLFLT
+* dioxb 	PLFLT	  x' = dioxax * x + dioxay * y + dioxb
+*
+* dioyax	PLFLT	  y' = dioyax * x + dioyay * y + dioyb
+* dioyay	PLFLT
+* dioyb 	PLFLT
+*
+***********************************************************************
+*
+* Everything else
+*
+* program	char*	Program name
 *
 * level		Initialization level
 * device	Graphics device id number
@@ -226,13 +296,8 @@ typedef struct {
     char DevName[80];
 
     FILE *OutFile;
-    char FamilyName[80], FileName[90];
+    char *FamilyName, *FileName;
     int  output_type;
-
-    int  plbuf_enable;
-    int  plbuf_read;
-    int  plbuf_write;
-    FILE *plbufFile;
 
     PLINT orientset;
     PLINT fileset;
@@ -257,12 +322,47 @@ typedef struct {
     PLColor cmap0[16];
     PLColor cmap1[256];
 
-/* Event handler */
+/* Driver event handler */
 
     void (*KeyEH)	(PLKey *, void *, int *);
     void *KeyEH_data;
 
+/* Stuff used by Xlib driver */
+
+    char *geometry;
+    long window_id;
+
+/* Stuff used by TK driver */
+
+    char *plserver;
+    char *plwindow;
+    char *tcl_cmd;
+    char *auto_path;
+    int  bufmax;
+
+/* Driver-specific data */
+
+    void *dev;
+
+/* Plot buffer settings */
+
+    int  plbuf_enable;
+    int  plbuf_read;
+    int  plbuf_write;
+    FILE *plbufFile;
+
+/* Driver interface */
+
+    PLINT diplt, didev, diori;
+    PLFLT dipxax, dipxb, dipyay, dipyb;
+    PLFLT dipxmin, dipymin, dipxmax, dipymax;
+    PLFLT didxax, didxb, didyay, didyb;
+    PLFLT dioxax, dioxay, dioxb, dioyax, dioyay, dioyb;
+
+/* Everything else */
 /* Could use some logical grouping here! */
+
+    char *program;
 
     PLINT level;
     PLINT device, termin, graphx;
