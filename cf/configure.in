@@ -207,10 +207,9 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 	if test $found = 0; then
 	    STATIC_DRIVERS="$STATIC_DRIVERS $driver"
 	fi
-
-	AC_DEFINE(PLD_$1)
     fi
-	
+
+    AC_DEFINE(PLD_$1)
     DEVICES="$DEVICES $1"
 else
     enable_$1="no"
@@ -775,7 +774,7 @@ if test "$enable_dynamic_drivers" = "yes"; then
 	    echo "plmeta:PLplot Native Meta-File:plmeta.drv:plm" >> drivers/drivers.db
 	    ;;
 	    ps)
-	    echo "ps:PostScript File (monochrome):ps.drv:ps" >> drivers/drivers.db
+	    echo "ps:PostScript File (monochrome):ps.drv:psm" >> drivers/drivers.db
 	    echo "psc:PostScript File (color):ps.drv:psc" >> drivers/drivers.db
 	    ;;
 	esac
