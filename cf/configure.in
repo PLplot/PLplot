@@ -130,7 +130,7 @@ AC_WITH(warn, ,    with_warn="no")
 
 AC_ENABLE(drivers, , enable_drivers="yes")
 AC_ENABLE(f77, ,     enable_f77="yes")
-AC_ENABLE(CXX, ,     enable_CXX="yes")
+AC_ENABLE(cxx, ,     enable_cxx="yes")
 AC_ENABLE(tcl, ,     enable_tcl="yes")
 
 # --------------------------------------------------------------------
@@ -242,8 +242,8 @@ cat cf/dist.in		>>tmp/Makefile.in
 
 # Optional packages
 
-if test "$enable_CXX" = "yes"; then
-    cat cf/pkg_CXX.in	>>tmp/Makefile.in 
+if test "$enable_cxx" = "yes"; then
+    cat cf/pkg_cxx.in	>>tmp/Makefile.in 
 fi
 if test "$enable_f77" = "yes"; then
     cat cf/pkg_f77.in	>>tmp/Makefile.in 
@@ -473,7 +473,7 @@ with-f2c:	$with_f2c		with-gcc:	$with_gcc
 enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
 enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
-enable-CXX:	$enable_CXX
+enable-cxx:	$enable_cxx
 "
 
 AC_OUTPUT(tmp/Makefile tmp/Makedemo)
