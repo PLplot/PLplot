@@ -1,9 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/02/23 05:00:24  mjl
-   Added some casts for more portable code (found when compiling with all
-   warnings on).
+   Revision 1.3  1993/07/01 22:07:38  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl", device driver functions start with "plD_", PDF functions
+   start with "pdf_".
 
+ * Revision 1.2  1993/02/23  05:00:24  mjl
+ * Added some casts for more portable code (found when compiling with all
+ * warnings on).
+ *
  * Revision 1.1  1993/01/23  05:44:39  mjl
  * Moved to src/ directory since that is more relevant.
  *
@@ -44,7 +50,7 @@
 \*--------------------------------------------------------------------------*/
 
 #define PL_NEED_MALLOC
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,7 +78,7 @@ pdf_set(char *option, int value)
 }
 
 /*----------------------------------------------------------------------*\
-* write_header()
+* pdf_wr_header()
 *
 * Writes a header string to FILE *file.
 * Input string must be NULL-terminated.
@@ -82,7 +88,7 @@ pdf_set(char *option, int value)
 \*----------------------------------------------------------------------*/
 
 int
-write_header(FILE *file, char *header)
+pdf_wr_header(FILE *file, char *header)
 {
     int i;
 
@@ -99,14 +105,14 @@ write_header(FILE *file, char *header)
 }
 
 /*----------------------------------------------------------------------*\
-* int read_header (file, header)
+* int pdf_rd_header (file, header)
 *
 * Reads a newline-terminated header string from FILE *file, and converts
 * to a usual NULL-terminated string.  80 chars maximum assumed.
 \*----------------------------------------------------------------------*/
 
 int
-read_header(FILE *file, char *header)
+pdf_rd_header(FILE *file, char *header)
 {
     int i;
 
@@ -122,13 +128,13 @@ read_header(FILE *file, char *header)
 }
 
 /*----------------------------------------------------------------------*\
-* int write_1byte ()
+* int pdf_wr_1byte ()
 *
 * Writes a U_CHAR as a single byte.
 \*----------------------------------------------------------------------*/
 
 int
-write_1byte(FILE *file, U_CHAR s)
+pdf_wr_1byte(FILE *file, U_CHAR s)
 {
     U_CHAR x[1];
 
@@ -140,13 +146,13 @@ write_1byte(FILE *file, U_CHAR s)
 }
 
 /*----------------------------------------------------------------------*\
-* int read_1byte ()
+* int pdf_rd_1byte ()
 *
 * Reads a single byte, storing into a U_CHAR.
 \*----------------------------------------------------------------------*/
 
 int
-read_1byte(FILE *file, U_CHAR *ps)
+pdf_rd_1byte(FILE *file, U_CHAR *ps)
 {
     U_CHAR x[1];
 
@@ -158,13 +164,13 @@ read_1byte(FILE *file, U_CHAR *ps)
 }
 
 /*----------------------------------------------------------------------*\
-* write_2bytes()
+* pdf_wr_2bytes()
 *
 * Writes a U_SHORT as two single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
-write_2bytes(FILE *file, U_SHORT s)
+pdf_wr_2bytes(FILE *file, U_SHORT s)
 {
     U_SHORT lo, hi;
     U_CHAR x[2];
@@ -181,13 +187,13 @@ write_2bytes(FILE *file, U_SHORT s)
 }
 
 /*----------------------------------------------------------------------*\
-* read_2bytes()
+* pdf_rd_2bytes()
 *
 * Reads a U_SHORT from two single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
-read_2bytes(FILE *file, U_SHORT *ps)
+pdf_rd_2bytes(FILE *file, U_SHORT *ps)
 {
     U_CHAR x[2];
 
@@ -199,13 +205,13 @@ read_2bytes(FILE *file, U_SHORT *ps)
 }
 
 /*----------------------------------------------------------------------*\
-* write_2nbytes()
+* pdf_wr_2nbytes()
 *
 * Writes n U_SHORT's as 2n single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
-write_2nbytes(FILE *file, U_SHORT *s, PLINT n)
+pdf_wr_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 {
     PLINT i;
     U_SHORT lo, hi;
@@ -224,13 +230,13 @@ write_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 }
 
 /*----------------------------------------------------------------------*\
-* read_2nbytes()
+* pdf_rd_2nbytes()
 *
 * Reads n U_SHORT's from 2n single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
-read_2nbytes(FILE *file, U_SHORT *s, PLINT n)
+pdf_rd_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 {
     PLINT i;
     U_CHAR x[2];
@@ -245,13 +251,13 @@ read_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 }
 
 /*----------------------------------------------------------------------*\
-* write_4bytes ()
+* pdf_wr_4bytes ()
 *
 * Writes an unsigned long as four single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
-write_4bytes(FILE *file, U_LONG s)
+pdf_wr_4bytes(FILE *file, U_LONG s)
 {
     U_LONG lo, hi;
     U_CHAR x[4];
@@ -282,13 +288,13 @@ write_4bytes(FILE *file, U_LONG s)
 }
 
 /*----------------------------------------------------------------------*\
-* read_4bytes ()
+* pdf_rd_4bytes ()
 *
 * Reads an unsigned long from 4 single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
-read_4bytes(FILE *file, U_LONG *ps)
+pdf_rd_4bytes(FILE *file, U_LONG *ps)
 {
     U_CHAR x[4];
 
@@ -359,13 +365,13 @@ where bias = 127 for 32 bit float
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* int write_ieeef ()
+* int pdf_wr_ieeef ()
 *
 * Writes a float in IEEE single precision (32 bit) format.
 \*----------------------------------------------------------------------*/
 
 int
-write_ieeef(FILE *file, float f)
+pdf_wr_ieeef(FILE *file, float f)
 {
     double fdbl, fmant, f_new;
     float fsgl, f_tmp;
@@ -374,7 +380,7 @@ write_ieeef(FILE *file, float f)
 
     if (f == 0.0) {
 	value = 0;
-	return (write_4bytes(file, value));
+	return (pdf_wr_4bytes(file, value));
     }
     fsgl = fdbl = f;
     fmant = frexp(fdbl, &exp);
@@ -401,7 +407,7 @@ write_ieeef(FILE *file, float f)
 
     if (e_ieee > 255) {
 	if (debug)
-	    printf("Warning -- overflow in write_ieeef()\n");
+	    printf("Warning -- overflow in pdf_wr_ieeef()\n");
 	e_ieee = 255;
     }
 
@@ -410,7 +416,7 @@ write_ieeef(FILE *file, float f)
 
     value = s_ieee | e_ieee | f_ieee;
 
-    if (istat = write_4bytes(file, value))
+    if (istat = pdf_wr_4bytes(file, value))
 	return (istat);
 
     if (debug) {
@@ -432,20 +438,20 @@ write_ieeef(FILE *file, float f)
 }
 
 /*----------------------------------------------------------------------*\
-* int read_ieeef ()
+* int pdf_rd_ieeef ()
 *
 * Reads a float from a IEEE single precision (32 bit) format.
 \*----------------------------------------------------------------------*/
 
 int
-read_ieeef(FILE *file, float *pf)
+pdf_rd_ieeef(FILE *file, float *pf)
 {
     double f_new, f_tmp;
     float fsgl;
     int istat, exp, bias = 127;
     U_LONG value, s_ieee, e_ieee, f_ieee;
 
-    if (istat = read_4bytes(file, &value))
+    if (istat = pdf_rd_4bytes(file, &value))
 	return (istat);
 
     s_ieee = (value & (U_LONG) 0x80000000) >> 31;
