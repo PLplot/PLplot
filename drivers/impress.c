@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/07/16 22:11:18  mjl
-   Eliminated low-level coordinate scaling; now done by driver interface.
+   Revision 1.12  1993/07/28 05:35:50  mjl
+   Fixed a cast in argument to free().
 
+ * Revision 1.11  1993/07/16  22:11:18  mjl
+ * Eliminated low-level coordinate scaling; now done by driver interface.
+ *
  * Revision 1.10  1993/07/01  21:59:36  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
@@ -269,7 +272,7 @@ plD_bop_imp(PLStream *pls)
 void
 plD_tidy_imp(PLStream *pls)
 {
-    free((char *) LineBuff);
+    free((void *) LineBuff);
     fclose(pls->OutFile);
     pls->fileset = 0;
     pls->page = 0;
