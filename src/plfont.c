@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/03/23 08:14:55  mjl
+ * Revision 1.12  1994/05/24 19:56:56  mjl
+ * Changed INSTALL_DIR to LIB_DIR for locating fonts.
+ *
+ * Revision 1.11  1994/03/23  08:14:55  mjl
  * Some cruft elimination.
  *
  * All external API source files: replaced call to plexit() on simple
@@ -26,21 +29,21 @@
 * by a system-dependent (and perhaps site-dependent) search path.
 * Directory names can be given with or without the trailing slash.  Each
 * system has three hard-wired devices (may be a logical name) that are
-* searched (default value listed below).  The value for INSTALL_DIR is
+* searched (default value listed below).  The value for LIB_DIR is
 * set from the makefile.
 *
 * Unix:
 *	current directory
 *	$(HOME)/lib
 *	$(PLPLOT_DIR)
-*	INSTALL_DIR
+*	LIB_DIR
 *	PLFONTDEV1	(/usr/local/lib)
 *	PLFONTDEV2	(/usr/local/lib/plplot
 *	PLFONTDEV3	(/usr/local/plplot)
 *
 * VMS:
 *	current directory
-*	INSTALL_DIR
+*	LIB_DIR
 *	PLFONTDEV1	(lib:)
 *	PLFONTDEV2	(sys$login:)
 *	PLFONTDEV3	(sys$sysroot:[sysfont.plplot])
@@ -48,7 +51,7 @@
 * Amiga:
 *	current directory
 *	$(PLPLOT_DIR)
-*	INSTALL_DIR
+*	LIB_DIR
 *	PLFONTDEV1	(fonts:plplot)
 *	PLFONTDEV2	(plfonts:) 
 */
@@ -273,8 +276,8 @@ plfontopen(char *fn)
 
 /**** 	search devices		****/
 
-#ifdef INSTALL_DIR
-    plGetName(INSTALL_DIR, "", fn, &fs);
+#ifdef LIB_DIR
+    plGetName(LIB_DIR, "", fn, &fs);
 
     if ((file = fopen(fs, "rb")) != NULL)
 	goto done;
