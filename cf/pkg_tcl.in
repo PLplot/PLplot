@@ -25,10 +25,13 @@ MAT_C		= tclMatrix.c matrixInit.c
 MAT_OBJS	= tclMatrix$O matrixInit$O
 MAT_OBJS_SO	=
 MAT_OBJS_SA	=
-MATLIB_AR	= libMatrix.a
-MATLIB_SO	= libMatrix$(SO)
+#No LIB_TAG appended because the matrix library only comes in one version, not
+#single- and double-precision versions.
+MATLIB_AR        = $(PLLIB_PATH)$(MATLIB_BASE)$A
+MATLIB_SO        = $(PLLIB_PATH)$(MATLIB_BASE)$(SO)
+MATLIB_SA        = $(PLLIB_PATH)$(MATLIB_BASE)$(SA)
 MAT_INSTALL	= install_mat
-MAT_LINK	= -lMatrix
+MAT_LINK	= -l$(MATLIB_NAME)
 
 MAT_BUILD	= $(MATLIBS)
 
@@ -46,7 +49,8 @@ tclIndex:
 
 install_tcl:
 	-if test $(SHARED) = 1; then \
-	   $(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) -o pltcl$E $(LDC_LIBS); \
+	   $(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) \
+		-o pltcl$E $(LDC_LIBS) $(INSTALL_RPATH); \
 	 fi
 	-strip pltcl$E
 	-cp pltcl$E $(BIN_DIR)
@@ -59,6 +63,3 @@ install_tcl:
 
 install_mat:
 	cp plplot/tclMatrix.h $(INCLUDE_DIR)
-	cp libMatrix* $(LIB_DIR)
-	if test -r libMatrix.a; then $(RANLIB) $(LIB_DIR)/libMatrix.a; fi
-
