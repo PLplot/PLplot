@@ -12,34 +12,24 @@
 # Set up inference rules appropriate for building archive libraries.
 # -----------------------------------------------------------------------
 
-# Suffix list -- the order is important.  
-
-.SUFFIXES: .o .cc .c .f .h .fm4
-
 .c.o:
 	$(CC) $(CC_FLAGS) $*.c
 
 .f.o:
 	$(F77) $(F77_FLAGS) $*.f
 
-.fm4.f:
-	$(M4) $(M4_FLAGS) $< >$*.f
-
 # -----------------------------------------------------------------------
 # Library dependency list and targets
 # -----------------------------------------------------------------------
 
-PLLIB_AR	= $(PLLIB_PATH)libplplot$(LIB_TAG).a
-PLLIBS		= $(PLLIB_AR)
+PLLIBS = $(PLLIB_AR)
 
-libs:	$(PLLIB_AR)
-
-LIB_OBJS = $(CORE_OBJ) $(TCL_OBJ) $(TK_OBJ) $(DRIVERS_OBJ) $(FSTUB_OBJ)
+libs:	$(PLLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
 	-rm $(PLLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
-	$(LIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
+	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
 	$(RANLIB) $(PLLIB_AR)
 	@echo ""
 

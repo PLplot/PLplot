@@ -13,8 +13,6 @@
 # libraries. 
 # -----------------------------------------------------------------------
 
-.SUFFIXES: .o .cc .c .f .h .fm4
-
 .c.o:
 	$(CC) $(CC_FLAGS) $*.c
 	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../$*.c
@@ -23,31 +21,25 @@
 	$(F77) $(F77_FLAGS) $*.f
 	cd shared; $(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) ../$*.f
 
-.fm4.f:
-	$(M4) $(M4_FLAGS) $< >$*.f
-
 # -----------------------------------------------------------------------
 # Library dependency list and targets
 # -----------------------------------------------------------------------
 
-PLLIB_AR	= $(PLLIB_PATH)libplplot$(LIB_TAG).a
-PLLIB_SH	= $(PLLIB_PATH)libplplot$(LIB_TAG)$(SHLIB_SUFFIX)
-PLLIBS		= $(PLLIB_AR) $(PLLIB_SH)
+PLLIBS = $(PLLIB_AR) $(PLLIB_SH)
 
-libs:	$(PLLIB_AR) $(PLLIB_SH)
-
-LIB_OBJS = $(CORE_OBJ) $(TCL_OBJ) $(TK_OBJ) $(DRIVERS_OBJ) $(FSTUB_OBJ)
+libs:	$(PLLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
 	-rm $(PLLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
-	$(LIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
+	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
 	$(RANLIB) $(PLLIB_AR)
 
 $(PLLIB_SH):	$(LIB_OBJS)
 	-rm $(PLLIB_SH)
 	@echo ""; echo "Building shared library"; echo ""
-	cd shared; $(SHLIB_BUILD) ../$(PLLIB_SH) $(LIB_OBJS)
+	cd shared; \
+	$(SHLIB_BUILD) ../$(PLLIB_SH) $(LIB_OBJS)
 	@echo ""
 
 # -----------------------------------------------------------------------

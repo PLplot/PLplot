@@ -12,27 +12,19 @@
 # Set up inference rules appropriate for building shared libraries.
 # -----------------------------------------------------------------------
 
-.SUFFIXES: .o .cc .c .f .h .fm4
-
 .c.o:
 	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) $*.c
 
 .f.o:
 	$(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) $*.f
 
-.fm4.f:
-	$(M4) $(M4_FLAGS) $< >$*.f
-
 # -----------------------------------------------------------------------
 # Library dependency list and targets
 # -----------------------------------------------------------------------
 
-PLLIB_SH	= $(PLLIB_PATH)libplplot$(LIB_TAG)$(SHLIB_SUFFIX)
-PLLIBS		= $(PLLIB_SH)
+PLLIBS = $(PLLIB_SH)
 
 libs:	$(PLLIB_SH)
-
-LIB_OBJS = $(CORE_OBJ) $(TCL_OBJ) $(TK_OBJ) $(DRIVERS_OBJ) $(FSTUB_OBJ)
 
 $(PLLIB_SH):	$(LIB_OBJS)
 	-rm $(PLLIB_SH)
