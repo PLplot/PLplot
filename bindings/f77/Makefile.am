@@ -23,25 +23,42 @@
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
 if enable_f77
-lib_LTLIBRARIES = libplplotf77@LIB_TAG@.la
+# order is important here since libplplotf77c@LIB_TAG@.la must be
+# created first (since libplplotf77@LIB_TAG@.la depends upon it).
+lib_LTLIBRARIES = libplplotf77c@LIB_TAG@.la libplplotf77@LIB_TAG@.la
 endif
 
 AM_CPPFLAGS = $(INCLTDL)
 version = -version-info $(SOVERSION)
 
-sources = \
-	plstubs.h \
-	sc3d.c \
-	sccont.c \
-	scstubs.c \
+# Keep Fortran and C libraries completely separate so libplplot will know how
+# to link them without relying on poorly known (for most platforms)
+# FLIBS information detailing how to combine C and fortran source in the
+# same library.
+
+fortran_sources= \
 	strutil.f \
 	sfstubs.h \
 	sfstubs.f \
 	configurable.f
 
-libplplotf77@LIB_TAG@_la_SOURCES  = $(sources)
-libplplotf77@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
-libplplotf77@LIB_TAG@_la_LIBADD  = $(FLIBS)
+c_sources= \
+	plstubs.h \
+	sc3d.c \
+	sccont.c \
+	scstubs.c
+
+# This creates the fortran source part of the fortran interface to libplplot.
+# It wraps calls to libplplotf77c@LIB_TAG@.la
+libplplotf77@LIB_TAG@_la_SOURCES  = $(fortran_sources)
+libplplotf77@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined libplplotf77c@LIB_TAG@.la
+
+# This creates the C source part of the fortran interface to libplplot.
+# libplplotf77@LIB_TAG@.la wraps libplplotf77c@LIB_TAG@.la which wraps
+# libplplot.  Thus, these two libraries together provide
+# a fortran wrapper for the "common" API part of libplplot.
+libplplotf77c@LIB_TAG@_la_SOURCES  = $(c_sources)
+libplplotf77c@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
 
 # Must be explicit here with dependencies.  Otherwise solaris "make" chokes.
 sfstubs.f: sfstubs.h
