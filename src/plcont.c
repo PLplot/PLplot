@@ -546,8 +546,11 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 {
     PLINT kcol, krow, lastindex;
     PLFLT distance;
+    PLFLT save_def, save_scale;
 
     char  flabel[30];
+    plgchr(&save_def, &save_scale);
+    save_scale = save_scale/save_def;
 
     cont_new_store(flev);
 
@@ -579,7 +582,7 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	}
 
     }
-    plschr(0.0, 1.0);
+    plschr(save_def, save_scale);
 }
 
 /*--------------------------------------------------------------------------*\
