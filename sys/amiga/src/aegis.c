@@ -1,22 +1,27 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:20  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/10/12 17:11:17  mjl
+   Amiga-specific mods, including ANSI-fication.
 
+ * Revision 1.1  1992/05/20  21:35:20  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	aegis.c
 
 	PLPLOT Amiga Aegis draw format device driver.
 */
+
+#include "plplot.h"
 #include <stdio.h>
 #include <string.h>
-#include "plplot.h"
 #include "dispatch.h"
+#include "plamiga.h"
 
 /* Function prototypes */
 
-static void flushbuffer	PLARGS((PLStream *));
+static void flushbuffer (PLStream *);
 
 /* top level declarations */
 
@@ -40,8 +45,7 @@ static PLDev (*dev) = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-aegisinit(pls)
-PLStream *pls;
+aegisinit(PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->color = 1;
@@ -75,9 +79,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-aegisline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+aegisline(PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     short *tempptr;
@@ -142,8 +144,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-aegisclear(pls)
-PLStream *pls;
+aegisclear(PLStream *pls)
 {
     /* Close the file */
     if (!firstline) {
@@ -161,8 +162,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-aegispage(pls)
-PLStream *pls;
+aegispage(PLStream *pls)
 {
     plOpenFile(pls);
 
@@ -183,8 +183,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-aegisadv(pls)
-PLStream *pls;
+aegisadv(PLStream *pls)
 {
     aegisclear(pls);
     aegispage(pls);
@@ -197,8 +196,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-aegistidy(pls)
-PLStream *pls;
+aegistidy(PLStream *pls)
 {
     flushbuffer(pls);
     free((VOID *) buffptr);
@@ -215,8 +213,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-aegiscolor(pls)
-PLStream *pls;
+aegiscolor(PLStream *pls)
 {
     flushbuffer(pls);
     firstline = 1;
@@ -234,8 +231,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-aegistext(pls)
-PLStream *pls;
+aegistext(PLStream *pls)
 {
 }
 
@@ -258,8 +254,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-aegiswidth(pls)
-PLStream *pls;
+aegiswidth(PLStream *pls)
 {
     flushbuffer(pls);
     firstline = 1;
@@ -277,10 +272,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-aegisesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+aegisesc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -291,8 +283,7 @@ char *ptr;
 \*----------------------------------------------------------------------*/
 
 static void 
-flushbuffer(pls)
-PLStream *pls;
+flushbuffer(PLStream *pls)
 {
     short i = 0;
 

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:21  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/10/12 17:11:19  mjl
+   Amiga-specific mods, including ANSI-fication.
 
+ * Revision 1.1  1992/05/20  21:35:21  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	amipr.c
@@ -11,9 +14,11 @@
 	Most of the code is in plsupport.c where it is shared with the
 	menu selection printer dump.
 */
-#include <stdio.h>
+
 #include "plplot.h"
+#include <stdio.h>
 #include "dispatch.h"
+#include "plamiga.h"
 
 /* top level declarations */
 
@@ -32,11 +37,9 @@ static PLDev (*dev) = &device;
 \*----------------------------------------------------------------------*/
 
 void
-amiprinit(pls)
-PLStream *pls;
+amiprinit(PLStream *pls)
 {
-    int mode, openprinter(), mapinit(), queryprint();
-    void closeprinter();
+    int mode;
 
     pls->termin = 0;		/* not an interactive terminal */
     pls->color = 1;
@@ -97,13 +100,10 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiprline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+amiprline(PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     long xn1, yn1, xn2, yn2;
-    void mapline();
 
     if (!pls->orient) {
 	xn1 = (x1 * dheight) / bmapymax;
@@ -144,11 +144,8 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-amiprclear(pls)
-PLStream *pls;
+amiprclear(PLStream *pls)
 {
-    void ejectpage(), dmpport();
-
     dmpport(0L, bmapx, bmapy);
     /* Eject the page. */
     ejectpage();
@@ -162,11 +159,8 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiprpage(pls)
-PLStream *pls;
+amiprpage(PLStream *pls)
 {
-    void mapclear();
-
     mapclear();
     pls->page++;
 }
@@ -178,8 +172,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amipradv(pls)
-PLStream *pls;
+amipradv(PLStream *pls)
 {
     amiprclear(pls);
     amiprpage(pls);
@@ -192,11 +185,8 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiprtidy(pls)
-PLStream *pls;
+amiprtidy(PLStream *pls)
 {
-    void dmpport(), mapfree(), closeprinter();
-
     dmpport(0L, bmapx, bmapy);
     mapfree();
     closeprinter();
@@ -211,8 +201,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiprcolor(pls)
-PLStream *pls;
+amiprcolor(PLStream *pls)
 {
 }
 
@@ -223,8 +212,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiprtext(pls)
-PLStream *pls;
+amiprtext(PLStream *pls)
 {
 }
 
@@ -235,8 +223,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiprgraph(pls)
-PLStream *pls;
+amiprgraph(PLStream *pls)
 {
 }
 
@@ -247,8 +234,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiprwidth(pls)
-PLStream *pls;
+amiprwidth(PLStream *pls)
 {
     if (pls->width < 1)
 	pls->width = 1;
@@ -263,9 +249,6 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amipresc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+amipresc(PLStream *pls, PLINT op, char *ptr)
 {
 }

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:25  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/10/12 17:11:22  mjl
+   Amiga-specific mods, including ANSI-fication.
 
+ * Revision 1.1  1992/05/20  21:35:25  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	iff.c
@@ -10,17 +13,11 @@
 	PLPLOT Amiga IFF device driver.
 	Originally written by Tomas Rokicki (Radical Eye Software).
 */
-#include <stdio.h>
+
 #include "plplot.h"
+#include <stdio.h>
 #include "dispatch.h"
-
-/* Function prototypes */
-
-int mapinit();
-void mapclear();
-void mapfree();
-void mapline();
-void iffwritefile();
+#include "plamiga.h"
 
 /* top level declarations */
 
@@ -39,8 +36,7 @@ static PLDev (*dev) = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-iffinit(pls)
-PLStream *pls;
+iffinit(PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->color = 1;
@@ -91,9 +87,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-iffline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+iffline(PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     long xn1, yn1, xn2, yn2;
@@ -138,8 +132,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-iffclear(pls)
-PLStream *pls;
+iffclear(PLStream *pls)
 {
     iffwritefile((PLINT) pls->xdpi, (PLINT) pls->ydpi, pls->OutFile);
     fclose(pls->OutFile);
@@ -154,8 +147,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-iffpage(pls)
-PLStream *pls;
+iffpage(PLStream *pls)
 {
     pls->page++;
     mapclear();
@@ -169,8 +161,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-iffadv(pls)
-PLStream *pls;
+iffadv(PLStream *pls)
 {
     iffclear(pls);
     iffpage(pls);
@@ -183,8 +174,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-ifftidy(pls)
-PLStream *pls;
+ifftidy(PLStream *pls)
 {
     iffclear(pls);
     mapfree();
@@ -200,8 +190,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-iffcolor(pls)
-PLStream *pls;
+iffcolor(PLStream *pls)
 {
 }
 
@@ -212,8 +201,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-ifftext(pls)
-PLStream *pls;
+ifftext(PLStream *pls)
 {
 }
 
@@ -224,8 +212,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-iffgraph(pls)
-PLStream *pls;
+iffgraph(PLStream *pls)
 {
 }
 
@@ -236,8 +223,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-iffwidth(pls)
-PLStream *pls;
+iffwidth(PLStream *pls)
 {
     if (pls->width < 1)
 	pls->width = 1;
@@ -252,9 +238,6 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-iffesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+iffesc(PLStream *pls, PLINT op, char *ptr)
 {
 }

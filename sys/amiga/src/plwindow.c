@@ -1,14 +1,17 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:30  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/10/12 17:11:29  mjl
+   Amiga-specific mods, including ANSI-fication.
 
+ * Revision 1.1  1992/05/20  21:35:30  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 #include "plplot.h"
-#include "plamiga.h"
 #include <stdio.h>
 #include <math.h>
+#include "plamiga.h"
 
 extern struct PLPrefs PLCurPrefs;
 
@@ -42,7 +45,7 @@ struct NewWindow NewWindow =
 };
 
 void 
-OpenPLWind()
+OpenPLWind(void)
 {
     short i;
 
@@ -142,7 +145,7 @@ OpenPLWind()
 }
 
 void 
-ClosePLWind()
+ClosePLWind(void)
 {
     FreeRaster(PLTmpPlane, PLScreen->Width, PLScreen->Height);
     ClearMenuStrip(PLWindow);

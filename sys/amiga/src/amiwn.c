@@ -1,24 +1,27 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:23  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/10/12 17:11:20  mjl
+   Amiga-specific mods, including ANSI-fication.
 
+ * Revision 1.1  1992/05/20  21:35:23  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	amiwn.c
 
 	PLPLOT Amiga window device driver.
 */
-#include <stdio.h>
+
 #include "plplot.h"
+#include <stdio.h>
 #include "dispatch.h"
 #include "plamiga.h"
 
-#ifdef AZTEC_C
-#define remove(name)    unlink(name)	/* Psuedo-ANSI compatibility */
-struct IntuitionBase *IntuitionBase;	/* Lattice defines these for you */
-struct GfxBase *GfxBase;
-#endif
+/* Function prototypes */
+
+static void beepw(void);
+static void setpen(PLINT);
 
 /* top level declarations */
 
@@ -43,8 +46,7 @@ static PLDev (*dev) = &device;
 \*----------------------------------------------------------------------*/
 
 void
-amiwninit(pls)
-PLStream *pls;
+amiwninit(PLStream *pls)
 {
     PLFLT Initdpmx, Initdpmy;
 
@@ -104,9 +106,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+amiwnline(PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     short comm, xshrt, yshrt;
@@ -156,11 +156,8 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnclear(pls)
-PLStream *pls;
+amiwnclear(PLStream *pls)
 {
-    void beepw(), setpen();
-
     beepw();
     setpen(0);
     RectFill(PLWRPort, XOffset, YOffset, PLWidth + XOffset, PLHeight + YOffset);
@@ -179,8 +176,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnpage(pls)
-PLStream *pls;
+amiwnpage(PLStream *pls)
 {
     fbuffer = 0;
     if (PLCurPrefs.WinType & PLBUFF) {
@@ -205,8 +201,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnadv(pls)
-PLStream *pls;
+amiwnadv(PLStream *pls)
 {
     amiwnclear(pls);
     amiwnpage(pls);
@@ -219,11 +214,8 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiwntidy(pls)
-PLStream *pls;
+amiwntidy(PLStream *pls)
 {
-    void beepw();
-
     beepw();
     ClosePLWind();
     CloseLibs();
@@ -242,11 +234,9 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiwncolor(pls)
-PLStream *pls;
+amiwncolor(PLStream *pls)
 {
     short shcol, comm;
-    void setpen();
 
     if (pls->color >= 0 && pls->color < 16) {
 	shcol = pls->color;
@@ -269,8 +259,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiwntext(pls)
-PLStream *pls;
+amiwntext(PLStream *pls)
 {
 }
 
@@ -281,8 +270,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiwngraph(pls)
-PLStream *pls;
+amiwngraph(PLStream *pls)
 {
 }
 
@@ -293,8 +281,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnwidth(pls)
-PLStream *pls;
+amiwnwidth(PLStream *pls)
 {
     short shwid, comm;
 
@@ -315,10 +302,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-amiwnesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+amiwnesc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -327,7 +311,7 @@ char *ptr;
 \*----------------------------------------------------------------------*/
 
 void 
-setlimits()
+setlimits(void)
 {
     XOffset = PLWindow->BorderLeft + 8;
     YOffset = PLWindow->BorderTop + 8;
@@ -348,7 +332,7 @@ setlimits()
 }
 
 void 
-OpenLibs()
+OpenLibs(void)
 {
     IntuitionBase = (struct IntuitionBase *) OpenLibrary("intuition.library", 0L);
     if (IntuitionBase == NULL) {
@@ -371,15 +355,14 @@ OpenLibs()
 }
 
 void 
-CloseLibs()
+CloseLibs(void)
 {
     CloseLibrary((struct Library *) GfxBase);
     CloseLibrary((struct Library *) IntuitionBase);
 }
 
 void 
-PLMove(x, y)
-PLINT x, y;
+PLMove(PLINT x, PLINT y)
 {
     PLINT xsc, ysc;
 
@@ -389,8 +372,7 @@ PLINT x, y;
 }
 
 void 
-PLDraw(x, y)
-PLINT x, y;
+PLDraw(PLINT x, PLINT y)
 {
     PLINT xsc, ysc;
 
@@ -400,7 +382,7 @@ PLINT x, y;
 }
 
 void 
-remakeplot()
+remakeplot(void)
 {
     long cxy, x1, y1;
     long x, y;
@@ -441,14 +423,13 @@ remakeplot()
 }
 
 static void 
-setpen(color)
-PLINT color;
+setpen(PLINT color)
 {
     SetAPen(PLWRPort, color);
 }
 
 static void 
-beepw()
+beepw(void)
 {
     DisplayBeep(PLScreen);
     eventwait();

@@ -1,22 +1,19 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:29  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/10/12 17:11:27  mjl
+   Amiga-specific mods, including ANSI-fication.
 
+ * Revision 1.1  1992/05/20  21:35:29  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 #include "plplot.h"
-#include "plamiga.h"
 #include <stdio.h>
-#ifdef LATTICE_50
 #include <stdlib.h>
 #include <string.h>
-#else
-extern char *calloc();
-extern void free();
-/* Psuedo-ANSI compatibility for AZTEC */
-#define memset(ptr,val,len)        setmem(ptr,len,val)
-#endif
+
+#include "plamiga.h"
 #include <libraries/dosextens.h>
 
 extern short fbuffer;
@@ -41,7 +38,7 @@ static struct ColorMap dummyColorMap =
 
 
 static void 
-doio()
+doio(void)
 {
     register struct IODRPReq *ioreq;
 
@@ -56,9 +53,7 @@ doio()
 }
 
 void 
-dmpport(flags, x, y)
-long flags;
-int x, y;
+dmpport(long flags, int x, int y)
 {
     register struct IODRPReq *ioreq;
 
@@ -81,8 +76,7 @@ static long bitmapx, bitmapy, wordsperrow;
 static short *bitmap;
 
 int 
-mapinit(bmapx, bmapy)
-long bmapx, bmapy;
+mapinit(long bmapx, long bmapy)
 {
     bitmapx = bmapx;
     bitmapy = bmapy;
@@ -99,21 +93,21 @@ long bmapx, bmapy;
 }
 
 void 
-mapfree()
+mapfree(void)
 {
     free((VOID *) bitmap);
 }
 
 void 
-mapclear()
+mapclear(void)
 {
     memset((char *) bitmap, '\0', (int) (wordsperrow * (long) bitmapy * 2));
 }
 
 /* Function to draw the line in the bitmap */
+
 void 
-mapline(x1, y1, x2, y2)
-register int x1, y1, x2, y2;
+mapline(register int x1, register int y1, register int x2, register int y2)
 {
     register short *p;
     register unsigned int b;
@@ -184,7 +178,7 @@ register int x1, y1, x2, y2;
 }
 
 int 
-openprinter()
+openprinter(void)
 {
     replyport = (struct MsgPort *) CreatePort("PLPlot.PIO", 0L);
     if (replyport == NULL) {
@@ -217,7 +211,7 @@ openprinter()
 }
 
 void 
-closeprinter()
+closeprinter(void)
 {
     CloseDevice((struct IORequest *) printerIO);
     FreeMem((VOID *) printerIO, (long) sizeof(union printerIO));
@@ -225,8 +219,8 @@ closeprinter()
 }
 
 int 
-queryprint(bmapx, bmapy, bmapxmax, bmapymax, xdpi, ydpi)
-long *bmapx, *bmapy, *bmapxmax, *bmapymax, *xdpi, *ydpi;
+queryprint(long *bmapx, long *bmapy, long *bmapxmax, long *bmapymax, 
+	   long *xdpi, long *ydpi)
 {
     int mode;
     Bitmap.BytesPerRow = 0;
@@ -271,7 +265,7 @@ long *bmapx, *bmapy, *bmapxmax, *bmapymax, *xdpi, *ydpi;
 }
 
 void 
-ejectpage()
+ejectpage(void)
 {
     printerIO->ios.io_Command = PRD_RAWWRITE;
     printerIO->ios.io_Data = (APTR) "\014";
@@ -283,9 +277,9 @@ ejectpage()
    support, i.e. color, shading, threshold, etc.  Otherwise we override many
    of the preferences selections, create a full page black and white
    bitmap and dump it to the printer. */
+
 void 
-screendump(type)
-PLINT type;
+screendump(PLINT type)
 {
     register struct IODRPReq *ioreq;
     long bmapx, bmapy;
@@ -346,12 +340,12 @@ PLINT type;
 		    ynew = ((long) dwidth * (long) y1) / InitPLHeight;
 		    switch (penwid) {
 		    case 3:
-			mapline(ylas, xlas, ynew, xnew);
+		      mapline(ylas, xlas, ynew, xnew);
 		    case 2:
-			mapline(ylas + 2, xlas + 2, ynew + 2, xnew + 2);
+		      mapline(ylas + 2, xlas + 2, ynew + 2, xnew + 2);
 		    case 1:
 		    default:
-			mapline(ylas + 1, xlas + 1, ynew + 1, xnew + 1);
+		      mapline(ylas + 1, xlas + 1, ynew + 1, xnew + 1);
 		    }
 		}
 		else {
@@ -359,12 +353,12 @@ PLINT type;
 		    ynew = ((long) dheight * (long) y1) / InitPLHeight;
 		    switch (penwid) {
 		    case 3:
-			mapline(xlas, dheight - ylas, xnew, dheight - ynew);
+		      mapline(xlas, dheight - ylas, xnew, dheight - ynew);
 		    case 2:
-			mapline(xlas + 2, dheight - ylas + 2, xnew + 1, dheight - ynew + 2);
+		      mapline(xlas + 2, dheight - ylas + 2, xnew + 1, dheight - ynew + 2);
 		    case 1:
 		    default:
-			mapline(xlas + 1, dheight - ylas + 1, xnew + 1, dheight - ynew + 1);
+		      mapline(xlas + 1, dheight - ylas + 1, xnew + 1, dheight - ynew + 1);
 		    }
 		}
 		xlas = xnew;
@@ -387,8 +381,9 @@ PLINT type;
 
 /* prepupdate() flushes and rewinds the plot buffer file.  This should always
    be called before attempting to read the buffer file. */
+
 void 
-prepupdate()
+prepupdate(void)
 {
 /*    plgfile(PlotFile); */
     if (fbuffer) {
@@ -399,9 +394,9 @@ prepupdate()
 
 /* Use getpoint to read the next command in the plot buffer file. */
 /* Returns 0 if okay or 1 if end of file. */
+
 int 
-getpoint(com, x, y)
-long *com, *x, *y;
+getpoint(long *com, long *x, long *y)
 {
     short csh, xsh, ysh;
 
@@ -425,7 +420,7 @@ long *com, *x, *y;
 }
 
 void 
-finiupdate()
+finiupdate(void)
 {
 /*    plgfile(PlotFile); */
     fseek(PlotFile, 0L, 2);
@@ -450,8 +445,7 @@ struct BitMapHeader {
 } bmhd;
 
 static void 
-iffobyte(b)
-register int b;
+iffobyte(register int b)
 {
     putc(b, OutFile);
     iffpos++;
@@ -459,8 +453,7 @@ register int b;
 char outchunk[256];
 
 static void 
-iffoutbyte(b)
-register int b;
+iffoutbyte(register int b)
 {
     register int i;
 
@@ -496,7 +489,7 @@ register int b;
 }
 
 static void 
-finishrow()
+finishrow(void)
 {
     register int i;
 
@@ -526,7 +519,7 @@ finishrow()
 
 /* Routine to write out color bitmap. */
 void 
-saveiff()
+saveiff(void)
 {
     long int formlen = 0, formpos, bmhdlen, camglen, camgbod;
     long int bodylen = 0, bodypos, cmaplen;
@@ -668,10 +661,9 @@ static struct iffhead {
 /*
  *   Finally we get into the nitty gritty of writing the stupid file.
  */
+
 void 
-iffwritefile(xdpi, ydpi, File)
-PLINT xdpi, ydpi;
-FILE *File;
+iffwritefile(PLINT xdpi, PLINT ydpi, FILE *File)
 {
     register int i, j;
     register short *p;
@@ -708,7 +700,7 @@ FILE *File;
 /* Note this comes with 2.0 as 'sys:tools/colors' */
 
 void 
-plcolreq()
+plcolreq(void)
 {
     short i;
     extern PLINT MaxColors;
@@ -936,7 +928,7 @@ static struct Requester PLFileReq =
 /* end of PowerWindows source generation */
 
 char *
-plfilereq()
+plfilereq(void)
 {
     ULONG oldFlags;
     USHORT gadid;
@@ -978,9 +970,9 @@ plfilereq()
    to the printer. (We don't want the user moving the window around or
    resizing it during those periods.). We always disable the window sizing
    and close gadgets. If flag is zero we disable the dragging gadget also. */
+
 void 
-disablegads(flag)
-PLINT flag;
+disablegads(PLINT flag)
 {
     int type;
     struct Gadget *gadget;
@@ -995,7 +987,7 @@ PLINT flag;
 }
 
 void 
-enablegads()
+enablegads(void)
 {
     struct Gadget *gadget;
 

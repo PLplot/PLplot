@@ -1,13 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:27  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/10/12 17:11:26  mjl
+   Amiga-specific mods, including ANSI-fication.
 
+ * Revision 1.1  1992/05/20  21:35:27  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 #include "plplot.h"
-#include "plamiga.h"
 #include <stdio.h>
+#include "plamiga.h"
 
 struct PLPrefs PLCurPrefs;
 

@@ -1,16 +1,20 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:26  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/10/12 17:11:24  mjl
+   Amiga-specific mods, including ANSI-fication.
 
+ * Revision 1.1  1992/05/20  21:35:26  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 #include "plplot.h"
-#include "plamiga.h"
+#include <stdio.h>
 #include <math.h>
+#include "plamiga.h"
 
 void 
-eventwait()
+eventwait(void)
 {
     for (;;) {
 	/* Wait for message */
@@ -21,7 +25,7 @@ eventwait()
 }
 
 PLINT 
-procmess()
+procmess(void)
 {
     ULONG class;
     USHORT code;
@@ -38,9 +42,7 @@ procmess()
 }
 
 PLINT 
-eventhandler(class, code)
-ULONG class;
-USHORT code;
+eventhandler(ULONG class, USHORT code)
 {
     switch (class) {
     case CLOSEWINDOW:
@@ -399,7 +401,7 @@ enum menu1item2subs {
 };
 
 void 
-MakePLMenu()
+MakePLMenu(void)
 {
     short mtx, mledge;
     short itx, itxlen, itedge, ichk;
@@ -518,23 +520,21 @@ MakePLMenu()
 }
 
 void 
-disablemenus()
+disablemenus(void)
 {
     OffMenu(PLWindow, PLMCONTROL | SHIFTITEM(NOITEM));
     OffMenu(PLWindow, PLMSCREEN | SHIFTITEM(NOITEM));
 }
 
 void 
-enablemenus()
+enablemenus(void)
 {
     OnMenu(PLWindow, PLMCONTROL | SHIFTITEM(NOITEM));
     OnMenu(PLWindow, PLMSCREEN | SHIFTITEM(NOITEM));
 }
 
 void 
-menuselect(class, code)
-ULONG class;
-USHORT code;
+menuselect(ULONG class, USHORT code)
 {
     PLINT ItemNumber, MenuNumber, SubNumber;
     PLINT remake = 0;

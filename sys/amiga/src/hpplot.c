@@ -1,11 +1,20 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:24  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/10/12 17:11:21  mjl
+   Amiga-specific mods, including ANSI-fication.
 
+ * Revision 1.1  1992/05/20  21:35:24  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
-/* This file contains drivers for the HP7475A plotter */
+ /* This file contains drivers for the HP7475A plotter */
+
+ /* Note this file is horribly out of date and will no longer work with the */
+ /* package.  I only keep it because it is a bit different from the other two */
+ /* hp drivers in the plplot/drivers directory (why?).  If I get around to */
+ /* verifying that those work fine with the Amiga PLT: device, this file will */
+ /* get tossed. */
 
 #include "plplot.h"
 #include <stdio.h>
