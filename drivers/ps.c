@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/02/27 04:46:40  mjl
-   Fixed errors in ordering of header file inclusion.  "plplot.h" should
-   always be included first.
+   Revision 1.9  1993/03/03 16:18:35  mjl
+   Cleaned up prolog block, fixed (?) default line width setting.
 
+ * Revision 1.8  1993/02/27  04:46:40  mjl
+ * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * always be included first.
+ *
  * Revision 1.7  1993/02/22  23:15:12  mjl
  * Eliminated the gradv() driver calls, as these were made obsolete by recent
  * changes to plmeta and plrender.  Also eliminated page clear commands from
@@ -130,19 +133,14 @@ ps_init(PLStream *pls)
     dev->xmin = 0;
     dev->ymin = 0;
 
-    orient = pls->orient - 1;
-    switch (orient) {
-
-      case 1:
-      case -1:
+    orient = pls->orient + 1;
+    if (orient%2 == 1) {
 	dev->xmax = PSY;
 	dev->ymax = PSX;
-	break;
-
-      default:
+    }
+    else {
 	dev->xmax = PSX;
 	dev->ymax = PSY;
-	break;
     }
 
     dev->xlen = dev->xmax - dev->xmin;
@@ -150,7 +148,7 @@ ps_init(PLStream *pls)
 
     setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
-    /* Header comments into PostScript file */
+/* Header comments into PostScript file */
 
     fprintf(OF, "%%!PS-Adobe-2.0 EPSF-2.0\n");
     fprintf(OF, "%%%%BoundingBox:         \n");
@@ -162,11 +160,16 @@ ps_init(PLStream *pls)
     fprintf(OF, "%%%%Pages: (atend)\n");
     fprintf(OF, "%%%%EndComments\n\n");
 
-    /* Definitions */
+/* Definitions */
+/* Save VM state */
 
-    fprintf(OF, "/PSSave save def\n");	/* save VM state */
-    fprintf(OF, "/PSDict 200 dict def\n");	/* define a dictionary */
-    fprintf(OF, "PSDict begin\n");	/* start using it */
+    fprintf(OF, "/PSSave save def\n");
+
+/* Define a dictionary and start using it */
+
+    fprintf(OF, "/PSDict 200 dict def\n");
+    fprintf(OF, "PSDict begin\n");
+
     fprintf(OF, "/@restore /restore load def\n");
     fprintf(OF, "/restore\n");
     fprintf(OF, "   {vmstatus pop\n");
@@ -182,75 +185,109 @@ ps_init(PLStream *pls)
     fprintf(OF, "   {\n");
     fprintf(OF, "    /#copies exch def\n");
     fprintf(OF, "   } def\n");
-    fprintf(OF, "/@start\n");	/* - @start -  -- start everything */
+
+/* - @start -  -- start everything */
+
+    fprintf(OF, "/@start\n");
     fprintf(OF, "   {\n");
     fprintf(OF, "    vmstatus pop /@VMused exch def pop\n");
     fprintf(OF, "   } def\n");
-    fprintf(OF, "/@end\n");	/* - @end -  -- finished */
+
+/* - @end -  -- finished */
+
+    fprintf(OF, "/@end\n");
     fprintf(OF, "   {flush\n");
     fprintf(OF, "    end\n");
     fprintf(OF, "    PSSave restore\n");
     fprintf(OF, "   } def\n");
-    fprintf(OF, "/bop\n");	/* bop -  -- begin a new page */
+
+/* bop -  -- begin a new page */
+
+    fprintf(OF, "/bop\n");
     fprintf(OF, "   {\n");
     fprintf(OF, "    /SaveImage save def\n");
     if (pls->color) {
 	fprintf(OF, "    Z %d %d M %d %d D %d %d D %d %d D %d %d",
 		0, 0, 0, PSY, PSX, PSY, PSX, 0, 0, 0);
-	r = ((float) pls->cmap0[0].r) / 255.;
-	g = ((float) pls->cmap0[0].g) / 255.;
-	b = ((float) pls->cmap0[0].b) / 255.;
+	r = ((float) pls->bgcolor.r) / 255.;
+	g = ((float) pls->bgcolor.g) / 255.;
+	b = ((float) pls->bgcolor.b) / 255.;
 	fprintf(OF, "    closepath %f %f %f setrgbcolor fill\n",
 		r, g, b);
     }
     fprintf(OF, "   } def\n");
-    fprintf(OF, "/eop\n");	/* - eop -  -- end a page */
+
+/* - eop -  -- end a page */
+
+    fprintf(OF, "/eop\n");
     fprintf(OF, "   {\n");
     fprintf(OF, "    showpage\n");
     fprintf(OF, "    SaveImage restore\n");
     fprintf(OF, "   } def\n");
-    fprintf(OF, "/@line\n");	/* set line parameters */
+
+/* Set line parameters */
+
+    fprintf(OF, "/@line\n");
     fprintf(OF, "   {0 setlinecap\n");
     fprintf(OF, "    0 setlinejoin\n");
     fprintf(OF, "    1 setmiterlimit\n");
     fprintf(OF, "   } def\n");
-    /* d @hsize -  horizontal clipping dimension */
+
+/* d @hsize -  horizontal clipping dimension */
+
     fprintf(OF, "/@hsize   {/hs exch def} def\n");
     fprintf(OF, "/@vsize   {/vs exch def} def\n");
-    /* d @hoffset - shift for the plots */
+
+/* d @hoffset - shift for the plots */
+
     fprintf(OF, "/@hoffset {/ho exch def} def\n");
     fprintf(OF, "/@voffset {/vo exch def} def\n");
-    /* s @hscale - scale factors */
+
+/* s @hscale - scale factors */
+
     fprintf(OF, "/@hscale  {100 div /hsc exch def} def\n");
     fprintf(OF, "/@vscale  {100 div /vsc exch def} def\n");
-    /* s @lscale - linewidth scale factor */
+
+/* Default line width */
+
+    fprintf(OF, "/lw %d def\n", pls->width);
+
+/* s @lscale - linewidth scale factor */
+
     fprintf(OF, "/@lscale  {100 div /lin exch def} def\n");
     fprintf(OF, "/@lwidth  {lin lw mul setlinewidth} def\n");
-    fprintf(OF, "/@SetPlot\n");	/* setup user specified
-						   offsets, */
-    fprintf(OF, "   {\n");	/* scales, sizes for clipping    */
+
+/* Setup user specified offsets, scales, sizes for clipping */
+
+    fprintf(OF, "/@SetPlot\n");
+    fprintf(OF, "   {\n");
     fprintf(OF, "    ho vo translate\n");
     fprintf(OF, "    XScale YScale scale\n");
     fprintf(OF, "    lin lw mul setlinewidth\n");
     fprintf(OF, "   } def\n");
-    fprintf(OF, "/XScale\n");	/* setup x scale */
+
+/* Setup x scale */
+
+    fprintf(OF, "/XScale\n");
     fprintf(OF, "   {hsc hs mul %d div} def\n", YPSSIZE);
-    fprintf(OF, "/YScale\n");	/* setup y scale */
+
+/* Setup y scale */
+
+    fprintf(OF, "/YScale\n");
     fprintf(OF, "   {vsc vs mul %d div} def\n", XPSSIZE);
 
-    /* Default line width */
-
-    fprintf(OF, "/lw %d def\n", pls->width);
-
-    /* Stroke definitions, to keep output file as small as possible */
+/* Stroke definitions, to keep output file as small as possible */
 
     fprintf(OF, "/M {moveto} def\n");
     fprintf(OF, "/D {lineto} def\n");
     fprintf(OF, "/S {stroke} def\n");
     fprintf(OF, "/Z {stroke newpath} def\n");
-    fprintf(OF, "end\n\n");	/* end of dictionary definition */
 
-    /* Set up the plots */
+/* End of dictionary definition */
+
+    fprintf(OF, "end\n\n");
+
+/* Set up the plots */
 
     fprintf(OF, "PSDict begin\n");
     fprintf(OF, "@start\n");
@@ -263,6 +300,7 @@ ps_init(PLStream *pls)
     fprintf(OF, "%d @hscale\n", YSCALE);
     fprintf(OF, "%d @vscale\n", XSCALE);
     fprintf(OF, "%d @lscale\n", LINESCALE);
+
     fprintf(OF, "@SetPlot\n\n");
 }
 
@@ -289,7 +327,7 @@ ps_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 /* Because portrait mode addressing is used here, we need to complement
    the orientation flag to get the right mapping. */
 
-    orient = pls->orient - 1;
+    orient = pls->orient + 1;
     plRotPhy(orient, dev, &x1, &y1, &x2, &y2);
 
     if (pls->pscale)
