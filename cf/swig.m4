@@ -1,9 +1,13 @@
 dnl import the whole of SWIG-1.3.21/Tools/config/swig.m4
-dnl subsequently AWI (with ideas from RL) fixed the case where find finds
+dnl subsequently AWI (with help from RL) fixed the case where find finds
 dnl multiple files, and also removed some bashism's and extended sed
 dnl constructs so now there is some hope these macros will work cross-platform.
 dnl also, disabled SWIG when version check does not succeed
-# Contributed by Sebastian Huber
+# Contributed by Sebastian Huber with improvements from Alan W. Irwin and
+# Rafael Laboissiere to remove non-portable shell constructs and deal with
+# a logic issue when more than one header file or Python library is found.
+# They also changed the logic so that swig is always disabled (with
+# appropriate message) unless the version check is passed.
 
 # SWIG_PROG([required-version = N[.N[.N]]])
 #
