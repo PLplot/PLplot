@@ -128,6 +128,46 @@ environment variable GPGKEY, like this:
     GPGKEY=0x1234ABCD upload-cvs-tarball.sh tarball.tar.gz
 
 
+The release process
+-------------------
+
+Tarball releases are generated with the make-cvs-tarball.sh script as
+described above.  The script tags the CVS repository with a unique tag
+generated from the current date and time.  This tag has the following
+structure:
+
+    cvs-tarball_<year>-<month>-<day>-<hour>-<minutes>-<seconds>
+    
+where the time is UTC-based.
+
+This tag can be used later to tag the final release with a symbolic string
+(vM_N_P) in the CVS repository. Here is the algorithm for a typical release
+cycle (for the sake of the example, let us say we are going to release
+version 5.6.7):
+
+0) Change the release number in AC_INIT to 5.6.7 in configure.ac
+
+1) Generate the tarball with a command like:
+   path/to/make-cvs-tarball.sh -v 5.6.7 2>&1 | tee build.log
+
+2) Test the generated tarball (plplot-5.6.7.tar.gz)
+   You might also give options -c an -i to make some checks automatic  
+
+3) Are you happy with the tarball?
+   NO:
+     Make changes in CVS and go back to 1)
+   YES:
+     4) Release the tarball
+     5) Tag the cvs repository with:
+        cvs rtag -r cvs-tarball-<date>-<time> v5_6_7
+        (where cvs-tarball-<date>-<time> was obtained in step 1) 
+
+6) Remove the temporary tags using scripts/rm-cvs-tarball-tags.pl
+
+Option -r of make-cvs-tarball.sh must be used if the release is being taken
+from a branch in the CVS repository.
+
+
 Debian area
 -----------
 
