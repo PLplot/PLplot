@@ -1,12 +1,13 @@
-plplot (5.3.0.cvs.20040303-2) unstable; urgency=low
+plplot (5.3.0.cvs.20040324-1) unstable; urgency=low
 
-  * NOT YET RELEASED!
+  * New cvs snapshot upstream release.
   * debian/control: Removed build-conflict on f2c and fort77.  Added
     fort77 build-dependency for the m68k architecture.  This should fix
-    the problem with bulding from source for m68k, since mkoctfile
-    apparently needs the f2c library for linking *.oct files.
+    the problem of building from source for m68k, since mkoctfile
+    apparently needs the f2c library for linking *.oct files on that
+    architecture.
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 25 Mar 2004 07:15:54 +0100
 
 plplot (5.3.0.cvs.20040303-1) unstable; urgency=low
 
