@@ -624,16 +624,60 @@ fi
 # ----------------------------------------------------------------------------
 
 if test "$enable_octave" = "yes"; then
+
+# Check that plplot was built with shared libs
     if test "$with_shlib" = "no"; then
 	AC_MSG_RESULT([warning: For Octave support PLplot must be build with shared libs. Disabling Octave support.]);
-	enable_octave=no
-    else
-	AC_CHECK_PROG(has_octave, mkoctfile, yes, no)
+	enable_octave=no;
+    fi
+
+# check for matwrap
+    if test "$enable_octave" = "yes"; then
 	AC_CHECK_PROG(has_matwrap, matwrap, yes, no)
-	if test "$has_octave" = "no" -o "$has_matwrap" = "no"; then
-	    AC_MSG_RESULT([warning: 'mkoctfile' or 'matwrap' was not found, disabling Octave support.])
-	    enable_octave=no
+	if test "$has_matwrap" = "no"; then
+	    AC_MSG_RESULT([warning: 'matwrap' not found, disabling Octave support.]);
+	    enable_octave=no;
 	fi
+    fi
+
+# check for user supplied mkoctfile
+    if test "$enable_octave" = "yes"; then
+	AC_ARG_WITH(mkoctfile, [  --with-mkoctfile=file   Specify mkoctfile], MKOCTFILE="$withval", MKOCTFILE="mkoctfile")
+	AC_CHECK_PROG(has_mkoctfile, $MKOCTFILE, yes, no)
+	if test "$has_mkoctfile" = "no"; then
+	    AC_MSG_RESULT([warning: $MKOCTFILE not found, disabling Octave support.]);
+	    AC_SUBST(MKOCTFILE)
+	    enable_octave=no;
+	fi
+    fi
+
+# check for user supplied Octave
+    if test "$enable_octave" = "yes"; then
+	AC_ARG_WITH(octavexe, [  --with-octavexe=file      Specify Octave], OCTAVE="$withval", OCTAVE="octave")
+	AC_CHECK_PROG(has_octave, $OCTAVE, yes, no)
+	if test "$has_octave" = "no"; then
+	    AC_MSG_RESULT([warning: $OCTAVE not found, disabling Octave support.]);
+	    enable_octave=no;
+	fi
+    fi
+
+# Get Octave default *.oct file directory
+    if test "$enable_octave" = "yes"; then
+	OCTAVE_DIR='$(PREFIX)'/share/plplot_octave
+	OCTAVE_OCT_DIR=`$OCTAVE -q -f <<EOF
+	t = octave_config_info;
+	printf("%s", t.octfiledir);
+EOF`
+
+# this is dubious. A normal user can have root access.
+# But I don't want to install the oct file in non standard places!
+	if ! test `touch $OCTAVE_OCT_DIR/po 2> /dev/null`; then
+	    OCTAVE_OCT_DIR=$OCTAVE_DIR
+	else
+	    rm $OCTAVE_OCT_DIR/po
+	fi
+	AC_SUBST(OCTAVE_OCT_DIR)
+	AC_SUBST(OCTAVE_DIR)
     fi
 fi
 
