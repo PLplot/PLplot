@@ -110,6 +110,8 @@ AC_SUBST(enable_java)
 PL_GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
 AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
 
+AM_CONDITIONAL(enable_java, [test "$enable_java" = yes])
+
 AC_CONFIG_FILES([
     bindings/java/Makefile
     bindings/java/config.java

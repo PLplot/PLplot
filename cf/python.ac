@@ -95,6 +95,8 @@ fi
 AC_SUBST(PYTHON_INC_DIR)
 AC_SUBST(PYTHON_NUM_DIR)
 
+AM_CONDITIONAL(enable_python, [test "$enable_python" = yes])
+
 AC_CONFIG_FILES([
     bindings/python/Makefile
     examples/python/Makefile

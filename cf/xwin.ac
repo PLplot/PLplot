@@ -32,3 +32,4 @@ if test "$have_x" != "yes"; then
     enable_xwin="no"
 fi
 
+AM_CONDITIONAL(enable_xwin, [test "$enable_xwin" = yes])

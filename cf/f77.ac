@@ -75,6 +75,8 @@ AC_SUBST(HAVE_F77PARSE_CL_FALSE)
 
 AC_SUBST(enable_f77)
 
+AM_CONDITIONAL(enable_f77, [test "$enable_f77" = yes])
+
 AC_CONFIG_FILES([
     bindings/f77/Makefile
     bindings/f77/configurable.f

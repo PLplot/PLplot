@@ -31,8 +31,6 @@ test "$enable_tk" = yes  && EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES tk"
 
 AC_SUBST(EXAMPLES_DIRECTORIES)
 
-define([TEST_CONFIG_FILES],[
-
 AC_CONFIG_FILES([
     test/Makefile
     test/plplot-test.sh

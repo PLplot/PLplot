@@ -112,8 +112,7 @@ fi
 
 PL_ARG_ENABLE(dyndrivers, [enable dynamic loading of drivers], yes)
 
-PL_INCLUDE(libtool.ac)
-AM_PROG_LIBTOOL
+m4_include(cf/libtool.ac)
 
 PL_ARG_ENABLE(drivers, [enable all device drivers], yes)
 
@@ -160,20 +159,63 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 ### already be too late).
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-PL_INCLUDE(python.ac)
+m4_include(cf/python.ac)
 
-PL_INCLUDE(java.ac)
+m4_include(cf/java.ac)
 
-PL_INCLUDE(drivers.ac)
+builtin([define], [PL_DRIVERS_DEVICE_LIST], [
+  cgm:cgm:yes,
+  dg300:dg300:no,
+  png:gd:yes, jpeg:gd:yes,
+  gnome:gnome:no,
+  hp7470:hpgl:yes, hp7580:hpgl:yes, lj_hpgl:hpgl:yes,
+  imp:impress:no,
+  linuxvga:linuxvga:yes,
+  ljii:ljii:no,
+  ljiip:ljiip:no,
+  mem:mem:yes,
+  ntk:ntk:no,
+  null:null:yes,
+  pbm:pbm:yes,
+  plmeta:plmeta:yes,
+  ps:ps:yes, psc:ps:yes,
+  pstex:pstex:yes,
+  xterm:tek:no, tek4010:tek:no, tek4107:tek:no, mskermit:tek:no,
+  versaterm:tek:no, vlt:tek:no, conex:tek:no, tek4010f:tek:no,
+  tek4107f:tek:no,
+  tk:tk:yes,
+  tkwin:tkwin:yes,
+  xfig:xfig:yes,
+  xwin:xwin:yes])
+
+AC_MSG_CHECKING(for dynamic drivers)
+PL_ARG_ENABLE_DRIVERS(PL_DRIVERS_DEVICE_LIST)
+AC_MSG_RESULT
+
+AC_SUBST(STATIC_DRIVERS)
+AC_SUBST(DYNAMIC_DRIVERS)
+
+m4_include(cf/gd.ac)
+m4_include(cf/cgm.ac)
+m4_include(cf/gnome.ac)
+m4_include(cf/linuxvga.ac)
+m4_include(cf/xwin.ac)
+
+PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
 
 ### Modify system-dependent results based on availability
-PL_INCLUDE(freetype.ac)
+m4_include(cf/freetype.ac)
 
-PL_INCLUDE(octave.ac)
+dnl FIXME: inclusion of octave.ac should not be excluded
+dnl m4_include(cf/octave.ac)
+dnl FIXME: move the next line into octave.ac
+AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
 
-PL_INCLUDE(swig.ac)
+m4_include(cf/csiro.ac)
 
-PL_INCLUDE(pthread.ac)
+m4_include(cf/swig.ac)
+
+m4_include(cf/pthread.ac)
 
 # ----------------------------------------------------------------------------
 # Check for inclusion of sys/types.h before dirent.h in broken MacOSX systems
@@ -208,9 +250,9 @@ LIBS=""
 
 # Optional packages
 
-PL_INCLUDE(tcl.ac)
+m4_include(cf/tcl.ac)
 
-PL_INCLUDE(test.ac)
+m4_include(cf/test.ac)
 
 ### Double vs single precison
 
@@ -235,9 +277,9 @@ DEFINE_PL_DOUBLE=
 test "$with_double" = yes && DEFINE_PL_DOUBLE="#define PL_DOUBLE"
 AC_SUBST(DEFINE_PL_DOUBLE)
 
-PL_INCLUDE(c++.ac)
+m4_include(cf/c++.ac)
 
-PL_INCLUDE(f77.ac)
+m4_include(cf/f77.ac)
 
 # Conditionals to control various Makefile.am files.
 
@@ -348,9 +390,9 @@ AC_SUBST(TCL_DIR)
 AC_SUBST(DRV_DIR)
 AC_SUBST(BUILD_DIR)
 
-PL_INCLUDE(docbook.ac)
+m4_include(cf/docbook.ac)
 
-PL_INCLUDE([pkg-config.ac])
+m4_include(cf/pkg-config.ac)
 
 ### rpath setting
 
@@ -376,31 +418,8 @@ AM_CONDITIONAL(enable_pbm, [test "$enable_pbm" = yes])
 AM_CONDITIONAL(enable_ps, [test "$enable_ps" = yes])
 AM_CONDITIONAL(enable_pstex, [test "$enable_pstex" = yes])
 AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
-AM_CONDITIONAL(enable_xwin, [test "$enable_xwin" = yes])
 AM_CONDITIONAL(with_rpath, [test "$with_rpath" = yes])
-AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers"= yes])
-AM_CONDITIONAL(enable_cxx, [test "$enable_cxx" = yes])
-AM_CONDITIONAL(with_csa, [test "$with_csa" = yes])
-AM_CONDITIONAL(with_qhull, [test "$with_qhull" = yes])
-AM_CONDITIONAL(docbook_build, [test $with_prebuiltdoc = no])
-AM_CONDITIONAL(enable_docbook,
-               [test $enable_builddoc = yes -o $with_prebuiltdoc = yes])
-AM_CONDITIONAL(has_onsgmls, [test "$has_onsgmls" = found])
-# This is for conditional compilation of plplot_octave_txt in bindings/octave
-AM_CONDITIONAL(has_xml_pm,
-  [test "$pldb_cv_xml_dom" = yes -a "$pldb_cv_xml_parser" = yes])
-AM_CONDITIONAL(enable_f77, [test "$enable_f77" = yes])
-AM_CONDITIONAL(enable_gnome, [test "$enable_gnome" = yes])
-AM_CONDITIONAL(enable_java, [test "$enable_java" = yes])
-AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
-AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
-AM_CONDITIONAL(with_pkg_config, [test "$with_pkg_config" = yes])
-AM_CONDITIONAL(enable_python, [test "$enable_python" = yes])
-AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
-AM_CONDITIONAL(enable_tcl, [test "$enable_tcl" = yes])
-AM_CONDITIONAL(enable_tk, [test "$enable_tk" = yes])
-AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
-
+AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
 
 ### Build configuration files
 
@@ -424,4 +443,4 @@ AC_CONFIG_FILES([
 
 AC_OUTPUT
 
-PL_INCLUDE(summary.ac)
+m4_include(cf/summary.ac)

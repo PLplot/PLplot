@@ -368,7 +368,3 @@ dnl ------------------------------------------------------------------------
 dnl Include third-party files containing m4 macros
 dnl (This should not be here once aclocal know how to follow files
 dnl included from configure.ac)
-PL_INCLUDE([gtk.m4])
-PL_INCLUDE([gnu-make.m4])
-PL_INCLUDE([gnome.m4])
-PL_INCLUDE([docbook.m4])

@@ -22,10 +22,15 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+# Filter "underquoted definitions" warnings from aclocal output
+
+function filter {
+  fgrep -v underquoted | fgrep -v "run info" | fgrep -v sources.redhat
+}
 
 function run {
   echo -n Running `$1 --version | sed q`...
-  $*
+  $* 2>&1 | filter
   echo " done"
 }
 
@@ -107,7 +112,11 @@ fi
 
 aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
 
-run aclocal -I cf $aclocal_opts \
+# aclocal -I option below must be given the absolute path of the cf/ dir,
+# otherwise it is not considered as ëxternal"to the project (this is, 
+# at least, the case for aclocal-1.8)
+
+run aclocal -I `pwd`/cf $aclocal_opts \
   && run autoheader \
   && rm -rf libltdl \
   && run libtoolize --force --copy --ltdl --automake \
@@ -115,7 +124,7 @@ run aclocal -I cf $aclocal_opts \
   && run autoconf \
   && ( echo -n "Regenerating libltdl/aclocal+configure..."; \
        cd libltdl ; \
-       aclocal && \
+       aclocal 2>&1 | filter && \
        if [ ! -e configure.ac ] ; then \
            cp configure.in configure.ac ; \
            autoconf 2>/dev/null ; \

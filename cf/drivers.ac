@@ -23,7 +23,6 @@ dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 dnl Drivers
-
 dnl ------------------------------------------------------------------------
 dnl
 
@@ -61,42 +60,3 @@ dnl to be compiled based on which devices are selected.
 dnl Ordered alphabetically by second in each pair (the driver) for human
 dnl consumption, but this is not necessary.
 
-AC_DEFUN([PL_DRIVERS_DEVICE_LIST],
-  [cgm:cgm:yes,
-  dg300:dg300:no,
-  png:gd:yes, jpeg:gd:yes,
-  gnome:gnome:no,
-  hp7470:hpgl:yes, hp7580:hpgl:yes, lj_hpgl:hpgl:yes,
-  imp:impress:no,
-  linuxvga:linuxvga:yes,
-  ljii:ljii:no,
-  ljiip:ljiip:no,
-  mem:mem:yes,
-  ntk:ntk:no,
-  null:null:yes,
-  pbm:pbm:yes,
-  plmeta:plmeta:yes,
-  ps:ps:yes, psc:ps:yes,
-  pstex:pstex:yes,
-  xterm:tek:no, tek4010:tek:no, tek4107:tek:no, mskermit:tek:no,
-  versaterm:tek:no, vlt:tek:no, conex:tek:no, tek4010f:tek:no,
-  tek4107f:tek:no,
-  tk:tk:yes,
-  tkwin:tkwin:yes,
-  xfig:xfig:yes,
-  xwin:xwin:yes])
-
-AC_MSG_CHECKING(for dynamic drivers)
-PL_ARG_ENABLE_DRIVERS(PL_DRIVERS_DEVICE_LIST)
-AC_MSG_RESULT
-
-AC_SUBST(STATIC_DRIVERS)
-AC_SUBST(DYNAMIC_DRIVERS)
-
-PL_INCLUDE(gd.ac)
-PL_INCLUDE(cgm.ac)
-PL_INCLUDE(gnome.ac)
-PL_INCLUDE(linuxvga.ac)
-PL_INCLUDE(xwin.ac)
-
-PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)

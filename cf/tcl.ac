@@ -369,6 +369,11 @@ AC_SUBST(DLNAME_LIBPLPLOTD)
 AC_SUBST(DLNAME_LIBPLPLOTTCLTK)
 AC_SUBST(DLNAME_LIBPLPLOTTCLTKD)
 
+AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
+AM_CONDITIONAL(enable_tcl, [test "$enable_tcl" = yes])
+AM_CONDITIONAL(enable_tk, [test "$enable_tk" = yes])
+AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
+
 AC_CONFIG_FILES([
     bindings/tcl/Makefile
     bindings/tcl/pkgIndex.tcl

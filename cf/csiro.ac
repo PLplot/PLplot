@@ -112,6 +112,9 @@ AC_SUBST(QHULLLIBS)
 AC_SUBST(NNLIBS)
 AC_SUBST(CSALIBS)
 
+AM_CONDITIONAL(with_csa, [test "$with_csa" = yes])
+AM_CONDITIONAL(with_qhull, [test "$with_qhull" = yes])
+
 AC_CONFIG_FILES([
     lib/Makefile
     lib/nn/Makefile
