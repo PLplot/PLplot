@@ -408,7 +408,7 @@ if enable_dyndrivers
 	rm -f $(DESTDIR)$(driversdir)/*.a
 endif
 
-docdir = $(DOCDIR)
+docdir = $(DOC_DIR)
 doc_DATA = README.drivers
 
 EXTRA_DIST = $(doc_DATA) next.c

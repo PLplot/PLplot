@@ -922,6 +922,10 @@ fi
 
 BUILD_DIR=`pwd`
 
+### Documentation directory
+DOC_DIR='${datadir}/doc/plplot'
+AC_SUBST(DOC_DIR)
+
 # Location substitutions for makefiles only
 
 AC_SUBST(INCLUDE_DIR)
@@ -958,11 +962,6 @@ PL_DRIVERS(PL_DRIVER_LIST)
 AC_MSG_RESULT
 AC_SUBST(STATIC_DRIVERS)
 AC_SUBST(DYNAMIC_DRIVERS)
-
-### Documentation directory
-
-DOCDIR=${datadir}/doc/plplot
-AC_SUBST(DOCDIR)
 
 ### DocBook documentation
 

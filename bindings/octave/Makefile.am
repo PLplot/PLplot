@@ -23,7 +23,7 @@
 
 SUBDIRS = PLplot demos misc
 
-docdir = $(DOCDIR)
+docdir = $(DOC_DIR)
 
 docfiles = \
   BUGS \

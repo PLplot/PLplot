@@ -27,7 +27,7 @@ libcsironn_la_LDFLAGS = -version-info 0:0:0 $(RPATH) -no-undefined \
                         $(QHULLLIBS) -lm
 AM_CPPFLAGS = -I.
 
-docdir = $(DOCDIR)
+docdir = $(DOC_DIR)
 docfiles = README README.1st
 
 install-data-hook:

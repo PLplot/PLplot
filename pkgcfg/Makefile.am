@@ -22,7 +22,7 @@
 ### Where?
 
 pkgconfigdir = $(libdir)/pkgconfig
-docdir = $(DOCDIR)
+docdir = $(DOC_DIR)
 
 ### What?
 
