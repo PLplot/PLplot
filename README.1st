@@ -31,8 +31,8 @@ Version 4.99h: Summary of major changes
 **************************************************************************
 
 This was to be a quick bug fix update, but I got going on several major
-changes and had to wind things up.  So, there are some new capabilities
-as well as a lot of bug fixes.
+changes plus addition of user contributions.  So there are some important
+new capabilities as well as a lot of bug fixes.
 
 ------------------------------------------------------------------------
 Configuration, building, and installation:
@@ -97,12 +97,23 @@ out the Tcl demos.
 
 ------------------------------------------------------------------------
 
-Other miscellaneous changes:
+Other changes:
 
 - Another major cleanup of the core source files.
 
 - Ability to make point, line, and polygon plots in 3-d added.
   (Contributed by Geoff Furnish.)
+
+- Changes to support returning the cursor location in world coordinates
+  given a mouse click, if supported by the driver (only used by windows
+  driver so far -- a lot of work remains for the rest of the package to
+  use it).  Supports multiple windows per page, and gets the correct set
+  of world coordinates for the plot selected.  Contributed by Paul
+  Casteels.
+
+- Function to plot map backgrounds added, where the map data is read from
+  the specified map data file (examples provided).  Contributed by Wesley
+  Ebisuzaki.
 
 - Fast point plot ability added.  Call plpoin with code=-1 for a 4X or so
   speed increase in point plots.

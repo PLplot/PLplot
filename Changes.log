@@ -39,6 +39,12 @@ the plstream pointer via extern; many accessor functions eliminated as a
 result.
 
 
+plwind.c:
+ * Revision 1.8  1994/07/29  20:29:24  mjl
+ * Change so that window coordinates are added to the window list each time
+ * plwind() is called.  Contributed by Paul Casteels.
+
+
 plsym.c:
  * Revision 1.12  1994/07/21  10:11:42  mjl
  * Added a fast point draw capability: if code=-1 is given to plpoin or
@@ -65,10 +71,22 @@ plshade.c:
 
 
 plpage.c:
+ * Revision 1.10  1994/07/29  20:27:40  mjl
+ * Added plGetCursor() and other support routines for returning the cursor
+ * location in world coordinates given a mouse click, if supported by the
+ * driver.  Supports multiple windows per page, and gets the correct set
+ * of world coordinates for the plot selected.  Contributed by Paul Casteels.
+ *
  * Revision 1.9  1994/06/30  18:27:17  mjl
  * Subpage initialization code moved to this file --
  * subpage settings can now be changed any time (previously, it had to be
  * done before calling plinit).
+
+
+plmap.c: (new)
+ * Revision 1.1  1994/07/29  20:26:10  mjl
+ * Function to plot map backgrounds, read from the specified map data file.
+ * Contributed by Wesley Ebisuzaki.
 
 
 plline.c:
@@ -84,6 +102,9 @@ plline.c:
 
 
 plfont.c:
+ * Revision 1.16  1994/07/29  20:24:42  mjl
+ * References to plfontopen() deleted, in favor of using plLibOpen().
+ *
  * Revision 1.15  1994/07/26  21:14:44  mjl
  * Improvements to the way PLplot looks for various files.  Now more
  * consistent and flexible.  In particular, environmentals can be set for
@@ -92,6 +113,11 @@ plfont.c:
 
 
 plctrl.c:
+ * Revision 1.23  1994/07/29  20:23:53  mjl
+ * Added new function plLibOpen(), used for opening and returning the file
+ * handle for "library" files -- font files, map files, etc.  These are all
+ * located by the same search path.
+ *
  * Revision 1.22  1994/07/26  21:14:41  mjl
  * Improvements to the way PLplot looks for various files.  Now more
  * consistent and flexible.  In particular, environmentals can be set for
@@ -143,6 +169,11 @@ plstream.h:
 
 
 plplotP.h:
+ * Revision 1.27  1994/07/29  20:19:31  mjl
+ * Added typedef for CWindow -- window coordinate structure, also prototypes
+ * for plAddCWindow() and plClrCWindows(void) (contributed by Paul Casteels).
+ * Also prototype for new plLibOpen() function.
+ *
  * Revision 1.26  1994/07/26  21:14:38  mjl
  * Improvements to the way PLplot looks for various files.  Now more
  * consistent and flexible.  In particular, environmentals can be set for
@@ -171,6 +202,11 @@ plplotP.h:
 
 
 plplot.h:
+ * Revision 1.69  1994/07/29  20:17:02  mjl
+ * Added typedef for new PLCursor struct and driver escape code for the get
+ * cursor operation (contributed by Paul Casteels).  Added prototypes for
+ * plmap() and plmeridians() (contributed by Wesley Ebisuzaki).
+ *
  * Revision 1.68  1994/07/28  08:04:49  mjl
  * Bumped version number, revision to various comments.
  *
@@ -502,6 +538,12 @@ x18c.c: (new)
  *
  * Revision 1.1  1994/07/15  20:38:09  furnish
  * Example program to show off 3-d line and point plotting.
+
+
+x19c.c: (new)
+ * Revision 1.1  1994/07/29  20:14:45  mjl
+ * Demo for generating world map backgrounds.
+ * Contributed by Wesley Ebisuzaki.
 
 
 -----------------------------------------------------------------------------
