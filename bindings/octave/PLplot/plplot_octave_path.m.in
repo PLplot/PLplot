@@ -35,7 +35,7 @@ function path = plplot_octave_path(path)
     endif
     __pl_plplot_octave_path = path;
   else
-    help octave_plplot_path
+    help plplot_octave_path
   endif
 
 endfunction
