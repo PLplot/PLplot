@@ -1,48 +1,12 @@
 /* $Id$
-   $Log$
-   Revision 1.11  1993/07/16 22:36:16  mjl
-   Algorithm improved and simplified, submitted by Wesley Ebisuzaki.
-
- * Revision 1.10  1993/07/01  22:13:37  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
+ * $Log$
+ * Revision 1.12  1994/03/23 08:12:54  mjl
+ * Split into two routines, one as a front-end to the driver interface fill
+ * routine, and the other as a target of the driver interface when the driver
+ * doesn't support the desired fill capability.
  *
- * Revision 1.9  1993/01/23  05:54:04  mjl
- * Now holds all routines dealing with fills.
- *
- * Revision 1.8  1992/10/12  17:08:03  mjl
- * Added PL_NEED_SIZE_T define to those files that need to know the value
- * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
- * to include <stddef.h> to get it.
- *
- * Revision 1.7  1992/09/30  18:25:46  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.6  1992/09/29  04:45:56  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.5  1992/05/27  00:01:12  furnish
- * Having now verified that my change to plfill.c works on dino, ctrss2 and
- * ctribm1 (at a total time cost of less than 10 minutes) I am now committing
- * yet another fix to plfill.c.  Anyone who touches this file in the next
- * four days will die!
- *
- * Revision 1.4  1992/05/26  20:41:34  mjl
- * Fixed my fix to my fix to work under non-ANSI C (i.e. SUNOS).
- *
- * Revision 1.3  1992/05/26  18:27:49  mjl
- * Fixed (hopefully for the last time) the problems introduced with the
- * last "fix".
- *
- * Revision 1.2  1992/05/22  16:39:05  mjl
- * Fixed bug in qsort call.  I can't see how it managed to avoid a core dump
- * before.  This may explain some of our many problems with this routine.
- *
- * Revision 1.1  1992/05/20  21:34:25  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.11  1993/07/16  22:36:16  mjl
+ * Algorithm improved and simplified, submitted by Wesley Ebisuzaki.
 */
 
 /*	plfill.c
@@ -50,12 +14,7 @@
 	Polygon pattern fill.
 */
 
-#define PL_NEED_MALLOC
-#define PL_NEED_SIZE_T
-
 #include "plplotP.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 
 #define DTOR            0.0174533
@@ -80,12 +39,55 @@ static void  buildlist	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 * void plfill()
 *
 * Pattern fills the polygon bounded by the input points.
+* If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
+* The final point is explicitly added if it doesn't match up to the first,
+* to prevent clipping problems.
 \*----------------------------------------------------------------------*/
 
 void
 c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 {
-    PLINT i, j, level;
+    PLINT level;
+    short xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
+    int i;
+
+    plP_glev(&level);
+    if (level < 3) {
+	plabort("plfill: Please set up window first");
+	return;
+    }
+    if (n < 3) {
+	plabort("plfill: Not enough points in object");
+	return;
+    }
+    if (n > PL_MAXPOLY-1) {
+	plwarn("plfill: too many points in polygon");
+	n = PL_MAXPOLY;
+    }
+    for (i = 0; i < n; i++) {
+	xpoly[i] = plP_wcpcx(x[i]);
+	ypoly[i] = plP_wcpcy(y[i]);
+    }
+
+    if (x[0] != x[n-1] || y[0] != y[n-1]) {
+	n++;
+	xpoly[n-1] = plP_wcpcx(x[0]);
+	ypoly[n-1] = plP_wcpcy(y[0]);
+    }
+
+    plP_fill(xpoly, ypoly, n);
+}
+
+/*----------------------------------------------------------------------*\
+* void plfill_soft()
+*
+* Pattern fills in software the polygon bounded by the input points.
+\*----------------------------------------------------------------------*/
+
+void
+plfill_soft(short *x, short *y, PLINT n)
+{
+    PLINT i, j;
     PLINT xp1, yp1, xp2, yp2, xp3, yp3;
     PLINT k, dinc;
     PLFLT ci, si;
@@ -93,16 +95,12 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
     PLFLT xpmm, ypmm;
     double temp;
 
-    plP_glev(&level);
-    if (level < 3)
-	plexit("plfill: Please set up window first.");
-    if (n < 3)
-	plexit("plfill: Not enough points in object!");
-
     buffersize = 2 * BINC;
     buffer = (PLINT *) malloc((size_t) buffersize * sizeof(PLINT));
-    if (!buffer)
-	plexit("plfill: Out of memory.");
+    if ( ! buffer) {
+	plabort("plfill: Out of memory");
+	return;
+    }
 
     plP_gpat(&inclin, &delta, &nps);
     plP_gpixmm(&xpmm, &ypmm);
@@ -124,19 +122,19 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 	if (dinc < 0) dinc = -dinc;
 	if (dinc == 0) dinc = 1;
 
-	xp1 = plP_wcpcx(x[n-2]);
-	yp1 = plP_wcpcy(y[n-2]);
+	xp1 = x[n-2];
+	yp1 = y[n-2];
 	tran(&xp1, &yp1, (PLFLT) ci, (PLFLT) si);
 
-	xp2 = plP_wcpcx(x[n-1]);
-	yp2 = plP_wcpcy(y[n-1]);
+	xp2 = x[n-1];
+	yp2 = y[n-1];
 	tran(&xp2, &yp2, (PLFLT) ci, (PLFLT) si);
 
 /* Loop over points in polygon */
 
 	for (i = 0; i < n; i++) {
-	    xp3 = plP_wcpcx(x[i]);
-	    yp3 = plP_wcpcy(y[i]);
+	    xp3 = x[i];
+	    yp3 = y[i];
 	    tran(&xp3, &yp3, (PLFLT) ci, (PLFLT) si);
 	    buildlist(xp1, yp1, xp2, yp2, xp3, yp3, dinc);
 	    xp1 = xp2;
