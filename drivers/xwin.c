@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.71  1998/12/01 20:50:30  furnish
+ * Revision 1.72  1999/02/26 19:37:47  furnish
+ * Add support for processing the double buffering device escape
+ * function.
+ *
+ * Revision 1.71  1998/12/01  20:50:30  furnish
  * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
  *
  * Revision 1.70  1998/01/06  23:44:33  furnish
@@ -248,6 +252,7 @@ static void  UpdateXhairs	(PLStream *pls);
 static void  ExposeCmd		(PLStream *pls, PLDisplay *ptr);
 static void  RedrawCmd		(PLStream *pls);
 static void  ResizeCmd		(PLStream *pls, PLDisplay *ptr);
+static void  ConfigBufferingCmd (PLStream *pls, PLBufferingCB *ptr );
 static void  GetCursorCmd	(PLStream *pls, PLGraphicsIn *ptr);
 static void  FillPolygonCmd	(PLStream *pls);
 
@@ -715,6 +720,10 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 
     case PLESC_RESIZE:
 	ResizeCmd(pls, (PLDisplay *) ptr);
+	break;
+
+    case PLESC_DOUBLEBUFFERING:
+	ConfigBufferingCmd(pls, (PLBufferingCB *) ptr );
 	break;
     }
 }
@@ -1963,6 +1972,39 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 	XCopyArea(xwd->display, dev->pixmap, dev->window, dev->gc, 0, 0,
 		  dev->width, dev->height, 0, 0);
 	XSync(xwd->display, 0);
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * ConfigBufferingCmd()
+ *
+ * Allows a widget to manipulate the double buffering support in the
+ * xwin dirver.
+\*--------------------------------------------------------------------------*/
+
+static void ConfigBufferingCmd( PLStream *pls, PLBufferingCB *ptr )
+{
+    XwDev *dev = (XwDev *) pls->dev;
+
+    switch (ptr->cmd) {
+
+    case PLESC_DOUBLEBUFFERING_ENABLE:
+	dev->write_to_window = 0;
+	pls->db = 1;
+	break;
+
+    case PLESC_DOUBLEBUFFERING_DISABLE:
+	dev->write_to_window = 1;
+	pls->db = 0;
+	break;
+
+    case PLESC_DOUBLEBUFFERING_QUERY:
+	ptr->result = pls->db;
+	break;
+
+    default:
+	printf( "Unrecognized buffering request ignored.\n" );
+	break;
     }
 }
 
