@@ -6,7 +6,7 @@
 
    Copyright (C) 1992  Geoffrey Furnish 
    Copyright (C) 1993, 1994, 1995, 2000, 2001, 2002  Maurice LeBrun
-   Copyright (C) 2000, 2002, 2004  Alan Irwin
+   Copyright (C) 2000, 2002, 2004, 2005  Alan W. Irwin
    Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
    Copyright (C) 2002  Vincent Darley
    Copyright (C) 2004  Andrew Ross
@@ -885,7 +885,7 @@ pldeco(short int **symbol, PLINT *length, const char *text)
 	    }
 	    else if (test == 'g' || test == 'G') {
 		test = text[j++];
-		ig = plP_strpos(pl_greek, test) + 1;
+		ig = plP_strpos(plP_greek_mnemonic, test) + 1;
 		sym[(*length)++] =
 		    *(fntlkup + (ifont - 1) * numberchars + 127 + ig);
 	    }

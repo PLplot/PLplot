@@ -377,8 +377,8 @@ extern Hershey_to_Unicode_table hershey_to_unicode_lookup_table[];
 
 #endif
 
-/* Greek character translation code (defined in plcore.c) */
-extern const char pl_greek[];
+/* Greek character translation array (defined in plcore.c) */
+extern const char plP_greek_mnemonic[];
 
 
 /*--------------------------------------------------------------------------*\

@@ -11,6 +11,7 @@
   Copyright (C) 2004  Rafael Laboissiere
   Copyright (C) 2004  Andrew Ross
   Copyright (C) 2004  Andrew Roach
+  Copyright (C) 2005  Alan W. Irwin
 
   This file is part of PLplot.
 
@@ -77,7 +78,7 @@ enum {AT_BOP, DRAWING, AT_EOP};
  * translating the Greek characters from the #g escape sequences into
  * the Hershey and Unicode codings
  */ 
-const char pl_greek[] = "ABGDEZYHIKLMNCOPRSTUFXQWabgdezyhiklmncoprstufxqw";
+const char plP_greek_mnemonic[] = "ABGDEZYHIKLMNCOPRSTUFXQWabgdezyhiklmncoprstufxqw";
 
 void
 plP_init(void)
@@ -460,7 +461,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			  * 527 = upper case alpha displacement in Hershey Table
 			  * 627 = lower case alpha displacement in Hershey Table
 			  */
-			 ig = plP_strpos(pl_greek, string[i+2]);
+			 ig = plP_strpos(plP_greek_mnemonic, string[i+2]);
 			 if (ig >= 0) 
 			   {
 			      if (ig >= 24)
@@ -474,7 +475,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			   {
 			      /* Use "unknown" unicode character if string[i+2] is not in
 			       * the Greek array.*/
-			      unicode_buffer[j]=(unsigned int)0x20;
+			      unicode_buffer[j]=(unsigned int)0x00;
 			      i+=2;
 			      skip=1;  /* skip is set if we have copied something into the unicode table */
 			   }
