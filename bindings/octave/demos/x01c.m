@@ -101,7 +101,7 @@ function ix01c
       if (status == 0) break; endif
       if (gin.keysym == hex2dec("1B")) break; endif
 
-      if (gin.keysym < hex2dec("FF") && isprint(gin.keysym)) 
+      if ((gin.keysym < hex2dec("FF")) && isprint(gin.string)) 
 	printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = '%c'\n",
 	       gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
       else
