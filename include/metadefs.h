@@ -68,4 +68,5 @@
 #define NEW_COLOR0 	NEW_COLOR
 #define NEW_COLOR1	14
 #define CHANGE_STATE	15
+#define BOP0		16	/* First BOP in a file */
 #define END_OF_FIELD	255
