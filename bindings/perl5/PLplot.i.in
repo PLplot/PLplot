@@ -280,3 +280,83 @@ extern void pltr1 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*,
 extern void pltr2 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
                    PLcGrid_ref);
 
+
+// plParseOpts support
+
+%typedef int int_p_in_out
+%typedef PLINT PLINT_parseopt_mode
+%typedef char char_pp_in_out
+
+// FIXME: the allocated memory should be freed
+%typemap(perl5,in) char_pp_in_out** {
+  SV* sv;
+  AV* av;
+  I32 i, n;
+  STRLEN len;
+  char* ptr;
+
+  sv = SvROK ($source) ?  SvRV ($source) : $source;
+  if (SvTYPE (sv) != SVt_PVAV)
+    croak ("char_pp_input** must be an array");
+  av = (AV*) sv;
+  n = av_len (av) + 1;
+  $target = (char_pp_input**) malloc (n * sizeof (char_pp_input*));
+  for (i = 0; i < n; i++) {
+    SV* elem = *(av_fetch(av, i, 0));
+    if (! SvPOK (elem))
+      croak ("Element in char_pp_input* input is not a string");
+    $target[i] = (char_pp_input*) SvPV (elem, len);
+  }
+}
+
+// FIXME: $source should be freed
+%typemap(perl5,out) char_pp_in_out** {
+  AV* av;
+  I32 i, n;
+
+  av = (AV*) $arg;
+  n = av_len (av) + 1;
+  for (i = 0; i < n; i++) {
+    SV* elem = newSVpv ($source[i], 0);
+    sv_2mortal (elem);
+    av_store (av, i, elem)
+  }
+}
+
+%typemap(perl5,out) int {
+  if (argvi >= items) {
+    EXTEND (sp,1);
+  }
+  $target = sv_newmortal();
+  sv_setiv ($target, (IV) $source);
+  argvi++;
+}
+
+%typemap(perl5,in) int_p_in_out* (int temp) {
+  SV* sv;
+
+  if (! SvROK ($source))
+    croak ("int_p_in_out* must be a reference");
+  sv = SvRV ($source);
+  if (! SvIOK (sv)) 
+    croak ("int_p_in_out* must reference an integer");
+  temp = (int) SvIV (sv);
+  $target = (int_p_in_out*) &temp;
+}
+%typemap(perl5,argout) int_p_in_out* {
+  sv_setiv (SvRV ($arg), (IV) *$source);
+}
+
+// FIXME: Add support for PL_PARSE_* defines
+%typemap(perl5,in) PLINT_parseopt_mode* (PLINT temp) {
+  SV* sv;
+
+  sv = $source;
+  if (! SvIOK (sv)) 
+    croak ("PLINT_parseopt_mode* must an integer");
+  temp = (PLINT) (SvIV (sv) | PL_PARSE_NOPROGRAM);
+  $target = (PLINT_parseopt_mode*) &temp;
+}
+
+extern int plParseOpts (int_p_in_out*, char_pp_in_out**, PLINT_parseopt_mode);
+

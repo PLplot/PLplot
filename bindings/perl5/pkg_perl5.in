@@ -15,6 +15,7 @@ IN_FILES = \
 
 DEMOS = \
   x01.pl \
+  x02.pl \
   x09.pl
 
 SCRIPTS = \
@@ -35,11 +36,14 @@ interface-stamp: api2bind.pl $(API_XML) $(PLPLOT_H) $(PLCONFIG_H) $(IN_FILES)
 
 Makefile.PL PLplot.i PLplot.pm-add: interface
 
-PLplot_wrap.c PLplot.pm: PLplot.i PLplot.pm-add
-	swig -perl5 -o $@ PLplot.i 
+swig-run: swig-run-stamp
+swig-run-stamp: PLplot.i PLplot.pm-add
+	swig -perl5 PLplot.i 
 	cat PLplot.pm PLplot.pm-add > PLplot.pm-tmp
 	mv PLplot.pm-tmp PLplot.pm 
+	touch swig-run-stamp
 
+PLplot_wrap.c PLplot.pm: swig-run
 
 Makeperl: Makefile.PL
 	perl $<
@@ -50,6 +54,6 @@ PLplot.so: PLplot_wrap.c Makeperl
 clean:
 	-$(MAKE) -f Makeperl clean
 	rm -f Makefile.PL PLplot.i PLplot*.pm PLplot.pm-tmp PLplot.pm-add \
-	  Makeperl PLplot_wrap.* interface-stamp
+	  Makeperl PLplot_wrap.* *-stamp
 
-.PHONY: all ln-tmp interface clean 
+.PHONY: all ln-tmp interface swig-run clean 
