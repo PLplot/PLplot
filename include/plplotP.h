@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/07/02 07:27:16  mjl
-   Created to hold private PLPLOT macros, declarations, and prototypes.
-   Included by all PLPLOT source files.
+   Revision 1.2  1993/07/16 22:29:17  mjl
+   Definition of standard meta coordinates now done here.  Prototypes for
+   several new functions added.
 
+ * Revision 1.1  1993/07/02  07:27:16  mjl
+ * Created to hold private PLPLOT macros, declarations, and prototypes.
+ * Included by all PLPLOT source files.
+ *
 */
 
 /*
@@ -221,10 +225,18 @@
 
 #define TEXT_MODE	0
 #define GRAPHICS_MODE	1
+#define PI		3.1415926535897932384
 #define PL_MAXCOLORS	16
 #define PL_RGB_COLOR	1<<7
 #define PL_MAXPOLYLINE	64
 #define PL_NSTREAMS	100	/* Max number of concurrent streams. */
+
+/* These define the metafile & X driver (virtual) coordinate systems */
+
+#define PIXELS_X	8192		/* Number of virtual pixels in x */
+#define PIXELS_Y	8192		/* Number of virtual pixels in x */
+#define LPAGE_X		254.0		/* Page length in x in virtual mm */
+#define LPAGE_Y		190.5		/* Page length in y in virtual mm */
 
 /* Switches for escape function call. */
 /* Some of these are obsolete but are retained in order to process
@@ -473,6 +485,10 @@ PLFLT plP_w3wcx		(PLFLT, PLFLT, PLFLT);
 PLFLT plP_w3wcy		(PLFLT, PLFLT, PLFLT);
 
 	/* Functions returning PLINTs */
+
+PLINT plctest		(PLFLT *, PLFLT);
+
+PLINT plctestez		(PLFLT *, PLINT, PLINT, PLINT, PLINT, PLFLT);
 
 PLINT plcvec		(PLINT, SCHAR **);
 
