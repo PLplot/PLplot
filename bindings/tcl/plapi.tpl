@@ -15,7 +15,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.3  1995/06/30 13:47:02  furnish
+# Revision 1.4  1995/06/30 13:57:03  furnish
+# Tyop introduced last update, grrrr.
+#
+# Revision 1.3  1995/06/30  13:47:02  furnish
 # Fix typo in one of the function names.
 #
 # Revision 1.2  1995/06/29  20:21:43  furnish
@@ -750,7 +753,7 @@ digits	PLINT
 # Do we need this in the tcl api?
 
 pltclcmd plsxwin void
-window	id PLINT
+window_id PLINT
 # hack this out once we know the above works... (_) plsxwin(PLINT window_id);
 
 # Set y axis labeling parameters.
