@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.46  1994/07/22 22:20:36  mjl
+ * Revision 1.47  1994/07/27 22:18:01  mjl
+ * Fixed bug in window cleanup and termination that was causing a core dump
+ * for apps using multiple plframe widgets.
+ *
+ * Revision 1.46  1994/07/22  22:20:36  mjl
  * Fixed bug in WM hints, introduced during the last bug fix.  It was causing
  * the window to come up without user intervention and in a poor location for
  * tvtwm.  Now it should get BOTH the default and the user specified cases
@@ -320,18 +324,18 @@ plD_tidy_xw(PLStream *pls)
 
     dbug_enter("plD_tidy_xw");
 
-    XFreeGC(xwd->display, xwd->gc);
     if (dev->is_main) {
 	XDestroyWindow(xwd->display, dev->window);
 	if (dev->write_to_pixmap) 
 	    XFreePixmap(xwd->display, dev->pixmap);
-	XCloseDisplay(xwd->display);
     }
 
     xwd->count--;
-    if (xwd->count == 0) 
+    if (xwd->count == 0) {
+	XFreeGC(xwd->display, xwd->gc);
+	XCloseDisplay(xwd->display);
 	free_mem(xwDisplay[xwd->ixwd]);
-
+    }
     pls->plbuf_write = 0;
 }
 
