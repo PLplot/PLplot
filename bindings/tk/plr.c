@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1993/08/09 22:15:02  mjl
+ * Revision 1.7  1993/08/11 19:23:33  mjl
+ * Added some extra debugging code.
+ *
+ * Revision 1.6  1993/08/09  22:15:02  mjl
  * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
  *
  * Revision 1.5  1993/08/03  01:46:46  mjl
@@ -69,8 +72,9 @@
 /* Some wrapper macros to return (-1) on error */
 
 #define plr_rd(code) \
-if (code) { fprintf(stderr, "Unable to read from %s in %s at line %d\n", \
-		      plr->filetype, __FILE__, __LINE__); return(-1); }
+if (code) { fprintf(stderr, \
+	    "Unable to read from %s in %s at line %d, bytecount %d\n", \
+	    plr->filetype, __FILE__, __LINE__, plr->nbytes); return(-1); }
 
 #define plr_cmd(code) \
 if ((code) == -1) return(-1);
@@ -321,15 +325,22 @@ plr_line(PLRDev *plr, int c)
 * Read n coordinate vectors.
 \*----------------------------------------------------------------------*/
 
+#define plr_rdn(code) \
+if (code) { fprintf(stderr, \
+"Unable to read from %s in %s at line %d, bytecount %d\n\
+Bytes requested: %d\n", \
+plr->filetype, __FILE__, __LINE__, plr->nbytes, 2*n); return(-1); }
+
 static int
 get_ncoords(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n)
 {
     int i;
     short xs[PL_MAXPOLYLINE], ys[PL_MAXPOLYLINE];
 
-    plr_rd(pdf_rd_2nbytes(plr->file, (U_SHORT *) xs, n));
-    plr_rd(pdf_rd_2nbytes(plr->file, (U_SHORT *) ys, n));
-    plr->nbytes -= 4*n;
+    plr_rdn(pdf_rd_2nbytes(plr->file, (U_SHORT *) xs, n));
+    plr->nbytes -= 2*n;
+    plr_rdn(pdf_rd_2nbytes(plr->file, (U_SHORT *) ys, n));
+    plr->nbytes -= 2*n;
 
     for (i = 0; i < n; i++) {
 	x[i] = xs[i];
