@@ -20,7 +20,8 @@ echo done
 
 if test "$1" != "-u" ; then
   ./bootstrap.sh
-  debian/rules config
+  ./configure --enable-docbook
+  ( cd doc/docbook ; make )
   make dist
   version=`debian/get-upstream-version.pl < configure.ac`
   mv plplot-$version.tar.gz ../plplot_$version.orig.tar.gz

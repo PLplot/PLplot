@@ -4,10 +4,10 @@ plplot for DEBIAN
 1. INTRODUCTION & ORIGIN
 
     These are the debianized packages for PLplot, a scientific plotting
-    library.  They were put together by Rafael Laboissiere. 
+    library.  They were put together by Rafael Laboissiere.
 
     The packages were built directly from the CVS sources and are considered
-    experimental. 
+    experimental.
 
 
 2. PACKAGES
@@ -22,15 +22,17 @@ plplot for DEBIAN
 
       * libplplot-dev: Headers and static libraries for developing programs
         using the PLplot API, as well as many examples in C, C++, and
-        Fortran77. 
+        Fortran77.
 
-      * plplot-doc: HTML and PDF formats of the PLplot manual. 
- 
+      * plplot-doc: HTML and PDF formats of the PLplot manual.
+
       * plplot-xwin: Provides the xwin driver module.
 
       * plplot-tcl: Modules allowing binding of the PLplot functions
         for Tcl/Tk.  Contains also the Tk driver module and some interactive
-        programs 
+        programs
+
+      * plplot-tcl-dev: Development files for the Tcl/Tk biondings.
 
       * plplot-gd: Provides the GD driver module, which allows direct
         generation of PNG and JPEG files.
@@ -49,7 +51,7 @@ plplot for DEBIAN
 3. DOCUMENTATION
 
     Further documentation for PLplot can be found in the plplot-doc
-    package.  The entry point is 
+    package.  The entry point is
 
 
 4. DEMOS & EXAMPLES

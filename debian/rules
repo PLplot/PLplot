@@ -29,8 +29,8 @@ config:
                     --enable-tk --enable-gd --enable-dyndrivers        \
                     --disable-static --enable-python --enable-octave   \
                     --enable-gnome --with-double --disable-linuxvga    \
-                    --enable-docbook  --infodir=/usr/share/info        \
-                    --with-freetype
+                    --infodir=/usr/share/info --with-freetype          \
+                    --without-rpath --disable-docbook
 
 build: build-stamp
 build-stamp: config
@@ -59,6 +59,17 @@ install-stamp: build-stamp
 	mv $(debdoc)/plplot $(debdoc)/libplplot5
 	mv $(debex) $(debdoc)/libplplot5
 
+	for i in libplplot-dev plplot-xwin plplot-tcl plplot-gnome \
+                 octave-plplot python-plplot plplot-gd plplot-doc  \
+                 plplot-tcl-dev ; do \
+	  ln -s libplplot5 $(debdoc)/$$i ; \
+	done
+
+	dh_movefiles -a --no-package=libplplot5
+	dh_movefiles -i --no-package=libplplot-dev
+	dh_movefiles --package=libplplot-dev
+	dh_movefiles --package=libplplot5
+
 	touch install-stamp
 
 # Build architecture-independent files here.
@@ -66,11 +77,7 @@ binary-indep: build install
 	dh_testdir -i
 	dh_testroot -i
 	dh_installdirs -i
-	dh_installdocs --package=plplot-doc
-# It ought to be a better way to not installing the following directory
-	rm -rf $(debbase)/plplot-doc/usr/share/doc
-	ln -fs libplplot5 $(debdoc)/plplot-doc
-	dh_movefiles -i
+	dh_installdocs --package=plplot-doc --exclude=copyright
 	dh_compress -i --exclude=.pdf
 	dh_fixperms -i
 	dh_installdeb -i
@@ -79,19 +86,9 @@ binary-indep: build install
 	dh_builddeb -i
 
 binary-arch: build install
-	#dh_testversion ge 2.0.86
 	dh_testdir -a
 	dh_testroot -a
 	dh_installdirs -a
-
-	for i in libplplot-dev plplot-xwin plplot-tcl plplot-gnome \
-                 octave-plplot python-plplot plplot-gd plplot-doc; do \
-	  ln -s libplplot5 $(debdoc)/$$i ; \
-	done
-
-	dh_movefiles -a --no-package=libplplot5 --no-package=libplplot-dev
-	dh_movefiles --package=libplplot-dev
-	dh_movefiles --package=libplplot5
 
 	dh_installdocs --package=libplplot5
 	dh_installchangelogs --package=libplplot5
@@ -100,7 +97,8 @@ binary-arch: build install
 	dh_compress -a -Xexamples/
 	dh_fixperms -a
 	dh_makeshlibs -V -a
-	dh_shlibdeps -L libplplot5 -l debian/libplplot5/usr/lib
+	dh_shlibdeps -L libplplot5 -L plplot-tcl \
+	  -l $(debbase)/libplplot5/usr/lib:$(debbase)/plplot-tcl/usr/lib
 	dh_installdeb -a
 	dh_shlibdeps -a -l$(debbase)/plplot-tcl/usr/lib
 	dh_gencontrol -a

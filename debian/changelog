@@ -1,3 +1,15 @@
+plplot (5.2.0.cvs.20030225-1) unstable; urgency=low
+
+  * Built with new CVS sources.  Some rpath problems have been fixed, so
+    that the package is Lintian clean as regard the rpath.
+  * Created new package plplot-tcl-dev.
+  * debian/rules: Give option --without-rpath to configure.
+  * debian/control: Removed dependencies on packages necessary for
+    compiling the DocBook documentation, since they will be available in
+    the upstream distribution tarball.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 25 Feb 2003 14:05:53 +0100
+
 plplot (5.2.0.cvs.20030224-1) unstable; urgency=low
 
   * Built with new CVS sources.  The info files and man pages are now
