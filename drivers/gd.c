@@ -90,8 +90,7 @@ plD_init_png_Dev(PLStream *pls)
 
     dev = (png_Dev *) pls->dev;
 
-    dev->colour=1;
-    dev->totcol=16;
+    dev->colour=1;  /* Set a fall back pen colour in case user doesn't */
  
 /*
  * To try and fix the problem colourmap problems, I will try something new.
@@ -100,7 +99,11 @@ plD_init_png_Dev(PLStream *pls)
  */
  
     for (i=0;i<256;++i) dev->colour_index[i]=-8888;
-    
+
+/*
+ *  Set the compression/quality level for JPEG files
+ *  The higher the value, the bigger/better the image is
+ */
     if ( (pls->dev_compression<=0)||(pls->dev_compression>99) )
        pls->dev_compression=90;
 
@@ -146,8 +149,6 @@ void plD_init_png(PLStream *pls)
       dev->im_out = gdImageCreate(pls->xlength, pls->ylength);
       
       setcmap(pls);
-      dev->totcol = 16;		/* Reset RGB map so we don't run out of
-				   indicies */
       pls->graphx = GRAPHICS_MODE;
 		
 
@@ -243,18 +244,18 @@ png_Dev *dev=(png_Dev *)pls->dev;
 static void
 setcmap(PLStream *pls)
 {
-    int i, ncol1, ncol0;
+    int i, ncol1=pls->ncol1, ncol0=pls->ncol0, total_colours;
     PLColor cmap1col;
     png_Dev *dev=(png_Dev *)pls->dev;
 
 /*
  * In theory when you call "gdImageDestroy()" the colourmap for that image
- * should be reset. Just to make absolutel sure it dies, and is completely
+ * should be reset. Just to make absolutely sure it dies, and is completely
  * cleared out, the next bit of code will go through and try to flush out
  * all the colours, even if they should already have been flushed.
  */
  
-    for (i=0;i<256;++i)
+    for (i=0;i<NCOLOURS;++i)
         {
          if (dev->colour_index[i]!=-8888)
             {
@@ -263,17 +264,33 @@ setcmap(PLStream *pls)
             }
         }
         
-    ncol0=pls->ncol0;
+    dev->totcol=0;       /* Reset the number of colours counter to zero */
+    
+    total_colours=ncol0+ncol1;  /* Work out how many colours are wanted */
 
+    if (total_colours>NCOLOURS)     /* Do some rather modest error      */
+       {                            /* checking to make sure that       */
+        total_colours=NCOLOURS;     /* we are not defining more colours */
+        ncol1=total_colours-ncol0;  /* than we have room for.           */
+
+        if (ncol1<=0)
+           {
+            plexit("Problem setting colourmap in PNG or JPEG driver.");
+           }
+       }
+ 
+    
 /* Initialize cmap 0 colors */
 
+if (ncol0>0)  /* make sure the program actually asked for cmap0 first */
+   {
     for (i = 0; i < ncol0; i++)
         {
         dev->colour_index[i]=gdImageColorAllocate(dev->im_out,
                                    pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
-
+        ++dev->totcol; /* count the number of colours we use as we use them */
         }
-
+    
 #ifdef SWAP_BALCK_WHEN_WHITE
 
 /* 
@@ -295,40 +312,55 @@ if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
        if (dev->colour_index[15]!=-8888)
             {
              gdImageColorDeallocate(dev->im_out,dev->colour_index[15]);
+             dev->colour_index[15]=gdImageColorAllocate(dev->im_out,0, 0, 0);
             } 
-        dev->colour_index[15]=gdImageColorAllocate(dev->im_out,0, 0, 0);
        }
     else
        {
        if (dev->colour_index[15]!=-8888)
             {
              gdImageColorDeallocate(dev->im_out,dev->colour_index[15]);
-            } 
-        dev->colour_index[15]=gdImageColorAllocate(dev->im_out, 
+             dev->colour_index[15]=gdImageColorAllocate(dev->im_out, 
                               pls->cmap0[1].r, pls->cmap0[1].g, pls->cmap0[1].b);
+            } 
 
        if (dev->colour_index[1]!=-8888)
             {
              gdImageColorDeallocate(dev->im_out,dev->colour_index[1]);
+             dev->colour_index[1]=gdImageColorAllocate(dev->im_out,0,0,0); 
             } 
-        dev->colour_index[1]=gdImageColorAllocate(dev->im_out,0,0,0); 
+        
                               
       }
    }
 
 #endif
 
+  }
+
 /* Initialize any remaining slots for cmap1 */
 
 
-    ncol1 = NCOLOURS-pls->ncol0;
-    for (i = 0; i < ncol1; i++) {
-	plcol_interp(pls, &cmap1col, i, ncol1);
-        dev->colour_index[i + pls->ncol0]=gdImageColorAllocate(dev->im_out,
+//    ncol1 = NCOLOURS-pls->ncol0;
+
+if (ncol1>0)    /* make sure that we want to define cmap1 first */
+   {
+    for (i = 0; i < ncol1; i++) 
+        {
+         plcol_interp(pls, &cmap1col, i, ncol1);
+
+         if (dev->colour_index[i + pls->ncol0]!=-8888) /* Should not be necessary  */
+            {                                          /* But won't hurt to be sure */
+             gdImageColorDeallocate(dev->im_out,dev->colour_index[i + pls->ncol0]);
+            } 
+
+         dev->colour_index[i + pls->ncol0]=gdImageColorAllocate(dev->im_out,
                                    cmap1col.r, cmap1col.g, cmap1col.b);
-    }
-
-
+                                   
+         ++dev->totcol; /* count the number of colours we use as we go */
+        }
+   }
+ 
 }
 
 
@@ -351,8 +383,13 @@ png_Dev *dev=(png_Dev *)pls->dev;
 	    int r = pls->curcolor.r;
 	    int g = pls->curcolor.g;
 	    int b = pls->curcolor.b;
-	    if (dev->totcol < 256) 
+	    if (dev->totcol < NCOLOURS) 
 	       {
+                if (dev->colour_index[dev->totcol+1]!=-8888) /* Should not ever be necessary  */
+                   {                                         /* But won't hurt to be sure */
+                    gdImageColorDeallocate(dev->im_out,dev->colour_index[dev->totcol+1]);
+                   } 
+	        
                 dev->colour_index[++dev->totcol]=gdImageColorAllocate(dev->im_out,r, g, b);
 		dev->colour = dev->totcol;
 	       }
@@ -361,16 +398,35 @@ png_Dev *dev=(png_Dev *)pls->dev;
 	break;
 
     case PLSTATE_COLOR1:
-        { int icol1, ncol1, r, g, b;
+        /*
+         *   Estimate which colour we want from CMAP1
+         */
+         
+        dev->colour = pls->ncol0 + pls->icol1;
+        
+        /*
+         *   Now run the "fall back" code for direct colour setting via RGB.
+         *   This should not trip in a well written program, but is here for
+         *   backwards compatibility, and might be used with GD2+ for 
+         *   supporting millions of colours. This might not work too well
+         *   100% of the time.
+         */
+         
+      	if (dev->colour == PL_RGB_COLOR) {
+            int icol1, ncol1, r, g, b;
 
-        if ((ncol1 = MIN(NCOLOURS -pls->ncol0, pls->ncol1)) < 1)
+        /* Try to work out if there is room for any more colours, and
+         * if so, how many.
+         */
+         
+        if ((ncol1 = MIN( (NCOLOURS-dev->totcol), pls->ncol1)) < 1)
             break;
 
         icol1 = pls->ncol0 + (pls->icol1 * (ncol1-1)) / (pls->ncol1-1);
         r = pls->curcolor.r;
         g = pls->curcolor.g;
         b = pls->curcolor.b;
-        
+
         /* We have to "deallocate" any colour that we want to redefine
          * I don't know what implications this has all up, but you seem
          * to have to do it to make things work the way you expect them too.
@@ -379,14 +435,19 @@ png_Dev *dev=(png_Dev *)pls->dev;
         if (dev->colour_index[icol1]!=-8888)  /* Make sure we are not deallocating */
             {                                 /* an "unallocated" colour           */
              gdImageColorDeallocate(dev->im_out,dev->colour_index[icol1]);
+             --dev->totcol;
             } 
         dev->colour_index[icol1]=gdImageColorAllocate(dev->im_out,r, g, b);
  	dev->colour = icol1;
+ 	++dev->totcol; /* Add another colour to the heap of already used colours */
 	}
 	break;
 
     case PLSTATE_CMAP0:
     case PLSTATE_CMAP1:
+    /*
+     *  Code to redfeine the entire palette
+     */
 	if (pls->color)
 	    setcmap(pls);
 	break;
@@ -433,7 +494,6 @@ void plD_bop_png(PLStream *pls)
     dev->im_out = gdImageCreate(pls->xlength, pls->ylength);
     setcmap(pls);
 
-    dev->totcol = 16;
 
 }
 
