@@ -458,8 +458,10 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	}
 	for (j=0; j<cline->npts; j++)
 	  zz[j] = plsc->ranmi;
-	plcol1((clev->level-fc_minz)/(fc_maxz-fc_minz));
-	plline3(cline->npts, cline->x, cline->y, zz);
+	if (cline->npts > 0) {
+	   plcol1((clev->level-fc_minz)/(fc_maxz-fc_minz));
+	   plline3(cline->npts, cline->x, cline->y, zz);
+	}
 	cline = cline->next;
       }
       while(cline != NULL);
@@ -923,10 +925,10 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 	  /* the hidden line plotter plnxtv() only works OK if the x points are in increasing order.
 	     As this does not always happens, the situation must be detected and the line segment
 	     must be reversed before being plotted */
-	  plcol1((clev->level-fc_minz)/(fc_maxz-fc_minz));
  	  i = 0;
 	  if (cline->npts > 0) {
 	    do {
+	      plcol1((clev->level-fc_minz)/(fc_maxz-fc_minz));
 	      cx =  plP_wcpcx(plP_w3wcx(cline->x[i],cline->y[i], plsc->ranmi));
 	      for (j=i; j < cline->npts; j++) {  /* convert to 2D coordinates */
 		uu[j] = plP_wcpcx(plP_w3wcx(cline->x[j],cline->y[j], plsc->ranmi));
