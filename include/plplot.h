@@ -476,6 +476,7 @@ typedef struct {
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
 #define    plotsh3d	c_plotsh3d
+#define    plotfc3d	c_plotfc3d
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
 #define    plpoin3	c_plpoin3
@@ -603,6 +604,7 @@ typedef struct {
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
 #define    c_plotsh3d	plotsh3d
+#define    c_plotfc3d	plotfc3d
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
 #define    c_plpoin3	plpoin3
@@ -1059,6 +1061,12 @@ void
 c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT side);
 
+/* Plots a 3-d false color (current colormap 1) representation of the function z[x][y]. */
+
+void
+c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z,
+	   PLINT nx, PLINT ny, PLINT side);
+  
 /* Set fill pattern directly. */
 
 void

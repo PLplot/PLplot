@@ -28,6 +28,8 @@ static PLINT mlo, xxlo, newlosize;
 
 /* Light source for shading */
 static PLFLT xlight, ylight, zlight;
+static PLINT falsecolor;
+static PLFLT fc_minz, fc_maxz;
 
 /* Prototypes for static functions */
 
@@ -53,6 +55,8 @@ static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT,
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 static PLFLT plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z);
 static void plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move);
+static void plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx,
+ 		      PLINT ny, PLINT side);
 
 /* #define MJL_HACK 1 */
 #if MJL_HACK
@@ -97,18 +101,10 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     pl3mode = 0;
 }
 
-/*--------------------------------------------------------------------------*\
- * void plotsh3d(x, y, z, nx, ny, side)
- *
- * Plots a 3-d representation of the function z[x][y]. The x values
- * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
- * values are in the 2-d array z[][]. 
-\*--------------------------------------------------------------------------*/
-
-
 /* clipping helper for 3d polygons */
 
-int plP_clip_poly(int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset)
+int
+plP_clip_poly(int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset)
 {
   int anyout = 0;
   PLFLT in[PL_MAXPOLY], T[3][PL_MAXPOLY];
@@ -163,7 +159,8 @@ int plP_clip_poly(int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset)
 }
 
 /* helper for plotsh3d below */
-static void shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
+static void
+shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
 			   PLFLT x1, PLFLT y1, PLFLT z1,
 			   PLFLT x2, PLFLT y2, PLFLT z2)
 {
@@ -182,7 +179,12 @@ static void shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
   y[0] = y0; y[1] = y1; y[2] = y2;
   z[0] = z0; z[1] = z1; z[2] = z2;
   n = 3;
-  c = plGetAngleToLight(x, y, z);
+
+  if (falsecolor)
+    c = ((z[0] + z[1] + z[2]) /3. - fc_minz) / (fc_maxz - fc_minz); /* the median should be better for vertically long and thin triangles ? */
+  else
+    c = plGetAngleToLight(x, y, z);
+
   V[0] = x; V[1] = y; V[2] = z;
 
   n = plP_clip_poly(n, V, 0,  1, -xmin);
@@ -222,6 +224,31 @@ static void shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
 void
 c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 		 PLINT nx, PLINT ny, PLINT side)
+{
+   falsecolor = 0;
+   plotsh3di(x,y,z,nx,ny,side);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plotfc3d(x, y, z, nx, ny, side)
+ *
+ * Plots a false-color 3-d representation of the function z[x][y].
+ * The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
+ *  and the z values are in the 2-d array z[][]. 
+\*--------------------------------------------------------------------------*/
+
+void
+c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z,
+		 PLINT nx, PLINT ny, PLINT side)
+{
+  falsecolor = 1;
+  plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+  plotsh3di(x,y,z,nx,ny,side);
+}
+
+static void
+plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z,
+	  PLINT nx, PLINT ny, PLINT side)
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT i, j;
