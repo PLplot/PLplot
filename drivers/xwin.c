@@ -444,8 +444,7 @@ xw_Xinit(PLStream *pls)
     for (;;) {
 	XNextEvent(xwd->display, &xwd->theEvent);
 	if (xwd->theEvent.type == Expose) {
-	    while (XCheckMaskEvent(xwd->display, ExposureMask, &xwd->theEvent))
-		;
+	    while (XCheckMaskEvent(xwd->display, ExposureMask, &xwd->theEvent));
 	    break;
 	}
     }
@@ -503,7 +502,7 @@ static void
 EventHandler(PLStream *pls, XEvent *event)
 {
     switch (event->type) {
-      case KeyPress:
+	case KeyPress:
 	KeyEH(pls, event);
 	break;
 
@@ -602,14 +601,14 @@ MouseEH(PLStream *pls, XEvent *event)
     XwDev *xwd = &(xwdev[id]);
 
     switch (event->xbutton.button) {
-    case Button1:
+      case Button1:
 	break;
 
-    case Button2:
+      case Button2:
 	printf("%d\t%d\n", event->xbutton.x, event->xbutton.y);
 	break;
 
-    case Button3:
+      case Button3:
 	xwd->exit_eventloop = TRUE;
 	break;
     }
@@ -633,8 +632,7 @@ ExposeEH(PLStream *pls, XEvent *event)
 
 /* Remove extraneous expose events from the event queue */
 
-    while (XCheckMaskEvent(xwd->display, ExposureMask, event))
-	;
+    while (XCheckMaskEvent(xwd->display, ExposureMask, event));
 }
 
 /*----------------------------------------------------------------------*\
@@ -673,8 +671,7 @@ ResizeEH(PLStream *pls, XEvent *event)
 
 /* Remove extraneous expose events from the event queue */
 
-    while (XCheckMaskEvent(xwd->display, ExposureMask, event))
-	;
+    while (XCheckMaskEvent(xwd->display, ExposureMask, event));
 }
 
 /*----------------------------------------------------------------------*\
@@ -709,7 +706,7 @@ xw_colini(PLStream *pls)
 
     gslevbg = ((float) pls->cmap0[0].r +
 	       (float) pls->cmap0[0].g +
-	       (float) pls->cmap0[0].b ) / 3.;
+	       (float) pls->cmap0[0].b) / 3.;
 
     if (!XAllocColor(xwd->display, xwd->map, &xwd->cmap0[0])) {
 	if (gslevbg < 128)
@@ -783,7 +780,7 @@ xw_colini(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 static void
-PLColor_to_XColor(XColor * xcolor, PLColor *plcolor)
+PLColor_to_XColor(XColor *xcolor, PLColor *plcolor)
 {
     xcolor->red = plcolor->r << 8;
     xcolor->green = plcolor->g << 8;
@@ -797,7 +794,7 @@ PLColor_to_XColor(XColor * xcolor, PLColor *plcolor)
 \*----------------------------------------------------------------------*/
 
 static void
-XColor_to_XColor(XColor * xcolor1, XColor * xcolor2)
+XColor_to_XColor(XColor *xcolor1, XColor *xcolor2)
 {
     xcolor1->red = xcolor2->red;
     xcolor1->green = xcolor2->green;
@@ -812,7 +809,7 @@ XColor_to_XColor(XColor * xcolor1, XColor * xcolor2)
 /* gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland. */
 
 static int
-AreWeMonochrome(Display * display)
+AreWeMonochrome(Display *display)
 {
 #if defined(__cplusplus) || defined(c_plusplus)
 #define THING c_class
