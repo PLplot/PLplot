@@ -208,7 +208,7 @@ and rpm's and also view the release notes (by clicking on the version number).
 <td colspan=2 align="left">
 
 <font size="+2">
-Release candidate tarballs
+CVS snapshot tarballs
 </font>
 
 </td>
@@ -218,11 +218,11 @@ Release candidate tarballs
 <td>
 </td>
 <td>
-In preparation for the 5.2.2 release, we are providing
-<A HREF="http://people.debian.org/~rafael/plplot.html">release candidate
-tarballs</A>, built directly from the cVS sources.  If you are brave
-enough, please help us to produce a high quality release and test this
-tarball.
+In preparation for future release, we are providing
+<A HREF="../cvs-tarball">CVS snapshot
+tarballs</A>, built directly from the CVS sources.  These tarballs
+eventually become release candidates.  If you are brave enough, please help
+us to produce a high quality release and test the tarball.
 </td>
 </tr>
 
@@ -241,15 +241,16 @@ Debian Packages
 </td>
 <td>
 PLplot packages for the <A HREF="http://www.debian.org">Debian GNU/Linux</A>
-testing distribution (a.k.a <Q>sarge</Q>, as in March 2003)
-are available <A HREF="debian">here</A> as a convenience for the
-users.  To upgrade your old packages with APT, include the following lines
-in your /etc/apt/sources.list file:
+testing distribution (a.k.a <Q>sarge</Q>) are available <A
+HREF="../debian">here</A> as a convenience for the users.  To upgrade your
+old packages with APT, include the following lines in your
+/etc/apt/sources.list file: 
 <P><B>
-&nbsp;&nbsp;deb&nbsp;http://plplot.sourceforge.net/resources/debian&nbsp;./
+&nbsp;&nbsp;deb&nbsp;http://plplot.sourceforge.net/debian&nbsp;./
 <BR>
-&nbsp;&nbsp;deb-src&nbsp;http://plplot.sourceforge.net/resources/debian&nbsp;./
+&nbsp;&nbsp;deb-src&nbsp;http://plplot.sourceforge.net/debian&nbsp;./
 </B></P>
+<!--
 <P>
 Version 5.2.1-19 of the Debian packages have been backported to the latest
 stable distribution of Debian (3.0, a.k.a. <Q>woody</Q>).  The <a
@@ -258,8 +259,10 @@ repository</a> is accessible with:
 </P>
 <P><B>
 &nbsp;&nbsp;deb&nbsp;http://people.debian.org/~rafael/plplot-woody/&nbsp;./
+<BR>
 &nbsp;&nbsp;deb-src&nbsp;http://people.debian.org/~rafael/plplot-woody/&nbsp;./
 </B></P>
+-->
 <P>
 Debian users running the unstable distribution (a.k.a <Q>sid</Q>) should
 point APT to any Debian mirror.
