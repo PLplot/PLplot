@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.32  1993/08/09 22:18:00  mjl
-   Added function prototypes for pleop(), plbop(), eliminated them for plclr()
-   and plpage().  Inserted defines to translate from the latter in case
-   someone actually uses them.  Fixed prototype for plcpstrm().
+   Revision 1.33  1993/08/11 19:27:12  mjl
+   Changed prototypes for plHelp() and plSyntax().
 
+ * Revision 1.32  1993/08/09  22:18:00  mjl
+ * Added function prototypes for pleop(), plbop(), eliminated them for plclr()
+ * and plpage().  Inserted defines to translate from the latter in case
+ * someone actually uses them.  Fixed prototype for plcpstrm().
+ *
  * Revision 1.31  1993/08/05  22:35:19  mjl
  * Eliminated prototypes for nonexistant functions.
  *
@@ -790,9 +793,9 @@ PLFLT plf2evalr (PLINT, PLINT, void *);
 
 	/* Command line parsing utilities */
 
-void  plSyntax	(void);
+void  plSyntax	(PLINT);
 
-void  plHelp	(void);
+void  plHelp	(PLINT);
 
 void  plNotes	(void);
 
