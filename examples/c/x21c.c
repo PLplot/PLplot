@@ -182,9 +182,9 @@ main(int argc, char *argv[])
   pladv(0);  
 
   plssub(3,2);
-  pladv(0);
 
   for (k=0; k<2; k++) {
+    pladv(0);
     for (alg=1; alg<7; alg++) {
 
       ct = clock();
@@ -266,7 +266,6 @@ main(int argc, char *argv[])
 	plot3dc(xg, yg, zg, xp, yp, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev, nl);
       }
     }
-    pladv(0);
   }
 
   plend();
