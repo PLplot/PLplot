@@ -316,6 +316,10 @@ extern "C" {
 /*---------------------------------------------------------------------------*/
 #endif
 
+/* Tcl package initialisation function */
+    
+int Matrix_Init	(Tcl_Interp*);
+
 /* This procedure is invoked to process the "matrix" Tcl command. */
 
 int

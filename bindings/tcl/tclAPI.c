@@ -400,7 +400,6 @@ Pltcl_Init( Tcl_Interp *interp )
 
     plsError(&errcode, errmsg);
 
-
 /* PLplot API commands */
 
     for (cmdInfoPtr = Cmds; cmdInfoPtr->name != NULL; cmdInfoPtr++) {
@@ -411,7 +410,7 @@ Pltcl_Init( Tcl_Interp *interp )
 
 /* We really need this so the TEA based 'make install' can 
  * properly determine the package we have installed */
-
+    
     Tcl_PkgProvide(interp, "Pltcl", "5.1");
     return TCL_OK;
 }
@@ -504,7 +503,7 @@ pls_auto_path(Tcl_Interp *interp)
 	Tcl_SetResult(interp, "Problems with getcwd in pls_auto_path", TCL_STATIC);
 	return TCL_ERROR;
     }
-
+    
     Tcl_SetVar(interp, "dir", buf, 0);
     if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
 	return TCL_ERROR;

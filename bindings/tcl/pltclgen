@@ -207,11 +207,13 @@ sub process_pltclcmd {
 		  };
 		  /PLINT \*/ && do {
 		      print GENFILE "    mat$argname[$i] = Tcl_GetMatrixPtr( interp, argv[1+$i] );\n";
+		      print GENFILE "    if (mat$argname[$i] == NULL) return TCL_ERROR;\n";		      
 		      print GENFILE "    $argname[$i] = mat$argname[$i]-\>idata;\n";
 		      last getarg;
 		  };
 		  /PLFLT \*/ && do {
 		      print GENFILE "    mat$argname[$i] = Tcl_GetMatrixPtr( interp, argv[1+$i] );\n";
+		      print GENFILE "    if (mat$argname[$i] == NULL) return TCL_ERROR;\n";		      
 		      print GENFILE "    $argname[$i] = mat$argname[$i]-\>fdata;\n";
 		      last getarg;
 		  };

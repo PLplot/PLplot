@@ -6,8 +6,6 @@
 
 #include "plplot/tclMatrix.h"
 
-int Matrix_Init	(Tcl_Interp*);
-
 int Matrix_Init( Tcl_Interp *interp ) {
 
     /* matrix -- matrix	support	command	*/
