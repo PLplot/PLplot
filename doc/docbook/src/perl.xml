@@ -43,10 +43,57 @@
     installed in the system, it is automatically detected by the PDL
     configuration script, such that PLplot support for PDL should work out of
     the box.
-  </para>
-
-  <para>
      For further informations see the <ulink url="http://pdl.perl.org">PDL
      homepage</ulink>.
   </para>
+
+  <para>
+    There is also a Perl PLplot interface on <ulink
+    url="http://www.cpan.org">CPAN</ulink> which is not dependent on PDL.
+    The Perl module is called <ulink
+    url="http://search.cpan.org/~tjenness/">Graphics::PLplot</ulink> and is
+    appropriate for small data arrays.  The API is very similar to the C
+    API except that if the number of elements in an array is required by
+    the C function the perl interface calculates it automatically.  Also,
+    return values are returned and not supplied as arguments.  Here is an
+    example of usage:
+  </para>
+
+    <para>
+      <programlisting>
+use Graphics::PLPLOT qw/ :all /;
+
+@x = (0..5);
+print scalar @x;
+@y = map {$_ * $_} @x;
+
+plsdev ("xwin");
+plinit ();
+plcol0 (1);
+
+plenv (-0.5, 5.5, -1, 26, 0, 0);
+plline (\@x, \@y);
+
+plend ();
+      </programlisting>
+    </para>
+
 </chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document: ("plplotdoc.xml" "book" "chapter" "")
+sgml-doctype:"plplotdoc.xml"
+sgml-default-dtd-file:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:("/usr/lib/sgml/catalogs")
+sgml-local-ecat-files:nil
+End:
+-->
