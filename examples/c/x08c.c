@@ -5,8 +5,8 @@
 
 #include "plplot/plcdemos.h"
 
-#define XPTS   120// 35		/* Data points in x */
-#define YPTS   160// 46		/* Datat points in y */
+#define XPTS   35		/* Data points in x */
+#define YPTS   46		/* Datat points in y */
 
 static int opt[] = {DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY, DRAW_LINEXY};
 static PLFLT alt[] = {60.0, 20.0, 60.0, 60.0};
