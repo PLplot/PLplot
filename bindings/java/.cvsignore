@@ -7,9 +7,7 @@ Makefile.in
 *.lo
 config.java
 java
-SWIGTYPE_p_double.java
 SWIGTYPE_p_p_char.java
-SWIGTYPE_p_p_double.java
 plplotjavac.java
 plplotjavacJNI.java
 plplotjavac_wrap.c

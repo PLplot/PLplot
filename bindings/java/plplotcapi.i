@@ -363,9 +363,15 @@ DOC(pllsty, "Set line style.")
 void
 pllsty(PLINT lin);
 
-DOC(plmesh, "Plot a 3D mesh representation of z[x][y].")
+DOC(plmesh, "Plot a 3-d mesh representation of z[x][y].")
 void
-plmesh(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk, PLINT nx, PLINT ny, PLINT opt);
+plmesh(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
+       PLINT nx, PLINT ny, PLINT opt);
+
+DOC(plmeshc, "Plot a 3-d contoured mesh representation of the function z[x][y].")
+void
+plmeshc(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
+	 PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n);
 
 DOC(plmkstrm, "Create a new stream and makes it the default.")
 void
@@ -381,7 +387,12 @@ void
 plot3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
 
-DOC(plsurf3d, "Plot a 3-d surface representation of the function z[x][y].")
+DOC(plot3dc, "Plot a 3-d contoured representation of the function z[x][y].")
+void
+plot3dc(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
+	 PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n);
+
+DOC(plsurf3d, "Plot a 3-d contoured surface representation of the function z[x][y].")
 void
 plsurf3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
 	 PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n);

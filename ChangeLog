@@ -1,3 +1,9 @@
+2002-12-28  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* Implement the simpler 2-d arrays for the swig-based Java API.  This
+	  means all examples work other than x09 (contours), x15 (shade plots
+	  with plshade), and x16 (shade plots with plshades).
+
 2002-12-27  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Implement new swig-based Java API.  Two-dimensional arrays are

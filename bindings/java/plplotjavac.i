@@ -62,6 +62,7 @@ typedef int PLINT;
 #define setup_array_2d_PLFLT setup_array_2d_d
 #define jPLFLTArray "jdoubleArray"
 #define jPLFLTbracket "double[]"
+#define jPLFLTbracket2 "double[][]"
 #define GetPLFLTArrayElements GetDoubleArrayElements
 #define ReleasePLFLTArrayElements ReleaseDoubleArrayElements
 #define jPLFLT jdouble
@@ -70,6 +71,7 @@ typedef int PLINT;
 #define setup_array_2d_PLFLT setup_array_2d_f
 #define jPLFLTArray "jfloatArray"
 #define jPLFLTbracket "float[]"
+#define jPLFLTbracket2 "float[][]"
 #define GetPLFLTArrayElements GetFloatArrayElements
 #define ReleasePLFLTArrayElements ReleaseFloatArrayElements
 #define jPLFLT jfloat
@@ -122,11 +124,10 @@ setup_array_1d_d( PLFLT **pa, jdouble *adat, int n )
 }
 
 /* 2d array of floats */
-/* Here caller must free(a[0]) and free(a) (in that order) if
-   *must_free_buffers is set */ 
+/* Here caller must free(a[0]) and free(a) (in that order) afterward */
 
 static void 
-setup_array_2d_f( PLFLT ***pa, jfloat **adat, int nx, int ny, int *must_free_buffers )
+setup_array_2d_f( PLFLT ***pa, jfloat **adat, int nx, int ny )
 {
    int i, j;
 
@@ -140,15 +141,13 @@ setup_array_2d_f( PLFLT ***pa, jfloat **adat, int nx, int ny, int *must_free_buf
 	  (*pa)[i][j] = adat[i][j];
      }
 
-   *must_free_buffers = 1;
 }
 
 /* 2d array of doubles */
-/* Here caller must free(a[0]) and free(a) (in that order) if
-   *must_free_buffers is set */ 
+/* Here caller must free(a[0]) and free(a) (in that order) afterward */
 
 static void
-setup_array_2d_d( PLFLT ***pa, jdouble **adat, int nx, int ny, int *must_free_buffers )
+setup_array_2d_d( PLFLT ***pa, jdouble **adat, int nx, int ny )
 {
    int i, j;
 
@@ -162,7 +161,6 @@ setup_array_2d_d( PLFLT ***pa, jdouble **adat, int nx, int ny, int *must_free_bu
 	  (*pa)[i][j] = adat[i][j];
      }
 
-   *must_free_buffers = 1;
 }
 %}
 
@@ -296,7 +294,7 @@ Naming rules:
 %typemap(javaout) (PLINT *ArrayCk, PLINT n) {
    return $jnicall;
 }
-  
+
 /******************************************************************************
 				 PLFLT Arrays 
 ******************************************************************************/
@@ -371,80 +369,161 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    return $jnicall;
 }
 
-//temporary
-#if 0
-/* check consistency with X dimension of previous */
-%typemap(in) PLFLT* ArrayCkX (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
-  if(tmp == NULL) return NULL;
-  if(tmp->dimensions[0] != Xlen) {
-    PyErr_SetString(PyExc_ValueError, "Vectors must be same length.");
-    return NULL;
-  }
-  $1 = (PLFLT*)tmp->data;
-}
-%typemap(freearg) PLFLT* ArrayCkX { Py_DECREF(tmp$argnum);}
-
-/* check consistency with Y dimension of previous */
-%typemap(in) PLFLT* ArrayCkY (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
-  if(tmp == NULL) return NULL;
-  if(tmp->dimensions[0] != Ylen) {
-    PyErr_SetString(PyExc_ValueError, "Vectors must be same length.");
-    return NULL;
-  }
-  $1 = (PLFLT*)tmp->data;
-}
-%typemap(freearg) PLFLT* ArrayCkY { Py_DECREF(tmp$argnum);}
-
 /* set X length for later consistency checking */
-%typemap(in) PLFLT *ArrayX (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
-  if(tmp == NULL) return NULL;
-  Xlen = tmp->dimensions[0];
-  $1 = (PLFLT*)tmp->data;
+%typemap(in) PLFLT *ArrayX {
+   jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
+   Xlen = (*jenv)->GetArrayLength( jenv, $input);
+   setup_array_1d_PLFLT( &$1, jxdata, Xlen);
+   (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap(freearg) PLFLT* ArrayX {Py_DECREF(tmp$argnum);}
+%typemap(freearg) PLFLT *ArrayX {
+   free($1);
+}
+%typemap(jni) PLFLT *ArrayX jPLFLTArray
+%typemap(jtype) PLFLT *ArrayX jPLFLTbracket
+%typemap(jstype) PLFLT *ArrayX jPLFLTbracket
+%typemap(javain) PLFLT *ArrayX "$javainput"
+%typemap(javaout) PLFLT *ArrayX {
+   return $jnicall;
+}
 
 /* set Y length for later consistency checking */
-%typemap(in) PLFLT *ArrayY (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
-  if(tmp == NULL) return NULL;
-  Ylen = tmp->dimensions[0];
-  $1 = (PLFLT*)tmp->data;
+%typemap(in) PLFLT *ArrayY {
+   jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
+   Ylen = (*jenv)->GetArrayLength( jenv, $input);
+   setup_array_1d_PLFLT( &$1, jydata, Ylen);
+   (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap(freearg) (PLFLT* ArrayY) {Py_DECREF(tmp$argnum);}
+%typemap(freearg) PLFLT *ArrayY {
+   free($1);
+}
+%typemap(jni) PLFLT *ArrayY jPLFLTArray
+%typemap(jtype) PLFLT *ArrayY jPLFLTbracket
+%typemap(jstype) PLFLT *ArrayY jPLFLTbracket
+%typemap(javain) PLFLT *ArrayY "$javainput"
+%typemap(javaout) PLFLT *ArrayY {
+   return $jnicall;
+}
 
 /* with trailing count */
-%typemap(in) (PLFLT *Array, PLINT n) (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 1, 1);
-  if(tmp == NULL) return NULL;
-  $2 = tmp->dimensions[0];
-  $1 = (PLFLT*)tmp->data;
+%typemap(in) (PLFLT *Array, PLINT n) {
+   jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
+   $2 = (*jenv)->GetArrayLength( jenv, $input );
+   setup_array_1d_PLFLT( &$1, jxdata, $2);
+   (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap(freearg) (PLFLT* Array, PLINT n) {Py_DECREF(tmp$argnum); }
+%typemap(freearg) (PLFLT *Array, PLINT n) {
+   free($1);
+}
+%typemap(jni) (PLFLT *Array, PLINT n) jPLFLTArray
+%typemap(jtype) (PLFLT *Array, PLINT n) jPLFLTbracket
+%typemap(jstype) (PLFLT *Array, PLINT n) jPLFLTbracket
+%typemap(javain) (PLFLT *Array, PLINT n) "$javainput"
+%typemap(javaout) (PLFLT *Array, PLINT n) {
+   return $jnicall;
+}
+
+/* check consistency with X dimension of previous */
+%typemap(in) PLFLT* ArrayCkX {
+   jPLFLT *jxdata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
+   if((*jenv)->GetArrayLength( jenv, $input ) != Xlen) {
+      printf("Vectors must be same length.\n");
+      return;
+   }
+   setup_array_1d_PLFLT( &$1, jxdata, Xlen );
+   (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
+}
+%typemap(freearg) PLFLT* ArrayCkX {
+   free($1);
+}
+%typemap(jni) PLFLT* ArrayCkX jPLFLTArray
+%typemap(jtype) PLFLT* ArrayCkX jPLFLTbracket
+%typemap(jstype) PLFLT* ArrayCkX jPLFLTbracket
+%typemap(javain) PLFLT* ArrayCkX "$javainput"
+%typemap(javaout) PLFLT* ArrayCkX{
+   return $jnicall;
+}
+
+/* check consistency with Y dimension of previous */
+%typemap(in) PLFLT* ArrayCkY {
+   jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
+   if((*jenv)->GetArrayLength( jenv, $input ) != Ylen) {
+      printf("Vectors must be same length.\n");
+      return;
+   }
+   setup_array_1d_PLFLT( &$1, jydata, Ylen );
+   (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
+}
+%typemap(freearg) PLFLT* ArrayCkY {
+   free($1);
+}
+%typemap(jni) PLFLT* ArrayCkY jPLFLTArray
+%typemap(jtype) PLFLT* ArrayCkY jPLFLTbracket
+%typemap(jstype) PLFLT* ArrayCkY jPLFLTbracket
+%typemap(javain) PLFLT* ArrayCkY "$javainput"
+%typemap(javaout) PLFLT* ArrayCkY{
+   return $jnicall;
+}
 
 /* 2D array with trailing dimensions, check consistency with previous */
-%typemap(in) (PLFLT **MatrixCk, PLINT nx, PLINT ny) (PyArrayObject* tmp) {
-  int i, size;
-  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 2, 2);
-  if(tmp == NULL) return NULL;
-  if(Xlen != tmp->dimensions[0] || Ylen != tmp->dimensions[1]) {
-    PyErr_SetString(PyExc_ValueError, "Vectors must match matrix.");
-    return NULL;
-  }
-  $2 = tmp->dimensions[0];
-  $3 = tmp->dimensions[1];
-  size = sizeof(PLFLT)*$3;
-  $1 = (PLFLT**)malloc(sizeof(PLFLT*)*$2);
-  for(i=0; i<$2; i++)
-    $1[i] = (PLFLT*)(tmp->data + i*size);
+%typemap(in) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
+   jPLFLT **adat;
+   jobject *ai;
+   int nx = (*jenv)->GetArrayLength( jenv, $input );
+   int ny = -1;
+   int i, j;
+   ai = (jobject *) malloc( nx * sizeof(jobject) );
+   adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   for( i=0; i < nx; i++ )
+     {
+	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
+	adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
+
+	if (ny == -1)
+	  ny = (*jenv)->GetArrayLength( jenv, ai[i] );
+	else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
+	   printf( "Misshapen a array.\n" );
+	   for( j=0; j <= i; j++ )
+	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
+	   free(ai);
+	   free(adat);
+	   return;
+	}
+     }
+
+   if( nx != Xlen || ny != Ylen ) {
+      printf( "Vectors must match matrix.\n" );
+      for( i=0; i < nx; i++ )
+	(*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      free(ai);
+      free(adat);
+      return;
+   }
+   setup_array_2d_PLFLT( &$1, adat, nx, ny );
+   $2 = nx;
+   $3 = ny;
+   for( i=0; i < nx; i++ )
+     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+
+   free(ai);
+   free(adat);
+
 }
 %typemap(freearg) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
-  Py_DECREF(tmp$argnum);
-  free($1);
+   free($1[0]);
+   free($1);
+}
+%typemap(jni) (PLFLT **MatrixCk, PLINT nx, PLINT ny) "jobjectArray"
+%typemap(jtype) (PLFLT **MatrixCk, PLINT nx, PLINT ny) jPLFLTbracket2
+%typemap(jstype) (PLFLT **MatrixCk, PLINT nx, PLINT ny) jPLFLTbracket2
+%typemap(javain) (PLFLT **MatrixCk, PLINT nx, PLINT ny) "$javainput"
+%typemap(javaout) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
+   return $jnicall;
 }
 
+//temporary
+#if 0
 /* 2D array with trailing dimensions, set the X, Y size for later checking */
 %typemap(in) (PLFLT **Matrix, PLINT nx, PLINT ny) (PyArrayObject* tmp) {
   int i, size;

@@ -50,9 +50,7 @@ javadir = $(libdir)/java/plplot/core
 java_DATA = \
 	README.javaAPI \
 	PLStreamc.java \
-	SWIGTYPE_p_double.java \
 	SWIGTYPE_p_p_char.java \
-	SWIGTYPE_p_p_double.java \
 	config.java \
 	plplotjavac.java \
 	plplotjavacJNI.java
@@ -65,9 +63,7 @@ java/plplot/core/PLStreamc.class java/plplot/core/config.class: \
 	javac -d java PLStreamc.java
 
 CLEANFILES = \
-	SWIGTYPE_p_double.java \
 	SWIGTYPE_p_p_char.java \
-	SWIGTYPE_p_p_double.java \
 	plplotjavac.java \
 	plplotjavacJNI.java \
 	plplotjavac_wrap.c

@@ -94,6 +94,7 @@ class x08 {
         double[] y = new double[ YPTS ];
         double[][] z = new double[XPTS][YPTS];
 	double clev[] = new double[LEVELS];
+        double clev_null [] = new double[0];
 
         double xx, yy, r;
 	double zmin=Double.MAX_VALUE, zmax=Double.MIN_VALUE;;
@@ -152,18 +153,20 @@ class x08 {
 
 	      pls.plcol0(2);
 	      if( ifshade == 0) // wireframe plot
-		pls.plplot3d( x, y, z, opt[k], 1 );
+		pls.plot3d( x, y, z, opt[k], 1 );
 	      else if (ifshade == 1) { // mag colored mesh plot
 		cmap1_init(0);
 		pls.plmesh( x, y, z, opt[k] | pls.MAG_COLOR);
 	      } else if (ifshade == 2) { // reflected light surface plot
 		cmap1_init(1);
-		pls.plsurf3d( x, y, z, 0, null);
+		 // with new interface haven't yet made null work so have
+		 // to put in specific zero-length array.
+		pls.plsurf3d( x, y, z, 0, clev_null);
 	      } else if (ifshade == 3) { // magnitude colored surface
 		 cmap1_init(0);
-		 pls.plsurf3d(x, y, z, pls.MAG_COLOR, null);
+		 pls.plsurf3d(x, y, z, pls.MAG_COLOR, clev_null);
 	      } else if (ifshade == 4) { //  magnitude colored surface with faceted squares
-		  pls.plsurf3d(x, y, z, pls.MAG_COLOR | pls.FACETED, null);
+		  pls.plsurf3d(x, y, z, pls.MAG_COLOR | pls.FACETED, clev_null);
 	      } else { //  magnitude colored surface with surface and xy plane contour lines
 		  pls.plsurf3d(x, y, z, pls.MAG_COLOR | pls.SURF_CONT | pls.BASE_CONT, clev);
 	      }
