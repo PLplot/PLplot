@@ -67,7 +67,11 @@ function ccmap = colormap(map)
   plscmap1n(rows(map)); # number of colors
   plscmap1(map(:,1), map(:,2), map(:,3));
   plflush;#pleop;
-  __pl_plotit;
+  
+  if (automatic_replot)
+    ## can cause problems on plot scripts that dont support automatic _replot
+    __pl_plotit; 
+  endif
 
   if (nargout)
     ccmap = cmap;
