@@ -16,15 +16,18 @@ function __pl_mesh(caller, ...)
 
   global __pl
   __pl_strm = __pl_init;
+  
+  caller(length(caller)+1:5)=" "; ## compatibility with 2.0.16. Notice
+                                  ## the blank spaces at the "case"s bellow.
 
   switch (caller)
-    case ("mesh")
+    case ("mesh ")
       type = 0;
     case ("meshc")
       type = 1;
     case ("meshz")
       type = 2;
-    case ("surf")
+    case ("surf ")
       type = 3;
     case ("surfc")
       type = 4;
