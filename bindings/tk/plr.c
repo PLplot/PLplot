@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/07/16 21:58:37  mjl
-   Removed handling for orientation, aspect setting at a low level, since this
-   is now done by the driver interface layer.
+   Revision 1.3  1993/07/28 05:42:38  mjl
+   Some minor changes to aid debugging.
 
+ * Revision 1.2  1993/07/16  21:58:37  mjl
+ * Removed handling for orientation, aspect setting at a low level, since this
+ * is now done by the driver interface layer.
+ *
  * Revision 1.1  1993/07/02  06:58:30  mjl
  * The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
  *
@@ -67,7 +70,7 @@ if ((code) == -1) return(-1);
 /* Error termination */
 
 #define barf(msg) \
-{ fprintf(stderr, "%s\n", msg); return(-1); }
+{ fprintf(stderr, "%s\nCurrent command code: %d\n", msg, csave); return(-1); }
 
 /* Static function prototypes. */
 
@@ -83,8 +86,9 @@ static int	plr_get		(PLRDev *);
 static int	plr_unget	(PLRDev *, U_CHAR);
 static int	get_ncoords	(PLRDev *, PLFLT *, PLFLT *, PLINT);
 
-/* Temporaries */
+/* variables */
 
+static int	csave = -1;
 static U_CHAR	dum_uchar;
 static U_SHORT	dum_ushort;
 static char	dum_char80[80];
@@ -125,7 +129,7 @@ plr_process(PLRDev *plr)
 
     while (plr->nbytes > 0) {
 	plr_cmd( c = plr_get(plr) );
-
+	csave = c;
 	plr_cmd( plr_process1(plr, (U_CHAR) c) );
     }
     return 0;
