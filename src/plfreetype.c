@@ -4,7 +4,7 @@
  * Copyright (C) 2002  Maurice LeBrun
  * Copyright (C) 2002, 2004, 2005  Alan W. Irwin
  * Copyright (C) 2003, 2004  Joao Cardoso
- * Copyright (C) 2003, 2004  Rafael Laboissiere
+ * Copyright (C) 2003, 2004, 2005  Rafael Laboissiere
  * Copyright (C) 2004  Andrew Ross
  *
  * This file is part of PLplot.
@@ -303,7 +303,14 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
     adjust.y= (FT->face->descender >> 6);
 #endif
 
+/* (RL) adjust.y is zeroed below,, making the code above (around
+ * DODGIE_DECENDER_HACK) completely useless.  This is necessary for
+ * getting the vertical alignement of text right, which is coped with
+ * in function plD_render_freetype_text now.
+ */
+
     adjust.x=0;
+    adjust.y=0;
     FT_Vector_Transform( &adjust, &FT->matrix);
     x+=adjust.x;
     y-=adjust.y;
@@ -658,6 +665,7 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     FT_Vector adjust;
     PLUNICODE fci;
     FT_Fixed height;
+    PLFLT height_factor;
 
 /*
  *  First of all we will see if we are buffering the output. If we are,
@@ -718,9 +726,20 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  * I wish I knew.
  */
 
-    height = (FT_Fixed) 
-             (0x10000 * (FT->face->ascender - FT->face->descender) 
-                              / FT->face->ascender);
+/* (RL, on 2005-01-21) The height_factor variable is introduced below.
+ * It is used here and farther below when computing the vertical
+ * adjustment.  The rationale for its introduction is as follow: up to
+ * now, the text produced with Hershey fonts was systematically taller
+ * than the same text produced with TT fonts, and tha by a factor of
+ * around 1.125 (I discovered this empirically).  This corresponds
+ * roughly to the ratio between total height and the ascender of some
+ * TT faces.  Hence the computation below.  Remember that descender is
+ * always a negative quantity.
+ */
+
+    height_factor = (PLFLT) (FT->face->ascender - FT->face->descender) 
+                    / FT->face->ascender;
+    height = (FT_Fixed) (0x10000 * height_factor);
 
 #ifdef DJGPP
     FT->matrix.xx = height * t[0];
@@ -833,6 +852,21 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
 #else
     adjust.y=0;
 #endif
+
+/* (RL, on 2005-01-21) The vertical adjustment is set below, making
+ * the code above moot.  I use the value of h as return by FT_StrX_YW,
+ * which should correspond to the total height of the text being
+ * drawn.  Freetype aligns text around the baseline, while PLplot
+ * aligns to the center of the ascender portion.  We must then adjust
+ * by half of the ascender and this is why there is a division by
+ * height_factor below.  The second division by height_factor is here
+ * because the adjust vector is later multiplied by FT->matrix, which
+ * was previously multiplied by height_factor.
+ */
+
+    adjust.y = - (FT_Pos) (h / (height_factor * height_factor) / 2.0);
+
+
     adjust.x=args->just*w;    /* was *-1; but just minus it in a few line time now */
 
     FT_Vector_Transform( &adjust, &FT->matrix);    /* was /&matrix); -  was I using the wrong matrix all this time ?*/
