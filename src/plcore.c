@@ -55,8 +55,7 @@ plP_init(void)
 {
     plsc->page_status = AT_EOP;
 
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_init) (plsc);
+    (*plsc->dispatch_table->pl_init) ((struct PLStream_struct *) plsc);
 
     if (plsc->plbuf_write)
 	plbuf_init(plsc);
@@ -77,8 +76,7 @@ plP_eop(void)
     if (plsc->plbuf_write)
 	plbuf_eop(plsc);
 
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_eop) (plsc);
+    (*plsc->dispatch_table->pl_eop) ((struct PLStream_struct *) plsc);
 }
 
 /* Set up new page. */
@@ -96,8 +94,7 @@ plP_bop(void)
     plsc->page_status = AT_BOP;
     plsc->nplwin = 0;
 
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_bop) (plsc);
+    (*plsc->dispatch_table->pl_bop) ((struct PLStream_struct *) plsc);
 
     if (plsc->plbuf_write)
 	plbuf_bop(plsc);
@@ -114,8 +111,7 @@ plP_tidy(void)
 	plsc->tidy_data = NULL;
     }
 
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_tidy) (plsc);
+    (*plsc->dispatch_table->pl_tidy) ((struct PLStream_struct *) plsc);
 
     if (plsc->plbuf_write)
 	plbuf_tidy(plsc);
@@ -129,8 +125,7 @@ plP_tidy(void)
 void
 plP_state(PLINT op)
 {
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_state) (plsc, op);
+    (*plsc->dispatch_table->pl_state) ((struct PLStream_struct *) plsc, op);
 
     if (plsc->plbuf_write)
 	plbuf_state(plsc, op);
@@ -141,8 +136,7 @@ plP_state(PLINT op)
 void
 plP_esc(PLINT op, void *ptr)
 {
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_esc) (plsc, op, ptr);
+    (*plsc->dispatch_table->pl_esc) ((struct PLStream_struct *) plsc, op, ptr);
 
     if (plsc->plbuf_write)
 	plbuf_esc(plsc, op, ptr);
@@ -193,8 +187,8 @@ plP_swin(PLWindow *plwin)
 /* It must use the filtered data, which it can get from *plsc */
 
     if (plsc->dev_swin) {
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_SWIN, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_SWIN, NULL );
     }
 }
 
@@ -289,15 +283,15 @@ plP_fill(short *x, short *y, PLINT npts)
 static void
 grline(short *x, short *y, PLINT npts)
 {
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_line) (plsc, x[0], y[0], x[1], y[1]);
+    (*plsc->dispatch_table->pl_line) ( (struct PLStream_struct *) plsc,
+                                       x[0], y[0], x[1], y[1] );
 }
 
 static void
 grpolyline(short *x, short *y, PLINT npts)
 {
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_polyline) (plsc, x, y, npts);
+    (*plsc->dispatch_table->pl_polyline) ( (struct PLStream_struct *) plsc,
+                                           x, y, npts );
 }
 
 /* Here if the desired area fill capability isn't present, we mock up */
@@ -325,8 +319,8 @@ grfill(short *x, short *y, PLINT npts)
 	plsc->dev_x = x;
 	plsc->dev_y = y;
 
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_FILL, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_FILL, NULL );
     }
     else
 	plfill_soft(x, y, npts);
@@ -616,8 +610,8 @@ calc_diplt(void)
     PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
 
     if (plsc->dev_di) {
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_DI, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_DI, NULL );
     }
 
     if ( ! (plsc->difilt & PLDI_PLT))
@@ -698,8 +692,8 @@ calc_didev(void)
     PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
 
     if (plsc->dev_di) {
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_DI, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_DI, NULL );
     }
 
     if ( ! (plsc->difilt & PLDI_DEV))
@@ -816,8 +810,8 @@ calc_diori(void)
     PLFLT x0, y0, lx, ly, aspect;
 
     if (plsc->dev_di) {
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_DI, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_DI, NULL );
     }
 
     if ( ! (plsc->difilt & PLDI_ORI))
@@ -965,8 +959,8 @@ void
 c_plflush(void)
 {
     if (plsc->dev_flush) {
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_FLUSH, NULL);
+	(*plsc->dispatch_table->pl_esc) ( (struct PLStream_struct *) plsc,
+                                          PLESC_FLUSH, NULL );
     }
     else {
 	if (plsc->OutFile != NULL)
@@ -1368,6 +1362,8 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 static void
 plGetDev()
 {
+    int n;
+
 /* Start by checking to see that the dispatch table has been initialized with
  * the info from the static drivers table and the available dynamic
  * drivers. */
@@ -1378,6 +1374,9 @@ plGetDev()
     plSelectDev();
 
     plLoadDriver();
+
+    n = plsc->device - 1;
+    plsc->dispatch_table = &dispatch_table[n];
 }
 
 static void
@@ -1504,7 +1503,7 @@ plInitDispatchTable()
 /*--------------------------------------------------------------------------*\
  * void plSelectDev()
  *
- * If the the user has not already specified the output device, or the
+ * If the user has not already specified the output device, or the
  * one specified is either: (a) not available, (b) "?", or (c) NULL, the
  * user is prompted for it.
  *
