@@ -85,8 +85,8 @@ enable-tk:      yes             enable-dp:      yes
 enable-itcl:    yes             enable-f77:     yes
 -----------------------------------------------------------------------------
 
-If I wanted to change to using e.g. double precision with optimization
-turned on and no shared library, I would rerun configure by typing:
+If you want to change to using e.g. double precision with optimization
+turned on and no shared library, you could rerun configure by typing:
 
 % configure --with-double --with-opt --without-shlib
 
@@ -108,6 +108,12 @@ with-gcc	Use gcc as C compiler instead of default
 
 enable-f77	Include Fortran interface
 enable-<...>	Include "..." driver (if present) and all dependent code.
+
+(--disable-<capability> to disable)
+
+You can specify the installation directory by using the --prefix flag, e.g.:
+
+% configure --prefix=$HOME/tools/plplot
 
 If you want configure to remember certain settings each time it is run
 for your site, you can create a file ~/config/cf_plplot.in.  If found,
