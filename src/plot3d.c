@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/06/30 18:22:13  mjl
+ * Revision 1.13  1994/07/15 20:37:21  furnish
+ * Added routines pl3line and pl3poin for drawing lines and points in 3
+ * space.  Added a new example program, and dependency info to build it.
+ *
+ * Revision 1.12  1994/06/30  18:22:13  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -68,6 +72,40 @@ static int  plabv	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT, 
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 /* INDENT ON */
+
+void
+c_pl3line(PLFLT *x, PLFLT *y, PLFLT *z, PLINT n)
+{
+    int i;
+    PLFLT u, v;
+
+    for( i=0; i < n; i++ ) {
+	u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
+	v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
+	if (i==0)
+	    plP_movphy(u,v);
+	else
+	    plP_draphy(u,v);
+    }
+
+    return;
+}
+
+void
+c_pl3poin(PLFLT *x, PLFLT *y, PLFLT *z, PLINT n)
+{
+    int i;
+    PLFLT u, v;
+
+    for( i=0; i < n; i++ ) {
+	u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
+	v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
+	plP_movphy(u,v);
+	plP_draphy(u,v);
+    }
+
+    return;
+}
 
 /*----------------------------------------------------------------------*\
  * void plmesh(x, y, z, nx, ny, opt)

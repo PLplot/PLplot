@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.64  1994/07/12 19:18:00  mjl
+ * Revision 1.65  1994/07/15 20:37:12  furnish
+ * Added routines pl3line and pl3poin for drawing lines and points in 3
+ * space.  Added a new example program, and dependency info to build it.
+ *
+ * Revision 1.64  1994/07/12  19:18:00  mjl
  * Fixed prototype for plshade().
  *
  * Revision 1.63  1994/06/30  18:33:36  mjl
@@ -476,6 +480,8 @@ typedef struct {
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
+#define    pl3line      c_pl3line
+#define    pl3poin      c_pl3poin
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
 #define    plprec	c_plprec
@@ -583,6 +589,8 @@ typedef struct {
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
+#define    c_pl3line    pl3line
+#define    c_pl3poin    pl3poin
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
 #define    c_plprec	plprec
@@ -942,6 +950,12 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
+
+void
+c_pl3line(PLFLT *x, PLFLT *y, PLFLT *z, PLINT n);
+
+void
+c_pl3poin(PLFLT *x, PLFLT *y, PLFLT *z, PLINT n);
 
 /* Set fill pattern directly. */
 
