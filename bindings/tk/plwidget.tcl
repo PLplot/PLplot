@@ -804,6 +804,11 @@ proc plw_save_close {w} {
 # Responsible for making sure zoom menu entries are normal or disabled as
 # appropriate.  In particular, that "Back" or "Forward" are only displayed
 # if it is possible to traverse the zoom windows list in that direction.
+#
+# Note you should use the entry name as argument to entryconfigure to guard
+# against problems in using the numerical index.  This caused problems going
+# from Tcl 7.x -> 8.x (I think in 8.x the tear off entry became numbered where
+# previously it wasn't).
 #----------------------------------------------------------------------------
 
 proc plw_update_zoom {w} {
@@ -813,17 +818,17 @@ proc plw_update_zoom {w} {
 # Back
 
     if { $zidx($w) == 0 } then {
-	$pmenu($w).zoom entryconfigure 1 -state disabled
+	$pmenu($w).zoom entryconfigure Back -state disabled
     } else {
-	$pmenu($w).zoom entryconfigure 1 -state normal
+	$pmenu($w).zoom entryconfigure Back -state normal
     }
 
 # Forward
 
     if { $zidx_max($w) == 0 || $zidx($w) == $zidx_max($w) } then {
-	$pmenu($w).zoom entryconfigure 2 -state disabled
+	$pmenu($w).zoom entryconfigure Forward -state disabled
     } else {
-	$pmenu($w).zoom entryconfigure 2 -state normal
+	$pmenu($w).zoom entryconfigure Forward -state normal
     }
 }
 
