@@ -1,7 +1,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.7  1995/05/06 17:08:14  mjl
+# Revision 1.8  1995/06/01 21:22:37  mjl
+# Changed to use new Palette file selector.
+#
+# Revision 1.7  1995/05/06  17:08:14  mjl
 # Shave and a haircut.
 #
 # Revision 1.6  1995/01/13  23:19:30  mjl
@@ -53,7 +56,7 @@
 #----------------------------------------------------------------------------
 
 proc plfile_open {op} {
-    set file [getItem "Enter file name"]
+    set file [getPaletteFile]
     if { [string index $file 0] == "~" } {
 	set file [glob ~][string trimleft $file ~]
     }
