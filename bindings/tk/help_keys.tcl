@@ -38,10 +38,10 @@ plrender} bold
 <Delete>	Back page
 <Page up>
 
-+<num><Return>	Seek forward <num> pages.
--<num><Return>	Seek backward <num> pages.
++<n><Return>	Seek forward <n> pages.
+-<n><Return>	Seek backward <n> pages.
 
-<num><Return>	Seek to page <num>.
+<n><Return>	Seek to page <n>.
 
 Both <Backspace> and <Delete> are recognized for a back-page since the
 target system may use either as its erase key.  <Page Up> is present on
