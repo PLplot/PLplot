@@ -52,4 +52,6 @@ proc x07 {{w loopback}} {
 	}
 	$w cmd plmtex "t" 1.5 0.5 0.5 "PLplot Example 7 - PLSYM symbols"
     }
+# Restore defaults
+    $w cmd plcol0 1
 }
