@@ -56,8 +56,8 @@ links:
   @copy $(PLDIR)\examples\c\lena.pgm $(PLTMP)\lena.pgm
   @copy $(PLDIR)\drivers\*.c $(PLTMP)\*.c
   @copy $(PLDIR)\utils\*.c $(PLTMP)\*.c
-  @copy $(PLDIR)\lib\*.fnt $(PLTMP)\*.fnt
-  @copy $(PLDIR)\lib\*.map $(PLTMP)\*.map
+  @copy $(PLDIR)\data\*.fnt $(PLTMP)\*.fnt
+  @copy $(PLDIR)\data\*.map $(PLTMP)\*.map
   @copy $(PLDIR)\bindings\python\plplotcmodule.i $(PLTMP)\plplotcmodule.i
   @copy $(PLDIR)\bindings\python\plplot_widgetmodule.c $(PLTMP)\plplot_widgetmodule.c
   @copy $(PLDIR)\bindings\python\*.py $(PLTMP)\*.py
@@ -67,7 +67,7 @@ links:
 #  @copy src\*.c $(PLTMP)\*.cpp
   @copy src\win3.cpp $(PLTMP)
   @copy src\plstub.cpp $(PLTMP)
-  @copy src\resource.h $(PLTMP)\plplot
+  @copy src\resource.h $(PLTMP)
   @copy src\setup.py $(PLTMP)\setup.py
 #  @copy src\*.rc $(PLTMP)
 #  @copy src\*.ico $(PLTMP)
@@ -93,7 +93,9 @@ common:
 #define __PLCONFIG_H__
 #define LIB_DIR "$(PLLIB:\=\\)"
 #define BIN_DIR "$(PLBIN:\=\\)"
-#define VERSION "5.2.0"
+#define DATA_DIR "$(PLLIB:\=\\)"
+#define DRV_DIR "$(PLLIB:\=\\)"
+#define VERSION "5.2.1"
 #define PL_DOUBLE
 #endif
 <<keep

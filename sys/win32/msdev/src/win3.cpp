@@ -14,14 +14,14 @@ win3.cpp
 			
 */
 
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 #ifdef PLD_win3
 
 #include <stdio.h>
 #include <string.h>
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
-#include "plplot/resource.h"
+#include "plplotP.h"
+#include "drivers.h"
+#include "resource.h"
 #include <windows.h>
 #include <assert.h>
 
