@@ -910,11 +910,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_plmeta" = "yes" -o "$enable_plmeta $enable_drivers" = " yes"; then
+    enable_plmeta="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_plmeta 1
 EOF
 
     DEVICES="$DEVICES plmeta"
+else
+    enable_plmeta="no"
 fi
 # Check whether --enable-null or --disable-null was given.
 enableval="$enable_null"
@@ -928,11 +931,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_null" = "yes" -o "$enable_null $enable_drivers" = " yes"; then
+    enable_null="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_null 1
 EOF
 
     DEVICES="$DEVICES null"
+else
+    enable_null="no"
 fi
 # Check whether --enable-xterm or --disable-xterm was given.
 enableval="$enable_xterm"
@@ -946,11 +952,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_xterm" = "yes" -o "$enable_xterm $enable_drivers" = " yes"; then
+    enable_xterm="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_xterm 1
 EOF
 
     DEVICES="$DEVICES xterm"
+else
+    enable_xterm="no"
 fi
 # Check whether --enable-tek4010 or --disable-tek4010 was given.
 enableval="$enable_tek4010"
@@ -964,11 +973,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_tek4010" = "yes" -o "$enable_tek4010 $enable_drivers" = " yes"; then
+    enable_tek4010="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_tek4010 1
 EOF
 
     DEVICES="$DEVICES tek4010"
+else
+    enable_tek4010="no"
 fi
 # Check whether --enable-tek4107 or --disable-tek4107 was given.
 enableval="$enable_tek4107"
@@ -982,11 +994,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_tek4107" = "yes" -o "$enable_tek4107 $enable_drivers" = " yes"; then
+    enable_tek4107="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_tek4107 1
 EOF
 
     DEVICES="$DEVICES tek4107"
+else
+    enable_tek4107="no"
 fi
 # Check whether --enable-mskermit or --disable-mskermit was given.
 enableval="$enable_mskermit"
@@ -1000,11 +1015,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_mskermit" = "yes" -o "$enable_mskermit $enable_drivers" = " yes"; then
+    enable_mskermit="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_mskermit 1
 EOF
 
     DEVICES="$DEVICES mskermit"
+else
+    enable_mskermit="no"
 fi
 # Check whether --enable-conex or --disable-conex was given.
 enableval="$enable_conex"
@@ -1018,11 +1036,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_conex" = "yes" -o "$enable_conex $enable_drivers" = " yes"; then
+    enable_conex="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_conex 1
 EOF
 
     DEVICES="$DEVICES conex"
+else
+    enable_conex="no"
 fi
 # Check whether --enable-linuxvga or --disable-linuxvga was given.
 enableval="$enable_linuxvga"
@@ -1036,11 +1057,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_linuxvga" = "yes" -o "$enable_linuxvga $enable_drivers" = " yes"; then
+    enable_linuxvga="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_linuxvga 1
 EOF
 
     DEVICES="$DEVICES linuxvga"
+else
+    enable_linuxvga="no"
 fi
 # Check whether --enable-vlt or --disable-vlt was given.
 enableval="$enable_vlt"
@@ -1054,11 +1078,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_vlt" = "yes" -o "$enable_vlt $enable_drivers" = " yes"; then
+    enable_vlt="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_vlt 1
 EOF
 
     DEVICES="$DEVICES vlt"
+else
+    enable_vlt="no"
 fi
 # Check whether --enable-versaterm or --disable-versaterm was given.
 enableval="$enable_versaterm"
@@ -1072,11 +1099,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_versaterm" = "yes" -o "$enable_versaterm $enable_drivers" = " yes"; then
+    enable_versaterm="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_versaterm 1
 EOF
 
     DEVICES="$DEVICES versaterm"
+else
+    enable_versaterm="no"
 fi
 # Check whether --enable-dg300 or --disable-dg300 was given.
 enableval="$enable_dg300"
@@ -1090,11 +1120,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_dg300" = "yes" -o "$enable_dg300 $enable_drivers" = " yes"; then
+    enable_dg300="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_dg300 1
 EOF
 
     DEVICES="$DEVICES dg300"
+else
+    enable_dg300="no"
 fi
 # Check whether --enable-ps or --disable-ps was given.
 enableval="$enable_ps"
@@ -1108,11 +1141,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_ps" = "yes" -o "$enable_ps $enable_drivers" = " yes"; then
+    enable_ps="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_ps 1
 EOF
 
     DEVICES="$DEVICES ps"
+else
+    enable_ps="no"
 fi
 # Check whether --enable-xfig or --disable-xfig was given.
 enableval="$enable_xfig"
@@ -1126,11 +1162,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_xfig" = "yes" -o "$enable_xfig $enable_drivers" = " yes"; then
+    enable_xfig="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_xfig 1
 EOF
 
     DEVICES="$DEVICES xfig"
+else
+    enable_xfig="no"
 fi
 # Check whether --enable-ljii or --disable-ljii was given.
 enableval="$enable_ljii"
@@ -1144,11 +1183,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_ljii" = "yes" -o "$enable_ljii $enable_drivers" = " yes"; then
+    enable_ljii="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_ljii 1
 EOF
 
     DEVICES="$DEVICES ljii"
+else
+    enable_ljii="no"
 fi
 # Check whether --enable-hp7470 or --disable-hp7470 was given.
 enableval="$enable_hp7470"
@@ -1162,11 +1204,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_hp7470" = "yes" -o "$enable_hp7470 $enable_drivers" = " yes"; then
+    enable_hp7470="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_hp7470 1
 EOF
 
     DEVICES="$DEVICES hp7470"
+else
+    enable_hp7470="no"
 fi
 # Check whether --enable-hp7580 or --disable-hp7580 was given.
 enableval="$enable_hp7580"
@@ -1180,11 +1225,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_hp7580" = "yes" -o "$enable_hp7580 $enable_drivers" = " yes"; then
+    enable_hp7580="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_hp7580 1
 EOF
 
     DEVICES="$DEVICES hp7580"
+else
+    enable_hp7580="no"
 fi
 # Check whether --enable-lj_hpgl or --disable-lj_hpgl was given.
 enableval="$enable_lj_hpgl"
@@ -1198,11 +1246,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_lj_hpgl" = "yes" -o "$enable_lj_hpgl $enable_drivers" = " yes"; then
+    enable_lj_hpgl="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_lj_hpgl 1
 EOF
 
     DEVICES="$DEVICES lj_hpgl"
+else
+    enable_lj_hpgl="no"
 fi
 # Check whether --enable-imp or --disable-imp was given.
 enableval="$enable_imp"
@@ -1216,11 +1267,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_imp" = "yes" -o "$enable_imp $enable_drivers" = " yes"; then
+    enable_imp="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_imp 1
 EOF
 
     DEVICES="$DEVICES imp"
+else
+    enable_imp="no"
 fi
 # Check whether --enable-xwin or --disable-xwin was given.
 enableval="$enable_xwin"
@@ -1234,11 +1288,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_xwin" = "yes" -o "$enable_xwin $enable_drivers" = " yes"; then
+    enable_xwin="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_xwin 1
 EOF
 
     DEVICES="$DEVICES xwin"
+else
+    enable_xwin="no"
 fi
 # Check whether --enable-tk or --disable-tk was given.
 enableval="$enable_tk"
@@ -1252,11 +1309,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_tk" = "yes" -o "$enable_tk $enable_drivers" = " yes"; then
+    enable_tk="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_tk 1
 EOF
 
     DEVICES="$DEVICES tk"
+else
+    enable_tk="no"
 fi
 # Check whether --enable-dp or --disable-dp was given.
 enableval="$enable_dp"
@@ -1270,11 +1330,14 @@ if test -n "$withval"; then
 fi
 
 if test "$enable_dp" = "yes" -o "$enable_dp $enable_drivers" = " yes"; then
+    enable_dp="yes"
     cat >> confdefs.h <<\EOF
 #define PLD_dp 1
 EOF
 
     DEVICES="$DEVICES dp"
+else
+    enable_dp="no"
 fi
 
 
@@ -1992,7 +2055,7 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1996 "configure"
+#line 2059 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -2006,7 +2069,7 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 2010 "configure"
+#line 2073 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -2149,7 +2212,7 @@ test -z "$x_direct_test_library" && x_direct_test_library=Xt
 test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
 test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
 cat > conftest.$ac_ext <<EOF
-#line 2153 "configure"
+#line 2216 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
@@ -2212,7 +2275,7 @@ rm -f conftest*
 ac_save_LIBS="$LIBS"
 LIBS="-l$x_direct_test_library $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2216 "configure"
+#line 2279 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2298,7 +2361,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 2302 "configure"
+#line 2365 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -2355,7 +2418,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2359 "configure"
+#line 2422 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3266,7 +3329,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lf2c  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3270 "configure"
+#line 3333 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3333,7 +3396,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3337 "configure"
+#line 3400 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3366,7 +3429,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3370 "configure"
+#line 3433 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3399,7 +3462,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3403 "configure"
+#line 3466 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3432,7 +3495,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3436 "configure"
+#line 3499 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3465,7 +3528,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3469 "configure"
+#line 3532 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3641,7 +3704,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3645 "configure"
+#line 3708 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3662,7 +3725,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3666 "configure"
+#line 3729 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3684,7 +3747,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3688 "configure"
+#line 3751 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3702,7 +3765,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3706 "configure"
+#line 3769 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3723,7 +3786,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3727 "configure"
+#line 3790 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3760,7 +3823,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3764 "configure"
+#line 3827 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3821,7 +3884,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3825 "configure"
+#line 3888 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3853,7 +3916,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3857 "configure"
+#line 3920 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -3887,7 +3950,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3891 "configure"
+#line 3954 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -4002,7 +4065,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4006 "configure"
+#line 4069 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -4057,7 +4120,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4061 "configure"
+#line 4124 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
