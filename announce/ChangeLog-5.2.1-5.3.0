@@ -1,3 +1,201 @@
+Commit from rlaboiss (2004-02-02 11:49 CET)
+--------------------
+
+[RL for Brian D. Wright:]
+
+Changed version to 5.3.0 and release to 1mdk.
+
+  plplot  rpm/plplot_mandrake9.2.spec  1.3
+
+
+Commit from rlaboiss (2004-02-01 11:49 CET)
+--------------------
+
+[RL for Brian D. Wright:]
+
+Bug fixed spec file for Mandrake 9.2. Fixes some missing file attribute
+settings and adds some directories to file lists for proper clean up on
+uninstall.
+
+  plplot  rpm/plplot_mandrake9.2.spec  1.2
+
+
+Commit from airwin (2004-01-31 07:26 CET)
+------------------
+
+Add wish list item for converting configuration-related environment
+variables to ./configure options.
+
+  plplot  PROBLEMS  1.26
+
+
+Commit from airwin (2004-01-31 07:22 CET)
+------------------
+
+Tore out the old Unix instructions which were so old they were completely
+misleading.  Replaced with more generic Unix instructions including
+rudimentary documentation of our configuration environment variables.
+Also included specific instructions for Cygwin and solaris.
+
+  plplot  INSTALL  1.12
+
+
+Commit from airwin (2004-01-28 20:38 CET)
+------------------
+
+Change incorrect $(DESTDIR)/ ==> $(DESTDIR)
+
+  plplot  examples/Makefile.am      1.7
+  plplot  examples/c/Makefile.am    1.17
+  plplot  examples/c++/Makefile.am  1.15
+  plplot  examples/f77/Makefile.am  1.20
+
+
+Commit from rlaboiss (2004-01-28 20:08 CET)
+--------------------
+
+Disable Octave bindings building by default
+
+  plplot  configure.ac  1.158
+
+
+Commit from airwin (2004-01-28 18:56 CET)
+------------------
+
+Use EXPAND_EXPRESSION to determine PYTHON_INSTDIR and JAVA_INSTDIR rather
+than previous multiple invocations of echo and sed to do the same thing.
+
+  plplot  configure.ac  1.157
+
+
+Commit from jcard (2004-01-28 18:40 CET)
+-----------------
+
+Fix the usage message.
+
+  plplot  bindings/octave/demos/plplot_octave_demo.m  1.4
+
+
+Commit from jcard (2004-01-28 18:39 CET)
+-----------------
+
+Fix usage message formating
+
+  plplot  bindings/octave/demos/x14c.m  1.9
+
+
+Commit from jcard (2004-01-28 18:38 CET)
+-----------------
+
+Fix (again) the usage message.
+
+  plplot  bindings/octave/demos/x01c.m  1.11
+
+
+Commit from jcard (2004-01-28 18:37 CET)
+-----------------
+
+Exchange mouse buttons 2 and 3 in help/label messages.
+
+  plplot  bindings/octave/demos/p17.m  1.3
+  plplot  bindings/octave/demos/p18.m  1.2
+
+
+Commit from andrewross (2004-01-28 13:36 CET)
+----------------------
+
+Fix 3 memory leaks found using plrender on x01c example.
+Any tcl_cmd command line options do not get memory freed on exit in plcore.c
+If a stream is not fully initialised the FileName string associated with
+it is not freed in plcore.c
+There is a malloc without a free in plrender.c
+
+  plplot  src/plcore.c      1.126
+  plplot  utils/plrender.c  1.64
+
+
+Commit from rlaboiss (2004-01-28 10:57 CET)
+--------------------
+
+Make the PostScript linewidth a multiple of DEF_WIDTH.
+
+  plplot  drivers/ps.c  1.63
+
+
+Commit from rlaboiss (2004-01-28 10:28 CET)
+--------------------
+
+Get out of the while loop when plGetCursor returns a status == 0, such that
+this script will not hang forever when launched with a non-interactive
+driver.
+
+  plplot  bindings/octave/demos/x01c.m  1.10
+
+
+Commit from aroach (2004-01-27 05:54 CET)
+------------------
+
+Ok, I will admit, this one has me stumped, but for reasons I can't
+understand, I have to move <time.h> a few lines up to get rid of a
+problem with how select() is defined in DJGPP's header. Never affected
+anything before, but... as long as it works now, who cares ?
+
+  plplot  sys/dos/djgpp/src/gnusvga.c  1.17
+
+
+Commit from aroach (2004-01-27 05:51 CET)
+------------------
+
+Small changes to get DJGPP version OK with 5.3.0
+
+  plplot  sys/dos/djgpp/cf/plconfig.in  1.5
+  plplot  sys/dos/djgpp/cf/version.in   1.2
+
+
+Commit from rlaboiss (2004-01-25 23:21 CET)
+--------------------
+
+Since on Octave 2.1.53 glob returns a cell array instead of a padded char
+array, call char() on the result of glob(), such that toggle_plplot_use will
+work on both Octave 2.1.50 and 2.1.53.
+
+Thanks to Brian D. Wright <bdwright@phy.ucsf.edu> for the fix.
+
+  plplot  bindings/octave/PLplot/toggle_plplot_use.m  1.6
+
+
+Commit from rlaboiss (2004-01-25 23:17 CET)
+--------------------
+
+Call help for plplot_octave_path instead of octave_plplot_path
+
+  plplot  bindings/octave/PLplot/plplot_octave_path.m.in  1.8
+
+
+Commit from jcard (2004-01-25 19:53 CET)
+-----------------
+
+Fix help message.
+
+  plplot  bindings/octave/PLplot/set_view.m  1.11
+
+
+Commit from jcard (2004-01-25 19:52 CET)
+-----------------
+
+Fix usage message. Slightly mouse behavior change.
+
+  plplot  bindings/octave/demos/x01c.m  1.9
+
+
+Commit from jcard (2004-01-25 19:48 CET)
+-----------------
+
+Fix usage messages.
+
+  plplot  bindings/octave/demos/x14c.m  1.8
+
+
 Commit from rlaboiss (2004-01-25 15:37 CET)
 --------------------
 
@@ -55,23 +253,6 @@ Exclude from EXTRA_DIST the *.sh files that are generated by AC_OUTPUT.
   plplot  test/Makefile.am  1.12
 
 
-Commit from rlaboiss (2004-01-25 15:04 CET)
---------------------
-
-Produce a unified diff in cvs commit messages
-
-  CVSROOT  loginfo  1.64
-
-
-Commit from rlaboiss (2004-01-25 15:02 CET)
---------------------
-
-Dummy commit, please ignore
-
-  plplot  acinclude.m4  1.14
-  plplot  bootstrap.sh  1.29
-
-
 Commit from rlaboiss (2004-01-25 14:52 CET)
 --------------------
 
@@ -88,22 +269,6 @@ Update to remove solved problems, and document new problems which have
 surfaced because of our more extensive cross-platform testing.
 
   plplot  PROBLEMS  1.25
-
-
-Commit from rlaboiss (2004-01-24 18:29 CET)
---------------------
-
-Dummy commit
-
-  plplot  bootstrap.sh  1.28
-
-
-Commit from rlaboiss (2004-01-24 18:27 CET)
---------------------
-
-Use syncmail instead of dncvspipe for commit notifications.
-
-  CVSROOT  loginfo  1.63
 
 
 Commit from andrewross (2004-01-23 16:00 CET)
@@ -134,15 +299,6 @@ Account for two variations of BIG_ENDIAN symbol in system headers.
   plplot  lib/nn/nan.h   1.3
 
 
-Commit from rlaboiss (2004-01-22 23:32 CET)
---------------------
-
-Synched HEAD and v5_3_0
-
-  plplot  debian/changelog  1.69.2.2
-  plplot  debian/control    1.43.2.1
-
-
 Commit from rlaboiss (2004-01-22 23:30 CET)
 --------------------
 
@@ -154,15 +310,6 @@ Commit from rlaboiss (2004-01-22 23:30 CET)
 
   plplot  debian/changelog  1.71
   plplot  debian/control    1.44
-
-
-Commit from rlaboiss (2004-01-22 22:52 CET)
---------------------
-
-RL for Arjen Markus <arjen.markus@wldelft.nl>: applied patch for DLL
-examples (branch v5_3_0).
-
-  plplot  sys/win32/msdev/DExamples/DExamples.mak  1.1.16.2
 
 
 Commit from rlaboiss (2004-01-22 22:51 CET)
@@ -482,7 +629,7 @@ Commit from rlaboiss on branch v5_3_0 (2004-01-19 21:02 CET)
 -------------------------------------
 
 Parse the name of the library correctly when processing a *.la entry.  Wrong
-results were occurring when the file name containing "lib"twice, as in
+results were occurring when the file name containing "lib" twice, as in
 libglib.la.
 
   plplot  scripts/get-dependency-libs.sh  1.4.2.1
@@ -1645,7 +1792,8 @@ Correct typo: require Octave >= 2.1.50 and not 2.1.51
 Commit from jcard (2004-01-04 19:02 CET)
 -----------------
 
-Don't include config.h in plplot_octave_org.h, as it might clash with Octave's config.h
+Don't include config.h in plplot_octave_org.h, as it might clash with
+Octave's config.h
 
 Instead, extract PL_DOUBLE from config.h and insert into plplot_octave_org.h
 
@@ -1974,7 +2122,7 @@ plstripc needs this).
 Commit from airwin (2004-01-02 18:54 CET)
 ------------------
 
-Change docmentation of id parameter of plstripc: input ==> output.
+Change documentation of id parameter of plstripc: input ==> output.
 
   plplot  doc/docbook/src/api.xml  1.61
 
@@ -2344,10 +2492,12 @@ Don't try/allow to use pthreads if they are not available.
 Commit from jcard (2003-12-30 04:12 CET)
 -----------------
 
-Make with_pthreads=yes (an option only effective for the xwin driver) the default.
+Make with_pthreads=yes (an option only effective for the xwin driver) the
+default.
 
-Recent changes to the xwin driver code should allow this to be now the default.
-Use "-drvopt usepth=0" to not use pthreads to redisplay the plot when using the xwin driver.
+Recent changes to the xwin driver code should allow this to be now the
+default.  Use "-drvopt usepth=0" to not use pthreads to redisplay the plot
+when using the xwin driver.
 
   plplot  configure.ac  1.124
 
@@ -2519,10 +2669,9 @@ are implemented correctly for the fortran interface.
 Commit from rlaboiss (2003-12-28 19:20 CET)
 --------------------
 
-
 Put back the setting of the variable plplot_config_invocationer with The
 line containing "command:" in the configuration summary shows the configure
-invokation again.
+invocation again.
 
   plplot  configure.ac  1.123
 
@@ -2627,7 +2776,6 @@ D. Wright <bdwright@phy.ucsf.edu> for the suggestion.
 
 Commit from rlaboiss (2003-12-26 22:34 CET)
 --------------------
-
 
 Clean up of configure messages
 
@@ -3005,7 +3153,7 @@ Commit from rlaboiss (2003-12-21 12:59 CET)
 
 Debian release 5.2.1.cvs.20031030-2
 
-From the changelog:
+>From the changelog:
 
   * debian/rules: Call configure with --enable-static, such that the
     lib*.a files will be present in the *-dev packages (closes: #224550).
@@ -3111,7 +3259,7 @@ version of Octave supported by PLplot.
 Commit from rlaboiss (2003-11-18 21:26 CET)
 --------------------
 
-Removed entry about --enable-strip-libraries option, sicne this is already
+Removed entry about --enable-strip-libraries option, since this is already
 implemented by Automake.
 
   plplot  TODO.AM-LT  1.4
@@ -3228,7 +3376,7 @@ Commit from rlaboiss (2003-10-29 20:19 CET)
 
 Preparation for the next Debian release.
 
-From the debian/changelog file:
+>From the debian/changelog file:
 
   * NOT YET RELEASED!
   * Preparation for the new upstream version, which changed the soversion
@@ -3312,7 +3460,7 @@ Commit from rlaboiss (2003-10-29 15:13 CET)
 
 Debian release plplot-5.2.1.cvs.20031027-3.
 
-From the debian/changelog file:
+>From the debian/changelog file:
 
   * debian/rules:
     - Added symlinks /usr/lib/lib{nn,csa}.so.0, such that this release of
@@ -3387,7 +3535,7 @@ Commit from rlaboiss (2003-10-27 11:54 CET)
 
 Debian release 5.2.1.cvs.20031027-2.
 
-From the debian/changelog file:
+>From the debian/changelog file:
 
   * debian/libplplot-dev.files: Added README.pkg-config file.
   * debian/libplplot5.README.Debian: Fixed typos.
@@ -3402,7 +3550,7 @@ Commit from rlaboiss (2003-10-27 11:35 CET)
 
 Debian release 5.2.1.cvs.20031027-1.
 
-From the debian/changelog file:
+>From the debian/changelog file:
 
   * New CVS snapshot upstream release.  This release is actually quite
     close to the latest Debian 5.2.1-21, since I have been tracking CVS
@@ -3579,7 +3727,7 @@ Commit from rlaboiss (2003-10-23 11:48 CET)
 
 Debian release 5.2.1-21
 
-From the debian/changelog file:
+>From the debian/changelog file:
 
   * sysloc.in: Applied patch from upstream CVS that assigns an unversioned
     path to OCTAVE_OCT_DIR.
@@ -3655,7 +3803,7 @@ Preparation for Debian release 5.2.1-20
 This will be uploaded to unstable only after version 5.2.1-19 had hit the
 testing distribution.
 
-From debian/changelog:
+>From debian/changelog:
 
     * Following a suggestion of Matthias Klose <doko@cs.tu-berlin.de>, the
       libltdl library shipped with the upstream sources is not compiled
@@ -3695,7 +3843,7 @@ Better logic for use of system's libltdl
 The decision about when to use the libltdl library is improved.  Now, the
 default is to always compiled the shipped libtool's libltdl as a convenience
 library, unless the user explicitly give the option --with-ltdlsystem to
-configure.  When this option is given, confgiure checks if the libltdl
+configure.  When this option is given, configure checks if the libltdl
 library is actually installed.  If not, it falls back to the convenience
 compilation case.
 
@@ -5152,7 +5300,6 @@ options now work!
 
   plplot  examples/c++/x01cc.cc  1.7
 
-#####
 
 Commit from airwin (2003-09-02 03:26 CET)
 ------------------

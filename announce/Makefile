@@ -14,7 +14,7 @@ all: $(TARGETS)
 	mv $< $@
 
 %.txt: %.xhtml
-	links -dump -dump-width 80 $< > $@
+	lynx -force_html -dump -width=80 $< > $@
 
 %.pdf: %.xml print.xsl
 	$(ENV) xmlto pdf -m print.xsl $<
