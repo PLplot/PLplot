@@ -9,6 +9,9 @@ README		General introduction, where to get more information, etc.
 README.1st	This file
 Changes.log	Log of changes to plplot in reverse chronological order.
 ToDo		Describes what's on the agenda (no promises, however :-).
+FAQ		Frequently answered questions.
+
+In particular, look at FAQ section 1, on installing plplot.
 
 Also there is system-specific documentation under sys/<system-name>, and
 a PLPLOT manual in the doc directory (not necessarily up-to-date, however).
