@@ -220,7 +220,7 @@ def main():
 #    plcont(w, clevel, mypltr, tr)
 #    plstyl([], [])
 #    plcol0(1)
-#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
@@ -231,7 +231,7 @@ def main():
     plcont(w, clevel, mypltr, tr)
     plstyl([], [])
     plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 
     # Plot using 1D coordinate transformation.
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
@@ -243,7 +243,7 @@ def main():
     plcont(w, clevel, pltr1, xg1, yg1)
     plstyl([], [])
     plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 
 #    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
 #    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
@@ -254,7 +254,7 @@ def main():
 #    plcont(w, clevel, pltr1, xg1, yg1)
 #    plstyl([], [])
 #    plcol0(1)
-#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 #    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
 #
     # Plot using 2D coordinate transformation.
@@ -266,7 +266,7 @@ def main():
     plcont(w, clevel, pltr2, xg2, yg2)
     plstyl([], [])
     plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 
 #    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
 #    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
@@ -277,7 +277,7 @@ def main():
 #    plcont(w, clevel, pltr2, xg2, yg2)
 #    plstyl([], [])
 #    plcol0(1)
-#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 #
 #   polar contour examples.
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
