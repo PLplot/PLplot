@@ -465,6 +465,12 @@ case "$system" in
 	SHLIB_BUILD="ld -b -o"
 	SHLIB_SUFFIX=".sl"
     ;;
+    AIX-* )
+	SHLIB_CCFLAGS="-fpic"
+	SHLIB_F77FLAGS="-fpic"
+	SHLIB_BUILD="ar q"
+	SHLIB_SUFFIX=".a"
+    ;;
 
     # The rest are probably broken.  Someone please fix them.
     # Remove the 'with_shlib="no"' line, comments, and go wild.

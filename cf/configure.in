@@ -258,6 +258,9 @@ if test "$with_shlib" = "yes"; then
 	SunOS-4* ) 
 	    cat cf/lib_sh_sun.in	>>tmp/Makefile.in
 	;;
+	AIX-* ) 
+	    cat cf/lib_sh_aix.in	>>tmp/Makefile.in
+	;;
 	* )
 	    cat cf/lib_sh.in	>>tmp/Makefile.in
 	;;

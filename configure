@@ -1146,6 +1146,12 @@ case "$system" in
 	SHLIB_BUILD="ld -b -o"
 	SHLIB_SUFFIX=".sl"
     ;;
+    AIX-* )
+	SHLIB_CCFLAGS="-fpic"
+	SHLIB_F77FLAGS="-fpic"
+	SHLIB_BUILD="ar q"
+	SHLIB_SUFFIX=".a"
+    ;;
 
     # The rest are probably broken.  Someone please fix them.
     # Remove the 'with_shlib="no"' line, comments, and go wild.
@@ -2380,13 +2386,15 @@ test -z "$RANLIB" && RANLIB=":"
 test -n "$RANLIB" && test -n "$verbose" && echo "	setting RANLIB to $RANLIB"
 
 test -n "$silent" || echo "checking for caddr_t in sys/types.h"
-echo '#include "confdefs.h"
-#include <sys/types.h>' > conftest.${ac_ext}
-eval "$ac_cpp conftest.${ac_ext} > conftest.out 2>&1"
-if egrep "caddr_t" conftest.out >/dev/null 2>&1; then
-  :
-else
-  rm -rf conftest*
+cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+
+#define caddr_t char *
+#include <sys/types.h>
+
+EOF
+eval $ac_compile
+if test -s conftest && (./conftest; exit) 2>/dev/null; then
   
 {
 test -n "$verbose" && \
@@ -2399,9 +2407,9 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}caddr_t\${ac_dB}caddr_t\${ac_dC}char *\${ac_
 "
 }
 
-fi
-rm -f conftest*
 
+fi
+rm -fr conftest*
 test -n "$silent" || echo "checking for pid_t in sys/types.h"
 echo '#include "confdefs.h"
 #include <sys/types.h>' > conftest.${ac_ext}
@@ -2684,6 +2692,9 @@ if test "$with_shlib" = "yes"; then
     case $system in 
 	SunOS-4* ) 
 	    cat cf/lib_sh_sun.in	>>tmp/Makefile.in
+	;;
+	AIX-* ) 
+	    cat cf/lib_sh_aix.in	>>tmp/Makefile.in
 	;;
 	* )
 	    cat cf/lib_sh.in	>>tmp/Makefile.in

@@ -1,0 +1,61 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# PLplot build rule for shared library under AIX.
+# -----------------------------------------------------------------------
+
+# -----------------------------------------------------------------------
+# Set up inference rules appropriate for building shared libraries.
+# -----------------------------------------------------------------------
+
+.c$O:
+	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) $*.c
+
+.f$O:
+	$(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) $*.f
+
+# -----------------------------------------------------------------------
+# Library dependency list and targets
+# -----------------------------------------------------------------------
+
+PLLIBS = $(PLLIB_AR)
+
+libs:	$(PLLIBS)
+
+$(PLLIB_AR):	$(LIB_OBJS)
+	-rm $(PLLIB_AR) $(PLLIB_AR)~
+	@echo ""; echo "Building shared library"; echo ""
+	ar q $(PLLIB_AR)~ $(LIB_OBJS)
+	dump -g $(PLLIB_AR)~ | \
+	  awk '$$1 > 0 && $$1 < 999999 && $$2 > 0 {print $$2}'\
+	    > $(PLLIB_AR).syms
+	ld -o shr.o $(PLLIB_AR)~ -H512 -T512 -bM:SRE -bE:$(PLLIB_AR).syms \
+	  $(LDC_LIBS) -lc -lm 2>ld.out
+	ar q $(PLLIB_AR) shr.o
+	rm -f $(PLLIB_AR)~ $(PLLIB_AR).syms shr.o
+	@echo ""
+
+# -----------------------------------------------------------------------
+# Sick hacks.
+# -----------------------------------------------------------------------
+
+# Needs to be compiled using K&R C.
+
+tcpip$O:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
+		plstream.h tcpip.c
+	$(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) tcpip.c
+
+# Optimizer under AIX 3.2.3 bogues out here.
+
+xwin$O:		plplotP.h plplot.h drivers.h pdf.h plstream.h plplotX.h xwin.c
+	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS_XWIN) xwin.c
+
+# Optimizer on SX-3 makes bogus code here.
+
+sccont$O:	plstubs.h plplotP.h plplot.h sccont.c
+	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS_SCCONT) sccont.c
+
