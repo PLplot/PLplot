@@ -149,7 +149,13 @@ ordinary Fortran variable or array name.
 
 The PLPLOT library comes with a set of Fortran interface routines that
 allow the exact same call syntax (usually) regardless of whether calling
-from C or Fortran.  These ``stub'' routines handle transforming the data
+from C or Fortran.  In some cases, this means the subroutine name {\em
+exceeds 8 characters in length}.  Nearly every Fortran compiler on sale
+today allows subroutine names longer than 8 characters, so this should not
+be a problem (although if it ever is, in principle a truncated name could
+be defined for that platform).
+
+These ``stub'' routines handle transforming the data
 from the normal Fortran representation to that typically used in C.  This
 includes:
 \begin{enumerate}
