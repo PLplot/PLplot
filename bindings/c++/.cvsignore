@@ -6,3 +6,4 @@ Makefile.in
 .libs
 *.la
 *.lo
+*.loT
