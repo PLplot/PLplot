@@ -856,7 +856,7 @@ proc_str (PLStream *pls, EscText *args)
 	clipy[1]=clipy[0];
 	clipx[3]=clipx[0];
 	clipy[3]=clipy[2];
-	difilt(&clipx, &clipy, 4, &clxmin, &clxmax, &clymin, &clymax);
+	difilt(clipx, clipy, 4, &clxmin, &clxmax, &clymin, &clymax);
 	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
 	         &clipx[0], &clipy[0]);
 	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
