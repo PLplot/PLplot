@@ -14,7 +14,7 @@ to modify the python and rebuild it.  Configure plplot with
 --disable-python, and follow these steps.  This will be a little bit
 of work, and you may have to think on your feet...
 
-1) Build python in the usual way.  PLplot has been tested with:
+1) First Build python in the usual way.  PLplot has been tested with:
 	python 1.4b3
 	NumPy-1.0a5
 	NumPyLib-1.0a5
@@ -25,26 +25,33 @@ of work, and you may have to think on your feet...
    versions, and building python with both Numerical extension and Tk
    support. Note in particular that the Numerical Extension
    instructions are not quite fully detailed.  You may have to "help"
-   it out a little.  You should be able to do:
+   it out a little.  At the end, you should be able to do:
+
 	% python
 	>>> from Numeric import *
+
    If you can do that, you are probably okay.
 
    Be sure to use the same --prefix when configure Tcl/Tk and Python,
-   and install them all.  For example, use for all three packages:
+   and any other packages (like maybe BLT, or whatever else you want
+   to use) and install them all.  For example, use for all three
+   packages: 
+
 	% configure --prefix=$HOME/test
 	% make
 	% make install
 
 2) Configure PLplot against this toolset.  Use the same --prefix when
    configuring PLplot.  For example, 
+
 	% configure --prefix=$HOME/test --with-double --disable-python
 	% make
 	% make install
 
 3) Now you are ready to hack PLplot support into python, and rebuild
    it.  Start by copying the PLplot plmodule stuff into the Python
-   build tree's Module directory.  That is the files:
+   build tree's Modules directory.  That is the files:
+
 	plplot/bindings/python/plmodule.c
 	plplot/bindings/python/plmodule2.c
 	plplot/bindings/python/plmodule.h
@@ -52,7 +59,7 @@ of work, and you may have to think on your feet...
    And edit Python's Setup file to include plmodule.  For example, you
    could add the liine:
 
-pl plmodule.c plmodule2.c -DDOUBLE -I$HOME/test/include $HOME/test/lib/libplplotdtk.a
+	pl plmodule.c plmodule2.c -DDOUBLE -I$HOME/test/include
 
    (Replace "$HOME/test" above with whatever prefix you gave when
    configuring python/tcl/tk/plplot).
@@ -64,25 +71,62 @@ pl plmodule.c plmodule2.c -DDOUBLE -I$HOME/test/include $HOME/test/lib/libplplot
    top level Makefile to include the plplot subdirectory in the list
    of things to install.  Search on "tkinter", and add plplot to that
    line.  If you haven't already, you'll probably want to add
-   "Numeric" there as well.  Now you also need to add the plplot
-   support files to the python path, just as is done for Tkinter, and
-   as ought to be done for Numeric.  Look in Modules/Setup at how
-   TKPATH is handled, and do the same thing for PLPLOTPATH, or
-   suchlike. 
+   "Numeric" there as well.  Now you also need edit Setup to add the
+   plplot support files to the python path, just as is done for
+   Tkinter, and as ought to be done for Numeric.  Look in
+   Modules/Setup at how TKPATH is handled, and do the same thing for
+   PLPLOTPATH, or suchlike.
 
    Now you also need to change the Modules/Setup line for the _tkinter
-   module:
+   module to pass a flag to tell it to include PLplot support.  Here,
+   is an example which tells it we have both the BLT toolkit, and
+   PLplot. 
 
-_tkinter _tkinter.c -DWITH_PLFRAME -I$HOME/test/include -L$HOME/test/lib -ltk4.1 -ltcl7.5 -lX11
+_tkinter _tkinter.c -DHAVE_BLT -DHAVE_PLPLOT -I/usr/include/X11R5 -I/home/cs/furnish/junk/include -L/home/cs/furnish/junk/lib -lplplotdtk -lMatrix -lBLT -ltk4.1 -ltcl7.5 -lX11
 
-   And edit the actual _tkinter.c itself, so that it recognizes
-   WITH_PLFRAME and will call the PLplot Tk initialization routine.
-   For example, from _tkinter.c:
+   (If you dont' want to use BLT, just take out the -DHAVE_BLT and the
+   -lBLT.)  And be sure to edit the actual _tkinter.c itself, so that
+   it recognizes HAVE_PLPLOT and will call the PLplot Tk
+   initialization routine (Pltk_Init).  For example, from _tkinter.c:
 
+#ifndef WITH_APPINIT
+int
+Tcl_AppInit (interp)
+     Tcl_Interp *interp;
+{
+  Tk_Window main;
 
-blah blah
+  main = Tk_MainWindow(interp);
+  if (Tcl_Init (interp) == TCL_ERROR) {
+    fprintf(stderr, "Tcl_Init error: %s\n", interp->result);
+    return TCL_ERROR;
+  }
+  if (Tk_Init (interp) == TCL_ERROR) {
+    fprintf(stderr, "Tk_Init error: %s\n", interp->result);
+    return TCL_ERROR;
+  }
+#ifdef HAVE_BLT
+  if (Blt_Init (interp) == TCL_ERROR) {
+    fprintf(stderr, "Blt_Init error: %s\n", interp->result);
+    return TCL_ERROR;
+  }
+#endif
+#ifdef HAVE_PLPLOT
+  if (Pltk_Init (interp) == TCL_ERROR) {
+    fprintf(stderr, "Pltk_Init error: %s\n", interp->result);
+    return TCL_ERROR;
+  }
+#endif
+  return TCL_OK;
+}
 
-   Now you can rebuild the python and reinstall:
+   I have put copies of a complete sample Setup and _tkinter.c from a
+   build using Python-1.4b3, into the plplot/bindings/python/1.4b3
+   subdirectory. 
+
+   Now you can rebuild the python and reinstall (from Python top level
+   directory):
+
 	% make
 	% make install
 
@@ -91,43 +135,6 @@ blah blah
    Tk support directory is included.
 
 4) If you get through all that, you should be all set.  You could go
-   to the python examples directory, soft link your new python in, and
+   to the python examples directory, softlink your new python in, and
    run pytkdemo.
 
-
-
-If you want to dynamically load:
-
-<No clear plan for this yet>
-
-If you are willing to statically bind plplot into your python:
-
-Build PLplot --with-double
-
-Build a python, be sure to include numeric extension.
-
-Copy plmodule.c plmodule2.c and plmodule.h to python_root/Modules
-
-Edit Setup:
-
-add a line:
-
-pl plmodule.c plmodule2.c -DDOUBLE -I/home/furnish/devel/plplot/tmp /home/furnish/devel/plplot/tmp2/libplplotdtk.a
-
-Make a directory python_rro/Lib/plplot
-
-copy bindings/python/*.py to python_rro/Lib/plplot
-
-Fix the python path in Setup to include the plplot .py directory.
-
-Fix the line for building _tkinter as follows:
-
-_tkinter _tkinter.c -DWITH_PLFRAME -I/home/furnish/j2/include -L/home/furnish/j2/lib -ltk4.1 -ltcl7.5 -L/usr/X11R6/lib -lX11
-
-edit _tkinter so it runs Pltk_Init().
-
-make
-
-make install
-
-python :-).
