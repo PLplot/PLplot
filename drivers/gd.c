@@ -187,7 +187,9 @@ void plD_init_png(PLStream *pls)
     pls->bytecnt = 0;
     pls->page = 0;
     pls->dev_fill0 = 1;         /* Can do solid fills */
+#if GD2_VERS < 2 
     pls->width = 1;
+#endif
 
     if (!pls->colorset)
 	pls->color = 1;         /* Is a color device */
@@ -243,6 +245,10 @@ void plD_init_png(PLStream *pls)
      plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
 
      plP_setphy(0, dev->scale*dev->pngx, 0, dev->scale*dev->pngy);
+
+#if GD2_VERS >= 2 
+    gdImageSetThickness(dev->im_out, pls->width);
+#endif
 
 }
 
@@ -478,6 +484,12 @@ PLFLT tmp_colour_pos;
 
     switch (op) {
 
+#if GD2_VERS >= 2 
+    case PLSTATE_WIDTH:
+        gdImageSetThickness(dev->im_out, pls->width);
+	break;
+#endif
+
     case PLSTATE_COLOR0:
 	dev->colour = pls->icol0;
 	if (dev->colour == PL_RGB_COLOR) {
@@ -571,6 +583,10 @@ void plD_bop_png(PLStream *pls)
 
     dev->im_out = gdImageCreate(pls->xlength, pls->ylength);
     setcmap(pls);
+
+#if GD2_VERS >= 2 
+    gdImageSetThickness(dev->im_out, pls->width);
+#endif
 
 
 }

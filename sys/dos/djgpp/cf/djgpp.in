@@ -75,7 +75,7 @@ GRX_DO_BMP = 1
 # To Turn on support for saving as JPEGs, make sure the 
 # next line is uncommented
 
-# GRX_DO_JPEG = 1
+#GRX_DO_JPEG = 1
 
 # If you want to add a "stand alone" JPEG device driver (in addition to or
 # instead of the screen-dump) then you have two choices. 
