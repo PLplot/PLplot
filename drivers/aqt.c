@@ -10,25 +10,25 @@ static inline void NOOP_(id x, ...) {;}
 #define LOG  NOOP_
 #endif  /* LOGGING */
 
-
 static NSAutoreleasePool *arpool;   // Objective-C autorelease pool
-static id adapter;                          // Adapter object
+static id adapter;					// Adapter object
 
 // ----------------------------------------------------------------
 // --- Start of PlPlot function aqtrm()
 // ----------------------------------------------------------------
+
 #include "plplotP.h"
 #include "drivers.h"
 
-// FIXME : Are the (numerical) values in this string important?
-
-char* plD_DEVICE_INFO_aqt = "aqt:AquaTerm (OS-X):1:aqt:50:aqt";
+char* plD_DEVICE_INFO_aqt = "aqt:AquaTerm (Mac OS X):1:aqt:50:aqt";
 
 /* declarations for functions local to aqt.c */
 
 void get_cursor(PLGraphicsIn *);
 void proc_str (PLStream *, EscText *);
-static void esc_purge(char *, const char *);
+NSMutableAttributedString * create_string(const PLUNICODE *, int, PLFLT);
+void set_font_and_size(NSMutableAttributedString *, PLUNICODE, PLFLT, int);
+char * UCS4_to_UTF8(const PLUNICODE);
 
 /* Driver entry and dispatch setup */
 
@@ -58,6 +58,9 @@ void plD_dispatch_init_aqt( PLDispatchTable *pdt )
    pdt->pl_state    = (plD_state_fp)    plD_state_aqt;
    pdt->pl_esc      = (plD_esc_fp)      plD_esc_aqt;
 }
+
+/* global variables & defines */
+
 static int currentPlot = 0;
 static int maxWindows = 30;
 static int windowXSize = 0;
@@ -67,6 +70,20 @@ static int windowYSize = 0;
 #define AQT_Max_X       720
 #define AQT_Max_Y       720
 #define DPI             72.0
+
+#define MAX_STRING_LEN	1000
+#define FCI 			0x10000000
+
+/* AquaTerm font look-up table */
+
+#define AQT_N_Type1Lookup 5
+const FCI_to_FontName_Table AQT_Type1Lookup[AQT_N_Type1Lookup] = {
+     {0x10000000, "Helvetica"},
+     {0x10000001, "Times-Roman"},
+     {0x10000002, "Courier"},
+     {0x10000003, "Times-Roman"},
+     {0x10000004, "Symbol"},
+};
 
 //---------------------------------------------------------------------
 //   aqt_init()
@@ -91,6 +108,7 @@ void plD_init_aqt(PLStream *pls)
    pls->bytecnt = 0;
    pls->debug = 1;
    pls->dev_text = 1;
+   pls->dev_unicode = 1; 	/* want unicode */
    pls->page = 0;
    pls->dev_fill0 = 1;		/* supports hardware solid fills */
    pls->dev_fill1 = 1;
@@ -274,7 +292,6 @@ void plD_esc_aqt(PLStream *pls, PLINT op, void *ptr)
       case PLESC_HAS_TEXT:
          proc_str(pls, (EscText *)ptr);
          break;
-
    }
 }
 
@@ -320,278 +337,250 @@ void get_cursor(PLGraphicsIn *gin){
 //---------------------------------------------------------------------
 // proc_str()
 //
-// process strings for display
+// Processes strings for display. The actual parsing of the unicode
+// string is handled by the sub-routine create_string.
 //---------------------------------------------------------------------
 
 void proc_str (PLStream *pls, EscText *args)
 {
-   PLFLT   *t = args->xform;
-   PLFLT   a1, alpha, ft_ht, angle;
-   PLINT   clxmin, clxmax, clymin, clymax;
-   char    str[128], fontn[128], updown[128], esc, *strp;
-   const char *cur_str;
-   char    *font, *ofont;
-   float   ft_scale;
-   int             i, jst, ref, symbol, length, ltmp;
-   NSMutableAttributedString  *s;
-   char    char_ind;
-   unichar Greek[53] = {
-      0X391, 0X392, 0X3A7, 0X394, 0X395, 0X3A6, 0X393, 0X397,
-      0X399, 0X3D1, 0X39A, 0X39B, 0X39C, 0X39D, 0X39F, 0X3A0,
-      0X398, 0X3A1, 0X3A3, 0X3A4, 0X3A5, 0X3A7, 0X3A9, 0X39E,
-      0X3A8, 0X396, 0X3B1, 0X3B2, 0X3C7, 0X3B4, 0X3B5, 0X3D5,
-      0X3B3, 0X3B7, 0X3B9, 0X3C6, 0X3BA, 0X3BB, 0X3BC, 0X3BD,
-      0X3BF, 0X3C0, 0X3B8, 0X3C1, 0X3C3, 0X3C4, 0X3C5, 0X3DB,
-      0X3C9, 0X3BE, 0X3C8, 0X3B6, 0x003F};
+	PLFLT   	*t = args->xform;
+	PLFLT   	a1, ft_ht, angle, shear;
+	PLINT   	clxmin, clxmax, clymin, clymax;
+	int     	i, jst, ref;
+	NSMutableAttributedString *str;
 
-   //  Set the font height - the 1.2 factor was trial and error
+	/* check that we got unicode, warning message and return if not */
+	
+	if(args->unicode_array_len == 0){
+		printf("Non unicode string passed to AquaTerm driver, ignoring\n");
+		return;
+	}
+	
+	/* check that unicode string isn't longer then the max we allow */
+	
+	if(args->unicode_array_len >= MAX_STRING_LEN){
+		printf("Sorry, the AquaTerm driver only handles strings of length < %d\n", MAX_STRING_LEN);
+		return;
+	}
 
-   ft_ht = 1.2*pls->chrht * DPI/25.4; /* ft_ht in points. ht is in mm */
+	/* set the font height - the 1.2 factor was trial and error */
 
-   //
-   //  Now find the angle of the text relative to the screen...
-   //
-   angle = pls->diorot * 90.;
-   a1 = acos(t[0]) * 180. / PI;
-   if (t[2] > 0.)
-      alpha = a1 - angle;
-   else
-      alpha = 360. - a1 - angle;
-   //
-   // any transformation if there is one - normally on text there isn't any
-   //
-   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
+	ft_ht = 1.2 * pls->chrht * DPI/25.4; 	/* ft_ht in points. ht is in mm */
 
-   //     check clip limits. For now, only the reference point of the string is checked;
-   //     but the the whole string should be checked
+   	/* given transform, calculate rotation angle & shear angle */
+   	
+/*   	printf("transform : %.2f %.2f %.2f %.2f\n", t[0], t[1], t[2], t[3]);
+	angle = pls->diorot * 90.;
+	printf("angle : %.2f\n", angle); */
+	
+	a1 = acos(t[0]) * 180. / PI;
+	if (t[2] > 0.)
+		angle = a1;
+	else
+		angle = 360. - a1;
 
-   if ( args->x < clxmin || args->x > clxmax || args->y < clymin || args->y > clymax)
-      return;
+	shear = atan(t[1]+t[2]) * 180.0 / PI;
 
-   //   * Text justification.  Left, center and right justification, which
-   //   *  are the more common options, are supported; variable justification is
-   //   *  only approximate, based on plplot computation of it's string lenght
+	/* apply plplot difilt transformations */
 
-   if (args->just < 0.33){
-      jst = AQTAlignLeft;                             /* left */
-   }
-   else if (args->just > 0.66){
-      jst = AQTAlignRight;                            /* right */
-   }
-   else {
-      jst = AQTAlignCenter;                           /* center */
-   }
-   /*
-    * Reference point (center baseline of string).
-    *  If base = 0, it is aligned with the center of the text box
-    *  If base = 1, it is aligned with the baseline of the text box
-    *  If base = 2, it is aligned with the top of the text box
-    *  Currently plplot only uses base=0
-    */
+	difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
 
-   if (args->base == 2)
-      ref = AQTAlignTop;
-   else if (args->base == 1)
-      ref = AQTAlignBaseline;
-   else
-      ref = AQTAlignMiddle;
+	/* text justification, AquaTerm only supports 3 options, so we round appropriately */
+	
+	if (args->just < 0.33)
+		jst = AQTAlignLeft;                             /* left */
+	else if (args->just > 0.66)
+		jst = AQTAlignRight;                            /* right */
+	else
+		jst = AQTAlignCenter;                           /* center */
+	
+	/* set the baseline of the string */
+	
+	if (args->base == 2)
+		ref = AQTAlignTop;
+	else if (args->base == 1)
+		ref = AQTAlignBaseline;
+	else
+		ref = AQTAlignMiddle;
 
-   //
-   //  Set the default font
-   //
-   switch (pls->cfont) {
-      case 1: ofont = "Times-Roman";  fontn[0]=1; break;
-      case 2: ofont = "Times-Roman";  fontn[0]=2; break;
-      case 3: ofont = "Times-Italic"; fontn[0]=3; break;
-      case 4: ofont = "Helvetica";    fontn[0]=4; break;
-      default:  ofont = "Times-Roman";fontn[0]=1;
-   }
+	/* create an appropriately formatted, etc... unicode string */
+	
+	str = create_string(args->unicode_array, args->unicode_array_len, ft_ht);
 
-   //  Get a purged string for testing
+	/* display the string */
+	
+	[adapter setColorRed:(float)(pls->curcolor.r/255.)
+                   green:(float)(pls->curcolor.g/255.)
+                    blue:(float)(pls->curcolor.b/255.)];
+//    [adapter addLabel:str atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE) angle:angle shearAngle:shear align:(jst | ref)];
 
-   plgesc(&esc);
+	[adapter addLabel:str atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE) angle:angle align:(jst | ref)];
 
-   length=0;
-   esc_purge(str, args->string);
-
-
-   //  set font and super/subscriptsfor each character
-   do{
-      updown[length]=0;
-      fontn[length]=fontn[0];
-   }while(str[length++] && length < 128);
-   fontn[--length]=0;
-
-   cur_str = args->string;
-
-   strp = str;
-
-   do {
-      symbol = 0;
-
-      if (*cur_str == esc) {
-         cur_str++;
-
-         if (*cur_str == esc) {
-            // <esc><esc>
-            *strp++ = *cur_str++;
-         }
-         else switch (*cur_str) {
-
-            case 'f':
-               //  Change font
-               cur_str++;
-               switch (*cur_str) {
-                  case 'n': font = "Times-Roman";
-                     fontn[strp-str]=1; break;
-                  case 'r': font = "Times-Roman";
-                     fontn[strp-str]=2; break;
-                  case 'i': font = "Times-Italic";
-                     fontn[strp-str]=3; break;
-                  case 's': font = "Helvetica";
-                     fontn[strp-str]=4; break;
-                  default:  font = "Times-Roman";
-                     fontn[strp-str]=1;
-               }
-                  //  set new font for rest of string or until next font change
-                  ltmp=strp-str;
-               do{
-                  fontn[ltmp++]=fontn[strp-str];
-               }while(ltmp < length);
-
-                  cur_str++;
-               break;
-
-            case 'g':
-               // Greek Letters are single characters
-               cur_str++;
-               fontn[strp-str]=5; break;
-               *strp++ = *cur_str++;
-               break;
-
-            case 'd':
-               // Subscript not used
-               ltmp=strp-str;
-               do{
-                  updown[ltmp++]--;
-               }while(ltmp < length);
-                  cur_str++;
-               break;
-
-            case 'u':
-               // Superscript not used
-               ltmp=strp-str;
-               do{
-                  updown[ltmp++]++;
-               }while(ltmp < length);
-                  cur_str++;
-               break;
-
-               /* ignore the next sequences */
-
-            case '+':
-            case '-':
-            case 'b':
-               // plwarn("'+', '-', and 'b' text escape sequences not processed.");
-               cur_str++;
-               break;
-
-            case '(':
-               // plwarn("'g(...)' text escape sequence not processed.");
-               while (*cur_str++ != ')');
-               *strp++ = 'x';                              //  Plplot uses #(229) for x in exponent
-               break;
-         }
-      }
-         // copy from current to next token
-
-         while(!symbol && *cur_str && *cur_str != esc) {
-            *strp++ = *cur_str++;
-         }
-         *strp = '\0';
-
-   } while(*cur_str);
-
-      //  Now we create an attributed string
-      //
-      s = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithCString:str]];
-      //
-      //  Set the default font and color for the string before we do anything else
-      //
-      [adapter setFontname:[NSString stringWithCString:ofont]];
-      [adapter setFontsize:ft_ht];
-      [adapter setColorRed:(float)(pls->curcolor.r/255.)
-                     green:(float)(pls->curcolor.g/255.)
-                      blue:(float)(pls->curcolor.b/255.)];
-      //
-      //  Set the font
-      for(i = 0; i < length; i++)
-      {
-         //
-         //  Set Greek Characters
-         if(fontn[i]==5){
-            if((str[i] >= 'A' && str[i] <= 'Z') || (str[i] >= 'a' && str[i] <= 'z')) {
-               char_ind = (char) str[i] - 'A';
-               if(char_ind >= 32)
-                  char_ind -=6;
-
-               if(char_ind < 0 || char_ind > 51 )
-                  char_ind = 52;
-
-               [s replaceCharactersInRange:NSMakeRange(i, 1)
-                                withString:[NSString stringWithCharacters:Greek+char_ind length:1]];
-            }
-         }
-         //
-         //  Set Super and subscripts
-
-         if(updown[i]!=0)
-         {
-            [s addAttribute:@"NSSuperScript"
-                      value:[NSNumber numberWithInt:updown[i]]
-                      range:NSMakeRange(i, 1)];
-         }
-      }
-      [adapter addLabel:s atPoint:NSMakePoint((float)args->x*SCALE, (float)args->y*SCALE) angle:alpha align:(jst | ref)]; 
-
-      [s release];
-
+    [str release];
 }
 
-static void esc_purge(char *dstr, const char *sstr)
+//---------------------------------------------------------------------
+// create_string()
+//
+// create a NSMutableAttributedString from the plplot ucs4 string
+//
+// assumptions :
+//	1. font changes are unicode >= FCI
+//  2. we'll never have to deal with a string longer then MAX_STRING_LEN characters
+// 	3. <esc><esc> means we desired <esc> as a character & not actually as <esc>
+//  4. there are no two character <esc> sequences... i.e. <esc>fn is now covered by fci
+//
+//---------------------------------------------------------------------
+
+NSMutableAttributedString  * create_string(const PLUNICODE *ucs4, int ucs4_len, PLFLT font_height)
 {
-   char esc;
+	PLUNICODE fci;
+	char plplot_esc;
+	int i;
+	int cur_loc;
+	int utf8_len;
+	int updown;
+	char dummy[MAX_STRING_LEN+1];
+	char *font;
+	char *utf8;
+	NSMutableAttributedString *str;
 
-   plgesc(&esc);
+	updown = 0;
+	
+	/* initialize the attributed string */
 
-   while(*sstr){
-      if (*sstr != esc) {
-         *dstr++ = *sstr++;
-         continue;
-      }
+	for(i=0;i<MAX_STRING_LEN;i++) dummy[i] = 'i';
+	dummy[MAX_STRING_LEN] = '\0';
+	str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithCString:dummy]];
 
-      sstr++;
-      if (*sstr == esc)
-         continue;
-      else {
-         switch(*sstr++) {
-            //                              case 'g':
-            case 'f':
-               sstr++;
-               break; /* two chars sequence */
+	/* get plplot escape character & current font */
+	
+	plgesc(&plplot_esc);
+	plgfci(&fci);
+	
+	/* set the font for the string based on the current font & size */
 
-            case '(':
-               while (*sstr++ != ')'); /* multi chars s
-                      equence */
-               *dstr++ = 'x';                              //  Plplot uses #(229) for x in exponent
-               break;
+	set_font_and_size(str, fci, font_height, 0);
+	
+	/* parse plplot ucs4 string */
 
-            default:
-               break;  /* single char escape */
-         }
-      }
-   }
-   *dstr = '\0';
+	cur_loc = 0;
+	i = 0;
+	while (i < ucs4_len){
+		if (ucs4[i] < 0x10000000){	/* not a font change */
+			if (ucs4[i] != (PLUNICODE)plplot_esc) {		/* a character to display */
+				utf8 = UCS4_to_UTF8(ucs4[i]);
+				[str replaceCharactersInRange:NSMakeRange(cur_loc, 1)
+								   withString:[NSString stringWithUTF8String:utf8]];
+				i++;
+				cur_loc++;
+				continue;
+			}
+			i++;
+			if (ucs4[i] == (PLUNICODE)plplot_esc){
+				utf8 = UCS4_to_UTF8(ucs4[i]);
+				[str replaceCharactersInRange:NSMakeRange(cur_loc, 1)
+								   withString:[NSString stringWithUTF8String:utf8]];
+				i++;
+				cur_loc++;
+				continue;
+			}
+    		else {
+    			if(ucs4[i] == (PLUNICODE)'f'){	// font change
+    				i++;
+    				printf("hmm, unicode string apparently not following fci convention...\n");
+    			}
+    			if(ucs4[i] == (PLUNICODE)'d'){	// Subscript
+    				updown--;
+    				[str addAttribute:@"NSSuperScript"
+                				value:[NSNumber numberWithInt:updown]
+                				range:NSMakeRange(cur_loc, (MAX_STRING_LEN - cur_loc))];
+    			}
+    			if(ucs4[i] == (PLUNICODE)'u'){	// Superscript
+    				updown++;
+    				[str addAttribute:@"NSSuperScript"
+                				value:[NSNumber numberWithInt:updown]
+                				range:NSMakeRange(cur_loc, (MAX_STRING_LEN - cur_loc))];
+                }
+           		i++;
+    		}
+    	}
+    	else {	/* a font change */
+    		set_font_and_size(str, ucs4[i], font_height, cur_loc);
+        	i++;
+    	}
+	}
+	
+	/* trim string to appropriate final length */
+	
+	[str deleteCharactersInRange:NSMakeRange(cur_loc, (MAX_STRING_LEN - cur_loc))];
+	
+	return str;
+}
+
+//---------------------------------------------------------------------
+// set_font_and_size
+//
+// set the font & size of a attributable string object
+//---------------------------------------------------------------------
+
+void set_font_and_size(NSMutableAttributedString * str, PLUNICODE fci, PLFLT font_height, int cur_loc)
+{
+	char *font;
+
+	font = plP_FCI2FontName(fci, AQT_Type1Lookup, AQT_N_Type1Lookup);
+	if(font == NULL) printf("could not find font given by fci = 0x%x\n", fci);
+    [str addAttribute:@"AQTFontname"
+                value:[NSString stringWithCString:font]
+                range:NSMakeRange(0, (MAX_STRING_LEN - cur_loc))];
+    [str addAttribute:@"AQTFontsize"
+                value:[NSNumber numberWithFloat:font_height]
+                range:NSMakeRange(0, (MAX_STRING_LEN - cur_loc))];
+}
+
+//---------------------------------------------------------------------
+// UCS4_to_UTF8()
+//
+// convert PLplot UCS4 unicode character to UTF8 character for Mac
+//---------------------------------------------------------------------
+
+char * UCS4_to_UTF8(const PLUNICODE ucs4)
+{
+	int i,len;
+	static char utf8[5];
+	
+	if (ucs4 < 0x80){
+		utf8[0] = ucs4;
+		utf8[1] = '\0';
+		len = 1;
+	}
+	else if (ucs4 < 0x800) {
+		utf8[0] = (0xC0 | ucs4 >> 6);
+		utf8[1] = (0x80 | ucs4 & 0x3F);
+		utf8[2] = '\0';
+		len = 2;
+	}
+	else if (ucs4 < 0x10000) {
+		utf8[0] = (0xE0 | ucs4 >> 12);
+		utf8[1] = (0x80 | ucs4 >> 6 & 0x3F);
+		utf8[2] = (0x80 | ucs4 & 0x3F);
+		utf8[3] = '\0';
+		len = 3;
+	}
+	else if (ucs4 < 0x200000) {
+		utf8[0] = (0xF0 | ucs4 >> 18);
+		utf8[1] = (0x80 | ucs4 >> 12 & 0x3F);
+		utf8[2] = (0x80 | ucs4 >> 6 & 0x3F);
+		utf8[3] = (0x80 | ucs4 & 0x3F);
+		utf8[4] = '\0';
+		len = 4;
+	}
+
+/*	printf("as utf8 : (%d) 0x", len);
+	for(i=0;i<len;i++) printf("%x", utf8[i]);
+	printf("\n"); */
+
+	return utf8;
 }
 
 // ----------------------------------------------------------------
