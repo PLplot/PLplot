@@ -1,4 +1,4 @@
-This is the 5th beta release (4.99e) of what will eventually become
+This is the 6th beta release (4.99f) of what will eventually become
 the PLPLOT 5.0 distribution.  At this point I'm mainly trying to root out the
 remaining bugs and system dependencies, but there will undoubtably be a
 few improvements yet before the final version sees the light of day.
@@ -14,6 +14,28 @@ Also there is system-specific documentation under sys/<system-name>, and
 a PLPLOT manual in the doc directory (not necessarily up-to-date, however).
 
 For more detail of these changes, consult Changes.log.
+
+**************************************************************************
+Version 4.99f: Summary of major changes (bug fix update only)
+**************************************************************************
+
+o fixed a bug involving a bogus tmpnam() call, introduced in the last
+  release.
+
+o deleted the -color builtin argument (better to have separate color vs
+  B&W drivers -- as I learned with the postscript driver).
+
+o changed tek driver to retain echo when changing tty settings as well
+  as send an initial page clear on beginning of page.
+
+o changed flush escape function in X driver to handle any pending events.
+
+o dos386/djgpp support brought up to date (submitted by Paul Kirschner)
+
+o miscellaneous modifications for new color model (still not finished).
+
+o Added include file plplotX.h to enable outside access to xwin driver
+  state data.
 
 **************************************************************************
 Version 4.99e: Summary of major changes (bug fix update only)

@@ -2,9 +2,81 @@ This file contains a list of the major changes in PLPLOT.  It is best to look
 through this file for new features, etc, until the new documentation is
 complete.
 
-I constructed this file by simply stripping off all the CVS (the source
+I typically construct entries by stripping off all the CVS (the source
 maintenance program we use) commit messages from each file.  Those that
 are common to all are handled separately to make it a bit less junky.
+Minor stuff I feel free to omit (if this bothers anyone let me know).
+
+*****************************************************************************
+PLPLOT 4.99f changes
+*****************************************************************************
+
+plplotX.h:
+ * Revision 1.1  1993/12/08  06:20:38  mjl
+ * Added for all code/data shared with the xwin driver.
+
+xwin.c:
+ * Revision 1.29  1993/12/08  06:17:33  mjl
+ * Split off definition of state structure into header file.  Changed end of
+ * page handler to check for and process events even if not pausing before
+ * the next page.
+ *
+ * Revision 1.28  1993/12/06  07:42:31  mjl
+ * Changed escape flush function to also handle any pending events.
+
+sys/dos386/makefile
+ brought up to date (submitted by Paul Kirschner)
+
+gnusvga.c:
+ * Revision 1.12  1993/12/08  06:12:22  mjl
+ * Miscellaneous bug fixes contributed by Paul Kirschner.
+
+plctrl.c:
+ * Revision 1.11  1993/12/08  06:22:23  mjl
+ * Fix for dos386/djgpp.
+
+plpage.c:
+ * Revision 1.7  1993/12/08  06:22:58  mjl
+ * Fix to plbop() so that the user can just use plbop/pleop if desired and
+ * never need to call pladv().
+
+configure:
+ now softlinks to tmp the contents of the fonts directory
+
+stndfont.c:
+xtndfont.c:
+ * Revision 1.5  1993/12/08  06:19:04  mjl
+ * Fixes so that these correctly build again (neglected to apply some global
+ * changes in a previous release).
+
+tek.c:
+ * Revision 1.18  1993/12/08  06:14:43  mjl
+ * Now send an initial page clear (tek devices only) on a beginning of page.
+ * This helps when there is only one graphics/alpha screen, otherwise is
+ * harmless.
+ *
+ * Revision 1.17  1993/12/06  07:41:47  mjl
+ * Changed to not turn off echo when changing tty settings.
+
+plargs.c:
+ * Revision 1.14  1993/12/06  07:46:11  mjl
+ * Eliminated the obsolete -color flag.
+
+plframe.c:
+tk.c:
+ * Revision 1.18  1993/12/08  06:18:06  mjl
+ * Changed to include new plplotX.h header file.
+ *
+ * Revision 1.17  1993/12/06  07:43:09  mjl
+ * Fixed bogus tmpnam call.
+
+plcore.c:
+plstream.c:
+scstubs.c:
+plplot.h:
+plstream.h:
+plstubs.h:
+ * Modifications for new color model.
 
 *****************************************************************************
 PLPLOT 4.99e changes
