@@ -345,7 +345,8 @@ page_switch (GtkNotebook *notebook, GtkNotebookPage *page, gint page_num,
   GnomeCanvas* canvas;
 
   canvas = ((GnomePLdev*)(dev))->page[page_num]->canvas;
-  gtk_widget_grab_focus (GTK_WIDGET (canvas));
+  if (canvas != NULL)
+    gtk_widget_grab_focus (GTK_WIDGET (canvas));
 }
 
 static guint32
