@@ -14,7 +14,7 @@ include(fmacs.m4)dnl
 	implicit_none
 	REAL	x(101), y(101)
 	REAL	xs(6), ys(6)
-	REAL	xscale, yscale, xoff, yoff, xmin, xmax, ymin, ymax
+	REAL	xscale, yscale, xoff, yoff
         character*80 version
 	integer digmax, i
 	common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
