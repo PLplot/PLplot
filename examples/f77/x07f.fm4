@@ -1,4 +1,4 @@
-! Displays the plotter symbols for PLSYM
+C      Displays the plotter symbols for PLSYM
       implicit none
 
       character*4 text
@@ -10,54 +10,53 @@
       real*8 x, y
 
 
-! Full sized page for display
+C      Full sized page for display
 
       call plinit()
       call plfontld(1)
-      do 100 l=1,17
+      do l=1,17
         call pladv(0)
 
-        call plcol(2)
+        call plcol0(2)
 
-! Set up viewport and window
+C        Set up viewport and window
 
-        call plvpor(0.1d0, 1.0d0, 0.1d0, 0.9d0)
+        call plvpor(0.15d0, 0.95d0, 0.1d0, 0.9d0)
         call plwind(0.0d0, 1.0d0, 0.0d0, 1.0d0)
 
-! Draw the grid using plbox
+C        Draw the grid using plbox
 
         call plbox('bcgt', 0.1d0, 0,'bcgt', 0.1d0, 0)
-        call plcol(15)
+        call plcol0(15)
 
-! Write the digits below the frame
+C        Write the digits below the frame
 
-        do 5 i=0,9
+        do  i=0,9
           write (text,'(i1)') i
-          call plmtex('b', 1.5d0, dble (0.1d0*i+0.05d0),
-     &      0.5d0, text)
-    5   continue
-
+          call plmtex('b', 1.5d0, (0.1d0*i+0.05d0),
+     &                0.5d0, text)
+        enddo
         k=0
-        do 1 i=0,9
+        do i=0,9
 
-! Write the digits to the left of the frame
+C          Write the digits to the left of the frame
 
           write (text,'(i4)') base(l)+10*i
-          call plmtex('lv', 1.0d0, dble (0.95d0-0.1d0*i),
+          call plmtex('lv', 1.0d0, (0.95d0-0.1d0*i),
      &      1.0d0, text)
-          do 2 j=0,9
+          do j=0,9
             x=0.1d0*j+0.05d0
             y=0.95d0-0.1d0*i
 
-! Display the symbols
+C            Display the symbols
 
             call plsym(1,x,y,base(l)+k)
             k=k+1
-    2     continue
-    1   continue
+          enddo
+        enddo
 
         call plmtex('t', 1.5d0, 0.5d0, 0.5d0,
-     &    'PLPLOT Example 7 - PLSYM symbols')
-  100 continue
+     &    'PLplot Example 7 - PLSYM symbols')
+      enddo
       call plend
       end
