@@ -545,14 +545,18 @@ fi
 
 
 
+jadelog=jadeout.log
+rm -f $jadelog
+JADELOG=$jadelog
+
+
+
+
 
 dsssl_dtd_pubid="-//James Clark//DTD DSSSL Style Sheet//EN"
 db_ss_html_pubid="-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
 db_ss_print_pubid="-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN"
 docbook_dtd_pubid="-//OASIS//DTD DocBook V3.1//EN"
-
-
-
 
 
 
@@ -604,7 +608,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:608: checking for $ac_word" >&5
+echo "configure:612: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_JADE'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -662,7 +666,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:666: checking for $ac_word" >&5
+echo "configure:670: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_JADETEX'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -720,7 +724,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:724: checking for $ac_word" >&5
+echo "configure:728: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_PERL'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -778,7 +782,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:782: checking for $ac_word" >&5
+echo "configure:786: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_MOGRIFY'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -836,7 +840,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:840: checking for $ac_word" >&5
+echo "configure:844: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_LATEX'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -894,7 +898,7 @@ do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:898: checking for $ac_word" >&5
+echo "configure:902: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_DVIPS'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -938,11 +942,14 @@ fi
 
 
 echo -n "checking for DSSSL Style Sheet DTD... "
+echo -e "\nChecking for DSSSL Style Sheet DTD" >> $jadelog
 sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
-sed "s|@DB_STYLE_SHEET@||" < conftest.tmp > conftest.dsl
+sed "s|@DB_STYLE_SHEET@||" < conftest.tmp \
+  | sed "s|@EXTERNAL_SPECIFICATION@||" > conftest.dsl
 sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
-jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml \
-             conftest.sgml 2>&1 | egrep ":(E|W):"`
+$jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
+   >> $jadelog 2>&1
+jade_result=`egrep ":(E|W):" $jadelog`
 if test "$jade_result" = "" ; then 
   echo "yes"
 else 
@@ -962,11 +969,14 @@ fi
 
 
 echo -n "checking for DocBook HTML Stylesheet... "
-sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test_stylesheet.dsl.in > conftest.tmp
-sed "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_html_pubid\" CDATA DSSSL>]|" < conftest.tmp > conftest.dsl
+echo -e "\nChecking for DocBook HTML Stylesheet" >> $jadelog
+sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
+sed "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_html_pubid\" CDATA DSSSL>]|" < conftest.tmp \
+  | sed "s|@EXTERNAL_SPECIFICATION@|<external-specification id="docbook" document="dbstyle">|" > conftest.dsl
 sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
-jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml \
-             conftest.sgml 2>&1 | egrep ":(E|W):"`
+$jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
+   >> $jadelog 2>&1
+jade_result=`egrep ":(E|W):" $jadelog`
 if test "$jade_result" = "" ; then 
   echo "yes"
 else 
@@ -986,11 +996,14 @@ fi
   
 
 echo -n "checking for DocBook Print Stylesheet... "
-sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test_stylesheet.dsl.in > conftest.tmp
-sed "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_print_pubid\" CDATA DSSSL>]|" < conftest.tmp > conftest.dsl
+echo -e "\nChecking for DocBook Print Stylesheet" >> $jadelog
+sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
+sed "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_print_pubid\" CDATA DSSSL>]|" < conftest.tmp \
+  | sed "s|@EXTERNAL_SPECIFICATION@|<external-specification id="docbook" document="dbstyle">|" > conftest.dsl
 sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
-jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t tex \
-             conftest.sgml 2>&1 | egrep ":(E|W):"`
+$jade_prog $SGML_CATALOGS -d conftest.dsl -t tex conftest.sgml \
+   >> $jadelog 2>&1
+jade_result=`egrep ":(E|W):" $jadelog`
 if test "$jade_result" = "" ; then 
   echo "yes"
 else 
@@ -1010,11 +1023,14 @@ fi
 
 
 echo -n "checking for DocBook DTD... "
+echo -e "\nChecking for DocBook DTD" >> $jadelog
 sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
-sed "s|@DB_STYLE_SHEET@||" < conftest.tmp > conftest.dsl
+sed "s|@DB_STYLE_SHEET@||" < conftest.tmp \
+  | sed "s|@EXTERNAL_SPECIFICATION@||" > conftest.dsl
 sed "s|@DOCBOOK_DTD@|PUBLIC \"$docbook_dtd_pubid\"|" < conf/test.sgml.in > conftest.sgml
-jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml \
-             conftest.sgml 2>&1 | egrep ":(E|W):"`
+$jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
+   >> $jadelog 2>&1
+jade_result=`egrep ":(E|W):" $jadelog`
 if test "$jade_result" = "" ; then 
   echo "yes"
 else 
@@ -1176,6 +1192,7 @@ s%@includedir@%$includedir%g
 s%@oldincludedir@%$oldincludedir%g
 s%@infodir@%$infodir%g
 s%@mandir@%$mandir%g
+s%@JADELOG@%$JADELOG%g
 s%@SGML_CATALOGS@%$SGML_CATALOGS%g
 s%@JADE@%$JADE%g
 s%@JADETEX@%$JADETEX%g
