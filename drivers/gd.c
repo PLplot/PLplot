@@ -391,12 +391,19 @@ void plD_init_png(PLStream *pls)
      plP_setphy(0, dev->scale*dev->pngx, 0, dev->scale*dev->pngy);
 
 #ifdef HAVE_FREETYPE
-
 if (pls->dev_text)
    {
+/* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
+ * call in plscmap0 which (a) leads to segfaults since the GD image is
+ * not defined at this point and (b) would be inefficient in any case since
+ * setcmap is always called later (see plD_bop_png) to update the driver
+ * color palette to be consistent with cmap0. */
+    PLINT level_save;
+    level_save = pls->level;
+    pls->level = 0;
     init_freetype_lv2(pls);
+    pls->level = level_save;
    }
-
 #endif
 
 }
@@ -584,7 +591,6 @@ long temp_col;
 #endif
 
     case PLSTATE_COLOR0:
-
 #if GD2_VERS >= 2
 
 	if ( (pls->icol0 == PL_RGB_COLOR)||     /*  Should never happen since PL_RGB_COLOR is depreciated, but here for backwards compatibility */
@@ -740,6 +746,7 @@ if (dev->red15) plD_red15_gd(pls);
 #endif
 
            dev->im_out = gdImageCreate(pls->xlength, pls->ylength);
+
            setcmap(pls);
 
 #if GD2_VERS >= 2
@@ -798,7 +805,6 @@ void plD_tidy_png(PLStream *pls)
 #endif
 
    fclose(pls->OutFile);
-
    free_mem(pls->dev);
 }
 
