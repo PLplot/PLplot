@@ -84,7 +84,7 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
 
 // Allocate array of PLFLT*
 // FIXME: the code belo does not free memeory in case of errors
-%typemap(perl5,in) PLFLT_pp_input* (PLFLT** temp) {
+%typemap(perl5,in) PLFLT_pp_input** (PLFLT** temp) {
   int i;
   SV* sv;
   I32 m, n, size;
@@ -92,7 +92,7 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
   
   temp = NULL;
   sv = SvROK ($source) ?  SvRV ($source) : $source;
-  if (type != SVt_PVAV)
+  if (SvTYPE (sv) != SVt_PVAV)
     croak ("PLFLT** input must be an array");
   av = (AV*) sv;
   n = av_len (av);
@@ -101,7 +101,7 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
     SV* elem =  *(av_fetch(av, i, 0));
     if (SvROK (elem)) 
       elem = SvRV (elem);
-    PLplot_perl_get_array_of_double (elem, &m, &temp[i]);
+    PLplot_perl_get_array_of_double (elem, &m, &(temp[i]));
     if (i == 0)
       size = m;
     else 
@@ -143,7 +143,6 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
       *temp = (PLINT) SvIV (sv);
     else
       *temp = (PLINT) SvNV (sv);
-    printf("Got here: %d\n", (int) *temp); fflush(stdout);
   }
   else
     croak ("Wrong type for PLINT* input");
