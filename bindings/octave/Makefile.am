@@ -39,6 +39,8 @@ EXTRA_DIST = \
 
 if enable_octave
 
+EXTRA_DIST += doc-stamp plplot_octave_txt
+
 if with_double
 sed_command = 's/REPLACE_ME/typedef double PLFLT;/'
 else
@@ -89,15 +91,19 @@ massage_SOURCES = massage.c
 # are undoubtedly cross-platform issues as well.  But it is good enough for
 # now for a Linux proof-of-concept.
 
-plplot_octave_txt/plplot.doc: etc/plplot.doc
+doc-stamp: etc/plplot.doc \
+	   $(top_srcdir)/doc/docbook/bin/api2text.pl \
+	   $(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
+	   $(top_srcdir)/doc/docbook/src/api.xml
 	mkdir -p plplot_octave_txt
 	cp etc/plplot.doc plplot_octave_txt/plplot.doc
-	cd plplot_octave_txt; \
-	../../../doc/docbook/bin/api2text.pl \
-	../../../doc/docbook/src/plplotdoc.xml \
-	../../../doc/docbook/src/api.xml
+	( cd plplot_octave_txt ; \
+	  ../$(top_srcdir)/doc/docbook/bin/api2text.pl \
+	  ../$(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
+	  ../$(top_srcdir)/doc/docbook/src/api.xml ) \
+	&& touch doc-stamp
 
-plplot_stub.m: plplot_octave_txt/plplot.doc tmp_stub massage
+plplot_stub.m: doc-stamp tmp_stub massage
 	@head -5 tmp_stub > plplot_stub.m
 	@echo "# It was also massaged to add online documentation" >> plplot_stub.m
 	@echo "# extracted from some PLplot distribution files" >> plplot_stub.m
@@ -122,13 +128,15 @@ doc_DATA =       \
 %.octave: %
 	  cp $< $@
 
-CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
-	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave*.oct \
-	plplot_stub.m missing_help $(doc_DATA) plplot_octave_txt/*
-
 else
 
 install-data-hook:
 
 #enable_octave
 endif
+
+CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
+	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave*.oct \
+	plplot_stub.m missing_help $(doc_DATA) 
+
+MAINTAINERCLEANFILES = doc-stamp plplot_octave_txt/*
