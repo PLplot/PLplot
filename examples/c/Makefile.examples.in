@@ -23,7 +23,7 @@ INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplplot@LIB_TAG@
 CC = @CC@
 
 all: x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c \
-	x11c x12c x13c x14c x15c x16c x17c x18c x19c x20c 
+	x11c x12c x13c x14c x15c x16c x17c x18c x19c x20c x21c
 
 clean:
 	rm x??c
