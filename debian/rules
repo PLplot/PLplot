@@ -23,11 +23,11 @@ cfflags		:= --with-double --disable-linuxvga --without-rpath
 
 export DEMOS_DIR = /usr/share/doc/plplot/examples
 
-ifeq (,$(findstring $(DEB_BUILD_ARCH),i386 m68k mips mipsel powerpc sparc))
-export DH_OPTIONS += -Npython-plplot
-else
+#ifeq (,$(findstring $(DEB_BUILD_ARCH),i386 m68k mips mipsel powerpc sparc))
+#export DH_OPTIONS += -Npython-plplot
+#else
 with_python = yes
-endif
+#endif
 
 build: build-stamp
 build-stamp:
@@ -43,10 +43,10 @@ build-stamp:
 # Build the Tcl/Tk libraries
 ifeq ($(with_python),yes)
 	./configure --prefix=/usr --enable-tcl --enable-tk \
-	                          --enable-python $(cfflags)
+	                          --enable-python --enable-octave $(cfflags)
 else
 	./configure --prefix=/usr --enable-tcl --enable-tk \
-	                          --disable-python $(cfflags)
+	                          --disable-python --enable-octave $(cfflags)
 endif
 	make PLLIB_PATH=
 	touch build-stamp

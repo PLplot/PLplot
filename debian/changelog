@@ -1,3 +1,13 @@
+plplot (5.1.0-1.1) unstable; urgency=low
+
+  * Non-Maintainer Upload
+  * Update for python-2.2 (Closes: #159807, #159811, #161569)
+  # reenable plplot-python on all architectures
+  * change Recommends: ghostscript (Closes: #136358)
+  * Depend on autoconf-2.13, since scripts are broken for 2.50
+
+ -- David Schleef <ds@schleef.org>  Fri, 11 Oct 2002 13:25:28 -0700
+
 plplot (5.1.0-1) unstable; urgency=low
 
   * Non-Maintainer Upload
@@ -369,7 +379,3 @@ plplot (4.99j-1) experimental; urgency=low
 
  -- Rafael Laboissiere <rafael@icp.inpg.fr>  Sat, 13 Jun 1998 00:50:50 +0200
 
-Local variables:
-mode: debian-changelog
-add-log-mailing-address: "rafael@icp.inpg.fr"
-End:
