@@ -85,7 +85,7 @@ export cdir=$EXAMPLES_DIR/c           \
        f77dir=$EXAMPLES_DIR/f77       \
        pythondir=$EXAMPLES_DIR/python \
        tcldir=$EXAMPLES_DIR/tcl       \
-       octavedir=@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//: \
+       octavedir=$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//: \
        PATH=@prefix@/bin:$EXAMPLES_DIR/../utils:$PATH
 
 fe=""
