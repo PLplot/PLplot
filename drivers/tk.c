@@ -1,6 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1993/07/28 05:46:30  mjl
+ * Revision 1.4  1993/07/31 08:00:57  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  An escape function call
+ * was added to handle driver interface commands -- these are much better passed
+ * on to the remote plframe widget for handling since then they are modifiable
+ * by the user.
+ *
+ * Revision 1.3  1993/07/28  05:46:30  mjl
  * Now explicitly initializes remote plplot by using the "cmd" widget
  * command.  Added support for -nopixmap option, and all malloc'ed
  * memory is eventually freed.
@@ -12,7 +21,6 @@
  *
  * Revision 1.1  1993/07/02  06:58:37  mjl
  * The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
- *
 */
 
 /*	tk.c
@@ -33,6 +41,7 @@
 #include "metadefs.h"
 #include "pdf.h"
 #include "plevent.h"
+#include "xwin.h"
 
 #define BUFMAX 2048
 
@@ -69,6 +78,7 @@ typedef struct {
 
 static void  tk_start		(PLStream *);
 static void  tk_stop		(PLStream *);
+static void  tk_di		(PLStream *);
 static void  WaitForPage	(PLStream *);
 static void  HandleEvents	(PLStream *);
 static void  tk_configure	(PLStream *);
@@ -76,6 +86,7 @@ static void  launch_server	(PLStream *);
 static void  flush_output	(PLStream *);
 static void  plwindow_init	(PLStream *);
 static void  link_init		(PLStream *);
+static void  bgcolor_init	(PLStream *);
 
 /* Tcl/TK utility commands */
 
@@ -119,6 +130,10 @@ plD_init_tk(PLStream *pls)
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
+    pls->dev_di = 1;
+
+    if ( ! pls->bgcolorset) 
+	bgcolor_init(pls);
 
     if (pls->bufmax == 0)
 	pls->bufmax = BUFMAX;
@@ -314,76 +329,44 @@ plD_tidy_tk(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_color_tk()
+* plD_state_tk()
 *
-* Set pen color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-void
-plD_color_tk(PLStream *pls)
+void 
+plD_state_tk(PLStream *pls, PLINT op)
 {
-    U_CHAR c = (U_CHAR) NEW_COLOR;
     TkDev *dev = (TkDev *) pls->dev;
+    U_CHAR c = (U_CHAR) CHANGE_STATE;
 
-    dbug_enter("plD_color_tk");
+    dbug_enter("plD_state_tk");
 
     tk_wr(pdf_wr_1byte(dev->file, c));
-    tk_wr(pdf_wr_1byte(dev->file, (U_CHAR) pls->icol0));
-    pls->bytecnt += 2;
 
-    if (pls->icol0 == PL_RGB_COLOR) {
-	tk_wr(pdf_wr_1byte(dev->file, pls->curcolor.r));
-	tk_wr(pdf_wr_1byte(dev->file, pls->curcolor.g));
-	tk_wr(pdf_wr_1byte(dev->file, pls->curcolor.b));
+    switch (op) {
+
+    case PLSTATE_WIDTH:
+	tk_wr(pdf_wr_1byte(dev->file, op));
+	tk_wr(pdf_wr_2bytes(dev->file, (U_SHORT) (pls->width)));
 	pls->bytecnt += 3;
+	break;
+
+    case PLSTATE_COLOR0:
+	tk_wr(pdf_wr_1byte(dev->file, op));
+	tk_wr(pdf_wr_1byte(dev->file, (U_CHAR) pls->icol0));
+	pls->bytecnt += 2;
+	if (pls->icol0 == PL_RGB_COLOR) {
+	    tk_wr(pdf_wr_1byte(dev->file, pls->curcolor.r));
+	    tk_wr(pdf_wr_1byte(dev->file, pls->curcolor.g));
+	    tk_wr(pdf_wr_1byte(dev->file, pls->curcolor.b));
+	    pls->bytecnt += 3;
+	}
+	break;
+
+    case PLSTATE_COLOR1:
+	break;
     }
-}
-
-/*----------------------------------------------------------------------*\
-* plD_text_tk()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_text_tk(PLStream *pls)
-{
-    dbug_enter("plD_text_tk");
-
-    HandleEvents(pls);	/* Check for events */
-}
-
-/*----------------------------------------------------------------------*\
-* plD_graph_tk()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_graph_tk(PLStream *pls)
-{
-    dbug_enter("plD_graph_tk");
-
-    HandleEvents(pls);	/* Check for events */
-}
-
-/*----------------------------------------------------------------------*\
-* plD_width_tk()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void
-plD_width_tk(PLStream *pls)
-{
-    U_CHAR c = (U_CHAR) NEW_WIDTH;
-    TkDev *dev = (TkDev *) pls->dev;
-
-    dbug_enter("plD_width_tk");
-
-    tk_wr(pdf_wr_1byte(dev->file, c));
-    tk_wr(pdf_wr_2bytes(dev->file, (U_SHORT) (pls->width)));
-    pls->bytecnt += 3;
 }
 
 /*----------------------------------------------------------------------*\
@@ -396,6 +379,76 @@ void
 plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
 {
     dbug_enter("plD_esc_tk");
+
+    switch (op) {
+
+      case PLESC_DI:
+	tk_di(pls);
+	break;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* tk_di
+*
+* Process driver interface command.
+* Just send the command to the remote plplot library.
+\*----------------------------------------------------------------------*/
+
+static void
+tk_di(PLStream *pls)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+    char str[10];
+
+    dbug_enter("tk_di");
+
+/* Safety feature, should never happen */
+
+    if (dev == NULL) 
+	plexit("tk_di: Illegal call to driver (not yet initialized)");
+
+/* Change orientation */
+
+    if (pls->difilt & PLDI_ORI) {
+	sprintf(str, "%f", pls->diorot);
+	Tcl_SetVar(dev->interp, "rot", str, 0);
+
+	server_cmd( pls, "$plwidget cmd setopt -ori $rot" );
+	pls->difilt &= ~PLDI_ORI;
+    }
+
+/* Change window into plot space */
+
+    if (pls->difilt & PLDI_PLT) {
+	sprintf(str, "%f", pls->dipxmin);
+	Tcl_SetVar(dev->interp, "xl", str, 0);
+	sprintf(str, "%f", pls->dipymin);
+	Tcl_SetVar(dev->interp, "yl", str, 0);
+	sprintf(str, "%f", pls->dipxmax);
+	Tcl_SetVar(dev->interp, "xr", str, 0);
+	sprintf(str, "%f", pls->dipymax);
+	Tcl_SetVar(dev->interp, "yr", str, 0);
+
+	server_cmd( pls, "$plwidget cmd setopt -wplt $xl,$yl,$xr,$yr" );
+	pls->difilt &= ~PLDI_PLT;
+    }
+
+/* Change window into device space */
+
+    if (pls->difilt & PLDI_DEV) {
+	sprintf(str, "%f", pls->didxmin);
+	Tcl_SetVar(dev->interp, "xl", str, 0);
+	sprintf(str, "%f", pls->didymin);
+	Tcl_SetVar(dev->interp, "yl", str, 0);
+	sprintf(str, "%f", pls->didxmax);
+	Tcl_SetVar(dev->interp, "xr", str, 0);
+	sprintf(str, "%f", pls->didymax);
+	Tcl_SetVar(dev->interp, "yr", str, 0);
+
+	server_cmd( pls, "$plwidget cmd setopt -wdev $xl,$yl,$xr,$yr" );
+	pls->difilt &= ~PLDI_DEV;
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -550,11 +603,11 @@ tk_configure(PLStream *pls)
 
 /* Set default names for server widget procs */
 
-    Tcl_SetVar(dev->interp, "plserver_init",   "plserver_init", 0);
-    Tcl_SetVar(dev->interp, "plw_create", "plw_create", 0);
-    Tcl_SetVar(dev->interp, "plw_init",   "plw_init", 0);
-    Tcl_SetVar(dev->interp, "plw_flash",  "plw_flash", 0);
-    Tcl_SetVar(dev->interp, "plw_end",    "plw_end", 0);
+    Tcl_SetVar(dev->interp, "plserver_init", "plserver_init", 0);
+    Tcl_SetVar(dev->interp, "plw_create",    "plw_create", 0);
+    Tcl_SetVar(dev->interp, "plw_init",      "plw_init", 0);
+    Tcl_SetVar(dev->interp, "plw_flash",     "plw_flash", 0);
+    Tcl_SetVar(dev->interp, "plw_end",       "plw_end", 0);
 
 /* Eval user-specified TCL command -- can be used to modify defaults */
 
@@ -711,8 +764,8 @@ plwindow_init(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
     char str[10], **argv, *clientvar;
-    int i;
     long bg;
+    int i;
 
     dbug_enter("plwindow_init");
 
@@ -754,30 +807,67 @@ plwindow_init(PLStream *pls)
 
     server_cmd( pls, "update" );
 
+/* Send background command */
+
+    bg = (((pls->bgcolor.r << 8) | pls->bgcolor.g) << 8) | pls->bgcolor.b;
+    sprintf(str, "#%06x", (bg & 0xFFFFFF));
+    Tcl_SetVar(dev->interp, "bg", str, 0);
+    server_cmd( pls, "$plwidget configure -bg $bg" );
+
 /* nopixmap option */
 
     if (pls->nopixmap) {
 	server_cmd( pls, "$plwidget cmd setopt -nopixmap" );
     }
 
-/* background color 
- * Since background color is a very TK-ish thing, I support it in plframe
- * widgets in the normal TK-ish way, then pass the relevant info down to
- * plplot.  Setting the background color directly from plplot does not
- * give the right results.
-*/
-
-    if (pls->bgcolorset) {
-	bg = (((pls->bgcolor.r << 8) | pls->bgcolor.g) << 8) | pls->bgcolor.b;
-	sprintf(str, "#%06x", (bg & 0xFFFFFF));
-	Tcl_SetVar(dev->interp, "bg", str, 0);
-	server_cmd( pls, "$plwidget configure -bg $bg" );
-    }
-
 /* Start up remote plplot */
 
     server_cmd( pls, "update" );
     server_cmd( pls, "$plwidget cmd init" );
+}
+
+/*----------------------------------------------------------------------*\
+* bgcolor_init
+*
+* Sets up the background color in the remote window.
+*
+* Since background color is a very TK-ish thing, I support it in plframe
+* widgets in the normal TK-ish way, then pass the relevant info down to
+* plplot.  Setting the background color directly from plplot does not
+* give the right results.
+*
+* Also: while TK has the facility to choose color defaults on the basis of
+* whether the display device is color or monochrome, at present there is no
+* method particular to grayscale devices.  On these, I a white background
+* looks best, so I set the background (if not already set) from here to
+* white.  The result is the following set of contortions.
+\*----------------------------------------------------------------------*/
+
+static void
+bgcolor_init(PLStream *pls)
+{
+    int gslevbg, is_color = pls->color;
+
+/* If the user hasn't forced "color", see if we are grayscale */
+
+    if ( ! pls->colorset) {
+	Display *display;
+
+	display = XOpenDisplay(pls->FileName);
+	if (display != NULL) {
+	    is_color = ! pl_AreWeGrayscale(display);
+	    XCloseDisplay(display);
+	}
+    }
+
+/* Default is white if grayscale and no explicit color commands given */
+
+    if ( ! is_color) {
+	pls->bgcolorset = 1;
+	pls->bgcolor.r = 0xFF;
+	pls->bgcolor.g = 0xFF;
+	pls->bgcolor.b = 0xFF;
+    }
 }
 
 /*----------------------------------------------------------------------*\
