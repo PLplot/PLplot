@@ -33,6 +33,7 @@ proc x01 {{w loopback}} {
 
     plot3 $w
 # Restore defaults
+    $w cmd plcol0 1
     $w cmd plssub 1 1
     $w cmd pleop
 
@@ -48,11 +49,13 @@ proc plot1 {w} {
     matrix y f $npts
 
     for {set i 0} {$i < $npts} {incr i} {
-	x $i = [expr $xoff + $xscale * ($i + 1) / $npts]
+	x $i = [expr $xoff + ($xscale * ($i + 1)) / $npts]
 	y $i = [expr $yoff + $yscale * pow([x $i],2)]
     }
 
+    set xmin [x [expr 0]]
     set xmax [x [expr $npts-1]]
+    set ymin [y [expr 0]]
     set ymax [y [expr $npts-1]]
 
     matrix x1 f 6
@@ -65,18 +68,18 @@ proc plot1 {w} {
     }
 
     $w cmd plcol0 1
-    $w cmd plenv $xoff $xmax $yoff $ymax 0 0
-    $w cmd plcol0 6
+    $w cmd plenv $xmin $xmax $ymin $ymax 0 0
+    $w cmd plcol0 2
     $w cmd pllab "(x)" "(y)" "#frPLplot Example 1 - y=x#u2"
 
     # plot the data points
 
-    $w cmd plcol0 9
+    $w cmd plcol0 4
     $w cmd plpoin 6 x1 y1 9
 
     # draw the line through the data
 
-    $w cmd plcol0 4
+    $w cmd plcol0 3
     $w cmd plline $npts x y
 }
 
@@ -93,7 +96,7 @@ proc plot2 {w} {
     matrix x1 f 101
     matrix y1 f 101
 
-    for {set i 0} {$i < 101} {incr i} {
+    for {set i 0} {$i < 100} {incr i} {
 	set x [expr ($i - 19.)/6.]
 	x1 $i = $x
 	y1 $i = 1
@@ -101,14 +104,14 @@ proc plot2 {w} {
     }
 
     $w cmd plcol0 3
-    $w cmd plline 101 x1 y1
+    $w cmd plline 100 x1 y1
 }
 
 # This is supposed to work just like the plot3() in x01c.c
 
 proc plot3 {w} {
 
-    set pi 3.1415926535897932384
+    set pi 3.14159265358979323846
     $w cmd pladv 0
     $w cmd plvsta
     $w cmd plwind 0.0 360.0 -1.2 1.2

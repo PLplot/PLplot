@@ -3,17 +3,15 @@
 #----------------------------------------------------------------------------
 
 proc x03 {{w loopback}} {
-    set twopi  [expr 2. * 3.1415926535897932384]
-
+    set twopi  [expr 2. * 3.14159265358979323846]
 # Set up viewport and window, but do not draw box 
 
-    $w cmd plcol0 1
     $w cmd plenv -1.3 1.3 -1.3 1.3 1 -2
 
 # Draw circles for polar grid
 
     set ni 10
-    set nj 45
+    set nj 360
     set nj1 [expr $nj + 1]
 
     set dr     [expr 1. / $ni]
@@ -41,7 +39,8 @@ proc x03 {{w loopback}} {
 	set yg [expr sin($theta)]
 	$w cmd pljoin 0.0 0.0 $xg $yg
 
-	if {$xg >= 0} {
+# Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
+	if {$xg >= -0.00001} {
 	    set dx $xg
 	    set dy $yg
 	    set just -0.15
@@ -52,12 +51,15 @@ proc x03 {{w loopback}} {
 	}
 	set label [expr round($theta*360./$twopi)]
 
+# N.B. cannot get this command to give same postscript output.  Also visual 
+# inspection shows 90 deg label jumping around slightly compared to python
+# and C front ends.  No idea why (AWI comment).
 	$w cmd plptex $xg $yg $dx $dy $just $label
     }
 
 # Draw the graph 
 
-    set npts 180
+    set npts 360
     set npts1 [expr $npts+1]
 
     set dtheta [expr $twopi / $npts]
@@ -76,4 +78,7 @@ proc x03 {{w loopback}} {
 
     $w cmd plcol0 4
     $w cmd plmtex "t" 2.0 0.5 0.5 "#frPLplot Example 3 - r(#gh)=sin 5#gh"
+
+# Restore defaults
+    $w cmd plcol0 1
 }
