@@ -184,6 +184,9 @@ xwin_drv_la_SOURCES = xwin.c
 xwin_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(xflags) $(lmflag)
 endif
 
+install-data-hook:
+	rm -f $(driversdir)/*.a
+
 # end of enable_dyndrivers
 else
 # start of static driver alternative which is implemented using
