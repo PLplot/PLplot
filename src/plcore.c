@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1993/11/07 09:07:38  mjl
+ * Revision 1.23  1993/11/15 08:38:35  mjl
+ * Added documentation.  Fixed plflush to be callable from Fortran.
+ * Moved plexit to this file and changed it to set nopause before issuing the
+ * final end-of-page command.
+ *
+ * Revision 1.22  1993/11/07  09:07:38  mjl
  * Changed plflush() to call escape function if driver wants to handle
  * flushes itself.  Also found & fixed a bug in plcpstrm.
  *
@@ -782,8 +787,7 @@ c_plgdidev(PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy)
 /*----------------------------------------------------------------------*\
 * void plsdiori
 *
-* Set plot orientation
-* Input is the rotation in units of pi/2.
+* Set plot orientation, specifying rotation in units of pi/2.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1029,7 +1033,7 @@ pxmin: %d,  pxmax: %d,  pymin: %d,  pymax: %d\n",
 \*----------------------------------------------------------------------*/
 
 void
-plflush(void)
+c_plflush(void)
 {
     if (plsc->dev_flush) {
 	offset = plsc->device - 1;
@@ -1046,7 +1050,7 @@ plflush(void)
 /*----------------------------------------------------------------------*\
 * void plstar(nx, ny)
 *
-* Here we are passing the windows/page in x and y.
+* Initialize plplot, passing in the windows/page settings.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1063,7 +1067,7 @@ c_plstar(PLINT nx, PLINT ny)
 /*----------------------------------------------------------------------*\
 * void plstart(devname, nx, ny)
 *
-* Here we are passing the device name, and windows/page in x and y.
+* Initialize plplot, passing the device name and windows/page settings. 
 \*----------------------------------------------------------------------*/
 
 void
@@ -1081,12 +1085,11 @@ c_plstart(const char *devname, PLINT nx, PLINT ny)
 /*----------------------------------------------------------------------*\
 * void plinit()
 *
-* Checks certain startup parameters for validity, then proceeds with
-* initialization.  Accepts no arguments.
+* Initializes plplot, using preset or default options.
 \*----------------------------------------------------------------------*/
 
 void
-c_plinit()
+c_plinit(void)
 {
     PLFLT gscale, hscale;
     PLFLT size_chr, size_sym, size_maj, size_min, lx, ly;
@@ -1190,7 +1193,7 @@ c_plinit()
 \*----------------------------------------------------------------------*/
 
 void
-c_plend()
+c_plend(void)
 {
     PLINT i;
 
@@ -1214,7 +1217,7 @@ c_plend()
 \*----------------------------------------------------------------------*/
 
 void
-c_plend1()
+c_plend1(void)
 {
     if (plsc->level > 0) {
 	plP_eop();
@@ -1502,6 +1505,31 @@ plwarn(char *errormsg)
 }
 
 /*----------------------------------------------------------------------*\
+* void plexit()
+*
+* In case of an abort this routine is called.  It just prints out an error
+* message and tries to clean up as much as possible.  It's best to turn
+* off pause and then restore previous setting before returning.
+\*----------------------------------------------------------------------*/
+
+void
+plexit(char *errormsg)
+{
+    PLINT nopause;
+
+    nopause = plsc->nopause;
+    plsc->nopause = 1;
+
+    plend();
+    if (*errormsg != '\0') {
+	fprintf(stderr, "\n*** PLPLOT ERROR ***\n");
+	fprintf(stderr, "%s\n", errormsg);
+    }
+    plsc->nopause = nopause;
+    pl_exit();
+}
+
+/*----------------------------------------------------------------------*\
 * void plfontld()
 *
 * Load specified font set.
@@ -1528,7 +1556,7 @@ c_plfontld(PLINT fnt)
 \*----------------------------------------------------------------------*/
 
 void
-c_plreplot()
+c_plreplot(void)
 {
     if (plsc->plbufFile != NULL) {
 	plRemakePlot(plsc);
@@ -1568,6 +1596,8 @@ plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
 *  Various external access routines.
 \*----------------------------------------------------------------------*/
 
+/* Get output device parameters. */
+
 void
 c_plgpage(PLFLT *p_xp, PLFLT *p_yp,
 	  PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT *p_yoff)
@@ -1580,31 +1610,7 @@ c_plgpage(PLFLT *p_xp, PLFLT *p_yp,
     *p_yoff = plsc->yoffset;
 }
 
-void
-c_plssub(PLINT nx, PLINT ny)
-{
-    if (plsc->level > 0) {
-	plwarn("plssub: Must be called before plinit.");
-	return;
-    }
-    if (nx > 0)
-	plsc->nsubx = nx;
-    if (ny > 0)
-	plsc->nsuby = ny;
-}
-
-void
-c_plsdev(const char *devname)
-{
-    if (plsc->level > 0) {
-	plwarn("plsdev: Must be called before plinit.");
-	return;
-    }
-    if (devname != NULL) {
-	strncpy(plsc->DevName, devname, sizeof(plsc->DevName) - 1);
-	plsc->DevName[sizeof(plsc->DevName) - 1] = '\0';
-    }
-}
+/* Set output device parameters.  Usually ignored by the driver. */
 
 void
 c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
@@ -1627,11 +1633,45 @@ c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
     plsc->pageset = 1;
 }
 
+/* Set the number of subwindows in x and y */
+
+void
+c_plssub(PLINT nx, PLINT ny)
+{
+    if (plsc->level > 0) {
+	plwarn("plssub: Must be called before plinit.");
+	return;
+    }
+    if (nx > 0)
+	plsc->nsubx = nx;
+    if (ny > 0)
+	plsc->nsuby = ny;
+}
+
+/* Set the device (keyword) name */
+
+void
+c_plsdev(const char *devname)
+{
+    if (plsc->level > 0) {
+	plwarn("plsdev: Must be called before plinit.");
+	return;
+    }
+    if (devname != NULL) {
+	strncpy(plsc->DevName, devname, sizeof(plsc->DevName) - 1);
+	plsc->DevName[sizeof(plsc->DevName) - 1] = '\0';
+    }
+}
+
+/* Get the current stream pointer */
+
 void
 plgpls(PLStream **p_pls)
 {
     *p_pls = plsc;
 }
+
+/* Set the function pointer for the keyboard event handler */
 
 void
 plsKeyEH(void (*KeyEH) (PLKey *, void *, int *), void *KeyEH_data)
@@ -1678,13 +1718,15 @@ c_plslpb(PLFLT lpbxmi, PLFLT lpbxma, PLFLT lpbymi, PLFLT lpbyma)
 {
 }
 
-/* Note these two are only useable from C.. */
+/* Set the output file pointer */
 
 void
 plgfile(FILE **p_file)
 {
     *p_file = plsc->OutFile;
 }
+
+/* Get the output file pointer */
 
 void
 plsfile(FILE *file)
@@ -1693,10 +1735,8 @@ plsfile(FILE *file)
     plsc->fileset = 1;
 }
 
-/*
-*  The user MUST allocate at least 80 characters to hold the filename.
-*  Beyond that, I truncate it.  You have been warned.
-*/
+/* Get the (current) output file name.  Must be preallocated to >80 bytes */
+/* Beyond that, I truncate it.  You have been warned. */
 
 void
 c_plgfnam(char *fnam)
@@ -1705,11 +1745,15 @@ c_plgfnam(char *fnam)
     fnam[79] = '\0';
 }
 
+/* Set the output file name. */
+
 void
 c_plsfnam(const char *fnam)
 {
     plP_sfnam(plsc, fnam);
 }
+
+/* Set the pause (on end-of-page) status */
 
 void
 c_plspause(PLINT pause)
@@ -1717,7 +1761,7 @@ c_plspause(PLINT pause)
     plsc->nopause = !pause;
 }
 
-/* Set/get the number of points written after the decimal point in labels. */
+/* Set the floating point precision (in number of places) in numeric labels. */
 
 void
 c_plprec(PLINT setp, PLINT prec)
@@ -1725,6 +1769,8 @@ c_plprec(PLINT setp, PLINT prec)
     plsc->setpre = setp;
     plsc->precis = prec;
 }
+
+/* Get the floating point precision (in number of places) in numeric labels. */
 
 void
 plP_gprec(PLINT *p_setp, PLINT *p_prec)
@@ -1734,7 +1780,7 @@ plP_gprec(PLINT *p_setp, PLINT *p_prec)
 }
 
 /*
-* Set/get the escape character for text strings.
+* Set the escape character for text strings.
 * From C you can pass as a character, from Fortran it needs to be the decimal
 * ASCII value.  Only selected characters are allowed to prevent the user from
 * shooting himself in the foot (a '\' isn't allowed since it conflicts with
@@ -1762,6 +1808,8 @@ c_plsesc(char esc)
     }
 }
 
+/* Get the escape character for text strings. */
+
 void
 plgesc(char *p_esc)
 {
@@ -1771,6 +1819,7 @@ plgesc(char *p_esc)
     *p_esc = plsc->esc;
 }
 
+/* Get the current library version number */
 /* Note: you MUST have allocated space for this (80 characters is safe) */
 
 void
@@ -1779,7 +1828,7 @@ c_plgver(char *p_ver)
     strcpy(p_ver, PLPLOT_VERSION);
 }
 
-/* For plotting into an inferior X window */
+/* Set inferior X window */
 
 void
 plsxwin(PLINT window_id)
@@ -2052,6 +2101,9 @@ c_plscolor(PLINT color)
 *	bmax	maximum member size
 \*----------------------------------------------------------------------*/
 
+/* Get family file parameters */
+
+
 void
 c_plgfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax)
 {
@@ -2059,6 +2111,8 @@ c_plgfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax)
     *p_num = plsc->member;
     *p_bmax = plsc->bytemax;
 }
+
+/* Set family file parameters */
 
 void
 c_plsfam(PLINT fam, PLINT num, PLINT bmax)
@@ -2074,6 +2128,8 @@ c_plsfam(PLINT fam, PLINT num, PLINT bmax)
 	plsc->bytemax = bmax;
 }
 
+/* Advance to the next family file on the next new page */
+
 void
 c_plfamadv(void)
 {
@@ -2085,12 +2141,16 @@ c_plfamadv(void)
 *  See pldtik.c for more info.
 \*----------------------------------------------------------------------*/
 
+/* Get x axis labeling parameters */
+
 void
 c_plgxax(PLINT *p_digmax, PLINT *p_digits)
 {
     *p_digmax = plsc->xdigmax;
     *p_digits = plsc->xdigits;
 }
+
+/* Set x axis labeling parameters */
 
 void
 c_plsxax(PLINT digmax, PLINT digits)
@@ -2099,12 +2159,16 @@ c_plsxax(PLINT digmax, PLINT digits)
     plsc->xdigits = digits;
 }
 
+/* Get y axis labeling parameters */
+
 void
 c_plgyax(PLINT *p_digmax, PLINT *p_digits)
 {
     *p_digmax = plsc->ydigmax;
     *p_digits = plsc->ydigits;
 }
+
+/* Set y axis labeling parameters */
 
 void
 c_plsyax(PLINT digmax, PLINT digits)
@@ -2113,12 +2177,16 @@ c_plsyax(PLINT digmax, PLINT digits)
     plsc->ydigits = digits;
 }
 
+/* Get z axis labeling parameters */
+
 void
 c_plgzax(PLINT *p_digmax, PLINT *p_digits)
 {
     *p_digmax = plsc->zdigmax;
     *p_digits = plsc->zdigits;
 }
+
+/* Set z axis labeling parameters */
 
 void
 c_plszax(PLINT digmax, PLINT digits)
@@ -2127,9 +2195,20 @@ c_plszax(PLINT digmax, PLINT digits)
     plsc->zdigits = digits;
 }
 
+/* Get character default height and current (scaled) height */
+
+void
+c_plgchr(PLFLT *p_def, PLFLT *p_ht)
+{
+    *p_def = plsc->chrdef;
+    *p_ht = plsc->chrht;
+}
+
 /*----------------------------------------------------------------------*\
 *  These should not be called by the user.
 \*----------------------------------------------------------------------*/
+
+/* Get plot level */
 
 void
 plP_glev(PLINT *p_n)
@@ -2137,11 +2216,15 @@ plP_glev(PLINT *p_n)
     *p_n = plsc->level;
 }
 
+/* Set plot level */
+
 void
 plP_slev(PLINT n)
 {
     plsc->level = n;
 }
+
+/* Get parameters for 3d plot base */
 
 void
 plP_gbase(PLFLT *p_x, PLFLT *p_y, PLFLT *p_xc, PLFLT *p_yc)
@@ -2152,6 +2235,8 @@ plP_gbase(PLFLT *p_x, PLFLT *p_y, PLFLT *p_xc, PLFLT *p_yc)
     *p_yc = plsc->basecy;
 }
 
+/* Set parameters for 3d plot base */
+
 void
 plP_sbase(PLFLT x, PLFLT y, PLFLT xc, PLFLT yc)
 {
@@ -2161,17 +2246,23 @@ plP_sbase(PLFLT x, PLFLT y, PLFLT xc, PLFLT yc)
     plsc->basecy = yc;
 }
 
+/* Get number of elements for current broken line style */
+
 void
 plP_gnms(PLINT *p_n)
 {
     *p_n = plsc->nms;
 }
 
+/* Set number of elements for current broken line style */
+
 void
 plP_snms(PLINT n)
 {
     plsc->nms = n;
 }
+
+/* Get physical coordinates of current point */
 
 void
 plP_gcurr(PLINT *p_ix, PLINT *p_iy)
@@ -2180,12 +2271,16 @@ plP_gcurr(PLINT *p_ix, PLINT *p_iy)
     *p_iy = plsc->curry;
 }
 
+/* Set physical coordinates of current point */
+
 void
 plP_scurr(PLINT ix, PLINT iy)
 {
     plsc->currx = ix;
     plsc->curry = iy;
 }
+
+/* Get x-y domain in world coordinates for 3d plots */
 
 void
 plP_gdom(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
@@ -2196,6 +2291,8 @@ plP_gdom(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
     *p_ymax = plsc->domyma;
 }
 
+/* Set x-y domain in world coordinates for 3d plots */
+
 void
 plP_sdom(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
@@ -2205,6 +2302,8 @@ plP_sdom(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     plsc->domyma = ymax;
 }
 
+/* Get vertical (z) scale parameters for 3-d plot */
+
 void
 plP_grange(PLFLT *p_zscl, PLFLT *p_zmin, PLFLT *p_zmax)
 {
@@ -2213,6 +2312,8 @@ plP_grange(PLFLT *p_zscl, PLFLT *p_zmin, PLFLT *p_zmax)
     *p_zmax = plsc->ranma;
 }
 
+/* Set vertical (z) scale parameters for 3-d plot */
+
 void
 plP_srange(PLFLT zscl, PLFLT zmin, PLFLT zmax)
 {
@@ -2220,6 +2321,8 @@ plP_srange(PLFLT zscl, PLFLT zmin, PLFLT zmax)
     plsc->ranmi = zmin;
     plsc->ranma = zmax;
 }
+
+/* Get parameters used in 3d plots */
 
 void
 plP_gw3wc(PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy, PLFLT *p_dyz)
@@ -2231,6 +2334,8 @@ plP_gw3wc(PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy, PLFLT *p_dyz)
     *p_dyz = plsc->cyz;
 }
 
+/* Set parameters used in 3d plots */
+
 void
 plP_sw3wc(PLFLT dxx, PLFLT dxy, PLFLT dyx, PLFLT dyy, PLFLT dyz)
 {
@@ -2241,6 +2346,8 @@ plP_sw3wc(PLFLT dxx, PLFLT dxy, PLFLT dyx, PLFLT dyy, PLFLT dyz)
     plsc->cyz = dyz;
 }
 
+/* Get viewport boundaries in physical coordinates */
+
 void
 plP_gvpp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
@@ -2249,6 +2356,8 @@ plP_gvpp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
     *p_iymin = plsc->vppymi;
     *p_iymax = plsc->vppyma;
 }
+
+/* Set viewport boundaries in physical coordinates */
 
 void
 plP_svpp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
@@ -2259,6 +2368,8 @@ plP_svpp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
     plsc->vppyma = iymax;
 }
 
+/* Get subpage boundaries in physical coordinates */
+
 void
 plP_gspp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
@@ -2267,6 +2378,8 @@ plP_gspp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
     *p_iymin = plsc->sppymi;
     *p_iymax = plsc->sppyma;
 }
+
+/* Set subpage boundaries in physical coordinates */
 
 void
 plP_sspp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
@@ -2277,6 +2390,8 @@ plP_sspp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
     plsc->sppyma = iymax;
 }
 
+/* Get clip boundaries in physical coordinates */
+
 void
 plP_gclp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
@@ -2285,6 +2400,8 @@ plP_gclp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
     *p_iymin = plsc->clpymi;
     *p_iymax = plsc->clpyma;
 }
+
+/* Set clip boundaries in physical coordinates */
 
 void
 plP_sclp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
@@ -2295,6 +2412,8 @@ plP_sclp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
     plsc->clpyma = iymax;
 }
 
+/* Get physical device limits in physical coordinates */
+
 void
 plP_gphy(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
@@ -2303,6 +2422,8 @@ plP_gphy(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
     *p_iymin = plsc->phyymi;
     *p_iymax = plsc->phyyma;
 }
+
+/* Set physical device limits in physical coordinates */
 
 void
 plP_sphy(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
@@ -2313,6 +2434,8 @@ plP_sphy(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
     plsc->phyyma = iymax;
 }
 
+/* Get number of subpages on physical device and current subpage */
+
 void
 plP_gsub(PLINT *p_nx, PLINT *p_ny, PLINT *p_cs)
 {
@@ -2320,6 +2443,8 @@ plP_gsub(PLINT *p_nx, PLINT *p_ny, PLINT *p_cs)
     *p_ny = plsc->nsuby;
     *p_cs = plsc->cursub;
 }
+
+/* Set number of subpages on physical device and current subpage */
 
 void
 plP_ssub(PLINT nx, PLINT ny, PLINT cs)
@@ -2329,12 +2454,16 @@ plP_ssub(PLINT nx, PLINT ny, PLINT cs)
     plsc->cursub = cs;
 }
 
+/* Get number of micrometers in a pixel */
+
 void
 plP_gumpix(PLINT *p_ix, PLINT *p_iy)
 {
     *p_ix = plsc->umx;
     *p_iy = plsc->umy;
 }
+
+/* Set number of micrometers in a pixel */
 
 void
 plP_sumpix(PLINT ix, PLINT iy)
@@ -2343,12 +2472,16 @@ plP_sumpix(PLINT ix, PLINT iy)
     plsc->umy = iy;
 }
 
+/* Get font and color attributes */
+
 void
 plP_gatt(PLINT *p_ifnt, PLINT *p_icol0)
 {
     *p_ifnt = font;
     *p_icol0 = plsc->icol0;
 }
+
+/* Set font and color attributes */
 
 void
 plP_satt(PLINT ifnt, PLINT icol0)
@@ -2357,11 +2490,15 @@ plP_satt(PLINT ifnt, PLINT icol0)
     plsc->icol0 = icol0;
 }
 
+/* Get current color, map 0 */
+
 void
 plP_gcol(PLINT *p_icol0)
 {
     *p_icol0 = plsc->icol0;
 }
+
+/* Set current color, map 0 */
 
 void
 plP_scol(PLINT icol0)
@@ -2369,17 +2506,23 @@ plP_scol(PLINT icol0)
     plsc->icol0 = icol0;
 }
 
+/* Get pen width */
+
 void
 plP_gwid(PLINT *p_pwid)
 {
     *p_pwid = plsc->width;
 }
 
+/* Set pen width */
+
 void
 plP_swid(PLINT pwid)
 {
     plsc->width = pwid;
 }
+
+/* Get subpage boundaries in normalized device coordinates */
 
 void
 plP_gspd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
@@ -2390,6 +2533,8 @@ plP_gspd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
     *p_ymax = plsc->spdyma;
 }
 
+/* Set subpage boundaries in normalized device coordinates */
+
 void
 plP_sspd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
@@ -2398,6 +2543,8 @@ plP_sspd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     plsc->spdymi = ymin;
     plsc->spdyma = ymax;
 }
+
+/* Get viewport boundaries in normalized device coordinates */
 
 void
 plP_gvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
@@ -2408,6 +2555,8 @@ plP_gvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
     *p_ymax = plsc->vpdyma;
 }
 
+/* Get viewport boundaries in normalized device coordinates */
+
 void
 plP_svpd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
@@ -2416,6 +2565,8 @@ plP_svpd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     plsc->vpdymi = ymin;
     plsc->vpdyma = ymax;
 }
+
+/* Get viewport boundaries in world coordinates */
 
 void
 plP_gvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
@@ -2426,6 +2577,8 @@ plP_gvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
     *p_ymax = plsc->vpwyma;
 }
 
+/* Set viewport boundaries in world coordinates */
+
 void
 plP_svpw(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
@@ -2435,12 +2588,16 @@ plP_svpw(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     plsc->vpwyma = ymax;
 }
 
+/* Get number of pixels to a millimeter */
+
 void
 plP_gpixmm(PLFLT *p_x, PLFLT *p_y)
 {
     *p_x = plsc->xpmm;
     *p_y = plsc->ypmm;
 }
+
+/* Set number of pixels to a millimeter */
 
 void
 plP_spixmm(PLFLT x, PLFLT y)
@@ -2484,6 +2641,8 @@ plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
     plP_smp(mpxscl, (PLFLT) (xmin), mpyscl, (PLFLT) (ymin));
 }
 
+/* Get transformation variables for world to physical conversion */
+
 void
 plP_gwp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
@@ -2492,6 +2651,8 @@ plP_gwp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
     *p_yscl = plsc->wpyscl;
     *p_yoff = plsc->wpyoff;
 }
+
+/* Set transformation variables for world to physical conversion */
 
 void
 plP_swp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
@@ -2502,6 +2663,8 @@ plP_swp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
     plsc->wpyoff = yoff;
 }
 
+/* Get transformation variables for world coordinates to mm */
+
 void
 plP_gwm(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
@@ -2510,6 +2673,8 @@ plP_gwm(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
     *p_yscl = plsc->wmyscl;
     *p_yoff = plsc->wmyoff;
 }
+
+/* Set transformation variables for world coordinates to mm */
 
 void
 plP_swm(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
@@ -2520,6 +2685,8 @@ plP_swm(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
     plsc->wmyoff = yoff;
 }
 
+/* Get transformation variables for device to physical conversion */
+
 void
 plP_gdp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
@@ -2528,6 +2695,8 @@ plP_gdp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
     *p_yscl = plsc->dpyscl;
     *p_yoff = plsc->dpyoff;
 }
+
+/* Set transformation variables for device to physical conversion */
 
 void
 plP_sdp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
@@ -2538,6 +2707,8 @@ plP_sdp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
     plsc->dpyoff = yoff;
 }
 
+/* Get transformation variables for millimeters from bottom left */
+
 void
 plP_gmp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
@@ -2546,6 +2717,8 @@ plP_gmp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
     *p_yscl = plsc->mpyscl;
     *p_yoff = plsc->mpyoff;
 }
+
+/* Set transformation variables for millimeters from bottom left */
 
 void
 plP_smp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
@@ -2556,12 +2729,7 @@ plP_smp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
     plsc->mpyoff = yoff;
 }
 
-void
-c_plgchr(PLFLT *p_def, PLFLT *p_ht)
-{
-    *p_def = plsc->chrdef;
-    *p_ht = plsc->chrht;
-}
+/* Set character default height and current (scaled) height */
 
 void
 plP_schr(PLFLT def, PLFLT ht)
@@ -2570,12 +2738,16 @@ plP_schr(PLFLT def, PLFLT ht)
     plsc->chrht = ht;
 }
 
+/* Get symbol default height and current (scaled) height */
+
 void
 plP_gsym(PLFLT *p_def, PLFLT *p_ht)
 {
     *p_def = plsc->symdef;
     *p_ht = plsc->symht;
 }
+
+/* Set symbol default height and current (scaled) height */
 
 void
 plP_ssym(PLFLT def, PLFLT ht)
@@ -2584,12 +2756,16 @@ plP_ssym(PLFLT def, PLFLT ht)
     plsc->symht = ht;
 }
 
+/* Get major tick default height and current (scaled) height */
+
 void
 plP_gmaj(PLFLT *p_def, PLFLT *p_ht)
 {
     *p_def = plsc->majdef;
     *p_ht = plsc->majht;
 }
+
+/* Set major tick default height and current (scaled) height */
 
 void
 plP_smaj(PLFLT def, PLFLT ht)
@@ -2598,12 +2774,16 @@ plP_smaj(PLFLT def, PLFLT ht)
     plsc->majht = ht;
 }
 
+/* Get minor tick default height and current (scaled) height */
+
 void
 plP_gmin(PLFLT *p_def, PLFLT *p_ht)
 {
     *p_def = plsc->mindef;
     *p_ht = plsc->minht;
 }
+
+/* Set minor tick default height and current (scaled) height */
 
 void
 plP_smin(PLFLT def, PLFLT ht)
@@ -2612,6 +2792,8 @@ plP_smin(PLFLT def, PLFLT ht)
     plsc->minht = ht;
 }
 
+/* Get defining parameters for pattern fill */
+
 void
 plP_gpat(PLINT *p_inc[], PLINT *p_del[], PLINT *p_nlin)
 {
@@ -2619,6 +2801,8 @@ plP_gpat(PLINT *p_inc[], PLINT *p_del[], PLINT *p_nlin)
     *p_del = plsc->delta;
     *p_nlin = plsc->nps;
 }
+
+/* Set defining parameters for pattern fill */
 
 void
 plP_spat(PLINT inc[], PLINT del[], PLINT nlin)
@@ -2632,6 +2816,8 @@ plP_spat(PLINT inc[], PLINT del[], PLINT nlin)
     }
 }
 
+/* Get defining parameters for broken lines */
+
 void
 plP_gmark(PLINT *p_mar[], PLINT *p_spa[], PLINT *p_nms)
 {
@@ -2639,6 +2825,8 @@ plP_gmark(PLINT *p_mar[], PLINT *p_spa[], PLINT *p_nms)
     *p_spa = plsc->space;
     *p_nms = plsc->nms;
 }
+
+/* Set defining parameters for broken lines */
 
 void
 plP_smark(PLINT mar[], PLINT spa[], PLINT nms)
@@ -2652,6 +2840,8 @@ plP_smark(PLINT mar[], PLINT spa[], PLINT nms)
     }
 }
 
+/* Get work variables used in broken line draws */
+
 void
 plP_gcure(PLINT **p_cur, PLINT **p_pen, PLINT **p_tim, PLINT **p_ala)
 {
@@ -2660,6 +2850,8 @@ plP_gcure(PLINT **p_cur, PLINT **p_pen, PLINT **p_tim, PLINT **p_ala)
     *p_tim = &(plsc->timecnt);
     *p_ala = &(plsc->alarm);
 }
+
+/* Set work variables used in broken line draws */
 
 void
 plP_scure(PLINT cur, PLINT pen, PLINT tim, PLINT ala)
