@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.8  1992/10/12 17:08:03  mjl
-   Added PL_NEED_SIZE_T define to those files that need to know the value
-   of (size_t) for non-POSIX systems (in this case the Amiga) that require you
-   to include <stddef.h> to get it.
+   Revision 1.9  1993/01/23 05:54:04  mjl
+   Now holds all routines dealing with fills.
 
+ * Revision 1.8  1992/10/12  17:08:03  mjl
+ * Added PL_NEED_SIZE_T define to those files that need to know the value
+ * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
+ * to include <stddef.h> to get it.
+ *
  * Revision 1.7  1992/09/30  18:25:46  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -48,42 +51,53 @@
 
 #define DTOR            0.0174533
 #define BINC            50
-int compar(const void *, const void *);
 
 struct point {
     PLINT x, y;
 };
 static PLINT bufferleng, buffersize, *buffer;
 
-void  addcoord (PLINT x1, PLINT y1);
+/* Static function prototypes */
+/* INDENT OFF */
 
-void 
-c_plfill( PLINT n, PLFLT *x, PLFLT *y )
+static int   compar	(const void *, const void *);
+static void  addcoord	(PLINT, PLINT);
+static void  tran	(PLINT *, PLINT *, PLFLT, PLFLT);
+static void  buildlist	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
+
+/* INDENT ON */
+
+/*----------------------------------------------------------------------*\
+* void plfill()
+*
+* Pattern fills the polygon bounded by the input points.
+\*----------------------------------------------------------------------*/
+
+void
+c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 {
     PLINT i, level;
-    PLINT xmin, ymin, x1, y1, x2, y2, x3, y3;
+    PLINT xp, yp, xpmin, ypmin, xp1, yp1, xp2, yp2, xp3, yp3;
     PLINT k, dinc;
     PLFLT ci, si, thetd;
     PLINT *inclin, *delta, nps;
     PLFLT xpmm, ypmm;
     short swap;
 
-    void tran(PLINT * a, PLINT * b, PLFLT c, PLFLT d);
-    void buildlist( PLINT, PLINT, PLINT, PLINT, PLINT, PLINT, PLINT );
-
     glev(&level);
     if (level < 3)
-	plexit("Please set up window before calling plfill.");
+	plexit("plfill: Please set up window first.");
     if (n < 3)
-	plexit("Not enough points in plfill object!");
+	plexit("plfill: Not enough points in object!");
 
     buffersize = 2 * BINC;
     buffer = (PLINT *) malloc((size_t) buffersize * sizeof(PLINT));
     if (!buffer)
-	plexit("Out of memory in plfill.");
+	plexit("plfill: Out of memory.");
 
     gpat(&inclin, &delta, &nps);
     gpixmm(&xpmm, &ypmm);
+
     for (k = 0; k < nps; k++) {
 	bufferleng = 0;
 
@@ -103,92 +117,104 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 	else
 	    dinc = delta[k] * SSQR(ypmm * ABS(ci), xpmm * ABS(si)) / 1000.;
 
-	xmin = wcpcx(x[0]);
-	ymin = wcpcy(y[0]);
+	xpmin = wcpcx(x[0]);
+	ypmin = wcpcy(y[0]);
 	for (i = 1; i < n; i++) {
-	    xmin = MIN(xmin, wcpcx(x[i]));
-	    ymin = MIN(ymin, wcpcy(y[i]));
+	    xp = wcpcx(x[i]);
+	    yp = wcpcy(y[i]);
+	    xpmin = MIN(xpmin, xp);
+	    ypmin = MIN(ypmin, yp);
 	}
 
-	x1 = wcpcx(x[0]) - xmin;
-	y1 = wcpcy(y[0]) - ymin;
-	tran(&x1, &y1, (PLFLT) ci, (PLFLT) si);
-	x2 = wcpcx(x[1]) - xmin;
-	y2 = wcpcy(y[1]) - ymin;
-	tran(&x2, &y2, (PLFLT) ci, (PLFLT) si);
+	xp1 = wcpcx(x[0]) - xpmin;
+	yp1 = wcpcy(y[0]) - ypmin;
+	tran(&xp1, &yp1, (PLFLT) ci, (PLFLT) si);
+
+	xp2 = wcpcx(x[1]) - xpmin;
+	yp2 = wcpcy(y[1]) - ypmin;
+	tran(&xp2, &yp2, (PLFLT) ci, (PLFLT) si);
+
 	for (i = 2; i < n; i++) {
-	    x3 = wcpcx(x[i]) - xmin;
-	    y3 = wcpcy(y[i]) - ymin;
-	    tran(&x3, &y3, (PLFLT) ci, (PLFLT) si);
+	    xp3 = wcpcx(x[i]) - xpmin;
+	    yp3 = wcpcy(y[i]) - ypmin;
+	    tran(&xp3, &yp3, (PLFLT) ci, (PLFLT) si);
 	    if (swap)
-		buildlist(y1, x1, y2, x2, y3, x3, dinc);
+		buildlist(yp1, xp1, yp2, xp2, yp3, xp3, dinc);
 	    else
-		buildlist(x1, y1, x2, y2, x3, y3, dinc);
-	    x1 = x2;
-	    y1 = y2;
-	    x2 = x3;
-	    y2 = y3;
+		buildlist(xp1, yp1, xp2, yp2, xp3, yp3, dinc);
+	    xp1 = xp2;
+	    yp1 = yp2;
+	    xp2 = xp3;
+	    yp2 = yp3;
 	}
-	x3 = wcpcx(x[0]) - xmin;
-	y3 = wcpcy(y[0]) - ymin;
-	tran(&x3, &y3, (PLFLT) ci, (PLFLT) si);
+	xp3 = wcpcx(x[0]) - xpmin;
+	yp3 = wcpcy(y[0]) - ypmin;
+	tran(&xp3, &yp3, (PLFLT) ci, (PLFLT) si);
+
 	if (swap)
-	    buildlist(y1, x1, y2, x2, y3, x3, dinc);
+	    buildlist(yp1, xp1, yp2, xp2, yp3, xp3, dinc);
 	else
-	    buildlist(x1, y1, x2, y2, x3, y3, dinc);
+	    buildlist(xp1, yp1, xp2, yp2, xp3, yp3, dinc);
 
-	x1 = x2;
-	y1 = y2;
-	x2 = x3;
-	y2 = y3;
-	x3 = wcpcx(x[1]) - xmin;
-	y3 = wcpcy(y[1]) - ymin;
-	tran(&x3, &y3, (PLFLT) ci, (PLFLT) si);
+	xp1 = xp2;
+	yp1 = yp2;
+	xp2 = xp3;
+	yp2 = yp3;
+	xp3 = wcpcx(x[1]) - xpmin;
+	yp3 = wcpcy(y[1]) - ypmin;
+	tran(&xp3, &yp3, (PLFLT) ci, (PLFLT) si);
+
 	if (swap)
-	    buildlist(y1, x1, y2, x2, y3, x3, dinc);
+	    buildlist(yp1, xp1, yp2, xp2, yp3, xp3, dinc);
 	else
-	    buildlist(x1, y1, x2, y2, x3, y3, dinc);
+	    buildlist(xp1, yp1, xp2, yp2, xp3, yp3, dinc);
 
-	/* Sort list by y then x */
-	qsort((void *) buffer, (size_t) bufferleng / 2, 
-			       (size_t) sizeof(struct point), compar);
+/* Sort list by y then x */
 
-	/* OK, now do the hatching */
+	qsort((void *) buffer, (size_t) bufferleng / 2,
+	      (size_t) sizeof(struct point), compar);
+
+/* OK, now do the hatching */
+
 	i = 0;
 	while (i < bufferleng) {
 	    if (swap) {
-		x1 = buffer[i + 1];
-		y1 = buffer[i];
+		xp1 = buffer[i + 1];
+		yp1 = buffer[i];
 	    }
 	    else {
-		x1 = buffer[i];
-		y1 = buffer[i + 1];
+		xp1 = buffer[i];
+		yp1 = buffer[i + 1];
 	    }
 	    i += 2;
-	    x2 = x1;
-	    y2 = y1;
-	    tran(&x1, &y1, (PLFLT) ci, (PLFLT) (-si));
-	    movphy(x1 + xmin, y1 + ymin);
+	    xp2 = xp1;
+	    yp2 = yp1;
+	    tran(&xp1, &yp1, (PLFLT) ci, (PLFLT) (-si));
+	    movphy(xp1 + xpmin, yp1 + ypmin);
 	    if (swap) {
-		x1 = buffer[i + 1];
-		y1 = buffer[i];
+		xp1 = buffer[i + 1];
+		yp1 = buffer[i];
 	    }
 	    else {
-		x1 = buffer[i];
-		y1 = buffer[i + 1];
+		xp1 = buffer[i];
+		yp1 = buffer[i + 1];
 	    }
 	    i += 2;
-	    if ((swap && x2 != x1) || (!swap && y2 != y1))
+	    if ((swap && xp2 != xp1) || (!swap && yp2 != yp1))
 		continue;	/* Uh oh we're lost */
-	    tran(&x1, &y1, (PLFLT) ci, (PLFLT) (-si));
-	    draphy(x1 + xmin, y1 + ymin);
+	    tran(&xp1, &yp1, (PLFLT) ci, (PLFLT) (-si));
+	    draphy(xp1 + xpmin, yp1 + ypmin);
 	}
     }
     free((VOID *) buffer);
 }
 
-void 
-tran(PLINT * a, PLINT * b, PLFLT c, PLFLT d)
+/*----------------------------------------------------------------------*\
+* Utility functions
+\*----------------------------------------------------------------------*/
+
+static void
+tran(PLINT *a, PLINT *b, PLFLT c, PLFLT d)
 {
     PLINT ta, tb;
 
@@ -199,64 +225,65 @@ tran(PLINT * a, PLINT * b, PLFLT c, PLFLT d)
     *b = ROUND(tb * c - ta * d);
 }
 
-void 
-buildlist (PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT dinc)
+static void
+buildlist(PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
+	  PLINT dinc)
 {
     PLINT i;
     PLINT dx, dy, cstep, nstep, lines, ploty, plotx;
 
-    dx = x2 - x1;
-    dy = y2 - y1;
+    dx = xp2 - xp1;
+    dy = yp2 - yp1;
 
     if (dy == 0)
 	return;
 
-    cstep = (y2 > y1 ? 1 : -1);
-    nstep = (y3 > y2 ? 1 : -1);
-    if (y3 == y2)
+    cstep = (yp2 > yp1 ? 1 : -1);
+    nstep = (yp3 > yp2 ? 1 : -1);
+    if (yp3 == yp2)
 	nstep = 0;
 
     /* Build coordinate list */
     lines = ABS(dy) / dinc + 1;
-    if (cstep == 1 && y1 > 0)
-	ploty = (y1 / dinc + 1) * dinc;
-    else if (cstep == -1 && y1 < 0)
-	ploty = (y1 / dinc - 1) * dinc;
+    if (cstep == 1 && yp1 > 0)
+	ploty = (yp1 / dinc + 1) * dinc;
+    else if (cstep == -1 && yp1 < 0)
+	ploty = (yp1 / dinc - 1) * dinc;
     else
-	ploty = (y1 / dinc) * dinc;
+	ploty = (yp1 / dinc) * dinc;
 
     for (i = 0; i < lines; i++) {
-	if (!BETW(ploty, y1, y2))
+	if (!BETW(ploty, yp1, yp2))
 	    break;
-	plotx = x1 + ROUND(((float) (ploty - y1) * dx) / dy + .5);
+	plotx = xp1 + ROUND(((float) (ploty - yp1) * dx) / dy + .5);
 	/* Check for extremum at end point, otherwise add to coord list */
-	if (!((ploty == y1) || (ploty == y2 && nstep != cstep)))
+	if (!((ploty == yp1) || (ploty == yp2 && nstep != cstep)))
 	    addcoord(plotx, ploty);
 	ploty += cstep * dinc;
     }
 }
 
-void 
-addcoord (PLINT x1, PLINT y1)
+static void
+addcoord(PLINT xp1, PLINT yp1)
 {
     PLINT *temp;
 
     if (bufferleng + 2 > buffersize) {
 	buffersize += 2 * BINC;
-	temp = (PLINT *) realloc((VOID *) buffer, 
-			(size_t) buffersize * sizeof(PLINT));
+	temp = (PLINT *) realloc((VOID *) buffer,
+				 (size_t) buffersize * sizeof(PLINT));
 	if (!temp) {
 	    free((VOID *) buffer);
-	    plexit("Out of memory in plfill!");
+	    plexit("plfill: Out of memory!");
 	}
 	buffer = temp;
     }
 
-    buffer[bufferleng++] = x1;
-    buffer[bufferleng++] = y1;
+    buffer[bufferleng++] = xp1;
+    buffer[bufferleng++] = yp1;
 }
 
-int 
+static int
 compar(const void *pnum1, const void *pnum2)
 {
     struct point *pnt1, *pnt2;
