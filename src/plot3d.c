@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/03/23 08:22:00  mjl
+ * Revision 1.10  1994/04/08 12:34:21  mjl
+ * Fixed some cases of allocating memory and never freeing it.  Also changed
+ * some previously fatal errors into recoverable ones.
+ *
+ * Revision 1.9  1994/03/23  08:22:00  mjl
  * Cruft elimination.
  *
  * Revision 1.8  1993/11/15  08:39:37  mjl
@@ -58,6 +62,8 @@ static void savelopoint	(PLINT, PLINT);
 static void swaphiview	(void);
 static void swaploview	(void);
 static void myexit	(char *);
+static void myabort	(char *);
+static void freework	(void);
 static int  plabv	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT, 
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
@@ -81,7 +87,6 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     pl3mode = 1;
     plot3d(x, y, z, nx, ny, opt, 0);
 
-    free_mem(oldloview);
     pl3mode = 0;
 }
 
@@ -108,24 +113,35 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     PLINT level;
 
     plP_glev(&level);
-    if (level < 3)
-	myexit("plot3d: Please set up window first");
+    if (level < 3) {
+	myabort("plot3d: Please set up window first");
+	return;
+    }
 
-    if (opt < 1 || opt > 3)
-	myexit("plot3d: Bad option");
+    if (opt < 1 || opt > 3) {
+	myabort("plot3d: Bad option");
+	return;
+    }
 
-    if (nx <= 0 || ny <= 0)
-	myexit("plot3d: Bad array dimensions.");
+    if (nx <= 0 || ny <= 0) {
+	myabort("plot3d: Bad array dimensions.");
+	return;
+    }
 
 /* Check that points in x and in y are strictly increasing */
 
-    for (i = 0; i < nx - 1; i++)
-	if (x[i] >= x[i + 1])
-	    myexit("plot3d: X array must be strictly increasing");
-
-    for (i = 0; i < ny - 1; i++)
-	if (y[i] >= y[i + 1])
-	    myexit("plot3d: Y array must be strictly increasing");
+    for (i = 0; i < nx - 1; i++) {
+	if (x[i] >= x[i + 1]) {
+	    myabort("plot3d: X array must be strictly increasing");
+	    return;
+	}
+    }
+    for (i = 0; i < ny - 1; i++) {
+	if (y[i] >= y[i + 1]) {
+	    myabort("plot3d: Y array must be strictly increasing");
+	    return;
+	}
+    }
 
     work = (PLINT *) malloc((size_t) (4 * MAX(nx, ny) * sizeof(PLINT)));
     if ( ! work)
@@ -220,8 +236,6 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 		   &work[0], &work[b - 1]);
     }
 
-    free_mem(work);
-
     if (side)
 	plside3(x, y, z, nx, ny, opt);
 
@@ -232,7 +246,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	plcol(color);
     }
 
-    free_mem(oldhiview);
+    freework();
 }
 
 /*----------------------------------------------------------------------*\
@@ -587,10 +601,8 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 */
     if (init == 1) {
 
-/* heap not yet allocated so ... */
-
 	oldhiview = (PLINT *) malloc((size_t) (2 * n * sizeof(PLINT)));
-	if (!oldhiview)
+	if ( ! oldhiview)
 	    myexit("plnxtvhi: Out of memory.");
 
 	plP_movphy(u[0], v[0]);
@@ -623,8 +635,16 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
     j = 0;
     if (pl3upv != 0) {
 	newhisize = 2 * (mhi + BINC);
-	newhiview = (PLINT *) malloc((size_t) (newhisize * sizeof(PLINT)));
-	if ( ! newhiview) 
+	if (newhiview != NULL) {
+	    newhiview = 
+		(PLINT *) realloc((void *) newhiview,
+				  (size_t) (2 * newhisize * sizeof(PLINT)));
+	}
+	else {
+	    newhiview = 
+		(PLINT *) malloc((size_t) (2 * newhisize * sizeof(PLINT)));
+	}
+	if ( ! newhiview)
 	    myexit("plnxtvhi: Out of memory.");
     }
 
@@ -832,10 +852,8 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 */
     if (init == 1) {
 
-/* heap not yet allocated so ... */
-
 	oldloview = (PLINT *) malloc((size_t) (2 * n * sizeof(PLINT)));
-	if (!oldloview)
+	if ( ! oldloview)
 	    myexit("plnxtvlo: Out of memory.");
 
 	plP_movphy(u[0], v[0]);
@@ -868,8 +886,16 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
     j = 0;
     if (pl3upv != 0) {
 	newlosize = 2 * (mlo + BINC);
-	newloview = (PLINT *) malloc((size_t) (newlosize * sizeof(PLINT)));
-	if ( ! newloview) 
+	if (newloview != NULL) {
+	    newloview = 
+		(PLINT *) realloc((void *) newloview,
+				  (size_t) (2 * newlosize * sizeof(PLINT)));
+	}
+	else {
+	    newloview = 
+		(PLINT *) malloc((size_t) (2 * newlosize * sizeof(PLINT)));
+	}
+	if ( ! newloview)
 	    myexit("plnxtvlo: Out of memory.");
     }
 
@@ -1064,19 +1090,17 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 static void
 savehipoint(PLINT px, PLINT py)
 {
-    PLINT *temp;
-
     if (pl3upv == 0)
 	return;
+
     if (xxhi >= newhisize) {	/* allocate additional space */
 	newhisize += 2 * BINC;
-	temp = (PLINT *) realloc((void *) newhiview,
-				 (size_t) (newhisize * sizeof(PLINT)));
-	if (!temp) 
+	newhiview = (PLINT *) realloc((void *) newhiview,
+				      (size_t) (newhisize * sizeof(PLINT)));
+	if ( ! newhiview) 
 	    myexit("savehipoint: Out of memory.");
-
-	newhiview = temp;
     }
+
     newhiview[xxhi] = px;
     xxhi++;
     newhiview[xxhi] = py;
@@ -1086,19 +1110,17 @@ savehipoint(PLINT px, PLINT py)
 static void
 savelopoint(PLINT px, PLINT py)
 {
-    PLINT *temp;
-
     if (pl3upv == 0)
 	return;
+
     if (xxlo >= newlosize) {	/* allocate additional space */
 	newlosize += 2 * BINC;
-	temp = (PLINT *) realloc((void *) newloview,
-				 (size_t) (newlosize * sizeof(PLINT)));
-	if (!temp)
+	newloview = (PLINT *) realloc((void *) newloview,
+				      (size_t) (newlosize * sizeof(PLINT)));
+	if ( ! newloview)
 	    myexit("savelopoint: Out of memory.");
-
-	newloview = temp;
     }
+
     newloview[xxlo] = px;
     xxlo++;
     newloview[xxlo] = py;
@@ -1140,6 +1162,22 @@ swaploview(void)
 }
 
 /*----------------------------------------------------------------------*\
+* freework
+*
+* Frees memory associated with work arrays
+\*----------------------------------------------------------------------*/
+
+static void
+freework(void)
+{
+    free_mem(oldhiview);
+    free_mem(oldloview);
+    free_mem(newhiview);
+    free_mem(newloview);
+    free_mem(work);
+}
+
+/*----------------------------------------------------------------------*\
 * myexit
 *
 * Calls plexit, cleaning up first.
@@ -1148,13 +1186,22 @@ swaploview(void)
 static void
 myexit(char *msg)
 {
-    free_mem(oldhiview);
-    free_mem(oldloview);
-    free_mem(newhiview);
-    free_mem(newloview);
-    free_mem(work);
-
+    freework();
     plexit(msg);
+}
+
+/*----------------------------------------------------------------------*\
+* myabort
+*
+* Calls plabort, cleaning up first.
+* Caller should return to the user program.
+\*----------------------------------------------------------------------*/
+
+static void
+myabort(char *msg)
+{
+    freework();
+    plabort(msg);
 }
 
 /*----------------------------------------------------------------------*\
