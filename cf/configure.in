@@ -746,7 +746,7 @@ plplot 2>/dev/null
 # Create output files.
 # ----------------------------------------------------------------------------
 
-AC_OUTPUT(Makefile Makedemo cf/plplot-config)
+AC_OUTPUT(Makefile Makedemo plplot-config)
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
