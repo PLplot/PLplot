@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.43  1994/07/01 22:38:04  mjl
+ * Revision 1.44  1994/07/18 20:28:46  mjl
+ * Fixed a cast.
+ *
+ * Revision 1.43  1994/07/01  22:38:04  mjl
  * All display-dependent data broken off into a separate structure.  The X
  * driver now saves only one of these XwDisplay structs for each physical
  * X display.  These are then shared between all PLplot streams.  This
@@ -538,7 +541,7 @@ Init(PLStream *pls)
 /* If no display matched, create a new one */
 
     if (dev->xwd == NULL) {
-	dev->xwd = calloc(1, (size_t) sizeof(XwDisplay));
+	dev->xwd = (XwDisplay *) calloc(1, (size_t) sizeof(XwDisplay));
 	if (dev->xwd == NULL)
 	    plexit("Init: Out of memory.");
 
