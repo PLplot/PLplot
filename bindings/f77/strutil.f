@@ -12,7 +12,7 @@
       do 100 i = 1,limit
          string2(i:i) = string1(i:i) 
  100  continue
-      string2(i:i) = char(0)
+      string2(limit+1:limit+1) = char(0)
 
       return
       end
@@ -31,7 +31,11 @@
       limit = limit + 1
       goto 10
 	
- 20   string2 = stringbuf(1:limit-1)
+ 20   if(limit.gt.1) then
+        string2 = stringbuf(1:limit-1)
+      else
+        string2 = ''
+      endif
 
       return
       end
@@ -48,6 +52,7 @@
          endif
  100  continue
 	   
-      islen = 1
+C      If string is blank or length 0, return length 0
+      islen = 0
       return
       end
