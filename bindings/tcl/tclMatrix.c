@@ -739,7 +739,7 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 /* Only works on 1d matrices */
 
     else if ((c == 's') && (strncmp(argv[0], "scale", length) == 0)) {
-	float scale;
+	Mat_float scale;
 
 	if (argc != 2 ) {
 	    Tcl_AppendResult(interp, "wrong # args: should be \"",
