@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1993/12/06 07:46:11  mjl
+ * Revision 1.15  1993/12/09 20:36:35  mjl
+ * Inserted a cast from (void *) to (char *).
+ *
+ * Revision 1.14  1993/12/06  07:46:11  mjl
  * Eliminated the obsolete -color flag.
  *
  * Revision 1.13  1993/08/28  06:38:05  mjl
@@ -1433,7 +1436,7 @@ opt_geo(char *opt, char *optarg, void *client_data)
 /* The TK driver uses the geometry string directly */
 
     plgpls(&pls);
-    pls->geometry = malloc((size_t) (1+strlen(optarg)) * sizeof(char));
+    pls->geometry = (char *) malloc((size_t)(1+strlen(optarg)) * sizeof(char));
     strcpy(pls->geometry, optarg);
 
 /* Geometry for output window (e.g. "400x400+100+0") */
