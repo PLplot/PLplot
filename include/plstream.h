@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1995/01/06 20:47:29  mjl
+ * Revision 1.35  1995/01/09 21:50:51  mjl
+ * Added flag pls->nobg for disabling background color modification.  If set,
+ * the device default is used.  You can set pls->nobg by specifying a
+ * negative number for the background color.  Useful for including color EPSF
+ * files into a document.
+ *
+ * Revision 1.34  1995/01/06  20:47:29  mjl
  * Added "freeaspect" stream variable: if set, aspect ratio is not preserved
  * on orientation swaps.
  *
@@ -163,6 +169,7 @@ typedef struct {
  *
  * cmap0setcol	int[]	Set for initialized cmap0 colors.
  * cmap1set	int	Set if cmap 1 has been initialized
+ * nobg		int	Use device default for background color
  *
  ***********************************************************************
  *
@@ -447,7 +454,7 @@ typedef struct {
 /* Colormaps */
 
     PLINT icol0, ncol0, icol1, ncol1, ncp1, curcmap;
-    int   cmap0setcol[16], cmap1set;
+    int   cmap0setcol[16], cmap1set, nobg;
 
     PLColor curcolor;
     PLColor cmap0[16];
