@@ -26,7 +26,9 @@ examples_pythondir = $(DATA_DIR)/examples/python
 
 examples_python_SCRIPTS = \
 	prova.py \
-	pythondemos.py
+	pythondemos.py \
+	xw14.py \
+	xw17.py
 
 examples_python_DATA = \
 	README.pythondemos \
@@ -45,10 +47,8 @@ examples_python_DATA = \
 	xw11.py \
 	xw12.py \
 	xw13.py \
-	xw14.py \
 	xw15.py \
 	xw16.py \
-	xw17.py \
 	xw18.py \
 	xw19.py
 
