@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1995/07/19 15:25:21  furnish
+ * Revision 1.3  1995/10/23 07:26:52  mjl
+ * Added entries for errcode and errmsg.
+ *
+ * Revision 1.2  1995/07/19  15:25:21  furnish
  * Coexist peacefully with C++.
  *
  * Revision 1.1  1995/05/26  20:24:52  mjl
@@ -280,6 +283,15 @@ typedef struct {
  *
  ****************************************************************************
  *
+ * User error control variables.  Pass in a pointer for either to be set
+ * in exceptional conditions.  The caller is responsible for clearing the
+ * error code.
+ *
+ * errcode	PLINT*	pointer to variable to assign error code
+ * errmsg	char*	pointer to error message buffer (must be >= 160 bytes)
+ *
+ ****************************************************************************
+ *
  * Stuff used by Xlib driver
  *
  * geometry	char*	Window geometry (malloc'ed)
@@ -527,6 +539,11 @@ typedef struct {
 
     void (*tidy)    (void *);
     void *tidy_data;
+
+/* Error info */
+
+    PLINT *errcode;
+    char *errmsg;
 
 /* Stuff used by Xlib driver */
 
