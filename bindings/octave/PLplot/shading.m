@@ -12,7 +12,7 @@
 ##
 ## This file is part of plplot_octave.
 
-## usage: shading "flat" || "faceted"
+## usage: shading "flat" || "faceted" || "contour"
 ##
 ## sets the type of shading to use by surf()
 
@@ -24,7 +24,7 @@ function type = shading(type)
   if (nargin == 0)
     type = __pl.shading(strm,:);
   elseif (nargin == 1)
-    if (strcmp(type, "flat") || strcmp(type,"faceted"))
+    if (strcmp(type, "flat") || strcmp(type,"faceted") || strcmp(type,"contour"))
       __pl.shading = __pl_matstr(__pl.shading, type, strm);
     else
       usage("shading");
@@ -34,7 +34,9 @@ function type = shading(type)
     usage("shading");
     return;
   endif
-
-  __pl_plotit;
+  
+  if (automatic_replot)
+    __pl_plotit;
+  endif
 
 endfunction

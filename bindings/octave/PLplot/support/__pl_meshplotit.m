@@ -68,11 +68,19 @@ function __pl_meshplotit()
 	 "bcmnstuv", tdeblank(__pl.zlabel(strm,:)), 0.0, 0);
   plcol(1)
 
+  nlev = 10;
+  st = (zM-zm)/nlev/2;
+  clevel = (linspace(zm+st, zM-st, nlev))';
+  levs = 0;
+
   switch (__pl.shading(strm,:))
     case "flat   "
       sh = 0;
     case "faceted"
       sh = FACETED;
+    case "contour"
+      sh = SURF_CONT;
+      levs = clevel;
   endswitch
 
   for items=0:__pl.items(strm)-1
@@ -87,17 +95,16 @@ function __pl_meshplotit()
     case 100  ## mesh
       plmesh(x, y, z', DRAW_LINEXY + MAG_COLOR);
     case 101  ## meshc
-      plmeshc(x, y, z', DRAW_LINEXY + MAG_COLOR + BASE_CONT, linspace(min(min(z)), max(max(z)), 10)');
+      plmeshc(x, y, z', DRAW_LINEXY + MAG_COLOR + BASE_CONT, clevel);
     case 102  ## meshz
       plot3d(x, y, z', DRAW_LINEXY + MAG_COLOR, 1); 
     case 103  ## surf
-      plsurf3d(x, y, z', MAG_COLOR + sh, 0);
+      plsurf3d(x, y, z', MAG_COLOR + sh, clevel);
     case 104   ## surfc
-      plsurf3d(x, y, z', MAG_COLOR + BASE_CONT + sh,
-	       linspace(min(min(z)), max(max(z)), 10)') 
+      plsurf3d(x, y, z', MAG_COLOR + BASE_CONT + sh, clevel) 
     case 105   ## surfl
       pllightsource(__pl.light(1), __pl.light(2), __pl.light(3));
-      plsurf3d(x, y, z', sh, 0);
+      plsurf3d(x, y, z', sh, levs);
   endswitch	
 
   endfor
