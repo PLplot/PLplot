@@ -76,3 +76,4 @@ figpg.dvi: $(FIGS)
 
 clean:
 	-rm -f *~ *.aux *.log *.dvi plotdoc.ps figpg.ps *.blg *.toc
+	-rm *.cp plplot.ps plplot.info
