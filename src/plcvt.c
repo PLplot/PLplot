@@ -93,6 +93,22 @@ plP_mmdcy(PLFLT y)
     return ((PLFLT) (y * plsc->ypmm / ABS(plsc->phyyma - plsc->phyymi)));
 }
 
+/* world coords into device coords (x) */
+
+PLFLT
+plP_wcdcx(PLFLT x)
+{
+    return ((PLFLT) (plsc->wdxoff + plsc->wdxscl * x));
+}
+
+/* world coords into device coords (y) */
+
+PLFLT
+plP_wcdcy(PLFLT y)
+{
+    return ((PLFLT) (plsc->wdyoff + plsc->wdyscl * y));
+}
+
 /* subpage coords to device coords (x) */
 
 PLFLT
