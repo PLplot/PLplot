@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.22  1993/03/16 06:54:18  mjl
-   Minor documentation change.
+   Revision 1.23  1993/03/18 07:05:47  mjl
+   Bumped version to 4.99c.
 
+ * Revision 1.22  1993/03/16  06:54:18  mjl
+ * Minor documentation change.
+ *
  * Revision 1.21  1993/03/16  06:47:39  mjl
  * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
  * more robust.
@@ -105,7 +108,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99b"
+#define PLPLOT_VERSION "4.99c"
 
 /*
 * The define of _POSIX_SOURCE is slightly dangerous.  Should probably be
