@@ -31,25 +31,33 @@
 # -----------------------------------------------------------------------------
 
 SOVERSION	= @SOVERSION@
-LIBVERSION	:= $(shell ./version)
 
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
-PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE).so.$(SOVERSION)
-SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
-SONAME		= $(PLLIB_BASE).so.$(SOVERSION)
+SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
+LINKNAME	= $(PLLIB_BASE)$(LIB_TAG).so
+
+#No LIB_TAG for matrix library!
+MATLIB_SO	= $(PLLIB_PATH)$(MATLIB_BASE).so.$(SOVERSION)
+MAT_SONAME     	= $(MATLIB_BASE).so.$(MAJOR_VERSION)
+MAT_LINKNAME   	= $(MATLIB_BASE).so
+
+CXXLIB_SO	= $(PLLIB_PATH)$(CXXLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+CXX_SONAME	= $(CXXLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
+CXX_LINKNAME	= $(CXXLIB_BASE)$(LIB_TAG).so
 
 
-PLLIBS = $(PLLIB_AR) $(PLLIB_SO) $(MATLIB_AR) $(MATLIB_SO) $(CXXLIB_AR) $(CXXLIB_SO)
+PLLIBS = $(PLLIB_AR) $(PLLIB_SO) $(MATLIBS) $(CXXLIBS)
 MATLIBS = $(MATLIB_AR) $(MATLIB_SO)
 CXXLIBS = $(CXXLIB_AR) $(CXXLIB_SO)
 
-libs:	$(MATLIBS) $(PLLIBS) $(CXXLIBS)
+libs:	$(PLLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
 	-$(RM) $(PLLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
 	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
 	$(RANLIB) $(PLLIB_AR)
+	@echo ""
 
 $(MATLIB_AR): $(MAT_OBJS)
 	-$(RM) $(MATLIB_AR)
@@ -65,8 +73,8 @@ $(CXXLIB_AR): $(CXX_OBJS)
 	$(RANLIB) $(CXXLIB_AR)
 	@echo ""
 
-# The following rule based (very) loosely on what I see David Engel
-# did in his Linux Tcl/Tk port.  
+# The following rules based on discussion in
+# http://www.linuxdoc.org/HOWTO/Program-Library-HOWTO/shared-libraries.html
 
 # NOTE: We have to link with iostream in order to satisfy the
 # references to cout and friends in the C++ interface class.  And we
@@ -78,29 +86,34 @@ $(PLLIB_SO):	$(MATLIB_SO) $(LIB_OBJS) stupidtk.o
 	-$(RM) $(PLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
-	$(SHLIB_BUILD) ../$(PLLIB_SO).$(LIBVERSION) \
+	$(SHLIB_BUILD) ../$(PLLIB_SO) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) stupidtk.o -L.. -lMatrix $(LDC_LIBS)
-	ln -sf $(PLLIB_SO).$(LIBVERSION) $(SONAME)
-	ln -sf $(SONAME) $(PLLIB_BASE).so
-	echo $(LIBVERSION) > version.built
-	./version inc
+		$(LIB_OBJS) stupidtk.o -L.. -l$(MATLIB_NAME) $(LDC_LIBS)
+	ln -sf $(PLLIB_SO) $(SONAME)
+	ln -sf $(SONAME) $(LINKNAME)
 	@echo ""
 
-#	ln -sf $(SONAME) $(PLLIB_BASE)$(LIB_TAG).so
 
 $(MATLIB_SO): $(MAT_OBJS)
 	-$(RM) $(MATLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
-	$(SHLIB_BUILD) ../$(MATLIB_SO) $(MAT_OBJS)
+	$(SHLIB_BUILD) ../$(MATLIB_SO) \
+		-Wl,-soname -Wl,$(MAT_SONAME) \
+		$(MAT_OBJS)
+	ln -sf $(MATLIB_SO) $(MAT_SONAME)
+	ln -sf $(MAT_SONAME) $(MAT_LINKNAME)
 	@echo ""
 
 $(CXXLIB_SO): $(CXX_OBJS)
 	-$(RM) $(CXXLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
-	$(SHLIB_BUILD) ../$(CXXLIB_SO) $(CXX_OBJS)
+	$(SHLIB_BUILD) ../$(CXXLIB_SO) \
+		-Wl,-soname -Wl,$(CXX_SONAME) \
+		$(CXX_OBJS)
+	ln -sf $(CXXLIB_SO) $(CXX_SONAME)
+	ln -sf $(CXX_SONAME) $(CXX_LINKNAME)
 	@echo ""
 
 # -----------------------------------------------------------------------------
