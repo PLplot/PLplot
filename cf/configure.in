@@ -199,6 +199,13 @@ AC_PREREQ(2.4)
 AC_INIT(src/plcore.c)
 
 # ----------------------------------------------------------------------------
+# Here is the centralized place for defining the release version of the 
+# PLplot package 
+# ----------------------------------------------------------------------------
+
+PACKAGE_VERSION(5,0,1)
+
+# ----------------------------------------------------------------------------
 # The configure script must be run in a separate build directory.  If the
 # user instead runs it from the top-level directory, the code below cd's to
 # tmp and exec's ../configure, in effect running configure from the build
@@ -537,22 +544,19 @@ if test "$prefix" = NONE; then
     prefix=$ac_default_prefix
 fi
 if test -z "$LIB_DIR"; then
-    LIB_DIR=$prefix/lib/plplot
+    LIB_DIR=$prefix/lib
+fi
+if test -z "$PLPLOT_PREFIX"; then
+    PLPLOT_PREFIX=$prefix/lib/plplot$MAJOR_VERSION.$MINOR_VERSION.$RELEASE_VERSION
+fi
+if test -z "$DATA_DIR"; then
+    DATA_DIR=$PLPLOT_PREFIX/data
 fi
 if test -z "$BIN_DIR"; then
     BIN_DIR=$prefix/bin
 fi
 if test -z "$TCL_DIR"; then
-    TCL_DIR=$prefix/lib/plplot/tcl
-fi
-if test -z "$PYTHON_DIR"; then
-    PYTHON_DIR=$prefix/lib/python1.5/site-packages
-fi
-if test "$enable_python" = "yes"; then
-    if test "$PYTHON_DIR" != "$PYTHON_MACH_DIR"; then
-	AC_MSG_RESULT(note: python module will be installed in $PYTHON_DIR);
-	AC_MSG_RESULT(note: it should be soft-linked to $PYTHON_MACH_DIR);
-    fi
+    TCL_DIR=$PLPLOT_PREFIX/tcl
 fi
 if test -z "$DOC_DIR"; then
     DOC_DIR=$prefix/share/doc/plplot
@@ -564,14 +568,16 @@ if test -z "$INCLUDE_DIR"; then
     INCLUDE_DIR=$prefix/include/plplot
 fi
 if test -z "$DEMOS_DIR"; then
-    DEMOS_DIR=$prefix/share/doc/plplot/examples
+    DEMOS_DIR=$DOC_DIR/examples
 fi
 
 AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR")
+AC_DEFINE_UNQUOTED(DATA_DIR, "$DATA_DIR")
 AC_DEFINE_UNQUOTED(BIN_DIR, "$BIN_DIR")
 AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR")
 
 AC_SUBST(LIB_DIR)
+AC_SUBST(DATA_DIR)
 AC_SUBST(BIN_DIR)
 AC_SUBST(TCL_DIR)
 AC_SUBST(DOC_DIR)
@@ -600,7 +606,6 @@ plplot 2>/dev/null
 
 ln -s \
 $srcdir/src/*.c \
-$srcdir/bindings/tk/stupidtk.c \
 $srcdir/drivers/*.c \
 . 2>/dev/null
 ln -s \

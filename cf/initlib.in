@@ -12,9 +12,9 @@
 # (e.g. Linux).  Warning: apps linked to it may fail on major version
 # changes (depending on OS).
 
-MAJOR_VERSION	= 5
-MINOR_VERSION	= 0
-RELEASE_VERSION	= 1
+MAJOR_VERSION	= @MAJOR_VERSION@
+MINOR_VERSION	= @MINOR_VERSION@
+RELEASE_VERSION	= @RELEASE_VERSION@
 
 # Utilities
 
@@ -60,24 +60,12 @@ PLLIB_AR	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$A
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
 PLLIB_SA	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SA)
 
-<<<<<<< initlib.in
-# The following corrects error detected by Lintian
-# ldconfig-symlink-referencing-wrong-file (should not link to ./*
-# file)
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
-=======
-PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
->>>>>>> 1.23
 
 # This is used for making the install versions of plrender & plserver
 # (Must relink after installing shared library!)
 
-<<<<<<< initlib.in
-LIB_INSTALL	= -L$(LIB_DIR)/.. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
-#LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME) $(MAT_LINK)
-=======
 LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
->>>>>>> 1.23
 
 # These are what we link against.
 
