@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.66  1995/06/29 18:09:42  mjl
+ * Revision 1.67  1995/08/22 16:10:58  mjl
+ * Fixed bug associated with drawing to off-screen windows, which results in
+ * non-portable behavior (sometimes works, sometimes fills window with
+ * garbage).  Instead, write to pixmap always done first, which is then blitted
+ * to the main window on expose events.
+ *
+ * Revision 1.66  1995/06/29  18:09:42  mjl
  * Changed the window initialization back to use XGetGeometry instead of the
  * DisplayWidth and DisplayHeight macros.  These were wreaking havoc on virtual
  * window managers such as tvtwm.
@@ -1845,7 +1851,6 @@ ExposeCmd(PLStream *pls, PLDisplay *pldis)
  * ResizeCmd()
  *
  * Event handler routine for resize events.
- * Note: this function is callable from the outside world.
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -1853,7 +1858,7 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
-    int write_to_pixmap = dev->write_to_pixmap;
+    int write_to_window = dev->write_to_window;
 
     dbug_enter("ResizeCmd");
 
@@ -1890,25 +1895,31 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
     }
 #endif
 
-/* Initialize & redraw to window */
-/* The ordering of this block and the next is reversed from a simple redraw; */
-/* it looks better this way */
+/* Note: the following order MUST be obeyed -- if you instead redraw into
+ * the window and then copy it to the pixmap, off-screen parts of the window
+ * may contain garbage which is then transferred to the pixmap (and thus
+ * will not go away after an expose).  
+ */
 
-    dev->write_to_pixmap = 0;
+/* Resize pixmap using new dimensions */
+
+    if (dev->write_to_pixmap) {
+	dev->write_to_window = 0;
+	XFreePixmap(xwd->display, dev->pixmap);
+	CreatePixmap(pls);
+    }
+
+/* Initialize & redraw (to pixmap, if available). */
 
     plD_bop_xw(pls);
     plRemakePlot(pls);
     XSync(xwd->display, 0);
 
-    dev->write_to_pixmap = write_to_pixmap;
-
-/* Need to regenerate pixmap copy of window using new dimensions, then */
-/* copy on-screen window to pixmap.  */
+/* If pixmap available, fake an expose */
 
     if (dev->write_to_pixmap) {
-	XFreePixmap(xwd->display, dev->pixmap);
-	CreatePixmap(pls);
-	XCopyArea(xwd->display, dev->window, dev->pixmap, dev->gc, 0, 0,
+	dev->write_to_window = write_to_window;
+	XCopyArea(xwd->display, dev->pixmap, dev->window, dev->gc, 0, 0,
 		  dev->width, dev->height, 0, 0);
 	XSync(xwd->display, 0);
     }
