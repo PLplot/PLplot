@@ -1,0 +1,30 @@
+This plplot docbook documentation project was originally a joint effort by
+Alan W. Irwin (AWI) and Rafael Laboissiere (RL) to convert the plplot
+latexinfo documentation (last modified in 1995 or earlier) to the docbook
+sgml format.  The motivations for the project are discussed at
+http://www.icp.inpg.fr/~rafael/plplotdoc.  We essentially finished the
+conversion project in July 1999 and suspended further improvements to the
+documentation until we had more time and plplot cvs access.
+
+As of 19 October 2000 the project was added to the cvs
+(plplot/doc/docbook-sgml) by AWI.
+
+To make the local copy before the install he used
+
+wget --recursive --level=2 http://www.icp.inpg.fr/~rafael/plplotdoc/src/
+
+wget buries the results in the local directory
+www.icp.inpg.fr/~rafael/plplotdoc/src/ so I moved the ..../src stuff to here
+and rm -rf www.icp.inpg.fr
+
+jatex.cfg and over-under.tex were missing from the web site and were
+supplied independently by RL.  On Debian potato the eps2jpeg.pl file no
+longer worked properly and had to be modified by Rafael. AWI then modified
+the Makefile to get it to work properly on his Debian potato system.  These
+source files and this README were then added to the plplot cvs repository in
+the directory plplot/doc/docbook-sgml on 19 October 2000.  All further
+changes to the docbook documentation will be made using that repository.  In
+the near term AWI plans to mostly work on improving the actual words in the
+documentation (e.g., a number of API descriptions are still missing) while
+RL plans to convert from the sgml to XML form of docbook and *possibly*
+generalize the Makefile to work on systems other than Debian/potato. 
