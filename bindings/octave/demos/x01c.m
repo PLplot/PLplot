@@ -40,7 +40,7 @@ function ix01c
   ## Get version number, just for kicks */
 
   ver=plgver';
-  printf("Plplot library version: %s\n", ver);
+  printf("PLplot library version: %s\n", ver);
 
   ## Initialize plplot */
   plinit;
