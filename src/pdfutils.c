@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/01/23 05:44:39  mjl
-   Moved to src/ directory since that is more relevant.
+   Revision 1.2  1993/02/23 05:00:24  mjl
+   Added some casts for more portable code (found when compiling with all
+   warnings on).
 
+ * Revision 1.1  1993/01/23  05:44:39  mjl
+ * Moved to src/ directory since that is more relevant.
+ *
  * Revision 1.4  1992/10/22  17:04:55  mjl
  * Fixed warnings, errors generated when compling with HP C++.
  *
@@ -41,9 +45,10 @@
 
 #define PL_NEED_MALLOC
 #include "plplot.h"
-#include <math.h>
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <string.h>
 
 #include "pdf.h"
@@ -164,7 +169,7 @@ write_2bytes(FILE *file, U_SHORT s)
     U_SHORT lo, hi;
     U_CHAR x[2];
 
-    hi = s >> 8;
+    hi = (U_LONG) s >> 8;
     lo = s - (hi << 8);
     x[0] = (U_CHAR) lo;
     x[1] = (U_CHAR) hi;
@@ -207,7 +212,7 @@ write_2nbytes(FILE *file, U_SHORT *s, PLINT n)
     U_CHAR x[2];
 
     for (i = 0; i < n; i++) {
-	hi = s[i] >> 8;
+	hi = (U_LONG) s[i] >> 8;
 	lo = s[i] - (hi << 8);
 	x[0] = (U_CHAR) lo;
 	x[1] = (U_CHAR) hi;
@@ -399,11 +404,6 @@ write_ieeef(FILE *file, float f)
 	    printf("Warning -- overflow in write_ieeef()\n");
 	e_ieee = 255;
     }
-    else if (e_ieee < 0) {
-	if (debug)
-	    printf("Impossible -- biased exponent < 0 in write_ieef()\n");
-	e_ieee = 0;
-    }
 
     s_ieee = s_ieee << 31;
     e_ieee = e_ieee << 23;
@@ -448,9 +448,9 @@ read_ieeef(FILE *file, float *pf)
     if (istat = read_4bytes(file, &value))
 	return (istat);
 
-    s_ieee = (value & 0x80000000) >> 31;
-    e_ieee = (value & 0x7F800000) >> 23;
-    f_ieee = (value & 0x007FFFFF);
+    s_ieee = (value & (U_LONG) 0x80000000) >> 31;
+    e_ieee = (value & (U_LONG) 0x7F800000) >> 23;
+    f_ieee = (value & (U_LONG) 0x007FFFFF);
 
     f_tmp = (double) f_ieee / 8388608.0;	/* divide by 2^23 */
 
