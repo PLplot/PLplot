@@ -215,8 +215,8 @@ dnl Check programs
 CHECK_PROG(jade, [HTML PRINT], http://www.jclark.com/jade/)
 CHECK_PROG(jadetex, PRINT, http://www.tug.org/applications/jadetex/)
 CHECK_PROG(pdfjadetex, PRINT, http://www.tug.org/applications/jadetex/)
-CHECK_PROG(perl, INFO, http://www.perl.com)
 CHECK_PROG(dvips, PRINT, http://www.ctan.org)
+CHECK_PROG(perl, INFO, http://www.perl.com)
 
 dnl Check public identifiers
 
