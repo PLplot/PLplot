@@ -200,8 +200,15 @@ def main():
     cos_y = cos((pi/2.)*yg0)
     xg1 = xg0 + distort*cos_x
     yg1 = yg0 - distort*cos_y
-    #Essential to copy (via slice) rather than assign by reference.
-    xg0t = xg0[:]
+    # Need independent copy here so the shape changes for xg0t do not affect
+    # xg0.
+    try:
+	xg0t = xg0.copy()
+    except:
+	# old versions of Numpy bundled with python-1.5 do not have the
+	# copy method for arrays.  So if the above fails, do it another way
+	# (which we will remove as soon as we quit supporting python-1.5)
+	xg0t = array(xg0)
     cos_x.shape = (-1,1)
     xg0t.shape = (-1,1)
     xg2 = xg0t + distort*cos_x*cos_y
