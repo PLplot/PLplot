@@ -23,7 +23,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-SF_USER=${USER:-rlaboiss}
+SF_USER=${SF_USER:-rlaboiss}
 SF_CVSROOT=cvs.plplot.sourceforge.net:/cvsroot/plplot
 VERSION=${1:+--version=$1}
 BRANCH=${2:+-r $2}
