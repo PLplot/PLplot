@@ -504,4 +504,4 @@ dnl> but the autoconf logic isn't set up to handle that.  I'll opt for
 dnl> stability over speed any day.
 dnl
 define([AC_CACHE_LOAD],)
-
+define([AC_CACHE_SAVE],)
