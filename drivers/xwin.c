@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.32  1994/04/08 11:43:40  mjl
+ * Revision 1.33  1994/04/25 18:45:03  mjl
+ * Fixed background bug introduced last update.  Added support for
+ * reallocation of cmap0 and cmap1 palettes.
+ *
+ * Revision 1.32  1994/04/08  11:43:40  mjl
  * Some improvements to color map 1 color allocation so that it will fail
  * less often (temporary, until custom color map support is added).  Master
  * event handler with user entry point added.  Escape function recognizes
@@ -51,7 +55,7 @@
 
 static void  Init		(PLStream *);
 static void  Init_main		(PLStream *);
-static void  Init_child		(PLStream *);
+static void  Map_main		(PLStream *);
 static void  WaitForPage	(PLStream *);
 static void  HandleEvents	(PLStream *);
 static void  ColorInit		(PLStream *);
@@ -347,6 +351,15 @@ plD_state_xw(PLStream *pls, PLINT op)
 	}
 	break;
     }
+
+    case PLSTATE_CMAP0:
+	Cmap0Init(pls);
+	break;
+
+    case PLSTATE_CMAP1:
+	Cmap1Init(pls);
+	break;
+
     }
 }
 
@@ -486,14 +499,11 @@ Init(PLStream *pls)
 
     dev->screen = DefaultScreen(dev->display);
 
-/* If not plotting into a child window, need to create main window now */
-
-    if (pls->window_id == 0)
-	Init_main(pls);
-    else
-	Init_child(pls);
-
 /* Create color map */
+/* This and the next call needs to be moved after the window creation to
+ * pass the window id when creating a custom color map.  But the created
+ * window then has the wrong background color! (white)  How do I fix this?
+ */
 
 #ifdef CUSTOM_COLOR_MAP
 /* Right now this just results in a core dump somewhere. */
@@ -507,6 +517,21 @@ Init(PLStream *pls)
 /* Default color values */
 
     ColorInit(pls);
+
+/* If not plotting into a child window, need to create main window now */
+
+    if (pls->window_id == 0) {
+	dev->is_main = TRUE;
+	Init_main(pls);
+    }
+    else {
+	dev->is_main = FALSE;
+	dev->window = pls->window_id;
+    }
+
+/* GC creation and initialization */
+
+    dev->gc = XCreateGC(dev->display, dev->window, 0, 0);
 
 /* Get initial drawing area dimensions */
 
@@ -524,15 +549,17 @@ Init(PLStream *pls)
 /* Set drawing color */
 
     plD_state_xw(pls, PLSTATE_COLOR0);
+
+/* If main window, need to map it and wait for exposure */
+
+    if (dev->is_main) 
+	Map_main(pls);
 }
 
 /*----------------------------------------------------------------------*\
 * Init_main()
 *
-* Xlib initialization routine for main window.
-*
-* Creates window & GC, sets up event handlers, and finally maps the window
-* and waits for exposure.
+* Create main window using standard Xlib calls.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -546,11 +573,8 @@ Init_main(PLStream *pls)
     U_INT width, height, border, depth;
     char header[80];
     Cursor cross_cursor;
-    XEvent the_event;
 
     dbug_enter("Init_main");
-
-    dev->is_main = TRUE;
 
 /* Get root window geometry */
 
@@ -597,14 +621,25 @@ Init_main(PLStream *pls)
     XSetStandardProperties(dev->display, dev->window, header, header,
 			   None, 0, 0, &hint);
 
-/* GC creation and initialization */
-
-    dev->gc = XCreateGC(dev->display, dev->window, 0, 0);
-
 /* Set cursor to crosshair */
 
     cross_cursor = XCreateFontCursor(dev->display, XC_crosshair);
     XDefineCursor(dev->display, dev->window, cross_cursor);
+}
+
+/*----------------------------------------------------------------------*\
+* Map_main()
+*
+* Sets up event handlers, maps main window and waits for exposure.
+\*----------------------------------------------------------------------*/
+
+static void
+Map_main(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XEvent the_event;
+
+    dbug_enter("Map_main");
 
 /* Input event selection */
 
@@ -619,7 +654,7 @@ Init_main(PLStream *pls)
     XSetBackground(dev->display, dev->gc, dev->bgcolor.pixel);
 
 /* Wait for exposure */
-/* Also need to remove extraneous expose events from the event queue */
+/* Remove extraneous expose events from the event queue */
 
     for (;;) {
 	XNextEvent(dev->display, &the_event);
@@ -628,30 +663,6 @@ Init_main(PLStream *pls)
 	    break;
 	}
     }
-}
-
-/*----------------------------------------------------------------------*\
-* Init_child()
-*
-* Xlib initialization routine for child window.
-*
-* The window ID is stored as pls->window_id.  If 0, the normal
-* startup is used.
-\*----------------------------------------------------------------------*/
-
-static void
-Init_child(PLStream *pls)
-{
-    XwDev *dev = (XwDev *) pls->dev;
-
-    dbug_enter("Init_child");
-
-    dev->is_main = FALSE;
-    dev->window = pls->window_id;
-
-/* GC creation and initialization */
-
-    dev->gc = XCreateGC(dev->display, dev->window, 0, 0);
 }
 
 /*----------------------------------------------------------------------*\
@@ -1174,6 +1185,8 @@ ColorInit(PLStream *pls)
 * Cmap0Init()
 *
 * Initializes cmap 0
+* Don't bother trapping bad allocations, since they could fail due to
+* being already allocated (e.g. black and white).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1185,6 +1198,9 @@ Cmap0Init(PLStream *pls)
     for (i = 0; i < pls->ncol0; i++) {
 
 	PLColor_to_XColor(&pls->cmap0[i], &dev->cmap0[i]);
+
+	if (dev->cmap0[i].pixel)
+	    XFreeColors(dev->display, dev->map, &dev->cmap0[i].pixel, 1, 0);
 
 	if ( ! XAllocColor(dev->display, dev->map, &dev->cmap0[i]))
 	    Colorcpy(&dev->cmap0[i], &dev->fgcolor);
@@ -1226,13 +1242,12 @@ Cmap1Init(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     PLColor newcolor;
-    unsigned long pixels[NCOL1_MAX];
-    int i, itry, ncol1_max;
+    int i, j, itry, ncol1_max;
 
 /* Use substantially less than max colors so that TK has some */
 
-    dev->ncol1 = MIN(NCOL1_MAX, pls->ncol1);
-    dev->ncol1 = MAX(dev->ncol1, 2);
+    if ( ! dev->ncol1) 
+	dev->ncol1 = MAX(2, MIN(NCOL1_MAX, pls->ncol1));
 
 /* Initialize dev->cmap1 by interpolation, then allocate them for real */
 /* It should NOT fail, but put in failsafe procedure just in case */
@@ -1246,10 +1261,11 @@ Cmap1Init(PLStream *pls)
 	    plcol_interp(pls, &newcolor, i, dev->ncol1);
 	    PLColor_to_XColor(&newcolor, &dev->cmap1[i]);
 
+	    if (dev->cmap1[i].pixel)
+		XFreeColors(dev->display, dev->map, &dev->cmap1[i].pixel, 1,0);
+
 	    if ( ! XAllocColor(dev->display, dev->map, &dev->cmap1[i])) 
 		break;
-
-	    pixels[i] = dev->cmap1[i].pixel;
 	}
 
 /* If we got all we asked for, return */
@@ -1259,10 +1275,15 @@ Cmap1Init(PLStream *pls)
 
 /* Failed, so need to free the allocated colors and try again */
 
-	XFreeColors(dev->display, dev->map, pixels, i, 0);
+	for (j = 0; j < i; j++) {
+	    XFreeColors(dev->display, dev->map, &dev->cmap1[i].pixel, 1, 0);
+	    dev->cmap1[i].pixel = 0;
+	}
 	dev->ncol1 = MAX(i-5, 1);
     }
+#ifdef DEBUG
     fprintf(stderr, "Allocated %d colors in cmap1\n", i);
+#endif
 }
 
 /*----------------------------------------------------------------------*\
