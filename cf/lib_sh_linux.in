@@ -153,13 +153,13 @@ $(MATLIB_SO): $(MAT_OBJS:%=shared/%)
 	ln -sf $(MAT_SONAME) $(MAT_LINKNAME)
 	@echo ""
 
-$(TCLLIB_SO): $(TCL_OBJS:%=shared/%) $(XWINDRV_SO) $(TKWINDRV_SO)
+$(TCLLIB_SO): $(TCL_OBJS:%=shared/%) $(TKWINDRV_SO)
 	-$(RM) $(TCLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(TCLLIB_SO) \
 		-Wl,-soname -Wl,$(TCL_SONAME) \
-		$(TCL_OBJS) @PLTCLLIBS@ -L.. $(XWINDRV_LINK) $(TKWINDRV_LINK)
+		$(TCL_OBJS) @PLTCLLIBS@ -L.. $(TKWINDRV_LINK)
 	ln -sf $(TCLLIB_SO) $(TCL_SONAME)
 	ln -sf $(TCL_SONAME) $(TCL_LINKNAME)
 	@echo ""

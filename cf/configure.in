@@ -923,7 +923,6 @@ if test "$enable_dyndrivers" = "yes"; then
 	    ;;
 	    xwin )
 	    echo "xwin:X-Window (Xlib):1:xwin"$LIB_TAG"_drv.so:5:xw" >> drivers/$DRIVERS_DB
-	    ln -s drivers/xwin"$LIB_TAG"_drv.so libplplot_xwin_driver"$LIB_TAG".so
 	    ;;
 	    tk )
 	    echo "tk:Tcl/TK Window:1:tk"$LIB_TAG"_drv.so:7:tk" >> drivers/$DRIVERS_DB

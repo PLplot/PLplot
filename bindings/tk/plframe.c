@@ -53,8 +53,6 @@
 
 #undef HAVE_ITCL
 
-extern int plplot_ccmap;
-
 #define NDEV	100		/* Max number of output device types in menu */
 
 /* If set, BUFFER_FIFO causes FIFO i/o to be buffered */
@@ -1427,6 +1425,8 @@ PlFrameInit(ClientData clientData)
 	plsxwin(Tk_WindowId(tkwin));
 	plspause(0);
 	plinit();
+/* plplot_ccmap is statically defined in plxwd.h.  Note that
+ * xwin.c also includes that header and uses that variable. */
 	if (plplot_ccmap) {
 	    Install_cmap(plFramePtr);
 	}
