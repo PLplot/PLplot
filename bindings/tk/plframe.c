@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1994/06/30 18:40:15  mjl
+ * Revision 1.36  1994/07/01 20:37:21  mjl
+ * Force an "update" when widget is initially mapped, but before startup
+ * procedure is invoked.  Ensures that "." has been mapped and that X is
+ * in a sane state before continuing (otherwise new toplevels containing
+ * plframes can cause a core dump).  Also some cruft elimination.
+ *
+ * Revision 1.35  1994/06/30  18:40:15  mjl
  * Cleaning up to remove gcc -Wall warnings, and other miscellanea.
  *
  * Revision 1.34  1994/06/23  22:32:47  mjl
@@ -95,10 +101,6 @@ typedef struct {
     Tcl_Interp *interp;		/* Interpreter associated with
 				 * widget.  Used to delete widget
 				 * command.  */
-    Tk_Uid screenName;		/* If this window isn't a toplevel window
-				 * then this is NULL;  otherwise it gives
-				 * the name of the screen on which window
-				 * is displayed. */
     Tk_3DBorder border;		/* Structure used to draw 3-D border and
 				 * background. */
     int borderWidth;		/* Width of 3-D border (if any). */
@@ -255,7 +257,6 @@ static void  DisplayPlFrame	(ClientData);
 static void  PlFrameInit	(ClientData);
 static void  PlFrameEventProc	(ClientData, XEvent *);
 static int   PlFrameWidgetCmd	(ClientData, Tcl_Interp *, int, char **);
-static void  MapPlFrame 	(ClientData);
 static int   ReadData		(ClientData, int);
 static void  Install_cmap	(PlFrame *plFramePtr);
 
@@ -307,11 +308,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     Tk_Window new;
     register PlFrame *plFramePtr;
     register PLRDev *plr;
-
-    Tk_Uid screenUid;
-    char *className, *screen;
-    int src, dst, i, ndev;
-
+    int i, ndev;
     XGCValues gcValues;
     unsigned long mask;
 
@@ -324,65 +321,18 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     }
 
     /*
-     * The code below is a special hack that extracts a few key
-     * options from the argument list now, rather than letting
-     * ConfigurePlFrame do it.  This is necessary because we have
-     * to know the window's screen (if it's top-level) and its
-     * class before creating the window.
-     */
-
-    screen = NULL;
-    className = (argv[0][0] == 't') ? "Toplevel" : "PlFrame";
-    for (src = 2, dst = 2; src < argc;  src += 2) {
-	char c;
-
-	c = argv[src][1];
-	if ((c == 'c')
-		&& (strncmp(argv[src], "-class", strlen(argv[src])) == 0)) {
-	    className = argv[src+1];
-	}
-	else if ((argv[0][0] == 't') && (c == 's')
-		&& (strncmp(argv[src], "-screen", strlen(argv[src])) == 0)) {
-	    screen = argv[src+1];
-	}
-	else {
-	    argv[dst] = argv[src];
-	    argv[dst+1] = argv[src+1];
-	    dst += 2;
-	}
-    }
-    argc -= src-dst;
-
-    /*
-     * Provide a default screen for top-level windows (same as screen
-     * of parent window).
-     */
-
-    if ((argv[0][0] == 't') && (screen == NULL)) {
-	screen = "";
-    }
-    if (screen != NULL) {
-	screenUid = Tk_GetUid(screen);
-    }
-    else {
-	screenUid = NULL;
-    }
-
-    /*
      * Create the window.
      */
 
-    new = Tk_CreateWindowFromPath(interp, tkwin, argv[1], screenUid);
+    new = Tk_CreateWindowFromPath(interp, tkwin, argv[1], (char *) NULL);
     if (new == NULL) {
 	return TCL_ERROR;
     }
 
-    Tk_SetClass(new, className);
     plFramePtr = (PlFrame *) ckalloc(sizeof(PlFrame));
     plFramePtr->tkwin = new;
     plFramePtr->display = Tk_Display(new);
     plFramePtr->interp = interp;
-    plFramePtr->screenName = screenUid;
     plFramePtr->xorGC = NULL;
     plFramePtr->border = NULL;
     plFramePtr->geometry = NULL;
@@ -439,8 +389,9 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     }
     plgFileDevs(&plFramePtr->devDesc, &plFramePtr->devName, &ndev);
 
-/* Start up event handlers */
+/* Start up event handlers and other good stuff */
 
+    Tk_SetClass(new, "plframe");
     Tk_CreateEventHandler(plFramePtr->tkwin, ExposureMask|StructureNotifyMask,
 			  PlFrameEventProc, (ClientData) plFramePtr);
 
@@ -450,9 +401,6 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     if (ConfigurePlFrame(interp, plFramePtr, argc-2, argv+2, 0) != TCL_OK) {
 	Tk_DestroyWindow(plFramePtr->tkwin);
 	return TCL_ERROR;
-    }
-    if (screenUid != NULL) {
-	Tk_DoWhenIdle(MapPlFrame, (ClientData) plFramePtr);
     }
     interp->result = Tk_PathName(plFramePtr->tkwin);
 
@@ -631,7 +579,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
 	 "\":  must be cmd, configure, draw, info, ",
-	 "openlink, orient, page, print, rsock, redraw, save, view, ",
+	 "openlink, orient, page, print, redraw, save, view, ",
 	 "xscroll, or yscroll", (char *) NULL);
 
 	result = TCL_ERROR;
@@ -775,13 +723,20 @@ PlFrameEventProc(ClientData clientData, register XEvent *eventPtr)
 	if (plFramePtr->flags & REFRESH_PENDING) {
 	    Tk_CancelIdleCall(DisplayPlFrame, (ClientData) plFramePtr);
 	}
-	Tk_CancelIdleCall(MapPlFrame, (ClientData) plFramePtr);
 	Tk_EventuallyFree((ClientData) plFramePtr, DestroyPlFrame);
 	break;
 
     case MapNotify:
 	if (plFramePtr->flags & REFRESH_PENDING) {
 	    Tk_CancelIdleCall(DisplayPlFrame, (ClientData) plFramePtr);
+	}
+
+/* For some strange reason, "." must be mapped or PlFrameInit will die */
+/* (Note: mapped & withdrawn or mapped in the withdrawn state is OK */
+/* Issuing an update fixes this.  I'd love to know why this occurs. */
+
+	if ( ! plFramePtr->tkwin_initted) {
+	    Tcl_VarEval(plFramePtr->interp, "update", (char *) NULL);
 	}
 	Tk_DoWhenIdle(PlFrameInit, (ClientData) plFramePtr);
 	break;
@@ -2214,57 +2169,4 @@ gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, char **argv)
     *yl = MIN(y0, y1);
     *xr = MAX(x0, x1);
     *yr = MAX(y0, y1);
-}
-
-/*
- *---------------------------------------------------------------------------
- *
- * MapPlFrame --
- *
- *	This procedure is invoked as a when-idle handler to map a
- *	newly-created top-level frame.  Since PLPlot widgets in
- *	practice never get created at top-level, this routine is
- *	never called.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	The plframe given by the clientData argument is mapped.
- *
- *---------------------------------------------------------------------------
- */
-
-static void
-MapPlFrame(ClientData clientData)
-{
-    PlFrame *plFramePtr = (PlFrame *) clientData;
-
-    dbug_enter("MapPlFrame");
-
-    /*
-     * Wait for all other background events to be processed before
-     * mapping window.  This ensures that the window's correct geometry
-     * will have been determined before it is first mapped, so that the
-     * window manager doesn't get a false idea of its desired geometry.
-     */
-
-    Tk_Preserve((ClientData) plFramePtr);
-    while (1) {
-	if (Tk_DoOneEvent(TK_IDLE_EVENTS) == 0) {
-	    break;
-	}
-
-	/*
-	 * After each event, make sure that the window still exists
-	 * and quit if the window has been destroyed.
-	 */
-
-	if (plFramePtr->tkwin == NULL) {
-	    Tk_Release((ClientData) plFramePtr);
-	    return;
-	}
-    }
-    Tk_MapWindow(plFramePtr->tkwin);
-    Tk_Release((ClientData) plFramePtr);
 }
