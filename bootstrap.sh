@@ -95,11 +95,13 @@ aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
 
 run aclocal $aclocal_opts \
   && run autoheader \
+  && rm -rf libltdl \
   && run libtoolize --force --copy --ltdl --automake \
   && run automake --add-missing --copy \
   && run autoconf \
-  && ( echo -n "Regenerating libltdl/configure..."; \
+  && ( echo -n "Regenerating libltdl/aclocal+configure..."; \
        cd libltdl ; \
+       aclocal && \
        if [ ! -e configure.ac ] ; then \
            cp configure.in configure.ac ; \
            autoconf 2>/dev/null ; \
