@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.22  1994/04/25 19:00:34  mjl
+# Revision 1.23  1994/05/07 03:13:11  mjl
+# Minor improvements to work better with new extended wish model and custom
+# color map capability.
+#
+# Revision 1.22  1994/04/25  19:00:34  mjl
 # Added "Options" cascade menu, along with "Palette 0" and "Palette 1"
 # entries.  Added shift and control modifiers to the key bindings
 # responsible for calling the key_filter proc.
@@ -111,6 +115,8 @@ proc plw_create_TopRow {w} {
 	[label $w.ftop.leop -relief raised] \
 	{left fill padx 12}
 
+    $w.ftop.leop config -bg [option get $w.ftop.leop on Label]
+
 # Plot menu
 
     pack append $w.ftop \
@@ -153,8 +159,6 @@ proc plw_create_TopRow {w} {
 
 proc plw_create_pmenu {w} {
 
-    global cascade_arrow
-
     menubutton $w.ftop.pmenu -menu $w.ftop.pmenu.m \
 	-text "Plot" \
 	-relief raised
@@ -174,7 +178,7 @@ proc plw_create_pmenu {w} {
 #-----------------
 
     $w.ftop.pmenu.m add cascade \
-	-label "Save  $cascade_arrow" \
+	-label "Save" \
 	-menu $w.ftop.pmenu.m.save
 
     menu $w.ftop.pmenu.m.save
@@ -186,7 +190,7 @@ proc plw_create_pmenu {w} {
 # the available output devices (which are listed).
 
     $w.ftop.pmenu.m.save add cascade \
-	-label "As  $cascade_arrow" \
+	-label "As" \
 	-menu $w.ftop.pmenu.m.save.as
 
     menu $w.ftop.pmenu.m.save.as
@@ -208,7 +212,7 @@ proc plw_create_pmenu {w} {
 #-----------------
 
     $w.ftop.pmenu.m add cascade \
-	-label "Orient  $cascade_arrow" \
+	-label "Orient" \
 	-menu $w.ftop.pmenu.m.orient
 
     menu $w.ftop.pmenu.m.orient
@@ -242,7 +246,7 @@ proc plw_create_pmenu {w} {
 #-----------------
 
     $w.ftop.pmenu.m add cascade \
-	-label "Zoom  $cascade_arrow" \
+	-label "Zoom" \
 	-menu $w.ftop.pmenu.m.zoom
 
     menu $w.ftop.pmenu.m.zoom
@@ -270,7 +274,7 @@ proc plw_create_pmenu {w} {
 #------------------------
 
     $w.ftop.pmenu.m add cascade \
-	-label "Page   $cascade_arrow" \
+	-label "Page" \
 	-menu $w.ftop.pmenu.m.page
 
     menu $w.ftop.pmenu.m.page
@@ -300,7 +304,7 @@ proc plw_create_pmenu {w} {
 #------------------
 
     $w.ftop.pmenu.m add cascade \
-	-label "Options  $cascade_arrow" \
+	-label "Options" \
 	-menu $w.ftop.pmenu.m.options
 
     menu $w.ftop.pmenu.m.options
