@@ -56,6 +56,8 @@ tclIndex: $(generated_scripts)
 
 pkginclude_HEADERS = pltcl.h tclMatrix.h
 
+tclAPI.c: tclgen.h tclgen_s.h tclgen.c
+
 tclgen.h tclgen_s.h tclgen.c : pltclgen plapi.tpl tclcmd.tpl
 	perl pltclgen
 
@@ -82,10 +84,10 @@ endif
 if enable_tk
 tksources = \
 	../tk/Pltk_Init.c \
-	../tk/tcpip.c \
 	../tk/plframe.c \
-	../tk/tkMain.c \
-	../tk/plr.c
+	../tk/plr.c \
+	../tk/tcpip.c \
+	../tk/tkMain.c
 endif
 
 ## This library should probably be broken up further into at least a tcl
