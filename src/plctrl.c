@@ -88,7 +88,9 @@ c_plcol0(PLINT icol0)
 	return;
     }
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
-	plabort("plcol0: Invalid color.");
+	char buffer[256];
+	sprintf(buffer, "plcol0: Invalid color map entry: %d", (int) icol0);
+	plabort(buffer);
 	return;
     }
 
@@ -117,7 +119,9 @@ c_plcol1(PLFLT col1)
 	return;
     }
     if (col1 < 0 || col1 > 1) {
-	plabort("plcol1: Invalid color.");
+	char buffer[256];
+	sprintf(buffer, "plcol1: Invalid color map position: %f", (float) col1);
+	plabort(buffer);
 	return;
     }
 
@@ -171,11 +175,16 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 	plscmap0n(0);
 
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
-	plabort("plscol0: Illegal color table value");
+	char buffer[256];
+	sprintf(buffer, "plscol0: Illegal color table value: %d", (int) icol0);
+	plabort(buffer);
 	return;
     }
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
-	plabort("plscol0: Invalid color");
+	char buffer[256];
+	sprintf(buffer, "plscol0: Invalid RGB color: %d, %d, %d",
+		(int) r, (int) g, (int) b);
+	plabort(buffer);
 	return;
     }
 
@@ -205,7 +214,9 @@ c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
     *b = -1;
 
     if (icol0 < 0 || icol0 > plsc->ncol0) {
-	plabort("plgcol0: Invalid color index");
+	char buffer[256];
+	sprintf(buffer, "plgcol0: Invalid color index: %d", (int) icol0);
+	plabort(buffer);
 	return;
     }
 
@@ -235,10 +246,10 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    fprintf(stderr, "plscmap0: Invalid RGB color: %d, %d, %d\n",
+	    char buffer[256];
+	    sprintf(buffer, "plscmap0: Invalid RGB color: %d, %d, %d",
 		    (int) r[i], (int) g[i], (int) b[i]);
-
-	    plabort("plscmap0: Invalid color");
+	    plabort(buffer);
 	    return;
 	}
 
@@ -270,10 +281,10 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    fprintf(stderr, "plscmap1: Invalid RGB color: %d, %d, %d\n",
+	    char buffer[256];
+	    sprintf(buffer, "plscmap1: Invalid RGB color: %d, %d, %d",
 		    (int) r[i], (int) g[i], (int) b[i]);
-
-	    plabort("plscmap1: Invalid color");
+	    plabort(buffer);
 	    return;
 	}
 	plsc->cmap1[i].r = r[i];
