@@ -88,7 +88,7 @@ See doc/docbook/README.developers for details.
 
 To install the DocBook area in the web site, do:
 
-    WWW_USER=joeplplotter make www-install
+    make WWW_USER=joeplplotter www-install
 
 
 CVS snapshot tarballs area
