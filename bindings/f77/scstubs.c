@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1995/10/16 18:22:24  mjl
+ * Revision 1.23  1995/10/23 07:23:12  mjl
+ * Added glevel() f77 binding.
+ *
+ * Revision 1.22  1995/10/16  18:22:24  mjl
  * Added support for plgdev API function in fortran bindings.
  *
  * Revision 1.21  1995/03/17  00:17:10  mjl
@@ -176,6 +179,12 @@ void
 PLGFNAM7(char *fnam)
 {
     c_plgfnam(fnam);
+}
+
+void
+PLGLEVEL(PLINT *level)
+{
+    c_plglevel(level);
 }
 
 void

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1995/10/16 18:22:23  mjl
+ * Revision 1.24  1995/10/23 07:23:11  mjl
+ * Added glevel() f77 binding.
+ *
+ * Revision 1.23  1995/10/16  18:22:23  mjl
  * Added support for plgdev API function in fortran bindings.
  *
  * Revision 1.22  1994/07/20  06:07:44  mjl
@@ -169,6 +172,7 @@
 #define    PLGDEV7	FNAME(PLGDEV7,plgdev7)
 #define    PLGFAM	FNAME(PLGFAM,plgfam)
 #define    PLGFNAM7	FNAME(PLGFNAM7,plgfnam7)
+#define    PLGLEVEL	FNAME(PLGLEVEL,plglevel)
 #define    PLGPAGE	FNAME(PLGPAGE,plgpage)
 #define    PLGRA	FNAME(PLGRA,plgra)
 #define    PLGSPA	FNAME(PLGSPA,plgspa)
