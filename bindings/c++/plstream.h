@@ -9,7 +9,7 @@
 #ifndef __plstream_h__
 #define __plstream_h__
 
-#include "plplot.h"
+#include "plplot/plplot.h"
 
 class PLS {
   public:

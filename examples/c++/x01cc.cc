@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "plstream.h"
+#include "plplot/plstream.h"
 
 //---------------------------------------------------------------------------//
 // In the real world, the user has his own Matrix class, so he just includes
