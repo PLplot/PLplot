@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1995/05/07 03:17:20  mjl
+ * Revision 1.10  1995/06/01 21:47:10  mjl
+ * Now is [incr Tcl] aware, if HAVE_ITCL has been defined (done during
+ * configure).
+ *
+ * Revision 1.9  1995/05/07  03:17:20  mjl
  * Changed to use new name for options-parsing function plParseOpts().
  *
  * Revision 1.8  1994/11/02  19:59:47  mjl
@@ -66,7 +70,7 @@ AppInit(Tcl_Interp *interp);
 
 extern void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty);
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main --
  *
  * Just a stub routine to call pltclMain.  The latter is nice to have when
@@ -75,7 +79,7 @@ extern void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty);
  * systems/compilers/linkers/etc).  Hopefully in the future Tcl will
  * supply a sufficiently capable tclMain() type function that can be used
  * instead.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char **argv)
@@ -85,13 +89,13 @@ main(int argc, char **argv)
     exit(pltclMain(argc, argv, NULL, AppInit));
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plExitCmd
  *
  * PLplot/Tcl extension command -- handle exit.
  * The reason for overriding the normal exit command is so we can tell
  * the PLplot library to clean up.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
@@ -111,12 +115,12 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * prPromptCmd
  *
  * PLplot/Tcl extension command -- print the prompt.
  * Allows much more flexible setting of the prompt.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 prPromptCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
@@ -137,7 +141,7 @@ prPromptCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 }
 
 /*
- *----------------------------------------------------------------------
+ *--------------------------------------------------------------------------
  *
  * AppInit --
  *
@@ -152,26 +156,31 @@ prPromptCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
  * Side effects:
  *	Depends on the startup script.
  *
- *----------------------------------------------------------------------
+ *--------------------------------------------------------------------------
  */
 
 static int
 AppInit(Tcl_Interp *interp)
 {
-    /*
-     * Call the init procedures for included packages.  Each call should
-     * look like this:
-     *
-     * if (Mod_Init(interp) == TCL_ERROR) {
-     *     return TCL_ERROR;
-     * }
-     *
-     * where "Mod" is the name of the module.
-     */
+/*
+ * Call the init procedures for included packages.  Each call should
+ * look like this:
+ *
+ * if (Mod_Init(interp) == TCL_ERROR) {
+ *     return TCL_ERROR;
+ * }
+ *
+ * where "Mod" is the name of the module.
+ */
 
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
+#ifdef HAVE_ITCL
+    if (Itcl_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+#endif
     if (Pltcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
@@ -205,7 +214,7 @@ AppInit(Tcl_Interp *interp)
 }
 
 /*
- *----------------------------------------------------------------------
+ *--------------------------------------------------------------------------
  *
  * plErrorHandler --
  *
@@ -219,7 +228,7 @@ AppInit(Tcl_Interp *interp)
  * Side effects:
  *	Error info is printed to stdout, if interactive, otherwise stderr.
  *
- *----------------------------------------------------------------------
+ *--------------------------------------------------------------------------
  */
 
 static void
