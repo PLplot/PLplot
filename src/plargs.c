@@ -1,13 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/07/01 22:27:59  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Many changes to capabilities of argument parser.  New mode
-   flags as well as argument flags.  User-specified variables can now be set
-   directly, depending on flags.  Invisible options and ignored options added.
-   Many internal options added (most invisible) for support of the TK driver.
-   See internal documentation for more details.
+   Revision 1.6  1993/07/16 22:32:35  mjl
+   Fixed bug encountered when setting option via plSetInternalOpt().
 
+ * Revision 1.5  1993/07/01  22:27:59  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Many changes to capabilities of argument parser.  New mode
+ * flags as well as argument flags.  User-specified variables can now be set
+ * directly, depending on flags.  Invisible options and ignored options added.
+ * Many internal options added (most invisible) for support of the TK driver.
+ * See internal documentation for more details.
+ *
  * Revision 1.4  1993/04/26  19:57:56  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
@@ -145,7 +148,7 @@ static int opt_geo		(char *, char *);
 static int opt_plserver		(char *, char *);
 static int opt_plwindow		(char *, char *);
 static int opt_tcl_cmd		(char *, char *);
-static int opt_auto_path		(char *, char *);
+static int opt_auto_path	(char *, char *);
 static int opt_bufmax		(char *, char *);
 
 /* Global variables */
@@ -630,10 +633,12 @@ ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 
 /* Option matched, so remove from argv list if applicable. */
 
-		if (mode_nodelete || (tab->mode & PL_OPT_NODELETE))
-		    (*(*p_argsave)++) = (**p_argv);
-		else
-		    --(*p_argc);
+		if ( ! mode_nodelete) {
+		    if (tab->mode & PL_OPT_NODELETE)
+			(*(*p_argsave)++) = (**p_argv);
+		    else
+			--(*p_argc);
+		}
 
 /* Process option (and argument if applicable) */
 
@@ -898,9 +903,6 @@ opt_a(char *opt, char *optarg)
     PLFLT aspect;
 
 /* Override aspect ratio */
-
-    aspect = atof(optarg);
-    plsasp(aspect);
 
     return(0);
 }
