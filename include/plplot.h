@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.47  1993/11/19 07:32:40  mjl
+ * Revision 1.48  1993/11/19 08:21:01  mjl
+ * Fixed busted ifdef syntax from last commit.
+ *
+ * Revision 1.47  1993/11/19  07:32:40  mjl
  * Added Convex support.
  *
  * Revision 1.46  1993/11/15  08:34:07  mjl
@@ -186,7 +189,7 @@ plplot (not ANSI-compliant).  Time to get a new one.
     defined(__hpux) ||				/* HP/UX */             \
     defined(sun) ||				/* SUN */               \
     defined(CRAY) ||				/* Cray */              \
-    defined(__convexc__) ||			/* CONVEX */             
+    defined(__convexc__) ||			/* CONVEX */            \
     (defined(__alpha) && defined(__osf__))	/* DEC Alpha AXP/OSF */
 
 #ifndef __unix
