@@ -51,8 +51,6 @@ Minor, essential.
 * If x08.tcl (or any other multi-page example) is executed first, then the
 first page is skipped.
 
-* tk cmap1 palette maniupulations no longer work.
-
 * ./xtk02 -f tk02
 invalid command name "Pltkwin"
     while executing
