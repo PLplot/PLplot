@@ -1,6 +1,9 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
+ * Revision 1.17.2.1  2000/07/27 15:54:30  airwin
+ * AWI: apply initial matrix.patch for TEA-based approach
+ *
  * Revision 1.17  2000/05/15 15:46:05  furnish
  * Include plplot.h so we can determine the setting for PLFLT.  This way
  * the Tcl matrix extension and the PLplot library won't become
@@ -103,7 +106,19 @@
 #define __TCLMATRIX_H__
 
 #include "plplot.h"
+
 #include <tcl.h>
+
+#ifdef TCL_STORAGE_CLASS
+# undef TCL_STORAGE_CLASS
+#endif
+#ifdef BUILD_Matrix
+# define TCL_STORAGE_CLASS DLLEXPORT
+#else
+# define TCL_STORAGE_CLASS DLLIMPORT
+#endif
+
+/* #define USE_MATRIX_STUBS */
 
 typedef PLFLT Mat_float;
 
@@ -389,17 +404,6 @@ extern "C" {
 /*---------------------------------------------------------------------------*/
 #endif
 
-/* This procedure is invoked to process the "matrix" Tcl command. */
-
-int
-Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
-	      int argc, char **argv);
-
-/* Returns a pointer to the specified matrix operator's data. */
-
-tclMatrix *
-Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName);
-
 /* Some stuff for handling extension subcommands. */
 
 typedef int (*tclMatrixXtnsnProc) ( tclMatrix *pm, Tcl_Interp *interp,
@@ -411,7 +415,31 @@ typedef struct tclMatrixXtnsnDescr {
     struct tclMatrixXtnsnDescr *next;
 } tclMatrixXtnsnDescr;
 
-int Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc );
+
+#ifndef MATRIX_USE_STUBS
+#include "matrixDecls.h"
+#endif
+
+/*
+ * Convenience declaration of Matrix_InitStubs.
+ * This function is not *implemented* by the matrix library, so the storage
+ * class is neither DLLEXPORT nor DLLIMPORT
+ */
+
+#undef TCL_STORAGE_CLASS
+#define TCL_STORAGE_CLASS
+
+EXTERN char *Matrix_InitStubs _ANSI_ARGS_((Tcl_Interp *interp, CONST char *version, int exact));
+
+#ifndef USE_MATRIX_STUBS
+
+#define Matrix_InitStubs(interp, version, exact) \
+    Tcl_PkgRequire(interp, "Matrix", version, exact)
+
+#endif
+
+#undef  TCL_STORAGE_CLASS
+#define TCL_STORAGE_CLASS DLLIMPORT
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.6.4.1  2000/07/27 15:54:30  airwin
+ * AWI: apply initial matrix.patch for TEA-based approach
+ *
  * Revision 1.6  1995/06/02 20:30:03  mjl
  * Made C++ friendly.
  *
@@ -34,6 +37,7 @@
 
 #include "plplot.h"
 #include <tcl.h>
+#define USE_MATRIX_STUBS
 #include "tclMatrix.h"
 
 #ifdef __cplusplus
@@ -55,9 +59,35 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp,
 	 int argc, char **argv);
 
 /* Initialization routine for PLplot-extended tclsh's (like pltcl). */
-
+#if defined(BUILD_Pltk)
 int
 Pltcl_Init( Tcl_Interp *interp );
+int 
+PlbasicInit( Tcl_Interp *interp );
+
+#else
+
+/*
+ * Windows needs to know which symbols to export.  Unix does not.
+ * BUILD_Pltcl should be undefined for Unix.
+ */
+
+#ifdef BUILD_Pltcl
+#undef TCL_STORAGE_CLASS
+#define TCL_STORAGE_CLASS DLLEXPORT
+#endif /* BUILD_Pltcl */
+
+/*
+ * Only the _Init function is exported, when building a shared lib.
+ */
+
+EXTERN int
+Pltcl_Init( Tcl_Interp *interp );
+
+EXTERN int 
+PlbasicInit( Tcl_Interp *interp );
+
+#endif
 
 /* tkshell.c */
 /* Sets up auto_path variable */

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.15.4.1  2000/07/27 15:54:30  airwin
+ * AWI: apply initial matrix.patch for TEA-based approach
+ *
  * Revision 1.15  1996/04/18 19:35:18  mjl
  * Added new matrix commands -- min: return minimum, max: return maximum,
  * scale: multiply by a scale factor [1d only], filter: apply the 3-pt binomial
@@ -127,7 +130,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define USE_MATRIX_STUB_PROCS
 #include "tclMatrix.h"
+
+/* This procedure is invoked to process the "matrix" Tcl command. */
+
+static int
+Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
+	      int argc, char **argv);
+
 
 /* Cool math macros */
 
@@ -1118,4 +1129,42 @@ DeleteMatrixCmd(ClientData clientData)
     else
 	fprintf(stderr, "OOPS!  You just lost %d bytes\n", sizeof(tclMatrix));
 #endif
+}
+
+#if defined(BUILD_Pltk) || defined(BUILD_Pltcl)
+int Matrix_Init _ANSI_ARGS_((Tcl_Interp*));
+#else
+
+/*
+ * Windows needs to know which symbols to export.  Unix does not.
+ * BUILD_Matrix should be undefined for Unix.
+ */
+
+#ifdef BUILD_Matrix
+#undef TCL_STORAGE_CLASS
+#define TCL_STORAGE_CLASS DLLEXPORT
+#endif /* BUILD_Matrix */
+
+/*
+ * Only the _Init function is exported.
+ */
+
+EXTERN int Matrix_Init _ANSI_ARGS_((Tcl_Interp*));
+#endif
+
+extern MatrixStubs matrixStubs;
+
+int Matrix_Init( Tcl_Interp *interp ) {
+#ifdef USE_TCL_STUBS
+    Tcl_InitStubs(interp,"8.1",0);
+#endif
+
+    /* matrix -- matrix	support	command	*/
+    Tcl_CreateCommand(interp, "matrix",	Tcl_MatrixCmd,
+		      (ClientData) NULL, (void (*)(ClientData))	NULL);
+
+    /* register extension as now available package */
+    Tcl_PkgProvideEx (interp, "Matrix", "0.1", (ClientData) &matrixStubs);
+    Matrix_InitStubs(interp, "0.1", 0);
+    return TCL_OK;
 }
