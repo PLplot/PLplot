@@ -1,2 +1,2 @@
 Makefile Makefile.in 
-eps2jpeg.pl inline-greek.pl tex2eps.pl
+eps2jpeg.pl inline-greek.pl tex2eps.pl api2man.pl
