@@ -102,6 +102,10 @@ def main():
 
     # Restore defaults
     plcol0(1)
+    # eop necessary here to write out last page before the default colour is restored.
+    # Note any additional eop directly after this will have no effect because 
+    # status will be AT_EOP rather than DRAWING.
+    pleop()
     restore_cmap1()
 	
 main()
