@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/10/18 19:41:49  mjl
-   Prototypes for Borland C driver under DOS.
+   Revision 1.12  1993/12/08 20:26:21  mjl
+   Changes to support MS-Kermit output device.
 
+ * Revision 1.11  1993/10/18  19:41:49  mjl
+ * Prototypes for Borland C driver under DOS.
+ *
  * Revision 1.10  1993/08/03  03:26:51  mjl
  * Additions to support new MGR and LinuxVGA drivers.
  *
@@ -65,6 +68,8 @@ void plD_init_tekt		(PLStream *);
 void plD_init_tekf		(PLStream *);
 void plD_init_t4107t		(PLStream *);
 void plD_init_t4107f		(PLStream *);
+void plD_init_mskermit		(PLStream *);
+void plD_state_mskermit		(PLStream *, PLINT);
 
 void plD_line_tek		(PLStream *, short, short, short, short);
 void plD_polyline_tek		(PLStream *, short *, short *, PLINT);

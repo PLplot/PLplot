@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1993/10/18 19:42:06  mjl
+ * Revision 1.15  1993/12/08 20:26:22  mjl
+ * Changes to support MS-Kermit output device.
+ *
+ * Revision 1.14  1993/10/18  19:42:06  mjl
  * Driver vectors for Borland C driver under DOS.
  *
  * Revision 1.13  1993/09/08  02:34:13  mjl
@@ -365,6 +368,22 @@ static PLDispatchTable dispatch_table[] = {
 	plD_bop_tek,
 	plD_tidy_tek,
 	plD_state_tek,
+	plD_esc_tek
+    },
+#endif
+
+#ifdef MSKERMIT
+    {
+	"MS-Kermit emulator",
+	"mskermit",
+	1,
+	plD_init_mskermit,
+	plD_line_tek,
+	plD_polyline_tek,
+	plD_eop_tek,
+	plD_bop_tek,
+	plD_tidy_tek,
+	plD_state_mskermit,
 	plD_esc_tek
     },
 #endif
