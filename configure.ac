@@ -803,7 +803,10 @@ MY_ARG_ENABLE(f77,
     [compile Fortran-77 interface code ($enable_f77)]))
 if test "$enable_f77" = yes ; then
   AC_PROG_F77
-  AC_F77_LIBRARY_LDFLAGS
+dnl  Commenting this call to AC_F77_LIBRARY_LDFLAGS, because it seems 
+dnl  useless, besides triggering an error when using plplot_libtool to build
+dnl  the F77 examples (RL on 2003-12-31)
+dnl  AC_F77_LIBRARY_LDFLAGS
   # If no F77 compiler is found, then disable f77 bindings building
   if test -z "$F77" ; then
     enable_f77=no
