@@ -2,13 +2,12 @@
 
 use PDL;
 use PDL::Graphics::PLplot;
+use Math::Trig;
 
 $xscale = 6.;
 $yscale = 1.;
 $xoff = 0.;
 $yoff = 0.;
-
-$PI = 3.1415926536;
 
 sub plot1 {
 
@@ -103,7 +102,7 @@ sub plot3 {
     pllab ("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
 
     my $x = 3.6 * pdl ([0..100]);
-    my $y = sin ($x * $PI / 180.0);
+    my $y = sin ($x * pi / 180.0);
 
     plcol0 (4);
     plline ($x, $y);
