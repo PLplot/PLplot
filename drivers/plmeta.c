@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1993/08/20 19:35:53  mjl
+ * Revision 1.21  1993/11/15 08:29:19  mjl
+ * Now writes number of pages in file to beginning of file on each
+ * new page.  For seeking to a specified number of pages before EOF.
+ *
+ * Revision 1.20  1993/08/20  19:35:53  mjl
  * Deleted save of pen width at every page boundary.  Eventually I'll come up
  * with a better way to save the state.
  *
@@ -70,6 +74,10 @@
 /* INDENT OFF */
 
 static void WriteHeader		(PLStream *);
+
+/* Global variables */
+
+static FPOS_T toc_offset;
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
@@ -300,9 +308,26 @@ plD_bop_plm(PLStream *pls)
 
     plGetFam(pls);
 
-/* Write new page header */
+/* Update page counter */
 
     pls->page++;
+
+/* Update table of contents info.  Right now only number of pages. */
+/* The order here is critical */
+
+    if (toc_offset > 0) {
+	if (pl_fsetpos(pls->OutFile, &toc_offset))
+	    plexit("plD_bop_plm: fsetpos call failed");
+
+	plm_wr(pdf_wr_header(pls->OutFile, "pages"));
+	plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) pls->page));
+
+	if (pl_fsetpos(pls->OutFile, &cp_offset))
+	    plexit("plD_bop_plm: fsetpos call failed");
+    }
+
+/* Write new page header */
+
     bwbyte_offset = pls->lp_offset;
 
     plm_wr(pdf_wr_1byte(pls->OutFile, c));
@@ -433,6 +458,15 @@ WriteHeader(PLStream *pls)
 
     plm_wr(pdf_wr_header(pls->OutFile, PLMETA_HEADER));
     plm_wr(pdf_wr_header(pls->OutFile, PLMETA_VERSION));
+
+/* Write table of contents info.  Right now only number of pages. */
+/* The order here is critical */
+
+    if (pl_fgetpos(pls->OutFile, &toc_offset))
+	plexit("WriteHeader: fgetpos call failed");
+
+    plm_wr(pdf_wr_header(pls->OutFile, "pages"));
+    plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) 0));
 
 /* Write initialization info.  Tag via strings to make backward
    compatibility with old metafiles as easy as possible. */
