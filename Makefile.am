@@ -75,6 +75,7 @@ EXTRA_DIST = \
 	Copyright \
 	FAQ \
 	PROBLEMS \
+	README.developers \
 	SERVICE \
 	TODO.AM-LT \
 	ToDo
