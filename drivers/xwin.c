@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.39  1994/05/23 22:08:00  mjl
+ * Revision 1.40  1994/05/27 22:19:17  mjl
+ * Window now placed properly when offsets (+x+y) are specified.  Thanks
+ * to Mark S. Glover (glover@zombi.res.utc.com) for the fix.
+ *
+ * Revision 1.39  1994/05/23  22:08:00  mjl
  * Moved code responsible for getting Visual back to where it belongs
  * (it was misplaced last update, causing core dumps on some systems).
  * Assignment of pixel values in cmap1 now staggered, in order to avoid
@@ -638,14 +642,13 @@ Init_main(PLStream *pls)
     hint.y = (int) pls->yoffset;
     hint.width = (int) pls->xlength;
     hint.height = (int) pls->ylength;
-    hint.flags = PPosition | PSize;
+    hint.flags = USPosition | USSize;
 
 /* Window title */
 
     sprintf(header, "plplot");
 
 /* Window creation */
-/* Why is the window manager ignoring the x & y values??? */
 
     dev->window =
 	XCreateWindow( dev->display,
