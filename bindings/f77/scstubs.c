@@ -434,7 +434,7 @@ PLPARSEOPTS7(int *numargs, char *iargs, PLINT *mode, PLINT *maxindex)
 	 argv[i] = iargs + (i* *maxindex);
 /*	 fprintf(stderr, "%s\n", argv[i]); */
       }
-      plParseOpts(numargs, argv, *mode);
+      c_plparseopts(numargs, argv, *mode);
    }  else
      fprintf(stderr,"plparseopts7: numargs too large\n");
 }
