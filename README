@@ -37,7 +37,7 @@ plotdoc").  Unfortunately documentation tends to lag actual improvements to
 the code, so don't be surprised if some known features are not explained
 there.  Consult "NEWS" to see a list of recent changes.  
 
-At present, PLplot is known to work on the following systems:
+At present, PLplot is believed to work on the following systems:
 
 	Unix:	AIX 		(IBM)
 		ConvexOS	(Convex)
@@ -56,15 +56,30 @@ At present, PLplot is known to work on the following systems:
 	MS-DOS
 	OS/2
 	NeXT
+	VMS
 
 Many different output device drivers are available, including postscript,
 tektronix, HP laserjet, HP pen plotters, XFig, xterm, X-windows, and a
-portable metafile format, among others.  The TK driver under Unix/X
-provides a full user interface, with facilities to zoom, pan, orient,
-determine placement on the output page, and save the plot or any set of
-plots to a specified file and device type.  The metafile renderer
-(plrender) supports seeking backwards or forwards to any specified page
-when interactively viewing metafile output.
+portable metafile format, among others.  The Tk driver under Unix/X
+provides a full user interface based on the plframe plotting widget (see
+below).  The Tcl-DP based driver is a variant of the Tk driver that
+supports distributed rendering.  The metafile renderer (plrender) supports
+all of the standard operations as well as seeking operations (backward,
+forward, or to any specified page) when interactively viewing metafile
+output.
+
+Part of the PLplot package is a Tcl-based interpreter (pltcl).  This
+program allows interactive plotting using the Tcl script language with
+plotting extensions.  Currently about half of the PLplot library functions
+are recognized from the Tcl side, with more to follow.
+
+Also part of PLplot is a Tk-based plotting widget, called a plframe.  This
+widget is based on the Tk frame widget, and supports a variety of user
+options such as zoom, scrolls, save to a variety of devices, print,
+resize, page layout, orientation change, and palette manipulation.  Direct
+plotting to the widget may be done by calls to the underlying library
+using either C or Fortran bindings, and a large number of operations can
+be interpreted directly (in Tcl) by the widget.
 
 For more information on how to get or use PLplot on your system, see:
  - appendices to the PLplot manual
@@ -84,24 +99,32 @@ PLplot is the result of the effort of many people, so it is impractical to
 list all the contributors.  Those currently supporting and otherwise
 responsible for the package in its present form include:
 
-Dr. Maurice LeBrun		PLplot overall coordination, kernel
-mjl@dino.ph.utexas.edu		development, most of the Unix and Amiga
-Institute for Fusion Studies	drivers
+Dr. Maurice LeBrun			PLplot overall coordination, kernel
+mjl@dino.ph.utexas.edu			development, most of the Unix and Amiga
+Institute for Fusion Studies		drivers, plframe widget and pltcl
 University of Texas
 
-Geoffrey Furnish		Co-developer.  Can help with C++ and UNIX
-furnish@dino.ph.utexas.edu	related questions
+Geoffrey Furnish			Co-developer.  Can help with C++ and
+furnish@dino.ph.utexas.edu		UNIX related questions
 Institute for Fusion Studies
 University of Texas
 
-Paul Casteels			DOS/BGI (bcc) port
+Paul Casteels				DOS/BGI (bcc) port
 casteels@uia.ac.be
+University of Antwerp
 
-John C. Peterson		OS/2 port 
+John C. Peterson			OS/2 port 
 jcp@trg.saic.com
+Science Applications Intl Corp
 
-Paul Kirschner			DOS/DJGPP port
+Paul Kirschner				DOS/DJGPP port
 pek@logos.res.utc.com
+United Technologies Research Center
 
-Mark Olesen			DOS/EMX port
+Mark Olesen				DOS/EMX port
 olesen@weber.me.queensu.ca
+Queen's University at Kingston
+
+Hiromi Kimura				VMS port
+hiromi@tac.tsukuba.ac.jp
+University of Tsukuba
