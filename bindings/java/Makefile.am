@@ -71,7 +71,7 @@ $(swiggenfiles): plplotjavac.i $(PLPLOTCAPI_I)
 	$(SWIG_CMD) -package plplot.core plplotjavac.i
 
 # Must have "exec" in the name.
-ourexecjavadir = $(DATA_DIR)/java/plplot/core
+ourexecjavadir = $(datadir)/java/plplot/core
 execjavawrapperdir = $(JAVAWRAPPER_DIR)
 
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la

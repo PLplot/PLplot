@@ -76,7 +76,7 @@ if enable_java
 examples_javadir = $(DATA_DIR)/examples/java
 examples_java_DATA = $(javademos)
 
-examples_execjavadir = $(DATA_DIR)/java/plplot/examples
+examples_execjavadir = $(datadir)/java/plplot/examples
 examples_execjava_DATA = $(javademos) $(example_classes) README.javademos
 
 endif
@@ -84,7 +84,7 @@ endif
 install-data-hook:
 if enable_java
 	( cd $(DESTDIR)$(examples_javadir) ; mv -f Makefile.examples Makefile )
-	( cd $(DESTDIR)$(DATA_DIR)/java ; jar -cf plplot.jar plplot ; \
+	( cd $(DESTDIR)$(datadir)/java ; jar -cf plplot.jar plplot ; \
 	rm -rf plplot)
 endif
 

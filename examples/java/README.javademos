@@ -26,11 +26,11 @@ CLASSPATH or by using the -classpath option to java. For example :-
 # notation works for all jdk's.
 
 # This location will depend on your install prefix:
-setenv CLASSPATH /usr/local/share/plplot5.3.1/java/plplot.jar
+setenv CLASSPATH /usr/local/share/java/plplot.jar
 java plplot.examples.x01 .....
 
 If you want to see the source code for the examples it can be found in
-the jar file /usr/local/share/plplot5.3.1/java/plplot.jar and also in
+the jar file /usr/local/share/java/plplot.jar and also in
 /usr/local/share/plplot5.3.1/examples/java/
 
 (4) Changing and recompiling java demos

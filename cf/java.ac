@@ -123,9 +123,9 @@ if test "$enable_java" = yes; then
        JAVAINCCMD="-I$JAVAINCDIR"
    fi
 ### Directory for Java wrapper library.
-   test -z "$JAVAWRAPPER_DIR" && JAVAWRAPPER_DIR="$LIB_DIR/${PACKAGE}${VERSION}/java"
+   test -z "$JAVAWRAPPER_DIR" && JAVAWRAPPER_DIR="$LIB_DIR/jni"
 ### Directory for Java bindings .jar file
-   test -z "$JAVADATA_DIR" && JAVADATA_DIR="$DATA_DIR/java"
+   test -z "$JAVADATA_DIR" && JAVADATA_DIR="$datadir/java"
 
 ### bindings/java/config.java.in requires JAVAWRAPPER_HARDDIR
 ### The symbolic exec_prefix must be replaced by the actual exec_prefix.
