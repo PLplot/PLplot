@@ -1,0 +1,56 @@
+The files in this directory must be concatenated to make the correct
+PLplot Makefile.in.  This is subsequently edited by the configure script,
+using "sed".  The order of concatenation should be:
+
+	init.in			(initialization)
+	<pkg files>		(optional packages)
+	deps.in			(basic dependencies & targets)
+	lib.in			(library target)
+	shlib.in		(shared library target, if supported)
+	install.in		(installation targets)
+	clean.in		(cleanup targets)
+
+The "init.in" file is the only one of these to contain macros set by the
+configure script.
+
+The files plConfig.h.in and plDevs.h.in are also processed by configure
+to obtain the final plConfig.h and plDevs.h header files.  The former is
+included by plplotP.h and is thus seen by all PLplot source files.  The
+latter is included by all drivers and plcore.h.  On a non-Unix system,
+plConfig.h and plDevs.h should be configured by hand and linked (or
+copied) to the tmp directory as part of the build procedure.
+
+Note that the operation of configure can be customized on a per-user
+basis.  Just set up a file ~/config/cf_plplot.in that contains the shell
+variables you wish to predefine.  This can be used to set frequently used
+options (such as what devices to enable) as well as speed up the
+configuration script.  The latter is done by setting the location of
+various include files and libraries, which otherwise need to be found by
+configure through a search process.  Here is an example cf_plplot.in file
+that is useful on /my/ machine:
+
+# --*-sh-*---------------------------------------------------------------
+#
+# PLplot configure script default variables.
+#
+# Created from contents of config.status and read automatically by
+# configure to set up initial variables and reduce running time.
+#
+# -----------------------------------------------------------------------
+
+CPP='c89 -E'
+XINCDIR='default'
+XLIBDIR='default'
+TCLINCDIR='/usr/local/include'
+TCLLIBDIR='/usr/local/lib'
+TKINCDIR='/usr/local/include'
+TKLIBDIR='/usr/local/lib'
+DPLIBDIR='/usr/local/lib'
+ITCLLIBDIR='/usr/local/lib'
+EXTRA_LIBS=' -lm'
+RANLIB='ranlib'
+prefix='/u/usr/local/plplot'
+DEFS=' -DSTDC_HEADERS=1'
+with_opt="no"
+
+
