@@ -390,15 +390,6 @@ void plD_init_png(PLStream *pls)
 
      plP_setphy(0, dev->scale*dev->pngx, 0, dev->scale*dev->pngy);
 
-#ifdef HAVE_FREETYPE
-
-if (pls->dev_text)
-   {
-    init_freetype_lv2(pls);
-   }
-
-#endif
-
 }
 
 /*----------------------------------------------------------------------*\
@@ -740,6 +731,15 @@ if (dev->red15) plD_red15_gd(pls);
 #endif
 
            dev->im_out = gdImageCreate(pls->xlength, pls->ylength);
+#ifdef HAVE_FREETYPE
+
+if (pls->dev_text)
+   {
+    init_freetype_lv2(pls);
+   }
+
+#endif
+
            setcmap(pls);
 
 #if GD2_VERS >= 2
@@ -747,6 +747,15 @@ if (dev->red15) plD_red15_gd(pls);
        else
          {
          dev->im_out = gdImageCreateTrueColor(pls->xlength, pls->ylength);
+#ifdef HAVE_FREETYPE
+
+if (pls->dev_text)
+   {
+    init_freetype_lv2(pls);
+   }
+
+#endif
+
 
 /*
  * In truecolour mode, the background colour GD makes is ALWAYS black, so to
@@ -790,7 +799,6 @@ if (dev->red15) plD_red15_gd(pls);
 
 void plD_tidy_png(PLStream *pls)
 {
-   fclose(pls->OutFile);
 
 #ifdef HAVE_FREETYPE
    FT_Data *FT=(FT_Data *)pls->FT;
@@ -798,6 +806,7 @@ void plD_tidy_png(PLStream *pls)
    plD_FreeType_Destroy(pls);
 #endif
 
+   fclose(pls->OutFile);
    free_mem(pls->dev);
 }
 
