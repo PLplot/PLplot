@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1994/06/30 18:37:03  mjl
+ * Revision 1.30  1994/07/19 22:34:46  mjl
+ * Eliminated some unnecessary defines.
+ *
+ * Revision 1.29  1994/06/30  18:37:03  mjl
  * Added status flag to keep track of current page status.
  *
  * Revision 1.28  1994/05/07  03:22:08  mjl
@@ -54,9 +57,6 @@
 
 #ifndef __PLSTREAM_H__
 #define __PLSTREAM_H__
-
-#include <plplot.h>
-#include <pdf.h>
 
 /*----------------------------------------------------------------------*\
 * Define the PLDev data structure.
