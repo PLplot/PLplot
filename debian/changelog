@@ -1,12 +1,11 @@
 plplot (5.2.1-20) unstable; urgency=low
 
-  * NOT YET RELEASED!
   * Following a suggestion of Matthias Klose <doko@cs.tu-berlin.de>, the
     libltdl library shipped with the upstream sources is not compiled
     anymore as a convenience library:
-    - Imported configure.ac and Makefile.am from upstream CVS that
-      implement the confgiure option --with-ltdlsystem, allowing the use
-      of the installed libltdl library.
+    - Patched configure.ac and Makefile.am from upstream CVS. The
+      configure option --with-ltdlsystem is now implemented, which allows
+      the use of the installed libltdl library.
     - debian/control: Build-depends on libltdl3-dev.
     - debian/rules: Call configure with option --with-ltdlsystem.
   * debian/control:
@@ -15,7 +14,7 @@ plplot (5.2.1-20) unstable; urgency=low
       are using dh_python (thanks again to Matthias Klose for pointing
       this out).
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 17 Oct 2003 08:25:49 +0200
 
 plplot (5.2.1-19) unstable; urgency=low
 
