@@ -196,6 +196,9 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_pstex) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_pstex,
 #endif
+#if defined(PLD_ntk) && !defined(ENABLE_DYNAMIC_DRIVERS)
+    plD_dispatch_init_ntk,
+#endif
 #if defined(PLD_null) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_null,
 #endif

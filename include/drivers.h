@@ -55,6 +55,7 @@ void plD_dispatch_init_pbm	( PLDispatchTable *pdt );
 void plD_dispatch_init_png	( PLDispatchTable *pdt );
 void plD_dispatch_init_null	( PLDispatchTable *pdt );
 void plD_dispatch_init_pstex	( PLDispatchTable *pdt );
+void plD_dispatch_init_ntk	( PLDispatchTable *pdt );
 
 #if 0
 void plD_init_tk		(PLStream *);
