@@ -9,9 +9,6 @@
 <!ENTITY chap-simple SYSTEM "simple.xml">
 <!ENTITY chap-advanced SYSTEM "advanced.xml">
 <!ENTITY chap-drivers SYSTEM "drivers.xml">
-<!ENTITY chap-api SYSTEM "api.xml">
-<!ENTITY chap-api-c SYSTEM "api-c.xml">
-<!ENTITY chap-api-fortran SYSTEM "api-fortran.xml">
 <!ENTITY chap-c SYSTEM "c.xml">
 <!ENTITY chap-fortran SYSTEM "fortran.xml">
 <!ENTITY chap-cplus SYSTEM "cplus.xml">
@@ -20,6 +17,10 @@
 <!ENTITY chap-gui SYSTEM "gui.xml">
 <!ENTITY chap-perl SYSTEM "perl.xml">
 <!ENTITY chap-python SYSTEM "python.xml">
+<!ENTITY chap-bibliography SYSTEM "bibliography.xml">
+<!ENTITY chap-api SYSTEM "api.xml">
+<!ENTITY chap-api-c SYSTEM "api-c.xml">
+<!ENTITY chap-api-fortran SYSTEM "api-fortran.xml">
 <!ENTITY pl_setcontlabelparam '<link linkend="pl_setcontlabelparam"><function>pl_setcontlabelparam</function></link>'>
 <!ENTITY pl_setcontlabelformat '<link linkend="pl_setcontlabelformat"><function>pl_setcontlabelformat</function></link>'>
 <!ENTITY pladv '<link linkend="pladv"><function>pladv</function></link>'>
@@ -269,13 +270,6 @@
   </part>
 
   <part>
-    <title> Reference </title>
-    &chap-api;
-    &chap-api-c;
-    &chap-api-fortran;
-  </part>
-
-  <part>
     <title> Language Bindings </title>
     &chap-c;
     &chap-fortran;
@@ -285,6 +279,14 @@
     &chap-gui;
     &chap-perl;
     &chap-python;
+  </part>
+
+  <part>
+    <title> Reference </title>
+    &chap-bibliography;
+    &chap-api;
+    &chap-api-c;
+    &chap-api-fortran;
   </part>
 
 </book>

@@ -14,6 +14,7 @@ SOURCE_FILES = \
   api.xml \
   api-c.xml \
   api-fortran.xml \
+  bibliography.xml \
   c.xml \
   fortran.xml \
   cplus.xml \
@@ -24,7 +25,6 @@ SOURCE_FILES = \
   intro.xml \
   perl.xml \
   python.xml \
-  scheme.xml \
   simple.xml \
   tcl.xml \
   wish.xml
@@ -140,4 +140,3 @@ $(MAN_MANIFEST): $(MASTER_XML_IN) api.xml
 
 .PHONY: all html print info man
 .PRECIOUS: %.info %.texi %.txml %.xml-info %.pdf
-
