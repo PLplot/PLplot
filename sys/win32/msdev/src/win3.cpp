@@ -128,6 +128,39 @@ BOOLEAN ok;
 */
 
 /*--------------------------------------------------------------------------*\
+* Provide a solution to the problem of temporary files (AM)
+\*--------------------------------------------------------------------------*/
+
+extern "C" {
+
+FILE *tmpfile( void )
+{
+   FILE *outfile ;
+   char *string  ;
+   char *ptemp   ;
+   char  buffer[100] ;
+   char  buffer2[100] ;
+
+   ptemp = getenv( "TEMP" ) ;
+   if ( ptemp == NULL )
+   {
+      ptemp = getenv( "TMP" ) ;
+   }
+   if ( ptemp == NULL )
+   {
+      ptemp = "C:" ;
+   }
+   string  = tmpnam( buffer ) ;
+   strcpy( buffer2, ptemp ) ;
+   strcat( buffer2, string ) ;
+   outfile = fopen( buffer2, "w+" ) ;
+
+   return outfile ;
+}
+
+}
+
+/*--------------------------------------------------------------------------*\
 * Initialize device.
 \*--------------------------------------------------------------------------*/
 
@@ -761,7 +794,8 @@ void imageops(PLStream *pls, int *ptr)
   }
 }
 
-LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,	UINT wParam,LONG lParam)
+LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd,UINT message,
+	UINT wParam,LONG lParam)
 {
 	RECT rect;
 	PAINTSTRUCT ps;
