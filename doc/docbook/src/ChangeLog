@@ -1,5 +1,13 @@
 2000-11-30  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* Makefile.am ($(BASE).pdf.gz): Implements the recursion trick to
+	run pdfjadetex just enough.  Also, the dependency for this is no
+	more on the dvi file, but on %.jadetex and jadetex.cfg, as it
+	should be.
+	(%.pdf.gz): New rule.
+	(.PRECIOUS): Added %.pdf.
+	(all): Added dependency on info target.
+
 	* plplotdoc-html.dsl.in (element anchor): Only generates the
 	<SPAN> output for <anchor>s having id="over-under".
 
