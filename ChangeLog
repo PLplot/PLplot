@@ -10,6 +10,11 @@
 	  should be possible to overload 1-d arrays when needed for xg0
 	  through yg1, have angle wrap code, and also drop kx, lx, ky, ly.
 
+	* Implement typemaps for defined_func and fill_func which allow
+	  x15.java and x16.java to work properly.  Note, I removed the
+	  local versions of plshades from x16.java since plshades is now
+	  defined in the PLplot java interface API.  
+
 2002-12-28  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Implement the simpler 2-d arrays for the swig-based Java API.  This

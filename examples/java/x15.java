@@ -14,6 +14,11 @@ class x15 {
 
     final int XPTS = 35;
     final int YPTS = 46;
+   // calculated constants and array that depends on them
+   final double XSPA =  2./(XPTS-1);
+   final double YSPA =  2./(YPTS-1);
+   final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
+
 
    PLStreamc plsdummy = new PLStreamc();
    plplotjavac pls = new plplotjavac();
@@ -47,8 +52,12 @@ class x15 {
 	
         double xx;
         double yy;
+        double x;
+        double y;
         double[][] z = new double[XPTS][YPTS];
 	double zmin, zmax;
+	double[][] xg0 = new double[XPTS][YPTS];
+	double[][] yg0 = new double[XPTS][YPTS];
 	
     // Parse and process command line arguments.
 
@@ -69,6 +78,14 @@ class x15 {
             {
                 yy = ((double) (j - (YPTS/2)) / (double) (YPTS/2)) - 1.;
                 z[i][j] = xx*xx - yy*yy + (xx - yy)/(xx*xx+yy*yy + 0.1);
+	       x = tr[0] * i + tr[1] * j + tr[2];
+	       y = tr[3] * i + tr[4] * j + tr[5];
+	       // Note xg0 ==> yg1 are one-dimensional because of arrangement of
+	       //zeros in the final tr definition above.  However, for now
+	       //we are using raw interface here so must nominally treat them
+	       //as two-dimensional.
+	       xg0[i][j] = x;
+	       yg0[i][j] = y;
             }
         }
 	
@@ -76,15 +93,15 @@ class x15 {
         zmin = fmin;
         zmax = fmax;
 	
-	plot1( z, zmin, zmax );
-	plot2( z, zmin, zmax );
+	plot1( xg0, yg0, z, zmin, zmax );
+	plot2( xg0, yg0, z, zmin, zmax );
 	
         pls.plend();
     }
 
 // Illustrates a single shaded region.
 
-    void plot1( double[][] z, double zmin, double zmax)
+    void plot1( double[][] xg0, double[][] yg0, double[][] z, double zmin, double zmax)
     {
 	double shade_min, shade_max, sh_color;
 	int sh_cmap = 0, sh_width;
@@ -110,7 +127,8 @@ class x15 {
         pls.plshade( z, -1., 1., -1., 1.,
                    shade_min, shade_max,
                    sh_cmap, sh_color, sh_width,
-                   min_color, min_width, max_color, max_width, 1 );
+                   min_color, min_width, max_color, max_width,
+		     1, xg0, yg0 );
 
 	pls.plcol0(1);
 	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -121,7 +139,7 @@ class x15 {
 // Illustrates multiple adjacent shaded regions, using different fill
 // patterns for each region.
 
-    void plot2( double[][] z, double zmin, double zmax)
+    void plot2(double[][] xg0, double[][] yg0, double[][] z, double zmin, double zmax)
     {
 	double shade_min, shade_max, sh_color;
 	int sh_cmap = 0, sh_width;
@@ -144,7 +162,8 @@ class x15 {
             pls.plshade( z, -1., 1., -1., 1.,
                        shade_min, shade_max,
                        sh_cmap, sh_color, sh_width,
-                       min_color, min_width, max_color, max_width, 1 );
+                       min_color, min_width, max_color, max_width,
+			 1, xg0, yg0 );
 	}
 
 	pls.plcol0(1);

@@ -764,6 +764,15 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    return $jnicall;
 }
 
+// Do not specify defined function or fill function from java.  Instead
+// specify NULL and plfill defaults in the interface C code.
+%typemap(in, numinputs=0) defined_func df {
+     $1 = NULL;
+}
+%typemap(in, numinputs=0) fill_func ff {
+     $1 = plfill;
+}
+
 //temporary
 #if 0
 /***************************

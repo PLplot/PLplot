@@ -510,8 +510,6 @@ DOC(plsfnam, "Set the output file name.")
 void
 plsfnam(const char *fnam);
 
-//temporary
-#if 0
 DOC(plshades, "Shade regions with continuous range of colours.")
 void 
 plshades( PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
@@ -533,8 +531,6 @@ plshade(PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 	  fill_func ff, PLINT rectangular,
 	  pltr_func pltr,
 	  PLPointer OBJECT_DATA);
-//temporary
-#endif
 
 DOC(plsmaj, "Set up lengths of major tick marks.")
 void
