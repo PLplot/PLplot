@@ -63,25 +63,20 @@ endif
 # processor options, not preprocessor.
 
 cgm_drv_la_CFLAGS = @CDINCCMD@
-cgmd_drv_la_CFLAGS = $(cgm_drv_la_CFLAGS)
 gd_drv_la_CFLAGS = @GDINCCMD@
-gdd_drv_la_CFLAGS = $(gd_drv_la_CFLAGS)
 gnome_drv_la_CFLAGS = @GTK_CFLAGS@ @GNOME_INCLUDEDIR@
-gnomed_drv_la_CFLAGS = $(gnome_drv_la_CFLAGS)
 ntk_drv_la_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-ntkd_drv_la_CFLAGS = $(ntk_drv_la_CFLAGS)
 tk_drv_la_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-tkd_drv_la_CFLAGS = $(tk_drv_la_CFLAGS)
 tkwin_drv_la_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
@@ -89,9 +84,7 @@ tkwin_drv_la_CFLAGS = \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-tkwind_drv_la_CFLAGS = $(tkwin_drv_la_CFLAGS)
 xwin_drv_la_CFLAGS = @X_CFLAGS@
-xwind_drv_la_CFLAGS = $(xwin_drv_la_CFLAGS)
 
 # Set overall preprocessor options
 AM_CPPFLAGS = @INCLTDL@
@@ -302,25 +295,20 @@ EXTRA_libplplotdrv_la_SOURCES = \
 # deserve....;-))
 
 cgm_lo_CFLAGS = @CDINCCMD@
-#cgmd_lo_CFLAGS = $(cgm_lo_CFLAGS)
 gd_lo_CFLAGS = @GDINCCMD@
-#gdd_lo_CFLAGS = $(gd_lo_CFLAGS)
 gnome_lo_CFLAGS = @GTK_CFLAGS@ @GNOME_INCLUDEDIR@
-#gnomed_lo_CFLAGS = $(gnome_lo_CFLAGS)
 ntk_lo_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-#ntkd_lo_CFLAGS = $(ntk_lo_CFLAGS)
 tk_lo_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-#tkd_lo_CFLAGS = $(tk_lo_CFLAGS)
 tkwin_lo_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
@@ -328,9 +316,7 @@ tkwin_lo_CFLAGS = \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-#tkwind_lo_CFLAGS = $(tkwin_lo_CFLAGS)
 xwin_lo_CFLAGS = @X_CFLAGS@
-#xwind_lo_CFLAGS = $(xwin_lo_CFLAGS)
 
 # tkwin covers ntk, tk, and tkwin
 # Following line did not work so try lumped alternative with AM_CPPFLAGS
