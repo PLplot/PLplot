@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/06/24 20:38:21  mjl
+ * Revision 1.3  1994/06/25 20:37:12  mjl
+ * Added API calls for pladv, plbop, plbox, pleop, plstyl, plvsta, plwind.
+ *
+ * Revision 1.2  1994/06/24  20:38:21  mjl
  * Changed name of struct to tclMatrix to avoid conflicts with C++ Matrix
  * classes.
  *
@@ -9,7 +12,6 @@
  * support calling PLplot functions via Tcl commands.  Support for calling
  * PLplot directly (from pltcl) or by widget commands (from plframe) is
  * provided.
- *
  */
 
 /*----------------------------------------------------------------------*\
@@ -31,16 +33,23 @@
 
 /* PLplot/Tcl API handlers.  Prototypes must come before Cmds struct */
 
+static int pladvCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plbopCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plboxCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plcol0Cmd	(ClientData, Tcl_Interp *, int, char **);
+static int pleopCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plenvCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plgraCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pllabCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pllineCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plpoinCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plstylCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsxaxCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsyaxCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pltextCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plvstaCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plwindCmd	(ClientData, Tcl_Interp *, int, char **);
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -64,17 +73,24 @@ typedef struct {
 /* Built-in commands, and the procedures associated with them */
 
 static CmdInfo Cmds[] = {
+    {"pladv",		pladvCmd},
+    {"plbop",		plbopCmd},
+    {"plbox",		plboxCmd},
     {"plcol",		plcol0Cmd},
     {"plcol0",		plcol0Cmd},
+    {"pleop",		pleopCmd},
     {"plenv",		plenvCmd},
     {"plgra",		plgraCmd},
     {"pllab",		pllabCmd},
     {"plline",		pllineCmd},
     {"plpoin",		plpoinCmd},
+    {"plstyl",		plstylCmd},
     {"plsxax",		plsxaxCmd},
     {"plsyax",		plsyaxCmd},
     {"plsetopt",	plsetoptCmd},
     {"pltext",		pltextCmd},
+    {"plvsta",		plvstaCmd},
+    {"plwind",		plwindCmd},
     {NULL,		NULL}
 };
 
@@ -103,7 +119,7 @@ Append_Cmdlist(Tcl_Interp *interp)
  *
  * Sets up command hash table for use with plframe to PLplot Tcl API.
  *
- * Note that not all API calls are allowed, since some of these /don't/
+ * Right now all API calls are allowed, although some of these may not
  * make much sense when used with a widget.
 \*----------------------------------------------------------------------*/
 
@@ -240,7 +256,7 @@ plxxxCmd(ClientData clientData, Tcl_Interp *interp,
 {
     if (argc != 0 ) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
-			 argv[0], "  \"",
+			 argv[0], " \"",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
@@ -251,10 +267,95 @@ plxxxCmd(ClientData clientData, Tcl_Interp *interp,
 }
 
 /*----------------------------------------------------------------------*\
+ * pladvCmd
+ *
+ * Processes pladv Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+pladvCmd(ClientData clientData, Tcl_Interp *interp,
+	 int argc, char **argv)
+{
+    int sub = 0;
+
+    if (argc > 2 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " ?subwindow?\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if (argc == 2) 
+	sub = atoi(argv[1]);
+
+    pladv(sub);
+
+    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plbopCmd
+ *
+ * Processes plbop Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plbopCmd(ClientData clientData, Tcl_Interp *interp,
+	 int argc, char **argv)
+{
+    if (argc > 1 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], "\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plbop();
+
+    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plboxCmd
+ *
+ * Processes plbox Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plboxCmd(ClientData clientData, Tcl_Interp *interp,
+	 int argc, char **argv)
+{
+    char *xopt, *yopt;
+    PLFLT xtick, ytick;
+    PLINT nxsub, nysub;
+
+    if (argc != 7 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " xopt xtick nxsub yopt ytick nysub\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    xopt = argv[1];
+    xtick = atof(argv[2]);
+    nxsub = atoi(argv[3]);
+
+    yopt = argv[4];
+    ytick = atof(argv[5]);
+    nysub = atoi(argv[6]);
+
+    plbox(xopt, xtick, nxsub, yopt, ytick, nysub);
+
+    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
  * plcol0Cmd
  *
  * Processes plcol0 Tcl command.
- * plcol0 or plcol -- set color index, map 0
 \*----------------------------------------------------------------------*/
 
 static int
@@ -282,7 +383,6 @@ plcol0Cmd(ClientData clientData, Tcl_Interp *interp,
  * plenvCmd
  *
  * Processes plenv Tcl command.
- * plenv -- Simple interface for defining viewport and window.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -313,10 +413,32 @@ plenvCmd(ClientData clientData, Tcl_Interp *interp,
 }
 
 /*----------------------------------------------------------------------*\
+ * pleopCmd
+ *
+ * Processes pleop Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+pleopCmd(ClientData clientData, Tcl_Interp *interp,
+	 int argc, char **argv)
+{
+    if (argc > 1 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], "\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    pleop();
+
+    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
  * plgraCmd
  *
  * Processes plgra Tcl command.
- * Used before doing any plotting.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -331,7 +453,6 @@ plgraCmd(ClientData clientData, Tcl_Interp *interp,
  * pllabCmd
  *
  * Processes pllab Tcl command.
- * Simple routine for labelling graphs.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -355,7 +476,6 @@ pllabCmd(ClientData clientData, Tcl_Interp *interp,
  * pllineCmd
  *
  * Processes plline Tcl command.
- * Draws line segments connecting a series of points.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -393,7 +513,6 @@ pllineCmd(ClientData clientData, Tcl_Interp *interp,
  * plpoinCmd
  *
  * Processes plpoin Tcl command.
- * Plots array y against x for n points using ASCII code "code".
 \*----------------------------------------------------------------------*/
 
 static int
@@ -433,7 +552,6 @@ plpoinCmd(ClientData clientData, Tcl_Interp *interp,
  * plsetoptCmd
  *
  * Processes plsetopt Tcl command.
- * plsetopt -- set a PLPlot option (command-line syntax) 
  * Just calls plSetInternalOpt() 
 \*----------------------------------------------------------------------*/
 
@@ -460,10 +578,41 @@ plsetoptCmd(ClientData clientData, Tcl_Interp *interp,
 }
 
 /*----------------------------------------------------------------------*\
+ * plstylCmd
+ *
+ * Processes plstyl Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plstylCmd(ClientData clientData, Tcl_Interp *interp,
+	 int argc, char **argv)
+{
+    PLINT *space, *mark, nels;
+    tclMatrix *mat1, *mat2;
+
+    if (argc != 4 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " nels mark-array space-array\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    nels = atoi(argv[1]);
+    mat1 = Tcl_GetMatrixPtr(interp, argv[2]);
+    space = mat1->idata;
+    mat2 = Tcl_GetMatrixPtr(interp, argv[3]);
+    mark = mat2->idata;
+
+    plstyl(nels, mark, space);
+
+    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
  * plsxaxCmd
  *
  * Processes plsxax Tcl command.
- * Set x axis labeling parameters.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -488,7 +637,6 @@ plsxaxCmd(ClientData clientData, Tcl_Interp *interp,
  * plsyaxCmd
  *
  * Processes plsyax Tcl command.
- * Set y axis labeling parameters.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -513,8 +661,6 @@ plsyaxCmd(ClientData clientData, Tcl_Interp *interp,
  * pltextCmd
  *
  * Processes pltext Tcl command.
- * Most notably used for setting the terminal back to a reasonable state
- * during interactive use.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -522,6 +668,59 @@ pltextCmd(ClientData clientData, Tcl_Interp *interp,
 	  int argc, char **argv)
 {
     pltext();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plvstaCmd
+ *
+ * Processes plvsta Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plvstaCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    if (argc > 1 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], "\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plvsta();
+
+    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plwindCmd
+ *
+ * Processes plwind Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plwindCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    PLFLT xmin, xmax, ymin, ymax;
+
+    if (argc != 5 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " xmin xmax ymin ymax\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    xmin = atof(argv[1]);
+    xmax = atof(argv[2]);
+    ymin = atof(argv[3]);
+    ymax = atof(argv[4]);
+
+    plwind(xmin, xmax, ymin, ymax);
+
+    plflush();
     return TCL_OK;
 }
 
