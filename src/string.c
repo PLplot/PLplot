@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:46:32  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:57  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:46:32  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:35:03  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -17,12 +21,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <ctype.h>
-#ifdef PLSTDC
 #include <string.h>
-#else
-extern int strlen();
-extern char *strchr();
-#endif
 
 #define PLMAXSTR	300
 #define STLEN		250

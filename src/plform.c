@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:58  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:49  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:58  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:34:28  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -15,12 +19,7 @@
 
 #include "plplot.h"
 #include <stdio.h>
-#ifdef PLSTDC
 #include <string.h>
-#else
-extern char *strcpy();
-extern char *strcat();
-#endif
 #include <math.h>
 
 static PLINT setpre, precis;

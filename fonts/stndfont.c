@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:25  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:28  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:25  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:33:34  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -13,19 +17,12 @@
 	Utility to generate standard font set.
 */
 
-#include "plplot.h"
 #include <stdio.h>
 #include <string.h>
-
-#ifdef PLSTDC
 #include <stdlib.h>
-#ifdef INCLUDE_MALLOC
-#include <malloc.h>
-#endif
 
-#else
-extern char *malloc();
-#endif
+#define PL_NEED_MALLOC
+#include "plplot.h"
 
 extern short int *hersh[];
 extern short int *findex[];
@@ -33,11 +30,13 @@ extern short int *buffer[];
 #define DEBUG 0
 
 int 
-compare (short *si1, short *si2)
+compare (const void *si1, const void *si2)
 {
-    return (*si1 == *si2 ? 0 : (*si1 > *si2 ? 1 : -1));
+    short *a = (short *) si1;
+    short *b = (short *) si2;
+    
+    return (*a == *b ? 0 : ( *a > *b ? 1 : -1));
 }
-
 
 int 
 main (int argc, char **argv)

@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:44:47  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:24:57  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:44:47  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:32:41  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -35,10 +39,13 @@
     now or ever."
 
     Garbage support added by Maurice LeBrun :-).
+    Garbage support removed by Geoff Furnish :-(.
 */
 #ifdef PLMETA
 
 #include <stdio.h>
+#include <string.h>
+
 #include "plplot.h"
 #include "dispatch.h"
 #include "metadefs.h"

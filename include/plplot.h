@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/29 04:45:32  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.4  1992/09/30 18:25:34  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.3  1992/09/29  04:45:32  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.2  1992/07/31  06:05:16  mjl
  * Added prototype for new function used in contour plots (pltrf0).
  *
@@ -34,27 +38,217 @@
     affect any user programs in C as long as this file is included.
 */
 
-#ifndef INCLUDED_PLPLOT
-#define INCLUDED_PLPLOT
+#ifndef __PLPLOT_H__
+#define __PLPLOT_H__
 
 #define _POSIX_SOURCE
 
-#include "chdr.h"
+/*----------------------------------------------------------------------*\
+*    USING PLPLOT
+* 
+* To use PLPLOT from C or C++, it is only necessary to 
+* 
+*      #include "plplot.h"
+* 
+* This file does all the necessary setup to make PLPLOT accessible to
+* your program as documented in the manual.  Additionally, this file
+* allows you to request certain behavior by defining certain symbols
+* before inclusion.  These are:
+*
+* #define PL_DOUBLE          This causes PLPLOT to use doubles instead
+*                            of floats.  Use the type PLFLT everywhere
+*                            in your code, and it will always be the
+*                            right thing.
+* (others...)
+* 
+* Additionally, there are some internal macros which are used in the
+* plplot sources (which of course also #include "plplot.h") to make
+* the sources substantially system independent.  If you want to use
+* them in your own code, you may.  They are:
+*
+* #define PL_NEED_MALLOC     Some systems have different ways of
+*                            gaining access to the malloc function.
+* #define PL_NO_VOID         In case there's still a compiler out
+*                            there somewhere in the void, with no void.  
+* (others...)
+* 
+\*----------------------------------------------------------------------*/
 
-/* change from chdr.h conventions to plplot ones */
+/*----------------------------------------------------------------------*\
+*        SYSTEM IDENTIFICATION
+*
+* Several systems are supported directly by PLPLOT.  In order to avoid
+* confusion, one id macro per system is used.  Since different compilers
+* may predefine different system id macros, we need to check all the
+* possibilities, and then set the one we will be referencing.  These are:
+*
+* __cplusplus                Any C++ compiler
+* unix                       Any unix system
+* __hpux                     Any HP/UX system
+* __aix                      Any AIX system
+* __linux                    Linux for i386
+* (others...)
+*
+\*----------------------------------------------------------------------*/
 
-typedef FLOAT PLFLT;
-typedef INT   PLINT;
-/*
-#define PLARGS(a) PROTO(a)
-*/
+/* Check for AIX */
 
-#ifdef USE_STDC
-#define PLSTDC
+#if defined(_IBMR2) && defined(_AIX)
+#define __aix
+#define unix
+#define STUB_L
+#ifdef PL_NEED_MALLOC
+#include <malloc.h>
+#endif
 #endif
 
-#ifndef PLSTDC
-#error "Get real buddy.  Go get a REAL compiler."
+/* Check for HP/UX */
+
+#ifdef __hpux
+#ifndef unix
+#define unix
+#endif
+#define STUB_L
+#define NO_SIGNED_CHAR
+#ifndef _HPUX_SOURCE
+#define _HPUX_SOURCE
+#endif
+#ifdef PL_NEED_MALLOC
+#include <malloc.h>
+#endif
+#endif
+
+/* Check for SUN systems */
+
+#ifdef sun
+#define STUB_LAU
+#ifdef PL_NEED_MALLOC
+#include <malloc.h>
+#endif
+#endif
+
+/* Check for CRAY's */
+
+#ifdef CRAY
+#ifdef CRAY1
+#undef _POSIX_SOURCE
+#endif
+#ifdef PL_NEED_MALLOC
+#include <malloc.h>
+#endif
+#endif
+
+/*----------------------------------------------------------------------*\
+*                       Default types for PLPLOT
+\*----------------------------------------------------------------------*/
+
+#ifdef PL_DOUBLE
+typedef double PLFLT;
+#else
+typedef float PLFLT;
+#endif
+
+typedef long PLINT;
+
+/*----------------------------------------------------------------------*\
+*                       Stuff from chdr.h
+\*----------------------------------------------------------------------*/
+
+/* Float and int types */
+
+/* Signed char type, in case we ever need it. */
+
+#ifdef VAXC
+#define NO_SIGNED_CHAR
+#endif
+
+#ifdef sun
+#define NO_SIGNED_CHAR
+#endif
+
+#ifdef NO_SIGNED_CHAR
+   typedef char        SCHAR;
+#else
+   typedef signed char SCHAR;
+#endif
+
+/* Some unsigned types */
+
+#ifndef U_CHAR
+#define U_CHAR unsigned char
+#endif
+
+#ifndef U_SHORT
+#define U_SHORT unsigned short
+#endif
+
+#ifndef U_INT
+#define U_INT unsigned int
+#endif
+
+#ifndef U_LONG
+#define U_LONG unsigned long
+#endif
+
+/* Some systems need the "b" flag when opening binary files.
+   Other systems will choke on it, hence the need for this silliness.
+*/
+
+#ifdef MSDOS
+#define BINARY_FLAG
+#endif
+
+#ifdef GNU386
+#define BINARY_FLAG
+#endif
+
+#ifdef BINARY_FLAG
+#define BINARY_WRITE "wb+"
+#define BINARY_READ "rb"
+#else
+#define BINARY_WRITE "w+"
+#define BINARY_READ "r"
+#endif
+
+/* Utility macros */
+
+#ifndef TRUE
+#define TRUE  1
+#define FALSE 0
+#endif
+
+#ifndef MAX
+#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef MIN
+#define MIN(a,b)    (((a) < (b)) ? (a) : (b))
+#endif
+#ifndef ABS
+#define ABS(a)      ((a)<0 ? -(a) : (a))
+#endif
+#ifndef ROUND
+#define ROUND(a)    (PLINT)((a)<0. ? ((a)-.5) : ((a)+.5))
+#endif
+#ifndef BETW
+#define BETW(ix,ia,ib)  (((ix)<=(ia)&&(ix)>=(ib)) || ((ix)>=(ia)&&(ix)<=(ib)))
+#endif
+#ifndef SSQR
+#define SSQR(a,b)       sqrt((a)*(a)+(b)*(b))
+#endif
+#ifndef SIGN
+#define SIGN(a)         ((a)<0 ? -1 : 1)
+#endif
+
+#define UNDEFINED -9999999
+
+/*----------------------------------------------------------------------*\
+*                       End of stuff from chdr.h
+\*----------------------------------------------------------------------*/
+
+#ifdef PL_NO_VOID
+#define VOID char
+#else
+#define VOID void
 #endif
 
 /* Some constants */
@@ -332,7 +526,7 @@ void c_pladv	(PLINT);
 
 void c_plancol	(PLINT, char *);
 
-void c_plaxes	(PLFLT, PLFLT, char *, PLFLT, PLINT, char *, \
+void c_plaxes	(PLFLT, PLFLT, char *, PLFLT, PLINT, char *,
 			PLFLT, PLINT);
 
 void c_plbeg	(PLINT, PLINT, PLINT);
@@ -341,22 +535,22 @@ void c_plbin	(PLINT, PLFLT *, PLFLT *, PLINT);
 
 void c_plbox	(char *, PLFLT, PLINT, char *, PLFLT, PLINT);
 
-void c_plbox3	(char *, char *, PLFLT, PLINT, \
-			char *, char *, PLFLT, PLINT, \
+void c_plbox3	(char *, char *, PLFLT, PLINT, 
+			char *, char *, PLFLT, PLINT, 
 			char *, char *, PLFLT, PLINT);
 
 void c_plclr	(void);
 
 void c_plcol	(PLINT);
 
-void c_plconf	(PLFLT **, PLINT, PLINT, PLINT, PLINT, \
-			PLINT, PLINT, PLFLT *, PLINT, \
+void c_plconf	(PLFLT **, PLINT, PLINT, PLINT, PLINT, 
+			PLINT, PLINT, PLFLT *, PLINT, 
 			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *, 
 				 PLFLT *, PLFLT *, PLINT, PLINT), 
 			PLFLT *, PLFLT *);
 
-void c_plcont	(PLFLT **, PLINT, PLINT, PLINT, PLINT, \
-			PLINT, PLINT, PLFLT *, PLINT, \
+void c_plcont	(PLFLT **, PLINT, PLINT, PLINT, PLINT, 
+			PLINT, PLINT, PLFLT *, PLINT, 
 			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *));
 
 void c_plend	(void);
@@ -405,12 +599,12 @@ void c_plline	(PLINT, PLFLT *, PLFLT *);
 
 void c_pllsty	(PLINT);
 
-void c_plmesh	(PLFLT *, PLFLT *, PLFLT **, \
+void c_plmesh	(PLFLT *, PLFLT *, PLFLT **, 
 			PLINT, PLINT, PLINT);
 
 void c_plmtex	(char *, PLFLT, PLFLT, PLFLT, char *);
 
-void c_plot3d	(PLFLT *, PLFLT *, PLFLT **, \
+void c_plot3d	(PLFLT *, PLFLT *, PLFLT **, 
 			PLINT, PLINT, PLINT, PLINT);
 
 void c_plpage	(void);
@@ -477,8 +671,8 @@ void c_plvpor	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 void c_plvsta	(void);
 
-void c_plw3d	(PLFLT, PLFLT, PLFLT, PLFLT, \
-			PLFLT, PLFLT, PLFLT, PLFLT, \
+void c_plw3d	(PLFLT, PLFLT, PLFLT, PLFLT, 
+			PLFLT, PLFLT, PLFLT, PLFLT, 
 			PLFLT, PLFLT, PLFLT);
 
 void c_plwend	(void);
@@ -493,20 +687,20 @@ void c_plwind	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 void  pltr0	(PLFLT, PLFLT, PLFLT *, PLFLT *);
 
-void  pltr1	(PLFLT, PLFLT, PLFLT *, PLFLT *, \
+void  pltr1	(PLFLT, PLFLT, PLFLT *, PLFLT *, 
 			PLFLT *, PLFLT *, PLINT, PLINT);
 
-void  pltr2	(PLFLT, PLFLT, PLFLT *, PLFLT *, \
+void  pltr2	(PLFLT, PLFLT, PLFLT *, PLFLT *, 
 			PLFLT *, PLFLT *, PLINT, PLINT);
 
 void  pltr0f	(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty);
 
-void  pltr2f	(PLFLT, PLFLT, PLFLT *, PLFLT *, \
+void  pltr2f	(PLFLT, PLFLT, PLFLT *, PLFLT *, 
 			PLFLT *, PLFLT *, PLINT, PLINT);
 
-void  plcntr	(PLFLT **, PLINT, PLINT, PLINT, PLINT, \
-			PLINT, PLINT, PLFLT, PLINT *, \
-			PLINT *, PLINT *, PLINT, \
+void  plcntr	(PLFLT **, PLINT, PLINT, PLINT, PLINT, 
+			PLINT, PLINT, PLFLT, PLINT *, 
+			PLINT *, PLINT *, PLINT, 
 			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *));
 
 void  plcntf	(PLFLT **, PLINT, PLINT, PLINT, PLINT,
@@ -518,12 +712,12 @@ void  plcntf	(PLFLT **, PLINT, PLINT, PLINT, PLINT,
 
 	/* These should not be called directly by the user */
 
-void  plccal	(PLFLT **, PLINT, PLINT, PLFLT, \
+void  plccal	(PLFLT **, PLINT, PLINT, PLFLT, 
 			PLINT, PLINT, PLINT, PLINT, PLFLT *);
 
 void  pldeco	(short **, PLINT *, char *);
 
-void  pldtik	(PLFLT, PLFLT, PLFLT *, PLINT *, \
+void  pldtik	(PLFLT, PLFLT, PLFLT *, PLINT *, 
 			PLINT *, PLINT *, PLINT, PLINT *);
 
 void  plerx1	(PLFLT, PLFLT, PLFLT);
@@ -531,6 +725,12 @@ void  plerx1	(PLFLT, PLFLT, PLFLT);
 void  plery1	(PLFLT, PLFLT, PLFLT);
 
 void  plexit	(char *);
+
+void  pl_exit (void);
+
+void  plwarn (char *errormsg);
+
+void  plfntld (PLINT fnt);
 
 void  plfontrel	(void);
 
@@ -556,12 +756,12 @@ void  plsym1	(PLFLT, PLFLT, PLINT);
 
 void  plxtik	(PLINT, PLINT, PLINT, PLINT);
 
-void  plxybx	(char *, char *, PLFLT, PLFLT, PLFLT, PLFLT, \
+void  plxybx	(char *, char *, PLFLT, PLFLT, PLFLT, PLFLT, 
 			PLFLT, PLFLT, PLFLT, PLINT, PLINT, PLINT *);
 
 void  plytik	(PLINT, PLINT, PLINT, PLINT);
 
-void  plzbx	(char *, char *, PLINT, PLFLT, PLFLT, PLFLT, \
+void  plzbx	(char *, char *, PLINT, PLFLT, PLFLT, PLFLT, 
 			PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, PLINT, PLINT *);
 
 void  plgrid3a	(PLFLT);
@@ -570,8 +770,8 @@ void  plnxtv	(PLINT *, PLINT *, PLINT, PLINT);
 
 void  plside3a	(PLFLT *, PLFLT *, PLFLT **, PLINT, PLINT, PLINT);
 
-void  plt3zz	(PLINT, PLINT, PLINT, PLINT, \
-			PLINT, PLINT, PLFLT *, PLFLT *, PLFLT **, \
+void  plt3zz	(PLINT, PLINT, PLINT, PLINT, 
+			PLINT, PLINT, PLFLT *, PLFLT *, PLFLT **, 
 			PLINT, PLINT, PLINT *, PLINT *);
 
 void  glev	(PLINT *);
@@ -720,6 +920,34 @@ void  setphy	(PLINT, PLINT, PLINT, PLINT);
 
 void  xform	(PLFLT, PLFLT, PLFLT *, PLFLT *);
 
+void  gmark (PLINT *pmar[], PLINT *pspa[], PLINT **pnms);
+
+void  gcure (PLINT **pcur, PLINT **ppen, PLINT **ptim, PLINT **pala);
+
+void  gradv (void);
+
+void  grclr (void);
+
+void  grbeg (PLINT dev);
+
+void  grcol (void);
+
+void  gpat (PLINT *pinc[], PLINT *pdel[], PLINT *pnlin);
+
+void  grgra (void);
+
+void  spat (PLINT inc[], PLINT del[], PLINT nlin);
+
+void  smark (PLINT mar[], PLINT spa[], PLINT nms);
+
+void  scure (PLINT cur, PLINT pen, PLINT tim, PLINT ala);
+
+void  grwid (void);
+
+void   long2str (long *istring, char *cstring);
+
+void   str2long (char *cstring, long *istring);
+
 	/* Functions that return floats */
 
 PLFLT plstrl	(char *);
@@ -804,4 +1032,4 @@ void gresc	(PLINT, char *);
 }
 #endif
 
-#endif	/* INCLUDED_PLPLOT */
+#endif	/* __PLPLOT_H__ */

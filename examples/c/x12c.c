@@ -1,9 +1,13 @@
 /* Demonstration program for PLPLOT: Bar chart example. */
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:20  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:24  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:20  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:33:01  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -16,9 +20,9 @@
 #include <stdio.h>
 
 void 
-plfbox(FLOAT x0, FLOAT y0)
+plfbox(PLFLT x0, PLFLT y0)
 {
-    FLOAT x[4], y[4];
+    PLFLT x[4], y[4];
 
     x[0] = x0;
     y[0] = 0.;
@@ -39,7 +43,7 @@ main (void)
 {
     int i;
     char string[20];
-    FLOAT y0[10];
+    PLFLT y0[10];
 
     /* Ask user to specify the output device */
     plstar(1, 1);

@@ -1,9 +1,13 @@
 /* $Id$
 
    $Log$
-   Revision 1.2  1992/09/29 04:45:08  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:12  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:08  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:32:48  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -40,18 +44,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+
+#define PL_NEED_MALLOC
 #include "plplot.h"
-
-#ifdef PLSTDC
-#include <stdlib.h>
-#ifdef INCLUDE_MALLOC
-#include <malloc.h>
-#endif
-
-#else
-extern char *malloc();
-extern void free();
-#endif
 
 /* You can select a different set of symbols to use when plotting the
    lines by changing the value of OFFSET. */
@@ -70,7 +65,7 @@ main (void)
    /* x is a pointer to an array containing the N x-coordinate values.
       y points to an array of M pointers each of which points to an
       array containing the N y-coordinate values for that line. */
-   FLOAT *x, **y;
+   PLFLT *x, **y;
 
    /* Define storage for the min and max values of the data. */
    float xmin, xmax, ymin, ymax, xdiff, ydiff;

@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:57  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:47  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:57  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:34:27  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -41,12 +45,18 @@
 *	PLFONTDEV3	not specified
 */
 
+#define PL_NEED_MALLOC
 #include "plplot.h"
 #include <stdio.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef MSDOS
 #include <malloc.h>
 #endif
+
+/* This ought to be done in plplot.h */
 
 #ifdef __unix__
 #ifndef unix

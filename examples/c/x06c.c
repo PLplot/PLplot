@@ -1,9 +1,13 @@
 /* Displays the plotter symbols for PLPOIN */
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:14  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:18  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:14  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:32:54  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -20,7 +24,7 @@ main (void)
 {
     char text[3];
     int i, j, k;
-    FLOAT x, y;
+    PLFLT x, y;
 
     /* Full sized page for display */
 

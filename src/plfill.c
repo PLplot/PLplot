@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.6  1992/09/29 04:45:56  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.7  1992/09/30 18:25:46  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.6  1992/09/29  04:45:56  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.5  1992/05/27  00:01:12  furnish
  * Having now verified that my change to plfill.c works on dino, ctrss2 and
  * ctribm1 (at a total time cost of less than 10 minutes) I am now committing
@@ -30,24 +34,11 @@
 	Polygon pattern fill.
 */
 
-#include "plplot.h"
+#include <stdlib.h>
 #include <math.h>
 
-#ifdef PLSTDC
-#include <stdlib.h>
-#ifdef INCLUDE_STDDEF
-#include <stddef.h>
-#endif
-#ifdef INCLUDE_MALLOC
-#include <malloc.h>
-#endif
-
-#else
-extern char *malloc();
-extern char *realloc();
-extern void free();
-#define size_t	int
-#endif
+#define PL_NEED_MALLOC
+#include "plplot.h"
 
 #define DTOR            0.0174533
 #define BINC            50
@@ -57,6 +48,8 @@ struct point {
     PLINT x, y;
 };
 static PLINT bufferleng, buffersize, *buffer;
+
+void  addcoord (PLINT x1, PLINT y1);
 
 void 
 c_plfill( PLINT n, PLFLT *x, PLFLT *y )
@@ -69,14 +62,8 @@ c_plfill( PLINT n, PLFLT *x, PLFLT *y )
     PLFLT xpmm, ypmm;
     short swap;
 
-#ifdef PLSTDC
     void tran(PLINT * a, PLINT * b, PLFLT c, PLFLT d);
     void buildlist( PLINT, PLINT, PLINT, PLINT, PLINT, PLINT, PLINT );
-#else
-    void tran();
-    void buildlist();
-    void qsort();
-#endif
 
     glev(&level);
     if (level < 3)
@@ -211,7 +198,6 @@ buildlist (PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT din
 {
     PLINT i;
     PLINT dx, dy, cstep, nstep, lines, ploty, plotx;
-    void addcoord();
 
     dx = x2 - x1;
     dy = y2 - y1;

@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:29  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:31  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:29  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:33:38  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -482,8 +486,8 @@ void  plFamInit		(PLStream *);
 PLINT plGetInt		(char *);
 PLFLT plGetFlt		(char *);
 void  plGetFam		(PLStream *);
-void  plSclPhy		(PLStream *, PLDev *, \
+void  plSclPhy		(PLStream *, PLDev *, 
 				int *, int *, int *, int *);
-void  plRotPhy		(PLStream *, PLDev *, \
+void  plRotPhy		(PLStream *, PLDev *, 
 				int *, int *, int *, int *);
 

@@ -1,9 +1,13 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:21  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:25  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:21  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:33:02  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -32,8 +36,8 @@ int
 main (void)
 {
     int i, j;
-    FLOAT dthet, theta0, theta1, theta, just, dx, dy;
-    static FLOAT x[500], y[500], per[5];
+    PLFLT dthet, theta0, theta1, theta, just, dx, dy;
+    static PLFLT x[500], y[500], per[5];
 
     per[0] = 10.;
     per[1] = 32.;

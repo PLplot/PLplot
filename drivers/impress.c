@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:44:43  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:24:53  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:44:43  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:32:36  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -15,19 +19,11 @@
 #ifdef IMP
 
 #include <stdio.h>
+#include <stdlib.h>
+
+#define PL_NEED_MALLOC
 #include "plplot.h"
 #include "dispatch.h"
-
-#ifdef PLSTDC
-#include <stdlib.h>
-#ifdef INCLUDE_MALLOC
-#include <malloc.h>
-#endif
-
-#else
-extern char *malloc();
-extern void free();
-#endif
 
 /* Function prototypes */
 
@@ -312,4 +308,7 @@ flushline (PLStream *pls)
     fprintf(pls->OutFile, "%c%c", DRAW_PATH, OPTYPE);
     FirstLine = 1;
 }
+
+#else
+int impress() {return 0;}
 #endif	/* IMP */

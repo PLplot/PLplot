@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/29 04:45:51  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.4  1992/09/30 18:25:44  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.3  1992/09/29  04:45:51  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.2  1992/07/31  06:03:13  mjl
  * Minor bug fixes.
  *
@@ -16,23 +20,11 @@
 	Contour plotter.
 */
 
-#include "plplot.h"
 #include <stdio.h>
-
-#ifdef PLSTDC
 #include <stdlib.h>
-#ifdef INCLUDE_STDDEF
-#include <stddef.h>
-#endif
-#ifdef INCLUDE_MALLOC
-#include <malloc.h>
-#endif
 
-#else
-extern char *malloc();
-extern void free();
-#define size_t	int
-#endif
+#define PL_NEED_MALLOC
+#include "plplot.h"
 
 /*----------------------------------------------------------------------*\
 * void plcont()

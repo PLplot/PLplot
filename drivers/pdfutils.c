@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:44:46  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:24:56  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:44:46  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:32:40  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -33,12 +37,15 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
+
+#include "plplot.h"
 #include "pdf.h"
 
 static int foo;
 static int debug=0;
 
-static void print_ieeef();
+static void print_ieeef( void *, void * );
 
 /*--------------------------------------------------------------------------*\
 *  void pdf_set (string, value)
@@ -426,10 +433,10 @@ read_ieeef( FILE *file, float *pf )
 \*----------------------------------------------------------------------*/
 
 static void 
-print_ieeef (U_LONG *x, U_LONG *y)
+print_ieeef ( void *vx, void *vy)
 {
     int i;
-    U_LONG f;
+    U_LONG f, *x = vx, *y = vy;
     char bitrep[33];
 
     bitrep[32] = '\0';

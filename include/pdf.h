@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:30  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:33  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:30  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:33:40  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -30,7 +34,7 @@
 #ifndef INCLUDED_PDF
 #define INCLUDED_PDF
 
-#include "chdr.h"
+/*#include "chdr.h"*/
 
 /* Error numbers */
 
@@ -44,7 +48,7 @@
 #define PDF_NOTPDF		8	/* Not a valid PDF file */
 
 /* Prototypes */
-
+/*
 int  pdf_open 		(INT ius, char *filename);
 int  pdf_creat 		(INT ius, char *filename);
 int  pdf_close 		(INT ius);
@@ -53,7 +57,7 @@ int  pdf_rdflt 		(INT ius, FLOAT *f, INT len, INT *pnbits);
 int  pdf_wrint 		(INT ius, FLOAT *f, INT len, INT nbits);
 int  pdf_rdint 		(INT ius, FLOAT *f, INT len, INT *pnbits);
 void pdf_set		(char *option, int value);
-
+*/
 int  read_header	(FILE *file, char *header);
 int  write_header	(FILE *file, char *header);
 int  write_1byte	(FILE *file, U_CHAR s);

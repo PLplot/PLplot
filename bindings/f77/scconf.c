@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/29 04:46:35  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.4  1992/09/30 18:26:00  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.3  1992/09/29  04:46:35  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.2  1992/07/31  06:03:28  mjl
  * Minor bug fixes.
  *
@@ -16,8 +20,10 @@
 	Contour plotter front-ends for Fortran.
 */
 
-#include "plstubs.h"
 #include <stdio.h>
+
+#define PL_NEED_MALLOC
+#include "plstubs.h"
 
 /*----------------------------------------------------------------------*\
 * pltr0f()
@@ -223,19 +229,18 @@ PLCON0_( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel )
 {
     int i, j;
-    FLOAT **temp;
-    char *malloc();
+    PLFLT **temp;
 
     /* Create the vectored C matrix from the Fortran matrix */
     /* To make things easy we save a temporary copy of the transpose of the
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (FLOAT **) malloc(*nx * sizeof(FLOAT *))))
+    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (FLOAT *) malloc(*ny * sizeof(FLOAT))))
+	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
@@ -258,19 +263,18 @@ PLCON1_( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLFLT *xg, PLFLT *yg )
 {
     int i, j;
-    FLOAT **temp;
-    char *malloc();
+    PLFLT **temp;
 
     /* Create the vectored C matrix from the Fortran matrix */
     /* To make things easy we save a temporary copy of the transpose of the
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (FLOAT **) malloc(*nx * sizeof(FLOAT *))))
+    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (FLOAT *) malloc(*ny * sizeof(FLOAT))))
+	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
@@ -294,8 +298,7 @@ PLCON2_( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLFLT *xg, PLFLT *yg )
 {
     int i, j;
-    FLOAT **temp;
-    char *malloc();
+    PLFLT **temp;
 
     /* Create the vectored C matrix from the Fortran matrix */
     /* To make things easy we save a temporary copy of the transpose of the
@@ -305,11 +308,11 @@ PLCON2_( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
     /* Note we do NOT transpose the (x,y) mapping arrays -- the transformation
        function takes care of getting the row-dominant ordering correct. */
 
-    if (!(temp = (FLOAT **) malloc(*nx * sizeof(FLOAT *))))
+    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (FLOAT *) malloc(*ny * sizeof(FLOAT))))
+	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
@@ -343,8 +346,7 @@ PLCONT_(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel, PLFLT *ftr )
 {
     int i, j;
-    FLOAT **temp;
-    char *malloc();
+    PLFLT **temp;
 
     for (i = 0; i < 6; i++)
 	tr[i] = ftr[i];
@@ -354,11 +356,11 @@ PLCONT_(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (FLOAT **) malloc(*nx * sizeof(FLOAT *))))
+    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (FLOAT *) malloc(*ny * sizeof(FLOAT))))
+	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)

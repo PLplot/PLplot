@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:46:34  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:59  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:46:34  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:35:06  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -13,6 +17,7 @@
 	Stub routines for 3d plots.
 */
 
+#define PL_NEED_MALLOC
 #include "plstubs.h"
 
 void
@@ -21,18 +26,17 @@ PLMESH( PLFLT *x, PLFLT *y, PLFLT *z,
 {
     int i, j;
     PLFLT **temp;
-    char *malloc();
 
     /* Create the vectored C matrix from the Fortran matrix */
     /* To make things easy we save a temporary copy of the transpose of the
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (FLOAT **) malloc(*nx * sizeof(FLOAT *))))
+    if (!(temp = (PLFLT **) malloc(*nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (FLOAT *) malloc(*ny * sizeof(FLOAT))))
+	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
@@ -54,7 +58,6 @@ PLOT3D( PLFLT *x, PLFLT *y, PLFLT *z,
 {
     int i, j, off1;
     PLFLT **temp;
-    char *malloc();
 
     /* Create the vectored C matrix from the Fortran matrix */
     /* To make things easy we save a temporary copy of the transpose of the
@@ -65,7 +68,7 @@ PLOT3D( PLFLT *x, PLFLT *y, PLFLT *z,
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (FLOAT *) malloc(*ny * sizeof(FLOAT))))
+	if (!(temp[i] = (PLFLT *) malloc(*ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)

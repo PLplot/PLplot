@@ -162,7 +162,7 @@ SYS_LIBS=
 # sections for SUNOS, A/IX).
 
 if_dbl({
-DBL_FLAG_C	= -DDOUBLE_PREC
+DBL_FLAG_C	= -DPL_DOUBLE
 DBL_FLAG_F      =
 PLLIB_MAIN	= $(PLLIB_PATH)libplplotd.a
 },{
@@ -196,7 +196,7 @@ PLLIB_LDC	= $(PLLIB_C)
 # The device list represents all system-independent output devices.
 # (i.e. not specifically requiring a particular CPU)
 
-SYS_FLAGS_C = -Dunix -DSTUB_LAU
+SYS_FLAGS_C =
 SYS_FLAGS_F = 
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
@@ -241,8 +241,10 @@ if_sunos({
 # if the openwin directory is absent.  If this is the case, you must
 # specify -DNO_OPENWIN when building the makefile with m4.
 
+CC = gcc
+
 PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DPS -DXFIG
-SYS_FLAGS_C = -Dunix -DSTUB_LAU -Dsun
+SYS_FLAGS_C =
 
 if_dbl({dnl
 DBL_FLAG_F      = -r8
@@ -265,7 +267,7 @@ LDFFLAGS= $(OPENWIN_DIR) -lm -lX11
 #		HP-UX definitions
 
 PLDEVICES = -DXTERM -DXWIN -DPLMETA -DTEK -DPS -DXFIG
-SYS_FLAGS_C = -Dunix -DSTUB_L -DHPUX -D_HPUX_SOURCE
+SYS_FLAGS_C =
 
 if_dbl({dnl
 DBL_FLAG_F      = -R8
@@ -298,7 +300,7 @@ LDFFLAGS= -ansi -lm -lX11
 #		LINUX definitions
 
 PLDEVICES = -DPLMETA -DPS -DLJII -DXWIN
-SYS_FLAGS_C = -Dunix -ansi
+SYS_FLAGS_C =
 
 CC	= gcc
 F77	= 
@@ -351,7 +353,7 @@ LDFFLAGS=
 #		A/IX definitions
 
 PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DPS -DXFIG
-SYS_FLAGS_C = -Dunix -DAIX -DSTUB_L 
+SYS_FLAGS_C =
 
 # Note that A/IX 3.0 has a bug in that getenv() calls in a C routine
 # linked with a Fortran main cause a core dump.  If this occurs, you 
@@ -374,12 +376,12 @@ FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
 })if_unicos({
 #	UNICOS defs.
 
-SYS_FLAGS_C = -Dunix
+SYS_FLAGS_C =
 
 # These settings are appropriate for UNICOS 6.x.
 # Here we assume that 'cc' is the standard C compiler.
 
-F77	= cft77
+F77	= cf77
 LDF	= segldr
 
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)

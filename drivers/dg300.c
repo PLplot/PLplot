@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:44:35  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:24:48  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:44:35  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:32:30  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -205,4 +209,7 @@ void
 dgesc (PLStream *pls, PLINT op, char *ptr)
 {
 }
+
+#else
+int dg300() {return 0;}
 #endif	/* DG300 */

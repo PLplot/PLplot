@@ -1,9 +1,13 @@
 /* Demonstration of 3-d plotting */
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:16  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:21  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:16  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:32:56  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -20,9 +24,9 @@
 
 static int opt[] = {1, 2, 3, 3};
 
-static FLOAT alt[] = {60.0, 20.0, 60.0, 60.0};
+static PLFLT alt[] = {60.0, 20.0, 60.0, 60.0};
 
-static FLOAT az[] = {30.0, 60.0, 120.0, 160.0};
+static PLFLT az[] = {30.0, 60.0, 120.0, 160.0};
 
 static char *title[4] = {
     "#frPLPLOT Example 8 - Alt=60, Az=30, Opt=1",
@@ -35,16 +39,16 @@ int
 main (void)
 {
     int i, j, k;
-    FLOAT *x, *y, **z;
-    FLOAT xx, yy, r;
+    PLFLT *x, *y, **z;
+    PLFLT xx, yy, r;
     char *malloc();
 
-    x = (FLOAT *) malloc(XPTS * sizeof(FLOAT));
-    y = (FLOAT *) malloc(YPTS * sizeof(FLOAT));
-    z = (FLOAT **) malloc(XPTS * sizeof(FLOAT *));
+    x = (PLFLT *) malloc(XPTS * sizeof(PLFLT));
+    y = (PLFLT *) malloc(YPTS * sizeof(PLFLT));
+    z = (PLFLT **) malloc(XPTS * sizeof(PLFLT *));
 
     for (i = 0; i < XPTS; i++) {
-	z[i] = (FLOAT *) malloc(YPTS * sizeof(FLOAT));
+	z[i] = (PLFLT *) malloc(YPTS * sizeof(PLFLT));
 	x[i] = (double) (i - (XPTS / 2)) / (double) (XPTS / 2);
     }
 

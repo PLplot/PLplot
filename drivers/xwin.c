@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/29 04:44:52  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.4  1992/09/30 18:25:01  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.3  1992/09/29  04:44:52  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.2  1992/07/31  06:06:48  mjl
  * Swapped background/foreground colors for monochrome X output.
  *
@@ -17,11 +21,11 @@
 */
 #ifdef XWIN
 
-#include <stdio.h>
 #include "plplot.h"
-#ifdef PLSTDC
+
+#include <stdio.h>
 #include <string.h>
-#endif
+#include <stdlib.h>
 
 #include "dispatch.h"
 #ifdef VMS
@@ -633,11 +637,16 @@ getwcur (float *x, float *y)
     }
 }
 
-/* gmf 11-8-91; Courtesy of Paul Martz of Evans & Sutherland. */
+/* gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland. */
 
-static int
-AreWeMonochrome ( Display     *display )
+static int AreWeMonochrome ( Display *display )
 {
+#if defined(__cplusplus) || defined(c_plusplus)
+#define THING c_class
+#else
+#define THING class
+#endif
+
     XVisualInfo *visuals;
     int nitems, i;
 
@@ -646,11 +655,12 @@ AreWeMonochrome ( Display     *display )
 
     /* check the list looking for non-monochrome visual classes */
     for (i=0; i<nitems; i++)
-        if ((visuals[i].class != GrayScale) &&
-            (visuals[i].class != StaticGray))
+        if ((visuals[i].THING != GrayScale) &&
+            (visuals[i].THING != StaticGray))
             return (0);
 
     /* if we got this far, only StaticGray and GrayScale classes available */
     return (1);
 }
+
 #endif	/* XWIN */

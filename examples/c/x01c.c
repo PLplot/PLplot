@@ -1,9 +1,13 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:45:09  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1992/09/30 18:25:13  furnish
+   Massive cleanup to irradicate garbage code.  Almost everything is now
+   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
 
+ * Revision 1.2  1992/09/29  04:45:09  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:32:49  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -17,11 +21,11 @@
 #include <stdio.h>
 #include <math.h>
 
-static FLOAT xs[6] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-static FLOAT ys[6] = {1.0, 4.0, 9.0, 16.0, 25.0, 36.0};
-static FLOAT x[101], y[101];
-static FLOAT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
-static INT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
+static PLFLT xs[6] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+static PLFLT ys[6] = {1.0, 4.0, 9.0, 16.0, 25.0, 36.0};
+static PLFLT x[101], y[101];
+static PLFLT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
+static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
 
 void plot1();
 void plot2();
@@ -30,7 +34,7 @@ void plot3();
 int 
 main (void)
 {
-    int digmax;
+    PLINT digmax;
 
     /* Ask user to specify the output device */
     plstar(2, 2);
@@ -74,7 +78,7 @@ void
 plot1 (void)
 {
     int i;
-    FLOAT xmin, xmax, ymin, ymax;
+    PLFLT xmin, xmax, ymin, ymax;
 
     for (i = 0; i < 60; i++) {
 	x[i] = xoff + xscale * (i + 1) / 60.0;
