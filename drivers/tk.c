@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/01/15 17:46:48  mjl
+ * Revision 1.26  1994/01/17 21:33:28  mjl
+ * Robustified send commands for when interpreter name has embedded blanks
+ * (as occurs when the same application is started several times, each
+ * creating its own main window).
+ *
+ * Revision 1.25  1994/01/15  17:46:48  mjl
  * Converted to new PDF function call syntax.  Substantially changed server
  * startup code -- now can handle a variety of cases including starting
  * plserver on a remote node (via remsh) or plserver already existing and
@@ -1048,7 +1053,7 @@ plwindow_init(PLStream *pls)
 
 /* Initialize the widget(s) */
 
-    server_cmd( pls, "[list $plw_init_proc $plwindow [list $client]]", 1 );
+    server_cmd( pls, "$plw_init_proc $plwindow [list $client]", 1 );
     tk_wait(pls, "[info exists plwidget]" );
 
 /* Now we should have the actual plplot widget name in $plwidget */
@@ -1068,7 +1073,7 @@ plwindow_init(PLStream *pls)
 
 /* Start up remote plplot */
 
-    server_cmd( pls, "[list $plw_start_proc $plwindow [list $client]]", 1 );
+    server_cmd( pls, "$plw_start_proc $plwindow [list $client]", 1 );
     tk_wait(pls, "[info exists widget_is_ready]" );
 }
 
@@ -1480,6 +1485,11 @@ tk_wait(PLStream *pls, char *cmd)
 *
 * If commands MUST proceed in a certain order (e.g. initialization), it
 * is safest to NOT run them in the background.
+*
+* In order to protect args that have embedded spaces in them, I enclose
+* the entire command in a [list ...], but for TK sends ONLY.  If done with
+* Tcl-DP RPC, the sent command is no longer recognized.  Evidently an
+* extra scan of the line is done with TK sends for some reason.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1508,11 +1518,11 @@ server_cmd(PLStream *pls, char *cmd, int nowait)
     } 
     else {
 	if (nowait) 
-	    result = Tcl_VarEval(dev->interp, tksend_cmd1, dev->cmdbuf,
-				 (char **) NULL);
+	    result = Tcl_VarEval(dev->interp, tksend_cmd1, "[list ",
+				 dev->cmdbuf, "]", (char **) NULL);
 	else
-	    result = Tcl_VarEval(dev->interp, tksend_cmd0, dev->cmdbuf,
-				 (char **) NULL);
+	    result = Tcl_VarEval(dev->interp, tksend_cmd0, "[list ",
+				 dev->cmdbuf, "]", (char **) NULL);
     }
 
     if (result) {
