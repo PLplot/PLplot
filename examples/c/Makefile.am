@@ -1,8 +1,7 @@
-# bindings/f77/Makefile.am for PLplot
+# examples/c/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
-# Copyright (C) 2002 Rafael Laboissiere
 # Copyright (C) 2002 Alan W. Irwin
 # 
 #This file is part of PLplot.
@@ -20,40 +19,30 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if enable_f77
-if with_double
-lib_LTLIBRARIES = libplf77d.la
-else
-lib_LTLIBRARIES = libplf77.la
-endif
-endif
-
 AM_CPPFLAGS = @INCLTDL@
-version = -version-info @SOVERSION@
-
-sources = \
-  plstubs.h \
-  sc3d.c \
-  sccont.c \
-  scstubs.c \
-  strutil.f
-
-libplf77_la_SOURCES  = $(sources)
-libplf77d_la_SOURCES = $(sources)
-
-libplf77_la_DEPENDENCIES  = sfstubs.lo
-libplf77d_la_DEPENDENCIES = sfstubs.lo
-
-libplf77_la_LDFLAGS  = $(version)
-libplf77d_la_LDFLAGS = $(version)
-
-EXTRA_DIST = fmacs.m4 sfstubs.fm4
-
-# Must be explicit here with dependencies.  Otherwise solaris "make" chokes.
-sfstubs.f: fmacs.m4 sfstubs.fm4
-
-.fm4.f:
-	@M4@ @M4_FLAGS@ $< >$*.f
-
-CLEANFILES = sfstubs.f
-SUFFIXES = .fm4
+examples_cdir = ${prefix}/@DATA_DIR@/../examples/c
+examples_c_DATA = \
+  plcdemos.h \
+  lena.pgm \
+  tutor.c \
+  x01c.c \
+  x02c.c \
+  x03c.c \
+  x04c.c \
+  x05c.c \
+  x06c.c \
+  x07c.c \
+  x08c.c \
+  x09c.c \
+  x10c.c \
+  x11c.c \
+  x12c.c \
+  x13c.c \
+  x14c.c \
+  x15c.c \
+  x16c.c \
+  x17c.c \
+  x18c.c \
+  x19c.c \
+  x20c.c
+EXTRA_DIST = $(examples_c_DATA)

@@ -660,7 +660,9 @@ fi
 
 AC_OUTPUT([Makefile src/Makefile include/Makefile lib/Makefile
            bindings/Makefile bindings/c++/Makefile bindings/f77/Makefile
-           drivers/Makefile])
+           drivers/Makefile
+	   examples/Makefile examples/c/Makefile examples/c++/Makefile
+	   examples/f77/Makefile])
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
