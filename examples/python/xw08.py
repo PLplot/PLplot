@@ -43,18 +43,26 @@ def restore_cmap1():
     # Interpolate between control points to set up default cmap1.
     plscmap1l(0, i, h, l, s, rev)
 
-# Routine for initializing color map 1 in HLS space.
-# Basic grayscale variation from half-dark (which makes more interesting
-# looking plot compared to dark) to light.
-def cmap1_init():
+# Routine for defining a specific color map 1 in HLS space.
+# if gray is true, use basic grayscale variation from half-dark to light.
+# otherwise use false color variation from blue (240 deg) to red (360 deg).
+def cmap1_init(gray):
     # Independent variable of control points.
     i = array((0., 1.))
-    # Hue for control points.  Doesn't matter since saturation is zero.
-    h = array((0., 0.))
-    # Lightness ranging from half-dark (for interest) to light.
-    l = array((0.5, 1.))
-    # Gray scale has zero saturation
-    s = array((0., 0.))
+    if gray:
+	# Hue for control points.  Doesn't matter since saturation is zero.
+	h = array((0., 0.))
+	# Lightness ranging from half-dark (for interest) to light.
+	l = array((0.5, 1.))
+	# Gray scale has zero saturation
+	s = array((0., 0.))
+    else:
+	# Hue ranges from blue (240 deg) to red (0 or 360 deg)
+	h = array((240., 0.))
+	# Lightness and saturation are constant (values taken from C example).
+	l = array((0.6, 0.6))
+	s = array((0.8, 0.8))
+
     # Integer flag array is zero (no interpolation along far-side of colour
     # figure.)
     rev = array((0, 0))
@@ -62,7 +70,6 @@ def cmap1_init():
     plscmap1n(256)
     # Interpolate between control points to set up cmap1.
     plscmap1l(0, i, h, l, s, rev)
-
 # main
 #
 # Does a series of 3-d plots for a given data set, with different
@@ -78,10 +85,8 @@ def main():
     z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
 
     pllightsource(1., 1., 1.)
-    #set up modified gray scale.
-    cmap1_init()
     for k in range(4):
-	for ifshade in range(2):
+	for ifshade in range(4):
 	    pladv(0)
 	    plvpor(0.0, 1.0, 0.0, 0.9)
 	    plwind(-1.0, 1.0, -0.9, 1.1)
@@ -93,10 +98,20 @@ def main():
 	    "bcdmnstuv", "z axis", 0.0, 0)
 	    
 	    plcol0(2)
-	    if ifshade == 1:
+	    if ifshade == 0:
+		plot3d(x, y, z, opt[k], 1)
+	    elif ifshade == 1:
+		#set up modified gray scale cmap1.
+		cmap1_init(1)
 		plotsh3d(x, y, z, 0)
 	    else:
-		plot3d(x, y, z, opt[k], 1)
+		#set up false colour cmap1.
+		cmap1_init(0)
+		plotfc3d(x, y, z, 0)
+		if ifshade == 3:
+		    # add black wireframe to false color plot
+		    plcol0(0)
+		    plot3d(x, y, z, opt[k], 0)
 	    plcol0(3)
 	    plmtex("t", 1.0, 0.5, 0.5, title[k])
 
