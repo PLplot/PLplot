@@ -84,23 +84,39 @@ c_pllightsource(PLFLT x, PLFLT y, PLFLT z)
  * Plots a mesh representation of the function z[x][y]. The x values
  * are stored as x[0..nx-1], the y values as y[0..ny-1], and the
  * z values are in the 2-d array z[][]. The integer "opt" specifies:
- *
- *  opt = 1 (DRAW_LINEX) :  Draw lines parallel to x-axis
- *  opt = 2 (DRAW_LINEY) :  Draw lines parallel to y-axis
- *  opt = 3 (DRAW_LINEXY = DRAW_LINEX | DRAW_LINEY):  Draw lines parallel to both axes
- *  opt = 4 (MAG_COLOR):    Magnitude coloring of wire frame
- *  opt = 32 (BASE_CONT):   Draw contour at bottom xy plane 
- *
- *  or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
- *
+ * see plmeshc() bellow.
 \*--------------------------------------------------------------------------*/
 
 void
 c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
 {
-    pl3mode = 1;
-    plot3d(x, y, z, nx, ny, opt, 0);
-    pl3mode = 0;
+  c_plot3dc(x, y, z, nx, ny, opt | PLMESH, NULL, 0);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plmeshc(x, y, z, nx, ny, opt, clevel, nlevel)
+ *
+ * Plots a mesh representation of the function z[x][y]. The x values
+ * are stored as x[0..nx-1], the y values as y[0..ny-1], and the
+ * z values are in the 2-d array z[][]. The integer "opt" specifies:
+ *
+ * DRAW_LINEX   draw lines parallel to the X axis
+ * DRAW_LINEY   draw lines parallel to the Y axis
+ * DRAW_LINEXY  draw lines parallel to both the X and Y axis
+ * MAG_COLOR    draw the mesh with a color dependent of the magnitude
+ * BASE_CONT    draw contour plot at bottom xy plane
+ * TOP_CONT     draw contour plot at top xy plane (not yet)
+ * DRAW_SIDES   draw sides
+ * 
+ * or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
+ *
+\*--------------------------------------------------------------------------*/
+
+void
+c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+	 PLFLT *clevel, PLINT nlevel)
+{
+    plot3dc(x, y, z, nx, ny, opt | PLMESH, clevel, nlevel);
 }
 
 /* clipping helper for 3d polygons */
@@ -219,12 +235,16 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
  * The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
  *  and the z values are in the 2-d array z[][].
  *
- * opt can be:
- *  SURF_CONT -- draw contour at surface
- *  SURF_BASE -- draw contour at bottom xy plane
- *  DRAW_SIDES -- draw sides
- *  FACETED   -- each square that makes up the surface is faceted
- *  MAG_COLOR -- the surface is colored according to the value of z;
+ *
+ * DRAW_LINEX   draw lines parallel to the X axis
+ * DRAW_LINEY   draw lines parallel to the Y axis
+ * DRAW_LINEXY  draw lines parallel to both the X and Y axis
+ * BASE_CONT    draw contour plot at bottom xy plane
+ * TOP_CONT     draw contour plot at top xy plane
+ * SURF_CONT    draw contour at surface
+ * FACETED      each square that makes up the surface is faceted
+ * DRAW_SIDES   draw sides
+ * MAG_COLOR    the surface is colored according to the value of z;
  *               if not defined, the surface is colored according to the
  *               intensity of the reflected light in the surface from a light
  *               source whose position is set using c_pllightsource()
@@ -514,7 +534,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
   if (opt & FACETED) {
     plcol0(0);
-    plmesh(x, y, z, nx, ny, DRAW_LINEXY);
+    plot3dc(x, y, z, nx, ny, PLMESH | DRAW_LINEXY, NULL, 0);
   }
 
   if (opt & DRAW_SIDES) { /* the sides look ugly !!! */
@@ -561,39 +581,61 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
  * Plots a 3-d representation of the function z[x][y]. The x values
  * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
  * values are in the 2-d array z[][]. The integer "opt" specifies:
- *
- *  opt = 1 (DRAW_LINEX) :  Draw lines parallel to x-axis
- *  opt = 2 (DRAW_LINEY) :  Draw lines parallel to y-axis
- *  opt = 3 (DRAW_LINEXY):  Draw lines parallel to both axes
- *  opt = 4 (MAG_COLOR):    Magnitude coloring of wire frame
- *  opt = 32 (BASE_CONT):   Draw contour at bottom xy plane 
- *
- * or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
- *
+ * see plot3dc() bellow
 \*--------------------------------------------------------------------------*/
 
 void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side)
 {
+  c_plot3dc( x, y, z, nx, ny, opt | (side == 1 ? DRAW_SIDES : 0), NULL, 0);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plot3dc(x, y, z, nx, ny, opt, clevel, nlevel)
+ *
+ * Plots a 3-d representation of the function z[x][y]. The x values
+ * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
+ * values are in the 2-d array z[][]. The integer "opt" specifies:
+ *
+ *  DRAW_LINEX :  Draw lines parallel to x-axis
+ *  DRAW_LINEY :  Draw lines parallel to y-axis
+ *  DRAW_LINEXY:  Draw lines parallel to both axes
+ *  MAG_COLOR:    Magnitude coloring of wire frame
+ *  BASE_CONT:    Draw contour at bottom xy plane 
+ *  TOP_CONT:     Draw contour at top xy plane (not yet)
+ *  DRAW_SIDES:   Draw sides around the plot
+ *  PLMESH:       Draw the "under" side of the plot
+ *
+ * or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
+ *
+\*--------------------------------------------------------------------------*/
+
+void
+c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
+	 PLINT nx, PLINT ny, PLINT opt,
+	 PLFLT *clevel, PLINT nlevel)
+{
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT init, i, ix, iy, color;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
     PLINT ixmin=0, ixmax=nx-1, iymin=0, iymax=ny-1;
-    PLINT clipped = 0, base_cont = 0;
+    PLINT clipped = 0, base_cont = 0, side = 0;
+
+    pl3mode = 0;
 
     if (plsc->level < 3) {
-	myabort("plot3d: Please set up window first");
+	myabort("plot3dc: Please set up window first");
 	return;
     }
 
-    if (opt < 1 || opt > 3+4+32) {
-	myabort("plot3d: Bad option");
+    if (opt < 1) {
+	myabort("plot3dc: Bad option");
 	return;
     }
 
     if (nx <= 0 || ny <= 0) {
-	myabort("plot3d: Bad array dimensions.");
+	myabort("plot3dc: Bad array dimensions.");
 	return;
     }
 
@@ -609,16 +651,23 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
     for (i = 0; i < nx - 1; i++) {
 	if (x[i] >= x[i + 1]) {
-	    myabort("plot3d: X array must be strictly increasing");
+	    myabort("plot3dc: X array must be strictly increasing");
 	    return;
 	}
     }
     for (i = 0; i < ny - 1; i++) {
 	if (y[i] >= y[i + 1]) {
-	    myabort("plot3d: Y array must be strictly increasing");
+	    myabort("plot3dc: Y array must be strictly increasing");
 	    return;
 	}
     }
+
+    if (opt & PLMESH)
+      pl3mode = 1;
+
+    if (opt & DRAW_SIDES)
+      side = 1;
+
     /* figure out the part of the data to use */
     if (xmin < x[0])
       xmin = x[0];
@@ -709,24 +758,30 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
       ny = _ny;	  
     }
 
-   if (opt & BASE_CONT || opt && MAG_COLOR) { 
+   if (opt & BASE_CONT || opt & TOP_CONT || opt && MAG_COLOR ) { 
      plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
      if (fc_maxz == fc_minz) {
-       plwarn("plot3d.c: Maximum and minimum Z values are equal! \"fixing\"...");
+       plwarn("plot3dc: Maximum and minimum Z values are equal! \"fixing\"...");
        fc_maxz = fc_minz + 1e-6;
      }
    }
  
    if (opt & BASE_CONT) {     /* If enabled, draw the contour at the base.  */
-          opt &= ~BASE_CONT; /* next logic checks for absolute values of opt */
-	  base_cont = 1;
+     if (clevel != NULL && nlevel != 0) {
+       base_cont = 1;
+       /* even if PLMESH is not set, "set it",
+	  as the base contour can only be done in this case */
+       pl3mode = 1; 
+     }
    }
 
    if (opt & MAG_COLOR) {     /* If enabled, use magnitude colored wireframe  */
      ctmp = (PLFLT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLFLT)));
-     opt &= ~MAG_COLOR; /* next logic checks for absolute values of opt */
    } else
      ctmp = NULL;
+
+   /* next logic only knows opt = 1 | 2 | 3, make sure that it only gets that */
+   opt &= DRAW_LINEXY;
 
     /* Allocate work arrays */
 
@@ -734,7 +789,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     vtmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
 
     if ( ! utmp || ! vtmp)
-	myexit("plot3d: Out of memory.");
+	myexit("plot3dc: Out of memory.");
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     init = 1;
@@ -742,13 +797,13 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
    (perpendicular to x-y plane) must be handled separately. */ 
 
     if (cxx >= 0.0 && cxy <= 0.0) {
-	if (opt == 2) 
+	if (opt == DRAW_LINEY) 
 	    plt3zz(1, ny, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
 	else {
 	    for (iy = 2; iy <= ny; iy++)
 		plt3zz(1, iy, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
 	}
-	if (opt == 1)
+	if (opt == DRAW_LINEX)
 	    plt3zz(1, ny, 1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (ix = 1; ix <= nx - 1; ix++)
@@ -757,13 +812,13 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     }
 
     else if (cxx <= 0.0 && cxy <= 0.0) {
-        if (opt == 1)
+        if (opt == DRAW_LINEX)
 	    plt3zz(nx, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (ix = 2; ix <= nx; ix++) 
 		plt3zz(ix, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
-	if (opt == 2)
+	if (opt == DRAW_LINEY)
 	    plt3zz(nx, ny, -1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (iy = ny; iy >= 2; iy--)
@@ -772,13 +827,13 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     }
 
     else if (cxx <= 0.0 && cxy >= 0.0) {
-	if (opt == 2) 
+	if (opt == DRAW_LINEY) 
 	    plt3zz(nx, 1, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (iy = ny - 1; iy >= 1; iy--) 
 		plt3zz(nx, iy, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
-	if (opt == 1)
+	if (opt == DRAW_LINEX)
 	    plt3zz(nx, 1, -1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (ix = nx; ix >= 2; ix--)
@@ -787,13 +842,13 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     }
 
     else if (cxx >= 0.0 && cxy >= 0.0) {
-	if (opt == 1) 
+	if (opt == DRAW_LINEX) 
 	    plt3zz(1, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (ix = nx - 1; ix >= 1; ix--) 
 		plt3zz(ix, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
-	if (opt == 2)
+	if (opt == DRAW_LINEY)
 	    plt3zz(1, 1, 1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
 	    for (iy = 1; iy <= ny - 1; iy++)
@@ -804,12 +859,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     /* draw contour at the base. Not 100%! Why? */
  
     if (base_cont){
-#define NPTS 100
-#define LEVELS 10 /* as the API has no clevel arg, set a default */
-
-      int nlevel = LEVELS, np = NPTS, j;
-      PLFLT clevel[LEVELS]; 
-      PLFLT step;
+      int np = NPTS, j;
       CONT_LEVEL *cont, *clev;
       CONT_LINE *cline;
 
@@ -817,10 +867,6 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
       PLINT *vv = (PLINT *) malloc(NPTS*sizeof(PLINT));
 
       pl3upv = 0;
-
-      step = (fc_maxz - fc_minz)/(nlevel+1);
-      for (i=0; i<nlevel; i++)
-	clevel[i] = fc_minz + step + step*i;
 
       /* get the contour lines */
       cont_store(x, y, z,  nx, ny, 1, nx, 1, ny, clevel, nlevel, &cont);
