@@ -4469,7 +4469,7 @@ source
     </para>
 
     <para>
-    Sets the 3D position of the light source for use with &plotsh3d;.
+    Sets the 3D position of the light source for use with &plsurf3d;.
     </para>
 
     <variablelist>
@@ -5396,16 +5396,16 @@ default
 
     </sect1>
 
-  <sect1 id="plotsh3d" renderas="sect3">
+  <sect1 id="plsurf3d" renderas="sect3">
     <title>
-      <function>plotsh3d</function>: Plot shaded 3-d surface plot
+      <function>plsurf3d</function>: Plot shaded 3-d surface plot
     </title>
 
     <para>
       <funcsynopsis>
       <funcprototype>
 	<funcdef>
-	  <function>plotsh3d</function>
+	  <function>plsurf3d</function>
 	</funcdef>
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
