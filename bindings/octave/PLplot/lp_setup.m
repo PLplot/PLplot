@@ -12,24 +12,24 @@
 ##
 ## This file is part of plplot_octave.
 
-# lp_setup(command)
-#
-# set your printer command and options for use with `save_fig'
-# default is "lp -c". In my system, '-c' make a copy of the file.
-# You must specify the lp command also, e.g. `lp_setup("lp -n 2 -d lj3")'
+## lp_setup(command)
+##
+## set your printer command and options for use with `save_fig'
+## default is "lpr".
+## You must specify the lp command also, e.g. `lp_setup("lpr -n 2 -P lj3")'
 
 function out = lp_setup(command)
 
-global __lp_options
+  global __lp_options
 
-if (!exist("__lp_options"))
-	__lp_options = "lp -c";
-endif
+  if (!exist("__lp_options"))
+    __lp_options = "lpr";
+  endif
 
-if (nargin == 1 && isstr(command))
-	__lp_options = command;
-endif
+  if (nargin == 1 && isstr(command))
+    __lp_options = command;
+  endif
 
-out = __lp_options;
+  out = __lp_options;
 
 endfunction

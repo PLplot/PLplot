@@ -56,19 +56,19 @@
 
 function subplot (rows, columns, index)
 
-	global __pl __pl_inited
+  global __pl __pl_inited
 
-	if (!exist("__pl_inited") || plglevel == 0)
-		figure(0)
-	endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
-	__pl_strm = plgstrm + 1;
+  __pl_strm = plgstrm + 1;
 
-	if (nargin != 3 && nargin != 1)
-		usage ("subplot (rows, columns, index) or subplot (rcn)");
-	endif
+  if (nargin != 3 && nargin != 1)
+    usage ("subplot (rows, columns, index) or subplot (rcn)");
+  endif
 
-	if (nargin == 1)
+  if (nargin == 1)
 
     if (! (is_scalar (rows) && rows >= 0))
       error ("subplot: input rcn has to be a positive scalar");
@@ -98,28 +98,28 @@ function subplot (rows, columns, index)
   endif
 
   if (columns*rows == 1) # switching to single plot
-		plssub(1,1);
+    plssub(1,1);
   else
-		
-		##already in multiplot with same characteristics ?
-		__pl.multi_cur(__pl_strm) = index;
-		
-		if (__pl.multi(__pl_strm) == 1 &&   
-				__pl.multi_col(__pl_strm) == columns &&
-				__pl.multi_row(__pl_strm) == rows)
-			
-			pladv(index);
-			plvpor(0,1,0,1)
-			plwind(0,1,0,1)
-			plcol(0); plpsty(0)
-			plfill([0; 1; 1; 0],[0; 0; 1; 1]);
-			plflush; pleop;
-		else
-			__pl.multi_col(__pl_strm) = columns;
-			__pl.multi_row(__pl_strm) = rows;
-			__pl.multi(__pl_strm) = 1;
-			plssub(columns, rows);
-			pladv(index);
+    
+    ## already in multiplot with same characteristics ?
+    __pl.multi_cur(__pl_strm) = index;
+    
+    if (__pl.multi(__pl_strm) == 1 &&   
+	__pl.multi_col(__pl_strm) == columns &&
+	__pl.multi_row(__pl_strm) == rows)
+      
+      pladv(index);
+      plvpor(0,1,0,1)
+      plwind(0,1,0,1)
+      plcol(0); plpsty(0)
+      plfill([0; 1; 1; 0],[0; 0; 1; 1]);
+      plflush; pleop;
+    else
+      __pl.multi_col(__pl_strm) = columns;
+      __pl.multi_row(__pl_strm) = rows;
+      __pl.multi(__pl_strm) = 1;
+      plssub(columns, rows);
+      pladv(index);
     endif
 
   endif

@@ -52,7 +52,7 @@ function __plt2mv__ (x, y, fmt)
   endif
 
   if (x_nc > 0)
-	__pl_store(x, y, fmt);
+    __pl_store(x, y, fmt);
   else
     error ("__plt2mv__: arguments must be a matrices");
   endif

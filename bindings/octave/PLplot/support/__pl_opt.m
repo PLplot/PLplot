@@ -116,11 +116,11 @@
 
 function [style, color, symbol, key_title] = __pl_opt (opt)
 
-	style = 2;
-	color = 20;
-	symbol = 2;
-	key_title = "";
-	
+  style = 2;
+  color = 20;
+  symbol = 2;
+  key_title = "";
+  
   set_color = 0;
   set_symbol = 0;
   set_lines = 0;
@@ -134,130 +134,130 @@ function [style, color, symbol, key_title] = __pl_opt (opt)
   more_opts = 1;
 
   if (nargin != 1)
-	usage ("__pl_opt (opt)");
+    usage ("__pl_opt (opt)");
   endif
 
   if (! isstr (opt))
-	error ("__pl_opt: argument must be a string");
+    error ("__pl_opt: argument must be a string");
   endif
 
   if isempty(opt)
-	return
+    return
   endif
   
   while (more_opts)
 
-	## first get next char.
+    ## first get next char.
 
-	if (max (size (opt)) > 1)
-#	   [char, opt] = sscanf (opt, "%c %s", "c");
-	   char = opt(1);
-	   opt = opt(2:length(opt));
-	else
-	  char = opt;
-	  more_opts = 0;
-	endif
+    if (max (size (opt)) > 1)
+      ## [char, opt] = sscanf (opt, "%c %s", "c");
+      char = opt(1);
+      opt = opt(2:length(opt));
+    else
+      char = opt;
+      more_opts = 0;
+    endif
 
-	## now set flags based on char.
+    ## now set flags based on char.
 
-	if (char == '-')
-	  set_lines = 1;
-	elseif (char == '.')
-	  set_dots	= 1;
-	  set_symbol = 1;
-	  symbol = 1;
-	elseif (char == '@')
-	  set_points = 1;
-	elseif (char == '^')
-	  set_impulses = 1;
-	elseif (char == 'l')
-	  set_steps = 1;
-	elseif (char == '~')
-	  set_errbars = 1;
-	elseif (char == '#')
-	  set_boxes = 1;
-	elseif isdigit(char)
-	  if (set_color)
-		set_points = 1;
-		symbol = str2num(char);
-		set_symbol = 1;
-	  else
-		color = str2num(char);
-		set_color = 1;
-	  endif
-    elseif (char == 'r')
+    if (char == "-")
+      set_lines = 1;
+    elseif (char == ".")
+      set_dots	= 1;
+      set_symbol = 1;
+      symbol = 1;
+    elseif (char == "@")
+      set_points = 1;
+    elseif (char == "^")
+      set_impulses = 1;
+    elseif (char == "l")
+      set_steps = 1;
+    elseif (char == "~")
+      set_errbars = 1;
+    elseif (char == "#")
+      set_boxes = 1;
+    elseif (isdigit(char))
+      if (set_color)
+	set_points = 1;
+	symbol = str2num(char);
+	set_symbol = 1;
+      else
+	color = str2num(char);
+	set_color = 1;
+      endif
+    elseif (char == "r")
       set_color = 1;
       color = 1;
-    elseif (char == 'g')
+    elseif (char == "g")
       set_color = 1;
       color = 3;
-    elseif (char == 'b')
+    elseif (char == "b")
       set_color = 1;
       color = 9;
-    elseif (char == 'm')
+    elseif (char == "m")
       set_color = 1;
       color = 13;
-    elseif (char == 'c')
+    elseif (char == "c")
       set_color = 1;
       color = 11;
-    elseif (char == 'w')
+    elseif (char == "w")
       set_color = 1;
       color = 15;
-    elseif (char == 'k')
+    elseif (char == "k")
       set_color = 1;
       color = 0;
-    elseif (char == 's')
+    elseif (char == "s")
       set_color = 1;
       color = 14;
-    elseif (char == 'v')
+    elseif (char == "v")
       set_color = 1;
       color = 10;
-    elseif (char == 'y')
+    elseif (char == "y")
       set_color = 1;
       color = 2;
-    elseif (char == '*')
+    elseif (char == "*")
       set_points = 1;
       set_symbol = 1;
       symbol = 3;
-    elseif (char == '+')
+    elseif (char == "+")
       set_points = 1;
       set_symbol = 1;
       symbol = 2;
-    elseif (char == 'o')
+    elseif (char == "o")
       set_points = 1;
       set_symbol = 1;
       symbol = 4;
-    elseif (char == 'x')
+    elseif (char == "x")
       set_points = 1;
       set_symbol = 1;
       symbol = 5;
-    elseif (char == ';')  # title mode
+    elseif (char == ";")  # title mode
       set_key = 1;
       working = 1;
       key_title = ""; 
       while (working)
         if (max (size (opt)) > 1)
-	  		char = opt(1);
-			opt = opt(2:length(opt));
+	  char = opt(1);
+	  opt = opt(2:length(opt));
         else
-			char = opt;
-			if (char != ";")
-            	error ("unfinished key label");
-          	end
-          	more_opts = 0;
-          	working = 0;
+	  char = opt;
+	  if (char != ";")
+            error ("unfinished key label");
+          endif
+          more_opts = 0;
+          working = 0;
         endif
         if (char == ";")
           working = 0;
         else
-		if (isempty (key_title))  # needs this to avoid empty matrix warning.
+	  if (isempty (key_title))  # needs this to avoid empty matrix warning.
             key_title = char;
-	  	else
+	  else
             key_title = strcat (key_title, char);
-	  	endif
-       endif
+	  endif
+	endif
       endwhile
-    elseif (char == ' ')
+    elseif (char == " ")
       ## whitespace -- do nothing.
     else
       error ("unrecognized format character: '%s'", char);

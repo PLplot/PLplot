@@ -21,8 +21,8 @@ function p14
   ##  must be set
 
   title("Octave, the movie");
-  ylabel "Use double buffer"
-  xlabel "in pldef.m"
+  ylabel "Use double buffer";
+  xlabel "in pldef.m";
   
   l = 2;
   x = y = linspace(-l, l, 30);
@@ -36,7 +36,7 @@ function p14
     mesh(x, y, sin(k).*r);
   endfor
 
-	axis;
+  axis;
 
 endfunction
 

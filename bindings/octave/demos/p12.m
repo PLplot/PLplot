@@ -14,16 +14,16 @@
 
 function p12
 
-	title("War Game");
-	legend("off");
-	x=0:0.1:4;
-	plot(x,exp(x));
-	text(1,20,"Click Here -> + ");
-	[x y]=ginput(1)
-	if (round(x) != 1 && round(y) != 20)
-		text(x,y,"You missed!")
-	else
-		text(x,y,"ouch! Gently!")
-	endif
+  title("War Game");
+  legend("off");
+  x=0:0.1:4;
+  plot(x,exp(x));
+  text(1,20,"Click Here -> + ");
+  [x y]=ginput(1);
+  if (round(x) != 1 && round(y) != 20)
+    text(x,y,"You missed!")
+  else
+    text(x,y,"ouch! Gently!")
+  endif
 
 endfunction

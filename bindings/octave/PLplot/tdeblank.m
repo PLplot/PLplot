@@ -43,10 +43,10 @@ function t = tdeblank (s)
       k = max (find (s != " "));
       l = min (find (s != " "));
       if (isempty(k) || isempty(l))
-	  	t = "";
-	  else
-		t = s (l:k);
-	  endif
+	t = "";
+      else
+	t = s (l:k);
+      endif
     endif
 
   else

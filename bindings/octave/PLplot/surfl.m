@@ -38,36 +38,36 @@
 
 function surfl (x, y, z, s)
 
-  	if (nargin == 2)
-		s = y;
-	elseif (nargin == 1 || nargin == 3)
-	    s = [10, 10, 10]; # change to figure properties, __pl.light
-	endif
+  if (nargin == 2)
+    s = y;
+  elseif (nargin == 1 || nargin == 3)
+    s = [10, 10, 10]; # change to figure properties, __pl.light
+  endif
 
-	flag = 0;
-  	if (is_vector(s))
-		if (length(s) == 2)
-			error("surfl: s = [Saz, Sel] not yet, use cartesian.\n");
-		endif
-		flag = 1;
-  	else
-  		error("surfl: s must be a vector\n");
-  	endif
+  flag = 0;
+  if (is_vector(s))
+    if (length(s) == 2)
+      error("surfl: s = [Saz, Sel] not yet, use cartesian.\n");
+    endif
+    flag = 1;
+  else
+    error("surfl: s must be a vector\n");
+  endif
 
   if (nargin == 1  || (nargin == 2 && flag))
     z = x;
 
     if (is_matrix (z))
-    	[rz, cz] = size(z);
-    	x = (1:rz)'; 
-		y = (1:cz)'; 
+      [rz, cz] = size(z);
+      x = (1:rz)'; 
+      y = (1:cz)'; 
 
-		__pl_mesh(x, y, z, s)
+      __pl_mesh(x, y, z, s)
     else
       error ("mesh: argument must be a matrix");
     endif
 
-   elseif (nargin == 3 || nargin == 4)
+  elseif (nargin == 3 || nargin == 4)
     
     if (is_vector (x) && is_vector (y) && is_matrix (z))
       xlen = length (x);
@@ -80,19 +80,19 @@ function surfl (x, y, z, s)
           x = x';
         endif
 
-		__pl_mesh(x, y, z, s)
+	__pl_mesh(x, y, z, s)
       else
         msg = "mesh: rows (z) must be the same as length (x) and";
         msg = sprintf ("%s\ncolumns (z) must be the same as length (y)", msg);
         error (msg);
       endif
     elseif (is_matrix (x) && is_matrix (y) && is_matrix (z))
-# FIXME
-	gset title "FIXME"
+      ## FIXME
+      gset title "FIXME"
       xlen = columns (z);
       ylen = rows (z);
       if (xlen == columns (x) && xlen == columns (y) &&
-	ylen == rows (x) && ylen == rows(y))
+	  ylen == rows (x) && ylen == rows(y))
         len = 3 * xlen;
         zz = zeros (ylen, len);
         k = 1;

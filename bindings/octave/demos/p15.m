@@ -15,17 +15,17 @@
     
 function p15
 
-	title "Lighted and shaded surface"
-	xlabel "";
-	ylabel "";
-	[x, y, z] = rosenbrock; z = log(z);
-	set_view(30, -60);
-	plcolormap('default');
-	surfl(x, y, z);
-	pause(1);
-	set_view(50, 40);
-	plcolormap(gray);
-	surfl(x, y, z);
-		
+  title "Lighted and shaded surface";
+  xlabel "";
+  ylabel "";
+  [x, y, z] = rosenbrock; z = log(z);
+  set_view(30, -60);
+  plcolormap('default');
+  surfl(x, y, z);
+  pause(1);
+  set_view(50, 40);
+  plcolormap(gray);
+  surfl(x, y, z);
+  
 endfunction
 

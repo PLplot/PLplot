@@ -32,20 +32,20 @@
 
 function oneplot ()
 
-	global __pl __pl_inited
+  global __pl __pl_inited
 
-	if (!exist("__pl_inited") || plglevel == 0)
-		figure(0)
-	endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
-	__pl_strm = plgstrm + 1;
+  __pl_strm = plgstrm + 1;
 
-	__pl.multi_row(__pl_strm)=1;
-	__pl.multi_col(__pl_strm)=1;
-	__pl.multi_cur(__pl_strm)=1;
-	__pl.multi(__pl_strm)=0;
-	
-	plssub(1,1);
-	pladv(0);
+  __pl.multi_row(__pl_strm)=1;
+  __pl.multi_col(__pl_strm)=1;
+  __pl.multi_cur(__pl_strm)=1;
+  __pl.multi(__pl_strm)=0;
+  
+  plssub(1,1);
+  pladv(0);
 
 endfunction

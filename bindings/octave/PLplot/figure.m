@@ -44,157 +44,156 @@
 
 function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame)
 
-	global __pl_inited __pl __tk_name
+  global __pl_inited __pl __tk_name
 
-	if (!exist("__pl_inited") || plglevel == 0)
-		atexit("closeallfig");
-		closeallfig;	# this is to remedy a bug with atexit !
-		## closeallfig must be called once before atexit is called!
-		plplot_stub;
-		__pl_inited = 1;
-		if (nargin == 0)
-			n=0; driver=""; intp="";
-			return
-		endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    atexit("closeallfig");
+    closeallfig;	# this is to remedy a bug with atexit !
+    ## closeallfig must be called once before atexit is called!
+    plplot_stub;
+    __pl_inited = 1;
+    if (nargin == 0)
+      n=0; driver=""; intp="";
+      return
+    endif
+  endif
+
+  if (nargin == 0)
+    n = plgstrm;
+  else  	
+    __pl.hold(plgstrm+1) = ishold; # save current hold state
+    plsstrm(n);
+    n = plgstrm;
+    __pl_strm = n+1;
+
+    if ( plglevel == 0)	# no device open yet
+
+      if (nargin >= 4 && win_id != 0 ) # use the specified X window
+	plsxwin(win_id)
+      endif
+
+      if (nargin >= 3 && !isempty(file)) # use the specified file
+	plsfnam(file)
+	## else
+	## plsfnam(getenv("DISPLAY")); # The tk driver needs this. Not anymore?
+      endif
+
+      if (nargin >= 2 )
+	if (isstr(device))
+	  plsdev(device);
+	else
+	  error("pldef: `device' must be a string");
 	endif
+      else
+	plsdev("xwin");
+      endif
 
-	if (nargin == 0)
-  	n = plgstrm;
-	else  	
-   	__pl.hold(plgstrm+1) = ishold;	# save current hold state
-   	plsstrm(n);
-   	n = plgstrm;
-   	__pl_strm = n+1;
+      __pl.type = 1;
+      __pl.legend_xpos(__pl_strm) = 1;	# legend x position
+      __pl.legend_ypos(__pl_strm) = 1;	# legend y position
+      __pl.legend(__pl_strm) = 2;	# legend type
+      __pl.lab_pos(__pl_strm) = 0;	# label position
+      __pl.lab_lsty(__pl_strm,1) = 0;	# label (line) style
+      __pl.lab_col(__pl_strm,1) = 0;	# label color
+      __pl.multi_row(__pl_strm) = 1;	# multiplot state
+      __pl.multi_col(__pl_strm) = 1;	# multiplot columns
+      __pl.multi_cur(__pl_strm) = 1;	# current multiplot
+      __pl.multi(__pl_strm) = 0;	# multiplot	rows
+      __pl.axis_st(__pl_strm) = 0;	# axis state
+      __pl.axis(__pl_strm,:) = zeros(1,6);	# current axis
+      __pl.xticks(__pl_strm,:) = [0, 0]; # xtick interval, number of minor xticks
+      __pl.yticks(__pl_strm,:) = [0, 0]; #
+      __pl.zticks(__pl_strm,:) = [0, 0]; # 		
+      __pl.lstlyle(__pl_strm) = 1;       # increase line style after plot
+      __pl.az(__pl_strm) = -60;	         # azimuth
+      __pl.alt(__pl_strm) = 30;		 # altitude
+      __pl.grid(__pl_strm) = 0;		 # grid state
+      __pl.plcol(__pl_strm) = 1;	 # current plot color
+      __pl.pllsty(__pl_strm) = 1;	 # current plot style
+      __pl.line_count(__pl_strm) = 1;    # current label counter
+      __pl.hold(__pl_strm) = 0; hold off;  # hold state
+      __pl.open(__pl_strm) = 1;		   # figure state
+      __pl.margin(__pl_strm) = 0;	   # keep a small margin around box
+      
+      if (struct_contains(__pl, "xlabel"))
+	__pl.xlabel = __pl_matstr( __pl.xlabel, "X", __pl_strm); # x,y,z,title labels text
+	__pl.ylabel = __pl_matstr( __pl.ylabel, "Y", __pl_strm);
+	__pl.zlabel = __pl_matstr( __pl.zlabel, "Z", __pl_strm);
+	__pl.tlabel = __pl_matstr( __pl.tlabel, "Title", __pl_strm);
+      else
+	__pl.xlabel(__pl_strm,:) = "X";
+	__pl.ylabel(__pl_strm,:) = "Y";
+	__pl.zlabel(__pl_strm,:) = "Z";
+	__pl.tlabel(__pl_strm,:) = "Title";
+      endif
 
-   	if ( plglevel == 0)	# no device open yet
+      if (struct_contains(__pl, "intp"))
+	__pl.intp = __pl_matstr(__pl.intp, " ", __pl_strm); # tk interpreter name		
+      else
+	__pl.intp = " ";
+      endif
 
-   		if (nargin >= 4 && win_id != 0 )	# use the specified X window
-				plsxwin(win_id)
-			endif
+      ## the tk stuff
 
-			if (nargin >= 3 && !isempty(file))	# use the specified file
-				plsfnam(file)
-				## else
-				## plsfnam(getenv("DISPLAY")); # The tk driver needs this. Not anymore?
-			endif
-
-			if (nargin >= 2 )
-				if (isstr(device))
-					plsdev(device);
-				else
-					error("pldef: `device' must be a string");
-				endif
-			else
-				plsdev("xwin");
-			endif
-
-			__pl.type = 1;
-			__pl.legend_xpos(__pl_strm) = 1;	# legend x position
-			__pl.legend_ypos(__pl_strm) = 1;	# legend y position
-			__pl.legend(__pl_strm) = 2;			  # legend type
-			__pl.lab_pos(__pl_strm) = 0;		  # label position
-			__pl.lab_lsty(__pl_strm,1) = 0;		# label (line) style
-			__pl.lab_col(__pl_strm,1) = 0;		# label color
-			__pl.multi_row(__pl_strm) = 1;		# multiplot state
-			__pl.multi_col(__pl_strm) = 1;		# multiplot columns
-			__pl.multi_cur(__pl_strm) = 1;		# current multiplot
-			__pl.multi(__pl_strm) = 0;			  # multiplot	rows
-			__pl.axis_st(__pl_strm) = 0;		  # axis state
-			__pl.axis(__pl_strm,:) = zeros(1,6);		  # current axis
-			__pl.xticks(__pl_strm,:) = [0, 0];# xtick interval, number of minor xticks
-			__pl.yticks(__pl_strm,:) = [0, 0];	#
-			__pl.zticks(__pl_strm,:) = [0, 0];	# 		
-			__pl.lstlyle(__pl_strm) = 1;	# increase line style after plot
-			__pl.az(__pl_strm) = -60;			# azimuth
-			__pl.alt(__pl_strm) = 30;			# altitude
-			__pl.grid(__pl_strm) = 0;			# grid state
-			__pl.plcol(__pl_strm) = 1;		# current plot color
-			__pl.pllsty(__pl_strm) = 1;		# current plot style
-			__pl.line_count(__pl_strm) = 1;		  # current label counter
-			__pl.hold(__pl_strm) = 0; hold off;	# hold state
-			__pl.open(__pl_strm) = 1;			# figure state
-			__pl.margin(__pl_strm) = 0;		# keep a small margin around box
-			
-			if (struct_contains(__pl, "xlabel"))
-				__pl.xlabel = __pl_matstr( __pl.xlabel, "X", __pl_strm); # x,y,z,title labels text
-				__pl.ylabel = __pl_matstr( __pl.ylabel, "Y", __pl_strm);
-				__pl.zlabel = __pl_matstr( __pl.zlabel, "Z", __pl_strm);
-				__pl.tlabel = __pl_matstr( __pl.tlabel, "Title", __pl_strm);
-			else
-				__pl.xlabel(__pl_strm,:) = "X";
-				__pl.ylabel(__pl_strm,:) = "Y";
-				__pl.zlabel(__pl_strm,:) = "Z";
-				__pl.tlabel(__pl_strm,:) = "Title";
-			endif
-
-			if (struct_contains(__pl, "intp"))
-				__pl.intp = __pl_matstr(__pl.intp, " ", __pl_strm);	# tk interpreter name		
-			else
-				__pl.intp = " ";
-			endif
-
-			## the tk stuff
-
-			if (nargin == 6 && strcmp("tk", sprintf("%s",plgdev')))
-				if (! exist("tk_start"))
-					if  (! exist("tk_init"))
-						error("Can't use this tk feature of PLplot until tk_octave is installed!\n")
-					else
-			      tk_init;
-			    endif
-		    endif
-				
-				init_file = tmpnam();
-				fp = fopen(init_file,"w");
-
-				fprintf(fp, "set octave_interp {%s}\n", __tk_name);
-				fprintf(fp, "set octave_interp_pid %d\n", getpid);
-				fprintf(fp, "send -async $octave_interp to_octave intp=\"[tk appname]\"\n");
-				fprintf(fp, "source {%s}\n", tk_file);
-				fprintf(fp, "proc to_octave {a args} {\n\
-global octave_interp octave_interp_pid; \n\
-send -async $octave_interp to_octave \"$a $args\"; \n\
-#exec kill -16 $octave_interp_pid \n\
-}");
-				
-				fclose(fp);
-
-				plSetOpt ("plwindow", plot_frame);
-				plSetOpt ("tk_file", init_file);
-			else 						# The window manager window name
-				if (strcmp("tk", sprintf("%s",plgdev')))
-					plSetOpt("plwindow", sprintf(".figure_%d",n));
-					intp = sprintf("figure_%d",n);
-					__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name
-				else
-					plSetOpt("plwindow", sprintf("Figure %d",n));
-				endif
-			endif
-
-   		pldef	# defaults/init
-
-			if (nargin == 6 && strcmp("tk", sprintf("%s",plgdev')))
-				## a=[];while(isempty(a))		a=tk_receive(0),sleep(1);fflush(stdout);endwhile
-				eval(tk_receive(1));
-				__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name					
-				unlink(init_file);
-			else
-				intp = __pl.intp(__pl_strm,:); # FIXME -- if no plot window exists, error!
-			endif
-
-   	else
-   		if (__pl.hold(__pl_strm))
-   			hold on
-   		endif
-   		intp = __pl.intp(__pl_strm,:);
-			## warning("figure already opened");
-   	endif
+      if (nargin == 6 && strcmp("tk", sprintf("%s",plgdev')))
+	if (! exist("tk_start"))
+	  if  (! exist("tk_init"))
+	    error("Can't use this tk feature of PLplot until tk_octave is installed!\n")
+	  else
+	    tk_init;
+	  endif
 	endif
+	
+	init_file = tmpnam();
+	fp = fopen(init_file,"w");
 
-	driver = sprintf("%s",plgdev');
+	fprintf(fp, "set octave_interp {%s}\n", __tk_name);
+	fprintf(fp, "set octave_interp_pid %d\n", getpid);
+	fprintf(fp, "send -async $octave_interp to_octave intp=\"[tk appname]\"\n");
+	fprintf(fp, "source {%s}\n", tk_file);
+	fprintf(fp, "proc to_octave {a args} {\n",
+		"global octave_interp octave_interp_pid; \n",
+		"send -async $octave_interp to_octave \"$a $args\"; \n",
+		"#exec kill -16 $octave_interp_pid \n}");
+	
+	fclose(fp);
 
-	if (!exist("intp"))
-		intp = __pl.intp(n+1,:);
+	plSetOpt ("plwindow", plot_frame);
+	plSetOpt ("tk_file", init_file);
+      else 	# The window manager window name
+	if (strcmp("tk", sprintf("%s",plgdev')))
+	  plSetOpt("plwindow", sprintf(".figure_%d",n));
+	  intp = sprintf("figure_%d",n);
+	  __pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name
+	else
+	  plSetOpt("plwindow", sprintf("Figure %d",n));
 	endif
+      endif
+
+      pldef	# defaults/init
+
+      if (nargin == 6 && strcmp("tk", sprintf("%s",plgdev')))
+	## a=[];while(isempty(a)); a=tk_receive(0),sleep(1);fflush(stdout);endwhile
+	eval(tk_receive(1));
+	__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name					
+	unlink(init_file);
+      else
+	intp = __pl.intp(__pl_strm,:); # FIXME -- if no plot window exists, error!
+      endif
+
+    else
+      if (__pl.hold(__pl_strm))
+   	hold on
+      endif
+      intp = __pl.intp(__pl_strm,:);
+      ## warning("figure already opened");
+    endif
+  endif
+
+  driver = sprintf("%s",plgdev');
+
+  if (!exist("intp"))
+    intp = __pl.intp(n+1,:);
+  endif
 
 endfunction

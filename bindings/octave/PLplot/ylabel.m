@@ -23,17 +23,16 @@
 ##
 ## See also: title, pllab, bottom_title, xlabel, ylabel, zlabel
 
-
 ## Author: jwe
 ## Modified: jc
 
 function text = ylabel (text)
 
-	global __pl __pl_inited
+  global __pl __pl_inited
 
-	if (!exist("__pl_inited") || plglevel == 0)
-		figure(0)
-	endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
   if (nargin > 1)
     usage ("ylable (text)");
@@ -42,13 +41,13 @@ function text = ylabel (text)
   __pl_strm = plgstrm+1;
 
   if (nargin == 1 && isempty(text))
-   	text = " ";
+    text = " ";
   endif
-	
+  
   if (nargin == 0)
-  	text = __pl.ylabel(__pl_strm,:);
+    text = __pl.ylabel(__pl_strm,:);
   else
-		__pl.ylabel = __pl_matstr(__pl.ylabel, text, __pl_strm);
+    __pl.ylabel = __pl_matstr(__pl.ylabel, text, __pl_strm);
   endif
 
 endfunction

@@ -14,54 +14,54 @@
 
 function __pl_mesh(x, y, z, s)
 
-global __pl_inited __pl
+  global __pl_inited __pl
 
-if (!exist("__pl_inited") || plglevel == 0)
-	figure(0)
-endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
-__pl_strm = plgstrm + 1;
+  __pl_strm = plgstrm + 1;
 
-xm = min(min(x)); xM = max(max(x));
-ym = min(min(y)); yM = max(max(y));
-zm = min(min(z)); zM = max(max(z));
+  xm = min(min(x)); xM = max(max(x));
+  ym = min(min(y)); yM = max(max(y));
+  zm = min(min(z)); zM = max(max(z));
 
-if (__pl.axis_st(__pl_strm))
-	xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);	# at least x always exist
+  if (__pl.axis_st(__pl_strm))
+    xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);	# at least x always exist
 
-	if (length(__pl.axis) >= 4)	
-		ym = __pl.axis(__pl_strm,3); yM = __pl.axis(__pl_strm,4);
-	else
-		__pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
-	endif
-	if (length(__pl.axis) == 6)
-		zm = __pl.axis(__pl_strm,5); zM = __pl.axis(__pl_strm,6);
-	else
-		__pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
-	endif
-else	# make axis() return current axis
-	__pl.axis(__pl_strm,1) = xm; __pl.axis(__pl_strm,2) = xM;
-	__pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
-	__pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
-endif
-    	
-plcol(15);pllsty(1);
-__pl_plenv(-1.6, 1.6, -1.6, 2.6, 0, -2);
-plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM, __pl.alt(__pl_strm), __pl.az(__pl_strm))
-plbox3("bnstu", tdeblank(__pl.xlabel(__pl_strm,:)), 0.0, 0,
-       "bnstu", tdeblank(__pl.ylabel(__pl_strm,:)), 0.0, 0,
-       "bcmnstuv", tdeblank(__pl.zlabel(__pl_strm,:)), 0.0, 0);
-        plcol(1)
-
-if (nargin == 3 || s == 0)        
-	plmesh(x, y, z, 3);
-else
-	pllightsource(s(1), s(2), s(3));
-	plotsh3d(x, y, z, 0)
-endif	
+    if (length(__pl.axis) >= 4)	
+      ym = __pl.axis(__pl_strm,3); yM = __pl.axis(__pl_strm,4);
+    else
+      __pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
+    endif
+    if (length(__pl.axis) == 6)
+      zm = __pl.axis(__pl_strm,5); zM = __pl.axis(__pl_strm,6);
+    else
+      __pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
+    endif
+  else	# make axis() return current axis
+    __pl.axis(__pl_strm,1) = xm; __pl.axis(__pl_strm,2) = xM;
+    __pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
+    __pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
+  endif
   
-plcol(15);
-pllab(" ", " ", tdeblank(__pl.tlabel(__pl_strm,:)));
-plflush;pleop;
+  plcol(15);pllsty(1);
+  __pl_plenv(-1.6, 1.6, -1.6, 2.6, 0, -2);
+  plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM, __pl.alt(__pl_strm), __pl.az(__pl_strm))
+  plbox3("bnstu", tdeblank(__pl.xlabel(__pl_strm,:)), 0.0, 0,
+	 "bnstu", tdeblank(__pl.ylabel(__pl_strm,:)), 0.0, 0,
+	 "bcmnstuv", tdeblank(__pl.zlabel(__pl_strm,:)), 0.0, 0);
+  plcol(1)
+
+  if (nargin == 3 || s == 0)        
+    plmesh(x, y, z, 3);
+  else
+    pllightsource(s(1), s(2), s(3));
+    plotsh3d(x, y, z, 0)
+  endif	
+  
+  plcol(15);
+  pllab(" ", " ", tdeblank(__pl.tlabel(__pl_strm,:)));
+  plflush;pleop;
 
 endfunction

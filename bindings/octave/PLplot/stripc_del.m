@@ -12,10 +12,12 @@
 ##
 ## This file is part of plplot_octave.
 
-# stripc_del(id)
-#
-# deletes the stripchart identified by id
+## stripc_del(id)
+##
+## deletes the stripchart identified by id
 
 function stripc_del(id)
 
-plstripd(id);
+  plstripd(id);
+
+endfunction

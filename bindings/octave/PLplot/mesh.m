@@ -36,11 +36,11 @@ function mesh (x, y, z)
   if (nargin == 1)
     z = x;
     if (is_matrix (z))
-    	[rz, cz] = size(z);
-    	x = (1:rz)'; 
-		y = (1:cz)'; 
+      [rz, cz] = size(z);
+      x = (1:rz)'; 
+      y = (1:cz)'; 
 
-		__pl_mesh(x, y, z)
+      __pl_mesh(x, y, z)
     else
       error ("mesh: argument must be a matrix");
     endif
@@ -56,19 +56,19 @@ function mesh (x, y, z)
           x = x';
         endif
 
-		__pl_mesh(x, y, z)
+	__pl_mesh(x, y, z)
       else
         msg = "mesh: rows (z) must be the same as length (x) and";
         msg = sprintf ("%s\ncolumns (z) must be the same as length (y)", msg);
         error (msg);
       endif
     elseif (is_matrix (x) && is_matrix (y) && is_matrix (z))
-# FIXME
-	gset title "FIXME"
+				# FIXME
+      gset title "FIXME"
       xlen = columns (z);
       ylen = rows (z);
       if (xlen == columns (x) && xlen == columns (y) &&
-	ylen == rows (x) && ylen == rows(y))
+	  ylen == rows (x) && ylen == rows(y))
         len = 3 * xlen;
         zz = zeros (ylen, len);
         k = 1;

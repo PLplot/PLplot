@@ -38,74 +38,74 @@
 
 function fill(x, y, c)
 
-	global __pl __pl_inited
+  global __pl __pl_inited
 
-	if (!exist("__pl_inited") || plglevel == 0)
-		figure(0);
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0);
+  endif
+
+  __pl_strm = plgstrm+1;
+
+  if (nargin != 3)
+    error("fill: not yet.\n");
+  endif
+
+  if (is_vector(x) & is_vector(y))
+    __pl_fill(x, y, c);
+    
+  elseif (is_matrix(x) | is_matrix(y))
+
+    if (rows(x) == rows(y))
+      if (is_vector(x))
+	x = x*ones(1,rows(x));
+      elseif (is_vector(y))
+	y = y*ones(1,rows(y));
+      endif
+
+      if (is_scalar(c))
+	c = ones(rows(x),1)*c;
+      elseif (rows(c) == 1)
+	c = c';
+	if (rows(c) != rows(x))
+	  error("fill: `c' must be scalar or have same number of rows as `x'\n");
 	endif
+      endif
 
-	__pl_strm = plgstrm+1;
+      h_st = ishold;
 
-	if (nargin != 3)
-		error("fill: not yet.\n");
-	endif
+      if (__pl.axis_st(__pl_strm) == 1)
+	xmin = __pl.axis(__pl_strm,1); xmax = __pl.axis(__pl_strm,2);
+	ymin = __pl.axis(__pl_strm,3); ymin = __pl.axis(__pl_strm,4);
+      else
+	xmin=min(min(x)); xmax=max(max(x));
+	ymin=min(min(y)); ymax=max(max(y));
+      endif
+      
+      ## if (__pl.axis_st(__pl_strm) == 0)
+      ##   xm = min(min(x)); xM = max(max(x));
+      ##   ym = min(min(y)); yM = max(max(y));
+      ##   axis([xm xM ym yM]);
+      ## endif
+      
+      if (!ishold)
+	plcol(15);
+	plenv(xmin, xmax, ymin, ymax, 0, -1);
+	hold on;
+      endif
 
-	if (is_vector(x) & is_vector(y))
-		__pl_fill(x, y, c);
-		
-	elseif (is_matrix(x) | is_matrix(y))
+      for i=1:rows(x)
+	__pl_fill(x(i,:), y(i,:), c(i,:));
+      endfor
 
-		if (rows(x) == rows(y))
-			if (is_vector(x))
-				x = x*ones(1,rows(x));
-			elseif (is_vector(y))
-				y = y*ones(1,rows(y));
-			endif
+      if (h_st == 0)
+	hold off
+      endif
+    else
+      error("fill: x and y must have same number of rows\n");
+    endif
+  endif
 
-			if (is_scalar(c))
-				c = ones(rows(x),1)*c;
-			elseif (rows(c) == 1)
-				c = c';
-				if (rows(c) != rows(x))
-					error("fill: `c' must be scalar or have same number of rows as `x'\n");
-				endif
-			endif
-
-			h_st = ishold;
-
-			if (__pl.axis_st(__pl_strm) == 1)
-				xmin = __pl.axis(__pl_strm,1); xmax = __pl.axis(__pl_strm,2);
-				ymin = __pl.axis(__pl_strm,3); ymin = __pl.axis(__pl_strm,4);
-			else
-				xmin=min(min(x)); xmax=max(max(x));
-				ymin=min(min(y)); ymax=max(max(y));
-			endif
-			
-			##		if (__pl.axis_st(__pl_strm) == 0)
-			##			xm = min(min(x)); xM = max(max(x));
-			##		ym = min(min(y)); yM = max(max(y));
-			##			axis([xm xM ym yM]);
-			##		endif
-			
-			if (!ishold)
-				plcol(15);
-				plenv(xmin, xmax, ymin, ymax, 0, -1);
-				hold on;
-			endif
-
-			for i=1:rows(x)
-				__pl_fill(x(i,:), y(i,:), c(i,:));
-			endfor
-
-			if (h_st == 0)
-				hold off
-			endif
-		else
-			error("fill: x and y must have same number of rows\n");
-		endif
-	endif
-
-	##  FILL(X1,Y1,C1,X2,Y2,C2,...) is another way of specifying
-	##	multiple filled areas.
+  ## FILL(X1,Y1,C1,X2,Y2,C2,...) is another way of specifying
+  ## multiple filled areas.
 
 endfunction

@@ -12,12 +12,12 @@
 ##
 ## This file is part of plplot_octave.
 
-# stripc_add(id, pen, x, y)
-#
-# add a point (x,y) to pen [0..3] of the stripchart 'id'
+## stripc_add(id, pen, x, y)
+##
+## add a point (x,y) to pen [0..3] of the stripchart 'id'
 
 function stripc_add(id, pen, x, y)
 
-plstripa(id, pen, x, y);
+  plstripa(id, pen, x, y);
 
 endfunction

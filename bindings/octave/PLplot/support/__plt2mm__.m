@@ -33,14 +33,14 @@ function __plt2mm__ (x, y, fmt)
   [x_nr, x_nc] = size (x);
   [y_nr, y_nc] = size (y);
 
-#  if (x_nr == y_nr && x_nc == y_nc)
-    if (x_nc > 0)
-	__pl_store(x, y, fmt);
-    else
-      error ("__plt2mm__: arguments must be a matrices");
-    endif
-#  else
-#    error ("__plt2mm__: matrix dimensions must match");
-#  endif
+  ##  if (x_nr == y_nr && x_nc == y_nc)
+  if (x_nc > 0)
+    __pl_store(x, y, fmt);
+  else
+    error ("__plt2mm__: arguments must be a matrices");
+  endif
+  ##  else
+  ##    error ("__plt2mm__: matrix dimensions must match");
+  ##  endif
 
 endfunction

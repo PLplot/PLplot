@@ -14,21 +14,21 @@
 
 function ost = plot_margin(st)
 
-	## st = plot_margin([st])
-	##
-	## set/return the status of the plot margin. The plot margin is small
-	## region near the box that surrouunds the plot; it is usefull not to
-	## plot in this region for scatter plot, or the plotted points can be
-	## ploted over the box.
+  ## st = plot_margin([st])
+  ##
+  ## set/return the status of the plot margin. The plot margin is small
+  ## region near the box that surrouunds the plot; it is usefull not to
+  ## plot in this region for scatter plot, or the plotted points can be
+  ## ploted over the box.
 
-	global __pl
-	
-	n = plgstrm+1;
-	ost = __pl.margin(n);
+  global __pl
+  
+  n = plgstrm+1;
+  ost = __pl.margin(n);
 
-	if (nargin == 1)
-		__pl.margin(n) = st;
-	endif
+  if (nargin == 1)
+    __pl.margin(n) = st;
+  endif
 
 endfunction
 	

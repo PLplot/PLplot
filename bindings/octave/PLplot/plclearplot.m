@@ -12,11 +12,11 @@
 ##
 ## This file is part of plplot_octave.
 
-# plclg() or plclearplot (): clear the plot window
+## plclg() or plclearplot (): clear the plot window
 
 function plclearplot
 
-plbop;
-plflush;pleop;
+  plbop;
+  plflush;pleop;
 
 endfunction                

@@ -15,5 +15,5 @@
 ## FIXME: in subplot mode, can't write at TOP of figure
 
 function top_title
-warning("top_title: in subplot mode, can't write at TOP of figure");
+  warning("top_title: in subplot mode, PLplot can't write at TOP of figure");
 endfunction

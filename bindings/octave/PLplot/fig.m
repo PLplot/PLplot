@@ -12,12 +12,12 @@
 ##
 ## This file is part of plplot_octave.
 
-# usage: [id driver  intp] = fig (...)
-#
-# just an alias to figure
+## usage: [id driver  intp] = fig (...)
+##
+## just an alias to figure
 
 function [n, driver,  intp] = fig (...)
 
-[n, driver, intp] = figure(all_va_args);
+  [n, driver, intp] = figure(all_va_args);
 
 endfunction

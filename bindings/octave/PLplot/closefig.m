@@ -12,43 +12,42 @@
 ##
 ## This file is part of plplot_octave.
 
-# closefig([n])
-#
-# Close plot window n, or current plot windows if nargin = 0.
-# Makes the lowest figure the current figure, if it exists.
+## closefig([n])
+##
+## Close plot window n, or current plot windows if nargin = 0.
+## Makes the lowest figure the current figure, if it exists.
 
 function closefig(n)
 
+  global  __pl_inited __pl
 
-global  __pl_inited __pl
+  if (!exist("__pl_inited"))
+    return
+  endif
 
-if (!exist("__pl_inited"))
-	return
-endif
+  ## old_fig = plgstrm;
+  old_fig = figure;
 
-#old_fig = plgstrm;
-old_fig = figure;
+  if (nargin == 0)
+    n = old_fig;
+  endif
 
-if (nargin == 0)
-	n = old_fig;
-endif
+  plsstrm(n);
+  plend1;
+  __pl.open(n+1) = 0;
 
-plsstrm(n);
-plend1;
-__pl.open(n+1) = 0;
-
-if ( n != old_fig)
-	if (__pl.open(old_fig+1))
-		plsstrm(old_fig)
-		figure(old_fig)
-	endif
-else
-	n = min(find(__pl.open == 1));
-	if (isempty(n))
-		return
-	endif
-	plsstrm(n-1);
-	figure(n-1);
-endif
+  if ( n != old_fig)
+    if (__pl.open(old_fig+1))
+      plsstrm(old_fig)
+      figure(old_fig)
+    endif
+  else
+    n = min(find(__pl.open == 1));
+    if (isempty(n))
+      return
+    endif
+    plsstrm(n-1);
+    figure(n-1);
+  endif
 
 endfunction

@@ -14,11 +14,10 @@
 
 function p8
 
-xlabel("X"); ylabel("Y");
-title("Mesh example");
-[x y z]=rosenbrock;z=log(z);
-mesh(x,y,z)
-
+  xlabel("X"); ylabel("Y");
+  title("Mesh example");
+  [x y z]=rosenbrock;z=log(z);
+  mesh(x,y,z)
 
 endfunction
 

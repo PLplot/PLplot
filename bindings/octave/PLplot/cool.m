@@ -12,19 +12,19 @@
 ##
 ## This file is part of plplot_octave.
 
-#	cmap = cool(m)
-#
-#	Shades of cyan and magenta color map.
-#	cool(M) returns an M-by-3 matrix containing a "cool" colormap.
-#	without arguments, cmap has lenght 64
+## cmap = cool(m)
+##
+##	Shades of cyan and magenta color map.
+##	cool(M) returns an M-by-3 matrix containing a "cool" colormap.
+##	without arguments, cmap has lenght 64
 
 function cmap = cool(m)
 
-if (nargin != 1)
-	m=64;
-endif
+  if (nargin != 1)
+    m=64;
+  endif
 
-r = (0:m-1)'/max(m-1,1);
-cmap = [r, 1-r, ones(m,1)]; 
+  r = (0:m-1)'/max(m-1,1);
+  cmap = [r, 1-r, ones(m,1)]; 
 
 endfunction

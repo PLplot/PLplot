@@ -12,8 +12,8 @@
 ##
 ## This file is part of plplot_octave.
 
-## FIXME: in subplot mode, can't write at BOTTOM of figure
+## FIXME: in subplot mode, PLplot can't write at BOTTOM of figure
 
 function bottom_title
-warning("bottom_title: in subplot mode, can't write at BOTTOM of figure");
+  warning("bottom_title: in subplot mode, PLplot can't write at BOTTOM of figure");
 endfunction

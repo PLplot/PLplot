@@ -14,18 +14,18 @@
 
 function out = __pl_matstr(mat, str, n)
 
-# Octave damned string arrays are defective!
+  ## Octave damned string arrays are defective!
 
-if (isempty(mat))
-	out(n,:) = str;
-	return
-endif
+  if (isempty(mat))
+    out(n,:) = str;
+    return
+  endif
 
-out = [mat; str];
-nn = rows(out);
-out(n,:) = out(nn,:);
-if (n < nn)
-	out(nn,:) = "";
-endif
+  out = [mat; str];
+  nn = rows(out);
+  out(n,:) = out(nn,:);
+  if (n < nn)
+    out(nn,:) = "";
+  endif
 
 endfunction

@@ -12,20 +12,20 @@
 ##
 ## This file is part of plplot_octave.
 
-# st = axis_set
-#
-# return current axis status
-# st = 0 => autoscale
-# st = 1 => axis are set
+## st = axis_set
+##
+## return current axis status
+## st = 0 => autoscale
+## st = 1 => axis are set
 
 function st = axis_set
 
-global __pl __pl_inited
+  global __pl __pl_inited
 
-if (!exist("__pl_inited") || plglevel == 0)
-	figure(0)
-endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
-st = __pl.axis_st(plgstrm + 1);
+  st = __pl.axis_st(plgstrm + 1);
 
 endfunction

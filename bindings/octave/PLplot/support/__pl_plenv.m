@@ -14,101 +14,101 @@
 
 function __pl_plenv(xm, xM, ym, yM, scale, axis)
 
-	## this is equivalent to plenv, except that no padv(0) is performed.
-	## this is important for multiplot, as pladv() advances the subwindow,
-	## and pladv(0) advances the page, clearing all plot. However, not
-	## calling pladv(0), keeps all plots in the plot buffer,
-	## so "plreplot" replots all plots since the last call to
-	## pladv(0)/plbop
-	## (nice way of doing "movie")
-	##
-	## instead, the (sub)window is cleared, and the subplot position
-	## remains
-	## the same. Of course, it is not fast. Changed: The above described
-	## behaviour is only valid in multiplot mode,
-	## else, pladv(0) is issued.
+  ## this is equivalent to plenv, except that no padv(0) is performed.
+  ## this is important for multiplot, as pladv() advances the subwindow,
+  ## and pladv(0) advances the page, clearing all plot. However, not
+  ## calling pladv(0), keeps all plots in the plot buffer,
+  ## so "plreplot" replots all plots since the last call to
+  ## pladv(0)/plbop
+  ## (nice way of doing "movie")
+  ##
+  ## instead, the (sub)window is cleared, and the subplot position
+  ## remains
+  ## the same. Of course, it is not fast. Changed: The above described
+  ## behaviour is only valid in multiplot mode,
+  ## else, pladv(0) is issued.
 
-	global __pl
-	__pl_strm = plgstrm + 1;
+  global __pl
+  __pl_strm = plgstrm + 1;
 
-	if (__pl.multi(__pl_strm) == 1)	# multiplot, erase current subwindow
-		plvpor(0,1,0,1)
-		plwind(0,1,0,1)
-		plcol(0);plpsty(0)
-		plfill([0;1;1;0],[0;0;1;1]);
-	else
-		pladv(0)
-	endif
-		
-  if (scale)
-  	plvasp(1)
+  if (__pl.multi(__pl_strm) == 1)	# multiplot, erase current subwindow
+    plvpor(0,1,0,1)
+    plwind(0,1,0,1)
+    plcol(0);plpsty(0)
+    plfill([0;1;1;0],[0;0;1;1]);
   else
-  	plvsta
+    pladv(0)
+  endif
+  
+  if (scale)
+    plvasp(1)
+  else
+    plvsta
   endif
 
-	xrg = yrg = 0;
-	if (__pl.margin(__pl_strm))
-		xrg = (xM-xm)/50; yrg = (yM-ym)/50;
-	endif
-		
+  xrg = yrg = 0;
+  if (__pl.margin(__pl_strm))
+    xrg = (xM-xm)/50; yrg = (yM-ym)/50;
+  endif
+  
   plwind(xm-xrg, xM+xrg, ym-yrg, yM+yrg);
   
-	## axis=-2 : draw no box, axis or labels
-	## axis=-1 : draw box only
-	## axis= 0 : Draw box and label with coordinates
-	## axis= 1 : Also draw the coordinate axes
-	## axis= 2 : Draw a grid at major tick positions
-	## axis=10 : Logarithmic X axis, Linear Y axis, No X=0 axis
-	## axis=11 : + coordinate axis
-	## axis=12 : + grid
-	## axis=20 : Linear X axis, Logarithmic Y axis, No Y=0 axis
-	## axis=21 : + coordinate axis
-	## axis=22 : + grid
-	## axis=30 : Logarithmic X and Y axes
-	## axis=31 : + coordinate axes
-	## axis=32 : + grid
+  ## axis=-2 : draw no box, axis or labels
+  ## axis=-1 : draw box only
+  ## axis= 0 : Draw box and label with coordinates
+  ## axis= 1 : Also draw the coordinate axes
+  ## axis= 2 : Draw a grid at major tick positions
+  ## axis=10 : Logarithmic X axis, Linear Y axis, No X=0 axis
+  ## axis=11 : + coordinate axis
+  ## axis=12 : + grid
+  ## axis=20 : Linear X axis, Logarithmic Y axis, No Y=0 axis
+  ## axis=21 : + coordinate axis
+  ## axis=22 : + grid
+  ## axis=30 : Logarithmic X and Y axes
+  ## axis=31 : + coordinate axes
+  ## axis=32 : + grid
 
-	switch(axis)
+  switch(axis)
     case -2
-    	xopt=""; yopt="";
+      xopt=""; yopt="";
     case -1
-			xopt="bc"; yopt="bc";
+      xopt="bc"; yopt="bc";
     case 0
-			xopt="bcnst"; yopt="bcnstv";
+      xopt="bcnst"; yopt="bcnstv";
     case 1
-			xopt="bcnsta"; yopt="bcnstva";
+      xopt="bcnsta"; yopt="bcnstva";
     case 2
-			xopt="bcnstag"; yopt="bcnstvag";
+      xopt="bcnstag"; yopt="bcnstvag";
     case 3
-			xopt="bcnstagh"; yopt="bcnstvagh";		
+      xopt="bcnstagh"; yopt="bcnstvagh";		
     case 10
-			xopt="bcnstl"; yopt="bcnstv";
+      xopt="bcnstl"; yopt="bcnstv";
     case 11
-			xopt="bcnstl"; yopt="bcnstva";
+      xopt="bcnstl"; yopt="bcnstva";
     case 12
-			xopt="bcgnstl"; yopt="bcnstvag";
+      xopt="bcgnstl"; yopt="bcnstvag";
     case 13
-			xopt="bcgnstlh"; yopt="bcnstvagh";		
+      xopt="bcgnstlh"; yopt="bcnstvagh";		
     case 20
-			xopt="bcnst"; yopt="bcnstvl";
+      xopt="bcnst"; yopt="bcnstvl";
     case 21
-			xopt="bcnst"; yopt="bcnstval";
+      xopt="bcnst"; yopt="bcnstval";
     case 22
-			xopt="bcnstg"; yopt="bcnstvagl";
+      xopt="bcnstg"; yopt="bcnstvagl";
     case 23
-			xopt="bcnstgh"; yopt="bcnstvaglh";		
+      xopt="bcnstgh"; yopt="bcnstvaglh";		
     case 30
-			xopt="bcnstl"; yopt="bcnstvl";
+      xopt="bcnstl"; yopt="bcnstvl";
     case 31
-			xopt="bcnstl"; yopt="bcnstval";
+      xopt="bcnstl"; yopt="bcnstval";
     case 32
-			xopt="bcngstl"; yopt="abcnstvgl";
+      xopt="bcngstl"; yopt="abcnstvgl";
     case 33
-			xopt="bcngstlh"; yopt="abcnstvglh";
-	endswitch
+      xopt="bcngstlh"; yopt="abcnstvglh";
+  endswitch
 
-	plcol(15); pllsty(1);
-	plbox(xopt, __pl.xticks(__pl_strm,1), __pl.xticks(__pl_strm,2),
-				yopt, __pl.yticks(__pl_strm,1), __pl.yticks(__pl_strm,2));            
-
+  plcol(15); pllsty(1);
+  plbox(xopt, __pl.xticks(__pl_strm,1), __pl.xticks(__pl_strm,2),
+	yopt, __pl.yticks(__pl_strm,1), __pl.yticks(__pl_strm,2));            
+  
 endfunction

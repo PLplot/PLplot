@@ -12,18 +12,18 @@
 ##
 ## This file is part of plplot_octave.
 
-# 	cmap = pink(m)
-#
-#	Pastel shades of pink color map.
-#	pink(M) returns an M-by-3 matrix containing a "pink" colormap.
-#	without arguments, cmap has lenght 64
+## cmap = pink(m)
+##
+## Pastel shades of pink color map.
+## pink(M) returns an M-by-3 matrix containing a "pink" colormap.
+## without arguments, cmap has lenght 64
 
 function cmap = pink(m)
 
-if (nargin < 1)
-	m=64;
-endif
+  if (nargin < 1)
+    m=64;
+  endif
 
-cmap = sqrt((2*gray(m) + hot(m))/3);
+  cmap = sqrt((2*gray(m) + hot(m))/3);
 
 endfunction

@@ -32,13 +32,13 @@
 
 function multiplot (xn, yn)
 
-	global __pl __pl_inited
+  global __pl __pl_inited
 
-	if (!exist("__pl_inited") || plglevel == 0)
-		figure(0)
-	endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
-	__pl_strm = plgstrm + 1;
+  __pl_strm = plgstrm + 1;
 
   if (nargin != 2)
     usage ("multiplot (xn, yn)");
@@ -61,8 +61,8 @@ function multiplot (xn, yn)
     __pl.multi(__pl_strm) = 1;
     __pl.multi_row(__pl_strm) = xn;
     __pl.multi_col(__pl_strm) = yn;
-		__pl.multi_cur(__pl_strm) = 1;
-		
+    __pl.multi_cur(__pl_strm) = 1;
+    
     plssub(xn, yn);
     pladv(0);
 

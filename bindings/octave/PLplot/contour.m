@@ -32,19 +32,19 @@
 
 function contour (z, n, x, y)
 
-	global __pl_inited
+  global __pl_inited
 
-	if (!exist("__pl_inited") || plglevel == 0)
-		figure(0)
-	endif
-	
-	if (nargin == 1)
-		n = 8;
-	endif
-	if (nargin == 3)
-		lines = 8;
-	endif
-	
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
+  
+  if (nargin == 1)
+    n = 8;
+  endif
+  if (nargin == 3)
+    lines = 8;
+  endif
+  
   ## XXX FIXME XXX -- these plot states should really just be set
   ## temporarily, probably inside an unwind_protect block, but there is
   ## no way to determine their current values.
@@ -52,29 +52,29 @@ function contour (z, n, x, y)
   if (nargin == 1 || nargin == 2)
     if (is_matrix (z))
 
-			__pl_contour(1:rows(z), 1:columns(z), z, n);
-			
+      __pl_contour(1:rows(z), 1:columns(z), z, n);
+      
     else
       error ("contour: argument must be a matrix");
     endif
   elseif (nargin == 3 || nargin == 4)
     if (nargin == 4 && !is_scalar(n))	# matlab syntax
-    	temp1 = z; lines = y; y = n; z = x; x = temp1;
+      temp1 = z; lines = y; y = n; z = x; x = temp1;
     elseif (nargin == 4 && is_scalar(n))
-    	lines = n;
+      lines = n;
     elseif (nargin == 3)	# matlab syntax
-    	temp1 = z; y = n; z = x; x = temp1;
+      temp1 = z; y = n; z = x; x = temp1;
     endif	
-	  if (is_vector (x) && is_vector (y) && is_matrix (z))
-	    if (length (x) == rows (z) && length (y) == columns (z))
-	      if (rows (x) == 1)
-	        x = x';
-	      endif
-	      if (rows (y) == 1)
-	        y = y';
-	      endif
-				
-	      __pl_contour(x, y, z, lines);
+    if (is_vector (x) && is_vector (y) && is_matrix (z))
+      if (length (x) == rows (z) && length (y) == columns (z))
+	if (rows (x) == 1)
+	  x = x';
+	endif
+	if (rows (y) == 1)
+	  y = y';
+	endif
+	
+	__pl_contour(x, y, z, lines);
       else
         msg = "contour: rows (z) must be the same as length (x) and";
         msg = sprintf ("%s\ncolumns (z) must be the same as length (y)", msg);

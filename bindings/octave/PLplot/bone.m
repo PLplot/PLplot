@@ -12,18 +12,18 @@
 ##
 ## This file is part of plplot_octave.
 
-#	b = bone(m)
-#
-#	Gray-scale with a tinge of blue color map.
-#	bone(M) returns an M-by-3 matrix containing a "bone" colormap.
-#	without arguments, cmap has lenght 64
+## b = bone(m)
+##
+##	Gray-scale with a tinge of blue color map.
+##	bone(M) returns an M-by-3 matrix containing a "bone" colormap.
+##	without arguments, cmap has lenght 64
 
 function cmap = bone(m)
 
-if (nargin != 1)
-	m = 64;
-endif
+  if (nargin != 1)
+    m = 64;
+  endif
 
-cmap = (7*gray(m) + fliplr(hot(m)))/8;
+  cmap = (7*gray(m) + fliplr(hot(m)))/8;
 
 endfunction

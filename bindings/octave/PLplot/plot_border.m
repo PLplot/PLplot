@@ -15,5 +15,5 @@
 ## FIXME: This does not work in plplot!
 
 function plot_border (...)
-	warning("plot_border: This does not work in plplot!");
+  warning("plot_border: This does not work in PLplot!");
 endfunction

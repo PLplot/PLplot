@@ -34,7 +34,7 @@ function __plt2ss__ (x, y, fmt)
   [y_nr, y_nc] = size (y);
 
   if (x_nr == 1 && x_nr == y_nr && x_nc == 1 && x_nc == y_nc)
-	__pl_store(x, y, fmt);
+    __pl_store(x, y, fmt);
   else
     error ("__plt2ss__: arguments must be scalars");
   endif

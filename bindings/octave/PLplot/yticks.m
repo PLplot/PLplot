@@ -12,33 +12,33 @@
 ##
 ## This file is part of plplot_octave.
 
-# yticks ([y_interval [, num_minor])
-#
-# set the yticks interval, and the number of minor ticks between major yticks.
-# No arguments makes it automatic (default).
+## yticks ([y_interval [, num_minor])
+##
+## set the yticks interval, and the number of minor ticks between major yticks.
+## No arguments makes it automatic (default).
 
 function yticks (int, num)
 
-global __pl
+  global __pl
 
-__pl_strm = plgstrm+1;
-	
-if (nargin >= 3)
-	help yticks;
-	return
-endif
+  __pl_strm = plgstrm+1;
+  
+  if (nargin >= 3)
+    help yticks;
+    return
+  endif
 
-if (nargin == 0)
-	__pl.yticks(__pl_strm,1) = 0;
-	__pl.yticks(__pl_strm,2) = 0;
-endif
+  if (nargin == 0)
+    __pl.yticks(__pl_strm,1) = 0;
+    __pl.yticks(__pl_strm,2) = 0;
+  endif
 
-if (nargin == 2)
-	__pl.yticks(__pl_strm,2) = num;
-endif
+  if (nargin == 2)
+    __pl.yticks(__pl_strm,2) = num;
+  endif
 
-if (nargin >= 1)
-	__pl.yticks(__pl_strm,1) = int;
-endif
+  if (nargin >= 1)
+    __pl.yticks(__pl_strm,1) = int;
+  endif
 
 endfunction

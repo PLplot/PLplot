@@ -34,13 +34,13 @@
 
 function grid (x)
 
-global __pl
+  global __pl
 
-if (!exist("__pl_inited") || plglevel == 0)
-	figure(0)
-endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
-__pl_strm = plgstrm+1;
+  __pl_strm = plgstrm+1;
 
   if (nargin == 0)
     __pl.grid(__pl_strm) = 1;
@@ -53,7 +53,7 @@ __pl_strm = plgstrm+1;
       elseif (strcmp ("minor", x))
         __pl.grid(__pl_strm) = 2;
       else
-    help grid
+	help grid
       endif
     else
       error ("grid: argument must be a string");

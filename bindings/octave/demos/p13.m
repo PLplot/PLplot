@@ -14,10 +14,10 @@
 
 function p13
 
-legend("opaque");
-title("Matrix with individual line atributes");
-fmt=["bo-;elf dist;"; "-15;norm porc;"; "@-g;cat peroi;"];
+  legend("opaque");
+  title("Matrix with individual line atributes");
+  fmt=["bo-;elf dist;"; "-15;norm porc;"; "@-g;cat peroi;"];
 
-plot(randn(10,3),fmt)
+  plot(randn(10,3),fmt)
 
 endfunction

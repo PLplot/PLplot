@@ -14,12 +14,12 @@
 
 function p4
 
-x=0.01:0.1:10;
-y=exp(x);
-grid "minor"
-title("Loglog example");
-loglog(x,y)
+  x=0.01:0.1:10;
+  y=exp(x);
+  grid "minor"
+  title("Loglog example");
+  loglog(x,y)
 
-grid "off"
+  grid "off"
 
 endfunction

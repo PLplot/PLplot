@@ -12,41 +12,41 @@
 ##
 ## This file is part of plplot_octave.
 
-# very preliminary! assumes that img is in octave image format, where each
-# matrix element is an index in the colormap. Slow.
-#
-# ex: [img, map] = loadimage("default.img");
-# plcolormap(map);
-# plimage(img);
+## *very* preliminary! assumes that img is in octave image format, where each
+## matrix element is an index in the colormap. Slow.
+##
+## ex: [img, map] = loadimage("default.img");
+## plcolormap(map);
+## plimage(img);
 
 function plimage(img, levels)
 
-entries = create_set(img); # this must be faster. use sort()
+  entries = create_set(img); # this must be faster. use sort()
 
-cmap = plcolormap;
-ncol = length(cmap);
+  cmap = plcolormap;
+  ncol = length(cmap);
 
-n = length(entries);
+  n = length(entries);
 
-[nr, nc] = size(img);
+  [nr, nc] = size(img);
 
-[xx, yy] = meshdom(1:nc, 1:nr);
+  [xx, yy] = meshdom(1:nc, 1:nr);
 
-xxx = reshape(xx, nr*nc, 1);
-yyy = reshape(yy, nr*nc, 1);
+  xxx = reshape(xx, nr*nc, 1);
+  yyy = reshape(yy, nr*nc, 1);
 
-__pl_plenv(0, nc, 0, nr, 1, -1);
+  __pl_plenv(0, nc, 0, nr, 1, -1);
 
-do_fortran_indexing = 1;
+  do_fortran_indexing = 1;
 
-for i=entries	# sloooow
+  for i=entries	# sloooow
 
-	plcol1(i/ncol);
-	ix = find(img == i);
-	plpoin(xxx(ix), yyy(ix),1);
+    plcol1(i/ncol);
+    ix = find(img == i);
+    plpoin(xxx(ix), yyy(ix),1);
 
-endfor
+  endfor
 
-plflush;pleop;
+  plflush;pleop;
 
 endfunction

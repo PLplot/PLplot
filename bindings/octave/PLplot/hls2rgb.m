@@ -12,14 +12,14 @@
 ##
 ## This file is part of plplot_octave.
 
-#   rgb = hls2rgb(hls)
-#   
-#   Hue-lightness-saturation to red-green-blue conversion.
-#	all components in the range [0..1]
+##   rgb = hls2rgb(hls)
+##   
+##   Hue-lightness-saturation to red-green-blue conversion.
+##	all components in the range [0..1]
 
 function rgb = hls2rgb(hls)
 
-[r, g, b] = plHLS_RGB(hls(:,1).*360, hls(:,2), hls(:,3));
-rgb = [r, g, b];
+  [r, g, b] = plHLS_RGB(hls(:,1).*360, hls(:,2), hls(:,3));
+  rgb = [r, g, b];
 
 endfunction

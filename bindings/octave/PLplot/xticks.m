@@ -12,33 +12,33 @@
 ##
 ## This file is part of plplot_octave.
 
-# xticks ([x_interval [, num_minor])
-#
-# set the xticks interval, and the number of minor ticks between major xticks.
-# No arguments makes it automatic (default).
+## xticks ([x_interval [, num_minor])
+##
+## set the xticks interval, and the number of minor ticks between major xticks.
+## No arguments makes it automatic (default).
 
 function xticks (int, num)
 
-global __pl
+  global __pl
 
-__pl_strm = plgstrm+1;
-	
-if (nargin >= 3)
-	help xticks;
-	return
-endif
+  __pl_strm = plgstrm+1;
+  
+  if (nargin >= 3)
+    help xticks;
+    return
+  endif
 
-if (nargin == 0)
-	__pl.xticks(__pl_strm,1) = 0;
-	__pl.xticks(__pl_strm,2) = 0;
-endif
+  if (nargin == 0)
+    __pl.xticks(__pl_strm,1) = 0;
+    __pl.xticks(__pl_strm,2) = 0;
+  endif
 
-if (nargin == 2)
-	__pl.xticks(__pl_strm,2) = num;
-endif
+  if (nargin == 2)
+    __pl.xticks(__pl_strm,2) = num;
+  endif
 
-if (nargin >= 1)
-	__pl.xticks(__pl_strm,1) = int;
-endif
+  if (nargin >= 1)
+    __pl.xticks(__pl_strm,1) = int;
+  endif
 
 endfunction

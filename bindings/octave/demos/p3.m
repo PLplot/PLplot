@@ -15,32 +15,32 @@
 
 function p3
 
-    xscale = 6.;
-    yscale = 1.;
-    xoff = 0.;
-    yoff = 0.;
+  xscale = 6.;
+  yscale = 1.;
+  xoff = 0.;
+  yoff = 0.;
 
-    m=60;
-    
-    for i=1:m
-        x(i) = xoff + xscale * (i + 1) / m;
-        y(i) = yoff + yscale * (x(i).^2.);
-    endfor
+  m=60;
+  
+  for i=1:m
+    x(i) = xoff + xscale * (i + 1) / m;
+    y(i) = yoff + yscale * (x(i).^2.);
+  endfor
 
-    n=5;
-    
-    for i=1:n
-        xs(i) = x(i * 10 + 3); xe(i) = rand;
-        ys(i) = y(i * 10 + 3); yel(i) = ys(i) - 4*rand; yer(i) = ys(i) + 4*rand;
-    endfor
+  n=5;
+  
+  for i=1:n
+    xs(i) = x(i * 10 + 3); xe(i) = rand;
+    ys(i) = y(i * 10 + 3); yel(i) = ys(i) - 4*rand; yer(i) = ys(i) + 4*rand;
+  endfor
 
-# Plot the data points */
-    title("#frPLplot Example 3 - y=x#u2 #d(with error bars)");
-    
-    plot(x, y);
-    hold
-    plot(xs,ys,'ob');
-    plot([xs xe], [ys yel yer], '~g');
-    hold
+  ## Plot the data points */
+  title("#frPLplot Example 3 - y=x#u2 #d(with error bars)");
+  
+  plot(x, y);
+  hold
+  plot(xs,ys,'ob');
+  plot([xs xe], [ys yel yer], '~g');
+  hold
 
 endfunction

@@ -38,16 +38,16 @@
 
 function mplot (...)
 
-	global __pl
+  global __pl
 
-	__pl_strm = plgstrm + 1;
-	__pl.multi_cur(__pl_strm) = rem(__pl.multi_cur(__pl_strm)+1,
-																	__pl.multi_row(__pl_strm) *
-																	__pl.multi_col(__pl_strm)+1);
-	if (__pl.multi_cur(__pl_strm) == 0 )
-		__pl.multi_cur(__pl_strm) = 1;
-	endif
-				
+  __pl_strm = plgstrm + 1;
+  __pl.multi_cur(__pl_strm) = rem(__pl.multi_cur(__pl_strm)+1,
+				  __pl.multi_row(__pl_strm) * 
+				  __pl.multi_col(__pl_strm)+1);
+  if (__pl.multi_cur(__pl_strm) == 0 )
+    __pl.multi_cur(__pl_strm) = 1;
+  endif
+  
   pladv(__pl.multi_cur(__pl_strm))
   __plt__ ("plot", all_va_args);
 

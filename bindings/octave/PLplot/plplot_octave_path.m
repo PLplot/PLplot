@@ -12,24 +12,29 @@
 ##
 ## This file is part of plplot_octave.
 
-# path = plplot_octave_path([path])
-#
-# set or return the current directory path of octave_plplot scripts
+## path = plplot_octave_path([path])
+##
+## set or return the current directory path of octave_plplot scripts
 
 function path = plplot_octave_path(path)
 
-global __pl_plplot_octave_path
+  global __pl_plplot_octave_path
 
-if (!exist("__pl_plplot_octave_path"))
-  __pl_plplot_octave_path = "/usr/local/share/plplot_octave";
-endif
+  if (!exist("__pl_plplot_octave_path"))
+    __pl_plplot_octave_path = "PLPLOT_OCTAVE_PATH";
+  endif
 
-if (nargin == 0)
-	path = __pl_plplot_octave_path;
-elseif (nargin == 1 && isstr(path))
-	__pl_plplot_octave_path = path;
-else
-	help octave_plplot_path
-endif
+  if (nargin == 0)
+    path = __pl_plplot_octave_path;
+  elseif (nargin == 1 && isstr(path))
+    __pl_plplot_octave_path = path;
+    if (path(length (path)) != '/')
+      path = [path "//"]
+    elseif (path(length (path)-1) != '/')
+      path = [path "/"]
+    endif
+  else
+    help octave_plplot_path
+  endif
 
 endfunction

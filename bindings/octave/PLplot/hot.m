@@ -12,20 +12,20 @@
 ##
 ## This file is part of plplot_octave.
 
-#	hot(m) returns an m-by-3 matrix containing a "hot" colormap.
-#	without arguments, cmap has lenght 64
+## hot(m) returns an m-by-3 matrix containing a "hot" colormap.
+## without arguments, cmap has lenght 64
 
 function cmap = hot(m)
 
-if (nargin < 1)
-	m = 64;
-endif
+  if (nargin < 1)
+    m = 64;
+  endif
 
-n = fix(3/8*m);
-r = [(1:n)'/n; ones(m-n,1)];
-g = [zeros(n,1); (1:n)'/n; ones(m-2*n,1)];
-b = [zeros(2*n,1); (1:m-2*n)'/(m-2*n)];
+  n = fix(3/8*m);
+  r = [(1:n)'/n; ones(m-n,1)];
+  g = [zeros(n,1); (1:n)'/n; ones(m-2*n,1)];
+  b = [zeros(2*n,1); (1:m-2*n)'/(m-2*n)];
 
-cmap = [r, g, b];
+  cmap = [r, g, b];
 
 endfunction

@@ -32,23 +32,23 @@
 
 function subwindow (xn, yn)
 
-	global __pl __pl_inited
+  global __pl __pl_inited
 
-	if (!exist("__pl_inited") || plglevel == 0)
-		figure(0)
-	endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
-	__pl_strm = plgstrm + 1;
+  __pl_strm = plgstrm + 1;
 
   if (nargin != 2 && nargin != 0)
     usage ("subwindow (xn, yn)");
   endif
 
-	if (nargin == 0)
-		__pl.multi_row(__pl_strm)
-		__pl.multi_col(__pl_strm)
-		return
-	endif
+  if (nargin == 0)
+    __pl.multi_row(__pl_strm)
+    __pl.multi_col(__pl_strm)
+    return
+  endif
 
   ## check for scalar inputs
 
@@ -59,17 +59,17 @@ function subwindow (xn, yn)
   xn = round (xn);
   yn = round (yn);
 
-	if (! __pl.multi(__pl_strm))
- 		multiplot (xn, yn);
-		return;
-	endif
+  if (! __pl.multi(__pl_strm))
+    multiplot (xn, yn);
+    return;
+  endif
   
   if (xn < 1 || xn > __pl.multi_row(__pl_strm) ||
-			yn < 1 || yn > __pl.multi_col(__pl_strm))
+      yn < 1 || yn > __pl.multi_col(__pl_strm))
     error ("subwindow: incorrect xn and yn");
   endif
-	
-	__pl.multi_cur(__pl_strm) = (yn-1)*__pl.multi_row(__pl_strm) + xn;
+  
+  __pl.multi_cur(__pl_strm) = (yn-1)*__pl.multi_row(__pl_strm) + xn;
   pladv(__pl.multi_cur(__pl_strm));
   
 endfunction

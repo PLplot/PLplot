@@ -14,24 +14,24 @@
 
 function p7
 
-#uncomment the colormap() if you are in a Pseudo Color Xserver (<256 colors)
+  ## uncomment the colormap() if you are in a Pseudo Color Xserver (<256 colors)
 
-[x y z]=rosenbrock;z=log(z);
+  [x y z]=rosenbrock;z=log(z);
 
-title("Shade example");
-plcolormap('default')
-shade(x,y,z,15)
+  title("Shade example");
+  plcolormap('default')
+  shade(x,y,z,15)
 
-pause(1)
-plcolormap(bone)
-pause(1)
-plcolormap(pink)
-axis([0.5 1.2 0 1.3]);
-hold
-shade(x,y,z,15,3)
-hold
-pause(1)
-shade(x,y,z,15,3)
-axis;
+  pause(1)
+  plcolormap(bone)
+  pause(1)
+  plcolormap(pink)
+  axis([0.5 1.2 0 1.3]);
+  hold
+  shade(x,y,z,15,3)
+  hold
+  pause(1)
+  shade(x,y,z,15,3)
+  axis;
 
 endfunction

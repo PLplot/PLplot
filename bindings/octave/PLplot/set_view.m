@@ -44,102 +44,102 @@ function set_view (alt, az)
   global	__pl __pl_inited 
 
   if (!exist("__pl_inited") || plglevel == 0)
-	 	figure(0)
+    figure(0)
   endif
 
   __pl_strm = plgstrm + 1;
 
-	callback = 0;
+  callback = 0;
   if (nargin == 2)
-	 	__pl.az(__pl_strm) = az;
-	 	__pl.alt(__pl_strm) = alt;
-	 	return
- 	elseif (nargin == 1 && isstr(alt))
-	 	script = alt;
-	 	callback = 1;
+    __pl.az(__pl_strm) = az;
+    __pl.alt(__pl_strm) = alt;
+    return
+  elseif (nargin == 1 && isstr(alt))
+    script = alt;
+    callback = 1;
   endif
 
   az = __pl.az(__pl_strm);
   alt =  __pl.alt(__pl_strm);
 
-	if (!callback)
-  	x = y = [0; 1];
-  	z = ones(2);
-  	xm = ym = zm = 0;
-  	xM = yM = zM = 1;
+  if (!callback)
+    x = y = [0; 1];
+    z = ones(2);
+    xm = ym = zm = 0;
+    xM = yM = zM = 1;
 
-  	plcol(15);
+    plcol(15);
 
-  	__pl_plenv(-1.5, 1.5, -1.5, 2.5, 0, -2);
-  	plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM, alt, az)
+    __pl_plenv(-1.5, 1.5, -1.5, 2.5, 0, -2);
+    plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM, alt, az)
 
-  	plmtex("t", 3, 0.5, 0.5, sprintf("Alt=%d   Az=%d", alt, az));
+    plmtex("t", 3, 0.5, 0.5, sprintf("Alt=%d   Az=%d", alt, az));
 
-  	plbox3("bnstu", "X axis", 0.0, 0,"bnstu", "Y axis", 0.0, 0,"bdcmnstuv",
-					 "Z axis", 0.0, 0)
+    plbox3("bnstu", "X axis", 0.0, 0,"bnstu", "Y axis", 0.0, 0,"bdcmnstuv",
+	   "Z axis", 0.0, 0)
 
-  	plot3d(x,y,z,3,1);
-  	plflush;pleop;
+    plot3d(x,y,z,3,1);
+    plflush;pleop;
 
-  	xm = ym = zm = 0;
-  	xM = yM = zM = 1;
-	else
-		title(sprintf("Alt=%d   Az=%d", alt, az));
-		eval(script)
-	endif
+    xm = ym = zm = 0;
+    xM = yM = zM = 1;
+  else
+    title(sprintf("Alt=%d   Az=%d", alt, az));
+    eval(script)
+  endif
   
   odx = ody = 0;
   c_alt = c_az = 0;
   
   while (1)
-	 	[status, state, keysym, button, string, pX, pY, dX, dY, wX, wY] = plGetCursor;
+    [status, state, keysym, button, string, pX, pY, dX, dY, wX, wY] = plGetCursor;
 
-	 	if (button == 3) # default position
-			az = -60; alt = 30;
-			ox = dX; oy = dY;
-			c_alt = c_az = 0;
-	 	elseif(button == 2) # stop
-			break
-	 	elseif (button == 1) # mark position
-			ox = dX; oy = dY;
-			alt = alt + c_alt; az = az + c_az;
-			c_alt = c_az = 0;
-	 	elseif (button == 0) # drag
-			c_az = (dX-ox)*100;
-			c_alt = (oy-dY)*100;
-	 	endif
-	 	
-	 	if (alt + c_alt > 90)
-			c_alt = 90 - alt;
-	 	elseif (alt + c_alt < 0)
-			c_alt = -alt;
-	 	endif
+    if (button == 3) # default position
+      az = -60; alt = 30;
+      ox = dX; oy = dY;
+      c_alt = c_az = 0;
+    elseif(button == 2) # stop
+      break
+    elseif (button == 1) # mark position
+      ox = dX; oy = dY;
+      alt = alt + c_alt; az = az + c_az;
+      c_alt = c_az = 0;
+    elseif (button == 0) # drag
+      c_az = (dX-ox)*100;
+      c_alt = (oy-dY)*100;
+    endif
+    
+    if (alt + c_alt > 90)
+      c_alt = 90 - alt;
+    elseif (alt + c_alt < 0)
+      c_alt = -alt;
+    endif
 
-		##	 if (az < -180)
-		##		az = -180;
-		## elseif (az > 180)
-		##		az = 180;
-		##	 endif
+    ## if (az < -180)
+    ##	az = -180;
+    ## elseif (az > 180)
+    ##	az = 180;
+    ## endif
 
-	 	if (!callback)
-			__pl_plenv(-1.5, 1.5, -1.5, 2.5, 0, -2);
+    if (!callback)
+      __pl_plenv(-1.5, 1.5, -1.5, 2.5, 0, -2);
 
-			plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM, alt+c_alt, az+c_az)
+      plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM, alt+c_alt, az+c_az)
 
-			plbox3("bnstu", "x axis", 0.0, 0,"bnstu", "y axis", 0.0,
-						 0,"bdcmnstuv", "z axis", 0.0, 0)
+      plbox3("bnstu", "x axis", 0.0, 0,"bnstu", "y axis", 0.0,
+	     0,"bdcmnstuv", "z axis", 0.0, 0)
 
-			plmtex("t", 3, 0.5, 0.5, sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
+      plmtex("t", 3, 0.5, 0.5, sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
 
-			plot3d(x,y,z,3,1);
-			plflush;pleop;
-		else
-			__pl.az(__pl_strm) = az + c_az; 
-			__pl.alt(__pl_strm) = alt + c_alt;
-			title(sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
-			eval(script)
-		endif
-		
+      plot3d(x,y,z,3,1);
+      plflush;pleop;
+    else
+      __pl.az(__pl_strm) = az + c_az; 
+      __pl.alt(__pl_strm) = alt + c_alt;
+      title(sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
+      eval(script)
+    endif
+    
   endwhile
 
   __pl.az(__pl_strm) = az + c_az; 

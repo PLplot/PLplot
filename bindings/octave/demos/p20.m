@@ -14,37 +14,37 @@
 
 function p20
 
-multiplot(4,4)
+  multiplot(4,4)
 
-subwindow(1, 1)
-p1
-subwindow(3 ,4)
-p2
-subwindow(1 ,4)
-p3
-subwindow(3 ,1)
-p4
-subwindow(2 ,4)
-p5
-subwindow(2 ,1)
-p6
-subwindow(2 ,3)
-p7
-subwindow(2 ,2)
-p8
-subwindow(3 ,3)
-p9
-subwindow(3 ,2)
-p11
-subwindow(1 ,3)
-p13
-subwindow(4 ,1)
-p10
-subwindow(4 ,2)
-p15
-subwindow(4 ,3)
-p14
-subwindow(1 ,2)
-p12
+  subwindow(1, 1)
+  p1
+  subwindow(3 ,4)
+  p2
+  subwindow(1 ,4)
+  p3
+  subwindow(3 ,1)
+  p4
+  subwindow(2 ,4)
+  p5
+  subwindow(2 ,1)
+  p6
+  subwindow(2 ,3)
+  p7
+  subwindow(2 ,2)
+  p8
+  subwindow(3 ,3)
+  p9
+  subwindow(3 ,2)
+  p11
+  subwindow(1 ,3)
+  p13
+  subwindow(4 ,1)
+  p10
+  subwindow(4 ,2)
+  p15
+  subwindow(4 ,3)
+  p14
+  subwindow(1 ,2)
+  p12
 
 endfunction

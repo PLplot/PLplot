@@ -12,14 +12,14 @@
 ##
 ## This file is part of plplot_octave.
 
-#   hsv = rgb2hls(rgb)
-#   
-#   red-green-blue to hue-lightness-saturation conversion.
-#	all components in the range [0..1]
+## hsv = rgb2hls(rgb)
+##   
+## red-green-blue to hue-lightness-saturation conversion.
+##   all components in the range [0..1]
 
 function hls = rgb2hls(rgb)
 
-[h, l, s] = plRGB_HLS(rgb(:,1), rgb(:,2), rgb(:,3));
-hls = [h/360, l, s];
+  [h, l, s] = plRGB_HLS(rgb(:,1), rgb(:,2), rgb(:,3));
+  hls = [h/360, l, s];
 
 endfunction

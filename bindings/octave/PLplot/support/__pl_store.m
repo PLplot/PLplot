@@ -14,15 +14,15 @@
 
 function __pl_store(x, y, fmt)
 
-global __pl
+  global __pl
 
-if (!struct_contains(__pl, "items"))
-	__pl.items=1;
-endif
+  if (!struct_contains(__pl, "items"))
+    __pl.items=1;
+  endif
 
-eval(sprintf("__pl.x%d=x; __pl.y%d=y; __pl.fmt%d=fmt;",\
-	__pl.items, __pl.items, __pl.items));
-	
-__pl.items = __pl.items + 1;
+  eval(sprintf("__pl.x%d=x; __pl.y%d=y; __pl.fmt%d=fmt;",\
+	       __pl.items, __pl.items, __pl.items));
+  
+  __pl.items = __pl.items + 1;
 
 endfunction

@@ -12,22 +12,22 @@
 ##
 ## This file is part of plplot_octave.
 
-#	rgbplot(map)
-#
-#   Plot color map.
-#	rgbplot(MAP) plots a color map, i.e. an m-by-3 matrix which
-#	is appropriate input for COLORMAP. The three columns of the
-#	colormap matrix are plotted in red, green, and blue lines.
+## rgbplot(map)
+##
+## Plot color map.
+## rgbplot(MAP) plots a color map, i.e. an m-by-3 matrix which
+## is appropriate input for COLORMAP. The three columns of the
+## colormap matrix are plotted in red, green, and blue lines.
 
 function rgbplot(map)
 
-if (columns(map) != 3)
-	error('map must be a 3-column colormap matrix.');
-endif
+  if (columns(map) != 3)
+    error('map must be a 3-column colormap matrix.');
+  endif
 
-m = 1:size(map,1);
-leg = ['r;Red;'; 'g;Green;'; 'b;Blue;'];
+  m = 1:size(map,1);
+  leg = ['r;Red;'; 'g;Green;'; 'b;Blue;'];
 
-plot(m, map, leg);
+  plot(m, map, leg);
 
 endfunction

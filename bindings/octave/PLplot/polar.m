@@ -35,11 +35,11 @@ function polar (x1, x2, fmt)
   ## temporarily, probably inside an unwind_protect block, but there is
   ## no way to determine their current values.
 
-global __pl
+  global __pl
 
-	__pl.type = -1;
-	__pl.items = 1;
-	
+  __pl.type = -1;
+  __pl.items = 1;
+  
   if (nargin == 3)
     if (!isstr (fmt))
       error ("polar: third argument must be a string");
@@ -59,6 +59,6 @@ global __pl
     usage ("polar (theta, rho, fmt)");
   endif
   
-	__pl_plotit;
-	
+  __pl_plotit;
+  
 endfunction

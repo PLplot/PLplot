@@ -23,26 +23,27 @@
 function comet(x, y, p)
 
   if (nargin == 0)
-	x = -pi:pi/200:pi;
-	y = tan(sin(x))-sin(tan(x));
-	p = 0.1;
-	plot(x,y);
+    x = -pi:pi/200:pi;
+    y = tan(sin(x))-sin(tan(x));
+    p = 0.1;
   elseif (nargin < 2)
-	y = x;
-	x = 1:length(y);
+    y = x;
+    x = 1:length(y);
   endif
 
   if (nargin < 3)
-	p = 0.10;
+    p = 0.10;
   endif
 
   if (rows(x) != 1)
-	x = x';
+    x = x';
   endif
 
   if (rows(y) != 1)
-	y = y';
+    y = y';
   endif
+
+  plot(x,y);
 
   [r, g, b] = plgcol0(1);
   plscol0(1, 255, 0, 255);
@@ -55,36 +56,36 @@ function comet(x, y, p)
   m = length(x);
   k = round(p*m);
   if (k == 1)
-	k = 2;
+    k = 2;
   endif
   plxormod(1);
   
   unwind_protect # recover if user hit ^C
-		
-	## Grow the body
-	for i = 1:k
-	  __comet(x(1:i), y(1:i));
-	endfor
+    
+    ## Grow the body
+    for i = 1:k
+      __comet(x(1:i), y(1:i));
+    endfor
 
-	## Primary loop
-	for i = k+1:m-k
-	  __comet(x(i:i+k), y(i:i+k));
-	endfor
+    ## Primary loop
+    for i = k+1:m-k
+      __comet(x(i:i+k), y(i:i+k));
+    endfor
 
-	## Clean up the tail
-	for i = m-k+1:m
-	  __comet(x(i:m), y(i:m));
-	endfor
-	
+    ## Clean up the tail
+    for i = m-k+1:m
+      __comet(x(i:m), y(i:m));
+    endfor
+    
   unwind_protect_cleanup
-	
-	plxormod(0);
-	
-	if (old_hold == 0)
-	  hold "off"
-	endif
+    
+    plxormod(0);
+    
+    if (old_hold == 0)
+      hold "off"
+    endif
 
-	plscol0(1, r, g, b);
+    plscol0(1, r, g, b);
 
   end_unwind_protect
 

@@ -51,6 +51,6 @@ function __plt2vv__ (x, y, fmt)
     error ("__plt2vv__: vector lengths must match");
   endif
 
-	__pl_store(x, y, fmt);
+  __pl_store(x, y, fmt);
 
 endfunction

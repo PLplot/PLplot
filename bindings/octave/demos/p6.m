@@ -14,8 +14,8 @@
 
 function p6
 
-[x y z]=rosenbrock;z=log(z);
-title("Contour example");
-contour(x,y,z)
+  [x y z] = rosenbrock; z = log(z);
+  title("Contour example");
+  contour(x,y,z)
 
 endfunction

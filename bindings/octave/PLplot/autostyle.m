@@ -12,24 +12,24 @@
 ##
 ## This file is part of plplot_octave.
 
-# st = autostyle "on" | "off"
-#
-# if set increases line style after each plot.
-# return current status;
-# Usefull for B&W plots
+## st = autostyle "on" | "off"
+##
+## if set increases line style after each plot.
+## return current status;
+## Usefull for B&W plots
 
 function st = autostyle(x)
 
-global __pl __pl_inited
+  global __pl __pl_inited
 
-if (!exist("__pl_inited") || plglevel == 0)
-	figure(0)
-endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
-__pl_strm = plgstrm+1;
+  __pl_strm = plgstrm+1;
 
   if (nargout == 1)
-  	st = __pl.lstlyle(__pl_strm);
+    st = __pl.lstlyle(__pl_strm);
   endif
   
   if (nargin == 1)
@@ -39,7 +39,7 @@ __pl_strm = plgstrm+1;
       elseif (strcmp ("on", x))
         __pl.lstlyle(__pl_strm) = 1;
       else
-    help autostyle
+	help autostyle
       endif
     else
       error ("autostyle: argument must be a string");

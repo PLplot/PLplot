@@ -12,20 +12,20 @@
 ##
 ## This file is part of plplot_octave.
 
-# legend ([status [, xposition [, yposition]])
-#
-# turns the plot legend status = "off" || "on" == "transparent" || "opaque",
-# left top corner legend at position (left)(botton) 0 <= position <= 1 (right)(top)
+## legend ([status [, xposition [, yposition]])
+##
+## turns the plot legend status = "off" || "on" == "transparent" || "opaque",
+## left top corner legend at position (left)(botton) 0 <= position <= 1 (right)(top)
 
 function legend (x, xpos, ypos)
 
-global __pl __pl_inited
+  global __pl __pl_inited
 
-if (!exist("__pl_inited") || plglevel == 0)
-	figure(0)
-endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
-__pl_strm = plgstrm+1;
+  __pl_strm = plgstrm+1;
 
   if (nargin == 0)
     __pl.legend(__pl_strm) = 1;
@@ -47,8 +47,8 @@ __pl_strm = plgstrm+1;
   endif
   
   if (nargin == 3)
-  	__pl.legend_xpos(__pl_strm) = xpos;
-  	__pl.legend_ypos(__pl_strm) = ypos;
+    __pl.legend_xpos(__pl_strm) = xpos;
+    __pl.legend_ypos(__pl_strm) = ypos;
   endif
 
 endfunction

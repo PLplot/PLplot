@@ -30,26 +30,26 @@
 
 function text = zlabel (text)
 
-global __pl __pl_inited
+  global __pl __pl_inited
 
-if (!exist("__pl_inited") || plglevel == 0)
-	figure(0)
-endif
+  if (!exist("__pl_inited") || plglevel == 0)
+    figure(0)
+  endif
 
   if (nargin > 1)
-      usage ("zlable (text)");
+    usage ("zlable (text)");
   endif
   
-   __pl_strm = plgstrm+1;
+  __pl_strm = plgstrm+1;
 
-   if (isempty(text))
-   	text = " ";
-   endif
-	
+  if (isempty(text))
+    text = " ";
+  endif
+  
   if (nargin == 0)
-  	text = __pl.zlabel(__pl_strm,:);
+    text = __pl.zlabel(__pl_strm,:);
   else
-	__pl.zlabel = __pl_matstr(__pl.zlabel, text, __pl_strm);
+    __pl.zlabel = __pl_matstr(__pl.zlabel, text, __pl_strm);
   endif
 
 endfunction

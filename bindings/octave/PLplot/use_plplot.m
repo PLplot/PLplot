@@ -16,7 +16,7 @@
 ## Author: Rafael Laboissiere <rafael@icp.inpg.fr>
 ## Modified: Joao Cardoso <jcardoso@inescn.pt>
 ## Created on: Sun Oct 18 22:03:10 CEST 1998
-## Last modified on: Fri Dec 11 17:09:58 CET 1998
+## Last modified on: March 2001
 ## 
 ## Copyright (C) 1998 Rafael Laboissiere
 ## 
@@ -26,51 +26,36 @@
 
 function use_plplot(action)
 
-global __pl_plplot_octave_path
+  global __pl_plplot_octave_path
 
-if (!exist("__pl_plplot_octave_path"))
-  __pl_plplot_octave_path = "/usr/local/share/plplot_octave";
-endif
+  if (!exist("__pl_plplot_octave_path"))
+    __pl_plplot_octave_path = "PLPLOT_OCTAVE_PATH";
+  endif
 
   if (nargin == 0)
     action = "on";
   endif
 
-  old_empty = empty_list_elements_ok;
-  empty_list_elements_ok = 1;
-  dirs = split(LOADPATH, ":");
-  n = size(dirs,1);
+  ix = findstr( LOADPATH,  __pl_plplot_octave_path);
+  if (!isempty(ix))
+    LOADPATH(ix, len( __pl_plplot_octave_path))= "";
+  endif
 
-  plpath = load_path = [];
-  for i=1:n
-    if strcmp(deblank(dirs(i,:)),__pl_plplot_octave_path)
-      plpath = [plpath, i];
-    endif
-  endfor
-
-  j = 1;
-  for i=1:n
-    if find(plpath != i)
-      if j==1
-        load_path = deblank(dirs(i,:));
-      else
-        load_path = [load_path, ":", deblank(dirs(i,:))];
-      endif
-      j = j+1;
-    endif
-  endfor
+  lcd = pwd;
+  cd (plplot_octave_path);
+  t = glob("*.m");
+  for i=t';clear(deblank(i'));end
+  cd (lcd);
 
   if (strcmp(action, "on"))
-    LOADPATH = [__pl_plplot_octave_path, ":", load_path];
+    LOADPATH = [__pl_plplot_octave_path, ":", LOADPATH];
     plplot_stub;
   elseif (strcmp(action, "off"))
-    LOADPATH = load_path;
+    LOADPATH = [LOADPATH, ":", __pl_plplot_octave_path];
   else
-  	help "use_plplot"
+    help "use_plplot"
   endif
   
- empty_list_elements_ok = old_empty;
-    
 endfunction
 
 

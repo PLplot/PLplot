@@ -12,24 +12,24 @@
 ##
 ## This file is part of plplot_octave.
 
-# closeallfig()
-#
-# Close all plplot windows
+## closeallfig()
+##
+## Close all plplot windows
 
 function closeallfig
 
-global  __pl_inited __pl
+  global  __pl_inited __pl
 
-if (!exist("__pl_inited") || !exist("__pl"))
-	return
-endif
+  if (!exist("__pl_inited") || !exist("__pl"))
+    return
+  endif
 
-# another atexit bug!
-# if rows() has not been used when closeallfig is called, an error occurs here
-[nr, nc] = size(__pl.open);
+  ## another atexit bug!
+  ## if rows() has not been used when closeallfig is called, an error occurs here
+  [nr, nc] = size(__pl.open);
 
-__pl.open = zeros(nr,1);
+  __pl.open = zeros(nr,1);
 
-plend
+  plend
 
 endfunction

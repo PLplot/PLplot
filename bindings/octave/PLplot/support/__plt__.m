@@ -22,21 +22,21 @@
 
 function __plt__ (caller, ...)
 
-global __pl
+  global __pl
 
-	switch(caller)
-		case ("plot")
-			__pl.type = 1;
-		case ("logx")
-			__pl.type = 11;
-		case ("logy")
-			__pl.type = 21;
-		case ("lgxy")
-			__pl.type = 31;
-		otherwise
-			__pl.type = 1;
-			error("__plt__: FIXME")
-	endswitch
+  switch(caller)
+    case ("plot")
+      __pl.type = 1;
+    case ("logx")
+      __pl.type = 11;
+    case ("logy")
+      __pl.type = 21;
+    case ("lgxy")
+      __pl.type = 31;
+    otherwise
+      __pl.type = 1;
+      error("__plt__: FIXME")
+  endswitch
 
   if (nargin == 2)
 
@@ -66,7 +66,7 @@ global __pl
 	  if (! x_set)
 	    error ("plot: no data to plot");
 	  endif
-		fmt = new;
+	  fmt = new;
 	  if (! y_set)
 	    __plt1__ (x, fmt);
 	  else
@@ -120,6 +120,6 @@ global __pl
 
   endif
   
-	__pl_plotit;
-	
+  __pl_plotit;
+  
 endfunction

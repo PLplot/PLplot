@@ -14,13 +14,13 @@
 
 function p5
 
-x=-pi:0.01:pi;
-y=sin(x).+cos(3*x);
-#plsdiori(1);
-grid "on"
-title("Polar example");
-polar(x,y)
-grid "off"
-plsdiori(0);
+  x=-pi:0.01:pi;
+  y=sin(x).+cos(3*x);
+  ## plsdiori(1);
+  grid "on"
+  title("Polar example");
+  polar(x,y)
+  grid "off"
+  ## plsdiori(0);
 
 endfunction

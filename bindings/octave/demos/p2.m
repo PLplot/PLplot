@@ -15,14 +15,14 @@
 
 function p2 
 
-    legend("opaque",0)
-    title("PLplot Example 2");
+  legend("opaque",0)
+  title("PLplot Example 2");
 
-    x=-pi/2:0.1:2*pi;
-    y1=sinc(x);
-    y2=sin(x).*cos(2*x);
-    y3=x.*sin(x);
-    plot(x, y1,';sinc(x);',x,y2,'b;sin(x)*cos(2*x);',x,y3,'g;x*sin(x);');
+  x=-pi/2:0.1:2*pi;
+  y1=sinc(x);
+  y2=sin(x).*cos(2*x);
+  y3=x.*sin(x);
+  plot(x, y1,';sinc(x);',x,y2,'b;sin(x)*cos(2*x);',x,y3,'g;x*sin(x);');
 
 endfunction
 

@@ -12,31 +12,31 @@
 ##
 ## This file is part of plplot_octave.
 
-# current_state = fig_state([old_state])
-#
-# save/restore current figure axis and hold state
+## current_state = fig_state([old_state])
+##
+## save/restore current figure axis and hold state
 
 function cur_st = fig_state(old_st)
 
-cur_st.ax_set = axis_set;
-if (cur_st.ax_set)
-	cur_st.ax = axis;
-	axis(cur_st.ax);
-endif
+  cur_st.ax_set = axis_set;
+  if (cur_st.ax_set)
+    cur_st.ax = axis;
+    axis(cur_st.ax);
+  endif
 
-cur_st.is_hold = ishold;
+  cur_st.is_hold = ishold;
 
-if (nargin == 1)
-	if (old_st.ax_set)
-		axis(old_st.ax);
-	else
-		axis;
-	endif
+  if (nargin == 1)
+    if (old_st.ax_set)
+      axis(old_st.ax);
+    else
+      axis;
+    endif
 
-	hold "off"
-	if (old_st.is_hold)
-		hold "on"
-	endif
-endif
+    hold "off"
+    if (old_st.is_hold)
+      hold "on"
+    endif
+  endif
 
 endfunction
