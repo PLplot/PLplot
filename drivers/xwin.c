@@ -2969,8 +2969,8 @@ DrawImage(PLStream *pls)
 	/* Fill square between current and next points. */
 
 	/* If the fill area is a single dot, accelerate the fill. */	   
-	if (0 /* aliasing? */ && (abs(Ppts[2].x - Ppts[0].x) == 1) &&
-	    (abs(Ppts[3].y - Ppts[1].y) == 1)) {
+	if ( (fabs(Ppts[2].x - Ppts[0].x) == 1) &&
+	    (fabs(Ppts[3].y - Ppts[1].y) == 1)) {
 	  XPutPixel(ximg, Ppts[0].x, dev->height-1 - Ppts[0].y, curcolor.pixel);
 
 	  /* integer rotate, accelerate */
