@@ -49,7 +49,7 @@ class  MenuExample(QWidget):
 
     def  Run(self):
        self.qpl.set_stream()
-       exec(str(self.mle.text()))
+       exec(str(self.mle.text()), globals(),globals())
 
   
        
@@ -78,7 +78,7 @@ class  MenuExample(QWidget):
 
 
     def  open(self):
-         self.command=str((QFileDialog.getOpenFileName()))
+         self.command=str((QFileDialog.getOpenFileName(".","*.py",)))
          print self.command
          f=open(self.command,"r")
          self.command=f.read()
