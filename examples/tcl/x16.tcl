@@ -16,6 +16,7 @@ proc x16 {{w loopback}} {
     set min_color 1; set min_width 0; set max_color 0; set max_width 0
 
     matrix clevel f $ns
+    matrix shedge f [expr $ns+1]
     matrix xg1 f $nx
     matrix yg1 f $ny
     matrix xg2 f $nx $ny
@@ -26,9 +27,9 @@ proc x16 {{w loopback}} {
 # Set up data array
 
     for {set i 0} {$i < $nx} {incr i} {
-	set x [expr ($i - ($nx/2.)) / ($nx/2.)]
+	set x [expr double($i - ($nx/2)) / double($nx/2)]
 	for {set j 0} {$j < $ny} {incr j} {
-	    set y [expr ($j - .5 * $ny) / (.5 * $ny) - 1.]
+	    set y [expr double($j - $ny/2) / double($ny/2) - 1.]
 
 	    zz $i $j = [expr -sin(7.*$x) * cos(7.*$y) + $x*$x - $y*$y ]
 	    ww $i $j = [expr -cos(7.*$x) * sin(7.*$y) + 2 * $x * $y ]
@@ -46,6 +47,10 @@ proc x16 {{w loopback}} {
 
     for {set i 0} {$i < $ns} {incr i} {
 	clevel $i = [expr $zmin + ($zmax - $zmin) * ($i + .5) / $ns.]
+    }
+
+    for {set i 0} {$i < [expr $ns+1]} {incr i} {
+	shedge $i = [expr $zmin + ($zmax - $zmin) * double($i) / double($ns)]
     }
 
 # Build the 1-d coord arrays.
@@ -164,36 +169,53 @@ proc x16 {{w loopback}} {
     $w cmd plcol0 1
     $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
     $w cmd plcol0 2
-#    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);
     $w cmd plcont ww clevel pltr2 xg2 yg2
 
     $w cmd pllab "distance" "altitude" "Bogon density, with streamlines"
 
-# Do it again, but show wrapping support.
+# Plot using 2d coordinate transform with both shades and contours.
 
     $w cmd pladv 0
     $w cmd plvpor 0.1 0.9 0.1 0.9
     $w cmd plwind -1.0 1.0 -1.0 1.0
 
-# Hold perimeter
-    matrix px f 100; matrix py f 100
+    for {set i 0} {$i < $ns} {incr i} {
+	set shade_min [expr $zmin + ($zmax - $zmin) * $i / $ns.]
+	set shade_max [expr $zmin + ($zmax - $zmin) * ($i +1.) / $ns.]
+	set sh_color [expr $i. / ($ns-1.)]
+	set sh_width 2
+	$w cmd plpsty 0
 
-    for {set i 0} {$i < 100} {incr i} {
-	set t [expr 2. * $pi * $i / 99.]
-	px $i = [expr cos($t)]
-	py $i = [expr sin($t)]
+	$w cmd plshade zz -1. 1. -1. 1. \
+	    $shade_min $shade_max $sh_cmap $sh_color $sh_width \
+	    $min_color $min_width $max_color $max_width \
+	    0 pltr2 xg2 yg2
     }
-# We won't draw it now b/c it should be drawn /after/ the plshade stuff.
 
-# Now build the new coordinate matricies.
+    $w cmd plcol0 2
+    $w cmd plcont zz shedge pltr2 xg2 yg2
+    $w cmd plcol0 1
+    $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
+    $w cmd plcol0 2
 
-    matrix xg f $nx $ny
-    matrix yg f $nx $ny
-    matrix z  f $nx $ny
+    $w cmd pllab "distance" "altitude" "Bogon density"
+
+# Polar plot example demonstrating wrapping support.
+
+    $w cmd pladv 0
+    $w cmd plvpor 0.1 0.9 0.1 0.9
+    $w cmd plwind -1.0 1.0 -1.0 1.0
+
+# Now build the new coordinate matrices.
+
+    set nylim [expr $ny - 1]; set wrap 2;
+    matrix xg f $nx $nylim
+    matrix yg f $nx $nylim
+    matrix z  f $nx $nylim
 
     for {set i 0} {$i < $nx} {incr i} {
 	set r [expr $i / ($nx - 1.)]
-	for {set j 0} {$j < $ny} {incr j} {
+	for {set j 0} {$j < $nylim} {incr j} {
 	    set t [expr 2. * $pi * $j / ($ny - 1.)]
 
 	    xg $i $j = [expr $r * cos($t)]
@@ -203,12 +225,12 @@ proc x16 {{w loopback}} {
 	}
     }
 
-# Need a new clevel to go allong with the new data set.
+# Need a new clevel to go along with the new data set.
 
     set zmin [z 0 0]
     set zmax $zmin
     for {set i 0} {$i < $nx} {incr i} {
-	for {set j 0} {$j < $ny} {incr j} {
+	for {set j 0} {$j < $nylim} {incr j} {
 	    if {[z $i $j] < $zmin} { set zmin [z $i $j] }
 	    if {[z $i $j] > $zmax} { set zmax [z $i $j] }
 	}
@@ -230,10 +252,18 @@ proc x16 {{w loopback}} {
 	$w cmd plshade z -1. 1. -1. 1. \
 	    $shade_min $shade_max $sh_cmap $sh_color $sh_width \
 	    $min_color $min_width $max_color $max_width \
-	    0 pltr2 xg yg 2
+	    0 pltr2 xg yg $wrap
     }
 
-# Now we can draw the perimeter.
+# Hold perimeter
+    matrix px f 100; matrix py f 100
+
+    for {set i 0} {$i < 100} {incr i} {
+	set t [expr 2. * $pi * $i / 99.]
+	px $i = [expr cos($t)]
+	py $i = [expr sin($t)]
+    }
+# draw the perimeter.
     $w cmd plcol0 1
     $w cmd plline 100 px py
 
