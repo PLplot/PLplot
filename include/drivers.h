@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1994/07/25 06:04:58  mjl
+ * Revision 1.21  1994/08/26 19:17:42  mjl
+ * Entries for conex device added; contributed by Mark Olesen.
+ *
+ * Revision 1.20  1994/07/25  06:04:58  mjl
  * Added prototype for new lj_hpgl driver.
  *
  * Revision 1.19  1994/07/19  22:35:14  mjl
@@ -74,6 +77,7 @@ void plD_init_tek4107f		(PLStream *);
 void plD_init_mskermit		(PLStream *);
 void plD_init_versaterm		(PLStream *);
 void plD_init_vlt		(PLStream *);
+void plD_init_conex		(PLStream *);
 
 void plD_line_tek		(PLStream *, short, short, short, short);
 void plD_polyline_tek		(PLStream *, short *, short *, PLINT);

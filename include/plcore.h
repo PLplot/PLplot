@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1994/07/25 06:05:35  mjl
+ * Revision 1.24  1994/08/26 19:17:44  mjl
+ * Entries for conex device added; contributed by Mark Olesen.
+ *
+ * Revision 1.23  1994/07/25  06:05:35  mjl
  * Added dispatch table entry for new lj_hpgl driver.
  *
  * Revision 1.22  1994/07/19  22:36:10  mjl
@@ -332,7 +335,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#if defined (__EMX__) && defined (EMXVESA)      /* graphics for emx+gcc */
+#ifdef PLD_emxvga		       /* graphics for emx+gcc */
     {
 	"VGA Screen (emx)",
 	"vga",
@@ -434,6 +437,22 @@ static PLDispatchTable dispatch_table[] = {
 	"vlt",
 	1,
 	plD_init_vlt,
+	plD_line_tek,
+	plD_polyline_tek,
+	plD_eop_tek,
+	plD_bop_tek,
+	plD_tidy_tek,
+	plD_state_tek,
+	plD_esc_tek
+    },
+#endif
+
+#ifdef PLD_conex
+    {
+	"Conex vt320/tek emulator",
+	"conex",
+	1,
+	plD_init_conex,
 	plD_line_tek,
 	plD_polyline_tek,
 	plD_eop_tek,
