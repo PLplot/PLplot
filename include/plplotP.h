@@ -95,6 +95,7 @@ typedef char * caddr_t;
 #include <math.h>
 #include <string.h>
 #include <limits.h>
+#include <float.h>
 
 #if HAVE_DIRENT_H
 # include <dirent.h>
