@@ -102,7 +102,7 @@ function set_view (alt, az)
 			break
 	 	elseif (button == 1) # mark position
 			ox = dX; oy = dY;
-			alt += c_alt; az += c_az;
+			alt = alt + c_alt; az = az + c_az;
 			c_alt = c_az = 0;
 	 	elseif (button == 0) # drag
 			c_az = (dX-ox)*100;
