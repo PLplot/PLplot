@@ -339,3 +339,12 @@ x01cc$E:  $(PLLIBS) x01cc$O
 	$(LDCXX) $(LDCXX_FLAGS) $(STARTUP) x01cc$O \
 	       	$(PLLIB_LDCXX) $(TO) $@ $(LDCXX_LIBS) $(DEMOS_RPATH)
 
+# Convenience rules for testing.
+
+bugcc$O: bugcc.cc
+	$(CC) $(CC_FLAGS_DEMOS) bugcc.cc
+
+bugcc$E: $(PLLIBS) bugcc$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) bugcc$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
+
