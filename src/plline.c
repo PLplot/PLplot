@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/03/03 19:42:22  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.6  1993/03/17 17:01:40  mjl
+   Eliminated some dead assignments that turned up when running with SAS/C's
+   global optimizer enabled on the Amiga.
 
+ * Revision 1.5  1993/03/03  19:42:22  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.4  1993/02/23  05:16:19  mjl
  * Changed references in error messages from plstar to plinit, and fixed
  * some error messages to be more specific.
@@ -372,19 +376,11 @@ clipline(PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
     if (flipx) {
 	*p_x1 = 2 * clpxma - *p_x1;
 	*p_x2 = 2 * clpxma - *p_x2;
-	clpxmi = 2 * clpxma - clpxmi;
-	t = clpxma;
-	clpxma = clpxmi;
-	clpxmi = t;
     }
 
     if (flipy) {
 	*p_y1 = 2 * clpyma - *p_y1;
 	*p_y2 = 2 * clpyma - *p_y2;
-	clpymi = 2 * clpyma - clpymi;
-	t = clpyma;
-	clpyma = clpymi;
-	clpymi = t;
     }
 
     return (0);

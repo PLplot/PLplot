@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/03/16 06:49:26  mjl
-   Changed driver functions that check for events to do so only after a
-   specified number of calls, to reduce overhead.
+   Revision 1.3  1993/03/17 17:01:44  mjl
+   Eliminated some dead assignments that turned up when running with SAS/C's
+   global optimizer enabled on the Amiga.
 
+ * Revision 1.2  1993/03/16  06:49:26  mjl
+ * Changed driver functions that check for events to do so only after a
+ * specified number of calls, to reduce overhead.
+ *
  * Revision 1.1  1993/03/15  21:34:26  mjl
  * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
  * OS 2.0 capabilities.
@@ -188,7 +192,7 @@ void
 amiwn_init(PLStream *pls)
 {
     PLFLT Initdpmx, Initdpmy;
-    struct Screen *wb_screen = NULL;
+    struct Screen *wb_screen;
     
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;

@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/03/03 17:03:20  mjl
-   Changed the -bg flag to accept a full-color argument in the form
-   -bg rrggbb, with rr, gg, bb corresponding to the background RGB
-   values in hex.  Example: -bg FFFF00 to get a yellow background.
+   Revision 1.3  1993/03/17 17:01:37  mjl
+   Eliminated some dead assignments that turned up when running with SAS/C's
+   global optimizer enabled on the Amiga.
 
+ * Revision 1.2  1993/03/03  17:03:20  mjl
+ * Changed the -bg flag to accept a full-color argument in the form
+ * -bg rrggbb, with rr, gg, bb corresponding to the background RGB
+ * values in hex.  Example: -bg FFFF00 to get a yellow background.
+ *
  * Revision 1.1  1993/02/23  05:28:26  mjl
  * Added code to parse command line arguments.  Accepts a data structure with
  * argument specification, syntax, description, mode flag, and function handler
@@ -369,7 +373,7 @@ static int
 ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 	 PLOptionTable *option_table)
 {
-    int i, status=0;
+    int i, status;
     char *opt, *optarg;
 
 /* Only handle actual flags and their arguments */
@@ -761,7 +765,7 @@ HandleOption_geo(char *opt, char *optarg)
 {
     char *field;
     PLFLT xdpi = 0., ydpi = 0.;
-    PLINT xwid = 0, ywid = 0, xoff = 0, yoff = 0;
+    PLINT xwid, ywid, xoff = 0, yoff = 0;
 
 /* Geometry for output window (e.g. 400x400+100+0), note offsets don't work
    correctly at present. */

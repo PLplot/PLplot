@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/01/23 05:44:58  mjl
-   Now holds all box-related routines.
+   Revision 1.5  1993/03/17 17:01:39  mjl
+   Eliminated some dead assignments that turned up when running with SAS/C's
+   global optimizer enabled on the Amiga.
 
+ * Revision 1.4  1993/01/23  05:44:58  mjl
+ * Now holds all box-related routines.
+ *
  * Revision 1.3  1992/09/30  18:25:42  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -508,8 +512,8 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
 	 char *yopt, PLFLT ytick, PLINT nysub)
 {
     static char string[40];
-    PLINT lax, lbx, lcx, lgx, lix, llx, lmx, lnx, lsx, ltx;
-    PLINT lay, lby, lcy, lgy, liy, lly, lmy, lny, lsy, lty, lvy;
+    PLINT lbx, lcx, lgx, llx, lmx, lnx, lsx, ltx;
+    PLINT lby, lcy, lgy, lly, lmy, lny, lsy, lty, lvy;
     PLINT xmajor, xminor, ymajor, yminor;
     PLINT xorigin, yorigin;
     PLINT xmode, xprec, xdigmax, xdigits, xscale;
@@ -557,22 +561,18 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
     ytick1 = ytick;
     nysub1 = nysub;
 
-    lax = stsearch(xopt, 'a');
     lbx = stsearch(xopt, 'b');
     lcx = stsearch(xopt, 'c');
     lgx = stsearch(xopt, 'g');
-    lix = stsearch(xopt, 'i');
     llx = stsearch(xopt, 'l');
     lmx = stsearch(xopt, 'm');
     lnx = stsearch(xopt, 'n');
     lsx = stsearch(xopt, 's');
     ltx = stsearch(xopt, 't');
 
-    lay = stsearch(yopt, 'a');
     lby = stsearch(yopt, 'b');
     lcy = stsearch(yopt, 'c');
     lgy = stsearch(yopt, 'g');
-    liy = stsearch(yopt, 'i');
     lly = stsearch(yopt, 'l');
     lmy = stsearch(yopt, 'm');
     lny = stsearch(yopt, 'n');
@@ -581,9 +581,6 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
     lvy = stsearch(yopt, 'v');
 
     gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
-
-    lax = lax && (vpwymi * vpwyma < 0.0) && !llx;
-    lay = lay && (vpwxmi * vpwxma < 0.0) && !lly;
 
     plgxax(&xdigmax, &xdigits);
     plgyax(&ydigmax, &ydigits);
