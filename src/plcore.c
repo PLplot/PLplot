@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.38  1994/08/10 05:30:18  mjl
+ * Revision 1.39  1994/08/25 04:06:26  mjl
+ * Moved call of plClrCWindows() to plP_eop where it belongs.
+ *
+ * Revision 1.38  1994/08/10  05:30:18  mjl
  * Reversed the order of stream destruction when plend() is called -- now the
  * last-created stream gets destroyed first.  Makes more sense this way and
  * works more robustly with the x14c demo.
@@ -149,6 +152,8 @@ plP_eop(void)
 
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_eop) (plsc);
+
+    plClrCWindows();
 }
 
 /* Set up new page. */
