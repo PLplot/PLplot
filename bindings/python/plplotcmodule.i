@@ -122,7 +122,7 @@ Naming rules:
   $2 = tmp->dimensions[0];
   $1 = (PLINT*)tmp->data;
 }
-%typemap(freearg) (PLINT *ArrayCk, int n) {Py_DECREF(tmp$argnum); }
+%typemap(freearg) (PLINT *ArrayCk, PLINT n) {Py_DECREF(tmp$argnum); }
 
 /* No count but check consistency with previous */
 %typemap(in) PLINT *ArrayCk (PyArrayObject* tmp) {
