@@ -129,8 +129,8 @@ proc x08 {{w loopback}} {
 	    $w cmd plvpor 0.0 1.0 0.0 0.9
 	    $w cmd plwind -1.0 1.0 -0.9 1.1
 	    $w cmd plcol0 3
-	    set title [format "#frPLplot Example 8 - Alt=%.0f, Az=%.0f, Opt=%d" \
-			   [alt $k] [az $k] [opt $k] ]
+	    set title [format "#frPLplot Example 8 - Alt=%.0f, Az=%.0f" \
+			   [alt $k] [az $k]]
 	$w cmd plmtex "t" 1.0 0.5 0.5 $title
 	$w cmd plcol0 1
 	$w cmd plw3d 1.0 1.0 1.0 -1.0 1.0 -1.0 1.0 -1.0 1.0 [alt $k] [az $k]
@@ -139,11 +139,11 @@ proc x08 {{w loopback}} {
 	    "bcdmnstuv" "z axis" 0.0 0
   	  $w cmd plcol0 2
 	  if {$ifshade == 0} {
-	      cmap1_init $w 1
 	     $w cmd plot3d x y z [opt $k] 1
 	  } elseif {$ifshade == 1} {
-	      cmap1_init $w 0
-	      $w cmd plmesh x y z [expr [opt $k] | $MAG_COLOR]
+	     #set up modified false colour cmap1.
+	     cmap1_init $w 0
+	     $w cmd plmesh x y z [expr [opt $k] | $MAG_COLOR]
 	  } elseif {$ifshade == 2} {
 	     #set up modified gray scale cmap1.
 	     cmap1_init $w 1
@@ -161,9 +161,9 @@ proc x08 {{w loopback}} {
 	     cmap1_init $w 0
 	     $w cmd plsurf3d x y z $xpts $ypts \
 		 [expr [opt $k] | $MAG_COLOR | $SURF_CONT | $BASE_CONT] clev $nlev
-	     }
 	  }
        }
+    }
 
 # Restore defaults
     $w cmd plcol0 1
