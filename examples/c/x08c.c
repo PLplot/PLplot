@@ -5,6 +5,19 @@
 
 #include "plcdemos.h"
 
+/*
+ Note that isinf() is not needed with the standard XPTS, YPTS
+ and x and y minimum and maximum values, but if the user changes
+ any of these, then we can get the log of a negative number.
+*/
+
+#if !defined(HAVE_ISINF) && defined(HAVE_FINITE)
+  #define isinf(x) ((x) == (x) && ! finite((x)))
+/* if x is not a NaN (x==x) and is not finite, it must be infinite */ 
+#else
+  #define isinf(x) (0) /* believe in probabilities (i.e., luck :) */
+#endif
+
 #define XPTS   35		/* Data points in x */
 #define YPTS   46		/* Datat points in y */
 
