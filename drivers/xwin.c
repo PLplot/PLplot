@@ -1,75 +1,18 @@
 /* $Id$
  * $Log$
- * Revision 1.41  1994/06/09 20:05:58  mjl
+ * Revision 1.42  1994/06/17 21:21:11  mjl
+ * Fixed background color for mono displays, should now come up white (much
+ * easier to see).  Middle mouse button press now returns world coordinates
+ * at cursor, but only correct for last plot on the page (submitted by
+ * Mark Glover glover@zombi.res.utc.com).
+ *
+ * Revision 1.41  1994/06/09  20:05:58  mjl
  * Fixed Visual handling to support grayscale and mono displays.  Enabled
  * exporting of colormap hack flag for other files (plframe.c) that need it.
  *
  * Revision 1.40  1994/05/27  22:19:17  mjl
  * Window now placed properly when offsets (+x+y) are specified.  Thanks
  * to Mark S. Glover (glover@zombi.res.utc.com) for the fix.
- *
- * Revision 1.39  1994/05/23  22:08:00  mjl
- * Moved code responsible for getting Visual back to where it belongs
- * (it was misplaced last update, causing core dumps on some systems).
- * Assignment of pixel values in cmap1 now staggered, in order to avoid
- * a strange occurance when drawing rubber-banded boxes using xor'ed GC's
- * (e.g. while zooming in plframe widget).
- *
- * Revision 1.38  1994/05/16  21:26:29  mjl
- * The default has been reset to use the default colormap.  The constant
- * ccmap at the head of xwin.c must be set to 1 to get a custom colormap.
- * This should really be a command line switch, except now I'm having no
- * problem with using the default colormap under HPUX.  Go figure.
- *
- * Revision 1.37  1994/05/10  21:44:22  mjl
- * Some cleaning up after previous development.
- *
- * Revision 1.36  1994/05/09  19:54:53  mjl
- * Some bug fixes for non-color displays.
- *
- * Revision 1.35  1994/05/07  03:03:32  mjl
- * Massively restructured initialization to handle custom color maps.
- * Switched to XCreateWindow instead of XCreateSimpleWindow for more power.
- * Initialization of custom color map fairly complex in order to lead to
- * a minimum of flickering -- low color map colors (used by window manager),
- * cmap0 colors, and preallocated colors (used by Tk) are preserved and
- * restored at the same pixel values to avoid undue flickering when switching
- * color maps.  Function PLX_save_colormap added to support the latter.  All
- * colormap state changes now done with XStoreColors which should be much
- * speedier than the old method of freeing and allocating new cells.
- *
- * Revision 1.34  1994/04/30  16:14:50  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.33  1994/04/25  18:45:03  mjl
- * Fixed background bug introduced last update.  Added support for
- * reallocation of cmap0 and cmap1 palettes.
- *
- * Revision 1.32  1994/04/08  11:43:40  mjl
- * Some improvements to color map 1 color allocation so that it will fail
- * less often (temporary, until custom color map support is added).  Master
- * event handler with user entry point added.  Escape function recognizes
- * the PLESC_EH command for handling pending events only, and a mouse handler
- * added (both contributed by Radey Shouman).
- *
- * Revision 1.31  1994/03/23  06:41:25  mjl
- * Added support for: color map 1 color selection, color map 0 or color map 1
- * state change (palette change), polygon fills.  Color map 1 allocator tries
- * to allocate as many colors as possible (minus a small number to be
- * friendly to TK) and reports the result.  Eventually this will be improved
- * to use a custom colormap, copying the colors used by the window manager
- * to reduce the flicker when changing focus.
- *
- * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
- * stdlib.h now included automatically by plplotP.h), extraneous clears
- * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
- * driver interface or driver initialization as appropriate).  Special
- * handling for malloc includes eliminated (no longer needed) and malloc
- * prototypes fixed as necessary.
- *
- * Revision 1.30  1994/01/25  06:18:34  mjl
- * Added double buffering capability.
 */
 
 /*	xwin.c
@@ -594,6 +537,9 @@ Init(PLStream *pls)
 
     plD_state_xw(pls, PLSTATE_COLOR0);
 
+    XSetWindowBackground(dev->display, dev->window, dev->cmap0[0].pixel);
+    XSetBackground(dev->display, dev->gc, dev->cmap0[0].pixel);
+
 /* If main window, need to map it and wait for exposure */
 
     if (dev->is_main) 
@@ -692,9 +638,6 @@ Map_main(PLStream *pls)
 		 ExposureMask | StructureNotifyMask);
 
 /* Window mapping */
-
-    XSetWindowBackground(dev->display, dev->window, dev->cmap0[0].pixel);
-    XSetBackground(dev->display, dev->gc, dev->cmap0[0].pixel);
 
     XMapRaised(dev->display, dev->window);
 
@@ -868,6 +811,7 @@ MouseEH(PLStream *pls, XEvent *event)
     XwDev *dev = (XwDev *) pls->dev;
 
     PLMouse mouse;
+    float xcoord, ycoord;
 
     dbug_enter("MouseEH");
 
@@ -889,6 +833,17 @@ MouseEH(PLStream *pls, XEvent *event)
 
     case Button2:
 	printf("%f\t%f\n", mouse.x, mouse.y);
+        xcoord=((event->xbutton.x+1-(pls->vpdxmi)*(pls->xlength))/
+                ((pls->vpdxma-pls->vpdxmi)*pls->xlength))*pls->vpwxma;
+        ycoord=((pls->ylength - event->xbutton.y+1-(pls->vpdymi)*(pls->ylength))/
+                ((pls->vpdyma-pls->vpdymi)*pls->ylength))*pls->vpwyma;
+	printf("%f\t%f\n", xcoord, ycoord);
+#ifdef DEBUG
+        printf("[xwin.c:MouseEH:] world X coord = %f\n",
+               xcoord);
+        printf("[xwin.c:MouseEH:] world Y coord = %f\n",
+               ycoord);
+#endif /* DEBUG */
 	break;
 
     case Button3:
@@ -1203,7 +1158,8 @@ Init_Colors(PLStream *pls)
  * grayscale monitors have poor contrast, and black-on-white looks better).
  */
 
-    if ( ! dev->color && ! pls->cmap0setcol[0]) {
+/*    if ( ! dev->color && ! pls->cmap0setcol[0]) {*/
+    if ( ! dev->color) {
 	pls->cmap0[0].r = pls->cmap0[0].g = pls->cmap0[0].b = 0xFF;
     }
     gslevbg = ((long) pls->cmap0[0].r +
