@@ -1195,6 +1195,7 @@ AC_CONFIG_FILES([
 	examples/tk/Makefile
 	examples/tk/Makefile.examples
 	examples/java/Makefile
+	examples/perl/Makefile
 	test/Makefile
 	test/plplot-test.sh
 	test/test_python.sh
