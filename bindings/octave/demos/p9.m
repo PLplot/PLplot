@@ -1,5 +1,4 @@
-
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -16,12 +15,13 @@
 function p9
 
   t = automatic_replot;
-  as = autostyle;
-  ls = legend;
-
-  legend "off"
   automatic_replot = 0;
+
+  as = autostyle;
   autostyle ("off");
+
+  ls = legend;
+  legend "off"
 
   step = 0.2;
   x = -2:step:2;
@@ -37,7 +37,7 @@ function p9
   plflush;
 
   legend(ls);
-  automatic_replot = t;
   autostyle(as); 
+  automatic_replot = t;
 
 endfunction
