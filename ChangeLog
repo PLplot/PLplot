@@ -2,6 +2,12 @@
 
 	* Finish AT libplplottcltk.so* build when itcl and tk are enabled.
 
+	* bindings/tk for AT: build and install plserver and *.tcl, *.itk,
+	  and palette (*.pal) files.
+
+	* acinclude.m4 copied (again) from cf/aclocal.m4 for AT branch to
+	  pick up all the autoconf 2.5.3 changes.
+
 2002-11-29  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* Finish AT tcl binding.  These are only small fairly

@@ -742,6 +742,7 @@ AC_OUTPUT([
 	bindings/f77/Makefile
 	bindings/python/Makefile
 	bindings/tcl/Makefile
+	bindings/tk/Makefile
 	drivers/Makefile
 	examples/Makefile
 	examples/c/Makefile
