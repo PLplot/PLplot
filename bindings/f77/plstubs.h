@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/04/26 20:00:55  mjl
-   Configuration info added for a DEC Alpha-based machine running OSF/1.
+   Revision 1.12  1993/07/02 07:26:10  mjl
+   Changed include of plplot.h to plplotP.h.  Also added IRIX support.
 
+ * Revision 1.11  1993/04/26  20:00:55  mjl
+ * Configuration info added for a DEC Alpha-based machine running OSF/1.
+ *
  * Revision 1.10  1993/03/28  08:45:07  mjl
  * Added support for NEC SX-3.  Also moved determination of stub name handling
  * to plstubs.h (more appropriate).
@@ -71,7 +74,7 @@
 #ifndef INCLUDED_PLSTUBS
 #define INCLUDED_PLSTUBS
 
-#include "plplot.h"
+#include "plplotP.h"
 
 /* Select name transformation based on system type */
 
@@ -85,6 +88,10 @@
 
 #ifdef __hpux				/* HP/UX */
 #define STUB_L
+#endif
+
+#ifdef __mips				/* IRIX (SGI systems) */
+#define STUB_LAU
 #endif
 
 #ifdef sun				/* SUN systems */
