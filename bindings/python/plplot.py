@@ -41,10 +41,8 @@ import Numeric
 #  plcont( z, clev, pltr, xg, yg, wrap )
 
 # redefine plcont to have the funky interface
-Cplcont = plcont
+_Cplcont = plcont
 def plcont(z, *args):
-  """Draws a contour plot from data in f(nx,ny).  Is just a front-end to
-  plfcont, with a particular choice for f2eval and f2eval_data. """
   z = Numeric.asarray(z)
   
   if len(args) > 4 and type(args[0]) == types.IntType:
@@ -112,9 +110,10 @@ def plcont(z, *args):
     ky = 1
     ly = z.shape[1]
 
-  Cplcont(z, kx, lx, ky, ly, clev, pltr, (xg, yg))
+  _Cplcont(z, kx, lx, ky, ly, clev, pltr, (xg, yg))
+plcont.__doc__ = _Cplcont.__doc__
   
-Cplstyl = plstyl
+_Cplstyl = plstyl
 def plstyl(*args):
   if len(args) == 3:
     n,m,s = args
@@ -130,12 +129,12 @@ def plstyl(*args):
   if type(s) == types.IntType:
     s = [s]
 
-  Cplstyl(m,s)
+  _Cplstyl(m,s)
+plstyl.__doc__ = _Cplstyl.__doc__
 
-Cplshades = plshades
+_Cplshades = plshades
 def plshades(z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, rect,
              *args):
-  '''Color fill plot with old interface.'''
   pltr = pltr0
   xg = None
   yg = None
@@ -181,6 +180,7 @@ def plshades(z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_wid
   else:
     pltr_data = None
 
-  Cplshades(z,  xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width,
+  _Cplshades(z,  xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width,
             rect, pltr, pltr_data)
+plshades.__doc__ = _Cplshades.__doc__
   
