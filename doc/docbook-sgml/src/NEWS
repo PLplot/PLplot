@@ -3,6 +3,16 @@ documentation project. For some background about that project see README.
 Alan W. Irwin (AWI) and Rafael Laboissiere (RL) have been the principal
 contributors to this project so far.
 
+2000 November 15: AWI finished documenting the previously undocumented API
+functions by lifting the comments from the code source.  Those comments
+usually did not include anything about the meaning of the function
+parameters so that continued lack of documentation for the parameters is now
+marked by "NEEDS DOCUMENTATION" rather than the previous ??? which was
+ambiguous.  This occurs about 160 times in api.sgml and needs to be
+addressed by the PLplot gurus. Since AWI is not one of those, this marks the
+end of AWI's work on the API documentation (but not other kinds of
+documentation work).
+
 2000 November 13: AWI moved CHANGES NEWS  (which is the more appropriate
 name for this file).  AWI also put information about Cygnus DocBook into
 README.developers.
