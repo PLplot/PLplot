@@ -1,4 +1,5 @@
-usr/lib/libplplotdtk*.so.*
+usr/lib/libplplotd.so.5*
+usr/lib/libplmatrix.so.5*
 usr/bin/plrender
 usr/bin/plserver
 usr/bin/plm2gif
@@ -9,4 +10,4 @@ usr/share/man/man1/plserver.1
 usr/share/man/man1/plm2gif.1
 usr/share/man/man1/plpr.1
 usr/share/man/man1/pltcl.1
-usr/lib/tcl8.0
+usr/lib/plplot5.0.1/tcl

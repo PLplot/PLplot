@@ -2,12 +2,13 @@ Source: plplot
 Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@icp.inpg.fr>
-Standards-Version: 3.0.1
+Standards-Version: 3.1.0
+Build-Depends: debhelper, tcl8.2-dev | tcl8.3-dev, tk8.2-dev | tk8.3-dev, xlibs-dev | xlib6g-dev
 
 Package: plplot
 Architecture: any
 Depends: ${shlibs:Depends}
-Conflicts: plplot-dev (<= 4.99j-2), plplot-tcl (<= 4.99j-5), plplot-doc (<= 4.99j-5)
+Conflicts: plplot-dev (<= 4.99j-2), plplot-tcl, plplot-doc (<= 4.99j-5)
 Description: Scientific plotting library
  PLplot is relatively small, portable, freely distributable, and is rich
  enough to satisfy most users.  It has a wide range of plot types including
@@ -23,11 +24,12 @@ Description: Scientific plotting library
  A program for rendering Tektronix vector files is also included in
  this package.
  .
- See http://emma.la.asu.edu/plplot for more information on PLplot.
+ See http://www.plplot.org for more information on PLplot.
 
 Package: plplot-tcl
 Architecture: any
-Depends: ${shlibs:Depends}, plplot
+Depends: ${shlibs:Depends}
+Conflicts: plplot
 Description: Tcl/Tk support for PLplot, a plotting library
  This package contains the Tcl/Tk support for PLplot, a scientific
  plotting library: shared and static libraries, Tcl modules, some
@@ -35,25 +37,32 @@ Description: Tcl/Tk support for PLplot, a plotting library
  pltcl), and utility programs for converting PLplot meta files (plpr
  and plm2gif).
  .
- See http://emma.la.asu.edu/plplot for more information on PLplot.
+ See http://www.plplot.org for more information on PLplot.
+
+Package: python-plplot
+Architecture: any
+Depends: plplot-tcl (>= 5.0.1), python-base, python-tk
+Description: Python support for PLplot, a plotting library
+ This package contains the library plmodule.so for gluing the PLplot
+ scientific plotting library into Python applications.
+ .
+ See http://www.plplot.org for more information on PLplot.
 
 Package: plplot-dev
 Architecture: any
-Depends: plplot, plplot-tcl, libc6-dev
+Depends: plplot | plplot-tcl
 Description: Header and static libraries for PLplot, a plotting library
  This package contains all that is needed for doing development in C,
  C++, Fortran, and Tcl/Tk with the PLplot, a scientific plotting library. 
+ Examples for C, C++, Fortran, Tcl/Tk, and Python are also included.
  .
- See http://emma.la.asu.edu/plplot for more information on PLplot.
+ See http://www.plplot.org for more information on PLplot.
 
 Package: plplot-doc
 Architecture: all
-Recommends: plplot
+Recommends: plplot | plplot-tcl, plplot-dev
 Description: Documentation for PLplot, a plotting library
- This package contains documentation for PLplot, a scientific plotting 
- library.  A manual in PostScript format and an info file are
- included, as well as examples for C, C++, Fortran, Tcl/Tk, and
- Python. 
+ This package is just a placeholder for inclusion of the new PLplot docs in
+ the future.  For the new docs in Docbook format, see:
  .
- See http://emma.la.asu.edu/plplot for more information on PLplot.
-
+ http://www.plplot.org/resources/docbook-manual/

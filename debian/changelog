@@ -1,9 +1,35 @@
 plplot (5.0.1-1) unstable; urgency=low
 
   * NOT YET READY FOR RELEASE.
-  * New upstream release.
+  * New upstream release.  Prompt flush for pltcl is working now.
+    (closes: #58273). 
+  * debian/control: 
+    - Upgraded Standards-Version to 3.1.0.  
+    - Added Build-Depends. 
+    - Forced conflict between plplot and plplot-tcl packages.
+    - New descriptions for packages plplot-dev and plplot-doc to reflect
+      the fact that examples go into plplot-dev and plplot-doc is just a
+      placeholder for future inclusion of the documentation in DocBook
+      format. 
+    - Updated URL location of the PLplpot website.
+    - Reintroduced entry for python-plplot.  Updated its dependency on
+      plplot-tcl. 
+  * debian/postinst: Place "exit 0" at the right place, allowing debhelper
+    added code to be executed (closes: #77997).  Also, removed code for
+    installing info manual.  In the future, this will go in pakcage
+    plplot-doc. 
+  * debian/rules: Major rewrite to reflect the new features of upstream
+    build and install.  The main novelty here is the capability of
+    doing make install with another prefix than that usde for building.
+  * debian/*.{docs,files}: Heavily modified to reflect the new upstream
+    version.
+  * debian/control-python, debian/fix-tk-path.pl, debian/postrm,
+    debian/python-exec-header, debian/python-plplot.postinst.debhelper,
+    debian/python-plplot.prerm.debhelper: Removed files. 
+  * debian/plplot-980407-plplot-980407-new.patch: Removed this obsolete
+    file. 
 
- -- Rafael Laboissiere <rafael@icp.inpg.fr>  Fri, 26 Jan 2001 17:05:45 +0100
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Fri,  2 Feb 2001 23:49:49 +0100
 
 plplot (4.99j-11) frozen unstable; urgency=low
 
