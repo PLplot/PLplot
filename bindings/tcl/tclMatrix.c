@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1995/06/28 14:48:25  furnish
+ * Revision 1.11  1995/06/30 13:47:35  furnish
+ * Took out yesterday's hack, which didn't work, and put in a new one
+ * which seems to.
+ *
+ * Revision 1.10  1995/06/28  14:48:25  furnish
  * Little hack to try to cope with the insidious trailing space which
  * screws up Tcl expr something awfull.  This needs to be exercised quite
  * a bit before the next release, though, to be sure it works ok.
@@ -690,22 +694,14 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 		    (*matPtr->put)((ClientData) matPtr, I3D(i,j,k), argv[0]);
 		else {
 		    (*matPtr->get)((ClientData) matPtr, I3D(i,j,k), tmp);
-		    Tcl_AppendResult(interp, tmp, (char *) NULL);
+		    if (i == nmax[0] && j == nmax[1] && k == nmax[2])
+			Tcl_AppendResult(interp, tmp, (char *) NULL);
+		    else
+			Tcl_AppendResult(interp, tmp, " ", (char *) NULL);
 		}
 	    }
 	}
     }
-
-/* Try to hack off the trailing space, it causes endless troubles. */
-    {
-	int len = strlen( tmp );
-	if ( tmp[len-1] == ' ' )
-	    tmp[len-1] = '\0';
-    }
-
-/* BTW, how the heck do we know that tmp is big enough for a multi-value
-   return?  Looks like we should be calculating the size of tmp, then using
-   the TCL_DYNAMIC result management protocol.  Maurice? */
 
     return TCL_OK;
 }
@@ -738,7 +734,7 @@ MatrixGet_f(ClientData clientData, int index, char *string)
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
-    sprintf(string, "%f ", matPtr->fdata[index]);
+    sprintf(string, "%f", matPtr->fdata[index]);
 }
 
 static void
@@ -754,7 +750,7 @@ MatrixGet_i(ClientData clientData, int index, char *string)
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
-    sprintf(string, "%d ", matPtr->idata[index]);
+    sprintf(string, "%d", matPtr->idata[index]);
 }
 
 /*--------------------------------------------------------------------------*\
