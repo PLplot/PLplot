@@ -41,18 +41,35 @@ EXTRA_DIST = \
   plplot_octave_rej.h \
   plplot_octave_def \
   etc \
-  matwrap
+  matwrap \
+  doc-stamp \
+  plplot_octave_txt
+
+doc-stamp plplot_octave_txt: etc/plplot.doc \
+	   $(top_srcdir)/doc/docbook/bin/api2text.pl \
+	   $(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
+	   $(top_srcdir)/doc/docbook/src/api.xml
+if has_xml_pm
+	mkdir -p plplot_octave_txt
+	cp etc/plplot.doc plplot_octave_txt/plplot.doc
+	( cd plplot_octave_txt ; \
+	  $(PERL) $(top_srcdir)/doc/docbook/bin/api2text.pl \
+	  $(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
+	  $(top_srcdir)/doc/docbook/src/api.xml ) \
+	&& touch doc-stamp
+else
+	@echo "Perl modules not available: cannot generate full online help for plplot_octave"
+endif
+
 
 if enable_octave
-
-EXTRA_DIST += doc-stamp plplot_octave_txt
 
 octave_libs = -L../../src/.libs -lplplot$(LIB_TAG)
 
 # Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
 # also still works on gcc 2.95
 plplot_octave.cc tmp_stub: plplot_octave_org.h ${top_builddir}/config.h
-	$(MATWRAP) -language octave -o plplot_octave.cc	-stub tmp_stub \
+	$(PERL) $(MATWRAP) -language octave -o plplot_octave.cc	-stub tmp_stub \
 	-cpp_ignore plplot_octave_rej.h ${top_builddir}/config.h \
 	-cpp c++ -E -C plplot_octave_org.h
 	mv -f plplot_octave.cc tmp_plplot_octave.cc
@@ -86,27 +103,6 @@ octaveshare_SCRIPTS = plplot_octave.oct
 
 noinst_PROGRAMS = massage
 massage_SOURCES = massage.c
-
-# This should be refined with more comprehensive dependencies, a clean
-# target to clean out of all the generated files at clean time, etc.  There
-# are undoubtedly cross-platform issues as well.  But it is good enough for
-# now for a Linux proof-of-concept.
-
-doc-stamp: etc/plplot.doc \
-	   $(top_srcdir)/doc/docbook/bin/api2text.pl \
-	   $(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
-	   $(top_srcdir)/doc/docbook/src/api.xml
-if has_xml_pm
-	mkdir -p plplot_octave_txt
-	cp etc/plplot.doc plplot_octave_txt/plplot.doc
-	( cd plplot_octave_txt ; \
-	  ../$(top_srcdir)/doc/docbook/bin/api2text.pl \
-	  ../$(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
-	  ../$(top_srcdir)/doc/docbook/src/api.xml ) \
-	&& touch doc-stamp
-else
-	@echo "Perl modules not available: cannot generate full online help for plplot_octave"
-endif
 
 plplot_stub.m: doc-stamp tmp_stub massage
 	@head -5 tmp_stub > plplot_stub.m

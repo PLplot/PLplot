@@ -97,15 +97,17 @@ AC_ARG_WITH($1,
   [prog_$1=$withval],
   [prog_$1=$1])
 AC_CHECK_PROG(has_$1, [$prog_$1], found, no)
-PROG=$prog_$1
-AC_SUBST(PROG)
 if test $has_$1 = no ; then
+  PROG=
   if test -n "$2" ; then
     for i in "$2" ; do
       export $i=""
     done
   fi
+else
+  PROG=$prog_$1
 fi
+AC_SUBST(PROG)
 AC_OUTPUT_COMMANDS( [
 if test $has_$1 = no ; then]
 AC_MSG_WARN( [

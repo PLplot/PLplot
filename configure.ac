@@ -777,6 +777,7 @@ AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN, [],
                                [Define if popen is available]))
 AC_CHECK_FUNC(usleep, AC_DEFINE(HAVE_USLEEP, [],
                                [Define if usleep is available]))
+AC_CHECK_LIB(m, sin)
 AC_CHECK_FUNC(isinf, AC_DEFINE(HAVE_ISINF, [],
                                [Define if isinf is available]))
 AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE, [],
@@ -873,6 +874,7 @@ AM_CONDITIONAL(enable_docbook,
 AC_INCLUDE(doc/docbook/docbook.m4)
 
 CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
+PERL=${PERL:-"-@echo perl program not available #"}
 
 if test $enable_builddoc = yes -o \
 \( $enable_octave = yes -a $with_prebuiltdoc = no \) ; then
