@@ -39,6 +39,9 @@ source plgrid.tcl
 plgrid
 exit
 EOF
+# Skip 14th example because requires two output files.
+# Skip 17th example because it is not implemented (and if it was, it
+# would be interactive only).
 $installbindir/pltcl -dev $device -o $results/tcldemos.$dsuffix $options <<EOF
 plinit
 source tcldemos.tcl
@@ -55,10 +58,8 @@ source tcldemos.tcl
 11
 12
 13
-14
 15
 16
-17
 18
 exit
 EOF
