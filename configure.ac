@@ -110,30 +110,26 @@ with_profile=no
 with_shlib=yes
 with_gcc=no
 with_warn=no
-with_dbmalloc=no
-with_fseek=no
 with_pkgdir=
 with_rpath=yes
 with_nobraindead=no
-with_freetype=no
+with_freetype=yes
 
 enable_drivers=yes
-#no required by default because yes needs shared libraries which we don't know
-#about at this point.
-enable_dyndrivers=no
+enable_dyndrivers=yes
 enable_f77=yes
 enable_cxx=yes
 enable_python=yes
 enable_tcl=yes
 enable_itcl=yes
 enable_java=no
-enable_octave=no
+enable_octave=yes
 #explicit default values must be specified here for library and header
 #searching to work right for the following variables.  Note these variables
 #also have a driver role to play, but unlike these, pure-driver variables
 #(e.g., enable_tek4010) do not require a default to be specified here.
 enable_gnome=no
-enable_ntk=no
+enable_ntk=yes
 enable_tkwin=yes
 enable_png=yes
 enable_jpeg=yes
@@ -152,7 +148,6 @@ enable_xfig=yes
 
 # separate the concept of desiring a driver (above) with
 # having system support for it.
-has_x11=yes
 has_tcl=yes
 has_tk=yes
 
@@ -344,7 +339,6 @@ case "$system" in
 	with_opt=no
     ;;
     BSD/OS* )
-	with_fseek=yes
 	with_gcc=yes
     ;;
     linux*|LINUX*|Linux* )
@@ -495,6 +489,12 @@ if test "$enable_dyndrivers" = "yes"; then
     AC_DEFINE(ENABLE_DYNDRIVERS, [],
               [Define if there is support for dynamically loaded drivers])
 fi
+
+### define X_CFLAGS, X_PRE_LIBS, X_LIBS, and X_EXTRA_LIBS
+### must occur before sysloc.in is included since sysloc.in logic depends
+### on it.
+
+AC_PATH_XTRA
 
 ### Modify system-dependent results based on availability
 AC_INCLUDE(sysloc.in)
@@ -804,10 +804,6 @@ AC_SUBST(LIB_DIR)
 AC_SUBST(BIN_DIR)
 AC_SUBST(TCL_DIR)
 AC_SUBST(DRV_DIR)
-
-### define X_CFLAGS, X_PRE_LIBS, X_LIBS, and X_EXTRA_LIBS
-
-AC_PATH_XTRA
 
 ### Drivers
 
