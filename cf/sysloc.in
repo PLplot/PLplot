@@ -18,7 +18,7 @@
 # Can disable explicitly by specifying --disable-xwin.
 # -----------------------------------------------------------------------
 
-AC_ENABLE(xwin, , enable_xwin="yes")
+AC_ENABLE(xwin, , enable_xwin=$enable_drivers)
 
 if test "$enable_xwin" = "yes"; then
     if test -z "$XINCDIR" -o -z "$XLIBDIR"; then
@@ -111,7 +111,6 @@ fi
 # tcl.h
 # -----------------------------------------------------------------------
 
-AC_ENABLE(tcl, , enable_tcl=$enable_xwin)
 header="tcl.h"
 
 if test "$enable_tcl" = "yes"; then
@@ -193,7 +192,10 @@ fi
 # If not in $TCLINCDIR, probably in the user's area.
 # -----------------------------------------------------------------------
 
-AC_ENABLE(dp, , enable_dp=$enable_tcl)
+AC_ENABLE(dp, , enable_dp=$enable_drivers)
+if test "$enable_tcl" = "no"; then
+    enable_dp="no"
+fi
 
 if test "$enable_dp" = "yes"; then
     if test -z "$DPINCDIR"; then
@@ -352,7 +354,10 @@ fi
 # tk.h
 # -----------------------------------------------------------------------
 
-AC_ENABLE(tk, , enable_tk=$enable_tcl)
+AC_ENABLE(tk, , enable_tk=$enable_drivers)
+if test "$enable_tcl" = "no"; then
+    enable_tk="no"
+fi
 header="tk.h"
 
 if test "$enable_tk" = "yes"; then

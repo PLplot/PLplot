@@ -128,8 +128,10 @@ AC_WITH(f2c, ,     with_f2c="no")
 AC_WITH(gcc, ,     with_gcc="no")
 AC_WITH(warn, ,    with_warn="no")
 
-AC_ENABLE(f77, , enable_f77="yes")
-AC_ENABLE(CXX, , enable_CXX="yes")
+AC_ENABLE(drivers, , enable_drivers="yes")
+AC_ENABLE(f77, ,     enable_f77="yes")
+AC_ENABLE(CXX, ,     enable_CXX="yes")
+AC_ENABLE(tcl, ,     enable_tcl="yes")
 
 # --------------------------------------------------------------------
 # Set up prefix
@@ -302,28 +304,35 @@ cat cf/miscdemo.in	>>tmp/Makedemo.in
 
 # --------------------------------------------------------------------
 # Set up variables governing device driver inclusion.
+#
+# You can enable/disable drivers either by the command line
+# (--enable-<driver> or --disable-<driver>) or via the cf_plplot.in file
+# (remember to use underscores instead of dashes here).  You can disable
+# all drivers by default by using --disable-drivers.
 # --------------------------------------------------------------------
 
-define(PL_DRIVERS,[ifelse($1,,,[PL_ADD_DRIVER($1)dnl
-PL_DRIVERS(builtin([shift],$*))])])
+dnl> This macro holds the driver selection code.
 
 define(PL_ADD_DRIVER,[dnl
-AC_ENABLE($1, , enable_$1="yes")
+AC_ENABLE($1, , enable_$1=$enable_drivers)
 if test "$enable_$1" = "yes"; then
     AC_DEFINE(PLD_$1)
     DEVICES="$DEVICES $1"
 fi
 ])dnl
 
-# Including a driver in this list includes it by default.  Maybe not
-# complete, but most of the devices of interest under Unix.  You can
-# enable/disable drivers either by the command line (--enable-<driver> or
-# --disable-<driver>) or via the cf_plplot.in file (remember to use
-# underscores instead of dashes here).
+dnl> Recursive macro to get driver selection code for all the default
+dnl> drivers (list specified below).
 
-PL_DRIVERS(plmeta, null, xterm, tek4010, tek4107, mskermit, conex, vlt,
-versaterm, dg300, ps, xfig, ljii, hp7470, hp7580, lj_hpgl, imp, xwin, tk,
-dp)
+define(PL_DRIVERS,[ifelse($1,,,[PL_ADD_DRIVER($1)dnl
+PL_DRIVERS(builtin([shift],$*))])])
+
+dnl> Including a driver in this list includes it by default.  Maybe not
+dnl> complete, but most of the devices of interest under Unix.  
+
+PL_DRIVERS(plmeta, null, xterm, tek4010, tek4107, mskermit, conex,
+vlt, versaterm, dg300, ps, xfig, ljii, hp7470, hp7580, lj_hpgl, imp,
+xwin, tk, dp)
 
 # --------------------------------------------------------------------
 # Set up variables that specify install directories
