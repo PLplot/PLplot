@@ -205,12 +205,23 @@ extern PLStream	*plsc;
 #define PI		3.1415926535897932384
 #endif
 
-/* These define the metafile & X driver (virtual) coordinate systems */
+/* These define the virtual coordinate system used by the metafile driver.
+   Others are free to use it, or some variation, or define their own. */
+
+/* Note desktop monitors of reasonable quality typically have 0.25 mm spacing 
+ * between dots which corresponds to 4.0 dots per mm.  The parameters here
+ * roughly correspond to a 14" monitor at 1024x768 resolution, which should
+ * work fine at other sizes/resolutions.  The number of virtual dots per mm is
+ * scaled by a factor of 32, with pixels scaled accordingly.  The customary
+ * x/y ratio of 4:3 is used.
+ */
 
 #define PIXELS_X	32768		/* Number of virtual pixels in x */
-#define PIXELS_Y	32768		/* Number of virtual pixels in x */
-#define LPAGE_X		254.0		/* Page length in x in virtual mm */
-#define LPAGE_Y		190.5		/* Page length in y in virtual mm */
+#define PIXELS_Y	24576		/* Number of virtual pixels in x */
+#define DPMM		4.		/* dots per mm */
+#define VDPMM	      (DPMM*32)		/* virtual dots per mm */
+#define LPAGE_X	    (PIXELS_X/VDPMM)	/* virtual page length in x in mm (256) */
+#define LPAGE_Y	    (PIXELS_Y/VDPMM)	/* virtual page length in y in mm (192) */
 
 /* This defines the first argument of the plRotPhy invocation that is made
  * in a number of device drivers (e.g., found in ljii.c, ljiip.c, ps.c,
