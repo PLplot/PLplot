@@ -194,12 +194,8 @@ fi
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
 	FIND_LIB_BEGIN(tcl, TCLLIBDIR)
-<<<<<<< sysloc.in
-	for version in 8.1 8.0 7.6i 7.5i 7.6 7.5 7.4 ""; do
-=======
 	for version in 8.3 8.2 8.1 8.0 ""; do
 	    FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
->>>>>>> 1.56
 	    if test -n "$TCLLIBDIR"; then
 		break
 	    fi
@@ -279,11 +275,7 @@ fi
 if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
 	FIND_LIB_BEGIN(tk, TKLIBDIR)
-<<<<<<< sysloc.in
-	for version in 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
-=======
 	for version in 8.3 8.2 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
->>>>>>> 1.56
 	    if test -n "$TKLIBDIR"; then
 		break
 	    fi
@@ -432,17 +424,12 @@ fi
 if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
 	incdirs="\
-<<<<<<< sysloc.in
-	$prefix/include/python1.5 \
-	/usr/include/python1.5 \
-=======
 	$prefix/include/python1.5 \
 	/usr/include/python1.5 \
 	$prefix/include/python1.5/Numeric \
 	/usr/include/python1.5/Numeric \
 	$prefix/include/python1.4 \
 	/usr/include/python1.4 \
->>>>>>> 1.56
 	$prefix/include/Py \
 	$HOME/local/include/Py \
 	$HOME/local/python/include/Py \
@@ -641,9 +628,9 @@ if test "$with_shlib" = "yes"; then
     SHLIB_LIBS=$LIBS
 
     if test "$with_gcc" = "yes"; then
-	SHLIB_CCFLAGS="-fpic -fPIC"
-	SHLIB_CXXFLAGS="-fpic -fPIC"
-	SHLIB_BUILD="gcc -shared -fpic -fPIC -lc -o"
+	SHLIB_CCFLAGS="-fPIC"
+	SHLIB_CXXFLAGS="-fPIC"
+	SHLIB_BUILD="gcc -shared -fPIC -o"
     else
 	SHLIB_CCFLAGS=
 	SHLIB_CXXFLAGS=
@@ -663,25 +650,14 @@ if test "$with_shlib" = "yes"; then
 		SHLIB_BUILD="ld -assert pure-text -o"
 	    fi
 	;;
-<<<<<<< sysloc.in
-	SCO* ) 
-#	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
-#	    SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
-	    AC_MSG_RESULT([Assuming sco-3.2v5 with gcc. Otherwise, reconfigure --without-shlib])
-		SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
-		LDSHARED='gcc -fpic -shared'
-		SHLIB_BUILD="gcc -shared -fpic -o"
-	;;
-=======
     SCO* )
 #       SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
 #       SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
         AC_MSG_RESULT([Assuming sco-3.2v5 with gcc. Otherwise, reconfigure --without-shlib])
         SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
-        LDSHARED='gcc -fpic -shared'
-        SHLIB_BUILD="gcc -shared -fpic -o"
+        LDSHARED='gcc -fPIC -shared'
+        SHLIB_BUILD="gcc -shared -fPIC -o"
     ;;
->>>>>>> 1.56
 	Linux* )
             # Added by Rafael Laboissiere <rafael@icp.inpg.fr>
             # on Sat Nov  6 20:57:55 CET 1999  
@@ -690,16 +666,12 @@ if test "$with_shlib" = "yes"; then
 	    # Should do something to make sure this is an ELF system, as
 	    # don't have patience for DLL...
 	    AC_MSG_RESULT([Assuming Linux ELF.  Otherwise, reconfigure --without-shlib])
-<<<<<<< sysloc.in
 #	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
-	    SHLIB_BUILD="gcc -shared -fpic -fPIC -lc -o"
-=======
-	    SHLIB_BUILD="gcc -shared -fpic -o"
->>>>>>> 1.56
+	    SHLIB_BUILD="gcc -shared -fPIC -o"
 
 	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)'
 
-	    LDSHARED='gcc -fpic -shared'
+	    LDSHARED='gcc -fPIC -shared'
 	    RPATH="-Wl,-rpath -Wl,.:$prefix/lib"
 	    INSTALL_RPATH="-Wl,-rpath -Wl,$prefix/lib"
 	    SONAME_FLAGS="-Wl,-soname -Wl,"
@@ -786,12 +758,9 @@ AC_SUBST(SONAME_FLAGS)
 AC_SUBST(SA)
 AC_SUBST(SO)
 AC_SUBST(LDSHARED)
-<<<<<<< sysloc.in
 AC_SUBST(RPATH)
-=======
 AC_SUBST(RPATH)
 AC_SUBST(INSTALL_RPATH)
->>>>>>> 1.56
 
 AC_SUBST(SOVERSION)
 
