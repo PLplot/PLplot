@@ -565,11 +565,40 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			       unicode_buffer[j]=fci;
 			       skip=1;
 			    }
-			    else
-			      skip = 0;
 			 }
 			 break;
 
+		       case 'f':  /* Deprecated Hershey-style font change*/
+		       case 'F':  /* Deprecated Hershey-style font change*/
+			 /* We implement an approximate response here so that reasonable
+			  * results are obtained for unicode fonts, but this
+			  * method is deprecated and the #<nnn> or 
+			  * #<command string> methods should be used instead
+			  * to change unicode fonts in mid-string.
+			  */
+			 if (string[i+2] == 'n')
+			   /* sans-serif, upright, normal, medium */
+			   code = 0x10000000;
+			 else if (string[i+2] == 'r')
+			   /* serif, upright, normal, medium */
+			   code = 0x10001000;
+			 else if (string[i+2] == 'i')
+			   /* serif, italic, normal, medium */
+			   code = 0x10001100;
+			 else if (string[i+2] == 's')
+			   /* script, upright, normal, medium */
+			   code = 0x10003000;
+			 else
+			   code = 0;
+
+			 if (code > 0){
+			    i+=3;
+			    fci = code;
+			    unicode_buffer[j] = fci;
+			    skip = 1;
+			 }
+			 break;
+			    
 		       case 'g':  /* Greek font */
 		       case 'G':  /* Greek font */
 			 /* Get the index in the lookup table 
