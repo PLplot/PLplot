@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/03/30 07:22:55  mjl
+ * Revision 1.2  1994/04/08 12:08:21  mjl
+ * Cleaned up some, switched to more interesting test function.
+ *
+ * Revision 1.1  1994/03/30  07:22:55  mjl
  * Added to test specifically color fill capability of plshade, with optional
  * coordinate mapping.
  *
@@ -11,7 +14,7 @@
 #include <plplot.h>
 #include <math.h>
 
-#define NCONTR	150
+#define NCONTR	20
 #define XPTS    35
 #define YPTS    46
 #define XSPA    2./(XPTS-1)
@@ -81,8 +84,8 @@ main(int argc, char *argv[])
 	for (j = 0; j < YPTS; j++) {
 	    y = (double) (j - (YPTS / 2)) / (double) (YPTS / 2) - 1.0;
 
-	    z[i][j] = x*x - y*y + (x - y) / (x*x + y*y + 0.1);
-	    w[i][j] = 2 * x * y;
+	    z[i][j] = - sin(7.*x) * cos(7.*y) + x*x - y*y;
+	    w[i][j] = - cos(7.*x) * sin(7.*y) + 2 * x * y;
 	}
     }
     f2mnmx(z, XPTS, YPTS, &zmin, &zmax);
@@ -143,7 +146,7 @@ main(int argc, char *argv[])
 /*
     plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, NCONTR, mypltr, NULL);
     */
-    pllab("distance", "altitude", "Bogon flux");
+    pllab("distance", "altitude", "Bogon density");
 
 /* Plot using 1d coordinate transform */
     
@@ -168,10 +171,11 @@ main(int argc, char *argv[])
     plcol(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol(2);
+/*
     plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, NCONTR,
 	   pltr1, (void *) &cgrid1);
-
-    pllab("distance", "altitude", "Bogon flux");
+	   */
+    pllab("distance", "altitude", "Bogon density");
 
 /* Plot using 2d coordinate transform */
 
@@ -196,10 +200,11 @@ main(int argc, char *argv[])
     plcol(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol(2);
+
     plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, NCONTR,
 	   pltr2, (void *) &cgrid2);
 
-    pllab("distance", "altitude", "Bogon flux");
+    pllab("distance", "altitude", "Bogon density, with streamlines");
 
 /* Clean up */
 
