@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/10/12 17:10:32  mjl
-   Added support for PL_NEED_SIZE_T switch to plplot.h and reworked comments.
-   Moved plamiga.h to sys/amiga/src.
+   Revision 1.6  1992/10/20 20:14:11  mjl
+   Added prototypes, definitions for new routine plfamadv(), for advancing
+   to next family member file.
 
+ * Revision 1.5  1992/10/12  17:10:32  mjl
+ * Added support for PL_NEED_SIZE_T switch to plplot.h and reworked comments.
+ * Moved plamiga.h to sys/amiga/src.
+ *
  * Revision 1.4  1992/09/30  18:25:34  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -373,6 +377,7 @@ typedef struct {
 #define    plenv	c_plenv
 #define    plerrx	c_plerrx
 #define    plerry	c_plerry
+#define    plfamadv	c_plfamadv
 #define    plfill	c_plfill
 #define    plfont	c_plfont
 #define    plfontld	c_plfontld
@@ -452,6 +457,7 @@ typedef struct {
 #define    c_plenv	plenv
 #define    c_plerrx	plerrx
 #define    c_plerry	plerry
+#define    c_plfamadv	plfamadv
 #define    c_plfill	plfill
 #define    c_plfont	plfont
 #define    c_plfontld	plfontld
@@ -564,6 +570,8 @@ void c_plenv	(PLFLT, PLFLT, PLFLT, PLFLT, PLINT, PLINT);
 void c_plerrx	(PLINT, PLFLT *, PLFLT *, PLFLT *);
 
 void c_plerry	(PLINT, PLFLT *, PLFLT *, PLFLT *);
+
+void c_plfamadv (void);
 
 void c_plfill	(PLINT, PLFLT *, PLFLT *);
 

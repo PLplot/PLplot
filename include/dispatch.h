@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:31  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/10/20 20:14:09  mjl
+   Added prototypes, definitions for new routine plfamadv(), for advancing
+   to next family member file.
 
+ * Revision 1.3  1992/09/30  18:25:31  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:29  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -62,6 +66,7 @@ typedef struct {
 * family	Non-zero if familying is enabled
 * member	Number of current family member file open
 * bytemax	Number of bytes maximum per member file
+* famadv        Non-zero to advance to the next family member
 * nsub...	Number of subpages on physical device
 * cursub	Current subpage
 * color		Current default color
@@ -129,7 +134,7 @@ typedef struct {
     PLINT level;
     PLINT device, termin, graphx;
     PLINT nopause;
-    PLINT family, member, bytemax;
+    PLINT family, member, bytemax, famadv;
     PLFLT sclx, scly;
     PLINT nsubx, nsuby, cursub;
     PLINT color, width, style;

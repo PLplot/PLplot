@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:33:44  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/10/20 20:14:12  mjl
+   Added prototypes, definitions for new routine plfamadv(), for advancing
+   to next family member file.
 
+ * Revision 1.1  1992/05/20  21:33:44  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*
@@ -66,6 +70,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLENV	plenv_
 #define    PLERRX	plerrx_
 #define    PLERRY	plerry_
+#define    PLFAMADV	plfamadv_
 #define    PLFILL	plfill_
 #define    PLFONT	plfont_
 #define    PLFONTLD	plfontld_
@@ -141,6 +146,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLENV	plenv
 #define    PLERRX	plerrx
 #define    PLERRY	plerry
+#define    PLFAMADV	plfamadv
 #define    PLFILL	plfill
 #define    PLFONT	plfont
 #define    PLFONTLD	plfontld
@@ -216,6 +222,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLENV	fortran PLENV
 #define    PLERRX	fortran PLERRX
 #define    PLERRY	fortran PLERRY
+#define    PLFAMADV	fortran PLFAMADV
 #define    PLFILL	fortran PLFILL
 #define    PLFONT	fortran PLFONT
 #define    PLFONTLD	fortran PLFONTLD
