@@ -93,11 +93,6 @@ c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 {
   int i, j;
 
-  if (plsc->level < 3) {
-    plabort("plgridata: Please set up window first");
-    return;
-  }
-
   if(npts < 1 || nptsx < 1 || nptsy < 1) {
     plabort("plgriddata: Bad array dimensions"); 
     return;
@@ -557,8 +552,10 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     return;
   }
 
-  if (wmin == 0.) /* only accept weights greater than wmin */
+  if (wmin == 0.) {/* only accept weights greater than wmin */
+   plwarn("plgriddata(): GRID_NNI: wmin must be specified with 'data' arg. Using -PLFLT_MAX"); 
     wmin =  -PLFLT_MAX;
+  }
 
   pin = (point *) malloc(npts * sizeof(point));
 
