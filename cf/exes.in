@@ -40,7 +40,7 @@ plrender$E:	$(PLLIBS) plrender$O
 
 pltcl$E:	$(PLLIBS) pltcl$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl$O $(PLLIB_LDC) $(TO) $@ \
-		$(LDC_LIBS)
+		$(LDC_LIBS)  $(RPATH)
 
 plserver$E:	$(PLLIBS) plserver$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O $(PLLIB_LDC) $(TO) $@ \
