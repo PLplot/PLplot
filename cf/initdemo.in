@@ -11,7 +11,8 @@
 
 # Miscellaneous variables set by configure.
 
-CC_FLAGS_DEMOS	= @CC_FLAGS@ -I$(INCLUDE_DIR) @INCS@
+CC_FLAGS_DEMOS	= @CC_FLAGS@  -I$(INCLUDE_DIR) @INCS@
+CXX_FLAGS_DEMOS	= @CXX_FLAGS@ -I$(INCLUDE_DIR) @INCS@
 
 # These are intentionally NOT set, since we should be dealing with the
 # installed demos here and no library rebuild is possible.
