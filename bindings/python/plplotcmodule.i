@@ -328,7 +328,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 /* This currently just used for plgdev, plgfnam, and plgver which apparently
  * have a limit of 80 bytes.  But to (hopefully) be safe for any future use
  * have a 1000 byte limit here. */
-%typemap(ignore) char* OUTPUT ( char buff[1000] ) {
+%typemap(in, numinputs=0) char* OUTPUT ( char buff[1000] ) {
   $1 = buff;
 }
 %typemap(argout) char* OUTPUT {
@@ -454,7 +454,7 @@ typedef void* PLPointer;
 /* All code associated with special call-back functions. */
 /* Identity transformation. */
 
-%typemap(ignore) PLPointer IGNORE {
+%typemap(in, numinputs=0) PLPointer IGNORE {
   $1 = NULL;
 }
 void
@@ -851,10 +851,10 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   Py_XDECREF(python_f2eval);
   python_f2eval = 0;
 }
-%typemap(ignore) defined_func df {
+%typemap(in, numinputs=0) defined_func df {
   $1 = NULL;
 }
-%typemap(ignore) fill_func ff {
+%typemap(in, numinputs=0) fill_func ff {
   $1 = plfill;
 }
 /* this typemap takes a sequence of strings and converts them for plstripc 
