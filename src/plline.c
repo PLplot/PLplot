@@ -541,6 +541,7 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	}
     }
     if (iclp + 1 >= 3) {
+      if(draw)
 	(*draw)(xclp, yclp, iclp + 1);
     }
 }
