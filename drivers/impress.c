@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/03/03 19:41:58  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.9  1993/03/15 21:39:09  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.8  1993/03/03  19:41:58  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.7  1993/02/27  04:46:35  mjl
  * Fixed errors in ordering of header file inclusion.  "plplot.h" should
  * always be included first.
@@ -218,27 +222,27 @@ imp_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* imp_clear()
+* imp_eop()
 *
-* Clear page.
+* End of page.
 \*----------------------------------------------------------------------*/
 
 void
-imp_clear(PLStream *pls)
+imp_eop(PLStream *pls)
 {
     flushline(pls);
     fprintf(pls->OutFile, "%c", ENDPAGE);
 }
 
 /*----------------------------------------------------------------------*\
-* imp_page()
+* imp_bop()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-imp_page(PLStream *pls)
+imp_bop(PLStream *pls)
 {
     FirstLine = 1;
     dev->xold = UNDEFINED;

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/03/03 19:42:09  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.9  1993/03/15 21:39:22  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.8  1993/03/03  19:42:09  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.7  1993/02/22  23:11:03  mjl
  * Eliminated the gradv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
@@ -183,27 +187,27 @@ xfig_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_clear()
+* xfig_eop()
 *
-* Clear page.
+* End of page.
 \*----------------------------------------------------------------------*/
 
 void
-xfig_clear(PLStream *pls)
+xfig_eop(PLStream *pls)
 {
     if (!firstline)
 	flushbuffer(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* xfig_page()
+* xfig_bop()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-xfig_page(PLStream *pls)
+xfig_bop(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/03/03 19:42:05  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.11  1993/03/15 21:39:18  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.10  1993/03/03  19:42:05  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.9  1993/03/03  16:17:59  mjl
  * Added #include <stdlib.h> since the code needs to exit(1) on some errors.
  *
@@ -246,13 +250,13 @@ plm_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* plm_clear()
+* plm_eop()
 *
-* Clear page.
+* End of page.
 \*----------------------------------------------------------------------*/
 
 void
-plm_clear(PLStream *pls)
+plm_eop(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) CLEAR;
 
@@ -261,7 +265,7 @@ plm_clear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plm_page()
+* plm_bop()
 *
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
@@ -269,7 +273,7 @@ plm_clear(PLStream *pls)
 static long bytecnt_last;
 
 void
-plm_page(PLStream *pls)
+plm_bop(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) PAGE;
     U_LONG foo;
@@ -280,7 +284,7 @@ plm_page(PLStream *pls)
 
     fflush(pls->OutFile);
     if (fgetpos(pls->OutFile, &cp_offset))
-	plexit("plm_page: fgetpos call failed");
+	plexit("plm_bop: fgetpos call failed");
 
 /* Seek back to previous page header and write forward byte offset. */
 
@@ -291,11 +295,11 @@ plm_page(PLStream *pls)
 
 	fwbyte_offset = pls->lp_offset + 7;
 	if (fsetpos(pls->OutFile, &fwbyte_offset))
-	    plexit("plm_page: fsetpos call failed");
+	    plexit("plm_bop: fsetpos call failed");
 
 #ifdef DEBUG
 	if (fgetpos(pls->OutFile, &fwbyte_offset))
-	    plexit("plm_page: fgetpos call failed");
+	    plexit("plm_bop: fgetpos call failed");
 
 	printf("Now at: %d, to write: %d\n", fwbyte_offset, cp_offset);
 #endif
@@ -305,14 +309,14 @@ plm_page(PLStream *pls)
 
 #ifdef DEBUG
 	if (fsetpos(pls->OutFile, &fwbyte_offset))
-	    plexit("plm_page: fsetpos call failed");
+	    plexit("plm_bop: fsetpos call failed");
 
 	plm_rd(read_4bytes(pls->OutFile, &foo));
 	printf("Value read as: %d\n", foo);
 #endif
 
 	if (fsetpos(pls->OutFile, &cp_offset))
-	    plexit("plm_page: fsetpos call failed");
+	    plexit("plm_bop: fsetpos call failed");
     }
 
 /* Start next family file if necessary. */

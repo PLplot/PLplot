@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/03/03 19:42:08  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.10  1993/03/15 21:39:21  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.9  1993/03/03  19:42:08  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.8  1993/03/03  16:17:09  mjl
  * Fixed orientation-swapping code.
  *
@@ -214,13 +218,13 @@ tek_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* tek_clear()
+* tek_eop()
 *
-* Clear page.  User must hit a <CR> to continue (terminal output).
+* End of page.  User must hit a <CR> to continue (terminal output).
 \*----------------------------------------------------------------------*/
 
 void
-tek_clear(PLStream *pls)
+tek_eop(PLStream *pls)
 {
     if (pls->termin) {
 	putchar('\007');
@@ -231,14 +235,14 @@ tek_clear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tek_page()
+* tek_bop()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-tek_page(PLStream *pls)
+tek_bop(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;

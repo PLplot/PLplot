@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/03/10 05:00:57  mjl
-   Added device-level orientation handling, for testing purposes.
+   Revision 1.13  1993/03/15 21:39:23  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.12  1993/03/10  05:00:57  mjl
+ * Added device-level orientation handling, for testing purposes.
+ *
  * Revision 1.11  1993/03/03  19:42:10  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
@@ -191,13 +195,13 @@ xte_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* xte_clear()
+* xte_eop()
 *
-* Clear page.  User must hit a <CR> to continue.
+* End of page.  User must hit a <CR> to continue.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_clear (PLStream *pls)
+xte_eop (PLStream *pls)
 {
     putchar(BEL);
     fflush(stdout);
@@ -206,13 +210,13 @@ xte_clear (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xte_page()
+* xte_bop()
 *
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
 void 
-xte_page (PLStream *pls)
+xte_bop (PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;

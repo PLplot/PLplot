@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/03/10 05:00:25  mjl
-   Actually works now.  Yay!
+   Revision 1.10  1993/03/15 21:39:11  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.9  1993/03/10  05:00:25  mjl
+ * Actually works now.  Yay!
+ *
  * Revision 1.8  1993/03/03  19:41:59  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
@@ -225,13 +229,13 @@ jet_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* jet_clear()
+* jet_eop()
 *
-* Clear page (prints it here).
+* End of page.(prints it here).
 \*----------------------------------------------------------------------*/
 
 void
-jet_clear(PLStream *pls)
+jet_eop(PLStream *pls)
 {
     PLINT i, j;
 
@@ -260,14 +264,14 @@ jet_clear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* jet_page()
+* jet_bop()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-jet_page(PLStream *pls)
+jet_bop(PLStream *pls)
 {
     if (!pls->termin)
 	plGetFam(pls);

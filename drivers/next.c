@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/03/06 04:57:23  mjl
-   Fix to ensure that a new segment is begun after a line width change.
+   Revision 1.10  1993/03/15 21:39:12  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.9  1993/03/06  04:57:23  mjl
+ * Fix to ensure that a new segment is begun after a line width change.
+ *
  * Revision 1.8  1993/03/03  19:42:00  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
@@ -166,13 +170,13 @@ nx_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* nx_clear()
+* nx_eop()
 *
-* Clear page.
+* End of page.
 \*----------------------------------------------------------------------*/
 
 void
-nx_clear(PLStream *pls)
+nx_eop(PLStream *pls)
 {
     fprintf(pls->OutFile, " S\neop\n");
 
@@ -184,14 +188,14 @@ nx_clear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* nx_page()
+* nx_bop()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-nx_page(PLStream *pls)
+nx_bop(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;

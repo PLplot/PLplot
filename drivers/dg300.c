@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/03/03 19:41:53  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.9  1993/03/15 21:39:03  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.8  1993/03/03  19:41:53  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.7  1993/02/27  04:46:30  mjl
  * Fixed errors in ordering of header file inclusion.  "plplot.h" should
  * always be included first.
@@ -135,13 +139,13 @@ dg_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* dg_clear()
+* dg_eop()
 *
-* Clear page.  User must hit a <CR> to continue.
+* End of page.  User must hit a <CR> to continue.
 \*----------------------------------------------------------------------*/
 
 void
-dg_clear(PLStream *pls)
+dg_eop(PLStream *pls)
 {
     /* Before clearing wait for CR */
     putchar('\007');
@@ -151,13 +155,13 @@ dg_clear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* dg_page()
+* dg_bop()
 *
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
 void
-dg_page(PLStream *pls)
+dg_bop(PLStream *pls)
 {
     pls->page++;
 }

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/03/03 19:42:03  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.6  1993/03/15 21:39:14  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.5  1993/03/03  19:42:03  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.4  1993/02/22  23:10:59  mjl
  * Eliminated the gradv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
@@ -188,12 +192,12 @@ os2_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-*  os2_clear()
+*  os2_eop()
 *
 *  Clear page.
 \*----------------------------------------------------------------------*/
 
-void	os2_clear( PLStream *pls )
+void	os2_eop( PLStream *pls )
 {
 	UCHAR c = (UCHAR) CLEAR;
 
@@ -201,12 +205,12 @@ void	os2_clear( PLStream *pls )
 }
 
 /*----------------------------------------------------------------------*\
-*  os2_page()
+*  os2_bop()
 *
 *  Advance to next page.
 \*----------------------------------------------------------------------*/
 
-void	os2_page( PLStream *pls )
+void	os2_bop( PLStream *pls )
 {
 	UCHAR c = (UCHAR) PAGE;
 

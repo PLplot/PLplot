@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/03/06 04:59:22  mjl
-   Changed the way the temporary plot buffer file is opened.  Should fix
-   X-window refresh problem observed under SunOS.
+   Revision 1.8  1993/03/15 21:39:16  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.7  1993/03/06  04:59:22  mjl
+ * Changed the way the temporary plot buffer file is opened.  Should fix
+ * X-window refresh problem observed under SunOS.
+ *
  * Revision 1.6  1993/03/03  19:42:04  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
@@ -68,8 +72,8 @@ static void	process_next	( PLStream *pls, U_CHAR );
 void rdbuf_init		(PLStream *);
 void rdbuf_line		(PLStream *);
 void rdbuf_polyline	(PLStream *);
-void rdbuf_clear	(PLStream *);
-void rdbuf_page		(PLStream *);
+void rdbuf_eop	(PLStream *);
+void rdbuf_bop		(PLStream *);
 void rdbuf_tidy		(PLStream *);
 void rdbuf_color	(PLStream *);
 void rdbuf_text		(PLStream *);
@@ -153,13 +157,13 @@ plbuf_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* plbuf_clear()
+* plbuf_eop()
 *
-* Clear page.
+* End of page.
 \*----------------------------------------------------------------------*/
 
 void
-plbuf_clear(PLStream *pls)
+plbuf_eop(PLStream *pls)
 {
     if (pls->plbuf_read)
 	return;
@@ -169,14 +173,14 @@ plbuf_clear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plbuf_page()
+* plbuf_bop()
 *
 * Set up for the next page.
 * Also write state information to ensure the next page is correct.
 \*----------------------------------------------------------------------*/
 
 void
-plbuf_page(PLStream *pls)
+plbuf_bop(PLStream *pls)
 {
     if (pls->plbuf_read)
 	return;
@@ -361,24 +365,24 @@ rdbuf_polyline(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* rdbuf_clear()
+* rdbuf_eop()
 *
-* Clear page.
+* End of page.
 \*----------------------------------------------------------------------*/
 
 void
-rdbuf_clear(PLStream *pls)
+rdbuf_eop(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* rdbuf_page()
+* rdbuf_bop()
 *
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
 void
-rdbuf_page(PLStream *pls)
+rdbuf_bop(PLStream *pls)
 {
 }
 
@@ -548,11 +552,11 @@ process_next(PLStream *pls, U_CHAR c)
 	break;
 
       case CLEAR:
-	rdbuf_clear(pls);
+	rdbuf_eop(pls);
 	break;
 
       case PAGE:
-	rdbuf_page(pls);
+	rdbuf_bop(pls);
 	break;
 
       case NEW_COLOR:

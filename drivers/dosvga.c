@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/03/03 19:41:54  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.8  1993/03/15 21:39:04  mjl
+   Changed all _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.7  1993/03/03  19:41:54  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.6  1993/02/27  04:46:31  mjl
  * Fixed errors in ordering of header file inclusion.  "plplot.h" should
  * always be included first.
@@ -165,32 +169,32 @@ vga_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* vga_clear()
+* vga_eop()
 *
-* Clear page.
+* End of page.
 \*----------------------------------------------------------------------*/
 
 void
-vga_clear(PLStream *pls)
+vga_eop(PLStream *pls)
 {
     if (page_state == DIRTY)
 	pause();
-    _clearscreen(_GCLEARSCREEN);
+    _eopscreen(_GCLEARSCREEN);
     page_state = CLEAN;
 }
 
 /*----------------------------------------------------------------------*\
-* vga_page()
+* vga_bop()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-vga_page(PLStream *pls)
+vga_bop(PLStream *pls)
 {
     pls->page++;
-    vga_clear(pls);
+    vga_eop(pls);
 }
 
 /*----------------------------------------------------------------------*\
