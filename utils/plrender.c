@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1994/04/08 12:37:53  mjl
+ * Revision 1.38  1994/04/30 16:15:17  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.37  1994/04/08  12:37:53  mjl
  * Fixed initial tcl command that is responsible for the backpage button
  * appearing.
  *
@@ -839,7 +843,7 @@ NextFamilyFile(U_CHAR *c)
 
     (void) fclose(MetaFile);
     member++;
-    (void) sprintf(FileName, "%s.%i", BaseName, member);
+    (void) sprintf(FileName, "%s.%i", BaseName, (int) member);
 
     if ((MetaFile = fopen(FileName, "rb")) == NULL) {
 	is_family = 0;
@@ -1449,7 +1453,7 @@ OpenMetaFile(int *p_argc, char **argv)
 	    return;
 	}
 
-	(void) sprintf(FileName, "%s.%i", name, member);
+	(void) sprintf(FileName, "%s.%i", name, (int) member);
 	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
 	    (void) sprintf(BaseName, "%s", name);
 	    is_family = 1;
@@ -1461,7 +1465,7 @@ OpenMetaFile(int *p_argc, char **argv)
 	    return;
 	}
 
-	(void) sprintf(FileName, "%s.plm.%i", name, member);
+	(void) sprintf(FileName, "%s.plm.%i", name, (int) member);
 	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
 	    (void) sprintf(BaseName, "%s.plm", name);
 	    is_family = 1;

@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1994/04/25 19:08:28  mjl
+ * Revision 1.16  1994/04/30 16:15:09  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.15  1994/04/25  19:08:28  mjl
  * Lots of fixes/improvements to plscmap1l to support TK palette
  * manipulators.  New function plRGB_HLS added.
  *
@@ -312,7 +316,7 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    fprintf(stderr, "plscmap0: Invalid RGB color: %d, %d, %d\n",
+	    fprintf(stderr, "plscmap0: Invalid RGB color: %ld, %ld, %ld\n",
 		    r[i], g[i], b[i]);
 
 	    plabort("plscmap0: Invalid color");
@@ -355,7 +359,7 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    fprintf(stderr, "plscmap1: Invalid RGB color: %d, %d, %d\n",
+	    fprintf(stderr, "plscmap1: Invalid RGB color: %ld, %ld, %ld\n",
 		    r[i], g[i], b[i]);
 
 	    plabort("plscmap1: Invalid color");
@@ -423,7 +427,6 @@ c_plscmap1l(PLINT itype, PLINT npts, PLFLT *pos,
     int i, n;
     PLFLT icmap1, delta;
     PLFLT h, l, s, r, g, b;
-    PLINT r1, g1, b1;
 
     plgpls(&plsc);
 
@@ -761,7 +764,6 @@ value(double n1, double n2, double hue)
 void
 plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 {
-    PLFLT r, g, b;
     float m1, m2;
 
     if (l <= .5)
@@ -1181,7 +1183,7 @@ strcat_delim(char *dirspec)
 PLINT
 plGetInt(char *s)
 {
-    PLINT m;
+    int m;
     int i = 0;
     char line[256];
 

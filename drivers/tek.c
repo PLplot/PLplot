@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/04/08 11:36:01  mjl
+ * Revision 1.23  1994/04/30 16:14:48  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.22  1994/04/08  11:36:01  mjl
  * Put nopause support back into the drivers where it is better off.
  * I don't know WHAT I was thinking.
  *
@@ -316,7 +320,6 @@ plD_line_tek(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     PLDev *dev = (PLDev *) pls->dev;
     int x1 = x1a >> 4, y1 = y1a >> 4, x2 = x2a >> 4, y2 = y2a >> 4;
-    int hy, ly, hx, lx;
 
 /* If continuation of previous line just send new point */
 
@@ -658,8 +661,6 @@ encode_int(char *c, int i)
 static void
 encode_vector(char *c, int x, int y)
 {
-    int hy, ly, hx, lx;
-
     c[0] = y / 32 + 32;
     c[1] = y - (y / 32) * 32 + 96;
     c[2] = x / 32 + 32;

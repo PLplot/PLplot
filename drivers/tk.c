@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.32  1994/04/08 12:05:21  mjl
+ * Revision 1.33  1994/04/30 16:15:00  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.32  1994/04/08  12:05:21  mjl
  * Mouse event handler added, also escape function support for the
  * PLESC_EXPOSE, PLESC_RESIZE, PLESC_REDRAW, PLESC_EH commands (contributed
  * by Radey Shouman).  Device-specific data typedef moved into plplotTK.h
@@ -880,7 +884,6 @@ tk_configure(PLStream *pls)
 static void
 init_server(PLStream *pls)
 {
-    TkDev *dev = (TkDev *) pls->dev;
     int server_exists = 0;
 
     dbug_enter("init_server");
@@ -1123,9 +1126,9 @@ plwindow_init(PLStream *pls)
 /* names (in case this kind of capability is someday supported) */
 
 	if (pls->ipls == 0)
-	    sprintf(pls->plwindow, ".%s", pname, pls->ipls);
+	    sprintf(pls->plwindow, ".%s", pname);
 	else
-	    sprintf(pls->plwindow, ".%s_%d", pname, pls->ipls);
+	    sprintf(pls->plwindow, ".%s_%ld", pname, pls->ipls);
 
 /* Replace any blanks with underscores to avoid quoting problems. */
 
@@ -1161,7 +1164,7 @@ plwindow_init(PLStream *pls)
 	long bg;
 
 	bg = (((pls->bgcolor.r << 8) | pls->bgcolor.g) << 8) | pls->bgcolor.b;
-	sprintf(str, "#%06x", (bg & 0xFFFFFF));
+	sprintf(str, "#%06x", (unsigned int) (bg & 0xFFFFFF));
 	Tcl_SetVar(dev->interp, "bg", str, 0);
 	server_cmd( pls, "$plwidget configure -bg $bg", 0 );
     }
@@ -1308,7 +1311,7 @@ flush_output(PLStream *pls)
     dbug_enter("flush_output");
 
 #ifdef DEBUG
-    fprintf(stderr, "%s: Flushing buffer, bytes = %d\n",
+    fprintf(stderr, "%s: Flushing buffer, bytes = %ld\n",
 	    __FILE__, pdfs->bp);
 #endif
 

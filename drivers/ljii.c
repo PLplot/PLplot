@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1994/04/08 11:34:38  mjl
+ * Revision 1.17  1994/04/30 16:14:43  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.16  1994/04/08  11:34:38  mjl
  * Fix for DOS machines running DJGPP.
  *
  * Revision 1.15  1994/03/23  06:34:28  mjl
@@ -209,26 +213,31 @@ plD_eop_ljii(PLStream *pls)
     PLINT i, j;
 
     /* First move cursor to origin */
+
     fprintf(pls->OutFile, "%c*p%dX", ESC, CURX);
     fprintf(pls->OutFile, "%c*p%dY", ESC, CURY);
 
     /* Then put Laser Printer in 150 dpi mode */
+
     fprintf(pls->OutFile, "%c*t%dR", ESC, DPI);
     fprintf(pls->OutFile, "%c*r1A", ESC);
 
     /* Write out raster data */
+
     for (j = 0; j < YDOTS; j++) {
-	fprintf(pls->OutFile, "%c*b%dW", ESC, BPROW);
+	fprintf(pls->OutFile, "%c*b%ldW", ESC, BPROW);
 	for (i = 0; i < BPROW; i++)
 	    putc(*(bitmap + i + j * BPROW), pls->OutFile);
     }
     pls->bytecnt += NBYTES;
 
     /* End raster graphics and send Form Feed */
+
     fprintf(pls->OutFile, "%c*rB", ESC);
     fprintf(pls->OutFile, "%c", FF);
 
     /* Finally, clear out bitmap storage area */
+
     memset(bitmap, '\0', NBYTES);
 }
 

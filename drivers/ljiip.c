@@ -1,13 +1,16 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/04/09 03:10:43  furnish
+ * Revision 1.3  1994/04/30 16:14:45  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.2  1994/04/09  03:10:43  furnish
  * Teeny typo correction to remove duplicate symbols which caused HP to
  * be unable to produce shared lib.
  *
  * Revision 1.1  1994/04/08  11:46:44  mjl
  * New LaserJet IIp driver by Wesley Ebisuzaki, based on old ljii driver.
  * Has compression and other optimizations.
- *
 */
 
 /*	ljiip.c
@@ -298,8 +301,9 @@ plD_eop_ljiip(PLStream *pls)
 #endif
 
     /* First move cursor to origin */
-    fprintf(pls->OutFile,"\033*p%dX", CURX);
-    fprintf(pls->OutFile,"\033*p%dY", CURY);
+
+    fprintf(pls->OutFile,"\033*p%ldX", CURX);
+    fprintf(pls->OutFile,"\033*p%ldY", CURY);
     fprintf(pls->OutFile,"\033*r0A");		/* start graphics */
 
     /* Write out raster data */

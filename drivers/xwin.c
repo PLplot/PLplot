@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.33  1994/04/25 18:45:03  mjl
+ * Revision 1.34  1994/04/30 16:14:50  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.33  1994/04/25  18:45:03  mjl
  * Fixed background bug introduced last update.  Added support for
  * reallocation of cmap0 and cmap1 palettes.
  *
@@ -134,9 +138,6 @@ plD_init_xw(PLStream *pls)
     Init(pls);
 
 /* Get ready for plotting */
-
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
 
     dev->xlen = xmax - xmin;
     dev->ylen = ymax - ymin;
@@ -843,7 +844,7 @@ MouseEH(PLStream *pls, XEvent *event)
 	break;
 
     case Button2:
-	printf("%d\t%d\n", mouse.x, mouse.y);
+	printf("%f\t%f\n", mouse.x, mouse.y);
 	break;
 
     case Button3:
@@ -1242,7 +1243,7 @@ Cmap1Init(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     PLColor newcolor;
-    int i, j, itry, ncol1_max;
+    int i, j, itry;
 
 /* Use substantially less than max colors so that TK has some */
 

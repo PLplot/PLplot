@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/03/23 08:32:34  mjl
+ * Revision 1.14  1994/04/30 16:15:13  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.13  1994/03/23  08:32:34  mjl
  * Moved color and color map handling functions into plctrl.c.
  * Changed file open routine to support new options for sequencing family
  * member files.
@@ -130,7 +134,7 @@ plP_getmember(PLStream *pls)
     if (pls->FileName == NULL)
 	pls->FileName = (char *) malloc(10 + strlen(pls->BaseName));
 
-    sprintf(tmp, "%s.%%0%1ii", pls->BaseName, pls->fflen);
+    sprintf(tmp, "%s.%%0%1ii", pls->BaseName, (int) pls->fflen);
     sprintf(pls->FileName, tmp, pls->member);
 }
 

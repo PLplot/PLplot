@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.11  1994/04/08 12:29:28  mjl
-   Hack to prevent labels like "-0.0" on some systems, caused by roundoff.
+   Revision 1.12  1994/04/30 16:15:04  mjl
+   Fixed format field (%ld instead of %d) or introduced casts where
+   appropriate to eliminate warnings given by gcc -Wall.
 
+ * Revision 1.11  1994/04/08  12:29:28  mjl
+ * Hack to prevent labels like "-0.0" on some systems, caused by roundoff.
+ *
  * Revision 1.10  1994/03/23  07:54:08  mjl
  * Replaced call to plexit() on simple (recoverable) errors with simply
  * printing the error message (via plabort()) and returning.  Should help
@@ -438,7 +442,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	    if (!llx)
 		plform(tn, xscale, xprec, string);
 	    else
-		sprintf(string, "10#u%d", ROUND(tn));
+		sprintf(string, "10#u%ld", ROUND(tn));
 
 	    pos = (tn - vpwxmi) / (vpwxma - vpwxmi);
 	    if (lnx)
@@ -454,7 +458,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	if (!llx && xmode) {
 	    pos = 1.0;
 	    height = 3.2;
-	    sprintf(string, "(x10#u%d#d)", xscale);
+	    sprintf(string, "(x10#u%ld#d)", xscale);
 	    if (lnx)
 		plmtex("b", height, pos, (PLFLT) 0.5, string);
 	    if (lmx)
@@ -471,7 +475,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 	    if (!lly)
 		plform(tn, yscale, yprec, string);
 	    else
-		sprintf(string, "10#u%d", ROUND(tn));
+		sprintf(string, "10#u%ld", ROUND(tn));
 
 	    pos = (tn - vpwymi) / (vpwyma - vpwymi);
 	    if (lny) {
@@ -497,7 +501,7 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
 /* Write separate exponential label if mode = 1. */
 
 	if (!lly && ymode) {
-	    sprintf(string, "(x10#u%d#d)", yscale);
+	    sprintf(string, "(x10#u%ld#d)", yscale);
 	    offset = 0.02;
 	    height = 2.0;
 	    if (lny) {
@@ -734,7 +738,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	    if (!llx)
 		plform(tn, xscale, xprec, string);
 	    else {
-		sprintf(string, "10#u%d", ROUND(tn));
+		sprintf(string, "10#u%ld", ROUND(tn));
 	    }
 	    pos = (tn - vpwxmi) / (vpwxma - vpwxmi);
 	    if (lnx)
@@ -750,7 +754,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	if (!llx && xmode) {
 	    pos = 1.0;
 	    height = 3.2;
-	    sprintf(string, "(x10#u%d#d)", xscale);
+	    sprintf(string, "(x10#u%ld#d)", xscale);
 	    if (lnx)
 		plmtex("b", height, pos, (PLFLT) 0.5, string);
 	    if (lmx)
@@ -767,7 +771,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 	    if (!lly)
 		plform(tn, yscale, yprec, string);
 	    else
-		sprintf(string, "10#u%d", ROUND(tn));
+		sprintf(string, "10#u%ld", ROUND(tn));
 
 	    pos = (tn - vpwymi) / (vpwyma - vpwymi);
 	    if (lny) {
@@ -792,7 +796,7 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
 /* Write separate exponential label if mode = 1. */
 
 	if (!lly && ymode) {
-	    sprintf(string, "(x10#u%d#d)", yscale);
+	    sprintf(string, "(x10#u%ld#d)", yscale);
 	    offset = 0.02;
 	    height = 2.0;
 	    if (lny) {
@@ -1104,7 +1108,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	    if (!ll)
 		plform(tn, scale, prec, string);
 	    else
-		sprintf(string, "10#u%-d", ROUND(tn));
+		sprintf(string, "10#u%-ld", ROUND(tn));
 	    pos = (tn - vmin) / (vmax - vmin);
 	    plxytx(wx1, wy1, wx2, wy2, (PLFLT) 1.5, pos, (PLFLT) 0.5, string);
 	    tp = tn;
@@ -1114,7 +1118,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	if (!ll && mode) {
 	    pos = 1.0;
 	    height = 3.2;
-	    sprintf(string, "(x10#u%d#d)", scale);
+	    sprintf(string, "(x10#u%ld#d)", scale);
 	    plxytx(wx1, wy1, wx2, wy2, height, pos, (PLFLT) 0.5, string);
 	}
     }
@@ -1304,7 +1308,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	    if (!ll)
 		plform(tn, scale, prec, string);
 	    else
-		sprintf(string, "10#u%d", ROUND(tn));
+		sprintf(string, "10#u%ld", ROUND(tn));
 	    pos = (tn - vmin) / (vmax - vmin);
 	    if (ln && !right)
 		plztx("v", dx, dy, wx, wy1, wy2,
@@ -1318,7 +1322,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	    *digits = MAX(*digits, lstring);
 	}
 	if (!ll && mode) {
-	    sprintf(string, "(x10#u%d#d)", scale);
+	    sprintf(string, "(x10#u%ld#d)", scale);
 	    pos = 1.15;
 	    height = 0.5;
 	    if (ln && !right) {
@@ -1419,7 +1423,7 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *result)
     scale2 = pow(10., prec);
     value = floor((value * scale2) + .5) / scale2;
 
-    sprintf(form, "%%.%df", prec);
+    sprintf(form, "%%.%ldf", prec);
     sprintf(temp, form, value);
     strcpy(result, temp);
 }

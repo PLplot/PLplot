@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/04/25 18:53:39  mjl
+ * Revision 1.26  1994/04/30 16:14:56  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.25  1994/04/25  18:53:39  mjl
  * Added the PLStream pointer to the widget structure, to allow faster access
  * to PLplot internals.  Added "cmd" widget commands "scmap0", "gcmap0",
  * "scmap1", "gcmap1" for setting/getting palette settings.
@@ -1021,7 +1025,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	unsigned long plcolor;
 	char str[10];
 
-	sprintf(str, "%d", plsc->ncol0);
+	sprintf(str, "%ld", plsc->ncol0);
 	Tcl_AppendElement(interp, str);
 	for (i = 0; i < plsc->ncol0; i++) {
 	    plcolor = ((plsc->cmap0[i].r << 16) | 
@@ -1084,7 +1088,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	PLFLT h, l, s, r, g, b;
 	int r1, g1, b1;
 
-	sprintf(str, "%d", plsc->ncp1);
+	sprintf(str, "%ld", plsc->ncp1);
 	Tcl_AppendElement(interp, str);
 	for (i = 0; i < plsc->ncp1; i++) {
 	    h = plsc->cmap1cp[i].h;

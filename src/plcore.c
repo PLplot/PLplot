@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1994/04/08 12:31:39  mjl
+ * Revision 1.30  1994/04/30 16:15:06  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.29  1994/04/08  12:31:39  mjl
  * Removed driver interface handling of nopause (it was a bad idea).  Added
  * call to (*plsc->tidy) [if defined] in plP_tidy.  Added a function
  * plsMouseEH for setting the mouse event handler (contributed by Radey
@@ -1166,7 +1170,7 @@ c_plsstrm(PLINT strm)
 {
     if (strm < 0 || strm >= PL_NSTREAMS) {
 	fprintf(stderr,
-		"plsstrm: Illegal stream number %d, must be in [0, %d]\n",
+		"plsstrm: Illegal stream number %ld, must be in [0, %d]\n",
 		strm, PL_NSTREAMS);
     }
     else {
@@ -1251,7 +1255,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 
     plsr = pls[iplsr];
     if (plsr == NULL) {
-	fprintf(stderr, "plcpstrm: stream %d not in use\n", iplsr);
+	fprintf(stderr, "plcpstrm: stream %ld not in use\n", iplsr);
 	return;
     }
 
@@ -1358,7 +1362,7 @@ plGetDev()
 	if (ipls == 0)
 	    printf("\nEnter device number or keyword: ");
 	else
-	    printf("\nEnter device number or keyword (stream %d): ", ipls);
+	    printf("\nEnter device number or keyword (stream %ld): ", ipls);
 
 	fgets(response, sizeof(response), stdin);
 

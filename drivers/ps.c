@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/03/23 06:44:26  mjl
+ * Revision 1.23  1994/04/30 16:14:46  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.22  1994/03/23  06:44:26  mjl
  * Added support for: color map 1 color selection, color map 0 or color map 1
  * state change (palette change), polygon fills.  Changes to generated
  * postscript code: now leaner and more robust, with less redundant
@@ -265,7 +269,7 @@ ps_init(PLStream *pls)
 
 /* Default line width */
 
-    fprintf(OF, "/lw %d def\n", pls->width);
+    fprintf(OF, "/lw %ld def\n", pls->width);
 
 /* Setup user specified offsets, scales, sizes for clipping */
 
@@ -405,7 +409,7 @@ plD_bop_ps(PLStream *pls)
     dev->yold = UNDEFINED;
 
     pls->page++;
-    fprintf(OF, "%%%%Page: %d %d\n", pls->page, pls->page);
+    fprintf(OF, "%%%%Page: %ld %ld\n", pls->page, pls->page);
     fprintf(OF, "bop\n");
     pls->linepos = 0;
 
@@ -442,7 +446,7 @@ plD_tidy_ps(PLStream *pls)
     dev->urx += 1;
     dev->ury += 1;
 
-    fprintf(OF, "%%%%Pages: %d\n", pls->page);
+    fprintf(OF, "%%%%Pages: %ld\n", pls->page);
     fprintf(OF, "@end\n");
 
 /* Backtrack to write the BoundingBox at the beginning */
@@ -472,7 +476,7 @@ plD_state_ps(PLStream *pls, PLINT op)
 	if (pls->width < 1 || pls->width > 10)
 	    fprintf(stderr, "\nInvalid pen width selection.");
 	else 
-	    fprintf(OF, " S\n%d W", pls->width);
+	    fprintf(OF, " S\n%ld W", pls->width);
 
 	dev->xold = UNDEFINED;
 	dev->yold = UNDEFINED;

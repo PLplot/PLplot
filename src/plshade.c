@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/03/23 08:29:58  mjl
+ * Revision 1.8  1994/04/30 16:15:12  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.7  1994/03/23  08:29:58  mjl
  * Functions from plctest.c moved to this file for clarity and simplicity.
  * Main shade function now accepts a function evaluator and data much like
  * the contour functions.  Front-ends exist (plshade1(), plshade2()) to call
@@ -264,7 +268,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 {
     PLINT level, init_width, n, slope, ix, iy;
     int count, i, j;
-    PLFLT *a, *a0, *a1, dx, dy, b;
+    PLFLT *a, *a0, *a1, dx, dy;
     PLFLT x[8], y[8], xp[2], tx, ty;
 
     int *c, *c0, *c1;
@@ -458,7 +462,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	      case 040:	/* 2 contour lines in box */
 	      case 004:
 		if (n != 6)
-		    fprintf(stderr, "plfshade err n=%d !6", n);
+		    fprintf(stderr, "plfshade err n=%ld !6", n);
 
 		if (slope == 1 && c0[iy] == OK) {
 		    if (fill)
@@ -479,7 +483,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		break;
 	      case 044:
 		if (n != 8)
-		    fprintf(stderr, "plfshade err n=%d !8", n);
+		    fprintf(stderr, "plfshade err n=%ld !8", n);
 		if (fill == NULL)
 		    break;
 		if (slope == 1) {

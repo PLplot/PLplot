@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/04/08 11:49:30  mjl
+ * Revision 1.14  1994/04/30 16:14:58  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.13  1994/04/08  11:49:30  mjl
  * No longer keep track of byte count, letting the PDF read routines do it
  * for us.  Now recognizes and acts upon the PLESC_EXPOSE and PLESC_REDRAW
  * escape commands.
@@ -72,7 +76,7 @@
 
 #define plr_rd(code) \
 if (code) { fprintf(stderr, \
-	    "Unable to read from %s in %s at line %d, bytecount %d\n", \
+	    "Unable to read from %s in %s at line %d, bytecount %ld\n", \
 	    plr->iodev->typename, __FILE__, __LINE__, plr->pdfs->bp); \
 	    return(-1); }
 
@@ -334,8 +338,8 @@ plr_line(PLRDev *plr, int c)
 
 #define plr_rdn(code) \
 if (code) { fprintf(stderr, \
-"Unable to read from %s in %s at line %d, bytecount %d\n\
-Bytes requested: %d\n", \
+"Unable to read from %s in %s at line %d, bytecount %ld\n\
+Bytes requested: %ld\n", \
 plr->iodev->typename, __FILE__, __LINE__, plr->pdfs->bp, 2*n); return(-1); }
 
 static int
@@ -552,7 +556,7 @@ plr_get(PLRDev *plr)
 
     c = pdf_getc(plr->pdfs);
     if (c == EOF) {
-	fprintf(stderr, "plr_get: at byte count: %d\n", plr->pdfs->bp);
+	fprintf(stderr, "plr_get: at byte count: %ld\n", plr->pdfs->bp);
 	barf("plr_get: Unable to read character");
     }
 

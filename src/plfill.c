@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/03/23 08:12:54  mjl
+ * Revision 1.13  1994/04/30 16:15:11  mjl
+ * Fixed format field (%ld instead of %d) or introduced casts where
+ * appropriate to eliminate warnings given by gcc -Wall.
+ *
+ * Revision 1.12  1994/03/23  08:12:54  mjl
  * Split into two routines, one as a front-end to the driver interface fill
  * routine, and the other as a target of the driver interface when the driver
  * doesn't support the desired fill capability.
@@ -166,7 +170,8 @@ plfill_soft(short *x, short *y, PLINT n)
 	    if (yp2 != yp1) {
 		fprintf(stderr, "plfill: oh oh we are lost\n");
 		for (j = 0; j < bufferleng; j+=2) {
-		    fprintf(stderr, "plfill: %d %d\n",buffer[j],buffer[j+1]);
+		    fprintf(stderr, "plfill: %ld %ld\n",
+			    buffer[j], buffer[j+1]);
 		}
 		continue;	/* Uh oh we're lost */
 	    }
