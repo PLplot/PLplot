@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/10/12 17:12:58  mjl
-   Rearranged order of header file inclusion.
-   #include "plplot.h" must come first!!
+   Revision 1.4  1992/10/29 15:56:16  mjl
+   Gave plrender an ID tag.
 
+ * Revision 1.3  1992/10/12  17:12:58  mjl
+ * Rearranged order of header file inclusion.
+ * #include "plplot.h" must come first!!
+ *
  * Revision 1.2  1992/09/29  04:46:46  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -33,6 +36,8 @@
     This file contains the code to render a PLPLOT metafile, written by
     the metafile driver, plmeta.c.
 */
+
+char ident[]="@(#) $Id$";
 
 #include "plplot.h"
 #include <stdio.h>
