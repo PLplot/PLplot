@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1995/05/26 20:20:57  mjl
+ * Revision 1.35  1995/10/23 07:26:22  mjl
+ * Changed plabort() to write error code and errormsg into *plsc->errcode and
+ * plsc->errmsg, respectively, if they've been set.
+ *
+ * Revision 1.34  1995/05/26  20:20:57  mjl
  * Moved code that was previously in plstream.c into here.
  *
  * Revision 1.33  1995/05/15  07:57:00  mjl
@@ -971,7 +975,7 @@ plwarn(char *errormsg)
 /*--------------------------------------------------------------------------*\
  * void plabort()
  *
- * Exactly the same as plwarn(), but appends ", aborting operation" to the
+ * Much the same as plwarn(), but appends ", aborting operation" to the
  * error message.  Helps to keep source code uncluttered and provides a
  * convention for error aborts.
 \*--------------------------------------------------------------------------*/
@@ -979,19 +983,29 @@ plwarn(char *errormsg)
 void
 plabort(char *errormsg)
 {
-    int was_gfx = 0;
+    if (plsc->errcode != NULL)
+	*(plsc->errcode) = 1;
 
-    if (plsc->graphx == 1) {
-	was_gfx = 1;
-	pltext();
+    if (plsc->errmsg != NULL) {
+	sprintf(plsc->errmsg, "\n*** PLPLOT ERROR ***\n");
+	if (*errormsg != '\0')
+	    sprintf(plsc->errmsg, "%s, aborting operation\n", errormsg);
+
+    } else {
+	int was_gfx = 0;
+
+	if (plsc->graphx == 1) {
+	    was_gfx = 1;
+	    pltext();
+	}
+
+	fprintf(stderr, "\n*** PLPLOT ERROR ***\n");
+	if (*errormsg != '\0')
+	    fprintf(stderr, "%s, aborting operation\n", errormsg);
+
+	if (was_gfx == 1)
+	    plgra();
     }
-
-    fprintf(stderr, "\n*** PLPLOT WARNING ***\n");
-    if (*errormsg != '\0')
-	fprintf(stderr, "%s, aborting operation\n", errormsg);
-
-    if (was_gfx == 1)
-	plgra();
 }
 
 /*--------------------------------------------------------------------------*\
