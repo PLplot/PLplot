@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/07/01 22:13:42  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.7  1993/07/16 22:36:33  mjl
+   Minor change to comments.
 
+ * Revision 1.6  1993/07/01  22:13:42  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+ *
  * Revision 1.5  1993/02/23  05:19:29  mjl
  * Changed references in error messages from plstar to plinit.  Also changed
  * behavior of size-setting routines (should not affect user code).  Fixed
@@ -299,7 +302,7 @@ c_pllsty(PLINT lin)
 /*----------------------------------------------------------------------*\
 * void plpat()
 *
-* Set line width.
+* Set fill pattern directly.
 \*----------------------------------------------------------------------*/
 
 void
@@ -324,7 +327,7 @@ c_plpat(PLINT nlin, PLINT *inc, PLINT *del)
 /*----------------------------------------------------------------------*\
 * void plpsty()
 *
-* Set fill pattern.
+* Set fill pattern, using one of the predefined patterns.
 \*----------------------------------------------------------------------*/
 
 void
