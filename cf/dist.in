@@ -77,48 +77,19 @@ FONT_OBJ = \
 	font10$O \
 	font11$O
 
-# Drivers
-
-DRIVERS_C = \
-	dg300.c \
-	gd.c \
-	hpgl.c \
-	impress.c \
-	linuxvga.c \
-	ljiip.c \
-	ljii.c \
-	next.c \
-	null.c \
-	pbm.c \
-	plmeta.c \
-	ps.c \
-	tek.c \
-	xfig.c \
-	xwin.c
-
-DRIVERS_OBJ = \
-	dg300$O \
-	gd$O \
-	hpgl$O \
-	impress$O \
-	linuxvga$O \
-	ljiip$O \
-	ljii$O \
-	next$O \
-	null$O \
-	pbm$O \
-	plmeta$O \
-	ps$O \
-	tek$O \
-	xfig$O \
-	xwin$O
-
 # Utilities
 
 UTIL_C = \
 	plrender.c \
 	plserver.c \
 	pltcl.c 
+
+# Driver stuff
+
+STATIC_DRIVERS	= @STATIC_DRIVERS@
+DYNAMIC_DRIVERS	= @DYNAMIC_DRIVERS@
+
+static_drivers_obj := $(STATIC_DRIVERS:%=%$(O))
 
 # Fortran language stubs for linking Plplot to Fortran.
 # I keep these dependencies here because (a) they use an implicit build
