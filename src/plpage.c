@@ -213,9 +213,9 @@ plGetCursor(PLGraphicsIn *plg)
 int
 plTranslateCursor(PLGraphicsIn *plg)
 {
-    int subpage;
-    c_plcalc_world(plg->dX, plg->dY, &plg->wX, &plg->wY, &subpage);
-    if ( subpage >= 0 )
+    int window;
+    c_plcalc_world(plg->dX, plg->dY, &plg->wX, &plg->wY, &window);
+    if ( window >= 0 )
      return 1;
     else
      return 0;
@@ -225,14 +225,14 @@ plTranslateCursor(PLGraphicsIn *plg)
  * void c_plcalc_world
  *
  * Calculate world coordinates wx, and wy from relative device coordinates, rx
- * and ry.  Also, return the subpage number for which the world coordinates 
- * are valid. subpage is set to -1 and wx and wy to 0. if rx and ry do not 
- * correspond to valid world coordinates for any currently existing subpage.
+ * and ry.  Also, return the window index for which the world coordinates 
+ * are valid. window is set to -1 and wx and wy to 0. if rx and ry do not 
+ * correspond to valid world coordinates for any currently existing window.
  * Originally written by Paul Casteels and modified by Alan W. Irwin.
 \*--------------------------------------------------------------------------*/
 
 void
-c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *subpage)
+c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window)
 {
     int i;
     int lastwin = plsc->nplwin - 1;
@@ -252,14 +252,14 @@ c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *subpage)
 	    *wy = w->wymi + (ry - w->dymi) * 
 		(w->wyma - w->wymi) / (w->dyma - w->dymi);
 	   
-	    *subpage = i;
+	    *window = i;
 
 	    return;
 	}
     }
-    /* No valid subpage found with these relative coordinates. */
+    /* No valid window found with these relative coordinates. */
     *wx = 0.;
     *wy = 0.;
-    *subpage = -1;
+    *window = -1;
     return;
 }

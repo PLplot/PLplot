@@ -236,10 +236,10 @@ static char doc_plcalc_world[]="Calculate world coordinates";
 static PyObject * pl_calc_world(PyObject *self, PyObject *args)
 {
 	PLFLT rx, ry, wx, wy;
-        PLINT subpage;
+        PLINT window;
 	TRY (PyArg_ParseTuple(args, PL_ARGS("dd", "ff"), &rx, &ry));
-	plcalc_world(rx, ry, &wx, &wy, &subpage);	
-	return Py_BuildValue(PL_ARGS("(ddi)", "(ffi)"), wx, wy, subpage);
+	plcalc_world(rx, ry, &wx, &wy, &window);	
+	return Py_BuildValue(PL_ARGS("(ddi)", "(ffi)"), wx, wy, window);
 }
 
 

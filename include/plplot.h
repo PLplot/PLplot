@@ -737,7 +737,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 /* Calculate world coordinates and subpage from relative device coordinates. */
 
 void
-c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *subpage);
+c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window);
 
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
