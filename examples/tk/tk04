@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.3  1995/06/09 22:49:52  mjl
+# Revision 1.4  1995/07/04 21:51:46  furnish
+# Corrected to reflect the new syntax of the plshade call.
+#
+# Revision 1.3  1995/06/09  22:49:52  mjl
 # Switched from plenv to plvpor/plwind/plbox in order to avoid overwriting
 # tick marks by judicious placement of the plbox call.
 #
@@ -119,7 +122,10 @@ proc shade {} {
 	set sh_max [expr $min + ($max-$min)*($i+1)/20]
 	set sh_col [expr $i/20.]
 
-	.plw plshade x $xmin $xmax $ymin $ymax $sh_min $sh_max $sh_col
+	.plw plshade x $xmin $xmax $ymin $ymax $sh_min $sh_max 1 $sh_col 0 \
+	    1 0 0 0 \
+	    1
+	    
     }
 
     .plw plcol 1
