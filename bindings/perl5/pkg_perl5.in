@@ -13,10 +13,14 @@ IN_FILES = \
   Makefile.PL.in \
   $(PLPLOT_PM).in
 
+DEMOS = \
+  x01.pl \
+  x09.pl
+
 all: PLplot.pm PLplot.so
 
 ln-tmp:
-	for i in $(IN_FILES) api2bind.pl pkg_perl5.in x01.pl ; do \
+	for i in $(IN_FILES) api2bind.pl pkg_perl5.in $(DEMOS) ; do \
 	  ln -sf ../bindings/perl5/$$i $(TMP_DIR)/$$i ; \
 	done
 
