@@ -220,6 +220,17 @@ AC_INIT(src/plcore.c)
 srcdir=`(cd $srcdir; pwd)`
 
 plplot_config_invocation="$0 $*"
+
+# Set up a command for automatic reconfigures.  This ensures whatever 
+# switches have been thrown previously are used again. 
+ 
+if test -n "$*"; then 
+    echo "$plplot_config_invocation" >$srcdir/reconfig
+    chmod +x $srcdir/reconfig 
+else 
+    rm -f $srcdir/reconfig >/dev/null 2>&1 
+fi 
+
 if test `pwd` = "$srcdir"; then
     echo "setting up to configure in tmp directory -- hold on..."
     if test ! -d tmp; then
