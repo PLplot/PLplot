@@ -109,18 +109,12 @@ fi
 # Notes:
 #
 # - type "configure --with-gcc" to specify gcc from the command line
-# - type "configure --with-f2c" to specify f2c from the command line
 #
-# On some systems, gcc or f2c is the default.  On others, they are not
-# supported (e.g. UNICOS, Convex).  The f2c executable is expected to be
-# "fc" since some systems may have both programs.  If "fc" can't be found,
-# "f77" is tried instead.
+# On some systems, gcc is the default.  Some systems, however, do not
+# support gcc, or for some other reason, the vendor compiler is
+# preferred. 
 #
-# On systems where gcc or f2c are actually undesirable (e.g. on Crays --
-# gcc isn't ported and why would you want to use f2c?), I set with_gcc
-# and/or with_f2c to "no" to prevent their use.
-#
-# The actual setup for gcc or f2c is done AFTER the case statements.  Done
+# The actual setup for gcc is done AFTER the case statements.  Done
 # this way because they're pretty predictable across platforms, and this
 # way we can just override what is set below.  IMPORTANT: the command line
 # argument uses a "-" (dash) to separate words, while the shell variable
@@ -213,10 +207,10 @@ found_cxx=no
 
 # If Kuck and Associates, Inc, Photon C++ is available, use that.
 
-if test "$enable_cxx" = "yes"; then
+if test "$enable_cxx" = "yes" -a -z "$CXX"; then
     AC_CHECK_PROG(found_photon, KCC, yes, no)
     if test "$found_photon" = "yes" ; then
-	AC_MSG_RESULT([Found butt-kicking Photon C++, using that!])
+	AC_MSG_RESULT([Found KAI C++, using that!])
 	CXX=KCC
 	found_cxx=yes
     fi
@@ -280,21 +274,21 @@ if test "$enable_f77" = "yes"; then
 		# but I've had problems with it, so use f77sx here instead.
 
 		F77=f77sx
-		with_f2c=no
 	    ;;
 	    CRAY* ) 
 		F77=cf77
-		with_f2c=no
 	    ;;
 	esac
     fi
 
-    # If not using f2c, try locating the executable now.
+    # Try to locate the executable now.  If it can't be found, look
+    # for g77.
 
-    if test "$with_f2c" = "no"; then
-	AC_CHECK_PROG(found_F77, $F77, yes, no)
-	if test "$found_F77" = "no" ; then
-	    with_f2c=yes
+    AC_CHECK_PROG(found_F77, $F77, yes, no)
+    if test "$found_F77" = "no"; then
+	AC_CHECK_PROG(found_g77, g77, yes, no)
+	if test "$found_g77" = "yes"; then
+	    F77=g77
 	fi
     fi
 fi
@@ -305,45 +299,14 @@ fi
 
 if test "$with_gcc" = "yes"; then
     CC=gcc
-    CXX=gcc
+    if test -z "$CXX"; then
+	CXX=gcc
+    fi
     OCC=gcc
     CPP="gcc -E"
 
     if test "$with_warn" = "yes"; then
 	SYS_FLAGS_C=-Wall
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# f2c
-#
-# I give preference to the program "fc" for invoking f2c, since there may
-# be a vendor-supplied program called "f77".  Only if "fc" isn't found
-# do I fall back to "f77".
-#
-# The only option supported for f2c is --with-double.
-# ----------------------------------------------------------------------------
-
-if test "$enable_f77" = "yes"; then
-    if test "$with_f2c" = "yes"; then
-	AC_CHECK_PROG(found_fc, fc, yes, no)
-	if test "$found_fc" = "yes" ; then
-	    F77=fc
-	else
-	    AC_CHECK_PROG(found_f77, f77, yes, no)
-	    if test "$found_f77" = "yes" ; then
-		F77=f77
-	    else
-		AC_MSG_RESULT([warning: cannot find a Fortran compiler, setting enable_f77=no])
-		with_f2c=no
-		enable_f77=no
-	    fi
-	fi
-
-	DEBUG_FLAG_F=
-	OPT_FLAG_F=
-	PROF_FLAG_F=
-	SYS_FLAGS_F=
     fi
 fi
 
@@ -377,7 +340,7 @@ case "$system" in
 	if test "$with_gcc" = "no"; then
 	    SYS_FLAGS_CXX=-+
 	fi
-	if test "$with_double" = "yes" -a "$with_f2c" = "no"; then
+	if test "$with_double" = "yes"; then
 	    DBL_FLAG_F="-qAUTODBL=DBLPAD"
 	fi
     ;;
@@ -397,11 +360,9 @@ case "$system" in
 	fi
     ;;
     dg*|DG* ) 
-	if test "$with_f2c" = "no"; then
-	    SYS_FLAGS_F77="-novms -f77"
-	    if test "$with_debug" = "yes"; then
-		DEBUG_FLAG_F="-g -ga -X18"
-	    fi
+	SYS_FLAGS_F77="-novms -f77"
+	if test "$with_debug" = "yes"; then
+	    DEBUG_FLAG_F="-g -ga -X18"
 	fi
     ;;
     hp*|HP* ) 
@@ -467,7 +428,7 @@ case "$system" in
 	# library will still build, but you won't be able to build the
 	# Fortran example programs in double precision.
 
-	if test $with_double = "yes" -a "$with_f2c" = "no"; then
+	if test $with_double = "yes"; then
 	    DBL_FLAG_F=+autodblpad
 	fi
     ;;
