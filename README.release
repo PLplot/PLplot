@@ -58,8 +58,14 @@ Attributes".  The escape sequence for unicode characters is
 where nnn can be decimal or hexadecimal.  Escape sequences are also defined
 to change fonts mid-string.
 
-The new unicode capabilities are demonstrated in examples x23 and x24.
-
+There are known bugs for our unicode font implementation that are listed in
+a special section of the PROBLEMS file, but the current implementation is
+good enough so we turn on unicode support by default for the psc, ps, png,
+gif, jpeg, and gcw devices. Although all examples look better with unicode
+fonts, the new PLplot unicode capabilities are especially demonstrated in
+examples x23 and x24.  (The latter example requires special fonts to be
+installed and at run time environment variables have to be set to access
+them, see the self-documentation of the example 24 source code).  
 
 2.2 Drivers
 
