@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/07/19 22:35:04  mjl
+ * Revision 1.23  1994/07/22 15:54:09  furnish
+ * Fix overaggressive behavior.
+ *
+ * Revision 1.22  1994/07/19  22:35:04  mjl
  * Added includes for pdf.h and plConfig.h.
  *
  * Revision 1.21  1994/06/30  18:36:06  mjl
@@ -218,7 +221,9 @@ typedef signed char SCHAR;
 
 #define TEXT_MODE	0
 #define GRAPHICS_MODE	1
+#ifndef PI
 #define PI		3.1415926535897932384
+#endif
 
 /* These define the metafile & X driver (virtual) coordinate systems */
 
