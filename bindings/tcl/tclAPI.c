@@ -380,6 +380,9 @@ PlbasicInit( Tcl_Interp *interp )
 	    if (Tcl_Access("plplot.tcl", 0) != 0) {
 		return TCL_ERROR;
 	    }
+	    if (Tcl_EvalFile(interp, "plplot.tcl") != TCL_OK) {
+		return TCL_ERROR;
+	    }
 	    /* It is in the current directory */
 	    libDir = Tcl_GetCwd(interp, &ds);
 	    if (libDir == NULL) {
@@ -387,13 +390,12 @@ PlbasicInit( Tcl_Interp *interp )
 	    }
 	    libDir = strdup(libDir);
 	    Tcl_DStringFree(&ds);
-	} else {
-	    /* 
-	     * Clear the result so the user isn't confused by an error
-	     * message from the previous failed search
-	     */
-	    Tcl_ResetResult(interp);
 	}
+	/* 
+	 * Clear the result so the user isn't confused by an error
+	 * message from the previous failed search
+	 */
+	Tcl_ResetResult(interp);
 #else
 	return TCL_ERROR;
 #endif
