@@ -18,13 +18,16 @@ for i=1:rows(t)
 endfor
 
 # p7 works OK with plmeta, e.g., but not ps or psc. pleop/plbop issue?
-for i=[1:7 8 9 13 15 16];
-   figure(i,"$device",sprintf("p%d.$dsuffix",i));
-   feval(sprintf("p%d",i))
-   closefig
-endfor
+# These require octave-2.1.50 so comment out since not everybody has
+# this.
 
-#plot equivalent of x??c examples.
+#for i=[1:7 8 9 13 15 16];
+#   figure(i,"$device",sprintf("p%d.$dsuffix",i));
+#   feval(sprintf("p%d",i))
+#   closefig
+#endfor
+
+#plot equivalent of x??c examples.  These only required octave-2.0.x
 #For file output 14 and 17 are not suitable, and 19 is not done
 #(and should probably be dropped anyway since the map stuff is not
 #in the API that is supposed to be common to all front ends.)
