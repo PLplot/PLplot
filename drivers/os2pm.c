@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/11/07 07:48:45  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.3  1993/01/23 05:41:48  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.2  1992/11/07  07:48:45  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.1  1992/05/20  21:32:38  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -36,7 +40,7 @@
 #include <os2.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "dispatch.h"
+#include "drivers.h"
 
 /* top level declarations */
 
@@ -44,8 +48,8 @@ static USHORT	rv;
 static HFILE	hf;
 static short	cnt;
 
-static PLINT	xold = -100000;
-static PLINT	yold = -100000;
+static PLINT	xold = UNDEFINED;
+static PLINT	yold = UNDEFINED;
 	  
 #include "pmdefs.h"
 
@@ -60,7 +64,7 @@ static void	write_command( COMMAND_ID cid, CPARAMS p );
 * Set up device.
 \*----------------------------------------------------------------------*/
 
-void os2setup	PLARGS(( PLStream *pls ))
+void os2setup( PLStream *pls )
 {
 }
 
@@ -70,7 +74,7 @@ void os2setup	PLARGS(( PLStream *pls ))
 * Set up orientation.
 \*----------------------------------------------------------------------*/
 
-void os2orient	PLARGS(( PLStream *pls ))
+void os2orient( PLStream *pls )
 {
 }
 
@@ -80,16 +84,19 @@ void os2orient	PLARGS(( PLStream *pls ))
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void	os2init	PLARGS(( PLStream *pls ))
+void	os2init( PLStream *pls )
 {
     USHORT	usAction;
     UCHAR	c = (UCHAR) INITIALIZE;
 
     pls->termin =- 0;		/* not an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 1;
+
+    if (!pls->colorset)
+        pls->color = 1;
 
     setpxl( (PLFLT) PIXEL_RES_X, (PLFLT) PIXEL_RES_Y );
     setphy( 0, PLMETA_X, 0, PLMETA_Y );
@@ -114,8 +121,8 @@ void	os2init	PLARGS(( PLStream *pls ))
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void os2line	PLARGS(( PLStream *pls, 
-			PLINT x1, PLINT y1, PLINT x2, PLINT y2 ))
+void os2line( PLStream *pls, 
+			PLSHORT x1, PLSHORT y1, PLSHORT x2, PLSHORT y2 )
 {
 	UCHAR c;
 	PLINT	cp[4];
@@ -157,12 +164,27 @@ void os2line	PLARGS(( PLStream *pls,
 }
   
 /*----------------------------------------------------------------------*\
+* os2_polyline()
+*
+* Draw a polyline in the current color.
+\*----------------------------------------------------------------------*/
+
+void 
+os2_polyline (PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i=0; i<npts-1; i++) 
+      os2_line( pls, xa[i], ya[i], xa[i+1], ya[i+1] );
+}
+
+/*----------------------------------------------------------------------*\
 *  os2clear()
 *
 *  Clear page.
 \*----------------------------------------------------------------------*/
 
-void	os2clear	PLARGS(( PLStream *pls ))
+void	os2clear( PLStream *pls )
 {
 	UCHAR c = (UCHAR) CLEAR;
 
@@ -175,12 +197,12 @@ void	os2clear	PLARGS(( PLStream *pls ))
 *  Advance to next page.
 \*----------------------------------------------------------------------*/
 
-void	os2page	PLARGS(( PLStream *pls ))
+void	os2page( PLStream *pls )
 {
 	UCHAR c = (UCHAR) PAGE;
 
-	xold = -100000;
-	yold = -100000;
+	xold = UNDEFINED;
+	yold = UNDEFINED;
 
 	write_command( c, NULL );
 }
@@ -192,7 +214,7 @@ void	os2page	PLARGS(( PLStream *pls ))
 * Also write page information as in plmpage().
 \*----------------------------------------------------------------------*/
 
-void	os2adv	PLARGS(( PLStream *pls ))
+void	os2adv( PLStream *pls )
 {
     os2clear(pls);
     os2page(pls);
@@ -204,7 +226,7 @@ void	os2adv	PLARGS(( PLStream *pls ))
 *  Close graphics file
 \*----------------------------------------------------------------------*/
 
-void	os2tidy	PLARGS(( PLStream *pls ))
+void	os2tidy( PLStream *pls )
 {
 	UCHAR c = (UCHAR) CLOSE;
 	
@@ -220,11 +242,11 @@ void	os2tidy	PLARGS(( PLStream *pls ))
 *  Set pen color.
 \*----------------------------------------------------------------------*/
 
-void	os2color	PLARGS(( PLStream *pls ))
+void	os2color( PLStream *pls )
 {
 	UCHAR c = (UCHAR) NEW_COLOR;
 	
-	write_command( c, &pls->color );
+	write_command( c, &pls->icol0 );
 }
 
 /*----------------------------------------------------------------------*\
@@ -233,7 +255,7 @@ void	os2color	PLARGS(( PLStream *pls ))
 *  Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void	os2text	PLARGS(( PLStream *pls ))
+void	os2text( PLStream *pls )
 {
 	UCHAR c = (UCHAR) SWITCH_TO_TEXT;
 
@@ -246,7 +268,7 @@ void	os2text	PLARGS(( PLStream *pls ))
 *  Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void	os2graph	PLARGS(( PLStream *pls ))
+void	os2graph( PLStream *pls )
 {
 	UCHAR c = (UCHAR) SWITCH_TO_GRAPH;
 
@@ -259,7 +281,7 @@ void	os2graph	PLARGS(( PLStream *pls ))
 *  Set pen width.
 \*----------------------------------------------------------------------*/
 
-void	os2width	PLARGS(( PLStream *pls ))
+void	os2width( PLStream *pls )
 {
 	UCHAR c = (UCHAR) NEW_WIDTH;
 	
@@ -273,7 +295,7 @@ void	os2width	PLARGS(( PLStream *pls ))
 *  independent form to maintain the transportability of the metafile.
 \*----------------------------------------------------------------------*/
 
-void	os2esc	PLARGS(( PLStream *pls, PLINT op, char *ptr ))
+void	os2esc( PLStream *pls, PLINT op, char *ptr )
 {
 	UCHAR c = (UCHAR) ESCAPE;
 	float *color;

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/11/07 07:48:44  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.5  1993/01/23 05:41:46  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.4  1992/11/07  07:48:44  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.3  1992/09/30  18:24:55  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -20,12 +24,11 @@
 
 	PLPLOT NeXT display driver.
 */
-static int dummy;
 #ifdef NEXT
 
 #include <stdio.h>
 #include "plplot.h"
-#include "dispatch.h"
+#include "drivers.h"
 
 /* top level declarations */
 
@@ -46,7 +49,7 @@ static int dummy;
 #define PSY             YPSSIZE-1
 
 static char outbuf[128];
-static int llx=XPSSIZE, lly=YPSSIZE, urx=0, ury=0, ptcnt;
+static int llx = XPSSIZE, lly = YPSSIZE, urx = 0, ury = 0, ptcnt;
 
 /* (dev) will get passed in eventually, so this looks weird right now */
 
@@ -54,16 +57,17 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* nxinit()
+* nx_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void 
-nxinit(PLStream *pls)
+void
+nx_init(PLStream *pls)
 {
     pls->termin = 1;		/* not an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
+    pls->color = 0;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -83,15 +87,15 @@ nxinit(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* nxline()
+* nx_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-nxline(PLStream * pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+void
+nx_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
-    int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int ori;
 
     if (pls->linepos + 21 > LINELENGTH) {
@@ -112,16 +116,16 @@ nxline(PLStream * pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
     }
     else {
 	sprintf(outbuf, "Z %d %d M %d %d D", x1, y1, x2, y2);
-        llx = MIN(llx,x1);
-        lly = MIN(lly,y1);
-        urx = MAX(urx,x1);
-        ury = MAX(ury,y1);
+	llx = MIN(llx, x1);
+	lly = MIN(lly, y1);
+	urx = MAX(urx, x1);
+	ury = MAX(ury, y1);
 	ptcnt = 1;
     }
-    llx = MIN(llx,x2);
-    lly = MIN(lly,y2);
-    urx = MAX(urx,x2);
-    ury = MAX(ury,y2);
+    llx = MIN(llx, x2);
+    lly = MIN(lly, y2);
+    urx = MAX(urx, x2);
+    ury = MAX(ury, y2);
 
     fprintf(pls->OutFile, "%s", outbuf);
     pls->bytecnt += strlen(outbuf);
@@ -131,13 +135,28 @@ nxline(PLStream * pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* nxclear()
+* nx_polyline()
 *
-* Clear page. 
+* Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
-void 
-nxclear(PLStream *pls)
+void
+nx_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i = 0; i < npts - 1; i++)
+	nx_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+}
+
+/*----------------------------------------------------------------------*\
+* nx_clear()
+*
+* Clear page.
+\*----------------------------------------------------------------------*/
+
+void
+nx_clear(PLStream *pls)
 {
     fprintf(pls->OutFile, " S\neop\n");
 
@@ -149,21 +168,21 @@ nxclear(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* nxpage()
+* nx_page()
 *
-* Set up for the next page.  
+* Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void 
-nxpage(PLStream *pls)
+void
+nx_page(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
 /* Pipe output to Preview */
 
-    pls->OutFile = popen("open","w");
+    pls->OutFile = popen("open", "w");
 
     /* Header comments into PostScript file */
 
@@ -173,46 +192,47 @@ nxpage(PLStream *pls)
     fprintf(pls->OutFile, "%%%%Creator: PLPLOT Version 4.0\n");
     fprintf(pls->OutFile, "%%%%EndComments\n\n");
 
-  /* Definitions */
+    /* Definitions */
 
-    fprintf(pls->OutFile, "/eop\n");       /* - eop -  -- end a page */
+    fprintf(pls->OutFile, "/eop\n");	/* - eop -  -- end a page */
     fprintf(pls->OutFile, "   {\n");
     fprintf(pls->OutFile, "    showpage\n");
     fprintf(pls->OutFile, "   } def\n");
-    fprintf(pls->OutFile, "/@line\n");     /* set line parameters */
+    fprintf(pls->OutFile, "/@line\n");	/* set line parameters */
     fprintf(pls->OutFile, "   {0 setlinecap\n");
     fprintf(pls->OutFile, "    0 setlinejoin\n");
     fprintf(pls->OutFile, "    1 setmiterlimit\n");
     fprintf(pls->OutFile, "   } def\n");
-                        /* d @hsize -  horizontal clipping dimension */
+    /* d @hsize -  horizontal clipping dimension */
     fprintf(pls->OutFile, "/@hsize   {/hs exch def} def\n");
     fprintf(pls->OutFile, "/@vsize   {/vs exch def} def\n");
-                        /* d @hoffset - shift for the plots */
+    /* d @hoffset - shift for the plots */
     fprintf(pls->OutFile, "/@hoffset {/ho exch def} def\n");
     fprintf(pls->OutFile, "/@voffset {/vo exch def} def\n");
-                        /* s @hscale - scale factors */
+    /* s @hscale - scale factors */
     fprintf(pls->OutFile, "/@hscale  {100 div /hsc exch def} def\n");
     fprintf(pls->OutFile, "/@vscale  {100 div /vsc exch def} def\n");
-                        /* s @lscale - linewidth scale factor */
+    /* s @lscale - linewidth scale factor */
     fprintf(pls->OutFile, "/@lscale  {100 div /lin exch def} def\n");
     fprintf(pls->OutFile, "/@lwidth  {lin lw mul setlinewidth} def\n");
-    fprintf(pls->OutFile, "/@SetPlot\n");  /* setup user specified offsets, */
-    fprintf(pls->OutFile, "   {\n");       /* scales, sizes for clipping    */
+    fprintf(pls->OutFile, "/@SetPlot\n");	/* setup user specified
+						   offsets, */
+    fprintf(pls->OutFile, "   {\n");	/* scales, sizes for clipping    */
     fprintf(pls->OutFile, "    ho vo translate\n");
     fprintf(pls->OutFile, "    XScale YScale scale\n");
     fprintf(pls->OutFile, "    lin lw mul setlinewidth\n");
     fprintf(pls->OutFile, "   } def\n");
-    fprintf(pls->OutFile, "/XScale\n");    /* setup x scale */
+    fprintf(pls->OutFile, "/XScale\n");	/* setup x scale */
     fprintf(pls->OutFile, "   {hsc hs mul %d div} def\n", YPSSIZE);
-    fprintf(pls->OutFile, "/YScale\n");    /* setup y scale */
+    fprintf(pls->OutFile, "/YScale\n");	/* setup y scale */
     fprintf(pls->OutFile, "   {vsc vs mul %d div} def\n", XPSSIZE);
-    fprintf(pls->OutFile, "/lw 1 def\n");  /* default line width */
+    fprintf(pls->OutFile, "/lw 1 def\n");	/* default line width */
     fprintf(pls->OutFile, "/M {moveto} def\n");
     fprintf(pls->OutFile, "/D {lineto} def\n");
     fprintf(pls->OutFile, "/S {stroke} def\n");
     fprintf(pls->OutFile, "/Z {stroke newpath} def\n");
 
-  /* Set up the plots */
+    /* Set up the plots */
 
     fprintf(pls->OutFile, "@line\n");
     fprintf(pls->OutFile, "%d @hsize\n", YSIZE);
@@ -228,71 +248,71 @@ nxpage(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* nxadv()
+* nx_adv()
 *
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-nxadv(PLStream *pls)
+void
+nx_adv(PLStream *pls)
 {
-    nxclear(pls);
-    nxpage(pls);
+    nx_clear(pls);
+    nx_page(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* nxtidy()
+* nx_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void 
-nxtidy(PLStream *pls)
+void
+nx_tidy(PLStream *pls)
 {
-    nxclear(pls);
+    nx_clear(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* nxcolor()
+* nx_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-nxcolor(PLStream *pls)
+void
+nx_color(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* nxtext()
+* nx_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-nxtext(PLStream *pls)
+void
+nx_text(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* nxgraph()
+* nx_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void 
-nxgraph(PLStream *pls)
+void
+nx_graph(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* nxwidth()
+* nx_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-nxwidth(PLStream *pls)
+void
+nx_width(PLStream *pls)
 {
     if (pls->width < 1 || pls->width > 10)
 	fprintf(stderr, "\nInvalid pen width selection.");
@@ -302,16 +322,24 @@ nxwidth(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* nxesc()
+* nx_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void 
-nxesc(pls, op, ptr)
+void
+nx_esc(pls, op, ptr)
 PLStream *pls;
 PLINT op;
 char *ptr;
 {
 }
+
+#else
+int 
+pldummy_next()
+{
+    return 0;
+}
+
 #endif

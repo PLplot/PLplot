@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/11/07 07:48:41  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.5  1993/01/23 05:41:42  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.4  1992/11/07  07:48:41  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.3  1992/09/30  18:24:52  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -20,12 +24,12 @@
 
 	PLPLOT hp7580 device driver.
 */
-static int dummy;
 #ifdef HP7580
 
 #include <stdio.h>
+#include <string.h>
 #include "plplot.h"
-#include "dispatch.h"
+#include "drivers.h"
 
 /* top level declarations */
 
@@ -45,19 +49,22 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* hp7580init()
+* hp7580_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580init (PLStream *pls)
+void
+hp7580_init(PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
+
+    if (!pls->colorset)
+	pls->color = 1;
 
 /* Initialize family file info */
 
@@ -72,38 +79,46 @@ hp7580init (PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
-    setpxl((PLFLT) 40., (PLFLT) 40.);
+    switch (pls->orient) {
 
-    if (!pls->orient) {
-	dev->xmin = HPXMIN;
-	dev->xmax = HPXMAX;
-	dev->ymin = HPYMIN;
-	dev->ymax = HPYMAX;
-    }
-    else {
+      case 1:
+      case -1:
 	dev->xmin = HPYMIN;
 	dev->xmax = HPYMAX;
 	dev->ymin = HPXMIN;
 	dev->ymax = HPXMAX;
+	break;
+
+      default:
+	dev->xmin = HPXMIN;
+	dev->xmax = HPXMAX;
+	dev->ymin = HPYMIN;
+	dev->ymax = HPYMAX;
+	break;
     }
+
+    dev->xlen = dev->xmax - dev->xmin;
+    dev->ylen = dev->ymax - dev->ymin;
+
+    setpxl((PLFLT) 40., (PLFLT) 40.);
     setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
-    fprintf(pls->OutFile, "%c.I200;;17:%c.N;19:%c.M;;;10:in;\n", ESC,ESC,ESC);
+    fprintf(pls->OutFile, "%c.I200;;17:%c.N;19:%c.M;;;10:in;\n", ESC, ESC, ESC);
     fprintf(pls->OutFile, "ro 90;ip;sp 4;pa;");
 }
 
 /*----------------------------------------------------------------------*\
-* hp7580line()
+* hp7580_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+void
+hp7580_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
-    plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
+    plRotPhy(pls->orient, dev, &x1, &y1, &x2, &y2);
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
 
@@ -122,25 +137,40 @@ hp7580line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* hp7580clear()
+* hp7580_polyline()
 *
-* Clear page. 
+* Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580clear (PLStream *pls)
+void
+hp7580_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i = 0; i < npts - 1; i++)
+	hp7580_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+}
+
+/*----------------------------------------------------------------------*\
+* hp7580_clear()
+*
+* Clear page.
+\*----------------------------------------------------------------------*/
+
+void
+hp7580_clear(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* hp7580page()
+* hp7580_page()
 *
-* Set up for the next page.  
+* Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580page (PLStream *pls)
+void
+hp7580_page(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -153,26 +183,26 @@ hp7580page (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* hp7580adv()
+* hp7580_adv()
 *
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580adv (PLStream *pls)
+void
+hp7580_adv(PLStream *pls)
 {
-    hp7580clear(pls);
-    hp7580page(pls);
+    hp7580_clear(pls);
+    hp7580_page(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* hp7580tidy()
+* hp7580_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580tidy (PLStream *pls)
+void
+hp7580_tidy(PLStream *pls)
 {
     fprintf(pls->OutFile, "\nsp0");
     fclose(pls->OutFile);
@@ -182,65 +212,70 @@ hp7580tidy (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* hp7580color()
+* hp7580_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580color (PLStream *pls)
+void
+hp7580_color(PLStream *pls)
 {
-    if (pls->color < 1 || pls->color > 8)
+    if (pls->icol0 < 1 || pls->icol0 > 8)
 	fprintf(stderr, "\nInvalid pen selection.");
     else {
-	fprintf(pls->OutFile, "sp%d\n", pls->color);
+	fprintf(pls->OutFile, "sp%d\n", pls->icol0);
     }
 }
 
 /*----------------------------------------------------------------------*\
-* hp7580text()
+* hp7580_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580text (PLStream *pls)
+void
+hp7580_text(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* hp7580graph()
+* hp7580_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580graph (PLStream *pls)
+void
+hp7580_graph(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* hp7580width()
+* hp7580_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580width (PLStream *pls)
+void
+hp7580_width(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* hp7580esc()
+* hp7580_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7580esc (PLStream *pls, PLINT op, char *ptr)
+void
+hp7580_esc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 
 #else
-int hp7580() {return 0;}
+int 
+pldummy_hp7580()
+{
+    return 0;
+}
+
 #endif

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/11/07 07:48:38  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.4  1993/01/23 05:41:40  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.3  1992/11/07  07:48:38  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.2  1992/09/29  04:44:40  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -38,13 +42,12 @@
 		can draw lines of any color you like, which is again
 		superior to the standard DOS version based on MS graphics.
 */
-
-static int dummy;
-#ifdef GNUSVGA		/* Only compile for DOS 386 with GNU CC compiler */
+#ifdef GNUSVGA			/* Only compile for DOS 386 with GNU CC
+				   compiler */
 
 #include <stdio.h>
 #include "plplot.h"
-#include "dispatch.h"
+#include "drivers.h"
 
 #include <graphics.h>
 
@@ -53,8 +56,8 @@ static int dummy;
 static void pause(void);
 static void init_palette(void);
 
-static	PLINT	vgax = 639;
-static	PLINT	vgay = 479;
+static PLINT vgax = 639;
+static PLINT vgay = 479;
 
 /* A flag to tell us whether we are in text or graphics mode */
 
@@ -83,24 +86,24 @@ typedef struct {
     int b;
 } RGB;
 
-static RGB colors[]={
-    { 0, 0, 0 },	/* coral */
-    { 255, 0, 0 },	/* red */
-    { 255, 255, 0 },	/* yellow */
-    { 0, 255, 0 },	/* green */
-    { 127, 255, 212 },	/* acquamarine */
-    { 255, 192, 203 },	/* pink */
-    { 245, 222, 179 },	/* wheat */
-    { 190, 190, 190 },	/* grey */
-    { 165, 42, 42 },	/* brown */
-    { 0, 0, 255 },	/* blue */
-    { 138, 43, 226 },	/* Blue Violet */
-    { 0, 255, 255 },	/* cyan */
-    { 64, 224, 208 },	/* turquoise */
-    { 255, 0, 255 },	/* magenta */
-    { 250, 128, 114 },	/* salmon */
-    { 255, 255, 255 },	/* white */
-    { 0, 0, 0 },	/* black */
+static RGB colors[] = {
+    {0, 0, 0},			/* coral */
+    {255, 0, 0},		/* red */
+    {255, 255, 0},		/* yellow */
+    {0, 255, 0},		/* green */
+    {127, 255, 212},		/* acquamarine */
+    {255, 192, 203},		/* pink */
+    {245, 222, 179},		/* wheat */
+    {190, 190, 190},		/* grey */
+    {165, 42, 42},		/* brown */
+    {0, 0, 255},		/* blue */
+    {138, 43, 226},		/* Blue Violet */
+    {0, 255, 255},		/* cyan */
+    {64, 224, 208},		/* turquoise */
+    {255, 0, 255},		/* magenta */
+    {250, 128, 114},		/* salmon */
+    {255, 255, 255},		/* white */
+    {0, 0, 0},			/* black */
 };
 
 
@@ -110,23 +113,26 @@ static RGB colors[]={
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void 
-svgainit (PLStream *pls)
+void
+svgainit(PLStream *pls)
 {
     pls->termin = 1;		/* is an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
     pls->graphx = TEXT_MODE;
 
+    if (!pls->colorset)
+	pls->color = 1;
+
 /* Set up device parameters */
 
-    svgagraph(pls);	/* Can't get current device info 
-			   unless in graphics mode. */
-    
-    vgax = GrSizeX()-1;	/* should I use -1 or not??? */
-    vgay = GrSizeY()-1;
+    svgagraph(pls);		/* Can't get current device info unless in
+				   graphics mode. */
+
+    vgax = GrSizeX() - 1;	/* should I use -1 or not??? */
+    vgay = GrSizeY() - 1;
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -137,7 +143,7 @@ svgainit (PLStream *pls)
 
     setpxl(2.5, 2.5);		/* My best guess.  Seems to work okay. */
 
-    setphy( 0, vgax, 0, vgay );
+    setphy(0, vgax, 0, vgay);
 }
 
 /*----------------------------------------------------------------------*\
@@ -146,10 +152,10 @@ svgainit (PLStream *pls)
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-svgaline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+void
+svgaline(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
-    int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
@@ -157,38 +163,53 @@ svgaline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
     y1 = vgay - y1;
     y2 = vgay - y2;
 
-    GrLine(x1,y1,x2,y2,col);
+    GrLine(x1, y1, x2, y2, col);
 
     page_state = DIRTY;
 }
 
 /*----------------------------------------------------------------------*\
-* svgaclear()
+* svgapolyline()
 *
-* Clear page. 
+* Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
-void 
-svgaclear (PLStream *pls)
+void
+svgapolyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i = 0; i < npts - 1; i++)
+	svgaline(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+}
+
+/*----------------------------------------------------------------------*\
+* svgaclear()
+*
+* Clear page.
+\*----------------------------------------------------------------------*/
+
+void
+svgaclear(PLStream *pls)
 {
     if (page_state == DIRTY)
 	pause();
 
-    GrSetMode( GR_default_graphics );
+    GrSetMode(GR_default_graphics);
     init_palette();
-    
+
     page_state = CLEAN;
 }
 
 /*----------------------------------------------------------------------*\
 * svgapage()
 *
-* Set up for the next page.  
+* Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void 
-svgapage (PLStream *pls)
+void
+svgapage(PLStream *pls)
 {
     pls->page++;
     svgaclear(pls);
@@ -200,8 +221,8 @@ svgapage (PLStream *pls)
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-svgaadv (PLStream *pls)
+void
+svgaadv(PLStream *pls)
 {
     svgaclear(pls);
     svgapage(pls);
@@ -213,8 +234,8 @@ svgaadv (PLStream *pls)
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void 
-svgatidy (PLStream *pls)
+void
+svgatidy(PLStream *pls)
 {
     svgatext(pls);
     pls->page = 0;
@@ -227,10 +248,10 @@ svgatidy (PLStream *pls)
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-svgacolor (PLStream *pls)
+void
+svgacolor(PLStream *pls)
 {
-    col = pls->color;
+    col = pls->icol0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -239,13 +260,13 @@ svgacolor (PLStream *pls)
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-svgatext (PLStream *pls)
+void
+svgatext(PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
 	    pause();
-	GrSetMode( GR_default_text );
+	GrSetMode(GR_default_text);
 	pls->graphx = TEXT_MODE;
     }
 }
@@ -264,13 +285,14 @@ svgatext (PLStream *pls)
 * saving the RGB info used so far, which is not currently done.
 \*----------------------------------------------------------------------*/
 
-void 
-svgagraph (PLStream *pls)
+void
+svgagraph(PLStream *pls)
 {
     if (pls->graphx == TEXT_MODE) {
-	GrSetMode( GR_default_graphics );	/* Destroys the palette */
-	init_palette();				/* Fix the palette */
-	totcol = 16;	/* Reset RGB map so we don't run out of indicies */
+	GrSetMode(GR_default_graphics);	/* Destroys the palette */
+	init_palette();		/* Fix the palette */
+	totcol = 16;		/* Reset RGB map so we don't run out of
+				   indicies */
 	pls->graphx = GRAPHICS_MODE;
 	page_state = CLEAN;
     }
@@ -282,8 +304,8 @@ svgagraph (PLStream *pls)
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-svgawidth (PLStream *pls)
+void
+svgawidth(PLStream *pls)
 {
 }
 
@@ -293,19 +315,19 @@ svgawidth (PLStream *pls)
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void 
-svgaesc (PLStream *pls, PLINT op, char *ptr)
+void
+svgaesc(PLStream *pls, PLINT op, char *ptr)
 {
     switch (op) {
-    case PL_SET_RGB: {
-	pleRGB *cols = (pleRGB *) ptr;
-	int r = 255 * cols->red;
-	int g = 255 * cols->green;
-	int b = 255 * cols->blue;
-	if (totcol < 255) {
-	    GrSetColor( ++totcol, r, g, b );
-	    col = totcol;
-	}
+	case PL_SET_RGB:{
+	    pleRGB *cols = (pleRGB *) ptr;
+	    int r = 255 * cols->red;
+	    int g = 255 * cols->green;
+	    int b = 255 * cols->blue;
+	    if (totcol < 255) {
+		GrSetColor(++totcol, r, g, b);
+		col = totcol;
+	    }
 	}
 	break;
     }
@@ -317,10 +339,10 @@ svgaesc (PLStream *pls, PLINT op, char *ptr)
 * Wait for a keystroke.
 \*----------------------------------------------------------------------*/
 
-static void 
+static void
 pause(void)
 {
-    GrTextXY( 0, 0, "Pause->", 15, 0 );
+    GrTextXY(0, 0, "Pause->", 15, 0);
     getkey();
 }
 
@@ -330,12 +352,20 @@ pause(void)
 * Set up the nice RGB default color map.
 \*----------------------------------------------------------------------*/
 
-static void init_palette(void)
+static void 
+init_palette(void)
 {
     int n;
-    
-    for( n=0; n < sizeof(colors)/sizeof(RGB); n++ )
-	GrSetColor( n, colors[n].r, colors[n].g, colors[n].b );
+
+    for (n = 0; n < sizeof(colors) / sizeof(RGB); n++)
+	GrSetColor(n, colors[n].r, colors[n].g, colors[n].b);
 }
 
-#endif		/* GNUSVGA */
+#else
+int 
+pldummy_gnusvga()
+{
+    return 0;
+}
+
+#endif				/* GNUSVGA */

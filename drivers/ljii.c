@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/11/07 07:48:43  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.5  1993/01/23 05:41:45  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.4  1992/11/07  07:48:43  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.3  1992/09/30  18:24:54  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -19,19 +23,19 @@
 /*	ljii.c
 
 	PLPLOT Laser Jet II device driver.
-	Note only the 150 dpi mode is supported.  The others (75,100,300) 
-	should work by just changing the value of DPI and changing the 
+	Note only the 150 dpi mode is supported.  The others (75,100,300)
+	should work by just changing the value of DPI and changing the
 	values passed to setphy().
 */
-static int dummy;
 #ifdef LJII
-
-#include <stdio.h>
-#include <math.h>
 
 #define PL_NEED_MALLOC
 #include "plplot.h"
-#include "dispatch.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+#include "drivers.h"
 
 /* Function prototypes */
 
@@ -55,8 +59,8 @@ static void setpoint(PLINT, PLINT);
 #define ESC      0x1b
 #define FF       0x0c
 
-static char mask[8] = 
-	{'\200', '\100', '\040', '\020', '\010', '\004', '\002', '\001'};
+static char mask[8] =
+{'\200', '\100', '\040', '\020', '\010', '\004', '\002', '\001'};
 
 #ifndef MSDOS
 #define _HUGE
@@ -64,7 +68,8 @@ static char mask[8] =
 #define _HUGE _huge
 #endif
 
-static char _HUGE *bitmap;	/* pointer to an area of memory NBYTES in size */
+static char _HUGE *bitmap;	/* points to memory area NBYTES in size */
+static PLINT orient;
 
 /* (dev) will get passed in eventually, so this looks weird right now */
 
@@ -72,16 +77,17 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* jetinit()
+* jet_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void 
-jetinit (PLStream *pls)
+void
+jet_init(PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
+    pls->color = 0;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -103,17 +109,29 @@ jetinit (PLStream *pls)
 
     setpxl((PLFLT) 5.905, (PLFLT) 5.905);
 
-/* Because portrait mode addressing is used here, we need to complement
-   the orientation flag to get the right mapping. */
+/* Because portrait mode addressing is used by the LJII, we need to
+   rotate by 90 degrees to get the right mapping. */
 
-    if (pls->orient) {
-	dev->xmax = JETX;
-	dev->ymax = JETY;
-    }
-    else {
+    dev->xmin = 0;
+    dev->ymin = 0;
+
+    orient = pls->orient - 1;
+    switch (orient) {
+
+      case 1:
+      case -1:
 	dev->xmax = JETY;
 	dev->ymax = JETX;
+	break;
+
+      default:
+	dev->xmax = JETX;
+	dev->ymax = JETY;
+	break;
     }
+
+    dev->xlen = dev->xmax - dev->xmin;
+    dev->ylen = dev->ymax - dev->ymin;
 
     setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
@@ -133,15 +151,15 @@ jetinit (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* jetline()
+* jet_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-jetline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+void
+jet_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
-    int   i, ori;
+    int i;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     PLINT x1b, y1b, x2b, y2b;
     float length, fx, fy, dx, dy;
@@ -149,16 +167,15 @@ jetline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 /* Because portrait mode addressing is used here, we need to complement
    the orientation flag to get the right mapping. */
 
-    ori = pls->orient; pls->orient = !pls->orient;
-    plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
-    pls->orient = ori;
+    orient = pls->orient - 1;
+    plRotPhy(orient, dev, &x1, &y1, &x2, &y2);
 
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
 
     x1b = x1, x2b = x2, y1b = y1, y2b = y2;
     length = (float) sqrt((double)
-		  ((x2b - x1b) * (x2b - x1b) + (y2b - y1b) * (y2b - y1b)));
+		     ((x2b - x1b) * (x2b - x1b) + (y2b - y1b) * (y2b - y1b)));
 
     if (length == 0.)
 	length = 1.;
@@ -175,13 +192,28 @@ jetline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* jetclear()
+* jet_polyline()
+*
+* Draw a polyline in the current color.
+\*----------------------------------------------------------------------*/
+
+void
+jet_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i = 0; i < npts - 1; i++)
+	jet_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+}
+
+/*----------------------------------------------------------------------*\
+* jet_clear()
 *
 * Clear page (prints it here).
 \*----------------------------------------------------------------------*/
 
-void 
-jetclear (PLStream *pls)
+void
+jet_clear(PLStream *pls)
 {
     PLINT i, j;
 
@@ -210,14 +242,14 @@ jetclear (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* jetpage()
+* jet_page()
 *
-* Set up for the next page.  
+* Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void 
-jetpage (PLStream *pls)
+void
+jet_page(PLStream *pls)
 {
     if (!pls->termin)
 	plGetFam(pls);
@@ -226,28 +258,28 @@ jetpage (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* jetadv()
+* jet_adv()
 *
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-jetadv (PLStream *pls)
+void
+jet_adv(PLStream *pls)
 {
-    jetclear(pls);
-    jetpage(pls);
+    jet_clear(pls);
+    jet_page(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* jettidy()
+* jet_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void 
-jettidy (PLStream *pls)
+void
+jet_tidy(PLStream *pls)
 {
-    jetclear(pls);
+    jet_clear(pls);
     /* Reset Printer */
     fprintf(pls->OutFile, "%cE", ESC);
     fclose(pls->OutFile);
@@ -258,57 +290,57 @@ jettidy (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* jetcolor()
+* jet_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-jetcolor (PLStream *pls)
+void
+jet_color(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* jettext()
+* jet_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-jettext (PLStream *pls)
+void
+jet_text(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* jetgraph()
+* jet_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void 
-jetgraph (PLStream *pls)
+void
+jet_graph(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* jetwidth()
+* jet_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-jetwidth (PLStream *pls)
+void
+jet_width(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* jetesc()
+* jet_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void 
-jetesc (PLStream *pls, PLINT op, char *ptr)
+void
+jet_esc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -318,8 +350,8 @@ jetesc (PLStream *pls, PLINT op, char *ptr)
 * Sets a bit in the bitmap.
 \*----------------------------------------------------------------------*/
 
-static void 
-setpoint (PLINT x, PLINT y)
+static void
+setpoint(PLINT x, PLINT y)
 {
     PLINT index;
     index = x / 8 + y * BPROW;
@@ -327,5 +359,10 @@ setpoint (PLINT x, PLINT y)
 }
 
 #else
-int ljii() {return 0;}
-#endif	/* LJII */
+int 
+pldummy_ljii()
+{
+    return 0;
+}
+
+#endif				/* LJII */

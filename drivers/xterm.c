@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/11/07 07:48:50  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.5  1993/01/23 05:41:55  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.4  1992/11/07  07:48:50  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.3  1992/10/22  17:04:59  mjl
  * Fixed warnings, errors generated when compling with HP C++.
  *
@@ -19,14 +23,15 @@
 
 	PLPLOT xterm device driver.
 */
-static int dummy;
 #ifdef XTERM
 
 #include <stdio.h>
 #include "plplot.h"
-#include "dispatch.h"
+#include "drivers.h"
+#include "plevent.h"
 
 /* top level declarations */
+/* INDENT OFF */
 
 #define TEKX   1023
 #define TEKY    779
@@ -41,19 +46,26 @@ static int dummy;
 #define US   31
 #define ETX  3
 
+/* Static function prototypes */
+
+static void	WaitForPage	(PLStream *);
+static void	EventHandler	(PLStream *, char);
+
 /* (dev) will get passed in eventually, so this looks weird right now */
 
 static PLDev device;
 static PLDev *dev = &device;
+static exit_eventloop = 0;
 
+/* INDENT ON */
 /*----------------------------------------------------------------------*\
-* xteinit()
+* xte_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void 
-xteinit (PLStream *pls)
+xte_init (PLStream *pls)
 {
     /* tell plplot that this is an interactive device (so pause after */
     /* drawing graph).  use if smod(0) if sending grphx to a file. */
@@ -64,7 +76,8 @@ xteinit (PLStream *pls)
     /* plplot will actually tell the device to use this pen by */
     /* making a call to plcolor. */
 
-    pls->color = 1;
+    pls->icol0 = 1;
+    pls->color = 0;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -93,13 +106,13 @@ xteinit (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xteline()
+* xte_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void 
-xteline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+xte_line (PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int hy, ly, hx, lx;
@@ -139,30 +152,43 @@ xteline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* xteclear()
+* xte_polyline()
+*
+* Draw a polyline in the current color.
+\*----------------------------------------------------------------------*/
+
+void 
+xte_polyline (PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i=0; i<npts-1; i++) 
+      xte_line( pls, xa[i], ya[i], xa[i+1], ya[i+1] );
+}
+
+/*----------------------------------------------------------------------*\
+* xte_clear()
 *
 * Clear page.  User must hit a <CR> to continue.
 \*----------------------------------------------------------------------*/
 
 void 
-xteclear (PLStream *pls)
+xte_clear (PLStream *pls)
 {
     putchar(BEL);
     fflush(stdout);
-    if (!pls->nopause)
-	while (getchar() != '\n')
-	    ;
+    WaitForPage(pls);
     printf("%c%c", ESC, FF);
 }
 
 /*----------------------------------------------------------------------*\
-* xtepage()
+* xte_page()
 *
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
 void 
-xtepage (PLStream *pls)
+xte_page (PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -170,26 +196,26 @@ xtepage (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xteadv()
+* xte_adv()
 *
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
 void 
-xteadv (PLStream *pls)
+xte_adv (PLStream *pls)
 {
-    xteclear(pls);
-    xtepage(pls);
+    xte_clear(pls);
+    xte_page(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* xtetidy()
+* xte_tidy()
 *
 * Close graphics file
 \*----------------------------------------------------------------------*/
 
 void 
-xtetidy (PLStream *pls)
+xte_tidy (PLStream *pls)
 {
     putchar(BEL);
     fflush(stdout);
@@ -209,24 +235,24 @@ xtetidy (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xtecolor()
+* xte_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void 
-xtecolor (PLStream *pls)
+xte_color (PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* xtetext()
+* xte_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void 
-xtetext (PLStream *pls)
+xte_text (PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	pls->graphx = TEXT_MODE;
@@ -235,13 +261,13 @@ xtetext (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xtegraph()
+* xte_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void 
-xtegraph (PLStream *pls)
+xte_graph (PLStream *pls)
 {
     if (pls->graphx == TEXT_MODE) {
 	pls->graphx = GRAPHICS_MODE;
@@ -250,24 +276,127 @@ xtegraph (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xtewidth()
+* xte_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void 
-xtewidth (PLStream *pls)
+xte_width (PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* xteesc()
+* xte_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void 
-xteesc (PLStream *pls, PLINT op, char *ptr)
+xte_esc (PLStream *pls, PLINT op, char *ptr)
 {
 }
+
+/*----------------------------------------------------------------------*\
+* WaitForPage()
+*
+* This routine waits for the user to advance the plot, while handling
+* all other events.
+\*----------------------------------------------------------------------*/
+
+static void
+WaitForPage(PLStream *pls)
+{
+    int input_char;
+
+    if (pls->nopause)
+	return;
+
+    while (!exit_eventloop) {
+	input_char = getchar();
+	EventHandler(pls, (char) input_char);
+    }
+    exit_eventloop = FALSE;
+}
+
+/*----------------------------------------------------------------------*\
+* EventHandler()
+*
+* Event handler routine for xterm.  
+* Just reacts to keyboard input.
+\*----------------------------------------------------------------------*/
+
+static void
+EventHandler(PLStream *pls, char input_char)
+{
+    PLKey key;
+
+    key.code = 0;
+    key.string[0] = '\0';
+
+/* Translate keystroke into a PLKey */
+
+    if (isprint(input_char)) {
+	key.string[0] = input_char;
+	key.string[1] = '\0';
+    }
+    else {
+	switch (input_char) {
+	case 0x08:
+	    key.code = PLK_BackSpace;
+	    break;
+
+	case 0x09:
+	    key.code = PLK_Tab;
+	    break;
+
+	case 0x0A:
+	    key.code = PLK_Linefeed;
+	    break;
+
+	case 0x0D:
+	    key.code = PLK_Return;
+	    break;
+
+	case 0x1B:
+	    key.code = PLK_Escape;
+	    break;
+
+	case 0xFF:
+	    key.code = PLK_Delete;
+	    break;
+	}
+    }
+
+#ifdef DEBUG
+    grtext();
+    printf("Keycode %x, string: %s\n", key.code, key.string);
+    grgra();
+#endif
+
+/* Call user event handler */
+/* Since this is called first, the user can disable all plplot internal
+   event handling by setting key.code to 0 and key.string to '\0' */
+
+    if (pls->KeyEH != NULL)
+	(*pls->KeyEH) (&key, pls->KeyEH_data, &exit_eventloop);
+
+/* Handle internal events */
+
+/* Advance to next page (i.e. terminate event loop) on a <eol> */
+
+    if (key.code == PLK_Linefeed)
+	exit_eventloop = TRUE;
+
+/* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
+
+    if (key.string[0] == 'Q') {
+	pls->nopause = TRUE;
+	plexit("");
+    }
+}
+
+#else
+int pldummy_xterm() {return 0;}
 #endif	/* XTERM */
+ 

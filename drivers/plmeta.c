@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/11/07 07:48:46  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.5  1993/01/23 05:41:50  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.4  1992/11/07  07:48:46  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.3  1992/09/30  18:24:57  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -25,41 +29,32 @@
 
     This software may be freely copied, modified and redistributed without
     fee provided that this copyright notice is preserved intact on all
-    copies and modified copies. 
- 
+    copies and modified copies.
+
     There is no warranty or other guarantee of fitness of this software.
     It is provided solely "as is". The author(s) disclaim(s) all
     responsibility and liability with respect to this software's usage or
-    its effect upon hardware or computer systems. 
+    its effect upon hardware or computer systems.
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	
     This is a metafile writer for plplot.
 
-    The Geoffrey Furnish Standard Disclaimer:
-    "I hate any C compiler that isn't ANSI compliant, and I refuse to waste
-    my time trying to support such garbage.  If you can't compile with an
-    ANSI compiler, then don't expect this to work.  No appologies,
-    now or ever."
-
-    Garbage support added by Maurice LeBrun :-).
-    Garbage support removed by Geoff Furnish :-(.
 */
-static int dummy;
 #ifdef PLMETA
 
 #include <stdio.h>
 #include <string.h>
 
 #include "plplot.h"
-#include "dispatch.h"
+#include "drivers.h"
 #include "metadefs.h"
 #include "pdf.h"
 
 /* Function prototypes */
+/* INDENT OFF */
 
-static void plmesc_rgb		(PLStream *, char *);
-static void plmesc_ancol	(PLStream *, char *);
+static void plm_pageadv		(PLStream *pls, U_CHAR c);
 static void WriteHeader		(PLStream *);
 
 /* Constants to determine resolution, number of pixels, etc.  Can be
@@ -67,7 +62,7 @@ static void WriteHeader		(PLStream *);
    are stored in the header (formats 1992a and later).
 */
 
-#define PLMETA_MAX	32767
+#define PLMETA_MAX	8191		/* About 1K dpi */
 
 #define PLMETA_X	PLMETA_MAX	/* Number of virtual pixels in x */
 #define PLMETA_Y	PLMETA_MAX	/* Number of virtual pixels in y */
@@ -82,18 +77,20 @@ static PLFLT lpage_y = 178.0;		/* Page length in y in virtual mm */
 static PLDev device;
 static PLDev *dev = &device;
 
+/* INDENT ON */
 /*----------------------------------------------------------------------*\
-* plminit()
+* plm_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void 
-plminit (PLStream *pls)
+void
+plm_init(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) INITIALIZE;
 
     pls->termin = 0;		/* not an interactive terminal */
+    pls->icol0 = 1;
     pls->color = 1;
     pls->width = 1;
     pls->bytecnt = 0;
@@ -121,7 +118,7 @@ plminit (PLStream *pls)
 
 /* Forget this for now */
 /*
-    if (pls->pscale) 
+    if (pls->pscale)
 	dev->pxly = dev->pxlx * pls->aspect;
 */
     setpxl(dev->pxlx, dev->pxly);
@@ -137,26 +134,30 @@ plminit (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plmline()
+* plm_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-plmline (PLStream *pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2)
+void
+plm_line(PLStream *pls, PLSHORT x1, PLSHORT y1, PLSHORT x2, PLSHORT y2)
 {
     U_CHAR c;
+    U_SHORT xy[4];
 
 /* Failsafe check */
 
+#ifdef DEBUG
     if (x1 < dev->xmin || x1 > dev->xmax ||
 	x2 < dev->xmin || x2 > dev->xmax ||
 	y1 < dev->ymin || y1 > dev->ymax ||
 	y2 < dev->ymin || y2 > dev->ymax) {
+
 	printf("PLPLOT: coordinates out of bounds in driver.\n");
 	printf("  Actual: (%i,%i), (%i,%i)   Bounds: (%i,%i,%i,%i)\n",
-		x1, y1, x2, y2, dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+	       x1, y1, x2, y2, dev->xmin, dev->xmax, dev->ymin, dev->ymax);
     }
+#endif
 
 /* If continuation of previous line send the LINETO command, which uses
    the previous (x,y) point as it's starting location.  This results in a
@@ -178,8 +179,9 @@ plmline (PLStream *pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2)
 	plm_wr(write_1byte(pls->OutFile, c));
 	pls->bytecnt++;
 
-	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) x2));
-	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) y2));
+	xy[0] = x2;
+	xy[1] = y2;
+	plm_wr(write_2nbytes(pls->OutFile, xy, 2));
 	pls->bytecnt += 4;
     }
     else {
@@ -187,10 +189,11 @@ plmline (PLStream *pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2)
 	plm_wr(write_1byte(pls->OutFile, c));
 	pls->bytecnt++;
 
-	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) x1));
-	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) y1));
-	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) x2));
-	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) y2));
+	xy[0] = x1;
+	xy[1] = y1;
+	xy[2] = x2;
+	xy[3] = y2;
+	plm_wr(write_2nbytes(pls->OutFile, xy, 4));
 	pls->bytecnt += 8;
     }
     dev->xold = x2;
@@ -198,13 +201,38 @@ plmline (PLStream *pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2)
 }
 
 /*----------------------------------------------------------------------*\
-* plmclear()
+* plm_polyline()
+*
+* Draw a polyline in the current color.
+\*----------------------------------------------------------------------*/
+
+void
+plm_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    U_CHAR c = (U_CHAR) POLYLINE;
+
+    plm_wr(write_1byte(pls->OutFile, c));
+    pls->bytecnt++;
+
+    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) npts));
+    pls->bytecnt += 2;
+
+    plm_wr(write_2nbytes(pls->OutFile, (U_SHORT *) xa, npts));
+    plm_wr(write_2nbytes(pls->OutFile, (U_SHORT *) ya, npts));
+    pls->bytecnt += 4 * npts;
+
+    dev->xold = xa[npts - 1];
+    dev->yold = ya[npts - 1];
+}
+
+/*----------------------------------------------------------------------*\
+* plm_clear()
 *
 * Clear page.
 \*----------------------------------------------------------------------*/
 
-void 
-plmclear (PLStream *pls)
+void
+plm_clear(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) CLEAR;
 
@@ -213,67 +241,106 @@ plmclear (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plmpage()
+* plm_page()
 *
 * Set up for the next page.
-* Also write: 
-*     - The page number for the following page (not strictly necessary 
-*	but the redundancy may someday be useful).
-*     - A blank field after the command to eventually hold the byte
-*	distance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-plmpage (PLStream *pls)
+static long bytecnt_last;
+
+void
+plm_page(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) PAGE;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
-
-    plGetFam(pls);
-    pls->page++;
-
-    plm_wr(write_1byte(pls->OutFile, c));
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) pls->page));
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (0)));
-
-    pls->bytecnt += 5;
+    plm_pageadv(pls, c);
 }
 
 /*----------------------------------------------------------------------*\
-* plmadv()
+* plm_adv()
 *
 * Advance to the next page.
-* Also write page information as in plmpage().
+* Also write page information as in plm_page().
 \*----------------------------------------------------------------------*/
 
-void 
-plmadv (PLStream *pls)
+void
+plm_adv(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) ADVANCE;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
-
-    plGetFam(pls);
-    pls->page++;
-
-    plm_wr(write_1byte(pls->OutFile, c));
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) pls->page));
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (0)));
-
-    pls->bytecnt += 5;
+    plm_pageadv(pls, c);
 }
 
 /*----------------------------------------------------------------------*\
-* plmtidy()
+* plm_pageadv()
+*
+* Work routine for plm_page() and plm_adv().
+*
+* Seeks back to previous beginning of page to write the byte offset to
+* current page.  Then writes the page number for the following page and
+* a blank field after the command to hold the byte offset once the page
+* is completed.
+\*----------------------------------------------------------------------*/
+
+static void
+plm_pageadv(PLStream *pls, U_CHAR c)
+{
+    long cp_offset;
+    U_LONG o_lp_offset;
+    U_CHAR o_c;
+    U_SHORT o_page;
+
+    dev->xold = UNDEFINED;
+    dev->yold = UNDEFINED;
+
+    cp_offset = ftell(pls->OutFile);
+
+/* Seek back to beginning of last page and write byte offset. */
+
+    if (pls->lp_offset > 0) {
+	fseek(pls->OutFile, pls->lp_offset, 0);
+
+	plm_rd(read_1byte(pls->OutFile, &o_c));
+	plm_rd(read_2bytes(pls->OutFile, &o_page));
+	plm_rd(read_4bytes(pls->OutFile, &o_lp_offset));
+	fflush(pls->OutFile);
+
+	plm_wr(write_4bytes(pls->OutFile, cp_offset));
+	fflush(pls->OutFile);
+
+	fseek(pls->OutFile, cp_offset, 0);
+#ifdef DEBUG
+	printf("Page cmd: %d, old page: %d, lpoff: %d, cpoff: %d\n",
+	       o_c, o_page, pls->lp_offset, cp_offset);
+#endif
+    }
+
+/* Start next family file if necessary. */
+
+    plGetFam(pls);
+
+/* Write new page header */
+
+    pls->page++;
+    cp_offset = ftell(pls->OutFile);
+
+    plm_wr(write_1byte(pls->OutFile, c));
+    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) pls->page));
+    plm_wr(write_4bytes(pls->OutFile, (U_LONG) pls->lp_offset));
+    plm_wr(write_4bytes(pls->OutFile, (U_LONG) (0)));
+    pls->bytecnt += 11;
+
+    pls->lp_offset = cp_offset;
+}
+
+/*----------------------------------------------------------------------*\
+* plm_tidy()
 *
 * Close graphics file
 \*----------------------------------------------------------------------*/
 
-void 
-plmtidy (PLStream *pls)
+void
+plm_tidy(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) CLOSE;
 
@@ -287,31 +354,38 @@ plmtidy (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plmcolor()
+* plm_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-plmcolor (PLStream *pls)
+void
+plm_color(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) NEW_COLOR;
 
     plm_wr(write_1byte(pls->OutFile, c));
     pls->bytecnt++;
 
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (pls->color)));
-    pls->bytecnt += 2;
+    plm_wr(write_1byte(pls->OutFile, (U_CHAR) pls->icol0));
+    pls->bytecnt++;
+
+    if (pls->icol0 == PL_RGB_COLOR) {
+	plm_wr(write_1byte(pls->OutFile, pls->curcolor.r));
+	plm_wr(write_1byte(pls->OutFile, pls->curcolor.g));
+	plm_wr(write_1byte(pls->OutFile, pls->curcolor.b));
+    }
+
 }
 
 /*----------------------------------------------------------------------*\
-* plmtext()
+* plm_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-plmtext (PLStream *pls)
+void
+plm_text(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) SWITCH_TO_TEXT;
 
@@ -320,13 +394,13 @@ plmtext (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plmgraph()
+* plm_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void 
-plmgraph (PLStream *pls)
+void
+plm_graph(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) SWITCH_TO_GRAPH;
 
@@ -335,13 +409,13 @@ plmgraph (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plmwidth()
+* plm_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-plmwidth (PLStream *pls)
+void
+plm_width(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) NEW_WIDTH;
 
@@ -353,20 +427,18 @@ plmwidth (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plmesc()
+* plm_esc()
 *
 * Escape function.  Note that any data written must be in device
 * independent form to maintain the transportability of the metafile.
 *
 * Functions:
 *
-* PL_SET_RGB	  Writes three data values for R, G, B content
-* PL_ALLOC_NCOL	  Writes color table allocation info
 * PL_SET_LPB	  Writes local plot bounds
 \*----------------------------------------------------------------------*/
 
-void 
-plmesc (PLStream *pls, PLINT op, char *ptr)
+void
+plm_esc(PLStream *pls, PLINT op, char *ptr)
 {
     U_CHAR c = (U_CHAR) ESCAPE;
     U_CHAR opc;
@@ -380,15 +452,7 @@ plmesc (PLStream *pls, PLINT op, char *ptr)
 
     switch (op) {
 
-    case PL_SET_RGB:
-	plmesc_rgb(pls, ptr);
-	break;
-
-    case PL_ALLOC_NCOL:
-	plmesc_ancol(pls, ptr);
-	break;
-
-    case PL_SET_LPB:
+      case PL_SET_LPB:
 	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpxmi)));
 	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpxma)));
 	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpymi)));
@@ -398,61 +462,13 @@ plmesc (PLStream *pls, PLINT op, char *ptr)
 }
 
 /*----------------------------------------------------------------------*\
-* Support routines
-\*----------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------*\
-* plmesc_rgb()
-*
-* Writes RGB as 16 bits each.
-\*----------------------------------------------------------------------*/
-
-static void 
-plmesc_rgb (PLStream *pls, char *ptr)
-{
-    pleRGB *cols = (pleRGB *) ptr;
-    U_SHORT ired, igreen, iblue;
-
-    ired   = MIN(65535, MAX(0, (U_SHORT) (65535. * cols->red)));
-    igreen = MIN(65535, MAX(0, (U_SHORT) (65535. * cols->green)));
-    iblue  = MIN(65535, MAX(0, (U_SHORT) (65535. * cols->blue)));
-
-    plm_wr(write_2bytes(pls->OutFile, ired));
-    plm_wr(write_2bytes(pls->OutFile, igreen));
-    plm_wr(write_2bytes(pls->OutFile, iblue));
-    pls->bytecnt += 6;
-}
-
-/*----------------------------------------------------------------------*\
-* plmesc_ancol()
-*
-* Writes color allocation table info.
-\*----------------------------------------------------------------------*/
-
-static void 
-plmesc_ancol (PLStream *pls, char *ptr)
-{
-    U_CHAR icolor;
-    char *name;
-    pleNcol *col = (pleNcol *) ptr;
-
-    icolor = col->icolor;
-    name = col->name;
-
-    plm_wr(write_1byte(pls->OutFile, icolor));
-    plm_wr(write_header(pls->OutFile, name));
-
-    pls->bytecnt += 2 + strlen(name);
-}
-
-/*----------------------------------------------------------------------*\
 * WriteHeader()
 *
 * Writes a PLPLOT Metafile header.
 \*----------------------------------------------------------------------*/
 
-static void 
-WriteHeader (PLStream *pls)
+static void
+WriteHeader(PLStream *pls)
 {
     plm_wr(write_header(pls->OutFile, PLPLOT_HEADER));
     plm_wr(write_header(pls->OutFile, PLPLOT_VERSION));
@@ -486,4 +502,12 @@ WriteHeader (PLStream *pls)
 
     plm_wr(write_header(pls->OutFile, ""));
 }
-#endif	/* PLMETA */
+
+#else
+int 
+pldummy_plmeta()
+{
+    return 0;
+}
+
+#endif				/* PLMETA */

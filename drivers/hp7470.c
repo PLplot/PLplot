@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/11/07 07:48:40  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.5  1993/01/23 05:41:41  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.4  1992/11/07  07:48:40  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.3  1992/09/30  18:24:51  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -20,12 +24,12 @@
 
 	PLPLOT hp7470 device driver.
 */
-static int dummy;
 #ifdef HP7470
 
 #include <stdio.h>
+#include <string.h>
 #include "plplot.h"
-#include "dispatch.h"
+#include "drivers.h"
 
 /* top level declarations */
 
@@ -43,19 +47,22 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* hp7470init()
+* hp7470_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470init (PLStream *pls)
+void
+hp7470_init(PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
+
+    if (!pls->colorset)
+	pls->color = 1;
 
 /* Initialize family file info */
 
@@ -72,33 +79,41 @@ hp7470init (PLStream *pls)
     dev->xmin = 0;
     dev->ymin = 0;
 
-    setpxl((PLFLT) 40., (PLFLT) 40.);
+    switch (pls->orient) {
 
-    if (!pls->orient) {
-	dev->xmax = HP7470X;
-	dev->ymax = HP7470Y;
-    }
-    else {
+      case 1:
+      case -1:
 	dev->xmax = HP7470Y;
 	dev->ymax = HP7470X;
+	break;
+
+      default:
+	dev->xmax = HP7470X;
+	dev->ymax = HP7470Y;
+	break;
     }
+
+    dev->xlen = dev->xmax - dev->xmin;
+    dev->ylen = dev->ymax - dev->ymin;
+
+    setpxl((PLFLT) 40., (PLFLT) 40.);
     setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
-    fprintf(pls->OutFile, "%c.I200;;17:%c.N;19:%c.M;;;10:in;\n",ESC,ESC,ESC);
+    fprintf(pls->OutFile, "%c.I200;;17:%c.N;19:%c.M;;;10:in;\n", ESC, ESC, ESC);
 }
 
 /*----------------------------------------------------------------------*\
-* hp7470line()
+* hp7470_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+void
+hp7470_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
-    plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
+    plRotPhy(pls->orient, dev, &x1, &y1, &x2, &y2);
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
 
@@ -117,25 +132,40 @@ hp7470line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* hp7470clear()
+* hp7470_polyline()
 *
-* Clear page. 
+* Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470clear (PLStream *pls)
+void
+hp7470_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i = 0; i < npts - 1; i++)
+	hp7470_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+}
+
+/*----------------------------------------------------------------------*\
+* hp7470_clear()
+*
+* Clear page.
+\*----------------------------------------------------------------------*/
+
+void
+hp7470_clear(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* hp7470page()
+* hp7470_page()
 *
-* Set up for the next page.  
+* Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470page (PLStream *pls)
+void
+hp7470_page(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -148,26 +178,26 @@ hp7470page (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* hp7470adv()
+* hp7470_adv()
 *
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470adv (PLStream *pls)
+void
+hp7470_adv(PLStream *pls)
 {
-    hp7470clear(pls);
-    hp7470page(pls);
+    hp7470_clear(pls);
+    hp7470_page(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* hp7470tidy()
+* hp7470_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470tidy (PLStream *pls)
+void
+hp7470_tidy(PLStream *pls)
 {
     fprintf(pls->OutFile, "sp0\n");
     fclose(pls->OutFile);
@@ -177,71 +207,75 @@ hp7470tidy (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* hp7470color()
+* hp7470_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470color (PLStream *pls)
+void
+hp7470_color(PLStream *pls)
 {
-    if (pls->color < 1 || pls->color > 8)
+    if (pls->icol0 < 1 || pls->icol0 > 8)
 	fprintf(stderr, "\nInvalid pen selection.");
     else {
-	fprintf(pls->OutFile, "sp%d %d\n", pls->color, pls->width);
+	fprintf(pls->OutFile, "sp%d %d\n", pls->icol0, pls->width);
     }
 }
 
 /*----------------------------------------------------------------------*\
-* hp7470text()
+* hp7470_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470text (PLStream *pls)
+void
+hp7470_text(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* hp7470graph()
+* hp7470_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470graph (PLStream *pls)
+void
+hp7470_graph(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* hp7470width()
+* hp7470_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470width (PLStream *pls)
+void
+hp7470_width(PLStream *pls)
 {
     if (pls->width < 1 || pls->width > 48)
 	fprintf(stderr, "\nInvalid pen width selection.");
     else {
-	fprintf(pls->OutFile, "sp%d %d\n", pls->color, pls->width);
+	fprintf(pls->OutFile, "sp%d %d\n", pls->icol0, pls->width);
     }
 }
 
 /*----------------------------------------------------------------------*\
-* hp7470esc()
+* hp7470_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void 
-hp7470esc (PLStream *pls, PLINT op, char *ptr)
+void
+hp7470_esc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 
 #else
-int hp7470() {return 0;}
-#endif	/* HP7470 */
+int 
+pldummy_hp7470()
+{
+    return 0;
+}
 
+#endif				/* HP7470 */

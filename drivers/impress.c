@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/11/07 07:48:42  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.5  1993/01/23 05:41:43  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.4  1992/11/07  07:48:42  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.3  1992/09/30  18:24:53  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -20,7 +24,6 @@
 
 	PLPLOT ImPress device driver.
 */
-static int dummy;
 #ifdef IMP
 
 #include <stdio.h>
@@ -28,7 +31,7 @@ static int dummy;
 
 #define PL_NEED_MALLOC
 #include "plplot.h"
-#include "dispatch.h"
+#include "drivers.h"
 
 /* Function prototypes */
 
@@ -71,16 +74,17 @@ static PLDev device;
 static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
-* impinit()
+* imp_init()
 *
 * Initialize device (terminal).
 \*----------------------------------------------------------------------*/
 
-void 
-impinit (PLStream *pls)
+void
+imp_init(PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
+    pls->color = 0;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -100,21 +104,29 @@ impinit (PLStream *pls)
     dev->xmin = 0;
     dev->ymin = 0;
 
-    setpxl((PLFLT) 11.81, (PLFLT) 11.81);
+    switch (pls->orient) {
 
-    if (!pls->orient) {
-	dev->xmax = IMPX;
-	dev->ymax = IMPY;
-    }
-    else {
+      case 1:
+      case -1:
 	dev->xmax = IMPY;
 	dev->ymax = IMPX;
+	break;
+
+      default:
+	dev->xmax = IMPX;
+	dev->ymax = IMPY;
+	break;
     }
+
+    dev->xlen = dev->xmax - dev->xmin;
+    dev->ylen = dev->ymax - dev->ymin;
+
+    setpxl((PLFLT) 11.81, (PLFLT) 11.81);
     setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
     LineBuff = (short *) malloc(BUFFLENG * sizeof(short));
     if (LineBuff == NULL) {
-	plexit("Error in memory alloc in impini().");
+	plexit("Error in memory alloc in imp_init().");
     }
     fprintf(pls->OutFile, "@Document(Language ImPress, jobheader off)");
     fprintf(pls->OutFile, "%c%c", SET_HV_SYSTEM, OPBYTE1);
@@ -124,17 +136,17 @@ impinit (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* impline()
+* imp_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-impline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+void
+imp_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
-    plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
+    plRotPhy(pls->orient, dev, &x1, &y1, &x2, &y2);
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
 
@@ -179,27 +191,42 @@ impline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* impclear()
+* imp_polyline()
 *
-* Clear page. 
+* Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
-void 
-impclear (PLStream *pls)
+void
+imp_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i = 0; i < npts - 1; i++)
+	imp_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+}
+
+/*----------------------------------------------------------------------*\
+* imp_clear()
+*
+* Clear page.
+\*----------------------------------------------------------------------*/
+
+void
+imp_clear(PLStream *pls)
 {
     flushline(pls);
     fprintf(pls->OutFile, "%c", ENDPAGE);
 }
 
 /*----------------------------------------------------------------------*\
-* imppage()
+* imp_page()
 *
-* Set up for the next page.  
+* Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void 
-imppage (PLStream *pls)
+void
+imp_page(PLStream *pls)
 {
     FirstLine = 1;
     dev->xold = UNDEFINED;
@@ -212,26 +239,26 @@ imppage (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* impadv()
+* imp_adv()
 *
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-impadv (PLStream *pls)
+void
+imp_adv(PLStream *pls)
 {
-    impclear(pls);
-    imppage(pls);
+    imp_clear(pls);
+    imp_page(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* imptidy()
+* imp_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void 
-imptidy (PLStream *pls)
+void
+imp_tidy(PLStream *pls)
 {
     flushline(pls);
     fprintf(pls->OutFile, "%c", ENDPAGE);
@@ -243,46 +270,46 @@ imptidy (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* impcolor()
+* imp_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-impcolor (PLStream *pls)
+void
+imp_color(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* imptext()
+* imp_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-imptext (PLStream *pls)
+void
+imp_text(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* impgraph()
+* imp_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void 
-impgraph (PLStream *pls)
+void
+imp_graph(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* impwidth()
+* imp_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-impwidth (PLStream *pls)
+void
+imp_width(PLStream *pls)
 {
     if (pls->width > 0 && pls->width <= 20) {
 	penwidth = pls->width;
@@ -291,13 +318,13 @@ impwidth (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* impesc()
+* imp_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void 
-impesc (PLStream *pls, PLINT op, char *ptr)
+void
+imp_esc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -307,8 +334,8 @@ impesc (PLStream *pls, PLINT op, char *ptr)
 * Spits out the line buffer.
 \*----------------------------------------------------------------------*/
 
-static void 
-flushline (PLStream *pls)
+static void
+flushline(PLStream *pls)
 {
     count /= 2;
     fprintf(pls->OutFile, "%c%c%c", CREATE_PATH, (char) count / 256, (char) count % 256);
@@ -318,5 +345,10 @@ flushline (PLStream *pls)
 }
 
 #else
-int impress() {return 0;}
-#endif	/* IMP */
+int 
+pldummy_impress()
+{
+    return 0;
+}
+
+#endif				/* IMP */

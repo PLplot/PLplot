@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/11/07 07:48:49  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.6  1993/01/23 05:41:54  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.5  1992/11/07  07:48:49  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.4  1992/10/22  17:04:58  mjl
  * Fixed warnings, errors generated when compling with HP C++.
  *
@@ -23,25 +27,26 @@
 
 	PLPLOT xfig device driver.
 */
-static int dummy;
 #ifdef XFIG
-
-#include <stdio.h>
 
 #define PL_NEED_MALLOC
 #include "plplot.h"
-#include "dispatch.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "drivers.h"
 
 /* Function prototypes */
+/* INDENT OFF */
 
 static void flushbuffer(PLStream *);
 
 /* top level declarations */
 
-#define FIGX        599
-#define FIGY        599
-#define DPI          80
-#define BSIZE  25
+#define FIGX	599
+#define FIGY	599
+#define DPI	80
+#define BSIZE	25
 
 static short *buffptr, bufflen;
 static short count;
@@ -53,17 +58,19 @@ static int firstline = 1;
 static PLDev device;
 static PLDev *dev = &device;
 
+/* INDENT ON */
 /*----------------------------------------------------------------------*\
-* xfiginit()
+* xfig_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void 
-xfiginit (PLStream *pls)
+void
+xfig_init(PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
+    pls->color = 0;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -101,13 +108,13 @@ xfiginit (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xfigline()
+* xfig_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-xfigline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+void
+xfig_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     short *tempptr;
@@ -152,27 +159,42 @@ xfigline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* xfigclear()
+* xfig_polyline()
+*
+* Draw a polyline in the current color.
+\*----------------------------------------------------------------------*/
+
+void
+xfig_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i = 0; i < npts - 1; i++)
+	xfig_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+}
+
+/*----------------------------------------------------------------------*\
+* xfig_clear()
 *
 * Clear page.
 \*----------------------------------------------------------------------*/
 
-void 
-xfigclear (PLStream *pls)
+void
+xfig_clear(PLStream *pls)
 {
     if (!firstline)
 	flushbuffer(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* xfigpage()
+* xfig_page()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void 
-xfigpage (PLStream *pls)
+void
+xfig_page(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -185,26 +207,26 @@ xfigpage (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xfigadv()
+* xfig_adv()
 *
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-xfigadv (PLStream *pls)
+void
+xfig_adv(PLStream *pls)
 {
-    xfigclear(pls);
-    xfigpage(pls);
+    xfig_clear(pls);
+    xfig_page(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* xfigtidy()
+* xfig_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void 
-xfigtidy (PLStream *pls)
+void
+xfig_tidy(PLStream *pls)
 {
     flushbuffer(pls);
     free((char *) buffptr);
@@ -215,46 +237,46 @@ xfigtidy (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xfigcolor()
+* xfig_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-xfigcolor (PLStream *pls)
+void
+xfig_color(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* xfigtext()
+* xfig_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-xfigtext (PLStream *pls)
+void
+xfig_text(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* xfiggraph()
+* xfig_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void 
-xfiggraph (PLStream *pls)
+void
+xfig_graph(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* xfigwidth()
+* xfig_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-xfigwidth (PLStream *pls)
+void
+xfig_width(PLStream *pls)
 {
     flushbuffer(pls);
     firstline = 1;
@@ -268,13 +290,13 @@ xfigwidth (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xfigesc()
+* xfig_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void 
-xfigesc (PLStream *pls, PLINT op, char *ptr)
+void
+xfig_esc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -282,8 +304,8 @@ xfigesc (PLStream *pls, PLINT op, char *ptr)
 * Utility functions.
 \*----------------------------------------------------------------------*/
 
-static void 
-flushbuffer (PLStream *pls)
+static void
+flushbuffer(PLStream *pls)
 {
     short i = 0;
 
@@ -291,11 +313,19 @@ flushbuffer (PLStream *pls)
 	return;
     fprintf(pls->OutFile, "2 1 0 %d 0 0 0 0 0.000 0 0\n", curwid);
     while (i < count) {
-	fprintf(pls->OutFile, "%d %d ", *(buffptr + i), 
-				        FIGY - *(buffptr + i + 1));
+	fprintf(pls->OutFile, "%d %d ", *(buffptr + i),
+		FIGY - *(buffptr + i + 1));
 	i += 2;
     }
     fprintf(pls->OutFile, "9999 9999\n");
     count = 0;
 }
-#endif	/* XFIG */
+
+#else
+int 
+pldummy_xfig()
+{
+    return 0;
+}
+
+#endif				/* XFIG */

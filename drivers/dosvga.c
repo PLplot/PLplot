@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/11/07 07:48:37  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.4  1993/01/23 05:41:39  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.3  1992/11/07  07:48:37  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.2  1992/09/29  04:44:39  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -38,12 +42,11 @@
 	ANSI compiler, then don't expect this to work.  No appologies,
 	now or ever."
 */
-static int dummy;
-#ifdef MSDOS		/* Only compile for MSDOS */
+#ifdef MSDOS			/* Only compile for MSDOS */
 
 #include <stdio.h>
 #include "plplot.h"
-#include "dispatch.h"
+#include "drivers.h"
 
 #include <graph.h>
 #include <conio.h>
@@ -82,15 +85,18 @@ static PLDev *dev = &device;
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void 
-vgainit (PLStream *pls)
+void
+vgainit(PLStream *pls)
 {
     pls->termin = 1;		/* is an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
     pls->graphx = TEXT_MODE;
+
+    if (!pls->colorset)
+	pls->color = 1;
 
 /* Set up device parameters */
 
@@ -103,7 +109,7 @@ vgainit (PLStream *pls)
 
     setpxl(2.5, 2.5);		/* My best guess.  Seems to work okay. */
 
-    setphy( (PLINT) 0, (PLINT) VGAX, (PLINT) 0, (PLINT) VGAY );
+    setphy((PLINT) 0, (PLINT) VGAX, (PLINT) 0, (PLINT) VGAY);
 
     vgagraph(pls);
 }
@@ -114,10 +120,10 @@ vgainit (PLStream *pls)
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-vgaline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+void
+vgaline(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
-    int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
@@ -132,13 +138,28 @@ vgaline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* vgaclear()
+* vgapolyline()
 *
-* Clear page. 
+* Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
-void 
-vgaclear (PLStream *pls)
+void
+vgapolyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i = 0; i < npts - 1; i++)
+	vgaline(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+}
+
+/*----------------------------------------------------------------------*\
+* vgaclear()
+*
+* Clear page.
+\*----------------------------------------------------------------------*/
+
+void
+vgaclear(PLStream *pls)
 {
     if (page_state == DIRTY)
 	pause();
@@ -149,12 +170,12 @@ vgaclear (PLStream *pls)
 /*----------------------------------------------------------------------*\
 * vgapage()
 *
-* Set up for the next page.  
+* Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void 
-vgapage (PLStream *pls)
+void
+vgapage(PLStream *pls)
 {
     pls->page++;
     vgaclear(pls);
@@ -166,8 +187,8 @@ vgapage (PLStream *pls)
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-vgaadv (PLStream *pls)
+void
+vgaadv(PLStream *pls)
 {
     vgaclear(pls);
     vgapage(pls);
@@ -179,8 +200,8 @@ vgaadv (PLStream *pls)
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void 
-vgatidy (PLStream *pls)
+void
+vgatidy(PLStream *pls)
 {
     vgatext(pls);
     pls->page = 0;
@@ -193,8 +214,8 @@ vgatidy (PLStream *pls)
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-vgacolor (PLStream *pls)
+void
+vgacolor(PLStream *pls)
 {
     static long cmap[16] = {
 	_WHITE, _RED, _LIGHTYELLOW, _GREEN,
@@ -203,11 +224,11 @@ vgacolor (PLStream *pls)
 	_RED, _MAGENTA, _LIGHTYELLOW, _WHITE
     };
 
-    if (pls->color < 0 || pls->color > 15)
-	pls->color = 15;
+    if (pls->icol0 < 0 || pls->icol0 > 15)
+	pls->icol0 = 15;
 
-    _remappalette( (short) pls->color, cmap[pls->color] );
-    _setcolor( (short) pls->color);
+    _remappalette((short) pls->icol0, cmap[pls->icol0]);
+    _setcolor((short) pls->icol0);
 }
 
 /*----------------------------------------------------------------------*\
@@ -216,8 +237,8 @@ vgacolor (PLStream *pls)
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-vgatext (PLStream *pls)
+void
+vgatext(PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
@@ -233,8 +254,8 @@ vgatext (PLStream *pls)
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void 
-vgagraph (PLStream *pls)
+void
+vgagraph(PLStream *pls)
 {
     if (pls->graphx == TEXT_MODE) {
 	if (!_setvideomode(_VRES16COLOR)) {
@@ -252,8 +273,8 @@ vgagraph (PLStream *pls)
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-vgawidth (PLStream *pls)
+void
+vgawidth(PLStream *pls)
 {
 }
 
@@ -263,8 +284,8 @@ vgawidth (PLStream *pls)
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void 
-vgaesc (PLStream *pls, PLINT op, char *ptr)
+void
+vgaesc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -274,7 +295,7 @@ vgaesc (PLStream *pls, PLINT op, char *ptr)
 * Wait for a keystroke.
 \*----------------------------------------------------------------------*/
 
-static void 
+static void
 pause(void)
 {
     _settextposition(0, 0);
@@ -282,4 +303,12 @@ pause(void)
     while (!kbhit());
     getch();
 }
-#endif		/* MSDOS */
+
+#else
+int 
+pldummy_dosvga()
+{
+    return 0;
+}
+
+#endif				/* MSDOS */

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/11/07 07:56:46  mjl
-   (correction) Null device driver, for use when you want the graphics to
-   disappear into the bit bucket.  Always appears as the last device.
+   Revision 1.3  1993/01/23 05:41:47  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.2  1992/11/07  07:56:46  mjl
+ * (correction) Null device driver, for use when you want the graphics to
+ * disappear into the bit bucket.  Always appears as the last device.
+ *
  * Revision 1.1  1992/11/07  07:54:13  mjl
  *
 */
@@ -12,17 +16,15 @@
 
 	PLPLOT Null device driver.
 */
-static int dummy;
 #ifdef NULLDEV
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "plplot.h"
-#include "dispatch.h"
+#include "drivers.h"
 
-static PLFLT lpage_x = 238.0;		/* Page length in x in virtual mm */
-static PLFLT lpage_y = 178.0;		/* Page length in y in virtual mm */
+static PLFLT lpage_x = 238.0;	/* Page length in x in virtual mm */
+static PLFLT lpage_y = 178.0;	/* Page length in y in virtual mm */
 
 static PLDev device;
 static PLDev *dev = &device;
@@ -33,13 +35,14 @@ static PLDev *dev = &device;
 * Initialize device (terminal).
 \*----------------------------------------------------------------------*/
 
-void 
-null_init (PLStream *pls)
+void
+null_init(PLStream *pls)
 {
     printf("Sending output to Null device..\n");
 
     pls->termin = 0;		/* not an interactive terminal */
-    pls->color = 1;
+    pls->icol0 = 1;
+    pls->color = 0;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -66,31 +69,42 @@ null_init (PLStream *pls)
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-null_line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+void
+null_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
+{
+}
+
+/*----------------------------------------------------------------------*\
+* null_polyline()
+*
+* Draw a polyline in the current color.
+\*----------------------------------------------------------------------*/
+
+void
+null_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
 {
 }
 
 /*----------------------------------------------------------------------*\
 * null_clear()
 *
-* Clear page. 
+* Clear page.
 \*----------------------------------------------------------------------*/
 
-void 
-null_clear (PLStream *pls)
+void
+null_clear(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
 * null_page()
 *
-* Set up for the next page.  
+* Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void 
-null_page (PLStream *pls)
+void
+null_page(PLStream *pls)
 {
 }
 
@@ -100,8 +114,8 @@ null_page (PLStream *pls)
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-null_adv (PLStream *pls)
+void
+null_adv(PLStream *pls)
 {
 }
 
@@ -111,8 +125,8 @@ null_adv (PLStream *pls)
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void 
-null_tidy (PLStream *pls)
+void
+null_tidy(PLStream *pls)
 {
 }
 
@@ -122,8 +136,8 @@ null_tidy (PLStream *pls)
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-null_color (PLStream *pls)
+void
+null_color(PLStream *pls)
 {
 }
 
@@ -133,8 +147,8 @@ null_color (PLStream *pls)
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-null_text (PLStream *pls)
+void
+null_text(PLStream *pls)
 {
 }
 
@@ -144,8 +158,8 @@ null_text (PLStream *pls)
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void 
-null_graph (PLStream *pls)
+void
+null_graph(PLStream *pls)
 {
 }
 
@@ -155,8 +169,8 @@ null_graph (PLStream *pls)
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-null_width (PLStream *pls)
+void
+null_width(PLStream *pls)
 {
 }
 
@@ -166,9 +180,16 @@ null_width (PLStream *pls)
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void 
-null_esc (PLStream *pls, PLINT op, char *ptr)
+void
+null_esc(PLStream *pls, PLINT op, char *ptr)
 {
 }
 
-#endif	/* NULLDEV */
+#else
+int 
+pldummy_null()
+{
+    return 0;
+}
+
+#endif				/* NULLDEV */

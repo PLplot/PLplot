@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/11/07 07:48:48  mjl
-   Fixed orientation operation in several files and standardized certain startup
-   operations. Fixed bugs in various drivers.
+   Revision 1.5  1993/01/23 05:41:53  mjl
+   Changes to support new color model, polylines, and event handler support
+   (interactive devices only).
 
+ * Revision 1.4  1992/11/07  07:48:48  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
  * Revision 1.3  1992/10/22  17:04:58  mjl
  * Fixed warnings, errors generated when compling with HP C++.
  *
@@ -19,16 +23,16 @@
 
 	PLPLOT tektronix device driver.
 */
-static int dummy;
 #ifdef TEK
 
 #include <stdio.h>
 #include "plplot.h"
-#include "dispatch.h"
+#include "drivers.h"
 
 /* Function prototypes */
+/* INDENT OFF */
 
-void tekinit(PLStream *);
+void tek_init(PLStream *);
 
 /* top level declarations */
 
@@ -48,33 +52,34 @@ void tekinit(PLStream *);
 static PLDev device;
 static PLDev *dev = &device;
 
+/* INDENT ON */
 /*----------------------------------------------------------------------*\
-* tektinit()
+* tekt_init()
 *
 * Initialize device (terminal).
 \*----------------------------------------------------------------------*/
 
-void 
-tektinit (PLStream *pls)
+void
+tekt_init(PLStream *pls)
 {
-    pls->termin = 1;			/* an interactive device */
+    pls->termin = 1;		/* an interactive device */
 
     pls->OutFile = stdout;
     pls->orient = 0;
-    tekinit(pls);
+    tek_init(pls);
     fprintf(pls->OutFile, "%c%c", ESC, FF);	/* mgg 07/23/91 via rmr */
 }
 
 /*----------------------------------------------------------------------*\
-* tekfinit()
+* tekf_init()
 *
 * Initialize device (file).
 \*----------------------------------------------------------------------*/
 
-void 
-tekfinit (PLStream *pls)
+void
+tekf_init(PLStream *pls)
 {
-    pls->termin = 0;			/* not an interactive terminal */
+    pls->termin = 0;		/* not an interactive terminal */
 
 /* Initialize family file info */
 
@@ -86,19 +91,20 @@ tekfinit (PLStream *pls)
 
 /* Set up device parameters */
 
-    tekinit(pls);
+    tek_init(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* tekinit()
+* tek_init()
 *
 * Generic device initialization.
 \*----------------------------------------------------------------------*/
 
-void 
-tekinit (PLStream *pls)
+void
+tek_init(PLStream *pls)
 {
-    pls->color = 1;
+    pls->icol0 = 1;
+    pls->color = 0;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -108,34 +114,43 @@ tekinit (PLStream *pls)
     dev->xmin = 0;
     dev->ymin = 0;
 
-    if (!pls->orient) {				/* landscape mode */
-	dev->xmax = TEKX * 16;
-	dev->ymax = TEKY * 16;
-	setpxl((PLFLT) (4.771 * 16), (PLFLT) (4.653 * 16));
-    }
-    else {					/* portrait mode */
+    switch (pls->orient) {
+
+      case 1:
+      case -1:
 	dev->xmax = TEKY * 16;
 	dev->ymax = TEKX * 16;
 	setpxl((PLFLT) (4.653 * 16), (PLFLT) (4.771 * 16));
+	break;
+
+      default:
+	dev->xmax = TEKX * 16;
+	dev->ymax = TEKY * 16;
+	setpxl((PLFLT) (4.771 * 16), (PLFLT) (4.653 * 16));
+	break;
     }
+
+    dev->xlen = dev->xmax - dev->xmin;
+    dev->ylen = dev->ymax - dev->ymin;
+
     setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
     fprintf(pls->OutFile, "%c", GS);
 }
 
 /*----------------------------------------------------------------------*\
-* tekline()
+* tek_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void 
-tekline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
+void
+tek_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int hy, ly, hx, lx;
 
-    plRotPhy(pls, dev, &x1, &y1, &x2, &y2);
+    plRotPhy(pls->orient, dev, &x1, &y1, &x2, &y2);
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
 
@@ -173,13 +188,28 @@ tekline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* tekclear()
+* tek_polyline()
+*
+* Draw a polyline in the current color.
+\*----------------------------------------------------------------------*/
+
+void
+tek_polyline(PLStream *pls, PLSHORT *xa, PLSHORT *ya, PLINT npts)
+{
+    PLINT i;
+
+    for (i = 0; i < npts - 1; i++)
+	tek_line(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+}
+
+/*----------------------------------------------------------------------*\
+* tek_clear()
 *
 * Clear page.  User must hit a <CR> to continue (terminal output).
 \*----------------------------------------------------------------------*/
 
-void 
-tekclear (PLStream *pls)
+void
+tek_clear(PLStream *pls)
 {
     if (pls->termin) {
 	putchar('\007');
@@ -190,14 +220,14 @@ tekclear (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tekpage()
+* tek_page()
 *
-* Set up for the next page.  
+* Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void 
-tekpage (PLStream *pls)
+void
+tek_page(PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -209,32 +239,32 @@ tekpage (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tekadv()
+* tek_adv()
 *
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void 
-tekadv (PLStream *pls)
+void
+tek_adv(PLStream *pls)
 {
-    tekclear(pls);
-    tekpage(pls);
+    tek_clear(pls);
+    tek_page(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* tektidy()
+* tek_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void 
-tektidy (PLStream *pls)
+void
+tek_tidy(PLStream *pls)
 {
     if (!pls->termin) {
 	fclose(pls->OutFile);
     }
     else {
-	tekclear(pls);
+	tek_clear(pls);
 	fprintf(pls->OutFile, "%c%c", US, CAN);
 	fflush(pls->OutFile);
     }
@@ -244,58 +274,66 @@ tektidy (PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tekcolor()
+* tek_color()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void 
-tekcolor (PLStream *pls)
+void
+tek_color(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* tektext()
+* tek_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void 
-tektext (PLStream *pls)
+void
+tek_text(PLStream *pls)
 {
     fprintf(pls->OutFile, "%c", US);
 }
 
 /*----------------------------------------------------------------------*\
-* tekgraph()
+* tek_graph()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void 
-tekgraph (PLStream *pls)
+void
+tek_graph(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* tekwidth()
+* tek_width()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void 
-tekwidth (PLStream *pls)
+void
+tek_width(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* tekesc()
+* tek_esc()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void 
-tekesc (PLStream *pls, PLINT op, char *ptr)
+void
+tek_esc(PLStream *pls, PLINT op, char *ptr)
 {
 }
-#endif	/* TEK */
+
+#else
+int 
+pldummy_tek()
+{
+    return 0;
+}
+
+#endif				/* TEK */
