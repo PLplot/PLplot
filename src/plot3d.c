@@ -967,7 +967,9 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 		}
 		plnxtv(&uu[start], &vv[start], NULL, end-start+1, 0); /* and plot it */
 		
-		i = end+1; /* restart where it was left */
+		cline->x[end] = cline->x[start];
+		cline->y[end] = cline->y[start];
+		i = end; /* restart where it was left */
 	      }
 	    } while (j < cline->npts && i < cline->npts);
 	  }
