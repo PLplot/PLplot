@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/09/23 07:49:35  mjl
+ * Revision 1.26  1995/04/12 08:21:49  mjl
+ * Two font control variables moved elsewhere.
+ *
+ * Revision 1.25  1994/09/23  07:49:35  mjl
  * Changed a PLINT to an int to make a DOS compiler happy about its use as a
  * for loop index.
  *
@@ -50,8 +53,8 @@ static void	calc_dimap	(void);
 
 static PLINT xscl[PL_MAXPOLY], yscl[PL_MAXPOLY];
 
-static PLINT font, initfont, fontset;	/* font control parameters */
-static PLINT offset;			/* offset for dispatch calls */
+static PLINT initfont;		/* initial font */
+static PLINT offset;		/* offset for dispatch calls */
 
 /*----------------------------------------------------------------------*\
 * Allocate a PLStream data structure (defined in plstream.h).
