@@ -242,6 +242,7 @@ plbuf_image(PLStream *pls)
  *
  *	PLESC_FILL	Fill polygon
  *	PLESC_SWIN	Set plot window parameters
+ *      PLESC_IMAGE     Draw image
 \*--------------------------------------------------------------------------*/
 
 void
@@ -478,6 +479,7 @@ rdbuf_state(PLStream *pls)
  *
  *	PLESC_FILL	Fill polygon
  *	PLESC_SWIN	Set plot window parameters
+ *      PLESC_IMAGE     Draw image
 \*--------------------------------------------------------------------------*/
 
 static void
