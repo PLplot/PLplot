@@ -1,3 +1,10 @@
+plplot (5.2.1.cvs.20040115-3) unstable; urgency=low
+
+  * scripts/get-dependency-libs.sh: Applied upstream CVS patch for finding
+    library files in .libs directories in the build tree.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 15 Jan 2004 10:16:32 +0100
+
 plplot (5.2.1.cvs.20040115-2) unstable; urgency=low
 
   * bindings/octave/PLplot/toggle_plplot_use.m,
