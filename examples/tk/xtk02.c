@@ -1,7 +1,10 @@
 /* 
 /* $Id$
  * $Log$
- * Revision 1.2  1994/05/26 22:38:08  mjl
+ * Revision 1.3  1994/06/10 20:47:34  furnish
+ * Big time clean up.
+ *
+ * Revision 1.2  1994/05/26  22:38:08  mjl
  * Added missing CVS Id and Log fields.
  *
  *
@@ -37,6 +40,7 @@ static char rcsid[] = "$Header$ SPRITE (Berkeley)";
 
 #include "tk.h"
 #include "itcl.h"
+#include "plplot.h"
 
 /*
  * The following variable is a special hack that allows applications
@@ -73,8 +77,6 @@ int
 Tcl_AppInit(interp)
     Tcl_Interp *interp;		/* Interpreter for application. */
 {
-int   plFrameCmd        (ClientData, Tcl_Interp *, int, char **);
-
     Tk_Window main;
 
     main = Tk_MainWindow(interp);
@@ -149,63 +151,7 @@ void plot1(void);
 void plot2(void);
 void plot3(void);
 
-int
-xxx_main(int argc, char *argv[])
-{
-    PLINT digmax;
-    char ver[80];
-
-/* plplot initialization */
-/* Divide page into 2x2 plots unless user overrides */
-
-    plssub(2, 2);
-
-/* Parse and process command line arguments */
-
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
-
-/* Get version number, just for kicks */
-
-    plgver(ver);
-    printf("Plplot library version: %s\n", ver);
-
-/* Initialize plplot */
-
-    plinit();
-
-/* Set up the data */
-/* Original case */
-
-    xscale = 6.;
-    yscale = 1.;
-    xoff = 0.;
-    yoff = 0.;
-
-/* Do a plot */
-
-    plot1();
-
-/* Set up the data */
-
-    xscale = 1.;
-    yscale = 0.0014;
-    yoff = 0.0185;
-
-/* Do a plot */
-
-    digmax = 5;
-    plsyax(digmax, 0);
-    plot1();
-
-    plot2();
-
-    plot3();
-
-/* Don't forget to call PLEND to finish off! */
-
-    plend();
-    exit(0);
-}
+/* This has been superceeded by Tcl code in tk02 */
 
 void myplot1()
 {
@@ -370,14 +316,6 @@ plot3(void)
 
 int   myplotCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
 {
-/*
-    int i;
-    printf( "argc = %d\n", argc );
-
-    for( i=0; i < argc; i++ )
-      printf( "argv[%d] = %s\n", i, argv[i] );
-      */
-
     if (!strcmp(argv[1],"1"))
       myplot1();
 
