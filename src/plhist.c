@@ -1,31 +1,17 @@
 /* $Id$
-   $Log$
-   Revision 1.7  1993/07/01 22:13:38  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
-
- * Revision 1.6  1993/02/23  05:14:32  mjl
- * Changed reference in error message from plstar to plinit.
+ * $Log$
+ * Revision 1.8  1994/03/23 08:15:17  mjl
+ * Some cruft elimination.
  *
- * Revision 1.5  1993/01/23  05:55:21  mjl
- * Formatting changes only, I think.
+ * All external API source files: replaced call to plexit() on simple
+ * (recoverable) errors with simply printing the error message (via
+ * plabort()) and returning.  Should help avoid loss of computer time in some
+ * critical circumstances (during a long batch run, for example).
  *
- * Revision 1.4  1992/10/12  17:08:04  mjl
- * Added PL_NEED_SIZE_T define to those files that need to know the value
- * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
- * to include <stddef.h> to get it.
- *
- * Revision 1.3  1992/09/30  18:25:50  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:46:01  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:34:32  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.7  1993/07/01  22:13:38  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
 */
 
 /*	plhist.c
@@ -33,11 +19,7 @@
 	Histogram plotter.
 */
 
-#define PL_NEED_MALLOC
-#define PL_NEED_SIZE_T
 #include "plplotP.h"
-
-#include <stdlib.h>
 #include <math.h>
 
 /*----------------------------------------------------------------------*\
@@ -58,20 +40,27 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
     short i;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plhist: Please call plinit first.");
-
-    if (level < 3 && oldwin)
-	plexit("plhist: Please set up window first.");
-
-    if (datmin >= datmax)
-	plexit("plhist: Data range invalid.");
-
-    if (!(x = (PLFLT *) malloc((size_t) nbin * sizeof(PLFLT))))
-	 plexit("plhist: Out of memory");
-
-    if (!(y = (PLFLT *) malloc((size_t) nbin * sizeof(PLFLT))))
-	 plexit("plhist: Out of memory");
+    if (level < 1) {
+	plabort("plhist: Please call plinit first");
+	return;
+    }
+    if (level < 3 && oldwin) {
+	plabort("plhist: Please set up window first");
+	return;
+    }
+    if (datmin >= datmax) {
+	plabort("plhist: Data range invalid");
+	return;
+    }
+    if ( ! (x = (PLFLT *) malloc((size_t) nbin * sizeof(PLFLT)))) {
+	plabort("plhist: Out of memory");
+	return;
+    }
+    if ( ! (y = (PLFLT *) malloc((size_t) nbin * sizeof(PLFLT)))) {
+	free((void *) x);
+	plabort("plhist: Out of memory");
+	return;
+    }
 
     dx = (datmax - datmin) / nbin;
     for (i = 0; i < nbin; i++) {
@@ -115,17 +104,22 @@ c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plbin: Please set up window first.");
+    if (level < 3) {
+	plabort("plbin: Please set up window first");
+	return;
+    }
 
     /* Check x[i] are in ascending order */
 
-    for (i = 0; i < nbin - 1; i++)
-	if (x[i] >= x[i + 1])
-	    plexit("plbin: Elements of x[] must be increasing.");
+    for (i = 0; i < nbin - 1; i++) {
+	if (x[i] >= x[i + 1]) {
+	    plabort("plbin: Elements of x array must be increasing");
+	    return;
+	}
+    }
 
     plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
-    if (!center) {
+    if ( ! center) {
 	for (i = 0; i < nbin - 1; i++) {
 	    pljoin(x[i], vpwymi, x[i], y[i]);
 	    pljoin(x[i], y[i], x[i + 1], y[i]);

@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/01/15 17:28:45  mjl
+ * Revision 1.11  1994/03/23 08:14:55  mjl
+ * Some cruft elimination.
+ *
+ * All external API source files: replaced call to plexit() on simple
+ * (recoverable) errors with simply printing the error message (via
+ * plabort()) and returning.  Should help avoid loss of computer time in some
+ * critical circumstances (during a long batch run, for example).
+ *
+ * Revision 1.10  1994/01/15  17:28:45  mjl
  * Changed to new PDF function call syntax.
  *
  * Revision 1.9  1993/09/08  02:40:16  mjl
@@ -8,14 +16,6 @@
  * now can be specified without the trailing slash, and the path name
  * is built up correctly (I hope) on Unix, Amiga, and MS-DOS (so special
  * handling for passing strings with a trailing backslash is gone).
- *
- * Revision 1.8  1993/07/28  05:53:47  mjl
- * Put in code to ensure all malloc'ed memory is freed upon exit.
- *
- * Revision 1.7  1993/07/01  22:15:32  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Improved code that locates fonts, and changed the default font
- * locations on the Amiga.
 */
 
 /*	plfont.c
@@ -50,16 +50,12 @@
 *	$(PLPLOT_DIR)
 *	INSTALL_DIR
 *	PLFONTDEV1	(fonts:plplot)
-*	PLFONTDEV2	(plfonts:) */
+*	PLFONTDEV2	(plfonts:) 
+*/
 
-#define PL_NEED_MALLOC
 #include "plplotP.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <string.h>
 #include "pdf.h"
+#include <string.h>
 
  /* MSDOS search path */
 
@@ -155,11 +151,14 @@ c_plfont(PLINT ifont)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plfont: Please call plinit first.");
-
-    if (ifont < 1 || ifont > 4)
-	plexit("plfont: Invalid font.");
+    if (level < 1) {
+	plabort("plfont: Please call plinit first");
+	return;
+    }
+    if (ifont < 1 || ifont > 4) {
+	plabort("plfont: Invalid font");
+	return;
+    }
 
     plP_gatt(&ifnt, &icol);
     plP_satt(ifont, icol);
@@ -247,7 +246,7 @@ plfontopen(char *fn)
 
 /****	search current directory	****/
 
-    if ((file = fopen(fn, BINARY_READ)) != NULL)
+    if ((file = fopen(fn, "rb")) != NULL)
 	goto done;
 
 /**** 	search $(HOME)/lib	****/
@@ -256,7 +255,7 @@ plfontopen(char *fn)
     if ((dn = getenv("HOME")) != NULL) {
 	plGetName(dn, "lib", fn, &fs);
 
-	if ((file = fopen(fs, BINARY_READ)) != NULL)
+	if ((file = fopen(fs, "rb")) != NULL)
 	    goto done;
     }
 #endif
@@ -267,7 +266,7 @@ plfontopen(char *fn)
     if ((dn = getenv(PLFONTENV)) != NULL) {
 	plGetName(dn, "", fn, &fs);
 
-	if ((file = fopen(fs, BINARY_READ)) != NULL)
+	if ((file = fopen(fs, "rb")) != NULL)
 	    goto done;
     }
 #endif
@@ -277,28 +276,28 @@ plfontopen(char *fn)
 #ifdef INSTALL_DIR
     plGetName(INSTALL_DIR, "", fn, &fs);
 
-    if ((file = fopen(fs, BINARY_READ)) != NULL)
+    if ((file = fopen(fs, "rb")) != NULL)
 	goto done;
 #endif
 
 #ifdef PLFONTDEV1
     plGetName(PLFONTDEV1, "", fn, &fs);
 
-    if ((file = fopen(fs, BINARY_READ)) != NULL)
+    if ((file = fopen(fs, "rb")) != NULL)
 	goto done;
 #endif
 
 #ifdef PLFONTDEV2
     plGetName(PLFONTDEV2, "", fn, &fs);
 
-    if ((file = fopen(fs, BINARY_READ)) != NULL)
+    if ((file = fopen(fs, "rb")) != NULL)
 	goto done;
 #endif
 
 #ifdef PLFONTDEV3
     plGetName(PLFONTDEV3, "", fn, &fs);
 
-    if ((file = fopen(fs, BINARY_READ)) != NULL)
+    if ((file = fopen(fs, "rb")) != NULL)
 	goto done;
 #endif
 
