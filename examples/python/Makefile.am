@@ -52,6 +52,8 @@ examples_python_DATA = \
 	xw18.py \
 	xw19.py
 
+CLEANFILES = *.pyc
+
 endif
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
