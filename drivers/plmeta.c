@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/07/19 22:30:26  mjl
+ * Revision 1.26  1995/03/11 21:38:33  mjl
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.  Added preliminary code to write & restore plot window parameters.
+ *
+ * Revision 1.25  1994/07/19  22:30:26  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.
  *
@@ -8,45 +12,33 @@
  * Now allocate a PLmDev in order to keep file offset information local
  * to the driver where it belongs.  No longer keep track of bytes written
  * since the PDF output routines do that automatically.
- *
- * Revision 1.23  1994/03/23  06:39:22  mjl
- * Added support for: color map 1 color selection, color map 0 or color map 1
- * state change (palette change), polygon fills.
- *
- * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
- * stdlib.h now included automatically by plplotP.h), extraneous clears
- * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
- * driver interface or driver initialization as appropriate).  Special
- * handling for malloc includes eliminated (no longer needed) and malloc
- * prototypes fixed as necessary.
- *
- * Revision 1.22  1994/01/15  17:21:58  mjl
- * Changed to new PDF function syntax.
- *
- * Revision 1.21  1993/11/15  08:29:19  mjl
- * Now writes number of pages in file to beginning of file on each
- * new page.  For seeking to a specified number of pages before EOF.
 */
 
 /*
     plmeta.c
 
-    Copyright 1991, 1992
-    Geoffrey Furnish
-    Maurice LeBrun
+    Copyright 1991, 1992, 1993, 1994, 1995
+    Geoffrey Furnish			furnish@dino.ph.utexas.edu
+    Maurice LeBrun			mjl@dino.ph.utexas.edu
+    Institute for Fusion Studies	University of Texas at Austin
 
-    This software may be freely copied, modified and redistributed without
-    fee provided that this copyright notice is preserved intact on all
-    copies and modified copies.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
 
-    There is no warranty or other guarantee of fitness of this software.
-    It is provided solely "as is". The author(s) disclaim(s) all
-    responsibility and liability with respect to this software's usage or
-    its effect upon hardware or computer systems.
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free
+    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	
-    This is a metafile writer for plplot.
+    This is a metafile writer for PLplot.
 
 */
 #include "plDevs.h"
@@ -71,17 +63,16 @@ typedef struct {
 } PLmDev;
 
 /* Function prototypes */
-/* INDENT OFF */
 
 static void WriteHeader		(PLStream *pls);
 static void plm_fill		(PLStream *pls);
+static void plm_swin		(PLStream *pls);
 
-/* INDENT ON */
-/*----------------------------------------------------------------------*\
-* plD_init_plm()
-*
-* Initialize device.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_init_plm()
+ *
+ * Initialize device.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_init_plm(PLStream *pls)
@@ -91,12 +82,9 @@ plD_init_plm(PLStream *pls)
 
     dbug_enter("plD_init_plm");
 
-    pls->termin = 0;		/* not an interactive terminal */
-    pls->icol0 = 1;
-    pls->color = 1;
-    pls->page = 0;
-    pls->dev_fill0 = 1;
-    pls->dev_fill1 = 1;
+    pls->color = 1;		/* Is a color device */
+    pls->dev_fill0 = 1;		/* Handle solid fills */
+    pls->dev_fill1 = 1;		/* Handle pattern fills */
 
 /* Initialize family file info */
 
@@ -143,11 +131,11 @@ plD_init_plm(PLStream *pls)
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
 }
 
-/*----------------------------------------------------------------------*\
-* plD_line_plm()
-*
-* Draw a line in the current color from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_line_plm()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
+\*--------------------------------------------------------------------------*/
 
 void
 plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
@@ -166,7 +154,7 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
 	y1 < dev->ymin || y1 > dev->ymax ||
 	y2 < dev->ymin || y2 > dev->ymax) {
 
-	fprintf(stderr, "PLPLOT: coordinates out of bounds in driver.\n");
+	fprintf(stderr, "PLplot: coordinates out of bounds in driver.\n");
 	fprintf(stderr, "  Actual: (%i,%i), (%i,%i)   Bounds: (%i,%i,%i,%i)\n",
 		x1, y1, x2, y2, dev->xmin, dev->xmax, dev->ymin, dev->ymax);
     }
@@ -179,9 +167,9 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
    graphics applications use this command heavily.
 
    Still not quite as efficient as tektronix format since we also send the
-   command each time (so shortest command is 25% larger), but a heck of
-   a lot easier to implement than the tek method.
-*/
+   command each time (so shortest command is 25% larger), but a lot easier
+   to implement than the tek method.  
+ */
     if (x1 == dev->xold && y1 == dev->yold) {
 
 	c = (U_CHAR) LINETO;
@@ -205,11 +193,11 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
     dev->yold = y2;
 }
 
-/*----------------------------------------------------------------------*\
-* plD_polyline_plm()
-*
-* Draw a polyline in the current color.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_polyline_plm()
+ *
+ * Draw a polyline in the current color.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_polyline_plm(PLStream *pls, short *xa, short *ya, PLINT npts)
@@ -230,31 +218,31 @@ plD_polyline_plm(PLStream *pls, short *xa, short *ya, PLINT npts)
     dev->yold = ya[npts - 1];
 }
 
-/*----------------------------------------------------------------------*\
-* plD_eop_plm()
-*
-* End of page.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_eop_plm()
+ *
+ * End of page.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_eop_plm(PLStream *pls)
 {
-    U_CHAR c = (U_CHAR) CLEAR;
+    U_CHAR c = (U_CHAR) EOP;
 
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
 }
 
-/*----------------------------------------------------------------------*\
-* plD_bop_plm()
-*
-* Set up for the next page.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_bop_plm()
+ *
+ * Set up for the next page.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_bop_plm(PLStream *pls)
 {
     PLmDev *dev = (PLmDev *) pls->dev;
-    U_CHAR c = (U_CHAR) PAGE;
+    U_CHAR c = (U_CHAR) BOP;
     FPOS_T cp_offset=0, fwbyte_offset=0, bwbyte_offset=0;
     FILE *file = pls->OutFile;
 
@@ -344,11 +332,11 @@ plD_bop_plm(PLStream *pls)
     plD_state_plm(pls, PLSTATE_COLOR0);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_tidy_plm()
-*
-* Close graphics file
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_tidy_plm()
+ *
+ * Close graphics file
+\*--------------------------------------------------------------------------*/
 
 void
 plD_tidy_plm(PLStream *pls)
@@ -361,11 +349,11 @@ plD_tidy_plm(PLStream *pls)
     pdf_close(pls->pdfs);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_state_plm()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_state_plm()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
+\*--------------------------------------------------------------------------*/
 
 void 
 plD_state_plm(PLStream *pls, PLINT op)
@@ -422,17 +410,18 @@ plD_state_plm(PLStream *pls, PLINT op)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* plD_esc_plm()
-*
-* Escape function.  Note that any data written must be in device
-* independent form to maintain the transportability of the metafile.
-*
-* Functions:
-*
-*	PLESC_FILL	Fill polygon
-*
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_esc_plm()
+ *
+ * Escape function.  Note that any data written must be in device
+ * independent form to maintain the transportability of the metafile.
+ *
+ * Functions:
+ *
+ *	PLESC_FILL	Fill polygon
+ *	PLESC_SWIN	Set window parameters
+ *
+\*--------------------------------------------------------------------------*/
 
 void
 plD_esc_plm(PLStream *pls, PLINT op, void *ptr)
@@ -448,14 +437,18 @@ plD_esc_plm(PLStream *pls, PLINT op, void *ptr)
     case PLESC_FILL:
 	plm_fill(pls);
 	break;
+
+    case PLESC_SWIN:
+	plm_swin(pls);
+	break;
     }
 }
 
-/*----------------------------------------------------------------------*\
-* plm_fill()
-*
-* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plm_fill()
+ *
+ * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+\*--------------------------------------------------------------------------*/
 
 static void
 plm_fill(PLStream *pls)
@@ -473,11 +466,27 @@ plm_fill(PLStream *pls)
     dev->yold = UNDEFINED;
 }
 
-/*----------------------------------------------------------------------*\
-* WriteHeader()
-*
-* Writes a PLPLOT Metafile header.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plm_swin()
+ *
+ * Set window parameters.
+ * Each parameter or group of parameters is tagged to make backward
+ * compatibility easier.
+\*--------------------------------------------------------------------------*/
+
+static void
+plm_swin(PLStream *pls)
+{
+    PLmDev *dev = (PLmDev *) pls->dev;
+
+    dbug_enter("plm_swin");
+}
+
+/*--------------------------------------------------------------------------*\
+ * WriteHeader()
+ *
+ * Writes Metafile header.
+\*--------------------------------------------------------------------------*/
 
 static void
 WriteHeader(PLStream *pls)
