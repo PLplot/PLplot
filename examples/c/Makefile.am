@@ -48,7 +48,9 @@ sources = \
 	x20c.c \
 	x21c.c \
 	x22c.c \
-	x23c.c
+	x23c.c \
+	x24c.c
+
 examples_c_DATA = \
 	$(sources) \
 	Makefile.examples
