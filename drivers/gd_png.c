@@ -2,6 +2,31 @@
  
          PNG device driver.
 */
+
+/*
+ * Driver supports a hack that manipulates the colour palette when 
+ * a light background is selected. This is basically to make sure 
+ * there are not two "whites" when -bg ffffff is issued at the
+ * command line.
+ *
+ * Related to this change, there is an ability to swap the "new"
+ * black colour (index 15) with the red colour (index 2) by issuing
+ * the command line "-hack" option. I like this for web pages, because
+ * I think that black looks nicer than red (on white) for default
+ * plotting. That is why it can be enabled with -hack, in case you
+ * don't like it working this way. 
+ *
+ * For me, these two changes make it easy to switch from a "screen friendly"
+ * black background with red first plotting colour, to a "web friendly"
+ * white background with a black first plotting colour. 
+ *
+ * These features are enabled on a driver level by defining 
+ * "SWAP_BALCK_WHEN_WHITE". If you wan't the driver to behave 100% like other
+ * drivers, comment out the define
+ */
+ 
+#define SWAP_BALCK_WHEN_WHITE 
+
 #include "plplot/plDevs.h"
 
 #if defined(PLD_png) || defined(PLD_jpg)
@@ -231,6 +256,41 @@ setcmap(PLStream *pls)
                                    pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
 
         }
+
+#ifdef SWAP_BALCK_WHEN_WHITE
+
+/* 
+ * Do a kludge to add a "black" colour back to the palette if the
+ * background is "almost white" (ie changed through -bg).
+ * 
+ * Also includes an "optional" change to swap the red colour (1) with the 
+ * black colour (15), which is off by default. (I don't like the red being
+ * the 'default' colour "1" on a "white" background, or for that matter
+ * yellow being "2", but I can live more with yellow at number two.)
+ * Just use "-hack" from the command line to make it take effect.
+ *
+ */
+
+if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
+   {
+    if (pls->hack!=1)
+       {
+        gdImageColorDeallocate(dev->im_out,dev->colour_index[15]);
+        dev->colour_index[15]=gdImageColorAllocate(dev->im_out,0, 0, 0);
+       }
+    else
+       {
+        gdImageColorDeallocate(dev->im_out,dev->colour_index[15]);
+        dev->colour_index[15]=gdImageColorAllocate(dev->im_out, 
+                              pls->cmap0[1].r, pls->cmap0[1].g, pls->cmap0[1].b);
+
+        gdImageColorDeallocate(dev->im_out,dev->colour_index[1]);
+        dev->colour_index[1]=gdImageColorAllocate(dev->im_out,0,0,0); 
+                              
+      }
+   }
+
+#endif
 
 /* Initialize any remaining slots for cmap1 */
 
