@@ -57,15 +57,15 @@ function curr_axis = axis (ax)
     __pl.axis_st(__pl_strm) = 1;
 
     if (len > 1)
-      __pl.axis(__pl_strm, [1, 2]) = [ax (1), ax (2)];
+      __pl.axis(__pl_strm, [1, 2]) = [ax(1), ax(2)];
     endif
 
     if (len > 3)
-      __pl.axis(__pl_strm, [3, 4]) = [ax (3), ax (4)];
+      __pl.axis(__pl_strm, [3, 4]) = [ax(3), ax(4)];
     endif
 
     if (len > 5)
-      __pl.axis(__pl_strm, [5, 6]) = [ax (5), ax (6)];
+      __pl.axis(__pl_strm, [5, 6]) = [ax(5), ax(6)];
     endif
 
   else
