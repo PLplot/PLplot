@@ -27,7 +27,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <values.h>
+#include <limits.h>
+#include <float.h>
 #include <math.h>
 #include <assert.h>
 #include <string.h>
@@ -269,10 +270,10 @@ csa* csa_create()
 
     a->verbose = 0;
 
-    a->xmin = MAXDOUBLE;
-    a->xmax = -MAXDOUBLE;
-    a->ymin = MAXDOUBLE;
-    a->ymax = -MAXDOUBLE;
+    a->xmin = DBL_MAX;
+    a->xmax = -DBL_MAX;
+    a->ymin = DBL_MAX;
+    a->ymax = -DBL_MAX;
 
     a->points = malloc(NPASTART * sizeof(point*));
     a->nallocated = NPASTART;

@@ -23,7 +23,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <values.h>
 #include "nan.h"
 #include "delaunay.h"
 

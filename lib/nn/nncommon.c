@@ -20,7 +20,7 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <math.h>
-#include <values.h>
+#include <float.h>
 #include <string.h>
 #include "nan.h"
 #include "delaunay.h"
@@ -98,10 +98,10 @@ void points_thin(int* pn, point** ppoints, int nx, int ny)
 {
     int n = *pn;
     point* points = *ppoints;
-    double xmin = MAXDOUBLE;
-    double xmax = -MAXDOUBLE;
-    double ymin = MAXDOUBLE;
-    double ymax = -MAXDOUBLE;
+    double xmin = DBL_MAX;
+    double xmax = -DBL_MAX;
+    double ymin = DBL_MAX;
+    double ymax = -DBL_MAX;
     int nxy = nx * ny;
     double* sumx = calloc(nxy, sizeof(double));
     double* sumy = calloc(nxy, sizeof(double));
@@ -218,10 +218,10 @@ void points_thin(int* pn, point** ppoints, int nx, int ny)
  */
 void points_generate1(int nin, point pin[], int nx, int ny, int* nout, point** pout)
 {
-    double xmin = MAXDOUBLE;
-    double xmax = -MAXDOUBLE;
-    double ymin = MAXDOUBLE;
-    double ymax = -MAXDOUBLE;
+    double xmin = DBL_MAX;
+    double xmax = -DBL_MAX;
+    double ymin = DBL_MAX;
+    double ymax = -DBL_MAX;
     double stepx, stepy;
     double x0, xx, yy;
     int i, j, ii;

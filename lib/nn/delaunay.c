@@ -26,8 +26,8 @@
 #include <math.h>
 #include <stdarg.h>
 #include <string.h>
-#include <values.h>
 #include <limits.h>
+#include <float.h>
 #include <sys/time.h>
 #ifdef USE_QHULL
 #include <qhull/qhull_a.h>
@@ -183,10 +183,10 @@ delaunay* delaunay_build(int np, point points[], int ns, int segments[], int nh,
     assert(tio_out.numberofpoints == np);
     assert(tio_out.pointlist[2 * np - 2] == points[np - 1].x && tio_out.pointlist[2 * np - 1] == points[np - 1].y);
 
-    d->xmin = MAXDOUBLE;
-    d->xmax = -MAXDOUBLE;
-    d->ymin = MAXDOUBLE;
-    d->ymax = -MAXDOUBLE;
+    d->xmin = DBL_MAX;
+    d->xmax = -DBL_MAX;
+    d->ymin = DBL_MAX;
+    d->ymax = -DBL_MAX;
 
     d->npoints = np;
     d->points = malloc(np * sizeof(point));
@@ -346,10 +346,10 @@ delaunay* delaunay_build(int np, point points[], int ns, int segments[], int nh,
     if (nn_verbose)
       fflush(stderr);
 
-    d->xmin = MAXDOUBLE;
-    d->xmax = -MAXDOUBLE;
-    d->ymin = MAXDOUBLE;
-    d->ymax = -MAXDOUBLE;
+    d->xmin = DBL_MAX;
+    d->xmax = -DBL_MAX;
+    d->ymin = DBL_MAX;
+    d->ymax = -DBL_MAX;
 
     d->npoints = np;
     d->points = malloc(np * sizeof(point));

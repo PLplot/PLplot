@@ -35,10 +35,10 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <values.h>
 #include <string.h>
 #include <assert.h>
 #include <math.h>
+#include <float.h>
 #include "nn.h"
 #include "delaunay.h"
 #include "nan.h"
@@ -87,7 +87,7 @@ nn_point_interpolator* nnpi_create(delaunay* d)
     nn_point_interpolator* nn = malloc(sizeof(nn_point_interpolator));
 
     nn->d = d;
-    nn->wmin = -MAXDOUBLE;
+    nn->wmin = -DBL_MAX;
     nn->vertices = calloc(NSTART, sizeof(int));
     nn->weights = calloc(NSTART, sizeof(double));
     nn->nvertices = 0;
