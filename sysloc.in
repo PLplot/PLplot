@@ -716,7 +716,7 @@ if test "$enable_octave" = "yes"; then
 
 # Check that plplot was built with shared libs
     if test "$enable_shared" != "yes"; then
-        AC_MSG_RESULT([warning: Octave support requires enable_shared=yes, setting enable_octave=no.]);
+        AC_MSG_WARN([Octave support requires enable_shared=yes, setting enable_octave=no.]);
         enable_octave=no;
     fi
 
@@ -726,7 +726,7 @@ if test "$enable_octave" = "yes"; then
         AC_CHECK_PROG(has_matwrap, matwrap, yes, no)
         if test "$has_matwrap" = "no"; then
             MATWRAP=`pwd`"/bindings/octave/matwrap/matwrap"
-            AC_MSG_RESULT([warning: Using builtin matwrap.]);
+            AC_MSG_WARN([Using builtin matwrap.]);
         fi
     fi
 
@@ -736,7 +736,7 @@ if test "$enable_octave" = "yes"; then
         MKOCTFILE=`basename $MKOCTFILE`
         AC_CHECK_PROG(has_mkoctfile, $MKOCTFILE, yes, no)
         if test "$has_mkoctfile" = "no"; then
-            AC_MSG_RESULT([warning: $MKOCTFILE not found, disabling Octave support.]);
+            AC_MSG_WARN([$MKOCTFILE not found, disabling Octave support.]);
             enable_octave=no;
         else
             check_mkoctfile_compile=`$MKOCTFILE --help 2>/dev/null \
@@ -750,7 +750,7 @@ if test "$enable_octave" = "yes"; then
         OCTAVE=`basename $OCTAVE`
         AC_CHECK_PROG(has_octave, $OCTAVE, yes, no)
         if test "$has_octave" = "no"; then
-            AC_MSG_RESULT([warning: $OCTAVE not found, disabling Octave support.]);
+            AC_MSG_WARN([$OCTAVE not found, disabling Octave support.]);
             enable_octave=no;
         fi
     fi
@@ -905,17 +905,23 @@ fi
 # ----------------------------------------------------------------------------
 
 if test "$with_qhull" = "yes"; then
-	AC_CHECK_LIB(qhull, qh_new_qhull, [ HAS_QHULL=yes])
-	if test "$HAS_QHULL" = "yes"; then
-		AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
-        	if test "$enable_dyndrivers" = "yes"; then                
-	            QHULLLIBS="-lqhull"
-		    NNLIBS="-lnn"
-        	else
-	            LIBS="$LIBS -lqhull -lnn"
-        	fi
-	fi	
+    if test "$with_double" = "yes"; then
+        AC_CHECK_LIB(qhull, qh_new_qhull, [ HAS_QHULL=yes])
+        if test "$HAS_QHULL" = "yes"; then
+            AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
+            if test "$enable_dyndrivers" = "yes"; then
+                QHULLIBS="-lqhull"
+                NNLIBS="-lnn"
+            else
+                LIBS="$LIBS -lqhull -lnn"
+            fi
+        fi
+    else
+        AC_MSG_WARN([To use Qhull/nn plplot must be configured with doubles])
+	with_qhull=no;
+    fi
 fi
+
 
 # ----------------------------------------------------------------------------
 # Now do the variable substitutions.
