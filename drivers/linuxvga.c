@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1995/03/11 20:27:08  mjl
+ * Revision 1.8  1995/06/12 02:55:02  mjl
+ * Fixed broken plP_setpxl and plP_setphy function calls.
+ *
+ * Revision 1.7  1995/03/11  20:27:08  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.
  *
@@ -92,9 +95,8 @@ plD_init_vga(PLStream *pls)
 
     totcol = vga_getcolors();
 
-    setpxl(2.5, 2.5);		/* My best guess.  Seems to work okay. */
-
-    setphy(0, vgax, 0, vgay);
+    plP_setpxl(2.5, 2.5);	/* My best guess.  Seems to work okay. */
+    plP_setphy(0, vgax, 0, vgay);
 }
 
 /*--------------------------------------------------------------------------*\
