@@ -297,7 +297,7 @@ LDFFLAGS= -ansi -lm -lX11
 })if_linux({
 #		LINUX definitions
 
-PLDEVICES = -DPLMETA -DPS -DLJII
+PLDEVICES = -DPLMETA -DPS -DLJII -DXWIN
 SYS_FLAGS_C = -Dunix -ansi
 
 CC	= gcc
@@ -305,8 +305,8 @@ F77	=
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
 FFLAGS	= 
 
-LDCFLAGS= -ansi -lm
-LDFFLAGS= -ansi -lm
+LDCFLAGS= -ansi -lX11 -lm
+LDFFLAGS= -ansi -lX11 -lm
 
 # Note that the ljii.c driver doesn't work yet, but we need to have it
 # in if it's ever gonna get fixed.
