@@ -284,7 +284,7 @@
         Release version: &Project-Version;
       </para>
       <para>
-        Release date: &Project-Date;
+        Release date: @RELEASE_DATE@
       </para>
 
     </legalnotice>

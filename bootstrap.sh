@@ -3,7 +3,7 @@
 # Autootols bootstrap script for PLplot
 #
 # This file is part of PLplot, and is released under the GNU LGPL.
-# No warranties.  
+# No warranties.
 #
 # Copyright (C) 2003  Alan W. Irwin
 # Copyright (C) 2003  Joao Cardoso
@@ -31,14 +31,17 @@ EOF
 version=""
 aclocal_opts=""
 date_version=no
+set_date=no
 
 while test $# -gt 0 ; do
   case $1 in
   --version=*)
     version=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
+    set_date=yes
     ;;
   --date-version)
     date_version=yes
+    set_date=yes
     ;;
   --help)
     usage
@@ -81,6 +84,13 @@ if [ -n "$version" ] ; then
   echo done
 fi
 
+if [ $set_date = yes ] ; then
+  date=`date +%Y-%m-%d`
+  echo -n "Patching configure.ac (release date $date)... "
+  perl -pi -e 's/^(RELEASE_DATE=).*/${1}'$date'/' configure.ac
+  echo done
+fi
+
 aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
 
 run aclocal $aclocal_opts \
@@ -97,4 +107,4 @@ run aclocal $aclocal_opts \
        else \
            autoconf 2>/dev/null ; \
        fi ; \
-       echo " done" ) 
+       echo " done" )

@@ -412,6 +412,13 @@ AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 ###   --date-version of that script. ]
 AM_INIT_AUTOMAKE(plplot, 5.2.1)
 
+### Date of release.  This can be set by hand, but the prefered method
+### is by specifying one of the option --version of --date-version to
+### bootstrap.sh
+
+RELEASE_DATE=2003-08-28
+AC_SUBST(RELEASE_DATE)
+
 ### Version number for the shared libraries.  Note we are keeping the shared
 ### library version consistent with the package version in direct
 ### contradiction to the libtool directive on this.  Thus, these numbers
