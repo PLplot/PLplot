@@ -52,9 +52,9 @@ EOF
 
 # Check for Automake version >= 1.8.2
 automake --version | sed 1q \
-  | perl -ne '/((\d+)\.(\d+)\.(\d+))/; \
+  | perl -ne '/((\d+)\.(\d+)(\.(\d+))?)/; \
       die "'$0': Automake version is $1.  Version 1.8.2 or later is needed\n"
-        if $2<1 or ($2==1 and $3<8) or ($2==1 and $3==8 and $4<2); \
+        if $2<1 or ($2==1 and $3<8) or ($2==1 and $3==8 and $5<2); \
       exit 0' || exit 1
 
 version=""
