@@ -32,7 +32,7 @@ PYTHON_LIBS=
 PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
-PYTHON_DEMOS	= README.python pytkdemo *.py
+PYTHON_DEMOS	= pytkdemo *.py
 
 # Variables for use in "make" and "make install".
 
@@ -67,11 +67,8 @@ install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
 	fi
 	@-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
 	@-cd $(top_srcdir)/examples/python ; \
+	$(CP) README.python $(DEMOS_DIR)/python ; \
 	for i in $(PYTHON_DEMOS) ; do \
-	  sed 's:@MODULE_DIR@:$(PYTHON_DIR):' < $$i > $(DEMOS_DIR)/$$i ; \
-	  chmod +x $(DEMOS_DIR)/$$i ; \
+	  sed 's:@MODULE_DIR@:$(PYTHON_DIR):' < $$i > $(DEMOS_DIR)/python/$$i ; \
+	  chmod a+rx $(DEMOS_DIR)/python/$$i ; \
 	done
-#	-if test ! -d $(PYTHON_MOD_DIR)/plplot; then \
-#		mkdir -p $(PYTHON_MOD_DIR)/plplot; fi
-#	-cd $(top_srcdir)/bindings/python; $(CP) *.py $(PYTHON_MOD_DIR)/plplot
-
