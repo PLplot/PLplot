@@ -168,6 +168,57 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	PLPointer pltr_data);
 
 /*----------------------------------------------------------------------*\
+ * plshades()
+ *
+ * Shade regions via a series of calls to plshade.
+ * All arguments are the same as plshade except the following:
+ * clevel is a pointer to an array of values representing 
+ * the shade edge values, nlevel-1 is
+ * the number of different shades, (nlevel is the number of shade edges),
+ * fill_width is the pattern fill width, and cont_color and cont_width
+ * are the color and width of the contour drawn at each shade edge.
+ * (if cont_color <= 0 or cont_width <=0, no such contours are drawn).
+\*----------------------------------------------------------------------*/
+
+void c_plshades( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+		PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+		PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+		PLINT cont_color, PLINT cont_width,
+		void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		PLPointer pltr_data )
+{
+   PLFLT shade_min, shade_max, shade_color;
+   PLINT i, init_color, init_width;
+
+   for (i = 0; i < nlevel-1; i++) {
+      shade_min = clevel[i];
+      shade_max = clevel[i+1];
+      shade_color = i / (float) (nlevel-2);
+      /* The constants in order mean 
+       * (1) color map1,
+       * (0, 0, 0, 0) all edge effects will be done with plcont rather
+       * than the normal plshade drawing which gets partially blocked
+       * when sequential shading is done as in the present case */
+      
+      plshade(a, nx, ny, defined, xmin, xmax, ymin, ymax,
+	      shade_min, shade_max,
+	      1, shade_color, fill_width,
+	      0, 0, 0, 0,
+	      fill, rectangular, pltr, pltr_data);
+   }
+   if(cont_color > 0 && cont_width > 0) {
+      init_color = plsc->icol0;
+      init_width = plsc->width;
+      plcol0(cont_color);
+      plwid(cont_width);
+      plcont(a, nx, ny, 1, nx, 1, ny, clevel, nlevel, pltr, pltr_data);
+      plcol0(init_color);
+      plwid(init_width);
+   }
+}
+   
+/*----------------------------------------------------------------------*\
  * plshade()
  *
  * Shade region.

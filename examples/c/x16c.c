@@ -91,13 +91,11 @@ main(int argc, char *argv[])
 
     PLFLT **z, **w, zmin, zmax;
     char zdefined[XPTS][YPTS];
-    PLFLT *clevel, *xg1, *yg1;
+    PLFLT *clevel, *shedge, *xg1, *yg1;
     PLcGrid  cgrid1;
     PLcGrid2 cgrid2;
 
-    PLFLT shade_min, shade_max, sh_color;
-    PLINT sh_cmap = 1, sh_width;
-    PLINT min_color = 1, min_width = 0, max_color = 0, max_width = 0;
+    PLINT fill_width = 2, cont_color = 0, cont_width = 0;
 
 /* Parse and process command line arguments */
 
@@ -124,6 +122,7 @@ main(int argc, char *argv[])
 /* Allocate data structures */
 
     clevel = (PLFLT *) calloc(ns, sizeof(PLFLT));
+    shedge = (PLFLT *) calloc(ns+1, sizeof(PLFLT));
     xg1 = (PLFLT *) calloc(nx, sizeof(PLFLT));
     yg1 = (PLFLT *) calloc(ny, sizeof(PLFLT));
 
@@ -144,6 +143,9 @@ main(int argc, char *argv[])
     f2mnmx(z, nx, ny, &zmin, &zmax);
     for (i = 0; i < ns; i++)
 	clevel[i] = zmin + (zmax - zmin) * (i + 0.5) / (float) ns;
+
+    for (i = 0; i < ns+1; i++)
+	shedge[i] = zmin + (zmax - zmin) * (float) i / (float) ns;
 
 /* Set up coordinate grids */
 
@@ -185,19 +187,12 @@ main(int argc, char *argv[])
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
-    for (i = 0; i < ns; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) ns;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) ns;
-	sh_color = i / (float) (ns-1);
-	sh_width = 2;
-	plpsty(0);
+    plpsty(0);
 
-	plshade(z, nx, ny, NULL, -1., 1., -1., 1., 
-		shade_min, shade_max, 
-		sh_cmap, sh_color, sh_width,
-		min_color, min_width, max_color, max_width,
-		plfill, 1, NULL, NULL);
-    }
+    plshades(z, nx, ny, NULL, -1., 1., -1., 1., 
+	     shedge, ns+1, fill_width,
+	     cont_color, cont_width,
+	     plfill, 1, NULL, NULL);
 
     plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -213,19 +208,12 @@ main(int argc, char *argv[])
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
-    for (i = 0; i < ns; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) ns;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) ns;
-	sh_color = i / (float) (ns-1);
-	sh_width = 2;
-	plpsty(0);
+    plpsty(0);
 
-	plshade(z, nx, ny, NULL, -1., 1., -1., 1., 
-		shade_min, shade_max, 
-		sh_cmap, sh_color, sh_width,
-		min_color, min_width, max_color, max_width,
-		plfill, 1, pltr1, (void *) &cgrid1);
-    }
+    plshades(z, nx, ny, NULL, -1., 1., -1., 1., 
+	     shedge, ns+1, fill_width,
+	     cont_color, cont_width,
+	     plfill, 1, pltr1, (void *) &cgrid1);
 
     plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -241,19 +229,12 @@ main(int argc, char *argv[])
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
-    for (i = 0; i < ns; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) ns;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) ns;
-	sh_color = i / (float) (ns-1);
-	sh_width = 2;
-	plpsty(0);
+    plpsty(0);
 
-	plshade(z, nx, ny, NULL, -1., 1., -1., 1., 
-		shade_min, shade_max, 
-		sh_cmap, sh_color, sh_width,
-		min_color, min_width, max_color, max_width,
-		plfill, 0, pltr2, (void *) &cgrid2);
-    }
+    plshades(z, nx, ny, NULL, -1., 1., -1., 1., 
+	     shedge, ns+1, fill_width,
+	     cont_color, cont_width,
+	     plfill, 0, pltr2, (void *) &cgrid2);
 
     plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -262,25 +243,38 @@ main(int argc, char *argv[])
 
     pllab("distance", "altitude", "Bogon density, with streamlines");
 
+/* Plot using 2d coordinate transform */
+
+    pladv(0);
+    plvpor(0.1, 0.9, 0.1, 0.9);
+    plwind(-1.0, 1.0, -1.0, 1.0);
+
+    plpsty(0);
+
+    plshades(z, nx, ny, NULL, -1., 1., -1., 1., 
+	     shedge, ns+1, fill_width,
+	     2, 9,
+	     plfill, 0, pltr2, (void *) &cgrid2);
+
+    plcol0(1);
+    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+    plcol0(2);
+/*    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);*/
+
+    pllab("distance", "altitude", "Bogon density");
+
 /* Plot using 2d coordinate transform and exclusion*/
 
     pladv(0);
     plvpor(0.1, 0.9, 0.1, 0.9);
     plwind(-1.0, 1.0, -1.0, 1.0);
 
-    for (i = 0; i < ns; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) ns;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) ns;
-	sh_color = i / (float) (ns-1);
-	sh_width = 2;
-	plpsty(0);
+    plpsty(0);
 
-	plshade(z, nx, ny, &zdefined[0][0], -1., 1., -1., 1., 
-		shade_min, shade_max, 
-		sh_cmap, sh_color, sh_width,
-		min_color, min_width, max_color, max_width,
-		plfill, 0, pltr2, (void *) &cgrid2);
-    }
+    plshades(z, nx, ny, &zdefined[0][0], -1., 1., -1., 1., 
+	     shedge, ns+1, fill_width,
+	     cont_color, cont_width,
+	     plfill, 0, pltr2, (void *) &cgrid2);
 
     plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -292,6 +286,7 @@ main(int argc, char *argv[])
     plend();
 
     free((void *) clevel);
+    free((void *) shedge);
     free((void *) xg1);
     free((void *) yg1);
     plFree2dGrid(z, nx, ny);

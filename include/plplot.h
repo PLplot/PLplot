@@ -486,6 +486,7 @@ typedef struct {
 #define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
 #define    plsfnam	c_plsfnam
+#define    plshades	c_plshades
 #define    plshade	c_plshade
 #define    plshade1	c_plshade1
 #define    plsmaj	c_plsmaj
@@ -607,6 +608,7 @@ typedef struct {
 #define    c_plsesc	plsesc
 #define    c_plsfam	plsfam
 #define    c_plsfnam	plsfnam
+#define    c_plshades	plshades
 #define    c_plshade	plshade
 #define    c_plshade1	plshade1
 #define    c_plsmaj	plsmaj
@@ -1163,7 +1165,16 @@ void
 c_plsfnam(const char *fnam);
 
 /* Shade region. */
+void 
+c_plshades( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	  PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+	  PLINT cont_color, PLINT cont_width,
+	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	  PLPointer pltr_data);
 
+   
 void 
 c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char *defined,
 	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
