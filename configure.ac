@@ -38,14 +38,14 @@ dnl   including the version number, otherwise it will fool up the
 dnl   bootstrap.sh script.  By the way, the line below can be changed using
 dnl   options --version and --date-version of that script. ]
 
-AC_INIT(plplot, 5.3.0.cvs.20040211, plplot-devel@lists.sourceforge.net)
+AC_INIT(plplot, 5.3.0.cvs.20040303, plplot-devel@lists.sourceforge.net)
 AC_REVISION($Revision$)
 
 dnl Date of release.  This can be set by hand, but the prefered method
 dnl is by specifying one of the option --version of --date-version to
 dnl bootstrap.sh
 
-RELEASE_DATE=2004-02-05
+RELEASE_DATE=2004-03-03
 AC_SUBST(RELEASE_DATE)
 
 dnl Check if we are in the right directory (this used to be done by
@@ -89,6 +89,15 @@ dnl CPP_SOVERSION.
 
 CPP_SOVERSION=9:0:0
 AC_SUBST(CPP_SOVERSION)
+
+dnl Version number for the CSIRO libraries distributed in lib/csa and
+dnl lib/nn.  This information was buried into lib/{csa,nn}/Makefile.am and it
+dnl is made explicit below.  It may happen that, in the future, we will need
+dnl separate soversions for libcsirocsa and libcsironn, but let us keep an
+dnl unique soversion for now.
+
+CSIRO_SOVERSION=0:0:0
+AC_SUBST(CSIRO_SOVERSION)
 
 dnl According to man package, PLPLOT_TCL_VERSION (used in the various
 dnl pkgIndex.tcl scripts) should be strictly numbers alternativing with

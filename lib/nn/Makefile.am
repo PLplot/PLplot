@@ -24,8 +24,8 @@
 lib_LTLIBRARIES = libcsironn.la
 libcsironn_la_SOURCES = delaunay.c hash.c istack.c lpi.c \
                         nnai.c nnpi.c nncommon.c
-libcsironn_la_LDFLAGS = -version-info 0:0:0 $(RPATH) -no-undefined \
-                        $(QHULLLIBS) -lm
+libcsironn_la_LDFLAGS = -version-info $(CSIRO_SOVERSION) $(RPATH) \
+                        -no-undefined $(QHULLLIBS) -lm
 AM_CPPFLAGS = -I.
 
 docdir = $(DOC_DIR)
