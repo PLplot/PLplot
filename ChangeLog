@@ -1,14 +1,23 @@
 2003-01-15  Alan W. Irwin <airwin@users.sourceforge.net>
 
-	* Make 9th and 11th Python examples consistent with recently changed
-	  C examples.  This concludes the Python consistency effort (at
-	  least until the next change in the C examples).  All python and
-	  java examples now agree exactly in their results.  The
-	  long-standing discrepancy in the last page of example 9 between
-	  the C example and now both the java and python examples persists
-	  both for single and double precision libplplot (and C example 9).
-	  So this suggests there may be some problem with the C example 9,
-	  but I cannot find it!
+	* Cleaned out hundreds of zombied files that were in the Attic
+	  with wrong state information that screwed up cvs -D option
+	  cvs merges, etc.
+
+	* Make 8th, 9th and 11th Python examples consistent with recently
+	  changed C examples.  This concludes the Python consistency effort
+	  (at least until the next change in the C examples).
+
+	* Make 8th, 9th and 11th Tcl examples consistent with recently
+	  changed C examples.  This concludes the Tcl consistency effort (at
+	  least until the next change in the C examples). All python and
+	  java examples now agree exactly in their results, and tcl examples
+	  agree quite closely also with java and python.  The long-standing
+	  discrepancy in the last page of example 9 between the C example
+	  and now all of the java, python, and tcl examples persists both
+	  for single and double precision libplplot (and C example 9). So
+	  this suggests there may be some problem with the C example 9, but
+	  I cannot find it!
 	  
 
 2003-01-04  Alan W. Irwin <airwin@users.sourceforge.net>
