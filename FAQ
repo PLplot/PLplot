@@ -49,12 +49,13 @@ Section 1: Building/installing PLplot
  1.6  The linker complains of unresolved functions atexit(), fsetpos(),
       fgetpos(), and so on.
  1.7  The compiler complains about the use of "malloc" or "size_t".
- 1.8  The compiler complains about "caddr_t" in one of the X support files.
+=1.8  The compiler complains about "caddr_t" in one of the X support files.
  1.9  configure script doesn't run correctly
  1.10 (removed)
  1.11 The linker complains that it can't resolve Tcl_AppInit. 
 +1.12 Can the library place be changed *after* compilation, say, by an
       environment variable ?
++1.13 tcpip.c won't compile.
 
 ==============================================================================
 Section 2: Philosophy, future directions, broad capabilities, etc.
@@ -72,7 +73,7 @@ Section 2: Philosophy, future directions, broad capabilities, etc.
 Section 3: Specific features/capabilities
 
  3.1  The manual doesn't mention capability...
- 3.2  How do I change to change the default background color?
+=3.2  How do I change the default background color?
  3.3  I'm getting core dumps when calling a contour function from C.
  3.4  Changing the default line width doesn't have any affect.
  3.5  How can I generate more than 16 line colors?
@@ -80,6 +81,11 @@ Section 3: Specific features/capabilities
  3.7  On stretched windows, the string characters look bad..
  3.8  I would like to capture key sequences..
 -3.9  How to get more information about a function or capability.
++3.10 What are the keyboard controls in the graphics window?
++3.11 How do I get the value of a PLplot internal variable?
++3.12 I'm getting "Unable to delete command .dx.gq1" when I use a matrix.
++3.13 My matrix'es are being deleted while in use from itcl.
++3.14 I'm getting a "already exists" message when creating a tclMatrix.
 
 ==============================================================================
 Section 4: X-based drivers (includes Tcl/TK, Tcl-DP)
@@ -97,6 +103,8 @@ Section 4: X-based drivers (includes Tcl/TK, Tcl-DP)
  4.11 Problems saving files from the Tk driver.
 +4.12 Why does the Tcl/TK driver use a separate process for rendering but
       not the X driver?
++4.13 How do I create an interactive, widget-based application using PLplot?
++4.14 How do I shade between a 4 color range with the Tk driver?
 
 ==============================================================================
 Section 5: All other drivers & supported platforms
@@ -106,6 +114,8 @@ Section 5: All other drivers & supported platforms
  5.3  PLplot is aborting with: Error opening plot data storage file.
  5.4  Is there a Windows port of PLplot?
 +5.5  I'd like to develop a windowed interface to PLplot for..
++5.6  What about PLplot support for the Mac?
++5.7  What about PLplot support for OS/2?
 
 ==============================================================================
 Section 1: Installing PLplot
@@ -228,16 +238,17 @@ Then add an identical declaration where it is *supposed* to be.  The
 second way is to hack plplot.h to explicitly prototype/typedef it.
 
 
- 1.8  The compiler complains about "caddr_t" in one of the X support files.
+=1.8  The compiler complains about "caddr_t" in one of the X support files.
 
 This is sometimes seen on systems that have X11R4 and claim POSIX
-conformance but that don't quite have their act together.  Typically on
-old versions of Unicos, Ultrix, and DGUX for example.  Currently the
-configure script determines whether caddr_t is typedef'ed, and if not,
-defines caddr_t appropriately.  Note that under POSIX.1, caddr_t is
-NOT supposed to be set.  But because of the various broken headers out
-there I compensate by defining it except when it is (illegally) already
-typedef'ed.  In any case, it should always work, and if not let me know.
+conformance but that don't quite have their act together.  Typically on old
+versions of Unicos, Ultrix, and DGUX for example.  Currently the configure
+script determines whether caddr_t is typedef'ed, and if not, typedefs
+caddr_t appropriately.  Note that under POSIX.1, caddr_t is NOT supposed to
+be set.  But because of the various broken headers out there I compensate by
+typedef'ing it except when it is (illegally) already typedef'ed (note: at
+least some versions of gcc perform the same "fix").  In any case, it should
+always work, and if not let me know.
 
 
  1.9  configure script doesn't run correctly
@@ -334,6 +345,14 @@ Below is a "cutting" from plctrl.c
  *	LIB_DIR
  *	PLLIBDEV
 \*----------------------------------------------------------------------*/
+
+
++1.13 tcpip.c won't compile.
+
+Probably a header file problem.  For example, under some versions of Linux,
+the compile fails with optimization on.  The header file stdlib.h is busted.
+Either fix the header file, turn off optimization, or put -U__OPTIMIZE__ on
+the compile line (best).
 
 
 ==============================================================================
@@ -763,9 +782,29 @@ unfortunately (a) it still needs some polish and (b) it is still waaay out
 of date.  The next big push will see the end of it.
 
 
- 3.2  How do I change to change the default background color?
+=3.2  How do I change the default background color?
 
-Use the -bg option.  Type plrender -h.
+Use the -bg option, or set by the plscolbg() API call.
+
+In general it is safest to make all settings that may affect the driver (pen
+width, color, etc) directly before the driver is initialized, i.e. before
+calling plinit.  It turns out that the Xwin driver has a firm concept of the
+background color, and changing it on the fly isn't hard.  Postscript (level
+1), however, does not have the concept of background color.  So to get a
+specific background color, a rectangle covering the background must be drawn
+and then filled using the appropriate color.  Anything previously drawn is
+obliterated.  So clearly, changing the background color should at least have
+no effect until the next bop, and in the 4.99i (and before) ps driver, only
+the initial setting is honored.  From 4.99j and later, the driver can get
+the background color right on the next bop.  Still, to get the correct color
+starting from page 1 you need to set it before calling plinit, because
+plinit does a bop.
+
+Note that in 4.99i and before, the background color fill in the ps driver
+was always done, independent of the color.  This is unnecessary and even bad
+in some cases, if the background is just white.  E.g. when generating color
+ps output as EPSF input to a document, a background fill causes the figure
+to overwrite parts of the page that you probably want to keep.
 
 
  3.3  I'm getting core dumps when calling a contour function from C.
@@ -937,6 +976,154 @@ type ESC-.  <poof>, you are there.  Happy hunting.
 
 p.s. Some of the new capabilities are illustrated in C example programs
 but not Fortran, e.g. see x15c and x16c.  x17c isn't working yet.
+
+
++3.10 What are the keyboard controls in the graphics window?
+
+> Can you give me a pointer as to the other keyboard controls that are
+> in effect in such a window? Is it in the docs/sources?
+> I've noticed that Q quits the window(?)
+
+It depends on the driver to some extent.  Here are the recognized keys
+for the xwin and tk/dp drivers (tek is similar):
+
+    case PLK_Return:
+    case PLK_Linefeed:
+    case PLK_Next:
+    /* Advance to next page (i.e. terminate event loop) on a <eol> */
+    /* Check for both <CR> and <LF> for portability, also a <Page Down> */
+
+    case 'Q':
+    /* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
+
+    case 'L':
+    /* Begin locate mode */
+
+You can intercept these by writing a keyboard event handler, if you want to
+do various user-related things with it.  Using plfill() to do erasures, one
+could even imagine writing an editing capability.  A graphical vi clone,
+anyone? :-)
+
+"plrender" installs its own keyboard event handler to add some more
+keystrokes:
+
+ * Keyboard event handler.  For mapping keyboard sequences to commands
+ * not usually supported by PLplot, such as seeking around in the
+ * metafile.  Recognized commands:
+ *
+ * <Backspace>	|
+ * <Delete>	| Back page
+ * <Page up>	|
+ *
+ * +<num><CR>	Seek forward <num> pages.
+ * -<num><CR>	Seek backward <num> pages.
+ *
+ * <num><CR>	Seek to page <num>.
+ * --<num><CR>	Seek to <num> pages before EOF.
+ *
+ * Both <BS> and <DEL> are recognized for a back-page since the target
+ * system may use either as its erase key.  <Page Up> is present on some
+ * keyboards (different from keypad key).
+ *
+ * No user data is passed in this case, although a test case is
+ * illustrated. 
+ *
+ * Illegal input is ignored.
+
+> How do you make your user aware of this? Does anyone have an example
+> of a userinterface that tells the user about this?
+
+I've thought about having the driver spit out a list of recognized
+keystrokes to stdout if the user types "?" but never felt strongly enough
+about doing so.  The Tk driver has a help entry that mentions most of
+the recognized keystrokes.  And you can always look at the source.
+Eventually this stuff will be covered in the manual.
+
+Also note, the Tk driver has some more sophisticated keyboard controls, some
+of which are activated depending on mode.  In normal operation, 'z' causes a
+zoom, 'r' causes a zoom reset, 'P' causes a print, and 's' causes a 'save
+again'.  These are set in pldefaults.tcl and can be customized on a per user
+basis (read the instructions in pldefaults.tcl on how to do it).  When in
+locate mode, the cursor keys move the graphics cursor.  When in zoom mode
+(and not locate), the cursor keys cause the view to scroll.  Adding modifier
+keys (CTRL, ALT, SHIFT, etc) causes a 5x speedup for each modifier added.
+
+
++3.11 How do I get the value of a PLplot internal variable?
+
+> 	Can anyone tell me if there is a yet-to-be-documented PLPLOT
+> function which returns the name or code of the output device associated
+> with the current output stream (for PLPLOT-generated graphics)?
+
+If there's no API call to do it, it's still easy to do from C or C++.  You
+just include plstrm.h and get the stream pointer using either:
+
+extern PLStream       *plsc;
+
+or
+
+PLStream *plsc;
+plgpls(&plsc);
+
+Then the device name is accessed by plsc->DevName.
+
+If you are using fortran or Tcl or whatever then you are stuck.  Consider
+writing a small C function to do the job.
+
+Note: an API call is always safest.  If you feel strongly that it's
+something that should be in the API, let me know.
+
+
++3.12 I'm getting "Unable to delete command .dx.gq1" when I use a tclMatrix.
+
+> Whenever I use the tcl matrix facility you wrote from itcl, I always
+> get these annoying 
+> 
+> Unable to delete command .dx.gq1
+
+Yeah.  I continued to look into this after you left.  
+
+> Seems you set a local variable when the matrix is created.  Then
+> when the local variable goes out of scope, it is unset, which trigger
+> a trace, so you try to delete the command, but can't, so the message
+> is printed.
+
+Right.  It turns out that a /different/ interpreter is trying to do the
+unset.  Really strange, eh?  I don't know what magic itcl is doing here,
+and don't really care to dig any further, because I can fix it so that
+the variable and matrix is deleted according to the original plan by
+just storing the original interpreter pointer in the tcl Matrix struct.
+(done in 4.99j)
+
+
++3.13 My tclMatrix'es are being deleted while in use from itcl.
+
+There's a lot of places in Tcl/Tk where a proc puts up some combination
+of widgets with action bindings and then returns.  The parent may then
+return or wait for the window to be deleted.  My 'Form2d' proc for example
+does this, but I wait for it to be destroyed before proceeding so I can be
+sure the input is available and act on it.  I.e.:
+
+    Form2d .e "Enter window coordinates for zoom.  Each coordinate should range from 0 to 1, with (0,0) corresponding to the lower left hand corner."
+    tkwait window .e
+
+I communicate with the Form2d using global variables, which may be the only
+way, since the proc goes out of scope before any user input is made!  Not to
+mention that the parent may go out of scope as well.
+
+So in 4.99j I added a way to make global, i.e. persistent tcl Matrices.
+Just add the -persist flag on its creation, remembering to explicitly delete
+the tclMatrix (using "<matrix> delete") when you're done.  I may add 'use'
+and 'free' matrix commands to handle reference counting and deletion in the
+next rev.
+
+
++3.14 I'm getting a "already exists" message when creating a tclMatrix.
+
+A "matrix" declaration creates a command that processes all matrix commands.
+Commands are always at global scope, unfortunately.  The local variable
+that is set is only for GC purposes.  So there is no local scope for a
+Tcl Matrix, just automatic GC (unless you use -persist).
 
 
 ==============================================================================
@@ -1292,6 +1479,81 @@ There are definitely MANY more software and portability issues involved in
 the separate process route.
 
 
++4.13 How do I create an interactive, widget-based application using PLplot?
+
+> I would like to make an interactive widget so that the plot can be
+> interactively changed by clicking and dragging on the plot.
+
+Direct control of the plframe widget, or even better, the plxframe
+"megawidget", is the way to go.
+
+One problem: plxframe is not a true megawidget.  At the time of this
+writing, there are few good ways to do this in straight Tcl, and I haven't
+yet committed to rewriting the code in [incr Tcl].  I probably will
+eventually, though, to make the plxframe truly controllable and robust.
+Right now it's just a collection of Tcl procs that work together to
+control a plframe.
+
+Another problem: you have to do practically all the plot control from a high
+level.  Graphical objects in the PLplot/tk interface are not objectized so
+there are few low-level operations the user has access to.
+
+The graphics representation in the plframe widget is just a bitmap.  I plan
+to gradually raise the abstraction level up in order to make the package
+more useful.  E.g. instead of a bunch of vector strokes, a character string
+will be represented as a data structure, which only becomes vector strokes
+when it gets to the driver.  That way the user can change its attributes;
+most notably, the postscript font that is used to print it when sending the
+plot through the ps driver.  Also something similar could be done with
+color.  But these capabilities are a long way off and will be added very
+conservatively.
+
+BTW, a Tk canvas has good support for manipulating its components (at a
+price). 
+
+Now back to the high level way of doing it.  You can intercept keystrokes or
+mouse clicks in Tk very easily using the "bind" command (Tcl API).  You can
+set up an event handler that interprets the appropriate actions by the user
+as commands to the plot library.  There are ways to return the world
+coordinates of the cursor as well (a plframe widget command and API call),
+which is important in controlling what gets done.
+
+Each time the plot must be changed it would have to be redrawn.  This is not
+unreasonable on today's killer micros or fast workstations.  In fact, the
+scrolling you can do after a zoom is accomplished not by scrolling around in
+some super bitmap but by redrawing the visible area of the plot each time
+(it is buffered so that it appears smooth).  How well this works is a
+function of the speed of your machine.  On my HP 720, scrolling simple line
+plots (e.g. x01c) in zoom mode is quite fast.  Shaded plots are much slower.
+And any routine that needs to do significant calculation (such as the
+contour plotters) will be kind of slow to redraw.
+
+
++4.14 How do I shade between a 4 color range with the Tk driver?
+
+The easiest way to experiment is to use the load palette option.
+The last distribution came with some alternate choices -- cmap1a.pal
+is the default, so try cmap1b.pal and cmap1c.pal.  And since they
+are ASCII, it's trivial to create new ones.  Here's cmap1c.pal:
+-----------cut-----------
+6
+#ff00ff 00
+#0080ff 20
+#00ffff 44
+#00ff90 54
+#fffb00 67
+#ff0000 100
+-----------cut-----------
+
+The first number is the number of control points, and each control point is
+set subsequently.  The first line after the '6' above is for the first
+control point, and so on to the 6th.  The first number is the color in
+hex, and the second number is the location in cmap1-space the control point
+resides.  There is an optional third number, a boolean (0 or 1), that
+results in the interpolation going "around the back" of the hue wheel
+if set.  There is also an API function for setting control points.
+
+
 ==============================================================================
 Section 5: All other drivers & supported platforms
 ==============================================================================
@@ -1317,7 +1579,8 @@ for supporting a particular platform, that'd be great -- let me know.
 
 =5.2  What about PLplot support for VMS?
 
-PLplot under VMS is now supported.  See the files in sys/vms.
+PLplot under VMS is now supported, thanks to the efforts of Hiromi Kimura
+(hiromi@tac.tsukuba.ac.jp).  See the files in sys/vms.
 
 
  5.3  PLplot is aborting with: Error opening plot data storage file.
@@ -1385,9 +1648,47 @@ driver.  Another alternative is to actually use Tk -- there are several
 ports of Tk to Windows in various stages of completion.  I'd like to hear
 about people's experiences with these, especially with PLplot.
 
+
++5.6  What about PLplot support for the Mac?
+
 I've been asked several times about a Mac interface.  There is now a
 Mac driver!  It needs someone to "adopt" it, i.e. keep it up to date,
 answer questions about it, etc.  Email mjl@dino.ph.utexas.edu if you
 want the job.  Otherwise it probably will end up broken sooner or later.
+
+(Ian Searle writes:) Tzong-Shuoh Yang (tsyang@ce.berkeley.edu) has been
+doing the RLaB Macintosh port for at least a year now (RLaB uses Plplot for
+graphics).  Plplot works quite nicely on the Mac.
+
+
++5.7  What about PLplot support for OS/2?
+
+>The stuff in sys/os2 worked under OS/2 1.3.  There is a port of that
+>code to OS/2 2.x underway by another person, but I'm not sure of the
+>current status of that port.  Presumably eventually PLplot will once
+>again have OS/2 PM support, but there is no ETA.  You should be able
+>to build PLplot to use file oriented drivers without difficulty.  Emx
+>should be fine for that.
+
+(John C. Peterson, KD6EKQ, {smart-host}!octagon!jcp,
+jcp%octagon.UUCP@ucsd.edu writes:) That person would be me!  And, your
+statement is correct, the only real "hitch" is the Presentation Manager
+driver, a very desirable one to have of course. I've made pretty good
+progress on the OS/2 port of the PM stuff using GCC/EMX. I've got all the
+Presentation Manager and other APIs converted over to their 32 bit
+equivalents.  It compiles cleanly under EMX without any "quibbling". At the
+moment, there *are* a few bugs that need to be hunted down, about 1/2 of the
+C examples fail to run correctly (or at all!) Most of this is because of
+subtle changes to the design of the PLplot driver interface that have
+occurred during the last couple years, during which time the driver was not
+been updated.
+
+   Unfortunately, I haven't had any time to work on it over the last
+several months.  I've been very busy at my regular job for the last 4-5
+months, working out of town for about 2 of those months. I tried to
+recruit some help for this effort through the Usenet OS/2 groups, but
+came up empty.  There is hope though, the big crunch at work is finally
+behind me, and as soon as I get caught up with personal things, I hope
+to get back to working on the port.
 
 ==============================================================================
