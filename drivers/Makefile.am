@@ -384,7 +384,7 @@ endif
 
 install-data-hook:
 if enable_dyndrivers
-	rm -f $(driversdir)/*.a
+	rm -f $(DESTDIR)$(driversdir)/*.a
 endif
 
 CLEANFILES = plapi.tpl tclcmd.tpl tclgen.h tclgen_s.h tclgen.c 
