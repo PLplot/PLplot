@@ -21,7 +21,7 @@ distclean: clean
 # for /all/ files here.
 
 depend:
-	gcc -MM *.c | sed 's/\.o/\$$O/' >objs.in
+	gcc -MM *.c *.cc | sed 's/\.o/\$$O/' >objs.in
 	@echo "Rerun configure for the new dependencies to take effect"
 
 # -----------------------------------------------------------------------------
