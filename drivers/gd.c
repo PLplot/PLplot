@@ -335,7 +335,7 @@ void plD_dispatch_init_gif( PLDispatchTable *pdt )
 #endif
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 47;
-    pdt->pl_init     = (plD_init_fp)     plD_init_png;
+    pdt->pl_init     = (plD_init_fp)     plD_init_gif;
     pdt->pl_line     = (plD_line_fp)     plD_line_png;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_png;
     pdt->pl_eop      = (plD_eop_fp)      plD_eop_gif;
