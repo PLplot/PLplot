@@ -638,24 +638,27 @@ plcmap0_def(int imin, int imax)
  *
  * Initializes color map 1.
  *
- * The default initialization uses 4 control points in HLS space, the two
- * inner ones being very close to one of the vertices of the HLS double
- * cone.  The vertex used (black or white) is chosen to be the closer to
- * the background color.  If you don't like these settings you can always
- * initialize it yourself.
+ * The default initialization uses 6 control points in HLS space, the inner
+ * ones being very close to one of the vertices of the HLS double cone.  The
+ * vertex used (black or white) is chosen to be the closer to the background
+ * color.  The 6 points were chosen over the older 4 points in order to make 
+ * weaker structures more easily visible, and give more control through the
+ * palette editor.  If you don't like these settings.. change them!
 \*--------------------------------------------------------------------------*/
 
 static void
 plcmap1_def(void)
 {
-    PLFLT i[4], h[4], l[4], s[4], vertex = 0.;
+    PLFLT i[6], h[6], l[6], s[6], midpt = 0., vertex = 0.;
 
 /* Positions of control points */
 
     i[0] = 0;		/* left boundary */
-    i[1] = 0.45;	/* just before center */
-    i[2] = 0.55;	/* just after center */
-    i[3] = 1;		/* right boundary */
+    i[1] = 0.44;	/* a little left of center */
+    i[2] = 0.50;	/* at center */
+    i[3] = 0.50;	/* at center */
+    i[4] = 0.56;	/* a little right of center */
+    i[5] = 1;		/* right boundary */
 
 /* For center control points, pick black or white, whichever is closer to bg */
 /* Be carefult to pick just short of top or bottom else hue info is lost */
@@ -665,24 +668,31 @@ plcmap1_def(void)
 		  (PLFLT) plsc->cmap0[0].g +
 		  (PLFLT) plsc->cmap0[0].b) / 3. / 255.;
 
-    if (vertex < 0.5)
+    if (vertex < 0.5) {
 	vertex = 0.01;
-    else
+	midpt  = 0.10;
+    } else {
 	vertex = 0.99;
+	midpt  = 0.90;
+    }
 
 /* Set hue */
 
     h[0] = 260;		/* low: blue-violet */
     h[1] = 260;		/* only change as we go over vertex */
-    h[2] = 0;		/* high: red */
-    h[3] = 0;		/* keep fixed */
+    h[2] = 260;		/* only change as we go over vertex */
+    h[3] = 0;		/* high: red */
+    h[4] = 0;		/* high: red */
+    h[5] = 0;		/* keep fixed */
 
 /* Set lightness */
 
     l[0] = 0.5;		/* low */
-    l[1] = vertex;	/* bg */
+    l[1] = midpt;	/* midpoint value */
     l[2] = vertex;	/* bg */
-    l[3] = 0.5;		/* high */
+    l[3] = vertex;	/* bg */
+    l[4] = midpt;	/* midpoint value */
+    l[5] = 0.5;		/* high */
 
 /* Set saturation -- keep at maximum */
 
@@ -690,8 +700,10 @@ plcmap1_def(void)
     s[1] = 1;
     s[2] = 1;
     s[3] = 1;
+    s[4] = 1;
+    s[5] = 1;
 
-    c_plscmap1l(0, 4, i, h, l, s, NULL);
+    c_plscmap1l(0, 6, i, h, l, s, NULL);
 }
 
 /*--------------------------------------------------------------------------*\
