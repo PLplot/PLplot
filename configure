@@ -818,8 +818,8 @@ if test "$prefix" = NONE; then
 	echo "$ac_t""$prefix" 1>&6
       else
 	echo "$ac_t""$prefix" 1>&6
-	echo "configure: warning: non-standard installed distribution (plrender not stored under bin)" 1>&2
-	echo "configure: warning: please completely delete old files before installation" 1>&2
+	echo "$ac_t""warning: non-standard installed distribution (plrender not stored under bin)" 1>&6
+	echo "$ac_t""warning: please completely delete old files before installation" 1>&6
       fi
       break
     fi
@@ -1075,7 +1075,7 @@ else
 fi
 
     if test "$found_cxx" = "no" ; then
-	echo "configure: warning: cannot find a C++ compiler.. disabling C++ interface" 1>&2
+	echo "$ac_t""warning: cannot find C++ compiler, setting enable_cxx=no" 1>&6
 	enable_cxx=no
     fi
 fi
@@ -1241,7 +1241,7 @@ fi
 	if test "$found_f77" = "yes" ; then
 	    F77=f77
 	else
-	    echo "configure: warning: cannot find a Fortran compiler.. disabling Fortran interface" 1>&2
+	    echo "$ac_t""warning: cannot find a Fortran compiler, setting enable_f77=no" 1>&6
 	    with_f2c=no
 	    enable_f77=no
 	fi
@@ -1354,6 +1354,7 @@ case "$system" in
 	if test "$with_debug" = "yes"; then
 	    if test "$with_gcc" = "no"; then
 		with_shlib=no
+		echo "$ac_t""warning: debug support requires with_shlib=no on HP, setting with_shlib=no" 1>&6
 	    fi
 	fi
 
@@ -1450,113 +1451,6 @@ case "$system" in
 esac
 
 # ----------------------------------------------------------------------------
-# Set flags to generate shared libraries for systems that we know about.
-# Originally based on BLT's configure.in.
-# This is really a mess.
-# ----------------------------------------------------------------------------
-
-echo $ac_n "checking how to make shared libraries""... $ac_c" 1>&6
-
-SA=".sa"
-SO=".so"
-LDSHARED="ld"
-
-if test "$with_gcc" = "yes"; then
-    SHLIB_CCFLAGS=-fpic
-    SHLIB_CXXFLAGS=-fpic
-    SHLIB_BUILD="gcc -shared -fpic -o"
-else
-    SHLIB_CCFLAGS=
-    SHLIB_CXXFLAGS=
-    SHLIB_BUILD=
-fi
-
-case "$system" in 
-    SunOS-4* ) 
-	SHLIB_F77FLAGS=-pic
-# Commented out for now
-#	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
-#	SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
-	echo "$ac_t""okay" 1>&6
-	if test "$with_gcc" = "no"; then
-	    SHLIB_CCFLAGS=-pic
-	    SHLIB_CXXFLAGS=-pic
-	    SHLIB_BUILD="ld -assert pure-text -o"
-	fi
-    ;;
-    HP-UX-* )
-	SO=".sl"
-	SHLIB_F77FLAGS="+z"
-	echo "$ac_t""okay" 1>&6
-	if test "$with_gcc" = "no"; then
-	    SHLIB_CCFLAGS=+z
-	    SHLIB_CXXFLAGS=+z
-	    SHLIB_F77FLAGS=+z
-	    SHLIB_BUILD="ld -b -o"
-	else
-	    echo "configure: warning: shared libs on HP with gcc is experimental" 1>&2
-	fi
-	LDSHARED="ld -b"
-    ;;
-    AIX-* )
-	SO=".a"
-	SHLIB_F77FLAGS=-fpic
-	if test "$with_gcc" = "no"; then
-	    echo "$ac_t""okay" 1>&6
-	    SHLIB_CCFLAGS=-fpic
-	    SHLIB_CXXFLAGS=-fpic
-	    SHLIB_BUILD="ar q"
-	else
-	    with_shlib=no
-	fi
-    ;;
-
-    # The rest are probably broken.  Someone please fix them.
-    # Remove the 'with_shlib=no' line, comments, and go wild.
-
-    SunOS-5* )
-	with_shlib=no
-	echo "$ac_t""unknown" 1>&6
-#	SHLIB_CCFLAGS="-K pic"
-#	SHLIB_F77FLAGS="-K pic"
-#	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -G"
-    ;;
-    OSF-1.* )
-	with_shlib=no
-	echo "$ac_t""unknown" 1>&6
-#	SHLIB_CCFLAGS=-fpic
-#	SHLIB_F77FLAGS=-fpic
-#	SHLIB_BUILD="$CC -shared"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -shared -expect_unresolved \"*\""
-    ;;
-    IRIX-5.* )
-	with_shlib=no
-	echo "$ac_t""unknown" 1>&6
-#	SHLIB_CCFLAGS=-KPIC
-#	SHLIB_F77FLAGS=-KPIC
-#	SHLIB_BUILD="$CC -shared"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -shared"
-    ;;
-    * )
-	with_shlib=no
-	echo "$ac_t""unknown" 1>&6
-    ;;
-esac
-
-
-
-
-
-
-
-
-
-
-# ----------------------------------------------------------------------------
 # Assemble finished compiler flags.
 # ----------------------------------------------------------------------------
 
@@ -1611,7 +1505,7 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1615 "configure"
+#line 1509 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1625,7 +1519,7 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1629 "configure"
+#line 1523 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1768,7 +1662,7 @@ test -z "$x_direct_test_library" && x_direct_test_library=Xt
 test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
 test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
 cat > conftest.$ac_ext <<EOF
-#line 1772 "configure"
+#line 1666 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
@@ -1831,7 +1725,7 @@ rm -f conftest*
 ac_save_LIBS="$LIBS"
 LIBS="-l$x_direct_test_library $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1835 "configure"
+#line 1729 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -1917,7 +1811,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 1921 "configure"
+#line 1815 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -1954,7 +1848,7 @@ else
 		fi
 	    done
 	    if test -z "$XINCDIR"; then
-		echo "configure: warning: couldn't find any X11 include files" 1>&2
+		echo "$ac_t""warning: couldn't find any X11 include files" 1>&6
 		XINCDIR=default
 		enable_xwin=no
 	    fi 
@@ -1974,7 +1868,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1978 "configure"
+#line 1872 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2020,7 +1914,7 @@ else
 		fi
 	    done
 	    if test -z "$XLIBDIR"; then
-		echo "configure: warning: couldn't find the X11 library archive" 1>&2
+		echo "$ac_t""warning: couldn't find the X11 library archive" 1>&6
 		XLIBDIR=default
 	    fi 
 fi
@@ -2093,7 +1987,7 @@ if test "$enable_tcl" = "yes"; then
     done
     if test -z "$TCLINCDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find tcl.h, setting enable_tcl to no" 1>&2
+	echo "$ac_t""warning: can't find tcl.h, setting enable_tcl to no" 1>&6
 	enable_tcl="no"
     fi
     if test "$TCLINCDIR" = "/usr/include"; then
@@ -2135,7 +2029,7 @@ if test "$enable_tcl" = "yes"; then
     done
     if test -z "$TCLLIBDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find tcl library, setting enable_tcl to no" 1>&2
+	echo "$ac_t""warning: can't find tcl library, setting enable_tcl to no" 1>&6
 	enable_tcl="no"
     fi
     if test "$TCLLIBDIR" = "/usr/lib"; then
@@ -2194,7 +2088,7 @@ if test "$enable_itcl" = "yes"; then
     done
     if test -z "$ITCLINCDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find itcl.h, setting enable_itcl to no" 1>&2
+	echo "$ac_t""warning: can't find itcl.h, setting enable_itcl to no" 1>&6
 	enable_itcl="no"
     fi
     if test "$ITCLINCDIR" = "/usr/include"; then
@@ -2236,7 +2130,7 @@ if test "$enable_itcl" = "yes"; then
     done
     if test -z "$ITCLLIBDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find itcl library, setting enable_itcl to no" 1>&2
+	echo "$ac_t""warning: can't find itcl library, setting enable_itcl to no" 1>&6
 	enable_itcl="no"
     fi
     if test "$ITCLLIBDIR" = "/usr/lib"; then
@@ -2305,7 +2199,7 @@ if test "$enable_tk" = "yes"; then
     done
     if test -z "$TKINCDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find tk.h, setting enable_tk to no" 1>&2
+	echo "$ac_t""warning: can't find tk.h, setting enable_tk to no" 1>&6
 	enable_tk="no"
     fi
     if test "$TKINCDIR" = "/usr/include"; then
@@ -2347,7 +2241,7 @@ if test "$enable_tk" = "yes"; then
     done
     if test -z "$TKLIBDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find tk library, setting enable_tk to no" 1>&2
+	echo "$ac_t""warning: can't find tk library, setting enable_tk to no" 1>&6
 	enable_tk="no"
     fi
     if test "$TKLIBDIR" = "/usr/lib"; then
@@ -2411,7 +2305,7 @@ if test "$enable_dp" = "yes"; then
     done
     if test -z "$DPINCDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find dp.h, setting enable_dp to no" 1>&2
+	echo "$ac_t""warning: can't find dp.h, setting enable_dp to no" 1>&6
 	enable_dp="no"
     fi
     if test "$DPINCDIR" = "/usr/include"; then
@@ -2454,7 +2348,7 @@ if test "$enable_dp" = "yes"; then
     done
     if test -z "$DPLIBDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find dpnetwork library, setting enable_dp to no" 1>&2
+	echo "$ac_t""warning: can't find dpnetwork library, setting enable_dp to no" 1>&6
 	enable_dp="no"
     fi
     if test "$DPLIBDIR" = "/usr/lib"; then
@@ -2700,7 +2594,7 @@ if test "$with_dbmalloc" = "yes"; then
     done
     if test -z "$DBMALLOCLIBDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find dbmalloc library, setting with_dbmalloc to no" 1>&2
+	echo "$ac_t""warning: can't find dbmalloc library, setting with_dbmalloc to no" 1>&6
 	with_dbmalloc="no"
     fi
     if test "$DBMALLOCLIBDIR" = "/usr/lib"; then
@@ -2754,7 +2648,7 @@ if test "$with_dbmalloc" = "yes"; then
     done
     if test -z "$DBMALLOCINCDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find malloc.h, setting with_dbmalloc to no" 1>&2
+	echo "$ac_t""warning: can't find malloc.h, setting with_dbmalloc to no" 1>&6
 	with_dbmalloc="no"
     fi
     if test "$DBMALLOCINCDIR" = "/usr/include"; then
@@ -2795,7 +2689,7 @@ fi
 
 if test "$enable_python" = "yes"; then
     if test "$with_shlib" = "no"; then
-	echo "$ac_t""dynamically loaded modules require with_shlib=yes.. disabling python support" 1>&6
+	echo "$ac_t""warning: python support requires with_shlib=yes, setting enable_python=no" 1>&6
 	enable_python=no
     fi
 fi
@@ -2824,7 +2718,7 @@ if test "$enable_python" = "yes"; then
     done
     if test -z "$PYTHON_INC_DIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "configure: warning: can't find Python.h, setting enable_python to no" 1>&2
+	echo "$ac_t""warning: can't find Python.h, setting enable_python to no" 1>&6
 	enable_python="no"
     fi
     if test "$PYTHON_INC_DIR" = "/usr/include"; then
@@ -2869,7 +2763,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lf2c  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2873 "configure"
+#line 2767 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2893,7 +2787,7 @@ if eval "test \"`echo '$ac_cv_lib_'f2c`\" = yes"; then
   LIBS="$LIBS -lf2c"
 else
   echo "$ac_t""no" 1>&6
-echo "configure: warning: couldn't find libf2c" 1>&2
+echo "$ac_t""warning: couldn't find libf2c" 1>&6
 fi
 
 fi
@@ -2928,7 +2822,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2932 "configure"
+#line 2826 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2961,7 +2855,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2965 "configure"
+#line 2859 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2994,7 +2888,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2998 "configure"
+#line 2892 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3027,7 +2921,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3031 "configure"
+#line 2925 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3060,7 +2954,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3064 "configure"
+#line 2958 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3094,6 +2988,120 @@ LIBS="$LIBS $EXTRA_LIBS"
 
 
 
+# ----------------------------------------------------------------------------
+# Set up shared library support.
+# VERY system dependent.
+# Originally based on BLT's configure.in.
+# This is really a mess.
+# ----------------------------------------------------------------------------
+
+echo $ac_n "checking how to make shared libraries""... $ac_c" 1>&6
+
+SA=".sa"
+SO=".so"
+LDSHARED="ld"
+SHLIB_LIBS=$LIBS
+
+if test "$with_gcc" = "yes"; then
+    SHLIB_CCFLAGS=-fpic
+    SHLIB_CXXFLAGS=-fpic
+    SHLIB_BUILD="gcc -shared -fpic -o"
+else
+    SHLIB_CCFLAGS=
+    SHLIB_CXXFLAGS=
+    SHLIB_BUILD=
+fi
+
+case "$system" in 
+    SunOS-4* ) 
+	SHLIB_F77FLAGS=-pic
+# Commented out for now
+#	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+#	SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	echo "$ac_t""okay" 1>&6
+	if test "$with_gcc" = "no"; then
+	    SHLIB_CCFLAGS=-pic
+	    SHLIB_CXXFLAGS=-pic
+	    SHLIB_BUILD="ld -assert pure-text -o"
+	fi
+    ;;
+    HP-UX-* )
+	SO=".sl"
+	SHLIB_F77FLAGS="+z"
+	echo "$ac_t""okay" 1>&6
+	if test "$with_gcc" = "no"; then
+	    SHLIB_CCFLAGS=+z
+	    SHLIB_CXXFLAGS=+z
+	    SHLIB_F77FLAGS=+z
+	    SHLIB_BUILD="ld -b -o"
+	else
+	    echo "$ac_t""warning: shared libs on HP with gcc is experimental" 1>&6
+	fi
+	LDSHARED="ld -b"
+    ;;
+    AIX-* )
+	SO=".a"
+	SHLIB_F77FLAGS=-fpic
+	if test "$with_gcc" = "no"; then
+	    echo "$ac_t""okay" 1>&6
+	    SHLIB_CCFLAGS=-fpic
+	    SHLIB_CXXFLAGS=-fpic
+	    SHLIB_BUILD="ar q"
+	    if test "$enable_cxx" = "yes"; then
+		SHLIB_LIBS="-L/usr/lpp/xlC/lib -lC $LIBS"
+	    fi
+	else
+	    with_shlib=no
+	fi
+    ;;
+
+    # The rest are probably broken.  Someone please fix them.
+    # Remove the 'with_shlib=no' line, comments, and go wild.
+
+    SunOS-5* )
+	with_shlib=no
+	echo "$ac_t""unknown" 1>&6
+#	SHLIB_CCFLAGS="-K pic"
+#	SHLIB_F77FLAGS="-K pic"
+#	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
+#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	LDSHARED="ld -G"
+    ;;
+    OSF-1.* )
+	with_shlib=no
+	echo "$ac_t""unknown" 1>&6
+#	SHLIB_CCFLAGS=-fpic
+#	SHLIB_F77FLAGS=-fpic
+#	SHLIB_BUILD="$CC -shared"
+#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	LDSHARED="ld -shared -expect_unresolved \"*\""
+    ;;
+    IRIX-5.* )
+	with_shlib=no
+	echo "$ac_t""unknown" 1>&6
+#	SHLIB_CCFLAGS=-KPIC
+#	SHLIB_F77FLAGS=-KPIC
+#	SHLIB_BUILD="$CC -shared"
+#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	LDSHARED="ld -shared"
+    ;;
+    * )
+	with_shlib=no
+	echo "$ac_t""unknown" 1>&6
+    ;;
+esac
+
+
+
+
+
+
+
+
+
+
+
+
 
 # If we cannot run a trivial program, we must be cross compiling.
 echo $ac_n "checking whether cross-compiling""... $ac_c" 1>&6
@@ -3104,7 +3112,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3108 "configure"
+#line 3116 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3125,7 +3133,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3129 "configure"
+#line 3137 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3147,7 +3155,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3151 "configure"
+#line 3159 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3165,7 +3173,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3169 "configure"
+#line 3177 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3186,7 +3194,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3190 "configure"
+#line 3198 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3223,7 +3231,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3227 "configure"
+#line 3235 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3284,7 +3292,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3288 "configure"
+#line 3296 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3316,7 +3324,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3320 "configure"
+#line 3328 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -3350,7 +3358,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3354 "configure"
+#line 3362 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -3465,7 +3473,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3469 "configure"
+#line 3477 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -3520,7 +3528,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3524 "configure"
+#line 3532 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -4352,13 +4360,6 @@ s%@found_cxx@%$found_cxx%g
 s%@found_F77@%$found_F77%g
 s%@found_fc@%$found_fc%g
 s%@found_f77@%$found_f77%g
-s%@SHLIB_BUILD@%$SHLIB_BUILD%g
-s%@SA@%$SA%g
-s%@SO@%$SO%g
-s%@LDSHARED@%$LDSHARED%g
-s%@SHLIB_CCFLAGS@%$SHLIB_CCFLAGS%g
-s%@SHLIB_CXXFLAGS@%$SHLIB_CXXFLAGS%g
-s%@SHLIB_F77FLAGS@%$SHLIB_F77FLAGS%g
 s%@CC@%$CC%g
 s%@CXX@%$CXX%g
 s%@OCC@%$OCC%g
@@ -4376,6 +4377,14 @@ s%@CPP@%$CPP%g
 s%@PYTHON_INC_DIR@%$PYTHON_INC_DIR%g
 s%@PYTHON_MOD_DIR@%$PYTHON_MOD_DIR%g
 s%@INCS@%$INCS%g
+s%@SHLIB_BUILD@%$SHLIB_BUILD%g
+s%@SA@%$SA%g
+s%@SO@%$SO%g
+s%@LDSHARED@%$LDSHARED%g
+s%@SHLIB_CCFLAGS@%$SHLIB_CCFLAGS%g
+s%@SHLIB_CXXFLAGS@%$SHLIB_CXXFLAGS%g
+s%@SHLIB_F77FLAGS@%$SHLIB_F77FLAGS%g
+s%@SHLIB_LIBS@%$SHLIB_LIBS%g
 s%@RANLIB@%$RANLIB%g
 s%@LIB_TAG@%$LIB_TAG%g
 s%@LIB_DIR@%$LIB_DIR%g
