@@ -18,7 +18,7 @@ class PLS {
 
 enum PLcolor { Black=0, Red, Yellow, Green,
 	       Cyan, Pink, Tan, Grey,
-	       DarkRed, DeepBlue, Purple, LIghtCyan,
+	       DarkRed, DeepBlue, Purple, LightCyan,
 	       LightBlue, Orchid, Mauve, White };
 
 // A class for assisting in generalizing the data prescription
@@ -79,9 +79,12 @@ class plstream {
 
   public:
     plstream();
+    plstream( plstream * pls );
     plstream( PLS::stream_id sid, int strm =0 );
     plstream( int _stream ) : stream(_stream) {}
     plstream( int nx /*=1*/, int ny /*=1*/, 
+	      const char *driver =NULL, const char *file =NULL );
+    plstream( int nx /*=1*/, int ny /*=1*/, int r, int g, int b,
 	      const char *driver =NULL, const char *file =NULL );
 
     ~plstream();
@@ -93,6 +96,10 @@ class plstream {
 // Advance to subpage "page", or to the next one if "page" = 0.
 
     void adv( PLINT page );
+
+// Simple arrow plotter
+    void arrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n, 
+                 PLFLT scale, PLFLT dx, PLFLT dy );
 
 // This functions similarly to plbox() except that the origin of the axes is
 // placed at the user-specified point (x0, y0).
@@ -155,6 +162,7 @@ class plstream {
 // /* Copies state parameters from the reference stream to the current stream. */
 
 //     void cpstrm( PLINT iplsr, PLINT flags );
+     void cpstrm( plstream &pls, PLINT flags );
 
 // Converts input values from relative device coordinates to relative plot
 // coordinates.
@@ -180,6 +188,12 @@ class plstream {
 // Simple interface for defining viewport and window.
 
     void env( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	      PLINT just, PLINT axis );
+
+// similar to env() above, but in multiplot mode does not advance 
+// the subpage, instead the current subpage is cleared
+
+    void env0( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	      PLINT just, PLINT axis );
 
 // End current page.  Should only be used with plbop().
@@ -259,6 +273,12 @@ class plstream {
 
     void gra();
 
+// grid irregularly sampled data 
+
+    void griddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+                  PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
+                  PLFLT **zg, int type, PLFLT data);
+
 // Get subpage boundaries in absolute coordinates.
 
     void gspa( PLFLT& xmin, PLFLT& xmax, PLFLT& ymin, PLFLT& ymax );
@@ -306,6 +326,10 @@ class plstream {
 
     void lab( const char *xlabel, const char *ylabel, const char *tlabel );
 
+/* Sets position of the light source */
+
+   void lightsource( PLFLT x, PLFLT y, PLFLT z );
+
 /* Draws line segments connecting a series of points. */
 
     void line( PLINT n, PLFLT *x, PLFLT *y );
@@ -333,6 +357,11 @@ class plstream {
 
     void mesh( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt );
 
+/* Plots a mesh representation of the function z[x][y] with contour. */
+
+    void meshc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
+    		    PLFLT *clevel, PLINT nlevel);
+
 // /* Creates a new stream and makes it the default.  */
 
 // void
@@ -348,9 +377,21 @@ class plstream {
     void plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
 		 PLINT nx, PLINT ny, PLINT opt, PLINT side );
 
+/* Plots a 3-d representation of the function z[x][y] with contour. */
+
+    void plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
+                 PLINT nx, PLINT ny, PLINT opt,
+                 PLFLT *clevel, PLINT nlevel);
+
+/* Plots a 3-d shaded representation of the function z[x][y]. */
+
+    void surf3d( PLFLT *x, PLFLT *y, PLFLT **z,
+		 PLINT nx, PLINT ny, PLINT opt,
+		 PLFLT *clevel, PLINT nlevel);
+
 /* Set fill pattern directly. */
 
-    void pat( PLINT nlin, PLINT *inc, PLINT *del );
+void pat( PLINT nlin, PLINT *inc, PLINT *del );
 
 /* Plots array y against x for n points using ASCII code "code".*/
 
@@ -462,6 +503,14 @@ class plstream {
 
     void sesc( char esc );
 
+/* Set offset and spacing of contour labels */
+
+    void setcontlabelparam( PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
+
+/* Set the format of the contour labels */
+
+    void setcontlabelformat( PLINT lexp, PLINT sigdig);
+
 /* Set family file parameters */
 
     void sfam( PLINT fam, PLINT num, PLINT bmax );
@@ -482,6 +531,14 @@ class plstream {
 		void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
 		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		PLPointer pltr_data );
+
+    void shades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
+              	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+		PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+                PLINT cont_color, PLINT cont_width,
+                void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+                void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+                PLPointer pltr_data);
 
 // Would be nice to fix this even more, say by stuffing xmin, xmax,
 // ymin, ymax, rectangular, and pcxf all into the contourable data
@@ -561,6 +618,30 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
     void start( const char *devname, PLINT nx, PLINT ny );
 
+/* Create 1d stripchart */
+
+    void stripc(PLINT *id, char *xspec, char *yspec,
+        PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
+        PLFLT xlpos, PLFLT ylpos,
+        PLINT y_ascl, PLINT acc,
+        PLINT colbox, PLINT collab,
+        PLINT colline[], PLINT styline[], char *legline[],
+        char *labx, char *laby, char *labtop);
+
+/* Add a point to a stripchart.  */
+
+    void stripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
+
+/* Deletes and releases memory used by a stripchart.  */
+
+    void stripd(PLINT id);
+
+/* plots a 2d image (or a matrix too large for plshade() ) */
+
+    void image( PLFLT **data, PLINT nx, PLINT ny,
+           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+           PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
+
 /* Set up a new line style */
 
     void styl( PLINT nms, PLINT *mark, PLINT *space );
@@ -626,6 +707,9 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
     void wind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
 
+/* set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device */
+    void xormod(PLINT mode, PLINT *status);
+
 	/* The rest for use from C only */
 
 /* Returns a list of file-oriented device names and their menu strings */
@@ -644,6 +728,10 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 /* Sets an optional user eop handler */
 
     void seopH(void (*handler) (void *, int *), void *handlier_data);
+
+/* Set the variables to be used for storing error info */
+
+    void sError(PLINT *errcode, char *errmsg);
 
 /* Sets an optional user exit handler. */
 
@@ -779,6 +867,9 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 /* Frees a block of memory allocated with plAlloc2dGrid(). */
 
     void Free2dGrid( PLFLT **f, PLINT nx, PLINT ny );
+
+/* Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid(). */
+    void MinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
 
 /* Functions for converting between HLS and RGB color space */
 

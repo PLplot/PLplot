@@ -204,8 +204,10 @@ int plstream::active_streams = 0;
 
 plstream::plstream()
 {
-    ::c_plinit();
+    ::c_plsstrm(next_stream++);
+    //::c_plinit();
     ::c_plgstrm( &stream );
+    active_streams++;
 }
 
 plstream::plstream( PLS::stream_id sid, int strm /*=0*/ )
@@ -238,9 +240,26 @@ plstream::plstream( int nx, int ny, const char *driver, const char *file )
     if (file)
 	::c_plsfnam(file);
     ::c_plssub( nx, ny );
-    ::c_plinit();
+    //::c_plinit();
 
-    ::c_plgstrm( &stream );
+    //::c_plgstrm( &stream );
+
+    active_streams++;
+}
+
+plstream::plstream( int nx, int ny, int r, int g, int b, const char *driver, const char *file)
+{
+    ::c_plsstrm(next_stream++);
+
+    if (driver)
+	::c_plsdev(driver);
+    if (file)
+        ::c_plsfnam(file);
+    ::c_plssub( nx, ny );
+    ::c_plscolbg( r, g, b );
+    //::c_plinit();
+
+    //::c_plgstrm( &stream );
 
     active_streams++;
 }
@@ -267,6 +286,15 @@ plstream::adv( PLINT page )
     set_stream();
 
     pladv(page);
+}
+
+void
+plstream::arrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
+                 PLFLT scale, PLFLT dx, PLFLT dy)
+{
+    set_stream();
+    
+    plarrows( u, v, x, y, n, scale, dx, dy );
 }
 
 // This functions similarly to plbox() except that the origin of the axes is
@@ -392,6 +420,13 @@ void plstream::fcont( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 //     plcpstrm(iplsr,flags);
 // }
 
+void plstream::cpstrm( plstream &pls, PLINT flags )
+{
+    set_stream();
+
+    plcpstrm(pls.stream,flags);
+}
+
 // Converts input values from relative device coordinates to relative plot
 // coordinates.
 
@@ -441,6 +476,17 @@ void plstream::env( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     set_stream();
 
     plenv(xmin, xmax, ymin, ymax, just, axis);
+}
+
+// Similar to env() above, but in multiplot mode does not advance 
+// the subpage, instead the current subpage is cleared 
+
+void plstream::env0( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+		    PLINT just, PLINT axis )
+{
+    set_stream();
+
+    plenv0(xmin, xmax, ymin, ymax, just, axis);
 }
 
 // End current page.  Should only be used with plbop().
@@ -616,6 +662,16 @@ void plstream::gra()
     plgra();
 }
 
+// grid irregularly sampled data
+void plstream::griddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+                        PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
+                        PLFLT **zg, int type, PLFLT data)
+{
+    set_stream();
+
+    plgriddata(x, y, z, npts, xg, nptsx, yg, nptsy, zg, type, data);
+}
+
 // Get subpage boundaries in absolute coordinates.
 
 void plstream::gspa( PLFLT& xmin, PLFLT& xmax, PLFLT& ymin, PLFLT& ymax )
@@ -698,6 +754,11 @@ void plstream::init()
     set_stream();
 
     plinit();
+
+    plgstrm( &stream );
+
+    // This is only set in the constructor.
+    //active_streams++;
 }
 
 /* Draws a line segment from (x1, y1) to (x2, y2). */
@@ -717,6 +778,15 @@ void plstream::lab( const char *xlabel, const char *ylabel,
     set_stream();
 
     pllab(xlabel, ylabel, tlabel);
+}
+
+/* Sets position of the light source */
+
+void plstream::lightsource( PLFLT x, PLFLT y, PLFLT z )
+{
+    set_stream();
+
+    pllightsource(x,y,z);
 }
 
 /* Draws line segments connecting a series of points. */
@@ -779,6 +849,16 @@ void plstream::mesh( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     plmesh(x, y, z, nx, ny, opt );
 }
 
+/* Plots a mesh representation of the function z[x][y] with contour. */
+
+void plstream::meshc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+		     PLINT opt, PLFLT *clevel, PLINT nlevel)
+{
+    set_stream();
+
+    plmeshc(x, y, z, nx, ny, opt, clevel, nlevel );
+}
+
 // /* Creates a new stream and makes it the default.  */
 
 // void plstream::mkstrm( PLINT *p_strm )
@@ -798,6 +878,17 @@ void plstream::mtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
     plmtex(side,disp,pos,just,text);
 }
 
+/* Plots a 3-d shaded representation of the function z[x][y]. */
+
+void plstream::surf3d( PLFLT *x, PLFLT *y, PLFLT **z,
+		       PLINT nx, PLINT ny, PLINT opt,
+		       PLFLT *clevel, PLINT nlevel)
+{
+    set_stream();
+
+    ::plsurf3d(x,y,z,nx,ny,opt,clevel,nlevel);
+}
+
 /* Plots a 3-d representation of the function z[x][y]. */
 
 void plstream::plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
@@ -806,6 +897,17 @@ void plstream::plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
     set_stream();
 
     ::plot3d(x,y,z,nx,ny,opt,side);
+}
+
+/* Plots a 3-d representation of the function z[x][y] with contour. */
+
+void plstream::plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
+		        PLINT nx, PLINT ny, PLINT opt, 
+		        PLFLT *clevel, PLINT nlevel )
+{
+    set_stream();
+
+    ::plot3dc(x,y,z,nx,ny,opt,clevel,nlevel);
 }
 
 /* Set fill pattern directly. */
@@ -1058,6 +1160,22 @@ void plstream::sesc( char esc )
     plsesc(esc);
 }
 
+/* Set the offset and spacing of contour labels */
+
+void plstream::setcontlabelparam( PLFLT offset, PLFLT size, PLFLT spacing, PLINT active ) {
+    set_stream();
+
+    pl_setcontlabelparam(offset, size, spacing, active);
+}
+
+/* Set the format of the contour labels */
+
+void plstream::setcontlabelformat( PLINT lexp, PLINT sigdig ) {
+    set_stream();
+
+    pl_setcontlabelformat(lexp, sigdig);
+}
+
 /* Set family file parameters */
 
 void plstream::sfam( PLINT fam, PLINT num, PLINT bmax )
@@ -1096,6 +1214,22 @@ plstream::shade( PLFLT **a, PLINT nx, PLINT ny,
 	     shade_min, shade_max,
 	     sh_cmap, sh_color, sh_width,
 	     min_color, min_width, max_color, max_width,
+	     fill, rectangular, pltr, pltr_data );
+}
+void 
+plstream::shades( PLFLT **a, PLINT nx, PLINT ny,
+		 PLINT (*defined) (PLFLT, PLFLT),
+		 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+		 PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+		 PLINT cont_color, PLINT cont_width,
+		 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+		 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		 PLPointer pltr_data )
+{
+    set_stream();
+
+    plshades( a,nx,ny,defined,xmin,xmax,ymin,ymax,
+    	     clevel, nlevel, fill_width, cont_color, cont_width,
 	     fill, rectangular, pltr, pltr_data );
 }
 
@@ -1262,6 +1396,53 @@ void plstream::start( const char *devname, PLINT nx, PLINT ny )
     plstart(devname,nx,ny);
 }
 
+/* Create 1d stripchart */
+
+void plstream::stripc(PLINT *id, char *xspec, char *yspec,
+        PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
+        PLFLT xlpos, PLFLT ylpos,
+        PLINT y_ascl, PLINT acc,
+        PLINT colbox, PLINT collab,
+        PLINT colline[], PLINT styline[], char *legline[],
+        char *labx, char *laby, char *labtop)
+{
+    set_stream();
+
+    plstripc(id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos,
+        y_ascl, acc, colbox, collab, colline, styline, legline, 
+        labx, laby, labtop);
+}
+
+/* Add a point to a stripchart.  */
+
+void plstream::stripa(PLINT id, PLINT pen, PLFLT x, PLFLT y)
+{
+    set_stream();
+
+    plstripa(id, pen, x, y);
+}
+
+/* Deletes and releases memory used by a stripchart.  */
+
+void plstream::stripd(PLINT id)
+{
+    set_stream();
+
+    plstripd(id);
+}
+
+/* plots a 2d image (or a matrix too large for plshade() ) */
+
+void plstream::image( PLFLT **data, PLINT nx, PLINT ny,
+         PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+         PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
+{
+    set_stream();
+
+    plimage(data, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, 
+    	Dxmin, Dxmax, Dymin, Dymax);
+}
+
 /* Set up a new line style */
 
 void plstream::styl( PLINT nms, PLINT *mark, PLINT *space )
@@ -1404,6 +1585,16 @@ void plstream::wind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
     plwind(xmin,xmax,ymin,ymax);
 }
 
+/*  set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device
+ */
+
+void plstream::xormod(PLINT mode, PLINT *status)
+{
+   set_stream();
+
+   plxormod(mode, status);
+}
+
 	/* The rest for use from C only */
 
 /* Returns a list of file-oriented device names and their menu strings */
@@ -1423,6 +1614,14 @@ void plstream::sKeyEH( void (*KeyEH) (PLGraphicsIn *, void *, int *),
     set_stream();
 
     plsKeyEH(KeyEH, KeyEH_data);
+}
+
+/* Set the variables to be used for storing error info */
+
+void plstream::sError(PLINT *errcode, char *errmsg) {
+    set_stream();
+
+    plsError(errcode, errmsg);
 }
 
 /* Sets an optional user exit handler. */
@@ -1698,7 +1897,7 @@ void plstream::Alloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny )
 {
     set_stream();
 
-    plAlloc2dGrid(f,nx,ny);
+    ::plAlloc2dGrid(f,nx,ny);
 }
 
 /* Frees a block of memory allocated with plAlloc2dGrid(). */
@@ -1707,7 +1906,15 @@ void plstream::Free2dGrid( PLFLT **f, PLINT nx, PLINT ny )
 {
     set_stream();
 
-    plFree2dGrid(f,nx,ny);
+    ::plFree2dGrid(f,nx,ny);
+}
+
+/* Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid(). */
+void plstream::MinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin)
+{
+    set_stream();
+
+    ::plMinMax2dGrid(f, nx, ny, fmax, fmin);
 }
 
 /* Functions for converting between HLS and RGB color space */
