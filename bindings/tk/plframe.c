@@ -86,8 +86,10 @@ typedef struct {
     int prevWidth;		/* Previous window width */
     int prevHeight;		/* Previous window height */
 
-    /* These are used in building menu for "save" command */
+    /* Support for save operations */
 
+    char *SaveFnam;		/* File name we are currently saving to.
+				   Malloc'ed. */
     char **devDesc;		/* Descriptive names for file-oriented 
 				 * devices.  Malloc'ed. */
     char **devName;		/* Keyword names of file-oriented devices.
@@ -349,6 +351,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->dyl = 0.;
     plFramePtr->dxr = 1.;
     plFramePtr->dyr = 1.;
+    plFramePtr->SaveFnam = NULL;
     plFramePtr->devDesc = NULL;
     plFramePtr->devName = NULL;
 
@@ -668,6 +671,9 @@ DestroyPlFrame(ClientData clientData)
     }
     if (plFramePtr->xScrollCmd != NULL) {
 	ckfree(plFramePtr->xScrollCmd);
+    }
+    if (plFramePtr->SaveFnam != NULL) {
+	ckfree(plFramePtr->devDesc);
     }
     if (plFramePtr->devDesc != NULL) {
 	ckfree(plFramePtr->devDesc);
@@ -1393,44 +1399,126 @@ static int
 Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
      int argc, char **argv)
 {
-    int idev;
+    int length, idev;
+    char c;
+    FILE *sfile;
 
 /* save -- save to already open file */
 
     if (argc == 0) {
-	if (! plFramePtr->ipls_save) {
+	if ( ! plFramePtr->ipls_save) {
 	    Tcl_AppendResult(interp, "Error -- no current save file", 
 			     (char *) NULL);
 	    return TCL_ERROR;
 	}
 	plsstrm(plFramePtr->ipls_save);
-	plclr();
-	plpage();
+	plcpstrm(plFramePtr->ipls, 0);
+	pladv(0);
 	plreplot();
+	plflush();
 	plsstrm(plFramePtr->ipls);
+#ifdef DEBUG
+	fprintf(stderr, "Saved plot to file %s\n", plFramePtr->SaveFnam);
+#endif
+	return TCL_OK;
     }
+
+    c = argv[0][0];
+    length = strlen(argv[0]);
 
 /* save to specified device & file */
 
-    else {
-	idev = atoi(argv[0]);
+    if ((c == 'a') && (strncmp(argv[0], "as", length) == 0)) {
+	if (argc < 3) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+			     " save as device file\"", (char *) NULL);
+	    return TCL_ERROR;
+	} 
+	idev = atoi(argv[1]);
 #ifdef DEBUG
 	fprintf(stderr, "Trying to save to device %s file %s\n",
-		plFramePtr->devName[idev], argv[1]);
+		plFramePtr->devName[idev], argv[2]);
 #endif
-	if (plFramePtr->ipls_save != 0) {
+
+/* If save previously in effect, delete old stream */
+
+	if (plFramePtr->ipls_save) {
 	    plsstrm(plFramePtr->ipls_save);
 	    plend1();
 	}
-	plcpstrm(&plFramePtr->ipls_save, plFramePtr->devName[idev], argv[1]);
-	if (plFramePtr->ipls_save == -1) {
+
+/* Create stream for saves to selected device & file */
+
+	plmkstrm(&plFramePtr->ipls_save);
+	if (plFramePtr->ipls_save < 0) {
 	    Tcl_AppendResult(interp, "Error -- cannot create stream", 
 			     (char *) NULL);
 	    plFramePtr->ipls_save = 0;
 	    return TCL_ERROR;
 	}
+
+/* Open file for writes */
+
+	if ((sfile = fopen(argv[2], "wb+")) == NULL) {
+	    Tcl_AppendResult(interp, "Error -- cannot open file", argv[1],
+			     "for writing", (char *) NULL);
+	    plFramePtr->ipls_save = 0;
+	    plend1();
+	    return TCL_ERROR;
+	}
+
+/* Initialize stream */
+
+	plsdev(plFramePtr->devName[idev]);
+	plsfile(sfile);
+	plinit();
+	pladv(0);
+	plcpstrm(plFramePtr->ipls, 0);
+
+/* Remake current plot and then switch back to original stream */
+
 	plreplot();
+	plflush();
 	plsstrm(plFramePtr->ipls);
+
+/* Save file name */
+
+#ifdef DEBUG
+	if (plFramePtr->SaveFnam != NULL)
+	    free((void *) plFramePtr->SaveFnam);
+
+	plFramePtr->SaveFnam = (char *)
+	    ckalloc(1 + strlen(argv[2]));
+
+	strcpy(plFramePtr->SaveFnam, argv[2]);
+
+	fprintf(stderr, "Saved plot to file %s\n", plFramePtr->SaveFnam);
+#endif
+    }
+
+/* close save file */
+
+    else if ((c == 'c') && (strncmp(argv[0], "close", length) == 0)) {
+
+	if ( ! plFramePtr->ipls_save) {
+	    Tcl_AppendResult(interp, "Error -- no current save file", 
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+	else {
+	    plsstrm(plFramePtr->ipls_save);
+	    plend1();
+	    plFramePtr->ipls_save = 0;
+	}
+    }
+
+/* unrecognized */
+
+    else {
+	Tcl_AppendResult(interp, "bad option to \"save\": must be ", 
+	 "as or close", (char *) NULL);
+
+	return TCL_ERROR;
     }
 
     return TCL_OK;
