@@ -2,17 +2,19 @@ The Status of the Python Examples
 
 We have now moved to a new default method of installing python using the
 recommended (by python) dynamic loading procedure.  This dynamically loads
-the wrapper programmes (source = plmodules.c plmodules2.c, and
-pyqt_plmodules.c) but not the PLplot library itself which is accessed like
-any other ordinary run-time library.  Thus, when that library trys to access
-the plframe widget there is no way to communicate with python's own widgets
-so that pytkdemo does not work.  pytkdemo has worked well in the past, but
-that demands a static method of loading everything plus much hacking of
-python itself, and all are agreed because of these complications that this
-is not the way to go in the future unless we cannot find a dynamic way to
-use tk widgets and plplot. That will probably require dynamic loading of the
-PLplot library itself, but more investigation is necessary before we adopt
-that option.
+the plplotc and plplot_widget extension modules (where plplotcmodules.c is
+created by swig and plplot_widget.c is hand-crafted, and both are built into
+extension modules by the setup.py procedure).  However, the PLplot library
+itself is accessed like any other ordinary run-time library from these
+extension modules.  Thus, when that library trys to access the plframe
+widget there is no way to communicate with python's own widgets so that
+pytkdemo does not work.  pytkdemo has worked well in the past, but that
+demands a static method of loading everything plus much hacking of python
+itself, and all are agreed because of these complications that this is not
+the way to go in the future unless we cannot find a dynamic way to use tk
+widgets and plplot. That will probably require dynamic loading of the PLplot
+library itself, but more investigation is necessary before we adopt that
+option.
 
 So for now, we are not supporting x??.py examples and pytkdemo which uses
 those examples.  But it is on our, ahem, dynamic agenda for the future.
@@ -26,7 +28,7 @@ Instead, they are designed to be called from pythondemos.py.
 
 Furthermore, if you need a widget you might want to try out and possibly
 contribute to the prova.py and qplplot.py examples which are used to create
-a proof-of-concept pyqt widget.  (The pyqt_plmodules.c code mentioned above
+a proof-of-concept pyqt widget.  (The plplot_widget.c code mentioned above
 creates some useful widget functions.)
 
 To try out the xw??.py examples without a widget simply run pythondemos.py
@@ -43,27 +45,27 @@ reported, and hopefully this issue will disappear in the future.
 
 All these xw??.py examples have been thoroughly tested under Linux and
 should also work under Unix systems according to the python team comments on
-dynamic loading, but that is yet to be tested as of 2001 November.
+dynamic loading, but that is yet to be tested as of 2002 June.
 
 PYTHONPATH and PLPLOT_LIB variables
 
 There are four situations:
 
 (1) The first case is you are just testing it out without installing. In
-order to get dynamic loads to work when plmodule.so and libplplot are in tmp
-and not installed, we have set up the uninstalled xw??.py examples so they
-will work from tmp by telling python to check the current path for
-plmodule.so.
+order to get dynamic loads to work when plplotcmodule.so and libplplot are
+in tmp and not installed, we have set up the uninstalled pythondemos.py
+(which exercises all the xw??.py examples) so it will work from tmp by
+telling python to check the current path for plplotcmodule.so.
 
 (2) If you run the uninstalled versions from any other directory (e.g.,
 examples/python) then you have to set PYTHONPATH to the path to tmp (that
-allows python to find plmodule.so) and set PLPLOT_LIB to the path to tmp.
+allows python to find plplotcmodule.so) and set PLPLOT_LIB to the path to tmp.
 This last condition allows the fonts to be found and is the same for all C,
 fortran, etc., examples so you are probably already familiar with this when
 running any uninstalled example away from tmp.
 
 (3) If you install with a prefix of /usr (usually done for deb or rpm
-installs), then plmodule.so is installed in the correct python location by
+installs), then plplotcmodule.so is installed in the correct python location by
 default.  Also, by default all plplot routines are installed with the
 installed location of the fonts hard-coded in (see DATA_DIR) so for the
 installed case you do not have to set PLPLOT_LIB.  Thus, for installations
@@ -71,8 +73,8 @@ with a prefix of /usr there is nothing more to be done; it should just work
 just as in case (1).
 
 (4) The installed version of pythondemos.py is filtered so that python is
-informed of the installed location of plmodule.so.  (This does not matter in
-case (3) since plmodule.so is in the correct place expected by python in any
+informed of the installed location of plplotcmodule.so.  (This does not matter in
+case (3) since plplotcmodule.so is in the correct place expected by python in any
 case.) If you install with a prefix other than /usr (usually for tarball
 installs), then the filtering means python has the information it needs, and
 the fonts location are hard-coded in.  Thus, again it should just work. 
