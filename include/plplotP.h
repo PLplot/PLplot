@@ -392,6 +392,10 @@ void
 plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		 PLINT refx, PLINT refy, const char *string);
 
+  /* where should structure definitions that must be seen by drivers and core source files, be? */
+
+  /* structure to be used by plcore.c and anydriver.c, related to plP_text() */
+
 typedef struct {
   PLINT base; /* ref point at base(1) or center(0) of text. Currently plplot only use 0 */
   PLFLT just; /* continuos justification, 0 left, 0.5 center, 1 right */
@@ -402,6 +406,32 @@ typedef struct {
   PLINT refy;
   const char *string; /* text to draw */
 }EscText;
+
+/* 
+ * structure that contains driver specific information, to be used by plargs.c and anydriver.c,
+ * related to plParseDrvOpts() and plHelpDrvOpts()
+ */
+
+typedef struct {
+  char *opt;
+  PLINT type;
+  void *var_ptr;
+  char *hlp_msg;
+} DrvOpt;
+
+  /* the available variable types, DrvOpt.type, for driver specific options */
+
+enum {DRV_INT, DRV_FLT, DRV_STR};
+
+  /* parse driver specific options, as in -drvopt <option[=value]>* */
+
+int
+plParseDrvOpts(DrvOpt *);
+
+  /* give help on driver specific options */
+
+void
+plHelpDrvOpts(DrvOpt *);
 
 /* Get x-y domain in world coordinates for 3d plots */
 

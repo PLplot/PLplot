@@ -133,6 +133,7 @@ static int opt_np		(char *, char *, void *);
 static int opt_px		(char *, char *, void *);
 static int opt_py		(char *, char *, void *);
 static int opt_wplt		(char *, char *, void *);
+static int opt_drvopt		(char *, char *, void *);
 
 static int opt_plserver		(char *, char *, void *);
 static int opt_plwindow		(char *, char *, void *);
@@ -143,7 +144,7 @@ static int opt_server_name	(char *, char *, void *);
 static int opt_server_host	(char *, char *, void *);
 static int opt_server_port	(char *, char *, void *);
 static int opt_user		(char *, char *, void *);
-static int opt_tk_file          (char *, char *, void *); /* jc: name of file to plserver -file option */
+static int opt_tk_file          (char *, char *, void *);
 static int opt_dpi		(char *, char *, void *);
 static int opt_dev_compression	(char *, char *, void *);
 
@@ -565,6 +566,14 @@ static PLOptionTable ploption_table[] = {
     "-compression num",
     "Sets compression level in supporting devices" },
 {
+    "drvopt",			/* Driver specific options */
+    opt_drvopt,
+    NULL,
+    NULL,
+    PL_OPT_ARG | PL_OPT_FUNC,
+    "-drvopt option[=value][,option[=value]]*",
+    "Driver specific options" },
+{
     NULL,			/* option */
     NULL,			/* handler */
     NULL,			/* client data */
@@ -614,6 +623,17 @@ PLOptionInfo ploption_info[PL_MAX_OPT_TABLES] = {
     }
 };
 
+/* The structure that hold the driver specific command line options */
+
+typedef struct DrvOptCmd {
+  char *option;
+  char *value;
+  struct DrvOptCmd *next;
+} DrvOptCmd;
+
+/* the variable where opt_drvopt() stores the driver specific command line options */
+static DrvOptCmd drv_opt;
+  
 static int  tables = 1;
 
 /*--------------------------------------------------------------------------*\
@@ -736,6 +756,10 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
     mode_noprogram = mode & PL_PARSE_NOPROGRAM;
     mode_nodash    = mode & PL_PARSE_NODASH;
     mode_skip      = mode & PL_PARSE_SKIP;
+
+    /* Initialize the driver specific option linked structure */
+    drv_opt.option  = drv_opt.value  = NULL;
+    drv_opt.next  = NULL;
 
     myargc = (*p_argc); 
     argend = argv + myargc;
@@ -1190,6 +1214,109 @@ Help(void)
 }
 
 /*--------------------------------------------------------------------------*\
+ * plParseDrvOpts
+ * 
+ * Parse driver specific options
+\*--------------------------------------------------------------------------*/
+
+int
+plParseDrvOpts(DrvOpt *acc_opt) {
+  DrvOptCmd *drvp;
+  DrvOpt *t;
+  int fl, st;
+  char msg[80];
+
+  if (!drv_opt.option)
+    return 1;
+
+  drvp = &drv_opt;
+  do {
+    t = acc_opt; fl = 0;
+    while (t->opt) {
+      if (strcmp(drvp->option, t->opt) == 0) {
+	fl = 1;
+	switch (t->type) {
+
+	case DRV_STR:
+	  /*  *((char *)(t->var_ptr)) = drvp->value;  this dont work! Any fix? */
+
+	  /* for strings, the driver allocated variable must have enough room! */
+	  if (strlen(drvp->value) > strlen((char *) t->var_ptr)) {
+	    sprintf(msg,"Too long argument to '%s' option", drvp->option);
+	    plabort(msg);
+	    exit (1);
+	  }
+
+	  strcpy((char *) t->var_ptr, drvp->value);
+#ifdef DEBUG
+	  fprintf(stderr,"plParseDrvOpts: %s %s\n", t->opt, (char *) t->var_ptr);
+#endif
+	  free(drvp->value); free(drvp->option);
+	  break;
+
+	case DRV_INT:
+	  /* *((int *)t->var_ptr) = atoi(drvp->value);  use sscanf() for error detection */
+
+	  if ((st = sscanf(drvp->value, "%d", (char *)t->var_ptr)) != 1) {
+	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
+	    plabort(msg);
+	    exit (1);
+	  }
+#ifdef DEBUG
+	  fprintf(stderr,"plParseDrvOpts: %s %d\n", t->opt, *(int *) t->var_ptr);
+#endif  
+	  free(drvp->value); free(drvp->option);
+	  break;
+
+	case DRV_FLT:
+	  /* *((float *)t->var_ptr) = atof(drvp->value); use sscanf() for error detection */
+
+	  if ((st = sscanf(drvp->value, "%f", (char *)t->var_ptr)) != 1) {
+	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
+	    plabort(msg);
+	    exit (1);
+	  }
+#ifdef DEBUG
+	  fprintf(stderr,"plParseDrvOpts: %s %f\n", t->opt, *(float *) t->var_ptr);
+#endif  
+	  free(drvp->value); free(drvp->option);
+	  break;
+	}
+      }
+    t++;
+    }
+
+    if (!fl) {
+      sprintf(msg, "Option '%s' not recognized.\n\nRecognized options for this driver are:\n", drvp->option);
+      plwarn(msg); 
+      plHelpDrvOpts(acc_opt);
+      plabort("Exiting");
+      exit(1);
+    }
+  }
+  while(drvp = drvp->next);
+
+  return 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plHelpDrvOpts
+ * 
+ * Give driver specific help
+\*--------------------------------------------------------------------------*/
+
+void
+plHelpDrvOpts(DrvOpt *acc_opt) {
+  DrvOpt *t;
+
+  t = acc_opt;
+  while(t->opt) {
+    fprintf(stderr, "%s:\t%s\n", t->opt, t->hlp_msg);
+    t++;
+  }
+}
+
+/*--------------------------------------------------------------------------*\
  * Option handlers
 \*--------------------------------------------------------------------------*/
 
@@ -1520,6 +1647,74 @@ opt_wplt(char *opt, char *optarg, void *client_data)
     yr = atof(field);
 
     plsdiplt(xl, yl, xr, yr);
+    return 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * opt_drvopt()
+ *
+ * Get driver specific options in the form <option[=value]>[,option[=value]]*
+ * If "value" is not specified, it defaults to "1".
+\*--------------------------------------------------------------------------*/
+
+static int
+opt_drvopt(char *opt, char *optarg, void *client_data)
+{
+  char t, *tt, option[80], value[80];
+  int fl = 0;
+  DrvOptCmd *drvp;
+
+  drvp = &drv_opt;
+  *option = *value = '\0';
+  tt = option;
+    while(t = *optarg++) {
+      switch (t) {
+      case ',':
+	if (fl)
+	  fl = 0;
+	else {
+	  value[0] = '1';
+	  value[1] = '\0';
+	}
+	
+	*tt = '\0'; tt = option;
+	drvp->option = plstrdup(option);
+	drvp->value = plstrdup(value);
+	drvp->next = (DrvOptCmd *) malloc(sizeof(DrvOptCmd));
+	if (drvp->next == NULL) {
+	  plabort("Out of memory!?\n");
+	  return 1;
+	}
+	drvp = drvp->next;
+	break;
+
+      case '=':
+	fl = 1;
+	*tt = '\0'; tt = value;
+	break;
+
+      default:
+	*tt++ = t;
+      }
+    }
+
+    *tt = '\0';
+    if (!fl) {
+      value[0] = '1';
+      value[1] = '\0';
+    }
+
+    drvp->option = plstrdup(option);
+    drvp->value = plstrdup(value);
+    drvp->next = NULL;
+
+#ifdef DEBUG
+    drvp = &drv_opt;
+    do 
+      fprintf(stderr, "%s %s\n", drvp->option, drvp->value);
+    while(drvp = drvp->next);
+#endif
+
     return 0;
 }
 
@@ -1890,11 +2085,14 @@ opt_geo(char *opt, char *optarg, void *client_data)
     return 0;
 }
 
-/*
- * jc: file name  for plserver -file option
-*/
+/*--------------------------------------------------------------------------*\
+ * opt_tk_file()
+ *
+ * File name for plserver tk_file option
+\*--------------------------------------------------------------------------*/
    
-static int opt_tk_file(char *opt, char *optarg, void *client_data)
+static int
+opt_tk_file(char *opt, char *optarg, void *client_data)
 {
     plsc->tk_file = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
     strcpy (plsc->tk_file, optarg);
@@ -1935,7 +2133,7 @@ opt_dpi(char *opt, char *optarg, void *client_data)
 	   fprintf (stderr, "?invalid ydpi\n");
 
       }
-else
+    else
       {
       xdpi = atof (optarg);
       ydpi=xdpi;
@@ -1966,4 +2164,3 @@ opt_dev_compression(char *opt, char *optarg, void *client_data)
 
     return 0;
 }
-
