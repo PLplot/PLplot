@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1995/10/16 18:27:31  mjl
+ * Revision 1.20  1995/10/19 00:02:25  mjl
+ * Some more cleaning up, somehow I missed all this last time.
+ *
+ * Revision 1.19  1995/10/16  18:27:31  mjl
  * Lots of cleaning up including eliminating obsolete code.
  *
  * Revision 1.18  1995/07/04  21:28:03  furnish
@@ -100,51 +103,11 @@
 /* PLplot/Tcl API handlers.  Prototypes must come before Cmds struct */
 
 static int loopbackCmd	(ClientData, Tcl_Interp *, int, char **);
-/*
-static int pladvCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plbopCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plboxCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plcol0Cmd	(ClientData, Tcl_Interp *, int, char **);
-*/
 static int plcontCmd	(ClientData, Tcl_Interp *, int, char **);
-/*
-static int plendCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plend1Cmd	(ClientData, Tcl_Interp *, int, char **);
-static int plenvCmd	(ClientData, Tcl_Interp *, int, char **);
-static int pleopCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plfontCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plfontldCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plgraCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plhistCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plinitCmd	(ClientData, Tcl_Interp *, int, char **);
-static int pljoinCmd	(ClientData, Tcl_Interp *, int, char **);
-static int pllabCmd	(ClientData, Tcl_Interp *, int, char **);
-static int pllineCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plmtexCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plpoinCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plptexCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plschrCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plscol0Cmd	(ClientData, Tcl_Interp *, int, char **);
-static int plscolbgCmd	(ClientData, Tcl_Interp *, int, char **);
-*/
 static int plmeshCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plot3dCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plshadeCmd	(ClientData, Tcl_Interp *, int, char **);
-/*
-static int plsstrmCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plssubCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plstylCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plsxaxCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plsyaxCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plsymCmd	(ClientData, Tcl_Interp *, int, char **);
-static int pltextCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plvpasCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plvporCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plvstaCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plwidCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plwindCmd	(ClientData, Tcl_Interp *, int, char **);
-*/
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -171,52 +134,11 @@ static CmdInfo Cmds[] = {
     {"loopback",	loopbackCmd},
 #include "tclgen_s.h"
     {"plcol",		plcol0Cmd},
-/*
-    {"pladv",		pladvCmd},
-    {"plbop",		plbopCmd},
-    {"plbox",		plboxCmd},
-    {"plcol",		plcol0Cmd},
-    {"plcol0",		plcol0Cmd},
-    */
     {"plcont",		plcontCmd},
-/*
-    {"plend",		plendCmd},
-    {"plend1",		plend1Cmd},
-    {"plenv",		plenvCmd},
-    {"pleop",		pleopCmd},
-    {"plfont",		plfontCmd},
-    {"plfontld",	plfontldCmd},
-    {"plgra",		plgraCmd},
-    {"plhist",		plhistCmd},
-    {"plinit",		plinitCmd},
-    {"pljoin",		pljoinCmd},
-    {"pllab",		pllabCmd},
-    {"plline",		pllineCmd},
-    {"plmtex",		plmtexCmd},
-    {"plpoin",		plpoinCmd},
-    {"plptex",		plptexCmd},
-    {"plschr",		plschrCmd},
-    {"plscol0",		plscol0Cmd},
-    {"plscolbg",	plscolbgCmd},
-    */
     {"plmesh",		plmeshCmd},
     {"plot3d",		plot3dCmd},
     {"plsetopt",	plsetoptCmd},
     {"plshade",		plshadeCmd},
-/*
-    {"plsstrm",		plsstrmCmd},
-    {"plssub",		plssubCmd},
-    {"plstyl",		plstylCmd},
-    {"plsxax",		plsxaxCmd},
-    {"plsyax",		plsyaxCmd},
-    {"plsym",		plsymCmd},
-    {"pltext",		pltextCmd},
-    {"plvpas",		plvpasCmd},
-    {"plvpor",		plvporCmd},
-    {"plvsta",		plvstaCmd},
-    {"plwid",		plwidCmd},
-    {"plwind",		plwindCmd},
-    */
     {NULL,		NULL}
 };
 
