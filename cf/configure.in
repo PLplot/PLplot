@@ -802,10 +802,8 @@ if test "$enable_dynamic_drivers" = "yes"; then
 	    pstex)
 	    echo "pstex:Postscript/LaTeX file:pstex.drv:41:pstex" >> drivers/drivers.db
 	    ;;
-	    png)
+	    gd)
 	    echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
-	    ;;
-	    jpeg)
 	    echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
 	    ;;
 	    tek)
