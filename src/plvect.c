@@ -71,7 +71,7 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
     PLFLT uu, vv;
     PLINT i, j, npts = 4;
     PLINT px0, py0, dpx, dpy;
-    PLINT a_x[npts], a_y[npts];
+    PLINT a_x[4], a_y[4];
     PLFLT max_u, max_v;
     double t;
 
@@ -172,7 +172,7 @@ plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale) {
 	
     PLFLT uu, vv, px0, py0, dpx, dpy;
     PLINT *a_x, *a_y;
-    int i,j;
+    int j;
 
     uu = scale*u;
     vv = scale*v;
