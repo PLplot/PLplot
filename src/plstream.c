@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/07/16 22:37:04  mjl
-   Eliminated obsolete functions, moved function for setting filename here.
+   Revision 1.7  1993/07/31 08:19:25  mjl
+   Utility function added for allocating a PLDev structure.
 
+ * Revision 1.6  1993/07/16  22:37:04  mjl
+ * Eliminated obsolete functions, moved function for setting filename here.
+ *
  * Revision 1.5  1993/07/01  22:13:43  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
@@ -11,44 +14,6 @@
  * Revision 1.4  1993/04/26  19:57:59  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
- *
- * Revision 1.3  1993/03/03  17:04:50  mjl
- * Changed orient-setting code to switch on the basis of orient%4, so that
- * any value of orient give valid output.
- *
- * Revision 1.2  1993/02/23  05:21:09  mjl
- * Eliminated negative orientations.  Recognized settings are now 0, 1, 2, 3
- * (multiply by 90 degrees to get orientation).
- *
- * Revision 1.1  1993/01/23  06:00:28  mjl
- * Added to hold functions that primarily deal with manipulation of stream
- * quantities, through a pointer to a stream passed as an argument.  You may
- * also think of it as a driver utility library.
- *
-
- * dispatch.c history:
- *
- * Revision 1.6  1992/11/07  07:48:36  mjl
- * Fixed orientation operation in several files and standardized certain startup
- * operations. Fixed bugs in various drivers.
- *
- * Revision 1.5  1992/10/22  17:04:54  mjl
- * Fixed warnings, errors generated when compling with HP C++.
- *
- * Revision 1.4  1992/10/20  20:12:26  mjl
- * Modified file open routine to open next family member file if requested
- * to do so.
- *
- * Revision 1.3  1992/09/30  18:24:50  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:44:38  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:31  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	plstream.c
@@ -59,6 +24,7 @@
 #include "plplotP.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "plstream.h"
 
@@ -333,6 +299,8 @@ plGetFlt(char *s)
 *
 * Rotates physical coordinates if necessary for given orientation.
 * Each time orient is incremented, the plot is rotated 90 deg clockwise.
+* Note: this is now used only to rotate by 90 degrees for devices that
+* expect portrait mode.
 \*----------------------------------------------------------------------*/
 
 void
@@ -373,3 +341,22 @@ plRotPhy(PLINT orient, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
     }
 }
 
+/*----------------------------------------------------------------------*\
+* plAllocDev()
+*
+* Allocates a standard PLDev structure for device-specific data, stores
+* the address in pls->dev, and returns the address as well.
+\*----------------------------------------------------------------------*/
+
+PLDev *
+plAllocDev(PLStream *pls)
+{
+    if (pls->dev != NULL)
+	free((void *) pls->dev);
+
+    pls->dev = calloc(1, (size_t) sizeof(PLDev));
+    if (pls->dev == NULL)
+	plexit("plAllocDev: cannot allocate memory\n");
+
+    return (PLDev *) pls->dev;
+}
