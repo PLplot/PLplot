@@ -75,7 +75,8 @@ class x03 {
 
         // Write labels for angle.
 
-            if (dx >= 0)
+	//Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
+            if (dx >= -0.00001)
                 pls.ptex(dx, dy, dx, dy, -0.15, text);
             else
                 pls.ptex(dx, dy, -dx, -dy, 1.15, text);
