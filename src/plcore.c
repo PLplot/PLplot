@@ -638,7 +638,16 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		  }
 	       }
 	       
-	       if (skip==0) unicode_buffer[j]=string[i];
+	       if (skip==0) {
+		  unicode_buffer[j]=string[i];
+		  /* Search for escesc (an unescaped escape) in the input string
+		   * and adjust unicode_buffer accordingly).
+		   */
+		  if (unicode_buffer[j] == esc && string[i+1] == esc) {
+		    i++;
+		    unicode_buffer[++j] = esc;
+		  }
+	       }
 	       j++;
 	    }
 	    if (j > 0) {
