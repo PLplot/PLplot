@@ -1,13 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/07/31 07:56:46  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
+   Revision 1.13  1993/12/06 22:37:31  mjl
+   Fixed zero line width bug (thanks to Paul Kirschner)
 
+ * Revision 1.12  1993/07/31  07:56:46  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.11  1993/07/16  22:11:23  mjl
  * Eliminated low-level coordinate scaling; now done by driver interface.
  *
@@ -44,7 +47,7 @@ static void flushbuffer(PLStream *);
 
 static short *buffptr, bufflen;
 static short count;
-static int curwid;
+static int curwid = 1;
 static int firstline = 1;
 
 /* INDENT ON */
