@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:35  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:42  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:35  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	hp7580.c
@@ -39,8 +42,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580init(pls)
-PLStream *pls;
+hp7580init (PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->color = 1;
@@ -83,9 +85,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580line(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+hp7580line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
 
@@ -114,8 +114,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580clear(pls)
-PLStream *pls;
+hp7580clear (PLStream *pls)
 {
 }
 
@@ -127,8 +126,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580page(pls)
-PLStream *pls;
+hp7580page (PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -147,8 +145,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580adv(pls)
-PLStream *pls;
+hp7580adv (PLStream *pls)
 {
     hp7580clear(pls);
     hp7580page(pls);
@@ -161,8 +158,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580tidy(pls)
-PLStream *pls;
+hp7580tidy (PLStream *pls)
 {
     fprintf(pls->OutFile, "\nsp0");
     fclose(pls->OutFile);
@@ -178,8 +174,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580color(pls)
-PLStream *pls;
+hp7580color (PLStream *pls)
 {
     if (pls->color < 1 || pls->color > 8)
 	fprintf(stderr, "\nInvalid pen selection.");
@@ -195,8 +190,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580text(pls)
-PLStream *pls;
+hp7580text (PLStream *pls)
 {
 }
 
@@ -207,8 +201,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580graph(pls)
-PLStream *pls;
+hp7580graph (PLStream *pls)
 {
 }
 
@@ -219,8 +212,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580width(pls)
-PLStream *pls;
+hp7580width (PLStream *pls)
 {
 }
 
@@ -231,10 +223,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7580esc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+hp7580esc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 #endif

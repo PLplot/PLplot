@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:47  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:17  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:47  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plside3a.c
@@ -14,9 +17,7 @@
 #include "plplot.h"
 
 void 
-plside3a(x, y, z, nx, ny, opt)
-PLINT nx, ny, opt;
-PLFLT *x, *y, **z;
+plside3a (PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
 {
     PLINT i;
     PLFLT cxx, cxy, cyx, cyy, cyz;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:01  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:29  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:35:01  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plwind.c
@@ -12,14 +15,8 @@
 
 #include "plplot.h"
 
-#ifdef PLSTDC
 void
 c_plwind (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
-#else
-void 
-c_plwind(xmin, xmax, ymin, ymax)
-PLFLT xmin, xmax, ymin, ymax;
-#endif
 {
     PLINT vppxmi, vppxma, vppymi, vppyma;
     PLFLT dx, dy;

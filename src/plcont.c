@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/07/31 06:03:13  mjl
-   Minor bug fixes.
+   Revision 1.3  1992/09/29 04:45:51  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.2  1992/07/31  06:03:13  mjl
+ * Minor bug fixes.
+ *
  * Revision 1.1  1992/05/20  21:34:20  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -41,18 +44,10 @@ extern void free();
 * into world coordinates.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void 
 c_plcont(PLFLT ** z, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
        PLINT ky, PLINT ly, PLFLT * clevel, PLINT nlevel,
        void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *))
-#else
-void 
-c_plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr)
-PLINT nx, ny, kx, lx, ky, ly, nlevel;
-PLFLT **z, *clevel;
-void (*pltr) ();
-#endif
 {
     PLINT i, mx, my, nstor, *heapc;
 
@@ -75,14 +70,8 @@ void (*pltr) ();
 
 /* Function for no transformation case */
 
-#ifdef PLSTDC
 void 
 pltr0(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty)
-#else
-void 
-pltr0(x, y, tx, ty)
-PLFLT x, y, *tx, *ty;
-#endif
 {
     *tx = x;
     *ty = y;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:02  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:31  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:35:02  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plzbx.c
@@ -14,8 +17,8 @@
 #include <stdio.h>
 #include <math.h>
 
-static void  plztx	PLARGS((char *, PLFLT, PLFLT, PLFLT, PLFLT, \
-				PLFLT, PLFLT, PLFLT, PLFLT, char *));
+static void  plztx(char *, PLFLT, PLFLT, PLFLT, PLFLT, \
+		   PLFLT, PLFLT, PLFLT, PLFLT, char *);
 
 static PLFLT xlog[8] =
 {0.301030, 0.477121, 0.602060, 0.698970, 0.778151, 0.845098,
@@ -42,19 +45,10 @@ static PLFLT xlog[8] =
 * V: Writes right-hand label
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
       PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin, PLFLT vmax,
       PLFLT tick, PLINT nsub, PLINT *digits)
-#else
-void
-plzbx(opt, label, right, dx, dy, wx, wy1, wy2, 
-      vmin, vmax, tick, nsub, digits)
-char *opt, *label;
-PLFLT dx, dy, wx, wy1, wy2, vmin, vmax, tick;
-PLINT nsub, right, *digits;
-#endif
 {
     static char string[40];
     PLINT lb, lc, li, ll, lm, ln, ls, lt, lu, lv;
@@ -193,16 +187,9 @@ PLINT nsub, right, *digits;
 * world coordinates (wx,wy1) to (wx,wy2).
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 static void 
 plztx (char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1, 
 	PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, char *text)
-#else
-static void 
-plztx(opt, dx, dy, wx, wy1, wy2, disp, pos, just, text)
-PLFLT dx, dy, wx, wy1, wy2, disp, pos, just;
-char *opt, *text;
-#endif
 {
     PLINT refx=0, refy=0;
     PLINT vert=0;

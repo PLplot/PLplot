@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:40  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:10  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:40  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plnxtv.c
@@ -31,15 +34,15 @@ extern void free();
 
 /* Prototypes for static functions */
 
-static void plnxtvhi	PLARGS((PLINT *, PLINT *, PLINT, PLINT));
-static void plnxtvlo	PLARGS((PLINT *, PLINT *, PLINT, PLINT));
-static void savehipoint	PLARGS((PLINT, PLINT));
-static void savelopoint	PLARGS((PLINT, PLINT));
-static void swaphiview	PLARGS((void));
-static void swaploview	PLARGS((void));
-static int  plabv	PLARGS((PLINT, PLINT, PLINT, PLINT, PLINT, PLINT));
-static void pl3cut	PLARGS((PLINT, PLINT, PLINT, PLINT, PLINT, \
-				PLINT, PLINT, PLINT, PLINT *, PLINT *));
+static void plnxtvhi	(PLINT *, PLINT *, PLINT, PLINT);
+static void plnxtvlo	(PLINT *, PLINT *, PLINT, PLINT);
+static void savehipoint	(PLINT, PLINT);
+static void savelopoint	(PLINT, PLINT);
+static void swaphiview	(void);
+static void swaploview	(void);
+static int  plabv	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
+static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT, \
+				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 
 /* 
 *  Internal constants.
@@ -62,29 +65,25 @@ static PLINT mlo, xxlo, newlosize;
 \*----------------------------------------------------------------------*/
 
 void 
-spl3mode(mode)
-PLINT mode;
+spl3mode (PLINT mode)
 {
     pl3mode = mode;
 }
 
 void 
-spl3upv(upv)
-PLINT upv;
+spl3upv (PLINT upv)
 {
     pl3upv = upv;
 }
 
 void 
-goldhivw(pohivw)
-PLINT **pohivw;
+goldhivw (PLINT **pohivw)
 {
     *pohivw = oldhiview;
 }
 
 void 
-goldlovw(polovw)
-PLINT **polovw;
+goldlovw (PLINT **polovw)
 {
     *polovw = oldloview;
 }
@@ -107,8 +106,7 @@ PLINT **polovw;
 \*----------------------------------------------------------------------*/
 
 void 
-plnxtv(u, v, n, init)
-PLINT *u, *v, n, init;
+plnxtv (PLINT *u, PLINT *v, PLINT n, PLINT init)
 {
     plnxtvhi(u, v, n, init);
 
@@ -117,8 +115,7 @@ PLINT *u, *v, n, init;
 }
 
 static void 
-plnxtvhi(u, v, n, init)
-PLINT *u, *v, n, init;
+plnxtvhi (PLINT *u, PLINT *v, PLINT n, PLINT init)
 {
     PLINT i, j, first;
     PLINT sx1=0, sx2=0, sy1=0, sy2=0;
@@ -341,8 +338,7 @@ PLINT *u, *v, n, init;
 }
 
 static void 
-plnxtvlo(u, v, n, init)
-PLINT *u, *v, n, init;
+plnxtvlo (PLINT *u, PLINT *v, PLINT n, PLINT init)
 {
     PLINT i, j, first;
     PLINT sx1=0, sx2=0, sy1=0, sy2=0;
@@ -565,8 +561,7 @@ PLINT *u, *v, n, init;
 }
 
 static void 
-savehipoint(px, py)
-PLINT px, py;
+savehipoint (PLINT px, PLINT py)
 {
     PLINT *temp;
 
@@ -591,8 +586,7 @@ PLINT px, py;
 }
 
 static void 
-savelopoint(px, py)
-PLINT px, py;
+savelopoint (PLINT px, PLINT py)
 {
     PLINT *temp;
 
@@ -617,7 +611,7 @@ PLINT px, py;
 }
 
 static void 
-swaphiview()
+swaphiview (void)
 {
     if (pl3upv != 0) {
 	mhi = xxhi / 2;
@@ -627,7 +621,7 @@ swaphiview()
 }
 
 static void 
-swaploview()
+swaploview (void)
 {
     if (pl3upv != 0) {
 	mlo = xxlo / 2;
@@ -639,9 +633,8 @@ swaploview()
 /* Determines if point (px,py) lies above the line joining (sx1,sy1) to */
 /* (sx2,sy2). It only works correctly if sx1 <= px <= sx2  */
 
-static int
-plabv(px, py, sx1, sy1, sx2, sy2)
-PLINT px, py, sx1, sy1, sx2, sy2;
+static int 
+plabv (PLINT px, PLINT py, PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2)
 {
     PLINT above;
 
@@ -663,8 +656,7 @@ PLINT px, py, sx1, sy1, sx2, sy2;
 /* (su1,sv1) to (su2,sv2). */
 
 static void 
-pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, cx, cy)
-PLINT sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, *cx, *cy;
+pl3cut (PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2, PLINT su1, PLINT sv1, PLINT su2, PLINT sv2, PLINT *cx, PLINT *cy)
 {
     PLINT x21, y21, u21, v21, yv1, xu1, a, b;
     PLFLT fa, fb;

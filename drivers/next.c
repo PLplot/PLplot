@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:37  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:45  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:37  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	next.c
@@ -48,8 +51,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-nxinit(pls)
-PLStream *pls;
+nxinit (PLStream *pls)
 {
     pls->termin = 1;		/* not an interactive terminal */
     pls->color = 1;
@@ -173,9 +175,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-nxline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+nxline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     int ori;
@@ -223,8 +223,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-nxclear(pls)
-PLStream *pls;
+nxclear (PLStream *pls)
 {
     fprintf(pls->OutFile, " S\neop\nbop\n");
 }
@@ -237,8 +236,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-nxpage(pls)
-PLStream *pls;
+nxpage (PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -258,8 +256,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-nxadv(pls)
-PLStream *pls;
+nxadv (PLStream *pls)
 {
     nxclear(pls);
     nxpage(pls);
@@ -272,8 +269,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-nxtidy(pls)
-PLStream *pls;
+nxtidy (PLStream *pls)
 {
     fprintf(pls->OutFile, " S\neop\n");
     fprintf(pls->OutFile, "@end\n\n");
@@ -304,8 +300,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-nxcolor(pls)
-PLStream *pls;
+nxcolor (PLStream *pls)
 {
 }
 
@@ -316,8 +311,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-nxtext(pls)
-PLStream *pls;
+nxtext (PLStream *pls)
 {
 }
 
@@ -328,8 +322,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-nxgraph(pls)
-PLStream *pls;
+nxgraph (PLStream *pls)
 {
 }
 
@@ -340,8 +333,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-nxwidth(pls)
-PLStream *pls;
+nxwidth (PLStream *pls)
 {
     if (pls->width < 1 || pls->width > 10)
 	fprintf(stderr, "\nInvalid pen width selection.");
@@ -357,10 +349,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-nxesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+nxesc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 #endif

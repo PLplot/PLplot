@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/07/31 06:05:16  mjl
-   Added prototype for new function used in contour plots (pltrf0).
+   Revision 1.3  1992/09/29 04:45:32  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.2  1992/07/31  06:05:16  mjl
+ * Added prototype for new function used in contour plots (pltrf0).
+ *
  * Revision 1.1  1992/05/20  21:33:43  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -42,10 +45,16 @@
 
 typedef FLOAT PLFLT;
 typedef INT   PLINT;
+/*
 #define PLARGS(a) PROTO(a)
+*/
 
 #ifdef USE_STDC
 #define PLSTDC
+#endif
+
+#ifndef PLSTDC
+#error "Get real buddy.  Go get a REAL compiler."
 #endif
 
 /* Some constants */
@@ -319,477 +328,477 @@ extern "C" {
 
 	/* C routines callable from stub routines come first */
 
-void c_pladv	PLARGS((PLINT));
+void c_pladv	(PLINT);
 
-void c_plancol	PLARGS((PLINT, char *));
+void c_plancol	(PLINT, char *);
 
-void c_plaxes	PLARGS((PLFLT, PLFLT, char *, PLFLT, PLINT, char *, \
-			PLFLT, PLINT));
+void c_plaxes	(PLFLT, PLFLT, char *, PLFLT, PLINT, char *, \
+			PLFLT, PLINT);
 
-void c_plbeg	PLARGS((PLINT, PLINT, PLINT));
+void c_plbeg	(PLINT, PLINT, PLINT);
 
-void c_plbin	PLARGS((PLINT, PLFLT *, PLFLT *, PLINT));
+void c_plbin	(PLINT, PLFLT *, PLFLT *, PLINT);
 
-void c_plbox	PLARGS((char *, PLFLT, PLINT, char *, PLFLT, PLINT));
+void c_plbox	(char *, PLFLT, PLINT, char *, PLFLT, PLINT);
 
-void c_plbox3	PLARGS((char *, char *, PLFLT, PLINT, \
+void c_plbox3	(char *, char *, PLFLT, PLINT, \
 			char *, char *, PLFLT, PLINT, \
-			char *, char *, PLFLT, PLINT));
+			char *, char *, PLFLT, PLINT);
 
-void c_plclr	PLARGS((void));
+void c_plclr	(void);
 
-void c_plcol	PLARGS((PLINT));
+void c_plcol	(PLINT);
 
-void c_plconf	PLARGS((PLFLT **, PLINT, PLINT, PLINT, PLINT, \
+void c_plconf	(PLFLT **, PLINT, PLINT, PLINT, PLINT, \
 			PLINT, PLINT, PLFLT *, PLINT, \
 			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *, 
 				 PLFLT *, PLFLT *, PLINT, PLINT), 
-			PLFLT *, PLFLT *));
+			PLFLT *, PLFLT *);
 
-void c_plcont	PLARGS((PLFLT **, PLINT, PLINT, PLINT, PLINT, \
+void c_plcont	(PLFLT **, PLINT, PLINT, PLINT, PLINT, \
 			PLINT, PLINT, PLFLT *, PLINT, \
-			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *)));
+			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *));
 
-void c_plend	PLARGS((void));
+void c_plend	(void);
 
-void c_plend1	PLARGS((void));
+void c_plend1	(void);
 
-void c_plenv	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT, PLINT, PLINT));
+void c_plenv	(PLFLT, PLFLT, PLFLT, PLFLT, PLINT, PLINT);
 
-void c_plerrx	PLARGS((PLINT, PLFLT *, PLFLT *, PLFLT *));
+void c_plerrx	(PLINT, PLFLT *, PLFLT *, PLFLT *);
 
-void c_plerry	PLARGS((PLINT, PLFLT *, PLFLT *, PLFLT *));
+void c_plerry	(PLINT, PLFLT *, PLFLT *, PLFLT *);
 
-void c_plfill	PLARGS((PLINT, PLFLT *, PLFLT *));
+void c_plfill	(PLINT, PLFLT *, PLFLT *);
 
-void c_plfont	PLARGS((PLINT));
+void c_plfont	(PLINT);
 
-void c_plfontld	PLARGS((PLINT));
+void c_plfontld	(PLINT);
 
-void c_plgfam	PLARGS(( PLINT *, PLINT *, PLINT *));
+void c_plgfam	( PLINT *, PLINT *, PLINT *);
 
-void c_plgfnam	PLARGS((char *));
+void c_plgfnam	(char *);
 
-void c_plgpage 	PLARGS((PLFLT *, PLFLT *, PLINT *, PLINT *, PLINT *, PLINT *));
+void c_plgpage 	(PLFLT *, PLFLT *, PLINT *, PLINT *, PLINT *, PLINT *);
 
-void c_plgra	PLARGS((void));
+void c_plgra	(void);
 
-void c_plgspa	PLARGS((PLFLT *, PLFLT *, PLFLT *, PLFLT *));
+void c_plgspa	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
-void c_plgstrm	PLARGS((PLINT *));
+void c_plgstrm	(PLINT *);
 
-void c_plgxax	PLARGS((PLINT *, PLINT *));
+void c_plgxax	(PLINT *, PLINT *);
 
-void c_plgyax	PLARGS((PLINT *, PLINT *));
+void c_plgyax	(PLINT *, PLINT *);
 
-void c_plgzax	PLARGS((PLINT *, PLINT *));
+void c_plgzax	(PLINT *, PLINT *);
 
-void c_plhist	PLARGS((PLINT, PLFLT *, PLFLT, PLFLT, PLINT, PLINT));
+void c_plhist	(PLINT, PLFLT *, PLFLT, PLFLT, PLINT, PLINT);
 
-void c_plhls	PLARGS((PLFLT, PLFLT, PLFLT));
+void c_plhls	(PLFLT, PLFLT, PLFLT);
 
-void c_pljoin	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void c_pljoin	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void c_pllab	PLARGS((char *, char *, char *));
+void c_pllab	(char *, char *, char *);
 
-void c_plline	PLARGS((PLINT, PLFLT *, PLFLT *));
+void c_plline	(PLINT, PLFLT *, PLFLT *);
 
-void c_pllsty	PLARGS((PLINT));
+void c_pllsty	(PLINT);
 
-void c_plmesh	PLARGS((PLFLT *, PLFLT *, PLFLT **, \
-			PLINT, PLINT, PLINT));
+void c_plmesh	(PLFLT *, PLFLT *, PLFLT **, \
+			PLINT, PLINT, PLINT);
 
-void c_plmtex	PLARGS((char *, PLFLT, PLFLT, PLFLT, char *));
+void c_plmtex	(char *, PLFLT, PLFLT, PLFLT, char *);
 
-void c_plot3d	PLARGS((PLFLT *, PLFLT *, PLFLT **, \
-			PLINT, PLINT, PLINT, PLINT));
+void c_plot3d	(PLFLT *, PLFLT *, PLFLT **, \
+			PLINT, PLINT, PLINT, PLINT);
 
-void c_plpage	PLARGS((void));
+void c_plpage	(void);
 
-void c_plpat	PLARGS((PLINT, PLINT *, PLINT *));
+void c_plpat	(PLINT, PLINT *, PLINT *);
 
-void c_plpoin	PLARGS((PLINT, PLFLT *, PLFLT *, PLINT));
+void c_plpoin	(PLINT, PLFLT *, PLFLT *, PLINT);
 
-void c_plprec	PLARGS((PLINT, PLINT));
+void c_plprec	(PLINT, PLINT);
 
-void c_plpsty	PLARGS((PLINT));
+void c_plpsty	(PLINT);
 
-void c_plptex	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, char *));
+void c_plptex	(PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, char *);
 
-void c_plrgb	PLARGS((PLFLT, PLFLT, PLFLT));
+void c_plrgb	(PLFLT, PLFLT, PLFLT);
 
-void c_plschr	PLARGS((PLFLT, PLFLT));
+void c_plschr	(PLFLT, PLFLT);
 
-void c_plsfam	PLARGS(( PLINT, PLINT, PLINT));
+void c_plsfam	( PLINT, PLINT, PLINT);
 
-void c_plsfnam	PLARGS((char *));
+void c_plsfnam	(char *);
 
-void c_plsasp	PLARGS((PLFLT));
+void c_plsasp	(PLFLT);
 
-void c_plslpb	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void c_plslpb	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void c_plsmaj	PLARGS((PLFLT, PLFLT));
+void c_plsmaj	(PLFLT, PLFLT);
 
-void c_plsmin	PLARGS((PLFLT, PLFLT));
+void c_plsmin	(PLFLT, PLFLT);
 
-void c_plsori	PLARGS((PLINT));
+void c_plsori	(PLINT);
 
-void c_plspage 	PLARGS((PLFLT, PLFLT, PLINT, PLINT, PLINT, PLINT));
+void c_plspage 	(PLFLT, PLFLT, PLINT, PLINT, PLINT, PLINT);
 
-void c_plspause	PLARGS((PLINT));
+void c_plspause	(PLINT);
 
-void c_plsstrm	PLARGS((PLINT));
+void c_plsstrm	(PLINT);
 
-void c_plssym	PLARGS((PLFLT, PLFLT));
+void c_plssym	(PLFLT, PLFLT);
 
-void c_plstar	PLARGS((PLINT, PLINT));
+void c_plstar	(PLINT, PLINT);
 
-void c_plstart	PLARGS((char *, PLINT, PLINT));
+void c_plstart	(char *, PLINT, PLINT);
 
-void c_plstyl	PLARGS((PLINT, PLINT *, PLINT *));
+void c_plstyl	(PLINT, PLINT *, PLINT *);
 
-void c_plsvpa	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void c_plsvpa	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void c_plsxax	PLARGS((PLINT, PLINT));
+void c_plsxax	(PLINT, PLINT);
 
-void c_plsyax	PLARGS((PLINT, PLINT));
+void c_plsyax	(PLINT, PLINT);
 
-void c_plsym	PLARGS((PLINT, PLFLT *, PLFLT *, PLINT));
+void c_plsym	(PLINT, PLFLT *, PLFLT *, PLINT);
 
-void c_plszax	PLARGS((PLINT, PLINT));
+void c_plszax	(PLINT, PLINT);
 
-void c_pltext	PLARGS((void));
+void c_pltext	(void);
 
-void c_plvasp	PLARGS((PLFLT));
+void c_plvasp	(PLFLT);
 
-void c_plvpas	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT, PLFLT));
+void c_plvpas	(PLFLT, PLFLT, PLFLT, PLFLT, PLFLT);
 
-void c_plvpor	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void c_plvpor	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void c_plvsta	PLARGS((void));
+void c_plvsta	(void);
 
-void c_plw3d	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT, \
+void c_plw3d	(PLFLT, PLFLT, PLFLT, PLFLT, \
 			PLFLT, PLFLT, PLFLT, PLFLT, \
-			PLFLT, PLFLT, PLFLT));
+			PLFLT, PLFLT, PLFLT);
 
-void c_plwend	PLARGS((void));
+void c_plwend	(void);
 
-void c_plwid	PLARGS((PLINT));
+void c_plwid	(PLINT);
 
-void c_plwind	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void c_plwind	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 	/* The rest for use from C only */
 
 	/* Contour plotters */
 
-void  pltr0	PLARGS((PLFLT, PLFLT, PLFLT *, PLFLT *));
+void  pltr0	(PLFLT, PLFLT, PLFLT *, PLFLT *);
 
-void  pltr1	PLARGS((PLFLT, PLFLT, PLFLT *, PLFLT *, \
-			PLFLT *, PLFLT *, PLINT, PLINT));
+void  pltr1	(PLFLT, PLFLT, PLFLT *, PLFLT *, \
+			PLFLT *, PLFLT *, PLINT, PLINT);
 
-void  pltr2	PLARGS((PLFLT, PLFLT, PLFLT *, PLFLT *, \
-			PLFLT *, PLFLT *, PLINT, PLINT));
+void  pltr2	(PLFLT, PLFLT, PLFLT *, PLFLT *, \
+			PLFLT *, PLFLT *, PLINT, PLINT);
 
-void  pltr0f	PLARGS((PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty));
+void  pltr0f	(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty);
 
-void  pltr2f	PLARGS((PLFLT, PLFLT, PLFLT *, PLFLT *, \
-			PLFLT *, PLFLT *, PLINT, PLINT));
+void  pltr2f	(PLFLT, PLFLT, PLFLT *, PLFLT *, \
+			PLFLT *, PLFLT *, PLINT, PLINT);
 
-void  plcntr	PLARGS((PLFLT **, PLINT, PLINT, PLINT, PLINT, \
+void  plcntr	(PLFLT **, PLINT, PLINT, PLINT, PLINT, \
 			PLINT, PLINT, PLFLT, PLINT *, \
 			PLINT *, PLINT *, PLINT, \
-			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *)));
+			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *));
 
-void  plcntf	PLARGS((PLFLT **, PLINT, PLINT, PLINT, PLINT,
+void  plcntf	(PLFLT **, PLINT, PLINT, PLINT, PLINT,
 			PLINT, PLINT, PLFLT, PLINT *,
 			PLINT *, PLINT *, PLINT,
 			void (*)(PLFLT, PLFLT, PLFLT *, PLFLT *, 
 				 PLFLT *, PLFLT *, PLINT, PLINT), 
-			PLFLT *, PLFLT *));
+			PLFLT *, PLFLT *);
 
 	/* These should not be called directly by the user */
 
-void  plccal	PLARGS((PLFLT **, PLINT, PLINT, PLFLT, \
-			PLINT, PLINT, PLINT, PLINT, PLFLT *));
+void  plccal	(PLFLT **, PLINT, PLINT, PLFLT, \
+			PLINT, PLINT, PLINT, PLINT, PLFLT *);
 
-void  pldeco	PLARGS((short **, PLINT *, char *));
+void  pldeco	(short **, PLINT *, char *);
 
-void  pldtik	PLARGS((PLFLT, PLFLT, PLFLT *, PLINT *, \
-			PLINT *, PLINT *, PLINT, PLINT *));
+void  pldtik	(PLFLT, PLFLT, PLFLT *, PLINT *, \
+			PLINT *, PLINT *, PLINT, PLINT *);
 
-void  plerx1	PLARGS((PLFLT, PLFLT, PLFLT));
+void  plerx1	(PLFLT, PLFLT, PLFLT);
 
-void  plery1	PLARGS((PLFLT, PLFLT, PLFLT));
+void  plery1	(PLFLT, PLFLT, PLFLT);
 
-void  plexit	PLARGS((char *));
+void  plexit	(char *);
 
-void  plfontrel	PLARGS((void));
+void  plfontrel	(void);
 
-void  plform	PLARGS((PLFLT, PLINT, PLINT, char *));
+void  plform	(PLFLT, PLINT, PLINT, char *);
 
-void  plhrsh	PLARGS((PLINT, PLINT, PLINT));
+void  plhrsh	(PLINT, PLINT, PLINT);
 
-void  pllclp	PLARGS((PLINT, PLINT, PLINT, PLINT));
+void  pllclp	(PLINT, PLINT, PLINT, PLINT);
 
-void  plpoi1	PLARGS((PLFLT, PLFLT, PLINT));
+void  plpoi1	(PLFLT, PLFLT, PLINT);
 
-void  plr135	PLARGS((PLINT *, PLINT *, PLINT));
+void  plr135	(PLINT *, PLINT *, PLINT);
 
-void  plr45	PLARGS((PLINT *, PLINT *, PLINT));
+void  plr45	(PLINT *, PLINT *, PLINT);
 
-void  plsetup	PLARGS((PLFLT, PLFLT, PLINT, PLINT));
+void  plsetup	(PLFLT, PLFLT, PLINT, PLINT);
 
-void  plstik	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void  plstik	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  plstr	PLARGS((PLINT, PLFLT *, PLINT, PLINT, char *));
+void  plstr	(PLINT, PLFLT *, PLINT, PLINT, char *);
 
-void  plsym1	PLARGS((PLFLT, PLFLT, PLINT));
+void  plsym1	(PLFLT, PLFLT, PLINT);
 
-void  plxtik	PLARGS((PLINT, PLINT, PLINT, PLINT));
+void  plxtik	(PLINT, PLINT, PLINT, PLINT);
 
-void  plxybx	PLARGS((char *, char *, PLFLT, PLFLT, PLFLT, PLFLT, \
-			PLFLT, PLFLT, PLFLT, PLINT, PLINT, PLINT *));
+void  plxybx	(char *, char *, PLFLT, PLFLT, PLFLT, PLFLT, \
+			PLFLT, PLFLT, PLFLT, PLINT, PLINT, PLINT *);
 
-void  plytik	PLARGS((PLINT, PLINT, PLINT, PLINT));
+void  plytik	(PLINT, PLINT, PLINT, PLINT);
 
-void  plzbx	PLARGS((char *, char *, PLINT, PLFLT, PLFLT, PLFLT, \
-			PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, PLINT, PLINT *));
+void  plzbx	(char *, char *, PLINT, PLFLT, PLFLT, PLFLT, \
+			PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, PLINT, PLINT *);
 
-void  plgrid3a	PLARGS((PLFLT));
+void  plgrid3a	(PLFLT);
 
-void  plnxtv	PLARGS((PLINT *, PLINT *, PLINT, PLINT));
+void  plnxtv	(PLINT *, PLINT *, PLINT, PLINT);
 
-void  plside3a	PLARGS((PLFLT *, PLFLT *, PLFLT **, PLINT, PLINT, PLINT));
+void  plside3a	(PLFLT *, PLFLT *, PLFLT **, PLINT, PLINT, PLINT);
 
-void  plt3zz	PLARGS((PLINT, PLINT, PLINT, PLINT, \
+void  plt3zz	(PLINT, PLINT, PLINT, PLINT, \
 			PLINT, PLINT, PLFLT *, PLFLT *, PLFLT **, \
-			PLINT, PLINT, PLINT *, PLINT *));
+			PLINT, PLINT, PLINT *, PLINT *);
 
-void  glev	PLARGS((PLINT *));
+void  glev	(PLINT *);
 
-void  slev	PLARGS((PLINT));
+void  slev	(PLINT);
 
-void  gbase	PLARGS((PLFLT *, PLFLT *, PLFLT *, PLFLT *));
+void  gbase	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
-void  sbase	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void  sbase	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  gnms	PLARGS((PLINT *));
+void  gnms	(PLINT *);
 
-void  snms	PLARGS((PLINT));
+void  snms	(PLINT);
 
-void  gdev	PLARGS((PLINT *, PLINT *, PLINT *));
+void  gdev	(PLINT *, PLINT *, PLINT *);
 
-void  sdev	PLARGS((PLINT, PLINT, PLINT));
+void  sdev	(PLINT, PLINT, PLINT);
 
-void  smod	PLARGS((PLINT));
+void  smod	(PLINT);
 
-void  gcurr	PLARGS((PLINT *, PLINT *));
+void  gcurr	(PLINT *, PLINT *);
 
-void  scurr	PLARGS((PLINT, PLINT));
+void  scurr	(PLINT, PLINT);
 
-void  gdom	PLARGS((PLFLT *, PLFLT *, PLFLT *, PLFLT *));
+void  gdom	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
-void  sdom	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void  sdom	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  grange	PLARGS((PLFLT *, PLFLT *, PLFLT *));
+void  grange	(PLFLT *, PLFLT *, PLFLT *);
 
-void  srange	PLARGS((PLFLT, PLFLT, PLFLT));
+void  srange	(PLFLT, PLFLT, PLFLT);
 
-void  gw3wc	PLARGS((PLFLT *, PLFLT *, PLFLT *, PLFLT *, PLFLT *));
+void  gw3wc	(PLFLT *, PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
-void  sw3wc	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT, PLFLT));
+void  sw3wc	(PLFLT, PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  gvpp	PLARGS((PLINT *, PLINT *, PLINT *, PLINT *));
+void  gvpp	(PLINT *, PLINT *, PLINT *, PLINT *);
 
-void  svpp	PLARGS((PLINT, PLINT, PLINT, PLINT));
+void  svpp	(PLINT, PLINT, PLINT, PLINT);
 
-void  gspp	PLARGS((PLINT *, PLINT *, PLINT *, PLINT *));
+void  gspp	(PLINT *, PLINT *, PLINT *, PLINT *);
 
-void  sspp	PLARGS((PLINT, PLINT, PLINT, PLINT));
+void  sspp	(PLINT, PLINT, PLINT, PLINT);
 
-void  gclp	PLARGS((PLINT *, PLINT *, PLINT *, PLINT *));
+void  gclp	(PLINT *, PLINT *, PLINT *, PLINT *);
 
-void  sclp	PLARGS((PLINT, PLINT, PLINT, PLINT));
+void  sclp	(PLINT, PLINT, PLINT, PLINT);
 
-void  gphy	PLARGS((PLINT *, PLINT *, PLINT *, PLINT *));
+void  gphy	(PLINT *, PLINT *, PLINT *, PLINT *);
 
-void  sphy	PLARGS((PLINT, PLINT, PLINT, PLINT));
+void  sphy	(PLINT, PLINT, PLINT, PLINT);
 
-void  gsub	PLARGS((PLINT *, PLINT *, PLINT *));
+void  gsub	(PLINT *, PLINT *, PLINT *);
 
-void  ssub	PLARGS((PLINT, PLINT, PLINT));
+void  ssub	(PLINT, PLINT, PLINT);
 
-void  gumpix	PLARGS((PLINT *, PLINT *));
+void  gumpix	(PLINT *, PLINT *);
 
-void  sumpix	PLARGS((PLINT, PLINT));
+void  sumpix	(PLINT, PLINT);
 
-void  gatt	PLARGS((PLINT *, PLINT *));
+void  gatt	(PLINT *, PLINT *);
 
-void  satt	PLARGS((PLINT, PLINT));
+void  satt	(PLINT, PLINT);
 
-void  gcol	PLARGS((PLINT *));
+void  gcol	(PLINT *);
 
-void  scol	PLARGS((PLINT));
+void  scol	(PLINT);
 
-void  gwid	PLARGS((PLINT *));
+void  gwid	(PLINT *);
 
-void  swid	PLARGS((PLINT));
+void  swid	(PLINT);
 
-void  gspd	PLARGS((PLFLT *, PLFLT *, PLFLT *, PLFLT *));
+void  gspd	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
-void  sspd	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void  sspd	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  gvpd	PLARGS((PLFLT *, PLFLT *, PLFLT *, PLFLT *));
+void  gvpd	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
-void  svpd	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void  svpd	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  gvpw	PLARGS((PLFLT *, PLFLT *, PLFLT *, PLFLT *));
+void  gvpw	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
-void  svpw	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void  svpw	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  gpixmm	PLARGS((PLFLT *, PLFLT *));
+void  gpixmm	(PLFLT *, PLFLT *);
 
-void  spixmm	PLARGS((PLFLT, PLFLT));
+void  spixmm	(PLFLT, PLFLT);
 
-void  setpxl	PLARGS((PLFLT, PLFLT));
+void  setpxl	(PLFLT, PLFLT);
 
-void  gwp	PLARGS((PLFLT *, PLFLT *, PLFLT *, PLFLT *));
+void  gwp	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
-void  swp	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void  swp	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  gwm	PLARGS((PLFLT *, PLFLT *, PLFLT *, PLFLT *));
+void  gwm	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
-void  swm	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void  swm	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  gdp	PLARGS((PLFLT *, PLFLT *, PLFLT *, PLFLT *));
+void  gdp	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
-void  sdp	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void  sdp	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  gmp	PLARGS((PLFLT *, PLFLT *, PLFLT *,PLFLT *));
+void  gmp	(PLFLT *, PLFLT *, PLFLT *,PLFLT *);
 
-void  smp	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT));
+void  smp	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  gchr	PLARGS((PLFLT *, PLFLT *));
+void  gchr	(PLFLT *, PLFLT *);
 
-void  schr	PLARGS((PLFLT, PLFLT));
+void  schr	(PLFLT, PLFLT);
 
-void  gsym	PLARGS((PLFLT *, PLFLT *));
+void  gsym	(PLFLT *, PLFLT *);
 
-void  ssym	PLARGS((PLFLT, PLFLT));
+void  ssym	(PLFLT, PLFLT);
 
-void  gmaj	PLARGS((PLFLT *, PLFLT *));
+void  gmaj	(PLFLT *, PLFLT *);
 
-void  smaj	PLARGS((PLFLT, PLFLT));
+void  smaj	(PLFLT, PLFLT);
 
-void  gmin	PLARGS((PLFLT *, PLFLT *));
+void  gmin	(PLFLT *, PLFLT *);
 
-void  smin	PLARGS((PLFLT, PLFLT));
+void  smin	(PLFLT, PLFLT);
 
-void  gzback	PLARGS((PLINT **, PLINT **, PLFLT **));
+void  gzback	(PLINT **, PLINT **, PLFLT **);
 
-void  spl3mode	PLARGS((PLINT));
+void  spl3mode	(PLINT);
 
-void  spl3upv	PLARGS((PLINT));
+void  spl3upv	(PLINT);
 
-void  goldhivw	PLARGS((PLINT **));
+void  goldhivw	(PLINT **);
 
-void  goldlovw	PLARGS((PLINT **));
+void  goldlovw	(PLINT **);
 
-void  cleanup	PLARGS((void));
+void  cleanup	(void);
 
-void  genlin	PLARGS((PLINT, PLINT, PLINT, PLINT));
+void  genlin	(PLINT, PLINT, PLINT, PLINT);
 
-void  movphy	PLARGS((PLINT, PLINT));
+void  movphy	(PLINT, PLINT);
 
-void  draphy	PLARGS((PLINT, PLINT));
+void  draphy	(PLINT, PLINT);
 
-void  movwor	PLARGS((PLFLT, PLFLT));
+void  movwor	(PLFLT, PLFLT);
 
-void  drawor	PLARGS((PLFLT, PLFLT));
+void  drawor	(PLFLT, PLFLT);
 
-void  setphy	PLARGS((PLINT, PLINT, PLINT, PLINT));
+void  setphy	(PLINT, PLINT, PLINT, PLINT);
 
-void  xform	PLARGS((PLFLT, PLFLT, PLFLT *, PLFLT *));
+void  xform	(PLFLT, PLFLT, PLFLT *, PLFLT *);
 
 	/* Functions that return floats */
 
-PLFLT plstrl	PLARGS((char *));
+PLFLT plstrl	(char *);
 
 	/* Stuff in convrt.c */
 
-PLFLT dcmmx	PLARGS((PLFLT));
+PLFLT dcmmx	(PLFLT);
 
-PLFLT dcmmy	PLARGS((PLFLT));
+PLFLT dcmmy	(PLFLT);
 
-PLFLT dcscx	PLARGS((PLFLT));
+PLFLT dcscx	(PLFLT);
 
-PLFLT dcscy	PLARGS((PLFLT));
+PLFLT dcscy	(PLFLT);
 
-PLFLT mmdcx	PLARGS((PLFLT));
+PLFLT mmdcx	(PLFLT);
 
-PLFLT mmdcy	PLARGS((PLFLT));
+PLFLT mmdcy	(PLFLT);
 
-PLFLT scdcx	PLARGS((PLFLT));
+PLFLT scdcx	(PLFLT);
 
-PLFLT scdcy	PLARGS((PLFLT));
+PLFLT scdcy	(PLFLT);
 
-PLFLT wcmmx	PLARGS((PLFLT));
+PLFLT wcmmx	(PLFLT);
 
-PLFLT wcmmy	PLARGS((PLFLT));
+PLFLT wcmmy	(PLFLT);
 
-PLFLT w3wcx	PLARGS((PLFLT, PLFLT, PLFLT));
+PLFLT w3wcx	(PLFLT, PLFLT, PLFLT);
 
-PLFLT w3wcy	PLARGS((PLFLT, PLFLT, PLFLT));
+PLFLT w3wcy	(PLFLT, PLFLT, PLFLT);
 
 	/* Functions returning PLINTs */
 
-PLINT plcvec	PLARGS((PLINT, SCHAR **));
+PLINT plcvec	(PLINT, SCHAR **);
 
-PLINT stindex	PLARGS((char *, char *));
+PLINT stindex	(char *, char *);
 
-PLINT strpos	PLARGS((char *, int));
+PLINT strpos	(char *, int);
 
-PLINT stsearch	PLARGS((char *, int));
+PLINT stsearch	(char *, int);
 
 	/* More stuff from convrt.c */
 
-PLINT dcpcx	PLARGS((PLFLT));
+PLINT dcpcx	(PLFLT);
 
-PLINT dcpcy	PLARGS((PLFLT));
+PLINT dcpcy	(PLFLT);
 
-PLINT mmpcx	PLARGS((PLFLT));
+PLINT mmpcx	(PLFLT);
 
-PLINT mmpcy	PLARGS((PLFLT));
+PLINT mmpcy	(PLFLT);
 
-PLINT wcpcx	PLARGS((PLFLT));
+PLINT wcpcx	(PLFLT);
 
-PLINT wcpcy	PLARGS((PLFLT));
+PLINT wcpcy	(PLFLT);
 
 	/* Driver calls */
 
-void grsetup	PLARGS((void));
+void grsetup	(void);
 
-void grorient	PLARGS((void));
+void grorient	(void);
 
-void grinit	PLARGS((void));
+void grinit	(void);
 
-void grline	PLARGS((PLINT, PLINT, PLINT, PLINT));
+void grline	(PLINT, PLINT, PLINT, PLINT);
 
-void grclear	PLARGS((void));
+void grclear	(void);
 
-void grpage	PLARGS((void));
+void grpage	(void);
 
-void grtidy	PLARGS((void));
+void grtidy	(void);
 
-void grcolor	PLARGS((void));
+void grcolor	(void);
 
-void grtext	PLARGS((void));
+void grtext	(void);
 
-void grgraph	PLARGS((void));
+void grgraph	(void);
 
-void grwidth	PLARGS((void));
+void grwidth	(void);
 
-void gresc	PLARGS((PLINT, char *));
+void gresc	(PLINT, char *);
 
 #ifdef __cplusplus
 }

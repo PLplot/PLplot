@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:21  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:52  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:21  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	pldtik.c
@@ -57,16 +60,9 @@
 * that the labels fit the requested field length.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 pldtik(PLFLT vmin, PLFLT vmax, PLFLT * tick, PLINT * nsubt,
        PLINT * mode, PLINT * prec, PLINT digmax, PLINT * scale)
-#else
-void
-pldtik(vmin, vmax, tick, nsubt, mode, prec, digmax, scale)
-PLFLT vmin, vmax, *tick;
-PLINT *nsubt, *mode, *prec, digmax, *scale;
-#endif
 {
     PLFLT t0, t1, t2, vmod;
     PLINT msd, np, ns, digmin, digfix, autoscale=0;

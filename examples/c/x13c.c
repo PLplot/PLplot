@@ -1,9 +1,12 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:33:02  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:21  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:33:02  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /* Note the compiler should automatically convert all non-pointer arguments
@@ -25,7 +28,8 @@ static char *text[] = {
     "Warner"
 };
 
-main()
+int 
+main (void)
 {
     int i, j;
     FLOAT dthet, theta0, theta1, theta, just, dx, dy;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:27  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:57  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:27  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plfont.c
@@ -141,7 +144,7 @@
 
 /* Function prototypes. */
 
-static FILE * plfontopen	PLARGS((char *));
+static FILE * plfontopen(char *);
 char *getenv();
 
 /* Declarations */
@@ -161,8 +164,7 @@ static short fontloaded = 0;
 \*----------------------------------------------------------------------*/
 
 void 
-c_plfont(ifont)
-PLINT ifont;
+c_plfont( PLINT ifont )
 {
     PLINT ifnt, icol;
     PLINT level;
@@ -184,8 +186,7 @@ PLINT ifont;
 \*----------------------------------------------------------------------*/
 
 void 
-plfntld(fnt)
-PLINT fnt;
+plfntld (PLINT fnt)
 {
     static short charset;
     short bffrleng;
@@ -263,8 +264,7 @@ PLINT fnt;
 \*----------------------------------------------------------------------*/
 
 static FILE *
-plfontopen(fn)
-char *fn;
+plfontopen( char *fn )
 {
     FILE *plfp;
     char fnb[NFILEN];
@@ -378,7 +378,7 @@ char *fn;
 \*----------------------------------------------------------------------*/
 
 void 
-plfontrel()
+plfontrel (void)
 {
     if (fontloaded) {
 	free((VOID *) fntindx);

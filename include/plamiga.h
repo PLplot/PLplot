@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:33:41  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:31  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:33:41  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 #include <exec/types.h>
@@ -34,9 +37,9 @@
 
 #ifndef PLARGS
 #ifdef LATTICE_50
-#define PLARGS(a)   a
+#define a)   a
 #else
-#define PLARGS(a)   ()
+#define a)   ()
 #endif
 #endif
 
@@ -82,31 +85,31 @@ extern struct PLPrefs PLCurPrefs;
 extern PLINT XOffset, YOffset, PLWidth, PLHeight;
 extern PLINT InitPLWidth, InitPLHeight;
 
-void OpenPLWind PLARGS((void));
-void OpenLibs PLARGS((void));
-void ClosePLWind PLARGS((void));
-void CloseLibs PLARGS((void));
-void GetPLDefs PLARGS((void));
-void SetPLDefs PLARGS((void));
-void setlimits PLARGS((void));
-void plcolreq PLARGS((void));
-void RestorePrefs PLARGS((void));
-void setpen PLARGS((PLINT color));
-void MakePLMenu PLARGS((void));
-void enablemenus PLARGS((void));
-void disablemenus PLARGS((void));
-void menuselect PLARGS((ULONG class, USHORT code));
-void eventwait PLARGS((void));
-PLINT eventhandler PLARGS((ULONG class, USHORT code));
-PLINT procmess PLARGS((void));
-void remakeplot PLARGS((void));
-void PLDraw PLARGS((PLINT x, PLINT y));
-void PLMove PLARGS((PLINT x, PLINT y));
-void prepupdate PLARGS((void));
-int getpoint PLARGS((long *com, long *x, long *y));
-void finiupdate PLARGS((void));
+void OpenPLWind (void);
+void OpenLibs (void);
+void ClosePLWind (void);
+void CloseLibs (void);
+void GetPLDefs (void);
+void SetPLDefs (void);
+void setlimits (void);
+void plcolreq (void);
+void RestorePrefs (void);
+void setpen (PLINT color);
+void MakePLMenu (void);
+void enablemenus (void);
+void disablemenus (void);
+void menuselect (ULONG class, USHORT code);
+void eventwait (void);
+PLINT eventhandler (ULONG class, USHORT code);
+PLINT procmess (void);
+void remakeplot (void);
+void PLDraw (PLINT x, PLINT y);
+void PLMove (PLINT x, PLINT y);
+void prepupdate (void);
+int getpoint (long *com, long *x, long *y);
+void finiupdate (void);
 
-void screendump PLARGS((PLINT type));
-void saveiff PLARGS((void));
-void disablegads PLARGS((PLINT flag));
-void enablegads PLARGS((void));
+void screendump (PLINT type);
+void saveiff (void);
+void disablegads (PLINT flag);
+void enablegads (void);

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:01  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:30  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:35:01  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plxybx.c
@@ -14,8 +17,8 @@
 #include <stdio.h>
 #include <math.h>
 
-static void  plxytx	PLARGS((PLFLT, PLFLT, PLFLT, PLFLT, \
-				PLFLT, PLFLT, PLFLT, char *));
+static void  plxytx(PLFLT, PLFLT, PLFLT, PLFLT, \
+		    PLFLT, PLFLT, PLFLT, char *);
 
 static PLFLT xlog[8] =
 {0.301030, 0.477121, 0.602060, 0.698970, 0.778151, 0.845098, 0.903090, 0.954243};
@@ -38,19 +41,10 @@ static PLFLT xlog[8] =
 * U: Write label on line
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
        PLFLT wx2, PLFLT wy2, PLFLT vmin, PLFLT vmax,
        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits)
-#else
-void
-plxybx(opt, label, wx1, wy1, wx2, wy2, 
-       vmin, vmax, tick, nsub, nolast, digits)
-char *opt, *label;
-PLFLT wx1, wy1, wx2, wy2, vmin, vmax, tick;
-PLINT nsub, nolast, *digits;
-#endif
 {
     static char string[40];
     PLINT lb, li, ll, ln, ls, lt, lu;
@@ -180,16 +174,9 @@ lab82:
 * (wx1,wy1) to (wx2,wy2). Parameters are as for plmtext.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 static void 
 plxytx (PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2, 
 	PLFLT disp, PLFLT pos, PLFLT just, char *text)
-#else
-static void 
-plxytx(wx1, wy1, wx2, wy2, disp, pos, just, text)
-PLFLT wx1, wy1, wx2, wy2, disp, pos, just;
-char *text;
-#endif
 {
     PLINT refx, refy;
     PLFLT shift, cc, ss, def, ht;

@@ -1,9 +1,12 @@
 /* Demonstration program for PLPLOT: Bar chart example. */
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:33:01  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:20  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:33:01  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /* Note the compiler should automatically convert all non-pointer arguments
@@ -12,14 +15,8 @@
 #include "plplot.h"
 #include <stdio.h>
 
-#ifdef PLSTDC
 void 
 plfbox(FLOAT x0, FLOAT y0)
-#else
-void 
-plfbox(x0, y0)
-FLOAT x0, y0;
-#endif
 {
     FLOAT x[4], y[4];
 
@@ -37,7 +34,8 @@ FLOAT x0, y0;
     plline(4, x, y);
 }
 
-main()
+int 
+main (void)
 {
     int i;
     char string[20];

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/07/31 06:03:12  mjl
-   Minor bug fixes.
+   Revision 1.3  1992/09/29 04:45:50  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.2  1992/07/31  06:03:12  mjl
+ * Minor bug fixes.
+ *
  * Revision 1.1  1992/05/20  21:34:19  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -42,12 +45,11 @@ extern void free();
 \*----------------------------------------------------------------------*/
 
 void 
-c_plconf(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr, xg, yg)
-PLINT nx, ny, kx, lx, ky, ly, nlevel;
-PLFLT **z, *clevel;
-PLFLT *xg, *yg;
-void (*pltr) PLARGS((PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty, \
-		     PLFLT * xg, PLFLT * yg, PLINT nx, PLINT ny));
+c_plconf( PLFLT **z, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+	 PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+	 void (*pltr) (PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty, \
+		       PLFLT * xg, PLFLT * yg, PLINT nx, PLINT ny),
+	 PLFLT *xg, PLFLT *yg )
 {
     PLINT i, mx, my, nstor, *heapc;
 
@@ -77,16 +79,9 @@ void (*pltr) PLARGS((PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty, \
 * possible, but if so we could use linear extrapolation).
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void 
 pltr1(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty, PLFLT * xg, PLFLT * yg,
       PLINT nx, PLINT ny)
-#else
-void 
-pltr1(x, y, tx, ty, xg, yg, nx, ny)
-PLFLT x, y, *tx, *ty, *xg, *yg;
-PLINT nx, ny;
-#endif
 {
     PLINT ul, ur, vl, vr;
     PLFLT du, dv;
@@ -144,16 +139,9 @@ PLINT nx, ny;
 * if everything works correctly.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void 
 pltr2(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty, PLFLT * xg, PLFLT * yg,
       PLINT nx, PLINT ny)
-#else
-void 
-pltr2(x, y, tx, ty, xg, yg, nx, ny)
-PLFLT x, y, *tx, *ty, *xg, *yg;
-PLINT nx, ny;
-#endif
 {
     PLINT ul, ur, vl, vr;
     PLFLT du, dv;
@@ -319,7 +307,6 @@ PLINT nx, ny;
 * iscan has nx elements. ixstor and iystor each have nstor elements.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void 
 plcntf (PLFLT ** points, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	PLINT ky, PLINT ly, PLFLT zlev, PLINT * iscan,
@@ -327,17 +314,6 @@ plcntf (PLFLT ** points, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	void (*pltr) 	(PLFLT, PLFLT, PLFLT *, PLFLT *, 
 			 PLFLT *, PLFLT *, PLINT, PLINT), 
 	PLFLT * xg, PLFLT * yg)
-#else
-void 
-plcntf(points, nx, ny, kx, lx, ky, ly, zlev, iscan, ixstor, iystor, nstor, pltr, xg, yg)
-PLINT nx, ny, ky, ly, kx, lx, nstor;
-PLFLT zlev, **points;
-PLINT *iscan, *ixstor, *iystor;
-PLFLT *xg, *yg;
-void (*pltr) 
-PLARGS((PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty, \
-	PLFLT * xg, PLFLT * yg, PLINT nx, PLINT ny));
-#endif
 {
     PLINT kcol, krow, kstor, kscan, iwbeg, ixbeg, iybeg, izbeg;
     PLINT iboun, iw, ix, iy, iz, ifirst, istep, ixgo, iygo;

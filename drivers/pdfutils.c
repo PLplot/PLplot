@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:40  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:46  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:40  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*--------------------------------------------------------------------------*\
@@ -43,10 +46,8 @@ static void print_ieeef();
 *  Set an option.  Pretty sparse right now but you never know.
 \*--------------------------------------------------------------------------*/
 
-void
-pdf_set (option, value)
-char *option;
-int value;
+void 
+pdf_set (char *option, int value)
 {
     if (!strcmp(option, "debug"))
 	debug = value;
@@ -63,9 +64,7 @@ int value;
 \*----------------------------------------------------------------------*/
 
 int
-write_header(file, header)
-FILE *file;
-char *header;
+write_header( FILE *file, char *header )
 {
     int i;
 
@@ -88,9 +87,7 @@ char *header;
 \*----------------------------------------------------------------------*/
 
 int
-read_header(file, header)
-FILE *file;
-char *header;
+read_header( FILE *file, char *header )
 {
     int i;
 
@@ -110,19 +107,8 @@ char *header;
 *  Writes a U_CHAR as a single byte.
 \*----------------------------------------------------------------------*/
 
-#ifdef USE_STDC
-
 int 
 write_1byte (FILE *file, U_CHAR s)
-
-#else
-
-int 
-write_1byte (file, s)
-FILE *file;
-U_CHAR s;
-
-#endif
 {
     U_CHAR x[1];
 
@@ -140,9 +126,7 @@ U_CHAR s;
 \*----------------------------------------------------------------------*/
 
 int 
-read_1byte (file, ps)
-FILE *file;
-U_CHAR *ps;
+read_1byte ( FILE *file, U_CHAR *ps )
 {
     U_CHAR x[1];
 
@@ -159,19 +143,8 @@ U_CHAR *ps;
 * Writes a U_SHORT as two single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
-#ifdef USE_STDC
-
 int
 write_2bytes(FILE *file, U_SHORT s)
-
-#else
-
-int
-write_2bytes(file, s)
-FILE *file;
-U_SHORT s;
-
-#endif
 {
     U_SHORT lo, hi;
     U_CHAR x[2];
@@ -194,9 +167,7 @@ U_SHORT s;
 \*----------------------------------------------------------------------*/
 
 int
-read_2bytes(file, ps)
-FILE *file;
-U_SHORT *ps;
+read_2bytes( FILE *file, U_SHORT *ps )
 {
     U_CHAR x[2];
 
@@ -214,9 +185,7 @@ U_SHORT *ps;
 \*----------------------------------------------------------------------*/
 
 int
-write_4bytes (file, s)
-FILE *file;
-U_LONG s;
+write_4bytes ( FILE *file, U_LONG s )
 {
     U_LONG lo, hi;
     U_CHAR x[4];
@@ -253,9 +222,7 @@ U_LONG s;
 \*----------------------------------------------------------------------*/
 
 int
-read_4bytes (file, ps)
-FILE *file;
-U_LONG *ps;
+read_4bytes ( FILE *file, U_LONG *ps )
 {
     U_CHAR x[4];
 
@@ -331,19 +298,8 @@ where bias = 127 for 32 bit float
 *  Writes a float in IEEE single precision (32 bit) format.
 \*----------------------------------------------------------------------*/
 
-#ifdef USE_STDC
-
 int
 write_ieeef (FILE *file, float f)
-
-#else
-
-int
-write_ieeef (file, f)
-FILE *file;
-float f;
-
-#endif
 {
     double fdbl, fmant, f_new;
     float  fsgl, f_tmp;
@@ -421,9 +377,7 @@ float f;
 \*----------------------------------------------------------------------*/
 
 int
-read_ieeef (file, pf)
-FILE *file;
-float *pf;
+read_ieeef( FILE *file, float *pf )
 {
     double f_new, f_tmp;
     float  fsgl;
@@ -471,9 +425,8 @@ float *pf;
 *  uses IEEE floats.
 \*----------------------------------------------------------------------*/
 
-static void
-print_ieeef(x, y)
-U_LONG *x, *y;
+static void 
+print_ieeef (U_LONG *x, U_LONG *y)
 {
     int i;
     U_LONG f;

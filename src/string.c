@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:03  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:32  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:35:03  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	string.c
@@ -50,10 +53,7 @@ extern short int numberfonts, numberchars;
 \*----------------------------------------------------------------------*/
 
 void 
-plstr(base, xform, refx, refy, string)
-PLINT base, refx, refy;
-char *string;
-PLFLT *xform;
+plstr (PLINT base, PLFLT *xform, PLINT refx, PLINT refy, char *string)
 {
     short int *symbol;
     SCHAR *xygrid;
@@ -171,8 +171,7 @@ PLFLT *xform;
 \*----------------------------------------------------------------------*/
 
 PLFLT 
-plstrl(string)
-char *string;
+plstrl (char *string)
 {
     short int *symbol;
     SCHAR *xygrid;
@@ -221,9 +220,7 @@ char *string;
 \*----------------------------------------------------------------------*/
 
 PLINT 
-plcvec(ch, xygr)
-PLINT ch;
-SCHAR **xygr;
+plcvec (PLINT ch, SCHAR **xygr)
 {
     PLINT k, ib;
     SCHAR x, y;
@@ -271,10 +268,7 @@ SCHAR **xygr;
 \*----------------------------------------------------------------------*/
 
 void 
-pldeco(sym, length, text)
-PLINT *length;
-short int **sym;
-char *text;
+pldeco (short int **sym, PLINT *length, char *text)
 {
     PLINT ch, icol, ifont, ig, j, lentxt;
     char test;
@@ -358,9 +352,7 @@ char *text;
 \*----------------------------------------------------------------------*/
 
 PLINT 
-strpos(str, chr)
-char *str;
-int chr;
+strpos (char *str, int chr)
 {
     char *temp;
 
@@ -377,8 +369,7 @@ int chr;
 \*----------------------------------------------------------------------*/
 
 PLINT 
-stindex(str1, str2)
-char *str1, *str2;
+stindex (char *str1, char *str2)
 {
     PLINT base;
     PLINT str1ind;
@@ -401,9 +392,7 @@ char *str1, *str2;
 \*----------------------------------------------------------------------*/
 
 PLINT 
-stsearch(str, chr)
-char *str;
-int chr;
+stsearch (char *str, int chr)
 {
     if (strchr(str, chr))
 	return ((PLINT) 1);

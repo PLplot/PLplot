@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:45  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:15  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:45  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plrot.c
@@ -19,8 +22,7 @@
 #endif
 
 void 
-plr45(ix, iy, isens)
-PLINT *ix, *iy, isens;
+plr45 (PLINT *ix, PLINT *iy, PLINT isens)
 {
     PLINT ixx, iyy;
 
@@ -31,8 +33,7 @@ PLINT *ix, *iy, isens;
 }
 
 void 
-plr135(ix, iy, isens)
-PLINT *ix, *iy, isens;
+plr135 (PLINT *ix, PLINT *iy, PLINT isens)
 {
     *ix = -*ix;
     *iy = -*iy;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:36  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:43  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:36  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	impress.c
@@ -28,7 +31,7 @@ extern void free();
 
 /* Function prototypes */
 
-static void flushline		PLARGS((PLStream *));
+static void flushline(PLStream *);
 
 /* top level declarations */
 
@@ -73,8 +76,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-impinit(pls)
-PLStream *pls;
+impinit (PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->color = 1;
@@ -124,9 +126,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-impline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+impline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
 
@@ -181,8 +181,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-impclear(pls)
-PLStream *pls;
+impclear (PLStream *pls)
 {
     flushline(pls);
     fprintf(pls->OutFile, "%c", ENDPAGE);
@@ -196,8 +195,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-imppage(pls)
-PLStream *pls;
+imppage (PLStream *pls)
 {
     FirstLine = 1;
     dev->xold = UNDEFINED;
@@ -216,8 +214,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-impadv(pls)
-PLStream *pls;
+impadv (PLStream *pls)
 {
     impclear(pls);
     imppage(pls);
@@ -230,8 +227,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-imptidy(pls)
-PLStream *pls;
+imptidy (PLStream *pls)
 {
     flushline(pls);
     fprintf(pls->OutFile, "%c", ENDPAGE);
@@ -249,8 +245,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-impcolor(pls)
-PLStream *pls;
+impcolor (PLStream *pls)
 {
 }
 
@@ -261,8 +256,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-imptext(pls)
-PLStream *pls;
+imptext (PLStream *pls)
 {
 }
 
@@ -273,8 +267,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-impgraph(pls)
-PLStream *pls;
+impgraph (PLStream *pls)
 {
 }
 
@@ -285,8 +278,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-impwidth(pls)
-PLStream *pls;
+impwidth (PLStream *pls)
 {
     if (pls->width > 0 && pls->width <= 20) {
 	penwidth = pls->width;
@@ -301,10 +293,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-impesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+impesc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -315,8 +304,7 @@ char *ptr;
 \*----------------------------------------------------------------------*/
 
 static void 
-flushline(pls)
-PLStream *pls;
+flushline (PLStream *pls)
 {
     count /= 2;
     fprintf(pls->OutFile, "%c%c%c", CREATE_PATH, (char) count / 256, (char) count % 256);

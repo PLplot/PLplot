@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:44  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:50  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:44  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	xfig.c
@@ -17,7 +20,7 @@
 
 /* Function prototypes */
 
-static void flushbuffer	PLARGS((PLStream *));
+static void flushbuffer(PLStream *);
 
 /* top level declarations */
 
@@ -42,9 +45,8 @@ static PLDev *dev = &device;
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
-void
-xfiginit(pls)
-PLStream *pls;
+void 
+xfiginit (PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->color = 1;
@@ -90,10 +92,8 @@ PLStream *pls;
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
-void
-xfigline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+void 
+xfigline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     short *tempptr;
@@ -143,9 +143,8 @@ PLINT x1a, y1a, x2a, y2a;
 * Clear page.
 \*----------------------------------------------------------------------*/
 
-void
-xfigclear(pls)
-PLStream *pls;
+void 
+xfigclear (PLStream *pls)
 {
     if (!firstline)
 	flushbuffer(pls);
@@ -158,9 +157,8 @@ PLStream *pls;
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
-void
-xfigpage(pls)
-PLStream *pls;
+void 
+xfigpage (PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -178,9 +176,8 @@ PLStream *pls;
 * Advance to the next page.
 \*----------------------------------------------------------------------*/
 
-void
-xfigadv(pls)
-PLStream *pls;
+void 
+xfigadv (PLStream *pls)
 {
     xfigclear(pls);
     xfigpage(pls);
@@ -192,9 +189,8 @@ PLStream *pls;
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
-void
-xfigtidy(pls)
-PLStream *pls;
+void 
+xfigtidy (PLStream *pls)
 {
     flushbuffer(pls);
     free((char *) buffptr);
@@ -210,9 +206,8 @@ PLStream *pls;
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
-void
-xfigcolor(pls)
-PLStream *pls;
+void 
+xfigcolor (PLStream *pls)
 {
 }
 
@@ -222,9 +217,8 @@ PLStream *pls;
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void
-xfigtext(pls)
-PLStream *pls;
+void 
+xfigtext (PLStream *pls)
 {
 }
 
@@ -234,9 +228,8 @@ PLStream *pls;
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
-void
-xfiggraph(pls)
-PLStream *pls;
+void 
+xfiggraph (PLStream *pls)
 {
 }
 
@@ -246,9 +239,8 @@ PLStream *pls;
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void
-xfigwidth(pls)
-PLStream *pls;
+void 
+xfigwidth (PLStream *pls)
 {
     flushbuffer(pls);
     firstline = 1;
@@ -267,11 +259,8 @@ PLStream *pls;
 * Escape function.
 \*----------------------------------------------------------------------*/
 
-void
-xfigesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+void 
+xfigesc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -280,8 +269,7 @@ char *ptr;
 \*----------------------------------------------------------------------*/
 
 static void 
-flushbuffer(pls)
-PLStream *pls;
+flushbuffer (PLStream *pls)
 {
     short i = 0;
 

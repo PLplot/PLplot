@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:54  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:24  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:54  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plvasp.c
@@ -21,14 +24,8 @@
 * room for labels.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 c_plvasp (PLFLT aspect)
-#else
-void 
-c_plvasp (aspect)
-PLFLT aspect;
-#endif
 {
     PLINT level;
     PLFLT chrdef, chrht, spxmin, spxmax, spymin, spymax;

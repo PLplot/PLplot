@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:36  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:05  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:36  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plline.c
@@ -13,9 +16,7 @@
 #include "plplot.h"
 
 void 
-c_plline(n, x, y)
-PLINT n;
-PLFLT *x, *y;
+c_plline( PLINT n, PLFLT *x, PLFLT *y )
 {
     PLINT i, level;
 

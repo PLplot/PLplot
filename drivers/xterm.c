@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:45  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:51  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:45  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	xterm.c
@@ -42,8 +45,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-xteinit(pls)
-PLStream *pls;
+xteinit (PLStream *pls)
 {
     /* tell plplot that this is an interactive device (so pause after */
     /* drawing graph).  use if smod(0) if sending grphx to a file. */
@@ -89,9 +91,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xteline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+xteline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1, y1, x2, y2, hy, ly, hx, lx;
 
@@ -141,8 +141,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-xteclear(pls)
-PLStream *pls;
+xteclear (PLStream *pls)
 {
     putchar(BEL);
     fflush(stdout);
@@ -159,8 +158,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xtepage(pls)
-PLStream *pls;
+xtepage (PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -174,8 +172,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xteadv(pls)
-PLStream *pls;
+xteadv (PLStream *pls)
 {
     xteclear(pls);
     xtepage(pls);
@@ -188,8 +185,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xtetidy (pls)
-PLStream *pls;
+xtetidy (PLStream *pls)
 {
     putchar(BEL);
     fflush(stdout);
@@ -215,8 +211,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xtecolor(pls)
-PLStream *pls;
+xtecolor (PLStream *pls)
 {
 }
 
@@ -227,8 +222,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xtetext(pls)
-PLStream *pls;
+xtetext (PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	pls->graphx = TEXT_MODE;
@@ -243,8 +237,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xtegraph(pls)
-PLStream *pls;
+xtegraph (PLStream *pls)
 {
     if (pls->graphx == TEXT_MODE) {
 	pls->graphx = GRAPHICS_MODE;
@@ -258,9 +251,8 @@ PLStream *pls;
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void
-xtewidth (pls)
-PLStream *pls;
+void 
+xtewidth (PLStream *pls)
 {
 }
 
@@ -271,10 +263,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xteesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+xteesc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 #endif	/* XTERM */

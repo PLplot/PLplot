@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:56  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:26  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:56  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plvpor.c
@@ -19,14 +22,8 @@
 * coordinates.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 c_plvpor (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
-#else
-void 
-c_plvpor(xmin, xmax, ymin, ymax)
-PLFLT xmin, xmax, ymin, ymax;
-#endif
 {
     PLFLT spdxmi, spdxma, spdymi, spdyma;
     PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;

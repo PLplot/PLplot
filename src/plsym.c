@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/06/02 23:27:35  furnish
-   short -> PLINT so can plot more than 32767 points.
+   Revision 1.3  1992/09/29 04:46:21  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.2  1992/06/02  23:27:35  furnish
+ * short -> PLINT so can plot more than 32767 points.
+ *
  * Revision 1.1  1992/05/20  21:34:51  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -26,9 +29,7 @@ extern short int numberfonts, numberchars;
 \*----------------------------------------------------------------------*/
 
 void 
-c_plsym(n, x, y, code)
-PLINT n, code;
-PLFLT x[], y[];
+c_plsym( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 {
     PLINT i;
     PLINT level;
@@ -51,9 +52,7 @@ PLFLT x[], y[];
 \*----------------------------------------------------------------------*/
 
 void 
-c_plpoin(n, x, y, code)
-PLINT n, code;
-PLFLT *x, *y;
+c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 {
     PLINT i;
     PLINT level, sym, font, col;
@@ -79,8 +78,7 @@ PLFLT *x, *y;
 \*----------------------------------------------------------------------*/
 
 void 
-plhrsh(ch, x, y)
-PLINT ch, x, y;
+plhrsh (PLINT ch, PLINT x, PLINT y)
 {
     PLINT cx, cy, k, penup;
     SCHAR *xygrid;

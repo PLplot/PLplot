@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:49  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:19  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:49  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plstyl.c
@@ -20,8 +23,7 @@
 \*----------------------------------------------------------------------*/
 
 void 
-c_plstyl(nms, mark, space)
-PLINT nms, *mark, *space;
+c_plstyl( PLINT nms, PLINT *mark, PLINT *space )
 {
     short int i;
     PLINT level;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:10  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:41  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:10  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	pladv.c
@@ -12,13 +15,12 @@
 
 #include "plplot.h"
 
-static void  setsub	PLARGS((void));
+static void  setsub(void);
 
 /* Advance to subpage "page", or to the next one if "page" = 0 */
 
 void 
-c_pladv(page)
-PLINT page;
+c_pladv( PLINT page )
 {
     PLINT cursub, nsubx, nsuby;
     PLINT device, termin, graphx;
@@ -72,7 +74,7 @@ c_plpage()
 /* selected */
 
 static void 
-setsub()
+setsub (void)
 {
     PLINT ix, iy;
     PLINT nsubx, nsuby, cursub;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:59  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:27  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:59  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plw3d.c
@@ -35,17 +38,10 @@
 * but az can be any value. 
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 c_plw3d (PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0, 
 	PLFLT xmax0, PLFLT ymin0, PLFLT ymax0, PLFLT zmin0, 
 	PLFLT zmax0, PLFLT alt, PLFLT az)
-#else
-void 
-c_plw3d(basex, basey, height, xmin0, xmax0, ymin0, ymax0, zmin0, zmax0, alt, az)
-PLFLT basex, basey, height, xmin0, xmax0, ymin0, ymax0, zmin0, zmax0;
-PLFLT alt, az;
-#endif
 {
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, d;
     PLFLT cx, cy, saz, caz, salt, calt, zscale;

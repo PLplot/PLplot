@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:33:34  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:25  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:33:34  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	stndfont.c
@@ -30,17 +33,14 @@ extern short int *buffer[];
 #define DEBUG 0
 
 int 
-compare(si1, si2)
-short *si1, *si2;
+compare (short *si1, short *si2)
 {
     return (*si1 == *si2 ? 0 : (*si1 > *si2 ? 1 : -1));
 }
 
 
 int 
-main(argc, argv)
-int argc;
-char **argv;
+main (int argc, char **argv)
 {
     short i, j, k, ib, nstd, nchars, nleng, htab, nindx, zero;
     short *hrshlst, *hrshidx;

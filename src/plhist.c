@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:32  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:01  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:32  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plhist.c
@@ -37,16 +40,9 @@ extern void free();
 * "plenv" to set up the graphics environment. 
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 c_plhist (PLINT n, PLFLT * data, PLFLT datmin, PLFLT datmax,
 	  PLINT nbin, PLINT oldwin)
-#else
-void 
-c_plhist(n, data, datmin, datmax, nbin, oldwin)
-PLINT n, nbin, oldwin;
-PLFLT *data, datmin, datmax;
-#endif
 {
     PLINT bin, level;
     PLFLT *x, *y, dx, ymax;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:48  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:18  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:48  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plstar.c
@@ -23,8 +26,7 @@
 \*----------------------------------------------------------------------*/
 
 void 
-c_plstar(nx, ny)
-PLINT nx, ny;
+c_plstar( PLINT nx, PLINT ny )
 {
     PLINT dev, i, level, count, length, ipls;
     char response[10];
@@ -96,9 +98,7 @@ PLINT nx, ny;
 \*----------------------------------------------------------------------*/
 
 void 
-c_plstart(devname, nx, ny)
-char *devname;
-PLINT nx, ny;
+c_plstart( char *devname, PLINT nx, PLINT ny )
 {
     PLINT dev, i, level;
     extern PLINT npldrivers;

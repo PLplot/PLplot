@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:42  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:11  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:42  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plot3d.c
@@ -40,9 +43,7 @@ static PLFLT zbtck;
 \*----------------------------------------------------------------------*/
 
 void 
-gzback(zbf, zbc, zbt)
-PLINT **zbf, **zbc;
-PLFLT **zbt;
+gzback (PLINT **zbf, PLINT **zbc, PLFLT **zbt)
 {
     *zbf = &zbflg;
     *zbc = &zbcol;
@@ -62,9 +63,8 @@ PLFLT **zbt;
 \*----------------------------------------------------------------------*/
 
 void 
-c_plot3d(x, y, z, nx, ny, opt, side)
-PLINT nx, ny, opt, side;
-PLFLT *x, *y, **z;
+c_plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
+	 PLINT nx, PLINT ny, PLINT opt, PLINT side )
 {
     PLINT b, color, font;
     PLFLT cxx, cxy, cyx, cyy, cyz;

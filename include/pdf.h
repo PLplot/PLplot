@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:33:40  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:30  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:33:40  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*--------------------------------------------------------------------------*\
@@ -42,24 +45,24 @@
 
 /* Prototypes */
 
-int  pdf_open 		PROTO((INT ius, char *filename));
-int  pdf_creat 		PROTO((INT ius, char *filename));
-int  pdf_close 		PROTO((INT ius));
-int  pdf_wrflt 		PROTO((INT ius, FLOAT *f, INT len, INT nbits));
-int  pdf_rdflt 		PROTO((INT ius, FLOAT *f, INT len, INT *pnbits));
-int  pdf_wrint 		PROTO((INT ius, FLOAT *f, INT len, INT nbits));
-int  pdf_rdint 		PROTO((INT ius, FLOAT *f, INT len, INT *pnbits));
-void pdf_set		PROTO((char *option, int value));
+int  pdf_open 		(INT ius, char *filename);
+int  pdf_creat 		(INT ius, char *filename);
+int  pdf_close 		(INT ius);
+int  pdf_wrflt 		(INT ius, FLOAT *f, INT len, INT nbits);
+int  pdf_rdflt 		(INT ius, FLOAT *f, INT len, INT *pnbits);
+int  pdf_wrint 		(INT ius, FLOAT *f, INT len, INT nbits);
+int  pdf_rdint 		(INT ius, FLOAT *f, INT len, INT *pnbits);
+void pdf_set		(char *option, int value);
 
-int  read_header	PROTO((FILE *file, char *header));
-int  write_header	PROTO((FILE *file, char *header));
-int  write_1byte	PROTO((FILE *file, U_CHAR s));
-int  read_1byte		PROTO((FILE *file, U_CHAR *ps));
-int  write_2bytes	PROTO((FILE *file, U_SHORT s));
-int  read_2bytes 	PROTO((FILE *file, U_SHORT *ps));
-int  write_4bytes	PROTO((FILE *file, U_LONG s));
-int  read_4bytes 	PROTO((FILE *file, U_LONG *ps));
-int  write_ieeef	PROTO((FILE *file, float f));
-int  read_ieeef		PROTO((FILE *file, float *pf));
+int  read_header	(FILE *file, char *header);
+int  write_header	(FILE *file, char *header);
+int  write_1byte	(FILE *file, U_CHAR s);
+int  read_1byte		(FILE *file, U_CHAR *ps);
+int  write_2bytes	(FILE *file, U_SHORT s);
+int  read_2bytes 	(FILE *file, U_SHORT *ps);
+int  write_4bytes	(FILE *file, U_LONG s);
+int  read_4bytes 	(FILE *file, U_LONG *ps);
+int  write_ieeef	(FILE *file, float f);
+int  read_ieeef		(FILE *file, float *pf);
 
 #endif	/* INCLUDED_PDF */

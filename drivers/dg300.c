@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:30  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:35  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:30  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	dg300.c
@@ -40,8 +43,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-dginit(pls)
-PLStream *pls;
+dginit (PLStream *pls)
 {
     /* Request terminal configuration report */
     printf("\n\036\107\051\n");
@@ -81,9 +83,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-dgline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+dgline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
 
@@ -100,8 +100,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-dgclear(pls)
-PLStream *pls;
+dgclear (PLStream *pls)
 {
     /* Before clearing wait for CR */
     putchar('\007');
@@ -117,8 +116,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-dgpage(pls)
-PLStream *pls;
+dgpage (PLStream *pls)
 {
     pls->page++;
 }
@@ -130,8 +128,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-dgadv(pls)
-PLStream *pls;
+dgadv (PLStream *pls)
 {
     dgclear(pls);
     dgpage(pls);
@@ -144,8 +141,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-dgtidy(pls)
-PLStream *pls;
+dgtidy (PLStream *pls)
 {
     dgclear(pls);
     printf("\036\107\042\060\n");
@@ -162,8 +158,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-dgcolor(pls)
-PLStream *pls;
+dgcolor (PLStream *pls)
 {
 }
 
@@ -174,8 +169,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-dgtext(pls)
-PLStream *pls;
+dgtext (PLStream *pls)
 {
 }
 
@@ -186,8 +180,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-dggraph(pls)
-PLStream *pls;
+dggraph (PLStream *pls)
 {
 }
 
@@ -197,9 +190,8 @@ PLStream *pls;
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void
-dgwidth (pls)
-PLStream *pls;
+void 
+dgwidth (PLStream *pls)
 {
 }
 
@@ -210,10 +202,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-dgesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+dgesc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 #endif	/* DG300 */

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:42  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:48  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:42  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	ps.c
@@ -17,7 +20,7 @@
 
 /* Prototypes for functions in this file. */
 
-static char *getdate PLARGS((void));
+static char *getdate(void);
 
 /* top level declarations */
 
@@ -52,8 +55,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-psinit(pls)
-PLStream *pls;
+psinit (PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->color = 1;
@@ -196,9 +198,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-psline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+psline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     int ori;
@@ -253,8 +253,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-psclear(pls)
-PLStream *pls;
+psclear (PLStream *pls)
 {
     fprintf(pls->OutFile, " S\neop\nbop\n");
 }
@@ -267,8 +266,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-pspage(pls)
-PLStream *pls;
+pspage (PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -288,8 +286,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-psadv(pls)
-PLStream *pls;
+psadv (PLStream *pls)
 {
     psclear(pls);
     pspage(pls);
@@ -302,8 +299,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-pstidy(pls)
-PLStream *pls;
+pstidy (PLStream *pls)
 {
     fprintf(pls->OutFile, " S\neop\n");
     fprintf(pls->OutFile, "@end\n\n");
@@ -334,8 +330,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-pscolor(pls)
-PLStream *pls;
+pscolor (PLStream *pls)
 {
 }
 
@@ -346,8 +341,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-pstext(pls)
-PLStream *pls;
+pstext (PLStream *pls)
 {
 }
 
@@ -358,8 +352,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-psgraph(pls)
-PLStream *pls;
+psgraph (PLStream *pls)
 {
 }
 
@@ -370,8 +363,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-pswidth(pls)
-PLStream *pls;
+pswidth (PLStream *pls)
 {
     if (pls->width < 1 || pls->width > 10)
 	fprintf(stderr, "\nInvalid pen width selection.");
@@ -387,10 +379,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-psesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+psesc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -401,7 +390,7 @@ char *ptr;
 \*----------------------------------------------------------------------*/
 
 static char *
-getdate()
+getdate (void)
 {
     int len;
     long t, time();

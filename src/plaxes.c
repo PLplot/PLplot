@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:11  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:42  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:11  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plaxes.c
@@ -30,18 +33,9 @@ static double xlog[8] = {0.301030, 0.477121, 0.602060, 0.698970,
 * is placed at the user-specified point (x0, y0).
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
 	 char *yopt, PLFLT ytick, PLINT nysub)
-#else
-void
-c_plaxes(x0, y0, xopt, xtick, nxsub, yopt, ytick, nysub)
-PLFLT x0, y0;
-char *xopt, *yopt;
-PLFLT xtick, ytick;
-PLINT nxsub, nysub;
-#endif
 {
     static char string[40];
     PLINT lax, lbx, lcx, lgx, lix, llx, lmx, lnx, lsx, ltx;

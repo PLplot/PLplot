@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:50  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:20  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:50  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plsvpa.c
@@ -20,16 +23,9 @@
 * boundaries.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 c_plsvpa (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
-#else
-void 
-c_plsvpa(xmin, xmax, ymin, ymax)
-PLFLT xmin, xmax, ymin, ymax;
-#endif
 {
-
     PLINT nx, ny, cs;
     PLFLT sxmin, symin;
     PLFLT spdxmi, spdxma, spdymi, spdyma;

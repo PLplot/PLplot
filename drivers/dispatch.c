@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:31  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:38  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:31  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	dispatch.c
@@ -39,7 +42,7 @@
 
 /* Functions only in this file */
 
-static void plSclSetup PLARGS((PLStream *, PLDev *));
+static void plSclSetup(PLStream *, PLDev *);
 
 /* Dispatch table initialization */
 /* Note: if you hit a <CR> in response to plstar() prompt, you get the
@@ -403,9 +406,8 @@ static char line[80];
 *  Prints extra newline at end to make output look better in batch runs.
 \*----------------------------------------------------------------------*/
 
-void
-plOpenFile(pls)
-PLStream *pls;
+void 
+plOpenFile (PLStream *pls)
 {
     int i=0;
 
@@ -442,9 +444,8 @@ PLStream *pls;
 *  Initializes family file parameters.
 \*----------------------------------------------------------------------*/
 
-void
-plFamInit(pls)
-PLStream *pls;
+void 
+plFamInit (PLStream *pls)
 {
     if (pls->family) {
 	pls->bytecnt = 0;
@@ -465,9 +466,8 @@ PLStream *pls;
 *  logical file if given the family name instead of the member name.
 \*----------------------------------------------------------------------*/
 
-void
-plGetFam(pls)
-PLStream *pls;
+void 
+plGetFam (PLStream *pls)
 {
     if (pls->family) {
 	if (pls->bytecnt > pls->bytemax) {
@@ -487,8 +487,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 PLINT 
-plGetInt(s)
-char *s;
+plGetInt (char *s)
 {
     PLINT m;
     int i=0;
@@ -515,8 +514,7 @@ char *s;
 \*----------------------------------------------------------------------*/
 
 PLFLT 
-plGetFlt(s)
-char *s;
+plGetFlt (char *s)
 {
     PLFLT m;
     int i=0;
@@ -542,11 +540,8 @@ char *s;
 *  Rotates physical coordinates if necessary for given orientation.
 \*----------------------------------------------------------------------*/
 
-void
-plRotPhy(pls, dev, px1, py1, px2, py2)
-PLStream *pls;
-PLDev *dev;
-int *px1, *py1, *px2, *py2;
+void 
+plRotPhy (PLStream *pls, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
 {
     int x1o, y1o, x2o, y2o;
 
@@ -573,11 +568,8 @@ int *px1, *py1, *px2, *py2;
 *  Scales physical coordinates to get a specified aspect ratio on plot.
 \*----------------------------------------------------------------------*/
 
-void
-plSclPhy(pls, dev, px1, py1, px2, py2)
-PLStream *pls;
-PLDev *dev;
-int *px1, *py1, *px2, *py2;
+void 
+plSclPhy (PLStream *pls, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
 {
     int x1o, y1o, x2o, y2o;
 
@@ -606,9 +598,7 @@ int *px1, *py1, *px2, *py2;
 \*----------------------------------------------------------------------*/
 
 static void 
-plSclSetup(pls, dev)
-PLStream *pls;
-PLDev *dev;
+plSclSetup (PLStream *pls, PLDev *dev)
 {
     PLINT sclxlen, sclylen, devxlen, devylen;
 

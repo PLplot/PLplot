@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:39  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:08  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:39  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plmtex.c
@@ -39,15 +42,8 @@
 *	just = 0.5 => centre of string is at reference
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 c_plmtex (char *side, PLFLT disp, PLFLT pos, PLFLT just, char *text)
-#else
-void 
-c_plmtex(side, disp, pos, just, text)
-char *side, *text;
-PLFLT disp, pos, just;
-#endif
 {
     PLINT clpxmi, clpxma, clpymi, clpyma;
     PLINT sppxmi, sppxma, sppymi, sppyma;

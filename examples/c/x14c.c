@@ -1,9 +1,12 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:33:03  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:22  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:33:03  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 
@@ -32,7 +35,8 @@ void plot3();
 void plot4();
 void plot5();
 
-main()
+int 
+main (void)
 {
     int i, digmax;
     int xleng0=0, yleng0=0, xoff0=0, yoff0=0;
@@ -138,7 +142,7 @@ main()
  /* =============================================================== */
 
 void 
-plot1()
+plot1 (void)
 {
     int i;
     FLOAT xmin, xmax, ymin, ymax;
@@ -183,7 +187,7 @@ plot1()
  /* =============================================================== */
 
 void 
-plot2()
+plot2 (void)
 {
     int i;
 
@@ -215,7 +219,7 @@ plot2()
  /* =============================================================== */
 
 void 
-plot3()
+plot3 (void)
 {
     int i;
 
@@ -257,8 +261,8 @@ plot3()
 
  /* =============================================================== */
 
-void
-plot4()
+void 
+plot4 (void)
 {
     int i, j;
     FLOAT dtr, theta, dx, dy, r;
@@ -346,8 +350,8 @@ FLOAT x, y, *tx, *ty;
 
 static FLOAT clevel[11] = {-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
 
-void
-plot5()
+void 
+plot5 (void)
 {
     int i, j;
     FLOAT xx, yy;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:32  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:39  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:32  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*
@@ -77,8 +80,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-vgainit(pls)
-PLStream *pls;
+vgainit (PLStream *pls)
 {
     pls->termin = 1;		/* is an interactive terminal */
     pls->color = 1;
@@ -110,9 +112,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-vgaline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+vgaline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
 
@@ -135,8 +135,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-vgaclear(pls)
-PLStream *pls;
+vgaclear (PLStream *pls)
 {
     if (page_state == DIRTY)
 	pause();
@@ -152,8 +151,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-vgapage(pls)
-PLStream *pls;
+vgapage (PLStream *pls)
 {
     pls->page++;
     vgaclear(pls);
@@ -166,8 +164,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-vgaadv(pls)
-PLStream *pls;
+vgaadv (PLStream *pls)
 {
     vgaclear(pls);
     vgapage(pls);
@@ -180,8 +177,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-vgatidy(pls)
-PLStream *pls;
+vgatidy (PLStream *pls)
 {
     vgatext(pls);
     pls->page = 0;
@@ -195,8 +191,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-vgacolor(pls)
-PLStream *pls;
+vgacolor (PLStream *pls)
 {
     static long cmap[16] = {
 	_WHITE, _RED, _LIGHTYELLOW, _GREEN,
@@ -219,8 +214,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-vgatext(pls)
-PLStream *pls;
+vgatext (PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
@@ -237,8 +231,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-vgagraph(pls)
-PLStream *pls;
+vgagraph (PLStream *pls)
 {
     if (pls->graphx == TEXT_MODE) {
 	if (!_setvideomode(_VRES16COLOR)) {
@@ -257,8 +250,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-vgawidth(pls)
-PLStream *pls;
+vgawidth (PLStream *pls)
 {
 }
 
@@ -269,10 +261,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-vgaesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+vgaesc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 

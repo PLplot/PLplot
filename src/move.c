@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:09  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:40  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:09  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	move.c
@@ -15,8 +18,7 @@
 /* Move to physical coordinates (x,y) */
 
 void 
-movphy(x, y)
-PLINT x, y;
+movphy (PLINT x, PLINT y)
 {
     scurr(x, y);
 }
@@ -24,8 +26,7 @@ PLINT x, y;
 /* Draw to physical coordinates (x,y) */
 
 void 
-draphy(x, y)
-PLINT x, y;
+draphy (PLINT x, PLINT y)
 {
     PLINT currx, curry;
     gcurr(&currx, &curry);
@@ -34,26 +35,14 @@ PLINT x, y;
 
 /* Move to world coordinates (x,y) */
 
-#ifdef PLSTDC
 void movwor (PLFLT x, PLFLT y)
-#else
-void 
-movwor(x, y)
-PLFLT x, y;
-#endif
 {
     scurr(wcpcx(x), wcpcy(y));
 }
 
 /* Draw to world coordinates (x,y) */
 
-#ifdef PLSTDC
 void drawor (PLFLT x, PLFLT y)
-#else
-void 
-drawor(x, y)
-PLFLT x, y;
-#endif
 {
     PLINT currx, curry;
     gcurr(&currx, &curry);

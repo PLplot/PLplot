@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:36:00  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:48  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:36:00  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*
@@ -30,9 +33,8 @@ void describe();
 #define US   31
 #define ETX  003
 
-main(argc,argv)
-int argc;
-char *argv[];
+int 
+main (int argc, char *argv[])
 {
 	FILE *fd,*fd1;
 	char infile[128];
@@ -182,7 +184,8 @@ char *argv[];
 *  since some compilers can't handle strings that long.
 \*----------------------------------------------------------------------*/
 
-void describe()
+void 
+describe (void)
 {
 	fputs("\
 \n\

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:15  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:46  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:15  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plbox3.c
@@ -12,19 +15,10 @@
 
 #include "plplot.h"
 
-#ifdef PLSTDC
 void
 c_plbox3 (char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx, 
 	  char *yopt, char *ylabel, PLFLT ytick, PLINT nsuby, 
 	  char *zopt, char *zlabel, PLFLT ztick, PLINT nsubz)
-#else
-void 
-c_plbox3(xopt, xlabel, xtick, nsubx, yopt, ylabel, ytick, nsuby,
-         zopt, zlabel, ztick, nsubz)
-char *xopt, *xlabel, *yopt, *ylabel, *zopt, *zlabel;
-PLINT nsubx, nsuby, nsubz;
-PLFLT xtick, ytick, ztick;
-#endif
 {
     PLFLT dx, dy, tx, ty, ux, uy;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;

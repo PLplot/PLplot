@@ -1,9 +1,12 @@
 /* Demonstrates multiple windows */
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:50  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:10  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:50  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /* Note the compiler should automatically convert all non-pointer arguments
@@ -13,7 +16,8 @@
 #include <stdio.h>
 #include <math.h>
 
-main()
+int 
+main (void)
 {
     int i, j;
     FLOAT vmin, vmax;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:14  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:45  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:14  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plbox.c
@@ -49,17 +52,9 @@ static PLFLT xlog[8] =
 * interval
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
 	char *yopt, PLFLT ytick, PLINT nysub)
-#else
-void
-c_plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
-char *xopt, *yopt;
-PLFLT xtick, ytick;
-PLINT nxsub, nysub;
-#endif
 {
     static char string[40];
     PLINT lax, lbx, lcx, lgx, lix, llx, lmx, lnx, lsx, ltx;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:06  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:34  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:35:06  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	sc3d.c
@@ -13,9 +16,8 @@
 #include "plstubs.h"
 
 void
-PLMESH(x, y, z, nx, ny, opt, lx)
-PLFLT *x, *y, *z;
-PLINT *nx, *ny, *opt, *lx;
+PLMESH( PLFLT *x, PLFLT *y, PLFLT *z,
+       PLINT *nx, PLINT *ny, PLINT *opt, PLINT *lx )
 {
     int i, j;
     PLFLT **temp;
@@ -47,9 +49,8 @@ PLINT *nx, *ny, *opt, *lx;
 
 
 void
-PLOT3D(x, y, z, nx, ny, opt, side, lx)
-PLFLT *x, *y, *z;
-PLINT *nx, *ny, *opt, *side, *lx;
+PLOT3D( PLFLT *x, PLFLT *y, PLFLT *z,
+       PLINT *nx, PLINT *ny, PLINT *opt, PLINT *side, PLINT *lx )
 {
     int i, j, off1;
     PLFLT **temp;

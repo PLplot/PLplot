@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:17  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:48  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:17  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plcntr.c
@@ -21,20 +24,11 @@
 * iscan has nx elements. ixstor and iystor each have nstor elements.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void 
 plcntr(PLFLT ** points, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
        PLINT ky, PLINT ly, PLFLT zlev, PLINT * iscan,
        PLINT * ixstor, PLINT * iystor, PLINT nstor,
        void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *))
-#else
-void 
-plcntr(points, nx, ny, kx, lx, ky, ly, zlev, iscan, ixstor, iystor, nstor, pltr)
-PLINT nx, ny, ky, ly, kx, lx, nstor;
-PLFLT zlev, **points;
-PLINT *iscan, *ixstor, *iystor;
-void (*pltr) ();
-#endif
 {
     PLINT kcol, krow, kstor, kscan, iwbeg, ixbeg, iybeg, izbeg;
     PLINT iboun, iw, ix, iy, iz, ifirst, istep, ixgo, iygo;

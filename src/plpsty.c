@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:44  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:13  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:44  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plpsty.c
@@ -61,8 +64,7 @@ static struct pattern {
 };
 
 void 
-c_plpsty(patt)
-PLINT patt;
+c_plpsty( PLINT patt )
 {
     PLINT level;
 

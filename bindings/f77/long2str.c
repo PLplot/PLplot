@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:05  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:33  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:35:05  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /* long2str.c
@@ -40,10 +43,8 @@ char cstring4[300], cstring5[300], cstring6[300];
 *  Requires that a long be the same size as an integer.
 \*--------------------------------------------------------------------------*/
 
-void
-long2str(istring, cstring)
-long *istring;
-char *cstring;
+void 
+long2str (long *istring, char *cstring)
 {
     int i, j, k, ii, lstring, mstring, nstring;
     long max_slen = 1000; 	/* eventually will pass this in */
@@ -82,10 +83,8 @@ char *cstring;
 *  Requires that a long be the same size as an integer.
 \*--------------------------------------------------------------------------*/
 
-void
-str2long(cstring, istring)
-char *cstring;
-long *istring;
+void 
+str2long (char *cstring, long *istring)
 {
     int i, j, k, ii;
     long max_ilen = 1000;	/* eventually will pass this in */

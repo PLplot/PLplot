@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:35:59  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:46  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:35:59  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*
@@ -48,20 +51,20 @@
 
 /* prototypes for functions in this file. */
 
-static void	GetOpts		PLARGS(( int , char ** ));
-static U_CHAR	getcommand	PLARGS(( void ));
-static void	process_next	PLARGS(( U_CHAR ));
-static void 	plr_init	PLARGS(( void ));
-static void	plresc_rgb	PLARGS(( void ));
-static void	plresc_ancol	PLARGS(( void ));
-static void	NextFamilyFile	PLARGS(( U_CHAR * ));
-static int	ReadHeader	PLARGS(( void ));
-static void	Syntax		PLARGS(( char * ));
-static void	Help		PLARGS(( void ));
-static void	Version		PLARGS(( void ));
-static void	ParseOpts	PLARGS(( int *, char *** ));
-static void	GetOption	PLARGS(( char **, int *, char *** ));
-static void	check_alignment PLARGS(( FILE * ));
+static void	GetOpts		( int , char ** );
+static U_CHAR	getcommand	( void );
+static void	process_next	( U_CHAR );
+static void 	plr_init	( void );
+static void	plresc_rgb	( void );
+static void	plresc_ancol	( void );
+static void	NextFamilyFile	( U_CHAR * );
+static int	ReadHeader	( void );
+static void	Syntax		( char * );
+static void	Help		( void );
+static void	Version		( void );
+static void	ParseOpts	( int *, char *** );
+static void	GetOption	( char **, int *, char *** );
+static void	check_alignment ( FILE * );
 
 /* top level declarations */
 
@@ -119,17 +122,7 @@ static PLFLT	mar=0.0, jx=0.5, jy=0.5;
 *  plrender -- render a PLPLOT metafile.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
-
 main(int argc, char *argv[])
-
-#else
-
-main(argc, argv)
-int argc;
-char *argv[];
-
-#endif
 {
     U_CHAR c;
 
@@ -203,8 +196,7 @@ char *argv[];
 \*----------------------------------------------------------------------*/
 
 static void 
-NextFamilyFile(c)
-U_CHAR *c;
+NextFamilyFile (U_CHAR *c)
 {
     (void) fclose(MetaFile);
     numberin++;
@@ -237,7 +229,7 @@ U_CHAR *c;
 \*----------------------------------------------------------------------*/
 
 static int 
-ReadHeader()
+ReadHeader (void)
 {
     char tag[80];
 
@@ -325,18 +317,8 @@ ReadHeader()
 *  Process a command
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
-
 static void 
 process_next(U_CHAR c)
-
-#else
-
-static void 
-process_next(c)
-U_CHAR c;
-
-#endif
 {
     U_CHAR op;
     U_SHORT p1, x1, y1, x2, y2;
@@ -502,7 +484,7 @@ U_CHAR c;
 \*----------------------------------------------------------------------*/
 
 static void 
-plr_init()
+plr_init (void)
 {
     float dev_aspect, ratio;
 
@@ -625,17 +607,8 @@ plr_init()
 *  Read & return the next command
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
-
 static U_CHAR 
 getcommand(void)
-
-#else
-
-static U_CHAR 
-getcommand()
-
-#endif
 {
     U_CHAR c;
 
@@ -650,7 +623,7 @@ getcommand()
 \*----------------------------------------------------------------------*/
 
 static void 
-plresc_rgb()
+plresc_rgb (void)
 {
     float red, green, blue;
     U_SHORT ired, igreen, iblue;
@@ -675,7 +648,7 @@ plresc_rgb()
 \*----------------------------------------------------------------------*/
 
 static void 
-plresc_ancol()
+plresc_ancol (void)
 {
     U_CHAR icolor;
     char name[80];
@@ -693,8 +666,7 @@ plresc_ancol()
 \*----------------------------------------------------------------------*/
 
 static void 
-check_alignment(file)
-FILE *file;
+check_alignment( FILE *file )
 {
     U_CHAR c;
 
@@ -762,8 +734,7 @@ NULL};
 \*----------------------------------------------------------------------*/
 
 static void 
-Syntax(badOption)
-char *badOption;
+Syntax (char *badOption)
 {
     struct _options *opt;
     int col, len;
@@ -804,7 +775,7 @@ char *badOption;
 \*----------------------------------------------------------------------*/
 
 static void 
-Help()
+Help (void)
 {
     struct _options *opt;
     char **cpp;
@@ -831,7 +802,7 @@ Help()
 \*----------------------------------------------------------------------*/
 
 static void 
-Version()
+Version (void)
 {
     fprintf(stderr, "%s: version %s\n", PROGRAM_NAME, PROGRAM_VERSION);
 }
@@ -843,9 +814,7 @@ Version()
 \*----------------------------------------------------------------------*/
 
 static void 
-GetOpts(argc, argv)
-int argc;
-char **argv;
+GetOpts (int argc, char **argv)
 {
     /* Parse the command line */
 
@@ -866,9 +835,7 @@ char **argv;
 \*----------------------------------------------------------------------*/
 
 static void 
-ParseOpts(pargc, pargv)
-int *pargc;
-char ***pargv;
+ParseOpts (int *pargc, char ***pargv)
 {
     char *opt, *optarg, *field;
 
@@ -1071,10 +1038,7 @@ char ***pargv;
 \*----------------------------------------------------------------------*/
 
 static void 
-GetOption(poptarg, pargc, pargv)
-char **poptarg;
-int *pargc;
-char ***pargv;
+GetOption (char **poptarg, int *pargc, char ***pargv)
 {
     if (*pargc > 0) {
 	(*pargc)--;

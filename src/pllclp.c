@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:35  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:04  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:35  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	pllclp.c
@@ -15,8 +18,7 @@
 #define INSIDE(ix,iy) (BETW(ix,clpxmi,clpxma) && BETW(iy,clpymi,clpyma))
 
 void 
-pllclp(x1, y1, x2, y2)
-PLINT x1, y1, x2, y2;
+pllclp (PLINT x1, PLINT y1, PLINT x2, PLINT y2)
 {
     PLINT clpxmi, clpxma, clpymi, clpyma;
     PLINT t, dx, dy, flipx, flipy;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:52  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:22  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:52  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plt3zz.c
@@ -25,10 +28,7 @@
 \*----------------------------------------------------------------------*/
 
 void 
-plt3zz(xstar0, ystar0, dx, dy, flg0, init, x, y, z, nx, ny, u, v)
-PLINT xstar0, ystar0, dx, dy, flg0, nx, ny, init;
-PLFLT *x, *y, **z;
-PLINT *u, *v;
+plt3zz (PLINT xstar0, PLINT ystar0, PLINT dx, PLINT dy, PLINT flg0, PLINT init, PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT *u, PLINT *v)
 {
     PLINT flag;
     PLINT n;

@@ -1,11 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/05/27 00:01:12  furnish
-   Having now verified that my change to plfill.c works on dino, ctrss2 and
-   ctribm1 (at a total time cost of less than 10 minutes) I am now committing
-   yet another fix to plfill.c.  Anyone who touches this file in the next
-   four days will die!
+   Revision 1.6  1992/09/29 04:45:56  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.5  1992/05/27  00:01:12  furnish
+ * Having now verified that my change to plfill.c works on dino, ctrss2 and
+ * ctribm1 (at a total time cost of less than 10 minutes) I am now committing
+ * yet another fix to plfill.c.  Anyone who touches this file in the next
+ * four days will die!
+ *
  * Revision 1.4  1992/05/26  20:41:34  mjl
  * Fixed my fix to my fix to work under non-ANSI C (i.e. SUNOS).
  *
@@ -48,7 +51,7 @@ extern void free();
 
 #define DTOR            0.0174533
 #define BINC            50
-int compar	PLARGS((const void *, const void *));
+int compar(const void *, const void *);
 
 struct point {
     PLINT x, y;
@@ -56,9 +59,7 @@ struct point {
 static PLINT bufferleng, buffersize, *buffer;
 
 void 
-c_plfill(n, x, y)
-PLINT n;
-PLFLT *x, *y;
+c_plfill( PLINT n, PLFLT *x, PLFLT *y )
 {
     PLINT i, level;
     PLINT xmin, ymin, x1, y1, x2, y2, x3, y3;
@@ -193,15 +194,8 @@ PLFLT *x, *y;
     free((VOID *) buffer);
 }
 
-#ifdef PLSTDC
 void 
 tran(PLINT * a, PLINT * b, PLFLT c, PLFLT d)
-#else
-void 
-tran(a, b, c, d)
-PLINT *a, *b;
-PLFLT c, d;
-#endif
 {
     PLINT ta, tb;
 
@@ -213,8 +207,7 @@ PLFLT c, d;
 }
 
 void 
-buildlist(x1, y1, x2, y2, x3, y3, dinc)
-PLINT x1, y1, x2, y2, x3, y3, dinc;
+buildlist (PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT dinc)
 {
     PLINT i;
     PLINT dx, dy, cstep, nstep, lines, ploty, plotx;
@@ -252,8 +245,7 @@ PLINT x1, y1, x2, y2, x3, y3, dinc;
 }
 
 void 
-addcoord(x1, y1)
-PLINT x1, y1;
+addcoord (PLINT x1, PLINT y1)
 {
     PLINT *temp;
 
@@ -272,14 +264,8 @@ PLINT x1, y1;
     buffer[bufferleng++] = y1;
 }
 
-#ifdef PLSTDC
 int 
 compar(const void *pnum1, const void *pnum2)
-#else
-int 
-compar(pnum1, pnum2)
-void *pnum1, *pnum2;
-#endif
 {
     struct point *pnt1, *pnt2;
 

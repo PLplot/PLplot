@@ -1,9 +1,12 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:49  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:09  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:49  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /* Plots several simple functions */
@@ -24,7 +27,8 @@ void plot1();
 void plot2();
 void plot3();
 
-main()
+int 
+main (void)
 {
     int digmax;
 
@@ -67,7 +71,7 @@ main()
  /* =============================================================== */
 
 void 
-plot1()
+plot1 (void)
 {
     int i;
     FLOAT xmin, xmax, ymin, ymax;
@@ -111,7 +115,7 @@ plot1()
  /* =============================================================== */
 
 void 
-plot2()
+plot2 (void)
 {
     int i;
 
@@ -143,7 +147,7 @@ plot2()
  /* =============================================================== */
 
 void 
-plot3()
+plot3 (void)
 {
     int i;
 

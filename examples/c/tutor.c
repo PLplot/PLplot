@@ -1,9 +1,12 @@
 /* $Id$
 
    $Log$
-   Revision 1.1  1992/05/20 21:32:48  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:08  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:48  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /* This program was used to create the figure in the accompanying memo.  
@@ -54,7 +57,8 @@ extern void free();
    lines by changing the value of OFFSET. */
 #define OFFSET  2
 
-main()
+int 
+main (void)
 {
   /* ==============  Begin variable definition section. ============= */
 
@@ -218,8 +222,8 @@ main()
     plend();
 }
 
-int error(str)
-char *str;
+int 
+error (char *str)
 {
     fprintf(stderr,"%s\n",str);
     exit(1);

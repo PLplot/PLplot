@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:16  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:47  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:16  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plccal.c
@@ -20,15 +23,8 @@
 * along ixg,iyg is returned as dist.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void plccal (PLFLT ** pts, PLINT nx, PLINT ny, PLFLT zlev, 
 	     PLINT ix, PLINT iy, PLINT ixg, PLINT iyg, PLFLT * dist)
-#else
-void 
-plccal(pts, nx, ny, zlev, ix, iy, ixg, iyg, dist)
-PLINT nx, ny, ix, iy, ixg, iyg;
-PLFLT **pts, zlev, *dist;
-#endif
 {
     PLINT ia, ib;
     PLFLT dbot, dtop, zmid;

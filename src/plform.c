@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:28  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:58  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:28  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plform.c
@@ -29,8 +32,7 @@ static PLINT setpre, precis;
 \*----------------------------------------------------------------------*/
 
 void
-c_plprec(setp, prec)
-PLINT setp, prec;
+c_plprec( PLINT setp, PLINT prec )
 {
     setpre = setp;
     precis = prec;
@@ -47,16 +49,8 @@ PLINT setp, prec;
 *	value must be divided by 10^scale.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 plform(PLFLT value, PLINT scale, PLINT prec, char *result)
-#else
-void
-plform(value, scale, prec, result)
-PLFLT value;
-PLINT scale, prec;
-char *result;
-#endif
 {
     char form[10];
     char temp[30];

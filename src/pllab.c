@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:34  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:03  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:34  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	pllab.c
@@ -13,8 +16,7 @@
 #include "plplot.h"
 
 void 
-c_pllab(xlabel, ylabel, tlabel)
-char *xlabel, *ylabel, *tlabel;
+c_pllab( char *xlabel, char *ylabel, char *tlabel )
 {
     PLINT level;
 

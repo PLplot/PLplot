@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:33:37  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:28  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:33:37  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*--------------------------------------------------------------------------*\
@@ -182,5 +185,11 @@ typedef void        VOID;
 #endif
 typedef char        VOID;
 #endif
+
+/* Get REAL, buddy !!! */
+
+/* We're gonna track down all this garbage and throw it away! */
+
+#define PROTO a;lskdjfka;lskdfjka;lskdfja;lsdkfja;dslkfjasdf;lkj$$##%^$
 
 #endif	/* INCLUDED_CHDR */

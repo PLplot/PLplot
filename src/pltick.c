@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:53  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:46:23  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:53  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	pltick.c
@@ -19,8 +22,7 @@
 \*----------------------------------------------------------------------*/
 
 void 
-plxtik(x, y, below, above)
-PLINT x, y, below, above;
+plxtik (PLINT x, PLINT y, PLINT below, PLINT above)
 {
     draphy(x, y);
     if (below != 0)
@@ -37,8 +39,7 @@ PLINT x, y, below, above;
 \*----------------------------------------------------------------------*/
 
 void 
-plytik(x, y, left, right)
-PLINT x, y, left, right;
+plytik (PLINT x, PLINT y, PLINT left, PLINT right)
 {
     draphy(x, y);
     if (left != 0)
@@ -55,13 +56,7 @@ PLINT x, y, left, right;
 * vector length (dx,dy).
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void plstik (PLFLT mx, PLFLT my, PLFLT dx, PLFLT dy)
-#else
-void 
-plstik(mx, my, dx, dy)
-PLFLT mx, my, dx, dy;
-#endif
 {
     draphy(mmpcx(mx), mmpcy(my));
     draphy(mmpcx((PLFLT) (mx + dx)), mmpcy((PLFLT) (my + dy)));

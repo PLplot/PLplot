@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:22  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:53  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:22  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plenv.c
@@ -33,16 +36,9 @@
 *	axis=30 : Logarithmic X and Y axes
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 c_plenv (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	 PLINT just, PLINT axis)
-#else
-void 
-c_plenv(xmin, xmax, ymin, ymax, just, axis)
-PLINT just, axis;
-PLFLT xmin, xmax, ymin, ymax;
-#endif
 {
     PLINT level;
     PLFLT chrdef, chrht;

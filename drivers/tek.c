@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:43  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:50  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:43  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	tek.c
@@ -17,7 +20,7 @@
 
 /* Function prototypes */
 
-void tekinit		PLARGS((PLStream *));
+void tekinit(PLStream *);
 
 /* top level declarations */
 
@@ -44,8 +47,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-tektinit(pls)
-PLStream *pls;
+tektinit (PLStream *pls)
 {
     pls->termin = 1;			/* an interactive device */
 
@@ -62,8 +64,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-tekfinit(pls)
-PLStream *pls;
+tekfinit (PLStream *pls)
 {
     pls->termin = 0;			/* not an interactive terminal */
 
@@ -86,9 +87,8 @@ PLStream *pls;
 * Generic device initialization.
 \*----------------------------------------------------------------------*/
 
-void
-tekinit(pls)
-PLStream *pls;
+void 
+tekinit (PLStream *pls)
 {
     pls->color = 1;
     pls->width = 1;
@@ -125,9 +125,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-tekline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+tekline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1, y1, x2, y2, hy, ly, hx, lx;
 
@@ -177,8 +175,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-tekclear(pls)
-PLStream *pls;
+tekclear (PLStream *pls)
 {
     if (pls->termin) {
 	putchar('\007');
@@ -196,8 +193,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-tekpage(pls)
-PLStream *pls;
+tekpage (PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -215,8 +211,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-tekadv(pls)
-PLStream *pls;
+tekadv (PLStream *pls)
 {
     tekclear(pls);
     tekpage(pls);
@@ -229,8 +224,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-tektidy(pls)
-PLStream *pls;
+tektidy (PLStream *pls)
 {
     if (!pls->termin) {
 	fclose(pls->OutFile);
@@ -252,8 +246,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-tekcolor(pls)
-PLStream *pls;
+tekcolor (PLStream *pls)
 {
 }
 
@@ -264,8 +257,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-tektext(pls)
-PLStream *pls;
+tektext (PLStream *pls)
 {
     fprintf(pls->OutFile, "%c", US);
 }
@@ -277,8 +269,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-tekgraph(pls)
-PLStream *pls;
+tekgraph (PLStream *pls)
 {
 }
 
@@ -289,8 +280,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-tekwidth(pls)
-PLStream *pls;
+tekwidth (PLStream *pls)
 {
 }
 
@@ -301,10 +291,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-tekesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+tekesc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 #endif	/* TEK */

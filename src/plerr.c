@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:23  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:54  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:23  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plerr.c
@@ -16,9 +19,7 @@
 /* Plots horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i)) */
 
 void 
-c_plerrx(n, xmin, xmax, y)
-PLINT n;
-PLFLT *xmin, *xmax, *y;
+c_plerrx( PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y )
 {
     PLINT level;
     short i;
@@ -33,9 +34,7 @@ PLFLT *xmin, *xmax, *y;
 /* Plots vertical error bars (x,ymin(i)) to (x(i),ymax(i)) */
 
 void 
-c_plerry(n, x, ymin, ymax)
-PLINT n;
-PLFLT *x, *ymin, *ymax;
+c_plerry( PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax )
 {
     PLINT level;
     short i;
@@ -49,13 +48,7 @@ PLFLT *x, *ymin, *ymax;
 
 /* Plots single horizontal error bar */
 
-#ifdef PLSTDC
 void plerx1 (PLFLT xmin, PLFLT xmax, PLFLT y)
-#else
-void 
-plerx1(xmin, xmax, y)
-PLFLT xmin, xmax, y;
-#endif
 {
     PLFLT mindef, minht, xpmm, ypmm;
     PLINT yminor;
@@ -71,13 +64,7 @@ PLFLT xmin, xmax, y;
 
 /* Plots single vertical error bar */
 
-#ifdef PLSTDC
 void plery1 (PLFLT x, PLFLT ymin, PLFLT ymax)
-#else
-void 
-plery1(x, ymin, ymax)
-PLFLT x, ymin, ymax;
-#endif
 {
     PLFLT mindef, minht, xpmm, ypmm;
     PLINT xminor;

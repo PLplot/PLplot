@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/07/31 06:03:28  mjl
-   Minor bug fixes.
+   Revision 1.3  1992/09/29 04:46:35  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.2  1992/07/31  06:03:28  mjl
+ * Minor bug fixes.
+ *
  * Revision 1.1  1992/05/20  21:35:07  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -24,14 +27,8 @@
 * Fortran paradigm for array index is used, i.e. starting at 1.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void 
 pltr0f (PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty)
-#else
-void 
-pltr0f (x, y, tx, ty)
-PLFLT x, y, *tx, *ty;
-#endif
 {
     *tx = x + 1.0;
     *ty = y + 1.0;
@@ -50,16 +47,9 @@ PLFLT x, y, *tx, *ty;
 * if everything works correctly.
 \*----------------------------------------------------------------------*/
 
-#ifdef PLSTDC
 void
 pltr2f(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty, PLFLT * xg, PLFLT * yg,
        PLINT nx, PLINT ny)
-#else
-void
-pltr2f(x, y, tx, ty, xg, yg, nx, ny)
-PLFLT x, y, *tx, *ty, *xg, *yg;
-PLINT nx, ny;
-#endif
 {
     PLINT ul, ur, vl, vr;
     PLFLT du, dv;
@@ -229,9 +219,8 @@ PLINT nx, ny;
 /* no transformation */
 
 void
-PLCON0_(z, nx, ny, kx, lx, ky, ly, clevel, nlevel)
-PLINT *nx, *ny, *kx, *lx, *ky, *ly, *nlevel;
-PLFLT *z, *clevel;
+PLCON0_( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel )
 {
     int i, j;
     FLOAT **temp;
@@ -264,9 +253,9 @@ PLFLT *z, *clevel;
 /* 1-d transformation */
 
 void
-PLCON1_(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, xg, yg)
-PLINT *nx, *ny, *kx, *lx, *ky, *ly, *nlevel;
-PLFLT *z, *clevel, *xg, *yg;
+PLCON1_( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel,
+	PLFLT *xg, PLFLT *yg )
 {
     int i, j;
     FLOAT **temp;
@@ -300,9 +289,9 @@ PLFLT *z, *clevel, *xg, *yg;
 /* 2-d transformation */
 
 void
-PLCON2_(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, xg, yg)
-PLINT *nx, *ny, *kx, *lx, *ky, *ly, *nlevel;
-PLFLT *z, *clevel, *xg, *yg;
+PLCON2_( PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel,
+	PLFLT *xg, PLFLT *yg )
 {
     int i, j;
     FLOAT **temp;
@@ -342,23 +331,16 @@ PLFLT *z, *clevel, *xg, *yg;
 
 PLFLT tr[6];
 
-#ifdef PLSTDC
 void
 xform(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty)
-#else
-void
-xform(x, y, tx, ty)
-PLFLT x, y, *tx, *ty;
-#endif
 {
     *tx = tr[0] * x + tr[1] * y + tr[2];
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
 
 void
-PLCONT_(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, ftr)
-PLINT *nx, *ny, *kx, *lx, *ky, *ly, *nlevel;
-PLFLT *z, *clevel, *ftr;
+PLCONT_(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel, PLFLT *ftr )
 {
     int i, j;
     FLOAT **temp;

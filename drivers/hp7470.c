@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:34  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:41  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:34  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	hp7470.c
@@ -37,8 +40,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470init(pls)
-PLStream *pls;
+hp7470init (PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->color = 1;
@@ -80,9 +82,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470line(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+hp7470line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
 
@@ -111,8 +111,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470clear(pls)
-PLStream *pls;
+hp7470clear (PLStream *pls)
 {
 }
 
@@ -124,8 +123,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470page(pls)
-PLStream *pls;
+hp7470page (PLStream *pls)
 {
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -144,8 +142,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470adv(pls)
-PLStream *pls;
+hp7470adv (PLStream *pls)
 {
     hp7470clear(pls);
     hp7470page(pls);
@@ -158,8 +155,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470tidy(pls)
-PLStream *pls;
+hp7470tidy (PLStream *pls)
 {
     fprintf(pls->OutFile, "sp0\n");
     fclose(pls->OutFile);
@@ -175,8 +171,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470color(pls)
-PLStream *pls;
+hp7470color (PLStream *pls)
 {
     if (pls->color < 1 || pls->color > 8)
 	fprintf(stderr, "\nInvalid pen selection.");
@@ -192,8 +187,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470text(pls)
-PLStream *pls;
+hp7470text (PLStream *pls)
 {
 }
 
@@ -204,8 +198,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470graph(pls)
-PLStream *pls;
+hp7470graph (PLStream *pls)
 {
 }
 
@@ -216,8 +209,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470width(pls)
-PLStream *pls;
+hp7470width (PLStream *pls)
 {
     if (pls->width < 1 || pls->width > 48)
 	fprintf(stderr, "\nInvalid pen width selection.");
@@ -233,10 +225,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-hp7470esc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+hp7470esc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 #endif	/* HP7470 */

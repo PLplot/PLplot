@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:24  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:55  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:24  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plexit.c
@@ -19,8 +22,7 @@
    be done in the user program. */
 
 void 
-plexit(errormsg)
-char *errormsg;
+plexit (char *errormsg)
 {
     void pl_exit();
 
@@ -35,13 +37,12 @@ char *errormsg;
 /* A handy way to issue warnings, if need be. */
 
 void 
-plwarn(errormsg)
-char *errormsg;
+plwarn (char *errormsg)
 {
     fprintf(stderr, "\nPlplot warning:\n%s\n", errormsg);
 }
 
 void 
-pl_exit()
+pl_exit (void)
 {
 }

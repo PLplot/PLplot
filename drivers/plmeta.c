@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:41  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:47  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:41  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*
@@ -43,9 +46,9 @@
 
 /* Function prototypes */
 
-static void plmesc_rgb		PLARGS((PLStream *, char *));
-static void plmesc_ancol	PLARGS((PLStream *, char *));
-static void WriteHeader		PLARGS((PLStream *));
+static void plmesc_rgb		(PLStream *, char *);
+static void plmesc_ancol	(PLStream *, char *);
+static void WriteHeader		(PLStream *);
 
 /* Constants to determine resolution, number of pixels, etc.  Can be
    changed without affecting ability to read the metafile since they
@@ -74,8 +77,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-plminit(pls)
-PLStream *pls;
+plminit (PLStream *pls)
 {
     U_CHAR c = (U_CHAR) INITIALIZE;
 
@@ -129,9 +131,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-plmline(pls, x1, y1, x2, y2)
-PLStream *pls;
-PLINT x1, y1, x2, y2;
+plmline (PLStream *pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2)
 {
     U_CHAR c;
 
@@ -192,8 +192,7 @@ PLINT x1, y1, x2, y2;
 \*----------------------------------------------------------------------*/
 
 void 
-plmclear(pls)
-PLStream *pls;
+plmclear (PLStream *pls)
 {
     U_CHAR c = (U_CHAR) CLEAR;
 
@@ -213,8 +212,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-plmpage(pls)
-PLStream *pls;
+plmpage (PLStream *pls)
 {
     U_CHAR c = (U_CHAR) PAGE;
 
@@ -239,8 +237,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-plmadv(pls)
-PLStream *pls;
+plmadv (PLStream *pls)
 {
     U_CHAR c = (U_CHAR) ADVANCE;
 
@@ -264,8 +261,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-plmtidy (pls)
-PLStream *pls;
+plmtidy (PLStream *pls)
 {
     U_CHAR c = (U_CHAR) CLOSE;
 
@@ -285,8 +281,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-plmcolor(pls)
-PLStream *pls;
+plmcolor (PLStream *pls)
 {
     U_CHAR c = (U_CHAR) NEW_COLOR;
 
@@ -304,8 +299,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-plmtext(pls)
-PLStream *pls;
+plmtext (PLStream *pls)
 {
     U_CHAR c = (U_CHAR) SWITCH_TO_TEXT;
 
@@ -320,8 +314,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-plmgraph(pls)
-PLStream *pls;
+plmgraph (PLStream *pls)
 {
     U_CHAR c = (U_CHAR) SWITCH_TO_GRAPH;
 
@@ -335,9 +328,8 @@ PLStream *pls;
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void
-plmwidth (pls)
-PLStream *pls;
+void 
+plmwidth (PLStream *pls)
 {
     U_CHAR c = (U_CHAR) NEW_WIDTH;
 
@@ -362,10 +354,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-plmesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+plmesc (PLStream *pls, PLINT op, char *ptr)
 {
     U_CHAR c = (U_CHAR) ESCAPE;
     U_CHAR opc;
@@ -407,9 +396,7 @@ char *ptr;
 \*----------------------------------------------------------------------*/
 
 static void 
-plmesc_rgb(pls, ptr)
-PLStream *pls;
-char *ptr;
+plmesc_rgb (PLStream *pls, char *ptr)
 {
     pleRGB *cols = (pleRGB *) ptr;
     U_SHORT ired, igreen, iblue;
@@ -431,9 +418,7 @@ char *ptr;
 \*----------------------------------------------------------------------*/
 
 static void 
-plmesc_ancol(pls, ptr)
-PLStream *pls;
-char *ptr;
+plmesc_ancol (PLStream *pls, char *ptr)
 {
     U_CHAR icolor;
     char *name;
@@ -455,8 +440,7 @@ char *ptr;
 \*----------------------------------------------------------------------*/
 
 static void 
-WriteHeader(pls)
-PLStream *pls;
+WriteHeader (PLStream *pls)
 {
     plm_wr(write_header(pls->OutFile, PLPLOT_HEADER));
     plm_wr(write_header(pls->OutFile, PLPLOT_VERSION));

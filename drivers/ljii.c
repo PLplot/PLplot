@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:37  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:44:44  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:37  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	ljii.c
@@ -36,7 +39,7 @@ extern void free();
 
 /* Function prototypes */
 
-static void setpoint	PLARGS((PLINT, PLINT));
+static void setpoint(PLINT, PLINT);
 
 /* top level declarations */
 
@@ -79,8 +82,7 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void 
-jetinit(pls)
-PLStream *pls;
+jetinit (PLStream *pls)
 {
     pls->termin = 0;		/* not an interactive terminal */
     pls->color = 1;
@@ -137,9 +139,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-jetline(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+jetline (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int   i, ori;
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
@@ -181,8 +181,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-jetclear(pls)
-PLStream *pls;
+jetclear (PLStream *pls)
 {
     PLINT i, j;
 
@@ -218,8 +217,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-jetpage(pls)
-PLStream *pls;
+jetpage (PLStream *pls)
 {
     if (!pls->termin)
 	plGetFam(pls);
@@ -234,8 +232,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-jetadv(pls)
-PLStream *pls;
+jetadv (PLStream *pls)
 {
     jetclear(pls);
     jetpage(pls);
@@ -248,8 +245,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-jettidy(pls)
-PLStream *pls;
+jettidy (PLStream *pls)
 {
     jetclear(pls);
     /* Reset Printer */
@@ -268,8 +264,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-jetcolor(pls)
-PLStream *pls;
+jetcolor (PLStream *pls)
 {
 }
 
@@ -280,8 +275,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-jettext(pls)
-PLStream *pls;
+jettext (PLStream *pls)
 {
 }
 
@@ -292,8 +286,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-jetgraph(pls)
-PLStream *pls;
+jetgraph (PLStream *pls)
 {
 }
 
@@ -304,8 +297,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-jetwidth(pls)
-PLStream *pls;
+jetwidth (PLStream *pls)
 {
 }
 
@@ -316,10 +308,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-jetesc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+jetesc (PLStream *pls, PLINT op, char *ptr)
 {
 }
 
@@ -329,9 +318,8 @@ char *ptr;
 * Sets a bit in the bitmap.
 \*----------------------------------------------------------------------*/
 
-static void
-setpoint(x, y)
-PLINT x, y;
+static void 
+setpoint (PLINT x, PLINT y)
 {
     PLINT index;
     index = x / 8 + y * BPROW;

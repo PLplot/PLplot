@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/07/31 06:06:48  mjl
-   Swapped background/foreground colors for monochrome X output.
+   Revision 1.3  1992/09/29 04:44:52  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.2  1992/07/31  06:06:48  mjl
+ * Swapped background/foreground colors for monochrome X output.
+ *
  * Revision 1.1  1992/05/20  21:32:46  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -31,18 +34,18 @@
 
 /* Function prototypes */
 
-static void	begplt		PLARGS((PLStream *));
-static void 	xwesc_rgb	PLARGS((char *));
-static void 	xwesc_ancol	PLARGS((char *));
-static void	setcol		PLARGS((long));
-static void	outplt		PLARGS((void));
-static void	endplt		PLARGS((void));
-static void	erase		PLARGS((void));
-static void	getkey		PLARGS((int *));
-static int 	getwcur		PLARGS((float *, float *));
-static int	AreWeMonochrome PLARGS((Display *));
-static void	color_def 	PLARGS((int, char *));
-static int	alloc_named_color PLARGS((XColor *, char *));
+static void	begplt		(PLStream *);
+static void 	xwesc_rgb	(char *);
+static void 	xwesc_ancol	(char *);
+static void	setcol		(long);
+static void	outplt		(void);
+static void	endplt		(void);
+static void	erase		(void);
+static void	getkey		(int *);
+static int 	getwcur		(float *, float *);
+static int	AreWeMonochrome (Display *);
+static void	color_def 	(int, char *);
+static int	alloc_named_color (XColor *, char *);
 
 /* top level declarations */
 
@@ -86,8 +89,7 @@ static int swap_background = 0;
 \*----------------------------------------------------------------------*/
 
 void 
-xw_init(pls)
-PLStream *pls;
+xw_init (PLStream *pls)
 {
     int hxa, hya;
 
@@ -127,9 +129,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xw_line(pls, x1a, y1a, x2a, y2a)
-PLStream *pls;
-PLINT x1a, y1a, x2a, y2a;
+xw_line (PLStream *pls, PLINT x1a, PLINT y1a, PLINT x2a, PLINT y2a)
 {
     int x1, y1, x2, y2;
 
@@ -157,8 +157,7 @@ PLINT x1a, y1a, x2a, y2a;
 \*----------------------------------------------------------------------*/
 
 void 
-xw_clear(pls)
-PLStream *pls;
+xw_clear (PLStream *pls)
 {
     int intrpt, but;
     float x, y;
@@ -179,8 +178,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xw_page(pls)
-PLStream *pls;
+xw_page (PLStream *pls)
 {
     pls->page++;
 }
@@ -192,8 +190,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xw_adv(pls)
-PLStream *pls;
+xw_adv (PLStream *pls)
 {
     xw_clear(pls);
     xw_page(pls);
@@ -206,8 +203,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xw_tidy(pls)
-PLStream *pls;
+xw_tidy (PLStream *pls)
 {
     int intrpt, but;
     float x, y;
@@ -232,8 +228,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xw_color(pls)
-PLStream *pls;
+xw_color (PLStream *pls)
 {
     id = devtable[pls->ipls][pls->ipld];
     xwd = &(xwdev[id]);
@@ -248,8 +243,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xw_text(pls)
-PLStream *pls;
+xw_text (PLStream *pls)
 {
 }
 
@@ -260,8 +254,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xw_graph(pls)
-PLStream *pls;
+xw_graph (PLStream *pls)
 {
 }
 
@@ -271,9 +264,8 @@ PLStream *pls;
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
-void
-xw_width (pls)
-PLStream *pls;
+void 
+xw_width (PLStream *pls)
 {
 }
 
@@ -284,10 +276,7 @@ PLStream *pls;
 \*----------------------------------------------------------------------*/
 
 void 
-xw_esc(pls, op, ptr)
-PLStream *pls;
-PLINT op;
-char *ptr;
+xw_esc (PLStream *pls, PLINT op, char *ptr)
 {
     id = devtable[pls->ipls][pls->ipld];
     xwd = &(xwdev[id]);
@@ -307,9 +296,8 @@ char *ptr;
 * Main initialization routine.
 \*----------------------------------------------------------------------*/
 
-static void
-begplt(pls)
-PLStream *pls;
+static void 
+begplt (PLStream *pls)
 {
     Window root;
     int x, y;
@@ -444,10 +432,8 @@ PLStream *pls;
 * Color allocation routines.
 \*----------------------------------------------------------------------*/
 
-static void
-color_def(icolor, name)
-int icolor;
-char *name;
+static void 
+color_def (int icolor, char *name)
 {
     if (alloc_named_color(xwd->colors+icolor, name)) {
 	if (icolor == 15 || icolor == 16) {
@@ -458,9 +444,7 @@ char *name;
 }
 
 static int
-alloc_named_color(color, name)
-XColor *color;
-char *name;
+alloc_named_color( XColor *color, char *name)
 {
     XColor xcolor;
 
@@ -478,8 +462,7 @@ char *name;
 \*----------------------------------------------------------------------*/
 
 static void 
-xwesc_ancol(ptr)
-char *ptr;
+xwesc_ancol (char *ptr)
 {
     int icolor;
     char *name;
@@ -504,8 +487,7 @@ char *ptr;
 \*----------------------------------------------------------------------*/
 
 static void 
-xwesc_rgb(ptr)
-char *ptr;
+xwesc_rgb (char *ptr)
 {
     XColor color;
     pleRGB *cols = (pleRGB *) ptr;
@@ -523,9 +505,8 @@ char *ptr;
 * Set color.
 \*----------------------------------------------------------------------*/
 
-static void
-setcol(icol)
-long icol;
+static void 
+setcol (long icol)
 {
     XColor curcolor;
 
@@ -596,14 +577,14 @@ long icol;
 * Misc. support routines.
 \*----------------------------------------------------------------------*/
 
-static void
-outplt()
+static void 
+outplt (void)
 {
     XFlush(xwd->mydisplay);
 }
 
-static void
-endplt()
+static void 
+endplt (void)
 {
     int intrpt;
     int ncb;
@@ -614,8 +595,8 @@ endplt()
     XCloseDisplay(xwd->mydisplay);
 }
 
-static void
-erase()
+static void 
+erase (void)
 {
     int intrpt;
     intrpt = 0;
@@ -624,9 +605,8 @@ erase()
     return;
 }
 
-static void
-getkey(intrpt)
-int *intrpt;
+static void 
+getkey (int *intrpt)
 {
     int ic;
     ic = getchar();
@@ -637,8 +617,7 @@ int *intrpt;
 }
 
 static int 
-getwcur(x, y)
-float *x, *y;
+getwcur (float *x, float *y)
 {
     int nbut;
     while (1) {
@@ -657,8 +636,7 @@ float *x, *y;
 /* gmf 11-8-91; Courtesy of Paul Martz of Evans & Sutherland. */
 
 static int
-AreWeMonochrome (display)
-Display     *display;
+AreWeMonochrome ( Display     *display )
 {
     XVisualInfo *visuals;
     int nitems, i;

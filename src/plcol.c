@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:18  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:49  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:18  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plcol.c
@@ -15,8 +18,7 @@
 /* Sets line color */
 
 void 
-c_plcol(color)
-PLINT color;
+c_plcol(PLINT color)
 {
     PLINT level;
 
@@ -32,14 +34,8 @@ PLINT color;
 
 /*  Set line color by red, green blue from  0. to 1. */
 
-#ifdef PLSTDC
 void 
 c_plrgb(PLFLT red, PLFLT green, PLFLT blue)
-#else
-void 
-c_plrgb(red, green, blue)
-PLFLT red, green, blue;
-#endif
 {
     pleRGB cols;
     char *ptr = (char *) &cols;
@@ -59,9 +55,7 @@ PLFLT red, green, blue;
 /* Allocate given named color and associated number for use with plcol(). */
 
 void 
-c_plancol(icolor, name)
-PLINT icolor;
-char *name;
+c_plancol( PLINT icolor, char *name )
 {
     pleNcol col;
     char *ptr = (char *) &col;
@@ -80,8 +74,7 @@ char *name;
 /* auxiliary function used by hlsrgb */
 
 static float 
-value(n1, n2, hue)
-float n1, n2, hue;
+value (double n1, double n2, double hue)
 {
     float val;
 
@@ -111,14 +104,8 @@ float n1, n2, hue;
 *	saturation	[0., 1.]	magnitude
 */
 
-#ifdef PLSTDC
 void 
 c_plhls(PLFLT hue, PLFLT lightness, PLFLT saturation)
-#else
-void 
-c_plhls(hue, lightness, saturation)
-PLFLT hue, lightness, saturation;
-#endif
 {
     float m1, m2;
     PLFLT red, green, blue;

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:08  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:39  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:08  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	genlin.c
@@ -18,8 +21,7 @@ static PLINT lastx = -100000, lasty = -100000;
 static void plupd();
 
 void 
-genlin(x1, y1, x2, y2)
-PLINT x1, y1, x2, y2;
+genlin (PLINT x1, PLINT y1, PLINT x2, PLINT y2)
 {
     PLINT nx, ny;
     PLINT *mark, *space, *nms;
@@ -113,8 +115,7 @@ PLINT x1, y1, x2, y2;
 /* Updates line style variables, called whenever alarm goes off */
 
 static void 
-plupd(nms,mark,space,curel,pendn,timecnt,alarm)
-PLINT nms, *mark, *space, *curel, *pendn, *timecnt, *alarm;
+plupd (PLINT nms, PLINT *mark, PLINT *space, PLINT *curel, PLINT *pendn, PLINT *timecnt, PLINT *alarm)
 {
     while ( *timecnt >= *alarm ) {
 	if (*pendn != 0) {

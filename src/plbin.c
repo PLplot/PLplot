@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:13  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:44  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:34:13  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plbin.c
@@ -23,10 +26,7 @@
 \*----------------------------------------------------------------------*/
 
 void 
-c_plbin(nbin, x, y, center)
-PLINT nbin;
-PLINT center;
-PLFLT *x, *y;
+c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT center )
 {
     PLINT i;
     PLFLT xmin, xmax, vpwxmi, vpwxma, vpwymi, vpwyma;

@@ -1,9 +1,12 @@
 /* Demonstration program for PLPLOT illustrating absolute positioning */
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:32:58  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/09/29 04:45:18  furnish
+   Massive clean up effort to remove support for garbage compilers (K&R).
 
+ * Revision 1.1  1992/05/20  21:32:58  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /* of graphs on a page */
@@ -12,7 +15,8 @@
 
 #include "plplot.h"
 
-main()
+int 
+main (void)
 {
     plstar(1, 1);
 
