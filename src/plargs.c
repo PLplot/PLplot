@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1994/01/25 06:38:26  mjl
+ * Revision 1.18  1994/02/01 22:47:49  mjl
+ * Added -user <user> flag, for specifying user when invoking plserver
+ * remotely (via remsh).
+ *
+ * Revision 1.17  1994/01/25  06:38:26  mjl
  * -db option (double buffering) added, for use with any of the X-based
  * drivers.  This holds the window fixed while drawing only into the pixmap,
  * until the end of page is seen.  Then the contents of the pixmap are
@@ -205,6 +209,7 @@ static int opt_bufmax		(char *, char *, void *);
 static int opt_server_name	(char *, char *, void *);
 static int opt_server_host	(char *, char *, void *);
 static int opt_server_port	(char *, char *, void *);
+static int opt_user		(char *, char *, void *);
 
 /* Global variables */
 
@@ -467,25 +472,33 @@ static PLOptionTable ploption_table[] = {
     opt_server_name,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-server_name name",
-    "Main window name of plplot server" },
+    "Main window name of plplot server (tk driver)" },
 {
     "server_host",			/* Host to run server on */
     opt_server_host,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-server_host name",
-    "Host to run plplot server on" },
+    "Host to run plplot server on (dp driver)" },
 {
     "server_port",			/* Port to talk to server on */
     opt_server_port,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-server_port name",
-    "Port to talk to plplot server on" },
+    "Port to talk to plplot server on (dp driver)" },
+{
+    "user",				/* user name on remote node */
+    opt_user,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-user name",
+    "User name on remote node (dp driver)" },
 {
     "plserver",			/* plplot server name */
     opt_plserver,
@@ -493,7 +506,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-plserver name",
-    "Invoked name of plplot server" },
+    "Invoked name of plplot server (tk or dp driver)" },
 {
     "plwindow",			/* plplot container window name */
     opt_plwindow,
@@ -501,7 +514,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-plwindow name",
-    "Name of plplot container window" },
+    "Name of plplot container window (tk or dp driver)" },
 {
     "tcl_cmd",			/* TCL initialization command */
     opt_tcl_cmd,
@@ -509,7 +522,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-tcl_cmd command",
-    "TCL command string run at startup" },
+    "TCL command string run at startup (note: disabled)" },
 {
     "auto_path",		/* Additional directory(s) to autoload */
     opt_auto_path,
@@ -517,7 +530,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-auto_path dir",
-    "Additional directory(s) to autoload" },
+    "Additional directory(s) to autoload (tk or dp driver)" },
 {
     NULL,			/* option */
     NULL,			/* handler */
@@ -1436,6 +1449,25 @@ opt_server_port(char *opt, char *optarg, void *client_data)
 
     plgpls(&pls);
     pls->server_port = optarg;
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* opt_user()
+*
+* Performs appropriate action for option "user".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_user(char *opt, char *optarg, void *client_data)
+{
+    PLStream *pls;
+
+/* User name on remote node (for remsh), dp driver only */
+
+    plgpls(&pls);
+    pls->user = optarg;
 
     return 0;
 }
