@@ -4831,14 +4831,14 @@ source
 
   <sect1 id="plmeshc" renderas="sect3">
     <title>
-      <function>plmesh</function>: Magnitude colored plot surface mesh with contour.
+      <function>plmeshc</function>: Magnitude colored plot surface mesh with contour.
     </title>
 
     <para>
       <funcsynopsis>
       <funcprototype>
 	<funcdef>
-	  <function>plmesh</function>
+	  <function>plmeshc</function>
 	</funcdef>
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
