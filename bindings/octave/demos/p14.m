@@ -13,16 +13,18 @@
 ## This file is part of plplot_octave.
 
 
-function p14
+function p14(fg)
 
   ## And now, in the Theatre near you, "Octave, the movie"
-  ##
-  ## For a smoother effect the "double buffer" option in 'pldef'
-  ##  must be set
+
+	if (!nargin)
+  plsetopt "db";
+  fig( free_fig); #  unused plot window
+	endif
 
   title("Octave, the movie");
-  ylabel "Use double buffer";
-  xlabel "in pldef.m";
+  ylabel "";
+  xlabel "";
   
   l = 2;
   x = y = linspace(-l, l, 30);
@@ -31,12 +33,20 @@ function p14
   r = yy .* exp(-(xx.^2 .+ yy.^2));
   
   axis([-l l -l l -0.5 0.5]);
-  
-  for k = linspace(0, 4*pi, 60)
+
+  for k = linspace(0, 4*pi, 30)
     mesh(x, y, sin(k).*r);
   endfor
 
-  axis;
+  plcolormap(gray);
+  for k = linspace(0, 4*pi, 30)
+    surfl(x, y, sin(k).*r);
+  endfor
+
+	if (!nargin)
+  closefig; # the "db" option has negatice side effects on other plots.
+  plsetopt "reset"; # reset options
+	endif
 
 endfunction
 
