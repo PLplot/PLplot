@@ -4,8 +4,9 @@
 #
 #	Histogram demo.
 
+from Numeric import *
 import math
-import pl
+#import pl
 import sys
 
 NPTS = 2047
@@ -14,29 +15,31 @@ NPTS = 2047
 #
 # Draws a histogram from sample data.
 
-def main():
+def main(w):
 
-	# Parse and process command line arguments
+##    # Parse and process command line arguments
+##
+##    pl.ParseOpts(sys.argv, pl.PARSE_FULL)
+##
+##    # Initialize plplot
+##
+##    pl.init()
 
-	pl.ParseOpts(sys.argv, pl.PARSE_FULL)
+    # Fill up data points
 
-	# Initialize plplot
+    delta = 2.0 * math.pi / NPTS
+    data = zeros(NPTS,'d')
+##    data = []
+    for i in range(NPTS):
+	data[i] = math.sin(i * delta)
 
-	pl.init()
+    w.plcol(1)
+    w.plhist(data, -1.1, 1.1, 44, 0)
+    w.plcol(2)
+    w.pllab("#frValue", "#frFrequency",
+	   "#frPLplot Example 5 - Probability function of Oscillator")
 
-	# Fill up data points
-
-	delta = 2.0 * math.pi / NPTS
-	data = []
-	for i in range(NPTS):
-		data.append(math.sin(i * delta))
-
-	pl.col(1)
-	pl.hist(data, -1.1, 1.1, 44, 0)
-	pl.col(2)
-	pl.lab("#frValue", "#frFrequency",
-	       "#frPLplot Example 5 - Probability function of Oscillator")
-
-	pl.end()
-
-main()
+    w.pleop()
+##    pl.end()
+##
+##main()

@@ -12,45 +12,45 @@ import sys
 # Does a simple bar chart, using color fill.  If color fill is
 # unavailable, pattern fill is used instead (automatic).
 
-def main():
+def main(w):
 
-	# Parse and process command line arguments
+##    # Parse and process command line arguments
+##
+##    pl.ParseOpts(sys.argv, pl.PARSE_FULL)
+##
+##    # Initialize plplot
+##
+##    pl.init()
 
-	pl.ParseOpts(sys.argv, pl.PARSE_FULL)
+    w.pladv(0)
+    w.plvsta()
+    w.plwind(1980.0, 1990.0, 0.0, 35.0)
+    w.plbox("bc", 1.0, 0, "bcnv", 10.0, 0)
+    w.plcol(2)
+    w.pllab("Year", "Widget Sales (millions)", "#frPLplot Example 12")
 
-	# Initialize plplot
+    y0 = [5, 15, 12, 24, 28, 30, 20, 8, 12, 3]
 
-	pl.init()
+    for i in range(10):
+	w.plcol(i + 1)
+	w.plpsty(0)
+	fbox( w, (1980. + i), y0[i] )
+	string = `y0[i]`
+	w.plptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, string)
+	string = `1980 + i`
+	w.plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string)
 
-	pl.adv(0)
-	pl.vsta()
-	pl.wind(1980.0, 1990.0, 0.0, 35.0)
-	pl.box("bc", 1.0, 0, "bcnv", 10.0, 0)
-	pl.col(2)
-	pl.lab("Year", "Widget Sales (millions)", "#frPLplot Example 12")
+    # Don't forget to call PLEND to finish off!
 
-	y0 = [5, 15, 12, 24, 28, 30, 20, 8, 12, 3]
+    w.pleop()
 
-	for i in range(10):
-		pl.col(i + 1)
-		pl.psty(0)
-		fbox((1980. + i), y0[i])
-		string = `y0[i]`
-		pl.ptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, string)
-		string = `1980 + i`
-		pl.mtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string)
-
-	# Don't forget to call PLEND to finish off!
-
-	pl.end()
-
-def fbox(x0, y0):
+def fbox( w, x0, y0 ):
 
     x = [x0, x0, x0 + 1., x0 + 1.]
     y = [0., y0, y0, 0.]
-    pl.fill(x, y)
-    pl.col(1)
-    pl.lsty(1)
-    pl.line(x, y)
+    w.plfill(x, y)
+    w.plcol(1)
+    w.pllsty(1)
+    w.plline(x, y)
 
-main()
+##main()

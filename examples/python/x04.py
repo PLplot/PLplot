@@ -4,61 +4,67 @@
 #
 #	Log plot demo.
 
+from Numeric import *
 import math
-import pl
+#import pl
 import sys
 
 # main
 # 
 # Illustration of logarithmic axes, and redefinition of window.
 
-def main():
+def main(w):
 
-	# Parse and process command line arguments
+##    # Parse and process command line arguments
+##
+##    pl.ParseOpts(sys.argv, pl.PARSE_FULL)
+##
+##    # Initialize plplot
+##
+##    pl.init()
 
-    	pl.ParseOpts(sys.argv, pl.PARSE_FULL)
+    w.pladv(0)
+    w.plfont(2)
 
-	# Initialize plplot
+    f0 = 1000.0
+    freql = zeros(101,'d'); ampl = zeros(101,'d'); phase=zeros(101,'d')
+##    freql = []
+##    ampl = []
+##    phase = []
+    for i in range(101):
+##	freql.append(1.0 + i / 20.0)
+	freql[i] = 1.0 + i / 20.0
+##	freq = pow(10.0, freql[i])
+	freq = pow( 10.0, freql[i] )
+##	ampl.append(
+##	    20.0 * math.log10(1.0 / math.sqrt(1.0 + pow((freq / f0), 2.)))
+##	    )
+	ampl[i] = 20.0 * math.log10(1.0 / math.sqrt(1.0 + pow((freq / f0), 2.)))
+##	phase.append(-(180.0 / math.pi) * math.atan(freq / f0))
+	phase[i] = -(180.0 / math.pi) * math.atan(freq / f0)
 
-	pl.init()
+    w.plvpor(0.15, 0.85, 0.1, 0.9)
+    w.plwind(1.0, 6.0, -80.0, 0.0)
+    w.plcol(1)
+    w.plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0)
+    w.plcol(2)
+    w.plline(freql, ampl)
+    w.plcol(1)
+    w.plptex(5.0, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade")
 
-	pl.adv(0)
-	pl.font(2)
+    w.plwind(1.0, 6.0, -100.0, 0.0)
+    w.plbox("", 0.0, 0, "cmstv", 30.0, 3)
+    w.plcol(3)
+    w.plline(freql, phase)
 
-	f0 = 1000.0
-	freql = []
-	ampl = []
-	phase = []
-	for i in range(101):
-		freql.append(1.0 + i / 20.0)
-		freq = pow(10.0, freql[i])
-		ampl.append(
-		20.0 * math.log10(1.0 / math.sqrt(1.0 + pow((freq / f0), 2.)))
-		)
-		phase.append(-(180.0 / math.pi) * math.atan(freq / f0))
+    w.plcol(1)
+    w.plmtex("b", 3.2, 0.5, 0.5, "Frequency")
+    w.plmtex("t", 2.0, 0.5, 0.5, "Single Pole Low-Pass Filter")
+    w.plcol(2)
+    w.plmtex("l", 5.0, 0.5, 0.5, "Amplitude (dB)")
+    w.plcol(3)
+    w.plmtex("r", 5.0, 0.5, 0.5, "Phase shift (degrees)")
 
-	pl.vpor(0.15, 0.85, 0.1, 0.9)
-	pl.wind(1.0, 6.0, -80.0, 0.0)
-	pl.col(1)
-	pl.box("bclnst", 0.0, 0, "bnstv", 0.0, 0)
-	pl.col(2)
-	pl.line(freql, ampl)
-	pl.col(1)
-	pl.ptex(5.0, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade")
+    w.pleop()
 
-	pl.wind(1.0, 6.0, -100.0, 0.0)
-	pl.box("", 0.0, 0, "cmstv", 30.0, 3)
-	pl.col(3)
-	pl.line(freql, phase)
-
-	pl.col(1)
-	pl.mtex("b", 3.2, 0.5, 0.5, "Frequency")
-	pl.mtex("t", 2.0, 0.5, 0.5, "Single Pole Low-Pass Filter")
-	pl.col(2)
-	pl.mtex("l", 5.0, 0.5, 0.5, "Amplitude (dB)")
-	pl.col(3)
-	pl.mtex("r", 5.0, 0.5, 0.5, "Phase shift (degrees)")
-
-	pl.end()
-
-main()
+##main()

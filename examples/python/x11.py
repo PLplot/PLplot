@@ -4,8 +4,9 @@
 #
 #	Mesh plot demo.
 
+from Numeric import *
 import math
-import pl
+#import pl
 import sys
 
 XPTS = 35		# Data points in x
@@ -27,52 +28,57 @@ title = ["#frPLplot Example 11 - Alt=60, Az=30, Opt=1",
 # Does a series of mesh plots for a given data set, with different
 # viewing options in each plot.
 
-def main():
+def main(w):
 
-	# Parse and process command line arguments
+##    # Parse and process command line arguments
+##
+##    pl.ParseOpts(sys.argv, pl.PARSE_FULL)
+##
+##    # Initialize plplot
+##
+##    pl.init()
 
-	pl.ParseOpts(sys.argv, pl.PARSE_FULL)
+    x = zeros(XPTS,'d'); y = zeros(YPTS,'d')
+    #z = zeros(XPTS,YPTS)
+    z = reshape( zeros( XPTS*YPTS, 'd' ), (XPTS, YPTS) )
+##    x = []
+##    y = []
+##    z = []
 
-	# Initialize plplot
+    for i in range(XPTS):
+	x[i] = float(i - (XPTS / 2)) / float(XPTS / 2)
 
-	pl.init()
+    for i in range(YPTS):
+	y[i] = float(i - (YPTS / 2)) / float(YPTS / 2)
 
-	x = []
-	y = []
-	z = []
+    for i in range(XPTS):
+	xx = x[i]
+	zz = []
+	for j in range(YPTS):
+	    yy = y[j]
+##	    zz.append(math.cos(2.0 * math.pi * xx) *
+##		      math.sin(2.0 * math.pi * yy))
+##	z.append(zz)
+	    z[i,j] = math.cos(2.0 * math.pi * xx) * \
+		     math.sin(2.0 * math.pi * yy)
 
-	for i in range(XPTS):
-		x.append(float(i - (XPTS / 2)) / float(XPTS / 2))
+    for k in range(4):
+	w.pladv(0)
+	w.plcol(1)
+	w.plvpor(0.0, 1.0, 0.0, 0.8)
+	w.plwind(-1.0, 1.0, -1.0, 1.5)
 
-	for i in range(YPTS):
-		y.append(float(i - (YPTS / 2)) / float(YPTS / 2))
+	w.plw3d(1.0, 1.0, 1.2, -1.0, 1.0, -1.0, 1.0, -1.5, 1.5,
+	       alt[k], az[k])
+	w.plbox3("bnstu", "x axis", 0.0, 0,
+		"bnstu", "y axis", 0.0, 0,
+		"bcdmnstuv", "z axis", 0.0, 4)
 
-	for i in range(XPTS):
-		xx = x[i]
-		zz = []
-		for j in range(YPTS):
-			yy = y[j]
-			zz.append(math.cos(2.0 * math.pi * xx) *
-				  math.sin(2.0 * math.pi * yy))
-		z.append(zz)
+	w.plcol(2)
+	w.plmesh(x, y, z, opt[k])
+	w.plcol(3)
+	w.plmtex("t", 1.0, 0.5, 0.5, title[k])
 
-	for k in range(4):
-		pl.adv(0)
-		pl.col(1)
-		pl.vpor(0.0, 1.0, 0.0, 0.8)
-		pl.wind(-1.0, 1.0, -1.0, 1.5)
+	w.pleop()
 
-		pl.w3d(1.0, 1.0, 1.2, -1.0, 1.0, -1.0, 1.0, -1.5, 1.5,
-		       alt[k], az[k])
-		pl.box3("bnstu", "x axis", 0.0, 0,
-			"bnstu", "y axis", 0.0, 0,
-			"bcdmnstuv", "z axis", 0.0, 4)
-
-		pl.col(2)
-		pl.mesh(x, y, z, opt[k])
-		pl.col(3)
-		pl.mtex("t", 1.0, 0.5, 0.5, title[k])
-
-	pl.end()
-
-main()
+##main()
