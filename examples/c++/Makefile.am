@@ -80,6 +80,13 @@ check_PROGRAMS = \
 	x21 \
 	x22
 
+check_DATA = lena.pgm
+
+lena.pgm:
+	rm -f lena.pgm
+	$(LN_S) ../c/lena.pgm lena.pgm
+
+
 x01cc_SOURCES = x01cc.cc
 x01_SOURCES = x01.cc
 x02_SOURCES = x02.cc
@@ -118,4 +125,5 @@ if enable_cxx
 endif
 
 EXTRA_DIST = $(sources) Makefile.examples.in README.c++demos
+CLEANFILES = lena.pgm
 DISTCLEANFILES = Makefile.examples
