@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.2  1993/07/16 22:04:02  mjl
+# Revision 1.3  1993/07/31 08:05:05  mjl
+# Added support procs used in plplot/TK style text windows.
+#
+# Revision 1.2  1993/07/16  22:04:02  mjl
 # Added several utility procs, mostly for getting info or confirmation from
 # the user.
 #
@@ -14,7 +17,7 @@
 # 1-Jul-1993
 # IFS, University of Texas at Austin
 #
-# Includes some code borrowed from the TCL/TK widget demo.
+# Includes code borrowed from the TCL/TK widget demo.
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
@@ -57,6 +60,117 @@ proc bogon_alert {msg} {
 
 proc dpos w {
     wm geometry $w +300+300
+}
+
+#----------------------------------------------------------------------------
+# normal_text_setup
+#
+# Sets up text widgets the way I like them.
+#----------------------------------------------------------------------------
+
+proc normal_text_setup {w {width 60} {height 30}} {
+    button $w.ok -text OK -command "destroy $w"
+    text $w.t -relief raised -bd 2 -yscrollcommand "$w.s set" -setgrid true \
+	    -width $width -height $height
+    scrollbar $w.s -relief flat -command "text_scroll $w.t"
+    pack append $w $w.ok {bottom fillx} $w.s {right filly} $w.t {expand fill}
+    focus $w.t
+
+# Set up display styles
+
+    $w.t tag configure normal -font -Adobe-Times-Medium-R-Normal--*-180-*
+    $w.t tag configure bold -font -Adobe-Times-Bold-R-Normal-*-180-*
+    $w.t tag configure big -font -Adobe-Times-Bold-R-Normal-*-240-*
+
+    if {[tk colormodel $w] == "color"} {
+	$w.t tag configure color1 -background #eed5b7
+	$w.t tag configure color2 -foreground red
+	$w.t tag configure raised -background #eed5b7 -relief raised \
+		-borderwidth 1
+	$w.t tag configure sunken -background #eed5b7 -relief sunken \
+		-borderwidth 1
+    } else {
+	$w.t tag configure color1 -background black -foreground white
+	$w.t tag configure color2 -background black -foreground white
+	$w.t tag configure raised -background white -relief raised \
+		-borderwidth 1
+	$w.t tag configure sunken -background white -relief sunken \
+		-borderwidth 1
+    }
+    $w.t tag configure bgstipple -background black -borderwidth 0 \
+	    -bgstipple gray25
+    $w.t tag configure fgstipple -fgstipple gray50
+    $w.t tag configure underline -underline on
+
+# Set up bindings to be as useful as possible.
+
+    bind $w <Any-Enter> "focus $w.t"
+
+    bind $w.t <Return>	  "destroy $w"
+
+    bind $w.t <Down>	  "text_scroll_by_line $w.t  1"
+    bind $w.t <Up>	  "text_scroll_by_line $w.t -1"
+
+    bind $w.t <Next>	  "text_scroll_by_page $w.t  1"
+    bind $w.t <space>	  "text_scroll_by_page $w.t  1"
+
+    bind $w.t <Prior>	  "text_scroll_by_page $w.t -1"
+    bind $w.t <BackSpace> "text_scroll_by_page $w.t -1"
+    bind $w.t <Delete>	  "text_scroll_by_page $w.t -1"
+}
+
+#----------------------------------------------------------------------------
+# text_scroll
+#
+# Scrolls text widget vertically, updating various things
+#----------------------------------------------------------------------------
+
+proc text_scroll {w line} {
+    $w yview $line
+    $w mark set insert [$w index @0,0]
+}
+
+#----------------------------------------------------------------------------
+# text_scroll_by_line
+#
+# Scrolls text widget vertically by the given number of lines.
+#----------------------------------------------------------------------------
+
+proc text_scroll_by_line {w delta} {
+    text_scroll $w [$w index "@0,0 + $delta lines"]
+}
+
+#----------------------------------------------------------------------------
+# text_scroll_by_page
+#
+# Scrolls text widget vertically by the given number of pages (almost).
+#----------------------------------------------------------------------------
+
+proc text_scroll_by_page {w delta} {
+    set height [lindex [$w config -height] 4]
+    set delta [expr $delta*($height-2)]
+    text_scroll $w [$w index "@0,0 + $delta lines"]
+}
+
+#----------------------------------------------------------------------------
+# The procedure below inserts text into a given text widget and
+# applies one or more tags to that text.  The arguments are:
+#
+# w		Window in which to insert
+# text		Text to insert (it's inserted at the "insert" mark)
+# args		One or more tags to apply to text.  If this is empty
+#		then all tags are removed from the text.
+#----------------------------------------------------------------------------
+
+proc insertWithTags {w text args} {
+    set start [$w index insert]
+    $w insert insert $text
+    foreach tag [$w tag names $start] {
+	$w tag remove $tag $start insert
+    }
+    foreach i $args {
+	$w tag add $i $start insert
+    }
 }
 
 #----------------------------------------------------------------------------
