@@ -23,26 +23,26 @@
 if enable_dyndrivers
 
 EXTRA_LTLIBRARIES = \
-	cgm_drv.la \
-	dg300_drv.la \
-	gd_drv.la \
-	gnome_drv.la \
-	hpgl_drv.la \
-	impress_drv.la \
-	linuxvga_drv.la \
-	ljii_drv.la \
-	ljiip_drv.la \
-	ntk_drv.la \
-	null_drv.la \
-	pbm_drv.la \
-	plmeta_drv.la \
-	ps_drv.la \
-	pstex_drv.la \
-	tek_drv.la \
-	tk_drv.la \
-	tkwin_drv.la \
-	xfig_drv.la \
-	xwin_drv.la
+	cgm.la \
+	dg300.la \
+	gd.la \
+	gnome.la \
+	hpgl.la \
+	impress.la \
+	linuxvga.la \
+	ljii.la \
+	ljiip.la \
+	ntk.la \
+	null.la \
+	pbm.la \
+	plmeta.la \
+	ps.la \
+	pstex.la \
+	tek.la \
+	tk.la \
+	tkwin.la \
+	xfig.la \
+	xwin.la
 
 driversdir = ${prefix}/@DATA_DIR@/@DRV_DIR@
 drivers_LTLIBRARIES = @DYNAMIC_DRIVERS@
@@ -58,33 +58,33 @@ endif
 
 # All -I preprocessor flags apparently must be lumped together for all source
 # in this directory.  Some day when automake grows up, convert these
-# to xwin_drv_la_AM_CPPFLAGS, etc.  For now, use individual CFLAGS instead
+# to xwin_la_AM_CPPFLAGS, etc.  For now, use individual CFLAGS instead
 # which strictly speaking is a misuse since CFLAGS are supposed to be
 # processor options, not preprocessor.
 
-cgm_drv_la_CFLAGS = @CDINCCMD@
-gd_drv_la_CFLAGS = @GDINCCMD@
-gnome_drv_la_CFLAGS = @GTK_CFLAGS@ @GNOME_INCLUDEDIR@
-ntk_drv_la_CFLAGS = \
+cgm_la_CFLAGS = @CDINCCMD@
+gd_la_CFLAGS = @GDINCCMD@
+gnome_la_CFLAGS = @GTK_CFLAGS@ @GNOME_INCLUDEDIR@
+ntk_la_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-tk_drv_la_CFLAGS = \
+tk_la_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-tkwin_drv_la_CFLAGS = \
+tkwin_la_CFLAGS = \
 	-I../bindings/tcl \
 	-I../bindings/tk \
 	-I../bindings//tk-x-plat \
 	@TCLINCCMD@ \
 	@TKINCCMD@
 
-xwin_drv_la_CFLAGS = @X_CFLAGS@
+xwin_la_CFLAGS = @X_CFLAGS@
 
 # Set overall preprocessor options
 AM_CPPFLAGS = @INCLTDL@
@@ -95,93 +95,93 @@ ldflags = -rpath $(driversdir) -no-undefined -module -avoid-version
 # The LDFLAGS variables have been set very carefully for each driver
 # to insure all their undefined symbols are resolved by the link step
 
-cgm_drv_la_SOURCES = cgm.c
-cgm_drv_la_LDFLAGS = $(ldflags) $(libplplot) @CDLIBCMD@
+cgm_la_SOURCES = cgm.c
+cgm_la_LDFLAGS = $(ldflags) $(libplplot) @CDLIBCMD@
 
-dg300_drv_la_SOURCES = dg300.c
-dg300_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+dg300_la_SOURCES = dg300.c
+dg300_la_LDFLAGS = $(ldflags) $(libplplot)
 
-gd_drv_la_SOURCES = gd.c
-gd_drv_la_LDFLAGS = $(ldflags) $(libplplot) @GDLIBCMD@
+gd_la_SOURCES = gd.c
+gd_la_LDFLAGS = $(ldflags) $(libplplot) @GDLIBCMD@
 
 if enable_gnome
 lmflag = -lm
-gnome_drv_la_SOURCES = gnome.c
-gnome_drv_la_LDFLAGS = $(ldflags) $(libplplot) @GNOMELIBS@ $(lmflag)
+gnome_la_SOURCES = gnome.c
+gnome_la_LDFLAGS = $(ldflags) $(libplplot) @GNOMELIBS@ $(lmflag)
 endif
 
-hpgl_drv_la_SOURCES = hpgl.c
-hpgl_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+hpgl_la_SOURCES = hpgl.c
+hpgl_la_LDFLAGS = $(ldflags) $(libplplot)
 
-impress_drv_la_SOURCES = impress.c
-impress_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+impress_la_SOURCES = impress.c
+impress_la_LDFLAGS = $(ldflags) $(libplplot)
 
-linuxvga_drv_la_SOURCES = linuxvga.c
-linuxvga_drv_la_LDFLAGS = $(ldflags) $(libplplot) @LINUXVGALIBS@
+linuxvga_la_SOURCES = linuxvga.c
+linuxvga_la_LDFLAGS = $(ldflags) $(libplplot) @LINUXVGALIBS@
 
 if enable_ljii
 lmflag = -lm
-ljii_drv_la_SOURCES = ljii.c
-ljii_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+ljii_la_SOURCES = ljii.c
+ljii_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 endif
 
 if enable_ljiip
 lmflag = -lm
-ljiip_drv_la_SOURCES = ljiip.c
-ljiip_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+ljiip_la_SOURCES = ljiip.c
+ljiip_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 endif
 
-ntk_drv_la_SOURCES = ntk.c
-ntk_drv_la_LDFLAGS = $(ldflags) $(libplplot) @TCLLIBCMD@ @TKLIBCMD@
+ntk_la_SOURCES = ntk.c
+ntk_la_LDFLAGS = $(ldflags) $(libplplot) @TCLLIBCMD@ @TKLIBCMD@
 
-null_drv_la_SOURCES = null.c
-null_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+null_la_SOURCES = null.c
+null_la_LDFLAGS = $(ldflags) $(libplplot)
 
 if enable_pbm
 lmflag = -lm
-pbm_drv_la_SOURCES = pbm.c
-pbm_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+pbm_la_SOURCES = pbm.c
+pbm_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 endif
 
-plmeta_drv_la_SOURCES = plmeta.c
-plmeta_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+plmeta_la_SOURCES = plmeta.c
+plmeta_la_LDFLAGS = $(ldflags) $(libplplot)
 
 if enable_ps
 lmflag = -lm
-ps_drv_la_SOURCES = ps.c pstex.c
-ps_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+ps_la_SOURCES = ps.c pstex.c
+ps_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 endif
 
 if enable_pstex
 lmflag = -lm
-pstex_drv_la_SOURCES = ps.c pstex.c
-pstex_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+pstex_la_SOURCES = ps.c pstex.c
+pstex_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 endif
 
-tek_drv_la_SOURCES = tek.c
-tek_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+tek_la_SOURCES = tek.c
+tek_la_LDFLAGS = $(ldflags) $(libplplot)
 
-tk_drv_la_SOURCES = tk.c
-tk_drv_la_LDFLAGS = $(ldflags) $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
+tk_la_SOURCES = tk.c
+tk_la_LDFLAGS = $(ldflags) $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
 
-tkwin_drv_la_SOURCES = \
+tkwin_la_SOURCES = \
 	tkwin.c \
 	../bindings/tk-x-plat/Plplotter_Init.c \
 	../bindings/tk-x-plat/plplotter.c
 
-tkwin_drv_la_LDFLAGS = $(ldflags) $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
+tkwin_la_LDFLAGS = $(ldflags) $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
 
 if enable_xfig
 lmflag = -lm
-xfig_drv_la_SOURCES = xfig.c
-xfig_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+xfig_la_SOURCES = xfig.c
+xfig_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 endif
 
 if enable_xwin
 xflags = @X_LIBS@ -lX11
 lmflag = -lm
-xwin_drv_la_SOURCES = xwin.c
-xwin_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(xflags) $(lmflag)
+xwin_la_SOURCES = xwin.c
+xwin_la_LDFLAGS = $(ldflags) $(libplplot) $(xflags) $(lmflag)
 endif
 
 # end of enable_dyndrivers
@@ -388,6 +388,7 @@ if enable_dyndrivers
 	rm -f $(driversdir)/*.a
 endif
 
-
 CLEANFILES = plapi.tpl tclcmd.tpl tclgen.h tclgen_s.h tclgen.c 
 DISTCLEANFILES = $(drivers_DATA)
+
+
