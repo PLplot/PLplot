@@ -2,8 +2,10 @@
 
 	* Support for examples/c examples/c++ and examples/f77 on AT
 	  branch.
-	* Makefile.examples using plplot_libtool
 	* Adopt Maurice's idea of initializing libltdl in pllib_init().
+	* Makefile.examples using plplot_libtool, c works
+	* c++ works (required a fix to linking of libplcxx consistent
+	  with hierarchical linking model.)
 
 2002-11-25  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 

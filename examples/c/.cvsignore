@@ -6,4 +6,3 @@ Makefile.examples
 .libs
 *.la
 *.lo
-*.f

@@ -12,3 +12,4 @@ aclocal.m4
 libtool
 *.tar.gz
 libltdl
+plplot_libtool
