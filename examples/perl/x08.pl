@@ -32,7 +32,7 @@ use Getopt::Long;
 use constant XPTS => 35;    # Data points in x
 use constant YPTS => 46;    # Data points in y
 
-use constant LEVELS => 10; 
+use constant LEVELS => 10;
 
 @alt = (60.0, 20.0);
 @az = (30.0, 60.0);
@@ -81,7 +81,7 @@ GetOptions ("sombrero" => \$sombrero);
 my $nlevel = LEVELS;
 my $rosen = 1;
 
-$rosen = 0 
+$rosen = 0
   if $sombrero;
 
 # Initialize plplot
