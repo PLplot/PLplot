@@ -15,5 +15,6 @@ cd ..
 # Store files, leaving out contents of certain directories as well as all
 # CVS-related junk.
 
-zip ${zipfile} plplot/lib/*.fnt plplot/tmp/.dummy plplot/private/.dummy
-zip -ru ${zipfile} plplot/* -x plplot/tmp plplot/lib plplot/private "*/CVS/*" "*~"
+zip ${zipfile} ${pldir}/lib/*.fnt ${pldir}/tmp/.dummy ${pldir}/private/.dummy
+zip -ru ${zipfile} ${pldir}/* \
+	-x ${pldir}/tmp ${pldir}/lib ${pldir}/private "*/CVS/*" "*~"
