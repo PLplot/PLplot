@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/09/30 18:25:01  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.5  1992/10/22 16:07:10  gray
+   added crude support to have mouse button 2 return cursor postition to
+   stdout
 
+ * Revision 1.4  1992/09/30  18:25:01  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.3  1992/09/29  04:44:52  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -171,7 +175,7 @@ xw_clear (PLStream *pls)
 
     outplt();
     if (!pls->nopause)
-	but = getwcur(&x, &y);
+    	but = getwcur(&x, &y);
     erase();
 }
 
@@ -629,10 +633,11 @@ getwcur (float *x, float *y)
 	if (myevent.type != ButtonPress)
 	    continue;
 	nbut = myevent.xbutton.button;
-	if (nbut == 2)
-	    nbut = 3;
-	else if (nbut == 3)
-	    nbut = 2;
+	if (nbut == 2) {
+	    printf("%d\t%d\n", myevent.xbutton.x, 
+	                       myevent.xbutton.y);
+	    continue;
+	} 
 	return (nbut);
     }
 }
