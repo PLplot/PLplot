@@ -17,7 +17,9 @@
 
   + Write lacking typemaps.
 
-* Makefile.PL.in: Add installation support from MakeMaker.
+* Makefile.PL.in: Add installation support from MakeMaker.  (See
+  http://people.debian.org/~bod/perl-policy/ch-module_packages.html for
+  hints.) 
 
 * Integration into PLplot configuration scheme in two steps:
 
