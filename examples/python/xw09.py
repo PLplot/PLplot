@@ -105,8 +105,8 @@ def potential():
 
     zmin = min(zg.flat)
     zmax = max(zg.flat)
-    print q1, d1, q1i, d1i, q2, d2, q2i, d2i
-    print xmin, xmax, ymin, ymax, zmin, zmax
+    #print q1, d1, q1i, d1i, q2, d2, q2i, d2i
+    #print xmin, xmax, ymin, ymax, zmin, zmax
 
     # Positive and negative contour levels.
     nlevel = 20
