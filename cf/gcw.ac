@@ -95,6 +95,9 @@ if test "$enable_gcw" = "yes"; then
     dnl Test for pygtk required by gcw/plplotcanvas
     PKG_CHECK_MODULES(PYGCW,pygtk-2.0,, enable_pygcw=no )
 
+    dnl Test for gnome-python required by gcw/plplotcanvas
+    PKG_CHECK_MODULES(GNOME_PYTHON, gnome-python-2.0, [], enable_pygcw=no)
+
     if test "$enable_pygcw" = "no"; then
 
       AC_MSG_WARN([required libraries not found via pkg-config;])
