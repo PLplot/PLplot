@@ -20,11 +20,11 @@ proc x11 {{w loopback}} {
     matrix z f $xpts $ypts
 
     for {set i 0} {$i < $xpts} {incr i} {
-	x $i = [expr ($i - ($xpts/2.)) / ($xpts/2.) ]
+	x $i = [expr ($i - ($xpts/2)) / double($xpts/2) ]
     }
 
     for {set i 0} {$i < $ypts} {incr i} {
-	y $i = [expr ($i - ($ypts/2.)) / ($ypts/2.) ]
+	y $i = [expr ($i - ($ypts/2)) / double($ypts/2) ]
     }
 
     for {set i 0} {$i < $xpts} {incr i} {
@@ -54,8 +54,10 @@ proc x11 {{w loopback}} {
 
 	$w cmd plcol0 3
 
-	set title [format "#frPLplot Example 11.%d - Alt=%f, Az=%f, Opt=%d" \
-		       $k [alt $k] [az $k] [opt $k] ]
+	set title [format "#frPLplot Example 11 - Alt=%.0f, Az=%.0f, Opt=%d" \
+		       [alt $k] [az $k] [opt $k] ]
 	$w cmd plmtex "t" 1.0 0.5 0.5 $title
     }
+# Restore defaults
+    $w cmd plcol0 1
 }

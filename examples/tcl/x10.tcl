@@ -4,9 +4,6 @@
 
 proc x10 {{w loopback}} {
   $w cmd pladv 0
-# use color index 1 in cmap0.  Should be red unless cmap0 has been
-# fiddled with by another tcl example.
-  $w cmd plcol0 1
   $w cmd plvpor 0.0 1.0 0.0 1.0
   $w cmd plwind 0.0 1.0 0.0 1.0
   $w cmd plbox bc 0.0 0 bc 0.0 0
@@ -14,4 +11,6 @@ proc x10 {{w loopback}} {
   $w cmd plwind 0.0 1.0 0.0 1.0
   $w cmd plbox bc 0.0 0 bc 0.0 0
   $w cmd plptex 0.5 0.5 1.0 0.0 0.5 "BOX at (50,150,50,100)"
+# Restore defaults
+  $w cmd plcol0 1
 }
