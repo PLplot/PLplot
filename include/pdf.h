@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:33  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1993/01/23 05:31:46  mjl
+   Added prototypes for functions that support polyline read/writes.
 
+ * Revision 1.3  1992/09/30  18:25:33  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:30  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -34,8 +37,6 @@
 #ifndef INCLUDED_PDF
 #define INCLUDED_PDF
 
-/*#include "chdr.h"*/
-
 /* Error numbers */
 
 #define PDF_ERROR		1	/* Unknown error	*/
@@ -58,12 +59,15 @@ int  pdf_wrint 		(INT ius, FLOAT *f, INT len, INT nbits);
 int  pdf_rdint 		(INT ius, FLOAT *f, INT len, INT *pnbits);
 void pdf_set		(char *option, int value);
 */
+
 int  read_header	(FILE *file, char *header);
 int  write_header	(FILE *file, char *header);
 int  write_1byte	(FILE *file, U_CHAR s);
 int  read_1byte		(FILE *file, U_CHAR *ps);
 int  write_2bytes	(FILE *file, U_SHORT s);
 int  read_2bytes 	(FILE *file, U_SHORT *ps);
+int  write_2nbytes	(FILE *file, U_SHORT *s, PLINT n);
+int  read_2nbytes 	(FILE *file, U_SHORT *s, PLINT n);
 int  write_4bytes	(FILE *file, U_LONG s);
 int  read_4bytes 	(FILE *file, U_LONG *ps);
 int  write_ieeef	(FILE *file, float f);
