@@ -165,7 +165,7 @@ incredibly easy it is to use the PLplot Tcl language binding.
 <para>
 In order to accommodate the ubiquitous requirement for matrix oriented
 data in scientific applications, and in the PLplot API in particular,
-PLPlot 5.0 includes a Tcl extension for manipulating matrices in Tcl.
+PLplot 5.0 includes a Tcl extension for manipulating matrices in Tcl.
 This Tcl Matrix Extension provides a straightforward and direct means
 of representing one and two dimensional matrices in Tcl.  The Tcl
 Matrix Extension is described in detail in the next section, but we
