@@ -86,7 +86,9 @@ function ret = plsetopt(option, value)
   endif
 
   if (!exist("__pl") || !struct_contains (__pl,"inited"))
-    __pl_init;
+    ## __pl_init; this doesn't make sense,
+    ## as some options must be set before plinit()
+    plplot_stub;
   endif
 
   nr = rows(options);
