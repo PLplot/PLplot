@@ -1063,5 +1063,8 @@ links:
 
 if_unix({
 clean:
-	-rm $(CDEMOS) $(FDEMOS) *.plm* *.tek*
+	-rm $(CDEMOS) $(FDEMOS) *.plm* *.tek* *.ps
+
+realclean:
+	-rm $(CDEMOS) $(FDEMOS) *.o *.c *.h *.f *.plm* *.tek* *.ps makefile
 })
