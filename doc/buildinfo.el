@@ -4,7 +4,8 @@
 
 ;;; LaTeXinfo
 (setq latexinfo-formats-directory
-      (expand-file-name (getenv "LATEXINFO")))
+       (expand-file-name (getenv "LATEXINFO"))
+       )
 
 (setq load-path 
       (cons
@@ -23,8 +24,7 @@
 	  "Create nodes structure for a LaTeXinfo file." t)
 
 
-
-
+(load-file "plplot-fmt.el")
 (find-file "plplot.tex")
 (latexinfo-format-buffer t)
 (save-some-buffers t)
