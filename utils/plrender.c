@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/02/26 04:20:14  mjl
-   Made minor change to fix prototype warning.
+   Revision 1.12  1993/02/26 05:21:35  mjl
+   Changed to a fatal error when unrecognized metafile input is encountered.
 
+ * Revision 1.11  1993/02/26  04:20:14  mjl
+ * Made minor change to fix prototype warning.
+ *
  * Revision 1.10  1993/02/25  19:53:14  mjl
  * Fixed -v (version) option.
  *
@@ -404,7 +407,7 @@ process_next(U_CHAR c)
 	break;
 
       default:
-	plwarn("process_next: Unrecognized command\n");
+	plexit("process_next: Unrecognized command\n");
     }
 }
 
