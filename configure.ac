@@ -965,7 +965,7 @@ AC_DEFINE_UNQUOTED(DATA_DIR, "`eval eval echo $DATA_DIR`",
                    [Location of package data files])
 AC_DEFINE_UNQUOTED(DRV_DIR, "`eval eval echo $DRV_DIR`",
                    [Location of dynamically loaded drivers])
-AC_DEFINE_UNQUOTED(BIN_DIR, "$BIN_DIR",
+AC_DEFINE_UNQUOTED(BIN_DIR, "`eval eval echo $BIN_DIR`",
                    [Location of executables])
 AC_DEFINE_UNQUOTED(TCL_DIR, "`eval eval echo $TCL_DIR`",
                    [Location of Tcl stuff])
