@@ -12,6 +12,14 @@ To run tcldemos.tcl, follow the directions in that file.  It will exercise
 all the x??.tcl demos.  A few of those return the message that they have
 not been implemented, but the rest should work smoothly without problems.
 
+N.B. It has recently come to our attention that there is cross-talk between
+the various demos.  For example, the 4 plots per page set in example 1 will
+persist in example 8 if 8 is run right after 1.  The ultimate solution
+for this is to set everything back to default for all demos before they
+finish, but this has not happened yet.  Meanwhile, if the demos are run
+in the exact order (with nothing missing) 1,2,3,...18, there should be
+no problems.
+
 To run the plot.tcl demo follow the directions in that file.
 
 To run the plgrid.tcl demo follow the directions in that file to run it
