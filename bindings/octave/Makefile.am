@@ -106,7 +106,6 @@ if has_xml_pm
 	&& touch doc-stamp
 else
 	@echo "Perl modules not available: cannot generate plplot_octave_txt/*.txt"
-	@false
 endif
 
 plplot_stub.m: doc-stamp tmp_stub massage
