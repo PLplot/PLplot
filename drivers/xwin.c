@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.69  1996/10/31 05:08:04  furnish
+ * Revision 1.70  1998/01/06 23:44:33  furnish
+ * Fix some stupid little comment syntax nit to shut up SGI cc.
+ *
+ * Revision 1.69  1996/10/31  05:08:04  furnish
  * Hack in support for using read only shared color cells when the visual
  * does not support read write private color cells.  Also, switch
  * DEVAULT_VISUAL to 0, so that we have a chance of locating a
@@ -2142,7 +2145,7 @@ GetVisual(PLStream *pls)
 	xwd->rw_cmap = 1;
     }
     
-/*xwd->rw_cmap = 0; /* debugging hack. */
+/*xwd->rw_cmap = 0;*/ /* debugging hack. */
 
 /* Just for kicks, see what kind of visual we got. */
 
