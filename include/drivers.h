@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1995/05/26 20:20:11  mjl
+ * Revision 1.24  1996/10/08 18:37:46  furnish
+ * First cut on a new driver for portable bitmaps.
+ *
+ * Revision 1.23  1995/05/26  20:20:11  mjl
  * Changed plstream.h -> plstrm.h everywhere.
  *
  * Revision 1.22  1995/04/11  09:40:25  mjl
@@ -242,6 +245,15 @@ void plD_bop_aegis		(PLStream *);
 void plD_tidy_aegis		(PLStream *);
 void plD_state_aegis		(PLStream *, PLINT);
 void plD_esc_aegis		(PLStream *, PLINT, void *);
+
+void plD_init_pbm		(PLStream *);
+void plD_line_pbm		(PLStream *, short, short, short, short);
+void plD_polyline_pbm		(PLStream *, short *, short *, PLINT);
+void plD_eop_pbm		(PLStream *);
+void plD_bop_pbm		(PLStream *);
+void plD_tidy_pbm		(PLStream *);
+void plD_state_pbm		(PLStream *, PLINT);
+void plD_esc_pbm		(PLStream *, PLINT, void *);
 
 void plD_init_null		(PLStream *);
 void plD_line_null		(PLStream *, short, short, short, short);

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1996/02/24 05:09:50  shouman
+ * Revision 1.30  1996/10/08 18:37:47  furnish
+ * First cut on a new driver for portable bitmaps.
+ *
+ * Revision 1.29  1996/02/24  05:09:50  shouman
  * Added declaration for plgdevlst(), now called by both plgFileDevs() and
  * plgDevs().
  *
@@ -734,6 +737,22 @@ static PLDispatchTable dispatch_table[] = {
 	plD_tidy_imp,
 	plD_state_imp,
 	plD_esc_imp
+    },
+#endif
+
+#ifdef PLD_pbm
+    {
+	"PDB (PPM) Driver",
+	"pbm",
+	0,
+	plD_init_pbm,
+	plD_line_pbm,
+	plD_polyline_pbm,
+	plD_eop_pbm,
+	plD_bop_pbm,
+	plD_tidy_pbm,
+	plD_state_pbm,
+	plD_esc_pbm
     },
 #endif
 
