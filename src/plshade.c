@@ -1,6 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1993/12/09 20:36:52  mjl
+ * Revision 1.7  1994/03/23 08:29:58  mjl
+ * Functions from plctest.c moved to this file for clarity and simplicity.
+ * Main shade function now accepts a function evaluator and data much like
+ * the contour functions.  Front-ends exist (plshade1(), plshade2()) to call
+ * it in a simpler fashion, using predefined memory organizations for the
+ * array.  Also, main shade function now accepts two arguments for handling
+ * color of the shaded region -- the color map (0 or 1) and the index
+ * (a float; >1 and integral for cmap0, in range [0,1] for cmap1).
+ *
+ * Revision 1.6  1993/12/09  20:36:52  mjl
  * Fixed some function prototypes.
  *
  * Revision 1.5  1993/10/21  19:28:52  mjl
@@ -11,16 +20,6 @@
  * most (all that I know of) PLPLOT functions.  This works b/c String has
  * an implicit conversion to const char *.  Now that PLPLOT routines take
  * const char * rather than char *, use from C++ is much easier.
- *
- * Revision 1.3  1993/08/31  17:58:06  mjl
- * More cleaning up, merged documentation file into source file.
- *
- * Revision 1.2  1993/08/09  22:18:57  mjl
- * Miscellaneous cleaning up.
- *
- * Revision 1.1  1993/07/16  22:38:12  mjl
- * These include functions to shade between contour levels (currently using
- * a pattern fill).  Contributed by Wesley Ebisuzaki.
 */
 
 /*	plshade.c
@@ -33,11 +32,12 @@
 /*----------------------------------------------------------------------*\
 * Call syntax for plshade():
 * 
-* void plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined, PLFLT left, 
-* 	PLFLT right, PLFLT bottom, PLFLT top, void (*mapform)(), 
+* void plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined, 
+*	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, 
 * 	PLFLT shade_min, PLFLT shade_max, 
 * 	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
-* 	PLINT max_color, PLINT max_width, void (*fill)(), PLINT rectangular)
+* 	PLINT max_color, PLINT max_width, void (*fill)(), PLINT
+* 	rectangular, ...)
 * 
 * arguments:
 * 
@@ -57,10 +57,10 @@
 * can be NULL if all the values are valid.  Must have been declared as char
 * defined[nx][ny].
 * 
-* 	PLFLT left, right, bottom, top
+* 	PLFLT xmin, xmax, ymin, ymax
 * 
 * Defines the "grid" coordinates.  The data a[0][0] has a position of
-* (left,bottom).
+* (xmin,ymin).
 * 
 * 	void (*mapform)()
 * 
@@ -73,9 +73,9 @@
 * Defines the interval to be shaded. If shade_max <= shade_min, plshade does
 * nothing.
 * 
-* 	PLINT sh_color, sh_width
+*	PLINT sh_cmap, PLFLT sh_color, PLINT sh_width
 * 
-* Defines pen color, width used by the fill pattern.
+* Defines color map, color map index, and width used by the fill pattern.
 * 
 * 	PLINT min_color, min_width, max_color, max_width
 * 
@@ -127,8 +127,6 @@
 \*----------------------------------------------------------------------*/
 
 #include "plplotP.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 #include <float.h>
 
@@ -139,91 +137,230 @@
 
 #define linear(val1, val2, level)  ((level - val1) / (val2 - val1))
 
+/* Global variables */
+
 static PLFLT sh_max, sh_min;
 static int min_points, max_points, n_point;
 static int min_pts[4], max_pts[4];
-static PLINT pen_col_sh, pen_col_min, pen_col_max;
-static PLINT pen_wd_sh, pen_wd_min, pen_wd_max;
+static PLINT pen_col_min, pen_col_max;
+static PLINT pen_wd_min, pen_wd_max;
 
 /* Function prototypes */
 
-static void set_cond	  (register int *, register PLFLT *,
-			   register const char *, register PLINT);
-static int  find_interval (PLFLT, PLFLT, PLINT, PLINT, PLFLT *);
-static void poly	  (void (*) (PLINT, PLFLT *, PLFLT *),
-			   PLFLT *, PLFLT *, PLINT, PLINT, PLINT, PLINT);
-static void big_recl	  (int *, register int, int, int, int *, int *);
-static void draw_boundary (PLINT, PLFLT *, PLFLT *);
+static void 
+set_cond(register int *cond, register PLFLT *a,
+	 register const char *defined, register PLINT n);
+
+static int 
+find_interval(PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x);
+
+static void 
+poly(void (*fill) (PLINT, PLFLT *, PLFLT *),
+     PLFLT *x, PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4);
+
+static void 
+big_recl(int *cond_code, register int ny, int dx, int dy,
+	 int *ix, int *iy);
+
+static void 
+draw_boundary(PLINT slope, PLFLT *x, PLFLT *y);
+
+static PLINT 
+plctest(PLFLT *x, PLFLT level);
+
+static PLINT 
+plctestez(PLFLT *a, PLINT nx, PLINT ny, PLINT ix,
+	  PLINT iy, PLFLT level);
 
 /*----------------------------------------------------------------------*\
 * plshade()
 *
 * Shade region.
+* This interface to plfshade() assumes the 2d function array is passed
+* via a (PLFLT **), and is column-dominant (normal C ordering).
 \*----------------------------------------------------------------------*/
 
 void 
-plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined, PLFLT left,
-	PLFLT right, PLFLT bottom, PLFLT top,
-	void (*mapform) (PLINT, PLFLT *, PLFLT *),
-	PLFLT shade_min, PLFLT shade_max,
-	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
-	PLINT max_color, PLINT max_width,
-	void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular)
+c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	  PLFLT shade_min, PLFLT shade_max,
+	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+	  PLINT min_color, PLINT min_width,
+	  PLINT max_color, PLINT max_width,
+	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	  PLPointer pltr_data)
 {
+    PLfGrid2 grid;
 
-    PLINT n, slope, ix, iy;
-    int nx1, ny1, count, i, j;
-    PLFLT *a0, *a1, dx, dy, b;
-    PLFLT x[8], y[8], xp[2];
+    grid.f = a;
+    grid.nx = nx;
+    grid.ny = ny;
+
+    plfshade(plf2eval2, (PLPointer) &grid,
+	     NULL, NULL,
+/*	     plc2eval, (PLPointer) &cgrid,*/
+	     nx, ny, xmin, xmax, ymin, ymax, shade_min, shade_max,
+	     sh_cmap, sh_color, sh_width,
+	     min_color, min_width, max_color, max_width,
+	     fill, rectangular, pltr, pltr_data);
+}
+
+/*----------------------------------------------------------------------*\
+* plshade1()
+*
+* Shade region.
+* This interface to plfshade() assumes the 2d function array is passed
+* via a (PLFLT *), and is column-dominant (normal C ordering).
+\*----------------------------------------------------------------------*/
+
+void 
+plshade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	 PLFLT shade_min, PLFLT shade_max,
+	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+	 PLINT min_color, PLINT min_width,
+	 PLINT max_color, PLINT max_width,
+	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	 PLPointer pltr_data)
+{
+    PLfGrid grid;
+
+    grid.f = a;
+    grid.nx = nx;
+    grid.ny = ny;
+
+    plfshade(plf2eval, (PLPointer) &grid,
+	     NULL, NULL,
+/*	     plc2eval, (PLPointer) &cgrid,*/
+	     nx, ny, xmin, xmax, ymin, ymax, shade_min, shade_max,
+	     sh_cmap, sh_color, sh_width,
+	     min_color, min_width, max_color, max_width,
+	     fill, rectangular, pltr, pltr_data);
+}
+
+/*----------------------------------------------------------------------*\
+* plfshade()
+*
+* Shade region.  
+* Array values are determined by the input function and the passed data.
+\*----------------------------------------------------------------------*/
+
+void 
+plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
+	 PLPointer f2eval_data,
+	 PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
+	 PLPointer c2eval_data,
+	 PLINT nx, PLINT ny, 
+	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	 PLFLT shade_min, PLFLT shade_max,
+	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+	 PLINT min_color, PLINT min_width,
+	 PLINT max_color, PLINT max_width,
+	 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	 PLPointer pltr_data)
+{
+    PLINT level, init_width, n, slope, ix, iy;
+    int count, i, j;
+    PLFLT *a, *a0, *a1, dx, dy, b;
+    PLFLT x[8], y[8], xp[2], tx, ty;
 
     int *c, *c0, *c1;
 
-    if (nx <= 0 || ny <= 0)
-	plexit("plshade: illegal args");
-    if (shade_min >= shade_max)
+    plP_glev(&level);
+    if (level < 3) {
+	plabort("plfshade: window must be set up first");
 	return;
-    if (mapform == NULL)
+    }
+
+    if (nx <= 0 || ny <= 0) {
+	plabort("plfshade: nx and ny must be positive");
+	return;
+    }
+
+    if (shade_min >= shade_max) {
+	plabort("plfshade: shade_max must exceed shade_min");
+	return;
+    }
+
+    if (pltr == NULL)
 	rectangular = 1;
-    pen_col_sh = sh_color;
+
+    plP_gwid(&init_width);
+
     pen_col_min = min_color;
     pen_col_max = max_color;
-    pen_wd_sh = sh_width;
+
     pen_wd_min = min_width;
     pen_wd_max = max_width;
 
     plstyl((PLINT) 0, NULL, NULL);
-    plcol(pen_col_sh);
-    plwid(pen_wd_sh);
+    plwid(sh_width);
+
+    switch (sh_cmap) {
+    case 0:
+	plcol0((PLINT) sh_color);
+	break;
+    case 1:
+	plcol1(sh_color);
+	break;
+    default:
+	plabort("plfshade: invalid color map selection");
+	return;
+    }
+
+    /* alloc space for value array, and initialize */
+    /* This is only a temporary kludge */
+
+    if ((a = (PLFLT *) malloc(nx * ny * sizeof(PLFLT))) == NULL) {
+	plabort("plfshade: unable to allocate memory for value array");
+	return;
+    }
+
+    for (ix = 0; ix < nx; ix++) 
+	for (iy = 0; iy < ny; iy++) 
+	    a[iy + ix*ny] = f2eval(ix, iy, f2eval_data);
 
     /* alloc space for condition codes */
-    if ((c = (int *) malloc(nx * ny * sizeof(int))) == NULL)
-	plexit("ran out of memory");
+
+    if ((c = (int *) malloc(nx * ny * sizeof(int))) == NULL) {
+	plabort("plfshade: unable to allocate memory for condition codes");
+	free(a);
+	return;
+    }
+
     sh_min = shade_min;
     sh_max = shade_max;
 
-    set_cond(c, a, defined, nx * ny);
+    /* Ignore defined array for now */
 
-    ny1 = ny - 1;
-    nx1 = nx - 1;
-    dx = (right - left) / (nx - 1);
-    dy = (top - bottom) / (ny - 1);
+    set_cond(c, a, NULL, nx * ny);
+
+    dx = (xmax - xmin) / (nx - 1);
+    dy = (ymax - ymin) / (ny - 1);
     a0 = a;
     a1 = a + ny;
     c0 = c;
     c1 = c + ny;
 
-    for (ix = 0; ix < nx1; ix++, a0 = a1, a1 += ny,
-	 c0 = c1, c1 += ny, left += dx) {
+    for (ix = 0; ix < nx - 1; ix++) {
 
-	for (iy = 0; iy < ny1; iy++) {
+	for (iy = 0; iy < ny - 1; iy++) {
+
 	    count = c0[iy] + c0[iy + 1] + c1[iy] + c1[iy + 1];
+
+	    /* No filling needs to be done for these cases */
+
 	    if (count >= UNDEF)
 		continue;
 	    if (count == 4 * POS)
 		continue;
 	    if (count == 4 * NEG)
 		continue;
-	    b = bottom + iy * dy;
+
+	    /* Entire rectangle can be filled */
 
 	    if (count == 4 * OK) {
 		/* find bigest rectangle that fits */
@@ -233,49 +370,76 @@ plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined, PLFLT left,
 		else {
 		    i = j = 1;
 		}
-		x[0] = x[1] = left;
-		x[2] = x[3] = left + i * dx;
-		y[0] = y[3] = b;
-		y[1] = y[2] = b + j * dy;
-		if (mapform)
-		    (*mapform) ((PLINT) 4, x, y);
+		x[0] = x[1] = ix;
+		x[2] = x[3] = ix+i;
+		y[0] = y[3] = iy;
+		y[1] = y[2] = iy+j;
+
+		if (pltr) {
+		    for (i = 0; i < 4; i++) {
+			(*pltr) (x[i], y[i], &tx, &ty, pltr_data);
+			x[i] = tx;
+			y[i] = ty;
+		    }
+		}
+		else {
+		    for (i = 0; i < 4; i++) {
+			x[i] = xmin + x[i]*dx;
+			y[i] = ymin + y[i]*dy;
+		    }
+		}
 		if (fill)
 		    (*fill) ((PLINT) 4, x, y);
 		iy += j - 1;
 		continue;
 	    }
+
+	    /* Only part of rectangle can be filled */
+
 	    n_point = min_points = max_points = 0;
 	    n = find_interval(a0[iy], a0[iy + 1], c0[iy], c0[iy + 1], xp);
 	    for (j = 0; j < n; j++) {
-		x[j] = left;
-		y[j] = b + dy * xp[j];
+		x[j] = ix;
+		y[j] = iy + xp[j];
 	    }
 
 	    i = find_interval(a0[iy + 1], a1[iy + 1],
 			      c0[iy + 1], c1[iy + 1], xp);
 
 	    for (j = 0; j < i; j++) {
-		x[j + n] = left + dx * xp[j];
-		y[j + n] = b + dy;
+		x[j + n] = ix + xp[j];
+		y[j + n] = iy + 1;
 	    }
 	    n += i;
 
 	    i = find_interval(a1[iy + 1], a1[iy], c1[iy + 1], c1[iy], xp);
 	    for (j = 0; j < i; j++) {
-		x[n + j] = left + dx;
-		y[n + j] = b + dy * (1.0 - xp[j]);
+		x[n + j] = ix + 1;
+		y[n + j] = iy + 1 - xp[j];
 	    }
 	    n += i;
 
 	    i = find_interval(a1[iy], a0[iy], c1[iy], c0[iy], xp);
 	    for (j = 0; j < i; j++) {
-		x[n + j] = left + dx * (1.0 - xp[j]);
-		y[n + j] = b;
+		x[n + j] = ix + 1 - xp[j];
+		y[n + j] = iy;
 	    }
 	    n += i;
 
-	    if (mapform)
-		(*mapform) (n, x, y);
+	    if (pltr) {
+		for (i = 0; i < n; i++) {
+		    (*pltr) (x[i], y[i], &tx, &ty, pltr_data);
+		    x[i] = tx;
+		    y[i] = ty;
+		}
+	    }
+	    else {
+		for (i = 0; i < n; i++) {
+		    x[i] = xmin + x[i]*dx;
+		    y[i] = ymin + y[i]*dy;
+		}
+	    }
+
 	    if (min_points == 4)
 		slope = plctestez(a, nx, ny, ix, iy, shade_min);
 	    if (max_points == 4)
@@ -294,7 +458,7 @@ plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined, PLFLT left,
 	      case 040:	/* 2 contour lines in box */
 	      case 004:
 		if (n != 6)
-		    fprintf(stderr, "plshade err n=%d !6", n);
+		    fprintf(stderr, "plfshade err n=%d !6", n);
 
 		if (slope == 1 && c0[iy] == OK) {
 		    if (fill)
@@ -315,7 +479,7 @@ plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined, PLFLT left,
 		break;
 	      case 044:
 		if (n != 8)
-		    fprintf(stderr, "plshade err n=%d !8", n);
+		    fprintf(stderr, "plfshade err n=%d !8", n);
 		if (fill == NULL)
 		    break;
 		if (slope == 1) {
@@ -361,14 +525,33 @@ plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined, PLFLT left,
 		break;
 	    }
 	    draw_boundary(slope, x, y);
+
+	    plwid(sh_width);
+	    switch (sh_cmap) {
+	    case 0:
+		plcol0((PLINT) sh_color);
+		break;
+	    case 1:
+		plcol1(sh_color);
+		break;
+	    }
 	}
+
+	a0 = a1;
+	c0 = c1;
+	a1 += ny;
+	c1 += ny;
     }
+
     free(c);
+    free(a);
+    plwid(init_width);
 }
 
 /*----------------------------------------------------------------------*\
 * set_cond()
 *
+* Fills out condition code array.
 \*----------------------------------------------------------------------*/
 
 static void 
@@ -592,7 +775,7 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
     int i;
 
     if (pen_col_min != 0 && pen_wd_min != 0 && min_points != 0) {
-	plcol(pen_col_min);
+	plcol0(pen_col_min);
 	plwid(pen_wd_min);
 	if (min_points == 4 && slope == 0) {
 	    /* swap points 1 and 3 */
@@ -607,7 +790,7 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
 	}
     }
     if (pen_col_max != 0 && pen_wd_max != 0 && max_points != 0) {
-	plcol(pen_col_max);
+	plcol0(pen_col_max);
 	plwid(pen_wd_max);
 	if (max_points == 4 && slope == 0) {
 	    /* swap points 1 and 3 */
@@ -621,6 +804,116 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
 		   y[max_pts[3]]);
 	}
     }
-    plcol(pen_col_sh);
-    plwid(pen_wd_sh);
+}
+
+/*----------------------------------------------------------------------*\
+*
+* plctest( &(x[0][0]), PLFLT level)
+* where x was defined as PLFLT x[4][4];
+*
+* determines if the contours associated with level have
+* postive slope or negative slope in the box:
+*
+*  (2,3)   (3,3)
+*
+*  (2,2)   (3,2)
+*
+* this is heuristic and can be changed by the user
+*
+* return 1 if positive slope
+*        0 if negative slope
+*
+* algorithmn:
+*      1st test:
+*	find length of contours assuming positive and negative slopes
+*      if the length of the negative slope contours is much bigger
+*	than the positive slope, then the slope is positive.
+*      (and vice versa)
+*      (this test tries to minimize the length of contours)
+*
+*      2nd test:
+*      if abs((top-right corner) - (bottom left corner)) >
+*	   abs((top-left corner) - (bottom right corner)) ) then
+*		return negatiave slope.
+*      (this test tries to keep the slope for different contour levels
+*	the same)
+\*----------------------------------------------------------------------*/
+
+#define X(a,b) (x[a*4+b])
+#define POSITIVE_SLOPE (PLINT) 1
+#define NEGATIVE_SLOPE (PLINT) 0
+#define RATIO_SQ 6.0
+
+static PLINT 
+plctest(PLFLT *x, PLFLT level)
+{
+    double a, b;
+    double positive, negative, left, right, top, bottom;
+
+    /* find positions of lines */
+    /* top = x coor of top intersection */
+    /* bottom = x coor of bottom intersection */
+    /* left = y coor of left intersection */
+    /* right = y coor of right intersection */
+
+    left = linear(X(1, 1), X(1, 2), level);
+    right = linear(X(2, 1), X(2, 2), level);
+    top = linear(X(1, 2), X(2, 2), level);
+    bottom = linear(X(1, 1), X(2, 1), level);
+
+    /* positive = sq(length of positive contours) */
+    /* negative = sq(length of negative contours) */
+
+    positive = top * top + (1.0 - left) * (1.0 - left) +
+	(1.0 - bottom) * (1.0 - bottom) + right * right;
+
+    negative = left * left + bottom * bottom +
+	(1.0 - top) * (1.0 - top) + (1.0 - right) * (1.0 - right);
+#ifdef DEBUG
+    fprintf(stderr, "ctest pos %f neg %f lev %f\n", positive, negative, level);
+#endif
+    if (RATIO_SQ * positive < negative)
+	return POSITIVE_SLOPE;
+    if (RATIO_SQ * negative < positive)
+	return NEGATIVE_SLOPE;
+
+    a = X(1, 2) - X(2, 1);
+    b = X(1, 1) - X(2, 2);
+#ifdef DEBUG
+    fprintf(stderr, "ctest a %f  b %f\n", a, b);
+#endif
+    if (fabs(a) > fabs(b))
+	return NEGATIVE_SLOPE;
+    return (PLINT) 0;
+}
+
+/*----------------------------------------------------------------------*\
+* plctestez
+*
+* second routine - easier to use
+* fills in x[4][4] and calls plctest
+*
+* test location a[ix][iy] (lower left corner)
+\*----------------------------------------------------------------------*/
+
+static PLINT 
+plctestez(PLFLT *a, PLINT nx, PLINT ny, PLINT ix,
+	  PLINT iy, PLFLT level)
+{
+
+    PLFLT x[4][4];
+    int i, j, ii, jj;
+
+    for (i = 0; i < 4; i++) {
+	ii = ix + i - 1;
+	ii = MAX(0, ii);
+	ii = MIN(ii, nx - 1);
+	for (j = 0; j < 4; j++) {
+	    jj = iy + j - 1;
+	    jj = MAX(0, jj);
+	    jj = MIN(jj, ny - 1);
+	    x[i][j] = a[ii * ny + jj];
+	}
+    }
+    return plctest(&(x[0][0]), level);
 }
