@@ -53,6 +53,11 @@ plD_init_pstex(PLStream *pls)
 \\fi\\endgroup%\n", 
 	  rot_scale, pls->FileName, 72./25.4/pls->xpmm);
 
+  /* prevent long text from flowing outside the figure. Don't work!
+fprintf(fp, "\\special{ps: /x1 100 def /x2 6000 def /y1 100 def /y2 2000 def
+x1 y1 moveto x1 y2 lineto x2 y2 lineto x2 x1 lineto closepath gsave stroke
+grestore gsave clip}"); */
+
   cur_pos = ftell(fp);
   fprintf(fp,"\\begin{picture}(xxxxxx,xxxxxx)(xxxxxx,xxxxxx)%\n");
 }
@@ -155,15 +160,17 @@ proc_str (PLStream *pls, EscText *args)
   fprintf(fp,"\\put(%d,%d){\\circle{10}}\n",
 	  args->x, args->y);
 #endif
-  fprintf(fp,"\\put(%d,%d){\\rotatebox{%.1f}{\\makebox(0,0)[%c%c]{\\SetFigFont{%.1f}{12}",
+  fprintf(fp,"\\put(%d,%d){\\rotatebox{%.1f}{\\makebox(0,0)[%c%c]
+{\\SetFigFont{%.1f}{12}",
 	  args->x, args->y, alpha, jst, ref, ft_ht);
 
   /* font family, serie and shape. Currently not supported by plplot */
-  /* use current font instead
-   o 1: Normal font (simplest and fastest)
+
+  /* Use current font instead:
+   o 1: Normal font (latex document default font)
    o 2: Roman font
-   o 3: Italic font
-   o 4: Script font (use sans serif instead)
+   o 3: Italic font (most probably latex slanted)
+   o 4: Script font (latex sans serif)
   */
 
    switch (pls->cfont) {
@@ -174,13 +181,13 @@ proc_str (PLStream *pls, EscText *args)
    default:fprintf(fp,"{\\familydefault}");
    }
 
-  fprintf(fp,"{\\mddefault}{\\updefault}");
+  fprintf(fp,"{\\mddefault}{\\updefault}\n");
 
   /* font color. */
-  fprintf(fp,"\\special{ps: gsave %.3f %.3f %.3f setrgbcolor}%
+  fprintf(fp,"\\special{ps: %.3f %.3f %.3f setrgbcolor}{
 % Your text follows:
-{%s}%
-\\special{ps: grestore}}}}\n",
+%s
+}}}}",
 	  pls->curcolor.r /255., pls->curcolor.g /255.,
 	  pls->curcolor.b /255., cptr);
 
