@@ -141,7 +141,7 @@ linkmain:
 	copy ..\..\..\..\drivers\*.c .
 #	copy ..\..\..\..\fonts\*.* .
 	copy ..\..\..\..\utils\*.* .
-	copy ..\..\..\..\lib\*.fnt .
+	copy ..\..\..\..\data\*.fnt .
 	copy ..\src\*.* .
 	copy ..\cf\*.h .
 
@@ -171,7 +171,7 @@ movemain:
 	copy ..\..\..\..\include\*.h .
 	move ../../../../drivers/*.c .
 	move ../../../../utils/*.* .
-	copy ..\..\..\..\lib\*.fnt .
+	copy ..\..\..\..\data\*.fnt .
 	move ../src/*.* .
 	copy ..\cf\*.h .
 
