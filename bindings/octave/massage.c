@@ -30,6 +30,7 @@
 #include  <sys/stat.h>
 #include  "errno.h"
 
+int
 main()
 {
   char	*p1, *p2;
@@ -57,7 +58,7 @@ main()
 
   while (! feof(fp)){
     fgets(b, sizeof(b), fp);
-    if (p2 = strchr(b, '(')){		/* function ... = ...( */
+    if ((p2 = strchr(b, '('))){		/* function ... = ...( */
       p1 = p2;
       while(*p1-- != ' ');
       p1 += 2;
@@ -80,11 +81,11 @@ main()
 	  }
 	}
 	if (j == item) {
-	  fprintf(stderr,"not found\n", tok);
+	  fprintf(stderr,"%s not found\n", tok);
 	  printf("%% No online help available. Help me, write and submit the documentation, or at least write a one line descriptive text.\n");
 	  
 	} else
-	  fprintf(stderr,"OK\n", tok);
+	  fprintf(stderr,"%s OK\n", tok);
       } else {
 	printf("%%   Original PLplot call documentation:\n%%\n");
 	fp1 = fopen(b,"r");
