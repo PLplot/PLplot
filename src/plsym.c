@@ -19,7 +19,7 @@ static short int numberfonts, numberchars;
 static short int indxleng;
 
 static short fontloaded = 0;
-static PLINT font = 1;		/* current font */
+/* moved to plstr.h, plsc->cfont */ static PLINT font = 1; /* /* current font */
 
 #define PLMAXSTR	300
 #define STLEN		250
@@ -86,7 +86,7 @@ c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 void
 c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 {
-    PLINT i, sym, ifont = font;
+    PLINT i, sym, ifont = plsc->cfont;
 
     if (plsc->level < 3) {
 	plabort("plpoin: Please set up window first");
@@ -120,7 +120,7 @@ c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 void
 c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 {
-    PLINT i, sym, ifont = font;
+    PLINT i, sym, ifont = plsc->cfont;
     PLFLT u, v;
 
     if (plsc->level < 3) {
@@ -794,7 +794,7 @@ plcvec(PLINT ch, signed char **xygr)
 static void
 pldeco(short int **symbol, PLINT *length, const char *text)
 {
-    PLINT ch, ifont = font, ig, j = 0, lentxt = strlen(text);
+    PLINT ch, ifont = plsc->cfont, ig, j = 0, lentxt = strlen(text);
     char test, esc;
     short int *sym = symbol_buffer;
 
@@ -954,7 +954,7 @@ c_plfont(PLINT ifont)
 	return;
     }
 
-    font = ifont;
+    plsc->cfont = ifont;
 }
 
 /*--------------------------------------------------------------------------*\
