@@ -2392,11 +2392,15 @@ LIB_TAG="$TAG_PREC$TAG_ENABLE"
 
 echo "creating tmp/Makefile.in"
 
-# Add Makefile initialization
+# Makefile initialization
 
 cat cf/init.in		>tmp/Makefile.in 
 
-# Add optional packages
+# Default target, core source and object file lists
+
+cat cf/dist.in		>>tmp/Makefile.in 
+
+# Optional packages
 
 if test "$enable_f77" = "yes"; then
     cat cf/pkg_f77.in	>>tmp/Makefile.in 
@@ -2408,11 +2412,9 @@ if test "$enable_tk" = "yes"; then
     cat cf/pkg_tk.in	>>tmp/Makefile.in 
 fi
 
-# Add source and object file lists
+# Library targets
 
-cat cf/dist.in		>>tmp/Makefile.in 
-
-# Add library targets
+cat cf/initlib.in	>>tmp/Makefile.in
 
 if test "$with_shlib" = "yes" -a "$with_arlib" = "yes"; then
     cat cf/lib_both.in		>>tmp/Makefile.in 
@@ -2424,7 +2426,7 @@ else
     fi
 fi
 
-# Add program and demo file dependencies, targets
+# Program and demo file dependencies, targets
 
 cat cf/exes.in		>>tmp/Makefile.in 
 cat cf/demos.in		>>tmp/Makefile.in 
@@ -2434,9 +2436,22 @@ cat cf/demos.in		>>tmp/Makefile.in
 cat cf/install.in	>>tmp/Makefile.in 
 cat cf/misc.in		>>tmp/Makefile.in 
 
-# Add object file dependencies
+# Object file dependencies
 
 cat cf/objs.in		>>tmp/Makefile.in 
+
+# -----------------------------------------------------------------------
+# Now build Makedemo.in.
+# Makedemo is a stand-alone makefile for the demo programs.
+# Note: it links against the installed PLplot library.
+# -----------------------------------------------------------------------
+
+echo "creating tmp/Makedemo.in"
+
+cat cf/init.in		>tmp/Makedemo.in 
+cat cf/initdemo.in	>>tmp/Makedemo.in 
+cat cf/demos.in		>>tmp/Makedemo.in 
+cat cf/miscdemo.in	>>tmp/Makedemo.in 
 
 # --------------------------------------------------------------------
 # Set up variables governing device driver inclusion.
@@ -3115,7 +3130,7 @@ do
   esac
 done
 
-trap 'rm -fr tmp/Makefile tmp/plConfig.h tmp/plDevs.h conftest*; exit 1' 1 2 15
+trap 'rm -fr tmp/Makefile tmp/Makedemo tmp/plConfig.h tmp/plDevs.h conftest*; exit 1' 1 2 15
 uname_found='$uname_found'
 found_fc='$found_fc'
 found_f77='$found_f77'
@@ -3167,7 +3182,7 @@ cat >> config.status <<\EOF
 
 ac_given_srcdir=$srcdir
 
-CONFIG_FILES=${CONFIG_FILES-"tmp/Makefile"}
+CONFIG_FILES=${CONFIG_FILES-"tmp/Makefile tmp/Makedemo"}
 for ac_file in .. ${CONFIG_FILES}; do if test "x$ac_file" != x..; then
   # Remove last slash and all that follows it.  Not all systems have dirname.
   ac_dir=`echo $ac_file|sed 's%/[^/][^/]*$%%'`

@@ -204,11 +204,15 @@ AC_SUBST(LIB_TAG)
 
 echo "creating tmp/Makefile.in"
 
-# Add Makefile initialization
+# Makefile initialization
 
 cat cf/init.in		>tmp/Makefile.in 
 
-# Add optional packages
+# Default target, core source and object file lists
+
+cat cf/dist.in		>>tmp/Makefile.in 
+
+# Optional packages
 
 if test "$enable_f77" = "yes"; then
     cat cf/pkg_f77.in	>>tmp/Makefile.in 
@@ -220,11 +224,9 @@ if test "$enable_tk" = "yes"; then
     cat cf/pkg_tk.in	>>tmp/Makefile.in 
 fi
 
-# Add source and object file lists
+# Library targets
 
-cat cf/dist.in		>>tmp/Makefile.in 
-
-# Add library targets
+cat cf/initlib.in	>>tmp/Makefile.in
 
 if test "$with_shlib" = "yes" -a "$with_arlib" = "yes"; then
     cat cf/lib_both.in		>>tmp/Makefile.in 
@@ -236,7 +238,7 @@ else
     fi
 fi
 
-# Add program and demo file dependencies, targets
+# Program and demo file dependencies, targets
 
 cat cf/exes.in		>>tmp/Makefile.in 
 cat cf/demos.in		>>tmp/Makefile.in 
@@ -246,9 +248,22 @@ cat cf/demos.in		>>tmp/Makefile.in
 cat cf/install.in	>>tmp/Makefile.in 
 cat cf/misc.in		>>tmp/Makefile.in 
 
-# Add object file dependencies
+# Object file dependencies
 
 cat cf/objs.in		>>tmp/Makefile.in 
+
+# -----------------------------------------------------------------------
+# Now build Makedemo.in.
+# Makedemo is a stand-alone makefile for the demo programs.
+# Note: it links against the installed PLplot library.
+# -----------------------------------------------------------------------
+
+echo "creating tmp/Makedemo.in"
+
+cat cf/init.in		>tmp/Makedemo.in 
+cat cf/initdemo.in	>>tmp/Makedemo.in 
+cat cf/demos.in		>>tmp/Makedemo.in 
+cat cf/miscdemo.in	>>tmp/Makedemo.in 
 
 # --------------------------------------------------------------------
 # Set up variables governing device driver inclusion.
@@ -412,4 +427,4 @@ enable-dp:	$enable_dp		enable-itcl:	$enable_itcl
 enable-f77:	$enable_f77
 "
 
-AC_OUTPUT(tmp/Makefile)
+AC_OUTPUT(tmp/Makefile tmp/Makedemo)
