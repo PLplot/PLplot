@@ -229,12 +229,14 @@ init(PLStream *pls)
     pls->dev_fill1 = 1;		/* Handle pattern fills */
     pls->server_nokill = 1;     /* don't kill if ^C */
     pls->dev_xor = 1;           /* device support xor mode */
-    pls->plbuf_write = 1;       /* Activate plot buffer. To
-    programmatically save a file we can't call plreplot(), but instead
-    one must send a command to plserver. As there is no API call for
-    this, the user must use the plserver "save/print" menu
-    entries. Activating the plot buffer enables the normal
-    plmkstrm/plcpstrm/plreplot/plend1 way of saving plots. */
+
+/* Activate plot buffer. To programmatically save a file we can't call
+   plreplot(), but instead one must send a command to plserver. As there is
+   no API call for this, the user must use the plserver "save/print" menu
+   entries. Activating the plot buffer enables the normal
+   plmkstrm/plcpstrm/plreplot/plend1 way of saving plots.
+*/
+    pls->plbuf_write = 1;
 
 /* Specify buffer size if not yet set (can be changed by -bufmax option).  */
 /* A small buffer works best for socket communication */
@@ -313,10 +315,8 @@ init(PLStream *pls)
     tk_wr_header(pls, "");
 
 /* Write color map state info */
-/*
-    plD_state_plm(pls, PLSTATE_CMAP0);
-    plD_state_plm(pls, PLSTATE_CMAP1);
-    */
+    plD_state_tk(pls, PLSTATE_CMAP0);
+    plD_state_tk(pls, PLSTATE_CMAP1);
 
 /* Good place to make sure the data transfer is working OK */
 
