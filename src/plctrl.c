@@ -1199,12 +1199,6 @@ plLibOpen(char *fn)
 
 /**** 	not found, give up 	****/
 
-    pltext();
-    fprintf(stderr, "\nCannot open library file: %s\n", fn);
-#if defined (DATA_DIR)
-    fprintf(stderr, "lib dir=\"" DATA_DIR "\"\n" );      /* what WAS set? */
-#endif  /* DATA_DIR */
-    plgra();
     return NULL;
 
  done:
