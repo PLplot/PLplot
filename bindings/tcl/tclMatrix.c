@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/06/30 05:45:24  furnish
+ * Revision 1.5  1994/06/30 18:55:02  mjl
+ * Now accepts an initializer when matrix is declared, for example:
+ * matrix base i 4 = {0, 200, 500, 600}.  Only works for 1-d arrays so far.
+ *
+ * Revision 1.4  1994/06/30  05:45:24  furnish
  * Cobbled together an extension facility which allows a user to define
  * their own subcommands for tclMatricies.  The idea is that you can use
  * this to implement your own matrix processing commands entirely on the
@@ -54,6 +58,7 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
 #include <tcl.h>
 #include "tclMatrix.h"
 
@@ -117,9 +122,9 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	      int argc, char **argv)
 {
     register tclMatrix *matPtr;
-    int i, length, new;
+    int i, length, new, initializer = 0;
     Tcl_HashEntry *hPtr;
-    char c, *varName;
+    char c, *varName, *value;
 
     if (argc < 3) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
@@ -145,6 +150,8 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     matPtr = (tclMatrix *) ckalloc(sizeof(tclMatrix));
     matPtr->fdata = NULL;
     matPtr->idata = NULL;
+    matPtr->dim = 0;
+    matPtr->len = 1;
     for (i = 0; i < MAX_ARRAY_DIM; i++)
 	matPtr->n[i] = 1;
 
@@ -199,22 +206,34 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Initialize dimensions */
 
-    argc--; argv++;
+    for (;;) {
+	argc--; argv++;
+	if (argc == 0)
+	    break;
 
-    matPtr->dim = argc;
-    matPtr->len = 1;
+	if (strcmp(argv[0], "=") == 0) {
+	    argc--; argv++;
+	    initializer = 1;
+	    break;
+	}
+	matPtr->n[matPtr->dim] = atoi(argv[0]);
 
-    for (i = 0; i < matPtr->dim; i++) {
-	matPtr->n[i] = atoi(argv[i]);
-
-	if (matPtr->n[i] < 1) {
-	    Tcl_AppendResult(interp, "invalid matrix dimension \"", argv[i],
+	if (matPtr->n[matPtr->dim] < 1) {
+	    Tcl_AppendResult(interp, "invalid matrix dimension \"", argv[0],
 			     "\"", (char *) NULL);
 
 	    ckfree((char *) matPtr);
 	    return TCL_ERROR;
 	}
-	matPtr->len *= matPtr->n[i];
+	matPtr->len *= matPtr->n[matPtr->dim];
+	matPtr->dim++;
+    }
+
+    if (matPtr->dim < 1) {
+	Tcl_AppendResult(interp, "at least one matrix dimension required",
+			 (char *) NULL);
+	ckfree((char *) matPtr);
+	return TCL_ERROR;
     }
 
 /* Allocate space for data */
@@ -231,6 +250,29 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	for (i = 0; i < matPtr->len; i++)
 	    matPtr->idata[i] = 0;
 	break;
+    }
+
+/* Process the initializer, if present */
+
+    if (initializer) {
+	if (argc == 0) {
+	    Tcl_AppendResult(interp, "bad initializer syntax",
+			     (char *) NULL);
+	    DeleteMatrixCmd((ClientData) matPtr);
+	    return TCL_ERROR;
+	}
+
+	value = strtok(argv[0], " ");
+	for (i = 0; ; i++) {
+	    if ( value == NULL )
+		break;
+
+	    if (i >= matPtr->len)
+		break;
+
+	    (*matPtr->put)((ClientData) matPtr, i, value);
+	    value = strtok(NULL, " ");
+	}
     }
 
 /* Create matrix operator */
@@ -355,7 +397,7 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     char c, tmp[80];
     char* name = argv[0];
     int nmin[MAX_ARRAY_DIM], nmax[MAX_ARRAY_DIM];
-    int i, j, k, index;
+    int i, j, k;
 
     for (i = 0; i < MAX_ARRAY_DIM; i++) {
 	nmin[i] = 0;
@@ -499,7 +541,11 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
  * MatrixPut_f	MatrixGet_f
  * MatrixPut_i	MatrixGet_i
  *
- * Each routine translates and stores string appropriately.
+ * A "put" converts from string format to the intrinsic type, storing into
+ * the array.
+ *
+ * A "get" converts from the intrinsic type to string format, storing into
+ * a string buffer.
  *
 \*----------------------------------------------------------------------*/
 
