@@ -1,28 +1,12 @@
 /* Demonstration of contour plotting */
-/* $Id$
-   $Log$
-   Revision 1.6  1993/07/02 07:07:33  mjl
-   No more VOID.  Now simply "void" (ahhh, much better).
 
- * Revision 1.5  1993/02/22  23:16:17  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
+/* $Id$
+ * $Log$
+ * Revision 1.7  1993/08/11 19:26:49  mjl
+ * Fixed a minor macro definition problem.
  *
- * Revision 1.4  1993/01/23  06:10:30  mjl
- * Instituted exit codes for all example codes.  Also deleted color functions
- * no longer supported (plancol).  Enhanced x09c to exploit new contour
- * capabilities.
- *
- * Revision 1.3  1992/09/30  18:25:22  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:45:17  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:57  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.6  1993/07/02  07:07:33  mjl
+ * No more VOID.  Now simply "void" (ahhh, much better).
 */
 
 /* Note the compiler should automatically convert all non-pointer arguments
@@ -37,7 +21,9 @@
 #define YPTS    46
 #define XSPA    2./(XPTS-1)
 #define YSPA    2./(YPTS-1)
+#ifndef PI
 #define PI	3.1415926535897932384
+#endif
 
 PLFLT tr[6] =
 {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
