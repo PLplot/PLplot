@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/07/25 06:04:21  mjl
+ * Revision 1.11  1994/07/26 21:08:47  mjl
+ * Put in a user-suggested portability fix (lost track of who sent it).
+ *
+ * Revision 1.10  1994/07/25  06:04:21  mjl
  * Desuckified header inclusions, and added test for unistd.h before
  * including it.
  *
@@ -109,6 +112,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#if defined(__sgi) && !defined(SVR3)
+#include <sys/select.h> 
+#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
