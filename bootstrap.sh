@@ -78,4 +78,10 @@ run aclocal $aclocal_opts \
   && run autoheader \
   && run libtoolize --copy --ltdl --automake \
   && run automake --add-missing --copy \
-  && run autoconf
+  && run autoconf \
+  && ( echo -n "Regenerating libltdl/configure..."; \
+       cd libltdl ; \
+       cp configure.in configure.ac ; \
+       autoconf 2>/dev/null ; \
+       rm -f configure.ac ; \
+       echo " done" ) 
