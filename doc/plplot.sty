@@ -34,28 +34,29 @@
 \newcommand{\bname}[1]%
 	{\pagebreak[2]%
 	\begin{ename}
-		{\fbox\code{#1}}%
+		\fbox{\code{#1}}%
 	\end{ename}%
 	\nopagebreak}
 
 \newcommand{\bnameC}[1]%
 	{\pagebreak[2]%
 	\begin{ename}%
-		{\fbox\code{#1}\qquad(C)}%
+		\fbox{\code{#1}}\qquad(C)%
 	\end{ename}%
 	\nopagebreak}
 
 \newcommand{\bnameF}[1]%
 	{\pagebreak[2]%
 	\begin{ename}%
-		{\fbox\code{#1}\qquad(Fortran)}%
+		\fbox{\code{#1}}\qquad(Fortran)%
 	\end{ename}%
 	\nopagebreak}
 
 \newcommand{\bnameCF}[4]%
 	{\pagebreak[2]%
 	\begin{ename}%
-		{\fbox{\tt#1}{\qquad#2}}\\{\fbox{\tt#3}{\qquad#4}}%
+		\fbox{\code{#1}}\qquad#2\\
+		\fbox{\code{#3}}\qquad#4%
 	\end{ename}%
 	\nopagebreak}
 
