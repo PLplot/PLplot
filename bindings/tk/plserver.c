@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1993/08/18 19:03:49  mjl
+ * Revision 1.9  1993/08/28 06:30:29  mjl
+ * Put one of the send commands into the background.  May help over a slow
+ * network.
+ *
+ * Revision 1.8  1993/08/18  19:03:49  mjl
  * Fixed a minor type error.
  *
  * Revision 1.7  1993/08/11  19:24:03  mjl
@@ -371,7 +375,7 @@ NotifyClient(ClientData clientData)
 	    Tcl_GetVar(interp, "plserver", 0),
 	    Tcl_GetVar(interp, "client", 0));
 #endif
-    tcl_cmd("send $client [list set plserver $plserver]");
+    tcl_cmd("send $client after 1 [list set plserver $plserver]");
 }
 
 /*----------------------------------------------------------------------*\
