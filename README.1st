@@ -19,3 +19,8 @@ Those known to have bugs are
 laserjet	(I'm working on it)
 
 and all the rest are iffy right now.
+
+Support for VMS has been suspended (perhaps permanently), since we don't use
+it anymore and it's too much of a pain to support.  If anyone fixes the
+makefile and verifies the package does work, however, we will include your
+fixes with the release version.
