@@ -17,10 +17,11 @@ TK_EXE		= plserver$E
 TK_INSTALL	= install_tk
 
 install_tk:
+	@echo "Installing Tk support."
 	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
 	-if test $(SHARED) = 1; then \
 	 $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
-		-o plserver$E $(LDC_LIBS); \
+		-o plserver$E $(LDC_LIBS) $(INSTALL_RPATH); \
 	 fi
 	-strip plserver$E
 	-cp plserver$E $(BIN_DIR)
