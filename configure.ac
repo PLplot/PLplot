@@ -603,11 +603,23 @@ if test "$enable_png" = yes -o "$enable_jpeg" = yes; then
       GDINCCMD="-I$GDINCDIR"
    fi
    AC_SUBST(GDINCCMD)
-   if test "$GDLIBDIR" = default; then
-      GDLIBCMD="$GDLIBSTR"
-   else
-      GDLIBCMD="-L$GDLIBDIR $GDLIBSTR"
+   # Figure out link line for libgd (including necessary libraries it
+   # links to for the case where only the static libgd (or libpng or
+   # libjpeg, or libz) is installed on the system).
+   GDLIBCMD=
+   if test "$GDLIBDIR" != default; then
+      GDLIBCMD="$GDLIBCMD -L$GDLIBDIR"
    fi
+   if test "$PNGLIBDIR" != default; then
+      GDLIBCMD="$GDLIBCMD -L$PNGLIBDIR"
+   fi
+   if test "$JPEGLIBDIR" != default; then
+      GDLIBCMD="$GDLIBCMD -L$JPEGLIBDIR"
+   fi
+   if test "$ZLIBLIBDIR" != default; then
+      GDLIBCMD="$GDLIBCMD -L$ZLIBLIBDIR"
+   fi
+   GDLIBCMD="$GDLIBCMD $GDLIBSTR $PNGLIBSTR $JPEGLIBSTR $ZLIBLIBSTR "
    AC_SUBST(GDLIBCMD)
 fi
 
