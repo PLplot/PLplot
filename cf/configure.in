@@ -85,7 +85,7 @@ with_rpath=yes
 with_nobraindead=no
 
 enable_drivers=yes
-enable_dyndrivers=no
+enable_dyndrivers=yes
 enable_f77=yes
 enable_cxx=yes
 enable_python=yes
