@@ -367,7 +367,7 @@ grfill(short *x, short *y, PLINT npts)
  * Where appropriate, the page clip limits are modified.
 \*--------------------------------------------------------------------------*/
 
-static void
+void
 difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
        PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma)
 {
