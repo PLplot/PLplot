@@ -3,7 +3,12 @@
 #
 # $Id$
 # $Log$
-# Revision 1.4  1995/07/01 21:43:43  furnish
+# Revision 1.5  1995/07/04 21:51:19  furnish
+# Tcl demos need to set the color before doing any drawing since they
+# may not be the first thing run, and so the color on entry to a Tcl
+# demo might be something other than 1.
+#
+# Revision 1.4  1995/07/01  21:43:43  furnish
 # Initial implementation, converted C example program code to Tcl.
 #
 # Revision 1.3  1995/04/24  21:28:20  mjl
@@ -28,6 +33,7 @@ proc x12 {{w loopback}} {
     $w cmd pladv 0
     $w cmd plvsta
     $w cmd plwind 1980.0 1990.0 0.0 35.0
+    $w cmd plcol 1
     $w cmd plbox "bc" 1.0 0 "bcnv" 10.0 0
     $w cmd plcol 2
     $w cmd pllab "Year" "Widget Sales (millions)" "#frPLplot Example 12"

@@ -3,7 +3,12 @@
 #
 # $Id$
 # $Log$
-# Revision 1.5  1995/07/04 19:40:48  furnish
+# Revision 1.6  1995/07/04 21:51:18  furnish
+# Tcl demos need to set the color before doing any drawing since they
+# may not be the first thing run, and so the color on entry to a Tcl
+# demo might be something other than 1.
+#
+# Revision 1.5  1995/07/04  19:40:48  furnish
 # Added plot to demonstrate the Tcl support for contouring of data
 # defined on wrapped coords.
 #
@@ -92,6 +97,7 @@ proc x09 {{w loopback}} {
 # thing from Tcl.  So here we just do a pltr0 thing, which will be
 # similar except for different bounds in world coordinates.
 
+    $w cmd plcol 1
     $w cmd plenv 0 [expr $xpts-1] 0 [expr $ypts-1] 0 0
     $w cmd plcol 2
     $w cmd plcont zz clevel
