@@ -93,6 +93,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       endif
 
       __pl.type = 1;
+      __pl.items = 1;
       __pl.legend_xpos(__pl_strm) = 1;	# legend x position
       __pl.legend_ypos(__pl_strm) = 1;	# legend y position
       __pl.legend(__pl_strm) = 2;	# legend type
