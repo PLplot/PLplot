@@ -473,6 +473,10 @@ if test "$with_shlib" = "yes"; then
     SHARED=1
     if test ! -d shared; then
 	mkdir shared
+	#following needed for includes to work properly with new plplot/*.h style
+	cd shared
+	ln -s ../plplot
+	cd ..
     fi
     case $system in 
 	SunOS-4* ) 
@@ -571,7 +575,7 @@ if test -z "$INFO_DIR"; then
     INFO_DIR=$prefix/info
 fi
 if test -z "$INCLUDE_DIR"; then
-    INCLUDE_DIR=$prefix/include
+    INCLUDE_DIR=$prefix/include/plplot
 fi
 if test -z "$DEMOS_DIR"; then
     DEMOS_DIR=$prefix/examples
@@ -601,19 +605,30 @@ AC_MSG_RESULT(creating links...)
 
 # Source, driver, and include files
     
+# All header files have to be in plplot as symlinks
+mkdir plplot
+ln -s \
+../plConfig.h ../plDevs.h \
+plplot 2>/dev/null
+
 ln -s \
 $srcdir/src/*.c \
 $srcdir/drivers/*.c \
-$srcdir/include/*.h \
 . 2>/dev/null
+ln -s \
+$srcdir/include/*.h \
+plplot 2>/dev/null
 
 # Packages (interfaces) and demos associated with them
 
 if test "$enable_cxx" = "yes"; then
     ln -s \
-    $srcdir/bindings/c++/*.* \
+    `ls $srcdir/bindings/c++/*.* |grep -v '\.h$'` \
     $srcdir/examples/c++/*.* \
     . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/c++/*.h \
+    plplot 2>/dev/null
 fi
 
 # Note that double precision Fortran files in the stub interface are
@@ -625,42 +640,59 @@ fi
 
 if test "$enable_f77" = "yes"; then
     ln -s \
-    $srcdir/bindings/f77/*.* \
+    `ls $srcdir/bindings/f77/*.* |grep -v '\.h$'` \
     $srcdir/examples/f77/*.* \
     . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/f77/*.h \
+    plplot 2>/dev/null
 fi
 
 if test "$enable_python" = "yes"; then
     ln -s \
-    $srcdir/bindings/python/*.* \
+    $srcdir/bindings/python/*.py \
+    $srcdir/bindings/python/*.c \
     $srcdir/examples/python/*.py \
     $srcdir/examples/python/pytkdemo \
     . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/python/*.h \
+    plplot 2>/dev/null
 fi
 
 # Just go ahead and set up the Python stuff needed to do staging.
+# (AWI thinks all the following should be removed since they
+# repeat the previous stuff, but he isn't positive.  Thus,
+# as a compromise he supressed the  error messages by the following
+# stuff by changing ln -s to ln -sf.)
 
-ln -s $srcdir/bindings/python/Plframe.py .
-ln -s $srcdir/bindings/python/TclSup.py .
-ln -s $srcdir/bindings/python/plmodule.c .
-ln -s $srcdir/bindings/python/plmodule2.c .
-ln -s $srcdir/bindings/python/plmodule.h .
-ln -s $srcdir/bindings/python/setup.py .
+ln -sf $srcdir/bindings/python/Plframe.py .
+ln -sf $srcdir/bindings/python/TclSup.py .
+ln -sf $srcdir/bindings/python/plmodule.c .
+ln -sf $srcdir/bindings/python/plmodule2.c .
+ln -sf $srcdir/bindings/python/plmodule.h plplot
+ln -sf $srcdir/bindings/python/setup.py .
 
 if test "$enable_tcl" = "yes"; then
     ln -s \
-    $srcdir/bindings/tcl/*.* \
+    `ls $srcdir/bindings/tcl/*.* |grep -v '\.h$'` \
     $srcdir/bindings/tcl/pltclgen \
     $srcdir/examples/tcl/*.* \
     . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/tcl/*.h \
+    plplot 2>/dev/null
 fi
 
 if test "$enable_tk" = "yes"; then
     ln -s \
-    $srcdir/bindings/tk/*.* \
+    `ls $srcdir/bindings/tk/*.* |grep -v '\.h$'` \
     $srcdir/examples/tk/*.c \
     $srcdir/examples/tk/tk* \
     . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/tk/*.h \
+    plplot 2>/dev/null
 fi
 
 #    $srcdir/bindings/tk/tclIndex 
@@ -669,7 +701,7 @@ fi
 # Miscellaneous
 
 ln -s \
-$srcdir/examples/c/*.* \
+`ls $srcdir/examples/c/*.* |grep -v '\.h$'` \
 $srcdir/utils/*.c \
 $srcdir/fonts/*.c \
 $srcdir/scripts/pl* \
@@ -678,6 +710,9 @@ $srcdir/lib/*.map \
 $srcdir/cf/*.in \
 $srcdir/sys/unix/version \
 . 2>/dev/null
+ln -s \
+$srcdir/examples/c/*.h \
+plplot 2>/dev/null
 
 # ----------------------------------------------------------------------------
 # Create output files.
