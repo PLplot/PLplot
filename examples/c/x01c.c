@@ -240,18 +240,20 @@ plot1(int do_test)
 /* it does not work in double buffering mode, however */
 
     if (do_test && test_xor) {
+#ifdef HAVE_USLEEP
 	plxormod(1, &st); /* enter xor mode */
 	if (st) {
 	  for (i=0; i<60; i++) {
 	    plpoin(1, x+i, y+i,9);	/* draw a point */
-#ifdef HAVE_USLEEP
 	    usleep(50000);		/* wait a little */
-#endif
 	    plflush();			/* force an update of the tk driver */
 	    plpoin(1, x+i, y+i,9);	/* erase point */
 	  }
 	  plxormod(0, &st);			/* leave xor mode */
 	}
+#else
+    printf("The -xor command line option can only be exercised if your system has usleep(), which does not seems to happen.\n"); 
+#endif
     }
 }
  
