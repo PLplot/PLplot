@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.75  1994/12/28 09:34:48  mjl
+ * Revision 1.76  1995/01/06 07:50:56  mjl
+ * Moved definition of window coordinate structure into here.  Also changed
+ * window relative device coordinate names to something more appropriate
+ * (this is the last time I will change this, I promise).
+ *
+ * Revision 1.75  1994/12/28  09:34:48  mjl
  * Added PL_PARSE_MERGE flag for merging user option tables with internal one.
  *
  * Revision 1.74  1994/11/02  19:53:34  mjl
@@ -285,6 +290,15 @@ typedef struct {
     PLFLT y;
 } PLMouse;
 
+/* Window coordinate structure */
+
+#define PL_MAXWINDOWS	64	/* Max number of windows/page tracked */
+
+typedef struct {
+    PLFLT dxmi, dxma, dymi, dyma;	/* min, max window rel dev coords */
+    PLFLT wxmi, wxma, wymi, wyma;	/* min, max window world coords */
+} plCWindow;
+
 /* Window structure for doing resizes without calling the X driver directly */
 /* May add other attributes in time */
 
@@ -356,19 +370,27 @@ typedef struct {
 /* PLColor is the usual way to pass an rgb color value. */
 
 typedef struct {
-    unsigned char r, g, b;
+    unsigned char r;		/* red */
+    unsigned char g;		/* green */
+    unsigned char b;		/* blue */
 } PLColor;
 
 /* PLControlPt is how cmap1 control points are represented. */
 
 typedef struct {
-    PLFLT h, l, s, p;
+    PLFLT h;			/* hue */
+    PLFLT l;			/* lightness */
+    PLFLT s;			/* saturation */
+    PLFLT p;			/* position */
+    int rev;			/* if set, interpolate through h=0 */
 } PLControlPt;
 
 /* For returning the coordinates of the cursor */
 
 typedef struct {
-    PLFLT vdX, vdY, wX, wY;
+    char c;			/* character pressed at cursor position */
+    PLFLT dX, dY;		/* relative device coordinates of cursor */
+    PLFLT wX, wY;		/* world coordinates of cursor */
 } PLCursor;
 
 /*----------------------------------------------------------------------*\
