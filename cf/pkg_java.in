@@ -18,8 +18,11 @@ JAVA_STUFF := java_build_target
 install_java:
 	@echo "Don't know how to install Java yet."
 
-jsrcs := $(wildcard java/plplot/core/*.java java/plplot/examples/*.java)
+jsrcs := $(wildcard java/plplot/core/*.java)
 jclss := $(jsrcs:.java=.class)
+
+java_demo_srcs := $(wildcard java/plplot/examples/*.java)
+java_demo_clss := $(java_demo_srcs:.java=.class)
 
 java/plplot/core/%.class : %.java
 	javac -d java $<
@@ -28,3 +31,8 @@ java/plplot/examples/%.class : %.java
 
 java_build_target: $(jclss)
 	@echo "Java targets rebuilt"
+
+jdemos: $(java_demo_clss)
+
+jall: default jdemos
+
