@@ -1617,47 +1617,33 @@ plInitDispatchTable()
         char* name = entry->d_name;
         int len = strlen (name) - 3;
 
-/* Only consider entries that have the ".la" suffix */
-	if ((len > 0) && (strcmp (name + len, ".la") == 0)) {
-	    char driver[300];
+/* Only consider entries that have the ".rc" suffix */
+	if ((len > 0) && (strcmp (name + len, ".rc") == 0)) {
 	    char path[300];
-	    char sym[300];
-	    char** info;
-            char* p;
+	    char buf[300];
+            FILE* fd;
+	 
+/* Open the driver's info file */
+            sprintf (path, "%s/%s/%s", DATA_DIR, DRV_DIR, name);
+            fd = fopen (path, "r");
 	    
-/* Get the basename of the driver's file */
-            strncpy (driver, name, len);
-	    driver[len] = '\0';
-	    
-/* Dynamically open the the module */
-            sprintf (path, "%s/%s/%s", DATA_DIR, DRV_DIR, driver);
-            dlhand = lt_dlopenext (path);
-
-/* Look for symbol plD_DEVICE_INFO_<driver> */
-	    sprintf (sym, "plD_DEVICE_INFO_%s", driver);
-	    info = (char **) lt_dlsym (dlhand, sym);
-
-/* DEVICE_INFO_<driver> may contain more than one device entry and they
- * must be separated by an '\n' character */
-	    if (info != NULL) {
-	        p = *info;
-	        while (1) {
-                    npldynamicdevices++;
-		    p = strchr (p, '\n');
-		    if (p == NULL)
-		        break;
-		    else
-		        p++;
-
-	        }
-
-/* Finally, write the device entries to the temporary file */
-		fprintf (fp_drvdb, "%s\n", *info);
+/* Each line in the <driver>.rc file corresponds to a specicfic device.
+ * Write it to the drivers db file and take care of leading newline 
+ * character */
+            while (fgets (buf, 300, fd) != NULL) 
+	    {
+                fprintf (fp_drvdb, "%s", buf);
+		if ( buf [strlen (buf) - 1] != '\n' )
+		    fprintf (fp_drvdb, "\n");
+                npldynamicdevices++;
 	    }
-/*	    lt_dlclose (dlhand); */
+	    fclose (fd);
 	}
     }
-
+    
+/* Make sure that the temporary file containing the driversr database 
+ * is ready to read and close the directory handle */
+    fflush (fp_drvdb);
     closedir (dp_drvdir);
 
 #endif

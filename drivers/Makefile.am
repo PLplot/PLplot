@@ -47,6 +47,22 @@ EXTRA_LTLIBRARIES = \
 driversdir = ${prefix}/@DATA_DIR@/@DRV_DIR@
 drivers_LTLIBRARIES = @DYNAMIC_DRIVERS@
 
+# The variable below will force building of the dyndrivers info files
+# (<driver>.rc) and their installation in the drivers directory
+
+drivers_DATA = $(drivers_LTLIBRARIES:.la=.rc)
+
+# get-drv-info is a program that, at build time, will generate the driver's
+# info files <driver>.rc
+
+noinst_PROGRAMS = get-drv-info
+get_drv_info_SOURCES = get-drv-info.c
+get_drv_info_LDADD = @LIBLTDL@
+get_drv_info_CFLAGS = @INCLTDL@
+
+%.rc: %.la get-drv-info
+	./get-drv-info $(<:.la=) > $@
+		
 if with_double
 libplplot = -L../src -lplplotd
 libplplottcltk = -L../bindings/tcl -lplplottcltkd
@@ -387,7 +403,7 @@ if enable_dyndrivers
 	rm -f $(DESTDIR)$(driversdir)/*.a
 endif
 
-CLEANFILES = plapi.tpl tclcmd.tpl tclgen.h tclgen_s.h tclgen.c 
+CLEANFILES = plapi.tpl tclcmd.tpl tclgen.h tclgen_s.h tclgen.c *.rc
 DISTCLEANFILES = $(drivers_DATA)
 
 
