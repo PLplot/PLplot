@@ -99,6 +99,16 @@ fi
 
 AC_SUBST(SGML_CATALOGS)
 
+dnl HTML file extension
+
+HTML_EXT=html
+AC_ARG_WITH(html-extension, [
+  --with-html-extension=EXT       File extension for the generated HTML      
+                                  files. (Default value: html)],
+  [HTML_EXT=$withval])
+AC_SUBST(HTML_EXT)
+
+
 dnl Check programs
 
 CHECK_PROG(jade, http://www.jclark.com/jade/)
@@ -154,4 +164,5 @@ CHECK_DTD(
   [declaration/docbook.dtd],
   [docbook (v3.1)])
 
-AC_OUTPUT([Makefile inline-greek.pl eps2jpeg.pl tex2eps.pl])
+AC_OUTPUT([Makefile plplotdoc-html.dsl inline-greek.pl eps2jpeg.pl 
+           tex2eps.pl])

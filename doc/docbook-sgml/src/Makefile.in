@@ -2,7 +2,7 @@
 # Description: Makefile template for PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Thu May 20 11:14:38 CEST 1999
-# Last modified on: Mon Oct 30 11:55:29 CET 2000
+# Last modified on: Fri Nov 10 10:45:03 CET 2000
 # $Id$
 
 #temporary kludge to be replaced by a real version number system
@@ -31,7 +31,7 @@ OTHER_SOURCES = \
 	CHANGES Makefile.in README configure configure.in \
 	eps2jpeg.pl.in included-html-files.pl inline-greek.pl.in \
 	jadetex.cfg over-under.tex parse-api.pl parse.pl tex2eps.pl.in \
-	$(STYLESHEET_HTML) $(STYLESHEET_PRINT)
+	$(STYLESHEET_HTML).in $(STYLESHEET_PRINT)
 
 CONFDIR_SOURCES = \
 	conf/test.dsl.in  conf/test.sgml.in
@@ -43,9 +43,10 @@ JADE = @JADE@
 JADETEX = @JADETEX@
 PERL = @PERL@
 SGML_CATALOGS=@SGML_CATALOGS@
+HTML_EXT=@HTML_EXT@
 
 BASE = plplotdoc
-MAIN_HTML = book1.html
+MAIN_HTML = book1.$(HTML_EXT)
 
 all: src_tar html_tar ps
 
@@ -132,7 +133,7 @@ uninstall:
 	rm -rf $(HTML_DESTDIR) install-stamp
 
 clean:
-	rm -f *.html $(BASE).{tex,dvi,aux,log,ps.gz} \
+	rm -f *.$(HTML_EXT) $(BASE).{tex,dvi,aux,log,ps.gz} \
 	      TMP* inline.ent *.eps *.jpeg inline.manifest install-stamp \
 	      conftest.* config.* *~ \
 	      $(PLPLOTDOC_HTML)-$(VERSION).tar.gz \
