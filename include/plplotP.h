@@ -330,6 +330,10 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
 	   void (*draw) (short *, short *, PLINT));
 
+  /* Clip a polygon to the 3d bounding plane */
+int
+plP_clip_poly(int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset);
+
 /* Pattern fills in software the polygon bounded by the input points. */
 
 void
