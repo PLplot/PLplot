@@ -37,14 +37,15 @@ function p14(fg)
   
   axis([-l l -l l -0.5 0.5]);
 
-  for k = linspace(0, 4*pi, 30)
-    mesh(x, y, sin(k).*r);
+  plcolormap(bgr);
+  for k = linspace(0.01, 4*pi, 30)
+    meshc(x, y, sin(k).*r);
   endfor
 
-  plcolormap(gray);
-  for k = linspace(0, 4*pi, 30)
-    surfl(x, y, sin(k).*r);
+  for k = linspace(0.01, 4*pi, 30)
+    surf(x, y, sin(k).*r);
   endfor
+
   axis; # reset axis to automatic mode
 
   if (!nargin)
