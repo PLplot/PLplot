@@ -869,6 +869,12 @@ AM_CONDITIONAL(enable_docbook,
 
 AC_INCLUDE(doc/docbook/docbook.m4)
 
+if test $enable_builddoc = yes -o $enable_octave = yes ; then
+CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
+CHECK_PM(XML::DOM, xml_dom, [INFO MAN])
+CHECK_PM(XML::Parser, xml_parser, [INFO MAN])
+fi
+
 if test $enable_builddoc = yes ; then
 
 dnl Check for GNU make
@@ -937,18 +943,13 @@ CHECK_DTD(
   [docbook-xml (DTD version 3.1.3)],
   [PRINT HTML])
 
+# These checks only work if perl is checked first (see above)!
 CHECK_PM(XML::Parser::PerlSAX, xml_parser_perlsax, [INFO])
 CHECK_PM(XML::Writer, xml_writer, [INFO])
 
 DOC_OUTPUT_COMMANDS
 
 fi # enable_builddoc
-
-if test $enable_builddoc = yes -o $enable_octave = yes ; then
-CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
-CHECK_PM(XML::DOM, xml_dom, [INFO MAN])
-CHECK_PM(XML::Parser, xml_parser, [INFO MAN])
-fi
 
 AM_CONDITIONAL(has_onsgmls, [test "$has_onsgmls" = found])
 # This is for conditional compilation of plplot_octave_txt in bindings/octave
