@@ -24,7 +24,7 @@ if enable_octave
 
 SUBDIRS = support
 
-plplot_octavedir = $(OCTAVE_DIR)
+plplot_octavedir = $(PLPLOT_OCTAVE_DIR)
 
 plplot_octave_DATA = \
 	arrow.m \
@@ -112,7 +112,7 @@ plplot_octave_DATA = \
 
 octave_mdir = $(OCTAVE_M_DIR)/PLplot
 
-octave_m_DATA = 
+octave_m_DATA = \
 	use_plplot.m \
 	plplot_octave_path.m
 
