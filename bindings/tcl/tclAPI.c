@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/10/10 19:45:07  furnish
+ * Revision 1.9  1995/01/27 03:56:24  mjl
+ * Added "loopback" command: gobbles the following word, which must be "cmd",
+ * and processes the remaining arguments as any other plplot/Tcl command.
+ * This allows scripts involving widget commands -- of the form <widget> cmd
+ * <plplot command> -- to be processed by pltcl, with <widget> replaced
+ * by "loopback".
+ *
+ * Revision 1.8  1994/10/10  19:45:07  furnish
  * Imlemented plshade from Tcl.
  *
  * Revision 1.7  1994/10/10  17:25:30  furnish
@@ -50,6 +57,8 @@
 #include "pltcl.h"
 
 /* PLplot/Tcl API handlers.  Prototypes must come before Cmds struct */
+
+static int loopbackCmd	(ClientData, Tcl_Interp *, int, char **);
 
 static int pladvCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plbopCmd	(ClientData, Tcl_Interp *, int, char **);
@@ -108,6 +117,7 @@ typedef struct {
 /* Built-in commands, and the procedures associated with them */
 
 static CmdInfo Cmds[] = {
+    {"loopback",	loopbackCmd},
     {"pladv",		pladvCmd},
     {"plbop",		plbopCmd},
     {"plbox",		plboxCmd},
@@ -249,6 +259,67 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp, int argc, char **argv)
     if (hPtr == NULL) {
 	Tcl_AppendResult(interp, "bad option to \"cmd\": must be one of ",
 			 cmdlist, (char *) NULL);
+	Append_Cmdlist(interp);
+	result = TCL_ERROR;
+    }
+    else {
+	register Command *cmdPtr = (Command *) Tcl_GetHashValue(hPtr);
+	result = (*cmdPtr->proc)(cmdPtr->clientData, interp, argc, argv);
+    }
+
+    return result;
+}
+
+/*----------------------------------------------------------------------*\
+ * loopbackCmd
+ *
+ * Loop-back command for Tcl interpreter.  Main purpose is to enable a
+ * compatible command syntax whether you are executing directly through a
+ * Tcl interpreter or a plframe widget.  I.e. the syntax is:
+ *
+ *	<widget> cmd <plplot command>		(widget command)
+ *	loopback cmd <plplot command>		(pltcl command)
+ *
+ * This routine is essentially the same as plTclCmd but without some of
+ * the window dressing required by the plframe widget.
+\*----------------------------------------------------------------------*/
+
+static int
+loopbackCmd(ClientData clientData, Tcl_Interp *interp,
+	    int argc, char **argv)
+{
+    register Tcl_HashEntry *hPtr;
+    int result = TCL_OK;
+
+    argc--; argv++;
+    if (argc == 0 || (strcmp(argv[0], "cmd") != 0)) {
+	Tcl_AppendResult(interp, "bad option to \"loopback\": must be ",
+			 "\"cmd ?options?\" ", (char *) NULL);
+	return TCL_ERROR;
+    }
+
+/* Create hash table on first call */
+
+    if ( ! cmdTable_initted) {
+	cmdTable_initted = 1;
+	plTclCmd_Init(interp);
+    }
+
+/* no option -- return list of available PLPlot commands */
+
+    argc--; argv++;
+    if (argc == 0) {
+	Append_Cmdlist(interp);
+	return TCL_OK;
+    }
+
+/* Pick out the desired command */
+
+    hPtr = Tcl_FindHashEntry(&cmdTable, argv[0]);
+    if (hPtr == NULL) {
+	Tcl_AppendResult(interp,
+			 "bad option to \"loopback cmd\": must be one of ",
+			 (char *) NULL);
 	Append_Cmdlist(interp);
 	result = TCL_ERROR;
     }
