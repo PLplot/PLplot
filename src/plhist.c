@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/02/23 05:14:32  mjl
-   Changed reference in error message from plstar to plinit.
+   Revision 1.7  1993/07/01 22:13:38  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.6  1993/02/23  05:14:32  mjl
+ * Changed reference in error message from plstar to plinit.
+ *
  * Revision 1.5  1993/01/23  05:55:21  mjl
  * Formatting changes only, I think.
  *
@@ -30,7 +35,7 @@
 
 #define PL_NEED_MALLOC
 #define PL_NEED_SIZE_T
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -52,7 +57,7 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
     PLFLT *x, *y, dx, ymax;
     short i;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plhist: Please call plinit first.");
 
@@ -89,8 +94,8 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
     }
 
     plbin(nbin, x, y, 0);
-    free((VOID *) x);
-    free((VOID *) y);
+    free((void *) x);
+    free((void *) y);
 }
 
 /*----------------------------------------------------------------------*\
@@ -109,7 +114,7 @@ c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center)
     PLFLT xmin, xmax, vpwxmi, vpwxma, vpwymi, vpwyma;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plbin: Please set up window first.");
 
@@ -119,7 +124,7 @@ c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center)
 	if (x[i] >= x[i + 1])
 	    plexit("plbin: Elements of x[] must be increasing.");
 
-    gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
+    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
     if (!center) {
 	for (i = 0; i < nbin - 1; i++) {
 	    pljoin(x[i], vpwymi, x[i], y[i]);

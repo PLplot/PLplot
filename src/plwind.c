@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/01/23 06:02:52  mjl
-   Now holds all routines dealing with window specification.
+   Revision 1.4  1993/07/01 22:13:48  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.3  1993/01/23  06:02:52  mjl
+ * Now holds all routines dealing with window specification.
+ *
  * Revision 1.2  1992/09/29  04:46:29  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -16,7 +21,7 @@
 	Routines for setting up world coordinates of the current viewport.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <math.h>
 
 #define  dtr   0.01745329252
@@ -38,12 +43,12 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 2)
 	plexit("plwind: Please set up viewport first.");
 
-    gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
-    gvpd(&vpxmi, &vpxma, &vpymi, &vpyma);
+    plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
+    plP_gvpd(&vpxmi, &vpxma, &vpymi, &vpyma);
 
     dx = (xmax - xmin) * 1.0e-5;
     dy = (ymax - ymin) * 1.0e-5;
@@ -54,10 +59,10 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 /* The true plot window is made slightly larger than requested so that */
 /* the end limits will be on the graph  */
 
-    svpw((PLFLT) (xmin - dx), (PLFLT) (xmax + dx),
+    plP_svpw((PLFLT) (xmin - dx), (PLFLT) (xmax + dx),
 	 (PLFLT) (ymin - dy), (PLFLT) (ymax + dy));
 
-    gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
+    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
 
 /* Compute the scaling between coordinate systems */
 
@@ -68,19 +73,19 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     wpxoff = (xmax * vppxmi - xmin * vppxma) / dx;
     wpyscl = (vppyma - vppymi) / dy;
     wpyoff = (ymax * vppymi - ymin * vppyma) / dy;
-    swp(wpxscl, wpxoff, wpyscl, wpyoff);
+    plP_swp(wpxscl, wpxoff, wpyscl, wpyoff);
 
-    vpxmi = dcmmx(vpxmi);
-    vpxma = dcmmx(vpxma);
-    vpymi = dcmmy(vpymi);
-    vpyma = dcmmy(vpyma);
+    vpxmi = plP_dcmmx(vpxmi);
+    vpxma = plP_dcmmx(vpxma);
+    vpymi = plP_dcmmy(vpymi);
+    vpyma = plP_dcmmy(vpyma);
     wmxscl = (vpxma - vpxmi) / dx;
     wmxoff = (xmax * vpxmi - xmin * vpxma) / dx;
     wmyscl = (vpyma - vpymi) / dy;
     wmyoff = (ymax * vpymi - ymin * vpyma) / dy;
-    swm(wmxscl, wmxoff, wmyscl, wmyoff);
+    plP_swm(wmxscl, wmxoff, wmyscl, wmyoff);
 
-    slev(3);
+    plP_slev(3);
 }
 
 /*----------------------------------------------------------------------*\
@@ -112,7 +117,7 @@ c_plw3d(PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
     PLFLT cx, cy, saz, caz, salt, calt, zscale;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plw3d: Please set up 2-d window first.");
 
@@ -142,13 +147,13 @@ c_plw3d(PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
     salt = sin(dtr * alt);
     calt = cos(dtr * alt);
 
-    sdom(xmin, xmax, ymin, ymax);
-    srange(zscale, zmin, zmax);
+    plP_sdom(xmin, xmax, ymin, ymax);
+    plP_srange(zscale, zmin, zmax);
 
-    sbase(basex, basey, (PLFLT) (0.5 * (xmin + xmax)),
+    plP_sbase(basex, basey, (PLFLT) (0.5 * (xmin + xmax)),
 	  (PLFLT) (0.5 * (ymin + ymax)));
 
-    sw3wc((PLFLT) (cx * caz), (PLFLT) (-cy * saz),
+    plP_sw3wc((PLFLT) (cx * caz), (PLFLT) (-cy * saz),
 	  (PLFLT) (cx * saz * salt), (PLFLT) (cy * caz * salt),
 	  (PLFLT) (zscale * calt));
 }

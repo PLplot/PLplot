@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/01/23 05:54:04  mjl
-   Now holds all routines dealing with fills.
+   Revision 1.10  1993/07/01 22:13:37  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.9  1993/01/23  05:54:04  mjl
+ * Now holds all routines dealing with fills.
+ *
  * Revision 1.8  1992/10/12  17:08:03  mjl
  * Added PL_NEED_SIZE_T define to those files that need to know the value
  * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
@@ -45,7 +50,7 @@
 #define PL_NEED_MALLOC
 #define PL_NEED_SIZE_T
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -84,7 +89,7 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
     PLFLT xpmm, ypmm;
     short swap;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plfill: Please set up window first.");
     if (n < 3)
@@ -95,8 +100,8 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
     if (!buffer)
 	plexit("plfill: Out of memory.");
 
-    gpat(&inclin, &delta, &nps);
-    gpixmm(&xpmm, &ypmm);
+    plP_gpat(&inclin, &delta, &nps);
+    plP_gpixmm(&xpmm, &ypmm);
 
     for (k = 0; k < nps; k++) {
 	bufferleng = 0;
@@ -117,26 +122,26 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 	else
 	    dinc = delta[k] * SSQR(ypmm * ABS(ci), xpmm * ABS(si)) / 1000.;
 
-	xpmin = wcpcx(x[0]);
-	ypmin = wcpcy(y[0]);
+	xpmin = plP_wcpcx(x[0]);
+	ypmin = plP_wcpcy(y[0]);
 	for (i = 1; i < n; i++) {
-	    xp = wcpcx(x[i]);
-	    yp = wcpcy(y[i]);
+	    xp = plP_wcpcx(x[i]);
+	    yp = plP_wcpcy(y[i]);
 	    xpmin = MIN(xpmin, xp);
 	    ypmin = MIN(ypmin, yp);
 	}
 
-	xp1 = wcpcx(x[0]) - xpmin;
-	yp1 = wcpcy(y[0]) - ypmin;
+	xp1 = plP_wcpcx(x[0]) - xpmin;
+	yp1 = plP_wcpcy(y[0]) - ypmin;
 	tran(&xp1, &yp1, (PLFLT) ci, (PLFLT) si);
 
-	xp2 = wcpcx(x[1]) - xpmin;
-	yp2 = wcpcy(y[1]) - ypmin;
+	xp2 = plP_wcpcx(x[1]) - xpmin;
+	yp2 = plP_wcpcy(y[1]) - ypmin;
 	tran(&xp2, &yp2, (PLFLT) ci, (PLFLT) si);
 
 	for (i = 2; i < n; i++) {
-	    xp3 = wcpcx(x[i]) - xpmin;
-	    yp3 = wcpcy(y[i]) - ypmin;
+	    xp3 = plP_wcpcx(x[i]) - xpmin;
+	    yp3 = plP_wcpcy(y[i]) - ypmin;
 	    tran(&xp3, &yp3, (PLFLT) ci, (PLFLT) si);
 	    if (swap)
 		buildlist(yp1, xp1, yp2, xp2, yp3, xp3, dinc);
@@ -147,8 +152,8 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 	    xp2 = xp3;
 	    yp2 = yp3;
 	}
-	xp3 = wcpcx(x[0]) - xpmin;
-	yp3 = wcpcy(y[0]) - ypmin;
+	xp3 = plP_wcpcx(x[0]) - xpmin;
+	yp3 = plP_wcpcy(y[0]) - ypmin;
 	tran(&xp3, &yp3, (PLFLT) ci, (PLFLT) si);
 
 	if (swap)
@@ -160,8 +165,8 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 	yp1 = yp2;
 	xp2 = xp3;
 	yp2 = yp3;
-	xp3 = wcpcx(x[1]) - xpmin;
-	yp3 = wcpcy(y[1]) - ypmin;
+	xp3 = plP_wcpcx(x[1]) - xpmin;
+	yp3 = plP_wcpcy(y[1]) - ypmin;
 	tran(&xp3, &yp3, (PLFLT) ci, (PLFLT) si);
 
 	if (swap)
@@ -190,7 +195,7 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 	    xp2 = xp1;
 	    yp2 = yp1;
 	    tran(&xp1, &yp1, (PLFLT) ci, (PLFLT) (-si));
-	    movphy(xp1 + xpmin, yp1 + ypmin);
+	    plP_movphy(xp1 + xpmin, yp1 + ypmin);
 	    if (swap) {
 		xp1 = buffer[i + 1];
 		yp1 = buffer[i];
@@ -203,10 +208,10 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 	    if ((swap && xp2 != xp1) || (!swap && yp2 != yp1))
 		continue;	/* Uh oh we're lost */
 	    tran(&xp1, &yp1, (PLFLT) ci, (PLFLT) (-si));
-	    draphy(xp1 + xpmin, yp1 + ypmin);
+	    plP_draphy(xp1 + xpmin, yp1 + ypmin);
 	}
     }
-    free((VOID *) buffer);
+    free((void *) buffer);
 }
 
 /*----------------------------------------------------------------------*\
@@ -270,10 +275,10 @@ addcoord(PLINT xp1, PLINT yp1)
 
     if (bufferleng + 2 > buffersize) {
 	buffersize += 2 * BINC;
-	temp = (PLINT *) realloc((VOID *) buffer,
+	temp = (PLINT *) realloc((void *) buffer,
 				 (size_t) buffersize * sizeof(PLINT));
 	if (!temp) {
-	    free((VOID *) buffer);
+	    free((void *) buffer);
 	    plexit("plfill: Out of memory!");
 	}
 	buffer = temp;

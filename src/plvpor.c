@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/03/28 08:46:25  mjl
-   Changes to allow viewports bigger than display area.  This allows enlargement
-   of plots.
+   Revision 1.6  1993/07/01 22:13:47  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.5  1993/03/28  08:46:25  mjl
+ * Changes to allow viewports bigger than display area.  This allows enlargement
+ * of plots.
+ *
  * Revision 1.4  1993/02/23  05:23:11  mjl
  * Changed references in error messages from plstar to plinit.
  *
@@ -23,7 +28,7 @@
 	Functions dealing with viewports.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 /*----------------------------------------------------------------------*\
 * void plenv()
@@ -55,7 +60,7 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     PLFLT spxmin, spxmax, spymin, spymax;
     PLFLT vpxmin, vpxmax, vpymin, vpymax;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plenv: Please call plinit first.");
 
@@ -72,7 +77,7 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     if (just == 0)
 	plvsta();
     else {
-	gchr(&chrdef, &chrht);
+	plgchr(&chrdef, &chrht);
 	lb = 8.0 * chrht;
 	rb = 5.0 * chrht;
 	tb = 5.0 * chrht;
@@ -130,21 +135,21 @@ c_plvsta()
     PLFLT chrdef, chrht, spdxmi, spdxma, spdymi, spdyma;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plvsta: Please call plinit first.");
 
-    gchr(&chrdef, &chrht);
-    gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
+    plgchr(&chrdef, &chrht);
+    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
 
 /*  Find out position of subpage boundaries in millimetres, reduce by */
 /*  the desired border, and convert back into normalized subpage */
 /*  coordinates */
 
-    xmin = dcscx(mmdcx((PLFLT) (dcmmx(spdxmi) + 8 * chrht)));
-    xmax = dcscx(mmdcx((PLFLT) (dcmmx(spdxma) - 5 * chrht)));
-    ymin = dcscy(mmdcy((PLFLT) (dcmmy(spdymi) + 5 * chrht)));
-    ymax = dcscy(mmdcy((PLFLT) (dcmmy(spdyma) - 5 * chrht)));
+    xmin = plP_dcscx(plP_mmdcx((PLFLT) (plP_dcmmx(spdxmi) + 8 * chrht)));
+    xmax = plP_dcscx(plP_mmdcx((PLFLT) (plP_dcmmx(spdxma) - 5 * chrht)));
+    ymin = plP_dcscy(plP_mmdcy((PLFLT) (plP_dcmmy(spdymi) + 5 * chrht)));
+    ymax = plP_dcscy(plP_mmdcy((PLFLT) (plP_dcmmy(spdyma) - 5 * chrht)));
 
     plvpor(xmin, xmax, ymin, ymax);
 }
@@ -167,38 +172,38 @@ c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLINT nx, ny, cs;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plvpor: Please call plinit first.");
 
     if ((xmin >= xmax) || (ymin >= ymax))
 	plexit("plvpor: Invalid limits.");
 
-    gsub(&nx, &ny, &cs);
+    plP_gsub(&nx, &ny, &cs);
     if ((cs <= 0) || (cs > (nx * ny)))
 	plexit("plvpor: Please call pladv or plenv to go to a subpage.");
 
-    gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
+    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
     vpdxmi = spdxmi + (spdxma - spdxmi) * xmin;
     vpdxma = spdxmi + (spdxma - spdxmi) * xmax;
     vpdymi = spdymi + (spdyma - spdymi) * ymin;
     vpdyma = spdymi + (spdyma - spdymi) * ymax;
-    svpd(vpdxmi, vpdxma, vpdymi, vpdyma);
+    plP_svpd(vpdxmi, vpdxma, vpdymi, vpdyma);
 
-    vppxmi = dcpcx(vpdxmi);
-    vppxma = dcpcx(vpdxma);
-    vppymi = dcpcy(vpdymi);
-    vppyma = dcpcy(vpdyma);
-    svpp(vppxmi, vppxma, vppymi, vppyma);
+    vppxmi = plP_dcpcx(vpdxmi);
+    vppxma = plP_dcpcx(vpdxma);
+    vppymi = plP_dcpcy(vpdymi);
+    vppyma = plP_dcpcy(vpdyma);
+    plP_svpp(vppxmi, vppxma, vppymi, vppyma);
 
-    gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
+    plP_gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
     clpxmi = MAX(vppxmi, phyxmi);
     clpxma = MIN(vppxma, phyxma);
     clpymi = MAX(vppymi, phyymi);
     clpyma = MIN(vppyma, phyyma);
-    sclp(clpxmi, clpxma, clpymi, clpyma);
+    plP_sclp(clpxmi, clpxma, clpymi, clpyma);
 
-    slev(2);
+    plP_slev(2);
 }
 
 /*----------------------------------------------------------------------*\
@@ -216,7 +221,7 @@ c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
     PLINT level;
     PLFLT vpxmid, vpymid, vpxlen, vpylen, w_aspect, ratio;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plvpas: Please call plinit first.");
 
@@ -228,10 +233,10 @@ c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
 	return;
     }
 
-    vpxmi = dcmmx(xmin);
-    vpxma = dcmmx(xmax);
-    vpymi = dcmmy(ymin);
-    vpyma = dcmmy(ymax);
+    vpxmi = plP_dcmmx(xmin);
+    vpxma = plP_dcmmx(xmax);
+    vpymi = plP_dcmmy(ymin);
+    vpyma = plP_dcmmy(ymax);
 
     vpxmid = (vpxmi + vpxma) / 2.;
     vpymid = (vpymi + vpyma) / 2.;
@@ -279,11 +284,11 @@ c_plvasp(PLFLT aspect)
     PLFLT xsize, ysize, nxsize, nysize;
     PLFLT lb, rb, tb, bb;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plvasp: Please call plinit first.");
 
-    gchr(&chrdef, &chrht);
+    plgchr(&chrdef, &chrht);
     lb = 8.0 * chrht;
     rb = 5.0 * chrht;
     tb = 5.0 * chrht;
@@ -328,28 +333,28 @@ c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plsvpa: Please call plinit first.");
 
     if ((xmin >= xmax) || (ymin >= ymax))
 	plexit("plsvpa: Invalid limits.");
 
-    gsub(&nx, &ny, &cs);
+    plP_gsub(&nx, &ny, &cs);
     if ((cs <= 0) || (cs > (nx * ny)))
 	plexit("plsvpa: Please call pladv or plenv to go to a subpage.");
 
-    gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
-    sxmin = dcmmx(spdxmi);
-    symin = dcmmy(spdymi);
+    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
+    sxmin = plP_dcmmx(spdxmi);
+    symin = plP_dcmmy(spdymi);
 
-    vpdxmi = mmdcx((PLFLT) (sxmin + xmin));
-    vpdxma = mmdcx((PLFLT) (sxmin + xmax));
-    vpdymi = mmdcy((PLFLT) (symin + ymin));
-    vpdyma = mmdcy((PLFLT) (symin + ymax));
+    vpdxmi = plP_mmdcx((PLFLT) (sxmin + xmin));
+    vpdxma = plP_mmdcx((PLFLT) (sxmin + xmax));
+    vpdymi = plP_mmdcy((PLFLT) (symin + ymin));
+    vpdyma = plP_mmdcy((PLFLT) (symin + ymax));
 
-    svpd(vpdxmi, vpdxma, vpdymi, vpdyma);
-    svpp(dcpcx(vpdxmi), dcpcx(vpdxma), dcpcy(vpdymi), dcpcy(vpdyma));
-    sclp(dcpcx(vpdxmi), dcpcx(vpdxma), dcpcy(vpdymi), dcpcy(vpdyma));
-    slev(2);
+    plP_svpd(vpdxmi, vpdxma, vpdymi, vpdyma);
+    plP_svpp(plP_dcpcx(vpdxmi), plP_dcpcx(vpdxma), plP_dcpcy(vpdymi), plP_dcpcy(vpdyma));
+    plP_sclp(plP_dcpcx(vpdxmi), plP_dcpcx(vpdxma), plP_dcpcy(vpdymi), plP_dcpcy(vpdyma));
+    plP_slev(2);
 }

@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/02/23 05:17:53  mjl
-   Changed references in error messages from plstar to plinit.  Also changed
-   pladv to call grclr and grpage (instead of gradv, now gone).
+   Revision 1.3  1993/07/01 22:13:41  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.2  1993/02/23  05:17:53  mjl
+ * Changed references in error messages from plstar to plinit.  Also changed
+ * pladv to call grclr and grpage (instead of gradv, now gone).
+ *
  * Revision 1.1  1993/01/23  05:57:59  mjl
  * Now holds all page-related functions.
  *
@@ -20,7 +25,7 @@
 	Page/subpage handling routines
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 /*----------------------------------------------------------------------*\
 * void pladv()
@@ -34,17 +39,17 @@ c_pladv(PLINT page)
     PLINT cursub, nsubx, nsuby;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("pladv: Please call plinit first.");
 
-    gsub(&nsubx, &nsuby, &cursub);
+    plP_gsub(&nsubx, &nsuby, &cursub);
     if (page > 0 && page <= nsubx * nsuby)
 	cursub = page;
     else if (page == 0) {
 	if (cursub == nsubx * nsuby) {
-	    grclr();
-	    grpage();
+	    plP_clr();
+	    plP_page();
 	    cursub = 1;
 	}
 	else
@@ -53,8 +58,8 @@ c_pladv(PLINT page)
     else
 	plexit("pladv: Invalid subpage number.");
 
-    ssub(nsubx, nsuby, cursub);
-    setsub();
+    plP_ssub(nsubx, nsuby, cursub);
+    plP_setsub();
 }
 
 /*----------------------------------------------------------------------*\
@@ -67,11 +72,11 @@ void
 c_plclr()
 {
     PLINT level;
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plclr: Please call plinit first.");
 
-    grclr();
+    plP_clr();
 }
 
 /*----------------------------------------------------------------------*\
@@ -83,24 +88,24 @@ c_plclr()
 void
 c_plpage()
 {
-    grpage();
+    plP_page();
 }
 
 /*----------------------------------------------------------------------*\
-* void setsub()
+* void plP_setsub()
 *
 * Set up the subpage boundaries according to the current subpage selected.
 \*----------------------------------------------------------------------*/
 
 void
-setsub(void)
+plP_setsub(void)
 {
     PLINT ix, iy;
     PLINT nsubx, nsuby, cursub;
     PLFLT spdxmi, spdxma, spdymi, spdyma;
     PLINT sppxmi, sppxma, sppymi, sppyma;
 
-    gsub(&nsubx, &nsuby, &cursub);
+    plP_gsub(&nsubx, &nsuby, &cursub);
     ix = (cursub - 1) % nsubx;
     iy = nsuby - (cursub - 1) / nsubx;
 
@@ -108,15 +113,15 @@ setsub(void)
     spdxma = (PLFLT) (ix + 1) / (PLFLT) (nsubx);
     spdymi = (PLFLT) (iy - 1) / (PLFLT) (nsuby);
     spdyma = (PLFLT) (iy) / (PLFLT) (nsuby);
-    sspd(spdxmi, spdxma, spdymi, spdyma);
+    plP_sspd(spdxmi, spdxma, spdymi, spdyma);
 
-    sppxmi = dcpcx(spdxmi);
-    sppxma = dcpcx(spdxma);
-    sppymi = dcpcy(spdymi);
-    sppyma = dcpcy(spdyma);
-    sspp(sppxmi, sppxma, sppymi, sppyma);
+    sppxmi = plP_dcpcx(spdxmi);
+    sppxma = plP_dcpcx(spdxma);
+    sppymi = plP_dcpcy(spdymi);
+    sppyma = plP_dcpcy(spdyma);
+    plP_sspp(sppxmi, sppxma, sppymi, sppyma);
 
-    sclp(sppxmi, sppxma, sppymi, sppyma);
+    plP_sclp(sppxmi, sppxma, sppymi, sppyma);
 }
 
 /*----------------------------------------------------------------------*\
@@ -132,13 +137,13 @@ c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
     PLFLT spdxmi, spdxma, spdymi, spdyma;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plgspa: Please call plinit first.");
 
-    gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
-    *xmin = dcmmx(spdxmi);
-    *xmax = dcmmx(spdxma);
-    *ymin = dcmmy(spdymi);
-    *ymax = dcmmy(spdyma);
+    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
+    *xmin = plP_dcmmx(spdxmi);
+    *xmax = plP_dcmmx(spdxma);
+    *ymin = plP_dcmmy(spdymi);
+    *ymax = plP_dcmmy(spdyma);
 }

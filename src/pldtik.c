@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/01/23 05:53:31  mjl
-   Formatting changes only (everything got run through indent).
+   Revision 1.4  1993/07/01 22:13:36  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.3  1993/01/23  05:53:31  mjl
+ * Formatting changes only (everything got run through indent).
+ *
  * Revision 1.2  1992/09/29  04:45:52  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -17,7 +22,7 @@
 	numeric axis labels.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <math.h>
 
 #define MIN_FLTDIG	3	/* disregarded if fractional part is 0 */

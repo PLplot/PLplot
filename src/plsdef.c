@@ -1,10 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/02/23 05:19:29  mjl
-   Changed references in error messages from plstar to plinit.  Also changed
-   behavior of size-setting routines (should not affect user code).  Fixed
-   data structure initializers to be ANSI-conformant.
+   Revision 1.6  1993/07/01 22:13:42  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.5  1993/02/23  05:19:29  mjl
+ * Changed references in error messages from plstar to plinit.  Also changed
+ * behavior of size-setting routines (should not affect user code).  Fixed
+ * data structure initializers to be ANSI-conformant.
+ *
  * Revision 1.4  1993/01/23  05:58:48  mjl
  * Holds functions that modify plplot defaults.  These do not need direct
  * access to the stream data.
@@ -27,7 +32,7 @@
 	symbol size, tick length, line and fill patterns, etc.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 /* Line pattern defaults */
 
@@ -205,10 +210,10 @@ c_plschr(PLFLT def, PLFLT scale)
     PLFLT defalt, ht;
 
     if (def != 0.0)
-	schr((PLFLT) (def), (PLFLT) (scale * def));
+	plP_schr((PLFLT) (def), (PLFLT) (scale * def));
     else {
-	gchr(&defalt, &ht);
-	schr(defalt, (PLFLT) (scale * defalt));
+	plgchr(&defalt, &ht);
+	plP_schr(defalt, (PLFLT) (scale * defalt));
     }
 }
 
@@ -224,10 +229,10 @@ c_plsmin(PLFLT def, PLFLT scale)
     PLFLT defalt, ht;
 
     if (def != 0.0)
-	smin(def, (PLFLT) (scale * def));
+	plP_smin(def, (PLFLT) (scale * def));
     else {
-	gmin(&defalt, &ht);
-	smin(defalt, (PLFLT) (scale * defalt));
+	plP_gmin(&defalt, &ht);
+	plP_smin(defalt, (PLFLT) (scale * defalt));
     }
 }
 
@@ -243,10 +248,10 @@ c_plsmaj(PLFLT def, PLFLT scale)
     PLFLT defalt, ht;
 
     if (def != 0.0)
-	smaj(def, (PLFLT) (scale * def));
+	plP_smaj(def, (PLFLT) (scale * def));
     else {
-	gmaj(&defalt, &ht);
-	smaj(defalt, (PLFLT) (scale * defalt));
+	plP_gmaj(&defalt, &ht);
+	plP_smaj(defalt, (PLFLT) (scale * defalt));
     }
 }
 
@@ -262,10 +267,10 @@ c_plssym(PLFLT def, PLFLT scale)
     PLFLT defalt, ht;
 
     if (def != 0.0)
-	ssym(def, (PLFLT) (scale * def));
+	plP_ssym(def, (PLFLT) (scale * def));
     else {
-	gsym(&defalt, &ht);
-	ssym(defalt, (PLFLT) (scale * defalt));
+	plP_gsym(&defalt, &ht);
+	plP_ssym(defalt, (PLFLT) (scale * defalt));
     }
 }
 
@@ -280,7 +285,7 @@ c_pllsty(PLINT lin)
 {
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("pllsty: Please call plinit first.");
 
@@ -302,7 +307,7 @@ c_plpat(PLINT nlin, PLINT *inc, PLINT *del)
 {
     PLINT i, level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plpat: Please call plinit first.");
 
@@ -313,7 +318,7 @@ c_plpat(PLINT nlin, PLINT *inc, PLINT *del)
 	if (del[i] < 0)
 	    plexit("plpat: Line spacing must be greater than 0.");
     }
-    spat(inc, del, nlin);
+    plP_spat(inc, del, nlin);
 }
 
 /*----------------------------------------------------------------------*\
@@ -327,7 +332,7 @@ c_plpsty(PLINT patt)
 {
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plpsty: Please call plinit first.");
 

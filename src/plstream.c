@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/04/26 19:57:59  mjl
-   Fixes to allow (once again) output to stdout and plrender to function as
-   a filter.  A type flag was added to handle file vs stream differences.
+   Revision 1.5  1993/07/01 22:13:43  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.4  1993/04/26  19:57:59  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+ *
  * Revision 1.3  1993/03/03  17:04:50  mjl
  * Changed orient-setting code to switch on the basis of orient%4, so that
  * any value of orient give valid output.
@@ -48,7 +53,7 @@
 	Stream & device support functions.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -230,11 +235,11 @@ plGetFam(PLStream *pls)
 {
     if (pls->family) {
 	if (pls->bytecnt > pls->bytemax || pls->famadv) {
-	    grtidy();
+	    plP_tidy();
 	    pls->fileset = 1;
 	    pls->member++;
 	    pls->famadv = 0;
-	    grinit();
+	    plP_init();
 	    return;
 	}
     }

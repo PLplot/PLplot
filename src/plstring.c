@@ -1,10 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/02/23 05:22:44  mjl
-   Split off code to write a stroke font character into its own function for
-   clarity.  Changed character-decoding routine to use stream-dependent escape
-   character in text strings.
+   Revision 1.3  1993/07/01 22:13:44  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.2  1993/02/23  05:22:44  mjl
+ * Split off code to write a stroke font character into its own function for
+ * clarity.  Changed character-decoding routine to use stream-dependent escape
+ * character in text strings.
+ *
  * Revision 1.1  1993/01/23  06:01:04  mjl
  * Added to hold all functions that deal with PLPLOT strings.
  *
@@ -15,7 +20,7 @@
 	Text & string handling routines.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -54,7 +59,7 @@ c_pllab(char *xlabel, char *ylabel, char *tlabel)
 {
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 2)
 	plexit("pllab: Please set up viewport first.");
 
@@ -101,56 +106,60 @@ c_plmtex(char *side, PLFLT disp, PLFLT pos, PLFLT just, char *text)
     PLFLT mpxscl, mpxoff, mpyscl, mpyoff;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 2)
 	plexit("plmtex: Please set up viewport first.");
 
     /* Open clip limits to subpage limits */
 
-    gclp(&clpxmi, &clpxma, &clpymi, &clpyma);
-    gspp(&sppxmi, &sppxma, &sppymi, &sppyma);
-    sclp(sppxmi, sppxma, sppymi, sppyma);
+    plP_gclp(&clpxmi, &clpxma, &clpymi, &clpyma);
+    plP_gspp(&sppxmi, &sppxma, &sppymi, &sppyma);
+    plP_sclp(sppxmi, sppxma, sppymi, sppyma);
 
-    gvpd(&vpdxmi, &vpdxma, &vpdymi, &vpdyma);
-    gmp(&mpxscl, &mpxoff, &mpyscl, &mpyoff);
-    gchr(&chrdef, &chrht);
+    plP_gvpd(&vpdxmi, &vpdxma, &vpdymi, &vpdyma);
+    plP_gmp(&mpxscl, &mpxoff, &mpyscl, &mpyoff);
+    plgchr(&chrdef, &chrht);
 
     shift = 0.0;
     if (just != 0.0)
 	shift = just * plstrl(text);
 
-    if (stsearch(side, 'b')) {
+    if (plP_stsearch(side, 'b')) {
 	vert = 0;
-	refx = dcpcx((PLFLT) (vpdxmi + (vpdxma - vpdxmi) * pos)) - shift * mpxscl;
-	refy = mmpcy((PLFLT) (dcmmy(vpdymi) - disp * chrht));
+	refx = plP_dcpcx((PLFLT) (vpdxmi + (vpdxma - vpdxmi) * pos)) -
+	    shift * mpxscl;
+	refy = plP_mmpcy((PLFLT) (plP_dcmmy(vpdymi) - disp * chrht));
     }
-    else if (stsearch(side, 't')) {
+    else if (plP_stsearch(side, 't')) {
 	vert = 0;
-	refx = dcpcx((PLFLT) (vpdxmi + (vpdxma - vpdxmi) * pos)) - shift * mpxscl;
-	refy = mmpcy((PLFLT) (dcmmy(vpdyma) + disp * chrht));
+	refx = plP_dcpcx((PLFLT) (vpdxmi + (vpdxma - vpdxmi) * pos)) -
+	    shift * mpxscl;
+	refy = plP_mmpcy((PLFLT) (plP_dcmmy(vpdyma) + disp * chrht));
     }
-    else if (stindex(side, "LV") != -1 || stindex(side, "lv") != -1) {
+    else if (plP_stindex(side, "LV") != -1 || plP_stindex(side, "lv") != -1) {
 	vert = 0;
-	refy = dcpcy((PLFLT) (vpdymi + (vpdyma - vpdymi) * pos));
-	refx = mmpcx((PLFLT) (dcmmx(vpdxmi) - disp * chrht - shift));
+	refy = plP_dcpcy((PLFLT) (vpdymi + (vpdyma - vpdymi) * pos));
+	refx = plP_mmpcx((PLFLT) (plP_dcmmx(vpdxmi) - disp * chrht - shift));
     }
-    else if (stindex(side, "RV") != -1 || stindex(side, "rv") != -1) {
+    else if (plP_stindex(side, "RV") != -1 || plP_stindex(side, "rv") != -1) {
 	vert = 0;
-	refy = dcpcy((PLFLT) (vpdymi + (vpdyma - vpdymi) * pos));
-	refx = mmpcx((PLFLT) (dcmmx(vpdxma) + disp * chrht - shift));
+	refy = plP_dcpcy((PLFLT) (vpdymi + (vpdyma - vpdymi) * pos));
+	refx = plP_mmpcx((PLFLT) (plP_dcmmx(vpdxma) + disp * chrht - shift));
     }
-    else if (stsearch(side, 'l')) {
+    else if (plP_stsearch(side, 'l')) {
 	vert = 1;
-	refy = dcpcy((PLFLT) (vpdymi + (vpdyma - vpdymi) * pos)) - shift * mpyscl;
-	refx = mmpcx((PLFLT) (dcmmx(vpdxmi) - disp * chrht));
+	refy = plP_dcpcy((PLFLT) (vpdymi + (vpdyma - vpdymi) * pos)) -
+	    shift * mpyscl;
+	refx = plP_mmpcx((PLFLT) (plP_dcmmx(vpdxmi) - disp * chrht));
     }
-    else if (stsearch(side, 'r')) {
+    else if (plP_stsearch(side, 'r')) {
 	vert = 1;
-	refy = dcpcy((PLFLT) (vpdymi + (vpdyma - vpdymi) * pos)) - shift * mpyscl;
-	refx = mmpcx((PLFLT) (dcmmx(vpdxma) + disp * chrht));
+	refy = plP_dcpcy((PLFLT) (vpdymi + (vpdyma - vpdymi) * pos)) -
+	    shift * mpyscl;
+	refx = plP_mmpcx((PLFLT) (plP_dcmmx(vpdxma) + disp * chrht));
     }
     else {
-	sclp(clpxmi, clpxma, clpymi, clpyma);
+	plP_sclp(clpxmi, clpxma, clpymi, clpyma);
 	return;
     }
 
@@ -167,7 +176,7 @@ c_plmtex(char *side, PLFLT disp, PLFLT pos, PLFLT just, char *text)
 	xform[3] = 1.0;
     }
     plstr(0, xform, refx, refy, text);
-    sclp(clpxmi, clpxma, clpymi, clpyma);
+    plP_sclp(clpxmi, clpxma, clpymi, clpyma);
 }
 
 /*----------------------------------------------------------------------*\
@@ -190,11 +199,11 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, char *text)
     PLFLT xscl, xoff, yscl, yoff;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plptex: Please set up window first.");
 
-    gwm(&xscl, &xoff, &yscl, &yoff);
+    plP_gwm(&xscl, &xoff, &yscl, &yoff);
 
     if (dx == 0.0 && dy == 0.0) {
 	dx = 1.0;
@@ -206,7 +215,7 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, char *text)
     cc = cc / diag;
     ss = ss / diag;
 
-    gmp(&xscl, &xoff, &yscl, &yoff);
+    plP_gmp(&xscl, &xoff, &yscl, &yoff);
     shift = 0.0;
 
     xform[0] = cc;
@@ -216,8 +225,8 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, char *text)
 
     if (just != 0.0)
 	shift = plstrl(text) * just;
-    refx = wcpcx(x) - shift * cc * xscl;
-    refy = wcpcy(y) - shift * ss * yscl;
+    refx = plP_wcpcx(x) - shift * cc * xscl;
+    refy = plP_wcpcy(y) - shift * ss * yscl;
     plstr(0, xform, refx, refy, text);
 }
 
@@ -248,15 +257,15 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, char *string)
     oline = 0;
     uline = 0;
 
-    gchr(&def, &ht);
+    plgchr(&def, &ht);
     dscale = 0.05 * ht;
     scale = dscale;
-    gmp(&xscl, &xoff, &yscl, &yoff);
+    plP_gmp(&xscl, &xoff, &yscl, &yoff);
 
 /* Line style must be continuous */
 
-    gnms(&style);
-    snms(0);
+    plP_gnms(&style);
+    plP_snms(0);
 
     pldeco(&symbol, &length, string);
     xorg = 0.0;
@@ -287,7 +296,7 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, char *string)
 		       xscl, xoff, yscl, yoff, &xorg, &yorg, &width);
 	}
     }
-    snms(style);
+    plP_snms(style);
 }
 
 /*----------------------------------------------------------------------*\
@@ -331,11 +340,11 @@ plchar(SCHAR *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
 	    lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
 	    ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
 	    if (penup != 0) {
-		movphy(lx, ly);
+		plP_movphy(lx, ly);
 		penup = 0;
 	    }
 	    else
-		draphy(lx, ly);
+		plP_draphy(lx, ly);
 	}
     }
 
@@ -344,22 +353,22 @@ plchar(SCHAR *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
 	y = *p_yorg + (30 + ydisp) * scale;
 	lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
 	ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
-	movphy(lx, ly);
+	plP_movphy(lx, ly);
 	x = *p_xorg + *p_width * scale;
 	lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
 	ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
-	draphy(lx, ly);
+	plP_draphy(lx, ly);
     }
     if (uline) {
 	x = *p_xorg;
 	y = *p_yorg + (-5 + ydisp) * scale;
 	lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
 	ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
-	movphy(lx, ly);
+	plP_movphy(lx, ly);
 	x = *p_xorg + *p_width * scale;
 	lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
 	ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
-	draphy(lx, ly);
+	plP_draphy(lx, ly);
     }
     *p_xorg = *p_xorg + *p_width * scale;
 }
@@ -380,10 +389,10 @@ plstrl(char *string)
     PLFLT xscl, xoff, yscl, yoff;
 
     width = 0.0;
-    gchr(&def, &ht);
+    plgchr(&def, &ht);
     dscale = 0.05 * ht;
     scale = dscale;
-    gmp(&xscl, &xoff, &yscl, &yoff);
+    plP_gmp(&xscl, &xoff, &yscl, &yoff);
 
     pldeco(&symbol, &length, string);
     xorg = 0.0;
@@ -481,7 +490,7 @@ pldeco(short int **sym, PLINT *length, char *text)
     lentxt = strlen(text);
     *length = 0;
     *sym = symbol;
-    gatt(&ifont, &icol);
+    plP_gatt(&ifont, &icol);
     plgesc(&esc);
     if (ifont > numberfonts)
 	ifont = 1;
@@ -531,13 +540,13 @@ pldeco(short int **sym, PLINT *length, char *text)
 	    }
 	    else if (test == 'f' || test == 'F') {
 		test = text[j++];
-		ifont = strpos(font, isupper(test) ? tolower(test) : test) + 1;
+		ifont = plP_strpos(font, isupper(test) ? tolower(test) : test) + 1;
 		if (ifont == 0 || ifont > numberfonts)
 		    ifont = 1;
 	    }
 	    else if (test == 'g' || test == 'G') {
 		test = text[j++];
-		ig = strpos(greek, test) + 1;
+		ig = plP_strpos(greek, test) + 1;
 		symbol[(*length)++] = *(fntlkup + (ifont - 1) * numberchars +
 					127 + ig);
 	    }
@@ -554,7 +563,7 @@ pldeco(short int **sym, PLINT *length, char *text)
 }
 
 /*----------------------------------------------------------------------*\
-* PLINT strpos()
+* PLINT plP_strpos()
 *
 * Searches string str for first occurence of character chr.  If found
 * the position of the character in the string is returned (the first
@@ -563,7 +572,7 @@ pldeco(short int **sym, PLINT *length, char *text)
 \*----------------------------------------------------------------------*/
 
 PLINT
-strpos(char *str, int chr)
+plP_strpos(char *str, int chr)
 {
     char *temp;
 
@@ -574,13 +583,13 @@ strpos(char *str, int chr)
 }
 
 /*----------------------------------------------------------------------*\
-* PLINT stindex()
+* PLINT plP_stindex()
 *
 * Similar to strpos, but searches for occurence of string str2.
 \*----------------------------------------------------------------------*/
 
 PLINT
-stindex(char *str1, char *str2)
+plP_stindex(char *str1, char *str2)
 {
     PLINT base;
     PLINT str1ind;
@@ -599,13 +608,13 @@ stindex(char *str1, char *str2)
 }
 
 /*----------------------------------------------------------------------*\
-* PLINT stsearch()
+* PLINT plP_stsearch()
 *
 * Searches string str for character chr (case insensitive).
 \*----------------------------------------------------------------------*/
 
 PLINT
-stsearch(char *str, int chr)
+plP_stsearch(char *str, int chr)
 {
     if (strchr(str, chr))
 	return ((PLINT) 1);

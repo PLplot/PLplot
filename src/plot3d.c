@@ -1,11 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/01/23 05:57:23  mjl
-   Now holds all routines dealing with 3d plots (and hence has become rather
-   large).  A capability similar to that in the contour plotter (passing
-   in function evaluators instead of 2d arrays) is planned but not in this
-   version.
+   Revision 1.6  1993/07/01 22:13:39  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.5  1993/01/23  05:57:23  mjl
+ * Now holds all routines dealing with 3d plots (and hence has become rather
+ * large).  A capability similar to that in the contour plotter (passing
+ * in function evaluators instead of 2d arrays) is planned but not in this
+ * version.
+ *
  * Revision 1.4  1992/10/12  17:08:08  mjl
  * Added PL_NEED_SIZE_T define to those files that need to know the value
  * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
@@ -31,7 +36,7 @@
 #define PL_NEED_MALLOC
 #define PL_NEED_SIZE_T
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -91,7 +96,7 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     pl3mode = 1;
     plot3d(x, y, z, nx, ny, opt, 0);
 
-    free((VOID *) oldloview);
+    free((void *) oldloview);
     pl3mode = 0;
 }
 
@@ -117,7 +122,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     PLINT i, ix, iy;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plot3d: Please set up window first");
 
@@ -142,7 +147,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	plexit("plot3d: Out of memory.");
 
     b = 2 * MAX(nx, ny) + 1;
-    gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
+    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     init = 1;
 
     if (cxx >= 0.0 && cxy <= 0.0) {
@@ -230,19 +235,19 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 		   &work[0], &work[b - 1]);
     }
 
-    free((VOID *) work);
+    free((void *) work);
 
     if (side)
 	plside3(x, y, z, nx, ny, opt);
 
     if (zbflg) {
-	gatt(&font, &color);
+	plP_gatt(&font, &color);
 	plcol(zbcol);
 	plgrid3(zbtck);
 	plcol(color);
     }
 
-    free((VOID *) oldhiview);
+    free((void *) oldhiview);
 }
 
 /*----------------------------------------------------------------------*\
@@ -250,7 +255,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 \*----------------------------------------------------------------------*/
 
 void
-gzback(PLINT **zbf, PLINT **zbc, PLFLT **zbt)
+plP_gzback(PLINT **zbf, PLINT **zbc, PLFLT **zbt)
 {
     *zbf = &zbflg;
     *zbc = &zbcol;
@@ -284,10 +289,10 @@ plt3zz(PLINT xstar0, PLINT ystar0, PLINT dx, PLINT dy, PLINT flg0, PLINT init,
 
   lab1:
     if (1 <= xstart && xstart <= nx && 1 <= ystart && ystart <= ny) {
-	u[n] = wcpcx(w3wcx(
+	u[n] = plP_wcpcx(plP_w3wcx(
 		    x[xstart - 1], y[ystart - 1], z[xstart - 1][ystart - 1]));
 
-	v[n] = wcpcy(w3wcy(
+	v[n] = plP_wcpcy(plP_w3wcy(
 		    x[xstart - 1], y[ystart - 1], z[xstart - 1][ystart - 1]));
 
 	if (flag == -3) {
@@ -327,10 +332,10 @@ plt3zz(PLINT xstar0, PLINT ystar0, PLINT dx, PLINT dy, PLINT flg0, PLINT init,
 	}
 
 	if (1 <= xstart && xstart <= nx && 1 <= ystart && ystart <= ny) {
-	    u[n] = wcpcx(w3wcx(
+	    u[n] = plP_wcpcx(plP_w3wcx(
 		    x[xstart - 1], y[ystart - 1], z[xstart - 1][ystart - 1]));
 
-	    v[n] = wcpcy(w3wcy(
+	    v[n] = plP_wcpcy(plP_w3wcy(
 		    x[xstart - 1], y[ystart - 1], z[xstart - 1][ystart - 1]));
 
 	    n = n + 1;
@@ -354,28 +359,28 @@ plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     PLFLT xmin, ymin, zmin, xmax, ymax, zmax, zscale;
     PLFLT tx, ty, ux, uy;
 
-    gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
-    gdom(&xmin, &xmax, &ymin, &ymax);
-    grange(&zscale, &zmin, &zmax);
+    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
+    plP_gdom(&xmin, &xmax, &ymin, &ymax);
+    plP_grange(&zscale, &zmin, &zmax);
 
     if (cxx >= 0.0 && cxy <= 0.0) {
 	/* Get x, y coordinates of legs and plot */
 	if (opt != 1) {
 	    for (i = 0; i < nx; i++) {
-		tx = w3wcx(x[i], y[0], zmin);
-		ty = w3wcy(x[i], y[0], zmin);
-		ux = w3wcx(x[i], y[0], z[i][0]);
-		uy = w3wcy(x[i], y[0], z[i][0]);
+		tx = plP_w3wcx(x[i], y[0], zmin);
+		ty = plP_w3wcy(x[i], y[0], zmin);
+		ux = plP_w3wcx(x[i], y[0], z[i][0]);
+		uy = plP_w3wcy(x[i], y[0], z[i][0]);
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
 
 	if (opt != 2) {
 	    for (i = 0; i < ny; i++) {
-		tx = w3wcx(x[0], y[i], zmin);
-		ty = w3wcy(x[0], y[i], zmin);
-		ux = w3wcx(x[0], y[i], z[0][i]);
-		uy = w3wcy(x[0], y[i], z[0][i]);
+		tx = plP_w3wcx(x[0], y[i], zmin);
+		ty = plP_w3wcy(x[0], y[i], zmin);
+		ux = plP_w3wcx(x[0], y[i], z[0][i]);
+		uy = plP_w3wcy(x[0], y[i], z[0][i]);
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
@@ -383,20 +388,20 @@ plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     else if (cxx <= 0.0 && cxy <= 0.0) {
 	if (opt != 1) {
 	    for (i = 0; i < nx; i++) {
-		tx = w3wcx(x[i], y[ny - 1], zmin);
-		ty = w3wcy(x[i], y[ny - 1], zmin);
-		ux = w3wcx(x[i], y[ny - 1], z[i][ny - 1]);
-		uy = w3wcy(x[i], y[ny - 1], z[i][ny - 1]);
+		tx = plP_w3wcx(x[i], y[ny - 1], zmin);
+		ty = plP_w3wcy(x[i], y[ny - 1], zmin);
+		ux = plP_w3wcx(x[i], y[ny - 1], z[i][ny - 1]);
+		uy = plP_w3wcy(x[i], y[ny - 1], z[i][ny - 1]);
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
 
 	if (opt != 2) {
 	    for (i = 0; i < ny; i++) {
-		tx = w3wcx(x[0], y[i], zmin);
-		ty = w3wcy(x[0], y[i], zmin);
-		ux = w3wcx(x[0], y[i], z[0][i]);
-		uy = w3wcy(x[0], y[i], z[0][i]);
+		tx = plP_w3wcx(x[0], y[i], zmin);
+		ty = plP_w3wcy(x[0], y[i], zmin);
+		ux = plP_w3wcx(x[0], y[i], z[0][i]);
+		uy = plP_w3wcy(x[0], y[i], z[0][i]);
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
@@ -404,20 +409,20 @@ plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     else if (cxx <= 0.0 && cxy >= 0.0) {
 	if (opt != 1) {
 	    for (i = 0; i < nx; i++) {
-		tx = w3wcx(x[i], y[ny - 1], zmin);
-		ty = w3wcy(x[i], y[ny - 1], zmin);
-		ux = w3wcx(x[i], y[ny - 1], z[i][ny - 1]);
-		uy = w3wcy(x[i], y[ny - 1], z[i][ny - 1]);
+		tx = plP_w3wcx(x[i], y[ny - 1], zmin);
+		ty = plP_w3wcy(x[i], y[ny - 1], zmin);
+		ux = plP_w3wcx(x[i], y[ny - 1], z[i][ny - 1]);
+		uy = plP_w3wcy(x[i], y[ny - 1], z[i][ny - 1]);
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
 
 	if (opt != 2) {
 	    for (i = 0; i < ny; i++) {
-		tx = w3wcx(x[nx - 1], y[i], zmin);
-		ty = w3wcy(x[nx - 1], y[i], zmin);
-		ux = w3wcx(x[nx - 1], y[i], z[nx - 1][i]);
-		uy = w3wcy(x[nx - 1], y[i], z[nx - 1][i]);
+		tx = plP_w3wcx(x[nx - 1], y[i], zmin);
+		ty = plP_w3wcy(x[nx - 1], y[i], zmin);
+		ux = plP_w3wcx(x[nx - 1], y[i], z[nx - 1][i]);
+		uy = plP_w3wcy(x[nx - 1], y[i], z[nx - 1][i]);
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
@@ -425,20 +430,20 @@ plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     else if (cxx >= 0.0 && cxy >= 0.0) {
 	if (opt != 1) {
 	    for (i = 0; i < nx; i++) {
-		tx = w3wcx(x[i], y[0], zmin);
-		ty = w3wcy(x[i], y[0], zmin);
-		ux = w3wcx(x[i], y[0], z[i][0]);
-		uy = w3wcy(x[i], y[0], z[i][0]);
+		tx = plP_w3wcx(x[i], y[0], zmin);
+		ty = plP_w3wcy(x[i], y[0], zmin);
+		ux = plP_w3wcx(x[i], y[0], z[i][0]);
+		uy = plP_w3wcy(x[i], y[0], z[i][0]);
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
 
 	if (opt != 2) {
 	    for (i = 0; i < ny; i++) {
-		tx = w3wcx(x[nx - 1], y[i], zmin);
-		ty = w3wcy(x[nx - 1], y[i], zmin);
-		ux = w3wcx(x[nx - 1], y[i], z[nx - 1][i]);
-		uy = w3wcy(x[nx - 1], y[i], z[nx - 1][i]);
+		tx = plP_w3wcx(x[nx - 1], y[i], zmin);
+		ty = plP_w3wcy(x[nx - 1], y[i], zmin);
+		ux = plP_w3wcx(x[nx - 1], y[i], z[nx - 1][i]);
+		uy = plP_w3wcy(x[nx - 1], y[i], z[nx - 1][i]);
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
@@ -461,9 +466,9 @@ plgrid3(PLFLT tick)
     PLINT nsub, prec, mode, digmax, digits, scale;
     PLFLT tp;
 
-    gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
-    gdom(&xmin, &xmax, &ymin, &ymax);
-    grange(&zscale, &zmin, &zmax);
+    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
+    plP_gdom(&xmin, &xmax, &ymin, &ymax);
+    plP_grange(&zscale, &zmin, &zmax);
 
     plgzax(&digmax, &digits);
     nsub = 0;
@@ -474,74 +479,74 @@ plgrid3(PLFLT tick)
 
     if (cxx >= 0.0 && cxy <= 0.0) {
 	while (tp <= zmax) {
-	    u[0] = wcpcx(w3wcx(xmin, ymax, tp));
-	    v[0] = wcpcy(w3wcy(xmin, ymax, tp));
-	    u[1] = wcpcx(w3wcx(xmax, ymax, tp));
-	    v[1] = wcpcy(w3wcy(xmax, ymax, tp));
-	    u[2] = wcpcx(w3wcx(xmax, ymin, tp));
-	    v[2] = wcpcy(w3wcy(xmax, ymin, tp));
+	    u[0] = plP_wcpcx(plP_w3wcx(xmin, ymax, tp));
+	    v[0] = plP_wcpcy(plP_w3wcy(xmin, ymax, tp));
+	    u[1] = plP_wcpcx(plP_w3wcx(xmax, ymax, tp));
+	    v[1] = plP_wcpcy(plP_w3wcy(xmax, ymax, tp));
+	    u[2] = plP_wcpcx(plP_w3wcx(xmax, ymin, tp));
+	    v[2] = plP_wcpcy(plP_w3wcy(xmax, ymin, tp));
 	    plnxtv(u, v, 3, 0);
 
 	    tp += tick;
 	}
-	u[0] = wcpcx(w3wcx(xmax, ymax, zmin));
-	v[0] = wcpcy(w3wcy(xmax, ymax, zmin));
-	u[1] = wcpcx(w3wcx(xmax, ymax, zmax));
-	v[1] = wcpcy(w3wcy(xmax, ymax, zmax));
+	u[0] = plP_wcpcx(plP_w3wcx(xmax, ymax, zmin));
+	v[0] = plP_wcpcy(plP_w3wcy(xmax, ymax, zmin));
+	u[1] = plP_wcpcx(plP_w3wcx(xmax, ymax, zmax));
+	v[1] = plP_wcpcy(plP_w3wcy(xmax, ymax, zmax));
 	plnxtv(u, v, 2, 0);
     }
     else if (cxx <= 0.0 && cxy <= 0.0) {
 	while (tp <= zmax) {
-	    u[0] = wcpcx(w3wcx(xmax, ymax, tp));
-	    v[0] = wcpcy(w3wcy(xmax, ymax, tp));
-	    u[1] = wcpcx(w3wcx(xmax, ymin, tp));
-	    v[1] = wcpcy(w3wcy(xmax, ymin, tp));
-	    u[2] = wcpcx(w3wcx(xmin, ymin, tp));
-	    v[2] = wcpcy(w3wcy(xmin, ymin, tp));
+	    u[0] = plP_wcpcx(plP_w3wcx(xmax, ymax, tp));
+	    v[0] = plP_wcpcy(plP_w3wcy(xmax, ymax, tp));
+	    u[1] = plP_wcpcx(plP_w3wcx(xmax, ymin, tp));
+	    v[1] = plP_wcpcy(plP_w3wcy(xmax, ymin, tp));
+	    u[2] = plP_wcpcx(plP_w3wcx(xmin, ymin, tp));
+	    v[2] = plP_wcpcy(plP_w3wcy(xmin, ymin, tp));
 	    plnxtv(u, v, 3, 0);
 
 	    tp += tick;
 	}
-	u[0] = wcpcx(w3wcx(xmax, ymin, zmin));
-	v[0] = wcpcy(w3wcy(xmax, ymin, zmin));
-	u[1] = wcpcx(w3wcx(xmax, ymin, zmax));
-	v[1] = wcpcy(w3wcy(xmax, ymin, zmax));
+	u[0] = plP_wcpcx(plP_w3wcx(xmax, ymin, zmin));
+	v[0] = plP_wcpcy(plP_w3wcy(xmax, ymin, zmin));
+	u[1] = plP_wcpcx(plP_w3wcx(xmax, ymin, zmax));
+	v[1] = plP_wcpcy(plP_w3wcy(xmax, ymin, zmax));
 	plnxtv(u, v, 2, 0);
     }
     else if (cxx <= 0.0 && cxy >= 0.0) {
 	while (tp <= zmax) {
-	    u[0] = wcpcx(w3wcx(xmax, ymin, tp));
-	    v[0] = wcpcy(w3wcy(xmax, ymin, tp));
-	    u[1] = wcpcx(w3wcx(xmin, ymin, tp));
-	    v[1] = wcpcy(w3wcy(xmin, ymin, tp));
-	    u[2] = wcpcx(w3wcx(xmin, ymax, tp));
-	    v[2] = wcpcy(w3wcy(xmin, ymax, tp));
+	    u[0] = plP_wcpcx(plP_w3wcx(xmax, ymin, tp));
+	    v[0] = plP_wcpcy(plP_w3wcy(xmax, ymin, tp));
+	    u[1] = plP_wcpcx(plP_w3wcx(xmin, ymin, tp));
+	    v[1] = plP_wcpcy(plP_w3wcy(xmin, ymin, tp));
+	    u[2] = plP_wcpcx(plP_w3wcx(xmin, ymax, tp));
+	    v[2] = plP_wcpcy(plP_w3wcy(xmin, ymax, tp));
 	    plnxtv(u, v, 3, 0);
 
 	    tp += tick;
 	}
-	u[0] = wcpcx(w3wcx(xmin, ymin, zmin));
-	v[0] = wcpcy(w3wcy(xmin, ymin, zmin));
-	u[1] = wcpcx(w3wcx(xmin, ymin, zmax));
-	v[1] = wcpcy(w3wcy(xmin, ymin, zmax));
+	u[0] = plP_wcpcx(plP_w3wcx(xmin, ymin, zmin));
+	v[0] = plP_wcpcy(plP_w3wcy(xmin, ymin, zmin));
+	u[1] = plP_wcpcx(plP_w3wcx(xmin, ymin, zmax));
+	v[1] = plP_wcpcy(plP_w3wcy(xmin, ymin, zmax));
 	plnxtv(u, v, 2, 0);
     }
     else if (cxx >= 0.0 && cxy >= 0.0) {
 	while (tp <= zmax) {
-	    u[0] = wcpcx(w3wcx(xmin, ymin, tp));
-	    v[0] = wcpcy(w3wcy(xmin, ymin, tp));
-	    u[1] = wcpcx(w3wcx(xmin, ymax, tp));
-	    v[1] = wcpcy(w3wcy(xmin, ymax, tp));
-	    u[2] = wcpcx(w3wcx(xmax, ymax, tp));
-	    v[2] = wcpcy(w3wcy(xmax, ymax, tp));
+	    u[0] = plP_wcpcx(plP_w3wcx(xmin, ymin, tp));
+	    v[0] = plP_wcpcy(plP_w3wcy(xmin, ymin, tp));
+	    u[1] = plP_wcpcx(plP_w3wcx(xmin, ymax, tp));
+	    v[1] = plP_wcpcy(plP_w3wcy(xmin, ymax, tp));
+	    u[2] = plP_wcpcx(plP_w3wcx(xmax, ymax, tp));
+	    v[2] = plP_wcpcy(plP_w3wcy(xmax, ymax, tp));
 	    plnxtv(u, v, 3, 0);
 
 	    tp += tick;
 	}
-	u[0] = wcpcx(w3wcx(xmin, ymax, zmin));
-	v[0] = wcpcy(w3wcy(xmin, ymax, zmin));
-	u[1] = wcpcx(w3wcx(xmin, ymax, zmax));
-	v[1] = wcpcy(w3wcy(xmin, ymax, zmax));
+	u[0] = plP_wcpcx(plP_w3wcx(xmin, ymax, zmin));
+	v[0] = plP_wcpcy(plP_w3wcy(xmin, ymax, zmin));
+	u[1] = plP_wcpcx(plP_w3wcx(xmin, ymax, zmax));
+	v[1] = plP_wcpcy(plP_w3wcy(xmin, ymax, zmax));
 	plnxtv(u, v, 2, 0);
     }
     pl3upv = 1;
@@ -601,11 +606,11 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	if (!oldhiview)
 	    plexit("plnxtvhi: Out of memory.");
 
-	movphy(u[0], v[0]);
+	plP_movphy(u[0], v[0]);
 	oldhiview[0] = u[0];
 	oldhiview[1] = v[0];
 	for (i = 1; i < n; i++) {
-	    draphy(u[i], v[i]);
+	    plP_draphy(u[i], v[i]);
 	    oldhiview[2 * i] = u[i];
 	    oldhiview[2 * i + 1] = v[i];
 	}
@@ -633,7 +638,7 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	newhisize = 2 * (mhi + BINC);
 	newhiview = (PLINT *) malloc((size_t) (newhisize * sizeof(PLINT)));
 	if (!newhiview) {
-	    free((VOID *) oldhiview);
+	    free((void *) oldhiview);
 	    plexit("plnxtvhi: Out of memory.");
 	}
     }
@@ -695,7 +700,7 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 * of "newhi" changes.
 */
 	if (first) {
-	    movphy(px, py);
+	    plP_movphy(px, py);
 	    first = 0;
 	    lstold = ptold;
 	    savehipoint(px, py);
@@ -709,13 +714,13 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 * endpoints are not connected to the old view.
 */
 	    if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
-		movphy(px, py);
+		plP_movphy(px, py);
 		lstold = ptold;
 		pthi = 0;
 		ochange = 0;
 	    }
 	    else if (pl3upv == 0 && ((!ptold && i >= mhi) || (ptold && j >= n))) {
-		movphy(px, py);
+		plP_movphy(px, py);
 		lstold = ptold;
 		pthi = 0;
 		ochange = 0;
@@ -770,9 +775,9 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 		pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
 		if (cx == px && cy == py) {
 		    if (lstold && !ochange)
-			movphy(px, py);
+			plP_movphy(px, py);
 		    else
-			draphy(px, py);
+			plP_draphy(px, py);
 
 		    savehipoint(px, py);
 		    lstold = 1;
@@ -780,9 +785,9 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 		}
 		else {
 		    if (lstold && !ochange)
-			movphy(cx, cy);
+			plP_movphy(cx, cy);
 		    else
-			draphy(cx, cy);
+			plP_draphy(cx, cy);
 
 		    lstold = 1;
 		    savehipoint(cx, cy);
@@ -795,9 +800,9 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 
 	if (pthi) {
 	    if (lstold && ptold)
-		movphy(px, py);
+		plP_movphy(px, py);
 	    else
-		draphy(px, py);
+		plP_draphy(px, py);
 
 	    savehipoint(px, py);
 	    lstold = ptold;
@@ -847,11 +852,11 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	if (!oldloview)
 	    plexit("plnxtvlo: Out of memory.");
 
-	movphy(u[0], v[0]);
+	plP_movphy(u[0], v[0]);
 	oldloview[0] = u[0];
 	oldloview[1] = v[0];
 	for (i = 1; i < n; i++) {
-	    draphy(u[i], v[i]);
+	    plP_draphy(u[i], v[i]);
 	    oldloview[2 * i] = u[i];
 	    oldloview[2 * i + 1] = v[i];
 	}
@@ -879,7 +884,7 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	newlosize = 2 * (mlo + BINC);
 	newloview = (PLINT *) malloc((size_t) (newlosize * sizeof(PLINT)));
 	if (!newloview) {
-	    free((VOID *) oldloview);
+	    free((void *) oldloview);
 	    plexit("plnxtvlo: Out of memory.");
 	}
     }
@@ -941,7 +946,7 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 * of "newlo" changes.
 */
 	if (first) {
-	    movphy(px, py);
+	    plP_movphy(px, py);
 	    first = 0;
 	    lstold = ptold;
 	    savelopoint(px, py);
@@ -955,13 +960,13 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 * endpoints are not connected to the old view.
 */
 	    if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
-		movphy(px, py);
+		plP_movphy(px, py);
 		lstold = ptold;
 		ptlo = 0;
 		ochange = 0;
 	    }
 	    else if (pl3upv == 0 && ((!ptold && i >= mlo) || (ptold && j >= n))) {
-		movphy(px, py);
+		plP_movphy(px, py);
 		lstold = ptold;
 		ptlo = 0;
 		ochange = 0;
@@ -1016,9 +1021,9 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 		pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
 		if (cx == px && cy == py) {
 		    if (lstold && !ochange)
-			movphy(px, py);
+			plP_movphy(px, py);
 		    else
-			draphy(px, py);
+			plP_draphy(px, py);
 
 		    savelopoint(px, py);
 		    lstold = 1;
@@ -1026,9 +1031,9 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 		}
 		else {
 		    if (lstold && !ochange)
-			movphy(cx, cy);
+			plP_movphy(cx, cy);
 		    else
-			draphy(cx, cy);
+			plP_draphy(cx, cy);
 
 		    lstold = 1;
 		    savelopoint(cx, cy);
@@ -1041,9 +1046,9 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 
 	if (ptlo) {
 	    if (lstold && ptold)
-		movphy(px, py);
+		plP_movphy(px, py);
 	    else
-		draphy(px, py);
+		plP_draphy(px, py);
 
 	    savelopoint(px, py);
 	    lstold = ptold;
@@ -1076,11 +1081,11 @@ savehipoint(PLINT px, PLINT py)
 	return;
     if (xxhi >= newhisize) {	/* allocate additional space */
 	newhisize += 2 * BINC;
-	temp = (PLINT *) realloc((VOID *) newhiview,
+	temp = (PLINT *) realloc((void *) newhiview,
 				 (size_t) (newhisize * sizeof(PLINT)));
 	if (!temp) {
-	    free((VOID *) oldhiview);
-	    free((VOID *) newhiview);
+	    free((void *) oldhiview);
+	    free((void *) newhiview);
 	    plexit("savehipoint: Out of memory.");
 	}
 	newhiview = temp;
@@ -1100,11 +1105,11 @@ savelopoint(PLINT px, PLINT py)
 	return;
     if (xxlo >= newlosize) {	/* allocate additional space */
 	newlosize += 2 * BINC;
-	temp = (PLINT *) realloc((VOID *) newloview,
+	temp = (PLINT *) realloc((void *) newloview,
 				 (size_t) (newlosize * sizeof(PLINT)));
 	if (!temp) {
-	    free((VOID *) oldloview);
-	    free((VOID *) newloview);
+	    free((void *) oldloview);
+	    free((void *) newloview);
 	    plexit("savelopoint: Out of memory.");
 	}
 	newloview = temp;
@@ -1120,7 +1125,7 @@ swaphiview(void)
 {
     if (pl3upv != 0) {
 	mhi = xxhi / 2;
-	free((VOID *) oldhiview);
+	free((void *) oldhiview);
 	oldhiview = newhiview;
     }
 }
@@ -1130,7 +1135,7 @@ swaploview(void)
 {
     if (pl3upv != 0) {
 	mlo = xxlo / 2;
-	free((VOID *) oldloview);
+	free((void *) oldloview);
 	oldloview = newloview;
     }
 }

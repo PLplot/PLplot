@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/04/26 20:04:03  mjl
-   Tweaks for placement of exponential label to ensure it doesn't interfere
-   with axes labels.
+   Revision 1.7  1993/07/01 22:13:32  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.6  1993/04/26  20:04:03  mjl
+ * Tweaks for placement of exponential label to ensure it doesn't interfere
+ * with axes labels.
+ *
  * Revision 1.5  1993/03/17  17:01:39  mjl
  * Eliminated some dead assignments that turned up when running with SAS/C's
  * global optimizer enabled on the Amiga.
@@ -28,7 +33,7 @@
 	Routines for drawing axes & box around the current viewport.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -102,23 +107,23 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
     PLFLT xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT pos, tn, tp, temp, offset, height;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plbox: Please set up window first.");
 
     /* Open  the clip limits to the subpage limits */
 
-    gclp(&lxmin, &lxmax, &lymin, &lymax);
-    gphy(&pxmin, &pxmax, &pymin, &pymax);
-    sclp(pxmin, pxmax, pymin, pymax);
+    plP_gclp(&lxmin, &lxmax, &lymin, &lymax);
+    plP_gphy(&pxmin, &pxmax, &pymin, &pymax);
+    plP_sclp(pxmin, pxmax, pymin, pymax);
 
-    gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
+    plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
 
     /* Tick and subtick sizes in device coords */
 
-    gpixmm(&xpmm, &ypmm);
-    gmaj(&defmaj, &htmaj);
-    gmin(&defmin, &htmin);
+    plP_gpixmm(&xpmm, &ypmm);
+    plP_gmaj(&defmaj, &htmaj);
+    plP_gmin(&defmin, &htmin);
 
     xmajor = MAX(ROUND(htmaj * ypmm), 1);
     ymajor = MAX(ROUND(htmaj * xpmm), 1);
@@ -130,30 +135,30 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
     ytick1 = ytick;
     nysub1 = nysub;
 
-    lax = stsearch(xopt, 'a');
-    lbx = stsearch(xopt, 'b');
-    lcx = stsearch(xopt, 'c');
-    lgx = stsearch(xopt, 'g');
-    lix = stsearch(xopt, 'i');
-    llx = stsearch(xopt, 'l');
-    lmx = stsearch(xopt, 'm');
-    lnx = stsearch(xopt, 'n');
-    lsx = stsearch(xopt, 's');
-    ltx = stsearch(xopt, 't');
+    lax = plP_stsearch(xopt, 'a');
+    lbx = plP_stsearch(xopt, 'b');
+    lcx = plP_stsearch(xopt, 'c');
+    lgx = plP_stsearch(xopt, 'g');
+    lix = plP_stsearch(xopt, 'i');
+    llx = plP_stsearch(xopt, 'l');
+    lmx = plP_stsearch(xopt, 'm');
+    lnx = plP_stsearch(xopt, 'n');
+    lsx = plP_stsearch(xopt, 's');
+    ltx = plP_stsearch(xopt, 't');
 
-    lay = stsearch(yopt, 'a');
-    lby = stsearch(yopt, 'b');
-    lcy = stsearch(yopt, 'c');
-    lgy = stsearch(yopt, 'g');
-    liy = stsearch(yopt, 'i');
-    lly = stsearch(yopt, 'l');
-    lmy = stsearch(yopt, 'm');
-    lny = stsearch(yopt, 'n');
-    lsy = stsearch(yopt, 's');
-    lty = stsearch(yopt, 't');
-    lvy = stsearch(yopt, 'v');
+    lay = plP_stsearch(yopt, 'a');
+    lby = plP_stsearch(yopt, 'b');
+    lcy = plP_stsearch(yopt, 'c');
+    lgy = plP_stsearch(yopt, 'g');
+    liy = plP_stsearch(yopt, 'i');
+    lly = plP_stsearch(yopt, 'l');
+    lmy = plP_stsearch(yopt, 'm');
+    lny = plP_stsearch(yopt, 'n');
+    lsy = plP_stsearch(yopt, 's');
+    lty = plP_stsearch(yopt, 't');
+    lvy = plP_stsearch(yopt, 'v');
 
-    gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
+    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
 
     lax = lax && (vpwymi * vpwyma < 0.0) && !llx;
     lay = lay && (vpwxmi * vpwxma < 0.0) && !lly;
@@ -207,7 +212,7 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
     /* Draw the bottom edge of the box */
 
     if (lbx) {
-	movphy(vppxmi, vppymi);
+	plP_movphy(vppxmi, vppymi);
 	if (ltx) {
 	    tp = xtick1 * floor(vpwxmi / xtick1);
 	    for (;;) {
@@ -217,30 +222,30 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
 			for (i = 0; i <= 7; i++) {
 			    temp = tp + xlog[i];
 			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(wcpcx(temp), vppymi, i1x, i2x);
+				plxtik(plP_wcpcx(temp), vppymi, i1x, i2x);
 			}
 		    }
 		    else {
 			for (i = 1; i <= nxsub1 - 1; i++) {
 			    temp = tp + i * (tn - tp) / nxsub1;
 			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(wcpcx(temp), vppymi, i1x, i2x);
+				plxtik(plP_wcpcx(temp), vppymi, i1x, i2x);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwxmi, vpwxma))
 		    break;
-		plxtik(wcpcx(tn), vppymi, i3x, i4x);
+		plxtik(plP_wcpcx(tn), vppymi, i3x, i4x);
 		tp = tn;
 	    }
 	}
-	draphy(vppxma, vppymi);
+	plP_draphy(vppxma, vppymi);
     }
 
     /* Draw right-hand edge of box */
 
     if (lcy) {
-	movphy(vppxma, vppymi);
+	plP_movphy(vppxma, vppymi);
 	if (lty) {
 	    tp = ytick1 * floor(vpwymi / ytick1);
 	    for (;;) {
@@ -250,30 +255,30 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
 			for (i = 0; i <= 7; i++) {
 			    temp = tp + xlog[i];
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(vppxma, wcpcy(temp), i2y, i1y);
+				plytik(vppxma, plP_wcpcy(temp), i2y, i1y);
 			}
 		    }
 		    else {
 			for (i = 1; i <= nysub1 - 1; i++) {
 			    temp = tp + i * (tn - tp) / nysub1;
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(vppxma, wcpcy(temp), i2y, i1y);
+				plytik(vppxma, plP_wcpcy(temp), i2y, i1y);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwymi, vpwyma))
 		    break;
-		plytik(vppxma, wcpcy(tn), i4y, i3y);
+		plytik(vppxma, plP_wcpcy(tn), i4y, i3y);
 		tp = tn;
 	    }
 	}
-	draphy(vppxma, vppyma);
+	plP_draphy(vppxma, vppyma);
     }
 
     /* Draw the top edge of the box */
 
     if (lcx) {
-	movphy(vppxma, vppyma);
+	plP_movphy(vppxma, vppyma);
 	if (ltx) {
 	    tp = xtick1 * (floor(vpwxma / xtick1) + 1);
 	    for (;;) {
@@ -283,30 +288,30 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
 			for (i = 7; i >= 0; i--) {
 			    temp = tn + xlog[i];
 			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(wcpcx(temp), vppyma, i2x, i1x);
+				plxtik(plP_wcpcx(temp), vppyma, i2x, i1x);
 			}
 		    }
 		    else {
 			for (i = nxsub1 - 1; i >= 1; i--) {
 			    temp = tn + i * (tp - tn) / nxsub1;
 			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(wcpcx(temp), vppyma, i2x, i1x);
+				plxtik(plP_wcpcx(temp), vppyma, i2x, i1x);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwxmi, vpwxma))
 		    break;
-		plxtik(wcpcx(tn), vppyma, i4x, i3x);
+		plxtik(plP_wcpcx(tn), vppyma, i4x, i3x);
 		tp = tn;
 	    }
 	}
-	draphy(vppxmi, vppyma);
+	plP_draphy(vppxmi, vppyma);
     }
 
     /* Draw left-hand edge of box */
 
     if (lby) {
-	movphy(vppxmi, vppyma);
+	plP_movphy(vppxmi, vppyma);
 	if (lty) {
 	    tp = ytick1 * (floor(vpwyma / ytick1) + 1);
 	    for (;;) {
@@ -316,31 +321,31 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
 			for (i = 7; i >= 0; i--) {
 			    temp = tn + xlog[i];
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(vppxmi, wcpcy(temp), i1y, i2y);
+				plytik(vppxmi, plP_wcpcy(temp), i1y, i2y);
 			}
 		    }
 		    else {
 			for (i = nysub1 - 1; i >= 1; i--) {
 			    temp = tn + i * (tp - tn) / nysub1;
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(vppxmi, wcpcy(temp), i1y, i2y);
+				plytik(vppxmi, plP_wcpcy(temp), i1y, i2y);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwymi, vpwyma))
 		    break;
-		plytik(vppxmi, wcpcy(tn), i3y, i4y);
+		plytik(vppxmi, plP_wcpcy(tn), i3y, i4y);
 		tp = tn;
 	    }
 	}
-	draphy(vppxmi, vppymi);
+	plP_draphy(vppxmi, vppymi);
     }
 
     /* Draw the horizontal axis */
 
     if (lax) {
-	it0 = wcpcy((PLFLT) 0.0);
-	movphy(vppxmi, it0);
+	it0 = plP_wcpcy((PLFLT) 0.0);
+	plP_movphy(vppxmi, it0);
 	if (ltx) {
 	    tp = xtick1 * floor(vpwxmi / xtick1);
 	    for (;;) {
@@ -350,31 +355,31 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
 			for (i = 0; i <= 7; i++) {
 			    temp = tp + xlog[i];
 			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(wcpcx(temp), it0, xminor, xminor);
+				plxtik(plP_wcpcx(temp), it0, xminor, xminor);
 			}
 		    }
 		    else {
 			for (i = 1; i <= nxsub1 - 1; i++) {
 			    temp = tp + i * (tn - tp) / nxsub1;
 			    if (BETW(temp, vpwxmi, vpwxma))
-				plxtik(wcpcx(temp), it0, xminor, xminor);
+				plxtik(plP_wcpcx(temp), it0, xminor, xminor);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwxmi, vpwxma))
 		    break;
-		plxtik(wcpcx(tn), it0, xmajor, xmajor);
+		plxtik(plP_wcpcx(tn), it0, xmajor, xmajor);
 		tp = tn;
 	    }
 	}
-	draphy(vppxma, it0);
+	plP_draphy(vppxma, it0);
     }
 
     /* Draw the vertical axis */
 
     if (lay) {
-	it0 = wcpcx((PLFLT) 0.0);
-	movphy(it0, vppymi);
+	it0 = plP_wcpcx((PLFLT) 0.0);
+	plP_movphy(it0, vppymi);
 	if (lty) {
 	    tp = ytick1 * floor(vpwymi / ytick1);
 	    for (;;) {
@@ -384,24 +389,24 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
 			for (i = 0; i <= 7; i++) {
 			    temp = tp + xlog[i];
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(it0, wcpcy(temp), yminor, yminor);
+				plytik(it0, plP_wcpcy(temp), yminor, yminor);
 			}
 		    }
 		    else {
 			for (i = 1; i <= nysub1 - 1; i++) {
 			    temp = tp + i * (tn - tp) / nysub1;
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(it0, wcpcy(temp), yminor, yminor);
+				plytik(it0, plP_wcpcy(temp), yminor, yminor);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwymi, vpwyma))
 		    break;
-		plytik(it0, wcpcy(tn), ymajor, ymajor);
+		plytik(it0, plP_wcpcy(tn), ymajor, ymajor);
 		tp = tn;
 	    }
 	}
-	draphy(it0, vppyma);
+	plP_draphy(it0, vppyma);
     }
 
     /* Draw grid in x direction */
@@ -502,7 +507,7 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
     }
     /* Restore the clip limits to viewport edge */
 
-    sclp(lxmin, lxmax, lymin, lymax);
+    plP_sclp(lxmin, lxmax, lymin, lymax);
 }
 
 /*----------------------------------------------------------------------*\
@@ -533,28 +538,28 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
     PLFLT xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT pos, tn, tp, temp, offset, height;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plaxes: Please set up window first.");
 
     /* Open  the clip limits to the subpage limits */
 
-    gclp(&lxmin, &lxmax, &lymin, &lymax);
-    gphy(&pxmin, &pxmax, &pymin, &pymax);
-    sclp(pxmin, pxmax, pymin, pymax);
+    plP_gclp(&lxmin, &lxmax, &lymin, &lymax);
+    plP_gphy(&pxmin, &pxmax, &pymin, &pymax);
+    plP_sclp(pxmin, pxmax, pymin, pymax);
 
-    gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
+    plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
 
     /* convert world coordinates to physical	 */
 
-    xorigin = wcpcx(x0);
-    yorigin = wcpcy(y0);
+    xorigin = plP_wcpcx(x0);
+    yorigin = plP_wcpcy(y0);
 
     /* Tick and subtick sizes in device coords */
 
-    gpixmm(&xpmm, &ypmm);
-    gmaj(&defmaj, &htmaj);
-    gmin(&defmin, &htmin);
+    plP_gpixmm(&xpmm, &ypmm);
+    plP_gmaj(&defmaj, &htmaj);
+    plP_gmin(&defmin, &htmin);
 
     xmajor = MAX(ROUND(htmaj * ypmm), 1);
     ymajor = MAX(ROUND(htmaj * xpmm), 1);
@@ -566,26 +571,26 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
     ytick1 = ytick;
     nysub1 = nysub;
 
-    lbx = stsearch(xopt, 'b');
-    lcx = stsearch(xopt, 'c');
-    lgx = stsearch(xopt, 'g');
-    llx = stsearch(xopt, 'l');
-    lmx = stsearch(xopt, 'm');
-    lnx = stsearch(xopt, 'n');
-    lsx = stsearch(xopt, 's');
-    ltx = stsearch(xopt, 't');
+    lbx = plP_stsearch(xopt, 'b');
+    lcx = plP_stsearch(xopt, 'c');
+    lgx = plP_stsearch(xopt, 'g');
+    llx = plP_stsearch(xopt, 'l');
+    lmx = plP_stsearch(xopt, 'm');
+    lnx = plP_stsearch(xopt, 'n');
+    lsx = plP_stsearch(xopt, 's');
+    ltx = plP_stsearch(xopt, 't');
 
-    lby = stsearch(yopt, 'b');
-    lcy = stsearch(yopt, 'c');
-    lgy = stsearch(yopt, 'g');
-    lly = stsearch(yopt, 'l');
-    lmy = stsearch(yopt, 'm');
-    lny = stsearch(yopt, 'n');
-    lsy = stsearch(yopt, 's');
-    lty = stsearch(yopt, 't');
-    lvy = stsearch(yopt, 'v');
+    lby = plP_stsearch(yopt, 'b');
+    lcy = plP_stsearch(yopt, 'c');
+    lgy = plP_stsearch(yopt, 'g');
+    lly = plP_stsearch(yopt, 'l');
+    lmy = plP_stsearch(yopt, 'm');
+    lny = plP_stsearch(yopt, 'n');
+    lsy = plP_stsearch(yopt, 's');
+    lty = plP_stsearch(yopt, 't');
+    lvy = plP_stsearch(yopt, 'v');
 
-    gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
+    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
 
     plgxax(&xdigmax, &xdigits);
     plgyax(&ydigmax, &ydigits);
@@ -619,25 +624,25 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
     /* draw boxing */
 
     if (lbx) {
-	movphy(vppxmi, vppymi);
-	draphy(vppxma, vppymi);
+	plP_movphy(vppxmi, vppymi);
+	plP_draphy(vppxma, vppymi);
     }
     if (lcx) {
-	movphy(vppxmi, vppyma);
-	draphy(vppxma, vppyma);
+	plP_movphy(vppxmi, vppyma);
+	plP_draphy(vppxma, vppyma);
     }
     if (lby) {
-	movphy(vppxmi, vppymi);
-	draphy(vppxmi, vppyma);
+	plP_movphy(vppxmi, vppymi);
+	plP_draphy(vppxmi, vppyma);
     }
     if (lcy) {
-	movphy(vppxma, vppymi);
-	draphy(vppxma, vppyma);
+	plP_movphy(vppxma, vppymi);
+	plP_draphy(vppxma, vppyma);
     }
 
     /* Draw the horizontal axis */
 
-    movphy(vppxmi, yorigin);
+    plP_movphy(vppxmi, yorigin);
     if (ltx) {
 	tp = xtick1 * floor(vpwxmi / xtick1);
 	for (;;) {
@@ -647,29 +652,29 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
 		    for (i = 0; i <= 7; i++) {
 			temp = tp + xlog[i];
 			if (BETW(temp, vpwxmi, vpwxma))
-			    plxtik(wcpcx(temp), yorigin, i1x, i2x);
+			    plxtik(plP_wcpcx(temp), yorigin, i1x, i2x);
 		    }
 		}
 		else {
 		    for (i = 1; i <= nxsub1 - 1; i++) {
 			temp = tp + i * (tn - tp) / nxsub1;
 			if (BETW(temp, vpwxmi, vpwxma))
-			    plxtik(wcpcx(temp), yorigin, i1x, i2x);
+			    plxtik(plP_wcpcx(temp), yorigin, i1x, i2x);
 		    }
 		}
 	    }
 	    if (!BETW(tn, vpwxmi, vpwxma))
 		break;
-	    plxtik(wcpcx(tn), yorigin, i3x, i4x);
+	    plxtik(plP_wcpcx(tn), yorigin, i3x, i4x);
 	    tp = tn;
 	}
     }
-    draphy(vppxma, yorigin);
+    plP_draphy(vppxma, yorigin);
 
     /* Draw vertical axis */
 
     if (lby) {
-	movphy(xorigin, vppyma);
+	plP_movphy(xorigin, vppyma);
 	if (lty) {
 	    tp = ytick1 * (floor(vpwyma / ytick1) + 1);
 	    for (;;) {
@@ -679,24 +684,24 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
 			for (i = 7; i >= 0; i--) {
 			    temp = tn + xlog[i];
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(xorigin, wcpcy(temp), i1y, i2y);
+				plytik(xorigin, plP_wcpcy(temp), i1y, i2y);
 			}
 		    }
 		    else {
 			for (i = nysub1 - 1; i >= 1; i--) {
 			    temp = tn + i * (tp - tn) / nysub1;
 			    if (BETW(temp, vpwymi, vpwyma))
-				plytik(xorigin, wcpcy(temp), i1y, i2y);
+				plytik(xorigin, plP_wcpcy(temp), i1y, i2y);
 			}
 		    }
 		}
 		if (!BETW(tn, vpwymi, vpwyma))
 		    break;
-		plytik(xorigin, wcpcy(tn), i3y, i4y);
+		plytik(xorigin, plP_wcpcy(tn), i3y, i4y);
 		tp = tn;
 	    }
 	}
-	draphy(xorigin, vppymi);
+	plP_draphy(xorigin, vppymi);
     }
 
     /* Draw grid in x direction */
@@ -795,7 +800,7 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
     }
     /* Restore the clip limits to viewport edge */
 
-    sclp(lxmin, lxmax, lymin, lymax);
+    plP_sclp(lxmin, lxmax, lymin, lymax);
 }
 
 /*----------------------------------------------------------------------*\
@@ -819,13 +824,13 @@ c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx,
     PLINT ydigmax, ydigits;
     PLINT zdigmax, zdigits;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plbox3: Please set up window first.");
 
-    gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
-    gdom(&xmin, &xmax, &ymin, &ymax);
-    grange(&zscale, &zmin, &zmax);
+    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
+    plP_gdom(&xmin, &xmax, &ymin, &ymax);
+    plP_grange(&zscale, &zmin, &zmax);
 
     plgxax(&xdigmax, &xdigits);
     plgyax(&ydigmax, &ydigits);
@@ -838,117 +843,117 @@ c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx,
 /* We have to wait until after the plot is drawn to draw back */
 /* grid so store this stuff. */
 
-    gzback(&zbflg, &zbcol, &zbtck);
-    *zbflg = stsearch(zopt, 'd');
+    plP_gzback(&zbflg, &zbcol, &zbtck);
+    *zbflg = plP_stsearch(zopt, 'd');
     if (*zbflg) {
 	/* save tick spacing and color */
 	*zbtck = ztick;
-	gatt(&font, zbcol);
+	plP_gatt(&font, zbcol);
     }
 
     if (cxx >= 0.0 && cxy <= 0.0) {
-	ln = stsearch(xopt, 'n');
-	tx = w3wcx(xmin, ymin, zmin);
-	ty = w3wcy(xmin, ymin, zmin);
-	ux = w3wcx(xmax, ymin, zmin);
-	uy = w3wcy(xmax, ymin, zmin);
+	ln = plP_stsearch(xopt, 'n');
+	tx = plP_w3wcx(xmin, ymin, zmin);
+	ty = plP_w3wcy(xmin, ymin, zmin);
+	ux = plP_w3wcx(xmax, ymin, zmin);
+	uy = plP_w3wcy(xmax, ymin, zmin);
 	plxybx(xopt, xlabel, tx, ty, ux, uy,
 	       xmin, xmax, xtick, nsubx, 0, &xdigits);
 
 	dx = ux - tx;
 	dy = uy - ty;
 	plzbx(zopt, zlabel, 1, dx, dy, ux, uy,
-	      w3wcy(xmax, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+	      plP_w3wcy(xmax, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
 
-	tx = w3wcx(xmin, ymax, zmin);
-	ty = w3wcy(xmin, ymax, zmin);
-	ux = w3wcx(xmin, ymin, zmin);
-	uy = w3wcy(xmin, ymin, zmin);
+	tx = plP_w3wcx(xmin, ymax, zmin);
+	ty = plP_w3wcy(xmin, ymax, zmin);
+	ux = plP_w3wcx(xmin, ymin, zmin);
+	uy = plP_w3wcy(xmin, ymin, zmin);
 	plxybx(yopt, ylabel, tx, ty, ux, uy,
 	       ymax, ymin, ytick, nsuby, ln, &ydigits);
 
 	dx = ux - tx;
 	dy = uy - ty;
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
-	      w3wcy(xmin, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+	      plP_w3wcy(xmin, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
     else if (cxx <= 0.0 && cxy <= 0.0) {
-	ln = stsearch(yopt, 'n');
-	tx = w3wcx(xmin, ymax, zmin);
-	ty = w3wcy(xmin, ymax, zmin);
-	ux = w3wcx(xmin, ymin, zmin);
-	uy = w3wcy(xmin, ymin, zmin);
+	ln = plP_stsearch(yopt, 'n');
+	tx = plP_w3wcx(xmin, ymax, zmin);
+	ty = plP_w3wcy(xmin, ymax, zmin);
+	ux = plP_w3wcx(xmin, ymin, zmin);
+	uy = plP_w3wcy(xmin, ymin, zmin);
 	plxybx(yopt, ylabel, tx, ty, ux, uy,
 	       ymax, ymin, ytick, nsuby, 0, &ydigits);
 
 	dx = ux - tx;
 	dy = uy - ty;
 	plzbx(zopt, zlabel, 1, dx, dy, ux, uy,
-	      w3wcy(xmin, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+	      plP_w3wcy(xmin, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
 
-	tx = w3wcx(xmax, ymax, zmin);
-	ty = w3wcy(xmax, ymax, zmin);
-	ux = w3wcx(xmin, ymax, zmin);
-	uy = w3wcy(xmin, ymax, zmin);
+	tx = plP_w3wcx(xmax, ymax, zmin);
+	ty = plP_w3wcy(xmax, ymax, zmin);
+	ux = plP_w3wcx(xmin, ymax, zmin);
+	uy = plP_w3wcy(xmin, ymax, zmin);
 	plxybx(xopt, xlabel, tx, ty, ux, uy,
 	       xmax, xmin, xtick, nsubx, ln, &xdigits);
 
 	dx = ux - tx;
 	dy = uy - ty;
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
-	      w3wcy(xmax, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+	      plP_w3wcy(xmax, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
     else if (cxx <= 0.0 && cxy >= 0.0) {
-	ln = stsearch(xopt, 'n');
-	tx = w3wcx(xmax, ymax, zmin);
-	ty = w3wcy(xmax, ymax, zmin);
-	ux = w3wcx(xmin, ymax, zmin);
-	uy = w3wcy(xmin, ymax, zmin);
+	ln = plP_stsearch(xopt, 'n');
+	tx = plP_w3wcx(xmax, ymax, zmin);
+	ty = plP_w3wcy(xmax, ymax, zmin);
+	ux = plP_w3wcx(xmin, ymax, zmin);
+	uy = plP_w3wcy(xmin, ymax, zmin);
 	plxybx(xopt, xlabel, tx, ty, ux, uy,
 	       xmax, xmin, xtick, nsubx, 0, &xdigits);
 
 	dx = ux - tx;
 	dy = uy - ty;
 	plzbx(zopt, zlabel, 1, dx, dy, ux, uy,
-	      w3wcy(xmin, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+	      plP_w3wcy(xmin, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
 
-	tx = w3wcx(xmax, ymin, zmin);
-	ty = w3wcy(xmax, ymin, zmin);
-	ux = w3wcx(xmax, ymax, zmin);
-	uy = w3wcy(xmax, ymax, zmin);
+	tx = plP_w3wcx(xmax, ymin, zmin);
+	ty = plP_w3wcy(xmax, ymin, zmin);
+	ux = plP_w3wcx(xmax, ymax, zmin);
+	uy = plP_w3wcy(xmax, ymax, zmin);
 	plxybx(yopt, ylabel, tx, ty, ux, uy,
 	       ymin, ymax, ytick, nsuby, ln, &ydigits);
 
 	dx = ux - tx;
 	dy = uy - ty;
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
-	      w3wcy(xmax, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+	      plP_w3wcy(xmax, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
     else if (cxx >= 0.0 && cxy >= 0.0) {
-	ln = stsearch(yopt, 'n');
-	tx = w3wcx(xmax, ymin, zmin);
-	ty = w3wcy(xmax, ymin, zmin);
-	ux = w3wcx(xmax, ymax, zmin);
-	uy = w3wcy(xmax, ymax, zmin);
+	ln = plP_stsearch(yopt, 'n');
+	tx = plP_w3wcx(xmax, ymin, zmin);
+	ty = plP_w3wcy(xmax, ymin, zmin);
+	ux = plP_w3wcx(xmax, ymax, zmin);
+	uy = plP_w3wcy(xmax, ymax, zmin);
 	plxybx(yopt, ylabel, tx, ty, ux, uy,
 	       ymin, ymax, ytick, nsuby, 0, &ydigits);
 
 	dx = ux - tx;
 	dy = uy - ty;
 	plzbx(zopt, zlabel, 1, dx, dy, ux, uy,
-	      w3wcy(xmax, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+	      plP_w3wcy(xmax, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
 
-	tx = w3wcx(xmin, ymin, zmin);
-	ty = w3wcy(xmin, ymin, zmin);
-	ux = w3wcx(xmax, ymin, zmin);
-	uy = w3wcy(xmax, ymin, zmin);
+	tx = plP_w3wcx(xmin, ymin, zmin);
+	ty = plP_w3wcy(xmin, ymin, zmin);
+	ux = plP_w3wcx(xmax, ymin, zmin);
+	uy = plP_w3wcy(xmax, ymin, zmin);
 	plxybx(xopt, xlabel, tx, ty, ux, uy,
 	       xmin, xmax, xtick, nsubx, ln, &xdigits);
 
 	dx = ux - tx;
 	dy = uy - ty;
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
-	      w3wcy(xmin, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
+	      plP_w3wcy(xmin, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
     plsxax(xdigmax, xdigits);
     plsyax(ydigmax, ydigits);
@@ -996,9 +1001,9 @@ plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
 
     /* Tick and subtick sizes in device coords */
 
-    gpixmm(&xpmm, &ypmm);
-    gmaj(&defmaj, &htmaj);
-    gmin(&defmin, &htmin);
+    plP_gpixmm(&xpmm, &ypmm);
+    plP_gmaj(&defmaj, &htmaj);
+    plP_gmin(&defmin, &htmin);
 
     major = MAX(ROUND(htmaj * ypmm), 1);
     minor = MAX(ROUND(htmin * ypmm), 1);
@@ -1006,13 +1011,13 @@ plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
     tick1 = tick;
     nsub1 = nsub;
 
-    lb = stsearch(opt, 'b');
-    li = stsearch(opt, 'i');
-    ll = stsearch(opt, 'l');
-    ln = stsearch(opt, 'n');
-    ls = stsearch(opt, 's');
-    lt = stsearch(opt, 't');
-    lu = stsearch(opt, 'u');
+    lb = plP_stsearch(opt, 'b');
+    li = plP_stsearch(opt, 'i');
+    ll = plP_stsearch(opt, 'l');
+    ln = plP_stsearch(opt, 'n');
+    ls = plP_stsearch(opt, 's');
+    lt = plP_stsearch(opt, 't');
+    lu = plP_stsearch(opt, 'u');
 
     if (lu)
 	plxytx(wx1, wy1, wx2, wy2, (PLFLT) 3.2, (PLFLT) 0.5, (PLFLT) 0.5, label);
@@ -1039,7 +1044,7 @@ plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
 
     /* Draw the line */
 
-    movwor(wx1, wy1);
+    plP_movwor(wx1, wy1);
     if (lt) {
 	tp = tick1 * floor(vmin / tick1);
       lab2:
@@ -1050,8 +1055,8 @@ plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
 		    temp = tp + xlog[i];
 		    if (BETW(temp, vmin, vmax)) {
 			lambda = (temp - vmin) / (vmax - vmin);
-			plxtik(wcpcx((PLFLT) (wx1 + lambda * dwx)),
-			       wcpcy((PLFLT) (wy1 + lambda * dwy)), i1, i2);
+			plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
+			       plP_wcpcy((PLFLT) (wy1 + lambda * dwy)), i1, i2);
 		    }
 		}
 	    }
@@ -1060,8 +1065,8 @@ plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
 		    temp = tp + i * (tn - tp) / nsub1;
 		    if (BETW(temp, vmin, vmax)) {
 			lambda = (temp - vmin) / (vmax - vmin);
-			plxtik(wcpcx((PLFLT) (wx1 + lambda * dwx)),
-			       wcpcy((PLFLT) (wy1 + lambda * dwy)), i1, i2);
+			plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
+			       plP_wcpcy((PLFLT) (wy1 + lambda * dwy)), i1, i2);
 		    }
 		}
 	    }
@@ -1069,14 +1074,14 @@ plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
 	temp = tn;
 	if (BETW(temp, vmin, vmax)) {
 	    lambda = (temp - vmin) / (vmax - vmin);
-	    plxtik(wcpcx((PLFLT) (wx1 + lambda * dwx)),
-		   wcpcy((PLFLT) (wy1 + lambda * dwy)), i3, i4);
+	    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
+		   plP_wcpcy((PLFLT) (wy1 + lambda * dwy)), i3, i4);
 	    tp = tn;
 	    goto lab2;
 	}
     }
 
-    drawor(wx2, wy2);
+    plP_drawor(wx2, wy2);
 
     /* Label the line */
 
@@ -1122,8 +1127,8 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
     PLFLT xform[4], diag;
     PLFLT xscl, xoff, yscl, yoff, wx, wy;
 
-    gchr(&def, &ht);
-    gwm(&xscl, &xoff, &yscl, &yoff);
+    plgchr(&def, &ht);
+    plP_gwm(&xscl, &xoff, &yscl, &yoff);
     cc = xscl * (wx2 - wx1);
     ss = yscl * (wy2 - wy1);
     diag = sqrt(cc * cc + ss * ss);
@@ -1141,8 +1146,8 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
     wx = wx1 + pos * (wx2 - wx1);
     wy = wy1 + pos * (wy2 - wy1);
 
-    refx = mmpcx((PLFLT) (wcmmx(wx) - shift * cc));
-    refy = mmpcy((PLFLT) (wcmmy(wy) - shift * ss - disp * ht));
+    refx = plP_mmpcx((PLFLT) (plP_wcmmx(wx) - shift * cc));
+    refy = plP_mmpcy((PLFLT) (plP_wcmmy(wy) - shift * ss - disp * ht));
     plstr(0, xform, refx, refy, text);
 }
 
@@ -1185,23 +1190,23 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     /* Tick and subtick sizes in device coords */
 
-    gpixmm(&xpmm, &ypmm);
-    gmaj(&defmaj, &major);
-    gmin(&defmin, &minor);
+    plP_gpixmm(&xpmm, &ypmm);
+    plP_gmaj(&defmaj, &major);
+    plP_gmin(&defmin, &minor);
 
     tick1 = tick;
     nsub1 = nsub;
 
-    lb = stsearch(opt, 'b');
-    lc = stsearch(opt, 'c');
-    li = stsearch(opt, 'i');
-    ll = stsearch(opt, 'l');
-    lm = stsearch(opt, 'm');
-    ln = stsearch(opt, 'n');
-    ls = stsearch(opt, 's');
-    lt = stsearch(opt, 't');
-    lu = stsearch(opt, 'u');
-    lv = stsearch(opt, 'v');
+    lb = plP_stsearch(opt, 'b');
+    lc = plP_stsearch(opt, 'c');
+    li = plP_stsearch(opt, 'i');
+    ll = plP_stsearch(opt, 'l');
+    lm = plP_stsearch(opt, 'm');
+    ln = plP_stsearch(opt, 'n');
+    ls = plP_stsearch(opt, 's');
+    lt = plP_stsearch(opt, 't');
+    lu = plP_stsearch(opt, 'u');
+    lv = plP_stsearch(opt, 'v');
 
     if (lu && !right)
 	plztx("h", dx, dy, wx, wy1, wy2,
@@ -1228,7 +1233,7 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
 	major = -major;
     }
 
-    gwm(&xscl, &xoff, &yscl, &yoff);
+    plP_gwm(&xscl, &xoff, &yscl, &yoff);
     dxm = dx * xscl;
     dym = dy * yscl;
     diag = sqrt(dxm * dxm + dym * dym);
@@ -1240,7 +1245,7 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     /* Draw the line */
 
-    movwor(wx, wy1);
+    plP_movwor(wx, wy1);
     if (lt) {
 	tp = tick1 * floor(vmin / tick1);
 	for (;;) {
@@ -1251,8 +1256,8 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
 			temp = tp + xlog[i];
 			if (BETW(temp, vmin, vmax)) {
 			    lambda = (temp - vmin) / (vmax - vmin);
-			    plstik(wcmmx(wx),
-				   wcmmy((PLFLT) (wy1 + lambda * dwy)),
+			    plstik(plP_wcmmx(wx),
+				   plP_wcmmy((PLFLT) (wy1 + lambda * dwy)),
 				   xminor, yminor);
 			}
 		    }
@@ -1262,8 +1267,8 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
 			temp = tp + i * tick1 / nsub1;
 			if (BETW(temp, vmin, vmax)) {
 			    lambda = (temp - vmin) / (vmax - vmin);
-			    plstik(wcmmx(wx),
-				   wcmmy((PLFLT) (wy1 + lambda * dwy)),
+			    plstik(plP_wcmmx(wx),
+				   plP_wcmmy((PLFLT) (wy1 + lambda * dwy)),
 				   xminor, yminor);
 			}
 		    }
@@ -1273,13 +1278,13 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
 	    if (!BETW(temp, vmin, vmax))
 		break;
 	    lambda = (temp - vmin) / (vmax - vmin);
-	    plstik(wcmmx(wx), wcmmy((PLFLT) (wy1 + lambda * dwy)),
+	    plstik(plP_wcmmx(wx), plP_wcmmy((PLFLT) (wy1 + lambda * dwy)),
 		   xmajor, ymajor);
 	    tp = tn;
 	}
     }
 
-    drawor(wx, wy2);
+    plP_drawor(wx, wy2);
 
     /* Label the line */
 
@@ -1311,7 +1316,8 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
 		plztx("v", dx, dy, wx, wy1, wy2, height, pos, 1.0, string);
 	    }
 	    if (lm && right) {
-		plztx("v", dx, dy, wx, wy1, wy2, -height, pos, 0.0, string);
+		plztx("v", dx, dy, wx, wy1, wy2,
+		      (PLFLT) -height, pos, 0.0, string);
 	    }
 	}
     }
@@ -1334,29 +1340,29 @@ plztx(char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
     PLFLT xform[4], diag;
     PLFLT xscl, xoff, yscl, yoff, wy;
 
-    gchr(&def, &ht);
-    gwm(&xscl, &xoff, &yscl, &yoff);
+    plgchr(&def, &ht);
+    plP_gwm(&xscl, &xoff, &yscl, &yoff);
     cc = xscl * dx;
     ss = yscl * dy;
     diag = sqrt(cc * cc + ss * ss);
     cc = cc / diag;
     ss = ss / diag;
-    gmp(&xscl, &xoff, &yscl, &yoff);
+    plP_gmp(&xscl, &xoff, &yscl, &yoff);
 
     shift = 0.0;
     if (just != 0.0)
 	shift = plstrl(text) * just;
     wy = wy1 + pos * (wy2 - wy1);
 
-    if (stsearch(opt, 'v')) {
+    if (plP_stsearch(opt, 'v')) {
 	vert = 0;
-	refx = mmpcx((PLFLT) (wcmmx(wx) - (disp * ht + shift) * cc));
-	refy = mmpcy((PLFLT) (wcmmy(wy) - (disp * ht + shift) * ss));
+	refx = plP_mmpcx((PLFLT) (plP_wcmmx(wx) - (disp * ht + shift) * cc));
+	refy = plP_mmpcy((PLFLT) (plP_wcmmy(wy) - (disp * ht + shift) * ss));
     }
-    else if (stsearch(opt, 'h')) {
+    else if (plP_stsearch(opt, 'h')) {
 	vert = 1;
-	refy = wcpcy(wy) - yscl * (disp * ht * ss + shift);
-	refx = mmpcx((PLFLT) (wcmmx(wx) - disp * ht * cc));
+	refy = plP_wcpcy(wy) - yscl * (disp * ht * ss + shift);
+	refx = plP_mmpcx((PLFLT) (plP_wcmmx(wx) - disp * ht * cc));
     }
     if (vert) {
 	xform[0] = 0.0;
@@ -1390,7 +1396,7 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *result)
     PLINT setpre, precis;
     char form[10], temp[30];
 
-    gprec(&setpre, &precis);
+    plP_gprec(&setpre, &precis);
 
     if(setpre)
 	prec = precis;

@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/01/23 06:01:36  mjl
-   Now holds all routines dealing with PLPLOT symbols.
+   Revision 1.5  1993/07/01 22:13:45  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.4  1993/01/23  06:01:36  mjl
+ * Now holds all routines dealing with PLPLOT symbols.
+ *
  * Revision 1.3  1992/09/29  04:46:21  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -19,7 +24,7 @@
 	Point and symbol plotting routines.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 extern short int *fntlkup;
 extern short int numberfonts, numberchars;
@@ -37,7 +42,7 @@ c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
     PLINT i;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plsym: Please set up window first.");
 
@@ -45,7 +50,7 @@ c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 	plexit("plsym: Invalid code.");
 
     for (i = 0; i < n; i++)
-	plhrsh(code, wcpcx(x[i]), wcpcy(y[i]));
+	plhrsh(code, plP_wcpcx(x[i]), plP_wcpcy(y[i]));
 }
 
 /*----------------------------------------------------------------------*\
@@ -61,18 +66,18 @@ c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
     PLINT i;
     PLINT level, sym, font, col;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plpoin: Please set up window first.");
 
     if (code < 0 || code > 127)
 	plexit("plpoin: Invalid code.");
 
-    gatt(&font, &col);
+    plP_gatt(&font, &col);
     sym = *(fntlkup + (font - 1) * numberchars + code);
 
     for (i = 0; i < n; i++)
-	plhrsh(sym, wcpcx(x[i]), wcpcy(y[i]));
+	plhrsh(sym, plP_wcpcx(x[i]), plP_wcpcy(y[i]));
 }
 
 /*----------------------------------------------------------------------*\
@@ -89,13 +94,13 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
     SCHAR *xygrid;
     PLFLT symdef, symht, scale, xscale, yscale, xpmm, ypmm;
 
-    gsym(&symdef, &symht);
-    gpixmm(&xpmm, &ypmm);
+    plP_gsym(&symdef, &symht);
+    plP_gpixmm(&xpmm, &ypmm);
     penup = 1;
     scale = 0.05 * symht;
 
     if (!plcvec(ch, &xygrid)) {
-	movphy(x, y);
+	plP_movphy(x, y);
 	return;
     }
 
@@ -109,18 +114,18 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 	cx = xygrid[k++];
 	cy = xygrid[k++];
 	if (cx == 64 && cy == 64) {
-	    movphy(x, y);
+	    plP_movphy(x, y);
 	    return;
 	}
 	else if (cx == 64 && cy == 0)
 	    penup = 1;
 	else {
 	    if (penup != 0) {
-		movphy(ROUND(x + xscale * cx), ROUND(y + yscale * cy));
+		plP_movphy(ROUND(x + xscale * cx), ROUND(y + yscale * cy));
 		penup = 0;
 	    }
 	    else
-		draphy(ROUND(x + xscale * cx), ROUND(y + yscale * cy));
+		plP_draphy(ROUND(x + xscale * cx), ROUND(y + yscale * cy));
 	}
     }
 }

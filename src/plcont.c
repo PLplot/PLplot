@@ -1,11 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/02/23 05:02:25  mjl
-   Replaced (void *) declaration for user data structures to (PLPointer), in
-   the spirit of Xt's XtPointer.  It was hoped that this would eliminate
-   certain warnings having to do with alignment (only showing up with all
-   warnings turned on), but it didn't.
+   Revision 1.8  1993/07/01 22:13:34  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.7  1993/02/23  05:02:25  mjl
+ * Replaced (void *) declaration for user data structures to (PLPointer), in
+ * the spirit of Xt's XtPointer.  It was hoped that this would eliminate
+ * certain warnings having to do with alignment (only showing up with all
+ * warnings turned on), but it didn't.
+ *
  * Revision 1.6  1993/01/23  05:47:12  mjl
  * Now holds all contouring routines.  The multiple contour functions have been
  * removed, since now a function is passed in instead of an array.  Through use
@@ -40,7 +45,7 @@
 
 #define PL_NEED_MALLOC
 #define PL_NEED_SIZE_T
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -370,7 +375,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
 		    (*pltr) (xlas, ylas, &tpx, &tpy, pltr_data);
 
-		    drawor(tpx, tpy);
+		    plP_drawor(tpx, tpy);
 		    dx = dist * ixg;
 		    dy = dist * iyg;
 		    xlas = ia + dx;
@@ -389,11 +394,11 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    }
 	    if (ifirst != 1) {
 		(*pltr) (xlas, ylas, &tpx, &tpy, pltr_data);
-		drawor(tpx, tpy);
+		plP_drawor(tpx, tpy);
 	    }
 	    else {
 		(*pltr) (xnew, ynew, &tpx, &tpy, pltr_data);
-		movwor(tpx, tpy);
+		plP_movwor(tpx, tpy);
 	    }
 	    xlas = xnew;
 	    ylas = ynew;
@@ -403,7 +408,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    if (ifirst != 1 &&
 		ix == ixbeg && iy == iybeg && iw == iwbeg && iz == izbeg) {
 		(*pltr) (xlas, ylas, &tpx, &tpy, pltr_data);
-		drawor(tpx, tpy);
+		plP_drawor(tpx, tpy);
 		return;
 	    }
 	    ifirst = 0;
@@ -463,7 +468,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	/* Reach here only if boundary encountered - Draw last bit */
 
 	(*pltr) (xnew, ynew, &tpx, &tpy, pltr_data);
-	drawor(tpx, tpy);
+	plP_drawor(tpx, tpy);
     }
 }
 

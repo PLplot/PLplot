@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/01/23 05:52:53  mjl
-   File for holding coordinate transformers (was: convert.c).
+   Revision 1.2  1993/07/01 22:13:35  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".
 
+ * Revision 1.1  1993/01/23  05:52:53  mjl
+ * File for holding coordinate transformers (was: convert.c).
+ *
 */
 
 /*	plcvt.c
@@ -10,7 +15,7 @@
 	Coordinate transformation routines.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 static PLINT phyxmi, phyxma, phyymi, phyyma;
 static PLFLT spdxmi, spdxma, spdymi, spdyma;
@@ -31,16 +36,16 @@ static PLFLT cxx, cxy, cyx, cyy, cyz;
 /* dcpc. converts device coordinates to physical coordinates */
 
 PLINT
-dcpcx(PLFLT x)
+plP_dcpcx(PLFLT x)
 {
-    gdp(&dpxscl, &dpxoff, &dpyscl, &dpyoff);
+    plP_gdp(&dpxscl, &dpxoff, &dpyscl, &dpyoff);
     return (ROUND(dpxoff + dpxscl * x));
 }
 
 PLINT
-dcpcy(PLFLT y)
+plP_dcpcy(PLFLT y)
 {
-    gdp(&dpxscl, &dpxoff, &dpyscl, &dpyoff);
+    plP_gdp(&dpxscl, &dpxoff, &dpyscl, &dpyoff);
     return (ROUND(dpyoff + dpyscl * y));
 }
 
@@ -48,32 +53,32 @@ dcpcy(PLFLT y)
 /* coordinates */
 
 PLINT
-mmpcx(PLFLT x)
+plP_mmpcx(PLFLT x)
 {
-    gmp(&mpxscl, &mpxoff, &mpyscl, &mpyoff);
+    plP_gmp(&mpxscl, &mpxoff, &mpyscl, &mpyoff);
     return (ROUND(mpxoff + mpxscl * x));
 }
 
 PLINT
-mmpcy(PLFLT y)
+plP_mmpcy(PLFLT y)
 {
-    gmp(&mpxscl, &mpxoff, &mpyscl, &mpyoff);
+    plP_gmp(&mpxscl, &mpxoff, &mpyscl, &mpyoff);
     return (ROUND(mpyoff + mpyscl * y));
 }
 
 /* wcpc. converts world coordinates to physical coordinates */
 
 PLINT
-wcpcx(PLFLT x)
+plP_wcpcx(PLFLT x)
 {
-    gwp(&wpxscl, &wpxoff, &wpyscl, &wpyoff);
+    plP_gwp(&wpxscl, &wpxoff, &wpyscl, &wpyoff);
     return (ROUND(wpxoff + wpxscl * x));
 }
 
 PLINT
-wcpcy(PLFLT y)
+plP_wcpcy(PLFLT y)
 {
-    gwp(&wpxscl, &wpxoff, &wpyscl, &wpyoff);
+    plP_gwp(&wpxscl, &wpxoff, &wpyscl, &wpyoff);
     return (ROUND(wpyoff + wpyscl * y));
 }
 
@@ -86,18 +91,18 @@ wcpcy(PLFLT y)
 /* left-hand corner */
 
 PLFLT
-dcmmx(PLFLT x)
+plP_dcmmx(PLFLT x)
 {
-    gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
-    gpixmm(&xpmm, &ypmm);
+    plP_gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
+    plP_gpixmm(&xpmm, &ypmm);
     return ((PLFLT) (x * ABS(phyxma - phyxmi) / xpmm));
 }
 
 PLFLT
-dcmmy(PLFLT y)
+plP_dcmmy(PLFLT y)
 {
-    gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
-    gpixmm(&xpmm, &ypmm);
+    plP_gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
+    plP_gpixmm(&xpmm, &ypmm);
     return ((PLFLT) (y * ABS(phyyma - phyymi) / ypmm));
 }
 
@@ -105,16 +110,16 @@ dcmmy(PLFLT y)
 /* coordinates */
 
 PLFLT
-dcscx(PLFLT x)
+plP_dcscx(PLFLT x)
 {
-    gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
+    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
     return ((PLFLT) ((x - spdxmi) / (spdxma - spdxmi)));
 }
 
 PLFLT
-dcscy(PLFLT y)
+plP_dcscy(PLFLT y)
 {
-    gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
+    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
     return ((PLFLT) ((y - spdymi) / (spdyma - spdymi)));
 }
 
@@ -122,66 +127,66 @@ dcscy(PLFLT y)
 /* coordinates */
 
 PLFLT
-mmdcx(PLFLT x)
+plP_mmdcx(PLFLT x)
 {
-    gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
-    gpixmm(&xpmm, &ypmm);
+    plP_gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
+    plP_gpixmm(&xpmm, &ypmm);
     return ((PLFLT) (x * xpmm / ABS(phyxma - phyxmi)));
 }
 
 PLFLT
-mmdcy(PLFLT y)
+plP_mmdcy(PLFLT y)
 {
-    gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
-    gpixmm(&xpmm, &ypmm);
+    plP_gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
+    plP_gpixmm(&xpmm, &ypmm);
     return ((PLFLT) (y * ypmm / ABS(phyyma - phyymi)));
 }
 
 /* scdc. converts subpage coordinates to device coordinates */
 
 PLFLT
-scdcx(PLFLT x)
+plP_scdcx(PLFLT x)
 {
-    gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
+    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
     return ((PLFLT) (spdxmi + (spdxma - spdxmi) * x));
 }
 
 PLFLT
-scdcy(PLFLT y)
+plP_scdcy(PLFLT y)
 {
-    gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
+    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
     return ((PLFLT) (spdymi + (spdyma - spdymi) * y));
 }
 
 /* wcmm. converts world coordinates into millimetres */
 
 PLFLT
-wcmmx(PLFLT x)
+plP_wcmmx(PLFLT x)
 {
-    gwm(&wmxscl, &wmxoff, &wmyscl, &wmyoff);
+    plP_gwm(&wmxscl, &wmxoff, &wmyscl, &wmyoff);
     return ((PLFLT) (wmxoff + wmxscl * x));
 }
 
 PLFLT
-wcmmy(PLFLT y)
+plP_wcmmy(PLFLT y)
 {
-    gwm(&wmxscl, &wmxoff, &wmyscl, &wmyoff);
+    plP_gwm(&wmxscl, &wmxoff, &wmyscl, &wmyoff);
     return ((PLFLT) (wmyoff + wmyscl * y));
 }
 
 PLFLT
-w3wcx(PLFLT x, PLFLT y, PLFLT z)
+plP_w3wcx(PLFLT x, PLFLT y, PLFLT z)
 {
-    gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
-    gbase(&base3x, &base3y, &basecx, &basecy);
+    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
+    plP_gbase(&base3x, &base3y, &basecx, &basecy);
     return ((PLFLT) ((x - basecx) * cxx + (y - basecy) * cxy));
 }
 
 PLFLT
-w3wcy(PLFLT x, PLFLT y, PLFLT z)
+plP_w3wcy(PLFLT x, PLFLT y, PLFLT z)
 {
-    gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
-    gbase(&base3x, &base3y, &basecx, &basecy);
-    grange(&zzscl, &ranmi, &ranma);
+    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
+    plP_gbase(&base3x, &base3y, &basecx, &basecy);
+    plP_grange(&zzscl, &ranmi, &ranma);
     return ((PLFLT) ((x - basecx) * cyx + (y - basecy) * cyy + (z - ranmi) * cyz));
 }
