@@ -1,5 +1,8 @@
 # $Id$
 # $Log$
+# Revision 1.3  2002/07/17 09:08:22  vincentdarley
+# plwidget.tcl merge continues
+#
 # Revision 1.2  2002/07/15 18:11:33  vincentdarley
 # plwidget partial merge
 #
@@ -228,8 +231,8 @@ proc plw::plxframe {w {client_id {}}} {
 	    set bop_col [option get $w.ftop.leop off Label]
 	    set eop_col [option get $w.ftop.leop on Label]
 
-	    $w.plwin configure -bopcmd "plw_flash $w $bop_col"
-	    $w.plwin configure -eopcmd "plw_flash $w $eop_col"
+	    $w.plwin configure -bopcmd "plw::flash $w $bop_col"
+	    $w.plwin configure -eopcmd "plw::flash $w $eop_col"
 
 	} else {
 	    $w.plwin configure -bopcmd {update}
@@ -240,8 +243,8 @@ proc plw::plxframe {w {client_id {}}} {
 	client_cmd "set plwidget $w.plwin"
     } else {
 	global plstate_bopseen; set plstate_bopseen($w) 0
-	$w.plwin configure -bopcmd "plw_bop $w"
-	$w.plwin configure -eopcmd "plw_eop $w"
+	$w.plwin configure -bopcmd "plw::bop $w"
+	$w.plwin configure -eopcmd "plw::eop $w"
     }
     
     return $w
@@ -302,13 +305,13 @@ proc plw::setup_defaults {w} {
       "plw::user_mouse $w %b %s %x %y"
 
     bind $w.plwin <B1-Motion> \
-      "plw_user_mouse $w %b %s %x %y"
+      "plw::user_mouse $w %b %s %x %y"
     
     bind $w.plwin <B2-Motion> \
-      "plw_user_mouse $w %b %s %x %y"
+      "plw::user_mouse $w %b %s %x %y"
     
     bind $w.plwin <B3-Motion> \
-      "plw_user_mouse $w %b %s %x %y"
+      "plw::user_mouse $w %b %s %x %y"
     
     bind $w.plwin <Any-Enter> \
       "focus $w.plwin"

@@ -10,7 +10,14 @@
 # Note: to keep namespace problems to a minimum, all procs defined here begin
 # with "pl".  These are further subdivided into "plw::" for button- or
 # menu-accessible commands, or "pl_" for utility commands.
+# 
+# anything in 'plw::' should really be considered private.  If they are
+# needed externally (i.e. in user code) then we should rename them or expose
+# them.
 #----------------------------------------------------------------------------
+
+# For backwards compatibility
+proc plw_create {args} { uplevel 1 plw::create $args ]
 
 #----------------------------------------------------------------------------
 # plw::create
@@ -21,7 +28,7 @@
 
 namespace eval plw {}
 
-proc plw_create {w {client_id {}}} {
+proc plw::create {w {client_id {}}} {
     plxframe $w $client_id
     wm title . [string trim $w .]
 }
@@ -34,7 +41,7 @@ proc plw_create {w {client_id {}}} {
 
 proc plr_create {w {client_id {}}} {
     global is_plrender; set is_plrender 1
-    plw_create $w $client_id
+    plw::create $w $client_id
 }
 
 #----------------------------------------------------------------------------

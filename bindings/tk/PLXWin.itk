@@ -13,13 +13,13 @@ itcl::class PLXWin {
     } {
     # Set up defaults
 
-	plw_setup_defaults $hull
+	plw::setup_defaults $hull
 
     # Make frame for top row widgets.  plframe widget must already have been
     # created (the plframe is queried for a list of the valid output devices
     # for page dumps).
 
-	plw_create_TopRow $hull
+	plw::create_TopRow $hull
 	pack append $hull $hull.ftop {top fill}
 
     # Initialize plplot widget.  Enable keyboard traversal when widget has

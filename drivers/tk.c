@@ -672,7 +672,7 @@ tk_di(PLStream *pls)
 /* Update view */
 
     server_cmd( pls, "update", 1 );
-    server_cmd( pls, "plw_update_view $plwindow", 1 );
+    server_cmd( pls, "plw::update_view $plwindow", 1 );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1267,10 +1267,10 @@ launch_server(PLStream *pls)
  * These can be used to set up the desired widget configuration.  The procs
  * invoked from this driver currently include:
  *
- *    $plw_create_proc		Creates the widget environment
- *    $plw_start_proc		Does any remaining startup necessary
- *    $plw_end_proc		Prepares for shutdown
- *    $plw_flash_proc		Invoked when waiting for page advance
+ *    $plw::create_proc		Creates the widget environment
+ *    $plw::start_proc		Does any remaining startup necessary
+ *    $plw::end_proc		Prepares for shutdown
+ *    $plw::flash_proc		Invoked when waiting for page advance
  *
  * Since all of these are interpreter variables, they can be trivially
  * changed by the user.
@@ -1283,7 +1283,7 @@ launch_server(PLStream *pls)
  * usage in all the TCL procs is consistent.
  *
  * In order that the TK driver be able to invoke the actual PLplot
- * widget, the proc "$plw_create_proc" deposits the widget name in the local
+ * widget, the proc "$plw::create_proc" deposits the widget name in the local
  * interpreter variable "plwidget".
 \*--------------------------------------------------------------------------*/
 
@@ -1302,7 +1302,7 @@ plwindow_init(PLStream *pls)
 /* Create the plframe widget & anything else you want with it. */
 
     server_cmd( pls,
-	"$plw_create_proc $plwindow [list $client]", 1 );
+	"$plw::create_proc $plwindow [list $client]", 1 );
 
     tk_wait(pls, "[info exists plwidget]" );
 
@@ -1347,7 +1347,7 @@ plwindow_init(PLStream *pls)
 
 /* Start up remote PLplot */
 
-    server_cmd( pls, "$plw_start_proc $plwindow", 1 );
+    server_cmd( pls, "$plw::start_proc $plwindow", 1 );
     tk_wait(pls, "[info exists widget_is_ready]" );
 }
 
