@@ -58,7 +58,7 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 
     for (i = 0; i < n; i++) {
 	bin = (data[i] - datmin) / dx;
-	if (flags & 2 == 0) {
+	if ((flags & 2) == 0) {
 	    bin = bin > 0 ? bin : 0;
 	    bin = bin < nbin ? bin : nbin - 1;
 	    y[bin]++;

@@ -104,7 +104,6 @@ Append_Cmdlist(Tcl_Interp *interp)
 {
     static int inited = 0;
     static char** namelist;
-    register CmdInfo *cmdInfoPtr;
     int i, j, ncmds = sizeof(Cmds)/sizeof(CmdInfo);
 
     if (!inited) {
@@ -527,7 +526,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
     tclMatrix *matPtr, *matf, *matclev;
     PLINT nx, ny, kx, lx, ky, ly, nclev;
     char *pltrname = "pltr0";
-    tclMatrix *mattrx, *mattry;
+    tclMatrix *mattrx = NULL, *mattry = NULL;
 
     int arg3_is_kx = 1, i, j;
     void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
@@ -1048,7 +1047,7 @@ static int
 plshadeCmd( ClientData clientData, Tcl_Interp *interp,
 	    int argc, char *argv[] )
 {
-    tclMatrix *matPtr, *matz, *mattrx, *mattry;
+    tclMatrix *matPtr, *matz, *mattrx = NULL, *mattry = NULL;
     PLFLT xmin, xmax, ymin, ymax, sh_min, sh_max, sh_col;
 
     PLINT sh_cmap =1, sh_wid =2;

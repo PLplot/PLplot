@@ -415,7 +415,7 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 	   void (*draw) (short *, short *, PLINT))
 {
     PLINT x1, x2, y1, y2;
-    PLINT i, j, iclp = -1;
+    PLINT i, iclp = -1;
     short xclp[PL_MAXPOLY], yclp[PL_MAXPOLY];
     int drawable;
 
@@ -476,31 +476,35 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 		    xclp[iclp] = xmin;
 		    yclp[iclp] = ymax;
 		}
-/*
-		for (j = 0; j < i; j++) {
-		    if (x[j] < xmin && y[j] < ymin) {
-			break;
-		    }
-		    else if (x[j] < xmin && y[j] > ymax) {
-			iclp++;
-			xclp[iclp] = xmin;
-			yclp[iclp] = ymax;
-			break;
-		    }
-		    else if (x[j] > xmax && y[j] < ymin) {
-			iclp++;
-			xclp[iclp] = xmax;
-			yclp[iclp] = ymin;
-			break;
-		    }
-		    else if (x[j] > xmax && y[j] > ymax) {
-			iclp++;
-			xclp[iclp] = xmax;
-			yclp[iclp] = ymax;
-			break;
+	    /* Experimental code from way back.
+	       Polygon clipping is HARD.
+		{
+		    int j;
+		    for (j = 0; j < i; j++) {
+			if (x[j] < xmin && y[j] < ymin) {
+			    break;
+			}
+			else if (x[j] < xmin && y[j] > ymax) {
+			    iclp++;
+			    xclp[iclp] = xmin;
+			    yclp[iclp] = ymax;
+			    break;
+			}
+			else if (x[j] > xmax && y[j] < ymin) {
+			    iclp++;
+			    xclp[iclp] = xmax;
+			    yclp[iclp] = ymin;
+			    break;
+			}
+			else if (x[j] > xmax && y[j] > ymax) {
+			    iclp++;
+			    xclp[iclp] = xmax;
+			    yclp[iclp] = ymax;
+			    break;
+			}
 		    }
 		}
-*/
+	    */
 		iclp++;
 		xclp[iclp] = x2;
 		yclp[iclp] = y2;
@@ -552,7 +556,7 @@ clipline(PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
 	 PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
 {
     PLINT t, dx, dy, flipx, flipy;
-    double dydx, dxdy;
+    double dydx = 0, dxdy = 0;
 
 /* If both points are outside clip region with no hope of intersection,
    return with an error */

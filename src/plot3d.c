@@ -733,13 +733,12 @@ plnxtv(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
 static void
 plnxtvhi(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
 {
-    PLINT i, j;
 /*
  * For the initial set of points, just display them and store them as the
  * peak points.
  */
     if (init == 1) {
-
+	int i;
 	oldhiview = (PLINT *) malloc((size_t) (2 * n * sizeof(PLINT)));
 	if ( ! oldhiview)
 	    myexit("plnxtvhi: Out of memory.");
@@ -1035,8 +1034,8 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 static void
 plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move)
 {
-    static count = 0;
-    static vcount = 0;
+    static int count = 0;
+    static int vcount = 0;
     static short px[MAX_POLY], py[MAX_POLY];
 
     if (threedshading) {

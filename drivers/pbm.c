@@ -201,18 +201,20 @@ void
 plD_eop_pbm(PLStream *pls)
 {
     FILE *fp = pls->OutFile;
-    int i, j, k;
 
     if (fp != NULL) {
 	fprintf(fp, "%s\n", "P6");
 	fprintf(fp, "%d %d\n", PIXELS_X, PIXELS_Y);
 	fprintf(fp, "%d\n", MAX_INTENSITY);
     /*
-	for (i=0; i<PIXELS_Y; i++)
-	    for (j=0; j<PIXELS_X; j++)
-		for (k=0; k<3; k++)
-		    fprintf(fp, "%c", cmap[i][j][k]);
-		    */
+	{
+	    int i, j, k;
+	    for (i=0; i<PIXELS_Y; i++)
+		for (j=0; j<PIXELS_X; j++)
+		    for (k=0; k<3; k++)
+			fprintf(fp, "%c", cmap[i][j][k]);
+	}
+    */
 	fwrite( cmap, 1, PIXELS_X * PIXELS_Y * 3, fp );
 
 	fclose(fp);

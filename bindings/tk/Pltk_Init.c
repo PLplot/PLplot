@@ -50,14 +50,12 @@ Pltk_Init( Tcl_Interp *interp )
     char *libDir;
 /*     Tcl_DString path; */
 
-    Tk_Window main;
-
-    main = Tk_MainWindow(interp);
+    Tk_Window mainWindow = Tk_MainWindow(interp);
 
 /* plframe -- PLplot graphing widget */
 
     Tcl_CreateCommand( interp, "plframe", plFrameCmd,
-		       (ClientData) main, (void (*)(ClientData)) NULL);
+		       (ClientData) mainWindow, (void (*)(ClientData)) NULL);
 
 /* matrix -- matrix support command */
 /* matrix support added in the pltk startup script */
@@ -88,7 +86,7 @@ Pltk_Init( Tcl_Interp *interp )
     Display *display;
     Colormap map;
 
-    display = Tk_Display(main);
+    display = Tk_Display(mainWindow);
     map = DefaultColormap(display, DefaultScreen(display));
 
     PLX_save_colormap(display, map);

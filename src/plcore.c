@@ -478,11 +478,11 @@ pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
     PLFLT sxmin, symin, sxmax, symax;
     PLFLT rxmin, rymin, rxmax, rymax;
 
-    pldebug("pldid2pc",
-	    "Relative device coordinates (in): %f, %f, %f, %f\n",
-	    *xmin, *ymin, *xmax, *ymax);
-
     if (plsc->difilt & PLDI_DEV) {
+
+	pldebug("pldid2pc",
+		"Relative device coordinates (in): %f, %f, %f, %f\n",
+		*xmin, *ymin, *xmax, *ymax);
 
 	pxmin = plP_dcpcx(*xmin);
 	pymin = plP_dcpcy(*ymin);
@@ -503,11 +503,11 @@ pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 	*xmax = (rxmax > 1) ? 1 : rxmax;
 	*ymin = (rymin < 0) ? 0 : rymin;
 	*ymax = (rymax > 1) ? 1 : rymax;
-    }
 
-    pldebug("pldid2pc",
-	    "Relative plot coordinates (out): %f, %f, %f, %f\n",
-	    rxmin, rymin, rxmax, rymax);
+	pldebug("pldid2pc",
+		"Relative plot coordinates (out): %f, %f, %f, %f\n",
+		rxmin, rymin, rxmax, rymax);
+    }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -524,11 +524,11 @@ pldip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
     PLFLT sxmin, symin, sxmax, symax;
     PLFLT rxmin, rymin, rxmax, rymax;
 
-    pldebug("pldip2pc",
-	    "Relative plot coordinates (in): %f, %f, %f, %f\n",
-	    *xmin, *ymin, *xmax, *ymax);
-
     if (plsc->difilt & PLDI_DEV) {
+
+	pldebug("pldip2pc",
+		"Relative plot coordinates (in): %f, %f, %f, %f\n",
+		*xmin, *ymin, *xmax, *ymax);
 
 	pxmin = plP_dcpcx(*xmin);
 	pymin = plP_dcpcy(*ymin);
@@ -549,11 +549,11 @@ pldip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 	*xmax = (rxmax > 1) ? 1 : rxmax;
 	*ymin = (rymin < 0) ? 0 : rymin;
 	*ymax = (rymax > 1) ? 1 : rymax;
-    }
 
-    pldebug("pldip2pc",
-	    "Relative device coordinates (out): %f, %f, %f, %f\n",
-	    rxmin, rymin, rxmax, rymax);
+	pldebug("pldip2pc",
+		"Relative device coordinates (out): %f, %f, %f, %f\n",
+		rxmin, rymin, rxmax, rymax);
+    }
 }
 
 /*--------------------------------------------------------------------------*\

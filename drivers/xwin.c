@@ -2461,7 +2461,7 @@ AllocCmap0(PLStream *pls)
 	    PLColor_to_XColor(&pls->cmap0[i], &c);
 	    r = XAllocColor( xwd->display, xwd->map, &c );
 	    if (pls->verbose)
-		fprintf( stderr, "i=%d, r=%d, pixel=%d\n", i, r, c.pixel );
+		fprintf( stderr, "i=%d, r=%d, pixel=%d\n", i, r, (int) c.pixel );
 	    if ( r )
 		xwd->cmap0[i] = c;
             else
@@ -2584,7 +2584,7 @@ AllocCmap1(PLStream *pls)
 	    
 	    r = XAllocColor( xwd->display, xwd->map, &xcol );
 	    if (pls->verbose)
-		fprintf(stderr, "i=%d, r=%d, pixel=%d\n", i, r, xcol.pixel );
+		fprintf(stderr, "i=%d, r=%d, pixel=%d\n", i, r, (int) xcol.pixel );
 	    if ( r )
 		xwd->cmap1[i] = xcol;
 	    else

@@ -832,10 +832,6 @@ pltkdriver_Init(PLStream *pls)
     TkDev *dev = (TkDev *) pls->dev;
     Tcl_Interp *interp = (Tcl_Interp *) dev->interp;
 
-    Tk_Window main;
-
-    main = Tk_MainWindow(interp);
-
 /*
  * Call the init procedures for included packages.  Each call should
  * look like this:
@@ -850,12 +846,6 @@ pltkdriver_Init(PLStream *pls)
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
-#if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
-    if (main && Tk_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-#endif
-
 #ifdef PLD_dp
     if (pls->dp) {
 	if (Tdp_Init(interp) == TCL_ERROR) {

@@ -429,6 +429,7 @@ pltclMain(int argc, char **argv, char *RcFileName /* OBSOLETE */,
     }
     sprintf(buffer, "exit %d", exitCode);
     Tcl_Eval(interp, buffer);
+    return 0;		/* to silence warnings */
 }
 
 /*

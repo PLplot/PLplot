@@ -314,7 +314,7 @@ static void  UpdateXhairs	(PlFrame *);
 
 /* Routines for manipulating the rubberband line */
 
-static void  CreatRband		(PlFrame *);
+static void  CreateRband	(PlFrame *);
 static void  DestroyRband	(PlFrame *);
 static void  DrawRband		(PlFrame *, int, int);
 static void  UpdateRband	(PlFrame *);
@@ -1352,10 +1352,6 @@ DestroyRband(PlFrame *plFramePtr)
 static void
 DrawRband(PlFrame *plFramePtr, int x0, int y0)
 {
-    register Tk_Window tkwin = plFramePtr->tkwin;
-    int xmin = 0, xmax = Tk_Width(tkwin) - 1;
-    int ymin = 0, ymax = Tk_Height(tkwin) - 1;
-
 /* If the line is already up, clear it. */
 
     if (plFramePtr->drawing_rband)

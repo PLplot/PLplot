@@ -322,7 +322,7 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	PLPointer pltr_data)
 {
 
-    PLINT init_width, n, slope, ix, iy;
+    PLINT init_width, n, slope = 0, ix, iy;
     int count, i, j, nxny;
     PLFLT *a, *a0, *a1, dx, dy;
     PLFLT x[8], y[8], xp[2], tx, ty;

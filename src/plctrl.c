@@ -611,8 +611,7 @@ plcmap0_def(int imin, int imax)
     color_def(1,  255,   0,   0, "red");	/* red */
     color_def(2,  255, 255,   0, "yellow" );	/* yellow */
     color_def(3,    0, 255,   0, "green" );	/* green */
-     color_def(4,   50, 191, 193, "aquamarine" );	/* aquamarine */
-/*    color_def(4,  127, 255, 212, "aquamarine" );	/* aquamarine */
+    color_def(4,   50, 191, 193, "aquamarine" );	/* aquamarine */
     color_def(5,  255, 181, 197, "pink" );	/* pink */
     color_def(6,  245, 222, 179, "wheat" );	/* wheat */
     color_def(7,  126, 126, 126, "grey" );	/* grey */
