@@ -1,0 +1,44 @@
+File: README.CVS -*- indented-text -*-
+Description: Maintaining Debian stuff in PLplot CVS repository
+Author: Rafael Laboissière <rafael@icp.inpg.fr>
+Created on: Sun Jan 21 21:00:46 CET 2001
+Last modified on: Sun Jan 21 22:51:48 CET 2001
+$Id$
+
+
+Background and repository location (how to access)
+
+  export CVS_RSH=ssh
+  cvs -z3 -drlaboiss@cvs.plplot.sourceforge.net:/cvsroot/plplot co plplot
+
+
+Tags
+
+  DEBIAN (branch)
+  debian_<upstream-version>_<debian-version> (no-branch)
+
+
+Upgrading
+
+  CURRENT_VERSION=5.0.1
+  NEW_VERSION=5.0.2
+  cvs co -rDEBIAN -d plplot-$NEW_VERSION plplot
+  tar xfz plplot-${NEW_VERSION}.tar.gz
+  cd plplot-$NEW_VERSION
+  FILES=`cvs status | fgrep "Locally Modified" | cut -f2 -d" "`
+  cvs co -rDEBIAN -d plplot-$NEW_VERSION $FILES
+  cvs update -j v`echo $CURRENT_VERSION | tr . -` \
+             -j v`echo $NEW_VERSION | tr . -` $FILES
+
+  After that, solve all conflicts and make the Debian package work.  If
+  some of the patched files finish being the same as the upstream ones,
+  just delete them from the DEBIAN branch using the "cvs remove" command.
+
+  
+Tagging and committing
+
+  DEBIAN_VERSION=1
+  cvs commit -m "Debian package version $NEW_VERSION-$DEBIAN_VERSION" \
+    $FILES 
+  cvs tag debian_`echo ${NEW_VERSION}_${DEBIAN_VERSION} | tr . -` $FILES
+
