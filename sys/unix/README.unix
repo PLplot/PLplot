@@ -88,11 +88,18 @@ One nice thing is that shared libraries are particularly easy to build, and
 the config file (cf_hp.m4) is set up to do that by default (except when gcc
 is being used).
 
-A/IX: I tried building a shared library here but failed due to some missing
-externals, I think from X.  I think I need to specify an import file of
-external symbols or some such, because of the X library being shared.  If
-anyone has success doing this I'd be very interested.
+A/IX: The optimizer under 3.2.3 fails on the file "xwin.o" (it goes into
+some kind of loop where it forever allocates memory, eventually crapping
+out when you hit some limit).  I've hacked cf_depend.m4 to get around it
+temporarily.  I tried building a shared library under AIX but failed due
+to some missing externals, I think from X.  I think I need to specify an
+import file of external symbols or some such, because of the X library
+being shared.  If anyone has success doing this I'd be very interested.
 
+Super-UX (NEC): The optimizer creates bad code for sccont.c.  I've hacked
+cf_depend.m4 to get around it temporarily.
+
+--
 The other platforms on which I know plplot 4.99d works fine includes:
 Unicos, Super-UX (NEC), Linux.  If changes to the config files are required
 to compile it on other platforms, please forward your fixes.
