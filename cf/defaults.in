@@ -57,7 +57,7 @@ MY_ARG_WITH(debug,
 
 MY_ARG_WITH(opt,
   [  --with-opt              compile with optimization (default: yes)],
-  [], with_opt=$with_opt_default)
+  [], with_opt=$default_with_opt)
 
 MY_ARG_WITH(double,
   [  --with-double           use double precision floats (default: no)],
