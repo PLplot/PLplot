@@ -1,26 +1,16 @@
-!
-
-! TODO:
-! Variables for holding error return info from PLplot
-!
-! static PLINT errcode
-! static char errmsg[160]
-
-!--------------------------------------------------------------------------
-! main program
-!--------------------------------------------------------------------------
+C--------------------------------------------------------------------------
+C      main program
+C--------------------------------------------------------------------------
 
       program x17f
       implicit none
-      real*8 id1, id2, n, autoy, acc, nsteps
+      integer id1, id2, n, autoy, acc, nsteps
       parameter ( nsteps = 1000 )
       real*8 y1, y2, y3, y4, ymin, ymax, xlab, ylab
       real*8 t, tmin, tmax, tjump, dt, noise
-      real*8 colbox, collab, colline(4), styline(4)
+      integer colbox, collab, colline(4), styline(4)
       character*20 legline(4)
       character*20 toplab
-      real*8     drand48
-      external drand48
 
       real*8 PI
       parameter ( PI = 3.1415926535897932384d0 )
@@ -28,43 +18,44 @@
       logical      errcode
       character*80 errmsg
 
-! plplot initialization
-! Parse and process command line arguments
+C      plplot initialization
+C      Parse and process command line arguments
 
-      ! TODO: plParseOpts()
+C      TODO: plParseOpts()
 
-! If db is used the plot is much more smooth. However, because of the
-! async X behaviour, one does not have a real-time scripcharter.
-!
-!     call plsetopt("db", "")
-!     call plsetopt("np", "")
+C      If db is used the plot is much more smooth. However, because of the
+C      async X behaviour, one does not have a real-time scripcharter.
+C
+      call plsetopt('db', '')
+      call plsetopt('np', '')
 
-! User sets up plot completely except for window and data
-! Eventually settings in place when strip chart is created will be
-! remembered so that multiple strip charts can be used simultaneously.
+C      User sets up plot completely except for window and data
+C      Eventually settings in place when strip chart is created will be
+C      remembered so that multiple strip charts can be used simultaneously.
 
 
-! Specify some reasonable defaults for ymin and ymax
-! The plot will grow automatically if needed (but not shrink)
+C      Specify some reasonable defaults for ymin and ymax
+C      The plot will grow automatically if needed (but not shrink)
 
       ymin = -0.1d0
       ymax = 0.1d0
 
-! Specify initial tmin and tmax -- this determines length of window.
-! Also specify maximum jump in t
-! This can accomodate adaptive timesteps
+C      Specify initial tmin and tmax -- this determines length of window.
+C      Also specify maximum jump in t
+C      This can accomodate adaptive timesteps
 
       tmin = 0.d0
       tmax = 10.d0
-      tjump = 0.3d0 ! percentage of plot to jump
+C      percentage of plot to jump
+      tjump = 0.3d0 
 
-! Axes options same as plbox.
-! Only automatic tick generation and label placement allowed
-! Eventually I'll make this fancier
+C      Axes options same as plbox.
+C      Only automatic tick generation and label placement allowed
+C      Eventually I'll make this fancier
 
       colbox = 1
       collab = 3
-      ! pens color and line style
+C      pens color and line style
       styline(1) = 2
       colline(1) = 2
       styline(2) = 3
@@ -74,92 +65,105 @@
       styline(4) = 5
       colline(4) = 5
 
-      ! pens legend
+C      pens legend
       legline(1) = 'sum'
       legline(2) = 'sin'
       legline(3) = 'sin*noi'
       legline(4) = 'sin+noi'
 
-      ! legend position
+C      legend position
       xlab = 0.d0
       ylab = 0.25d0
 
-      autoy = 1  ! autoscale y
-      acc = 1    ! don't scrip, accumulate
+C      autoscale y
+      autoy = 1  
+C      don't scrip, accumulate
+      acc = 1    
 
-! Initialize plplot
+C      Initialize plplot
 
       call plinit()
 
       call pladv(0)
       call plvsta()
 
-! Register our error variables with PLplot
-! From here on, we're handling all errors here
+C      Register our error variables with PLplot
+C      From here on, we're handling all errors here
 
-!     TODO: call plsError(&errcode, errmsg)
+C      TODO: call plsError(&errcode, errmsg)
 
       call plstripc(id1, 'bcnst', 'bcnstv',
-     &        tmin, tmax, tjump, ymin, ymax,
-     &        xlab, ylab,
-     &        autoy, acc,
-     &        colbox, collab,
-     &        colline, styline, legline,
-     &        't', ' ', 'Strip chart demo')
+     &  tmin, tmax, tjump, ymin, ymax,
+     &  xlab, ylab,
+     &  autoy, acc,
+     &  colbox, collab,
+     &  colline, styline, legline,
+     &  't', ' ', 'Strip chart demo')
 
+      errcode = .false.
       if ( errcode ) then
-         write(*,*) errmsg
-         stop
+        write(*,*) errmsg
+        stop
       endif
 
-! Let plplot handle errors from here on
+C      Let plplot handle errors from here on
 
-!     TODO: call plsError(NULL, NULL)
+C      TODO: call plsError(NULL, NULL)
 
-      autoy = 0 ! autoscale y
-      acc = 1   ! accumulate
+C      autoscale y
+      autoy = 0
+C      accumulate
+      acc = 1
 
-! This is to represent a loop over time
-! Let's try a random walk process
+C      This is to represent a loop over time
+C      Let's try a random walk process
 
       y1 = 0.0d0
       y2 = 0.0d0
       y3 = 0.0d0
       y4 = 0.0d0
       dt = 0.1d0
+C      start random number generator.
+C      (This use of rand should work for g77 and Solaris and ?)
+      noise = rand(1)
 
-      do 110 n = 1,nsteps
-         ! wait a little (10 ms) to simulate time elapsing
-         call sleep(10000)
+      do n = 1,nsteps
+C        wait a little (10 ms) to simulate time elapsing.
+C        g77 sleep has resolution of 1 sec so the call below is commented out
+C        because it is like watching paint dry.  In any case,
+C        I like the resulting speedier output when
+C        you drop sleep altogether from this loop.
+!        call sleep(1)
 
-         t = dble(n) * dt
-         noise = drand48() - 0.5d0
-         y1 = y1 + noise
-         y2 = sin(t*PI/18.d0)
-         y3 = y2 * noise
-         y4 = y2 + noise/3.d0
+        t = dble(n) * dt
+C        (This use of rand should work for g77 and Solaris and ?)
+        noise = rand(0) - 0.5d0
+        y1 = y1 + noise
+        y2 = sin(t*PI/18.d0)
+        y3 = y2 * noise
+        y4 = y2 + noise/3.d0
+        
+C        There is no need for all pens to have the same number of
+C        points or beeing equally time spaced.
 
-! There is no need for all pens to have the same number of
-! points or beeing equally time spaced.
+        if ( mod(n,2) .ne. 0 ) then
+          call plstripa(id1, 0, t, y1)
+        endif
+        if ( mod(n,3) .ne. 0 ) then
+          call plstripa(id1, 1, t, y2)
+        endif
+        if ( mod(n,4) .ne. 0 ) then
+          call plstripa(id1, 2, t, y3)
+        endif
+        if ( mod(n,5) .ne. 0 ) then
+          call plstripa(id1, 3, t, y4)
+        endif
+C        use double buffer (-db on command line)
+        call pleop()
+      enddo
 
-         if ( mod(n,2) .ne. 0 ) then
-            call plstripa(id1, 0, t, y1)
-         endif
-         if ( mod(n,3) .ne. 0 ) then
-            call plstripa(id1, 1, t, y2)
-         endif
-         if ( mod(n,4) .ne. 0 ) then
-            call plstripa(id1, 2, t, y3)
-         endif
-         if ( mod(n,5) .ne. 0 ) then
-            call plstripa(id1, 3, t, y4)
-         endif
-         call pleop()  ! use double buffer (-db on command line)
-  110 continue
-
-! Destroy strip chart and it's memory
+C      Destroy strip chart and it's memory
 
       call plstripd(id1)
       call plend()
-      stop
       end
