@@ -66,12 +66,23 @@ MATLIB_BASE	= lib$(MATLIB_NAME)
 # Install directories
 
 PREFIX		= @prefix@
-LIB_DIR		= $(PREFIX)$(shell echo @LIB_DIR@ | sed 's,@prefix@,,')
-DATA_DIR	= $(PREFIX)$(shell echo @DATA_DIR@ | sed 's,@prefix@,,')
-DOC_DIR		= $(PREFIX)$(shell echo @DOC_DIR@ | sed 's,@prefix@,,')
-BIN_DIR		= $(PREFIX)$(shell echo @BIN_DIR@ | sed 's,@prefix@,,')
-INFO_DIR	= $(PREFIX)$(shell echo @INFO_DIR@ | sed 's,@prefix@,,')
-INCLUDE_DIR	= $(PREFIX)$(shell echo @INCLUDE_DIR@ | sed 's,@prefix@,,')
-TCL_DIR		= $(PREFIX)$(shell echo @TCL_DIR@ | sed 's,@prefix@,,')
-DEMOS_DIR	= $(PREFIX)$(shell echo @DEMOS_DIR@ | sed 's,@prefix@,,')
+
+# This is here in preparation for the definite approval of GNU make
+#LIB_DIR		= $(PREFIX)$(shell echo @LIB_DIR@ | sed 's,@prefix@,,')
+#DATA_DIR	= $(PREFIX)$(shell echo @DATA_DIR@ | sed 's,@prefix@,,')
+#DOC_DIR		= $(PREFIX)$(shell echo @DOC_DIR@ | sed 's,@prefix@,,')
+#BIN_DIR		= $(PREFIX)$(shell echo @BIN_DIR@ | sed 's,@prefix@,,')
+#INFO_DIR	= $(PREFIX)$(shell echo @INFO_DIR@ | sed 's,@prefix@,,')
+#INCLUDE_DIR	= $(PREFIX)$(shell echo @INCLUDE_DIR@ | sed 's,@prefix@,,')
+#TCL_DIR		= $(PREFIX)$(shell echo @TCL_DIR@ | sed 's,@prefix@,,')
+#DEMOS_DIR	= $(PREFIX)$(shell echo @DEMOS_DIR@ | sed 's,@prefix@,,')
+
+LIB_DIR		= @LIB_DIR@
+DATA_DIR	= @DATA_DIR@
+DOC_DIR		= @DOC_DIR@
+BIN_DIR		= @BIN_DIR@
+INFO_DIR	= @INFO_DIR@
+INCLUDE_DIR	= @INCLUDE_DIR@
+TCL_DIR		= @TCL_DIR@
+DEMOS_DIR	= @DEMOS_DIR@
 
