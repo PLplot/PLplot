@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.19  2000/07/19 21:12:20  furnish
+ * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+ * surface plotter, contour labelling, and demo updates to show off these
+ * new features.
+ *
  * Revision 1.18  1995/10/14 17:15:13  mjl
  * Changed the "Plplot library version" message to go to stderr so that program
  * can be used as the beginning of a pipeline.
@@ -86,6 +91,7 @@ char *notes[] = {"Make sure you get it right!", NULL};
 /* Function prototypes */
 
 void plot1(void);
+void plot11(void);
 void plot2(void);
 void plot3(void);
 
@@ -149,7 +155,7 @@ main(int argc, char *argv[])
     digmax = 5;
     plsyax(digmax, 0);
 
-    plot1();
+    plot11();
 
     plot2();
 
@@ -181,7 +187,7 @@ main(int argc, char *argv[])
 }
 
  /* =============================================================== */
-
+ 
 void
 plot1(void)
 {
@@ -222,6 +228,59 @@ plot1(void)
 
     plcol(3);
     plline(60, x, y);
+}
+ 
+void
+plot11(void)
+{
+    int i;
+    PLFLT xmin, xmax, ymin, ymax;
+
+    for (i = 0; i < 60; i++) {
+	x[i] = xoff + xscale * (i + 1) / 60.0;
+	y[i] = yoff + yscale * pow(x[i], 2.);
+    }
+
+    xmin = x[0];
+    xmax = x[59];
+    ymin = y[0];
+    ymax = y[59];
+
+    for (i = 0; i < 6; i++) {
+	xs[i] = x[i * 10 + 3];
+	ys[i] = y[i * 10 + 3];
+    }
+
+/* Set up the viewport and window using PLENV. The range in X is 
+ * 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
+ * scaled separately (just = 0), and we just draw a labelled 
+ * box (axis = 0). 
+ */
+    plcol(1);
+    plenv(xmin, xmax, ymin, ymax, 0, 0);
+    plcol(2);
+    pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
+
+/* Plot the data points */
+
+    plcol(4);
+    plpoin(6, xs, ys, 9);
+
+/* Draw the line through the data */
+
+    plcol(3);
+    plline(60, x, y);
+
+    /* xor mode enable erasing a line/point/text by reploting it again */
+    /* it does not work in double buffering mode, however */
+    plxormod(1);  /* enter xor mode */
+    for (i=0; i<60; i++) {
+      plpoin(1, x+i, y+i,9);/* draw a point */
+      usleep(50000); /* wait a little */
+      plflush();/* this is here to force an update of the tk driver */
+      plpoin(1, x+i, y+i,9);/* erase point */
+    }
+    plxormod(0); /* leave xor mode */
 }
 
  /* =============================================================== */

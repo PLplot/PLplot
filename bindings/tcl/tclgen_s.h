@@ -4,6 +4,7 @@
     {"plbop",          plbopCmd},
     {"plbox",          plboxCmd},
     {"plbox3",          plbox3Cmd},
+    {"plxormod",          plxormodCmd},
     {"plcol0",          plcol0Cmd},
     {"plcol1",          plcol1Cmd},
     {"pldid2pc",          pldid2pcCmd},

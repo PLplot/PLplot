@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.14  2000/07/19 21:12:20  furnish
+ * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+ * surface plotter, contour labelling, and demo updates to show off these
+ * new features.
+ *
  * Revision 1.13  1995/06/01 21:40:09  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
@@ -126,6 +131,18 @@ main(int argc, char *argv[])
     plcol(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    plcol(2);
+    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
+    plstyl(1, &mark, &space);
+    plcol(3);
+    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
+    plstyl(0, &mark, &space);
+    plcol(1);
+    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+    
 /* Plot using 1d coordinate transform */
 
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
@@ -141,6 +158,21 @@ main(int argc, char *argv[])
     plcol(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    plcol(2);
+    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+	   pltr1, (void *) &cgrid1);
+
+    plstyl(1, &mark, &space);
+    plcol(3);
+    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+	   pltr1, (void *) &cgrid1);
+    plstyl(0, &mark, &space);
+    plcol(1);
+    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+    
 /* Plot using 2d coordinate transform */
 
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
@@ -156,6 +188,20 @@ main(int argc, char *argv[])
     plcol(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
+    plcol(2);
+    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+	   pltr2, (void *) &cgrid2);
+
+    plstyl(1, &mark, &space);
+    plcol(3);
+    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+	   pltr2, (void *) &cgrid2);
+    plstyl(0, &mark, &space);
+    plcol(1);
+    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    
     plend();
     free((void *) w);
     free((void *) z);

@@ -1,5 +1,10 @@
 # $Id$
 # $Log$
+# Revision 1.12  2000/07/19 21:11:49  furnish
+# Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+# surface plotter, contour labelling, and demo updates to show off these
+# new features.
+#
 # Revision 1.11  1998/12/01 20:49:18  furnish
 # Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
 #
@@ -253,4 +258,9 @@ proc pldefaults {} {
     global key_scroll_down;	set key_scroll_down	"Down"
     global key_scroll_mag;	set key_scroll_mag	"5"
     global key_scroll_speed;	set key_scroll_speed	"1"
+
+# enable/disable top plot and file menu
+
+    global file_menu_on;	set file_menu_on "1"
+    global plot_menu_on;	set plot_menu_on "1"
 }

@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.12  2000/07/19 21:12:20  furnish
+ * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+ * surface plotter, contour labelling, and demo updates to show off these
+ * new features.
+ *
  * Revision 1.11  1995/06/01 21:40:09  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
@@ -53,6 +58,8 @@ main(int argc, char *argv[])
     int i, j, k;
     PLFLT *x, *y, **z;
     PLFLT xx, yy, r;
+    PLINT n_col = 256;
+    PLINT rr[256], gg[256], bb[256];
 
 /* Parse and process command line arguments */
 
@@ -95,6 +102,27 @@ main(int argc, char *argv[])
 
 	plcol(2);
 	plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
+	plcol(3);
+	plmtex("t", 1.0, 0.5, 0.5, title[k]);
+    }
+
+    pllightsource(1.,1.,1.); /* jc: */
+    for (i=0;i<n_col;i++)
+    	rr[i] = gg[i] = bb[i] = i*256/n_col;
+    plscmap1(rr,gg,bb,n_col);
+    	
+    for (k = 0; k < 4; k++) {
+	pladv(0);
+	plvpor(0.0, 1.0, 0.0, 0.9);
+	plwind(-1.0, 1.0, -0.9, 1.1);
+	plcol(1);
+	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
+	plbox3("bnstu", "x axis", 0.0, 0,
+	       "bnstu", "y axis", 0.0, 0,
+	       "bcdmnstuv", "z axis", 0.0, 0);
+
+	plcol(2);
+	plotsh3d(x, y, z, XPTS, YPTS, 0);	
 	plcol(3);
 	plmtex("t", 1.0, 0.5, 0.5, title[k]);
     }

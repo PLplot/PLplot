@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.74  2000/07/19 21:12:13  furnish
+ * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+ * surface plotter, contour labelling, and demo updates to show off these
+ * new features.
+ *
  * Revision 1.73  1999/06/19 05:37:52  furnish
  * Integrated patch set from Joao Cardoso.
  *
@@ -258,6 +263,7 @@ static void  ResizeCmd		(PLStream *pls, PLDisplay *ptr);
 static void  ConfigBufferingCmd (PLStream *pls, PLBufferingCB *ptr );
 static void  GetCursorCmd	(PLStream *pls, PLGraphicsIn *ptr);
 static void  FillPolygonCmd	(PLStream *pls);
+static void  XorMod		(PLStream *pls, PLINT *mod);
 
 /* Miscellaneous */
 
@@ -486,6 +492,24 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*--------------------------------------------------------------------------*\
+ * XorMod()
+ *
+ * Enter xor mode ( mod != 0) or leave it ( mode = 0)
+\*--------------------------------------------------------------------------*/
+
+static void
+XorMod(PLStream *pls, PLINT *mod)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
+    if (*mod == 0)
+      XSetFunction(xwd->display, dev->gc, GXcopy);
+    else
+      XSetFunction(xwd->display, dev->gc, GXxor);
+}
+
+/*--------------------------------------------------------------------------*\
  * plD_polyline_xw()
  *
  * Draw a polyline in the current color from (x1,y1) to (x2,y2).
@@ -685,6 +709,7 @@ plD_state_xw(PLStream *pls, PLINT op)
  *	PLESC_GETC	Get coordinates upon mouse click
  *	PLESC_REDRAW	Force a redraw
  *	PLESC_RESIZE	Force a resize
+ * 	PLESC_XORMOD 	set/reset xor mode
 \*--------------------------------------------------------------------------*/
 
 void
@@ -723,6 +748,10 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 
     case PLESC_RESIZE:
 	ResizeCmd(pls, (PLDisplay *) ptr);
+	break;
+
+    case PLESC_XORMOD:
+	XorMod(pls, (PLINT *) ptr);
 	break;
 
     case PLESC_DOUBLEBUFFERING:
@@ -1007,6 +1036,7 @@ MapMain(PLStream *pls)
 	ButtonPressMask      |
 	KeyPressMask         |
 	ExposureMask         |
+	ButtonMotionMask     | /* jc: drag */
 	StructureNotifyMask;
 
     XSelectInput(xwd->display, dev->window, dev->event_mask);
@@ -1143,6 +1173,7 @@ MasterEH(PLStream *pls, XEvent *event)
 	break;
 
     case MotionNotify:
+	if (event->xmotion.state) ButtonEH(pls, event); /* jc: drag */
 	MotionEH(pls, event);
 	break;
 
@@ -2195,9 +2226,9 @@ GetVisual(PLStream *pls)
 	    xwd->visual = visualList->visual;	/* Choose first match. */
 	    xwd->depth = vTemplate.depth;
 	}
-#endif
+#endif /* HACK_STATICCOLOR */
     }
-#endif
+#endif /* DEFAULT_VISUAL == 0 */
 
     if ( ! visuals_matched) {
 	xwd->visual = DefaultVisual( xwd->display, xwd->screen );
@@ -2706,7 +2737,10 @@ StoreCmap0(PLStream *pls)
 
     for (i = 1; i < xwd->ncol0; i++) {
 	PLColor_to_XColor(&pls->cmap0[i], &xwd->cmap0[i]);
-	XStoreColor(xwd->display, xwd->map, &xwd->cmap0[i]);
+	if (xwd->rw_cmap)
+	  XStoreColor(xwd->display, xwd->map, &xwd->cmap0[i]);
+	else
+	  XAllocColor( xwd->display, xwd->map, &xwd->cmap0[i]);
     }
 }
 
@@ -2731,7 +2765,10 @@ StoreCmap1(PLStream *pls)
     for (i = 0; i < xwd->ncol1; i++) {
 	plcol_interp(pls, &cmap1color, i, xwd->ncol1);
 	PLColor_to_XColor(&cmap1color, &xwd->cmap1[i]);
-	XStoreColor(xwd->display, xwd->map, &xwd->cmap1[i]);
+	if (xwd->rw_cmap)
+	  XStoreColor(xwd->display, xwd->map, &xwd->cmap1[i]);
+	else 
+	  XAllocColor(xwd->display, xwd->map, &xwd->cmap1[i]);
     }
 }
 

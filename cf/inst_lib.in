@@ -17,9 +17,9 @@ install_lib:
 	-cp $(PLLIB_BASE)* $(LIB_DIR); \
 	 for file in $(PLLIB_BASE)*; do $(RANLIB) $(LIB_DIR)/$$file; done
 	-cp libMatrix.* $(LIB_DIR); \
-	 if test -r libMatrix.a; then $(RANLIB)) $(LIB_DIR)/libMatrix.a; fi
+	 if test -r libMatrix.a; then $(RANLIB) $(LIB_DIR)/libMatrix.a; fi
 	-cp libPLcxx.* $(LIB_DIR); \
-	 if test -r libPLcxx.a; then $(RANLIB)) $(LIB_DIR)/libPLcxx.a; fi
+	 if test -r libPLcxx.a; then $(RANLIB) $(LIB_DIR)/libPLcxx.a; fi
 	-cd $(top_srcdir); \
 	 cp README NEWS CHANGES Copyright COPYING.LIB FAQ ToDo \
 	    mklinks $(DOC_DIR)

@@ -1,5 +1,10 @@
 # $Id$
 # $Log$
+# Revision 1.23  2000/07/19 21:11:49  furnish
+# Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+# surface plotter, contour labelling, and demo updates to show off these
+# new features.
+#
 # Revision 1.22  1995/06/13 21:28:23  mjl
 # Miscellaneous tk4 fixes.
 #
@@ -48,6 +53,7 @@
 #----------------------------------------------------------------------------
 
 proc plserver_init {} {
+global file_menu_on
 
 # Set up toplevel
 
@@ -55,6 +61,8 @@ proc plserver_init {} {
 
 # Create the window for the menu bar
 
+# jc: no File/Help menu! save plot area!
+if $file_menu_on then {
     frame .menu -relief raised -borderwidth 1
     pack append . .menu {top fillx}
 
@@ -142,7 +150,7 @@ proc plserver_init {} {
     if {$tk_version < 4.0} then {
 	focus default .
     }
-
+}
 # Set up initial link to client.
 
     plserver_link_init
@@ -170,7 +178,8 @@ proc client_cmd {msg} {
     if { $dp } then {
 	after 1 catch [list "dp_RDO [list $client] $msg"]
     } else {
-	after 1 catch [list "send [list $client] after 1 $msg"]
+#jc:	after 1 catch [list "send [list $client] after 1 $msg"]
+	after 1 catch [list "send -async [list $client] $msg"]
     }
 }
 

@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.14  2000/07/19 21:12:31  furnish
+ * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+ * surface plotter, contour labelling, and demo updates to show off these
+ * new features.
+ *
  * Revision 1.13  1995/03/16 23:59:57  mjl
  * Eliminated a #pragma message() that some people found objectionable :-).
  *
@@ -15,6 +20,8 @@
 
 	Contour plotter.
 */
+
+#include <math.h>
 
 #include "plplotP.h"
 
@@ -37,7 +44,7 @@ static void
 pldrawcn(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 	 PLPointer plf2eval_data,
 	 PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-	 PLINT ky, PLINT ly, PLFLT flev, PLINT kcol, PLINT krow,
+	 PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
 	 PLINT *p_kscan, PLINT *p_kstor, PLINT *iscan,
 	 PLINT *ixstor, PLINT *iystor, PLINT nstor,
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
@@ -55,9 +62,193 @@ plr45 (PLINT *ix, PLINT *iy, PLINT isens);
 static void 
 plr135 (PLINT *ix, PLINT *iy, PLINT isens);
 
+static void
+plfloatlabel(PLFLT value, char *string);
+
+static PLFLT
+plP_pcwcx(PLINT x);
+
+static PLFLT
+plP_pcwcy(PLINT y);
+
+static void
+pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance, PLINT *lastindex);
+
 /* Error flag for aborts */
 
 static int error;
+
+/****************************************/
+/*                                      */
+/* Defaults for contour label printing. */
+/*                                      */
+/****************************************/
+
+/* Font height for contour labels (normalized)                                         */
+static PLFLT
+contlabel_size = 0.3;
+
+/* Offset of label from contour line (if set to 0.0, labels are printed on the lines). */
+static PLFLT
+contlabel_offset = 0.006;
+
+/* Spacing parameter for contour labels */
+static PLFLT
+contlabel_space = 0.1;
+
+/* Activate labels, default off */
+static PLINT
+contlabel_active = 0;
+
+/* If the contour label exceed 10^(limexp) or 10^(-limexp), the exponential format is used */
+static PLINT
+limexp = 4;
+
+/* Number of significant digits */
+static PLINT
+sigprec = 2;
+
+/* small routine to set offset and spacing of contour labels, see desciption above */
+void pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active)
+{
+   contlabel_offset = offset;
+   contlabel_size   = size;
+   contlabel_space  = spacing;
+   contlabel_active	= active;
+}
+
+/* small routine to set the format of the contour labels, description of limexp and prec see above */
+void pl_setcontlabelformat(PLINT lexp, PLINT sigdig)
+{
+   limexp  = lexp;
+   sigprec = sigdig;
+}
+
+void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance, PLINT *lastindex)
+{
+   PLFLT scale, currx_old, curry_old,
+         delta_x, delta_y, vec_x, vec_y, mx, my, dev_x, dev_y, off_x, off_y;
+                       
+   delta_x = plP_pcdcx(plsc->currx)-plP_pcdcx(plP_wcpcx(tpx));
+   delta_y = plP_pcdcy(plsc->curry)-plP_pcdcy(plP_wcpcy(tpy));
+
+   currx_old = plsc->currx;
+   curry_old = plsc->curry;
+                   
+   *distance += sqrt(delta_x*delta_x + delta_y*delta_y);
+                    
+   plP_drawor(tpx, tpy);
+                    
+   if ((int )(fabs(*distance/contlabel_space)) > *lastindex)
+      {                                                                               
+         vec_x = tpx-plP_pcwcx(currx_old);
+         vec_y = tpy-plP_pcwcy(curry_old);                                                        
+         
+         mx = (double )plsc->wpxscl/(double )plsc->phyxlen;
+         my = (double )plsc->wpyscl/(double )plsc->phyylen;                                           
+                 
+         dev_x = -my*vec_y/mx;
+         dev_y = mx*vec_x/my;                                                         
+                                       
+         scale = sqrt((mx*mx*dev_x*dev_x + my*my*dev_y*dev_y)/
+                         (contlabel_offset*contlabel_offset));                                                   
+         
+         off_x = dev_x/scale;
+         off_y = dev_y/scale;                                                                                                              
+         
+         plptex(tpx+off_x, tpy+off_y, vec_x, vec_y, 0.5, flabel); 
+         plP_movwor(tpx, tpy); 
+         (*lastindex)++;                                                                            
+      }                 
+   else
+      plP_movwor(tpx, tpy);
+      
+}
+  
+
+/* Format  contour labels. Arguments:                                                           */
+/* value:  floating point number to be formatted                                               */
+/* string: the formatted label, plptex must be called with it to actually print the label      */
+ 
+void plfloatlabel(PLFLT value, char *string)
+{
+   PLINT  setpre, precis;
+   char   form[10];
+   char   tmpstring[10];
+   PLINT  exponent;
+   PLFLT  mant, tmp;
+   
+   PLINT  prec = sigprec;
+   
+   plP_gprec(&setpre, &precis);
+
+   if (setpre)
+      prec = precis;
+
+   if (value > 0.0)      
+      tmp = log10(value);                     
+   else if (value < 0.0)
+      tmp = log10(-value);
+   else 
+      tmp = 0;
+      
+   if (tmp >= 0.0)
+      exponent = (int )tmp;
+   else if (tmp < 0.0)
+      {
+         tmp = -tmp;
+         if (floor(tmp) < tmp)
+            exponent = -(int )(floor(tmp) + 1.0);
+         else
+            exponent = -(int )(floor(tmp));   
+      }
+      
+
+   mant = value/pow(10.0, exponent);
+ 
+   if (mant != 0.0)  
+      mant = (int )(mant*pow(10.0, prec-1) + 0.5*mant/fabs(mant))/pow(10.0, prec-1);
+   
+   sprintf(form, "%%.%df", prec-1);
+   sprintf(string, form, mant);
+   /* sprintf(tmpstring, "#(229)10#u%d", exponent); */
+   sprintf(tmpstring, "#(229)10#u%d", exponent);
+   strcat(string, tmpstring); 
+                       
+   if (abs(exponent) < limexp || value == 0.0)
+      {                   
+         value = pow(10.0, exponent) * mant;
+       
+         if (exponent >= 0)
+            prec = prec - 1 - exponent;
+         else
+            prec = prec - 1 + abs(exponent);
+       
+         if (prec < 0)
+            prec = 0;
+            
+         sprintf(form, "%%.%df", (int) prec);
+	 sprintf(string, form, value);	
+      }      
+}
+
+/* physical coords (x) to world coords */
+
+PLFLT
+plP_pcwcx(PLINT x)
+{
+    return ((x-plsc->wpxoff)/plsc->wpxscl);
+}
+
+/* physical coords (y) to world coords */
+
+PLFLT
+plP_pcwcy(PLINT y)
+{
+    return ((y-plsc->wpyoff)/plsc->wpyscl);
+}
+
+
 
 /*--------------------------------------------------------------------------*\
  * plf2eval2()
@@ -176,7 +367,7 @@ plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     }
 
     nstor = mx * my;
-    heapc = (PLINT *) malloc((size_t) (mx + 2 * nstor) * sizeof(PLINT));
+    heapc = (PLINT *) malloc((size_t) (2*mx + 10 * nstor) * sizeof(PLINT));
     if (heapc == NULL) {
 	plabort("plfcont: out of memory in heap allocation");
 	return;
@@ -215,6 +406,13 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 {
     PLINT kcol, krow, kstor, kscan, l, ixt, iyt, jstor, next;
 
+    char  flabel[30];
+
+    /* format contour label for plptex and define the font height of the labels */
+    plfloatlabel(flev, flabel);
+    plschr(0.0, contlabel_size);
+
+
 /* Initialize memory pointers */
 
     kstor = 0;
@@ -226,7 +424,7 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	/* Follow and draw a contour */
 
 	    pldrawcn(f2eval, f2eval_data,
-		     nx, ny, kx, lx, ky, ly, flev, kcol, krow,
+		     nx, ny, kx, lx, ky, ly, flev, flabel, kcol, krow,
 		     &kscan, &kstor, iscan, ixstor, iystor, nstor,
 		     pltr, pltr_data);
 
@@ -263,6 +461,7 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    kstor = jstor;
 	}
     }
+    plschr(0.0, 1.0);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -275,7 +474,7 @@ static void
 pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	 PLPointer f2eval_data,
 	 PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-	 PLINT ky, PLINT ly, PLFLT flev, PLINT kcol, PLINT krow,
+	 PLINT ky, PLINT ly, PLFLT flev, char *flabel, PLINT kcol, PLINT krow,
 	 PLINT *p_kscan, PLINT *p_kstor, PLINT *iscan,
 	 PLINT *ixstor, PLINT *iystor, PLINT nstor,
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
@@ -289,6 +488,11 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     PLFLT xlas = 0., ylas = 0., tpx, tpy, xt, yt;
     PLFLT f1, f2, f3, f4, fcheck;
 
+    PLINT lastindex = 0;
+    PLFLT delta_x = 0.0, delta_y = 0.0, distance = 0.0, currx_old, curry_old;
+    PLFLT norm_device, off_x, off_y, vec_x, vec_y, dev_x, dev_y, mx, my, bx, by, off, scale;
+                    
+
 /* Check if a contour has been crossed */
 
     fxl = f2eval(kcol-1, krow, f2eval_data);
@@ -298,7 +502,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	ixbeg = kcol - 1;
 	iwbeg = kcol;
     }
-    else if (fxr < flev && fxl >= flev) {
+    else if (fxr < flev && fxl > flev) {
 	ixbeg = kcol;
 	iwbeg = kcol - 1;
     }
@@ -356,7 +560,11 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
 		    (*pltr) (xlas, ylas, &tpx, &tpy, pltr_data);
 
-		    plP_drawor(tpx, tpy);
+		    if (contlabel_active)
+		      pl_drawcontlabel(tpx, tpy, flabel, &distance, &lastindex);
+		    else
+		      plP_drawor(tpx, tpy);
+
 		    dx = dist * ixg;
 		    dy = dist * iyg;
 		    xlas = ia + dx;
@@ -375,7 +583,10 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    }
 	    if (ifirst != 1) {
 		(*pltr) (xlas, ylas, &tpx, &tpy, pltr_data);
-		plP_drawor(tpx, tpy);
+		if (contlabel_active)
+		  pl_drawcontlabel(tpx, tpy, flabel, &distance, &lastindex);
+		else
+		  plP_drawor(tpx, tpy);
 	    }
 	    else {
 		(*pltr) (xnew, ynew, &tpx, &tpy, pltr_data);
@@ -389,7 +600,10 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    if (ifirst != 1 &&
 		ix == ixbeg && iy == iybeg && iw == iwbeg && iz == izbeg) {
 		(*pltr) (xlas, ylas, &tpx, &tpy, pltr_data);
-		plP_drawor(tpx, tpy);
+		if (contlabel_active)
+		  pl_drawcontlabel(tpx, tpy, flabel, &distance, &lastindex);
+		else
+		  plP_drawor(tpx, tpy);
 		return;
 	    }
 	    ifirst = 0;
@@ -451,6 +665,11 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	/* Reach here only if boundary encountered - Draw last bit */
 
 	(*pltr) (xnew, ynew, &tpx, &tpy, pltr_data);
+        /* distance = 0.0; */
+        
+        currx_old = plsc->currx;
+        curry_old = plsc->curry;
+        
 	plP_drawor(tpx, tpy);
     }
 }

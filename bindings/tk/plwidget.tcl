@@ -1,5 +1,10 @@
 # $Id$
 # $Log$
+# Revision 1.40  2000/07/19 21:11:49  furnish
+# Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+# surface plotter, contour labelling, and demo updates to show off these
+# new features.
+#
 # Revision 1.39  1998/12/01 20:49:22  furnish
 # Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
 #
@@ -146,7 +151,10 @@ proc plr_create {w {client_id {}}} {
 
 proc plxframe {w {client_id {}}} {
 
-    global client
+    global client plot_menu_on plwidget
+
+# the client should'nt know the name of the plot window?
+    set plwidget $w
 
 # Save client name
 
@@ -174,10 +182,11 @@ proc plxframe {w {client_id {}}} {
 # plframe widget must already have been created (the plframe is queried
 # for a list of the valid output devices for page dumps).
 
+if $plot_menu_on then {
     plw_create_TopRow $w
     pack append $w \
 	$w.ftop {top fill}
-    update
+    update }
 
 # Enable keyboard traversal when widget has the input focus.
 # Also grab the initial input focus.
@@ -189,17 +198,22 @@ proc plxframe {w {client_id {}}} {
 # commands.
 
     if { [info exists client] } then {
+		if $plot_menu_on then {
 	set bop_col [option get $w.ftop.leop off Label]
 	set eop_col [option get $w.ftop.leop on Label]
 
 	$w.plwin configure -bopcmd "plw_flash $w $bop_col"
 	$w.plwin configure -eopcmd "plw_flash $w $eop_col"
+		} else {
+		    $w.plwin configure -bopcmd {update}
+		    $w.plwin configure -eopcmd {update}
+		}
+	}
 
     # Resize binding -- just experimental for now.
     #	bind $w.plwin <Configure> "client_cmd \"plfinfo %w %h\""
 
 	client_cmd "set plwidget $w.plwin"
-    }
 
     return $w
 }
@@ -257,6 +271,15 @@ proc plw_setup_defaults {w} {
     bind $w.plwin <Any-ButtonPress> \
 	"plw_user_mouse $w %b %s %x %y"
 
+    bind $w.plwin <B1-Motion> \
+	"plw_user_mouse $w %b %s %x %y"
+
+    bind $w.plwin <B2-Motion> \
+	"plw_user_mouse $w %b %s %x %y"
+
+    bind $w.plwin <B3-Motion> \
+	"plw_user_mouse $w %b %s %x %y"
+	
     bind $w.plwin <Any-Enter> \
 	"focus $w.plwin"
 }
@@ -633,6 +656,9 @@ proc plw_start {w} {
     if { [info exists client] } then {
 	client_cmd "set widget_is_ready 1"
     }
+
+# jc: call a user supplied routine to do any necessary post initialization
+   catch after_plw_start
 }
 
 #----------------------------------------------------------------------------
@@ -1644,8 +1670,9 @@ proc status_msg {w msg} {
 #----------------------------------------------------------------------------
 
 proc plw_label_reset {w} {
-
-    $w.ftop.lstat configure -text " [string range $w 1 end]"
+global plot_menu_on
+if $plot_menu_on then {	# jc:
+    $w.ftop.lstat configure -text " [string range $w 1 end]" }
 }
 
 #----------------------------------------------------------------------------
@@ -1655,8 +1682,9 @@ proc plw_label_reset {w} {
 #----------------------------------------------------------------------------
 
 proc plw_label_set {w msg} {
-
-    $w.ftop.lstat configure -text " $msg"
+global plot_menu_on
+if $plot_menu_on then {	# jc:
+    $w.ftop.lstat configure -text " $msg" }
 }
 
 #----------------------------------------------------------------------------

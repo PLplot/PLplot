@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.15  2000/07/19 21:12:31  furnish
+ * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+ * surface plotter, contour labelling, and demo updates to show off these
+ * new features.
+ *
  * Revision 1.14  1994/06/30 18:22:07  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
@@ -78,6 +83,46 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 	n++;
 	xpoly[n-1] = plP_wcpcx(x[0]);
 	ypoly[n-1] = plP_wcpcy(y[0]);
+    }
+
+    plP_fill(xpoly, ypoly, n);
+}
+
+/*----------------------------------------------------------------------*\
+ * void plfill3()
+ *
+ * Pattern fills the polygon in 3d bounded by the input points.
+ * If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
+ * The final point is explicitly added if it doesn't match up to the first,
+ * to prevent clipping problems.
+\*----------------------------------------------------------------------*/
+
+void
+c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
+{
+    short xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
+    PLINT i;
+
+    if (plsc->level < 3) {
+	plabort("plfill3: Please set up window first");
+	return;
+    }
+    if (n < 3) {
+	plabort("plfill3: Not enough points in object");
+	return;
+    }
+    if (n > PL_MAXPOLY-1) {
+	plwarn("plfill3: too many points in polygon");
+	n = PL_MAXPOLY;
+    }
+    for( i=0; i < n; i++ ) {
+	xpoly[i] = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
+	ypoly[i] = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
+	}
+    if (x[0] != x[n-1] || y[0] != y[n-1] || z[0] != z[n-1]) {
+	n++;
+	xpoly[n-1] = xpoly[0];
+	ypoly[n-1] = ypoly[0];
     }
 
     plP_fill(xpoly, ypoly, n);

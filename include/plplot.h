@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.93  2000/07/19 21:12:26  furnish
+ * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+ * surface plotter, contour labelling, and demo updates to show off these
+ * new features.
+ *
  * Revision 1.92  2000/05/15 07:18:49  furnish
  * Include plConfig.h now, to pick up definition of PL_DOUBLE that was
  * set at configuration time.
@@ -255,6 +260,7 @@ typedef void* PLPointer;
 #define PLESC_GETC		13	/* get cursor position */
 #define PLESC_SWIN		14	/* set window parameters */
 #define PLESC_DOUBLEBUFFERING	15	/* configure double buffering */
+#define PLESC_XORMOD		16	/* jc: set xor mode */
 
 /* Window parameter tags */
 
@@ -502,8 +508,11 @@ typedef struct {
 #define    plbox3	c_plbox3
 #define    plcol0	c_plcol0
 #define    plcol1	c_plcol1
+#define    plxormod	c_plxormod
 #define    plcont	c_plcont
 #define    plcpstrm	c_plcpstrm
+#define    pl_setcontlabelparam c_pl_setcontlabelparam
+#define    pl_setcontlabelformat c_pl_setcontlabelformat
 #define    plend	c_plend
 #define    plend1	c_plend1
 #define    plenv	c_plenv
@@ -512,6 +521,7 @@ typedef struct {
 #define    plerry	c_plerry
 #define    plfamadv	c_plfamadv
 #define    plfill	c_plfill
+#define    plfill3	c_plfill3
 #define    plflush	c_plflush
 #define    plfont	c_plfont
 #define    plfontld	c_plfontld
@@ -538,6 +548,7 @@ typedef struct {
 #define    plinit	c_plinit
 #define    pljoin	c_pljoin
 #define    pllab	c_pllab
+#define    pllightsource	c_pllightsource
 #define    plline	c_plline
 #define    plline3	c_plline3
 #define    pllsty	c_pllsty
@@ -547,6 +558,7 @@ typedef struct {
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
+#define    plotsh3d	c_plotsh3d
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
 #define    plpoin3	c_plpoin3
@@ -617,8 +629,11 @@ typedef struct {
 #define    c_plbox3	plbox3
 #define    c_plcol0	plcol0
 #define    c_plcol1	plcol1
+#define    c_plxormod	plxormod
 #define    c_plcpstrm	plcpstrm
 #define    c_plcont	plcont
+#define    c_pl_setcontlabelparam pl_setcontlabelparam
+#define    c_pl_setcontlabelformat pl_setcontlabelformat
 #define    c_plend	plend
 #define    c_plend1	plend1
 #define    c_plenv	plenv
@@ -627,6 +642,7 @@ typedef struct {
 #define    c_plerry	plerry
 #define    c_plfamadv	plfamadv
 #define    c_plfill	plfill
+#define    c_plfill3	plfill3
 #define    c_plflush	plflush
 #define    c_plfont	plfont
 #define    c_plfontld	plfontld
@@ -653,6 +669,7 @@ typedef struct {
 #define    c_plinit	plinit
 #define    c_pljoin	pljoin
 #define    c_pllab	pllab
+#define    c_pllightsource pllightsource
 #define    c_plline	plline
 #define    c_plline3	plline3
 #define    c_pllsty	pllsty
@@ -662,6 +679,7 @@ typedef struct {
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
+#define    c_plotsh3d	plotsh3d
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
 #define    c_plpoin3	plpoin3
@@ -788,6 +806,11 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz);
 
+/*  set xor mode */
+
+void
+c_plxormod(PLINT color);
+
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
 void
@@ -878,6 +901,11 @@ c_plfamadv(void);
 
 void
 c_plfill(PLINT n, PLFLT *x, PLFLT *y);
+
+/* Pattern fills the 3d polygon bounded by the input points. */
+
+void
+c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
 
 /* Flushes the output stream.  Use sparingly, if at all. */
 
@@ -1011,6 +1039,10 @@ c_pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2);
 void
 c_pllab(const char *xlabel, const char *ylabel, const char *tlabel);
 
+/* Sets position of the light source */
+void
+c_pllightsource(PLFLT x, PLFLT y, PLFLT z);
+
 /* Draws line segments connecting a series of points. */
 
 void
@@ -1060,6 +1092,12 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
+
+/* Plots a 3-d shaded representation of the function z[x][y]. */
+
+void
+c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
+	 PLINT nx, PLINT ny, PLINT side);
 
 /* Set fill pattern directly. */
 
@@ -1194,6 +1232,16 @@ c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
 
 void
 c_plsesc(char esc);
+
+/* set offset and spacing of contour labels */
+
+void
+c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
+
+/* set the format of the contour labels */
+
+void
+c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig);
 
 /* Set family file parameters */
 

@@ -4,6 +4,7 @@ static int plbinCmd( ClientData, Tcl_Interp *, int, char **);
 static int plbopCmd( ClientData, Tcl_Interp *, int, char **);
 static int plboxCmd( ClientData, Tcl_Interp *, int, char **);
 static int plbox3Cmd( ClientData, Tcl_Interp *, int, char **);
+static int plxormodCmd( ClientData, Tcl_Interp *, int, char **);
 static int plcol0Cmd( ClientData, Tcl_Interp *, int, char **);
 static int plcol1Cmd( ClientData, Tcl_Interp *, int, char **);
 static int pldid2pcCmd( ClientData, Tcl_Interp *, int, char **);

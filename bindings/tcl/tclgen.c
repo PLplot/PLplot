@@ -313,6 +313,49 @@ plbox3Cmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 }
 
 /*--------------------------------------------------------------------------*\
+ * plxormodCmd
+ *
+ * Processes plxormod Tcl command.
+\*--------------------------------------------------------------------------*/
+
+static int
+plxormodCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    PLINT mod;
+
+    errcode = 0; errmsg[0] = '\0';
+
+    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+	Tcl_AppendResult( interp, "command syntax: \"",
+			  "plxormod mod", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( (!0 && 0 && (argc < (1 + 1 - 0))) ||
+         (!0 && !0 && (argc != (1 + 1))) ||
+         ( 0 && (argc != 1) && (argc != (1 + 1))) ) {
+	Tcl_AppendResult( interp, "wrong # args: should be \"",
+			  "plxormod mod", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    mod = atoi(argv[1+0]);
+
+    plxormod ( mod );
+
+
+    if (errcode != 0) {
+	Tcl_AppendResult(interp, errmsg, (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    plflush();
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
  * plcol0Cmd
  *
  * Processes plcol0 Tcl command.

@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.59  2000/07/19 21:12:13  furnish
+ * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+ * surface plotter, contour labelling, and demo updates to show off these
+ * new features.
+ *
  * Revision 1.58  1999/06/19 05:37:51  furnish
  * Integrated patch set from Joao Cardoso.
  *
@@ -150,6 +155,7 @@ static void  flush_output	(PLStream *pls);
 static void  plwindow_init	(PLStream *pls);
 static void  link_init		(PLStream *pls);
 static void  GetCursor		(PLStream *pls, PLGraphicsIn *ptr);
+static void  tk_XorMod          (PLStream *pls, PLINT *ptr);
 
 /* performs Tk-driver-specific initialization */
 
@@ -525,6 +531,7 @@ plD_state_tk(PLStream *pls, PLINT op)
  *	PLESC_FLUSH	Flush X event buffer
  *	PLESC_FILL	Fill polygon
  *	PLESC_EH	Handle events only
+ *	PLESC_XORMOD	Xor mode
  *
 \*--------------------------------------------------------------------------*/
 
@@ -565,11 +572,32 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
 	GetCursor(pls, (PLGraphicsIn *) ptr);
 	break;
 
+    case PLESC_XORMOD:
+	tk_XorMod(pls, (PLINT *) ptr);
+	break;
+
     default:
 	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
 	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
     }
 }
+
+/*--------------------------------------------------------------------------*\
+ * tk_XorMod()
+ *
+ * enter (mod = 1) or leave (mod = 0) xor mode
+ *
+\*--------------------------------------------------------------------------*/
+
+static void
+tk_XorMod(PLStream *pls, PLINT *ptr)
+{
+  if (*ptr != 0)
+    server_cmd( pls, "$plwidget cmd plxormod 1", 1 );
+  else
+    server_cmd( pls, "$plwidget cmd plxormod 0", 1 );
+}
+
 
 /*--------------------------------------------------------------------------*\
  * GetCursor()
@@ -1370,7 +1398,7 @@ plwindow_init(PLStream *pls)
 
     bg = pls->cmap0[0].b | (pls->cmap0[0].g << 8) | (pls->cmap0[0].r << 16);
     if (bg > 0) {
-	sprintf(command, "$plwidget configure -bg #%06x", bg);
+	sprintf(command, "$plwidget configure -plbg #%06x", bg);
 	server_cmd( pls, command, 0 );
     }
 
@@ -1383,6 +1411,11 @@ plwindow_init(PLStream *pls)
 
     if (pls->debug)
 	server_cmd( pls, "$plwidget cmd plsetopt -debug", 0 );
+
+/* double buffering */
+
+    if (pls->db)
+	server_cmd( pls, "$plwidget cmd plsetopt -db", 0 );
 
 /* color map options */
 

@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.40  2000/07/19 21:12:31  furnish
+ * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+ * surface plotter, contour labelling, and demo updates to show off these
+ * new features.
+ *
  * Revision 1.39  2000/05/11 22:02:08  furnish
  * Rearrange inclusion order for Mac, per Rob Managan.
  *
@@ -1083,6 +1088,13 @@ c_plgra(void)
 {
     if (plsc->level > 0)
 	plP_esc(PLESC_GRAPH, NULL);
+}
+
+void
+c_plxormod(PLINT color)	/* jc: xor */
+{
+    if (plsc->level > 0)
+	plP_esc(PLESC_XORMOD, &color);
 }
 
 /*--------------------------------------------------------------------------*\

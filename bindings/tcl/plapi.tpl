@@ -16,6 +16,11 @@
 # $Id$
 #
 # $Log$
+# Revision 1.8  2000/07/19 21:11:43  furnish
+# Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
+# surface plotter, contour labelling, and demo updates to show off these
+# new features.
+#
 # Revision 1.7  1995/10/23 07:33:11  mjl
 # Added Tcl binding for plglevel.
 #
@@ -106,6 +111,11 @@ zopt	const char *
 zlabel	const char *
 ztick	PLFLT
 nsubz	PLINT
+
+# Enter xor mode (mod != 0) or leave it (mod = 0)
+
+pltclcmd plxormod void
+mod PLINT
 
 # Set color, map 0.  Argument is integer between 0 and 15.
 
