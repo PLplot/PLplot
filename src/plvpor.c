@@ -1,17 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/06/30 18:22:23  mjl
+ * Revision 1.10  1995/03/17 00:15:33  mjl
+ * Eliminated unnecessary accessor variables and other cleaning up.
+ *
+ * Revision 1.9  1994/06/30  18:22:23  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
  * global access to the plstream pointer via extern; many accessor functions
  * eliminated as a result.
- *
- * Revision 1.8  1994/03/23  08:35:28  mjl
- * All external API source files: replaced call to plexit() on simple
- * (recoverable) errors with simply printing the error message (via
- * plabort()) and returning.  Should help avoid loss of computer time in some
- * critical circumstances (during a long batch run, for example).
 */
 
 /*	plvpor.c
@@ -21,7 +18,7 @@
 
 #include "plplotP.h"
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plenv()
  *
  * Simple interface for defining viewport and window. If "just"=1,
@@ -38,7 +35,7 @@
  *	axis=20 : Linear X axis, Logarithmic Y axis, No Y=0 axis
  *	axis=21 : Linear X axis, Logarithmic Y axis, Y=0 axis
  *	axis=30 : Logarithmic X and Y axes
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -128,26 +125,23 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plvsta()
  *
  * Defines a "standard" viewport with seven character heights for
  * the left margin and four character heights everywhere else.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plvsta(void)
 {
     PLFLT xmin, xmax, ymin, ymax;
-    PLFLT spdxmi, spdxma, spdymi, spdyma;
     PLFLT lb, rb, tb, bb;
 
     if (plsc->level < 1) {
 	plabort("plvsta: Please call plinit first");
 	return;
     }
-
-    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
 
 /*  Find out position of subpage boundaries in millimetres, reduce by */
 /*  the desired border, and convert back into normalized subpage */
@@ -158,30 +152,23 @@ c_plvsta(void)
     tb = 5.0 * plsc->chrht;
     bb = 5.0 * plsc->chrht;
 
-    xmin = plP_dcscx(plP_mmdcx((PLFLT) (plP_dcmmx(spdxmi) + lb)));
-    xmax = plP_dcscx(plP_mmdcx((PLFLT) (plP_dcmmx(spdxma) - rb)));
-    ymin = plP_dcscy(plP_mmdcy((PLFLT) (plP_dcmmy(spdymi) + tb)));
-    ymax = plP_dcscy(plP_mmdcy((PLFLT) (plP_dcmmy(spdyma) - bb)));
+    xmin = plP_dcscx(plP_mmdcx((PLFLT) (plP_dcmmx(plsc->spdxmi) + lb)));
+    xmax = plP_dcscx(plP_mmdcx((PLFLT) (plP_dcmmx(plsc->spdxma) - rb)));
+    ymin = plP_dcscy(plP_mmdcy((PLFLT) (plP_dcmmy(plsc->spdymi) + tb)));
+    ymax = plP_dcscy(plP_mmdcy((PLFLT) (plP_dcmmy(plsc->spdyma) - bb)));
 
     plvpor(xmin, xmax, ymin, ymax);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plvpor()
  *
  * Creates a viewport with the specified normalized subpage coordinates.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
-    PLFLT spdxmi, spdxma, spdymi, spdyma;
-    PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;
-    PLINT vppxmi, vppxma, vppymi, vppyma;
-    PLINT clpxmi, clpxma, clpymi, clpyma;
-    PLINT phyxmi, phyxma, phyymi, phyyma;
-    PLINT nx, ny, cs;
-
     if (plsc->level < 1) {
 	plabort("plvpor: Please call plinit first");
 	return;
@@ -190,41 +177,35 @@ c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 	plabort("plvpor: Invalid limits");
 	return;
     }
-    plP_gsub(&nx, &ny, &cs);
-    if ((cs <= 0) || (cs > (nx * ny))) {
+    if ((plsc->cursub <= 0) || (plsc->cursub > (plsc->nsubx * plsc->nsuby))) {
 	plabort("plvpor: Please call pladv or plenv to go to a subpage");
 	return;
     }
 
-    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
-    vpdxmi = spdxmi + (spdxma - spdxmi) * xmin;
-    vpdxma = spdxmi + (spdxma - spdxmi) * xmax;
-    vpdymi = spdymi + (spdyma - spdymi) * ymin;
-    vpdyma = spdymi + (spdyma - spdymi) * ymax;
-    plP_svpd(vpdxmi, vpdxma, vpdymi, vpdyma);
+    plsc->vpdxmi = plsc->spdxmi + (plsc->spdxma - plsc->spdxmi) * xmin;
+    plsc->vpdxma = plsc->spdxmi + (plsc->spdxma - plsc->spdxmi) * xmax;
+    plsc->vpdymi = plsc->spdymi + (plsc->spdyma - plsc->spdymi) * ymin;
+    plsc->vpdyma = plsc->spdymi + (plsc->spdyma - plsc->spdymi) * ymax;
 
-    vppxmi = plP_dcpcx(vpdxmi);
-    vppxma = plP_dcpcx(vpdxma);
-    vppymi = plP_dcpcy(vpdymi);
-    vppyma = plP_dcpcy(vpdyma);
-    plP_svpp(vppxmi, vppxma, vppymi, vppyma);
+    plsc->vppxmi = plP_dcpcx(plsc->vpdxmi);
+    plsc->vppxma = plP_dcpcx(plsc->vpdxma);
+    plsc->vppymi = plP_dcpcy(plsc->vpdymi);
+    plsc->vppyma = plP_dcpcy(plsc->vpdyma);
 
-    plP_gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
-    clpxmi = MAX(vppxmi, phyxmi);
-    clpxma = MIN(vppxma, phyxma);
-    clpymi = MAX(vppymi, phyymi);
-    clpyma = MIN(vppyma, phyyma);
-    plP_sclp(clpxmi, clpxma, clpymi, clpyma);
+    plsc->clpxmi = MAX(plsc->vppxmi, plsc->phyxmi);
+    plsc->clpxma = MIN(plsc->vppxma, plsc->phyxma);
+    plsc->clpymi = MAX(plsc->vppymi, plsc->phyymi);
+    plsc->clpyma = MIN(plsc->vppyma, plsc->phyyma);
 
     plsc->level = 2;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plvpas()
  *
  * Creates the largest viewport of the specified aspect ratio that fits
  * within the specified normalized subpage coordinates.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
@@ -283,12 +264,12 @@ c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
     plsvpa(vpxmi, vpxma, vpymi, vpyma);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plvasp()
  *
  * Sets the edges of the viewport with the given aspect ratio, leaving
  * room for labels.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plvasp(PLFLT aspect)
@@ -332,20 +313,17 @@ c_plvasp(PLFLT aspect)
     plsvpa(vpxmin, vpxmax, vpymin, vpymax);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plsvpa()
  *
  * Sets the edges of the viewport to the specified absolute coordinates
  * (mm), measured with respect to the current subpage boundaries.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
-    PLINT nx, ny, cs;
     PLFLT sxmin, symin;
-    PLFLT spdxmi, spdxma, spdymi, spdyma;
-    PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;
 
     if (plsc->level < 1) {
 	plabort("plsvpa: Please call plinit first");
@@ -355,26 +333,28 @@ c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 	plabort("plsvpa: Invalid limits");
 	return;
     }
-    plP_gsub(&nx, &ny, &cs);
-    if ((cs <= 0) || (cs > (nx * ny))) {
+    if ((plsc->cursub <= 0) || (plsc->cursub > (plsc->nsubx * plsc->nsuby))) {
 	plabort("plsvpa: Please call pladv or plenv to go to a subpage");
 	return;
     }
 
-    plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
-    sxmin = plP_dcmmx(spdxmi);
-    symin = plP_dcmmy(spdymi);
+    sxmin = plP_dcmmx(plsc->spdxmi);
+    symin = plP_dcmmy(plsc->spdymi);
 
-    vpdxmi = plP_mmdcx((PLFLT) (sxmin + xmin));
-    vpdxma = plP_mmdcx((PLFLT) (sxmin + xmax));
-    vpdymi = plP_mmdcy((PLFLT) (symin + ymin));
-    vpdyma = plP_mmdcy((PLFLT) (symin + ymax));
+    plsc->vpdxmi = plP_mmdcx((PLFLT) (sxmin + xmin));
+    plsc->vpdxma = plP_mmdcx((PLFLT) (sxmin + xmax));
+    plsc->vpdymi = plP_mmdcy((PLFLT) (symin + ymin));
+    plsc->vpdyma = plP_mmdcy((PLFLT) (symin + ymax));
 
-    plP_svpd(vpdxmi, vpdxma, vpdymi, vpdyma);
-    plP_svpp(plP_dcpcx(vpdxmi), plP_dcpcx(vpdxma),
-	     plP_dcpcy(vpdymi), plP_dcpcy(vpdyma));
-    plP_sclp(plP_dcpcx(vpdxmi), plP_dcpcx(vpdxma),
-	     plP_dcpcy(vpdymi), plP_dcpcy(vpdyma));
+    plsc->vppxmi = plP_dcpcx(plsc->vpdxmi);
+    plsc->vppxma = plP_dcpcx(plsc->vpdxma);
+    plsc->vppymi = plP_dcpcy(plsc->vpdymi);
+    plsc->vppyma = plP_dcpcy(plsc->vpdyma);
+
+    plsc->clpxmi = plP_dcpcx(plsc->vpdxmi);
+    plsc->clpxma = plP_dcpcx(plsc->vpdxma);
+    plsc->clpymi = plP_dcpcy(plsc->vpdymi);
+    plsc->clpyma = plP_dcpcy(plsc->vpdyma);
 
     plsc->level = 2;
 }
