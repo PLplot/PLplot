@@ -1,3 +1,9 @@
+plplot (5.3.0.cvs.20040517-1) unstable; urgency=low
+
+  * New CVS tarball upstream release.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 17 May 2004 10:05:37 +0200
+
 plplot (5.3.0.cvs.20040430-3) unstable; urgency=low
 
   * debian/patches/octave-2.1.53-demos.dpatch: Added patches for Octave
