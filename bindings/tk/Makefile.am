@@ -66,7 +66,8 @@ else
 mkindex = $(top_srcdir)/scripts/mktclIndex -tcl
 endif
 
-tclIndex: $(tcldata) $(itkdata)
+$(top_srcdir)/bindings/tk/tclIndex: $(tcldata) $(itkdata)
+	cd $(top_srcdir)/bindings/tk ; \
 	$(mkindex)
 
 paldata = \
@@ -77,11 +78,12 @@ paldata = \
 	cmap1c.pal \
 	cmap1d.pal
 
-tcl_DATA = $(tcldata) $(itkdata) tclIndex $(paldata)
+nodist_tcl_DATA = $(top_srcdir)/bindings/tk/tclIndex
+tcl_DATA = $(tcldata) $(itkdata) $(paldata)
 
 endif
 
-CLEANFILES = tclIndex
+CLEANFILES = $(top_srcdir)/bindings/tk/tclIndex
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
