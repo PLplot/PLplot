@@ -1,14 +1,41 @@
 #!/bin/sh
 # Test suite for f77 examples.  
-# This is called from plplot-test.sh with $f77dir, $device, and 
-# $dsuffix defined.
+# This is called from plplot-test.sh with $f77dir, $device, $dsuffix, 
+# and $options defined.
 
 # To build the f77 examples before running this script do the following:
 # pushd $f77dir; make; popd 
 
-# Eventually, argument parsing will be added to the f77 api, and this
-# file will be greatly simplified after that while allowing additional $options
-# (such as familying for the png device) to be enabled.
+if test "@F77PARSE_CL@" = ".true."; then
+# This stanza only works if fortran has command-line parsing capability.
+# However, this is the preferred method because it allows access to
+# command-line parsing of the $options (e.g., familying options for png
+# and jpeg devices) that have been passed from plplot-test.sh
+$f77dir/x01f -dev $device -o x01f.$dsuffix $options
+$f77dir/x02f -dev $device -o x02f.$dsuffix $options
+$f77dir/x03f -dev $device -o x03f.$dsuffix $options
+$f77dir/x04f -dev $device -o x04f.$dsuffix $options
+$f77dir/x05f -dev $device -o x05f.$dsuffix $options
+$f77dir/x06f -dev $device -o x06f.$dsuffix $options
+$f77dir/x07f -dev $device -o x07f.$dsuffix $options
+$f77dir/x08f -dev $device -o x08f.$dsuffix $options
+$f77dir/x09f -dev $device -o x09f.$dsuffix $options
+$f77dir/x10f -dev $device -o x10f.$dsuffix $options
+$f77dir/x11f -dev $device -o x11f.$dsuffix $options
+$f77dir/x12f -dev $device -o x12f.$dsuffix $options
+$f77dir/x13f -dev $device -o x13f.$dsuffix $options
+# Skip example 14 because interactive (and not written)
+$f77dir/x15f -dev $device -o x15f.$dsuffix $options
+$f77dir/x16f -dev $device -o x16f.$dsuffix $options
+# Do non-standard example 16a because it illustrates plshade functionality 
+# with cmap1 (and also because the result looks nice.)
+$f77dir/x16af -dev $device -o x16af.$dsuffix $options
+# Skip example 17 because interactive.
+$f77dir/x18f -dev $device -o x18f.$dsuffix $options
+else
+# Fall back to this method if this fortran platform does not have
+# command-line parsing capability.  Command-line $options must be ignored 
+# for this method.
 $f77dir/x01f <<EOF >/dev/null
 $device
 x01f.$dsuffix
@@ -77,3 +104,4 @@ $f77dir/x18f <<EOF >/dev/null
 $device
 x18f.$dsuffix
 EOF
+fi
