@@ -39,7 +39,7 @@ function plot3 (x, y, z, fmt)
   if (is_vector(x) & is_vector(y) & is_vector(y))
     
     if (nargin == 3)
-      fmt = "11";
+      fmt = "-r";
     endif	
 
     __pl_plot3(x, y, z, fmt);
@@ -53,7 +53,7 @@ function plot3 (x, y, z, fmt)
       endif
       
       if (nargin == 3)
-	fmt = "11";
+	fmt = "-r";
 	for i=2:columns(x)
 	  fmt = [fmt; sprintf("%d%d", i, i)];
 	endfor
