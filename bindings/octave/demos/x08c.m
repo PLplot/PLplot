@@ -119,7 +119,7 @@ endfunction
 	endswitch
       endfor
     endfor
-    plend();
+    plend1();
   endfunction
 
 ix08c

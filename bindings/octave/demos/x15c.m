@@ -62,7 +62,7 @@ function ix15c
   plot1(z,zmin,zmax);
   plot2(z,zmin,zmax);
 
-  plend;
+  plend1();
   
 endfunction
 

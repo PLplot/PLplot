@@ -75,5 +75,5 @@ function x06c
   endfor
 
   plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
-  plend();
+  plend1();
 endfunction

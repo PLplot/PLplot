@@ -84,7 +84,7 @@ function ix18c
     plmtex("t", 1.0, 0.5, 0.5, title);
   endfor
 
-  plend();
+  plend1();
 endfunction
 
 function y = THETA(a)

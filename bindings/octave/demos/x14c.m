@@ -130,9 +130,9 @@ function ix14c
   plsstrm(0);
   pleop();
 
-  ## Call plend to finish off. */
+  ## Call plend1 to finish off. */
 
-  plend();
+  plend1();
   
 endfunction
 

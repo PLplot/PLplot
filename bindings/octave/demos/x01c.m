@@ -111,9 +111,9 @@ function ix01c
       fflush(stdout);
     endwhile
   endif
-  ## Don't forget to call plend  to finish off! */
+  ## Don't forget to call plend1  to finish off! */
 
-  plend;
+  plend1();
 
 endfunction
 

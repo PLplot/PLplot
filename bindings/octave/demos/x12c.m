@@ -56,7 +56,7 @@ function ix12c
     string=sprintf("%d", 1980 + i);
     plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string);
   endfor
-  plend();
+  plend1();
 endfunction
 
 function plfbox(x0, y0)

@@ -77,5 +77,5 @@ function x11c
     plcol0(3);
     plmtex("t", 1.0, 0.5, 0.5, title(k+1,:));
   endfor
-  plend();
+  plend1();
 endfunction

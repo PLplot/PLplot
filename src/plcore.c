@@ -1287,12 +1287,7 @@ c_plend(void)
     plfontrel();
 #ifdef ENABLE_DYNDRIVERS
 /* Release the libltdl resources */
-/* However, commented out because there is no right place to do this.
- * libltdl resources only allocated during library initialization so can
- * only remove them again when completely done with plotting.  But never
- * know if this particular call to plend does that or there are further 
- * plinit's in store. */
-/*    lt_dlexit();   */
+    lt_dlexit();
 #endif
 }
 

@@ -84,5 +84,5 @@ function x13c
   plfont(2);
   plschr(0., 1.3);
   plptex(5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales");
-  plend();
+  plend1();
 endfunction

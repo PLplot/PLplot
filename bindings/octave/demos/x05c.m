@@ -45,5 +45,5 @@ function x05c
   plcol0(2);
   pllab("#frValue", "#frFrequency",
 	"#frPLplot Example 5 - Probability function of Oscillator");
-  plend();
+  plend1();
 endfunction

@@ -320,7 +320,7 @@ function ix09c
     potential();
 
 
-	  plend();
+	  plend1();
 
 	endfunction
 

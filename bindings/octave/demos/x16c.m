@@ -250,7 +250,7 @@ function ix16c
 
   ## Clean up 
 
-  plend();
+  plend1();
 
 endfunction
 

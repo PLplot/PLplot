@@ -77,5 +77,5 @@ function x07c
 
     plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols");
   endfor
-  plend();
+  plend1();
 endfunction

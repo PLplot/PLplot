@@ -40,7 +40,7 @@ function ix04c
 
   plot1(0);
   plot1(1);
-  plend();
+  plend1();
 endfunction
 
 ## Log-linear plot.

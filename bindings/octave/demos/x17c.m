@@ -108,6 +108,6 @@ function x17c
   ## Destroy strip chart and it's memory */
 
   plstripd(id1);
-  plend;
+  plend1();
   
 endfunction

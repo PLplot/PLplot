@@ -83,6 +83,6 @@ function x03c
   plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh");
 
   ## Close the plot at end */
-  plend();
+  plend1();
 endfunction
 

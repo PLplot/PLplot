@@ -56,6 +56,6 @@ function x02c
     plptex(0.5, 0.5, 1.0, 0.0, 0.5, text);
   endfor
 
-  plend();
+  plend1();
 
 endfunction
