@@ -16,7 +16,7 @@
 #
 # Note: each demo proc is supplied a widget argument if run from a widget,
 # or "loopback" if being run from pltcl.  In the latter case, the
-# "loopback cmd" does nothing, but is required two make the two styles of
+# "loopback cmd" does nothing but is required to make the two styles of
 # Tcl scripts compatible.
 #----------------------------------------------------------------------------
 
