@@ -222,9 +222,9 @@ const Unicode_to_Type1_table unicode_to_dingbats_lookup_table[188] = {
 {0x27be,254}
 };
 
-const int number_of_entries_in_unicode_to_standard_table=148;
+const int number_of_entries_in_unicode_to_standard_table=149;
 
-const Unicode_to_Type1_table unicode_to_standard_lookup_table[148] = {
+const Unicode_to_Type1_table unicode_to_standard_lookup_table[149] = {
 {0x0020,32},
 {0x0021,33},
 {0x0022,34},
@@ -232,6 +232,7 @@ const Unicode_to_Type1_table unicode_to_standard_lookup_table[148] = {
 {0x0024,36},
 {0x0025,37},
 {0x0026,38},
+{0x0027,39},
 {0x0028,40},
 {0x0029,41},
 {0x002a,42},
