@@ -134,7 +134,7 @@ enable_octave=no
 #(e.g., enable_tek4010) do not require a default to be specified here.
 enable_gnome=no
 enable_ntk=no
-enable_tkwin=no
+enable_tkwin=yes
 enable_png=yes
 enable_jpeg=yes
 enable_cgm=yes
@@ -420,6 +420,11 @@ AC_LIBLTDL_CONVENIENCE
 AC_CONFIG_SUBDIRS(libltdl)
 AC_SUBST(INCLTDL)
 AC_SUBST(LIBLTDL)
+
+# This required for dll support under cygwin.  Must occur before 
+# AC_PROG_LIBTOOL (AM_PROG_LIBTOOL? FIXME).
+# comment out until this proves to work on cygwin.
+#AC_LIBTOOL_WIN32_DLL
 
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
