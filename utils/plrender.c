@@ -1,10 +1,9 @@
 /* $Id$
    $Log$
-   Revision 1.18  1993/03/06 05:04:51  mjl
-   Inserted a hack for old metafiles with bad linewidth commands (WIDTH
-   commands in the body of the metafile are now ignored for metafiles version
-   1993a and older).  WIDTH commands prior to the INIT on old metafiles are
-   still honored.
+   Revision 1.19  1993/03/15 21:49:21  mjl
+   Change to allow plrender to abort a plot mid-page in order to respond to
+   a user seek request.  Now it processes <backspace> or <page up> or <delete>
+   (to go backward) and <RET> or <page down> as fast as it can get them.
 
  * Revision 1.17  1993/03/03  19:43:47  mjl
  * Changed PLSHORT -> short.  Also put in some explicit casts to remove warnings
@@ -166,7 +165,6 @@ static int HandleOption_jy	(char *, char *);
 
 /* Page info */
 
-
 static PLINT	page_begin=1;	/* Where to start plotting */
 static PLINT	page_end=-1;	/* Where to stop (0 to disable) */
 static PLINT	curpage=0;	/* Current page number */
@@ -222,7 +220,7 @@ static PLFLT	vpxmin, vpxmax, vpxlen, vpymin, vpymax, vpylen;
 
 static U_CHAR 	c_old, c1;
 static U_SHORT	npts;
-static int	direction_flag, isanum;
+static int	direction_flag, isanum, at_eop;
 static char	num_buffer[20];
 static PLFLT	x[PL_MAXPOLYLINE], y[PL_MAXPOLYLINE];
 
@@ -658,8 +656,11 @@ plr_clr(U_CHAR c)
     if (cursub == nsubx * nsuby)
 	end_of_page = 1;
 
-    if (end_of_page == 1)
+    if (end_of_page == 1) {
+	at_eop = 1;
 	grclr();
+	at_eop = 0;
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -748,9 +749,6 @@ plr_switch(U_CHAR c)
 * plr_width()
 *
 * Change pen width.
-*
-* This command is ignored on old metafiles, due to problems with the
-* past implementation of this.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -760,8 +758,7 @@ plr_width(U_CHAR c)
 
     plm_rd(read_2bytes(MetaFile, &width));
 
-    if (strcmp(mf_version, "1993b") >= 0) 
-	plwid(width);
+    plwid(width);
 }
 
 /*----------------------------------------------------------------------*\
@@ -937,7 +934,7 @@ static void
 plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 {
     char *tst = (char *) user_data;
-    int input_num;
+    int input_num, dun_seek = 0;
 
 /* TEST */
 
@@ -997,7 +994,10 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 		SeekToPage(target_page);
 	    }
 	}
-	*p_exit_eventloop = TRUE;
+	else
+	    SeekToPage(curpage + 1);
+
+	dun_seek = 1;
     }
 
 /* Page backward */
@@ -1006,27 +1006,29 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 	key->code == PLK_Delete ||
 	key->code == PLK_Prior) 
     {
-	*p_exit_eventloop = TRUE;
 	target_page = curpage - 1;
 	SeekToPage(target_page);
+	dun_seek = 1;
     }
 
 /* DEBUG */
 
 #ifdef DEBUG
     pltext();
-    printf("key->code = %x, target_page = %d, page = %d,\
-           exit_eventloop = %d\n", key->code, target_page, curpage,
-	   *p_exit_eventloop);
+    printf("key->code = %x, target_page = %d, page = %d\n",
+           key->code, target_page, curpage);
     plgra();
 #endif
 
 /* Cleanup */
 
-    if (*p_exit_eventloop == TRUE) {
+    if (dun_seek) {
 	num_buffer[0] = '\0';
 	direction_flag = 0;
 	isanum = 0;
+	key->code = 0;
+	if (at_eop)
+	    *p_exit_eventloop = TRUE;
     }
 }
 
@@ -1035,12 +1037,13 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 *
 * Seek to 'target_page'.
 *
-* At this point we're actually at the end of a page, and haven't yet read
-* the page header for the next page.  It would be most convenient if we
-* could just decrement the target_page and start seeking with the next page
-* header, but this fails if we're at the end of a file.  Instead, I backup
-* to the beginning of the current page and start seeking from there.  This
-* keeps the logic simple at the cost of a small loss in performance.
+* When this routine is called we are probably at the end of a page, but
+* maybe not (e.g. if the user hit <backspace> in the middle of the screen
+* update, and the driver immediately processes the event).  Also we might
+* be at the end of the file.  So in order to get info on the previous and
+* next page offsets we must backup to the beginning of the current page and
+* start seeking from there.  In addition, we must set end_of_page = 1 to
+* force a clear.
 *
 * The wacky business with cursub is to ensure that when seeking with
 * subpages in effect, the last subpage on the page previous to the target
@@ -1052,7 +1055,7 @@ SeekToPage(long target_page)
 {
     long delta;
 
-    if (target_page - 1 == curpage)
+    if ((target_page - 1 == curpage) && at_eop)
 	return;
 
     if (curpage_loc != 0) {
@@ -1070,7 +1073,7 @@ SeekToPage(long target_page)
 	    curpage--;
 	}
     }
-    if (target_page - 1 > curpage)
+    if (target_page - 1 >= curpage)
 	delta = (target_page - 1) - curpage + (1 - cursub/(nsubx*nsuby));
     else
 	delta = (target_page - 1) - curpage;
@@ -1136,6 +1139,8 @@ SeekToPage(long target_page)
     printf("nsubx, nsuby: %d, %d\n", nsubx, nsuby);
     grgra();
 #endif
+
+    end_of_page = 1;
 }
 
 /*----------------------------------------------------------------------*\
