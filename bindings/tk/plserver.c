@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1993/09/08 18:38:24  mjl
+ * Revision 1.13  1993/09/27 20:34:25  mjl
+ * Eliminated some cases of freeing unallocated memory.
+ *
+ * Revision 1.12  1993/09/08  18:38:24  mjl
  * Changed conditional compile for Tk 3.2 to expand for any pre-3.3 version.
  *
  * Revision 1.11  1993/09/08  02:31:34  mjl
@@ -299,7 +302,7 @@ configure(int argc, char **argv)
 static void
 set_auto_path(void)
 {
-    char *buf, *ptr, *foo;
+    char *buf, *ptr=NULL, *dn;
 #ifdef DEBUG
     char *path;
 #endif
@@ -322,9 +325,9 @@ set_auto_path(void)
 
 /* Add $HOME/tcl */
 
-    foo = getenv("HOME");
-    if (foo != NULL) {
-	plGetName(foo, "tcl", "", &ptr);
+    dn = getenv("HOME");
+    if (dn != NULL) {
+	plGetName(dn, "tcl", "", &ptr);
 	Tcl_SetVar(interp, "dir", ptr, 0);
 	tcl_cmd("set auto_path \"$dir $auto_path\"");
 #ifdef DEBUG
@@ -336,9 +339,9 @@ set_auto_path(void)
 
 /* Add $(PLPLOT_DIR)/tcl */
 
-    foo = getenv("PLPLOT_DIR");
-    if (foo != NULL) {
-	plGetName(foo, "tcl", "", &ptr);
+    dn = getenv("PLPLOT_DIR");
+    if (dn != NULL) {
+	plGetName(dn, "tcl", "", &ptr);
 	Tcl_SetVar(interp, "dir", ptr, 0);
 	tcl_cmd("set auto_path \"$dir $auto_path\"");
 #ifdef DEBUG

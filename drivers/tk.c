@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1993/09/08 04:52:23  mjl
+ * Revision 1.12  1993/09/27 20:34:26  mjl
+ * Eliminated some cases of freeing unallocated memory.
+ *
+ * Revision 1.11  1993/09/08  04:52:23  mjl
  * Fixes made for TK3.3b3.  Now searches for plserver before doing fork/exec,
  * checking the following locations: ".", ${PLPLOT_DIR}, INSTALL_DIR (defined
  * in the makefile).  If plserver not found, aborts gracefully.
@@ -1304,16 +1307,19 @@ copybuf(PLStream *pls, char *cmd)
 *	current directory
 *	$(PLPLOT_DIR)
 *	INSTALL_DIR
+*
+* The caller must free the returned pointer (points to malloc'ed memory)
+* when finished with it.
 \*----------------------------------------------------------------------*/
 
 static char *
 find_plserver(char *fn)
 {
-    char *fs = NULL, *dn = NULL;
+    char *fs = NULL, *dn;
 
 /* Current directory */
 
-    fs = fn;
+    plGetName("", "", fn, &fs);
     if ( ! findname(fs))
 	return fs;
 
@@ -1337,6 +1343,7 @@ find_plserver(char *fn)
 
     free_mem(fs);
     plexit("plserver cannot be found or is not executable");
+    return NULL;
 }
 
 /*----------------------------------------------------------------------*\
