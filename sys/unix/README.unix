@@ -94,17 +94,9 @@ help you archive all the source files using 'zoo', 'tar', or 'zip'.
 2. System specific notes
 
 ---
-2.1 SunOS: I now rely on ANSI libc functions both for seeking (fsetpos,
-fgetpos) and for cleanup (atexit).  If you don't have an ANSI libc handy
-or if it is inconvenient to use, you can specify -DNO_ANSI_LIBC when
-building.  This will switch to the older ftell/fseek form of seeking and
-disable some capabilities of the tek/xterm drivers.  Some older versions
-of Sunos & acc require you to link in the ANSI lib explicitly when using
-from a Fortran program, but this appears to be fixed in SunOS 4.1.3.  The
-cleanest way to change the build to use this switch is to use the
-following in ~/config/cf_plplot.m4 --
-
-EXT_FLAGS_C	= -DNO_ANSI_LIBC
+2.1 SunOS: be on the lookout for a non-ANSI libc.  Old versions of acc and
+self-installed gcc's are vulnerable to this.  See the FAQ item 1.5 for a
+description of the problem and how to deal with it.
 
 I haven't tried building shared libraries for SunOS yet but hope to get
 around to it one of these days.
