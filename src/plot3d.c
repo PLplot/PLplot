@@ -1374,7 +1374,7 @@ plnxtvlo(PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init)
      * have fallen past the edges. Having found the point, load up the point
      * and segment coordinates appropriately.
      */
-	ptold = ((oldloview[2 * i] < u[j] && i < mlo) || j >= n);
+	ptold = (j >= n || (i < mlo && oldloview[2 * i] < u[j]));
 	if (ptold) {
 	    px = oldloview[2 * i];
 	    py = oldloview[2 * i + 1];
