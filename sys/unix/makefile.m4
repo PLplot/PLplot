@@ -9,6 +9,7 @@
 # Set up the m4 macros.
 
 changequote({,})dnl
+define({UNIX},)dnl
 
 # Some utility macros.
 
@@ -26,28 +27,18 @@ define(if_linux,    {ifdef({LINUX},	{$1},{$2})})dnl
 define(if_sx,	    {ifdef({SX},	{$1},{$2})})dnl
 define(if_alphaosf, {ifdef({ALPHAOSF},	{$1},{$2})})dnl
 
-if_aix(     {define({UNIX},)})dnl
-if_hpux(    {define({UNIX},)})dnl
-if_dgux(    {define({UNIX},)})dnl
-if_sysv(    {define({UNIX},)})dnl
-if_bsd(     {define({UNIX},)})dnl
-if_irix(    {define({UNIX},)})dnl
-if_unicos(  {define({UNIX},)})dnl
-if_sunos(   {define({UNIX},)})dnl
-if_next(    {define({UNIX},)})dnl
-if_linux(   {define({UNIX},)define({NO_FORTRAN},)})dnl
-if_ultrix(  {define({UNIX},)define({SUNOS})})dnl
-if_sx(      {define({UNIX},)})dnl
-if_alphaosf({define({UNIX},)})dnl
+define(if_unix,  {ifdef({UNIX},  {$1},{$2})})dnl
+define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
+
+if_linux(   {define({NO_FORTRAN},)})dnl
+if_ultrix(  {define({SUNOS})})dnl
+if_amiga(   {undefine({UNIX})})
 
 define(if_ranlib,{ifdef({RANLIB},{$1},{$2})})dnl
 if_sunos( {define({RANLIB},)})dnl
 if_next(  {define({RANLIB},)})dnl
 if_bsd(   {define({RANLIB},)})dnl
 if_linux( {define({RANLIB},)})dnl
-
-define(if_unix,  {ifdef({UNIX},  {$1},{$2})})dnl
-define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
 
 ifdef({NO_X},{dnl
 define({NO_TK})dnl
