@@ -27,5 +27,3 @@ examples_DATA = Makefile.examples
 
 install-data-hook:
 	( cd $(DESTDIR)$(examplesdir) ; mv -f Makefile.examples Makefile )
-
-EXTRA_DIST = Makefile.examples.in

@@ -1,6 +1,5 @@
 Makefile
 Makefile.in
-Makefile.examples
 *.sh
 *.ps
 *.png

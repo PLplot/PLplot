@@ -263,7 +263,6 @@ AC_CONFIG_FILES([
     cf/Makefile
     drivers/Makefile
     examples/Makefile
-    examples/Makefile.examples
     examples/c/Makefile
     examples/c/Makefile.examples
     examples/perl/Makefile

@@ -25,10 +25,12 @@
 # convenience to the user for building all the examples without having 
 # to invoke make in the individual sub-directories of examples.
 
-SUBDIRS = @EXAMPLES_DIRECTORIES@
+SUBDIRS = c c++ f77 tk
 all clean: 
 	target=`echo $@`; \
 	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
-	  (cd $$subdir && $(MAKE) $$target) \
+	  if test -d "$$subdir"; then \
+	    echo "Making $$target in $$subdir"; \
+	    (cd $$subdir && $(MAKE) $$target); \
+	  fi; \
 	done
