@@ -673,13 +673,14 @@ main()
     <para>
       <screen>
 <prompt>%</prompt> <userinput>x01c -h</userinput>
-
 Usage:
-        x01c [plplot options]
+        ./x01c [options]
 
-plplot options:
+PLplot options:
     -h                   Print out this message
-    -v                   Print out the plplot library version number
+    -v                   Print out the PLplot library version number
+    -verbose             Be more verbose than usual
+    -debug               Print debugging info (implies -verbose)
     -dev name            Output device name
     -o name              Output filename
     -display name        X server to contact
@@ -692,8 +693,11 @@ plplot options:
     -jx justx            Page justification in x (-0.5 to 0.5, def 0)
     -jy justy            Page justification in y (-0.5 to 0.5, def 0)
     -ori orient          Plot orientation (0,2=landscape, 1,3=portrait)
-    -width width         Sets pen width (1 &lt;= width &lt;= 10)
+    -freeaspect          Do not preserve aspect ratio on orientation swaps
+    -width width         Sets pen width (1 <= width <= 10)
     -bg color            Background color (0=black, FFFFFF=white)
+    -ncol0 n             Number of colors to allocate in cmap 0 (upper bound)
+    -ncol1 n             Number of colors to allocate in cmap 1 (upper bound)
     -fam                 Create a family of output files
     -fsiz size           Output family file size in MB (e.g. -fsiz 1.0)
     -fbeg number         First family member number on output
@@ -702,11 +706,14 @@ plplot options:
     -nopixmap            Don't use pixmaps in X-based drivers
     -db                  Double buffer X window output
     -np                  No pause between pages
-    -server_name name    Main window name of plplot server (tk driver)
+    -server_name name    Main window name of PLplot server (tk driver)
+    -server_host name    Host to run PLplot server on (dp driver)
+    -server_port name    Port to talk to PLplot server on (dp driver)
+    -user name           User name on remote node (dp driver)
 
 All parameters must be white-space delimited.  Some options are driver
-dependent.  Please see the plplot reference document for more detail.<!--
-   --></screen>
+dependent.  Please see the PLplot reference document for more detail.
+</screen>
     </para>
 
   </sect1>
@@ -1104,6 +1111,59 @@ dependent.  Please see the plplot reference document for more detail.<!--
       colors to give a virtually infinite number of different patterns.
     </para>
 
+  </sect1>
+  
+  <sect1 id="color">
+    <title>Using Color within PLplot</title>
+
+    <para> Normally, color is used for all drivers and devices that support
+    it within PLplot subject to the condition that the user has the option
+    of globally turning off the color (and subsequently turning it on again
+    if so desired) using &plscolor;. </para>
+
+    <para> The PLplot color model utilizes two color maps. Color map0
+    (discussed in <xref linkend="color-map-0"/>) is intended for coloring the
+    background, axes, lines, and labels.  That is, it is used for everything
+    except the case covered by color map1.  Color map1 (discussed in <xref
+    linkend="color-map-1"/>) is intended for plots (see <xref
+    linkend="contour-plots"/> in which data values are represented by colors.
+    </para>
+
+  <sect2 id="color-map-0">
+    <title>Color Map0</title>
+
+    <para> Color map0 is intended for coloring the background, axes, lines,
+    and labels.  Generally, the default color map0 pallette of 16 colors is
+    used. (<filename>examples/c/x02c.c</filename> illustrates these colors.)
+    The default background color is taken from the index 0 color which is
+    black by default.  The default foreground color is white. </para>
+
+    <para> There are a number of options for changing the default white on
+    black colors.  The user may set the background color using the
+    command-line <literal>bg</literal> parameter or by calling &plscolbg;
+    <emphasis>before</emphasis> &plinit;. During the course of the plot, the
+    user can change the foreground color as often as desired using &plcol0;
+    to select the index of the desired color. </para>
+
+    <para> For more advanced use it is possible to define an arbitrary map0
+    pallette of colors. The user may set the number of colors in the map0
+    pallette using the command-line <literal>ncol0</literal> parameter or by
+    calling &plscmap0n;.  &plscol0; sets the RGB value of the given index
+    which must be less than the maximum number of colors (which is set by
+    default, by command line, by &plscmap0n;, or even by &plscmap0;).
+    Alternatively, &plscmap0; sets up the entire map0 color pallette. For
+    all these ways of defining the map0 pallette any number of colors is
+    allowed, but it is not guaranteed that the individual drivers will
+    actually be able to use more than 16 colors. </para>
+
+  </sect2>
+  <sect2 id="color-map-1">
+    <title>Color Map1</title>
+
+    <para>
+    </para>
+
+  </sect2>
   </sect1>
   
   <sect1 id="characters">
