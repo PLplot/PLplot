@@ -1390,6 +1390,12 @@ plGetDev()
     plsc->dispatch_table = dispatch_table[n];
 }
 
+/*--------------------------------------------------------------------------*\
+ * void plInitDispatchTable()
+ *
+ * ...
+\*--------------------------------------------------------------------------*/
+
 static void
 plInitDispatchTable()
 {
@@ -1397,9 +1403,10 @@ plInitDispatchTable()
     char *devnam, *devdesc, *driver, *tag, *seqstr;
     int seq;
     int i, j, n, driver_found, done=0;
+    FILE *fp_drvdb = 0;
 
 #ifdef ENABLE_DYNAMIC_DRIVERS
-    FILE *fp_drvdb = plLibOpen( "drivers/drivers.db" );
+    fp_drvdb = plLibOpen( "drivers/drivers.db" );
 
     if (!fp_drvdb) {
         fprintf( stderr, "Can't open drivers/drivers.db\n" );
@@ -1422,23 +1429,16 @@ plInitDispatchTable()
 /* Allocate space for the dispatch table. */
     dispatch_table = malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable *) );
 
-/* Copy the static devices into the dispatch table */
+/* Initialize the dispatch table entries for the static devices by calling
+   the dispatch table initialization function for each static device.  This
+   is the same function that would be called at load time for dynamic
+   drivers. */
+
     for( n=0; n < nplstaticdevices; n++ )
     {
         dispatch_table[n] = malloc( sizeof(PLDispatchTable) );
 
-        dispatch_table[n]->pl_MenuStr = static_devices[n].pl_MenuStr;
-        dispatch_table[n]->pl_DevName = static_devices[n].pl_DevName;
-        dispatch_table[n]->pl_type = static_devices[n].pl_type;
-        dispatch_table[n]->pl_seq = static_devices[n].pl_seq;
-        dispatch_table[n]->pl_init = static_devices[n].pl_init;
-        dispatch_table[n]->pl_line = static_devices[n].pl_line;
-        dispatch_table[n]->pl_polyline = static_devices[n].pl_polyline;
-        dispatch_table[n]->pl_eop = static_devices[n].pl_eop;
-        dispatch_table[n]->pl_bop = static_devices[n].pl_bop;
-        dispatch_table[n]->pl_tidy = static_devices[n].pl_tidy;
-        dispatch_table[n]->pl_state = static_devices[n].pl_state;
-        dispatch_table[n]->pl_esc = static_devices[n].pl_esc;
+        (*static_device_initializers[n])( dispatch_table[n] );
     }
     npldrivers = nplstaticdevices;
 
@@ -1683,32 +1683,22 @@ plLoadDriver(void)
         return;
     }
 
-/* Now we are ready to pull all the symbols for the requested device out of
- * the dynamically loaded driver module, and hook up the dispatch table.  */
+/* Now we are ready to ask the driver's device dispatch init function to
+   initialize the entries in the dispatch table. */
 
-    sprintf( sym, "plD_init_%s", tag );
-    dev->pl_init = dlsym( driver->dlhand, sym );
+    sprintf( sym, "plD_dispatch_init_%s", tag );
 
-    sprintf( sym, "plD_line_%s", tag );
-    dev->pl_line = dlsym( driver->dlhand, sym );
+    {
+        PLDispatchInit dispatch_init = dlsym( driver->dlhand, sym );
+        if (!dispatch_init)
+        {
+            fprintf( stderr,
+                     "Unable to locate dispatch table initialization function for driver: %s.\n", driver->drvnam );
+            return;
+        }
 
-    sprintf( sym, "plD_polyline_%s", tag );
-    dev->pl_polyline = dlsym( driver->dlhand, sym );
-
-    sprintf( sym, "plD_eop_%s", tag );
-    dev->pl_eop = dlsym( driver->dlhand, sym );
-
-    sprintf( sym, "plD_bop_%s", tag );
-    dev->pl_bop = dlsym( driver->dlhand, sym );
-
-    sprintf( sym, "plD_tidy_%s", tag );
-    dev->pl_tidy = dlsym( driver->dlhand, sym );
-
-    sprintf( sym, "plD_state_%s", tag );
-    dev->pl_state = dlsym( driver->dlhand, sym );
-
-    sprintf( sym, "plD_esc_%s", tag );
-    dev->pl_esc = dlsym( driver->dlhand, sym );
+        (*dispatch_init)( dev );
+    }
 #endif
 }
 
