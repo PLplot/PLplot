@@ -25,7 +25,14 @@
 # probably unrealistic.
 #
 # $Log$
-# Revision 1.3  1995/10/16 18:27:01  mjl
+# Revision 1.4  1995/10/23 07:32:48  mjl
+# Support for storing return results into return string.  Now most accessor
+# type functions act similar to the "gets" command -- if the necessary
+# variable names are specified, the result gets stored into them, otherwise
+# it is returned.  So e.g. "set level [plglevel]" and "plglevel level" now
+# have the same effect.
+#
+# Revision 1.3  1995/10/16  18:27:01  mjl
 # Gave script the ability to deal with "const char *" and char&, improved help
 # entry by eliminating extra blanks.
 #
@@ -108,6 +115,7 @@ sub process_pltclcmd {
     $args = "";
     $nargs = 0;
     $ndefs = 0;
+    $refargs = 0;
     while( <SPECFILE> ) {
 	chop;
 
@@ -134,8 +142,11 @@ sub process_pltclcmd {
 		$argref[ $nargs ] = 1;
 	    }
 
-	    $args .= " $vname";
-
+	    if ($nargs == 0) {
+		$args .= "$vname";
+	    } else {
+		$args .= " $vname";
+	    }
 	    $ndefs++ if $defval ne "";
 	    $nargs++;
 	    next;
@@ -286,22 +297,35 @@ sub process_pltclcmd {
 	    if ($refargs) {
 		for( $i=0; $i < $nargs; $i++ ) {
 		    next if !$argref[$i];
+		    if ($i > 0) {
+			print GENFILE "    if (argc == 1)\n";
+			print GENFILE "        Tcl_AppendResult( interp, \" \", (char *) NULL );\n";
+		    }
 		    $_ = $argtype[$i];
 		  fetch: {
 		      /PLINT&/ && do {
 			  print GENFILE "    sprintf( buf, \"%d\", $argname[$i] );\n";
-			  print GENFILE "    Tcl_SetVar( interp, argv[1+$i], buf, 0 );\n";
+			  print GENFILE "    if (argc > 1)\n";
+			  print GENFILE "        Tcl_SetVar( interp, argv[1+$i], buf, 0 );\n";
+			  print GENFILE "    else\n";
+			  print GENFILE "        Tcl_AppendResult( interp, buf, (char *) NULL );\n";
 			  last fetch;
 		      };
 
 		      /char \*/ && do {
-			  print GENFILE "    Tcl_SetVar( interp, argv[1+$i], $argname[$i], 0 );\n";
+			  print GENFILE "    if (argc > 1)\n";
+			  print GENFILE "       Tcl_SetVar( interp, argv[1+$i], $argname[$i], 0 );\n";
+			  print GENFILE "    else\n";
+			  print GENFILE "        Tcl_AppendResult( interp, $argname[$i], (char *) NULL );\n";
 			  last fetch;
 		      };
 
 		      /char&/ && do {
 			  print GENFILE "    sprintf( buf, \"%c\", $argname[$i] );\n";
-			  print GENFILE "    Tcl_SetVar( interp, argv[1+$i], buf, 0 );\n";
+			  print GENFILE "    if (argc > 1)\n";
+			  print GENFILE "        Tcl_SetVar( interp, argv[1+$i], buf, 0 );\n";
+			  print GENFILE "    else\n";
+			  print GENFILE "        Tcl_AppendResult( interp, buf, (char *) NULL );\n";
 			  last fetch;
 		      };
 
@@ -310,7 +334,10 @@ sub process_pltclcmd {
 
 		      /PLFLT&/ && do {
 			  print GENFILE "    sprintf( buf, \"%f\", $argname[$i] );\n";
-			  print GENFILE "    Tcl_SetVar( interp, argv[1+$i], buf, 0 );\n";
+			  print GENFILE "    if (argc > 1)\n";
+			  print GENFILE "        Tcl_SetVar( interp, argv[1+$i], buf, 0 );\n";
+			  print GENFILE "    else\n";
+			  print GENFILE "        Tcl_AppendResult( interp, buf, (char *) NULL );\n";
 			  last fetch;
 		      };
 		      print GENFILE "Unsupported arg type.\n";
@@ -324,8 +351,13 @@ sub process_pltclcmd {
 
 	$_ =~ s/%cmd%/$cmd/g;
 	$_ =~ s/%nargs%/$nargs/g;
-	$_ =~ s/%args%/$args/g;
+	if ($refargs) {
+	    $_ =~ s/%args%/\?$args\?/g;
+	} else {
+	    $_ =~ s/%args%/$args/g;
+	}
 	$_ =~ s/%ndefs%/$ndefs/g;
+	$_ =~ s/%isref%/$refargs/g;
 
 	print GENFILE $_;
     }
