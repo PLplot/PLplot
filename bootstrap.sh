@@ -6,7 +6,7 @@ function run {
   echo " done"
 }
 
-aclocal_opts="$1"
+aclocal_opts="$*"
 aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
 
 run aclocal $aclocal_opts \
