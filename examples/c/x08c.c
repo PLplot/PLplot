@@ -8,17 +8,15 @@
 #define XPTS   35		/* Data points in x */
 #define YPTS   46		/* Datat points in y */
 
-static int opt[] = {DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY, DRAW_LINEXY};
-static PLFLT alt[] = {60.0, 20.0, 60.0, 60.0};
-static PLFLT az[] = {30.0, 60.0, 120.0, 160.0};
+static int opt[] = {DRAW_LINEXY, DRAW_LINEXY};
+static PLFLT alt[] = {60.0, 20.0};
+static PLFLT az[] = {30.0, 60.0};
 static void cmap1_init(int);
 
-static char *title[4] =
+static char *title[] =
 {
     "#frPLplot Example 8 - Alt=60, Az=30",
     "#frPLplot Example 8 - Alt=20, Az=60",
-    "#frPLplot Example 8 - Alt=60, Az=120",
-    "#frPLplot Example 8 - Alt=60, Az=160"
 };
 
 /*--------------------------------------------------------------------------*\
@@ -71,17 +69,17 @@ cmap1_init(int gray)
 \*--------------------------------------------------------------------------*/
 
 
-static int rosen;
+static int sombrero;
 
 static PLOptionTable options[] = {
   {
-    "rosen",			/* Turns on test of API locate function */
+    "sombrero",			/* Turns on test of API locate function */
     NULL,
     NULL,
-    &rosen,
+    &sombrero,
     PL_OPT_BOOL,
-    "-rosen",
-    "Use the Rosenbrock function." },
+    "-sombrero",
+    "Use the \"sombrero\" function." },
   {
     NULL,			/* option */
     NULL,			/* handler */
@@ -104,11 +102,14 @@ main(int argc, char *argv[])
   PLFLT zmin, zmax, step;
   PLFLT clevel[LEVELS];
   PLINT nlevel=LEVELS;
+  int   rosen=1;
 
   /* Parse and process command line arguments */
   plMergeOpts(options, "x08c options",  NULL);
   (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
-
+  if (sombrero)
+    rosen=0;
+  
   /* Initialize plplot */
 
   plinit();
@@ -153,8 +154,8 @@ main(int argc, char *argv[])
   
   pllightsource(1.,1.,1.);
     	
-  for (k = 0; k < 4; k++) {
-    for (ifshade = 0; ifshade < 6; ifshade++) {
+  for (k = 0; k < 2; k++) {
+    for (ifshade = 0; ifshade < 4; ifshade++) {
       pladv(0);
       plvpor(0.0, 1.0, 0.0, 0.9);
       plwind(-1.0, 1.0, -0.9, 1.1);
@@ -171,18 +172,13 @@ main(int argc, char *argv[])
 	     "bcdmnstuv", "z axis", 0.0, 0);
       plcol0(2);
 
-      if (ifshade == 0) {        /* wireframe plot */
-	plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
-      } else if (ifshade == 1) { /* magnitude colored wireframe plot */
-	cmap1_init(0);
-	plmesh(x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR);
-      } else if (ifshade == 2) { /* diffuse light surface plot */
+      if (ifshade == 0) { /* diffuse light surface plot */
 	cmap1_init(1);
 	plsurf3d(x, y, z, XPTS, YPTS, 0, NULL, 0);
-      } else if (ifshade == 3) { /* magnitude colored plot */
+      } else if (ifshade == 1) { /* magnitude colored plot */
 	cmap1_init(0);
 	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR, NULL, 0);
-      } else if (ifshade == 4) { /*  magnitude colored plot with faceted squares */
+      } else if (ifshade == 2) { /*  magnitude colored plot with faceted squares */
 	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0);
       } else                     /* magnitude colored plot with contours */
 	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel);
