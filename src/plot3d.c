@@ -444,7 +444,7 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   /* we've got to draw the background grid first, hidden line code has to draw it last */
   if (zbflg) {
     PLFLT bx[3], by[3], bz[3];
-    PLFLT tick=0, tp;
+    PLFLT tick=zbtck, tp;
     PLINT nsub=0;
 
     /* get the tick spacing */
