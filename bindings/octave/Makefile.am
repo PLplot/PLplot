@@ -37,7 +37,6 @@ EXTRA_DIST = \
   $(docfiles) \
   globals-in-scripts \
   massage.c \
-  plplot_octave_org.h \
   plplot_octave_rej.h \
   plplot_octave_def \
   etc \
@@ -66,10 +65,6 @@ endif
 if enable_octave
 
 octave_libs = -L../../src/.libs -lplplot$(LIB_TAG)
-
-plplot_octave.h: plplot_octave_org.h ${top_builddir}/config.h
-	rep=`grep -o "#define PL_DOUBLE" $(top_builddir)/config.h` && \
-	sed "s/REPLACEME/$$rep/" plplot_octave_org.h > plplot_octave.h
 
 # Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
 # also still works on gcc 2.95
@@ -130,7 +125,7 @@ install-data-hook:
 #enable_octave
 endif
 
-CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
+CLEANFILES = tmp_plplot_octave.cc \
 	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave*.oct \
 	plplot_stub.m missing_help
 

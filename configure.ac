@@ -637,6 +637,13 @@ else
 fi
 AC_SUBST(LIB_TAG)
 
+# The following is for use in bindings/octave/plplot_octave.h.in (RL)
+
+DEFINE_PL_DOUBLE=
+test "$with_double" = yes && DEFINE_PL_DOUBLE="#define PL_DOUBLE"
+AC_SUBST(DEFINE_PL_DOUBLE)
+		  
+
 ### These various DLNAME variables are used to configure the names of
 ### the libplplot and libplplottcltk libraries for use in the various
 ### pkgIndex.tcl scripts.  At run time those scripts currently search first
@@ -1102,7 +1109,8 @@ AC_CONFIG_FILES([
 	bindings/tk/pkgIndex.tcl
 	bindings/tk-x-plat/pkgIndex.tcl
 	bindings/octave/Makefile
-	bindings/octave/PLplot/Makefile
+        bindings/octave/plplot_octave.h
+        bindings/octave/PLplot/Makefile
 	bindings/octave/PLplot/plplot_octave_path.m
 	bindings/octave/PLplot/support/Makefile
 	bindings/octave/demos/Makefile
