@@ -16,9 +16,23 @@
 ## Does a series of mesh plots for a given data set, with different
 ## viewing options in each plot.
 
-1;
+function x11c
 
-function go
+  global device file
+
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
 
   XPTS = 35;		## Data points in x */
   YPTS = 46;		## Datat points in y */
@@ -37,10 +51,6 @@ function go
   ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
   ## Initialize plplot */
-
-  global pldevice
-  plsdev(pldevice)
-  
   plinit();
 
   for i=0: XPTS-1
@@ -77,5 +87,3 @@ function go
   endfor
   plend();
 endfunction
-
-go

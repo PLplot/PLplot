@@ -15,9 +15,25 @@
 
 ## Generates polar plot, with 1-1 scaling.
 
-1;
+function x03c
 
-function go
+global device file
+
+  ## Initialize plplot */
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
+  plinit;
 
   dtr = pi / 180.0;
 
@@ -29,11 +45,6 @@ function go
   ## Parse and process command line arguments */
 
   ##    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
-
-  ## Initialize plplot */
-  global pldevice
-  plsdev(pldevice)
-  plinit();
 
   ## Set up viewport and window, but do not draw box */
 
@@ -94,4 +105,3 @@ function go
   plend();
 endfunction
 
-go

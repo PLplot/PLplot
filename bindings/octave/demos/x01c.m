@@ -1,10 +1,10 @@
 ## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -17,26 +17,40 @@
 
 1;
 
-function go
+function ix01c
 
-  global pldevice
+global device file
+
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
+
   ## plplot initialization */
   ## Divide page into 2x2 plots unless user overrides */
 
   plssub(2, 2);
 
   ## Parse and process command line arguments */
-  
+
   ##    plMergeOpts(options, "x01c options", notes);
   ##    plParseOpts(&argc, argv, PL_PARSE_FULL);
-  
+
   ## Get version number, just for kicks */
 
   ver=plgver';
   printf("Plplot library version: %s\n", ver);
 
   ## Initialize plplot */
-  plsdev(pldevice)
   plinit;
 
   ## Set up the data */
@@ -80,36 +94,36 @@ function go
   ## float dX, dY;  /* relative device coordinates of pointer */
   ## float wX, wY;  /* world coordinates of pointer */
 
-  printf("\n\nYou are in Locate mode. Click any mouse button or press any key\n\
-      and a printout will give you some info. Terminate with the <Esc> ot <Enter> key\n\
-      or clicking or pressing a key while the cursor is outside a sub-plot window.\n\n\
-      Dont't forget to finish the plot with the <Enter> key\n");
-  fflush(stdout);
-
-  while(1)
-
-    [status, gin.state, gin.keysym, gin.button, gin.string, gin.pX, gin.pY, \
-     gin.dX, gin.dY, gin.wX, gin.wY] = plGetCursor;
-
-    if (status == 0) break; endif
-    if (gin.keysym == hex2dec("1B")) break; endif
-
-    if (gin.keysym < hex2dec("FF") && isprint(gin.keysym)) 
-      printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = '%c'\n",
-	     gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
-    else
-      printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = 0x%02x\n",
-	     gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
-    endif
+  if (!exist("file") || (exist("file") && isempty(file)))
+    printf("\n\nYou are in Locate mode. Click any mouse button or press any key\n\
+	and a printout will give you some info. Terminate with the <Esc> ot <Enter> key\n\
+	or clicking or pressing a key while the cursor is outside a sub-plot window.\n\n\
+	Dont't forget to finish the plot with the <Enter> key\n");
     fflush(stdout);
-  endwhile
 
+    while(1)
+
+      [status, gin.state, gin.keysym, gin.button, gin.string, gin.pX, gin.pY, \
+       gin.dX, gin.dY, gin.wX, gin.wY] = plGetCursor;
+
+      if (status == 0) break; endif
+      if (gin.keysym == hex2dec("1B")) break; endif
+
+      if (gin.keysym < hex2dec("FF") && isprint(gin.keysym)) 
+	printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = '%c'\n",
+	       gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
+      else
+	printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = 0x%02x\n",
+	       gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
+      endif
+      fflush(stdout);
+    endwhile
+  endif
   ## Don't forget to call plend  to finish off! */
 
   plend;
 
 endfunction
-
 
 function plot1(xscale, yscale, xoff, yoff)
 
@@ -224,4 +238,6 @@ function plot3
   
 endfunction
 
-go
+ix01c
+
+

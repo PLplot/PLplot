@@ -21,7 +21,23 @@ global az = [30.0, 40.0, 50.0, 60.0];
 ##  Does a series of 3-d plots for a given data set, with different
 ##  viewing options in each plot.
 
-function go
+function ix18c
+
+  global device file
+
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
 
   global alt;
   global az;
@@ -33,15 +49,8 @@ function go
   ##    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
   ## Initialize plplot */
-  global pldevice
-  plsdev(pldevice)
-
   plinit();
 
-
-  printf("\a\a\a\n\nI didn't dare to vectorize this, so please be patient\n\n");
-  fflush(stdout);
-  
   for k=0:3
     test_poly(k);
   endfor
@@ -152,4 +161,4 @@ function test_poly(k)
   plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" );
 endfunction
 
-go
+ix18c

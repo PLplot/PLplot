@@ -15,17 +15,32 @@
 
 ## Illustration of logarithmic axes, and redefinition of window.
 
+## this file defines several functions:
 1;
 
-function go
+function ix04c
+
+  global device file
 
   ## Parse and process command line arguments */
 
   ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
   ## Initialize plplot */
-  global pldevice
-  plsdev(pldevice)
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
+
   plinit();
   plfont(2);
 
@@ -97,4 +112,7 @@ function plot1(type)
 
 endfunction
 
-go
+
+ix04c
+
+

@@ -18,17 +18,29 @@
 
 1;
 
-function go
+function ix12c
+
+  global device file
+
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
 
   ## Parse and process command line arguments */
 
   ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
   ## Initialize plplot */
-
-  global pldevice
-  plsdev(pldevice)
-
   plinit();
 
   pladv(0);
@@ -72,4 +84,5 @@ function plfbox(x0, y0)
   
 endfunction
 
-go
+ix12c
+

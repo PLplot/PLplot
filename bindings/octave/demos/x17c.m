@@ -13,15 +13,28 @@
 ## This file is part of plplot_octave.
 ## It is based on the corresponding demo function of PLplot.
 
-1;
+function x17c
 
-function go
+  global device file
+
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
 
   ## If db is used the plot is much more smooth. However, because of the
   ## async X behaviour, one does not have a real-time scripcharter.
   ##    plSetOpt("db", ""); 
 
-  global pldevice
   plSetOpt("np", "");
 
   ## Specify some reasonable defaults for ymin and ymax */
@@ -58,8 +71,6 @@ function go
   acc = 1;	## dont strip, accumulate
 
   ## Initialize plplot */
-
-  plsdev(pldevice);
   plinit();
   pladv(0);    
   plvsta();    
@@ -108,5 +119,3 @@ function go
   plend;
   
 endfunction
-
-go

@@ -15,17 +15,29 @@
 
 ## Displays the entire "plsym" symbol (font) set.
 
-1;
+function x07c
 
-function go
+  global device file
+
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
 
   ## Parse and process command line arguments */
 
   ##    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
   ## Initialize plplot */
-  global pldevice
-  plsdev(pldevice)
   plinit();
 
   base=[0, 200, 500, 600, 700, 800, 900, \
@@ -75,5 +87,3 @@ function go
   endfor
   plend();
 endfunction
-
-go

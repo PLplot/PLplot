@@ -15,20 +15,31 @@
 
 ## Draws a histogram from sample data.
 
-1;
+function x05c
 
-function go
+  global device file
+
+  ## Initialize plplot */
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
+  plinit;
 
   NPTS=2047;
 
   ## Parse and process command line arguments */
 
   ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
-
-  ## Initialize plplot */
-  global pldevice
-  plsdev(pldevice)
-  plinit();
 
   ## Fill up data points */
 
@@ -44,5 +55,3 @@ function go
 	"#frPLplot Example 5 - Probability function of Oscillator");
   plend();
 endfunction
-
-go

@@ -14,9 +14,23 @@
 ## It is based on the corresponding demo function of PLplot.
 # Does a simple pie chart.
 
-1;
+function x13c
 
-function go
+  global device file
+
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
 
   text =[
 	 "Maurice",
@@ -37,9 +51,6 @@ function go
   ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
   ## Initialize plplot */
-  global pldevice
-  plsdev(pldevice)
-
   plinit();
 
   plenv(0., 10., 0., 10., 1, -2);
@@ -83,5 +94,3 @@ function go
   plptex(5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales");
   plend();
 endfunction
-
-go

@@ -27,10 +27,14 @@ Press any key to continue...\n");
 fflush(stdout);
 kbhit;
 
-plplot_stub;
-global pldevice="xwin";
+global device file
+
+## to use a diferent device/file, set its values, e.g:
+## device = "psc"
+## file = "foo.ps"
+
 for i=1:19;
-	cmd=sprintf("x%.2dc",i);
+	cmd = sprintf("x%.2dc",i);
 	printf("Demo %s\n", cmd);
 	fflush(stdout);
 	eval(cmd);

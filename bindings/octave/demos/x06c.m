@@ -15,17 +15,30 @@
 
 ## Displays the entire "plpoin" symbol (font) set.
 
-1;
+function x06c
 
-function go
+  global device file
+
+  ## Initialize plplot */
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
 
   ## Parse and process command line arguments */
 
   ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
   ## Initialize plplot */
-  global pldevice
-  plsdev(pldevice)
   plinit();
 
   pladv(0);
@@ -72,5 +85,3 @@ function go
   plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
   plend();
 endfunction
-
-go

@@ -22,9 +22,22 @@
 
 1;
 
-function go(arg)
+function ix14c
 
-  global pldevice
+  global device file
+
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (!exist("device"))
+    device="tk";
+  endif
+  plsdev(device);
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
 
   ## printf("If you dont have built PLplot with Tcl/Tk support this demo (x14c) will fail.\n");
 
@@ -40,7 +53,7 @@ function go(arg)
   geometry_master = "500x410+100+200";
   geometry_slave  = "500x410+650+200";
 
-  printf("Demo of multiple output streams via the %s driver.\n", pldevice);
+  printf("Demo of multiple output streams via the %s driver.\n", device);
   printf("Running with the second window as slave.\n");
   printf("To advance to the next plot, press the \">>\" button in the window\n");
   printf("labeled \"plclient\", or hit the <Enter> key with the focus on that window.\n");
@@ -49,8 +62,6 @@ function go(arg)
   ## Set up first stream */
 
   plSetOpt("geometry", geometry_master);
-
-  plsdev(pldevice);
   plssub(2,2);
   plinit();
 
@@ -62,7 +73,12 @@ function go(arg)
 
   plSetOpt("geometry", geometry_slave);
   plspause(0);
-  plsdev(pldevice);
+
+    plsdev(device);
+    if (exist("file"))
+      plsfnam(file);
+    endif
+
   ##plsfnam(getenv("DISPLAY"));
   plinit();
 
@@ -129,7 +145,6 @@ function go(arg)
   plend();
   
 endfunction
-
 
 function plot1(xoff,xscale,yoff,yscale)
 
@@ -342,4 +357,4 @@ function plot5()
   plflush;#pleop();
 endfunction
 
-go
+ix14c

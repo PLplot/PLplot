@@ -29,7 +29,24 @@ function  [tx ty] = mypltr( x, y)
   ty = tr(4) * x + tr(5) * y + tr(6);
 endfunction
 
-function go
+function ix16c
+
+  global device file
+
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
+
 
   global tr; global nx; global ny;
   ## Fundamental settings.  See notes[] for more info. */
@@ -54,9 +71,6 @@ function go
   plscmap0n(3);
 
   ## Initialize plplot */
-  global pldevice
-  plsdev(pldevice)
-  
   plinit();
 
   ## Set up data array */
@@ -112,7 +126,7 @@ function go
     plshade(z, "0", -1., 1., -1., 1., 
 	    shade_min, shade_max, 
 	    sh_cmap, sh_color, sh_width,
-	    min_color, min_width, max_color, max_width,1,rand(6,1));
+	    min_color, min_width, max_color, max_width, 1, zeros(6,1));
   endfor
 
   plcol(1);
@@ -184,4 +198,4 @@ function go
 
 endfunction
 
-go
+ix16c

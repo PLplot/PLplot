@@ -15,22 +15,32 @@
 
 #	Multiple window and color map 0 demo.
 
-1;
+function x02c
 
-function go
+  global device file
+
+  ## Initialize plplot */
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
+  plinit();
 
   ## Divide screen into 16 regions */
-  global pldevice
-  plsdev(pldevice)
   plssub(4, 4);
 
   ## Parse and process command line arguments */
 
   ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
-
-  ## Initialize plplot */
-
-  plinit();
 
   plschr(0.0, 3.5);
   plfont(4);
@@ -56,5 +66,3 @@ function go
   plend();
 
 endfunction
-
-go

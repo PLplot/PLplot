@@ -33,7 +33,23 @@ function [tx ty] = mypltr(x, y)
   
 endfunction
 
-function go
+function ix09c
+
+  global device file
+
+  if (!exist("plinit"))
+    plplot_stub
+  endif
+
+  if (exist("device"))
+    plsdev(device);
+  else
+    plsdev("xwin");
+  endif
+
+  if (exist("file"))
+    plsfnam(file);
+  endif
 
   global	XPTS
   global	YPTS
@@ -49,8 +65,6 @@ function go
 
   ## Initialize plplot */
 
-  global pldevice
-  plsdev(pldevice)	
   plinit();
 
   ## Set up function arrays */
@@ -155,6 +169,7 @@ function go
   pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
   
   plend();
+
 endfunction
 
-go
+ix09c
