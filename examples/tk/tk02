@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.9  1994/07/24 07:42:58  mjl
+# Revision 1.10  1995/06/09 22:48:47  mjl
+# Eliminated old way of referencing tclMatrices.  Should have done this
+# a long time ago but never noticed it was bad until now.
+#
+# Revision 1.9  1994/07/24  07:42:58  mjl
 # Eliminated "destroy ." in favor of "exit".
 #
 # Revision 1.8  1994/07/01  20:44:00  mjl
@@ -111,8 +115,8 @@ proc plot1 {} {
 
     for {set i 2; set n1 0} {$i < 60} {incr i 10; incr n1} {
 	set x [expr $xoff + $xscale * ($i + 1) / 60]
-	$x1 $n1 = $x
-	$y1 $n1 = [expr $yoff + $yscale * pow($x,2)]
+	x1 $n1 = $x
+	y1 $n1 = [expr $yoff + $yscale * pow($x,2)]
     }
 
     set n2 60
@@ -121,12 +125,12 @@ proc plot1 {} {
 
     for {set i 0} {$i < $n2} {incr i} {
 	set x [expr $xoff + $xscale * ($i + 1) / $n2]
-	$x2 $i = $x
-	$y2 $i = [expr $yoff + $yscale * pow($x,2)]
+	x2 $i = $x
+	y2 $i = [expr $yoff + $yscale * pow($x,2)]
     }
 
-    set xmax [$x2 [expr $n2-1]]
-    set ymax [$y2 [expr $n2-1]]
+    set xmax [x2 [expr $n2-1]]
+    set ymax [y2 [expr $n2-1]]
 
     .plw plcol 1
     .plw plenv $xoff $xmax $yoff $ymax 0 0
@@ -136,12 +140,12 @@ proc plot1 {} {
     # plot the data points
 
     .plw plcol 9
-    .plw plpoin $n1 $x1 $y1 9
+    .plw plpoin $n1 x1 y1 9
 
     # plot the data points
 
     .plw plcol 4
-    .plw plline $n2 $x2 $y2
+    .plw plline $n2 x2 y2
 }
 
 # This is supposed to work just like the plot2() in x01c.c/xtk02.c
@@ -159,13 +163,13 @@ proc plot2 {} {
 
     for {set i 0} {$i < 101} {incr i} {
 	set x [expr ($i - 19.)/6.]
-	$x1 $i = $x
-	$y1 $i = 1
-	if {$x != 0} { $y1 $i = [expr sin($x)/$x] }
+	x1 $i = $x
+	y1 $i = 1
+	if {$x != 0} { y1 $i = [expr sin($x)/$x] }
     }
 
     .plw plcol 3
-    .plw plline 101 $x1 $y1
+    .plw plline 101 x1 y1
 }
 
 proc gumbyplot {} {
@@ -179,11 +183,11 @@ proc gumbyplot {} {
 
     for {set i 0} {$i < 101} {incr i} {
 	set x [expr $i * .01]
-	$x1 $i = $x
-	$y1 $i = [expr 1 - 2 * $x + 2 * $x * $x]
+	x1 $i = $x
+	y1 $i = [expr 1 - 2 * $x + 2 * $x * $x]
     }
 
-    .plw plline 101 $x1 $y1
+    .plw plline 101 x1 y1
 }
 
 # This proc shows off the use of a matrix extension subcommand.
@@ -196,16 +200,16 @@ proc snoopy {} {
 
     for {set i 0} {$i < 101} {incr i} {
 	set xx [expr $i * .01]
-	$x $i = $xx
+	x $i = $xx
     }
 
-    $y stuff
+    y stuff
 
     .plw plcol 1
     .plw plenv 0 1 0 1 0 0
     .plw plcol 6
     .plw pllab "(x)" "(y)" "#frDemo of Matrix extension subcommand"
-    .plw plline 101 $x $y
+    .plw plline 101 x y
 }
 
 # Punch eject and hold onto your seat !!!
