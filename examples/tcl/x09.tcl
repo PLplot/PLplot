@@ -74,16 +74,16 @@ proc x09 {{w loopback}} {
 # the same results as the mypltr transformation for the first
 # plots in x09c.
 
-    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
-    $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
-    $w cmd plcol0 2
-    $w cmd plcont zz clevel pltr1 xg0 yg0
-    $w cmd plstyl 1 mark space
-    $w cmd plcol0 3
-    $w cmd plcont ww clevel pltr1 xg0 yg0
-    $w cmd plstyl 0 mark space
-    $w cmd plcol0 1
-    $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
+#    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
+#    $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
+#    $w cmd plcol0 2
+#    $w cmd plcont zz clevel pltr1 xg0 yg0
+#    $w cmd plstyl 1 mark space
+#    $w cmd plcol0 3
+#    $w cmd plcont ww clevel pltr1 xg0 yg0
+#    $w cmd plstyl 0 mark space
+#    $w cmd plcol0 1
+#    $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
     $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
@@ -109,20 +109,20 @@ proc x09 {{w loopback}} {
     $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
-    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
-    $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
-    $w cmd plcol0 2
-    $w cmd plcont zz clevel pltr1 xg1 yg1
-    $w cmd plstyl 1 mark space
-    $w cmd plcol0 3
-    $w cmd plcont ww clevel pltr1 xg1 yg1
-    $w cmd plstyl 0 mark space
-    $w cmd plcol0 1
-    $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
+#    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
+#    $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
+#    $w cmd plcol0 2
+#    $w cmd plcont zz clevel pltr1 xg1 yg1
+#    $w cmd plstyl 1 mark space
+#    $w cmd plcol0 3
+#    $w cmd plcont ww clevel pltr1 xg1 yg1
+#    $w cmd plstyl 0 mark space
+#    $w cmd plcol0 1
+#    $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
 # Plot using 2d coordinate transform
 
-    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
+#    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
     $w cmd plcol0 2
     $w cmd plcont zz clevel pltr2 xg2 yg2
@@ -133,34 +133,34 @@ proc x09 {{w loopback}} {
     $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
-    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
-    $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
-    $w cmd plcol0 2
-    $w cmd plcont zz clevel pltr2 xg2 yg2
-    $w cmd plstyl 1 mark space
-    $w cmd plcol0 3
-    $w cmd plcont ww clevel pltr2 xg2 yg2
-    $w cmd plstyl 0 mark space
-    $w cmd plcol0 1
-    $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
+#    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
+#    $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
+#    $w cmd plcol0 2
+#    $w cmd plcont zz clevel pltr2 xg2 yg2
+#    $w cmd plstyl 1 mark space
+#    $w cmd plcol0 3
+#    $w cmd plcont ww clevel pltr2 xg2 yg2
+#    $w cmd plstyl 0 mark space
+#    $w cmd plcol0 1
+#    $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
     #polar contour example.
     $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
     x09_polar $w
 
-    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
-    x09_polar $w
+#    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
+#    x09_polar $w
 
     #potential contour example.
     $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
     x09_potential $w
 
-    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
-    x09_potential $w
+#    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
+#    x09_potential $w
 
 # Restore defaults
     $w cmd plcol0 1
-    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
+#    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
 }
 
 # Demonstrate plotting of wrapped data.  What is significant to
