@@ -19,7 +19,20 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+
+### FIXME: Brute force inclusion in dist tarball.  The files below may
+### be treated in a different way for installation [RL, 2003-03-06]
+EXTRA_DIST = \
+	PLStream.java \
+	PLStreamc.java \
+	README.javaAPI \
+	javabind.c \
+	plplotcapi.i \
+	plplotjavac.i
+
 if enable_java
+
+EXTRA_DIST += $(MAINTAINERCLEANFILES)
 
 libplplot = ../../src/libplplot$(LIB_TAG).la
 
@@ -79,12 +92,3 @@ MAINTAINERCLEANFILES = \
 # if enable_java
 endif
 
-### FIXME: Brute force inclusion in dist tarball.  The files below may
-### be treated in a different way for installation [RL, 2003-03-06]
-EXTRA_DIST = \
-	PLStream.java \
-	PLStreamc.java \
-	README.javaAPI \
-	javabind.c \
-	plplotcapi.i \
-	plplotjavac.i

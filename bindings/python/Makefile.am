@@ -22,14 +22,31 @@
 # N.B.  This treatment probably will need changes or else a complete
 # replacement to work cross-platform as indicated by ?cross-platform?
 # comment below, but it works quite nicely on Linux.
+				
+### FIXME: Brute force inclusion in dist tarball.  The files below may
+### be treated in a different way for installation [RL, 2003-03-06]
+EXTRA_DIST = \
+        1.4b3 \
+	setup.py.in \
+	plplotcmodule.i \
+	makedocstrings.py \
+	plplot_widgetmodule.c \
+	plplot.py \
+	Plframe.py \
+	README.pythonbuild \
+	TclSup.py \
+	plmodule.c \
+	plmodule.h \
+	plplotcapi.i
 
 if enable_python
+
+EXTRA_DIST += $(MAINTAINERCLEANFILES)
 
 ourexecpythondir = $(pythondir)
 
 libplplot = ../../src/libplplot$(LIB_TAG).la
 
-if with_double
 ### Only swig version 1.3.17 (and above?) will work here.
 ### Ordinarily this detail only matters for CVS users because the tarball
 ### version of PLplot always has both plplotcmodule_p_double.c and
@@ -46,15 +63,20 @@ plplotcmodule_p_double.c plplotc.py: plplotcmodule.i plplotcapi.i
 plplotcmodule_double.c: plplotcmodule_p_double.c makedocstrings.py
 	$(PYTHON) makedocstrings.py plplotcmodule_p_double.c plplotcmodule_double.c
 
-nodist_UNDERSCORE_plplotcmodule_la_SOURCES  = plplotcmodule_double.c
-
-else
-plplotcmodule_p_single.c plplotc.py: plplotcmodule.i plplotcapi.i
+### Note plplotc.py generated here as well, but it is identical to the
+### one generated above and we cannot mention it as a duplicate target here.
+plplotcmodule_p_single.c: plplotcmodule.i plplotcapi.i
 	$(SWIG) -python -o plplotcmodule_p_single.c -c++ \
 	plplotcmodule.i
 
 plplotcmodule_single.c: plplotcmodule_p_single.c makedocstrings.py
 	$(PYTHON) makedocstrings.py plplotcmodule_p_single.c plplotcmodule_single.c
+
+if with_double
+
+nodist_UNDERSCORE_plplotcmodule_la_SOURCES  = plplotcmodule_double.c
+
+else
 
 nodist_UNDERSCORE_plplotcmodule_la_SOURCES  = plplotcmodule_single.c
 endif
@@ -103,21 +125,3 @@ if enable_python
 	      mv $$file `echo $$file | sed s/UNDERSCORE//`;  \
           done )
 endif
-				
-				
-
-### FIXME: Brute force inclusion in dist tarball.  The files below may
-### be treated in a different way for installation [RL, 2003-03-06]
-EXTRA_DIST = \
-        1.4b3 \
-	setup.py.in \
-	plplotcmodule.i \
-	makedocstrings.py \
-	plplot_widgetmodule.c \
-	plplot.py \
-	Plframe.py \
-	README.pythonbuild \
-	TclSup.py \
-	plmodule.c \
-	plmodule.h \
-	plplotcapi.i

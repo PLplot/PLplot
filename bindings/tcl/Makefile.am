@@ -24,7 +24,19 @@ tcldir = ${prefix}/$(DATA_DIR)/../tcl
 libplplot = ../../src/libplplot$(LIB_TAG).la
 libmatrix = libtclmatrix$(LIB_TAG).la
 
+### FIXME: Brute force inclusion in dist tarball.  The files below may
+### be treated in a different way for installation [RL, 2003-03-06]
+EXTRA_DIST = \
+	pltclgen \
+	plapi.tpl \
+	tclcmd.tpl \
+	README.tclAPI \
+	plitclgen
+
 if enable_tcl
+
+EXTRA_DIST += $(MAINTAINERCLEANFILES)
+
 generated_scripts = plplot.tcl
 tcl_DATA = $(generated_scripts) tclIndex
 
@@ -53,7 +65,9 @@ $(MAINTAINERCLEANFILES): pltclgen plapi.tpl tclcmd.tpl
 	perl pltclgen
 
 CLEANFILES = $(generated_scripts) tclIndex
+
 MAINTAINERCLEANFILES = tclgen.h tclgen_s.h tclgen.c
+
 # ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
 AM_CPPFLAGS = $(INCLTDL) $(TCLINCCMD) $(ITCLINCCMD) $(TKINCCMD)
 version = -version-info $(SOVERSION)
@@ -96,11 +110,3 @@ libplplottcltk@LIB_TAG@_la_LDFLAGS  = \
 	$(libplplot) \
 	$(libmatrix)
 
-### FIXME: Brute force inclusion in dist tarball.  The files below may
-### be treated in a different way for installation [RL, 2003-03-06]
-EXTRA_DIST = \
-	pltclgen \
-	plapi.tpl \
-	tclcmd.tpl \
-	README.tclAPI \
-	plitclgen
