@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.21  1994/04/08 11:58:50  mjl
+# Revision 1.22  1994/04/25 19:00:34  mjl
+# Added "Options" cascade menu, along with "Palette 0" and "Palette 1"
+# entries.  Added shift and control modifiers to the key bindings
+# responsible for calling the key_filter proc.
+#
+# Revision 1.21  1994/04/08  11:58:50  mjl
 # Changes to support new mouse handler, keyboard filter, scrolling using
 # cursor keys.  eop label should now flash correctly.
 #
@@ -290,6 +295,38 @@ proc plw_create_pmenu {w} {
 #	-label "Redraw" \
 #	-command "$w.plwin redraw"
 
+#------------------
+# Options (cascade)
+#------------------
+
+    $w.ftop.pmenu.m add cascade \
+	-label "Options  $cascade_arrow" \
+	-menu $w.ftop.pmenu.m.options
+
+    menu $w.ftop.pmenu.m.options
+
+    $w.ftop.pmenu.m.options add command \
+	-label "Palette 0" \
+	-command "plcmap0_edit $w" 
+
+    $w.ftop.pmenu.m.options add command \
+	-label "Palette 1" \
+	-command "plcmap1_edit $w" 
+
+#    $w.ftop.pmenu.m.options add separator
+
+#    $w.ftop.pmenu.m.options add command \
+#	-label "Load Configuration" \
+#	-command {null_command "Load Configuration"} 
+
+#    $w.ftop.pmenu.m.options add command \
+#	-label "Save Configuration" \
+#	-command {null_command "Save Configuration"} 
+
+#    $w.ftop.pmenu.m.options add command \
+#	-label "Save Configuration As..." \
+#	-command {null_command "Save Configuration As..."} 
+
 # Los endos
 
     return $w.ftop.pmenu
@@ -360,10 +397,21 @@ proc plw_init_plplot {w client} {
 
 # Bindings
 
-    bind $w.plwin <KeyPress> "key_filter $w [list $client] %K %N %A"
+    bind $w.plwin <Any-KeyPress> \
+	"key_filter $w [list $client] %K %N %A 0 0"
+
+    bind $w.plwin <Shift-KeyPress> \
+	"key_filter $w [list $client] %K %N %A 1 0"
+
+    bind $w.plwin <Control-KeyPress> \
+	"key_filter $w [list $client] %K %N %A 0 1"
+
+    bind $w.plwin <Shift-Control-KeyPress> \
+	"key_filter $w [list $client] %K %N %A 1 1"
 
     bind $w.plwin <Any-ButtonPress> \
 	"plw_user_mouse $w [list $client] %b %s %x %y"
+
     bind $w.plwin <Any-Enter> \
 	"focus $w.plwin"
 
