@@ -21,14 +21,14 @@ static PLINT *newhiview = NULL;
 static PLINT *newloview = NULL;
 static PLINT *utmp = NULL;
 static PLINT *vtmp = NULL;
-static PLFLT *ctmp =0;
+static PLFLT *ctmp = NULL;
 
 static PLINT mhi, xxhi, newhisize;
 static PLINT mlo, xxlo, newlosize;
 
 /* Light source for shading */
 static PLFLT xlight, ylight, zlight;
-static PLINT falsecolor;
+static PLINT falsecolor=0;
 static PLFLT fc_minz, fc_maxz;
 
 /* Prototypes for static functions */
@@ -55,8 +55,8 @@ static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT,
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 static PLFLT plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z);
 static void plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move);
-static void plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx,
- 		      PLINT ny, PLINT side);
+static void plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+		      PLINT opt, PLFLT *clevel, PLINT nlevel);
 
 /* #define MJL_HACK 1 */
 #if MJL_HACK
@@ -87,9 +87,10 @@ c_pllightsource(PLFLT x, PLFLT y, PLFLT z)
  * are stored as x[0..nx-1], the y values as y[0..ny-1], and the
  * z values are in the 2-d array z[][]. The integer "opt" specifies:
  *
- *  opt = 1:  Draw lines parallel to x-axis
- *  opt = 2:  Draw lines parallel to y-axis
- *  opt = 3:  Draw lines parallel to both axes
+ *  opt = 1 (DRAW_LINEX) :  Draw lines parallel to x-axis
+ *  opt = 2 (DRAW_LINEY) :  Draw lines parallel to y-axis
+ *  opt = 3 (DRAW_LINEXY):  Draw lines parallel to both axes
+ *
 \*--------------------------------------------------------------------------*/
 
 void
@@ -216,8 +217,7 @@ void
 c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 		 PLINT nx, PLINT ny, PLINT side)
 {
-   falsecolor = 0;
-   plotsh3di(x,y,z,nx,ny,side);
+   plotsh3di(x, y, z, nx, ny, side, NULL, 0);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -225,16 +225,51 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
  *
  * Plots a false-color 3-d representation of the function z[x][y].
  * The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
- *  and the z values are in the 2-d array z[][]. 
+ *  and the z values are in the 2-d array z[][].
+ *
+ * opt can be:
+ *  SURF_CONT -- draw contour at surface
+ *  SURF_BASE -- draw contour at bottom xy plane
+ *  DRAW_SIDE -- draw sides
+ *
+ * or any bitwise combination, e.g. "SURF_CONT | SURF_BASE | DRAW_SIDE"
 \*--------------------------------------------------------------------------*/
 
+#define LEVELS 10
+    PLFLT clevel[LEVELS];
+    PLINT nlevel=LEVELS;
+
 void
-c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z,
-		 PLINT nx, PLINT ny, PLINT side)
+c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+	   PLINT opt, PLFLT *clevel, PLINT nlevel)
 {
-  falsecolor = 1;
-  plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
-  plotsh3di(x,y,z,nx,ny,side);
+
+    PLFLT step;
+    extern int cont3d;
+    PLcGrid grid;
+    int i;
+
+    /*
+    step = (fc_maxz-fc_minz)/nlevel;
+    for (i=0; i<LEVELS; i++)
+	clevel[i] = fc_minz + i*step;
+    */
+
+    falsecolor = 1;
+    plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
+    plotsh3di(x, y ,z, nx, ny, opt, clevel, nlevel);
+    falsecolor = 0;
+
+    /*
+    cont3d = 1;
+    grid.nx = nx; grid.ny = ny; grid.xg = x; grid.yg = y;
+
+    plcont(z, nx, ny, 1, nx, 1, ny, clevel, nlevel,
+	    pltr1,  (void *) & grid );
+
+    cont_cl_store();
+    cont3d = 0;
+    */
 }
 
 /*--------------------------------------------------------------------------*\
@@ -249,209 +284,245 @@ c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z,
 \*--------------------------------------------------------------------------*/
 
 static void
-plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z,
-	  PLINT nx, PLINT ny, PLINT side)
+plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+	  PLINT opt, PLFLT *clevel, PLINT nlevel)
 {
-    PLFLT cxx, cxy, cyx, cyy, cyz;
-    PLINT i, j;
-    PLINT ixDir, ixOrigin, iyDir, iyOrigin, nFast, nSlow;
-    PLINT ixFast, ixSlow, iyFast, iySlow;
-    PLINT iFast, iSlow;
-    PLINT iX[2][2], iY[2][2];
-    PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
-    PLFLT xm, ym, zm;
-    PLINT ixmin=0, ixmax=nx, iymin=0, iymax=ny;
+  PLFLT cxx, cxy, cyx, cyy, cyz;
+  PLINT i, j, k;
+  PLINT ixDir, ixOrigin, iyDir, iyOrigin, nFast, nSlow;
+  PLINT ixFast, ixSlow, iyFast, iySlow;
+  PLINT iFast, iSlow;
+  PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
+  PLFLT xm, ym, zm;
+  PLINT ixmin=0, ixmax=nx, iymin=0, iymax=ny;
+  PLFLT xx[3],yy[3],zz[3];
+  PLFLT px[4], py[4], pz[4];
+  int   ct, ix, iy;
 
-    if (plsc->level < 3) {
-	myabort("plotsh3d: Please set up window first");
-	return;
-    }
+  if (plsc->level < 3) {
+    myabort("plotsh3d: Please set up window first");
+    return;
+  }
     
-    if (nx <= 0 || ny <= 0) {
-	myabort("plotsh3d: Bad array dimensions.");
-	return;
-    }
+  if (nx <= 0 || ny <= 0) {
+    myabort("plotsh3d: Bad array dimensions.");
+    return;
+  }
     
-    plP_gdom(&xmin, &xmax, &ymin, &ymax);
-    plP_grange(&zscale, &zmin, &zmax);
-    if(zmin > zmax) {
-      PLFLT t = zmin;
-      zmin = zmax;
-      zmax = t;
+  plP_gdom(&xmin, &xmax, &ymin, &ymax);
+  plP_grange(&zscale, &zmin, &zmax);
+  if(zmin > zmax) {
+    PLFLT t = zmin;
+    zmin = zmax;
+    zmax = t;
+  }
+
+  /* Check that points in x and in y are strictly increasing  and in range */
+
+  for (i = 0; i < nx - 1; i++) {
+    if (x[i] >= x[i + 1]) {
+      myabort("plotsh3d: X array must be strictly increasing");
+      return;
     }
-
-    /* Check that points in x and in y are strictly increasing  and in range */
-
-    for (i = 0; i < nx - 1; i++) {
-	if (x[i] >= x[i + 1]) {
-	    myabort("plotsh3d: X array must be strictly increasing");
-	    return;
-	}
-	if (x[i] < xmin && x[i+1] >= xmin)
-	  ixmin = i;
-	if (x[i+1] > xmax && x[i] <= xmax)
-	  ixmax = i+2;
+    if (x[i] < xmin && x[i+1] >= xmin)
+      ixmin = i;
+    if (x[i+1] > xmax && x[i] <= xmax)
+      ixmax = i+2;
+  }
+  for (i = 0; i < ny - 1; i++) {
+    if (y[i] >= y[i + 1]) {
+      myabort("plotsh3d: Y array must be strictly increasing");
+      return;
     }
-    for (i = 0; i < ny - 1; i++) {
-	if (y[i] >= y[i + 1]) {
-	    myabort("plotsh3d: Y array must be strictly increasing");
-	    return;
-	}
-	if (y[i] < ymin && y[i+1] >= ymin)
-	  iymin = i;
-	if (y[i+1] > ymax && y[i] <= ymax)
-	  iymax = i+2;
-    }
+    if (y[i] < ymin && y[i+1] >= ymin)
+      iymin = i;
+    if (y[i+1] > ymax && y[i] <= ymax)
+      iymax = i+2;
+  }
 
-    /* get the viewing parameters */
-    plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
+  /* get the viewing parameters */
+  plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
 
-    /* we're going to draw from back to front */
+  /* we're going to draw from back to front */
 
-    /* iFast will index the dominant (fastest changing) dimension
-       iSlow will index the slower changing dimension
+  /* iFast will index the dominant (fastest changing) dimension
+     iSlow will index the slower changing dimension
 
-       iX indexes the X dimension
-       iY indexes the Y dimension */
+     iX indexes the X dimension
+     iY indexes the Y dimension */
 
-    /* get direction for X */
-    if(cxy >= 0) {
-      ixDir = 1;	/* direction in X */
-      ixOrigin = ixmin;	/* starting point */
-    } else {
-      ixDir = -1;
-      ixOrigin = ixmax - 1;
-    }
-    /* get direction for Y */
-    if(cxx >= 0) {
-      iyDir = -1;
-      iyOrigin = iymax - 1;
-    } else {
-      iyDir = 1;
-      iyOrigin = iymin;
-    }
+  /* get direction for X */
+  if(cxy >= 0) {
+    ixDir = 1;	/* direction in X */
+    ixOrigin = ixmin;	/* starting point */
+  } else {
+    ixDir = -1;
+    ixOrigin = ixmax - 1;
+  }
+  /* get direction for Y */
+  if(cxx >= 0) {
+    iyDir = -1;
+    iyOrigin = iymax - 1;
+  } else {
+    iyDir = 1;
+    iyOrigin = iymin;
+  }
 
-    /* figure out which dimension is dominant */
-    if (fabs(cxx) > fabs(cxy)) {
-      /* X is dominant */
-      nFast = ixmax - ixmin;	/* samples in the Fast direction */
-      nSlow = iymax - iymin;	/* samples in the Slow direction */
+  /* figure out which dimension is dominant */
+  if (fabs(cxx) > fabs(cxy)) {
+    /* X is dominant */
+    nFast = ixmax - ixmin;	/* samples in the Fast direction */
+    nSlow = iymax - iymin;	/* samples in the Slow direction */
       
-      ixFast = ixDir; ixSlow = 0;
-      iyFast = 0;     iySlow = iyDir;
-    } else {
-      nFast = iymax - iymin;
-      nSlow = ixmax - ixmin;
+    ixFast = ixDir; ixSlow = 0;
+    iyFast = 0;     iySlow = iyDir;
+  } else {
+    nFast = iymax - iymin;
+    nSlow = ixmax - ixmin;
 
-      ixFast = 0;     ixSlow = ixDir;
-      iyFast = iyDir; iySlow = 0;
+    ixFast = 0;     ixSlow = ixDir;
+    iyFast = iyDir; iySlow = 0;
+  }
+
+  /* we've got to draw the background grid first, hidden line code has to draw it last */
+  if (zbflg) {
+    PLINT color = plsc->icol0;
+    PLFLT bx[3], by[3], bz[3];
+    PLFLT tick=0, tp;
+    PLINT nsub=0;
+
+    /* get the tick spacing */
+    pldtik(zmin, zmax, &tick, &nsub);
+
+    /* determine the vertices for the background grid line */
+    bx[0] = (ixOrigin!=ixmin && ixFast==0) || ixFast > 0 ? xmax : xmin;
+    by[0] = (iyOrigin!=iymin && iyFast==0) || iyFast > 0 ? ymax : ymin;
+    bx[1] = ixOrigin!=ixmin ? xmax : xmin;
+    by[1] = iyOrigin!=iymin ? ymax : ymin;
+    bx[2] = (ixOrigin!=ixmin && ixSlow==0) || ixSlow > 0 ? xmax : xmin;
+    by[2] = (iyOrigin!=iymin && iySlow==0) || iySlow > 0 ? ymax : ymin;
+
+    plcol(zbcol);
+    for(tp = tick * floor(zmin / tick) + tick; tp <= zmax; tp += tick) {
+      bz[0] = bz[1] = bz[2] = tp;
+      plline3(3, bx, by, bz);	
     }
+    /* draw the vertical line at the back corner */
+    bx[0] = bx[1];
+    by[0] = by[1];
+    bz[0] = zmin;
+    plline3(2, bx, by, bz);
+    plcol(color);
+  }
 
-    /* we've got to draw the background grid first, hidden line code has to draw it last */
-    if (zbflg) {
-      PLINT color = plsc->icol0;
-      PLFLT bx[3], by[3], bz[3];
-      PLFLT tick=0, tp;
-      PLINT nsub=0;
+  /* Now we can iterate over the grid drawing the quads */
+  for(iSlow=0; iSlow < nSlow-1; iSlow++) {
+    for(iFast=0; iFast < nFast-1; iFast++) {
+      /* get the 4 corners of the Quad */
+      for(i=0; i<2; i++) {
+	for(j=0; j<2; j++) {
+	  /* we're transforming from Fast/Slow coordinates to x/y coordinates */
+	  /* note, these are the indices, not the values */
+	  ix = ixFast * (iFast+i) + ixSlow * (iSlow+j) + ixOrigin;
+	  iy = iyFast * (iFast+i) + iySlow * (iSlow+j) + iyOrigin;
 
-      /* get the tick spacing */
-      pldtik(zmin, zmax, &tick, &nsub);
-
-      /* determine the vertices for the background grid line */
-      bx[0] = (ixOrigin!=ixmin && ixFast==0) || ixFast > 0 ? xmax : xmin;
-      by[0] = (iyOrigin!=iymin && iyFast==0) || iyFast > 0 ? ymax : ymin;
-      bx[1] = ixOrigin!=ixmin ? xmax : xmin;
-      by[1] = iyOrigin!=iymin ? ymax : ymin;
-      bx[2] = (ixOrigin!=ixmin && ixSlow==0) || ixSlow > 0 ? xmax : xmin;
-      by[2] = (iyOrigin!=iymin && iySlow==0) || iySlow > 0 ? ymax : ymin;
-
-      plcol(zbcol);
-      for(tp = tick * floor(zmin / tick) + tick; tp <= zmax; tp += tick) {
-	bz[0] = bz[1] = bz[2] = tp;
-	plline3(3, bx, by, bz);	
+	  px[2*i+j] = x[ix];
+	  py[2*i+j] = y[iy];
+	  pz[2*i+j] = z[ix][iy];
+	}
       }
-      /* draw the vertical line at the back corner */
-      bx[0] = bx[1];
-      by[0] = by[1];
-      bz[0] = zmin;
-      plline3(2, bx, by, bz);
-      plcol(color);
-    }
 
-    /* Now we can iterate over the grid drawing the quads */
-    for(iSlow=0; iSlow < nSlow-1; iSlow++) {
-      for(iFast=0; iFast < nFast-1; iFast++) {
-	/* get the 4 corners of the Quad */
-	for(i=0; i<2; i++) {
-	  for(j=0; j<2; j++) {
-	    /* we're transforming from Fast/Slow coordinates to x/y coordinates */
-	    /* note, these are the indices, not the values */
-	    iX[i][j] = ixFast * (iFast+i) + ixSlow * (iSlow+j) + ixOrigin;
-	    iY[i][j] = iyFast * (iFast+i) + iySlow * (iSlow+j) + iyOrigin;
+      /* now draw the quad as two triangles (4 might be better) */
+
+      /* 
+       * two/four triangles. Four is better, but slower, as
+       *  it takes more 50% of execution time. Is it worth? 
+       */
+
+      xm = ym = zm = 0.;
+      for (i=0;i<4;i++) {
+	xm += px[i];
+	ym += py[i];
+	zm += pz[i];
+      }
+      xm /= 4.; ym /= 4.; zm /= 4.;
+
+      for (i=1; i<3; i++) {
+	for (j=0; j<4; j+=3) {
+	  shade_triangle(px[j], py[j], pz[j], xm, ym, zm, px[i], py[i], pz[i]);
+	 
+#define min3(a,b,c) (MIN((MIN(a,b)),c))
+#define max3(a,b,c) (MAX((MAX(a,b)),c))
+
+	  if (clevel != NULL && ((opt & SURF_CONT) || (opt & BASE_CONT))) {
+	    for (k=0; k<nlevel; k++) {
+	      if (clevel[k] >= min3(pz[i],zm,pz[j]) && clevel[k] < max3(pz[i],zm,pz[j])) {
+		ct = 0;
+		if (clevel[k] >= MIN(pz[i],zm) && clevel[k] < MAX(pz[i],zm)) { /* p0-pm */
+		  xx[ct] = ((clevel[k] - pz[i])*(xm-px[i]))/(zm-pz[i]) + px[i];
+		  yy[ct] = ((clevel[k] - pz[i])*(ym-py[i]))/(zm-pz[i]) + py[i];
+		  ct++;
+		}
+
+		if (clevel[k] >= MIN(pz[i],pz[j]) && clevel[k] < MAX(pz[i],pz[j])) { /* p0-p1 */
+		  xx[ct] = ((clevel[k] - pz[i])*(px[j]-px[i]))/(pz[j]-pz[i]) + px[i];
+		  yy[ct] = ((clevel[k] - pz[i])*(py[j]-py[i]))/(pz[j]-pz[i]) + py[i];
+		  ct++;
+		}
+
+		if (clevel[k] >= MIN(pz[j],zm) && clevel[k] < MAX(pz[j],zm)) { /* p1-pm */
+		  xx[ct] = ((clevel[k] - pz[j])*(xm-px[j]))/(zm-pz[j]) + px[j];
+		  yy[ct] = ((clevel[k] - pz[j])*(ym-py[j]))/(zm-pz[j]) + py[j];
+		  ct++;
+		}
+		
+		if (ct == 2) {
+		  if (opt & BASE_CONT) {
+		    /* base contour with surface color*/
+		    zz[0] = zz[1] =  plsc->ranmi;
+		    plline3(2, xx, yy, zz);
+		  }
+
+		  if (opt & SURF_CONT) {
+		    /* surface contour with black color (suggestions?) */
+		    plcol0(0);
+		    zz[0] = zz[1] = clevel[k]; 
+		    plline3(2, xx, yy, zz);
+		  }
+
+		  /* break; one triangle can span various contour levels */
+
+		} else
+		  plexit("plot3d.c:plotsh3di() ***ERROR***\n");
+	      } 
+	    }
 	  }
 	}
 
-	/* now draw the quad as two triangles (4 might be better) */
-
-	/* 
-	 * two/four triangles. Four is better, but slower.
-	 * The x08c demo takes more 50% of execution time. Is it worth? 
-	 */
-
-	/* #define TWO_TRI /**/
-#ifdef TWO_TRI
-	shade_triangle(x[iX[0][0]], y[iY[0][0]], z[iX[0][0]][iY[0][0]],
-		       x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]],
-		       x[iX[0][1]], y[iY[0][1]], z[iX[0][1]][iY[0][1]]);
-	shade_triangle(x[iX[0][1]], y[iY[0][1]], z[iX[0][1]][iY[0][1]],
-		       x[iX[1][1]], y[iY[1][1]], z[iX[1][1]][iY[1][1]],
-		       x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]]);
-
-#else
-	xm = ( x[iX[0][0]] + x[iX[0][1]] + x[iX[1][0]] + x[iX[1][1]]) / 4.;
-	ym = ( y[iY[0][0]] + y[iY[0][1]] + y[iY[1][0]] + y[iY[1][1]]) / 4.;
-	zm = ( z[iX[0][0]][iY[0][0]] + z[iX[0][1]][iY[0][1]] +
-	       z[iX[1][0]][iY[1][0]] + z[iX[1][1]][iY[1][1]]) / 4.;
-
-	shade_triangle(x[iX[0][0]], y[iY[0][0]], z[iX[0][0]][iY[0][0]],
-		       xm, ym, zm,
-		       x[iX[0][1]], y[iY[0][1]], z[iX[0][1]][iY[0][1]]);
-	
-	shade_triangle(x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]],
-		       xm, ym, zm,
-		       x[iX[1][1]], y[iY[1][1]], z[iX[1][1]][iY[1][1]]);
-
-	shade_triangle(x[iX[0][0]], y[iY[0][0]], z[iX[0][0]][iY[0][0]],
-		       xm, ym, zm,
-		       x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]]);
-
-	shade_triangle(x[iX[1][1]], y[iY[1][1]], z[iX[1][1]][iY[1][1]],
-		       xm, ym, zm,
-		       x[iX[0][1]], y[iY[0][1]], z[iX[0][1]][iY[0][1]]);
-#endif /* TWO_TRI */
       }
     }
+  }
 
-    if (side) {
-      /* draw one more row with all the Z's set to zmin */
-      PLFLT zscale, zmin, zmax;
+  if (opt & DRAW_SIDE) {
+    /* draw one more row with all the Z's set to zmin */
+    PLFLT zscale, zmin, zmax;
 
-      plP_grange(&zscale, &zmin, &zmax);
-      iSlow = nSlow-1;
-      for(iFast=0; iFast < nFast-1; iFast++) {
-	for(i=0; i<2; i++) {
-	  iX[i][0] = ixFast * (iFast+i) + ixSlow * iSlow + ixOrigin;
-	  iY[i][0] = iyFast * (iFast+i) + iySlow * iSlow + iyOrigin;
-	}
-	/* now draw the quad as two triangles (4 might be better) */
-	shade_triangle(x[iX[0][0]], y[iY[0][0]], z[iX[0][0]][iY[0][0]],
-		       x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]],
-		       x[iX[0][0]], y[iY[0][0]], zmin);
-	shade_triangle(x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]],
-		       x[iX[1][0]], y[iY[1][0]], zmin,
-		       x[iX[0][0]], y[iY[0][0]], zmin);
+    plP_grange(&zscale, &zmin, &zmax);
+    iSlow = nSlow-1;
+    for(iFast=0; iFast < nFast-1; iFast++) {
+      for(i=0; i<2; i++) {
+	ix = ixFast * (iFast+i) + ixSlow * iSlow + ixOrigin;
+	iy = iyFast * (iFast+i) + iySlow * iSlow + iyOrigin;
+	px[2*i] = x[ix]; 
+	py[2*i] = y[iy];
+	pz[2*i] = z[ix][iy];
       }
+      /* now draw the quad as two triangles (4 might be better) */
+	 
+      shade_triangle(px[0], py[0], pz[0], px[2], py[2], pz[2], px[0], py[0], zmin);
+      shade_triangle(px[2], py[2], pz[2], px[2], py[2], zmin,  px[0], py[0], zmin);
     }
+  }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -461,9 +532,9 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z,
  * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
  * values are in the 2-d array z[][]. The integer "opt" specifies:
  *
- *  opt = 1:  Draw lines parallel to x-axis
- *  opt = 2:  Draw lines parallel to y-axis
- *  opt = 3:  Draw lines parallel to both axes
+ *  opt = 1 (DRAW_LINEX) :  Draw lines parallel to x-axis
+ *  opt = 2 (DRAW_LINEY) :  Draw lines parallel to y-axis
+ *  opt = 3 (DRAW_LINEXY):  Draw lines parallel to both axes
 \*--------------------------------------------------------------------------*/
 
 void
@@ -606,7 +677,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
     utmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
     vtmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
-    ctmp = 0;
+    ctmp = (PLFLT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLFLT)));
     
     if ( ! utmp || ! vtmp)
 	myexit("plot3d: Out of memory.");
@@ -781,12 +852,16 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 {
     PLINT n = 0;
     PLFLT x2d, y2d;
+    PLFLT zmin, zmax;
 
+    plMinMax2dGrid(z, nx, ny, &zmax, &zmin);
+    
     while (1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny) {
 	x2d = plP_w3wcx(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	y2d = plP_w3wcy(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	u[n] = plP_wcpcx(x2d);
 	v[n] = plP_wcpcy(y2d);
+	ctmp[n] = (zmax - z[x0 - 1][y0 - 1])/(zmax-zmin);
 
 	switch (flag) {
 	case -3:
@@ -1342,7 +1417,8 @@ plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move)
 {
     static int count = 0;
     static int vcount = 0;
-    static short px[MAX_POLY], py[MAX_POLY];
+
+    plcol1(1.-ctmp[j]);
     if (move)
       plP_movphy(x, y);
     else
