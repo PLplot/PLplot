@@ -7,14 +7,15 @@
 #include "plcdemos.h"
 
 /*--------------------------------------------------------------------------*\
- * mapform
+ * mapform19
  *
- * Defines our coordinate transformation.
+ * Defines specific coordinate transformation for example 19.
+ * Not to be confused with mapform in src/plmap.c.
  * x[], y[] are the coordinates to be plotted.
 \*--------------------------------------------------------------------------*/
 
 void 
-mapform(PLINT n, PLFLT *x, PLFLT *y) 
+mapform19(PLINT n, PLFLT *x, PLFLT *y) 
 {
     int i;
     double xp, yp, radius;
@@ -75,10 +76,10 @@ main(int argc, char **argv)
     maxx = 360;
 
     plenv(-75., 75., -75., 75., 1, -1);
-    plmap(mapform,"globe", minx, maxx, miny, maxy);
+    plmap(mapform19,"globe", minx, maxx, miny, maxy);
 
     pllsty(2);
-    plmeridians(mapform,10.0, 10.0, 0.0, 360.0, -10.0, 80.0);
+    plmeridians(mapform19,10.0, 10.0, 0.0, 360.0, -10.0, 80.0);
     plend();
     exit(0);
 }
