@@ -106,9 +106,6 @@ FT_StrX_Y(PLStream *pls, const char *text, int *xx, int *yy)
     plgesc(&esc);
 
 /*
- *  y is negative since Freetype goes "bottom up" rather than "top down"
- *  ...or at least I think it is (maybe it's the other way around ?)
- *
  * Things seems to work better with this line than without it;
  * I guess because there is no vertical kerning or advancement for most
  * non-transformed fonts, so we need to define *something* for the y height,
@@ -124,14 +121,18 @@ FT_StrX_Y(PLStream *pls, const char *text, int *xx, int *yy)
 
 	    switch(text[i+1]) {
 	    case 'f':  /* Change Font */
+	    case 'F':
                 switch (text[i+2]) {
 		case 'r':
+		case 'R':
 		    FT_SetFace( pls ,2);
 		    break;
 		case 'i':
+		case 'I':
 		    FT_SetFace( pls ,3);
 		    break;
 		case 's':
+		case 'S':
 		    FT_SetFace( pls ,4);
 		    break;
 		default:
@@ -144,6 +145,8 @@ FT_StrX_Y(PLStream *pls, const char *text, int *xx, int *yy)
 
 	    case 'u': /* super script */
 	    case 'd': /* subscript */
+	    case 'U':
+	    case 'D':
                 i++;
                 break;
 	    }
@@ -207,7 +210,7 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
     FT_Data *FT=(FT_Data *)pls->FT;
     short len=strlen(text);
     short i=0,last_char=-1;
-    FT_Vector  akerning;
+    FT_Vector  akerning, adjust;
     char esc;
 
 /* copy string to modifiable memory */
@@ -217,24 +220,53 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
 
     plgesc(&esc);
 
-/* adjust for the descender - make sure the font is nice and centred vertically */
-    y-=FT->face->descender >> 6;
+/*
+ *  Adjust for the descender - make sure the font is nice and centred
+ *  vertically. Freetype assumes we have a base-line, but plplot thinks of
+ *  centre-lines, so that's why we have to do this. Since this is one of our
+ *  own adjustments, rather than a freetype one, we have to run it through
+ *  the transform matrix manually.
+ *
+ *  For some odd reason, this works best if we triple the
+ *  descender's height and then adjust the height later on...
+ *  Don't ask me why, 'cause I don't know. But it does seem to work.
+ *
+ *  I really wish I knew *why* it worked better though...
+ *
+ *   y-=FT->face->descender >> 6;
+ */
+
+#ifdef DODGIE_DECENDER_HACK
+    adjust.y= (FT->face->descender >> 6)*3;
+#else
+    adjust.y= (FT->face->descender >> 6);
+#endif
+
+    adjust.x=0;
+    FT_Vector_Transform( &adjust, &FT->matrix);
+    x+=adjust.x;
+    y-=adjust.y;
 
 /* walk through the text character by character */
+
     for (i=0; i<len; i++) {
 	if ((FT->textbuf[i]==esc)&&(FT->textbuf[i-1]!=esc)) {
 	    if (FT->textbuf[i+1]==esc) continue;
 
 	    switch(FT->textbuf[i+1]) {
 	    case 'f':  /* Change Font */
+	    case 'F':
                 switch (FT->textbuf[i+2]) {
 		case 'r':
+		case 'R':
 		    FT_SetFace( pls,2);
 		    break;
 		case 'i':
+		case 'I':
 		    FT_SetFace( pls,3);
 		    break;
 		case 's':
+		case 'S':
 		    FT_SetFace( pls,4);
 		    break;
 		default:
@@ -248,6 +280,7 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
                 break;
 
 	    case 'g':  /* Greek font */
+	    case 'G':
                 FT->greek=pls->cfont;
                 FT_SetFace( pls, 5 );
 
@@ -270,13 +303,32 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
                 i++;
                 break;
 
+/*
+ *  We run the OFFSET for the super-script and sub-script through the
+ *  transformation matrix so we can calculate nice and easy the required
+ *  offset no matter what's happened rotation wise. Everything else, like
+ *  kerning and advancing from character to character is transformed
+ *  automatically by freetype, but since the superscript/subscript is a
+ *  feature of plplot, and not freetype, we have to make allowances.
+ */
+
 	    case 'u': /* super script */
-                y -= (FT->face->size->metrics.height >> 6)/2;
+	    case 'U': /* super script */
+                adjust.y= (FT->face->size->metrics.height >> 6)/2;
+                adjust.x=0;
+                FT_Vector_Transform( &adjust, &FT->matrix);
+                x+=adjust.x;
+                y-=adjust.y;
                 i++;
                 break;
 
 	    case 'd': /* subscript */
-                y += (FT->face->size->metrics.height >> 6)/2;
+	    case 'D': /* subscript */
+                adjust.y= (FT->face->size->metrics.height >> 6)/-2;
+                adjust.x=0;
+                FT_Vector_Transform( &adjust, &FT->matrix);
+                x+=adjust.x;
+                y-=adjust.y;
                 i++;
                 break;
 	    }
@@ -289,6 +341,8 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
 				FT->textbuf[i],
 				ft_kerning_default, &akerning );
 		x+= (akerning.x >> 6);        /* add (or subtract) the kerning */
+		y-= (akerning.y >> 6);        /* Do I need this in case of rotation ? */
+
             }
 
 	    if (FT->smooth_text==0)
@@ -378,7 +432,7 @@ void plD_FreeType_init(PLStream *pls)
 {
     FT_Data *FT;
     char *a;
-/* font paths and file names can be long so leave generous (1024) room */    
+/* font paths and file names can be long so leave generous (1024) room */
     char font_path[1024];
     const char *env_var_names[]={"PLPLOT_NORMAL_FONT","PLPLOT_ROMAN_FONT",
 				 "PLPLOT_ITALIC_FONT","PLPLOT_SCRIPT_FONT",
@@ -504,7 +558,7 @@ void plD_FreeType_init(PLStream *pls)
 
 	if (access(FT->font_name[i], F_OK)!=0) {
 	    char msgbuf[1024];
-	    sprintf(msgbuf, 
+	    sprintf(msgbuf,
 		    "Possible error defining one of the freetype compatible fonts:\n %s",
 		    FT->font_name[i]);
 	    plwarn(msgbuf);
@@ -554,17 +608,19 @@ void FT_SetFace( PLStream *pls, int fnt )
 void plD_render_freetype_text (PLStream *pls, EscText *args)
 {
     FT_Data *FT=(FT_Data *)pls->FT;
-    int y;
-    int x=args->x/FT->scale;
+    int x,y;
     int w=0,h=0;
     PLFLT *t = args->xform;
+    FT_Matrix matrix;
+    PLFLT angle=PI*pls->diorot/2;
+    PLFLT a1, alpha;
+    PLINT clxmin, clxmax, clymin, clymax;
+    PLFLT Sin_A,Cos_A;
+    FT_Vector adjust;
 
-    if (FT->invert_y==1)
-	y=FT->ymax-(args->y/FT->scale);
-    else
-	y=args->y/FT->scale;
 
     if (FT->cfont!=pls->cfont) FT_SetFace(pls,pls->cfont);
+
 
 /*  this will help work out underlining and overlining
 
@@ -576,13 +632,32 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
 */
 
 /*
+ *  Now we work out how long the text is (for justification etc...) and how
+ *  high the text is. This is done on UN-TRANSFORMED text, since we will
+ *  apply our own transformations on it later, so it's necessary for us
+ *  to to turn all transformations off first, before calling the function
+ *  that calculates the text size.
+ */
+
+    FT->matrix.xx =0x10000;
+    FT->matrix.xy =0000;
+    FT->matrix.yx =0;
+    FT->matrix.yy =0x10000;
+
+    FT_Vector_Transform( &FT->pos, &FT->matrix);
+    FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
+
+    FT_StrX_Y(pls,args->string,&w, &h);
+
+
+/*
  *      Set up the transformation Matrix
  *
  * Fortunately this is almost identical to plplot's own transformation matrix;
  * you have NO idea how much effort that saves ! Some params are in a
  * different order, and Freetype wants integers whereas plplot likes floats,
  * but such differences are quite trivial.
- * 
+ *
  * For some odd reason, this needs to be set a different way for DJGPP. Why ?
  * I wish I knew.
  */
@@ -599,13 +674,40 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     FT->matrix.yy =(FT_Fixed)0x10000*t[3];
 #endif
 
+
+/*                            Rotate the Font
+ *
+ *  If the page has been rotated using -ori, this is where we rotate the
+ *  font to point in the right direction. To make things nice and easy, we
+ *  will use freetypes matrix math stuff to do this for us.
+ */
+
+    Cos_A=cos(angle);
+    Sin_A=sin(angle);
+
+    matrix.xx =(FT_Fixed)0x10000*Cos_A;
+
+#ifdef DJGPP
+    matrix.xy =(FT_Fixed)0x10000*Sin_A*-1;
+    matrix.yx =(FT_Fixed)0x10000*Sin_A;
+#else
+    matrix.xy =(FT_Fixed)0x10000*Sin_A;
+    matrix.yx =(FT_Fixed)0x10000*Sin_A*-1;
+#endif
+
+    matrix.yy =(FT_Fixed)0x10000*Cos_A;
+
+    FT_Matrix_Multiply(&matrix,&FT->matrix);
+
+
 /*       Calculate a Vector from the matrix
  *
- * This is closely related to the "transform matrix" we just defined.
+ * This is closely related to the "transform matrix".
  * The matrix is used for rendering the glyph, while the vector is used for
  * calculating offsets of the text box, so we need both. Why ? I dunno, but
  * we have to live with it, and it works...
  */
+
 
     FT_Vector_Transform( &FT->pos, &FT->matrix);
 
@@ -622,11 +724,60 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
 
 
-    FT_StrX_Y(pls,args->string,&w, &h); /* find out how big the text string is */
 
-/* y+=(h/2.0);  adjust for base line */
+/*                            Rotate the Page
+ *
+ *  If the page has been rotated using -ori, this is we recalculate the
+ *  reference point for the text using plplot functions.
+ */
 
-    x-=(args->just*w); /* adjust for the justification */
+  difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
+
+
+/*
+ *   Convert into normal coordinates from virtual coordinates
+ */
+
+  x=args->x/FT->scale;
+
+ if (FT->invert_y==1)
+    y=FT->ymax-(args->y/FT->scale);
+ else
+    y=args->y/FT->scale;
+
+
+ /*          Adjust for the justification and character height
+  *
+  *  Eeeksss... this wasn't a nice bit of code to work out, let me tell you.
+  *  I could not work out an entirely satisfactory solution that made
+  *  logical sense, so came up with an "illogical" one as well.
+  *  The logical one works fine for text in the normal "portrait"
+  *  orientation, and does so for reasons you might expect it to work; But
+  *  for all other orientations, the text's base line is either a little
+  *  high, or a little low. This is because of the way the base-line pos
+  *  is calculated from the decender height. The "dodgie" way of calculating
+  *  the position is to use the character height here, then adjust for the
+  *  decender height by a three-fold factor later on. That approach seems to
+  *  work a little better for rotated pages, but why it should be so, I
+  *  don't understand. You can compile in or out which way you want it by
+  *  defining "DODGIE_DECENDER_HACK".
+  *
+  *  note: the logic of the page rotation coming up next is that we pump in
+  *  the justification factor and then use freetype to rotate and transform
+  *  the values, which we then use to change the plotting location.
+  */
+
+
+#ifdef DODGIE_DECENDER_HACK
+    adjust.y=h;
+#else
+    adjust.y=0;
+#endif
+
+    adjust.x=args->just*w*-1;
+    FT_Vector_Transform( &adjust, &matrix);
+    x+=adjust.x;
+    y-=adjust.y;
 
     FT_WriteStr(pls,args->string,x,y); /* write it out */
 }
