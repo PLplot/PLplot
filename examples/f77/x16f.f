@@ -1,6 +1,10 @@
 ! $Id$
 ! $Log$
-! Revision 1.2  1994/05/26 19:34:28  mjl
+! Revision 1.3  1994/09/27 22:07:17  mjl
+! All use of double quotes for Fortran strings (not strictly legal)
+! eliminated in favor of single quotes.
+!
+! Revision 1.2  1994/05/26  19:34:28  mjl
 ! Inserted missing CVS Id and Log fields for all Fortran demos.  Comment
 ! character changed to "!" everywhere, to work well with font-lock in Lucid
 ! emacs (requires a small change to fortran-mode.el).
@@ -119,7 +123,7 @@
       real	clevel(NCONTR)
       real	xmin, xmax, ymin, ymax, zmin, zmax
       real	xpmin, xpmax, ypmin, ypmax
-      real	x, y, r, theta, rmax, x0, y0
+      real	r, theta, rmax, x0, y0
       real	eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i
       real	div1, div1i, div2, div2i
 

@@ -1,6 +1,10 @@
 ! $Id$
 ! $Log$
-! Revision 1.2  1994/05/26 19:34:14  mjl
+! Revision 1.3  1994/09/27 22:07:12  mjl
+! All use of double quotes for Fortran strings (not strictly legal)
+! eliminated in favor of single quotes.
+!
+! Revision 1.2  1994/05/26  19:34:14  mjl
 ! Inserted missing CVS Id and Log fields for all Fortran demos.  Comment
 ! character changed to "!" everywhere, to work well with font-lock in Lucid
 ! emacs (requires a small change to fortran-mode.el).
@@ -13,8 +17,8 @@
 !
 ! Plots three simple functions, each function occupies a separate page
 
-	real x(101), y(101)
-	real xs(6), ys(6)
+	real	x(101), y(101)
+	real	xs(6), ys(6)
 	real	xscale, yscale, xoff, yoff
         character*80 version
 	integer digmax
@@ -27,7 +31,7 @@
 
 ! Ask user to specify the output device
 
-        call plssub(2,2)
+        call plssub(2, 2)
         call plinit()
 
 ! Set up the data
@@ -51,7 +55,7 @@
 ! Do a plot
 
 	digmax = 5
-	call plsyax(digmax, 0)
+	call plsyax(digmax,  0)
 	call plot1()
 
 !======================================================================
@@ -62,22 +66,23 @@
 !  (axis = 1).
 
       call plcol(1)
-      call plenv(-2.0,10.0,-0.4,1.2,0,1)
+      call plenv( -2.0, 10.0, -0.4, 1.2, 0, 1 )
       call plcol(2)
-      call pllab('(x)','sin(x)/x','#frPLPLOT Example 1 - Sinc Function')
+      call pllab( '(x)', 'sin(x)/x', 
+     &            '#frPLPLOT Example 1 - Sinc Function' )
 
 ! Fill up the arrays
 
-      do 2 i = 1,100
+      do 2 i = 1, 100
         x(i) = (i-20.0)/6.0
         y(i) = 1.0
-        if (x(i).ne.0.0) y(i) = sin(x(i))/x(i)
+        if (x(i) .ne. 0.0) y(i) = sin(x(i)) / x(i)
     2 continue
 
 ! Draw the line
 
       call plcol(3)
-      call plline(100,x,y)
+      call plline( 100, x, y )
 
 !======================================================================
 !
@@ -89,37 +94,37 @@
 ! Use standard viewport, and define X range from 0 to 360 degrees,
 !  Y range from -1.2 to 1.2.
 
-      call plvsta      
-      call plwind(0.0,360.0,-1.2,1.2)
+      call plvsta()
+      call plwind( 0.0, 360.0, -1.2, 1.2 )
 
 ! Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
       call plcol(1)
-      call plbox('bcnst',60.0,2,'bcnstv',0.2,2)
+      call plbox( 'bcnst', 60.0, 2, 'bcnstv', 0.2, 2 )
 
 ! Superimpose a dashed line grid, with 1.5 mm marks and spaces. With
 !  only a single mark and space element, we do not need arrays
 
-      call plstyl(1,1500,1500)            
+      call plstyl( 1, 1500, 1500 )
       call plcol(2)
-      call plbox('g',30.0,0,'g',0.2,0)
-      call plstyl(0,0,0)
+      call plbox( 'g', 30.0, 0, 'g', 0.2, 0 )
+      call plstyl( 0, 0, 0 )
 
       call plcol(3)
-      call pllab('Angle (degrees)','sine',
-     *           '#frPLPLOT Example 1 - Sine function')
+      call pllab( 'Angle (degrees)', 'sine',
+     &            '#frPLPLOT Example 1 - Sine function' )
 
-      do 3 i = 1,101
+      do 3 i = 1, 101
         x(i) = 3.6 * (i-1)
-        y(i) = sin(x(i)*3.141592654/180.0)
+        y(i) = sin( x(i) * 3.141592654/180.0 )
     3 continue
 
       call plcol(4)
-      call plline(101,x,y)
+      call plline( 101, x, y )
 
 ! Don't forget to call PLEND to finish off!
 
-      call plend
+      call plend()
 
       end
 
@@ -133,8 +138,8 @@
 	common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
 	do 10 i = 1, 60
-	    x(i)=xoff + xscale * float(i)/60.0
-	    y(i)=yoff + yscale * x(i)**2
+	    x(i) = xoff + xscale * float(i)/60.0
+	    y(i) = yoff + yscale * x(i)**2
 10	continue
 
 	xmin = x(1)
@@ -153,19 +158,19 @@
 ! box (axis = 0).
 
 	call plcol(1)
-	call plenv(xmin, xmax, ymin, ymax, 0, 0)
+	call plenv( xmin, xmax, ymin, ymax, 0, 0 )
 	call plcol(6)
-	call pllab("(x)","(y)","#frPLPLOT Example 1 - y=x#u2")
+	call pllab( '(x)', '(y)', '#frPLPLOT Example 1 - y=x#u2' )
 
 ! Plot the data points
 
 	call plcol(9)
-	call plpoin(6,xs,ys,9)
+	call plpoin( 6, xs, ys, 9 )
 
 ! Draw the line through the data
 
 	call plcol(4)
-	call plline(60,x,y)
+	call plline( 60, x, y )
 
 	return
 	end
