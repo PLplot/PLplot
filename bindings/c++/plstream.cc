@@ -320,6 +320,16 @@ plstream::arrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 }
 
 void
+plstream::arrows2(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale, 
+		  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		  PLPointer pltr_data)
+{
+    set_stream();
+
+    plarrows2( u, v, nx, ny, scale, pltr, pltr_data );
+}
+
+void
 plstream::sarrow(PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts, PLINT fill)
 {
     set_stream();

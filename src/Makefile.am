@@ -49,7 +49,8 @@ sources = \
   plvpor.c \
   plwind.c \
   plbuf.c \
-  plgridd.c
+  plgridd.c \
+  plvect.c
 
 AM_CPPFLAGS = $(FREETYPEINCCMD) $(INCLTDL)
 

@@ -1178,6 +1178,8 @@ c_plstart(const char *devname, PLINT nx, PLINT ny)
 void
 c_plinit(void)
 {
+    PLFLT def_arrow_x[4] = {0.5, -0.5, -0.27, -0.5};
+    PLFLT def_arrow_y[4] = {0.0, 0.0, 0.0, 0.20};
     PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_old, aspect_new;
     PLINT mk = 0, sp = 0, inc = 0, del = 2000;
 
@@ -1253,13 +1255,15 @@ c_plinit(void)
     if (plsc->zdigmax == 0)
 	plsc->zdigmax = 3;
 
-/* Switch to graphics mode and set color */
+/* Switch to graphics mode and set color and arrow style*/
 
     plgra();
     plcol(1);
 
     plstyl(0, &mk, &sp);
     plpat(1, &inc, &del);
+
+    plsarrow(def_arrow_x, def_arrow_y, 4, 0);
 
 /* Set clip limits. */
 

@@ -606,6 +606,11 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
          PLFLT scale, PLFLT dx, PLFLT dy) ;
 
 void
+plarrows2(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+              PLPointer pltr_data);
+
+void
 plsarrow(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill);
 
 /* This functions similarly to plbox() except that the origin of the axes */

@@ -121,6 +121,10 @@ class plstream {
     void arrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
                  PLFLT scale, PLFLT dx, PLFLT dy );
 
+    void arrows2(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+		   void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		   PLPointer pltr_data);
+
 // Set the arrow style
     void sarrow( PLFLT *arrox_x, PLFLT *arrow_y, PLINT npts, PLINT fill);
 
