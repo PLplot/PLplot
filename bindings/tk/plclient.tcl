@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.2  1994/01/17 21:30:23  mjl
+# Revision 1.3  1994/02/07 22:52:38  mjl
+# Removed references to plw_flash (no longer invoked from client side).
+#
+# Revision 1.2  1994/01/17  21:30:23  mjl
 # Improved security for Tcl-DP communication by disabling any further
 # connections after the initial client/server handshaking is finished.
 #
@@ -35,7 +38,7 @@
 proc plclient_init {} {
 
     global plserver_init_proc plw_create_proc plw_init_proc \
-	plw_start_proc plw_flash_proc plw_end_proc \
+	plw_start_proc plw_end_proc \
 	dp client_host client_port update_proc
 
 # This initializes plserver
@@ -47,7 +50,6 @@ proc plclient_init {} {
     set plw_create_proc		plw_create
     set plw_init_proc		plw_init
     set plw_start_proc		plw_start
-    set plw_flash_proc		plw_flash
     set plw_end_proc 		plw_end
 
 # Set up communications port and other junk
