@@ -138,7 +138,7 @@ enable_tkwin=no
 enable_png=yes
 enable_jpeg=yes
 enable_cgm=yes
-enable_tk=no
+enable_tk=yes
 enable_xwin=yes
 
 # separate the concept of desiring a driver (above) with
