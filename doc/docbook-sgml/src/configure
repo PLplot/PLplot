@@ -956,7 +956,12 @@ fi
 
 
 
-echo -n "checking for DSSSL Style Sheet DTD... "
+echo $ac_n "checking DSSSL Style Sheet DTD""... $ac_c" 1>&6
+echo "configure:961: checking DSSSL Style Sheet DTD" >&5
+if eval "test \"`echo '$''{'pldb_cv_dsssl_dtd'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  
 echo -e "\nChecking for DSSSL Style Sheet DTD" >> $jadelog
 sed -e "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" -e "s|@DB_STYLE_SHEET@||" \
   -e "s|@STYLE_SPEC_USE@||" -e "s|@EXTERNAL_SPECIFICATION@||" \
@@ -966,9 +971,15 @@ $jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
    >> $jadelog 2>&1
 jade_result=`egrep ":(E|W):" $jadelog`
 if test "$jade_result" = "" ; then 
-  echo "yes"
+  pldb_cv_dsssl_dtd=yes
 else 
-  echo "no"
+  pldb_cv_dsssl_dtd=no
+fi
+
+fi
+
+echo "$ac_t""$pldb_cv_dsssl_dtd" 1>&6
+if test pldb_cv_dsssl_dtd = no ; then 
   { echo "configure: error: Could not find DSSSL Style Sheet DTD.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:
@@ -983,7 +994,12 @@ fi
 
 
 
-echo -n "checking for DocBook HTML Stylesheet... "
+echo $ac_n "checking DocBook HTML Stylesheet""... $ac_c" 1>&6
+echo "configure:999: checking DocBook HTML Stylesheet" >&5
+if eval "test \"`echo '$''{'pldb_cv_html_ss'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  
 echo -e "\nChecking for DocBook HTML Stylesheet" >> $jadelog
 sed -e "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" -e "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_html_pubid\" CDATA DSSSL>]|" \
   -e "s|@STYLE_SPEC_USE@|use="docbook"|" -e "s|@EXTERNAL_SPECIFICATION@|<external-specification id="docbook" document="dbstyle">|" \
@@ -993,9 +1009,15 @@ $jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
    >> $jadelog 2>&1
 jade_result=`egrep ":(E|W):" $jadelog`
 if test "$jade_result" = "" ; then 
-  echo "yes"
+  pldb_cv_html_ss=yes
 else 
-  echo "no"
+  pldb_cv_html_ss=no
+fi
+
+fi
+
+echo "$ac_t""$pldb_cv_html_ss" 1>&6
+if test pldb_cv_html_ss = no ; then 
   { echo "configure: error: Could not find DocBook HTML Stylesheet.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:
@@ -1010,7 +1032,12 @@ fi
 
   
 
-echo -n "checking for DocBook Print Stylesheet... "
+echo $ac_n "checking DocBook Print Stylesheet""... $ac_c" 1>&6
+echo "configure:1037: checking DocBook Print Stylesheet" >&5
+if eval "test \"`echo '$''{'pldb_cv_print_ss'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  
 echo -e "\nChecking for DocBook Print Stylesheet" >> $jadelog
 sed -e "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" -e "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_print_pubid\" CDATA DSSSL>]|" \
   -e "s|@STYLE_SPEC_USE@|use="docbook"|" -e "s|@EXTERNAL_SPECIFICATION@|<external-specification id="docbook" document="dbstyle">|" \
@@ -1020,9 +1047,15 @@ $jade_prog $SGML_CATALOGS -d conftest.dsl -t tex conftest.sgml \
    >> $jadelog 2>&1
 jade_result=`egrep ":(E|W):" $jadelog`
 if test "$jade_result" = "" ; then 
-  echo "yes"
+  pldb_cv_print_ss=yes
 else 
-  echo "no"
+  pldb_cv_print_ss=no
+fi
+
+fi
+
+echo "$ac_t""$pldb_cv_print_ss" 1>&6
+if test pldb_cv_print_ss = no ; then 
   { echo "configure: error: Could not find DocBook Print Stylesheet.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:
@@ -1037,7 +1070,12 @@ fi
 
 
 
-echo -n "checking for DocBook DTD... "
+echo $ac_n "checking DocBook DTD""... $ac_c" 1>&6
+echo "configure:1075: checking DocBook DTD" >&5
+if eval "test \"`echo '$''{'pldb_cv_db_dtd'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  
 echo -e "\nChecking for DocBook DTD" >> $jadelog
 sed -e "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" -e "s|@DB_STYLE_SHEET@||" \
   -e "s|@STYLE_SPEC_USE@||" -e "s|@EXTERNAL_SPECIFICATION@||" \
@@ -1047,9 +1085,15 @@ $jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
    >> $jadelog 2>&1
 jade_result=`egrep ":(E|W):" $jadelog`
 if test "$jade_result" = "" ; then 
-  echo "yes"
+  pldb_cv_db_dtd=yes
 else 
-  echo "no"
+  pldb_cv_db_dtd=no
+fi
+
+fi
+
+echo "$ac_t""$pldb_cv_db_dtd" 1>&6
+if test pldb_cv_db_dtd = no ; then 
   { echo "configure: error: Could not find DocBook DTD.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:
