@@ -28,14 +28,14 @@ def restore_cmap1():
     # Independent variable of control points.
     i = array((0., 0.45, 0.55, 1.))
     # Hue for control points.  Blue-violet to red
-    h = array((260., 260., 0., 0.,))
+    h = array((260., 260., 0., 0.))
     # Lightness ranging from medium to vertex to medium
     l = array((0.5, vertex, vertex, 0.5))
     # Saturation is complete for default
-    s = array((1., 1., 1., 1.,))
+    s = array((1., 1., 1., 1.))
     # Integer flag array is zero (no interpolation along far-side of colour
     # figure
-    rev = array((0, 0, 0, 0,))
+    rev = array((0, 0, 0, 0))
     # Default number of cmap1 colours
     plscmap1n(128)
     # Interpolate between control points to set up default cmap1.
