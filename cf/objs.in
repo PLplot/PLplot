@@ -18,7 +18,7 @@ font10$O: font10.c
 font11$O: font11.c
 gd$O: gd.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
  plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h /usr/include/gd.h /usr/include/gd_io.h
+ plplot/drivers.h
 gnome$O: gnome.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
  plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
 hpgl$O: hpgl.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
@@ -136,8 +136,7 @@ stupidtk$O: stupidtk.c
 tclAPI$O: tclAPI.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
  plplot/plstrm.h plplot/pdf.h plplot/pldebug.h plplot/pltcl.h \
  plplot/tclMatrix.h plplot/tclgen.h plplot/tclgen_s.h tclgen.c
-tclMain$O: tclMain.c plplot/plplot.h plplot/plConfig.h \
- /usr/include/tcl.h /usr/include/tclDecls.h
+tclMain$O: tclMain.c plplot/plplot.h plplot/plConfig.h
 tclMatrix$O: tclMatrix.c plplot/tclMatrix.h plplot/plplot.h \
  plplot/plConfig.h
 tclgen$O: tclgen.c
