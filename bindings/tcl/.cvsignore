@@ -1,1 +1,4 @@
 *.flc
+tclgen.c
+tclgen.h
+tclgen_s.h
