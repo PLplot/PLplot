@@ -32,6 +32,10 @@ proc x01 {{w loopback}} {
 # Fourth
 
     plot3 $w
+# Restore defaults
+    $w cmd plssub 1 1
+    $w cmd pleop
+
 }
 
 # This is supposed to work just like the plot1() in x01c.c

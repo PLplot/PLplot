@@ -6,6 +6,7 @@ proc x02 {{w loopback}} {
 
 # Divide screen into 16 regions
 
+    $w cmd pladv 0
     $w cmd plssub 4 4
     $w cmd plschr 0.0 3.5
     $w cmd plfont 4
@@ -26,4 +27,8 @@ proc x02 {{w loopback}} {
 	$w cmd plwid 1
 	$w cmd plptex 0.5 0.5 1.0 0.0 0.5 $i
     }
+
+# Restore defaults
+    $w cmd plssub 1 1
+    $w cmd pleop
 }

@@ -8,7 +8,6 @@ proc x04 {{w loopback}} {
     matrix ampl f 101
     matrix phase f 101
 
-    $w cmd plssub 1 1
     $w cmd pladv 0
     $w cmd plfont 2
 

@@ -7,7 +7,6 @@ proc x03 {{w loopback}} {
 
 # Set up viewport and window, but do not draw box 
 
-    $w cmd plssub 1 1
     $w cmd plcol0 1
     $w cmd plenv -1.3 1.3 -1.3 1.3 1 -2
 

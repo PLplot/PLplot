@@ -7,7 +7,6 @@ proc x10 {{w loopback}} {
 # use color index 1 in cmap0.  Should be red unless cmap0 has been
 # fiddled with by another tcl example.
   $w cmd plcol0 1
-  $w cmd pladv 0
   $w cmd plvpor 0.0 1.0 0.0 1.0
   $w cmd plwind 0.0 1.0 0.0 1.0
   $w cmd plbox bc 0.0 0 bc 0.0 0
