@@ -1889,7 +1889,7 @@ plLoadDriver(void)
 
     sprintf( sym, "plD_dispatch_init_%s", tag );
     {
-        PLDispatchInit dispatch_init = lt_dlsym( driver->dlhand, sym );
+        PLDispatchInit dispatch_init = (PLDispatchInit) lt_dlsym( driver->dlhand, sym );
         if (!dispatch_init)
         {
             fprintf( stderr,
