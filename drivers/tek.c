@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1995/05/06 16:50:20  mjl
+ * Revision 1.38  1995/06/07 20:37:46  mjl
+ * Minor fix to function declarations, contributed by Hiromi Kimura.
+ *
+ * Revision 1.37  1995/05/06  16:50:20  mjl
  * Changed debugging output to use new pldebug() function.
  *
  * Revision 1.36  1995/03/11  21:40:32  mjl
@@ -78,10 +81,10 @@ static int  tty_cbreak	(void);
 static int  tty_reset	(void);
 static void tty_atexit	(void);
 #else
-static void tty_setup	(void) {};
-static int  tty_cbreak	(void) {return 0};
-static int  tty_reset	(void) {return 0};
-static void tty_atexit	(void) {};
+static void tty_setup	(void) {}
+static int  tty_cbreak	(void) {return 0;}
+static int  tty_reset	(void) {return 0;}
+static void tty_atexit	(void) {}
 #endif
 
 /* Pixel settings */
