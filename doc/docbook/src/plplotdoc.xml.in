@@ -160,6 +160,7 @@
 <!ENTITY plsdiplz '<link linkend="plsdiplz"><function>plsdiplz</function></link>'>
 <!ENTITY plsesc '<link linkend="plsesc"><function>plsesc</function></link>'>
 <!ENTITY plsescfortran '<link linkend="plsescfortran"><function>plsescfortran</function></link>'>
+<!ENTITY plsetopt '<link linkend="plsetopt"><function>plsetopt</function></link>'>
 <!ENTITY plsfam '<link linkend="plsfam"><function>plsfam</function></link>'>
 <!ENTITY plsfile '<link linkend="plsfile"><function>plsfile</function></link>'>
 <!ENTITY plsfnam '<link linkend="plsfnam"><function>plsfnam</function></link>'>

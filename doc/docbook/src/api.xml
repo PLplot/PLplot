@@ -4336,8 +4336,8 @@ device coordinates
       device keyword or number of the desired output device.  Hitting a
       RETURN in response to the prompt is the same as selecting the first
       device.  &plinit; will issue no prompt if either the device was
-      specified previously (via command line flag or the
-      &plsdev; function), or if only one device is
+      specified previously (via command line flag, the &plsetopt; function,
+      or the &plsdev; function), or if only one device is
       enabled when PLplot is installed.  If subpages have been specified,
       the output device is divided into <literal>nx</literal> by
       <literal>ny</literal> sub-pages, each of which may be used
@@ -7368,6 +7368,58 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
             Escape character.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plsetopt" renderas="sect3">
+    <title>
+      <function>plsetopt</function>: Set any command-line option
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plsetopt</function>
+        </funcdef>
+        <paramdef><parameter>opt</parameter></paramdef>
+        <paramdef><parameter>optarg</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Set any command-line option internally from a program before it invokes
+      &plinit;. <literal>opt</literal> is the name of the command-line
+      option and <literal>optarg</literal> is the corresponding command-line
+      option argument.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>opt</parameter>
+	  (<literal>const char *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to string containing the command-line option.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>optarg</parameter>
+	  (<literal>const char *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to string containing the argument of the command-line
+	    option.
 	  </para>
 	</listitem>
       </varlistentry>

@@ -117,14 +117,14 @@
       Either the device number or a device keyword is accepted.
     </para>
     
-    <para>
-      There are several routines affecting the initialization that must be
-      called <emphasis>before</emphasis> &plinit;, if they are used.  The
-      function &plsdev; allows you to set the device
-      explicitly.  The function &plssub; may be called
-      to divide the output device plotting area into several subpages of
-      equal size, each of which can be used separately.
-    </para>
+    <para> 
+      There are several routines affecting the initialization that must
+      be called <emphasis>before</emphasis> &plinit;, if they are used.  The
+      function &plsdev; allows you to set the device explicitly.  The
+      function &plsetopt; allows you to set any command-line option
+      internally in your code.  The function &plssub; may be called to
+      divide the output device plotting area into several subpages of equal
+      size, each of which can be used separately. </para>
     
     <para>
       One advances to the next page (or screen) via &pladv;.  If subpages
