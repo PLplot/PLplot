@@ -76,8 +76,12 @@ if test "$echo_cflags" = "yes"; then
 fi
 
 if test "$echo_libs" = "yes"; then
-  my_plplot_libs=
   libdirs=-L${prefix}/lib
+  my_plplot_libs=
+  # plcxx must be first in the list (if required) since library order matters.
+  if test "$echo_cxx" = "yes" ; then
+    my_plplot_libs="$my_plplot_libs $plplot_cxx_lib"
+  fi
   for i in $plplot_libs ; do
     if test $i != -L${prefix}/lib ; then
       if test -z "$my_plplot_libs" ; then
@@ -87,9 +91,5 @@ if test "$echo_libs" = "yes"; then
       fi
     fi
   done
-  if test "$echo_cxx" = "yes" ; then
-    my_plplot_libs="$my_plplot_libs $plplot_cxx_lib"
-  fi
   echo $libdirs $my_plplot_libs
-fi      
-
+fi
