@@ -1,6 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/08/10 20:23:47  mjl
+ * Revision 1.3  1996/02/24 05:33:17  shouman
+ * Updated driver to use PLGraphicsIn struct instead of obsolete PLKey.
+ * Added translation of more keys to PLK_ keysyms (eg pageup, pagedown, F keys).
+ * Added mouse button event handler.  Added PLESC_EH support to allow polling
+ * for button, keyboard events.
+ *
+ * Eliminated default color stuff, since color maps are now reachable through
+ * PLStreams.  Cmap0 colors no longer revert to default with each new page.
+ *
+ * Revision 1.2  1994/08/10  20:23:47  mjl
  * Latest changes for DJGPP port by Paul Kirschner.
  *
  * Revision 1.1  1994/08/10  01:08:29  mjl
@@ -76,22 +85,26 @@
 #include "plplotP.h"
 #include "drivers.h"
 #include "plevent.h"
-#include <graphics.h>
+#include <grx.h>
+#include <mousex.h>
+#include <keys.h>
 
 /* Prototypes:	Since GNU CC, we can rest in the safety of ANSI prototyping. */
 
 static void	plpause		(PLStream *);
-static void	init_palette	(void);
 static void	svga_text	(PLStream *);
 static void	svga_graph	(PLStream *);
 
 static void	fill_polygon	(PLStream *pls);
 static void	setcmap		(PLStream *pls);
 static void	WaitForPage	(PLStream *pls);
-static void	EventHandler	(PLStream *pls, int input_char);
+static void	EventHandler	(PLStream *pls, MouseEvent *event);
+static void     TranslateEvent  (MouseEvent *event, PLGraphicsIn *gin);
 
 static PLINT vgax = 639;
 static PLINT vgay = 479;
+static MouseEvent   mevent;
+static PLGraphicsIn gin;		        /* Graphics input structure */
 
 /* A flag to tell us whether we are in text or graphics mode */
 
@@ -109,33 +122,6 @@ static exit_eventloop = 0;
 #define DIRTY 1
 
 static page_state;
-
-typedef struct {
-    int r;
-    int g;
-    int b;
-} RGB;
-
-static RGB colors[] = {
-    {0, 0, 0},			/* coral */
-    {255, 0, 0},		/* red */
-    {255, 255, 0},		/* yellow */
-    {0, 255, 0},		/* green */
-    {127, 255, 212},		/* acquamarine */
-    {255, 192, 203},		/* pink */
-    {245, 222, 179},		/* wheat */
-    {190, 190, 190},		/* grey */
-    {165, 42, 42},		/* brown */
-    {0, 0, 255},		/* blue */
-    {138, 43, 226},		/* Blue Violet */
-    {0, 255, 255},		/* cyan */
-    {64, 224, 208},		/* turquoise */
-    {255, 0, 255},		/* magenta */
-    {250, 128, 114},		/* salmon */
-    {255, 255, 255},		/* white */
-    {0, 0, 0},			/* black */
-};
-
 
 /*----------------------------------------------------------------------*\
  * plD_init_vga()
@@ -159,7 +145,6 @@ plD_init_vga(PLStream *pls)
 	pls->color = 1;
 
 /* Set up device parameters */
-
     svga_graph(pls);		/* Can't get current device info unless in
 				   graphics mode. */
 
@@ -169,6 +154,9 @@ plD_init_vga(PLStream *pls)
     plP_setpxl(2.5, 2.5);	/* My best guess.  Seems to work okay. */
 
     plP_setphy(0, vgax, 0, vgay);
+    
+    MouseEventMode(1);		/* Use interrupt driven mouse handler */
+    MouseInit();
 }
 
 /*----------------------------------------------------------------------*\
@@ -219,8 +207,6 @@ plD_eop_vga(PLStream *pls)
 	    WaitForPage(pls);
     }
 
-/*     init_palette(); */
-
     page_state = CLEAN;
 }
 
@@ -248,6 +234,7 @@ plD_bop_vga(PLStream *pls)
 void
 plD_tidy_vga(PLStream *pls)
 {
+    MouseUnInit();		/* Restore interrupt vectors */
     svga_text(pls);
 }
 
@@ -322,6 +309,16 @@ plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
       case PLESC_FILL:
 	fill_polygon(pls);
 	break;
+
+      case PLESC_EH:
+	for (;;) {
+  	    MouseGetEvent(M_BUTTON_DOWN | M_KEYPRESS | M_POLL, &mevent);
+	    if (M_EVENT & mevent.flags)
+	        EventHandler(pls, &mevent);
+	    else
+	        break;
+	}
+	break;
     }
 }
 
@@ -392,9 +389,9 @@ svga_graph(PLStream *pls)
 				/* Destroys the palette */
 	GrSetMode(GR_default_graphics);
 /*	GrSetMode(GR_320_200_graphics); */
-	init_palette();		/* Fix the palette */
+	setcmap(pls);
 	totcol = 16;		/* Reset RGB map so we don't run out of
-				   indicies */
+				   indices */
 	pls->graphx = GRAPHICS_MODE;
 	page_state = CLEAN;
     }
@@ -443,21 +440,6 @@ setcmap(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
- * init_palette()
- *
- * Set up the nice RGB default color map.
-\*----------------------------------------------------------------------*/
-
-static void 
-init_palette(void)
-{
-    int n;
-
-    for (n = 0; n < sizeof(colors) / sizeof(RGB); n++)
-	GrSetColor(n, colors[n].r, colors[n].g, colors[n].b);
-}
-
-/*----------------------------------------------------------------------*\
  * WaitForPage()
  *
  * This routine waits for the user to advance the plot, while handling
@@ -467,14 +449,13 @@ init_palette(void)
 static void
 WaitForPage(PLStream *pls)
 {
-    int input_char;
 
 /*    putchar(BEL); */
 /*    fflush(stdout); */
 
     while ( ! exit_eventloop) {
-	input_char = getkey();
-	EventHandler(pls, input_char);
+        MouseGetEvent(M_BUTTON_DOWN | M_KEYPRESS, &mevent);
+  	    EventHandler(pls, &mevent); 
     }
     exit_eventloop = FALSE;
 }
@@ -482,72 +463,150 @@ WaitForPage(PLStream *pls)
 /*----------------------------------------------------------------------*\
  * EventHandler()
  *
- * Event handler routine for xterm.  
- * Just reacts to keyboard input.
+ * Event handler routine.
+ * Reacts to keyboard or mouse input.
 \*----------------------------------------------------------------------*/
 
 static void
-EventHandler(PLStream *pls, int input_char)
+EventHandler(PLStream *pls, MouseEvent *event)
 {
-    PLKey key;
-
-    key.code = 0;
-    key.string[0] = '\0';
-
-/* Translate keystroke into a PLKey */
-
-    if ( ! isprint(input_char)) {
-	switch (input_char) {
-	case 0x0A:
-	    key.code = PLK_Linefeed;
-	    break;
-
-	case 0x0D:
-	    key.code = PLK_Return;
-	    break;
-
-	case 0x08:
-	    key.code = PLK_BackSpace;
-	    break;
-
-	case 0x7F:
-	    key.code = PLK_Delete;
-	    break;
-	}
-    }
-    else {
-	key.string[0] = input_char;
-	key.string[1] = '\0';
-    }
+    TranslateEvent(event, &gin);
 
 #ifdef DEBUG
-    pltext();
-    fprintf(stderr, "Input char %x, Keycode %x, string: %s\n",
-	    input_char, key.code, key.string);
-    plgra();
+    {
+      char buf[200];
+      sprintf(buf, "flags 0x%x, buttons 0x%x, key 0x%x                ",
+	      event->flags, event->buttons, event->key);
+      GrTextXY(0, 0, buf, 15, 0);
+      sprintf(buf, "Input char 0x%x, Keycode 0x%x, string: %s               ",
+	      event->key, gin.keysym, gin.string);
+      GrTextXY(0, 50, buf, 15, 0);
+      sprintf(buf, "button %d, pX %d, pY %d, state 0x%x                     ", 
+	      gin.button, gin.pX, gin.pY, gin.state);
+      GrTextXY(0, 100, buf, 15, 0);
+    }
 #endif
 
 /* Call user event handler */
 /* Since this is called first, the user can disable all plplot internal
    event handling by setting key.code to 0 and key.string to '\0' */
 
-    if (pls->KeyEH != NULL)
-	(*pls->KeyEH) (&key, pls->KeyEH_data, &exit_eventloop);
+    if (gin.button) {
+        if (pls->ButtonEH != NULL)
+	    (*pls->ButtonEH) (&gin, pls->ButtonEH_data, &exit_eventloop);
+    } 
+    else {
+        if (pls->KeyEH != NULL)
+            (*pls->KeyEH) (&gin, pls->KeyEH_data, &exit_eventloop);
+    }
 
 /* Handle internal events */
 
 /* Advance to next page (i.e. terminate event loop) on a <eol> */
 
-    if (key.code == PLK_Linefeed)
+    if (gin.keysym == PLK_Linefeed)
 	exit_eventloop = TRUE;
-    if (key.code == PLK_Return)
+    if (gin.keysym == PLK_Return)
 	exit_eventloop = TRUE;
+    if (gin.button == 3)
+        exit_eventloop = TRUE;
 
 /* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
 
-    if (key.string[0] == 'Q') {
+    if (gin.string[0] == 'Q') {
 	pls->nopause = TRUE;
 	plexit("");
+    }
+}
+
+
+/*--------------------------------------------------------------------------*\
+ * TranslateEvent()
+ *
+ * Fills in the PLGraphicsIn from a MouseEvent.  All keys are not yet 
+ * translated correctly.
+\*--------------------------------------------------------------------------*/
+
+static void
+TranslateEvent(MouseEvent *event, PLGraphicsIn *gin)
+{
+    gin->string[0] = '\0';
+
+/* Translate DJGPP MouseEvent into PlPLot event */
+
+    if (event->flags & M_KEYPRESS) {
+        gin->keysym = event->key;
+	if (isprint(event->key)) {
+	    gin->string[0] = event->key;
+	    gin->string[1] = '\0';
+	}
+	else {
+	    switch (event->key) {
+	    default: gin->keysym = event->key;
+	      break;
+
+	    case K_F1: case K_F2: case K_F3: 
+	    case K_F4: case K_F5: case K_F6:
+	    case K_F7: case K_F8: case K_F9: 
+	    case K_F10:
+	      gin->keysym = event->key - K_F1 + PLK_F1;
+	      break;
+
+	    case K_Home: case K_EHome:
+	      gin->keysym = PLK_Home;
+	      break;
+
+	    case K_Up: case K_EUp:
+	      gin->keysym = PLK_Up;
+	      break;
+
+	    case K_Right: case K_ERight:
+	      gin->keysym = PLK_Right;
+	      break;
+
+	    case K_Down: case K_EDown:
+	      gin->keysym = PLK_Down;
+	      break;
+
+	    case K_Left: case K_ELeft:
+	      gin->keysym = PLK_Left;
+	      break;
+
+	    case K_PageDown: case K_EPageDown:
+	      gin->keysym = PLK_Prior; 
+	      break;
+
+	    case K_PageUp: case K_EPageUp:
+	      gin->keysym = PLK_Next;
+	      break;
+
+	    case K_Insert: case K_EInsert:
+	      gin->keysym = PLK_Insert;
+	      break;
+	    }
+	}
+	gin->button = 0;
+	gin->state = event->kbstat;
+    }
+
+    else if (event->flags & M_BUTTON_DOWN) {
+      switch (event->flags) {
+      case M_LEFT_DOWN:
+          gin->button = 1;
+	  break;
+      case M_MIDDLE_DOWN:
+	  gin->button = 2;
+	  break;
+      case M_RIGHT_DOWN:
+	  gin->button = 3;
+	  break;
+      }
+      gin->keysym = 0x20;
+      gin->pX = event->x;
+      gin->pY = event->y;
+      gin->dX = (PLFLT) event->x / vgax;
+      gin->dY = 1.0 - (PLFLT) event->y / vgay;
+      gin->state = event->kbstat;
     }
 }
 
