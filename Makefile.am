@@ -49,7 +49,7 @@ doc_DATA = \
 
 CLEANFILES = plplot_libtool reconfig jadeout.log
 
-EXTRA_DIST = debian fonts rpm sys
+EXTRA_DIST = sysloc.in debian fonts rpm sys
 
 dist-hook:
 	rm -rf `find $(distdir) -name CVS -o -name .cvsignore`
