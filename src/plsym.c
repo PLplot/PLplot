@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1995/05/07 03:13:52  mjl
+ * Revision 1.16  1996/02/24 04:52:38  shouman
+ * Added check to make sure ASCII point drawing routines don't try to use
+ * a font that has been unloaded.
+ *
+ * Revision 1.15  1995/05/07  03:13:52  mjl
  * Changed debugging output to use new function pldebug().
  *
  * Revision 1.14  1995/04/12  21:17:54  mjl
@@ -133,7 +137,7 @@ c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 void
 c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 {
-    PLINT i, sym;
+    PLINT i, sym, ifont = font;
 
     if (plsc->level < 3) {
 	plabort("plpoin: Please set up window first");
@@ -149,7 +153,9 @@ c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 	    pljoin(x[i], y[i], x[i], y[i]);
     }
     else {
-	sym = *(fntlkup + (font - 1) * numberchars + code);
+        if (ifont > numberfonts)
+	    ifont = 1;
+	sym = *(fntlkup + (ifont - 1) * numberchars + code);
 
 	for (i = 0; i < n; i++)
 	    plhrsh(sym, plP_wcpcx(x[i]), plP_wcpcy(y[i]));
@@ -165,7 +171,7 @@ c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 void
 c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 {
-    PLINT i, sym;
+    PLINT i, sym, ifont = font;
     PLFLT u, v;
 
     if (plsc->level < 3) {
@@ -186,7 +192,9 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 	}
     }
     else {
-	sym = *(fntlkup + (font - 1) * numberchars + code);
+        if (ifont > numberfonts)
+	    ifont = 1;
+	sym = *(fntlkup + (ifont - 1) * numberchars + code);
 
 	for( i=0; i < n; i++ ) {
 	    u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
