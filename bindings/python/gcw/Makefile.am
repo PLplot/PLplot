@@ -35,9 +35,6 @@ EXTRA_DIST = \
 	$(MAINTAINERCLEANFILES)
 
 
-if enable_python
-if enable_pygcw
-
 # Must have "exec" in the name.
 ourexecpythondir = $(pythondir)
 
@@ -84,33 +81,34 @@ cplplotcanvas.c: plplotcanvas.defs cplplotcanvas.override
 
 plplotcanvas.defs: 
 	/usr/share/pygtk/2.0/codegen/h2def.py \
-	$(top_srcdir)/include/plplotcanvas.h > tmp.defs ; \
-	sed -e s/PLINT/long/ -e s/PLFLT/double/ tmp.defs > plplotcanvas.defs ; \
-	rm -f tmp.defs
+		$(top_srcdir)/include/plplotcanvas.h \
+		| sed -e s/PLINT/long/ -e s/PLFLT/double/ > plplotcanvas.defs
 
 gcwmodule_la_SOURCES  = gcwmodule.c
 gcwmodule_la_CFLAGS = $(GCW_CFLAGS) $(PYGCW_CFLAGS)
 gcwmodule_la_LDFLAGS = $(UNDERSCORE_plplotcmodule_la_LDFLAGS) $(libgcw) \
 	               $(GCW_LIBS) $(PYGCW_LIBS)
 
-gcwmoduleexecpython_LTLIBRARIES = gcwmodule.la
-gcwmoduleexecpythondir = $(pythondir)
-
-
 cplplotcanvasmodule_la_SOURCES  = cplplotcanvas.c cplplotcanvasmodule.c
 cplplotcanvasmodule_la_CFLAGS = $(GCW_CFLAGS) $(PYGCW_CFLAGS)
 cplplotcanvasmodule_la_LDFLAGS = $(UNDERSCORE_plplotcmodule_la_LDFLAGS) \
                                  $(libgcw) $(GCW_LIBS) $(PYGCW_LIBS)
+
+
+if enable_python
+if enable_pygcw
+
+gcwmoduleexecpython_LTLIBRARIES = gcwmodule.la
+gcwmoduleexecpythondir = $(pythondir)
 
 cplplotcanvasmoduleexecpython_LTLIBRARIES = cplplotcanvasmodule.la
 cplplotcanvasmoduleexecpythondir = $(pythondir)
 cplplotcanvasmoduleexecpython_DATA = plplotcanvas.py
 
 
-endif # enable_pygcw
-endif # enable_python
+endif
+endif
 
-
-CLEANFILES = \
-	cplplotcanvas.c \
+MAINTAINERCLEANFILES =    \
+	cplplotcanvas.c   \
 	plplotcanvas.defs
