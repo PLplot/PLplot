@@ -1,4 +1,4 @@
-# include/Makefile.am for PLplot
+# lib/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
@@ -19,15 +19,13 @@
 # Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA. 
 
-pkginclude_HEADERS = \
-  drivers.h \
-  metadefs.h \
-  pdf.h \
-  plcore.h \
-  pldebug.h \
-  plevent.h \
-  plplot.h \
-  plplotP.h \
-  plstrm.h \
-  plxwd.h
+pkgdatadir = ${prefix}/@DATA_DIR@
+
+pkgdata_DATA = \
+  cglobe.map \
+  globe.map \
+  plstnd5.fnt \
+  plxtnd5.fnt \
+  usa.map \
+  usaglobe.map
 

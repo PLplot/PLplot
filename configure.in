@@ -33,11 +33,17 @@ AM_PROG_LIBTOOL
 
 AC_CHECK_HEADERS(unistd.h)
 
+### Directory for PLplot specific data files
+
+DATA_DIR=lib/${PACKAGE}${VERSION} 
+AC_DEFINE_UNQUOTED(DATA_DIR, "$prefix/$DATA_DIR")
+AC_SUBST(DATA_DIR)
+
 ### Configuration headers
 
 AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
 
 ### Build Makefiles
 
-AC_OUTPUT([Makefile src/Makefile include/Makefile])
+AC_OUTPUT([Makefile src/Makefile include/Makefile lib/Makefile])
 
