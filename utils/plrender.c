@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.50  1995/06/21 15:38:10  mjl
+ * Revision 1.51  1995/10/14 17:17:03  mjl
+ * Fixed problems associated with reading metafiles from stdin or specified
+ * via the -i flag.  This should fix the current crop of printing problems.
+ *
+ * Revision 1.50  1995/06/21  15:38:10  mjl
  * Fixed problem with sending output to stdout that was causing prints from
  * a plxframe to fail.
  *
@@ -161,6 +165,7 @@ static FPOS_T	nextpage_loc;	/* Byte position of next page header */
 /* File info */
 
 static int	input_type;	/* 0 for file, 1 for stream */
+static int	do_file_loop=1;	/* loop over multiple files if set */
 static PDFstrm	*pdfs;		/* PDF stream handle */
 static FILE	*MetaFile;	/* Actual metafile handle, for seeks etc */
 
@@ -229,7 +234,7 @@ static PLOptionTable options[] = {
     NULL,
     NULL,
     &input_type,
-    PL_OPT_BOOL | PL_OPT_ARG,
+    PL_OPT_BOOL,
     "-f",
     "Filter option -- equivalent to \"-i - -o -\"" },
 {
@@ -293,10 +298,11 @@ main(int argc, char *argv[])
 
 /* Process any additional files */
 
-    pltext();
-    while ( ! ProcessFile(argc, argv))
-	;
-
+    if (do_file_loop) {
+	pltext();
+	while ( ! ProcessFile(argc, argv))
+	    ;
+    }
     plend();
     exit(EX_SUCCESS);
 }
@@ -440,9 +446,8 @@ ProcessFile(int argc, char **argv)
 
     plend1();
 
-/* Restore the old argc/argv except for the processed file */
+/* Restore the old argc/argv */
 
-    argv[1][0] = '\0';
     argc = myargc;
     for (i = 0; i < argc; i++) {
 	argv[i] = myargv[i];
@@ -456,7 +461,9 @@ ProcessFile(int argc, char **argv)
  *
  * Attempts to open a metafile.  If the output file isn't already determined
  * via the -i or -f flags, we assume it's the second argument in argv[] (the
- * first should still hold the program name).
+ * first should still hold the program name).  Null out the string after
+ * copying it so that it doesn't appear on subsequent passes of the command
+ * line. 
 \*--------------------------------------------------------------------------*/
 
 static int
@@ -469,15 +476,17 @@ OpenMetaFile(char **argv)
     if ( ! strcmp(FileName, "-"))
 	input_type = 1;
 
-    if (input_type == 1)
+    if (input_type == 1) {
 	MetaFile = stdin;
-
+	do_file_loop = 0;
+    }
     else {
 
 	if (*FileName == '\0') {
 	    if (argv[1] != NULL && *argv[1] != '\0') {
 		strncpy(FileName, argv[1], sizeof(FileName) - 1);
 		FileName[sizeof(FileName) - 1] = '\0';
+		argv[1][0] = '\0';
 	    }
 	    else {
 		return 1;
@@ -1688,6 +1697,7 @@ Opt_i(char *opt, char *optarg, void *client_data)
 
     strncpy(FileName, optarg, sizeof(FileName) - 1);
     FileName[sizeof(FileName) - 1] = '\0';
+    do_file_loop = 0;
 
     return 0;
 }
