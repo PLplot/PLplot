@@ -41,6 +41,98 @@ class x16 {
 	  }
      }
 
+/*----------------------------------------------------------------------*\
+ * Temporary API for plshades() until it is defined properly in javabind.c
+ *
+ * Shade regions via a series of calls to plshade.
+ * All arguments are the same as plshade except the following:
+ * clevel is a pointer to an array of values representing 
+ * the shade edge values, nlevel-1 is
+ * the number of different shades, (nlevel is the number of shade edges),
+ * fill_width is the pattern fill width, and cont_color and cont_width
+ * are the color and width of the contour drawn at each shade edge.
+ * (if cont_color <= 0 or cont_width <=0, no such contours are drawn).
+\*----------------------------------------------------------------------*/
+
+   void plshades_local1(double [][] a,
+		  double xmin, double xmax, double ymin, double ymax,
+		  double [] clevel, int nlevel, int fill_width,
+		  int cont_color, int cont_width, int rectangular,
+		  double [] x, double [] y,
+		  int wrap)
+     //API note, x, and y and wrap are ignored for now because plshade is
+     //very incompletely implemented in javabind.c.  Also, in this local
+     //version of plshades, clevel array is handled explicitly with int nlevel, but
+     //nlevel will disappear for final javabind.c version.
+     //
+     {
+	double shade_min, shade_max, shade_color;
+	int i, init_color, init_width;
+	
+	for (i = 0; i < nlevel-1; i++) {
+	   shade_min = clevel[i];
+	   shade_max = clevel[i+1];
+	   shade_color = i / (double) (nlevel-2);
+      /* The constants in order mean 
+       * (1) color map1,
+       * (0, 0, 0, 0) all edge effects will be done with plcont rather
+       * than the normal plshade drawing which gets partially blocked
+       * when sequential shading is done as in the present case */
+      
+	   pls.shade(a, xmin, xmax, ymin, ymax,
+		   shade_min, shade_max,
+		   1, shade_color, fill_width,
+		   0, 0, 0, 0,
+		   rectangular);
+	}
+	if(cont_color > 0 && cont_width > 0) {
+	   // Note, don't bother with cont_color and cont_width setting.
+	   // since this local plshades will disappear soon in any case.
+//	   pls.col0(cont_color);
+//	   pls.wid(cont_width);
+	   pls.cont(a, clevel, x, y, wrap);
+	}
+}
+   void plshades_local2(double [][] a,
+		  double xmin, double xmax, double ymin, double ymax,
+		  double [] clevel, int nlevel, int fill_width,
+		  int cont_color, int cont_width, int rectangular,
+		  double [][] x, double [][] y,
+		  int wrap)
+     //API note, x, and y and wrap are ignored for now because plshade is
+     //very incompletely implemented in javabind.c.  Also, in this local
+     //version of plshades, clevel array is handled explicitly with int nlevel, but
+     //nlevel will disappear for final javabind.c version.
+     //
+     {
+	double shade_min, shade_max, shade_color;
+	int i, init_color, init_width;
+	
+	for (i = 0; i < nlevel-1; i++) {
+	   shade_min = clevel[i];
+	   shade_max = clevel[i+1];
+	   shade_color = i / (double) (nlevel-2);
+      /* The constants in order mean 
+       * (1) color map1,
+       * (0, 0, 0, 0) all edge effects will be done with plcont rather
+       * than the normal plshade drawing which gets partially blocked
+       * when sequential shading is done as in the present case */
+      
+	   pls.shade(a, xmin, xmax, ymin, ymax,
+		   shade_min, shade_max,
+		   1, shade_color, fill_width,
+		   0, 0, 0, 0,
+		   rectangular);
+	}
+	if(cont_color > 0 && cont_width > 0) {
+	   // Note, don't bother with cont_color and cont_width setting.
+	   // since this local plshades will disappear soon in any case.
+//	   pls.col0(cont_color);
+//	   pls.wid(cont_width);
+	   pls.cont(a, clevel, x, y, wrap);
+   }
+}
+   
    // Does a variety of shade plots with continuous (cmap1) colours
 
    public static void main( String[] args ) 
@@ -130,13 +222,11 @@ class x16 {
 
 	pls.psty(0);
 
-//API	pls.shades(z, XPTS, YPTS, NULL, -1., 1., -1., 1., 
-//		 shedge, NSHADES+1, fill_width,
-//		 cont_color, cont_width,
-//		 plfill, 1, NULL, NULL);
+	plshades_local1(z, -1., 1., -1., 1., 
+		 shedge, NSHADES+1, fill_width,
+		 cont_color, cont_width,
+		 1, xg0, yg0, 0);
 
-//Temporary replacement for API
-	pls.cont(z, shedge, xg0, yg0, 0);
 	pls.col0(1);
 	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
 	pls.col0(2);
@@ -150,13 +240,11 @@ class x16 {
 
 	pls.psty(0);
 
-//    plshades(z, XPTS, YPTS, NULL, -1., 1., -1., 1., 
-//	     shedge, NSHADES+1, fill_width,
-//	     cont_color, cont_width,
-//	     plfill, 1, pltr1, (void *) &cgrid1);
+	plshades_local1(z, -1., 1., -1., 1., 
+	     shedge, NSHADES+1, fill_width,
+	     cont_color, cont_width,
+	     1, xg1, yg1, 0);
 
-//Temporary replacement for API
-        pls.cont(z, shedge, xg1, yg1, 0);
 	pls.col0(1);
 	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
 	pls.col0(2);
@@ -171,13 +259,11 @@ class x16 {
 
 	pls.psty(0);
 
-//    plshades(z, XPTS, YPTS, NULL, -1., 1., -1., 1., 
-//	     shedge, NSHADES+1, fill_width,
-//	     cont_color, cont_width,
-//	     plfill, 0, pltr2, (void *) &cgrid2);
+	plshades_local2(z, -1., 1., -1., 1., 
+		 shedge, NSHADES+1, fill_width,
+		 cont_color, cont_width,
+		 0, xg2, yg2, 0);
 
-//Temporary replacement for API
-        pls.cont(z, shedge, xg2, yg2, 0);
 	pls.col0(1);
 	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
 	pls.col0(2);
@@ -193,13 +279,10 @@ class x16 {
 
 	pls.psty(0);
 
-//    plshades(z, XPTS, YPTS, NULL, -1., 1., -1., 1., 
-//	     shedge, NSHADES+1, fill_width,
-//	     2, 3,
-//	     plfill, 0, pltr2, (void *) &cgrid2);
-
-//Temporary replacement for API
-        pls.cont(z, shedge, xg2, yg2, 0);
+	plshades_local2(z, -1., 1., -1., 1., 
+		 shedge, NSHADES+1, fill_width,
+		 2, 3,
+		 0, xg2, yg2, 0);
 
 	pls.col0(1);
 	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -240,14 +323,10 @@ class x16 {
 	for (i = 0; i < NSHADES+1; i++)
 	  shedge[i] = zmin + (zmax - zmin) * (double) i / (double) NSHADES;
 
-	// Now we can shade the interior region.
-//    plshades(z, XPTS, YPTS, NULL, -1., 1., -1., 1., 
-//	     shedge, NSHADES+1, fill_width,
-//	     cont_color, cont_width,
-//	     plfill, 0, pltr2, (void *) &cgrid2);
-
-//Temporary replacement for API
-        pls.cont(z, shedge, xg2, yg2, 0);
+	plshades_local2(z, -1., 1., -1., 1., 
+		 shedge, NSHADES+1, fill_width,
+		 cont_color, cont_width,
+		 0, xg2, yg2, 0);
 
 // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
 	for (i = 0; i < PERIMETERPTS; i++) {
