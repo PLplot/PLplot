@@ -5,8 +5,8 @@ includedir=@includedir@
 bindir=@bindir@
 
 Name: PLplot
-Description: Scientific plotting library (double precision)
+Description: Scientific plotting library (single precision)
 Requires:
 Version: @VERSION@
-Libs: -L${libdir} -lplplotd @FREETYPELIBCMD@
-Cflags: -I${includedir} -DPL_DOUBLE
+Libs: -L${libdir} -lplplot @FREETYPELIBCMD@
+Cflags: -I${includedir}

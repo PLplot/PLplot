@@ -404,7 +404,7 @@ AC_INIT(src/plcore.c)
 AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 ### Package version number
-AM_INIT_AUTOMAKE(plplot, 5.2.0)
+AM_INIT_AUTOMAKE(plplot, 5.2.0.cvs.20030305)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
 ### library version consistent with the package version in direct
@@ -920,7 +920,7 @@ AC_CONFIG_FILES([
 	doc/Makefile
 	pkgcfg/Makefile	
 	pkgcfg/plplot.pc
-	pkgcfg/plplot-double.pc
+	pkgcfg/plplot-float.pc
 	doc/docbook/Makefile
 	doc/docbook/src/Makefile
 	doc/docbook/src/plplotdoc.xml
