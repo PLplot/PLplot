@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/02/01 22:43:47  mjl
+ * Revision 1.11  1994/02/07 22:56:18  mjl
+ * Fixed error messages to use new iodev data structure.
+ *
+ * Revision 1.10  1994/02/01  22:43:47  mjl
  * Slight change to error handling for unrecognized commands.
  *
  * Revision 1.9  1994/01/15  17:38:12  mjl
@@ -82,7 +85,8 @@
 #define plr_rd(code) \
 if (code) { fprintf(stderr, \
 	    "Unable to read from %s in %s at line %d, bytecount %d\n", \
-	    plr->filetype, __FILE__, __LINE__, plr->nbytes); return(-1); }
+	    plr->iodev->typename, __FILE__, __LINE__, plr->nbytes); \
+	    return(-1); }
 
 #define plr_cmd(code) \
 if ((code) == -1) return(-1);
@@ -94,16 +98,16 @@ if ((code) == -1) return(-1);
 
 /* Static function prototypes. */
 
-static int	plr_process1 	(PLRDev *, int);
-static int	plr_init	(PLRDev *);
-static int	plr_line	(PLRDev *, int);
-static int	plr_eop		(PLRDev *);
-static int	plr_bop 	(PLRDev *);
-static int	plr_state	(PLRDev *);
-static int	plr_esc		(PLRDev *);
-static int	plr_get		(PLRDev *);
-static int	plr_unget	(PLRDev *, U_CHAR);
-static int	get_ncoords	(PLRDev *, PLFLT *, PLFLT *, PLINT);
+static int	plr_process1 	(PLRDev *plr, int c);
+static int	plr_init	(PLRDev *plr);
+static int	plr_line	(PLRDev *plr, int c);
+static int	plr_eop		(PLRDev *plr);
+static int	plr_bop 	(PLRDev *plr);
+static int	plr_state	(PLRDev *plr);
+static int	plr_esc		(PLRDev *plr);
+static int	plr_get		(PLRDev *plr);
+static int	plr_unget	(PLRDev *plr, U_CHAR c);
+static int	get_ncoords	(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n);
 
 /* variables */
 
@@ -178,10 +182,12 @@ plr_process1(PLRDev *plr, int c)
 	break;
 
       case EOP:
+	plr->at_eop = 1;
 	plr_cmd( plr_eop(plr) );
 	break;
 
       case BOP:
+	plr->at_bop = 1;
 	plr_cmd( plr_bop(plr) );
 	break;
 
@@ -350,7 +356,7 @@ plr_line(PLRDev *plr, int c)
 if (code) { fprintf(stderr, \
 "Unable to read from %s in %s at line %d, bytecount %d\n\
 Bytes requested: %d\n", \
-plr->filetype, __FILE__, __LINE__, plr->nbytes, 2*n); return(-1); }
+plr->iodev->typename, __FILE__, __LINE__, plr->nbytes, 2*n); return(-1); }
 
 static int
 get_ncoords(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n)
