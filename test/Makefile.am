@@ -50,6 +50,9 @@ endif
 
 examples_SCRIPTS = $(scripts) plplot-test.sh
 
+TESTS = plplot-test.sh
+TESTS_ENVIRONMENT = EXAMPLES_DIR=$(top_builddir)/examples $(SHELL)
+
 EXTRA_DIST = test_c.sh             \
              test_cxx.sh           \
              test_java.sh          \

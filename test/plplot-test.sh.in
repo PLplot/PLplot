@@ -34,56 +34,61 @@
 
 version=@VERSION@
 
+export EXAMPLES_DIR=${EXAMPLES_DIR:-.} \
+       OUTPUT_DIR=${OUTPUT_DIR:-.}     \
+       device=${DEVICE:-psc}
+
 usage()
 {
    cat <<EOF
 Usage: plplot-test.sh [OPTIONS]
+
 Options:
-   [--device=DEVICE] (DEVICE = one of psc [default], ps, png, jpeg, cgm, xfig, or plmeta.
-   [--front-end=FE] (FE = one of c, cxx, f77, java, octave, python, or tcl. If this option is not specified, then all front-ends will be tested.
+   [--device=DEVICE] (DEVICE = one of psc [default], ps, png, jpeg, cgm,
+                      xfig, or plmeta)
+   [--front-end=FE]  (FE = one of c, cxx, f77, java, octave, python, or tcl)
+                     If this option is not specified, then all front-ends will
+                     be tested.  More than one front-end may be given, like
+                     this --front-end="c cxx"
+   [--examples-dir=/path/to/examples/dir]
+                     Specify path to the examples directory.  Defaults to "."
+   [--output-dir=/path/to/output/dir]
+                     Specify location where the resulting files are stored.
+                     Defaults to "."
    [--version]
    [--help]
+
+Environment variables:
+   DEVICE, FRONT_END, EXAMPLES_DIR, and OUTPUT_DIR can be used to
+   specify the devices, front-ends, and the examples and output
+    directories, but are overriden by the options --device,
+    --front-end, --examples-dir and --output-dir, respectively.
 EOF
    exit $1
 }
 
-# This script is only designed to work from a directory named "examples"
-# with a subdirectory called "c".  Check whether those conditions are true.
+# This script is only designed to work when EXAMPLES_DIR is a directory
+# with a subdirectory called "c".  Check whether this conditions is true.
 
-current=`pwd | sed 's?^..*/\(examples\)$?\1?'`
-if test ! \( "$current" = "examples" -a -d "c" \) ; then
+if test ! -d $EXAMPLES_DIR/c ; then
 cat << EOF
-This script is only designed to work from a directory named "examples"
-with a subdirectory called "c".  One or both of those conditions has been
-violated.
+This script is only designed to work when the EXAMPLES_DIR environment
+variable (overriden by option --examples_dir) is a directory with a
+subdirectory called "c".  This condition has been violated.
 EOF
 exit 1
 fi
 # These variables set by default assuming you are going to run this
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
-cdir=c
-export cdir
-cxxdir=c++
-export cxxdir
-f77dir=f77
-export f77dir
-pythondir=python
-export pythondir
-tcldir=tcl
-export tcldir
-octavedir=@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:./octave//:
-export octavedir
-installbindir=@prefix@/bin
-export installbindir
+export cdir=$EXAMPLES_DIR/c           \
+       cxxdir=$EXAMPLES_DIR/c++       \
+       f77dir=$EXAMPLES_DIR/f77       \
+       pythondir=$EXAMPLES_DIR/python \
+       tcldir=$EXAMPLES_DIR/tcl       \
+       octavedir=@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//: \
+       installbindir=@prefix@/bin
 
 fe=""
-test_c="no"
-test_cxx="no"
-test_f77="no"
-test_java="no"
-test_octave="no"
-test_python="no"
-test_tcl="no"
 
 while test $# -gt 0; do
    case "$1" in
@@ -94,24 +99,30 @@ while test $# -gt 0; do
    case $1 in
       --device=*)
          device=$optarg
-         export device
          ;;
       --version)
          echo $version
 	 exit 0
          ;;
       --front-end=*)
-         fe=$optarg
-	 if test "${fe}" != "c" -a \
-		"${fe}" != "cxx" -a \
-		"${fe}" != "f77" -a \
-		"${fe}" != "java" -a \
-		"${fe}" != "octave" -a \
-		"${fe}" != "python" -a \
-		"${fe}" != "tcl"; then
-		usage 0 1>&2
-	 fi
+         FRONT_END=$optarg
+         for i in $FRONT_END ; do
+	 test $i = "c"         \
+              -o $i = "cxx"    \
+              -o $i = "f77"    \
+              -o $i = "java"   \
+              -o $i = "octave" \
+              -o $i = "python" \
+              -o $i = "tcl"    \
+         || usage 0 1>&2
+         done
 	 ;;
+      --examples-dir=*)
+         EXAMPLES_DIR=$optarg
+         ;;
+      --output-dir=*)
+         OUTPUT_DIR=$optarg
+         ;;
       --help)
          usage 0 1>&2
          ;;
@@ -122,47 +133,24 @@ while test $# -gt 0; do
    shift
 done
 
-if test -z "$device"; then
-   device=psc
-   export device
-fi
-
-case $device in
+case "$device" in
    ps|psc)
-      dsuffix=ps
-      export dsuffix
-      options=
-      export options
+      export dsuffix=ps options=
       ;;
    png)
-      dsuffix=png
-      export dsuffix
-      options="-fam -fflen 2"
-      export options
+      export dsuffix=png options="-fam -fflen 2"
       ;;
    jpeg)
-      dsuffix=jpeg
-      export dsuffix
-      options="-fam -fflen 2"
-      export options
+      export dsuffix=jpeg options="-fam -fflen 2"
       ;;
    cgm)
-      dsuffix=cgm
-      export dsuffix
-      options=
-      export options
+      export dsuffix=cgm options=
       ;;
    xfig)
-      dsuffix=fig
-      export dsuffix
-      options="-fam -fflen 2"
-      export options
+      export dsuffix=fig options="-fam -fflen 2"
       ;;
    plmeta)
-      dsuffix=plmeta
-      export dsuffix
-      options=
-      export options
+      export dsuffix=plmeta options=
       ;;
    *)
       usage 1 1>&2
@@ -170,59 +158,28 @@ case $device in
 esac
 
 # Find out what front-ends have been configured
-if test "${fe}" = ""; then
-   test_c=yes
-   test_cxx=@enable_cxx@
-   test_f77=@enable_f77@
-   test_java=@enable_java@
-   test_octave=@enable_octave@
-   test_python=@enable_python@
-   test_tcl=@enable_tcl@
-else
-   case $fe in
-     c)
-	test_c="yes";;
-     cxx)
-	test_cxx="yes";;
-     f77)
-	test_f77="yes";;
-     java)
-	test_java="yes";;
-     octave)
-	test_octave="yes";;
-     python)
-	test_python="yes";;
-     tcl)
-	test_tcl="yes";;
-    esac
+if test -z "$FRONT_END" ; then
+   FRONT_END=c
+   test @enable_cxx@ = yes    && FRONT_END="$FRONT_END cxx"
+   test @enable_f77@ = yes    && FRONT_END="$FRONT_END f77"
+   test @enable_java@ = yes   && FRONT_END="$FRONT_END java"
+   test @enable_octave@ = yes && FRONT_END="$FRONT_END octave"
+   test @enable_python@ = yes && FRONT_END="$FRONT_END python"
+   test @enable_tcl@ = yes    && FRONT_END="$FRONT_END tcl"
 fi
 
-# Find out what options have been configured, and test accordingly.
-if test "$test_c" = "yes" ; then
-./test_c.sh
-fi
+# Find where the front-end scripts are by looking at the dirname of the
+# current script
+scripts_dir=`echo $0 | sed 's:/[^/]\+$::'`
 
-if test "$test_cxx" = "yes" ; then
-   ./test_cxx.sh
-fi
+# Call the front-end scripts
+status=0
 
-if test "$test_f77" = "yes" ; then
-   ./test_f77.sh
-fi
+for i in $FRONT_END ; do
+   echo "Testing front-end $i"
+   script=$scripts_dir/test_$i.sh
+   chmod +x $script
+   $script || status=1
+done
 
-if test "$test_java" = "yes" ; then
-   ./test_java.sh
-fi
-
-if test "$test_octave" = "yes" ; then
-   ./test_octave.sh
-fi
-
-if test "$test_python" = "yes" ; then
-   ./test_python.sh
-fi
-
-if test "$test_tcl" = "yes" ; then
-   ./test_tcl.sh
-fi
-
+exit $status
