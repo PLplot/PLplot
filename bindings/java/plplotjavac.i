@@ -23,8 +23,8 @@ A SWIG interface to PLplot for Java. This wrapper does the following:
    1) it strictly provides the C-API with the usual change of not
       requiring lengths for arrays,
 
-   2) it attempts to provide the entire API including callbacks for
-      plcont and plshade.
+   2) it attempts to provide the entire API *excluding* callbacks for
+      plcont and plshade(s) (for now).
       
    3) it works both with the single and double-precision versions of the
       PLplot library.
@@ -171,6 +171,8 @@ setup_array_2d_d( PLFLT ***pa, jdouble **adat, int nx, int ny )
 %{
    static PLINT Alen = 0;
    static PLINT Xlen = 0, Ylen = 0;
+   static PLFLT **xg;
+   static PLFLT **yg;
   %}
 
 /* The following typemaps take care of marshaling values into and out of PLplot functions. The
@@ -486,8 +488,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 	   printf( "Misshapen a array.\n" );
 	   for( j=0; j <= i; j++ )
 	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
-	   free(ai);
 	   free(adat);
+	   free(ai);
 	   return;
 	}
      }
@@ -496,8 +498,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
       printf( "Vectors must match matrix.\n" );
       for( i=0; i < nx; i++ )
 	(*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
-      free(ai);
       free(adat);
+      free(ai);
       return;
    }
    setup_array_2d_PLFLT( &$1, adat, nx, ny );
@@ -506,8 +508,8 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    for( i=0; i < nx; i++ )
      (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
 
-   free(ai);
    free(adat);
+   free(ai);
 
 }
 %typemap(freearg) (PLFLT **MatrixCk, PLINT nx, PLINT ny) {
@@ -522,55 +524,248 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    return $jnicall;
 }
 
-//temporary
-#if 0
 /* 2D array with trailing dimensions, set the X, Y size for later checking */
-%typemap(in) (PLFLT **Matrix, PLINT nx, PLINT ny) (PyArrayObject* tmp) {
-  int i, size;
-  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 2, 2);
-  if(tmp == NULL) return NULL;
-  Xlen = $2 = tmp->dimensions[0];
-  Ylen = $3 = tmp->dimensions[1];
-  size = sizeof(PLFLT)*$3;
-  $1 = (PLFLT**)malloc(sizeof(PLFLT*)*$2);
-  for(i=0; i<$2; i++)
-    $1[i] = (PLFLT*)(tmp->data + i*size);
+%typemap(in) (PLFLT **Matrix, PLINT nx, PLINT ny) {
+   jPLFLT **adat;
+   jobject *ai;
+   int nx = (*jenv)->GetArrayLength( jenv, $input );
+   int ny = -1;
+   int i, j;
+   ai = (jobject *) malloc( nx * sizeof(jobject) );
+   adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   for( i=0; i < nx; i++ )
+     {
+	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
+	adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
+
+	if (ny == -1)
+	  ny = (*jenv)->GetArrayLength( jenv, ai[i] );
+	else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
+	   printf( "Misshapen a array.\n" );
+	   for( j=0; j <= i; j++ )
+	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
+	   free(adat);
+	   free(ai);
+	   return;
+	}
+     }
+
+   Xlen = nx;
+   Ylen = ny;
+   setup_array_2d_PLFLT( &$1, adat, nx, ny );
+   $2 = nx;
+   $3 = ny;
+   for( i=0; i < nx; i++ )
+     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+
+   free(adat);
+   free(ai);
+
 }
 %typemap(freearg) (PLFLT **Matrix, PLINT nx, PLINT ny) {
-  Py_DECREF(tmp$argnum);
-  free($1);
+   free($1[0]);
+   free($1);
 }
-
-/* for plshade1, note the difference in the type for the first arg */
-%typemap(in) (PLFLT *Matrix, PLINT nx, PLINT ny) (PyArrayObject* tmp) {
-  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 2, 2);
-  if(tmp == NULL) return NULL;
-  Xlen = $2 = tmp->dimensions[0];
-  Ylen = $3 = tmp->dimensions[1];
-  $1 = (PLFLT*)tmp->data;
-}
-%typemap(freearg) (PLFLT *Matrix, PLINT nx, PLINT ny) {
-  Py_DECREF(tmp$argnum);
+%typemap(jni) (PLFLT **Matrix, PLINT nx, PLINT ny) "jobjectArray"
+%typemap(jtype) (PLFLT **Matrix, PLINT nx, PLINT ny) jPLFLTbracket2
+%typemap(jstype) (PLFLT **Matrix, PLINT nx, PLINT ny) jPLFLTbracket2
+%typemap(javain) (PLFLT **Matrix, PLINT nx, PLINT ny) "$javainput"
+%typemap(javaout) (PLFLT **Matrix, PLINT nx, PLINT ny) {
+   return $jnicall;
 }
 
 /* 2D array, check for consistency */
-%typemap(in) PLFLT **MatrixCk (PyArrayObject* tmp) {
-  int i, size;
-  tmp = (PyArrayObject *)myArray_ContiguousFromObject($input, PyArray_PLFLT, 2, 2);
-  if(tmp == NULL) return NULL;
-  if(tmp->dimensions[0] != Xlen || tmp->dimensions[1] != Ylen) {
-    PyErr_SetString(PyExc_ValueError, "Vectors must match matrix.");
-    return NULL;
-  }
-  size = sizeof(PLFLT)*Ylen;
-  $1 = (PLFLT**)malloc(sizeof(PLFLT*)*Xlen);
-  for(i=0; i<Xlen; i++)
-    $1[i] = (PLFLT*)(tmp->data + i*size);
+%typemap(in) PLFLT **MatrixCk {
+   jPLFLT **adat;
+   jobject *ai;
+   int nx = (*jenv)->GetArrayLength( jenv, $input );
+   int ny = -1;
+   int i, j;
+   ai = (jobject *) malloc( nx * sizeof(jobject) );
+   adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   for( i=0; i < nx; i++ )
+     {
+	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
+	adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
+
+	if (ny == -1)
+	  ny = (*jenv)->GetArrayLength( jenv, ai[i] );
+	else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
+	   printf( "Misshapen a array.\n" );
+	   for( j=0; j <= i; j++ )
+	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
+	   free(adat);
+	   free(ai);
+	   return;
+	}
+     }
+
+   if( nx != Xlen || ny != Ylen ) {
+      printf( "Vectors must match matrix.\n" );
+      for( i=0; i < nx; i++ )
+	(*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      free(adat);
+      free(ai);
+      return;
+   }
+   setup_array_2d_PLFLT( &$1, adat, nx, ny );
+   for( i=0; i < nx; i++ )
+     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+
+   free(adat);
+   free(ai);
+
 }
 %typemap(freearg) PLFLT **MatrixCk {
-  Py_DECREF(tmp$argnum);
-  free($1);
+   free($1[0]);
+   free($1);
 }
+%typemap(jni) PLFLT **MatrixCk "jobjectArray"
+%typemap(jtype) PLFLT **MatrixCk jPLFLTbracket2
+%typemap(jstype) PLFLT **MatrixCk jPLFLTbracket2
+%typemap(javain) PLFLT **MatrixCk "$javainput"
+%typemap(javaout) PLFLT **MatrixCk {
+   return $jnicall;
+}
+
+%{
+   typedef PLINT (*defined_func)(PLFLT, PLFLT);
+   typedef void (*fill_func)(PLINT, PLFLT*, PLFLT*);
+   typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
+   typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
+   %}
+
+/* First of two object arrays, where we check X and Y with previous.
+ * Note this is the simplified Tcl-like approach to handling the xg
+ * and yg arrays.  Later we would like to move to true call-back functions
+ * here instead like is done with the python interface. */
+%typemap(in) pltr_func pltr {
+   jPLFLT **adat;
+   jobject *ai;
+   int nx = (*jenv)->GetArrayLength( jenv, $input );
+   int ny = -1;
+   int i, j;
+   ai = (jobject *) malloc( nx * sizeof(jobject) );
+   adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   for( i=0; i < nx; i++ )
+     {
+	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
+	adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
+
+	if (ny == -1)
+	  ny = (*jenv)->GetArrayLength( jenv, ai[i] );
+	else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
+	   printf( "Misshapen a array.\n" );
+	   for( j=0; j <= i; j++ )
+	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
+	   free(adat);
+	   free(ai);
+	   return;
+	}
+     }
+   
+   if( !((nx == Xlen && ny == Ylen) || (nx == Xlen && ny == 1))) {
+      printf( "Xlen = %d, nx = %d, Ylen = %d, ny = %d\n", Xlen, nx, Ylen, ny );
+      printf( "X vector or matrix must match matrix dimensions.\n" );
+      for( i=0; i < nx; i++ )
+	(*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      free(adat);
+      free(ai);
+      return;
+   }
+   /* Store whether second dimension is unity. */
+   Alen = ny;
+   setup_array_2d_PLFLT( &xg, adat, nx, ny );
+   for( i=0; i < nx; i++ )
+     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+
+   free(adat);
+   free(ai);
+   $1 = pltr2;
+
+}
+
+%typemap(freearg) pltr_func pltr {
+   free(xg[0]);
+   free(xg);
+}
+%typemap(jni) pltr_func pltr "jobjectArray"
+%typemap(jtype) pltr_func pltr jPLFLTbracket2
+%typemap(jstype) pltr_func pltr jPLFLTbracket2
+%typemap(javain) pltr_func pltr "$javainput"
+%typemap(javaout) pltr_func pltr {
+   return $jnicall;
+}
+
+/* Second of two object arrays, where we check X and Y with previous object. */
+%typemap(in) PLPointer OBJECT_DATA {
+   jPLFLT **adat;
+   jobject *ai;
+   int nx = (*jenv)->GetArrayLength( jenv, $input );
+   int ny = -1;
+   int i, j;
+   PLcGrid2 cgrid;
+   ai = (jobject *) malloc( nx * sizeof(jobject) );
+   adat = (jPLFLT **) malloc( nx * sizeof(jPLFLT *) );
+
+   for( i=0; i < nx; i++ )
+     {
+	ai[i] = (*jenv)->GetObjectArrayElement( jenv, $input, i );
+	adat[i] = (*jenv)->GetPLFLTArrayElements( jenv, ai[i], 0 );
+
+	if (ny == -1)
+	  ny = (*jenv)->GetArrayLength( jenv, ai[i] );
+	else if (ny != (*jenv)->GetArrayLength( jenv, ai[i] )) {
+	   printf( "Misshapen a array.\n" );
+	   for( j=0; j <= i; j++ )
+	     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[j], adat[j], 0 );
+	   free(adat);
+	   free(ai);
+	   return;
+	}
+     }
+
+   if( !((nx == Xlen && ny == Ylen) || (nx == Ylen && ny == 1 && ny == Alen))) {
+      printf( "Xlen = %d, nx = %d, Ylen = %d, Alen = %d, ny = %d\n", 
+	      Xlen, nx, Ylen, Alen, ny );
+      printf( "Y vector or matrix must match matrix dimensions.\n" );
+      for( i=0; i < nx; i++ )
+	(*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+      free(adat);
+      free(ai);
+      return;
+   }
+   setup_array_2d_PLFLT( &yg, adat, nx, ny );
+   for( i=0; i < nx; i++ )
+     (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
+
+   free(adat);
+   free(ai);
+   cgrid.xg = xg;
+   cgrid.yg = yg;
+   cgrid.nx = nx;
+   cgrid.ny = ny;
+   $1 = &cgrid;
+
+}
+
+%typemap(freearg) PLPointer OBJECT_DATA {
+   free(yg[0]);
+   free(yg);
+}
+%typemap(jni) PLPointer OBJECT_DATA "jobjectArray"
+%typemap(jtype) PLPointer OBJECT_DATA jPLFLTbracket2
+%typemap(jstype) PLPointer OBJECT_DATA jPLFLTbracket2
+%typemap(javain) PLPointer OBJECT_DATA "$javainput"
+%typemap(javaout) PLPointer OBJECT_DATA {
+   return $jnicall;
+}
+
+//temporary
+#if 0
 /***************************
 	String returning functions
 ****************************/
@@ -584,6 +779,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
 %typemap(argout) char* OUTPUT {
   $result = $1;
 }
+//temporary
 #endif
 
 /* swig compatible PLplot API definitions from here on. */

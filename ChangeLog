@@ -1,3 +1,15 @@
+2002-12-29  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* Implement additional 2-d arrays for the swig-based Java API. These
+	  new typemaps allow plcont (and x09.java) to work.  Note, only the
+	  2-d version is implemented, there is no angle wrap code, and kx,
+	  lx, ky, ly always have to be in the argument list.  In other words
+	  this is the raw java interface to PLplot.  Thus, a number of
+	  adjustments had to be made to x09.java to work with this raw
+	  interface.  However, once the user-friendly interface is done, it
+	  should be possible to overload 1-d arrays when needed for xg0
+	  through yg1, have angle wrap code, and also drop kx, lx, ky, ly.
+
 2002-12-28  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Implement the simpler 2-d arrays for the swig-based Java API.  This

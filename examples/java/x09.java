@@ -49,17 +49,20 @@ class x09 {
     {
         int i, j;
 
-        double[] xg0 = new double[XPTS];
-        double[] yg0 = new double[YPTS];
-        double[] xg1 = new double[XPTS];
-        double[] yg1 = new double[YPTS];
+        double[][] xg0 = new double[XPTS][YPTS];
+        double[][] yg0 = new double[XPTS][YPTS];
+        double[][] xg1 = new double[XPTS][YPTS];
+        double[][] yg1 = new double[XPTS][YPTS];
         double[][] xg2 = new double[XPTS][YPTS];
         double[][] yg2 = new double[XPTS][YPTS];
         double[][] z = new double[XPTS][YPTS];
         double[][] w = new double[XPTS][YPTS];
 	
         double xx, yy, argx, argy, distort;
-	final int mark = 1500, space = 1500;
+	final int[] mark = {1500};
+        final int[] space = {1500};
+	final int[] mark0 = {};
+        final int[] space0 = {};
 	
     // Parse and process command line arguments.
 
@@ -94,10 +97,13 @@ class x09 {
 
             // Note these are one-dimensional because of arrangement of
             // zeros in the final tr definition above.
-                xg0[i] = xx;
-                yg0[j] = yy;
-                xg1[i] = xx + distort * Math.cos(argx);
-                yg1[j] = yy - distort * Math.cos(argy);
+	    // But I haven't found out yet, how with swig to overload
+	    // one- and two-dimensional array arguments so for now make 
+	    // xg0 --> yg1 two-dimensional.
+                xg0[i][j] = xx;
+                yg0[i][j] = yy;
+                xg1[i][j] = xx + distort * Math.cos(argx);
+                yg1[i][j] = yy - distort * Math.cos(argy);
 	      
                 xg2[i][j] = xx + distort * Math.cos(argx) * Math.cos(argy);
                 yg2[i][j] = yy - distort * Math.cos(argx) * Math.cos(argy);
@@ -106,83 +112,82 @@ class x09 {
 
 
     // Plot using scaled identity transform used to create xg0 and yg0
-	pls.plsetcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
-        pls.plcont( z, clevel, xg0, yg0, 0 );
-    // May want to reconsider the pls.plstyl API, i.e., input arrays?
-	pls.plstyl(1, mark, space);
+        pls.plcont( z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+	pls.plstyl(mark, space);
 	pls.plcol0(3);
-	pls.plcont(w, clevel, xg0, yg0, 0);
-	pls.plstyl(0, mark, space);
+	pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+	pls.plstyl(mark0, space0);
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-	pls.plsetcontlabelparam(0.006, 0.3, 0.1, 1);
+	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
-        pls.plcont(z, clevel, xg0, yg0, 0);
-	pls.plstyl(1, mark, space);
+        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+	pls.plstyl(mark, space);
 	pls.plcol0(3);
-        pls.plcont(w, clevel, xg0, yg0, 0);
-	pls.plstyl(0, mark, space);
+        pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
+	pls.plstyl(mark0, space0);
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     // Plot using 1d coordinate transform
-	pls.plsetcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
-        pls.plcont(z, clevel, xg1, yg1, 0);
-	pls.plstyl(1, mark, space);
+        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
+	pls.plstyl(mark, space);
 	pls.plcol0(3);
-	pls.plcont(w, clevel, xg1, yg1, 0);
-	pls.plstyl(0, mark, space);
+	pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1) ;
+	pls.plstyl(mark0, space0);
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-	pls.plsetcontlabelparam(0.006, 0.3, 0.1, 1);
+	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
-        pls.plcont(z, clevel, xg1, yg1, 0);
-	pls.plstyl(1, mark, space);
+        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
+	pls.plstyl(mark, space);
 	pls.plcol0(3);
-        pls.plcont(w, clevel, xg1, yg1, 0);
-	pls.plstyl(0, mark, space);
+        pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
+	pls.plstyl(mark0, space0);
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     // Plot using 2d coordinate transform
-	pls.plsetcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
-        pls.plcont(z, clevel, xg2, yg2, 0);
-	pls.plstyl(1, mark, space);
+        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
+	pls.plstyl(mark, space);
 	pls.plcol0(3);
-        pls.plcont(w, clevel, xg2, yg2, 0);
-	pls.plstyl(0, mark, space);
+        pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
+	pls.plstyl(mark0, space0);
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-	pls.plsetcontlabelparam(0.006, 0.3, 0.1, 1);
+	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
-        pls.plcont(z, clevel, xg2, yg2, 0);
-	pls.plstyl(1, mark, space);
+        pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
+	pls.plstyl(mark, space);
 	pls.plcol0(3);
-        pls.plcont(w, clevel, xg2, yg2, 0);
-	pls.plstyl(0, mark, space);
+        pls.plcont(w, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
+	pls.plstyl(mark0, space0);
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
     
-        pls.plsetcontlabelparam(0.006, 0.3, 0.1, 0);
+        pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 	polar();
-        pls.plsetcontlabelparam(0.006, 0.3, 0.1, 1);
+        pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	polar();
 
-	pls.plsetcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 	potential();
-        pls.plsetcontlabelparam(0.006, 0.3, 0.1, 1);
+        pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	potential();
 
 	pls.plend();
@@ -194,9 +199,9 @@ class x09 {
 	int i,j;
         double[] px = new double[PERIMETERPTS];
         double[] py = new double[PERIMETERPTS];
-        double[][] xg = new double[RPTS][THETAPTS-1];
-        double[][] yg = new double[RPTS][THETAPTS-1];
-        double[][] z = new double[RPTS][THETAPTS-1];
+        double[][] xg = new double[RPTS][THETAPTS];
+        double[][] yg = new double[RPTS][THETAPTS];
+        double[][] z = new double[RPTS][THETAPTS];
 	double t, r, theta;
 	double [] lev = new double[10];
 
@@ -209,13 +214,13 @@ class x09 {
             px[i] = Math.cos(t);
             py[i] = Math.sin(t);
 	}
-	pls.plline(PERIMETERPTS, px, py);
+	pls.plline(px, py);
 	       
     // Create data to be contoured.
    
 	for (i = 0; i < RPTS; i++) {
             r = i/(double)(RPTS-1);
-            for (j = 0; j < THETAPTS-1; j++) {
+            for (j = 0; j < THETAPTS; j++) {
                 theta = (2.*Math.PI/(double)(THETAPTS-1))*(double)j;
                 xg[i][j] = r*Math.cos(theta);
                 yg[i][j] = r*Math.sin(theta);
@@ -228,7 +233,7 @@ class x09 {
 	}
 
 	pls.plcol0(2);
-        pls.plcont( z, lev, xg, yg, 2 );
+        pls.plcont( z, 1, RPTS, 1, THETAPTS, lev, xg, yg );
 	pls.plcol0(1);
 	pls.pllab("", "", "Polar Contour Plot");
     }
@@ -256,9 +261,9 @@ class x09 {
 	double peps, xpmin, xpmax, ypmin, ypmax;
 	double eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
 	double div1, div1i, div2, div2i;
-	double [][] xg = new double[PRPTS][PTHETAPTS-1] ;
-	double [][] yg = new double[PRPTS][PTHETAPTS-1] ;
-	double [][] z = new double[PRPTS][PTHETAPTS-1] ;
+	double [][] xg = new double[PRPTS][PTHETAPTS] ;
+	double [][] yg = new double[PRPTS][PTHETAPTS] ;
+	double [][] z = new double[PRPTS][PTHETAPTS] ;
 	int nlevelneg, nlevelpos;
 	double dz, clevel;
 	double [] clevelneg_store = new double[PNLEVEL];
@@ -274,7 +279,7 @@ class x09 {
 	r = 0.; 
 	for (i = 0; i < PRPTS; i++) {
             r = 0.5 + (double) i;
-            for (j = 0; j < PTHETAPTS-1; j++) {
+            for (j = 0; j < PTHETAPTS; j++) {
                 theta = (2.*Math.PI/(double)(PTHETAPTS-1))*(0.5 + (double) j);
                 xg[i][j] = r*Math.cos(theta);
                 yg[i][j] = r*Math.sin(theta);
@@ -283,11 +288,11 @@ class x09 {
 
 	rmax = r;
 
-        f2mnmx( xg, PRPTS, PTHETAPTS-1 );
+        f2mnmx( xg, PRPTS, PTHETAPTS );
         xmin = fmin;
         xmax = fmax;
 
-        f2mnmx( yg, PRPTS, PTHETAPTS-1 );
+        f2mnmx( yg, PRPTS, PTHETAPTS );
         ymin = fmin;
         ymax = fmax;
 
@@ -321,7 +326,7 @@ class x09 {
 	d2i = Math.pow(rmax,2)/d2;
 
 	for (i = 0; i < PRPTS; i++) {
-            for (j = 0; j < PTHETAPTS-1; j++) {
+            for (j = 0; j < PTHETAPTS; j++) {
                 div1 = Math.sqrt(Math.pow(xg[i][j]-d1,2) + Math.pow(yg[i][j]-d1,2) + Math.pow(eps,2));
                 div1i = Math.sqrt(Math.pow(xg[i][j]-d1i,2) + Math.pow(yg[i][j]-d1i,2) + Math.pow(eps,2));
                 div2 = Math.sqrt(Math.pow(xg[i][j]-d2,2) + Math.pow(yg[i][j]+d2,2) + Math.pow(eps,2));
@@ -330,7 +335,7 @@ class x09 {
             }
 	}
 
-        f2mnmx( z, PRPTS, PTHETAPTS-1 );
+        f2mnmx( z, PRPTS, PTHETAPTS );
         zmin = fmin;
         zmax = fmax;
 
@@ -375,7 +380,7 @@ class x09 {
 	   // which is essential for the java wrapper of plplot to work correctly.
 	   double [] clevelneg = new double[nlevelneg];
 	   System.arraycopy(clevelneg_store, 0, clevelneg, 0, nlevelneg);
-	   pls.plcont( z, clevelneg, xg, yg, 2 );
+	   pls.plcont( z, 1, PRPTS, 1, PTHETAPTS, clevelneg, xg, yg );
 	}
 
 	if(nlevelpos >0) {
@@ -385,7 +390,7 @@ class x09 {
 	   // The point here is to copy results into an array of the correct size
 	   // which is essential for the java wrapper of plplot to work correctly.
 	   System.arraycopy(clevelpos_store, 0, clevelpos, 0, nlevelpos);
-	   pls.plcont( z, clevelpos, xg, yg, 2 );
+	   pls.plcont( z, 1, PRPTS, 1, PTHETAPTS, clevelpos, xg, yg );
 	}
 		 
     // Draw outer boundary
@@ -396,7 +401,7 @@ class x09 {
 	}
 
 	pls.plcol0(ncolbox);
-	pls.plline(PPERIMETERPTS, px, py);
+	pls.plline(px, py);
 	       
 	pls.plcol0(ncollab);
 	pls.pllab("", "", "Shielded potential of charges in a conducting sphere");

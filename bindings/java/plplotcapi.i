@@ -179,14 +179,12 @@ DOC(plcol1, "Set color, map 1.  Argument is a float between 0. and 1.")
 void
 plcol1(PLFLT col1);
 
-#if 0
 DOC(plcont, "Draw a contour plot.")
 void
 plcont(PLFLT **Matrix, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	 PLINT ky, PLINT ly, PLFLT *Array, PLINT n,
 	 pltr_func pltr,
-	 PLPointer PYOBJECT_DATA);
-#endif
+	 PLPointer OBJECT_DATA);
 
 DOC(plcpstrm, "Copy state parameters from the reference stream to the current stream.")
 void
@@ -512,6 +510,7 @@ DOC(plsfnam, "Set the output file name.")
 void
 plsfnam(const char *fnam);
 
+//temporary
 #if 0
 DOC(plshades, "Shade regions with continuous range of colours.")
 void 
@@ -521,7 +520,7 @@ plshades( PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 	  PLINT cont_color, PLINT cont_width,
 	  fill_func ff, PLINT rectangular,
 	  pltr_func pltr,
-	  PLPointer PYOBJECT_DATA);
+	  PLPointer OBJECT_DATA);
 
 DOC(plshade, "Shade region with discrete colour, pattern fill.")
 void 
@@ -533,7 +532,8 @@ plshade(PLFLT **Matrix, PLINT nx, PLINT ny, defined_func df,
 	  PLINT max_color, PLINT max_width,
 	  fill_func ff, PLINT rectangular,
 	  pltr_func pltr,
-	  PLPointer PYOBJECT_DATA);
+	  PLPointer OBJECT_DATA);
+//temporary
 #endif
 
 DOC(plsmaj, "Set up lengths of major tick marks.")
@@ -657,7 +657,7 @@ DOC(plxormod, "Set xor mode; mode = 1-enter, 0-leave, status = 0 if not interact
 void
 plxormod(PLINT mode, PLINT *OUTPUT);
 
-# if 0
+#if 0
 
 /* Deprecated functions that are in common API, but we don't want to
  * propagate them to the python API. */
@@ -679,7 +679,7 @@ plshade1(PLFLT *Matrix, PLINT nx, PLINT ny, defined_func df,
 	 PLINT max_color, PLINT max_width,
 	 fill_func ff, PLINT rectangular,
 	 pltr_func pltr,
-	 PLPointer PYOBJECT_DATA);
+	 PLPointer OBJECT_DATA);
 
 #endif
 
@@ -698,11 +698,11 @@ plshade1(PLFLT *Matrix, PLINT nx, PLINT ny, defined_func df,
  */
 void
 plfcont(f2eval_func f2eval,
-	PLPointer PYOBJECT_DATA,
+	PLPointer OBJECT_DATA,
 	PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
 	pltr_func pltr,
-	PLPointer PYOBJECT_DATA);
+	PLPointer OBJECT_DATA);
 /* plot continental outline in world coordinates */
 
 void
@@ -718,7 +718,7 @@ plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
 
 void 
 plfshade(f2eval_func,
-	 PLPointer PYOBJECT_DATA,
+	 PLPointer OBJECT_DATA,
 	 c2eval_func,
 	 PLPointer c2eval_data,
 	 PLINT nx, PLINT ny, 
@@ -729,7 +729,7 @@ plfshade(f2eval_func,
 	 PLINT max_color, PLINT max_width,
 	 fill_func, PLINT rectangular,
 	 pltr_func,
-	 PLPointer PYOBJECT_DATA);
+	 PLPointer OBJECT_DATA);
 
 /* Converts input values from relative device coordinates to relative plot */
 /* coordinates. */
