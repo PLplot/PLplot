@@ -471,7 +471,8 @@ plD_state_tk(PLStream *pls, PLINT op)
 	break;
 
     case PLSTATE_COLOR0:
-	tk_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->icol0) );
+	tk_wr( pdf_wr_2bytes(pls->pdfs, (short) pls->icol0) );
+
 	if (pls->icol0 == PL_RGB_COLOR) {
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.r) );
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.g) );
