@@ -1,16 +1,5 @@
 /* -*-C-*- */
 /* $Id$
- * $Log$
- * Revision 1.2  2000/05/12 18:05:32  furnish
- * Imported latest Mac port work by Rob Managan.
- *
- * Revision 1.1  1995/04/11  09:39:15  mjl
- * Mac port, contributed by Mark Franz.
- *
-*/
-
-/*
-    plDevs.h
 
     Mac-specific version.
 
@@ -43,7 +32,6 @@
 #undef PLD_imp
 #undef PLD_xwin
 #undef PLD_tk
-#undef PLD_dp
 #define PLD_mac
 
 #endif	/* __PLDEVS_H__ */

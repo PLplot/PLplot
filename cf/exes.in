@@ -14,7 +14,7 @@
 #	fonts		font generators and font files
 #	pltcl		PLplot tcl interpreter (i.e. enhanced tclsh)
 #	plserver	PLplot tcl/tk interpreter (i.e. enhanced wish).
-#			Handles plplot Tk/DP driver rendering.
+#			Handles plplot Tk driver rendering.
 #	plmodule	Dynamically loaded module for PLplot python scripts
 #
 #

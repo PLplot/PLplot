@@ -99,12 +99,6 @@ $(CXXLIB_SO): $(CXX_OBJS)
 # Sick hacks.
 # -----------------------------------------------------------------------------
 
-# Needs to be compiled using K&R C.
-
-tcpip.o:
-	$(OCC) $(CC_FLAGS) tcpip.c
-	cd shared; $(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../tcpip.c
-
 stupidtk.o:
 	$(CC) $(CC_FLAGS) stupidtk.c
 	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../stupidtk.c

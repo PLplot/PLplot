@@ -90,7 +90,6 @@ enable_python=yes
 enable_tcl=yes
 enable_tk=yes
 enable_itcl=yes
-enable_dp=yes
 enable_xwin=yes
 
 divert(-1)
@@ -107,7 +106,7 @@ MY_ARG_ENABLE(drivers,
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4107, mskermit,
 conex, linuxvga, vlt, versaterm, dg300, ps, xfig, ljii, hp7470, hp7580,
-lj_hpgl, imp, xwin, tk, dp, pbm])
+lj_hpgl, imp, xwin, tk, pbm])
 
 # Macro to set one driver enable value
 
@@ -768,12 +767,12 @@ devices:	$DEVICES
 with_shlib:	$with_shlib		with_double:	$with_double
 with_debug:	$with_debug		with_opt:	$with_opt
 with_warn:	$with_warn		with_profile:	$with_profile
-                                        with_gcc:	$with_gcc
+with_gcc:	$with_gcc
 
 enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
-enable_tk:	$enable_tk		enable_dp:	$enable_dp
-enable_itcl:	$enable_itcl		enable_f77:	$enable_f77
+enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
 enable_cxx:	$enable_cxx		enable_python:	$enable_python
+enable_f77:	$enable_f77
 "
 
 cat << EOF > config.summary

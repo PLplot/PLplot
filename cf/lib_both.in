@@ -46,13 +46,6 @@ $(PLLIB_SH):	$(LIB_OBJS)
 # Sick hacks.
 # -----------------------------------------------------------------------
 
-# Needs to be compiled using K&R C.
-
-tcpip.o:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
-		plstream.h tcpip.c
-	$(OCC) $(CC_FLAGS) tcpip.c
-	cd shared; $(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../tcpip.c
-
 # Optimizer under AIX 3.2.3 bogues out here.
 
 xwin.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h plplotX.h xwin.c

@@ -1,6 +1,6 @@
 /* -*-C-*-
  *
- *  plDevs.h
+ *  $Id$
  *
  *  Maurice LeBrun
  *  IFS, University of Texas at Austin
@@ -34,7 +34,6 @@
 #undef PLD_imp			
 #undef PLD_xwin			
 #undef PLD_tk
-#undef PLD_dp
 
 #define PLD_emxvga
 #define PLD_ljii

@@ -127,12 +127,6 @@ $(CXXLIB_SO): $(CXX_OBJS)
 # Sick hacks.
 # -----------------------------------------------------------------------------
 
-# Needs to be compiled using K&R C.
-
-tcpip.o:
-	$(OCC) $(CC_FLAGS) tcpip.c
-	cd shared; $(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../tcpip.c
-
 # This target not referenced when tk is not enabled.  This is fortunate
 # since I doubt it can be handled symbolically in any case.
 stupidtk.o:

@@ -97,13 +97,3 @@ $(CXXLIB_SA):	$(CXX_OBJS_SA)
 	$(RANLIB) $(CXXLIB_SA)
 	@echo ""
 
-# -----------------------------------------------------------------------------
-# Sick hacks.
-# -----------------------------------------------------------------------------
-
-# Needs to be compiled using K&R C.
-
-tcpip.o:
-	$(OCC) $(CC_FLAGS) tcpip.c
-	cd shared; $(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../tcpip.c
-

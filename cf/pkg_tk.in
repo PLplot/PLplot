@@ -8,9 +8,7 @@
 # Make assignments for PLplot/TK support.
 # -----------------------------------------------------------------------------
 
-TK_C		= tk.c tkshell.c tcpip.c plframe.c tkMain.c plr.c
 TK_C		= tk.c Pltk_Init.c tcpip.c plframe.c tkMain.c plr.c
-TK_OBJ		= tk$O tkshell$O tcpip$O plframe$O plr$O
 TK_OBJ		= tk$O Pltk_Init$O tcpip$O plframe$O plr$O
 TK_OBJ_SA	= tkMain$O 
 TK_EXE		= plserver$E

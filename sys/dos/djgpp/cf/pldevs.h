@@ -1,21 +1,5 @@
 /* -*-C-*-
 /* $Id$
- * $Log$
- * Revision 1.1  1994/08/10 01:08:26  mjl
- * New directory structure, config files, and other modifications for PLplot
- * 4.99h/djgpp DOS port, submitted by Paul Kirschner.  New driver supports
- * color fill.
- *
- * Revision 1.2  1994/07/25  05:57:32  mjl
- * Added line for new lj_hpgl driver.
- *
- * Revision 1.1  1994/07/19  22:27:37  mjl
- * Header file for holding defines that enable PLplot device drivers.
- * Included by all device drivers and plcore.h.
-*/
-
-/*
-    plDevs.h.in
 
     Maurice LeBrun
     IFS, University of Texas at Austin
@@ -49,7 +33,6 @@
 #undef PLD_imp
 #undef PLD_xwin
 #undef PLD_tk
-#undef PLD_dp
 
 #define PLD_gnusvga
 #define PLD_ljii

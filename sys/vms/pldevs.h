@@ -1,4 +1,5 @@
-/* plDevs.h
+/* 
+ * $Id$
  * Header file for holding defines that enable PLplot device drivers.
  */
 /* plDevs.h for VMS system
@@ -26,6 +27,5 @@
 #define PLD_ljii 1
 #define PLD_dg300 1
 /* #undef PLD_tk */
-/* #undef PLD_dp */
 
 #endif  /* __PLDEVS_H__ */

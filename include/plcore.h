@@ -224,22 +224,6 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef PLD_dp
-    {
-	"Tcl-DP/TK Window",
-	"dp",
-	1,
-	plD_init_dp,
-	plD_line_tk,
-	plD_polyline_tk,
-	plD_eop_tk,
-	plD_bop_tk,
-	plD_tidy_tk,
-	plD_state_tk,
-	plD_esc_tk
-    },
-#endif
-
 #ifdef PLD_tk
     {
 	"Tcl/TK Window",

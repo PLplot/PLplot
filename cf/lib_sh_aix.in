@@ -72,12 +72,3 @@ $(CXXLIB_AR):	$(CXX_OBJS)
 	rm -f $(CXXLIB_AR)~ $(CXXLIB_AR).syms shr.o
 	@echo ""
 
-# -----------------------------------------------------------------------------
-# Sick hacks.
-# -----------------------------------------------------------------------------
-
-# Needs to be compiled using K&R C.
-
-tcpip.o:
-	$(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) tcpip.c
-

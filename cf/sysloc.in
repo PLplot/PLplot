@@ -18,7 +18,6 @@ LIBPATH=
 # Default linker library commands.  These may need version numbers
 # appended to them though.
 
-DPLIBSTR=-ldpnetwork
 ITKLIBSTR=-litk
 TKLIBSTR=-ltk
 ITCLLIBSTR=-litcl
@@ -317,31 +316,6 @@ if test "$enable_itk" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
-# dp.h
-# ----------------------------------------------------------------------------
-
-if test "$enable_tcl" = "no" -o "$enable_tk" = "no"; then
-    enable_dp=no
-fi
-
-if test "$enable_dp" = "yes"; then
-
-    if test -z "$DPINCDIR"; then
-	FIND_INC(dp, DPINCDIR, enable_dp)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# libdpnetwork (Tcl-DP)
-# ----------------------------------------------------------------------------
-
-if test "$enable_dp" = "yes"; then
-    if test -z "$DPLIBDIR"; then
-	FIND_LIB(dpnetwork, DPLIBDIR, DPLIBSTR, enable_dp)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
 # Assemble list of tcl/TK/X/whatever include directives.  These can go in
 # any order, except the first, which supports the 'include "plplot/<header>"'
 # syntax.
@@ -353,9 +327,6 @@ fi
 if test "$enable_tcl" = "yes"; then
     ADD_TO_INCS($TCLINCDIR, INCS, INCPATH)
 fi
-if test "$enable_dp" = "yes"; then
-    ADD_TO_INCS($DPINCDIR, INCS, INCPATH)
-fi
 if test "$enable_itcl" = "yes"; then
     ADD_TO_INCS($ITCLINCDIR, INCS, INCPATH)
 fi
@@ -366,15 +337,11 @@ fi
 # ----------------------------------------------------------------------------
 # Assemble list of tcl/TK/X/whatever libraries.
 # Note the library order CAN be important, depending on the system:
-# The full Tcl-DP library depends on both Tk and Tcl so must come first.
 # Tk depends on Tcl and X11 so must come before both.
 # Itcl depends on Tcl so must come before it.
 # Tcl and X11 can be put in either order.
 # ----------------------------------------------------------------------------
 
-if test "$enable_dp" = "yes"; then
-    ADD_TO_LIBS($DPLIBDIR, $DPLIBSTR, LIBS, LIBPATH)
-fi
 if test "$enable_itk" = "yes"; then
     ADD_TO_LIBS($ITKLIBDIR, $ITKLIBSTR, LIBS, LIBPATH)
 fi
