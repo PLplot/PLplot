@@ -1181,7 +1181,6 @@ void c_plsfnam(const char *fnam); //%name plsfnam
 
 /* the simpler plshade() */
 
-//void my_plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
 void my_plshade(PLFLT *a, PLINT nx, PLINT ny, PLFLT *defined,
 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	 PLFLT shade_min, PLFLT shade_max,
@@ -1537,6 +1536,18 @@ int my_plTranslateCursor(PLFLT *x, PLFLT *y, PLFLT x_in, PLFLT y_in) {
 	*x = gin.wX; *y = gin.wY;
 	return st;
 } //%name plTranslateCursor //%output x, y
+
+void plimage( PLFLT **data, PLINT nx, PLINT ny, 
+	      PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	      PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax); //%nowrap
+
+void my_plimage(PLFLT *a, PLINT nx, PLINT ny, 
+		PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax ,
+		PLFLT dxmin, PLFLT dxmax, PLFLT dymin, PLFLT dymax) {
+
+  f2c(a,aa,nx,ny);
+  plimage(aa, nx, ny, xmin, xmax, ymin, ymax, dxmin, dxmax, dymin, dymax);
+} //%name pplimage //%input a(nx, ny)
 
 #ifdef __cplusplus
 }
