@@ -343,7 +343,7 @@ AC_DEFUN([PL_GET_DLLNAME],[
     $2=`grep ^dlname= $1.la | sed "s/dlname='\(.*\)'/\1/"`
     cd ..
     rm -rf $TMP_DIR
-    AC_MSG_RESULT([$[$3]])
+    AC_MSG_RESULT([$[$2]])
   fi
 ])
 dnl ------------------------------------------------------------------------
