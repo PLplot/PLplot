@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.47  1995/06/03 06:07:11  mjl
+ * Revision 1.48  1995/06/23 02:57:08  mjl
+ * Moved call to plP_subpInit() to bop, to make sure device dimensions are
+ * calculated properly.
+ *
+ * Revision 1.47  1995/06/03  06:07:11  mjl
  * Added some casts to eliminate warnings under SunOS 4.x.
  *
  * Revision 1.46  1995/05/07  03:09:17  mjl
@@ -156,6 +160,7 @@ plP_bop(void)
 
     plsc->page_status = AT_BOP;
     plsc->nplwin = 0;
+    plP_subpInit();
 
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_bop) (plsc);
@@ -1355,6 +1360,10 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	return;
     }
 
+/* May be debugging */
+
+    plsc->debug = plsr->debug;
+
 /* Plot buffer -- need to copy file pointer so that plreplot() works */
 /* This also prevents inadvertent writes into the plot buffer */
 
@@ -1374,9 +1383,13 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 
 /* Map device coordinates */
 
-    if ( ! (flags & 0x01))
+    if ( ! (flags & 0x01)) {
+	pldebug("plcpstrm", "mapping parameters: %d %d %d %d %f %f\n",
+		plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
+		plsr->xpmm, plsr->ypmm);
 	plsdimap(plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
 		 plsr->xpmm, plsr->ypmm);
+    }
 
 /* current color */
 
@@ -1610,8 +1623,12 @@ c_plssub(PLINT nx, PLINT ny)
     if (ny > 0)
 	plsc->nsuby = ny;
 
-    if (plsc->level > 0)
-	plP_subpInit();
+/* Force a page advance */
+
+    if (plsc->level > 0) {
+	plP_eop();
+	plP_bop();
+    }
 }
 
 /* Set the device (keyword) name */
