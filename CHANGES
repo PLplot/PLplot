@@ -5,7 +5,8 @@ is complete.
 I typically construct entries by stripping off all the CVS (the source
 maintenance program we use) commit messages from each file.  Those that
 are common to all are handled separately to make it a bit less junky.
-Minor stuff I feel free to omit.
+Changes that do not reflect any new capability (changes to comments,
+header file shuffling, elimination of warnings, etc) I will often omit.
 
 *****************************************************************************
 PLplot 4.99i changes
@@ -14,17 +15,80 @@ Sep ?, 1994
 
 This release contains several important bug fixes.  Changes grouped by
 files affected.  The old Changes.log file has been moved to the doc
-directory as Rel4p99h.doc for future reference.
+directory as Rel4p99h.doc for future reference.  
 
 Maurice LeBrun	mjl@dino.ph.utexas.edu
+
+-----------------------------------------------------------------------------
+Miscellaneous
+-----------------------------------------------------------------------------
+
+Changed distribution status to GPL/LGPL.  Added GNU files: COPYING (GPL),
+COPYING.LIB (LGPL).
+
+Name changes: Changes.log -> CHANGES, README.1ST -> NEWS, COPYRIGHTS ->
+Copyright.
+
+Added file: INSTALL, to explain install procedure under Unix.  Chopped
+from the FAQ.
+
+Moved: README.local to doc/.
+
+FAQ updated.
 
 -----------------------------------------------------------------------------
 Install scripts, makefile, etc.
 -----------------------------------------------------------------------------
 
+- Moved remaining stuff for building configure script to cf/ to reduce
+  top level clutter.
+- Eliminated use of -fast for Fortran compiler under SunOS.
+- Switched enable_x11 to enable_xwin to be compatible with driver name.
+  Really works now.
+- Eliminated bogus lines dealing with shared libraries on systems where
+  I don't support them yet.
+- Minor fix to allow for a missing tmp directory.
+
 -----------------------------------------------------------------------------
 Main source files
 -----------------------------------------------------------------------------
+
+plpage.c:
+ * Revision 1.11  1994/08/25  04:10:03  mjl
+ * Moved plClrCWindows() out of pladv() into plP_eop(), to ensure it always
+ * gets called at the end of a page.  Put in handling for insufficient
+ * remaining space in windows struct.
+
+plctrl.c:
+ * Revision 1.26  1994/09/02  05:09:42  mjl
+ * Flush stdout before issuing error message, to be sure we are really on the
+ * text screen.
+ *
+ * Revision 1.25  1994/08/25  04:08:09  mjl
+ * Fixed limiting saturation value in a case that was affecting grayscale
+ * output.  Contributed by Radey Shouman.  Also modified pltext/plgra to
+ * return silently if plinit not yet called.
+
+plcore.c:
+ * Revision 1.39  1994/08/25  04:06:26  mjl
+ * Moved call of plClrCWindows() to plP_eop where it belongs.
+
+plbox.c:
+ * Revision 1.14  1994/08/29  22:05:19  mjl
+ * Fixed a bug that was preventing the exponential label from showing up
+ * under certain circumstances.
+
+plcore.h:
+ * Revision 1.24  1994/08/26  19:17:44  mjl
+ * Entries for conex device added; contributed by Mark Olesen.
+
+plDevs.h.in:
+ * Revision 1.4  1994/08/26  19:17:21  mjl
+ * Define for conex device added; contributed by Mark Olesen.
+
+drivers.h:
+ * Revision 1.21  1994/08/26  19:17:42  mjl
+ * Entries for conex device added; contributed by Mark Olesen.
 
 -----------------------------------------------------------------------------
 Fortran interface
@@ -34,25 +98,107 @@ Fortran interface
 Tcl API
 -----------------------------------------------------------------------------
 
+pltcl.c:
+ * Revision 1.5  1994/08/25  04:05:16  mjl
+ * Fixed error output; removes spurious <RET> at end.
+
 -----------------------------------------------------------------------------
 Example programs
 -----------------------------------------------------------------------------
+
+x14c.c:
+ * Revision 1.11  1994/08/25  04:02:32  mjl
+ * Now can work with either TK or Tcl-DP.  Changed to use TK by default.
+
 -----------------------------------------------------------------------------
 Drivers
 -----------------------------------------------------------------------------
+
+xwin.c:
+ * Revision 1.49  1994/08/25  03:58:15  mjl
+ * Change to use default visual for now, since otherwise the current
+ * procedure results in a BadMatch when calling XCreateWindow on some systems
+ * (Suns).  To really get it right, XGetRGBColormaps or something similar
+ * must be used to pair the visual with a compatible colormap.
+ *
+ * Revision 1.48  1994/08/05  09:25:05  mjl
+ * Added the static variable "synchronize", to be set when you want
+ * synchronous X operation.  Only for debugging, otherwise it's too slow.
+
+tek.c:
+ * Revision 1.32  1994/08/26  19:21:55  mjl
+ * Added support for the Conex vt320 Tek4010/4014/4105 terminal emulator (DOS).
+ * Much cleaning up and optimizations.  Contributed by Mark Olesen.
+
+ps.c:
+ * Revision 1.29  1994/09/01  22:28:09  mjl
+ * Fixed bug in current point update after state change.
+ *
+ * Revision 1.28  1994/08/27  03:40:32  mjl
+ * Fix to allow cmap1 color selections to appear in grayscale.  Contributed
+ * by Radey Shouman.
 
 -----------------------------------------------------------------------------
 TK driver, plframe widget, and support tools
 -----------------------------------------------------------------------------
 
+plserver.c:
+ * Revision 1.29  1994/08/25  04:00:27  mjl
+ * Fixed some error output; elminates spurious <RET> at end.
+
+tk.c:
+ * Revision 1.45  1994/08/25  04:02:03  mjl
+ * Fix to allow a TK main window to be associated with each PLStream.
+ * Contributed by Radey Shouman.
+
+plr.c:
+ * Revision 1.18  1994/08/25  03:59:43  mjl
+ * Fixed to properly update driver when cmap state is changed.  Contributed
+ * by Radey Shouman.
+
+plwidget.tcl:
+# Revision 1.26  1994/08/25  04:01:23  mjl
+# Simplified and sped up eop handling.
+
+plcolor.tcl:
+# Revision 1.5  1994/08/25  03:59:13  mjl
+# Fixed limiting saturation value that was messing up grayscale cmap1's.
+
 -----------------------------------------------------------------------------
 utilities
 -----------------------------------------------------------------------------
+
+pltek.c:
+ * Revision 1.7  1994/08/26  19:25:40  mjl
+ * Now checks for the terminal type and provides some rudimentary decisions
+ * based on the TERM setting.  The xterm is unaffected, but with a terminal
+ * type of "tekterm", the 'Page >' prompt is printed on the graphics screen
+ * so that the plot can be seen without having pltek flash back to the text
+ * screen immediately.  Other minor cleaning up as well.  Contributed by Mark
+ * Olesen.
 
 -----------------------------------------------------------------------------
 DOS drivers
 -----------------------------------------------------------------------------
 
+Updated DOS/EMX driver provided by Mark Olesen; see sys/dos/emx for
+more detail.
+
 -----------------------------------------------------------------------------
 Amiga driver
 -----------------------------------------------------------------------------
+
+Now has configure script for SKsh users -- makes it trivial to configure
+and build.  Needs some embellishment though (command line flags to mimic
+Unix configure script).  The Makefile fragments under cf/ updated
+accordingly.  Also cf/Makefile and cf/Makedemo provided for those without
+SKsh.
+
+Several files:
+ * Minor fixes to work with PLplot 4.99h distribution and other cleaning up.
+
+pla_wn.c:
+ * Revision 1.11  1994/09/02  08:36:37  mjl
+ * Fixed bug encountered when changing screen modes -- FreeRaster call was
+ * given the wrong screen dimensions.
+
