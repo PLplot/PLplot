@@ -127,7 +127,7 @@ x16f_SOURCES = x16f.f
 LDADD = $(top_builddir)/bindings/f77/libplplotf77$(LIB_TAG).la
 
 install-data-hook:
-	( cd $(DESTDIR)/$(examples_f77dir) ; mv Makefile.examples Makefile ) 
+	( cd $(DESTDIR)/$(examples_f77dir) ; mv -f Makefile.examples Makefile ) 
 
 else
 

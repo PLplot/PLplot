@@ -52,7 +52,7 @@ examples_c_DATA = \
 	Makefile.examples
 
 install-data-hook:
-	( cd $(DESTDIR)/$(examples_cdir) ; mv Makefile.examples Makefile )
+	( cd $(DESTDIR)/$(examples_cdir) ; mv -f Makefile.examples Makefile )
 
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
