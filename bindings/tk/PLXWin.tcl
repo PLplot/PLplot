@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.2  1994/10/04 18:18:47  mjl
+# Revision 1.3  1995/03/23 20:46:09  mjl
+# Fixed key bindings.
+#
+# Revision 1.2  1994/10/04  18:18:47  mjl
 # Inserted initialization of zoom windows lists.  Gross, but it should
 # work.
 #
@@ -69,20 +72,11 @@ itcl_class PLXWin {
 	# parsed by the interpreter twice -- once during the bind and
 	# once during its execution.
 
-	bind $this.plwin <Any-KeyPress> \
-	    "key_filter $this [list $client] %K %N %A 0 0"
-	
-	bind $this.plwin <Shift-KeyPress> \
-	    "key_filter $this [list $client] %K %N %A 1 0"
+	bind $w.plwin <Any-KeyPress> \
+	    "plw_key_filter $w [list $client] %N %s %x %y %K %A"
 
-	bind $this.plwin <Control-KeyPress> \
-	    "key_filter $this [list $client] %K %N %A 0 1"
-
-	bind $this.plwin <Shift-Control-KeyPress> \
-	    "key_filter $this [list $client] %K %N %A 1 1"
-
-	bind $this.plwin <Any-ButtonPress> \
-	    "plw_user_mouse $this [list $client] %b %s %x %y"
+	bind $w.plwin <Any-ButtonPress> \
+	    "plw_user_mouse $w [list $client] %b %s %x %y"
 
 	bind $this.plwin <Any-Enter> \
 	    "focus $this.plwin"
