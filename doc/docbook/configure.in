@@ -1,6 +1,6 @@
 
 AC_INIT(src/plplotdoc.xml.in)
-AM_INIT_AUTOMAKE(plplotdoc, 0.3.0)
+AM_INIT_AUTOMAKE(plplotdoc, 0.3.1)
 
 dnl Web site Installation
 
@@ -45,9 +45,6 @@ dnl Controlling were the HTML files should go
 
 HTML_MANIFEST=HTML-MANIFEST
 AC_SUBST(HTML_MANIFEST)
-
-JPEG_MANIFEST=JPEG-MANIFEST
-AC_SUBST(JPEG_MANIFEST)
 
 BASE=$PACKAGE-$VERSION
 AC_SUBST(BASE)
@@ -210,7 +207,6 @@ AC_SUBST(FILE[_EXT])
 popdef(FILE)
 ])
 
-FILE_EXT(jpeg)
 FILE_EXT(html)
 
 
@@ -220,8 +216,6 @@ CHECK_PROG(jade, [HTML PRINT], http://www.jclark.com/jade/)
 CHECK_PROG(jadetex, PRINT, http://www.tug.org/applications/jadetex/)
 CHECK_PROG(pdfjadetex, PRINT, http://www.tug.org/applications/jadetex/)
 CHECK_PROG(perl, [HTML PRINT INFO], http://www.perl.com)
-CHECK_PROG(mogrify, HTML, ftp://ftp.wizards.dupont.com/pub/ImageMagick/)
-CHECK_PROG(latex, PRINT, http://www.ctan.org)
 CHECK_PROG(dvips, PRINT, http://www.ctan.org)
 
 dnl Check public identifiers
@@ -412,6 +406,5 @@ print=$PRINT; html=$HTML; info=$INFO
 AC_OUTPUT([Makefile
            src/Makefile src/plplotdoc.xml src/plplotdoc-html.dsl 
            src/plplotdoc-print.dsl 
-           bin/Makefile bin/inline-greek.pl bin/eps2jpeg.pl 
-           bin/tex2eps.pl
+           bin/Makefile 
            www/index.html.in])

@@ -3,7 +3,7 @@
 
 <!ENTITY Project-Version "@VERSION@">
 <!-- $Format: "<!ENTITY Project-Date \"$Date$\">"$ -->
-<!ENTITY Project-Date "Mon, 20 Nov 2000 09:33:06 +0100">
+<!ENTITY Project-Date "Tue, 21 Nov 2000 11:02:16 +0100">
 
 <!ENTITY chap-intro SYSTEM "intro.xml">
 <!ENTITY chap-simple SYSTEM "simple.xml">
@@ -139,6 +139,8 @@
 <!ENTITY plw3d '<link linkend="plw3d"><function>plw3d</function></link>'>
 <!ENTITY plwid '<link linkend="plwid"><function>plwid</function></link>'>
 <!ENTITY plwind '<link linkend="plwind"><function>plwind</function></link>'>
+<!ENTITY % Math-Entities SYSTEM "math.ent">
+%Math-Entities;
 <!ENTITY % Inline-Entities SYSTEM "inline.ent">
 %Inline-Entities;
 ]

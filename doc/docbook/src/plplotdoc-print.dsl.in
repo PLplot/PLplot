@@ -31,14 +31,6 @@
 (define %footnote-ulinks% #t)
 (define bop-footnotes #t)
 
-(define %bf-size%
-  ;; Defines the body font size
-  (case %visual-acuity%
-    (("tiny") 9pt)
-    (("normal") 11pt)
-    (("presbyopic") 14pt)
-    (("large-type") 26`pt)))
-
 (element funcprototype 
   (make paragraph
     first-line-start-indent: %para-indent-firstpara%

@@ -22,8 +22,8 @@ $(HTML_TARBALL):
 	mkdir $(BASE_HTML)
 	( cd src ; \
 	  $(MAKE) html ; \
-          cp `cat $(HTML_MANIFEST)` `cat $(JPEG_MANIFEST)` \
-             ../$(BASE_HTML) )
+          cp `cat $(HTML_MANIFEST)` ../$(BASE_HTML) )
+	cp src/stylesheet.css $(BASE_HTML)
 	tar cfz $(HTML_TARBALL) $(BASE_HTML)
 	rm -rf $(BASE_HTML)
 

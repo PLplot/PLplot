@@ -1,3 +1,35 @@
+2000-11-29  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Makefile.am (SOURCE_FILES): Removed over-under.eps and
+	jadetex.cfg.
+	(EXTRA_DIST): Added jadetex.cfg and stylesheet.css.
+	($(JPEG_MANIFEST), over-under-*): Removed rules.
+	(html): Removed dependency on $(JPEG_MANIFEST).
+	($(BASE).dvi): Removed dependency on over-under.eps and added
+	dependency on jadetex.cfg.
+	(CLEANFILES): Removed jpeg related patterns.
+	* math.ent: New common entities file, containing the greek and
+	math symbols for both printed and HTML outputs.
+	* plplotdoc.xml.in: Include math.enc.
+	* stylesheet.css: Added file.  This is the Cascade stylesheet file
+	for the HTML rendering.
+	* over-under.tex: Removed file.
+	* jadetex.cfg: Declare Unicode character for producing the
+	"S(freq)" overlined and underlined (this was previously obtained
+	from over-under.tex). 
+	* inline-print.ent, inline-html.ent: Removed greek and math
+	entities.  Redifine &over-under; to use <SPAN> and the CSS in
+	HTML, and a Unicode character whose translation is provided in
+	jadetex.cfg. 
+	* plplotdoc-html.dsl.in: Define %stylesheet%.
+	Added definition for element `anchor'.
+	* plplotdoc-print.dsl.in: The body size is not defined here anymore.
+	It will default to 10pt.  The previous 11pt was causing problem
+	with the PDF output.
+
+	* pdftex.map: New file.  This is a kludge to make pdfjadetex
+	include corretly Computer Modern Type 1 fonts.
+
 2000-11-28  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Makefile.am ($(BASE).pdf.gz): Forcing compression with gzip.

@@ -2,7 +2,7 @@
 # Description: Automake template for the PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Tue Nov 28 09:43:00 CET 2000
+# Last modified on: Wed Nov 29 05:29:58 CET 2000
 # $Id$
 
 MASTER_XML = plplotdoc.xml
@@ -18,8 +18,6 @@ SOURCE_FILES = \
   inline-html.ent \
   inline-print.ent \
   intro.xml \
-  jadetex.cfg \
-  over-under.tex \
   perl.xml \
   python.xml \
   scheme.xml \
@@ -33,9 +31,11 @@ STYLESHEETS_IN = \
   $(STYLESHEET_HTML).in \
   $(STYLESHEET_PRINT).in
 
-EXTRA_DIST = $(SOURCE_FILES) $(STYLESHEETS_IN)
+EXTRA_DIST = \
+  $(SOURCE_FILES) $(STYLESHEETS_IN) \
+  jadetex.cfg stylesheet.css
 CLEANFILES = \
-  *.$(HTML_EXT) *.$(JPEG_EXT) $(HTML_MANIFEST) $(JPEG_MANIFEST) \
+  *.$(HTML_EXT) $(HTML_MANIFEST) $(INFO_MANIFEST)\
   *.jadetex *.aux *.dvi *.ps.gz *.pdf* inline.ent *.log *.eps TMP.* \
   *.out *.info* *.texi *.txml *.xml-info
 
@@ -47,7 +47,6 @@ PERL = @PERL@
 LATEX = @LATEX@
 DVIPS = @DVIPS@
 HTML_EXT = @HTML_EXT@
-JPEG_EXT = @JPEG_EXT@
 
 MAX_TEX_RECURSION = 4
 
@@ -57,25 +56,12 @@ BINDIR = ../bin
 all: html print
 
 
-html: $(HTML_MANIFEST) $(JPEG_MANIFEST)
+html: $(HTML_MANIFEST)
 
 $(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML).in inline-html.ent
 	ln -fs inline-html.ent inline.ent
 	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
 	  $(XML_DECL) $(MASTER_XML)
-
-$(JPEG_MANIFEST): $(BINDIR)/inline-greek.pl.in over-under.jpeg
-	$(PERL) $(BINDIR)/inline-greek.pl $(BINDIR) > $@
-	echo over-under.jpeg >> $@
-
-over-under.eps: over-under.tex $(BINDIR)/tex2eps.pl.in
-	$(PERL) $(BINDIR)/tex2eps.pl -s `cat over-under.tex` -x 1000 -o $@
-
-over-under-big.eps: over-under.tex $(BINDIR)/tex2eps.pl.in
-	$(PERL) $(BINDIR)/tex2eps.pl -s `cat over-under.tex` -x 5000 -o $@
-
-over-under.jpeg: over-under-big.eps $(BINDIR)/eps2jpeg.pl.in
-	$(PERL) $(BINDIR)/eps2jpeg.pl -g 35% -i over-under-big.eps -o $@
 
 
 print: $(BASE).ps.gz $(BASE).dvi $(BASE).pdf.gz
@@ -87,7 +73,7 @@ $(BASE).pdf.gz: $(BASE).dvi
 	-$(PDFJADETEX) $(BASE).jadetex 
 	gzip -9f $(BASE).pdf
 
-$(BASE).dvi: $(BASE).jadetex over-under.eps
+$(BASE).dvi: $(BASE).jadetex jadetex.cfg
 	$(JADETEX) $< 
 	if ! cmp $(BASE).aux prior.aux 2>/dev/null && \
 	   expr $(MAKELEVEL) '<' $(MAX_TEX_RECURSION); then \

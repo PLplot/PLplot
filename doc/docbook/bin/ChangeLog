@@ -1,3 +1,9 @@
+2000-11-29  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* eps2jpeg.pl.in, inline-greek.pl.in, tex2eps.pl.in: Removed files.
+	* Makefile.am (EXTRA_DIST): Removed them from here also.
+
+
 2000-11-27  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* size-href.pl: Fixed parsing of ls command output.

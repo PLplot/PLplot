@@ -1,3 +1,13 @@
+2000-11-29  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* configure.in: Released version 0.3.1.
+	All inline stuff is gone: no more checking programs mogrify and
+	latex (yupie!), JPEG-MANIFEST related settings are removed.  Also,
+	the related Perl scripts in bin/ are no more needed.
+
+	* Makefile.am ($(HTML_TARBALL)): Include stylesheet.css in the
+	tarball and do not include files in JPEG-MANIFEST.
+
 2000-11-28  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* configure.in: Replaced bashism ${var/pat/} by a POSIX compliant

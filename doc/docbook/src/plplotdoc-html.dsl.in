@@ -8,6 +8,8 @@
 <style-specification use="docbook">
 <style-specification-body>
 
+(define %stylesheet% "stylesheet.css")
+
 (element funcprototype
   (make element gi: "TABLE"
 	attributes: '(("BORDER"  "0")
@@ -42,6 +44,17 @@
     (process-children)
     (literal ">")))
 
+(element anchor
+  (make sequence
+    (make element gi: "SPAN"
+	  attributes: '(("CLASS"  "overline"))
+      (literal "S"))
+    (literal "(")
+    (make element gi: "SPAN"
+	  attributes: '(("CLASS"  "underline"))
+      (literal "freq"))
+    (literal ")")))
+    
 (define %html-ext% ".@HTML_EXT@")
 
 (define %root-filename% "index")
