@@ -1,35 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1995/01/06 07:40:30  mjl
+ * Revision 1.7  1995/03/11 20:27:08  mjl
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.
+ *
+ * Revision 1.6  1995/01/06  07:40:30  mjl
  * All drivers: pls->width now more sensibly handled.  If the driver supports
  * multiple widths, it first checks to see if it has been initialized
  * already (e.g. from the command line) before initializing it.  For drivers
  * that don't support multiple widths, pls->width is ignored.
- *
- * Revision 1.5  1994/07/19  22:30:19  mjl
- * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
- * is xwin, ps, etc.  See plDevs.h for more detail.
- *
- * Revision 1.4  1994/05/25  09:36:54  mjl
- * All VGA driver function names now end with "_vga", a nice simplification.
- * Since all are compiler-dependent and mutually exclusive, this should pose
- * no problem.  Also HP pen plotter driver were consolidated.  Both
- * contributions by Mark Olesen (olesen@weber.me.queensu.ca).
- *
- * Revision 1.3  1994/04/08  11:35:58  mjl
- * Put nopause support back into the drivers where it is better off.
- * I don't know WHAT I was thinking.
- *
- * Revision 1.2  1994/03/23  06:34:27  mjl
- * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
- * stdlib.h now included automatically by plplotP.h), extraneous clears
- * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
- * driver interface or driver initialization as appropriate).  Special
- * handling for malloc includes eliminated (no longer needed) and malloc
- * prototypes fixed as necessary.
- *
- * Revision 1.1  1993/08/03  03:21:54  mjl
- * Added contributions from Sergio Fanchiotti for use under Linux.
 */
 
 /*
@@ -80,19 +59,16 @@ static int totcol = 16;
 
 static page_state;
 
-/*----------------------------------------------------------------------*\
-* plD_init_vga()
-*
-* Initialize device.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_init_vga()
+ *
+ * Initialize device.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_init_vga(PLStream *pls)
 {
-    pls->termin = 1;		/* is an interactive terminal */
-    pls->icol0 = 1;
-    pls->bytecnt = 0;
-    pls->page = 0;
+    pls->termin = 1;		/* Is an interactive terminal */
     pls->graphx = TEXT_MODE;
 
     if (!pls->colorset)
@@ -100,6 +76,7 @@ plD_init_vga(PLStream *pls)
 
 /* What kind of VGA mode one wants is set up here.
    It can be easyly made interactive! */
+
     mode = G640x480x16;		/* See <vga.h> for a list */
     if (vga_hasmode(mode))
 	vga_setmode(mode);
@@ -108,7 +85,8 @@ plD_init_vga(PLStream *pls)
 	exit(-1);
     }
 
-    /* If all is fine we get the dimensions and # of colors */
+/* If all is fine we get the dimensions and # of colors */
+
     vgax = vga_getxdim() - 1;
     vgay = vga_getydim() - 1;
 
@@ -119,11 +97,11 @@ plD_init_vga(PLStream *pls)
     setphy(0, vgax, 0, vgay);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_line_vga()
-*
-* Draw a line in the current color from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_line_vga()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
+\*--------------------------------------------------------------------------*/
 
 void
 plD_line_vga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
@@ -138,11 +116,11 @@ plD_line_vga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     page_state = DIRTY;
 }
 
-/*----------------------------------------------------------------------*\
-* plD_polyline_vga()
-*
-* Draw a polyline in the current color.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_polyline_vga()
+ *
+ * Draw a polyline in the current color.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_polyline_vga(PLStream *pls, short *xa, short *ya, PLINT npts)
@@ -153,11 +131,11 @@ plD_polyline_vga(PLStream *pls, short *xa, short *ya, PLINT npts)
 	plD_line_vga(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_eop_vga()
-*
-* End of page.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_eop_vga()
+ *
+ * End of page.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_eop_vga(PLStream *pls)
@@ -171,12 +149,12 @@ plD_eop_vga(PLStream *pls)
     page_state = CLEAN;
 }
 
-/*----------------------------------------------------------------------*\
-* plD_bop_vga()
-*
-* Set up for the next page.
-* Advance to next family file if necessary (file output).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_bop_vga()
+ *
+ * Set up for the next page.
+ * Advance to next family file if necessary (file output).
+\*--------------------------------------------------------------------------*/
 
 void
 plD_bop_vga(PLStream *pls)
@@ -185,11 +163,11 @@ plD_bop_vga(PLStream *pls)
     plD_eop_vga(pls);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_tidy_vga()
-*
-* Close graphics file or otherwise clean up.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_tidy_vga()
+ *
+ * Close graphics file or otherwise clean up.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_tidy_vga(PLStream *pls)
@@ -197,11 +175,11 @@ plD_tidy_vga(PLStream *pls)
     lxvga_text(pls);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_state_vga()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_state_vga()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
+\*--------------------------------------------------------------------------*/
 
 void
 plD_state_vga(PLStream *pls, PLINT op)
@@ -214,8 +192,8 @@ plD_state_vga(PLStream *pls, PLINT op)
       case PLSTATE_COLOR0:
 	if (pls->color) {
 
-	    /* Maybe it would be wiser to use a set of 16 relevant colors only
-	       and just fix it to black if col is exceeded 16.        */
+	/* Maybe it would be wiser to use a set of 16 relevant colors only
+	   and just fix it to black if col is exceeded 16.        */
 
 	    col = (pls->icol0) % totcol;	/* Color modulo # of colors
 						   avail */
@@ -228,11 +206,11 @@ plD_state_vga(PLStream *pls, PLINT op)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* plD_esc_vga()
-*
-* Escape function.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_esc_vga()
+ *
+ * Escape function.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
@@ -249,11 +227,11 @@ plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* lxvga_text()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * lxvga_text()
+ *
+ * Switch to text mode.
+\*--------------------------------------------------------------------------*/
 
 static void
 lxvga_text(PLStream *pls)
@@ -266,11 +244,11 @@ lxvga_text(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* lxvga_graph()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * lxvga_graph()
+ *
+ * Switch to graphics mode.
+\*--------------------------------------------------------------------------*/
 
 static void
 lxvga_graph(PLStream *pls)
@@ -282,11 +260,11 @@ lxvga_graph(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* pause()
-*
-* Wait for a keystroke.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * pause()
+ *
+ * Wait for a keystroke.
+\*--------------------------------------------------------------------------*/
 
 static void
 pause(PLStream *pls)

@@ -1,29 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1995/01/06 07:40:33  mjl
+ * Revision 1.6  1995/03/11 20:27:11  mjl
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.
+ *
+ * Revision 1.5  1995/01/06  07:40:33  mjl
  * All drivers: pls->width now more sensibly handled.  If the driver supports
  * multiple widths, it first checks to see if it has been initialized
  * already (e.g. from the command line) before initializing it.  For drivers
  * that don't support multiple widths, pls->width is ignored.
- *
- * Revision 1.4  1994/07/19  22:30:22  mjl
- * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
- * is xwin, ps, etc.  See plDevs.h for more detail.
- *
- * Revision 1.3  1994/04/08  11:35:59  mjl
- * Put nopause support back into the drivers where it is better off.
- * I don't know WHAT I was thinking.
- *
- * Revision 1.2  1994/03/23  06:34:29  mjl
- * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
- * stdlib.h now included automatically by plplotP.h), extraneous clears
- * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
- * driver interface or driver initialization as appropriate).  Special
- * handling for malloc includes eliminated (no longer needed) and malloc
- * prototypes fixed as necessary.
- *
- * Revision 1.1  1993/08/03  03:21:55  mjl
- * Added contributions from Sergio Fanchiotti for use under Linux.
 */
 
 /*
@@ -78,11 +63,11 @@ static int totcol = 16;
 
 static page_state;
 
-/*----------------------------------------------------------------------*\
-* plD_init_mgr()
-*
-* Initialize device.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_init_mgr()
+ *
+ * Initialize device.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_init_mgr(PLStream *pls)
@@ -91,15 +76,14 @@ plD_init_mgr(PLStream *pls)
     int Xw, Yw;			/* Dummy vars */
 
 /* Check if we are running in a MGR window */
+
     if (strcmp(getenv("TERM"), "mgr"))
 	plexit("plD_init_mgr: TERM enviroment var not set to \"mgr\".");
 
-/* Ok, now set up the device parameters */
-    pls->termin = 1;		/* is an interactive terminal */
-    pls->icol0 = 1;
+/* Set up the device parameters */
+
+    pls->termin = 1;		/* Is an interactive terminal */
     pls->color = 0;		/* No color implemented in Linux MGR (Yet!) */
-    pls->bytecnt = 0;
-    pls->page = 0;
     pls->graphx = TEXT_MODE;
 
     if (!pls->colorset)
@@ -112,7 +96,8 @@ plD_init_mgr(PLStream *pls)
     m_setup(M_FLUSH | M_MODEOK);/* Initialize function library */
     m_push(P_ALL);		/* Store terminal state in a stack */
 
-    /* Now we get the dimensions of the window */
+/* Now we get the dimensions of the window */
+
     m_setnoecho();		/* MGR not echoing to screen */
     get_size(&Xw, &Yw, &mgrx, &mgry);
     mgrx -= 1;
@@ -136,11 +121,11 @@ plD_init_mgr(PLStream *pls)
     m_setecho();		/* In case there is some text interaction */
 }
 
-/*----------------------------------------------------------------------*\
-* plD_line_mgr()
-*
-* Draw a line in the current color from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_line_mgr()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
+\*--------------------------------------------------------------------------*/
 
 void
 plD_line_mgr(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
@@ -155,11 +140,11 @@ plD_line_mgr(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     page_state = DIRTY;
 }
 
-/*----------------------------------------------------------------------*\
-* plD_polyline_mgr()
-*
-* Draw a polyline in the current color.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_polyline_mgr()
+ *
+ * Draw a polyline in the current color.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_polyline_mgr(PLStream *pls, short *xa, short *ya, PLINT npts)
@@ -170,11 +155,11 @@ plD_polyline_mgr(PLStream *pls, short *xa, short *ya, PLINT npts)
 	plD_line_mgr(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_eop_mgr()
-*
-* End of page.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_eop_mgr()
+ *
+ * End of page.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_eop_mgr(PLStream *pls)
@@ -187,12 +172,12 @@ plD_eop_mgr(PLStream *pls)
     page_state = CLEAN;
 }
 
-/*----------------------------------------------------------------------*\
-* plD_bop_mgr()
-*
-* Set up for the next page.
-* Advance to next family file if necessary (file output).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_bop_mgr()
+ *
+ * Set up for the next page.
+ * Advance to next family file if necessary (file output).
+\*--------------------------------------------------------------------------*/
 
 void
 plD_bop_mgr(PLStream *pls)
@@ -201,11 +186,11 @@ plD_bop_mgr(PLStream *pls)
     plD_eop_mgr(pls);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_tidy_mgr()
-*
-* Close graphics file or otherwise clean up.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_tidy_mgr()
+ *
+ * Close graphics file or otherwise clean up.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_tidy_mgr(PLStream *pls)
@@ -215,11 +200,11 @@ plD_tidy_mgr(PLStream *pls)
 				   plD_init_mgr) */
 }
 
-/*----------------------------------------------------------------------*\
-* plD_state_mgr()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_state_mgr()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
+\*--------------------------------------------------------------------------*/
 
 void
 plD_state_mgr(PLStream *pls, PLINT op)
@@ -242,11 +227,11 @@ plD_state_mgr(PLStream *pls, PLINT op)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* plD_esc_mgr()
-*
-* Escape function.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_esc_mgr()
+ *
+ * Escape function.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_esc_mgr(PLStream *pls, PLINT op, void *ptr)
@@ -263,11 +248,11 @@ plD_esc_mgr(PLStream *pls, PLINT op, void *ptr)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* mgr_text()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * mgr_text()
+ *
+ * Switch to text mode.
+\*--------------------------------------------------------------------------*/
 
 static void
 mgr_text(PLStream *pls)
@@ -281,11 +266,11 @@ mgr_text(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* mgr_graph()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * mgr_graph()
+ *
+ * Switch to graphics mode.
+\*--------------------------------------------------------------------------*/
 
 static void
 mgr_graph(PLStream *pls)
@@ -302,16 +287,17 @@ mgr_graph(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* SetEvent(void)
-*
-* Setup MGR event messages format and load menus.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * SetEvent(void)
+ *
+ * Setup MGR event messages format and load menus.
+\*--------------------------------------------------------------------------*/
 
 static void
 SetEvent(void)
 {
-    /* Load menu in Middle and Right buttons */
+/* Load menu in Middle and Right buttons */
+
     m_loadmenu(0, "|Next page|Non-stop|Quit|N||Q|");
     m_loadmenu(1, "|Next page|Non-stop|Quit|N||Q|");
     m_selectmenu(0);		/* Middle button */
@@ -321,12 +307,12 @@ SetEvent(void)
 				   passed to the client */
 }
 
-/*----------------------------------------------------------------------*\
-* GetKey(PLStream *)
-*
-* Check if MGR did something to the window and act accordingly. It needs
-* to wait for a key to be pressed though.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * GetKey(PLStream *)
+ *
+ * Check if MGR did something to the window and act accordingly. It needs
+ * to wait for a key to be pressed though.
+\*--------------------------------------------------------------------------*/
 
 static void
 GetKey(PLStream *pls)
@@ -346,7 +332,7 @@ GetKey(PLStream *pls)
 	    get_size(&Xw, &Yw, &mgrx, &mgry);
 	    mgrx -= 1;
 	    mgry -= 1;
-	    /* Inform of the change to the plplot routines */
+	    /* Inform of the change to the PLplot routines */
 	    dev->xmax = mgrx;
 	    dev->ymax = mgry;
 	    dev->xlen = dev->xmax - dev->xmin;

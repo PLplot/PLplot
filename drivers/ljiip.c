@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1995/01/06 07:40:32  mjl
+ * Revision 1.7  1995/03/11 20:27:10  mjl
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.
+ *
+ * Revision 1.6  1995/01/06  07:40:32  mjl
  * All drivers: pls->width now more sensibly handled.  If the driver supports
  * multiple widths, it first checks to see if it has been initialized
  * already (e.g. from the command line) before initializing it.  For drivers
@@ -9,28 +13,11 @@
  * Revision 1.5  1995/01/04  04:43:20  mjl
  * Minor tweek.  Modified the pixel width to depend on the slope of the line.
  * Makes diagonal lines thinner.  Contributed by Wesley Ebisuzaki.
- *
- *
- * Revision 1.4  1994/07/19  22:30:21  mjl
- * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
- * is xwin, ps, etc.  See plDevs.h for more detail.
- *
- * Revision 1.3  1994/04/30  16:14:45  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.2  1994/04/09  03:10:43  furnish
- * Teeny typo correction to remove duplicate symbols which caused HP to
- * be unable to produce shared lib.
- *
- * Revision 1.1  1994/04/08  11:46:44  mjl
- * New LaserJet IIp driver by Wesley Ebisuzaki, based on old ljii driver.
- * Has compression and other optimizations.
 */
 
 /*	ljiip.c
 
-	PLPLOT Laser Jet IIp device driver.
+	PLplot Laser Jet IIp device driver.
 	Based on old LJII driver, modifications by Wesley Ebisuzaki
 
 	DPI = 300, 150, 100	(dots per inch)
@@ -76,19 +63,19 @@ static void setpoint(PLINT, PLINT);
 #define DPI      150
 #endif
 
-#define CURX	 ((long) (DPI / 5))
-#define CURY	 ((long) (DPI / 7))
-#define XDOTS	 (376 * (DPI / 50))	/* # dots across */
-#define YDOTS	 (500 * (DPI / 50))	/* # dots down */
-#define JETX     (XDOTS-1)
-#define JETY     (YDOTS-1)
+#define OF	pls->OutFile
+#define CURX	((long) (DPI / 5))
+#define CURY	((long) (DPI / 7))
+#define XDOTS	(376 * (DPI / 50))	/* # dots across */
+#define YDOTS	(500 * (DPI / 50))	/* # dots down */
+#define JETX    (XDOTS-1)
+#define JETY    (YDOTS-1)
 
 
-#define BPROW	 (XDOTS/8L)	/* # bytes across */
-#define MAX_WID	 8		/* max pen width in pixels */
-#define BPROW1	 (BPROW + (MAX_WID+7)/8)
-/* pen has width, make bitmap bigger */
-#define NBYTES	 BPROW1*(YDOTS+MAX_WID)	/* total number of bytes */
+#define BPROW	(XDOTS/8L)		/* # bytes across */
+#define MAX_WID	8			/* max pen width in pixels */
+#define BPROW1	(BPROW + (MAX_WID+7)/8)	/* pen has width, make bitmap bigger */
+#define NBYTES	BPROW1*(YDOTS+MAX_WID)	/* total number of bytes */
 
 /* Graphics control characters. */
 
@@ -104,24 +91,18 @@ static char mask[8] =
 #define _HUGE _huge
 #endif
 
-static unsigned char _HUGE *bitmap;	/* points to memory area NBYTES in size */
+static unsigned char _HUGE *bitmap;	/* memory area NBYTES in size */
 
-/*----------------------------------------------------------------------*\
-* plD_init_ljiip()
-*
-* Initialize device.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_init_ljiip()
+ *
+ * Initialize device.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_init_ljiip(PLStream *pls)
 {
     PLDev *dev;
-
-    pls->termin = 0;		/* not an interactive terminal */
-    pls->icol0 = 1;
-    pls->color = 0;
-    pls->bytecnt = 0;
-    pls->page = 0;
 
     if (pls->width == 0)	/* Is 0 if uninitialized */
 	pls->width = DPI / 100;
@@ -143,7 +124,8 @@ plD_init_ljiip(PLStream *pls)
     dev->xmin = 0;
     dev->ymin = 0;
 
-    /* number of pixels / mm */
+/* number of pixels / mm */
+
     plP_setpxl((PLFLT) (DPI/25.4), (PLFLT) (DPI/25.4));
 
 /* Rotate by 90 degrees since portrait mode addressing is used */
@@ -160,7 +142,8 @@ plD_init_ljiip(PLStream *pls)
 /* Allocate storage for bit map matrix */
 
 #ifdef MSDOS
-    if ((bitmap = (unsigned char _HUGE *) halloc((long) NBYTES, sizeof(char))) == NULL)
+    if ((bitmap = (unsigned char _HUGE *)
+	 halloc((long) NBYTES, sizeof(char))) == NULL)
 	plexit("Out of memory in call to calloc");
 #else
     if ((bitmap = (unsigned char *) calloc(NBYTES, sizeof(char))) == NULL)
@@ -169,14 +152,14 @@ plD_init_ljiip(PLStream *pls)
 
 /* Reset Printer */
 
-    fprintf(pls->OutFile, "%cE", ESC);
+    fprintf(OF, "%cE", ESC);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_line_ljiip()
-*
-* Draw a line in the current color from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_line_ljiip()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
+\*--------------------------------------------------------------------------*/
 
 void
 plD_line_ljiip(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
@@ -292,11 +275,11 @@ plD_line_ljiip(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* plD_polyline_ljiip()
-*
-* Draw a polyline in the current color.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_polyline_ljiip()
+ *
+ * Draw a polyline in the current color.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_polyline_ljiip(PLStream *pls, short *xa, short *ya, PLINT npts)
@@ -307,11 +290,11 @@ plD_polyline_ljiip(PLStream *pls, short *xa, short *ya, PLINT npts)
 	plD_line_ljiip(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_eop_ljiip()
-*
-* End of page.(prints it here).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_eop_ljiip()
+ *
+ * End of page.(prints it here).
+\*--------------------------------------------------------------------------*/
 
 void
 plD_eop_ljiip(PLStream *pls)
@@ -324,39 +307,41 @@ plD_eop_ljiip(PLStream *pls)
     unsigned char c;
 #endif
 
-    /* PCL III setup: ref. Deskjet Plus Printer Owner's Manual */
+/* PCL III setup: ref. Deskjet Plus Printer Owner's Manual */
 
-    fprintf(pls->OutFile,"\033*rB");      	/* end raster graphics */
-    fprintf(pls->OutFile,"\033*t%3dR", DPI);	/* set DPI */
+    fprintf(OF,"\033*rB");      	/* end raster graphics */
+    fprintf(OF,"\033*t%3dR", DPI);	/* set DPI */
 
 #if GCMODE != 0
-    fprintf(pls->OutFile,"\033*r%dS", XDOTS);	/* raster width */
-    fprintf(pls->OutFile,"\033*b%1dM", GCMODE); /* graphics mode */
+    fprintf(OF,"\033*r%dS", XDOTS);	/* raster width */
+    fprintf(OF,"\033*b%1dM", GCMODE);	/* graphics mode */
 #endif
 
-    /* First move cursor to origin */
+/* First move cursor to origin */
 
-    fprintf(pls->OutFile,"\033*p%ldX", CURX);
-    fprintf(pls->OutFile,"\033*p%ldY", CURY);
-    fprintf(pls->OutFile,"\033*r0A");		/* start graphics */
+    fprintf(OF,"\033*p%ldX", CURX);
+    fprintf(OF,"\033*p%ldY", CURY);
+    fprintf(OF,"\033*r0A");		/* start graphics */
 
-    /* Write out raster data */
+/* Write out raster data */
 
 #if GCMODE == 0
     for (j = 0, p = bitmap; j < YDOTS; j++, p += BPROW1) {
-	fprintf(pls->OutFile,"\033*b>%dW", BPROW);
-	fwrite(p, BPROW, sizeof(char), pls->OutFile);
+	fprintf(OF,"\033*b>%dW", BPROW);
+	fwrite(p, BPROW, sizeof(char), OF);
     }
 #endif
 #if GCMODE == 2
     for (iy = 0, p = bitmap; iy < YDOTS; iy++, p += BPROW1) {
 
-	/* find last non-zero byte */
+    /* find last non-zero byte */
+
 	last = BPROW - 1;
 	while (last > 0 && p[last] == 0) last--;
 	last++;
 
-	/* translate to mode 2, save results in t_buf[] */
+    /* translate to mode 2, save results in t_buf[] */
+
 	i = n = 0;
 	while (i < last) {
 	    c = p[i];
@@ -378,30 +363,31 @@ plD_eop_ljiip(PLStream *pls)
 		while (i < j) {
 		    t_buf[n++] = p[i++];
 		}
-		/* i = j; */
 	    }
 	}
-	fprintf(pls->OutFile,"\033*b%dW", (int) n);
-	fwrite(t_buf, (int) n, sizeof(char), pls->OutFile);
+	fprintf(OF,"\033*b%dW", (int) n);
+	fwrite(t_buf, (int) n, sizeof(char), OF);
     }
 #endif
 
     pls->bytecnt += NBYTES;
 
-    /* End raster graphics and send Form Feed */
-    fprintf(pls->OutFile, "\033*rB");
-    fprintf(pls->OutFile, "%c", FF);
+/* End raster graphics and send Form Feed */
 
-    /* Finally, clear out bitmap storage area */
+    fprintf(OF, "\033*rB");
+    fprintf(OF, "%c", FF);
+
+/* Finally, clear out bitmap storage area */
+
     memset((void *) bitmap, '\0', NBYTES);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_bop_ljiip()
-*
-* Set up for the next page.
-* Advance to next family file if necessary (file output).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_bop_ljiip()
+ *
+ * Set up for the next page.
+ * Advance to next family file if necessary (file output).
+\*--------------------------------------------------------------------------*/
 
 void
 plD_bop_ljiip(PLStream *pls)
@@ -412,49 +398,49 @@ plD_bop_ljiip(PLStream *pls)
     pls->page++;
 }
 
-/*----------------------------------------------------------------------*\
-* plD_tidy_ljiip()
-*
-* Close graphics file or otherwise clean up.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_tidy_ljiip()
+ *
+ * Close graphics file or otherwise clean up.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_tidy_ljiip(PLStream *pls)
 {
 /* Reset Printer */
 
-    fprintf(pls->OutFile, "%cE", ESC);
-    fclose(pls->OutFile);
+    fprintf(OF, "%cE", ESC);
+    fclose(OF);
     free((char *) bitmap);
 }
 
-/*----------------------------------------------------------------------*\
-* plD_state_ljiip()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_state_ljiip()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
+\*--------------------------------------------------------------------------*/
 
 void 
 plD_state_ljiip(PLStream *pls, PLINT op)
 {
 }
 
-/*----------------------------------------------------------------------*\
-* plD_esc_ljiip()
-*
-* Escape function.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plD_esc_ljiip()
+ *
+ * Escape function.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_esc_ljiip(PLStream *pls, PLINT op, void *ptr)
 {
 }
 
-/*----------------------------------------------------------------------*\
-* setpoint()
-*
-* Sets a bit in the bitmap.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * setpoint()
+ *
+ * Sets a bit in the bitmap.
+\*--------------------------------------------------------------------------*/
 
 static void
 setpoint(PLINT x, PLINT y)
