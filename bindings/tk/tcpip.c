@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/02/07 23:00:43  mjl
+ * Revision 1.4  1994/04/08 12:00:05  mjl
+ * Function name changes to reduce namespace pollution.  Robustness improved
+ * in packet reader (changes stolen from Tcl-DP3.1 update).
+ *
+ * Revision 1.3  1994/02/07  23:00:43  mjl
  * Simplified and genericized pl_PacketReceive and pl_PacketSend functions so
  * that they work with FIFO's as well as sockets: data stream is now fully
  * packetized.  Functions require a PLiodev struct to be passed in,
@@ -290,7 +294,7 @@ pl_Read (fd, buffer, numReq)
 #include <sys/socket.h>
 
 /*----------------------------------------------------------------------*\
-* Host_ID
+* plHost_ID
 *
 * Tcl command -- return the IP address for the current host.  
 *
@@ -312,7 +316,7 @@ get_inet(listptr, length)
 }
 
 int
-Host_ID(clientData, interp, argc, argv)
+plHost_ID(clientData, interp, argc, argv)
     ClientData clientData;
     Tcl_Interp *interp;
     int argc;
@@ -447,8 +451,26 @@ pl_PacketReceive(interp, iodev, pdfs)
 
     /*
      * Read in the packet, and if it's not all there, put it back.
+     *
+     * We have to be careful here, because we could block when if just
+     * the header came in (making the file readable at the beginning of this
+     * function) but the rest of the packet is still out on the network.
      */
-    numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
+
+    if (iodev->type == 0) 
+	numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
+    else {
+#ifdef TCL_DP
+	if (Tdp_FDIsReady(iodev->fd) & TCL_FILE_READABLE) {
+	    numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
+	} else {
+	    pl_Unread (iodev->fd, hbuf, headerSize, 1);
+	    Tcl_ResetResult(interp);
+	    return TCL_OK;
+	}
+#endif
+    }
+
     if (numRead <= 0) {
 	goto readError;
     }
@@ -474,6 +496,7 @@ readError:
      */
 
     if (errno == EWOULDBLOCK || errno == EAGAIN) {
+	Tcl_ResetResult(interp);
 	return TCL_OK;
     }
 
@@ -532,7 +555,8 @@ pl_PacketSend(interp, iodev, pdfs)
     int numSent;
     unsigned char hbuf[8];
     int header[2];
-    struct iovec iov[2];
+    int len;
+    char *buffer;
     char tmp[256];
 
     /*
@@ -562,15 +586,22 @@ pl_PacketSend(interp, iodev, pdfs)
     hbuf[6] = (header[1] & (unsigned long) 0x0000FF00) >> 8;
     hbuf[7] = (header[1] & (unsigned long) 0x000000FF);
 
-    /* Set up scatter/gather vector */
+    /*
+     * Send it off, with error checking.
+     * Simulate writev using memcpy to put together
+     * the msg so it can go out in a single write() call.
+     */
 
-    iov[0].iov_len = 8;
-    iov[0].iov_base = (char *) hbuf;
-    iov[1].iov_len = pdfs->bp;
-    iov[1].iov_base = (char *) pdfs->buffer;
+    len = pdfs->bp + 2 * sizeof(int);
+    buffer = (char *) malloc(len);
 
-    /* Send it off, with error checking */
-    numSent = writev (iodev->fd, iov, 2);
+    memcpy(buffer, (char *) hbuf, 2 * sizeof(int));
+    memcpy(buffer + 2 * sizeof(int), pdfs->buffer, pdfs->bp);
+
+    numSent = write(iodev->fd, buffer, len);
+
+    free(buffer);
+
     if (numSent != packetLen) {
 
 	if ((errno == 0) || (errno == EWOULDBLOCK || errno == EAGAIN)) {
