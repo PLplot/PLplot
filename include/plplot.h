@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.62  1994/06/16 19:48:36  mjl
+ * Revision 1.63  1994/06/30 18:33:36  mjl
+ * Now includes math.h and string.h, since I was tired of getting burned by
+ * leaving these out (and having strange run-time errors as a result).  The
+ * PLINT type now is an "int" by default, except on MSDOS where it's a long
+ * (16 bits not being enough).  The latter can be modified under 32 bit
+ * compilation systems to use an int also.  So currently, you can use an
+ * int as a PLINT on all systems except MSDOS, there you must use PLINT.
+ *
+ * Revision 1.62  1994/06/16  19:48:36  mjl
  * Inserted prototype for pltkMain(), removed prototype for plframeCmd().
  *
  * Revision 1.61  1994/05/14  05:45:17  mjl
@@ -106,6 +114,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* I'm sick of being burned by forgetting math or string prototypes */
+
+#include <math.h>
+#include <string.h>
+
 /*----------------------------------------------------------------------*\
 *        SYSTEM IDENTIFICATION
 *
@@ -163,13 +176,11 @@ plplot (not ANSI-compliant).  Time to get a new one.
 * Only those that are necessary for function prototypes are defined here.
 * Notes:
 *
-* PLINT is typedef'd to a long by default.  This choice is necessary on
-* 16 bit int systems (most PC's) since 16 bits is too inaccurate for
-* some PLPLOT functions.  Most current workstations have int==long for
-* which the choice is irrelevant.  Many new 64-bit architectures (Alpha,
-* R4000, Pentium) will have 64 bit longs and 32 bit ints which may
-* require PLINT to be typedef'd to an int if a fortran INTEGER remains
-* 32 bits (probable).
+* PLINT is typedef'd to an int by default.  This is a change from previous
+* versions, where a long was used.  Under MSDOS, a PLINT is typedef'd to a
+* long, since 16 bits is too inaccurate for some PLPLOT functions.  So
+* under MSDOS you must use type PLINT for integer array arguments to PLplot
+* functions, but on other systems you can just use int.
 *
 * short is currently used for device page coordinates, so they are
 * bounded by (-32767, 32767).  This gives a max resolution of about 3000
@@ -182,10 +193,10 @@ typedef double PLFLT;
 typedef float PLFLT;
 #endif
 
-#if defined(__alpha) && defined(__osf__)
-typedef int PLINT;
-#else
+#if defined(MSDOS)
 typedef long PLINT;
+#else
+typedef int PLINT;
 #endif
 
 /* For passing user data, as with X's XtPointer */
