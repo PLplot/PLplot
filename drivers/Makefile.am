@@ -193,7 +193,7 @@ xfig_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 endif
 
 if enable_xwin
-xflags = $(X_LIBS) -lX11
+xflags = $(X_LIBS) -lX11 $(PTHREADLIBS)
 lmflag = -lm
 xwin_la_SOURCES = xwin.c
 xwin_la_LDFLAGS = $(ldflags) $(libplplot) $(xflags) $(lmflag)

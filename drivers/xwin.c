@@ -13,6 +13,15 @@
 #include "drivers.h"
 #include "plevent.h"
 
+#ifdef HAVE_PTHREAD
+#include <pthread.h>
+#include <signal.h>
+int    pthread_mutexattr_setkind_np(pthread_mutexattr_t *attr, int kind);
+static void events_thread(void *pls);
+static pthread_mutex_t events_mutex;
+static int already = 0;
+#endif
+
 /* Device info */
 char* plD_DEVICE_INFO_xwin = "xwin:X-Window (Xlib):1:xwin:5:xw";
 
@@ -244,6 +253,41 @@ plD_init_xw(PLStream *pls)
 
     plP_setpxl(pxlx, pxly);
     plP_setphy(xmin, xmax, ymin, ymax);
+
+#ifdef HAVE_PTHREAD
+    {
+      pthread_mutexattr_t mutexatt;
+      pthread_attr_t pthattr;
+
+      if (!already) {
+	pthread_mutexattr_init(&mutexatt);
+	if( pthread_mutexattr_setkind_np(&mutexatt, PTHREAD_MUTEX_RECURSIVE_NP))
+	  plexit("xwin: pthread_mutexattr_setkind_np() failed!\n");
+
+	pthread_mutex_init(&events_mutex, &mutexatt);
+	already = 1;
+      } else {
+	pthread_mutex_lock(&events_mutex);
+	already++;
+	pthread_mutex_unlock(&events_mutex);
+      }
+
+      pthread_attr_init(&pthattr);
+      pthread_attr_setdetachstate(&pthattr, PTHREAD_CREATE_JOINABLE);
+
+      if (pthread_create(&(dev->updater), &pthattr, (void *) &events_thread, (void *) pls)) {
+	pthread_mutex_lock(&events_mutex);
+	already--;
+	pthread_mutex_unlock(&events_mutex);
+
+	if (already == 0) {
+	  pthread_mutex_destroy(&events_mutex);
+	  plexit("xwin: pthread_create() failed!\n");
+	} else
+	  plwarn("xwin: couldn't create thread for this plot window!\n");
+      }
+    }
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -260,6 +304,12 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
+    dbug_enter("plD_line_xw");
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_lock(&events_mutex);
+#endif
+
     CheckForEvents(pls);
 
     y1 = dev->ylen - y1;
@@ -275,6 +325,10 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
     if (dev->write_to_pixmap)
 	XDrawLine(xwd->display, dev->pixmap, dev->gc, x1, y1, x2, y2);
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_unlock(&events_mutex);
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -313,6 +367,12 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
     if (npts > PL_MAXPOLY)
 	plexit("plD_polyline_xw: Too many points in polyline\n");
 
+    dbug_enter("plD_polyline_xw");
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_lock(&events_mutex);
+#endif
+
     CheckForEvents(pls);
 
     for (i = 0; i < npts; i++) {
@@ -327,6 +387,10 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
     if (dev->write_to_pixmap)
 	XDrawLines(xwd->display, dev->pixmap, dev->gc, pts, npts,
 		   CoordModeOrigin);
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_unlock(&events_mutex);
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -343,12 +407,20 @@ plD_eop_xw(PLStream *pls)
 
     dbug_enter("plD_eop_xw");
 
+#ifdef HAVE_PTHREAD
+    pthread_mutex_lock(&events_mutex);
+#endif
+
     XFlush(xwd->display);
     if (pls->db)
 	ExposeCmd(pls, NULL);
 	
     if (dev->is_main && ! pls->nopause)
 	WaitForPage(pls);
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_unlock(&events_mutex);
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -365,6 +437,10 @@ plD_bop_xw(PLStream *pls)
 
     dbug_enter("plD_bop_xw");
 
+#ifdef HAVE_PTHREAD
+    pthread_mutex_lock(&events_mutex);
+#endif
+
     if (dev->write_to_window) {
 	XClearWindow(xwd->display, dev->window);
     }
@@ -376,6 +452,10 @@ plD_bop_xw(PLStream *pls)
     }
     XSync(xwd->display, 0);
     pls->page++;
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_unlock(&events_mutex);
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -391,6 +471,16 @@ plD_tidy_xw(PLStream *pls)
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
     dbug_enter("plD_tidy_xw");
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_lock(&events_mutex);
+    if (pthread_cancel(dev->updater) == 0)
+      pthread_join(dev->updater, NULL);
+
+    pthread_mutex_unlock(&events_mutex);
+    if (--already == 0)
+      pthread_mutex_destroy(&events_mutex);
+#endif
 
     if (dev->is_main) {
 	XDestroyWindow(xwd->display, dev->window);
@@ -422,6 +512,10 @@ plD_state_xw(PLStream *pls, PLINT op)
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
     dbug_enter("plD_state_xw");
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_lock(&events_mutex);
+#endif
 
     CheckForEvents(pls);
 
@@ -481,6 +575,10 @@ plD_state_xw(PLStream *pls, PLINT op)
 	StoreCmap1(pls);
 	break;
     }
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_unlock(&events_mutex);
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -517,6 +615,10 @@ void
 plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 {
     dbug_enter("plD_esc_xw");
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_lock(&events_mutex);
+#endif
 
     switch (op) {
     case PLESC_EH:
@@ -582,6 +684,10 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 	OpenXwin(pls);
 	break;
     }
+
+#ifdef HAVE_PTHREAD
+    pthread_mutex_unlock(&events_mutex);
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -742,7 +848,10 @@ OpenXwin(PLStream *pls)
 	xwd->nstreams = 1;
 
 /* Open display */
-
+#ifdef HAVE_PTHREAD
+	if (! XInitThreads())
+	  plexit("xwin: XInitThreads() not successful.\n");
+#endif
 	xwd->display = XOpenDisplay(pls->FileName);
 	if (xwd->display == NULL) {
 	    fprintf(stderr, "Can't open display\n");
@@ -999,8 +1108,7 @@ MapMain(PLStream *pls)
 	XWindowEvent(xwd->display, dev->window, dev->event_mask, &event);
 	if (event.type == Expose) {
 	    while (XCheckWindowEvent(xwd->display, dev->window,
-				     ExposureMask, &event))
-		;
+				     ExposureMask, &event));
 	    break;
 	}
     }
@@ -1028,6 +1136,96 @@ WaitForPage(PLStream *pls)
     }
     dev->exit_eventloop = FALSE;
 }
+
+/*------------------------------------------------------------\*
+ * events_thread()
+ *
+ * This function is being running continously by a tread and is
+ * responsible for dealing with expose and resize X events, in
+ * the case that the main program is too busy to honor them.
+ *
+ * Dealing with other X events is possible, but not desirable,
+ * e.g. treating the "Q" or right-mouse-button would terminate
+ * the thread (if this is desirable, the thread should kill the
+ * main program -- not thread aware -- and kill itself afterward).
+ *
+ * This works pretty well, but the main program *must* be linked
+ * with the pthread library, although not being thread aware.
+ * This happens automatically when linking against libplplot.so,
+ * but when building modules for extending some language such as
+ * Python or Octave, the language providing binary itself must be
+ * relinked with -lpthread.
+ *
+\*------------------------------------------------------------*/
+
+#ifdef HAVE_PTHREAD
+static void
+events_thread(void *pls)
+{
+  PLStream *lpls = (PLStream *) pls;
+  XwDev *dev = (XwDev *) lpls->dev;
+  XwDisplay *xwd = (XwDisplay *) dev->xwd;
+  struct timespec delay;
+  XEvent event;
+  long event_mask;
+  sigset_t set;
+  
+  /*
+   * only treats exposures and resizes, but remove usual events from queue,
+   * as it can be disturbing to not have them acknowledged in real time,
+   * because the program is busy, and suddenly all being acknowledged.
+   * Also, the locator ("L" key) is sluggish if driven by the thread.
+   *
+   * But this approach is a problem when the thread removes events
+   * from the queue while the program is responsible! The user hits 'L'
+   * and nothing happens, as the thread removes it.
+   *
+   * Perhaps the "Q" key should have a different treatment, quiting the
+   * program anyway?
+   *
+   * Changed: does not remove non treated events from the queue
+   */
+
+  event_mask =  ExposureMask | StructureNotifyMask;
+  
+  /* block all signal for this thread */
+  sigemptyset(&set);
+  /* sigfillset(&set);  can't be all signals, decide latter */
+  sigaddset(&set, SIGINT); 
+
+  sigprocmask(SIG_BLOCK, &set, NULL); 
+
+  pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+
+  delay.tv_sec = 0;
+  delay.tv_nsec = 10000000; /* this thread runs 10 times a second. (1/10 ms) */
+
+  while(1) {
+    pthread_mutex_lock(&events_mutex);
+
+    if (dev->is_main &&	! lpls->plbuf_read &&
+	++dev->instr % dev->max_instr == 0) {
+
+      dev->instr = 0;
+      while (XCheckWindowEvent(xwd->display, dev->window, event_mask, &event)) {
+	switch (event.type) {
+	case Expose:
+	  ExposeEH(lpls, &event);
+	  break;
+	case ConfigureNotify:
+	  ResizeEH(lpls, &event);
+	  break;
+	}
+      }
+    }
+
+    pthread_mutex_unlock(&events_mutex);
+    nanosleep(&delay, NULL); /* 10ms in linux */
+    /* pthread_yield(NULL); */ /* this puts too much load on the CPU */
+  }
+}
+#endif
 
 /*--------------------------------------------------------------------------*\
  * CheckForEvents()
@@ -2810,7 +3008,7 @@ AreWeGrayscale(Display *display)
 }
 
 /*--------------------------------------------------------------------------*\
- * SaveColormap()
+ * SaveColormap()  **** DUMMY, NOT USED ANYMORE ***
  *
  * Saves RGB components of given colormap.
  * Used in an ugly hack to get past some X11R5 and TK limitations.
@@ -2860,7 +3058,7 @@ GetImageErrorHandler(Display *display, XErrorEvent *error)
     if (error->error_code != BadMatch) {
 	char buffer[256];
 	XGetErrorText(display, error->error_code, buffer, 256);
-	fprintf(stderr, "Error in XGetImage: %s.\n", buffer);
+	fprintf(stderr, "xwin: Error in XGetImage: %s.\n", buffer);
     }
     return 1;
 }	
@@ -2920,7 +3118,7 @@ DrawImage(PLStream *pls)
   XSetErrorHandler(oldErrorHandler);
 
   if (ximg == NULL) {
-    plabort("Can't get image, the window must be partly obscured.");
+    plabort("Can't get image, the window must be partly off-screen, move it to fit screen");
     return;
   }
 

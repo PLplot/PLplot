@@ -23,6 +23,7 @@ PNGLIBSTR=-lpng
 JPEGLIBSTR=-ljpeg
 ZLIBLIBSTR=-lz
 FREETYPELIBSTR=-lfreetype
+PTHREADLIBS=""
 QHULLLIBS=""
 NNLIBS=""
 CSALIBS=""
@@ -901,6 +902,16 @@ if test "$enable_linuxvga" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# Check for pthreads 
+# ----------------------------------------------------------------------------
+
+if test "$with_pthreads" = "yes" -a "$enable_xwin" = "yes"; then
+    AC_CHECK_LIB(pthread, pthread_create, [
+        AC_DEFINE(HAVE_PTHREAD, [], [Define if pthreads is available])
+        PTHREADLIBS="-lpthread" ], [ with_pthreads="no"])
+fi
+
+# ----------------------------------------------------------------------------
 # Check for csa
 # ----------------------------------------------------------------------------
 
@@ -929,13 +940,14 @@ fi
 if test "$with_qhull" = "yes" -o "$with_csa" = "yes"; then
     case "$host_cpu" in
 	i*86 )
-            CFLAGS="$(CFLAGS) -mieee-fp"
+            CFLAGS="$CFLAGS -mieee-fp"
 	;;
 	alpha* )
             if test "$GCC" = yes; then
-                CFLAGS="$(CFLAGS) -mieee"
+                CFLAGS="$CFLAGS -mieee"
             else
-                CFLAGS="$(CFLAGS) -ieee"
+                CFLAGS="$CFLAGS -ieee"
+            fi
 	;;
     esac
 
@@ -968,6 +980,7 @@ AC_SUBST(SHLIB_LIBS)
 AC_SUBST(LINUXVGALIBS)
 AC_SUBST(GNOMELIBS)
 AC_SUBST(CDLIBS)
+AC_SUBST(PTHREADLIBS)
 AC_SUBST(QHULLLIBS)
 AC_SUBST(NNLIBS)
 AC_SUBST(CSALIBS)

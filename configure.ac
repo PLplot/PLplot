@@ -112,6 +112,7 @@ with_pkgdir=
 with_rpath=yes
 with_nobraindead=no
 with_freetype=yes
+with_pthreads=no
 with_qhull=yes
 with_csa=yes
 
@@ -436,6 +437,11 @@ AM_PROG_LIBTOOL
 MY_ARG_WITH(freetype,
   AC_HELP_STRING([--with-freetype], 
     [enable driver options for using freetype library for fonts ($with_freetype)]))
+
+# use pthreads with the xwin driver
+
+MY_ARG_WITH(pthreads,
+  [  --with-pthreads         Use pthreads with the xwin driver])
 
 MY_ARG_WITH(qhull,
   AC_HELP_STRING([--with-qhull], 
@@ -975,7 +981,7 @@ with_rpath:	$with_rpath		with_double:	$with_double
 
 Optional libraries:
 with_qhull:	$with_qhull		with_csa:	$with_csa
-with_freetype:	$with_freetype		
+with_freetype:	$with_freetype		with_pthreads:	$with_pthreads
 
 
 Language Bindings:
