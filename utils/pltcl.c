@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/07/19 22:33:16  mjl
+ * Revision 1.5  1994/08/25 04:05:16  mjl
+ * Fixed error output; removes spurious <RET> at end.
+ *
+ * Revision 1.4  1994/07/19  22:33:16  mjl
  * Internal header file inclusion changed to /not/ use a search path so that
  * it will work better with makedepend.
  *
@@ -77,7 +80,7 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
 /* Print error message if one given */
 
-    if (interp->result != '\0')
+    if (interp->result != NULL && interp->result[0] != '\0')
 	fprintf(stderr, "%s\n", interp->result);
 
     plspause(0);
