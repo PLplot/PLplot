@@ -15,32 +15,8 @@ TK_EXE		= plserver$E
 #DO NOT include the symlinks, i.e., x01.tcl, etc.
 TK_DEMOS	= tk?? tkdemos.tcl *.c README.tkdemos
 
-<<<<<<< pkg_tk.in
-install_tk:
-	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
-	-if test $(SHARED) = 1; then \
-	 $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
-		-o plserver$E $(LDC_LIBS); \
-	 fi
-	-strip plserver$E
-	-cp plserver$E $(BIN_DIR)
-	-cd $(top_srcdir)/bindings/tk; \
-	 cp pltk.h $(INCLUDE_DIR); \
-	 cp *.itk *.tcl *.pal $(TCL_DIR)
-	-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
-	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
-	-cd $(top_srcdir)/examples/tk; cp * $(DEMOS_DIR)/tk
-# Modified by Rafael Laboissiere <rafael@icp.oinpg.fr>
-# on Fri Nov 13 03:37:04 CET 1998
-#	-$(LN) $(DEMOS_DIR)/tcl/x??.tcl $(DEMOS_DIR)/tk
-	( cd $(DEMOS_DIR)/tk ; $(LN) ../tcl/x??.tcl $(DEMOS_DIR)/tk )
-=======
 # Variables for use in "make" and "make install".
->>>>>>> 1.17
 
-<<<<<<< pkg_tk.in
-
-=======
 INSTALL_TK	= install_tk
 
 # Targets
@@ -76,4 +52,3 @@ install_tk_demos:
 
 install_tk: install_plserver install_tk_scripts install_tk_demos
 
->>>>>>> 1.17

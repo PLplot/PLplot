@@ -25,14 +25,10 @@ PYTHON_NUM_DIR	= @PYTHON_NUM_DIR@
 PYTHON_MOD_DIR	= @PYTHON_MOD_DIR@
 PYTHON_MACH_DIR	= @PYTHON_MACH_DIR@
 PYTHON_CFG_DIR	= @PYTHON_CFG_DIR@
-<<<<<<< pkg_python.in
-PYTHON_LIBS	= -L$(PYTHON_CFG_DIR) -lpython1.5
-=======
 #These libraries do not exist on Linux systems (at least for python-1.5) so
 #must comment out.  If required on other systems, must do something fancy.
 #PYTHON_LIBS	= -L$(PYTHON_CFG_DIR) -lModules -lObjects -lParser -lPython
 PYTHON_LIBS=
->>>>>>> 1.14
 PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
@@ -42,30 +38,6 @@ PYTHON_DEMOS	= README pytkdemo *.py
 
 INSTALL_PYTHON	= install_python
 
-<<<<<<< pkg_python.in
-plmodule$O:	plmodule.c plmodule2.c plmodule.h
-	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) \
-		-I$(PYTHON_INC_DIR) -I$(PYTHON_CFG_DIR) \
-		plmodule.c
-
-$(PYTHON_EXE): plmodule$O
-	@echo " "
-	@echo "Building Python module."
-	@echo " "
-	$(LDSHARED) $(LDC_FLAGS) plmodule$O $(PYTHON_LIBS) $(PLLIB_LDC) \
-		-o $(PYTHON_EXE) -lc $(LDC_LIBS)
-
-install_python:
-	$(LDSHARED) $(LDC_FLAGS) plmodule$O $(PYTHON_LIBS) $(LIB_INSTALL) \
-		-o $(PYTHON_EXE) -lc $(LDC_LIBS)
-	-if test ! -d $(PYTHON_DIR); then mkdir -p $(PYTHON_DIR); fi
-	-cp $(PYTHON_EXE) $(PYTHON_DIR)
-	-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
-	-cd $(top_srcdir)/examples/python; cp * $(DEMOS_DIR)/python
-	-if test ! -d $(PYTHON_MOD_DIR)/plplot; then \
-		mkdir -p $(PYTHON_MOD_DIR)/plplot; fi
-	-cd $(top_srcdir)/bindings/python; cp *.py $(PYTHON_MOD_DIR)/plplot
-=======
 install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
 	@cd python_dynamic ; make -s distclean
 	@echo '*shared*' > python_dynamic/Setup.in
@@ -86,5 +58,4 @@ install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
 #	-if test ! -d $(PYTHON_MOD_DIR)/plplot; then \
 #		mkdir -p $(PYTHON_MOD_DIR)/plplot; fi
 #	-cd $(top_srcdir)/bindings/python; $(CP) *.py $(PYTHON_MOD_DIR)/plplot
->>>>>>> 1.14
 
