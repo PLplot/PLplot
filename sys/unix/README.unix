@@ -1,50 +1,37 @@
 Here's how to make *everything* conveniently on a unix-like system.
 
-The makefile is built by running the file makefile.m4 through the m4 macro
-processor with an appropriate system macro defined.  This allows multiple
-configurations to be easily supported, similar to 'imake'.  Macros for
-system type include: HPUX, SUNOS, AIX, UNICOS, SYSV, DGUX, LINUX, NEXT,
-ULTRIX, BSD, AMIGA.  One of these *must* be specified, or if necessary you
-can add system specific defines analogous to the existing ones.  There are
-also the macros DOUBLE (for double precision), DEBUG (debugging), PROFILE
-(for enabling profiling code, if supported by the compiler), OPT
-(optimization), OPTF (full optimization), NO_SHARE (no shared libraries),
-NO_X (no X-windows), NO_TK (no TK driver), and probably more by now.
-Please look at the comments in makefile.m4 for more info.
+From the top level directory, just type the following:
+
+	cd tmp
+	../configure
+
+The makefile will then be built by running the file makefile.m4 through
+the m4 macro processor with an appropriate value for the SYSTEM macro
+(this is a bit different from how it was handled prior to 4.99d).  The
+configure script automatically gets the system name right, using the
+output of `uname`.  There are many other options you can give configure,
+or you can specify these as environmental or shell variables if you like.
+Type ../configure h for more information.  The files used in construction
+of the makefile are stored in the m4 subdirectory; see the README file
+there for more info.
 
 You must ensure that the appropriate system header files can be found by the
 generated makefile.  This is occasionally a problem for X11 header files,
 e.g. they might be in /usr/include/X11, /usr/include/X11R4/X11,
-/usr/include/X11R5/X11, etc.  This can usually be solved by setting the
-appropriate environmental variables.  For example, under HPUX 9.01 I have the
-following set in my .login:
+/usr/include/X11R5/X11, etc.  The cf_plplot.m4 file is for customizing
+settings for your site; the default values will work for many systems.
+If not, you should create a directory ~/config, copy cf_plplot.m4 to it,
+and modify it accordingly.  The next time you use configure it will soft
+link the copy in ~/config and use that.  This way you can set up site-
+specific config files once and have the build always work flawlessly.
 
-	setenv CCOPTS	"-I/usr/include/X11R5"
-	setenv CXXOPTS	"-I/usr/include/X11R5"
-	setenv LDOPTS	"-L/usr/lib/X11R5 -L/usr/lib/Motif1.1"
-
-Not all C compilers have such switches, however, so the other nice way
-of doing it is e.g.
-
-	ln -s /usr/include/X11R5/X11 ~/include/X11
-
-which will be found since the makefile specifies that ~/include be checked
-in the include path.
-
-To build the makefile, starting from the plplot directory:
-
-	% cd tmp
-	% cp ../config/*.m4 .
-	% m4 -D<sys> <makefile.m4 >makefile
-
-where <sys> is the appropriate system name.
 Then, while in the tmp directory
 
 	% make
 
-sets up soft links to all the source files, makes the main library
-(default precision, probably single on a workstation), makes the renderer
-and the server (if the TK driver is specified).  Finally, to make a demo,
+makes the main library (default precision, probably single on a
+workstation), makes the renderer and the server (if the TK driver is
+specified).  Finally, to make a demo,
 
 	% make x01c
 

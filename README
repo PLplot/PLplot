@@ -1,16 +1,11 @@
-This is the PLPLOT distribution.  PLPLOT is a scientific plotting package for
-many systems, small (micro) and large (super) alike.  Despite its small size
-and quickness, it has enough power to satisfy most users, including: standard
-x-y plots, semilog plots, log-log plots, contour plots, 3D plots, mesh plots,
-bar charts and pie charts.  Multiple graphs (of the same or different sizes)
-may be placed on a single page with multiple lines in each graph.  Different
-line styles, widths and colors are supported.  A virtually infinite number of
-distinct area fill patterns may be used.  There are almost 1000 characters in
-the extended character set.  This includes four different fonts, the Greek
-alphabet and a host of mathematical, musical, and other symbols.  The fonts
-can be scaled to any size for various effects.  Many different output device
-drivers are available (system dependent), including a portable metafile
-format and renderer.
+This is the distribution for PLPLOT, a scientific plotting package.
+PLPLOT is relatively small, portable, freely distributable, and is rich
+enough to satisfy most users.  It has a wide range of plot types including
+line (linear, log), contour, 3D, fill, and almost 1000 characters
+(including Greek and mathematical) in its extended font set.  The package
+is designed to make it easy to quickly get graphical output; only a
+handful of function calls is typically required.  For more advanced use,
+virtually all aspects of plotting are configurable.
 
 The PLPLOT package is freely distributable, but NOT in the public domain.
 The PLPLOT source code, except header files and those files explicitly
@@ -38,26 +33,38 @@ modification of the user program.  C programs are required to include the
 header file "plplot.h"; see the documentation for more details.
 
 The main documentation for PLPLOT is in the doc/ directory in the form of
-several TeX files; please consult this for additional information ('latex
-plotdoc').  Unfortunately documentation tends to lag actual improvements to
+several TeX files; please consult this for additional information ("latex
+plotdoc").  Unfortunately documentation tends to lag actual improvements to
 the code, so don't be surprised if some known features are not explained
-there.  Consult 'Changes.log' to see a list of recent changes.  
+there.  Consult "Changes.log" to see a list of recent changes.  
 
 At present, PLPLOT is known to work on the following systems:
 
-	Unix:	SunOS
-		A/IX 
-		HP-UX
-		Unicos
-		DG/UX
-		Ultrix
-		SysV
-		Linux
+	Unix:	A/IX 		(IBM)
+		DG/UX		(Data General)
+		HP-UX		(Hewlett-Packard)
+		IRIX		(Silicon Graphics)
+		Linux		(various)
+		OSF/1		(DEC)
+		SunOS		(Sun)
+		Super-UX	(NEC)
+		SysV		(various)
+		Ultrix		(DEC)
+		Unicos		(Cray)
 
 	Amiga/Exec
 	MS-DOS
 	OS/2
 	NeXT
+
+Many different output device drivers are available, including postscript,
+tektronix, HP laserjet, HP pen plotters, XFig, xterm, X-windows, and a
+portable metafile format, among others.  The TK driver under Unix/X
+provides a full user interface, with facilities to zoom, pan, orient,
+determine placement on the output page, and save the plot or any set of
+plots to a specified file and device type.  The metafile renderer
+(plrender) supports seeking backwards or forwards to any specified page
+when interactively viewing metafile output.
 
 For more information on how to get or use PLPLOT on your system, see:
  - appendices to the PLPLOT manual
@@ -74,11 +81,11 @@ list all the contributors.   Those currently supporting and otherwise
 responsible for the package in its present form include:
 
 Maurice LeBrun
-Please send all comments, flames, patches, etc, to me.  I am responsible for
-all the PLPLOT kernel development as well as most of the work on the
-metafile, xwindow, xterm, postscript, tektronix, and Amiga drivers.
+Please send all comments, flames, patches, etc, to me.  I am responsible
+for the PLPLOT kernel development as well as work on the Tcl/TK, X-window,
+metafile, postscript, xterm, tektronix, and Amiga drivers.
 
-EMAIL	mjl@fusion.ph.utexas.edu 
+EMAIL	mjl@dino.ph.utexas.edu 
 USMAIL	Dr. Maurice LeBrun
 	Institute for Fusion Studies
 	University of Texas
@@ -86,9 +93,9 @@ USMAIL	Dr. Maurice LeBrun
 
 
 Geoff Furnish
-Please send questions regarding the MS-DOS and OS/2 drivers to Geoff.
+Please send questions regarding the OS/2 driver to Geoff.
 
-EMAIL	furnish@fusion.ph.utexas.edu
+EMAIL	furnish@dino.ph.utexas.edu
 USMAIL	Geoff Furnish
 	Institute for Fusion Studies
 	University of Texas

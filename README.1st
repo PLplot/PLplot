@@ -30,8 +30,11 @@ current plot, all from a menu.  Help menu entries also available, as well
 as forward/backward page button (only plrender has the backward page
 button) and end of plot indicator.  Colors and fonts are
 user-customizable.  Entire layout designed to be user-customizable
-although this aspect has not been well tested.  You are encouraged
-to read the file doc/Xauthority before using this driver.
+although this aspect has not been well tested.  You are encouraged to read
+the file doc/Xauthority before using this driver.  You can get the Tcl/TK
+package by anonymous ftp from sprite.berkeley.edu in the tcl subdirectory
+(or from harbor.ecn.purdue.edu in directory pub/tcl).  Also consult with
+the comp.lang.tcl newsgroup on Usenet.
 
 o Changed all plplot source files to include plplotP.h (private) rather
 than plplot.h.  Rationalized namespace -- all externally-visible plplot
@@ -124,7 +127,12 @@ into a number of different utility m4 files.  Makes addition of new
 systems a snap.  A /bin/sh configure script is now use for building
 plplot, allowing automatic determination of system type and other
 niceties.  To build package, cd to tmp directory and type "../configure",
-then "make".  See the README file in the m4 directory for more info.
+then "make".  See the README file in the m4 directory for more info,
+also the appropriate system specific README file.
+
+o Note: DOS and OS/2 drivers not updated and most certainly are broken
+now.  I need someone to support these platforms as the original DOS &
+OS/2 developers have switched to Linux.
 
 **************************************************************************
 Version 4.99c: Summary of major changes (minor update only)
