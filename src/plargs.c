@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1995/05/05 19:34:30  shouman
+ * Revision 1.30  1995/05/07 03:05:45  mjl
+ * Added handling for new flags: -verbose, -debug, -ncol0, -ncol1.  Eliminated
+ * all uses of PL_OPT_ENABLED in favor of PL_OPT_DISABLED (applied in reverse).
+ * Changed help (-h) output to pipe output to $PAGER if available, otherwise
+ * "more" (if found).  Still needs to be made portable using configure -- right
+ * now only works under Unix.  Other minor tweaks.
+ *
+ * Revision 1.29  1995/05/05  19:34:30  shouman
  * Changed ProcessOpt to mallocate a temporary copy of an option before giving
  * it to a handler function if PL_PARSE_NODELETE is specified.  Some of the
  * handlers call strtok(), altering the option they are handed.
@@ -159,6 +166,8 @@ static void Syntax	(void);
 
 static int opt_h		(char *, char *, void *);
 static int opt_v		(char *, char *, void *);
+static int opt_verbose		(char *, char *, void *);
+static int opt_debug		(char *, char *, void *);
 static int opt_hack		(char *, char *, void *);
 static int opt_dev		(char *, char *, void *);
 static int opt_o		(char *, char *, void *);
@@ -171,6 +180,8 @@ static int opt_ori		(char *, char *, void *);
 static int opt_freeaspect	(char *, char *, void *);
 static int opt_width		(char *, char *, void *);
 static int opt_bg		(char *, char *, void *);
+static int opt_ncol0		(char *, char *, void *);
+static int opt_ncol1		(char *, char *, void *);
 static int opt_fam		(char *, char *, void *);
 static int opt_fsiz		(char *, char *, void *);
 static int opt_fbeg		(char *, char *, void *);
@@ -239,10 +250,10 @@ static int  mode_nodash;
  *
  * The mode bits are:
  *
- * PL_OPT_ENABLED	Processing for option is enabled
  * PL_OPT_ARG		Option has an argment 
  * PL_OPT_NODELETE	Don't delete after processing 
  * PL_OPT_INVISIBLE	Make invisible (usually for debugging)
+ * PL_OPT_DISABLED	Ignore this option
  *
  * The following mode bits cause the option to be processed as specified:
  *
@@ -250,7 +261,7 @@ static int  mode_nodash;
  * PL_OPT_BOOL		Set *var=1
  * PL_OPT_INT		Set *var=atoi(optarg)
  * PL_OPT_FLOAT		Set *var=atof(optarg)
- * PL_OPT_STRING		Set var=optarg
+ * PL_OPT_STRING	Set var=optarg
  *
  * where opt points to the option string and optarg points to the
  * argument string.
@@ -263,7 +274,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     NULL,
     &mode_showall,
-    PL_OPT_BOOL | PL_OPT_ENABLED | PL_OPT_INVISIBLE,
+    PL_OPT_BOOL | PL_OPT_INVISIBLE,
     "-showall",
     "Turns on invisible options" },
 {
@@ -271,7 +282,7 @@ static PLOptionTable ploption_table[] = {
     opt_h,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED,
+    PL_OPT_FUNC,
     "-h",
     "Print out this message" },
 {
@@ -279,15 +290,31 @@ static PLOptionTable ploption_table[] = {
     opt_v,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED,
+    PL_OPT_FUNC,
     "-v",
     "Print out the PLplot library version number" },
+{
+    "verbose",			/* Be more verbose than usual */
+    opt_verbose,
+    NULL,
+    NULL,
+    PL_OPT_FUNC,
+    "-verbose",
+    "Be more verbose than usual" },
+{
+    "debug",			/* Print debugging info */
+    opt_debug,
+    NULL,
+    NULL,
+    PL_OPT_FUNC,
+    "-debug",
+    "Print debugging info (implies -verbose)" },
 {
     "hack",			/* Enable driver-specific hack(s) */
     opt_hack,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_INVISIBLE,
+    PL_OPT_FUNC | PL_OPT_INVISIBLE,
     "-hack",
     "Enable driver-specific hack(s)" },
 {
@@ -295,7 +322,7 @@ static PLOptionTable ploption_table[] = {
     opt_dev,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-dev name",
     "Output device name" },
 {
@@ -303,7 +330,7 @@ static PLOptionTable ploption_table[] = {
     opt_o,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-o name",
     "Output filename" },
 {
@@ -311,7 +338,7 @@ static PLOptionTable ploption_table[] = {
     opt_o,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-display name",
     "X server to contact" },
 {
@@ -319,7 +346,7 @@ static PLOptionTable ploption_table[] = {
     opt_px,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-px number",
     "Plots per page in x" },
 {
@@ -327,7 +354,7 @@ static PLOptionTable ploption_table[] = {
     opt_py,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-py number",
     "Plots per page in y" },
 {
@@ -335,7 +362,7 @@ static PLOptionTable ploption_table[] = {
     opt_geo,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-geometry geom",
     "Window size, in pixels (e.g. -geometry 400x300)" },
 {
@@ -343,7 +370,7 @@ static PLOptionTable ploption_table[] = {
     opt_geo,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-geo geom",
     "Window size, in pixels (e.g. -geo 400x300)" },
 {
@@ -351,7 +378,7 @@ static PLOptionTable ploption_table[] = {
     opt_wplt,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-wplt xl,yl,xr,yr",
     "Relative coordinates [0-1] of window into plot" },
 {
@@ -359,7 +386,7 @@ static PLOptionTable ploption_table[] = {
     opt_mar,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-mar margin",
     "Margin space in relative coordinates (0 to 0.5, def 0)" },
 {
@@ -367,7 +394,7 @@ static PLOptionTable ploption_table[] = {
     opt_a,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-a aspect",
     "Page aspect ratio (def: same as output device)"},
 {
@@ -375,7 +402,7 @@ static PLOptionTable ploption_table[] = {
     opt_jx,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-jx justx",
     "Page justification in x (-0.5 to 0.5, def 0)"},
 {
@@ -383,7 +410,7 @@ static PLOptionTable ploption_table[] = {
     opt_jy,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-jy justy",
     "Page justification in y (-0.5 to 0.5, def 0)"},
 {
@@ -391,7 +418,7 @@ static PLOptionTable ploption_table[] = {
     opt_ori,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-ori orient",
     "Plot orientation (0,2=landscape, 1,3=portrait)" },
 {
@@ -399,7 +426,7 @@ static PLOptionTable ploption_table[] = {
     opt_freeaspect,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED,
+    PL_OPT_FUNC,
     "-freeaspect",
     "Do not preserve aspect ratio on orientation swaps" },
 {
@@ -407,7 +434,7 @@ static PLOptionTable ploption_table[] = {
     opt_width,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-width width",
     "Sets pen width (1 <= width <= 10)" },
 {
@@ -415,15 +442,31 @@ static PLOptionTable ploption_table[] = {
     opt_bg,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-bg color",
     "Background color (0=black, FFFFFF=white)" },
+{
+    "ncol0",			/* Allocated colors in cmap 0 */
+    opt_ncol0,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ARG,
+    "-ncol0 n",
+    "Number of colors to allocate in cmap 0 (upper bound)" },
+{
+    "ncol1",			/* Allocated colors in cmap 1 */
+    opt_ncol1,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ARG,
+    "-ncol1 n",
+    "Number of colors to allocate in cmap 1 (upper bound)" },
 {
     "fam",			/* Familying on switch */
     opt_fam,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED,
+    PL_OPT_FUNC,
     "-fam",
     "Create a family of output files" },
 {
@@ -431,7 +474,7 @@ static PLOptionTable ploption_table[] = {
     opt_fsiz,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-fsiz size",
     "Output family file size in MB (e.g. -fsiz 1.0)" },
 {
@@ -439,7 +482,7 @@ static PLOptionTable ploption_table[] = {
     opt_fbeg,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-fbeg number",
     "First family member number on output" },
 {
@@ -447,7 +490,7 @@ static PLOptionTable ploption_table[] = {
     opt_finc,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-finc number",
     "Increment between family members" },
 {
@@ -455,7 +498,7 @@ static PLOptionTable ploption_table[] = {
     opt_fflen,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-fflen length",
     "Family member number minimum field width" },
 {
@@ -463,7 +506,7 @@ static PLOptionTable ploption_table[] = {
     opt_nopixmap,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED,
+    PL_OPT_FUNC,
     "-nopixmap",
     "Don't use pixmaps in X-based drivers" },
 {
@@ -471,7 +514,7 @@ static PLOptionTable ploption_table[] = {
     opt_db,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED,
+    PL_OPT_FUNC,
     "-db",
     "Double buffer X window output" },
 {
@@ -479,7 +522,7 @@ static PLOptionTable ploption_table[] = {
     opt_np,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED,
+    PL_OPT_FUNC,
     "-np",
     "No pause between pages" },
 {
@@ -487,7 +530,7 @@ static PLOptionTable ploption_table[] = {
     opt_bufmax,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-bufmax",
     "bytes sent before flushing output" },
 {
@@ -495,7 +538,7 @@ static PLOptionTable ploption_table[] = {
     opt_server_name,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-server_name name",
     "Main window name of PLplot server (tk driver)" },
 {
@@ -503,7 +546,7 @@ static PLOptionTable ploption_table[] = {
     opt_server_host,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-server_host name",
     "Host to run PLplot server on (dp driver)" },
 {
@@ -511,7 +554,7 @@ static PLOptionTable ploption_table[] = {
     opt_server_port,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-server_port name",
     "Port to talk to PLplot server on (dp driver)" },
 {
@@ -519,7 +562,7 @@ static PLOptionTable ploption_table[] = {
     opt_user,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-user name",
     "User name on remote node (dp driver)" },
 {
@@ -527,7 +570,7 @@ static PLOptionTable ploption_table[] = {
     opt_plserver,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-plserver name",
     "Invoked name of PLplot server (tk or dp driver)" },
 {
@@ -535,7 +578,7 @@ static PLOptionTable ploption_table[] = {
     opt_plwindow,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-plwindow name",
     "Name of PLplot container window (tk or dp driver)" },
 {
@@ -543,7 +586,7 @@ static PLOptionTable ploption_table[] = {
     opt_tcl_cmd,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-tcl_cmd command",
     "TCL command string run at startup (note: disabled)" },
 {
@@ -551,7 +594,7 @@ static PLOptionTable ploption_table[] = {
     opt_auto_path,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-auto_path dir",
     "Additional directory(s) to autoload (tk or dp driver)" },
 {
@@ -815,8 +858,10 @@ ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 
 	/* Skip if option not enabled */
 
-	    if ( ! (tab->mode & PL_OPT_ENABLED)) 
+	    if (tab->mode & PL_OPT_DISABLED) 
 		continue;
+
+	/* Try to match it */
 
 	    if (*opt == *tab->opt && ! strcmp(opt, tab->opt)) {
 
@@ -1051,7 +1096,7 @@ Syntax(void)
 
 	col = 80;
 	for (tab = ploption_info[i].options; tab->opt; tab++) {
-	    if ( ! (tab->mode & PL_OPT_ENABLED))
+	    if (tab->mode & PL_OPT_DISABLED)
 		continue;
 
 	    if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
@@ -1084,6 +1129,22 @@ Help(void)
     PLOptionTable *tab;
     char **note;
     int i;
+    FILE *outfile = stderr;
+
+    FILE *pager = NULL;
+    if (getenv("PAGER") != NULL)
+	pager = (FILE *) popen("$PAGER", "w");
+    if (pager == NULL)
+	pager = (FILE *) popen("more", "w");
+    if (pager != NULL)
+	outfile = pager;
+
+/* Usage line */
+
+    if (usage == NULL)
+	fprintf(outfile, "\nUsage:\n        %s [options]\n", program);
+    else
+	fputs(usage, outfile);
 
 /* Loop over all options tables */
 
@@ -1092,14 +1153,14 @@ Help(void)
     /* Introducer */
 
 	if (ploption_info[i].name)
-	    fprintf(stderr, "\n%s:\n", ploption_info[i].name);
+	    fprintf(outfile, "\n%s:\n", ploption_info[i].name);
 	else
-	    fputs("\nUser options:\n", stderr);
+	    fputs("\nUser options:\n", outfile);
 
     /* Print description for each option */
 
 	for (tab = ploption_info[i].options; tab->opt; tab++) {
-	    if ( ! (tab->mode & PL_OPT_ENABLED))
+	    if (tab->mode & PL_OPT_DISABLED)
 		continue;
 
 	    if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
@@ -1109,21 +1170,24 @@ Help(void)
 		continue;
 
 	    if (tab->mode & PL_OPT_INVISIBLE) 
-		fprintf(stderr, " *  %-20s %s\n", tab->syntax, tab->desc);
+		fprintf(outfile, " *  %-20s %s\n", tab->syntax, tab->desc);
 	    else 
-		fprintf(stderr, "    %-20s %s\n", tab->syntax, tab->desc);
+		fprintf(outfile, "    %-20s %s\n", tab->syntax, tab->desc);
 	}
 
     /* Usage notes */
 
 	if (ploption_info[i].notes) {
-	    putc('\n', stderr);
+	    putc('\n', outfile);
 	    for (note = ploption_info[i].notes; *note; note++) {
-		fputs(*note, stderr);
-		putc('\n', stderr);
+		fputs(*note, outfile);
+		putc('\n', outfile);
 	    }
 	}
     }
+
+    if (pager != NULL)
+	pclose(pager);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1140,14 +1204,9 @@ Help(void)
 static int
 opt_h(char *opt, char *optarg, void *client_data)
 {
-    if ( ! mode_quiet) {
-	if (usage == NULL)
-	    fprintf(stderr, "\nUsage:\n        %s [options]\n", program);
-	else
-	    fputs(usage, stderr);
-
+    if ( ! mode_quiet)
 	Help();
-    }
+
     return 2;
 }
 
@@ -1161,10 +1220,39 @@ opt_h(char *opt, char *optarg, void *client_data)
 static int
 opt_v(char *opt, char *optarg, void *client_data)
 {
-    if ( ! mode_quiet) {
+    if ( ! mode_quiet) 
 	fprintf(stderr, "PLplot library version: %s\n", PLPLOT_VERSION);
-    }
+
     return 2;
+}
+
+/*--------------------------------------------------------------------------*\
+ * opt_verbose()
+ *
+ * Performs appropriate action for option "verbose":
+ * Turn on verbosity flag
+\*--------------------------------------------------------------------------*/
+
+static int
+opt_verbose(char *opt, char *optarg, void *client_data)
+{
+    plsc->verbose = 1;
+    return 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * opt_debug()
+ *
+ * Performs appropriate action for option "debug":
+ * Turn on debugging flag
+\*--------------------------------------------------------------------------*/
+
+static int
+opt_debug(char *opt, char *optarg, void *client_data)
+{
+    plsc->debug = 1;
+    plsc->verbose = 1;
+    return 0;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1368,6 +1456,34 @@ opt_bg(char *opt, char *optarg, void *client_data)
 
     plscolbg(r, g, b);
 
+    return 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * opt_ncol0()
+ *
+ * Performs appropriate action for option "ncol0":
+ * Sets number of colors to allocate in cmap 0 (upper bound).
+\*--------------------------------------------------------------------------*/
+
+static int
+opt_ncol0(char *opt, char *optarg, void *client_data)
+{
+    plsc->ncol0 = atoi(optarg);
+    return 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * opt_ncol1()
+ *
+ * Performs appropriate action for option "ncol1":
+ * Sets number of colors to allocate in cmap 1 (upper bound).
+\*--------------------------------------------------------------------------*/
+
+static int
+opt_ncol1(char *opt, char *optarg, void *client_data)
+{
+    plsc->ncol1 = atoi(optarg);
     return 0;
 }
 
