@@ -105,13 +105,13 @@ def plcont(z, *args):
 	    #Must be pltr_data
 	    pltr_data = args[0]
 	    args = args[1:]
-	elif len(args) == 2 or len(args) == 3:
+	elif len(args) >= 2:
 	    xg = Numeric.asarray(args[0])
 	    if len(xg.shape) < 1 or len(xg.shape) > 2:
 		raise ValueError, 'xg must be 1D or 2D array'
 	    yg = Numeric.asarray(args[1])
-	    if len(yg.shape) < 1 or len(yg.shape) > 2:
-		raise ValueError, 'yg must be 1D or 2D array'
+	    if len(yg.shape) != len(xg.shape):
+		raise ValueError, 'yg must have same number of dimensions as xg'
 	    args = args[2:]
 	    # wrap only relevant if xg and yg specified.
 	    if len(args) > 0:
@@ -139,8 +139,6 @@ def plcont(z, *args):
 	     else:
 		 raise ValueError, 'Specified wrap is not an integer'
 	    pltr_data = (xg, yg)
-	else:
-	    raise ValueError, 'Must have 0-3 arguments after pltr'
     else:
 	# default is identity transformation
 	pltr = pltr0
@@ -248,13 +246,13 @@ def plshades(z, *args):
 	    #Must be pltr_data
 	    pltr_data = args[0]
 	    args = args[1:]
-	elif len(args) == 2 or len(args) == 3:
+	elif len(args) >= 2:
 	    xg = Numeric.asarray(args[0])
 	    if len(xg.shape) < 1 or len(xg.shape) > 2:
 		raise ValueError, 'xg must be 1D or 2D array'
 	    yg = Numeric.asarray(args[1])
-	    if len(yg.shape) < 1 or len(yg.shape) > 2:
-		raise ValueError, 'yg must be 1D or 2D array'
+	    if len(yg.shape) != len(xg.shape):
+		raise ValueError, 'yg must have same number of dimensions as xg'
 	    args = args[2:]
 	    # wrap only relevant if xg and yg specified.
 	    if len(args) > 0:
@@ -282,8 +280,6 @@ def plshades(z, *args):
 	     else:
 		 raise ValueError, 'Specified wrap is not an integer'
 	    pltr_data = (xg, yg)
-	else:
-	    raise ValueError, 'Must have 0-3 arguments after pltr'
     else:
 	# default is identity transformation
 	pltr = pltr0
@@ -291,7 +287,152 @@ def plshades(z, *args):
     if len(args) > 0:
 	raise ValueError, 'Too many arguments for plshades'
 
-    _plshades(z,  xmin, xmax, ymin, ymax, clev, \
+    _plshades(z, xmin, xmax, ymin, ymax, clev, \
     fill_width, cont_color, cont_width, rect, pltr, pltr_data)
 plshades.__doc__ = _plshades.__doc__
+  
+# Redefine plshade to have the user-friendly interface
+# Allowable syntaxes:
+
+# _plshade(z, [xmin, xmax, ymin, ymax,] \
+# shade_min, shade_max, sh_cmap, sh_color, sh_width, \
+# [min_color, min_width, max_color, max_width,] rect, \
+# [pltr, [pltr_data] or [xg, yg, [wrap]]])
+
+# plshade(z,  [xmin, xmax, ymin, ymax,] clev, \
+# fill_width, [cont_color, cont_width,], rect, \
+# [pltr, [pltr_data] or [xg, yg, [wrap]]])
+ 
+_plshade = plshade
+def plshade(z, *args):
+    z = Numeric.asarray(z)
+    if len(z.shape) != 2:
+	raise ValueError, 'Expected 2D z array'
+
+    # Extra check on shade_min = float on end is absolutely necessary
+    # to unambiguously figure out where we are in the argument list.
+    if len(args) > 9 and \
+    (type(args[0]) == types.FloatType or type(args[0]) == types.IntType) and \
+    (type(args[1]) == types.FloatType or type(args[1]) == types.IntType) and \
+    (type(args[2]) == types.FloatType or type(args[2]) == types.IntType) and \
+    (type(args[3]) == types.FloatType or type(args[3]) == types.IntType) and \
+    type(args[4]) == types.FloatType:
+	# These 4 args are xmin, xmax, ymin, ymax
+	xmin, xmax, ymin, ymax = args[0:4]
+	args = args[4:]
+    else:
+	# These values are ignored if pltr and pltr_data are defined in any case.
+	# So pick some convenient defaults that work for the pltr0, None case
+	xmin = -1.
+	xmax = 1.
+	ymin = -1.
+	ymax = 1.
+
+    # shade_min, shade_max, sh_cmap, sh_color, sh_width, must be present.
+    # sh_color can be either integer or float.
+    if len(args) > 5 and \
+    type(args[0]) == types.FloatType and \
+    type(args[1]) == types.FloatType and \
+    type(args[2]) == types.IntType and \
+    (type(args[3]) == types.FloatType or type(args[3]) == types.IntType) and \
+    type(args[4]) == types.IntType:
+	shade_min, shade_max, sh_cmap, sh_color, sh_width = args[0:5]
+	args = args[5:]
+    else:
+	raise ValueError, \
+	'shade_min, shade_max, sh_cmap, sh_color, sh_width, must be present'
+
+    # min_color, min_width, max_color, max_width are optional.
+    if len(args) > 4 and \
+    type(args[0]) == types.IntType and \
+    type(args[1]) == types.IntType and \
+    type(args[2]) == types.IntType and \
+    type(args[3]) == types.IntType:
+	# These 4 args are 
+	min_color, min_width, max_color, max_width = args[0:4]
+	args = args[4:]
+    else:
+	# Turn off boundary colouring
+	min_color, min_width, max_color, max_width = (0,0,0,0)
+
+    # rect must be present.
+    if len(args) > 0 and type(args[0]) == types.IntType:
+	rect = args[0]
+	args = args[1:]
+    else:
+	raise ValueError, 'Missing rect argument'
+
+    if len(args) > 0 and ( \
+    type(args[0]) == types.StringType or \
+    type(args[0]) == types.FunctionType or \
+    type(args[0]) == types.BuiltinFunctionType):
+	pltr = args[0]
+	# Handle the string names for the callbacks though specifying the
+	# built-in function name directly (without the surrounding quotes) 
+	# or specifying any user-defined transformation function 
+	# (following above rules) works fine too.
+	if type(pltr) == types.StringType:
+	    if pltr == 'pltr0':
+		pltr = pltr0
+	    elif pltr == 'pltr1':
+		pltr = pltr1
+	    elif pltr == 'pltr2':
+		pltr = pltr2
+	    else:
+		raise ValueError, 'pltr string is unrecognized'
+
+	args = args[1:]
+	# Handle pltr_data or separate xg, yg, [wrap]
+	if len(args) == 0:
+	    # Default pltr_data
+	    pltr_data = None
+	elif len(args) == 1:
+	    #Must be pltr_data
+	    pltr_data = args[0]
+	    args = args[1:]
+	elif len(args) >= 2:
+	    xg = Numeric.asarray(args[0])
+	    if len(xg.shape) < 1 or len(xg.shape) > 2:
+		raise ValueError, 'xg must be 1D or 2D array'
+	    yg = Numeric.asarray(args[1])
+	    if len(yg.shape) != len(xg.shape):
+		raise ValueError, 'yg must have same number of dimensions as xg'
+	    args = args[2:]
+	    # wrap only relevant if xg and yg specified.
+	    if len(args) > 0:
+	     if type(args[0]) == types.IntType:
+	      wrap = args[0]
+	      args = args[1:]
+	      if len(xg.shape) == 2 and len(yg.shape) == 2 and  \
+	      z.shape == xg.shape and z.shape == yg.shape:
+		# handle wrap
+		if wrap == 1:
+		    z = Numeric.resize(z, (z.shape[0]+1, z.shape[1]))
+		    xg = Numeric.resize(xg, (xg.shape[0]+1, xg.shape[1]))
+		    yg = Numeric.resize(yg, (yg.shape[0]+1, yg.shape[1]))
+		elif wrap == 2:
+		    z = Numeric.transpose(Numeric.resize( \
+		    Numeric.transpose(z), (z.shape[1]+1, z.shape[0])))
+		    xg = Numeric.transpose(Numeric.resize( \
+		    Numeric.transpose(xg), (xg.shape[1]+1, xg.shape[0])))
+		    yg = Numeric.transpose(Numeric.resize( \
+		    Numeric.transpose(yg), (yg.shape[1]+1, yg.shape[0])))
+		elif wrap != 0:
+		    raise ValueError, "Invalid wrap specifier, must be 0, 1 or 2."
+	      elif wrap != 0:
+		  raise ValueError, 'Non-zero wrap specified and xg and yg are not 2D arrays'
+	     else:
+		 raise ValueError, 'Specified wrap is not an integer'
+	    pltr_data = (xg, yg)
+    else:
+	# default is identity transformation
+	pltr = pltr0
+	pltr_data = None
+    if len(args) > 0:
+	raise ValueError, 'Too many arguments for plshade'
+
+    _plshade(z,  xmin, xmax, ymin, ymax, \
+    shade_min, shade_max, sh_cmap, sh_color, sh_width, \
+    min_color, min_width, max_color, max_width, rect, pltr, pltr_data)
+plshade.__doc__ = _plshade.__doc__
   
