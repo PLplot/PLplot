@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.38  2000/05/11 21:23:08  furnish
+ * Minor rework of Rob Managan's change.
+ *
  * Revision 1.37  2000/05/10 20:41:49  furnish
  * Modify plLibOpen and strcat_delim for Mac.  Rob Managan.
  *
@@ -1232,15 +1235,15 @@ plLibOpen(char *fn)
 #ifdef PLLIBDEV
     plGetName(PLLIBDEV, "", fn, &fs);
 
+    if ((file = fopen(fs, "rb")) != NULL)
+	goto done;
+#endif	/* PLLIBDEV */
+
 #ifdef macintosh
     file = plMacLibOpen(fn);
     if (file != NULL)
         goto done;
 #endif /* macintosh */
-
-    if ((file = fopen(fs, "rb")) != NULL)
-	goto done;
-#endif	/* PLLIBDEV */
 
 /**** 	not found, give up 	****/
 
