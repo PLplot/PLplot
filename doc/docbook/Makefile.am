@@ -18,7 +18,7 @@ INFO_TARBALL = $(BASE_INFO).tar.gz
 MAN_TARBALL = $(BASE_MAN).tar.gz
 INDEX_HTML = www/index.html
 
-noinst_DATA = $(TARBALL)
+# noinst_DATA = $(TARBALL)
 
 $(HTML_TARBALL):
 	rm -rf $(BASE_HTML)
@@ -56,7 +56,7 @@ dist-stamp:
 $(INDEX_HTML): $(INDEX_HTML).in.in $(HTML_TARBALL) \
                $(INFO_TARBALL) $(MAN_TARBALL)
 	( cd src ; \
-          $(MAKE) print )	
+          $(MAKE) print )
 	$(PERL) bin/size-href.pl < $(INDEX_HTML).in > $@
 
 $(TARBALL): $(INDEX_HTML)
@@ -77,6 +77,6 @@ www-install: $(TARBALL) www-uninstall
 	$(RSH_COMMAND) chmod -R g=u $(WWW_DIR)
 	$(RSH_COMMAND) rm -f $(WWW_DIR)/$(TARBALL)
 
-.PHONY: www-uninstall www-install 
+.PHONY: www-uninstall www-install
 # enable_docbook
 endif
