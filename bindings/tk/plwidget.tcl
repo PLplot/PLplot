@@ -1,6 +1,14 @@
 # $Id$
 # $Log$
-# Revision 1.8  1993/08/20 19:39:03  mjl
+# Revision 1.9  1993/08/28 06:33:08  mjl
+# Changed all send commands to go through the plw_send proc, which (a) puts
+# send commands in background (to speed interpretation) and (b) catches any
+# errors encountered (such as a lack of response by the remote interpreter).
+# This prevents error messages from the plserver interpreter when attached
+# to an unresponsive client interpreter (such as would happen with many
+# number-crunching codes).
+#
+# Revision 1.8  1993/08/20  19:39:03  mjl
 # Many minor adjustments on how the plot view is set up and scrolled.
 # Should now work intuitively and accurately for any combination of zooming
 # and page settings.  Added proc that adds scrollbars if necessary given
@@ -324,14 +332,12 @@ proc plw_init {w client} {
 
 # Configure forward page button
 
-    $w.ftop.fp configure -command \
-	"send [list $client] keypress Return"
+    $w.ftop.fp configure -command "plw_send $client {keypress Return}"
 
 # Configure back page button, plrender only
 
     if {[info exists is_plrender]} {
-	$w.ftop.bp configure -command \
-	    "send [list $client] keypress BackSpace"
+	$w.ftop.bp configure -command "plw_send $client {keypress BackSpace}"
     }
 
 # Initialize plplot widget
@@ -357,12 +363,12 @@ proc plw_init_plplot {w client} {
 
 # Bindings
 
-    bind $w.plwin <KeyPress> "send [list $client] keypress %K %N %A"
+    bind $w.plwin <KeyPress> "plw_send $client {keypress %K %N %A}"
     bind $w.plwin <Any-Enter> "focus $w.plwin"
 
 # Inform client of plplot widget name for widget commands.
 
-    send $client "set plwidget $w.plwin"
+    plw_send $client "set plwidget $w.plwin"
 
 # I want the focus
 
@@ -394,6 +400,17 @@ proc plw_flash {w} {
 
 proc plw_end {w} {
     $w.plwin detach
+}
+
+#----------------------------------------------------------------------------
+# plw_send
+#
+# Send string to client.  Does it in the background and catches errors
+# (if client is busy it won't respond).
+#----------------------------------------------------------------------------
+
+proc plw_send {client msg} {
+    after 1 catch [list "send [list $client] $msg"]
 }
 
 #----------------------------------------------------------------------------
