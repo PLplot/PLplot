@@ -1,3 +1,11 @@
+plplot (5.2.1-9) unstable; urgency=low
+
+  * debian/control: Restored "Architecture: any" for the octave-plplot
+    package.  Excluded build-dependencies on octave for the hppa and
+    powerpc architectures.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 12 May 2003 18:30:23 +0200
+
 plplot (5.2.1-8) unstable; urgency=low
 
   * Rebuilt using octave 2.1.48.
