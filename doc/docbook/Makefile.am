@@ -24,6 +24,9 @@ EXTRA_DIST = \
   COPYING README.developers docbook.m4 \
   bin cnf perl www
 
+dist-hook:
+	rm -f $(distdir)/bin/api2man.pl
+
 CLEANFILES = conftest.*
 
 SUBDIRS = src
