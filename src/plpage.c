@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/11/02 19:57:34  mjl
+ * Revision 1.13  1995/01/06 07:57:24  mjl
+ * Switch to the new syntax for the window structure -- now part of the
+ * plstream.
+ *
+ * Revision 1.12  1994/11/02  19:57:34  mjl
  * Name changes to cursor variables, changed plAddCWindow() call syntax.
  *
  * Revision 1.11  1994/08/25  04:10:03  mjl
@@ -30,11 +34,6 @@
 */
 
 #include "plplotP.h"
-
-/* Page window list. */
-
-int nrCWindows = 0;
-CWindow windows[PL_MAXWINDOWS];
 
 /*----------------------------------------------------------------------*\
  * void pladv()
@@ -216,25 +215,25 @@ int
 plGetCursor(PLCursor *cursor)
 {
     int i;
-    CWindow *w;
+    plCWindow *w;
 
     plP_esc(PLESC_GETC, cursor);
     cursor->wX = 0;
     cursor->wY = 0;
-    for (i = 0; i < nrCWindows; i++) {
-	w = &windows[i];
-	if ((cursor->vdX > w->vdx1) &&
-	    (cursor->vdX < w->vdx2) &&
-	    (cursor->vdY > w->vdy1) &&
-	    (cursor->vdY < w->vdy2) ) {
+    for (i = 0; i < plsc->nCWindows; i++) {
+	w = &plsc->windows[i];
+	if ((cursor->dX > w->dxmi) &&
+	    (cursor->dX < w->dxma) &&
+	    (cursor->dY > w->dymi) &&
+	    (cursor->dY < w->dyma) ) {
 
-	    cursor->wX = w->wx1 +
-		(cursor->vdX - w->vdx1) * (w->wx2 - w->wx1) / 
-		    (w->vdx2 - w->vdx1);
+	    cursor->wX = w->wxmi +
+		(cursor->dX - w->dxmi) * (w->wxma - w->wxmi) / 
+		    (w->dxma - w->dxmi);
 
-	    cursor->wY = w->wy1 +
-		(cursor->vdY - w->vdy1) * (w->wy2 - w->wy1) / 
-		    (w->vdy2 - w->vdy1);
+	    cursor->wY = w->wymi +
+		(cursor->dY - w->dymi) * (w->wyma - w->wymi) / 
+		    (w->dyma - w->dymi);
 
 	    return 1;
 	}
@@ -252,22 +251,22 @@ plGetCursor(PLCursor *cursor)
 void 
 plAddCWindow(void) 
 {
-    CWindow *w;
+    plCWindow *w;
 
-    if (nrCWindows >= PL_MAXWINDOWS)
+    if (plsc->nCWindows >= PL_MAXWINDOWS)
 	return;
 
-    w = &windows[nrCWindows++];
+    w = &plsc->windows[plsc->nCWindows++];
 
-    w->wx1 = plsc->vpwxmi;
-    w->wx2 = plsc->vpwxma;
-    w->wy1 = plsc->vpwymi;
-    w->wy2 = plsc->vpwyma;
+    w->wxmi = plsc->vpwxmi;
+    w->wxma = plsc->vpwxma;
+    w->wymi = plsc->vpwymi;
+    w->wyma = plsc->vpwyma;
 
-    w->vdx1 = plsc->vpdxmi;
-    w->vdx2 = plsc->vpdxma;
-    w->vdy1 = plsc->vpdymi;
-    w->vdy2 = plsc->vpdyma;
+    w->dxmi = plsc->vpdxmi;
+    w->dxma = plsc->vpdxma;
+    w->dymi = plsc->vpdymi;
+    w->dyma = plsc->vpdyma;
 }
 
 /*----------------------------------------------------------------------*\
@@ -280,5 +279,5 @@ plAddCWindow(void)
 void 
 plClrCWindows(void) 
 {
-    nrCWindows = 0;
+    plsc->nCWindows = 0;
 }
