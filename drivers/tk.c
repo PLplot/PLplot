@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.46  1994/09/23 07:47:02  mjl
+ * Revision 1.47  1994/11/02 19:51:48  mjl
+ * Added locator handling.  When escape function is called with a PLESC_GETC
+ * operation, the driver simply goes into an event loop, waiting for a mouse
+ * event to be reported back from plserver.  The coordinates are stored in
+ * the data structure passed to the escape function.  Still to be added is
+ * some way to tell plserver to change the cursor to crosshair in order to
+ * better prompt user input.
+ *
+ * Revision 1.46  1994/09/23  07:47:02  mjl
  * Significantly improved cleanup upon exit, especially when using the Tcl-DP
  * driver.  Fixes the problem of spurious core dumps that sometimes occurs
  * when exiting Tcl-DP streams.  There were two problems: one was that a race
@@ -105,6 +113,7 @@ static void	launch_server	(PLStream *pls);
 static void	flush_output	(PLStream *pls);
 static void	plwindow_init	(PLStream *pls);
 static void	link_init	(PLStream *pls);
+static void	GetCursor	(PLStream *pls, PLCursor *ptr);
 
 /* performs Tk-driver-specific initialization */
 
@@ -480,27 +489,61 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
 
     dbug_enter("plD_esc_tk");
 
-    tk_wr( pdf_wr_1byte(pls->pdfs, c) );
-    tk_wr( pdf_wr_1byte(pls->pdfs, op) );
-
     switch (op) {
 
     case PLESC_DI:
+	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
+	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
 	tk_di(pls);
 	break;
 
+    case PLESC_EH:
+	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
+	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
+	HandleEvents(pls);
+	break;
+
     case PLESC_FLUSH:
+	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
+	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
 	flush_output(pls);
 	break;
 
     case PLESC_FILL:
+	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
+	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
 	tk_fill(pls);
 	break;
 
-    case PLESC_EH:
-	HandleEvents(pls);
+    case PLESC_GETC:
+	GetCursor(pls, (PLCursor *) ptr);
 	break;
+
+    default:
+	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
+	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
     }
+}
+
+/*----------------------------------------------------------------------*\
+ * GetCursor()
+ *
+ * Waits for a left button mouse event and returns coordinates.
+\*----------------------------------------------------------------------*/
+
+static void
+GetCursor(PLStream *pls, PLCursor *ptr)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+
+    dev->cursorX = -1;
+    dev->cursorY = -1;
+    while (dev->cursorX < 0) {
+	HandleEvents(pls);
+    }
+
+    ptr->vdX = dev->cursorX;
+    ptr->vdY = dev->cursorY;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1564,6 +1607,12 @@ MouseEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 	if (advance)
 	    Tcl_SetVar(dev->interp, "advance", "1", 0);
     }
+
+/* These lines terminate the locate input loop */
+
+    dev->cursorX = mouse.x;
+    dev->cursorY = mouse.y;
+
     return TCL_OK;
 }
 
