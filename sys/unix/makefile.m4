@@ -47,6 +47,7 @@ define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
 define(if_debug,   {ifdef({DEBUG},     {$1},{$2})})dnl
 define(if_dbl,     {ifdef({DOUBLE},    {$1},{$2})})dnl
 define(if_opt,     {ifdef({OPT},       {$1},{$2})})dnl
+define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
 
 ##############################################################################
 #
@@ -134,6 +135,10 @@ define(if_opt,     {ifdef({OPT},       {$1},{$2})})dnl
 #    you don't have a fortran compiler handy), specify -DNO_FORTRAN
 #    on the m4 command line.
 #
+# 4. To get debug settings, specify -DDEBUG on the m4 command line.
+#
+# 5. To get profiling, specify -DPROFILE on the m4 command line.
+#
 ##############################################################################
 
 ##############################################################################
@@ -171,6 +176,16 @@ DBL_FLAG_F      =
 PLLIB_MAIN	= $(PLLIB_PATH)libplplotf.a
 })
 
+if_profile({
+PROFILE_FLAG_C	= -p
+PROFILE_FLAG_LC	= -p
+},{
+PROFILE_FLAG_C	= 
+PROFILE_FLAG_LC	= 
+})
+PROFILE_FLAG_F	=
+PROFILE_FLAG_LF	=
+
 if_debug({
 DEBUG_FLAG_C	= -g
 DEBUG_FLAG_F	= -g
@@ -198,10 +213,14 @@ PLLIB_LDC	= $(PLLIB_C)
 
 SYS_FLAGS_C =
 SYS_FLAGS_F = 
-CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
-FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
-LDCFLAGS= -lm -lX11
-LDFFLAGS= -lm -lX11
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
+
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
+
+LDCFLAGS= -lm -lX11 $(PROFILE_FLAG_C)
+LDFFLAGS= -lm -lX11 $(PROFILE_FLAG_F)
 
 CC	= cc
 F77	= f77
@@ -230,7 +249,7 @@ PLDEVICES = -DPLMETA -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
 
 #----------------------------------------------------------------------#
 if_sunos({
-#	SUNOS definitions (also good for Ultrix 4.3)
+#	SUNOS definitions, using gcc (also good for Ultrix 4.3)
 #
 # WARNING!
 # You MUST use /usr/5bin/m4 to create the makefile, and not /usr/bin/m4,
@@ -256,11 +275,18 @@ OPENWIN_DIR = -L/usr/openwin/lib
 OPENWIN_DIR =
 })
 
-CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
-FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
+if_profile({
+PROFILE_FLAG_LC = -p -static
+})
 
-LDCFLAGS= $(OPENWIN_DIR) -lm -lX11
-LDFFLAGS= $(OPENWIN_DIR) -lm -lX11
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
+
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
+
+LDCFLAGS= $(OPENWIN_DIR) -lm -lX11 $(PROFILE_FLAG_LC)
+LDFFLAGS= $(OPENWIN_DIR) -lm -lX11 $(PROFILE_FLAG_LF)
 
 #----------------------------------------------------------------------#
 })if_hpux({
@@ -274,11 +300,14 @@ DBL_FLAG_F      = -R8
 })dnl
 
 CC	= c89
-CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
-FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
 
-LDCFLAGS= -L/usr/lib/X11R4 -lm -lX11 -g
-LDFFLAGS= /usr/lib/X11R4/libX11.a -lm -g
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
+
+LDCFLAGS= -L/usr/lib/X11R4 -lm -lX11 $(PROFILE_FLAG_LC) -g
+LDFFLAGS= /usr/lib/X11R4/libX11.a -lm $(PROFILE_FLAG_LF) -g
 
 #----------------------------------------------------------------------#
 })if_dgux({
@@ -289,11 +318,14 @@ SYS_FLAGS_C = -Dunix -DSTUB_LAU -ansi
 SYS_FLAGS_F = -novms
 
 F77	= ghf77
-CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
-FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
 
-LDCFLAGS= -ansi -lm -lX11
-LDFFLAGS= -ansi -lm -lX11
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
+
+LDCFLAGS= -ansi -lm -lX11 $(PROFILE_FLAG_LC)
+LDFFLAGS= -ansi -lm -lX11 $(PROFILE_FLAG_LF)
 
 #----------------------------------------------------------------------#
 })if_linux({
@@ -304,11 +336,14 @@ SYS_FLAGS_C =
 
 CC	= gcc
 F77	= 
-CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
-FFLAGS	= 
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
 
-LDCFLAGS= -ansi -lX11 -lm
-LDFFLAGS= -ansi -lX11 -lm
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
+
+LDCFLAGS= -ansi -lX11 $(PROFILE_FLAG_LC) -lm
+LDFFLAGS= -ansi -lX11 $(PROFILE_FLAG_LF) -lm
 
 # Note that the ljii.c driver doesn't work yet, but we need to have it
 # in if it's ever gonna get fixed.
@@ -337,13 +372,13 @@ SYS_FLAGS_C = -Dunix -DSTUB_LAU
 # options (just -lplplotf).
 
 CC      = cc
+F77	= f77	# I've tested Fortran compatibility using f2c only - amr
 
-CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
 
-# I've tested Fortran compatibility using f2c only - amr
-
-F77	= f77
-FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
 
 LDCFLAGS= -lm
 LDFFLAGS= 
@@ -367,10 +402,11 @@ DBL_FLAG_F      = -qAUTODBL=DBLPAD
 
 F77	= xlf
 CC	= xlc
-CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
-FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
 
-#FONTFLAG= '-DPLFONTDEV1="$(HOME)/lib/"'		# deal with 3.0 bug
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
 
 #----------------------------------------------------------------------#
 })if_unicos({
@@ -384,11 +420,19 @@ SYS_FLAGS_C =
 F77	= cf77
 LDF	= segldr
 
-CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C)
-FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F)
+if_profile({
+PROFILE_FLAG_C = -Gp
+PROFILE_FLAG_LC = -lprof -lsci
+})
 
-LDCFLAGS= -lX11,net,m
-LDFFLAGS= -lX11,net,m
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
+
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
+
+LDCFLAGS= -lX11,net,m $(PROFILE_FLAG_LC)
+LDFFLAGS= -lX11,net,m $(PROFILE_FLAG_LF)
 
 #----------------------------------------------------------------------#
 })if_amiga({
