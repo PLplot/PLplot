@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.53  1995/09/18 20:15:46  furnish
+ * Revision 1.54  1995/09/22 16:04:11  mjl
+ * Fixes to names of member variables of PLiodev structs.
+ *
+ * Revision 1.53  1995/09/18  20:15:46  furnish
  * Some changes to mirror what was done to Tk in the newest itcl 2.
  *
  * Revision 1.52  1995/08/22  16:17:22  mjl
@@ -2091,7 +2094,7 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 	iodev->type = 0;
-	iodev->typename = "fifo";
+	iodev->typeName = "fifo";
 	iodev->file = fdopen(iodev->fd, "rb");
     }
 
@@ -2106,9 +2109,9 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 	iodev->type = 1;
-	iodev->typename = "socket";
-	iodev->filehandle = argv[1];
-	if (Tcl_GetOpenFile(interp, iodev->filehandle,
+	iodev->typeName = "socket";
+	iodev->fileHandle = argv[1];
+	if (Tcl_GetOpenFile(interp, iodev->fileHandle,
 			    0, 1, &iodev->file) != TCL_OK) {
 	    return TCL_ERROR;
 	}
@@ -2175,7 +2178,7 @@ process_data(Tcl_Interp *interp, register PlFrame *plFramePtr)
 /* Process data */
 
     if (plr_process(plr) == -1) {
-	Tcl_AppendResult(interp, "unable to read from ", iodev->typename,
+	Tcl_AppendResult(interp, "unable to read from ", iodev->typeName,
 			 (char *) NULL);
 	result = TCL_ERROR;
     }

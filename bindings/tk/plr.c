@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1995/03/16 23:08:06  mjl
+ * Revision 1.20  1995/09/22 16:04:12  mjl
+ * Fixes to names of member variables of PLiodev structs.
+ *
+ * Revision 1.19  1995/03/16  23:08:06  mjl
  * The Copyright message was changed and general cleaning up done.
  *
  * Revision 1.18  1994/08/25  03:59:43  mjl
@@ -67,7 +70,7 @@
 #define plr_rd(code) \
 if (code) { fprintf(stderr, \
 	    "Unable to read from %s in %s at line %d, bytecount %ld\n", \
-	    plr->iodev->typename, __FILE__, __LINE__, plr->pdfs->bp); \
+	    plr->iodev->typeName, __FILE__, __LINE__, plr->pdfs->bp); \
 	    return -1; }
 
 #define plr_cmd(code) \
@@ -324,7 +327,7 @@ plr_line(PLRDev *plr, int c)
 #define plr_rdn(code) \
 if (code) { fprintf(stderr, \
 "Unable to read from %s in %s at line %d, bytecount %d\n\
-Bytes requested: %d\n", plr->iodev->typename, __FILE__, __LINE__, \
+Bytes requested: %d\n", plr->iodev->typeName, __FILE__, __LINE__, \
 (int) plr->pdfs->bp, (int) 2*n); return -1; }
 
 static int

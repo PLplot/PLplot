@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.53  1995/06/23 02:55:35  mjl
+ * Revision 1.54  1995/09/22 16:04:16  mjl
+ * Fixes to names of member variables of PLiodev structs.
+ *
+ * Revision 1.53  1995/06/23  02:55:35  mjl
  * Better debugging support, also inserted experimental code for using physical
  * window dimensions in the library.  Still needs work.
  *
@@ -1338,32 +1341,32 @@ link_init(PLStream *pls)
 
     if ( ! pls->dp) {
 
-	iodev->filename = (char *) tmpnam(NULL);
-	if (mkfifo(iodev->filename,
+	iodev->fileName = (char *) tmpnam(NULL);
+	if (mkfifo(iodev->fileName,
 		   S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0) 
 	    abort_session(pls, "mkfifo error");
 
     /* Tell plframe widget to open FIFO (for reading). */
 
-	Tcl_SetVar(dev->interp, "fifoname", iodev->filename, 0);
+	Tcl_SetVar(dev->interp, "fifoname", iodev->fileName, 0);
 	server_cmd( pls, "$plwidget openlink fifo $fifoname", 1 );
 
     /* Open the FIFO for writing */
     /* This will block until the server opens it for reading */
 
-	if ((iodev->fd = open(iodev->filename, O_WRONLY)) == -1) 
+	if ((iodev->fd = open(iodev->fileName, O_WRONLY)) == -1) 
 	    abort_session(pls, "Error opening fifo for write");
 
     /* Create stream interface (C file handle) to FIFO */
 
 	iodev->type = 0;
-	iodev->typename = "fifo";
+	iodev->typeName = "fifo";
 	iodev->file = fdopen(iodev->fd, "wb");
 
 /* Unlink FIFO so that it isn't left around if program crashes. */
 /* This also ensures no other program can mess with it. */
 
-	if (unlink(iodev->filename) == -1) 
+	if (unlink(iodev->fileName) == -1) 
 	    abort_session(pls, "Error removing fifo");
     }
 
@@ -1372,11 +1375,11 @@ link_init(PLStream *pls)
     else {
 
 	iodev->type = 1;
-	iodev->typename = "socket";
+	iodev->typeName = "socket";
 	tcl_cmd(pls, "plclient_dp_init");
-	iodev->filehandle = Tcl_GetVar(dev->interp, "data_sock", 0);
+	iodev->fileHandle = Tcl_GetVar(dev->interp, "data_sock", 0);
 
-	if (Tcl_GetOpenFile(dev->interp, iodev->filehandle,
+	if (Tcl_GetOpenFile(dev->interp, iodev->fileHandle,
 			    0, 1, &iodev->file) != TCL_OK) {
 
 	    fprintf(stderr, "Cannot get file info:\n\t %s\n",

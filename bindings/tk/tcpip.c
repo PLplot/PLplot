@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1995/06/01 21:29:45  mjl
+ * Revision 1.16  1995/09/22 16:04:13  mjl
+ * Fixes to names of member variables of PLiodev structs.
+ *
+ * Revision 1.15  1995/06/01  21:29:45  mjl
  * Change to header file inclusion.
  *
  * Revision 1.14  1994/09/23  07:42:39  mjl
@@ -501,7 +504,7 @@ pl_PacketReceive(interp, iodev, pdfs)
      */
     if (header[0] != PACKET_MAGIC) {
 	fprintf(stderr, "Badly formatted packet, numRead = %d\n", numRead);
-        Tcl_AppendResult(interp, "Error reading from ", iodev->typename,
+        Tcl_AppendResult(interp, "Error reading from ", iodev->typeName,
 			 ": badly formatted packet", (char *) NULL);
 	return TCL_ERROR;
     }
@@ -603,7 +606,7 @@ readError:
 	return TCL_OK;
     } else {
 	Tcl_AppendResult (interp, "pl_PacketReceive -- error reading from ",
-			  iodev->typename, ": ", errMsg, (char *) NULL);
+			  iodev->typeName, ": ", errMsg, (char *) NULL);
 	return TCL_ERROR;
     }
 }
@@ -714,7 +717,7 @@ pl_PacketSend(interp, iodev, pdfs)
 	    return TCL_OK;
 	} else {
 	    Tcl_AppendResult (interp, "pl_PacketSend -- error writing to ",
-			      iodev->typename, ": ",
+			      iodev->typeName, ": ",
 			      Tcl_PosixError (interp), (char *) NULL);
 	}
 
