@@ -20,7 +20,7 @@
 
     <P>
       The previous form of the
-      <a href="http://www.plplot.org">PLplot</a> documentation was
+      <a href="http://plplot.sf.net">PLplot</a> documentation was
       quite extensive but had two issues.  (1) It was written in LaTeXinfo
       form which is no longer supported.  (2) It was dated (no documentation
       updates since 1995 because of issue [1]).  To address issue

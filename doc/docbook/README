@@ -32,7 +32,7 @@ docbook documentation source update your cvs copy of the plplot source tree.
 To get the latest docbook documentation results either build from your
 updated source tree (for instructions see
 plplot/doc/docbook-sgml/README.developers) or visit
-http://www.plplot.org/resources/index.html.  That page always points to a
+http://plplot.sf.net/resources/index.html.  That page always points to a
 recent version of the docbook results.
 
 In the near term AWI plans to mostly work on improving the substance of the

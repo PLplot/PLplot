@@ -1,6 +1,6 @@
 
 AC_INIT(src/plplotdoc.xml.in)
-AM_INIT_AUTOMAKE(plplotdoc, 0.4.1)
+AM_INIT_AUTOMAKE(plplotdoc, 0.4.2)
 
 dnl Web site Installation
 

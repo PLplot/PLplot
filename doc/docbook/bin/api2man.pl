@@ -84,7 +84,7 @@ Geoffrey Furnish and Maurice LeBrun wrote and maintain PLplot.  This man page
 was automatically generated from the DocBook source of the PLplot 
 documentation, maintained by Alan W. Irwin and Rafael Laboissiere.
 .SH SEE ALSO
-PLplot documentation at http://www.plplot.org/resources.
+PLplot documentation at http://plplot.sf.net/resources.
 ";
 $manifest = "";
 
