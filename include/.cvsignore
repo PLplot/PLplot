@@ -2,6 +2,6 @@
 Makefile
 Makefile.in
 stamp-h*
-plConfig.h
+plConfig.h*
 plDevs.h
 
