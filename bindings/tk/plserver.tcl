@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.13  1994/05/07 03:11:35  mjl
+# Revision 1.14  1994/05/14 05:41:53  mjl
+# Added a missing global declaration for the geometry variable.
+#
+# Revision 1.13  1994/05/07  03:11:35  mjl
 # Ripped out code dependent on tk3.2 since it finally started to get in the
 # way.  Also improved some documentation.
 #
@@ -76,6 +79,7 @@ proc plserver_init {} {
 # Set window geometry if not already set.
 # Depart from square slightly to account for menu bar.
 
+    global geometry
     if { ! [ info exists geometry ] } {
 	set width  [expr "$root_width / 16 * 10"]
 	set height [expr "$root_height / 16 * 11"]
