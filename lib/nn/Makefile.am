@@ -23,7 +23,7 @@
 lib_LTLIBRARIES = libcsironn.la
 libcsironn_la_SOURCES = delaunay.c hash.c istack.c linear.c \
                         nnai.c nnpi.c nncommon.c
-libcsironn_la_LDFLAGS = -version-info 0:0:0 $(RPATH) -no-undefined 
+libcsironn_la_LDFLAGS = -version-info 0:0:0 $(RPATH) -no-undefined \
                         $(QHULLLIBS) -lm
 AM_CPPFLAGS = -I.
 
