@@ -69,5 +69,4 @@ proc plgrid {{w loopback}} {
 	}
 	$w cmd plline $ni xi yi
     }
-    $w cmd pleop
 }
