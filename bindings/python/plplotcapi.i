@@ -949,14 +949,11 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT
 void
 plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *OUTPUT, PLFLT *OUTPUT, PLFLT *OUTPUT);
 
-/* Wait for graphics input event and translate to world coordinates */
-
-#if 0
+DOC(plGetCursor, "Wait for graphics input event and translate to world coordinates")
 PLINT
 plGetCursor(PLGraphicsIn *gin);
 
 /* Translates relative device coordinates to world coordinates.  */
-#endif
 /* Use plcalc_world instead of plTranslateCursor. */
 #if 0
 int
