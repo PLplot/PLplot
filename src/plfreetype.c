@@ -128,47 +128,6 @@ static FT_ULong hershey_to_unicode (char in);
 static void FT_WriteStrW(PLStream *pls,const PLUNICODE  *text, short len, int x, int y);
 static void FT_StrX_YW(PLStream *pls,const PLUNICODE *text, short len, int *xx, int *yy);
 
-/*--------------------------------------------------------------------------*\
- *  char *
- *  plP_FCI2FontName ( PLUNICODE fci, 
- *                     const FCI_to_FontName_Table lookup[], const int nlookup)
- *
- *  Function takes an input FCI (font characterization integer) index, 
- *  looks through the lookup table (which must be sorted by PLUNICODE fci),
- *  then returns the corresponding pointer to a valid font name.  If the FCI
- *  index is not present the returned value is NULL.
- \*--------------------------------------------------------------------------*/
-
-char *
-plP_FCI2FontName ( PLUNICODE fci, 
-		     const FCI_to_FontName_Table lookup[], const int nlookup)
-{
-   int jlo = -1, jmid, jhi = nlookup;
-   while (jhi - jlo > 1) 
-     {
-	/* Note that although jlo or jhi can be just outside valid
-	 * range (see initialization above) because of while condition
-	 * jlo < jmid < jhi and jmid must be in valid range.
-	 */
-	jmid = (jlo+jhi)/2;
-	if (fci > lookup[jmid].fci)
-	  jlo = jmid;
-	else if (fci < lookup[jmid].fci)
-	  jhi = jmid;
-	else
-	  /* We have found it!
-	   * fci == lookup[jmid].fci 
-	   */
-	  return (lookup[jmid].pfont);
-     }
-   /* jlo is invalid or it is valid and fci > lookup[jlo].Unicode.
-    * jhi is invalid or it is valid and fci < lookup[jhi].Unicode.
-    * All these conditions together imply fci index cannot be found in lookup.
-    * Mark lookup failure with NULL pointer.
-    */
-   return(NULL);
-}
-
 /*----------------------------------------------------------------------*\
  * FT_StrX_YW()
  *
