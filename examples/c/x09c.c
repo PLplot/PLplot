@@ -137,7 +137,7 @@ static void potential()
    for (i = 0; i < PRPTS; i++) {
       r = 0.5 + (double) i;
       for (j = 0; j < PTHETAPTS; j++) {
-	 theta = (2.*PI/(double)(PTHETAPTS))*(0.5 + (double) j);
+	 theta = (2.*PI/(double)(PTHETAPTS-1))*(0.5 + (double) j);
 	 cgrid2.xg[i][j] = r*cos(theta);
 	 cgrid2.yg[i][j] = r*sin(theta);
       }
