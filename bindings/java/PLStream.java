@@ -104,6 +104,11 @@ public class PLStream {
 
     public native void syax( int digmax, int digits );
 
+    public native void sym( int n, float[] x, float[] y, int code );
+    public native void sym( int n, double[] x, double[] y, int code );
+    public native void sym( float x, float y, int code );
+    public native void sym( double x, double y, int code );
+
     public native void vpor( float xmin, float xmax, float ymin, float ymax );
     public native void vpor( double xmin, double xmax, double ymin, double ymax );
 
