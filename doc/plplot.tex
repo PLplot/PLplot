@@ -9,7 +9,12 @@
 %
 % $Id$
 % $Log$
-% Revision 1.2  1994/05/09 22:09:06  furnish
+% Revision 1.3  1994/05/19 06:43:07  mjl
+% Changed \documentstyle to include the plplot style file.  Not all
+% sections included now; just the ones I'm working on (will need
+% to be changed back).  Various fixes, updates, flashing lights...
+%
+% Revision 1.2  1994/05/09  22:09:06  furnish
 % Improvements to the new doc.
 %
 % Revision 1.1  1994/05/09  15:06:25  furnish
@@ -17,7 +22,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentstyle[12pt,fullpage,latexinfo]{book}
+\documentstyle[12pt,fullpage,latexinfo,plplot]{book}
 \pagestyle{headings}
 
 \begin{document}
@@ -25,19 +30,15 @@
 \c Declare which indices you want to make use of.
 \newindex{cp}
 
-\title{ The PLPLOT Plotting Library \\ 
+\title{ The PLplot Plotting Library \\ 
         Programmer's Reference Manual \\
-        Version 4.0}
+        Version 5.0}
 \author{
-        Maurice J. LeBrun, 
-        Geoff Furnish, and
-        Tony Richardson$^1$\\
+        Maurice J. LeBrun\\
+        Geoff Furnish\\
 \\
         Institute for Fusion Studies\\
         University of Texas at Austin\\
-        \\
-        $^1$Dept of Electrical Engineering\\
-        Duke University\\
         }
 
 \date{\today}
@@ -46,7 +47,7 @@
 \c The following commands start the copyright page for the printed manual.
 \clearpage
 \vspace{0pt plus 1filll}
-Copyright \copyright\ 1994 Geoffrey Furnish, Maurice LeBrun, ???
+Copyright \copyright\ 1994 Geoffrey Furnish, Maurice LeBrun.
 
 PLplot may be used by anyone.
 
@@ -80,24 +81,18 @@ Put another 5 page copyleft here for the Info file.
 
 \node Top,       Introduction, (dir),   (dir)
 
+\begin{menu}
 This document describes PLplot, the awesome free plotting library for
 creating cool scientific plots.
 
-\begin{menu}
 * Introduction::	What PLplot is all about.
-
 * Simple Use::		How to get started.
-
 * Advanced Use::	How to go wild.
-
-* Drivers::		Xwin, Tk, Tcl-DP, and all the rest.
-
-* Extended WISH::	Integration with Tcl/Tk
-
+* X-windows Drivers::	Xwin, Tk, Tcl-DP, and all the rest.
+* Extended WISH::	Integration with Tcl/Tk.
+* Other Drivers::	All non-X drivers.
 * API::			All the functions
-
 * Bibliography::	What you don't want to know about refs.
-
 * Concept Index::	All the stuff you need to know.
 \end{menu}
 
@@ -105,7 +100,7 @@ creating cool scientific plots.
 
 \part{Introduction}
 
-\input{intro}
+\noinput{intro}
 
 \part{Programming}
 
@@ -113,13 +108,13 @@ creating cool scientific plots.
 
 \input{advanced}
 
-\input{drivers}
+\noinput{drivers}
 
-\input{wish}
+\noinput{wish}
 
 \part{Reference}
 
-\input{api}
+\noinput{api}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
