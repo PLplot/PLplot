@@ -147,7 +147,7 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 	wrap = 0;
 	/* check for wrap around problems */
 	for (i = 0; i < n-1; i++) {
-	    test[i] = (abs(bufx[i]-bufx[i+1]) > abs(bufy[i]/3)); /* Changed this from 30 degrees so it is now "polar sensitive" */
+	    test[i] = (fabs(bufx[i]-bufx[i+1]) > fabs(bufy[i]/3)); /* Changed this from 30 degrees so it is now "polar sensitive" */
 	    if (test[i]) wrap = 1;
 	}
 
