@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1993/08/18 19:04:08  mjl
+ * Revision 1.5  1993/09/08 02:32:02  mjl
+ * Added include of <errno.h>.
+ *
+ * Revision 1.4  1993/08/18  19:04:08  mjl
  * Added include of file "plplotio.h".
  *
  * Revision 1.3  1993/08/03  01:48:08  mjl
@@ -40,6 +43,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <X11/Xlib.h>
 #include <X11/cursorfont.h>
