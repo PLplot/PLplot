@@ -393,7 +393,7 @@ void x21::create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts) {
       r = sqrt((*x) * (*x) + (*y) * (*y));
       *z = exp(-r * r) * cos(2.0 * M_PI * r);
     } else {
-      *z = log(pow(1. - *x, 2.) + 100. * pow(*y - pow(*x, 2.), 2.));
+      *z = log(pow((double)(1. - *x), 2.) + 100. * pow((double)(*y - pow((double)*x, 2.)), 2.));
     }
     x++; y++; z++;
   }

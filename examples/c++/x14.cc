@@ -198,7 +198,7 @@ void x14::plot1(plstream *pls)
 
     for (i = 0; i < 60; i++) {
 	x[i] = xoff + xscale * (i + 1) / 60.0;
-	y[i] = yoff + yscale * pow(x[i], 2.);
+	y[i] = yoff + yscale * pow((double)x[i], 2.);
     }
 
     xmin = x[0];

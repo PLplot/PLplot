@@ -203,7 +203,7 @@ x08::x08( int argc, char **argv ) {
 	{
 	  yy = y[j];
 	  if (rosen) {
-	    z[i][j] = pow(1. - xx,2.) + 100 * pow(yy - pow(xx,2.),2.);
+	    z[i][j] = pow((double)(1. - xx),2.) + 100 * pow((double)(yy - pow((double)xx,2.)),2.);
 	    /* The log argument may be zero for just the right grid.  */
 	    if (z[i][j] > 0.)
 	       z[i][j] = log(z[i][j]);
