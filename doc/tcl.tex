@@ -1,0 +1,80 @@
+\c tcl.tex
+\c Geoffrey Furnish
+\c 11 October 1994
+\c
+\c Document the PLplot Tcl API, and related programming issues.
+\c
+\c $Id$
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node Tcl, Extended WISH, API, Top
+\chapter{Using PLplot from Tcl}
+
+PLplot version 5.0 introduces a new way of accessing the PLplot
+library--via the Tcl scripting language.  blah blah.
+
+Each of the PLplot calls available to the C or Fortran programmer are
+also available from Tcl, with the same name and generally the same
+arguments.  Thus for instance, whereas in C you can write:
+% Insert a few more calls to make this a more realistic example.
+\begin{example}
+    plenv( 0., 1., 0., 1., 0, 0 );
+    pllab( "(x)", "(y)", "The title of the graph" );
+\end{example}
+you can now write in Tcl:
+\begin{example}
+    plenv 0 1 0 1 0 0
+    pllab "(x)" "(y)" "The title of the graph"
+\end{example}
+
+In order to accomodate the ubiquitous requirement for matrix oriented
+data in scientific applications, and in the PLplot API in particular,
+PLPlot 5.0 includes a Tcl extension for manipulating matricies in Tcl.
+This Tcl Matrix Extension provides a straightforward and direct means
+of representing one and two dimensional matricies in Tcl.  Many of the
+PLplot Tcl API functions accept Tcl matricies as arguments.  For
+insance, in C you might write:
+\begin{example}
+    float x[100], y[100];
+
+    /* code to initialize x and y */
+
+    plline( 100, x, y );
+\end{example}
+In Tcl you can write:
+\begin{example}
+    matrix x f 100
+    matrix y f 100
+
+    # code to initialize x and y
+
+    plline 100 x y
+\end{example}
+
+In general then, you can assume that each C function is provided in
+Tcl with the same name and same arguments (and one or two dimensional
+arrays in C are replaced by Tcl matricies).  There are only a few
+exceptions to this rule, generally resulting from the complexity of
+the argument types which are passed to some functions in the C API.
+Those exceptional functions are described below, all others work in
+the obvious way (analogous to the above example).  See the Tcl
+example programs for extensive demonstrations of the usage of the
+PLplot Tcl API.
+
+\begin{menu}
+* Tcl Matrix::		All about the Tcl Matrix extension
+* Tcl plcont::		Drawing contour plots from Tcl.
+* Tcl plshade::		Drawing color fill plots from Tcl.
+\end{menu}
+
+\input{tclmatrix}
+
+\node Tcl plcont, Tcl plshade, Tcl Matrix, Tcl
+\section{Drawing contour plots from Tcl}
+
+isn't hard.
+
+\node Tcl plshade, , Tcl plcont, Tcl
+\section{Drawing color fill plots from Tcl}
+
+isn't hard either.
