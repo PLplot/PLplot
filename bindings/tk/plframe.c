@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1994/05/10 21:49:52  mjl
+ * Revision 1.29  1994/05/23 22:09:04  mjl
+ * Fixed some minor omissions regarding the xorGC.
+ *
+ * Revision 1.28  1994/05/10  21:49:52  mjl
  * Added new, more efficient ways to set colors via plframe "cmd" -- now you
  * can change only a single cmap0 entry or cmap1 control point color instead
  * of the whole map.  Took out call to XSetWMColormapWindows except when it
@@ -414,9 +417,11 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->display = Tk_Display(new);
     plFramePtr->interp = interp;
     plFramePtr->screenName = screenUid;
+    plFramePtr->xorGC = NULL;
     plFramePtr->border = NULL;
     plFramePtr->geometry = NULL;
     plFramePtr->cursor = None;
+    plFramePtr->draw_cursor = None;
     plFramePtr->flags = 0;
     plFramePtr->prevWidth = Tk_Width(plFramePtr->tkwin);
     plFramePtr->prevHeight = Tk_Height(plFramePtr->tkwin);
@@ -452,6 +457,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     gcValues.function = GXxor;
     mask = GCForeground | GCBackground | GCFunction;
     plFramePtr->xorGC = Tk_GetGC(plFramePtr->tkwin, mask, &gcValues);
+
     plFramePtr->draw_cursor =
 	Tk_GetCursor(plFramePtr->interp, plFramePtr->tkwin, "crosshair");
 
@@ -702,7 +708,7 @@ DestroyPlFrame(ClientData clientData)
     if (plFramePtr->draw_cursor != None) {
 	Tk_FreeCursor(plFramePtr->display, plFramePtr->draw_cursor);
     }
-    if (plFramePtr->xorGC != None) {
+    if (plFramePtr->xorGC != NULL) {
 	Tk_FreeGC(plFramePtr->display, plFramePtr->xorGC);
     }
     if (plFramePtr->yScrollCmd != NULL) {
