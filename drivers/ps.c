@@ -373,7 +373,12 @@ plD_bop_ps(PLStream *pls)
 	plGetFam(pls);
 
     pls->page++;
-    fprintf(OF, "%%%%Page: %d %d\n", (int) pls->page, (int) pls->page);
+
+    if (pls->family)
+        fprintf(OF, "%%%%Page: %d %d\n", (int) pls->page, 1);
+    else
+        fprintf(OF, "%%%%Page: %d %d\n", (int) pls->page, (int) pls->page);
+
     fprintf(OF, "bop\n");
     if (pls->color) {
 	float r, g, b;
@@ -423,7 +428,11 @@ plD_tidy_ps(PLStream *pls)
     dev->urx += 1;
     dev->ury += 1;
 
-    fprintf(OF, "%%%%Pages: %d\n", (int) pls->page);
+    if (pls->family)
+        fprintf(OF, "%%%%Pages: %d\n", (int) 1);
+    else
+        fprintf(OF, "%%%%Pages: %d\n", (int) pls->page);
+
     fprintf(OF, "@end\n");
 
 /* Backtrack to write the BoundingBox at the beginning */
