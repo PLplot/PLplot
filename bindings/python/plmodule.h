@@ -1,7 +1,7 @@
 #include <Python.h>
+#include <arrayobject.h>	
 #include "plplot/plplot.h"	
 #include "plplot/plplotP.h"
-#include "Numeric/arrayobject.h"	
 
 #if defined(PL_DOUBLE) || defined(DOUBLE)
 #define PL_ARGS(a, b) (a)
