@@ -135,13 +135,6 @@ There has been improvement in this area, but can we now run make check
 everywhere when nothing installed?  And when something installed, does
 make check completely ignore it?
 
-* Permissions problem with generated plplot-config and plplot-test.sh in
-plplot/test.  Using new autoconf API allows you to set permissions of results
-so this will automatically get sorted out when we move to a modern autoconf
-API.  Also, this issue only affects "make check" environment since the
-installed versions should have the correct permissions using the autotools
-approach.
-
 * standard octave examples should be made consistent with the C, C++, tcl,
 Java, python, fortran, and even yorick (yplot) examples as a test that the
 API is implemented correctly for octave and as a teaching device of how to
