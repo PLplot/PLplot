@@ -4,7 +4,7 @@
 */
 #include "plplot/plDevs.h"
 
-#ifdef PLD_png
+#if defined(PLD_png) || defined(PLD_jpg)
 
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
@@ -74,6 +74,9 @@ plD_init_png_Dev(PLStream *pls)
 
     dev->colour=1;
     dev->totcol=16;
+
+    if ( (pls->dev_compression<=0)||(pls->dev_compression>99) )
+       pls->dev_compression=90;
 
 }
 
@@ -197,7 +200,7 @@ png_Dev *dev=(png_Dev *)pls->dev;
      for (i = 0; i < pls->dev_npts; i++) 
          {
 	   points[i].x = pls->dev_x[i];
-	   points[i].y = (int) pls->ylength - pls->dev_y[i];
+	   points[i].y = dev->pngy - pls->dev_y[i];
          }
 
    gdImageFilledPolygon(dev->im_out, points, pls->dev_npts, dev->colour_index[dev->colour]);
@@ -318,22 +321,6 @@ void plD_esc_png(PLStream *pls, PLINT op, void *ptr)
     }
 }
 
-
-/*----------------------------------------------------------------------*\
- * plD_eop_png()
- *
- * End of page.
-\*----------------------------------------------------------------------*/
-
-void plD_eop_png(PLStream *pls)
-{
-png_Dev *dev=(png_Dev *)pls->dev;
-    if (pls->family || pls->page == 1) {
-       gdImagePng(dev->im_out, pls->OutFile);
-       gdImageDestroy(dev->im_out);
-    }
-}
-
 /*----------------------------------------------------------------------*\
  * plD_bop_png()
  *
@@ -375,6 +362,44 @@ void plD_tidy_png(PLStream *pls)
    free_mem (pls->dev);
 
 }
+
+#ifdef PLD_png
+
+/*----------------------------------------------------------------------*\
+ * plD_eop_png()
+ *
+ * End of page.
+\*----------------------------------------------------------------------*/
+
+void plD_eop_png(PLStream *pls)
+{
+png_Dev *dev=(png_Dev *)pls->dev;
+    if (pls->family || pls->page == 1) {
+       gdImagePng(dev->im_out, pls->OutFile);
+       gdImageDestroy(dev->im_out);
+    }
+}
+
+#endif
+
+#ifdef PLD_jpg
+
+/*----------------------------------------------------------------------*\
+ * plD_eop_jpg()
+ *
+ * End of page.
+\*----------------------------------------------------------------------*/
+
+void plD_eop_jpg(PLStream *pls)
+{
+png_Dev *dev=(png_Dev *)pls->dev;
+    if (pls->family || pls->page == 1) {
+       gdImageJpeg(dev->im_out, pls->OutFile, pls->dev_compression);
+       gdImageDestroy(dev->im_out);
+    }
+}
+
+#endif
 
 /*#endif*/
 
