@@ -92,8 +92,8 @@ static int windowXSize = 0;
 static int windowYSize = 0;
 
 #define SCALE			0.1
-#define AQT_Max_X       720
-#define AQT_Max_Y       720
+#define AQT_Default_X	720
+#define AQT_Default_Y	540
 #define DPI             72.0
 
 #define MAX_STRING_LEN	1000
@@ -147,12 +147,12 @@ void plD_init_aqt(PLStream *pls)
    //
    plP_setpxl(DPI/25.4/SCALE, DPI/25.4/SCALE);           /* Pixels/mm. */
    //
-   // Set the bounds for plotting.  default is AQT_Max_X x AQT_Max_Y unless otherwise specified.
+   // Set the bounds for plotting.  default is AQT_Default_X x AQT_Default_Y unless otherwise specified.
    //
    if (pls->xlength <= 0 || pls->ylength <= 0){
-      windowXSize = AQT_Max_X;
-      windowYSize = AQT_Max_Y;
-      plP_setphy((PLINT) 0, (PLINT) (AQT_Max_X/SCALE), (PLINT) 0, (PLINT) (AQT_Max_Y/SCALE));
+      windowXSize = AQT_Default_X;
+      windowYSize = AQT_Default_Y;
+      plP_setphy((PLINT) 0, (PLINT) (AQT_Default_X/SCALE), (PLINT) 0, (PLINT) (AQT_Default_Y/SCALE));
    } else {
       windowXSize = pls->xlength;
       windowYSize = pls->ylength;
