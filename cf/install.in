@@ -23,6 +23,7 @@ install_lib_drivers: install_lib install_drivers
 
 # TCL must appear before TK in this list because symlinks installed by
 # TK are decided by the existence of the x??.tcl files installed by TCL.
+# Also TCL must appear before either TK or TKWIN to get pkgIndex.tcl correct.
 
 install: install_lib_drivers \
 	$(INSTALL_F77) \
@@ -30,6 +31,7 @@ install: install_lib_drivers \
 	$(INSTALL_JAVA) \
 	$(INSTALL_TCL) \
 	$(INSTALL_TK) \
+	$(INSTALL_TKWIN) \
 	$(INSTALL_CXX) \
 	$(INSTALL_OCTAVE) \
 	install_demos \
