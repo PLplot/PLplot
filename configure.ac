@@ -488,52 +488,52 @@ AC_SUBST(enable_octave)
 
 if test "$enable_cgm" = yes; then
    if test "$CDINCDIR" != default; then
-      CDINCCMD="-I"$CDINCDIR
+      CDINCCMD="-I$CDINCDIR"
       AC_SUBST(CDINCCMD)
    fi
    if test "$CDLIBDIR" = default; then
-      CDLIBCMD=$CDLIBSTR
+      CDLIBCMD="$CDLIBSTR"
    else
-      CDLIBCMD="-L "$CDLIBDIR" "$CDLIBSTR
+      CDLIBCMD="-L$CDLIBDIR $CDLIBSTR"
    fi
    AC_SUBST(CDLIBCMD)
 fi
 
 if test "$with_freetype" = yes; then
    if test "$FREETYPEINCDIR" != default; then
-      FREETYPEINCCMD="-I"$FREETYPEINCDIR
+      FREETYPEINCCMD="-I$FREETYPEINCDIR"
       AC_SUBST(FREETYPEINCCMD)
    fi
    if test "$FREETYPELIBDIR" = default; then
-      FREETYPELIBCMD=$FREETYPELIBSTR
+      FREETYPELIBCMD="$FREETYPELIBSTR"
    else
-      FREETYPELIBCMD="-L "$FREETYPELIBDIR" "$FREETYPELIBSTR
+      FREETYPELIBCMD="-L$FREETYPELIBDIR $FREETYPELIBSTR"
    fi
    AC_SUBST(FREETYPELIBCMD)
 fi
 
 if test "$enable_png" = yes -o "$enable_jpeg" = yes; then
    if test "$GDINCDIR" != default; then
-      GDINCCMD="-I"$GDINCDIR
+      GDINCCMD="-I$GDINCDIR"
       AC_SUBST(GDINCCMD)
    fi
    if test "$GDLIBDIR" = default; then
-      GDLIBCMD=$GDLIBSTR
+      GDLIBCMD="$GDLIBSTR"
    else
-      GDLIBCMD="-L "$GDLIBDIR" "$GDLIBSTR
+      GDLIBCMD="-L$GDLIBDIR $GDLIBSTR"
    fi
    AC_SUBST(GDLIBCMD)
 fi
 
 if test "$enable_itcl" = yes; then
    if test "$ITCLINCDIR" != default; then
-      ITCLINCCMD="-I"$ITCLINCDIR
+      ITCLINCCMD="-I$ITCLINCDIR"
       AC_SUBST(ITCLINCCMD)
    fi
    if test "$ITCLLIBDIR" = default; then
-      ITCLLIBCMD=$ITCLLIBSTR
+      ITCLLIBCMD="$ITCLLIBSTR"
    else
-      ITCLLIBCMD="-L "$ITCLLIBDIR" "$ITCLLIBSTR
+      ITCLLIBCMD="-L$ITCLLIBDIR $ITCLLIBSTR"
    fi
    AC_SUBST(ITCLLIBCMD)
 fi
@@ -546,35 +546,35 @@ if test "$enable_itk" = yes; then
 #      AC_SUBST(ITKINCCMD)
 #   fi
    if test "$ITKLIBDIR" = default; then
-      ITKLIBCMD=$ITKLIBSTR
+      ITKLIBCMD="$ITKLIBSTR"
    else
-      ITKLIBCMD="-L "$ITKLIBDIR" "$ITKLIBSTR
+      ITKLIBCMD="-L$ITKLIBDIR $ITKLIBSTR"
    fi
    AC_SUBST(ITKLIBCMD)
 fi
 
 if test "$enable_tcl" = yes; then
    if test "$TCLINCDIR" != default; then
-      TCLINCCMD="-I"$TCLINCDIR
+      TCLINCCMD="-I$TCLINCDIR"
       AC_SUBST(TCLINCCMD)
    fi
    if test "$TCLLIBDIR" = default; then
-      TCLLIBCMD=$TCLLIBSTR
+      TCLLIBCMD="$TCLLIBSTR"
    else
-      TCLLIBCMD="-L "$TCLLIBDIR" "$TCLLIBSTR
+      TCLLIBCMD="-L$TCLLIBDIR $TCLLIBSTR"
    fi
    AC_SUBST(TCLLIBCMD)
 fi
 
 if test "$enable_tk" = yes; then
    if test "$TKINCDIR" != default; then
-      TKINCCMD="-I"$TKINCDIR
+      TKINCCMD="-I$TKINCDIR"
       AC_SUBST(TKINCCMD)
    fi
    if test "$TKLIBDIR" = default; then
-      TKLIBCMD=$TKLIBSTR
+      TKLIBCMD="$TKLIBSTR"
    else
-      TKLIBCMD="-L "$TKLIBDIR" "$TKLIBSTR
+      TKLIBCMD="-L$TKLIBDIR $TKLIBSTR"
    fi
    AC_SUBST(TKLIBCMD)
 fi
@@ -582,7 +582,7 @@ fi
 # Java stanza completely different from others.  sysloc.in must have 
 # found both $JAVAINCDIR and $JAVAMDINCDIR if $enable_java is still yes.
 if test "$enable_java" = yes; then
-   JAVAINCCMD="-I"$JAVAINCDIR" -I"$JAVAMDINCDIR
+   JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
    AC_SUBST(JAVAINCCMD)
 fi
 
