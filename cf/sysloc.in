@@ -611,9 +611,9 @@ if test "$with_shlib" = "yes"; then
     SHLIB_LIBS=$LIBS
 
     if test "$with_gcc" = "yes"; then
-	SHLIB_CCFLAGS=-fpic
-	SHLIB_CXXFLAGS=-fpic
-	SHLIB_BUILD="gcc -shared -fpic -o"
+	SHLIB_CCFLAGS=-fPIC
+	SHLIB_CXXFLAGS=-fPIC
+	SHLIB_BUILD="gcc -shared -fPIC -o"
     else
 	SHLIB_CCFLAGS=
 	SHLIB_CXXFLAGS=
@@ -638,18 +638,18 @@ if test "$with_shlib" = "yes"; then
 #       SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
         AC_MSG_RESULT([Assuming sco-3.2v5 with gcc. Otherwise, reconfigure --without-shlib])
         SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
-        LDSHARED='gcc -fpic -shared'
-        SHLIB_BUILD="gcc -shared -fpic -o"
+        LDSHARED='gcc -fPIC -shared'
+        SHLIB_BUILD="gcc -shared -fPIC -o"
     ;;
 	Linux* )
 	    # Should do something to make sure this is an ELF system, as
 	    # don't have patience for DLL...
 	    AC_MSG_RESULT([Assuming Linux ELF.  Otherwise, reconfigure --without-shlib])
-	    SHLIB_BUILD="gcc -shared -fpic -o"
+	    SHLIB_BUILD="gcc -shared -fPIC -o"
 
 	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)'
 
-	    LDSHARED='gcc -fpic -shared'
+	    LDSHARED='gcc -fPIC -shared'
 	    RPATH="-Wl,-rpath -Wl,.:$prefix/lib"
 	    INSTALL_RPATH="-Wl,-rpath -Wl,$prefix/lib"
 	    SONAME_FLAGS="-Wl,-soname -Wl,"
