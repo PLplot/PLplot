@@ -84,13 +84,13 @@ CLEAN :
 
 F90_PROJ=/compile_only /include:"$(INTDIR)\\" /nologo /warn:nofileopt /module:"Release/" /object:"Release/"
 F90_OBJS=.\Release/
-CPP_PROJ=/nologo /Ox /MD /W3 /GX /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "BUILD_DIR=$(BUILD_DIR)" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c
+CPP_PROJ=/nologo /Ox /MD /W3 /GX /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "BUILD_DIR=$(BUILD_DIR)" /D "HAVE_FREETYPE" /I..\..\..\..\..\freetype\freetype-2.1.9\include /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc"
 BSC32_SBRS= \
 	
 LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"plplot.lib"
+LIB32_FLAGS=/nologo /out:"plplot.lib" "$(TMPDIR)\freetype.lib"
 LIB32_OBJS= \
 	"$(INTDIR)\plcore.obj" \
 	"$(INTDIR)\win3.obj" \
@@ -125,6 +125,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\pltick.obj" \
 	"$(INTDIR)\plwind.obj" \
 	"$(INTDIR)\pdfutils.obj" \
+	"$(INTDIR)\plfreetype.obj" \
 	"$(INTDIR)\plvect.obj" \
 	"$(INTDIR)\pldtik.obj"
 
@@ -190,7 +191,7 @@ CLEAN :
 
 F90_PROJ=/check:bounds /compile_only /debug:full /include:"$(INTDIR)\\" /nologo /traceback /warn:argument_checking /warn:nofileopt /module:"Debug/" /object:"Debug/" /pdbfile:"Debug/DF60.PDB"
 F90_OBJS=.\Debug/
-CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"$(INTDIR)\plplib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ  /c
+CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /D "HAVE_FREETYPE" /Fp"$(INTDIR)\plplib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ  /c
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc"
 BSC32_SBRS= \
@@ -209,7 +210,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\mem.obj" \
 	"$(INTDIR)\xfig.obj" \
 	"$(INTDIR)\pstex.obj" \
-	"$(INTDIR)\pbm.obj" \
 	"$(INTDIR)\plfreetype.obj" \
 	"$(INTDIR)\plbuf.obj" \
 	"$(INTDIR)\plcont.obj" \
@@ -495,12 +495,6 @@ SOURCE=$(TMPDIR)\pstex.c
 SOURCE=$(TMPDIR)\hpgl.c
 
 "$(INTDIR)\hpgl.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-SOURCE=$(TMPDIR)\pbm.c
-
-"$(INTDIR)\pbm.obj" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 

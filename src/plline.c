@@ -566,26 +566,36 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
  * the typical return value is 3 or -3, since 3 turns are necessary in order
  * to complete the fill region.  Only for really oddly shaped fill regions
  * will it give the wrong answer.
+ *
+ * AM:
+ * Changed the computation: use the outer product to compute the surface
+ * area, the sign determines if the polygon is followed clockwise or
+ * counterclockwise. This is more reliable. Floating-point numbers
+ * are used to avoid overflow.
 \*----------------------------------------------------------------------*/
 
 static int
 circulation(PLINT *x, PLINT *y, PLINT npts)
 {
-    int xproduct, direction = 0;
-    PLINT i, x1, y1, x2, y2, x3, y3;
-    for (i = 0; i < npts - 1; i++) {
-	x1 = x[i]; x2 = x[i+1];
-	y1 = y[i]; y2 = y[i+1];
-	if (i < npts-2) {
-	    x3 = x[i+2]; y3 = y[i+2];
-	} else {
-	    x3 = x[0]; y3 = y[0];
-	}
-	xproduct = (x2-x1)*(y3-y2) - (y2-y1)*(x3-x2);
+    PLFLT xproduct;
+    int direction = 0;
+    PLFLT x1, y1, x2, y2, x3, y3;
+    int i;
 
-	if (xproduct > 0) direction++;
-	if (xproduct < 0) direction--;
+    xproduct = 0.0 ;
+    for (i = 0; i < npts - 1; i++) {
+        x1 = x[i]; x2 = x[i+1];
+        y1 = y[i]; y2 = y[i+1];
+        if (i < npts-2) {
+            x3 = x[i+2]; y3 = y[i+2];
+        } else {
+            x3 = x[0]; y3 = y[0];
+        }
+        xproduct = xproduct + (x2-x1)*(y3-y2) - (y2-y1)*(x3-x2);
     }
+
+    if (xproduct > 0.0) direction = 1;
+    if (xproduct < 0.0) direction = -1;
     return direction;
 }
 
