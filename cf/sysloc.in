@@ -163,12 +163,15 @@ if test "$has_x11" = "yes"; then
 		JAVAMDINCDIR="$JAVAINCDIR/linux"
 	    ;;
 	    * ) 	
-		AC_MSG_RESULT(Can't find Java machine dependent includes.)
+		AC_MSG_RESULT('Can\'t find Java machine dependent includes.')
 	    ;;
 	esac
 
 	if ! test -r "$JAVAMDINCDIR/jni_md.h"; then
-	    JAVAMDINCDIR=""
+	    JAVAMDINCDIR="$JAVAINCDIR/genunix"
+	    if ! test -r "$JAVAMDINCDIR/jni_md.h"; then
+		JAVAMDINCDIR=""
+	    fi
 	fi
 
 	if test -z "$JAVAMDINCDIR"; then
