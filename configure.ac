@@ -141,6 +141,15 @@ enable_cgm=yes
 enable_tk=yes
 enable_xwin=yes
 
+# am_conditional on the following flags required because these drivers
+# need the math library linked in.
+enable_ljii=yes
+enable_ljiip=yes
+enable_pbm=yes
+enable_ps=yes
+enable_pstex=yes
+enable_xfig=yes
+
 # separate the concept of desiring a driver (above) with
 # having system support for it.
 has_x11=yes
@@ -576,19 +585,13 @@ else
   DRIVERS_DB="drivers.db"
   LIB_TAG=""
 fi
-AM_CONDITIONAL(with_double, [test "$with_double" = yes])
 AC_SUBST(LIB_TAG)
 AC_DEFINE_UNQUOTED(DRIVERS_DB, "$DRIVERS_DB")
-
-### Dynamic driver conditional
-AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
-
 
 ### C++ binding
 
 MY_ARG_ENABLE(cxx,
   [  --enable-cxx            compile C++ interface code ($enable_cxx)])
-AM_CONDITIONAL(enable_cxx, [test "$enable_cxx" = yes])
 if test "$enable_cxx" = yes ; then
   AC_PROG_CXX
 fi
@@ -597,7 +600,6 @@ fi
 
 MY_ARG_ENABLE(f77,
   [  --enable-f77            compile Fortran-77 interface code ($enable_f77)])
-AM_CONDITIONAL(enable_f77, [test "$enable_f77" = yes])
 if test "$enable_f77" = yes ; then
   AC_PROG_F77
   AC_CHECK_PROGS(M4, m4, "no")
@@ -613,17 +615,11 @@ fi
 
 MY_ARG_ENABLE(python,
   [  --enable-python         compile Python interface code ($enable_python)])
-AM_CONDITIONAL(enable_python, [test "$enable_python" = yes])
 
 ### tcl binding
 
 MY_ARG_ENABLE(tcl,
   [  --enable-tcl            compile Tcl interface code ($enable_tcl)])
-AM_CONDITIONAL(enable_tcl, [test "$enable_tcl" = yes])
-AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
-AM_CONDITIONAL(enable_tk, [test "$enable_tk" = yes])
-AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
-AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
 
 MY_ARG_ENABLE(itcl,
   [  --enable-itcl           enable incr Tcl interface code ($enable_itcl)])
@@ -633,6 +629,27 @@ MY_ARG_ENABLE(java,
 
 MY_ARG_ENABLE(octave,
   [  --enable-octave         compile Octave interface code ($enable_octave)])
+
+# Conditionals to control various Makefile.am files.
+
+AM_CONDITIONAL(with_double, [test "$with_double" = yes])
+AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
+AM_CONDITIONAL(enable_cxx, [test "$enable_cxx" = yes])
+AM_CONDITIONAL(enable_f77, [test "$enable_f77" = yes])
+AM_CONDITIONAL(enable_gnome, [test "$enable_gnome" = yes])
+AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
+AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
+AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])
+AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
+AM_CONDITIONAL(enable_pbm, [test "$enable_pbm" = yes])
+AM_CONDITIONAL(enable_ps, [test "$enable_ps" = yes])
+AM_CONDITIONAL(enable_pstex, [test "$enable_pstex" = yes])
+AM_CONDITIONAL(enable_python, [test "$enable_python" = yes])
+AM_CONDITIONAL(enable_tcl, [test "$enable_tcl" = yes])
+AM_CONDITIONAL(enable_tk, [test "$enable_tk" = yes])
+AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
+AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
+AM_CONDITIONAL(enable_xwin, [test "$enable_xwin" = yes])
 
 ### Checks for existence of headers
 

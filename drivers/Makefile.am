@@ -126,6 +126,8 @@ AM_CPPFLAGS = @INCLTDL@
 ldflags = -rpath $(driversdir) -no-undefined -module -avoid-version 
 
 # Single precision versions of the dynamic drivers.
+# The LDFLAGS variables have been set very carefully for each driver
+# to insure all their undefined symbols are resolved by the link step
 
 cgm_drv_la_SOURCES = cgm.c
 cgm_drv_la_LDFLAGS = $(ldflags) $(libplplot) @CDLIBCMD@
@@ -136,8 +138,11 @@ dg300_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 gd_drv_la_SOURCES = gd.c
 gd_drv_la_LDFLAGS = $(ldflags) $(libplplot) @GDLIBCMD@
 
+if enable_gnome
+lmflag = -lm
 gnome_drv_la_SOURCES = gnome.c
-gnome_drv_la_LDFLAGS = $(ldflags) $(libplplot) @GNOMELIBS@
+gnome_drv_la_LDFLAGS = $(ldflags) $(libplplot) @GNOMELIBS@ $(lmflag)
+endif
 
 hpgl_drv_la_SOURCES = hpgl.c
 hpgl_drv_la_LDFLAGS = $(ldflags) $(libplplot)
@@ -148,11 +153,17 @@ impress_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 linuxvga_drv_la_SOURCES = linuxvga.c
 linuxvga_drv_la_LDFLAGS = $(ldflags) $(libplplot) @LINUXVGALIBS@
 
+if enable_ljii
+lmflag = -lm
 ljii_drv_la_SOURCES = ljii.c
-ljii_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+ljii_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+endif
 
+if enable_ljiip
+lmflag = -lm
 ljiip_drv_la_SOURCES = ljiip.c
-ljiip_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+ljiip_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+endif
 
 ntk_drv_la_SOURCES = ntk.c
 ntk_drv_la_LDFLAGS = $(ldflags) $(libplplot) @TCLLIBCMD@ @TKLIBCMD@
@@ -160,17 +171,26 @@ ntk_drv_la_LDFLAGS = $(ldflags) $(libplplot) @TCLLIBCMD@ @TKLIBCMD@
 null_drv_la_SOURCES = null.c
 null_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
+if enable_pbm
+lmflag = -lm
 pbm_drv_la_SOURCES = pbm.c
-pbm_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+pbm_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+endif
 
 plmeta_drv_la_SOURCES = plmeta.c
 plmeta_drv_la_LDFLAGS = $(ldflags) $(libplplot)
 
+if enable_ps
+lmflag = -lm
 ps_drv_la_SOURCES = ps.c pstex.c
-ps_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+ps_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+endif
 
+if enable_pstex
+lmflag = -lm
 pstex_drv_la_SOURCES = ps.c pstex.c
-pstex_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+pstex_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+endif
 
 tek_drv_la_SOURCES = tek.c
 tek_drv_la_LDFLAGS = $(ldflags) $(libplplot)
@@ -185,11 +205,18 @@ tkwin_drv_la_SOURCES = \
 
 tkwin_drv_la_LDFLAGS = $(ldflags) $(libplplottcltk) @TCLLIBCMD@ @TKLIBCMD@
 
+if enable_xfig
+lmflag = -lm
 xfig_drv_la_SOURCES = xfig.c
-xfig_drv_la_LDFLAGS = $(ldflags) $(libplplot)
+xfig_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
+endif
 
+if enable_xwin
+xflags = @X_LIBS@ -lX11
+lmflag = -lm
 xwin_drv_la_SOURCES = xwin.c
-xwin_drv_la_LDFLAGS = $(ldflags) $(libplplot) @X_LIBS@ -lX11
+xwin_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(xflags) $(lmflag)
+endif
 
 # Double precision versions of the dynamic drivers.
 
@@ -407,6 +434,41 @@ AM_CPPFLAGS = \
 	@ITCLINCCMD@
 
 libplplotdrv_la_LIBADD = @STATIC_DRIVERS@ 
+# Concatanate all LDFLAGS for individual drivers above together
+
+if enable_gnome
+lmflag = -lm
+endif
+
+if enable_ljii
+lmflag = -lm
+endif
+
+if enable_ljiip
+lmflag = -lm
+endif
+
+if enable_pbm
+lmflag = -lm
+endif
+
+if enable_ps
+lmflag = -lm
+endif
+
+if enable_pstex
+lmflag = -lm
+endif
+
+if enable_xfig
+lmflag = -lm
+endif
+
+if enable_xwin
+xflags = @X_LIBS@ -lX11
+lmflag = -lm
+endif
+
 libplplotdrv_la_LDFLAGS = \
 	@CDLIBCMD@ \
 	@GDLIBCMD@ \
@@ -416,7 +478,7 @@ libplplotdrv_la_LDFLAGS = \
 	@TKLIBCMD@ \
 	@ITCLLIBCMD@ \
 	@ITKLIBCMD@ \
-	@X_LIBS@ -lX11
+	$(xflags) $(lmflag)
 
 # These dependencies required for some reason if using the LIBADD method.
 libplplotdrv_la_DEPENDENCIES = $(libplplotdrv_la_LIBADD)

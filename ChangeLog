@@ -1,3 +1,14 @@
+2002-12-11  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* src/plcore.c: reactivate release of libltdl resources in plend.
+
+	* bindings/octave/demos/x??c.m: plend ==> plend1.
+
+	* drivers/Makefile.am, configure.ac: xflags and lmflag activated for
+	  drivers which need linking to X libraries or the math library.
+	  Needs additional AM_CONDITIONALS in configure.ac to be
+	  implemented.
+
 2002-12-09  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* configure.ac: only run AM_PATH_PYTHON(1.5) if python is enabled.
