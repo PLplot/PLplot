@@ -1,5 +1,5 @@
-How to build yourself python with PLplot support
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+How to build yourself a python with PLplot support
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 General:
 
@@ -35,9 +35,9 @@ itself.  Geoffrey Furnish tells us this method is still working, but the
 instructions have not been updated since 1996 so there may be some changes
 which you should ask him about.
 
-Configure plplot with
---disable-python, and follow these steps.  This will be a little bit
-of work, and you may have to think on your feet...
+Configure plplot with --disable-python, and follow these steps.  This
+will be a little bit of work, and you may have to think on your
+feet...
 
 1) First Build python in the usual way.  PLplot has been tested with:
 	python 1.4b3
