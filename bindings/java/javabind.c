@@ -826,7 +826,7 @@ Java_plplot_core_PLStream_cont___3_3F_3F_3_3F_3_3FI(
     int xgnx = (*env)->GetArrayLength( env, jxg ), xgny = -1;
     int ygnx = (*env)->GetArrayLength( env, jyg ), ygny = -1;
 
-    PLFLT **z, **xg, **yg;
+    PLFLT **z, **zwrapped, **zused, **xg, **yg;
 
     int kx, ky, lx, ly;
     int nx, ny;
@@ -835,7 +835,6 @@ Java_plplot_core_PLStream_cont___3_3F_3F_3_3F_3_3FI(
     jfloat *clevdat = (*env)->GetFloatArrayElements( env, jclev, 0 );
     PLFLT *clev;
 
-    PLfGrid2 fgrid;
     PLcGrid2 cgrid;
 
     int must_free_buffers = 0;
@@ -949,10 +948,6 @@ Java_plplot_core_PLStream_cont___3_3F_3F_3_3F_3_3FI(
         must_free_buffers = 1;
     }
 
-    fgrid.f = z;
-    fgrid.nx = znx;
-    fgrid.ny = zny;
-
 /* Better hav xgnx == ygnx and xgny == ygny */
 
     if (wrap == 0) {
@@ -960,41 +955,50 @@ Java_plplot_core_PLStream_cont___3_3F_3F_3_3F_3_3FI(
         cgrid.yg = yg;
         cgrid.nx = xgnx;
         cgrid.ny = xgny;
+        zused = z;
     } else if (wrap == 1) {
         plAlloc2dGrid( &cgrid.xg, nx+1, ny );
         plAlloc2dGrid( &cgrid.yg, nx+1, ny );
+        plAlloc2dGrid( &zwrapped, nx+1, ny );
 
         cgrid.nx = nx+1;
         cgrid.ny = ny;
+        zused = zwrapped;
 
         for( i=0; i < nx; i++ )
             for( j=0; j < ny; j++ ) {
                 cgrid.xg[i][j] = xg[i][j];
                 cgrid.yg[i][j] = yg[i][j];
+                zwrapped[i][j] = z[i][j];
             }
 
         for( j=0; j < ny; j++ ) {
             cgrid.xg[nx][j] = cgrid.xg[0][j];
             cgrid.yg[nx][j] = cgrid.yg[0][j];
+            zwrapped[nx][j] = zwrapped[0][j];
         }
 
         ny++;
     } else if (wrap == 2) {
         plAlloc2dGrid( &cgrid.xg, nx, ny+1 );
         plAlloc2dGrid( &cgrid.yg, nx, ny+1 );
+        plAlloc2dGrid( &zwrapped, nx, ny+1 );
 
         cgrid.nx = nx;
         cgrid.ny = ny+1;
+        zused = zwrapped;
 
         for( i=0; i < nx; i++ )
             for( j=0; j < ny; j++ ) {
                 cgrid.xg[i][j] = xg[i][j];
                 cgrid.yg[i][j] = yg[i][j];
+                zwrapped[i][j] = z[i][j];
             }
 
         for( i=0; i < nx; i++ ) {
             cgrid.xg[i][ny] = cgrid.xg[i][0];
             cgrid.yg[i][ny] = cgrid.yg[i][0];
+            zwrapped[i][ny] = zwrapped[i][0];
         }
 
         ny++;
@@ -1007,7 +1011,7 @@ Java_plplot_core_PLStream_cont___3_3F_3F_3_3F_3_3FI(
 
     set_PLStream(env,jthis);
 
-    plfcont( f2eval2, &fgrid, nx, ny, kx, lx, ky, ly,
+    plcont( zused, nx, ny, kx, lx, ky, ly,
              clev, nlev, pltr2, &cgrid );
 
     if (must_free_buffers) {
@@ -1035,6 +1039,7 @@ Java_plplot_core_PLStream_cont___3_3F_3F_3_3F_3_3FI(
     if (wrap != 0) {
         plFree2dGrid( cgrid.xg, nx, ny );
         plFree2dGrid( cgrid.yg, nx, ny );
+        plFree2dGrid( zwrapped, nx, ny );
     }
 }
 
@@ -1063,7 +1068,7 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3_3D_3_3DI(
     int xgnx = (*env)->GetArrayLength( env, jxg ), xgny = -1;
     int ygnx = (*env)->GetArrayLength( env, jyg ), ygny = -1;
 
-    PLFLT **z, **xg, **yg;
+    PLFLT **z, **zwrapped, **zused, **xg, **yg;
 
     int kx, ky, lx, ly;
     int nx, ny;
@@ -1072,7 +1077,6 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3_3D_3_3DI(
     jdouble *clevdat = (*env)->GetDoubleArrayElements( env, jclev, 0 );
     PLFLT *clev;
 
-    PLfGrid2 fgrid;
     PLcGrid2 cgrid;
 
     int must_free_buffers = 0;
@@ -1186,10 +1190,6 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3_3D_3_3DI(
         must_free_buffers = 1;
     }
 
-    fgrid.f = z;
-    fgrid.nx = znx;
-    fgrid.ny = zny;
-
 /* Better hav xgnx == ygnx and xgny == ygny */
 
     if (wrap == 0) {
@@ -1197,41 +1197,50 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3_3D_3_3DI(
         cgrid.yg = yg;
         cgrid.nx = xgnx;
         cgrid.ny = xgny;
+        zused = z;
     } else if (wrap == 1) {
         plAlloc2dGrid( &cgrid.xg, nx+1, ny );
         plAlloc2dGrid( &cgrid.yg, nx+1, ny );
+        plAlloc2dGrid( &zwrapped, nx+1, ny );
 
         cgrid.nx = nx+1;
         cgrid.ny = ny;
+        zused = zwrapped;
 
         for( i=0; i < nx; i++ )
             for( j=0; j < ny; j++ ) {
                 cgrid.xg[i][j] = xg[i][j];
                 cgrid.yg[i][j] = yg[i][j];
+                zwrapped[i][j] = z[i][j];
             }
 
         for( j=0; j < ny; j++ ) {
             cgrid.xg[nx][j] = cgrid.xg[0][j];
             cgrid.yg[nx][j] = cgrid.yg[0][j];
+            zwrapped[nx][j] = zwrapped[0][j];
         }
 
         ny++;
     } else if (wrap == 2) {
         plAlloc2dGrid( &cgrid.xg, nx, ny+1 );
         plAlloc2dGrid( &cgrid.yg, nx, ny+1 );
+        plAlloc2dGrid( &zwrapped, nx, ny+1 );
 
         cgrid.nx = nx;
         cgrid.ny = ny+1;
+        zused = zwrapped;
 
         for( i=0; i < nx; i++ )
             for( j=0; j < ny; j++ ) {
                 cgrid.xg[i][j] = xg[i][j];
                 cgrid.yg[i][j] = yg[i][j];
+                zwrapped[i][j] = z[i][j];
             }
 
         for( i=0; i < nx; i++ ) {
             cgrid.xg[i][ny] = cgrid.xg[i][0];
             cgrid.yg[i][ny] = cgrid.yg[i][0];
+            zwrapped[i][ny] = zwrapped[i][0];
         }
 
         ny++;
@@ -1244,7 +1253,7 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3_3D_3_3DI(
 
     set_PLStream(env,jthis);
 
-    plfcont( f2eval2, &fgrid, nx, ny, kx, lx, ky, ly,
+    plcont( zused, nx, ny, kx, lx, ky, ly,
              clev, nlev, pltr2, &cgrid );
 
     if (must_free_buffers) {
@@ -1272,6 +1281,7 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3_3D_3_3DI(
     if (wrap != 0) {
         plFree2dGrid( cgrid.xg, nx, ny );
         plFree2dGrid( cgrid.yg, nx, ny );
+        plFree2dGrid( zwrapped, nx, ny );
     }
 }
 
