@@ -1,0 +1,429 @@
+#!/bin/sh
+
+#****************************************************************************
+#
+# configure - configures plplot for build
+#
+# Maurice LeBrun (mjl@dino.ph.utexas.edu)
+# IFS, University of Texas at Austin
+# 24-Sep-93
+# Loosely based on old TPC configure script by Geoff Furnish.
+# Type "configure h" for info on usage.
+#
+#****************************************************************************
+#
+# $Id$
+#
+# $Log$
+# Revision 1.1  1993/10/04 17:43:23  mjl
+# Adapted TPC configure script for use with plplplplot.
+#
+#
+#****************************************************************************
+
+#unset system	# just for testing
+
+# Set up defaults
+# The value from the environment is used, if present.
+# This way you can customize the default build settings on a per site
+# basis through your normal login.
+
+if [ ! "$system" ] ; then
+	uname 1>/dev/null 2>&1 && system=`uname`
+fi
+
+if [ ! "$double" ]; then
+	double=off
+fi
+
+if [ ! "$debug" ]; then
+	debug=on
+fi
+
+if [ ! "$opt" ]; then
+	opt=0
+fi
+
+if [ ! "$profile" ]; then
+	profile=off
+fi
+
+if [ ! "$no_x" ]; then
+	no_x=off
+fi
+
+if [ ! "$no_tk" ]; then
+	no_tk=off
+fi
+
+if [ ! "$no_share" ]; then
+	no_share=off
+fi
+
+# System-specific initializations.
+
+case "$system" in
+
+SunOS)
+	PATH=/usr/5bin:/usr/bin:/bin		# to get the SysV "echo"
+	;;
+esac
+
+# Define some handy functions
+
+#****************************************************************************
+
+# Spits out the current variable settings.
+
+Settings () {
+
+	echo \
+"The current settings are:\n\
+\n\
+	system		$system\n\
+	double		$double\n\
+	debug		$debug\n\
+	opt		$opt\n\
+	profile		$profile\n\
+	no_x		$no_x\n\
+	no_tk		$no_tk\n\
+	no_share	$no_share\n\
+"
+}
+
+#****************************************************************************
+
+# Spits out help message, then exits
+#
+# Some example command lines:
+#
+#	configure debug double
+#	configure opt=2 projdir=../src/myproj
+#
+# Specifying debug turns optimization off (opt=0), and specifying
+# opt=1 or opt=2 turns debugging off.  Other wierd combinations have
+# to be detected by the makefile.
+
+Help () {
+
+	echo \
+"Syntax:\n\
+	configure [flags]\n\
+\n\
+where recognized flags include:\n\
+\n\
+	h			help\n\
+	system	  =<name>	specify system name\n\
+	opt	  [=0|1|2]	specify optimization level\n\
+	double	  [=on|off]	specify double precision\n\
+	debug	  [=on|off]	specify debugging\n\
+	profile	  [=on|off]	specify profiling\n\
+	no_x	  [=on|off]	no X linkage\n\
+	no_tk	  [=on|off]	no Tcl/TK linkage\n\
+	no_share  [=on|off]	do not build shared libraries\n\
+\n\
+Options are set via the command line, environment, and internal defaults,\n\
+in that order.  The option value must be specified without spaces, e.g.\n\
+debug=off.  The value can often be omitted, in which case booleans are set\n\
+to \"on\" and multi-state variables are set to some typical \"on\" value.\n\
+Variables can be truncated to their shortest unique length.\n\
+"
+	Settings
+	exit 1
+}
+
+#****************************************************************************
+
+# Parses argument list
+
+Parse_args () {
+
+	while [ $# -gt 0 ]
+	do
+		arg=$1
+		case "$arg" in
+		h|he|hel|help)
+			give_me_help=1
+			;;
+		s=*|sy=*|sys=*|syst=*|syste=*|system=*)
+			system=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		de=*|deb=*|debu=*|debug=*)
+			debug=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			if [ $debug = "on" ]; then opt=0; fi
+			;;
+		de|deb|debu|debug)
+			debug=on
+			opt=0
+			;;
+		dbl=*|dou=*|doub=*|doubl=*|double=*)
+			double=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		dbl|dou|doub|doubl|double)
+			double=on
+			;;
+		o=*|op=*|opt=*)
+			opt=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			if [ $opt -gt 0 ]; then debug=off; fi
+			;;
+		o|op|opt)
+			opt=1
+			;;
+		p=*|pr=*|pro=*|prof=*|profi=*|profil=*|profile=*)
+			profile=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		prof|profi|profil|profile)
+			profile=on
+			;;
+		no_x=*)
+			no_x=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		no_x)
+			no_x=on
+			;;
+		no_t=*|no_tk=*)
+			no_tk=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		no_tk)
+			no_tk=on
+			;;
+		no_s=*|no_sh=*|no_sha=*|no_shar=*|no_share=*)
+			no_share=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		no_share)
+			no_share=on
+			;;
+		*)
+			give_me_help=1
+			;;
+		esac
+		shift
+	done
+}
+
+#****************************************************************************
+
+# Sets up all the build options.
+
+Setup_options () {
+
+	system_flag=
+	machine_flag=
+	debug_flag=
+	opt_flag=
+	profile_flag=
+	double_flag=
+
+# Allow various abbreviations for system name, including output of `uname`.  
+
+	case "$system" in
+
+	hp*|HP*)
+		system="HP"
+		;;
+
+	sun*|SUN*|Sun*)
+		system="SUN"
+		;;
+
+	unicos*|Unicos*|UNICOS*|Cray*|cray*|sn*)
+		system="UNICOS"
+		;;
+
+	sx*|Sx*|SX*|monte*|Monte*|MONTE*)
+		system="SX"
+		;;
+
+	aix*|AIX*|rs*|RS*|ibm*|IBM*)
+		system="AIX"
+		;;
+
+	alpha*|ALPHA*|Alpha*)
+		system="ALPHAOSF"
+		;;
+
+	irix*|IRIX*|Irix*|sgi*|SGI*)
+		system="IRIX"
+		;;
+
+	sysv*|SYSV*|Sysv*)
+		system="SYSV"
+		;;
+
+	alpha*|ALPHA*|Alpha*)
+		system="ALPHAOSF"
+		;;
+
+	bsd*|BSD*)
+		system="BSD"
+		;;
+
+	dg*|DG*)
+		system="DGUX"
+		;;
+
+	linux*|LINUX*|Linux*)
+		system="LINUX"
+		;;
+
+	*)	
+		echo "Unrecognized system"
+		Help
+		;;
+	esac
+
+	system_flag="-DSYSTEM=$system"
+
+# Now set up machine name if necessary.  Use output from `uname -m`.
+
+	if [ ! "$machine" ]; then
+		machine=`uname -m`
+	fi
+
+	case "$system" in 
+
+	UNICOS)
+		case "$machine" in
+
+		"CRAY C90"|"CRAY Y-MP"|"cray y-mp"|y*|Y*|CRAY*1|cray*1|1)
+			machine="CRAY_1"
+			;;
+
+		CRAY*2|cray*2|2)
+			machine="CRAY_2"
+			;;
+		esac
+		machine_flag="-DMACHINE=$machine"
+		;;
+	esac
+
+# Set up everything else.
+
+	if [ "$debug" = "on" ]; then
+		debug_flag="-DDEBUG"
+	fi
+	if [ "$opt" -eq 1 ]; then
+		opt_flag="-DOPT=1"
+	fi
+	if [ "$opt" -eq 2 ]; then
+		opt_flag="-DOPT=2"
+	fi
+	if [ "$profile" = "on" ]; then
+		profile_flag="-DPROF"
+	fi
+	if [ "$double" = "on" ]; then
+		double_flag="-DDOUBLE"
+	fi
+	if [ "$no_x" = "on" ]; then
+		no_x_flag="-DNO_X"
+	fi
+	if [ "$no_tk" = "on" ]; then
+		no_tk_flag="-DNO_TK"
+	fi
+	if [ "$no_share" = "on" ]; then
+		no_share_flag="-DNO_SHARE"
+	fi
+}
+
+#****************************************************************************
+
+# Actually configures the code.
+
+Configure () {
+
+	if [ ! -d ../src ] || [ ! -d ../drivers ] || [ ! -d ../include ]
+	then
+		echo "Source directory missing!  Are you in the right place?"
+		exit 1
+	fi
+
+# Create links to source code.
+
+	echo "Creating links.."
+
+	ln -s \
+		../src/*.c \
+		../src/stubc/*.c \
+		../examples/C/*.c \
+		../utils/*.c \
+		../scripts/pl* \
+		../include/*.h \
+		../drivers/*.c \
+		../drivers/tk/*.c \
+		../drivers/tk/*.h \
+		../drivers/tk/*.tcl \
+		../drivers/tk/tclIndex \
+		../lib/*.fnt \
+		.
+
+# Create links to the Fortran files.  
+# I use separate single vs double precision files to handle pre-9.0
+# versions of HP-UX.  May be handy on other systems too.
+
+	if [ "$double" = "on" ] && [ "$system" = "HP" ]; then
+		ln -s \
+			../src/stubf/dbl/*.f \
+			../examples/f77/dbl/*.f \
+			.
+	else
+		ln -s \
+			../src/stubf/sgl/*.f \
+			../examples/f77/sgl/*.f \
+			.
+	fi
+
+# Create links to m4 config files.
+
+	ln -s ../m4/*.* .
+
+# Try to locate site-specific config file.
+# Look in ${configdir} first if it exists, then ${HOME}/config.  If not
+# found, the default one in ../m4 (typically just a template) is retained.
+
+	configfile=
+	if [ -f ${configdir}/cf_plplot.m4 ]; 
+	then 
+		configfile=${configdir}/cf_plplot.m4
+
+	elif [ -f ${HOME}/config/cf_plplot.m4 ]; 
+	then 
+		configfile=${HOME}/config/cf_plplot.m4
+	fi
+
+	if [ "$configfile" ]; then
+		rm cf_plplot.m4
+		ln -s $configfile .
+		echo "Using $configfile as config file"
+	fi
+
+# Now time to build the makefile.
+
+	echo "Building makefile with command:\n\n\
+m4 $system_flag $machine_flag $double_flag \
+$debug_flag $opt_flag $profile_flag \
+$no_x_flag $no_tk_flag $no_share_flag \
+makefile.m4 >Makefile
+"
+
+	m4 $system_flag $machine_flag $user_flag $double_flag \
+	   $debug_flag $opt_flag $profile_flag \
+	   $no_x_flag $no_tk_flag $no_share_flag \
+	   makefile.m4 >Makefile
+}
+
+#****************************************************************************
+
+# Now to actually do the work.
+
+Parse_args $*
+Setup_options
+
+if [ "$give_me_help" ]; then
+	Help
+fi
+
+Settings
+Configure
+
+echo "Done with configuring PLPLOT."
+exit 0
