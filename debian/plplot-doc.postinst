@@ -1,0 +1,25 @@
+#!/bin/sh -e
+# File: plplot-doc.postinst
+# Description: Postinst file for the Debian PLplot package
+# Author: Rafael Laboissière <rafael@icp.inpg.fr>
+# Created on: Thu Mar 22 12:29:22 CET 2001
+# Last modified on: Thu Mar 22 12:29:24 CET 2001
+
+set -e
+
+case "$1" in
+    configure)     
+        install-info --quiet --section Math Math \
+           --description="Scientific Plotting Library" \
+           --menuentry="PLplot" /usr/share/info/plplotdoc.info
+        ;;
+
+    abort-upgrade | abort-deconfigure | abort-remove)
+        ;;
+    *)
+        echo "$0: incorrect arguments: $*" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#

@@ -4,13 +4,5 @@ python-plplot for DEBIAN
 Contains a module with Python bindings for PLplot, a scientific
 plotting library.
 
-********** WARNING *************
-THIS PACKAGE IS NOT WORKING WITH PYTHON 1.5.  I WILL SOON APPLY A
-PATCH FOUND AT http://www.geog.ubc.ca/~phil/python/plplot.html TO
-SOLVE THE PROBLEM.
-
-Sorry for any inconvenience.
-*******************************
-
 Rafael Laboissiere <rafael@icp.inpg.fr>, Tue, Tue Oct 13 19:43:41 CEST 1998
 

@@ -3,8 +3,23 @@ plplot (5.0.2-0.potato.1) unstable; urgency=low
   * New upstream release.
   * Backported patch from CVS for using fseek/ftell everywhere to
     eliminate non-portable behavior (closes: #86512).
+  * Changes in the upstream configuration file for making the installation
+    relocatable.  This will be hopefully integrated upstream in the next
+    release of PLplot, and the Debian diff file will be reduced to files
+    in the debian/ directory.
+  * debian/plplot-doc.doc-base, debian/plplot-doc.files: Added files.
+  * debian/plplot-doc.postinst: Added file for installing info files.
+  * Added html, pdf, ps, and info forms of the PLplot manual to the
+    plplot-doc package.
+  * debian/plplot-dev.files: Added man pages generated from the DocBook
+    API documentation.
+  * debian/rules: Added commands for installing files into the plplot-doc
+    and plplot-dev packages.
+  * debian/control: Make plplot-doc conflict with plplot << 5.  This is
+    because of the info files.
+  * debian/plplot-*.README.Debian: Updated.
 
- -- Rafael Laboissiere <rafael@icp.inpg.fr>  Wed, 21 Mar 2001 18:22:07 +0100
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Thu, 22 Mar 2001 14:14:35 +0100
 
 plplot (5.0.1-0.potato.5) unstable; urgency=low
 

@@ -38,7 +38,7 @@ PYTHON_DEMOS	= pytkdemo *.py
 
 INSTALL_PYTHON	= install_python
 
-PYTHON_INSTDIR = $(PREFIX)$(shell echo $(PYTHON_DIR) | sed 's,@prefix@,,')
+PYTHON_INSTDIR = $(PREFIX)/@PYTHON_INSTDIR@
 
 install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
 	@cd python_dynamic ; make -s distclean

@@ -3,22 +3,18 @@ plplot-dev for DEBIAN
 
 To link with plplot, use g77 and specify:
 
-  -lplplotdX -L/usr/X11R6/lib -lX11 -lm    
+  -lplplotd -lplmatrixd -lX11 -ldl -lm -lg2c
                    for X support alone (xwin driver)
-  -lplplotdtk -ltk8.0 -ltcl8.0 -lMatrix -L/usr/X11R6/lib -lX11 -lm 
+
+  -lplplotd -lplmatrixd -litcl3.1 -ltcl8.2 -ldl -lm -lg2c
                    for Tk support (tk driver)
 
 To link with the C++ library, specify also:
 
-    -lPLcxx
+    -lplcxxd
 
-The package was compiled with floating point type DOUBLE.  You have to
-use the definition
-
-  #define PL_DOUBLE
-
-before `#include "plplot.h"' and use PLFLT as floating point type
-everywhere in your code.
+The package was compiled with floating point type DOUBLE.  You have to use
+PLFLT as floating point type everywhere in your code.
 
 
 Rafael Laboissiere <rafael@icp.inpg.fr>, Tue, 16 Jun 1998 20:14:20 +0200

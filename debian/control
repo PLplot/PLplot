@@ -84,7 +84,7 @@ Description: Tcl/Tk support for PLplot, a plotting library
 
 Package: plplot-c++
 Architecture: any
-Depends: plplot-lib, ${shlibs:Depends}
+Depends: plplot-lib
 Conflicts: plplot (<< 5)
 Description: C++ bindings for PLplot, a plotting library
  This package contains the C++ bindings for PLplot, a scientific plotting
@@ -117,6 +117,7 @@ Description: Header and static libraries for PLplot, a plotting library
 Package: plplot-doc
 Architecture: all
 Recommends: plplot-dev
+Conflicts: plplot (<< 5)
 Description: Documentation for PLplot, a plotting library
  This package is just a placeholder for inclusion of the new PLplot docs in
  the future.  For the new docs in Docbook format, see:

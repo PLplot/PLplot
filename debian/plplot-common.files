@@ -1,5 +1,6 @@
 usr/lib/plplot*/data
 usr/share/doc/plplot/changelog
 usr/share/doc/plplot/NEWS
-usr/share/doc/plplot/ToDo
+usr/share/doc/plplot/ToDo*
+usr/share/doc/plplot/FAQ*
 usr/share/doc/plplot/README*

@@ -6,3 +6,4 @@ usr/lib/libplmatrix.so
 usr/lib/libplmatrix.a
 usr/share/doc/plplot/examples
 usr/include
+usr/share/man/man3/*

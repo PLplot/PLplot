@@ -11,19 +11,20 @@
 # Uncomment this to turn on verbose mode. 
 #export DH_VERBOSE=1
 
+version		:= 5.0.2
+
 debbase		:= $(shell pwd)/debian
 debtmp		:= $(debbase)/tmp
 debusr		:= $(debtmp)/usr
 deblib		:= $(debusr)/lib
 debdoc		:= $(debusr)/share/doc
+debinfo		:= $(debusr)/share/info
 cfflags		:= --with-double --disable-linuxvga --without-rpath
 
 build: build-stamp
 build-stamp:
 	dh_testdir
-	( cd cf ; \
-	  autoconf ; \
-	  mv configure .. )
+	make configure
 # Build first bare libraries (no Tcl/Tk) 
 	./configure --prefix=/usr --disable-tcl --disable-tk \
 	                          --disable-python $(cfflags)
@@ -42,8 +43,9 @@ clean:
 	dh_testroot
 	rm -f build-stamp
 	-$(MAKE) clean
-	rm -f configure confdefs.h config.log $(debbase)/lib* \
-              $(debbase)/plrender
+	rm -rf configure confdefs.h config.log $(debbase)/lib* \
+              $(debbase)/plrender $(debbase)/plplotdoc-info-* \
+	      $(debbase)/plplotdoc-man-* $(debbase)/manpages
 	dh_clean
 
 install: install-stamp
@@ -54,7 +56,7 @@ install-stamp: build-stamp
 
 	(cd tmp; make PREFIX=$(debusr) install)
 # This hack ought to go away when it is fixed upstream
-	chmod -x $(deblib)/plplot5.0.1/tcl/plcolor.tcl
+	chmod -x $(deblib)/plplot$(version)/tcl/plcolor.tcl
 # Temporary hack
 	rm -f $(debusr)/bin/plplot_linkage
 
@@ -76,6 +78,11 @@ binary-indep: build install
 	dh_testdir -i
 	dh_testroot -i
 	dh_installdocs -i
+	( cd $(debbase)/plplot-doc/usr/share/doc/plplot-doc ; \
+	  mv plplotdoc-html-* html )
+	( cd $(debbase) ; \
+	  tar xfz ../doc/plplotdoc-info-*.tar.gz ; \
+	  cp plplotdoc-info-*/* $(debinfo) )
 	dh_installchangelogs -i 
 	dh_movefiles -i
 	dh_compress -i
@@ -91,6 +98,11 @@ binary-arch: build install
 	dh_testdir -a
 	dh_testroot -a
 	dh_installdocs -a
+	( cd $(debbase) ; \
+	  tar xfz ../doc/plplotdoc-man-*.tar.gz ; \
+	  mv plplotdoc-man-* manpages )
+	dh_installmanpages --package=plplot-dev $(debbase)/*.1
+	dh_installmanpages --package=plplot
 	dh_installchangelogs -a 
 
 	dh_installdirs -a
