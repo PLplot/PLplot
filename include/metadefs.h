@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/07/02 07:21:12  mjl
-   Added header definitions for use by TK driver.  Also new macros for plplot
-   bop/eop commands.
+   Revision 1.7  1993/07/31 08:08:40  mjl
+   Added macro CHANGE_STATE for new state driver function.
 
+ * Revision 1.6  1993/07/02  07:21:12  mjl
+ * Added header definitions for use by TK driver.  Also new macros for plplot
+ * bop/eop commands.
+ *
  * Revision 1.5  1993/03/06  05:03:49  mjl
  * Bumped the metafile format ID, to allow a hack on old metafiles with bad
  * linewidth commands (WIDTH commands in the body of the metafile are now
@@ -97,5 +100,6 @@
 #define POLYLINE	13
 #define NEW_COLOR0 	NEW_COLOR
 #define NEW_COLOR1	14
+#define CHANGE_STATE	15
 
 #define END_OF_FIELD 255
