@@ -52,7 +52,7 @@ doc_DATA = \
 	PROBLEMS \
 	README
 
-CLEANFILES = plplot_libtool reconfig jadeout.log config.summary
+CLEANFILES = plplot_libtool jadeout.log config.summary
 
 EXTRA_DIST = \
 	debian \
