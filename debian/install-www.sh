@@ -71,10 +71,12 @@ mkdir -p $tmp_dir
 cp ../*${release}*.{deb,dsc,diff.gz} $tmp_dir
 cp ../*`echo $release | sed 's/-.*//'`.orig.tar.gz $tmp_dir
 touch $tmp_dir/override
+pwd=`pwd`
 ( cd $tmp_dir 
   dpkg-scanpackages . override | gzip -9 -c > Packages.gz
   dpkg-scansources . override | gzip -9 -c > Sources.gz
   rm -f override
+  ls | fgrep -v index | eperl -k $pwd/debian/index.html.in > index.html
   tar cfz $tarball `ls`
 )
 
