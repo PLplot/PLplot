@@ -7,13 +7,31 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1994/04/11 19:01:02  furnish
+# Revision 1.2  1994/05/07 03:16:33  mjl
+# Changes to bring up PLplot "megawidget".  Still needs work, in that there
+# are several widgets not appropriate for this application.  The PLplot
+# "megawidget" should really be rewritten in itcl, but for now I'll hack
+# something up instead.
+#
+# Revision 1.1  1994/04/11  19:01:02  furnish
 # The first Tk w/ embedded PLPLOT widget example program.  Very simple,
 # but shows the basics of what you can do.
 #
 ###############################################################################
 
 wm title . "x01c -- TK version"
+
+# Set up configuration options.
+# The first is to hold default values of everything, the second is for
+# user customization.  See pldefaults.tcl for more info.
+
+    pldefaults
+    plconfig
+
+# I refuse to allow exec's, ever.
+# Open's have to remain, however, to read/write palette info.
+
+    rename exec {}
 
 # Create the main window
 # Use the default window title.
@@ -62,17 +80,14 @@ message .msg \
 
 option add *plwin.background black
 
-plframe .plwin
+plw_create .plw
 
 pack append . .menu {top fillx} \
-	.plwin {bottom padx 25 pady 25 expand fill} \
 	.msg {bottom padx 5 pady 5 fill}
-
-#.plf configure height 5
 
 update
 
-.plwin cmd init
+.plw.plwin cmd init
 
 option add "*font" "-Adobe-helvetica-medium-r-normal--*-180*"
 
