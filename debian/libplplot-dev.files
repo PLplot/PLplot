@@ -5,4 +5,5 @@ usr/lib/lib*.la
 usr/lib/lib*.so
 usr/lib/pkgconfig
 usr/share/doc/libplplot5/examples
+usr/share/doc/libplplot5/README.pkg-config
 usr/share/doc/libplplot-dev

@@ -1,3 +1,10 @@
+plplot (5.2.1.cvs.20031027-2) unstable; urgency=low
+
+  * debian/libplplot-dev.files: Added README.pkg-config file.
+  * debian/libplplot5.README.Debian: Fixed typos.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 27 Oct 2003 11:44:16 +0100
+
 plplot (5.2.1.cvs.20031027-1) unstable; urgency=low
 
   * New CVS snapshot upstream release.  This release is actually quite
