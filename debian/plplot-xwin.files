@@ -1,4 +1,4 @@
-usr/lib/plplot5.2.0/driversd/xwin.*
+usr/lib/plplot*/driversd/xwin.*
 usr/share/doc/plplot-xwin
 
 
