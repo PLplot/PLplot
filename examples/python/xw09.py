@@ -17,10 +17,9 @@ PTHETAPTS = 64
 
 tr = array((XSPA, 0.0, -1.0, 0.0, YSPA, -1.0))
 
-def mypltr(x, y, data=None):
-    global tr
-    result0 = tr[0] * x + tr[1] * y + tr[2]
-    result1 = tr[3] * x + tr[4] * y + tr[5]
+def mypltr(x, y, data):
+    result0 = data[0] * x + data[1] * y + data[2]
+    result1 = data[3] * x + data[4] * y + data[5]
     return array((result0, result1))
 
 def polar():
@@ -45,8 +44,8 @@ def polar():
     lev = 0.05 + 0.10*arange(10)
     
     plcol0(2)
-    plcont( zg, lev, "pltr2", xg, yg, 2 )
-    #                                 ^-- :-).  Means: "2nd coord is wrapped."
+    plcont(zg, lev, pltr2, xg, yg, 2)
+    #                              ^-- :-).  Means: "2nd coord is wrapped."
     plcol0(1)
     pllab("", "", "Polar Contour Plot")
 
@@ -152,11 +151,11 @@ def potential():
     plcol0(ncollin)
     # Negative contours
     pllsty(2)
-    plcont( zg, clevelneg, "pltr2", xg, yg, 2 )
+    plcont(zg, clevelneg, pltr2, xg, yg, 2)
 
     # Positive contours
     pllsty(1)
-    plcont( zg, clevelpos, "pltr2", xg, yg, 2 )
+    plcont(zg, clevelpos, pltr2, xg, yg, 2)
 
 
     # Draw outer boundary
@@ -186,10 +185,10 @@ def main():
 
     # Set up grids.
 
-    # Note *for the given* tr, mypltr(i,j)[0] is only a function of i
-    # and mypltr(i,j)[1] is only function of j.
-    xg0 = mypltr(arange(XPTS),0)[0]
-    yg0 = mypltr(0,arange(YPTS))[1]
+    # Note *for the given* tr, mypltr(i,j,tr)[0] is only a function of i
+    # and mypltr(i,j,tr)[1] is only function of j.
+    xg0 = mypltr(arange(XPTS),0,tr)[0]
+    yg0 = mypltr(0,arange(YPTS),tr)[1]
 
     distort = 0.4
     cos_x = cos((pi/2.)*xg0)
@@ -215,10 +214,10 @@ def main():
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
-    plcont( z, clevel, "pltr1", xg0, yg0, 0 )
+    plcont(z, clevel, mypltr, tr)
     plstyl( 1, mark, space )
     plcol0(3)
-    plcont( w, clevel, "pltr1", xg0, yg0, 0 )
+    plcont(w, clevel, mypltr, tr)
     plstyl( 0, mark, space )
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
@@ -226,10 +225,10 @@ def main():
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
-    plcont( z, clevel, "pltr1", xg0, yg0, 0 )
+    plcont(z, clevel, mypltr, tr)
     plstyl( 1, mark, space )
     plcol0(3)
-    plcont( w, clevel, "pltr1", xg0, yg0, 0 )
+    plcont(w, clevel, mypltr, tr)
     plstyl( 0, mark, space )
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
@@ -238,10 +237,10 @@ def main():
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
-    plcont( z, clevel, "pltr1", xg1, yg1, 0 )
+    plcont(z, clevel, pltr1, xg1, yg1)
     plstyl( 1, mark, space )
     plcol0(3)
-    plcont( w, clevel, "pltr1", xg1, yg1, 0 )
+    plcont(w, clevel, pltr1, xg1, yg1)
     plstyl( 0, mark, space )
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
@@ -249,10 +248,10 @@ def main():
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
-    plcont( z, clevel, "pltr1", xg1, yg1, 0 )
+    plcont(z, clevel, pltr1, xg1, yg1)
     plstyl( 1, mark, space )
     plcol0(3)
-    plcont( w, clevel, "pltr1", xg1, yg1, 0 )
+    plcont(w, clevel, pltr1, xg1, yg1)
     plstyl( 0, mark, space )
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
@@ -261,10 +260,10 @@ def main():
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
-    plcont( z, clevel, "pltr2", xg2, yg2, 0 )
+    plcont(z, clevel, pltr2, xg2, yg2)
     plstyl( 1, mark, space )
     plcol0(3)
-    plcont( w, clevel, "pltr2", xg2, yg2, 0 )
+    plcont(w, clevel, pltr2, xg2, yg2)
     plstyl( 0, mark, space )
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
@@ -272,10 +271,10 @@ def main():
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
-    plcont( z, clevel, "pltr2", xg2, yg2, 0 )
+    plcont(z, clevel, pltr2, xg2, yg2)
     plstyl( 1, mark, space )
     plcol0(3)
-    plcont( w, clevel, "pltr2", xg2, yg2, 0 )
+    plcont(w, clevel, pltr2, xg2, yg2)
     plstyl( 0, mark, space )
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
