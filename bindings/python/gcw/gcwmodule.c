@@ -239,6 +239,40 @@ static PyObject * _wrap_gcw_use_text(PyObject *self, PyObject *args)
   return Py_BuildValue("");
 }
 
+static PyObject * _wrap_gcw_use_fast_rendering(PyObject *self, PyObject *args)
+{
+  // Variables for parsing the args and converting the PyObjects
+  PyGObject *canvas_;
+  PyObject *use_fast_rendering_;
+  GnomeCanvas* canvas;
+  gboolean use_fast_rendering;
+
+  // Parse the args
+  if(!PyArg_UnpackTuple(args,"ref",2,2,&canvas_,&use_fast_rendering_))
+  {
+    PyErr_SetString(PyExc_TypeError,
+                    "_wrap_gcw_use_fast_rendering: Cannot parse arguments.");
+    return NULL;
+  }
+
+  // Convert the PyObjects
+  //
+  canvas=GNOME_CANVAS(canvas_->obj);
+  //
+  if(!PyInt_Check(use_fast_rendering_))
+  {
+    PyErr_SetString(PyExc_TypeError,
+                    "_wrap_gcw_use_fast_rendering: PyInt expected as arg 2.");
+    return NULL;
+  }
+  use_fast_rendering=(gboolean)PyInt_AsLong(use_fast_rendering_);
+
+  // Make the call
+  gcw_use_fast_rendering(canvas,use_fast_rendering);
+
+  return Py_BuildValue("");
+}
+
 static PyObject * _wrap_gcw_use_foreground_group(PyObject *self, PyObject *args)
 {
   // Variables for parsing the args and converting the PyObjects
@@ -320,6 +354,7 @@ static PyMethodDef gcwmoduleMethods[]=
   { "set_canvas_size", _wrap_gcw_set_canvas_size, METH_VARARGS },
   { "get_canvas_viewport", _wrap_gcw_get_canvas_viewport, METH_VARARGS },
   { "use_text", _wrap_gcw_use_text, METH_VARARGS },
+  { "use_fast_rendering", _wrap_gcw_use_fast_rendering, METH_VARARGS },
   { "use_foreground_group", _wrap_gcw_use_foreground_group, METH_VARARGS },
   { "use_background_group", _wrap_gcw_use_background_group, METH_VARARGS },
   { "use_default_group", _wrap_gcw_use_default_group, METH_VARARGS },
