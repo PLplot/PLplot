@@ -173,6 +173,15 @@ tutor$E: $(PLLIBS) tutor$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
 
+# Convenience rules for testing.
+
+bugc$O:	bugc.c
+	$(CC) $(CC_FLAGS_DEMOS) bugc.c
+
+bugc$E:	$(PLLIBS) bugc$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) bugc$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(DEMOS_RPATH)
+
 # -----------------------------------------------------------------------------
 # Example programs, in Fortran.
 
@@ -279,22 +288,14 @@ x16f$E:	$(PLLIBS) x16f$O
 	$(LDF) $(LDF_FLAGS) x16f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(DEMOS_RPATH)
 
-# -----------------------------------------------------------------------------
 # Convenience rules for testing.
-
-bugc$O:	bugc.c
-	$(CC) $(CC_FLAGS_DEMOS) bugc.c
-
-bugc$E:	$(PLLIBS) bugc$O
-	$(LDC) $(LDC_FLAGS) $(STARTUP) bugc$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 bugf$O:	bugf.f
 	$(F77) $(F77_FLAGS) bugf.f
 
 bugf$E:	$(PLLIBS) bugf$O
 	$(LDF) $(LDF_FLAGS) bugf$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(DEMOS_RPATH)
 
 # -----------------------------------------------------------------------------
 # TK example programs.
