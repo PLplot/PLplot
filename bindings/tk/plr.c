@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/02/07 22:56:18  mjl
+ * Revision 1.12  1994/03/23 06:52:34  mjl
+ * Added support for: color map 1 color selection, color map 0 or color map 1
+ * state change (palette change), polygon fills.
+ *
+ * Revision 1.11  1994/02/07  22:56:18  mjl
  * Fixed error messages to use new iodev data structure.
  *
  * Revision 1.10  1994/02/01  22:43:47  mjl
@@ -8,31 +12,6 @@
  *
  * Revision 1.9  1994/01/15  17:38:12  mjl
  * Changed to new PDF function call syntax.
- *
- * Revision 1.8  1993/09/28  21:26:38  mjl
- * Fixed an inconsistency in the byte count.
- *
- * Revision 1.7  1993/08/11  19:23:33  mjl
- * Added some extra debugging code.
- *
- * Revision 1.6  1993/08/09  22:15:02  mjl
- * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
- *
- * Revision 1.5  1993/08/03  01:46:46  mjl
- * Changes to eliminate warnings when compiling with gcc -Wall.
- *
- * Revision 1.4  1993/07/31  08:06:54  mjl
- * More consolidation of driver functions.
- *
- * Revision 1.3  1993/07/28  05:42:38  mjl
- * Some minor changes to aid debugging.
- *
- * Revision 1.2  1993/07/16  21:58:37  mjl
- * Removed handling for orientation, aspect setting at a low level, since this
- * is now done by the driver interface layer.
- *
- * Revision 1.1  1993/07/02  06:58:30  mjl
- * The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
 */
 
 /*
@@ -67,14 +46,18 @@
 *      special effort is necessary to make the byte stream portable,
 *      also, only low-level graphics calls are used (grline, etc)
 *
-* The rendering code here must (by contrast to plbuf) use the high
-* level plot routines as plrender, to support local zooms as well as
-* the ability to dump the associated window into plot space to a file,
-* but is otherwise pretty minimal.  A portable byte stream is used
-* since eventually the FIFO communication may be replaced by network
-* communication over a socket.
+* The rendering code here must (by contrast to plbuf) use the high level
+* plot routines (as does plrender), to support local zooms as well as the
+* ability to dump the associated window into plot space to a file, but is
+* otherwise pretty minimal.  A portable byte stream is used since
+* network communication over a socket may be used.
 *
 \*----------------------------------------------------------------------*/
+
+/*
+#define DEBUG
+#define DEBUG_ENTER
+*/
 
 #include "plserver.h"
 #include "plevent.h"
@@ -108,12 +91,19 @@ static int	plr_esc		(PLRDev *plr);
 static int	plr_get		(PLRDev *plr);
 static int	plr_unget	(PLRDev *plr, U_CHAR c);
 static int	get_ncoords	(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n);
+static int	plresc_fill	(PLRDev *plr);
 
 /* variables */
 
 static int	csave = -1;
 static U_CHAR	dum_uchar;
 static U_SHORT	dum_ushort;
+static PLFLT	x[PL_MAXPOLY], y[PL_MAXPOLY];
+
+/* Stream pointer.  */
+/* Fetched by some routines to directly set plplot state data */
+
+static PLStream	*plsc;
 
 /*----------------------------------------------------------------------*\
 * plr_start()
@@ -171,35 +161,35 @@ plr_process1(PLRDev *plr, int c)
 {
     switch (c) {
 
-      case INITIALIZE:
+    case INITIALIZE:
 	plr_cmd( plr_init(plr) );
 	break;
 
-      case LINE:
-      case LINETO:
-      case POLYLINE:
+    case LINE:
+    case LINETO:
+    case POLYLINE:
 	plr_cmd( plr_line(plr, c) );
 	break;
 
-      case EOP:
+    case EOP:
 	plr->at_eop = 1;
 	plr_cmd( plr_eop(plr) );
 	break;
 
-      case BOP:
+    case BOP:
 	plr->at_bop = 1;
 	plr_cmd( plr_bop(plr) );
 	break;
 
-      case CHANGE_STATE:
+    case CHANGE_STATE:
 	plr_cmd( plr_state(plr) );
 	break;
 
-      case ESCAPE:
+    case ESCAPE:
 	plr_cmd( plr_esc(plr) );
 	break;
 
-      default:
+    default:
 	fprintf(stderr, "plr_process1: Unrecognized command code %d\n", c);
     }
 
@@ -252,35 +242,35 @@ plr_init(PLRDev *plr)
 	if (*tag == '\0')
 	    break;
 
-	if (!strcmp(tag, "xmin")) {
+	if ( ! strcmp(tag, "xmin")) {
 	    plr_rd( pdf_rd_2bytes(plr->pdfs, &dum_ushort) );
 	    plr->xmin = dum_ushort;
 	    plr->nbytes -= 2;
 	    continue;
 	}
 
-	if (!strcmp(tag, "xmax")) {
+	if ( ! strcmp(tag, "xmax")) {
 	    plr_rd( pdf_rd_2bytes(plr->pdfs, &dum_ushort) );
 	    plr->xmax = dum_ushort;
 	    plr->nbytes -= 2;
 	    continue;
 	}
 
-	if (!strcmp(tag, "ymin")) {
+	if ( ! strcmp(tag, "ymin")) {
 	    plr_rd( pdf_rd_2bytes(plr->pdfs, &dum_ushort) );
 	    plr->ymin = dum_ushort;
 	    plr->nbytes -= 2;
 	    continue;
 	}
 
-	if (!strcmp(tag, "ymax")) {
+	if ( ! strcmp(tag, "ymax")) {
 	    plr_rd( pdf_rd_2bytes(plr->pdfs, &dum_ushort) );
 	    plr->ymax = dum_ushort;
 	    plr->nbytes -= 2;
 	    continue;
 	}
 
-	if (!strcmp(tag, "width")) {
+	if ( ! strcmp(tag, "width")) {
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &dum_uchar) );
 	    plwid(dum_uchar);
 	    plr->nbytes -= 2;
@@ -304,7 +294,6 @@ plr_line(PLRDev *plr, int c)
 {
     int c1;
     U_SHORT npts;
-    PLFLT x[PL_MAXPOLYLINE], y[PL_MAXPOLYLINE];
 
     npts = 1;
     x[0] = plr->xold;
@@ -312,15 +301,15 @@ plr_line(PLRDev *plr, int c)
 
     switch ((int) c) {
 
-      case LINE:
+    case LINE:
 	plr_cmd( get_ncoords(plr, x, y, 1) );
 
-      case LINETO:
+    case LINETO:
 	for (;;) {
 	    plr_cmd( get_ncoords(plr, x + npts, y + npts, 1) );
 
 	    npts++;
-	    if (npts == PL_MAXPOLYLINE || plr->nbytes == 0)
+	    if (npts == PL_MAXPOLY || plr->nbytes == 0)
 		break;
 
 	    plr_cmd( c1 = plr_get(plr) );
@@ -331,7 +320,7 @@ plr_line(PLRDev *plr, int c)
 	}
 	break;
 
-      case POLYLINE:
+    case POLYLINE:
 	plr_rd( pdf_rd_2bytes(plr->pdfs, &npts) );
 	plr->nbytes -= 2;
 	plr_cmd( get_ncoords(plr, x, y, npts) );
@@ -362,7 +351,7 @@ static int
 get_ncoords(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n)
 {
     int i;
-    short xs[PL_MAXPOLYLINE], ys[PL_MAXPOLYLINE];
+    short xs[PL_MAXPOLY], ys[PL_MAXPOLY];
 
     plr_rdn( pdf_rd_2nbytes(plr->pdfs, (U_SHORT *) xs, n) );
     plr_rdn( pdf_rd_2nbytes(plr->pdfs, (U_SHORT *) ys, n) );
@@ -420,6 +409,7 @@ static int
 plr_state(PLRDev *plr)
 {
     U_CHAR op;
+    int i;
 
     plr_rd( pdf_rd_1byte(plr->pdfs, &op) );
     plr->nbytes -= 1;
@@ -455,8 +445,58 @@ plr_state(PLRDev *plr)
 	break;
     }
 
-    case PLSTATE_COLOR1:
+    case PLSTATE_COLOR1:{
+	U_SHORT icol1;
+	PLFLT col1;
+
+	plr_rd( pdf_rd_2bytes(plr->pdfs, &icol1) );
+	plr->nbytes -= 2;
+	plgpls(&plsc);
+	col1 = icol1 / (float) plsc->ncol1;
+	plcol1(col1);
 	break;
+    }
+
+    case PLSTATE_FILL:{
+	signed char patt;
+
+	plr_rd( pdf_rd_1byte(plr->pdfs, (U_CHAR *) &patt) );
+	plr->nbytes -= 1;
+	plpsty(patt);
+	break;
+    }
+
+    case PLSTATE_CMAP0:{
+	U_CHAR ncol0;
+
+	plgpls(&plsc);
+	plr_rd( pdf_rd_1byte(plr->pdfs, &ncol0) );
+	plr->nbytes -= 1;
+	plsc->ncol0 = ncol0;
+	for (i = 0; i < plsc->ncol0; i++) {
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap0[i].r) );
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap0[i].g) );
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap0[i].b) );
+	    plr->nbytes -= 3;
+	}
+	break;
+    }
+
+    case PLSTATE_CMAP1:{
+	U_SHORT ncol1;
+
+	plgpls(&plsc);
+	plr_rd( pdf_rd_2bytes(plr->pdfs, &ncol1) );
+	plr->nbytes -= 2;
+	plsc->ncol1 = ncol1;
+	for (i = 0; i < plsc->ncol1; i++) {
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap1[i].r) );
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap1[i].g) );
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap1[i].b) );
+	    plr->nbytes -= 3;
+	}
+	break;
+    }
     }
 
     return 0;
@@ -466,7 +506,13 @@ plr_state(PLRDev *plr)
 * plr_esc()
 *
 * Handle all escape functions.
-* None supported for now -- just read command code and move on.
+* Note that most escape functions in the TK driver make direct widget
+* commands.
+*
+* Functions:
+*
+*	PLESC_FILL	Fill polygon
+*
 \*----------------------------------------------------------------------*/
 
 static int
@@ -476,6 +522,35 @@ plr_esc(PLRDev *plr)
 
     plr_rd( pdf_rd_1byte(plr->pdfs, &op) );
     plr->nbytes -= 1;
+
+    switch (op) {
+
+    case PLESC_FILL:
+	plr_cmd( plresc_fill(plr) );
+	break;
+    }
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* plresc_fill()
+*
+* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+\*----------------------------------------------------------------------*/
+
+static int
+plresc_fill(PLRDev *plr)
+{
+    U_SHORT npts;
+
+    dbug_enter("plresc_fill");
+
+    plr_rd( pdf_rd_2bytes(plr->pdfs, &npts) );
+    plr->nbytes -= 2;
+    get_ncoords(plr, x, y, npts);
+    plfill(npts, x, y);
+
     return 0;
 }
 
