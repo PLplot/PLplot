@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.19  1995/11/29 20:55:13  furnish
+# Revision 1.20  1995/12/15 18:49:10  furnish
+# Hack out more of the evil class system which was missed before, and
+# also hack out the remaining support for [itcl 1.5] which was messing
+# things up pretty bad under 2.0.  Seems to all work a lot better now.
+#
+# Revision 1.19  1995/11/29  20:55:13  furnish
 # Hack the itcl file selection support for itcl 2.  itcl 1.5 is no
 # longer supported.
 #
@@ -790,9 +795,9 @@ proc lappendmember {var val} {
     uplevel $cmd
 }
 
-proc delete object {
-    uplevel "unset $object"
-}
+#proc delete object {
+#    uplevel "unset $object"
+#}
 
 #------------------------------------------------------------------------------
 # Proc to set up debug bindings.
@@ -862,7 +867,7 @@ bind $w <Any-Visibility>	{puts stderr "Widget event: Visibility"}
 # performance of this software.
 # ======================================================================
 
-if {[info commands tk_destroy] == ""} { rename destroy tk_destroy }
+#if {[info commands tk_destroy] == ""} { rename destroy tk_destroy }
 
 # ----------------------------------------------------------------------
 #  USAGE:  destroy ?window window...?
@@ -870,19 +875,20 @@ if {[info commands tk_destroy] == ""} { rename destroy tk_destroy }
 #  Replacement for the usual Tk "destroy" command.  Destroys both
 #  Tk windows and [incr Tcl] objects.
 # ----------------------------------------------------------------------
-proc destroy {args} {
-    global itcl_destroy
 
-    foreach win $args {
-	if { "[info commands itcl_class]" != "" &&
-	     "[itcl_info objects $win]" != "" &&
-	     ![info exists itcl_destroy($win)]} {
+#proc destroy {args} {
+#    global itcl_destroy
 
-	    set itcl_destroy($win) "in progress"
-	    $win delete
-	    unset itcl_destroy($win)
-	} else {
-	    tk_destroy $win
-	}
-    }
-}
+#    foreach win $args {
+#	if { "[info commands itcl_class]" != "" &&
+#	     "[itcl_info objects $win]" != "" &&
+#	     ![info exists itcl_destroy($win)]} {
+
+#	    set itcl_destroy($win) "in progress"
+#	    $win delete
+#	    unset itcl_destroy($win)
+#	} else {
+#	    tk_destroy $win
+#	}
+#    }
+#}
