@@ -112,6 +112,7 @@ with_pkgdir=
 with_rpath=yes
 with_nobraindead=no
 with_freetype=yes
+with_qhull=yes
 
 enable_drivers=yes
 enable_dyndrivers=yes
@@ -740,6 +741,8 @@ AC_CHECK_FUNC(isinf, AC_DEFINE(HAVE_ISINF, [],
                                [Define if isinf is available]))
 AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE, [],
                                [Define if finite is available]))
+AC_CHECK_FUNC(isnan, AC_DEFINE(HAVE_ISNAN, [],
+                               [Define if isnan is available]))
 
 ### Define PLplot default install locations:
 ### DATA_DIR, LIB_DIR, INCLUDE_DIR, BIN_DIR, TCL_DIR
@@ -853,6 +856,9 @@ AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	include/Makefile
+	lib/Makefile
+	lib/nn/Makefile
+	lib/csa/Makefile
 	data/Makefile
 	bindings/Makefile
 	bindings/c++/Makefile
