@@ -93,7 +93,7 @@ typedef struct {
  * ncol0	PLINT	Number of colors allocated in color map 0.
  * icol1	PLINT	Color map 1 entry, current color (0 <= icol1 <= ncol1)
  * ncol1	PLINT	Number of colors allocated in color map 1.
- * ncol1cp	PLINT	Number of control points in cmap1 allocation (max 32)
+ * ncol1cp	PLINT	Number of control points in cmap1 allocation (max PL_MAX_CMAP1CP)
  * lcol1cp	PLFLT	Locations of control points in cmap1 [0,1]
  * curcmap	PLINT	Current color map
  * curcolor	RGB[]	Current color
@@ -412,6 +412,8 @@ typedef struct {
  *
 \*--------------------------------------------------------------------------*/
 
+#define PL_MAX_CMAP1CP 256
+
 typedef struct {
 
 /* Misc control information */
@@ -427,7 +429,7 @@ typedef struct {
     PLColor *cmap0;
     PLColor *cmap1;
 
-    PLControlPt cmap1cp[32];
+    PLControlPt cmap1cp[PL_MAX_CMAP1CP];
 
 /* Variables governing pen width */
 
