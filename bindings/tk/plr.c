@@ -426,7 +426,7 @@ plr_state(PLRDev *plr)
 	U_CHAR ncol0;
 
 	plr_rd( pdf_rd_1byte(plr->pdfs, &ncol0) );
-	plsc->ncol0 = ncol0;
+	plscmap0n((PLINT) ncol0);
 	for (i = 0; i < plsc->ncol0; i++) {
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap0[i].r) );
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap0[i].g) );
@@ -440,7 +440,7 @@ plr_state(PLRDev *plr)
 	U_SHORT ncol1;
 
 	plr_rd( pdf_rd_2bytes(plr->pdfs, &ncol1) );
-	plsc->ncol1 = ncol1;
+	plscmap1n((PLINT) ncol1);
 	for (i = 0; i < plsc->ncol1; i++) {
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap1[i].r) );
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap1[i].g) );
