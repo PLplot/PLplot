@@ -23,8 +23,8 @@ EXTRA_DIST =      \
     README        \
     acinclude.m4  \
     bootstrap.sh  \
-    docbook.m4    \ 
-    gnome.m4      \ 
+    docbook.m4    \
+    gnome.m4      \
     gnu-make.m4   \
     gtk.m4        \
     swig.m4
