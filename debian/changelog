@@ -1,3 +1,16 @@
+plplot (5.2.1-11) unstable; urgency=low
+
+  * debian/control: Added arm to the list of excluded architectures of
+    package octave2.*-header in Build-Depends.
+  * debian/rules: Exclude building of Octave bindings for the arm
+    architecture.
+  * (N.B.: I am currently excluding the building of the octave-plplot for
+    four architectures: hppa, powerpc, m68k, and arm.  I will revisit this
+    decision later when octave2.1 will work again for these
+    architectures.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 22 May 2003 22:50:37 +0200
+
 plplot (5.2.1-10) unstable; urgency=low
 
   * debian/control: Added m68k to the list of excluded architectures of

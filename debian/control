@@ -3,7 +3,7 @@ Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.5.9
-Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev, g77, itk3.1-dev, python-numeric | python2.2-numeric, python-dev | python2.2-dev, octave2.1-headers [!hppa !powerpc !m68k] | octave2.0-headers [!hppa !powerpc !m68k], libgd2-dev, libgnome-dev, m4, perl, libqhull-dev, libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev
+Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev, g77, itk3.1-dev, python-numeric | python2.2-numeric, python-dev | python2.2-dev, octave2.1-headers [!hppa !powerpc !m68k !arm] | octave2.0-headers [!hppa !powerpc !m68k !arm], libgd2-dev, libgnome-dev, m4, perl, libqhull-dev, libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev
 Build-Conflicts: f2c, fort77
 
 Package: libplplot5
