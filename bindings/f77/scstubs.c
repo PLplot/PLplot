@@ -640,16 +640,23 @@ PLSTRIPC7(PLINT *id, char *xspec, char *yspec,
 	  PLFLT *xlpos, PLFLT *ylpos,
 	  PLINT *y_ascl, PLINT *acc,
 	  PLINT *colbox, PLINT *collab,
-	  PLINT *colline, PLINT *styline, char **legline,
+	  PLINT *colline, PLINT *styline, 
+	  char *legline0, char *legline1, char *legline2, char *legline3,
 	  char *labx, char *laby, char *labtop)
 {
-    c_plstripc(id, xspec, yspec,
-	       *xmin, *xmax, *xjump, *ymin, *ymax,
-	       *xlpos, *ylpos,
-	       *y_ascl, *acc,
-	       *colbox, *collab,
-	       colline, styline, legline,
-	       labx, laby, labtop);
+   char* legline[4];
+   legline[0] = legline0;
+   legline[1] = legline1;
+   legline[2] = legline2;
+   legline[3] = legline3;
+   
+   c_plstripc(id, xspec, yspec,
+	      *xmin, *xmax, *xjump, *ymin, *ymax,
+	      *xlpos, *ylpos,
+	      *y_ascl, *acc,
+	      *colbox, *collab,
+	      colline, styline, legline,
+	      labx, laby, labtop);
 }
 
 void

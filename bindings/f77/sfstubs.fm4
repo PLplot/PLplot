@@ -490,3 +490,36 @@
 
 !***********************************************************************
 
+      subroutine plstripc(id, xspec, yspec, xmin, xmax, xjump,
+     &  ymin, ymax, xlpos, ylpos, y_ascl, acc,
+     &  colbox, collab, colline, styline, legline,
+     &  labx, laby, labtop)
+
+      implicit none
+      integer id, y_ascl, acc, colbox, collab, colline(4), styline(4)
+      character*(*) xspec, yspec, legline(4), labx, laby, labtop
+      real*8 xmin, xmax, xjump, ymin, ymax, xlpos, ylpos
+      integer nx, ny
+
+      include 'sfstubs.h'
+
+      call plstrf2c(xspec, string1, maxlen)
+      call plstrf2c(yspec, string2, maxlen)
+      call plstrf2c(legline(1), string3, maxlen)
+      call plstrf2c(legline(2), string4, maxlen)
+      call plstrf2c(legline(3), string5, maxlen)
+      call plstrf2c(legline(4), string6, maxlen)
+      call plstrf2c(labx, string7, maxlen)
+      call plstrf2c(laby, string8, maxlen)
+      call plstrf2c(labtop, string9, maxlen)
+
+      call plstripc7(id, s1, s2, xmin, xmax, xjump,
+     &  ymin, ymax, xlpos, ylpos, y_ascl, acc,
+     &  colbox, collab, colline, styline,
+     &  s3, s4, s5, s6,
+     &  s7, s8, s9)
+
+      end
+
+!***********************************************************************
+
