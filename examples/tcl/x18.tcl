@@ -3,7 +3,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.1  1995/06/30 13:48:57  furnish
+# Revision 1.2  1995/06/30 13:57:39  furnish
+# Eliminate debugging hacks since the demo works now.
+#
+# Revision 1.1  1995/06/30  13:48:57  furnish
 # Tcl version of demo 18.
 #
 #----------------------------------------------------------------------------
@@ -15,7 +18,6 @@ proc x18 {{w loopback}} {
     matrix az  f 4 = {30.0, 40.0, 50.0, 60.0}
 
     set npts 1000
-    set npts 100
     set pi 3.1415927
 
     for {set k 0} {$k < 4} {incr k} {
