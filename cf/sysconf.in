@@ -204,7 +204,7 @@ fi
 if test "$enable_cxx" = "yes"; then
     AC_CHECK_PROG(found_cxx, $CXX, yes, no)
     if test "$found_cxx" = "no" ; then
-	AC_MSG_WARN(cannot find a C++ compiler.. disabling C++ interface)
+	AC_MSG_RESULT([warning: cannot find C++ compiler, setting enable_cxx=no])
 	enable_cxx=no
     fi
 fi
@@ -289,7 +289,7 @@ if test "$with_f2c" = "yes"; then
 	if test "$found_f77" = "yes" ; then
 	    F77=f77
 	else
-	    AC_MSG_WARN(cannot find a Fortran compiler.. disabling Fortran interface)
+	    AC_MSG_RESULT([warning: cannot find a Fortran compiler, setting enable_f77=no])
 	    with_f2c=no
 	    enable_f77=no
 	fi
@@ -402,6 +402,7 @@ case "$system" in
 	if test "$with_debug" = "yes"; then
 	    if test "$with_gcc" = "no"; then
 		with_shlib=no
+		AC_MSG_RESULT([warning: debug support requires with_shlib=no on HP, setting with_shlib=no])
 	    fi
 	fi
 
@@ -496,113 +497,6 @@ case "$system" in
     * ) 	
     ;;
 esac
-
-# ----------------------------------------------------------------------------
-# Set flags to generate shared libraries for systems that we know about.
-# Originally based on BLT's configure.in.
-# This is really a mess.
-# ----------------------------------------------------------------------------
-
-AC_MSG_CHECKING(how to make shared libraries)
-
-SA=".sa"
-SO=".so"
-LDSHARED="ld"
-
-if test "$with_gcc" = "yes"; then
-    SHLIB_CCFLAGS=-fpic
-    SHLIB_CXXFLAGS=-fpic
-    SHLIB_BUILD="gcc -shared -fpic -o"
-else
-    SHLIB_CCFLAGS=
-    SHLIB_CXXFLAGS=
-    SHLIB_BUILD=
-fi
-
-case "$system" in 
-    SunOS-4* ) 
-	SHLIB_F77FLAGS=-pic
-# Commented out for now
-#	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
-#	SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
-	AC_MSG_RESULT(okay)
-	if test "$with_gcc" = "no"; then
-	    SHLIB_CCFLAGS=-pic
-	    SHLIB_CXXFLAGS=-pic
-	    SHLIB_BUILD="ld -assert pure-text -o"
-	fi
-    ;;
-    HP-UX-* )
-	SO=".sl"
-	SHLIB_F77FLAGS="+z"
-	AC_MSG_RESULT(okay)
-	if test "$with_gcc" = "no"; then
-	    SHLIB_CCFLAGS=+z
-	    SHLIB_CXXFLAGS=+z
-	    SHLIB_F77FLAGS=+z
-	    SHLIB_BUILD="ld -b -o"
-	else
-	    AC_MSG_WARN(shared libs on HP with gcc is experimental)
-	fi
-	LDSHARED="ld -b"
-    ;;
-    AIX-* )
-	SO=".a"
-	SHLIB_F77FLAGS=-fpic
-	if test "$with_gcc" = "no"; then
-	    AC_MSG_RESULT(okay)
-	    SHLIB_CCFLAGS=-fpic
-	    SHLIB_CXXFLAGS=-fpic
-	    SHLIB_BUILD="ar q"
-	else
-	    with_shlib=no
-	fi
-    ;;
-
-    # The rest are probably broken.  Someone please fix them.
-    # Remove the 'with_shlib=no' line, comments, and go wild.
-
-    SunOS-5* )
-	with_shlib=no
-	AC_MSG_RESULT(unknown)
-#	SHLIB_CCFLAGS="-K pic"
-#	SHLIB_F77FLAGS="-K pic"
-#	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -G"
-    ;;
-    OSF-1.* )
-	with_shlib=no
-	AC_MSG_RESULT(unknown)
-#	SHLIB_CCFLAGS=-fpic
-#	SHLIB_F77FLAGS=-fpic
-#	SHLIB_BUILD="$CC -shared"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -shared -expect_unresolved \"*\""
-    ;;
-    IRIX-5.* )
-	with_shlib=no
-	AC_MSG_RESULT(unknown)
-#	SHLIB_CCFLAGS=-KPIC
-#	SHLIB_F77FLAGS=-KPIC
-#	SHLIB_BUILD="$CC -shared"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -shared"
-    ;;
-    * )
-	with_shlib=no
-	AC_MSG_RESULT(unknown)
-    ;;
-esac
-
-AC_SUBST(SHLIB_BUILD)
-AC_SUBST(SA)
-AC_SUBST(SO)
-AC_SUBST(LDSHARED)
-
-AC_SUBST(SHLIB_CCFLAGS)
-AC_SUBST(SHLIB_CXXFLAGS)
-AC_SUBST(SHLIB_F77FLAGS)
 
 # ----------------------------------------------------------------------------
 # Assemble finished compiler flags.

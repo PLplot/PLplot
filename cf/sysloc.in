@@ -61,7 +61,7 @@ if test "$enable_xwin" = "yes"; then
 		fi
 	    done
 	    if test -z "$XINCDIR"; then
-		AC_MSG_WARN(couldn't find any X11 include files)
+		AC_MSG_RESULT(warning: couldn't find any X11 include files)
 		XINCDIR=default
 		enable_xwin=no
 	    fi ])
@@ -94,7 +94,7 @@ if test "$enable_xwin" = "yes"; then
 		fi
 	    done
 	    if test -z "$XLIBDIR"; then
-		AC_MSG_WARN(couldn't find the X11 library archive)
+		AC_MSG_RESULT(warning: couldn't find the X11 library archive)
 		XLIBDIR=default
 	    fi ])
 	fi
@@ -439,7 +439,7 @@ fi
 
 if test "$enable_python" = "yes"; then
     if test "$with_shlib" = "no"; then
-	AC_MSG_RESULT(dynamically loaded modules require with_shlib=yes.. disabling python support)
+	AC_MSG_RESULT([warning: python support requires with_shlib=yes, setting enable_python=no])
 	enable_python=no
     fi
 fi
@@ -488,7 +488,7 @@ AC_SUBST(PYTHON_MOD_DIR)
 
 if test "$with_f2c" = "yes"; then
     AC_CHECK_LIB(f2c, main, [LIBS="$LIBS -lf2c"],
-    AC_MSG_WARN(couldn't find libf2c))
+    AC_MSG_RESULT(warning: couldn't find libf2c))
 fi
 
 # ----------------------------------------------------------------------------
@@ -526,3 +526,117 @@ LIBS="$LIBS $EXTRA_LIBS"
 
 AC_SUBST(INCS)
 AC_SUBST(LIBS)
+
+# ----------------------------------------------------------------------------
+# Set up shared library support.
+# VERY system dependent.
+# Originally based on BLT's configure.in.
+# This is really a mess.
+# ----------------------------------------------------------------------------
+
+AC_MSG_CHECKING(how to make shared libraries)
+
+SA=".sa"
+SO=".so"
+LDSHARED="ld"
+SHLIB_LIBS=$LIBS
+
+if test "$with_gcc" = "yes"; then
+    SHLIB_CCFLAGS=-fpic
+    SHLIB_CXXFLAGS=-fpic
+    SHLIB_BUILD="gcc -shared -fpic -o"
+else
+    SHLIB_CCFLAGS=
+    SHLIB_CXXFLAGS=
+    SHLIB_BUILD=
+fi
+
+case "$system" in 
+    SunOS-4* ) 
+	SHLIB_F77FLAGS=-pic
+# Commented out for now
+#	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+#	SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	AC_MSG_RESULT(okay)
+	if test "$with_gcc" = "no"; then
+	    SHLIB_CCFLAGS=-pic
+	    SHLIB_CXXFLAGS=-pic
+	    SHLIB_BUILD="ld -assert pure-text -o"
+	fi
+    ;;
+    HP-UX-* )
+	SO=".sl"
+	SHLIB_F77FLAGS="+z"
+	AC_MSG_RESULT(okay)
+	if test "$with_gcc" = "no"; then
+	    SHLIB_CCFLAGS=+z
+	    SHLIB_CXXFLAGS=+z
+	    SHLIB_F77FLAGS=+z
+	    SHLIB_BUILD="ld -b -o"
+	else
+	    AC_MSG_RESULT(warning: shared libs on HP with gcc is experimental)
+	fi
+	LDSHARED="ld -b"
+    ;;
+    AIX-* )
+	SO=".a"
+	SHLIB_F77FLAGS=-fpic
+	if test "$with_gcc" = "no"; then
+	    AC_MSG_RESULT(okay)
+	    SHLIB_CCFLAGS=-fpic
+	    SHLIB_CXXFLAGS=-fpic
+	    SHLIB_BUILD="ar q"
+	    if test "$enable_cxx" = "yes"; then
+		SHLIB_LIBS="-L/usr/lpp/xlC/lib -lC $LIBS"
+	    fi
+	else
+	    with_shlib=no
+	fi
+    ;;
+
+    # The rest are probably broken.  Someone please fix them.
+    # Remove the 'with_shlib=no' line, comments, and go wild.
+
+    SunOS-5* )
+	with_shlib=no
+	AC_MSG_RESULT(unknown)
+#	SHLIB_CCFLAGS="-K pic"
+#	SHLIB_F77FLAGS="-K pic"
+#	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
+#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	LDSHARED="ld -G"
+    ;;
+    OSF-1.* )
+	with_shlib=no
+	AC_MSG_RESULT(unknown)
+#	SHLIB_CCFLAGS=-fpic
+#	SHLIB_F77FLAGS=-fpic
+#	SHLIB_BUILD="$CC -shared"
+#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	LDSHARED="ld -shared -expect_unresolved \"*\""
+    ;;
+    IRIX-5.* )
+	with_shlib=no
+	AC_MSG_RESULT(unknown)
+#	SHLIB_CCFLAGS=-KPIC
+#	SHLIB_F77FLAGS=-KPIC
+#	SHLIB_BUILD="$CC -shared"
+#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	LDSHARED="ld -shared"
+    ;;
+    * )
+	with_shlib=no
+	AC_MSG_RESULT(unknown)
+    ;;
+esac
+
+AC_SUBST(SHLIB_BUILD)
+AC_SUBST(SA)
+AC_SUBST(SO)
+AC_SUBST(LDSHARED)
+
+AC_SUBST(SHLIB_CCFLAGS)
+AC_SUBST(SHLIB_CXXFLAGS)
+AC_SUBST(SHLIB_F77FLAGS)
+AC_SUBST(SHLIB_LIBS)
+
