@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1995/04/12 08:18:51  mjl
+ * Revision 1.16  1995/05/06 21:27:34  mjl
+ * Updated options table syntax -- PL_OPT_ENABLED no longer used.  Fixed
+ * error exit.
+ *
+ * Revision 1.15  1995/04/12  08:18:51  mjl
  * Changes to all C demos: now include "plcdemos.h" to get all startup
  * definitions and includes that are useful to share between them.
  *
@@ -55,7 +59,7 @@ static PLOptionTable options[] = {
     NULL,
     NULL,
     &locate_mode,
-    PL_OPT_BOOL | PL_OPT_ENABLED,
+    PL_OPT_BOOL,
     "-locate",
     "Turns on test of API locate function" },
 };
@@ -94,9 +98,7 @@ main(int argc, char *argv[])
 /* Parse and process command line arguments */
 
     plMergeOpts(options, "x01c options", notes);
-
-    if (plParseOpts(&argc, argv, PL_PARSE_FULL))
-	exit(1);
+    plParseOpts(&argc, argv, PL_PARSE_FULL);
 
 /* Get version number, just for kicks */
 
@@ -139,7 +141,7 @@ main(int argc, char *argv[])
 /* Let's get some user input */
 
     if (locate_mode) {
-	while (1) {
+	for (;;) {
 	    if (! plGetCursor(&gin)) break;
 	    if (gin.keysym == PLK_Escape) break;
 
