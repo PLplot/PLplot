@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/10/12 17:05:37  mjl
-   Converted to string-integer equivalence method for C-Fortran string passing.
+   Revision 1.4  1992/10/20 20:16:03  mjl
+   Put in stub for plfamadv().
 
+ * Revision 1.3  1992/10/12  17:05:37  mjl
+ * Converted to string-integer equivalence method for C-Fortran string passing.
+ *
  * Revision 1.2  1992/09/29  04:46:37  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -111,6 +114,12 @@ void
 PLERRY( PLINT *n, PLFLT *x, PLFLT *ymin, PLFLT *ymax)
 {
     c_plerry(*n, x, ymin, ymax);
+}
+
+void 
+PLFAMADV( void )
+{
+    c_plfamadv();
 }
 
 void 
