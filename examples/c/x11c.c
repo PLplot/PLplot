@@ -9,7 +9,7 @@
 #define YPTS    46		/* Datat points in y */
 #define LEVELS 10 
 
-static int opt[] = { 3, 3};
+static int opt[] = { DRAW_LINEXY, DRAW_LINEXY};
 
 static PLFLT alt[] = {33.0, 17.0};
 static PLFLT az[] = {24.0, 115.0};
