@@ -1,9 +1,12 @@
 /* $Id$
-   $Log$
-   Revision 1.20  1993/12/08 06:21:19  mjl
-   Fix for dos386/djgpp; added definition for plspause (should now work from
-   fortran).
-
+ * $Log$
+ * Revision 1.21  1994/03/23 07:11:49  mjl
+ * Added stub name definitions for cmap1 selectors and plshade front-ends.
+ *
+ * Revision 1.20  1993/12/08  06:21:19  mjl
+ * Fix for dos386/djgpp; added definition for plspause (should now work from
+ * fortran).
+ *
  * Revision 1.19  1993/12/06  07:45:25  mjl
  * Modifications for new color model.
  *
@@ -20,11 +23,11 @@
    Header file for plplot Fortran interface stubs.
    THIS FILE IS NOT FOR INCLUSION BY USER CODES!!
 
-   This software is in the public domain. 
+   The contents of this file are in the public domain. 
 */
 
-#ifndef INCLUDED_PLSTUBS
-#define INCLUDED_PLSTUBS
+#ifndef __PLSTUBS_H__
+#define __PLSTUBS_H__
 
 #include "plplotP.h"
 
@@ -197,7 +200,8 @@
 #define    PLSCHR	FNAME(PLSCHR,plschr)
 #define    PLSCMAP0	FNAME(PLSCMAP0,plscmap0)
 #define    PLSCMAP1	FNAME(PLSCMAP1,plscmap1)
-#define    PLSCMAP1F1	FNAME(PLSCMAP1F1,plscmap1f1)
+#define    PLSCMAP0N	FNAME(PLSCMAP0N,plscmap0n)
+#define    PLSCMAP1L	FNAME(PLSCMAP1L,plscmap1l)
 #define    PLSCOL0	FNAME(PLSCOL0,plscol0)
 #define    PLSCOLBG	FNAME(PLSCOLBG,plscolbg)
 #define    PLSCOLOR	FNAME(PLSCOLOR,plscolor)
@@ -205,6 +209,9 @@
 #define    PLSESC	FNAME(PLSESC,plsesc)
 #define    PLSFAM	FNAME(PLSFAM,plsfam)
 #define    PLSFNAM7	FNAME(PLSFNAM7,plsfnam7)
+#define    PLSHADE07	FNAME(PLSHADE07,plshade07)
+#define    PLSHADE17	FNAME(PLSHADE17,plshade17)
+#define    PLSHADE27	FNAME(PLSHADE27,plshade27)
 #define    PLSMAJ	FNAME(PLSMAJ,plsmaj)
 #define    PLSMIN	FNAME(PLSMIN,plsmin)
 #define    PLSORI	FNAME(PLSORI,plsori)
@@ -230,4 +237,4 @@
 #define    PLWID	FNAME(PLWID,plwid)
 #define    PLWIND	FNAME(PLWIND,plwind)
 
-#endif	/* INCLUDED_PLSTUBS */
+#endif	/* __PLSTUBS_H__ */
