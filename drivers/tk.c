@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1993/09/28 21:29:40  mjl
+ * Revision 1.14  1993/10/18 19:41:15  mjl
+ * Moved functions for finding executable commands prior to an exec into
+ * a more accessible place (plctrl.c).
+ *
+ * Revision 1.13  1993/09/28  21:29:40  mjl
  * Fixed some inconsistencies in the byte count.  Now prints a status message
  * prior to forking plserver, and executes the copy in the current directory
  * if present.
@@ -127,8 +131,6 @@ static void  flush_output	(PLStream *);
 static void  plwindow_init	(PLStream *);
 static void  link_init		(PLStream *);
 static void  bgcolor_init	(PLStream *);
-static char *find_plserver	(char *);
-static int   findname		(char *);
 
 /* Tcl/TK utility commands */
 
@@ -766,15 +768,15 @@ launch_server(PLStream *pls)
 
 /* Start server process */
 
-    plserver_cmd = find_plserver(pls->plserver);
-    printf("Starting up %s\n", plserver_cmd);
-    if ( (pid = FORK()) < 0) {
-	abort_session(pls, "fork error");
+    plserver_cmd = plFindCommand(pls->plserver);
+    if ( (plserver_cmd == NULL) || (pid = FORK()) < 0) {
+	abort_session(pls, "Unable to fork server process");
     }
     else if (pid == 0) {
+	printf("Starting up %s\n", plserver_cmd);
 	argv[i++] = NULL;
 	if (execv(plserver_cmd, argv)) {
-	    fprintf(stderr, "execv error\n");
+	    fprintf(stderr, "Unable to exec server process\n");
 	    _exit(1);
 	}
     }
@@ -1320,120 +1322,6 @@ copybuf(PLStream *pls, char *cmd)
     }
 
     strcpy(dev->cmdbuf, cmd);
-}
-
-/*----------------------------------------------------------------------*\
-* char *find_plserver
-*
-* Looks for plserver in a few places:
-*	current directory
-*	$(PLPLOT_DIR)
-*	INSTALL_DIR
-*
-* The caller must free the returned pointer (points to malloc'ed memory)
-* when finished with it.
-\*----------------------------------------------------------------------*/
-
-static char *
-find_plserver(char *fn)
-{
-    char *fs = NULL, *dn;
-
-/* Current directory */
-
-    plGetName(".", "", fn, &fs);
-    if ( ! findname(fs))
-	return fs;
-
-/* $(PLPLOT_DIR) */
-
-    if ((dn = getenv("PLPLOT_DIR")) != NULL) {
-	plGetName(dn, "", fn, &fs);
-	if ( ! findname(fs))
-	    return fs;
-    }
-
-/* INSTALL_DIR */
-
-#ifdef INSTALL_DIR
-    plGetName(INSTALL_DIR, "", fn, &fs);
-    if ( ! findname(fs))
-	return fs;
-#endif
-
-/* Crapped out */
-
-    free_mem(fs);
-    plexit("plserver cannot be found or is not executable");
-    return NULL;
-}
-
-/*----------------------------------------------------------------------*\
-* int findname
-*
-* Authors: Paul Dubois (LLNL), others?
-* This function is in the public domain.
-*
-* Given a pathname, determine if it is a symbolic link.  If so, continue
-* searching to the ultimate terminus - there may be more than one link.
-* Use the error value to determine when the terminus is reached, and to
-* determine if the pathname really exists.  Then stat it to determine
-* whether it's executable.  Return 0 for an executable, errno otherwise.
-* Note that 'p' _must_ have at least one '/' character - it does by
-* construction in this program.  The contents of the array pointed to by
-* 'p' are changed to the actual pathname if findname is successful.
-\*----------------------------------------------------------------------*/
-
-static int 
-findname(char *p)
-{
-    int n;
-    char buf[1024], *cp;
-    extern int errno;
-    struct stat sbuf;
-
-    while ((n = readlink(p, buf, 1024)) > 0) {
-#ifdef DEBUG
-	fprintf(stderr, "Readlink read %d chars at: %s\n", n, p);
-#endif
-	if (buf[0] == '/') {	/* Link is an absolute path */
-	    strncpy(p, buf, n);
-	    p[n] = '\0';
-#ifdef DEBUG
-	    fprintf(stderr, "Link is absolute: %s\n", p);
-#endif
-	}
-	else {			/* Link is relative to its directory; make it
-				   absolute */
-	    cp = 1 + strrchr(p, '/');
-	    strncpy(cp, buf, n);
-	    cp[n] = '\0';
-#ifdef DEBUG
-	    fprintf(stderr, "Link is relative: %s\n\tTotal path: %s\n", cp, p);
-#endif
-	}
-    }
-
-/* SGI machines return ENXIO instead of EINVAL Dubois 11/92 */
-
-    if (errno == EINVAL || errno == ENXIO) {
-#ifdef DEBUG
-	fprintf(stderr, "%s may be the one ...", p);
-#endif
-#ifdef SX
-#define S_ISREG(mode)   (mode & S_IFREG)
-#endif
-	if ((stat(p, &sbuf) == 0) && S_ISREG(sbuf.st_mode)) {
-#ifdef DEBUG
-	    fprintf(stderr, "regular file\n");
-#endif
-	    return (access(p, X_OK));
-	}
-    }
-#ifdef DEBUG
-    fprintf(stderr, "not executable\n");
-#endif
-    return (errno ? errno : -1);
 }
 
 /*----------------------------------------------------------------------*/
