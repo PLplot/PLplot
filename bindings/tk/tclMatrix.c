@@ -1,10 +1,18 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/06/16 19:28:35  mjl
+ * Revision 1.2  1994/06/16 21:55:54  mjl
+ * Changed to new declaration syntax.  Now declaration must specify variable
+ * that holds matrix operator name.  This allows matrix command to place a
+ * trace on any unset of the variable, in which case it can clean up after
+ * itself.  I.e. when a matrix is declared locally, it goes away
+ * automatically when the proc exits (note to itcl users: since itcl does not
+ * let you place traces on class data, you will need to either make it global
+ * or create a destructor for it).
+ *
+ * Revision 1.1  1994/06/16  19:28:35  mjl
  * New Tcl matrix command.  Supplies a much-needed new capability to Tcl.
  * Arrays are stored as binary, column-dominant, and contiguous, so that
  * interaction with scientific code API's as well as Tcl is trivial.
- *
  */
 
 /*----------------------------------------------------------------------*\
@@ -22,28 +30,43 @@
  * 10-Jun-1994
 \*----------------------------------------------------------------------*/
 
+/*
+#define DEBUG
+*/
+
 #include <stdlib.h>
 #include <tcl.h>
 #include "tclMatrix.h"
 
 /* Internal data */
 
-static int matnum;		/* Counter used in simple naming scheme */
+static int matNum;		/* Counter used in simple naming scheme */
+static int matTable_initted;	/* Hash table initialization flag */
 static Tcl_HashTable matTable;	/* Hash table for external access to data */
 
 /* Function prototypes */
 
+/* Invoked to process the "matrix" Tcl command. */
+
 static  int
 MatrixCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
 
+/* Causes matrix command to be deleted.  */
+
+static char *
+DeleteMatrixVar(ClientData clientData,
+		Tcl_Interp *interp, char *name1, char *name2, int flags);
+
+/* Releases all the resources allocated to the matrix command. */
+
 static void
-ProcDeleteMatrix(ClientData clientData);
+DeleteMatrixCmd(ClientData clientData);
 
 /*----------------------------------------------------------------------*\
  *
  * Tcl_MatCmd --
  *
- *	This procedure is invoked to process the "mat" Tcl command.
+ *	Invoked to process the "matrix" Tcl command.
  *	Creates a multiply dimensioned array (matrix) of floats (other
  *	types will be supported eventually).  The number of arguments
  *	determines the dimensionality.
@@ -63,24 +86,56 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     register Matrix *matPtr;
     int i, new;
     Tcl_HashEntry *hPtr;
+    char *varName;
 
     if (argc < 3) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-		" type dim1 ?dim2? ?dim3? ...\"", (char *) NULL);
+		" var type dim1 ?dim2? ?dim3? ...\"", (char *) NULL);
 	return TCL_ERROR;
     }
 
-    if (argc > MAX_ARRAY_DIM + 3) {
+    if (argc > MAX_ARRAY_DIM + 4) {
 	Tcl_AppendResult(interp, "too many dimensions specified",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
 
-/* Create matrix structure */
+/* Create hash table on first call */
+
+    if ( ! matTable_initted) {
+	matTable_initted = 1;
+	Tcl_InitHashTable(&matTable, TCL_STRING_KEYS);
+    }
+
+/* Create matrix data structure */
 
     matPtr = (Matrix *) ckalloc(sizeof(Matrix));
     for (i = 0; i < MAX_ARRAY_DIM; i++)
 	matPtr->n[i] = 0;
+
+/* Create name */
+
+    matNum++;
+    sprintf(matPtr->name, "matrix_%d", matNum);
+
+    argc--; argv++;
+    varName = argv[0];
+
+    if (Tcl_GetVar(interp, varName, 0) != NULL) {
+	Tcl_AppendResult(interp, "Local variable of name \"", varName,
+			 "\" already exists", (char *) NULL);
+	ckfree((char *) matPtr);
+	return TCL_ERROR;
+    }
+
+    if (Tcl_SetVar(interp, varName, matPtr->name, 0) == NULL) {
+	Tcl_AppendResult(interp, "unable to set variable to matrix name",
+			 (char *) NULL);
+	ckfree((char *) matPtr);
+	return TCL_ERROR;
+    }
+    Tcl_TraceVar(interp, varName, TCL_TRACE_UNSETS, DeleteMatrixVar,
+		 (ClientData) matPtr);
 
 /* Initialize type */
 
@@ -127,24 +182,18 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	break;
     }
 
-/* Create hash table on first call */
-
-    if (matnum == 0)
-	Tcl_InitHashTable(&matTable, TCL_STRING_KEYS);
-
 /* Create matrix operator */
 
-    matnum++;
-    sprintf(interp->result, "matrix_%d", matnum);
-    Tcl_CreateCommand(interp, interp->result, MatrixCmd, (ClientData) matPtr,
-		      ProcDeleteMatrix);
+    Tcl_CreateCommand(interp, matPtr->name, MatrixCmd, (ClientData) matPtr,
+		      DeleteMatrixCmd);
 
 /* Create hash table entry for this matrix operator's data */
 /* This should never fail */
 
-    hPtr = Tcl_CreateHashEntry(&matTable, interp->result, &new);
+    hPtr = Tcl_CreateHashEntry(&matTable, matPtr->name, &new);
     if ( ! new) {
-	Tcl_SetResult(interp, "Unable to create hash table entry", TCL_STATIC);
+	Tcl_AppendResult(interp, "Unable to create hash table entry",
+			 (char *) NULL);
 	return TCL_ERROR;
     }
     Tcl_SetHashValue(hPtr, matPtr);
@@ -378,11 +427,41 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
 /*----------------------------------------------------------------------*\
  *
- * ProcDeleteMatrix --
+ * DeleteMatrixVar --
  *
- *	This procedure is invoked just before a matrix command is
- *	removed from an interpreter.  Its job is to release all the
- *	resources allocated to the matrix.
+ *	Causes matrix command to be deleted.  Invoked when variable
+ *	associated with matrix command is unset.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	See DeleteMatrixCmd.
+ *
+\*----------------------------------------------------------------------*/
+
+static char *
+DeleteMatrixVar(ClientData clientData,
+		Tcl_Interp *interp, char *name1, char *name2, int flags)
+{
+    Matrix *matPtr = (Matrix *) clientData;
+
+    if (Tcl_DeleteCommand(interp, matPtr->name) != TCL_OK) 
+	fprintf(stderr, "Unable to delete command %s\n", matPtr->name);
+#ifdef DEBUG
+    else
+	fprintf(stderr, "Deleted command %s\n", matPtr->name);
+#endif
+    return (char *) NULL;
+}
+
+/*----------------------------------------------------------------------*\
+ *
+ * DeleteMatrixCmd --
+ *
+ *	Releases all the resources allocated to the matrix command.
+ *	Invoked just before a matrix command is removed from an
+ *	interpreter.
  *
  * Results:
  *	None.
@@ -393,11 +472,15 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 \*----------------------------------------------------------------------*/
 
 static void
-ProcDeleteMatrix(ClientData clientData)
+DeleteMatrixCmd(ClientData clientData)
 {
     Matrix *matPtr = (Matrix *) clientData;
 
-    if (matPtr->fdata != NULL)
+#ifdef DEBUG
+    fprintf(stderr, "Freeing space associated with matrix %s\n", matPtr->name);
+#endif
+    if (matPtr->fdata != NULL) 
 	ckfree((char *) matPtr->fdata);
     ckfree((char *) matPtr);
 }
+
