@@ -1,25 +1,16 @@
 Install:
 
-plplot_octave_org.h is the main (only) important file. It is a massaged
-version of plplot's plplot.h file, ready for use with Holt's matwrap,
-which you can find at
+plplot_octave.h is the main important file. It is a massaged version
+of plplot's plplot.h file, ready for use with Holt's matwrap, which
+you can find at
 
-	http://www.klab.caltech.edu/~holt/matwrap/
+	http://lnc.usc.edu/~holt/matwrap/
 
 As usual, you should get the last version, 0.57 at the time of this
-writing. *But you don't need it*, the included 'plplot_octave.cc' is
-the result of running matwrap on 'plplot.h'.
+writing. You also need perl.
 
-If you need or want to regenerate plplot_octave.cc, than you need
-matwrap, and you must run 'make' in directory plplot/bindings/octave.
-After that you should 'cd' to the base directory and 'configure' plplot
-in the usual way.
-
-Because PLplot can be built with floats or doubles, using the
-'configure' option --with-double, there are two versions of
-plplot_octave.cc and plplot_octave.h, being the correct one copied
-during 'configure' to directory plplot/tmp, where all the plplot
-compilation takes place.
+You must compile PLplot with shared libraries, which 'configure' does
+by default if your OS is supported.
 
 What you get:
 
@@ -48,17 +39,15 @@ Before installing, you can test plplot_octave:
 
 'cd' to directory plplot/tmp.
 
-If you build plplot with shared libs, using option --with-shlibs during
-'configure', you might have problems. Try issuing the command 'ldconfig `pwd`'.
-
 If you have another version of plplot installed, check, after invoking
 octave and making same plots, the plplot version, typing "plgver'" (note
-the apostrophe in plgver, meaning transpose).
+the apostrophe in plgver, meaning transpose). You should get the same
+version that you have just compiled, not the installed version.
 
 Invoke octave, and set the LOADPATH, typing
 	LOADPATH="../bindings/octave//::"
 
-There have several Octave demos, 'p1' up to 'p20'. Try them:
+There are several Octave demos, 'p1' up to 'p20'. Try them:
 
 octave> for i=[1:15 19:20]; feval(sprintf("p%d",i));kbhit;endfor;oneplot
 
@@ -72,6 +61,15 @@ You can set some preferences in the file 'pldef.m'
 
 The default path to instalation is $prefix/share/plplot_octave. You must
 set your LOADPATH to include it *before* the standard Octave LOADPATH.
+
+If you just want to use the PLplot API, use it as you would from a C
+program, with the exception that you don't need to specify matrices
+dimensions; e.g., for plline(n,x,y) you just need to call it as
+plline(x,y), where x and y are column vectors. Look at the various
+x??x.m examples in the demos directory.
+
+You can't call API functions whose arguments are pointers to
+functions. Some wrappers for common situations are however available.
 
 As with every program, except D. Knuth ones, the programs in this
 package are not finished nor bug free. Please report bugs and send
