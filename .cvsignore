@@ -9,3 +9,4 @@ Makefile
 Makefile.in
 aclocal.m4
 libtool
+*.tar.gz
