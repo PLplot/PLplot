@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.72  1994/09/23 07:48:24  mjl
+ * Revision 1.73  1994/10/06 07:24:05  furnish
+ * Correction to work with the one true language, C++.
+ *
+ * Revision 1.72  1994/09/23  07:48:24  mjl
  * Fixed prototype for pltkMain().
  *
  * Revision 1.71  1994/09/16  04:50:07  mjl
@@ -1484,7 +1487,7 @@ Pltk_Init( Tcl_Interp *interp );
 
 int
 pltkMain(int argc, char **argv, char *RcFileName,
-	 int (*AppInit)(Tcl_Interp *interp))
+	 int (*AppInit)(Tcl_Interp *interp));
 #endif
 
 #ifdef __cplusplus
