@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/03/30 07:27:16  mjl
+ * Revision 1.14  1994/04/08 12:33:22  mjl
+ * Changed exit handler behavior.  Now it is called /prior/ to the stream
+ * cleanup, which is more useful.  Also it is passed the error message and
+ * is expected to return (if it returns) an exit code.  Prototype is:
+ * static int    (*exit_handler) (char *);
+ *
+ * Revision 1.13  1994/03/30  07:27:16  mjl
  * Put in better handling for roundoff-generated errors in color map
  * selection.
  *
@@ -25,15 +31,6 @@
  *
  * plabort() added to be almost identical to plwarn(), except for message
  * content.  Now used before a return on most error conditions.
- *
- * Revision 1.11  1993/12/08  06:22:23  mjl
- * Fix for dos386/djgpp.
- *
- * Revision 1.10  1993/11/15  08:39:05  mjl
- * Removed plexit().
- *
- * Revision 1.9  1993/11/07  09:08:14  mjl
- * Added user-settable exit handler (call plsexit to set).
 */
 
 /*	plctrl.c
@@ -63,7 +60,7 @@
 /* Static functions */
 
 static void	strcat_delim	(char *);
-static void	(*exit_handler) (void);
+static int	(*exit_handler) (char *);
 static void	plHLS_RGB	(PLFLT h, PLFLT l, PLFLT s,
 				 PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 
@@ -822,53 +819,41 @@ plabort(char *errormsg)
 * In case of an abort this routine is called.  It just prints out an error
 * message and tries to clean up as much as possible.  It's best to turn
 * off pause and then restore previous setting before returning.
+*
+* If cleanup needs to be done in the main program, the user should write
+* his/her own exit handler and pass it in via plsexit().  This function
+* should should either call plend() before exiting, or simply return.
 \*----------------------------------------------------------------------*/
 
 void
 plexit(char *errormsg)
 {
-    PLINT nopause;
+    int status = 1;
 
     plgpls(&plsc);
-    nopause = plsc->nopause;
-    plsc->nopause = 1;
 
+    if (exit_handler != NULL)
+	status = (*exit_handler)(errormsg);
+
+    plsc->nopause = 1;
     plend();
     if (*errormsg != '\0') {
 	fprintf(stderr, "\n*** PLPLOT ERROR ***\n");
 	fprintf(stderr, "%s\n", errormsg);
     }
-    plsc->nopause = nopause;
-    pl_exit();
-}
 
-/*----------------------------------------------------------------------*\
-* void pl_exit()
-*
-* Just a front-end to exit().  If cleanup needs to be done in the main
-* program, the user should write his/her own exit handler and pass it in
-* via plsexit().
-\*----------------------------------------------------------------------*/
-
-void
-pl_exit(void)
-{
-    if (exit_handler != NULL)
-	(*exit_handler)();
-    else {
-	fprintf(stderr, "Program aborted\n");
-	exit(1);
-    }
+    fprintf(stderr, "Program aborted\n");
+    exit(status);
 }
 
 /*----------------------------------------------------------------------*\
 * void plsexit()
 *
-* Sets the exit handler to use instead of exit().
+* Sets an optional user exit handler.
 \*----------------------------------------------------------------------*/
 
 void
-plsexit(void (*handler) (void))
+plsexit(int (*handler) (char *))
 {
     exit_handler = handler;
 }
