@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1993/08/11 19:20:03  mjl
+ * Revision 1.6  1993/11/12 18:41:18  mjl
+ * Substituted bit operations for some arithmetic ones, for faster, more
+ * concise, and more portable code.
+ *
+ * Revision 1.5  1993/08/11  19:20:03  mjl
  * Changed debugging code to print to stderr instead of stdout, plugged
  * a hole where possible failure of fwrite went undetected.
  *
@@ -81,12 +85,12 @@ pdf_wr_header(FILE *file, char *header)
 	if (header[i] == '\0')
 	    break;
 	if (putc(header[i], file) == EOF)
-	    return (PDF_WRERR);
+	    return PDF_WRERR;
     }
     if (putc('\n', file) == EOF)
-	return (PDF_WRERR);
+	return PDF_WRERR;
 
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -103,13 +107,13 @@ pdf_rd_header(FILE *file, char *header)
 
     for (i = 0; i < 79; i++) {
 	if ((header[i] = getc(file)) == EOF)
-	    return (PDF_RDERR);
+	    return PDF_RDERR;
 
 	if (header[i] == '\n')
 	    break;
     }
     header[i] = '\0';		/* NULL terminate */
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -125,9 +129,9 @@ pdf_wr_1byte(FILE *file, U_CHAR s)
 
     x[0] = s;
     if (fwrite(x, 1, 1, file) != 1)
-	return (PDF_WRERR);
+	return PDF_WRERR;
 
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -142,10 +146,10 @@ pdf_rd_1byte(FILE *file, U_CHAR *ps)
     U_CHAR x[1];
 
     if ( ! fread(x, 1, 1, file))
-	return (PDF_RDERR);
+	return PDF_RDERR;
 
     *ps = ((U_CHAR) x[0]);
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -157,18 +161,15 @@ pdf_rd_1byte(FILE *file, U_CHAR *ps)
 int
 pdf_wr_2bytes(FILE *file, U_SHORT s)
 {
-    U_SHORT lo, hi;
     U_CHAR x[2];
 
-    hi = (U_LONG) s >> 8;
-    lo = s - (hi << 8);
-    x[0] = (U_CHAR) lo;
-    x[1] = (U_CHAR) hi;
+    x[0] = (U_CHAR) ((U_LONG) (s & (U_LONG) 0x00FF));
+    x[1] = (U_CHAR) ((U_LONG) (s & (U_LONG) 0xFF00) >> 8);
 
     if (fwrite(x, 1, 2, file) != 2)
-	return (PDF_WRERR);
+	return PDF_WRERR;
 
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -183,10 +184,13 @@ pdf_rd_2bytes(FILE *file, U_SHORT *ps)
     U_CHAR x[2];
 
     if ( ! fread(x, 1, 2, file))
-	return (PDF_RDERR);
+	return PDF_RDERR;
 
-    *ps = (U_SHORT) x[0] + ((U_SHORT) x[1] << 8);
-    return (0);
+    *ps = 0;
+    *ps |= (U_LONG) x[0];
+    *ps |= (U_LONG) x[1] << 8;
+
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -199,19 +203,16 @@ int
 pdf_wr_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 {
     PLINT i;
-    U_SHORT lo, hi;
     U_CHAR x[2];
 
     for (i = 0; i < n; i++) {
-	hi = (U_LONG) s[i] >> 8;
-	lo = s[i] - (hi << 8);
-	x[0] = (U_CHAR) lo;
-	x[1] = (U_CHAR) hi;
+	x[0] = (U_CHAR) ((U_LONG) (s[i] & (U_LONG) 0x00FF));
+	x[1] = (U_CHAR) ((U_LONG) (s[i] & (U_LONG) 0xFF00) >> 8);
 
 	if (fwrite(x, 1, 2, file) != 2)
-	    return (PDF_WRERR);
+	    return PDF_WRERR;
     }
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -228,11 +229,13 @@ pdf_rd_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 
     for (i = 0; i < n; i++) {
 	if ( ! fread(x, 1, 2, file))
-	    return (PDF_RDERR);
+	    return PDF_RDERR;
 
-	s[i] = (U_SHORT) x[0] + ((U_SHORT) x[1] << 8);
+	s[i] = 0;
+	s[i] |= (U_SHORT) x[0];
+	s[i] |= (U_SHORT) x[1] << 8;
     }
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -244,32 +247,17 @@ pdf_rd_2nbytes(FILE *file, U_SHORT *s, PLINT n)
 int
 pdf_wr_4bytes(FILE *file, U_LONG s)
 {
-    U_LONG lo, hi;
     U_CHAR x[4];
 
-    hi = s >> 8;
-    lo = s - (hi << 8);
-    x[0] = (U_CHAR) lo;
-
-    s = hi;
-    hi = s >> 8;
-    lo = s - (hi << 8);
-    x[1] = (U_CHAR) lo;
-
-    s = hi;
-    hi = s >> 8;
-    lo = s - (hi << 8);
-    x[2] = (U_CHAR) lo;
-
-    s = hi;
-    hi = s >> 8;
-    lo = s - (hi << 8);
-    x[3] = (U_CHAR) lo;
+    x[0] = (U_CHAR) ((s & (U_LONG) 0x000000FF));
+    x[1] = (U_CHAR) ((s & (U_LONG) 0x0000FF00) >> 8);
+    x[2] = (U_CHAR) ((s & (U_LONG) 0x00FF0000) >> 16);
+    x[3] = (U_CHAR) ((s & (U_LONG) 0xFF000000) >> 24);
 
     if (fwrite(x, 1, 4, file) != 4)
-	return (PDF_WRERR);
+	return PDF_WRERR;
 
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -284,69 +272,70 @@ pdf_rd_4bytes(FILE *file, U_LONG *ps)
     U_CHAR x[4];
 
     if ( ! fread(x, 1, 4, file))
-	return (PDF_RDERR);
+	return PDF_RDERR;
 
-    *ps = ((U_LONG) x[0])
-	+ ((U_LONG) x[1] << 8)
-	+ ((U_LONG) x[2] << 16)
-	+ ((U_LONG) x[3] << 24);
+    *ps = 0;
+    *ps |= (U_LONG) x[0];
+    *ps |= (U_LONG) x[1] << 8;
+    *ps |= (U_LONG) x[2] << 16;
+    *ps |= (U_LONG) x[3] << 24;
 
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
-Here is the IEEE floating point specification in both 32 bit and 64 bit
-precisions, from page 9 of "IEEE Standard for Binary Floating-Point
-Arithmetic", copyright 1985, IEEE Std 754-1985:
-
-
-                            Single Format
-
-msb means most significant bit
-lsb means least significant bit
-
-  1         8                                23
-_____________________________________________________________________
-|   |                |                                              |
-| s |       e        |                        f                     |
-|___|________________|______________________________________________|
-     msb          lsb msb                                        lsb
-
-
-
-                            Double Format
-
-msb means most significant bit
-lsb means least significant bit
-
-  1        11                                52
-_____________________________________________________________________
-|   |                |                                              |
-| s |       e        |                        f                     |
-|___|________________|______________________________________________|
-     msb          lsb msb                                        lsb
-
-
-(Thanks to: Andy Mai (mai@ncar.ucar.edu))
-
-
-According to "inmos: Transputer instruction set" the IEEE standard specifies
-the floating format as:
-
-       s exp frac
-
-Where: s = sign bit  (1 bit)
-       exp = exponent (8 bits for 32 bit float / 11 bits for 64 bit float)
-       frac = fraction (23 bits for 32 bit float / 52 bits for 64 bit float)
-
-value of (s exp frac) = (-1)^s * 1.frac * 2^(exp-bias) ; if exp not 0
-                        (-1)^s * 0.frac * 2^(1-bias) ; if exp = 0
-
-where bias = 127 for 32 bit float
-      bias = 1023 for 64 bit float
-
-(Thanks to: Tom Bjorkholm(TBJORKHOLM@abo.fi))
-
+* Here is the IEEE floating point specification in both 32 bit and 64 bit
+* precisions, from page 9 of "IEEE Standard for Binary Floating-Point
+* Arithmetic", copyright 1985, IEEE Std 754-1985:
+* 
+* 
+*                             Single Format
+* 
+* msb means most significant bit
+* lsb means least significant bit
+* 
+*   1         8                                23
+* _____________________________________________________________________
+* |   |                |                                              |
+* | s |       e        |                        f                     |
+* |___|________________|______________________________________________|
+*      msb          lsb msb                                        lsb
+* 
+* 
+* 
+*                             Double Format
+* 
+* msb means most significant bit
+* lsb means least significant bit
+* 
+*   1        11                                52
+* _____________________________________________________________________
+* |   |                |                                              |
+* | s |       e        |                        f                     |
+* |___|________________|______________________________________________|
+*      msb          lsb msb                                        lsb
+* 
+* 
+* (Thanks to: Andy Mai (mai@ncar.ucar.edu))
+* 
+* 
+* According to "inmos: Transputer instruction set" the IEEE standard specifies
+* the floating format as:
+* 
+*        s exp frac
+* 
+* Where: s = sign bit  (1 bit)
+*        exp = exponent (8 bits for 32 bit float / 11 bits for 64 bit float)
+*        frac = fraction (23 bits for 32 bit float / 52 bits for 64 bit float)
+* 
+* value of (s exp frac) = (-1)^s * 1.frac * 2^(exp-bias) ; if exp not 0
+*                         (-1)^s * 0.frac * 2^(1-bias) ; if exp = 0
+* 
+* where bias = 127 for 32 bit float
+*       bias = 1023 for 64 bit float
+* 
+* (Thanks to: Tom Bjorkholm(TBJORKHOLM@abo.fi))
+* 
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
@@ -409,7 +398,7 @@ pdf_wr_ieeef(FILE *file, float f)
 	print_ieeef(&fsgl, &value);
     }
 
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -455,7 +444,7 @@ pdf_rd_ieeef(FILE *file, float *pf)
 	print_ieeef(&fsgl, &value);
     }
 
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
