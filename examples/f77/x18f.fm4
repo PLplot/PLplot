@@ -119,9 +119,10 @@ C        r = 1. - dble (i-1) / dble (NPTS)
      &  1, 0, 1, 0,
      &  0, 1, 0, 1,
      &  1, 1, 0, 0 /
-      real*8 theta, phi, a
-      THETA(a) = (two_pi * (a) /20.d0)
-      PHI(a)   = (pi * (a) / 20.1d0)
+      real*8 theta, phi
+      integer ia
+      THETA(ia) = (two_pi * (ia) /20.d0)
+      PHI(ia)   = (pi * (ia) / 20.1d0)
 
       call pladv(0)
       call plvpor(0.0d0, 1.0d0, 0.0d0, 0.9d0)
