@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1994/05/14 08:30:41  mjl
+ * Revision 1.25  1994/05/26 19:22:04  mjl
+ * Supplied some missing variable initializations.
+ *
+ * Revision 1.24  1994/05/14  08:30:41  mjl
  * Changed to correctly set background color.  Added initialization hack to
  * improve color fill behavior using the vlt driver.
  *
@@ -253,6 +256,8 @@ tek_init(PLStream *pls)
 
     pls->icol0 = 1;
     pls->width = 1;
+    pls->bytecnt = 0;
+    pls->page = 0;
     pls->graphx = TEXT_MODE;
     curcolor = 1;
 
