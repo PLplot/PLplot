@@ -16,9 +16,8 @@ You will find in this directory tree the latest PLplot documentation in
 DocBook 4.1 XML format.  You will find in the current file
 (README.developers) instructions for building the documentation from the
 DocBook source files in this directory. The documentation that is built
-includes man pages of the API as well
-as complete versions of the documentation in html, dvi, postscript,
-pdf, and info form.
+includes man pages of the API as well as complete versions of the
+documentation in html, dvi, postscript, pdf, and info form.
 
 This documentation project started as a conversion (under the direction of
 Rafael Laboissière) of the old (1995 or earlier) version of the PLplot
@@ -140,9 +139,9 @@ pdf.  The solution is to update to the latest Cygnus.
 
 (see the Debian instructions above for other details).
 
-AWI has checked that output versions of the documentation (except for pdf)
-are built on Cygnus systems to the same quality (with a few minor
-exceptions) as on Debian systems.
+AWI has checked that output versions of the documentation are built on
+Cygnus systems to the same quality (with a few minor exceptions) as on
+Debian systems.
 
 Note on SGML Catalogs
 =====================
@@ -260,7 +259,7 @@ the KDE2 documentation project and can be accessed from
 ftp://sourceware.cygnus.com/pub/docbook-tools/new-trials/RPMS.  (Note this
 site has high traffic so you may have to use a mirror.) The current set of
 Cygnus rpm's that allow building the DocBook documentation are
-(NOTE THIS PACKAGE LIST CHANGED SIGNIFICANTLY AS OF 2000 8 DECEMBER)
+(NOTE THIS PACKAGE LIST CHANGED SIGNIFICANTLY AS OF 2000 21 DECEMBER)
 
 docbook-dtd31-sgml-1.0-6.noarch.rpm
 docbook-dtd41-sgml-1.0-6.noarch.rpm
@@ -268,14 +267,9 @@ docbook-dtd41-xml-1.0-3.noarch.rpm    (CHANGE)
 docbook-style-dsssl-1.59-2.noarch.rpm (CHANGE)
 docbook-utils-0.6-1.noarch.rpm
 jade-1.2.1-6.i386.rpm
-jadetex-2.20-4.noarch.rpm
+jadetex-2.20-5.noarch.rpm             (CHANGE)
 perl-SGMLSpm-1.03ii-3.noarch.rpm
 sgml-common-0.5-1.noarch.rpm          (CHANGE)
-
-Note jadetex-2.20-4.noarch.rpm is currently (2000 December 14) being
-upgraded with a fix so that pdfjadetex works for the first time.  If
-the new version has not been made at the time of reading, then apply
-the fix distributed on the plplot_core list.
 
 You also need the following RedHat 6.2 packages:
 
