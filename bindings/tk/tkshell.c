@@ -62,7 +62,8 @@ Pltk_Init( Tcl_Interp *interp )
     display = Tk_Display(main);
     map = DefaultColormap(display, DefaultScreen(display));
 
-    PLX_save_colormap(display, map);
+/* Convert this to use esc function if it's going to be used */
+/* SaveColormap(display, map); */
     }
 #endif
     return TCL_OK;
