@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/06/16 21:57:11  mjl
+ * Revision 1.3  1994/06/24 20:37:55  mjl
+ * Changed name of struct to tclMatrix to avoid conflicts with C++ Matrix
+ * classes.  Put in ifdef-ed extern "C" linkage statements for C++.
+ *
+ * Revision 1.2  1994/06/16  21:57:11  mjl
  * Added matrix operator name to command data struct.
  *
  * Revision 1.1  1994/06/16  19:49:05  mjl
@@ -22,8 +26,6 @@
 
 #ifndef __TCLMATRIX_H__
 #define __TCLMATRIX_H__
-
-#include <tcl.h>
 
 #ifdef DOUBLE
 typedef double Mat_float;
@@ -62,9 +64,15 @@ typedef struct {
 
     Mat_float *fdata;		/* Floating point data */
     Mat_int   *idata;		/* Integer data */
-} Matrix;
+} tclMatrix;
 
 /* Function prototypes */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <tcl.h>
 
 /* This procedure is invoked to process the "matrix" Tcl command. */
 
@@ -74,7 +82,11 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Returns a pointer to the specified matrix operator's data. */
 
-Matrix *
+tclMatrix *
 Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* __TCLMATRIX_H__ */
