@@ -4926,7 +4926,7 @@ else
 #line 4927 "configure"
 #include "confdefs.h"
 #ifdef __cplusplus
-extern "C" void exit(int) throw();
+extern "C" void exit(int);
 #endif
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -5162,7 +5162,7 @@ else
 #line 5163 "configure"
 #include "confdefs.h"
 #ifdef __cplusplus
-extern "C" void exit(int) throw();
+extern "C" void exit(int);
 #endif
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
