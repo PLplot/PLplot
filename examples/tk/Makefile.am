@@ -93,7 +93,7 @@ $(generated_files): \
 	cp ../tcl/x??.tcl .
 	$(mkindex)
 
-libplplottcltk = -L../../bindings/tcl -lplplottcltk$(LIB_TAG)
+libplplottcltk = ../../bindings/tcl/libplplottcltk$(LIB_TAG).la
 
 check_PROGRAMS = \
 	xtk01 \
