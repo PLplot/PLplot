@@ -1215,16 +1215,14 @@ if test "$with_shlib" = "yes"; then
 	    RPATH=
 	    INSTALL_RPATH=
 
-	    # Assume -fPIC still means the same thing for Darwin gcc.
-	    # Essentially no options other than this one for the pure
-	    # compilations.
-	    SHLIB_CCFLAGS=-fPIC
+	    # No compile options (suggested by Robb Brown)
+	    SHLIB_CCFLAGS=
 	    SHLIB_CXXFLAGS=$SHLIB_CCFLAGS
 	    SHLIB_F77FLAGS=$SHLIB_CCFLAGS
-	    # -shared and -fPIC are standard gcc options (which should either be
-	    # supported or noops on MacOS X).  The remainder of these link
+	    # No -shared or -fPIC (suggested by Robb Brown
+	    # The remainder of these link
 	    # options have been recommended by Robb Brown <brownr@ucalgary.ca>
-	    SHLIB_BUILD="gcc -shared -fPIC -dylib -undefined suppress -flat_namespace -o"
+	    SHLIB_BUILD="gcc -bundle -undefined suppress -flat_namespace -o"
         ;;
 	HP-UX-* )
 	    SO=".sl"
