@@ -1,7 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1995/06/01 21:19:14  mjl
- * Split off IP routine prototypes (not needed by user) into tcpip.h.
+ * Revision 1.6  1995/06/02 20:30:03  mjl
+ * Made C++ friendly.
+ *
+ * Revision 1.5  1995/06/01  21:19:14  mjl
+ * Split off IPC routine prototypes (not needed by user) into tcpip.h.
  *
  * Revision 1.4  1995/05/07  03:00:25  mjl
  * Added prototype for pltclMain().
@@ -32,6 +35,10 @@
 #include "plplot.h"
 #include <tcl.h>
 #include "tclMatrix.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* tclMain.c */
 /* Main program for a Tcl-based shell that reads Tcl commands from stdin. */
@@ -67,5 +74,9 @@ plWait_Until(ClientData, Tcl_Interp *, int, char **);
 
 int
 plHost_ID(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* __PLTCL_H__ */
