@@ -679,7 +679,6 @@ AC_OUTPUT([
 	bindings/c++/Makefile
 	bindings/f77/Makefile
 	bindings/python/Makefile
-	bindings/python/setup.py
 	drivers/Makefile
 	examples/Makefile
 	examples/c/Makefile

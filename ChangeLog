@@ -12,6 +12,9 @@
 	  directory which contains the installed plplot python extensions
 	  (assuming that might not be in the standard system location).
 
+	* Fixed single precision bugs in bindings/c++/Makefile.am and
+	  bindings/f77/Makefile.am.
+
 2002-11-26  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* Support for examples/c examples/c++ and examples/f77 on AT
