@@ -502,6 +502,16 @@ setcmap(PLStream *pls)
     png_Dev *dev=(png_Dev *)pls->dev;
     PLFLT tmp_colour_pos;
 
+/*
+ * Yuckky fix to get rid of the previosuly allocated palette from the 
+ * GD image
+ */
+
+    for (i=0;i<256;i++) 
+      { 
+       gdImageColorDeallocate(dev->im_out,i);
+      }
+
     if (ncol0>NCOLOURS/2)     /* Check for ridiculous number of colours */
        {                      /* in ncol0, and appropriately adjust the */
         plwarn("Too many colours in cmap0.");     /* number, issuing a  */
