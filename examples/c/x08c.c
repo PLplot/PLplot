@@ -12,10 +12,10 @@
 */
 
 #if !defined(HAVE_ISINF) && defined(HAVE_FINITE)
-  #define isinf(x) ((x) == (x) && ! finite((x)))
-/* if x is not a NaN (x==x) and is not finite, it must be infinite */ 
+#define isinf(x) ((x) == (x) && ! finite((x)))
+/* if x is not a NaN (x==x) and is not finite, it must be infinite */
 #else
-  #define isinf(x) (0) /* believe in probabilities (i.e., luck :) */
+#define isinf(x) (0) /* believe in probabilities (i.e., luck :) */
 #endif
 
 #define XPTS   35		/* Data points in x */
@@ -148,7 +148,7 @@ main(int argc, char *argv[])
     for (j = 0; j < YPTS; j++) {
       yy = y[j];
       if (rosen) {
-	z[i][j] = log(pow(1. - xx,2) + 100 * pow(yy - pow(xx,2),2));
+	z[i][j] = log(pow(1. - xx, 2.) + 100. * pow(yy - pow(xx, 2.), 2.));
 	if (isinf(z[i][j])) /* the log() of the function may become -inf */
 	  z[i][j] = -5.; /* -MAXFLOAT would mess-up up the scale */
       }

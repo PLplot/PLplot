@@ -126,14 +126,14 @@ static void potential()
    PLINT ncollin, ncolbox, ncollab;
    PLFLT px[PPERIMETERPTS], py[PPERIMETERPTS];
    PLFLT t, r, theta;
-   
+
 /*create data to be contoured.*/
    plAlloc2dGrid(&cgrid2.xg, PRPTS, PTHETAPTS);
    plAlloc2dGrid(&cgrid2.yg, PRPTS, PTHETAPTS);
    plAlloc2dGrid(&z, PRPTS, PTHETAPTS);
    cgrid2.nx = PRPTS;
    cgrid2.ny = PTHETAPTS;
-   
+
    for (i = 0; i < PRPTS; i++) {
       r = 0.5 + (double) i;
       for (j = 0; j < PTHETAPTS; j++) {
@@ -145,17 +145,17 @@ static void potential()
 
    rmax = r;
    f2mnmx(cgrid2.xg, PRPTS, PTHETAPTS, &xmin, &xmax);
-   f2mnmx(cgrid2.yg, PRPTS, PTHETAPTS, &ymin, &ymax); 
+   f2mnmx(cgrid2.yg, PRPTS, PTHETAPTS, &ymin, &ymax);
    x0 = (xmin + xmax)/2.;
    y0 = (ymin + ymax)/2.;
 
    /* Expanded limits */
    peps = 0.05;
-   xpmin = xmin - abs(xmin)*peps;
-   xpmax = xmax + abs(xmax)*peps;
-   ypmin = ymin - abs(ymin)*peps;
-   ypmax = ymax + abs(ymax)*peps;
-     
+   xpmin = xmin - fabs(xmin)*peps;
+   xpmax = xmax + fabs(xmax)*peps;
+   ypmin = ymin - fabs(ymin)*peps;
+   ypmax = ymax + fabs(ymax)*peps;
+
    /* Potential inside a conducting cylinder (or sphere) by method of images.
       Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
       Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
@@ -168,20 +168,20 @@ static void potential()
    d1 = rmax/4.;
 
    q1i = - q1*rmax/d1;
-   d1i = pow(rmax,2)/d1;
+   d1i = pow(rmax, 2.)/d1;
 
    q2 = -1.;
    d2 = rmax/4.;
 
    q2i = - q2*rmax/d2;
-   d2i = pow(rmax,2)/d2;
+   d2i = pow(rmax, 2.)/d2;
 
    for (i = 0; i < PRPTS; i++) {
       for (j = 0; j < PTHETAPTS; j++) {
-	 div1 = sqrt(pow(cgrid2.xg[i][j]-d1,2) + pow(cgrid2.yg[i][j]-d1,2) + pow(eps,2));
-	 div1i = sqrt(pow(cgrid2.xg[i][j]-d1i,2) + pow(cgrid2.yg[i][j]-d1i,2) + pow(eps,2));
-	 div2 = sqrt(pow(cgrid2.xg[i][j]-d2,2) + pow(cgrid2.yg[i][j]+d2,2) + pow(eps,2));
-	 div2i = sqrt(pow(cgrid2.xg[i][j]-d2i,2) + pow(cgrid2.yg[i][j]+d2i,2) + pow(eps,2));
+	 div1 = sqrt(pow(cgrid2.xg[i][j]-d1, 2.) + pow(cgrid2.yg[i][j]-d1, 2.) + pow(eps, 2.));
+	 div1i = sqrt(pow(cgrid2.xg[i][j]-d1i, 2.) + pow(cgrid2.yg[i][j]-d1i, 2.) + pow(eps, 2.));
+	 div2 = sqrt(pow(cgrid2.xg[i][j]-d2, 2.) + pow(cgrid2.yg[i][j]+d2, 2.) + pow(eps, 2.));
+	 div2i = sqrt(pow(cgrid2.xg[i][j]-d2i, 2.) + pow(cgrid2.yg[i][j]+d2i, 2.) + pow(eps, 2.));
 	 z[i][j] = q1/div1 + q1i/div1i + q2/div2 + q2i/div2i;
       }
    }
