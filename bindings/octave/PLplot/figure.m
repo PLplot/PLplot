@@ -188,14 +188,14 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name					
 	unlink(init_file);
       else
-	intp = __pl.intp(__pl_strm,:);
+	intp = deblank(__pl.intp(__pl_strm,:));
       endif
 
     else
       if (__pl.hold(__pl_strm))
    	hold on
       endif
-      intp = __pl.intp(__pl_strm,:);
+      intp = deblank(__pl.intp(__pl_strm,:));
       ## warning("figure already opened");
     endif
   endif
@@ -203,7 +203,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
   driver = sprintf("%s",plgdev');
 
   if (!exist("intp"))
-    intp = __pl.intp(n+1,:);
+    intp = deblank(__pl.intp(n+1,:));
   endif
 
 endfunction
