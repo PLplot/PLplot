@@ -1,3 +1,9 @@
+plplot (5.2.1-8) unstable; urgency=low
+
+  * Rebuilt using octave 2.1.48.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu,  8 May 2003 14:33:18 +0200
+
 plplot (5.2.1-7) unstable; urgency=low
 
   * debian/rules: Correctly changed some rule dependencies to *-stamp,
