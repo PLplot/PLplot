@@ -255,6 +255,8 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBS) -lm
 
 CC	= cc
 F77	= f77
+BUILD	= ar q
+LIBSUF	= a
 LDC	= $(CC)
 LDF	= $(F77)
 LN	= ln -s
@@ -316,6 +318,8 @@ LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 #----------------------------------------------------------------------#
 })if_hpux({
 #		HP-UX definitions
+#
+# The default is to build a shareable library including the TK driver.
 
 define({TK},)
 
@@ -338,6 +342,8 @@ F77	= fort77
 SYS_FLAGS_C	= 
 
 if_shareable({
+BUILD		= ld -b -o
+LIBSUF		= sl
 SHARE_FLAG_C	= +z
 SHARE_FLAG_F	= +z
 },{
@@ -616,29 +622,25 @@ if_unix({
 #	X	with Xlib included
 #	tk	with Xlib and tk included
 #
-# Build those best suited to your system and softlink to libplplotf.a
-# and libplplotd.a to create the system default.
+# Build those best suited to your system and softlink to libplplotf
+# and libplplotd to create the system default.
 
 if_dbl({
+TAG_PREC	= d
+},{
+TAG_PREC	= f
+})
+
 if_tk({
-PLLIB_MAIN	= $(PLLIB_PATH)libplplotdtk.a
+TAG_INCLUDE	= tk
 },{
 if_xwin({
-PLLIB_MAIN	= $(PLLIB_PATH)libplplotdX.a
+TAG_INCLUDE	= X
 },{
-PLLIB_MAIN	= $(PLLIB_PATH)libplplotdb.a
+TAG_INCLUDE	= b
 })})
 
-},{
-if_tk({
-PLLIB_MAIN	= $(PLLIB_PATH)libplplotftk.a
-},{
-if_xwin({
-PLLIB_MAIN	= $(PLLIB_PATH)libplplotfX.a
-},{
-PLLIB_MAIN	= $(PLLIB_PATH)libplplotfb.a
-})})
-})
+PLLIB_MAIN	= $(PLLIB_PATH)libplplot$(TAG_PREC)$(TAG_INCLUDE).$(LIBSUF)
 
 PLLIB_C		= $(PLLIB_MAIN)
 PLLIB_F		= $(PLLIB_MAIN)
@@ -934,16 +936,13 @@ plplotP.h: .dummy
 if_unix({ifdef({NO_FORTRAN},{
 $(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ)
 	-rm $(PLLIB_MAIN)
-	ar q $(PLLIB_MAIN) $(OBJ) $(DRIVERS_OBJ)
+	$(BUILD) $(PLLIB_MAIN) $(OBJ) $(DRIVERS_OBJ)
 	if_ranlib({ranlib $(PLLIB_MAIN)})
-	if_shareable({ld -b -o $(PLLIB_MAIN:.a=.sl) $(OBJ) $(DRIVERS_OBJ)},)
 },{
 $(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ) $(CSTUB_OBJ) $(FSTUB_OBJ)
 	-rm $(PLLIB_MAIN)
-	ar q $(PLLIB_MAIN) $(OBJ) $(DRIVERS_OBJ) $(CSTUB_OBJ) $(FSTUB_OBJ)
+	$(BUILD) $(PLLIB_MAIN) $(OBJ) $(DRIVERS_OBJ) $(CSTUB_OBJ) $(FSTUB_OBJ)
 	if_ranlib({ranlib $(PLLIB_MAIN)})
-	if_shareable({ld -b -o $(PLLIB_MAIN:.a=.sl) $(OBJ) $(DRIVERS_OBJ) \
-		$(CSTUB_OBJ) $(FSTUB_OBJ)},)
 })})
 
 if_amiga({
@@ -1250,6 +1249,7 @@ if_dbl({dnl
 		../drivers/tk/*.c \
 		../drivers/tk/*.h \
 		../drivers/tk/*.tcl \
+		../drivers/tk/tclIndex \
 		.
 })
 if_amiga({
@@ -1267,7 +1267,7 @@ clean:
 
 realclean:
 	-rm $(CDEMOS) $(FDEMOS) *.o *.c *.h *.f *.plm* *.tek* *.ps \
-	*.tcl makefile
+	*.tcl tclIndex makefile
 })
 
 #----------------------------------------------------------------------#
@@ -1282,7 +1282,7 @@ INSTALL_DIR = /usr/local/plplot
 
 install:
 	-strip plrender
-	-cp plrender ../lib/libplplot*.a ../lib/*.fnt $(INSTALL_DIR)
+	-cp plrender ../lib/libplplot* ../lib/*.fnt $(INSTALL_DIR)
 	-cd ..; cp README* Changes.log COPYRIGHTS ToDo $(INSTALL_DIR)
 	-cd ../{include}; \
 		cp plplotP.h plplot.h plplotio.h plevent.h plstream.h pdf.h \
