@@ -58,16 +58,11 @@ class x01 {
 //         plMergeOpts(options, "x01c options", notes);
         pls.plParseOpts( args, pls.PL_PARSE_FULL|pls.PL_PARSE_NOPROGRAM );
 
-// Print out version number, just for kicks.
-// plgver should work according to my limited understanding of JNI, but
-// it does not so it (and plgdev and plgfnam, other routines that pass back
-// Strings in their argument list) have been disabled, and
-// this attempt to use plgver has been commented out.
-//	String version = "5.x.x";
-//	pls.plgver(version);
+// Print out version number.
 
-//	System.out.println("PLplot library version: " + version);
-
+	StringBuffer version = new StringBuffer(80);
+	pls.plgver(version);
+	System.out.println("PLplot library version: " + version);
 
     // Initialize PLplot.
         pls.plinit();
