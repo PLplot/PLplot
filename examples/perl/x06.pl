@@ -62,7 +62,7 @@ for ($i = 0; $i <= 12; $i++) {
 
   # Write the digits to the left of the frame
 
-  plmtex (1.0, (1.0 - (2 * $i + 1) / 26.0), 1.0, "lv", $i);
+  plmtex (1.0, (1.0 - (2 * $i + 1) / 26.0), 1.0, "lv", 10 * $i);
 
   for ($j = 0; $j <= 9; $j++) {
     my $x = 0.1 * $j + 0.05;
