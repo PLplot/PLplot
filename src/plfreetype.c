@@ -214,7 +214,7 @@ FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
                 break;
 	    }
 
-        } else if ((text[i]>> (7*4)) == 0x1) {
+        } else if ((text[i] & PL_FCI_MARK) == PL_FCI_MARK) {
 	   /* FCI in text stream; change font accordingly. */
 	   FT_SetFace(pls , text[i]);
         } else {
@@ -353,7 +353,7 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
                 break;
 	    }
 
-        } else if ((text[i]>> (7*4)) == 0x1) {
+        } else if ((text[i] & PL_FCI_MARK) == PL_FCI_MARK) {
 	   /* FCI in text stream; change font accordingly. */
 	   FT_SetFace(pls , text[i]);
 	   FT=(FT_Data *)pls->FT;
@@ -516,7 +516,7 @@ void plD_FreeType_init(PLStream *pls)
 	plexit("Could not initialise Freetype library");
 
     /* set to an impossible value for an FCI */
-    FT->fci=0x0;
+    FT->fci=PL_FCI_IMPOSSIBLE;
 
 #if defined(MSDOS) || defined(WIN32)
 
@@ -621,7 +621,7 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci)
    if (fci != FT->fci) {
       char *font_name = plP_FCI2FontName(fci, FontLookup, N_TrueTypeLookup);
       if (font_name == NULL) {
-	 if (FT->fci == 0x0)
+	 if (FT->fci == PL_FCI_IMPOSSIBLE)
 	   plexit("FT_SetFace: Bad FCI and no previous valid font to fall back on");
 	 else
 	   plwarn("FT_SetFace: Bad FCI.  Falling back to previous font.");

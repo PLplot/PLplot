@@ -244,7 +244,7 @@ PLUNICODE unicode_char;
         }
       else
         {
-	  PLUNICODE  plhrsh_unicode_buffer[3];
+	  PLUNICODE  plhrsh_unicode_buffer[3], fci;
 	  PLFLT xform[] = {1.0, 0.0, 0.0, 1.0};
 	  char esc;
           args.unicode_char=unicode_char;
@@ -260,7 +260,9 @@ PLUNICODE unicode_char;
 	  args.xform = xform;
 	  args.unicode_array_len=2;
 	  /* Temporary Symbol font for every character. */
-	  plhrsh_unicode_buffer[0] = 0x10000004;
+	  plgfci(&fci);
+	  plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
+	  plhrsh_unicode_buffer[0] = fci;
 	  plhrsh_unicode_buffer[1] = unicode_char;
 	  /* watch out for escape character and unescape it by appending
 	   * one extra. */
@@ -991,6 +993,7 @@ plP_stsearch(const char *str, int chr)
 void
 c_plfont(PLINT ifont)
 {
+    PLUNICODE fci = PL_FCI_MARK;
     if (plsc->level < 1) {
 	plabort("plfont: Please call plinit first");
 	return;
@@ -1010,19 +1013,24 @@ c_plfont(PLINT ifont)
      {
       case 1:
 	/* normal = (medium, upright, sans serif) */
-	plsfci(0x10000000);
+	plP_hex2fci(PL_FCI_SANS, PL_FCI_FAMILY, &fci);
+	plsfci(fci);
 	break;
 	/* roman = (medium, upright, serif) */
       case 2:
-	plsfci(0x10000001);
+	plP_hex2fci(PL_FCI_SERIF, PL_FCI_FAMILY, &fci);
+	plsfci(fci);
 	break;
 	/* italic = (medium, italic, serif) */
       case 3:
-	plsfci(0x10000011);
+	plP_hex2fci(PL_FCI_ITALIC, PL_FCI_STYLE, &fci);
+	plP_hex2fci(PL_FCI_SERIF, PL_FCI_FAMILY, &fci);
+	plsfci(fci);
 	break;
 	/* script = (medium, upright, script) */
       case 4:
-	plsfci(0x10000003);
+	plP_hex2fci(PL_FCI_SCRIPT, PL_FCI_FAMILY, &fci);
+	plsfci(fci);
 	break;
      }
 }

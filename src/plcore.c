@@ -407,8 +407,8 @@ int text2num( const char *text, char end, PLUNICODE *num)
  *    values in the table, and the function returns the number of characters
  *    in text that are consumed by the matching string in the table lookup.
  *
- *    If the lookup fails, hexdigit is set to 0, hexpower is set to 0xf, and
- *    the function returns 0.
+ *    If the lookup fails, hexdigit is set to 0, hexpower is set to and
+ *    impossible value, and the function returns 0.
 \*--------------------------------------------------------------------------*/
 
 int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower)
@@ -423,19 +423,18 @@ int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower
    /* This defines the various font control commands and the corresponding
     * hexdigit and hexpower in the FCI.
     */
-#define N_TextLookupTable 11
+#define N_TextLookupTable 10
    const TextLookupTable lookup[N_TextLookupTable] = {
-	{"<sans-serif/>",0,0},
-	{"<serif/>",1,0},
-	{"<monospace/>",2,0},
-	{"<script/>",3,0},
-	{"<symbol/>",4,0},
-	{"<upright/>",0,1},
-	{"<italic/>",1,1},
-	{"<oblique/>",2,1},
-	{"<medium/>",0,2},
-	{"<bold/>",1,2},
-	{"<normal/>",0,3}
+	{"<sans-serif/>", PL_FCI_SANS, PL_FCI_FAMILY},
+	{"<serif/>", PL_FCI_SERIF, PL_FCI_FAMILY},
+	{"<monospace/>", PL_FCI_MONO, PL_FCI_FAMILY},
+	{"<script/>", PL_FCI_SCRIPT, PL_FCI_FAMILY},
+	{"<symbol/>", PL_FCI_SYMBOL, PL_FCI_FAMILY},
+	{"<upright/>", PL_FCI_UPRIGHT, PL_FCI_STYLE},
+	{"<italic/>", PL_FCI_ITALIC, PL_FCI_STYLE},
+	{"<oblique/>", PL_FCI_OBLIQUE, PL_FCI_STYLE},
+	{"<medium/>", PL_FCI_MEDIUM, PL_FCI_WEIGHT},
+	{"<bold/>", PL_FCI_BOLD, PL_FCI_WEIGHT}
    };
    int i, length;
    for (i=0; i<N_TextLookupTable; i++) {
@@ -447,7 +446,7 @@ int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower
       }
    }
    *hexdigit = 0;
-   *hexpower = 0xf;
+   *hexpower = PL_FCI_HEXPOWER_IMPOSSIBLE;
    return(0);
 }
 
@@ -500,7 +499,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     idx=plhershey2unicode(code);
 		     /* momentarily switch to symbol font. */
 		     fcisave = fci;
-		     plP_hex2fci(4, 0, &fci);
+		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
 		     unicode_buffer[j++]= fci;
 		     unicode_buffer[j++]=(PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
 		     /* if unicode_buffer[j-1] corresponds to the escape character
@@ -519,7 +518,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     i+=2+text2num(&string[i+2],']',&code);
 		     /* momentarily switch to symbol font. */
 		     fcisave = fci;
-		     plP_hex2fci(4, 0, &fci);
+		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
 		     unicode_buffer[j++]= fci;
 		     unicode_buffer[j++]=code;
 		     /* if unicode_buffer[j-1] corresponds to the escape character
@@ -530,7 +529,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		      */
 		     if (unicode_buffer[j-1]==esc) unicode_buffer[j++]=esc;
 		     fci = fcisave;
-		     unicode_buffer[j]= fci;
+		     unicode_buffer[j] = fci;
 		     skip=1;
 		     break;
 		     
@@ -538,23 +537,22 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     i+=2;
 		     if ('0' <= string[i] && string[i] <= '9' ) {
 			i+=text2num(&string[i],'>', &code);
-			if ((code >> (7*4)) == 1) {
-			   /* left most hex digit is 1 ==> change
-			    * the whole FCI (font characterization integer)
-			    * to this value.
+			if ((code & PL_FCI_MARK) == PL_FCI_MARK) {
+			   /* code is a complete FCI (font characterization 
+			    * integer): change FCI to this value.
 			    */
 			   fci = code;
 			   unicode_buffer[j]=fci;
 			   skip=1;
 			}
 			else {
-			   /* left most hex digit not 1 ==> change
+			   /* code is not complete FCI. Change
 			    * FCI with hex power in rightmost hex
 			    * digit and hex digit value in second rightmost
 			    * hex digit.
 			    */
-			   hexdigit = (code & 0xf0) >> 4;
-			   hexpower = code & 0x7;
+			   hexdigit = (code >> 4) & PL_FCI_HEXDIGIT_MASK;
+			   hexpower = code & PL_FCI_HEXPOWER_MASK;
 			   plP_hex2fci(hexdigit, hexpower, &fci);
 			   unicode_buffer[j]=fci;
 			   skip=1;
@@ -582,24 +580,25 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		      * #<command string> methods should be used instead
 		      * to change unicode fonts in mid-string.
 		      */
-		     if (string[i+2] == 'n')
-		       /* medium, upright, sans-serif */
-		       code = 0x10000000;
-		     else if (string[i+2] == 'r')
-		       /* medium, upright, serif */
-		       code = 0x10000001;
-		     else if (string[i+2] == 'i')
-		       /* medium, italic, serif */
-		       code = 0x10000011;
-		     else if (string[i+2] == 's')
-		       /* medium, upright, script */
-		       code = 0x10000003;
-		     else
-		       code = 0;
+		     fci = PL_FCI_MARK;
+		     if (string[i+2] == 'n') {
+			/* medium, upright, sans-serif */
+			plP_hex2fci(PL_FCI_SANS, PL_FCI_FAMILY, &fci);
+		     } else if (string[i+2] == 'r') {
+			/* medium, upright, serif */
+			plP_hex2fci(PL_FCI_SERIF, PL_FCI_FAMILY, &fci);
+		     } else if (string[i+2] == 'i') {
+			/* medium, italic, serif */
+			plP_hex2fci(PL_FCI_ITALIC, PL_FCI_STYLE, &fci);
+			plP_hex2fci(PL_FCI_SERIF, PL_FCI_FAMILY, &fci);
+		     } else if (string[i+2] == 's') {
+			/* medium, upright, script */
+			plP_hex2fci(PL_FCI_SCRIPT, PL_FCI_FAMILY, &fci);
+		     } else
+		       fci = PL_FCI_IMPOSSIBLE;
 		     
-		     if (code > 0){
+		     if (fci != PL_FCI_IMPOSSIBLE){
 			i+=2;
-			fci = code;
 			unicode_buffer[j] = fci;
 			skip = 1;
 		     }
@@ -613,7 +612,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		      */
 		     /* momentarily switch to symbol font. */
 		     fcisave = fci;
-		     plP_hex2fci(4, 0, &fci);
+		     plP_hex2fci(PL_FCI_SYMBOL, PL_FCI_FAMILY, &fci);
 		     unicode_buffer[j++]= fci;
 		     ig = plP_strpos(plP_greek_mnemonic, string[i+2]);
 		     if (ig >= 0) {
@@ -2766,9 +2765,8 @@ plgesc(char *p_esc)
 void
 c_plsfci(PLUNICODE fci)
 {
-   /* Always mark FCI as such with 0x1 in leftmost hex digit. */
-   plP_hex2fci(0x1, 7, &fci);
-   plsc->fci = fci;
+   /* Always mark FCI as such. */
+   plsc->fci = fci | PL_FCI_MARK;
 }
 
 /* Get the FCI (font characterization integer) for unicode-enabled device
@@ -2777,9 +2775,8 @@ c_plsfci(PLUNICODE fci)
 void
 c_plgfci(PLUNICODE *pfci)
 {
-   *pfci = plsc->fci;
-   /* Always mark FCI as such with 0x1 in leftmost hex digit. */
-   plP_hex2fci(0x1, 7, pfci);
+   /* Always mark FCI as such. */
+   *pfci = plsc->fci | PL_FCI_MARK;
 }
 /* Store hex digit value shifted to the left by hexdigit hexadecimal digits 
  * into pre-existing FCI. 
@@ -2788,10 +2785,10 @@ void
 plP_hex2fci(unsigned char hexdigit, unsigned char hexpower, PLUNICODE *pfci)
 {
    PLUNICODE mask;
-   hexpower = hexpower & 0x7;
-   mask = ~ (((PLUNICODE) 0xf) << (4*hexpower));
+   hexpower = hexpower & PL_FCI_HEXPOWER_MASK;
+   mask = ~ (((PLUNICODE) PL_FCI_HEXDIGIT_MASK) << ((PLUNICODE) 4*hexpower));
    *pfci = *pfci & mask;
-   mask = (((PLUNICODE) hexdigit) << (4*hexpower));
+   mask = (((PLUNICODE) (hexdigit & PL_FCI_HEXDIGIT_MASK)) << (4*hexpower));
    *pfci = *pfci | mask;
 }
 
@@ -2801,8 +2798,8 @@ void
 plP_fci2hex(PLUNICODE fci, unsigned char *phexdigit, unsigned char hexpower)
 {
    PLUNICODE mask;
-   hexpower = hexpower & 0x7;
-   mask = (((PLUNICODE) 0xf) << ((PLUNICODE) (4*hexpower)));
+   hexpower = hexpower & PL_FCI_HEXPOWER_MASK;
+   mask = (((PLUNICODE) PL_FCI_HEXPOWER_MASK) << ((PLUNICODE) (4*hexpower)));
    *phexdigit = (unsigned char) ((fci & mask) >> 
 				 ((PLUNICODE) (4*hexpower)));
 }

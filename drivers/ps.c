@@ -754,7 +754,7 @@ proc_str (PLStream *pls, EscText *args)
 	}
 	cur_text =  args->unicode_array;
 	for (f=s=j=0; j < args->unicode_array_len; j++) {
-	   if ((cur_text[j] >> (7*4)) == 0x1) {
+	   if ((cur_text[j] & PL_FCI_MARK) == PL_FCI_MARK) {
 	      /* process an FCI by saving it and escaping cur_str
 	       * with an escff to make it a 2-character escape
 	       * that is not used in legacy Hershey code
