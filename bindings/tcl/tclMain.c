@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/06/24 20:40:45  mjl
+ * Revision 1.3  1994/06/30 18:52:53  mjl
+ * Minor change to eliminate a warning.
+ *
+ * Revision 1.2  1994/06/24  20:40:45  mjl
  * Created function to handle error condition.  Is handled by indirection
  * through a global pointer, so can be replaced.  This call has to bypass
  * the interpreter since it's important that the interp->result string is
@@ -54,6 +57,7 @@
 #define _POSIX_SOURCE
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <tcl.h>
 #include <errno.h>
 
