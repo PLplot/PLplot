@@ -15,8 +15,10 @@ TCL_C = \
 
 TCL_OBJ = \
 	tclAPI.o \
-	tclMain.o \
 	tclMatrix.o
+
+TCL_OBJ_SA = \
+	tclMain.o 
 
 TCL_EXE	= pltcl
 

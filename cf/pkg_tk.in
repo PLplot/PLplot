@@ -21,8 +21,10 @@ TK_OBJ = \
 	tkshell.o \
 	tcpip.o \
 	plframe.o \
-	tkMain.o \
 	plr.o
+
+TK_OBJ_SA = \
+	tkMain.o 
 
 TK_EXE	= plserver
 

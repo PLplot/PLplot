@@ -16,7 +16,9 @@ FSTUB_C = \
 FSTUB_OBJ = \
 	sc3d.o \
 	sccont.o \
-	scstubs.o \
+	scstubs.o 
+
+FSTUB_OBJ_SA = \
 	strutil.o \
 	sfstubs.o 
 
