@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/03/23 06:54:14  mjl
+ * Revision 1.15  1994/04/08 11:53:59  mjl
+ * Split off some stuff into the new file plplotTK.h, and made some function
+ * name changes to help keep the namespace consistent.
+ *
+ * Revision 1.14  1994/03/23  06:54:14  mjl
  * Include of "plplotio.h" (no longer existant) eliminated.
  *
  * Revision 1.13  1994/03/22  23:17:35  furnish
@@ -38,14 +42,8 @@
  * Declarations for plserver and associated files.  
  */
 
-#include "plplotP.h"
-#include "plplotX.h"
-#include "pdf.h"
-#include "plstream.h"
-
-#include <tcl.h>
-#include <tk.h>
-
+#include <plplotP.h>
+#include <plplotTK.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
@@ -75,28 +73,23 @@ typedef struct {
 /* Create top level window */
 
 int
-tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
-	    char *display, char *basename, char *classname);
+pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
+	      char *display, char *basename, char *classname);
 
 /* Run a script */
 
 int
-tk_source(Tk_Window w, Tcl_Interp *interp, char *script);
+pltk_source(Tk_Window w, Tcl_Interp *interp, char *script);
 
 /* performs application-specific initialization */
 
 int
-plTcl_AppInit(Tcl_Interp *interp);
-
-/* Sets up auto_path variable */
-
-int
-set_auto_path(Tcl_Interp *interp);
+pltk_Init(Tcl_Interp *interp);
 
 /* Tcl command -- wait until the specified condition is satisfied. */
 
 int
-Wait_Until(ClientData, Tcl_Interp *, int, char **);
+plWait_Until(ClientData, Tcl_Interp *, int, char **);
 
 /* from plr.c */
 
@@ -125,4 +118,4 @@ pl_PacketSend(Tcl_Interp *interp, PLiodev *iodev, PDFstrm *pdfs);
 /* Tcl command -- return the IP address for the current host.  */
 
 int
-Host_ID(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
+plHost_ID(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
