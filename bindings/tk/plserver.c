@@ -93,6 +93,14 @@ main(int argc, char **argv)
     if (tk_toplevel(&w, interp, display, argv[0], 0))
 	abort_session("");
 
+/* Create new tclIndex file -- a convenience */
+
+    if (mkidx != NULL) {
+	tcl_cmd("auto_mkindex . *.tcl");
+	client = NULL;
+	abort_session("");
+    }
+
 /* Initialize stuff known to interpreter */
 
     configure(argc, argv);
@@ -102,26 +110,24 @@ main(int argc, char **argv)
     if (tk_source(w, interp, "$tk_library/wish.tcl"))
 	abort_session("");
 
-/* Run user startup code */
-
-    if (tk_source(w, interp, file))
-	abort_session("");
-
-/* Create new tclIndex file -- a convenience */
-
-    if (mkidx != NULL) {
-	tcl_cmd("auto_mkindex . *.tcl");
-	client = NULL;
-	abort_session("");
-    }
-
 /* Set up auto_path */
 
     set_auto_path();
 
+/* 
+* Run user startup code.
+*
+* Note you can change the name of the initialization proc here if desired.
+* This is useful for wrapping plserver_init in your own code.  If the
+* "source" command had some sort of path mechanism I wouldn't have to go
+* through all these contortions.
+*/
+    if (tk_source(w, interp, file))
+	abort_session("");
+
 /* Configure main window, default settings.  Autoloaded. */
 
-    tcl_cmd("plserver_init");
+    tcl_cmd("$plserver_init_proc");
 
 /* Send notification to client if necessary */
 
@@ -215,6 +221,10 @@ configure(int argc, char **argv)
     Tcl_CreateCommand(interp, "plframe", plFrameCmd,
                       (ClientData) w, (void (*)()) NULL);
 
+/* Default initialization proc */
+
+    Tcl_SetVar(interp, "plserver_init_proc", "plserver_init", 0);
+
 /* Now variable information. */
 /* For uninitialized variables it's better to skip the Tcl_SetVar. */
 
@@ -263,19 +273,7 @@ set_auto_path(void)
 /* Add /usr/local/plplot/tcl */
 
     Tcl_SetVar(interp, "dir", "/usr/local/plplot/tcl", TCL_GLOBAL_ONLY);
-/*
     tcl_cmd("set auto_path \"$dir $auto_path\"");
-*/
-    tcl_cmd("puts stderr I_am_a_test");
-
-    tcl_cmd("puts stderr $dir");
-
-    tcl_cmd("puts stderr $auto_path");
-
-    tcl_cmd("puts stderr I_am_a_test_number_2");
-
-    tcl_cmd("set auto_path [list $dir $auto_path]");
-
 #ifdef DEBUG
     fprintf(stderr, "plserver: adding %s to auto_path\n", "/usr/local/plplot");
     path = Tcl_GetVar(interp, "auto_path", 0);
