@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/02/27 04:50:33  mjl
-   Simplified fgetpos/fsetpos usage, to where it will now actually work on rays,
-   and I hope the Amiga and Linux also.  Lesson to all: seeking in C is fragile!
-   Also added lots of diagnostics, enabled when DEBUG is defined.
+   Revision 1.9  1993/03/03 16:17:59  mjl
+   Added #include <stdlib.h> since the code needs to exit(1) on some errors.
 
+ * Revision 1.8  1993/02/27  04:50:33  mjl
+ * Simplified fgetpos/fsetpos usage, to where it will now actually work on rays,
+ * and I hope the Amiga and Linux also.  Lesson to all: seeking in C is fragile!
+ * Also added lots of diagnostics, enabled when DEBUG is defined.
+ *
  * Revision 1.7  1993/02/27  01:41:39  mjl
  * Changed from ftell/fseek to fgetpos/fsetpos.
  *
@@ -58,6 +61,7 @@
 
 #include "plplot.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "drivers.h"
