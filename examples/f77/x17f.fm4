@@ -41,6 +41,12 @@ C--------------------------------------------------------------------------
 
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
+
+C      some fortran compilers demand typing of intrinsic rand, and
+C      although this is not demanded on g77 it also works there.
+C      n.b. real*4 will be left alone by double2single.sed script.
+      real*4 rand
+
 C      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 

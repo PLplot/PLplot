@@ -28,6 +28,10 @@ C      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
       integer digmax
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
+C      some fortran compilers demand typing of intrinsic lnblnk, and
+C      although this is not demanded on g77 it also works there.
+      integer lnblnk
+      
 C      Process command-line arguments
       call plparseopts(PL_PARSE_FULL)
 
