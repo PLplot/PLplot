@@ -1,3 +1,32 @@
+plplot (5.2.1-17) unstable; urgency=low
+
+  * Rebuilt against the new python2.3-dev itcl/itk 3.2 and iwidgets4
+    packages.
+  * debian/control:
+    - Bumped Standards-Version to 3.6.1.
+    - Bumped build-dependencies from to python2.3, itcl3, and itk3.
+    - plplot-tcl depends now on iwidgets4.
+  * sysloc.in, configure.ac: Using patched version from CVS upstream with
+    fixes in the Python configuration and in the list of include
+    directories to find files itcl.h and itk.h.
+  * Used new CVS upstream version of the documentation files with
+    legacy license statement removed.  A new .orig.tar.gz was generated,
+    since it was impossible to patch binary files, like plplot-5.2.1.pdf.
+    The plplot-doc package is now DFSG compliant (closes: #202761).
+  * utils/plrender.c: Patched from CVS upstream.  From the commit log:
+    Comment out call to plSetInternalOpt which uses the tcl_cmd option
+    that has been disabled in plargs.c.  This fix solves the plrender
+    memory management problems and the crashes associated with plrender
+    and device tk.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sat, 23 Aug 2003 22:32:46 +0200
+
+plplot (5.2.1-16) unstable; urgency=low
+
+  * Disallow Build-Conflicts on f2c and fort77 for m68k.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Wed,  9 Jul 2003 23:29:46 +0200
+
 plplot (5.2.1-15) unstable; urgency=low
 
   * Added build-dependency on fort77 for the m68k to match the

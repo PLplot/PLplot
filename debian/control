@@ -2,9 +2,9 @@ Source: plplot
 Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@debian.org>
-Standards-Version: 3.5.9
-Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev, g77 [!m68k], fort77 [m68k], g++-3.2, itk3.1-dev, python-numeric | python2.2-numeric, python-dev | python2.2-dev, octave2.1-headers | octave2.0-headers, libgd2-dev, libgnome-dev, m4, perl, libqhull-dev, libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev
-Build-Conflicts: f2c, fort77
+Standards-Version: 3.6.1
+Build-Depends: debhelper (>= 4.1.4), tcl8.4-dev, tk8.4-dev, itcl3-dev, xlibs-dev, g77 [!m68k], fort77 [m68k], g++-3.2, itk3-dev, python-numeric | python2.3-numeric, python-dev | python2.3-dev, octave2.1-headers | octave2.0-headers, libgd2-dev, libgnome-dev, m4, perl, libqhull-dev, libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev
+Build-Conflicts: f2c [!m68k], fort77 [!m68k]
 
 Package: libplplot5
 Architecture: any
@@ -64,7 +64,7 @@ Description: Scientific plotting library (Gnome canvas driver)
 Package: plplot-tcl
 Architecture: any
 Priority: extra
-Depends: plplot-xwin, iwidgets3.1, ${shlibs:Depends}
+Depends: plplot-xwin, iwidgets4, ${shlibs:Depends}
 Conflicts: plplot-lib, libplplot5 (<< 5.2.0.cvs.20030317)
 Description: Tcl/Tk support for PLplot, a plotting library
  This package contains the Tcl/Tk support for PLplot, a scientific

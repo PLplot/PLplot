@@ -1,13 +1,17 @@
 This package was debianized by Rafael Laboissiere rafael@debian.org on
 Sun Feb 16 18:44:55 CET 2003
 
-It was built directly from the CVS sources available at:
+It was downloaded from:
+
+    http://sourceforge.net/project/showfiles.php?group_id=2915
+
+Several files were backported from the CVS sources available at:
 
     http://sourceforge.net/cvs/?group_id=2915
 
 Below is the copyright notice that comes with the source distribution
 (reference to the location of LGPL text in the Debian system was
-added): 
+added):
 
 
 Copyright (from file "Copyright" in the pristine source distributions;
@@ -61,13 +65,13 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the names of Digital or MIT not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -78,8 +82,50 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 ******************************************************************************
 
+The documentation files are distributed under the following license terms:
+
+               DocBook documentation for the PLplot Library
+
+Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
+Copyright (C) 1999, 2000, 2001, 2003 Alan W. Irwin and Rafael Laboissiere,
+Copyright (C) 2003  Joao Cardoso
+
+License terms:
+
+  ===========================================================================
+
+    Redistribution and use in source (XML DocBook) and "compiled" forms
+    (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
+    modification, are permitted provided that the following conditions are
+    met:
+
+       1. Redistributions of source code (XML DocBook) must retain the
+          above copyright notice, this list of conditions and the following
+          disclaimer as the first lines of this file unmodified.
+
+       2. Redistributions in compiled form (transformed to other DTDs,
+          converted to HTML, PDF, PostScript, and other formats) must
+          reproduce the above copyright notice, this list of conditions and
+          the following disclaimer in the documentation and/or other
+          materials provided with the distribution.
+
+    Important: THIS DOCUMENTATION IS PROVIDED BY THE PLPLOT PROJECT "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+    THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE PLPLOT PROJECT BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+    BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+    WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  ===========================================================================
+
+
 Any file that is explicitly marked as "public domain" is free from any
-restriction on distribution.  
+restriction on distribution.
 
 Any file that has a explicit copyright notice may be distributed under
 the terms of both the LGPL and whatever stated conditions accompany the

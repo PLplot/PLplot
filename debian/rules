@@ -28,7 +28,7 @@ arch		:= $(shell dpkg-architecture -qDEB_HOST_ARCH)
 # Keep the code below, just in case it is needed again
 # ifeq ($(shell if test "$(arch)" = hppa -o "$(arch)" = powerpc
 #                 -o "$(arch)" = m68k -o "$(arch)" = arm ; then
-ifeq ($(shell if test "$(arch)" = noarch ; then \
+ifeq ($(shell if test "$(arch)" = none ; then \
                 echo yes ; \
               else \
                 echo no ; \
