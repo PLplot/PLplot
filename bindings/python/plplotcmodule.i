@@ -31,9 +31,10 @@ the one supplied in plmodule.c in that:
    3) it works both with the single and double-precision versions of the
       PLplot library.
 
-This is known to work with swig-1.3.11 and python-2.2.1 on Windows 2000 and
-swig-1.3.11 and python-2.1.3 on Linux/Unix (only tested on Debian woody so
-far).
+This is known to work with swig-1.3.17 (versions prior to 1.3.14 *known* not
+to work, 1.3.14-1.3.16 might work but you are on your own).  The resulting
+interface works for both python-1.5.2 (RedHat 7.3) and python-2.1.3 (Debian
+woody).
 
 */
 
