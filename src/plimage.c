@@ -104,7 +104,7 @@ grimage(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny)
 
 /*-------------------------------------------------------------------------*\
  * plimage
- *           (subject to change in the future)
+ *           (***** SUBJECT TO CHANGE ******)
  *
  * arguments are
  *   data: array containing image data
@@ -152,7 +152,7 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
     for (iy=0; iy<ny; iy++)
       data[ix*ny+iy] = idata[ix][iy];
 
-  if( plsc->is_a_fast_image_device == 0) {
+  if( plsc->dev_fastimg == 0) {
     plimageslow( data, nx,  ny, 
 		 xmin, xmax, ymin, ymax,
 		 Dxmin, Dxmax, Dymin, Dymax,
