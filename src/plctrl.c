@@ -1,16 +1,19 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/09/08 02:37:48  mjl
-   Added plGetName for building up file name specs out of path components.
-   Also moved some utility functions from plstream.c here.
+   Revision 1.6  1993/09/27 20:40:12  mjl
+   Added #include <string.h> to pick up prototype for strcat.
 
+ * Revision 1.5  1993/09/08  02:37:48  mjl
+ * Added plGetName for building up file name specs out of path components.
+ * Also moved some utility functions from plstream.c here.
+ *
  * Revision 1.4  1993/07/31  08:18:10  mjl
  * Changes to text/graph screen switching commands to reflect reorganization.
  *
  * Revision 1.3  1993/07/01  22:20:19  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".  Moved functions plend() and plend1()
+ * plplot functions now start with "plP_". Moved functions plend() and plend1()
  * to plcore.c.  Added pl_cmd() as a front-end to the driver escape function
  * to allow virtually any command & data be sent to the driver by the calling
  * program.
@@ -36,6 +39,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static void	strcat_delim	(char *);
 
