@@ -1,3 +1,0 @@
-# Append to effective python path so that can find plplot modules.
-import sys
-sys.path.insert (0, "@PYTHON_INSTDIR@")
