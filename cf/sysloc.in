@@ -26,6 +26,7 @@ CDLIBSTR=-lcd
 PNGLIBSTR=-lpng
 JPEGLIBSTR=-ljpeg
 ZLIBLIBSTR=-lz
+FREETYPELIBSTR=-lfreetype
 
 # Add the current directory to the include path.  This must occur
 # first in the list, before we add the directories for any auxilliary
@@ -440,6 +441,69 @@ if test "$enable_cgm" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# Find freetype 2 library and header required for enabling 
+# driver options for handling the fonts with the freetype library.
+# Written by Alan W. Irwin.
+# ----------------------------------------------------------------------------
+
+if test "$with_freetype" = "yes"; then
+    if test -z "$FREETYPEINCDIR"; then
+        AC_TRY_CPP([#include <freetype/config/ftheader.h>], [ FREETYPEINCDIR=default ], [
+	incdirs="\
+	/usr/include/freetype2 \
+	/usr/local/include/freetype2"
+
+        for dir in $incdirs; do
+	    if test -r "$dir/freetype/config/ftheader.h"; then
+	       FREETYPEINCDIR="$dir"
+	       break
+	    fi
+	done
+	if test -z "$FREETYPEINCDIR"; then
+	    AC_MSG_RESULT(warning: freetype header files not found)
+	    FREETYPEINCDIR=default
+	    with_freetype=no
+	fi ])
+    fi
+    if test "$FREETYPEINCDIR" = "/usr/include"; then
+        FREETYPEINCDIR=default
+    fi
+
+    if test -z "$FREETYPELIBDIR"; then
+        AC_CHECK_LIB(freetype, main, [ FREETYPELIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libfreetype.so" -o -r "$dir/libfreetype.a"; then
+	        FREETYPELIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
+		break
+	    fi
+	done
+	if test -z "$FREETYPELIBDIR"; then
+	    AC_MSG_RESULT(warning: freetype library not found)
+	    FREETYPELIBDIR=default
+	    with_freetype=no
+	fi ])
+    fi
+    if test "$FREETYPELIBDIR" = "/usr/lib"; then
+        FREETYPELIBDIR=default
+    fi
+fi
+
+FREETYPELIBS=""
+FREETYPEINCS=""
+if test "$with_freetype" = "yes"; then
+    AC_DEFINE(HAVE_FREETYPE)
+    ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCS, INCPATH)
+    if test "$enable_dyndrivers" = "yes"; then
+	ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBS, LIBPATH)
+    fi
+fi
+
+# ----------------------------------------------------------------------------
 # Make some guesses where the Tcl/Tk include files and libraries are.
 # Look first in the Tcl/Tk distributions and then move on to the standard
 # include file/library locations.  If it's still not found I assume it's
@@ -691,6 +755,9 @@ fi
 if test "$enable_cgm" = "yes"; then
     ADD_TO_INCS($CDINCDIR, INCS, INCPATH)
 fi
+if test "$with_freetype" = "yes"; then
+    ADD_TO_INCS($FREETYPEINCDIR, INCS, INCPATH)
+fi
 if test "$enable_java" = "yes"; then
     ADD_TO_INCS($JAVAINCDIR, INCS, INCPATH)
     ADD_TO_INCS($JAVAMDINCDIR, INCS, INCPATH)
@@ -755,6 +822,9 @@ if test "$enable_cgm" = "yes"; then
     if test "$enable_dyndrivers" != "yes"; then
 	ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, LIBS, LIBPATH)
     fi
+fi
+if test "$with_freetype" = "yes"; then
+    ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, LIBS, LIBPATH)
 fi
 if test ! -z "$TCL_DL_LIBS"; then
     ADD_TO_LIBS( default, $TCL_DL_LIBS, LIBS, LIBPATH)

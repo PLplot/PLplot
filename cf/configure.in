@@ -83,6 +83,7 @@ with_fseek=no
 with_pkgdir=
 with_rpath=yes
 with_nobraindead=no
+with_freetype=no
 
 enable_drivers=yes
 #no required by default because yes needs shared libraries which we don't know
@@ -412,6 +413,9 @@ MY_ARG_WITH(fseek,
 
 MY_ARG_WITH(rpath,
   [  --with-rpath            link libraries with -rpath option ($with_rpath)])
+
+MY_ARG_WITH(freetype,
+  [  --with-freetype         enable driver options for using freetype library for fonts ($with_freetype)])
 
 MY_ARG_WITH(nobraindead)
 
@@ -1208,6 +1212,7 @@ with_shlib:	$with_shlib		with_double:	$with_double
 with_debug:	$with_debug		with_opt:	$with_opt
 with_warn:	$with_warn		with_profile:	$with_profile
 with_gcc:	$with_gcc		with_rpath:	$with_rpath
+with_freetype:	$with_freetype
 
 enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
 enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
