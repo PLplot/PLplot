@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.39  1995/06/01 21:44:36  mjl
+ * Revision 1.40  1995/06/11 19:22:35  mjl
+ * Changed caddr_t treatment to make bogus cases easier to diagnose.
+ *
+ * Revision 1.39  1995/06/01  21:44:36  mjl
  * Repaired some bogus comments.
  *
  * Revision 1.38  1995/05/26  20:20:12  mjl
@@ -94,6 +97,10 @@
 \*--------------------------------------------------------------------------*/
 
 #include "plConfig.h"
+#ifdef caddr_t
+#undef caddr_t
+typedef char * caddr_t;
+#endif
 
 /* System headers */
 
