@@ -1219,10 +1219,10 @@ from relative device coordinates,
 
     <para>
       Clears the current page, effectively erasing everything that have
-      been drawn.  This command only works with interactive drivers and not
-      all of them support this yet.  If the current page is divided into
-      subpages, only the current subpage is erased.  The nth subpage
-      can be selected with &pladv;(n).
+      been drawn.  This command only works with interactive drivers; if the driver
+      does not support this, the page is filled with the background color in use.
+      If the current page is divided into subpages, only the current subpage
+      is erased.  The nth subpage can be selected with &pladv;(n).
     </para>
 
   </sect1>
@@ -1641,7 +1641,7 @@ reference stream to the current stream
 
   <sect1 id="plend1" renderas="sect3">
     <title>
-      <function>plend1</function>: End plotting session for 1 stream
+      <function>plend1</function>: End plotting session for current stream
     </title>
 
     <para>
@@ -1660,6 +1660,13 @@ reference stream to the current stream
       &plsstrm; for more info.
     </para>
 
+  </sect1>
+
+  <sect1 id="plenv0" renderas="sect3">
+    <title>
+      <function>plenv0</function>: Same as plenv() but if in multiplot
+      mode does not advance the subpage, instead clears it.
+    </title>
   </sect1>
 
   <sect1 id="plenv" renderas="sect3">
@@ -1742,15 +1749,39 @@ reference stream to the current stream
 	  <parameter>just</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
+        <para>
+           Controls how the axes will be scaled:
+
+        <itemizedlist>
 	<listitem>
 	  <para>
-	    If <literal><parameter>just</parameter>=0</literal>, the x and
+	    <literal>-1</literal>: the scales
+            will not be set, the user must set up the scale before calling
+            plenv() using plsvpa(), plvasp() or other.
+         </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <literal>0</literal>: the x and
 	    y axes are scaled independently to use as much of the screen as
-	    possible, but if
-	    <literal><parameter>just</parameter>=1</literal>, the scales of
+	    possible.
+         </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <literal>1</literal>: the scales of
 	    the x and y axes are made equal.
 	  </para>
 	</listitem>
+	<listitem>
+	  <para>
+	    <literal>2</literal>: the axis of
+	    the x and y axes are made equal, and the plot box will be square.
+	  </para>
+	</listitem>
+    </itemizedlist>
+
+
       </varlistentry>
       <varlistentry>
 	<term>
@@ -1791,6 +1822,12 @@ positions in both coordinates.
 	      </listitem>
 	      <listitem>
 		<para>
+		  <literal>3</literal>: also draw a grid at minor tick
+positions in both coordinates.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
 		  <literal>10</literal>: same as 0 except logarithmic
 		  <literal>x</literal> tick marks. (The <literal>x</literal>
 		  data have to be converted to logarithms separately.)
@@ -1806,6 +1843,13 @@ positions in both coordinates.
 	      <listitem>
 		<para>
 		  <literal>12</literal>: same as 2 except logarithmic
+		  <literal>x</literal> tick marks. (The <literal>x</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>13</literal>: same as 3 except logarithmic
 		  <literal>x</literal> tick marks. (The <literal>x</literal>
                   data have to be converted to logarithms separately.)
 		</para>
@@ -1833,6 +1877,13 @@ positions in both coordinates.
 	      </listitem>
 	      <listitem>
 		<para>
+		  <literal>23</literal>: same as 3 except logarithmic
+		  <literal>y</literal> tick marks. (The <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
 		  <literal>30</literal>: same as 0 except logarithmic
 		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal>
 		  data have to be converted to logarithms separately.)
@@ -1848,6 +1899,13 @@ positions in both coordinates.
 	      <listitem>
 		<para>
 		  <literal>32</literal>: same as 2 except logarithmic
+		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>33</literal>: same as 3 except logarithmic
 		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal>
                   data have to be converted to logarithms separately.)
 		</para>
@@ -3332,6 +3390,13 @@ space for this (80 characters is safe).
                 the approximation.
               </para>
             </listitem>
+            <listitem>
+              <para>
+                <literal>GRID_NNI</literal>, only weights greater then
+                <literal>data</literal> will be accepted. If 0, all weigths
+                will be accepted.
+              </para>
+            </listitem>
           </itemizedlist>
 	</listitem>
       </varlistentry>
@@ -4490,7 +4555,7 @@ source
 	    <itemizedlist>
 	      <listitem>
 		<para>
-		  <literal><parameter>opt</parameter>=1</literal>: Lines
+		  <literal><parameter>opt</parameter>=DRAW_LINEX</literal>: Lines
 		  are drawn showing
 		  <literal><parameter>z</parameter></literal> as a function
 		  of <literal><parameter>x</parameter></literal> for each
@@ -4499,7 +4564,7 @@ source
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal><parameter>opt</parameter>=2</literal>: Lines
+		  <literal><parameter>opt</parameter>=DRAW_LINEY</literal>: Lines
 		  are drawn showing
 		  <literal><parameter>z</parameter></literal> as a function
 		  of <literal><parameter>y</parameter></literal> for each
@@ -4508,7 +4573,7 @@ source
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal><parameter>opt</parameter>=3</literal>: Network
+		  <literal><parameter>opt</parameter>=DRAW_LINEXY</literal>: Network
 		  of lines is drawn connecting points at which function is
 		  defined.
 		</para>
@@ -4518,8 +4583,186 @@ source
 	</listitem>
       </varlistentry>
     </variablelist>
-
   </sect1>
+
+
+
+  <sect1 id="plmeshc" renderas="sect3">
+    <title>
+      <function>plmesh</function>: Magnitude colored plot surface mesh with contour.
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plmesh</function>
+	</funcdef>
+        <paramdef><parameter>x</parameter></paramdef>
+        <paramdef><parameter>y</parameter></paramdef>
+        <paramdef><parameter>z</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>opt</parameter></paramdef>
+        <paramdef><parameter>clevel</parameter></paramdef>
+        <paramdef><parameter>nlevel</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+    Identical to <function>plmesh</function> but with extra functionalities:
+    the surface mesh can be colored accordingly to the current z value being plotted,
+    a contour plot can be drawn at the base XY plane, and a curtain can be drawn between
+    the plotted function border and the base XY plane.
+    </para>
+
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of x coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of y coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a vectored two-dimensional array with set of
+	    function values.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>x</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>y</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>opt</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Determines the way in which the surface is represented. To specify
+            more than one option just add the options, e.g. DRAW_LINEXY + MAG_COLOR
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_LINEX</literal>: Lines
+		  are drawn showing
+		  <literal><parameter>z</parameter></literal> as a function
+		  of <literal><parameter>x</parameter></literal> for each
+		  value of <literal><parameter>y</parameter>[j]</literal>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_LINEY</literal>: Lines
+		  are drawn showing
+		  <literal><parameter>z</parameter></literal> as a function
+		  of <literal><parameter>y</parameter></literal> for each
+		  value of <literal><parameter>x</parameter>[i]</literal>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_LINEXY</literal>: Network
+		  of lines is drawn connecting points at which function is
+		  defined.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=MAG_COLOR</literal>: Each line
+                  in the mesh is colored according to the z value being plotted. The 
+                  color is used from the current colormap 1.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=BASE_CONT</literal>: A contour
+                  plot is drawn at the base XY plane using parameters 
+                  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_SIDES</literal>: draws a curtain
+                  between the base XY plane and the borders of the plotted function.
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>clevel</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the array that defines the contour level spacing.
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nlevel</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+          Number of elements in the <literal>clevel</literal> array.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+    </setc1>
 
   <sect1 id="plmkstrm" renderas="sect3">
     <title>
@@ -4754,6 +4997,9 @@ default
       <literal><parameter>opt</parameter></literal> controls the way in
       which the surface is displayed.  For further details see <xref
       linkend="tri-d-plots"/>.
+      The only difference between plmesh() and plot3d() is that plmesh() draws
+      the botton side of the surface, while plot3d() only draws the surface as
+      view from the top.
     </para>
 
     <variablelist>
@@ -4828,7 +5074,7 @@ default
 	    <itemizedlist>
 	      <listitem>
 		<para>
-		  <literal><parameter>opt</parameter>=1</literal>: Lines
+		  <literal><parameter>opt</parameter>=DRAW_LINEX</literal>: Lines
 		  are drawn showing
 		  <literal><parameter>z</parameter></literal> as a function
 		  of <literal><parameter>x</parameter></literal> for each
@@ -4837,7 +5083,7 @@ default
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal><parameter>opt</parameter>=2</literal>: Lines
+		  <literal><parameter>opt</parameter>=DRAW_LINEY</literal>: Lines
 		  are drawn showing
 		  <literal><parameter>z</parameter></literal> as a function
 		  of <literal><parameter>y</parameter></literal> for each
@@ -4846,7 +5092,7 @@ default
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal><parameter>opt</parameter>=3</literal>: Network
+		  <literal><parameter>opt</parameter>=DRAW_LINEXY</literal>: Network
 		  of lines is drawn connecting points at which function is
 		  defined.
 		</para>
@@ -4872,9 +5118,45 @@ default
 
   </sect1>
 
-  <sect1 id="plotsh3d" renderas="sect3">
+
+  <sect1 id="plot3dc" renderas="sect3">
     <title>
-      <function>plotsh3d</function>: Plot shaded 3-d surface plot
+      <function>plot3dc</function>: Magnitude colored plot surface with contour.
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plot3dc</function>
+	</funcdef>
+        <paramdef><parameter>x</parameter></paramdef>
+        <paramdef><parameter>y</parameter></paramdef>
+        <paramdef><parameter>z</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>opt</parameter></paramdef>
+        <paramdef><parameter>clevel</parameter></paramdef>
+        <paramdef><parameter>nlevel</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+    Identical to <function>plot3d</function> but with extra functionalities:
+    the surface mesh can be colored accordingly to the current z value being plotted,
+    a contour plot can be drawn at the base XY plane, and a curtain can be drawn between
+    the plotted function border and the base XY plane.
+    The arguments are identical to <function>plmeshc</function>. The only difference between
+    plmeshc() and plot3dc() is that plmeshc() draws the botton side of the surface, while
+    plot3dc() only draws the surface as view from the top.
+    </para>
+
+    </sect1>
+
+  <sect1 id="plsurf3d" renderas="sect3">
+    <title>
+      <function>plsurf3d</function>: Plot shaded 3-d surface plot
     </title>
 
     <para>
@@ -4888,7 +5170,9 @@ default
         <paramdef><parameter>z</parameter></paramdef>
         <paramdef><parameter>nx</parameter></paramdef>
         <paramdef><parameter>ny</parameter></paramdef>
-        <paramdef><parameter>side</parameter></paramdef>
+        <paramdef><parameter>opt</parameter></paramdef>
+        <paramdef><parameter>clevel</parameter></paramdef>
+        <paramdef><parameter>nlevel</parameter></paramdef>
       </funcprototype>
       </funcsynopsis>
     </para>
@@ -4969,16 +5253,69 @@ default
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>side</parameter>
+	  <parameter>opt</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Flag to indicate whether or not ``sides'' should be draw on the
-	    figure.  If <literal><parameter>side</parameter>=0</literal> no
-	    sides are drawn, otherwise the sides are drawn.
+	    Determines the way in which the surface is represented. To specify
+            more than one option just add the options, e.g. FACETED + SURF_CONT
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=FACETED</literal>: Network
+		  of lines is drawn connecting points at which function is
+		  defined.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=BASE_CONT</literal>: A contour
+                  plot is drawn at the base XY plane using parameters 
+                  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=SURF_CONT</literal>: A contour
+                  plot is drawn at the surface plane using parameters 
+                  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_SIDES</literal>: draws a curtain
+                  between the base XY plane and the borders of the plotted function.
+		</para>
+	      </listitem>
+	    </itemizedlist>
 	  </para>
 	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <parameter>clevel</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the array that defines the contour level spacing.
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nlevel</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+          Number of elements in the <literal>clevel</literal> array.
+	  </para>
+	</listitem>
+      </varlistentry>
       </varlistentry>
     </variablelist>
 
