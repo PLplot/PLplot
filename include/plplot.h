@@ -236,8 +236,8 @@ typedef struct {
     unsigned int button;	/* mouse button selected */
     char string[PL_MAXKEY];	/* translated string */
     int pX, pY;			/* absolute device coordinates of pointer */
-    PLFLT dX, dY;		/* relative device coordinates of pointer */
-    PLFLT wX, wY;		/* world coordinates of pointer */
+    double dX, dY;		/* relative device coordinates of pointer */
+    double wX, wY;		/* world coordinates of pointer */
 } PLGraphicsIn;
 
 /* Structure for describing the plot window */
@@ -245,8 +245,8 @@ typedef struct {
 #define PL_MAXWINDOWS	64	/* Max number of windows/page tracked */
 
 typedef struct {
-    PLFLT dxmi, dxma, dymi, dyma;	/* min, max window rel dev coords */
-    PLFLT wxmi, wxma, wymi, wyma;	/* min, max window world coords */
+    double dxmi, dxma, dymi, dyma;	/* min, max window rel dev coords */
+    double wxmi, wxma, wymi, wyma;	/* min, max window world coords */
 } PLWindow;
 
 /* Structure for doing display-oriented operations via escape commands */
