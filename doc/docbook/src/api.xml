@@ -3101,9 +3101,9 @@ space for this (80 characters is safe).
     
   </sect1>
   
-  <sect1 id="plggriddata" renderas="sect3">
+  <sect1 id="plgriddata" renderas="sect3">
     <title>
-      <function>plggriddata</function>: #FILL SHORT DESCRIPTION HERE#
+      <function>plgriddata</function>: grids data from irregularly sampled data
     </title>
 
     <para>
@@ -3128,7 +3128,14 @@ space for this (80 characters is safe).
     </para>
 
     <para>
-      #FILL EXTENDED DESCRIPTION HERE#
+     Real world data is frequently irregularly sampled, but all PLplot
+     3D plots require data placed in a uniform grid. This function
+     takes irregularly sampled data from three input arrays x[npts],
+     y[npts] and z[npts], reads the desired grid location from input
+     arrays xg[nptsx] and yg[nptsy], and returns the gridded data into
+     output array zg[nptsx][nptsy]. The algorithm used to grid the
+     data is specified with the argument 'type' which can have one
+     parameter specified in argument 'data'.
     </para>
 
     <variablelist>
@@ -3139,7 +3146,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    The input x array.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3150,7 +3157,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    The input y array.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3161,7 +3168,8 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    The input z array. Each triple x[i], y[i], z[i] represents
+	    one data sample coordinates.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3172,7 +3180,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    The number of data samples in the x, y and z arrays.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3183,7 +3191,9 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    The input array that specifies the grid spacing in the x
+	    direction. Usually xg has nptsx equaly spaced values from
+	    the mininum to the maximum values of the x input array
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3194,7 +3204,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    The number of points in the xg array.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3205,7 +3215,8 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    The input array that specifies the grid spacing in the y
+	    direction. Similar to the xg parameter
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3216,7 +3227,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    The number of points in the yg array.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3227,7 +3238,10 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    The output array, where data lies in the regular grid
+	    specified by xg and yg. the zg array must exists or be
+	    allocated by the user prior to the calling, and must have
+	    dimension zg[nptsx][xptsy].
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3238,7 +3252,16 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    The type of gridding algorithm to use, which can be:
+
+             GRID_CSA     Bivariate Cubic Spline approximation
+             GRID_DTLI    Delaunay Triangulation Linear Interpolation
+             GRID_NNI     Natural Neighbors Interpolation
+             GRID_NNIDW   Nearest Neighbors Inverse Distance Weighted
+             GRID_NNLI    Nearest Neighbors Linear Interpolation
+             GRID_NNAIDW  Nearest Neighbors Around Inverse Distance Weighted
+
+             for details on the algorithm read the source file plgridd.c
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3249,7 +3272,18 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-	    #DESC#
+	    Some gridding algorithms require extra data, which can be
+	    specified through this argument. Currently, for algoritm:
+
+            GRID_NNIDW, 'data' specifies the number of neighbors to
+            use, the lower the value, the noisier (more local) the
+            approximation is.
+
+            GRID_NNLI, 'data' specifies what a thin triangle is, in
+            the range [1. .. 2.]. High values enable the usage of very
+            thin triangles for interpolation, possibly resulting in
+            error in the approximation.
+
 	  </para>
 	</listitem>
       </varlistentry>
