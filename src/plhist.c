@@ -1,17 +1,19 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/03/23 08:15:17  mjl
+ * Revision 1.9  1994/06/30 18:22:10  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
+ * Revision 1.8  1994/03/23  08:15:17  mjl
  * Some cruft elimination.
  *
  * All external API source files: replaced call to plexit() on simple
  * (recoverable) errors with simply printing the error message (via
  * plabort()) and returning.  Should help avoid loss of computer time in some
  * critical circumstances (during a long batch run, for example).
- *
- * Revision 1.7  1993/07/01  22:13:38  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
 */
 
 /*	plhist.c
@@ -20,31 +22,28 @@
 */
 
 #include "plplotP.h"
-#include <math.h>
 
 /*----------------------------------------------------------------------*\
-* void plhist()
-*
-* Draws a histogram of n values of a variable in array data[0..n-1] in
-* the range datmin to datmax using nbin bins. If "oldwin" is 1, the
-* histogram is plotted in the current window. If not, the routine calls
-* "plenv" to set up the graphics environment.
+ * void plhist()
+ *
+ * Draws a histogram of n values of a variable in array data[0..n-1] in
+ * the range datmin to datmax using nbin bins. If "oldwin" is 1, the
+ * histogram is plotted in the current window. If not, the routine calls
+ * "plenv" to set up the graphics environment.
 \*----------------------------------------------------------------------*/
 
 void
 c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 	 PLINT nbin, PLINT oldwin)
 {
-    PLINT bin, level;
+    PLINT i, bin;
     PLFLT *x, *y, dx, ymax;
-    short i;
 
-    plP_glev(&level);
-    if (level < 1) {
+    if (plsc->level < 1) {
 	plabort("plhist: Please call plinit first");
 	return;
     }
-    if (level < 3 && oldwin) {
+    if (plsc->level < 3 && oldwin) {
 	plabort("plhist: Please set up window first");
 	return;
     }
@@ -75,10 +74,11 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 	y[bin]++;
     }
 
-    if (!oldwin) {
+    if ( ! oldwin) {
 	ymax = 0.0;
 	for (i = 0; i < nbin; i++)
 	    ymax = MAX(ymax, y[i]);
+
 	plenv(datmin, datmax, (PLFLT) 0.0, (PLFLT) (1.1 * ymax), 0, 0);
     }
 
@@ -88,12 +88,12 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 }
 
 /*----------------------------------------------------------------------*\
-* void plbin()
-*
-* Plot a histogram using the arrays x and y to represent data values
-* and frequencies respectively. If center is false, x values denote the
-* lower edge of the bin, and if center is true, they denote the center
-* of the bin.
+ * void plbin()
+ *
+ * Plot a histogram using the arrays x and y to represent data values
+ * and frequencies respectively. If center is false, x values denote the
+ * lower edge of the bin, and if center is true, they denote the center
+ * of the bin.
 \*----------------------------------------------------------------------*/
 
 void
@@ -101,10 +101,8 @@ c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT center)
 {
     PLINT i;
     PLFLT xmin, xmax, vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLINT level;
 
-    plP_glev(&level);
-    if (level < 3) {
+    if (plsc->level < 3) {
 	plabort("plbin: Please set up window first");
 	return;
     }

@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/04/30 16:15:12  mjl
+ * Revision 1.9  1994/06/30 18:22:16  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
+ * Revision 1.8  1994/04/30  16:15:12  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -12,18 +19,6 @@
  * array.  Also, main shade function now accepts two arguments for handling
  * color of the shaded region -- the color map (0 or 1) and the index
  * (a float; >1 and integral for cmap0, in range [0,1] for cmap1).
- *
- * Revision 1.6  1993/12/09  20:36:52  mjl
- * Fixed some function prototypes.
- *
- * Revision 1.5  1993/10/21  19:28:52  mjl
- * Added prototypes for passed-in function pointers.
- *
- * Revision 1.4  1993/09/24  20:33:27  furnish
- * Went wild with "const correctness".  Can now pass a C++ String type to
- * most (all that I know of) PLPLOT functions.  This works b/c String has
- * an implicit conversion to const char *.  Now that PLPLOT routines take
- * const char * rather than char *, use from C++ is much easier.
 */
 
 /*	plshade.c
@@ -34,104 +29,103 @@
 */
 
 /*----------------------------------------------------------------------*\
-* Call syntax for plshade():
-* 
-* void plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined, 
-*	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, 
-* 	PLFLT shade_min, PLFLT shade_max, 
-* 	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
-* 	PLINT max_color, PLINT max_width, void (*fill)(), PLINT
-* 	rectangular, ...)
-* 
-* arguments:
-* 
-* 	PLFLT &(a[0][0])
-* 
-* Contains array to be plotted. The array must have been declared as PLFLT
-* a[nx][ny].  See following note on fortran-style arrays.
-* 
-* 	PLINT nx, ny
-* 
-* Dimension of array "a".
-* 
-* 	char &(defined[0][0])
-* 
-* Contains array of flags, 1 = data is valid, 0 = data is not valid.  This
-* array determines which sections of the data is to be plotted.  This argument
-* can be NULL if all the values are valid.  Must have been declared as char
-* defined[nx][ny].
-* 
-* 	PLFLT xmin, xmax, ymin, ymax
-* 
-* Defines the "grid" coordinates.  The data a[0][0] has a position of
-* (xmin,ymin).
-* 
-* 	void (*mapform)()
-* 
-* Transformation from `grid' coordinates to world coordinates.  This pointer to
-* a function can be NULL in which case the grid coordinates are the same as the
-* world coordinates.
-* 
-* 	PLFLT shade_min, shade_max
-* 
-* Defines the interval to be shaded. If shade_max <= shade_min, plshade does
-* nothing.
-* 
-*	PLINT sh_cmap, PLFLT sh_color, PLINT sh_width
-* 
-* Defines color map, color map index, and width used by the fill pattern.
-* 
-* 	PLINT min_color, min_width, max_color, max_width
-* 
-* Defines pen color, width used by the boundary of shaded region. The min
-* values are used for the shade_min boundary, and the max values are used on
-* the shade_max boundary.  Set color and width to zero for no plotted
-* boundaries.
-* 
-* 	void (*fill)()
-* 
-* Routine used to fill the region.  Use plfill.  Future version of plplot may
-* have other fill routines.
-* 
-* 	PLINT rectangular
-* 
-* Flag. Set to 1 if rectangles map to rectangles after (*mapform)() else set to
-* zero. If rectangular is set to 1, plshade tries to save time by filling large
-* rectangles.  This optimization fails if (*mapform)() distorts the shape of
-* rectangles.  For example a plot in polor coordinates has to have rectangular
-* set to zero.
-* 
-* Example mapform's:
-* 
-* Grid to world coordinate transformation.
-* This example goes from a r-theta to x-y for a polar plot.
-*
-* void mapform(PLINT n, PLFLT *x, PLFLT *y) {
-* 	int i;
-* 	double r, theta;
-* 	for (i = 0; i < n; i++) {
-* 	    r = x[i];
-* 	    theta = y[i];
-* 	    x[i] = r*cos(theta);
-* 	    y[i] = r*sin(theta);	
-* 	}
-* }
-* 
-* Grid was in cm, convert to world coordinates in inches.
-* Expands in x direction.
-*
-* void mapform(PLINT n, PLFLT *x, PLFLT *y) {
-* 	int i;
-* 	for (i = 0; i < n; i++) {
-* 		x[i] = (1.0 / 2.5) * x[i];
-* 		y[i] = (1.0 / 2.5) * y[i];
-* 	}
-* }
-*
+ * Call syntax for plshade():
+ * 
+ * void plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined, 
+ *	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, 
+ * 	PLFLT shade_min, PLFLT shade_max, 
+ * 	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
+ * 	PLINT max_color, PLINT max_width, void (*fill)(), PLINT
+ * 	rectangular, ...)
+ * 
+ * arguments:
+ * 
+ * 	PLFLT &(a[0][0])
+ * 
+ * Contains array to be plotted. The array must have been declared as
+ * PLFLT a[nx][ny].  See following note on fortran-style arrays.
+ * 
+ * 	PLINT nx, ny
+ * 
+ * Dimension of array "a".
+ * 
+ * 	char &(defined[0][0])
+ * 
+ * Contains array of flags, 1 = data is valid, 0 = data is not valid.
+ * This array determines which sections of the data is to be plotted.
+ * This argument can be NULL if all the values are valid.  Must have been
+ * declared as char defined[nx][ny].
+ * 
+ * 	PLFLT xmin, xmax, ymin, ymax
+ * 
+ * Defines the "grid" coordinates.  The data a[0][0] has a position of
+ * (xmin,ymin).
+ * 
+ * 	void (*mapform)()
+ * 
+ * Transformation from `grid' coordinates to world coordinates.  This
+ * pointer to a function can be NULL in which case the grid coordinates
+ * are the same as the world coordinates.
+ * 
+ * 	PLFLT shade_min, shade_max
+ * 
+ * Defines the interval to be shaded. If shade_max <= shade_min, plshade
+ * does nothing.
+ * 
+ *	PLINT sh_cmap, PLFLT sh_color, PLINT sh_width
+ * 
+ * Defines color map, color map index, and width used by the fill pattern.
+ * 
+ * 	PLINT min_color, min_width, max_color, max_width
+ * 
+ * Defines pen color, width used by the boundary of shaded region. The min
+ * values are used for the shade_min boundary, and the max values are used
+ * on the shade_max boundary.  Set color and width to zero for no plotted
+ * boundaries.
+ * 
+ * 	void (*fill)()
+ * 
+ * Routine used to fill the region.  Use plfill.  Future version of plplot
+ * may have other fill routines.
+ * 
+ * 	PLINT rectangular
+ * 
+ * Flag. Set to 1 if rectangles map to rectangles after (*mapform)() else
+ * set to zero. If rectangular is set to 1, plshade tries to save time by
+ * filling large rectangles.  This optimization fails if (*mapform)()
+ * distorts the shape of rectangles.  For example a plot in polor
+ * coordinates has to have rectangular set to zero.
+ * 
+ * Example mapform's:
+ * 
+ * Grid to world coordinate transformation.
+ * This example goes from a r-theta to x-y for a polar plot.
+ *
+ * void mapform(PLINT n, PLFLT *x, PLFLT *y) {
+ * 	int i;
+ * 	double r, theta;
+ * 	for (i = 0; i < n; i++) {
+ * 	    r = x[i];
+ * 	    theta = y[i];
+ * 	    x[i] = r*cos(theta);
+ * 	    y[i] = r*sin(theta);	
+ * 	}
+ * }
+ * 
+ * Grid was in cm, convert to world coordinates in inches.
+ * Expands in x direction.
+ *
+ * void mapform(PLINT n, PLFLT *x, PLFLT *y) {
+ * 	int i;
+ * 	for (i = 0; i < n; i++) {
+ * 		x[i] = (1.0 / 2.5) * x[i];
+ * 		y[i] = (1.0 / 2.5) * y[i];
+ * 	}
+ * }
+ *
 \*----------------------------------------------------------------------*/
 
 #include "plplotP.h"
-#include <math.h>
 #include <float.h>
 
 #define NEG  1
@@ -177,11 +171,11 @@ plctestez(PLFLT *a, PLINT nx, PLINT ny, PLINT ix,
 	  PLINT iy, PLFLT level);
 
 /*----------------------------------------------------------------------*\
-* plshade()
-*
-* Shade region.
-* This interface to plfshade() assumes the 2d function array is passed
-* via a (PLFLT **), and is column-dominant (normal C ordering).
+ * plshade()
+ *
+ * Shade region.
+ * This interface to plfshade() assumes the 2d function array is passed
+ * via a (PLFLT **), and is column-dominant (normal C ordering).
 \*----------------------------------------------------------------------*/
 
 void 
@@ -211,11 +205,11 @@ c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char *defined,
 }
 
 /*----------------------------------------------------------------------*\
-* plshade1()
-*
-* Shade region.
-* This interface to plfshade() assumes the 2d function array is passed
-* via a (PLFLT *), and is column-dominant (normal C ordering).
+ * plshade1()
+ *
+ * Shade region.
+ * This interface to plfshade() assumes the 2d function array is passed
+ * via a (PLFLT *), and is column-dominant (normal C ordering).
 \*----------------------------------------------------------------------*/
 
 void 
@@ -245,10 +239,10 @@ plshade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
 }
 
 /*----------------------------------------------------------------------*\
-* plfshade()
-*
-* Shade region.  
-* Array values are determined by the input function and the passed data.
+ * plfshade()
+ *
+ * Shade region.  
+ * Array values are determined by the input function and the passed data.
 \*----------------------------------------------------------------------*/
 
 void 
@@ -266,15 +260,14 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data)
 {
-    PLINT level, init_width, n, slope, ix, iy;
+    PLINT init_width, n, slope, ix, iy;
     int count, i, j;
     PLFLT *a, *a0, *a1, dx, dy;
     PLFLT x[8], y[8], xp[2], tx, ty;
 
     int *c, *c0, *c1;
 
-    plP_glev(&level);
-    if (level < 3) {
+    if (plsc->level < 3) {
 	plabort("plfshade: window must be set up first");
 	return;
     }
@@ -292,7 +285,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     if (pltr == NULL)
 	rectangular = 1;
 
-    plP_gwid(&init_width);
+    init_width = plsc->width;
 
     pen_col_min = min_color;
     pen_col_max = max_color;
@@ -462,7 +455,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	      case 040:	/* 2 contour lines in box */
 	      case 004:
 		if (n != 6)
-		    fprintf(stderr, "plfshade err n=%ld !6", n);
+		    fprintf(stderr, "plfshade err n=%d !6", (int) n);
 
 		if (slope == 1 && c0[iy] == OK) {
 		    if (fill)
@@ -483,7 +476,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		break;
 	      case 044:
 		if (n != 8)
-		    fprintf(stderr, "plfshade err n=%ld !8", n);
+		    fprintf(stderr, "plfshade err n=%d !8", (int) n);
 		if (fill == NULL)
 		    break;
 		if (slope == 1) {
@@ -553,9 +546,9 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 }
 
 /*----------------------------------------------------------------------*\
-* set_cond()
-*
-* Fills out condition code array.
+ * set_cond()
+ *
+ * Fills out condition code array.
 \*----------------------------------------------------------------------*/
 
 static void 
@@ -589,14 +582,14 @@ set_cond(register int *cond, register PLFLT *a,
 }
 
 /*----------------------------------------------------------------------*\
-* find_interval()
-*
-* Two points x(0) = a0, (condition code c0) x(1) = a1, (condition code c1)
-* return interval on the line that are shaded
-* 
-* returns 0 : no points to be shaded 1 : x[0] <= x < 1 is the interval 2 :
-* x[0] <= x <= x[1] < 1 interval to be shaded n_point, max_points,
-* min_points are incremented location of min/max_points are stored 
+ * find_interval()
+ *
+ * Two points x(0) = a0, (condition code c0) x(1) = a1, (condition code c1)
+ * return interval on the line that are shaded
+ * 
+ * returns 0 : no points to be shaded 1 : x[0] <= x < 1 is the interval 2 :
+ * x[0] <= x <= x[1] < 1 interval to be shaded n_point, max_points,
+ * min_points are incremented location of min/max_points are stored 
 \*----------------------------------------------------------------------*/
 
 static int 
@@ -636,10 +629,10 @@ find_interval(PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x)
 }
 
 /*----------------------------------------------------------------------*\
-* poly()
-*
-* Draws a polygon from points in x[] and y[].
-* Point selected by v1..v4 
+ * poly()
+ *
+ * Draws a polygon from points in x[] and y[].
+ * Point selected by v1..v4 
 \*----------------------------------------------------------------------*/
 
 static void 
@@ -671,26 +664,26 @@ poly(void (*fill) (PLINT, PLFLT *, PLFLT *),
 }
 
 /*----------------------------------------------------------------------*\
-* big_recl()
-*
-* find a big rectangle for shading
-*
-* 2 goals: minimize calls to (*fill)()
-*  keep ratio 1:3 for biggest rectangle
-*
-* only called by plshade()
-*
-* assumed that a 1 x 1 square already fits
-*
-* c[] = condition codes
-* ny = c[1][0] == c[ny]  (you know what I mean)
-*
-* returns ix, iy = length of rectangle in grid units
-*
-* ix < dx - 1
-* iy < dy - 1
-*
-* If iy == 1 -> ix = 1 (so that cond code can be set to skip)
+ * big_recl()
+ *
+ * find a big rectangle for shading
+ *
+ * 2 goals: minimize calls to (*fill)()
+ *  keep ratio 1:3 for biggest rectangle
+ *
+ * only called by plshade()
+ *
+ * assumed that a 1 x 1 square already fits
+ *
+ * c[] = condition codes
+ * ny = c[1][0] == c[ny]  (you know what I mean)
+ *
+ * returns ix, iy = length of rectangle in grid units
+ *
+ * ix < dx - 1
+ * iy < dy - 1
+ *
+ * If iy == 1 -> ix = 1 (so that cond code can be set to skip)
 \*----------------------------------------------------------------------*/
 
 #define RATIO 3
@@ -768,9 +761,9 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
 }
 
 /*----------------------------------------------------------------------*\
-* draw_boundary()
-*
-* Draw boundaries of contour regions based on min_pts[], and max_pts[].
+ * draw_boundary()
+ *
+ * Draw boundaries of contour regions based on min_pts[], and max_pts[].
 \*----------------------------------------------------------------------*/
 
 static void 
@@ -811,36 +804,36 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
 }
 
 /*----------------------------------------------------------------------*\
-*
-* plctest( &(x[0][0]), PLFLT level)
-* where x was defined as PLFLT x[4][4];
-*
-* determines if the contours associated with level have
-* postive slope or negative slope in the box:
-*
-*  (2,3)   (3,3)
-*
-*  (2,2)   (3,2)
-*
-* this is heuristic and can be changed by the user
-*
-* return 1 if positive slope
-*        0 if negative slope
-*
-* algorithmn:
-*      1st test:
-*	find length of contours assuming positive and negative slopes
-*      if the length of the negative slope contours is much bigger
-*	than the positive slope, then the slope is positive.
-*      (and vice versa)
-*      (this test tries to minimize the length of contours)
-*
-*      2nd test:
-*      if abs((top-right corner) - (bottom left corner)) >
-*	   abs((top-left corner) - (bottom right corner)) ) then
-*		return negatiave slope.
-*      (this test tries to keep the slope for different contour levels
-*	the same)
+ *
+ * plctest( &(x[0][0]), PLFLT level)
+ * where x was defined as PLFLT x[4][4];
+ *
+ * determines if the contours associated with level have
+ * postive slope or negative slope in the box:
+ *
+ *  (2,3)   (3,3)
+ *
+ *  (2,2)   (3,2)
+ *
+ * this is heuristic and can be changed by the user
+ *
+ * return 1 if positive slope
+ *        0 if negative slope
+ *
+ * algorithmn:
+ *      1st test:
+ *	find length of contours assuming positive and negative slopes
+ *      if the length of the negative slope contours is much bigger
+ *	than the positive slope, then the slope is positive.
+ *      (and vice versa)
+ *      (this test tries to minimize the length of contours)
+ *
+ *      2nd test:
+ *      if abs((top-right corner) - (bottom left corner)) >
+ *	   abs((top-left corner) - (bottom right corner)) ) then
+ *		return negatiave slope.
+ *      (this test tries to keep the slope for different contour levels
+ *	the same)
 \*----------------------------------------------------------------------*/
 
 #define X(a,b) (x[a*4+b])
@@ -892,12 +885,12 @@ plctest(PLFLT *x, PLFLT level)
 }
 
 /*----------------------------------------------------------------------*\
-* plctestez
-*
-* second routine - easier to use
-* fills in x[4][4] and calls plctest
-*
-* test location a[ix][iy] (lower left corner)
+ * plctestez
+ *
+ * second routine - easier to use
+ * fills in x[4][4] and calls plctest
+ *
+ * test location a[ix][iy] (lower left corner)
 \*----------------------------------------------------------------------*/
 
 static PLINT 

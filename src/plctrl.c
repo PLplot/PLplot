@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1994/05/24 19:56:47  mjl
+ * Revision 1.20  1994/06/30 18:22:03  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
+ * Revision 1.19  1994/05/24  19:56:47  mjl
  * Changed INSTALL_DIR to BIN_DIR for locating executables.
  *
  * Revision 1.18  1994/05/10  21:52:10  mjl
@@ -60,8 +67,6 @@
 */
 
 #include "plplotP.h"
-#include "plstream.h"
-#include <string.h>
 
 #ifdef __GO32__			/* dos386/djgpp */
 #ifdef __unix
@@ -84,26 +89,19 @@ strcat_delim(char *dirspec);
 static int
 (*exit_handler) (char *errormsg);
 
-/* Stream pointer.  */
-/* Fetched by some routines to directly set plplot state data */
-
-static PLStream	*plsc;
-
 /*----------------------------------------------------------------------*\
-*  Routines that deal with colors & color maps.
+ *  Routines that deal with colors & color maps.
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* plcol0()
-*
-* Set color, map 0.  Argument is integer between 0 and 15.
+ * plcol0()
+ *
+ * Set color, map 0.  Argument is integer between 0 and 15.
 \*----------------------------------------------------------------------*/
 
 void
 c_plcol0(PLINT icol0)
 {
-    plgpls(&plsc);
-
     if (plsc->level < 1) {
 	plabort("plcol0: Please call plinit first");
 	return;
@@ -127,17 +125,15 @@ c_plcol0(PLINT icol0)
 }
 
 /*----------------------------------------------------------------------*\
-* plcol1()
-*
-* Set color, map 1.  Argument is a float between 0. and 1.
+ * plcol1()
+ *
+ * Set color, map 1.  Argument is a float between 0. and 1.
 \*----------------------------------------------------------------------*/
 
 void
 c_plcol1(PLFLT col1)
 {
     PLINT icol1;
-
-    plgpls(&plsc);
 
     if (plsc->level < 1) {
 	plabort("plcol1: Please call plinit first");
@@ -161,9 +157,9 @@ c_plcol1(PLFLT col1)
 }
 
 /*----------------------------------------------------------------------*\
-* plscolbg()
-*
-* Set the background color (cmap0[0]) by 8 bit RGB value
+ * plscolbg()
+ *
+ * Set the background color (cmap0[0]) by 8 bit RGB value
 \*----------------------------------------------------------------------*/
 
 void
@@ -173,9 +169,9 @@ c_plscolbg(PLINT r, PLINT g, PLINT b)
 }
 
 /*----------------------------------------------------------------------*\
-* plgcolbg()
-*
-* Returns the background color (cmap0[0]) by 8 bit RGB value
+ * plgcolbg()
+ *
+ * Returns the background color (cmap0[0]) by 8 bit RGB value
 \*----------------------------------------------------------------------*/
 
 void
@@ -185,17 +181,15 @@ c_plgcolbg(PLINT *r, PLINT *g, PLINT *b)
 }
 
 /*----------------------------------------------------------------------*\
-* plscol0()
-*
-* Set a given color from color map 0 by 8 bit RGB value
-* Does not result in any additional cells to be allocated.
+ * plscol0()
+ *
+ * Set a given color from color map 0 by 8 bit RGB value
+ * Does not result in any additional cells to be allocated.
 \*----------------------------------------------------------------------*/
 
 void
 c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 {
-    plgpls(&plsc);
-
     if (icol0 < 0 || icol0 > 15) {
 	plabort("plscol0: Illegal color table value");
 	return;
@@ -215,17 +209,15 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 }
 
 /*----------------------------------------------------------------------*\
-* plgcol0()
-*
-* Returns 8 bit RGB values for given color from color map 0
-* Values are negative if an invalid color id is given
+ * plgcol0()
+ *
+ * Returns 8 bit RGB values for given color from color map 0
+ * Values are negative if an invalid color id is given
 \*----------------------------------------------------------------------*/
 
 void
 c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
 {
-    plgpls(&plsc);
-
     *r = -1;
     *g = -1;
     *b = -1;
@@ -242,21 +234,20 @@ c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
     *r = plsc->cmap0[icol0].r;
     *g = plsc->cmap0[icol0].g;
     *b = plsc->cmap0[icol0].b;
+
     return;
 }
 
 /*----------------------------------------------------------------------*\
-* plscmap0n()
-*
-* Set number of colors in cmap 0
-* Must be <= 16, and the driver is not guaranteed to support all of these.
+ * plscmap0n()
+ *
+ * Set number of colors in cmap 0
+ * Must be <= 16, and the driver is not guaranteed to support all of these.
 \*----------------------------------------------------------------------*/
 
 void
 c_plscmap0n(PLINT ncol0)
 {
-    plgpls(&plsc);
-
     if (ncol0 > 16 || ncol0 < 1) {
 	plabort("plscmap0n: Number of colors must be between 1 and 16");
 	return;
@@ -266,18 +257,16 @@ c_plscmap0n(PLINT ncol0)
 }
 
 /*----------------------------------------------------------------------*\
-* plscmap1n()
-*
-* Set number of colors in cmap 1
-* Note that the driver is allowed to disregard this number.
-* In particular, most use far fewer.
+ * plscmap1n()
+ *
+ * Set number of colors in cmap 1
+ * Note that the driver is allowed to disregard this number.
+ * In particular, most use far fewer.
 \*----------------------------------------------------------------------*/
 
 void
 c_plscmap1n(PLINT ncol1)
 {
-    plgpls(&plsc);
-
     if (ncol1 > 256 || ncol1 < 1) {
 	plabort("plscmap1n: Number of colors must be between 1 and 256");
 	return;
@@ -287,18 +276,16 @@ c_plscmap1n(PLINT ncol1)
 }
 
 /*----------------------------------------------------------------------*\
-* plscmap0()
-*
-* Set color map 0 colors by 8 bit RGB values
-* This also sets the number of colors.
+ * plscmap0()
+ *
+ * Set color map 0 colors by 8 bit RGB values
+ * This also sets the number of colors.
 \*----------------------------------------------------------------------*/
 
 void
 c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 {
     int i;
-
-    plgpls(&plsc);
 
     if (ncol0 > 16 || ncol0 < 1) {
 	plabort("plscmap0n: Number of colors must be between 1 and 16");
@@ -311,8 +298,8 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    fprintf(stderr, "plscmap0: Invalid RGB color: %ld, %ld, %ld\n",
-		    r[i], g[i], b[i]);
+	    fprintf(stderr, "plscmap0: Invalid RGB color: %d, %d, %d\n",
+		    (int) r[i], (int) g[i], (int) b[i]);
 
 	    plabort("plscmap0: Invalid color");
 	    return;
@@ -329,18 +316,16 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 }
 
 /*----------------------------------------------------------------------*\
-* plscmap1()
-*
-* Set color map 1 colors by 8 bit RGB values
-* This also sets the number of colors.
+ * plscmap1()
+ *
+ * Set color map 1 colors by 8 bit RGB values
+ * This also sets the number of colors.
 \*----------------------------------------------------------------------*/
 
 void
 c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 {
     int i;
-
-    plgpls(&plsc);
 
     if (ncol1 > 256 || ncol1 < 1) {
 	plabort("plscmap1n: Number of colors must be between 1 and 256");
@@ -354,8 +339,8 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    fprintf(stderr, "plscmap1: Invalid RGB color: %ld, %ld, %ld\n",
-		    r[i], g[i], b[i]);
+	    fprintf(stderr, "plscmap1: Invalid RGB color: %d, %d, %d\n",
+		    (int) r[i], (int) g[i], (int) b[i]);
 
 	    plabort("plscmap1: Invalid color");
 	    return;
@@ -371,59 +356,56 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 }
 
 /*----------------------------------------------------------------------*\
-* plscmap1l()
-*
-* Set color map 1 colors using a piece-wise linear relationship between
-* position in the color map (from 0 to 1) and position in HLS or RGB color
-* space.  May be called at any time.
-*
-* The idea here is to specify a number of control points that specify the
-* mapping between HLS (or RGB or CMY) and palette 1 value.  Between these
-* points, linear interpolation is used.  By mapping position in the color
-* map to function value, this gives a smooth variation of color with
-* intensity.  Any number of control points may be specified, located at
-* arbitrary positions (intensities), although typically 2 - 4 are enough.
-* Another way of stating this is that we are traversing a given number of
-* lines through HLS (or RGB) space as we move through cmap 1 entries.  The
-* control points at the minimum and maximum intensity (0 and 1) must
-* always be specified.  By adding more control points you can get more
-* variation.  One good technique for plotting functions that vary about
-* some expected average is to use an additional 2 control points in the
-* center (intensity ~= 0.5) that are the same color as the background
-* (typically white for paper output, black for crt), and same hue as the
-* boundary control points.  This allows the highs and lows to be very
-* easily distinguished.
-*
-* Each control point must specify the position in cmap 1 as well as
-* three coordinates in HLS or RGB space.  The first point MUST correspond
-* to position = 0, and the last to position = 1.
-*
-* Bounds on RGB coordinates:
-*	R,G,B		[0, 1]		magnitude
-*
-* Bounds on HLS coordinates:
-*	hue		[0, 360]	degrees
-*	lightness	[0, 1]		magnitude
-*	saturation	[0, 1]		magnitude
-*
-* The inputs are:
-*	itype		0: HLS, 1: RGB
-*	npts		number of control points
-*	pos[]		position for each control point
-*	coord1[]	first coordinate for each control point
-*	coord2[]	second coordinate for each control point
-*	coord3[]	third coordinate for each control point 
+ * plscmap1l()
+ *
+ * Set color map 1 colors using a piece-wise linear relationship between
+ * position in the color map (from 0 to 1) and position in HLS or RGB color
+ * space.  May be called at any time.
+ *
+ * The idea here is to specify a number of control points that specify the
+ * mapping between HLS (or RGB or CMY) and palette 1 value.  Between these
+ * points, linear interpolation is used.  By mapping position in the color
+ * map to function value, this gives a smooth variation of color with
+ * intensity.  Any number of control points may be specified, located at
+ * arbitrary positions (intensities), although typically 2 - 4 are enough.
+ * Another way of stating this is that we are traversing a given number of
+ * lines through HLS (or RGB) space as we move through cmap 1 entries.  The
+ * control points at the minimum and maximum intensity (0 and 1) must
+ * always be specified.  By adding more control points you can get more
+ * variation.  One good technique for plotting functions that vary about
+ * some expected average is to use an additional 2 control points in the
+ * center (intensity ~= 0.5) that are the same color as the background
+ * (typically white for paper output, black for crt), and same hue as the
+ * boundary control points.  This allows the highs and lows to be very
+ * easily distinguished.
+ *
+ * Each control point must specify the position in cmap 1 as well as
+ * three coordinates in HLS or RGB space.  The first point MUST correspond
+ * to position = 0, and the last to position = 1.
+ *
+ * Bounds on RGB coordinates:
+ *	R,G,B		[0, 1]		magnitude
+ *
+ * Bounds on HLS coordinates:
+ *	hue		[0, 360]	degrees
+ *	lightness	[0, 1]		magnitude
+ *	saturation	[0, 1]		magnitude
+ *
+ * The inputs are:
+ *	itype		0: HLS, 1: RGB
+ *	npts		number of control points
+ *	pos[]		position for each control point
+ *	coord1[]	first coordinate for each control point
+ *	coord2[]	second coordinate for each control point
+ *	coord3[]	third coordinate for each control point 
 \*----------------------------------------------------------------------*/
 
 void
 c_plscmap1l(PLINT itype, PLINT npts, PLFLT *pos,
 	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3)
 {
-    int i, n;
-    PLFLT icmap1, delta;
+    int n;
     PLFLT h, l, s, r, g, b;
-
-    plgpls(&plsc);
 
     if (npts < 2) {
 	plabort("plscmap1l: Must specify at least two control points");
@@ -473,10 +455,10 @@ c_plscmap1l(PLINT itype, PLINT npts, PLFLT *pos,
 }
 
 /*----------------------------------------------------------------------*\
-* plcmap1_calc()
-*
-* Bin up cmap 1 space and assign colors to make inverse mapping easy.
-* Always do interpolation in HLS space.
+ * plcmap1_calc()
+ *
+ * Bin up cmap 1 space and assign colors to make inverse mapping easy.
+ * Always do interpolation in HLS space.
 \*----------------------------------------------------------------------*/
 
 void
@@ -485,8 +467,6 @@ plcmap1_calc(void)
     int i, n;
     PLFLT icmap1, delta;
     PLFLT h, l, s, r, g, b;
-
-    plgpls(&plsc);
 
     for (n = 0; n < plsc->ncp1-1; n++) {
 
@@ -523,10 +503,10 @@ plcmap1_calc(void)
 }
 
 /*----------------------------------------------------------------------*\
-* color_def()
-*
-* Initializes color table entries by RGB values.
-* Does nothing if color already set.
+ * color_def()
+ *
+ * Initializes color table entries by RGB values.
+ * Does nothing if color already set.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -541,24 +521,23 @@ color_def(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b)
 }
 
 /*----------------------------------------------------------------------*\
-* plCmap0_init()
-*
-* Initializes color map 0.
-* Do not initialize if already done.
-*
-* Initial RGB values for color map 0 taken from HPUX 8.07 X-windows 
-* rgb.txt file, and may not accurately represent the described colors on 
-* all systems.
-*
-* Note the background color is not set, since the device driver may be
-* able to detect if a monochrome output device is being used, in which
-* case I want to choose the default background color there.
+ * plCmap0_init()
+ *
+ * Initializes color map 0.
+ * Do not initialize if already done.
+ *
+ * Initial RGB values for color map 0 taken from HPUX 8.07 X-windows 
+ * rgb.txt file, and may not accurately represent the described colors on 
+ * all systems.
+ *
+ * Note the background color is not set, since the device driver may be
+ * able to detect if a monochrome output device is being used, in which
+ * case I want to choose the default background color there.
 \*----------------------------------------------------------------------*/
 
 void
 plCmap0_init(void)
 {
-    plgpls(&plsc);
     if (plsc->ncol0 == 0)
 	plsc->ncol0 = 16;
 
@@ -584,24 +563,22 @@ plCmap0_init(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plCmap1_init()
-*
-* Initializes color map 1.
-* Do not initialize if already done.
-*
-* The default initialization uses 4 control points in HLS space, the two
-* inner ones being very close to one of the vertices of the HLS double
-* cone.  The vertex used (black or white) is chosen to be the closer to
-* the background color.  If you don't like these settings you can always
-* initialize it yourself.
+ * plCmap1_init()
+ *
+ * Initializes color map 1.
+ * Do not initialize if already done.
+ *
+ * The default initialization uses 4 control points in HLS space, the two
+ * inner ones being very close to one of the vertices of the HLS double
+ * cone.  The vertex used (black or white) is chosen to be the closer to
+ * the background color.  If you don't like these settings you can always
+ * initialize it yourself.
 \*----------------------------------------------------------------------*/
 
 void
 plCmap1_init(void)
 {
     PLFLT i[4], h[4], l[4], s[4], vertex;
-
-    plgpls(&plsc);
 
 /* Return if the user has already filled color map */
 
@@ -651,31 +628,28 @@ plCmap1_init(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plscolor()
-*
-* Used to globally turn color output on/off
+ * plscolor()
+ *
+ * Used to globally turn color output on/off
 \*----------------------------------------------------------------------*/
 
 void
 c_plscolor(PLINT color)
 {
-    plgpls(&plsc);
     plsc->colorset = 1;
     plsc->color = color;
 }
 
 /*----------------------------------------------------------------------*\
-* plrgb()
-*
-* Set line color by red, green, blue from  0. to 1.
-* Do NOT use this.  Only retained for backward compatibility
+ * plrgb()
+ *
+ * Set line color by red, green, blue from  0. to 1.
+ * Do NOT use this.  Only retained for backward compatibility
 \*----------------------------------------------------------------------*/
 
 void
 c_plrgb(PLFLT r, PLFLT g, PLFLT b)
 {
-    plgpls(&plsc);
-
     if (plsc->level < 1) {
 	plabort("plrgb: Please call plinit first");
 	return;
@@ -691,17 +665,15 @@ c_plrgb(PLFLT r, PLFLT g, PLFLT b)
 }
 
 /*----------------------------------------------------------------------*\
-* plrgb1()
-*
-* Set line color by 8 bit RGB values.
-* See note to plrgb()
+ * plrgb1()
+ *
+ * Set line color by 8 bit RGB values.
+ * See note to plrgb()
 \*----------------------------------------------------------------------*/
 
 void
 c_plrgb1(PLINT r, PLINT g, PLINT b)
 {
-    plgpls(&plsc);
-
     if (plsc->level < 1) {
 	plabort("plrgb1: Please call plinit first");
 	return;
@@ -721,11 +693,11 @@ c_plrgb1(PLINT r, PLINT g, PLINT b)
 }
 
 /*----------------------------------------------------------------------*\
-* void plhls()
-*
-* Set current color by hue, lightness, and saturation.
-* Convert hls color coordinates to rgb, then call plrgb.
-* See note to plrgb()
+ * void plhls()
+ *
+ * Set current color by hue, lightness, and saturation.
+ * Convert hls color coordinates to rgb, then call plrgb.
+ * See note to plrgb()
 \*----------------------------------------------------------------------*/
 
 void
@@ -738,9 +710,9 @@ c_plhls(PLFLT h, PLFLT l, PLFLT s)
 }
 
 /*----------------------------------------------------------------------*\
-* void value()
-*
-* Auxiliary function used by plHLS_RGB().
+ * void value()
+ *
+ * Auxiliary function used by plHLS_RGB().
 \*----------------------------------------------------------------------*/
 
 static float
@@ -766,17 +738,17 @@ value(double n1, double n2, double hue)
 }
 
 /*----------------------------------------------------------------------*\
-* void plHLS_RGB()
-*
-* Convert HLS color to RGB color.
-* Bounds on HLS (input):
-*	hue		[0., 360.]	degrees
-*	lightness	[0., 1.]	magnitude
-*	saturation	[0., 1.]	magnitude
-*
-* Hue is always mapped onto the interval [0., 360.] regardless of input.
-* Bounds on RGB (output) is always [0., 1.].  Convert to RGB color values
-* by multiplying by 2**nbits (nbits typically 8).
+ * void plHLS_RGB()
+ *
+ * Convert HLS color to RGB color.
+ * Bounds on HLS (input):
+ *	hue		[0., 360.]	degrees
+ *	lightness	[0., 1.]	magnitude
+ *	saturation	[0., 1.]	magnitude
+ *
+ * Hue is always mapped onto the interval [0., 360.] regardless of input.
+ * Bounds on RGB (output) is always [0., 1.].  Convert to RGB color values
+ * by multiplying by 2**nbits (nbits typically 8).
 \*----------------------------------------------------------------------*/
 
 void
@@ -797,14 +769,14 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 }
 
 /*----------------------------------------------------------------------*\
-* void plRGB_HLS()
-*
-* Convert RGB color to HLS color.
-* Bounds on RGB (input) is always [0., 1.].  
-* Bounds on HLS (output):
-*	hue		[0., 360.]	degrees
-*	lightness	[0., 1.]	magnitude
-*	saturation	[0., 1.]	magnitude
+ * void plRGB_HLS()
+ *
+ * Convert RGB color to HLS color.
+ * Bounds on RGB (input) is always [0., 1.].  
+ * Bounds on HLS (output):
+ *	hue		[0., 360.]	degrees
+ *	lightness	[0., 1.]	magnitude
+ *	saturation	[0., 1.]	magnitude
 \*----------------------------------------------------------------------*/
 
 void
@@ -851,13 +823,13 @@ plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
 }
 
 /*----------------------------------------------------------------------*\
-* A grab-bag of various control routines.
+ * A grab-bag of various control routines.
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* void plwarn()
-*
-* A handy way to issue warnings, if need be.
+ * void plwarn()
+ *
+ * A handy way to issue warnings, if need be.
 \*----------------------------------------------------------------------*/
 
 void
@@ -865,7 +837,6 @@ plwarn(char *errormsg)
 {
     int was_gfx = 0;
 
-    plgpls(&plsc);
     if (plsc->level > 0) {
 	if (plsc->graphx == 1) {
 	    was_gfx = 1;
@@ -883,11 +854,11 @@ plwarn(char *errormsg)
 }
 
 /*----------------------------------------------------------------------*\
-* void plabort()
-*
-* Exactly the same as plwarn(), but appends ", aborting operation" to the
-* error message.  Helps to keep source code uncluttered and provides a
-* convention for error aborts.
+ * void plabort()
+ *
+ * Exactly the same as plwarn(), but appends ", aborting operation" to the
+ * error message.  Helps to keep source code uncluttered and provides a
+ * convention for error aborts.
 \*----------------------------------------------------------------------*/
 
 void
@@ -895,7 +866,6 @@ plabort(char *errormsg)
 {
     int was_gfx = 0;
 
-    plgpls(&plsc);
     if (plsc->level > 0) {
 	if (plsc->graphx == 1) {
 	    was_gfx = 1;
@@ -913,23 +883,21 @@ plabort(char *errormsg)
 }
 
 /*----------------------------------------------------------------------*\
-* void plexit()
-*
-* In case of an abort this routine is called.  It just prints out an error
-* message and tries to clean up as much as possible.  It's best to turn
-* off pause and then restore previous setting before returning.
-*
-* If cleanup needs to be done in the main program, the user should write
-* his/her own exit handler and pass it in via plsexit().  This function
-* should should either call plend() before exiting, or simply return.
+ * void plexit()
+ *
+ * In case of an abort this routine is called.  It just prints out an error
+ * message and tries to clean up as much as possible.  It's best to turn
+ * off pause and then restore previous setting before returning.
+ *
+ * If cleanup needs to be done in the main program, the user should write
+ * his/her own exit handler and pass it in via plsexit().  This function
+ * should should either call plend() before exiting, or simply return.
 \*----------------------------------------------------------------------*/
 
 void
 plexit(char *errormsg)
 {
     int status = 1;
-
-    plgpls(&plsc);
 
     if (exit_handler != NULL)
 	status = (*exit_handler)(errormsg);
@@ -946,9 +914,9 @@ plexit(char *errormsg)
 }
 
 /*----------------------------------------------------------------------*\
-* void plsexit()
-*
-* Sets an optional user exit handler.
+ * void plsexit()
+ *
+ * Sets an optional user exit handler.
 \*----------------------------------------------------------------------*/
 
 void
@@ -958,17 +926,15 @@ plsexit(int (*handler) (char *))
 }
 
 /*----------------------------------------------------------------------*\
-* void plgra()
-*
-* Switches to graphics screen.
+ * void plgra()
+ *
+ * Switches to graphics screen.
 \*----------------------------------------------------------------------*/
 
 void
 c_plgra(void)
 {
-    PLINT level;
-    plP_glev(&level);
-    if (level < 1) {
+    if (plsc->level < 1) {
 	plabort("plgra: Please call plinit first");
 	return;
     }
@@ -976,18 +942,15 @@ c_plgra(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void pltext()
-*
-* Switches to text screen.
+ * void pltext()
+ *
+ * Switches to text screen.
 \*----------------------------------------------------------------------*/
 
 void
 c_pltext(void)
 {
-    PLINT level;
-
-    plP_glev(&level);
-    if (level < 1) {
+    if (plsc->level < 1) {
 	plabort("pltext: Please call plinit first");
 	return;
     }
@@ -995,11 +958,11 @@ c_pltext(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void pl_cmd()
-*
-* Front-end to driver escape function.
-* In principle this can be used to pass just about anything directly
-* to the driver.
+ * void pl_cmd()
+ *
+ * Front-end to driver escape function.
+ * In principle this can be used to pass just about anything directly
+ * to the driver.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1009,15 +972,15 @@ pl_cmd(PLINT op, void *ptr)
 }
 
 /*----------------------------------------------------------------------*\
-* char *plFindCommand
-*
-* Looks for the specified executable file.  Search path:
-*	current directory
-*	$(PLPLOT_DIR)
-*	BIN_DIR
-*
-* The caller must free the returned pointer (points to malloc'ed memory)
-* when finished with it.
+ * char *plFindCommand
+ *
+ * Looks for the specified executable file.  Search path:
+ *	current directory
+ *	$(PLPLOT_DIR)
+ *	BIN_DIR
+ *
+ * The caller must free the returned pointer (points to malloc'ed memory)
+ * when finished with it.
 \*----------------------------------------------------------------------*/
 
 char *
@@ -1055,21 +1018,21 @@ plFindCommand(char *fn)
 }
 
 /*----------------------------------------------------------------------*\
-* int plFindName
-*
-* Authors: Paul Dubois (LLNL), others?
-* This function is in the public domain.
-*
-* Given a pathname, determine if it is a symbolic link.  If so, continue
-* searching to the ultimate terminus - there may be more than one link.
-* Use the error value to determine when the terminus is reached, and to
-* determine if the pathname really exists.  Then stat it to determine
-* whether it's executable.  Return 0 for an executable, errno otherwise.
-* Note that 'p' _must_ have at least one '/' character - it does by
-* construction in this program.  The contents of the array pointed to by
-* 'p' are changed to the actual pathname if findname is successful.
-*
-* This function is only defined under Unix for now.
+ * int plFindName
+ *
+ * Authors: Paul Dubois (LLNL), others?
+ * This function is in the public domain.
+ *
+ * Given a pathname, determine if it is a symbolic link.  If so, continue
+ * searching to the ultimate terminus - there may be more than one link.
+ * Use the error value to determine when the terminus is reached, and to
+ * determine if the pathname really exists.  Then stat it to determine
+ * whether it's executable.  Return 0 for an executable, errno otherwise.
+ * Note that 'p' _must_ have at least one '/' character - it does by
+ * construction in this program.  The contents of the array pointed to by
+ * 'p' are changed to the actual pathname if findname is successful.
+ *
+ * This function is only defined under Unix for now.
 \*----------------------------------------------------------------------*/
 
 #ifdef __unix
@@ -1134,12 +1097,12 @@ plFindName(char *p)
 #endif
 
 /*----------------------------------------------------------------------*\
-* void plGetName()
-*
-* Gets search name for file by concatenating the dir, subdir, and file
-* name, allocating memory as needed.  The appropriate delimiter is added
-* after the dir specification as necessary.  The caller is responsible
-* for freeing the malloc'ed memory.
+ * void plGetName()
+ *
+ * Gets search name for file by concatenating the dir, subdir, and file
+ * name, allocating memory as needed.  The appropriate delimiter is added
+ * after the dir specification as necessary.  The caller is responsible
+ * for freeing the malloc'ed memory.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1167,11 +1130,11 @@ plGetName(char *dir, char *subdir, char *filename, char **filespec)
 }
 
 /*----------------------------------------------------------------------*\
-* void strcat_delim()
-*
-* Append path name deliminator if necessary (does not add one if one's
-* there already, or if dealing with a colon-terminated device name as
-* used on the Amiga).
+ * void strcat_delim()
+ *
+ * Append path name deliminator if necessary (does not add one if one's
+ * there already, or if dealing with a colon-terminated device name as
+ * used on the Amiga).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1193,9 +1156,9 @@ strcat_delim(char *dirspec)
 }
 
 /*----------------------------------------------------------------------*\
-* plGetInt()
-*
-* Prompts human to input an integer in response to given message.
+ * plGetInt()
+ *
+ * Prompts human to input an integer in response to given message.
 \*----------------------------------------------------------------------*/
 
 PLINT
@@ -1222,9 +1185,9 @@ plGetInt(char *s)
 }
 
 /*----------------------------------------------------------------------*\
-* plGetFlt()
-*
-* Prompts human to input a float in response to given message.
+ * plGetFlt()
+ *
+ * Prompts human to input a float in response to given message.
 \*----------------------------------------------------------------------*/
 
 PLFLT

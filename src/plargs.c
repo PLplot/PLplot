@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1994/05/16 21:29:39  mjl
+ * Revision 1.21  1994/06/30 18:21:58  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
+ * Revision 1.20  1994/05/16  21:29:39  mjl
  * Changes to plSetInternalOpt: the first argument is no longer required to
  * have a leading dash.
  *
@@ -32,54 +39,6 @@
  * already running.  -server_host and -server_port are used for the DP
  * driver, for specifying the host to run it on, and the communications port
  * (if already running).
- *
- * Revision 1.15  1993/12/09  20:36:35  mjl
- * Inserted a cast from (void *) to (char *).
- *
- * Revision 1.14  1993/12/06  07:46:11  mjl
- * Eliminated the obsolete -color flag.
- *
- * Revision 1.13  1993/08/28  06:38:05  mjl
- * The option table now requires passing of a pointer to user-defined data,
- * similar in spirit to that used in Xt or TK callbacks.  If unused, simply
- * initialize as NULL.  All option handlers changed to accept this pointer
- * as the third argument.  Especially useful from C++ for passing the "this"
- * pointer.
- *
- * Revision 1.12  1993/08/18  19:19:44  mjl
- * Added new flags -mar, -a, -jx, -jy for setting margin, aspect ratio, and
- * justification from the command line.  These are similar but not the same
- * as the same-named variables from old versions of plrender, and are treated
- * entirely different.  These now are used to set device window coordinates
- * in the driver interface.  The aspect ratio defaults to 0 for the natural
- * aspect ratio of the device, and the user normally won't need to change
- * this (plots requiring a specified aspect ratio should use plvpas or
- * plvasp).  The margin (0 to 0.5) is the *minimum* fraction of the page to
- * reserve on each side, while the justification (-0.5 to 0.5) is the
- * fractional displacement of the center of the plot in x (for -jx) or y (for
- * -jy).  Since these settings are now handled in the driver interface, ALL
- * output drivers now support margins, aspect ratio modification, and
- * justification.  The -wdev flag introduced only a month or so ago was
- * eliminated.
- *
- * Revision 1.11  1993/08/11  19:21:58  mjl
- * Changed definition of plHelp() and plSyntax() to take a mode flag
- * as argument.  Currently used to govern handling of invisible options.
- *
- * Revision 1.10  1993/08/04  18:27:03  mjl
- * Modified -bg argument handler to strip leading '#' off hex color value if
- * present, to allow it to deal with TCL-style color values.
- *
- * Revision 1.9  1993/08/03  01:46:56  mjl
- * Changes to eliminate warnings when compiling with gcc -Wall.
- *
- * Revision 1.8  1993/07/31  08:16:12  mjl
- * Flags added to change plot window (-wplt), device window (-wdev).
- * Orientation flag (-ori) changed to use new driver interface.  Aspect flag
- * (-a) deleted.
- *
- * Revision 1.7  1993/07/28  05:54:29  mjl
- * Added support for -nopixmap option.
 */
 
 /*
@@ -154,9 +113,6 @@
 */
 
 #include "plplotP.h"
-#include "plstream.h"
-
-#include <string.h>
 #include <ctype.h>
 
 /* Support functions */
@@ -221,60 +177,55 @@ static int	mode_noprogram;
 static int	mode_override;
 static int	mode_nodash;
 
-/* Stream pointer.  */
-/* Fetched before option processing, so can directly set plplot state data */
-
-static PLStream	*plsc;
-
 /*----------------------------------------------------------------------*\
-* PLPLOT options data structure definition.
-*
-* The table is defined as follows
-*
-* typedef struct {
-*     char *opt;
-*     int  (*handler)	(char *, char *, void *);
-*     void *client_data;
-*     void *var;
-*     long mode;
-*     char *syntax;
-*     char *desc;
-* } PLOptionTable;
-*
-* where each entry has the following meaning:
-*
-* opt		option string
-* handler	pointer to function for processing the option and
-*		 (optionally) its argument
-* client_data	pointer to data that gets passed to (*handler)
-* var		address of variable to set based on "mode"
-* mode		governs handling of option (see below)
-* syntax	short syntax description
-* desc		long syntax description
-*
-* The syntax and or desc strings can be NULL if the option is never to be
-* described.  Usually this is only used for obsolete arguments; those we
-* just wish to hide from normal use are better made invisible (which are
-* made visible by either specifying -showall first or PL_PARSE_SHOWALL).
-*
-* The mode bits are:
-*
-* PL_OPT_ENABLED	Processing for option is enabled
-* PL_OPT_ARG		Option has an argment 
-* PL_OPT_NODELETE	Don't delete after processing 
-* PL_OPT_INVISIBLE	Make invisible (usually for debugging)
-*
-* The following mode bits cause the option to be processed as specified:
-*
-* PL_OPT_FUNC		Call function handler (opt, optarg)
-* PL_OPT_BOOL		Set *var=1
-* PL_OPT_INT		Set *var=atoi(optarg)
-* PL_OPT_FLOAT		Set *var=atof(optarg)
-* PL_OPT_STRING		Set var=optarg
-*
-* where opt points to the option string and optarg points to the
-* argument string.
-*
+ * PLPLOT options data structure definition.
+ *
+ * The table is defined as follows
+ *
+ * typedef struct {
+ *     char *opt;
+ *     int  (*handler)	(char *, char *, void *);
+ *     void *client_data;
+ *     void *var;
+ *     long mode;
+ *     char *syntax;
+ *     char *desc;
+ * } PLOptionTable;
+ *
+ * where each entry has the following meaning:
+ *
+ * opt		option string
+ * handler	pointer to function for processing the option and
+ *		 (optionally) its argument
+ * client_data	pointer to data that gets passed to (*handler)
+ * var		address of variable to set based on "mode"
+ * mode		governs handling of option (see below)
+ * syntax	short syntax description
+ * desc		long syntax description
+ *
+ * The syntax and or desc strings can be NULL if the option is never to be
+ * described.  Usually this is only used for obsolete arguments; those we
+ * just wish to hide from normal use are better made invisible (which are
+ * made visible by either specifying -showall first or PL_PARSE_SHOWALL).
+ *
+ * The mode bits are:
+ *
+ * PL_OPT_ENABLED	Processing for option is enabled
+ * PL_OPT_ARG		Option has an argment 
+ * PL_OPT_NODELETE	Don't delete after processing 
+ * PL_OPT_INVISIBLE	Make invisible (usually for debugging)
+ *
+ * The following mode bits cause the option to be processed as specified:
+ *
+ * PL_OPT_FUNC		Call function handler (opt, optarg)
+ * PL_OPT_BOOL		Set *var=1
+ * PL_OPT_INT		Set *var=atoi(optarg)
+ * PL_OPT_FLOAT		Set *var=atof(optarg)
+ * PL_OPT_STRING		Set var=optarg
+ *
+ * where opt points to the option string and optarg points to the
+ * argument string.
+ *
 \*----------------------------------------------------------------------*/
 
 static PLOptionTable ploption_table[] = {
@@ -583,23 +534,23 @@ NULL};
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
-* The following routines contain some code derived from "xterm.c" and
-* "ParseCmd.c" of the X-windows Version 11 distribution.  The copyright
-* notice is reproduced here:
+ * The following routines contain some code derived from "xterm.c" and
+ * "ParseCmd.c" of the X-windows Version 11 distribution.  The copyright
+ * notice is reproduced here:
 
 Copyright 1987, 1988 by Digital Equipment Corporation, Maynard, Massachusetts,
 and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
                         All Rights Reserved
 
-* The full permission notice is given in the plplot documentation.
+ * The full permission notice is given in the plplot documentation.
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* plSyntax()
-*
-* Front-end to Syntax() for external use.
-* Accepts mode flag (right now only PL_PARSE_SHOWALL bit is used).
+ * plSyntax()
+ *
+ * Front-end to Syntax() for external use.
+ * Accepts mode flag (right now only PL_PARSE_SHOWALL bit is used).
 \*----------------------------------------------------------------------*/
 
 void
@@ -610,10 +561,10 @@ plSyntax(PLINT mode)
 }
 
 /*----------------------------------------------------------------------*\
-* plHelp()
-*
-* Front-end to Help() for external use.
-* Accepts mode flag (right now only PL_PARSE_SHOWALL bit is used).
+ * plHelp()
+ *
+ * Front-end to Help() for external use.
+ * Accepts mode flag (right now only PL_PARSE_SHOWALL bit is used).
 \*----------------------------------------------------------------------*/
 
 void
@@ -624,9 +575,9 @@ plHelp(PLINT mode)
 }
 
 /*----------------------------------------------------------------------*\
-* plNotes()
-*
-* Print usage notes.
+ * plNotes()
+ *
+ * Print usage notes.
 \*----------------------------------------------------------------------*/
 
 void
@@ -643,10 +594,10 @@ plNotes(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plParseInternalOpts()
-*
-* Process plplot internal options list
-* If mode is PL_PARSE_FULL, exit on an error.
+ * plParseInternalOpts()
+ *
+ * Process plplot internal options list
+ * If mode is PL_PARSE_FULL, exit on an error.
 \*----------------------------------------------------------------------*/
 
 int
@@ -661,10 +612,10 @@ plParseInternalOpts(int *p_argc, char **argv, PLINT mode)
 }
 
 /*----------------------------------------------------------------------*\
-* plSetInternalOpt()
-*
-* Process input strings, treating them as an option and argument pair.
-* Returns 1 on an error.
+ * plSetInternalOpt()
+ *
+ * Process input strings, treating them as an option and argument pair.
+ * Returns 1 on an error.
 \*----------------------------------------------------------------------*/
 
 int
@@ -690,11 +641,11 @@ plSetInternalOpt(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* plParseOpts()
-*
-* Process options list
-* An error in parsing the argument list causes a program exit if
-* mode_full is set, otherwise the function returns with an error.
+ * plParseOpts()
+ *
+ * Process options list
+ * An error in parsing the argument list causes a program exit if
+ * mode_full is set, otherwise the function returns with an error.
 \*----------------------------------------------------------------------*/
 
 int
@@ -719,10 +670,6 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
     argend = argv + myargc;
     if (usage_handler != NULL)
 	UsageH = usage_handler;
-
-/* The stream pointer is fetched for direct access to plplot state data */
-
-    plgpls(&plsc);
 
 /* Disable internal options that match user options if mode_override is set */
 
@@ -774,9 +721,9 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
 }
 
 /*----------------------------------------------------------------------*\
-* ParseOpt()
-*
-* Parses & determines appropriate action for input flag.
+ * ParseOpt()
+ *
+ * Parses & determines appropriate action for input flag.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -834,9 +781,9 @@ ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 }
 
 /*----------------------------------------------------------------------*\
-* ProcessOpt()
-*
-* Process option (and argument if applicable).
+ * ProcessOpt()
+ *
+ * Process option (and argument if applicable).
 \*----------------------------------------------------------------------*/
 
 static int
@@ -925,10 +872,10 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 }
 
 /*----------------------------------------------------------------------*\
-* GetOptarg()
-*
-* Retrieves an option argument.
-* If an error occurs here it is a true syntax error.
+ * GetOptarg()
+ *
+ * Retrieves an option argument.
+ * If an error occurs here it is a true syntax error.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -965,9 +912,9 @@ GetOptarg(char **poptarg, int *p_myargc, char ***p_argv, int *p_argc)
 }
 
 /*----------------------------------------------------------------------*\
-* Usage()
-*
-* Print usage & syntax message.
+ * Usage()
+ *
+ * Print usage & syntax message.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -987,9 +934,9 @@ Usage(char *badOption)
 }
 
 /*----------------------------------------------------------------------*\
-* Syntax()
-*
-* Print syntax message appropriate for plplot.
+ * Syntax()
+ *
+ * Print syntax message appropriate for plplot.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1023,9 +970,9 @@ Syntax(void)
 }
 
 /*----------------------------------------------------------------------*\
-* Help()
-*
-* Print long help message appropriate for plplot.
+ * Help()
+ *
+ * Print long help message appropriate for plplot.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1052,14 +999,14 @@ Help(void)
 }
 
 /*----------------------------------------------------------------------*\
-* Option handlers
+ * Option handlers
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* opt_h()
-*
-* Performs appropriate action for option "h":
-* Issues help message
+ * opt_h()
+ *
+ * Performs appropriate action for option "h":
+ * Issues help message
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1076,10 +1023,10 @@ opt_h(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_v()
-*
-* Performs appropriate action for option "v":
-* Issues version message
+ * opt_v()
+ *
+ * Performs appropriate action for option "v":
+ * Issues version message
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1092,10 +1039,10 @@ opt_v(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_hack()
-*
-* Performs appropriate action for option "hack":
-* Enables driver-specific hack(s)
+ * opt_hack()
+ *
+ * Performs appropriate action for option "hack":
+ * Enables driver-specific hack(s)
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1106,10 +1053,10 @@ opt_hack(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_dev()
-*
-* Performs appropriate action for option "dev":
-* Sets output device keyword
+ * opt_dev()
+ *
+ * Performs appropriate action for option "dev":
+ * Sets output device keyword
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1120,10 +1067,10 @@ opt_dev(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_o()
-*
-* Performs appropriate action for option "o":
-* Sets output file name
+ * opt_o()
+ *
+ * Performs appropriate action for option "o":
+ * Sets output file name
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1134,10 +1081,10 @@ opt_o(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_mar()
-*
-* Performs appropriate action for option "mar":
-* Sets relative margin width
+ * opt_mar()
+ *
+ * Performs appropriate action for option "mar":
+ * Sets relative margin width
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1148,10 +1095,10 @@ opt_mar(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_a()
-*
-* Performs appropriate action for option "a":
-* Sets plot aspect ratio on page
+ * opt_a()
+ *
+ * Performs appropriate action for option "a":
+ * Sets plot aspect ratio on page
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1162,10 +1109,10 @@ opt_a(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_jx()
-*
-* Performs appropriate action for option "jx":
-* Sets relative justification in x
+ * opt_jx()
+ *
+ * Performs appropriate action for option "jx":
+ * Sets relative justification in x
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1176,10 +1123,10 @@ opt_jx(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_jy()
-*
-* Performs appropriate action for option "jy":
-* Sets relative justification in y
+ * opt_jy()
+ *
+ * Performs appropriate action for option "jy":
+ * Sets relative justification in y
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1190,10 +1137,10 @@ opt_jy(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_ori()
-*
-* Performs appropriate action for option "ori":
-* Sets orientation
+ * opt_ori()
+ *
+ * Performs appropriate action for option "ori":
+ * Sets orientation
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1204,10 +1151,10 @@ opt_ori(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_width()
-*
-* Performs appropriate action for option "width":
-* Sets pen width
+ * opt_width()
+ *
+ * Performs appropriate action for option "width":
+ * Sets pen width
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1228,10 +1175,10 @@ opt_width(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_bg()
-*
-* Performs appropriate action for option "bg":
-* Sets background color
+ * opt_bg()
+ *
+ * Performs appropriate action for option "bg":
+ * Sets background color
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1280,10 +1227,10 @@ opt_bg(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_wplt()
-*
-* Performs appropriate action for option "wplt":
-* Sets (zoom) window into plot (e.g. "0,0,0.5,0.5")
+ * opt_wplt()
+ *
+ * Performs appropriate action for option "wplt":
+ * Sets (zoom) window into plot (e.g. "0,0,0.5,0.5")
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1317,10 +1264,10 @@ opt_wplt(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_fam()
-*
-* Performs appropriate action for option "fam":
-* Enables family output files
+ * opt_fam()
+ *
+ * Performs appropriate action for option "fam":
+ * Enables family output files
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1331,11 +1278,11 @@ opt_fam(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_fsiz()
-*
-* Performs appropriate action for option "fsiz":
-* Sets size of a family member file (may be somewhat larger since eof must
-* occur at a page break).
+ * opt_fsiz()
+ *
+ * Performs appropriate action for option "fsiz":
+ * Sets size of a family member file (may be somewhat larger since eof must
+ * occur at a page break).
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1354,10 +1301,10 @@ opt_fsiz(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_fbeg()
-*
-* Performs appropriate action for option "fbeg":
-* Starts with the specified family member number.
+ * opt_fbeg()
+ *
+ * Performs appropriate action for option "fbeg":
+ * Starts with the specified family member number.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1369,10 +1316,10 @@ opt_fbeg(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_finc()
-*
-* Performs appropriate action for option "finc":
-* Specify increment between family members.
+ * opt_finc()
+ *
+ * Performs appropriate action for option "finc":
+ * Specify increment between family members.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1384,10 +1331,10 @@ opt_finc(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_fflen()
-*
-* Performs appropriate action for option "fflen":
-* Specify minimum field length for family member number.
+ * opt_fflen()
+ *
+ * Performs appropriate action for option "fflen":
+ * Specify minimum field length for family member number.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1399,10 +1346,10 @@ opt_fflen(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_np()
-*
-* Performs appropriate action for option "np":
-* Disables pause between pages
+ * opt_np()
+ *
+ * Performs appropriate action for option "np":
+ * Disables pause between pages
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1413,10 +1360,10 @@ opt_np(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_nopixmap()
-*
-* Performs appropriate action for option "nopixmap":
-* Disables use of pixmaps in X drivers
+ * opt_nopixmap()
+ *
+ * Performs appropriate action for option "nopixmap":
+ * Disables use of pixmaps in X drivers
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1427,10 +1374,10 @@ opt_nopixmap(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_db()
-*
-* Performs appropriate action for option "db":
-* Double buffer X output (update only done on eop or Expose)
+ * opt_db()
+ *
+ * Performs appropriate action for option "db":
+ * Double buffer X output (update only done on eop or Expose)
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1441,10 +1388,10 @@ opt_db(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_bufmax()
-*
-* Performs appropriate action for option "bufmax":
-* Sets size of data buffer for tk driver
+ * opt_bufmax()
+ *
+ * Performs appropriate action for option "bufmax":
+ * Sets size of data buffer for tk driver
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1455,10 +1402,10 @@ opt_bufmax(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_server_name()
-*
-* Performs appropriate action for option "server_name":
-* Sets main window name of server (Tcl/TK/DP driver only)
+ * opt_server_name()
+ *
+ * Performs appropriate action for option "server_name":
+ * Sets main window name of server (Tcl/TK/DP driver only)
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1469,10 +1416,10 @@ opt_server_name(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_server_host()
-*
-* Performs appropriate action for option "server_host":
-* Sets host to run server on (Tcl/TK/DP driver only)
+ * opt_server_host()
+ *
+ * Performs appropriate action for option "server_host":
+ * Sets host to run server on (Tcl/TK/DP driver only)
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1483,10 +1430,10 @@ opt_server_host(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_server_port()
-*
-* Performs appropriate action for option "server_port":
-* Sets port to talk to server on (Tcl/TK/DP driver only)
+ * opt_server_port()
+ *
+ * Performs appropriate action for option "server_port":
+ * Sets port to talk to server on (Tcl/TK/DP driver only)
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1497,10 +1444,10 @@ opt_server_port(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_user()
-*
-* Performs appropriate action for option "user":
-* Sets user name on remote node (for remsh), dp driver only
+ * opt_user()
+ *
+ * Performs appropriate action for option "user":
+ * Sets user name on remote node (for remsh), dp driver only
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1511,10 +1458,10 @@ opt_user(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_plserver()
-*
-* Performs appropriate action for option "plserver":
-* Sets name to use when invoking server (Tcl/TK/DP driver only)
+ * opt_plserver()
+ *
+ * Performs appropriate action for option "plserver":
+ * Sets name to use when invoking server (Tcl/TK/DP driver only)
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1525,10 +1472,10 @@ opt_plserver(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_plwindow()
-*
-* Performs appropriate action for option "plwindow":
-* Sets plplot window name
+ * opt_plwindow()
+ *
+ * Performs appropriate action for option "plwindow":
+ * Sets plplot window name
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1539,10 +1486,10 @@ opt_plwindow(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_tcl_cmd()
-*
-* Performs appropriate action for option "tcl_cmd":
-* Sets TCL command(s) to eval on startup
+ * opt_tcl_cmd()
+ *
+ * Performs appropriate action for option "tcl_cmd":
+ * Sets TCL command(s) to eval on startup
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1553,10 +1500,10 @@ opt_tcl_cmd(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_auto_path()
-*
-* Performs appropriate action for option "auto_path":
-* Sets additional directories to autoload
+ * opt_auto_path()
+ *
+ * Performs appropriate action for option "auto_path":
+ * Sets additional directories to autoload
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1567,10 +1514,10 @@ opt_auto_path(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_px()
-*
-* Performs appropriate action for option "px":
-* Set packing in x
+ * opt_px()
+ *
+ * Performs appropriate action for option "px":
+ * Set packing in x
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1581,10 +1528,10 @@ opt_px(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_py()
-*
-* Performs appropriate action for option "py":
-* Set packing in y
+ * opt_py()
+ *
+ * Performs appropriate action for option "py":
+ * Set packing in y
 \*----------------------------------------------------------------------*/
 
 static int
@@ -1595,10 +1542,10 @@ opt_py(char *opt, char *optarg, void *client_data)
 }
 
 /*----------------------------------------------------------------------*\
-* opt_geo()
-*
-* Performs appropriate action for option "geo":
-* Set geometry for output window (e.g. "400x400+100+0")
+ * opt_geo()
+ *
+ * Performs appropriate action for option "geo":
+ * Set geometry for output window (e.g. "400x400+100+0")
 \*----------------------------------------------------------------------*/
 
 static int

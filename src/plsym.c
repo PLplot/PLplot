@@ -1,20 +1,17 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/03/23 08:34:53  mjl
+ * Revision 1.10  1994/06/30 18:22:21  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
+ * Revision 1.9  1994/03/23  08:34:53  mjl
  * All external API source files: replaced call to plexit() on simple
  * (recoverable) errors with simply printing the error message (via
  * plabort()) and returning.  Should help avoid loss of computer time in some
  * critical circumstances (during a long batch run, for example).
- *
- * Revision 1.8  1993/11/15  08:40:33  mjl
- * Comment fixes.
- *
- * Revision 1.7  1993/10/21  19:30:25  mjl
- * Updated calls to private plplot utility functions (these now begin
- * with "plP_").
- *
- * Revision 1.6  1993/10/18  19:45:50  mjl
- * Added user-contributed plarrows function.
 */
 
 /*	plsym.c
@@ -23,26 +20,23 @@
 */
 
 #include "plplotP.h"
-#include <math.h>
 #include <float.h>
 
 extern short int *fntlkup;
 extern short int numberfonts, numberchars;
 
 /*----------------------------------------------------------------------*\
-* void plsym()
-*
-* Plots array y against x for n points using Hershey symbol "code".
+ * void plsym()
+ *
+ * Plots array y against x for n points using Hershey symbol "code".
 \*----------------------------------------------------------------------*/
 
 void
 c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 {
     PLINT i;
-    PLINT level;
 
-    plP_glev(&level);
-    if (level < 3) {
+    if (plsc->level < 3) {
 	plabort("plsym: Please set up window first");
 	return;
     }
@@ -56,19 +50,17 @@ c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 }
 
 /*----------------------------------------------------------------------*\
-* void plpoin()
-*
-* Plots array y against x for n points using ASCII code "code".
+ * void plpoin()
+ *
+ * Plots array y against x for n points using ASCII code "code".
 \*----------------------------------------------------------------------*/
 
 void
 c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 {
-    PLINT i;
-    PLINT level, sym, font, col;
+    PLINT i, sym, font, col;
 
-    plP_glev(&level);
-    if (level < 3) {
+    if (plsc->level < 3) {
 	plabort("plpoin: Please set up window first");
 	return;
     }
@@ -85,10 +77,10 @@ c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 }
 
 /*----------------------------------------------------------------------*\
-* void plhrsh()
-*
-* Writes the Hershey symbol "ch" centred at the physical
-* coordinate (x,y).
+ * void plhrsh()
+ *
+ * Writes the Hershey symbol "ch" centred at the physical
+ * coordinate (x,y).
 \*----------------------------------------------------------------------*/
 
 void
@@ -96,12 +88,10 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 {
     PLINT cx, cy, k, penup;
     SCHAR *xygrid;
-    PLFLT symdef, symht, scale, xscale, yscale, xpmm, ypmm;
+    PLFLT scale, xscale, yscale;
 
-    plP_gsym(&symdef, &symht);
-    plP_gpixmm(&xpmm, &ypmm);
     penup = 1;
-    scale = 0.05 * symht;
+    scale = 0.05 * plsc->symht;
 
     if ( ! plcvec(ch, &xygrid)) {
 	plP_movphy(x, y);
@@ -110,8 +100,8 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 
     /* Compute how many physical pixels correspond to a character pixel */
 
-    xscale = scale * xpmm;
-    yscale = scale * ypmm;
+    xscale = scale * plsc->xpmm;
+    yscale = scale * plsc->ypmm;
 
     k = 4;
     for (;;) {

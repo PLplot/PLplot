@@ -1,14 +1,12 @@
 /* $Id$
-   $Log$
-   Revision 1.6  1994/03/23 08:35:41  mjl
-   All external API source files: replaced call to plexit() on simple
-   (recoverable) errors with simply printing the error message (via
-   plabort()) and returning.  Should help avoid loss of computer time in some
-   critical circumstances (during a long batch run, for example).
-
- * Revision 1.5  1993/09/17  06:44:40  mjl
- * Eliminated abort on bad window bounds; now issues a warning and attempts
- * to recover.
+ * $Log$
+ * Revision 1.7  1994/06/30 18:22:24  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
 */
 
 /*	plwind.c
@@ -17,14 +15,13 @@
 */
 
 #include "plplotP.h"
-#include <math.h>
 
 #define  dtr   0.01745329252
 
 /*----------------------------------------------------------------------*\
-* void plwind()
-*
-* Set up world coordinates of the viewport boundaries (2d plots).
+ * void plwind()
+ *
+ * Set up world coordinates of the viewport boundaries (2d plots).
 \*----------------------------------------------------------------------*/
 
 void
@@ -34,12 +31,9 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLFLT dx, dy;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT vpxmi, vpxma, vpymi, vpyma;
-    PLFLT wpxscl, wpxoff, wpyscl, wpyoff;
     PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
-    PLINT level;
 
-    plP_glev(&level);
-    if (level < 2) {
+    if (plsc->level < 2) {
 	plabort("plwind: Please set up viewport first");
 	return;
     }
@@ -74,43 +68,44 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     dx = vpwxma - vpwxmi;
     dy = vpwyma - vpwymi;
 
-    wpxscl = (vppxma - vppxmi) / dx;
-    wpxoff = (xmax * vppxmi - xmin * vppxma) / dx;
-    wpyscl = (vppyma - vppymi) / dy;
-    wpyoff = (ymax * vppymi - ymin * vppyma) / dy;
-    plP_swp(wpxscl, wpxoff, wpyscl, wpyoff);
+    plsc->wpxscl = (vppxma - vppxmi) / dx;
+    plsc->wpxoff = (xmax * vppxmi - xmin * vppxma) / dx;
+    plsc->wpyscl = (vppyma - vppymi) / dy;
+    plsc->wpyoff = (ymax * vppymi - ymin * vppyma) / dy;
 
     vpxmi = plP_dcmmx(vpxmi);
     vpxma = plP_dcmmx(vpxma);
     vpymi = plP_dcmmy(vpymi);
     vpyma = plP_dcmmy(vpyma);
+
     wmxscl = (vpxma - vpxmi) / dx;
     wmxoff = (xmax * vpxmi - xmin * vpxma) / dx;
     wmyscl = (vpyma - vpymi) / dy;
     wmyoff = (ymax * vpymi - ymin * vpyma) / dy;
+
     plP_swm(wmxscl, wmxoff, wmyscl, wmyoff);
 
-    plP_slev(3);
+    plsc->level = 3;
 }
 
 /*----------------------------------------------------------------------*\
-* void plw3d()
-*
-* Set up a window for three-dimensional plotting. The data are mapped
-* into a box with world coordinate size "basex" by "basey" by "height",
-* with the base being symmetrically positioned about zero. Thus
-* the mapping between data 3-d and world 3-d coordinates is given by:
-*
-*   x = xmin   =>   wx = -0.5*basex
-*   x = xmax   =>   wx =  0.5*basex
-*   y = ymin   =>   wy = -0.5*basey
-*   y = ymax   =>   wy =  0.5*basey
-*   z = zmin   =>   wz =  0.0
-*   z = zmax   =>   wz =  height
-*
-* The world coordinate box is then viewed from position "alt"-"az",
-* measured in degrees. For proper operation, 0 <= alt <= 90 degrees,
-* but az can be any value.
+ * void plw3d()
+ *
+ * Set up a window for three-dimensional plotting. The data are mapped
+ * into a box with world coordinate size "basex" by "basey" by "height",
+ * with the base being symmetrically positioned about zero. Thus
+ * the mapping between data 3-d and world 3-d coordinates is given by:
+ *
+ *   x = xmin   =>   wx = -0.5*basex
+ *   x = xmax   =>   wx =  0.5*basex
+ *   y = ymin   =>   wy = -0.5*basey
+ *   y = ymax   =>   wy =  0.5*basey
+ *   z = zmin   =>   wz =  0.0
+ *   z = zmax   =>   wz =  height
+ *
+ * The world coordinate box is then viewed from position "alt"-"az",
+ * measured in degrees. For proper operation, 0 <= alt <= 90 degrees,
+ * but az can be any value.
 \*----------------------------------------------------------------------*/
 
 void
@@ -120,10 +115,8 @@ c_plw3d(PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
 {
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, d;
     PLFLT cx, cy, saz, caz, salt, calt, zscale;
-    PLINT level;
 
-    plP_glev(&level);
-    if (level < 3) {
+    if (plsc->level < 3) {
 	plabort("plw3d: Please set up 2-d window first");
 	return;
     }
@@ -157,13 +150,22 @@ c_plw3d(PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
     salt = sin(dtr * alt);
     calt = cos(dtr * alt);
 
-    plP_sdom(xmin, xmax, ymin, ymax);
-    plP_srange(zscale, zmin, zmax);
+    plsc->domxmi = xmin;
+    plsc->domxma = xmax;
+    plsc->domymi = ymin;
+    plsc->domyma = ymax;
+    plsc->zzscl = zscale;
+    plsc->ranmi = zmin;
+    plsc->ranma = zmax;
 
-    plP_sbase(basex, basey, (PLFLT) (0.5 * (xmin + xmax)),
-	  (PLFLT) (0.5 * (ymin + ymax)));
+    plsc->base3x = basex;
+    plsc->base3y = basey;
+    plsc->basecx = 0.5 * (xmin + xmax);
+    plsc->basecy = 0.5 * (ymin + ymax);
 
-    plP_sw3wc((PLFLT) (cx * caz), (PLFLT) (-cy * saz),
-	  (PLFLT) (cx * saz * salt), (PLFLT) (cy * caz * salt),
-	  (PLFLT) (zscale * calt));
+    plsc->cxx = cx * caz;
+    plsc->cxy = -cy * saz;
+    plsc->cyx = cx * saz * salt;
+    plsc->cyy = cy * caz * salt;
+    plsc->cyz = zscale * calt;
 }

@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/05/24 19:56:56  mjl
+ * Revision 1.13  1994/06/30 18:22:09  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
+ * Revision 1.12  1994/05/24  19:56:56  mjl
  * Changed INSTALL_DIR to LIB_DIR for locating fonts.
  *
  * Revision 1.11  1994/03/23  08:14:55  mjl
@@ -13,12 +20,6 @@
  *
  * Revision 1.10  1994/01/15  17:28:45  mjl
  * Changed to new PDF function call syntax.
- *
- * Revision 1.9  1993/09/08  02:40:16  mjl
- * Added search of INSTALL_DIR, passed in from makefile.  Directories
- * now can be specified without the trailing slash, and the path name
- * is built up correctly (I hope) on Unix, Amiga, and MS-DOS (so special
- * handling for passing strings with a trailing backslash is gone).
 */
 
 /*	plfont.c
@@ -58,7 +59,6 @@
 
 #include "plplotP.h"
 #include "pdf.h"
-#include <string.h>
 
  /* MSDOS search path */
 
@@ -142,35 +142,9 @@ short int indxleng;
 static short fontloaded = 0;
 
 /*----------------------------------------------------------------------*\
-* void c_plfont(ifont)
-*
-* Sets the global font flag to 'ifont'.
-\*----------------------------------------------------------------------*/
-
-void
-c_plfont(PLINT ifont)
-{
-    PLINT ifnt, icol;
-    PLINT level;
-
-    plP_glev(&level);
-    if (level < 1) {
-	plabort("plfont: Please call plinit first");
-	return;
-    }
-    if (ifont < 1 || ifont > 4) {
-	plabort("plfont: Invalid font");
-	return;
-    }
-
-    plP_gatt(&ifnt, &icol);
-    plP_satt(ifont, icol);
-}
-
-/*----------------------------------------------------------------------*\
-* void plfntld(fnt)
-*
-* Loads either the standard or extended font.
+ * void plfntld(fnt)
+ *
+ * Loads either the standard or extended font.
 \*----------------------------------------------------------------------*/
 
 void
@@ -235,10 +209,10 @@ plfntld(PLINT fnt)
 }
 
 /*----------------------------------------------------------------------*\
-* FILE *plfontopen(fn)
-*
-* Return file pointer to font file.
-* Lots of locations checked; see documentation for plfntld().
+ * FILE *plfontopen(fn)
+ *
+ * Return file pointer to font file.
+ * Lots of locations checked; see documentation for plfntld().
 \*----------------------------------------------------------------------*/
 
 static FILE *
@@ -315,9 +289,9 @@ plfontopen(char *fn)
 }
 
 /*----------------------------------------------------------------------*\
-* void plfontrel()
-*
-* Release memory for fonts.
+ * void plfontrel()
+ *
+ * Release memory for fonts.
 \*----------------------------------------------------------------------*/
 
 void

@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/04/30 16:15:11  mjl
+ * Revision 1.14  1994/06/30 18:22:07  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
+ * Revision 1.13  1994/04/30  16:15:11  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -8,9 +15,6 @@
  * Split into two routines, one as a front-end to the driver interface fill
  * routine, and the other as a target of the driver interface when the driver
  * doesn't support the desired fill capability.
- *
- * Revision 1.11  1993/07/16  22:36:16  mjl
- * Algorithm improved and simplified, submitted by Wesley Ebisuzaki.
 */
 
 /*	plfill.c
@@ -19,7 +23,6 @@
 */
 
 #include "plplotP.h"
-#include <math.h>
 
 #define DTOR            0.0174533
 #define BINC            50
@@ -40,23 +43,21 @@ static void  buildlist	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 /* INDENT ON */
 
 /*----------------------------------------------------------------------*\
-* void plfill()
-*
-* Pattern fills the polygon bounded by the input points.
-* If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
-* The final point is explicitly added if it doesn't match up to the first,
-* to prevent clipping problems.
+ * void plfill()
+ *
+ * Pattern fills the polygon bounded by the input points.
+ * If hardware fill is used, a maximum of PL_MAXPOLY-1 vertices is allowed.
+ * The final point is explicitly added if it doesn't match up to the first,
+ * to prevent clipping problems.
 \*----------------------------------------------------------------------*/
 
 void
 c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 {
-    PLINT level;
     short xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
-    int i;
+    PLINT i;
 
-    plP_glev(&level);
-    if (level < 3) {
+    if (plsc->level < 3) {
 	plabort("plfill: Please set up window first");
 	return;
     }
@@ -83,9 +84,9 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 }
 
 /*----------------------------------------------------------------------*\
-* void plfill_soft()
-*
-* Pattern fills in software the polygon bounded by the input points.
+ * void plfill_soft()
+ *
+ * Pattern fills in software the polygon bounded by the input points.
 \*----------------------------------------------------------------------*/
 
 void
@@ -95,8 +96,6 @@ plfill_soft(short *x, short *y, PLINT n)
     PLINT xp1, yp1, xp2, yp2, xp3, yp3;
     PLINT k, dinc;
     PLFLT ci, si;
-    PLINT *inclin, *delta, nps;
-    PLFLT xpmm, ypmm;
     double temp;
 
     buffersize = 2 * BINC;
@@ -106,23 +105,24 @@ plfill_soft(short *x, short *y, PLINT n)
 	return;
     }
 
-    plP_gpat(&inclin, &delta, &nps);
-    plP_gpixmm(&xpmm, &ypmm);
-
 /* Loop over sets of lines in pattern */
 
-    for (k = 0; k < nps; k++) {
+    for (k = 0; k < plsc->nps; k++) {
 	bufferleng = 0;
 
-        temp = DTOR * inclin[k] * 0.1;
-        si = sin(temp) * ypmm;
-        ci = cos(temp) * xpmm;
+        temp = DTOR * plsc->inclin[k] * 0.1;
+        si = sin(temp) * plsc->ypmm;
+        ci = cos(temp) * plsc->xpmm;
+
 	/* normalize: 1 = si*si + ci*ci */
+
         temp = sqrt((double) (si*si + ci*ci));
 	si /= temp;
 	ci /= temp;
 
-	dinc = delta[k] * SSQR(ypmm * ABS(ci), xpmm * ABS(si)) / 1000.;
+	dinc = plsc->delta[k] * SSQR(plsc->ypmm * ABS(ci),
+				     plsc->xpmm * ABS(si)) / 1000.;
+
 	if (dinc < 0) dinc = -dinc;
 	if (dinc == 0) dinc = 1;
 
@@ -170,8 +170,8 @@ plfill_soft(short *x, short *y, PLINT n)
 	    if (yp2 != yp1) {
 		fprintf(stderr, "plfill: oh oh we are lost\n");
 		for (j = 0; j < bufferleng; j+=2) {
-		    fprintf(stderr, "plfill: %ld %ld\n",
-			    buffer[j], buffer[j+1]);
+		    fprintf(stderr, "plfill: %d %d\n",
+			    (int) buffer[j], (int) buffer[j+1]);
 		}
 		continue;	/* Uh oh we're lost */
 	    }
@@ -183,7 +183,7 @@ plfill_soft(short *x, short *y, PLINT n)
 }
 
 /*----------------------------------------------------------------------*\
-* Utility functions
+ * Utility functions
 \*----------------------------------------------------------------------*/
 
 static void
@@ -229,6 +229,7 @@ buildlist(PLINT xp1, PLINT yp1, PLINT xp2, PLINT yp2, PLINT xp3, PLINT yp3,
     if (yp3 == yp2) nstep = 0;
 
     /* Build coordinate list */
+
     ploty = (min_y / dinc) * dinc;
     if (ploty < min_y) ploty += dinc;
 
@@ -272,15 +273,16 @@ compar(const void *pnum1, const void *pnum2)
     pnt2 = (const struct point *) pnum2;
 
     if (pnt1->y < pnt2->y)
-	return (-1);
+	return -1;
     else if (pnt1->y > pnt2->y)
-	return (1);
+	return 1;
 
     /* Only reach here if y coords are equal, so sort by x */
-    if (pnt1->x < pnt2->x)
-	return (-1);
-    else if (pnt1->x > pnt2->x)
-	return (1);
 
-    return (0);
+    if (pnt1->x < pnt2->x)
+	return -1;
+    else if (pnt1->x > pnt2->x)
+	return 1;
+
+    return 0;
 }

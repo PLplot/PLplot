@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/04/08 12:29:00  mjl
+ * Revision 1.10  1994/06/30 18:21:56  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
+ * Revision 1.9  1994/04/08  12:29:00  mjl
  * Now always keeps track of bytes written or read, for use by drivers
  * that need that info.
  *
@@ -13,14 +20,6 @@
  * of a file handle, to enable PDF operations to/from a memory buffer.
  * New PDF front-ends to fopen, fclose, getc, putc added.  pdf_bopen()
  * added for initialization of memory buffer.
- *
- * Revision 1.6  1993/11/12  18:41:18  mjl
- * Substituted bit operations for some arithmetic ones, for faster, more
- * concise, and more portable code.
- *
- * Revision 1.5  1993/08/11  19:20:03  mjl
- * Changed debugging code to print to stderr instead of stdout, plugged
- * a hole where possible failure of fwrite went undetected.
 */
 
 /*--------------------------------------------------------------------------*\
@@ -47,9 +46,6 @@
 #include "plplotP.h"
 #include "pdf.h"
 
-#include <math.h>
-#include <string.h>
-
 static void print_ieeef	(void *, void *);
 static int  pdf_wrx	(const U_CHAR *x, long nitems, PDFstrm *pdfs);
 static int  pdf_rdx	(U_CHAR *x, long nitems, PDFstrm *pdfs);
@@ -57,9 +53,9 @@ static int  pdf_rdx	(U_CHAR *x, long nitems, PDFstrm *pdfs);
 static int debug = 0;
 
 /*--------------------------------------------------------------------------*\
-* void pdf_set (string, value)
-*
-* Set an option.  Pretty sparse right now but you never know.
+ * void pdf_set (string, value)
+ *
+ * Set an option.  Pretty sparse right now but you never know.
 \*--------------------------------------------------------------------------*/
 
 void
@@ -70,10 +66,10 @@ pdf_set(char *option, int value)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_fopen()
-*
-* Initializes a PDFstrm for a file oriented device.
-* Used exactly like fopen().
+ * pdf_fopen()
+ *
+ * Initializes a PDFstrm for a file oriented device.
+ * Used exactly like fopen().
 \*----------------------------------------------------------------------*/
 
 PDFstrm *
@@ -99,10 +95,10 @@ pdf_fopen(char *filename, char *mode)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_bopen()
-*
-* Initializes a PDFstrm for reading/writing to a memory buffer.
-* If buffer is NULL, a standard buffer is allocated.
+ * pdf_bopen()
+ *
+ * Initializes a PDFstrm for reading/writing to a memory buffer.
+ * If buffer is NULL, a standard buffer is allocated.
 \*----------------------------------------------------------------------*/
 
 PDFstrm *
@@ -140,10 +136,10 @@ pdf_bopen(U_CHAR *buffer, long bufmax)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_finit()
-*
-* Initializes a PDFstrm for a file oriented device.
-* Like pdf_fopen() but an existing file handle is specified.
+ * pdf_finit()
+ *
+ * Initializes a PDFstrm for a file oriented device.
+ * Like pdf_fopen() but an existing file handle is specified.
 \*----------------------------------------------------------------------*/
 
 PDFstrm *
@@ -164,10 +160,10 @@ pdf_finit(FILE *file)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_close()
-*
-* Closes a PDFstrm.
-* Used exactly like fclose().
+ * pdf_close()
+ *
+ * Closes a PDFstrm.
+ * Used exactly like fclose().
 \*----------------------------------------------------------------------*/
 
 int
@@ -188,9 +184,9 @@ pdf_close(PDFstrm *pdfs)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_putc()
-*
-* Writes a single character.
+ * int pdf_putc()
+ *
+ * Writes a single character.
 \*----------------------------------------------------------------------*/
 
 int
@@ -223,9 +219,9 @@ pdf_putc(int c, PDFstrm *pdfs)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_getc()
-*
-* Reads a single character.
+ * int pdf_getc()
+ *
+ * Reads a single character.
 \*----------------------------------------------------------------------*/
 
 int
@@ -248,9 +244,9 @@ pdf_getc(PDFstrm *pdfs)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_ungetc()
-*
-* Push back the last command read.
+ * int pdf_ungetc()
+ *
+ * Push back the last command read.
 \*----------------------------------------------------------------------*/
 
 int
@@ -276,9 +272,9 @@ pdf_ungetc(int c, PDFstrm *pdfs)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_wrx()
-*
-* Writes a record.
+ * int pdf_wrx()
+ *
+ * Writes a record.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -311,9 +307,9 @@ pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_rdx()
-*
-* Reads a record.
+ * int pdf_rdx()
+ *
+ * Reads a record.
 \*----------------------------------------------------------------------*/
 
 static int
@@ -338,13 +334,11 @@ pdf_rdx(U_CHAR *x, long nitems, PDFstrm *pdfs)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_wr_header()
-*
-* Writes a header string.
-* Input string must be NULL-terminated.
-* The written string is terminated by a new-line, not a NULL.
-* This is done so you can type e.g. "% strings <file> | head" and
-* have it be easy to read.
+ * pdf_wr_header()
+ *
+ * Writes a header string.  Input string must be NULL-terminated.  The
+ * written string is terminated by a new-line, not a NULL.  This is done
+ * so you can type e.g. "% strings <file> | head" and get sensible output.
 \*----------------------------------------------------------------------*/
 
 int
@@ -367,10 +361,10 @@ pdf_wr_header(PDFstrm *pdfs, char *header)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_rd_header
-*
-* Reads a newline-terminated header string from PDFstrm *pdfs, and converts
-* to a usual NULL-terminated string.  80 chars maximum assumed.
+ * int pdf_rd_header
+ *
+ * Reads a newline-terminated header string from PDFstrm *pdfs, and
+ * converts to a usual NULL-terminated string.  80 chars maximum assumed.
 \*----------------------------------------------------------------------*/
 
 int
@@ -392,9 +386,9 @@ pdf_rd_header(PDFstrm *pdfs, char *header)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_wr_1byte()
-*
-* Writes a U_CHAR as a single byte.
+ * int pdf_wr_1byte()
+ *
+ * Writes a U_CHAR as a single byte.
 \*----------------------------------------------------------------------*/
 
 int
@@ -410,9 +404,9 @@ pdf_wr_1byte(PDFstrm *pdfs, U_CHAR s)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_rd_1byte()
-*
-* Reads a single byte, storing into a U_CHAR.
+ * int pdf_rd_1byte()
+ *
+ * Reads a single byte, storing into a U_CHAR.
 \*----------------------------------------------------------------------*/
 
 int
@@ -428,9 +422,9 @@ pdf_rd_1byte(PDFstrm *pdfs, U_CHAR *ps)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_wr_2bytes()
-*
-* Writes a U_SHORT as two single bytes, low end first.
+ * pdf_wr_2bytes()
+ *
+ * Writes a U_SHORT as two single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
@@ -448,9 +442,9 @@ pdf_wr_2bytes(PDFstrm *pdfs, U_SHORT s)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_rd_2bytes()
-*
-* Reads a U_SHORT from two single bytes, low end first.
+ * pdf_rd_2bytes()
+ *
+ * Reads a U_SHORT from two single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
@@ -469,9 +463,9 @@ pdf_rd_2bytes(PDFstrm *pdfs, U_SHORT *ps)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_wr_2nbytes()
-*
-* Writes n U_SHORT's as 2n single bytes, low end first.
+ * pdf_wr_2nbytes()
+ *
+ * Writes n U_SHORT's as 2n single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
@@ -491,9 +485,9 @@ pdf_wr_2nbytes(PDFstrm *pdfs, U_SHORT *s, PLINT n)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_rd_2nbytes()
-*
-* Reads n U_SHORT's from 2n single bytes, low end first.
+ * pdf_rd_2nbytes()
+ *
+ * Reads n U_SHORT's from 2n single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
@@ -514,9 +508,9 @@ pdf_rd_2nbytes(PDFstrm *pdfs, U_SHORT *s, PLINT n)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_wr_4bytes()
-*
-* Writes an unsigned long as four single bytes, low end first.
+ * pdf_wr_4bytes()
+ *
+ * Writes an unsigned long as four single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
@@ -536,9 +530,9 @@ pdf_wr_4bytes(PDFstrm *pdfs, U_LONG s)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_rd_4bytes()
-*
-* Reads an unsigned long from 4 single bytes, low end first.
+ * pdf_rd_4bytes()
+ *
+ * Reads an unsigned long from 4 single bytes, low end first.
 \*----------------------------------------------------------------------*/
 
 int
@@ -559,64 +553,64 @@ pdf_rd_4bytes(PDFstrm *pdfs, U_LONG *ps)
 }
 
 /*----------------------------------------------------------------------*\
-* Here is the IEEE floating point specification in both 32 bit and 64 bit
-* precisions, from page 9 of "IEEE Standard for Binary Floating-Point
-* Arithmetic", copyright 1985, IEEE Std 754-1985:
-* 
-* 
-*                             Single Format
-* 
-* msb means most significant bit
-* lsb means least significant bit
-* 
-*   1         8                                23
-* _____________________________________________________________________
-* |   |                |                                              |
-* | s |       e        |                        f                     |
-* |___|________________|______________________________________________|
-*      msb          lsb msb                                        lsb
-* 
-* 
-* 
-*                             Double Format
-* 
-* msb means most significant bit
-* lsb means least significant bit
-* 
-*   1        11                                52
-* _____________________________________________________________________
-* |   |                |                                              |
-* | s |       e        |                        f                     |
-* |___|________________|______________________________________________|
-*      msb          lsb msb                                        lsb
-* 
-* 
-* (Thanks to: Andy Mai (mai@ncar.ucar.edu))
-* 
-* 
-* According to "inmos: Transputer instruction set" the IEEE standard specifies
-* the floating format as:
-* 
-*        s exp frac
-* 
-* Where: s = sign bit  (1 bit)
-*        exp = exponent (8 bits for 32 bit float / 11 bits for 64 bit float)
-*        frac = fraction (23 bits for 32 bit float / 52 bits for 64 bit float)
-* 
-* value of (s exp frac) = (-1)^s * 1.frac * 2^(exp-bias) ; if exp not 0
-*                         (-1)^s * 0.frac * 2^(1-bias) ; if exp = 0
-* 
-* where bias = 127 for 32 bit float
-*       bias = 1023 for 64 bit float
-* 
-* (Thanks to: Tom Bjorkholm(TBJORKHOLM@abo.fi))
-* 
+ * Here is the IEEE floating point specification in both 32 bit and 64 bit
+ * precisions, from page 9 of "IEEE Standard for Binary Floating-Point
+ * Arithmetic", copyright 1985, IEEE Std 754-1985:
+ * 
+ * 
+ *                             Single Format
+ * 
+ * msb means most significant bit
+ * lsb means least significant bit
+ * 
+ *   1         8                                23
+ * _____________________________________________________________________
+ * |   |                |                                              |
+ * | s |       e        |                        f                     |
+ * |___|________________|______________________________________________|
+ *      msb          lsb msb                                        lsb
+ * 
+ * 
+ * 
+ *                             Double Format
+ * 
+ * msb means most significant bit
+ * lsb means least significant bit
+ * 
+ *   1        11                                52
+ * _____________________________________________________________________
+ * |   |                |                                              |
+ * | s |       e        |                        f                     |
+ * |___|________________|______________________________________________|
+ *      msb          lsb msb                                        lsb
+ * 
+ * 
+ * (Thanks to: Andy Mai (mai@ncar.ucar.edu))
+ * 
+ * 
+ * According to "inmos: Transputer instruction set" the IEEE standard
+ * specifies the floating format as:
+ * 
+ *      s exp frac
+ * 
+ * Where: s = sign bit  (1 bit)
+ *      exp = exponent (8 bits for 32 bit float / 11 bits for 64 bit float)
+ *      frac = fraction (23 bits for 32 bit float / 52 bits for 64 bit float)
+ * 
+ * value of (s exp frac) = (-1)^s * 1.frac * 2^(exp-bias) ; if exp not 0
+ *                         (-1)^s * 0.frac * 2^(1-bias) ; if exp = 0
+ * 
+ * where bias = 127 for 32 bit float
+ *       bias = 1023 for 64 bit float
+ * 
+ * (Thanks to: Tom Bjorkholm(TBJORKHOLM@abo.fi))
+ * 
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* int pdf_wr_ieeef()
-*
-* Writes a float in IEEE single precision (32 bit) format.
+ * int pdf_wr_ieeef()
+ *
+ * Writes a float in IEEE single precision (32 bit) format.
 \*----------------------------------------------------------------------*/
 
 int
@@ -677,9 +671,9 @@ pdf_wr_ieeef(PDFstrm *pdfs, float f)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_rd_ieeef()
-*
-* Reads a float from a IEEE single precision (32 bit) format.
+ * int pdf_rd_ieeef()
+ *
+ * Reads a float from a IEEE single precision (32 bit) format.
 \*----------------------------------------------------------------------*/
 
 int
@@ -723,12 +717,12 @@ pdf_rd_ieeef(PDFstrm *pdfs, float *pf)
 }
 
 /*----------------------------------------------------------------------*\
-* print_ieeef()
-*
-* Prints binary representation for numbers pointed to by arguments.
-* The first argument is the original float, the second is the
-* IEEE representation.  They should be the same on any machine that
-* uses IEEE floats.
+ * print_ieeef()
+ *
+ * Prints binary representation for numbers pointed to by arguments.
+ * The first argument is the original float, the second is the
+ * IEEE representation.  They should be the same on any machine that
+ * uses IEEE floats.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -766,18 +760,19 @@ print_ieeef(void *vx, void *vy)
 }
 
 /*----------------------------------------------------------------------*\
-* plAlloc2dGrid()
-*
-* Allocates a block of memory for use as a 2-d grid of PLFLT's.  Resulting
-* array can be indexed as f[i][j] anywhere.  This is to be used instead of
-* PLFLT f[nx][ny], which is less useful.  Note that this type of allocation
-* is required by the PLPLOT functions which take a 2-d grids of PLFLT's
-* as an argument, such as plcont() and plot3d().  Example usage:
-*
-*   PLFLT **z;
-*
-*   Alloc2dGrid(&z, XPTS, YPTS);
-*
+ * plAlloc2dGrid()
+ *
+ * Allocates a block of memory for use as a 2-d grid of PLFLT's.
+ * Resulting array can be indexed as f[i][j] anywhere.  This is to be used
+ * instead of PLFLT f[nx][ny], which is less useful.  Note that this type
+ * of allocation is required by the PLPLOT functions which take a 2-d
+ * grids of PLFLT's as an argument, such as plcont() and plot3d().
+ * Example usage:
+ *
+ *   PLFLT **z;
+ *
+ *   Alloc2dGrid(&z, XPTS, YPTS);
+ *
 \*----------------------------------------------------------------------*/
 
 void
@@ -792,9 +787,9 @@ plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
 }
 
 /*----------------------------------------------------------------------*\
-* Free2dGrid()
-*
-* Frees a block of memory allocated with Alloc2dGrid().
+ * Free2dGrid()
+ *
+ * Frees a block of memory allocated with Alloc2dGrid().
 \*----------------------------------------------------------------------*/
 
 void

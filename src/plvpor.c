@@ -1,18 +1,17 @@
 /* $Id$
-   $Log$
-   Revision 1.8  1994/03/23 08:35:28  mjl
-   All external API source files: replaced call to plexit() on simple
-   (recoverable) errors with simply printing the error message (via
-   plabort()) and returning.  Should help avoid loss of computer time in some
-   critical circumstances (during a long batch run, for example).
-
- * Revision 1.7  1993/11/15  08:40:42  mjl
- * Comment fixes.
+ * $Log$
+ * Revision 1.9  1994/06/30 18:22:23  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
  *
- * Revision 1.6  1993/07/01  22:13:47  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
+ * Revision 1.8  1994/03/23  08:35:28  mjl
+ * All external API source files: replaced call to plexit() on simple
+ * (recoverable) errors with simply printing the error message (via
+ * plabort()) and returning.  Should help avoid loss of computer time in some
+ * critical circumstances (during a long batch run, for example).
 */
 
 /*	plvpor.c
@@ -23,37 +22,34 @@
 #include "plplotP.h"
 
 /*----------------------------------------------------------------------*\
-* void plenv()
-*
-* Simple interface for defining viewport and window. If "just"=1,
-* X and Y scales will be the same, otherwise they are scaled
-* independently. The "axis" parameter is interpreted as follows:
-*
-*	axis=-2 : draw no box, axis or labels
-*	axis=-1 : draw box only
-*	axis= 0 : Draw box and label with coordinates
-*	axis= 1 : Also draw the coordinate axes
-*	axis= 2 : Draw a grid at major tick positions
-*	axis=10 : Logarithmic X axis, Linear Y axis, No X=0 axis
-*	axis=11 : Logarithmic X axis, Linear Y axis, X=0 axis
-*	axis=20 : Linear X axis, Logarithmic Y axis, No Y=0 axis
-*	axis=21 : Linear X axis, Logarithmic Y axis, Y=0 axis
-*	axis=30 : Logarithmic X and Y axes
+ * void plenv()
+ *
+ * Simple interface for defining viewport and window. If "just"=1,
+ * X and Y scales will be the same, otherwise they are scaled
+ * independently. The "axis" parameter is interpreted as follows:
+ *
+ *	axis=-2 : draw no box, axis or labels
+ *	axis=-1 : draw box only
+ *	axis= 0 : Draw box and label with coordinates
+ *	axis= 1 : Also draw the coordinate axes
+ *	axis= 2 : Draw a grid at major tick positions
+ *	axis=10 : Logarithmic X axis, Linear Y axis, No X=0 axis
+ *	axis=11 : Logarithmic X axis, Linear Y axis, X=0 axis
+ *	axis=20 : Linear X axis, Logarithmic Y axis, No Y=0 axis
+ *	axis=21 : Linear X axis, Logarithmic Y axis, Y=0 axis
+ *	axis=30 : Logarithmic X and Y axes
 \*----------------------------------------------------------------------*/
 
 void
 c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLINT just, PLINT axis)
 {
-    PLINT level;
-    PLFLT chrdef, chrht;
     PLFLT lb, rb, tb, bb, dx, dy;
     PLFLT xsize, ysize, xscale, yscale, scale;
     PLFLT spxmin, spxmax, spymin, spymax;
     PLFLT vpxmin, vpxmax, vpymin, vpymax;
 
-    plP_glev(&level);
-    if (level < 1) {
+    if (plsc->level < 1) {
 	plabort("plenv: Please call plinit first");
 	return;
     }
@@ -71,14 +67,14 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     }
 
     pladv(0);
+
     if (just == 0)
 	plvsta();
     else {
-	plgchr(&chrdef, &chrht);
-	lb = 8.0 * chrht;
-	rb = 5.0 * chrht;
-	tb = 5.0 * chrht;
-	bb = 5.0 * chrht;
+	lb = 8.0 * plsc->chrht;
+	rb = 5.0 * plsc->chrht;
+	tb = 5.0 * plsc->chrht;
+	bb = 5.0 * plsc->chrht;
 	dx = ABS(xmax - xmin);
 	dy = ABS(ymax - ymin);
 	plgspa(&spxmin, &spxmax, &spymin, &spymax);
@@ -94,69 +90,86 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 
 	plsvpa(vpxmin, vpxmax, vpymin, vpymax);
     }
+
     plwind(xmin, xmax, ymin, ymax);
-    if (axis == -2);
-    else if (axis == -1)
+
+    switch (axis) {
+    case -2:
+	break;
+    case -1:
 	plbox("bc", (PLFLT) 0.0, 0, "bc", (PLFLT) 0.0, 0);
-    else if (axis == 0)
+	break;
+    case 0:
 	plbox("bcnst", (PLFLT) 0.0, 0, "bcnstv", (PLFLT) 0.0, 0);
-    else if (axis == 1)
+	break;
+    case 1:
 	plbox("abcnst", (PLFLT) 0.0, 0, "abcnstv", (PLFLT) 0.0, 0);
-    else if (axis == 2)
+	break;
+    case 2:
 	plbox("abcgnst", (PLFLT) 0.0, 0, "abcgnstv", (PLFLT) 0.0, 0);
-    else if (axis == 10)
+	break;
+    case 10:
 	plbox("bclnst", (PLFLT) 0.0, 0, "bcnstv", (PLFLT) 0.0, 0);
-    else if (axis == 11)
+	break;
+    case 11:
 	plbox("bclnst", (PLFLT) 0.0, 0, "abcnstv", (PLFLT) 0.0, 0);
-    else if (axis == 20)
+	break;
+    case 20:
 	plbox("bcnst", (PLFLT) 0.0, 0, "bclnstv", (PLFLT) 0.0, 0);
-    else if (axis == 21)
+	break;
+    case 21:
 	plbox("bcnst", (PLFLT) 0.0, 0, "abclnstv", (PLFLT) 0.0, 0);
-    else if (axis == 30)
+	break;
+    case 30:
 	plbox("bclnst", (PLFLT) 0.0, 0, "bclnstv", (PLFLT) 0.0, 0);
-    else
+	break;
+    default:
 	plwarn("plenv: Invalid axis argument");
+    }
 }
 
 /*----------------------------------------------------------------------*\
-* void plvsta()
-*
-* Defines a "standard" viewport with seven character heights for
-* the left margin and four character heights everywhere else.
+ * void plvsta()
+ *
+ * Defines a "standard" viewport with seven character heights for
+ * the left margin and four character heights everywhere else.
 \*----------------------------------------------------------------------*/
 
 void
 c_plvsta(void)
 {
     PLFLT xmin, xmax, ymin, ymax;
-    PLFLT chrdef, chrht, spdxmi, spdxma, spdymi, spdyma;
-    PLINT level;
+    PLFLT spdxmi, spdxma, spdymi, spdyma;
+    PLFLT lb, rb, tb, bb;
 
-    plP_glev(&level);
-    if (level < 1) {
+    if (plsc->level < 1) {
 	plabort("plvsta: Please call plinit first");
 	return;
     }
 
-    plgchr(&chrdef, &chrht);
     plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
 
 /*  Find out position of subpage boundaries in millimetres, reduce by */
 /*  the desired border, and convert back into normalized subpage */
 /*  coordinates */
 
-    xmin = plP_dcscx(plP_mmdcx((PLFLT) (plP_dcmmx(spdxmi) + 8 * chrht)));
-    xmax = plP_dcscx(plP_mmdcx((PLFLT) (plP_dcmmx(spdxma) - 5 * chrht)));
-    ymin = plP_dcscy(plP_mmdcy((PLFLT) (plP_dcmmy(spdymi) + 5 * chrht)));
-    ymax = plP_dcscy(plP_mmdcy((PLFLT) (plP_dcmmy(spdyma) - 5 * chrht)));
+    lb = 8.0 * plsc->chrht;
+    rb = 5.0 * plsc->chrht;
+    tb = 5.0 * plsc->chrht;
+    bb = 5.0 * plsc->chrht;
+
+    xmin = plP_dcscx(plP_mmdcx((PLFLT) (plP_dcmmx(spdxmi) + lb)));
+    xmax = plP_dcscx(plP_mmdcx((PLFLT) (plP_dcmmx(spdxma) - rb)));
+    ymin = plP_dcscy(plP_mmdcy((PLFLT) (plP_dcmmy(spdymi) + tb)));
+    ymax = plP_dcscy(plP_mmdcy((PLFLT) (plP_dcmmy(spdyma) - bb)));
 
     plvpor(xmin, xmax, ymin, ymax);
 }
 
 /*----------------------------------------------------------------------*\
-* void plvpor()
-*
-* Creates a viewport with the specified normalized subpage coordinates.
+ * void plvpor()
+ *
+ * Creates a viewport with the specified normalized subpage coordinates.
 \*----------------------------------------------------------------------*/
 
 void
@@ -168,10 +181,8 @@ c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLINT clpxmi, clpxma, clpymi, clpyma;
     PLINT phyxmi, phyxma, phyymi, phyyma;
     PLINT nx, ny, cs;
-    PLINT level;
 
-    plP_glev(&level);
-    if (level < 1) {
+    if (plsc->level < 1) {
 	plabort("plvpor: Please call plinit first");
 	return;
     }
@@ -205,25 +216,23 @@ c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     clpyma = MIN(vppyma, phyyma);
     plP_sclp(clpxmi, clpxma, clpymi, clpyma);
 
-    plP_slev(2);
+    plsc->level = 2;
 }
 
 /*----------------------------------------------------------------------*\
-* void plvpas()
-*
-* Creates the largest viewport of the specified aspect ratio that fits
-* within the specified normalized subpage coordinates.
+ * void plvpas()
+ *
+ * Creates the largest viewport of the specified aspect ratio that fits
+ * within the specified normalized subpage coordinates.
 \*----------------------------------------------------------------------*/
 
 void
 c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
 {
     PLFLT vpxmi, vpxma, vpymi, vpyma;
-    PLINT level;
     PLFLT vpxmid, vpymid, vpxlen, vpylen, w_aspect, ratio;
 
-    plP_glev(&level);
-    if (level < 1) {
+    if (plsc->level < 1) {
 	plabort("plvpas: Please call plinit first");
 	return;
     }
@@ -252,10 +261,10 @@ c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
     ratio = aspect / w_aspect;
 
 /*
-* If ratio < 1, you are requesting an aspect ratio (y/x) less than the natural
-* aspect ratio of the specified window, and you will need to reduce the length
-* in y correspondingly.  Similarly, for ratio > 1, x length must be reduced.
-*/
+ * If ratio < 1, you are requesting an aspect ratio (y/x) less than the natural
+ * aspect ratio of the specified window, and you will need to reduce the length
+ * in y correspondingly.  Similarly, for ratio > 1, x length must be reduced.
+ */
 
     if (ratio <= 0.) {
 	plabort("plvpas: Error in aspect ratio setting");
@@ -275,32 +284,30 @@ c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
 }
 
 /*----------------------------------------------------------------------*\
-* void plvasp()
-*
-* Sets the edges of the viewport with the given aspect ratio, leaving
-* room for labels.
+ * void plvasp()
+ *
+ * Sets the edges of the viewport with the given aspect ratio, leaving
+ * room for labels.
 \*----------------------------------------------------------------------*/
 
 void
 c_plvasp(PLFLT aspect)
 {
-    PLINT level;
-    PLFLT chrdef, chrht, spxmin, spxmax, spymin, spymax;
+    PLFLT spxmin, spxmax, spymin, spymax;
     PLFLT vpxmin, vpxmax, vpymin, vpymax;
     PLFLT xsize, ysize, nxsize, nysize;
     PLFLT lb, rb, tb, bb;
 
-    plP_glev(&level);
-    if (level < 1) {
+    if (plsc->level < 1) {
 	plabort("plvasp: Please call plinit first");
 	return;
     }
 
-    plgchr(&chrdef, &chrht);
-    lb = 8.0 * chrht;
-    rb = 5.0 * chrht;
-    tb = 5.0 * chrht;
-    bb = 5.0 * chrht;
+    lb = 8.0 * plsc->chrht;
+    rb = 5.0 * plsc->chrht;
+    tb = 5.0 * plsc->chrht;
+    bb = 5.0 * plsc->chrht;
+
     plgspa(&spxmin, &spxmax, &spymin, &spymax);
     xsize = spxmax - spxmin;
     ysize = spymax - spymin;
@@ -321,15 +328,15 @@ c_plvasp(PLFLT aspect)
     vpxmax = vpxmin + nxsize;
     vpymin = .5 * (ysize - nysize) + bb;
     vpymax = vpymin + nysize;
+
     plsvpa(vpxmin, vpxmax, vpymin, vpymax);
 }
 
 /*----------------------------------------------------------------------*\
-* void plsvpa()
-*
-* Sets the edges of the viewport to the specified absolute
-* coordinates (mm), measured with respect to the current subpage
-* boundaries.
+ * void plsvpa()
+ *
+ * Sets the edges of the viewport to the specified absolute coordinates
+ * (mm), measured with respect to the current subpage boundaries.
 \*----------------------------------------------------------------------*/
 
 void
@@ -339,10 +346,8 @@ c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLFLT sxmin, symin;
     PLFLT spdxmi, spdxma, spdymi, spdyma;
     PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;
-    PLINT level;
 
-    plP_glev(&level);
-    if (level < 1) {
+    if (plsc->level < 1) {
 	plabort("plsvpa: Please call plinit first");
 	return;
     }
@@ -366,7 +371,10 @@ c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     vpdyma = plP_mmdcy((PLFLT) (symin + ymax));
 
     plP_svpd(vpdxmi, vpdxma, vpdymi, vpdyma);
-    plP_svpp(plP_dcpcx(vpdxmi), plP_dcpcx(vpdxma), plP_dcpcy(vpdymi), plP_dcpcy(vpdyma));
-    plP_sclp(plP_dcpcx(vpdxmi), plP_dcpcx(vpdxma), plP_dcpcy(vpdymi), plP_dcpcy(vpdyma));
-    plP_slev(2);
+    plP_svpp(plP_dcpcx(vpdxmi), plP_dcpcx(vpdxma),
+	     plP_dcpcy(vpdymi), plP_dcpcy(vpdyma));
+    plP_sclp(plP_dcpcx(vpdxmi), plP_dcpcx(vpdxma),
+	     plP_dcpcy(vpdymi), plP_dcpcy(vpdyma));
+
+    plsc->level = 2;
 }

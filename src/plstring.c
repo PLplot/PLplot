@@ -1,22 +1,17 @@
 /* $Id$
-   $Log$
-   Revision 1.7  1994/03/23 08:34:00  mjl
-   All external API source files: replaced call to plexit() on simple
-   (recoverable) errors with simply printing the error message (via
-   plabort()) and returning.  Should help avoid loss of computer time in some
-   critical circumstances (during a long batch run, for example).
-
- * Revision 1.6  1993/10/18  19:45:25  mjl
- * User-contributed workaround for Borland C compiler bug.
+ * $Log$
+ * Revision 1.8  1994/06/30 18:22:18  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
  *
- * Revision 1.5  1993/09/24  20:33:29  furnish
- * Went wild with "const correctness".  Can now pass a C++ String type to
- * most (all that I know of) PLPLOT functions.  This works b/c String has
- * an implicit conversion to const char *.  Now that PLPLOT routines take
- * const char * rather than char *, use from C++ is much easier.
- *
- * Revision 1.4  1993/08/03  01:47:00  mjl
- * Changes to eliminate warnings when compiling with gcc -Wall.
+ * Revision 1.7  1994/03/23  08:34:00  mjl
+ * All external API source files: replaced call to plexit() on simple
+ * (recoverable) errors with simply printing the error message (via
+ * plabort()) and returning.  Should help avoid loss of computer time in some
+ * critical circumstances (during a long batch run, for example).
 */
 
 /*	plstring.c
@@ -25,10 +20,7 @@
 */
 
 #include "plplotP.h"
-
-#include <math.h>
 #include <ctype.h>
-#include <string.h>
 
 #define PLMAXSTR	300
 #define STLEN		250
@@ -52,18 +44,15 @@ static void  plchar	(SCHAR *, PLFLT *, PLINT, PLINT, PLINT,
 			 PLFLT *, PLFLT *, PLFLT *);
 
 /*----------------------------------------------------------------------*\
-* void pllab()
-*
-* Simple routine for labelling graphs.
+ * void pllab()
+ *
+ * Simple routine for labelling graphs.
 \*----------------------------------------------------------------------*/
 
 void
 c_pllab(const char *xlabel, const char *ylabel, const char *tlabel)
 {
-    PLINT level;
-
-    plP_glev(&level);
-    if (level < 2) {
+    if (plsc->level < 2) {
 	plabort("pllab: Please set up viewport first");
 	return;
     }
@@ -74,29 +63,29 @@ c_pllab(const char *xlabel, const char *ylabel, const char *tlabel)
 }
 
 /*----------------------------------------------------------------------*\
-* void plmtex()
-*
-* Prints out "text" at specified position relative to viewport
-* (may be inside or outside)
-*
-* side	String which is one of the following:
-*	B or b  :  Bottom of viewport
-*	T or t  :  Top of viewport
-*	L or l  :  Left of viewport
-*	R or r  :  Right of viewport
-*	LV or lv : Left of viewport, vertical text
-*	RV or rv : Right of viewport, vertical text
-* disp	Displacement from specified edge of viewport, measured
-*	outwards from the viewport in units of the current
-*	character height. The centerlines of the characters are
-*	aligned with the specified position.
-* pos	Position of the reference point of the string relative
-*	to the viewport edge, ranging from 0.0 (left-hand edge)
-*	to 1.0 (right-hand edge)
-* just	Justification of string relative to reference point
-*	just = 0.0 => left hand edge of string is at reference
-*	just = 1.0 => right hand edge of string is at reference
-*	just = 0.5 => center of string is at reference
+ * void plmtex()
+ *
+ * Prints out "text" at specified position relative to viewport
+ * (may be inside or outside)
+ *
+ * side	String which is one of the following:
+ *	B or b  :  Bottom of viewport
+ *	T or t  :  Top of viewport
+ *	L or l  :  Left of viewport
+ *	R or r  :  Right of viewport
+ *	LV or lv : Left of viewport, vertical text
+ *	RV or rv : Right of viewport, vertical text
+ * disp	Displacement from specified edge of viewport, measured
+ *	outwards from the viewport in units of the current
+ *	character height. The centerlines of the characters are
+ *	aligned with the specified position.
+ * pos	Position of the reference point of the string relative
+ *	to the viewport edge, ranging from 0.0 (left-hand edge)
+ *	to 1.0 (right-hand edge)
+ * just	Justification of string relative to reference point
+ *	just = 0.0 => left hand edge of string is at reference
+ *	just = 1.0 => right hand edge of string is at reference
+ *	just = 0.5 => center of string is at reference
 \*----------------------------------------------------------------------*/
 
 void
@@ -110,10 +99,8 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
     PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;
     PLFLT chrdef, chrht;
     PLFLT mpxscl, mpxoff, mpyscl, mpyoff;
-    PLINT level;
 
-    plP_glev(&level);
-    if (level < 2) {
+    if (plsc->level < 2) {
 	plabort("plmtex: Please set up viewport first");
 	return;
     }
@@ -188,14 +175,14 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 }
 
 /*----------------------------------------------------------------------*\
-* void plptex()
-*
-* Prints out "text" at world cooordinate (x,y). The text may be
-* at any angle "angle" relative to the horizontal. The parameter
-* "just" adjusts the horizontal justification of the string:
-*	just = 0.0 => left hand edge of string is at (x,y)
-*	just = 1.0 => right hand edge of string is at (x,y)
-*	just = 0.5 => center of string is at (x,y) etc.
+ * void plptex()
+ *
+ * Prints out "text" at world cooordinate (x,y). The text may be
+ * at any angle "angle" relative to the horizontal. The parameter
+ * "just" adjusts the horizontal justification of the string:
+ *	just = 0.0 => left hand edge of string is at (x,y)
+ *	just = 1.0 => right hand edge of string is at (x,y)
+ *	just = 0.5 => center of string is at (x,y) etc.
 \*----------------------------------------------------------------------*/
 
 void
@@ -205,10 +192,8 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
     PLFLT shift, cc, ss;
     PLFLT xform[4], diag;
     PLFLT xscl, xoff, yscl, yoff;
-    PLINT level;
 
-    plP_glev(&level);
-    if (level < 3) {
+    if (plsc->level < 3) {
 	plabort("plptex: Please set up window first");
 	return;
     }
@@ -241,17 +226,17 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
 }
 
 /*----------------------------------------------------------------------*\
-* void plstr()
-*
-* Prints out a "string" at reference position with physical coordinates
-* (refx,refy). The coordinates of the vectors defining the string are
-* passed through the linear mapping defined by the 2 x 2 matrix xform()
-* before being plotted.  The reference position is at the left-hand edge of
-* the string. If base = 1, it is aligned with the baseline of the string.
-* If base = 0, it is aligned with the center of the character box.
-*
-* Note, all calculations are done in terms of millimetres. These are scaled
-* as necessary before plotting the string on the page.
+ * void plstr()
+ *
+ * Prints out a "string" at reference position with physical coordinates
+ * (refx,refy). The coordinates of the vectors defining the string are
+ * passed through the linear mapping defined by the 2 x 2 matrix xform()
+ * before being plotted.  The reference position is at the left-hand edge of
+ * the string. If base = 1, it is aligned with the baseline of the string.
+ * If base = 0, it is aligned with the center of the character box.
+ *
+ * Note, all calculations are done in terms of millimetres. These are scaled
+ * as necessary before plotting the string on the page.
 \*----------------------------------------------------------------------*/
 
 void
@@ -274,8 +259,8 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 
 /* Line style must be continuous */
 
-    plP_gnms(&style);
-    plP_snms(0);
+    style = plsc->nms;
+    plsc->nms = 0;
 
     pldeco(&symbol, &length, string);
     xorg = 0.0;
@@ -306,13 +291,13 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 		       xscl, xoff, yscl, yoff, &xorg, &yorg, &width);
 	}
     }
-    plP_snms(style);
+    plsc->nms = style;
 }
 
 /*----------------------------------------------------------------------*\
-* plchar()
-*
-* Plots out a given stroke font character.
+ * plchar()
+ *
+ * Plots out a given stroke font character.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -384,9 +369,9 @@ plchar(SCHAR *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
 }
 
 /*----------------------------------------------------------------------*\
-* PLFLT plstrl()
-*
-* Computes the length of a string in mm, including escape sequences.
+ * PLFLT plstrl()
+ *
+ * Computes the length of a string in mm, including escape sequences.
 \*----------------------------------------------------------------------*/
 
 PLFLT
@@ -432,10 +417,10 @@ plstrl(const char *string)
 }
 
 /*----------------------------------------------------------------------*\
-* PLINT plcvec()
-*
-* Gets the character digitisation of Hershey table entry "char".
-* Returns 1 if there is a valid entry.
+ * PLINT plcvec()
+ *
+ * Gets the character digitisation of Hershey table entry "char".
+ * Returns 1 if there is a valid entry.
 \*----------------------------------------------------------------------*/
 
 PLINT
@@ -465,28 +450,28 @@ plcvec(PLINT ch, SCHAR ** xygr)
 }
 
 /*----------------------------------------------------------------------*\
-* void pldeco()
-*
-* Decode a character string, and return an array of float integer symbol
-* numbers. This routine is responsible for interpreting all escape sequences.
-* At present the following escape sequences are defined (the letter following
-* the <esc> may be either upper or lower case):
-*
-* <esc>u	: up one level (returns -1)
-* <esc>d	: down one level (returns -2)
-* <esc>b	: backspace (returns -3)
-* <esc>+	: toggles overline mode (returns -4)
-* <esc>-	: toggles underline mode (returns -5)
-* <esc><esc>	: <esc>
-* <esc>gx	: greek letter corresponding to roman letter x
-* <esc>fn	: switch to Normal font
-* <esc>fr	: switch to Roman font
-* <esc>fi	: switch to Italic font
-* <esc>fs	: switch to Script font
-* <esc>(nnn)	: Hershey symbol number nnn (any number of digits)
-*
-* The escape character defaults to '#', but can be changed to any of
-* [!#$%&*@^~] via a call to plsesc.
+ * void pldeco()
+ *
+ * Decode a character string, and return an array of float integer symbol
+ * numbers. This routine is responsible for interpreting all escape sequences.
+ * At present the following escape sequences are defined (the letter following
+ * the <esc> may be either upper or lower case):
+ *
+ * <esc>u	: up one level (returns -1)
+ * <esc>d	: down one level (returns -2)
+ * <esc>b	: backspace (returns -3)
+ * <esc>+	: toggles overline mode (returns -4)
+ * <esc>-	: toggles underline mode (returns -5)
+ * <esc><esc>	: <esc>
+ * <esc>gx	: greek letter corresponding to roman letter x
+ * <esc>fn	: switch to Normal font
+ * <esc>fr	: switch to Roman font
+ * <esc>fi	: switch to Italic font
+ * <esc>fs	: switch to Script font
+ * <esc>(nnn)	: Hershey symbol number nnn (any number of digits)
+ *
+ * The escape character defaults to '#', but can be changed to any of
+ * [!#$%&*@^~] via a call to plsesc.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -576,12 +561,12 @@ pldeco(short int **sym, PLINT *length, const char *text)
 }
 
 /*----------------------------------------------------------------------*\
-* PLINT plP_strpos()
-*
-* Searches string str for first occurence of character chr.  If found
-* the position of the character in the string is returned (the first
-* character has position 0).  If the character is not found a -1 is
-* returned.
+ * PLINT plP_strpos()
+ *
+ * Searches string str for first occurence of character chr.  If found
+ * the position of the character in the string is returned (the first
+ * character has position 0).  If the character is not found a -1 is
+ * returned.
 \*----------------------------------------------------------------------*/
 
 PLINT
@@ -596,9 +581,9 @@ plP_strpos(char *str, int chr)
 }
 
 /*----------------------------------------------------------------------*\
-* PLINT plP_stindex()
-*
-* Similar to strpos, but searches for occurence of string str2.
+ * PLINT plP_stindex()
+ *
+ * Similar to strpos, but searches for occurence of string str2.
 \*----------------------------------------------------------------------*/
 
 PLINT
@@ -621,9 +606,9 @@ plP_stindex(const char *str1, const char *str2)
 }
 
 /*----------------------------------------------------------------------*\
-* PLINT plP_stsearch()
-*
-* Searches string str for character chr (case insensitive).
+ * PLINT plP_stsearch()
+ *
+ * Searches string str for character chr (case insensitive).
 \*----------------------------------------------------------------------*/
 
 PLINT

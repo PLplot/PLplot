@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/03/23 07:56:35  mjl
+ * Revision 1.12  1994/06/30 18:22:02  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
+ * Revision 1.11  1994/03/23  07:56:35  mjl
  * Changed name of plcontf() to plfcont(), as part of the new 2d function
  * plotter API.  plcontf is now a macro for backward compatibility.
  *
@@ -8,17 +15,6 @@
  * printing the error message (via plabort()) and returning.  Should help
  * avoid loss of computer time in some critical circumstances (during a long
  * batch run, for example).
- *
- * Revision 1.10  1993/11/15  08:36:12  mjl
- * Updated the documentation.
- *
- * Revision 1.9  1993/07/17  21:31:55  mjl
- * Improved error message for out of range indices.
- *
- * Revision 1.8  1993/07/01  22:13:34  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
 */
 
 /*	plcont.c
@@ -27,7 +23,6 @@
 */
 
 #include "plplotP.h"
-#include <math.h>
 
 #ifdef MSDOS
 #pragma message("Microsoft programmers are sissies.")
@@ -72,10 +67,10 @@ plr135 (PLINT *ix, PLINT *iy, PLINT isens);
 static int error;
 
 /*----------------------------------------------------------------------*\
-* plf2eval2()
-*
-* Does a lookup from a 2d function array.
-* Array is of type (PLFLT **), and is column dominant (normal C ordering).
+ * plf2eval2()
+ *
+ * Does a lookup from a 2d function array.  Array is of type (PLFLT **),
+ * and is column dominant (normal C ordering).
 \*----------------------------------------------------------------------*/
 
 PLFLT
@@ -90,11 +85,11 @@ plf2eval2(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 }
 
 /*----------------------------------------------------------------------*\
-* plf2eval()
-*
-* Does a lookup from a 2d function array.
-* Array is of type (PLFLT *), and is column dominant (normal C ordering).
-* You MUST fill the ny maximum array index entry in the PLfGrid struct.
+ * plf2eval()
+ *
+ * Does a lookup from a 2d function array.  Array is of type (PLFLT *),
+ * and is column dominant (normal C ordering).  You MUST fill the ny
+ * maximum array index entry in the PLfGrid struct.
 \*----------------------------------------------------------------------*/
 
 PLFLT
@@ -109,11 +104,11 @@ plf2eval(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 }
 
 /*----------------------------------------------------------------------*\
-* plf2evalr()
-*
-* Does a lookup from a 2d function array.
-* Array is of type (PLFLT *), and is row dominant (Fortran ordering).
-* You MUST fill the nx maximum array index entry in the PLfGrid struct.
+ * plf2evalr()
+ *
+ * Does a lookup from a 2d function array.  Array is of type (PLFLT *),
+ * and is row dominant (Fortran ordering).  You MUST fill the nx maximum
+ * array index entry in the PLfGrid struct.
 \*----------------------------------------------------------------------*/
 
 PLFLT
@@ -128,10 +123,10 @@ plf2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 }
 
 /*----------------------------------------------------------------------*\
-* void plcont()
-*
-* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
-* plfcont, with a particular choice for f2eval and f2eval_data.
+ * void plcont()
+ *
+ * Draws a contour plot from data in f(nx,ny).  Is just a front-end to
+ * plfcont, with a particular choice for f2eval and f2eval_data.
 \*----------------------------------------------------------------------*/
 
 void
@@ -149,21 +144,20 @@ c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 }
 
 /*----------------------------------------------------------------------*\
-* void plfcont()
-*
-* Draws a contour plot using the function evaluator f2eval and data stored
-* by way of the f2eval_data pointer.  This allows arbitrary organizations
-* of 2d array data to be used.
-*
-* The subrange of indices used for contouring is kx to lx in the x
-* direction and from ky to ly in the y direction. The array of contour
-* levels is clevel(nlevel), and "pltr" is the name of a function which
-* transforms array indicies into world coordinates.
-*
-* Note that the fortran-like minimum and maximum indices (kx, lx,
-* ky, ly) are translated into more C-like ones.  I've only kept them
-* as they are for the plcontf() argument list because of backward
-* compatibility.
+ * void plfcont()
+ *
+ * Draws a contour plot using the function evaluator f2eval and data
+ * stored by way of the f2eval_data pointer.  This allows arbitrary
+ * organizations of 2d array data to be used.
+ *
+ * The subrange of indices used for contouring is kx to lx in the x
+ * direction and from ky to ly in the y direction. The array of contour
+ * levels is clevel(nlevel), and "pltr" is the name of a function which
+ * transforms array indicies into world coordinates.
+ *
+ * Note that the fortran-like minimum and maximum indices (kx, lx, ky, ly)
+ * are translated into more C-like ones.  I've only kept them as they are
+ * for the plcontf() argument list because of backward compatibility.
 \*----------------------------------------------------------------------*/
 
 void
@@ -211,10 +205,10 @@ plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 }
 
 /*----------------------------------------------------------------------*\
-* void plcntr()
-*
-* The contour for a given level is drawn here.
-* Note iscan has nx elements. ixstor and iystor each have nstor elements.
+ * void plcntr()
+ *
+ * The contour for a given level is drawn here.  Note iscan has nx
+ * elements. ixstor and iystor each have nstor elements.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -279,9 +273,9 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 }
 
 /*----------------------------------------------------------------------*\
-* void pldrawcn()
-*
-* Follow and draw a contour.
+ * void pldrawcn()
+ *
+ * Follow and draw a contour.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -469,11 +463,11 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 }
 
 /*----------------------------------------------------------------------*\
-* void plccal()
-*
-* Function to interpolate the position of a contour which is known
-* to be next to ix,iy in the direction ixg,iyg. The unscaled distance
-* along ixg,iyg is returned as dist.
+ * void plccal()
+ *
+ * Function to interpolate the position of a contour which is known to be
+ * next to ix,iy in the direction ixg,iyg. The unscaled distance along
+ * ixg,iyg is returned as dist.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -532,7 +526,7 @@ plccal(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 }
 
 /*----------------------------------------------------------------------*\
-* Rotators
+ * Rotators
 \*----------------------------------------------------------------------*/
 
 static void 
@@ -555,9 +549,9 @@ plr135 (PLINT *ix, PLINT *iy, PLINT isens)
 }
 
 /*----------------------------------------------------------------------*\
-* pltr0()
-*
-* Identity transformation.
+ * pltr0()
+ *
+ * Identity transformation.
 \*----------------------------------------------------------------------*/
 
 void
@@ -568,12 +562,12 @@ pltr0(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 }
 
 /*----------------------------------------------------------------------*\
-* pltr1()
-*
-* Does linear interpolation from singly dimensioned coord arrays.
-*
-* Just abort for now if coordinates are out of bounds (don't think it's
-* possible, but if so we could use linear extrapolation).
+ * pltr1()
+ *
+ * Does linear interpolation from singly dimensioned coord arrays.
+ *
+ * Just abort for now if coordinates are out of bounds (don't think it's
+ * possible, but if so we could use linear extrapolation).
 \*----------------------------------------------------------------------*/
 
 void
@@ -602,8 +596,9 @@ pltr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
     }
 
 /* Look up coordinates in row-dominant array.
-   Have to handle right boundary specially -- if at the edge, we'd
-   better not reference the out of bounds point. */
+ * Have to handle right boundary specially -- if at the edge, we'd
+ * better not reference the out of bounds point. 
+ */
 
     xl = xg[ul];
     yl = yg[vl];
@@ -625,16 +620,16 @@ pltr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 }
 
 /*----------------------------------------------------------------------*\
-* pltr2()
-*
-* Does linear interpolation from doubly dimensioned coord arrays
-* (column dominant, as per normal C 2d arrays).
-*
-* This routine includes lots of checks for out of bounds.  This would
-* occur occasionally due to some bugs in the contour plotter (now fixed).
-* If an out of bounds coordinate is obtained, the boundary value is provided
-* along with a warning.  These checks should stay since no harm is done if
-* if everything works correctly.
+ * pltr2()
+ *
+ * Does linear interpolation from doubly dimensioned coord arrays (column
+ * dominant, as per normal C 2d arrays).
+ *
+ * This routine includes lots of checks for out of bounds.  This would
+ * occur occasionally due to some bugs in the contour plotter (now fixed).
+ * If an out of bounds coordinate is obtained, the boundary value is
+ * provided along with a warning.  These checks should stay since no harm
+ * is done if if everything works correctly.
 \*----------------------------------------------------------------------*/
 
 void
@@ -730,9 +725,10 @@ pltr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
     }
 
 /* Normal case.
-   Look up coordinates in row-dominant array.
-   Have to handle right boundary specially -- if at the edge, we'd
-   better not reference the out of bounds point. */
+ * Look up coordinates in row-dominant array.
+ * Have to handle right boundary specially -- if at the edge, we'd
+ * better not reference the out of bounds point. 
+ */
 
     else {
 
@@ -791,11 +787,11 @@ pltr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 }
 
 /*----------------------------------------------------------------------*\
-* pltr2p()
-*
-* Just like pltr2() but uses pointer arithmetic to get coordinates from
-* 2d grid tables.  This form of grid tables is compatible with those from
-* PLPLOT 4.0.  The grid data must be pointed to by a PLcGrid structure.  
+ * pltr2p()
+ *
+ * Just like pltr2() but uses pointer arithmetic to get coordinates from
+ * 2d grid tables.  This form of grid tables is compatible with those from
+ * PLPLOT 4.0.  The grid data must be pointed to by a PLcGrid structure.
 \*----------------------------------------------------------------------*/
 
 void
@@ -895,9 +891,10 @@ pltr2p(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
     }
 
 /* Normal case.
-   Look up coordinates in row-dominant array.
-   Have to handle right boundary specially -- if at the edge, we'd
-   better not reference the out of bounds point. */
+ * Look up coordinates in row-dominant array.
+ * Have to handle right boundary specially -- if at the edge, we'd
+ * better not reference the out of bounds point. 
+ */
 
     else {
 

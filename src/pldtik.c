@@ -1,25 +1,11 @@
 /* $Id$
-   $Log$
-   Revision 1.6  1993/10/12 21:57:41  mjl
-   Same thing as last commit, only this time it's right.
-
- * Revision 1.5  1993/10/12  21:32:38  mjl
- * Fixed bug in automatic setting of precision (it was too large by 1 place)
- * when exponent is placed separately.
- *
- * Revision 1.4  1993/07/01  22:13:36  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
- *
- * Revision 1.3  1993/01/23  05:53:31  mjl
- * Formatting changes only (everything got run through indent).
- *
- * Revision 1.2  1992/09/29  04:45:52  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:34:21  furnish
- * Initial checkin of the whole PLPLOT project.
+ * $Log$
+ * Revision 1.7  1994/06/30 18:22:06  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
  *
 */
 
@@ -30,7 +16,6 @@
 */
 
 #include "plplotP.h"
-#include <math.h>
 
 #define MIN_FLTDIG	3	/* disregarded if fractional part is 0 */
 #define MAX_FIXDIG_POS	6
@@ -38,41 +23,43 @@
 #define DIGMAX_DEF	5
 
 /*----------------------------------------------------------------------*\
-* void pldtik()
-*
-* If tick == 0, this works out a "nice" interval, so that there are between
-* 3 and 7.5 major tick intervals in the input range "vmin" to "vmax". Using
-* this value for the tick interval or supplied value, it also computes
-* "prec" which specifies the number of places that should be written after
-* the decimal point. The recommended number of subticks is returned in
-* "nsubt" unless the routine is entered with a non-zero value of "nsubt".
-* The output variable "mode" is set to 0 if labels are to be written in
-* floating-point format, or to 1 if they are to be written in scientific
-* format.    For mode = 1, the exponent will be placed at:
-*
-* 	top left	for vertical axis on left
-* 	top right	for vertical axis on right
-* 	bottom right	for horizontal axis
-*
-* The digmax flag can be set by the user, and represents the maximum number
-* of digits a label may occupy.  If digmax<0, it is disregarded, and if
-* digmax=0 the default value is used.  For digmax>0, mode=1 is chosen if
-* there is insufficient room for the label within the specified # of digits.
-*
-* In the case of mode=0, the actual # of digits will become too large when
-* the magnitude of the labels become too large.  The mode=1 case offers the
-* greatest precision for the smallest field length.
-*
-* The determination of maximum length for fixed point quantities is
-* complicated by the fact that very long fixed point representations look
-* much worse than the same sized floating point representation.  Further, a
-* fixed point number with a large negative exponent will actually gain in
-* precision when written as floating point.  Thus we use certain fuzz
-* factors to get 'digfix' from 'digmax', however it will always be true
-* that digfix<=digmax.
-*
-* Finally, if 'digmax' is set, 'prec' is reduced in size if necessary so
-* that the labels fit the requested field length.
+ * void pldtik()
+ *
+ * If tick == 0, this works out a "nice" interval, so that there are
+ * between 3 and 7.5 major tick intervals in the input range "vmin" to
+ * "vmax". Using this value for the tick interval or supplied value, it
+ * also computes "prec" which specifies the number of places that should
+ * be written after the decimal point. The recommended number of subticks
+ * is returned in "nsubt" unless the routine is entered with a non-zero
+ * value of "nsubt".  The output variable "mode" is set to 0 if labels are
+ * to be written in floating-point format, or to 1 if they are to be
+ * written in scientific format.  For mode = 1, the exponent will be
+ * placed at:
+ *
+ * 	top left	for vertical axis on left
+ * 	top right	for vertical axis on right
+ * 	bottom right	for horizontal axis
+ *
+ * The digmax flag can be set by the user, and represents the maximum
+ * number of digits a label may occupy.  If digmax<0, it is disregarded,
+ * and if digmax=0 the default value is used.  For digmax>0, mode=1 is
+ * chosen if there is insufficient room for the label within the specified
+ * # of digits.
+ *
+ * In the case of mode=0, the actual # of digits will become too large
+ * when the magnitude of the labels become too large.  The mode=1 case
+ * offers the greatest precision for the smallest field length.
+ *
+ * The determination of maximum length for fixed point quantities is
+ * complicated by the fact that very long fixed point representations look
+ * much worse than the same sized floating point representation.  Further,
+ * a fixed point number with a large negative exponent will actually gain
+ * in precision when written as floating point.  Thus we use certain fuzz
+ * factors to get 'digfix' from 'digmax', however it will always be true
+ * that digfix<=digmax.
+ *
+ * Finally, if 'digmax' is set, 'prec' is reduced in size if necessary so
+ * that the labels fit the requested field length.
 \*----------------------------------------------------------------------*/
 
 void

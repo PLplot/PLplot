@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1994/05/10 21:52:45  mjl
+ * Revision 1.16  1994/06/30 18:22:17  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.
+ *
+ * Revision 1.15  1994/05/10  21:52:45  mjl
  * Put in a slight optimization in cmap1 color interpolation.
  *
  * Revision 1.14  1994/04/30  16:15:13  mjl
@@ -14,15 +21,6 @@
  *
  * Revision 1.12  1994/01/15  17:28:59  mjl
  * Added include of pdf.h.
- *
- * Revision 1.11  1993/12/06  07:46:54  mjl
- * More modifications to support new color model.
- *
- * Revision 1.10  1993/09/24  20:33:28  furnish
- * Went wild with "const correctness".  Can now pass a C++ String type to
- * most (all that I know of) PLPLOT functions.  This works b/c String has
- * an implicit conversion to const char *.  Now that PLPLOT routines take
- * const char * rather than char *, use from C++ is much easier.
 */
 
 /*	plstream.c
@@ -31,15 +29,13 @@
 */
 
 #include "plplotP.h"
-#include "plstream.h"
-#include <string.h>
 
 /*----------------------------------------------------------------------*\
-* plcol_interp()
-*
-* Initializes device cmap 1 entry by interpolation from pls->cmap1
-* entries.  Returned PLColor is supposed to represent the i_th color
-* out of a total of ncol colors in the current color scheme.
+ * plcol_interp()
+ *
+ * Initializes device cmap 1 entry by interpolation from pls->cmap1
+ * entries.  Returned PLColor is supposed to represent the i_th color
+ * out of a total of ncol colors in the current color scheme.
 \*----------------------------------------------------------------------*/
 
 void
@@ -69,11 +65,11 @@ plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
 }
 
 /*----------------------------------------------------------------------*\
-* plOpenFile()
-*
-* Opens file for output, prompting if not set.
-* Prints extra newline at end to make output look better in batch runs.
-* A file name of "-" indicates output to stdout.
+ * plOpenFile()
+ *
+ * Opens file for output, prompting if not set.
+ * Prints extra newline at end to make output look better in batch runs.
+ * A file name of "-" indicates output to stdout.
 \*----------------------------------------------------------------------*/
 
 void
@@ -124,9 +120,9 @@ plOpenFile(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plP_getmember()
-*
-* Sets up next file member name (in pls->FileName), but does not open it.
+ * plP_getmember()
+ *
+ * Sets up next file member name (in pls->FileName), but does not open it.
 \*----------------------------------------------------------------------*/
 
 void
@@ -142,10 +138,10 @@ plP_getmember(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plP_sfnam()
-*
-* Sets up file name & family stem name.
-* Reserve some extra space (5 chars) to hold an optional member number.
+ * plP_sfnam()
+ *
+ * Sets up file name & family stem name.
+ * Reserve some extra space (5 chars) to hold an optional member number.
 \*----------------------------------------------------------------------*/
 
 void
@@ -169,9 +165,9 @@ plP_sfnam(PLStream *pls, const char *fnam)
 }
 
 /*----------------------------------------------------------------------*\
-* plFamInit()
-*
-* Initializes family file parameters.
+ * plFamInit()
+ *
+ * Initializes family file parameters.
 \*----------------------------------------------------------------------*/
 
 void
@@ -191,13 +187,13 @@ plFamInit(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plGetFam()
-*
-* Starts new member file of family file set if necessary.
-*
-* Note each member file is a complete graphics file (can be printed
-* individually), although 'plrender' will treat a family as a single
-* logical file if given the family name instead of the member name.
+ * plGetFam()
+ *
+ * Starts new member file of family file set if necessary.
+ *
+ * Note each member file is a complete graphics file (can be printed
+ * individually), although 'plrender' will treat a family as a single
+ * logical file if given the family name instead of the member name.
 \*----------------------------------------------------------------------*/
 
 void
@@ -215,12 +211,12 @@ plGetFam(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plRotPhy()
-*
-* Rotates physical coordinates if necessary for given orientation.
-* Each time orient is incremented, the plot is rotated 90 deg clockwise.
-* Note: this is now used only to rotate by 90 degrees for devices that
-* expect portrait mode.
+ * plRotPhy()
+ *
+ * Rotates physical coordinates if necessary for given orientation.
+ * Each time orient is incremented, the plot is rotated 90 deg clockwise.
+ * Note: this is now used only to rotate by 90 degrees for devices that
+ * expect portrait mode.
 \*----------------------------------------------------------------------*/
 
 void
@@ -255,10 +251,10 @@ plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
 }
 
 /*----------------------------------------------------------------------*\
-* plAllocDev()
-*
-* Allocates a standard PLDev structure for device-specific data, stores
-* the address in pls->dev, and returns the address as well.
+ * plAllocDev()
+ *
+ * Allocates a standard PLDev structure for device-specific data, stores
+ * the address in pls->dev, and returns the address as well.
 \*----------------------------------------------------------------------*/
 
 PLDev *
