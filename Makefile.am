@@ -32,7 +32,7 @@ ACLOCAL_AMFLAGS = -I cf 2>&1 | grep -v underquoted
 # automake-1.8 underquoted warning messages quit being such an annoyance.
 #ACLOCAL_AMFLAGS = -I cf
 
-src_dirs = lib src include data bindings
+src_dirs = fonts lib include src data bindings
 other_dirs = examples utils test scripts doc pkgcfg cf
 
 if enable_dyndrivers
