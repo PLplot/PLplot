@@ -1,7 +1,10 @@
 /* -*-C-*- */
 /* $Id$
  * $Log$
- * Revision 1.7  1995/06/01 21:35:54  mjl
+ * Revision 1.8  1995/10/13 21:04:07  mjl
+ * Added USE_FSEEK macro.
+ *
+ * Revision 1.7  1995/06/01  21:35:54  mjl
  * Added HAVE_POPEN and HAVE_ITCL macros.
  *
  * Revision 1.6  1995/05/15  07:56:07  mjl
@@ -76,6 +79,9 @@
 
 /* If you don't know what this is for, you shouldn't be using it */
 #undef NOBRAINDEAD
+
+/* Define if fgetpos/fsetpos is busted */
+#undef USE_FSEEK
 
 /* Define if [incr Tcl] is available */
 #undef HAVE_ITCL
