@@ -21,3 +21,7 @@ config.h
 config.h.in
 jadeout.log
 stamp-h1
+.dsl
+.htm
+.out
+.xml
