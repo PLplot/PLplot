@@ -12,6 +12,7 @@ plplot_octave.oct
 tmp_stub
 plplot_stub.m 
 missing_help
+massage.c
 massage
 plplot_octave_txt
 .samename
