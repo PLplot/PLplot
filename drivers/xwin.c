@@ -684,6 +684,7 @@ GetCursorCmd(PLStream *pls, PLGraphicsIn *ptr)
 	MasterEH(pls, &event);
     }
     *ptr = *gin;
+    DestroyXhairs(pls);
 }
 
 /*--------------------------------------------------------------------------*\
