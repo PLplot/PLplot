@@ -35,15 +35,8 @@ for them.
    PLStream.java.  Also, I kept the (only partially implemented) arg
    parsing stuff together, irrespective of alphabetization.
 
-7) Note that the JNI function name has some bizarre "0002f" characters
-   in the middle of it for some reason.  This happens to me regularly,
-   although I think there was once or twice when I ran javah, it
-   didn't do that to me.  I have no idea what makes this bizardom
-   happen or not happen.  Anyway, if you don't see what I'm talking
-   about, compare the function names in some of the comment blocks in
-   javabind.c, to the actual function name, and in some of them you'll
-   see how I edited out the stupid "0002f" stuff.  Wierd, I have no
-   idea what that's about.
+7) Edit out any occurances of the "0002f" string if they occur (see #2 for
+   avoiding this).
 
 8) Fill in the function parameter names.
 
