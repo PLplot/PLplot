@@ -1,3 +1,74 @@
+Commit from rlaboiss (2004-04-04 22:51 CEST)
+--------------------
+
+Do not redirect stderr to stdout when running Octave.  This avoids spurious
+error message to be included in the output result.
+
+  plplot  cf/acinclude.m4  1.7
+
+
+Commit from airwin (2004-04-02 01:12 CEST)
+------------------
+
+plcol1 is called only when the number of points in a given contour line is
+non-zero.
+
+  plplot  src/plot3d.c  1.56
+
+
+Commit from airwin (2004-03-29 22:28 CEST)
+------------------
+
+* Replace $system logic by $host_os logic in java.ac and octave.ac.
+
+* Relabel system: as host: in summary.ac.
+
+  plplot  cf/java.ac    1.4
+  plplot  cf/octave.ac  1.3
+  plplot  cf/summary.ac  1.3
+  
+
+Commit from airwin (2004-03-29 19:29 CEST)
+------------------
+
+Use latest versions of these macros from the GNU macro archive at
+http://www.gnu.org/software/ac-archive/htmldoc/index.html
+
+  plplot  cf/ac_python_devel.m4  1.2
+  plplot  cf/ac_pkg_swig.m4  1.2
+
+
+Commit from airwin (2004-03-27 16:54 CET)
+------------------
+
+Revert previous change with log message
+
+"Remove python linking workaround for Mac OS X since Koen informs me it is
+no longer needed."
+
+Koen's present tests show the workaround is in fact needed.
+
+  plplot  bindings/python/Makefile.am  1.31
+  plplot  cf/python.ac                 1.6
+
+
+Commit from andrewross (2004-03-26 17:31 CET)
+----------------------
+
+Fix bounds check in plcont. Also (partially) fix problem contouring
+flat surface.
+
+  plplot  src/plcont.c  1.26
+
+
+Commit from andrewross (2004-03-26 09:30 CET)
+----------------------
+
+<cctype> needs to be explicitly included for older versions of g++.
+
+  plplot  examples/c++/x01.cc  1.13
+
+
 Commit from andrewross (2004-03-22 13:13 CET)
 ----------------------
 
