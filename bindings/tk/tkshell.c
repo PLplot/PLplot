@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1994/06/16 19:15:17  mjl
+ * Revision 1.18  1994/06/23 22:37:30  mjl
+ * Minor cosmetic changes.
+ *
+ * Revision 1.17  1994/06/16  19:15:17  mjl
  * Moved the Tk initialization function for the tk driver into tk.c.  Changed
  * Pltk_Init to include by default some of the other Tcl commands used by
  * the PLplot/Tk driver.  Turned set_auto_path() into pls_auto_path() and
@@ -34,17 +37,17 @@ static int
 tcl_eval(Tcl_Interp *interp, char *cmd);
 
 /*----------------------------------------------------------------------*\
-*
-* pltk_toplevel --
-*
-*	Create top level window without mapping it.
-*
-* Results:
-*	Returns 1 on error.
-*
-* Side effects:
-*	Returns window ID as *w.
-*
+ *
+ * pltk_toplevel --
+ *
+ *	Create top level window without mapping it.
+ *
+ * Results:
+ *	Returns 1 on error.
+ *
+ * Side effects:
+ *	Returns window ID as *w.
+ *
 \*----------------------------------------------------------------------*/
 
 int
@@ -55,10 +58,10 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
     static char wcmd[] = "wm withdraw .";
 
 /*
-* Determine server name.  If it contains any forward slashes ("/"), only
-* use the part following the last "/" so that name can be loaded with 
-* argv[0] by caller.
-*/
+ * Determine server name.  If it contains any forward slashes ("/"), only
+ * use the part following the last "/" so that name can be loaded with 
+ * argv[0] by caller.
+ */
     new_name = strrchr(basename, '/');
     if (new_name != NULL) 
 	basename = ++new_name;
@@ -82,17 +85,17 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 }
 
 /*----------------------------------------------------------------------*\
-*
-* pltk_source --
-*
-*	Run a script.
-*
-* Results:
-*	Returns 1 on error.
-*
-* Side effects:
-*	None.
-*
+ *
+ * pltk_source --
+ *
+ *	Run a script.
+ *
+ * Results:
+ *	Returns 1 on error.
+ *
+ * Side effects:
+ *	None.
+ *
 \*----------------------------------------------------------------------*/
 
 int
@@ -119,9 +122,11 @@ pltk_source(Tk_Window w, Tcl_Interp *interp, char *script)
 }
 
 /*----------------------------------------------------------------------*\
-* Pltk_Init
-*
-* Generic initialization routine for extended wish'es.
+ * Pltk_Init
+ *
+ * Initialization routine for extended wish'es.
+ * Creates the plframe, matrix, wait_until, and host_id (w/Tcl-DP only)
+ * commands.  Also sets the auto_path variable.
 \*----------------------------------------------------------------------*/
 
 int
@@ -138,6 +143,11 @@ Pltk_Init( Tcl_Interp *interp )
     Tcl_CreateCommand(interp, "plframe", plFrameCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);
 
+/* matrix -- matrix support command */
+
+    Tcl_CreateCommand(interp, "matrix", Tcl_MatrixCmd,
+                      (ClientData) main, (void (*)(ClientData)) NULL);
+
 /* wait_until -- waits for a specific condition to arise */
 /* Can be used with either Tcl-DP or TK */
 
@@ -150,11 +160,6 @@ Pltk_Init( Tcl_Interp *interp )
     Tcl_CreateCommand(interp, "host_id", plHost_ID,
 		      (ClientData) NULL, (void (*) (ClientData)) NULL);
 #endif
-
-/* matrix -- matrix support command */
-
-    Tcl_CreateCommand(interp, "matrix", Tcl_MatrixCmd,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
 
 /* Set up auto_path */
 
@@ -314,3 +319,4 @@ plWait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     }
     return TCL_OK;
 }
+
