@@ -13,6 +13,8 @@
 
 export DH_COMPAT=4
 
+include /usr/share/octave/debian/defs.make
+
 version		:= $(shell perl debian/get-upstream-version.pl < configure.ac)
 libpkg          := libplplot9
 debbase		:= $(shell pwd)/debian
@@ -50,11 +52,6 @@ config-stamp: autotools-stamp
                     --without-rpath --with-prebuiltdoc --enable-java    \
 		    $(javasetup) --with-pthreads --with-ltdlsystem      \
 		    --with-freefont
-	( octver=`egrep "^OCTAVE_VERSION =" Makefile                   \
-              | sed "s/OCTAVE_VERSION = *//" | sed 's/ *$$//'`       ; \
-          octpkgver=`echo $$octver | sed 's/\.[0-9]*$$//'`           ; \
-          echo "octave:Depends=octave$$octpkgver (>= $$octver)"        \
-              > debian/octave-plplot.substvars )
 	touch config-stamp
 
 build: build-stamp
@@ -79,7 +76,7 @@ install-stamp: build-stamp
 	dh_testdir
 	dh_testroot
 
-	make DESTDIR=$(debtmp) install
+	make DESTDIR=$(debtmp) OCTAVE_OCT_DIR=$(OCTDIR) install
 
 	rm -f $(debtmp)/usr/bin/plplot-config
 
@@ -131,6 +128,7 @@ binary-arch: build install
 	dh_makeshlibs -V -a
 	dh_shlibdeps -a -L $(libpkg) \
           -l $(debbase)/$(libpkg)/usr/lib:$(debbase)/plplot-tcl/usr/lib
+	octave-depends --package=octave-plplot
 	dh_installdeb -a
 	dh_gencontrol -a
 	dh_md5sums -a
