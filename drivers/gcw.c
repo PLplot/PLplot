@@ -124,26 +124,80 @@ static guint32 plcolor_to_rgba(PLColor color, guchar alpha)
 \*--------------------------------------------------------------------------*/
 
 /* Delete event callback */
-gint delete_event( GtkWidget *widget,GdkEvent *event,gpointer data ) {
+gint delete_event(GtkWidget *widget, GdkEvent *event, gpointer data ) {
   return FALSE;
 }
 
 /* Destroy event calback */
-void destroy(GtkWidget *widget,gpointer data) {
+void destroy(GtkWidget *widget, gpointer data) {
   gtk_main_quit ();
+}
+
+/* All-purpose zoom callback */
+void zoom(gpointer data, gboolean zoomin) {
+
+  gint n;
+
+  GtkNotebook *notebook;
+  GnomeCanvas *canvas;
+  GtkWidget *scrolled_window;
+  GList *list;
+
+  GcwPLdev* dev;
+
+  /* Get the current canvas */
+  notebook = GTK_NOTEBOOK(data);
+  n = gtk_notebook_get_current_page(notebook);
+  scrolled_window = gtk_notebook_get_nth_page(notebook,n);
+  canvas = GNOME_CANVAS(gtk_container_get_children(
+	   GTK_CONTAINER(gtk_container_get_children(
+           GTK_CONTAINER(scrolled_window))->data))->data);
+
+  /* Retrieve the device */
+  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+
+  /* Determine the new magnification */
+  if(zoomin)
+    gcw_set_canvas_zoom(canvas,1.5);
+  else
+    gcw_set_canvas_zoom(canvas,1./1.5);
+
+  /* Set the focus on the notebook */
+  gtk_window_set_focus(GTK_WINDOW(dev->window),GTK_WIDGET(dev->notebook));
+}
+
+
+/* Callback when zoom in button is pressed */
+void zoom_in(GtkWidget *widget, gpointer data ) {
+  zoom(data,TRUE);
+}
+
+/* Callback when zoom out button is pressed */
+void zoom_out(GtkWidget *widget, gpointer data ) {
+  zoom(data,FALSE);
+}
+
+/* Zoom callback when +/- keys are pressed */
+void key_zoom(GtkWidget *widget, GdkEventKey  *event, gpointer data ) {
+  if(event->keyval == '+')  zoom(data,TRUE);
+  if(event->keyval == '-')  zoom(data,FALSE);
 }
 
 void install_canvas(PLStream *pls)
 {
   GcwPLdev* dev = pls->dev;
-  GtkWidget *window;
+  GtkWidget *window,*vbox,*hbox,*button,*image,*scrolled_window;
   GnomeCanvas *canvas;
+
+  gboolean flag = FALSE;
 
 #ifdef DEBUG_GCW
   debug("<install_canvas>\n");
 #endif
 
   if(dev->window==NULL) {
+
+    flag = TRUE;
 
     /* Create a new window and prepare a notebook for it */
 
@@ -154,33 +208,89 @@ void install_canvas(PLStream *pls)
     /* Create a new window */
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     dev->window = window;
-    gtk_window_set_title(GTK_WINDOW(window),"");
+    gtk_window_set_title(GTK_WINDOW(window),"PLplot");
 
     /* Connect the signal handlers to the window decorations */
     g_signal_connect(G_OBJECT(window),"delete_event",
 		     G_CALLBACK(delete_event),NULL);
     g_signal_connect(G_OBJECT(window),"destroy",G_CALLBACK(destroy),NULL);
 
-    /* Create the new notebook */
+    /* Create a hbox and put it into the window */
+    hbox = gtk_hbox_new(FALSE,0);
+    gtk_container_add(GTK_CONTAINER(window),GTK_WIDGET(hbox));
+
+    /* Add an vbox to the hbox */
+    vbox = gtk_vbox_new(FALSE,5);
+    gtk_container_set_border_width (GTK_CONTAINER (vbox), 5);
+    gtk_box_pack_start(GTK_BOX(hbox),GTK_WIDGET(vbox),FALSE,FALSE,0);
+
+    /* Create the new notebook and add it to the hbox*/
     dev->notebook = gtk_notebook_new();
     gtk_notebook_set_scrollable(GTK_NOTEBOOK(dev->notebook),TRUE);
+    gtk_box_pack_start(GTK_BOX(hbox),GTK_WIDGET(dev->notebook),TRUE,TRUE,0);
+    g_signal_connect(G_OBJECT(dev->notebook), "key_release_event",
+                         G_CALLBACK(key_zoom), G_OBJECT(dev->notebook));
 
-    /* Put the notebook into the window */
-    gtk_container_add(GTK_CONTAINER(window),GTK_WIDGET(dev->notebook));
+    /* Use a few labels as spacers */
+    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(gtk_label_new(" ")),
+		       FALSE,FALSE,0);
+    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(gtk_label_new(" ")),
+		       FALSE,FALSE,0);
+
+    /* Add buttons to the vbox */
+
+    /* Add zoom in button and create callbacks */
+    image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_IN,
+				     GTK_ICON_SIZE_SMALL_TOOLBAR);
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
+    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
+    g_signal_connect (G_OBJECT(button), "clicked",
+		      G_CALLBACK(zoom_in), G_OBJECT(dev->notebook));
+    g_signal_connect(G_OBJECT(button), "key_release_event",
+                         G_CALLBACK(key_zoom), G_OBJECT(dev->notebook));
+
+    /* Add zoom out button and create callbacks */
+    image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_OUT,
+				     GTK_ICON_SIZE_SMALL_TOOLBAR);
+    button = gtk_button_new();
+    gtk_container_add(GTK_CONTAINER(button), GTK_WIDGET(image));
+    gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(button),FALSE,FALSE,0);
+    g_signal_connect (G_OBJECT(button), "clicked",
+		      G_CALLBACK(zoom_out), G_OBJECT(dev->notebook));
+    g_signal_connect(G_OBJECT(button), "key_release_event",
+                         G_CALLBACK(key_zoom), G_OBJECT(dev->notebook));
   }
 
-  /* Install a new canvas in the notebook*/
-  if(aa) {
+  /* Create a new canvas */
+  if(aa)
     canvas = GNOME_CANVAS(gnome_canvas_new_aa());
-  }
   else
     canvas = GNOME_CANVAS(gnome_canvas_new());
 
   gcw_set_canvas(pls,canvas);
-
   gcw_set_canvas_zoom(canvas,1.5);
-  gtk_notebook_append_page(GTK_NOTEBOOK(dev->notebook),GTK_WIDGET(canvas),
-			   NULL);
+
+  /* Put the canvas in a scrolled window */
+  scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window),
+                                 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled_window), 
+					GTK_WIDGET(canvas));
+
+  /* Install the scrolled window in the notebook */
+  gtk_notebook_append_page(GTK_NOTEBOOK(dev->notebook),
+			   GTK_WIDGET(scrolled_window), NULL);
+
+  if(flag) {
+
+    /* Set the focus on the notebook */
+    gtk_window_set_focus(GTK_WINDOW(window),GTK_WIDGET(dev->notebook));
+
+    /* Size the window */
+    gtk_window_resize(GTK_WINDOW(window),dev->width*1.5+50,
+ 		      dev->height*1.5+50);
+  }
 
   /* Display everything */
   gtk_widget_show_all(dev->window);
@@ -301,6 +411,8 @@ void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification)
 {
   GcwPLdev* dev;
 
+  double curmag=1.,dum;
+
 #ifdef DEBUG_GCW
   debug("<gcw_set_canvas_zoom>\n");
 #endif
@@ -313,11 +425,15 @@ void gcw_set_canvas_zoom(GnomeCanvas* canvas,PLFLT magnification)
   /* Retrieve the device */
   dev = g_object_get_data(G_OBJECT(canvas),"dev");
 
-  gnome_canvas_set_pixels_per_unit(canvas,magnification);
+  /* Get the current magnification */
+  if(dev->zoom_is_initialized) gnome_canvas_c2w(canvas,1,0,&curmag,&dum);
+  curmag = 1./curmag;
+
+  gnome_canvas_set_pixels_per_unit(canvas,magnification*curmag);
 
   gtk_widget_set_size_request(GTK_WIDGET(canvas),
-			      (dev->width+1)*magnification,
-			      (dev->height+2)*magnification);
+			      (dev->width+1)*magnification*curmag,
+			      (dev->height+2)*magnification*curmag);
 
   gnome_canvas_set_scroll_region(canvas,0,-dev->height,
 				 dev->width+1,1);
@@ -547,9 +663,6 @@ void plD_init_gcw(PLStream *pls)
   /* Set up physical limits of plotting device (in drawing units) */
   plP_setphy((PLINT)0,(PLINT)CANVAS_WIDTH*DU_PER_IN,
 	     (PLINT)0,(PLINT)CANVAS_HEIGHT*DU_PER_IN);
-
-  /* Set the magnification */
-  dev->magnification = 1.;
 
   /* Set the width and height for the device */
   dev->width = PIXELS_PER_DU * DU_PER_IN * CANVAS_WIDTH;
@@ -1082,7 +1195,7 @@ void proc_str(PLStream *pls, EscText *args)
    * The factor at the end matches the font size to plplot's native
    * font size.
    */
-  size = (gint)(pls->chrht/MM_PER_IN*DU_PER_IN*PIXELS_PER_DU/3.4);
+  size = (gint)(pls->chrht/MM_PER_IN*DU_PER_IN*PIXELS_PER_DU/2.75);
   advance *= (float)size / 11.;
 
   /* apply transformations */
