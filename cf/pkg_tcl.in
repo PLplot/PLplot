@@ -79,7 +79,8 @@ install_tcl_includes:
 
 install_tcl_demos:
 	@-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi; \
-	  cd $(top_srcdir)/examples/tcl; $(CP) $(TCL_DEMOS) $(DEMOS_DIR)/tcl
+	  cd $(top_srcdir)/examples/tcl; $(CP) $(TCL_DEMOS) $(DEMOS_DIR)/tcl; \
+	  cd $(DEMOS_DIR)/tcl; $(MAKEINDEX)
 
 install_tcl: install_pltcl install_tcl_index install_tcl_includes install_tcl_demos
 
