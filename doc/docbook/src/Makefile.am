@@ -1,9 +1,24 @@
-# File: Makefile.am
-# Description: Automake template for the PLplot-DocBook project
-# Author: Rafael Laboissière <rafael@icp.inpg.fr>
-# Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Fri Feb 14 10:20:02 CET 2003
-# $Id$
+# doc/docbook/src/Makefile.am for PLplot
+###
+### Process this file with automake to produce Makefile.in
+###
+# Copyright (C) 2002, 2003 Rafael Laboissière 
+# Copyright (C) 2002, 2003 Alan W. Irwin
+# 
+#This file is part of PLplot.
+#
+#This file is free software; you can redistribute it and/or modify
+#it under the terms of the GNU Library General Public License as published by
+#the Free Software Foundation; version 2 of the License.
+#
+#This file is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Library General Public License for more details.
+#
+#You should have received a copy of the GNU Library General Public License
+#along with the file; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 MASTER_XML = plplotdoc.xml
 MASTER_XML_IN = $(MASTER_XML).in
@@ -62,7 +77,9 @@ all: @TARGETS@
 
 html: $(HTML_MANIFEST)
 
-$(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML).in inline-html.ent
+# N.B. $(STYLESHEET_HTML) assures that manifest of generated html files is 
+# output to the $(HTML_MANIFEST) file.
+$(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML) inline-html.ent
 	ln -fs inline-html.ent inline.ent
 	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
 	  $(XML_DECL) $(MASTER_XML)
@@ -95,7 +112,7 @@ $(BASE).pdf: $(BASE).jadetex jadetex.cfg
 	fi
 
 
-$(BASE).jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT).in inline-print.ent
+$(BASE).jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT) inline-print.ent
 	ln -fs inline-print.ent inline.ent
 	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex \
 	  -o $@ $(XML_DECL) $(MASTER_XML)
