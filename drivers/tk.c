@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.41  1994/07/21 08:43:27  mjl
+ * Revision 1.42  1994/07/22 10:17:48  mjl
+ * Bug squashed, introduced in last update.  On issuing a "Q", the cleanup
+ * was getting hosed, leaving a spurious plserver window hanging around.
+ * Works great now.
+ *
+ * Revision 1.41  1994/07/21  08:43:27  mjl
  * Eliminated some bogus Tcl-DP initializations when the Tk driver is
  * being used.
  *
@@ -701,15 +706,26 @@ tk_stop(PLStream *pls)
  * abort_session
  *
  * Terminates with an error.  
- * Cleanup is done by plD_tidy_tk(), called by plexit().
+ * Cleanup is done here, and once pls->level is cleared the driver will
+ * never be called again. 
 \*----------------------------------------------------------------------*/
 
 static void
 abort_session(PLStream *pls, char *msg)
 {
+    TkDev *dev = (TkDev *) pls->dev;
+
     dbug_enter("abort_session");
 
-    pls->nopause = TRUE;
+/* Safety check for out of control code */
+
+    if (dev->pass_thru)
+	return;
+
+    tk_stop(pls);
+    free_mem(dev->cmdbuf);
+    pls->level = 0;
+
     plexit(msg);
 }
 
@@ -890,7 +906,7 @@ init_server(PLStream *pls)
 
 #ifdef DEBUG
     fprintf(stderr, "%s -- PID: %d, PGID: %d, PPID: %d\n",
-	    __FILE__, getpid(), getpgrp(), getppid());
+	    __FILE__, (int) getpid(), (int) getpgrp(), (int) getppid());
 #endif
 
 /* If no means of communication provided, need to launch plserver */
@@ -1417,7 +1433,7 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
 #ifdef DEBUG
     fprintf(stderr, "KeyEH: stream: %d, Keysym %s, hex %x, ASCII: %s\n",
-	    pls->ipls, keysym, key.code, key.string);
+	    (int) pls->ipls, keysym, (unsigned int) key.code, key.string);
 #endif
 
 /* Call user event handler */
