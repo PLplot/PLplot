@@ -118,6 +118,12 @@ typedef char * caddr_t;
 #include <unistd.h>
 #endif
 
+/* (AM) Define M_PI if the platform does not include it
+   (MSVC for instance) */
+#if !defined(M_PI)
+#define M_PI 3.14159265358979323846
+#endif
+
 #if HAVE_DIRENT_H
 /* The following conditional is a workaround for a bug in the MacOSX system.
    When  the dirent.h file will be fixed upstream by Apple Inc, this should
@@ -574,8 +580,8 @@ typedef struct cont_level {
 } CONT_LEVEL;
 
 void
-cont_store(PLFLT **f, PLINT nx, PLINT ny, 
-	    PLINT kx, PLINT lx, PLINT ky, PLINT ly, 
+cont_store(PLFLT **f, PLINT nx, PLINT ny,
+	    PLINT kx, PLINT lx, PLINT ky, PLINT ly,
 	    PLFLT *clevel, PLINT nlevel,
 	    void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	    PLPointer pltr_data,
@@ -936,8 +942,8 @@ plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny,
 typedef struct {
   PLFLT xmin, ymin, dx, dy;} IMG_DT;
 
-/* 
- * void plfvect() 
+/*
+ * void plfvect()
  *
  * Internal routine to plot a vector array with arbitrary coordinate
  * and vector transformations.
@@ -956,15 +962,15 @@ int
 plhershey2unicode ( int in );
 
 /* struct used for FCI to FontName lookups. */
-typedef struct 
-{   
+typedef struct
+{
    PLUNICODE fci;
    unsigned char *pfont;
 } FCI_to_FontName_Table;
 
 /* Internal function to obtain a pointer to a valid font name. */
 char *
-plP_FCI2FontName ( PLUNICODE fci, 
+plP_FCI2FontName ( PLUNICODE fci,
 		   const FCI_to_FontName_Table lookup[], const int nlookup);
 
 
