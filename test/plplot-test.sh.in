@@ -67,18 +67,6 @@ EOF
    exit $1
 }
 
-# These variables set by default assuming you are going to run this
-# script from the installed demos directory $prefix/lib/plplot$version/examples.
-export cdir=$EXAMPLES_DIR/c           \
-       cxxdir=$EXAMPLES_DIR/c++       \
-       f77dir=$EXAMPLES_DIR/f77       \
-       pythondir=$EXAMPLES_DIR/python \
-       tcldir=$EXAMPLES_DIR/tcl       \
-       octavedir=$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//: \
-       PATH=@prefix@/bin:$EXAMPLES_DIR/../utils:$PATH
-
-fe=""
-
 while test $# -gt 0; do
    case "$1" in
    -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
@@ -133,6 +121,18 @@ subdirectory called "c".  This condition has been violated.
 EOF
 exit 1
 fi
+
+# These variables set by default assuming you are going to run this
+# script from the installed demos directory $prefix/lib/plplot$version/examples.
+export cdir=$EXAMPLES_DIR/c           \
+       cxxdir=$EXAMPLES_DIR/c++       \
+       f77dir=$EXAMPLES_DIR/f77       \
+       pythondir=$EXAMPLES_DIR/python \
+       tcldir=$EXAMPLES_DIR/tcl       \
+       octavedir=$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//: \
+       PATH=@prefix@/bin:$EXAMPLES_DIR/../utils:$PATH
+
+fe=""
 
 case "$device" in
    ps|psc)
