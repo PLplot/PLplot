@@ -8,7 +8,10 @@
 // $Id$
 //
 // $Log$
-// Revision 1.1  1995/06/22 19:01:15  furnish
+// Revision 1.2  1995/10/16 18:22:58  mjl
+// Added support for plgdev API function in C++ bindings.
+//
+// Revision 1.1  1995/06/22  19:01:15  furnish
 // Resubmit file which was broken by apparent RCS foulup.
 //
 // Revision 1.2  1995/06/01  21:18:16  mjl
@@ -460,6 +463,10 @@ class plstream {
 /* Set the device (keyword) name */
 
     void sdev( const char *devname );
+
+/* Get the device (keyword) name */
+
+    void gdev( char *devname );
 
 /* Set window into device space using margin, aspect ratio, and */
 /* justification */

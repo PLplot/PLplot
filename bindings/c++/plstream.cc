@@ -8,7 +8,10 @@
 // $Id$
 //
 // $Log$
-// Revision 1.2  1995/06/22 18:52:59  furnish
+// Revision 1.3  1995/10/16 18:22:57  mjl
+// Added support for plgdev API function in C++ bindings.
+//
+// Revision 1.2  1995/06/22  18:52:59  furnish
 // Bare pointer elimination, api collapsing, and removal of features
 // intended for use from Fortran.  Still muuuuuch work to be done on this
 // class.
@@ -1014,6 +1017,15 @@ void plstream::sdev( const char *devname )
     set_stream();
 
     plsdev(devname);
+}
+
+/* Get the device (keyword) name */
+
+void plstream::gdev( char *devname )
+{
+    set_stream();
+
+    plgdev(devname);
 }
 
 /* Set window into device space using margin, aspect ratio, and */
