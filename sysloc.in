@@ -765,7 +765,7 @@ EOF`])
     if test "$enable_octave" = "yes"; then
 
         # Get Octave version
-        OCTAVE_VERSION=`$OCTAVE --version | sed 's/^.*version // ; q' \
+        OCTAVE_VERSION=`$OCTAVE --version | sed 's/^.*version //;q' \
                         | sed 's/ .*$//'`
 
 	# This is the directory for installation of the PLplot_Octave
@@ -775,7 +775,7 @@ EOF`])
 	# Get Configuration default values for Octave
         OCTAVE_PREFIX=OCTAVE_CONFIG_INFO(prefix)
         OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(octfiledir)	
-	if test -n "`echo $OCTAVE_VERSION | sed 's/^2.1//p ; d ; q'`" ; then
+	if test -n "`echo $OCTAVE_VERSION | sed 's/^2.1//p;d;q'`" ; then
             # Octave version 2.1
             OCTAVE_M_DIR=OCTAVE_CONFIG_INFO(localfcnfiledir)
         else
@@ -860,11 +860,11 @@ if test "$enable_python" = "yes" -o "$enable_java" = "yes"; then
     AC_CHECK_PROGS(SWIG, swig)
     if test -n "$SWIG" ; then
         SWIG_VERSION=`$SWIG  -version 2>&1 \
-                      | sed 's/^SWIG Version // ; t END ; d ; : END q'`
+                      | sed 's/^SWIG Version //;tEND;d;:END;q'`
         SWIG_VERSION_MAJOR=`echo $SWIG_VERSION \
                       | sed 's/\..*//'`
         [SWIG_VERSION_MINOR=`echo $SWIG_VERSION \
-                      | sed 's/[0-9]*\.// ; s/\..*//'`]
+                      | sed 's/[0-9]*\.//;s/\..*//'`]
         [SWIG_VERSION_MICRO=`echo $SWIG_VERSION \
                       | sed 's/[0-9]*\.[0-9]*\.//;s/[^0-9].*//'`]
         # Must have swig version 1.3.17 (or later micro number for 1.3.x)
