@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.14  1993/10/26 21:21:27  mjl
+# Revision 1.15  1993/12/15 09:02:13  mjl
+# Changes to support Tcl-DP style communication; eliminated plframe
+# widget attach and detach commands (no longer supported).
+#
+# Revision 1.14  1993/10/26  21:21:27  mjl
 # Fixed TK send bug that appeared when you had multiple applications with
 # the same name using a plplot/TK driver concurrently (e.g. multiple
 # plrenders).
@@ -379,10 +383,6 @@ proc plw_init {w client} {
 
 proc plw_init_plplot {w client} {
     
-# Give client name to plplot widget.
-
-    $w.plwin attach $client
-
 # Enable keyboard traversal when widget has the input focus.
 
     tk_bindForTraversal $w.plwin
@@ -425,7 +425,7 @@ proc plw_flash {w} {
 #----------------------------------------------------------------------------
 
 proc plw_end {w} {
-    $w.plwin detach
+    destroy .
 }
 
 #----------------------------------------------------------------------------
@@ -436,7 +436,8 @@ proc plw_end {w} {
 #----------------------------------------------------------------------------
 
 proc plw_send {client msg} {
-    after 1 catch [list "send [list $client] $msg"]
+    global plsend
+    after 1 catch [list "after 1 $plsend [list $client] $msg"]
 }
 
 #----------------------------------------------------------------------------
