@@ -18,7 +18,7 @@ clean:
 
 depend:
 	gcc -MM $(CORE_C) $(DRIVERS_C) $(UTIL_C) $(FSTUB_C) $(TCL_C) $(TK_C) \
-		> deps.in
+		| ./cvtdeps
 	@echo "Rerun configure for the new dependencies to take effect"
 
 # -----------------------------------------------------------------------

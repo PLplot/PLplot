@@ -20,32 +20,32 @@
 
 # Utility programs.
 
-pltek.o:	pltek.c
+pltek$O:	pltek.c
 	$(CC) $(CC_FLAGS) pltek.c
 
-pltek:		pltek.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek.o $(PLLIB_LDC) $(TO) $@ \
+pltek$E:	pltek$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS)
 
-plrender.o:	$(PLLIBS) plrender.c
+plrender$O:	$(PLLIBS) plrender.c
 	$(CC) $(CC_FLAGS) plrender.c
 
-plrender:	$(PLLIBS) plrender.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) plrender.o $(PLLIB_LDC) $(TO) $@ \
+plrender$E:	$(PLLIBS) plrender$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) plrender$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS)
 
-plserver.o:	$(PLLIBS) plserver.c
+plserver$O:	$(PLLIBS) plserver.c
 	$(CC) $(CC_FLAGS) plserver.c
 
-plserver:	$(PLLIBS) plserver.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver.o $(PLLIB_LDC) $(TO) $@ \
+plserver$E:	$(PLLIBS) plserver$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS)
 
-pltcl.o:	$(PLLIBS) pltcl.c
+pltcl$O:	$(PLLIBS) pltcl.c
 	$(CC) $(CC_FLAGS) pltcl.c
 
-pltcl:		$(PLLIBS) pltcl.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl.o $(PLLIB_LDC) $(TO) $@ \
+pltcl$E:	$(PLLIBS) pltcl$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS)
 
 # -----------------------------------------------------------------------
@@ -61,19 +61,19 @@ fonts:	sfont xfont
 sfont:	$(PLFNT_PATH)plstnd5.fnt
 xfont:	$(PLFNT_PATH)plxtnd5.fnt
 
-$(PLFNT_PATH)plstnd5.fnt: stndfont pdfutils.o $(FONT_OBJ)
-	-./stndfont
+$(PLFNT_PATH)plstnd5.fnt: stndfont$E pdfutils$O $(FONT_OBJ)
+	-./stndfont$E
 	-mv *.fnt $(PLFNT_DIR)
 
-$(PLFNT_PATH)plxtnd5.fnt: xtndfont pdfutils.o $(FONT_OBJ)
-	-./xtndfont
+$(PLFNT_PATH)plxtnd5.fnt: xtndfont$E pdfutils$O $(FONT_OBJ)
+	-./xtndfont$E
 	-mv *.fnt $(PLFNT_DIR)
 
-stndfont:	$(PLLIBS) stndfont.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) stndfont.o $(FONT_OBJ) \
+stndfont$E:	$(PLLIBS) stndfont$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) stndfont$O $(FONT_OBJ) \
  		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-xtndfont:	$(PLLIBS) xtndfont.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) xtndfont.o $(FONT_OBJ) \
+xtndfont$E:	$(PLLIBS) xtndfont$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtndfont$O $(FONT_OBJ) \
  		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 

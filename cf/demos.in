@@ -19,221 +19,222 @@
 # -----------------------------------------------------------------------
 # Example programs, in C.
 
-CDEMOS= x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c x11c \
-	x12c x13c x14c x15c x16c x17c x18c tutor
+CDEMOS= x01c$E x02c$E x03c$E x04c$E x05c$E x06c$E x07c$E x08c$E x09c$E \
+	x10c$E x11c$E x12c$E x13c$E x14c$E x15c$E x16c$E x17c$E x18c$E \
+	tutor$E
 
 cdemos:	$(CDEMOS)
 
-x01c.o:	x01c.c
+x01c$O:	x01c.c
 	$(CC) $(CC_FLAGS_DEMOS) x01c.c
 
-x01c:	$(PLLIBS) x01c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x01c.o \
+x01c$E:	$(PLLIBS) x01c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x01c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x02c.o:	x02c.c
+x02c$O:	x02c.c
 	$(CC) $(CC_FLAGS_DEMOS) x02c.c
 
-x02c:	$(PLLIBS) x02c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x02c.o \
+x02c$E:	$(PLLIBS) x02c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x02c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x03c.o:	x03c.c
+x03c$O:	x03c.c
 	$(CC) $(CC_FLAGS_DEMOS) x03c.c
 
-x03c:	$(PLLIBS) x03c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x03c.o \
+x03c$E:	$(PLLIBS) x03c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x03c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x04c.o:	x04c.c
+x04c$O:	x04c.c
 	$(CC) $(CC_FLAGS_DEMOS) x04c.c
 
-x04c:	$(PLLIBS) x04c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x04c.o \
+x04c$E:	$(PLLIBS) x04c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x04c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x05c.o:	x05c.c
+x05c$O:	x05c.c
 	$(CC) $(CC_FLAGS_DEMOS) x05c.c
 
-x05c:	$(PLLIBS) x05c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x05c.o \
+x05c$E:	$(PLLIBS) x05c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x05c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x06c.o:	x06c.c
+x06c$O:	x06c.c
 	$(CC) $(CC_FLAGS_DEMOS) x06c.c
 
-x06c:	$(PLLIBS) x06c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x06c.o \
+x06c$E:	$(PLLIBS) x06c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x06c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x07c.o:	x07c.c
+x07c$O:	x07c.c
 	$(CC) $(CC_FLAGS_DEMOS) x07c.c
 
-x07c:	$(PLLIBS) x07c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x07c.o \
+x07c$E:	$(PLLIBS) x07c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x07c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x08c.o:	x08c.c
+x08c$O:	x08c.c
 	$(CC) $(CC_FLAGS_DEMOS) x08c.c
 
-x08c:	$(PLLIBS) x08c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x08c.o \
+x08c$E:	$(PLLIBS) x08c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x08c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x09c.o:	x09c.c
+x09c$O:	x09c.c
 	$(CC) $(CC_FLAGS_DEMOS) x09c.c
 
-x09c:	$(PLLIBS) x09c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x09c.o \
+x09c$E:	$(PLLIBS) x09c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x09c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x10c.o:	x10c.c
+x10c$O:	x10c.c
 	$(CC) $(CC_FLAGS_DEMOS) x10c.c
 
-x10c:	$(PLLIBS) x10c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x10c.o \
+x10c$E:	$(PLLIBS) x10c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x10c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x11c.o:	x11c.c
+x11c$O:	x11c.c
 	$(CC) $(CC_FLAGS_DEMOS) x11c.c
 
-x11c:	$(PLLIBS) x11c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x11c.o \
+x11c$E:	$(PLLIBS) x11c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x11c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x12c.o:	x12c.c
+x12c$O:	x12c.c
 	$(CC) $(CC_FLAGS_DEMOS) x12c.c
 
-x12c:	$(PLLIBS) x12c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x12c.o \
+x12c$E:	$(PLLIBS) x12c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x12c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x13c.o:	x13c.c
+x13c$O:	x13c.c
 	$(CC) $(CC_FLAGS_DEMOS) x13c.c
 
-x13c:	$(PLLIBS) x13c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x13c.o \
+x13c$E:	$(PLLIBS) x13c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x13c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x14c.o:	x14c.c
+x14c$O:	x14c.c
 	$(CC) $(CC_FLAGS_DEMOS) x14c.c
 
-x14c:	$(PLLIBS) x14c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x14c.o \
+x14c$E:	$(PLLIBS) x14c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x14c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x15c.o:	x15c.c
+x15c$O:	x15c.c
 	$(CC) $(CC_FLAGS_DEMOS) x15c.c
 
-x15c:	$(PLLIBS) x15c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x15c.o \
+x15c$E:	$(PLLIBS) x15c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x15c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x16c.o:	x16c.c
+x16c$O:	x16c.c
 	$(CC) $(CC_FLAGS_DEMOS) x16c.c
 
-x16c:	$(PLLIBS) x16c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x16c.o \
+x16c$E:	$(PLLIBS) x16c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x16c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x17c.o:	x17c.c
+x17c$O:	x17c.c
 	$(CC) $(CC_FLAGS_DEMOS) x17c.c
 
-x17c:	$(PLLIBS) x17c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x17c.o \
+x17c$E:	$(PLLIBS) x17c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x17c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x18c.o:	x18c.c
+x18c$O:	x18c.c
 	$(CC) $(CC_FLAGS_DEMOS) x18c.c
 
-x18c:	$(PLLIBS) x18c.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) x18c.o \
+x18c$E:	$(PLLIBS) x18c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x18c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-tutor.o:	tutor.c
+tutor$O:	tutor.c
 	$(CC) $(CC_FLAGS_DEMOS) tutor.c
 
-tutor:	$(PLLIBS) tutor.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor.o \
+tutor$E:	$(PLLIBS) tutor$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 # -----------------------------------------------------------------------
 # Example programs, in Fortran.
 
-FDEMOS= x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f \
-	x12f x13f x16f
+FDEMOS= x01f$E x02f$E x03f$E x04f$E x05f$E x06f$E x07f$E x08f$E x09f$E \
+	x10f$E x11f$E x12f$E x13f$E x16f$E
 
 fdemos:	$(FDEMOS)
 
-x01f:	$(PLLIBS) x01f.o
-	$(LDF) $(LDF_FLAGS) x01f.o \
+x01f$E:	$(PLLIBS) x01f$O
+	$(LDF) $(LDF_FLAGS) x01f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x02f:	$(PLLIBS) x02f.o
-	$(LDF) $(LDF_FLAGS) x02f.o \
+x02f$E:	$(PLLIBS) x02f$O
+	$(LDF) $(LDF_FLAGS) x02f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x03f:	$(PLLIBS) x03f.o
-	$(LDF) $(LDF_FLAGS) x03f.o \
+x03f$E:	$(PLLIBS) x03f$O
+	$(LDF) $(LDF_FLAGS) x03f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x04f:	$(PLLIBS) x04f.o
-	$(LDF) $(LDF_FLAGS) x04f.o \
+x04f$E:	$(PLLIBS) x04f$O
+	$(LDF) $(LDF_FLAGS) x04f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x05f:	$(PLLIBS) x05f.o
-	$(LDF) $(LDF_FLAGS) x05f.o \
+x05f$E:	$(PLLIBS) x05f$O
+	$(LDF) $(LDF_FLAGS) x05f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x06f:	$(PLLIBS) x06f.o
-	$(LDF) $(LDF_FLAGS) x06f.o \
+x06f$E:	$(PLLIBS) x06f$O
+	$(LDF) $(LDF_FLAGS) x06f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x07f:	$(PLLIBS) x07f.o
-	$(LDF) $(LDF_FLAGS) x07f.o \
+x07f$E:	$(PLLIBS) x07f$O
+	$(LDF) $(LDF_FLAGS) x07f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x08f:	$(PLLIBS) x08f.o
-	$(LDF) $(LDF_FLAGS) x08f.o \
+x08f$E:	$(PLLIBS) x08f$O
+	$(LDF) $(LDF_FLAGS) x08f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x09f:	$(PLLIBS) x09f.o
-	$(LDF) $(LDF_FLAGS) x09f.o \
+x09f$E:	$(PLLIBS) x09f$O
+	$(LDF) $(LDF_FLAGS) x09f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x10f:	$(PLLIBS) x10f.o
-	$(LDF) $(LDF_FLAGS) x10f.o \
+x10f$E:	$(PLLIBS) x10f$O
+	$(LDF) $(LDF_FLAGS) x10f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x11f:	$(PLLIBS) x11f.o
-	$(LDF) $(LDF_FLAGS) x11f.o \
+x11f$E:	$(PLLIBS) x11f$O
+	$(LDF) $(LDF_FLAGS) x11f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x12f:	$(PLLIBS) x12f.o
-	$(LDF) $(LDF_FLAGS) x12f.o \
+x12f$E:	$(PLLIBS) x12f$O
+	$(LDF) $(LDF_FLAGS) x12f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x13f:	$(PLLIBS) x13f.o
-	$(LDF) $(LDF_FLAGS) x13f.o \
+x13f$E:	$(PLLIBS) x13f$O
+	$(LDF) $(LDF_FLAGS) x13f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
-x16f:	$(PLLIBS) x16f.o
-	$(LDF) $(LDF_FLAGS) x16f.o \
+x16f$E:	$(PLLIBS) x16f$O
+	$(LDF) $(LDF_FLAGS) x16f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 
 # -----------------------------------------------------------------------
 # TK example programs.
 
-TKDEMOS = xtk01 xtk02
+TKDEMOS = xtk01$E xtk02$E
 
 tkdemos: $(TKDEMOS)
 
-xtk01:  $(PLLIBS) xtk01.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk01.o \
+xtk01$E:  $(PLLIBS) xtk01$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk01$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-xtk02:  $(PLLIBS) xtk02.o
-	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk02.o \
+xtk02$E:  $(PLLIBS) xtk02$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk02$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 

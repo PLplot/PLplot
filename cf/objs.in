@@ -1,60 +1,60 @@
-sc3d.o : sc3d.c plstubs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-sccont.o : sccont.c plstubs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-scstubs.o : scstubs.c plstubs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-tclAPI.o : tclAPI.c plplotP.h plConfig.h plplot.h pdf.h plstream.h pltcl.h tclMatrix.h 
-tclMain.o : tclMain.c 
-tclMatrix.o : tclMatrix.c tclMatrix.h 
-tk.o : tk.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h plplotTK.h \
+sc3d$O : sc3d.c plstubs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+sccont$O : sccont.c plstubs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+scstubs$O : scstubs.c plstubs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+tclAPI$O : tclAPI.c plplotP.h plConfig.h plplot.h pdf.h plstream.h pltcl.h tclMatrix.h 
+tclMain$O : tclMain.c 
+tclMatrix$O : tclMatrix.c tclMatrix.h 
+tk$O : tk.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h plplotTK.h \
   plplotX.h pltcl.h tclMatrix.h drivers.h metadefs.h plevent.h 
-tkshell.o : tkshell.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
+tkshell$O : tkshell.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
   pltcl.h tclMatrix.h plplotTK.h plDevs.h 
-tcpip.o : tcpip.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plframe.o : plframe.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
+tcpip$O : tcpip.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plframe$O : plframe.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
   pltcl.h tclMatrix.h plplotTK.h plDevs.h plplotX.h 
-tkMain.o : tkMain.c 
-plr.o : plr.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h pltcl.h \
+tkMain$O : tkMain.c 
+plr$O : plr.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h pltcl.h \
   tclMatrix.h plplotTK.h plDevs.h plevent.h metadefs.h 
-pdfutils.o : pdfutils.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plargs.o : plargs.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plbox.o : plbox.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plcont.o : plcont.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plcore.o : plcore.c plcore.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
+pdfutils$O : pdfutils.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plargs$O : plargs.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plbox$O : plbox.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plcont$O : plcont.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plcore$O : plcore.c plcore.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
   drivers.h plDevs.h 
-plctrl.o : plctrl.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plcvt.o : plcvt.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-pldtik.o : pldtik.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plfill.o : plfill.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plfont.o : plfont.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plhist.o : plhist.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plline.o : plline.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plot3d.o : plot3d.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plpage.o : plpage.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plsdef.o : plsdef.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plshade.o : plshade.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plstream.o : plstream.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plstring.o : plstring.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plsym.o : plsym.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-pltick.o : pltick.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plvpor.o : plvpor.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plwind.o : plwind.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-dg300.o : dg300.c plDevs.h 
-hpgl.o : hpgl.c plDevs.h 
-impress.o : impress.c plDevs.h 
-ljiip.o : ljiip.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
-ljii.o : ljii.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
-next.o : next.c plDevs.h 
-null.o : null.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
-plbuf.o : plbuf.c plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h metadefs.h 
-plmeta.o : plmeta.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
+plctrl$O : plctrl.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plcvt$O : plcvt.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+pldtik$O : pldtik.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plfill$O : plfill.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plfont$O : plfont.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plhist$O : plhist.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plline$O : plline.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plot3d$O : plot3d.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plpage$O : plpage.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plsdef$O : plsdef.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plshade$O : plshade.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plstream$O : plstream.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plstring$O : plstring.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plsym$O : plsym.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+pltick$O : pltick.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plvpor$O : plvpor.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+plwind$O : plwind.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
+dg300$O : dg300.c plDevs.h 
+hpgl$O : hpgl.c plDevs.h 
+impress$O : impress.c plDevs.h 
+ljiip$O : ljiip.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
+ljii$O : ljii.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
+next$O : next.c plDevs.h 
+null$O : null.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
+plbuf$O : plbuf.c plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h metadefs.h 
+plmeta$O : plmeta.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
   drivers.h metadefs.h 
-ps.o : ps.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
-tek.o : tek.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h \
+ps$O : ps.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
+tek$O : tek.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h \
   plevent.h 
-xfig.o : xfig.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
-xwin.o : xwin.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h plplotX.h \
+xfig$O : xfig.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
+xwin$O : xwin.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h plplotX.h \
   drivers.h plevent.h 
-plrender.o : plrender.c plplotP.h plConfig.h plplot.h pdf.h plstream.h plevent.h \
+plrender$O : plrender.c plplotP.h plConfig.h plplot.h pdf.h plstream.h plevent.h \
   metadefs.h 
-plserver.o : plserver.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
+plserver$O : plserver.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
   pltcl.h tclMatrix.h plplotTK.h plDevs.h 
-pltcl.o : pltcl.c plplotP.h plConfig.h plplot.h pdf.h plstream.h pltcl.h tclMatrix.h 
+pltcl$O : pltcl.c plplotP.h plConfig.h plplot.h pdf.h plstream.h pltcl.h tclMatrix.h 

@@ -5,36 +5,12 @@
 # IFS, University of Texas at Austin
 # 14-Jul-1994
 #
-# Make assignments and targets for PLplot/TK driver.
+# Make assignments for PLplot/TK driver.
 # -----------------------------------------------------------------------
 
-TK_C = \
-	tk.c \
-	tkshell.c \
-	tcpip.c \
-	plframe.c \
-	tkMain.c \
-	plr.c
-
-TK_OBJ = \
-	tk.o \
-	tkshell.o \
-	tcpip.o \
-	plframe.o \
-	plr.o
-
-TK_OBJ_SA = \
-	tkMain.o 
-
-TK_EXE	= plserver
-
-TK_INSTALL = install_tk
-
-install_tk:
-	-if [ ! -d $(TCL_DIR) ] ; then mkdir -p $(TCL_DIR); fi
-	$(LDC) $(LDC_FLAGS) plserver.o $(LIB_INSTALL) \
-		-o plserver $(LDC_LIBS)
-	-strip plserver
-	-cp plserver $(BIN_DIR)
-	-cd ../drivers/tk; cp *.tcl *.pal tclIndex $(TCL_DIR)
+TK_C		= tk.c tkshell.c tcpip.c plframe.c tkMain.c plr.c
+TK_OBJ		= tk$O tkshell$O tcpip$O plframe$O plr$O
+TK_OBJ_SA	= tkMain$O 
+TK_EXE		= plserver$E
+TK_INSTALL	= install_tk
 

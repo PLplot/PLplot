@@ -13,11 +13,11 @@
 # libraries. 
 # -----------------------------------------------------------------------
 
-.c.o:
+.c$O:
 	$(CC) $(CC_FLAGS) $*.c
 	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../$*.c
 
-.f.o:
+.f$O:
 	$(F77) $(F77_FLAGS) $*.f
 	cd shared; $(F77) $(SHLIB_F77FLAGS) $(F77_FLAGS) ../$*.f
 
@@ -48,20 +48,20 @@ $(PLLIB_SH):	$(LIB_OBJS)
 
 # Needs to be compiled using K&R C.
 
-tcpip.o:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
+tcpip$O:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
 		plstream.h tcpip.c
 	$(OCC) $(CC_FLAGS) tcpip.c
 	cd shared; $(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../tcpip.c
 
 # Optimizer under AIX 3.2.3 bogues out here.
 
-xwin.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h plplotX.h xwin.c
+xwin$O:		plplotP.h plplot.h drivers.h pdf.h plstream.h plplotX.h xwin.c
 	$(CC) $(CC_FLAGS_XWIN) xwin.c
 	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS_XWIN) ../xwin.c
 
 # Optimizer on SX-3 makes bogus code here.
 
-sccont.o:	plstubs.h plplotP.h plplot.h sccont.c
+sccont$O:	plstubs.h plplotP.h plplot.h sccont.c
 	$(CC) $(CC_FLAGS_SCCONT) sccont.c
 	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS_SCCONT) ../sccont.c
 

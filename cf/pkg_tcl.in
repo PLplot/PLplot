@@ -5,28 +5,12 @@
 # IFS, University of Texas at Austin
 # 14-Jul-1994
 #
-# Make assignments and targets for PLplot/Tcl support.
+# Make assignments for PLplot/Tcl support.
 # -----------------------------------------------------------------------
 
-TCL_C = \
-	tclAPI.c \
-	tclMain.c \
-	tclMatrix.c
-
-TCL_OBJ = \
-	tclAPI.o \
-	tclMatrix.o
-
-TCL_OBJ_SA = \
-	tclMain.o 
-
-TCL_EXE	= pltcl
-
-TCL_INSTALL = install_tcl
-
-install_tcl:
-	$(LDC) $(LDC_FLAGS) pltcl.o $(LIB_INSTALL) \
-		-o pltcl $(LDC_LIBS)
-	-strip pltcl
-	-cp pltcl $(BIN_DIR)
+TCL_C		= tclAPI.c tclMain.c tclMatrix.c
+TCL_OBJ		= tclAPI$O tclMatrix$O
+TCL_OBJ_SA	= tclMain$O 
+TCL_EXE		= pltcl$E
+TCL_INSTALL	= install_tcl
 

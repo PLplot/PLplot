@@ -29,13 +29,13 @@ everything: cdemos fdemos tkdemos
 # Clear the suffix list to prevent problems.
 
 .SUFFIXES:
-.SUFFIXES: .o .cc .c .f .h
+.SUFFIXES: $O .cc .c .f .h
 
 # Inference rules.
 
-.c.o:
+.c$O:
 	$(CC) $(CC_FLAGS) $*.c
 
-.f.o:
+.f$O:
 	$(F77) $(F77_FLAGS) $*.f
 

@@ -66,12 +66,12 @@ PLLIB_LDF	= -L$(PLLIB_DIR) -lplplot$(LIB_TAG)
 
 # Default is to build library(s) and utils.
 
-everything: libs plrender pltek $(TCL_EXE) $(TK_EXE)
+everything: libs plrender$E pltek$E $(TCL_EXE) $(TK_EXE)
 
 # Clear the suffix list to prevent problems.
 
 .SUFFIXES:
-.SUFFIXES: .o .cc .c .f .h .fm4
+.SUFFIXES: $O .cc .c .f .h .fm4
 
 # Inference rules, not specific to archive or shared libraries.
 

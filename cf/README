@@ -7,7 +7,7 @@ init.in		(initialization)
 dist.in		(default target, core source and object file lists)
 pkg_<name>.in	(optional packages, e.g. f77, tcl, tk support)
 initlib.in	(library initialization)
-lib_<type>.in	(library target, either "ar", "sh", or "both")
+lib_<type>.in	(library target)
 exes.in		(utility program dependencies & targets)
 demos.in	(demo program dependencies & targets)
 install.in	(installation targets)
@@ -76,3 +76,4 @@ enable_imp="no"
 enable_tek4107="no"
 enable_hp7470="no"
 enable_hp7580="no"
+

@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# A simple sed driver to convert gcc output dependencies to a more useful
+# form.  It can't go in the Makefile since the $O would get expanded.
+# The gcc output dependencies are read from standard input.
+
+sed 's/\.o/\$O/' >deps.in
