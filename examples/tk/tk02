@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.7  1994/06/30 05:46:20  furnish
+# Revision 1.8  1994/07/01 20:44:00  mjl
+# Modified to use startup proc plstdwin when configuring main window.
+#
+# Revision 1.7  1994/06/30  05:46:20  furnish
 # Another plot command in tk02 which invokes a private tclMatrix
 # extension for demo purposes.  xtk02.c adds a new tclMatrix subcommand
 # "stuff", and tk02 exercises it.  Dumb, but shows how it all works.
@@ -38,38 +41,7 @@
 ###############################################################################
 
 wm title . "x01c -- TK version"
-
-# Set up configuration options.
-# The first is to hold default values of everything, the second is for
-# user customization.  See pldefaults.tcl for more info.
-
-    pldefaults
-    plconfig
-
-# I refuse to allow exec's, ever.
-# Open's have to remain, however, to read/write palette info.
-
-    rename exec {}
-
-# Create the main window
-# Use the default window title.
-
-    set root_width  [winfo vrootwidth .]
-    set root_height [winfo vrootheight .]
-
-    wm minsize . 300 240
-    wm maxsize . [expr "$root_width/64*63"] [expr "$root_height/64*62"]
-
-# Set window geometry if not already set.
-# Depart from square slightly to account for menu bar.
-
-    if { ! [ info exists geometry ] } {
-        set width  [expr "$root_width / 16 * 10"]
-        set height [expr "$root_height / 16 * 11"]
-        set geometry ${width}x${height}
-    }
-    wm geometry . $geometry
-
+plstdwin .
 
 ###############################################################################
 # Set up the menubar and message widgets.

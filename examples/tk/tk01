@@ -7,61 +7,20 @@
 # $Id$
 #
 # $Log$
-# Revision 1.5  1994/06/17 21:23:09  mjl
+# Revision 1.6  1994/07/01 20:43:59  mjl
+# Modified to use startup proc plstdwin when configuring main window.
+#
+# Revision 1.5  1994/06/17  21:23:09  mjl
 # Removed option database settings since they were the same as those set
 # in the pldefaults proc.
 #
 # Revision 1.4  1994/06/09  20:28:15  mjl
 # Changed to new improved megawidget instantiation method.
 #
-# Revision 1.3  1994/05/09  18:00:37  furnish
-# Hack for tcl-mode with font-lock, etc.
-#
-# Revision 1.2  1994/05/07  03:16:33  mjl
-# Changes to bring up PLplot "megawidget".  Still needs work, in that there
-# are several widgets not appropriate for this application.  The PLplot
-# "megawidget" should really be rewritten in itcl, but for now I'll hack
-# something up instead.
-#
-# Revision 1.1  1994/04/11  19:01:02  furnish
-# The first Tk w/ embedded PLPLOT widget example program.  Very simple,
-# but shows the basics of what you can do.
-#
 ###############################################################################
 
 wm title . "x01c -- TK version"
-
-# Set up configuration options.
-# The first is to hold default values of everything, the second is for
-# user customization.  See pldefaults.tcl for more info.
-
-    pldefaults
-    plconfig
-
-# I refuse to allow exec's since there's no need for them now.
-# Open's have to remain, however, to read/write palette info.
-
-    rename exec {}
-
-# Create the main window
-# Use the default window title.
-
-    set root_width  [winfo vrootwidth .]
-    set root_height [winfo vrootheight .]
-
-    wm minsize . 300 240
-    wm maxsize . [expr "$root_width/64*63"] [expr "$root_height/64*62"]
-
-# Set window geometry if not already set.
-# Depart from square slightly to account for menu bar.
-
-    if { ! [ info exists geometry ] } {
-        set width  [expr "$root_width / 16 * 10"]
-        set height [expr "$root_height / 16 * 11"]
-        set geometry ${width}x${height}
-    }
-    wm geometry . $geometry
-
+plstdwin .
 
 ###############################################################################
 # Set up the menubar and message widgets.
