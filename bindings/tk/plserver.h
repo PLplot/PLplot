@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1993/07/02 06:58:32  mjl
+ * Revision 1.2  1993/07/16 22:01:29  mjl
+ * Eliminated obsolete variables from renderer state struct.
+ *
+ * Revision 1.1  1993/07/02  06:58:32  mjl
  * The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
  *
  */
@@ -36,15 +39,8 @@ typedef struct {
     char  *filetype;			/* Set to "fifo" or "socket" */
 
     int   nbytes;			/* data bytes waiting to be read */
-    int   orient;			/* Orientation */
-    float aspect;			/* Aspect ratio */
-    int   orientset, aspectset;		/* Flags governing the above */
 
     short xmin, xmax, ymin, ymax;	/* Data minima and maxima */
-    int   xlen, ylen;			/* Data system lengths */
-    float vpxmin, vpxmax;		/* Viewport minima and maxima */
-    float vpymin, vpymax;
-
     PLFLT xold, yold;			/* Endpoints of last line plotted */
 } PLRDev;
 
