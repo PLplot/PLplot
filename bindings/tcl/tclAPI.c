@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/06/25 20:37:12  mjl
+ * Revision 1.4  1994/06/30 18:52:09  mjl
+ * Added API calls for: plfont, plfontld, plhist, pljoin, plmtex, plptex,
+ * plschr, plssub, plsym, plvpor, plwid.
+ *
+ * Revision 1.3  1994/06/25  20:37:12  mjl
  * Added API calls for pladv, plbop, plbox, pleop, plstyl, plvsta, plwind.
  *
  * Revision 1.2  1994/06/24  20:38:21  mjl
@@ -29,6 +33,7 @@
  *
 \*----------------------------------------------------------------------*/
 
+#include <plplotP.h>
 #include <pltcl.h>
 
 /* PLplot/Tcl API handlers.  Prototypes must come before Cmds struct */
@@ -39,16 +44,27 @@ static int plboxCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plcol0Cmd	(ClientData, Tcl_Interp *, int, char **);
 static int pleopCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plenvCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plfontCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plfontldCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plgraCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plhistCmd	(ClientData, Tcl_Interp *, int, char **);
+static int pljoinCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pllabCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pllineCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plmtexCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plpoinCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plptexCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plschrCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plssubCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plsymCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plstylCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsxaxCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsyaxCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pltextCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plvporCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plvstaCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plwidCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plwindCmd	(ClientData, Tcl_Interp *, int, char **);
 
 /*
@@ -80,16 +96,27 @@ static CmdInfo Cmds[] = {
     {"plcol0",		plcol0Cmd},
     {"pleop",		pleopCmd},
     {"plenv",		plenvCmd},
+    {"plfont",		plfontCmd},
+    {"plfontld",	plfontldCmd},
     {"plgra",		plgraCmd},
+    {"plhist",		plhistCmd},
+    {"pljoin",		pljoinCmd},
     {"pllab",		pllabCmd},
     {"plline",		pllineCmd},
+    {"plmtex",		plmtexCmd},
     {"plpoin",		plpoinCmd},
+    {"plptex",		plptexCmd},
+    {"plschr",		plschrCmd},
+    {"plssub",		plssubCmd},
     {"plstyl",		plstylCmd},
     {"plsxax",		plsxaxCmd},
     {"plsyax",		plsyaxCmd},
     {"plsetopt",	plsetoptCmd},
+    {"plsym",		plsymCmd},
     {"pltext",		pltextCmd},
+    {"plvpor",		plvporCmd},
     {"plvsta",		plvstaCmd},
+    {"plwid",		plwidCmd},
     {"plwind",		plwindCmd},
     {NULL,		NULL}
 };
@@ -152,7 +179,12 @@ plTclCmd_Init(Tcl_Interp *interp)
 /*----------------------------------------------------------------------*\
  * plTclCmd
  *
- * Front-end to PLplot/Tcl API for use from the plframe widget.
+ * Front-end to PLplot/Tcl API for use from Tcl commands (e.g. plframe).
+ *
+ * This command is called by the plframe widget to process subcommands
+ * of the "cmd" plframe widget command.  This is the plframe's direct
+ * plotting interface to the PLplot library.  This routine can be called
+ * from other commands that want a similar capability.
  *
  * In a widget-based application, a plplot "command" doesn't make much
  * sense by itself since it isn't connected to a specific widget.
@@ -228,6 +260,8 @@ Pltcl_Init( Tcl_Interp *interp )
 	Tcl_CreateCommand(interp, cmdInfoPtr->name, cmdInfoPtr->proc,
 			  (ClientData) NULL, (void (*)(ClientData)) NULL);
     }
+
+    return TCL_OK;
 }
 
 /*----------------------------------------------------------------------*\
@@ -242,7 +276,7 @@ Pltcl_Init( Tcl_Interp *interp )
  * using pltext()), the device will get confused.
 \*----------------------------------------------------------------------*/
 
-/* TEMPLATE FOR NEW CALLS */
+/* TEMPLATE */
 
 /*----------------------------------------------------------------------*\
  * plxxxCmd
@@ -306,7 +340,7 @@ plbopCmd(ClientData clientData, Tcl_Interp *interp,
 {
     if (argc > 1 ) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
-			 argv[0], "\"",
+			 argv[0], " \"",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
@@ -375,7 +409,6 @@ plcol0Cmd(ClientData clientData, Tcl_Interp *interp,
 
     plcol0( col );
 
-    plflush();
     return TCL_OK;
 }
 
@@ -436,6 +469,58 @@ pleopCmd(ClientData clientData, Tcl_Interp *interp,
 }
 
 /*----------------------------------------------------------------------*\
+ * plfontCmd
+ *
+ * Processes plfont Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plfontCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    PLINT font;
+
+    if (argc != 2 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " font\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    font = atoi(argv[1]);
+
+    plfont(font);
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plfontldCmd
+ *
+ * Processes plfontld Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plfontldCmd(ClientData clientData, Tcl_Interp *interp,
+	    int argc, char **argv)
+{
+    PLINT font;
+
+    if (argc != 2 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " font\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    font = atoi(argv[1]);
+
+    plfontld(font);
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
  * plgraCmd
  *
  * Processes plgra Tcl command.
@@ -445,7 +530,80 @@ static int
 plgraCmd(ClientData clientData, Tcl_Interp *interp,
 	 int argc, char **argv)
 {
+    if (argc > 1 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " \"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
     plgra();
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plhistCmd
+ *
+ * Processes plhist Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plhistCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    PLINT n, nbin, oldwin;
+    PLFLT *data, datmin, datmax;
+    tclMatrix *mat;
+
+    if (argc != 7 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " n data datmin datmax nbin oldwin\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    n = atoi(argv[1]);
+    mat = Tcl_GetMatrixPtr(interp, argv[2]);
+    data = mat->fdata;
+    datmin = atof( argv[3] );
+    datmax = atof( argv[4] );
+    nbin = atoi( argv[5] );
+    oldwin = atoi( argv[6] );
+
+    plhist(n, data, datmin, datmax, nbin, oldwin);
+
+    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * pljoinCmd
+ *
+ * Processes pljoin Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+pljoinCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    PLFLT x1, y1, x2, y2;
+
+    if (argc != 5 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " x1 y1 x2 y2\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    x1 = atof( argv[1] );
+    y1 = atof( argv[2] );
+    x2 = atof( argv[3] );
+    y2 = atof( argv[4] );
+
+    pljoin(x1, y1, x2, y2);
+
+    plflush();
     return TCL_OK;
 }
 
@@ -461,7 +619,7 @@ pllabCmd(ClientData clientData, Tcl_Interp *interp,
 {
     if (argc != 4 ) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
-			 argv[0], "  xlabel ylabel tlabel\"",
+			 argv[0], " xlabel ylabel tlabel\"",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
@@ -484,11 +642,11 @@ pllineCmd(ClientData clientData, Tcl_Interp *interp,
 {
     PLFLT *x, *y;
     tclMatrix *matx, *maty;
-    int npts;
+    int n;
 
     if (argc != 4 ) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-			 " <npts> <x-array-name> <y-array-name>\"",
+			 " n x-array y-array\"",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
@@ -499,11 +657,43 @@ pllineCmd(ClientData clientData, Tcl_Interp *interp,
     y = maty->fdata;
 
     if (strncmp(argv[1], "*", 1) == 0)
-	npts = MIN(matx->len, maty->len);
+	n = MIN(matx->len, maty->len);
     else
-	npts = atoi(argv[1]);
+	n = atoi(argv[1]);
 
-    plline( npts, x, y );
+    plline( n, x, y );
+
+    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plmtexCmd
+ *
+ * Processes plmtex Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plmtexCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    char *side, *text;
+    PLFLT disp, pos, just;
+
+    if (argc != 6 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " side disp pos just text\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    side = argv[1];
+    disp = atof(argv[2]);
+    pos = atof(argv[3]);
+    just = atof(argv[4]);
+    text = argv[5];
+
+    plmtex(side, disp, pos, just, text);
 
     plflush();
     return TCL_OK;
@@ -521,11 +711,11 @@ plpoinCmd(ClientData clientData, Tcl_Interp *interp,
 {
     PLFLT *x, *y;
     tclMatrix *matx, *maty;
-    int npts, code;
+    int n, code;
 
     if (argc != 5 ) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-			 " <npts> <x-array-name> <y-array-name> <code>\"",
+			 " n x-array y-array code\"",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
@@ -534,17 +724,76 @@ plpoinCmd(ClientData clientData, Tcl_Interp *interp,
     x = matx->fdata;
     maty = Tcl_GetMatrixPtr(interp, argv[3]);
     y = maty->fdata;
-
-    if (strncmp(argv[1], "*", 1) == 0)
-	npts = MIN(matx->len, maty->len);
-    else
-	npts = atoi(argv[1]);
-
     code = atoi( argv[4] );
 
-    plpoin( npts, x, y, code );
+    if (strncmp(argv[1], "*", 1) == 0)
+	n = MIN(matx->len, maty->len);
+    else
+	n = atoi(argv[1]);
+
+    plpoin( n, x, y, code );
 
     plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plptexCmd
+ *
+ * Processes plptex Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plptexCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    PLFLT x, y, dx, dy, just;
+    char *text;
+
+    if (argc != 7 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " x y dx dy just text\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    x = atof(argv[1]);
+    y = atof(argv[2]);
+    dx = atof(argv[3]);
+    dy = atof(argv[4]);
+    just = atof(argv[5]);
+    text = argv[6];
+
+    plptex(x, y, dx, dy, just, text);
+
+    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plschrCmd
+ *
+ * Processes plschr Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plschrCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    PLFLT def, scale;
+
+    if (argc != 3 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " def scale\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    def = atof(argv[1]);
+    scale = atof(argv[2]);
+
+    plschr(def, scale);
+
     return TCL_OK;
 }
 
@@ -564,14 +813,36 @@ plsetoptCmd(ClientData clientData, Tcl_Interp *interp,
 			 argv[0], " option ?argument?\"", (char *) NULL);
 	return TCL_ERROR;
     }
-    else {
-#ifdef DEBUG
-	fprintf(stderr, "Processing command: %s\n", argv[1]);
-	if (argv[2] != NULL)
-	    fprintf(stderr, "Processing option: %s\n", argv[2]);
-#endif
-	plSetInternalOpt(argv[1], argv[2]);
+
+    plSetInternalOpt(argv[1], argv[2]);
+
+    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plssubCmd
+ *
+ * Processes plssub Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plssubCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    PLINT nsubx, nsuby;
+
+    if (argc != 3 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " nsubx nsuby\"",
+			 (char *) NULL);
+	return TCL_ERROR;
     }
+
+    nsubx = atoi(argv[1]);
+    nsuby = atoi(argv[2]);
+
+    plssub(nsubx, nsuby);
 
     plflush();
     return TCL_OK;
@@ -605,7 +876,6 @@ plstylCmd(ClientData clientData, Tcl_Interp *interp,
 
     plstyl(nels, mark, space);
 
-    plflush();
     return TCL_OK;
 }
 
@@ -629,7 +899,9 @@ plsxaxCmd(ClientData clientData, Tcl_Interp *interp,
     }
 
     digmax = atoi(argv[1]);
+
     plsxax(digmax, 0);
+
     return TCL_OK;
 }
 
@@ -653,7 +925,47 @@ plsyaxCmd(ClientData clientData, Tcl_Interp *interp,
     }
 
     digmax = atoi(argv[1]);
+
     plsyax(digmax, 0);
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plsymCmd
+ *
+ * Processes plsym Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plsymCmd(ClientData clientData, Tcl_Interp *interp,
+	 int argc, char **argv)
+{
+    PLFLT *x, *y;
+    tclMatrix *matx, *maty;
+    int n, code;
+
+    if (argc != 5 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+			 " n x-array y-array code\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    matx = Tcl_GetMatrixPtr(interp, argv[2]);
+    x = matx->fdata;
+    maty = Tcl_GetMatrixPtr(interp, argv[3]);
+    y = maty->fdata;
+    code = atoi( argv[4] );
+
+    if (strncmp(argv[1], "*", 1) == 0)
+	n = MIN(matx->len, maty->len);
+    else
+	n = atoi(argv[1]);
+
+    plsym( n, x, y, code );
+
+    plflush();
     return TCL_OK;
 }
 
@@ -667,7 +979,44 @@ static int
 pltextCmd(ClientData clientData, Tcl_Interp *interp,
 	  int argc, char **argv)
 {
+    if (argc > 1 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " \"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
     pltext();
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plvporCmd
+ *
+ * Processes plvpor Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plvporCmd(ClientData clientData, Tcl_Interp *interp,
+	  int argc, char **argv)
+{
+    PLFLT xmin, xmax, ymin, ymax;
+
+    if (argc != 5 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " xmin xmax ymin ymax\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    xmin = atof( argv[1] );
+    xmax = atof( argv[2] );
+    ymin = atof( argv[3] );
+    ymax = atof( argv[4] );
+
+    plvpor(xmin, xmax, ymin, ymax);
+
     return TCL_OK;
 }
 
@@ -683,14 +1032,39 @@ plvstaCmd(ClientData clientData, Tcl_Interp *interp,
 {
     if (argc > 1 ) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
-			 argv[0], "\"",
+			 argv[0], " \"",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
 
     plvsta();
 
-    plflush();
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plwidCmd
+ *
+ * Processes plwid Tcl command.
+\*----------------------------------------------------------------------*/
+
+static int
+plwidCmd(ClientData clientData, Tcl_Interp *interp,
+	 int argc, char **argv)
+{
+    PLINT width;
+
+    if (argc != 2 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " width\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    width = atoi(argv[1]);
+
+    plwid(width);
+
     return TCL_OK;
 }
 
