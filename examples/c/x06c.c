@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1995/06/01 21:40:07  mjl
+ * Revision 1.11  1996/11/18 19:18:38  furnish
+ * Lengthen buffer for safety.
+ *
+ * Revision 1.10  1995/06/01  21:40:07  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
  *
@@ -34,7 +37,7 @@
 int
 main(int argc, char *argv[])
 {
-    char text[3];
+    char text[10];
     int i, j, k;
     PLFLT x, y;
 
