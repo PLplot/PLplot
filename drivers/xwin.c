@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.61  1995/05/08 20:25:51  mjl
+ * Revision 1.62  1995/05/15 21:54:10  mjl
+ * Fixed problem with color allocation that was causing code death on
+ * monochrome X terminals.  Reordered resize operations so that window is
+ * drawn to first, then pixmap copied after that (more natural looking).
+ *
+ * Revision 1.61  1995/05/08  20:25:51  mjl
  * Split the crossing event handler into separate enter and leave event
  * handlers to better keep track of whether we should be drawing graphic
  * crosshairs or not.  Now works properly under all combinations of expose,
@@ -535,11 +540,7 @@ plD_state_xw(PLStream *pls, PLINT op)
 
     case PLSTATE_COLOR0:{
 	int icol0 = pls->icol0;
-	if ( ! xwd->color) {
-	    dev->curcolor = xwd->fgcolor;
-	    XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
-	}
-	else {
+	if (xwd->color) {
 	    if (icol0 == PL_RGB_COLOR) {
 		PLColor_to_XColor(&pls->curcolor, &dev->curcolor);
 		if ( ! XAllocColor(xwd->display, xwd->map, &dev->curcolor)) {
@@ -549,6 +550,10 @@ plD_state_xw(PLStream *pls, PLINT op)
 	    } else {
 		dev->curcolor = xwd->cmap0[icol0];
 	    }
+	    XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
+	}
+	else {
+	    dev->curcolor = xwd->fgcolor;
 	    XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
 	}
 	break;
@@ -564,10 +569,10 @@ plD_state_xw(PLStream *pls, PLINT op)
 	    break;
 
 	icol1 = (pls->icol1 * (xwd->ncol1-1)) / (pls->ncol1-1);
-	if ( ! xwd->color) 
-	    dev->curcolor = xwd->fgcolor;
-	else 
+	if (xwd->color) 
 	    dev->curcolor = xwd->cmap1[icol1];
+	else 
+	    dev->curcolor = xwd->fgcolor;
 
 	XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
 	break;
@@ -796,9 +801,9 @@ Init(PLStream *pls)
 	dev->write_to_pixmap = 0;
 	pls->db = 0;
     }
-    else
+    else {
 	dev->write_to_pixmap = 1;
-
+    }
     dev->write_to_window = ! pls->db;
 
 /* Create pixmap for holding plot image (for expose events). */
@@ -840,9 +845,12 @@ InitMain(PLStream *pls)
     dbug_enter("InitMain");
 
 /* Get root window geometry */
-
+/*
     (void) XGetGeometry(xwd->display, DefaultRootWindow(xwd->display),
 			&root, &x, &y, &width, &height, &border, &depth);
+			*/
+    width = DisplayWidth(xwd->display, 0);
+    height = DisplayHeight(xwd->display, 0);
 
     dev->border = 5;
     hint.flags = 0;
@@ -1879,23 +1887,20 @@ RedrawCmd(PLStream *pls)
 	return;
     }
 
-/* Initialize & redraw to pixmap.  Then fake an expose. */
+/* Initialize & redraw to window, then copy to pixmap. */
 
-    if (dev->write_to_pixmap)
-	dev->write_to_window = 0;
-
+    dev->write_to_pixmap = 0;
     XSync(xwd->display, 0);
     plD_bop_xw(pls);
     plRemakePlot(pls);
-
+    dev->write_to_pixmap = ! pls->nopixmap;
     XSync(xwd->display, 0);
+
     if (dev->write_to_pixmap) {
-	XCopyArea(xwd->display, dev->pixmap, dev->window, dev->gc, 0, 0,
+	XCopyArea(xwd->display, dev->window, dev->pixmap, dev->gc, 0, 0,
 		  dev->width, dev->height, 0, 0);
 	XSync(xwd->display, 0);
     }
-
-    dev->write_to_window = ! pls->db;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2024,13 +2029,10 @@ AllocBGFG(PLStream *pls)
 
     dbug_enter("AllocBGFG");
 
-/* If not on a color system, allocate read-only and return */
+/* If not on a color system, just return */
 
-    if ( ! xwd->color) {
-	XAllocColor(xwd->display, xwd->map, &xwd->cmap0[0]);
-	XAllocColor(xwd->display, xwd->map, &xwd->fgcolor);
+    if ( ! xwd->color) 
 	return;
-    }
 
 /* Allocate r/w color cell for background */
 
@@ -2126,8 +2128,13 @@ plX_setBGFG(PLStream *pls)
 
 /* Now store */
 
-    XStoreColor(xwd->display, xwd->map, &xwd->fgcolor);
-    XStoreColor(xwd->display, xwd->map, &xwd->cmap0[0]);
+    if (xwd->color) {
+	XStoreColor(xwd->display, xwd->map, &xwd->fgcolor);
+	XStoreColor(xwd->display, xwd->map, &xwd->cmap0[0]);
+    } else {
+	XAllocColor(xwd->display, xwd->map, &xwd->cmap0[0]);
+	XAllocColor(xwd->display, xwd->map, &xwd->fgcolor);
+    }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2383,6 +2390,9 @@ StoreCmap0(PLStream *pls)
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
     int i;
 
+    if ( ! xwd->color) 
+	return;
+
     for (i = 1; i < xwd->ncol0; i++) {
 	PLColor_to_XColor(&pls->cmap0[i], &xwd->cmap0[i]);
 	XStoreColor(xwd->display, xwd->map, &xwd->cmap0[i]);
@@ -2403,6 +2413,9 @@ StoreCmap1(PLStream *pls)
 
     PLColor cmap1color;
     int i;
+
+    if ( ! xwd->color) 
+	return;
 
     for (i = 0; i < xwd->ncol1; i++) {
 	plcol_interp(pls, &cmap1color, i, xwd->ncol1);
