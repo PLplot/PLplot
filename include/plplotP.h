@@ -22,21 +22,54 @@
 #define __PLPLOTP_H__
 
 /*--------------------------------------------------------------------------*\
- *        SYSTEM-SPECIFIC SETTINGS
+ * Select environment.  Must be done before anything else.
+ *
+ * Basically we want the widest range of system services that are available.
+ * Fortunately on many systems, that is the default.  To get "everything",
+ * one of the following must be defined, as appropriate:
+ *
+ * _GNU_SOURCE     on Linux (default) 
+ * _OSF_SOURCE     on OSF1 (default) 
+ * _HPUX_SOURCE    on HP (not default) 
+ * _ALL_SOURCE     on AIX (no idea) 
+ *
+ * To see where these are set, do the following:
+ *
+ *    cd /usr/include; grep SOURCE *.h | fgrep 'define '
+ *
+ * and the file containing lots of these is the one you want (features.h on
+ * Linux, standards.h on OSF1, etc).  Follow the logic to see what needs to be
+ * defined to get "everything", i.e. POSIX.*, XOPEN, etc.
+ *
+ * Note that for specific functionality, we test using autoconf.  Still it's
+ * best to stick to ANSI C, POSIX.1, and POSIX.2, in that order, for maximum
+ * portability.
+\*--------------------------------------------------------------------------*/
+
+/* HPUX - if this is no longer needed, please remove it */
+#ifdef _HPUX
+#define _HPUX_SOURCE
+#endif
+
+/* A/IX - if this is no longer needed, please remove it */
+#ifdef _AIX
+#define _ALL_SOURCE
+#endif
+
+/* Add others here as needed. */
+
+/*--------------------------------------------------------------------------*\
+ *	Configuration settings
  * 
- * Here we enable or disable based on system specific capabilities of
- * PLPLOT.  At present there are only two different "optional"
- * capabilities.  They are:
+ * Some of the macros set during configuration are described here.
  *
- * POSIX_TTY	Defined if POSIX.1 tty control functions are available. 
- * STDC_HEADERS	Defined if libc is ANSI-compliant.
- *
- * POSIX.1 tty control functions are used by some of the drivers, e.g. to
- * switch to character-oriented (CBREAK) i/o (notably the tek driver and
- * all its variants).  It is usable without this but not as powerful.  The
+ * If HAVE_TERMIOS_H is set, we employ POSIX.1 tty terminal I/O.  One purpose
+ * of this is to select character-oriented (CBREAK) i/o in the tek driver and
+ * all its variants.  It is usable without this but not as powerful.  The
  * reason for using this is that some supported systems are still not
  * POSIX.1 compliant (and some may never be).
  *
+ * If STDC_HEADERS is defined, the system's libc is ANSI-compliant.
  * ANSI libc calls are used for: (a) setting up handlers to be called
  * before program exit (via the "atexit" call), and (b) for seek
  * operations.  Again, the code is usable without these.  An ANSI libc
@@ -61,10 +94,6 @@ typedef char * caddr_t;
 #include <ctype.h>
 #include <math.h>
 #include <string.h>
-
-#ifdef _POSIX_SOURCE
-#define POSIX_TTY
-#endif
 
 /*
  * Macros for file positioning.  I tried switching to f[sg]etpos() because I
@@ -324,6 +353,11 @@ plfntld(PLINT fnt);
 
 void
 plfontrel(void);
+
+/* A replacement for strdup(), which isn't portable. */
+
+char *
+plstrdup(char *src);
 
 /* Bin up cmap 1 space and assign colors to make inverse mapping easy. */
 
