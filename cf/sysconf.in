@@ -173,7 +173,7 @@ case $system in
     ultrix*|ULTRIX* ) 
 	with_gcc="yes"
     ;;
-    unicos*|Unicos*|UNICOS*|Cray*|cray*|sn* ) 
+    CRAY* ) 
 	F77="cf77"
 	with_gcc="no"
 	with_f2c="no"
@@ -379,8 +379,7 @@ case $system in
 	    PROF_FLAG_LC="-p -static"
 	fi
     ;;
-    unicos*|Unicos*|UNICOS*|Cray*|cray*|sn* ) 
-
+    CRAY* ) 
 	if test "$with_debug" = "yes" ; then
 	    DEBUG_FLAG_F="-Wf\"-ez\""
 	fi
@@ -398,11 +397,11 @@ case $system in
 
 	    machine=`uname -m`
 	    case "$machine" in
-		"CRAY C90"|"CRAY Y-MP"|"cray y-mp"|y*|Y*|CRAY*1|cray*1|1 )
-		    EXTRA_LIBS=$EXTRA_LIBS -lprof -lsci
+		CRAY-2 )
+		    LIBS=$LIBS -lprof -lsci -lu
 		;;
-		CRAY*2|cray*2|2 )
-		    EXTRA_LIBS=$EXTRA_LIBS -lprof -lsci -lu
+		* )
+		    LIBS=$LIBS -lprof -lsci
 		;;
 	    esac
 	fi
