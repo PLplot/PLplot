@@ -178,18 +178,35 @@ fi
 
 # ----------------------------------------------------------------------------
 # Set up C++ compiler
+# If gcc has been specified, use that.  Otherwise do NOT use gcc.
+# Mixing/matching compilers is best left to the experts.
 
-if test -z "$CXX"; then
-    CXX=CC
-    case "$system" in
-	linux*|LINUX*|Linux* ) 
-	    with_gcc=yes
+if test "$enable_cxx" = "yes"; then
+    if test -z "$CXX"; then
+	if test "$enable_gcc"; then
 	    CXX=gcc
-	;;
-	hp*|HP* ) 
-	    CXX="CC +a1"
-	;;
-    esac
+	else
+	    CXX=CC
+	    case "$system" in
+		aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+		    CXX=xlC
+		;;
+		hp*|HP* ) 
+		    CXX="CC +a1"
+		;;
+	    esac
+	fi
+    fi
+fi
+
+# Try to find C++ compiler.  If not found, switch enable_cxx to "no".
+
+if test "$enable_cxx" = "yes"; then
+    AC_CHECK_PROG(found_cxx, $CXX, yes, no)
+    if test "$found_cxx" = "no" ; then
+	AC_MSG_WARN(cannot find a C++ compiler.. disabling C++ interface)
+	enable_cxx=no
+    fi
 fi
 
 # ----------------------------------------------------------------------------
@@ -246,17 +263,10 @@ if test "$with_gcc" = "yes"; then
     CC=gcc
     CXX=gcc
     OCC="gcc -traditional"
+    CPP="gcc -E"
 
     if test "$with_warn" = "yes"; then
 	SYS_FLAGS_C=-Wall
-    fi
-
-    if test "$with_shlib" = "yes"; then
-	case "$system" in
-	    hp*|HP* ) 
-		AC_MSG_WARN(shared libs on HP with gcc is experimental)
-	    ;;
-	esac
     fi
 fi
 
@@ -318,6 +328,9 @@ fi
 
 case "$system" in 
     aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+	if test "$with_gcc" = "no"; then
+	    SYS_FLAGS_CXX=-+
+	fi
 	if test "$with_double" = "yes" -a "$with_f2c" = "no"; then
 	    DBL_FLAG_F="-qAUTODBL=DBLPAD"
 	fi
@@ -487,62 +500,62 @@ esac
 # ----------------------------------------------------------------------------
 # Set flags to generate shared libraries for systems that we know about.
 # Originally based on BLT's configure.in.
+# This is really a mess.
 # ----------------------------------------------------------------------------
 
 AC_MSG_CHECKING(how to make shared libraries)
-SHLIB_CCFLAGS=
-SHLIB_CXXFLAGS=
-SHLIB_BUILD=
-SHLIB_SUFFIX=
-SALIB_SUFFIX=""
-SO=""
+
+SA=".sa"
+SO=".so"
 LDSHARED="ld"
+
+if test "$with_gcc" = "yes"; then
+    SHLIB_CCFLAGS=-fpic
+    SHLIB_CXXFLAGS=-fpic
+    SHLIB_BUILD="gcc -shared -fpic -o"
+else
+    SHLIB_CCFLAGS=
+    SHLIB_CXXFLAGS=
+    SHLIB_BUILD=
+fi
 
 case "$system" in 
     SunOS-4* ) 
-	if test "$with_gcc" = "yes"; then
-	    with_shlib=no
-	    AC_MSG_RESULT(unknown)
-	else
+	SHLIB_F77FLAGS=-pic
+# Commented out for now
+#	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+#	SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	AC_MSG_RESULT(okay)
+	if test "$with_gcc" = "no"; then
 	    SHLIB_CCFLAGS=-pic
 	    SHLIB_CXXFLAGS=-pic
-	    SHLIB_F77FLAGS=-pic
 	    SHLIB_BUILD="ld -assert pure-text -o"
-	    SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
-	    SALIB_SUFFIX='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
-	    SO=".so"
-	    LDSHARED="ld"
-	    AC_MSG_RESULT(okay)
 	fi
     ;;
     HP-UX-* )
-	SHLIB_SUFFIX=.sl
-	if test "$with_gcc" = "yes"; then
-	    SHLIB_CCFLAGS=-fpic
-	    SHLIB_CXXFLAGS=-fpic
-	    SHLIB_F77FLAGS=+z
-	    SHLIB_BUILD="gcc -shared -fpic -o"
-	else
+	SO=".sl"
+	SHLIB_F77FLAGS="+z"
+	AC_MSG_RESULT(okay)
+	if test "$with_gcc" = "no"; then
 	    SHLIB_CCFLAGS=+z
 	    SHLIB_CXXFLAGS=+z
 	    SHLIB_F77FLAGS=+z
 	    SHLIB_BUILD="ld -b -o"
+	else
+	    AC_MSG_WARN(shared libs on HP with gcc is experimental)
 	fi
-	SO=".sl"
 	LDSHARED="ld -b"
-	AC_MSG_RESULT(okay)
     ;;
     AIX-* )
-	if test "$with_gcc" = "yes"; then
-	    with_shlib=no
-	    AC_MSG_RESULT(unknown)
-	else
+	SO=".a"
+	SHLIB_F77FLAGS=-fpic
+	if test "$with_gcc" = "no"; then
+	    AC_MSG_RESULT(okay)
 	    SHLIB_CCFLAGS=-fpic
 	    SHLIB_CXXFLAGS=-fpic
-	    SHLIB_F77FLAGS=-fpic
 	    SHLIB_BUILD="ar q"
-	    SHLIB_SUFFIX=.a
-	    AC_MSG_RESULT(okay)
+	else
+	    with_shlib=no
 	fi
     ;;
 
@@ -551,33 +564,30 @@ case "$system" in
 
     SunOS-5* )
 	with_shlib=no
+	AC_MSG_RESULT(unknown)
 #	SHLIB_CCFLAGS="-K pic"
 #	SHLIB_F77FLAGS="-K pic"
 #	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	SO=".so"
 	LDSHARED="ld -G"
-	AC_MSG_RESULT(unknown)
     ;;
     OSF-1.* )
 	with_shlib=no
+	AC_MSG_RESULT(unknown)
 #	SHLIB_CCFLAGS=-fpic
 #	SHLIB_F77FLAGS=-fpic
 #	SHLIB_BUILD="$CC -shared"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	SO=".so"
 	LDSHARED="ld -shared -expect_unresolved \"*\""
-	AC_MSG_RESULT(unknown)
     ;;
     IRIX-5.* )
 	with_shlib=no
+	AC_MSG_RESULT(unknown)
 #	SHLIB_CCFLAGS=-KPIC
 #	SHLIB_F77FLAGS=-KPIC
 #	SHLIB_BUILD="$CC -shared"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	SO=".so"
 	LDSHARED="ld -shared"
-	AC_MSG_RESULT(unknown)
     ;;
     * )
 	with_shlib=no
@@ -585,39 +595,27 @@ case "$system" in
     ;;
 esac
 
-if test ! -z "SHLIB_CCFLAGS" ; then 
-    if test "$compiler" = "gcc" ; then
-	SHLIB_CCFLAGS=-fpic
-    fi
-fi
-
 AC_SUBST(SHLIB_BUILD)
-AC_SUBST(SHLIB_SUFFIX)
-AC_SUBST(SALIB_SUFFIX)
+AC_SUBST(SA)
 AC_SUBST(SO)
 AC_SUBST(LDSHARED)
+
+AC_SUBST(SHLIB_CCFLAGS)
+AC_SUBST(SHLIB_CXXFLAGS)
+AC_SUBST(SHLIB_F77FLAGS)
 
 # ----------------------------------------------------------------------------
 # Assemble finished compiler flags.
 # ----------------------------------------------------------------------------
 
-CC_FLAGS_NOOPT=\
-"-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C"
-
-CXX_FLAGS_NOOPT=\
-"-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX"
-
-F77_FLAGS_NOOPT=\
-"-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F"
-
 CC_FLAGS=\
-"$CC_FLAGS_NOOPT $OPT_FLAG_C"
+"-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C $OPT_FLAG_C"
 
 CXX_FLAGS=\
-"$CXX_FLAGS_NOOPT $OPT_FLAG_CXX"
+"-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX $OPT_FLAG_CXX"
 
 F77_FLAGS=\
-"$F77_FLAGS_NOOPT $OPT_FLAG_F"
+"-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F $OPT_FLAG_F"
 
 LDC_FLAGS=\
 "$PROF_FLAG_LC $SYS_FLAGS_LC $DEBUG_FLAG_LC"
@@ -644,27 +642,3 @@ AC_SUBST(LDC_FLAGS)
 AC_SUBST(LDCXX_FLAGS)
 AC_SUBST(F77_FLAGS)
 AC_SUBST(LDF_FLAGS)
-AC_SUBST(SHLIB_CCFLAGS)
-AC_SUBST(SHLIB_CXXFLAGS)
-AC_SUBST(SHLIB_F77FLAGS)
-
-# ----------------------------------------------------------------------------
-# Hacks to deal with optimizer failures.
-# ----------------------------------------------------------------------------
-
-CC_FLAGS_XWIN=$CC_FLAGS
-CC_FLAGS_SCCONT=$CC_FLAGS
-
-case "$system" in 
-    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
-	CC_FLAGS_XWIN=$CC_FLAGS_NOOPT
-    ;;
-
-    sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
-	CC_FLAGS_SCCONT=$CC_FLAGS_NOOPT
-    ;;
-esac
-
-AC_SUBST(CC_FLAGS_XWIN)
-AC_SUBST(CC_FLAGS_SCCONT)
-
