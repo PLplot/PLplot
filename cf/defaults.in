@@ -1,0 +1,103 @@
+# --*-sh-*--------------------------------------------------------------------
+#
+# defaults.in
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 7-Jun-1994
+#
+# Sets up some default variables based on system type.  Doing it this way
+# ensures that user preferences are respected.
+# ----------------------------------------------------------------------------
+
+default_with_debug=no
+default_with_opt=yes
+default_with_double=no
+default_with_profile=no
+default_with_shlib=yes
+default_with_f2c=no
+default_with_gcc=no
+default_with_warn=no
+default_with_dbmalloc=no
+default_enable_drivers=yes
+default_enable_f77=yes
+default_enable_cxx=yes
+default_enable_python=yes
+
+case "$system" in
+    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+	default_with_opt=no
+    ;;
+    linux*|LINUX*|Linux* ) 
+	default_with_gcc=yes
+	default_with_f2c=yes
+    ;;
+    next*|NeXT*|NEXT* ) 
+	default_with_gcc=yes
+	default_with_f2c=yes
+    ;;
+    ultrix*|ULTRIX* ) 
+	default_with_gcc=yes
+    ;;
+esac
+
+# ----------------------------------------------------------------------------
+# Set up command line arguments -- help entries and default values.
+# ----------------------------------------------------------------------------
+
+MY_ARG_WITH(defaults,   
+  [  --with-defaults         source defaults file at startup (default: yes)],
+  [])
+
+MY_ARG_WITH(debug,   
+  [  --with-debug            compile with debugging (default: no)],
+  [], with_debug=$default_with_debug)
+
+MY_ARG_WITH(opt,
+  [  --with-opt              compile with optimization (default: yes)],
+  [], with_opt=$with_opt_default)
+
+MY_ARG_WITH(double,
+  [  --with-double           use double precision floats (default: no)],
+  [], with_double=$default_with_double)
+
+MY_ARG_WITH(profile,
+  [  --with-profile          turn on profiling option (defualt: no)],
+  [], with_profile=$default_with_profile)
+
+MY_ARG_WITH(shlib,
+  [  --with-shlib            build shared libraries (not all systems)],
+  [], with_shlib=$default_with_shlib)
+
+MY_ARG_WITH(f2c,
+  [  --with-f2c              use f2c to compile Fortran code (default: no)],
+  [], with_f2c=$default_with_f2c)
+
+MY_ARG_WITH(gcc,
+  [  --with-gcc              use gcc to compile C and C++ code (default: no)],
+  [], with_gcc=$default_with_gcc)
+
+MY_ARG_WITH(warn,
+  [  --with-warn             enable all compilation warnings (default: no)],
+  [], with_warn=$default_with_warn)
+
+MY_ARG_WITH(dbmalloc,
+  [  --with-dbmalloc         link with libdbmalloc (default: no)],
+  [], with_dbmalloc=$default_with_dbmalloc)
+
+MY_ARG_ENABLE(drivers,
+  [  --enable-drivers        enable all device drivers (default: yes)],
+  [], enable_drivers=$default_enable_drivers)
+
+MY_ARG_ENABLE(f77,
+  [  --enable-f77            compile Fortran-77 interface code (default: yes)],
+  [], enable_f77=$default_enable_f77)
+
+MY_ARG_ENABLE(cxx,
+  [  --enable-cxx            compile C++ interface code (default: yes)],
+  [], enable_cxx=$default_enable_cxx)
+
+MY_ARG_ENABLE(python,
+  [  --enable-python         compile python interface code (default: yes)],
+  [], enable_python=$default_enable_python)
+
