@@ -1,0 +1,48 @@
+/* $Id$
+ * $Log$
+ * Revision 1.1  1994/07/19 22:26:57  mjl
+ * Header file for holding miscellaneous config info, including install
+ * directories, system dependencies, etc.  Included by plplotP.h.
+ *
+*/
+
+/*
+    plConfig.h.in
+
+    Maurice LeBrun
+    IFS, University of Texas at Austin
+    18-Jul-1994
+
+    Contains macro definitions that determine miscellaneous PLplot library
+    configuration defaults, such as macros for bin, font, lib, and tcl
+    install directories, and various system dependencies.  On a Unix
+    system, typically the configure script builds plConfig.h from
+    plConfig.h.in.  Elsewhere, it's best to hand-configure a plConfig.h
+    file and keep it with the system-specific files.
+*/
+
+#ifndef __PLCONFIG_H__
+#define __PLCONFIG_H__
+
+/* Install directories. */
+
+#undef LIB_DIR
+#undef BIN_DIR
+#undef TCL_DIR
+
+/* Define if you have vfork.h.  */
+#undef HAVE_VFORK_H
+
+/* Define to `int' if <sys/types.h> doesn't define.  */
+#undef pid_t
+
+/* Define as the return type of signal handlers (int or void).  */
+#undef RETSIGTYPE
+
+/* Define if you have the ANSI C header files.  */
+#undef STDC_HEADERS
+
+/* Define vfork as fork if vfork does not work.  */
+#undef vfork
+
+#endif	/* __PLCONFIG_H__ */
