@@ -23,16 +23,16 @@
 */
 
 /* In Debian, run like this:
- * 
+ *
  * PLPLOT_FREETYPE_SANS_FONT=/usr/share/fonts/truetype/arphic/bkai00mp.ttf \
  * PLPLOT_FREETYPE_SERIF_FONT=/usr/share/fonts/truetype/freefont/FreeSerif.ttf \
  * PLPLOT_FREETYPE_MONO_FONT=/usr/share/fonts/truetype/ttf-indic-fonts/lohit_hi.ttf \
  * PLPLOT_FREETYPE_SCRIPT_FONT=/usr/share/fonts/truetype/unfonts/UnBatang.ttf \
  * PLPLOT_FREETYPE_SYMBOL_FONT=/usr/share/fonts/truetype/ttf-bangla-fonts/JamrulNormal.ttf \
  * ./x24c -dev png -drvopt text,smooth=0 -o x24c.png
- * 
+ *
  * Packages needed:
- * 
+ *
  * ttf-arphic-bkai00mp
  * ttf-freefont
  * ttf-indic-fonts
@@ -80,19 +80,19 @@ static PLFLT sy[] = {
   0.63165,
   0.87598
 };
-      
+
 
 /* Taken from http://www.columbia.edu/~fdc/pace/ */
 
 static char* peace[] = {
-  /* Mandarin */  
+  /* Mandarin */
   "#<0x00>和平",
   /* Hindi */
   "#<0x20>शांति",
   /* English */
   "#<0x10>Peace",
   /* Hebrew */
-  "#<0x10>שלום",
+  "#<0x10>םולש",
   /* Russian */
   "#<0x10>Мир",
   /* German */
@@ -101,12 +101,12 @@ static char* peace[] = {
   "#<0x30>평화",
   /* French */
   "#<0x10>Paix",
-  /* Spanish */		 
+  /* Spanish */
   "#<0x10>Paz",
   /* Arabic */
-  "#<0x10>سلام",      
+  "#<0x10>مالس",
   /* Turkish*/
-  "#<0x10>Barış",      
+  "#<0x10>Barış",
   /* Kurdish */
   "#<0x10>Hasîtî",
 };
@@ -118,37 +118,37 @@ main(int argc, char *argv[])
   PLFLT chardef, charht, deltax, deltay, x, y;
   int i, j, page, length, slice;
   char cmdString[20];
-  
+
   plParseOpts (&argc, argv, PL_PARSE_FULL);
-  
+
   plinit ();
 
   pladv (0);
   plvpor (0.0, 1.0, 0.0, 1.0);
   plwind (0.0, 1.0, 0.0, 1.0);
-  plcol0 (0);  
+  plcol0 (0);
   plbox("", 1.0, 0, "", 1.0, 0);
 
   plscmap0n (7);
   plscmap0 (red, green, blue, 7);
-  
+
   plschr (0, 4.0);
   plfont (1);
-  
+
   for (i = 0; i < 6; i++) {
-    
+
     plcol0 (i + 1);
     plfill (4, px, py);
-    
+
     for (j = 0; j < 4; j++)
       py [j] += 1.0 / 6.0;
-    
+
   }
-  
-  plcol0 (0);  
-  for (i = 0; i < 12; i++) 	
+
+  plcol0 (0);
+  for (i = 0; i < 12; i++)
     plptex (sx [i], sy [i], 1.0, 0.0, 0.5, peace [i]);
-	
+
 
   plend();
 
