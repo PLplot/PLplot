@@ -226,6 +226,7 @@ int main(int argc,char *argv[] )
    *  place it in a frame 
    */
   canvas0 = plplot_canvas_new(FALSE);
+  plplot_canvas_use_fast_rendering(canvas0,TRUE);
   plplot_canvas_set_aspect(canvas0,ASPECT);
   plplot_canvas_set_zoom(canvas0,ZOOM);
   plplot_canvas_pladv(canvas0,0);  /* Advance the page */
@@ -238,6 +239,7 @@ int main(int argc,char *argv[] )
    * place it in a frame
    */
   canvas1 = plplot_canvas_new(FALSE);
+  plplot_canvas_use_fast_rendering(canvas1,TRUE);
   plplot_canvas_set_aspect(canvas1,ASPECT);
   plplot_canvas_set_zoom(canvas1,ZOOM);
   plplot_canvas_pladv(canvas1,0);  /* Advance the page */
