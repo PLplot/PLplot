@@ -86,7 +86,7 @@ rm -rf htdocs
 # Transfer the tarball to Sourceforge and unpack it, such that the files will
 # appear in the PLplot web site
 
-WWW_HOST=${SF_USER:+$SF_USER@}shell.sf.net
+WWW_HOST=${WWW_USER:+$WWW_USER@}shell.sf.net
 WWW_DIR=/home/groups/p/pl/plplot
 
 echo Copying the tarball to WWW site

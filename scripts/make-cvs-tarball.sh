@@ -23,8 +23,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-SF_USER=${SF_USER:-rlaboiss}
-SF_CVSROOT=cvs.plplot.sourceforge.net:/cvsroot/plplot
+WWW_USER=${WWW_USER:-rlaboiss}
+CVSROOTDIR=cvs.plplot.sourceforge.net:/cvsroot/plplot
 VERSION=${1:+--version=$1}
 BRANCH=${2:+-r $2}
 BRANCH=${BRANCH:--D now}
@@ -38,7 +38,7 @@ trap "cleanup" 0 HUP INT QUIT PIPE TERM
 
 cleanup
 
-cvs -d${SF_USER}@$SF_CVSROOT export -d$CVSTMPDIR $BRANCH plplot \
+cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
   && cd $CVSTMPDIR \
   && ./bootstrap.sh ${VERSION:---date-version} \
   && ./configure --enable-builddoc \
