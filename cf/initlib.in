@@ -61,12 +61,12 @@ PLLIB_SA	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SA)
 # This is used for making the install versions of plrender & plserver
 # (Must relink after installing shared library!)
 
-LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
+LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 
 # These are what we link against.
 
-PLLIB_LDC	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
-PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
+PLLIB_LDC	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
+PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 
 # Header file dependencies for demos.
 # Done this way to only pick up the dependency during development, and not
