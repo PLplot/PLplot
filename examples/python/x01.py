@@ -129,7 +129,6 @@ def plot1(w):
 	# labelled box (axis = 0).
 
 	w.plcol(1)
-	print "xmin=%f xmax=%f ymin=%f ymax=%f" % (xmin, xmax, ymin, ymax)
 	w.plenv(xmin, xmax, ymin, ymax, 0, 0)
 	w.plcol(2)
 	w.pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2")
