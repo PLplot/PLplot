@@ -18,14 +18,18 @@ setenv JAVA_HOME /home/software/java/IBMJava2-14/
 setenv PATH $PATH":$JAVA_HOME/bin"
 #Your locations will differ depending on your PLPlot configure --prefix.
 setenv CLASSPATH /usr/local/plplot/lib/java
-setenv LD_LIBRARY_PATH /usr/local/plplot/lib
 
 (3) The rest is highly automated.  Move to the top-level PLplot build
 directory and configure, build, and install.
 
 cd plplot
-./configure --prefix=/usr/local/plplot --enable-java  (+ other options you care to
+./configure --prefix=/usr/local/plplot  (+ other options you care to
 specify).
+
+Note the option --enable-java is turned on by default, and if you have
+set the above environment variables the report at the end will indicate
+that java was not turned off by the configure script because of some
+problem.
 
 make
 make install
@@ -56,13 +60,13 @@ corresponding class files that are compiled from them make up the
 plplot.core package.
 
 'make install' installs the relevant java and class files that are part of
-the plplot.core package in /usr/local/plplot/lib/java/plplot/core and also
-installs (from ../../examples/java) the example java scripts that are part
-of the plplot.examples package into
+the plplot.core package in /usr/local/plplot/lib/java/plplot/core, installs
+the module (DLL) for the java PLplot interface in the same location, and also
+installs (from ../../examples/java) the example java scripts and
+corresponding class files that are part of the plplot.examples package into
 /usr/local/plplot/lib/java/plplot/examples. For more details about the
-examples and how to compile them after installation, please see
-../../examples/java/README.javademos or the installed version of that file
-in /usr/local/plplot/lib/java/plplot/examples.
+examples, please see ../../examples/java/README.javademos or the installed
+version of that file in /usr/local/plplot/lib/java/plplot/examples.
 
 Here is how to add a new function to the Java API for PLplot:
 
@@ -142,12 +146,10 @@ precision versions of the PLplot API description, and the two possible
 function calls will automatically be overloaded.  But I may have that wrong.
 
 N.B. This java precision issue should not be confused with the double or
-single precision PLplot library issue.  I have been doing all my testing
-with the single-precision form of the PLplot library, and all
-double-precision java entities are transformed to single-precision without
-problems. I assume the double-precision form of the PLplot library will work
-fine as well since no transformation is required in that case, but I have
-not tested it.
+single precision PLplot library issue.  I have been doing my testing with
+both the single-precision and double-precision forms of the PLplot library,
+and all double-precision java entities are transformed to the appropriate C
+precision (either single or double) without problems.
 
 (6) The callback functions should be done properly so that Java methods can
 be used for transformations for the full 3-D PLplot API.  This approach
@@ -157,8 +159,7 @@ though, we will be taking a simplified approach to the 3-d API similar to
 what is done for the Tcl interface rather than the preferred complete
 callback approach used for the Python interface.
 
-Alan W. Irwin (last updated on 2002 December 31.)
-
+Alan W. Irwin (last updated on 2003 October 1.)
 _________________________________________________________________
 
 The following notes (written by Geoffrey Furnish with some minor editing
