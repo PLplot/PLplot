@@ -943,9 +943,9 @@ fi
 
 echo -n "checking for DSSSL Style Sheet DTD... "
 echo -e "\nChecking for DSSSL Style Sheet DTD" >> $jadelog
-sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
-sed "s|@DB_STYLE_SHEET@||" < conftest.tmp \
-  | sed "s|@EXTERNAL_SPECIFICATION@||" > conftest.dsl
+sed -e "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" -e "s|@DB_STYLE_SHEET@||" \
+  -e "s|@STYLE_SPEC_USE@||" -e "s|@EXTERNAL_SPECIFICATION@||" \
+  < conf/test.dsl.in > conftest.dsl
 sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
 $jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
    >> $jadelog 2>&1
@@ -970,9 +970,9 @@ fi
 
 echo -n "checking for DocBook HTML Stylesheet... "
 echo -e "\nChecking for DocBook HTML Stylesheet" >> $jadelog
-sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
-sed "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_html_pubid\" CDATA DSSSL>]|" < conftest.tmp \
-  | sed "s|@EXTERNAL_SPECIFICATION@|<external-specification id="docbook" document="dbstyle">|" > conftest.dsl
+sed -e "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" -e "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_html_pubid\" CDATA DSSSL>]|" \
+  -e "s|@STYLE_SPEC_USE@|use="docbook"|" -e "s|@EXTERNAL_SPECIFICATION@|<external-specification id="docbook" document="dbstyle">|" \
+  < conf/test.dsl.in > conftest.dsl
 sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
 $jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
    >> $jadelog 2>&1
@@ -997,9 +997,9 @@ fi
 
 echo -n "checking for DocBook Print Stylesheet... "
 echo -e "\nChecking for DocBook Print Stylesheet" >> $jadelog
-sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
-sed "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_print_pubid\" CDATA DSSSL>]|" < conftest.tmp \
-  | sed "s|@EXTERNAL_SPECIFICATION@|<external-specification id="docbook" document="dbstyle">|" > conftest.dsl
+sed -e "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" -e "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_print_pubid\" CDATA DSSSL>]|" \
+  -e "s|@STYLE_SPEC_USE@|use="docbook"|" -e "s|@EXTERNAL_SPECIFICATION@|<external-specification id="docbook" document="dbstyle">|" \
+  < conf/test.dsl.in > conftest.dsl
 sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o (#PCDATA)>]|" < conf/test.sgml.in > conftest.sgml
 $jade_prog $SGML_CATALOGS -d conftest.dsl -t tex conftest.sgml \
    >> $jadelog 2>&1
@@ -1024,9 +1024,9 @@ fi
 
 echo -n "checking for DocBook DTD... "
 echo -e "\nChecking for DocBook DTD" >> $jadelog
-sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
-sed "s|@DB_STYLE_SHEET@||" < conftest.tmp \
-  | sed "s|@EXTERNAL_SPECIFICATION@||" > conftest.dsl
+sed -e "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" -e "s|@DB_STYLE_SHEET@||" \
+  -e "s|@STYLE_SPEC_USE@||" -e "s|@EXTERNAL_SPECIFICATION@||" \
+  < conf/test.dsl.in > conftest.dsl
 sed "s|@DOCBOOK_DTD@|PUBLIC \"$docbook_dtd_pubid\"|" < conf/test.sgml.in > conftest.sgml
 $jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml conftest.sgml \
    >> $jadelog 2>&1
