@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.26  1993/05/08 16:08:30  mjl
-   Bumped version number to 4.99d, but the 4.99d release won't happen for
-   some time yet.
+   Revision 1.27  1993/07/02 07:23:35  mjl
+   Now holds only those symbols absolutely needed by applications to use
+   PLPLOT.  Includes typedefs and function prototypes, maybe an occaisional
+   macro only.  _POSIX_SOURCE no longer defined here!
 
+ * Revision 1.26  1993/05/08  16:08:30  mjl
+ * Bumped version number to 4.99d, but the 4.99d release won't happen for
+ * some time yet.
+ *
  * Revision 1.25  1993/04/26  20:00:53  mjl
  * Configuration info added for a DEC Alpha-based machine running OSF/1.
  *
@@ -98,37 +103,28 @@
     Copyright (C) 1992 by 
     Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
 
-    Macros and prototypes for the PLPLOT package.  This header file must 
-    be included before all others, including system header files.
+    Macros and prototypes for the PLPLOT package.  This header file must
+    be included by all user codes.
 
-    This software may be freely copied, modified and redistributed without
-    fee provided that this copyright notice is preserved intact on all
-    copies and modified copies. 
- 
+    This software may be freely copied, modified and redistributed
+    without fee provided that this copyright notice is preserved intact
+    on all copies and modified copies.
+
     There is no warranty or other guarantee of fitness of this software.
     It is provided solely "as is". The author(s) disclaim(s) all
-    responsibility and liability with respect to this software's usage or
-    its effect upon hardware or computer systems. 
+    responsibility and liability with respect to this software's usage
+    or its effect upon hardware or computer systems.
 
     Note: some systems allow the Fortran & C namespaces to clobber each
     other.  So for PLPLOT to work from Fortran, we do some rather nasty
     things to the externally callable C function names.  This shouldn't
-    affect any user programs in C as long as this file is included.
+    affect any user programs in C as long as this file is included. 
 */
 
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
 #define PLPLOT_VERSION "4.99d"
-
-/*
-* The define of _POSIX_SOURCE is slightly dangerous.  Should probably be
-* replaced by a define only seen internally.
-*/
-
-#ifndef _POSIX_SOURCE
-#define _POSIX_SOURCE
-#endif
 
 /*----------------------------------------------------------------------*\
 *    USING PLPLOT
@@ -140,29 +136,19 @@
 * This file does all the necessary setup to make PLPLOT accessible to
 * your program as documented in the manual.  Additionally, this file
 * allows you to request certain behavior by defining certain symbols
-* before inclusion.  These are:
+* before inclusion.  At the moment the only one is:
 *
 * #define PL_DOUBLE
-*	This causes PLPLOT to use doubles instead of floats.  Use the type
-*	PLFLT everywhere in your code, and it will always be the right thing.
-* 
-* Additionally, there are some internal macros which are used in the
-* plplot sources (which of course also #include "plplot.h") to make
-* the sources substantially system independent.  If you want to use
-* them in your own code, you may.  They are:
 *
-* #define PL_NEED_MALLOC
-*	From "C -- The Pocket Reference" by Herbert Schildt (1988):
+* This causes PLPLOT to use doubles instead of floats.  Use the type
+* PLFLT everywhere in your code, and it will always be the right thing.
 *
-*	"The proposed ANSI standard specifies that the header information
-*	necessary to the dynamic allocation system will be in stdlib.h.
-*	However, at the time of this writing, a great many C compilers
-*	require you to include the header malloc.h instead."
-*
-* #define PL_NEED_SIZE_T
-*	On some systems, size_t is not defined in the usual place (stdlib.h),
-*	and you must include stddef.h to get it.
-*
+* Note: most of the functions visible here begin with "pl", while all
+* of the data types and switches begin with "PL".  Eventually everything
+* will conform to this rule in order to keep namespace pollution of the
+* user code to a minimum.  All the PLPLOT source files actually include
+* "plplotP.h", which includes this file as well as all the internally-
+* visible declarations, etc.  
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
@@ -174,7 +160,7 @@
 * possibilities, and then set the one we will be referencing.  These are:
 *
 * __cplusplus                Any C++ compiler
-* unix                       Any Unix-like system
+* __unix                     Any Unix-like system
 * __hpux                     Any HP/UX system
 * __aix                      Any AIX system
 * __linux                    Linux for i386
@@ -182,114 +168,43 @@
 *
 \*----------------------------------------------------------------------*/
 
-/* Check for NEC Super-UX */
-
-#if defined(SX)
-#ifndef unix
-#define unix
+#ifdef unix			/* the old way */
+#ifndef __unix
+#define __unix
 #endif
 #endif
 
-/* Check for AIX */
+/* Make sure Unix systems define "__unix" */
 
-#if defined(_IBMR2) && defined(_AIX)
-#define __aix
-#define unix
-#ifdef PL_NEED_MALLOC
-#include <malloc.h>
-#endif
-#endif
+#if defined(SX)	||				/* NEC Super-UX */      \
+    (defined(_IBMR2) && defined(_AIX)) ||	/* AIX */               \
+    defined(__hpux) ||				/* HP/UX */             \
+    defined(sun) ||				/* SUN */               \
+    defined(CRAY) ||				/* Cray */              \
+    (defined(__alpha) && defined(__osf__))	/* DEC Alpha AXP/OSF */
 
-/* Check for HP/UX */
-
-#ifdef __hpux
-#ifndef unix
-#define unix
+#ifndef __unix
+#define __unix
 #endif
-#define NO_SIGNED_CHAR
-#ifndef _HPUX_SOURCE
-#define _HPUX_SOURCE
-#endif
-#ifdef PL_NEED_MALLOC
-#include <malloc.h>
-#endif
-#endif
-
-/* Check for SUN systems */
-/* Even if the machine has an ANSI libc, more than likely the Fortran */
-/* compiler won't know to use it by default.  So you may want to set */
-/* NO_ANSI_LIBC in any case on Suns, sigh. */
-
-#ifdef sun
-#ifndef NO_ANSI_LIBC
-#define NO_ANSI_LIBC
-#endif
-#ifndef unix
-#define unix
-#endif
-#ifdef PL_NEED_MALLOC
-#include <malloc.h>
-#endif
-#endif
-
-/* Check for CRAY's */
-
-#ifdef CRAY
-#ifndef unix
-#define unix
-#endif
-#ifdef CRAY1
-#undef _POSIX_SOURCE
-#endif
-#ifdef PL_NEED_MALLOC
-#include <malloc.h>
-#endif
-#endif
-
-/* Check for Amiga's */
-/* NO_ANSI_LIBC is required by SAS/C 5.X */
-
-#ifdef AMIGA
-#ifndef NO_ANSI_LIBC
-#define NO_ANSI_LIBC
-#endif
-#ifdef PL_NEED_SIZE_T
-#include <stddef.h>
-#endif
-#endif
-
-/* Check for DEC Alpha AXP systems */
-
-#if defined(__alpha) && defined(__osf__)	/* DEC Alpha AXP/OSF */
-#ifndef unix
-#define unix
-#endif
-#endif
-
-/* A disgusting hack */
-
-#ifdef NO_ANSI_LIBC
-#define FPOS_T long
-#define pl_fsetpos(a,b) fseek(a, *b, 0)
-#define pl_fgetpos(a,b) (-1L == (*b = ftell(a)))
-
-#else
-#define FPOS_T fpos_t
-#define pl_fsetpos(a,b) fsetpos(a, b)
-#define pl_fgetpos(a,b) fgetpos(a, b)
 #endif
 
 /*----------------------------------------------------------------------*\
-*                       Default types for PLPLOT
+* Base types for PLPLOT
 *
+* Only those that are necessary for function prototypes are defined here.
 * Notes:
 *
-*  - PLINT should stay typedef'd to a long.  Bad things happen to some
-*    routines on some systems if it is set to an int.
+* PLINT is typedef'd to a long by default.  This choice is necessary on
+* 16 bit int systems (most PC's) since 16 bits is too inaccurate for
+* some PLPLOT functions.  Most current workstations have int==long for
+* which the choice is irrelevant.  Many new 64-bit architectures (Alpha,
+* R4000, Pentium) will have 64 bit longs and 32 bit ints which may
+* require PLINT to be typedef'd to an int if a fortran INTEGER remains
+* 32 bits (probable).
 *
-*  - short is currently used for device page coordinates, so they are
-*    bounded by (-32767, 32767).  This gives a max resolution of about
-*    3000 dpi, and improves performance in some areas over using a PLINT.
+* short is currently used for device page coordinates, so they are
+* bounded by (-32767, 32767).  This gives a max resolution of about 3000
+* dpi, and improves performance in some areas over using a PLINT.
 \*----------------------------------------------------------------------*/
 
 #ifdef PL_DOUBLE
@@ -298,52 +213,10 @@ typedef double PLFLT;
 typedef float PLFLT;
 #endif
 
-/*
-* NOTE:  since the Alpha AXP is a 64-bit chip the type long is a 64-bit
-*        entity.  However, the default integer in fortran is still a
-*        32-bit entity.  Hence, we have to use type int for all integers
-*        here.
-*
-*/
-
 #if defined(__alpha) && defined(__osf__)
 typedef int PLINT;
 #else
 typedef long PLINT;
-#endif
-
-/* Signed char type, in case we ever need it. */
-
-#ifdef VAXC
-#define NO_SIGNED_CHAR
-#endif
-
-#ifdef sun
-#define NO_SIGNED_CHAR
-#endif
-
-#ifdef NO_SIGNED_CHAR
-   typedef char        SCHAR;
-#else
-   typedef signed char SCHAR;
-#endif
-
-/* Some unsigned types */
-
-#ifndef U_CHAR
-#define U_CHAR unsigned char
-#endif
-
-#ifndef U_SHORT
-#define U_SHORT unsigned short
-#endif
-
-#ifndef U_INT
-#define U_INT unsigned int
-#endif
-
-#ifndef U_LONG
-#define U_LONG unsigned long
 #endif
 
 /* For passing user data, as with X's XtPointer */
@@ -351,127 +224,43 @@ typedef long PLINT;
 typedef void* PLPointer;
 
 /*----------------------------------------------------------------------*\
-*                       Utility macros
-\*----------------------------------------------------------------------*/
-
-/*
-* Some systems need the "b" flag when opening binary files.
-* Other systems will choke on it, hence the need for this silliness.
-*/
-
-#ifdef MSDOS
-#define BINARY_FLAG
-#endif
-
-#ifdef GNU386
-#define BINARY_FLAG
-#endif
-
-#ifdef BINARY_FLAG
-#define BINARY_WRITE "wb+"
-#define BINARY_READ "rb"
-#else
-#define BINARY_WRITE "w+"
-#define BINARY_READ "r"
-#endif
-
-#ifndef TRUE
-#define TRUE  1
-#define FALSE 0
-#endif
-
-#ifdef sun
-#ifndef NULL
-#define NULL	0
-#endif
-#endif
-
-#ifndef MAX
-#define MAX(a,b)    (((a) > (b)) ? (a) : (b))
-#endif
-#ifndef MIN
-#define MIN(a,b)    (((a) < (b)) ? (a) : (b))
-#endif
-#ifndef ABS
-#define ABS(a)      ((a)<0 ? -(a) : (a))
-#endif
-#ifndef ROUND
-#define ROUND(a)    (PLINT)((a)<0. ? ((a)-.5) : ((a)+.5))
-#endif
-#ifndef BETW
-#define BETW(ix,ia,ib)  (((ix)<=(ia)&&(ix)>=(ib)) || ((ix)>=(ia)&&(ix)<=(ib)))
-#endif
-#ifndef SSQR
-#define SSQR(a,b)       sqrt((a)*(a)+(b)*(b))
-#endif
-#ifndef SIGN
-#define SIGN(a)         ((a)<0 ? -1 : 1)
-#endif
-
-#define UNDEFINED -9999999
-
-/*----------------------------------------------------------------------*\
-*                       PLPLOT control macros
-\*----------------------------------------------------------------------*/
-
-/* All ANSI compilers support void, so VOID should really be eliminated */
-
-#define VOID void
-
-/* Some constants */
-
-#define TEXT_MODE	0
-#define GRAPHICS_MODE	1
-#define PL_MAXCOLORS	16
-#define PL_RGB_COLOR	1<<7
-#define PL_MAXPOLYLINE	64
-#define PL_NSTREAMS	3	/* Max number of concurrent streams. */
-
-/* Switches for escape function call. */
-/* Some of these are obsolete but are retained in order to process
-   old metafiles */
-
-#define PL_SET_RGB	1	/* obsolete */
-#define PL_ALLOC_NCOL	2	/* obsolete */
-#define PL_SET_LPB	3	/* probably soon to be obsolete */
-
-/* Default size for family files, in KB.
-*  If you want it bigger, set it from the makefile or at runtime.
-*/
-
-#ifndef PL_FILESIZE_KB
-#define PL_FILESIZE_KB 1000
-#endif
-
-/* Font file names. */
-
-#define PLPLOT5_FONTS
-
-#ifdef PLPLOT5_FONTS
-#define PL_XFONT	"plxtnd5.fnt"
-#define PL_SFONT	"plstnd5.fnt"
-#else
-#define PL_XFONT	"plxtnd4.fnt"
-#define PL_SFONT	"plstnd4.fnt"
-#endif
-
-/*----------------------------------------------------------------------*\
-* Complex data types
+* Complex data types and other good stuff
 \*----------------------------------------------------------------------*/
 
 /* Plplot Option table & support constants */
 
-#define PL_PARSE_ARG		0x01
-#define PL_PARSE_NODELETE	0x02
+/* Option-specific settings */
 
-#define PL_PARSE_FULL		0
-#define PL_PARSE_PARTIAL	1
-#define PL_PARSE_QUIET		2
+#define PL_OPT_ENABLED		0x0001	/* Processing is enabled */
+#define PL_OPT_ARG		0x0002	/* Option has an argment */
+#define PL_OPT_NODELETE		0x0004	/* Don't delete after processing */
+#define PL_OPT_INVISIBLE	0x0008	/* Make invisible */
+
+/* Option-processing settings -- mutually exclusive */
+
+#define PL_OPT_FUNC		0x0100	/* Call handler function */
+#define PL_OPT_BOOL		0x0200	/* Set *var = 1 */
+#define PL_OPT_INT		0x0400	/* Set *var = atoi(optarg) */
+#define PL_OPT_FLOAT		0x0800	/* Set *var = atof(optarg) */
+#define PL_OPT_STRING		0x1000	/* Set var = optarg */
+
+/* Global mode settings */
+/* These override per-option settings */
+
+#define PL_PARSE_PARTIAL	0x0000	/* For backward compatibility */
+#define PL_PARSE_FULL		0x0001	/* Process fully & exit if error */
+#define PL_PARSE_QUIET		0x0002	/* Don't issue messages */
+#define PL_PARSE_NODELETE	0x0004	/* Don't delete options after */
+					/* processing */
+#define PL_PARSE_SHOWALL	0x0008	/* Show invisible options */
+#define PL_PARSE_OVERRIDE	0x0010	/* Overrides internal option(s) */
+#define PL_PARSE_NOPROGRAM	0x0020	/* Program name NOT in *argv[0].. */
 
 typedef struct {
     char *opt;
     int  (*handler)	(char *, char *);
-    int  flags;
+    void *var;
+    long mode;
     char *syntax;
     char *desc;
 } PLOptionTable;
@@ -481,7 +270,7 @@ typedef struct {
 #define PL_NKEYSTRING 20
 
 typedef struct {
-    U_LONG code;
+    unsigned long code;
 
     int isKeypadKey;
     int isCursorKey;
@@ -493,7 +282,15 @@ typedef struct {
     char string[PL_NKEYSTRING];
 } PLKey;
 
-/* See plcont.c for examples of all of these */
+/* Window structure for doing resizes without calling the X driver directly */
+/* May add other attributes in time */
+
+typedef struct {
+    unsigned int width;
+    unsigned int height;
+} PLWindow;
+
+/* See plcont.c for examples of the following */
 
 /*
 * PLfGrid is for passing (as a pointer to the first element) an arbitrarily
@@ -551,7 +348,7 @@ typedef struct {
 /* PLColor is the usual way to pass an rgb color value. */
 
 typedef struct {
-    U_CHAR r, g, b;
+    unsigned char r, g, b;
 } PLColor;
 
 /*----------------------------------------------------------------------*\
@@ -620,6 +417,7 @@ typedef struct {
 #define    plflush	c_plflush
 #define    plfont	c_plfont
 #define    plfontld	c_plfontld
+#define    plgchr	c_plgchr
 #define    plgfam	c_plgfam
 #define    plgfile	c_plgfile
 #define    plgfnam	c_plgfnam
@@ -660,6 +458,10 @@ typedef struct {
 #define    plscolbg	c_plscolbg
 #define    plscolor	c_plscolor
 #define    plsdev	c_plsdev
+#define    plsdiplt	c_plsdiplt
+#define    plsdiplz	c_plsdiplz
+#define    plsdidev	c_plsdidev
+#define    plsdiori	c_plsdiori
 #define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
 #define    plsfnam	c_plsfnam
@@ -711,6 +513,7 @@ typedef struct {
 #define    c_plflush	plflush
 #define    c_plfont	plfont
 #define    c_plfontld	plfontld
+#define    c_plgchr	plgchr
 #define    c_plgfam	plgfam
 #define    c_plgfile	plgfile
 #define    c_plgfnam	plgfnam
@@ -750,6 +553,10 @@ typedef struct {
 #define    c_plscolbg	plscolbg
 #define    c_plscolor	plscolor
 #define    c_plsdev	plsdev
+#define    c_plsdiplt	plsdiplt
+#define    c_plsdiplz	plsdiplz
+#define    c_plsdidev	plsdidev
+#define    c_plsdiori	plsdiori
 #define    c_plsesc	plsesc
 #define    c_plsfam	plsfam
 #define    c_plsfnam	plsfnam
@@ -842,6 +649,8 @@ void c_plfont	(PLINT);
 
 void c_plfontld	(PLINT);
 
+void c_plgchr	(PLFLT *, PLFLT *);
+
 void c_plgfam	( PLINT *, PLINT *, PLINT *);
 
 void c_plgfnam	(char *);
@@ -919,6 +728,14 @@ void c_plscolbg	(PLINT r, PLINT g, PLINT b);
 void c_plscolor	(PLINT color);
 
 void c_plsdev	(char *);
+
+void c_plsdiplt	(PLFLT, PLFLT, PLFLT, PLFLT);
+
+void c_plsdiplz	(PLFLT, PLFLT, PLFLT, PLFLT);
+
+void c_plsdidev	(PLFLT, PLFLT, PLFLT, PLFLT);
+
+void c_plsdiori	(PLFLT);
 
 void c_plsesc	(char);
 
@@ -1021,276 +838,19 @@ int   plParseInternalOpts (int *, char **, PLINT);
 int   plParseOpts	(int *, char **, PLINT, PLOptionTable *,
 			 void (*) (char *));
 
+int   plSetInternalOpt	(char *, char *);
+
 	/* Miscellaneous */
 
 void  plgesc	(char *);
+
+void  pl_cmd	(PLINT, void *);
 
 	/* Nice way to allocate space for a vectored 2d grid */
 
 void  Alloc2dGrid (PLFLT ***, PLINT, PLINT);
 
 void  Free2dGrid (PLFLT **, PLINT, PLINT);
-
-	/* These should not be called directly by the user */
-
-void  pldtik	(PLFLT, PLFLT, PLFLT *, PLINT *, 
-		 PLINT *, PLINT *, PLINT, PLINT *);
-
-void  plexit	(char *);
-
-void  pl_exit	(void);
-
-void  plwarn	(char *errormsg);
-
-void  plfntld	(PLINT fnt);
-
-void  plfontrel	(void);
-
-void  plHLS_RGB	(PLFLT, PLFLT, PLFLT, PLFLT *, PLFLT *, PLFLT *);
-
-void  plhrsh	(PLINT, PLINT, PLINT);
-
-void  plstik	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  plstr	(PLINT, PLFLT *, PLINT, PLINT, char *);
-
-void  plxtik	(PLINT, PLINT, PLINT, PLINT);
-
-void  plytik	(PLINT, PLINT, PLINT, PLINT);
-
-void  glev	(PLINT *);
-
-void  slev	(PLINT);
-
-void  gbase	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void  sbase	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  gnms	(PLINT *);
-
-void  snms	(PLINT);
-
-void  gcurr	(PLINT *, PLINT *);
-
-void  scurr	(PLINT, PLINT);
-
-void  gdom	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void  sdom	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  grange	(PLFLT *, PLFLT *, PLFLT *);
-
-void  srange	(PLFLT, PLFLT, PLFLT);
-
-void  gw3wc	(PLFLT *, PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void  sw3wc	(PLFLT, PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  gvpp	(PLINT *, PLINT *, PLINT *, PLINT *);
-
-void  svpp	(PLINT, PLINT, PLINT, PLINT);
-
-void  gspp	(PLINT *, PLINT *, PLINT *, PLINT *);
-
-void  sspp	(PLINT, PLINT, PLINT, PLINT);
-
-void  gclp	(PLINT *, PLINT *, PLINT *, PLINT *);
-
-void  sclp	(PLINT, PLINT, PLINT, PLINT);
-
-void  gphy	(PLINT *, PLINT *, PLINT *, PLINT *);
-
-void  sphy	(PLINT, PLINT, PLINT, PLINT);
-
-void  gsub	(PLINT *, PLINT *, PLINT *);
-
-void  ssub	(PLINT, PLINT, PLINT);
-
-void  gumpix	(PLINT *, PLINT *);
-
-void  sumpix	(PLINT, PLINT);
-
-void  gatt	(PLINT *, PLINT *);
-
-void  satt	(PLINT, PLINT);
-
-void  gwid	(PLINT *);
-
-void  swid	(PLINT);
-
-void  gspd	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void  sspd	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  gvpd	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void  svpd	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  gvpw	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void  svpw	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  gpixmm	(PLFLT *, PLFLT *);
-
-void  spixmm	(PLFLT, PLFLT);
-
-void  setpxl	(PLFLT, PLFLT);
-
-void  gwp	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void  swp	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  gwm	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void  swm	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  gdp	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
-
-void  sdp	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  gmp	(PLFLT *, PLFLT *, PLFLT *,PLFLT *);
-
-void  smp	(PLFLT, PLFLT, PLFLT, PLFLT);
-
-void  gchr	(PLFLT *, PLFLT *);
-
-void  schr	(PLFLT, PLFLT);
-
-void  gscale	(PLFLT *);
-
-void  sscale	(PLFLT);
-
-void  gsym	(PLFLT *, PLFLT *);
-
-void  ssym	(PLFLT, PLFLT);
-
-void  gmaj	(PLFLT *, PLFLT *);
-
-void  smaj	(PLFLT, PLFLT);
-
-void  gmin	(PLFLT *, PLFLT *);
-
-void  smin	(PLFLT, PLFLT);
-
-void  gzback	(PLINT **, PLINT **, PLFLT **);
-
-void  movphy	(PLINT, PLINT);
-
-void  draphy	(PLINT, PLINT);
-
-void  movwor	(PLFLT, PLFLT);
-
-void  drawor	(PLFLT, PLFLT);
-
-void  draphy_poly (PLINT *x, PLINT *y, PLINT n);
-
-void  drawor_poly (PLFLT *x, PLFLT *y, PLINT n);
-
-void  setphy	(PLINT, PLINT, PLINT, PLINT);
-
-void  setsub	(void);
-
-void  gmark	(PLINT *pmar[], PLINT *pspa[], PLINT *pnms);
-
-void  gcure	(PLINT **pcur, PLINT **ppen, PLINT **ptim, PLINT **pala);
-
-void  gradv	(void);
-
-void  grclr	(void);
-
-void  grcol	(void);
-
-void  gpat	(PLINT *pinc[], PLINT *pdel[], PLINT *pnlin);
-
-void  grgra	(void);
-
-void  spat	(PLINT inc[], PLINT del[], PLINT nlin);
-
-void  smark	(PLINT mar[], PLINT spa[], PLINT nms);
-
-void  scure	(PLINT cur, PLINT pen, PLINT tim, PLINT ala);
-
-void  grwid	(void);
-
-void  gprec	(PLINT *, PLINT *);
-
-	/* Functions that return floats */
-
-PLFLT plstrl	(char *);
-
-	/* Stuff in convrt.c */
-
-PLFLT dcmmx	(PLFLT);
-
-PLFLT dcmmy	(PLFLT);
-
-PLFLT dcscx	(PLFLT);
-
-PLFLT dcscy	(PLFLT);
-
-PLFLT mmdcx	(PLFLT);
-
-PLFLT mmdcy	(PLFLT);
-
-PLFLT scdcx	(PLFLT);
-
-PLFLT scdcy	(PLFLT);
-
-PLFLT wcmmx	(PLFLT);
-
-PLFLT wcmmy	(PLFLT);
-
-PLFLT w3wcx	(PLFLT, PLFLT, PLFLT);
-
-PLFLT w3wcy	(PLFLT, PLFLT, PLFLT);
-
-	/* Functions returning PLINTs */
-
-PLINT plcvec	(PLINT, SCHAR **);
-
-PLINT stindex	(char *, char *);
-
-PLINT strpos	(char *, int);
-
-PLINT stsearch	(char *, int);
-
-	/* More stuff from convrt.c */
-
-PLINT dcpcx	(PLFLT);
-
-PLINT dcpcy	(PLFLT);
-
-PLINT mmpcx	(PLFLT);
-
-PLINT mmpcy	(PLFLT);
-
-PLINT wcpcx	(PLFLT);
-
-PLINT wcpcy	(PLFLT);
-
-	/* Driver calls */
-
-void grinit	(void);
-
-void grline	(short, short, short, short);
-
-void grpolyline	(short *, short *, PLINT);
-
-void grclear	(void);
-
-void grpage	(void);
-
-void grtidy	(void);
-
-void grcolor	(void);
-
-void grtext	(void);
-
-void grgraph	(void);
-
-void grwidth	(void);
-
-void gresc	(PLINT, char *);
 
 #ifdef __cplusplus
 }
