@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1993/08/18 20:33:22  mjl
+ * Revision 1.19  1993/08/31 20:14:30  mjl
+ * Fix to plend1() so that prematurely aborted streams do not result in a
+ * core dump.  Put font loading code before plsc->level is set to 1, to
+ * prevent core dumps when fonts are not found.
+ *
+ * Revision 1.18  1993/08/18  20:33:22  mjl
  * Many changes to driver interface to properly modify the device window
  * based on orientation and coordinate mapping.  Orientation switches now
  * automatically set the device window so as to preserve the aspect ratio.
@@ -1058,10 +1063,6 @@ c_plinit()
 
     plCmaps_init(plsc);
 
-/* We're rolling now.. */
-
-    plsc->level = 1;
-
 /* Load fonts */
 
     font = 1;
@@ -1072,9 +1073,11 @@ c_plinit()
     else
 	plfntld(0);
 
-/* Initialize device */
+/* Initialize device & first page */
 
     plP_init();
+    plsc->level = 1;
+
     plP_bop();
 
 /*
@@ -1161,12 +1164,11 @@ c_plend()
 void
 c_plend1()
 {
-    if ((ipls == 0) && (plsc->level == 0))
-	return;
-
-    plP_eop();
-    plP_tidy();
-    plP_slev(0);
+    if (plsc->level > 0) {
+	plP_eop();
+	plP_tidy();
+	plP_slev(0);
+    }
 
 /* Free all malloc'ed stream memory */
 
