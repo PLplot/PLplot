@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.38  1994/06/30 18:43:04  mjl
+ * Revision 1.39  1994/07/18 20:30:39  mjl
+ * Fixed the eop driver function to flush output even if pause is turned off.
+ *
+ * Revision 1.38  1994/06/30  18:43:04  mjl
  * Cleaning up to remove gcc -Wall warnings, and other miscellanea.
  *
  * Revision 1.37  1994/06/16  19:13:10  mjl
@@ -354,6 +357,9 @@ plD_eop_tk(PLStream *pls)
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
 
+    if (pls->pdfs->bp > 0) 
+	flush_output(pls);
+
     if ( ! pls->nopause)
 	WaitForPage(pls);
 }
@@ -481,7 +487,6 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
     dbug_enter("plD_esc_tk");
 
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
-
     tk_wr( pdf_wr_1byte(pls->pdfs, op) );
 
     switch (op) {
@@ -1277,9 +1282,6 @@ WaitForPage(PLStream *pls)
 
     dbug_enter("WaitForPage");
 
-    if (pls->pdfs->bp > 0) 
-	flush_output(pls);
-
     while ( ! dev->exit_eventloop)
 	Tk_DoOneEvent(0);
 
@@ -1305,12 +1307,12 @@ HandleEvents(PLStream *pls)
  *
  * Sends graphics instructions to the {FIFO|socket} via a packet send.
  *
- * The i/o routines are modified versions of the ones from the Tcl-DP
- * package.  They have been altered to take a pointer to a PDFstrm struct,
- * and read-to or write-from pdfs->buffer.  The length of the buffer is
- * stored in pdfs->bp (the original Tcl-DP routine assume the message is
- * character data and use strlen).  Also, they can send/receive from 
- * either a fifo or a socket.
+ * The packet i/o routines are modified versions of the ones from the
+ * Tcl-DP package.  They have been altered to take a pointer to a PDFstrm
+ * struct, and read-to or write-from pdfs->buffer.  The length of the
+ * buffer is stored in pdfs->bp (the original Tcl-DP routine assumes the
+ * message is character data and uses strlen).  Also, they can
+ * send/receive from either a fifo or a socket.
 \*----------------------------------------------------------------------*/
 
 static void
