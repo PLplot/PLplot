@@ -24,7 +24,7 @@
 
 use PDL;
 use PDL::Graphics::PLplot;
-use GD;
+use PDL::IO::Pnm;
 use Math::Trig qw [pi];
 use Getopt::Long qw(:config pass_through);
 use Text::Wrap;
@@ -39,10 +39,10 @@ sub gray_cmap {
   my $r = pdl [0, 1];
   my $g = pdl [0, 1];
   my $b = pdl [0, 1];
-  my $pos = pdl [0, 1];        
-    
+  my $pos = pdl [0, 1];
+
   plscmap1n ($num_col);
-    
+
   plscmap1l (1, $pos, $r, $g, $b, pdl ([]));
 }
 
@@ -50,21 +50,8 @@ sub gray_cmap {
 
 sub read_img {
   my $fname = shift;
-    
-  my $img = GD::Image->new ($fname);
-
-  my ($width, $height) = $img->getBounds ();
-  my $num_col = $img->colorsTotal ();
-    
-  my $img_f = zeroes ($width, $height);
-  
-  for (my $i = 0; $i < $width; $i++) {
-    for (my $j = 0; $j < $height; $j++) {
-      $img_f->slice ("$i,$j") .= $img->getPixel ($i, $height - $j - 1);
-    }
-  }
-
-  return ($img_f, $width, $height, $num_col);
+  my $img = rpnm ($fname);
+  return ($img, $img->dims (), $img->max);
 }
 
 use constant XDIM => 260;
@@ -86,7 +73,7 @@ $0 options:
     --dbg                 Extra debugging plot
     --nosombrero          No sombrero plot
     --nointeractive       No interactive selection
-    --save filename       Save sombrero plot in color postscript `filename'
+    --save filename       Save sombrero plot in color postscript 'filename'
 
 EOT
   print (wrap ('', '', @notes), "\n");
@@ -96,7 +83,7 @@ EOT
 unshift (@ARGV, $0);
 
 # Parse and process command line arguments
-      
+
 plParseOpts (\@ARGV, PL_PARSE_PARTIAL);
 
 # Initialize plplot
@@ -104,15 +91,15 @@ plParseOpts (\@ARGV, PL_PARSE_PARTIAL);
 plinit ();
 
 # view image border pixels
-#if ($dbg) { 
+#if ($dbg) {
 #  plenv (1, XDIM, 1, YDIM, 1, 1); # no plot box
-#    
+#
 #  # build a one pixel square border, for diagnostics
 #    for (i=0; i<XDIM; i++)
 #      z[i][YDIM-1] = 1.; /* right */
 #    for (i=0; i<XDIM; i++)
 #      z[i][0] = 1.; /* left */
-#  
+#
 #    for (i=0; i<YDIM; i++)
 #      z[0][i] = 1.; /* top */
 #    for (i=0; i<YDIM; i++)
@@ -128,7 +115,7 @@ plinit ();
 #  }
 #
 #  /* sombrero-like demo */
-#  if (!nosombrero) { 
+#  if (!nosombrero) {
 #    plAlloc2dGrid(&r, XDIM, YDIM);
 #    plcol0(2); /* draw a yellow plot box, useful for diagnostics! :( */
 #    plenv(0., 2.*PI, 0, 3.*PI, 1, -1);
@@ -147,7 +134,7 @@ plinit ();
 #    pllab("No, an amplitude clipped \"sombrero\"", "", "Saturn?");
 #    plptex(2., 2., 3., 4., 0., "Transparent image");
 #    plimage(z, XDIM, YDIM, 0., 2.*PI, 0, 3.*PI, 0.05, 1.,
-#	    0., 2.*PI, 0, 3.*PI); 
+#	    0., 2.*PI, 0, 3.*PI);
 #    plFree2dGrid(r, XDIM, YDIM);
 #
 #    /* save the plot */
@@ -159,10 +146,10 @@ plinit ();
 #
 #  plFree2dGrid(z, XDIM, YDIM);
 #
-    
+
 # read Lena image
 
-my ($img_f, $width, $height, $num_col) = read_img ("lena.png");
+my ($img_f, $width, $height, $num_col) = read_img ("../c/lena.pgm");
 
 # set gray colormap
 
@@ -171,18 +158,15 @@ gray_cmap ($num_col);
 # display Lena
 
 plenv (1, $width, 1, $height, 1, -1);
-#
-#  if (!nointeractive)
-#    pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...");
-#  else
-#    pllab(""," ","Lena...");
-#
+
+pllab ((not $nointeractive
+        ? "Set and drag Button 1 to (re)set selection, Button 2 to finish."
+        : ""), " ", "Lena...");
+
 plimage ($img_f, 1, $width, 1, $height, 0, 0, 1, $width, 1, $height);
-#
-#  /* plend();exit(0); */
-#
+
 #  /* selection/expansion demo */
-#  if (!nointeractive) { 
+#  if (!nointeractive) {
 #    xi = 200.; xe = 330.;
 #    yi = 280.; ye = 220.;
 #
@@ -190,8 +174,8 @@ plimage ($img_f, 1, $width, 1, $height, 0, 0, 1, $width, 1, $height);
 #      plend();
 #      exit(0);
 #    }
-#  
-#    /* 
+#
+#    /*
 #       I'm unable to continue, clearing the plot and advancing to the next
 #       one, without hiting the enter key, or pressing the button... help!
 #
@@ -199,12 +183,12 @@ plimage ($img_f, 1, $width, 1, $height, 0, 0, 1, $width, 1, $height);
 #       xhairs (in GetCursorCmd()) solves some problems, but I still have
 #       to press the enter key or press Button-2 to go to next plot, even
 #       if a pladv() is not present!  Using plbop() solves the problem, but
-#       it shouldn't be needed! 
+#       it shouldn't be needed!
 #    */
 #
 #    /* plbop(); */
 #
-#    /* 
+#    /*
 #       plspause(0), pladv(0), plspause(1), also works,
 #       but the above question remains.
 #       With this approach, the previous pause state is lost,
@@ -233,13 +217,13 @@ plimage ($img_f, 1, $width, 1, $height, 0, 0, 1, $width, 1, $height);
 #}
 #
 #/* save plot */
-#void save_plot(char *fname)   
+#void save_plot(char *fname)
 #{
-#  int cur_strm, new_strm; 
+#  int cur_strm, new_strm;
 #
 #  plgstrm(&cur_strm); /* get current stream */
-#  plmkstrm(&new_strm); /* create a new one */ 
-#    
+#  plmkstrm(&new_strm); /* create a new one */
+#
 #  plsdev("psc"); /* new device type. Use a known existing driver */
 #  plsfnam(fname); /* file name */
 #
@@ -284,7 +268,7 @@ plimage ($img_f, 1, $width, 1, $height, 0, 0, 1, $width, 1, $height);
 #	  plline(5, sx, sy); /* clear previous rectangle */
 #
 #	start = 1;
-#  
+#
 #	sx[2] = xxe; sy[2] = yye;
 #	sx[1] = xxe; sy[1] = yyi;
 #	sx[3] = xxi; sy[3] = yye;
@@ -295,7 +279,7 @@ plimage ($img_f, 1, $width, 1, $height, 0, 0, 1, $width, 1, $height);
 #	if (start)
 #	  plline(5, sx, sy); /* clear previous rectangle */
 #	break;
-#      }      
+#      }
 #    }
 #    plxormod(0, &st); /* leave xor mod */
 #  }
