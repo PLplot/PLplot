@@ -47,6 +47,8 @@
 #define DEBUG
 */
 
+#define DEBUGx
+
 #define NEED_PLDEBUG
 #include "plserver.h"
 #include "plxwd.h"
@@ -522,10 +524,41 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     c = argv[1][0];
     length = strlen(argv[1]);
 
+#ifdef DEBUG
+    {
+        int i;
+        printf( "Current stream %d, frame stream %d\n",
+                plsc->ipls, plFramePtr->ipls );
+        printf( "PlFrameWidgetCmd: " );
+        for( i=0; i < argc; i++ )
+            printf( " %s", argv[i] );
+        printf( "\n" );
+    }
+#endif
+
+/* First, before anything else, we have to set the stream to be the one that
+ * corresponds to this widget. */
+    plsstrm( plFramePtr->ipls );
+
 /* cmd -- issue a command to the PLplot library */
 
     if ((c == 'c') && (strncmp(argv[1], "cmd", length) == 0)) {
 	result = Cmd(interp, plFramePtr, argc-2, argv+2);
+    }
+
+/* cget */
+
+    else if ((c == 'c') && (strncmp(argv[1], "cget", length) == 0)) {
+	if (argc > 2) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+		    argv[0], " cget <option>\"", (char *) NULL);
+	    result = TCL_ERROR;
+	    goto done;
+	}
+	else {
+	    result = Tk_ConfigureInfo(interp, plFramePtr->tkwin, configSpecs,
+		    (char *) plFramePtr, (char *) NULL, 0);
+	}
     }
 
 /* configure */
@@ -719,7 +752,14 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	 "view, xscroll, or yscroll", (char *) NULL);
 
 	result = TCL_ERROR;
+#ifdef DEBUG
+        printf( "bad option!\n" );
+#endif
     }
+
+#ifdef DEBUG
+    printf( "result=%d current stream=%d\n", result, plsc->ipls );
+#endif
 
  done:
     Tk_Release((ClientData) plFramePtr);
