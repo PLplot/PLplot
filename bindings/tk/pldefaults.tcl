@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.7  1995/05/19 22:21:26  mjl
+# Revision 1.8  1995/05/26 20:11:10  mjl
+# Added global variables for setting defaults for zoom and save options.
+#
+# Revision 1.7  1995/05/19  22:21:26  mjl
 # Fixes for Tk 4.0.  The default options in the options database changed in
 # some cases so that apps look the same as before.  Users can change these
 # to taste.  The test for mono system using the line
@@ -177,6 +180,23 @@ proc pldefaults {} {
 # look the same.  More selectivity might be better.
 
     option add *highlightThickness		0
+
+# Various options -- use global variables for simplicity.
+# Not a great solution but will have to do for now.
+
+# zoom options:
+#  0:	0=don't preserve aspect ratio, 1=do
+#  1:	0=stretch from corner, 1=stretch from center
+
+    global zoomopt_0;		set zoomopt_0 1
+    global zoomopt_1;		set zoomopt_1 0
+
+# save options:
+#  0:   name of default save device
+#  1:   0=save 1 plot/file, 1=save multi plots/file (must close!)
+
+    global saveopt_0;		set saveopt_0 psc
+    global saveopt_1;		set saveopt_1 0
 
 # Key shortcut definitions -- change them if you want!
 # Turn them into an empty string to disable.
