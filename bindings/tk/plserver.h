@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/01/15 17:40:04  mjl
+ * Revision 1.12  1994/02/07 22:57:14  mjl
+ * Fixed up prototypes for pl_PacketReceive and pl_PacketSend.
+ *
+ * Revision 1.11  1994/01/15  17:40:04  mjl
  * Changed PLRDev definition to use pointer to PDFstrm instead of file
  * handle.  Added prototypes for new socket i/o functions.
  *
@@ -46,15 +49,14 @@
 #include <math.h>
 #include <ctype.h>
 
-/* This data structure holds all state info for the rendering code */
+/* State info for the rendering code */
 
 typedef struct {
     char  *client;			/* Name of client main window */
     PDFstrm *pdfs;			/* PDF stream descriptor */
-    FILE  *fifo;			/* FIFO handle (if needed) */
-    char  *filetype;			/* Set to "fifo" or "buffer" */
-    char  *socket;			/* Socket name (if needed) */
+    PLiodev *iodev;			/* I/O info */
     int   nbytes;			/* data bytes waiting to be read */
+    int   at_bop, at_eop;		/* bop/eop condition flags */
 
     short xmin, xmax, ymin, ymax;	/* Data minima and maxima */
     PLFLT xold, yold;			/* Endpoints of last line plotted */
@@ -104,16 +106,15 @@ plr_process(PLRDev *plr);
 
 /* From tcpip.c */
 
-/* C interface to the "dp_packetReceive" command. */
+/* Modified version of the "Tdp_PacketReceive" command. */
 
 int
-pl_PacketReceive(Tcl_Interp *interp, char *fileHandle, int peek,
-		 PDFstrm *pdfs);
+pl_PacketReceive(Tcl_Interp *interp, PLiodev *iodev, PDFstrm *pdfs);
 
-/* C interface to the "dp_packetSend" command. */
+/* Modified version of the "Tdp_PacketSend" command. */
 
 int
-pl_PacketSend(Tcl_Interp *interp, char *fileHandle, PDFstrm *pdfs);
+pl_PacketSend(Tcl_Interp *interp, PLiodev *iodev, PDFstrm *pdfs);
 
 /* Tcl command -- return the IP address for the current host.  */
 
