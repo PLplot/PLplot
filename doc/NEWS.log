@@ -1,0 +1,296 @@
+This file contains a log of all the old NEWS files.
+
+
+
+**************************************************************************
+Version 4.99h: Summary of major changes
+**************************************************************************
+
+This was to be a quick bug fix update, but I got going on several major
+changes plus addition of user contributions.  So there are some important
+new capabilities as well as a lot of bug fixes.
+
+Note: as a result of a lack of time, most of the DOS drivers and the Amiga
+driver have not been upgraded to work with the new configure/build files.
+The DOS DJGPP port is one exception.  So these are essentially useless
+until these are done.  I will issue another beta as soon as these are
+done, hopefully within a week or two.
+
+------------------------------------------------------------------------
+Configuration, building, and installation:
+
+Completely new configuration script!  The new configure script is
+built using GNU autoconf, and great care was taken in its construction.
+Highlights:
+
+1) It is capable of doing basically everything it did before.  Packages
+   are included by typing e.g. --enable-tk or --disable-tk, etc.  Major
+   options are set by typing e.g. --with-gcc or --without-opt, etc.  There
+   is a startup file so you can customize on a per-site basis like before.
+   Although now, shell variables are used to store settings rather than m4
+   variables, and only are substituted in the various files at the end of
+   the configure script.
+
+2) The Makefile components are usable on non-Unix systems.  Notably the
+   dependencies -- the Makefile is constructed by concatenating several
+   text files together. The setting of configuration defaults on a
+   non-Unix system is similarly easier than before.  Just keep around
+   custom copies of plConfig.h and plDevs.h.  It's better to have
+   'configure' build these for you, of course.
+
+3) The configure script is fully automatic.  It should find all the major
+   capabilities needed by PLplot if your system supports them, with no
+   user intervention required.  
+
+4) The object file dependency list is now constructed using "gcc -MM"
+   (like "makedepend", only better), making it much more robust.
+
+5) Much better support for shared libraries.  Works under HPUX and SunOS
+   now, with Solaris, Irix, OSF-1 probably not far behind if someone wants
+   to fill in the details.  AIX probably I will get to, and Geoff has
+   started on the Linux shared library build.
+
+6) The new header file plConfig.h makes it much easier to get portable
+   code, by concentrating all the hacks in one place and using configure
+   to set them accordingly.
+
+See the cf/README file for more info.  It works pretty much without
+user intervention now, though.
+
+------------------------------------------------------------------------
+The second major addition: a Tcl PLplot API and interpreter.  This means
+you can now make PLplot calls from Tcl.  An interpreter -- pltcl (an
+extended tclsh) is provided.  Be sure to check out the demo programs as
+follows:
+
+foobar% pltcl
+% source demos.tcl
+% 1
+% 2
+
+etc, up through 7.  Not all PLplot C API calls are supported by the Tcl
+API yet.
+
+As part of this development a Tcl extension was created to handle matrices
+(arrays).  Right now it supports 1-d, 2-d, and 3-d arrays.  Eventually
+it will be improved a bit more and better documented and released to
+the Tcl/TK community.  For now, read doc/tclMatrix.doc and check
+out the Tcl demos.
+
+------------------------------------------------------------------------
+
+Other changes:
+
+- Another major cleanup of the core source files.
+
+- Ability to make point, line, and polygon plots in 3-d added.
+  (Contributed by Geoff Furnish.)
+
+- Changes to support returning the cursor location in world coordinates
+  given a mouse click, if supported by the driver (only used by windows
+  driver so far -- a lot of work remains for the rest of the package to
+  use it).  Supports multiple windows per page, and gets the correct set
+  of world coordinates for the plot selected.  Contributed by Paul
+  Casteels.
+
+- Function to plot map backgrounds added, where the map data is read from
+  the specified map data file (examples provided).  Contributed by Wesley
+  Ebisuzaki.
+
+- Fast point plot ability added.  Call plpoin with code=-1 for a 4X or so
+  speed increase in point plots.
+
+- Search path for needed files improved and made more consistent.
+  (Contributed by Mark Olesen).
+
+- Can now save a plot from the Tk/DP driver and have the colors turn
+  out correctly.
+
+- Previous problems re: mono X displays fixed.
+
+- Multiple sequential bop or eop's are now munged together, making it
+  easier to avoid blank pages.
+
+- Can now change the number of subpages at any time.
+
+- Fixed problems in tek drivers caused by entering cbreak mode --
+  this was fouling up user input (tty) requests.  Now it goes into cbreak
+  mode when switching to the graphics screen, and back to canonical mode
+  when switching to the text screen.  Also, this is all usable now on
+  systems without an ANSI libc.
+
+- Added new driver -- HP Laserjet III in HPGL emulation mode (lj_hpgl).
+  Contributed by Conrad Steenberg.
+
+- Greatly improved support for embedded plframe use (directly from
+  plserver or a plframe-extended wish).  See tk01, tk02, tk03 for more
+  info.  Many minor improvements and a few bugs squashed in the Tk driver.
+
+
+
+**************************************************************************
+Version 4.99g: Summary of major changes (gigantic update)
+**************************************************************************
+
+This was a very big update, sorry for the delay.  The changes may cause
+some inconvenience, and while we can't promise an end to that :-), will
+try to hold them to a minimum before the "big" 5.0 release.  As we get
+closer, there are some changes we will make in the "now or never" frame of
+mind, meant to positively affect future versions without causing too much
+difficulty now.
+
+
+- Document:
+
+We have made substantial progress towards converting the (previously
+LaTeX) document into LaTeXinfo.  This gives us the capability to have both
+a high quality (yes, if you work at it hard enough) printed manual as well
+as a hypertext-like online document, using info.  There are many info
+readers around but the most famous is the one built into Emacs.  Both
+documents are now available but still need considerable work, and
+unfortunately are still largely based on information as of the beta
+plplot4.0 series.  Based on the number and importance of the changes since
+then, we an updated manual is desperately needed!  And it is coming...the
+contents of the doc directory represents work in progress.
+
+
+- configuration, building, and installation:
+
+configure has been improved so that it runs more like GNU configure.  You
+can run it from the root directory (although I don't necessarily advise
+doing so) and use the GNU configure --prefix option for setting the
+location to install PLplot (more useful).
+
+THE DEFAULT INSTALL DIRECTORY PROCEDURE HAS BEEN CHANGED!!!!!
+Now PLplot by default installs into:
+	prefix-dir/
+		bin/
+		lib/
+		include/
+		doc/
+		tcl/
+It had to be done before it was too late.  Makefile overrides default
+value of INSTALL_DIR if m4 macro PREFIX is defined.   Also check out
+the script "mklinks".
+
+
+- Tcl-DP driver added!
+
+Yes, finally finished, and it works great everywhere but on Crays (sigh --
+and I thought I fixed that in the Tcl-DP 3.1 distribution).  By using the
+DP driver you bypass all the difficulties with using Xauth (or the
+security problems of doing without it) in the TK driver.  The Tcl-DP
+driver is much more usable.  It's even distributable -- tested between an
+HP and a Sun (as server), and between an IBM RS-6000 and HP (as server).
+Just specify -server_host (and -user if necessary), and it will try to
+start up a plserver under your user account (need to have .rhost info set
+appropriately).  Great at increasing responsiveness of the GUI, and screen
+dumps always save to the local machine.
+
+
+- TK interface improvements.
+
+The TK interface (using either the TK or DP drivers) has been greatly
+enhanced.  "plserver" can be used exactly like an extended "wish" now (the
+TK windowing shell).  It has been extended to know about "plframe" widgets
+and how to interact with the PLplot/TK/DP drivers.  There are documented
+interfaces and demos now for building your own extended wish using the
+plframe widget, as well as an illustration of direct plotting using PLplot
+from Tcl (through the plframe widget).  Color map manipulation tools added
+for cmap0 and cmap1.  Support for user-modifiable keystroke invocation of
+menu items added.  The following are the defaults keymappings as set in
+pldefaults.tcl, their meaning is clear:
+
+    global key_zoom_select;	set key_zoom_select	"z"
+    global key_zoom_reset;	set key_zoom_reset	"r"
+    global key_print;		set key_print		"p"
+    global key_save_again;	set key_save_again	"s"
+    global key_scroll_right;	set key_scroll_right	"Right"
+    global key_scroll_left;	set key_scroll_left	"Left"
+    global key_scroll_up;	set key_scroll_up	"Up"
+    global key_scroll_down;	set key_scroll_down	"Down"
+    global key_scroll_slow;	set key_scroll_slow	"3"
+    global key_scroll_fast;	set key_scroll_fast	"15"
+    global key_scroll_faster;	set key_scroll_faster	"75"
+
+The last three indicate the number of pixels to scroll each time one
+keystroke is processed.  To get the "fast" setting, press Shift-cursor.
+You get the "faster" setting by using shift-ctrl-cursor.
+
+
+- Area fill support added.
+
+Now you can do color (hardware) fills.  Only recognized on certain drivers
+(postscript, all X-based drivers, all Tek4107 devices, and Amiga).
+Tektronix devices even recognize hardware pattern fills (obtained by a
+negative fill index).  Devices that don't know about hardware fills
+automatically get a software pattern fill.
+
+
+- Color map usage improved.
+
+I have finally implemented the dual cmap0/cmap1 color scheme I have long
+talked about.  cmap0 is typically for fixed colors, like axes, labels,
+lines, etc.  Color 0 of cmap0 should now be the background!  It may not
+always be enforced now but it eventually will be, as well as possible.
+cmap1 is envisioned as a continuous tone color palette.  cmap0 contains
+the "normal" colors that you set by plcol(<number>) (now plcol0(<number>)
+is preferred).  cmap1 contains colors set indirectly, by specifying
+"position in cmap1 space" -- a floating point number from 0 to 1 (previous
+to that a mapping between position and color must have been specified).
+This scheme has the advantage that you can take advantage of as many or
+few colors as the output device supports.  For example, with postscript
+which supports arbitrarily many colors (the printer itself is another
+story), you can get 256 different colors, because that's as many as I
+currently provide storage for.  On X-windows with 8 plane displays I get a
+lot less with a shared colormap (custom colormap support is almost done),
+maybe around 50-100, depending on window manager.  And this scheme is even
+useful on as few as 16 colors, as is commonly available (Tek 4107
+emulation is fairly common on the PC, Mac, and Amiga).  You do so by
+limiting the number of colors in cmap0, leaving most for use in cmap1.
+plshade() function enhanced to work with either color map -- see example
+program x16c for a demonstration.  
+
+If at all possible, try to play with x16c using the TK or DP driver --
+modifying the color map interactively is simply wonderful.  Especially try
+modifying cmap1, and then loading in the alternate palettes cmap1b.pal and
+cmap1c.pal (cmap1a.pal is the default), and play with it; you will get a
+much better idea how it works while I get around to documenting it!
+
+
+- Revamped Tek drivers, added explicit support for: Versaterm (Mac), and
+VLT (Amiga).  [explicit mskermit(DOS) support was added in the last
+release] Tek4107 driver improved to actually work on a real tek 4107
+(thanks to Paul Kirschner).  Commands to set color palette now are sent
+from PLplot.
+
+
+- Postscript output behaves better with ghostview -- it actually
+backspaces correctly (hey hey, finally).
+
+
+- X driver: lots of changes to support color map1 and custom color
+maps.  Right now does NOT use a custom color map by default since I didn't
+think it was quite ready for the big time, especially as part of the
+TK/DP driver.  There are some internal settings the adventurous can
+play with.  Function added for capturing mouse events added (thanks to
+Radey Shouman); this soon should lead to a way of returning world
+coordinates at the mouse position.
+
+
+- Improved DOS driver support (see Changes.log and the drivers)
+
+
+- All source files handling API: replaced call to plexit() on simple
+(recoverable) errors with simply printing the error message (via
+plabort()) and returning.  Should help avoid loss of computer time in some
+critical circumstances (during a long batch run, for example).
+
+
+- behavior of exit handler changed to be more useful for users who want 
+greater control of execution.
+
+
+- plus lots of bug fixes, memory leaks plugged, compilation warnings
+eliminated, etc.
+
