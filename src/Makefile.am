@@ -56,7 +56,9 @@ AM_CPPFLAGS = $(FREETYPEINCCMD) $(INCLTDL)
 libplplot@LIB_TAG@_la_SOURCES  = $(sources)
 libplplot@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(FREETYPELIBCMD) $(CSALIBS) $(NNLIBS) -lm
 if !enable_dyndrivers
-libdrv = ../drivers/libplplotdrv.la
+libplplot@LIB_TAG@_la_LIBADD = $(top_builddir)/drivers/libplplotdrv.la
+else
+libplplot@LIB_TAG@_la_LIBADD = $(LIBLTDL)
 endif
-libplplot@LIB_TAG@_la_LIBADD  = $(LIBLTDL) $(libdrv)
+
 
