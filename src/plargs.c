@@ -742,7 +742,7 @@ plResetOpts(void)
 \*--------------------------------------------------------------------------*/
 
 int
-plparseopts(int *p_argc, char **argv, PLINT mode)
+c_plparseopts(int *p_argc, char **argv, PLINT mode)
 {
     char **argsave, **argend;
     int	i, myargc, status = 0;
