@@ -1,9 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.14  1993/04/26 19:57:48  mjl
-   Fixes to allow (once again) output to stdout and plrender to function as
-   a filter.  A type flag was added to handle file vs stream differences.
+   Revision 1.15  1993/07/01 22:00:51  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+   now start with "pl"; device driver functions start with "plD_".  PDF
+   functions start with "pdf_".
 
+ * Revision 1.14  1993/04/26  19:57:48  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+ *
  * Revision 1.13  1993/03/18  07:05:17  mjl
  * Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
  * driver and renderer.  These are really not necessary when a metafile is
@@ -33,9 +39,9 @@
  * Changed from ftell/fseek to fgetpos/fsetpos.
  *
  * Revision 1.6  1993/02/22  23:11:01  mjl
- * Eliminated the gradv() driver calls, as these were made obsolete by
+ * Eliminated the plP_adv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
  *
  * Revision 1.5  1993/01/23  05:41:50  mjl
  * Changes to support new color model, polylines, and event handler support
@@ -80,7 +86,7 @@
 */
 #ifdef PLMETA
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -116,13 +122,13 @@ static PLDev *dev = &device;
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
-* plm_init()
+* plD_init_plm()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-plm_init(PLStream *pls)
+plD_init_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) INITIALIZE;
 
@@ -158,8 +164,8 @@ plm_init(PLStream *pls)
     if (pls->pscale)
 	dev->pxly = dev->pxlx * pls->aspect;
 */
-    setpxl(dev->pxlx, dev->pxly);
-    setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+    plP_setpxl(dev->pxlx, dev->pxly);
+    plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
 /* Write Metafile header. */
 
@@ -167,17 +173,17 @@ plm_init(PLStream *pls)
 
 /* Write initialization command. */
 
-    plm_wr(write_1byte(pls->OutFile, c));
+    plm_wr(pdf_wr_1byte(pls->OutFile, c));
 }
 
 /*----------------------------------------------------------------------*\
-* plm_line()
+* plD_line_plm()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-plm_line(PLStream *pls, short x1, short y1, short x2, short y2)
+plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
 {
     U_CHAR c;
     U_SHORT xy[4];
@@ -213,24 +219,24 @@ plm_line(PLStream *pls, short x1, short y1, short x2, short y2)
     if (x1 == dev->xold && y1 == dev->yold) {
 
 	c = (U_CHAR) LINETO;
-	plm_wr(write_1byte(pls->OutFile, c));
+	plm_wr(pdf_wr_1byte(pls->OutFile, c));
 	pls->bytecnt++;
 
 	xy[0] = x2;
 	xy[1] = y2;
-	plm_wr(write_2nbytes(pls->OutFile, xy, 2));
+	plm_wr(pdf_wr_2nbytes(pls->OutFile, xy, 2));
 	pls->bytecnt += 4;
     }
     else {
 	c = (U_CHAR) LINE;
-	plm_wr(write_1byte(pls->OutFile, c));
+	plm_wr(pdf_wr_1byte(pls->OutFile, c));
 	pls->bytecnt++;
 
 	xy[0] = x1;
 	xy[1] = y1;
 	xy[2] = x2;
 	xy[3] = y2;
-	plm_wr(write_2nbytes(pls->OutFile, xy, 4));
+	plm_wr(pdf_wr_2nbytes(pls->OutFile, xy, 4));
 	pls->bytecnt += 8;
     }
     dev->xold = x2;
@@ -238,24 +244,24 @@ plm_line(PLStream *pls, short x1, short y1, short x2, short y2)
 }
 
 /*----------------------------------------------------------------------*\
-* plm_polyline()
+* plD_polyline_plm()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-plm_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_plm(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     U_CHAR c = (U_CHAR) POLYLINE;
 
-    plm_wr(write_1byte(pls->OutFile, c));
+    plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
 
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) npts));
+    plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) npts));
     pls->bytecnt += 2;
 
-    plm_wr(write_2nbytes(pls->OutFile, (U_SHORT *) xa, npts));
-    plm_wr(write_2nbytes(pls->OutFile, (U_SHORT *) ya, npts));
+    plm_wr(pdf_wr_2nbytes(pls->OutFile, (U_SHORT *) xa, npts));
+    plm_wr(pdf_wr_2nbytes(pls->OutFile, (U_SHORT *) ya, npts));
     pls->bytecnt += 4 * npts;
 
     dev->xold = xa[npts - 1];
@@ -263,22 +269,22 @@ plm_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* plm_eop()
+* plD_eop_plm()
 *
 * End of page.
 \*----------------------------------------------------------------------*/
 
 void
-plm_eop(PLStream *pls)
+plD_eop_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) CLEAR;
 
-    plm_wr(write_1byte(pls->OutFile, c));
+    plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
 }
 
 /*----------------------------------------------------------------------*\
-* plm_bop()
+* plD_bop_plm()
 *
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
@@ -286,7 +292,7 @@ plm_eop(PLStream *pls)
 static long bytecnt_last;
 
 void
-plm_bop(PLStream *pls)
+plD_bop_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) PAGE;
     U_LONG foo;
@@ -298,7 +304,7 @@ plm_bop(PLStream *pls)
     fflush(pls->OutFile);
     if (pls->output_type == 0) {
 	if (pl_fgetpos(pls->OutFile, &cp_offset))
-	    plexit("plm_bop: fgetpos call failed");
+	    plexit("plD_bop_plm: fgetpos call failed");
     }
 
 /* Seek back to previous page header and write forward byte offset. */
@@ -310,28 +316,28 @@ plm_bop(PLStream *pls)
 
 	fwbyte_offset = pls->lp_offset + 7;
 	if (pl_fsetpos(pls->OutFile, &fwbyte_offset))
-	    plexit("plm_bop: fsetpos call failed");
+	    plexit("plD_bop_plm: fsetpos call failed");
 
 #ifdef DEBUG
 	if (pl_fgetpos(pls->OutFile, &fwbyte_offset))
-	    plexit("plm_bop: fgetpos call failed");
+	    plexit("plD_bop_plm: fgetpos call failed");
 
 	printf("Now at: %d, to write: %d\n", fwbyte_offset, cp_offset);
 #endif
 
-	plm_wr(write_4bytes(pls->OutFile, (U_LONG) cp_offset));
+	plm_wr(pdf_wr_4bytes(pls->OutFile, (U_LONG) cp_offset));
 	fflush(pls->OutFile);
 
 #ifdef DEBUG
 	if (pl_fsetpos(pls->OutFile, &fwbyte_offset))
-	    plexit("plm_bop: fsetpos call failed");
+	    plexit("plD_bop_plm: fsetpos call failed");
 
-	plm_rd(read_4bytes(pls->OutFile, &foo));
+	plm_rd(pdf_rd_4bytes(pls->OutFile, &foo));
 	printf("Value read as: %d\n", foo);
 #endif
 
 	if (pl_fsetpos(pls->OutFile, &cp_offset))
-	    plexit("plm_bop: fsetpos call failed");
+	    plexit("plD_bop_plm: fsetpos call failed");
     }
 
 /* Start next family file if necessary. */
@@ -343,27 +349,27 @@ plm_bop(PLStream *pls)
     pls->page++;
     bwbyte_offset = pls->lp_offset;
 
-    plm_wr(write_1byte(pls->OutFile, c));
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) pls->page));
-    plm_wr(write_4bytes(pls->OutFile, (U_LONG) bwbyte_offset));
-    plm_wr(write_4bytes(pls->OutFile, (U_LONG) 0));
+    plm_wr(pdf_wr_1byte(pls->OutFile, c));
+    plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) pls->page));
+    plm_wr(pdf_wr_4bytes(pls->OutFile, (U_LONG) bwbyte_offset));
+    plm_wr(pdf_wr_4bytes(pls->OutFile, (U_LONG) 0));
 
     pls->bytecnt += 11;
     pls->lp_offset = cp_offset;
 }
 
 /*----------------------------------------------------------------------*\
-* plm_tidy()
+* plD_tidy_plm()
 *
 * Close graphics file
 \*----------------------------------------------------------------------*/
 
 void
-plm_tidy(PLStream *pls)
+plD_tidy_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) CLOSE;
 
-    plm_wr(write_1byte(pls->OutFile, c));
+    plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
 
     fclose(pls->OutFile);
@@ -373,72 +379,71 @@ plm_tidy(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plm_color()
+* plD_color_plm()
 *
 * Set pen color.
 \*----------------------------------------------------------------------*/
 
 void
-plm_color(PLStream *pls)
+plD_color_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) NEW_COLOR;
 
-    plm_wr(write_1byte(pls->OutFile, c));
+    plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
 
-    plm_wr(write_1byte(pls->OutFile, (U_CHAR) pls->icol0));
+    plm_wr(pdf_wr_1byte(pls->OutFile, (U_CHAR) pls->icol0));
     pls->bytecnt++;
 
     if (pls->icol0 == PL_RGB_COLOR) {
-	plm_wr(write_1byte(pls->OutFile, pls->curcolor.r));
-	plm_wr(write_1byte(pls->OutFile, pls->curcolor.g));
-	plm_wr(write_1byte(pls->OutFile, pls->curcolor.b));
+	plm_wr(pdf_wr_1byte(pls->OutFile, pls->curcolor.r));
+	plm_wr(pdf_wr_1byte(pls->OutFile, pls->curcolor.g));
+	plm_wr(pdf_wr_1byte(pls->OutFile, pls->curcolor.b));
     }
-
 }
 
 /*----------------------------------------------------------------------*\
-* plm_text()
+* plD_text_plm()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
 void
-plm_text(PLStream *pls)
+plD_text_plm(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* plm_graph()
+* plD_graph_plm()
 *
 * Switch to graphics mode.
 \*----------------------------------------------------------------------*/
 
 void
-plm_graph(PLStream *pls)
+plD_graph_plm(PLStream *pls)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* plm_width()
+* plD_width_plm()
 *
 * Set pen width.
 \*----------------------------------------------------------------------*/
 
 void
-plm_width(PLStream *pls)
+plD_width_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) NEW_WIDTH;
 
-    plm_wr(write_1byte(pls->OutFile, c));
+    plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
 
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (pls->width)));
+    plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->width)));
     pls->bytecnt += 2;
 }
 
 /*----------------------------------------------------------------------*\
-* plm_esc()
+* plD_esc_plm()
 *
 * Escape function.  Note that any data written must be in device
 * independent form to maintain the transportability of the metafile.
@@ -449,25 +454,25 @@ plm_width(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void
-plm_esc(PLStream *pls, PLINT op, char *ptr)
+plD_esc_plm(PLStream *pls, PLINT op, void *ptr)
 {
     U_CHAR c = (U_CHAR) ESCAPE;
     U_CHAR opc;
 
-    plm_wr(write_1byte(pls->OutFile, c));
+    plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
 
     opc = (U_CHAR) op;
-    plm_wr(write_1byte(pls->OutFile, opc));
+    plm_wr(pdf_wr_1byte(pls->OutFile, opc));
     pls->bytecnt++;
 
     switch (op) {
 
       case PL_SET_LPB:
-	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpxmi)));
-	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpxma)));
-	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpymi)));
-	plm_wr(write_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpyma)));
+	plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpxmi)));
+	plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpxma)));
+	plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpymi)));
+	plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpyma)));
 	break;
     }
 }
@@ -481,37 +486,37 @@ plm_esc(PLStream *pls, PLINT op, char *ptr)
 static void
 WriteHeader(PLStream *pls)
 {
-    plm_wr(write_header(pls->OutFile, PLMETA_HEADER));
-    plm_wr(write_header(pls->OutFile, PLMETA_VERSION));
+    plm_wr(pdf_wr_header(pls->OutFile, PLMETA_HEADER));
+    plm_wr(pdf_wr_header(pls->OutFile, PLMETA_VERSION));
 
 /* Write initialization info.  Tag via strings to make backward
    compatibility with old metafiles as easy as possible. */
 
-    plm_wr(write_header(pls->OutFile, "xmin"));
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) dev->xmin));
+    plm_wr(pdf_wr_header(pls->OutFile, "xmin"));
+    plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) dev->xmin));
 
-    plm_wr(write_header(pls->OutFile, "xmax"));
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) dev->xmax));
+    plm_wr(pdf_wr_header(pls->OutFile, "xmax"));
+    plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) dev->xmax));
 
-    plm_wr(write_header(pls->OutFile, "ymin"));
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) dev->ymin));
+    plm_wr(pdf_wr_header(pls->OutFile, "ymin"));
+    plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) dev->ymin));
 
-    plm_wr(write_header(pls->OutFile, "ymax"));
-    plm_wr(write_2bytes(pls->OutFile, (U_SHORT) dev->ymax));
+    plm_wr(pdf_wr_header(pls->OutFile, "ymax"));
+    plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) dev->ymax));
 
-    plm_wr(write_header(pls->OutFile, "pxlx"));
-    plm_wr(write_ieeef(pls->OutFile, (float) dev->pxlx));
+    plm_wr(pdf_wr_header(pls->OutFile, "pxlx"));
+    plm_wr(pdf_wr_ieeef(pls->OutFile, (float) dev->pxlx));
 
-    plm_wr(write_header(pls->OutFile, "pxly"));
-    plm_wr(write_ieeef(pls->OutFile, (float) dev->pxly));
+    plm_wr(pdf_wr_header(pls->OutFile, "pxly"));
+    plm_wr(pdf_wr_ieeef(pls->OutFile, (float) dev->pxly));
 
-    plm_wr(write_header(pls->OutFile, "aspect"));
-    plm_wr(write_ieeef(pls->OutFile, (float) pls->aspect));
+    plm_wr(pdf_wr_header(pls->OutFile, "aspect"));
+    plm_wr(pdf_wr_ieeef(pls->OutFile, (float) pls->aspect));
 
-    plm_wr(write_header(pls->OutFile, "orient"));
-    plm_wr(write_1byte(pls->OutFile, (U_CHAR) (pls->orient)));
+    plm_wr(pdf_wr_header(pls->OutFile, "orient"));
+    plm_wr(pdf_wr_1byte(pls->OutFile, (U_CHAR) (pls->orient)));
 
-    plm_wr(write_header(pls->OutFile, ""));
+    plm_wr(pdf_wr_header(pls->OutFile, ""));
 }
 
 #else
