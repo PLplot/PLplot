@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1993/12/21 10:35:46  mjl
+ * Revision 1.22  1994/01/15 17:35:09  mjl
+ * Added new variables for use in Tcl/TK/DP driver: server_name, server_host,
+ * server_port.
+ *
+ * Revision 1.21  1993/12/21  10:35:46  mjl
  * Added flag to be set by driver to indicate whether TK or DP style
  * communication is being used.
  *
@@ -109,13 +113,13 @@ typedef struct {
 * The quantities in each stream are as follows:
 *
 * ipls		Stream number
-* ipld		Device number
-* DevName	Device name
 *
+* DevName	Device name
 * OutFile	Output file pointer
 * FamilyName	Output family name (i.e. stem)
 * FileName	Output file name
 * output_type	0 for file, 1 for stream
+* pdfs		PDF stream pointer, for filtering output data through PDF.
 *
 * fileset	Set if file name or file pointer was specified
 *
@@ -177,13 +181,13 @@ typedef struct {
 * only a keyboard event handler is supported.
 *
 * KeyEH		void*	Keyboard event handler
-* KeyEH_data	void*	pointer to client data to pass
+* KeyEH_data	void*	Pointer to client data to pass
 *
 ***********************************************************************
 *
 * Stuff used by Xlib driver
 *
-* geometry	char*	window geometry (malloc'ed)
+* geometry	char*	Window geometry (malloc'ed)
 * window_id	long	X-window window ID
 * nopixmap	int	Set if you want to forbid allocation of pixmaps
 *
@@ -191,11 +195,14 @@ typedef struct {
 *
 * These are for support of the TK driver.
 *
-* plserver	char*	name of server
-* plwindow	char*	name of reference server window (malloc'ed)
+* server_name	char*	Main window name of server
+* server_host	char*	Name of host to run server on
+* server_port	char*	Port to talk to server on
+* plserver	char*	Name of server
+* plwindow	char*	Name of reference server window (malloc'ed)
 * tcl_cmd	char*	TCL command(s) to eval on startup
 * auto_path	char*	Additional directories to autoload
-* bufmax	int	number of bytes sent before output buffer is flushed
+* bufmax	int	Number of bytes sent before output buffer is flushed
 * dp		int	Use Tcl-DP for communication, if set
 *
 ***********************************************************************
@@ -350,10 +357,11 @@ typedef struct {
 \*----------------------------------------------------------------------*/
 
 typedef struct {
-    PLINT ipls, ipld;
+    PLINT ipls;
     char DevName[80];
 
     FILE *OutFile;
+    PDFstrm *pdfs;
     char *FamilyName, *FileName;
     int  output_type;
 
@@ -388,10 +396,9 @@ typedef struct {
 
 /* Stuff used by TK driver */
 
-    char *plserver;
-    char *plwindow;
-    char *tcl_cmd;
-    char *auto_path;
+    char *server_name, *server_host, *server_port;
+    char *plserver, *plwindow;
+    char *tcl_cmd, *auto_path;
     int  bufmax, dp;
 
 /* Driver-specific data */
