@@ -947,11 +947,62 @@ if test "$with_pthreads" = "yes" -a "$enable_xwin" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# C(XX)FLAGS to use ieee because of NaN issues in libcsironn and libcsirocsa
+# this must be done prior to the NaN awarenedd test that follows
+# ----------------------------------------------------------------------------
+
+if test "$with_qhull" = "yes" -o "$with_csa" = "yes"; then
+    case "$host_cpu" in
+	i*86 )
+            CFLAGS="$CFLAGS -mieee-fp"
+            CXXFLAGS="$CXXFLAGS -mieee-fp"
+	;;
+	alpha* )
+            if test "$GCC" = yes; then
+                CFLAGS="$CFLAGS -mieee"
+                CXXFLAGS="$CXXFLAGS -mieee"
+            else
+		CFLAGS="$CFLAGS -ieee"
+                CXXFLAGS="$CXXFLAGS -ieee"
+            fi
+	;;
+    esac
+fi
+
+# ----------------------------------------------------------------------------
+# Check for NaN awareness
+# this must be done prior to the following csa and qhull test
+# ----------------------------------------------------------------------------
+
+# make test on simple NaN operations
+
+AC_RUN_IFELSE(
+	[AC_LANG_PROGRAM([[#include <stdio.h>
+#if defined(__GNUC__)
+static const double NaN = 0.0 / 0.0;
+#elif defined(BIG_ENDIAN)
+static const long long lNaN = 0x7fffffffffffffff;
+#define NaN (*(double*)&lNaN)
+#else
+static const long long lNaN = 0xfff8000000000000;
+#define NaN (*(double*)&lNaN)
+#endif]],
+[[double x = NaN;
+if (x != x) return 0;
+else return 1;]])] ,
+[with_nan="yes"],[with_nan="no"])
+
+if test "$with_nan" = "no"; then
+	AC_MSG_WARN([System is not NaN aware, setting with_csa=no and with_qhull=no])
+	with_csa="no";
+	with_qhull="no";
+fi
+
+# ----------------------------------------------------------------------------
 # Check for csa
 # ----------------------------------------------------------------------------
 
 if test "$with_csa" = "yes"; then
-#make test on simple NaN operations (nan+1. e.g.)
 	AC_DEFINE(WITH_CSA, [], [Define if csa is desired])
 	CSALIBS='$(top_builddir)/lib/csa/libcsirocsa.la'
 fi
@@ -961,36 +1012,10 @@ fi
 # ----------------------------------------------------------------------------
 
 if test "$with_qhull" = "yes"; then
-# if the above csa test fails, don't use Qhull, as nn can't be used!
     AC_CHECK_LIB(qhull, qh_new_qhull, [
         AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
         QHULLLIBS="-lqhull"
         NNLIBS='$(top_builddir)/lib/nn/libcsironn.la' ], [ with_qhull="no" ])
-fi
-
-# ----------------------------------------------------------------------------
-# CFLAGS to use ieee because of NaN issues in libcsironn and libcsirocsa
-# ----------------------------------------------------------------------------
-
-# (Note: Setting the CXXFLAGS variable below seems to be necessary for
-# compiling the C++ examples on the Alpha architecture.)
-
-if test "$with_qhull" = "yes" -o "$with_csa" = "yes"; then
-    case "$host_cpu" in
-	i*86 )
-            CFLAGS="$CFLAGS -mieee-fp"
-	;;
-	alpha* )
-            if test "$GCC" = yes; then
-                CFLAGS="$CFLAGS -mieee"
-                CXXFLAGS="$CXXFLAGS -mieee"
-            else
-                CFLAGS="$CFLAGS -ieee"
-                CXXFLAGS="$CXXFLAGS -ieee"
-            fi
-	;;
-    esac
-
 fi
 
 # ----------------------------------------------------------------------------
