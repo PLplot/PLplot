@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.12  1994/04/25 18:57:07  mjl
+# Revision 1.13  1994/05/07 03:11:35  mjl
+# Ripped out code dependent on tk3.2 since it finally started to get in the
+# way.  Also improved some documentation.
+#
+# Revision 1.12  1994/04/25  18:57:07  mjl
 # Removed the rename of open since now we need it for reading/writing
 # palette files (I hope everyone's security is up to par by now).  Deleted
 # options menu -- now these are associated with the plframe widget.  Added
@@ -48,8 +52,6 @@
 
 proc plserver_init {} {
 
-    global cascade_arrow tkVersion
-
 # Set up configuration options.
 # The first is to hold default values of everything, the second is for
 # user customization.  See pldefaults.tcl for more info.
@@ -57,14 +59,10 @@ proc plserver_init {} {
     pldefaults
     plconfig
 
-# Hack to plug TK's gaping security hole, just in case security has been
-# compromised in some way.  This is a minimal set.
-#
-# It is necessary to autoload or source all the files you want procs from
-# before this point is reached.
+# I refuse to allow exec's, ever.
+# Open's have to remain, however, to read/write palette info.
 
     rename exec {}
-#    rename open {}
 
 # Create the main window
 # Use the default window title.
@@ -85,14 +83,6 @@ proc plserver_init {} {
     }
     wm geometry . $geometry
 
-# Set a variable to fake menu cascade arrows for TK 3.2 and earlier
-
-    if { $tkVersion < 3.3 } { 
-	set cascade_arrow "=>" 
-    } else {
-	set cascade_arrow "" 
-    }
-    
 # Create the window for the menu bar
 
     frame .menu -relief raised -borderwidth 1
