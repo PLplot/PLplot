@@ -34,14 +34,16 @@ SOVERSION	= @SOVERSION@
 LIBVERSION	:= $(shell ./version)
 
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE).so.$(SOVERSION)
 SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+SONAME		= $(PLLIB_BASE).so.$(SOVERSION)
 
 
 PLLIBS = $(PLLIB_AR) $(PLLIB_SO)
 MATLIBS = $(MATLIB_AR) $(MATLIB_SO)
 CXXLIBS = $(CXXLIB_AR) $(CXXLIB_SO)
 
-libs:	$(PLLIBS) $(MATLIBS) $(CXXLIBS)
+libs:	$(MATLIBS) $(PLLIBS) $(CXXLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
 	-$(RM) $(PLLIB_AR)
@@ -78,12 +80,14 @@ $(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO).$(LIBVERSION) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) stupidtk.o
+		$(LIB_OBJS) stupidtk.o -L.. -lMatrix $(LDC_LIBS)
 	ln -sf $(PLLIB_SO).$(LIBVERSION) $(SONAME)
-	ln -sf $(SONAME) $(PLLIB_BASE)$(LIB_TAG).so
+	ln -sf $(SONAME) $(PLLIB_BASE).so
 	echo $(LIBVERSION) > version.built
 	./version inc
 	@echo ""
+
+#	ln -sf $(SONAME) $(PLLIB_BASE)$(LIB_TAG).so
 
 $(MATLIB_SO): $(MAT_OBJS)
 	-$(RM) $(MATLIB_SO)
