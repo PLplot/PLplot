@@ -39,22 +39,35 @@ plplot_octave.h: plplot_octave_org.h Makefile
 # Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
 # also still works on gcc 2.95
 plplot_octave.cc tmp_stub: plplot_octave.h
-	@MATWRAP@ -language octave plplot_octave.h -o plplot_octave.cc \
+	$(MATWRAP) -language octave plplot_octave.h -o plplot_octave.cc \
 	-stub tmp_stub
 	mv -f plplot_octave.cc tmp_plplot_octave.cc
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
+
 # 'mkoctfile' does not accept -rpath, use LD_RUN_PATH
-plplot_octave.oct: plplot_octave.o
+if mkoctfile_accepts_c_flag
+MKOCTFILE_SOURCE = plplot_octave.o
 
 plplot_octave.o: plplot_octave.cc
-if octave_install_local
-	LD_RUN_PATH=`pwd`/../../src/.libs/ @MKOCTFILE@ -v -I. \
-	plplot_octave.o -L../../src/.libs $(octave_libs)
+	$(MKOCTFILE) -v -I. --compile plplot_octave.cc
+
 else
-	LD_RUN_PATH=$(libdir)  @MKOCTFILE@ -v -I. \
-	plplot_octave.o -L$(libdir) $(octave_libs)
-fi
+MKOCTFILE_SOURCE = plplot_octave.cc
+endif
+
+plplot_octave.oct: $(MKOCTFILE_SOURCE)
+	LD_RUN_PATH=`pwd`/../../src/.libs $(MKOCTFILE) -v -I. \
+	   $(MKOCTFILE_SOURCE) -L../../src/.libs $(octave_libs)
+
+install-exec-local: plplot_octave-libdir.oct
+	$(mkinstalldirs) $(DESTDIR)$(octavesharedir)
+	$(INSTALL) plplot_octave-libdir.oct \
+	  $(DESTDIR)$(octavesharedir)/plplot_octave.oct
+
+plplot_octave-libdir.oct: $(MKOCTFILE_SOURCE)
+	LD_RUN_PATH=$(libdir) $(MKOCTFILE) -v -I. $(MKOCTFILE_SOURCE) \
+	  -o plplot_octave-libdir.oct -L$(libdir) $(octave_libs)
 
 octavesharedir = $(OCTAVE_OCT_DIR)
 
@@ -107,7 +120,7 @@ doc_DATA =       \
 	  cp $< $@
 
 CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
-	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave.oct \
+	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave*.oct \
 	plplot_stub.m missing_help $(doc_DATA)
 
 #enable_octave

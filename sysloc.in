@@ -732,8 +732,12 @@ if test "$enable_octave" = "yes"; then
         AC_CHECK_PROG(has_mkoctfile, $MKOCTFILE, yes, no)
         if test "$has_mkoctfile" = "no"; then
             AC_MSG_RESULT([warning: $MKOCTFILE not found, disabling Octave support.]);
-            AC_SUBST(MKOCTFILE)
             enable_octave=no;
+        else
+            check_mkoctfile_compile=`$MKOCTFILE --help 2>/dev/null \
+                | sed 's/--compile// ; t END ; d ; : END q'`
+            AM_CONDITIONAL(mkoctfile_accepts_c_flag,
+                [test -n "$check_mkoctfile_compile"])
         fi
     fi
 
@@ -774,11 +778,14 @@ EOF`])
 	OCTAVE_M_DIR=${prefix}/`echo $OCTAVE_M_DIR \
                                 | sed "s:$OCTAVE_PREFIX/*::"`
 
-        AC_SUBST(MATWRAP)
-        AC_SUBST(OCTAVE_OCT_DIR)
-        AC_SUBST(OCTAVE_M_DIR)
-        AC_SUBST(PLPLOT_OCTAVE_DIR)
     fi
+
+    AC_SUBST(MATWRAP)
+    AC_SUBST(MKOCTFILE)
+    AC_SUBST(OCTAVE_OCT_DIR)
+    AC_SUBST(OCTAVE_M_DIR)
+    AC_SUBST(PLPLOT_OCTAVE_DIR)
+
 fi
 
 
