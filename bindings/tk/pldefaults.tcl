@@ -248,7 +248,8 @@ proc toggle_menus {w} {
 
 proc plw_moveCursor {w x y xd yd} {
     # If not an activeplot, then return.
-    if {![$w cget -activeplot]} {return}
+    if {[catch {set activeplot [$w cget -activeplot]}]} {return}
+    if {!$activeplot} {return}
     incr x $xd
     incr y $yd
     # Move the cursor as directed.
