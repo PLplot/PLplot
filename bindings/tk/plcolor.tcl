@@ -1,7 +1,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.8  1995/06/01 21:22:37  mjl
+# Revision 1.9  1995/09/01 20:15:23  mjl
+# Removed the +/- buttons to clean up the cmap1 manipulator under Tk 4.0 --
+# this functionality is now available via key bindings.
+#
+# Revision 1.8  1995/06/01  21:22:37  mjl
 # Changed to use new Palette file selector.
 #
 # Revision 1.7  1995/05/06  17:08:14  mjl
@@ -658,16 +662,13 @@ class ColorPalette1 {
 	label $w.lab.rev -relief flat -text "Reverse"
 
 	pack append $w.lab \
-	    $w.lab.color \
-	    {left padx 50}
+	    $w.lab.color {left padx 150}
 
 	pack append $w.lab \
-	    $w.lab.rev \
-	    {right fillx}
+	    $w.lab.pos {left padx 120}
 
 	pack append $w.lab \
-	    $w.lab.pos \
-	    {right padx 200}
+	    $w.lab.rev {right padx 20}
 
 	set cmap1 [$plot.plwin cmd plgcmap1]
 	set ncol1 [lindex $cmap1 0]
@@ -684,27 +685,13 @@ class ColorPalette1 {
 		-orient horizontal \
 		-command "ColorPalette1:posChanged $this $i $plot"
 
-	# I only decorate the movable sliders (i.e. not endpoints) by +/-
-	# buttons.  But the sliders themselves are a good visual cue as to
-	# what's going on so they get to stay.
+	    pack append $w.l.$i \
+		$w.l.$i.scale "right expand padx 8 pady 4" 
 
-	    if {$i == 0 || $i == $ncol1-1} {
-		pack append $w.l.$i \
-		    $w.l.$i.scale "right expand padx 8 pady 4" 
-	    } else {
-		button $w.l.$i.up -width 2 -text + \
-		    -command "ColorPalette1:inc $this $i 1"
-		button $w.l.$i.down -width 2 -text - \
-		    -command "ColorPalette1:inc $this $i -1"
-
-		pack append $w.l.$i \
-		    $w.l.$i.up "right padx .5c" \
-		    $w.l.$i.scale "right expand padx 8 pady 4" \
-		    $w.l.$i.down "right padx .5c" 
-	    }
 	    pack append $w.l.$i \
 		$w.l.$i.color "right frame e" \
 		$w.l.$i.patch "left padx 4 pady 4 frame w" 
+
 	    pack append $w.l $w.l.$i "top fillx"
 	}
 
@@ -846,7 +833,6 @@ class ColorPalette1 {
 
 	$w.l.$i.color config -text $color
 	$w.l.$i.patch config -background $color
-#	puts stdout "$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)"
 	$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
     }
     method colChanged {data color} {
@@ -857,7 +843,6 @@ class ColorPalette1 {
 
 	$w.l.$i.color config -text $color
 	$w.l.$i.patch config -background $color
-#	puts stdout "$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)"
 	$plot.plwin cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
     }
     method setcmap {plot} {
@@ -867,7 +852,6 @@ class ColorPalette1 {
 	    set cmap1 \
 		"$cmap1 $plcmap1_col($i) $plcmap1_pos($i) $plcmap1_rev($i)"
 	}
-#	puts stdout "$plot.plwin cmd plscmap1 $ncol1 $cmap1"
 	$plot.plwin cmd plscmap1 $ncol1 $cmap1
     }
     method getColor {i} {
