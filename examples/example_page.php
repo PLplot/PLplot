@@ -7,7 +7,7 @@ function demo_page ($demo, $nfigs, $language) {
   $demo_str = sprintf ("%02d", $demo);
   $demo_dir = "../examples-data/demo$demo_str";
   $demos = array (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-                  15, 16, 17, 18, 19, 20, 21, 22);
+                  15, 16, 18, 19, 20, 21, 22);
 
   print <<<END
 <div ALIGN="CENTER"><b>Select to see the example $demo source code</b></div>
@@ -98,7 +98,7 @@ END;
   foreach ($demos as $i) {
     $demo_str = sprintf ("%02d", $i);
     if ($i != $demo) {
-      echo "<A HREF=\"demo$demo_str.php\">x$demo_str</A>\n";
+      echo "<A HREF=\"demo$demo_str.php?lbind=$language\">x$demo_str</A>\n";
     } else {
       echo "<b>x$demo_str\n</b>";
     }
