@@ -368,7 +368,10 @@ if test "$enable_itk" = "yes"; then
 fi
 if test "$enable_tk" = "yes"; then
     ADD_TO_LIBS($TKLIBDIR, $TKLIBSTR, LIBS, LIBPATH)
+    #needed in Linux case (and SCO eventually?)
+    STUPIDTK_OBJ=stupidtk.o
 fi
+AC_SUBST(STUPIDTK_OBJ)
 if test "$enable_itcl" = "yes"; then
     ADD_TO_LIBS($ITCLLIBDIR, $ITCLLIBSTR, LIBS, LIBPATH)
 fi
