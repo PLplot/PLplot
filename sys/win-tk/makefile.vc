@@ -40,7 +40,7 @@ DEBUGDEFINES = -DUSE_TCLALLOC=0
 DBGX     = d
 !ENDIF
 
-PROJECT = plplot$(DLL_VERSION)$(DBGX)
+PROJECT = plplotter$(DLL_VERSION)$(DBGX)
 
 ROOT    = ..\..
 !IF "$(NODEBUG)" == "1"
@@ -67,7 +67,7 @@ include32	= -I"$(TOOLS32)\include"
 
 TCLLIB  = $(TCL)\lib\tclstub$(TCLVERSION).lib
 TKLIB  = $(TCL)\lib\tkstub$(TCLVERSION).lib
-INSTALLDIR = $(TCL)\lib\plplot$(VERSION)
+INSTALLDIR = $(TCL)\lib\plplotter$(VERSION)
 
 ######################################################################
 # Compile flags
@@ -232,8 +232,18 @@ setup:
 	$(CP) $(GENERICTCLDIR)\*.h plplot
 	$(CP) $(OLDTKDIR)\*.h plplot
 	$(CP) $(GENERICTKDIR)\*.h plplot
-	$(CP) tclIndex $(ROOT)\examples\tcl
 
+install-examples:
+	-@md $(INSTALLDIR)
+	-@md $(INSTALLDIR)\examples
+	-@md $(INSTALLDIR)\examples\tcl
+	-@md $(INSTALLDIR)\examples\tk
+	$(CP) $(ROOT)\examples\tcl\*.tcl $(INSTALLDIR)\examples\tcl
+	$(CP) $(ROOT)\examples\tk\*.tcl $(INSTALLDIR)\examples\tk
+	$(CP) $(ROOT)\examples\tcl\tclIndex $(INSTALLDIR)\examples\tcl
+	$(CP) $(ROOT)\examples\tcl\*.dat $(INSTALLDIR)\examples\tcl
+	$(CP) $(ROOT)\examples\tcl\*.log $(INSTALLDIR)\examples\tcl
+	
 install:	$(PROJECT).dll
 	-@md $(INSTALLDIR)
 	$(CP) $(LIBDIR)\*.map $(INSTALLDIR)

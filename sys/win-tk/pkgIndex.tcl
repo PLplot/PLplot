@@ -1,7 +1,7 @@
 if {[info exists tcl_platform(debug)]} {
-    set file [file join $dir plplot511d[info sharedlibextension]]
+    set file [file join $dir plplotter511d[info sharedlibextension]]
 } else {
-    set file [file join $dir plplot511[info sharedlibextension]]
+    set file [file join $dir plplotter511[info sharedlibextension]]
 }
 
 # This little helper is needed to deal seamlessly with the
