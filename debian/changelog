@@ -1,0 +1,381 @@
+plplot (5.1.0-1.1) unstable; urgency=low
+
+  * Non-Maintainer Upload
+  * Update for python-2.2 (Closes: #159807, #159811, #161569)
+  # reenable plplot-python on all architectures
+  * change Recommends: ghostscript (Closes: #136358)
+  * Depend on autoconf-2.13, since scripts are broken for 2.50
+
+ -- David Schleef <ds@schleef.org>  Fri, 11 Oct 2002 13:25:28 -0700
+
+plplot (5.1.0-1) unstable; urgency=low
+
+  * Non-Maintainer Upload
+  * New upstream version (Closes: #101264)
+  * handle changing of name of libplmatrixd to libtclmatrixd.  Since
+    this library is only used by libplplotd, it is not a ABI change.
+    libtclmatrixd should probably be in a separate directory or linked
+    directly with libplplotd -- this needs to be coordinated with
+    upstream, and may also be moot once this packaged is changed to
+    use loadable modules for the drivers.
+
+ -- David Schleef <ds@schleef.org>  Thu, 15 Aug 2002 18:31:37 -0700
+
+plplot (5.0.2-1.1) unstable; urgency=low
+
+  * NMU
+  * Fix hppa build problems. Closes: #141723
+  * Remove 'potato' from version number.
+
+ -- LaMont Jones <lamont@debian.org>  Sun,  7 Apr 2002 21:22:06 -0600
+
+plplot (5.0.2-0.potato.3.2) unstable; urgency=low
+
+  * Non-Maintainer Upload
+  * debian/control, debian/rules: plplot indirectly Build-Depends
+    on lapack to build python-plplot.  Since lapack is only available
+    on a few architectures, this causes problems building the other
+    packages on all architectures.  Fixed to Build-Depend and build
+    python-plplot only on working architectures.
+
+ -- David Schleef <ds@schleef.org>  Fri, 15 Mar 2002 20:49:18 -0500
+
+plplot (5.0.2-0.potato.3.1) unstable; urgency=low
+
+  * Non-Maintainer Upload
+  * Fix build dependencies (Closes: #92344, #98119, #102014)
+  * cf/syslog.in: backport configure rules for tcl/itcl and python2.1
+    (fixes new build problems)
+  * debian/control: add dependencies to plplot-dev (Closes: #101392)
+  * remove use of {} globbing in debian/rules (Closes: #101259)
+  * debian/changelog: removed emacs settings
+  * debian/control: change the tk/tcl build dependencies to 8.3
+  * debian/*: update for python2.1
+  * debian/control: fix python dependencies to coorespond to policy
+  * debian/control: remove dependency on itk3.1, since it's added by
+    ${shlibs:Depends}
+  * debian/*.shlibs: Added shlibs files
+    Note: the libplmatrix entry in plplot-tcl.shlibs specifies
+    plplot-xwin, but plplot-xwin doesn't actually have the
+    library.  This is ok, since it should only be used by
+    libplplotd.so.
+  * Fixed packages interdependencies and added ${shlibs:Depends}
+    where appropriate
+  * Fixed postinst, prerm scripts to use debhelper
+
+ -- David Schleef <ds@schleef.org>  Sun, 17 Feb 2002 18:51:57 -0800
+
+plplot (5.0.2-0.potato.3) unstable; urgency=low
+
+  * debian/control: Made plplot-common conflict and replace plplot <<
+    5.0.2, because plplot-common took over plplot's FAQ file.  Thanks to
+    Jim LewisMoss <dres@mindspring.com> (closes: #90846).
+  * Removed some useless debian/*.dirs files, particularly
+    plplot-tcl.dirs, which was creating a wrong directory
+    /usr/lib/plplot5.0.1 (!). 
+  * Added more build dependencies, based on the buildd report on Sparc.
+    Also, patched cf/sysloc.in to have configure finding the file tcl.h.
+    Thanks to Ben Collins <bcollins@debian.org> (closes: #91228).
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon, 26 Mar 2001 17:34:01 +0200
+
+plplot (5.0.2-0.potato.2) unstable; urgency=low
+
+  * Removed a extraneous file in the upstream directory.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Thu, 22 Mar 2001 16:47:49 +0100
+
+plplot (5.0.2-0.potato.1) unstable; urgency=low
+
+  * New upstream release.
+  * Backported patch from CVS for using fseek/ftell everywhere to
+    eliminate non-portable behavior (closes: #86512).
+  * Changes in the upstream configuration file for making the installation
+    relocatable.  This will be hopefully integrated upstream in the next
+    release of PLplot, and the Debian diff file will be reduced to files
+    in the debian/ directory.
+  * debian/plplot-doc.doc-base, debian/plplot-doc.files: Added files.
+  * debian/plplot-doc.postinst: Added file for installing info files.
+  * Added html, pdf, ps, and info forms of the PLplot manual to the
+    plplot-doc package.
+  * debian/plplot-dev.files: Added man pages generated from the DocBook
+    API documentation.
+  * debian/rules: Added commands for installing files into the plplot-doc
+    and plplot-dev packages.
+  * debian/control: Make plplot-doc conflict with plplot << 5.  This is
+    because of the info files.
+  * debian/plplot-*.README.Debian: Updated.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Thu, 22 Mar 2001 14:14:35 +0100
+
+plplot (5.0.1-0.potato.5) unstable; urgency=low
+
+  * debian/control: Changed section of plplot-dev to devel (to avoid mail
+    notification sent by dinstall, that overrides my choice).  Made
+    plplot-tcl depend on iwidgets3.1 (which is needed to run example
+    tk02).
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon, 19 Feb 2001 12:29:25 +0100
+
+plplot (5.0.1-0.potato.4) unstable; urgency=low
+
+  * debian/rules: Excluding examples/ dir from list of compressible files
+    by dh_compress.
+    Make x16.py non-executable, since it is lacking the initial #! line.
+    Give explicit -l options for dh_shlibdeps for packages plplot-tcl and
+    plplot-xwin.  This will avoid the wrong dependencies that were being
+    generated.
+  * debian/control: Build-depends on iTcl.  This will make the plplot-tcl
+    package [incr Tcl]-able.  This is needed to run the tk/tk01 and
+    tk/tk04 examples (thanks to Alan Irwin <irwin@beluga.phys.uvic.ca> for
+    pointing this out).  Also, made plplot-tcl depend on itk3.1.
+  * examples/c/plcdemos.h: Removed #definition of PL_DOUBLE, as it is
+    already done by plConfig.h.
+  * cf/sysloc.in: Added /usr/include/itcl3.1/generic to incdirs_default.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Thu, 15 Feb 2001 13:47:16 +0100
+
+plplot (5.0.1-0.potato.3) unstable; urgency=low
+
+  * debian/control: Make plplot-common conflict with older version of
+    plplot.  This makes a smooth upgrade.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Tue, 13 Feb 2001 12:53:09 +0100
+
+plplot (5.0.1-0.potato.2) unstable; urgency=low
+
+  * debian/control: Better descriptions for plplot-c++ and plplot-common
+    (thanks to Alan Irwin <irwin@beluga.phys.uvic.ca>).  Added "Replaces:"
+    fields to plplot-xwin and plplot-tcl.  The dependencies now are
+    simplified thanks to the use of a virtual package plplot-lib.
+  * debian/plplot-doc.files: Removed file.
+  * debian/plplot-dev.files: Addded usr/include.  This will put the header
+    files into plplot-dev (thanks again to Alan).
+  * Created new package plplot-bin with pltek, plpr and plm2gif, which
+    were before in plplot-common.  This was causing circular dependency
+    problems. 
+  * debian/plplot-common.files: Get some files that were wrongly going
+    into the "empty" package plplot.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Tue, 13 Feb 2001 12:21:20 +0100
+
+plplot (5.0.1-0.potato.1) unstable; urgency=low
+
+  * New upstream release.  Starting with version 5.0.0, PLplot entered a
+    new development phase.  The project is now hosted at SourceForge
+    (http://plplot.sourceforge.net) and the current Debian maintainer is
+    also involved with upstream development.  
+  * This release works with potato (hence the release number).
+  * There has been an overall reorganisation of the packages.  There is
+    now a package called plplot-common, containing the data files.
+    plplot-xwin and plplot-tcl are both exclusive and contain the shared
+    libs.  plplot-c++ has the C++ bindings shared lib.  python-plplot is
+    working with Python 1.5 and has been reintroduced.  plplot-doc is for
+    now just a boilerplate package, waiting for the DocBook docs to be
+    introduced in PLplot 5.0.2.
+  * Prompt flush for pltcl is working now (closes: #58273). 
+  * debian/control: 
+    - Upgraded Standards-Version to 3.1.0.  
+    - Added Build-Depends. 
+    - Forced conflict between plplot and plplot-tcl packages.
+    - New descriptions for packages plplot-dev and plplot-doc to reflect
+      the fact that examples go into plplot-dev and plplot-doc is just a
+      placeholder for future inclusion of the documentation in DocBook
+      format. 
+    - Updated URL location of the PLplpot website.
+    - Reintroduced entry for python-plplot.  Updated its dependency on
+      plplot-tcl. 
+  * debian/postinst: Place "exit 0" at the right place, allowing debhelper
+    added code to be executed (closes: #77997).  Also, removed code for
+    installing info manual.  In the future, this will go in pakcage
+    plplot-doc. 
+  * debian/rules: Major rewrite to reflect the new features of upstream
+    build and install.  The main novelty here is the capability of
+    doing make install with another $prefix than that used for building.
+  * debian/*.{docs,files}: Heavily modified to reflect the new upstream
+    version.
+  * debian/control-python, debian/fix-tk-path.pl, debian/postrm,
+    debian/python-exec-header, debian/python-plplot.postinst.debhelper,
+    debian/python-plplot.prerm.debhelper: Removed files. 
+  * debian/plplot-980407-plplot-980407-new.patch: Removed this obsolete
+    file. 
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon, 12 Feb 2001 16:51:09 +0100
+
+plplot (4.99j-11) frozen unstable; urgency=low
+
+  * Added --disable-linuxvga to configure options fixing an important bug
+    report (closes: #65216).
+  * The lib*tk files are moved to the right package now (plplot-tcl).
+    This fixes the unnecessary dependency of the bare library package
+    (plplot) on the TCl/Tk libraries.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Wed,  7 Jun 2000 18:00:18 +0200
+
+plplot (4.99j-10) unstable; urgency=low
+
+  * debian/rules: 
+    - Using option --without-f2c with ./configure.  This should avoid the
+      build problems when the package f2c (which provides /usr/bin/fc) is 
+      installed (closes: #30944). 
+    - Erase empty dir usr/share/doc/examples after dh_movefiles.  This
+      prevents the plplot from having junk in it.
+  * debian/control: Excluded problematic package python-plplot.  Created
+    file debian/control-pyhton for easy reversal in the future (closes:
+    #33150).
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon,  8 Nov 1999 12:17:27 +0100
+
+plplot (4.99j-9) unstable; urgency=low
+
+  * Added "#define PLPLOT_DOUBLE" to plcdemos.h.  This will allow
+    compilation of the examples, due to the lacking of `PLPLOT_DOUBLE'
+    definition (Closes: #49120, #36993).  Also added a note in
+    plplot-dev.README.Debian indicating how to compile correctly.
+  * FHS compliant.
+  * Upgraded to Standards-Version 3.0.1 (requires debhelper >= 2.0.68).
+  * debian/copyright: Right location for the LGPL.
+  * cf/sysconf.in: Added `SHLIB_F77FLAGS="-fpic -fPIC"'.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Sat,  6 Nov 1999 21:01:13 +0100
+
+plplot (4.99j-8) frozen unstable; urgency=low
+
+  * Recompiled with new release of libc6 (cf discussion in debian-devel
+    starting at
+    http://www.debian.org/Lists-Archives/debian-devel-9812/msg00998.html). 
+  * Changed LDC in cf/sysconf.in to F77 (link with gcc complains because
+    it is lacking symbols from g77).
+  
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Fri, 11 Dec 1998 22:20:08 +0100
+
+plplot (4.99j-7) frozen unstable; urgency=low, closes=29694 29704
+
+  * Set Conflicts relationship because files were moved around in the
+    latest release (Fixes Bug#29694, reported by  Francesco Potorti`
+    <F.Potorti@cnuce.cnr.it>).
+  * Rebuilt to fix bogus dependency on tkstep8.0 (closes Bug#29704
+    reported by Matthias Klose <doko@cs.tu-berlin.de>)
+  
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Thu, 19 Nov 1998 16:33:24 +0100
+
+plplot (4.99j-6) frozen unstable; urgency=low, closes=28534
+
+  * Uploading to frozen and unstable.  (The previous release, 4.99j-5, was
+    rejected and I never reuploaded it.) 
+  * Revamped debian/rules with use of variables for the debian dirs.
+  * Corrected typo in plplot-dev.README (closes Bug#28534).
+  * No compression of executable exemples in package plplot-doc.
+  * Fixed paths only for tk* scripts under /usr/doc/plplot/examples/tk.
+  * Fixed permission for plcolor.tcl and tkdemos.tcl.
+  * Fixed path for script x16.py (in plplot-doc).
+  * Moved library files libMatrix and libplplotdtk from plplot-tcl to
+    plplot. 
+  * Moved info file from the plplot-doc package to the base package
+    plplot: this is the only documentation availalbe for the PLplot API.
+  * Fixed typo ("\*") in debhelper compress files.
+  * Fixed the problem related to the naming of shared libraries.
+  * Improved "Description:" fields in debian/control: 
+    - Added "a scientific library" to first line (as suggested by
+      Christopher J. Fearnley <cjf@I21.com>).
+    - Included URL of PLplot homepage for each package.
+  * dh_shlibdeps does not act on package python-plplot.
+  * postinst and postrm test now for its argument.
+  * Rewrote README.Debian files.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Fri, 13 Nov 1998 03:02:34 +0100
+
+plplot (4.99j-5) unstable; urgency=low
+
+  * Build with patch from Joao Cardoso <jcardoso@inescn.pt> for Octave
+    interface.  The patch file is included in the debian/ directory. 
+  * The orig.tar.gz and the diff.gz files were absent from 4.99j-4
+    upload.  This is corrected now (bug reported by Paul Slootman
+    <paul@wau.mis.ah.nl>).
+  * Corrected sed expression for fixing the #! path in Python scripts
+  * Corrected bug in debian/compress file which was causing compression of
+    executable scripts under usr/doc/plplot/examples.
+  * Created plplot-tcl.postinst with a call to ldconfig, as plplot-tcl
+    includes shared libraries.
+  * Links to the shared library are now Policy compliant, i.e. their names 
+    have only one number after .so.
+  * debain/shlibs.local is renamed to debian/shlibs, and
+    debian/plplot-tcl.shlibs is created.
+  * The scripts installed under usr/lib/tcl8.0/plplot/ should not be
+    executable.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Wed, 14 Oct 1998 16:42:08 +0200
+
+plplot (4.99j-4) unstable; urgency=low
+
+  * debian/fix-tk-path.pl script is chmod'd in debian/rules files: now
+    fixes really first part of Bug#26935.  Fix suggested by Paul Slootman
+    <paul@wau.mis.ah.nl>.
+  * debian/control: plplot-doc architecture is now "all" and is compiled
+    in the binary-indep section of debian/rules (suggested by
+    Paul Slootman <paul@wau.mis.ah.nl>).  In order to do that, big changes 
+    in debian/rules were done.  Hope I did not screw things up.
+  * debian/rules: Corrected hideous bug in chmod mode switches: "chmod -x"
+    should be "chmod +x".
+  * Corrected some typos in debian/control, debian/copyright.
+  * cf/pkg_tcl.in: put number version in libMatrix.so (changed
+    README.Debian to document the fix). 
+  * Moved libMatrix.so and libMatrix.a to plplot-dev package.
+  * Moved libMatrix.so.* and libplplotdtk.so.* to plplot-tcl package, and
+    made plplot-dev depend on plplot-tcl (changed debian/control file to
+    reflect the changes).
+  * I just realized that the upstream Python support works only with
+    python-1.4.  I will fix this in the next release.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Tue, 13 Oct 1998 20:00:06 +0200
+
+plplot (4.99j-3) unstable; urgency=low
+
+  * debian/rules: fixing Python path for python scripts is done now with a 
+    sed command (get rid of debian/fix-python-path.pl).  Suggested by
+    Matthias Klose <doko@cs.tu-berlin.de>.
+  * Change in upstream file utils/pltek.c: gcc 2.7.2.3 deprecates the use
+    of gets  
+  * Corrected file debian/plplot-dev.files, in order to have the files
+    libMatrix.* included in the right package (plplot).
+  * Make plplot conflict with plplot-dev for versions previous to this
+    one, because of the move of libMatrix.*.
+  * Changed mode of debian/fix-tk-path.pl script to executable (fixes
+    first part of Bug#26935).
+  * Building is now done entirely under debian/tmp (fixes second part of
+    Bug#26935).
+  * Buildning now `with double' instead of `with float', as required for
+    the PLplot Octave interface.  Also, all instances of `libplotf*' were
+    changed to `libplotd*' (in debian/rules and in debian/*.files).
+  * /usr/lib/libplplotdtk.so.* files moved to the plplot package (they were
+    in plplot-tcl): this fixes the problem of installing the plplot-dev
+    package with a dangling symlink. 
+  * Removed file debian/dirs, which had no function at all.
+  * Tcl/Tk and Python scripts under /usr/doc/plplot/examples are now
+    executable.
+  * fix-tk-path.pl: corrected "/example/" -> "/examples/"
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon, 12 Oct 1998 15:20:26 +0200
+
+plplot (4.99j-2) unstable; urgency=low
+
+  * Using debhelper 0.93 : README.Debian files are installed automatically
+    by dh_installdocs
+  * Fixed some problems found by Matthias Klose <doko@cs.tu-berlin.de>.
+    Danke Matthias!
+  * Corrected typo in fix-pytho-path.pl, that made all python examples
+    have size equal to zero.
+  * examples/Makefile has now correct references to /usr directories
+  * Scripts under /usr/doc/plplot/examples are no more compressed
+  * Tk scripts under /usr/doc/examples/tk have now the right path after
+    `#!'
+  * Added dependency python-tk to python-plplot
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon, 22 Jun 1998 21:53:26 +0200
+
+plplot (4.99j-1) experimental; urgency=low
+
+  * Initial Release.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Sat, 13 Jun 1998 00:50:50 +0200
+

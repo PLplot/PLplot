@@ -1,0 +1,3 @@
+tmp plplot-dev plplot-doc plplot-tcl python-plplot plplot-c++ 
+plplot-xwin plplot-common plplot-bin
+*.debhelper *substvars files

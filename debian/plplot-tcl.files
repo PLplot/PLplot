@@ -1,0 +1,9 @@
+usr/lib/libplplotd.so.*
+usr/lib/libtclmatrixd.so.*
+usr/bin/plrender
+usr/bin/plserver
+usr/bin/pltcl
+usr/share/man/man1/plrender.1
+usr/share/man/man1/plserver.1
+usr/share/man/man1/pltcl.1
+usr/lib/plplot*/tcl

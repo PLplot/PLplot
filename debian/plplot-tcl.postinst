@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# postinst script for the Debian GNU/Linux plplot-tcl package
+#
+# Written by Rafael Laboissiere <rafael@icp.inpg.fr>
+# on Fri Nov 13 02:54:30 CET 1998
+
+#DEBHELPER#
+
+exit 0
+

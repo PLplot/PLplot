@@ -1,0 +1,8 @@
+python-plplot for DEBIAN
+------------------------
+
+Contains a module with Python bindings for PLplot, a scientific
+plotting library.
+
+Rafael Laboissiere <rafael@icp.inpg.fr>, Tue, Tue Oct 13 19:43:41 CEST 1998
+
