@@ -7,3 +7,4 @@ plserver
 .libs
 *.la
 *.lo
+pkgIndex.tcl

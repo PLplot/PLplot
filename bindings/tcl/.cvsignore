@@ -10,3 +10,4 @@ Makefile.in
 .libs
 *.la
 *.lo
+pkgIndex.tcl
