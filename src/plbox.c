@@ -976,7 +976,7 @@ static void
 plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 {
-    PLINT refx = 0, refy = 0, x, y, vert = 0;
+    PLINT refx = 0, refy = 0, x = 0, y = 0, vert = 0;
     PLFLT shift, cc, ss, def, ht, wy;
     PLFLT xmm, ymm, xform[4], diag;
 
