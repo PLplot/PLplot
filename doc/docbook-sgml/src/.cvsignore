@@ -1,4 +1,4 @@
 *.html *.jpeg 
 *.log *.aux *.dvi *.tex *.fot *.ps.gz *.eps
 plplotdoc-html.dsl
-config.* *-stamp Makefile
+configure config.* *-stamp Makefile
