@@ -1,0 +1,162 @@
+This is the 9th beta release (4.99i) of what will eventually become
+the PLplot 5.0 distribution.  At this point I'm mainly trying to root out the
+remaining bugs and system dependencies, but there will undoubtably be a
+few improvements yet before the final version sees the light of day.
+
+Please refer to the following files for more information:
+
+README		General introduction, where to get more information, etc.
+README.1st	This file
+Changes.log	Log of changes to plplot in reverse chronological order.
+ToDo		Describes what's on the agenda (no promises, however :-).
+FAQ		Frequently answered questions.  
+
+In particular, look at FAQ section 1, on installing PLplot.
+Also see the system-specific documentation under sys/<system-name>.
+The manual is being updated!  More below.
+
+You can get the PLplot distribution by anonymous ftp from:
+
+	/anonymous@dino.ph.utexas.edu:/plplot
+
+in either .zip or .tar.gz form.  The most up-to-date (not very, at this
+point) manual (in .ps and .dvi form) and info document files are available
+there as well.
+
+
+For more detail of these changes, consult Changes.log.
+
+**************************************************************************
+Version 4.99i: Summary of major changes
+**************************************************************************
+
+Primarily a bug-fix release.
+
+Bug in multi-windows code squashed; thanks to Ian Searle for providing
+a test case.
+
+
+**************************************************************************
+Version 4.99h: Summary of major changes
+**************************************************************************
+
+This was to be a quick bug fix update, but I got going on several major
+changes plus addition of user contributions.  So there are some important
+new capabilities as well as a lot of bug fixes.
+
+Note: as a result of a lack of time, most of the DOS drivers and the Amiga
+driver have not been upgraded to work with the new configure/build files.
+The DOS DJGPP port is one exception.  So these are essentially useless
+until these are done.  I will issue another beta as soon as these are
+done, hopefully within a week or two.
+
+------------------------------------------------------------------------
+Configuration, building, and installation:
+
+Completely new configuration script!  The new configure script is
+built using GNU autoconf, and great care was taken in its construction.
+Highlights:
+
+1) It is capable of doing basically everything it did before.  Packages
+   are included by typing e.g. --enable-tk or --disable-tk, etc.  Major
+   options are set by typing e.g. --with-gcc or --without-opt, etc.  There
+   is a startup file so you can customize on a per-site basis like before.
+   Although now, shell variables are used to store settings rather than m4
+   variables, and only are substituted in the various files at the end of
+   the configure script.
+
+2) The Makefile components are usable on non-Unix systems.  Notably the
+   dependencies -- the Makefile is constructed by concatenating several
+   text files together. The setting of configuration defaults on a
+   non-Unix system is similarly easier than before.  Just keep around
+   custom copies of plConfig.h and plDevs.h.  It's better to have
+   'configure' build these for you, of course.
+
+3) The configure script is fully automatic.  It should find all the major
+   capabilities needed by PLplot if your system supports them, with no
+   user intervention required.  
+
+4) The object file dependency list is now constructed using "gcc -MM"
+   (like "makedepend", only better), making it much more robust.
+
+5) Much better support for shared libraries.  Works under HPUX and SunOS
+   now, with Solaris, Irix, OSF-1 probably not far behind if someone wants
+   to fill in the details.  AIX probably I will get to, and Geoff has
+   started on the Linux shared library build.
+
+6) The new header file plConfig.h makes it much easier to get portable
+   code, by concentrating all the hacks in one place and using configure
+   to set them accordingly.
+
+See the cf/README file for more info.  It works pretty much without
+user intervention now, though.
+
+------------------------------------------------------------------------
+The second major addition: a Tcl PLplot API and interpreter.  This means
+you can now make PLplot calls from Tcl.  An interpreter -- pltcl (an
+extended tclsh) is provided.  Be sure to check out the demo programs as
+follows:
+
+foobar% pltcl
+% source demos.tcl
+% 1
+% 2
+
+etc, up through 7.  Not all PLplot C API calls are supported by the Tcl
+API yet.
+
+As part of this development a Tcl extension was created to handle matrices
+(arrays).  Right now it supports 1-d, 2-d, and 3-d arrays.  Eventually
+it will be improved a bit more and better documented and released to
+the Tcl/TK community.  For now, read doc/tclMatrix.doc and check
+out the Tcl demos.
+
+------------------------------------------------------------------------
+
+Other changes:
+
+- Another major cleanup of the core source files.
+
+- Ability to make point, line, and polygon plots in 3-d added.
+  (Contributed by Geoff Furnish.)
+
+- Changes to support returning the cursor location in world coordinates
+  given a mouse click, if supported by the driver (only used by windows
+  driver so far -- a lot of work remains for the rest of the package to
+  use it).  Supports multiple windows per page, and gets the correct set
+  of world coordinates for the plot selected.  Contributed by Paul
+  Casteels.
+
+- Function to plot map backgrounds added, where the map data is read from
+  the specified map data file (examples provided).  Contributed by Wesley
+  Ebisuzaki.
+
+- Fast point plot ability added.  Call plpoin with code=-1 for a 4X or so
+  speed increase in point plots.
+
+- Search path for needed files improved and made more consistent.
+  (Contributed by Mark Olesen).
+
+- Can now save a plot from the Tk/DP driver and have the colors turn
+  out correctly.
+
+- Previous problems re: mono X displays fixed.
+
+- Multiple sequential bop or eop's are now munged together, making it
+  easier to avoid blank pages.
+
+- Can now change the number of subpages at any time.
+
+- Fixed problems in tek drivers caused by entering cbreak mode --
+  this was fouling up user input (tty) requests.  Now it goes into cbreak
+  mode when switching to the graphics screen, and back to canonical mode
+  when switching to the text screen.  Also, this is all usable now on
+  systems without an ANSI libc.
+
+- Added new driver -- HP Laserjet III in HPGL emulation mode (lj_hpgl).
+  Contributed by Conrad Steenberg.
+
+- Greatly improved support for embedded plframe use (directly from
+  plserver or a plframe-extended wish).  See tk01, tk02, tk03 for more
+  info.  Many minor improvements and a few bugs squashed in the Tk driver.
+
