@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/03/03 19:42:10  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.12  1993/03/10 05:00:57  mjl
+   Added device-level orientation handling, for testing purposes.
 
+ * Revision 1.11  1993/03/03  19:42:10  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.10  1993/02/27  21:07:40  mjl
  * Fixed the last bug :-) in text/graph window switching.
  *
@@ -100,16 +103,21 @@ xte_init (PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
     dev->xmin = 0;
-    dev->xmax = TEKX * 16;
     dev->ymin = 0;
-    dev->ymax = TEKY * 16;
 
-    /* set device resolution in dots/mm */
+    if (pls->orient%2 == 1) {
+	dev->xmax = TEKY * 16;
+	dev->ymax = TEKX * 16;
+	setpxl((PLFLT) (4.653 * 16), (PLFLT) (4.771 * 16));
+    }
+    else {
+	dev->xmax = TEKX * 16;
+	dev->ymax = TEKY * 16;
+	setpxl((PLFLT) (4.771 * 16), (PLFLT) (4.653 * 16));
+    }
 
-    setpxl((PLFLT) (4.771 * 16), (PLFLT) (4.653 * 16));
-
-    /* set page size using setphy(xmin,xmax,ymin,ymax) */
-    /* plplot assumes that the min coordinates are in the lower left */
+    dev->xlen = dev->xmax - dev->xmin;
+    dev->ylen = dev->ymax - dev->ymin;
 
     setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
@@ -132,6 +140,7 @@ xte_line (PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int hy, ly, hx, lx;
 
+    plRotPhy(pls->orient, dev, &x1, &y1, &x2, &y2);
     if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
 
