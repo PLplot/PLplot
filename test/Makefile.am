@@ -69,12 +69,7 @@ endif
 TESTS_ENVIRONMENT += $(SHELL)
 
 
-EXTRA_DIST = test_c.sh             \
-             test_cxx.sh           \
-             test_java.sh          \
-             test_octave.sh        \
-             test_single_python.sh \
-             test_single_tcl.sh    \
-             test_tcl.sh
+EXTRA_DIST = test_single_python.sh \
+             test_single_tcl.sh
 
 CLEANFILES = *.ps *.png *.jpeg *.cgm *.fig *.plmeta
