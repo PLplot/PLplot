@@ -1,7 +1,12 @@
 /* -*-C-*-
 /* $Id$
  * $Log$
- * Revision 1.3  1994/07/25 05:56:30  mjl
+ * Revision 1.4  1994/07/28 07:40:47  mjl
+ * Added define for caddr_t to prevent future problems with broken X11R4
+ * headers and _POSIX_SOURCE.  Not defined if sys/types.h goes ahead
+ * and typedef's it anyway, when it's not supposed to.
+ *
+ * Revision 1.3  1994/07/25  05:56:30  mjl
  * Added check for unistd.h.
  *
  * Revision 1.2  1994/07/23  04:41:08  mjl
@@ -30,12 +35,6 @@
 #ifndef __PLCONFIG_H__
 #define __PLCONFIG_H__
 
-/* Install directories. */
-
-#undef LIB_DIR
-#undef BIN_DIR
-#undef TCL_DIR
-
 /* Define if on a POSIX.1 compliant system.  */
 #undef _POSIX_SOURCE
 
@@ -48,6 +47,9 @@
 /* Define to `int' if <sys/types.h> doesn't define.  */
 #undef pid_t
 
+/* Define to `char *' if <sys/types.h> doesn't define.  */
+#undef caddr_t
+
 /* Define as the return type of signal handlers (int or void).  */
 #undef RETSIGTYPE
 
@@ -56,5 +58,11 @@
 
 /* Define vfork as fork if vfork does not work.  */
 #undef vfork
+
+/* Install directories. */
+
+#undef LIB_DIR
+#undef BIN_DIR
+#undef TCL_DIR
 
 #endif	/* __PLCONFIG_H__ */
