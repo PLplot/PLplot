@@ -17,6 +17,7 @@
 /*#undef DEBUG*/
 #define DEBUG
 
+/*#undef USE_THREADS*/
 #define USE_THREADS
 
 #undef ANTIALISED_CANVAS
@@ -123,6 +124,27 @@ gnome_pldev_adopt (PLStream* pls, GtkContainer* parent)
   gtk_container_add (parent, root);
   dev->parent = GTK_WIDGET (parent);
   gtk_object_unref (GTK_OBJECT (root));
+}
+
+static guint timeout_id;
+
+static gint
+canvas_timeout (gpointer dev)
+{
+  guint i;
+
+  for (i = 0; i < ((GnomePLdev*) dev)->npages ; i++)
+    ((GnomePLdev*) dev)->page[i]->canvas->need_update = TRUE;
+
+  return FALSE;
+}
+
+static void
+timeout_register (GnomeCanvas* canvas, GnomePLdev* dev)
+{
+  //  gtk_timeout_remove (timeout_id);
+  //  canvas->need_update = FALSE;
+  //  timeout_id = gtk_timeout_add (100, canvas_timeout, dev);
 }
 
 static
@@ -383,6 +405,7 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
     }
     gnome_canvas_set_pixels_per_unit (GNOME_CANVAS (widget), page->ppu);
     break;
+  case GDK_Q:
   case GDK_Return:
     if (quit_dialog () == TRUE)
       gtk_main_quit ();
@@ -515,6 +538,8 @@ new_page (PLStream* pls)
 
 #endif
 
+  timeout_id = gtk_timeout_add (1000, canvas_timeout, dev);
+
   page->canvas = canvas;
 
   page->width = PIXELS_PER_DU * WIDTH / DRAWING_UNIT;
@@ -538,6 +563,8 @@ new_page (PLStream* pls)
 				      "width_units", 0.0,
 				      NULL);
 
+  timeout_register (canvas, dev);
+
   set_color (background, 0, 0.0);
 
   points = gnome_canvas_points_new (2);
@@ -556,6 +583,9 @@ new_page (PLStream* pls)
 			   "width_units", 1.0,
 			   NULL);
   gnome_canvas_item_hide (page->hlocline);
+
+  timeout_register (canvas, dev);
+
   page->hpos = 0.0;
 
   points->coords[0] = 0.0;
@@ -571,6 +601,9 @@ new_page (PLStream* pls)
 			   "width_units", 1.0,
 			   NULL);
   gnome_canvas_item_hide (page->vlocline);
+
+  timeout_register (canvas, dev);
+
   page->vpos = 0.0;
 
   gnome_canvas_points_unref (points);
@@ -597,6 +630,9 @@ new_page (PLStream* pls)
 			   NULL);
 
   gnome_canvas_item_hide (page->zoomrect);
+
+  timeout_register (canvas, dev);
+
   page->hpos = 0.0;
 
   gnome_canvas_points_unref (points);
@@ -722,6 +758,7 @@ plD_init_gnome (PLStream *pls)
   pls->plbuf_write = 0;	        /* No plot buffer */
   pls->width = 1;
   
+
   /* The real meat of the initialization done here */
 
   //  atexit (do_quit);
@@ -823,6 +860,8 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
                                 "width_units",
 				MAX ((double) pls->width, 3.0) * PIXELS_PER_DU,
                                 NULL);
+
+  timeout_register (canvas, dev);
 
   set_color (item, 0, pls->icol0);
 
@@ -996,8 +1035,10 @@ generate_pattern_fill (PLStream* pls)
     double sini;
     double cosi;
     GdkGC* gc;
-    GdkColor color;
-    
+    GdkColor black;
+    GdkColor white;
+    GdkColormap* colormap;
+
     dist = (pls->delta[i]/1e3) * PIXELS_PER_MM;
     
     incl = pls->inclin[i] % 3600;
@@ -1012,8 +1053,8 @@ generate_pattern_fill (PLStream* pls)
     
     if (ABS (sini) < cosi) {
       if (sini == 0.0) {
-	width = (int) dist;
-	height = 2;
+	width = 1;
+	height = (int) dist;;
       }
       else {
 	width = MIN (ABS (dist / sini), 64);
@@ -1022,8 +1063,8 @@ generate_pattern_fill (PLStream* pls)
     }
     else {
       if (ABS(incl) == 900) {
-	width = 2;
-	height = (int) dist;
+	width = (int) dist;
+	height = 1;
       }
       else {
 	width = MAX (ABS (dist / sini), 2);
@@ -1031,44 +1072,45 @@ generate_pattern_fill (PLStream* pls)
       }
     }
     
+    colormap = gtk_widget_get_colormap (GTK_WIDGET (dev->page[0]->canvas));
+
+    gdk_color_parse ("white", &white);
+    gdk_color_alloc (colormap, &white);
+    gdk_color_parse ("black", &black);
+    gdk_color_alloc (colormap, &black);
+
     if (dev->pattern_stipple[i] != NULL)
       gdk_pixmap_unref (dev->pattern_stipple[i]);
-    else
-      dev->pattern_stipple[i] = gdk_pixmap_new (NULL, width, height, 1);
+
+    dev->pattern_stipple[i] = gdk_pixmap_new (NULL, width, height, 1);
 
     gc = gdk_gc_new (dev->pattern_stipple[i]);
+    
+    gdk_gc_set_foreground (gc, &black);
 
-    gdk_color_parse ("white", &color);
-    gdk_gc_set_background (gc, &color);
+    gdk_draw_rectangle (dev->pattern_stipple[i], gc, TRUE,
+			0, 0, width, height);
 
-    gdk_color_parse ("black", &color);
-    gdk_gc_set_foreground (gc, &color);
-    gdk_gc_set_line_attributes (gc, 2, GDK_LINE_SOLID, 0, 0);
+    gdk_gc_set_foreground (gc, &white);
+    gdk_gc_set_line_attributes (gc, 1, GDK_LINE_SOLID, 0, 0);
 
-    printf ("cosi = %f    width = %d     height = %d\n", cosi, width, height);
-    fflush (stdout);
-
-    if (sini < 0) {
+    if (incl == 0 || ABS (incl) == 900) 
+      gdk_draw_point (dev->pattern_stipple[i], gc, 0, 0);
+    else if (sini < 0.0) {
       gdk_draw_line (dev->pattern_stipple[i], gc, 0, 0, width, height);
-      /*      gdk_draw_line (dev->pattern_stipple[i], gc, 0, -height, 2*width, height);
-      gdk_draw_line (dev->pattern_stipple[i], gc, -width, 0, width, 2*height);
-      */
+      gdk_draw_line (dev->pattern_stipple[i], gc, 0, -height,
+		     2*width, height);
+      gdk_draw_line (dev->pattern_stipple[i], gc, -width, 0,
+		     width, 2*height);
     }
     else {
       gdk_draw_line (dev->pattern_stipple[i], gc, width, 0, 0, height);
-      /*      gdk_draw_line (dev->pattern_stipple[i], gc, 2*width, 0, 0, 2*height);
+      gdk_draw_line (dev->pattern_stipple[i], gc, 2*width, 0, 0, 2*height);
       gdk_draw_line (dev->pattern_stipple[i], gc,
-      width, -height, -width, height); */
+		     width, -height, -width, height); 
     }
 
-    gdk_gc_set_clip_mask (gc, dev->pattern_stipple[i]);
-    gdk_gc_set_clip_origin (gc, 0, 0);
-    gdk_draw_pixmap (dev->pattern_stipple[i], gc,
-		     dev->pattern_stipple[i], 0, 0, 0, 0, width, height);
-
     gdk_gc_unref (gc);
-
-    debug ("Got out\n");
 
   }
 }
@@ -1129,7 +1171,9 @@ fill_polygon (PLStream* pls)
 				  "width_units", 0.0,
 				  NULL);
 
-  set_color (item, 1, ((double) pls->icol1)/pls->ncol1);
+  timeout_register (canvas, dev);
+
+  set_color (item, 0, (double) pls->icol0);
 
   gtk_signal_connect (GTK_OBJECT (item), "event",
                       (GtkSignalFunc) canvas_pressed_cb,
@@ -1194,6 +1238,8 @@ dashed_line (PLStream* pls)
                                 "width_units",
 				MAX ((double) pls->width, 3.0) * PIXELS_PER_DU,
                                 NULL);
+
+  timeout_register (canvas, dev);
 
   set_color (item, 0, (double) pls->icol0);
 
