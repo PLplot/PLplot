@@ -234,6 +234,7 @@ typedef struct {
     unsigned int state;		/* key or button mask */
     unsigned int keysym;	/* key selected */
     unsigned int button;	/* mouse button selected */
+    PLINT subwindow;            /* subwindow (alias subpage, alias subplot) number */
     char string[PL_MAXKEY];	/* translated string */
     int pX, pY;			/* absolute device coordinates of pointer */
     PLFLT dX, dY;		/* relative device coordinates of pointer */
@@ -469,6 +470,7 @@ typedef struct {
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
 #define    plotsh3d	c_plotsh3d
+#define    plotfc3d	c_plotfc3d
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
 #define    plpoin3	c_plpoin3
@@ -591,6 +593,7 @@ typedef struct {
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
 #define    c_plotsh3d	plotsh3d
+#define    c_plotfc3d	plotfc3d
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
 #define    c_plpoin3	plpoin3
@@ -1041,6 +1044,17 @@ void my_plotsh3d(PLFLT *x, PLFLT *y, PLFLT *z,
 	f2c(z, zz, nx, ny)
 	c_plotsh3d(x, y, zz, nx, ny, side);
 } //%name plotsh3d //%input x(nx), y(ny), z(nx,ny)
+
+/* Plots a 3-d magnitude colored representation of the function z[x][y]. */
+
+void c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z,
+	PLINT nx, PLINT ny, PLINT side); //%nowrap
+
+void my_plotfc3d(PLFLT *x, PLFLT *y, PLFLT *z,
+	PLINT nx, PLINT ny, PLINT side) {
+	f2c(z, zz, nx, ny)
+	c_plotfc3d(x, y, zz, nx, ny, side);
+} //%name plotfc3d //%input x(nx), y(ny), z(nx,ny)
 	
 /* Set fill pattern directly. */
 
@@ -1516,13 +1530,13 @@ void plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s); /
 
 int plGetCursor(PLGraphicsIn *gin); //%nowrap
 
-int my_plGetCursor(int *state, int *keysym, int *button, char *string, int *pX, int *pY, PLFLT *dX, PLFLT *dY, PLFLT *wX, PLFLT *wY) {
+int my_plGetCursor(int *state, int *keysym, int *button, char *string, int *pX, int *pY, PLFLT *dX, PLFLT *dY, PLFLT *wX, PLFLT *wY, int *subwin) {
 	PLGraphicsIn gin;
 	int	status; status=plGetCursor(&gin);
-	*state=gin.state; *keysym=gin.keysym; *button=gin.button; *string=gin.string[0];
+	*subwin=gin.subwindow; *state=gin.state; *keysym=gin.keysym; *button=gin.button; *string=gin.string[0];
 	*pX=gin.pX; *pY=gin.pY; *dX=gin.dX; *dY=gin.dY; *wX=gin.wX; *wY=gin.wY;
 	return status;
-} //%name plGetCursor //%output state, keysym, button, string(1), pX, pY, dX, dY,  wX, wY
+} //%name plGetCursor //%output subwin, state, keysym, button, string(1), pX, pY, dX, dY,  wX, wY
 
 /* Translates relative device coordinates to world coordinates.  */
 
