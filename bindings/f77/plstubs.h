@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/01/23 05:39:55  mjl
-   Changes in function prototypes to reflect reorganization, new color
-   model support.
+   Revision 1.8  1993/02/23 04:59:00  mjl
+   Added and deleted some function prototypes.
 
+ * Revision 1.7  1993/01/23  05:39:55  mjl
+ * Changes in function prototypes to reflect reorganization, new color
+ * model support.
+ *
  * Revision 1.5  1992/10/27  22:49:49  mjl
  * Reduced stub routine definition to ONE set of defines through a clever
  * macro, FNAME.  Will work in principle for all systems.
@@ -84,7 +87,6 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 
 #define    PLADV	FNAME(PLADV,pladv)
 #define    PLAXES_	FNAME(PLAXES_,plaxes_)
-#define    PLBEG	FNAME(PLBEG,plbeg)
 #define    PLBIN	FNAME(PLBIN,plbin)
 #define    PLBOX3_	FNAME(PLBOX3_,plbox3_)
 #define    PLBOX_	FNAME(PLBOX_,plbox_)
@@ -137,6 +139,8 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLSCM1F1	FNAME(PLSCM1F1,plscm1f1)
 #define    PLSCOL0	FNAME(PLSCOL0,plscol0)
 #define    PLSCOLOR	FNAME(PLSCOLOR,plscolor)
+#define    PLSDEV_	FNAME(PLSDEV_,plsdev_)
+#define    PLSESC	FNAME(PLSESC,plsesc)
 #define    PLSFAM	FNAME(PLSFAM,plsfam)
 #define    PLSFNAM_	FNAME(PLSFNAM_,plsfnam_)
 #define    PLSMAJ	FNAME(PLSMAJ,plsmaj)
@@ -144,6 +148,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLSORI	FNAME(PLSORI,plsori)
 #define    PLSPAGE	FNAME(PLSPAGE,plspage)
 #define    PLSSTRM	FNAME(PLSSTRM,plsstrm)
+#define    PLSSUB	FNAME(PLSSUB,plssub)
 #define    PLSSYM	FNAME(PLSSYM,plssym)
 #define    PLSTAR	FNAME(PLSTAR,plstar)
 #define    PLSTART_	FNAME(PLSTART_,plstart_)
