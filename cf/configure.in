@@ -98,6 +98,7 @@ enable_octave=yes
 #also have a driver role to play, but unlike these, pure-driver variables
 #(e.g., enable_tek4010) do not require a default to be specified here.
 enable_gnome=no
+enable_ntk=no
 enable_png=yes
 enable_jpeg=yes
 enable_cgm=yes
