@@ -33,7 +33,7 @@ octave_libs = -lplplot
 endif
 
 plplot_octave.h: plplot_octave_org.h
-	sed plplot_octave_org.h -e $(sed_command) > plplot_octave.h
+	sed -e $(sed_command) plplot_octave_org.h > plplot_octave.h
 
 # Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
 # also still works on gcc 2.95
@@ -74,7 +74,7 @@ plplot_octave_txt/plplot.doc: etc/plplot.doc
 	../../../doc/docbook/bin/api2text.pl \
 	../../../doc/docbook/src/plplotdoc.xml.in \
 	../../../doc/docbook/src/api.xml
-	
+
 plplot_stub.m missing_help: plplot_octave_txt/plplot.doc tmp_stub massage
 	@head -5 tmp_stub > plplot_stub.m
 	@echo "# It was also massaged to add online documentation" >> plplot_stub.m
