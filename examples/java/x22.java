@@ -35,8 +35,8 @@ import java.lang.Math;
 class x22 {
 
 
-    double MIN(double x, double y) { return (x<y?x:y);};
-    double MAX(double x, double y) { return (x>y?x:y);};
+    double MIN(double x, double y) { return (x<y?x:y);}
+    double MAX(double x, double y) { return (x>y?x:y);}
 
     PLStreamc plsdummy = new PLStreamc();
     plplotjavac pls = new plplotjavac();
