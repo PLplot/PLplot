@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1993/07/28 05:34:45  mjl
+ * Revision 1.21  1993/07/31 07:58:33  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The color initialization
+ * was modified to work better with the TK driver, and the function to detect
+ * grayscale displays made external for use from tk.c.
+ *
+ * Revision 1.20  1993/07/28  05:34:45  mjl
  * Added error handler to trap pixmap allocation errors, and switch to a
  * slower method (redraw) of refreshing window on exposes.  Also added
  * globally visible utility functions for converting between a PLColor and
@@ -22,41 +30,6 @@
  * plframe widget).  The X-driver device data is now dynamically allocated,
  * for use by multiple streams.  The default size of the created X window
  * has been reduced some.
- *
- * Revision 1.17  1993/03/16  06:49:24  mjl
- * Changed driver functions that check for events to do so only after a
- * specified number of calls, to reduce overhead.
- *
- * Revision 1.16  1993/03/15  21:42:14  mjl
- * Changed _clear/_page driver functions to the names _eop/_bop, to be
- * more representative of what's actually going on.  Also moved clear window
- * call to the _bop function to support plot interrupts by plrender (seeks
- * before the plot is completed).
- *
- * Revision 1.15  1993/03/06  05:00:39  mjl
- * Fixed a bug in foreground plotting for grayscale devices when the bg color
- * was set to black.
- *
- * Revision 1.6  1992/10/22  17:05:01  mjl
- * Fixed warnings, errors generated when compling with HP C++.
- *
- * Revision 1.5  1992/10/22  16:07:10  gray
- * added crude support to have mouse button 2 return cursor postition to
- * stdout
- *
- * Revision 1.4  1992/09/30  18:25:01  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.3  1992/09/29  04:44:52  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.2  1992/07/31  06:06:48  mjl
- * Swapped background/foreground colors for grayscale X output.
- *
- * Revision 1.1  1992/05/20  21:32:46  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	xwin.c
@@ -125,7 +98,6 @@ static void  WaitForPage	(PLStream *);
 static void  HandleEvents	(PLStream *);
 static void  ColorInit		(PLStream *);
 static void  CreatePixmap	(XwDev *);
-static int   AreWeGrayscale	(Display *);
 static void  Colorcpy		(XColor *, XColor *);
 
 static void  EventHandler	(PLStream *, XEvent *);
@@ -217,8 +189,8 @@ plD_init_xw(PLStream *pls)
 void
 plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
-    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     XwDev *dev = (XwDev *) pls->dev;
+    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     static long count = 0, max_count = 20;
 
     if ( (++count/max_count)*max_count == count) {
@@ -250,9 +222,9 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 void
 plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
+    XwDev *dev = (XwDev *) pls->dev;
     PLINT i;
     XPoint pts[PL_MAXPOLYLINE];
-    XwDev *dev = (XwDev *) pls->dev;
     static long count = 0, max_count = 10;
 
     if ( (++count/max_count)*max_count == count) {
@@ -348,70 +320,51 @@ plD_tidy_xw(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_color_xw()
+* plD_state_xw()
 *
-* Set pen color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-void
-plD_color_xw(PLStream *pls)
+void 
+plD_state_xw(PLStream *pls, PLINT op)
 {
     XwDev *dev = (XwDev *) pls->dev;
-    int icol0 = pls->icol0;
+
+    dbug_enter("plD_state_xw");
 
     HandleEvents(pls);	/* Check for events */
 
-    if ( ! dev->color) {
-	dev->curcolor.pixel = dev->fgcolor.pixel;
-	XSetForeground(dev->display, dev->gc, dev->curcolor.pixel);
-    }
-    else {
-	if (icol0 == PL_RGB_COLOR) {
-	    PLColor_to_XColor(&pls->curcolor, &dev->curcolor);
+    switch (op) {
 
-	    if ( ! XAllocColor(dev->display, dev->map, &dev->curcolor))
-		dev->curcolor.pixel = dev->fgcolor.pixel;
+    case PLSTATE_WIDTH:
+	break;
 
+    case PLSTATE_COLOR0:{
+	int icol0 = pls->icol0;
+	if ( ! dev->color) {
+	    dev->curcolor.pixel = dev->fgcolor.pixel;
 	    XSetForeground(dev->display, dev->gc, dev->curcolor.pixel);
 	}
-	else
-	    XSetForeground(dev->display, dev->gc, dev->cmap0[icol0].pixel);
+	else {
+	    if (icol0 == PL_RGB_COLOR) {
+		PLColor_to_XColor(&pls->curcolor, &dev->curcolor);
+
+		if ( ! XAllocColor(dev->display, dev->map, &dev->curcolor)) {
+		    fprintf(stderr, "Warning: could not allocate color\n");
+		    dev->curcolor.pixel = dev->fgcolor.pixel;
+		}
+
+		XSetForeground(dev->display, dev->gc, dev->curcolor.pixel);
+	    }
+	    else
+		XSetForeground(dev->display, dev->gc, dev->cmap0[icol0].pixel);
+	}
+	break;
     }
-}
 
-/*----------------------------------------------------------------------*\
-* plD_text_xw()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_text_xw(PLStream *pls)
-{
-    HandleEvents(pls);	/* Check for events */
-}
-
-/*----------------------------------------------------------------------*\
-* plD_graph_xw()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_graph_xw(PLStream *pls)
-{
-    HandleEvents(pls);	/* Check for events */
-}
-
-/*----------------------------------------------------------------------*\
-* plD_width_xw()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void
-plD_width_xw(PLStream *pls)
-{
+    case PLSTATE_COLOR1:
+	break;
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -426,15 +379,15 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
     dbug_enter("plD_esc_xw");
 
     switch (op) {
-      case PL_EXPOSE:
+      case PLESC_EXPOSE:
 	ExposeCmd(pls);
 	break;
 
-      case PL_RESIZE:
+      case PLESC_RESIZE:
 	ResizeCmd(pls, (PLWindow *) ptr);
 	break;
 
-      case PL_REDRAW:
+      case PLESC_REDRAW:
 	RedrawCmd(pls);
 	break;
     }
@@ -497,7 +450,7 @@ Init(PLStream *pls)
 
 /* Set drawing color */
 
-    plD_color_xw(pls);
+    plD_state_xw(pls, PLSTATE_COLOR0);
 }
 
 /*----------------------------------------------------------------------*\
@@ -559,7 +512,7 @@ Init_main(PLStream *pls)
     sprintf(header, "plplot");
 
 /* Window creation */
-/* Why is the server ignoring the x & y values??? */
+/* Why is the window manager ignoring the x & y values??? */
 
     dev->window =
 	XCreateSimpleWindow(dev->display,
@@ -985,6 +938,9 @@ CreatePixmapErrorHandler(Display *display, XErrorEvent *error)
     if (error->error_code == BadAlloc) {
 	CreatePixmapStatus = error->error_code;
     }
+    else
+	fprintf(stderr, "Something bad just happened.\n");
+
     return(1);
 }	
 
@@ -1038,7 +994,7 @@ ColorInit(PLStream *pls)
 	dev->color = pls->color;
     else {
 	pls->color = 1;
-	dev->color = ! AreWeGrayscale(dev->display);
+	dev->color = ! pl_AreWeGrayscale(dev->display);
     }
 
 /*
@@ -1050,25 +1006,11 @@ ColorInit(PLStream *pls)
 */
 
     if ( ! dev->color && ! pls->bgcolorset) {
-	pls->bgcolor.r = 255;
-	pls->bgcolor.g = 255;
-	pls->bgcolor.b = 255;
+	pls->bgcolor.r = 0xFF;
+	pls->bgcolor.g = 0xFF;
+	pls->bgcolor.b = 0xFF;
     }
-
-    gslevbg = ((float) pls->bgcolor.r +
-	       (float) pls->bgcolor.g +
-	       (float) pls->bgcolor.b) / 3.;
-
-    if ( ! dev->color) {
-	if (gslevbg < 128)
-	    gslevbg = 0;
-	else
-	    gslevbg = 255;
-
-	pls->bgcolor.r = gslevbg;
-	pls->bgcolor.g = gslevbg;
-	pls->bgcolor.b = gslevbg;
-    }
+    gslevbg = (pls->bgcolor.r + pls->bgcolor.g + pls->bgcolor.b) / 3;
 
     PLColor_to_XColor(&pls->bgcolor, &dev->bgcolor);
 
@@ -1091,8 +1033,8 @@ ColorInit(PLStream *pls)
 * call to XAllocColor fails at runtime.
 */
 
-    if (gslevbg < 128)
-	gslevfg = 255;
+    if (gslevbg <= 0x7F)
+	gslevfg = 0xFF;
     else
 	gslevfg = 0;
 
@@ -1121,42 +1063,6 @@ ColorInit(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* void PLColor_to_XColor()
-*
-* Copies the supplied PLColor to an XColor, padding with bits as
-* necessary (a PLColor uses an unsigned char for color storage, while
-* an XColor uses an unsigned short).  On most workstations, nbits = 8.
-* The argument types follow the same order as in the function name.
-\*----------------------------------------------------------------------*/
-
-void
-PLColor_to_XColor(PLColor *plcolor, XColor *xcolor)
-{
-    short nbits = sizeof(unsigned short) / sizeof(unsigned char);
-
-    xcolor->red = plcolor->r << nbits;
-    xcolor->green = plcolor->g << nbits;
-    xcolor->blue = plcolor->b << nbits;
-}
-
-/*----------------------------------------------------------------------*\
-* void PLColor_from_XColor()
-*
-* Copies the supplied XColor to a PLColor, stripping off bits as
-* necessary.  See the previous routine for more info.
-\*----------------------------------------------------------------------*/
-
-void
-PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
-{
-    short nbits = sizeof(unsigned short) / sizeof(unsigned char);
-
-    plcolor->r = xcolor->red >> nbits;
-    plcolor->g = xcolor->green >> nbits;
-    plcolor->b = xcolor->blue >> nbits;
-}
-
-/*----------------------------------------------------------------------*\
 * void Colorcpy()
 *
 * Self-explanatory.
@@ -1172,13 +1078,47 @@ Colorcpy(XColor *xcolor1, XColor *xcolor2)
 }
 
 /*----------------------------------------------------------------------*\
-* Misc. support routines.
+* void PLColor_to_XColor()
+*
+* Copies the supplied PLColor to an XColor, padding with bits as necessary
+* (a PLColor uses 8 bits for color storage, while an XColor uses 16 bits).
+* The argument types follow the same order as in the function name.
 \*----------------------------------------------------------------------*/
 
-/* gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland. */
+#define ToXColor(a) (((0xFF & (a)) << 8) | (a))
+#define ToPLColor(a) ((a) >> 8)
 
-static int
-AreWeGrayscale(Display *display)
+void
+PLColor_to_XColor(PLColor *plcolor, XColor *xcolor)
+{
+    xcolor->red   = ToXColor(plcolor->r);
+    xcolor->green = ToXColor(plcolor->g);
+    xcolor->blue  = ToXColor(plcolor->b);
+}
+
+/*----------------------------------------------------------------------*\
+* void PLColor_from_XColor()
+*
+* Copies the supplied XColor to a PLColor, stripping off bits as
+* necessary.  See the previous routine for more info.
+\*----------------------------------------------------------------------*/
+
+void
+PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
+{
+    plcolor->r = ToPLColor(xcolor->red);
+    plcolor->g = ToPLColor(xcolor->green);
+    plcolor->b = ToPLColor(xcolor->blue);
+}
+
+/*----------------------------------------------------------------------*\
+* int pl_AreWeGrayscale(Display *display)
+*
+* gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland. 
+\*----------------------------------------------------------------------*/
+
+int
+pl_AreWeGrayscale(Display *display)
 {
 #if defined(__cplusplus) || defined(c_plusplus)
 #define THING c_class
