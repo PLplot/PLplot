@@ -57,7 +57,7 @@ sub main {
   # Options data structure definition. */
 
   my $locate_mode = 0;
-  my $fontset = "";
+  my $fontset = 1;
 
   GetOptions ("locate" => \$locate_mode,
               "xor"    => \$test_xor,
@@ -102,7 +102,7 @@ EOT
 
   # Select font set as per input flag
 
-  plfontld ($fontset ? 1 : 0);
+  plfontld ($fontset);
 
   # Set up the data
   # Original case
@@ -185,7 +185,7 @@ sub plot1 {
 
   my $do_test = shift;
 
-  my $x = $xoff + $xscale * sequence (60) / 60.0;
+  my $x = $xoff + $xscale * (1 + sequence (60)) / 60.0;
   my $y = $yoff + $yscale * ($x ** 2);
 
   $xmin = $x->index (0);
