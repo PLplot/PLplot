@@ -12,8 +12,9 @@
 # (e.g. SunOS).  Warning: apps linked to it may fail on major version
 # changes (depending on OS).
 
-MAJOR_VERSION	= 4
-MINOR_VERSION	= 99
+#MAJOR_VERSION=5
+#MINOR_VERSION=0
+#RELEASE_VERSION=2
 
 # Utilities
 
@@ -23,8 +24,8 @@ SHLIB_BUILD	= @SHLIB_BUILD@
 
 # Flags and other miscellanea
 
-CC_FLAGS	= -c -O -DGNU386 -I.
-CC_FLAGS_DEMOS	= -c -O -DGNU386 -I.
+CC_FLAGS	= -c -O -m486 -DGNU386 -I.
+CC_FLAGS_DEMOS	= -c -O -m486 -DGNU386 -I.
 SHLIB_CCFLAGS	= @SHLIB_CCFLAGS@
 SHLIB_F77FLAGS	= @SHLIB_F77FLAGS@
 SHLIB_SUFFIX	= @SHLIB_SUFFIX@
@@ -32,8 +33,8 @@ SALIB_SUFFIX	= @SALIB_SUFFIX@
 
 # Hacks to deal with optimizer failures.
 
-CC_FLAGS_SCCONT = -c -O -DGNU386 -I.
-CC_FLAGS_XWIN	= -c -O -DGNU386 -I.
+CC_FLAGS_SCCONT = -c -O -m486 -DGNU386 -I.
+CC_FLAGS_XWIN	= -c -O -m486 -DGNU386 -I.
 
 # Dependent directories
 
@@ -47,6 +48,7 @@ PLFNT_PATH	= $(PLFNT_DIR)/
 LIB_OBJS_SO	= $(CORE_OBJ) $(TCL_OBJ) $(TK_OBJ) $(ADD_DRIVERS_OBJ) $(FSTUB_OBJ)
 LIB_OBJS_SA	= $(TCL_OBJ_SA) $(TK_OBJ_SA) $(FSTUB_OBJ_SA)
 LIB_OBJS	= $(LIB_OBJS_SO) $(LIB_OBJS_SA)
+DEMOS_RPATH	= $(RPATH)
 
 # Library names
 
@@ -61,8 +63,15 @@ LIB_INSTALL	= -L$(LIB_DIR2) -lplplt$(LIB_TAG)
 
 # These are what we link against.
 
-PLLIB_LDC	= -L$(PLLIB_DIR) -lplplt$(LIB_TAG)
+PLLIB_LDC	= -L$(PLLIB_DIR) -lplplt$(LIB_TAG) 
 PLLIB_LDF	= -L$(PLLIB_DIR) -lplplt$(LIB_TAG)
+
+# Header file dependencies for demos.
+# Done this way to only pick up the dependency during development, and not
+# when installed (since then headers are found by the include search path,
+# and the library can't be rebuilt anyway).
+
+CDEMO_HEADERS	= plplot/plcdemos.h plplot/plplot.h
 
 # Default is to build library(s) and utils.
 

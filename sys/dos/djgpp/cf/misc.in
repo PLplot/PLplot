@@ -11,7 +11,9 @@
 # Cleanup
 
 clean:
-	-rm * shared/* ../lib/libpl*
+	rm ./plplot/*.*
+	rmdir plplot
+	rm *.c *.h *.o *.* *
 
 # Autogeneration of dependencies.  Use gcc -MM because X11's "makedepend"
 # includes system headers, and that really sucks.

@@ -33,9 +33,13 @@
 #undef PLD_imp
 #undef PLD_xwin
 #undef PLD_tk
+#undef PLD_tiff
+#undef PLD_bmp
+#undef PLD_jpeg
 
 #define PLD_gnusvga
-#define PLD_ljii
+#define PLD_hp7470
+#define PLD_hp7580
 #define PLD_plmeta
 #define PLD_ps
 #define PLD_null

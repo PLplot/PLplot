@@ -1,32 +1,5 @@
 /* -*-C-*-
 /* $Id$
- * $Log$
- * Revision 1.2  2001/01/22 20:17:14  airwin
- * Change these files to windows-style line termination to be consistent
- * with all other files in the sys/dos/djgpp tree.  This change also makes
- * it easier to accept patches from dos/djgpp developers.
- *
- * Revision 1.1  1994/08/10 01:08:25  mjl
- * New directory structure, config files, and other modifications for PLplot
- * 4.99h/djgpp DOS port, submitted by Paul Kirschner.  New driver supports
- * color fill.
- *
- * Revision 1.4  1994/07/28  07:40:47  mjl
- * Added define for caddr_t to prevent future problems with broken X11R4
- * headers and _POSIX_SOURCE.  Not defined if sys/types.h goes ahead
- * and typedef's it anyway, when it's not supposed to.
- *
- * Revision 1.3  1994/07/25  05:56:30  mjl
- * Added check for unistd.h.
- *
- * Revision 1.2  1994/07/23  04:41:08  mjl
- * I'm going to try defining _POSIX_SOURCE here now.
- *
- * Revision 1.1  1994/07/19  22:26:57  mjl
- * Header file for holding miscellaneous config info, including install
- * directories, system dependencies, etc.  Included by plplotP.h.
-*/
-
 /*
     plConfig.h.in
 
@@ -46,10 +19,10 @@
 #define __PLCONFIG_H__
 
 /* Define if on a POSIX.1 compliant system.  */
-#undef _POSIX_SOURCE
+#define _POSIX_SOURCE
 
 /* Define HAVE_UNISTD_H if unistd.h is available. */
-#undef HAVE_UNISTD_H
+#define HAVE_UNISTD_H
 
 /* Define if you have vfork.h.  */
 #undef HAVE_VFORK_H
@@ -64,10 +37,31 @@
 #undef RETSIGTYPE
 
 /* Define if you have the ANSI C header files.  */
-#undef STDC_HEADERS
+#define STDC_HEADERS
 
 /* Define vfork as fork if vfork does not work.  */
 #undef vfork
+
+/* Define if popen is available.  */
+#undef HAVE_POPEN
+
+/* Define if we're using a debugging malloc */
+#undef DEBUGGING_MALLOC
+
+/* If you don't know what this is for, you shouldn't be using it */
+#undef NOBRAINDEAD
+
+/* Define if fgetpos/fsetpos is busted */
+#undef USE_FSEEK
+
+/* Define if [incr Tcl] is available */
+#undef HAVE_ITCL
+
+/* Define if [incr Tk] is available */
+#undef HAVE_ITK
+
+/* Define if you want PLplot's float type to be double */
+#undef PL_DOUBLE
 
 /* Install directories. */
 
@@ -75,4 +69,4 @@
 #undef BIN_DIR
 #undef TCL_DIR
 
-#endif	/* __PLCONFIG_H__ */
+#ifndef PLPLOT_VERSION
