@@ -17,14 +17,28 @@
 
 #undef ANTIALISED_CANVAS
 
-#define PLD_gnome
+/* Physical dimensions */
+
+/* Unit of drawing (1/360 in).  Corresponds to the pen widht = 1 */
+#define DRAWING_UNIT (0.0027777778)
+
+/* How many pixels in a drawing unit (defualt value) */
+#define PIXELS_PER_DU (0.2)
+
+/* mm per inch */
+#define MM_PER_IN (25.4)
+
+/* Default dimensions of the canvas (in inches) */
+#define WIDTH (9)
+#define HEIGHT (6.5)
+
 #ifdef PLD_gnome
 
 void
 debug (char* msg)
 {
-  //    printf (msg);
-  //    fflush (stdout);
+  //      printf (msg);
+  //      fflush (stdout);
 }
 
 G_LOCK_DEFINE_STATIC (canvas);
@@ -43,7 +57,6 @@ typedef enum {
 } GnomePLdevCanvasMode;
   
 typedef struct {
-  GtkScrolledWindow* sw;
   GnomeCanvas* canvas;
   GnomePLdevCanvasMode mode;
   GnomeCanvasItem* hlocline;
@@ -53,6 +66,8 @@ typedef struct {
   GnomeCanvasItem* zoomrect;
   PLGraphicsIn gin;
   guint context;
+  double width;
+  double height;
 } GnomePLdevPage;
 
 typedef struct {
@@ -126,7 +141,7 @@ quit (void)
   gdk_threads_leave ();
   debug ("Quitting\n");
 
-  _exit (0);
+  pthread_exit(NULL);
 }
 
 static gint 
@@ -141,6 +156,10 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 
   move = FALSE;
   switch (event->type) {
+
+  case GDK_2BUTTON_PRESS:
+
+  case GDK_3BUTTON_PRESS:
 
   case GDK_BUTTON_PRESS:
     
@@ -167,22 +186,33 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 
       dragging = TRUE;
     }
+    //    printf ("Button press\n");
+    //    fflush (stdout);
+    break;
 
   case GDK_MOTION_NOTIFY:
     if (dragging && (event->motion.state & GDK_BUTTON1_MASK)) 
       move = TRUE;
+    //    printf ("Mouse motion\n");
+    //    fflush (stdout);
     break;
     
   case GDK_BUTTON_RELEASE:
-    gnome_canvas_item_ungrab(item, event->button.time);
-    dragging = FALSE;
-    gnome_canvas_item_hide (page->hlocline);
-    gnome_canvas_item_hide (page->vlocline);
-    // FIXME : Terribel global variable hack
-    gtk_statusbar_pop (sb, page->context);
+    if (dragging && (event->motion.state & GDK_BUTTON1_MASK)) {
+      gnome_canvas_item_ungrab(item, event->button.time);
+      dragging = FALSE;
+      gnome_canvas_item_hide (page->hlocline);
+      gnome_canvas_item_hide (page->vlocline);
+      // FIXME : Terribel global variable hack
+      gtk_statusbar_pop (sb, page->context);
+      //      printf ("Button release\n");
+      //      fflush (stdout);
+    }
     break;
     
   default:
+    //    printf ("Other event\n");
+    //    fflush (stdout);
     break;
     
   }
@@ -197,8 +227,8 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 			    event->button.x - page->hpos, 0.0);    
     page->hpos = event->button.x;
 
-    gin->dX = page->hpos / 600.0;
-    gin->dY = page->vpos / (-450.0);
+    gin->dX = page->hpos / page->width;
+    gin->dY = page->vpos / (- page->height);
 
     plTranslateCursor (gin);
 
@@ -215,12 +245,13 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 
 
 static gint 
-delete_event_cb(GtkWidget* window, GdkEventAny* e, gpointer data)
+delete_event_cb (GtkWidget* widget, GdkEventAny* e, gpointer data)
 {
+  printf ("Entered delete_event_cb\n");
+  fflush (stdout);
   gdk_threads_enter ();
-  gtk_widget_destroy (window);
+  gtk_widget_destroy (widget);
   gdk_threads_leave ();
-  debug ("Before quit\n");
   quit ();
   return FALSE;
 }
@@ -266,10 +297,10 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
   
   switch (event->keyval) {
   case GDK_minus:
-    ppu /= 2;
+    ppu /= 1.4142;
     break;
   case GDK_equal:
-    ppu *= 2;
+    ppu *= 1.4142;
     break;
   case GDK_q:
     gdk_threads_enter ();
@@ -297,18 +328,34 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
 }
 
 static void
-page_switch (GtkWidget *notebook, GtkNotebookPage *page, gint page_num)
+page_switch (GtkNotebook *notebook, GtkNotebookPage *page, gint page_num,
+	     gpointer dev)
 {
   guint curpage;
   GnomeCanvas* canvas;
 
-  // FIXME : reference to plsc
-  canvas = ((GnomePLdev*)(plsc->dev))->page[page_num]->canvas;
+  canvas = ((GnomePLdev*)(dev))->page[page_num]->canvas;
+  gtk_widget_grab_focus (GTK_WIDGET (canvas));
+}
 
-  if (canvas != NULL) 
-    {}
-    //    gtk_container_set_focus_child (GTK_CONTAINER (notebook),
-    //				   GTK_WIDGET (canvas));
+static guint32
+plcolor_to_rgba (PLColor color, guchar alpha)
+{
+  return
+    ((int)(color.r) << 24)
+    + ((int)(color.g) << 16)
+    + ((int)(color.b) << 8)
+    + alpha;
+}
+
+static guint32
+plcolor_to_rgba_inv (PLColor color, guchar alpha)
+{
+  return 
+    ((int)(255 - color.r) << 24)
+    + ((int)(255 - color.g) << 16)
+    + ((int)(255 - color.b) << 8)
+    + alpha;
 }
 
 static void
@@ -320,7 +367,9 @@ new_page (PLStream* pls)
   GnomePLdev* dev;
   GnomePLdevPage* page;
   GnomeCanvasPoints* points;
+  GtkScrolledWindow* sw;
   guint np;
+  guint32 loclinecolor;
   char buffer[32];
 
   debug("Entered new_page\n");
@@ -353,7 +402,11 @@ new_page (PLStream* pls)
 
   page->canvas = canvas;
 
-  gnome_canvas_set_scroll_region(GNOME_CANVAS(canvas), 0, -450, 600, 0);
+  page->width = PIXELS_PER_DU * WIDTH / DRAWING_UNIT;
+  page->height = PIXELS_PER_DU * HEIGHT / DRAWING_UNIT;
+
+  gnome_canvas_set_scroll_region(GNOME_CANVAS(canvas),
+				 0, -page->height, page->width, 0);
 
   debug("After scroll_region\n");
 
@@ -367,8 +420,8 @@ new_page (PLStream* pls)
   background = gnome_canvas_item_new (group,
 				      gnome_canvas_rect_get_type(),
 				      "x1", 0.0,
-				      "y1", -450.0,
-				      "x2", 600.0,
+				      "y1", -page->height,
+				      "x2", page->width,
 				      "y2", 0.0, 
 				      "fill_color", (pls->cmap0[0]).name,
 				      "width_units", 0.0,
@@ -378,25 +431,22 @@ new_page (PLStream* pls)
 
   points->coords[0] = 0.0;
   points->coords[1] = 0.0;
-  points->coords[2] = 600.0;
+  points->coords[2] = page->width;
   points->coords[3] = 0.0;
 
+  loclinecolor = plcolor_to_rgba_inv (pls->cmap0[0], 0xF0),
   page->hlocline =
     gnome_canvas_item_new (group,
 			   gnome_canvas_line_get_type(),
 			   "points", points,
-			   "fill_color_rgba", 
-			   ((int)((255 - pls->cmap0[0].r) << 24)
-			    + (int)((255 - pls->cmap0[0].g) << 16)
-			    + (int)((255 - pls->cmap0[0].b) << 8)
-			    + 0xf0),			   
+			   "fill_color_rgba", loclinecolor,
 			   "width_units", 1.0,
 			   NULL);
   gnome_canvas_item_hide (page->hlocline);
   page->hpos = 0.0;
 
   points->coords[0] = 0.0;
-  points->coords[1] = -450.0;
+  points->coords[1] = -page->height;
   points->coords[2] = 0.0;
   points->coords[3] = 0.0;
 
@@ -404,11 +454,7 @@ new_page (PLStream* pls)
     gnome_canvas_item_new (group,
 			   gnome_canvas_line_get_type(),
 			   "points", points,
-			   "fill_color_rgba", 
-			   ((int)((255 - pls->cmap0[0].r) << 24)
-			    + (int)((255 - pls->cmap0[0].g) << 16)
-			    + (int)((255 - pls->cmap0[0].b) << 8)
-			    + 0xf0),			   
+			   "fill_color_rgba", loclinecolor,
 			   "width_units", 1.0,
 			   NULL);
   gnome_canvas_item_hide (page->vlocline);
@@ -432,11 +478,8 @@ new_page (PLStream* pls)
     gnome_canvas_item_new (group,
 			   gnome_canvas_line_get_type(),
 			   "points", points,
-			   "fill_color_rgba", 
-			   ((int)((255 - plsc->cmap0[0].r) << 24)
-			    + (int)((255 - plsc->cmap0[0].g) << 16)
-			    + (int)((255 - plsc->cmap0[0].b) << 8)
-			    + 0xb0),			   
+			   "fill_color_rgba",
+			   plcolor_to_rgba_inv (pls->cmap0[0], 0xF0),
 			   "width_units", 1.0,
 			   NULL);
 
@@ -446,6 +489,8 @@ new_page (PLStream* pls)
   gnome_canvas_points_unref (points);
 
   page->context = np+1;
+
+  change_mode (page, GNOME_PLDEV_LOCATE_MODE);
 
   gtk_signal_connect (GTK_OBJECT (background), "event",
                       (GtkSignalFunc) canvas_pressed_cb,
@@ -458,90 +503,36 @@ new_page (PLStream* pls)
   gtk_signal_connect (GTK_OBJECT (canvas), "key_press_event",
 		      GTK_SIGNAL_FUNC (key_cb), pls);
 
-  page->sw = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (NULL, NULL));
+  sw = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (NULL, NULL));
 
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(page->sw),
-                                 GTK_POLICY_AUTOMATIC,
-                                 GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
+				  GTK_POLICY_AUTOMATIC,
+				  GTK_POLICY_AUTOMATIC);
 
-  gtk_container_add (GTK_CONTAINER (page->sw), GTK_WIDGET (canvas));
+  gtk_container_add (GTK_CONTAINER (sw), GTK_WIDGET (canvas));
 
-  //  printf ("np = %d\n", np);
-  debug("Before if (np == 0)\n");
-
-  if (np == 0) {
-
-    debug("Before dev->root\n");
-
-    //    dev->root = GTK_WIDGET (page->sw);
-
-    dev->statusbar = GTK_STATUSBAR (gtk_statusbar_new ());
-    sb = dev->statusbar;
-    change_mode (page, GNOME_PLDEV_LOCATE_MODE);
-
-    gtk_box_pack_end (GTK_BOX (dev->root), GTK_WIDGET (dev->statusbar),
-		      FALSE, FALSE, 0);
-
-    gtk_box_pack_start (GTK_BOX (dev->root), GTK_WIDGET (page->sw),
-		      TRUE, TRUE, 0);
-
-    debug("After dev->root\n");
-
+  if (np == 0) 
     dev->page = g_malloc (sizeof (GnomePLdevPage*));
-    dev->page[0] = page;
-
-    debug("After malloc\n");
-  }
-
-  else {
-    if (np == 1) {
-      GtkScrolledWindow* sw0 = dev->page[0]->sw;
-
-      debug("Inside if (np == 1)\n");
-
-      dev->notebook = GTK_NOTEBOOK (gtk_notebook_new ());
-
-      // FIXME : this crashed the driver when the 4th page is displayed 
-      gtk_signal_connect (GTK_OBJECT (dev->notebook), "switch_page",
-			  GTK_SIGNAL_FUNC (page_switch), NULL);
-
-      gtk_notebook_set_scrollable (dev->notebook, TRUE);
-      //      dev->root = GTK_WIDGET (dev->notebook);
-
-      gtk_object_ref (GTK_OBJECT (sw0));
-      gtk_container_remove (GTK_CONTAINER (dev->root),
-			    GTK_WIDGET (sw0));
-      gtk_notebook_append_page (dev->notebook, GTK_WIDGET (sw0),
-				gtk_label_new ("Page 1"));
-
-      gtk_box_pack_start (GTK_BOX (dev->root), GTK_WIDGET (dev->notebook),
-			  TRUE, TRUE, 0);
-
-      gtk_object_unref (GTK_OBJECT (sw0));
-
-    }
-
-    sprintf (buffer, "Page %d", np+1);
-    gtk_notebook_append_page (dev->notebook, GTK_WIDGET (page->sw),
-			      gtk_label_new (buffer));
-
-    gtk_widget_show_all (GTK_WIDGET (dev->notebook));
-
-    gtk_notebook_set_page (dev->notebook,
-			   gtk_notebook_get_current_page (dev->notebook) + 1);
-
+  else
     dev->page = g_realloc (dev->page,
 			   (np+1) * sizeof (GnomePLdevPage*));
 
-    dev->page[np] = page;
+  
+  debug ("After g_realloc\n");
 
-    debug("After realloc\n");
-  }
+  dev->page[np] = page;
+  
+  debug ("Before gtk_notebook_append_page\n");
 
-  debug("After if (np == 1)\n");
+  gtk_notebook_set_show_tabs (dev->notebook, (np > 0));
+
+  sprintf (buffer, "Page %d", np+1);
+  gtk_notebook_append_page (dev->notebook, GTK_WIDGET (sw),
+			    gtk_label_new (buffer));
 
   gtk_widget_show_all (dev->parent);
 
+  gtk_notebook_set_page (dev->notebook, -1);
 
   gdk_threads_leave ();
 
@@ -561,11 +552,36 @@ gnome_pldev_create (PLStream* pls)
   pls->dev = dev;
   dev->npages = 0;
   vbox = gtk_vbox_new (FALSE, 0);
-  gtk_signal_connect (GTK_OBJECT (vbox),
-		      "destroy_event",
-		      GTK_SIGNAL_FUNC (delete_event_cb),
-		      NULL);
   dev->root = vbox;
+
+  dev->statusbar = GTK_STATUSBAR (gtk_statusbar_new ());
+  sb = dev->statusbar;
+
+  gtk_box_pack_end (GTK_BOX (dev->root), GTK_WIDGET (dev->statusbar),
+		    FALSE, FALSE, 0);
+  
+  debug("Before gtk_notebook_new\n");
+
+  dev->notebook = GTK_NOTEBOOK (gtk_notebook_new ());
+
+  // FIXME : this crashed the driver when the 4th page is displayed 
+  gtk_signal_connect (GTK_OBJECT (dev->notebook), "switch_page",
+    		      GTK_SIGNAL_FUNC (page_switch), dev);
+  
+  gtk_notebook_set_scrollable (dev->notebook, TRUE);
+  
+  debug ("Before gtk_box_pack_start\n");
+
+  gtk_box_pack_start (GTK_BOX (dev->root), GTK_WIDGET (dev->notebook),
+		      TRUE, TRUE, 0);
+  
+  debug ("After gtk_box_pack_start\n");
+
+  debug ("Before gtk_widget_show_all\n");
+
+  gtk_widget_show_all (GTK_WIDGET (dev->notebook));
+  
+  debug ("Before gtk_notebook_set_page\n");
 
 
   //  new_page (pls);
@@ -589,6 +605,7 @@ plD_init_gnome (PLStream *pls)
   char* argv[] = { "" };
   GnomePLdev* dev;
   GtkWidget* window;
+  double phys2canvas = PIXELS_PER_DU / DRAWING_UNIT / MM_PER_IN;
 
   pls->termin = 1;		/* Is an interactive terminal */
   pls->dev_flush = 1;		/* Handle our own flushes */
@@ -609,6 +626,7 @@ plD_init_gnome (PLStream *pls)
       debug ("Before gnome_init\n");
 
       gnome_init ("GnomePLplotDriver", "0.0.1", 1, argv);
+      gnome_sound_shutdown ();
 
       debug ("After gnome_init\n");
 
@@ -626,6 +644,11 @@ plD_init_gnome (PLStream *pls)
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     dev->parent = window;
 
+    gtk_signal_connect (GTK_OBJECT (window),
+			"destroy_event",
+			GTK_SIGNAL_FUNC (delete_event_cb),
+			NULL);
+
     gtk_window_set_title (GTK_WINDOW (window), "Gnome PLplot Driver");
 
     gtk_window_set_policy (GTK_WINDOW (window), TRUE, TRUE, TRUE);
@@ -638,8 +661,8 @@ plD_init_gnome (PLStream *pls)
 
   }
 
-  plP_setpxl (30.0, 30.0);
-  plP_setphy (0, 6000, 0, 4500);
+  plP_setpxl (phys2canvas, phys2canvas);
+  plP_setphy (0, WIDTH/DRAWING_UNIT, 0, HEIGHT/DRAWING_UNIT);
 
   gnome_is_initialized = TRUE;
 
@@ -701,8 +724,8 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
   points = gnome_canvas_points_new (npts);
 
   for ( i = 0; i < npts; i++ ) {
-    points->coords[2*i] = ((double) x[i])/10;
-    points->coords[2*i + 1] = ((double) -y[i])/10;
+    points->coords[2*i] = ((double) x[i]) * PIXELS_PER_DU;
+    points->coords[2*i + 1] = ((double) -y[i]) * PIXELS_PER_DU;;
   }
 
   item = gnome_canvas_item_new (group,
@@ -711,11 +734,9 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
 				"join_style", GDK_JOIN_ROUND,
                                 "points", points,
 				"fill_color_rgba",
- 				(guint32) ((int)(pls->curcolor.r << 24)
-					   + (int)(pls->curcolor.g << 16) 
-					   + (int)(pls->curcolor.b << 8)
-					   + 0xFF),
-                                "width_units", (double) pls->width,
+				plcolor_to_rgba (pls->curcolor, 0xFF),
+                                "width_units",
+				MAX ((double) pls->width, 3.0) * PIXELS_PER_DU,
                                 NULL);
 
   debug ("After gnome_canvas_item_new\n");
@@ -767,7 +788,7 @@ plD_eop_gnome(PLStream *pls)
   GnomePLdevPage* page;
   GnomeCanvas* canvas;
 
-  static int i;
+  //  static int i;
 
   dev = pls->dev;
 
@@ -781,8 +802,8 @@ plD_eop_gnome(PLStream *pls)
 
   gdk_threads_leave ();
 
-  printf("eop #%d\n", i++);
-  fflush (stdout);
+  //  printf("eop #%d\n", i++);
+  //  fflush (stdout);
 
   //  getchar();
 }
@@ -804,8 +825,8 @@ plD_bop_gnome(PLStream *pls)
   
   dev = pls->dev;
 
-  printf("npages = %d\n", dev->npages);
-  fflush (stdout);
+  //  printf("npages = %d\n", dev->npages);
+  //  fflush (stdout);
 
   gdk_threads_enter ();
   
@@ -830,6 +851,7 @@ void
 plD_tidy_gnome(PLStream *pls)
 {
   debug("plD_tidy_gnome");
+
   pthread_join (tid, NULL);
 }
 
@@ -898,8 +920,8 @@ fill_polygon (PLStream* pls)
   points = gnome_canvas_points_new (pls->dev_npts);
 
   for ( i = 0; i < pls->dev_npts; i++ ) {
-    points->coords[2*i] = ((double) pls->dev_x[i])/10;
-    points->coords[2*i + 1] = ((double) -pls->dev_y[i])/10;
+    points->coords[2*i] = ((double) pls->dev_x[i]) * PIXELS_PER_DU;
+    points->coords[2*i + 1] = ((double) -pls->dev_y[i]) * PIXELS_PER_DU;
   }
 
   debug ("Before gnome_canvas_item_new\n");
@@ -908,10 +930,7 @@ fill_polygon (PLStream* pls)
                                 gnome_canvas_polygon_get_type (),
                                 "points", points,
                                 "fill_color_rgba",
- 				(guint32) ((int)(pls->curcolor.r << 24)
-					   + (int)(pls->curcolor.g << 16) 
-					   + (int)(pls->curcolor.b << 8)
-					   + 0xFF),
+ 				plcolor_to_rgba (pls->curcolor, 0xFF),
                                 "width_units", 0.0,
                                 NULL);
 
@@ -963,10 +982,10 @@ clear (PLStream* pls)
 
   rect = gnome_canvas_item_new (group,
 				gnome_canvas_rect_get_type(),
-				"x1", (double) (pls->sppxmi)/10.0,
-				"y1", (double) -(pls->sppyma)/10.0,
-				"x2", (double) (pls->sppxma)/10.0,
-				"y2", (double) -(pls->sppymi)/10.0,
+				"x1", (double) (pls->sppxmi) * PIXELS_PER_DU,
+				"y1", (double) -(pls->sppyma) * PIXELS_PER_DU,
+				"x2", (double) (pls->sppxma) * PIXELS_PER_DU,
+				"y2", (double) -(pls->sppymi) * PIXELS_PER_DU,
 				"fill_color", (pls->cmap0[0]).name,
 				"width_units", 0.0,
 				NULL);
