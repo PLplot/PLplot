@@ -418,6 +418,11 @@ divert(-1)
 
 AC_REVISION($Revision$)
 AC_INIT(src/plcore.c)
+### Configuration headers
+
+AUTOHEADER="echo autoheader ignored"
+AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
+
 ### Package version number
 AM_INIT_AUTOMAKE(plplot, 5.2.0)
 
@@ -764,10 +769,6 @@ fi
 # Location substitutions for makefiles only
 
 AC_SUBST(INCLUDE_DIR)
-
-### Configuration headers
-
-AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 # Location substitutions for header files as well
 
