@@ -823,16 +823,16 @@ if test "$enable_octave" = "yes"; then
 
 # Check that plplot was built with shared libs
     if test "$with_shlib" = "no"; then
-	AC_MSG_RESULT([warning: For Octave support PLplot must be build with shared libs. Disabling Octave support.]);
+	AC_MSG_RESULT([warning: Octave support requires with_shlib=yes, setting enable_octave=no.]);
 	enable_octave=no;
     fi
 
 # check for matwrap
     if test "$enable_octave" = "yes"; then
+	MATWRAP=matwrap
 	AC_CHECK_PROG(has_matwrap, matwrap, yes, no)
 	if test "$has_matwrap" = "no"; then
-	    AC_MSG_RESULT([warning: 'matwrap' not found, disabling Octave support.]);
-	    enable_octave=no;
+	    MATWRAP="./matwrap"
 	fi
     fi
 
@@ -849,7 +849,7 @@ if test "$enable_octave" = "yes"; then
 
 # check for user supplied Octave
     if test "$enable_octave" = "yes"; then
-	AC_ARG_WITH(octavexe, [  --with-octavexe=file      Specify Octave], OCTAVE="$withval", OCTAVE="octave")
+	AC_ARG_WITH(octavexe, [ --with-octavexe=file      Specify Octave], OCTAVE="$withval", OCTAVE="octave")
 	AC_CHECK_PROG(has_octave, $OCTAVE, yes, no)
 	if test "$has_octave" = "no"; then
 	    AC_MSG_RESULT([warning: $OCTAVE not found, disabling Octave support.]);
@@ -872,6 +872,7 @@ EOF`
 	else
 	    rm $OCTAVE_OCT_DIR/po
 	fi
+	AC_SUBST(MATWRAP)
 	AC_SUBST(OCTAVE_OCT_DIR)
 	AC_SUBST(OCTAVE_DIR)
     fi

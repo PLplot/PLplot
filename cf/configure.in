@@ -1096,7 +1096,13 @@ if test "$enable_octave" = "yes"; then
     ln -s $srcdir/bindings/octave/massage.c . 2>/dev/null
     ln -s $srcdir/bindings/octave/.octaverc . 2>/dev/null
     mkdir -p plplot_octave_txt
-    (cd plplot_octave_txt; $srcdir/doc/docbook/bin/api2text.pl $srcdir/doc/docbook/src/plplotdoc.xml.in $srcdir/doc/docbook/src/api.xml; ln -s $srcdir/bindings/octave/etc/plplot.doc .)
+    (cd plplot_octave_txt; $srcdir/doc/docbook/bin/api2text.pl \
+	$srcdir/doc/docbook/src/plplotdoc.xml.in $srcdir/doc/docbook/src/api.xml;\
+	ln -s $srcdir/bindings/octave/etc/plplot.doc .)
+  if test "$has_matwrap" = "no"; then
+    ln -s $srcdir/bindings/octave/matwrap/matwrap . 2>/dev/null
+    ln -s $srcdir/bindings/octave/matwrap/wrap_octave.pl . 2>/dev/null
+  fi
 fi
 
 # Miscellaneous

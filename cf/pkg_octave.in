@@ -13,7 +13,7 @@ OCTAVE_LIBS	= $(LDC_LIBS) $(MAT_LINK) -l$(PLLIB_NAME)$(LIB_TAG)
 OCTAVE_DIR	= @OCTAVE_DIR@
 OCTAVE_OCT_DIR	= @OCTAVE_OCT_DIR@
 MKOCTFILE	= @MKOCTFILE@
-MATWRAP		= matwrap
+MATWRAP		= @MATWRAP@
 
 # Variables for use in "make" and "make install".
 
