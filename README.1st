@@ -1,4 +1,4 @@
-This is the 4th beta release (4.99d) of what will eventually become
+This is the 5th beta release (4.99e) of what will eventually become
 the PLPLOT 5.0 distribution.  At this point I'm mainly trying to root out the
 remaining bugs and system dependencies, but there will undoubtably be a
 few improvements yet before the final version sees the light of day.
@@ -14,6 +14,51 @@ Also there is system-specific documentation under sys/<system-name>, and
 a PLPLOT manual in the doc directory (not necessarily up-to-date, however).
 
 For more detail of these changes, consult Changes.log.
+
+**************************************************************************
+Version 4.99e: Summary of major changes (bug fix update only)
+**************************************************************************
+
+o Added explicit support for Ultrix and Convex systems.  Modified
+m4 config files, configure, and header files appropriately.
+
+o Header file prototype sections completely reworked.  Now each prototype
+taken directly from the definition (so includes variable names) and is
+accompanied by a brief description of what the function does.  This makes
+the header file much more useful as a quick reminder of the argument
+syntax for each function (i.e. a poor man's manual).
+
+o Changed the minimum distance a grid line must be from the boundary in
+order for it to be drawn.  
+
+o The user can now specify an exit handler for plplot via the plsexit()
+function.  The old mechanism where a custom pl_exit is supplied does not
+work on all systems and is no longer supported.
+
+o The plflush() function now calls a driver-specific flush if the driver
+requests this capability.  So the X driver now tells the X server to flush
+and the TK driver flushes its FIFO when the user calls plflush(),
+resulting in the page being completely drawn.
+
+o Metafiles are now created with the number of pages stored near the head
+of the file.  At each new page, a seek is made back to the beginning for
+it to be updated.  plrender uses this information to enable seeks backward
+from the end of the file.  To do this simply specify "--" and then the
+number of pages backward.  Can be used as argument to one of the
+page-specifying arguments (-b, -e, -p) or when interactively seeking
+("--<n><CR>").  Only works for newly created metafiles!
+
+o TK driver updated to work with Tcl7.1/TK3.4 and later (actually tested
+with Tcl7.2/TK3.5; I skipped the 7.1/3.4 release).  TK driver now
+eliminates dangerous Tcl commands by renaming them!  I had forgotten to do
+this previously (only did so for plserver's Tcl interpreter).  A tricks
+and tips file named "Xauthority" was added to the doc directory.
+
+o error in bounding box for PS driver fixed
+
+o stubs and definitions fixed for PLSCOLBG, PLEOP, PLBOP.  Should be OK
+to use from Fortran now.
+
 
 **************************************************************************
 Version 4.99d: Summary of major changes (major update!)

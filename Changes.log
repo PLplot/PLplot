@@ -7,6 +7,134 @@ maintenance program we use) commit messages from each file.  Those that
 are common to all are handled separately to make it a bit less junky.
 
 *****************************************************************************
+PLPLOT 4.99e changes
+*****************************************************************************
+
+pdfutils.c:
+ * Revision 1.6  1993/11/12  18:41:18  mjl
+ * Substituted bit operations for some arithmetic ones, for faster, more
+ * concise, and more portable code.
+
+plbox.c:
+ * Revision 1.9  1993/11/19  07:29:18  mjl
+ * Changed the minimum distance a grid line must be from the boundary in
+ * order for it to be drawn.  It was set before at 0.5 ticks (undocumented
+ * and hardwired) and I changed this to 0.1 ticks while documenting it in the
+ * code and making it easier to alter (but only through changing the source).
+ * Maybe in the long term this should become a settable parameter.
+
+plcore.c:
+ * Revision 1.23  1993/11/15  08:38:35  mjl
+ * Added documentation.  Fixed plflush to be callable from Fortran.
+ * Moved plexit to this file and changed it to set nopause before issuing the
+ * final end-of-page command.
+ *
+ * Revision 1.22  1993/11/07  09:07:38  mjl
+ * Changed plflush() to call escape function if driver wants to handle
+ * flushes itself.  Also found & fixed a bug in plcpstrm.
+
+plctrl.c:
+ * Revision 1.10  1993/11/15  08:39:05  mjl
+ * Removed plexit().
+ *
+ * Revision 1.9  1993/11/07  09:08:14  mjl
+ * Added user-settable exit handler (call plsexit to set).
+
+plmeta.c:
+ * Revision 1.21  1993/11/15  08:29:19  mjl
+ * Now writes number of pages in file to beginning of file on each
+ * new page.  For seeking to a specified number of pages before EOF.
+
+plrender.c:
+ * Revision 1.34  1993/11/15  08:42:15  mjl
+ * Added code to support seeks to the specified number of pages before EOF.
+ * Number is specified using "--", i.e. -b --3 to start 3 pages before EOF.
+ * Also works while interactively seeking.
+
+plserver.c:
+ * Revision 1.14  1993/11/19  07:31:35  mjl
+ * Updated to new call syntax for tk_toplevel().
+
+ps.c:
+ * Revision 1.19  1993/11/19  07:29:50  mjl
+ * Fixed the bounding box maxima (bug reported by Jan Thorbecke).
+
+scstubs.c:
+ * Revision 1.16  1993/11/15  08:40:57  mjl
+ * Added stub for PLSCOLBG.
+
+tk.c:
+ * Revision 1.17  1993/11/19  07:31:36  mjl
+ * Updated to new call syntax for tk_toplevel().
+ *
+ * Revision 1.16  1993/11/15  08:31:16  mjl
+ * Now uses tmpnam() to get temporary file instead of tempnam().  Also,
+ * put in rename of dangerous Tcl commands just after startup.
+ *
+ * Revision 1.15  1993/11/07  09:02:52  mjl
+ * Added escape function handling for dealing with flushes.
+
+tkshell.c:
+ * Changed to new argument syntax for Tk_CreateMainWindow for TK 3.4 and later.
+
+xwin.c:
+ * Revision 1.26  1993/11/07  09:02:33  mjl
+ * Some minor optimizations.  Also added escape function handling for dealing
+ * with flushes.
+
+metadefs.h:
+ * Revision 1.9  1993/11/15  08:31:37  mjl
+ * Bumped metafile version number since now write pages info to header.
+
+plplot.h:
+ * Revision 1.47  1993/11/19  07:32:40  mjl
+ * Added Convex support.
+ *
+ * Revision 1.46  1993/11/15  08:34:07  mjl
+ * Prototype section completely reworked.  Now each prototype taken directly
+ * from the definition (so includes variable names) and is accompanied by a
+ * brief description of what the function does.  This makes the header file
+ * much more useful as a quick reminder of the argument syntax for each
+ * function (i.e. a poor man's manual).
+ *
+ * Revision 1.45  1993/11/07  22:49:00  mjl
+ * Bumped version number to 4.99e.
+ *
+ * Revision 1.44  1993/11/07  09:03:22  mjl
+ * Added prototype for plsexit, the new exit-handler setting function.
+
+plplotP.h:
+ * Revision 1.14  1993/11/19  07:41:52  mjl
+ * define NO_ANSI_LIBC if on Convex (may be overkill but it works..)
+ *
+ * Revision 1.13  1993/11/15  08:34:23  mjl
+ * Prototype section completely reworked.  Now each prototype taken directly
+ * from the definition (so includes variable names) and is accompanied by a
+ * brief description of what the function does.  This makes the header file
+ * much more useful as a quick reminder of the argument syntax for each
+ * function (i.e. a poor man's manual).
+ *
+ * Revision 1.12  1993/11/07  09:03:42  mjl
+ * Added escape code for flush handling.
+
+plserver.h:
+ * Revision 1.6  1993/11/19  07:31:20  mjl
+ * Fixed the prototype for tk_toplevel().
+
+plstream.h:
+ * Revision 1.18  1993/11/15  08:34:43  mjl
+ * Documentation changes.
+ *
+ * Revision 1.17  1993/11/07  09:04:17  mjl
+ * Added device variable to specify that driver wants to handle its own
+ * flushes.
+
+plstubs.h:
+ * Revision 1.18  1993/11/15  08:35:22  mjl
+ * Name definitions added for new stubs -- PLEOP, PLBOP, PLSCOLBG.
+
+
+*****************************************************************************
 PLPLOT 4.99d changes
 *****************************************************************************
 
