@@ -35,7 +35,7 @@ static void  buildlist	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 void
 c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 {
-    short xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
+    PLINT xpoly[PL_MAXPOLY], ypoly[PL_MAXPOLY];
     PLINT i;
 
     if (plsc->level < 3) {
@@ -61,7 +61,8 @@ c_plfill(PLINT n, PLFLT *x, PLFLT *y)
 	ypoly[n-1] = plP_wcpcy(y[0]);
     }
 
-    plP_fill(xpoly, ypoly, n);
+    plP_plfclp(xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
+	       plsc->clpymi, plsc->clpyma, plP_fill);
 }
 
 /*----------------------------------------------------------------------*\
