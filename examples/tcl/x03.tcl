@@ -3,7 +3,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.4  1995/01/27 02:49:47  mjl
+# Revision 1.5  1995/03/21 19:38:56  mjl
+# De-bogotification.
+#
+# Revision 1.4  1995/01/27  02:49:47  mjl
 # New Tcl example files.  Can now be run from either pltcl -- using the
 # "loopback" command as argument, or from plserver (or other plplot-aware
 # extended wish) -- using the widget name as argument.
@@ -48,7 +51,7 @@ proc x03 {w} {
 
 # Draw circles for polar grid
 
-	$w cmd plline $npts1 x $y
+	$w cmd plline $npts1 x y
     }
 
     $w cmd plcol 2
@@ -83,7 +86,7 @@ proc x03 {w} {
 	y $i = [expr [y0 $i] * $r]
     }
     $w cmd plcol 3
-    $w cmd plline $npts1 x $y
+    $w cmd plline $npts1 x y
 
     $w cmd plcol 4
     $w cmd plmtex "t" 2.0 0.5 0.5 "#frPLplot Example 3 - r(#gh)=sin 5#gh"
