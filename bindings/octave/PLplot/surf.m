@@ -23,8 +23,8 @@
 ## columns of z correspond to different x values and rows of z correspond
 ## to different y values.
 
-function surf (...)
+function surf (varargin)
 
-  __pl_mesh ("surf", all_va_args);
+  __pl_mesh ("surf", varargin{:});
 
 endfunction

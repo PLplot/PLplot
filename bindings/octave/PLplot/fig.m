@@ -16,8 +16,8 @@
 ##
 ## just an alias to figure
 
-function [n, driver,  intp] = fig (...)
+function [n, driver,  intp] = fig (varargin)
 
-  [n, driver, intp] = figure(all_va_args);
+  [n, driver, intp] = figure(varargin{:});
 
 endfunction

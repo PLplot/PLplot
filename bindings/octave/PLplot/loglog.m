@@ -21,8 +21,8 @@
 ## See the help message for the plot command for a description of how
 ## the arguments are interpreted.
 
-function loglog (...)
+function loglog (varargin)
 
-  __plt__ ("lgxy", all_va_args);
+  __plt__ ("lgxy", varargin{:});
 
 endfunction

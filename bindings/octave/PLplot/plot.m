@@ -51,8 +51,8 @@
 ##
 ##     b will be plotted with points of type "*".
 
-function plot (...)
+function plot (varargin)
 
-  __plt__ ("plot", all_va_args);
+  __plt__ ("plot", varargin{:});
 
 endfunction

@@ -31,11 +31,10 @@ function st = grid (x)
     __pl.grid(strm) = 1;
   elseif (nargin == 1)
     if (isstr (x))
-      x(length(x)+1:5) = " "; ## compatibility with 2.0.16.
       switch (x)
-	case "off  "
+	case "off"
           __pl.grid(strm) = 0;
-	case "on   "   
+	case "on"   
           __pl.grid(strm) = 1;
 	case "minor"
           __pl.grid(strm) = 2;

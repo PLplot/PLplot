@@ -21,8 +21,8 @@
 ## See the help message for the plot command for a description of how
 ## the arguments are interpreted.
 
-function semilogx (...)
+function semilogx (varargin)
 
-  __plt__ ("logx", all_va_args);
+  __plt__ ("logx", varargin{:});
 
 endfunction

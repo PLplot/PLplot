@@ -97,10 +97,9 @@ function curr_axis = axis (ax, opt)
     endif
 
   elseif (nargin != 0 && !isempty(opt))
-    opt(length(opt)+1:7) = " "; ## compatibility with 2.0.16.
 
     switch(opt)
-      case "state  " ## [s1, s2, s3] = axis('state') returns current settings
+      case "state" ## [s1, s2, s3] = axis('state') returns current settings
   	## S1 = 'auto' or 'manual'.
 	if (__pl.axis_st(strm) == 0 && __pl.margin(strm) == 1)
 	  S1 = "auto";
@@ -123,43 +122,43 @@ function curr_axis = axis (ax, opt)
 	curr_axis = [S1; S2; S3];
 
 	## aspect ratio
-      case "square "
+      case "square"
 	__pl.aspect(strm) = 2;
-      case "equal  "
+      case "equal"
 	__pl.aspect(strm) = 1;
-      case "normal "
+      case "normal"
 	__pl.axis_st(strm) = 0;
 	__pl.aspect(strm) = 0;
 
 	## the way axis limits are interpreted.
-      case "auto   " 
+      case "auto" 
 	__pl.axis_st(strm) = 0;
 	__pl.margin(strm) = 1;
-      case "manual "  ## fix the current axis
+      case "manual"  ## fix the current axis
 	__pl.axis_st(strm) = 1;
-      case "tight  " 
+      case "tight" 
 	__pl.axis_st(strm) = 0;
 	__pl.margin(strm) = 0;
-      case "image  "
+      case "image"
 	__pl.aspect(strm) = 1;
 	__pl.margin(strm) = 0;
 
 	## the appearance of tic marks
-      case "on     "  ## tic marks and tick labels on for all axes 
+      case "on"  ## tic marks and tick labels on for all axes 
 	__pl.xticks(strm,3) = 1;
 	__pl.xticks(strm,4) = 1;
 	__pl.yticks(strm,3) = 1;
 	__pl.yticks(strm,4) = 1;
-      case "off    "  ## tic marks off for all axes 
+      case "off"  ## tic marks off for all axes 
 	__pl.xticks(strm,3) = 0;
 	__pl.yticks(strm,3) = 0;
-      case "ticxy  "  ## on for the specified axes and off for the remainder.
+      case "ticxy"  ## on for the specified axes and off for the remainder.
 	__pl.xticks(strm,3) = 1;
 	__pl.yticks(strm,3) = 1;
-      case "ticx   " 
+      case "ticx" 
 	__pl.xticks(strm,3) = 1;
 	__pl.yticks(strm,3) = 0;
-      case "ticy   " 
+      case "ticy" 
 	__pl.xticks(strm,3) = 0;
 	__pl.yticks(strm,3) = 1;
 
@@ -167,10 +166,10 @@ function curr_axis = axis (ax, opt)
       case "labelxy"  ## on for the specified axes and off for the remainder. 
 	__pl.xticks(strm,4) = 1;
 	__pl.yticks(strm,4) = 1;
-      case "labelx "
+      case "labelx"
 	__pl.xticks(strm,4) = 1;
 	__pl.yticks(strm,4) = 0;
-      case "labely "
+      case "labely"
 	__pl.xticks(strm,4) = 0;
 	__pl.yticks(strm,4) = 1;
       case "nolabel"  ## Turn tic labels off for all axes.
@@ -178,13 +177,13 @@ function curr_axis = axis (ax, opt)
 	__pl.yticks(strm,4) = 0;
 
 	##  the direction of increasing values on the axes
-      case "ij     " 
+      case "ij" 
 	warning("axis: option 'ij' not supported.");
-      case "xy     " 
+      case "xy" 
 	1;  ## default
 
 	## the appearance of the xy axis
-      case "axison "
+      case "axison"
 	  __pl.axisxy(strm) = 1;
 	case "axisoff"
 	  __pl.axisxy(strm) = 0;

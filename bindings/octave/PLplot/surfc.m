@@ -23,8 +23,8 @@
 ## columns of z correspond to different x values and rows of z correspond
 ## to different y values.
 
-function surfc (...)
+function surfc (varargin)
 
-  __pl_mesh ("surfc", all_va_args);
+  __pl_mesh ("surfc", varargin{:});
 
 endfunction

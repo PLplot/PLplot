@@ -20,8 +20,8 @@
 ## columns of z correspond to different x values and rows of z correspond
 ## to different y values.
 
-function mesh (...)
+function mesh (varargin)
 
-  __pl_mesh ("mesh", all_va_args);
+  __pl_mesh ("mesh", varargin{:});
 
 endfunction

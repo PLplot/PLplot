@@ -35,7 +35,7 @@
 ##    button 2 press: finish
 ##    button 3 press: return to default position
 
-function set_view (alt, az, ...)
+function set_view (alt, az, varargin)
 
   global __pl 
   strm = __pl_init;
@@ -78,7 +78,7 @@ function set_view (alt, az, ...)
     xM = yM = zM = 1;
   else
     title(sprintf("Alt=%d   Az=%d", alt, az));
-    feval(cmd, arg1, all_va_args);
+    feval(cmd, arg1, varargin{:});
   endif
   
   odx = ody = 0;
@@ -124,7 +124,7 @@ function set_view (alt, az, ...)
       __pl.az(strm) = az + c_az; 
       __pl.alt(strm) = alt + c_alt;
       title(sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
-      feval(cmd, arg1, all_va_args);
+      feval(cmd, arg1, varargin{:});
     endif
     
   endwhile

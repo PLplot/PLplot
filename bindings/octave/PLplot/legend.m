@@ -26,7 +26,7 @@
 ##   format used in the plot, e.g., "r+;legend;".
 ##   To disable an entry, enter one blank, e.g. legend("set","; ;")
 
-function st = legend (x, xpos, ...)
+function st = legend (x, xpos, varargin)
 
   global __pl
   strm = __pl_init;
@@ -53,11 +53,10 @@ function st = legend (x, xpos, ...)
 
     elseif (strcmp ("set", x))
       if (nargin >= 2 && isstr(xpos))
-	__pl.fmt0_1 = xpos;
-	va_start;
-	i=1;
+	__pl.fmt{1,1} = xpos;
+	i=2;
 	while (--nargin > 1)
-	  eval(sprintf("__pl.fmt%d_%d=va_arg;",i++, strm));
+	  __pl.fmt{i++,strm} = varargin{i-1};
 	endwhile
       endif
     else

@@ -16,9 +16,7 @@ function __pl_plotit
 
   ## __pl.type is the type of plot (polar, logx, etc.),
   ## __pl.items the number of triples (x, y, fmt) in the plot argument
-  ## __pl.[x|y|fmt] stores the triples, as .x_i, .y_i, fmt_i,
-  ## were _i varies from 1 to __pl_items
-  ## now the format is __pl.x{i}_j, where i is the item and j the figure
+  ## __pl.[x|y|fmt]{i,j} stores the triples where i is the item and j the figure
 
   global __pl
 
@@ -41,25 +39,6 @@ function __pl_plotit
     __pl_logplotit;
   endif
   
-  ## define a viewport before plotting.
-  if(0) # moved to __pl_store
-    __pl_lxM = __pl_lyM = -realmax;
-    __pl_lxm = __pl_lym = realmax;
-
-    for i=0:__pl.items(strm)-1
-      
-      x = eval(sprintf("__pl.x%d_%d;", i, strm));
-      y = eval(sprintf("__pl.y%d_%d;", i, strm));
-      
-      __pl_lxm = min([__pl_lxm, min(min(x))]);
-      __pl_lxM = max([__pl_lxM, max(max(x))]);
-      
-      __pl_lym = min([__pl_lym, min(min(y))]);
-      __pl_lyM = max([__pl_lyM, max(max(y))]);
-      
-    endfor
-  endif
-
   ## It seems that a viewport of (x, x, y, y) doesn't work
   __pl_lxm = __pl.lxm(strm); __pl_lxM = __pl.lxM(strm);
   __pl_lym = __pl.lym(strm); __pl_lyM = __pl.lyM(strm);
@@ -98,7 +77,7 @@ function __pl_plotit
     
   ## start from the beginning
     
-  if (__pl.items(strm) != 0)
+  if (__pl.items(strm) != 1)
     __pl.plcol(strm) = 1;
     __pl.pllsty(strm) = 1;
     __pl.lab_pos(strm) = 1;
@@ -125,12 +104,12 @@ function __pl_plotit
   endif			    
 
   ## get the plots to be done, previously stored in the __pl_struct structure
-  for items=0:__pl.items(strm)-1
+  for items=1:__pl.items(strm)-1
 
-    x = eval(sprintf("__pl.x%d_%d;", items, strm));
-    y = eval(sprintf("__pl.y%d_%d;", items, strm));
-    fmt = eval(sprintf("__pl.fmt%d_%d;", items, strm));
-    
+    x = __pl.x{items, strm};
+    y = __pl.y{items, strm};
+    fmt = __pl.fmt{items, strm};
+
     if (__pl.type(strm) == 10 || __pl.type(strm) == 30)
       x = log10(x); 
     endif
@@ -138,7 +117,7 @@ function __pl_plotit
       y = log10(y);
     endif
     
-    ## HERE - this is here just because of style variable
+    ## this is here just because of style variable
     if (isempty(fmt))
       [style, color, symbol, key_title] = __pl_opt(fmt);
     else
@@ -165,15 +144,10 @@ function __pl_plotit
       for j=eval(range)
 	
 	if (is_strmatrix(fmt) && !is_strvector(fmt))
-	  ## if (rows(fmt) < max(eval(range)))
-	  ## now reuse fmt
-	  ## error ("__pl_plotit: matrix dimensions must match");
-	  ## else
 	  [style, color, symbol, key_title] = __pl_opt(fmt(rem(j-1,rows(fmt))+1,:));
 	  if (color != 20)
 	    __pl.plcol(strm) = color;
 	  endif
-	  ## endif
 	endif
 	
 	if (isempty(key_title))
@@ -197,7 +171,7 @@ function __pl_plotit
 	endif
 
 	if (__pl.legend(strm))
-	  if (lab == "") ## log plots may have a CTRL-A as the label plot
+	  if (lab == "") ## log plots may have a CTRL-A as the label plot! hugh!
 	    __pl.lab_str = [__pl.lab_str; " "];
 	  else
 	    __pl.lab_str = [__pl.lab_str; lab];

@@ -23,8 +23,8 @@
 ## columns of z correspond to different x values and rows of z correspond
 ## to different y values.
 
-function meshc (...)
+function meshc (varargin)
 
-  __pl_mesh ("meshc", all_va_args);
+  __pl_mesh ("meshc", varargin{:});
   
 endfunction

@@ -28,8 +28,10 @@ function closeallfig
   ## if rows() has not been used when closeallfig is called, an error occurs here
   [nr, nc] = size(__pl.open);
 
-  __pl.open = zeros(nr,1);
-
-  plend
+  for i=1:nr
+    if (__pl.open(i))
+      closefig(i-1);
+    endif
+  endfor
 
 endfunction

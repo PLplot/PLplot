@@ -25,7 +25,7 @@
 ## See command plot() for the various options to this command
 ## as this is just mulitplot version of the same command.
 
-function mplot (...)
+function mplot (varargin)
 
   global __pl
   strm = __pl_init;
@@ -38,6 +38,6 @@ function mplot (...)
   endif
   
   pladv(__pl.multi_cur(strm))
-  __plt__ ("plot", all_va_args);
+  __plt__ ("plot", varargin{:});
 
 endfunction

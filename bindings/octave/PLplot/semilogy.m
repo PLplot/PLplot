@@ -19,8 +19,8 @@
 ## See the help message for the plot command for a description of how
 ## the arguments are interpreted.
 
-function semilogy (...)
+function semilogy (varargin)
 
-  __plt__ ("logy", all_va_args);
+  __plt__ ("logy", varargin{:});
 
 endfunction

@@ -12,7 +12,7 @@
 ##
 ## This file is part of plplot_octave.
 
-function __pl_mesh(caller, ...)
+function __pl_mesh(caller, varargin)
 
   global __pl
   global DRAW_LINEXY MAG_COLOR BASE_CONT
@@ -20,16 +20,14 @@ function __pl_mesh(caller, ...)
 
   strm = __pl_init;
   
-  caller(length(caller)+1:5)=" "; ## compatibility with 2.0.16. Notice
-                                  ## the blank spaces at the "case"s bellow.
   switch (caller)
-    case ("mesh ")
+    case ("mesh")
       __pl.type(strm) = 100;
     case ("meshc")
       __pl.type(strm) = 101;
     case ("meshz")
       __pl.type(strm) = 102;
-    case ("surf ")
+    case ("surf")
       __pl.type(strm) = 103;
     case ("surfc")
       __pl.type(strm) = 104;
@@ -38,9 +36,9 @@ function __pl_mesh(caller, ...)
     otherwise
       error("__pl_mesh: FIXME")
   endswitch
-  
+
   if (nargin == 2)
-    z = va_arg ();
+    z = varargin{1};
     if (is_matrix (z))
       [rz, cz] = size(z);
       x = (1:cz)'; 
@@ -49,9 +47,9 @@ function __pl_mesh(caller, ...)
       error ("mesh: argument must be a matrix.\n");
     endif
   elseif (nargin == 4 )
-    x = va_arg ();
-    y = va_arg ();
-    z = va_arg ();
+    x = varargin{1};
+    y = varargin{2};
+    z = varargin{3};
     if (is_vector (x) && is_vector (y) && is_matrix (z))
       xlen = length (x);
       ylen = length (y);
@@ -78,7 +76,7 @@ function __pl_mesh(caller, ...)
   endif
 
   if (!ishold)
-    __pl.items(strm) = 0;
+    __pl.items(strm) = 1;
     __pl.lxm(strm) = __pl.lym(strm) = __pl.lzm(strm) = realmax;
     __pl.lxM(strm) = __pl.lyM(strm) = __pl.lzM(strm) = -realmax;
   endif
@@ -96,9 +94,11 @@ function __pl_mesh(caller, ...)
   __pl.lzM(strm) = max([__pl.lzM(strm), max(max(z))]);
 
   ## kludge, use "fmt" as plot type. But __pl_plotit still uses __pl.type
-  eval(sprintf("__pl.x%d_%d=x; __pl.y%d_%d=y; __pl.z%d_%d=z; __pl.fmt%d_%d=__pl.type(strm);",\
-	       items, strm, items, strm, items, strm, items, strm));
-  
+    __pl.x{items, strm} = x;
+    __pl.y{items, strm} = y;
+    __pl.z{items, strm} = z;
+    __pl.fmt{items, strm} = __pl.type(strm);
+
   __pl.items(strm) = __pl.items(strm) + 1;
 
   __pl_meshplotit;

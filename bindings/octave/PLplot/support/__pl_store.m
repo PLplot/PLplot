@@ -18,21 +18,36 @@ function __pl_store(x, y, fmt)
   strm = __pl_init;
 
   if (!struct_contains(__pl, "items"))
-    __pl.items(strm) = 0;
+    __pl.items(strm) = 1;
   endif
 
   items = __pl.items(strm);
 
   ## find the max/min x/y values. Currently reset at __plt__
-  __pl.lxm(strm) = min([__pl.lxm(strm), min(min(x))]);
-  __pl.lxM(strm) = max([__pl.lxM(strm), max(max(x))]);
+  ## for log plots use only positive values
 
-  __pl.lym(strm) = min([__pl.lym(strm), min(min(y))]);
-  __pl.lyM(strm) = max([__pl.lyM(strm), max(max(y))]);
+  if (__pl.type(strm) == 10 || __pl.type(strm) == 30)
+    minx = min(min(x(x>0))); maxx = max(max(x(x>0)));
+  else
+    minx = min(min(x)); maxx = max(max(x));
+  endif
 
-  eval(sprintf("__pl.x%d_%d=x; __pl.y%d_%d=y; __pl.fmt%d_%d=fmt;",\
-	       items, strm, items, strm, items, strm));
-  
-  __pl.items(strm) = __pl.items(strm) + 1;
+  if (__pl.type(strm) == 20 || __pl.type(strm) == 30)		
+    miny = min(min(y(y>0))); maxy = max(max(y(y>0)));
+  else
+    miny = min(min(y)); maxy = max(max(y));
+  endif
+
+  __pl.lxm(strm) = min([__pl.lxm(strm), minx]);
+  __pl.lxM(strm) = max([__pl.lxM(strm), maxx]);
+
+  __pl.lym(strm) = min([__pl.lym(strm), miny]);
+  __pl.lyM(strm) = max([__pl.lyM(strm), maxy]);
+
+  __pl.x{items, strm} = x;
+  __pl.y{items, strm} = y;
+  __pl.fmt{items, strm} = fmt;
+
+  __pl.items(strm)++;
 
 endfunction

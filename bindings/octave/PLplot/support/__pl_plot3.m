@@ -83,7 +83,7 @@ function __pl_plot3(x, y, z, c)
     endswitch
 
     plflush;pleop;
-    __pl.items(strm) = 0; # for now!
+    __pl.items(strm) = 1; # for now!
   endif
 
 endfunction

@@ -73,8 +73,9 @@ function __pl_meshplotit()
   clevel = (linspace(zm+st, zM-st, nlev))';
   levs = 0;
 
-  switch (__pl.shading(strm,:))
-    case "flat   "
+  shad = tdeblank(__pl.shading(strm,:));
+  switch (shad)
+    case "flat"
       sh = 0;
     case "faceted"
       sh = FACETED;
@@ -83,13 +84,13 @@ function __pl_meshplotit()
       levs = clevel;
   endswitch
 
-  for items=0:__pl.items(strm)-1
-    x = eval(sprintf("__pl.x%d_%d;", items, strm));
-    y = eval(sprintf("__pl.y%d_%d;", items, strm));
-    z = eval(sprintf("__pl.z%d_%d;", items, strm));
+  for items=1:__pl.items(strm)-1
+    x = __pl.x{items, strm};
+    y = __pl.y{items, strm};
+    z = __pl.z{items, strm};
 
     ## kludge, use "fmt" as plot type. But __pl_plotit still uses __pl.type
-    type = eval(sprintf("__pl.fmt%d_%d;", items, strm));
+    type = __pl.fmt{items, strm};
 
   switch (type)
     case 100  ## mesh

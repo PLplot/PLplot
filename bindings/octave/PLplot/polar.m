@@ -28,7 +28,7 @@ function polar (x1, x2, fmt)
 
   __pl.type(strm) = -1;
   if (!ishold)
-    __pl.items(strm) = 0;
+    __pl.items(strm) = 1;
     __pl.lxm(strm) = __pl.lym(strm) = realmax;
     __pl.lxM(strm) = __pl.lyM(strm) = -realmax;
   endif

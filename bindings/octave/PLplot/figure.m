@@ -47,6 +47,14 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
   global __pl __tk_name
 
   if (!exist("__pl") || !struct_contains (__pl,"inited"))
+    v = split(version ,'.');
+    if (! (str2num(v(1,:)) >= 2 &&
+           str2num(v(2,:)) >= 1 &&
+           str2num(v(3,:)) >= 51))
+        error("The PLplot-Octave scripts need an Octave version \n\
+        greater then or equal to 2.1.50.\n");
+    endif
+
     plplot_stub;
 
     ## closeallfig must be called once before atexit is called!
@@ -102,9 +110,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       endif
 
       __pl.type(strm) = 0;
-      ##if (!struct_contains(__pl, "items"))
-	__pl.items(strm) = 0;
-      ##endif
+	__pl.items(strm) = 1;
       __pl.legend_xpos(strm) = 1;	# legend x position
       __pl.legend_ypos(strm) = 1;	# legend y position
       __pl.legend(strm) = 2;	        # legend type

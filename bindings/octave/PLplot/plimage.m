@@ -64,6 +64,6 @@ function plimage(img, x1, x2, y1, y2)
 	tdeblank(__pl.tlabel(strm,:)));
   plflush;pleop;
 
-  __pl.items(strm) = 0; # for now!
+  __pl.items(strm) = 1; # for now!
 
 endfunction

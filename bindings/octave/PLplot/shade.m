@@ -126,8 +126,7 @@ function shade(x, y, z, levels, cont )
 
   tr = [(maxx-minx)/(xlen-1); 0; xmm; 0; (maxy-miny)/(ylen-1); ymm];
   plpsty(0);
-  if (1) ## it turns out that plshades() is slower than several calls to plshade() !? and plshades() sometimes fails ?!
-
+  if (1) ## plshades() is slower than several calls to plshade() !? and plshades() sometimes fails ?!
     for i = 1:n
       plshade(z', '0', minx, maxx, miny, maxy, 
 	      clevel(i), clevel(i+1),
@@ -167,7 +166,7 @@ function shade(x, y, z, levels, cont )
   pllab(tdeblank(__pl.xlabel(strm,:)), tdeblank(__pl.ylabel(strm,:)), tdeblank(__pl.tlabel(strm,:)));
 
   plflush;
-  __pl.items(strm) = 0; # for now!
+  __pl.items(strm) = 1; # for now!
   empty_list_elements_ok = old_empty_list_elements_ok;
   
 endfunction
