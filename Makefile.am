@@ -71,6 +71,7 @@ EXTRA_DIST = \
 	mkrel \
 	plexp \
 	plimp \
+	reconfig \
 	sysloc.in \
 	tarup	 \
 	zipup
