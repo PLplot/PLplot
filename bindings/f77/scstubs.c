@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1993/11/15 08:40:57  mjl
+ * Revision 1.17  1993/12/06 07:47:34  mjl
+ * Changed routine names used in new color model.
+ *
+ * Revision 1.16  1993/11/15  08:40:57  mjl
  * Added stub for PLSCOLBG.
  *
  * Revision 1.15  1993/10/21  19:27:07  mjl
@@ -74,9 +77,23 @@ PLBOX37(char *xopt, char *xlabel, PLFLT *xtick, PLINT *nxsub,
 }
 
 void
+PLCOL0(PLINT *icol)
+{
+    c_plcol0(*icol);
+}
+
+void
+PLCOL1(PLFLT *col)
+{
+    c_plcol1(*col);
+}
+
+/* The old way, same as plcol0 */
+
+void
 PLCOL(PLINT *icol)
 {
-    c_plcol(*icol);
+    c_plcol0(*icol);
 }
 
 void
@@ -317,27 +334,21 @@ PLSCHR(PLFLT *def, PLFLT *scale)
 }
 
 void
-PLSCM0(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol0)
+PLSCMAP0(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol0)
 {
-    c_plscm0(r, g, b, *ncol0);
+    c_plscmap0(r, g, b, *ncol0);
 }
 
 void
-PLSCM0N(PLINT *ncol0)
+PLSCMAP1(PLINT *r, PLINT *g, PLINT *b)
 {
-    c_plscm0n(*ncol0);
+    c_plscmap1(r, g, b);
 }
 
 void
-PLSCM1(PLINT *r, PLINT *g, PLINT *b)
+PLSCMAP1F1(PLINT *itype, PLFLT *param)
 {
-    c_plscm1(r, g, b);
-}
-
-void
-PLSCM1F1(PLINT *itype, PLFLT *param)
-{
-    c_plscm1f1(*itype, param);
+    c_plscmap1f1(*itype, param);
 }
 
 void
