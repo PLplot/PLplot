@@ -1,102 +1,4 @@
 # $Id$
-# $Log$
-# Revision 1.40  2000/07/19 21:11:49  furnish
-# Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
-# surface plotter, contour labelling, and demo updates to show off these
-# new features.
-#
-# Revision 1.39  1998/12/01 20:49:22  furnish
-# Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
-#
-# Revision 1.38  1996/02/23  16:49:29  furnish
-# Some little hacks to make the scroll bars look better during zooms.
-#
-# Revision 1.37  1995/08/22  16:17:53  mjl
-# Inserted a necessary "update".
-#
-# Revision 1.36  1995/06/23  02:54:19  mjl
-# Added resize binding, just experimental but I may want to mess with it
-# again later.
-#
-# Revision 1.35  1995/06/13  21:28:24  mjl
-# Miscellaneous tk4 fixes.
-#
-# Revision 1.34  1995/06/02  20:31:54  mjl
-# Set zoom starting point to default to center.  Better for zooming in on
-# small plot features, although worse for large objects (e.g. entire plots).
-#
-# Revision 1.33  1995/06/01  21:28:24  mjl
-# Changed to call getSaveFile to retrieve save file name.
-#
-# Revision 1.32  1995/05/26  20:18:43  mjl
-# Split up the plot-menu building code into different procs and rewrote
-# substantially.  Save menu changed: the device is now specified as an option,
-# with all Save-As.. selections going to this device.  A file type option
-# was added, to select between 1 plot/file (the default) and many plots/file
-# (archive files).  Intended to reduce errors caused by forgetting to close
-# the save file.  The Again and Close commands are now disabled unless an
-# archive type save file is open.  Zoom menu changed: forward/back entries
-# added, to go forward or back one zoom level.  Disabled if it's not possible
-# to do so.  Zoom options added: preserve aspect ratio (check button), zoom
-# starting from corner or center (radio button).  Default is to zoom from
-# one corner, preserving aspect ratio.
-#
-# Revision 1.31  1995/04/12  08:15:46  mjl
-# Changed the way the client variable is treated.  If specified, enables
-# settings relevant to working with the plplot/TK driver.  To simplify the
-# code, the client variable is now kept globally and not passed as an argument
-# so some proc syntaxes were changed.  Also, this forces only 1 plplot stream
-# per plserver process (I doubt anyone has tried to do otherwise anyway).
-#
-# Revision 1.30  1995/03/16  23:17:01  mjl
-# Key filtering changed to new modifier magnification scheme.  Changed style
-# of reports (of keypress or mouse events) back to client code in order to be
-# more complete.
-#
-# Revision 1.29  1994/10/11  18:57:58  mjl
-# Default zooming behavior changed -- now it zooms outward from the center
-# (first point clicked on), preserving aspect ratio.  This works correctly
-# even if the orientation or the aspect ratio is changed.  The old behavior
-# can be recovered by setting the global variable "zoomopt" to 1.
-#
-# Revision 1.28  1994/09/27  22:06:11  mjl
-# Several important additions to the zooming capability:
-#  - A double click now zooms by 2X, centered at the mouse cursor.  If the
-#    cursor is too close to the boundary to allow this, an appropriately
-#    higher magnification is used.
-#  - The zoomed window positions are retained and can be recalled.  The keys
-#    "b" (backward) and "f" (forward) are used to traverse the window list.
-#
-# Revision 1.27  1994/09/23  07:42:01  mjl
-# Added a status message while waiting for plot to print.
-#
-# Revision 1.26  1994/08/25  04:01:23  mjl
-# Simplified and sped up eop handling.
-#
-# Revision 1.25  1994/07/13  21:40:35  mjl
-# Put in status message while waiting for plot to be saved.  Reassures the
-# user that the program hasn't crashed, when saving very complicated plots.
-#
-# Revision 1.24  1994/06/09  20:24:57  mjl
-# Massive reorganization and cleaning up.  Main result is that the plplot
-# "megawidget" acts much more like a normal Tk widget.  Still not
-# configurable; this will require extending it using itcl.  But now,
-# creation and mapping is much more straightforward, both directly (from
-# plserver or an extended wish) and from the plplot/tk driver.  You can do
-# simply:
-#
-#     plxframe .plw
-#     pack append . .plw {bottom fill expand}
-#
-# and you get a plframe "megawidget", complete with plot menu (with dump,
-# zoom, etc) and status label.  Support widgets relevant for the plplot/tk
-# driver do not come up unless invoked from the tk driver (by specifying
-# a client to connect to).  The main drawback at this point with this method
-# is that direct plotting commands in Tcl must be specified using the syntax
-# (for the above example) ".plw.plwin cmd <command> <args>", whereas in
-# itcl is simply ".plw <command> <args>".
-#
-
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer
 # plplot window initialization procs
@@ -151,10 +53,8 @@ proc plr_create {w {client_id {}}} {
 
 proc plxframe {w {client_id {}}} {
 
-    global client plot_menu_on plwidget
-
-# the client should'nt know the name of the plot window?
-    set plwidget $w
+# Note the window name w must never be a global.
+    global client plot_menu_on
 
 # Save client name
 
@@ -182,11 +82,12 @@ proc plxframe {w {client_id {}}} {
 # plframe widget must already have been created (the plframe is queried
 # for a list of the valid output devices for page dumps).
 
-if $plot_menu_on then {
-    plw_create_TopRow $w
-    pack append $w \
-	$w.ftop {top fill}
-    update }
+    if $plot_menu_on then {
+	plw_create_TopRow $w
+	pack append $w \
+	    $w.ftop {top fill}
+	update
+    }
 
 # Enable keyboard traversal when widget has the input focus.
 # Also grab the initial input focus.
@@ -198,22 +99,22 @@ if $plot_menu_on then {
 # commands.
 
     if { [info exists client] } then {
-		if $plot_menu_on then {
-	set bop_col [option get $w.ftop.leop off Label]
-	set eop_col [option get $w.ftop.leop on Label]
+	if $plot_menu_on then {
+	    set bop_col [option get $w.ftop.leop off Label]
+	    set eop_col [option get $w.ftop.leop on Label]
 
-	$w.plwin configure -bopcmd "plw_flash $w $bop_col"
-	$w.plwin configure -eopcmd "plw_flash $w $eop_col"
-		} else {
-		    $w.plwin configure -bopcmd {update}
-		    $w.plwin configure -eopcmd {update}
-		}
+	    $w.plwin configure -bopcmd "plw_flash $w $bop_col"
+	    $w.plwin configure -eopcmd "plw_flash $w $eop_col"
+	} else {
+	    $w.plwin configure -bopcmd {update}
+	    $w.plwin configure -eopcmd {update}
 	}
 
     # Resize binding -- just experimental for now.
     #	bind $w.plwin <Configure> "client_cmd \"plfinfo %w %h\""
 
 	client_cmd "set plwidget $w.plwin"
+    }
 
     return $w
 }
@@ -1670,9 +1571,11 @@ proc status_msg {w msg} {
 #----------------------------------------------------------------------------
 
 proc plw_label_reset {w} {
-global plot_menu_on
-if $plot_menu_on then {	# jc:
-    $w.ftop.lstat configure -text " [string range $w 1 end]" }
+    global plot_menu_on
+    if $plot_menu_on then {
+	# jc:
+	$w.ftop.lstat configure -text " [string range $w 1 end]"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -1682,9 +1585,11 @@ if $plot_menu_on then {	# jc:
 #----------------------------------------------------------------------------
 
 proc plw_label_set {w msg} {
-global plot_menu_on
-if $plot_menu_on then {	# jc:
-    $w.ftop.lstat configure -text " $msg" }
+    global plot_menu_on
+    if $plot_menu_on then {
+	# jc:
+	$w.ftop.lstat configure -text " $msg"
+    }
 }
 
 #----------------------------------------------------------------------------
