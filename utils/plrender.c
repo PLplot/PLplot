@@ -1,25 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.40  1994/07/12 19:22:49  mjl
+ * Revision 1.41  1994/08/25 04:05:36  mjl
+ * Eliminated unnecessary header file inclusion.
+ *
+ * Revision 1.40  1994/07/12  19:22:49  mjl
  * Small change to ensure that cmap0 palette "sticks" when plot is saved from
  * Tk driver.
  *
  * Revision 1.39  1994/06/30  18:55:48  mjl
  * Minor changes to eliminate gcc -Wall warnings.
- *
- * Revision 1.38  1994/04/30  16:15:17  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.37  1994/04/08  12:37:53  mjl
- * Fixed initial tcl command that is responsible for the backpage button
- * appearing.
- *
- * Revision 1.36  1994/03/23  09:03:05  mjl
- * Added support for cmap1, color map state changes, hardware polygon fills.
- *
- * Revision 1.35  1994/01/17  20:45:02  mjl
- * Converted to new syntax for PDF function calls.
 */
 
 /*
@@ -49,7 +38,6 @@ char ident[] = "@(#) $Id$";
 #include "plplotP.h"
 #include "plevent.h"
 #include "metadefs.h"
-#include "pdf.h"
 #include <ctype.h>
 
 static char *program_name = "plrender";
