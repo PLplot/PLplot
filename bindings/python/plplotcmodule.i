@@ -466,6 +466,10 @@ pltr0(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE);
 							   PyArray_PLFLT, 1, 1);
     pltr_yg = (PyArrayObject*)myArray_ContiguousFromObject(PySequence_Fast_GET_ITEM(input, 1), 
 							   PyArray_PLFLT, 1, 1);
+    if(pltr_xg == 0 || pltr_yg == 0) {
+      PyErr_SetString(PyExc_ValueError, "Expected a sequence to two 1D arrays.");
+      return NULL;
+    }
     tmpGrid1.nx = pltr_xg->dimensions[0];
     tmpGrid1.ny = pltr_yg->dimensions[0];
     if(Xlen != tmpGrid1.nx || Ylen != tmpGrid1.ny) {
@@ -494,6 +498,10 @@ pltr0(PLFLT x, PLFLT y, PLFLT *OUTPUT, PLFLT *OUTPUT, PLPointer IGNORE);
 							   PyArray_PLFLT, 2, 2);
     pltr_yg = (PyArrayObject*)myArray_ContiguousFromObject(PySequence_Fast_GET_ITEM(input, 1), 
 							   PyArray_PLFLT, 2, 2);
+    if(pltr_xg == 0 || pltr_yg == 0) {
+      PyErr_SetString(PyExc_ValueError, "Expected a sequence of two 2D arrays.");
+      return NULL;
+    }
     if(pltr_xg->dimensions[0] != pltr_yg->dimensions[0] ||
        pltr_xg->dimensions[1] != pltr_yg->dimensions[1]) {
       PyErr_SetString(PyExc_ValueError, "Arrays must be same size.");
@@ -566,6 +574,7 @@ typedef void (*pltr_func)(PLFLT, PLFLT, PLFLT *, PLFLT*, PLPointer);
 typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   %}
 
+#if 0
 /* We need to get this PyThreadState structure initialized to use it for controlling
    threads on the callback. Probably not *really* necessary since I'm not allowing
    threads through the call */
@@ -574,16 +583,19 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
   save_interp = PyThreadState_Get()->interp;
   %}
 
+#endif
 
 %wrapper %{
 
   /* helper code for handling the callback */
-
+#if 0
  static PyInterpreterState *save_interp = NULL;
+#endif
  enum callback_type { CB_0, CB_1, CB_2, CB_Python } pltr_type;
  PyObject* python_pltr = NULL;
  PyObject* python_f2eval = NULL;
 
+#if 0
 #define MY_BLOCK_THREADS { \
 	PyThreadState *prev_state, *new_state; \
 	/* need to have started a thread at some stage */ \
@@ -597,6 +609,10 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 	PyEval_ReleaseLock(); \
 	PyThreadState_Delete(new_state); \
 }
+#else
+#define MY_BLOCK_THREADS
+#define MY_UNBLOCK_THREADS
+#endif
 
 /* This is the callback that gets handed to the C code. It, in turn, calls the Python callback */
 
@@ -607,17 +623,29 @@ typedef PLFLT (*f2eval_func)(PLINT, PLINT, PLPointer);
 
       /* the data argument is acutally a pointer to a python object */
       pdata = (PyObject*)data;
+      if(data == NULL) {
+	pdata = Py_None;
+      }
       if(python_pltr) { /* if not something is terribly wrong */
 	/* hold a reference to the data object */
 	Py_XINCREF(pdata);
 	/* grab the Global Interpreter Lock to be sure threads don't mess us up */
 	MY_BLOCK_THREADS
 	/* build the argument list */
+#ifdef PL_DOUBLE
 	arglist = Py_BuildValue("(ddO)", x, y, pdata);
+#else
+	arglist = Py_BuildValue("(ffO)", x, y, pdata);
+#endif
+	if(arglist == NULL) {
+	  fprintf(stderr, "Py_BuildValue failed to make argument list.\n");
+	  *tx = *ty = 0;
+	  return;
+	}
 	/* call the python function */
 	result = PyEval_CallObject(python_pltr, arglist);
 	/* release the argument list */
-	Py_DECREF(arglist);
+	Py_XDECREF(arglist);
 	/* check and unpack the result */
 	if(result == NULL) {
 	  fprintf(stderr, "call to python pltr function with 3 arguments failed\n");
