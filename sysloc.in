@@ -586,7 +586,7 @@ fi
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
         FIND_LIB_BEGIN(tcl, TCLLIBDIR)
-        for version in 8.3 8.2 8.1 8.0 ""; do
+        for version in 8.4 8.3 8.2 8.1 8.0 ""; do
             FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
             if test -n "$TCLLIBDIR"; then
                 break
@@ -646,7 +646,7 @@ fi
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLLIBDIR"; then
         FIND_LIB_BEGIN(itcl, ITCLLIBDIR)
-        for version in 3.2 3.1 3.0 2.1 2.0 ""; do
+        for version in 3.3 3.2 3.1 3.0 2.1 2.0 ""; do
             if test -n "$ITCLLIBDIR"; then
                 break
             fi
@@ -721,7 +721,7 @@ fi
 if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
         FIND_LIB_BEGIN(tk, TKLIBDIR)
-        for version in 8.3 8.2 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
+        for version in 8.4 8.3 8.2 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
             if test -n "$TKLIBDIR"; then
                 break
             fi
@@ -750,7 +750,7 @@ fi
 if test "$enable_itk" = "yes"; then
     if test -z "$ITKLIBDIR"; then
         FIND_LIB_BEGIN(itk, ITKLIBDIR)
-        for version in 3.2 3.1 3.0 2.1 2.0 ""; do
+        for version in 3.3 3.2 3.1 3.0 2.1 2.0 ""; do
             if test -n "$ITKLIBDIR"; then
                 break
             fi
