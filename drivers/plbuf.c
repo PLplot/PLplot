@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/07/01 21:59:42  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl"; device driver functions start with "plD_".
+   Revision 1.10  1993/07/16 22:12:17  mjl
+   Simplified and slightly changed behavior to support plot dumps to cloned
+   plplot streams.
 
+ * Revision 1.9  1993/07/01  21:59:42  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".
+ *
  * Revision 1.8  1993/03/15  21:39:16  mjl
  * Changed all _clear/_page driver functions to the names _eop/_bop, to be
  * more representative of what's actually going on.
@@ -36,8 +40,8 @@
  * (interactive devices only).
  *
  * Revision 1.1  1992/11/07  07:57:09  mjl
- * Routines for writing to and reading from a plot buffer, as well as recreating
- * an entire plot.  The driver need merely specify pls->plbuf_enable = 1 for it
+ * Routines for writing to and reading from a plot buffer and recreating
+ * an entire plot.  The driver need merely specify pls->plbuf_write = 1 for it
  * to be used (it must of course handle the expose/resize events itself).
  *
 */
@@ -99,14 +103,21 @@ static short xpoly[PL_MAXPOLYLINE], ypoly[PL_MAXPOLYLINE];
 * plbuf_init()
 *
 * Initialize device.
+* Allow for the possibility that multiple streams are sharing a single
+* plot buffer (one stream may be cloned).
 \*----------------------------------------------------------------------*/
 
 void
 plbuf_init(PLStream *pls)
 {
-    pls->plbufFile = tmpfile();
+    dbug_enter("plbuf_init");
+
     if (pls->plbufFile == NULL) {
-	plexit("Error opening plot data storage file.");
+	pls->plbufFile = tmpfile();
+	pls->plbufOwner = 1;
+	if (pls->plbufFile == NULL) {
+	    plexit("plbuf_init: Error opening plot data storage file.");
+	}
     }
 }
 
@@ -119,20 +130,17 @@ plbuf_init(PLStream *pls)
 void
 plbuf_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
-    if (pls->plbuf_read)
-	return;
+    dbug_enter("plbuf_line");
 
-    if (pls->plbuf_write) {
-	(void) wr_command(pls, (U_CHAR) LINE);
+    (void) wr_command(pls, (U_CHAR) LINE);
 
-	xpoly[0] = x1a;
-	xpoly[1] = x2a;
-	ypoly[0] = y1a;
-	ypoly[1] = y2a;
+    xpoly[0] = x1a;
+    xpoly[1] = x2a;
+    ypoly[0] = y1a;
+    ypoly[1] = y2a;
 
-	(void) fwrite(xpoly, sizeof(short), 2, pls->plbufFile);
-	(void) fwrite(ypoly, sizeof(short), 2, pls->plbufFile);
-    }
+    (void) fwrite(xpoly, sizeof(short), 2, pls->plbufFile);
+    (void) fwrite(ypoly, sizeof(short), 2, pls->plbufFile);
 }
 
 /*----------------------------------------------------------------------*\
@@ -146,20 +154,17 @@ plbuf_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
-    if (pls->plbuf_read)
-	return;
+    dbug_enter("plbuf_polyline");
 
-    if (pls->plbuf_write) {
-	(void) wr_command(pls, (U_CHAR) POLYLINE);
-	(void) fwrite(&npts, sizeof(PLINT), 1, pls->plbufFile);
+    (void) wr_command(pls, (U_CHAR) POLYLINE);
+    (void) fwrite(&npts, sizeof(PLINT), 1, pls->plbufFile);
 
-	for (i = 0; i < npts; i++) {
-	    xpoly[i] = xa[i];
-	    ypoly[i] = ya[i];
-	}
-	(void) fwrite(xpoly, sizeof(short), npts, pls->plbufFile);
-	(void) fwrite(ypoly, sizeof(short), npts, pls->plbufFile);
+    for (i = 0; i < npts; i++) {
+	xpoly[i] = xa[i];
+	ypoly[i] = ya[i];
     }
+    (void) fwrite(xpoly, sizeof(short), npts, pls->plbufFile);
+    (void) fwrite(ypoly, sizeof(short), npts, pls->plbufFile);
 }
 
 /*----------------------------------------------------------------------*\
@@ -171,11 +176,9 @@ plbuf_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
 void
 plbuf_eop(PLStream *pls)
 {
-    if (pls->plbuf_read)
-	return;
+    dbug_enter("plbuf_eop");
 
-    if (pls->plbuf_write)
-	(void) wr_command(pls, (U_CHAR) CLEAR);
+    (void) wr_command(pls, (U_CHAR) CLEAR);
 }
 
 /*----------------------------------------------------------------------*\
@@ -188,17 +191,12 @@ plbuf_eop(PLStream *pls)
 void
 plbuf_bop(PLStream *pls)
 {
-    if (pls->plbuf_read)
-	return;
+    dbug_enter("plbuf_bop");
 
-    pls->plbuf_write = pls->plbuf_enable;
-
-    if (pls->plbuf_write) {
-	rewind(pls->plbufFile);
-	(void) wr_command(pls, (U_CHAR) PAGE);
-	plP_col();
-	plP_wid();
-    }
+    rewind(pls->plbufFile);
+    (void) wr_command(pls, (U_CHAR) PAGE);
+    plP_col();
+    plP_wid();
 }
 
 /*----------------------------------------------------------------------*\
@@ -210,7 +208,10 @@ plbuf_bop(PLStream *pls)
 void
 plbuf_tidy(PLStream *pls)
 {
-    fclose(pls->plbufFile);
+    dbug_enter("plbuf_tidy");
+
+    if (pls->plbufOwner)
+	fclose(pls->plbufFile);
 }
 
 /*----------------------------------------------------------------------*\
@@ -227,17 +228,14 @@ plbuf_color(PLStream *pls)
     U_CHAR g = pls->curcolor.g;
     U_CHAR b = pls->curcolor.b;
 
-    if (pls->plbuf_read)
-	return;
+    dbug_enter("plbuf_color");
 
-    if (pls->plbuf_write) {
-	(void) wr_command(pls, (U_CHAR) NEW_COLOR);
-	(void) fwrite(&icol0, sizeof(U_CHAR), 1, pls->plbufFile);
-	if (icol0 == PL_RGB_COLOR) {
-	    (void) fwrite(&r, sizeof(U_CHAR), 1, pls->plbufFile);
-	    (void) fwrite(&g, sizeof(U_CHAR), 1, pls->plbufFile);
-	    (void) fwrite(&b, sizeof(U_CHAR), 1, pls->plbufFile);
-	}
+    (void) wr_command(pls, (U_CHAR) NEW_COLOR);
+    (void) fwrite(&icol0, sizeof(U_CHAR), 1, pls->plbufFile);
+    if (icol0 == PL_RGB_COLOR) {
+	(void) fwrite(&r, sizeof(U_CHAR), 1, pls->plbufFile);
+	(void) fwrite(&g, sizeof(U_CHAR), 1, pls->plbufFile);
+	(void) fwrite(&b, sizeof(U_CHAR), 1, pls->plbufFile);
     }
 }
 
@@ -250,12 +248,9 @@ plbuf_color(PLStream *pls)
 void
 plbuf_text(PLStream *pls)
 {
-    if (pls->plbuf_read)
-	return;
+    dbug_enter("plbuf_text");
 
-    if (pls->plbuf_write) {
-	(void) wr_command(pls, (U_CHAR) SWITCH_TO_TEXT);
-    }
+    (void) wr_command(pls, (U_CHAR) SWITCH_TO_TEXT);
 }
 
 /*----------------------------------------------------------------------*\
@@ -267,12 +262,9 @@ plbuf_text(PLStream *pls)
 void
 plbuf_graph(PLStream *pls)
 {
-    if (pls->plbuf_read)
-	return;
+    dbug_enter("plbuf_graph");
 
-    if (pls->plbuf_write) {
-	(void) wr_command(pls, (U_CHAR) SWITCH_TO_GRAPH);
-    }
+    (void) wr_command(pls, (U_CHAR) SWITCH_TO_GRAPH);
 }
 
 /*----------------------------------------------------------------------*\
@@ -286,13 +278,10 @@ plbuf_width(PLStream *pls)
 {
     U_CHAR width = pls->width;
 
-    if (pls->plbuf_read)
-	return;
+    dbug_enter("plbuf_width");
 
-    if (pls->plbuf_write) {
-	(void) wr_command(pls, (U_CHAR) NEW_WIDTH);
-	(void) fwrite(&width, sizeof(U_CHAR), 1, pls->plbufFile);
-    }
+    (void) wr_command(pls, (U_CHAR) NEW_WIDTH);
+    (void) fwrite(&width, sizeof(U_CHAR), 1, pls->plbufFile);
 }
 
 /*----------------------------------------------------------------------*\
@@ -309,17 +298,14 @@ plbuf_width(PLStream *pls)
 void
 plbuf_esc(PLStream *pls, PLINT op, void *ptr)
 {
-    if (pls->plbuf_read)
-	return;
+    dbug_enter("plbuf_esc");
 
-    if (pls->plbuf_write) {
-	(void) wr_command(pls, (U_CHAR) ESCAPE);
-	(void) wr_command(pls, (U_CHAR) op);
+    (void) wr_command(pls, (U_CHAR) ESCAPE);
+    (void) wr_command(pls, (U_CHAR) op);
 
-	switch (op) {
-	  case 0:
-	    break;
-	}
+    switch (op) {
+    case 0:
+	break;
     }
 }
 
@@ -336,6 +322,7 @@ plbuf_esc(PLStream *pls, PLINT op, void *ptr)
 void
 rdbuf_init(PLStream *pls)
 {
+    dbug_enter("rdbuf_init");
 }
 
 /*----------------------------------------------------------------------*\
@@ -347,6 +334,8 @@ rdbuf_init(PLStream *pls)
 void
 rdbuf_line(PLStream *pls)
 {
+    dbug_enter("rdbuf_line");
+
     (void) fread(xpoly, sizeof(short), 2, pls->plbufFile);
     (void) fread(ypoly, sizeof(short), 2, pls->plbufFile);
 
@@ -364,6 +353,8 @@ rdbuf_polyline(PLStream *pls)
 {
     PLINT npts;
 
+    dbug_enter("rdbuf_polyline");
+
     (void) fread(&npts, sizeof(PLINT), 1, pls->plbufFile);
     (void) fread(xpoly, sizeof(short), npts, pls->plbufFile);
     (void) fread(ypoly, sizeof(short), npts, pls->plbufFile);
@@ -380,6 +371,7 @@ rdbuf_polyline(PLStream *pls)
 void
 rdbuf_eop(PLStream *pls)
 {
+    dbug_enter("rdbuf_eop");
 }
 
 /*----------------------------------------------------------------------*\
@@ -391,6 +383,7 @@ rdbuf_eop(PLStream *pls)
 void
 rdbuf_bop(PLStream *pls)
 {
+    dbug_enter("rdbuf_bop");
 }
 
 /*----------------------------------------------------------------------*\
@@ -402,6 +395,7 @@ rdbuf_bop(PLStream *pls)
 void
 rdbuf_tidy(PLStream *pls)
 {
+    dbug_enter("rdbuf_tidy");
 }
 
 /*----------------------------------------------------------------------*\
@@ -414,6 +408,8 @@ void
 rdbuf_color(PLStream *pls)
 {
     U_CHAR icol0, r, g, b;
+
+    dbug_enter("rdbuf_color");
 
     (void) fread(&icol0, sizeof(U_CHAR), 1, pls->plbufFile);
     if (icol0 == PL_RGB_COLOR) {
@@ -447,6 +443,8 @@ rdbuf_color(PLStream *pls)
 void
 rdbuf_text(PLStream *pls)
 {
+    dbug_enter("rdbuf_text");
+
     plP_text();
 }
 
@@ -459,6 +457,8 @@ rdbuf_text(PLStream *pls)
 void
 rdbuf_graph(PLStream *pls)
 {
+    dbug_enter("rdbuf_graph");
+
     plP_gra();
 }
 
@@ -472,6 +472,8 @@ void
 rdbuf_width(PLStream *pls)
 {
     U_CHAR width;
+
+    dbug_enter("rdbuf_width");
 
     (void) fread(&width, sizeof(U_CHAR), 1, pls->plbufFile);
     pls->width = width;
@@ -487,7 +489,6 @@ rdbuf_width(PLStream *pls)
 *
 * Functions:
 *
-* PL_SET_LPB	  Reads local plot bounds
 \*----------------------------------------------------------------------*/
 
 void
@@ -495,6 +496,8 @@ rdbuf_esc(PLStream *pls)
 {
     U_CHAR op;
     void *ptr = NULL;
+
+    dbug_enter("rdbuf_esc");
 
     (void) fread(&op, sizeof(U_CHAR), 1, pls->plbufFile);
 
@@ -517,14 +520,18 @@ void
 plRemakePlot(PLStream *pls)
 {
     U_CHAR c;
+    int plbuf_status;
 
-    if (!pls->plbuf_write)
+    dbug_enter("plRemakePlot");
+
+    if (pls->plbufFile == NULL)
 	return;
 
     fflush(pls->plbufFile);
     rewind(pls->plbufFile);
+
+    plbuf_status = pls->plbuf_write;
     pls->plbuf_write = FALSE;
-    pls->plbuf_read = TRUE;
 
     while (rd_command(pls, &c)) {
 	if (c == CLEAR)
@@ -532,8 +539,7 @@ plRemakePlot(PLStream *pls)
 	process_next(pls, c);
     }
 
-    pls->plbuf_write = TRUE;
-    pls->plbuf_read = FALSE;
+    pls->plbuf_write = plbuf_status;
 }
 
 /*----------------------------------------------------------------------*\
@@ -545,6 +551,8 @@ plRemakePlot(PLStream *pls)
 static void
 process_next(PLStream *pls, U_CHAR c)
 {
+    dbug_enter("process_next");
+
     switch ((int) c) {
 
       case INITIALIZE:
