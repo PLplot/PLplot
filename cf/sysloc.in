@@ -458,6 +458,7 @@ if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
 	incdirs="\
 	$prefix/include/python1.4 \
+	/usr/include/python1.4 \
 	$prefix/include/Py \
 	$HOME/local/include/Py \
 	$HOME/local/python/include/Py \
@@ -465,6 +466,9 @@ if test "$enable_python" = "yes"; then
 	/usr/local/python/include/Py \
 	/usr/local/python-1.2/include/Py \
 	/usr/local/include/Py"
+
+# Should probably just drop everything after /usr/include/python1.4,
+# have to think about it.
 
 	FIND_INC(Python, PYTHON_INC_DIR, enable_python)
 
