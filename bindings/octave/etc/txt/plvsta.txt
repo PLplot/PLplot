@@ -1,8 +1,0 @@
-  plvsta()
-  ********
-
-  plvsta
-
-  Sets up a standard viewport, leaving a left-hand margin of seven
-  character heights, and four character heights around the other three sides.
-

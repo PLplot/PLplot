@@ -194,7 +194,7 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
    for (i = 0; i < nlevel-1; i++) {
       shade_min = clevel[i];
       shade_max = clevel[i+1];
-      shade_color = i / (float) (nlevel-2);
+      shade_color = i / (PLFLT) (nlevel-2);
       /* The constants in order mean 
        * (1) color map1,
        * (0, 0, 0, 0) all edge effects will be done with plcont rather
