@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1994/07/26 21:14:44  mjl
+ * Revision 1.16  1994/07/29 20:24:42  mjl
+ * References to plfontopen() deleted, in favor of using plLibOpen().
+ *
+ * Revision 1.15  1994/07/26  21:14:44  mjl
  * Improvements to the way PLplot looks for various files.  Now more
  * consistent and flexible.  In particular, environmentals can be set for
  * locations of each directory (for Tcl, binary, and library files).
@@ -30,44 +33,13 @@
 /*	plfont.c
  *
  *	Font management code.
- *	See the description of plfontopen() for the search path used in
+ *	See the description of plLibOpen() for the search path used in
  *	finding the font files.
 */
 
 #include "plplotP.h"
 #include "pdf.h"
 #include <string.h>
-
-/* An additional hardwired location is sometimes useful */
-
-#if defined(AMIGA)
-#ifndef PLFONTDEV
-#define PLFONTDEV  "fonts:plplot"
-#endif
-
-#elif defined(GNU386)
-#ifndef PLFONTDEV
-#define PLFONTDEV "c:/lib"
-#endif
-
-#elif defined(MSDOS)
-#ifndef PLFONTDEV
-#define PLFONTDEV "c:\\lib"
-#endif
-
-#else
-
-/* Anything else is assumed to be Unix */
-
-#ifndef PLFONTDEV
-#define PLFONTDEV "/usr/local/lib"
-#endif
-
-#endif
-
-/* Function prototypes. */
-
-static FILE	*plfontopen	(char *);
 
 /* Declarations */
 
@@ -101,9 +73,12 @@ plfntld(PLINT fnt)
     charset = fnt;
 
     if (fnt)
-	file = plfontopen(PL_XFONT);
+	file = plLibOpen(PL_XFONT);
     else
-	file = plfontopen(PL_SFONT);
+	file = plLibOpen(PL_SFONT);
+
+    if (file == NULL)
+	plexit("Unable to open font file");
 
     pdfs = pdf_finit(file);
     if ( ! pdfs)
@@ -144,85 +119,6 @@ plfntld(PLINT fnt)
 /* Done */
 
     pdf_close(pdfs);
-}
-
-/*----------------------------------------------------------------------*\
- * FILE *plfontopen(fn)
- *
- * Return file pointer to font file.
- * Locations checked:
- *	PLPLOT_LIB_ENV = $(PLPLOT_LIB)
- *	current directory
- *	PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib
- *	LIB_DIR
- *	PLFONTDEV
-\*----------------------------------------------------------------------*/
-
-static FILE *
-plfontopen(char *fn)
-{
-    FILE *file;
-    char *fs = NULL, *dn = NULL;
-
-/****	search PLPLOT_LIB_ENV = $(PLPLOT_LIB)	****/
-
-#if defined(PLPLOT_LIB_ENV)
-    if ((dn = getenv(PLPLOT_LIB_ENV)) != NULL) {
-        plGetName(dn, "", fn, &fs);
-
-        if ((file = fopen(fs, "rb")) != NULL)
-            goto done;
-
-        fprintf(stderr, PLPLOT_LIB_ENV"=\"%s\"\n", dn); /* what IS set? */
-    }
-#endif  /* PLPLOT_LIB_ENV */
-
-/****	search current directory	****/
-
-    if ((file = fopen(fn, "rb")) != NULL)
-        goto done;
-
-/****	search PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib	****/
-
-#if defined (PLPLOT_HOME_ENV)
-    if ((dn = getenv(PLPLOT_HOME_ENV)) != NULL) {
-        plGetName(dn, "lib", fn, &fs);
-
-        if ((file = fopen(fs, "rb")) != NULL)
-            goto done;
-        fprintf(stderr, PLPLOT_HOME_ENV"=\"%s\"\n",dn); /* what IS set? */
-    }
-#endif  /* PLPLOT_HOME_ENV/lib */
-
-/**** 	search installed location	****/
-
-#if defined (LIB_DIR)
-    plGetName(LIB_DIR, "", fn, &fs);
-
-    if ((file = fopen(fs, "rb")) != NULL)
-        goto done;
-#endif  /* LIB_DIR */
-
-/**** 	search hardwired location	****/
-
-#ifdef PLFONTDEV
-    plGetName(PLFONTDEV, "", fn, &fs);
-
-    if ((file = fopen(fs, "rb")) != NULL)
-	goto done;
-#endif	/* PLFONTDEV */
-
-/**** 	not found, give up 	****/
-
-    fprintf(stderr, "\nCannot open font file: %s\n", fn);
-#if defined (LIB_DIR)
-    fprintf(stderr, "lib dir=\"" LIB_DIR "\"\n" );      /* what WAS set? */
-#endif  /* LIB_DIR */
-    plexit("");
-
- done:
-    free_mem(fs);
-    return (file);
 }
 
 /*----------------------------------------------------------------------*\
