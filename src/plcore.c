@@ -1572,8 +1572,6 @@ pllib_devinit()
     plsc->dispatch_table = dispatch_table[plsc->device - 1];
 }
 
-#ifdef ENABLE_DYNDRIVERS
-
 int plInBuildTree()
 {
   static int inited = 0;
@@ -1590,6 +1588,8 @@ int plInBuildTree()
   }
   return inBuildTree;
 }
+
+#ifdef ENABLE_DYNDRIVERS
 
 static char*
 plGetDrvDir ()
