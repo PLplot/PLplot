@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1994/06/30 18:36:06  mjl
+ * Revision 1.22  1994/07/19 22:35:04  mjl
+ * Added includes for pdf.h and plConfig.h.
+ *
+ * Revision 1.21  1994/06/30  18:36:06  mjl
  * Removed prototypes for deleted accessor functions.  Inserted an extern
  * PLStream *plsc declaration for easier access to PLplot state info (only
  * plcore.h, which declares the real plsc, doesn't see this declaration).
@@ -128,7 +131,9 @@
 /* plplot.h also includes some handy system header files */
 
 #include "plplot.h"
+#include "pdf.h"
 #include "plstream.h"
+#include "plConfig.h"
 
 /* If not including this file from inside of plcore.h, declare plsc */
 
