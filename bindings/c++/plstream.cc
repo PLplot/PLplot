@@ -27,7 +27,7 @@ void Coord_Xform_evaluator( PLFLT ox, PLFLT oy,
 }
 
 // A specific case for handling transformation defined by 2-d grid vertex
-// specification matricies.
+// specification matrices.
 
 cxx_pltr2::cxx_pltr2( Coord_2d& cx, Coord_2d& cy )
     : xg(cx), yg(cy)

@@ -5,6 +5,9 @@
 # Based heavily on the Tcl demo 16.
 #
 # $Log$
+# Revision 1.4  2002/05/12 15:12:30  airwin
+# Fix comment spelling mistake that was bugging me....;-)
+#
 # Revision 1.3  2001/04/01 00:33:37  airwin
 # Replace #!/usr/local/bin/python with #!/usr/bin/env python
 #
@@ -177,7 +180,7 @@ def main(w):
 
     # We won't draw it now b/c it should be drawn /after/ the plshade stuff.
 
-    # Now build the new coordinate matricies.
+    # Now build the new coordinate matrices.
 
     #xg = zeros(nx,ny); yg= zeros(nx,ny); z = zeros(nx,ny)
     xg = reshape( zeros(nx*ny,'d'), (nx,ny) )
