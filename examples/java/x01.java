@@ -48,12 +48,6 @@ class x01 {
    public x01( String[] args )
      {
 
-    // The following is drawn from x01c.c, but I don't currently know exactly
-    // how to implement this stuff in Java, so I'm including it here for
-    // future reference, but won't be implementing it at this time.
-    // Ultimately I would like to see this fully implemented so that x01.java
-    // can be a faithful implementation of the full x01c.c example program.
-
     // plplot initialization
     // Divide page into 2x2 plots unless user overrides.
 
