@@ -2,7 +2,7 @@
 # Description: Automake template for the PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Mon Dec  4 13:39:08 CET 2000
+# Last modified on: Mon Dec  4 13:40:37 CET 2000
 # $Id$
 
 MASTER_XML = plplotdoc.xml
@@ -46,6 +46,7 @@ PDFJADETEX = @PDFJADETEX@
 PERL = @PERL@
 LATEX = @LATEX@
 DVIPS = @DVIPS@
+MAKEINFO = @MAKEINFO@
 HTML_EXT = @HTML_EXT@
 
 MAX_TEX_RECURSION = 4
@@ -107,7 +108,7 @@ info: $(PACKAGE).info
 %.info: %.texi
 	rm -rf $(INFO_TMPDIR)
 	mkdir -p $(INFO_TMPDIR)
-	-makeinfo --force -o $(INFO_TMPDIR)/$@ $<
+	-$(MAKEINFO) --force -o $(INFO_TMPDIR)/$@ $<
 	( cd $(INFO_TMPDIR) ; ls ) | cat > $(INFO_MANIFEST)
 	mv $(INFO_TMPDIR)/* .
 	rmdir $(INFO_TMPDIR)

@@ -4,6 +4,7 @@
 	(%.txml): More robust rule.  If docbook2texixml script fails, the
 	target file is not generated.
 	(CLEANFILES): Include *-tmp pattern, needed by %.txml rule.
+	(%.info): Use AC_SUBST'ed variable MAKEINFO.
 
 2000-11-30  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
