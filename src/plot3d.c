@@ -41,10 +41,6 @@ static void plt3zz	(PLINT, PLINT, PLINT, PLINT,
 static void plnxtvhi (PLINT *, PLINT *, PLFLT*, PLINT, PLINT);
 static void plnxtvlo (PLINT *, PLINT *, PLFLT*, PLINT, PLINT);
 static void plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n);
-static void plP_fill3(PLINT x0, PLINT y0, PLINT x1, PLINT y1,
-		      PLINT x2, PLINT y2, PLINT j);
-static void plP_fill4(PLINT x0, PLINT y0, PLINT x1, PLINT y1,
-		      PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT j);
 
 static void savehipoint	(PLINT, PLINT);
 static void savelopoint	(PLINT, PLINT);
@@ -58,6 +54,14 @@ static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT,
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 static PLFLT plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z);
 static void plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move);
+
+/* #define MJL_HACK 1 */
+#if MJL_HACK
+static void plP_fill3(PLINT x0, PLINT y0, PLINT x1, PLINT y1,
+		      PLINT x2, PLINT y2, PLINT j);
+static void plP_fill4(PLINT x0, PLINT y0, PLINT x1, PLINT y1,
+		      PLINT x2, PLINT y2, PLINT x3, PLINT y3, PLINT j);
+#endif
 
 /*--------------------------------------------------------------------------*\
  * void plsetlightsource(x, y, z)
@@ -961,13 +965,14 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 		    savehipoint(cx, cy);
 		}
 		ochange = 1;
+
+#if MJL_HACK
 	    /*
 	     * I tried experimenting with some of the different boundary cases
 	     * here.   x08c shows some improvement, but there are errors.  SIGH.
 	     * I'm beginning to thing it will take a thorough rewrite to fix
 	     * this. 
 	     */
-#if 0
 		if (threedshading && (j > 1)) {
 		    PLINT cx0, cy0, cx1 = cx, cy1 = cy, cx2, cy2;
 		    PLINT su0 = u[j-2], sv0 = v[j-2];
@@ -1080,6 +1085,7 @@ plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move)
  * Fills the polygon specified.  Just for experimentation.
 \*--------------------------------------------------------------------------*/
 
+#if MJL_HACK
 static void
 plP_fill3(PLINT x0, PLINT y0, PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT j)
 {
@@ -1120,6 +1126,7 @@ plP_fill4(PLINT x0, PLINT y0, PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT x3, 
     plcol1(ctmp[j]);
     plP_fill(px, py, 4);
 }
+#endif	/* MJL_HACK */
 
 /*--------------------------------------------------------------------------*\
  * void plnxtvlo()
