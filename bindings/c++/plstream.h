@@ -1,50 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-// plstream.h
+// $Id$
 // Geoffrey Furnish
-// 21 September 1994
+// Sep 21 1994
 //---------------------------------------------------------------------------//
 // @> Header file plstream.
-//
-// $Id$
-//
-// $Log$
-// Revision 1.3  1995/10/23 07:22:33  mjl
-// Added glevel() accessor.
-//
-// Revision 1.2  1995/10/16  18:22:58  mjl
-// Added support for plgdev API function in C++ bindings.
-//
-// Revision 1.1  1995/06/22  19:01:15  furnish
-// Resubmit file which was broken by apparent RCS foulup.
-//
-// Revision 1.2  1995/06/01  21:18:16  mjl
-// Fixed include file semantics.
-//
-// Revision 1.1  1995/05/30  07:34:47  mjl
-// Changed to a more natural naming scheme.
-//
-//
-// Old Log entries (as stream.h):
-//
-// Revision 1.5  1995/05/08  20:52:02  furnish
-// Mostly formatting improvements, but also some overloading resolutions
-// and some C++ style considerations.
-//
-// Revision 1.4  1995/03/17  07:51:59  mjl
-// Fixed return codes for new interface routines.
-//
-// Revision 1.3  1995/01/16  19:23:29  mjl
-// Fixed prototype for scmap1.
-//
-// Revision 1.2  1994/10/18  16:12:36  furnish
-// Beginnings of 2-d abstraction for contouring and shading.  Better
-// constructors.  Names for colors.  Other minor stuff.  Still need to do
-// major hacking on the 2-d abstraction, and also need to remove large
-// numbers of unnecessary methods.
-//
-// Revision 1.1  1994/10/06  07:24:44  furnish
-// New C++ wrapper around the PLplot API.  Needs much work.
-//
 //---------------------------------------------------------------------------//
 
 #ifndef __plstream_h__
@@ -84,9 +43,9 @@ void Coord_Xform_evaluator( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer );
 
 class Coord_2d {
   public:
-    virtual float operator() ( int ix, int iy ) const =0;
+    virtual PLFLT operator() ( int ix, int iy ) const =0;
     virtual void elements( int& _nx, int& _ny ) =0;
-    virtual void min_max( float& _min, float& _max ) =0;
+    virtual void min_max( PLFLT& _min, PLFLT& _max ) =0;
 };
 
 class cxx_pltr2 : public Coord_Xformer {
@@ -512,7 +471,7 @@ class plstream {
 
 /* Shade region. */
 
-    void shade( PLFLT **a, PLINT nx, PLINT ny, const char **defined,
+    void shade( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
 		PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 		PLFLT shade_min, PLFLT shade_max,
 		PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,

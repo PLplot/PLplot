@@ -1,50 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-// plstream.cc
+// $Id$
 // Geoffrey Furnish
-// 21 September 1994
+// Sep 21 1994
 //---------------------------------------------------------------------------//
 // @> Source file plstream.
-//
-// $Id$
-//
-// $Log$
-// Revision 1.4  1995/10/23 07:22:32  mjl
-// Added glevel() accessor.
-//
-// Revision 1.3  1995/10/16  18:22:57  mjl
-// Added support for plgdev API function in C++ bindings.
-//
-// Revision 1.2  1995/06/22  18:52:59  furnish
-// Bare pointer elimination, api collapsing, and removal of features
-// intended for use from Fortran.  Still muuuuuch work to be done on this
-// class.
-//
-// Revision 1.1  1995/05/30  07:34:46  mjl
-// Changed to a more natural naming scheme.
-//
-//
-// Old log entries (as stream.cc):
-//
-// Revision 1.5  1995/05/08  20:52:05  furnish
-// Mostly formatting improvements, but also some overloading resolutions
-// and some C++ style considerations.
-//
-// Revision 1.4  1995/03/17  07:53:17  mjl
-// Added new interface methods to the parsing functions.  Eliminated old
-// ones that were obsolete.
-//
-// Revision 1.3  1995/01/16  19:24:19  mjl
-// Fixed arglists for scmap1l and plscmap1l.
-//
-// Revision 1.2  1994/10/18  16:12:39  furnish
-// Beginnings of 2-d abstraction for contouring and shading.  Better
-// constructors.  Names for colors.  Other minor stuff.  Still need to do
-// major hacking on the 2-d abstraction, and also need to remove large
-// numbers of unnecessary methods.
-//
-// Revision 1.1  1994/10/06  07:24:47  furnish
-// New C++ wrapper around the PLplot API.  Needs much work.
-//
 //---------------------------------------------------------------------------//
 
 #include "plplot.h"
@@ -95,11 +54,11 @@ void cxx_pltr2::xform( PLFLT x, PLFLT y, PLFLT& tx, PLFLT& ty ) const
     xg.elements( nx, ny );
 
     int ul, ur, vl, vr;
-    float du, dv;
+    PLFLT du, dv;
 
-    float xll, xlr, xrl, xrr;
-    float yll, ylr, yrl, yrr;
-    float xmin, xmax, ymin, ymax;
+    PLFLT xll, xlr, xrl, xrr;
+    PLFLT yll, ylr, yrl, yrr;
+    PLFLT xmin, xmax, ymin, ymax;
 
     ul = (int) x;
     ur = ul + 1;
@@ -1118,7 +1077,7 @@ void plstream::sfnam( const char *fnam )
 /* Shade region. */
 
 void 
-plstream::shade( PLFLT **a, PLINT nx, PLINT ny, const char **defined,
+plstream::shade( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
 		 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 		 PLFLT shade_min, PLFLT shade_max,
 		 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
