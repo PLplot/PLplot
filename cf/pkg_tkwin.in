@@ -13,6 +13,10 @@ TKWIN_EXE	=
 
 INSTALL_TKWIN	= install_tkwin
 
+# this has to be rebuilt every time we add new stuff to TCL_DIR
+install_tkwin_tclIndex:
+	@-cd $(TCL_DIR); $(MAKEINDEX)
+
 # this target depends on install_tcl_pkgIndex correctly overwriting the old file
 install_tkwin_pkgIndex:
 	@-cd $(top_srcdir)/bindings/tk-x-plat; \
@@ -21,7 +25,7 @@ install_tkwin_pkgIndex:
 # May install all *.tcl files eventually, but for now do nothing
 install_tkwin_scripts:
 
-install_tkwin: install_tkwin_scripts install_tkwin_pkgIndex
+install_tkwin: install_tkwin_scripts install_tkwin_pkgIndex install_tkwin_tclIndex
 
 ifneq ($(DYNAMIC_DRIVERS),)
 TKWIN_DRV	= tkwin_drv

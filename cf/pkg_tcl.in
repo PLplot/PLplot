@@ -69,10 +69,6 @@ install_pltcl:
 	  fi; \
 	  strip pltcl$E; $(CP) pltcl$E $(BIN_DIR)
 
-install_tcl_index:
-	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi; \
-	  cd $(TCL_DIR); $(MAKEINDEX)
-
 install_tcl_includes:
 	@-cd $(top_srcdir)/bindings/tcl; \
 	  $(CP) pltcl.h $(INCLUDE_DIR)
@@ -82,12 +78,18 @@ install_tcl_demos:
 	  cd $(top_srcdir)/examples/tcl; $(CP) $(TCL_DEMOS) $(DEMOS_DIR)/tcl; \
 	  cd $(DEMOS_DIR)/tcl; $(MAKEINDEX)
 
+install_tcldir:
+	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
+
+install_tcl_tclIndex:
+	@-cd $(TCL_DIR); $(MAKEINDEX)
+
 install_tcl_pkgIndex:
 	@-cd $(top_srcdir)/bindings/tcl; \
 	  cat pkgIndex.tcl.in >$(DATA_DIR)/../pkgIndex.tcl
 
-install_tcl: install_pltcl install_tcl_index install_tcl_includes \
-	install_tcl_demos install_tcl_pkgIndex
+install_tcl: install_pltcl install_tcl_includes install_tcl_demos install_tcldir \
+	install_tcl_pkgIndex install_tcl_tclIndex
 
 install_mat_includes:
 	@-cd $(top_srcdir)/bindings/tcl; \
