@@ -1,7 +1,7 @@
 \c -*-latexinfo-*-
 \c advanced.tex
-\c Geoffrey Furnish
-\c 9 May 1994
+\c Maurice LeBrun
+\c 19 May 1994
 
 \node Advanced Use, Drivers, Simple Use, Top
 \chapter{Advanced Use of PLplot}
@@ -14,6 +14,7 @@ three-dimensional surface plots and contour plots.
 \begin{menu}
 * Concepts::		Basic PLplot Concepts
 * Output Device::	Specifying the Output Device
+* Arguments::		Command Line Arguments
 * Viewports::		Defining the Viewport
 * Windows::		Defining the Window
 * Annotation::		Annotating the Viewport
@@ -29,6 +30,7 @@ three-dimensional surface plots and contour plots.
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Concepts, Output Device, Advanced Use, Advanced Use
+\message{Concepts}
 \section{Basic PLplot Concepts}
 \cindex{Basic Concepts}
 
@@ -47,43 +49,88 @@ in PLplot.\refill
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\node Output Device, Viewports, Concepts, Advanced Use
+\node Output Device, Arguments, Concepts, Advanced Use
+\message{Output}
 \section{Specifying the Output Device}
 \cindex{Output device}
 
-Before any actual plotting calls are made, a graphics program initialize
-PLplot, i.e.~specify the output device and how this device is to be
-divided up for graph plotting.  There are at present two routines
-recommended for this purpose, \rou{plstar}, which prompts at the console
-for the output device type, and \rou{plstart} which expects to be
-supplied the keyword of the device as an argument.  The old routine
-\code{plbeg} can also be used for initialization, but use of this
-routine is discouraged since it requires the device \emph{number} which
-depends on the particular device drivers installed for your system
-(\code{plbeg} has only been retained for compatibility with old codes,
-and will not be discussed further).\refill
+The main initialization routine for PLplot is \code{plinit}, which sets
+up all internal data structures necessary for plotting and initializes
+the output device driver.  The output device can be a terminal, disk
+file, window system, pipe, or socket.  If the output device has not
+already been specified when \code{plinit} is called, a list of valid
+output devices is given and the user is prompted for a choice.  For
+example:\refill
 
-Besides selecting the device, \code{plstar} and \code{plstart} allow the
-user to divide the output device plotting area into several subpages of
-equal size, each of which can be used separately.  The routine
+\begin{verbatim}
+% x01c
+
+Plotting Options:
+ < 1> xwin       X-Window (Xlib)
+ < 2> dp         Tcl-DP/TK Window
+ < 3> tk         Tcl/TK Window
+ < 4> xterm      Xterm Window
+ < 5> tekt       Tektronix Terminal (4010)
+ < 6> tek4107t   Tektronix Terminal (4105/4107)
+ < 7> mskermit   MS-Kermit emulator
+ < 8> versaterm  Versaterm vt100/tek emulator
+ < 9> vlt        VLT vt100/tek emulator
+ <10> plmeta     PLPLOT Native Meta-File
+ <11> tekf       Tektronix File (4010)
+ <12> tek4107f   Tektronix File (4105/4107)
+ <13> ps         PostScript File (monochrome)
+ <14> psc        PostScript File (color)
+ <15> xfig       Xfig file
+ <16> ljiip      LaserJet IIp/deskjet compressed graphics
+ <17> ljii       LaserJet II Bitmap File (150 dpi)
+ <18> null       Null device
+
+Enter device number or keyword: 
+\end{verbatim}
+
+Either the device number or a device keyword is accepted.  Specifying
+the device by keyword is preferable in aliases or scripts since the
+device number is dependent on the install procedure (the installer can
+choose which device drivers to include).  The device can be specified
+prior to the call to \code{plinit} by:\refill
+
+\begin{itemize}
+\item
+A call to \rou{plsdev}.
+
+\item
+The \code{-dev} \var{device} command line argument, if the program's
+command line arguments are being passed to the PLplot function
+\rou{plParseInternalOpts}.\refill
+\end{itemize}
+
+Additional startup routines \rou{plstar} and \rou{plstart} are available
+but these are simply front-ends to \code{plinit}, and should be avoided.
+It is preferable to call \code{plinit} directly, along with the
+appropriate setup calls, for the greater amount of control this
+provides (see the example programs for more info).
+
+Before \code{plinit} is called, you may modify the number of subpages
+the output device is divided into via a call to \rou{plssub}.  Subpages
+are useful for placing several graphs on a page, but all subpages are
+constrained to be of the same size.  For greater flexibility, viewports
+can be used (\pxref{Viewports} for more info on viewports).  The routine
 \code{pladv} is used to advance to a particular subpage or to the next
 subpage.  The screen is cleared (or a new piece of paper loaded) if a
 new subpage is requested when there are no subpages left on the current
 page.  When a page is divided into subpages, the default character,
 symbol and tick sizes are scaled inversely as the square root of the
-number of subpages in the vertical direction.\refill
+number of subpages in the vertical direction.  This is designed to
+improve readability of plot labels as the plot size shrinks.\refill
 
-A new addition to PLplot is the ability to write to multiple output
-streams.  An output stream corresponds to a single logical device to
-which one plots independent of all other streams.  The function
-\rou{plsstrm} is used to switch between streams (note one may only write
-to one output stream at a time).  At present, an output stream is not
-limited by the type of device (however it may not be wise to attempt
-opening two terminal devices).  Eventually it will be possible to open
-multiple output devices per stream, with plots going to each device
-simultaneously, however this feature was not ready in time for the
-PLplot 4.0 release.  An example usage for the creation of multiple
-streams is as follows:\refill
+PLplot has the ability to write to multiple output streams.  An output
+stream corresponds to a single logical device to which one plots
+independent of all other streams.  The function \rou{plsstrm} is used to
+switch between streams -- you may only write to one output stream at
+a time.  At present, an output stream is not limited by the type of
+device, however, it may not be wise to attempt opening two terminal
+devices.  An example usage for the creation of multiple streams is as
+follows:\refill
 
 \begin{verbatim}
 #include "plplot.h"
@@ -92,13 +139,17 @@ main()
 {
     int nx = 2, ny = 2;
 
-    plstart("xterm", nx, ny);
+    plssub(nx, ny);
+    plsdev("xwin");
+    plinit();
 
     <plots for stream 0>
 
     plsstrm(1);
+    plssub(nx, ny);
+    plsdev("plmeta");
     plsfnam("tst.plm");
-    plstart("plmeta", nx, ny);
+    plinit();
 
     <plots for stream 1>
 
@@ -107,7 +158,7 @@ main()
     <plots for stream 0>
 \end{verbatim}
 
-and so on, for sending output simultaneously to an xterm and a metafile.
+and so on, for sending output simultaneously to an X-window and a metafile.
 The default stream corresponds to stream number zero.  At present, the
 majority of output drivers can only be used by a single stream
 (exceptions include the metafile driver and X-window driver).  Also see
@@ -125,7 +176,65 @@ given stream.\refill
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\node Arguments, Viewports, Output Device, Advanced Use    
+\message{Arguments}
+\section{Command line arguments}
+\cindex{arguments}
+\cindex{command line}
+
+PLplot supports a large number of command line arguments, but it is up
+to the user to pass these to PLplot for processing at the beginning
+of execution.  The function \rou{plParseInternalOpts} is responsible
+for parsing the argument list, removing all that are recognized by
+PLplot, and taking the appropriate action before returning.  There are
+an extensive number of options available to affect this process.  The
+command line arguments recognized by PLplot are given by the -h 
+option:\refill
+
+\begin{verbatim}
+% x01c -h
+
+Usage:
+        x01c [plplot options]
+
+plplot options:
+    -h                   Print out this message
+    -v                   Print out the plplot library version number
+    -dev name            Output device name
+    -o name              Output filename
+    -display name        X server to contact
+    -px number           Plots per page in x
+    -py number           Plots per page in y
+    -geometry geom       Window size, in pixels (e.g. -geometry 400x300)
+    -wplt xl,yl,xr,yr    Relative coordinates [0-1] of window into plot
+    -mar margin          Margin space in relative coordinates (0 to 0.5, def 0)
+    -a aspect            Page aspect ratio (def: same as output device)
+    -jx justx            Page justification in x (-0.5 to 0.5, def 0)
+    -jy justy            Page justification in y (-0.5 to 0.5, def 0)
+    -ori orient          Plot orientation (0,2=landscape, 1,3=portrait)
+    -width width         Sets pen width (1 <= width <= 10)
+    -bg color            Background color (0=black, FFFFFF=white)
+    -fam                 Create a family of output files
+    -fsiz size           Output family file size in MB (e.g. -fsiz 1.0)
+    -fbeg number         First family member number on output
+    -finc number         Increment between family members
+    -fflen length        Family member number minimum field width
+    -nopixmap            Don't use pixmaps in X-based drivers
+    -db                  Double buffer X window output
+    -np                  No pause between pages
+    -server_name name    Main window name of plplot server (tk driver)
+    -server_host name    Host to run plplot server on (dp driver)
+    -server_port name    Port to talk to plplot server on (dp driver)
+    -user name           User name on remote node (dp driver)
+
+All parameters must be white-space delimited.  Some options are driver
+dependent.  Please see the plplot reference document for more detail.
+\end{verbatim}
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \node Viewports, Windows, Output Device, Advanced Use    
+\message{Viewports}
 \section{Defining the Viewport}
 \cindex{viewports}
 
@@ -184,7 +293,7 @@ reserves no extra space at the edges for labels.\refill
 To help the user call \code{plsvpa} correctly, the routine \rou{plgspa}
 is provided which returns the positions of the extremities of the
 current subpage measured in millimeters from the bottom left-hand corner
-of the device.  Thus, if to set up a viewport with a 10.0~mm margin
+of the device.  Thus, if to set up a viewport with a 10.0 mm margin
 around it within the current subpage, the following sequence of calls
 may be used:\refill
 
@@ -200,11 +309,12 @@ enough room for axis labels and a title.  This standard viewport is that
 used by \code{plenv} (\pxref{Standard Window}).\refill
 
 Another way to get a specified aspect ratio is via the routine
-\rou{plsasp}, which sets the global aspect ratio and must be called
-prior to \code{plstar}.  An aspect ratio of 0.0 corresponds to
-``natural'' dimensions (i.e.~fill the page); any positive value will
-give the specified aspect ratio.  This scaling of plots is actually done
-in the driver, and so may not work for all output devices (note that
+\code{plsasp} [not!.. fix this], which sets the global aspect ratio and
+must be called prior to \code{plstar}.  An aspect ratio of 0.0
+corresponds to ``natural'' dimensions (i.e. fill the page); any positive
+value will give the specified aspect ratio.  This scaling of plots is
+actually done in the driver, and so may not work for all output devices
+(note that
 \code{plrender} is capable of scaled aspect ratio plots to any device
 whether that device supports scaling or not).  In such scaled plots,
 absolute plotting is done in the scaled coordinate system.\refill
@@ -212,6 +322,7 @@ absolute plotting is done in the scaled coordinate system.\refill
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Windows, Annotation, Viewports, Advanced Use
+\message{Windows}
 \section{Defining the Window}
 \cindex{Windows}
 
@@ -219,18 +330,25 @@ The window must be defined after the viewport in order to map the world
 coordinate rectangle into the viewport rectangle.  The routine
 \rou{plwind} is used to specify the rectangle in world-coordinate space.
 For example, if we wish to plot a graph showing the collector current
-\c $I_C$ as a function of the collector to emitter voltage $V_{CE}$ for a
-\c transistor where $0\le I_C\le 10.0\mbox{\, mA}$ and $0\le V_{CE}\le
-\c 12.0\mbox{\, V}$, we would call the function \code{plwind} as
-\c follows:\refill
+\begin{tex}
+$I_C$ as a function of the collector to emitter voltage $V_{CE}$ for a
+transistor where $0\le I_C\le 10.0\mbox{\, mA}$ and $0\le V_{CE}\le
+12.0\mbox{\, V}$, 
+\end{tex}
+\begin{ifinfo}
+\code{I_C} as a function of the collector to emitter voltage \code{V_CE}
+for a transistor where \code{0 <= I_C <= 10.0 mA} and \code{0 <= V_CE <=
+12.0 V},
+\end{ifinfo}
+we would call the function \code{plwind} as follows:\refill
 
 \begin{verbatim}
     plwind(0.0, 12.0, 0.0, 10.0);
 \end{verbatim}
 
 Note that each of the arguments is a floating point number, and so the
-decimal points are required.  If the order of either the X~limits or
-Y~limits is reversed, the corresponding axis will point in the opposite
+decimal points are required.  If the order of either the X limits or
+Y limits is reversed, the corresponding axis will point in the opposite
 sense, (i.e., right to left for X and top to bottom for Y).  The window
 must be defined before any calls to the routines which actually draw the
 data points.  Note however that \code{plwind} may also be called to
@@ -241,6 +359,7 @@ more graphs with different axes on the same piece of paper.\refill
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Annotation, Standard Window, Windows, Advanced Use
+\message{Annotation}
 \section{Annotating the Viewport}
 \cindex{Annotation}
 \cindex{Writing Text}
@@ -271,9 +390,9 @@ relative to the viewport.  For our example, we may use\refill
     pllab("V#dCE#u (Volts)", "I#dC#u (mA)", "TRANSISTOR CHARACTERISTICS");
 \end{verbatim}
 
-Note that \verb+#d+ and \verb+#u+ are escape sequences
-(\pxref{Escape Sequences}) which allow subscripts and superscripts to be
-used in text.  They are described more fully later in this chapter.\refill
+Note that \code{#d} and \code{#u} are escape sequences (\pxref{Escape
+Sequences}) which allow subscripts and superscripts to be used in text.
+They are described more fully later in this chapter.\refill
 
 The appearance of axis labels may be further altered by auxiliary calls
 to \rou{plprec}, \rou{plschr}, \rou{plsxax}, \rou{plsyax}, and
@@ -298,7 +417,7 @@ a vertical axis on the right, and bottom right for a horizontal axis.\refill
 \c representation, the label is printed as simply $4.78$ with the $10^{-5}$
 \c exponent placed separately.\refill
 
-The determination of maximum length (i.e.~\code{digmax}) for fixed point
+The determination of maximum length (i.e. \code{digmax}) for fixed point
 quantities is complicated by the fact that long fixed point
 representations look much worse than the same sized floating point
 representation.  Further, a fixed point number with magnitude much less
@@ -323,6 +442,7 @@ complete.\refill
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Standard Window, Line Attributes, Annotation, Advanced Use
+\message{Standard}
 \section{Setting up a Standard Window}
 \cindex{Standard window}
 \cindex{plenv}
@@ -350,6 +470,7 @@ which is equivalent to the following series of calls:
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Line Attributes, Fill Pattern, Standard Window, Advanced Use
+\message{Line}
 \section{Setting Line Attributes}
 \cindex{Line attributes}
 
@@ -392,6 +513,7 @@ different predefined styles.\refill
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Fill Pattern, Characters, Line Attributes, Advanced Use
+\message{Fill}
 \section{Setting the Area Fill Pattern}
 \cindex{Fill pattern}
 
@@ -430,6 +552,7 @@ colors to give a virtually infinite number of different patterns.
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Characters, Escape Sequences, Characters, Advanced Use
+\message{Characters}
 \section{Setting Character and Symbol Attributes}
 \cindex{Character attributes}
 \cindex{Symbol attributes}
@@ -490,6 +613,7 @@ routines \rou{plsmaj} and \rou{plsmin}.
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Escape Sequences, 3-d Plots, Characters, Advanced Use
+\message{Escape}
 \section{Escape Sequences in Text}
 \cindex{Escape sequences}
 
@@ -497,42 +621,50 @@ The routines which draw text all allow you to include escape sequences
 in the text to be plotted.  These are character sequences that are
 interpreted as instructions to change fonts, draw superscripts and
 subscripts, draw non-ASCII (e.g. Greek), and so on.  All escape
-sequences start with a number symbol (\verb+#+).\refill
+sequences start with a number symbol (\code{#}).\refill
 
 The following escape sequences are defined:
 \begin{itemize}
-   \item \verb+#u+: move up to the superscript position
-    (ended with \verb+#d+)
-   \item \verb+#d+: move down to subscript position
-    (ended with \verb+#u+)
-   \item \verb+#b+: backspace (to allow overprinting)
-   \item \verb+##+: number symbol
-   \item \verb.#+.: toggle overline mode
-   \item \verb.#-.: toggle underline mode
-   \item \verb+#gx+: Greek letter corresponding to Roman letter \code{x}
+   \item \code{#u}: move up to the superscript position
+    (ended with \code{#d})
+   \item \code{#d}: move down to subscript position
+    (ended with \code{#u})
+   \item \code{#b}: backspace (to allow overprinting)
+   \item \code{##}: number symbol
+   \item \code{#+}: toggle overline mode
+   \item \code{#-}: toggle underline mode
+   \item \code{#gx}: Greek letter corresponding to Roman letter \code{x}
                      (see below)
-   \item \verb+#fn+: switch to normal font
-   \item \verb+#fr+: switch to Roman font
-   \item \verb+#fi+: switch to italic font
-   \item \verb+#fs+: switch to script font
-   \item \verb+#(nnn)+: Hershey character nnn (1 to 4 decimal digits)
+   \item \code{#fn}: switch to normal font
+   \item \code{#fr}: switch to Roman font
+   \item \code{#fi}: switch to italic font
+   \item \code{#fs}: switch to script font
+   \item \code{#(nnn)}: Hershey character nnn (1 to 4 decimal digits)
 \end{itemize}
 
 Sections of text can have an underline or overline appended.  For
 example, the string
-\c \[
-\c {\rm\overline{S}(\underline{freq})}
-\c \]
-is obtained by specifying \verb."#+S#+(#-freq#-)"..
+\begin{tex}
+\[
+{\rm\overline{S}(\underline{freq})}
+\]
+\end{tex}
+\begin{ifinfo}
+	_
+	S(freq)
+	  ----
+\end{ifinfo}
+is obtained by specifying \code{"#+S#+(#-freq#-)"}.
 
-Greek letters are obtained by \verb+#g+ followed by a Roman letter.
-Table~\ref{greek} shows how these letters map into Greek
+Greek letters are obtained by \code{#g} followed by a Roman letter.
+Table \ref{greek} shows how these letters map into Greek
 characters.\refill
 \noinput{table}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node 3-d Plots, Contour Plots, Escape Sequences, Advanced Use
+\message{3}
 \section{Three Dimensional Surface Plots}
 \cindex{3-d plots}
 \cindex{Surface plots}
@@ -543,13 +675,13 @@ function to be plotted is \code{Z[X][Y]}, where \code{Z} represents the
 dependent variable and \code{X} and \code{Y} represent the independent
 variables.\refill
 
-\c As usual, we would like to refer to a three dimensional point \code{(X,
-\c Y, Z)} in terms of some meaningful user-specified coordinate system.
-\c These are called \emph{three-dimensional world coordinates}.  We need to
-\c specify the ranges of these coordinates, so that the entire surface is
-\c contained within the cuboid defined by
-\c $\code{xmin}<\code{x}<\code{xmax}$, $\code{ymin}<\code{y}<\code{ymax}$
-\c and $\code{zmin}<\code{z}<\code{zmax}$.  Typically, we shall want to
+As usual, we would like to refer to a three dimensional point \code{(X,
+Y, Z)} in terms of some meaningful user-specified coordinate system.
+These are called \emph{three-dimensional world coordinates}.  We need to
+specify the ranges of these coordinates, so that the entire surface is
+contained within the cuboid defined by
+\code{xmin}<\code{x}<\code{xmax}, \code{ymin}<\code{y}<\code{ymax}
+and \code{zmin}<\code{z}<\code{zmax}.  Typically, we shall want to
 view the surface from a variety of angles, and to facilitate this, a
 two-stage mapping of the enclosing cuboid is performed.  Firstly, it is
 mapped into another cuboid called the \emph{normalized box} whose size
@@ -557,15 +689,15 @@ must also be specified by the user, and secondly this normalized box is
 viewed from a particular azimuth and elevation so that it can be
 projected onto the two-dimensional window.\refill
 
-\c This two-stage transformation process allows considerable flexibility in
-\c specifying how the surface is depicted.  The lengths of the sides of the
-\c normalized box are independent of the world coordinate ranges of each of
-\c the variables, making it possible to use ``reasonable'' viewing angles
-\c even if the ranges of the world coordinates on the axes are very
-\c different.  The size of the normalized box is determined essentially by
-\c the size of the two-dimensional window into which it is to be mapped.
-\c The normalized box is centered about the origin in the $x$ and $y$
-\c directions, but rests on the plane $\code{z = 0}$.  It is viewed by an
+This two-stage transformation process allows considerable flexibility in
+specifying how the surface is depicted.  The lengths of the sides of the
+normalized box are independent of the world coordinate ranges of each of
+the variables, making it possible to use ``reasonable'' viewing angles
+even if the ranges of the world coordinates on the axes are very
+different.  The size of the normalized box is determined essentially by
+the size of the two-dimensional window into which it is to be mapped.
+The normalized box is centered about the origin in the \code{x} and \code{y}
+directions, but rests on the plane \code{z = 0}.  It is viewed by an
 observer located at altitude \code{alt} and azimuth \code{az}, where
 both angles are measured in degrees.  The altitude should be restricted
 to the range zero to ninety degrees for proper operation, and represents
@@ -585,13 +717,18 @@ choose the normalized box to have sides of length
     height = 3.0;
 \end{verbatim}
 
-\c A reasonable range for the $x$ coordinate of the two-dimensional window
-\c is -2.5 to +2.5, since the length of the diagonal across the base of the
-\c normalized box is $\sqrt{2^2+4^2} = 2\sqrt{5}$, which fits into this
-\c coordinate range.  A reasonable range for the $y$ coordinate of the two
-dimensional window in this case is -2.5 to +4, as the the projection of
-the normalized box lies in this range for the allowed range of viewing
-angles.\refill
+\begin{tex} 
+A reasonable range for the x coordinate of the two-dimensional window
+is -2.5 to +2.5, since the length of the diagonal across the base of the
+normalized box is $\sqrt{2^2+4^2} = 2\sqrt{5}$,\end{tex}
+\begin{ifinfo}
+A reasonable range for the x coordinate of the two-dimensional window
+is -2.5 to +2.5, since the length of the diagonal across the base of the
+normalized box is sqrt(2^2+4^2) = 2 sqrt(5),\end{ifinfo}
+which fits into this coordinate range.  A reasonable range for the y
+coordinate of the two dimensional window in this case is -2.5 to +4, as
+the the projection of the normalized box lies in this range for the
+allowed range of viewing angles.\refill
 
 The routine \rou{plwind} or \rou{plenv} is used in the usual way to
 establish the size of the two-dimensional window.  The routine
@@ -600,9 +737,17 @@ dimensional world coordinates, the size of the normalized box and the
 viewing angles.  After calling \code{plw3d}, the actual surface is drawn
 by a call to \rou{plot3d}.\refill
 
+\message{foo}
 For example, if the three-dimensional world-coordinate ranges are
-\c $-10.0\le\code{x}\le 10.0$, $-3.0\le\code{y}\le +7.0$ and
-\c $0.0\le\code{z}\le 8.0$, we could use the following statements:\refill
+\begin{tex}
+$-10.0\le\code{x}\le 10.0$, $-3.0\le\code{y}\le +7.0$ and 
+$0.0\le\code{z}\le 8.0$, 
+\end{tex}
+\begin{ifinfo}
+-10.0 <= \code{x} <=  10.0, -3.0 <= \code{y} <=  +7.0 and
+0.0 <= \code{z} <=  8.0, 
+\end{ifinfo}
+we could use the following statements:\refill
 
 \begin{verbatim}
     xmin2d = -2.5;
@@ -626,12 +771,12 @@ For example, if the three-dimensional world-coordinate ranges are
     plot3d(x, y, z, nx, ny, opt, side);
 \end{verbatim}
 
-\c The values of the function are stored in a two-dimensional array
-\c \code{z[][]} where the array element \code{z[i][j]} contains the value
-\c of the function at the point $x_i$, $y_j$.  (The two-dimensional array
-\c \code{z} is a vectored array instead of a fixed size array.  \code{z}
-\c points to an array of pointers which each point to a rwo of the matrix.)
-\c Note that the values of the independent variables $x_i$ and $y_j$ do not
+The values of the function are stored in a two-dimensional array
+\code{z[][]} where the array element \code{z[i][j]} contains the value
+of the function at the point x_i, y_j.  (The two-dimensional array
+\code{z} is a vectored array instead of a fixed size array.  \code{z}
+points to an array of pointers which each point to a rwo of the matrix.)
+Note that the values of the independent variables x_i and y_j do not
 need to be equally spaced, but they must lie on a rectangular grid.
 Thus two further arrays \code{x[nx]} and \code{y[ny]} are required as
 arguments to \code{plot3d} to specify the values of the independent
@@ -661,6 +806,7 @@ labelling.
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Contour plots, , 3-d Plots, Advanced Use
+\message{Contour}
 \section{Contour and Shade Plots}
 \cindex{Contour plots}
 \cindex{Shade plots}
@@ -682,6 +828,7 @@ handled in turn.
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Contour Plots - C, Contour Plots - Fortran, Contour Plots, Advanced Use
+\message{Contour}
 \subsection{Contour Plots from C}
 \cindex{Contour Plots -- C}
 
@@ -691,8 +838,8 @@ form:\refill
 
 \name{plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr)}
 
-\c where \code{z} is the two-dimensional array of size
-\c $\code{nx}\times\code{ny}$ containing samples of the function to be
+where \code{z} is the two-dimensional array of size
+\code{nx} by \code{ny} containing samples of the function to be
 contoured.  (\code{z} is a vectored two-dimensional array as described
 in the previous section.  It is \emph{not} a fixed-size two-dimensional
 array.) The parameters \code{kx}, \code{lx}, \code{ky} and \code{ly}
@@ -709,14 +856,14 @@ used as input to the transformation function \code{pltr}.\refill
 The path of each contour is initially computed in terms of the values of
 the array indicies which range from \code{0} to \code{nx-1} in the first
 index and from \code{0} to \code{ny-1} in the second index.  Before
-these can be drawn in the current window (see page \pageref{window} in
-Section \ref{window}), it is necessary to convert from these array
-indicies into world coordinates.  This is done by passing a pointer to a
-user-defined function to \code{plcont} (the case for
-\code{plconf} is slightly different and discussed below).  This
-function pointer is the last argument \code{pltr}.  This function must
-be declared as type \code{void} in the module which calls \code{plcont}.
-This transformation function must have the parameter list:\refill
+these can be drawn in the current window (\pxref{Windows}), it is
+necessary to convert from these array indicies into world coordinates.
+This is done by passing a pointer to a user-defined function to
+\code{plcont} (the case for \code{plconf} is slightly different and
+discussed below).  This function pointer is the last argument
+\code{pltr}.  This function must be declared as type \code{void} in the
+module which calls \code{plcont}.  This transformation function must
+have the parameter list:\refill
 
 \name{void pltr(x, y, tx, ty);}
 
@@ -755,28 +902,34 @@ Thus by setting up the values in the array \code{tr[]}, we can apply an
 arbitrary translation, rotation and/or shear to the array before drawing
 out the contours.  By defining other transformation subroutines, it is
 possible to draw contours wrapped around polar grids etc.  If no
-\c transformation is required, you can simply set \code{tr[0]$ = $tr[4]$ =
-\c $1.}, with other entries set to $0.$.  Alternately you can pass the
-\c built-in function \code{pltr0} to \code{plcont}; this function merely
-\c sets \code{*tx} to \code{x} and \code{*ty} to {y}, resulting in no net
-\c transformation.\refill
+transformation is required, you can simply set \code{tr[0] = tr[4] =
+1.}, with other entries set to 0..  Alternately you can pass the
+built-in function \code{pltr0} to \code{plcont}; this function merely
+sets \code{*tx} to \code{x} and \code{*ty} to {y}, resulting in no net
+transformation.\refill
 
-\c As an example in setting up \code{tr[]}, suppose that the array \code{z}
-\c is of size $21 \times 41$ and contains the values of the function
-\c $z[x][y]$, where $x$ ranges from 0.0 to 4.0 and $y$ ranges from -8.0 to
-8.0.  Furthermore, let us also suppose that the window (as defined using
+As an example in setting up \code{tr[]}, suppose that the array \code{z}
+is of size 21 by 41 and contains the values of the function
+\code{z[x][y]}, where \code{x} ranges from 0.0 to 4.0 and \code{y}
+ranges from -8.0 to 8.0.  Furthermore, let us also suppose that the
+window (as defined using
 \code{plenv} or \code{plwind}) covers this range of world coordinates.
 Since we wish the index (0, 0) in array \code{z} to map to (0.0, -8.0)
 and the index (20, 40) to map to (4.0, 8.0), and for there to be no skew
 in the axes, we should choose elements of \code{tr[]} so that\refill
+\begin{tex}
+\[
+   \begin{array}{l@{\; = \;}l}
+   tx & 0.2x \\
+   ty & 0.4y - 8.
+   \end{array}
+\]
+\end{tex}
+\begin{ifinfo}
 
-\c \[
-\c    \begin{array}{l@{\; = \;}l}
-\c    tx & 0.2x \\
-\c    ty & 0.4y - 8.
-\c    \end{array}
-\c \]
+	(omitted in info version)
 
+\end{ifinfo}
 and so \code{tr[0] = 0.2}, \code{tr[1] = 0.0}, \code{tr[2] = 0.0}, 
 \code{tr[3] = 0.0}, \code{tr[4] = 0.4}, \code{tr[5] = -8.}.\refill
 
@@ -803,6 +956,7 @@ following section.\refill
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \node Contour Plots - Fortran, , Contour Plots - C, Advanced Use
+\message{Contour}
 \subsection{Contour Plots from Fortran}
 \cindex{Contour Plots -- Fortran}
 
