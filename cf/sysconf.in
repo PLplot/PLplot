@@ -237,8 +237,8 @@ fi
 # Can finally set linker defaults.
 # -----------------------------------------------------------------------
 
-LDC=$CC
-LDF=$F77
+LDC="$CC"
+LDF="$F77"
 
 # -----------------------------------------------------------------------
 # Now get system-specific compiler flags.
