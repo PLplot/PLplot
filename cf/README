@@ -65,7 +65,7 @@ DPLIBDIR='/usr/local/lib'
 ITCLLIBDIR='/usr/local/lib'
 EXTRA_LIBS=' -lm'
 RANLIB='ranlib'
-prefix='/u/usr/local/plplot'
+pl_prefix='/usr/local/plplot'
 DEFS=' -DSTDC_HEADERS=1'
 with_opt="no"
 
