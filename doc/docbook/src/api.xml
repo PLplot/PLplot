@@ -1780,8 +1780,7 @@ reference stream to the current stream
 	  </para>
 	</listitem>
     </itemizedlist>
-
-
+        </para>
       </varlistentry>
       <varlistentry>
 	<term>
@@ -4762,7 +4761,7 @@ source
 	</listitem>
       </varlistentry>
     </variablelist>
-    </setc1>
+    </sect1>
 
   <sect1 id="plmkstrm" renderas="sect3">
     <title>
@@ -5315,7 +5314,6 @@ default
           Number of elements in the <literal>clevel</literal> array.
 	  </para>
 	</listitem>
-      </varlistentry>
       </varlistentry>
     </variablelist>
 
