@@ -26,12 +26,6 @@
 #include "plcdemos.h"
 #include "plevent.h"
 
-/* Pairs of points making the line segments used to plot the user defined arrow */
-static PLFLT arrow_x[6] = {-0.5, 0.5, 0.3, 0.5, 0.3, 0.5};
-static PLFLT arrow_y[6] = {0.0, 0.0, 0.2, 0.0, -0.2, 0.0};
-static PLFLT arrow2_x[6] = {-0.5, 0.3, 0.3, 0.5, 0.3, 0.3};
-static PLFLT arrow2_y[6] = {0.0, 0.0,   0.2, 0.0, -0.2, 0.0};
-
 /*
  * main
  *
