@@ -448,6 +448,8 @@ AC_SUBST(CPP_SOVERSION)
 PLPLOT_TCL_VERSION=5
 AC_SUBST(PLPLOT_TCL_VERSION)
 
+AM_PROG_CC_STDC
+
 ### Libtool settings
 
 MY_ARG_WITH(ltdlsystem,
@@ -476,7 +478,6 @@ AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
 # AM_PROG_LIBTOOL
 AC_LIBTOOL_WIN32_DLL
 
-AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
 
 ### If the user don't want (or the system is not capable of) to build
