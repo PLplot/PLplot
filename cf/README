@@ -28,7 +28,7 @@ options (such as what devices to enable) as well as speed up the
 configuration script.  The latter is done by setting the location of
 various include files and libraries, which otherwise need to be found by
 configure through a search process.  Here is an example cf_plplot.in file
-that is useful on /my/ machine:
+that I use on my workstation:
 
 # --*-sh-*---------------------------------------------------------------
 #
@@ -36,6 +36,10 @@ that is useful on /my/ machine:
 #
 # Created from contents of config.status and read automatically by
 # configure to set up initial variables and reduce running time.
+#
+# Note: the internal representation of the --with-<option> and
+# --enable-<option> command line switches actually uses an underscore,
+# e.g. with_<option> and enable_<option>.  Don't forget!
 #
 # -----------------------------------------------------------------------
 
@@ -54,4 +58,10 @@ prefix='/u/usr/local/plplot'
 DEFS=' -DSTDC_HEADERS=1'
 with_opt="no"
 
+# Devices are selected by --enable or --disable.
 
+enable_dg300="no"
+enable_imp="no"
+enable_tek4107="no"
+enable_hp7470="no"
+enable_hp7580="no"
