@@ -8,7 +8,7 @@
 #define XPTS    35		/* Data points in x */
 #define YPTS    46		/* Datat points in y */
 
-static int opt[] = {1, 2, 3, 3};
+static int opt[] = {DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY, DRAW_LINEXY};
 static PLFLT alt[] = {60.0, 20.0, 60.0, 60.0};
 static PLFLT az[] = {30.0, 60.0, 120.0, 160.0};
 static void cmap1_init(int);
@@ -92,8 +92,6 @@ static PLOptionTable options[] = {
     NULL }			/* long syntax */
 };
 
-char *notes[] = {"Make sure you get it right!", NULL};
-
 #define LEVELS 10
 
 int
@@ -108,7 +106,7 @@ main(int argc, char *argv[])
   PLINT nlevel=LEVELS;
 
   /* Parse and process command line arguments */
-  plMergeOpts(options, "x08c options", notes);
+  plMergeOpts(options, "x08c options",  NULL);
   (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
   /* Initialize plplot */
@@ -153,7 +151,7 @@ main(int argc, char *argv[])
   pllightsource(1.,1.,1.);
     	
   for (k = 0; k < 4; k++) {
-      for (ifshade = 0; ifshade < 4; ifshade++) {
+      for (ifshade = 0; ifshade < 5; ifshade++) {
 	  pladv(0);
 	  plvpor(0.0, 1.0, 0.0, 0.9);
 	  plwind(-1.0, 1.0, -0.9, 1.1);
@@ -170,10 +168,13 @@ main(int argc, char *argv[])
 
 	  if (ifshade == 0)        /* wireframe plot */
 	      plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
-	  else if (ifshade == 1) { /* light difused shaded plot */
+	  else if (ifshade == 1) {       /* magnitude colored wireframe plot */
+	      cmap1_init(0);
+	      plot3d(x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, 1);
+	  } else if (ifshade == 2) { /* light difused shaded plot */
 	      cmap1_init(1);
 	      plotsh3d(x, y, z, XPTS, YPTS, 0);
-	  } else if (ifshade == 2) { /* false color plot */
+	  } else if (ifshade == 3) { /* false color plot */
 	      cmap1_init(0);
 	      plotfc3d(x, y, z, XPTS, YPTS, 0, clevel, nlevel);
 	  } else    /* false color plot with contours */
