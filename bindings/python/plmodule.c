@@ -320,7 +320,6 @@ static void pypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer data)
 static PyObject * pl_cont_ts(PyObject *self, PyObject *args)
 {
     PLINT nx, ny, kx, lx, ky, ly, nlevel;
-    int i;
     PLFLT **z, *clevel;	
     PyObject *op, *levelop, *f;
     TRY (PyArg_ParseTuple(args, "OiiiiOO!", &op, &kx, &lx, &ky, &ly, &levelop, 
@@ -380,7 +379,6 @@ pyf2eval2(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 static PyObject * pl_cont2(PyObject *self, PyObject *args)
 {
     PLINT nx, ny, kx, lx, ky, ly, nlevel;
-    int i;
     PLFLT **z, *clevel;	
     PyObject *op, *levelop;
     PLfGrid2 grid;
@@ -856,6 +854,17 @@ static PyObject * pl_lab(PyObject *self, PyObject *args)
     return Py_None;
 }
 
+static char doc_pllightsource[]="Sets the 3D position of the light source for use with plotsh3d";
+
+static PyObject * pl_lightsource(PyObject *self, PyObject *args)
+{
+    PLFLT x, y, z;
+    TRY (PyArg_ParseTuple(args, PL_ARGS("ddd", "fff"), &x, &y, &z));
+    pllightsource(x, y, z);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static char doc_plline[]="Draws line segments connecting a series of points";
 
 static PyObject * pl_line(PyObject *self, PyObject *args)
@@ -942,7 +951,6 @@ static PyObject * pl_mesh(PyObject *self, PyObject *args)
     PLFLT *x, *y, **z;
     PLINT nx, ny, opt;
     PyObject *xop, *yop, *zop;
-    int i;
     TRY (PyArg_ParseTuple(args, "OOOi", &xop, &yop, &zop, &opt));
     TRY (pl_PyArray_AsFloatArray(&xop, &x, &nx));
     TRY (pl_PyArray_AsFloatArray(&yop, &y, &ny));
@@ -991,6 +999,26 @@ static PyObject * pl_ot3d(PyObject *self, PyObject *args)
     TRY (pl_PyArray_AsFloatArray(&yop, &y, &ny));
     TRY (pl_PyArray_AsFloatMatrix(&zop, &nx, &ny, &z));
     plot3d(x, y, z, nx, ny, opt, side);
+    PyMem_DEL(z);
+    Py_DECREF(xop);
+    Py_DECREF(yop);
+    Py_DECREF(zop);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static char doc_plotsh3d[]="Plot shaded 3-d surface plot";
+
+static PyObject * pl_otsh3d(PyObject *self, PyObject *args)
+{
+    PLFLT *x, *y, **z;
+    PLINT nx, ny, side;
+    PyObject *xop, *yop, *zop;
+    TRY (PyArg_ParseTuple(args, "OOOi", &xop, &yop, &zop, &side));
+    TRY (pl_PyArray_AsFloatArray(&xop, &x, &nx));
+    TRY (pl_PyArray_AsFloatArray(&yop, &y, &ny));
+    TRY (pl_PyArray_AsFloatMatrix(&zop, &nx, &ny, &z));
+    plotsh3d(x, y, z, nx, ny, side);
     PyMem_DEL(z);
     Py_DECREF(xop);
     Py_DECREF(yop);
@@ -1885,6 +1913,7 @@ static PyMethodDef pl_methods[] = {
     {"plinit",			pl_init, 1, doc_plinit},
     {"pljoin",			pl_join, 1, doc_pljoin},
     {"pllab",			pl_lab, 1, doc_pllab},
+    {"pllightsource",		pl_lightsource, 1, doc_pllightsource},
     {"plline",			pl_line, 1, doc_plline},
     {"plline3",		pl_line3, 1, doc_plline3},
     {"pllsty",			pl_lsty, 1, doc_pllsty},
@@ -1892,6 +1921,7 @@ static PyMethodDef pl_methods[] = {
     {"plmkstrm",		pl_mkstrm, 1, doc_plmkstrm},
     {"plmtex",		pl_mtex, 1, doc_plmtex},
     {"plot3d",		pl_ot3d, 1, doc_plot3d},
+    {"plotsh3d",	pl_otsh3d, 1, doc_plotsh3d},
     {"plpage",		pl_bop, 1, doc_plbop},		/* old name for backward compatibility */
     {"plpat",			pl_pat, 1, doc_plpat},
     {"plpoin",		pl_poin, 1, doc_plpoin},
@@ -1958,7 +1988,7 @@ static PyMethodDef pl_methods[] = {
     {NULL,			NULL}
 };
 
-void initpl()
+void initpl(void)
 {
     PyObject *m;
     PyObject *d;
