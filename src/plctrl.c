@@ -1325,8 +1325,6 @@ strcat_delim(char *dirspec)
 #elif defined (macintosh)
     if (dirspec[ldirspec-1] != ':')
         strcat(dirspec, ":");
-#elif defined (VMS)
-
 #else           /* unix is the default */
     if (dirspec[ldirspec-1] != '/')
 	strcat(dirspec, "/");
