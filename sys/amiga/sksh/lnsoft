@@ -1,1 +1,77 @@
-(SKSH_PP,09)(39(74(69(04,$#)(04,2))(75(02,$1)(01,-?)))(32(31(29,echo)(01,Usage:)(19(31(29,basename)(04,$0)))(01,files... target))(31(29,echo)(01,       (links file or files to target)))(31(29,return)(04,1))))(31(04,nloop)(21,=)(19(47(79(04,$#)(04,1)))))(31(04,files)(21,=)(02,))(50(04,i)(32(31(04,files)(21,=)(02,$files $1))(31(29,shift)))(04,1)(04,$nloop))(31(04,target)(21,=)(04,$1))(39(56(04,$target))(32(31(04,isadir)(21,=)(04,1)))(32(31(04,isadir)(21,=)(04,0))))(39(73(70(04,$nloop)(04,1))(77(75(04,$isadir)(04,1))))(32(31(29,echo)(01,Target not a directory!))(31(29,return)(04,1))))(39(66(04,$isadir)(04,1))(32(31(04,ltarget)(21,=)(19(47(83(04,$target)))))(39(76(19(47(84(04,$target)(04,$ltarget)(04,$ltarget))))(01,:))(32(31(04,target)(21,=)(02,$target/))))))(34(04,file)(33(04,$files))(32(39(55(04,$file))(32(31(04,filename)(21,=)(19(31(29,basename)(04,$file))))(39(66(04,$isadir)(04,1))(32(31(04,targetfile)(21,=)(04,$target$filename)))(32(31(04,targetfile)(21,=)(04,$target))))(31(04,makelink)(04,$targetfile)(04,$file))))))(31(29,return)(04,0))
+#!c:sksh
+
+#*************************************************************************
+#
+# lnsoft - create a link or links
+#
+# Maurice LeBrun, 2/92.
+#
+# This function acts like the Unix "ln -s" command.
+# No flags are taken at present -- the default action of MakeLink is used.
+#
+# The HARD option is the default on the CBM version of MakeLink since 
+# it doesn't support softlinks in 2.04.  The version of MakeLink by
+# Stefan Becker make softlinks by default, and this works well on a
+# hard disk partition but not in ram:.
+#
+#*************************************************************************
+
+if [ $# -lt 2 -o "$1" = '-?' ]
+then
+   echo 'Usage:' $(basename $0) 'files... target'
+   echo '       (links file or files to target)'
+   return 1
+fi
+
+nloop = $(expr $# - 1)
+files = ""
+numloop i = 1 $nloop
+do
+    files = "$files $1"
+    shift
+done
+
+# Set directory target flag.
+
+target = $1
+if [ -d $target ] 
+then
+    isadir = 1
+else
+    isadir = 0
+fi
+
+if [ $nloop -gt 1 -a ! $isadir = 1 ]
+then
+    echo 'Target not a directory!'
+    return 1
+fi
+
+# handle directory name vs device name for target
+
+if [ $isadir -eq 1 ]
+then
+    ltarget = $(expr length $target)
+    if [ $(expr substr $target $ltarget $ltarget) != ':' ]
+    then
+	target = "$target/"
+    fi
+fi
+
+# loop over files
+
+for file in $files
+do
+    if [ -f $file ]
+    then
+	filename = $(basename $file)
+	if [ $isadir -eq 1 ]
+	then
+	    targetfile = $target$filename
+	else
+	    targetfile = $target
+	fi
+	makelink $targetfile $file
+    fi
+done
+return 0
