@@ -1,3 +1,17 @@
+plplot (5.0.1-0.potato.2) unstable; urgency=low
+
+  * debian/control: Better descriptions for plplot-c++ and plplot-common
+    (thanks to Alan Irwin <irwin@beluga.phys.uvic.ca>).  Added "Replaces:"
+    fields to plplot-xwin and plplot-tcl.
+  * debian/plplot-doc.files: Removed file.
+  * debian/plplot-dev.files: Addded usr/include.  This will put the header
+    files into plplot-dev (thanks again to Alan).
+  * Created new package plplot-bin with pltek, plpr and plm2gif, which
+    were before in plplot-common.  This was causing circular dependency
+    problems. 
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Tue, 13 Feb 2001 10:30:32 +0100
+
 plplot (5.0.1-0.potato.1) unstable; urgency=low
 
   * New upstream release.  Starting with version 5.0.0, PLplot entered a

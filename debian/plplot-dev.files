@@ -5,3 +5,4 @@ usr/lib/libplcxxd.so
 usr/lib/libplmatrix.so
 usr/lib/libplmatrix.a
 usr/share/doc/plplot/examples
+usr/include
