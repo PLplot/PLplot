@@ -10,3 +10,4 @@ tarball.tgz
 plplot-man-*.tar.gz
 plplot-info-*.tar.gz
 plplot-html-*.tar.gz
+*.txt

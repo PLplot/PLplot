@@ -39,6 +39,7 @@
 
 <!ENTITY Project-Version "@VERSION@">
 <!ENTITY Project-Date "$Date$">
+<!ENTITY Release-Date "@RELEASE_DATE@">
 
 <!ENTITY chap-intro SYSTEM "intro.xml">
 <!ENTITY chap-simple SYSTEM "simple.xml">
@@ -58,7 +59,8 @@
 <!ENTITY chap-api-c SYSTEM "api-c.xml">
 <!ENTITY chap-api-fortran SYSTEM "api-fortran.xml">
 <!ENTITY chap-api-compat SYSTEM "api-compat.xml">
-<!ENTITY symfile SYSTEM "plplot.sym">
+<!ENTITY plplot-symbols SYSTEM "plplot-symbols.txt">
+<!ENTITY plplot-structs SYSTEM "plplot-structs.txt">
 <!ENTITY chap-os-notes SYSTEM "os_notes.xml">
 <!ENTITY plP_checkdriverinit '<link linkend="plP_checkdriverinit"><function>plP_checkdriverinit</function></link>'>
 <!ENTITY plP_getinitdriverlist '<link linkend="plP_getinitdriverlist"><function>plP_getinitdriverlist</function></link>'>
@@ -304,7 +306,7 @@
         Release version: &Project-Version;
       </para>
       <para>
-        Release date: @RELEASE_DATE@
+        Release date: &Release-Date;
       </para>
 
     </legalnotice>

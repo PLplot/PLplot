@@ -45,8 +45,11 @@ SOURCE_FILES = \
   simple.xml \
   tcl.xml \
   wish.xml \
-  math.ent \
-  plplot.sym
+  math.ent
+
+INCLUDED_FILES =     \
+  plplot-symbols.txt \
+  plplot-structs.txt
 
 STYLESHEET_HTML = plplotdoc-html.dsl
 STYLESHEET_PRINT = plplotdoc-print.dsl
@@ -59,7 +62,8 @@ built_files = \
   $(INFO_MANIFEST) $(HTML_MANIFEST) $(MAN_MANIFEST) \
   $(BASE).jadetex \
   $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA) \
-  plplotdoc.txml plplotdoc.xml-info plplotdoc.texi
+  plplotdoc.txml plplotdoc.xml-info plplotdoc.texi \
+  $(INCLUDED_FILES)
 endif
 
 EXTRA_DIST = \
@@ -75,7 +79,7 @@ INDEX_HTML = ../www/index.html
 
 
 CLEANFILES = \
-  *.aux inline.ent *.log *.eps TMP.* *-tmp *.out \
+  *.aux inline.ent *.log *.eps TMP.* *-tmp *.out *.txt \
   $(TARBALL) $(HTML_TARBALL) $(INFO_TARBALL) $(MAN_TARBALL)
 
 MAINTAINERCLEANFILES = \
@@ -108,9 +112,24 @@ BINDIR = ../bin
 
 if docbook_build
 
+# The following files are included in api-compat.sml
+
+plplot-symbols.txt: $(BINDIR)/get-library-symbols.pl                  \
+                    $(top_builddir)/src/.libs/libplplot$(LIB_TAG).so  \
+	            $(top_srcdir)/include/plplot.h
+	$(PERL) $(BINDIR)/get-library-symbols.pl > plplot-symbols.txt \
+	  $(top_builddir)/src/.libs/libplplot$(LIB_TAG).so            \
+          $(top_srcdir)/include/plplot.h 3
+	  
+plplot-structs.txt: $(BINDIR)/get-library-structs.pl \
+	            $(top_srcdir)/include/plplot.h 
+	$(PERL) $(BINDIR)/get-library-structs.pl > plplot-structs.txt \
+	  $(top_srcdir)/include/plplot.h
+
 # N.B. $(STYLESHEET_HTML) assures that manifest of generated html files is
 # output to the $(HTML_MANIFEST) file.
-$(HTML_MANIFEST): $(SOURCE_FILES) $(MASTER_XML) $(STYLESHEET_HTML) inline-html.ent
+$(HTML_MANIFEST): $(SOURCE_FILES) $(MASTER_XML) $(STYLESHEET_HTML) \
+                  $(INCLUDED_FILES) inline-html.ent
 	ln -fs inline-html.ent inline.ent
 	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
 	  $(XML_DECL) $(MASTER_XML)
@@ -139,7 +158,7 @@ $(BASE).pdf: $(BASE).jadetex jadetex.cfg
 
 
 $(BASE).jadetex: $(SOURCE_FILES) $(MASTER_XML) $(STYLESHEET_PRINT) \
-		 inline-print.ent
+		 $(INCLUDED_FILES) inline-print.ent
 	ln -fs inline-print.ent inline.ent
 	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex \
 	  -o $@ $(XML_DECL) $(MASTER_XML)
@@ -163,7 +182,7 @@ plplotdoc.txml: plplotdoc.xml-info
 	$(DB2X_XSLTPROC) -s texi -o plplotdoc.txml plplotdoc.xml-info
 
 plplotdoc.xml-info: $(BINDIR)/info-clean.pl $(SOURCE_FILES) $(MASTER_XML) \
-		inline-info.ent
+		    $(INCLUDED_FILES) inline-info.ent
 	ln -fs inline-info.ent inline.ent
 	$(PERL) $(BINDIR)/info-clean.pl plplotdoc.xml > $@
 

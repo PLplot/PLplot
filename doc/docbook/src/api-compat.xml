@@ -48,6 +48,11 @@
     library soname will be changed (for operating systems such as Linux
     that support versioned shared libraries).
   </para>
+  
+  <para>
+    The information in this chapter regards version &Project-Version; of
+    PLplot, released on &Release-Date;.
+  </para>
 
   <sect1>
     <title>
@@ -64,8 +69,20 @@
     </para>
 
     <para>
-      <programlisting>&symfile;</programlisting>
+      <programlisting>&plplot-symbols;</programlisting>
     </para>
+
+    <para>
+      Another important aspect of compatibility regard the Application
+      Binary Interface (ABI).  Backwards compatibility can be broken by
+      changes in the C structures made public through 
+      <filename>plplot.h</filename>.  Currently, they are:
+    </para>
+
+    <para>
+      <programlisting>&plplot-structs;</programlisting>
+    </para>
+
   </sect1>
 
   <sect1>
