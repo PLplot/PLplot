@@ -39,8 +39,8 @@ octave and making same plots, the plplot version, typing "plgver'" (note
 the apostrophe in plgver, meaning transpose). You should get the same
 version that you have just compiled, not the installed version.
 
-Invoke octave, and set the LOADPATH, typing
-	LOADPATH="../bindings/octave//::"
+Invoke octave, (the variable  LOADPATH is automatically set to
+	LOADPATH="../bindings/octave//:" because of the file .octaverc)
 
 There are several Octave demos, 'p1' up to 'p20'. Try them:
 
@@ -73,8 +73,8 @@ might not yet work.
 
 If you want to test the installation, call octave and set the LOADPATH as
 
-LOADPATH ="/usr/local/test/share/doc/plplot/examples/octave//\
-:/usr/local/test/share/plplot_octave//:"
+LOADPATH ="/usr/local/share/doc/plplot/examples/octave//\
+:/usr/local/share/plplot_octave//:"
 
 You can now repeat the demos you already tried. Or just type 'p1'<CR>,
 'p2'<CR> ... my preferred test is "plot(sin(1:10),'-o')". As usual,
