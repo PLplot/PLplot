@@ -26,7 +26,7 @@ EXEEXT = @EXEEXT@
 LIB_TAG = @LIB_TAG@
 INCLUDEANDLIB = @INCLUDE_DIR_CMD@ @LIB_DIR_CMD@ -lplplot$(LIB_TAG)
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-RPATH = @RPATH@
+RPATHCMD = @RPATHCMD@
 
 EXECUTABLES_list = \
 		 x01c$(EXEEXT) \
@@ -57,7 +57,7 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 .c$(EXEEXT):
-@pkg_config_true@	$(CC) $< -o $@ $(RPATH) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)`
+@pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)`
 @pkg_config_false@	plplot_libtool --mode=link $(CC) $(CFLAGS) $< $(INCLUDEANDLIB) -o $@
 
 .SUFFIXES: .c $(EXEEXT)

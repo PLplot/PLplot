@@ -397,7 +397,7 @@ AC_REVISION($Revision$)
 ###   version number, otherwise it will fool up the bootstrap.sh script.  By
 ###   the way, the line below can be changed using options --version and
 ###   --date-version of that script. ]
-AC_INIT(plplot, 5.2.1, plplot-devel@lists.sourceforge.net)
+AC_INIT(plplot, 5.2.1.cvs.20031231, plplot-devel@lists.sourceforge.net)
 AC_CONFIG_SRCDIR(src/plcore.c)
 
 ### Configuration headers
@@ -1120,10 +1120,13 @@ AC_SUBST(MANVOL)
 
 if test "$with_rpath" = yes ; then
   RPATH='-rpath $(libdir)'
+  EXPAND_EXPRESSION(RPATHCMD, [-Wl,-rpath -Wl,$libdir])
 else
   RPATH=
+  RPATHCMD=
 fi
 AC_SUBST(RPATH)
+AC_SUBST(RPATHCMD)
 AM_CONDITIONAL(with_rpath, [test "$with_rpath" = yes])
 
 

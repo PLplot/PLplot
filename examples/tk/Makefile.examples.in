@@ -31,7 +31,7 @@ INCLUDEANDLIB = \
 CC = @CC@
 EXEEXT = @EXEEXT@
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-RPATH = @RPATH@
+RPATHCMD = @RPATHCMD@
 
 EXECUTABLES_list = \
 		 xtk01$(EXEEXT) \
@@ -44,7 +44,7 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 .c$(EXEEXT):
-@pkg_config_true@	$(CC) $< -o $@ $(RPATH) $(TCLTKINCCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-tcl`
+@pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) $(TCLTKINCCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-tcl`
 @pkg_config_false@	plplot_libtool --mode=link $(CC) $< $(INCLUDEANDLIB) -o $@
 
 .SUFFIXES: .c $(EXEEXT)
