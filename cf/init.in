@@ -20,6 +20,7 @@ F77		= @F77@
 LDF		= @LDF@
 M4		= m4
 LN		= ln -s
+RM		= rm -f
 
 # Flags and other miscellanea
 
