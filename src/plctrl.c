@@ -366,8 +366,8 @@ c_plscmap1l(PLINT itype, PLINT npts, PLFLT *pos,
 	return;
     }
 
-    if ( npts > 32 ) {
-	plabort("plscmap1l: Maximum of 32 control points allowed");
+    if ( npts > PL_MAX_CMAP1CP ) {
+	plabort("plscmap1l: exceeded maximum number of control points");
 	return;
     }
 
