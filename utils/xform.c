@@ -3,7 +3,7 @@
 	Example linear transformation function for contour plotter.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 extern PLFLT tr[];
 

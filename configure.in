@@ -124,9 +124,9 @@ enable_dyndrivers=no
 enable_f77=yes
 enable_cxx=yes
 enable_python=yes
+enable_tcl=yes
+enable_itcl=yes
 enable_java=no
-enable_tcl=no
-enable_itcl=no
 enable_octave=no
 #explicit default values must be specified here for library and header 
 #searching to work right for the following variables.  Note these variables
@@ -377,21 +377,6 @@ MY_ARG_ENABLE(drivers,
 MY_ARG_ENABLE(dyndrivers,
   [  --enable-dyndrivers     enable dynamic loading of drivers ($enable_dyndrivers)])
 
-MY_ARG_ENABLE(python,
-  [  --enable-python         compile Python interface code ($enable_python)])
-
-MY_ARG_ENABLE(java,
-  [  --enable-java           compile Java interface code ($enable_java)])
-
-MY_ARG_ENABLE(octave,
-  [  --enable-octave         compile Octave interface code ($enable_octave)])
-
-MY_ARG_ENABLE(tcl,
-  [  --enable-tcl            compile Tcl interface code ($enable_tcl)])
-
-MY_ARG_ENABLE(itcl,
-  [  --enable-itcl           enable incr Tcl interface code ($enable_itcl)])
-
 # Set driver enable values
 #
 # You can enable/disable drivers either by the command line
@@ -420,6 +405,52 @@ if test "$enable_dyndrivers" = "yes"; then
     AC_DEFINE(ENABLE_DYNDRIVERS)
 fi
 
+### Modify system-dependent results based on availability
+AC_INCLUDE(sysloc.in)
+#disable LIBS so we don't have all libraries mentioned
+LIBS=""
+
+### automake symbols for system-dependent results
+
+if test "$with_freetype" = yes; then
+   if test "$FREETYPEINCDIR" != default; then
+      FREETYPEINCCMD="-I"$FREETYPEINCDIR
+      AC_SUBST(FREETYPEINCCMD)
+   fi
+   if test "$FREETYPELIBDIR" = default; then
+      FREETYPELIBCMD=$FREETYPELIBSTR
+   else
+      FREETYPELIBCMD="-L "$FREETYPELIBDIR" "$FREETYPELIBSTR
+   fi
+   AC_SUBST(FREETYPELIBCMD)
+fi
+
+if test "$enable_tcl" = yes; then
+   if test "$TCLINCDIR" != default; then
+      TCLINCCMD="-I"$TCLINCDIR
+      AC_SUBST(TCLINCCMD)
+   fi
+   if test "$TCLLIBDIR" = default; then
+      TCLLIBCMD=$TCLLIBSTR
+   else
+      TCLLIBCMD="-L "$TCLLIBDIR" "$TCLLIBSTR
+   fi
+   AC_SUBST(TCLLIBCMD)
+fi
+
+if test "$enable_itcl" = yes; then
+   if test "$ITCLINCDIR" != default; then
+      ITCLINCCMD="-I"$ITCLINCDIR
+      AC_SUBST(ITCLINCCMD)
+   fi
+   if test "$ITCLLIBDIR" = default; then
+      ITCLLIBCMD=$ITCLLIBSTR
+   else
+      ITCLLIBCMD="-L "$ITCLLIBDIR" "$ITCLLIBSTR
+   fi
+   AC_SUBST(ITCLLIBCMD)
+fi
+
 ### Double vs single precison
 
 if test "$with_double" = yes; then
@@ -435,7 +466,7 @@ AM_CONDITIONAL(with_double, test "$with_double" = yes)
 AC_SUBST(LIB_TAG)
 AC_DEFINE_UNQUOTED(DRIVERS_DB, "$DRIVERS_DB")
 
-### C++ bindings
+### C++ binding
 
 MY_ARG_ENABLE(cxx,
   [  --enable-cxx            compile C++ interface code ($enable_cxx)])
@@ -444,7 +475,7 @@ if test "$enable_cxx" = yes ; then
   AC_PROG_CXX
 fi
 
-### Fortran 77 bindings
+### Fortran 77 binding
 
 MY_ARG_ENABLE(f77,
   [  --enable-f77            compile Fortran-77 interface code ($enable_f77)])
@@ -459,6 +490,27 @@ the Fortran bindings])
   M4_FLAGS="-S2000 -B8192 $DBL_FLAG_M4"
   AC_SUBST(M4_FLAGS)
 fi
+
+### Python binding
+
+MY_ARG_ENABLE(python,
+  [  --enable-python         compile Python interface code ($enable_python)])
+AM_CONDITIONAL(enable_python, test "$enable_python" = yes)
+
+### tcl binding
+
+MY_ARG_ENABLE(tcl,
+  [  --enable-tcl            compile Tcl interface code ($enable_tcl)])
+AM_CONDITIONAL(enable_tcl, test "$enable_tcl" = yes)
+
+MY_ARG_ENABLE(itcl,
+  [  --enable-itcl           enable incr Tcl interface code ($enable_itcl)])
+
+MY_ARG_ENABLE(java,
+  [  --enable-java           compile Java interface code ($enable_java)])
+
+MY_ARG_ENABLE(octave,
+  [  --enable-octave         compile Octave interface code ($enable_octave)])
 
 ### Checks for existence of headers
 
@@ -506,27 +558,6 @@ AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
 AC_PATH_XTRA
 MODULES="xwin"$LIB_TAG"_drv.la ps"$LIB_TAG"_drv.la"
 AC_SUBST(MODULES)
-
-### Modify system-dependent results based on availability
-AC_INCLUDE(sysloc.in)
-#disable LIBS so we don't have all libraries mentioned
-LIBS=""
-
-AM_CONDITIONAL(enable_python, test "$enable_python" = yes)
-
-### automake symbols for system-dependent results
-if test "$with_freetype" = yes; then
-   if test "$FREETYPEINCDIR" != default; then
-      FREETYPEINCCMD="-I"$FREETYPEINCDIR
-      AC_SUBST(FREETYPEINCCMD)
-   fi
-   if test "$FREETYPELIBDIR" = default; then
-      FREETYPELIBCMD=$FREETYPELIBSTR
-   else
-      FREETYPELIBCMD="-L "$FREETYPELIBDIR" "$FREETYPELIBSTR
-   fi
-   AC_SUBST(FREETYPELIBCMD)
-fi
 
 ### Drivers
 
@@ -679,6 +710,7 @@ AC_OUTPUT([
 	bindings/c++/Makefile
 	bindings/f77/Makefile
 	bindings/python/Makefile
+	bindings/tcl/Makefile
 	drivers/Makefile
 	examples/Makefile
 	examples/c/Makefile
@@ -689,6 +721,7 @@ AC_OUTPUT([
 	examples/f77/Makefile.examples
 	examples/python/Makefile
 	examples/python/plplot_python_start.py
+	utils/Makefile
 	])
 
 # ----------------------------------------------------------------------------

@@ -1,3 +1,12 @@
+2002-11-28  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* AT build of libplplottcl (including a substantial reorganization
+	  of configure.in).
+
+	* AT build of utilities plrender, pltek, and pltcl.
+
+	* AT reorganize src/Makefile.am, but no substantive changes.
+
 2002-11-27  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* Creation of python extension modules now works.  Replaced the

@@ -10,9 +10,9 @@
 #ifndef __PLTCL_H__
 #define __PLTCL_H__
 
-#include "plplot/plplot.h"
+#include "plplot.h"
 #include <tcl.h>
-#include "plplot/tclMatrix.h"
+#include "tclMatrix.h"
 
 #ifdef __cplusplus
 extern "C" {

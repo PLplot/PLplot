@@ -30,7 +30,7 @@
  */
 
 #include <tcl.h>
-#include "plplot/plplot.h"
+#include "plplot.h"
 
 /* From tclIntDecls.h */
 

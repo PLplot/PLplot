@@ -2,3 +2,9 @@
 tclgen.c
 tclgen.h
 tclgen_s.h
+Makefile
+Makefile.in
+.deps
+.libs
+*.la
+*.lo

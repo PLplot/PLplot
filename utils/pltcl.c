@@ -9,8 +9,8 @@
  *
  */
 
-#include "plplot/plplotP.h"
-#include "plplot/pltcl.h"
+#include "plplotP.h"
+#include "pltcl.h"
 #ifdef HAVE_ITCL
 # ifndef HAVE_ITCLDECLS_H
 #  define RESOURCE_INCLUDED

@@ -1,4 +1,4 @@
-SUBDIRS = libltdl src drivers include lib bindings examples
+SUBDIRS = libltdl src include lib bindings drivers examples utils
 bin_SCRIPTS = plplot_libtool
 
 plplot_libtool: libtool
