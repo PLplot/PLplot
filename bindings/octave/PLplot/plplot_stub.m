@@ -1,7 +1,7 @@
 # Stub subroutines for octave file plplot_octave.cc.
 # This file was automatically generated for octave by wrap_octave on
-# Sat Jan  6 18:17:58 2001 from
-# plplot.h.
+# Sun Mar  4 18:47:43 2001 from
+# plplot_octave.h.
 #
 # It was also massaged to add online documentation
 # extracted from some PLplot distribution files
@@ -262,8 +262,8 @@ function plbox3(xopt, xlabel, xtick, nsubx, yopt, ylabel, ytick, nsuby, zopt, zl
   plplot_octave(7, xopt, xlabel, xtick, nsubx, yopt, ylabel, ytick, nsuby, zopt, zlabel, ztick, nsubz);
 endfunction
 
-function plcol0(icol0)
-% plcol0(icol0)
+function c_plcol0(icol0)
+% c_plcol0(icol0)
 %
 % Set color, map 0.  Argument is eger between 0 and 15.  
   plplot_octave(8, icol0);
@@ -540,31 +540,37 @@ function [r, g, b] = plgcolbg()
   [r, g, b] = plplot_octave(25);
 endfunction
 
+function c_plgcompression(compression)
+% c_plgcompression(compression)
+%
+  plplot_octave(26, compression);
+endfunction
+
 function p_dev = plgdev()
 % p_dev = plgdev()
 %
-  p_dev = plplot_octave(26);
+  p_dev = plplot_octave(27);
 endfunction
 
 function [p_mar, p_aspect, p_jx, p_jy] = plgdidev()
 % [p_mar, p_aspect, p_jx, p_jy] = plgdidev()
 %
 % etrieve current window into device space
-  [p_mar, p_aspect, p_jx, p_jy] = plplot_octave(27);
+  [p_mar, p_aspect, p_jx, p_jy] = plplot_octave(28);
 endfunction
 
 function p_rot = plgdiori()
 % p_rot = plgdiori()
 %
 % Get plot orientation  
-  p_rot = plplot_octave(28);
+  p_rot = plplot_octave(29);
 endfunction
 
 function [p_xmin, p_ymin, p_xmax, p_ymax] = plgdiplt()
 % [p_xmin, p_ymin, p_xmax, p_ymax] = plgdiplt()
 %
 % Retrieve current window into plot space  
-  [p_xmin, p_ymin, p_xmax, p_ymax] = plplot_octave(29);
+  [p_xmin, p_ymin, p_xmax, p_ymax] = plplot_octave(30);
 endfunction
 
 function [p_fam, p_num, p_bmax] = plgfam()
@@ -590,7 +596,7 @@ function [p_fam, p_num, p_bmax] = plgfam()
 %   (in bytes) for a family file.
 % 
 % 
-  [p_fam, p_num, p_bmax] = plplot_octave(30);
+  [p_fam, p_num, p_bmax] = plplot_octave(31);
 endfunction
 
 function fnam = plgfnam()
@@ -608,14 +614,14 @@ function fnam = plgfnam()
 %   fnam (char *, output): Pointer to file name string.
 % 
 % 
-  fnam = plplot_octave(31);
+  fnam = plplot_octave(32);
 endfunction
 
 function p_level = plglevel()
 % p_level = plglevel()
 %
 % et the (current) run level
-  p_level = plplot_octave(32);
+  p_level = plplot_octave(33);
 endfunction
 
 function [p_xp, p_yp, p_xleng, p_yleng, p_xoff, p_yoff] = plgpage()
@@ -643,7 +649,7 @@ function [p_xp, p_yp, p_xleng, p_yleng, p_xoff, p_yoff] = plgpage()
 %   yoff (PLINT *, output): Pointer to y page offset.
 % 
 % 
-  [p_xp, p_yp, p_xleng, p_yleng, p_xoff, p_yoff] = plplot_octave(33);
+  [p_xp, p_yp, p_xleng, p_yleng, p_xoff, p_yoff] = plplot_octave(34);
 endfunction
 
 function plgra()
@@ -665,7 +671,7 @@ function plgra()
 %   pltext.
 % 
 % 
-  plplot_octave(34);
+  plplot_octave(35);
 endfunction
 
 function [xmin, xmax, ymin, ymax] = plgspa()
@@ -696,7 +702,7 @@ function [xmin, xmax, ymin, ymax] = plgspa()
 %   subpage in millimeters.
 % 
 % 
-  [xmin, xmax, ymin, ymax] = plplot_octave(35);
+  [xmin, xmax, ymin, ymax] = plplot_octave(36);
 endfunction
 
 function p_strm = plgstrm()
@@ -714,14 +720,14 @@ function p_strm = plgstrm()
 %   strm (PLINT *, output): Pointer to current stream value.
 % 
 % 
-  p_strm = plplot_octave(36);
+  p_strm = plplot_octave(37);
 endfunction
 
 function p_ver = plgver()
 % p_ver = plgver()
 %
 % Get the current library version number  
-  p_ver = plplot_octave(37);
+  p_ver = plplot_octave(38);
 endfunction
 
 function [p_digmax, p_digits] = plgxax()
@@ -747,7 +753,7 @@ function [p_digmax, p_digits] = plgxax()
 %   digits for the numeric labels (x axis) from the last plot.
 % 
 % 
-  [p_digmax, p_digits] = plplot_octave(38);
+  [p_digmax, p_digits] = plplot_octave(39);
 endfunction
 
 function [p_digmax, p_digits] = plgyax()
@@ -764,7 +770,7 @@ function [p_digmax, p_digits] = plgyax()
 %   description of plgxax for more detail.
 % 
 % 
-  [p_digmax, p_digits] = plplot_octave(39);
+  [p_digmax, p_digits] = plplot_octave(40);
 endfunction
 
 function [p_digmax, p_digits] = plgzax()
@@ -781,7 +787,7 @@ function [p_digmax, p_digits] = plgzax()
 %   description of plgxax for more detail.
 % 
 % 
-  [p_digmax, p_digits] = plplot_octave(40);
+  [p_digmax, p_digits] = plplot_octave(41);
 endfunction
 
 function plhist(data, datmin, datmax, nbin, oldwin)
@@ -817,14 +823,14 @@ function plhist(data, datmin, datmax, nbin, oldwin)
 %   plotting.
 % 
 % 
-  plplot_octave(41, data, datmin, datmax, nbin, oldwin);
+  plplot_octave(42, data, datmin, datmax, nbin, oldwin);
 endfunction
 
 function plhls(h, l, s)
 % plhls(h, l, s)
 %
 % Set current color -map 0- by hue, lightness, and saturation.  
-  plplot_octave(42, h, l, s);
+  plplot_octave(43, h, l, s);
 endfunction
 
 function plinit()
@@ -849,7 +855,7 @@ function plinit()
 %   one subpage to the next.
 % 
 % 
-  plplot_octave(43);
+  plplot_octave(44);
 endfunction
 
 function pljoin(x1, y1, x2, y2)
@@ -873,7 +879,7 @@ function pljoin(x1, y1, x2, y2)
 %   y2 (PLFLT, input): y coordinate of second point.
 % 
 % 
-  plplot_octave(44, x1, y1, x2, y2);
+  plplot_octave(45, x1, y1, x2, y2);
 endfunction
 
 function pllab(xlabel, ylabel, tlabel)
@@ -895,13 +901,13 @@ function pllab(xlabel, ylabel, tlabel)
 %   tlabel (char *, input): Title of graph.
 % 
 % 
-  plplot_octave(45, xlabel, ylabel, tlabel);
+  plplot_octave(46, xlabel, ylabel, tlabel);
 endfunction
 
 function pllightsource(x, y, z)
 % pllightsource(x, y, z)
 %
-  plplot_octave(46, x, y, z);
+  plplot_octave(47, x, y, z);
 endfunction
 
 function plline(x, y)
@@ -923,14 +929,14 @@ function plline(x, y)
 %   y (PLFLT *, input): Pointer to array with y coordinates of points.
 % 
 % 
-  plplot_octave(47, x, y);
+  plplot_octave(48, x, y);
 endfunction
 
 function plline3(x, y, z)
 % plline3(x, y, z)
 %
 % Draws a line in 3 space.   
-  plplot_octave(48, x, y, z);
+  plplot_octave(49, x, y, z);
 endfunction
 
 function pllsty(lin)
@@ -949,14 +955,14 @@ function pllsty(lin)
 %   n (PLINT, input): Integer value between 1 and 8.
 % 
 % 
-  plplot_octave(49, lin);
+  plplot_octave(50, lin);
 endfunction
 
 function p_strm = plmkstrm()
 % p_strm = plmkstrm()
 %
 % Creates a new stream and makes it the default.   
-  p_strm = plplot_octave(50);
+  p_strm = plplot_octave(51);
 endfunction
 
 function plmtex(side, disp, pos, just, text)
@@ -1002,7 +1008,7 @@ function plmtex(side, disp, pos, just, text)
 %   text (char *, input): The string to be written out.
 % 
 % 
-  plplot_octave(51, side, disp, pos, just, text);
+  plplot_octave(52, side, disp, pos, just, text);
 endfunction
 
 function plpat(inc, del)
@@ -1031,7 +1037,7 @@ function plpat(inc, del)
 %   spacing in micrometers between the lines making up the pattern.
 % 
 % 
-  plplot_octave(52, inc, del);
+  plplot_octave(53, inc, del);
 endfunction
 
 function plpoin(x, y, code)
@@ -1059,14 +1065,14 @@ function plpoin(x, y, code)
 %   code (PLINT, input): Code number for the symbol to be plotted.
 % 
 % 
-  plplot_octave(53, x, y, code);
+  plplot_octave(54, x, y, code);
 endfunction
 
 function plpoin3(x, y, z, code)
 % plpoin3(x, y, z, code)
 %
 % Draws a series of points in 3 space.  
-  plplot_octave(54, x, y, z, code);
+  plplot_octave(55, x, y, z, code);
 endfunction
 
 function plprec(setp, prec)
@@ -1090,7 +1096,7 @@ function plprec(setp, prec)
 %   point in numeric labels.
 % 
 % 
-  plplot_octave(55, setp, prec);
+  plplot_octave(56, setp, prec);
 endfunction
 
 function plpsty(patt)
@@ -1109,7 +1115,7 @@ function plpsty(patt)
 %   n (PLINT *, input): The desired pattern.
 % 
 % 
-  plplot_octave(56, patt);
+  plplot_octave(57, patt);
 endfunction
 
 function plptex(x, y, dx, dy, just, text)
@@ -1150,28 +1156,28 @@ function plptex(x, y, dx, dy, just, text)
 %   text (char *, input): The string to be written out.
 % 
 % 
-  plplot_octave(57, x, y, dx, dy, just, text);
+  plplot_octave(58, x, y, dx, dy, just, text);
 endfunction
 
 function plreplot()
 % plreplot()
 %
 % Replays contents of plot buffer to current device/file.  
-  plplot_octave(58);
+  plplot_octave(59);
 endfunction
 
 function plrgb(r, g, b)
 % plrgb(r, g, b)
 %
 % Set line color by red, green, blue from  0. to 1.  
-  plplot_octave(59, r, g, b);
+  plplot_octave(60, r, g, b);
 endfunction
 
 function plrgb1(r, g, b)
 % plrgb1(r, g, b)
 %
 % Set line color by 8 bit RGB values.  
-  plplot_octave(60, r, g, b);
+  plplot_octave(61, r, g, b);
 endfunction
 
 function plschr(def, scale)
@@ -1195,112 +1201,118 @@ function plschr(def, scale)
 %   actual character height.
 % 
 % 
-  plplot_octave(61, def, scale);
+  plplot_octave(62, def, scale);
 endfunction
 
 function plscmap0(r, g, b)
 % plscmap0(r, g, b)
 %
 % Set color map 0 colors by 8 bit RGB values  
-  plplot_octave(62, r, g, b);
+  plplot_octave(63, r, g, b);
 endfunction
 
 function plscmap0n(ncol0)
 % plscmap0n(ncol0)
 %
 % Set number of colors in cmap 0  
-  plplot_octave(63, ncol0);
+  plplot_octave(64, ncol0);
 endfunction
 
 function plscmap1(r, g, b)
 % plscmap1(r, g, b)
 %
 % Set color map 1 colors by 8 bit RGB values  
-  plplot_octave(64, r, g, b);
+  plplot_octave(65, r, g, b);
 endfunction
 
 function plscmap1l(itype, intensity, coord1, coord2, coord3, rev)
 % plscmap1l(itype, intensity, coord1, coord2, coord3, rev)
 %
 % Set color map 1 colors using a piece-wise linear relationship between  intensity [0,1] -cmap 1 index- and position in HLS or RGB color space.  
-  plplot_octave(65, itype, intensity, coord1, coord2, coord3, rev);
+  plplot_octave(66, itype, intensity, coord1, coord2, coord3, rev);
 endfunction
 
 function plscmap1n(ncol1)
 % plscmap1n(ncol1)
 %
 % Set number of colors in cmap 1  
-  plplot_octave(66, ncol1);
+  plplot_octave(67, ncol1);
 endfunction
 
 function plscol0(icol0, r, g, b)
 % plscol0(icol0, r, g, b)
 %
 % Set a given color from color map 0 by 8 bit RGB value  
-  plplot_octave(67, icol0, r, g, b);
+  plplot_octave(68, icol0, r, g, b);
 endfunction
 
 function plscolbg(r, g, b)
 % plscolbg(r, g, b)
 %
 % Set the background color by 8 bit RGB value  
-  plplot_octave(68, r, g, b);
+  plplot_octave(69, r, g, b);
 endfunction
 
 function plscolor(color)
 % plscolor(color)
 %
 % Used to globally turn color output on/off  
-  plplot_octave(69, color);
+  plplot_octave(70, color);
+endfunction
+
+function c_plscompression(compression)
+% c_plscompression(compression)
+%
+  plplot_octave(71, compression);
 endfunction
 
 function plsdev(devname)
 % plsdev(devname)
 %
 % Set the device -keyword- name  
-  plplot_octave(70, devname);
+  plplot_octave(72, devname);
 endfunction
 
 function plsdidev(mar, aspect, jx, jy)
 % plsdidev(mar, aspect, jx, jy)
 %
 % Set window into device space using margin, aspect ratio, and  justification  
-  plplot_octave(71, mar, aspect, jx, jy);
+  plplot_octave(73, mar, aspect, jx, jy);
 endfunction
 
 function plsdimap(dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm)
 % plsdimap(dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm)
 %
 % Set up transformation from metafile coordinates.  
-  plplot_octave(72, dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm);
+  plplot_octave(74, dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm);
 endfunction
 
 function plsdiori(rot)
 % plsdiori(rot)
 %
 % Set plot orientation, specifying rotation in units of pi/2.  
-  plplot_octave(73, rot);
+  plplot_octave(75, rot);
 endfunction
 
 function plsdiplt(xmin, ymin, xmax, ymax)
 % plsdiplt(xmin, ymin, xmax, ymax)
 %
 % Set window into plot space  
-  plplot_octave(74, xmin, ymin, xmax, ymax);
+  plplot_octave(76, xmin, ymin, xmax, ymax);
 endfunction
 
 function plsdiplz(xmin, ymin, xmax, ymax)
 % plsdiplz(xmin, ymin, xmax, ymax)
 %
 % Set window into plot space incrementally -zoom-  
-  plplot_octave(75, xmin, ymin, xmax, ymax);
+  plplot_octave(77, xmin, ymin, xmax, ymax);
 endfunction
 
 function plsesc(esc)
 % plsesc(esc)
 %
 % Set the escape character for text strings.  
-  plplot_octave(76, esc);
+  plplot_octave(78, esc);
 endfunction
 
 function plsfam(fam, num, bmax)
@@ -1325,7 +1337,7 @@ function plsfam(fam, num, bmax)
 %   bmax (PLINT, input): Maximum file size (in bytes) for a family file.
 % 
 % 
-  plplot_octave(77, fam, num, bmax);
+  plplot_octave(79, fam, num, bmax);
 endfunction
 
 function plsfnam(fnam)
@@ -1346,7 +1358,7 @@ function plsfnam(fnam)
 %   fnam (char *, input): Pointer to file name string.
 % 
 % 
-  plplot_octave(78, fnam);
+  plplot_octave(80, fnam);
 endfunction
 
 function plsmaj(def, scale)
@@ -1369,7 +1381,7 @@ function plsmaj(def, scale)
 %   actual tick length.
 % 
 % 
-  plplot_octave(79, def, scale);
+  plplot_octave(81, def, scale);
 endfunction
 
 function plsmin(def, scale)
@@ -1393,7 +1405,7 @@ function plsmin(def, scale)
 %   actual tick length.
 % 
 % 
-  plplot_octave(80, def, scale);
+  plplot_octave(82, def, scale);
 endfunction
 
 function plsori(ori)
@@ -1416,7 +1428,7 @@ function plsori(ori)
 %   ori (PLINT, input): Orientation value.
 % 
 % 
-  plplot_octave(81, ori);
+  plplot_octave(83, ori);
 endfunction
 
 function plspage(xp, yp, xleng, yleng, xoff, yoff)
@@ -1447,14 +1459,14 @@ function plspage(xp, yp, xleng, yleng, xoff, yoff)
 %   yoff (PLINT *, output):  Page offset, y.
 % 
 % 
-  plplot_octave(82, xp, yp, xleng, yleng, xoff, yoff);
+  plplot_octave(84, xp, yp, xleng, yleng, xoff, yoff);
 endfunction
 
 function plspause(pause)
 % plspause(pause)
 %
 % Set the pause -on end-of-page- status  
-  plplot_octave(83, pause);
+  plplot_octave(85, pause);
 endfunction
 
 function plsstrm(strm)
@@ -1474,14 +1486,14 @@ function plsstrm(strm)
 %   strm (PLINT *, output): Pointer to current stream number.
 % 
 % 
-  plplot_octave(84, strm);
+  plplot_octave(86, strm);
 endfunction
 
 function plssub(nx, ny)
 % plssub(nx, ny)
 %
 % Set the number of subwindows in x and y  
-  plplot_octave(85, nx, ny);
+  plplot_octave(87, nx, ny);
 endfunction
 
 function plssym(def, scale)
@@ -1505,7 +1517,7 @@ function plssym(def, scale)
 %   actual symbol height.
 % 
 % 
-  plplot_octave(86, def, scale);
+  plplot_octave(88, def, scale);
 endfunction
 
 function plstar(nx, ny)
@@ -1533,7 +1545,7 @@ function plstar(nx, ny)
 %   vertical direction.
 % 
 % 
-  plplot_octave(87, nx, ny);
+  plplot_octave(89, nx, ny);
 endfunction
 
 function plstart(devname, nx, ny)
@@ -1566,19 +1578,19 @@ function plstart(devname, nx, ny)
 %   vertical direction.
 % 
 % 
-  plplot_octave(88, devname, nx, ny);
+  plplot_octave(90, devname, nx, ny);
 endfunction
 
 function plstripa(id, pen, x, y)
 % plstripa(id, pen, x, y)
 %
-  plplot_octave(89, id, pen, x, y);
+  plplot_octave(91, id, pen, x, y);
 endfunction
 
 function plstripd(id)
 % plstripd(id)
 %
-  plplot_octave(90, id);
+  plplot_octave(92, id);
 endfunction
 
 function plstyl(nms, mark, space)
@@ -1609,7 +1621,7 @@ function plstyl(nms, mark, space)
 %   segments during which the pen is up, measured in micrometers.
 % 
 % 
-  plplot_octave(91, nms, mark, space);
+  plplot_octave(93, nms, mark, space);
 endfunction
 
 function plsvpa(xmin, xmax, ymin, ymax)
@@ -1640,7 +1652,7 @@ function plsvpa(xmin, xmax, ymin, ymax)
 %   the top edge of the subpage in millimeters.
 % 
 % 
-  plplot_octave(92, xmin, xmax, ymin, ymax);
+  plplot_octave(94, xmin, xmax, ymin, ymax);
 endfunction
 
 function plsxax(digmax, digits)
@@ -1667,7 +1679,7 @@ function plsxax(digmax, digits)
 %   user may obtain its value after a call to plbox by calling plgxax.
 % 
 % 
-  plplot_octave(93, digmax, digits);
+  plplot_octave(95, digmax, digits);
 endfunction
 
 function plsyax(digmax, digits)
@@ -1684,7 +1696,7 @@ function plsyax(digmax, digits)
 %   description of plsxax for more detail.
 % 
 % 
-  plplot_octave(94, digmax, digits);
+  plplot_octave(96, digmax, digits);
 endfunction
 
 function plsym(x, y, code)
@@ -1712,7 +1724,7 @@ function plsym(x, y, code)
 %   code (PLINT, input): Code number for the symbol to be plotted.
 % 
 % 
-  plplot_octave(95, x, y, code);
+  plplot_octave(97, x, y, code);
 endfunction
 
 function plszax(digmax, digits)
@@ -1729,7 +1741,7 @@ function plszax(digmax, digits)
 %   description of plsxax for more detail.
 % 
 % 
-  plplot_octave(96, digmax, digits);
+  plplot_octave(98, digmax, digits);
 endfunction
 
 function pltext()
@@ -1754,7 +1766,7 @@ function pltext()
 %   different method for shifting focus (also plgra).
 % 
 % 
-  plplot_octave(97);
+  plplot_octave(99);
 endfunction
 
 function plvasp(aspect)
@@ -1773,7 +1785,7 @@ function plvasp(aspect)
 %   aspect (PLFLT, input): Ratio of length of y axis to length of x axis.
 % 
 % 
-  plplot_octave(98, aspect);
+  plplot_octave(100, aspect);
 endfunction
 
 function plvpas(xmin, xmax, ymin, ymax, aspect)
@@ -1808,7 +1820,7 @@ function plvpas(xmin, xmax, ymin, ymax, aspect)
 %   aspect (PLFLT, input): Ratio of length of y axis to length of x axis.
 % 
 % 
-  plplot_octave(99, xmin, xmax, ymin, ymax, aspect);
+  plplot_octave(101, xmin, xmax, ymin, ymax, aspect);
 endfunction
 
 function plvpor(xmin, xmax, ymin, ymax)
@@ -1840,7 +1852,7 @@ function plvpor(xmin, xmax, ymin, ymax)
 %   of the viewport.
 % 
 % 
-  plplot_octave(100, xmin, xmax, ymin, ymax);
+  plplot_octave(102, xmin, xmax, ymin, ymax);
 endfunction
 
 function plvsta()
@@ -1857,7 +1869,7 @@ function plvsta()
 %   character heights, and four character heights around the other three sides.
 % 
 % 
-  plplot_octave(101);
+  plplot_octave(103);
 endfunction
 
 function plw3d(basex, basey, height, xmin0, xmax0, ymin0, ymax0, zmin0, zmax0, alt, az)
@@ -1907,7 +1919,7 @@ function plw3d(basex, basey, height, xmin0, xmax0, ymin0, ymax0, zmin0, zmax0, a
 %   plane.
 % 
 % 
-  plplot_octave(102, basex, basey, height, xmin0, xmax0, ymin0, ymax0, zmin0, zmax0, alt, az);
+  plplot_octave(104, basex, basey, height, xmin0, xmax0, ymin0, ymax0, zmin0, zmax0, alt, az);
 endfunction
 
 function plwid(width)
@@ -1926,7 +1938,7 @@ function plwid(width)
 %   between 1 and a device dependent maximum value.
 % 
 % 
-  plplot_octave(103, width);
+  plplot_octave(105, width);
 endfunction
 
 function plwind(xmin, xmax, ymin, ymax)
@@ -1954,27 +1966,27 @@ function plwind(xmin, xmax, ymin, ymax)
 %   viewport.
 % 
 % 
-  plplot_octave(104, xmin, xmax, ymin, ymax);
+  plplot_octave(106, xmin, xmax, ymin, ymax);
 endfunction
 
 function plxormod(icol0)
 % plxormod(icol0)
 %
-  plplot_octave(105, icol0);
+  plplot_octave(107, icol0);
 endfunction
 
 function [retval, state, keysym, button, string, pX, pY, dX, dY, wX, wY] = plGetCursor()
 % [retval, state, keysym, button, string, pX, pY, dX, dY, wX, wY] = plGetCursor()
 %
 % Wait for graphics input event and translate to world coordinates  
-  [retval, state, keysym, button, string, pX, pY, dX, dY, wX, wY] = plplot_octave(106);
+  [retval, state, keysym, button, string, pX, pY, dX, dY, wX, wY] = plplot_octave(108);
 endfunction
 
 function [retval, x, y] = plTranslateCursor(x_in, y_in)
 % [retval, x, y] = plTranslateCursor(x_in, y_in)
 %
 % Translates relative device coordinates to world coordinates.   
-  [retval, x, y] = plplot_octave(107, x_in, y_in);
+  [retval, x, y] = plplot_octave(109, x_in, y_in);
 endfunction
 
 function plcol(icol0)
@@ -2010,7 +2022,7 @@ function plcol(icol0)
 %  16. white (default foreground)
 % 
 % 
-  plplot_octave(108, icol0);
+  plplot_octave(110, icol0);
 endfunction
 
 function plcont(f, kx, lx, ky, ly, clevel, tr)
@@ -2064,31 +2076,31 @@ function plcont(f, kx, lx, ky, ly, clevel, tr)
 %   plcon1, or plcon2 instead.
 % 
 % 
-  plplot_octave(109, f, kx, lx, ky, ly, clevel, tr);
+  plplot_octave(111, f, kx, lx, ky, ly, clevel, tr);
 endfunction
 
 function plcont0(f, kx, lx, ky, ly, clevel)
 % plcont0(f, kx, lx, ky, ly, clevel)
 %
-  plplot_octave(110, f, kx, lx, ky, ly, clevel);
+  plplot_octave(112, f, kx, lx, ky, ly, clevel);
 endfunction
 
 function plcont1(f, kx, lx, ky, ly, clevel, xg, yg)
 % plcont1(f, kx, lx, ky, ly, clevel, xg, yg)
 %
-  plplot_octave(111, f, kx, lx, ky, ly, clevel, xg, yg);
+  plplot_octave(113, f, kx, lx, ky, ly, clevel, xg, yg);
 endfunction
 
 function plcont2(f, kx, lx, ky, ly, clevel, xg, yg)
 % plcont2(f, kx, lx, ky, ly, clevel, xg, yg)
 %
-  plplot_octave(112, f, kx, lx, ky, ly, clevel, xg, yg);
+  plplot_octave(114, f, kx, lx, ky, ly, clevel, xg, yg);
 endfunction
 
 function plcont2p(f, kx, lx, ky, ly, clevel, xg, yg)
 % plcont2p(f, kx, lx, ky, ly, clevel, xg, yg)
 %
-  plplot_octave(113, f, kx, lx, ky, ly, clevel, xg, yg);
+  plplot_octave(115, f, kx, lx, ky, ly, clevel, xg, yg);
 endfunction
 
 function plmesh(x, y, z, opt)
@@ -2133,7 +2145,7 @@ function plmesh(x, y, z, opt)
 %   subarrays (Fortran only).
 % 
 % 
-  plplot_octave(114, x, y, z, opt);
+  plplot_octave(116, x, y, z, opt);
 endfunction
 
 function plot3d(x, y, z, opt, side)
@@ -2182,140 +2194,146 @@ function plot3d(x, y, z, opt, side)
 %   subarrays (Fortran only).
 % 
 % 
-  plplot_octave(115, x, y, z, opt, side);
+  plplot_octave(117, x, y, z, opt, side);
 endfunction
 
 function plotsh3d(x, y, z, side)
 % plotsh3d(x, y, z, side)
 %
-  plplot_octave(116, x, y, z, side);
+  plplot_octave(118, x, y, z, side);
 endfunction
 
 function plpoly3(x, y, z, draw, clockwise)
 % plpoly3(x, y, z, draw, clockwise)
 %
 % Draws a polygon in 3 space.   
-  plplot_octave(117, x, y, z, draw, clockwise);
+  plplot_octave(119, x, y, z, draw, clockwise);
 endfunction
 
 function plshade(a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, tr)
 % plshade(a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, tr)
 %
 % Shade region.  
-  plplot_octave(118, a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, tr);
+  plplot_octave(120, a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, tr);
 endfunction
 
 function plshade1(a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, xg, yg)
 % plshade1(a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, xg, yg)
 %
 % Shade region.   
-  plplot_octave(119, a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, xg, yg);
+  plplot_octave(121, a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, xg, yg);
 endfunction
 
 function plshade2(a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, xg, yg)
 % plshade2(a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, xg, yg)
 %
-  plplot_octave(120, a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, xg, yg);
+  plplot_octave(122, a, defined, left, right, bottom, top, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, rectangular, xg, yg);
 endfunction
 
 function id = plstripc(xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos, y_ascl, acc, colbox, collab, colline, styline, legline1, legline2, legline3, legline4, labx, laby, labtop)
 % id = plstripc(xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos, y_ascl, acc, colbox, collab, colline, styline, legline1, legline2, legline3, legline4, labx, laby, labtop)
 %
-  id = plplot_octave(121, xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos, y_ascl, acc, colbox, collab, colline, styline, legline1, legline2, legline3, legline4, labx, laby, labtop);
+  id = plplot_octave(123, xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos, y_ascl, acc, colbox, collab, colline, styline, legline1, legline2, legline3, legline4, labx, laby, labtop);
 endfunction
 
 function plClearOpts()
 % plClearOpts()
 %
 % Clear external option table info structure.  
-  plplot_octave(122);
+  plplot_octave(124);
 endfunction
 
 function retval = plGetFlt(s)
 % retval = plGetFlt(s)
 %
 % Prompts human to input a float in response to given message.  
-  retval = plplot_octave(123, s);
+  retval = plplot_octave(125, s);
 endfunction
 
 function retval = plGetInt(s)
 % retval = plGetInt(s)
 %
-  retval = plplot_octave(124, s);
+  retval = plplot_octave(126, s);
 endfunction
 
 function [p_r, p_g, p_b] = plHLS_RGB(h, l, s)
 % [p_r, p_g, p_b] = plHLS_RGB(h, l, s)
 %
-  [p_r, p_g, p_b] = plplot_octave(125, h, l, s);
+  [p_r, p_g, p_b] = plplot_octave(127, h, l, s);
 endfunction
 
 function plOptUsage()
 % plOptUsage()
 %
 % Print usage & syntax message.  
-  plplot_octave(126);
+  plplot_octave(128);
 endfunction
 
 function retval = plParseOpts(p_argc, argv, mode)
 % retval = plParseOpts(p_argc, argv, mode)
 %
 % Process options list using current options info.  
-  retval = plplot_octave(127, p_argc, argv, mode);
+  retval = plplot_octave(129, p_argc, argv, mode);
 endfunction
 
 function [p_h, p_l, p_s] = plRGB_HLS(r, g, b)
 % [p_h, p_l, p_s] = plRGB_HLS(r, g, b)
 %
-  [p_h, p_l, p_s] = plplot_octave(128, r, g, b);
+  [p_h, p_l, p_s] = plplot_octave(130, r, g, b);
 endfunction
 
 function plResetOpts()
 % plResetOpts()
 %
 % Reset external option table info structure.  
-  plplot_octave(129);
+  plplot_octave(131);
 endfunction
 
 function retval = plSetOpt(opt, optarg)
 % retval = plSetOpt(opt, optarg)
 %
 % Process input strings, treating them as an option and argument pair.  
-  retval = plplot_octave(130, opt, optarg);
+  retval = plplot_octave(132, opt, optarg);
 endfunction
 
 function plSetUsage(program_string, usage_string)
 % plSetUsage(program_string, usage_string)
 %
 % Set the strings used in usage and syntax messages.  
-  plplot_octave(131, program_string, usage_string);
+  plplot_octave(133, program_string, usage_string);
+endfunction
+
+function plarrows(u, v, x, y, n, scale, dx, dy)
+% plarrows(u, v, x, y, n, scale, dx, dy)
+%
+  plplot_octave(134, u, v, x, y, n, scale, dx, dy);
 endfunction
 
 function pldid2pc(xmin, ymin, xmax, ymax)
 % pldid2pc(xmin, ymin, xmax, ymax)
 %
 % Converts input values from relative device coordinates to relative plot  coordinates.  
-  plplot_octave(132, xmin, ymin, xmax, ymax);
+  plplot_octave(135, xmin, ymin, xmax, ymax);
 endfunction
 
 function pldip2dc(xmin, ymin, xmax, ymax)
 % pldip2dc(xmin, ymin, xmax, ymax)
 %
 % Converts input values from relative plot coordinates to relative  device coordinates.  
-  plplot_octave(133, xmin, ymin, xmax, ymax);
+  plplot_octave(136, xmin, ymin, xmax, ymax);
 endfunction
 
 function plsError(errcode, errmsg)
 % plsError(errcode, errmsg)
 %
 % Set the variables to be used for storing error info
-  plplot_octave(134, errcode, errmsg);
+  plplot_octave(137, errcode, errmsg);
 endfunction
 
 function plsxwin(window_id)
 % plsxwin(window_id)
 %
 % Set inferior X window  
-  plplot_octave(135, window_id);
+  plplot_octave(138, window_id);
 endfunction
 
