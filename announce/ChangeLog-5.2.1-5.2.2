@@ -1,3 +1,369 @@
+Commit from rlaboiss (2003-12-31 14:14 CET)
+--------------------
+
+Commented out the call to AC_F77_LIBRARY_LDFLAGS, because it seems useless,
+besides triggering an error when using plplot_libtool to build the F77
+examples.
+
+  plplot  configure.ac  1.128
+
+
+Commit from rlaboiss (2003-12-31 02:46 CET)
+--------------------
+
+
+Sane behavior of TCL_DIR, LIB_DIR, and BIN_DIR.
+
+  TCL_DIR: Made coherent the AC_SUSTitution for bindings/{tcl,tk}/Makefile.am
+    and the #define for bindings/tcl/tclAPI.c.  They both are prefixed by
+    $datadir now.
+
+  LIB_DIR & BIN_DIR: Made those Autotools-friendly.  They are now defined as
+    $libdir and $bindir, respectively.  Besides this, LIB_DIR does not need
+    to be AC_DEFINEd and BIN_DIR does not need to be AC_SUBSTituted, so
+    removed those calls.
+
+  plplot  configure.ac              1.127
+  plplot  bindings/tcl/Makefile.am  1.19
+  plplot  bindings/tk/Makefile.am   1.10
+
+
+Commit from rlaboiss (2003-12-31 02:34 CET)
+--------------------
+
+Call return after two calls to plabort in function plInitDispatchTable. This
+prevents a gratuitous segmentation fault when the drivers library cannot be
+opened.
+
+  plplot  src/plcore.c  1.122
+
+
+Commit from rlaboiss (2003-12-30 22:52 CET)
+--------------------
+
+Quoted definition of DOC_DIR, such that '${datadir}'is propagated into the
+Makefiles.  This allows specification of prefix at make run, like "make
+prefix=/some/dir", as David Schleef suggested some time ago in plplot-devel.
+Also changed the name of the variable from DOCDIR to DOC_DIR, for
+consistency with the other *_DIR variables.
+
+  plplot  configure.ac                 1.126
+  plplot  bindings/octave/Makefile.am  1.35
+  plplot  drivers/Makefile.am          1.35
+  plplot  lib/csa/Makefile.am          1.9
+  plplot  lib/nn/Makefile.am           1.10
+  plplot  pkgcfg/Makefile.am           1.7
+
+
+Commit from airwin (2003-12-30 19:48 CET)
+------------------
+
+Make the actual leading dimension larger than the defined leading dimension
+of the z matrix.  The results were the same (as the equivalent C example)
+which tests both the leading dimension functionality of the fortran
+interface to the 3D functions and the latest commit of sc3d.c which now
+implements that fortran interface to the 3D functions using plAlloc2dGrid
+and plFree2dGrid rather than in-line code.
+
+  plplot  examples/f77/x08f.fm4  1.9
+
+
+Commit from airwin (2003-12-30 19:42 CET)
+------------------
+
+Use plAlloc2dGrid and plFree2dGrid rather than in-line code to create
+a vectored array from the transpose of the fortran matrix.
+
+  plplot  bindings/f77/sc3d.c  1.12
+
+
+Commit from rlaboiss (2003-12-30 19:40 CET)
+--------------------
+
+Sane treatment of DATA_DIR and DRV_DIR
+
+The variables/#defines DATA_DIR and DRV_DIR are treated now in a more
+coherent and Autotools-friendly way.  The main changes regard:
+
+    - Use of $libdir and $datadir as prefixes of DRV_DIR and DATA_DIR,
+      respectively, in configure.ac.  This allows users to easily override
+      the installation locations when running configure (options --libdir
+      and --datadir).  The environment variables DATA_DIR and DRV_DIR are
+      still honored.
+
+    - DRV_DIR is an absolute path now, not relative to DATA_DIR as before.
+      Besides it being cleaner and more intuitive, the new design allows
+      better compliance with the FHS.  Indeed, architecture-independent
+      files (like the font amd map files, as weel as examples and the Tcl
+      stuff) go by default in $prefix/share, while driver module files
+      (which are architecture-dependent) go in $prefix/lib.
+
+As regards final results, the only difference with the previous situation is
+that the *.fnt and *.map files are installed now in plplot<version>/ instead
+of plplot<version>/data.  I did not try to keep the previous situation
+because it would imply in the definition of a new variable/#define.
+However, if the other developers have really strong arguments in favor of
+it, I will implement that.
+
+  plplot  configure.ac                       1.125
+  plplot  bindings/Makefile.am               1.12
+  plplot  bindings/octave/demos/Makefile.am  1.9
+  plplot  bindings/octave/misc/Makefile.am   1.5
+  plplot  bindings/tcl/Makefile.am           1.18
+  plplot  bindings/tk/Makefile.am            1.9
+  plplot  data/Makefile.am                   1.2
+  plplot  debian/changelog                   1.60
+  plplot  debian/libplplot9.files            1.2
+  plplot  debian/plplot-tcl.files            1.8
+  plplot  debian/rules                       1.42
+  plplot  drivers/Makefile.am                1.34
+  plplot  examples/c/Makefile.am             1.15
+  plplot  examples/c++/Makefile.am           1.12
+  plplot  examples/f77/Makefile.am           1.15
+  plplot  examples/perl/Makefile.am          1.2
+  plplot  examples/python/Makefile.am        1.7
+  plplot  examples/tcl/Makefile.am           1.7
+  plplot  examples/tk/Makefile.am            1.11
+  plplot  scripts/Makefile.am                1.6
+  plplot  src/plcore.c                       1.121
+  plplot  test/Makefile.am                   1.8
+  plplot  test/plplot-test.sh.in             1.9
+
+
+Commit from jcard (2003-12-30 04:19 CET)
+-----------------
+
+Drop Octave-2.0.x compatibility at the script level. The PLplot library bindings are still Octave-2.0.x compatible.
+
+Octave-2.0.x is very old, and even the Octave developper recomends using Octave-2.1.50.
+The script components of the Octave bindings now require Octave-2.1.50 or greater;
+however, the PLplot library bindings are still compatible with any Octave version.
+
+  plplot  bindings/octave/PLplot/axis.m                     1.9
+  plplot  bindings/octave/PLplot/closeallfig.m              1.7
+  plplot  bindings/octave/PLplot/fig.m                      1.5
+  plplot  bindings/octave/PLplot/figure.m                   1.18
+  plplot  bindings/octave/PLplot/grid.m                     1.9
+  plplot  bindings/octave/PLplot/legend.m                   1.9
+  plplot  bindings/octave/PLplot/loglog.m                   1.4
+  plplot  bindings/octave/PLplot/meshc.m                    1.4
+  plplot  bindings/octave/PLplot/mesh.m                     1.7
+  plplot  bindings/octave/PLplot/meshz.m                    1.4
+  plplot  bindings/octave/PLplot/mplot.m                    1.6
+  plplot  bindings/octave/PLplot/plimage.m                  1.5
+  plplot  bindings/octave/PLplot/plot_border.m              1.5
+  plplot  bindings/octave/PLplot/plot.m                     1.4
+  plplot  bindings/octave/PLplot/polar.m                    1.7
+  plplot  bindings/octave/PLplot/semilogx.m                 1.4
+  plplot  bindings/octave/PLplot/semilogy.m                 1.4
+  plplot  bindings/octave/PLplot/set_view.m                 1.10
+  plplot  bindings/octave/PLplot/shade.m                    1.13
+  plplot  bindings/octave/PLplot/surfc.m                    1.4
+  plplot  bindings/octave/PLplot/surf.m                     1.4
+  plplot  bindings/octave/PLplot/support/__pl_contour.m     1.8
+  plplot  bindings/octave/PLplot/support/__pl_logplotit.m   1.2
+  plplot  bindings/octave/PLplot/support/__pl_mesh.m        1.12
+  plplot  bindings/octave/PLplot/support/__pl_meshplotit.m  1.3
+  plplot  bindings/octave/PLplot/support/__pl_plot3.m       1.4
+  plplot  bindings/octave/PLplot/support/__pl_plotit.m      1.10
+  plplot  bindings/octave/PLplot/support/__pl_store.m       1.4
+  plplot  bindings/octave/PLplot/support/__plt__.m          1.5
+
+
+Commit from jcard (2003-12-30 04:14 CET)
+-----------------
+
+Don't try/allow to use pthreads if they are not available.
+
+  plplot  drivers/xwin.c  1.114
+
+
+Commit from jcard (2003-12-30 04:12 CET)
+-----------------
+
+Make with_pthreads=yes (an option only effective for the xwin driver) the default.
+
+Recent changes to the xwin driver code should allow this to be now the default.
+Use "-drvopt usepth=0" to not use pthreads to redisplay the plot when using the xwin driver.
+
+  plplot  configure.ac  1.124
+
+
+Commit from airwin (2003-12-30 03:02 CET)
+------------------
+
+Wording tweak for documentation of plshades parameter nlevel.
+
+  plplot  doc/docbook/src/api.xml  1.60
+
+
+Commit from rlaboiss (2003-12-30 01:46 CET)
+--------------------
+
+Include file usr/lib/plplot*/pkgIndex.tcl in plplot-tcl.files
+
+  plplot  debian/changelog         1.59
+  plplot  debian/plplot-tcl.files  1.7
+
+
+Commit from airwin (2003-12-29 18:46 CET)
+------------------
+
+Plplot ==> PLplot
+
+  plplot  bindings/octave/demos/x01c.m  1.7
+
+
+Commit from rlaboiss (2003-12-29 11:56 CET)
+--------------------
+
+Changed all instances of "Plplot" to "PLplot", since the later is our official
+spelling.
+
+  plplot  examples/c/tutor.c        1.15
+  plplot  examples/c/x01c.c         1.36
+  plplot  examples/c++/x01.cc       1.6
+  plplot  examples/f77/x01f.fm4     1.11
+  plplot  examples/java/x01.java    1.12
+  plplot  examples/python/tutor.py  1.3
+  plplot  examples/python/x01.py    1.6
+
+
+Commit from airwin (2003-12-29 01:46 CET)
+------------------
+
+Remove reconfig from the clean list
+
+  plplot  Makefile.am  1.31
+
+
+Commit from airwin (2003-12-29 00:27 CET)
+------------------
+
+Style changes: comments, do loops, indentation, and plcol ==> plcol0.
+
+  plplot  examples/f77/x16af.fm4  1.2
+
+
+Commit from airwin (2003-12-29 00:11 CET)
+------------------
+
+Add the 15th fortran example (which now works for the first time) and the
+alternative 16th fortran example to the fortran executables that are tested.
+
+  plplot  test/test_f77.sh  1.5
+
+
+Commit from airwin (2003-12-29 00:08 CET)
+------------------
+
+The 16th fortran example is about to be substantially changed to mimic what
+is done for the standard 16th example, but I thought the current programming
+for the 16th fortran example should be preserved as x16af.fm4 since it
+produces an attractive looking result.
+
+  plplot  examples/f77/.cvsignore            1.5
+  plplot  examples/f77/Makefile.am           1.14
+  plplot  examples/f77/Makefile.examples.in  1.10
++ plplot  examples/f77/x16af.fm4             1.1
+
+
+Commit from airwin (2003-12-29 00:00 CET)
+------------------
+
+Trim length of output version string using lnblnk.
+
+  plplot  examples/f77/x01f.fm4  1.10
+
+
+Commit from rlaboiss (2003-12-28 23:53 CET)
+--------------------
+
+Preparation for Debian release 5.2.1.cvs.20031228-2
+
+  * NOT YET RELEASED!
+  * debian/control: Changed section of packages libplplot9,
+    plplot9-driver-gd, plplot9-driver-gnome, and plplot9-driver-xwin to
+    libs (was math before) in order to comply with overrides of
+    debian-installer.
+
+  plplot  debian/changelog  1.58
+  plplot  debian/control    1.40
+
+
+Commit from airwin (2003-12-28 23:35 CET)
+------------------
+
+Remove reconfig since that file is now under CVS control
+
+  plplot  .cvsignore  1.12
+
+
+Commit from rlaboiss (2003-12-28 23:24 CET)
+--------------------
+
+Debian release 5.2.1.cvs.20031228-1
+
+  plplot  debian/changelog  1.57
+
+
+Commit from airwin (2003-12-28 21:25 CET)
+------------------
+
+Embedded underscore fix.  For g77 all names by default that originally have
+an underscore in them have two underscores appended rather than the usual
+one.  hello ==> hello_ while hello_world ==> hello_world__ . Therefore, I
+have appended an additional underscore to the three plplot function names
+(pl_setcontlabelformat, pl_setcontlabelparam, and plcalc_world) that have an
+underscore embedded, and this seems to build and execute fine with g77,
+while the build fails on g77 without this fix.  We may have to do something
+additional for some platforms/compilers to get them to work with this g77
+default naming convention as well, but apparently, the reason this is the
+default for g77 is this is the behaviour of many Unix fortran compilers
+(according to info g77).
+
+  plplot  bindings/f77/plstubs.h  1.30
+
+
+Commit from airwin (2003-12-28 21:00 CET)
+------------------
+
+Style changes: comments, do loops, indentation, and plcol ==> plcol0.
+
+Change 15th example to (a) make it work for the first time (there were
+incorrect arguments in some cases, and the 15th example uses more than 3
+colours in cmap0 so that is why plscmap0n(3) is commented out in the C
+example case and is now dropped altogether in this fortran example case) and
+(b) obtain exact agreement with file results from the corresponding C
+example. This agreement confirms that the fortran interface plshade0
+function is implemented correctly.
+
+  plplot  examples/f77/x15f.fm4  1.2
+
+
+Commit from airwin (2003-12-28 19:49 CET)
+------------------
+
+Style changes: comments, do loops, indentation, and plcol ==> plcol0.
+
+Change 9th example to obtain exact agreement with file results from the
+corresponding C example.  This confirms that plcont, plcon1, and plcon2
+are implemented correctly for the fortran interface.
+
+  plplot  examples/f77/x09f.fm4  1.7
+
+
+Commit from rlaboiss (2003-12-28 19:20 CET)
+--------------------
+
+
+Put back the setting of the variable plplot_config_invocationer with The
+line containing "command:" in the configuration summary shows the configure
+invokation again.
+
+  plplot  configure.ac  1.123
+
+
 Commit from airwin (2003-12-28 00:58 CET)
 ------------------
 
