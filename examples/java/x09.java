@@ -103,90 +103,86 @@ class x09 {
 	}
 
 
-	//Plot using scaled identity transform used to create xg0 and yg0
-//API	pls._setcontlabelparam(0.006, 0.3, 0.1, 0);
+    // Plot using scaled identity transform used to create xg0 and yg0
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.col0(2);
-	//API should probably follow what is done for python
+    // API should probably follow what is done for python
 //API	pls.cont(z, XPTS, YPTS, clevel, 11, "pltr1", xg0, yg0, 0);
 //May want to reconsider the pls.styl API, i.e., input arrays?
+        pls.cont( z, clevel, xg0, yg0, 0 );
 	pls.styl(1, mark, space);
 	pls.col0(3);
-//API	pls.cont(w, XPTS, YPTS, clevel, 11, "pltr1", xg0, yg0, 0);
+	pls.cont(w, clevel, xg0, yg0, 0);
 	pls.styl(0, mark, space);
 	pls.col0(1);
 	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-//API	pls._setcontlabelparam(0.006, 0.3, 0.1, 1);
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
 	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.col0(2);
-	//API should probably follow what is done for python
-//API	pls.cont(z, XPTS, YPTS, clevel, 11, "pltr1", xg0, yg0, 0);
+        pls.cont(z, clevel, xg0, yg0, 0);
 	pls.styl(1, mark, space);
 	pls.col0(3);
-//API	pls.cont(w, XPTS, YPTS, clevel, 11, "pltr1", xg0, yg0, 0);
+        pls.cont(w, clevel, xg0, yg0, 0);
 	pls.styl(0, mark, space);
 	pls.col0(1);
 	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
 	//Plot using 1d coordinate transform
-//API	pls._setcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.col0(2);
-	//API should probably follow what is done for python
-//API	pls.cont(z, XPTS, YPTS, clevel, 11, "pltr1", xg1, yg1, 0);
+        pls.cont(z, clevel, xg1, yg1, 0);
 	pls.styl(1, mark, space);
 	pls.col0(3);
-//API	pls.cont(w, XPTS, YPTS, clevel, 11, "pltr1", xg1, yg1, 0);
+	pls.cont(w, clevel, xg1, yg1, 0);
 	pls.styl(0, mark, space);
 	pls.col0(1);
 	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-//API	pls._setcontlabelparam(0.006, 0.3, 0.1, 1);
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
 	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.col0(2);
-	//API should probably follow what is done for python
-//API	pls.cont(z, XPTS, YPTS, clevel, 11, "pltr1", xg1, yg1, 0);
+        pls.cont(z, clevel, xg1, yg1, 0);
 	pls.styl(1, mark, space);
 	pls.col0(3);
-//API	pls.cont(w, XPTS, YPTS, clevel, 11, "pltr1", xg1, yg1, 0);
+        pls.cont(w, clevel, xg1, yg1, 0);
 	pls.styl(0, mark, space);
 	pls.col0(1);
 	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
 	//Plot using 2d coordinate transform
-//API	pls._setcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.col0(2);
-	//API should probably follow what is done for python
-//API	pls.cont(z, XPTS, YPTS, clevel, 11, "pltr1", xg2, yg2, 0);
+        pls.cont(z, clevel, xg2, yg2, 0);
 	pls.styl(1, mark, space);
 	pls.col0(3);
-//API	pls.cont(w, XPTS, YPTS, clevel, 11, "pltr1", xg2, yg2, 0);
+        pls.cont(w, clevel, xg2, yg2, 0);
 	pls.styl(0, mark, space);
 	pls.col0(1);
 	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-//API	pls._setcontlabelparam(0.006, 0.3, 0.1, 1);
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
 	pls.env(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.col0(2);
-	//API should probably follow what is done for python
-//API	pls.cont(z, XPTS, YPTS, clevel, 11, "pltr1", xg2, yg2, 0);
+        pls.cont(z, clevel, xg2, yg2, 0);
 	pls.styl(1, mark, space);
 	pls.col0(3);
-//API	pls.cont(w, XPTS, YPTS, clevel, 11, "pltr1", xg2, yg2, 0);
+        pls.cont(w, clevel, xg2, yg2, 0);
 	pls.styl(0, mark, space);
 	pls.col0(1);
 	pls.lab("X Coordinate", "Y Coordinate", "Streamlines of flow");
     
-//API	pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+        pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 	polar();
-//API	pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+        pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
 	polar();
 
-//API	pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 	potential();
-//API	pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+        pls.setcontlabelparam(0.006, 0.3, 0.1, 1);
 	potential();
 
 	pls.end();
