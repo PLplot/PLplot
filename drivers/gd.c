@@ -770,10 +770,12 @@ setcmap(PLStream *pls)
  * GD image
  */
 
+    if (dev->im_out != NULL) {
     for (i=0;i<256;i++)
       {
        gdImageColorDeallocate(dev->im_out,i);
       }
+    }
 
     if (ncol0>NCOLOURS/2)     /* Check for ridiculous number of colours */
        {                      /* in ncol0, and appropriately adjust the */
@@ -804,7 +806,7 @@ setcmap(PLStream *pls)
 
 /* Initialize cmap 0 colors */
 
-if (ncol0>0)  /* make sure the program actually asked for cmap0 first */
+if ((ncol0>0)&&(dev->im_out != NULL))  /* make sure the program actually asked for cmap0 first */
    {
     for (i = 0; i < ncol0; i++)
         {
@@ -819,7 +821,7 @@ if (ncol0>0)  /* make sure the program actually asked for cmap0 first */
 /* Initialize any remaining slots for cmap1 */
 
 
-if (ncol1>0)    /* make sure that we want to define cmap1 first */
+if ((ncol1>0)&&(dev->im_out != NULL))    /* make sure that we want to define cmap1 first */
    {
     for (i = 0; i < ncol1; i++)
         {
@@ -951,7 +953,7 @@ long temp_col;
     case PLSTATE_CMAP1:
 
 #if GD2_VERS >= 2
-       if (!gdImageTrueColor(dev->im_out))
+       if ((dev->im_out != NULL) && !gdImageTrueColor(dev->im_out))
           {
 #endif
 
@@ -1255,6 +1257,7 @@ png_Dev *dev=(png_Dev *)pls->dev;
        gdImagePng(dev->im_out, pls->OutFile);
 
        gdImageDestroy(dev->im_out);
+       dev->im_out = NULL;
     }
 }
 
@@ -1381,6 +1384,7 @@ png_Dev *dev=(png_Dev *)pls->dev;
        gdImageJpeg(dev->im_out, pls->OutFile, pls->dev_compression);
 
        gdImageDestroy(dev->im_out);
+       dev->im_out = NULL;
     }
 }
 
@@ -1402,6 +1406,7 @@ png_Dev *dev=(png_Dev *)pls->dev;
        gdImageGif(dev->im_out, pls->OutFile);
 
        gdImageDestroy(dev->im_out);
+       dev->im_out = NULL;
     }
 }
 
