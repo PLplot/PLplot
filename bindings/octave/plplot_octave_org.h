@@ -766,8 +766,6 @@ void pltr2p(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data); //%now
  * f2c, which is a #define that does the necessary conversion.
 */
 
-/* static PLFLT _pl_tr[6];*/
-
 void xform(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data) {
 	*tx = *((PLFLT *)pltr_data+0) * x + *((PLFLT *)pltr_data+1) * y + *((PLFLT *)pltr_data+2);
 	*ty = *((PLFLT *)pltr_data+3) * x + *((PLFLT *)pltr_data+4) * y + *((PLFLT *)pltr_data+5);} //%nowrap
@@ -1246,7 +1244,19 @@ void my_plshade2(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
 	 	plfill, rectangular, pltr2, &grid2);
 }  //%name plshade2 //%input a(nx, ny), xg(nx,ny), yg(nx,ny)
 
-void my_plshades(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+void my_plshades(PLFLT *a, PLINT nx, PLINT ny,
+	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+	 PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+	 PLINT cont_color, PLINT cont_width,
+	 PLINT rectangular) {
+
+	f2c(a,aa,nx,ny);
+	c_plshades(aa, nx, ny, NULL, left, right, bottom, top,
+		clevel, nlevel-1, fill_width, cont_color, cont_width,
+		plfill, rectangular, NULL, NULL);
+}  //%name plshades //%input a(nx, ny), clevel(nlevel)
+
+void my_plshadesx(PLFLT *a, PLINT nx, PLINT ny,
 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	 PLFLT *clevel, PLINT nlevel, PLINT fill_width,
 	 PLINT cont_color, PLINT cont_width,
@@ -1256,7 +1266,38 @@ void my_plshades(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
 	c_plshades(aa, nx, ny, NULL, left, right, bottom, top,
 		clevel, nlevel, fill_width, cont_color, cont_width,
 		plfill, rectangular, xform, tr);
-}  //%name plshades //%input a(nx, ny), clevel(nlevel), tr(6)
+}  //%name plshadesx //%input a(nx, ny), clevel(nlevel), tr(6)
+
+void my_plshades1(PLFLT *a, PLINT nx, PLINT ny,
+	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+	 PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+	 PLINT cont_color, PLINT cont_width,
+	 PLINT rectangular, PLFLT *xg, PLFLT *yg) {
+	PLcGrid grid1;
+	grid1.nx = nx;	grid1.ny = ny;
+	grid1.xg = xg;	grid1.yg = yg;
+
+	f2c(a,aa,nx,ny);
+	c_plshades(aa, nx, ny, NULL, left, right, bottom, top,
+		clevel, nlevel, fill_width, cont_color, cont_width,
+		plfill, rectangular, pltr1, &grid1);
+}  //%name plshades1 //%input a(nx, ny), clevel(nlevel), xg(nx), yg(ny)
+
+
+void my_plshades2(PLFLT *a, PLINT nx, PLINT ny,
+	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+	 PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+	 PLINT cont_color, PLINT cont_width,
+	 PLINT rectangular, PLFLT *xg, PLFLT *yg) {
+	PLcGrid2 grid2;
+	f2c(xg, xgg, nx, ny); f2c(yg, ygg, nx, ny);
+	grid2.nx = nx;	grid2.ny = ny;
+	grid2.xg = xgg;	grid2.yg = ygg;
+	f2c(a,aa,nx,ny);
+	c_plshades(aa, nx, ny, NULL, left, right, bottom, top,
+		clevel, nlevel, fill_width, cont_color, cont_width,
+		plfill, rectangular, pltr2, &grid2);
+}  //%name plshades2 //%input a(nx, ny), clevel(nlevel), xg(nx,ny), yg(nx,ny)
 
 /* Set up lengths of major tick marks. */
 
