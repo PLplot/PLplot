@@ -275,21 +275,36 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 
 /* definition of original arrow: 2 line segments */
 
-static PLFLT arrow_x[4] = {0.5, -0.5, -0.27, -0.5};
-static PLFLT arrow_y[4] = {0.0, 0.0, 0.0, 0.20};
+static PLFLT def_arrow_x[4] = {0.5, -0.5, -0.27, -0.5};
+static PLFLT def_arrow_y[4] = {0.0, 0.0, 0.0, 0.20};
 
 void
 plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 	 PLFLT scale, PLFLT dx, PLFLT dy)
 {
     PLFLT uu, vv;
-    PLINT i, j;
+    PLINT i, j, npts;
     PLINT px0, py0, dpx, dpy;
-    PLINT a_x[4], a_y[4];
+    PLFLT *arrow_x, *arrow_y;
+    PLINT *a_x, *a_y;
     PLFLT max_u, max_v;
     double t;
 
     if (n <= 0) return;
+
+    if ((plsc->arrow_x == NULL) || (plsc->arrow_y == NULL)) {
+	arrow_x = def_arrow_x;
+	arrow_y = def_arrow_y;
+	npts = 4;
+    }
+    else {
+        arrow_x = plsc->arrow_x;
+        arrow_y = plsc->arrow_y;
+        npts = plsc->arrow_npts;
+    }
+
+    a_x = (PLINT *) malloc(npts*sizeof(PLINT));
+    a_y = (PLINT *) malloc(npts*sizeof(PLINT));
 
     if (scale <= 0.0) {
 
@@ -338,7 +353,7 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 
     /* transform arrow -> a */
 
-	for (j = 0; j < 4; j++) {
+	for (j = 0; j < npts; j++) {
 	    a_x[j] = arrow_x[j] * dpx -
 		arrow_y[j] * dpy + px0;
 	    a_y[j] = arrow_x[j] * dpy +
@@ -347,12 +362,39 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 
     /* draw the arrow */
 
-	plP_movphy(a_x[0], a_y[0]);
-	plP_draphy(a_x[1], a_y[1]);
-	plP_movphy(a_x[2], a_y[2]);
-	plP_draphy(a_x[3], a_y[3]);
+	for (j = 0; j < npts-1; j+=2) {
+	    plP_movphy(a_x[j], a_y[j]);
+	    plP_draphy(a_x[j+1], a_y[j+1]);
+	}
+    }
+
+    free_mem(a_x);
+    free_mem(a_y);
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plsarrow()
+ *
+ * Set the style of the arrow used by plarrows
+\*--------------------------------------------------------------------------*/
+
+void
+plsarrow(PLFLT *arrowx, PLFLT *arrowy, PLINT npts) {
+    int i;
+
+    if (plsc->arrow_x) free_mem(plsc->arrow_x);
+    if (plsc->arrow_y) free_mem(plsc->arrow_y);
+
+    plsc->arrow_x = (PLFLT *)malloc(npts*sizeof(PLFLT));
+    plsc->arrow_y = (PLFLT *)malloc(npts*sizeof(PLFLT));
+
+    plsc->arrow_npts = npts;
+    for (i=0; i<npts; i++) {
+      plsc->arrow_x[i] = arrowx[i];
+      plsc->arrow_y[i] = arrowy[i];
     }
 }
+
 
 /*--------------------------------------------------------------------------*\
  * void pllab()

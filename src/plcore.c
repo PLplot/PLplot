@@ -1372,6 +1372,9 @@ c_plend1(void)
     if (plsc->plserver) free_mem(plsc->plserver);
     if (plsc->auto_path) free_mem(plsc->auto_path);
 
+    if (plsc->arrow_x) free_mem(plsc->arrow_x);
+    if (plsc->arrow_y) free_mem(plsc->arrow_y);
+
 /* Free malloc'ed stream if not in initial stream, else clear it out */
 
     if (ipls > 0) {

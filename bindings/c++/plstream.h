@@ -121,6 +121,9 @@ class plstream {
     void arrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
                  PLFLT scale, PLFLT dx, PLFLT dy );
 
+// Set the arrow style
+    void sarrow( PLFLT *arrox_x, PLFLT *arrow_y, PLINT npts);
+
 // This functions similarly to plbox() except that the origin of the axes is
 // placed at the user-specified point (x0, y0).
 

@@ -46,7 +46,8 @@ sources = \
 	x18c.c \
 	x19c.c \
 	x20c.c \
-	x21c.c
+	x21c.c \
+	x22c.c
 examples_c_DATA = \
 	$(sources) \
 	Makefile.examples
@@ -77,7 +78,8 @@ check_PROGRAMS = \
 	x18c \
 	x19c \
 	x20c \
-	x21c
+	x21c \
+	x22c
 
 LDADD = $(libplplot)
 

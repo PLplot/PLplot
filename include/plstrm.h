@@ -112,6 +112,14 @@ typedef struct {
  *
  ***************************************************************************
  *
+ * Variables governing arrow type
+ *
+ * arrow_x      x coordinates of points in arrow
+ * arrow_y      y coordinates of points in arrow
+ * arrow_npts   number of points in arrow_x, arrow_y
+ *
+ ***************************************************************************
+ *
  * Variables used to pass information between the core and the driver
  *
  * It would be nice to use the "dev_" prefix uniformly but changing
@@ -439,6 +447,11 @@ typedef struct {
 
     PLINT width;
     PLINT widthset, widthlock;
+
+/* Variables governing arrow */
+    PLFLT *arrow_x;
+    PLFLT *arrow_y;
+    PLINT arrow_npts;
 
 /* Driver dispatch table, obsoletes "device" member below. */
 

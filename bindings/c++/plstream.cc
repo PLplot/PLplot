@@ -319,6 +319,14 @@ plstream::arrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
     plarrows( u, v, x, y, n, scale, dx, dy );
 }
 
+void
+plstream::sarrow(PLFLT *arrow_x, PLFLT *arrow_y, PLINT npts)
+{
+    set_stream();
+
+    plsarrow(arrow_x, arrow_y, npts);
+}
+
 // This functions similarly to plbox() except that the origin of the axes is
 // placed at the user-specified point (x0, y0).
 
