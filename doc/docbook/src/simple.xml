@@ -41,7 +41,7 @@
       </listitem>
       <listitem>
 	<para>
-	  <function>plenv</function>, to define the range and scale of the
+	  &plenv;, to define the range and scale of the
 	  graph, and draw labels, axes, etc.
 	</para>
       </listitem>
