@@ -70,8 +70,29 @@ $(generated_files):
 	cp ../tcl/x??.tcl .
 	$(mkindex)
 
+if with_double
+libplplottcltk = -L../../bindings/tcl -lplplottcltkd
+else
+libplplottcltk = -L../../bindings/tcl -lplplottcltk
 endif
+
+check_PROGRAMS = \
+	xtk01 \
+	xtk02 \
+	xtk04
+
+cflags = -I../../bindings/tk -I../../bindings/tcl @TCLINCCMD@ @TKINCCMD@
+xtk01_CFLAGS = $(cflags)
+xtk02_CFLAGS = $(cflags)
+xtk04_CFLAGS = $(cflags)
+
+xtk01_LDFLAGS = $(libplplottcltk)
+xtk02_LDFLAGS = $(libplplottcltk)
+xtk04_LDFLAGS = $(libplplottcltk)
 
 EXTRA_DIST = $(data_files) $(examples_tk_SCRIPTS) $(mkindex)
 CLEANFILES = $(generated_files)
 DISTCLEANFILES = Makefile.examples
+
+# enable_tk
+endif

@@ -19,6 +19,8 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+if enable_f77
+
 AM_CPPFLAGS = @INCLTDL@
 examples_f77dir = ${prefix}/@DATA_DIR@/../examples/f77
 f77m4_source = \
@@ -91,5 +93,60 @@ SUFFIXES = .fm4
 .fm4.f:
 	$(M4) @M4_FLAGS@ $< >$*.f
 
+if with_double
+libplplotf77 = -L../../bindings/f77 -lplplotf77d
+else
+libplplotf77 = -L../../bindings/f77 -lplplotf77
+endif
+
+check_PROGRAMS = \
+	x01f \
+	x02f \
+	x03f \
+	x04f \
+	x05f \
+	x06f \
+	x07f \
+	x08f \
+	x09f \
+	x10f \
+	x11f \
+	x12f \
+	x13f \
+	x16f
+
+x01f_SOURCES = x01f.f
+x02f_SOURCES = x02f.f
+x03f_SOURCES = x03f.f
+x04f_SOURCES = x04f.f
+x05f_SOURCES = x05f.f
+x06f_SOURCES = x06f.f
+x07f_SOURCES = x07f.f
+x08f_SOURCES = x08f.f
+x09f_SOURCES = x09f.f
+x10f_SOURCES = x10f.f
+x11f_SOURCES = x11f.f
+x12f_SOURCES = x12f.f
+x13f_SOURCES = x13f.f
+x16f_SOURCES = x16f.f
+
+x01f_LDFLAGS = $(libplplotf77)
+x02f_LDFLAGS = $(libplplotf77)
+x03f_LDFLAGS = $(libplplotf77)
+x04f_LDFLAGS = $(libplplotf77)
+x05f_LDFLAGS = $(libplplotf77)
+x06f_LDFLAGS = $(libplplotf77)
+x07f_LDFLAGS = $(libplplotf77)
+x08f_LDFLAGS = $(libplplotf77)
+x09f_LDFLAGS = $(libplplotf77)
+x10f_LDFLAGS = $(libplplotf77)
+x11f_LDFLAGS = $(libplplotf77)
+x12f_LDFLAGS = $(libplplotf77)
+x13f_LDFLAGS = $(libplplotf77)
+x16f_LDFLAGS = $(libplplotf77)
+
 EXTRA_DIST = $(f77m4_source) Makefile.examples.in
 DISTCLEANFILES = Makefile.examples
+
+# enable_f77
+endif

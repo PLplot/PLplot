@@ -48,9 +48,9 @@ examples_c_DATA = \
 	x20c.c
 
 if with_double
-libplplot = ../../src/libplplotd.la
+libplplot = -L../../src -lplplotd
 else
-libplplot = ../../src/libplplot.la
+libplplot = -L../../src -lplplot
 endif
 
 check_PROGRAMS = \
@@ -75,26 +75,26 @@ check_PROGRAMS = \
 	x19c \
 	x20c
 
-x01c_LDADD = $(libplplot)
-x02c_LDADD = $(libplplot)
-x03c_LDADD = $(libplplot)
-x04c_LDADD = $(libplplot)
-x05c_LDADD = $(libplplot)
-x06c_LDADD = $(libplplot)
-x07c_LDADD = $(libplplot)
-x08c_LDADD = $(libplplot)
-x09c_LDADD = $(libplplot)
-x10c_LDADD = $(libplplot)
-x11c_LDADD = $(libplplot)
-x12c_LDADD = $(libplplot)
-x13c_LDADD = $(libplplot)
-x14c_LDADD = $(libplplot)
-x15c_LDADD = $(libplplot)
-x16c_LDADD = $(libplplot)
-x17c_LDADD = $(libplplot)
-x18c_LDADD = $(libplplot)
-x19c_LDADD = $(libplplot)
-x20c_LDADD = $(libplplot)
+x01c_LDFLAGS = $(libplplot)
+x02c_LDFLAGS = $(libplplot)
+x03c_LDFLAGS = $(libplplot)
+x04c_LDFLAGS = $(libplplot)
+x05c_LDFLAGS = $(libplplot)
+x06c_LDFLAGS = $(libplplot)
+x07c_LDFLAGS = $(libplplot)
+x08c_LDFLAGS = $(libplplot)
+x09c_LDFLAGS = $(libplplot)
+x10c_LDFLAGS = $(libplplot)
+x11c_LDFLAGS = $(libplplot)
+x12c_LDFLAGS = $(libplplot)
+x13c_LDFLAGS = $(libplplot)
+x14c_LDFLAGS = $(libplplot)
+x15c_LDFLAGS = $(libplplot)
+x16c_LDFLAGS = $(libplplot)
+x17c_LDFLAGS = $(libplplot)
+x18c_LDFLAGS = $(libplplot)
+x19c_LDFLAGS = $(libplplot)
+x20c_LDFLAGS = $(libplplot)
 
 EXTRA_DIST = $(examples_c_DATA) Makefile.examples.in
 DISTCLEANFILES = Makefile.examples

@@ -8,3 +8,4 @@ Makefile.examples
 *.lo
 x??.tcl
 tclIndex
+xtk??

@@ -7,3 +7,4 @@ Makefile.examples
 *.la
 *.lo
 *.f
+x??f

@@ -19,10 +19,29 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+if enable_cxx
+
 AM_CPPFLAGS = @INCLTDL@
 examples_cxxdir = ${prefix}/@DATA_DIR@/../examples/c++
 examples_cxx_DATA = \
 Makefile.examples \
 x01cc.cc
+
+if with_double
+libplplotcxx = -L../../bindings/c++ -lplplotcxxd
+else
+libplplotcxx = -L../../bindings/c++ -lplplotcxx
+endif
+
+check_PROGRAMS = \
+	x01cc
+
+x01cc_CXXFLAGS = -I../../bindings/c++
+x01cc_SOURCES = x01cc.cc
+x01cc_LDFLAGS = $(libplplotcxx)
+
 EXTRA_DIST = $(examples_cxx_DATA) Makefile.examples.in
 DISTCLEANFILES = Makefile.examples
+
+# enable_cxx
+endif

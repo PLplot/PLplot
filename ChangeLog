@@ -1,3 +1,9 @@
+2002-12-06  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+        * Configure test executables in examples for c++, f77, and tk.  make
+	  check builds everything fine, and plplot-test.sh 
+	  works locally with some limitations that are discussed on list.
+
 2002-12-05  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* Configure test executables in examples/c/Makefile.am
