@@ -35,7 +35,7 @@ function __pl_plotit
   ## this is a kludge,  FIXME no matrix allowed!
 
   i=0;	
-  while (i++ != __pl.items-1)
+  while (i++ < __pl.items)
     if (__pl.type == 11 || __pl.type == 21 || __pl.type == 31)
       
       x = eval(sprintf("__pl.x%d;", i));
