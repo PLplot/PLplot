@@ -482,14 +482,6 @@ else
   with_profile="no"
 fi
 
-# check whether --with-arlib or --without-arlib was given.
-withval="$with_arlib"
-if test -n "$withval"; then
-  :
-else
-  with_arlib="yes"
-fi
-
 # check whether --with-shlib or --without-shlib was given.
 withval="$with_shlib"
 if test -n "$withval"; then
@@ -577,6 +569,46 @@ fi
 # -----------------------------------------------------------------------
 # This is where the real work is done.
 # -----------------------------------------------------------------------
+
+test -n "$silent" || echo "checking how to run the C preprocessor"
+if test -z "$CPP"; then
+  # This must be in double quotes, not single quotes, because CPP may get
+  # substituted into the Makefile and ``${CC-cc}'' will simply confuse
+  # make.  It must be expanded now.
+  CPP="${CC-cc} -E"
+  cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+#include <stdio.h>
+Syntax Error
+EOF
+# Some shells (Coherent) do redirections in the wrong order, so need
+# the parens.
+ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
+if test -z "$ac_err"; then
+  :
+else
+  rm -rf conftest*
+  CPP="${CC-cc} -E -traditional-cpp"
+  cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+#include <stdio.h>
+Syntax Error
+EOF
+# Some shells (Coherent) do redirections in the wrong order, so need
+# the parens.
+ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
+if test -z "$ac_err"; then
+  :
+else
+  rm -rf conftest*
+  CPP=/lib/cpp
+fi
+rm -f conftest*
+fi
+rm -f conftest*
+fi
+test -n "$verbose" && echo "	setting CPP to $CPP"
+
 
 test -n "$silent" || echo "checking for POSIXized ISC"
 if \
@@ -1038,10 +1070,10 @@ case $system in
 	    machine=`uname -m`
 	    case "$machine" in
 		CRAY-2 )
-		    EXTRA_LIBS=$EXTRA_LIBS -lprof -lsci -lu
+		    LIBS=$LIBS -lprof -lsci -lu
 		;;
 		* )
-		    EXTRA_LIBS=$EXTRA_LIBS -lprof -lsci
+		    LIBS=$LIBS -lprof -lsci
 		;;
 	    esac
 	fi
@@ -1065,6 +1097,7 @@ case $system in
 	SHLIB_F77FLAGS="-pic"
 	SHLIB_BUILD="ld -assert pure-text -o"
 	SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	SALIB_SUFFIX='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
     ;;
     HP-UX-* )
 	SHLIB_CCFLAGS="+z"
@@ -1108,6 +1141,7 @@ if test ! -z "SHLIB_CCFLAGS" ; then
 	SHLIB_CCFLAGS="-fpic"
     fi
 fi
+
 
 
 
@@ -1210,46 +1244,7 @@ fi
 
 if test "$enable_x11" = "yes"; then
     if test -z "$XINCDIR" -o -z "$XLIBDIR"; then
-	test -n "$silent" || echo "checking how to run the C preprocessor"
-if test -z "$CPP"; then
-  # This must be in double quotes, not single quotes, because CPP may get
-  # substituted into the Makefile and ``${CC-cc}'' will simply confuse
-  # make.  It must be expanded now.
-  CPP="${CC-cc} -E"
-  cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-#include <stdio.h>
-Syntax Error
-EOF
-# Some shells (Coherent) do redirections in the wrong order, so need
-# the parens.
-ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
-if test -z "$ac_err"; then
-  :
-else
-  rm -rf conftest*
-  CPP="${CC-cc} -E -traditional-cpp"
-  cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-#include <stdio.h>
-Syntax Error
-EOF
-# Some shells (Coherent) do redirections in the wrong order, so need
-# the parens.
-ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
-if test -z "$ac_err"; then
-  :
-else
-  rm -rf conftest*
-  CPP=/lib/cpp
-fi
-rm -f conftest*
-fi
-rm -f conftest*
-fi
-test -n "$verbose" && echo "	setting CPP to $CPP"
-
-# If we find X, set shell vars x_includes and x_libraries to the paths.
+	# If we find X, set shell vars x_includes and x_libraries to the paths.
 no_x=true
 if test "x$with_x" != xno; then
 test -n "$silent" || echo "checking for X include and library files with xmkmf"
@@ -2186,6 +2181,29 @@ fi
 test -z "$RANLIB" && RANLIB=":"
 test -n "$RANLIB" && test -n "$verbose" && echo "	setting RANLIB to $RANLIB"
 
+test -n "$silent" || echo "checking for caddr_t in sys/types.h"
+echo '#include "confdefs.h"
+#include <sys/types.h>' > conftest.${ac_ext}
+eval "$ac_cpp conftest.${ac_ext} > conftest.out 2>&1"
+if egrep "caddr_t" conftest.out >/dev/null 2>&1; then
+  :
+else
+  rm -rf conftest*
+  
+{
+test -n "$verbose" && \
+echo "	defining" caddr_t to be "char *"
+echo "#define" caddr_t "char *" >> confdefs.h
+DEFS="$DEFS -Dcaddr_t=char *"
+ac_sed_defs="${ac_sed_defs}\${ac_dA}caddr_t\${ac_dB}caddr_t\${ac_dC}char *\${ac_dD}
+\${ac_uA}caddr_t\${ac_uB}caddr_t\${ac_uC}char *\${ac_uD}
+\${ac_eA}caddr_t\${ac_eB}caddr_t\${ac_eC}char *\${ac_eD}
+"
+}
+
+fi
+rm -f conftest*
+
 test -n "$silent" || echo "checking for pid_t in sys/types.h"
 echo '#include "confdefs.h"
 #include <sys/types.h>' > conftest.${ac_ext}
@@ -2386,10 +2404,6 @@ fi
 rm -fr conftest*
 
 
-if test "$with_shlib" = "no" -a "$with_arlib" = "no"; then
-    with_arlib="yes"
-fi
-
 # -----------------------------------------------------------------------
 # It'd be good to let this be selected too, need to put it in somewhere:
 # You can use the NOBRAINDEAD option here if you wish
@@ -2465,14 +2479,17 @@ fi
 
 cat cf/initlib.in	>>tmp/Makefile.in
 
-if test "$with_shlib" = "yes" -a "$with_arlib" = "yes"; then
-    cat cf/lib_both.in		>>tmp/Makefile.in 
+if test "$with_shlib" = "yes"; then
+    case $system in 
+	SunOS-4* ) 
+	    cat cf/lib_sh_sun.in	>>tmp/Makefile.in
+	;;
+	* )
+	    cat cf/lib_sh.in	>>tmp/Makefile.in
+	;;
+    esac
 else
-    if test "$with_shlib" = "yes"; then
-	cat cf/lib_sh.in	>>tmp/Makefile.in
-    else
-	cat cf/lib_ar.in	>>tmp/Makefile.in
-    fi
+    cat cf/lib_ar.in	>>tmp/Makefile.in
 fi
 
 # Program and demo file dependencies, targets
@@ -3114,11 +3131,10 @@ LIBS:		$LIBS
 LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
 
-with-arlib:	$with_arlib		with-shlib:	$with_shlib
+with-shlib:	$with_shlib		with-double:	$with_double
 with-debug:	$with_debug		with-opt:	$with_opt
 with-warn:	$with_warn		with-profile:	$with_profile
 with-f2c:	$with_f2c		with-gcc:	$with_gcc
-with-double:	$with_double
 
 enable-tcl:	$enable_tcl		enable-tk:	$enable_tk
 enable-dp:	$enable_dp		enable-itcl:	$enable_itcl
@@ -3185,10 +3201,12 @@ done
 
 trap 'rm -fr tmp/Makefile tmp/Makedemo tmp/plConfig.h tmp/plDevs.h conftest*; exit 1' 1 2 15
 uname_found='$uname_found'
+CPP='$CPP'
 found_fc='$found_fc'
 found_f77='$found_f77'
 SHLIB_BUILD='$SHLIB_BUILD'
 SHLIB_SUFFIX='$SHLIB_SUFFIX'
+SALIB_SUFFIX='$SALIB_SUFFIX'
 CC='$CC'
 OCC='$OCC'
 F77='$F77'
@@ -3202,7 +3220,6 @@ SHLIB_CCFLAGS='$SHLIB_CCFLAGS'
 SHLIB_F77FLAGS='$SHLIB_F77FLAGS'
 CC_FLAGS_XWIN='$CC_FLAGS_XWIN'
 CC_FLAGS_SCCONT='$CC_FLAGS_SCCONT'
-CPP='$CPP'
 XINCDIR='$XINCDIR'
 XLIBDIR='$XLIBDIR'
 TCLINCDIR='$TCLINCDIR'
@@ -3271,10 +3288,12 @@ $ac_prsub
 $ac_vpsub
 $extrasub
 s%@uname_found@%$uname_found%g
+s%@CPP@%$CPP%g
 s%@found_fc@%$found_fc%g
 s%@found_f77@%$found_f77%g
 s%@SHLIB_BUILD@%$SHLIB_BUILD%g
 s%@SHLIB_SUFFIX@%$SHLIB_SUFFIX%g
+s%@SALIB_SUFFIX@%$SALIB_SUFFIX%g
 s%@CC@%$CC%g
 s%@OCC@%$OCC%g
 s%@F77@%$F77%g
@@ -3288,7 +3307,6 @@ s%@SHLIB_CCFLAGS@%$SHLIB_CCFLAGS%g
 s%@SHLIB_F77FLAGS@%$SHLIB_F77FLAGS%g
 s%@CC_FLAGS_XWIN@%$CC_FLAGS_XWIN%g
 s%@CC_FLAGS_SCCONT@%$CC_FLAGS_SCCONT%g
-s%@CPP@%$CPP%g
 s%@XINCDIR@%$XINCDIR%g
 s%@XLIBDIR@%$XLIBDIR%g
 s%@TCLINCDIR@%$TCLINCDIR%g

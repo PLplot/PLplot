@@ -122,7 +122,6 @@ AC_WITH(debug, ,   with_debug="no")
 AC_WITH(opt, ,     with_opt="yes")
 AC_WITH(double, ,  with_double="no")
 AC_WITH(profile, , with_profile="no")
-AC_WITH(arlib, ,   with_arlib="yes")
 AC_WITH(shlib, ,   with_shlib="yes")
 AC_WITH(f2c, ,     with_f2c="no")
 AC_WITH(gcc, ,     with_gcc="no")
@@ -151,17 +150,15 @@ fi
 # This is where the real work is done.
 # -----------------------------------------------------------------------
 
+AC_REQUIRE_CPP
 AC_ISC_POSIX
 AC_INCLUDE(cf/sysconf.in)
 AC_INCLUDE(cf/sysloc.in)
 AC_STDC_HEADERS
 AC_HAVE_HEADERS(unistd.h)
 AC_PROG_RANLIB
+AC_CADDR_T
 AC_VFORK
-
-if test "$with_shlib" = "no" -a "$with_arlib" = "no"; then
-    with_arlib="yes"
-fi
 
 # -----------------------------------------------------------------------
 # It'd be good to let this be selected too, need to put it in somewhere:
@@ -238,14 +235,17 @@ fi
 
 cat cf/initlib.in	>>tmp/Makefile.in
 
-if test "$with_shlib" = "yes" -a "$with_arlib" = "yes"; then
-    cat cf/lib_both.in		>>tmp/Makefile.in 
+if test "$with_shlib" = "yes"; then
+    case $system in 
+	SunOS-4* ) 
+	    cat cf/lib_sh_sun.in	>>tmp/Makefile.in
+	;;
+	* )
+	    cat cf/lib_sh.in	>>tmp/Makefile.in
+	;;
+    esac
 else
-    if test "$with_shlib" = "yes"; then
-	cat cf/lib_sh.in	>>tmp/Makefile.in
-    else
-	cat cf/lib_ar.in	>>tmp/Makefile.in
-    fi
+    cat cf/lib_ar.in	>>tmp/Makefile.in
 fi
 
 # Program and demo file dependencies, targets
@@ -426,11 +426,10 @@ LIBS:		$LIBS
 LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
 
-with-arlib:	$with_arlib		with-shlib:	$with_shlib
+with-shlib:	$with_shlib		with-double:	$with_double
 with-debug:	$with_debug		with-opt:	$with_opt
 with-warn:	$with_warn		with-profile:	$with_profile
 with-f2c:	$with_f2c		with-gcc:	$with_gcc
-with-double:	$with_double
 
 enable-tcl:	$enable_tcl		enable-tk:	$enable_tk
 enable-dp:	$enable_dp		enable-itcl:	$enable_itcl
