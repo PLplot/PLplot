@@ -32,6 +32,27 @@ proc load_pkg_Pltk {dir} {
 	    if { $file != "" } { break }
 	}
 	if { $file == "" } {
+	# Dynamic driver location failed, now try static driver location.
+	set stem libplplot
+	set searchdirs ". ..";		# Need ".." for installed image
+	set tags "d {}";		# prefer double precision version
+	set ver 5.1.0
+	set suf [info sharedlibextension].$ver
+
+	set file ""
+	foreach reldir $searchdirs {
+	    foreach tag $tags {
+		set driver [file join $dir $reldir $stem$tag$suf]
+		#puts "looking for driver file: $driver"
+		if [file exists $driver] {
+		    set file $driver
+		    break
+		}
+	    }
+	    if { $file != "" } { break }
+	}
+	}
+	if { $file == "" } {
 	    error "load_pkg_Pltk: could not find loadable driver"
 	}
 

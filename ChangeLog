@@ -3,6 +3,11 @@
 	* drivers/Makefile.am: Make tk and tkwin static drivers work. This
 	  completes the static drivers configuration.
 
+	* bindings/t*/pkgIndex.tcl.in: search for Pltk and Plplotter entry
+	  points in libplplot if a search in the dynamic drivers fails.
+	  This is required for static drivers since in that case the entry 
+	  points are put in libplplot.
+
 2002-12-06  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
         * Configure test executables in examples for c++, f77, and tk.  make
