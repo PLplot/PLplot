@@ -38,6 +38,21 @@
 /* Define if [freetype] is available */
 #undef HAVE_FREETYPE
 
+/* Define if finite is available */
+#undef HAVE_FINITE
+
+/* Define if isinf is available */
+#undef HAVE_ISINF
+
+/* Define if isnan is available */
+#undef HAVE_ISNAN
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define if usleep is available */
+#undef HAVE_USLEEP
+
 /* Define if you want PLplot's float type to be double */
 #undef PL_DOUBLE
 
