@@ -1226,7 +1226,7 @@ JNIEXPORT void JNICALL Java_plplot_core_PLStream_poin__I_3D_3DI(
     PLFLT *x, *y;
     int must_free_buffers = 0, i;
 
-    if (sizeof(PLFLT) == sizeof(jfloat)) {
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
     /* Trick: The cast is here to shut up the compiler in the case where
      * PLFLT != float, in which case the /other/ branch is the one that is
      * actually executed. */

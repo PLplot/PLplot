@@ -236,7 +236,7 @@ public class PLStream {
 
 // Static code block to get the PLplot dynamic library loaded in.
     static {
-        System.loadLibrary( "plplotd" );
+        System.loadLibrary( "plplot" );
     }
 
 // Class data.
