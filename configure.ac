@@ -402,7 +402,7 @@ AC_INIT(src/plcore.c)
 AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 ### Package version number
-AM_INIT_AUTOMAKE(plplot, 5.2.0)
+AM_INIT_AUTOMAKE(plplot, 5.2.0.cvs.20030301)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
 ### library version consistent with the package version in direct
@@ -435,6 +435,10 @@ AM_PROG_LIBTOOL
 MY_ARG_WITH(freetype,
   AC_HELP_STRING([--with-freetype], 
     [enable driver options for using freetype library for fonts ($with_freetype)]))
+
+MY_ARG_WITH(qhull,
+  AC_HELP_STRING([--with-qhull], 
+    [Enable use of the Qhull library ($with_qhull)]))
 
 MY_ARG_ENABLE(drivers,
   AC_HELP_STRING([--enable-drivers],
