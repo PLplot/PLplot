@@ -703,7 +703,7 @@ void
 proc_str (PLStream *pls, EscText *args)
 {
   PLFLT *t = args->xform, tt[4]; /* Transform matrices */
-  PLFLT theta, shear;  /* Rotation angle and shear from the matrix */
+  PLFLT theta;  /* Rotation angle and shear from the matrix */
   PLFLT ft_ht, offset; /* Font height and offset */
   PLFLT cs,sn,l1,l2;
   PSDev *dev = (PSDev *) pls->dev;
@@ -805,9 +805,12 @@ proc_str (PLStream *pls, EscText *args)
 	/* The transform matrix has only rotations and shears; extract them */
 	theta = acos(t[0]) * 180. / PI;  /* Determine the rotation (in degrees)... */
 	if (t[2] < 0.) theta *= -1.;     /* ... and sign ... */
-	if(cos(theta*PI/180.)<0.000001)  /* ... and shear */
-	  shear = t[3]/sin(theta*PI/180.);
-	else shear = (t[1]+sin(theta*PI/180.))/cos(theta*PI/180.); 
+	cs = cos(theta*PI/180.);
+	sn = sin(theta*PI/180.);
+	tt[0] = t[0]*cs + t[2]*sn;
+	tt[1] = t[1]*cs + t[3]*sn;
+	tt[2] = -t[0]*sn + t[2]*cs;
+	tt[3] = -t[1]*sn + t[3]*cs;
 	
 	/* 
 	 * Reference point conventions:
@@ -949,15 +952,16 @@ proc_str (PLStream *pls, EscText *args)
 	   if(fabs(up)<0.001) up = 0.; /* Watch out for small differences */
 	   
 	   /* Apply the scaling and the shear */
-	   fprintf(OF, "/%s [%.3f 0 %.3f %.3f 0 0] SF\n",
+	   fprintf(OF, "/%s [%.3f %.3f %.3f %.3f 0 0] SF\n",
 		   font,
-		   font_factor * ENLARGE * ft_ht * scale,
-		   shear * font_factor * ENLARGE * ft_ht * scale,
-		   font_factor * ENLARGE * ft_ht * scale);
+		   tt[0]*font_factor * ENLARGE * ft_ht * scale,
+		   tt[2]*font_factor * ENLARGE * ft_ht * scale,
+		   tt[1]*font_factor * ENLARGE * ft_ht * scale,
+		   tt[3]*font_factor * ENLARGE * ft_ht * scale);
 	   
 	   /* if up/down escape sequences, save current point and adjust baseline;
 	    * take the shear into account */
-	   if(up!=0.) fprintf(OF, "gsave %.3f %.3f rmoveto\n",up*shear,up);
+	   if(up!=0.) fprintf(OF, "gsave %.3f %.3f rmoveto\n",up*tt[1],up*tt[3]);
 	   
 	   /* print the string */
 	   fprintf(OF, "(%s) show\n", str);  
