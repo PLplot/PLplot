@@ -102,6 +102,12 @@ AC_SUBST(DATA_DIR)
 
 AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
 
+### Modules 
+
+AC_PATH_XTRA
+MODULES="xwin.la"
+AC_SUBST(MODULES)
+
 ### Drivers
 
 define(PL_DRIVER_LIST, [

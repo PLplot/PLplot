@@ -44,3 +44,13 @@ EXTRA_libpldrv_la_SOURCES = \
   xfig.c \
   xwin.c
 
+# what
+EXTRA_LTLIBRARIES = xwin.la
+# to
+pkglib_LTLIBRARIES = @MODULES@
+# from
+xwin_la_SOURCES = xwin.c
+# how
+INCLUDES = @X_CFLAGS@
+xwin_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
+xwin_la_LIBADD = @X_LIBS@ -lX11
