@@ -87,10 +87,12 @@
       <itemizedlist>
         <listitem>
           <para>
-            The C++ API has been totally rewritten, with 13 API additions.
-            It is much more modern now and the demos were revamped.  The
-            <filename>libplplotcxx</filename> has a separate soversion
-            number now, independent of that for the C PLplot library.
+            The C++ API has been totally rewritten, with 13 API additions,
+	    most notably the command-line parsing functions. The interface
+	    is much more modern now and the demos were revamped. Several
+	    backward incompatibilities have been introduced, such that the
+	    <filename>libplplotcxx</filename> has a separate soversion
+	    number now, independent of that for the C PLplot library.
           </para>
         </listitem>
         <listitem>
@@ -156,9 +158,12 @@
         <listitem>
           <para>
             In the xwin driver, a window resizing bug is fixed.  This bug
-            appeared when several windows were used in a pthreaded
-            application.  Also, the xwin driver uses now by default
-            pthreads and <quote>default visual</quote>.
+	    appeared when several windows were used in a pthreaded
+	    application.  Also, the xwin driver uses now by default pthreads
+	    as well as <quote>default visual</quote>.  To disable them, the
+	    user has to use <quote><literal>-drvopt
+	    usepth=0</literal></quote> and <quote><literal>-drvopt
+	    defvis=0</literal></quote>. 
           </para>
         </listitem>
       </itemizedlist>
@@ -230,16 +235,6 @@
             changes.  This is implemented through the new core function
             <function>plInBuildTree</function>, and the new configuration
             variable <literal>BUILD_DIR</literal>.
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            RPM spec files for Red Hat 7.3 and Mandrake 9.2 are include in
-            the tarball.  Brian D. Wright has setup an unofficial
-            repository for <ulink
-            url="ftp://keck.ucsf.edu/pub/urpmi/Mandrake/9.2/RPMS">RPMs</ulink>
-            and <ulink
-            url="ftp://keck.ucsf.edu/pub/urpmi/Mandrake/9.2/SRPMS">SRPMs</ulink>.
           </para>
         </listitem>
       </itemizedlist>
@@ -324,10 +319,11 @@
   <sect2>
     <title>Acknowledgments</title>
 
-    <para>
-      We acknowledge the PLplot core developers who actively participated
-      to this release: Joao Cardoso, Vincent Darley, Alan W. Irwin, Maurice
-      LeBrun, Arjen Markus, Andrew Roach, and Andrew Ross.
+    <para> 
+      The following PLplot core developers actively participated in this
+      release: Joao Cardoso, Vincent Darley, Alan W. Irwin, Rafael
+      Laboissiere, Maurice LeBrun, Arjen Markus, Andrew Roach, and Andrew
+      Ross.
     </para>
 
     <para>
@@ -336,8 +332,7 @@
       Devappa Kini, Rob Managan, Per Persson, Michel Peyrard, Valerij
       Pipin, Olof Svensson, and Brian D. Wright.  Many others have
       participated to discussions in the plplot-devel and plplot-general
-      mailings lists.  We acknowledge their helpful suggestions and
-      commentaries.
+      mailings lists.
     </para>
 
   </sect2>
