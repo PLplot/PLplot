@@ -88,26 +88,23 @@ function ix01c
 
   if (!exist("file") || (exist("file") && isempty(file)))
     printf("\n\nYou are in Locate mode. Click any mouse button or press any key\n\
-	and a printout will give you some info. Terminate with the <Esc> ot <Enter> key\n\
-	or clicking or pressing a key while the cursor is outside a sub-plot window.\n\n\
-	Dont't forget to finish the plot with the <Enter> key\n");
+and a printout will give you some info.\n\
+Please keep <NumLock> and <CapsLock> off. Terminate with the <Enter> key.\n\ 
+Dont't forget to finish the plot with the <Enter> or <ESC> key\n");
+
     fflush(stdout);
 
     while(1)
 
-      [status, gin.state, gin.keysym, gin.button, gin.string, gin.pX, gin.pY, \
-       gin.dX, gin.dY, gin.wX, gin.wY] = plGetCursor;
+      [status, mod, keysym, button, string, pX, pY, dX, dY, wX, wY, swin] = plGetCursor;
 
-      if (status == 0) break; endif
-      if (gin.keysym == hex2dec("1B")) break; endif
-
-      if ((gin.keysym < hex2dec("FF")) && isprint(gin.string)) 
-	printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = '%c'\n",
-	       gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
-      else
-	printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = 0x%02x\n",
-	       gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
+      if (keysym == hex2dec("0D")); break; endif
+      
+      if (status != 0)
+	printf("wx=%.3f wy=%.3f dx=%.3f dy=%.3f c=0x%02x str=%s mb=%d mod=%0x swin=%d\n", ...
+	       wX, wY, dX, dY, keysym, string, button, mod, swin);
       endif
+
       fflush(stdout);
     endwhile
   endif
