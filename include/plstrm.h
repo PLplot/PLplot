@@ -600,6 +600,7 @@ typedef struct {
 
     PLFLT wpxscl, wpxoff, wpyscl, wpyoff;
     PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
+    PLFLT wdxscl, wdxoff, wdyscl, wdyoff;
 
 /* Other variables */
 
