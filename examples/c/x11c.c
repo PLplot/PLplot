@@ -1,10 +1,13 @@
 /* Demonstration of mesh plotting (just like example08 but mesh) */
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:23  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1992/10/12 17:04:16  mjl
+   Minor change to work around some compiler brain damage on the Amiga.
 
+ * Revision 1.3  1992/09/30  18:25:23  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:19  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -40,7 +43,7 @@ main (void)
 {
     int i, j, k;
     PLFLT *x, *y, **z;
-    PLFLT xx, yy, r;
+    PLFLT xx, yy;
     char *malloc();
 
     x = (PLFLT *) malloc(XPTS * sizeof(PLFLT));
@@ -68,7 +71,7 @@ main (void)
 	pladv(0);
 	plcol(1);
 	plvpor((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 0.8);
-	plwind(-1.0, 1.0, -1.0, 1.5);
+	plwind((PLFLT)-1.0, (PLFLT) 1.0, (PLFLT)-1.0, (PLFLT) 1.5);
 
 	plw3d((PLFLT) 1.0, (PLFLT) 1.0, (PLFLT) 1.2, (PLFLT) -1.0, (PLFLT) 1.0, 
 	      (PLFLT) -1.0, (PLFLT) 1.0, (PLFLT) -1.5, (PLFLT) 1.5, 
