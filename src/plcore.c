@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.45  1995/04/12 21:15:25  mjl
+ * Revision 1.46  1995/05/07 03:09:17  mjl
+ * Changed debugging output to use new function pldebug().  Added plstrm_init()
+ * for stream initialization, including color map allocation, and added calls
+ * to it in appropriate places.  Added free(colormaps) in plend1().  Changed
+ * plcpstrm() to deal correctly with new variable-sized colormaps.
+ *
+ * Revision 1.45  1995/04/12  21:15:25  mjl
  * Made the plsc->plwin array circular so that if we run out of windows we just
  * start over from 0.  Also, plTranslateCursor now starts with the most
  * recently created windows, rather than the oldest, since newer windows are
@@ -66,6 +72,7 @@
 	This stuff used to be in "dispatch.h", "dispatch.c", and "base.c".
 */
 
+#define DEBUG
 #include "plcore.h"
 
 /*--------------------------------------------------------------------------*\
@@ -535,10 +542,9 @@ pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
     PLFLT sxmin, symin, sxmax, symax;
     PLFLT rxmin, rymin, rxmax, rymax;
 
-#ifdef DEBUG
-    fprintf(stderr, "Relative device coordinates (input): %f, %f, %f, %f\n",
+    pldebug("pldid2pc",
+	    "Relative device coordinates (in): %f, %f, %f, %f\n",
 	    *xmin, *ymin, *xmax, *ymax);
-#endif
 
     if (plsc->difilt & PLDI_DEV) {
 
@@ -563,10 +569,9 @@ pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 	*ymax = (rymax > 1) ? 1 : rymax;
     }
 
-#ifdef DEBUG
-    fprintf(stderr, "Relative plot coordinates (output): %f, %f, %f, %f\n",
+    pldebug("pldid2pc",
+	    "Relative plot coordinates (out): %f, %f, %f, %f\n",
 	    rxmin, rymin, rxmax, rymax);
-#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -583,10 +588,9 @@ pldip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
     PLFLT sxmin, symin, sxmax, symax;
     PLFLT rxmin, rymin, rxmax, rymax;
 
-#ifdef DEBUG
-    fprintf(stderr, "Relative plot coordinates (input): %f, %f, %f, %f\n",
+    pldebug("pldip2pc",
+	    "Relative plot coordinates (in): %f, %f, %f, %f\n",
 	    *xmin, *ymin, *xmax, *ymax);
-#endif
 
     if (plsc->difilt & PLDI_DEV) {
 
@@ -611,10 +615,9 @@ pldip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 	*ymax = (rymax > 1) ? 1 : rymax;
     }
 
-#ifdef DEBUG
-    fprintf(stderr, "Relative device coordinates (output): %f, %f, %f, %f\n",
+    pldebug("pldip2pc",
+	    "Relative device coordinates (out): %f, %f, %f, %f\n",
 	    rxmin, rymin, rxmax, rymax);
-#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1096,10 +1099,9 @@ c_plinit(void)
 
     plGetDev();
 
-/* Initialize color maps */
+/* Auxiliary stream setup */
 
-    plCmap0_init();
-    plCmap1_init();
+    plstrm_init();
 
 /* Initialize device & first page */
 
@@ -1192,6 +1194,8 @@ c_plend1(void)
 
 /* Free all malloc'ed stream memory */
 
+    free_mem(plsc->cmap0);
+    free_mem(plsc->cmap1);
     free_mem(plsc->plwindow);
     free_mem(plsc->geometry);
     free_mem(plsc->dev);
@@ -1281,6 +1285,37 @@ c_plmkstrm(PLINT *p_strm)
 	*p_strm = i;
 	plsstrm(i);
     }
+    plstrm_init();
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plstrm_init
+ *
+ * Does required startup initialization of a stream.  Should be called right
+ * after creating one (for allocating extra memory, etc).  Users shouldn't
+ * need to call this directly.
+ *
+ * This function can be called multiple times for a given stream, in which
+ * case only the first call produces any effect.  For streams >= 1, which
+ * are created dynamically, this is called by the routine that allocates
+ * the stream.  Stream 0, which is preallocated, is much harder to deal with
+ * because any of a number of different calls may be the first call to the
+ * library.  This is handled by just calling plstrm_init() from every
+ * function that might be called first.  Sucks, but it should work.
+\*--------------------------------------------------------------------------*/
+
+void
+plstrm_init(void)
+{
+    if ( ! plsc->initialized) {
+	plsc->initialized = 1;
+
+	if (plsc->cmap0 == NULL)
+	    plscmap0n(0);
+
+	if (plsc->cmap1 == NULL)
+	    plscmap1n(0);
+    }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1340,23 +1375,29 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	plsdimap(plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
 		 plsr->xpmm, plsr->ypmm);
 
-/* Palettes */
+/* current color */
+
+    cp_color(&plsc->curcolor, &plsr->curcolor);
+
+/* cmap 0 */
 
     plsc->icol0 = plsr->icol0;
     plsc->ncol0 = plsr->ncol0;
+    if (plsc->cmap0 != NULL)
+	free((void *) plsc->cmap0);
+    plsc->cmap0 = calloc(1, plsc->ncol0 * sizeof(PLColor));
+    for (i = 0; i < plsc->ncol0; i++)
+	cp_color(&plsc->cmap0[i], &plsr->cmap0[i]);
+
+/* cmap 1 */
+
     plsc->icol1 = plsr->icol1;
     plsc->ncol1 = plsr->ncol1;
-
-    cp_color(&plsc->curcolor, &plsr->curcolor);
-    for (i = 0; i < 16; i++) {
-	plsc->cmap0setcol[i] = plsr->cmap0setcol[i];
-	cp_color(&plsc->cmap0[i], &plsr->cmap0[i]);
-    }
-
-    plsc->cmap1set = plsr->cmap1set;
-    for (i = 0; i < 256; i++) {
+    if (plsc->cmap1 != NULL)
+	free((void *) plsc->cmap1);
+    plsc->cmap1 = calloc(1, plsc->ncol1 * sizeof(PLColor));
+    for (i = 0; i < plsc->ncol1; i++) 
 	cp_color(&plsc->cmap1[i], &plsr->cmap1[i]);
-    }
 
 /* Initialize if it hasn't been done yet. */
 
