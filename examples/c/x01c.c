@@ -109,7 +109,6 @@ main(int argc, char *argv[])
 /* Initialize plplot */
 
     plinit();
-
 /* Select font set as per input flag */
 
     if (fontset)
@@ -284,7 +283,9 @@ plot2(void)
 /* Draw the line */
 
     plcol0(3);
+    plwid(2);
     plline(100, x, y);
+    plwid(1);
 }
 
  /* =============================================================== */
