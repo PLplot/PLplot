@@ -10,7 +10,19 @@ DOUBLE (for double precision), DEBUG (debugging), PROFILE (for enabling
 profiling code, if supported by the compiler) and OPT (optimization).  Please
 look at the comments in makefile.m4 for more info.
 
-To use, from the plplot directory:
+You must ensure that the appropriate system header files can be found by the
+generated makefile.  This is occasionally a problem for X11 header files,
+e.g. they might be in /usr/include/X11, /usr/include/X11R4/X11,
+/usr/include/X11R5/X11, etc.  This can usually be solved by setting the
+appropriate environmental variables.  For example, under HPUX 9.01 I have the
+following set in my .login:
+
+setenv CCOPTS	"-I/usr/include/X11R5"
+setenv CXXOPTS	"-I/usr/include/X11R5"
+setenv LDOPTS	"-L/usr/lib/X11R5 -L/usr/lib/Motif1.1"
+
+
+To build the makefile, starting from the plplot directory:
 
 	% cd tmp
 	% cp ../sys/unix/makefile.m4 .
