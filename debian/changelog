@@ -1,3 +1,17 @@
+plplot (5.2.1.cvs.20031027-3) unstable; urgency=low
+
+  * debian/rules:
+    - Added symlinks /usr/lib/lib{nn,csa}.so.0, such that this release of
+      the libplplot5 package does not break binary compatiblity with previous
+      released versions of PLplot (closes: #217895).  This is an interim
+      solution.  Probably, the upstream authors will have to change the
+      soversion or revert the changing of names of the libscsiro{nn,csa}
+      libraries in order to get the problem cleanly fixed.
+    - Call configure with --disable-java, since enable_java has been made
+      the default in the upstream configure.ac.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 28 Oct 2003 13:45:21 +0100
+
 plplot (5.2.1.cvs.20031027-2) unstable; urgency=low
 
   * debian/libplplot-dev.files: Added README.pkg-config file.

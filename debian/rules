@@ -56,7 +56,7 @@ config-stamp: autotools-stamp
                     --disable-static --enable-python $(octave_cfg)     \
                     --enable-gnome --with-double --disable-linuxvga    \
                     --infodir=/usr/share/info --with-freetype          \
-                    --without-rpath --with-prebuiltdoc                 \
+                    --without-rpath --with-prebuiltdoc --disable-java  \
                     --with-pthreads --with-ltdlsystem
 	( octver=`egrep "^OCTAVE_VERSION =" Makefile                   \
               | sed "s/OCTAVE_VERSION = *//" | sed 's/ *$$//'`       ; \
@@ -87,6 +87,10 @@ install-stamp: build-stamp
 	dh_testroot
 
 	make DESTDIR=$(debtmp) install
+
+	for f in nn csa ; do \
+	  dh_link usr/lib/libcsiro$$f.so.0 usr/lib/lib$$f.so.0 ; \
+	done
 
 	rm -f $(debtmp)/usr/bin/plplot-config
 
