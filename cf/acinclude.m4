@@ -321,7 +321,7 @@ AC_DEFUN([PL_GET_DLNAME],[
 dnl ------------------------------------------------------------------------
 dnl Determine the dlname of a DLL to be installed by libtool
 dnl This is a usefule variation of GET_DLNAME above for dynamically loaded
-dnd libraries (DLL's).
+dnl libraries (DLL's).
 dnl     PL_GET_DLLNAME(STEM,VARIABLE)
 dnl For a given DLL STEM determine the dlname of the
 dnl library in the form $STEM.<so_ext>.  Set the
