@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.24  1994/06/09 20:24:57  mjl
+# Revision 1.25  1994/07/13 21:40:35  mjl
+# Put in status message while waiting for plot to be saved.  Reassures the
+# user that the program hasn't crashed, when saving very complicated plots.
+#
+# Revision 1.24  1994/06/09  20:24:57  mjl
 # Massive reorganization and cleaning up.  Main result is that the plplot
 # "megawidget" acts much more like a normal Tk widget.  Still not
 # configurable; this will require extending it using itcl.  But now,
@@ -550,7 +554,10 @@ proc plw_saveas {w dev} {
 		return
 	    }
 	}
+	plw_label_set $w "Saving plot..."
+	update
 	if { [catch "$w.plwin save as $dev $file" foo] } {
+	    plw_label_reset $w
 	    bogue_out "$foo"
 	} else {
 	    status_msg $w "Plot saved."
