@@ -67,14 +67,15 @@ if enable_octave
 
 octave_libs = -L$(top_builddir)/src/.libs -lplplot$(LIB_TAG)
 
-deplibs = `$(top_builddir)/scripts/get-dependency-libs.sh \
+deplibs = `$(top_srcdir)/scripts/get-dependency-libs.sh \
                $(top_builddir)/src/.libs/libplplot$(LIB_TAG).la`
 
 # Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
 # also still works on gcc 2.95
 plplot_octave.cc tmp_stub: plplot_octave.h
 	$(PERL) $(MATWRAP) -language octave -o plplot_octave.cc	-stub tmp_stub \
-	-cpp_ignore plplot_octave_rej.h -cpp $(CC) -E -C plplot_octave.h
+	-cpp_ignore $(srcdir)/plplot_octave_rej.h -cpp $(CC) -E -I$(srcdir) \
+	-C plplot_octave.h
 	mv -f plplot_octave.cc tmp_plplot_octave.cc
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
@@ -88,7 +89,7 @@ SET_LDRPATH = LD_RUN_PATH=$(top_builddir)/src/.libs$(LDRPATH_CSA)$(LDRPATH_NN)
 
 plplot_octave.oct plplot_octave.o: plplot_octave.cc
 	$(SET_LDRPATH) $(MKOCTFILE_VARS) \
-	    $(MKOCTFILE) -v -I. plplot_octave.cc $(octave_libs) $(deplibs)
+	    $(MKOCTFILE) -v -I. -I$(srcdir) plplot_octave.cc $(octave_libs) $(deplibs)
 
 if with_rpath
 SET_LDRPATH_LIBDIR = LD_RUN_PATH=$(libdir)
@@ -112,7 +113,7 @@ octavesharedir = $(OCTAVE_OCT_DIR)
 octaveshare_SCRIPTS = plplot_octave.oct
 
 noinst_PROGRAMS = massage
-massage_SOURCES = massage.c
+nodist_massage_SOURCES = massage.c
 
 plplot_stub.m: doc-stamp tmp_stub massage
 	@head -5 tmp_stub > plplot_stub.m
@@ -121,7 +122,7 @@ plplot_stub.m: doc-stamp tmp_stub massage
 	@echo   >> plplot_stub.m
 	@echo "1;" >> plplot_stub.m
 	@echo >> plplot_stub.m
-	@cat plplot_octave_def >> plplot_stub.m
+	@cat $(srcdir)/plplot_octave_def >> plplot_stub.m
 	@echo >> plplot_stub.m
 	./massage >> plplot_stub.m 2> missing_help
 
