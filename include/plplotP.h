@@ -898,6 +898,19 @@ plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny,
 typedef struct {
   PLFLT xmin, ymin, dx, dy;} IMG_DT;
 
+/* 
+ * void plfvect() 
+ *
+ * Internal routine to plot a vector array with arbitrary coordinate
+ * and vector transformations.
+ * This is not currently intended to be called direct by the user
+ */
+void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
+		PLPointer f2evalv_data, PLPointer f2evalc_data,
+		PLINT nx, PLINT ny, PLFLT scale,
+		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+		PLPointer pltr_data);
+
 #ifdef __cplusplus
 }
 #endif

@@ -291,14 +291,14 @@ PLCON27(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 
 /*----------------------------------------------------------------------*\
 * Vector plotter front-ends.
-* These specify the row-dominant function evaluator in the plvecf_int
+* These specify the row-dominant function evaluator in the plfvect
 * argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
 *
 * - plvec0	no transformation
 * - plvec1	linear interpolation from singly dimensioned coord arrays
 * - plvec2	linear interpolation from doubly dimensioned coord arrays
 *
-* The latter two work by calling plvecf_int() with the appropriate grid
+* The latter two work by calling plfvect() with the appropriate grid
 * structure for input to pltr2f().
 \*----------------------------------------------------------------------*/
 
@@ -317,7 +317,7 @@ PLVEC07(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale)
     fgrid2.ny = *ny;
     fgrid2.f = v;
 
-    plvecf_int(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
+    plfvect(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
 	    *nx, *ny, *scale, pltr0f, NULL);
 }
 
@@ -344,7 +344,7 @@ PLVEC17(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
     cgrid.xg = xg;
     cgrid.yg = yg;
 
-    plvecf_int(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
+    plfvect(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
 	    *nx, *ny, *scale, pltr1, (void *) &cgrid);
 }
 
@@ -371,7 +371,7 @@ PLVEC27(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
     cgrid.xg = xg;
     cgrid.yg = yg;
 
-    plvecf_int(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
+    plfvect(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
 	    *nx, *ny, *scale, pltr2f, (void *) &cgrid);
 }
 
@@ -418,7 +418,7 @@ PLVECT7(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
     fgrid2.ny = *ny;
     fgrid2.f = v;
 
-    plvecf_int(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
+    plfvect(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
 	    *nx, *ny, *scale,
 	    pltr, (void *) ftr);
 }

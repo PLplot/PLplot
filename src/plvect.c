@@ -30,12 +30,6 @@
 
 void plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale);
     
-void plvecf_int(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer), 
-		PLPointer f2evalv_data, PLPointer f2evalc_data,
-		PLINT nx, PLINT ny, PLFLT scale,
-		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-		PLPointer pltr_data);
-
 /*--------------------------------------------------------------------------*\
  * void plarrows()
  *
@@ -210,12 +204,12 @@ plP_plotvect(PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale) {
 }
 
 /*
- * void plvecf_int()
+ * void plfvect()
  *
  * Internal routine to plot a vector array with arbitrary coordinate 
  * and vector transformations
  */
-void plvecf_int(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer), 
+void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer), 
 		PLPointer f2eval_data1, PLPointer f2eval_data2,
 		PLINT nx, PLINT ny, PLFLT scale,
 		void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
@@ -240,7 +234,7 @@ void plvecf_int(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
     /* Calculate apropriate scaling if necessary */
     if (scale <= 0.0 ) {
 	if (nx <= 1 && ny <= 1) {
-	    fprintf(stderr,"plvecf_int: not enough points for autoscaling\n");
+	    fprintf(stderr,"plfvect: not enough points for autoscaling\n");
 	    return;
 	}
 	dxmin = x[1][0]-x[0][0];
@@ -296,6 +290,6 @@ c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
     grid1.f = u;
     grid2.f = v;
 
-    plvecf_int(plf2eval2, (PLPointer) &grid1, (PLPointer) &grid2, 
+    plfvect(plf2eval2, (PLPointer) &grid1, (PLPointer) &grid2, 
 	       nx, ny, scale, pltr, pltr_data);
 }
