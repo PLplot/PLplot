@@ -1,0 +1,12 @@
+.c.obj:
+        $(CC) -c $(CFLAGS) $*.c
+.rc.res:
+        $(BRC) -r $(BRCFLAGS) $*.rc
+.c.exe:
+        $(CC) -c $(CFLAGS) $*.c
+        tlink @&&|
+/v c0l $*.obj
+$*,$*
+plplot.lib graphics.lib mathl.lib fp87.lib cl.lib
+|
+

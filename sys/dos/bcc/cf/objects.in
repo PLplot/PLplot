@@ -1,0 +1,50 @@
+OBJ =   \
+	plbox.obj \
+	plcont.obj \
+	pldtik.obj \
+	plfill.obj \
+	plfont.obj \
+	plhist.obj \
+	plline.obj \
+	plot3d.obj \
+	plsdef.obj \
+	plsym.obj \
+	pltick.obj \
+	plvpor.obj \
+	plwind.obj \
+	plcore.obj \
+	plargs.obj \
+	plbuf.obj \
+	plctrl.obj \
+	plcvt.obj \
+	plpage.obj \
+	plstream.obj \
+	plstring.obj \
+	plshade.obj
+
+DRV_OBJ = \
+	pdfutils.obj \
+	hpgl.obj \
+	impress.obj \
+	ljii.obj \
+	ps.obj \
+	tek.obj \
+	dosbgi.obj \
+	win3.obj \
+	plmeta.obj
+
+libs:   libc
+libc:   $(PLLIBS)\plplot.lib
+
+$(PLLIBS)\plplot.lib: $(OBJ) $(DRV_OBJ)
+	@echo Ready to build plplot.lib
+	-@del plplot.lib
+	tlib @&&!
+plplot\
++$(OBJ:.obj=.obj +)\
+$(DRV_OBJ:.obj=.obj +)\
+,plplot.lst
+!
+
+plrender: plrender.exe
+

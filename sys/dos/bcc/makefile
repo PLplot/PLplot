@@ -1,284 +1,154 @@
-#               
-# Makefile for PLPLOT
 #
+# This makefile copies all source files to PLTMP and
+# creates a makefile in this directory.
+# Additional drivers should be uncommented from pldevs.h
 #
-# Questions or problems, send (e)mail to:
-#
+# Questions/problems,send email to :
 #       Paul Casteels   casteels@uia.ac.be
-#       University of Antwerp   Dpt Physics
+#       University of Antwerp   Dpt. Physics
 #       Belgium
+#
 
-PLDIR   = c:\plplot\  # 
-PLLIBS  = .  #
-PLFONTS = $(PLDIR)plfonts\  # 
-PLFONT_DIR= $(PLDIR)  #
-PLTMP   = $(PLDIR)tmp\  # 
-PLLIBDIR = .  #
-
+#
+# Location of the Borland include directory
+#  (change this for V3.1 !)
+#
 BCCINCLUDE = c:\bc4\include
 
-# Windows or DOS
-WIN3 = TRUE
-
-CC      = bcc
-!if $d(WIN3)
-CFLAGS = -3 -Od -ml -P -v 
-!else
-#CFLAGS = -f287 -Od -ml -P -v -DMSDOS -D__cplusplus
-CFLAGS = -3 -f287 -Od -ml -P -v 
-!endif
-BRC = brc
-BRCFLAGS =
-
-# DOS & Windows
-!if $d(WIN3)
-DRIVERS = -DPS -DPLMETA -DHP7470 -DIMP -DWIN3
-LIBS =
-!else
-DRIVERS = -DPS -DPLMETA -DHP7470 -DIMP -DBGI
-LIBS = graphics.lib
-!endif
-
-# Rules
-.SUFFIXES:
-.SUFFIXES: .obj .c .for
-
-.c.obj:
-	$(CC) -c $(CFLAGS) $*.c 
-.for.o:
-	$(F77) -c $(FFLAGS) -o$*.o $*.for
-.rc.res:
-	$(BRC) -r $(BRCFLAGS) $*.rc
-!if $d(WIN3)
-.c.exe:
-	$(CC) -c $(CFLAGS) -W $*.c
-	tlink @&&|
-/v c0wl $*.obj
-$*,$*
-plplot.lib import.lib mathwl.lib cwl.lib
-default.def
-|
-	brc plplot.rc $*.exe
-!else
-.c.exe:
-	$(CC) -c $(CFLAGS) $*.c
-	tlink @&&|
-/v c0l $*.obj
-$*,$*
-plplot.lib graphics.lib mathl.lib fp87.lib cl.lib
-|
-!endif
-
-# Object file macros
-
-OBJ =   \
-	plbox.obj \
-	plcont.obj \
-	pldtik.obj \
-	plfill.obj \
-	plfont.obj \
-	plhist.obj \
-	plline.obj \
-	plot3d.obj \
-	plsdef.obj \
-	plsym.obj \
-	pltick.obj \
-	plvpor.obj \
-	plwind.obj \
-	plcore.obj \
-	plargs.obj \
-	plbuf.obj \
-	plctrl.obj \
-	plcvt.obj \
-	plpage.obj \
-	plstream.obj \
-	plstring.obj \
-	plshade.obj
-
-DRV_OBJ = \
-	pdfutils.obj \
-	hpgl.obj \
-	impress.obj \
-	ljii.obj \
-	ps.obj \
-	tek.obj \
-	dosbgi.obj \
-	win3.obj \
-	plmeta.obj
-
-# Support files for font generators.
-
-FONT_OBJ = \
-	font01.obj \
-	font02.obj \
-	font03.obj \
-	font04.obj \
-	font05.obj \
-	font06.obj \
-	font07.obj \
-	font08.obj \
-	font09.obj \
-	font10.obj \
-	font11.obj
-
-# C language stubs for linking Plplot to Fortran.
-
-CSTUB_OBJ = \
-	long2str.obj \
-	sc3d.obj \
-	scconf.obj \
-	scstubs.obj
-
-# Fortran language stubs for linking Plplot to Fortran.
-
-FSTUB_OBJ = \
-	sfstubs.obj
-
-# Library dependencies
-
-#libs:   libc libf
-libs:   libc
-libc:   $(PLLIBS)\plplot.lib
-libf:   $(PLLIBS)\plstub.lib
-
-
-$(PLLIBS)\plplot.lib: $(OBJ) $(DRV_OBJ)
-	@echo Ready to build plplot.lib
-	-@del plplot.lib
-	tlib @&&!
-plplot\
-+$(OBJ:.obj=.obj +)\
-$(DRV_OBJ:.obj=.obj +)\
-,plplot.lst
-!
-
-# In case you REALLY mean it!
-
-force: links libs
-
-# First time only, should be executed from $(PLTMP)
-
-links: linkmain linkstubs
-	@echo Converting from Unix to Dos format
-	crlf -fs *.h *.c *.rc *.def
-
-linkmain:
-	copy ..\src\*.c .
-	copy ..\include\*.h .
-	copy ..\examples\c\*.c .
-	copy ..\drivers\*.* .
-	copy ..\fonts\*.* .
-	copy ..\utils\*.* .
-	copy ..\sys\dos\bcc\*.h .
-	copy ..\sys\dos\bcc\*.c .
-	copy ..\sys\dos\bcc\*.rc .
-	copy ..\sys\dos\bcc\*.def .
-	copy ..\sys\dos\bcc\crlf.com .
-	copy plplot.h $(BCCINCLUDE)
-	copy pdf.h $(BCCINCLUDE)
-
-linkstubs:      
-	copy ..\sys\os2\stubf\*.* .
-	copy ..\src\stubc\*.* .
-	ren *.f *.for
-
-# The metafile renderer.
-
-plrender:
-	cl $(CFLAGS) plrender.c getopt.c plplot.lib
-
-#----------------------------------------------------------------------#
-# Font files.
-# Note 6 font files actually created.
-# sfont - standard font
-# xfont - extended fonts
-
-fonts:  sfont xfont
-	@echo $(PLDIR)
-	@echo $(PLFONT_DIR)
-	copy *.fnt $(PLFONT_DIR)
-	@echo Put this in autoexec.bat !!
-	set PLFONTS=$(PLFONT_DIR)
-
-sfont:  $(PLFONT_DIR)plstnd.fnt
-xfont:  $(PLFONT_DIR)plxtnd.fnt
-
-$(PLFONT_DIR)plstnd.fnt:
-	$(CC) $(CFLAGS:ml=mh) -Ff=16 stndfont.c font*.c pdfutils.c
-	-stndfont
-
-$(PLFONT_DIR)plxtnd.fnt:
-	$(CC) $(CFLAGS:ml=mh) -Ff=16 xtndfont.c font*.c pdfutils.c 
-	-xtndfont
-
-#----------------------------------------------------------------------#
-# Explicit rules
 #
-# plfont.c may have font flags passed in
+# Location of plplot directories
+#
+PLDIR = c:\plplot
+PLTMP = $(PLDIR)\tmp
+PLLIB = $(PLDIR)\lib
+PLBIN = $(PLDIR)\bin
 
-plfont.obj: plfont.c
-	$(CC) -c $(CFLAGS) $(FONTFLAG)  $*.c
+#
+# Device selection
+#
+META =  PLD_plmeta
+#PS = PLD_ps
+#XFIG = PLD_xfig
+#LJII = PLD_ljii
+#HPGL = PLD_hp7470
+#HPGLL = PLD_hp7580
+#LJHPGL = PLD_lj_hpgl
+#NULL = PLD_null
 
-# dispatch.c and all the drivers need to know $(PLDEVICES).  The guts
-# of the driver routine are not compiled if its name is not present in
-# the device list.  You may want to leave drivers for specific systems
-# (Amiga, MS-DOS, OS/2, etc) out of this list.
+BGI = PLD_bgi
+WIN3 = PLD_win3
 
-dispatch.obj: dispatch.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) $*.c 
+default:
+  @echo ``
+  @echo `Usage : make win3 or make bgi`
+  @echo ``
+links:
+#
+# Copy the necessary files to the temp dir
+#
+  @echo ``
+  @echo `Copying source files to $(PLTMP)`
+  @echo ``
+  @copy $(PLDIR)\src\*.c $(PLTMP)
+  @copy $(PLDIR)\include\*.h $(PLTMP)
+  @copy $(PLDIR)\examples\c\*.c $(PLTMP)
+  @copy $(PLDIR)\drivers\*.* $(PLTMP)
+  @copy $(PLDIR)\utils\*.* $(PLTMP)
+#
+# Copy the local source files to temp\
+#
+  @copy src\*.c $(PLTMP)
+  @copy src\*.h $(PLTMP)
+  @copy src\*.rc $(PLTMP)
+  @copy src\*.def $(PLTMP)
+#
+# Convert from Unix -> Dos
+#
+  @echo ``
+  @echo `Converting Unix->Dos (add CRs)`
+  @echo ``
+  @crlf -fs $(PLTMP)\*.c
+  @crlf -fs $(PLTMP)\*.h
+  @crlf -fs $(PLTMP)\*.rc
+  @crlf -fs $(PLTMP)\*.def
+#
+# Make some include file available everywhere
+#
+  @echo ``
+  @echo `Putting some .h files in default include directory`
+  @echo ``
+  @copy $(PLDIR)\include\plplot.h $(BCCINCLUDE)
+  @copy $(PLDIR)\include\pdf.h $(BCCINCLUDE)
 
-hpgl.obj:       hpgl.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) $*.c 
+common:
+#
+# Create plconfig.h file
+#
+  @echo ``
+  @echo `Creating $(PLTMP)\plconfig.h`
+  @wcr ifndef __PLCONFIG_H__ > $(PLTMP)\plconfig.h
+  @wcr define __PLCONFIG_H__ >> $(PLTMP)\plconfig.h
+  @wcr define LIB_DIR "$(PLLIB:\=\\)" >> $(PLTMP)\plconfig.h
+  @wcr define BIN_DIR "$(PLBIN:\=\\)" >> $(PLTMP)\plconfig.h
+  @wcr endif >> $(PLTMP)\plconfig.h
+#
+# Create pldevs.h file
+#
+  @echo ``
+  @echo `Creating $(PLTMP)\pldevs.h`
+!ifdef META
+  @wcr define PLD_plmeta > $(PLTMP)\pldevs.h
+!endif
+!ifdef PS
+  @wcr define PLD_ps >> $(PLTMP)\pldevs.h
+!endif
+!ifdef XFIG 
+  @wcr define PLD_xfig >> $(PLTMP)\pldevs.h
+!endif
+!ifdef LJII 
+  @wcr define PLD_ljii >> $(PLTMP)\pldevs.h
+!endif
+!ifdef HPGL
+  @wcr define PLD_hp7470 >> $(PLTMP)\pldevs.h
+!endif
+!ifdef HPGLL
+  @wcr define PLD_hp7580 >> $(PLTMP)\pldevs.h
+!endif
+!ifdef LJHPGL
+  @wcr define PLD_lj_hpgl >> $(PLTMP)\pldevs.h
+!endif
+!ifdef NULL
+  @wcr define PLD_null >> $(PLTMP)\pldevs.h
+!endif
+#
+# Write first part of the makefile
+#
+  @echo ``
+  @echo `Creating $(PLTMP)\makefile`
+  @echo `` > $(PLTMP)\makefile
+#
+# Compiler options
+#
+  @echo `CC = bcc` >> $(PLTMP)\makefile
+  @echo `CFLAGS = -3 -f287 -Od -ml -P -v -w-par -DMSDOS` >> $(PLTMP)\makefile
+  @echo `BRC = brc` >> $(PLTMP)\makefile
+  @echo `BRCFLAGS =` >> $(PLTMP)\makefile
 
-impress.obj:      impress.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) $*.c 
+win3: links common
+  @wcr define $(WIN3) >> $(PLTMP)\pldevs.h
+#
+# Add Windows definitions to the makefile
+#
+  @type cf\win3.in >> $(PLTMP)\makefile
+  @type cf\objects.in >> $(PLTMP)\makefile
+  @type cf\demos.in >> $(PLTMP)\makefile
 
-ljii.obj: ljii.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) $*.c 
+bgi: links common
+  @wcr define $(BGI) >> $(PLTMP)\pldevs.h
+#
+# Add dos/bgi definitions to the makefile
+#
+  @type cf\bgi.in >> $(PLTMP)\makefile
+  @type cf\objects.in >> $(PLTMP)\makefile
+  @type cf\demos.in >> $(PLTMP)\makefile
 
-ps.obj:   ps.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) $*.c 
-
-win3.obj: win3.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) $*.c 
-
-tek.obj:  tek.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) $*.c 
-
-plmeta.obj:       plmeta.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) $*.c 
-
-plcore.obj:       plcore.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) $*.c 
-
-dosbgi.obj:  dosbgi.c
-	$(CC) -c $(CFLAGS) $(DRIVERS) $(BGIDRIVERS) $*.c 
-
-#----------------------------------------------------------------------#
-# Build all the demos
-
-demos : cdemos fdemos
-
-# Example programs, in c.
-
-cdemos: x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c x11c \
-	x12c x13c x15c tutor
-
-x01c:   x01c.exe 
-x02c:   x02c.exe
-x03c:   x03c.exe
-x04c:   x04c.exe
-x05c:   x05c.exe
-x06c:   x06c.exe
-x07c:   x07c.exe
-x08c:   x08c.exe
-x09c:   x09c.exe
-x10c:   x10c.exe
-x11c:   x11c.exe
-x12c:   x12c.exe
-x13c:   x13c.exe
-# only x-windows !!!
-#x14c:   x14c.c
-#        $(CC) $(CFLAGS) x14c.c plplot.lib $(LIBS) 
-x15c:   x15c.exe
-tutor:  tutor.exe

@@ -1,0 +1,13 @@
+.c.obj:
+        $(CC) -c $(CFLAGS) $*.c
+.rc.res:
+        $(BRC) -r $(BRCFLAGS) $*.rc
+.c.exe:
+        $(CC) -c $(CFLAGS) -W $*.c
+        tlink @&&|
+/v c0wl $*.obj
+$*,$*
+plplot.lib import.lib mathwl.lib cwl.lib
+default.def
+|
+        $(BRC) plplot.rc $*.exe
