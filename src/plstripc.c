@@ -6,7 +6,13 @@
 
 /* $Id$
  * $Log$
- * Revision 1.1  1998/12/01 20:46:30  furnish
+ * Revision 1.2  1999/06/24 20:53:02  furnish
+ * Add c_ prefixes to some functions which slipped by unnoticed
+ * previously.  The c_ prefixes are needed to keep the C and Fortran
+ * linkage namespaces separate, since the various compiler vendors treat
+ * this issue nonuniformly.
+ *
+ * Revision 1.1  1998/12/01  20:46:30  furnish
  * Add a strip chart facility.
  *
  * Revision 1.5  1995/06/01  21:40:14  mjl
@@ -75,13 +81,13 @@ char *strdup(char *);
 \*--------------------------------------------------------------------------*/
 
 void
-plstripc(PLINT *id, char *xspec, char *yspec,
-	PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
-	PLFLT xlpos, PLFLT ylpos,
-	PLINT y_ascl, PLINT acc,
-	PLINT colbox,  PLINT collab,
-	PLINT *colline,  PLINT *styline, char *legline[],
-	char *labx, char *laby, char *labtop)
+c_plstripc( PLINT *id, char *xspec, char *yspec,
+            PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
+            PLFLT xlpos, PLFLT ylpos,
+            PLINT y_ascl, PLINT acc,
+            PLINT colbox,  PLINT collab,
+            PLINT *colline,  PLINT *styline, char *legline[],
+            char *labx, char *laby, char *labtop )
 {
     int i;
 
@@ -178,12 +184,12 @@ void plstrip_legend(PLStrip *stripc, int first)
  * Generates a complete stripchart plot.  Used either initially or
  * during rescaling.
 \*--------------------------------------------------------------------------*/
+
 PLFLT oxm,oxM, oym,oyM;
-void
-plstrip_gen(PLStrip *strip)
+void plstrip_gen( PLStrip *strip )
 {
-	int i;
-	PLFLT x[]={0.,1.,1.,0.}, y[]={0.,0.,1.,1.};
+    int i;
+    PLFLT x[]={0.,1.,1.,0.}, y[]={0.,0.,1.,1.};
 
 /* Set up window */
 
@@ -196,19 +202,19 @@ plstrip_gen(PLStrip *strip)
 
 //	what about this way? 
     */
-		plvpor(0,1,0,1);
-		plwind(0,1,0,1);
-		plcol(0);plpsty(0);
-		plfill(4, &x[0], &y[0]);
-		plvsta();
+    plvpor(0,1,0,1);
+    plwind(0,1,0,1);
+    plcol(0);plpsty(0);
+    plfill(4, &x[0], &y[0]);
+    plvsta();
 
 /* Draw box and same window dimensions */
-strip->wxmin=strip->xmin; strip->wxmax=strip->xmax;
- strip->wymin=strip->ymin; strip->wymax=strip->ymax; /* FIXME - can exist some redundancy here */
+    strip->wxmin=strip->xmin; strip->wxmax=strip->xmax;
+    strip->wymin=strip->ymin; strip->wymax=strip->ymax; /* FIXME - can exist some redundancy here */
 
     plwind(strip->xmin, strip->xmax, strip->ymin, strip->ymax);
     
-	pllsty(1);
+    pllsty(1);
     plcol(strip->colbox);
     plbox(strip->xspec, 0.0, 0, strip->yspec, 0.0, 0);
 
@@ -216,13 +222,13 @@ strip->wxmin=strip->xmin; strip->wxmax=strip->xmax;
     pllab(strip->labx, strip->laby, strip->labtop);
 	 
     for (i=0; i<PEN; i++) {
-	    if (strip->npts[i] > 0) {
-			plcol(strip->colline[i]);pllsty(strip->styline[i]);
-			plline(strip->npts[i], strip->x[i], strip->y[i]);
-	    }
+        if (strip->npts[i] > 0) {
+            plcol(strip->colline[i]);pllsty(strip->styline[i]);
+            plline(strip->npts[i], strip->x[i], strip->y[i]);
+        }
     }
 
-	plstrip_legend(strip,0);
+    plstrip_legend(strip,0);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -232,8 +238,7 @@ strip->wxmin=strip->xmin; strip->wxmax=strip->xmax;
  * Allocates memory and rescales as necessary.
 \*--------------------------------------------------------------------------*/
 
-void
-plstripa(PLINT id, PLINT p, PLFLT x, PLFLT y)
+void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
 {
     int j, yasc=0, istart;
 
@@ -335,10 +340,9 @@ plstripa(PLINT id, PLINT p, PLFLT x, PLFLT y)
  * Deletes and releases memory used by a stripchart.  
 \*--------------------------------------------------------------------------*/
 
-void
-plstripd(PLINT id)
+void c_plstripd( PLINT id )
 {
-	int i;
+    int i;
     stripc = strip[id];
 
     if (stripc == NULL) {
@@ -348,17 +352,17 @@ plstripd(PLINT id)
     
     for (i=0; i<PEN; i++) {
     	if (stripc->npts[i]) {
-	    	free((void *) stripc->x[i]);
-		    free((void *) stripc->y[i]);
-		    free(stripc->legline[i]);
-	    }
+            free((void *) stripc->x[i]);
+            free((void *) stripc->y[i]);
+            free(stripc->legline[i]);
+        }
     }
 
-	free(stripc->xspec);
-	free(stripc->yspec);
-	free(stripc->labx);
-	free(stripc->laby);
-	free(stripc->labtop);    
+    free(stripc->xspec);
+    free(stripc->yspec);
+    free(stripc->labx);
+    free(stripc->laby);
+    free(stripc->labtop);    
     free((void *) stripc);
     strip[id] = NULL;
 }
