@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.30  1994/06/09 20:15:30  mjl
+ * Revision 1.31  1994/06/10 20:46:10  furnish
+ * Mirror plpoin.  More of the API still needs doing.
+ *
+ * Revision 1.30  1994/06/09  20:15:30  mjl
  * Changed plplot direct widget commands ("<widget> cmd <command> <args>") to
  * begin with a "pl", e.g. scol<?> to plscol<?>, etc.  To make going between
  * the C and Tcl API's as natural as possible.  Added new direct widget
@@ -1186,6 +1189,54 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
 
 	plline( elsc, x, y );
+	free(x), free(y);
+
+	result = TCL_OK;
+    }
+
+/* Mirror plpoin */
+
+    else if ((c3 == 'p') && (strncmp(argv[0], "plpoin", length) == 0)) {
+
+	int elsc, i;
+	char **elsv;
+	PLFLT *x, *y;
+	int marker;
+
+	if (argc != 3 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+			     " pairs-list marker\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	Tcl_SplitList( interp, argv[1], &elsc, &elsv );
+
+	if ( elsc < 2 ) {
+	    Tcl_AppendResult(interp, "Malformed list.",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	x = (float *) malloc( sizeof(float) * elsc );
+	y = (float *) malloc( sizeof(float) * elsc );
+
+	for( i=0; i < elsc; i++ ) {
+	    int xyc;
+	    char **xyv;
+
+	    Tcl_SplitList( interp, elsv[i], &xyc, &xyv );
+	    if ( xyc != 2 ) {
+		interp->result = "Malformed list.";
+		return TCL_ERROR;
+	    }
+
+	    x[i] = atof( xyv[0] );
+	    y[i] = atof( xyv[1] );
+	}
+
+	marker = atoi( argv[2] );
+	plpoin( elsc, x, y, marker );
 	free(x), free(y);
 
 	result = TCL_OK;

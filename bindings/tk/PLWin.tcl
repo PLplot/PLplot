@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.3  1994/06/09 20:07:13  mjl
+# Revision 1.4  1994/06/10 20:46:58  furnish
+# Mirror plpoin.  More of the API still needs doing.
+#
+# Revision 1.3  1994/06/09  20:07:13  mjl
 # Cleaned up and switched to plplot direct commands embedded in plframe
 # widget (through "<widget> cmd <command> <args>" syntax).
 #
@@ -29,7 +32,7 @@ itcl_class PLWin {
 	::rename $this-tmp- $this
 
 	plframe $this.plwin -relief sunken
-	pack append $this $this.plwin {left expand fill}
+	pack append $this $this.plwin {bottom expand fill}
     }
 
     method configure {config} {}
@@ -48,6 +51,10 @@ itcl_class PLWin {
 
     method plline {pairs} {
 	$this.plwin cmd plline $pairs
+    }
+
+    method plpoin {pairs marker} {
+	$this.plwin cmd plpoin $pairs $marker
     }
 
     public name
