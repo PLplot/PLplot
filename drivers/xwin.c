@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1993/07/31 07:58:33  mjl
+ * Revision 1.22  1993/08/11 19:22:23  mjl
+ * Fixed warning under Sun's acc.
+ *
+ * Revision 1.21  1993/07/31  07:58:33  mjl
  * Several driver functions consolidated, for all drivers.  The width and color
  * commands are now part of a more general "state" command.  The text and
  * graph commands used for switching between modes is now handled by the
@@ -1010,7 +1013,8 @@ ColorInit(PLStream *pls)
 	pls->bgcolor.g = 0xFF;
 	pls->bgcolor.b = 0xFF;
     }
-    gslevbg = (pls->bgcolor.r + pls->bgcolor.g + pls->bgcolor.b) / 3;
+    gslevbg = ((long) pls->bgcolor.r + (long) pls->bgcolor.g +
+	       (long) pls->bgcolor.b) / 3;
 
     PLColor_to_XColor(&pls->bgcolor, &dev->bgcolor);
 
