@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/07/28 05:42:38  mjl
-   Some minor changes to aid debugging.
+   Revision 1.4  1993/07/31 08:06:54  mjl
+   More consolidation of driver functions.
 
+ * Revision 1.3  1993/07/28  05:42:38  mjl
+ * Some minor changes to aid debugging.
+ *
  * Revision 1.2  1993/07/16  21:58:37  mjl
  * Removed handling for orientation, aspect setting at a low level, since this
  * is now done by the driver interface layer.
@@ -75,13 +78,12 @@ if ((code) == -1) return(-1);
 /* Static function prototypes. */
 
 static int	plr_process1 	(PLRDev *, U_CHAR);
-static int	plr_init	(PLRDev *, U_CHAR);
+static int	plr_init	(PLRDev *);
 static int	plr_line	(PLRDev *, U_CHAR);
-static int	plr_eop		(PLRDev *, U_CHAR);
-static int	plr_bop 	(PLRDev *, U_CHAR);
-static int	plr_color	(PLRDev *, U_CHAR);
-static int	plr_width	(PLRDev *, U_CHAR);
-static int	plr_esc		(PLRDev *, U_CHAR);
+static int	plr_eop		(PLRDev *);
+static int	plr_bop 	(PLRDev *);
+static int	plr_state	(PLRDev *);
+static int	plr_esc		(PLRDev *);
 static int	plr_get		(PLRDev *);
 static int	plr_unget	(PLRDev *, U_CHAR);
 static int	get_ncoords	(PLRDev *, PLFLT *, PLFLT *, PLINT);
@@ -151,7 +153,7 @@ plr_process1(PLRDev *plr, U_CHAR c)
     switch ((int) c) {
 
       case INITIALIZE:
-	plr_cmd( plr_init(plr, c) );
+	plr_cmd( plr_init(plr) );
 	break;
 
       case LINE:
@@ -161,28 +163,19 @@ plr_process1(PLRDev *plr, U_CHAR c)
 	break;
 
       case EOP:
-	plr_cmd( plr_eop(plr, c) );
+	plr_cmd( plr_eop(plr) );
 	break;
 
       case BOP:
-	plr_cmd( plr_bop(plr, c) );
+	plr_cmd( plr_bop(plr) );
 	break;
 
-      case NEW_COLOR0:
-      case NEW_COLOR1:
-	plr_cmd( plr_color(plr, c) );
-	break;
-
-      case SWITCH_TO_TEXT:
-      case SWITCH_TO_GRAPH:
-	break;
-
-      case NEW_WIDTH:
-	plr_cmd( plr_width(plr, c) );
+      case CHANGE_STATE:
+	plr_cmd( plr_state(plr) );
 	break;
 
       case ESCAPE:
-	plr_cmd( plr_esc(plr, c) );
+	plr_cmd( plr_esc(plr) );
 	break;
 
       default:
@@ -199,7 +192,7 @@ plr_process1(PLRDev *plr, U_CHAR c)
 \*----------------------------------------------------------------------*/
 
 static int
-plr_init(PLRDev *plr, U_CHAR c)
+plr_init(PLRDev *plr)
 {
     char tk_magic[80], tk_version[80];
     char tag[80];
@@ -349,7 +342,7 @@ get_ncoords(PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n)
 \*----------------------------------------------------------------------*/
 
 static int
-plr_eop(PLRDev *plr, U_CHAR c)
+plr_eop(PLRDev *plr)
 {
     dbug_enter("plr_eop");
 
@@ -364,7 +357,7 @@ plr_eop(PLRDev *plr, U_CHAR c)
 \*----------------------------------------------------------------------*/
 
 static int
-plr_bop(PLRDev *plr, U_CHAR c)
+plr_bop(PLRDev *plr)
 {
     dbug_enter("plr_bop");
 
@@ -378,47 +371,53 @@ plr_bop(PLRDev *plr, U_CHAR c)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_color()
+* plr_state()
 *
-* Change color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
 static int
-plr_color(PLRDev *plr, U_CHAR c)
+plr_state(PLRDev *plr)
 {
-    U_CHAR icol0, r, g, b;
+    U_CHAR op;
 
-    plr_rd(pdf_rd_1byte(plr->file, &icol0));
-    plr->nbytes -= 1;
+    plr_rd(pdf_rd_1byte(plr->file, &op));
 
-    if (icol0 == PL_RGB_COLOR) {
-	plr_rd(pdf_rd_1byte(plr->file, &r));
-	plr_rd(pdf_rd_1byte(plr->file, &g));
-	plr_rd(pdf_rd_1byte(plr->file, &b));
-	plr->nbytes -= 3;
-	plrgb1(r, g, b);
+    switch (op) {
+
+    case PLSTATE_WIDTH:{
+	U_SHORT width;
+
+	plr_rd(pdf_rd_2bytes(plr->file, &width));
+	plr->nbytes -= 2;
+
+	plwid(width);
+	break;
     }
-    else {
-	plcol(icol0);
+
+    case PLSTATE_COLOR0:{
+	U_CHAR icol0, r, g, b;
+
+	plr_rd(pdf_rd_1byte(plr->file, &icol0));
+	plr->nbytes -= 1;
+
+	if (icol0 == PL_RGB_COLOR) {
+	    plr_rd(pdf_rd_1byte(plr->file, &r));
+	    plr_rd(pdf_rd_1byte(plr->file, &g));
+	    plr_rd(pdf_rd_1byte(plr->file, &b));
+	    plr->nbytes -= 3;
+	    plrgb1(r, g, b);
+	}
+	else {
+	    plcol(icol0);
+	}
+	break;
     }
-    return 0;
-}
 
-/*----------------------------------------------------------------------*\
-* plr_width()
-*
-* Change pen width.
-\*----------------------------------------------------------------------*/
+    case PLSTATE_COLOR1:
+	break;
+    }
 
-static int
-plr_width(PLRDev *plr, U_CHAR c)
-{
-    U_SHORT width;
-
-    plr_rd(pdf_rd_2bytes(plr->file, &width));
-    plr->nbytes -= 2;
-
-    plwid(width);
     return 0;
 }
 
@@ -430,7 +429,7 @@ plr_width(PLRDev *plr, U_CHAR c)
 \*----------------------------------------------------------------------*/
 
 static int
-plr_esc(PLRDev *plr, U_CHAR c)
+plr_esc(PLRDev *plr)
 {
     U_CHAR op;
 
