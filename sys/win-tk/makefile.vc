@@ -10,8 +10,8 @@
 #
 MACHINE		= IX86
 
-VERSION = 5.1.1
-DLL_VERSION = 511
+VERSION = 5.2.1
+DLL_VERSION = 521
 
 # Project directories -- these may need to be customized for your site
 #
@@ -27,7 +27,7 @@ TCL              = c:\progra~1\tcl
 TCLVERSION       = 84
 
 # set nodebug=0 for symbols, nodebug=1 for optimized build.
-NODEBUG=1
+NODEBUG=0
 
 # DON'T EDIT BELOW THIS LINE, UNLESS YOU REALLY KNOW WHAT
 # YOU ARE DOING!
@@ -35,9 +35,11 @@ NODEBUG=1
 !IF "$(NODEBUG)" == "1"
 DEBUGDEFINES =
 DBGX     = 
+DBGXMS     = 
 !ELSE
 DEBUGDEFINES = -DUSE_TCLALLOC=0
-DBGX     = d
+DBGX     = g
+DBGXMS     = d
 !ENDIF
 
 PROJECT = plplotter$(DLL_VERSION)$(DBGX)
@@ -53,7 +55,7 @@ GENERICTCLDIR	 = $(ROOT)\bindings\tcl
 OLDTKDIR	 = $(ROOT)\bindings\tk
 GENERICTKDIR	 = $(ROOT)\bindings\tk-x-plat
 GENERICDRIVERDIR = $(ROOT)\drivers
-LIBDIR           = $(ROOT)\lib
+DATADIR           = $(ROOT)\data
 
 cc32		= "$(TOOLS32)\bin\cl.exe"
 link32		= "$(TOOLS32)\bin\link.exe"
@@ -116,10 +118,10 @@ conlflags = $(lflags) -subsystem:console -entry:mainCRTStartup
 guilflags = $(lflags) -subsystem:windows -entry:WinMainCRTStartup
 
 !IF "$(MACHINE)" == "PPC"
-libc = libc$(DBGX).lib
-libcdll = crtdll$(DBGX).lib
+libc = libc$(DBGXMS).lib
+libcdll = crtdll$(DBGXMS).lib
 !ELSE
-libc = libc$(DBGX).lib oldnames.lib
+libc = libc$(DBGXMS).lib oldnames.lib
 libcdll = 
 !ENDIF
 
@@ -162,7 +164,8 @@ INCLUDES = \
 
 DEFINES = -nologo $(DEBUGDEFINES) -DUSE_TCL_STUBS \
 	-DUSE_TK_STUBS -DPLPLOT_USE_TCL_CHANNELS \
-	-DVERSION=\"$(VERSION)\" 
+	-DVERSION=\"$(VERSION)\" -DDATA_DIR=\"data\" \
+	-DDRV_DIR=\"drivers\"
 
 # 
 # Global makefile settings
@@ -205,8 +208,8 @@ DLLOBJS = \
 	$(WINDIR)\tkwin.obj \
 	$(WINDIR)\null.obj \
 	$(WINDIR)\pbm.obj \
-	$(WINDIR)\plbuf.obj \
 	$(WINDIR)\plmeta.obj \
+	$(WINDIR)\plbuf.obj \
 	$(WINDIR)\ps.obj \
 	$(WINDIR)\pstex.obj \
 	$(WINDIR)\tek.obj \
@@ -250,8 +253,8 @@ install-examples:
 	
 install:	$(PROJECT).dll
 	-@md $(INSTALLDIR)
-	$(CP) $(LIBDIR)\*.map $(INSTALLDIR)
-	$(CP) $(LIBDIR)\*.fnt $(INSTALLDIR)
+	$(CP) $(DATADIR)\*.map $(INSTALLDIR)
+	$(CP) $(DATADIR)\*.fnt $(INSTALLDIR)
 	$(CP) $(OLDTKDIR)\plcolor.tcl $(INSTALLDIR)
 	$(CP) $(OLDTKDIR)\plplot.tcl $(INSTALLDIR)
 	$(CP) $(OLDTKDIR)\pldefaults.tcl $(INSTALLDIR)
@@ -359,7 +362,7 @@ $(WINDIR)\pbm.obj: $(GENERICDRIVERDIR)\pbm.c
 	$(cc32) $(cdebug) $(cflags) $(cvarsdll) $(INCLUDES) \
 		$(DEFINES) -Fo$(WINDIR)\ $?
 
-$(WINDIR)\plbuf.obj: $(GENERICDRIVERDIR)\plbuf.c
+$(WINDIR)\plbuf.obj: $(GENERICDIR)\plbuf.c
 	$(cc32) $(cdebug) $(cflags) $(cvarsdll) $(INCLUDES) \
 		$(DEFINES) -Fo$(WINDIR)\ $?
 

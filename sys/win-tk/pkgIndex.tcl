@@ -1,7 +1,7 @@
-if {[info exists tcl_platform(debug)]} {
-    set file [file join $dir plplotter511d[info sharedlibextension]]
+if {[info exists ::tcl_platform(debug)]} {
+    set file [file join $dir plplotter521g[info sharedlibextension]]
 } else {
-    set file [file join $dir plplotter511[info sharedlibextension]]
+    set file [file join $dir plplotter521[info sharedlibextension]]
 }
 
 # This little helper is needed to deal seamlessly with the
@@ -16,5 +16,5 @@ proc loadPlplot {dir file} {
     lappend auto_path $dir/tcl
 }
 
-package ifneeded Plplotter 5.1.1 [list loadPlplot $dir $file]
+package ifneeded Plplotter 5.2.1 [list loadPlplot $dir $file]
 unset file
