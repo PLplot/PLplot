@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.13  1993/02/26 05:19:39  mjl
-   Fix for SUNOS -- NULL isn't always defined.  Should it be?  Anyhow this
-   was the easiest way to fix it.
+   Revision 1.14  1993/02/26 06:05:41  mjl
+   Surrounded the test for NULL being defined with an "#ifdef sun" since it
+   is bound to cause problems otherwise.
 
+ * Revision 1.13  1993/02/26  05:19:39  mjl
+ * Fix for SUNOS -- NULL isn't always defined.  Should it be?  Anyhow this
+ * was the easiest way to fix it.
+ *
  * Revision 1.12  1993/02/25  18:43:54  mjl
  * Eliminated obsolete typedef.
  *
@@ -279,8 +283,10 @@ typedef void* PLPointer;
 #define FALSE 0
 #endif
 
+#ifdef sun
 #ifndef NULL
 #define NULL	0
+#endif
 #endif
 
 #ifndef MAX
