@@ -41,9 +41,15 @@ if (plsc->debug) \
  *
  * Included into every plplot source file to control debugging output.  To
  * enable printing of debugging output, you must #define DEBUG before
- * including plplotP.h or specify -DDEBUG in the compile line.  When running
- * the program you must in addition specify -debug.  This allows debugging
- * output to be available when asked for but otherwise be fairly unobtrusive.
+ * including plplotP.h or specify -DDEBUG in the compile line, for each file
+ * that you want to have debug output enabled.  When running the program you
+ * must in addition specify -debug.  This allows debugging output to tailored
+ * to many different circumstances but otherwise be fairly unobtrusive. 
+ *
+ * Note, any file that actually uses pldebug() must also define NEED_PLDEBUG
+ * before the plplotP.h include.  This is to eliminate warnings caused by
+ * those files in which this is defined but never referenced.  All this could
+ * be much nicer if CPP had the abilities of m4, sigh.. 
  *
  * Syntax:
  *	pldebug(label, format [, arg1, arg2, ...] );
@@ -51,6 +57,7 @@ if (plsc->debug) \
  * The label is typically the calling function name.
 \*--------------------------------------------------------------------------*/
 
+#ifdef NEED_PLDEBUG
 static void
 pldebug( const char *label, ... )
 {
@@ -77,7 +84,8 @@ pldebug( const char *label, ... )
 	if (plsc->termin)
 	    c_plgra();
     }
-#endif
+#endif	/* DEBUG */
 }
+#endif	/* NEED_PLDEBUG */
 
 #endif	/* __PLDEBUG_H__ */
