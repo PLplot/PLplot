@@ -1,0 +1,142 @@
+The Tcl7.0/TK3.3 attempts to improve security by using the Xauthority
+mechanism (there are better ways but this was a quick fix).  To use
+it, you must either deal with the new access control method or compile
+Tcl/TK with security off.  It's not really a big deal using the new
+access method but can be confusing initially.
+
+First, you need to have a file ~/.Xauthority.  If you already have this,
+you are off to a good start.  In this case your X server is already set to
+use xauth style security.  If not, you need to create a ~/.Xauthority
+file.  You can do this by running "xauth" and then making entries.  You
+will need to reset the X server for this change to take effect.  If you
+are at the console this may mean a reboot (my HP running VUE gave me a bit
+of a hard time).
+
+You next disable all xhost based access.  This means not only typing
+"xhost -", but deleting all hosts named as having access when you
+type "xhost".
+
+Finally you ftp your ~/.Xauthority file to your home directory on the
+machine you are running client X applications.  When they start up, they
+will try to create windows on your local server as specified by DISPLAY
+(or whatever).  The client and server then exchange magic cookies, and
+when they match, the client gains access and is allowed to make X
+requests.
+
+Note that you may in general need to ftp your ~/.Xauthority file to the
+desired hosts each session, because at least on my machine the X server
+writes a new magic cookie in ~/.Xauthority each time it is run.  This
+is basically analogous to reenabling xhost access each time you log in.
+
+Below I've appended another person's explanation of what needs to be done,
+as posted on comp.lang.tcl.
+
+--
+Maurice LeBrun    mjl@dino.ph.utexas.edu
+Institute for Fusion Studies, University of Texas at Austin
+
+--cut-here--cut-here--cut-here--cut-here--cut-here--cut-here--cut-here-
+
+Author: Vivek Khera <khera@cs.duke.edu>		-*- text -*-
+Subject: making your X server more secure
+Originally Written: Tue, 10 Jul 90 12:26:15 -0400
+Time-stamp: "August 10, 1993 12:28:31"
+
+Here's how I have made my X sessions more secure than just the xhost
+way.  It is mostly transparent, and doesn't allow arbitrary users to
+plaster windows on my screen, or to snoop at my keyboard.  Even people
+who log into the machine I'm working on can't connect to the server.
+
+This whole scheme is based on the MIT-MAGIC-COOKIE scheme, where each
+client must present to the server a magic cookie to prove that it is
+allowed to connect.  The cookie is kept in a file in your home
+directory (.Xauthority) which only you are allowed to read.  The
+server reads this file when it starts up, so if you change the cookie
+file, you will have to restart the server to make it read the new
+information.  Normally you don't need to do this.  The .Xauthority
+files can be merged using the xauth program.  See the man page for
+some more details.
+
+Here is how to make yourself "secure":
+
+1. Create a .xserverrc file similar to mine in your home directory.
+The important part is to pass the "-auth $HOME/.Xauthority" option to
+the X server on the last line.  Here is what my .xserverrc file looks
+like:
+
+--cut here--
+#!/bin/sh
+# for Xsun:
+# -ar1 NNN	set keyboard repeat delay to NNN milliseconds
+# -ar2 NNN	set keyboard repeat rate to NNN milliseconds
+
+if test -w /dev/cgthree0 -o -w /dev/cgsix0; then
+  server=Xsun
+else
+  server=XsunMono
+fi
+
+# we *must* do an exec for the server so that signals are handled properly
+exec $server -ar1 250 -ar2 20 -auth $HOME/.Xauthority
+--cut here--
+
+
+2. Before you start the X server, be sure to create the .Xauthority
+file.  I wrote a shell script to do this, called newcookie.  You must
+create a new .Xauthority file when you switch machines, as the name of
+the machine the server is on is part of the authority mechanism.  This
+is how it knows which cookie to send to which server it is connecting
+to.  I run newcookie from my .login file when I am logging into the
+console.  If you run newcookie after you start the X server, you are
+hosed unless you can remember the random number it generated and
+recreate the .Xauthority file by hand; otherwise you will have to quit
+and restart the server.
+
+Here is my newcookie program.  If you have a program that generates
+md5 signatures, you can use it to generate a strong random number by
+passing the -md5 flag.  If you have md4, just edit the script to use
+it instead of md5.  If you don't have md4 or md5, then it assumes you
+have perl to generate random numbers.  If you don't have perl, then
+write your own program to generate a long random number with an even
+number of hexadecimal digits in it, and then run "xauth add" like in
+my program.  Note that md4 and md5 generate values that an even number
+of digits long already.  An implementation of md5 can be found in
+Internet RFC 1321.
+
+--cut here--
+#!/bin/sh
+
+# create new .Xauthority file
+
+PATH=/usr/local/X/bin:/usr/gnu/bin:$PATH
+
+# try some security
+auth=$HOME/.Xauthority
+#cp /dev/null $auth
+
+# generate a nice long random key
+if [ "$1" = "-md5" ]; then
+  # use a random noise source and get a strong checksum of it.
+  # this is probably a stronger random number than the other method.
+  key=`pstat -pfS | md5`
+else
+  # quick and dirty.  can probably be recreated if time can be guessed.
+  key=`perl -e 'srand; printf int(rand(100000000000000000))'`
+  # use $key$key to make sure even length.
+  key=$key$key
+fi
+# add to auth file. 
+xauth add ${HOST}/unix:0 . $key
+xauth add ${HOST}:0 . $key
+--cut here--
+
+3. Make sure any program you run does not do an xhost +<machine>
+command.  This will destroy any security you might gain by using
+xauth.  Notably, the rcmd script does this.
+
+4. Start the X server using startx.  Things should be secure now.  All
+new X clients (from R4 and later) understand this authorization
+scheme, so you should never need to run xhost again. (Unless you are
+using the standard Ultrix libraries -- but then you get what you
+deserve.)  In fact, xhost should report *no* hosts as being allowed
+in.

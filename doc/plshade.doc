@@ -1,0 +1,110 @@
+
+void plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined, PLFLT left, 
+	PLFLT right, PLFLT bottom, PLFLT top, void (*mapform)(), 
+	PLFLT shade_min, PLFLT shade_max, 
+	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
+	PLINT max_color, PLINT max_width, void (*fill)(), PLINT rectangular)
+
+arguments:
+	PLFLT &(a[0][0])	Contains array to be plotted. The array
+				must have been declared as PLFLT a[nx][ny].
+				See following note on fortran-style arrays.
+	PLINT nx, ny		dimension of array 'a'
+	char &(defined[0][0])   Contains array of flags, 1 = data is
+				valid, 0 = data is not valid. This
+				array determines which sections of the
+				data is to be plotted.  This argument 
+				can be NULL if all the values are valid.
+				Must have been declared as char defined[nx][ny].
+	PLFLT left, right, bottom, top
+				Defines the `grid' coordinates.  The data
+				a[0][0] has a position of (left,bottom).
+	void (*mapform)()	Transformation from `grid' coordinates to
+				world coordinates.  This pointer to a
+				function can be NULL in which case the
+				grid coordinates are the same as the
+				world coordinates.  
+	PLFLT shade_min, shade_max
+				Defines the interval to be shaded. If
+				shade_max <= shade_min, plshade does nothing.
+	PLINT sh_color, sh_width
+				defines pen color, width used by the fill pattern
+	PLINT min_color, min_width
+	PLINT max_color, max_width
+				defines pen color, width used by the boundary
+				of shaded region. The min values are used
+				for the shade_min boundary, and the max values
+				are used on the shade_max boundary.
+				Set color and width to zero for no plotted
+				boundaries.
+	void (*fill)()		Routine used to fill the region.  Use plfill.
+				Future version of plplot may have other
+				fill routines.
+	PLINT rectangular	Flag. Set to 1 if rectangles map to rectangles
+				after (*mapform)() else set to zero. If
+				rectangular is set to 1, plshade tries to
+				save time by filling large rectangles.  This
+				optimization fails if (*mapform)() distorts
+				the shape of rectangles.  For example a plot
+				in polor coordinates has to have rectangular
+				set to zero.
+
+Example mapform's
+
+void mapform(PLINT n, PLFLT *x, PLFLT *y) {
+	/* does a grid to world coordinate transformation */
+	/* this example goes from a r-theta to x-y for a polar plot */
+	int i;
+	double r, theta;
+	for (i = 0; i < n; i++) {
+	    r = x[i];
+	    theta = y[i];
+	    x[i] = r*cos(theta);
+	    y[i] = r*sin(theta);	
+	}
+}
+
+void mapform(PLINT n, PLFLT *x, PLFLT *y) {
+	/* grid was in cm, convert to world coordinates in inches */
+	/* expands in x direction */
+	int i;
+	for (i = 0; i < n; i++) {
+		x[i] = (1.0 / 2.5) * x[i];
+		y[i] = (1.0 / 2.5) * y[i];
+	}
+}
+
+
+Note: Fortran-style arrays.  Plshade can use fortran-style arrays
+with no modification by reflecting the plot through the 45 degree line.
+
+void fort_mapform(PLINT n, PLFLT *x, PLFLT *y) {
+	/* swap x and y values */
+	PLFLT t;
+	while (n-- > 0) {
+		t = *x;
+		*x++ = *y;
+		*y++ = t;
+	}
+}
+
+Fortran-style array argments.
+void plshade(PLFLT *a, PLINT ny, PLINT nx, char *defined, PLFLT bottom, 
+	PLFLT top, PLFLT left, PLFLT right, fort_mapform,
+	PLFLT shade_min, PLFLT shade_max, 
+	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
+	PLINT max_color, PLINT max_width, void (*fill)(), PLINT 1);
+
+
+--------------------------------------------------------
+
+files needed to run plshade
+
+(1) new copy of plfill  (w_plfill.c)
+
+(2) w_ctest.c
+
+(3) w_plshade.c
+
+Note: the 'w_' is help prevent confusion between plplot routines
+and local routines.
