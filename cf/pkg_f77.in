@@ -47,6 +47,6 @@ x16f.f: x16f.fm4 fmacs.m4
 # Require dependency on FDEMOS_SOURCES because these are generated files
 install_f77: $(FDEMOS_SOURCES)
 	@-if test ! -d $(DEMOS_DIR)/f77; then mkdir -p $(DEMOS_DIR)/f77; fi; \
-	  $(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/f77; \
+	  $(LN) ../Makefile $(DEMOS_DIR)/f77; \
 	  cd $(top_srcdir)/examples/f77; $(CP) *.f $(DEMOS_DIR)/f77
 
