@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1994/03/23 07:50:37  mjl
+ * Revision 1.20  1994/05/16 21:29:39  mjl
+ * Changes to plSetInternalOpt: the first argument is no longer required to
+ * have a leading dash.
+ *
+ * Revision 1.19  1994/03/23  07:50:37  mjl
  * Added new plplot base options:
  *
  *  -hack		Set to enable some driver-specific hack
@@ -128,6 +132,8 @@
     PL_PARSE_NOPROGRAM -- Specified if argv[0] is NOT a pointer to the
     program name.
 
+    PL_PARSE_NODASH -- Set if leading dash is NOT required.
+
     Note that the parser for user-defined flags accepts a pointer to a
     function to be called when an error is detected, to allow an
     appropriate usage message to be issued.
@@ -213,6 +219,7 @@ static int	mode_nodelete;
 static int	mode_showall;
 static int	mode_noprogram;
 static int	mode_override;
+static int	mode_nodash;
 
 /* Stream pointer.  */
 /* Fetched before option processing, so can directly set plplot state data */
@@ -663,15 +670,17 @@ plParseInternalOpts(int *p_argc, char **argv, PLINT mode)
 int
 plSetInternalOpt(char *opt, char *optarg)
 {
-    int mode = 0, argc, status;
+    int mode = 0, argc = 2, status;
     char *argv[3];
 
     argv[0] = opt;
     argv[1] = optarg;
     argv[2] = NULL;
-
-    mode = PL_PARSE_QUIET | PL_PARSE_NODELETE | PL_PARSE_NOPROGRAM;
-    argc = 2;
+    mode =
+	PL_PARSE_QUIET |
+	PL_PARSE_NODELETE |
+	PL_PARSE_NOPROGRAM |
+	PL_PARSE_NODASH;
 
     status = plParseOpts(&argc, argv, mode, ploption_table, NULL);
     if (status) {
@@ -704,6 +713,7 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
     mode_showall   = mode & PL_PARSE_SHOWALL;
     mode_noprogram = mode & PL_PARSE_NOPROGRAM;
     mode_override  = mode & PL_PARSE_OVERRIDE;
+    mode_nodash    = mode & PL_PARSE_NODASH;
 
     myargc = (*p_argc); 
     argend = argv + myargc;
@@ -778,9 +788,11 @@ ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 
 /* Only handle actual flags and their arguments */
 
-    if ((*p_argv)[0][0] == '-') {
+    if ( mode_nodash || (*p_argv)[0][0] == '-') {
 
-	opt = (*p_argv)[0] + 1;
+	opt = (*p_argv)[0];
+	if (*opt == '-') 
+	    opt++;
 
 	for (tab = option_table; tab->opt; tab++) {
 
