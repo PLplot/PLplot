@@ -258,6 +258,7 @@ dnl files.
 
 AC_CONFIG_FILES([
     Makefile
+    fonts/Makefile
     src/Makefile
     include/Makefile
     data/Makefile
