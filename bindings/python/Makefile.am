@@ -68,7 +68,7 @@ plplotcmodule_single.c: plplotcmodule_p_single.c makedocstrings.py
 # Must have "exec" in the name.
 ourexecpythondir = $(pythondir)
 
-libplplot = ../../src/libplplot$(LIB_TAG).la
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
 # PYTHON_NUM_DIR only required until we quit supporting python 1.5
 # X_CFLAGS required (on some platforms, e.g., netbsd) by plplot_widgetmodule.c

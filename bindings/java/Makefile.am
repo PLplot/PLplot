@@ -52,7 +52,7 @@ $(swiggenfiles): plplotjavac.i plplotcapi.i
 # Must have "exec" in the name.
 ourexecjavadir = $(libdir)/java/plplot/core
 
-libplplot = ../../src/libplplot$(LIB_TAG).la
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
 AM_CPPFLAGS = $(INCLTDL) $(JAVAINCCMD)
 

@@ -24,9 +24,9 @@ if enable_tk
 examples_tkdir = $(DATA_DIR)/examples/tk
 
 if enable_itcl
-mkindex = ../../scripts/mktclIndex -itcl
+mkindex = $(top_builddir)/scripts/mktclIndex -itcl
 else
-mkindex = ../../scripts/mktclIndex -itcl
+mkindex = $(top_builddir)/scripts/mktclIndex -itcl
 endif
 
 generated_files = \
@@ -93,14 +93,14 @@ $(generated_files): \
 	cp ../tcl/x??.tcl .
 	$(mkindex)
 
-libplplottcltk = ../../bindings/tcl/libplplottcltk$(LIB_TAG).la
+libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 
 check_PROGRAMS = \
 	xtk01 \
 	xtk02 \
 	xtk04
 
-cflags = -I../../bindings/tk -I../../bindings/tcl $(TCLINCCMD) $(TKINCCMD)
+cflags = -I$(top_builddir)/bindings/tk -I$(top_builddir)/bindings/tcl $(TCLINCCMD) $(TKINCCMD)
 xtk01_CFLAGS = $(cflags)
 xtk02_CFLAGS = $(cflags)
 xtk04_CFLAGS = $(cflags)

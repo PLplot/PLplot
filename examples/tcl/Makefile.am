@@ -24,9 +24,9 @@ if enable_tcl
 examples_tcldir = $(DATA_DIR)/examples/tcl
 
 if enable_itcl
-  mkindex = ../../scripts/mktclIndex -itcl
+  mkindex = $(top_builddir)/scripts/mktclIndex -itcl
 else
-  mkindex = ../../scripts/mktclIndex -itcl
+  mkindex = $(top_builddir)/scripts/mktclIndex -itcl
 endif
 
 examples_tcl_DATA = \
