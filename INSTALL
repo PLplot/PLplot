@@ -220,7 +220,8 @@ There is no need on my system to use that flag.
   -- RL ]
 
 ------------------------------------------------------------------------------
-Build Instructions for Solaris 
+Build Instructions for Solaris (as of plplot-5.3.0.cvs.20040217.tar.gz)
+N.B. with this version FLIBS is no longer required!
 ------------------------------------------------------------------------------
 
 * Platform (uname -a): SunOS sparc-solaris1 5.9 Generic_112233-03 sun4u sparc SUNW,Ultra-60
@@ -231,7 +232,7 @@ Build Instructions for Solaris
 
   + export MYPREFIX=/whatever
 
-  + export PATH='/opt/SUNWspro/bin:/usr/ccs/bin:'$PATH':$MYPREFIX/bin'
+  + export PATH="/opt/SUNWspro/bin:/usr/ccs/bin:"$PATH":$MYPREFIX/bin"
 
     /opt/SUNWspro/bin puts native cc and f95 on the path, /usr/ccs/bin puts
     native ld on the path, and $MYPREFIX/bin is there for when you want to
@@ -255,20 +256,6 @@ Build Instructions for Solaris
     we are now three for three (g77, OSF1 f77, and solaris f95) on that
     score.
 
-  + export FLIBS='-R/opt/SUNWspro/lib -L/opt/SUNWspro/lib -L/opt/SUNWspro/prod/lib -L/usr/ccs/lib -L/usr/lib -lf77compat -lfui -lfai -lfai2 -lfsumai -lfprodai -lfminlai -lfmaxlai -lfminvai -lfmaxvai -lfsu -lsunmath -lm'
-
-    Identify link flags required for mixed fortran/C libraries, i.e.,
-    libplplotf77.
-
-    I am not sure all these complications are necessary for FLIBS, but this
-    works and this FLIBS string is close to what the AC_F77_LIBRARY_LDFLAGS
-    macro produces for this solaris system.  (The FLIBS string produced by
-    the macro had the -lf77compat option in the wrong place [before the
-    corresponding -L option] and the -lompstubs option had to be eliminated
-    because that library was causing trouble.) It is possible other solaris
-    systems will be different so you may have to play some with FLIBS to get
-    the right combination.
-
 * Remaining commands to configure, build, and install:
 
   + ./configure --prefix=$MYPREFIX --disable-cxx --without-gnu-ld
@@ -282,23 +269,25 @@ Build Instructions for Solaris
     ld linker.
 
   + make
+  
+  + make check
 
   + make install
 
 Here is the configuration summary:
 
-command:        ./configure --prefix=/home/users/a/ai/airwin/plplot_install_solaris_sparc/ --disable-cxx --without-gnu-ld
+command:        ./configure --prefix=/home/users/a/ai/airwin/plplot_install_solaris_sparc --disable-cxx --without-gnu-ld
 system:         sparc-sun-solaris2.9
 have_x:         yes
-prefix:         /home/users/a/ai/airwin/plplot_install_solaris_sparc/
-CC:             cc
-F77:            f95
+prefix:         /home/users/a/ai/airwin/plplot_install_solaris_sparc
+CC:             cc 
+F77:            f95 
 LIB_TAG:        d
-devices:         dg300 hp7470 hp7580 lj_hpgl imp ljii ljiip mem null pbm plmeta ps psc pstex xterm tek4010 tek4107 mskermit versaterm vlt conex tek4010f tek4107f xfig xwin
+devices:         hp7470 hp7580 lj_hpgl mem null pbm plmeta ps psc pstex xfig xwin
 
 Available device drivers:
-static:
-dynamic:         dg300.la hpgl.la impress.la ljii.la ljiip.la mem.la null.la pbm.la plmeta.la ps.la pstex.la tek.la xfig.la xwin.la
+static:         
+dynamic:         hpgl.la mem.la null.la pbm.la plmeta.la ps.la pstex.la xfig.la xwin.la
 
 Compilation options:
 with_debug:     no              with_opt:       yes
@@ -321,9 +310,10 @@ enable_octave:  no
 
 As you can see a fair number of devices got built, although the only ones
 really useful on a remote machine like this without X client access are the
-psc and ps devices. make and make install proceeded without errors. After I
+psc, ps, and plmeta devices. make, make check (which builds 34 postscript
+files in the build tree), and make install proceeded without errors. After I
 installed (to a non-root MYPREFIX that was under my control as an ordinary
-user) I did the usual test:
+user) I did the usual install tree test as well:
 
 cd $MYPREFIX/share/plplot5.2.1.rc1.5.3.0/examples; make; ./plplot-test.sh
 
@@ -332,7 +322,9 @@ Linux-produced figures, and the other half were only slightly distinguishable
 visually (slight changes in the rendering of some of the characters).
 Presumably these differences are due to our current 16-bit rendering.
 
-In sum, it was a good result for this release candidate,
-and it should also be a good native (cc, f95, and ld) solaris result for
-PLplot-5.3.0.  Adjust these instructions if you want to use the Gnu versions
-of everything (which allows you to use g++).
+In sum, it was a good result for plplot-5.3.0.cvs.20040217.tar.gz and it
+should also be a good native (cc, f95, and ld) solaris result for
+PLplot-5.3.1 (when that official release is completed).  
+
+Adjust these instructions if you want to use the Gnu versions of everything
+(which allows you to use g++). 
