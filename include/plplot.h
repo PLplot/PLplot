@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.57  1994/04/18 19:23:25  furnish
+ * Revision 1.58  1994/04/18 20:02:59  furnish
+ * Autodetect inclusion of tk.h.
+ *
+ * Revision 1.57  1994/04/18  19:23:25  furnish
  * Added new function Pltk_Init to allow users to easily construct PLPLOT
  * enhanced application specific extended wishen.  Works great, needs advert.
  *
@@ -1389,7 +1392,7 @@ plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
 
 /* plframe widget command */
 
-#ifdef TK
+#if defined(TK) || defined(_TK)
 #include <tk.h>
 int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
 int   Pltk_Init( Tcl_Interp *interp );
