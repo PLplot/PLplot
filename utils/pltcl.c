@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/06/24 20:41:35  mjl
+ * Revision 1.3  1994/06/30 18:55:50  mjl
+ * Minor changes to eliminate gcc -Wall warnings.
+ *
+ * Revision 1.2  1994/06/24  20:41:35  mjl
  * Added error handler specific to pltcl.  Ensures output device is in text
  * mode before issuing error message.
  *
@@ -30,13 +33,13 @@
  *
 \*----------------------------------------------------------------------*/
 
+#include <plplotP.h>
 #include <pltcl.h>
 
 static void
 plErrorHandler(Tcl_Interp *interp, int code, int tty);
 
 extern void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty);
-
 
 /*----------------------------------------------------------------------*\
  * main --
@@ -68,14 +71,6 @@ main(int argc, char **argv)
 static int
 plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 {
-    static int pass_thru = 0;
-
-/* Safety check for out of control code */
-
-    if (pass_thru)
-	return;
-
-    pass_thru = 1;
 
 /* Print error message if one given */
 
@@ -87,6 +82,8 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
     Tcl_UnsetVar(interp, "tcl_prompt1", 0);
     Tcl_Eval(interp, "tclexit");
+
+    return TCL_OK;
 }
 
 /*

@@ -1,42 +1,28 @@
 /* $Id$
-   $Log$
-   Revision 1.4  1993/07/17 00:30:03  mjl
-   Eliminated extraneous file open.
-
- * Revision 1.3  1993/01/23  06:16:10  mjl
- * Formatting changes only to pltek.  plrender changes include: support for
- * polylines (even converts connected lines while reading into polylines for
- * better response), new color model support, event handler support.  New
- * events recognized allow seeking to arbitrary locations in the file (absolute
- * or relative), and backward.  Some old capabilities (no longer useful)
- * eliminated.
- *
- * Revision 1.2  1992/09/29  04:46:48  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:36:00  furnish
- * Initial checkin of the whole PLPLOT project.
+ * $Log$
+ * Revision 1.5  1994/06/30 18:55:52  mjl
+ * Minor changes to eliminate gcc -Wall warnings.
  *
 */
 
 /*
-*  pltek.c
-*  Review a Tektronix vector file.
-*  from 'scan', by Clair Nielsen, LANL.
-*  Modifications by Maurice LeBrun, IFS.
-*
-*  This version works well with xterm and at least one vt100/tek emulator
-*  I've tried.
-*/
+ *  pltek.c
+ *  Review a Tektronix vector file.
+ *  from 'scan', by Clair Nielsen, LANL.
+ *  Modifications by Maurice LeBrun, IFS.
+ *
+ *  This version works well with xterm and at least one vt100/tek emulator
+ *  I've tried.
+ */
 
 #include <stdio.h>
+#include <ctype.h>
 
 static long start[1000];
 void describe();
 #define UNSELECTED -999
 
 /* Define graphics control characters. */
-/* INDENT OFF */
 
 #define FF   12
 #define CAN  24
@@ -45,19 +31,15 @@ void describe();
 #define US   31
 #define ETX  003
 
-/* INDENT ON */
-
 int
 main(int argc, char *argv[])
 {
     FILE *fd;
     char infile[128];
-    int i, j, k, nb, nframe, iframe, ifirst, oldframe;
+    int i, j, nb, nframe, iframe, ifirst, oldframe;
     int istop;
     char xtra;
     char buf[1024], lastchar;
-    int dummy;
-    char *ninp;
     char ibuf[128];
     char c;
 
@@ -191,16 +173,16 @@ main(int argc, char *argv[])
 	fflush(stdout);
     }
     fclose(fd);
+    exit(0);
 }
 
 /*----------------------------------------------------------------------*\
-*  describe()
-*
-*  Print help message.
-*  Note: if this message starts to exceed 512 bytes, may need to split
-*  since some compilers can't handle strings that long.
+ *  describe()
+ *
+ *  Print help message.
+ *  Note: if this message starts to exceed 512 bytes, may need to split
+ *  since some compilers can't handle strings that long.
 \*----------------------------------------------------------------------*/
-/* INDENT OFF */
 
 void 
 describe (void)
@@ -219,4 +201,3 @@ At the prompt, the following replies are recognized:\n\
 \n\
 ", stdout);
 }
- 
