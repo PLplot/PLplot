@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.82  1995/10/16 18:20:52  mjl
+ * Revision 1.83  1995/10/23 07:28:07  mjl
+ * Added prototypes and other support for new functions plglevel() and
+ * plsError().
+ *
+ * Revision 1.82  1995/10/16  18:20:52  mjl
  * Added prototype & defines for plgdev API function.
  *
  * Revision 1.81  1995/07/19  18:51:31  mjl
@@ -469,6 +473,7 @@ typedef struct {
 #define    plgdiplt	c_plgdiplt
 #define    plgfam	c_plgfam
 #define    plgfnam	c_plgfnam
+#define    plglevel	c_plglevel
 #define    plgpage	c_plgpage
 #define    plgphy	c_plgphy
 #define    plgra	c_plgra
@@ -579,6 +584,7 @@ typedef struct {
 #define    c_plgdiplt	plgdiplt
 #define    c_plgfam	plgfam
 #define    c_plgfnam	plgfnam
+#define    c_plglevel	plglevel
 #define    c_plgpage	plgpage
 #define    c_plgra	plgra
 #define    c_plgspa	plgspa
@@ -866,6 +872,11 @@ c_plgfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax);
 
 void
 c_plgfnam(char *fnam);
+
+/* Get the (current) run level.  */
+
+void
+c_plglevel(PLINT *p_level);
 
 /* Get output device parameters. */
 
@@ -1317,6 +1328,11 @@ plsKeyEH(void (*KeyEH) (PLGraphicsIn *, void *, int *), void *KeyEH_data);
 void
 plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, int *),
 	    void *ButtonEH_data);
+
+/* Set the variables to be used for storing error info */
+
+void
+plsError(PLINT *errcode, char *errmsg);
 
 /* Sets an optional user exit handler. */
 
