@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.45  1994/07/19 22:30:32  mjl
+ * Revision 1.46  1994/07/22 22:20:36  mjl
+ * Fixed bug in WM hints, introduced during the last bug fix.  It was causing
+ * the window to come up without user intervention and in a poor location for
+ * tvtwm.  Now it should get BOTH the default and the user specified cases
+ * right regardless of window manager (I hope).
+ *
+ * Revision 1.45  1994/07/19  22:30:32  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.
  *
@@ -516,7 +522,7 @@ fill_polygon(PLStream *pls)
  * The user may customize the window in the following ways:
  *
  * display:	pls->OutFile (use plsfnam() or -display option) 
- * size:		pls->xlength, pls->ylength (use plspage() or -geo option)
+ * size:	pls->xlength, pls->ylength (use plspage() or -geo option)
  * bg color:	pls->cmap0[0] (use plscolbg() or -bg option)
 \*----------------------------------------------------------------------*/
 
@@ -652,27 +658,37 @@ Init_main(PLStream *pls)
 			&root, &x, &y, &width, &height, &border, &depth);
 
     dev->border = 5;
+    hint.flags = 0;
+
+/* Set window size */
+/* Need to be careful to set XSizeHints flags correctly */
+
+    if (pls->xlength == 0 && pls->ylength == 0)
+	hint.flags |= PSize;
+    else
+	hint.flags |= USSize;
+
     if (pls->xlength == 0)
 	pls->xlength = width * 0.75;
     if (pls->ylength == 0)
 	pls->ylength = height * 0.75;
+
     if (pls->xlength > width)
 	pls->xlength = width - dev->border * 2;
     if (pls->ylength > height)
 	pls->ylength = height - dev->border * 2;
 
-    if (pls->xoffset == 0)
-	pls->xoffset = width / 20;
-    if (pls->yoffset == 0)
-	pls->yoffset = height / 20;
-
-/* Default program-specified window position and size */
-
-    hint.x = (int) pls->xoffset;
-    hint.y = (int) pls->yoffset;
     hint.width = (int) pls->xlength;
     hint.height = (int) pls->ylength;
-    hint.flags = USPosition | USSize;
+
+/* Set window position if specified by the user. */
+/* Otherwise leave up to the window manager */
+
+    if (pls->xoffset != 0 || pls->yoffset != 0) {
+	hint.flags |= USPosition;
+	hint.x = (int) pls->xoffset;
+	hint.y = (int) pls->yoffset;
+    }
 
 /* Window title */
 
@@ -921,7 +937,7 @@ MouseEH(PLStream *pls, XEvent *event)
 	printf("%f\t%f\n", mouse.x, mouse.y);
         xcoord=((event->xbutton.x+1-(pls->vpdxmi)*(pls->xlength))/
                 ((pls->vpdxma-pls->vpdxmi)*pls->xlength))*pls->vpwxma;
-        ycoord=((pls->ylength - event->xbutton.y+1-(pls->vpdymi)*(pls->ylength))/
+        ycoord=((pls->ylength-event->xbutton.y+1-(pls->vpdymi)*(pls->ylength))/
                 ((pls->vpdyma-pls->vpdymi)*pls->ylength))*pls->vpwyma;
 	printf("%f\t%f\n", xcoord, ycoord);
 #ifdef DEBUG
