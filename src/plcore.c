@@ -1856,6 +1856,8 @@ plLoadDriver(void)
 
         if (!driver->dlhand)
         {
+	    pldebug("plLoadDriver", "Local dlopen failed because of "
+		    "the following reason:\n%s\n", dlerror());
             sprintf( drvspec, "%s/%s/%s",
                      DATA_DIR, "../drivers", driver->drvnam );
 
@@ -1868,8 +1870,9 @@ plLoadDriver(void)
 /* If it still isn't loaded, then we're doomed. */
     if (!driver->dlhand)
     {
+        pldebug("plLoadDriver", "Global dlopen failed because of "
+		 "the following reason:\n%s\n", dlerror());
         fprintf( stderr, "Unable to load driver: %s.\n", driver->drvnam );
-        fprintf( stderr, "Reason: %s\n", dlerror() );
         return;
     }
 
