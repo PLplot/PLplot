@@ -1,3 +1,10 @@
+plplot (5.2.1-19) unstable; urgency=low
+
+  * configure.ac: Added upstream patch from the CVS repository to avoid
+    problems when using the variable $max_cmd_len in the libtool script.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 16 Sep 2003 12:37:48 +0200
+
 plplot (5.2.1-18) unstable; urgency=low
 
   * debian/rules: Use dh_python to correctly generate python version
@@ -258,7 +265,7 @@ plplot (5.2.0.cvs.20030317-1) unstable; urgency=low
 
 plplot (5.2.0.cvs.20030307-1) unstable; urgency=low
 
-  * Built with new CVS sources: that are slight improvements in the Octave
+  * Built with new CVS sources: there are slight improvements in the Octave
     bindings, regarding the user function toggle_plplot_use.
   * debian/control:
       - Changed some Priority and Section headers to match the override
@@ -300,7 +307,7 @@ plplot (5.2.0.cvs.20030301-1) unstable; urgency=low
 plplot (5.2.0.cvs.20030227-2) unstable; urgency=low
 
   * This is the first release of this cvs snapshot series to the Debian
-    repository (closes: #101264).
+    unstable repository (closes: #101264).
   * A big thanks to David Schleef, who has acted as interim maintainer
     (and made a great job) while I have been unavailable.
   * Many bugs that have been around for ages are fixed in this
