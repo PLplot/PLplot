@@ -50,5 +50,6 @@ EXTRA_DIST = sfstubs.fm4
 .fm4.f:
 	@M4@ @M4_FLAGS@ $< >$*.f
 
+CLEANFILES = sfstubs.f
 SUFFIXES = .fm4
 

@@ -54,3 +54,22 @@
 #undef TCL_DIR
 
 #endif	/* __PLCONFIG_H__ */
+
+#undef PLD_dg300
+#undef PLD_gd
+#undef PLD_gnome
+#undef PLD_hpgl
+#undef PLD_impress
+#undef PLD_linuxvga
+#undef PLD_ljii
+#undef PLD_ljiip
+#undef PLD_next
+#undef PLD_null
+#undef PLD_pbm
+#undef PLD_plbuf
+#undef PLD_plmeta
+#undef PLD_ps
+#undef PLD_tek
+#undef PLD_tk
+#undef PLD_xfig
+#undef PLD_xwin

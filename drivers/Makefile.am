@@ -1,4 +1,4 @@
-# src/Makefile.am for PLplot
+# drivers/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
@@ -19,44 +19,28 @@
 # Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA. 
 
-if with_double
-lib_LTLIBRARIES = libplplotd.la
-else
-lib_LTLIBRARIES = libplplot.la
-endif
+noinst_LTLIBRARIES = libpldrv.la
 
-version = -version-info @SOVERSION@
+libpldrv_la_SOURCES = 
+libpldrv_la_LIBADD = @DRIVERS@
+libpldrv_la_DEPENDENCIES = @DRIVERS@
+EXTRA_libpldrv_la_SOURCES = \
+  dg300.c \
+  gd.c \
+  gnome.c \
+  hpgl.c \
+  impress.c \
+  linuxvga.c \
+  ljii.c \
+  ljiip.c \
+  next.c \
+  null.c \
+  pbm.c \
+  plbuf.c \
+  plmeta.c \
+  ps.c \
+  tek.c \
+  tk.c \
+  xfig.c \
+  xwin.c
 
-sources = \
-  pdfutils.c \
-  plargs.c \
-  plbox.c \
-  plcont.c \
-  plcore.c \
-  plctrl.c \
-  plcvt.c \
-  pldtik.c \
-  plfill.c \
-  plhist.c \
-  plline.c \
-  plmap.c \
-  plot3d.c \
-  plpage.c \
-  plsdef.c \
-  plshade.c \
-  plstripc.c \
-  plsym.c \
-  pltick.c \
-  plvpor.c \
-  plwind.c
-
-libplplot_la_SOURCES  = $(sources)
-libplplotd_la_SOURCES = $(sources)
-
-libplplot_la_LDFLAGS  = $(version)
-libplplotd_la_LDFLAGS = $(version)
-
-libdrv = ../drivers/libpldrv.la
-
-libplplot_la_LIBADD  = $(libdrv)
-libplplotd_la_LIBADD = $(libdrv)

@@ -35,6 +35,16 @@ AC_SUBST(SOVERSION)
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
 
+### Double vs single precison
+
+MY_ARG_WITH(double,
+  [  --with-double           use double precision floats ($with_double)])
+if test "$with_double" = yes; then
+  AC_DEFINE(PL_DOUBLE)
+  DBL_FLAG_M4=-DDOUBLE
+fi
+AM_CONDITIONAL(with_double, test "$with_double" = yes)
+
 ### C++ bindings
 
 MY_ARG_ENABLE(cxx,
@@ -92,16 +102,52 @@ AC_SUBST(DATA_DIR)
 
 AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
 
-### Double vs single precison
+### Drivers
 
-MY_ARG_WITH(double,
-  [  --with-double           use double precision floats ($with_double)])
-if test "$with_double" = yes; then
-  AC_DEFINE(PL_DOUBLE)
+define(PL_DRIVER_LIST, [
+  dg300,
+  gd,
+  gnome,
+  hpgl,
+  impress,
+  linuxvga,
+  ljii,
+  ljiip,
+  next,
+  null,
+  pbm,
+  plbuf,
+  plmeta,
+  ps,
+  tek,
+  tk,
+  xfig,
+  xwin])
+
+# Macro to set one driver enable value
+
+define(PL_ADD_DRIVER,[dnl
+MY_ARG_ENABLE($1, builtin(format,
+[  --enable-%-14s enable %s device driver ($enable_$1)], $1, $1))
+if test "$enable_$1" = "yes" ; then
+  enable_$1="yes"
+  AC_DEFINE(PLD_$1)
+  DRIVERS="$DRIVERS $1.lo"
+else
+  enable_$1="no"
 fi
-AM_CONDITIONAL(with_double, test "$with_double" = yes)
+])dnl
+
+# Recursive macro to set up all driver help entries
+
+define(PL_DRIVERS,[ifelse($1,,,[PL_ADD_DRIVER($1)dnl
+PL_DRIVERS(builtin([shift],$*))])])
+
+PL_DRIVERS(PL_DRIVER_LIST)
+AC_SUBST(DRIVERS)
 
 ### Build Makefiles
 
 AC_OUTPUT([Makefile src/Makefile include/Makefile lib/Makefile
-           bindings/Makefile bindings/c++/Makefile bindings/f77/Makefile])
+           bindings/Makefile bindings/c++/Makefile bindings/f77/Makefile
+           drivers/Makefile])
