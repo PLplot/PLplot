@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.32  1995/05/08 18:12:58  mjl
+ * Revision 1.33  1995/06/01 21:46:31  mjl
+ * Now only pipes help output through a pager if HAVE_POPEN is defined (done
+ * during configure).  Added check in plMergeOpts() to ensure the user isn't
+ * passing an improperly-terminated options table.
+ *
+ * Revision 1.32  1995/05/08  18:12:58  mjl
  * Fixed problem with file header.
  *
  * Revision 1.31  1995/05/08  16:44:38  shouman
@@ -693,8 +698,30 @@ plSetOpt(char *opt, char *optarg)
 int
 plMergeOpts(PLOptionTable *options, char *name, char **notes)
 {
+    PLOptionTable *tab;
+
+/* Check to make sure option table has been terminated correctly */
+
+    for (tab = options; tab->opt; tab++)
+	;
+
+/* We've reached the last table entry.  All the subentries must be NULL or 0 */
+
+    if ((tab->handler     != NULL) ||
+	(tab->client_data != NULL) ||
+	(tab->var         != NULL) ||
+	(tab->mode        != 0) ||
+	(tab->syntax      != NULL) ||
+	(tab->desc        != NULL)) {
+
+	plabort("plMergeOpts: input table improperly terminated");
+	return 1;
+    }
+
+/* No room for more tables */
+
     if (tables++ >= PL_MAX_OPT_TABLES) {
-	plabort("Max options tables limit exceeded");
+	plabort("plMergeOpts: max tables limit exceeded, table not merged");
 	return 1;
     }
 
@@ -1140,6 +1167,7 @@ Help(void)
     int i;
     FILE *outfile = stderr;
 
+#ifdef HAVE_POPEN
     FILE *pager = NULL;
     if (getenv("PAGER") != NULL)
 	pager = (FILE *) popen("$PAGER", "w");
@@ -1147,6 +1175,7 @@ Help(void)
 	pager = (FILE *) popen("more", "w");
     if (pager != NULL)
 	outfile = pager;
+#endif
 
 /* Usage line */
 
@@ -1195,8 +1224,10 @@ Help(void)
 	}
     }
 
+#ifdef HAVE_POPEN
     if (pager != NULL)
 	pclose(pager);
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
