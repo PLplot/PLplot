@@ -20,33 +20,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 EXTRA_DIST =      \
+    README        \
     acinclude.m4  \
     bootstrap.sh  \
-    c++.ac        \  
-    cgm.ac        \
-    csiro.ac      \
-    docbook.ac    \  
     docbook.m4    \ 
-    drivers.ac    \
-    f77.ac        \
-    freetype.ac   \
-    gd.ac         \
-    gnome.ac      \  
     gnome.m4      \ 
     gnu-make.m4   \
     gtk.m4        \
-    java.ac       \
-    libtool.ac    \
-    linuxvga.ac   \
-    octave.ac     \
-    pkg-config.ac \
-    pthread.ac    \
-    python.ac     \
-    README        \
-    summary.ac    \
-    swig.ac       \
-    swig.m4       \
-    tcl.ac        \
-    test.ac       \
-    xwin.ac
+    swig.m4
     

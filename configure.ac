@@ -238,6 +238,7 @@ AC_CONFIG_FILES([
     include/Makefile
     data/Makefile
     bindings/Makefile
+    cf/Makefile
     drivers/Makefile
     examples/Makefile
     examples/Makefile.examples

@@ -22,7 +22,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 src_dirs = lib src include data bindings
-other_dirs = examples utils test scripts doc pkgcfg
+other_dirs = examples utils test scripts doc pkgcfg cf
 
 if enable_dyndrivers
   SUBDIRS =
