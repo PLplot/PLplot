@@ -1014,10 +1014,10 @@ c_plgra(void)
 }
 
 void
-c_plxormod(PLINT color)	/* jc: xor */
+c_plxormod(PLINT mode)	/* jc: xor */
 {
     if (plsc->level > 0)
-	plP_esc(PLESC_XORMOD, &color);
+	plP_esc(PLESC_XORMOD, &mode);
 }
 
 /*--------------------------------------------------------------------------*\
