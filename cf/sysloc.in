@@ -325,15 +325,17 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     fi
 fi
 
-GDLIBS=""
 GDINCS=""
+GDINCPATH=""
+GDLIBS=""
+GDLIBPATH=""
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
-    ADD_TO_INCS($GDINCDIR, GDINCS, INCPATH)
+    ADD_TO_INCS($GDINCDIR, GDINCS, GDINCPATH)
     if test "$enable_dyndrivers" = "yes"; then
-	ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, GDLIBS, LIBPATH)
-	ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, GDLIBS, LIBPATH)
-	ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, GDLIBS, LIBPATH)
-	ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, GDLIBS, LIBPATH)
+	ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, GDLIBS, GDLIBPATH)
+	ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, GDLIBS, GDLIBPATH)
+	ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, GDLIBS, GDLIBPATH)
+	ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, GDLIBS, GDLIBPATH)
     fi
 fi
 
@@ -431,12 +433,16 @@ if test "$enable_cgm" = "yes"; then
     fi
 fi
 
+CDINCS=""
+CDINCPATH=""
+CDLIBS=""
+CDLIBPATH=""
 CDLIBS=""
 CDINCS=""
 if test "$enable_cgm" = "yes"; then
-    ADD_TO_INCS($CDINCDIR, CDINCS, INCPATH)
+    ADD_TO_INCS($CDINCDIR, CDINCS, CDINCPATH)
     if test "$enable_dyndrivers" = "yes"; then
-	ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBS, LIBPATH)
+	ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBS, CDLIBPATH)
     fi
 fi
 
@@ -493,14 +499,15 @@ if test "$with_freetype" = "yes"; then
     fi
 fi
 
-FREETYPELIBS=""
 FREETYPEINCS=""
+FREETYPEINCPATH=""
+FREETYPELIBS=""
+FREETYPELIBPATH=""
 if test "$with_freetype" = "yes"; then
+    ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCS, FREETYPEINCPATH)
+    ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBS, FREETYPELIBPATH)
     AC_DEFINE(HAVE_FREETYPE)
-    ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCS, INCPATH)
-    if test "$enable_dyndrivers" = "yes"; then
-	ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBS, LIBPATH)
-    fi
+    AC_SUBST(FREETYPELIBS)
 fi
 
 # ----------------------------------------------------------------------------

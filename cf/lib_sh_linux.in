@@ -137,7 +137,7 @@ $(PLLIB_SO):	$(LIB_OBJS:%=shared/%) $(PLLIB_LIBRARIES)
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) $(PLLIB_LINKS) @EXTRA_LIBS@
+		$(LIB_OBJS) $(PLLIB_LINKS) @EXTRA_LIBS@ @FREETYPELIBS@
 	ln -sf $(PLLIB_SO) $(SONAME)
 	ln -sf $(SONAME) $(LINKNAME)
 	@echo ""
