@@ -1,3 +1,15 @@
+plplot (5.2.1-2) unstable; urgency=low
+
+  * debian/control: Removed the explicit build-dependencies on libpng-dev,
+    libjpeg-dev, and libfreetype-dev, since they are declared as
+    dependencies of libgd2-dev.  This is an attempt to fix the libpng
+    incompatibility between libgd2-dev and libgnome-dev.  Also, fixed a typo
+    in the Build-Conflicts field.
+
+  * debian/rules: Remove config.sub and config.guess in clean rule.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 29 Apr 2003 13:42:34 +0200
+
 plplot (5.2.1-1) unstable; urgency=low
 
   * New stable upstream release.
