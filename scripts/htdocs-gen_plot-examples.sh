@@ -61,13 +61,14 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21; do
     echo populatting www directory demo${exe}
     mkdir -p $EXDIR/demo${exe}
     mv *${exe}.??.png $EXDIR/demo${exe}/
-    cp examples/c/x${exe}c.c examples/tcl/x${exe}.tcl examples/java/x${exe}.java \
-	examples/f77/x${exe}f.f bindings/octave/demos/x${exe}c.m \
-	examples/python/xw${exe}.py $EXDIR/demo${exe}
+    cp examples/c/x${exe}c.c examples/tcl/x${exe}.tcl               \
+       examples/java/x${exe}.java examples/f77/x${exe}f.f           \
+       bindings/octave/demos/x${exe}c.m	examples/python/xw${exe}.py \
+       examples/c++/x${exe}.cc 	$EXDIR/demo${exe}
 
     # rename executables, to avoid browsers trying to execute files instead of showing them.
     (cd  htdocs/examples-data/demo${exe};
-    for j in *.c *.f *.m *.tcl *.java *.py; do
+    for j in *.c *.cc *.f *.m *.tcl *.java *.py; do
 	    mv $j $j-
     done
     )  
