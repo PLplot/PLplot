@@ -1061,7 +1061,8 @@ if_dbl({dnl
 		../fonts/*.c \
 		../{include}/*.h \
 		../drivers/*.c \
-		../drivers/motif/* \
+		../drivers/motif/*.c \
+		../drivers/motif/*.h \
 		.
 })
 if_amiga({
