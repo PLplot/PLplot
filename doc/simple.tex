@@ -1,0 +1,300 @@
+\c simple.tex
+\c Geoffrey Furnish
+\c 9 May 1994
+
+\node Simple Use, Advanced Use, Introduction, Top
+\chapter{Simple Use of PLplot}
+
+This is the simple introduction to plotting with plplot.
+
+\begin{menu}
+* Simple Plot::		Plotting a Simple Graph
+* Initializing::	PLplot
+* Scales::		Defining Plot Scales and Axes
+* Labelling::		The Graph
+* Drawing::		The Graph
+* Finishing::		Up...
+* Error::		In case of...
+\end{menu}
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\c \chapter {Simple Use of PLPLOT} \label{simple}
+
+\node Simple Plot, Initializing, Simple Use, Simple Use
+\section{Plotting a Simple Graph}
+
+We shall first consider plotting simple graphs showing the dependence
+of one variable upon another. Such a graph may be composed of several
+elements:
+\begin{itemize}
+   \item A box which defines the ranges of the variables, perhaps with axes
+         and numeric labels along its edges, 
+   \item A set of points or lines within the box showing the functional
+         dependence, 
+   \item A set of labels for the variables and a title for the graph.
+\end{itemize}
+In order to draw such a graph, it is necessary to call at least four of
+the PLPLOT functions:
+\begin{enumerate}
+   \item {\tt plstar}, to specify the device you want to plot on, 
+   \item {\tt plenv}, to define the range and scale of the graph, and
+                      draw labels, axes, etc., 
+   \item One or more calls to {\tt plline} or {\tt plpoin} to draw
+         lines or points as needed. Other more complex routines include
+         {\tt plbin} and {\tt plhist} to draw histograms, {\tt plerrx} and
+         {\tt plerry} to draw error-bars, \label{draw}
+   \item {\tt plend}, to close the plot.
+\end{enumerate}
+More than one graph can be drawn on a single set of axes by making
+repeated calls to the routines listed in item \ref{draw} above.  PLPLOT 
+only needs to be initialized once (via {\tt plstar} or a different startup
+routine), unless it is desired to switch output devices between pages.
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node Initializing, Scales, Simple Plot, Simple Use
+\section{Initializing PLPLOT} 
+\c \label{startingup}
+
+Subroutine {\tt plstar} selects a graphics device or opens a disk file to
+receive a plot for later display. If {\tt plstar} is called again during
+a program, the previously opened file will be closed. When called, 
+the user is prompted for a number representing the device on which
+the plot is to appear. The syntax for {\tt plstar} is:
+
+Xname{plstar(nx, ny);}
+Xargu{{\tt nx, ny} (PLINT, input)}
+{The number of plots to a page. The page is divided into
+\c {\tt nx}~$\times$~{\tt ny} subpages, with {\tt nx} in the horizontal
+direction, and {\tt ny} in the vertical direction.}
+
+Subpages are useful for placing several graphs on a page, but all
+subpages are constrained to be of the same size. For greater flexibility, 
+read page \pageref{viewport} in Section
+\ref{viewport} which discusses viewports.
+
+An alternate startup routine {\tt plstart} behaves identically to {\tt
+plstar} except that the device name is input by a keyword argument (keywords
+are listed for each device in Appendix \ref{ap:dev}).  This style of call is
+convenient if the user always outputs to the same device.  If the requested
+device is not available, or if the input string is empty or begins with
+``?'', the prompted startup of {\tt plstar} is used.  The syntax for {\tt
+plstart} is:
+
+Xname{plstart(devname, nx, ny);}
+Xargu{{\tt devname} (char *, input)}
+{The device name, in the form of a keyword for that device.}
+Xargu{{\tt nx, ny} (PLINT, input)}
+{The number of plots to a page, as in {\tt plstar}.}
+
+The majority of calls to PLPLOT are made after initializing it by one of the
+routines listed above, however, a few must be made {\em before\/} the
+initialization in order to correctly set up the subsequent plots (the
+description in the reference section identifies these setup calls).
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node Scales, Labelling, Initializing, Simple Use
+\section{Defining Plot Scales and Axes}
+
+The function {\tt plenv} is used to define the scales and axes for simple
+graphs. {\tt plenv} starts a new picture on the next subpage (or a new page
+if necessary), and defines the ranges of the variables required. The
+routine will also draw a box, axes, and numeric labels if requested.
+The syntax for {\tt plenv} is:
+
+Xname{plenv(xmin, xmax, ymin, ymax, just, axis);}
+Xargu{{\tt xmin, xmax} (PLFLT, input)}
+{The left and right limits for the horizontal axis.}
+Xargu{{\tt ymin, ymax} (PLFLT, input)}
+{The bottom and top limits for the vertical axis.}
+Xargu{{\tt just} (PLINT, input)}
+{This should be zero or one. If {\tt just} is one, the scales of the
+x-axis and
+y-axis will be the same (in units per millimeter); otherwise the axes are
+scaled independently. This parameter is useful for ensuring that objects
+such as circles have the correct aspect ratio in the final plot.}
+Xargu{{\tt axis} (PLINT, input)}
+{{\tt axis} controls whether a box, tick marks, labels, axes, and/or a
+grid are drawn.
+\begin{itemize}
+     \item {\tt axis=-2}: No box or annotation.
+     \item {\tt axis=-1}: Draw box only.
+     \item {\tt axis= 0}: Draw box, labelled with coordinate values around edge.
+     \item {\tt axis= 1}: In addition to box and labels, draw the two axes
+                          X=0 and Y=0.
+     \item {\tt axis= 2}: As for {\tt axis=1}, but also draw a grid at the major tick interval.
+     \item {\tt axis=10}: Logarithmic X axis, linear Y axis.
+     \item {\tt axis=11}: Logarithmic X axis, linear Y axis and draw line Y=0.
+     \item {\tt axis=20}: Linear X axis, logarithmic Y axis.
+     \item {\tt axis=21}: Linear X axis, logarithmic Y axis and draw line X=0.
+     \item {\tt axis=30}: Logarithmic X and Y axes.
+\end{itemize}
+}
+
+Note: Logarithmic axes only affect the appearance of the axes and their
+labels, so it is up to the user to compute the logarithms prior to passing
+them to {\tt plenv} and any of the other routines. Thus, if a graph has a
+\c 3-cycle logarithmic axis from 1 to 1000, we need to set {\tt
+\c xmin}$=\log_{10}1=0.0$, and {\tt xmax}$=\log_{10}1000=3.0$. 
+
+For greater control over the size of the plots, axis labelling and tick
+intervals, more complex graphs should make use of the functions
+\c \rou{plvpor}, \rou{plvasp}, \rou{plvpas}, \rou{plwind}, \rou{plbox}, and
+\c routines for manipulating axis labelling \rou{plgxax} through \rou{plszax},
+described in Chapter \ref{reference}. 
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node Labelling, Drawing, Scales, Simple Use
+\section{Labelling the Graph}
+
+The function {\tt pllab} may be called after {\tt plenv} to write labels
+on the x and y axes, and at the top of the picture. All the
+variables are character variables or constants. Trailing spaces
+are removed and the label is centered in the appropriate field.
+The syntax for {\tt pllab} is:
+
+Xname{pllab(xlbl, ylbl, toplbl);}
+Xargu{{\tt xlbl} (char *, input)}
+{Pointer to string with label for the X-axis (bottom of graph).}
+Xargu{{\tt ylbl} (char *, input)}
+{Pointer to string with label for the Y-axis (left of graph).}
+Xargu{{\tt toplbl} (char *, input)}
+{Pointer to string with label for the plot (top of picture).}
+
+\c More complex labels can be drawn using the function \rou{plmtex}.  See
+Section \ref{graph-text} for information about the function {\tt plptex}
+which writes labels within a graph, and section \ref{annotate} which
+discusses floating point formats.
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node Drawing, Finishing, Labelling, Simple Use
+\section{Drawing the Graph}
+
+PLPLOT can draw graphs consisting of points with optional error bars, 
+line segments or histograms. Functions which perform each of these
+actions may be called after setting up the plotting environment
+using {\tt plenv}. All of the following functions draw within the box
+defined by {\tt plenv}, and any lines crossing the boundary are clipped.
+Functions are also provided for drawing surface and contour representations
+of multi-dimensional functions. These are described in
+Chapter \ref{advanced}.
+
+\subsection {Drawing Points}
+{\tt plpoin} and {\tt plsym} mark out {\tt n} points
+{\tt (x[i], y[i])} with the
+specified symbol. The routines differ only in the interpretation
+of the symbol
+codes. {\tt plpoin} uses an extended ASCII representation, with the
+printable
+ASCII codes mapping to the respective characters in the current font, and
+the codes from 0--31 mapping to various useful symbols.
+In {\tt plsym} however, 
+the code is a Hershey font code number. Example programs are provided
+which display each of the symbols available using these routines.
+
+Xname{plpoin(n, x, y, code); {\rm and } plsym(n, x, y, code);}
+Xargu{{\tt n} (PLINT, input)}
+{the number of points to plot.}
+Xargu{{\tt x, y} (PLFLT *, input)}
+{pointers to arrays of the coordinates of the {\tt n} points.}
+Xargu{{\tt code} (PLINT, input)}
+{code number of symbol to draw.}
+
+\subsection {Drawing Lines or Curves}
+
+PLPLOT provides two functions for drawing line graphs.
+All lines are drawn in
+the currently selected color, style and width. See page \pageref{color} in
+Section \ref{color}, page \pageref{style} in Section \ref{style} and
+page \pageref{width} in Section \ref{width} for
+information about changing these parameters.
+
+{\tt plline} draws a line or curve. The curve consists of {\tt n-1} line
+segments joining the {\tt n} points in the input arrays. For single line
+segments, {\tt pljoin} is used to join two points.
+
+Xname{plline(n, x, y);}
+Xargu{{\tt n} (PLINT, input)}
+{the number of points.}
+Xargu{{\tt x, y} (PLFLT *, input)}
+{pointers to arrays with coordinates of the {\tt n} points.}
+
+Xname{pljoin(x1, y1, x2, y2);}
+Xargu{{\tt x1, y1} (PLFLT, input)}
+{coordinates of the first point.}
+Xargu{{\tt x2, y2} (PLFLT, input)}
+{coordinates of the second point.}
+
+\subsection {Writing Text on a Graph} \label {graph-text}
+
+{\tt plptex} allows text to be written within the limits set by
+{\tt plenv}. The reference point of a text string may be located
+anywhere along an imaginary horizontal line passing through the string
+at half the height of a capital letter. The parameter {\tt just} specifies
+where along this line the reference point is located. The string is then
+rotated about the reference point through an angle specified by the
+parameters {\tt dx} and {\tt dy}, so that the string becomes parallel
+to a line joining {\tt (x, y)} to {\tt (x+dx, y+dy)}.
+
+Xname{plptex(x, y, dx, dy, just, text);}
+Xargu{{\tt x, y} (PLFLT, input)}
+{coordinates of the reference point.}
+Xargu{{\tt dx, dy} (PLFLT, input)}
+{these specify the angle at which the text is to be printed. The text is
+ written parallel to a line joining the points {\tt (x, y)} to
+ {\tt (x+dx, y+dy)} on the graph.}
+Xargu{{\tt just} (PLFLT, input)}
+{determines justification of the string by specifying which point within
+ the string is placed at the reference point {\tt (x, y)}. This parameter
+ is a fraction of the distance along the string. Thus if {\tt just=0.0}, 
+ the reference point is at the left-hand edge of the string.
+ If {\tt just=0.5}, it is at the center and if {\tt just=1.0}, it is at
+ the right-hand edge.}
+Xargu{{\tt text} (char *, input)}
+{pointer to the string of characters to be written.}
+
+\subsection {Area Fills}
+
+Area fills are done in
+the currently selected color, line style, line width and pattern style.
+
+{\tt plfill} fills a polygon. The polygon consists of {\tt n}
+vertices which define the polygon.
+
+Xname{plfill(n, x, y);}
+Xargu{{\tt n} (PLINT, input)}
+{the number of vertices.}
+Xargu{{\tt x, y} (PLFLT *, input)}
+{pointers to arrays with coordinates of the {\tt n} vertices.}
+
+
+\subsection {More Complex Graphs (Histograms and Error Bars)}
+
+\c Functions \rou{plbin} and \rou{plhist} are provided for
+\c drawing histograms, and functions \rou{plerrx}
+\c and \rou{plerry} draw error bars about specified
+points. They are described in detail in Chapter \ref{reference}.
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node Finishing, Error, Drawing, Simple Use
+\section{Finishing Up}
+
+\c Before the end of the program, {\em always\/} call \rou{plend} to close any
+output plot files and to free up resources.  For devices that have separate
+graphics and text modes, {\tt plend} resets the device to text mode. 
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\node Error, , Finishing, Simple Use
+\section{In Case of Error}
+
+If a fatal error is encountered during execution of a PLPLOT routine then
+\c \rou{plexit} is called. This routine prints an error message, does resource
+recovery, calls {\tt pl\_exit} (page~\pageref{plxexit}) and then exits. The
+default {\tt pl\_exit} routine does nothing, but the user may wish to
+supply his/her own version of {\tt pl\_exit} (for C programs only). 

@@ -1,0 +1,153 @@
+% -*-latexinfo-*-
+% plplot.tex
+% Geoffrey Furnish
+% 9 May 1994
+%
+% This is a LaTeXinfo document detailing the use of PLplot.
+%
+% Process via:	% latex plplot
+%
+% $Id$
+% $Log$
+% Revision 1.1  1994/05/09 15:06:25  furnish
+% New files for building the PLplot manual via LaTeXinfo.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentstyle[12pt,fullpage,latexinfo]{book}
+\pagestyle{headings}
+
+\begin{document}
+
+\c Declare which indices you want to make use of.
+\newindex{cp}
+
+\title{ The PLPLOT Plotting Library \\ 
+        Programmer's Reference Manual \\
+        Version 4.0}
+\author{
+        Maurice J. LeBrun, 
+        Geoff Furnish, and
+        Tony Richardson$^1$\\
+\\
+        Institute for Fusion Studies\\
+        University of Texas at Austin\\
+        \\
+        $^1$Dept of Electrical Engineering\\
+        Duke University\\
+        }
+
+\date{\today}
+\maketitle
+
+\c The following commands start the copyright page for the printed manual.
+\clearpage
+\vspace{0pt plus 1filll}
+Copyright \copyright\ 1994 Geoffrey Furnish, Maurice LeBrun, ???
+
+PLplot may be used by anyone.
+
+This manual may be copied by anyone.
+
+Anyone may modify the program for personal use.
+
+\c Permission is granted to copy and distribute modified versions of this
+\c manual under the following five pages of conditions...
+
+\c End the Copyleft page and don't use headings on this page.
+\clearpage
+\pagestyle{headings}
+
+\pagenumbering{roman}
+\tableofcontents
+
+\c End the Table of Contents
+\clearpage
+\pagenumbering{arabic}
+
+\setfilename{plplot.info}
+\c Anything before the \setfilename will not appear in the Info file.
+
+\begin{ifinfo}
+Put another 5 page copyleft here for the Info file.
+\end{ifinfo}
+
+\c The Top node contains the master menu for the Info file.
+\c This appears only in the Info file, not the printed manual.
+
+\node Top,       Introduction, (dir),   (dir)
+
+This document describes PLplot, the awesome free plotting library for
+creating cool scientific plots.
+
+\begin{menu}
+* Introduction::	What PLplot is all about.
+
+* Simple Use::		How to get started.
+
+* Advanced Use::	How to go wild.
+
+* Extended WISH::	Integration with Tcl/Tk
+
+* API::			All the functions
+
+* Bibliography::	What you don't want to know about refs.
+
+* Concept Index::	All the stuff you need to know.
+\end{menu}
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\part{Introduction}
+
+\input{intro}
+
+\part{Programming}
+
+\input{simple}
+
+\input{advanced}
+
+\input{wish}
+
+\part{Reference}
+
+\input{api}
+
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\part{Closure}
+
+\bibliographystyle{plain}
+
+\node Bibliography, Concept Index, API, Top
+
+This is the bibliography.
+
+\c \begin{thebibliography}{1}
+\c 
+\c \bibitem{birdsall}
+\c C.~K. Birdsall and A.~B. Langdon.  {\it Plasma Physics via Computer
+\c Simulation}.  McGraw Hill, New York. 1985.
+\c 
+\c \bibitem{hockney}
+\c R.~W. Hockney and J.~W. Eastwood.  {\it Computer Simulation Using Particles}.
+\c Adam Hilgar, Bristol and New York. 1988.
+\c 
+\c \bibitem{lebrun}
+\c M.~J. LeBrun, M. G. Gray, G. Furnish, T. Tajima, and W. D. Nystrom  {\it
+\c The Numerical ``Laboratory'' for Plasma Simulation: A Modern Approach
+\c for the Condtruction and Maintenance of a Large Simulation Code}
+\c Proceedings of the 14th International Conference on the Numerical
+\c Simulation of Plasmas
+\c 
+\c \end{thebibliography}
+
+\c  \node Concept Index, Top, First Chapter, Top
+ \node Concept Index,, Bibliography, Top
+\c  \unnumbered{Concept Index}
+
+\twocolumn
+\printindex{cp}
+
+\end{document}

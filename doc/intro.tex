@@ -1,0 +1,294 @@
+\c intro.tex
+\c Geoffrey Furnish
+\c 9 May 1994
+
+\node Introduction, Simple Use, Top, Top
+\chapter{Introduction}
+\cindex{PLPLOT Introduction}
+
+This chapter introduces the incredibly cool PLplot scientific plotting
+package.
+
+\begin{menu}
+* Library::		The PLplot Plotting Library
+* Acquiring PLplot::	How to get it.
+* Installing::		Installing and Using PLplot
+* Organization::	Of this Manual
+* Credits::		To whom it's due.
+\end{menu}
+
+\c \pagenumbering{arabic}
+\node Library, Acquiring PLplot, Introduction, Introduction
+\section{The PLPLOT Plotting Library}
+
+PLPLOT is a library of C functions that are useful for making
+scientific plots from a program written in C, C++, or Fortran.  The
+PLPLOT library can be used to create standard x-y plots, semilog
+plots, log-log plots, contour plots, 3D plots, mesh plots, bar charts
+and pie charts.  Multiple graphs (of the same or different sizes) may
+be placed on a single page with multiple lines in each graph.
+Different line styles, widths and colors are supported.  A virtually
+infinite number of distinct area fill patterns may be used.  There are
+almost 1000 characters in the extended character set.  This includes
+four different fonts, the Greek alphabet and a host of mathematical,
+musical, and other symbols.  The fonts can be scaled to any desired
+size.  A variety of output devices are supported and new devices can
+be easily added by writing a small number of device dependent
+routines.
+
+Many of the underlying concepts used in the PLPLOT subroutine package
+are based on ideas used in Tim Pearson's PGPLOT package originally
+written in VAX-specific Fortran-77.  Sze Tan of the University of
+Auckland originally developed PLPLOT on an IBM PC, and subsequently
+transferred it to a number of other machines.  Additional features
+were added to allow three-dimensional plotting and better access to
+low-level routines.
+
+The C version of PLPLOT was developed by Tony Richardson on a
+Commodore Amiga.  In the process, several of the routines were
+rewritten to improve efficiency and some new features added.  The
+program structure was changed somewhat to make it easier to
+incorporate new devices.
+
+PLPLOT 4.0 is primarily the result of efforts by Maurice LeBrun and
+Geoff Furnish of University of Texas at Austin to extend and improve
+the previous work (PLPLOT 2.6b and 3.0, by Tony Richardson).  PLPLOT
+4.0 is currently used as the main graphics engine for TPC (Toroidal
+Particle Code), a large plasma simulation code developed at the IFS
+\cite{lebrun89a}.  During this work we have found that PLPLOT compares
+well with ``heavier'' packages (read: expensive, slow) and is an
+excellent choice for scientists seeking an inexpensive (or free) but
+high quality graphics package that runs on many different computing
+platforms.
+
+Some of the improvements in PLPLOT 4.0 include: the addition of
+several new routines to enhance usage from Fortran and design of a
+portable C to Fortran interface.  Additional support was added for
+coordinate mappings in contour plots and some bugs fixed.  New
+labelling options were added.  The font handling code was made more
+flexible and portable.  A portable PLPLOT metafile driver and renderer
+was developed, allowing one to create a generic graphics file and do
+the actual rendering later (even on a different system).  The ability
+to create family output files was added.  The internal code structure
+was dramatically reworked, with elimination of global variables (for a
+more robust package), the drivers rewritten to improve consistency,
+and the ability to maintain multiple output streams added.  An XFig
+driver was added.  Other contributions include Clair Nielsen's (LANL)
+X-window driver (very nice for high-speed color graphics) and
+tektronix file viewer.  At present, Maurice LeBrun and Geoff Furnish
+are the active developers and maintainers of PLPLOT.
+
+We have attempted to keep PLPLOT 4.0 backward compatible with previous
+versions of PLPLOT.  However, some functions are now obsolete, and
+many new ones have been added (e.g.  new contouring functions,
+variable get/set routines, functions that affect label appearance).
+Codes written in C that use PLPLOT must be recompiled including the
+new header file ({\tt plplot.h}) before linking to the new PLPLOT
+library.
+
+PLPLOT is currently known to work on the following systems: SUNOS,
+HP-UX, A/IX, DG/UX, UNICOS, Ultrix, VMS, Amiga/Exec, MS-DOS, OS/2, and
+NeXT, with more expected.  The PLPLOT package is freely distributable,
+but {\em not\/} in the public domain.  There have been various
+copyrights placed on the software; see section \ref{sec:credits} for
+the full list and criteria for distribution.
+
+We welcome suggestions on how to improve this code, especially in the
+form of user-contributed enhancements or bug fixes.  If PLPLOT is used
+in any published papers, please include an acknowledgment or citation
+of our work, which will help us to continue improving PLPLOT.  Please
+direct all communication to:
+
+\c \begin{tabbing}
+\c 01234567\=
+\c 	89012345678901234567890123456789\= \kill
+\c %
+\c 	\>Dr. Maurice LeBrun		\>Internet:\\
+\c 	\>Institute for Fusion Studies	\>mjl@fusion.ph.utexas.edu\\
+\c 	\>University of Texas\\
+\c 	\>Austin, TX  78712\\
+\c \\
+\c 	\>Geoff Furnish			\>Internet:\\
+\c 	\>Institute for Fusion Studies	\>furnish@fusion.ph.utexas.edu\\
+\c 	\>University of Texas\\
+\c 	\>Austin, TX  78712\\
+\c \\
+\c 	\>Tony Richardson		\>Internet:\\
+\c 	\>184 Electrical Engineering	\>amr@egr.duke.edu\\
+\c 	\>Duke University\\
+\c 	\>Durham, NC 27706\\
+\c \end{tabbing}
+
+The original version of this manual was written by Sze Tan.
+
+\node Acquiring PLplot, Installing, Library, Introduction
+\section{Getting a copy of the PLPLOT package}
+
+At present, the only mechanism we are providing for distribution of
+the PLPLOT is by electronic transmission over the Internet.  We
+encourage others to make it available to users without Internet
+access.  PLPLOT may be obtained by {\tt ftp} from {\tt
+hagar.ph.utexas.edu} (128.83.179.27).  Login as user {\tt anonymous},
+set file transfer type to binary, and get the newest plplot archive in
+the {\tt pub/} subdirectory.  We will provide PLPLOT in both {\tt zoo}
+and {\tt tar} archives; get whichever one you prefer.
+
+\node Installing, Organization, Acquiring PLplot, Introduction
+\section{Installing and Using the PLPLOT Library}
+
+The installation procedure is by necessity system specific;
+installation notes for each system are provided in Appendix
+\ref{ap:sys}.  The procedure requires that all of the routines be
+compiled and they are then usually placed in a linkable library.
+
+After the library has been created, you can write your main program to
+make the desired PLPLOT calls.  Example programs in both C and Fortran
+are included as a guide (if calling from C, you must include {\tt
+plplot.h} into your program; see Appendix \ref{ap:lang} for more
+details).  Plots generated from the example programs are shown at the
+end of this work.
+
+You will then need to compile your program and link it with the PLPLOT
+library(s).  Again, please refer to the documentation specific to your
+system for this.  Note that there may be more than one library
+available to link with, such as single or double precision, with or
+without X window libraries, IEEE floating point or Motorola FFP, etc.
+Make sure you link to the correct one for your program.
+
+\node Organization, Credits, Installing, Introduction
+\section{Organization of this Manual}
+
+The PLPLOT library has been designed so that it is easy to write
+programs producing graphical output without having to set up large
+numbers of parameters.  However, more precise control of the results
+may be necessary, and these are accomodated by providing lower-level
+routines which change the system defaults.  In Chapter \ref{simple},
+the overall process of producing a graph using the high-level routines
+is described.  Chapter\ref{advanced} discusses the underlying concepts
+of the plotting process and introduces some of the more complex
+routines.  Chapter \ref{reference} is the reference section of the
+manual, containing an alphabetical list of the user-accessible PLPLOT
+functions with detailed descriptions.
+
+Because the PLPLOT kernel is written in C, standard C syntax is used
+in the description of each PLPLOT function.  The C and Fortran
+language interfaces are discussed in Appendix \ref{ap:lang}; look
+there if you have difficulty interpreting the call syntax as described
+in this manual.  The meaning of function (subroutine) arguments is
+typically the same regardless of whether you are calling from C or
+Fortran (but there are some exceptions to this).  The arguments for
+each function are usually specified in terms of PLFLT and PLINT ---
+these are the internal PLPLOT representations for integer and floating
+point, and are typically a long and a float (or an INTEGER and a REAL,
+for Fortran programmers).  See Appendix \ref{ap:lang} for more detail.
+
+Also, you can use PLPLOT from C++ just as you would from C.  No
+special classes are available at this time, just use it as any other
+procedural type library.  Simply include {\tt plplot.h}, and invoke as
+you would from C.
+
+The output devices supported by PLPLOT are listed in Appendix
+\ref{ap:dev}, along with description of the device driver--PLPLOT
+interface, metafile output, family files, and vt100/tek4010 emulators.
+In Appendix\ref{ap:sys} the usage and installation for each system
+supported by PLPLOT is described (not guaranteed to be entirely
+up-to-date; check the release notes to be sure).
+
+\node Credits, , Organization, Introduction
+\section{Credits}
+\label{sec:credits}
+
+PLPLOT 4.0 was created through the effort of many individuals and
+funding agencies.  We would like to acknowledge the support (financial
+and otherwise) of the following institutions:
+
+\c \begin{description}
+\c \item	The Institute for Fusion Studies, University of Texas at Austin
+\c \item	The Scientific and Technology Agency of Japan
+\c \item	Japan Atomic Energy Research Institute
+\c \item	Duke University
+\c \item	Universite de Nice
+\c \item	National Energy Research Supercomputer Center
+\c \item	Los Alamos National Labs
+\c \end{description}
+
+The authors disclaim all warranties with regard to this software,
+including all implied warranties of merchantability and fitness, In no
+event shall the authors be liable for any special, indirect or
+consequential damages or any damages whatsoever resulting from loss of
+use, data or profits, whether in an action of contract, negligence or
+other tortious action, arising out of or in connection with the use or
+performance of this software.
+
+The PLPLOT source code, except header files and those files explicitly
+granting permission, may not be used in a commercial software package
+without consent of the authors.  You are allowed and encouraged to
+include the PLPLOT object library and header files in a commercial
+package provided that: (1) it is explicitly and prominently stated
+that the PLPLOT library is freely available, and (2) the full
+copyrights on the PLPLOT package be displayed somewhere in the
+documentation for the package.
+
+PLPLOT was first derived from the excellent PGPLOT graphics package by
+T.  J. Pearson.  All parts of PLPLOT not explicitly marked by a
+copyright are assumed to derive sufficiently from the original to be
+covered by the PGPLOT copyright:
+\begin{verbatim}
+***********************************************************************
+*                                                                     *
+*  Copyright (c) 1983-1991 by                                         *
+*  California Institute of Technology.                                *
+*  All rights reserved.                                               *
+*                                                                     *
+*  For further information, contact:                                  *
+*     Dr. T. J. Pearson                                               *
+*     105-24 California Institute of Technology,                      *
+*     Pasadena, California 91125, USA                                 *
+*                                                                     *
+***********************************************************************
+\end{verbatim}
+
+The code in PLPLOT not derived from PGPLOT is Copyright 1992 by
+Maurice J.  LeBrun and Geoff Furnish of the University of Texas at
+Austin and Tony Richardson of Duke University.  Unless otherwise
+specified, code written by us as a part of this package may be freely
+copied, modified and redistributed without fee provided that all
+copyright notices are preserved intact on all copies and modified
+copies.
+
+The startup code for plrender.c is from {\tt xterm.c} of the X-windows
+Release 5.0 distribution, and we reproduce its copyright here:
+\begin{verbatim}
+Copyright 1987, 1988 by Digital Equipment Corporation, Maynard, Massachusetts,
+and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
+
+                        All Rights Reserved
+
+Permission to use, copy, modify, and distribute this software and its 
+documentation for any purpose and without fee is hereby granted, 
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in 
+supporting documentation, and that the names of Digital or MIT not be
+used in advertising or publicity pertaining to distribution of the
+software without specific, written prior permission.  
+
+DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
+DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+SOFTWARE.
+\end{verbatim}
+
+Thanks are also due to the many contributors to PLPLOT, including:
+
+\c \begin{description}
+\c \item Tony Richardson: Creator of PLPLOT 2.6b, 3.0
+\c \item Sam Paolucci (postscript driver)
+\c \item Clair Nielsen (X driver and tektronix file viewer)
+\c \item Tom Rokicki (IFF driver and Amiga printer driver)
+\c \end{description}
+
+Finally, thanks to all those who submitted bug reports and other
+suggestions.
