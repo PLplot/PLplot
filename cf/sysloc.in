@@ -12,8 +12,18 @@
 # Includes code and ideas taken from the BLT (Tk extension) configure.
 # ----------------------------------------------------------------------------
 
-inc_path=
-lib_path=
+INCPATH=
+LIBPATH=
+
+# Default linker library commands.  These may need version numbers
+# appended to them though.
+
+DPLIBSTR=-ldpnetwork
+ITKLIBSTR=-litk
+TKLIBSTR=-ltk
+ITCLLIBSTR=-litcl
+TCLLIBSTR=-ltcl
+XLIBSTR=-lX11
 
 # ----------------------------------------------------------------------------
 # Run xmkmf to check for location of X libraries and includes.  If not
@@ -37,7 +47,7 @@ if test "$enable_xwin" = "yes"; then
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    AC_TRY_CPP([#include <X11/Intrinsic.h>], [ XINCDIR=default ], [
-	    places="\
+	    incdirs="\
 	    /usr/include \
 	    /usr/include/X11 \
 	    /usr/include/X11R5 \
@@ -61,7 +71,7 @@ if test "$enable_xwin" = "yes"; then
 		fi
 	    done
 	    if test -z "$XINCDIR"; then
-		AC_MSG_RESULT(warning: couldn't find any X11 include files)
+		AC_MSG_RESULT(warning: X11 include files not found)
 		XINCDIR=default
 		enable_xwin=no
 	    fi ])
@@ -73,7 +83,7 @@ if test "$enable_xwin" = "yes"; then
 	XLIBDIR="$x_libraries"
 	if test -z "$XLIBDIR"; then
 	    AC_CHECK_LIB(X11, main, [ XLIBDIR=default ], [
-	    places="\
+	    libdirs="\
 	    /lib \
 	    /usr/lib \
 	    /usr/lib/X11R5 \
@@ -94,7 +104,7 @@ if test "$enable_xwin" = "yes"; then
 		fi
 	    done
 	    if test -z "$XLIBDIR"; then
-		AC_MSG_RESULT(warning: couldn't find the X11 library archive)
+		AC_MSG_RESULT(warning: X11 library not found)
 		XLIBDIR=default
 	    fi ])
 	fi
@@ -112,10 +122,39 @@ fi
 #
 # Note: it is important to check in user directories _before_ checking
 # anywhere else.  That way you can easily compile custom versions (of Tcl,
-# Tk, etc), put them in your file space, and have them be found first.
-# Some examples: libraries compiled with debugging turned on, or from a
-# different revision of the (Tcl, Tk, etc) package.
+# Tk, etc), put them in your file space, and have them be found first.  Some
+# examples: libraries compiled with debugging turned on, or from a different
+# revision of the (Tcl, Tk, etc) package.  Also, when dealing with multiple
+# versions (e.g. libtcl7.4.a vs the older libtcl.a), check for the newer
+# version first.
 # ----------------------------------------------------------------------------
+
+# Default directories to search for include files
+
+incdirs_default="\
+$prefix/include \
+$HOME/local/include \
+$HOME/include \
+/usr/local/include \
+/usr/include/tcl \
+/usr/include"
+
+# Default directories to search for library files
+
+libdirs_default="\
+$prefix/lib \
+$HOME/local/lib \
+$HOME/lib \
+/usr/local/lib \
+/usr/lib"
+
+incdirs=$incdirs_default
+libdirs=$libdirs_default
+
+if test -n "$with_pkgdir"; then
+    incdirs="$with_pkgdir/include $incdirs"
+    libdirs="$with_pkgdir/lib $libdirs"
+fi
 
 # ----------------------------------------------------------------------------
 # tcl.h
@@ -127,21 +166,6 @@ MY_ARG_ENABLE(tcl,
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLINCDIR"; then
-	places="\
-	$prefix/include \
-	$HOME/local/tcl7.3/include \
-	$HOME/local/tk3.6/include \
-	$HOME/local/include \
-	$HOME/include \
-	$PWD/../tcl7.3 \
-	/usr/local/include \
-	/usr/include/tcl \
-	/usr/local/tcl7.3/include \
-	/usr/local/tk3.6/include \
-	$XINCDIR/tk \
-	$XINCDIR \
-	/usr/include"
-
 	FIND_INC(tcl, TCLINCDIR, enable_tcl)
     fi
 fi
@@ -152,27 +176,19 @@ fi
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
-	places="\
-	$prefix/lib \
-	$HOME/local/tk3.6/lib \
-	$HOME/local/tcl7.3/lib \
-	$HOME/local/lib \
-	$HOME/lib \
-	$PWD/../tcl7.3 \
-	/usr/local/lib \
-	/usr/local/tk3.6/lib \
-	/usr/local/tcl7.3/lib \
-	$XLIBDIR \
-	/usr/lib"
-
-	FIND_LIB(tcl, TCLLIBDIR, enable_tcl)
+	FIND_LIB_BEGIN(tcl, TCLLIBDIR)
+	for version in 7.4 ""; do
+	    if test -n "$TCLLIBDIR"; then
+		break
+	    fi
+	    FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
+	done
+	FIND_LIB_END(tcl, TCLLIBDIR, enable_tcl)
     fi
 fi
 
 # ----------------------------------------------------------------------------
 # itcl.h
-#
-# If not in $TCLINCDIR, probably in the user's area.
 # ----------------------------------------------------------------------------
 
 MY_ARG_ENABLE(itcl,
@@ -181,20 +197,6 @@ MY_ARG_ENABLE(itcl,
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLINCDIR"; then
-	places="\
-	$prefix/include \
-	$TCLINCDIR \
-	$HOME/local/tcl7.3/include \
-	$HOME/local/tk3.6/include \
-	$HOME/local/include \
-	$HOME/include \
-	$PWD/../itcl-1.5
-	/usr/local/include \
-	/usr/include/tcl \
-	/usr/local/tcl7.3/include \
-	/usr/local/tk3.6/include \
-	/usr/include"
-
 	FIND_INC(itcl, ITCLINCDIR, enable_itcl)
     fi
 fi
@@ -205,25 +207,15 @@ fi
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLLIBDIR"; then
-	places="\
-	$prefix/lib \
-	$TCLLIBDIR \
-	$HOME/local/tk3.6/lib \
-	$HOME/local/lib \
-	$HOME/lib \
-	$PWD/../itcl-1.5 \
-	/usr/local/lib \
-	/usr/local/tcl7.0/lib \
-	/usr/local/tk3.6/lib \
-	$XLIBDIR \
-	/usr/lib"
-
-	FIND_LIB(itcl, ITCLLIBDIR, enable_itcl)
+	FIND_LIB_BEGIN(itcl, ITCLLIBDIR)
+	for version in 2.0 ""; do
+	    if test -n "$ITCLLIBDIR"; then
+		break
+	    fi
+	    FIND_LIB_SET(itcl$version, ITCLLIBDIR, ITCLLIBSTR)
+	done
+	FIND_LIB_END(itcl, ITCLLIBDIR, enable_itcl)
     fi
-fi
-
-if test "$enable_itcl" = "yes"; then
-    AC_DEFINE(HAVE_ITCL)
 fi
 
 # ----------------------------------------------------------------------------
@@ -240,21 +232,6 @@ fi
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKINCDIR"; then
-	places="\
-	$prefix/include \
-	$TCLINCDIR \
-	$HOME/local/tk3.6/include \
-	$HOME/local/include \
-	$HOME/include \
-	$PWD/../tk3.6 \
-	$XINCDIR/tk \
-	$XINCDIR \
-	/usr/local/include \
-	/usr/include/tcl \
-	/usr/local/tcl7.3/include \
-	/usr/local/tk3.6/include \
-	/usr/include"
-
 	FIND_INC(tk, TKINCDIR, enable_tk)
     fi
 fi
@@ -265,27 +242,45 @@ fi
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
-	places="\
-	$prefix/lib \
-	$TCLLIBDIR \
-	$HOME/local/tk3.6/lib \
-	$HOME/local/lib \
-	$HOME/lib \
-	$PWD/../tk3.6 \
-	/usr/local/lib \
-	/usr/local/tcl7.0/lib \
-	/usr/local/tk3.6/lib \
-	$XLIBDIR \
-	/usr/lib"
-
-	FIND_LIB(tk, TKLIBDIR, enable_tk)
+	FIND_LIB_BEGIN(tk, TKLIBDIR)
+	for version in 4.0 ""; do
+	    if test -n "$TKLIBDIR"; then
+		break
+	    fi
+	    FIND_LIB_SET(tk$version, TKLIBDIR, TKLIBSTR)
+	done
+	FIND_LIB_END(tk, TKLIBDIR, enable_tk)
     fi
 fi
 
 # ----------------------------------------------------------------------------
+# libitk
+# ----------------------------------------------------------------------------
+
+enable_itk="yes"
+if test "$enable_tk" = "no" -o "$enable_itcl" = "no"; then
+    enable_itk="no"
+fi
+
+if test "$enable_itk" = "yes"; then
+    if test -z "$ITKLIBDIR"; then
+	FIND_LIB_BEGIN(itk, ITKLIBDIR)
+	for version in 2.0 ""; do
+	    if test -n "$ITKLIBDIR"; then
+		break
+	    fi
+	    FIND_LIB_SET(itk$version, ITKLIBDIR, ITKLIBSTR)
+	done
+	FIND_LIB_END(itk, ITKLIBDIR, enable_itk)
+    fi
+fi
+
+if test "$enable_itk" = "yes"; then
+    AC_DEFINE(HAVE_ITK)
+fi
+
+# ----------------------------------------------------------------------------
 # dp.h
-#
-# If not in $TCLINCDIR, probably in the user's area.
 # ----------------------------------------------------------------------------
 
 MY_ARG_ENABLE(dp,
@@ -298,21 +293,6 @@ fi
 
 if test "$enable_dp" = "yes"; then
     if test -z "$DPINCDIR"; then
-	places="\
-	$prefix/include \
-	$TCLINCDIR \
-	$HOME/local/tcl7.3/include \
-	$HOME/local/tk3.6/include \
-	$HOME/local/include \
-	$HOME/include \
-	$PWD/../tcl-dp3.1 \
-	$PWD/../tcl-dp3.2 \
-	/usr/local/include \
-	/usr/include/tcl \
-	/usr/local/tcl7.3/include \
-	/usr/local/tk3.6/include \
-	/usr/include"
-
 	FIND_INC(dp, DPINCDIR, enable_dp)
     fi
 fi
@@ -323,21 +303,7 @@ fi
 
 if test "$enable_dp" = "yes"; then
     if test -z "$DPLIBDIR"; then
-	places="\
-	$prefix/lib \
-	$TCLLIBDIR \
-	$HOME/local/tk3.6/lib \
-	$HOME/local/lib \
-	$HOME/lib \
-	$PWD/../tcl-dp3.1 \
-	$PWD/../tcl-dp3.2 \
-	/usr/local/lib \
-	/usr/local/tcl7.0/lib \
-	/usr/local/tk3.6/lib \
-	$XLIBDIR \
-	/usr/lib"
-
-	FIND_LIB(dpnetwork, DPLIBDIR, enable_dp)
+	FIND_LIB(dpnetwork, DPLIBDIR, DPLIBSTR, enable_dp)
     fi
 fi
 
@@ -347,19 +313,19 @@ fi
 # ----------------------------------------------------------------------------
 
 if test "$enable_xwin" = "yes"; then
-    ADD_TO_INCS($XINCDIR)
+    ADD_TO_INCS($XINCDIR, INCS, INCPATH)
 fi
 if test "$enable_tcl" = "yes"; then
-    ADD_TO_INCS($TCLINCDIR)
+    ADD_TO_INCS($TCLINCDIR, INCS, INCPATH)
 fi
 if test "$enable_dp" = "yes"; then
-    ADD_TO_INCS($DPINCDIR)
+    ADD_TO_INCS($DPINCDIR, INCS, INCPATH)
 fi
 if test "$enable_itcl" = "yes"; then
-    ADD_TO_INCS($ITCLINCDIR)
+    ADD_TO_INCS($ITCLINCDIR, INCS, INCPATH)
 fi
 if test "$enable_tk" = "yes"; then
-    ADD_TO_INCS($TKINCDIR)
+    ADD_TO_INCS($TKINCDIR, INCS, INCPATH)
 fi
 
 # ----------------------------------------------------------------------------
@@ -372,19 +338,22 @@ fi
 # ----------------------------------------------------------------------------
 
 if test "$enable_dp" = "yes"; then
-    ADD_TO_LIBS($DPLIBDIR, -ldpnetwork)
+    ADD_TO_LIBS($DPLIBDIR, $DPLIBSTR, LIBS, LIBPATH)
 fi
-if test "$enable_itcl" = "yes"; then
-    ADD_TO_LIBS($ITCLLIBDIR, -litk -litcl)
+if test "$enable_itk" = "yes"; then
+    ADD_TO_LIBS($ITKLIBDIR, $ITKLIBSTR, LIBS, LIBPATH)
 fi
 if test "$enable_tk" = "yes"; then
-    ADD_TO_LIBS($TKLIBDIR, -ltk)
+    ADD_TO_LIBS($TKLIBDIR, $TKLIBSTR, LIBS, LIBPATH)
+fi
+if test "$enable_itcl" = "yes"; then
+    ADD_TO_LIBS($ITCLLIBDIR, $ITCLLIBSTR, LIBS, LIBPATH)
 fi
 if test "$enable_tcl" = "yes"; then
-    ADD_TO_LIBS($TCLLIBDIR, -ltcl)
+    ADD_TO_LIBS($TCLLIBDIR, $TCLLIBSTR, LIBS, LIBPATH)
 fi
 if test "$enable_xwin" = "yes"; then
-    ADD_TO_LIBS($XLIBDIR, -lX11)
+    ADD_TO_LIBS($XLIBDIR, $XLIBSTR, LIBS, LIBPATH)
 fi
 
 # ----------------------------------------------------------------------------
@@ -395,7 +364,7 @@ fi
 
 if test "$with_dbmalloc" = "yes"; then
     if test -z "$DBMALLOCLIBDIR"; then
-	places="\
+	libdirs="\
 	$prefix/lib \
 	$HOME/local/lib \
 	$HOME/dbmalloc/lib \
@@ -407,13 +376,13 @@ if test "$with_dbmalloc" = "yes"; then
 	FIND_LIB(dbmalloc, DBMALLOCLIBDIR, with_dbmalloc)
     fi
     if test -n "$DBMALLOCLIBDIR"; then
-	ADD_TO_LIBS($DBMALLOCLIBDIR, -ldbmalloc)
+	ADD_TO_LIBS($DBMALLOCLIBDIR, -ldbmalloc, LIBS, LIBPATH)
     fi
 fi
 
 if test "$with_dbmalloc" = "yes"; then
     if test -z "$DBMALLOCINCDIR"; then
-	places="\
+	incdirs="\
 	$prefix/include \
 	$HOME/local/include \
 	$HOME/local/dbmalloc/include \
@@ -425,7 +394,7 @@ if test "$with_dbmalloc" = "yes"; then
 	FIND_INC(malloc, DBMALLOCINCDIR, with_dbmalloc)
     fi
     if test -n "$DBMALLOCINCDIR"; then
-	ADD_TO_INCS($DBMALLOCINCDIR)
+	ADD_TO_INCS($DBMALLOCINCDIR, INCS, INCPATH)
     fi
 fi
 
@@ -446,7 +415,7 @@ fi
 
 if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
-	places="\
+	incdirs="\
 	$prefix/include/Py \
 	$HOME/local/include/Py \
 	$HOME/local/python/include/Py \
@@ -473,7 +442,7 @@ if test "$enable_python" = "yes"; then
 	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[[^/]]*/[[^/]]*$,,'`
 	PYTHON_MOD_DIR=$python_dir/lib/python/$MACHDEP
 	if test ! -d "$PYTHON_MOD_DIR"; then
-	    AC_MSG_RESULT([couldn't find PYTHON_MOD_DIR, setting enable_python to no])
+	    AC_MSG_RESULT([PYTHON_MOD_DIR not found, setting enable_python to no])
 	    enable_python=no
 	fi
     fi
@@ -488,7 +457,7 @@ AC_SUBST(PYTHON_MOD_DIR)
 
 if test "$with_f2c" = "yes"; then
     AC_CHECK_LIB(f2c, main, [LIBS="$LIBS -lf2c"],
-    AC_MSG_RESULT(warning: couldn't find libf2c))
+    AC_MSG_RESULT(warning: libf2c not found))
 fi
 
 # ----------------------------------------------------------------------------
