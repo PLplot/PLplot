@@ -28,8 +28,6 @@
 
 #include "plstream.h"
 
-#include <cstdlib>
-#include <cctype>
 #include <iostream>
 #include <cmath>
 #ifdef HAVE_UNISTD_H
@@ -40,7 +38,9 @@
 # endif
 #endif
 
+#ifdef USE_NAMESPACE
 using namespace std;
+#endif
 
 class x17 {
 

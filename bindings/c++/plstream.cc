@@ -31,7 +31,9 @@
 
 #include <iostream>
 
+#ifdef USE_NAMESPACE
 using namespace std;
+#endif
 
 PLFLT Contourable_Data_evaluator( PLINT i, PLINT j, PLPointer p )
 {

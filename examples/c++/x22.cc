@@ -29,11 +29,12 @@
 #include "plstream.h"
 #include "plevent.h"
 
-#include <cstdlib>
-#include <cctype>
+#include <iostream>
 #include <cmath>
 
+#ifdef USE_NAMESPACE
 using namespace std;
+#endif
 
 class x22 {
 

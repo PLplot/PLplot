@@ -29,12 +29,14 @@
 // relating to 2-d plotting.
 //---------------------------------------------------------------------------//
 
-#include <stdlib.h>
-#include <math.h>
+#include <cmath>
+#include <iostream>
 
 #include "plstream.h"
 
+#ifdef USE_NAMESPACE
 using namespace std;
+#endif
 
 //---------------------------------------------------------------------------//
 // In the real world, the user has his own Matrix class, so he just includes

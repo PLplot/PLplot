@@ -26,14 +26,14 @@
 // Implementation of PLplot example 13 in C++.
 //---------------------------------------------------------------------------//
 
-#include <cstdlib>
-#include <cctype>
+#include "plstream.h"
+
 #include <iostream>
 #include <cmath>
 
-#include "plstream.h"
-
+#ifdef USE_NAMESPACE
 using namespace std;
+#endif
 
 static char* text[] = {"Maurice", "Geoffrey", "Alan", "Rafael", "Vince"};
 static int per[] = {10, 32, 12, 30, 16};

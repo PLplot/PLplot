@@ -26,14 +26,14 @@
 // Implementation of PLplot example 15 in C++.
 //---------------------------------------------------------------------------//
 
-#include <cstdlib>
-#include <cctype>
+#include "plstream.h"
+
 #include <iostream>
 #include <cmath>
 
-#include "plstream.h"
-
+#ifdef USE_NAMESPACE
 using namespace std;
+#endif
 
 class x15 {
 

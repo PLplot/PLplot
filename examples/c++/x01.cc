@@ -28,9 +28,7 @@
 
 #include "plstream.h"
 #include "plevent.h"
-#include "plConfig.h"
 
-#include <cctype>
 #include <iostream>
 #include <cmath>
 #ifdef HAVE_UNISTD_H
@@ -137,7 +135,7 @@ x01::x01( int argc, char ** argv ) {
   // Print out version number, just for kicks.
   pls->gver(ver);
 
-   cout << "PLplot library version: " <<  ver << endl;
+  cout << "PLplot library version: " <<  ver << endl;
 
 
   // Initialize PLplot.

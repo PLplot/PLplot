@@ -26,14 +26,14 @@
 // Implementation of PLplot example 07 in C++.
 //---------------------------------------------------------------------------//
 
-#include <cstdlib>
-#include <cctype>
+#include "plstream.h"
+
 #include <iostream>
 #include <cmath>
 
-#include "plstream.h"
-
+#ifdef USE_NAMESPACE
 using namespace std;
+#endif
 
 static int base[17] = {
   0, 200, 500, 600, 700, 800, 900,

@@ -26,8 +26,8 @@
 // Implementation of PLplot example 21 in C++.
 //---------------------------------------------------------------------------//
 
-#include <cstdlib>
-#include <cctype>
+#include "plstream.h"
+
 #include <iostream>
 #include <cmath>
 #include <time.h>
@@ -36,9 +36,9 @@
   #define isnan(x) ((x) != (x))
 #endif
 
-#include "plstream.h"
-
+#ifdef USE_NAMESPACE
 using namespace std;
+#endif
 
 class x21 {
 
@@ -209,7 +209,7 @@ x21::x21( int argc, char ** argv ) {
 
   create_grid(&xg, xp, &yg, yp); /* grid the data at */
   pls->Alloc2dGrid(&zg, xp, yp); /* the output grided data */
-  clev = (PLFLT *) malloc(nl * sizeof(PLFLT));
+  clev = new PLFLT[nl];
 
   sprintf(xlab, "Npts=%d gridx=%d gridy=%d", pts, xp, yp);
   pls->col0(1);
@@ -317,7 +317,7 @@ x21::x21( int argc, char ** argv ) {
 
   free_data(x, y, z);
   free_grid(xg, yg);
-  free(clev);
+  delete[] clev;
   pls->Free2dGrid(zg, xp, yp);
 
   delete pls;
@@ -350,8 +350,8 @@ void x21::create_grid(PLFLT **xi, int px, PLFLT **yi, int py) {
   PLFLT *x, *y;
   int i;
 
-  x = *xi = (PLFLT *) malloc(px * sizeof(PLFLT));
-  y = *yi = (PLFLT *) malloc(py * sizeof(PLFLT));
+  x = *xi = new PLFLT[px];
+  y = *yi = new PLFLT[py];
 
   for (i=0; i<px; i++)
     *x++ = xm + (xM-xm)*i/(px-1.);
@@ -361,8 +361,8 @@ void x21::create_grid(PLFLT **xi, int px, PLFLT **yi, int py) {
 }
 
 void x21::free_grid(PLFLT *xi, PLFLT *yi) {
-  free(xi);
-  free(yi);
+  delete[] xi;
+  delete[] yi;
 }
 
 void x21::create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts) {
@@ -370,9 +370,9 @@ void x21::create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts) {
   PLFLT *x, *y, *z, r;
   PLFLT xt, yt;
 
-  *xi = x = (PLFLT *) malloc(pts * sizeof(PLFLT));
-  *yi = y = (PLFLT *) malloc(pts * sizeof(PLFLT));
-  *zi = z = (PLFLT *) malloc(pts * sizeof(PLFLT));
+  *xi = x = new PLFLT[pts];
+  *yi = y = new PLFLT[pts];
+  *zi = z = new PLFLT[pts];
 
   for(i=0; i<pts; i++) {
     xt = drand48();
@@ -395,9 +395,9 @@ void x21::create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts) {
 }
 
 void x21::free_data(PLFLT *x, PLFLT *y, PLFLT *z) {
-  free((void *)x);
-  free((void *)y);
-  free((void *)z);
+  delete[] x;
+  delete[] y;
+  delete[] z;
 }
 
 int main( int argc, char ** argv ) {

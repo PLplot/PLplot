@@ -26,15 +26,16 @@
 // Implementation of PLplot example 20 in C++.
 //---------------------------------------------------------------------------//
 
-#include <cstdlib>
-#include <cctype>
-#include <iostream>
-#include <cmath>
-
 #include "plstream.h"
 #include "plevent.h"
 
+#include <fstream>
+#include <iostream>
+#include <cmath>
+
+#ifdef USE_NAMESPACE
 using namespace std;
+#endif
 
 class x20 {
 
@@ -271,42 +272,45 @@ x20::x20( int argc, char ** argv ) {
 
 // read image from file in binary ppm format
 int x20::read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num_col) {
-  FILE *fp;
+  ifstream ifs(fname,ios::out | ios::binary);
   unsigned char *img;
   char ver[80];
+  char c;
   int i, j, w, h;
   PLFLT **imf;
 
   /* naive grayscale binary ppm reading. If you know how to, improve it */
-  if ((fp = fopen(fname,"rb")) == NULL)
+  if (!ifs.is_open())
     return 1;
 
-  fscanf(fp,"%s\n", ver); /* version */
-  /* cout << "version: " << ver << endl;*/
+  ifs.getline(ver,80);
+  //cout << "version: " << ver << endl;
 
   if (strcmp(ver, "P5")) /* I only understand this! */
     return 1;
 
-  while((i=fgetc(fp)) == '#') {
-    fgets(ver, 80, fp); /* comments */
-    /* cout << ver << endl; */
+  ifs.read(&c,1);
+  while(c == '#') {
+    ifs.getline(ver, 80); /* comments */
+    //cout << ver << endl; 
+    ifs.read(&c,1);
   }
-  ungetc(i, fp);
+  ifs.putback(c);
 
-  fscanf(fp,"%d%d%d", &w, &h, num_col); /* width, height num colors */
-  /* cout << "width=" << w < " height=" << h << " num_col=" << *numcol << endl; */
+  ifs >> w >> h >> *num_col;
+  //cout << "width=" << w << " height=" << h << " num_col=" << *num_col << endl;
 
-  img = (unsigned char *) malloc(w*h*sizeof(char));
+  img = new unsigned char[w*h];
   pls->Alloc2dGrid(&imf, w, h);
 
-  fread(img, sizeof(char), w*h, fp);
-  fclose(fp);
+  ifs.read((char *)img,w*h);
+  ifs.close();
 
   for (i=0; i<w; i++)
     for (j=0; j<h; j++)
       imf[i][j] = img[(h-1-j)*w+i]; /* flip image up-down */
 
-  free(img);
+  delete[] img;
 
   *width = w;
   *height = h;
