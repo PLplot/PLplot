@@ -54,7 +54,7 @@ sources = \
 AM_CPPFLAGS = $(FREETYPEINCCMD) $(INCLTDL)
 
 libplplot@LIB_TAG@_la_SOURCES  = $(sources)
-libplplot@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(FREETYPELIBCMD) $(CSALIBS) $(NNLIBS) $(QHULLLIBS) $(PTHREADLIBS) -lm
+libplplot@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(FREETYPELIBCMD) $(CSALIBS) $(NNLIBS) -lm
 if !enable_dyndrivers
 libdrv = ../drivers/libplplotdrv.la
 endif
