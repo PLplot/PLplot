@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 static char* text[] = {"Maurice", "Geoffrey", "Alan", "Rafael", "Vince"};
 static int per[] = {10, 32, 12, 30, 16};
 
@@ -81,8 +83,8 @@ x13::x13( int argc, char ** argv ) {
     if (i == 4)
       theta1 = 500;
     for (theta = theta0; theta <= theta1; theta += dthet) {
-      x[j] = 5 + 3 * std::cos((2.*M_PI/500.)*theta);
-      y[j++] = 5 + 3 * std::sin((2.*M_PI/500.)*theta);
+      x[j] = 5 + 3 * cos((2.*M_PI/500.)*theta);
+      y[j++] = 5 + 3 * sin((2.*M_PI/500.)*theta);
     }
     pls->col0(i + 1);
     pls->psty((i + 3) % 8 + 1);
@@ -90,8 +92,8 @@ x13::x13( int argc, char ** argv ) {
     pls->col0(1);
     pls->line(j, x, y);
     just = (2.*M_PI/500.)*(theta0 + theta1)/2.;
-    dx = .25 * std::cos(just);
-    dy = .25 * std::sin(just);
+    dx = .25 * cos(just);
+    dy = .25 * sin(just);
     if ((theta0 + theta1)  < 250 || (theta0 + theta1) > 750) 
       just = 0.;
     else 

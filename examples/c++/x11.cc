@@ -31,6 +31,7 @@
 
 #include "plstream.h"
 
+using namespace std;
 
 class x11 {
 
@@ -137,9 +138,9 @@ x11::x11( int argc, char **argv ) {
       for( j = 0; j < YPTS; j++ )
 	{
 	  yy = y[j];
-	  z[i][j] = 3. * (1.-xx)*(1.-xx) * std::exp(-(xx*xx) - (yy+1.)*(yy+1.)) -
-	    10. * (xx/5. - std::pow(xx,3.) - std::pow(yy,5.)) * std::exp(-xx*xx-yy*yy) -
-	    1./3. * std::exp(-(xx+1)*(xx+1) - (yy*yy));
+	  z[i][j] = 3. * (1.-xx)*(1.-xx) * exp(-(xx*xx) - (yy+1.)*(yy+1.)) -
+	    10. * (xx/5. - pow(xx,3.) - pow(yy,5.)) * exp(-xx*xx-yy*yy) -
+	    1./3. * exp(-(xx+1)*(xx+1) - (yy*yy));
 	  if(false) { /* Jungfraujoch/Interlaken */
 	    if (z[i][j] < -1.)
 	      z[i][j] = -1.;

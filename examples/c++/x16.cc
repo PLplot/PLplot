@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 class x16 {
 
 public:
@@ -182,8 +184,8 @@ x16::x16( int argc, char ** argv ) {
     for (j = 0; j < ny; j++) {
       y = (PLFLT) (j - (ny / 2)) / (PLFLT) (ny / 2) - 1.0;
 
-      z[i][j] = - std::sin(7.*x) * std::cos(7.*y) + x*x - y*y;
-      w[i][j] = - std::cos(7.*x) * std::sin(7.*y) + 2 * x * y;
+      z[i][j] = - sin(7.*x) * cos(7.*y) + x*x - y*y;
+      w[i][j] = - cos(7.*x) * sin(7.*y) + 2 * x * y;
     }
   }
 
@@ -215,11 +217,11 @@ x16::x16( int argc, char ** argv ) {
       argy = y * M_PI/2;
       distort = 0.4;
 
-      cgrid1.xg[i] = x + distort * std::cos(argx);
-      cgrid1.yg[j] = y - distort * std::cos(argy);
+      cgrid1.xg[i] = x + distort * cos(argx);
+      cgrid1.yg[j] = y - distort * cos(argy);
 
-      cgrid2.xg[i][j] = x + distort * std::cos(argx) * std::cos(argy);
-      cgrid2.yg[i][j] = y - distort * std::cos(argx) * std::cos(argy);
+      cgrid2.xg[i][j] = x + distort * cos(argx) * cos(argy);
+      cgrid2.yg[i][j] = y - distort * cos(argx) * cos(argy);
     }
   }
 
@@ -335,9 +337,9 @@ x16::x16( int argc, char ** argv ) {
     r = ((PLFLT) i)/ (nx-1);
     for (j = 0; j < ny; j++) {
       t = (2.*M_PI/(ny-1.))*j;
-      cgrid2.xg[i][j] = r*std::cos(t);
-      cgrid2.yg[i][j] = r*std::sin(t);
-      z[i][j] = std::exp(-r*r)*std::cos(5.*M_PI*r)*std::cos(5.*t);
+      cgrid2.xg[i][j] = r*cos(t);
+      cgrid2.yg[i][j] = r*sin(t);
+      z[i][j] = exp(-r*r)*cos(5.*M_PI*r)*cos(5.*t);
     }
   }
 
@@ -356,8 +358,8 @@ x16::x16( int argc, char ** argv ) {
   // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
   for (i = 0; i < PERIMETERPTS; i++) {
     t = (2.*M_PI/(PERIMETERPTS-1))*(PLFLT)i;
-    px[i] = std::cos(t);
-    py[i] = std::sin(t);
+    px[i] = cos(t);
+    py[i] = sin(t);
   }
   pls->col0(1);
   pls->line(PERIMETERPTS, px, py);

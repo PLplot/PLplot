@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 class x04 {
 
 public:
@@ -83,9 +85,9 @@ void x04::plot1( int type ) {
   f0 = 1.0;
   for (i = 0; i <= 100; i++) {
     freql[i] = -2.0 + i / 20.0;
-    freq = std::pow(10.0, freql[i]);
-    ampl[i] = 20.0 * std::log10(1.0 / std::sqrt(1.0 + std::pow((freq / f0), 2.)));
-    phase[i] = -(180.0 / M_PI) * std::atan(freq / f0);
+    freq = pow(10.0, freql[i]);
+    ampl[i] = 20.0 * log10(1.0 / sqrt(1.0 + pow((freq / f0), 2.)));
+    phase[i] = -(180.0 / M_PI) * atan(freq / f0);
   }
 
   pls->vpor(0.15, 0.85, 0.1, 0.9);

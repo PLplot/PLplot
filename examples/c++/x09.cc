@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 class x09 {
 public:
   x09(int, char**);
@@ -155,11 +157,11 @@ x09::x09( int argc, char **argv ) {
       argy = yy * M_PI/2;
       distort = 0.4;
       
-      cgrid1.xg[i] = xx + distort * std::cos(argx);
-      cgrid1.yg[j] = yy - distort * std::cos(argy);
+      cgrid1.xg[i] = xx + distort * cos(argx);
+      cgrid1.yg[j] = yy - distort * cos(argy);
 	      
-      cgrid2.xg[i][j] = xx + distort * std::cos(argx) * std::cos(argy);
-      cgrid2.yg[i][j] = yy - distort * std::cos(argx) * std::cos(argy);
+      cgrid2.xg[i][j] = xx + distort * cos(argx) * cos(argy);
+      cgrid2.yg[i][j] = yy - distort * cos(argx) * cos(argy);
     }
   }
 
@@ -287,8 +289,8 @@ void x09::polar()
   // Perimeter
   for (i = 0; i < PERIMETERPTS; i++) {
     t = (2.*M_PI/(PERIMETERPTS-1))*(PLFLT)i;
-    px[i] = std::cos(t);
-    py[i] = std::sin(t);
+    px[i] = cos(t);
+    py[i] = sin(t);
   }
   pls->line(PERIMETERPTS, px, py);
 	       
@@ -298,8 +300,8 @@ void x09::polar()
     r = i/(PLFLT)(RPTS-1);
     for (j = 0; j < THETAPTS; j++) {
       theta = (2.*M_PI/(PLFLT)(THETAPTS-1))*(PLFLT)j;
-      cgrid2.xg[i][j] = r*std::cos(theta);
-      cgrid2.yg[i][j] = r*std::sin(theta);
+      cgrid2.xg[i][j] = r*cos(theta);
+      cgrid2.yg[i][j] = r*sin(theta);
       z[i][j] = r;
     }
   }
@@ -352,8 +354,8 @@ const void x09::potential()
     r = 0.5 + (PLFLT) i;
     for (j = 0; j < PTHETAPTS; j++) {
       theta = (2.*M_PI/(PLFLT)(PTHETAPTS-1))*(0.5 + (PLFLT) j);
-      cgrid2.xg[i][j] = r*std::cos(theta);
-      cgrid2.yg[i][j] = r*std::sin(theta);
+      cgrid2.xg[i][j] = r*cos(theta);
+      cgrid2.yg[i][j] = r*sin(theta);
     }
   }
 
@@ -367,10 +369,10 @@ const void x09::potential()
 
   // Expanded limits
   peps = 0.05;
-  xpmin = xmin - std::abs(xmin)*peps;
-  xpmax = xmax + std::abs(xmax)*peps;
-  ypmin = ymin - std::abs(ymin)*peps;
-  ypmax = ymax + std::abs(ymax)*peps;
+  xpmin = xmin - abs(xmin)*peps;
+  xpmax = xmax + abs(xmax)*peps;
+  ypmin = ymin - abs(ymin)*peps;
+  ypmax = ymax + abs(ymax)*peps;
      
   // Potential inside a conducting cylinder (or sphere) by method of images.
   // Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
@@ -383,20 +385,20 @@ const void x09::potential()
   d1 = rmax/4.;
 
   q1i = - q1*rmax/d1;
-  d1i = std::pow(rmax,2)/d1;
+  d1i = pow(rmax,2)/d1;
 
   q2 = -1.;
   d2 = rmax/4.;
 
   q2i = - q2*rmax/d2;
-  d2i = std::pow(rmax,2)/d2;
+  d2i = pow(rmax,2)/d2;
 
   for (i = 0; i < PRPTS; i++) {
     for (j = 0; j < PTHETAPTS; j++) {
-      div1 = std::sqrt(std::pow(cgrid2.xg[i][j]-d1,2) + std::pow(cgrid2.yg[i][j]-d1,2) + std::pow(eps,2));
-      div1i = std::sqrt(std::pow(cgrid2.xg[i][j]-d1i,2) + std::pow(cgrid2.yg[i][j]-d1i,2) + std::pow(eps,2));
-      div2 = std::sqrt(std::pow(cgrid2.xg[i][j]-d2,2) + std::pow(cgrid2.yg[i][j]+d2,2) + std::pow(eps,2));
-      div2i = std::sqrt(std::pow(cgrid2.xg[i][j]-d2i,2) + std::pow(cgrid2.yg[i][j]+d2i,2) + std::pow(eps,2));
+      div1 = sqrt(pow(cgrid2.xg[i][j]-d1,2) + pow(cgrid2.yg[i][j]-d1,2) + pow(eps,2));
+      div1i = sqrt(pow(cgrid2.xg[i][j]-d1i,2) + pow(cgrid2.yg[i][j]-d1i,2) + pow(eps,2));
+      div2 = sqrt(pow(cgrid2.xg[i][j]-d2,2) + pow(cgrid2.yg[i][j]+d2,2) + pow(eps,2));
+      div2i = sqrt(pow(cgrid2.xg[i][j]-d2i,2) + pow(cgrid2.yg[i][j]+d2i,2) + pow(eps,2));
       z[i][j] = q1/div1 + q1i/div1i + q2/div2 + q2i/div2i;
     }
   }
@@ -451,8 +453,8 @@ const void x09::potential()
   // Draw outer boundary
   for (i = 0; i < PPERIMETERPTS; i++) {
     t = (2.*M_PI/(PPERIMETERPTS-1))*(PLFLT)i;
-    px[i] = x0 + rmax*std::cos(t);
-    py[i] = y0 + rmax*std::sin(t);
+    px[i] = x0 + rmax*cos(t);
+    py[i] = y0 + rmax*sin(t);
   }
 
   pls->col0(ncolbox);

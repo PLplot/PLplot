@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 class x15 {
 
 public:

@@ -38,6 +38,8 @@
 # endif
 #endif
 
+using namespace std;
+
 class x17 {
 
 public:

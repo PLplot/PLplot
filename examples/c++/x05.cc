@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 class x05 {
 
 public:
@@ -66,7 +68,7 @@ x05::x05( int argc, char ** argv ) {
 
   delta = 2.0 * M_PI / (PLFLT) NPTS;
   for (i = 0; i < NPTS; i++)
-    data[i] = std::sin(i * delta);
+    data[i] = sin(i * delta);
 
   pls->col0(1);
   pls->hist(NPTS, data, -1.1, 1.1, 44, 0);

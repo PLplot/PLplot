@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 class x19 {
 
 public:
@@ -58,8 +60,8 @@ mapform19(PLINT n, PLFLT *x, PLFLT *y)
     double xp, yp, radius;
     for (i = 0; i < n; i++) {
         radius = 90.0 - y[i];
-        xp = radius * std::cos(x[i] * M_PI / 180.0);
-        yp = radius * std::sin(x[i] * M_PI / 180.0);
+        xp = radius * cos(x[i] * M_PI / 180.0);
+        yp = radius * sin(x[i] * M_PI / 180.0);
         x[i] = xp;
         y[i] = yp;
     }

@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 class x03 {
 
 public:
@@ -58,8 +60,8 @@ x03::x03( int argc, char ** argv ) {
   dtr = M_PI / 180.0;
   for( i = 0; i <= 360; i++ )
     {
-      x0[i] = std::cos(dtr * i);
-      y0[i] = std::sin(dtr * i);
+      x0[i] = cos(dtr * i);
+      y0[i] = sin(dtr * i);
     }
 
 
@@ -90,8 +92,8 @@ x03::x03( int argc, char ** argv ) {
   pls->col0(2);
   for (i = 0; i <= 11; i++) {
     theta = 30.0 * i;
-    dx = std::cos(dtr * theta);
-    dy = std::sin(dtr * theta);
+    dx = cos(dtr * theta);
+    dy = sin(dtr * theta);
 
     // Draw radial spokes for polar grid.
     pls->join(0.0, 0.0, dx, dy);
@@ -109,7 +111,7 @@ x03::x03( int argc, char ** argv ) {
   // Draw the graph.
 
   for (i = 0; i <= 360; i++) {
-    r = std::sin(dtr * (5 * i));
+    r = sin(dtr * (5 * i));
     x[i] = x0[i] * r;
     y[i] = y0[i] * r;
   }

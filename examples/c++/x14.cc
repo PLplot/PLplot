@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 class x14 {
 
 public:
@@ -108,14 +110,14 @@ x14::x14( int argc, char ** argv ) {
 
   pls1->gdev(driver_orig);
   if (strcmp(driver_orig, "tk")) {
-    std::cout << "Demo for TK driver only." << std::endl;
+    cout << "Demo for TK driver only." << endl;
     delete pls1;
     exit(1);
   }
   
-  std::cout << "Demo of multiple output streams via the " << 
-    driver << " driver." << std::endl;
-  std::cout << "Running with the second window as slave.\n" << std::endl;
+  cout << "Demo of multiple output streams via the " << 
+    driver << " driver." << endl;
+  cout << "Running with the second window as slave.\n" << endl;
 
   // Set up first stream
   
@@ -323,8 +325,8 @@ void x14::plot4(plstream *pls)
 
     dtr = M_PI / 180.0;
     for (i = 0; i <= 360; i++) {
-	x0[i] = std::cos(dtr * i);
-	y0[i] = std::sin(dtr * i);
+	x0[i] = cos(dtr * i);
+	y0[i] = sin(dtr * i);
     }
 
 /* Set up viewport and window, but do not draw box */
@@ -344,8 +346,8 @@ void x14::plot4(plstream *pls)
     pls->col0(2);
     for (i = 0; i <= 11; i++) {
 	theta = 30.0 * i;
-	dx = std::cos(dtr * theta);
-	dy = std::sin(dtr * theta);
+	dx = cos(dtr * theta);
+	dy = sin(dtr * theta);
 
 /* Draw radial spokes for polar grid */
 

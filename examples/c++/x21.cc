@@ -36,6 +36,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 class x21 {
 
 public:

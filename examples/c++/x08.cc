@@ -31,6 +31,7 @@
 
 #include "plstream.h"
 
+using namespace std;
 
 class x08 {
 
@@ -191,17 +192,16 @@ x08::x08( int argc, char **argv ) {
 	{
 	  yy = y[j];
 	  if (rosen) {
-	    z[i][j] = std::pow(1. - xx,2.) + 100 * 
-			       std::pow(yy - std::pow(xx,2.),2.);
+	    z[i][j] = pow(1. - xx,2.) + 100 * pow(yy - pow(xx,2.),2.);
 	    /* The log argument may be zero for just the right grid.  */
 	    if (z[i][j] > 0.)
-	       z[i][j] = std::log(z[i][j]);
+	       z[i][j] = log(z[i][j]);
 	    else
 	      z[i][j] = -5.; /* -MAXFLOAT would mess-up up the scale */
 	  }
 	  else {
-	    r = std::sqrt(xx * xx + yy * yy);
-	    z[i][j] = std::exp(-r * r) * std::cos(2.0 * M_PI * r);
+	    r = sqrt(xx * xx + yy * yy);
+	    z[i][j] = exp(-r * r) * cos(2.0 * M_PI * r);
 	  }
           if(i==0 && j==0) {
 	     zmin = z[i][j];

@@ -32,6 +32,8 @@
 #include "plstream.h"
 #include "plevent.h"
 
+using namespace std;
+
 class x20 {
 
 public:
@@ -174,8 +176,8 @@ x20::x20( int argc, char ** argv ) {
 
     for (i=0; i<XDIM; i++)
       for (j=0; j<YDIM; j++) {
-	r[i][j] = std::sqrt(x[i]*x[i]+y[j]*y[j])+1e-3;
-	z[i][j] = std::sin(r[i][j]) / (r[i][j]);
+	r[i][j] = sqrt(x[i]*x[i]+y[j]*y[j])+1e-3;
+	z[i][j] = sin(r[i][j]) / (r[i][j]);
       }
 
     pls->lab("No, an amplitude clipped \"sombrero\"", "", "Saturn?");
@@ -195,7 +197,7 @@ x20::x20( int argc, char ** argv ) {
 
   /* read Lena image */
   if (read_img("lena.pgm", &img_f, &width, &height, &num_col)) {
-    std::cout << "No such file - aborting" << std::endl;
+    cout << "No such file - aborting" << endl;
     delete pls;
     exit(1);
   }
@@ -278,19 +280,19 @@ int x20::read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num
     return 1;
 
   fscanf(fp,"%s\n", ver); /* version */
-  /* std::cout << "version: " << ver << std::endl;*/
+  /* cout << "version: " << ver << endl;*/
 
   if (strcmp(ver, "P5")) /* I only understand this! */
     return 1;
 
   while((i=fgetc(fp)) == '#') {
     fgets(ver, 80, fp); /* comments */
-    /* std:;cout << ver << std::endl; */
+    /* cout << ver << endl; */
   }
   ungetc(i, fp);
 
   fscanf(fp,"%d%d%d", &w, &h, num_col); /* width, height num colors */
-  /* std::cout << "width=" << w < " height=" << h << " num_col=" << *numcol << std::endl; */
+  /* cout << "width=" << w < " height=" << h << " num_col=" << *numcol << endl; */
 
   img = (unsigned char *) malloc(w*h*sizeof(char));
   pls->Alloc2dGrid(&imf, w, h);

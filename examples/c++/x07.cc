@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 static int base[17] = {
   0, 200, 500, 600, 700, 800, 900,
   2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900

@@ -31,6 +31,8 @@
 
 #include "plstream.h"
 
+using namespace std;
+
 class x18 {
 
 public:
@@ -90,8 +92,8 @@ x18::x18( int argc, char ** argv ) {
     // r    = 1. - ( (PLFLT) i / (PLFLT) NPTS );
     r = z[i];
 
-    x[i] = r * std::cos( 2. * M_PI * 6. * i / NPTS );
-    y[i] = r * std::sin( 2. * M_PI * 6. * i / NPTS );
+    x[i] = r * cos( 2. * M_PI * 6. * i / NPTS );
+    y[i] = r * sin( 2. * M_PI * 6. * i / NPTS );
   }
 
   for (k = 0; k < 4; k++) {
@@ -163,25 +165,25 @@ void x18::test_poly(int k) {
 
   for( i=0; i < 20; i++ ) {
     for( j=0; j < 20; j++ ) {
-      x[0] = std::sin( PHI(j) ) * std::cos( THETA(i) );
-      y[0] = std::sin( PHI(j) ) * std::sin( THETA(i) );
-      z[0] = std::cos( PHI(j) );
+      x[0] = sin( PHI(j) ) * cos( THETA(i) );
+      y[0] = sin( PHI(j) ) * sin( THETA(i) );
+      z[0] = cos( PHI(j) );
 	      
-      x[1] = std::sin( PHI(j+1) ) * std::cos( THETA(i) );
-      y[1] = std::sin( PHI(j+1) ) * std::sin( THETA(i) );
-      z[1] = std::cos( PHI(j+1) );
+      x[1] = sin( PHI(j+1) ) * cos( THETA(i) );
+      y[1] = sin( PHI(j+1) ) * sin( THETA(i) );
+      z[1] = cos( PHI(j+1) );
 	      
-      x[2] = std::sin( PHI(j+1) ) * std::cos( THETA(i+1) );
-      y[2] = std::sin( PHI(j+1) ) * std::sin( THETA(i+1) );
-      z[2] = std::cos( PHI(j+1) );
+      x[2] = sin( PHI(j+1) ) * cos( THETA(i+1) );
+      y[2] = sin( PHI(j+1) ) * sin( THETA(i+1) );
+      z[2] = cos( PHI(j+1) );
 	    
-      x[3] = std::sin( PHI(j) ) * std::cos( THETA(i+1) );
-      y[3] = std::sin( PHI(j) ) * std::sin( THETA(i+1) );
-      z[3] = std::cos( PHI(j) );
+      x[3] = sin( PHI(j) ) * cos( THETA(i+1) );
+      y[3] = sin( PHI(j) ) * sin( THETA(i+1) );
+      z[3] = cos( PHI(j) );
 	      
-      x[4] = std::sin( PHI(j) ) * std::cos( THETA(i) );
-      y[4] = std::sin( PHI(j) ) * std::sin( THETA(i) );
-      z[4] = std::cos( PHI(j) );
+      x[4] = sin( PHI(j) ) * cos( THETA(i) );
+      y[4] = sin( PHI(j) ) * sin( THETA(i) );
+      z[4] = cos( PHI(j) );
 
       pls->poly3(5, x, y, z, draw[k], 1 );
     }
