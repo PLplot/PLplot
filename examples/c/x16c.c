@@ -15,6 +15,9 @@ static int ns = 20;		/* Default number of shade levels */
 static int nx = 35;		/* Default number of data points in x */
 static int ny = 46;		/* Default number of data points in y */
 
+/* polar plot data */
+#define PERIMETERPTS 100
+
 /* Transformation function */
 
 PLFLT tr[6];
@@ -94,7 +97,8 @@ int
 main(int argc, char *argv[])
 {
     int i, j;
-    PLFLT x, y, argx, argy, distort;
+    PLFLT x, y, argx, argy, distort, r, t;
+    PLFLT px[PERIMETERPTS], py[PERIMETERPTS];
 
     PLFLT **z, **w, zmin, zmax;
     PLFLT *clevel, *shedge, *xg1, *yg1;
@@ -263,6 +267,9 @@ main(int argc, char *argv[])
 
     pllab("distance", "altitude", "Bogon density");
 
+/* Ignore this exclusion part because API will probably change. */
+#if 0
+
 /* Plot using 2d coordinate transform and exclusion*/
 
     pladv(0);
@@ -280,6 +287,56 @@ main(int argc, char *argv[])
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
 
     pllab("distance", "altitude", "Bogon density with exclusion");
+/* end of ignored page which demonstrates exclusion */
+#endif
+
+/* Example showing wrapping support. */
+
+    pladv(0);
+    plvpor( .1, .9, .1, .9 );
+    plwind( -1., 1., -1., 1. );
+
+    plpsty(0);
+
+    /* Build new coordinate matrices. */
+    
+    for (i = 0; i < nx; i++) {
+        r = ((PLFLT) i)/ (nx-1);
+	for (j = 0; j < ny; j++) {
+	   t = (2.*PI/(ny-1.))*j;
+	   cgrid2.xg[i][j] = r*cos(t);
+	   cgrid2.yg[i][j] = r*sin(t);
+	   z[i][j] = exp(-r*r)*cos(5.*PI*r)*cos(5.*t);
+	}
+    }
+
+    /* Need a new shedge to go along with the new data set. */
+
+    f2mnmx(z, nx, ny, &zmin, &zmax);
+
+    for (i = 0; i < ns+1; i++)
+	shedge[i] = zmin + (zmax - zmin) * (PLFLT) i / (PLFLT) ns;
+
+    /*  Now we can shade the interior region. */
+    plshades(z, nx, ny, NULL, -1., 1., -1., 1., 
+	     shedge, ns+1, fill_width,
+	     cont_color, cont_width,
+	     plfill, 0, pltr2, (void *) &cgrid2);
+
+/* Now we can draw the perimeter.  (If do before, shade stuff may overlap.) */
+      for (i = 0; i < PERIMETERPTS; i++) {
+	       t = (2.*PI/(PERIMETERPTS-1))*(double)i;
+	       px[i] = cos(t);
+	       py[i] = sin(t);
+      }
+      plcol0(1);
+      plline(PERIMETERPTS, px, py);
+                  
+      /* And label the plot.*/
+
+      plcol0(2);
+      pllab( "", "",  "Tokamak Bogon Instability" );
+
 
 /* Clean up */
 
