@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1995/05/07 03:00:25  mjl
+ * Revision 1.5  1995/06/01 21:19:14  mjl
+ * Split off IP routine prototypes (not needed by user) into tcpip.h.
+ *
+ * Revision 1.4  1995/05/07  03:00:25  mjl
  * Added prototype for pltclMain().
  *
  * Revision 1.3  1994/07/19  22:34:23  mjl
@@ -20,12 +23,13 @@
  * 21-Jun-94
  *
  * Declarations for PLplot/Tcl utility routines.
- * In general, these do not require either Tk or Tcl-DP.
+ * These should not require either Tk or Tcl-DP.
  */
 
 #ifndef __PLTCL_H__
 #define __PLTCL_H__
 
+#include "plplot.h"
 #include <tcl.h>
 #include "tclMatrix.h"
 
@@ -63,16 +67,5 @@ plWait_Until(ClientData, Tcl_Interp *, int, char **);
 
 int
 plHost_ID(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
-
-/* tcpip.c */
-/* Modified version of the "Tdp_PacketSend" command. */
-
-int
-pl_PacketSend(Tcl_Interp *interp, PLiodev *iodev, PDFstrm *pdfs);
-
-/* Modified version of the "Tdp_PacketReceive" command. */
-
-int
-pl_PacketReceive(Tcl_Interp *interp, PLiodev *iodev, PDFstrm *pdfs);
 
 #endif	/* __PLTCL_H__ */
