@@ -82,27 +82,30 @@
     </itemizedlist>
   </para>
 
-  <para> 
-    Under Linux, the easiest way to install a binary version of PLplot
-    on a user's machine is to use PLplot deb binary packages for the Debian
+  <para>
+    Under Linux, the easiest way to install a binary version of PLplot on a
+    user's machine is to use PLplot deb binary packages for the Debian
     distribution, and PLplot rpm binary packages for rpm-based
-    distributions. (See http://plplot.sourceforge.net/resources/index.html
-    for locations of debs and rpms.) Build the application on the build
-    machine using the results of the "plplot-config --cflags --libs" command,
-    and copy the resulting executable(s) to the users' machines.
+    distributions. (See the <ulink
+    url="http://plplot.sourceforge.net/resources/index.html">Resources
+    area</ulink> of the PLplot web site for locations of debs and rpms.)
+    Build the application on the build machine using the results of the
+    <userinput>plplot-config --cflags --libs</userinput> command, and copy
+    the resulting executable(s) to the users' machines.
   </para>
 
   <para>
     Under Unix (and also under Linux if you would prefer to use a newer
     version of PLplot than is available in the debs or rpms), a good way
     to deploy binary PLplot and applications that depend on that binary PLplot
-    on users machines is as follows:  
+    on users machines is as follows:
     <itemizedlist>
       <listitem>
         <para>
-	  Use the ./configure option --prefix=/usr/local/plplot (or some
-	  other unique but consistent directory that is available on the
-	  build machine and all users' machines).
+	  Use the <command>./configure</command> option
+	  <userinput>--prefix=/usr/local/plplot</userinput> (or some other
+	  unique but consistent directory that is available on the build
+	  machine and all users' machines).
         </para>
       </listitem>
       <listitem>
@@ -112,22 +115,24 @@
       </listitem>
       <listitem>
         <para>
-	  Copy the installed PLplot tree, /usr/local/plplot, into a tarball.
+	  Copy the installed PLplot tree,
+	  <filename>/usr/local/plplot</filename>, into a tarball.
         </para>
       </listitem>
       <listitem>
         <para>
-	  Unpack that tarball on all users' machines in the same location =
-	  /usr/local/plplot.
+	  Unpack that tarball on all users' machines in the same location
+	  <filename>/usr/local/plplot</filename>.
         </para>
       </listitem>
       <listitem>
         <para>
 	  Build the application(s) on the build machine using the results
-	  of the "plplot-config --cflags --libs" command, and copy the 
-	  resulting executable(s) to the users' machines.  Since the
-	  PLplot install location is consistent on all machines, the 
-	  application should work the same way on all machines.
+	  of the <userinput>plplot-config --cflags --libs</userinput>
+	  command, and copy the resulting executable(s) to the users'
+	  machines.  Since the PLplot install location is consistent on all
+	  machines, the application should work the same way on all
+	  machines.
         </para>
       </listitem>
     </itemizedlist>
@@ -190,10 +195,10 @@
       <listitem>
         <para>
           It looks at the environment variables
-          <literal>PLPLOT_LIB</literal> and <literal>PLPLOT_HOME</literal>.
+          <envar>PLPLOT_LIB</envar> and <envar>PLPLOT_HOME</envar>.
           (Actually, this happens only, if the corresponding compiler
-          macros <literal>PLPLOT_LIB_ENV</literal> and
-          <literal>PLPLOT_HOME_ENV</literal> were defined at compile time.)
+          macros <envar>PLPLOT_LIB_ENV</envar> and
+          <envar>PLPLOT_HOME_ENV</envar> were defined at compile time.)
         </para>
       </listitem>
       <listitem>
@@ -215,13 +220,13 @@
     <itemizedlist>
       <listitem>
         <para>
-          <literal>PLPLOT_LIB</literal> should point to the directory
+          <envar>PLPLOT_LIB</envar> should point to the directory
           actually holding these files
         </para>
       </listitem>
       <listitem>
         <para>
-          <literal>PLPLOT_HOME</literal> should point to the directory that
+          <envar>PLPLOT_HOME</envar> should point to the directory that
           holds a subdirectory <quote><filename>lib</filename></quote>
           which in turn holds these files.
         </para>
@@ -240,17 +245,17 @@
   </para>
 
   <para>
-    The <emphasis>second  case</emphasis> is this: the PLplot libraries
-    (but not the drivers) need to be loaded via the dynamic loader. The details
+    The <emphasis>second case</emphasis> is this: the PLplot libraries (but
+    not the drivers) need to be loaded via the dynamic loader. The details
     depend on the system you are working on, but here are some common
     platforms:
     <itemizedlist>
       <listitem>
         <para>
           Most UNIX, BSD and Linux systems use an environment variable
-          <literal>LD_LIBRARY_PATH</literal> which indicates all the
+          <envar>LD_LIBRARY_PATH</envar> which indicates all the
           directories shared libraries can be found. Some use
-          <literal>SHLIB_PATH</literal>, like HPUX.
+          <envar>SHLIB_PATH</envar>, like HPUX.
         </para>
       </listitem>
       <listitem>
@@ -290,10 +295,10 @@
     well as the actual libraries and the description files that libtool
     uses) is either a directory determined at the time you configured
     PLplot is typically something like
-    /usr/local/plplot/lib/plplot5.3.1/driversd.  This directory must be
-    pointed to by the
-    <literal>PLPLOT_DRV_DIR</literal> environment variable. Again for
-    deployment, only the environment variable is of real interest.
+    <filename>/usr/local/plplot/lib/plplot5.3.1/driversd</filename>.  This
+    directory must be pointed to by the <envar>PLPLOT_DRV_DIR</envar>
+    environment variable. Again for deployment, only the environment
+    variable is of real interest.
   </para>
 
   <para>
@@ -306,21 +311,21 @@
           <itemizedlist>
             <listitem>
               <para>
-                <literal>PLPLOT_HOME</literal> or
-                <literal>PLPLOT_LIB</literal> to indicate the position of
+                <envar>PLPLOT_HOME</envar> or
+                <envar>PLPLOT_LIB</envar> to indicate the position of
                 font files (and also of the various geographic maps)
               </para>
             </listitem>
             <listitem>
               <para>
-                <literal>LD_LIBRARY_PATH</literal>,
-                <literal>SHLIB_PATH</literal> or <literal>PATH</literal> to
+                <envar>LD_LIBRARY_PATH</envar>,
+                <envar>SHLIB_PATH</envar> or <envar>PATH</envar> to
                 find the dynamic/shared libraries
               </para>
             </listitem>
             <listitem>
               <para>
-                <literal>PLPLOT_DRV_DIR</literal> to find the driver
+                <envar>PLPLOT_DRV_DIR</envar> to find the driver
                 descriptions
               </para>
             </listitem>
@@ -357,7 +362,7 @@
 
   <para>
     All the environment variables, except
-    <literal>LD_LIBRARY_PATH</literal> and equivalents, can be set within
+    <envar>LD_LIBRARY_PATH</envar> and equivalents, can be set within
     the program (by using a small configuration file or by determining the
     position of the files relative to the program's location). They just
     have be set before PLplot is initialised.
