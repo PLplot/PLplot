@@ -22,6 +22,9 @@ if test "$1" != "-u" ; then
   ./bootstrap.sh
   ./configure --enable-docbook
   ( cd doc/docbook ; make )
+  cp config.status config.status-save
+  fakeroot debian/rules clean
+  mv config.status-save config.status
   make dist
   version=`debian/get-upstream-version.pl < configure.ac`
   mv plplot-$version.tar.gz ../plplot_$version.orig.tar.gz
