@@ -51,6 +51,11 @@ ourexecjavadir = $(DATA_DIR)/java/plplot/examples
 
 ourexecjava_DATA = $(javademos)
 
+# Duplicate this so the source appears in the examples/java directory for
+# the user to read
+examples_javadir = $(DATA_DIR)/examples/java
+examples_java_DATA = $(javademos)
+
 endif
 
 ### Use install-hook to compile the java files that have been installed.

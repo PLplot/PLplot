@@ -28,6 +28,9 @@ javac -d java java/plplot/examples/*.java
 # notation works for all jdk's.
 
 # This location will depend on your install prefix:
-setenv CLASSPATH /usr/local/plplot/lib/java
+setenv CLASSPATH /usr/local/share/plplot5.3.1/java/plplot.jar
 java plplot.examples.x01 .....
 
+All the plplot java bindings and examples are contained in the jar file
+plplot.jar. In the above case the source for the examples would be in 
+/usr/local/share/plplot5.3.1/examples/java/
