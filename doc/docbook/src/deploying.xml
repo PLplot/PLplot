@@ -84,9 +84,9 @@
 
   <para>
     Under Linux, the easiest way to install a binary version of PLplot on a
-    user's machine is to use PLplot deb binary packages for the Debian
-    distribution, and PLplot rpm binary packages for rpm-based
-    distributions. (See the <ulink
+    user's machine is to use PLplot deb binary packages for the <ulink
+    url="http://www.debian.org">Debian</ulink> distribution, and PLplot rpm
+    binary packages for rpm-based distributions. (See the <ulink
     url="http://plplot.sourceforge.net/resources/index.html">Resources
     area</ulink> of the PLplot web site for locations of debs and rpms.)
     Build the application on the build machine using the results of the
