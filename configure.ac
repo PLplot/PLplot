@@ -517,6 +517,7 @@ if test "$enable_python" = "yes"; then
     ### not stop.
     pushdef([AC_MSG_ERROR],defn([AC_MSG_WARN]))
     AM_PATH_PYTHON(1.5)
+    PYTHON_DEVEL
     popdef([AC_MSG_ERROR])
     if test -n "$PYTHON_VERSION" ; then
 ### PYTHON_INSTDIR is the same as $pythondir except that the
@@ -542,6 +543,11 @@ AC_SUBST(enable_python)
 AC_SUBST(enable_java)
 AC_SUBST(enable_tcl)
 AC_SUBST(enable_octave)
+
+# swig only needed for python and java interface so far.
+if test "$enable_python" = "yes" -o "$enable_java" = "yes"; then
+  SWIG_PROG(1.3.21)
+fi
 
 ### Create list of valid examples subdirectories
 
