@@ -436,34 +436,7 @@ plf2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 \*--------------------------------------------------------------------------*/
 
 void
-cont_store(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-	   PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, CONT_LEVEL **contour)
-{
-  PLcGrid grid1;
-
-  cont3d = 1;
-
-  grid1.nx = nx; grid1.ny = ny; grid1.xg = x; grid1.yg = y;
-  plcont(z, nx, ny, 1, nx, 1, ny, clevel, nlevel,
-	 pltr1,  (void *) & grid1 );
-
-  *contour = startlev;
-  cont3d = 0;
-}
-
-/*--------------------------------------------------------------------------*\
- *
- * cont_storel:
- *
- * Draw contour lines in memory.
- * The difference between this version and cont_store is the input part of
- * the argument list uses the full API (and full power) of plcont.
- * cont_clean_store() must be called after use to release allocated memory.
- *
-\*--------------------------------------------------------------------------*/
-
-void
-cont_storel(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+cont_store(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	 PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data,

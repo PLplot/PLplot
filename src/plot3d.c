@@ -486,7 +486,7 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
     /* get the contour lines */
 
-    /* prepare cont_storel input */
+    /* prepare cont_store input */
     PLFLT **zstore;
     PLcGrid2 cgrid2;
     cgrid2.nx = nx;
@@ -513,10 +513,10 @@ c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
        }
     }
     /* Fill cont structure with contours. */
-    cont_storel(zstore, nx, ny, ixstart+1, ixn, 1, ny, 
+    cont_store(zstore, nx, ny, ixstart+1, ixn, 1, ny, 
 		clevel, nlevel, pltr2, (void *) &cgrid2, &cont);
 
-    /* Free the 2D input arrays to cont_store1 since not needed any more. */
+    /* Free the 2D input arrays to cont_store since not needed any more. */
     plFree2dGrid(zstore, nx, ny);
     plFree2dGrid(cgrid2.xg, nx, ny);
     plFree2dGrid(cgrid2.yg, nx, ny);
@@ -1032,11 +1032,34 @@ c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
       PLINT *uu = (PLINT *) malloc(NPTS*sizeof(PLINT));
       PLINT *vv = (PLINT *) malloc(NPTS*sizeof(PLINT));
 
+      /* prepare cont_store input */
+      PLFLT **zstore;
+      PLcGrid2 cgrid2;
+      cgrid2.nx = nx;
+      cgrid2.ny = ny;
+      plAlloc2dGrid(&cgrid2.xg, nx, ny);
+      plAlloc2dGrid(&cgrid2.yg, nx, ny);
+      plAlloc2dGrid(&zstore, nx, ny);
+
+      for (i = 0; i < nx; i++) {
+	 for (j = 0; j < ny; j++) {
+	    cgrid2.xg[i][j] = x[i];
+	    cgrid2.yg[i][j] = y[j];
+	    zstore[i][j] = z[i][j];
+	 }
+      }
+
       pl3upv = 0;
 
-      /* get the contour lines */
-      cont_store(x, y, z,  nx, ny, 1, nx, 1, ny, clevel, nlevel, &cont);
+      /* Fill cont structure with contours. */
+      cont_store(zstore, nx, ny, 1, nx, 1, ny, 
+		 clevel, nlevel, pltr2, (void *) &cgrid2, &cont);
 
+      /* Free the 2D input arrays to cont_store since not needed any more. */
+      plFree2dGrid(zstore, nx, ny);
+      plFree2dGrid(cgrid2.xg, nx, ny);
+      plFree2dGrid(cgrid2.yg, nx, ny);
+     
       /* follow the contour levels and lines */
       clev = cont;
       do { /* for each contour level */
@@ -1221,13 +1244,13 @@ plxyindexlimits(PLINT instart, PLINT inn,
 }
 
 /*--------------------------------------------------------------------------*\
- * void plP_gzbackw()
+ * void plP_gzback()
  *
  * Get background parameters for 3d plot.
 \*--------------------------------------------------------------------------*/
 
 void
-plP_gzbackw(PLINT **zbf, PLINT **zbc, PLFLT **zbt, PLINT **zbw)
+plP_gzback(PLINT **zbf, PLINT **zbc, PLFLT **zbt, PLINT **zbw)
 {
     *zbf = &zbflg;
     *zbc = &zbcol;
