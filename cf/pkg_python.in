@@ -38,21 +38,23 @@ PYTHON_DEMOS	= README pytkdemo *.py
 
 INSTALL_PYTHON	= install_python
 
+PYTHON_INSTDIR = $(PREFIX)$(shell echo $(PYTHON_DIR) | sed 's,@prefix@,,')
+
 install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
 	@cd python_dynamic ; make -s distclean
 	@echo '*shared*' > python_dynamic/Setup.in
 	@echo 'pl plmodule.c plmodule2.c -I$(INCLUDE_DIR)/.. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)' >> python_dynamic/Setup.in
 	@cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
 	 $(MV) $(PYTHON_EXE) ..
-	@-if test ! -d $(PYTHON_DIR); then mkdir -p $(PYTHON_DIR); fi
-	@-$(CP) $(PYTHON_EXE) $(PYTHON_DIR)
-	@-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
-	  echo "If the following symlink creation fails (perhaps because you are not root)" ; \
-	  echo "then you must set PYTHONPATH to $(PYTHON_DIR) in order to run" ; \
-	  echo "the python demos, xw??.py" ; \
-	  echo "$(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR)" ; \
-	  $(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR) ; \
-	  fi
+	@-if test ! -d $(PYTHON_INSTDIR); then mkdir -p $(PYTHON_INSTDIR); fi
+	@-$(CP) $(PYTHON_EXE) $(PYTHON_INSTDIR)
+#	@-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
+#	  echo "If the following symlink creation fails (perhaps because you are not root)" ; \
+#	  echo "then you must set PYTHONPATH to $(PYTHON_DIR) in order to run" ; \
+#	  echo "the python demos, xw??.py" ; \
+#	  echo "$(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR)" ; \
+#	  $(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR) ; \
+#	  fi
 	@-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
 	@-cd $(top_srcdir)/examples/python; $(CP) $(PYTHON_DEMOS) $(DEMOS_DIR)/python
 #	-if test ! -d $(PYTHON_MOD_DIR)/plplot; then \
