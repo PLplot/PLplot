@@ -650,8 +650,13 @@ if test "$with_shlib" = "yes"; then
 	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)'
 
 	    LDSHARED='gcc -fPIC -shared'
-	    RPATH="-Wl,-rpath -Wl,.:$prefix/lib"
-	    INSTALL_RPATH="-Wl,-rpath -Wl,$prefix/lib"
+	    if test "$with_rpath" = "yes" ; then
+	        RPATH="-Wl,-rpath -Wl,.:$prefix/lib"
+	        INSTALL_RPATH="-Wl,-rpath -Wl,$prefix/lib"
+	    else
+	        RPATH=
+	        INSTALL_RPATH=
+	    fi
 	    SONAME_FLAGS="-Wl,-soname -Wl,"
 
 	    if test "$CXX" = "KCC"; then
@@ -715,7 +720,11 @@ if test "$with_shlib" = "yes"; then
 	    AC_MSG_RESULT(okay)
 	    SHLIB_BUILD="$CC -shared -o"
 	    LDSHARED="ld -shared"
-	    RPATH="-rpath ."
+	    if test "$with_rpath" = "yes" ; then
+	        RPATH="-rpath ."
+            else
+	        RPATH=
+	    fi
 	;;
 	* )
 	    with_shlib=no
