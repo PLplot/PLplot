@@ -365,6 +365,10 @@ define(FIND_INC, [
 dnl> ------------------------------------------------------------------------
 dnl> The following macro searches a list of directories for the given
 dnl> library file and takes appropriate actions if found or not.
+dnl> Arguments: 
+dnl> 	$1 - the library name, the part after the -l and before the "."
+dnl>	$2 - a variable that holds the matched directory name
+dnl>	$3 - a variable indicating if the search succeeded ("yes"/"no") 
 dnl
 define(FIND_LIB, [
     AC_MSG_CHECKING(for lib$1)
