@@ -385,6 +385,13 @@ typedef struct {
  *
  * dev_compression Compression level for supporting devices
  *
+ ****************************************************************************
+ *
+ * Font related variables
+ *
+ * cfont           Current font number, replaces global 'font' in plsym.c
+ *                 This can be latter extended for font shape, series, family and size
+ *
 \*--------------------------------------------------------------------------*/
 
 typedef struct {
@@ -552,6 +559,7 @@ typedef struct {
 /* Other variables */
    
     PLINT dev_compression;
+    PLINT cfont;
 
 } PLStream;
 
