@@ -1,37 +1,37 @@
-From interran@uluru.Stanford.EDU Thu Mar 16 23:32 CST 1995
-Received: from uluru.Stanford.EDU by dino.ph.utexas.edu with SMTP
-	(1.37.109.4/16.2) id AA17171; Thu, 16 Mar 95 23:32:31 -0600
-Return-Path: <interran@uluru.Stanford.EDU>
-Received: by uluru.Stanford.EDU (4.1/inc-1.0)
-	id AA11807; Thu, 16 Mar 95 21:34:31 PST
-Date: Thu, 16 Mar 95 21:34:31 PST
-From: interran@uluru.Stanford.EDU (John Interrante)
-Message-Id: <9503170534.AA11807@uluru.Stanford.EDU>
-To: Maurice LeBrun <mjl@dino.ph.utexas.edu>
-Subject: PLplot Python module
-Status: RO
+How to build yourself a python with PLplot support.
 
-A while ago I told you that I'd written a Python interface to the
-PLplot library.  I sent it to Guido van Rossum, but he doesn't plan to
-include it in the next release of Python.  So I went to the trouble of
-modifying the PLplot cf/*.in files to let the PLplot Makefile build
-the dynamically loaded Python module and install it where Python will
-find it.  I'm sending you the sources in a gzipped shar archive.  Pipe
-this message through unshar to extract a tar file called python.tar.
-Unpack the tar file in an empty directory (*not* in the PLplot source
-tree---it will overwrite files in the cf subdirectory if you do that)
-to get all of the new and changed files.  Then you can merge the
-changes I made to the changed files by comparing them to your files
-with diff.  The new files you can just move into the source tree with
-mv.  For your convenience, I've run diff on the changed files myself
-and saved the output in one of the new files (called 'diff') so that
-you can see what were my changes and not the changes that you made
-yourself since 4p99i's release.
+If you want to dynamically load:
 
-A little credit in the documentation is OK, but I don't want to
-continue maintaining the Python interface.  I hope it will be useful
-enough that you or somebody else'll want to take over its maintenance.
-You can do whatever you want with it.
+<No clear plan for this yet>
 
-		John
+If you are willing to statically bind plplot into your python:
 
+Build PLplot --with-double
+
+Build a python, be sure to include numeric extension.
+
+Copy plmodule.c plmodule2.c and plmodule.h to python_root/Modules
+
+Edit Setup:
+
+add a line:
+
+pl plmodule.c plmodule2.c -DDOUBLE -I/home/furnish/devel/plplot/tmp /home/furnish/devel/plplot/tmp2/libplplotdtk.a
+
+Make a directory python_rro/Lib/plplot
+
+copy bindings/python/*.py to python_rro/Lib/plplot
+
+Fix the python path in Setup to include the plplot .py directory.
+
+Fix the line for building _tkinter as follows:
+
+_tkinter _tkinter.c -DWITH_PLFRAME -I/home/furnish/j2/include -L/home/furnish/j2/lib -ltk4.1 -ltcl7.5 -L/usr/X11R6/lib -lX11
+
+edit _tkinter so it runs Pltk_Init().
+
+make
+
+make install
+
+python :-).
