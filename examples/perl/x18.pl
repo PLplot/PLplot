@@ -22,6 +22,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+# SYNC: x18c.c 1.21
+
 use PDL;
 use PDL::Graphics::PLplot;
 use Math::Trig qw [pi];

@@ -39,6 +39,8 @@
 # ttf-unfonts
 # ttf-bangla-fonts
 
+# SYNC: x24c.c 1.6
+
 use PDL;
 use PDL::Graphics::PLplot;
 

@@ -22,6 +22,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+# SYNC: x13c.c 1.15
+
 # N.N. Although the visual results of this script is essentially the
 # same as that produced by the equivalent C example x13c, the code
 # below is quite different from that of x13c.c.  I use the vectorized

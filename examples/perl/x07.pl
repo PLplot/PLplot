@@ -23,6 +23,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+# SYNC: x07c.c 1.18
 
 use PDL;
 use PDL::Graphics::PLplot;
