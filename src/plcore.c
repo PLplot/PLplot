@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1994/01/18 06:01:38  mjl
+ * Revision 1.27  1994/01/25 06:23:26  mjl
+ * Moved default setting of digits variables to the correct location.
+ *
+ * Revision 1.26  1994/01/18  06:01:38  mjl
  * Now set default number of digits in numeric labels for axis to be switched
  * to scientific notation.  Before this capability had to be enabled by the
  * user.  The number of digits defaults to x:4, y:4, z:3 (xy or xyz plots).
@@ -1176,9 +1179,14 @@ c_plinit(void)
 /* Set up number of allowed digits before switching to scientific notation */
 /* The user can always change this */
 
-    plsxax(4, 0);
-    plsyax(4, 0);
-    plszax(3, 0);
+    if (plsc->xdigmax == 0)
+	plsc->xdigmax = 4;
+
+    if (plsc->ydigmax == 0)
+	plsc->ydigmax = 4;
+
+    if (plsc->zdigmax == 0)
+	plsc->zdigmax = 3;
 
 /* Switch to graphics mode and set color */
 
