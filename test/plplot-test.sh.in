@@ -36,9 +36,10 @@ version=@VERSION@
 
 dirname=@DIRNAME@
 
-export EXAMPLES_DIR=${EXAMPLES_DIR:-.} \
-       OUTPUT_DIR=${OUTPUT_DIR:-.}     \
-       device=${DEVICE:-psc}
+EXAMPLES_DIR=${EXAMPLES_DIR:-.}
+OUTPUT_DIR=${OUTPUT_DIR:-.}
+device=${DEVICE:-psc}
+export EXAMPLES_DIR OUTPUT_DIR device
 
 usage()
 {
@@ -126,35 +127,48 @@ fi
 
 # These variables set by default assuming you are going to run this
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
-export cdir=$EXAMPLES_DIR/c           \
-       cxxdir=$EXAMPLES_DIR/c++       \
-       f77dir=$EXAMPLES_DIR/f77       \
-       pythondir=$EXAMPLES_DIR/python \
-       tcldir=$EXAMPLES_DIR/tcl       \
-       octave=@OCTAVE@                \
-       octavedir=$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//: \
-       PATH=$EXAMPLES_DIR/../utils:@exec_prefix@/bin:$PATH
+cdir=$EXAMPLES_DIR/c
+cxxdir=$EXAMPLES_DIR/c++
+f77dir=$EXAMPLES_DIR/f77
+pythondir=$EXAMPLES_DIR/python
+tcldir=$EXAMPLES_DIR/tcl
+octave=@OCTAVE@
+octavedir=$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:
+PATH=$EXAMPLES_DIR/../utils:@exec_prefix@/bin:$PATH
+export cdir cxxdir f77dir pythondir tcldir octave octavedir PATH
 
 fe=""
 
 case "$device" in
    ps|psc)
-      export dsuffix=ps options=
+      dsuffix=ps
+      options=
+      export dsuffix options
       ;;
    png)
-      export dsuffix=png options="-fam -fflen 2"
+      dsuffix=png
+      options="-fam -fflen 2"
+      export dsuffix options
       ;;
    jpeg)
-      export dsuffix=jpeg options="-fam -fflen 2"
+      dsuffix=jpeg
+      options="-fam -fflen 2"
+      export dsuffix options
       ;;
    cgm)
-      export dsuffix=cgm options=
+      dsuffix=cgm
+      options=
+      export dsuffix options
       ;;
    xfig)
-      export dsuffix=fig options="-fam -fflen 2"
+      dsuffix=fig
+      options="-fam -fflen 2"
+      export dsuffix options
       ;;
    plmeta)
-      export dsuffix=plmeta options=
+      dsuffix=plmeta
+      options=
+      export dsuffix options
       ;;
    *)
       usage 1 1>&2
