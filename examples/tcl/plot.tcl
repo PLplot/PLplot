@@ -119,13 +119,15 @@ proc plot {{file {}} {columns {}}} {
 
 # Turn off pause on xwin devices since it's really not necessary for a
 # single plot application.
+# AWI, comment out since dp no longer exists, and xwin and tk work better
+# without this.
 
-    plgdev device
-    switch $device {
-	xwin	-
-	tk	-
-	dp	{plspause 0}
-    }
+#    plgdev device
+#    switch $device {
+#	xwin	-
+#	tk	-
+#	dp	{plspause 0}
+#    }
 
 # Initialize data arrays
 
