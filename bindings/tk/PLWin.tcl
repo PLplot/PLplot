@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.4  1994/06/10 20:46:58  furnish
+# Revision 1.5  1994/06/16 18:33:51  mjl
+# Modified argument lists for plline and plpoin methods to use matrix names.
+#
+# Revision 1.4  1994/06/10  20:46:58  furnish
 # Mirror plpoin.  More of the API still needs doing.
 #
 # Revision 1.3  1994/06/09  20:07:13  mjl
@@ -49,12 +52,12 @@ itcl_class PLWin {
 	$this.plwin cmd pllab $xlab $ylab $toplab
     }
 
-    method plline {pairs} {
-	$this.plwin cmd plline $pairs
+    method plline {n x y} {
+	$this.plwin cmd plline $n $x $y
     }
 
-    method plpoin {pairs marker} {
-	$this.plwin cmd plpoin $pairs $marker
+    method plpoin {n x y code} {
+	$this.plwin cmd plpoin $n $x $y $code
     }
 
     public name
