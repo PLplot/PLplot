@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.46  1995/05/06 17:10:51  mjl
+ * Revision 1.47  1995/05/08 20:26:26  mjl
+ * Split the crossing event handler into separate enter and leave event
+ * handlers to better keep track of whether we should be drawing graphic
+ * crosshairs or not.  Now works properly under all combinations of expose,
+ * pointer in or out of window, and with or without a pixmap, as far as I can
+ * tell.
+ *
+ * Revision 1.46  1995/05/06  17:10:51  mjl
  * Added EnterNotify and LeaveNotify event handling, to draw or undraw
  * crosshairs as needed.  Improved debugging output.
  *
@@ -286,7 +293,8 @@ static void  PlFrameInit	(ClientData);
 static void  PlFrameConfigureEH	(ClientData, XEvent *);
 static void  PlFrameExposeEH	(ClientData, XEvent *);
 static void  PlFrameMotionEH	(ClientData, register XEvent *);
-static void  PlFrameCrossingEH	(ClientData, register XEvent *);
+static void  PlFrameEnterEH	(ClientData, register XEvent *);
+static void  PlFrameLeaveEH	(ClientData, register XEvent *);
 static void  PlFrameKeyEH	(ClientData, register XEvent *);
 static int   PlFrameWidgetCmd	(ClientData, Tcl_Interp *, int, char **);
 static int   ReadData		(ClientData, int);
@@ -810,11 +818,10 @@ PlFrameConfigureEH(ClientData clientData, register XEvent *eventPtr)
  * Note: it's customary in Tk to collapse multiple exposes, so for best
  * performance without losing the window contents, I keep track of the
  * smallest single rectangle that can satisfy all expose events.  If there
- * is any overlaid graphics (like crosshairs), however, we need to refresh
+ * are any overlaid graphics (like crosshairs), however, we need to refresh
  * the entire plot in order to have a predictable outcome.
  *
- *---------------------------------------------------------------------------
- */
+ *--------------------------------------------------------------------------- */
 
 static void
 PlFrameExposeEH(ClientData clientData, register XEvent *eventPtr)
@@ -890,10 +897,10 @@ PlFrameMotionEH(ClientData clientData, register XEvent *eventPtr)
 /*
  *---------------------------------------------------------------------------
  *
- * PlFrameCrossingEH --
+ * PlFrameEnterEH --
  *
- *	Invoked by the Tk dispatcher on EnterNotify or LeaveNotify events in
- *	a plframe.  Not invoked unless we are drawing graphic crosshairs.
+ *	Invoked by the Tk dispatcher on EnterNotify events in a plframe.
+ *	Not invoked unless we are drawing graphic crosshairs.
  *
  * Results:
  *	None.
@@ -901,19 +908,45 @@ PlFrameMotionEH(ClientData clientData, register XEvent *eventPtr)
  * Side effects:
  *	Graphic crosshairs are updated.
  *
- *---------------------------------------------------------------------------
- */
+ *--------------------------------------------------------------------------- */
 
 static void
-PlFrameCrossingEH(ClientData clientData, register XEvent *eventPtr)
+PlFrameEnterEH(ClientData clientData, register XEvent *eventPtr)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+    XCrossingEvent *crossingEvent = (XCrossingEvent *) eventPtr;
+
+    dbug_enter("PlFrameEnterEH");
+
+    DrawXhairs(plFramePtr, crossingEvent->x, crossingEvent->y);
+    plFramePtr->drawing_xhairs = 1;
+}
+
+/*
+ *---------------------------------------------------------------------------
+ *
+ * PlFrameLeaveEH --
+ *
+ *	Invoked by the Tk dispatcher on LeaveNotify events in a plframe.
+ *	Not invoked unless we are drawing graphic crosshairs.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Graphic crosshairs are updated.
+ *
+ *--------------------------------------------------------------------------- */
+
+static void
+PlFrameLeaveEH(ClientData clientData, register XEvent *eventPtr)
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
 
-    dbug_enter("PlFrameCrossingEH");
+    dbug_enter("PlFrameLeaveEH");
 
-    if (plFramePtr->drawing_xhairs) {
-	UpdateXhairs(plFramePtr);
-    }
+    UpdateXhairs(plFramePtr);
+    plFramePtr->drawing_xhairs = 0;
 }
 
 /*
@@ -1044,26 +1077,30 @@ CreateXhairs(PlFrame *plFramePtr)
 
     Tk_DefineCursor(tkwin, plFramePtr->xhair_cursor);
 
-/* Find current pointer location and draw some graphic crosshairs */
+/* Find current pointer location and draw graphic crosshairs if pointer is */
+/* inside our window. */
 
     if (XQueryPointer(plFramePtr->display, Tk_WindowId(tkwin),
 		      &root, &child, &root_x, &root_y, &win_x, &win_y,
 		      &mask)) {
 
 	if (win_x >= 0 && win_x < Tk_Width(tkwin) &&
-	    win_y >= 0 && win_y < Tk_Height(tkwin))
+	    win_y >= 0 && win_y < Tk_Height(tkwin)) {
 	    DrawXhairs(plFramePtr, win_x, win_y);
+	    plFramePtr->drawing_xhairs = 1;
+	}
     }
 
 /* Catch PointerMotion and crossing events so we can update them properly */
 
-    plFramePtr->drawing_xhairs = 1;
-
     Tk_CreateEventHandler(tkwin, PointerMotionMask,
 			  PlFrameMotionEH, (ClientData) plFramePtr);
 
-    Tk_CreateEventHandler(tkwin, EnterWindowMask | LeaveWindowMask,
-			  PlFrameCrossingEH, (ClientData) plFramePtr);
+    Tk_CreateEventHandler(tkwin, EnterWindowMask,
+			  PlFrameEnterEH, (ClientData) plFramePtr);
+
+    Tk_CreateEventHandler(tkwin, LeaveWindowMask,
+			  PlFrameLeaveEH, (ClientData) plFramePtr);
 
 /* Catch KeyPress events so we can filter them */
 
@@ -1086,10 +1123,16 @@ DestroyXhairs(PlFrame *plFramePtr)
 
     Tk_DefineCursor(tkwin, plFramePtr->cursor);
 
-/* Don't catch PointerMotion events any more */
+/* Don't catch PointerMotion or crossing events any more */
 
     Tk_DeleteEventHandler(tkwin, PointerMotionMask,
 			  PlFrameMotionEH, (ClientData) plFramePtr);
+
+    Tk_DeleteEventHandler(tkwin, EnterWindowMask,
+			  PlFrameEnterEH, (ClientData) plFramePtr);
+
+    Tk_DeleteEventHandler(tkwin, LeaveWindowMask,
+			  PlFrameLeaveEH, (ClientData) plFramePtr);
 
     Tk_DeleteEventHandler(tkwin, KeyPressMask,
 			  PlFrameKeyEH, (ClientData) plFramePtr);
@@ -1340,14 +1383,19 @@ DisplayPlFrame(ClientData clientData)
 	}
 
     /* Expose -- if window bounds are unchanged */
-    /* Reset window bounds so that next time they are set fresh */
 
 	else {
 	    plsstrm(plFramePtr->ipls);
-	    if (plFramePtr->drawing_xhairs) 
+	    if (plFramePtr->drawing_xhairs) {
+		XClearWindow(plFramePtr->display, Tk_WindowId(tkwin));
+		XFlush(plFramePtr->display);
 		pl_cmd(PLESC_EXPOSE, NULL);
-	    else
+	    }
+	    else {
 		pl_cmd(PLESC_EXPOSE, (void *) &(plFramePtr->pldis));
+	    }
+
+	/* Reset window bounds so that next time they are set fresh */
 
 	    plFramePtr->pldis.x      = Tk_X(tkwin) + Tk_Width(tkwin);
 	    plFramePtr->pldis.y      = Tk_Y(tkwin) + Tk_Height(tkwin);
