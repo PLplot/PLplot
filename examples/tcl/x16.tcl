@@ -10,7 +10,7 @@ proc x16 {{w loopback}} {
     set nx 35
     set ny 46
 
-    set pi 3.1415926535897932384
+    set pi 3.14159265358979323846
 
     set sh_cmap 1
     set min_color 1; set min_width 0; set max_color 0; set max_width 0

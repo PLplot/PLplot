@@ -34,7 +34,7 @@ proc plgrid {{w loopback}} {
     matrix yj f $nj1
 
     set dr     [expr 1. / $ni]
-    set dtheta [expr 2. * 3.141592654 / $nj]
+    set dtheta [expr 2. * 3.14159265358979323846 / $nj]
 
 # Set up viewport and window, but do not draw box 
 

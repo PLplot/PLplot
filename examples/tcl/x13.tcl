@@ -24,7 +24,7 @@ proc x13 {{w loopback}} {
     $w cmd plcol0 2
 
     set theta0 0.;
-    set pi 3.1415926535897932384
+    set pi 3.14159265358979323846
 
     set dthet [expr 2. * $pi / 500.]
     for {set i 0} {$i <= 4} {incr i} {

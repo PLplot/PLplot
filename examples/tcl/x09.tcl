@@ -34,7 +34,7 @@ proc x09 {{w loopback}} {
     matrix xg2 f $xpts $ypts
     matrix yg2 f $xpts $ypts
 
-    set pi 3.1415926535897932384
+    set pi 3.14159265358979323846
     set distort .4
 
 # Build the 1-d coord arrays.
@@ -122,7 +122,7 @@ proc x09 {{w loopback}} {
 
 proc x09_polar {{w loopback}} {
 
-    set pi 3.1415926535897932384
+    set pi 3.14159265358979323846
     $w cmd plenv -1 1 -1 1 0 -2
     $w cmd plcol0 1
 
