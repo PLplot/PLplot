@@ -85,7 +85,9 @@ with_rpath=yes
 with_nobraindead=no
 
 enable_drivers=yes
-enable_dyndrivers=yes
+#no required by default because yes needs shared libraries which we don't know
+#about at this point.
+enable_dyndrivers=no
 enable_f77=yes
 enable_cxx=yes
 enable_python=yes
