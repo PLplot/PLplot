@@ -589,7 +589,8 @@ color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, char *name )
  *
  * Initializes specified color map 0 color entry to its default.
  *
- * Initial RGB values for color map 0 taken from HPUX 8.07 X-windows 
+ * Initial RGB values for color map 0 taken from X11R6 
+ * (XFree86-3.3.6) X-windows 
  * rgb.txt file, and may not accurately represent the described colors on 
  * all systems.
 \*--------------------------------------------------------------------------*/
