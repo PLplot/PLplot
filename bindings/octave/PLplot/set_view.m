@@ -25,7 +25,7 @@
 ## is evaluated as a function and should do a 3D plot, using the remaining arguments.
 ##
 ##     example of callback `script':
-##      [x, y, z] = peaks; z = log(z);
+##      [x, y, z] = peaks;
 ##      set_view("surfl", x, y, z);
 ##
 ## To control the view angle, the following mouse buttons can be used:
