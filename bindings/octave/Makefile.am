@@ -58,7 +58,9 @@ if has_xml_pm
 	  ../$(top_srcdir)/doc/docbook/src/api.xml ) \
 	&& touch doc-stamp
 else
-	@echo "Perl modules not available: cannot generate full online help for plplot_octave"
+	@echo "Perl modules not available: cannot generate full online help for plplot_octave" \
+	&& mkdir -p plplot_octave_txt \
+	&& touch doc-stamp
 endif
 
 
