@@ -3,7 +3,7 @@ DOCBOOK_XSL = /usr/share/sgml/docbook/stylesheet/xsl/nwalsh/xhtml/docbook.xsl
 ENV = XML_CATALOG_FILES=/usr/share/sgml/docbook/dtd/xml/4.2/catalog.xml
 XML_DCL = /usr/lib/sgml/declaration/xml.dcl
 URL = http://plplot.sf.net
-PWD = $(shell pwd)
+PWD = $(shell cd .. ; pwd)
 
 TARGETS = $(SOURCES:%=%.xhtml) $(SOURCES:%=%.txt) $(SOURCES:%=%.pdf)
 
@@ -17,7 +17,7 @@ all: $(TARGETS)
 
 %.txt: %.xhtml
 	lynx -force_html -dump -width=80 $< \
-	| sed "s,file://localhost$(PWD),$(URL)/announce," > $@
+	| sed "s,file://localhost$(PWD),$(URL)," > $@
 
 %.pdf: %.xml print.xsl
 	$(ENV) xmlto pdf -m print.xsl $<
