@@ -48,6 +48,8 @@ function p20
   p14(1)
   subwindow(1 ,2)
   p12
+  subwindow(3, 4)
+  p17
   oneplot;
 
 endfunction
