@@ -269,10 +269,10 @@ functionality.  This is provided through a ``family'' of PLplot
 megawidgets implemented in [incr Tcl].  Using this interface, a
 programmer can get a PLplot window/widget into a Tk interface as
 easily as:
-\c \begin{code}
+\begin{example}
 PLWin .plw
 pack .plw
-\c \end{code}
+\end{example}
 Actually, there's the update/init business--need to clear that up.
 
 The \code{PLWin} class then mirrors much of the PLplot C API, so that
@@ -282,4 +282,158 @@ This is demonstrated in the \file{tk02} demo,
 \node Custom Extensions, , PLplot Extensions, Extended WISH
 \section{Custom Extensions to Tcl}
 
-It's gonna be great, go wild.
+By this point, you should have a pretty decent understanding of the
+underlying philosophy of Tcl and Tk, and the whole concept of
+extensions, of which [incr Tcl] and PLplot are examples.  These alone
+are enough to allow the rapid prototyping and development of powerful,
+flexible grpahical applications.  Normally the programmer simply
+writes a shell script to be executed by the Tk windowing shell,
+\code{wish}.  It is in vogue for each Tcl/Tk extension package to
+build it's own ``extended WISH''.  Tcl-DP, for example builds
+\code{dpwish} which users can use to evaluate scripts combining Tcl-DP
+commands with standard Tcl/Tk.  There are many examples of this, and
+indeed even PLplot's \code{plserver} program, described in an earlier
+chapter, could just as easily have been called \code{plwish}.
+
+In any event, as exciting and useful as these standalone, extended
+windowing shells may be, they are ultimately only the beginning of
+what you can do.  The real benefit of this approach is realized when
+you make your own ``extended WISH'', comprised of Tcl, Tk, any of the
+standard extensions you like, and finally embellished with a
+smattering of application specific extensions designed to support your
+own application domain.  In this section we give a detailed
+introduction to the process of constructing your own WISH.  After
+that, you're on your own...
+
+\begin{menu}
+* WISH construction::		How to write code for a private WISH
+* WISH linking::		Turning your code into an executable
+* WISH programming::		Using your new WISH
+\end{menu}
+
+\node WISH construction, WISH linking, Custom Extensions, Custom Extensions
+\subsection{WISH Construction}
+\cindex{making a wish}
+
+The standard way to make your own WISH, as supported by the Tcl/Tk
+system, is to take a boilerplate file, \file{tkAppInit.c}, edit to
+reflect the Tcl/Tk extensions you will be requiring, add some commands
+to the interpretter, and link it all together.
+
+Here for example is the important part of the \file{tk02} demo,
+extracted from the file \file{xtk02.c}, which is effectively the
+extended WISH definition file for the \file{tk02} demo.  Comments and
+other miscelany are omitted.
+\begin{example}
+#include "tk.h"
+#include "itcl.h"
+
+/* ... */
+
+int   myplotCmd        (ClientData, Tcl_Interp *, int, char **);
+
+int
+Tcl_AppInit(interp)
+    Tcl_Interp *interp;		/* Interpreter for application. */
+\{
+int   plFrameCmd        (ClientData, Tcl_Interp *, int, char **);
+
+    Tk_Window main;
+
+    main = Tk_MainWindow(interp);
+
+    /*
+     * Call the init procedures for included packages.  Each call should
+     * look like this:
+     *
+     * if (Mod_Init(interp) == TCL_ERROR) \{
+     *     return TCL_ERROR;
+     * \}
+     *
+     * where "Mod" is the name of the module.
+     */
+
+    if (Tcl_Init(interp) == TCL_ERROR) \{
+        return TCL_ERROR;
+    \}
+    if (Tk_Init(interp) == TCL_ERROR) \{
+        return TCL_ERROR;
+    \}
+    if (Itcl_Init(interp) == TCL_ERROR) \{
+        return TCL_ERROR;
+    \}
+    if (Pltk_Init(interp) == TCL_ERROR) \{
+        return TCL_ERROR;
+    \}
+
+    /*
+     * Call Tcl_CreateCommand for application-specific commands, if
+     * they weren't already created by the init procedures called above.
+     */
+
+    Tcl_CreateCommand(interp, "myplot", myplotCmd,
+                      (ClientData) main, (void (*)(ClientData)) NULL);
+
+
+    /*
+     * Specify a user-specific startup file to invoke if the
+     * application is run interactively.  Typically the startup
+     * file is "~/.apprc" where "app" is the name of the application.
+     * If this line is deletedthen no user-specific startup file
+     * will be run under any conditions.
+     */
+
+    tcl_RcFileName = "~/.wishrc";
+    return TCL_OK;
+\}
+
+/* ... myPlotCmd, etc ... */
+\end{example}
+
+The calls to \code{Tcl_Init()} and \code{Tk_Init()} are in every WISH.
+To make an extended WISH, you add calls to the initialization routines
+for any extension packages you want to use, in this [incr Tcl]
+(\code{Itcl_Init()}) and PLplot (\code{Pltk_Init()}).  Finally you add
+keywords to the interpretter, associating them with functions in your
+code using \code{Tcl_CreateCommand()} as shown.
+
+In particular, PLplot has a number of [incr Tcl] classes in its Tcl
+library.  If you want to be able to use those in your WISH, you need
+to include the initialization of [incr Tcl].
+
+\node WISH linking, WISH programming, WISH construction, Custom Extensions
+\subsection{WISH Linking}
+
+Having constructed your \code{Tcl_AppInit()} function, you now merely
+need to link this file with your own private files to provide the code
+for any functions you registered via \code{Tcl_CreateCommand()} (and
+any they depend on), against the Tcl, Tk and extension libraries you
+are using.
+\begin{example}
+cc -c tkAppInit.c
+cc -c mycommands.c
+cc -o my_wish tkAppInit.o mycommands.o 
+           -lplplotftk -ltcl -ltk -litcl -lX11 -lm
+\end{example}
+Add any needed \code{-L} options as needed.
+
+Voila!  You have made a wish.
+
+\node WISH programming, , WISH linking, Custom Extensions
+\subsection{WISH Programming}
+
+Now you are ready to put the genie to work.  The basic plan here is to
+write shell scripts which use your new application specific windowing
+shell as their interpreter, to imlement X Windows user interfaces to
+control and utilize the facilities made available in your extensions.
+
+Effectively this just comes down to wrting Tcl/Tk code, embellished as
+appropriate with calls to the extension commands you registered.
+Additionally, since this wish includes the PLplot extensions, you can
+instantiate any of the PLplot family of [incr Tcl] classes, and invoke
+methods on those objects to effect the drawing of graphs.  Similarly,
+you may have your extension commands (which are coded in C) call the
+PLplot C programmers API to draw into the widget.  In this way you can
+have the best of both worlds.  Use compiled C code when the
+computational demands require the speed of compiled code, or use Tcl
+or [incr Tcl] code when speed is not critical.
