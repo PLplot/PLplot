@@ -1,25 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/06/30 18:21:56  mjl
+ * Revision 1.11  1994/08/25 04:04:06  mjl
+ * Eliminated an unnecessary header file inclusion.
+ *
+ * Revision 1.10  1994/06/30  18:21:56  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
  * global access to the plstream pointer via extern; many accessor functions
  * eliminated as a result.
- *
- * Revision 1.9  1994/04/08  12:29:00  mjl
- * Now always keeps track of bytes written or read, for use by drivers
- * that need that info.
- *
- * Revision 1.8  1994/03/23  07:26:56  mjl
- * Changed Alloc2dGrid to plAlloc2dGrid, Free2dGrid to plFree2dGrid.
- * Eliminated special malloc include handling.
- *
- * Revision 1.7  1994/01/15  17:24:59  mjl
- * All PDF functions changed to accept a pointer to a PDFstrm instead
- * of a file handle, to enable PDF operations to/from a memory buffer.
- * New PDF front-ends to fopen, fclose, getc, putc added.  pdf_bopen()
- * added for initialization of memory buffer.
 */
 
 /*--------------------------------------------------------------------------*\
@@ -44,7 +33,6 @@
 \*--------------------------------------------------------------------------*/
 
 #include "plplotP.h"
-#include "pdf.h"
 
 static void print_ieeef	(void *, void *);
 static int  pdf_wrx	(const U_CHAR *x, long nitems, PDFstrm *pdfs);

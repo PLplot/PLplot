@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1994/08/03 20:12:43  mjl
+ * Revision 1.29  1994/08/25 04:03:17  mjl
+ * Eliminated an unnecessary header file inclusion.
+ *
+ * Revision 1.28  1994/08/03  20:12:43  mjl
  * Eliminated #undef of _POSIX_SOURCE on Crays -- no longer needed now that
  * caddr_t is defined in plConfig.h (if not typedef'ed by <sys/types.h>).
  *
@@ -110,7 +113,6 @@
 /* plplot.h also includes some handy system header files */
 
 #include "plplot.h"
-#include "pdf.h"
 #include "plstream.h"
 
 /* If not including this file from inside of plcore.h, declare plsc */
