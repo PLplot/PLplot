@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+bindir=@bindir@
+
+Name: Plplot (double precision)
+Description: Plotting library (double precision)
+Requires:
+Version: @VERSION@
+Libs: -L${libdir} -lplplotd
+Cflags: -I${includedir} -DPL_DOUBLE

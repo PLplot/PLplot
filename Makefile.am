@@ -9,6 +9,13 @@ bin_SCRIPTS = plplot_libtool
 plplot_libtool: libtool
 	cp libtool plplot_libtool
 
+pkgconfigdir = $(libdir)/pkgconfig
+if with_double
+pkgconfig_DATA = plplot-double.pc
+else
+pkgconfig_DATA = plplot.pc
+endif
+
 docdir = $(datadir)/doc/plplot
 
 doc_DATA = \
