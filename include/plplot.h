@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.86  1996/10/11 23:32:17  furnish
+ * Revision 1.87  1998/12/01 20:46:15  furnish
+ * Add a strip chart facility.
+ *
+ * Revision 1.86  1996/10/11  23:32:17  furnish
  * Bump version for snapshot.
  *
  * Revision 1.85  1996/06/26  21:32:21  furnish
@@ -546,6 +549,9 @@ typedef struct {
 #define    plssym	c_plssym
 #define    plstar	c_plstar
 #define    plstart	c_plstart
+#define    plstripa	c_plstripa
+#define    plstripc	c_plstripc
+#define    plstripd	c_plstripd
 #define    plstyl	c_plstyl
 #define    plsvpa	c_plsvpa
 #define    plsxax	c_plsxax
@@ -656,6 +662,9 @@ typedef struct {
 #define    c_plssym	plssym
 #define    c_plstar	plstar
 #define    c_plstart	plstart
+#define    c_plstripa	plstripa
+#define    c_plstripc	plstripc
+#define    c_plstripd	plstripd
 #define    c_plstyl	plstyl
 #define    c_plsvpa	plsvpa
 #define    c_plsxax	plsxax
@@ -1239,6 +1248,27 @@ c_plstar(PLINT nx, PLINT ny);
 
 void
 c_plstart(const char *devname, PLINT nx, PLINT ny);
+
+/* Create 1d stripchart */
+
+void
+c_plstripc(PLINT *id, char *xspec, char *yspec,
+	PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
+	PLFLT xlpos, PLFLT ylpos,
+	PLINT y_ascl, PLINT acc,
+	PLINT colbox, PLINT collab,
+	PLINT colline[], PLINT styline[], char *legline[],
+	char *labx, char *laby, char *labtop);
+
+/* Add a point to a stripchart.  */
+
+void
+c_plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
+
+/* Deletes and releases memory used by a stripchart.  */
+
+void
+c_plstripd(PLINT id);
 
 /* Set up a new line style */
 
