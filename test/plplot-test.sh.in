@@ -30,7 +30,7 @@ EOF
 # This script is only designed to work from a directory named "examples" 
 # with a subdirectory called "c".  Check whether those conditions are true.
 
-current=`pwd | sed 's?^.\+/\(examples\)$?\1?'`
+current=`pwd | sed 's?^..*/\(examples\)$?\1?'`
 if test ! \( "$current" = "examples" -a -d "c" \) ; then
 cat << EOF
 This script is only designed to work from a directory named "examples" 
