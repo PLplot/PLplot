@@ -16,16 +16,9 @@ cvs -d${SF_USER}@$SF_CVSROOT co -d$CVSTMPDIR  plplot
 cd $CVSTMPDIR
 rm -rf `find . -name CVS`
 
-CVSREL=.cvs.`date '+%Y%m%d'`
-
-echo -n "Patching configure.ac ... "
-perl -pi -e \
-  's/^(AM_INIT_AUTOMAKE\(plplot, )(\d\.\d\.\d)([^)]*\))/$1$2'$CVSREL')/' \
-  configure.ac
-echo done
-
-./bootstrap.sh
-./configure --enable-docbook
+VERSION=${1:+--version=$1}
+echo ./bootstrap.sh ${VERSION:---date-version}
+./configure --enable-docbook --enable-python --enable-octave --enable-f77
 ( cd doc/docbook ; make )
 make dist
 TARBALL=`ls plplot-*.tar.gz`
