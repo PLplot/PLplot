@@ -103,7 +103,8 @@ install-stamp: build-stamp
 
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev plplot-doc  \
 	         plplot9-driver-gd plplot9-driver-xwin plplot9-driver-gnome \
-                 $(octave_pkg) python-plplot plplot-bin ; do \
+                 $(octave_pkg) python-plplot plplot-bin libplplot-c++9 \
+		 libcsiro0 ; do \
 	  ln -s $(libpkg) $(debdoc)/$$i ; \
 	done
 
