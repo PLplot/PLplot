@@ -467,9 +467,11 @@ typedef struct {
 #define    plline3	c_plline3
 #define    pllsty	c_pllsty
 #define    plmesh	c_plmesh
+#define    plmeshc	c_plmeshc
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
+#define    plot3dc	c_plot3dc
 #define    plsurf3d	c_plsurf3d
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
@@ -590,9 +592,11 @@ typedef struct {
 #define    c_plline3	plline3
 #define    c_pllsty	pllsty
 #define    c_plmesh	plmesh
+#define    c_plmeshc	plmeshc
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
+#define    c_plot3dc	plot3dc
 #define    c_plsurf3d	plsurf3d
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
@@ -1020,6 +1024,14 @@ void my_plmesh(PLFLT *x, PLFLT *y, PLFLT *z, PLINT nx, PLINT ny, PLINT opt) {
 	f2c(z, zz, nx, ny);
 	c_plmesh(x, y, zz, nx, ny, opt);} //%name plmesh //%input x(nx), y(ny), z(nx,ny)
 
+/* Plots a mesh representation of the function z[x][y] with contour */
+
+void c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel); //%nowrap
+
+void my_plmeshc(PLFLT *x, PLFLT *y, PLFLT *z, PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel) {
+	f2c(z, zz, nx, ny);
+	c_plmeshc(x, y, zz, nx, ny, opt, clevel, nlevel);} //%name plmeshc //%input x(nx), y(ny), z(nx,ny), clevel(nlevel)
+
 /* Creates a new stream and makes it the default.  */
 
 void c_plmkstrm(PLINT *p_strm); //%name plmkstrm //%output p_strm
@@ -1039,6 +1051,19 @@ void my_plot3d(PLFLT *x, PLFLT *y, PLFLT *z,
 	f2c(z, zz, nx, ny)
 	c_plot3d(x, y, zz, nx, ny, opt, side);
 } //%name plot3d //%input x(nx), y(ny), z(nx,ny)
+
+/* Plots a 3-d representation of the function z[x][y] with contour */
+
+void c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
+	       PLINT nx, PLINT ny, PLINT opt,
+	       PLFLT *clevel, PLINT nlevel); //%nowrap
+
+void my_plot3dc(PLFLT *x, PLFLT *y, PLFLT *z,
+		PLINT nx, PLINT ny, PLINT opt,
+		PLFLT *clevel, PLINT nlevel) {
+  f2c(z, zz, nx, ny)
+    c_plot3dc(x, y, zz, nx, ny, opt, clevel, nlevel);
+} //%name plot3dc //%input x(nx), y(ny), z(nx,ny), clevel(nlevel)
 
 /* Plots the 3-d surface representation of the function z[x][y]. */
 
@@ -1591,14 +1616,16 @@ int my_plTranslateCursor(PLFLT *x, PLFLT *y, PLFLT x_in, PLFLT y_in) {
 
 void plimage( PLFLT **data, PLINT nx, PLINT ny, 
 	      PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	      PLFLT zmin, PLFLT zmax,
 	      PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax); //%nowrap
 
 void my_plimage(PLFLT *a, PLINT nx, PLINT ny, 
 		PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax ,
+		PLFLT zmin, PLFLT zmax,
 		PLFLT dxmin, PLFLT dxmax, PLFLT dymin, PLFLT dymax) {
 
   f2c(a,aa,nx,ny);
-  plimage(aa, nx, ny, xmin, xmax, ymin, ymax, dxmin, dxmax, dymin, dymax);
+  plimage(aa, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, dxmin, dxmax, dymin, dymax);
 } //%name pplimage //%input a(nx, ny)
 
 #ifdef __cplusplus
