@@ -8,7 +8,11 @@
 // $Id$
 //
 // $Log$
-// Revision 1.3  1995/01/16 19:24:19  mjl
+// Revision 1.4  1995/03/17 07:53:17  mjl
+// Added new interface methods to the parsing functions.  Eliminated old
+// ones that were obsolete.
+//
+// Revision 1.3  1995/01/16  19:24:19  mjl
 // Fixed arglists for scmap1l and plscmap1l.
 //
 // Revision 1.2  1994/10/18  16:12:39  furnish
@@ -952,16 +956,6 @@ plstream::rgb1(PLINT r, PLINT g, PLINT b)
     plrgb1(r,g,b);
 }
 
-/* Obsolete.  Use page driver interface instead. */
-
-void
-plstream::sasp(PLFLT asp)
-{
-    set_stream();
-
-    plsasp(asp);
-}
-
 /* Set character height. */
 
 void
@@ -1239,16 +1233,6 @@ plstream::fshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	      fill, rectangular, pltr, pltr_data );
 }
 
-/* I've canned this for now */
-
-void
-plstream::slpb(PLFLT lpbxmi, PLFLT lpbxma, PLFLT lpbymi, PLFLT lpbyma)
-{
-    set_stream();
-
-    plslpb( lpbxmi, lpbxma, lpbymi, lpbyma );
-}
-
 /* Set up lengths of major tick marks. */
 
 void
@@ -1522,7 +1506,7 @@ plstream::gFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
 /* Set the function pointer for the keyboard event handler */
 
 void
-plstream::sKeyEH(void (*KeyEH) (PLKey *, void *, int *), void
+plstream::sKeyEH(void (*KeyEH) (PLGraphicsIn *, void *, int *), void
 		 *KeyEH_data)
 {
     set_stream();
@@ -1658,67 +1642,74 @@ plstream::f2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 
 	/* Command line parsing utilities */
 
-/* Front-end to Syntax() for external use. */
+/* Clear internal option table info structure. */
 
 void
-plstream::Syntax(PLINT mode)
+plstream::ClearOpts(void)
 {
     set_stream();
 
-    ::plSyntax( mode );
+    ::plClearOpts();
 }
 
-/* Front-end to Help() for external use. */
+/* Reset internal option table info structure. */
 
 void
-plstream::Help(PLINT mode)
+plstream::ResetOpts(void)
 {
     set_stream();
 
-    plHelp( mode );
+    ::plResetOpts();
 }
 
-/* Print usage notes. */
-
-void
-plstream::Notes(void)
-{
-    set_stream();
-
-    plNotes();
-}
-
-/* Process PLplot internal options list */
+/* Merge user option table into internal info structure. */
 
 int
-plstream::ParseInternalOpts(int *p_argc, char **argv, PLINT mode)
+plstream::MergeOpts(PLOptionTable *options, char *name, char **notes)
 {
     set_stream();
 
-    return plParseInternalOpts( p_argc, argv, mode );
+    return ::plMergeOpts(options, name, notes);
 }
 
-/* Process options list */
+/* Set the strings used in usage and syntax messages. */
 
-int
-plstream::ParseOpts(int *p_argc, char **argv, PLINT mode,
-		    PLOptionTable *option_table,
-		    void (*usage_handler) (char *))
+void
+plstream::SetUsage(char *program_string, char *usage_string)
 {
     set_stream();
 
-    return plParseOpts( p_argc, argv, mode, option_table,
-			usage_handler );
+    ::plSetUsage(program_string, usage_string);
 }
 
 /* Process input strings, treating them as an option and argument pair. */
 
 int
-plstream::SetInternalOpt(char *opt, char *optarg)
+plstream::SetOpt(char *opt, char *optarg)
 {
     set_stream();
 
-    return SetInternalOpt(opt, optarg);
+    return ::plSetOpt(opt, optarg);
+}
+
+/* Process options list using current options info. */
+
+int
+plstream::ParseOpts(int *p_argc, char **argv, PLINT mode)
+{
+    set_stream();
+
+    return ::plParseOpts( p_argc, argv, mode );
+}
+
+/* Print usage & syntax message. */
+
+void
+plstream::OptUsage(void)
+{
+    set_stream();
+
+    ::plOptUsage();
 }
 
 	/* Miscellaneous */
@@ -1861,11 +1852,11 @@ plstream::RGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l,
 /* Wait for right button mouse event and translate to world coordinates */
 
 int
-plstream::GetCursor(PLCursor *cursor)
+plstream::GetCursor(PLGraphicsIn *gin)
 {
     set_stream();
 
-    return plGetCursor(cursor);
+    return plGetCursor(gin);
 }
 
 //---------------------------------------------------------------------------//
