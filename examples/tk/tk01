@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.7  1994/07/24 07:42:57  mjl
+# Revision 1.8  1995/04/17 19:24:13  furnish
+# Embellished to demonstrate (test :-) ways of using Tk bindings with
+# plframes.  Boundless possibilities.  Time to stand up and SHOUT!!!
+#
+# Revision 1.7  1994/07/24  07:42:57  mjl
 # Eliminated "destroy ." in favor of "exit".
 #
 # Revision 1.6  1994/07/01  20:43:59  mjl
@@ -63,6 +67,33 @@ tk_menuBar .menu .menu.one .menu.two .menu.three .menu.four .menu.exit
 
 plxframe .plw
 pack append . .plw {left expand fill}
+
+###############################################################################
+# Here we show off some of what you can do with Tk bindings and PLplot.
+
+# These bindings cause the giant cross hair to always be active
+# whenever the cursor is in the plframe, and not otherwise.
+
+bind .plw.plwin <Enter> { .plw.plwin configure -xhairs 1 }
+bind .plw.plwin <Leave> { .plw.plwin configure -xhairs 0 }
+
+# Here is a binding which allows you to obtain the world coordinates
+# of a point at any time you want it.  This is better than the "locate
+# mode" of the X driver per se, since it is appears modeless to the
+# user.  Note especially that in the body of this example "get_coords"
+# proc, you can do anything you can do from Tcl.  In particular, you
+# need not put the data out to stdout (which is pretty boring).
+# Instead, you can use this to feed the world coords to some more
+# complicated Tcl proc of your choosing.  Use the regexp parser to
+# pull out the world x and y coordinates, etc.  Have fun!
+
+bind .plw.plwin <Shift-1> { get_coords %x %y };
+
+proc get_coords {x y} {
+    set w [.plw.plwin report wc $x $y]
+
+    puts "PLplot says, :$w:"
+}
 
 ###############################################################################
 # Definitions of procedures used in this script.
