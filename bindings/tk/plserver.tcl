@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.16  1994/06/16 19:08:22  mjl
+# Revision 1.17  1994/06/23 22:34:57  mjl
+# Removed an unnecessary "update".
+#
+# Revision 1.16  1994/06/16  19:08:22  mjl
 # exit_app proc simplified -- some of its previous tasks have been absorbed
 # into the redefined exit proc.
 #
@@ -164,7 +167,6 @@ proc exit_app {} {
 
     if { [ info exists client ] } then {
 	client_cmd $client "unset server"
-	update
     }
     after 1 exit
 }
