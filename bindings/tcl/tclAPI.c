@@ -1283,7 +1283,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
 {
     PLINT nx, ny, opt, nlev;
     PLFLT *x, *y, **z;
-    PLFLT *clev = NULL;
+    PLFLT *clev;
 
     tclMatrix *matx, *maty, *matz, *matPtr, *matlev;
     int i;
@@ -1375,6 +1375,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
 	nx   = atoi( argv[4] );
 	ny   = atoi( argv[5] );
 	opt  = atoi( argv[6] );
+        clev = NULL;
 
 	matx = Tcl_GetMatrixPtr( interp, argv[1] );
 	if (matx == NULL) return TCL_ERROR;
@@ -1407,6 +1408,7 @@ plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
     }
     else if (argc == 5) {
 	opt = atoi( argv[4] );
+        clev = NULL;
 
 	matx = Tcl_GetMatrixPtr( interp, argv[1] );
 	if (matx == NULL) return TCL_ERROR;
