@@ -403,7 +403,7 @@ family member files as a single logical file.
 
 <para> To create a family file, one must simply call &plsfam; with the
 familying flag <literal>fam</literal> set to 1, and the desired maximum
-member size (in bytes) in <literal>bmax</literal>.  &plsfam also allows
+member size (in bytes) in <literal>bmax</literal>.  &plsfam; also allows
 you to set the current family file number.  If the current output
 driver does not support familying, there will be no effect.  This call must
 be made <emphasis>before</emphasis> calling &plstar; or &plstart;. </para>
