@@ -1160,7 +1160,7 @@ plserver:	$(PLLIB_MAIN) $(SERVER_OBJ)
 # Example programs, in c.
 
 CDEMOS= x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c x11c \
-	x12c x13c x14c tutor
+	x12c x13c x14c x15c tutor
 
 cdemos:	$(CDEMOS)
 
@@ -1287,13 +1287,16 @@ if_dbl({dnl
 		../drivers/tk/*.h \
 		../drivers/tk/*.tcl \
 		../drivers/tk/tclIndex \
+		../lib/*.fnt \
 		.
 })
 if_amiga({
 links:
 	copy /src/\#?.c ""
 	copy /drivers/\#?.c ""
+	copy /include/\#?.h ""
 	copy /utils/\#?.c ""
+	copy /lib/\#?.fnt ""
 	copy /examples/C/\#?.c ""
 	copy /sys/amiga/src/\#?.c ""
 })
@@ -1307,7 +1310,7 @@ clean:
 
 realclean:
 	-rm $(CDEMOS) $(FDEMOS) *.o *.c *.h *.f *.plm* *.tek* *.ps \
-	*.tcl tclIndex makefile plpr ../lib/libpl*
+	*.tcl tclIndex *.fnt makefile plrender plserver plpr ../lib/libpl*
 })
 
 #----------------------------------------------------------------------#
