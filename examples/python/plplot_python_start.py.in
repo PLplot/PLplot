@@ -4,5 +4,5 @@ invocation_path = sys.path[0]
 sys.path.insert (0, "@PYTHON_INSTDIR@")
 
 # The following is useful for build tree only!
-sys.path.insert (0, invocation_path + "/../bindings/python")
-sys.path.insert (0, invocation_path + "/../bindings/python/.libs")
+sys.path.insert (0, invocation_path + "/../../bindings/python")
+sys.path.insert (0, invocation_path + "/../../bindings/python/.libs")
