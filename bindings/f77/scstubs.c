@@ -429,13 +429,13 @@ PLMTEX7(char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, char *text)
 }
 
 void
-PLPARSEOPTS7(PLINT *numargs, char *iargs, PLINT *mode, PLINT *maxindex)
+PLPARSEOPTS7(int *numargs, char *iargs, PLINT *mode, PLINT *maxindex)
 {
 /* Same as in plparseopts fortran subroutine that calls this one. */
 #define MAXARGS 20
    if(*numargs <= MAXARGS) {
       char *argv[MAXARGS];
-      PLINT i;
+      int i;
       for(i = 0; i < *numargs; i++) {
 	 argv[i] = iargs + (i* *maxindex);
 /*	 fprintf(stderr, "%s\n", argv[i]); */
