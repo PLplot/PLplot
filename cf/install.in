@@ -31,7 +31,9 @@ install_demos:
 	-if test ! -d $(DEMOS_DIR)/c; then mkdir -p $(DEMOS_DIR)/c; fi
 	-cp Makedemo $(DEMOS_DIR)/Makefile
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c
-	-cd $(top_srcdir)/examples/c; cp * $(DEMOS_DIR)/c
+	-cd $(top_srcdir)/examples/c; \
+	cp *.c $(DEMOS_DIR)/c; \
+	cp *.h $(INCLUDE_DIR)
 
 install_utils:
 	-if test $(SHARED) = 1; then \
