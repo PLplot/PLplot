@@ -21,7 +21,7 @@ You will have to change the $libs variable at the top of api2bind.pl,
 reflecting the configuration results in your system.  This variable will be
 AC_SUBST'ituted in the future.
 
-    $ make -f pkg_perl5.in (which executes api2bind.pl)
+    $ make -f pkg_perl5.in 
 
 Then run the x01 demo:
 
