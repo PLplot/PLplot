@@ -174,9 +174,22 @@ if test "$enable_cxx" = "yes"; then
     fi
 fi
 
-# Try to find C++ compiler.  If not found, switch enable_cxx to "no".
+found_cxx=no
+
+# If Kuck and Associates, Inc, Photon C++ is available, use that.
 
 if test "$enable_cxx" = "yes"; then
+    AC_CHECK_PROG(found_photon, KCC, yes, no)
+    if test "$found_photon" = "yes" ; then
+	AC_MSG_RESULT([Found butt-kicking Photon C++, using that!])
+	CXX=KCC
+	found_cxx=yes
+    fi
+fi
+
+# Try to find C++ compiler.  If not found, switch enable_cxx to "no".
+
+if test "$enable_cxx" = "yes" -a "$found_cxx" = "no"; then
     AC_CHECK_PROG(found_cxx, $CXX, yes, no)
     if test "$found_cxx" = "no" ; then
 	AC_MSG_RESULT([warning: cannot find C++ compiler, setting enable_cxx=no])
@@ -379,8 +392,13 @@ case "$system" in
 	# Handling of C++ exceptions
 
 	if test "$with_gcc" = "no"; then
-	    SYS_FLAGS_CXX=+eh
-	    SYS_FLAGS_LCXX=+eh
+	    if test "$CXX" = "KCC"; then
+		SYS_FLAGS_CXX=
+		SYS_FLAGS_LCXX=
+	    else
+		SYS_FLAGS_CXX=+eh
+		SYS_FLAGS_LCXX=+eh
+	    fi
 	fi
 
 	# Profiling
