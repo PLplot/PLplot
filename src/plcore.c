@@ -466,7 +466,13 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			      skip=1;  /* skip is set if we have copied something into the unicode table */
 			   }
 			 else
-			   i+=2;
+			   {
+			      /* Use space unicode character if string[i+2] is not in
+			       * the Greek array.*/
+			      unicode_buffer[j]=(unsigned int)0x20;
+			      i+=2;
+			      skip=1;  /* skip is set if we have copied something into the unicode table */
+			   }
 			 
 			 break;
 
@@ -486,7 +492,13 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			      skip=1;  /* skip is set if we have copied something into the unicode table */
 			   }
 			 else
-			   i+=2;
+			   {
+			      /* Use space unicode character if string[i+2] is not in
+			       * the Greek array.*/
+			      unicode_buffer[j]=(unsigned int)0x20;
+			      i+=2;
+			      skip=1;  /* skip is set if we have copied something into the unicode table */
+			   }
 			 
 			 break;
 
