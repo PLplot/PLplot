@@ -515,7 +515,7 @@ plD_state_ps(PLStream *pls, PLINT op)
     case PLSTATE_WIDTH:{
 	int width = 
 	    (pls->width < MIN_WIDTH) ? DEF_WIDTH :
-	    (pls->width > MAX_WIDTH) ? MAX_WIDTH : DEF_WIDTH * pls->width;
+	    (pls->width > MAX_WIDTH) ? MAX_WIDTH : pls->width;
 
 	fprintf(OF, " S\n%d W", width);
 
