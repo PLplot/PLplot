@@ -595,13 +595,13 @@ dnl If there was a GNU version, then set @ifGNUmake@ to the empty string, '#' ot
 ] )
 dnl ------------------------------------------------------------------------
 dnl Determine the dlname of a library to be installed by libtool
-dnl     GET_DLNAME(STEM,VERSION_INFO,VARIABLE)
+dnl     PL_GET_DLNAME(STEM,VERSION_INFO,VARIABLE)
 dnl For a given library STEM and a given VERSION_INFO (a la
 dnl -version-info option of libtool), determine the dlname of the
 dnl library in the form lib$STEM.<so_ext>.<so_number>.  Set the
 dnl variable VARIABLE with the resulting value.  This macro should be used
 dnl only after the call to AM_PROG_LIBTOOL.
-AC_DEFUN([GET_DLNAME],[
+AC_DEFUN([PL_GET_DLNAME],[
   if test -z "$LIBTOOL" -a -z "$CC" ; then
     AC_MSG_ERROR([Dlname guessings can be done only after libtool is initialized])
   else
@@ -620,12 +620,12 @@ dnl ------------------------------------------------------------------------
 dnl Determine the dlname of a DLL to be installed by libtool
 dnl This is a usefule variation of GET_DLNAME above for dynamically loaded
 dnd libraries (DLL's).
-dnl     GET_DLLNAME(STEM,VARIABLE)
+dnl     PL_GET_DLLNAME(STEM,VARIABLE)
 dnl For a given DLL STEM determine the dlname of the
 dnl library in the form $STEM.<so_ext>.  Set the
 dnl variable VARIABLE with the resulting value.  This macro should be used
 dnl only after the call to AM_PROG_LIBTOOL.
-AC_DEFUN([GET_DLLNAME],[
+AC_DEFUN([PL_GET_DLLNAME],[
   if test -z "$LIBTOOL" -a -z "$CC" ; then
     AC_MSG_ERROR([Dlname guessings can be done only after libtool is initialized])
   else

@@ -671,10 +671,10 @@ AC_SUBST(DEFINE_PL_DOUBLE)
 ### This macro may only be used after AM_PROG_LIBTOOL and the definitions of
 ### $SOVERSION (and $LIB_TAG if we ever have separate double and single
 ### precision forms of the pkgIndex.tcl scripts).
-GET_DLNAME([plplot], [$SOVERSION], [DLNAME_LIBPLPLOT])
-GET_DLNAME([plplotd], [$SOVERSION], [DLNAME_LIBPLPLOTD])
-GET_DLNAME([plplottcltk], [$SOVERSION], [DLNAME_LIBPLPLOTTCLTK])
-GET_DLNAME([plplottcltkd], [$SOVERSION], [DLNAME_LIBPLPLOTTCLTKD])
+PL_GET_DLNAME([plplot], [$SOVERSION], [DLNAME_LIBPLPLOT])
+PL_GET_DLNAME([plplotd], [$SOVERSION], [DLNAME_LIBPLPLOTD])
+PL_GET_DLNAME([plplottcltk], [$SOVERSION], [DLNAME_LIBPLPLOTTCLTK])
+PL_GET_DLNAME([plplottcltkd], [$SOVERSION], [DLNAME_LIBPLPLOTTCLTKD])
 AC_SUBST(DLNAME_LIBPLPLOT)
 AC_SUBST(DLNAME_LIBPLPLOTD)
 AC_SUBST(DLNAME_LIBPLPLOTTCLTK)
@@ -682,7 +682,7 @@ AC_SUBST(DLNAME_LIBPLPLOTTCLTKD)
 
 ### bindings/java/config.java.in needs the complete name of the
 ### plplotjavac_wrap DLL.
-GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
+PL_GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
 AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
 
 ### C++ binding
