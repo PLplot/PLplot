@@ -2385,6 +2385,166 @@ Java_plplot_core_PLStream_plot3d___3D_3D_3_3DII(
 
 /*
  * Class:     plplot_core_PLStream
+ * Method:    plotfc3d
+ * Signature: ([F[F[[FI)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_plotfc3d___3F_3F_3_3FI(
+    JNIEnv *env, jobject jthis,
+    jfloatArray xarr, jfloatArray yarr, jobjectArray zarr, jint side )
+{
+    int nx = (*env)->GetArrayLength( env, xarr );
+    int ny = (*env)->GetArrayLength( env, yarr );
+
+    jfloat *xdat = (*env)->GetFloatArrayElements( env, xarr, 0 );
+    jfloat *ydat = (*env)->GetFloatArrayElements( env, yarr, 0 );
+    jfloat **zdat = (jfloat **) malloc( nx * sizeof(jfloat*) );
+
+    PLFLT *x, *y, **z, *zbuf;
+    int must_free_buffers = 0;
+    int i, j;
+
+/* Should really check that z.length == nx */
+
+/* Now fetch the arrays of z[] and pull their data pointers. */
+    for( i=0; i < nx; i++ )
+    {
+        jobject zi = (*env)->GetObjectArrayElement( env, zarr, i );
+        int ziels = (*env)->GetArrayLength( env, zi );
+    /* ziels should be ny! */
+        zdat[i] = (*env)->GetFloatArrayElements( env, zi, 0 );
+    }
+
+    if (sizeof(PLFLT) == sizeof(jfloat)) {
+        x = (PLFLT *) xdat;
+        y = (PLFLT *) ydat;
+        z = (PLFLT **) zdat;
+    } else {
+        x = (PLFLT *) malloc( nx * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( ny * sizeof(PLFLT) );
+        z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
+        zbuf = (PLFLT *) malloc( nx * ny * sizeof(PLFLT) );
+
+        for( i=0; i < nx; i++ ) x[i] = xdat[i];
+        for( j=0; j < ny; j++ ) y[j] = ydat[j];
+
+        for( i=0; i < nx; i++ ) {
+            z[i] = zbuf + i*ny;
+            for( j=0; j < ny; j++ )
+                z[i][j] = zdat[i][j];
+        }
+
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plotfc3d( x, y, z, nx, ny, side );
+
+    if (must_free_buffers) {
+        free(x);
+        free(y);
+        free(z);
+        free(zbuf);
+    }
+    free(zdat);
+
+    (*env)->ReleaseFloatArrayElements( env, xarr, xdat, 0 );
+    (*env)->ReleaseFloatArrayElements( env, yarr, ydat, 0 );
+
+/* Seems to me we need to release these elements of zarr[i] too, but for some
+ * reason the JVM gets sick to its stomach when I do this...  I must be doing
+ * something wrong, but I can't see what it is. */
+
+/*     for( i=0; i < nx; i++ ) */
+/*     { */
+/*         jobject zi = (*env)->GetObjectArrayElement( env, zarr, i ); */
+/*         (*env)->ReleaseFloatArrayElements( env, zi, zdat[i], 0 ); */
+/*     } */
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    plotfc3d
+ * Signature: ([D[D[[DI)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_plotfc3d___3D_3D_3_3DI(
+    JNIEnv *env, jobject jthis,
+    jdoubleArray xarr, jdoubleArray yarr, jobjectArray zarr, jint side )
+{
+    int nx = (*env)->GetArrayLength( env, xarr );
+    int ny = (*env)->GetArrayLength( env, yarr );
+
+    jdouble *xdat = (*env)->GetDoubleArrayElements( env, xarr, 0 );
+    jdouble *ydat = (*env)->GetDoubleArrayElements( env, yarr, 0 );
+    jdouble **zdat = (jdouble **) malloc( nx * sizeof(jdouble*) );
+
+    PLFLT *x, *y, **z, *zbuf;
+    int must_free_buffers = 0;
+    int i, j;
+
+/* Should really check that z.length == nx */
+
+/* Now fetch the arrays of z[] and pull their data pointers. */
+    for( i=0; i < nx; i++ )
+    {
+        jobject zi = (*env)->GetObjectArrayElement( env, zarr, i );
+        int ziels = (*env)->GetArrayLength( env, zi );
+    /* ziels should be ny! */
+        zdat[i] = (*env)->GetDoubleArrayElements( env, zi, 0 );
+    }
+
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+        x = (PLFLT *) xdat;
+        y = (PLFLT *) ydat;
+        z = (PLFLT **) zdat;
+    } else {
+        x = (PLFLT *) malloc( nx * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( ny * sizeof(PLFLT) );
+        z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
+        zbuf = (PLFLT *) malloc( nx * ny * sizeof(PLFLT) );
+
+        for( i=0; i < nx; i++ ) x[i] = xdat[i];
+        for( j=0; j < ny; j++ ) y[j] = ydat[j];
+
+        for( i=0; i < nx; i++ ) {
+            z[i] = zbuf + i*ny;
+            for( j=0; j < ny; j++ )
+                z[i][j] = zdat[i][j];
+        }
+
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plotfc3d( x, y, z, nx, ny, side );
+
+    if (must_free_buffers) {
+        free(x);
+        free(y);
+        free(z);
+        free(zbuf);
+    }
+    free(zdat);
+
+    (*env)->ReleaseDoubleArrayElements( env, xarr, xdat, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, yarr, ydat, 0 );
+
+/* Seems to me we need to release these elements of zarr[i] too, but for some
+ * reason the JVM gets sick to its stomach when I do this...  I must be doing
+ * something wrong, but I can't see what it is. */
+
+/*     for( i=0; i < nx; i++ ) */
+/*     { */
+/*         jobject zi = (*env)->GetObjectArrayElement( env, zarr, i ); */
+/*         (*env)->ReleaseDoubleArrayElements( env, zi, zdat[i], 0 ); */
+/*     } */
+}
+
+/*
+ * Class:     plplot_core_PLStream
  * Method:    plotsh3d
  * Signature: ([F[F[[FI)V
  */

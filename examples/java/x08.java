@@ -37,7 +37,7 @@ class x08 {
     // An interesting variation on this:
     // s[1] = 1.0
     
-    void cmap1_init()
+    void cmap1_init(int gray)
     {
 	double [] i = new double[2];
 	double [] h = new double[2];
@@ -47,23 +47,34 @@ class x08 {
 	  
         i[0] = 0.0;         // left boundary
         i[1] = 1.0;         // right boundary
+
+        if (gray==1) {
+	   h[0] = 0.0;         // hue -- low: red (arbitrary if s=0)
+	   h[1] = 0.0;         // hue -- high: red (arbitrary if s=0)
 	  
-        h[0] = 0.0;         // hue -- low: red (arbitrary if s=0)
-        h[1] = 0.0;         // hue -- high: red (arbitrary if s=0)
-	  
-        l[0] = 0.5;         // lightness -- low: half-dark
-        l[1] = 1.0;         // lightness -- high: light
-	  
-        s[0] = 0.0;         // minimum saturation
-        s[1] = 0.0;         // minimum saturation
+	   l[0] = 0.5;         // lightness -- low: half-dark
+	   l[1] = 1.0;         // lightness -- high: light
+	   
+	   s[0] = 0.0;         // minimum saturation
+	   s[1] = 0.0;         // minimum saturation
+	}
+        else {
+	   h[0] = 240; /* blue -> green -> yellow -> */
+	   h[1] = 0;   /* -> red */
+	   
+	   l[0] = 0.6;
+	   l[1] = 0.6;
+	   
+	   s[0] = 0.8;
+	   s[1] = 0.8;
+	}
+       
         rev[0] = 0;         // interpolate on front side of colour wheel.
         rev[1] = 0;         // interpolate on front side of colour wheel.
 	  
         pls.scmap1n(256);
         pls.scmap1l(0, 2, i, h, l, s, rev);
     }
-   
-     
 
 // Does a series of 3-d plots for a given data set, with different viewing
 // options in each plot.
@@ -113,11 +124,9 @@ class x08 {
         }
 
         pls.lightsource( 1., 1., 1. );
-        cmap1_init();
-    	
         for( k = 0; k < 4; k++ )
         {
-	   for( ifshade = 0; ifshade < 2; ifshade++)
+	   for( ifshade = 0; ifshade < 4; ifshade++)
 	   {
 	      pls.adv(0);
 	      pls.vpor(0.0, 1.0, 0.0, 0.9);
@@ -129,10 +138,19 @@ class x08 {
 			"bnstu", "y axis", 0.0, 0,
 			"bcdmnstuv", "z axis", 0.0, 0 );
 	      pls.col0(2);
-	      if( ifshade == 1) 
-		pls.plotsh3d( x, y, z, 0 );
-	      else
+	      if( ifshade == 0) /* wireframe plot */
 		pls.plot3d( x, y, z, opt[k], 1 );
+	      else if (ifshade == 1) { /* 3D shaded plot */
+		cmap1_init(1);
+		pls.plotsh3d( x, y, z, 0 );
+	      } else {                 /* false color plot */
+		 cmap1_init(0);
+		 pls.plotfc3d(x, y, z, 0);
+		 if (ifshade == 3) {    /* add wireframe to false color plot */
+		    pls.col0(0);
+		    pls.plot3d(x, y, z, opt[k], 0);
+		 }
+	      }
 	      pls.col0(3);
 	      pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
 	   }
