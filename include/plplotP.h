@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/08/03 01:46:51  mjl
-   Changes to eliminate warnings when compiling with gcc -Wall.
+   Revision 1.6  1993/08/05 22:35:21  mjl
+   Eliminated prototypes for nonexistant functions.
 
+ * Revision 1.5  1993/08/03  01:46:51  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
  * Revision 1.4  1993/07/31  08:10:42  mjl
  * Macros for use in escape function changed to have a prefix PLESC_, similarly
  * those used in the state function start with PLSTATE_.  Some function
@@ -434,10 +437,6 @@ void  plP_smp		(PLFLT, PLFLT, PLFLT, PLFLT);
 
 void  plP_schr		(PLFLT, PLFLT);
 
-void  plP_gscale	(PLFLT *);
-
-void  plP_sscale	(PLFLT);
-
 void  plP_gsym		(PLFLT *, PLFLT *);
 
 void  plP_ssym		(PLFLT, PLFLT);
@@ -540,18 +539,6 @@ PLINT plP_wcpcx		(PLFLT);
 
 PLINT plP_wcpcy		(PLFLT);
 
-	/* Pseudo-driver calls */
-
-void  plP_adv		(void);
-
-void  plP_clr		(void);
-
-void  plP_col		(void);
-
-void  plP_gra		(void);
-
-void  plP_wid		(void);
-
 	/* Driver calls */
 
 void plP_init		(void);
@@ -562,7 +549,7 @@ void plP_polyline	(short *, short *, PLINT);
 
 void plP_fill		(short *, short *, PLINT);
 
-void plP_clear		(void);
+void plP_clr		(void);
 
 void plP_page		(void);
 

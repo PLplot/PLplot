@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.30  1993/08/03 01:46:49  mjl
-   Changes to eliminate warnings when compiling with gcc -Wall.
+   Revision 1.31  1993/08/05 22:35:19  mjl
+   Eliminated prototypes for nonexistant functions.
 
+ * Revision 1.30  1993/08/03  01:46:49  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
  * Revision 1.29  1993/07/31  08:09:18  mjl
  * Cleaned up a bit.
  *
@@ -343,7 +346,6 @@ typedef struct {
 #define    plfontld	c_plfontld
 #define    plgchr	c_plgchr
 #define    plgfam	c_plgfam
-#define    plgfile	c_plgfile
 #define    plgfnam	c_plgfnam
 #define    plgpage	c_plgpage
 #define    plgphy	c_plgphy
@@ -443,7 +445,6 @@ typedef struct {
 #define    c_plfontld	plfontld
 #define    c_plgchr	plgchr
 #define    c_plgfam	plgfam
-#define    c_plgfile	plgfile
 #define    c_plgfnam	plgfnam
 #define    c_plgpage	plgpage
 #define    c_plgra	plgra
@@ -736,8 +737,6 @@ void c_plvsta	(void);
 void c_plw3d	(PLFLT, PLFLT, PLFLT, PLFLT, 
 		 PLFLT, PLFLT, PLFLT, PLFLT, 
 		 PLFLT, PLFLT, PLFLT);
-
-void c_plwend	(void);
 
 void c_plwid	(PLINT);
 
