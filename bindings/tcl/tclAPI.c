@@ -337,7 +337,7 @@ PlbasicInit( Tcl_Interp *interp )
     "tcl_findLibrary plplot 5.1 \"\" plplot.tcl PL_LIBRARY pllibrary";
 #ifdef PLPLOT_EXTENDED_SEARCH
     static char initScriptExtended[] = 
-    "tcl_findLibrary plplot 5.1 \"\" tcl/plplot.tcl PL_LIBRARY pllibrary";
+    "tcl_findLibrary plplot 5.1.0 \"\" tcl/plplot.tcl PL_LIBRARY pllibrary";
 #endif
     char *libDir = NULL;
 #ifdef USE_TCL_STUBS
