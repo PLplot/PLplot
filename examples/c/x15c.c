@@ -206,6 +206,7 @@ plot2(void)
     PLINT sh_cmap = 0, sh_width;
     PLINT min_color = 0, min_width = 0, max_color = 0, max_width = 0;
     int i;
+    sh_width = 2;
 
     pladv(0);
     plvpor(0.1, 0.9, 0.1, 0.9);
@@ -217,7 +218,6 @@ plot2(void)
 	shade_min = zmin + (zmax - zmin) * i / 10.0;
 	shade_max = zmin + (zmax - zmin) * (i +1) / 10.0;
 	sh_color = i+6;
-	sh_width = 2;
 	plpsty((i + 2) % 8 + 1);
 
 	plshade1(&z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1., 
