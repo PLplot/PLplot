@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1994/03/23 07:05:51  mjl
+ * Revision 1.18  1994/04/08 12:13:14  mjl
+ * Removed PLESC tag defs (now in plplot.h) and unsigned var defs (now in
+ * pdf.h).
+ *
+ * Revision 1.17  1994/03/23  07:05:51  mjl
  * Cruft elimination, including stuff that was for dealing with non-ANSI
  * or marginally ANSI compliant compilers (special treatment for malloc
  * includes, etc).  New function prototypes, and new defines for PLSTATE
@@ -138,24 +142,6 @@
 
 typedef signed char SCHAR;
 
-/* Some unsigned types */
-
-#ifndef U_CHAR
-#define U_CHAR unsigned char
-#endif
-
-#ifndef U_SHORT
-#define U_SHORT unsigned short
-#endif
-
-#ifndef U_INT
-#define U_INT unsigned int
-#endif
-
-#ifndef U_LONG
-#define U_LONG unsigned long
-#endif
-
 /*----------------------------------------------------------------------*\
 *                       Utility macros
 \*----------------------------------------------------------------------*/
@@ -233,22 +219,6 @@ typedef signed char SCHAR;
 #define PIXELS_Y	8192		/* Number of virtual pixels in x */
 #define LPAGE_X		254.0		/* Page length in x in virtual mm */
 #define LPAGE_Y		190.5		/* Page length in y in virtual mm */
-
-/* Switches for escape function call. */
-/* Some of these are obsolete but are retained in order to process
-   old metafiles */
-
-#define PLESC_SET_RGB		1	/* obsolete */
-#define PLESC_ALLOC_NCOL	2	/* obsolete */
-#define PLESC_SET_LPB		3	/* obsolete */
-#define PLESC_EXPOSE		4	/* handle window expose */
-#define PLESC_RESIZE		5	/* handle window resize */
-#define PLESC_REDRAW		6	/* handle window redraw */
-#define PLESC_TEXT		7	/* switch to text screen */
-#define PLESC_GRAPH		8	/* switch to graphics screen */
-#define PLESC_FILL		9	/* fill polygon */
-#define PLESC_DI		10	/* handle DI command */
-#define PLESC_FLUSH		11	/* flush output */
 
 /* Switches for state function call. */
 
