@@ -29,22 +29,6 @@ def main():
     x.shape = (-1,)
     z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
 
-    for k in range(4):
-	pladv(0)
-	plvpor(0.0, 1.0, 0.0, 0.9)
-	plwind(-1.0, 1.0, -0.9, 1.1)
-	plcol0(1)
-	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
-		alt[k], az[k])
-	plbox3("bnstu", "x axis", 0.0, 0,
-		 "bnstu", "y axis", 0.0, 0,
-		 "bcdmnstuv", "z axis", 0.0, 0)
-
-	plcol0(2)
-	plot3d(x, y, z, opt[k], 1)
-	plcol0(3)
-	plmtex("t", 1.0, 0.5, 0.5, title[k])
-
     pllightsource(1., 1., 1.)
     #set up gray scale.
     rr = arrayrange(256)
@@ -53,21 +37,24 @@ def main():
     plscmap1(rr, gg, bb)
     
     for k in range(4):
-	pladv(0)
-	plvpor(0.0, 1.0, 0.0, 0.9)
-	plwind(-1.0, 1.0, -0.9, 1.1)
-	plcol0(1)
-	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
-		alt[k], az[k])
-	plbox3("bnstu", "x axis", 0.0, 0,
-		 "bnstu", "y axis", 0.0, 0,
-		 "bcdmnstuv", "z axis", 0.0, 0)
-
-	plcol0(2)
-	plotsh3d(x, y, z, 0)
-	plcol0(3)
-	plmtex("t", 1.0, 0.5, 0.5, title[k])
-
+	for ifshade in range(2):
+	    pladv(0)
+	    plvpor(0.0, 1.0, 0.0, 0.9)
+	    plwind(-1.0, 1.0, -0.9, 1.1)
+	    plcol0(1)
+	    plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
+	    alt[k], az[k])
+	    plbox3("bnstu", "x axis", 0.0, 0,
+	    "bnstu", "y axis", 0.0, 0,
+	    "bcdmnstuv", "z axis", 0.0, 0)
+	    
+	    plcol0(2)
+	    if ifshade == 1:
+		plotsh3d(x, y, z, 0)
+	    else:
+		plot3d(x, y, z, opt[k], 1)
+	    plcol0(3)
+	    plmtex("t", 1.0, 0.5, 0.5, title[k])
 
     # Restore defaults
     plcol0(1)

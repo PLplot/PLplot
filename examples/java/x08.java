@@ -53,6 +53,7 @@ class x08 {
         int[] rr = new int[256];
         int[] gg = new int[256];
         int[] bb = new int[256];
+        int ifshade;
 
     // Parse and process command line arguments.
 
@@ -79,24 +80,6 @@ class x08 {
             }
         }
 
-        for( k = 0; k < 4; k++ )
-        {
-            pls.adv(0);
-            pls.vpor(0.0, 1.0, 0.0, 0.9);
-            pls.wind(-1.0, 1.0, -0.9, 1.1);
-            pls.col0(1);
-            pls.w3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
-                     alt[k], az[k] );
-            pls.box3( "bnstu", "x axis", 0.0, 0,
-                      "bnstu", "y axis", 0.0, 0,
-                      "bcdmnstuv", "z axis", 0.0, 0 );
-
-            pls.col0(2);
-            pls.plot3d( x, y, z, opt[k], 1 );
-            pls.col0(3);
-            pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
-        }
-
         pls.lightsource( 1., 1., 1. );
         for( i=0; i < n_col; i++ )
             rr[i] = gg[i] = bb[i] = i*256/n_col;
@@ -104,20 +87,25 @@ class x08 {
     	
         for( k = 0; k < 4; k++ )
         {
-            pls.adv(0);
-            pls.vpor(0.0, 1.0, 0.0, 0.9);
-            pls.wind(-1.0, 1.0, -0.9, 1.1);
-            pls.col0(1);
-            pls.w3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
-                     alt[k], az[k] );
-            pls.box3( "bnstu", "x axis", 0.0, 0,
-                      "bnstu", "y axis", 0.0, 0,
-                      "bcdmnstuv", "z axis", 0.0, 0 );
-
-            pls.col0(2);
-            pls.plotsh3d( x, y, z, 0 );
-            pls.col0(3);
-            pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
+	   for( ifshade = 0; ifshade < 2; ifshade++)
+	   {
+	      pls.adv(0);
+	      pls.vpor(0.0, 1.0, 0.0, 0.9);
+	      pls.wind(-1.0, 1.0, -0.9, 1.1);
+	      pls.col0(1);
+	      pls.w3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
+		       alt[k], az[k] );
+	      pls.box3( "bnstu", "x axis", 0.0, 0,
+			"bnstu", "y axis", 0.0, 0,
+			"bcdmnstuv", "z axis", 0.0, 0 );
+	      pls.col0(2);
+	      if( ifshade == 1) 
+		pls.plotsh3d( x, y, z, 0 );
+	      else
+		pls.plot3d( x, y, z, opt[k], 1 );
+	      pls.col0(3);
+	      pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
+	   }
         }
 
         pls.end();

@@ -35,6 +35,7 @@ main(int argc, char *argv[])
     PLFLT xx, yy, r;
     PLINT n_col = 256;
     PLINT rr[256], gg[256], bb[256];
+    PLINT ifshade;
 
 /* Parse and process command line arguments */
 
@@ -65,41 +66,29 @@ main(int argc, char *argv[])
 	}
     }
 
-    for (k = 0; k < 4; k++) {
-	pladv(0);
-	plvpor(0.0, 1.0, 0.0, 0.9);
-	plwind(-1.0, 1.0, -0.9, 1.1);
-	plcol0(1);
-	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
-	plbox3("bnstu", "x axis", 0.0, 0,
-	       "bnstu", "y axis", 0.0, 0,
-	       "bcdmnstuv", "z axis", 0.0, 0);
-
-	plcol0(2);
-	plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
-	plcol0(3);
-	plmtex("t", 1.0, 0.5, 0.5, title[k]);
-    }
-
     pllightsource(1.,1.,1.);
     for (i=0;i<n_col;i++)
     	rr[i] = gg[i] = bb[i] = i*256/n_col;
     plscmap1(rr,gg,bb,n_col);
     	
     for (k = 0; k < 4; k++) {
-	pladv(0);
-	plvpor(0.0, 1.0, 0.0, 0.9);
-	plwind(-1.0, 1.0, -0.9, 1.1);
-	plcol0(1);
-	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
-	plbox3("bnstu", "x axis", 0.0, 0,
-	       "bnstu", "y axis", 0.0, 0,
-	       "bcdmnstuv", "z axis", 0.0, 0);
-
-	plcol0(2);
-	plotsh3d(x, y, z, XPTS, YPTS, 0);	
-	plcol0(3);
-	plmtex("t", 1.0, 0.5, 0.5, title[k]);
+       for (ifshade = 0; ifshade < 2; ifshade++) {
+	  pladv(0);
+	  plvpor(0.0, 1.0, 0.0, 0.9);
+	  plwind(-1.0, 1.0, -0.9, 1.1);
+	  plcol0(1);
+	  plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
+	  plbox3("bnstu", "x axis", 0.0, 0,
+		 "bnstu", "y axis", 0.0, 0,
+		 "bcdmnstuv", "z axis", 0.0, 0);
+	  plcol0(2);
+	  if (ifshade == 1)
+	    plotsh3d(x, y, z, XPTS, YPTS, 0);
+	  else
+	    plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
+	  plcol0(3);
+	  plmtex("t", 1.0, 0.5, 0.5, title[k]);
+       }
     }
 
     plend();
