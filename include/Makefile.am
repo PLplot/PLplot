@@ -20,12 +20,11 @@
 #along with the file PLplot; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-pkginclude_HEADERS = \
+# Installed header files that should be distributed
+dist_pkginclude_HEADERS = \
 	disptab.h \
 	drivers.h \
 	pdf.h \
-	plConfig.h \
-	plDevs.h \
 	pldebug.h \
 	plevent.h \
 	plplot.h \
@@ -33,7 +32,12 @@ pkginclude_HEADERS = \
 	plstrm.h \
 	plxwd.h
 
-# Uninstalled header files that should be distributed.
+# Installed header files that should not be distributed
+nodist_pkginclude_HEADERS = \
+	plConfig.h \
+	plDevs.h
+
+# Uninstalled header files that should be distributed
 EXTRA_DIST = \
 	metadefs.h \
 	plcore.h \
