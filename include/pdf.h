@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.9  1994/04/08 12:10:08  mjl
-   Moved unsigned type defines to this header file.
+   Revision 1.10  1995/09/18 20:13:34  furnish
+   Crazy hack needed to allow inclusion of this file in C++ programs.
+   Really the structure member name should be changed, and all clients of
+   this struct updated.
 
+ * Revision 1.9  1994/04/08  12:10:08  mjl
+ * Moved unsigned type defines to this header file.
+ *
  * Revision 1.8  1994/03/23  06:58:11  mjl
  * Minor change to file wrapper to make consistent with rest of package.
  *
@@ -70,7 +75,11 @@ typedef struct {
     char  *filename;			/* Fifo or socket name (if needed) */
     char  *filehandle;			/* Handle for use from interpreter */
     int   type;				/* Communication channel type */
+#ifndef __cplusplus
     char  *typename;			/* As above, but in string form */
+#else
+    char  *_typename;			/* As above, but in string form */
+#endif
 } PLiodev;
 
 /* Error numbers */
