@@ -78,70 +78,68 @@ proc pldefaults {} {
 
     global tcl_platform
     if {$tcl_platform(platform) == "unix"} {
+	option add *font		$gen_font		startupFile
+	option add *Entry.font		$gen_font		startupFile
+	option add *Menu*font		$gen_menu_font		startupFile
+	option add *Menubutton*font	$gen_menu_font		startupFile
+	option add *Scale.font		$gen_bold_font_small	startupFile
+	option add *color.font		$gen_fixed_font		startupFile
 
-	option add *font		$gen_font
-	option add *Entry.font	$gen_font
-	option add *Menu*font	$gen_menu_font
-	option add *Menubutton*font	$gen_menu_font
-	option add *Scale.font	$gen_bold_font_small
-	option add *color.font	$gen_fixed_font
-
-	option add *background			$gen_bg
-	option add *foreground			$gen_fg
-	option add *activeBackground		$gen_active_bg
-	option add *activeForeground		$gen_active_fg
-	option add *disabledForeground		gray45
-	option add *Checkbutton.selector		yellow
-	option add *Radiobutton.selector		yellow
-	#option add *Entry.background		#c07070
-	option add *Entry.foreground		black
-	option add *Entry.insertBackground		black
-	option add *Listbox.background		$gen_darker_bg
-	option add *Scale.foreground		$gen_fg
-	option add *Scale.activeForeground		$gen_bg
-	option add *Scale.background		$gen_bg
-	option add *Scale.sliderForeground		$gen_bg
-	option add *Scale.sliderBackground		$gen_darker_bg
-	option add *Scrollbar.background		$gen_bg
-	option add *Scrollbar.troughColor		$gen_darker_bg
+	option add *background			$gen_bg		startupFile
+	option add *foreground			$gen_fg		startupFile
+	option add *activeBackground		$gen_active_bg	startupFile
+	option add *activeForeground		$gen_active_fg	startupFile
+	option add *disabledForeground		gray45		startupFile
+	option add *Checkbutton.selector	yellow		startupFile
+	option add *Radiobutton.selector	yellow		startupFile
+	#option add *Entry.background		#c07070		startupFile
+	option add *Entry.foreground		black		startupFile
+	option add *Entry.insertBackground	black		startupFile
+	option add *Listbox.background		$gen_darker_bg	startupFile
+	option add *Scale.foreground		$gen_fg		startupFile
+	option add *Scale.activeForeground	$gen_bg		startupFile
+	option add *Scale.background		$gen_bg		startupFile
+	option add *Scale.sliderForeground	$gen_bg		startupFile
+	option add *Scale.sliderBackground	$gen_darker_bg	startupFile
+	option add *Scrollbar.background	$gen_bg		startupFile
+	option add *Scrollbar.troughColor	$gen_darker_bg	startupFile
 
 	# End of page indicator
-	
-	option add *leop.off			$gen_bg
-	option add *leop.on				gray45
-	
+
+	option add *leop.off			$gen_bg		startupFile
+	option add *leop.on			gray45		startupFile
+
 	# This specifies the default plplot widget background color.
 	# A white background looks better on grayscale or mono.
-	
+
 	if {[winfo depth .] == 1} {
-	    option add *Plframe.background		white
+	    option add *Plframe.background	white		startupFile
 	} else {
-	    option add *Plframe.background		black
+	    option add *Plframe.background	black		startupFile
 	}
 
 	#----------------------------------------------------------------------------
 	# Miscellaneous 
-	
-	option add *anchor				w
-	option add *Button.borderWidth		2
-	option add *Button.anchor			c
-	option add *Checkbutton.borderWidth		2
-	option add *Radiobutton.borderWidth		2
-	option add *Label.anchor			w
-	option add *Labelframe.borderWidth		2
-	option add *Entry.relief			sunken
-	option add *Scrollbar.relief		sunken
-	
+
+	option add *anchor			w		startupFile
+	option add *Button.borderWidth		2		startupFile
+	option add *Button.anchor		c		startupFile
+	option add *Checkbutton.borderWidth	2		startupFile
+	option add *Radiobutton.borderWidth	2		startupFile
+	option add *Label.anchor		w		startupFile
+	option add *Labelframe.borderWidth	2		startupFile
+	option add *Entry.relief		sunken		startupFile
+	option add *Scrollbar.relief		sunken		startupFile
+
 	# I have this in here so that applications written before Tk 4.0 still
 	# look the same.  More selectivity might be better.
-	
-	option add *highlightThickness		0
-	
+
+	option add *highlightThickness		0		startupFile
+
 	# Have focus follow mouse, only available in Tk 4.0+
 	# This is needed if you want to control scales using keystrokes.
-	
-	tk_focusFollowsMouse
 
+	tk_focusFollowsMouse
     }
     
 # Various options -- use global variables for simplicity.
