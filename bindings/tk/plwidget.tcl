@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.18  1994/01/15 17:41:52  mjl
+# Revision 1.19  1994/01/17 21:30:24  mjl
+# Improved security for Tcl-DP communication by disabling any further
+# connections after the initial client/server handshaking is finished.
+#
+# Revision 1.18  1994/01/15  17:41:52  mjl
 # Improved handling of status label widget.  Added proc to handle
 # initialization of data link via socket.
 #
@@ -907,6 +911,8 @@ proc plw_label_set {w msg} {
 # plw_dplink
 #
 # Initializes socket data link between widget and client code.
+# In addition, as this is the last client/server connection needed, I
+# disable further connections.
 #----------------------------------------------------------------------------
 
 proc plw_dplink {w client} {
@@ -920,4 +926,6 @@ proc plw_dplink {w client} {
     dp_RDO $client set data_port $data_port
     set data_sock [lindex [dp_accept $list_sock] 0]
     $w.plwin openlink socket $data_sock
+
+    dp_Host -
 }

@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.1  1994/01/15 17:36:03  mjl
+# Revision 1.2  1994/01/17 21:30:23  mjl
+# Improved security for Tcl-DP communication by disabling any further
+# connections after the initial client/server handshaking is finished.
+#
+# Revision 1.1  1994/01/15  17:36:03  mjl
 # Added to hold client side initialization procs.
 #
 #----------------------------------------------------------------------------
@@ -87,6 +91,8 @@ proc plclient_link_init {} {
 # plclient_dp_init
 #
 # Initializes dp data link.
+# In addition, as this is the last client/server connection needed, I
+# disable further connections.
 #----------------------------------------------------------------------------
 
 proc plclient_dp_init {} {
@@ -96,5 +102,6 @@ proc plclient_dp_init {} {
 
     wait_until {[info exists data_port]}
     set data_sock [lindex [dp_connect $server_host $data_port] 0]
-}
 
+    dp_Host -
+}
