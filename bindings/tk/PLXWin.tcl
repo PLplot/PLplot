@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.6  1995/05/06 17:08:13  mjl
+# Revision 1.7  1995/06/01 21:22:22  mjl
+# Removed a lot of the miscellaneous init garbage, now handled by
+# plw_setup_defaults.
+#
+# Revision 1.6  1995/05/06  17:08:13  mjl
 # Shave and a haircut.
 #
 # Revision 1.5  1995/04/12  08:00:30  mjl
@@ -35,9 +39,9 @@ itcl_class PLXWin {
 
 	PLWin::constructor
 
-	#puts "running PLXWin ctor"
+    # Set up defaults
 
-    # The following code copied over from plxframe in plwidget.tcl.
+	plw_setup_defaults $this
 
     # Make frame for top row widgets.  plframe widget must already have been
     # created (the plframe is queried for a list of the valid output devices
@@ -51,28 +55,5 @@ itcl_class PLXWin {
 
 	tk_bindForTraversal $this.plwin
 	focus $this.plwin
-
-    # Set up zoom windows list
-
-	global zidx zidx_max zxl zyl zxr zyr
-
-	set zidx($this) 0
-	set zidx_max($this) 0
-	set zxl($this,0) 0.0
-	set zyl($this,0) 0.0
-	set zxr($this,0) 1.0
-	set zyr($this,0) 1.0
-
-    # Bindings
-
-	bind $this.plwin <Any-KeyPress> \
-	    "plw_key_filter $this %N %s %x %y %K %A"
-
-	bind $this.plwin <Any-ButtonPress> \
-	    "plw_user_mouse $this %b %s %x %y"
-
-	bind $this.plwin <Any-Enter> \
-	    "focus $this.plwin"
-
     }
 }
