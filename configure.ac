@@ -595,6 +595,20 @@ AC_SUBST(enable_java)
 AC_SUBST(enable_tcl)
 AC_SUBST(enable_octave)
 
+### Create list of valid examples subdirectories
+
+EXAMPLES_DIRECTORIES=c
+if test "$enable_cxx" = yes; then
+   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES c++"
+fi
+if test "$enable_f77" = yes; then
+   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES f77"
+fi
+if test "$enable_tk" = yes; then
+   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES tk"
+fi
+AC_SUBST(EXAMPLES_DIRECTORIES)
+
 ### automake symbols for system-dependent results
 
 if test "$enable_cgm" = yes; then
@@ -1209,6 +1223,7 @@ AC_CONFIG_FILES([
 	bindings/java/config.java
 	drivers/Makefile
 	examples/Makefile
+	examples/Makefile.examples
 	examples/c/Makefile
 	examples/c/Makefile.examples
 	examples/c++/Makefile
