@@ -1,6 +1,21 @@
 /* $Id$
  * $Log$
- * Revision 1.30  1994/01/25 06:18:34  mjl
+ * Revision 1.31  1994/03/23 06:41:25  mjl
+ * Added support for: color map 1 color selection, color map 0 or color map 1
+ * state change (palette change), polygon fills.  Color map 1 allocator tries
+ * to allocate as many colors as possible (minus a small number to be
+ * friendly to TK) and reports the result.  Eventually this will be improved
+ * to use a custom colormap, copying the colors used by the window manager
+ * to reduce the flicker when changing focus.
+ *
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
+ *
+ * Revision 1.30  1994/01/25  06:18:34  mjl
  * Added double buffering capability.
  *
  * Revision 1.29  1993/12/08  06:17:33  mjl
@@ -30,6 +45,8 @@
 #include "drivers.h"
 #include "plevent.h"
 
+#define NCOL1_MAX 128
+
 /* Function prototypes */
 /* INDENT OFF */
 
@@ -39,7 +56,10 @@ static void  Init_child		(PLStream *);
 static void  WaitForPage	(PLStream *);
 static void  HandleEvents	(PLStream *);
 static void  ColorInit		(PLStream *);
+static void  Cmap0Init		(PLStream *pls);
+static void  Cmap1Init		(PLStream *pls);
 static void  CreatePixmap	(PLStream *);
+static void  fill_polygon	(PLStream *pls);
 static void  Colorcpy		(XColor *, XColor *);
 
 static void  EventHandler	(PLStream *, XEvent *);
@@ -81,6 +101,7 @@ plD_init_xw(PLStream *pls)
     pls->page = 0;
     pls->plbuf_write = 1;
     pls->dev_flush = 1;		/* Want to handle our own flushes */
+    pls->dev_fill0 = 1;		/* Can do solid fills */
 
 /* Allocate and initialize device-specific data */
 
@@ -117,11 +138,11 @@ plD_init_xw(PLStream *pls)
     dev->xlen = xmax - xmin;
     dev->ylen = ymax - ymin;
 
-    dev->xscale_dev = (double) (dev->init_width-1) / (double) dev->xlen;
-    dev->yscale_dev = (double) (dev->init_height-1) / (double) dev->ylen;
+    dev->xscale_init = (double) (dev->init_width-1) / (double) dev->xlen;
+    dev->yscale_init = (double) (dev->init_height-1) / (double) dev->ylen;
 
-    dev->xscale = dev->xscale_dev;
-    dev->yscale = dev->yscale_dev;
+    dev->xscale = dev->xscale_init;
+    dev->yscale = dev->yscale_init;
 
     plP_setpxl(pxlx, pxly);
     plP_setphy(xmin, xmax, ymin, ymax);
@@ -173,7 +194,7 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     XwDev *dev = (XwDev *) pls->dev;
     PLINT i;
-    XPoint pts[PL_MAXPOLYLINE];
+    XPoint pts[PL_MAXPOLY];
     static long count = 0, max_count = 10;
 
     if (dev->is_main) {
@@ -183,7 +204,7 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
 	}
     }
 
-    if (npts > PL_MAXPOLYLINE)
+    if (npts > PL_MAXPOLY)
 	plexit("Error -- too many points in polyline\n");
 
     for (i = 0; i < npts; i++) {
@@ -267,10 +288,7 @@ plD_tidy_xw(PLStream *pls)
 	XCloseDisplay(dev->display);
     }
 
-    pls->fileset = 0;
-    pls->page = 0;
     pls->plbuf_write = 0;
-    pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
@@ -318,8 +336,17 @@ plD_state_xw(PLStream *pls, PLINT op)
 	break;
     }
 
-    case PLSTATE_COLOR1:
+    case PLSTATE_COLOR1:{
+	int icol1 = (pls->icol1 * (dev->ncol1-1)) / (pls->ncol1-1);
+	if ( ! dev->color) {
+	    dev->curcolor.pixel = dev->fgcolor.pixel;
+	    XSetForeground(dev->display, dev->gc, dev->curcolor.pixel);
+	}
+	else {
+	    XSetForeground(dev->display, dev->gc, dev->cmap1[icol1].pixel);
+	}
 	break;
+    }
     }
 }
 
@@ -353,6 +380,65 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 	HandleEvents(pls);	/* Check for events */
 	XFlush(dev->display);
 	break;
+
+      case PLESC_FILL:
+	fill_polygon(pls);
+	break;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* fill_polygon()
+*
+* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+* Only solid color fill supported.
+\*----------------------------------------------------------------------*/
+
+static void
+fill_polygon(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XPoint pts[PL_MAXPOLY];
+    static long count = 0, max_count = 10;
+    int i, outline_only=0;
+
+    if (dev->is_main) {
+	if ( (++count/max_count)*max_count == count) {
+	    count = 0;
+	    HandleEvents(pls);	/* Check for events */
+	}
+    }
+
+    if (pls->dev_npts > PL_MAXPOLY)
+	plexit("Error -- too many points in polygon\n");
+
+    for (i = 0; i < pls->dev_npts; i++) {
+	pts[i].x = dev->xscale * pls->dev_x[i];
+	pts[i].y = dev->yscale * (dev->ylen - pls->dev_y[i]);
+    }
+
+/*
+ * For an interesting effect during fills, turn on outline_only.
+ * Mostly for debugging.
+ */
+
+    if (outline_only) {
+	if (dev->write_to_window)
+	    XDrawLines(dev->display, dev->window, dev->gc, pts, pls->dev_npts,
+		       CoordModeOrigin);
+
+	if (dev->write_to_pixmap)
+	    XDrawLines(dev->display, dev->pixmap, dev->gc, pts, pls->dev_npts,
+		       CoordModeOrigin);
+    }
+    else {
+	if (dev->write_to_window)
+	    XFillPolygon(dev->display, dev->window, dev->gc,
+			 pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
+
+	if (dev->write_to_pixmap)
+	    XFillPolygon(dev->display, dev->pixmap, dev->gc,
+			 pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
     }
 }
 
@@ -559,7 +645,7 @@ WaitForPage(PLStream *pls)
 
     dbug_enter("WaitForPage");
 
-    if (pls->nopause || ! dev->is_main) {
+    if ( ! dev->is_main) {
 	HandleEvents(pls);	/* Check for events */
 	return;
     }
@@ -834,8 +920,8 @@ ResizeCmd(PLStream *pls, PLWindow *window)
     dev->xscale = (double) (dev->width-1) / (double) dev->init_width;
     dev->yscale = (double) (dev->height-1) / (double) dev->init_height;
 
-    dev->xscale = dev->xscale * dev->xscale_dev;
-    dev->yscale = dev->yscale * dev->yscale_dev;
+    dev->xscale = dev->xscale * dev->xscale_init;
+    dev->yscale = dev->yscale * dev->yscale_init;
 
 /* Need to regenerate pixmap copy of window using new dimensions */
 
@@ -891,7 +977,7 @@ RedrawCmd(PLStream *pls)
 	XFlush(dev->display);
     }
 
-    dev->write_to_window = pls->db;
+    dev->write_to_window = ! pls->db;
 }
 
 /*----------------------------------------------------------------------*\
@@ -961,7 +1047,7 @@ static void
 ColorInit(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
-    int i, gslevbg, gslevfg;
+    int gslevbg, gslevfg;
 
 /*
 * Default is color IF the user hasn't specified and IF the output device is
@@ -1028,17 +1114,105 @@ ColorInit(PLStream *pls)
 	exit(1);
     }
 
-/* Allocate colors in palette 0 */
+/* Allocate colors in cmap 0 & 1 */
 
     if (dev->color) {
-	for (i = 0; i < pls->ncol0; i++) {
-
-	    PLColor_to_XColor(&pls->cmap0[i], &dev->cmap0[i]);
-
-	    if ( ! XAllocColor(dev->display, dev->map, &dev->cmap0[i]))
-		Colorcpy(&dev->cmap0[i], &dev->fgcolor);
-	}
+	Cmap0Init(pls);
+	Cmap1Init(pls);
     }
+}
+
+/*----------------------------------------------------------------------*\
+* Cmap0Init()
+*
+* Initializes cmap 0
+\*----------------------------------------------------------------------*/
+
+static void
+Cmap0Init(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    int i;
+
+    for (i = 0; i < pls->ncol0; i++) {
+
+	PLColor_to_XColor(&pls->cmap0[i], &dev->cmap0[i]);
+
+	if ( ! XAllocColor(dev->display, dev->map, &dev->cmap0[i]))
+	    Colorcpy(&dev->cmap0[i], &dev->fgcolor);
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* Cmap1Init()
+*
+* Initializes cmap 1
+*
+* There is a basic chicken-and-egg problem here:
+* (a) the palette isn't known until the number of colors is available
+*     since a smooth color variation is used.
+* (b) the number of colors depends on the palette, because colors
+*     already allocated do not consume a new color cell slot.
+*
+* The way to handle this is to start with some initial target for number
+* of colors.  Some considerations: if your display supports 256 colors
+* it's best to stay well below that since otherwise you will run out of
+* unallocated color cells.  Fortunately, beyond 100 or so colors is
+* getting pretty good if you get them all.  Unfortunately there's no
+* guarantee you WILL get them all (i.e. they are distinct) unless you
+* install your own color map, since X will return the closest color
+* without error.  Eventually the X driver will support custom color maps,
+* but the interaction with TK will have to be worked out in detail.
+*
+* If the initial allocation should fail, I just free all the allocated
+* colors and try again using the number of colors I succeeded in
+* allocating the first time as the limit (minus a small number).  This is
+* done in a loop that terminates after 5 tries.  There is no way of
+* telling a priori how many colors you will get (I usually get 50-70, and
+* sometimes more).
+* 
+\*----------------------------------------------------------------------*/
+
+static void
+Cmap1Init(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    PLColor newcolor;
+    unsigned long pixels[NCOL1_MAX];
+    int i, itry;
+
+/* Initialize dev->cmap1 by interpolation, then try to allocate them */
+/* If it fails, reinitialize with the new number of colors and repeat */
+
+    dev->ncol1 = MIN(NCOL1_MAX, pls->ncol1);
+
+    for (itry=0;;itry++) {
+	if (itry > 5)
+	    plexit("Cannot allocate color map 1");
+
+	for (i = 0; i < dev->ncol1; i++) {
+
+	    plcol_interp(pls, &newcolor, i, dev->ncol1);
+
+	    PLColor_to_XColor(&newcolor, &dev->cmap1[i]);
+
+	    if ( ! XAllocColor(dev->display, dev->map, &dev->cmap1[i])) 
+		break;
+
+	    pixels[i] = dev->cmap1[i].pixel;
+	}
+
+/* If we got all we asked for, return */
+
+	if (i == dev->ncol1)
+	    break;
+
+/* Failed, so need to free the allocated colors and try again */
+
+	XFreeColors(dev->display, dev->map, pixels, i, 0);
+	dev->ncol1 = MAX(i-5, 1);
+    }
+    fprintf(stderr, "Allocated %d colors in cmap1\n", i);
 }
 
 /*----------------------------------------------------------------------*\
