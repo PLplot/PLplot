@@ -87,6 +87,9 @@ public class PLStream {
     public native void line( int n, float[] x, float[] y );
     public native void line( int n, double[] x, double[] y );
 
+    public native void mesh( float[] x, float[] y, float[][] z, int opt );
+    public native void mesh( double[] x, double[] y, double[][] z, int opt );
+
     public native void mtex( String side,
                              float disp, float pos, float just,
                              String text);
@@ -103,6 +106,7 @@ public class PLStream {
     public native void plotsh3d( double[] x, double[] y, double[][] z, int side );
 
     public native void poin( int n, float[] x, float[] y, int code );
+    public native void poin( int n, double[] x, double[] y, int code );
     public native void poin( float x, float y, int code ); // API addition
     public native void poin( double x, double y, int code ); // API addition
 
