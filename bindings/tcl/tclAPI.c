@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/06/23 22:45:50  mjl
+ * Revision 1.2  1994/06/24 20:38:21  mjl
+ * Changed name of struct to tclMatrix to avoid conflicts with C++ Matrix
+ * classes.
+ *
+ * Revision 1.1  1994/06/23  22:45:50  mjl
  * Contains functions, a command table, a hash table, and other tools to
  * support calling PLplot functions via Tcl commands.  Support for calling
  * PLplot directly (from pltcl) or by widget commands (from plframe) is
@@ -359,7 +363,7 @@ pllineCmd(ClientData clientData, Tcl_Interp *interp,
 	   int argc, char **argv)
 {
     PLFLT *x, *y;
-    Matrix *matx, *maty;
+    tclMatrix *matx, *maty;
     int npts;
 
     if (argc != 4 ) {
@@ -397,7 +401,7 @@ plpoinCmd(ClientData clientData, Tcl_Interp *interp,
 	   int argc, char **argv)
 {
     PLFLT *x, *y;
-    Matrix *matx, *maty;
+    tclMatrix *matx, *maty;
     int npts, code;
 
     if (argc != 5 ) {

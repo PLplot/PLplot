@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/06/23 22:42:53  mjl
+ * Revision 1.2  1994/06/24 20:38:23  mjl
+ * Changed name of struct to tclMatrix to avoid conflicts with C++ Matrix
+ * classes.
+ *
+ * Revision 1.1  1994/06/23  22:42:53  mjl
  * The Tcl Matrix class moved here, since it is useful independent of the
  * Tk driver.
  *
@@ -87,7 +91,7 @@ int
 Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	      int argc, char **argv)
 {
-    register Matrix *matPtr;
+    register tclMatrix *matPtr;
     int i, new;
     Tcl_HashEntry *hPtr;
     char *varName;
@@ -113,7 +117,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Create matrix data structure */
 
-    matPtr = (Matrix *) ckalloc(sizeof(Matrix));
+    matPtr = (tclMatrix *) ckalloc(sizeof(tclMatrix));
     for (i = 0; i < MAX_ARRAY_DIM; i++)
 	matPtr->n[i] = 0;
 
@@ -219,7 +223,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
  *
 \*----------------------------------------------------------------------*/
 
-Matrix *
+tclMatrix *
 Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName)
 {
     Tcl_HashEntry *hPtr;
@@ -230,7 +234,7 @@ Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName)
 			 matName, "\"", (char *) NULL);
 	return NULL;
     }
-    return (Matrix *) Tcl_GetHashValue(hPtr);
+    return (tclMatrix *) Tcl_GetHashValue(hPtr);
 }
 
 /*----------------------------------------------------------------------*\
@@ -253,7 +257,7 @@ static int
 MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	  int argc, char **argv)
 {
-    register Matrix *matPtr = (Matrix *) clientData;
+    register tclMatrix *matPtr = (tclMatrix *) clientData;
     int length, put = 0;
     char c, tmp[80];
     char* name = argv[0];
@@ -448,7 +452,7 @@ static char *
 DeleteMatrixVar(ClientData clientData,
 		Tcl_Interp *interp, char *name1, char *name2, int flags)
 {
-    Matrix *matPtr = (Matrix *) clientData;
+    tclMatrix *matPtr = (tclMatrix *) clientData;
 
     if (Tcl_DeleteCommand(interp, matPtr->name) != TCL_OK) 
 	fprintf(stderr, "Unable to delete command %s\n", matPtr->name);
@@ -478,7 +482,7 @@ DeleteMatrixVar(ClientData clientData,
 static void
 DeleteMatrixCmd(ClientData clientData)
 {
-    Matrix *matPtr = (Matrix *) clientData;
+    tclMatrix *matPtr = (tclMatrix *) clientData;
 
 #ifdef DEBUG
     fprintf(stderr, "Freeing space associated with matrix %s\n", matPtr->name);
