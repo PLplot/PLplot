@@ -70,10 +70,14 @@ install_utils:
 	 fi
 	-if test $(SHARED) = 1; then \
 	 $(LDC) $(LDC_FLAGS) pltek$O $(LIB_INSTALL) \
-		-o pltek$E $(LDC_LIBS); \
+		-o pltek$E; \
 	 fi
 	-strip plrender$E pltek$E
 	-cp plrender$E pltek$E $(BIN_DIR)
+
+# Remember, this is bogus...
+#	 $(LDC) $(LDC_FLAGS) pltek$O $(LIB_INSTALL) \
+#		-o pltek$E $(LDC_LIBS); \
 
 install_plmodule:
 	 $(LDSHARED) $(LDC_FLAGS) plmodule$O $(LIB_INSTALL) \

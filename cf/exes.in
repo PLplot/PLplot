@@ -25,8 +25,13 @@ pltek$O:	pltek.c
 	$(CC) $(CC_FLAGS) pltek.c
 
 pltek$E:	pltek$O
-	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@ \
-		$(LDC_LIBS)
+	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@
+
+# This is what the pltek build rule used to be, but it's wrong, b/c
+# pltek doesn't need to link with tk, tcl, X11, etc.  Should make a
+# new macro for libs this thing depends on...
+#	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@ \
+#		$(LDC_LIBS)
 
 plrender$O:	$(PLLIBS) plrender.c
 	$(CC) $(CC_FLAGS) plrender.c
