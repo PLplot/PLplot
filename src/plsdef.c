@@ -1,35 +1,18 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/11/15 08:40:21  mjl
-   Comment fix.
+   Revision 1.9  1994/03/23 08:24:33  mjl
+   Added support for hardware fill patterns (negative).
 
+   All external API source files: replaced call to plexit() on simple
+   (recoverable) errors with simply printing the error message (via
+   plabort()) and returning.  Should help avoid loss of computer time in some
+   critical circumstances (during a long batch run, for example).
+
+ * Revision 1.8  1993/11/15  08:40:21  mjl
+ * Comment fix.
+ *
  * Revision 1.7  1993/07/16  22:36:33  mjl
  * Minor change to comments.
- *
- * Revision 1.6  1993/07/01  22:13:42  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
- *
- * Revision 1.5  1993/02/23  05:19:29  mjl
- * Changed references in error messages from plstar to plinit.  Also changed
- * behavior of size-setting routines (should not affect user code).  Fixed
- * data structure initializers to be ANSI-conformant.
- *
- * Revision 1.4  1993/01/23  05:58:48  mjl
- * Holds functions that modify plplot defaults.  These do not need direct
- * access to the stream data.
- *
- * Revision 1.3  1992/11/07  08:04:28  mjl
- * Fixed a problem encountered when a user tried to change the default
- * character/symbol scale heights.
- *
- * Revision 1.2  1992/09/29  04:46:16  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:34:46  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	plsdef.c
@@ -292,14 +275,17 @@ c_pllsty(PLINT lin)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("pllsty: Please call plinit first.");
+    if (level < 1) {
+	plabort("pllsty: Please call plinit first");
+	return;
+    }
+    if (lin < 1 || lin > 8) {
+	plabort("pllsty: Invalid line style");
+	return;
+    }
 
-    if (lin < 1 || lin > 8)
-	plexit("pllsty: Invalid line style.");
-
-    plstyl(line[lin - 1].nels, &line[lin - 1].mark[0], &line[lin - 1].space[0]);
-
+    plstyl(line[lin - 1].nels,
+	   &line[lin - 1].mark[0], &line[lin - 1].space[0]);
 }
 
 /*----------------------------------------------------------------------*\
@@ -314,15 +300,19 @@ c_plpat(PLINT nlin, PLINT *inc, PLINT *del)
     PLINT i, level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plpat: Please call plinit first.");
-
-    if (nlin < 1 || nlin > 2)
-	plexit("plpat: Only 1 or 2 line styles allowed.");
-
+    if (level < 1) {
+	plabort("plpat: Please call plinit first");
+	return;
+    }
+    if (nlin < 1 || nlin > 2) {
+	plabort("plpat: Only 1 or 2 line styles allowed");
+	return;
+    }
     for (i = 0; i < nlin; i++) {
-	if (del[i] < 0)
-	    plexit("plpat: Line spacing must be greater than 0.");
+	if (del[i] < 0) {
+	    plabort("plpat: Line spacing must be greater than 0");
+	    return;
+	}
     }
     plP_spat(inc, del, nlin);
 }
@@ -331,6 +321,7 @@ c_plpat(PLINT nlin, PLINT *inc, PLINT *del)
 * void plpsty()
 *
 * Set fill pattern, using one of the predefined patterns.
+* A fill pattern <= 0 indicates hardware fill.
 \*----------------------------------------------------------------------*/
 
 void
@@ -339,13 +330,18 @@ c_plpsty(PLINT patt)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plpsty: Please call plinit first.");
-
-    if (patt < 1 || patt > 8)
-	plexit("plpsty: Invalid pattern.");
-
-    plpat(pattern[patt - 1].nlines, &pattern[patt - 1].inc[0],
-	  &pattern[patt - 1].del[0]);
-
+    if (level < 1) {
+	plabort("plpsty: Please call plinit first");
+	return;
+    }
+    if (patt > 8) {
+	plabort("plpsty: Invalid pattern");
+	return;
+    }
+    plP_spsty(patt);
+    if (patt > 0) {
+	plP_spat(&pattern[patt - 1].inc[0], &pattern[patt - 1].del[0],
+		 pattern[patt - 1].nlines);
+    }
 }
+
