@@ -41,13 +41,13 @@
  */
 
 
-#ifdef HAVE_FREETYPE
 
 #include <unistd.h>
 
 #include "plplot/plDevs.h"
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
+#ifdef HAVE_FREETYPE
 #include "plplot/plfreetype.h"
 
 
@@ -399,7 +399,7 @@ void plD_FreeType_init(PLStream *pls)
 {
 FT_Data *FT;
 char *a;
-char font_path[60];
+char font_path[160];
 const char *env_var_names[]={"PLPLOT_NORMAL_FONT","PLPLOT_ROMAN_FONT",
                             "PLPLOT_ITALIC_FONT","PLPLOT_SCRIPT_FONT",
                             "PLPLOT_SYMBOL_FONT"};
@@ -412,11 +412,11 @@ static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.t
 
 #else
 
-const char *default_unix_font_path[]="/usr/share/fonts/truetype/";
+const char *default_unix_font_path="/usr/share/fonts/truetype/";
 
 static char *default_font_names[]={"Arial.ttf","Times_New_Roman.ttf",
             "Times_New_Roman_Italic.ttf","Comic_Sans_MS.ttf",
-            "Symbol.ttf"};
+            "Arial.ttf"};
 
 #endif
 
@@ -491,7 +491,7 @@ else
  *
  *  Under plplot, the "normal" font is actually a sans-serifed font, while
  *  ps.c defines it as times-roman, a serifed font. For the freetype
- *  implimentation I will define sans-serifed font, arial.
+ *  implementation I will define sans-serifed font, arial.
  *
  * The driver looks for 5 environmental variables where the path and name of
  * these fonts can be OPTIONALLY set, overriding the "guessed" values.
