@@ -11,9 +11,10 @@
 ## General Public License for more details.
 ##
 ## This file is part of plplot_octave.
-## It is based on the corresponding demo function of PLplot.
+## It is based on the corresponding demo function of PLplot, but doesn't
+## use the tk driver.
 
-#	Demo of multiple stream/window capability (requires Tk or Tcl-DP).
+#	Demo of multiple stream/window capability
 #
 ## Plots several simple functions from other example programs.
 #
@@ -34,24 +35,19 @@ function ix14c
     plsdev(device);
   endif
 
-  ## printf("If you dont have built PLplot with Tcl/Tk support this demo (x14c) will fail.\n");
-
   xleng0 = 400; yleng0 = 300; xoff0 = 200; yoff0 = 200;
   xleng1 = 400; yleng1 = 300; xoff1 = 500; yoff1 = 500;
 
-  ## Select either TK or DP driver and use a small window */
-  ## Using DP results in a crash at the end due to some odd cleanup problems */
   ## The geometry strings MUST be in writable memory */
 
-  ## plsfnam(getenv("DISPLAY")); ## This shouldnt be necessary!
-  ## driver = "tk";
   geometry_master = "500x410+100+200";
   geometry_slave  = "500x410+650+200";
 
   printf("Demo of multiple output streams via the %s driver.\n", device);
-  printf("Running with the second window as slave.\n");
-  printf("To advance to the next plot, press the \">>\" button in the window\n");
-  printf("labeled \"plclient\", or hit the <Enter> key with the focus on that window.\n");
+  printf("Running with the second (right) window as slave.\n");
+  printf("To advance to the next plot, press the third mouse button ");
+  printf("or the enter key in the first (left) window\n");
+
   fflush(stdout);
 
   ## Set up first stream */
