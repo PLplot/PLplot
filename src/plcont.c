@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/07/01 22:13:34  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.9  1993/07/17 21:31:55  mjl
+   Improved error message for out of range indices.
 
+ * Revision 1.8  1993/07/01  22:13:34  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+ *
  * Revision 1.7  1993/02/23  05:02:25  mjl
  * Replaced (void *) declaration for user data structures to (PLPointer), in
  * the spirit of Xt's XtPointer.  It was hoped that this would eliminate
@@ -201,8 +204,11 @@ plcontf(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     mx = lx - kx + 1;
     my = ly - ky + 1;
 
-    if (kx < 1 || lx > nx || kx >= lx || ky < 1 || ky > ny || ky >= ly)
-	plexit("plcont: Argument error.");
+    if (kx < 1 || kx >= lx)
+	plexit("plcont: indices must satisfy  1 <= kx <= lx <= nx.");
+
+    if (ky < 1 || ky >= ly)
+	plexit("plcont: indices must satisfy  1 <= ky <= ly <= ny.");
 
     nstor = mx * my;
     heapc = (PLINT *) malloc((size_t) (mx + 2 * nstor) * sizeof(PLINT));
