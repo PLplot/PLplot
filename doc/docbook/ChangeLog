@@ -1,3 +1,9 @@
+2001-06-26  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* configure.in: Centralization of the PLplot web site definition
+	through use of the --with-plplot-website and AC_SUBSTituted
+	variable PLPLOT_WEBSITE.
+
 2001-01-15  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* configure.in: Added --disable-{info,man} options.  Also created

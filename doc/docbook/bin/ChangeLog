@@ -1,3 +1,13 @@
+2001-06-26  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* api2man.pl.in: Renamed from api2man.pl.
+	Use centralized definition of web site for the PLplot project.
+
+2000-06-25  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* api2man.pl: Generate correct entries for whatis database in the
+	short description of man pages. 
+
 2000-12-05  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* api2man.pl: Corrected spell of Alan's name.
