@@ -411,9 +411,7 @@ Configure () {
 		../scripts/pl* \
 		../include/*.h \
 		../drivers/*.c \
-		../drivers/tk/*.c \
-		../drivers/tk/*.h \
-		../drivers/tk/*.tcl \
+		../drivers/tk/*.* \
 		../drivers/tk/tclIndex \
 		../lib/*.fnt \
 		.
