@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.41  1995/01/06 07:54:50  mjl
+ * Revision 1.42  1995/01/06 20:54:13  mjl
+ * Changed orientation swapping code to not preserve aspect ratio if
+ * plsc->freeaspect is set.
+ *
+ * Revision 1.41  1995/01/06  07:54:50  mjl
  * Moved a misplaced line of code affecting stream cleanup.
  *
  * Revision 1.40  1994/09/23  07:52:08  mjl
@@ -135,7 +139,7 @@ enum {AT_BOP, DRAWING, AT_EOP};
 void
 plP_init(void)
 {
-    plsc->status = AT_EOP;
+    plsc->page_status = AT_EOP;
 
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_init) (plsc);
@@ -151,10 +155,10 @@ plP_init(void)
 void
 plP_eop(void)
 {
-    if (plsc->status != DRAWING)
+    if (plsc->page_status != DRAWING)
 	return;
 
-    plsc->status = AT_EOP;
+    plsc->page_status = AT_EOP;
 
     if (plsc->plbuf_write)
 	plbuf_eop(plsc);
@@ -173,10 +177,10 @@ plP_eop(void)
 void
 plP_bop(void)
 {
-    if (plsc->status == AT_BOP)
+    if (plsc->page_status == AT_BOP)
 	return;
 
-    plsc->status = AT_BOP;
+    plsc->page_status = AT_BOP;
 
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_bop) (plsc);
@@ -242,7 +246,7 @@ plP_line(short *x, short *y)
 {
     PLINT i, npts = 2, clpxmi, clpxma, clpymi, clpyma;
 
-    plsc->status = DRAWING;
+    plsc->page_status = DRAWING;
 
     if (plsc->plbuf_write)
 	plbuf_line(plsc, x[0], y[0], x[1], y[1]);
@@ -268,7 +272,7 @@ plP_polyline(short *x, short *y, PLINT npts)
 {
     PLINT i, clpxmi, clpxma, clpymi, clpyma;
 
-    plsc->status = DRAWING;
+    plsc->page_status = DRAWING;
 
     if (plsc->plbuf_write)
 	plbuf_polyline(plsc, x, y, npts);
@@ -295,7 +299,7 @@ plP_fill(short *x, short *y, PLINT npts)
 {
     PLINT i, clpxmi, clpxma, clpymi, clpyma;
 
-    plsc->status = DRAWING;
+    plsc->page_status = DRAWING;
 
     if (plsc->plbuf_write) {
 	plsc->dev_npts = npts;
@@ -885,7 +889,10 @@ calc_diori(void)
     if (aspect == 0.)
 	aspect = plsc->aspdev;
 
-    plsc->aspori = (aspect * cost + sint) / (aspect * sint + cost);
+    if (plsc->freeaspect)
+	plsc->aspori = aspect;
+    else
+	plsc->aspori = (aspect * cost + sint) / (aspect * sint + cost);
 
     if ( ! (plsc->difilt & PLDI_DEV)) {
 	plsc->difilt |= PLDI_DEV;
