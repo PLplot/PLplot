@@ -700,13 +700,9 @@ if test "$with_shlib" = "yes"; then
 	    #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
 	    LDSHARED="ld -shared -expect_unresolved \"*\""
 	;;
-	IRIX-5.* )
-	    with_shlib=no
-	    AC_MSG_RESULT(unknown)
-	    #	SHLIB_CCFLAGS=-KPIC
-	    #	SHLIB_F77FLAGS=-KPIC
-	    #	SHLIB_BUILD="$CC -shared"
-	    #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	IRIX-5.*|IRIX64-6.* )
+	    AC_MSG_RESULT(okay)
+	    SHLIB_BUILD="$CC -shared -o"
 	    LDSHARED="ld -shared"
 	;;
 	* )

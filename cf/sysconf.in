@@ -472,6 +472,9 @@ case "$system" in
     ;;
     irix*|IRIX*|Irix*|sgi*|SGI* ) 
     ;;
+    IRIX64-6.2 )
+	    SYS_FLAGS_C="-D_BSD_SIGNALS"
+    ;;
     linux*|LINUX*|Linux* ) 
     ;;
     next*|NeXT*|NEXT* ) 
