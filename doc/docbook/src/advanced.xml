@@ -554,7 +554,7 @@ Enter device number or keyword: <!--
       <itemizedlist>
 	<listitem>
 	  <para>
-	    A call to <function>plsdev</function>.
+	    A call to &plsdev;.
 	  </para>
 	</listitem>
 	<listitem>

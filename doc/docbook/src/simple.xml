@@ -85,8 +85,8 @@
     <para>
       There are several routines affecting the initialization that must be
       called <emphasis>before</emphasis> &plinit;, if they are used.  The
-      function <function>plsdev</function> allows you to set the device
-      explicitly.  The function <function>plsdev</function> may be called
+      function &plsdev; allows you to set the device
+      explicitly.  The function &plsdev; may be called
       to divide the output device plotting area into several subpages of
       equal size, each of which can be used separately.
     </para>
