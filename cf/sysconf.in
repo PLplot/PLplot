@@ -181,11 +181,13 @@ fi
 if test "$enable_cxx" = "yes"; then
 
     # If KAI C++ (Kuck and Associates) is available, use that.
-
+    
+    found_cxx=no
     if test -z "$CXX" -o "$CXX" = "KCC"; then
-	found_cxx=
-	AC_CHECK_PROG(found_cxx, KCC, yes, no)
-	if test "$found_cxx" = "yes" ; then
+	found_kcc=
+	AC_CHECK_PROG(found_kcc, KCC, yes, no)
+	if test "$found_kcc" = "yes" ; then
+	    found_cxx=yes
 	    AC_MSG_RESULT([Found KAI C++, using that!])
 	    CXX=KCC
 	    # Thread-safety is probably best.  It must be supplied when both
