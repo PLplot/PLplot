@@ -59,6 +59,7 @@ void plD_dispatch_init_tkwin	( PLDispatchTable *pdt );
 void plD_dispatch_init_pstex	( PLDispatchTable *pdt );
 void plD_dispatch_init_ntk	( PLDispatchTable *pdt );
 void plD_dispatch_init_mem	( PLDispatchTable *pdt );
+void plD_dispatch_init_wingcc	( PLDispatchTable *pdt );
 
 /* Prototypes for plot buffer calls. */
 

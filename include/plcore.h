@@ -134,25 +134,25 @@ static PLDispatchInit static_device_initializers[] = {
 #ifdef PLD_emxvga		       /* graphics for emx+gcc */
     plD_dispatch_init_vga,
 #endif
-#if defined(PLD_xterm) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_xterm) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_xterm,
 #endif
-#if defined(PLD_tek4010) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_tek4010) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_tekt,
 #endif
-#if defined(PLD_tek4107) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_tek4107) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_tek4107t,
 #endif
-#if defined(PLD_mskermit) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_mskermit) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_mskermit,
 #endif
-#if defined(PLD_versaterm) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_versaterm) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_versaterm,
 #endif
-#if defined(PLD_vlt) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_vlt) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_vlt,
 #endif
-#if defined(PLD_conex) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_conex) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_conex,
 #endif
 #if defined(PLD_dg300) && !defined(ENABLE_DYNDRIVERS)
@@ -161,10 +161,10 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_plmeta) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_plm,
 #endif
-#if defined(PLD_tek4010f) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_tek4010f) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_tekf,
 #endif
-#if defined(PLD_tek4107f) && !defined(ENABLE_DYNDRIVERS) 
+#if defined(PLD_tek4107f) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_tek4107f,
 #endif
 #if defined(PLD_ps) && !defined(ENABLE_DYNDRIVERS)
@@ -218,6 +218,9 @@ static PLDispatchInit static_device_initializers[] = {
 #endif
 #if defined(PLD_tkwin) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_tkwin,
+#endif
+#if defined(PLD_wingcc) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_wingcc,
 #endif
     NULL
 };

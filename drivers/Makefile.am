@@ -46,6 +46,7 @@ EXTRA_LTLIBRARIES = \
 	tek.la \
 	tk.la \
 	tkwin.la \
+	wingcc.la \
 	xfig.la \
 	xwin.la
 
@@ -136,6 +137,9 @@ dg300_la_LDFLAGS = $(ldflags) $(libplplot)
 
 gd_la_SOURCES = gd.c
 gd_la_LDFLAGS = $(ldflags) $(libplplot) $(GDLIBCMD)
+
+wingcc_la_SOURCES = wingcc.c
+wingcc_la_LDFLAGS = $(ldflags) $(libplplot) $(GDI32LIBCMD)
 
 if enable_gnome
 gnome_la_SOURCES = gnome.c
@@ -292,6 +296,7 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	tek.c \
 	tk.c \
 	tkwin.c \
+	wingcc.c \
 	xfig.c \
 	xwin.c \
 	$(extra_tksources) \
@@ -342,6 +347,7 @@ AM_CPPFLAGS = \
 	$(gd_lo_CFLAGS) \
 	$(gnome_lo_CFLAGS) \
 	$(tkwin_lo_CFLAGS) \
+	$(wingcc_lo_CFLAGS) \
 	$(xwin_lo_CFLAGS) \
 	$(FREETYPEINCCMD) \
 	$(ITCLINCCMD)

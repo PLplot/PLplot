@@ -47,5 +47,6 @@
 #undef PLD_ntk
 #undef PLD_tkwin
 #undef PLD_mem
+#undef PLD_wingcc
 
 #endif	/* __PLDEVS_H__ */
