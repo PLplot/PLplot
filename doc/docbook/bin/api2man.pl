@@ -185,8 +185,9 @@ for ($i = 0; $i < $ns; $i++) {
   open (MAN, "> $name.$manvol");
   print MAN $opening;
   print MAN ".TH " . uc ($name) . ' 3plplot  "' . $date . '" "" "PLplot API"' . "\n";
-  print MAN ".SH NAME\n$title";
   $titles .= "\n.TP\n$title";
+  $title =~ s/:/ -/;
+  print MAN ".SH NAME\n$title";
   print MAN "\n.SH SYNOPSIS\n$synopsis";
   print MAN "\n.SH DESCRIPTION\n$desc";
   if (not $varlist eq "") {
