@@ -1025,14 +1025,21 @@ if test "$enable_python" = "yes"; then
 # have to think about it.
 
 	FIND_INC(Python, PYTHON_INC_DIR, enable_python)
+    fi
 
-	if test "$enable_python" = "yes"; then
-	    FIND_INC(arrayobject, PYTHON_NUM_DIR, numeric_python)
-	    if test "$numeric_python" = "no"; then
-		AC_MSG_RESULT([plplot module needs Python numeric extension.])
-		AC_MSG_RESULT([Setting enable_python to no])
-		enable_python=no
-	    fi
+# This needs to be a separate test in case PYTHON_INC_DIR is specified by the
+# user, to pick up a particular version.  Numeric should be either in the same
+# or a subdir of PYTHON_INC_DIR else version mismatch could occur.
+
+    if test "$enable_python" = "yes"; then
+        incdirs="\ 
+        $PYTHON_INC_DIR \ 
+        $PYTHON_INC_DIR/Numeric"
+	FIND_INC(arrayobject, PYTHON_NUM_DIR, numeric_python)
+	if test "$numeric_python" = "no"; then
+	    AC_MSG_RESULT([plplot module needs Python numeric extension.])
+	    AC_MSG_RESULT([Setting enable_python to no])
+	    enable_python=no
 	fi
     fi
 fi
