@@ -37,7 +37,7 @@ $(PLLIB_AR):	$(LIB_OBJS)
 	  awk '$$1 > 0 && $$1 < 999999 && $$2 > 0 {print $$2}'\
 	    > $(PLLIB_AR).syms
 	ld -o shr.o $(PLLIB_AR)~ -H512 -T512 -bM:SRE -bE:$(PLLIB_AR).syms \
-	  $(LDC_LIBS) -lc -lm 2>ld.out
+	  $(SHLIB_LIBS) -lc -lm 2>ld.out
 	ar q $(PLLIB_AR) shr.o
 	rm -f $(PLLIB_AR)~ $(PLLIB_AR).syms shr.o
 	@echo ""
