@@ -21,6 +21,35 @@ static char *title[4] =
 };
 
 /*--------------------------------------------------------------------------*\
+ * cmap1_init1
+ *
+ * Initializes color map 1 in HLS space.
+ * Basic grayscale variation from dark to light.
+ * An interesting variation on this:
+ *	l[1] = 0.5; s[1] = 1.0
+\*--------------------------------------------------------------------------*/
+
+static void
+cmap1_init(void)
+{
+    PLFLT i[2], h[2], l[2], s[2];
+
+    i[0] = 0.0;		/* left boundary */
+    i[1] = 1.0;		/* right boundary */
+
+    h[0] = 0.0;		/* hue -- low: red (arbitrary if s=0) */
+    h[1] = 0.0;		/* hue -- high: red (arbitrary if s=0) */
+
+    l[0] = 0.0;		/* lightness -- low: dark */
+    l[1] = 1.0;		/* lightness -- high: light */
+
+    s[0] = 0.0;		/* minimum saturation */
+    s[1] = 0.0;		/* minimum saturation */
+
+    c_plscmap1l(0, 2, i, h, l, s, NULL);
+}
+
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Does a series of 3-d plots for a given data set, with different
@@ -33,8 +62,6 @@ main(int argc, char *argv[])
     int i, j, k;
     PLFLT *x, *y, **z;
     PLFLT xx, yy, r;
-    PLINT n_col = 256;
-    PLINT rr[256], gg[256], bb[256];
     PLINT ifshade;
 
 /* Parse and process command line arguments */
@@ -67,9 +94,7 @@ main(int argc, char *argv[])
     }
 
     pllightsource(1.,1.,1.);
-    for (i=0;i<n_col;i++)
-    	rr[i] = gg[i] = bb[i] = i*256/n_col;
-    plscmap1(rr,gg,bb,n_col);
+    cmap1_init();
     	
     for (k = 0; k < 4; k++) {
        for (ifshade = 0; ifshade < 2; ifshade++) {
