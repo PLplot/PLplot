@@ -353,6 +353,11 @@ N.B. with this version FLIBS is no longer required!
 `
   and then all went well.
 
+  Note that when the shell is "bash", all goes well.
+  If you have "bash" on your system, you can enforce this by:
+
+  export SHELL=/bin/bash
+
 * Environment variables that should be set _before_ ./configure is run:
 
   + export PATH=/wherever the compilers are located:"$PATH"
