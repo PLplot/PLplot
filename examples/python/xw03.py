@@ -22,10 +22,8 @@ from pl import *
 def main():
 
     dtr = math.pi / 180.0
-    x0 = zeros(361,'d'); y0 = zeros(361,'d')
-    for i in range(361):
-	x0[i] = math.cos(dtr * i)
-	y0[i] = math.sin(dtr * i)
+    x0 = cos(dtr*arrayrange(361))
+    y0 = sin(dtr*arrayrange(361))
 
     # Parse and process command line arguments
 
@@ -40,14 +38,12 @@ def main():
 
     plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
 
-    x = zeros(11*361,'d'); y = zeros(11*361,'d')
-    k=0
-    for i in range(11):
-	for j in range(361):
-	    x[k] = 0.1 * i * x0[j]
-	    y[k] = 0.1 * i * y0[j]
-	    k = k + 1
-
+    i = 0.1*arrayrange(11)
+    #ravel(outerproduct(i,x0)) and ravel(outerproduct(i,y0)) is what we are 
+    #mocking up here since old numpy version does not have outerproduct.
+    x=ravel(transpose(resize(i,(len(x0),len(i))))*x0)
+    y=ravel(transpose(resize(i,(len(y0),len(i))))*y0)
+    
     # Draw circles for polar grid
 
     plline(x, y)
@@ -72,11 +68,9 @@ def main():
 
     # Draw the graph
 
-    x = zeros(361,'d'); y = zeros(361,'d')
-    for i in range(361):
-	r = math.sin(dtr * (5 * i))
-	x[i] = x0[i] * r
-	y[i] = y0[i] * r
+    r = sin((dtr*5.)*arrayrange(361))
+    x = x0*r
+    y = y0*r
 
     plcol0(3)
     plline(x, y)
