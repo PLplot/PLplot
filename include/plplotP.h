@@ -98,6 +98,12 @@ typedef char * caddr_t;
 #include <float.h>
 
 #if HAVE_DIRENT_H
+/* The following conditional is a workaround for a bug in the MacOSX system.
+   When  the dirent.h file will be fixed upstream by Apple Inc, this should
+   go away. */
+# ifdef NEED_SYS_TYPE_H
+#   include <sys/types.h>
+# endif
 # include <dirent.h>
 # define NAMLEN(dirent) strlen((dirent)->d_name)
 #else

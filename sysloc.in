@@ -989,6 +989,16 @@ if test "$with_qhull" = "yes" -o "$with_csa" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# Check for inclusion of sys/types.h before dirent.h in broken MacOSX systems
+# ----------------------------------------------------------------------------
+
+case "$host_os" in
+    darwin*)
+        AC_DEFINE(NEED_SYS_TYPE_H, [], [Include sys/type.h if needed])
+    ;;
+esac
+
+# ----------------------------------------------------------------------------
 # Now do the variable substitutions.
 # ----------------------------------------------------------------------------
 
