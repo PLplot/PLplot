@@ -8460,7 +8460,7 @@ stripchart
       <varlistentry>
 	<term>
 	  <parameter>digmax</parameter>
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8471,7 +8471,7 @@ stripchart
       <varlistentry>
 	<term>
 	  <parameter>digits</parameter>
-	  (<literal>PLINT</literal>, output)
+	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
