@@ -1,12 +1,55 @@
 # -*-perl-*-
+
 package PLplot;
+
 use vars qw(@ISA %EXPORT_TAGS @EXPORT_OK);
 require Exporter;
 require DynaLoader;
 @ISA = qw(Exporter DynaLoader);
-package PLplot;
+
 bootstrap PLplot;
 var_PLplot_init();
-%EXPORT_TAGS = (all => [qw(@EXPORTS@)]);
+
+%EXPORT_TAGS = (all => [qw(&plline_p &plstyl_p @EXPORTS@)]);
+
 Exporter::export_ok_tags('all');
+
+use Carp;
+
+sub _assert_length ($$) {
+  my $x = shift;
+  my $y = shift;
+
+  my ($m , $n) = map { my $r = ref;
+		       if ((! $r) or ($r eq "SCALAR")) {
+			 1
+		       }
+		       elsif ($r eq "ARRAY") {
+			 scalar @$_;
+		       }
+		       else {
+			 croak "Non-conformant argument";
+		       }
+		     } ($x, $y);
+
+  croak "Arguments must have same size"
+    if ($m != $n);
+
+  return $n;
+}
+
+sub plline_p ($$) {
+  my $x = shift;
+  my $y = shift;
+  my $n = _assert_length ($x, $y);
+  plline ($n, $x, $y);
+}
+  
+sub plstyl_p ($$) {
+  my $x = shift;
+  my $y = shift;
+  my $n = _assert_length ($x, $y);
+  plstyl ($n, $x, $y);
+}
+  
 1;
