@@ -151,6 +151,13 @@ proc x09 {{w loopback}} {
     $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
     x09_polar $w
 
+    #potential contour example.
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
+    x09_potential $w
+
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
+    x09_potential $w
+
 # Restore defaults
     $w cmd plcol0 1
     $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
@@ -206,4 +213,154 @@ proc x09_polar {{w loopback}} {
 
     $w cmd plcol0 1
     $w cmd pllab "" "" "Polar Contour Plot"
+}
+
+proc x09_potential {{w loopback}} {
+# Shielded potential contour plot example
+
+    set pi 3.14159265358979323846
+    set xpts 40; set ypts 64; set perimeterpts 100; set nlevel 20
+
+    # Create data to be contoured.
+    matrix xg f $xpts $ypts
+    matrix yg f $xpts $ypts
+
+    for {set i 0} {$i < $xpts} {incr i} {
+	set r [expr 0.5 + $i]
+	for {set j 0} {$j < $ypts} {incr j} {
+	    set theta [expr (2. * $pi  / $ypts)*(0.5 + $j)]
+
+	    xg $i $j = [expr $r * cos($theta)]
+	    yg $i $j = [expr $r * sin($theta)]
+	}
+    }
+
+    set rmax $r
+    set xmin [xg 0 0]
+    set xmax $xmin
+    set ymin [yg 0 0]
+    set ymax $ymin
+    for {set i 0} {$i < $xpts} {incr i} {
+       for {set j 0} {$j < $ypts} {incr j} {
+	  if {[xg $i $j] < $xmin} { set xmin [xg $i $j] }
+	  if {[xg $i $j] > $xmax} { set xmax [xg $i $j] }
+	  if {[yg $i $j] < $ymin} { set ymin [yg $i $j] }
+	  if {[yg $i $j] > $ymax} { set ymax [yg $i $j] }
+       }
+    }
+    set x0 [expr ($xmin + $xmax)/2.]
+    set y0 [expr ($ymin + $ymax)/2.]
+
+    # Expanded limits.
+
+    set peps [expr 0.05]
+    set xpmin [expr $xmin - abs($xmin)*$peps]
+    set xpmax [expr $xmax + abs($xmax)*$peps]
+    set ypmin [expr $ymin - abs($ymin)*$peps]
+    set ypmax [expr $ymax + abs($ymax)*$peps]
+
+    # Potential inside a conducting cylinder (or sphere) by method of images.
+    # Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+    # Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+    # Also put in smoothing term at small distances.
+
+    set eps [expr 2.]
+
+    set q1 [expr 1.]
+    set d1 [expr $rmax/4.]
+
+    set q1i [expr - $q1*$rmax/$d1]
+    set d1i [expr pow($rmax,2)/$d1]
+
+    set q2 [expr -1.]
+    set d2 [expr $rmax/4.]
+
+    set q2i [expr - $q2*$rmax/$d2]
+    set d2i [expr pow($rmax,2)/$d2]
+
+    matrix z f $xpts $ypts
+    for {set i 0} {$i < $xpts} {incr i} {
+	for {set j 0} {$j < $ypts} {incr j} {
+  	   set div1 [expr sqrt(pow([xg $i $j]-$d1,2) + pow([yg $i $j]-$d1,2) + pow($eps,2))]
+  	   set div1i [expr sqrt(pow([xg $i $j]-$d1i,2) + pow([yg $i $j]-$d1i,2) + pow($eps,2))]
+  	   set div2 [expr sqrt(pow([xg $i $j]-$d2,2) + pow([yg $i $j]+$d2,2) + pow($eps,2))]
+  	   set div2i [expr sqrt(pow([xg $i $j]-$d2i,2) + pow([yg $i $j]+$d2i,2) + pow($eps,2))]
+	   z $i $j = [expr $q1/$div1 + $q1i/$div1i + $q2/$div2 + $q2i/$div2i]
+	}
+     }
+
+    set zmin [z 0 0]
+    set zmax $zmin
+    for {set i 0} {$i < $xpts} {incr i} {
+	for {set j 0} {$j < $ypts} {incr j} {
+	    if {[z $i $j] < $zmin} { set zmin [z $i $j] }
+	    if {[z $i $j] > $zmax} { set zmax [z $i $j] }
+	}
+    }
+
+    # Positive and negative contour levels.
+    set dz [expr ($zmax-$zmin)/$nlevel]
+    set nlevelneg [expr 0]
+    set nlevelpos [expr 0]
+    matrix clevelneg f $nlevel
+    matrix clevelpos f $nlevel
+    for {set i 0} {$i < $nlevel} {incr i} {
+       set clevel [expr $zmin + ($i + 0.5)*$dz]
+       if {$clevel <= 0.} {
+     	  clevelneg $nlevelneg = $clevel; incr nlevelneg
+       } else {
+	  clevelpos $nlevelpos = $clevel; incr nlevelpos
+       }
+     }
+
+     # Colours!
+     set ncollin [expr 11]
+     set ncolbox [expr 1]
+     set ncollab [expr 2]
+     
+     # Finally start plotting this page!
+     $w cmd pladv 0
+     $w cmd plcol0 $ncolbox
+
+     $w cmd plvpas 0.1 0.9 0.1 0.9 1.0
+     $w cmd plwind $xpmin $xpmax $ypmin $ypmax
+     $w cmd plbox "" 0. 0 "" 0. 0
+
+     $w cmd plcol0 $ncollin
+     if {$nlevelneg >0} {
+	# Negative contours
+	# copy partially full clevelneg to full levneg required by plcont
+	matrix levneg f $nlevelneg
+    	for {set i 0} {$i < $nlevelneg} {incr i} {
+	   levneg $i = [clevelneg $i]
+	}
+	$w cmd pllsty 2
+    	$w cmd plcont z levneg pltr2 xg yg 2
+     }
+     
+     if {$nlevelpos >0} {
+	# Positive contours
+	# copy partially full clevelpos to full levpos required by plcont
+	matrix levpos f $nlevelpos
+    	for {set i 0} {$i < $nlevelpos} {incr i} {
+	   levpos $i = [clevelpos $i]
+	}
+	$w cmd pllsty 1
+    	$w cmd plcont z levpos pltr2 xg yg 2
+     }
+     
+    #Draw outer boundary
+    matrix px f $perimeterpts
+    matrix py f $perimeterpts
+    for {set i 0} {$i < $perimeterpts} {incr i} {
+       set t [expr (2.*$pi/($perimeterpts-1))*$i]
+	px $i = [expr $x0 + $rmax*cos($t)]
+	py $i = [expr $y0 + $rmax*sin($t)]
+    }
+
+    $w cmd plcol0 $ncolbox
+    $w cmd plline $perimeterpts px py
+
+    $w cmd plcol0 $ncollab
+    $w cmd pllab "" "" "Shielded potential of charges in a conducting sphere"
 }
