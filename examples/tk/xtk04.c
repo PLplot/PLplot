@@ -11,7 +11,7 @@ AppInit(Tcl_Interp *interp);
 int mat_max( tclMatrix *pm, Tcl_Interp *interp,
 	     int argc, char *argv[] )
 {
-    float max = pm->fdata[0];
+    PLFLT max = pm->fdata[0];
     int i;
     for( i=1; i < pm->len; i++ )
 	if (pm->fdata[i] > max)
@@ -24,7 +24,7 @@ int mat_max( tclMatrix *pm, Tcl_Interp *interp,
 int mat_min( tclMatrix *pm, Tcl_Interp *interp,
 	     int argc, char *argv[] )
 {
-    float min = pm->fdata[0];
+    PLFLT min = pm->fdata[0];
     int i;
     for( i=1; i < pm->len; i++ )
 	if (pm->fdata[i] < min)
@@ -131,7 +131,7 @@ int   get_dataCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
 {
     tclMatrix *pm, *matPtr;
     int nx, ny, i, j;
-    float pi = 3.1415927;
+    PLFLT pi = 3.1415927;
     int kx = 3, ky = 2;
 
     pm = Tcl_GetMatrixPtr( interp, argv[1] );

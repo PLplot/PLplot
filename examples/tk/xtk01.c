@@ -363,7 +363,7 @@ shade(void)
     }
     f2mnmx(z, XPTS, YPTS, &zmin, &zmax);
     for (i = 0; i < NCONTR; i++)
-	clevel[i] = zmin + (zmax - zmin) * (i + 0.5) / (float) NCONTR;
+	clevel[i] = zmin + (zmax - zmin) * (i + 0.5) / (PLFLT) NCONTR;
 
 /* Set up coordinate grids */
 
@@ -400,9 +400,9 @@ shade(void)
     plwind(-1.0, 1.0, -1.0, 1.0);
 
     for (i = 0; i < NCONTR; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) NCONTR;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) NCONTR;
-	sh_color = i / (float) (NCONTR-1);
+	shade_min = zmin + (zmax - zmin) * i / (PLFLT) NCONTR;
+	shade_max = zmin + (zmax - zmin) * (i +1) / (PLFLT) NCONTR;
+	sh_color = i / (PLFLT) (NCONTR-1);
 	sh_width = 2;
 	plpsty(0);
 

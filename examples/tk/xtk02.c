@@ -19,12 +19,12 @@ int stuff( tclMatrix *pm, Tcl_Interp *interp,
 	   int argc, char *argv[] )
 {
     int i;
-    float x, y;
+    PLFLT x, y;
 
 /* Should check that matrix is right type, size, etc. */
 
     for( i = 0; i < pm->n[0]; i++ ) {
-	x = (float) i / pm->n[0];
+	x = (PLFLT) i / pm->n[0];
 	y = sin( 6.28 * 4. * i / pm->n[0] ) * x * (1. - x) * 2 +
 	    2. * x * (1. - x);
 	pm->fdata[i] = y;
