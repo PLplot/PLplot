@@ -15,6 +15,8 @@
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 
+#define FT_Data _FT_Data_
+
 typedef void (*plD_pixel_fp)     (PLStream *, PLINT, PLINT);
 
 /*--------------------------------------------------------------------------*\

@@ -49,6 +49,8 @@
 #ifdef HAVE_FREETYPE
 #include "plfreetype.h"
 
+#define FT_Data _FT_Data_
+
 /*              TOP LEVEL DEFINES       */
 
 /*  Freetype lets you set the text size absolutely. It also takes into
