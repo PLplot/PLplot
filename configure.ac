@@ -672,6 +672,8 @@ AC_CHECK_TYPE(caddr_t, char *)
 
 AC_FUNC_VFORK
 AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN))
+AC_CHECK_FUNC(isinf, AC_DEFINE(HAVE_ISINF))
+AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE))
 
 ### Directory for PLplot specific data files
 

@@ -31,6 +31,12 @@
 /* Define if popen is available.  */
 #undef HAVE_POPEN
 
+/* Define if isinf is available.  */
+#undef HAVE_ISINF
+
+/* Define if finite is available.  */
+#undef HAVE_FINITE
+
 /* Define if we're using a debugging malloc */
 #undef DEBUGGING_MALLOC
 
