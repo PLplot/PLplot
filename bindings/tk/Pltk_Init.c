@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1996/10/25 19:21:21  furnish
+ * Revision 1.2  1998/11/19 04:32:46  furnish
+ * Hack out a dumb little diagnostic which has been being printed for a
+ * couple of years, but whose utility has long since expired.
+ *
+ * Revision 1.1  1996/10/25  19:21:21  furnish
  * New package bootstrap facility, contributed by Vince Darley, further
  * modified by Geoff Furnish.  Still needs work.
  *
@@ -44,15 +48,15 @@ Pltk_Init( Tcl_Interp *interp )
  */
     static char initCmd[] =
     "if {[catch {source plplot.tcl}] != 0} {\n\
-    puts \"Unable to source plplot.tcl, looking around.\\n\"\n\
-    if [file exists [file join ${pllibrary} plplot.tcl]] {\n\
-	source [file join ${pllibrary} plplot.tcl]\n\
-    } else {\n\
-	set msg \"can't find [file join ${pllibrary} plplot.tcl]\\n\"\n\
-	append msg \"Perhaps you need to install Plplot \\n\"\n\
-	append msg \"or set your PL_LIBRARY environment variable?\"\n\
-	error $msg\n\
-    }\n}";
+        if [file exists [file join ${pllibrary} plplot.tcl]] {\n\
+	    source [file join ${pllibrary} plplot.tcl]\n\
+        } else {\n\
+	    set msg \"can't find [file join ${pllibrary} plplot.tcl]\\n\"\n\
+	    append msg \"Perhaps you need to install Plplot \\n\"\n\
+	    append msg \"or set your PL_LIBRARY environment variable?\"\n\
+	    error $msg\n\
+        }\n\
+    }";
 
     char *libDir;
 /*     Tcl_DString path; */
