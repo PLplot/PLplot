@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.46  1995/05/07 03:09:17  mjl
+ * Revision 1.47  1995/06/03 06:07:11  mjl
+ * Added some casts to eliminate warnings under SunOS 4.x.
+ *
+ * Revision 1.46  1995/05/07  03:09:17  mjl
  * Changed debugging output to use new function pldebug().  Added plstrm_init()
  * for stream initialization, including color map allocation, and added calls
  * to it in appropriate places.  Added free(colormaps) in plend1().  Changed
@@ -1385,7 +1388,8 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
     plsc->ncol0 = plsr->ncol0;
     if (plsc->cmap0 != NULL)
 	free((void *) plsc->cmap0);
-    plsc->cmap0 = calloc(1, plsc->ncol0 * sizeof(PLColor));
+
+    plsc->cmap0 = (PLColor *) calloc(1, plsc->ncol0 * sizeof(PLColor));
     for (i = 0; i < plsc->ncol0; i++)
 	cp_color(&plsc->cmap0[i], &plsr->cmap0[i]);
 
@@ -1395,7 +1399,8 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
     plsc->ncol1 = plsr->ncol1;
     if (plsc->cmap1 != NULL)
 	free((void *) plsc->cmap1);
-    plsc->cmap1 = calloc(1, plsc->ncol1 * sizeof(PLColor));
+
+    plsc->cmap1 = (PLColor *) calloc(1, plsc->ncol1 * sizeof(PLColor));
     for (i = 0; i < plsc->ncol1; i++) 
 	cp_color(&plsc->cmap1[i], &plsr->cmap1[i]);
 
