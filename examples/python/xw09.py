@@ -17,7 +17,7 @@ PTHETAPTS = 64
 
 tr = array((XSPA, 0.0, -1.0, 0.0, YSPA, -1.0))
 
-def mypltr(x, y):
+def mypltr(x, y, data=None):
     global tr
     result0 = tr[0] * x + tr[1] * y + tr[2]
     result1 = tr[3] * x + tr[4] * y + tr[5]
@@ -186,14 +186,10 @@ def main():
 
     # Set up grids.
 
-    xg0 = zeros(XPTS,"double")
-    yg0 = zeros(YPTS,"double")
     # Note *for the given* tr, mypltr(i,j)[0] is only a function of i
     # and mypltr(i,j)[1] is only function of j.
-    for i in range(XPTS):
-	xg0[i] = mypltr(i,0)[0]
-    for j in range(YPTS):
-	yg0[j] = mypltr(0,j)[1]
+    xg0 = mypltr(arange(XPTS),0)[0]
+    yg0 = mypltr(0,arange(YPTS))[1]
 
     distort = 0.4
     cos_x = cos((pi/2.)*xg0)
