@@ -21,7 +21,7 @@
 
 ### Where?
 
-pkgconfigdir = $(libdir)/pkgconfig
+pkgconfigdir = $(PKG_CONFIG_DIR)
 docdir = $(DOC_DIR)
 
 ### What?

@@ -911,3 +911,16 @@ AC_DEFUN([GET_DLLNAME],[
     rm -rf $TMP_DIR
   fi
 ])
+dnl ------------------------------------------------------------------------
+dnl EXPAND_EXPRESSION(VARIABLE,EXPRESSION)
+dnl
+dnl Expand recursively a given EXPRESSION, until no variable expansion is
+dnl possible.  Put the result in VARIABLE.
+AC_DEFUN([EXPAND_EXPRESSION],[
+  str1="$2"
+  while true ; do
+   str2=`eval echo $str1`
+     test "$str1" = "$str2" && break
+     str1="$str2"
+   done
+   $1="$str2"])
