@@ -342,9 +342,12 @@ PROFILE_FLAG_LF	= -G
 })
 
 CC	= c89
-F77	= fort77
-
 SYS_FLAGS_C	= 
+
+#CC	= gcc
+#SYS_FLAGS_C	= -Wall
+
+F77	= fort77
 
 if_shr({
 BUILD		= ld -b -o
@@ -519,8 +522,8 @@ LDFFLAGS= $(LIBF) -lm
 
 define({TK},)
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS -DXFIG \
-	     DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS \
+	    -DXFIG DEF_XWIN() DEF_TK()
 SYS_FLAGS_C =
 
 # Note that A/IX 3.0 has a bug in that getenv() calls in a C routine
@@ -533,13 +536,24 @@ if_dbl({dnl
 DBL_FLAG_F      = -qAUTODBL=DBLPAD
 })dnl
 
+# If anyone wants to support shared libraries, feel free.  
+# I can't get it to work.
+
+#if_shr({
+#SHARE_FLAG_C	= -bM:SRE
+#SHARE_FLAG_F	= -bM:SRE
+#},{
+SHARE_FLAG_C	=
+SHARE_FLAG_F	=
+#})
+
 F77	= xlf
 CC	= xlc
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
-	     $(PROFILE_FLAG_C)
+	     $(PROFILE_FLAG_C) $(SHARE_FLAG_C)
 
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
-	     $(PROFILE_FLAG_F)
+	     $(PROFILE_FLAG_F) $(SHARE_FLAG_F)
 
 LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
 LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
@@ -590,8 +604,8 @@ LDFFLAGS= $(PROFILE_FLAG_F) $(LIBF) -lm -lnet
 # mess up some diagonal dashed lines.  The double precision flags have not
 # been tested in an actual library build.
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS -DXFIG \
-	     DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS \
+	    -DXFIG DEF_XWIN() DEF_TK()
 
 SYS_FLAGS_C = -std
 
@@ -930,9 +944,9 @@ DRIVERS_OBJ = \
 #	realclean	cleans up object files, soft-links
 #	install		installs files user will need into public location
 
-default: plrender if_tk({plserver}) libs
+default: plplotP.h plrender if_tk({plserver}) libs
 
-everything: plrender if_tk({plserver}) libs
+everything: default
 
 libs:	$(PLLIB_MAIN)
 
