@@ -10,23 +10,9 @@
 #
 MACHINE		= IX86
 
-PLPLOT_VERSION = 5.1
-DLL_VERSION = 51
+PLPLOT_VERSION = 5.1.0
+DLL_VERSION = 510
 
-# set nodebug=0 for symbols, nodebug=1 for optimized build.
-NODEBUG=1
-
-!IF "$(NODEBUG)" == "1"
-DEBUGDEFINES =
-DBGX     = 
-!ELSE
-DEBUGDEFINES = -DUSE_TCLALLOC=0
-DBGX     = d
-!ENDIF
-
-PROJECT = plplot$(DLL_VERSION)$(DBGX)
-
-#
 # Project directories -- these may need to be customized for your site
 #
 # TOOLS32 --    location of VC++ compiler installation.
@@ -39,6 +25,22 @@ TCLSRCDIR        = C:\Tcl-source\tcl8.4
 TKSRCDIR         = C:\Tcl-source\tk8.4
 TCL              = c:\progra~1\tcl
 TCLVERSION       = 84
+
+# set nodebug=0 for symbols, nodebug=1 for optimized build.
+NODEBUG=1
+
+# DON'T EDIT BELOW THIS LINE, UNLESS YOU REALLY KNOW WHAT
+# YOU ARE DOING!
+
+!IF "$(NODEBUG)" == "1"
+DEBUGDEFINES =
+DBGX     = 
+!ELSE
+DEBUGDEFINES = -DUSE_TCLALLOC=0
+DBGX     = d
+!ENDIF
+
+PROJECT = plplot$(DLL_VERSION)$(DBGX)
 
 ROOT    = ..\..
 !IF "$(NODEBUG)" == "1"
@@ -72,8 +74,9 @@ INSTALLDIR = $(TCL)\lib\plplot$(PLPLOT_VERSION)
 ######################################################################
 
 !IF "$(NODEBUG)" == "1"
-# This cranks the optimization level to maximize speed
-cdebug = -O2 -Gs -GD
+# This cranks the optimization level up. We can't use '-O2' because
+# it causes a bug somewhere.
+cdebug = -Oti -Gs -GD
 !ELSE IF "$(MACHINE)" == "IA64"
 cdebug = -Od -Zi
 !ELSE
@@ -155,7 +158,7 @@ INCLUDES = \
     -I$(WINDIR)/..
 
 DEFINES = -nologo $(DEBUGDEFINES) -DUSE_TCL_STUBS \
-	-DUSE_TK_STUBS \
+	-DUSE_TK_STUBS -DPLPLOT_USE_TCL_CHANNELS \
 	-DPLPLOT_VERSION=\"$(PLPLOT_VERSION)\" 
 
 # 

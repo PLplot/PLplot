@@ -1,6 +1,9 @@
 /* -*-C-*- */
 /* $Id$
  * $Log$
+ * Revision 1.2  2002/07/04 15:17:15  vincentdarley
+ * win-tk build
+ *
  * Revision 1.1  2002/07/02 09:35:31  vincentdarley
  * windows tk build
  *
@@ -106,9 +109,5 @@
 #undef LIB_DIR
 #undef BIN_DIR
 #undef TCL_DIR
-
-//#define malloc Tcl_Alloc
-//#define free Tcl_Free
-//#define calloc ckcalloc
 
 #endif	/* __PLCONFIG_H__ */
