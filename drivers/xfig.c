@@ -61,8 +61,10 @@ static DrvOpt xfig_options[] = {{"text", DRV_INT, &text, "Use Postscript text (t
 
 void plD_dispatch_init_xfig( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "Xfig file";
     pdt->pl_DevName  = "xfig";
+#endif
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 31;
     pdt->pl_init     = (plD_init_fp)     plD_init_xfig;

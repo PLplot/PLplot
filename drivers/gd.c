@@ -232,8 +232,10 @@ void plD_esc_png		(PLStream *, PLINT, void *);
 
 void plD_dispatch_init_png( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "PNG file";
     pdt->pl_DevName  = "png";
+#endif
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 39;
     pdt->pl_init     = (plD_init_fp)     plD_init_png;
@@ -252,8 +254,10 @@ void plD_dispatch_init_png( PLDispatchTable *pdt )
 
 void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "JPEG File";
     pdt->pl_DevName  = "jpeg";
+#endif
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 40;
     pdt->pl_init     = (plD_init_fp)     plD_init_png;

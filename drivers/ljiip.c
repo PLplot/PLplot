@@ -93,8 +93,10 @@ static unsigned char _HUGE *bitmap;	/* memory area NBYTES in size */
 
 void plD_dispatch_init_ljiip( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "LaserJet IIp/deskjet compressed graphics";
     pdt->pl_DevName  = "ljiip";
+#endif
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 32;
     pdt->pl_init     = (plD_init_fp)     plD_init_ljiip;

@@ -49,8 +49,10 @@ static void ps_dispatch_init_helper( PLDispatchTable *pdt,
                                      char *menustr, char *devnam,
                                      int type, int seq, plD_init_fp init )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr = menustr;
     pdt->pl_DevName = devnam;
+#endif
     pdt->pl_type = type;
     pdt->pl_seq = seq;
     pdt->pl_init     = init;

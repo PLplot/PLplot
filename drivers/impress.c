@@ -60,8 +60,10 @@ static short count;
 
 void plD_dispatch_init_imp( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "Impress File";
     pdt->pl_DevName  = "imp";
+#endif
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 37;
     pdt->pl_init     = (plD_init_fp)     plD_init_imp;

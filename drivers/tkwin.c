@@ -216,8 +216,10 @@ void plD_open_tkwin             (PLStream *pls);
 
 void plD_dispatch_init_tkwin( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "PLplot Tk plotter";
     pdt->pl_DevName  = "tkwin";
+#endif
     pdt->pl_type     = plDevType_Interactive;
     pdt->pl_seq      = 45;
     pdt->pl_init     = (plD_init_fp)     plD_init_tkwin;

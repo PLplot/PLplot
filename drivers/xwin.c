@@ -207,8 +207,10 @@ static DrvOpt xwin_options[] = {{"sync", DRV_INT, &synchronize, "Synchronized X 
 
 void plD_dispatch_init_xw( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "X-Window (Xlib)";
     pdt->pl_DevName  = "xwin";
+#endif
     pdt->pl_type     = plDevType_Interactive;
     pdt->pl_seq      = 5;
     pdt->pl_init     = (plD_init_fp)     plD_init_xw;

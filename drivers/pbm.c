@@ -44,8 +44,10 @@ static char *cmap;
 
 void plD_dispatch_init_pbm( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "PDB (PPM) Driver";
     pdt->pl_DevName  = "pbm";
+#endif
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 38;
     pdt->pl_init     = (plD_init_fp)     plD_init_pbm;

@@ -38,8 +38,10 @@ struct termattr {
 
 void plD_dispatch_init_dg( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "DG300 Terminal";
     pdt->pl_DevName  = "dg300";
+#endif
     pdt->pl_type     = plDevType_Interactive;
     pdt->pl_seq      = 25;
     pdt->pl_init     = (plD_init_fp)     plD_init_dg;

@@ -103,8 +103,10 @@ static void PrintLocation(PLStream *pls, char *tag)
 
 void plD_dispatch_init_plm( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "PLplot Native Meta-File";
     pdt->pl_DevName  = "plmeta";
+#endif
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 26;
     pdt->pl_init     = (plD_init_fp)     plD_init_plm;

@@ -150,8 +150,10 @@ static int   LookupTkButtonEvent(PLStream *pls, Tcl_Interp *interp,
 
 void plD_dispatch_init_tk( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "Tcl/TK Window";
     pdt->pl_DevName  = "tk";
+#endif
     pdt->pl_type     = plDevType_Interactive;
     pdt->pl_seq      = 7;
     pdt->pl_init     = (plD_init_fp)     plD_init_tk;

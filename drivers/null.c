@@ -25,8 +25,10 @@ void plD_esc_null		(PLStream *, PLINT, void *);
 
 void plD_dispatch_init_null( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "Null device";
     pdt->pl_DevName  = "null";
+#endif
     pdt->pl_type     = plDevType_Null;
     pdt->pl_seq      = 42;
     pdt->pl_init     = (plD_init_fp)     plD_init_null;

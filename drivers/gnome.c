@@ -775,8 +775,10 @@ void plD_esc_gnome			(PLStream *, PLINT, void *);
 
 void plD_dispatch_init_gnome( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "Gnome Canvas";
     pdt->pl_DevName  = "gnome";
+#endif
     pdt->pl_type     = plDevType_Interactive;
     pdt->pl_seq      = 1;
     pdt->pl_init     = (plD_init_fp)     plD_init_gnome;

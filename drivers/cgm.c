@@ -159,8 +159,10 @@ void plD_esc_cgm		(PLStream *, PLINT, void *);
 
 void plD_dispatch_init_cgm( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "CGM (Computer Graphics metafile) file";
     pdt->pl_DevName  = "cgm";
+#endif
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 44;
     pdt->pl_init     = (plD_init_fp)     plD_init_cgm;

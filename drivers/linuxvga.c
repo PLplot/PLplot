@@ -61,8 +61,10 @@ static page_state;
 
 void plD_dispatch_init_vga( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "Linux console VGA Screen";
     pdt->pl_DevName  = "vga";
+#endif
     pdt->pl_type     = plDevType_Interactive;
     pdt->pl_seq      = 8;
     pdt->pl_init     = (plD_init_fp)     plD_init_vga;

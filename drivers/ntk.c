@@ -50,8 +50,10 @@ void plD_esc_ntk		(PLStream *, PLINT, void *);
 
 void plD_dispatch_init_ntk( PLDispatchTable *pdt )
 {
+#ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr  = "New Tk device";
     pdt->pl_DevName  = "ntk";
+#endif
     pdt->pl_type     = plDevType_Interactive;
     pdt->pl_seq      = 43;
     pdt->pl_init     = (plD_init_fp)     plD_init_ntk;
