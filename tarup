@@ -25,7 +25,8 @@ tar cf $tarfile \
 	! -path \*~ \
         -type f`
 
-tar rf $tarfile ${pldir}/lib/*.fnt ${pldir}/tmp/.dummy ${pldir}/private/.dummy
+tar rf $tarfile ${pldir}/lib/*.fnt ${pldir}/lib/*.map \
+	${pldir}/tmp/.dummy ${pldir}/private/.dummy
 
 echo "Compressing..."
 gzip ${tarfile}
