@@ -12,38 +12,54 @@
 ##
 ## This file is part of plplot_octave.
 
-## legend ([status [, xposition [, yposition]])
+## legend (status)
+##   turns the plot legend status "off", "on" == "transparent", or "opaque".
 ##
-## turns the plot legend status = "off" || "on" == "transparent" || "opaque",
-## left top corner legend at position (left)(botton) 0 <= position <= 1 (right)(top)
+## legend ( xposition, yposition)
+##   sets the left top corner legend at position (left)(bottom) 0 <= position <= 1 (right)(top)
+##
+## legend ("set", "legend 1", "legend 2", ...)
+##   sets the legend strings, where the string must be equal to the
+##   format used in the plot, e.g., "r+;legend;"
 
-function legend (x, xpos, ypos)
+function legend (x, xpos, ...)
 
   global __pl
   __pl_strm = __pl_init;
 
   if (nargin == 0)
-    __pl.legend(__pl_strm) = 1;
+    __pl.legend(__pl_strm) = 2;
     __pl.legend_xpos(__pl_strm) = __pl.legend_ypos(__pl_strm) = 1;
-  endif
-  
-  if (nargin >= 1)
-    if (isstr (x))
-      if (strcmp ("off", x))
-        __pl.legend(__pl_strm) = 0;
-      elseif (strcmp ("on", x) || strcmp ("transparent", x))
-        __pl.legend(__pl_strm) = 1;
-      elseif (strcmp ("opaque", x))
-        __pl.legend(__pl_strm) = 2;
+
+  elseif (nargin == 2 && !isstr(x) && !isstr(xpos))
+    __pl.legend_xpos(__pl_strm) = x;
+    __pl.legend_ypos(__pl_strm) = xpos;
+
+  elseif (nargin >= 1 && isstr (x))
+    if (strcmp ("off", x))
+      __pl.legend(__pl_strm) = 0;
+    elseif (strcmp ("on", x) || strcmp ("transparent", x))
+      __pl.legend(__pl_strm) = 1;
+    elseif (strcmp ("opaque", x))
+      __pl.legend(__pl_strm) = 2;
+
+    elseif (strcmp ("set", x))
+      if (nargin >= 2 && isstr(xpos))
+	__pl.fmt1 = xpos;
+	va_start; i=2;
+	while (--nargin > 1)
+	  eval(sprintf("__pl.fmt%d=va_arg;",i++))
+	endwhile
       endif
     else
-      error ("legend: argument must be a string");
+      help "legend"
     endif
+  else
+    help "legend"
   endif
-  
-  if (nargin == 3)
-    __pl.legend_xpos(__pl_strm) = xpos;
-    __pl.legend_ypos(__pl_strm) = ypos;
+
+  if (automatic_replot)
+    __pl_plotit;
   endif
 
 endfunction
