@@ -30,6 +30,7 @@ examples_perl_SCRIPTS = \
 	x06.pl \
 	x07.pl \
 	x08.pl \
+	x09.pl \	
 	x12.pl
 
 examples_perl_DATA = \
