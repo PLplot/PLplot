@@ -1,37 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1994/04/08 11:53:59  mjl
- * Split off some stuff into the new file plplotTK.h, and made some function
- * name changes to help keep the namespace consistent.
+ * Revision 1.16  1994/06/16 19:07:08  mjl
+ * Include-guarded.  Now includes file tclMatrix.h, to pick up the new matrix
+ * command support.  Prototype for plframe() moved here from plplot.h since
+ * it shouldn't be necessary for the user to explicitly refer to it any more
+ * (in lieu of using Pltk_Init()).
  *
- * Revision 1.14  1994/03/23  06:54:14  mjl
- * Include of "plplotio.h" (no longer existant) eliminated.
- *
- * Revision 1.13  1994/03/22  23:17:35  furnish
- * Avoid collision with user code when he wants to make a custom wish
- * combined with PLPLOT.
- *
- * Revision 1.12  1994/02/07  22:57:14  mjl
- * Fixed up prototypes for pl_PacketReceive and pl_PacketSend.
- *
- * Revision 1.11  1994/01/15  17:40:04  mjl
- * Changed PLRDev definition to use pointer to PDFstrm instead of file
- * handle.  Added prototypes for new socket i/o functions.
- *
- * Revision 1.10  1993/12/15  08:59:28  mjl
- * Added prototypes for Tcl_AppInit() and set_autopath().
- *
- * Revision 1.9  1993/12/09  21:19:26  mjl
- * Changed prototype for tk_toplevel().
- *
- * Revision 1.8  1993/12/09  20:33:41  mjl
- * Eliminated unneccessary system header file inclusions.
- *
- * Revision 1.7  1993/12/08  06:18:08  mjl
- * Changed to include new plplotX.h header file.
- *
- * Revision 1.6  1993/11/19  07:31:20  mjl
- * Fixed the prototype for tk_toplevel().
  */
 
 /* 
@@ -41,6 +15,9 @@
  *
  * Declarations for plserver and associated files.  
  */
+
+#ifndef __PLSERVER_H__
+#define __PLSERVER_H__
 
 #include <plplotP.h>
 #include <plplotTK.h>
@@ -52,6 +29,8 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
+
+#include "tclMatrix.h"
 
 /* State info for the rendering code */
 
@@ -67,6 +46,14 @@ typedef struct {
 } PLRDev;
 
 /* External function prototypes. */
+/* Note that tcl command functions are added during Pltk_Init and don't */
+/* need to be called directly by the user */
+
+/* from plframe.c */
+
+int
+plFrameCmd(ClientData clientData, Tcl_Interp *interp,
+	   int argc, char **argv);
 
 /* from tkshell.c */
 
@@ -81,10 +68,10 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 int
 pltk_source(Tk_Window w, Tcl_Interp *interp, char *script);
 
-/* performs application-specific initialization */
+/* Sets up auto_path variable */
 
 int
-pltk_Init(Tcl_Interp *interp);
+pls_auto_path(Tcl_Interp *interp);
 
 /* Tcl command -- wait until the specified condition is satisfied. */
 
@@ -119,3 +106,5 @@ pl_PacketSend(Tcl_Interp *interp, PLiodev *iodev, PDFstrm *pdfs);
 
 int
 plHost_ID(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
+
+#endif	/* __PLSERVER_H__ */
