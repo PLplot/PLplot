@@ -413,7 +413,7 @@ AM_INIT_AUTOMAKE(plplot, 5.2.0)
 ### N.B. The "secret" libtool code for getting 5.y.x for the library
 ### version is 5+y:x:y.  Thus 7:0:2 ==> 5.2.0.
 
-SOVERSION=7:0:2
+SOVERSION=8:0:3
 AC_SUBST(SOVERSION)
 
 ### Test for programs
