@@ -1,4 +1,4 @@
-# examples/c/Makefile.am for PLplot
+# examples/python/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
@@ -66,6 +66,7 @@ plplotcmodule_p_single.c: plplotcmodule.i plplotcapi.i
 plplotcmodule_single.c: plplotcmodule_p_single.c makedocstrings.py
 	$(PYTHON) makedocstrings.py plplotcmodule_p_single.c plplotcmodule_single.c
 
+# Must have "exec" in the name.
 ourexecpythondir = $(pythondir)
 
 libplplot = ../../src/libplplot$(LIB_TAG).la
@@ -74,9 +75,11 @@ libplplot = ../../src/libplplot$(LIB_TAG).la
 # X_CFLAGS required (on some platforms, e.g., netbsd) by plplot_widgetmodule.c
 AM_CPPFLAGS = $(INCLTDL) -I/$(PYTHON_INC_DIR) -I/$(PYTHON_NUM_DIR) $(X_CFLAGS)
 
+# Do not use -no-undefined here since symbols should be resolved by
+# python when it dynamically loads this shared object.
+
 UNDERSCORE_plplotcmodule_la_LDFLAGS  = \
 	-rpath $(ourexecpythondir) \
-	-no-undefined \
 	-module \
 	-avoid-version \
 	$(libplplot)
