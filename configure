@@ -1,77 +1,31 @@
-#!/bin/sh
-# -----------------------------------------------------------------------
-#
-# configure.in
-#
-# Maurice LeBrun
-# IFS, University of Texas at Austin
-# 14-Jul-1994
-#
-# PLplot configure script input
-#
-# This script does a few things that most autoconf-generated scripts do
-# not.  I resisted going with autoconf for a long time, in favor of a
-# home-rolled solution because of (a) certain needs that autoconf didn't
-# appear to meet, and (b) PLplot started out as a package with much less
-# demanding needs than today.  Eventually the build situation got out of
-# hand, and I took the plunge -- all those nice features in autoconf were
-# just too hard to resist any longer.  Those areas where I needed to be a
-# bit inventive include:
-#
-# - makefile control flow and file inclusion.  Standard make is braindead
-# in this regard.  The problem is how to conditionally enable/disable
-# packages in the makefile itself.  GNU make appears to handle this quite
-# well, but I have concerns about portability -- I've heard of (and had)
-# problems porting it to old versions of Unix, and it's not available
-# under some non-Unix systems (notably MSDOS).  Anyhow, there are several
-# ways one can simulate active control, and the route I've gone is to
-# include a separate file for each capability.  Makefile.in is created by
-# the configure script by concatenating the right pieces together.  Not
-# only is this very portable, but keeping the target/dependency portion
-# separate allows (a) this to be generated automatically e.g. by
-# makedepend without changing any other file, and (b) non-Unix ports to
-# share it (important because the target/dependency list tends to change a
-# lot).  Since these Makefile fragments are just text files, it should
-# be simple enough to string them together as desired.
-#
-# - System-specific settings for ANSI C compiler, Fortran compiler, and
-# other non-standard switches (profiling, auto promotion in Fortran,
-# optimization levels).  This is handled by a largish case statement over
-# system type that I snarfed from my previous configure utils.  A similar
-# case statement for building shared libraries was snarfed from the BLT
-# (Tk extension package) configure script.
-#
-# - Fast, site-specific configures.  I have set things up so that most of
-# the configure is skipped if the relevant shell variables are set.  Early
-# on I try to source a defaults file (~/config/cf_plplot.in) which does
-# this.  The point is, for a given site most settings are invariant from
-# one configure to the next, but you might want to change things like what
-# packages are enabled, compilers, precision, profiling, debugging, etc.
-# Very useful for development.
-#
-# -----------------------------------------------------------------------
+#! /bin/sh
 
-# Running configure from a subdirectory doesn't work quite right.
-# This is a lot easier than trying to fix it.
-
-if test "$0" = "../configure"; then
-    cd ..
-    configure $*
-    exit
-fi
-
-# -----------------------------------------------------------------------
-# Source site-specific variables file, if present.
-# Can be used to dramatically reduce the time spent configuring.
-# Should be done before command-line flags are handled so that the user
-# can override if necessary.
+# Guess values for system-dependent variables and create Makefiles.
+# Generated automatically using autoconf version 2.3 
+# Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
 #
-# The special command line flag --nodefaults (must come first) can be used
-# to skip sourcing the defaults file.
-# -----------------------------------------------------------------------
+# This configure script is free software; the Free Software Foundation
+# gives unlimited permission to copy, distribute and modify it.
 
-if test "$1" = "--nodefaults"; then
-    shift
+# Defaults:
+ac_help=
+ac_default_prefix=/usr/local
+# Any additions from configure.in:
+
+with_defaults=yes
+for option
+    do
+    case "$option" in
+	-with-defaults | --with-defaults | -with-defaults=yes | --with-defaults=yes )
+	    with_defaults=yes
+	;;
+	-without-defaults | --without-defaults | -with-defaults=no | --with-defaults=no )
+	    with_defaults=no
+	;;
+    esac
+done
+
+if test "$with_defaults" = "no"; then
     echo "Performing full configure."
 else
     initfile="$HOME/config/cf_plplot.in"
@@ -83,74 +37,111 @@ else
     fi
 fi
 
-LIBS=""
-INCS=""
 
-# -----------------------------------------------------------------------
-# Initialize autoconf.
-# -----------------------------------------------------------------------
-
-#!/bin/sh
-# Guess values for system-dependent variables and create Makefiles.
-# Generated automatically using autoconf version 1.11 
-# Copyright (C) 1991, 1992, 1993, 1994 Free Software Foundation, Inc.
-
-# This configure script is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as published
-# by the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-
-# This script is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
-# Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-# Save the original args to write them into config.status later.
-configure_args="$*"
-
-# Only options that might do something get documented.
-ac_usage="Usage: configure [options] [host]
-Options: [defaults in brackets after descriptions]
---build=BUILD		configure for building on BUILD [BUILD=HOST]
---disable-FEATURE	do not include FEATURE (same as --enable-FEATURE=no)
---enable-FEATURE[=ARG]	include FEATURE [ARG=yes]
---exec-prefix=PREFIX	install host dependent files in PREFIX [/usr/local]
---help			print this message
---host=HOST		configure for HOST [guessed]
---prefix=PREFIX		install host independent files in PREFIX [/usr/local]
---quiet, --silent	do not print \`checking for...' messages
---srcdir=DIR		find the sources in DIR [configure dir or ..]
---target=TARGET		configure for TARGET [TARGET=HOST]
---verbose		print results of checks
---version		print the version of autoconf that created configure
---with-PACKAGE[=ARG]	use PACKAGE [ARG=yes]
---without-PACKAGE	do not use PACKAGE (same as --with-PACKAGE=no)
---x-includes=DIR	X include files are in DIR
---x-libraries=DIR	X library files are in DIR"
+ac_help="$ac_help
+  --with-defaults         source defaults file at startup (default: yes)"
+ac_help="$ac_help
+  --with-debug            compile with debugging (default: no)"
+ac_help="$ac_help
+  --with-opt              compile with optimization (default: yes)"
+ac_help="$ac_help
+  --with-double           use double precision floats (default: no)"
+ac_help="$ac_help
+  --with-profile          turn on profiling option (defualt: no)"
+ac_help="$ac_help
+  --with-shlib            build shared libraries (not all systems)"
+ac_help="$ac_help
+  --with-f2c              use f2c to compile Fortran code (default: no)"
+ac_help="$ac_help
+  --with-gcc              use gcc to compile C and C++ code (default: no)"
+ac_help="$ac_help
+  --with-warn             enable all compilation warnings (default: no)"
+ac_help="$ac_help
+  --with-dbmalloc         link with libdbmalloc (default: no)"
+ac_help="$ac_help
+  --enable-drivers        enable all device drivers (default: yes)"
+ac_help="$ac_help
+  --enable-f77            compile Fortran-77 interface code (default: yes)"
+ac_help="$ac_help
+  --enable-cxx            compile C++ interface code (default: yes)"
+ac_default_prefix=/usr/local/plplot
+ac_help="$ac_help
+  --enable-xwin           enable X Window System driver"
+ac_help="$ac_help
+  --with-x                use the X Window System"
+ac_help="$ac_help
+  --enable-tcl            compile Tcl interface code (default: yes)"
+ac_help="$ac_help
+  --enable-itcl           enable incr Tcl interface code"
+ac_help="$ac_help
+  --enable-tk             enable Tk driver"
+ac_help="$ac_help
+  --enable-dp             enable Tcl-DP driver"
+ac_help="$ac_help
+  --enable-plmeta         enable plmeta device driver"
+ac_help="$ac_help
+  --enable-null           enable null device driver"
+ac_help="$ac_help
+  --enable-xterm          enable xterm device driver"
+ac_help="$ac_help
+  --enable-tek4010        enable tek4010 device driver"
+ac_help="$ac_help
+  --enable-tek4107        enable tek4107 device driver"
+ac_help="$ac_help
+  --enable-mskermit       enable mskermit device driver"
+ac_help="$ac_help
+  --enable-conex          enable conex device driver"
+ac_help="$ac_help
+  --enable-vlt            enable vlt device driver"
+ac_help="$ac_help
+  --enable-versaterm      enable versaterm device driver"
+ac_help="$ac_help
+  --enable-dg300          enable dg300 device driver"
+ac_help="$ac_help
+  --enable-ps             enable ps device driver"
+ac_help="$ac_help
+  --enable-xfig           enable xfig device driver"
+ac_help="$ac_help
+  --enable-ljii           enable ljii device driver"
+ac_help="$ac_help
+  --enable-hp7470         enable hp7470 device driver"
+ac_help="$ac_help
+  --enable-hp7580         enable hp7580 device driver"
+ac_help="$ac_help
+  --enable-lj_hpgl        enable lj_hpgl device driver"
+ac_help="$ac_help
+  --enable-imp            enable imp device driver"
+ac_help="$ac_help
+  --enable-xwin           enable xwin device driver"
+ac_help="$ac_help
+  --enable-tk             enable tk device driver"
+ac_help="$ac_help
+  --enable-dp             enable dp device driver"
 
 # Initialize some variables set by options.
 # The variables have the same names as the options, with
 # dashes changed to underlines.
 build=NONE
-exec_prefix=
+cache_file=./config.cache
+exec_prefix=NONE
 host=NONE
 no_create=
 nonopt=NONE
-norecursion=
-prefix=
-program_prefix=
-program_suffix=
-program_transform_name=
+no_recursion=
+prefix=NONE
+program_prefix=NONE
+program_suffix=NONE
+program_transform_name=s,x,x,
 silent=
+site=
 srcdir=
 target=NONE
 verbose=
-x_includes=
-x_libraries=
+x_includes=NONE
+x_libraries=NONE
+
+# Initialize some other variables.
+subdirs=
 
 ac_prev=
 for ac_option
@@ -163,13 +154,12 @@ do
     continue
   fi
 
-  # Accept (but ignore some of) the important Cygnus configure
-  # options, so we can diagnose typos.
-
   case "$ac_option" in
   -*=*) ac_optarg=`echo "$ac_option" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
   *) ac_optarg= ;;
   esac
+
+  # Accept the important Cygnus configure options, so we can diagnose typos.
 
   case "$ac_option" in
 
@@ -178,20 +168,27 @@ do
   -build=* | --build=* | --buil=* | --bui=* | --bu=* | --b=*)
     build="$ac_optarg" ;;
 
+  -cache-file | --cache-file | --cache-fil | --cache-fi \
+  | --cache-f | --cache- | --cache | --cach | --cac | --ca | --c)
+    ac_prev=cache_file ;;
+  -cache-file=* | --cache-file=* | --cache-fil=* | --cache-fi=* \
+  | --cache-f=* | --cache-=* | --cache=* | --cach=* | --cac=* | --ca=* | --c=*)
+    cache_file="$ac_optarg" ;;
+
   -disable-* | --disable-*)
     ac_feature=`echo $ac_option|sed -e 's/-*disable-//'`
-    # Reject names that aren't valid shell variable names.
+    # Reject names that are not valid shell variable names.
     if test -n "`echo $ac_feature| sed 's/[-a-zA-Z0-9_]//g'`"; then
-      echo "configure: $ac_feature: invalid feature name" >&2; exit 1
+      { echo "configure: error: $ac_feature: invalid feature name" 1>&2; exit 1; }
     fi
     ac_feature=`echo $ac_feature| sed 's/-/_/g'`
     eval "enable_${ac_feature}=no" ;;
 
   -enable-* | --enable-*)
     ac_feature=`echo $ac_option|sed -e 's/-*enable-//' -e 's/=.*//'`
-    # Reject names that aren't valid shell variable names.
+    # Reject names that are not valid shell variable names.
     if test -n "`echo $ac_feature| sed 's/[-_a-zA-Z0-9]//g'`"; then
-      echo "configure: $ac_feature: invalid feature name" >&2; exit 1
+      { echo "configure: error: $ac_feature: invalid feature name" 1>&2; exit 1; }
     fi
     ac_feature=`echo $ac_feature| sed 's/-/_/g'`
     case "$ac_option" in
@@ -200,7 +197,6 @@ do
     esac
     eval "enable_${ac_feature}='$ac_optarg'" ;;
 
-  # For backward compatibility, recognize -exec-prefix and --exec_prefix.
   -exec-prefix | --exec_prefix | --exec-prefix | --exec-prefi \
   | --exec-pref | --exec-pre | --exec-pr | --exec-p | --exec- \
   | --exec | --exe | --ex)
@@ -211,11 +207,42 @@ do
     exec_prefix="$ac_optarg" ;;
 
   -gas | --gas | --ga | --g)
-    with_gas=yes ;; # Obsolete; use --with-gas.
+    # Obsolete; use --with-gas.
+    with_gas=yes ;;
 
   -help | --help | --hel | --he)
+    # Omit some internal or obsolete options to make the list less imposing.
+    # This message is too long to be a string in the A/UX 3.1 sh.
     cat << EOF
-$ac_usage
+Usage: configure [options] [host]
+Options: [defaults in brackets after descriptions]
+Configuration:
+  --cache-file=FILE       cache test results in FILE
+  --help                  print this message
+  --no-create             do not create output files
+  --quiet, --silent       do not print \`checking...' messages
+  --version               print the version of autoconf that created configure
+Directory and file names:
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [$ac_default_prefix]
+  --exec-prefix=PREFIX    install architecture-dependent files in PREFIX
+                          [same as prefix]
+  --srcdir=DIR            find the sources in DIR [configure dir or ..]
+  --program-prefix=PREFIX prepend PREFIX to installed program names
+  --program-suffix=SUFFIX append SUFFIX to installed program names
+  --program-transform-name=PROGRAM run sed PROGRAM on installed program names
+Host type:
+  --build=BUILD           configure for building on BUILD [BUILD=HOST]
+  --host=HOST             configure for HOST [guessed]
+  --target=TARGET         configure for TARGET [TARGET=HOST]
+Features and packages:
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --x-includes=DIR        X include files are in DIR
+  --x-libraries=DIR       X library files are in DIR
+--enable and --with options recognized:$ac_help
 EOF
     exit 0 ;;
 
@@ -225,15 +252,16 @@ EOF
     host="$ac_optarg" ;;
 
   -nfp | --nfp | --nf)
-    with_fp=no ;; # Obsolete; use --without-fp.
+    # Obsolete; use --without-fp.
+    with_fp=no ;;
 
   -no-create | --no-create | --no-creat | --no-crea | --no-cre \
   | --no-cr | --no-c)
     no_create=yes ;;
 
-  -norecursion | --norecursion | --norecursio | --norecursi \
-  | --norecurs | --norecur | --norecu | --norec | --nore | --nor)
-    norecursion=yes ;;
+  -no-recursion | --no-recursion | --no-recursio | --no-recursi \
+  | --no-recurs | --no-recur | --no-recu | --no-rec | --no-re | --no-r)
+    no_recursion=yes ;;
 
   -prefix | --prefix | --prefi | --pref | --pre | --pr | --p)
     ac_prev=prefix ;;
@@ -275,6 +303,11 @@ EOF
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
+  -site | --site | --sit)
+    ac_prev=site ;;
+  -site=* | --site=* | --sit=*)
+    site="$ac_optarg" ;;
+
   -srcdir | --srcdir | --srcdi | --srcd | --src | --sr)
     ac_prev=srcdir ;;
   -srcdir=* | --srcdir=* | --srcdi=* | --srcd=* | --src=* | --sr=*)
@@ -289,14 +322,14 @@ EOF
     verbose=yes ;;
 
   -version | --version | --versio | --versi | --vers)
-    echo "configure generated by autoconf version 1.11"
+    echo "configure generated by autoconf version 2.3"
     exit 0 ;;
 
   -with-* | --with-*)
     ac_package=`echo $ac_option|sed -e 's/-*with-//' -e 's/=.*//'`
-    # Reject names that aren't valid shell variable names.
+    # Reject names that are not valid shell variable names.
     if test -n "`echo $ac_package| sed 's/[-_a-zA-Z0-9]//g'`"; then
-      echo "configure: $ac_package: invalid package name" >&2; exit 1
+      { echo "configure: error: $ac_package: invalid package name" 1>&2; exit 1; }
     fi
     ac_package=`echo $ac_package| sed 's/-/_/g'`
     case "$ac_option" in
@@ -307,14 +340,16 @@ EOF
 
   -without-* | --without-*)
     ac_package=`echo $ac_option|sed -e 's/-*without-//'`
-    # Reject names that aren't valid shell variable names.
+    # Reject names that are not valid shell variable names.
     if test -n "`echo $ac_package| sed 's/[-a-zA-Z0-9_]//g'`"; then
-      echo "configure: $ac_package: invalid package name" >&2; exit 1
+      { echo "configure: error: $ac_package: invalid package name" 1>&2; exit 1; }
     fi
     ac_package=`echo $ac_package| sed 's/-/_/g'`
     eval "with_${ac_package}=no" ;;
 
-  --x) with_x=yes ;; # Obsolete; use --with-x.
+  --x)
+    # Obsolete; use --with-x.
+    with_x=yes ;;
 
   -x-includes | --x-includes | --x-include | --x-includ | --x-inclu \
   | --x-incl | --x-inc | --x-in | --x-i)
@@ -330,15 +365,15 @@ EOF
   | --x-librar=* | --x-libra=* | --x-libr=* | --x-lib=* | --x-li=* | --x-l=*)
     x_libraries="$ac_optarg" ;;
 
-  -*) echo "configure: $ac_option: invalid option; use --help to show usage" >&2; exit 1
+  -*) { echo "configure: error: $ac_option: invalid option; use --help to show usage" 1>&2; exit 1; }
     ;;
 
   *) 
     if test -n "`echo $ac_option| sed 's/[-a-z0-9.]//g'`"; then
-      echo "configure: warning: $ac_option: invalid host type" >&2
+      echo "configure: warning: $ac_option: invalid host type" 1>&2
     fi
     if test "x$nonopt" != xNONE; then
-      echo "configure: can only configure for one host and one target at a time" >&2; exit 1
+      { echo "configure: error: can only configure for one host and one target at a time" 1>&2; exit 1; }
     fi
     nonopt="$ac_option"
     ;;
@@ -347,31 +382,53 @@ EOF
 done
 
 if test -n "$ac_prev"; then
-  echo "configure: missing argument to --`echo $ac_prev | sed 's/_/-/g'`" >&2; exit 1
+  { echo "configure: error: missing argument to --`echo $ac_prev | sed 's/_/-/g'`" 1>&2; exit 1; }
 fi
 
-trap 'rm -fr conftest* confdefs* core $ac_clean_files; exit 1' 1 2 15
-trap 'rm -fr confdefs* $ac_clean_files' 0
+trap 'rm -fr conftest* confdefs* core core.* *.core $ac_clean_files; exit 1' 1 2 15
 
-# Save the original args if we used an alternate arg parser.
-ac_configure_temp="${configure_args-$*}"
-# Strip out --no-create and --norecursion so they don't pile up.
-configure_args=
-for ac_arg in $ac_configure_temp; do
+# File descriptor usage:
+# 0 standard input
+# 1 file creation
+# 2 errors and warnings
+# 3 some systems may open it to /dev/tty
+# 4 used on the Kubota Titan
+# 6 checking for... messages and results
+# 5 compiler messages saved in config.log
+if test "$silent" = yes; then
+  exec 6>/dev/null
+else
+  exec 6>&1
+fi
+exec 5>./config.log
+
+echo "\
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+" 1>&5
+
+# Strip out --no-create and --no-recursion so they do not pile up.
+# Also quote any args containing shell metacharacters.
+ac_configure_args=
+for ac_arg
+do
   case "$ac_arg" in
   -no-create | --no-create | --no-creat | --no-crea | --no-cre \
   | --no-cr | --no-c) ;;
-  -norecursion | --norecursion | --norecursio | --norecursi \
-  | --norecurs | --norecur | --norecu | --norec | --nore | --nor) ;;
-  *) configure_args="$configure_args $ac_arg" ;;
+  -no-recursion | --no-recursion | --no-recursio | --no-recursi \
+  | --no-recurs | --no-recur | --no-recu | --no-rec | --no-re | --no-r) ;;
+  *" "*|*"	"*|*[\[\]\~\#\$\^\&\*\(\)\{\}\\\|\;\<\>\?]*)
+  ac_configure_args="$ac_configure_args '$ac_arg'" ;;
+  *) ac_configure_args="$ac_configure_args $ac_arg" ;;
   esac
 done
 
 # NLS nuisances.
+# Only set LANG and LC_ALL to C if already set.
 # These must not be set unconditionally because not all systems understand
 # e.g. LANG=C (notably SCO).
-if test "${LC_ALL+set}" = 'set'; then LC_ALL=C; export LC_ALL; fi
-if test "${LANG+set}"   = 'set'; then LANG=C;   export LANG;   fi
+if test "${LC_ALL+set}" = set; then LC_ALL=C; export LC_ALL; fi
+if test "${LANG+set}"   = set; then LANG=C;   export LANG;   fi
 
 # confdefs.h avoids OS command line length limits that DEFS can exceed.
 rm -rf conftest* confdefs.h
@@ -385,7 +442,7 @@ ac_unique_file=src/plcore.c
 # Find the source files, if location was not specified.
 if test -z "$srcdir"; then
   ac_srcdir_defaulted=yes
-  # Try the directory containing this script, then `..'.
+  # Try the directory containing this script, then its parent.
   ac_prog=$0
   ac_confdir=`echo $ac_prog|sed 's%/[^/][^/]*$%%'`
   test "x$ac_confdir" = "x$ac_prog" && ac_confdir=.
@@ -393,42 +450,119 @@ if test -z "$srcdir"; then
   if test ! -r $srcdir/$ac_unique_file; then
     srcdir=..
   fi
+else
+  ac_srcdir_defaulted=no
 fi
 if test ! -r $srcdir/$ac_unique_file; then
-  if test x$ac_srcdir_defaulted = xyes; then
-    echo "configure: can not find sources in ${ac_confdir} or .." >&2; exit 1
+  if test "$ac_srcdir_defaulted" = yes; then
+    { echo "configure: error: can not find sources in $ac_confdir or .." 1>&2; exit 1; }
   else
-    echo "configure: can not find sources in ${srcdir}" >&2; exit 1
+    { echo "configure: error: can not find sources in $srcdir" 1>&2; exit 1; }
   fi
 fi
+srcdir=`echo "${srcdir}" | sed 's%\([^/]\)/*$%\1%'`
+
+# Prefer explicitly selected file to automatically selected ones.
+if test -z "$CONFIG_SITE"; then
+  if test "x$prefix" != xNONE; then
+    CONFIG_SITE="$prefix/share/config.site $prefix/etc/config.site"
+  else
+    CONFIG_SITE="$ac_default_prefix/share/config.site $ac_default_prefix/etc/config.site"
+  fi
+fi
+for ac_site_file in $CONFIG_SITE; do
+  if test -r "$ac_site_file"; then
+    echo "loading site script $ac_site_file"
+    . "$ac_site_file"
+  fi
+done
+
+if test -r "$cache_file"; then
+  echo "loading cache $cache_file"
+  . $cache_file
+else
+  echo "creating cache $cache_file"
+  > $cache_file
+fi
+
 ac_ext=c
 # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
-ac_cpp='${CPP}'
-ac_compile='${CC-cc} $CFLAGS $LDFLAGS conftest.${ac_ext} -o conftest $LIBS >/dev/null 2>&1'
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='${CC-cc} -c $CFLAGS $CPPFLAGS conftest.$ac_ext 1>&5 2>&5'
+ac_link='${CC-cc} -o conftest $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS 1>&5 2>&5'
+
+if (echo "testing\c"; echo 1,2,3) | grep c >/dev/null; then
+  # Stardent Vistra SVR4 grep lacks -e, says ghazi@caip.rutgers.edu.
+  if (echo -n testing; echo 1,2,3) | sed s/-n/xn/ | grep xn >/dev/null; then
+    ac_n= ac_c='
+' ac_t='	'
+  else
+    ac_n=-n ac_c= ac_t=
+  fi
+else
+  ac_n= ac_c='\c' ac_t=
+fi
 
 
 
+# ----------------------------------------------------------------------------
+# The configure script must be run in a separate build directory.  If the
+# user instead runs it from the top-level directory, the code below cd's to
+# tmp and exec's ../configure, in effect running configure from the build
+# directory after all.
+#
+# In fact, configure can be run from a separate build directory anywhere,
+# leaving the original source tree untouched if that is so desired.  This
+# allows one to build from Read-Only media (e.g. CDROM) or create multiple
+# build directories at once, each with different options.  Softlinks to all
+# source files are used to create the "monolithic build directory".  With
+# the PLplot distribution spread out over so many directories, I've found
+# this paradigm to be the easiest for me to use during development while
+# remaining widely portable.  On systems that don't support softlinks, you
+# can always use copy.  At least you will only have to do it once.
+# ----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------
+if test `pwd` = `(cd $srcdir; pwd)`; then
+    echo "$ac_t""setting up to configure in tmp directory -- hold on..." 1>&6
+    if test ! -d tmp; then
+	mkdir tmp
+    fi
+    cd tmp
+    exec ../configure "$@"
+fi
+
+
+# ----------------------------------------------------------------------------
 # First get system using uname.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-if test -z "$uname_found"; then
-  # Extract the first word of `uname', so it can be a program name with args.
-  set ac_dummy uname; ac_word=$2
-  test -n "$silent" || echo "checking for $ac_word"
+# Extract the first word of "uname", so it can be a program name with args.
+set dummy uname; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_prog_uname_found'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test -n "$uname_found"; then
+  ac_cv_prog_uname_found="$uname_found" # Let the user override the test.
+else
   IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
   for ac_dir in $PATH; do
     test -z "$ac_dir" && ac_dir=.
     if test -f $ac_dir/$ac_word; then
-      uname_found="1"
+      ac_cv_prog_uname_found="1"
       break
     fi
   done
   IFS="$ac_save_ifs"
+  test -z "$ac_cv_prog_uname_found" && ac_cv_prog_uname_found="0"
 fi
-test -z "$uname_found" && uname_found="0"
-test -n "$uname_found" && test -n "$verbose" && echo "	setting uname_found to $uname_found"
+fi
+uname_found="$ac_cv_prog_uname_found"
+if test -n "$uname_found"; then
+  echo "$ac_t""$uname_found" 1>&6
+else
+  echo "$ac_t""no" 1>&6
+fi
 
  if test $uname_found -eq 1 ; then
     system=`uname -s`-`uname -r`
@@ -444,117 +578,201 @@ test -n "$uname_found" && test -n "$verbose" && echo "	setting uname_found to $u
 fi 
 
 if test "$system" ; then
-    echo "system is: $system"
+    echo "$ac_t""system is: $system" 1>&6
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Some defaults
-# -----------------------------------------------------------------------
+# Note: the --with-defaults entry is only used to set up its help entry; the
+# actual handling is done before any args are parsed.
+# ----------------------------------------------------------------------------
 
-# check whether --with-debug or --without-debug was given.
+# Check whether --with-defaults or --without-defaults was given.
+withval="$with_defaults"
+if test -n "$withval"; then
+  :
+fi
+# Check whether --enable-defaults or --disable-defaults was given.
+enableval="$enable_defaults"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_defaults" 1>&2; exit 1; }
+fi
+
+
+# Check whether --with-debug or --without-debug was given.
 withval="$with_debug"
 if test -n "$withval"; then
   :
 else
   with_debug="no"
 fi
+# Check whether --enable-debug or --disable-debug was given.
+enableval="$enable_debug"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_debug" 1>&2; exit 1; }
+fi
 
-# check whether --with-opt or --without-opt was given.
+
+# Check whether --with-opt or --without-opt was given.
 withval="$with_opt"
 if test -n "$withval"; then
   :
 else
   with_opt="yes"
 fi
+# Check whether --enable-opt or --disable-opt was given.
+enableval="$enable_opt"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_opt" 1>&2; exit 1; }
+fi
 
-# check whether --with-double or --without-double was given.
+
+# Check whether --with-double or --without-double was given.
 withval="$with_double"
 if test -n "$withval"; then
   :
 else
   with_double="no"
 fi
+# Check whether --enable-double or --disable-double was given.
+enableval="$enable_double"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_double" 1>&2; exit 1; }
+fi
 
-# check whether --with-profile or --without-profile was given.
+
+# Check whether --with-profile or --without-profile was given.
 withval="$with_profile"
 if test -n "$withval"; then
   :
 else
   with_profile="no"
 fi
+# Check whether --enable-profile or --disable-profile was given.
+enableval="$enable_profile"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_profile" 1>&2; exit 1; }
+fi
 
-# check whether --with-shlib or --without-shlib was given.
+
+# Check whether --with-shlib or --without-shlib was given.
 withval="$with_shlib"
 if test -n "$withval"; then
   :
 else
   with_shlib="yes"
 fi
+# Check whether --enable-shlib or --disable-shlib was given.
+enableval="$enable_shlib"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_shlib" 1>&2; exit 1; }
+fi
 
-# check whether --with-f2c or --without-f2c was given.
+
+# Check whether --with-f2c or --without-f2c was given.
 withval="$with_f2c"
 if test -n "$withval"; then
   :
 else
   with_f2c="no"
 fi
+# Check whether --enable-f2c or --disable-f2c was given.
+enableval="$enable_f2c"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_f2c" 1>&2; exit 1; }
+fi
 
-# check whether --with-gcc or --without-gcc was given.
+
+# Check whether --with-gcc or --without-gcc was given.
 withval="$with_gcc"
 if test -n "$withval"; then
   :
 else
   with_gcc="no"
 fi
+# Check whether --enable-gcc or --disable-gcc was given.
+enableval="$enable_gcc"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_gcc" 1>&2; exit 1; }
+fi
 
-# check whether --with-warn or --without-warn was given.
+
+# Check whether --with-warn or --without-warn was given.
 withval="$with_warn"
 if test -n "$withval"; then
   :
 else
   with_warn="no"
 fi
+# Check whether --enable-warn or --disable-warn was given.
+enableval="$enable_warn"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_warn" 1>&2; exit 1; }
+fi
 
 
-# check whether --enable-drivers was given
+# Check whether --with-dbmalloc or --without-dbmalloc was given.
+withval="$with_dbmalloc"
+if test -n "$withval"; then
+  :
+else
+  with_dbmalloc="no"
+fi
+# Check whether --enable-dbmalloc or --disable-dbmalloc was given.
+enableval="$enable_dbmalloc"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_dbmalloc" 1>&2; exit 1; }
+fi
+
+
+# Check whether --enable-drivers or --disable-drivers was given.
 enableval="$enable_drivers"
 if test -n "$enableval"; then
   :
 else
   enable_drivers="yes"
 fi
+# Check whether --with-drivers or --without-drivers was given.
+withval="$with_drivers"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_drivers" 1>&2; exit 1; }
+fi
 
-# check whether --enable-f77 was given
+
+# Check whether --enable-f77 or --disable-f77 was given.
 enableval="$enable_f77"
 if test -n "$enableval"; then
   :
 else
   enable_f77="yes"
 fi
+# Check whether --with-f77 or --without-f77 was given.
+withval="$with_f77"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_f77" 1>&2; exit 1; }
+fi
 
-# check whether --enable-cxx was given
+
+# Check whether --enable-cxx or --disable-cxx was given.
 enableval="$enable_cxx"
 if test -n "$enableval"; then
   :
 else
   enable_cxx="yes"
 fi
-
-# check whether --enable-tcl was given
-enableval="$enable_tcl"
-if test -n "$enableval"; then
-  :
-else
-  enable_tcl="yes"
+# Check whether --with-cxx or --without-cxx was given.
+withval="$with_cxx"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_cxx" 1>&2; exit 1; }
 fi
 
 
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Set up prefix
 #
 # The prefix is set using the following algorithm:
 #
-#	via the command line --prefix flag
+#	via the command line: --prefix=<value>
 #	via the shell variable "pl_prefix", set in the defaults file
 #	via the directory "plrender" currently is located in
 #
@@ -564,13 +782,13 @@ fi
 # use the "mklinks" script for soft-linking the bin, lib, and include
 # files to the usual places under /usr/local or /usr.  See the discussion
 # of this in the FAQ for more info.
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-if test -z "$prefix"; then
+
+if test "$prefix" = NONE; then
     if test -z "$pl_prefix"; then
-	if test -z "$prefix"
-then
-  test -n "$silent" || echo "checking for plrender to derive installation directory prefix"
+	if test "$prefix" = NONE; then
+  echo $ac_n "checking for prefix by location of plrender""... $ac_c" 1>&6
   IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="$IFS:"
   for ac_dir in $PATH; do
     test -z "$ac_dir" && ac_dir=.
@@ -581,97 +799,34 @@ then
       dirname=`echo $prefix | sed 's%/.*/%%'`
       if test $dirname = "bin"; then
         prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
+	echo "$ac_t""$prefix" 1>&6
       else
-        echo ""
-	echo "dirname is: $dirname"
-        echo "Warning: Non-standard installed distribution (plrender not stored under bin)."
-        echo "Please completely delete old files before installation."
+	echo "$ac_t""$prefix" 1>&6
+	echo "configure: warning: non-standard installed distribution (plrender not stored under bin)" 1>&2
+	echo "configure: warning: please completely delete old files before installation" 1>&2
       fi
       break
     fi
   done
+  if test "$prefix" = NONE; then
+    echo "$ac_t""not found -- using default" 1>&6
+  fi
   IFS="$ac_save_ifs"
-  test -n "$verbose" && echo "	chose installation directory prefix ${prefix}"
 fi
 
-	if test -z "$prefix"; then
-	    prefix="/usr/local/plplot"
-	    echo "Unable to determine prefix; using $prefix"
-	fi
     else
 	prefix="$pl_prefix"
     fi
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # This is where the real work is done.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-test -n "$silent" || echo "checking how to run the C preprocessor"
-if test -z "$CPP"; then
-  # This must be in double quotes, not single quotes, because CPP may get
-  # substituted into the Makefile and ``${CC-cc}'' will simply confuse
-  # make.  It must be expanded now.
-  CPP="${CC-cc} -E"
-  cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-#include <stdio.h>
-Syntax Error
-EOF
-# Some shells (Coherent) do redirections in the wrong order, so need
-# the parens.
-ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
-if test -z "$ac_err"; then
-  :
-else
-  rm -rf conftest*
-  CPP="${CC-cc} -E -traditional-cpp"
-  cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-#include <stdio.h>
-Syntax Error
-EOF
-# Some shells (Coherent) do redirections in the wrong order, so need
-# the parens.
-ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
-if test -z "$ac_err"; then
-  :
-else
-  rm -rf conftest*
-  CPP=/lib/cpp
-fi
-rm -f conftest*
-fi
-rm -f conftest*
-fi
-test -n "$verbose" && echo "	setting CPP to $CPP"
+LIBS=""
+INCS=""
 
-
-test -n "$silent" || echo "checking for POSIXized ISC"
-if \
-     grep _POSIX_VERSION /usr/include/unistd.h >/dev/null 2>&1 ||
-     grep _POSIX_VERSION /usr/include/sys/unistd.h >/dev/null 2>&1
-then
-  echo "yup, it's POSIX"
-  ISC=1 # If later tests want to check for ISC.
-  
-{
-test -n "$verbose" && \
-echo "	defining _POSIX_SOURCE"
-echo "#define" _POSIX_SOURCE "1" >> confdefs.h
-DEFS="$DEFS -D_POSIX_SOURCE=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}_POSIX_SOURCE\${ac_dB}_POSIX_SOURCE\${ac_dC}1\${ac_dD}
-\${ac_uA}_POSIX_SOURCE\${ac_uB}_POSIX_SOURCE\${ac_uC}1\${ac_uD}
-\${ac_eA}_POSIX_SOURCE\${ac_eB}_POSIX_SOURCE\${ac_eC}1\${ac_eD}
-"
-}
-
-else
- echo "nope, not POSIX"
-fi
-
-
-# --*-sh-*---------------------------------------------------------------
+# --*-sh-*--------------------------------------------------------------------
 #
 # sysconf.in
 #
@@ -687,9 +842,9 @@ fi
 # This treatment is a little bit of overkill for PLplot, but some of it
 # comes from other projects, and you never know when it will turn out to
 # be useful..
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Compiler/linker variables
 #
 # The following shell variables are used.  They can be redefined as
@@ -719,54 +874,54 @@ fi
 # DBL_FLAG	Use double-precision
 # PROF_FLAG	Compile with profiling on
 # SYS_FLAGS	Misc system-specific compiler flags
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 # Defaults
 
-M4="m4"
+M4=m4
 
 # Debugging
 
 if test "$with_debug" = "yes"; then
-    with_opt="no"
-    DEBUG_FLAG_C="-g"
-    DEBUG_FLAG_CXX="-g"
-    DEBUG_FLAG_F="-g"
-    DEBUG_FLAG_LC="-g"
-    DEBUG_FLAG_LCXX="-g"
-    DEBUG_FLAG_LF="-g"
+    with_opt=no
+    DEBUG_FLAG_C=-g
+    DEBUG_FLAG_CXX=-g
+    DEBUG_FLAG_F=-g
+    DEBUG_FLAG_LC=-g
+    DEBUG_FLAG_LCXX=-g
+    DEBUG_FLAG_LF=-g
 fi
 
 # Optimization
 
 if test "$with_opt" = "yes"; then
-    OPT_FLAG_C="-O"
-    OPT_FLAG_CXX="-O"
-    OPT_FLAG_F="-O"
+    OPT_FLAG_C=-O
+    OPT_FLAG_CXX=-O
+    OPT_FLAG_F=-O
 fi
 
 # Double precision
 # Note that although there is no truly standard way to invoke double
-# precision in Fortran from the command line, enough of them use "-r8"
+# precision in Fortran from the command line, enough of them use -r8
 # that I've decided to make it the default.  
 
 if test "$with_double" = "yes"; then
-    DBL_FLAG_C="-DDOUBLE"
-    DBL_FLAG_CXX="-DDOUBLE"
-    DBL_FLAG_M4="-DDOUBLE"
-    DBL_FLAG_F="-r8"
+    DBL_FLAG_C=-DDOUBLE
+    DBL_FLAG_CXX=-DDOUBLE
+    DBL_FLAG_M4=-DDOUBLE
+    DBL_FLAG_F=-r8
 fi
 
 # Profiling
 # Not a good default for Fortran here, either.
 
 if test "$with_profile" = "yes"; then
-    PROF_FLAG_C="-p"
-    PROF_FLAG_CXX="-p"
-    PROF_FLAG_LC="-p"
+    PROF_FLAG_C=-p
+    PROF_FLAG_CXX=-p
+    PROF_FLAG_LC=-p
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Set compiler on a system-dependent basis.
 # Notes:
 #
@@ -789,58 +944,59 @@ fi
 # gcc), or with_f2c=yes (to get f2c).  IMPORTANT: the command line
 # argument uses a "-" (dash) to separate words, while the shell variable
 # uses a "_" (underscore).
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 # Set up ANSI C compiler
 
 if test -z "$CC"; then
-    CC="cc"
+    CC=cc
     case "$system" in 
 	aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
-	    CC="xlc"
+	    CC=xlc
 	;;
 	alpha*|ALPHA*|Alpha*|OSF* ) 
 	    CC="cc -std"
 	;;
 	convex*|ConvexOS* ) 
 	    CC="cc -std"
-	    with_gcc="no"
+	    with_gcc=no
 	;;
 	dg*|DG* ) 
 	    CC="cc -ansi"
 	;;
 	hp*|HP* ) 
-	    CC="c89"
+	    CC=c89
 	;;
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
 	    CC="cc -ansi"
 	;;
 	linux*|LINUX*|Linux* ) 
-	    with_gcc="yes"
+	    with_gcc=yes
 	;;
 	next*|NeXT*|NEXT* ) 
-	    with_gcc="yes"
+	    with_gcc=yes
 	;;
 	SunOS-4* )
-	    CC="acc"
+	    CC=acc
 	;;
 	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
 	    CC="cc -hansi"
-	    with_gcc="no"
+	    with_gcc=no
 	;;
 	ultrix*|ULTRIX* ) 
-	    with_gcc="yes"
+	    with_gcc=yes
 	;;
 	CRAY* ) 
-	    with_gcc="no"
+	    with_gcc=no
 	;;
     esac
 fi
 
+# ----------------------------------------------------------------------------
 # Set up K&R C compiler
 
 if test -z "$OCC"; then
-    OCC="cc"
+    OCC=cc
     case "$system" in 
 	SunOS-5.* )
 	    OCC="cc -Xs"
@@ -848,14 +1004,15 @@ if test -z "$OCC"; then
     esac
 fi
 
+# ----------------------------------------------------------------------------
 # Set up C++ compiler
 
 if test -z "$CXX"; then
-    CXX="CC"
+    CXX=CC
     case "$system" in
 	linux*|LINUX*|Linux* ) 
-	    with_gcc="yes"
-	    CXX="gcc"
+	    with_gcc=yes
+	    CXX=gcc
 	;;
 	hp*|HP* ) 
 	    CXX="CC +a1"
@@ -863,66 +1020,102 @@ if test -z "$CXX"; then
     esac
 fi
 
+# ----------------------------------------------------------------------------
 # Set up Fortran compiler
 
 if test -z "$F77"; then
-    F77="f77"
+    F77=f77
     case "$system" in 
 	aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
-	    F77="xlf"
+	    F77=xlf
 	;;
 	dg*|DG* ) 
-	    F77="ghf77"
+	    F77=ghf77
 	;;
 	hp*|HP* ) 
 	    # The fort77 front-end uses a cc-like set of command line flags.
 
-	    F77="fort77"
+	    F77=fort77
 	;;
 	linux*|LINUX*|Linux* ) 
-	    with_f2c="yes"
+	    with_f2c=yes
 	;;
 	next*|NeXT*|NEXT* ) 
-	    with_f2c="yes"
+	    with_f2c=yes
 	;;
 	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
 	    # The f77 front-end uses a cc-like set of command line flags,
 	    # but I've had problems with it, so use f77sx here instead.
 
-	    F77="f77sx"
-	    with_f2c="no"
+	    F77=f77sx
+	    with_f2c=no
 	;;
 	CRAY* ) 
-	    F77="cf77"
-	    with_f2c="no"
+	    F77=cf77
+	    with_f2c=no
 	;;
     esac
 fi
 
-# -----------------------------------------------------------------------
-# gcc
-# -----------------------------------------------------------------------
+# If not using f2c, try locating the executable now.
 
-if test "$with_gcc" = "yes"; then
-    CC="gcc"
-    CXX="gcc"
-    OCC="gcc -traditional"
-
-    if test "$with_warn" = "yes"; then
-	SYS_FLAGS_C="-Wall"
+if test "$with_f2c" = "no"; then
+    # Extract the first word of "$F77", so it can be a program name with args.
+set dummy $F77; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_prog_found_F77'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test -n "$found_F77"; then
+  ac_cv_prog_found_F77="$found_F77" # Let the user override the test.
+else
+  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
+  for ac_dir in $PATH; do
+    test -z "$ac_dir" && ac_dir=.
+    if test -f $ac_dir/$ac_word; then
+      ac_cv_prog_found_F77="yes"
+      break
     fi
+  done
+  IFS="$ac_save_ifs"
+  test -z "$ac_cv_prog_found_F77" && ac_cv_prog_found_F77="no"
+fi
+fi
+found_F77="$ac_cv_prog_found_F77"
+if test -n "$found_F77"; then
+  echo "$ac_t""$found_F77" 1>&6
+else
+  echo "$ac_t""no" 1>&6
+fi
 
-    # There are very few platforms on which gcc supports shared libs
-    # For now, just disable.
-
-    if test "$with_shlib" = "yes"; then
-#	echo "Warning: no support for shared libs with gcc yet"
-#	with_shlib="no"
-	echo "Experimental HP support for shared libs with gcc."
+    if test "$found_F77" = "no" ; then
+	with_f2c=yes
     fi
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# gcc
+# ----------------------------------------------------------------------------
+
+if test "$with_gcc" = "yes"; then
+    CC=gcc
+    CXX=gcc
+    OCC="gcc -traditional"
+
+    if test "$with_warn" = "yes"; then
+	SYS_FLAGS_C=-Wall
+    fi
+
+    if test "$with_shlib" = "yes"; then
+	case "$system" in
+	    hp*|HP* ) 
+		echo "configure: warning: shared libs on HP with gcc is experimental" 1>&2
+	    ;;
+	esac
+    fi
+fi
+
+# ----------------------------------------------------------------------------
 # f2c
 #
 # I give preference to the program "fc" for invoking f2c, since there may
@@ -930,51 +1123,74 @@ fi
 # do I fall back to "f77".
 #
 # The only option supported for f2c is --with-double.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 if test "$with_f2c" = "yes"; then
-    if test -z "$found_fc"; then
-  # Extract the first word of `fc', so it can be a program name with args.
-  set ac_dummy fc; ac_word=$2
-  test -n "$silent" || echo "checking for $ac_word"
+    # Extract the first word of "fc", so it can be a program name with args.
+set dummy fc; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_prog_found_fc'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test -n "$found_fc"; then
+  ac_cv_prog_found_fc="$found_fc" # Let the user override the test.
+else
   IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
   for ac_dir in $PATH; do
     test -z "$ac_dir" && ac_dir=.
     if test -f $ac_dir/$ac_word; then
-      found_fc=""yes""
+      ac_cv_prog_found_fc="yes"
       break
     fi
   done
   IFS="$ac_save_ifs"
+  test -z "$ac_cv_prog_found_fc" && ac_cv_prog_found_fc="no"
 fi
-test -z "$found_fc" && found_fc=""no""
-test -n "$found_fc" && test -n "$verbose" && echo "	setting found_fc to $found_fc"
+fi
+found_fc="$ac_cv_prog_found_fc"
+if test -n "$found_fc"; then
+  echo "$ac_t""$found_fc" 1>&6
+else
+  echo "$ac_t""no" 1>&6
+fi
 
     if test "$found_fc" = "yes" ; then
-	F77="fc"
+	F77=fc
     else
-	if test -z "$found_f77"; then
-  # Extract the first word of `f77', so it can be a program name with args.
-  set ac_dummy f77; ac_word=$2
-  test -n "$silent" || echo "checking for $ac_word"
+	# Extract the first word of "f77", so it can be a program name with args.
+set dummy f77; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_prog_found_f77'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test -n "$found_f77"; then
+  ac_cv_prog_found_f77="$found_f77" # Let the user override the test.
+else
   IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
   for ac_dir in $PATH; do
     test -z "$ac_dir" && ac_dir=.
     if test -f $ac_dir/$ac_word; then
-      found_f77=""yes""
+      ac_cv_prog_found_f77="yes"
       break
     fi
   done
   IFS="$ac_save_ifs"
+  test -z "$ac_cv_prog_found_f77" && ac_cv_prog_found_f77="no"
 fi
-test -z "$found_f77" && found_f77=""no""
-test -n "$found_f77" && test -n "$verbose" && echo "	setting found_f77 to $found_f77"
+fi
+found_f77="$ac_cv_prog_found_f77"
+if test -n "$found_f77"; then
+  echo "$ac_t""$found_f77" 1>&6
+else
+  echo "$ac_t""no" 1>&6
+fi
 
 	if test "$found_f77" = "yes" ; then
-	    F77="f77"
+	    F77=f77
 	else
-	    echo "Warning: could not find \"fc\" or \"f77\""
-	    with_f2c="no"
+	    echo "configure: warning: cannot find a Fortran compiler.. disabling Fortran interface" 1>&2
+	    with_f2c=no
+	    enable_f77=no
 	fi
     fi
 
@@ -984,9 +1200,9 @@ test -n "$found_f77" && test -n "$verbose" && echo "	setting found_f77 to $found
     SYS_FLAGS_F=
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Can finally set linker defaults.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 if test -z "$LDC"; then
     LDC="$CC"
@@ -998,7 +1214,7 @@ if test -z "$LDF"; then
     LDF="$F77"
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Now get system-specific compiler flags.
 #
 # If your Fortran compiler supports auto-promotion to double precision, it
@@ -1007,7 +1223,7 @@ fi
 # to generate single and double precision versions.  So if your compiler
 # can't do command-line promotion to double precision, the only loss is
 # that you won't be able to run the Fortran demos in double precision.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 case "$system" in 
     aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
@@ -1021,13 +1237,13 @@ case "$system" in
 	# optimization will mess up some diagonal dashed lines.  
 
 	if test "$with_opt" = "yes"; then
-	    OPT_FLAG_C="-O1"
+	    OPT_FLAG_C=-O1
 	fi
     ;;
     convex*|ConvexOS* ) 
 	if test "$with_opt" = "yes"; then
-	    OPT_FLAG_C="-O3"
-	    OPT_FLAG_F="-O3"
+	    OPT_FLAG_C=-O3
+	    OPT_FLAG_F=-O3
 	fi
     ;;
     dg*|DG* ) 
@@ -1054,34 +1270,34 @@ case "$system" in
 	#  +ESlit puts const data and strings in read-only memory (c89 option)
 
 	if test "$with_warn" = "yes" -a "$with_gcc" = "no"; then
-	    SYS_FLAGS_LC="-z"
+	    SYS_FLAGS_LC=-z
 	    SYS_FLAGS_C="+w1 +ESlit"
-	    SYS_FLAGS_F="-w"
+	    SYS_FLAGS_F=-w
 	fi
 
 	# Handling of C++ exceptions
 
 	if test "$with_gcc" = "no"; then
-	    SYS_FLAGS_CXX="+eh"
-	    SYS_FLAGS_LCXX="+eh"
+	    SYS_FLAGS_CXX=+eh
+	    SYS_FLAGS_LCXX=+eh
 	fi
 
 	# Profiling
 	# Should not be used with shared libraries.
 
 	if test "$with_profile" = "yes" -a "$with_gcc" = "no"; then
-	    with_shlib="no"
-	    PROF_FLAG_C="-G"
-	    PROF_FLAG_F="-G"
-	    PROF_FLAG_LC="-G"
-	    PROF_FLAG_LF="-G"
+	    with_shlib=no
+	    PROF_FLAG_C=-G
+	    PROF_FLAG_F=-G
+	    PROF_FLAG_LC=-G
+	    PROF_FLAG_LF=-G
 	fi
 
 	# Shut off shared libraries if debugging.
 
 	if test "$with_debug" = "yes"; then
 	    if test "$with_gcc" = "no"; then
-		with_shlib="no"
+		with_shlib=no
 	    fi
 	fi
 
@@ -1096,7 +1312,7 @@ case "$system" in
 	# Fortran example programs in double precision.
 
 	if test $with_double = "yes" -a "$with_f2c" = "no"; then
-	    DBL_FLAG_F="+autodblpad"
+	    DBL_FLAG_F=+autodblpad
 	fi
     ;;
     irix*|IRIX*|Irix*|sgi*|SGI* ) 
@@ -1159,8 +1375,8 @@ case "$system" in
 	    PROF_FLAG_F=
 	    PROF_FLAG_LC=
 	    PROF_FLAG_LF=
-	    DEBUG_FLAG_C="-Gp"
-	    DEBUG_FLAG_LC="-Gp"
+	    DEBUG_FLAG_C=-Gp
+	    DEBUG_FLAG_LC=-Gp
 	    DEBUG_FLAG_LF= 
 
 	    case "$machine" in
@@ -1177,80 +1393,91 @@ case "$system" in
     ;;
 esac
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Set flags to generate shared libraries for systems that we know about.
 # Taken from BLT configure.in with some modifications.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-echo "checking how to make shared libraries"
-SHLIB_CCFLAGS=""
-SHLIB_CXXFLAGS=""
-SHLIB_BUILD=""
-SHLIB_SUFFIX=""
+echo $ac_n "checking how to make shared libraries""... $ac_c" 1>&6
+SHLIB_CCFLAGS=
+SHLIB_CXXFLAGS=
+SHLIB_BUILD=
+SHLIB_SUFFIX=
 case "$system" in 
     SunOS-4* ) 
-	SHLIB_CCFLAGS="-pic"
-	SHLIB_CXXFLAGS="-pic"
-	SHLIB_F77FLAGS="-pic"
+	SHLIB_CCFLAGS=-pic
+	SHLIB_CXXFLAGS=-pic
+	SHLIB_F77FLAGS=-pic
 	SHLIB_BUILD="ld -assert pure-text -o"
 	SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	SALIB_SUFFIX='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
-    ;;
-    HP-UX-* )
-	SHLIB_CCFLAGS="+z"
-	SHLIB_CXXFLAGS="+z"
-	SHLIB_F77FLAGS="+z"
-	SHLIB_BUILD="ld -b -o"
-	SHLIB_SUFFIX=".sl"
 	if test "$with_gcc" = "yes"; then
-	    SHLIB_CCFLAGS="-fpic"
-	    SHLIB_CXXFLAGS="-fpic"
-	    SHLIB_F77FLAGS="+z"
-	    SHLIB_BUILD="gcc -shared -fpic -o"
-	    SHLIB_SUFFIX=".sl"
+	    with_shlib=no
+	    echo "$ac_t""unknown" 1>&6
+	else
+	    echo "$ac_t""okay" 1>&6
 	fi
     ;;
+    HP-UX-* )
+	SHLIB_CCFLAGS=+z
+	SHLIB_CXXFLAGS=+z
+	SHLIB_F77FLAGS=+z
+	SHLIB_BUILD="ld -b -o"
+	SHLIB_SUFFIX=.sl
+	if test "$with_gcc" = "yes"; then
+	    SHLIB_CCFLAGS=-fpic
+	    SHLIB_CXXFLAGS=-fpic
+	    SHLIB_F77FLAGS=+z
+	    SHLIB_BUILD="gcc -shared -fpic -o"
+	    SHLIB_SUFFIX=.sl
+	fi
+	echo "$ac_t""okay" 1>&6
+    ;;
     AIX-* )
-	SHLIB_CCFLAGS="-fpic"
-	SHLIB_CXXFLAGS="-fpic"
-	SHLIB_F77FLAGS="-fpic"
+	SHLIB_CCFLAGS=-fpic
+	SHLIB_CXXFLAGS=-fpic
+	SHLIB_F77FLAGS=-fpic
 	SHLIB_BUILD="ar q"
-	SHLIB_SUFFIX=".a"
+	SHLIB_SUFFIX=.a
+	echo "$ac_t""okay" 1>&6
     ;;
 
     # The rest are probably broken.  Someone please fix them.
-    # Remove the 'with_shlib="no"' line, comments, and go wild.
+    # Remove the 'with_shlib=no' line, comments, and go wild.
 
     SunOS-5* )
-	with_shlib="no"
+	with_shlib=no
 #	SHLIB_CCFLAGS="-K pic"
 #	SHLIB_F77FLAGS="-K pic"
 #	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	echo "$ac_t""unknown" 1>&6
     ;;
     OSF-1.* )
-	with_shlib="no"
-#	SHLIB_CCFLAGS="-fpic"
-#	SHLIB_F77FLAGS="-fpic"
+	with_shlib=no
+#	SHLIB_CCFLAGS=-fpic
+#	SHLIB_F77FLAGS=-fpic
 #	SHLIB_BUILD="$CC -shared"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	echo "$ac_t""unknown" 1>&6
     ;;
     IRIX-5.* )
-	with_shlib="no"
-#	SHLIB_CCFLAGS="-KPIC"
-#	SHLIB_F77FLAGS="-KPIC"
+	with_shlib=no
+#	SHLIB_CCFLAGS=-KPIC
+#	SHLIB_F77FLAGS=-KPIC
 #	SHLIB_BUILD="$CC -shared"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	echo "$ac_t""unknown" 1>&6
     ;;
     * )
-	echo "Don't know how to make shared libraries for $system"
-	with_shlib="no"
+	with_shlib=no
+	echo "$ac_t""unknown" 1>&6
     ;;
 esac
 
 if test ! -z "SHLIB_CCFLAGS" ; then 
     if test "$compiler" = "gcc" ; then
-	SHLIB_CCFLAGS="-fpic"
+	SHLIB_CCFLAGS=-fpic
     fi
 fi
 
@@ -1258,9 +1485,9 @@ fi
 
 
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Assemble finished compiler flags.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 CC_FLAGS_NOOPT=\
 "-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C"
@@ -1309,9 +1536,9 @@ M4_FLAGS="-S2000 -B8192"
 
 
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Hacks to deal with optimizer failures.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 CC_FLAGS_XWIN=$CC_FLAGS
 CC_FLAGS_SCCONT=$CC_FLAGS
@@ -1330,7 +1557,77 @@ esac
 
 
 
-# --*-sh-*---------------------------------------------------------------
+
+echo $ac_n "checking how to run the C preprocessor""... $ac_c" 1>&6
+# On Suns, sometimes $CPP names a directory.
+if test -n "$CPP" && test -d "$CPP"; then
+  CPP=
+fi
+if test -z "$CPP"; then
+if eval "test \"`echo '$''{'ac_cv_prog_CPP'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+    # This must be in double quotes, not single quotes, because CPP may get
+  # substituted into the Makefile and "${CC-cc}" will confuse make.
+  CPP="${CC-cc} -E"
+  # On the NeXT, cc -E runs the code through the compiler's parser,
+  # not just through cpp.
+  cat > conftest.$ac_ext <<EOF
+#line 1577 "configure"
+#include "confdefs.h"
+#include <assert.h>
+Syntax Error
+EOF
+eval "$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
+ac_err=`grep -v '^ *+' conftest.out`
+if test -z "$ac_err"; then
+  :
+else
+  echo "$ac_err" >&5
+  rm -rf conftest*
+  CPP="${CC-cc} -E -traditional-cpp"
+  cat > conftest.$ac_ext <<EOF
+#line 1591 "configure"
+#include "confdefs.h"
+#include <assert.h>
+Syntax Error
+EOF
+eval "$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
+ac_err=`grep -v '^ *+' conftest.out`
+if test -z "$ac_err"; then
+  :
+else
+  echo "$ac_err" >&5
+  rm -rf conftest*
+  CPP=/lib/cpp
+fi
+rm -f conftest*
+fi
+rm -f conftest*
+  ac_cv_prog_CPP="$CPP"
+fi
+  CPP="$ac_cv_prog_CPP"
+fi
+echo "$ac_t""$CPP" 1>&6
+
+
+echo $ac_n "checking for POSIXized ISC""... $ac_c" 1>&6
+if \
+     grep _POSIX_VERSION /usr/include/unistd.h >/dev/null 2>&1 ||
+     grep _POSIX_VERSION /usr/include/sys/unistd.h >/dev/null 2>&1
+then
+  echo "$ac_t""yes" 1>&6
+  ISC=1 # If later tests want to check for ISC.
+  cat >> confdefs.h <<\EOF
+#define _POSIX_SOURCE 1
+EOF
+
+else
+  echo "$ac_t""no" 1>&6
+fi
+
+
+# --*-sh-*--------------------------------------------------------------------
 #
 # sysloc.in
 #
@@ -1342,29 +1639,61 @@ esac
 # The stuff set here is fairly generic and can be automated.
 # This includes how to find required header files and libraries.
 # Includes code and ideas taken from the BLT (Tk extension) configure.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------
-# Run xmkmf to check for location of X libraries and includes.
-# If not found, I have to assume that X isn't available (it happens).
-# Can disable explicitly by specifying --disable-xwin.
-# -----------------------------------------------------------------------
+inc_path=
+lib_path=
 
-# check whether --enable-xwin was given
+# ----------------------------------------------------------------------------
+# Run xmkmf to check for location of X libraries and includes.  If not
+# found, I have to assume that X isn't available (it happens).  Can disable
+# explicitly by specifying --disable-xwin or --without-x (the latter switch
+# is built into autoconf so I might as well support it).
+# ----------------------------------------------------------------------------
+
+# Check whether --enable-xwin or --disable-xwin was given.
 enableval="$enable_xwin"
 if test -n "$enableval"; then
   :
 else
   enable_xwin=$enable_drivers
 fi
+# Check whether --with-xwin or --without-xwin was given.
+withval="$with_xwin"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_xwin" 1>&2; exit 1; }
+fi
 
+
+if test "$with_x" = "no"; then
+    enable_xwin=no
+fi
 
 if test "$enable_xwin" = "yes"; then
     if test -z "$XINCDIR" -o -z "$XLIBDIR"; then
-	# If we find X, set shell vars x_includes and x_libraries to the paths.
-no_x=true
-if test "x$with_x" != xno; then
-test -n "$silent" || echo "checking for X include and library files with xmkmf"
+	# If we find X, set shell vars x_includes and x_libraries to the
+# paths, otherwise set no_x=yes.
+# Uses ac_ vars as temps to allow command line to override cache and checks.
+# --without-x overrides everything else, but does not touch the cache.
+echo $ac_n "checking for X""... $ac_c" 1>&6
+
+# Check whether --with-x or --without-x was given.
+withval="$with_x"
+if test -n "$withval"; then
+  :
+fi
+
+if test "x$with_x" = xno; then
+  no_x=yes
+else
+  if test "x$x_includes" != xNONE && test "x$x_libraries" != xNONE; then
+    no_x=
+  else
+if eval "test \"`echo '$''{'ac_cv_path_x'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  # One or both of the vars are not set, and there is no cached value.
+no_x=yes
 rm -fr conftestdir
 if mkdir conftestdir; then
   cd conftestdir
@@ -1382,41 +1711,38 @@ EOF
     then
       ac_im_usrlibdir=$ac_im_libdir
     fi
+    # Screen out bogus values from the imake configuration.
     case "$ac_im_incroot" in
 	/usr/include) ;;
-	*) test -z "$x_includes" && x_includes="$ac_im_incroot" ;;
+	*) test -f "$ac_im_incroot/X11/Xos.h" && ac_x_includes="$ac_im_incroot" ;;
     esac
     case "$ac_im_usrlibdir" in
 	/usr/lib | /lib) ;;
-	*) test -z "$x_libraries" && x_libraries="$ac_im_usrlibdir" ;;
+	*) test -d "$ac_im_usrlibdir" && ac_x_libraries="$ac_im_usrlibdir" ;;
     esac
   fi
   cd ..
   rm -fr conftestdir
 fi
 
-if test -z "$ac_im_usrlibdir"; then
-test -n "$silent" || echo "checking for X include and library files directly"
-if test ".$x_direct_test_library" = . ; then
-   x_direct_test_library='Xt'
-fi
-if test ".$x_direct_test_include" = . ; then
-   x_direct_test_include='X11/Intrinsic.h'
-fi
-cat > conftest.${ac_ext} <<EOF
+if test "$no_x" = yes; then
+test -z "$x_direct_test_library" && x_direct_test_library=Xt
+test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
+test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
+cat > conftest.$ac_ext <<EOF
+#line 1734 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
-# Some shells (Coherent) do redirections in the wrong order, so need
-# the parens.
-ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
+eval "$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
+ac_err=`grep -v '^ *+' conftest.out`
 if test -z "$ac_err"; then
   rm -rf conftest*
-  no_x=
-
+  no_x= ac_x_includes=
 else
+  echo "$ac_err" >&5
   rm -rf conftest*
-  for ac_dir in               \
+    for ac_dir in               \
     /usr/X11R6/include        \
     /usr/X11R5/include        \
     /usr/X11R4/include        \
@@ -1454,37 +1780,35 @@ else
     ; \
   do
     if test -r "$ac_dir/$x_direct_test_include"; then
-      test -z "$x_includes" && x_includes=$ac_dir
-      no_x=
+      no_x= ac_x_includes=$ac_dir
       break
     fi
   done
 fi
 rm -f conftest*
 
-# Check for the libraries.  First see if replacing the `include' by
-# `lib' works.
-ac_save_LIBS="${LIBS}"
-LIBS="${LIBS} -l"$x_direct_test_library""
-ac_have_lib=""
-test -n "$silent" || echo "checking for -l"$x_direct_test_library""
-cat > conftest.${ac_ext} <<EOF
+# Check for the libraries.
+# See if we find them without any special options.
+# Don't add to $LIBS permanently.
+ac_save_LIBS="$LIBS"
+LIBS="-l$x_direct_test_library $LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 1797 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
-int t() { main();; return 0; }
+int t() {
+${x_direct_test_function}()
+; return 0; }
 EOF
-if eval $ac_compile; then
+if eval $ac_link; then
   rm -rf conftest*
-  ac_have_lib="1"
-
-fi
-rm -f conftest*
-LIBS="${ac_save_LIBS}"
-if test -n "${ac_have_lib}"; then
-   :; no_x=
+  LIBS="$ac_save_LIBS" no_x= ac_x_libraries=
 else
-   :; for ac_dir in `echo "$x_includes" | sed s/include/lib/` \
+  rm -rf conftest*
+  LIBS="$ac_save_LIBS"
+# First see if replacing the include by lib works.
+for ac_dir in `echo "$ac_x_includes" | sed s/include/lib/` \
     /usr/X11R6/lib        \
     /usr/X11R5/lib        \
     /usr/X11R4/lib        \
@@ -1523,34 +1847,49 @@ else
 do
   for ac_extension in a so sl; do
     if test -r $ac_dir/lib${x_direct_test_library}.$ac_extension; then
-      test -z "$x_libraries" && x_libraries=$ac_dir
-      no_x=
+      no_x= ac_x_libraries=$ac_dir
       break 2
     fi
   done
 done
 fi
+rm -f conftest*
 
 fi
-test -n "$x_includes" && test -n "$verbose" && echo "	X11 headers are in $x_includes"
-test -n "$x_libraries" && test -n "$verbose" && echo "	X11 libraries are in $x_libraries"
+if test "$no_x" = yes; then
+  ac_cv_path_x="no_x=yes"
+else
+  ac_cv_path_x="no_x= ac_x_includes=$ac_x_includes ac_x_libraries=$ac_x_libraries"
+fi
+fi
+  fi
+  eval "$ac_cv_path_x"
+fi # $with_x != no
+
+if test "$no_x" = yes; then
+  echo "$ac_t""no" 1>&6
+else
+  test "x$x_includes" = xNONE && x_includes=$ac_x_includes
+  test "x$x_libraries" = xNONE && x_libraries=$ac_x_libraries
+  ac_cv_path_x="no_x= ac_x_includes=$x_includes ac_x_libraries=$x_libraries"
+  echo "$ac_t""libraries $x_libraries, headers $x_includes" 1>&6
 fi
 
 
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
-	    cat > conftest.${ac_ext} <<EOF
+	    cat > conftest.$ac_ext <<EOF
+#line 1883 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
-# Some shells (Coherent) do redirections in the wrong order, so need
-# the parens.
-ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
+eval "$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
+ac_err=`grep -v '^ *+' conftest.out`
 if test -z "$ac_err"; then
   rm -rf conftest*
-   XINCDIR="default" 
-
+   XINCDIR=default 
 else
+  echo "$ac_err" >&5
   rm -rf conftest*
   
 	    places="\
@@ -1577,40 +1916,51 @@ else
 		fi
 	    done
 	    if test -z "$XINCDIR"; then
-		echo "Warning:  couldn't find any X11 include files."
-		XINCDIR="default"
-		enable_xwin="no"
+		echo "configure: warning: couldn't find any X11 include files" 1>&2
+		XINCDIR=default
+		enable_xwin=no
 	    fi 
 fi
 rm -f conftest*
 	fi
 	if test "$XINCDIR" = "/usr/include"; then
-	    XINCDIR="default"
+	    XINCDIR=default
 	fi
 
 	XLIBDIR="$x_libraries"
 	if test -z "$XLIBDIR"; then
-	    ac_save_LIBS="${LIBS}"
-LIBS="${LIBS} -lX11"
-ac_have_lib=""
-test -n "$silent" || echo "checking for -lX11"
-cat > conftest.${ac_ext} <<EOF
+	    echo $ac_n "checking for -lX11""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_lib_X11'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+LIBS="-lX11  $LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 1940 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
-int t() { main();; return 0; }
+int t() {
+main()
+; return 0; }
 EOF
-if eval $ac_compile; then
+if eval $ac_link; then
   rm -rf conftest*
-  ac_have_lib="1"
-
+  eval "ac_cv_lib_X11=yes"
+else
+  rm -rf conftest*
+  eval "ac_cv_lib_X11=no"
 fi
 rm -f conftest*
-LIBS="${ac_save_LIBS}"
-if test -n "${ac_have_lib}"; then
-   :;  XLIBDIR="default" 
+LIBS="$ac_save_LIBS"
+
+fi
+if eval "test \"`echo '$ac_cv_lib_'X11`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+   XLIBDIR=default 
 else
-   :; 
+  echo "$ac_t""no" 1>&6
+
 	    places="\
 	    /lib \
 	    /usr/lib \
@@ -1632,19 +1982,19 @@ else
 		fi
 	    done
 	    if test -z "$XLIBDIR"; then
-		echo "Warning:  couldn't find the X11 library archive. "
-		XLIBDIR="default"
+		echo "configure: warning: couldn't find the X11 library archive" 1>&2
+		XLIBDIR=default
 	    fi 
 fi
 
 	fi
 	if test "$XLIBDIR" = "/usr/lib"; then
-	    XLIBDIR="default"
+	    XLIBDIR=default
 	fi
     fi
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Make some guesses where the Tcl/Tk include files and libraries are.
 # Look first in the Tcl/Tk distributions and then move on to the standard
 # include file/library locations.  If it's still not found I assume it's
@@ -1655,18 +2005,28 @@ fi
 # Tk, etc), put them in your file space, and have them be found first.
 # Some examples: libraries compiled with debugging turned on, or from a
 # different revision of the (Tcl, Tk, etc) package.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # tcl.h
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-header="tcl.h"
+# Check whether --enable-tcl or --disable-tcl was given.
+enableval="$enable_tcl"
+if test -n "$enableval"; then
+  :
+else
+  enable_tcl=yes
+fi
+# Check whether --with-tcl or --without-tcl was given.
+withval="$with_tcl"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_tcl" 1>&2; exit 1; }
+fi
+
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLINCDIR"; then
-	echo "checking for $header"
-	TCLINCDIR=""
 	places="\
 	$prefix/include \
 	$HOME/local/tcl7.3/include \
@@ -1682,30 +2042,35 @@ if test "$enable_tcl" = "yes"; then
 	$XINCDIR \
 	/usr/include"
 
-	for dir in $places; do
-	    if test -r "$dir/$header"; then
-		TCLINCDIR="$dir"
-		break
-	    fi
-	done
-	if test -z "$TCLINCDIR"; then
-	    echo "can't find $header, disabling Tcl support. "
-	    enable_tcl="no"
+	
+    echo $ac_n "checking for tcl.h""... $ac_c" 1>&6
+    TCLINCDIR=""
+
+    for dir in $places; do
+	if test -r "$dir/tcl.h"; then
+	    TCLINCDIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
 	fi
-	if test "$TCLINCDIR" = "/usr/include"; then
-	    TCLINCDIR="default"
-	fi
+    done
+    if test -z "$TCLINCDIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find tcl.h, setting enable_tcl to no" 1>&2
+	enable_tcl="no"
+    fi
+    if test "$TCLINCDIR" = "/usr/include"; then
+	TCLINCDIR="default"
+    fi
+
     fi
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # libtcl
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
-	echo "checking for -ltcl"
-	TCLLIBDIR=""
 	places="\
 	$prefix/lib \
 	$HOME/local/tk3.6/lib \
@@ -1719,134 +2084,51 @@ if test "$enable_tcl" = "yes"; then
 	$XLIBDIR \
 	/usr/lib"
 
-	for dir in $places; do
-	    if test -r "$dir/libtcl.a" -o -r "$dir/libtcl.sl"; then
-		TCLLIBDIR="$dir"
-		break
-	    fi
-	done
+	
+    echo $ac_n "checking for -ltcl""... $ac_c" 1>&6
+    TCLLIBDIR=""
 
-	if test -z "$TCLLIBDIR"; then
-	    echo "can't find Tcl library, disabling Tcl support. "
-	    enable_tcl="no"
+    for dir in $places; do
+	if test -r "$dir/libtcl.a" -o -r "$dir/libtcl.sl"; then
+	    TCLLIBDIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
 	fi
-	if test "$TCLLIBDIR" = "/usr/lib"; then
-	    TCLLIBDIR="default"
-	fi
+    done
+    if test -z "$TCLLIBDIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find tcl library, setting enable_tcl to no" 1>&2
+	enable_tcl="no"
+    fi
+    if test "$TCLLIBDIR" = "/usr/lib"; then
+	TCLLIBDIR="default"
+    fi
+
     fi
 fi
 
-# -----------------------------------------------------------------------
-# dp.h
-#
-# If not in $TCLINCDIR, probably in the user's area.
-# -----------------------------------------------------------------------
-
-# check whether --enable-dp was given
-enableval="$enable_dp"
-if test -n "$enableval"; then
-  :
-else
-  enable_dp=$enable_drivers
-fi
-
-if test "$enable_tcl" = "no"; then
-    enable_dp="no"
-fi
-
-if test "$enable_dp" = "yes"; then
-    if test -z "$DPINCDIR"; then
-	echo "checking for dp.h"
-	DPINCDIR=""
-	places="\
-	$prefix/include \
-	$TCLINCDIR \
-	$HOME/local/tcl7.3/include \
-	$HOME/local/tk3.6/include \
-	$HOME/local/include \
-	$HOME/include \
-	$PWD/../tcl-dp3.1 \
-	$PWD/../tcl-dp3.2 \
-	/usr/local/include \
-	/usr/include/tcl \
-	/usr/local/tcl7.3/include \
-	/usr/local/tk3.6/include \
-	/usr/include"
-
-	for dir in $places; do
-	    if test -r "$dir/dp.h"; then
-		DPINCDIR="$dir"
-		break
-	    fi
-	done
-	if test -z "$DPINCDIR"; then
-	    echo "can't find dp.h, disabling Tcl-DP support. "
-	    enable_dp="no"
-	fi
-	if test "$DPINCDIR" = "/usr/include"; then
-	    DPINCDIR="default"
-	fi
-    fi
-fi
-
-# -----------------------------------------------------------------------
-# libdpnetwork (Tcl-DP)
-# -----------------------------------------------------------------------
-
-if test "$enable_dp" = "yes"; then
-    if test -z "$DPLIBDIR"; then
-	echo "checking for -ldpnetwork"
-	DPLIBDIR=""
-	places="\
-	$prefix/lib \
-	$TCLLIBDIR \
-	$HOME/local/tk3.6/lib \
-	$HOME/local/lib \
-	$HOME/lib \
-	$PWD/../tcl-dp3.1 \
-	$PWD/../tcl-dp3.2 \
-	/usr/local/lib \
-	/usr/local/tcl7.0/lib \
-	/usr/local/tk3.6/lib \
-	$XLIBDIR \
-	/usr/lib"
-
-	for dir in $places; do
-	    if test -r "$dir/libdpnetwork.a" -o -r "$dir/libdpnetwork.sl"; then
-		DPLIBDIR="$dir"
-		break
-	    fi
-	done
-	if test -z "$DPLIBDIR"; then
-	    echo "can't find Tcl-DP library, disabling Tcl-DP support. "
-	    enable_dp="no"
-	fi
-	if test "$DPLIBDIR" = "/usr/lib"; then
-	    DPLIBDIR="default"
-	fi
-    fi
-fi
-
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # itcl.h
 #
 # If not in $TCLINCDIR, probably in the user's area.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# check whether --enable-itcl was given
+# Check whether --enable-itcl or --disable-itcl was given.
 enableval="$enable_itcl"
 if test -n "$enableval"; then
   :
 else
   enable_itcl=$enable_tcl
 fi
+# Check whether --with-itcl or --without-itcl was given.
+withval="$with_itcl"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_itcl" 1>&2; exit 1; }
+fi
 
-header="itcl.h"
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLINCDIR"; then
-	echo "checking for $header"
-	ITCLINCDIR=""
 	places="\
 	$prefix/include \
 	$TCLINCDIR \
@@ -1861,30 +2143,35 @@ if test "$enable_itcl" = "yes"; then
 	/usr/local/tk3.6/include \
 	/usr/include"
 
-	for dir in $places; do
-	    if test -r "$dir/$header"; then
-		ITCLINCDIR="$dir"
-		break
-	    fi
-	done
-	if test -z "$ITCLINCDIR"; then
-	    echo "can't find $header, disabling Itcl support. "
-	    enable_itcl="no"
+	
+    echo $ac_n "checking for itcl.h""... $ac_c" 1>&6
+    ITCLINCDIR=""
+
+    for dir in $places; do
+	if test -r "$dir/itcl.h"; then
+	    ITCLINCDIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
 	fi
-	if test "$ITCLINCDIR" = "/usr/include"; then
-	    ITCLINCDIR="default"
-	fi
+    done
+    if test -z "$ITCLINCDIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find itcl.h, setting enable_itcl to no" 1>&2
+	enable_itcl="no"
+    fi
+    if test "$ITCLINCDIR" = "/usr/include"; then
+	ITCLINCDIR="default"
+    fi
+
     fi
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # libitcl ([incr Tcl])
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLLIBDIR"; then
-	echo "checking for -litcl"
-	ITCLLIBDIR=""
 	places="\
 	$prefix/lib \
 	$TCLLIBDIR \
@@ -1898,43 +2185,53 @@ if test "$enable_itcl" = "yes"; then
 	$XLIBDIR \
 	/usr/lib"
 
-	for dir in $places; do
-	    if test -r "$dir/libitcl.a" -o -r "$dir/libitcl.sl"; then
-		ITCLLIBDIR="$dir"
-		break
-	    fi
-	done
-	if test -z "$ITCLLIBDIR"; then
-	    echo "can't find Itcl library, disabling Itcl support. "
-	    enable_itcl="no"
+	
+    echo $ac_n "checking for -litcl""... $ac_c" 1>&6
+    ITCLLIBDIR=""
+
+    for dir in $places; do
+	if test -r "$dir/libitcl.a" -o -r "$dir/libitcl.sl"; then
+	    ITCLLIBDIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
 	fi
-	if test "$ITCLLIBDIR" = "/usr/lib"; then
-	    ITCLLIBDIR="default"
-	fi
+    done
+    if test -z "$ITCLLIBDIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find itcl library, setting enable_itcl to no" 1>&2
+	enable_itcl="no"
+    fi
+    if test "$ITCLLIBDIR" = "/usr/lib"; then
+	ITCLLIBDIR="default"
+    fi
+
     fi
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # tk.h
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# check whether --enable-tk was given
+# Check whether --enable-tk or --disable-tk was given.
 enableval="$enable_tk"
 if test -n "$enableval"; then
   :
 else
   enable_tk=$enable_drivers
 fi
-
-if test "$enable_tcl" = "no"; then
-    enable_tk="no"
+# Check whether --with-tk or --without-tk was given.
+withval="$with_tk"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_tk" 1>&2; exit 1; }
 fi
-header="tk.h"
+
+
+if test "$enable_tcl" = "no" -o "$enable_xwin" = "no"; then
+    enable_tk=no
+fi
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKINCDIR"; then
-	echo "checking for $header"
-	TKINCDIR=""
 	places="\
 	$prefix/include \
 	$TCLINCDIR \
@@ -1950,30 +2247,35 @@ if test "$enable_tk" = "yes"; then
 	/usr/local/tk3.6/include \
 	/usr/include"
 
-	for dir in $places; do
-	    if test -r "$dir/$header"; then
-		TKINCDIR="$dir"
-		break
-	    fi
-	done
-	if test -z "$TKINCDIR"; then
-	    echo "can't find $header, disabling Tk support. "
-	    enable_tk="no"
+	
+    echo $ac_n "checking for tk.h""... $ac_c" 1>&6
+    TKINCDIR=""
+
+    for dir in $places; do
+	if test -r "$dir/tk.h"; then
+	    TKINCDIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
 	fi
-	if test "$TKINCDIR" = "/usr/include"; then
-	    TKINCDIR="default"
-	fi
+    done
+    if test -z "$TKINCDIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find tk.h, setting enable_tk to no" 1>&2
+	enable_tk="no"
+    fi
+    if test "$TKINCDIR" = "/usr/include"; then
+	TKINCDIR="default"
+    fi
+
     fi
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # libtk
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
-	echo "checking for -ltk"
-	TKLIBDIR=""
 	places="\
 	$prefix/lib \
 	$TCLLIBDIR \
@@ -1987,202 +2289,462 @@ if test "$enable_tk" = "yes"; then
 	$XLIBDIR \
 	/usr/lib"
 
-	for dir in $places; do
-	    if test -r "$dir/libtk.a" -o -r "$dir/libtk.sl"; then
-		TKLIBDIR="$dir"
-		break
-	    fi
-	done
-	if test -z "$TKLIBDIR"; then
-	    echo "can't find TK library, disabling Tk support. "
-	    enable_tk="no"
+	
+    echo $ac_n "checking for -ltk""... $ac_c" 1>&6
+    TKLIBDIR=""
+
+    for dir in $places; do
+	if test -r "$dir/libtk.a" -o -r "$dir/libtk.sl"; then
+	    TKLIBDIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
 	fi
-	if test "$TKLIBDIR" = "/usr/lib"; then
-	    TKLIBDIR="default"
-	fi
+    done
+    if test -z "$TKLIBDIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find tk library, setting enable_tk to no" 1>&2
+	enable_tk="no"
+    fi
+    if test "$TKLIBDIR" = "/usr/lib"; then
+	TKLIBDIR="default"
+    fi
+
     fi
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# dp.h
+#
+# If not in $TCLINCDIR, probably in the user's area.
+# ----------------------------------------------------------------------------
+
+# Check whether --enable-dp or --disable-dp was given.
+enableval="$enable_dp"
+if test -n "$enableval"; then
+  :
+else
+  enable_dp=$enable_drivers
+fi
+# Check whether --with-dp or --without-dp was given.
+withval="$with_dp"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_dp" 1>&2; exit 1; }
+fi
+
+
+if test "$enable_tcl" = "no" -o "$enable_tk" = "no"; then
+    enable_dp=no
+fi
+
+if test "$enable_dp" = "yes"; then
+    if test -z "$DPINCDIR"; then
+	places="\
+	$prefix/include \
+	$TCLINCDIR \
+	$HOME/local/tcl7.3/include \
+	$HOME/local/tk3.6/include \
+	$HOME/local/include \
+	$HOME/include \
+	$PWD/../tcl-dp3.1 \
+	$PWD/../tcl-dp3.2 \
+	/usr/local/include \
+	/usr/include/tcl \
+	/usr/local/tcl7.3/include \
+	/usr/local/tk3.6/include \
+	/usr/include"
+
+	
+    echo $ac_n "checking for dp.h""... $ac_c" 1>&6
+    DPINCDIR=""
+
+    for dir in $places; do
+	if test -r "$dir/dp.h"; then
+	    DPINCDIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
+	fi
+    done
+    if test -z "$DPINCDIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find dp.h, setting enable_dp to no" 1>&2
+	enable_dp="no"
+    fi
+    if test "$DPINCDIR" = "/usr/include"; then
+	DPINCDIR="default"
+    fi
+
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# libdpnetwork (Tcl-DP)
+# ----------------------------------------------------------------------------
+
+if test "$enable_dp" = "yes"; then
+    if test -z "$DPLIBDIR"; then
+	places="\
+	$prefix/lib \
+	$TCLLIBDIR \
+	$HOME/local/tk3.6/lib \
+	$HOME/local/lib \
+	$HOME/lib \
+	$PWD/../tcl-dp3.1 \
+	$PWD/../tcl-dp3.2 \
+	/usr/local/lib \
+	/usr/local/tcl7.0/lib \
+	/usr/local/tk3.6/lib \
+	$XLIBDIR \
+	/usr/lib"
+
+	
+    echo $ac_n "checking for -ldpnetwork""... $ac_c" 1>&6
+    DPLIBDIR=""
+
+    for dir in $places; do
+	if test -r "$dir/libdpnetwork.a" -o -r "$dir/libdpnetwork.sl"; then
+	    DPLIBDIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
+	fi
+    done
+    if test -z "$DPLIBDIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find dpnetwork library, setting enable_dp to no" 1>&2
+	enable_dp="no"
+    fi
+    if test "$DPLIBDIR" = "/usr/lib"; then
+	DPLIBDIR="default"
+    fi
+
+    fi
+fi
+
+# ----------------------------------------------------------------------------
 # Assemble list of tcl/TK/X/whatever include directives.  These can go in
 # any order.
-#
-# I go to a bit of trouble to eliminate redundant -I specifications (to
-# keep the build line concise).
-# -----------------------------------------------------------------------
-
-inc_path=""
+# ----------------------------------------------------------------------------
 
 if test "$enable_xwin" = "yes"; then
-    XINCSW=""
+    
+    INCSW=""
     if test "$XINCDIR" != "default"; then
-	XINCSW="-I$XINCDIR"
+	INCSW="-I$XINCDIR"
     fi
     for dir in $inc_path; do
 	if test "$XINCDIR" = "$dir"; then
-	    XINCSW=""
+	    INCSW=""
 	    break
 	fi
     done
-    INCS="$INCS $XINCSW"
+    if test -n "$INCSW"; then
+	INCS="$INCS $INCSW"
+    fi
     inc_path="$inc_path $XINCDIR"
-fi
 
+fi
 if test "$enable_tcl" = "yes"; then
-    TCLINCSW=""
+    
+    INCSW=""
     if test "$TCLINCDIR" != "default"; then
-	TCLINCSW="-I$TCLINCDIR"
+	INCSW="-I$TCLINCDIR"
     fi
     for dir in $inc_path; do
 	if test "$TCLINCDIR" = "$dir"; then
-	    TCLINCSW=""
+	    INCSW=""
 	    break
 	fi
     done
-    INCS="$INCS $TCLINCSW"
+    if test -n "$INCSW"; then
+	INCS="$INCS $INCSW"
+    fi
     inc_path="$inc_path $TCLINCDIR"
-fi
 
+fi
 if test "$enable_dp" = "yes"; then
-    DPINCSW=""
+    
+    INCSW=""
     if test "$DPINCDIR" != "default"; then
-	DPINCSW="-I$DPINCDIR"
+	INCSW="-I$DPINCDIR"
     fi
     for dir in $inc_path; do
 	if test "$DPINCDIR" = "$dir"; then
-	    DPINCSW=""
+	    INCSW=""
 	    break
 	fi
     done
-    INCS="$INCS $DPINCSW"
+    if test -n "$INCSW"; then
+	INCS="$INCS $INCSW"
+    fi
     inc_path="$inc_path $DPINCDIR"
-fi
 
+fi
 if test "$enable_itcl" = "yes"; then
-    ITCLINCSW=""
+    
+    INCSW=""
     if test "$ITCLINCDIR" != "default"; then
-	ITCLINCSW="-I$ITCLINCDIR"
+	INCSW="-I$ITCLINCDIR"
     fi
     for dir in $inc_path; do
 	if test "$ITCLINCDIR" = "$dir"; then
-	    ITCLINCSW=""
+	    INCSW=""
 	    break
 	fi
     done
-    INCS="$INCS $ITCLINCSW"
+    if test -n "$INCSW"; then
+	INCS="$INCS $INCSW"
+    fi
     inc_path="$inc_path $ITCLINCDIR"
-fi
 
+fi
 if test "$enable_tk" = "yes"; then
     
-    TKINCSW=""
+    INCSW=""
     if test "$TKINCDIR" != "default"; then
-	TKINCSW="-I$TKINCDIR"
+	INCSW="-I$TKINCDIR"
     fi
     for dir in $inc_path; do
 	if test "$TKINCDIR" = "$dir"; then
-	    TKINCSW=""
+	    INCSW=""
 	    break
 	fi
     done
-    INCS="$INCS $TKINCSW"
+    if test -n "$INCSW"; then
+	INCS="$INCS $INCSW"
+    fi
     inc_path="$inc_path $TKINCDIR"
+
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Assemble list of tcl/TK/X/whatever libraries.
-# Note the library order CAN be important, depending on the system.  
-#
-# I go to a bit of trouble to eliminate redundant -L specifications (to
-# keep the build line concise).
-# -----------------------------------------------------------------------
-
-lib_path=""
-
+# Note the library order CAN be important, depending on the system:
 # The full Tcl-DP library depends on both Tk and Tcl so must come first.
+# Tk depends on Tcl and X11 so must come before both.
+# Itcl depends on Tcl so must come before it.
+# Tcl and X11 can be put in either order.
+# ----------------------------------------------------------------------------
 
 if test "$enable_dp" = "yes"; then
-    DPLIBSW=""
+    
+    LIBSW=""
     if test "$DPLIBDIR" != "default"; then
-	DPLIBSW="-L$DPLIBDIR"
+	LIBSW="-L$DPLIBDIR"
     fi
     for dir in $lib_path; do
 	if test "$DPLIBDIR" = "$dir"; then
-	    DPLIBSW=""
+	    LIBSW=""
 	    break
 	fi
     done
-    LIBS="$LIBS $DPLIBSW -ldpnetwork"
+    if test -n "$LIBSW"; then
+	LIBS="$LIBS $LIBSW -ldpnetwork"
+    else
+	LIBS="$LIBS -ldpnetwork"
+    fi
     lib_path="$lib_path $DPLIBDIR"
+
 fi
-
-# Tk depends on Tcl and X11 so must come before both.
-
 if test "$enable_tk" = "yes"; then
-    TKLIBSW=""
+    
+    LIBSW=""
     if test "$TKLIBDIR" != "default"; then
-	TKLIBSW="-L$TKLIBDIR"
+	LIBSW="-L$TKLIBDIR"
     fi
     for dir in $lib_path; do
 	if test "$TKLIBDIR" = "$dir"; then
-	    TKLIBSW=""
+	    LIBSW=""
 	    break
 	fi
     done
-    LIBS="$LIBS $TKLIBSW -ltk"
+    if test -n "$LIBSW"; then
+	LIBS="$LIBS $LIBSW -ltk"
+    else
+	LIBS="$LIBS -ltk"
+    fi
     lib_path="$lib_path $TKLIBDIR"
+
 fi
-
-# Itcl depends on Tcl so must come before it.
-
 if test "$enable_itcl" = "yes"; then
-    ITCLLIBSW=""
+    
+    LIBSW=""
     if test "$ITCLLIBDIR" != "default"; then
-	ITCLLIBSW="-L$ITCLLIBDIR"
+	LIBSW="-L$ITCLLIBDIR"
     fi
     for dir in $lib_path; do
 	if test "$ITCLLIBDIR" = "$dir"; then
-	    ITCLLIBSW=""
+	    LIBSW=""
 	    break
 	fi
     done
-    LIBS="$LIBS $ITCLLIBSW -litcl"
+    if test -n "$LIBSW"; then
+	LIBS="$LIBS $LIBSW -litcl"
+    else
+	LIBS="$LIBS -litcl"
+    fi
     lib_path="$lib_path $ITCLLIBDIR"
+
 fi
-
-# Tcl and X11 can be put in either order.
-
 if test "$enable_tcl" = "yes"; then
-    TCLLIBSW=""
+    
+    LIBSW=""
     if test "$TCLLIBDIR" != "default"; then
-	TCLLIBSW="-L$TCLLIBDIR"
+	LIBSW="-L$TCLLIBDIR"
     fi
     for dir in $lib_path; do
 	if test "$TCLLIBDIR" = "$dir"; then
-	    TCLLIBSW=""
+	    LIBSW=""
 	    break
 	fi
     done
-    LIBS="$LIBS $TCLLIBSW -ltcl"
+    if test -n "$LIBSW"; then
+	LIBS="$LIBS $LIBSW -ltcl"
+    else
+	LIBS="$LIBS -ltcl"
+    fi
     lib_path="$lib_path $TCLLIBDIR"
-fi
 
+fi
 if test "$enable_xwin" = "yes"; then
-    XLIBSW=""
+    
+    LIBSW=""
     if test "$XLIBDIR" != "default"; then
-	XLIBSW="-L$XLIBDIR"
+	LIBSW="-L$XLIBDIR"
     fi
     for dir in $lib_path; do
 	if test "$XLIBDIR" = "$dir"; then
-	    XLIBSW=""
+	    LIBSW=""
 	    break
 	fi
     done
-    LIBS="$LIBS $XLIBSW -lX11"
+    if test -n "$LIBSW"; then
+	LIBS="$LIBS $LIBSW -lX11"
+    else
+	LIBS="$LIBS -lX11"
+    fi
     lib_path="$lib_path $XLIBDIR"
+
 fi
 
-#--------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# Debugging malloc
+# Even with debugging on, is off by default, because it can dramatically
+# slow down program execution (particularly in combination with Tcl/Tk).
+# ----------------------------------------------------------------------------
+
+if test "$with_dbmalloc" = "yes"; then
+    if test -z "$DBMALLOCLIBDIR"; then
+	places="\
+	$prefix/lib \
+	$HOME/local/lib \
+	$HOME/dbmalloc/lib \
+	$HOME/lib \
+	/usr/local/lib \
+	/usr/local/dbmalloc/lib \
+	/usr/lib"
+
+	
+    echo $ac_n "checking for -ldbmalloc""... $ac_c" 1>&6
+    DBMALLOCLIBDIR=""
+
+    for dir in $places; do
+	if test -r "$dir/libdbmalloc.a" -o -r "$dir/libdbmalloc.sl"; then
+	    DBMALLOCLIBDIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
+	fi
+    done
+    if test -z "$DBMALLOCLIBDIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find dbmalloc library, setting with_dbmalloc to no" 1>&2
+	with_dbmalloc="no"
+    fi
+    if test "$DBMALLOCLIBDIR" = "/usr/lib"; then
+	DBMALLOCLIBDIR="default"
+    fi
+
+    fi
+    if test -n "$DBMALLOCLIBDIR"; then
+	
+    LIBSW=""
+    if test "$DBMALLOCLIBDIR" != "default"; then
+	LIBSW="-L$DBMALLOCLIBDIR"
+    fi
+    for dir in $lib_path; do
+	if test "$DBMALLOCLIBDIR" = "$dir"; then
+	    LIBSW=""
+	    break
+	fi
+    done
+    if test -n "$LIBSW"; then
+	LIBS="$LIBS $LIBSW -ldbmalloc"
+    else
+	LIBS="$LIBS -ldbmalloc"
+    fi
+    lib_path="$lib_path $DBMALLOCLIBDIR"
+
+    fi
+fi
+
+if test "$with_dbmalloc" = "yes"; then
+    if test -z "$DBMALLOCINCDIR"; then
+	places="\
+	$prefix/include \
+	$HOME/local/include \
+	$HOME/dbmalloc/include \
+	$HOME/include \
+	$HOME/debug_include \
+	/usr/local/dbmalloc/include \
+	/usr/local/debug_include"
+
+	
+    echo $ac_n "checking for malloc.h""... $ac_c" 1>&6
+    DBMALLOCINCDIR=""
+
+    for dir in $places; do
+	if test -r "$dir/malloc.h"; then
+	    DBMALLOCINCDIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
+	fi
+    done
+    if test -z "$DBMALLOCINCDIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find malloc.h, setting with_dbmalloc to no" 1>&2
+	with_dbmalloc="no"
+    fi
+    if test "$DBMALLOCINCDIR" = "/usr/include"; then
+	DBMALLOCINCDIR="default"
+    fi
+
+    fi
+    if test -n "$DBMALLOCINCDIR"; then
+	
+    INCSW=""
+    if test "$DBMALLOCINCDIR" != "default"; then
+	INCSW="-I$DBMALLOCINCDIR"
+    fi
+    for dir in $inc_path; do
+	if test "$DBMALLOCINCDIR" = "$dir"; then
+	    INCSW=""
+	    break
+	fi
+    done
+    if test -n "$INCSW"; then
+	INCS="$INCS $INCSW"
+    fi
+    inc_path="$inc_path $DBMALLOCINCDIR"
+
+    fi
+fi
+
+if test "with_dbmalloc" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define DEBUGGING_MALLOC 1
+EOF
+
+fi
+
+# ----------------------------------------------------------------------------
 # Check for the existence of various libraries.  The order here
 # is important, so that then end up in the right order in the
 # command line generated by Make.
@@ -2195,7 +2757,7 @@ fi
 # On some systems the linker doesn't return an error code to the shell if
 # you try to link with nonexistant libraries, so need to handle these
 # explicitly.
-#--------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 if test -z "$EXTRA_LIBS"; then
     EXTRA_LIBS=
@@ -2204,119 +2766,169 @@ if test -z "$EXTRA_LIBS"; then
 	    EXTRA_LIBS="$EXTRA_LIBS -lm"
 	;;
 	* ) 	
-	    ac_save_LIBS="${LIBS}"
-LIBS="${LIBS} -lXbsd"
-ac_have_lib=""
-test -n "$silent" || echo "checking for -lXbsd"
-cat > conftest.${ac_ext} <<EOF
+	    echo $ac_n "checking for -lXbsd""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_lib_Xbsd'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+LIBS="-lXbsd  $LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 2777 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
-int t() { main();; return 0; }
+int t() {
+main()
+; return 0; }
 EOF
-if eval $ac_compile; then
+if eval $ac_link; then
   rm -rf conftest*
-  ac_have_lib="1"
-
+  eval "ac_cv_lib_Xbsd=yes"
+else
+  rm -rf conftest*
+  eval "ac_cv_lib_Xbsd=no"
 fi
 rm -f conftest*
-LIBS="${ac_save_LIBS}"
-if test -n "${ac_have_lib}"; then
-   :; EXTRA_LIBS="$EXTRA_LIBS -lXbsd"
+LIBS="$ac_save_LIBS"
+
+fi
+if eval "test \"`echo '$ac_cv_lib_'Xbsd`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+  EXTRA_LIBS="$EXTRA_LIBS -lXbsd"
 else
-   :; 
+  echo "$ac_t""no" 1>&6
 fi
 
-	    ac_save_LIBS="${LIBS}"
-LIBS="${LIBS} -lsocket"
-ac_have_lib=""
-test -n "$silent" || echo "checking for -lsocket"
-cat > conftest.${ac_ext} <<EOF
+	    echo $ac_n "checking for -lsocket""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_lib_socket'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+LIBS="-lsocket  $LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 2810 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
-int t() { main();; return 0; }
+int t() {
+main()
+; return 0; }
 EOF
-if eval $ac_compile; then
+if eval $ac_link; then
   rm -rf conftest*
-  ac_have_lib="1"
-
+  eval "ac_cv_lib_socket=yes"
+else
+  rm -rf conftest*
+  eval "ac_cv_lib_socket=no"
 fi
 rm -f conftest*
-LIBS="${ac_save_LIBS}"
-if test -n "${ac_have_lib}"; then
-   :; EXTRA_LIBS="$EXTRA_LIBS -lsocket"
+LIBS="$ac_save_LIBS"
+
+fi
+if eval "test \"`echo '$ac_cv_lib_'socket`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+  EXTRA_LIBS="$EXTRA_LIBS -lsocket"
 else
-   :; 
+  echo "$ac_t""no" 1>&6
 fi
 
-	    ac_save_LIBS="${LIBS}"
-LIBS="${LIBS} -lnsl"
-ac_have_lib=""
-test -n "$silent" || echo "checking for -lnsl"
-cat > conftest.${ac_ext} <<EOF
+	    echo $ac_n "checking for -lnsl""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_lib_nsl'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+LIBS="-lnsl  $LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 2843 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
-int t() { main();; return 0; }
+int t() {
+main()
+; return 0; }
 EOF
-if eval $ac_compile; then
+if eval $ac_link; then
   rm -rf conftest*
-  ac_have_lib="1"
-
+  eval "ac_cv_lib_nsl=yes"
+else
+  rm -rf conftest*
+  eval "ac_cv_lib_nsl=no"
 fi
 rm -f conftest*
-LIBS="${ac_save_LIBS}"
-if test -n "${ac_have_lib}"; then
-   :; EXTRA_LIBS="$EXTRA_LIBS -lnsl"
+LIBS="$ac_save_LIBS"
+
+fi
+if eval "test \"`echo '$ac_cv_lib_'nsl`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+  EXTRA_LIBS="$EXTRA_LIBS -lnsl"
 else
-   :; 
+  echo "$ac_t""no" 1>&6
 fi
 
-	    ac_save_LIBS="${LIBS}"
-LIBS="${LIBS} -lieee"
-ac_have_lib=""
-test -n "$silent" || echo "checking for -lieee"
-cat > conftest.${ac_ext} <<EOF
+	    echo $ac_n "checking for -lieee""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_lib_ieee'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+LIBS="-lieee  $LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 2876 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
-int t() { main();; return 0; }
+int t() {
+main()
+; return 0; }
 EOF
-if eval $ac_compile; then
+if eval $ac_link; then
   rm -rf conftest*
-  ac_have_lib="1"
-
+  eval "ac_cv_lib_ieee=yes"
+else
+  rm -rf conftest*
+  eval "ac_cv_lib_ieee=no"
 fi
 rm -f conftest*
-LIBS="${ac_save_LIBS}"
-if test -n "${ac_have_lib}"; then
-   :; EXTRA_LIBS="$EXTRA_LIBS -lieee"
+LIBS="$ac_save_LIBS"
+
+fi
+if eval "test \"`echo '$ac_cv_lib_'ieee`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+  EXTRA_LIBS="$EXTRA_LIBS -lieee"
 else
-   :; 
+  echo "$ac_t""no" 1>&6
 fi
 
-	    ac_save_LIBS="${LIBS}"
-LIBS="${LIBS} -lm"
-ac_have_lib=""
-test -n "$silent" || echo "checking for -lm"
-cat > conftest.${ac_ext} <<EOF
+	    echo $ac_n "checking for -lm""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_lib_m'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+LIBS="-lm  $LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 2909 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
-int t() { main();; return 0; }
+int t() {
+main()
+; return 0; }
 EOF
-if eval $ac_compile; then
+if eval $ac_link; then
   rm -rf conftest*
-  ac_have_lib="1"
-
+  eval "ac_cv_lib_m=yes"
+else
+  rm -rf conftest*
+  eval "ac_cv_lib_m=no"
 fi
 rm -f conftest*
-LIBS="${ac_save_LIBS}"
-if test -n "${ac_have_lib}"; then
-   :; EXTRA_LIBS="$EXTRA_LIBS -lm"
+LIBS="$ac_save_LIBS"
+
+fi
+if eval "test \"`echo '$ac_cv_lib_'m`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+  EXTRA_LIBS="$EXTRA_LIBS -lm"
 else
-   :; 
+  echo "$ac_t""no" 1>&6
 fi
 
 	;;
@@ -2327,32 +2939,43 @@ LIBS="$LIBS $EXTRA_LIBS"
 
 
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # libf2c
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 if test "$with_f2c" = "yes"; then
-    ac_save_LIBS="${LIBS}"
-LIBS="${LIBS} -lf2c"
-ac_have_lib=""
-test -n "$silent" || echo "checking for -lf2c"
-cat > conftest.${ac_ext} <<EOF
+    echo $ac_n "checking for -lf2c""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_lib_f2c'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+LIBS="-lf2c  $LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 2955 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
-int t() { main();; return 0; }
+int t() {
+main()
+; return 0; }
 EOF
-if eval $ac_compile; then
+if eval $ac_link; then
   rm -rf conftest*
-  ac_have_lib="1"
-
+  eval "ac_cv_lib_f2c=yes"
+else
+  rm -rf conftest*
+  eval "ac_cv_lib_f2c=no"
 fi
 rm -f conftest*
-LIBS="${ac_save_LIBS}"
-if test -n "${ac_have_lib}"; then
-   :; LIBS="$LIBS -lf2c"
+LIBS="$ac_save_LIBS"
+
+fi
+if eval "test \"`echo '$ac_cv_lib_'f2c`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+  LIBS="$LIBS -lf2c"
 else
-   :; echo "Warning:  couldn't find libf2c."
+  echo "$ac_t""no" 1>&6
+echo "configure: warning: couldn't find libf2c" 1>&2
 fi
 
 fi
@@ -2361,272 +2984,383 @@ fi
 
 
 
-test -n "$silent" || echo "checking for ANSI C header files"
-cat > conftest.${ac_ext} <<EOF
+# If we cannot run a trivial program, we must be cross compiling.
+echo $ac_n "checking whether cross-compiling""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_c_cross'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test "$cross_compiling" = yes; then
+  ac_cv_c_cross=yes
+else
+cat > conftest.$ac_ext <<EOF
+#line 2997 "configure"
+#include "confdefs.h"
+main(){return(0);}
+EOF
+eval $ac_link
+if test -s conftest && (./conftest; exit) 2>/dev/null; then
+  ac_cv_c_cross=no
+else
+  ac_cv_c_cross=yes
+fi
+fi
+rm -fr conftest*
+fi
+cross_compiling=$ac_cv_c_cross
+echo "$ac_t""$ac_cv_c_cross" 1>&6
+
+echo $ac_n "checking for ANSI C header files""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext <<EOF
+#line 3018 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 #include <float.h>
 EOF
-# Some shells (Coherent) do redirections in the wrong order, so need
-# the parens.
-ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
+eval "$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
+ac_err=`grep -v '^ *+' conftest.out`
 if test -z "$ac_err"; then
   rm -rf conftest*
-  # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
-echo '#include "confdefs.h"
-#include <string.h>' > conftest.${ac_ext}
-eval "$ac_cpp conftest.${ac_ext} > conftest.out 2>&1"
-if egrep "memchr" conftest.out >/dev/null 2>&1; then
+  ac_cv_header_stdc=yes
+else
+  echo "$ac_err" >&5
   rm -rf conftest*
-  # SGI's /bin/cc from Irix-4.0.5 gets non-ANSI ctype macros unless using -ansi.
-cat > conftest.${ac_ext} <<EOF
+  ac_cv_header_stdc=no
+fi
+rm -f conftest*
+
+if test $ac_cv_header_stdc = yes; then
+  # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
+cat > conftest.$ac_ext <<EOF
+#line 3040 "configure"
+#include "confdefs.h"
+#include <string.h>
+EOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  egrep "memchr" >/dev/null 2>&1; then
+  :
+else
+  rm -rf conftest*
+  ac_cv_header_stdc=no
+fi
+rm -f conftest*
+
+fi
+
+if test $ac_cv_header_stdc = yes; then
+  # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
+cat > conftest.$ac_ext <<EOF
+#line 3058 "configure"
+#include "confdefs.h"
+#include <stdlib.h>
+EOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  egrep "free" >/dev/null 2>&1; then
+  :
+else
+  rm -rf conftest*
+  ac_cv_header_stdc=no
+fi
+rm -f conftest*
+
+fi
+
+if test $ac_cv_header_stdc = yes; then
+  # /bin/cc in Irix-4.0.5 gets non-ANSI ctype macros unless using -ansi.
+if test "$cross_compiling" = yes; then
+  ac_cv_header_stdc=no
+else
+cat > conftest.$ac_ext <<EOF
+#line 3079 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
 #define TOUPPER(c) (ISLOWER(c) ? 'A' + ((c) - 'a') : (c))
-#define XOR(e,f) (((e) && !(f)) || (!(e) && (f)))
+#define XOR(e, f) (((e) && !(f)) || (!(e) && (f)))
 int main () { int i; for (i = 0; i < 256; i++)
 if (XOR (islower (i), ISLOWER (i)) || toupper (i) != TOUPPER (i)) exit(2);
 exit (0); }
 
 EOF
-eval $ac_compile
+eval $ac_link
 if test -s conftest && (./conftest; exit) 2>/dev/null; then
-  # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
-echo '#include "confdefs.h"
-#include <stdlib.h>' > conftest.${ac_ext}
-eval "$ac_cpp conftest.${ac_ext} > conftest.out 2>&1"
-if egrep "free" conftest.out >/dev/null 2>&1; then
-  rm -rf conftest*
-  
-{
-test -n "$verbose" && \
-echo "	defining STDC_HEADERS"
-echo "#define" STDC_HEADERS "1" >> confdefs.h
-DEFS="$DEFS -DSTDC_HEADERS=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}STDC_HEADERS\${ac_dB}STDC_HEADERS\${ac_dC}1\${ac_dD}
-\${ac_uA}STDC_HEADERS\${ac_uB}STDC_HEADERS\${ac_uC}1\${ac_uD}
-\${ac_eA}STDC_HEADERS\${ac_eB}STDC_HEADERS\${ac_eC}1\${ac_eD}
-"
-}
-
-
+  :
+else
+  ac_cv_header_stdc=no
 fi
-rm -f conftest*
-
-
 fi
 rm -fr conftest*
+fi
+fi
+echo "$ac_t""$ac_cv_header_stdc" 1>&6
+if test $ac_cv_header_stdc = yes; then
+  cat >> confdefs.h <<\EOF
+#define STDC_HEADERS 1
+EOF
 
 fi
-rm -f conftest*
-
-
-fi
-rm -f conftest*
 
 for ac_hdr in unistd.h
 do
-ac_tr_hdr=HAVE_`echo $ac_hdr | tr '[a-z]./' '[A-Z]__'`
-test -n "$silent" || echo "checking for ${ac_hdr}"
-cat > conftest.${ac_ext} <<EOF
+ac_safe=`echo "$ac_hdr" | tr './\055' '___'`
+echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext <<EOF
+#line 3116 "configure"
 #include "confdefs.h"
-#include <${ac_hdr}>
+#include <$ac_hdr>
 EOF
-# Some shells (Coherent) do redirections in the wrong order, so need
-# the parens.
-ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
+eval "$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
+ac_err=`grep -v '^ *+' conftest.out`
 if test -z "$ac_err"; then
   rm -rf conftest*
-  
-{
-test -n "$verbose" && \
-echo "	defining ${ac_tr_hdr}"
-echo "#define" ${ac_tr_hdr} "1" >> confdefs.h
-DEFS="$DEFS -D${ac_tr_hdr}=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}${ac_tr_hdr}\${ac_dB}${ac_tr_hdr}\${ac_dC}1\${ac_dD}
-\${ac_uA}${ac_tr_hdr}\${ac_uB}${ac_tr_hdr}\${ac_uC}1\${ac_uD}
-\${ac_eA}${ac_tr_hdr}\${ac_eB}${ac_tr_hdr}\${ac_eC}1\${ac_eD}
-"
-}
-
-
+  eval "ac_cv_header_$ac_safe=yes"
+else
+  echo "$ac_err" >&5
+  rm -rf conftest*
+  eval "ac_cv_header_$ac_safe=no"
 fi
 rm -f conftest*
+fi
+if eval "test \"`echo '$ac_cv_header_'$ac_safe`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+    ac_tr_hdr=HAVE_`echo $ac_hdr | tr '[a-z]./\055' '[A-Z]___'`
+  cat >> confdefs.h <<EOF
+#define $ac_tr_hdr 1
+EOF
+ 
+else
+  echo "$ac_t""no" 1>&6
+fi
 done
 
-if test -z "$RANLIB"; then
-  # Extract the first word of `ranlib', so it can be a program name with args.
-  set ac_dummy ranlib; ac_word=$2
-  test -n "$silent" || echo "checking for $ac_word"
+# Extract the first word of "ranlib", so it can be a program name with args.
+set dummy ranlib; ac_word=$2
+echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_prog_RANLIB'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test -n "$RANLIB"; then
+  ac_cv_prog_RANLIB="$RANLIB" # Let the user override the test.
+else
   IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
   for ac_dir in $PATH; do
     test -z "$ac_dir" && ac_dir=.
     if test -f $ac_dir/$ac_word; then
-      RANLIB="ranlib"
+      ac_cv_prog_RANLIB="ranlib"
       break
     fi
   done
   IFS="$ac_save_ifs"
+  test -z "$ac_cv_prog_RANLIB" && ac_cv_prog_RANLIB=":"
 fi
-test -z "$RANLIB" && RANLIB=":"
-test -n "$RANLIB" && test -n "$verbose" && echo "	setting RANLIB to $RANLIB"
+fi
+RANLIB="$ac_cv_prog_RANLIB"
+if test -n "$RANLIB"; then
+  echo "$ac_t""$RANLIB" 1>&6
+else
+  echo "$ac_t""no" 1>&6
+fi
 
-test -n "$silent" || echo "checking for caddr_t in sys/types.h"
-cat > conftest.${ac_ext} <<EOF
+ac_aux_dir=
+for ac_dir in $srcdir $srcdir/.. $srcdir/../..; do
+  if test -f $ac_dir/install-sh; then
+    ac_aux_dir=$ac_dir
+    ac_install_sh="$ac_aux_dir/install-sh -c"
+    break
+  elif test -f $ac_dir/install.sh; then
+    ac_aux_dir=$ac_dir
+    ac_install_sh="$ac_aux_dir/install.sh -c"
+    break
+  fi
+done
+if test -z "$ac_aux_dir"; then
+  { echo "configure: error: can not find install-sh or install.sh in $srcdir $srcdir/.. $srcdir/../.." 1>&2; exit 1; }
+fi
+ac_config_guess=$ac_aux_dir/config.guess
+ac_config_sub=$ac_aux_dir/config.sub
+ac_configure=$ac_aux_dir/configure # This should be Cygnus configure.
+
+# Find a good install program.  We prefer a C program (faster),
+# so one script is as good as another.  But avoid the broken or
+# incompatible versions:
+# SysV /etc/install, /usr/sbin/install
+# SunOS /usr/etc/install
+# IRIX /sbin/install
+# AIX /bin/install
+# AFS /usr/afsws/bin/install, which mishandles nonexistent args
+# SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
+# ./install, which can be erroneously created by make from ./install.sh.
+echo $ac_n "checking for a BSD compatible install""... $ac_c" 1>&6
+if test -z "$INSTALL"; then
+if eval "test \"`echo '$''{'ac_cv_path_install'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+    IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="${IFS}:"
+  for ac_dir in $PATH; do
+    # Account for people who put trailing slashes in PATH elements.
+    case "$ac_dir/" in
+    /|./|.//|/etc/*|/usr/sbin/*|/usr/etc/*|/sbin/*|/usr/afsws/bin/*|/usr/ucb/*) ;;
+    *)
+      # OSF1 and SCO ODT 3.0 have their own names for install.
+      for ac_prog in ginstall installbsd scoinst install; do
+        if test -f $ac_dir/$ac_prog; then
+	  if test $ac_prog = install &&
+            grep dspmsg $ac_dir/$ac_prog >/dev/null 2>&1; then
+	    # AIX install.  It has an incompatible calling convention.
+	    # OSF/1 installbsd also uses dspmsg, but is usable.
+	    :
+	  else
+	    ac_cv_path_install="$ac_dir/$ac_prog -c"
+	    break 2
+	  fi
+	fi
+      done
+      ;;
+    esac
+  done
+  IFS="$ac_save_ifs"
+  # As a last resort, use the slow shell script.
+  test -z "$ac_cv_path_install" && ac_cv_path_install="$ac_install_sh"
+fi
+  INSTALL="$ac_cv_path_install"
+fi
+echo "$ac_t""$INSTALL" 1>&6
+
+# Use test -z because SunOS4 sh mishandles braces in ${var-val}.
+# It thinks the first close brace ends the variable substitution.
+test -z "$INSTALL_PROGRAM" && INSTALL_PROGRAM='${INSTALL}'
+
+test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
+
+echo $ac_n "checking for pid_t""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext <<EOF
+#line 3248 "configure"
 #include "confdefs.h"
-
-#define caddr_t char *
 #include <sys/types.h>
-
+#if STDC_HEADERS
+#include <stdlib.h>
+#endif
 EOF
-eval $ac_compile
-if test -s conftest && (./conftest; exit) 2>/dev/null; then
-  
-{
-test -n "$verbose" && \
-echo "	defining" caddr_t to be "char *"
-echo "#define" caddr_t "char *" >> confdefs.h
-DEFS="$DEFS -Dcaddr_t=char *"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}caddr_t\${ac_dB}caddr_t\${ac_dC}char *\${ac_dD}
-\${ac_uA}caddr_t\${ac_uB}caddr_t\${ac_uC}char *\${ac_uD}
-\${ac_eA}caddr_t\${ac_eB}caddr_t\${ac_eC}char *\${ac_eD}
-"
-}
-
-
-fi
-rm -fr conftest*
-test -n "$silent" || echo "checking for pid_t in sys/types.h"
-echo '#include "confdefs.h"
-#include <sys/types.h>' > conftest.${ac_ext}
-eval "$ac_cpp conftest.${ac_ext} > conftest.out 2>&1"
-if egrep "pid_t" conftest.out >/dev/null 2>&1; then
-  :
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  egrep "pid_t" >/dev/null 2>&1; then
+  rm -rf conftest*
+  ac_cv_type_pid_t=yes
 else
   rm -rf conftest*
-  
-{
-test -n "$verbose" && \
-echo "	defining" pid_t to be "int"
-echo "#define" pid_t "int" >> confdefs.h
-DEFS="$DEFS -Dpid_t=int"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}pid_t\${ac_dB}pid_t\${ac_dC}int\${ac_dD}
-\${ac_uA}pid_t\${ac_uB}pid_t\${ac_uC}int\${ac_uD}
-\${ac_eA}pid_t\${ac_eB}pid_t\${ac_eC}int\${ac_eD}
-"
-}
-
+  ac_cv_type_pid_t=no
 fi
 rm -f conftest*
 
-test -n "$silent" || echo "checking for vfork.h"
-cat > conftest.${ac_ext} <<EOF
+fi
+echo "$ac_t""$ac_cv_type_pid_t" 1>&6
+if test $ac_cv_type_pid_t = no; then
+  cat >> confdefs.h <<\EOF
+#define pid_t int
+EOF
+
+fi
+
+ac_safe=`echo "vfork.h" | tr './\055' '___'`
+echo $ac_n "checking for vfork.h""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext <<EOF
+#line 3280 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
-# Some shells (Coherent) do redirections in the wrong order, so need
-# the parens.
-ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
+eval "$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
+ac_err=`grep -v '^ *+' conftest.out`
 if test -z "$ac_err"; then
   rm -rf conftest*
-  
-{
-test -n "$verbose" && \
-echo "	defining HAVE_VFORK_H"
-echo "#define" HAVE_VFORK_H "1" >> confdefs.h
-DEFS="$DEFS -DHAVE_VFORK_H=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}HAVE_VFORK_H\${ac_dB}HAVE_VFORK_H\${ac_dC}1\${ac_dD}
-\${ac_uA}HAVE_VFORK_H\${ac_uB}HAVE_VFORK_H\${ac_uC}1\${ac_uD}
-\${ac_eA}HAVE_VFORK_H\${ac_eB}HAVE_VFORK_H\${ac_eC}1\${ac_eD}
-"
-}
-
-
+  eval "ac_cv_header_$ac_safe=yes"
+else
+  echo "$ac_err" >&5
+  rm -rf conftest*
+  eval "ac_cv_header_$ac_safe=no"
 fi
 rm -f conftest*
-
-test -n "$silent" || echo "checking for working vfork"
-test -n "$silent" || echo "checking for return type of signal handlers"
-cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-#include <sys/types.h>
-#include <signal.h>
-#ifdef signal
-#undef signal
-#endif
-extern void (*signal ()) ();
-int main() { return 0; }
-int t() { int i;; return 0; }
+fi
+if eval "test \"`echo '$ac_cv_header_'$ac_safe`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+  cat >> confdefs.h <<\EOF
+#define HAVE_VFORK_H 1
 EOF
-if eval $ac_compile; then
-  rm -rf conftest*
-  
-{
-test -n "$verbose" && \
-echo "	defining" RETSIGTYPE to be "void"
-echo "#define" RETSIGTYPE "void" >> confdefs.h
-DEFS="$DEFS -DRETSIGTYPE=void"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}RETSIGTYPE\${ac_dB}RETSIGTYPE\${ac_dC}void\${ac_dD}
-\${ac_uA}RETSIGTYPE\${ac_uB}RETSIGTYPE\${ac_uC}void\${ac_uD}
-\${ac_eA}RETSIGTYPE\${ac_eB}RETSIGTYPE\${ac_eC}void\${ac_eD}
-"
-}
-
 
 else
-  rm -rf conftest*
-  
-{
-test -n "$verbose" && \
-echo "	defining" RETSIGTYPE to be "int"
-echo "#define" RETSIGTYPE "int" >> confdefs.h
-DEFS="$DEFS -DRETSIGTYPE=int"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}RETSIGTYPE\${ac_dB}RETSIGTYPE\${ac_dC}int\${ac_dD}
-\${ac_uA}RETSIGTYPE\${ac_uB}RETSIGTYPE\${ac_uC}int\${ac_uD}
-\${ac_eA}RETSIGTYPE\${ac_eB}RETSIGTYPE\${ac_eC}int\${ac_eD}
-"
-}
-
+  echo "$ac_t""no" 1>&6
 fi
-rm -f conftest*
 
-
-
-cat > conftest.${ac_ext} <<EOF
+echo $ac_n "checking for working vfork""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_func_vfork'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test "$cross_compiling" = yes; then
+  ac_cv_func_vfork=no
+else
+cat > conftest.$ac_ext <<EOF
+#line 3314 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <signal.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #ifdef HAVE_VFORK_H
 #include <vfork.h>
 #endif
-static int signalled;
-static RETSIGTYPE catch (s) int s; { signalled = 1; }
+/* On some sparc systems, changes by the child to local and incoming
+   argument registers are propagated back to the parent.
+   The compiler is told about this with #include <vfork.h>,
+   but some compilers (e.g. gcc -O) don't grok <vfork.h>.
+   Test for this by using a static variable whose address
+   is put into a register that is clobbered by the vfork.  */
+static
+#ifdef __cplusplus
+sparc_address_test (int arg)
+#else
+sparc_address_test (arg) int arg;
+#endif
+{
+  static pid_t child;
+  if (!child) {
+    child = vfork ();
+    if (child < 0)
+      perror ("vfork");
+    if (!child) {
+      arg = getpid();
+      write(-1, "", 0);
+      _exit (arg);
+    }
+  }
+}
 main() {
   pid_t parent = getpid ();
   pid_t child;
 
-  signal (SIGINT, catch);
+  sparc_address_test ();
 
   child = vfork ();
 
   if (child == 0) {
-    /* On sparc systems, changes by the child to local and incoming
-       argument registers are propagated back to the parent.
-       The compiler is told about this with #include <vfork.h>,
-       but some compilers (e.g. gcc -O) don't grok <vfork.h>.
-       Test for this by using lots of local variables, at least
+    /* Here is another test for sparc vfork register problems.
+       This test uses lots of local variables, at least
        as many local variables as main has allocated so far
        including compiler temporaries.  4 locals are enough for
-       gcc 1.40.3 on a sparc, but we use 8 to be safe.
+       gcc 1.40.3 on a Solaris 4.1.3 sparc, but we use 8 to be safe.
        A buggy compiler should reuse the register of parent
        for one of the local variables, since it will think that
        parent can't possibly be used any more in this routine.
@@ -2640,12 +3374,6 @@ main() {
     if (p != p1 || p != p2 || p != p3 || p != p4
 	|| p != p5 || p != p6 || p != p7)
       _exit(1);
-
-    /* On some systems (e.g. SunOS 5.2), if the parent is catching
-       a signal, the child ignores the signal before execing,
-       and the parent later receives that signal, the parent dumps core.
-       Test for this by ignoring SIGINT in the child.  */
-    signal (SIGINT, SIG_IGN);
 
     /* On some systems (e.g. IRIX 3.3),
        vfork doesn't separate parent from child file descriptors.
@@ -2669,47 +3397,97 @@ main() {
 	 /* Did the vfork/compiler bug occur?  */
 	 || parent != getpid()
 
-	 /* Did the signal handling bug occur?  */
-	 || kill(parent, SIGINT) != 0
-	 || signalled != 1
-
 	 /* Did the file descriptor bug occur?  */
 	 || fstat(fileno(stdout), &st) != 0
 	 );
   }
 }
 EOF
-eval $ac_compile
+eval $ac_link
 if test -s conftest && (./conftest; exit) 2>/dev/null; then
-  :
+  ac_cv_func_vfork=yes
 else
-  
-{
-test -n "$verbose" && \
-echo "	defining" vfork to be "fork"
-echo "#define" vfork "fork" >> confdefs.h
-DEFS="$DEFS -Dvfork=fork"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}vfork\${ac_dB}vfork\${ac_dC}fork\${ac_dD}
-\${ac_uA}vfork\${ac_uB}vfork\${ac_uC}fork\${ac_uD}
-\${ac_eA}vfork\${ac_eB}vfork\${ac_eC}fork\${ac_eD}
-"
-}
-
+  ac_cv_func_vfork=no
+fi
 fi
 rm -fr conftest*
+fi
+echo "$ac_t""$ac_cv_func_vfork" 1>&6
+if test $ac_cv_func_vfork = no; then
+  cat >> confdefs.h <<\EOF
+#define vfork fork
+EOF
+
+fi
 
 
-# -----------------------------------------------------------------------
-# It'd be good to let this be selected too, need to put it in somewhere:
-# You can use the NOBRAINDEAD option here if you wish
-# If you use it, you may want to define NOBRAINDEAD in plplot.h
-# before moving it to it's permanent location.
+# ----------------------------------------------------------------------------
+# Some X11 headers require "caddr_t" even on systems that claim POSIX.1
+# compliance, which is illegal.  This makes it impossible to compile
+# programs that include X11 headers if _POSIX_SOURCE is defined.  I work
+# around this potential problem by just defining caddr_t to 'char *' on all
+# systems (unless it is set already), whether it will be needed or not.
 
-#CC="$CC -DNOBRAINDEAD"
+echo $ac_n "checking for caddr_t""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext <<EOF
+#line 3437 "configure"
+#include "confdefs.h"
+#include <sys/types.h>
+#if STDC_HEADERS
+#include <stdlib.h>
+#endif
+EOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  egrep "caddr_t" >/dev/null 2>&1; then
+  rm -rf conftest*
+  ac_cv_type_caddr_t=yes
+else
+  rm -rf conftest*
+  ac_cv_type_caddr_t=no
+fi
+rm -f conftest*
 
-# -----------------------------------------------------------------------
+fi
+echo "$ac_t""$ac_cv_type_caddr_t" 1>&6
+if test $ac_cv_type_caddr_t = no; then
+  cat >> confdefs.h <<\EOF
+#define caddr_t char *
+EOF
+
+fi
+
+
+# ----------------------------------------------------------------------------
+# If you don't know what this is for you shouldn't be using it.
+# An invisible option for now.
+
+# Check whether --with-nobraindead or --without-nobraindead was given.
+withval="$with_nobraindead"
+if test -n "$withval"; then
+  :
+else
+  with_nobraindead="no"
+fi
+# Check whether --enable-nobraindead or --disable-nobraindead was given.
+enableval="$enable_nobraindead"
+if test -n "$enableval"; then
+  { echo "configure: error: unrecognized variable: enable_nobraindead" 1>&2; exit 1; }
+fi
+
+
+if test "with_nobraindead" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define NOBRAINDEAD 1
+EOF
+
+fi
+
+# ----------------------------------------------------------------------------
 # Set up library suffix.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 # Define tags to be used in multiple-precision library names
 #
@@ -2744,96 +3522,95 @@ LIB_TAG="$TAG_PREC$TAG_ENABLE"
 
 
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Now build up Makefile.in, out of all the eensy-weensy little pieces.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-if test ! -d tmp; then
-    mkdir tmp
-fi
-echo "creating tmp/Makefile.in"
+echo "$ac_t""creating Makefile.in" 1>&6
 
 # Makefile initialization
 
-cat cf/init.in		>tmp/Makefile.in 
+cat $srcdir/cf/init.in		>Makefile.in 
 
 # Default target, core source and object file lists
 
-cat cf/dist.in		>>tmp/Makefile.in 
+cat $srcdir/cf/dist.in		>>Makefile.in 
 
 # Optional packages
 
 if test "$enable_cxx" = "yes"; then
-    cat cf/pkg_cxx.in	>>tmp/Makefile.in 
+    cat $srcdir/cf/pkg_cxx.in	>>Makefile.in 
 fi
 if test "$enable_f77" = "yes"; then
-    cat cf/pkg_f77.in	>>tmp/Makefile.in 
+    cat $srcdir/cf/pkg_f77.in	>>Makefile.in 
 fi
 if test "$enable_tcl" = "yes"; then
-    cat cf/pkg_tcl.in	>>tmp/Makefile.in 
+    cat $srcdir/cf/pkg_tcl.in	>>Makefile.in 
 fi
 if test "$enable_tk" = "yes"; then
-    cat cf/pkg_tk.in	>>tmp/Makefile.in 
+    cat $srcdir/cf/pkg_tk.in	>>Makefile.in 
 fi
 
 # Library targets
 
-cat cf/initlib.in	>>tmp/Makefile.in
+cat $srcdir/cf/initlib.in	>>Makefile.in
 
 if test "$with_shlib" = "yes"; then
-    if test ! -d tmp/shared; then
-	mkdir tmp/shared
+    SHARED=1
+    if test ! -d shared; then
+	mkdir shared
     fi
     case $system in 
 	SunOS-4* ) 
-	    cat cf/lib_sh_sun.in	>>tmp/Makefile.in
+	    cat $srcdir/cf/lib_sh_sun.in	>>Makefile.in
 	;;
 	AIX-* ) 
-	    cat cf/lib_sh_aix.in	>>tmp/Makefile.in
+	    cat $srcdir/cf/lib_sh_aix.in	>>Makefile.in
 	;;
 	* )
-	    cat cf/lib_sh.in	>>tmp/Makefile.in
+	    cat $srcdir/cf/lib_sh.in	>>Makefile.in
 	;;
     esac
 else
-    cat cf/lib_ar.in	>>tmp/Makefile.in
+    SHARED=0
+    cat $srcdir/cf/lib_ar.in	>>Makefile.in
 fi
 
 # Program and demo file dependencies, targets
 
-cat cf/exes.in		>>tmp/Makefile.in 
-cat cf/demos.in		>>tmp/Makefile.in 
+cat $srcdir/cf/exes.in		>>Makefile.in 
+cat $srcdir/cf/demos.in		>>Makefile.in 
 
 # Installation and miscellaneous.
 
-cat cf/install.in	>>tmp/Makefile.in 
-cat cf/misc.in		>>tmp/Makefile.in 
+cat $srcdir/cf/install.in	>>Makefile.in 
+cat $srcdir/cf/misc.in		>>Makefile.in 
 
 # Object file dependencies
 
-cat cf/objs.in		>>tmp/Makefile.in 
+cat $srcdir/cf/objs.in		>>Makefile.in 
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Now build Makedemo.in.
 # Makedemo is a stand-alone makefile for the demo programs.
 # Note: it links against the installed PLplot library.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-echo "creating tmp/Makedemo.in"
+echo "$ac_t""creating Makedemo.in" 1>&6
 
-cat cf/init.in		>tmp/Makedemo.in 
-cat cf/initdemo.in	>>tmp/Makedemo.in 
-cat cf/demos.in		>>tmp/Makedemo.in 
-cat cf/miscdemo.in	>>tmp/Makedemo.in 
+cat $srcdir/cf/init.in		>Makedemo.in 
+cat $srcdir/cf/initdemo.in	>>Makedemo.in 
+cat $srcdir/cf/demos.in		>>Makedemo.in 
+cat $srcdir/cf/miscdemo.in	>>Makedemo.in 
 
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Set up variables governing device driver inclusion.
 #
 # You can enable/disable drivers either by the command line
 # (--enable-<driver> or --disable-<driver>) or via the cf_plplot.in file
 # (remember to use underscores instead of dashes here).  You can disable
 # all drivers by default by using --disable-drivers.
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 
 
@@ -2841,469 +3618,409 @@ cat cf/miscdemo.in	>>tmp/Makedemo.in
 
 
 
-# check whether --enable-plmeta was given
+# Check whether --enable-plmeta or --disable-plmeta was given.
 enableval="$enable_plmeta"
 if test -n "$enableval"; then
   :
 else
   enable_plmeta=$enable_drivers
 fi
+# Check whether --with-plmeta or --without-plmeta was given.
+withval="$with_plmeta"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_plmeta" 1>&2; exit 1; }
+fi
 
 if test "$enable_plmeta" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_plmeta"
-echo "#define" PLD_plmeta "1" >> confdefs.h
-DEFS="$DEFS -DPLD_plmeta=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_plmeta\${ac_dB}PLD_plmeta\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_plmeta\${ac_uB}PLD_plmeta\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_plmeta\${ac_eB}PLD_plmeta\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_plmeta 1
+EOF
 
     DEVICES="$DEVICES plmeta"
 fi
-# check whether --enable-null was given
+# Check whether --enable-null or --disable-null was given.
 enableval="$enable_null"
 if test -n "$enableval"; then
   :
 else
   enable_null=$enable_drivers
 fi
+# Check whether --with-null or --without-null was given.
+withval="$with_null"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_null" 1>&2; exit 1; }
+fi
 
 if test "$enable_null" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_null"
-echo "#define" PLD_null "1" >> confdefs.h
-DEFS="$DEFS -DPLD_null=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_null\${ac_dB}PLD_null\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_null\${ac_uB}PLD_null\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_null\${ac_eB}PLD_null\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_null 1
+EOF
 
     DEVICES="$DEVICES null"
 fi
-# check whether --enable-xterm was given
+# Check whether --enable-xterm or --disable-xterm was given.
 enableval="$enable_xterm"
 if test -n "$enableval"; then
   :
 else
   enable_xterm=$enable_drivers
 fi
+# Check whether --with-xterm or --without-xterm was given.
+withval="$with_xterm"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_xterm" 1>&2; exit 1; }
+fi
 
 if test "$enable_xterm" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_xterm"
-echo "#define" PLD_xterm "1" >> confdefs.h
-DEFS="$DEFS -DPLD_xterm=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_xterm\${ac_dB}PLD_xterm\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_xterm\${ac_uB}PLD_xterm\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_xterm\${ac_eB}PLD_xterm\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_xterm 1
+EOF
 
     DEVICES="$DEVICES xterm"
 fi
-# check whether --enable-tek4010 was given
+# Check whether --enable-tek4010 or --disable-tek4010 was given.
 enableval="$enable_tek4010"
 if test -n "$enableval"; then
   :
 else
   enable_tek4010=$enable_drivers
 fi
+# Check whether --with-tek4010 or --without-tek4010 was given.
+withval="$with_tek4010"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_tek4010" 1>&2; exit 1; }
+fi
 
 if test "$enable_tek4010" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_tek4010"
-echo "#define" PLD_tek4010 "1" >> confdefs.h
-DEFS="$DEFS -DPLD_tek4010=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_tek4010\${ac_dB}PLD_tek4010\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_tek4010\${ac_uB}PLD_tek4010\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_tek4010\${ac_eB}PLD_tek4010\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_tek4010 1
+EOF
 
     DEVICES="$DEVICES tek4010"
 fi
-# check whether --enable-tek4107 was given
+# Check whether --enable-tek4107 or --disable-tek4107 was given.
 enableval="$enable_tek4107"
 if test -n "$enableval"; then
   :
 else
   enable_tek4107=$enable_drivers
 fi
+# Check whether --with-tek4107 or --without-tek4107 was given.
+withval="$with_tek4107"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_tek4107" 1>&2; exit 1; }
+fi
 
 if test "$enable_tek4107" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_tek4107"
-echo "#define" PLD_tek4107 "1" >> confdefs.h
-DEFS="$DEFS -DPLD_tek4107=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_tek4107\${ac_dB}PLD_tek4107\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_tek4107\${ac_uB}PLD_tek4107\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_tek4107\${ac_eB}PLD_tek4107\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_tek4107 1
+EOF
 
     DEVICES="$DEVICES tek4107"
 fi
-# check whether --enable-mskermit was given
+# Check whether --enable-mskermit or --disable-mskermit was given.
 enableval="$enable_mskermit"
 if test -n "$enableval"; then
   :
 else
   enable_mskermit=$enable_drivers
 fi
+# Check whether --with-mskermit or --without-mskermit was given.
+withval="$with_mskermit"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_mskermit" 1>&2; exit 1; }
+fi
 
 if test "$enable_mskermit" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_mskermit"
-echo "#define" PLD_mskermit "1" >> confdefs.h
-DEFS="$DEFS -DPLD_mskermit=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_mskermit\${ac_dB}PLD_mskermit\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_mskermit\${ac_uB}PLD_mskermit\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_mskermit\${ac_eB}PLD_mskermit\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_mskermit 1
+EOF
 
     DEVICES="$DEVICES mskermit"
 fi
-# check whether --enable-conex was given
+# Check whether --enable-conex or --disable-conex was given.
 enableval="$enable_conex"
 if test -n "$enableval"; then
   :
 else
   enable_conex=$enable_drivers
 fi
+# Check whether --with-conex or --without-conex was given.
+withval="$with_conex"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_conex" 1>&2; exit 1; }
+fi
 
 if test "$enable_conex" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_conex"
-echo "#define" PLD_conex "1" >> confdefs.h
-DEFS="$DEFS -DPLD_conex=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_conex\${ac_dB}PLD_conex\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_conex\${ac_uB}PLD_conex\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_conex\${ac_eB}PLD_conex\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_conex 1
+EOF
 
     DEVICES="$DEVICES conex"
 fi
-# check whether --enable-vlt was given
+# Check whether --enable-vlt or --disable-vlt was given.
 enableval="$enable_vlt"
 if test -n "$enableval"; then
   :
 else
   enable_vlt=$enable_drivers
 fi
+# Check whether --with-vlt or --without-vlt was given.
+withval="$with_vlt"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_vlt" 1>&2; exit 1; }
+fi
 
 if test "$enable_vlt" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_vlt"
-echo "#define" PLD_vlt "1" >> confdefs.h
-DEFS="$DEFS -DPLD_vlt=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_vlt\${ac_dB}PLD_vlt\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_vlt\${ac_uB}PLD_vlt\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_vlt\${ac_eB}PLD_vlt\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_vlt 1
+EOF
 
     DEVICES="$DEVICES vlt"
 fi
-# check whether --enable-versaterm was given
+# Check whether --enable-versaterm or --disable-versaterm was given.
 enableval="$enable_versaterm"
 if test -n "$enableval"; then
   :
 else
   enable_versaterm=$enable_drivers
 fi
+# Check whether --with-versaterm or --without-versaterm was given.
+withval="$with_versaterm"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_versaterm" 1>&2; exit 1; }
+fi
 
 if test "$enable_versaterm" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_versaterm"
-echo "#define" PLD_versaterm "1" >> confdefs.h
-DEFS="$DEFS -DPLD_versaterm=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_versaterm\${ac_dB}PLD_versaterm\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_versaterm\${ac_uB}PLD_versaterm\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_versaterm\${ac_eB}PLD_versaterm\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_versaterm 1
+EOF
 
     DEVICES="$DEVICES versaterm"
 fi
-# check whether --enable-dg300 was given
+# Check whether --enable-dg300 or --disable-dg300 was given.
 enableval="$enable_dg300"
 if test -n "$enableval"; then
   :
 else
   enable_dg300=$enable_drivers
 fi
+# Check whether --with-dg300 or --without-dg300 was given.
+withval="$with_dg300"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_dg300" 1>&2; exit 1; }
+fi
 
 if test "$enable_dg300" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_dg300"
-echo "#define" PLD_dg300 "1" >> confdefs.h
-DEFS="$DEFS -DPLD_dg300=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_dg300\${ac_dB}PLD_dg300\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_dg300\${ac_uB}PLD_dg300\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_dg300\${ac_eB}PLD_dg300\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_dg300 1
+EOF
 
     DEVICES="$DEVICES dg300"
 fi
-# check whether --enable-ps was given
+# Check whether --enable-ps or --disable-ps was given.
 enableval="$enable_ps"
 if test -n "$enableval"; then
   :
 else
   enable_ps=$enable_drivers
 fi
+# Check whether --with-ps or --without-ps was given.
+withval="$with_ps"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_ps" 1>&2; exit 1; }
+fi
 
 if test "$enable_ps" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_ps"
-echo "#define" PLD_ps "1" >> confdefs.h
-DEFS="$DEFS -DPLD_ps=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_ps\${ac_dB}PLD_ps\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_ps\${ac_uB}PLD_ps\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_ps\${ac_eB}PLD_ps\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_ps 1
+EOF
 
     DEVICES="$DEVICES ps"
 fi
-# check whether --enable-xfig was given
+# Check whether --enable-xfig or --disable-xfig was given.
 enableval="$enable_xfig"
 if test -n "$enableval"; then
   :
 else
   enable_xfig=$enable_drivers
 fi
+# Check whether --with-xfig or --without-xfig was given.
+withval="$with_xfig"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_xfig" 1>&2; exit 1; }
+fi
 
 if test "$enable_xfig" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_xfig"
-echo "#define" PLD_xfig "1" >> confdefs.h
-DEFS="$DEFS -DPLD_xfig=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_xfig\${ac_dB}PLD_xfig\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_xfig\${ac_uB}PLD_xfig\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_xfig\${ac_eB}PLD_xfig\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_xfig 1
+EOF
 
     DEVICES="$DEVICES xfig"
 fi
-# check whether --enable-ljii was given
+# Check whether --enable-ljii or --disable-ljii was given.
 enableval="$enable_ljii"
 if test -n "$enableval"; then
   :
 else
   enable_ljii=$enable_drivers
 fi
+# Check whether --with-ljii or --without-ljii was given.
+withval="$with_ljii"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_ljii" 1>&2; exit 1; }
+fi
 
 if test "$enable_ljii" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_ljii"
-echo "#define" PLD_ljii "1" >> confdefs.h
-DEFS="$DEFS -DPLD_ljii=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_ljii\${ac_dB}PLD_ljii\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_ljii\${ac_uB}PLD_ljii\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_ljii\${ac_eB}PLD_ljii\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_ljii 1
+EOF
 
     DEVICES="$DEVICES ljii"
 fi
-# check whether --enable-hp7470 was given
+# Check whether --enable-hp7470 or --disable-hp7470 was given.
 enableval="$enable_hp7470"
 if test -n "$enableval"; then
   :
 else
   enable_hp7470=$enable_drivers
 fi
+# Check whether --with-hp7470 or --without-hp7470 was given.
+withval="$with_hp7470"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_hp7470" 1>&2; exit 1; }
+fi
 
 if test "$enable_hp7470" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_hp7470"
-echo "#define" PLD_hp7470 "1" >> confdefs.h
-DEFS="$DEFS -DPLD_hp7470=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_hp7470\${ac_dB}PLD_hp7470\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_hp7470\${ac_uB}PLD_hp7470\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_hp7470\${ac_eB}PLD_hp7470\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_hp7470 1
+EOF
 
     DEVICES="$DEVICES hp7470"
 fi
-# check whether --enable-hp7580 was given
+# Check whether --enable-hp7580 or --disable-hp7580 was given.
 enableval="$enable_hp7580"
 if test -n "$enableval"; then
   :
 else
   enable_hp7580=$enable_drivers
 fi
+# Check whether --with-hp7580 or --without-hp7580 was given.
+withval="$with_hp7580"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_hp7580" 1>&2; exit 1; }
+fi
 
 if test "$enable_hp7580" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_hp7580"
-echo "#define" PLD_hp7580 "1" >> confdefs.h
-DEFS="$DEFS -DPLD_hp7580=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_hp7580\${ac_dB}PLD_hp7580\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_hp7580\${ac_uB}PLD_hp7580\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_hp7580\${ac_eB}PLD_hp7580\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_hp7580 1
+EOF
 
     DEVICES="$DEVICES hp7580"
 fi
-# check whether --enable-lj_hpgl was given
+# Check whether --enable-lj_hpgl or --disable-lj_hpgl was given.
 enableval="$enable_lj_hpgl"
 if test -n "$enableval"; then
   :
 else
   enable_lj_hpgl=$enable_drivers
 fi
+# Check whether --with-lj_hpgl or --without-lj_hpgl was given.
+withval="$with_lj_hpgl"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_lj_hpgl" 1>&2; exit 1; }
+fi
 
 if test "$enable_lj_hpgl" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_lj_hpgl"
-echo "#define" PLD_lj_hpgl "1" >> confdefs.h
-DEFS="$DEFS -DPLD_lj_hpgl=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_lj_hpgl\${ac_dB}PLD_lj_hpgl\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_lj_hpgl\${ac_uB}PLD_lj_hpgl\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_lj_hpgl\${ac_eB}PLD_lj_hpgl\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_lj_hpgl 1
+EOF
 
     DEVICES="$DEVICES lj_hpgl"
 fi
-# check whether --enable-imp was given
+# Check whether --enable-imp or --disable-imp was given.
 enableval="$enable_imp"
 if test -n "$enableval"; then
   :
 else
   enable_imp=$enable_drivers
 fi
+# Check whether --with-imp or --without-imp was given.
+withval="$with_imp"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_imp" 1>&2; exit 1; }
+fi
 
 if test "$enable_imp" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_imp"
-echo "#define" PLD_imp "1" >> confdefs.h
-DEFS="$DEFS -DPLD_imp=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_imp\${ac_dB}PLD_imp\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_imp\${ac_uB}PLD_imp\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_imp\${ac_eB}PLD_imp\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_imp 1
+EOF
 
     DEVICES="$DEVICES imp"
 fi
-# check whether --enable-xwin was given
+# Check whether --enable-xwin or --disable-xwin was given.
 enableval="$enable_xwin"
 if test -n "$enableval"; then
   :
 else
   enable_xwin=$enable_drivers
 fi
+# Check whether --with-xwin or --without-xwin was given.
+withval="$with_xwin"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_xwin" 1>&2; exit 1; }
+fi
 
 if test "$enable_xwin" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_xwin"
-echo "#define" PLD_xwin "1" >> confdefs.h
-DEFS="$DEFS -DPLD_xwin=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_xwin\${ac_dB}PLD_xwin\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_xwin\${ac_uB}PLD_xwin\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_xwin\${ac_eB}PLD_xwin\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_xwin 1
+EOF
 
     DEVICES="$DEVICES xwin"
 fi
-# check whether --enable-tk was given
+# Check whether --enable-tk or --disable-tk was given.
 enableval="$enable_tk"
 if test -n "$enableval"; then
   :
 else
   enable_tk=$enable_drivers
 fi
+# Check whether --with-tk or --without-tk was given.
+withval="$with_tk"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_tk" 1>&2; exit 1; }
+fi
 
 if test "$enable_tk" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_tk"
-echo "#define" PLD_tk "1" >> confdefs.h
-DEFS="$DEFS -DPLD_tk=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_tk\${ac_dB}PLD_tk\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_tk\${ac_uB}PLD_tk\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_tk\${ac_eB}PLD_tk\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_tk 1
+EOF
 
     DEVICES="$DEVICES tk"
 fi
-# check whether --enable-dp was given
+# Check whether --enable-dp or --disable-dp was given.
 enableval="$enable_dp"
 if test -n "$enableval"; then
   :
 else
   enable_dp=$enable_drivers
 fi
+# Check whether --with-dp or --without-dp was given.
+withval="$with_dp"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_dp" 1>&2; exit 1; }
+fi
 
 if test "$enable_dp" = "yes"; then
-    
-{
-test -n "$verbose" && \
-echo "	defining PLD_dp"
-echo "#define" PLD_dp "1" >> confdefs.h
-DEFS="$DEFS -DPLD_dp=1"
-ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_dp\${ac_dB}PLD_dp\${ac_dC}1\${ac_dD}
-\${ac_uA}PLD_dp\${ac_uB}PLD_dp\${ac_uC}1\${ac_uD}
-\${ac_eA}PLD_dp\${ac_eB}PLD_dp\${ac_eC}1\${ac_eD}
-"
-}
+    cat >> confdefs.h <<\EOF
+#define PLD_dp 1
+EOF
 
     DEVICES="$DEVICES dp"
 fi
 
 
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Set up variables that specify install directories
 #
 # You can preset these to anything you want if you don't like the default
@@ -3311,8 +4028,11 @@ fi
 # directory, the examples, tcl, and doc subdirectories will cause
 # problems.  In this case, set the <whatever>_DIR variables below as
 # desired in ~/config/cf_plplot.in, and you are set.
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
+if test "$prefix" = NONE; then
+    prefix=$ac_default_prefix
+fi
 if test -z "$LIB_DIR"; then
     LIB_DIR=$prefix/lib
 fi
@@ -3335,41 +4055,17 @@ if test -z "$DEMOS_DIR"; then
     DEMOS_DIR=$prefix/examples
 fi
 
+cat >> confdefs.h <<EOF
+#define LIB_DIR "$LIB_DIR"
+EOF
 
-{
-test -n "$verbose" && \
-echo "	defining" LIB_DIR to be "\"$LIB_DIR\""
-echo "#define" LIB_DIR "\"$LIB_DIR\"" >> confdefs.h
-DEFS="$DEFS -DLIB_DIR=\"$LIB_DIR\""
-ac_sed_defs="${ac_sed_defs}\${ac_dA}LIB_DIR\${ac_dB}LIB_DIR\${ac_dC}\"$LIB_DIR\"\${ac_dD}
-\${ac_uA}LIB_DIR\${ac_uB}LIB_DIR\${ac_uC}\"$LIB_DIR\"\${ac_uD}
-\${ac_eA}LIB_DIR\${ac_eB}LIB_DIR\${ac_eC}\"$LIB_DIR\"\${ac_eD}
-"
-}
+cat >> confdefs.h <<EOF
+#define BIN_DIR "$BIN_DIR"
+EOF
 
-
-{
-test -n "$verbose" && \
-echo "	defining" BIN_DIR to be "\"$BIN_DIR\""
-echo "#define" BIN_DIR "\"$BIN_DIR\"" >> confdefs.h
-DEFS="$DEFS -DBIN_DIR=\"$BIN_DIR\""
-ac_sed_defs="${ac_sed_defs}\${ac_dA}BIN_DIR\${ac_dB}BIN_DIR\${ac_dC}\"$BIN_DIR\"\${ac_dD}
-\${ac_uA}BIN_DIR\${ac_uB}BIN_DIR\${ac_uC}\"$BIN_DIR\"\${ac_uD}
-\${ac_eA}BIN_DIR\${ac_eB}BIN_DIR\${ac_eC}\"$BIN_DIR\"\${ac_eD}
-"
-}
-
-
-{
-test -n "$verbose" && \
-echo "	defining" TCL_DIR to be "\"$TCL_DIR\""
-echo "#define" TCL_DIR "\"$TCL_DIR\"" >> confdefs.h
-DEFS="$DEFS -DTCL_DIR=\"$TCL_DIR\""
-ac_sed_defs="${ac_sed_defs}\${ac_dA}TCL_DIR\${ac_dB}TCL_DIR\${ac_dC}\"$TCL_DIR\"\${ac_dD}
-\${ac_uA}TCL_DIR\${ac_uB}TCL_DIR\${ac_uC}\"$TCL_DIR\"\${ac_uD}
-\${ac_eA}TCL_DIR\${ac_eB}TCL_DIR\${ac_eC}\"$TCL_DIR\"\${ac_eD}
-"
-}
+cat >> confdefs.h <<EOF
+#define TCL_DIR "$TCL_DIR"
+EOF
 
 
 
@@ -3380,42 +4076,45 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}TCL_DIR\${ac_dB}TCL_DIR\${ac_dC}\"$TCL_DIR\"
 
 
 
-# --------------------------------------------------------------------
+
+# ----------------------------------------------------------------------------
 # Create links to source code.
-#
-# I've found that with the PLplot distribution spread out over so many
-# directories, the "monolithic build directory" paradigm is the easiest
-# for me to use during development.  On systems that don't support
-# softlinks, you can always use copy.  At least you will only have to do
-# it once.
-# --------------------------------------------------------------------
+# I do this every time and just send the output to /dev/null to make sure
+# we never miss any.  This should keep Geoff happy (for a while at least).
+# ----------------------------------------------------------------------------
 
-if test ! -f tmp/plcore.c; then
-    echo "Creating links.."
-    cd tmp
+echo "$ac_t""creating links..." 1>&6
 
-    ln -s \
-    ../src/*.c \
-    ../src/*.cc \
-    ../src/tcl/*.c \
-    ../src/stubc/*.c \
-    ../examples/c/*.* \
-    ../examples/tcl/*.tcl \
-    ../examples/tk/*.c \
-    ../examples/tk/tk* \
-    ../examples/c++/*.* \
-    ../utils/*.c \
-    ../fonts/*.c \
-    ../scripts/pl* \
-    ../include/*.h \
-    ../drivers/*.c \
-    ../drivers/tk/*.* \
-    ../drivers/tk/tclIndex \
-    ../lib/*.fnt \
-    ../lib/*.map \
-    .
+# Source, driver, interface files
+    
+ln -s \
+$srcdir/src/*.c \
+$srcdir/src/*.cc \
+$srcdir/src/tcl/*.c \
+$srcdir/src/stubc/*.c \
+$srcdir/drivers/*.c \
+$srcdir/drivers/tk/*.* \
+$srcdir/drivers/tk/tclIndex \
+$srcdir/include/*.h \
+. 2>/dev/null
 
-# Create links to the Fortran files.  
+# Demos, miscellaneous
+
+ln -s \
+$srcdir/examples/c/*.* \
+$srcdir/examples/tcl/*.tcl \
+$srcdir/examples/tk/*.c \
+$srcdir/examples/tk/tk* \
+$srcdir/examples/c++/*.* \
+$srcdir/utils/*.c \
+$srcdir/fonts/*.c \
+$srcdir/scripts/pl* \
+$srcdir/lib/*.fnt \
+$srcdir/lib/*.map \
+$srcdir/cf/*.in \
+. 2>/dev/null
+
+# Fortran files.  
 # Double precision Fortran files in the stub interface are obtained
 # entirely by m4 macro expansion.  This should work anywhere.  Double
 # precision example programs are obtained through automatic compiler
@@ -3423,72 +4122,54 @@ if test ! -f tmp/plcore.c; then
 # all real variables and constants for this to work (note: the HPUX 8.x
 # compiler did not support this, but it's supported under 9.0).
 
-    ln -s \
-    ../src/stubf/*.* \
-    ../examples/f77/*.* \
-    .
+ln -s \
+$srcdir/src/stubf/*.* \
+$srcdir/examples/f77/*.* \
+. 2>/dev/null
 
-# Create links to config files.
+# ----------------------------------------------------------------------------
+# Create output files.
+# ----------------------------------------------------------------------------
 
-    ln -s ../cf/*.in .
-    cd ..
-fi
-
-# --------------------------------------------------------------------
-# Print out some of the more important settings, then create output
-# files.
+trap '' 1 2 15
+cat > confcache <<\EOF
+# This file is a shell script that caches the results of configure
+# tests run on this system so they can be shared between configure
+# scripts and configure runs.  It is not useful on other systems.
+# If it contains results you don't want to keep, you may remove or edit it.
 #
-# IMPORTANT: the with_<foo> and enable_<bar> vars are printed as
-# with-<foo> and enable-<bar>.  Yes, this is confusing.  I really wish the
-# same syntax were used for both the command line switch and the variable
-# it is setting.  The possibility for confusion is much higher if I don't
-# write them the same in the status message as they appear in the command
-# line.  The only occasion you will have to set the variable directly is
-# in ~/config/cf_plplot.in if you use it, and just make sure you remember
-# to use an underscore in that case.
-# --------------------------------------------------------------------
-
-echo "
-Configuration results:
-
-system:		$system
-prefix:		$prefix
-CC:		$CC $CC_FLAGS
-CXX:		$CXX $CXX_FLAGS
-F77:		$F77 $F77_FLAGS
-LDC:		$LDC $LDC_FLAGS
-LDF:		$LDF $LDF_FLAGS
-INCS:		$INCS
-LIBS:		$LIBS
-LIB_TAG:	$LIB_TAG
-devices:	$DEVICES
-
-with-shlib:	$with_shlib		with-double:	$with_double
-with-debug:	$with_debug		with-opt:	$with_opt
-with-warn:	$with_warn		with-profile:	$with_profile
-with-f2c:	$with_f2c		with-gcc:	$with_gcc
-
-enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
-enable-tk:	$enable_tk		enable-dp:	$enable_dp
-enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
-enable-cxx:	$enable_cxx
-" >plconfig.log
-
-cat plconfig.log
-
-
-# The preferred way to propogate these variables is regular @ substitutions.
-if test -n "$prefix"; then
-  ac_prsub="s%^prefix\\([ 	]*\\)=\\([ 	]*\\).*$%prefix\\1=\\2$prefix%"
+# By default, configure uses ./config.cache as the cache file,
+# creating it if it does not exist already.  You can give configure
+# the --cache-file=FILE option to use a different cache file; that is
+# what configure does when it calls configure scripts in
+# subdirectories, so they share the cache.
+# Giving --cache-file=/dev/null disables caching, for debugging configure.
+# config.status only pays attention to the cache file if you give it the
+# --recheck option to rerun configure.
+#
+EOF
+# Ultrix sh set writes to stderr and can't be redirected directly,
+# and sets the high bit in the cache file unless we assign to the vars.
+(set) 2>&1 |
+  sed -n "s/^\([a-zA-Z0-9_]*_cv_[a-zA-Z0-9_]*\)=\(.*\)/\1=\${\1='\2'}/p" \
+  >> confcache
+if cmp -s $cache_file confcache; then
+  :
 else
-  prefix=/usr/local
+  if test -w $cache_file; then
+    echo "updating cache $cache_file"
+    cat confcache > $cache_file
+  else
+    echo "not updating unwritable cache $cache_file"
+  fi
 fi
-if test -n "$exec_prefix"; then
-  ac_prsub="$ac_prsub
-s%^exec_prefix\\([ 	]*\\)=\\([ 	]*\\).*$%exec_prefix\\1=\\2$exec_prefix%"
-else
-  exec_prefix='${prefix}' # Let make expand it.
-fi
+rm -f confcache
+
+trap 'rm -fr conftest* confdefs* core core.* *.core $ac_clean_files; exit 1' 1 2 15
+
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+# Let make expand exec_prefix.
+test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 # Any assignment to VPATH causes Sun make to only execute
 # the first set of double-colon rules, so remove it if not needed.
@@ -3497,36 +4178,36 @@ if test "x$srcdir" = x.; then
   ac_vpsub='/^[ 	]*VPATH[ 	]*=[^:]*$/d'
 fi
 
-# Quote sed substitution magic chars in DEFS.
-cat >conftest.def <<EOF
-$DEFS
-EOF
-ac_escape_ampersand_and_backslash='s%[&\\]%\\&%g'
-DEFS=`sed "$ac_escape_ampersand_and_backslash" <conftest.def`
-rm -f conftest.def
-# Substitute for predefined variables.
+trap 'rm -f $CONFIG_STATUS conftest*; exit 1' 1 2 15
 
-trap 'rm -f config.status; exit 1' 1 2 15
-echo creating config.status
-rm -f config.status
-cat > config.status <<EOF
-#!/bin/sh
+DEFS=-DHAVE_CONFIG_H
+
+# Without the "./", some shells look in PATH for config.status.
+: ${CONFIG_STATUS=./config.status}
+
+echo creating $CONFIG_STATUS
+rm -f $CONFIG_STATUS
+cat > $CONFIG_STATUS <<EOF
+#! /bin/sh
 # Generated automatically by configure.
 # Run this file to recreate the current configuration.
 # This directory was configured as follows,
 # on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
 #
-# $0 $configure_args
+# $0 $ac_configure_args
+#
+# Compiler output produced by configure, useful for debugging
+# configure, is in ./config.log if it exists.
 
-ac_cs_usage="Usage: config.status [--recheck] [--version] [--help]"
+ac_cs_usage="Usage: $CONFIG_STATUS [--recheck] [--version] [--help]"
 for ac_option
 do
   case "\$ac_option" in
   -recheck | --recheck | --rechec | --reche | --rech | --rec | --re | --r)
-    echo running \${CONFIG_SHELL-/bin/sh} $0 $configure_args --no-create
-    exec \${CONFIG_SHELL-/bin/sh} $0 $configure_args --no-create ;;
+    echo "running \${CONFIG_SHELL-/bin/sh} $0 $ac_configure_args --no-create --no-recursion"
+    exec \${CONFIG_SHELL-/bin/sh} $0 $ac_configure_args --no-create --no-recursion ;;
   -version | --version | --versio | --versi | --vers | --ver | --ve | --v)
-    echo "config.status generated by autoconf version 1.11"
+    echo "$CONFIG_STATUS generated by autoconf version 2.3"
     exit 0 ;;
   -help | --help | --hel | --he | --h)
     echo "\$ac_cs_usage"; exit 0 ;;
@@ -3534,94 +4215,27 @@ do
   esac
 done
 
-trap 'rm -fr tmp/Makefile tmp/Makedemo tmp/plConfig.h tmp/plDevs.h conftest*; exit 1' 1 2 15
-uname_found='$uname_found'
-CPP='$CPP'
-found_fc='$found_fc'
-found_f77='$found_f77'
-SHLIB_BUILD='$SHLIB_BUILD'
-SHLIB_SUFFIX='$SHLIB_SUFFIX'
-SALIB_SUFFIX='$SALIB_SUFFIX'
-CC='$CC'
-CXX='$CXX'
-OCC='$OCC'
-F77='$F77'
-LDC='$LDC'
-LDCXX='$LDCXX'
-LDF='$LDF'
-CXX_FLAGS='$CXX_FLAGS'
-CC_FLAGS='$CC_FLAGS'
-LDC_FLAGS='$LDC_FLAGS'
-LDCXX_FLAGS='$LDCXX_FLAGS'
-F77_FLAGS='$F77_FLAGS'
-LDF_FLAGS='$LDF_FLAGS'
-SHLIB_CCFLAGS='$SHLIB_CCFLAGS'
-SHLIB_CXXFLAGS='$SHLIB_CXXFLAGS'
-SHLIB_F77FLAGS='$SHLIB_F77FLAGS'
-CC_FLAGS_XWIN='$CC_FLAGS_XWIN'
-CC_FLAGS_SCCONT='$CC_FLAGS_SCCONT'
-TKINCDIR='$TKINCDIR'
-EXTRA_LIBS='$EXTRA_LIBS'
-LIBS='$LIBS'
-INCS='$INCS'
-RANLIB='$RANLIB'
-LIB_TAG='$LIB_TAG'
-LIB_DIR='$LIB_DIR'
-BIN_DIR='$BIN_DIR'
-TCL_DIR='$TCL_DIR'
-DOC_DIR='$DOC_DIR'
-INFO_DIR='$INFO_DIR'
-INCLUDE_DIR='$INCLUDE_DIR'
-DEMOS_DIR='$DEMOS_DIR'
-srcdir='$srcdir'
-top_srcdir='$top_srcdir'
-prefix='$prefix'
-exec_prefix='$exec_prefix'
-ac_prsub='$ac_prsub'
-ac_vpsub='$ac_vpsub'
-extrasub='$extrasub'
-EOF
-cat >> config.status <<\EOF
-
 ac_given_srcdir=$srcdir
+ac_given_INSTALL="$INSTALL"
 
-CONFIG_FILES=${CONFIG_FILES-"tmp/Makefile tmp/Makedemo"}
-for ac_file in .. ${CONFIG_FILES}; do if test "x$ac_file" != x..; then
-  # Remove last slash and all that follows it.  Not all systems have dirname.
-  ac_dir=`echo $ac_file|sed 's%/[^/][^/]*$%%'`
-  if test "$ac_dir" != "$ac_file" && test "$ac_dir" != .; then
-    # The file is in a subdirectory.
-    test ! -d "$ac_dir" && mkdir "$ac_dir"
-    ac_dir_suffix="/$ac_dir"
-  else
-    ac_dir_suffix=
-  fi
+trap 'rm -fr `echo "Makefile Makedemo plConfig.h plDevs.h" | sed "s/:[^ ]*//g"` conftest*; exit 1' 1 2 15
 
-  # A "../" for each directory in $ac_dir_suffix.
-  ac_dots=`echo $ac_dir_suffix|sed 's%/[^/]*%../%g'`
-  case "$ac_given_srcdir" in
-  .)  srcdir=.
-      if test -z "$ac_dir_suffix"; then top_srcdir=.
-      else top_srcdir=`echo $ac_dots|sed 's%/$%%'`; fi ;;
-  /*) srcdir="$ac_given_srcdir$ac_dir_suffix"; top_srcdir="$ac_given_srcdir" ;;
-  *) # Relative path.
-    srcdir="$ac_dots$ac_given_srcdir$ac_dir_suffix"
-    top_srcdir="$ac_dots$ac_given_srcdir" ;;
-  esac
-
-  echo creating "$ac_file"
-  rm -f "$ac_file"
-  comment_str="Generated automatically from `echo $ac_file|sed 's|.*/||'`.in by configure."
-  case "$ac_file" in
-    *.c | *.h | *.C | *.cc | *.m )  echo "/* $comment_str */" > "$ac_file" ;;
-    * )          echo "# $comment_str"     > "$ac_file" ;;
-  esac
-  sed -e "
-$ac_prsub
+# Protect against being on the right side of a sed subst in config.status. 
+sed 's/%@/@@/; s/@%/@@/; s/%g$/@g/; /@g$/s/[\\\\&%]/\\\\&/g; 
+ s/@@/%@/; s/@@/@%/; s/@g$/%g/' > conftest.subs <<\CEOF
 $ac_vpsub
 $extrasub
+s%@CFLAGS@%$CFLAGS%g
+s%@CPPFLAGS@%$CPPFLAGS%g
+s%@CXXFLAGS@%$CXXFLAGS%g
+s%@DEFS@%$DEFS%g
+s%@LDFLAGS@%$LDFLAGS%g
+s%@LIBS@%$LIBS%g
+s%@exec_prefix@%$exec_prefix%g
+s%@prefix@%$prefix%g
+s%@program_transform_name@%$program_transform_name%g
 s%@uname_found@%$uname_found%g
-s%@CPP@%$CPP%g
+s%@found_F77@%$found_F77%g
 s%@found_fc@%$found_fc%g
 s%@found_f77@%$found_f77%g
 s%@SHLIB_BUILD@%$SHLIB_BUILD%g
@@ -3645,11 +4259,12 @@ s%@SHLIB_CXXFLAGS@%$SHLIB_CXXFLAGS%g
 s%@SHLIB_F77FLAGS@%$SHLIB_F77FLAGS%g
 s%@CC_FLAGS_XWIN@%$CC_FLAGS_XWIN%g
 s%@CC_FLAGS_SCCONT@%$CC_FLAGS_SCCONT%g
-s%@TKINCDIR@%$TKINCDIR%g
+s%@CPP@%$CPP%g
 s%@EXTRA_LIBS@%$EXTRA_LIBS%g
-s%@LIBS@%$LIBS%g
 s%@INCS@%$INCS%g
 s%@RANLIB@%$RANLIB%g
+s%@INSTALL_PROGRAM@%$INSTALL_PROGRAM%g
+s%@INSTALL_DATA@%$INSTALL_DATA%g
 s%@LIB_TAG@%$LIB_TAG%g
 s%@LIB_DIR@%$LIB_DIR%g
 s%@BIN_DIR@%$BIN_DIR%g
@@ -3658,104 +4273,156 @@ s%@DOC_DIR@%$DOC_DIR%g
 s%@INFO_DIR@%$INFO_DIR%g
 s%@INCLUDE_DIR@%$INCLUDE_DIR%g
 s%@DEMOS_DIR@%$DEMOS_DIR%g
+s%@SHARED@%$SHARED%g
+
+CEOF
+EOF
+cat >> $CONFIG_STATUS <<EOF
+
+CONFIG_FILES=\${CONFIG_FILES-"Makefile Makedemo"}
+EOF
+cat >> $CONFIG_STATUS <<\EOF
+for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
+  # Support "outfile[:infile]", defaulting infile="outfile.in".
+  case "$ac_file" in
+  *:*) ac_file_in=`echo "$ac_file"|sed 's%.*:%%'`
+       ac_file=`echo "$ac_file"|sed 's%:.*%%'` ;;
+  *) ac_file_in="${ac_file}.in" ;;
+  esac
+
+  # Adjust relative srcdir, etc. for subdirectories.
+
+  # Remove last slash and all that follows it.  Not all systems have dirname.
+  ac_dir=`echo $ac_file|sed 's%/[^/][^/]*$%%'`
+  if test "$ac_dir" != "$ac_file" && test "$ac_dir" != .; then
+    # The file is in a subdirectory.
+    test ! -d "$ac_dir" && mkdir "$ac_dir"
+    ac_dir_suffix="/`echo $ac_dir|sed 's%^\./%%'`"
+    # A "../" for each directory in $ac_dir_suffix.
+    ac_dots=`echo $ac_dir_suffix|sed 's%/[^/]*%../%g'`
+  else
+    ac_dir_suffix= ac_dots=
+  fi
+
+  case "$ac_given_srcdir" in
+  .)  srcdir=.
+      if test -z "$ac_dots"; then top_srcdir=.
+      else top_srcdir=`echo $ac_dots|sed 's%/$%%'`; fi ;;
+  /*) srcdir="$ac_given_srcdir$ac_dir_suffix"; top_srcdir="$ac_given_srcdir" ;;
+  *) # Relative path.
+    srcdir="$ac_dots$ac_given_srcdir$ac_dir_suffix"
+    top_srcdir="$ac_dots$ac_given_srcdir" ;;
+  esac
+
+  case "$ac_given_INSTALL" in
+  [/$]*) INSTALL="$ac_given_INSTALL" ;;
+  *) INSTALL="$ac_dots$ac_given_INSTALL" ;;
+  esac
+  echo creating "$ac_file"
+  rm -f "$ac_file"
+  configure_input="Generated automatically from `echo $ac_file_in|sed 's%.*/%%'` by configure."
+  case "$ac_file" in
+  *Makefile*) ac_comsub="1i\\
+# $configure_input" ;;
+  *) ac_comsub= ;;
+  esac
+  sed -e "$ac_comsub
+s%@configure_input@%$configure_input%g
 s%@srcdir@%$srcdir%g
 s%@top_srcdir@%$top_srcdir%g
-s%@prefix@%$prefix%g
-s%@exec_prefix@%$exec_prefix%g
-s%@DEFS@%-DHAVE_CONFIG_H%" $ac_given_srcdir/${ac_file}.in >> $ac_file
+s%@INSTALL@%$INSTALL%g
+" -f conftest.subs `if test -f $ac_file_in; then echo $ac_file_in; else echo $ac_given_srcdir/$ac_file_in; fi` > $ac_file
 fi; done
+rm -f conftest.subs
 
-# These sed commands are put into ac_sed_defs when defining a macro.
-# They are broken into pieces to make the sed script easier to manage.
-# They are passed to sed as "A NAME B NAME C VALUE D", where NAME
-# is the cpp macro being defined and VALUE is the value it is being given.
-# Each defining turns into a single global substitution command.
-# Hopefully no one uses "!" as a variable value.
-# Other candidates for the sed separators, like , and @, do get used.
+# These sed commands are passed to sed as "A NAME B NAME C VALUE D", where
+# NAME is the cpp macro being defined and VALUE is the value it is being given.
 #
 # ac_d sets the value in "#define NAME VALUE" lines.
-ac_dA='s!^\([ 	]*\)#\([ 	]*define[ 	][ 	]*\)'
-ac_dB='\([ 	][ 	]*\)[^ 	]*!\1#\2'
+ac_dA='s%^\([ 	]*\)#\([ 	]*define[ 	][ 	]*\)'
+ac_dB='\([ 	][ 	]*\)[^ 	]*%\1#\2'
 ac_dC='\3'
-ac_dD='!g'
+ac_dD='%g'
 # ac_u turns "#undef NAME" with trailing blanks into "#define NAME VALUE".
-ac_uA='s!^\([ 	]*\)#\([ 	]*\)undef\([ 	][ 	]*\)'
-ac_uB='\([ 	]\)!\1#\2define\3'
+ac_uA='s%^\([ 	]*\)#\([ 	]*\)undef\([ 	][ 	]*\)'
+ac_uB='\([ 	]\)%\1#\2define\3'
 ac_uC=' '
-ac_uD='\4!g'
+ac_uD='\4%g'
 # ac_e turns "#undef NAME" without trailing blanks into "#define NAME VALUE".
-ac_eA='s!^\([ 	]*\)#\([ 	]*\)undef\([ 	][ 	]*\)'
-ac_eB='$!\1#\2define\3'
+ac_eA='s%^\([ 	]*\)#\([ 	]*\)undef\([ 	][ 	]*\)'
+ac_eB='$%\1#\2define\3'
 ac_eC=' '
-ac_eD='!g'
-rm -f conftest.sed
-EOF
-# Turn off quoting long enough to insert the sed commands.
-rm -f conftest.sh
-cat > conftest.sh <<EOF
-$ac_sed_defs
-EOF
+ac_eD='%g'
 
-# Break up $ac_sed_defs (now in conftest.sh) because some shells have a limit
-# on the size of here documents.
+CONFIG_HEADERS=${CONFIG_HEADERS-"plConfig.h plDevs.h"}
+for ac_file in .. $CONFIG_HEADERS; do if test "x$ac_file" != x..; then
+  # Support "outfile[:infile]", defaulting infile="outfile.in".
+  case "$ac_file" in
+  *:*) ac_file_in=`echo "$ac_file"|sed 's%.*:%%'`
+       ac_file=`echo "$ac_file"|sed 's%:.*%%'` ;;
+  *) ac_file_in="${ac_file}.in" ;;
+  esac
 
-# Maximum number of lines to put in a single here document.
-ac_max_sh_lines=9
-
-while :
-do
-  # wc gives bogus results for an empty file on some AIX systems.
-  ac_lines=`grep -c . conftest.sh`
-  if test -z "$ac_lines" || test "$ac_lines" -eq 0; then break; fi
-  rm -f conftest.s1 conftest.s2
-  sed ${ac_max_sh_lines}q conftest.sh > conftest.s1 # Like head -9.
-  sed 1,${ac_max_sh_lines}d conftest.sh > conftest.s2 # Like tail +10.
-  # Write a limited-size here document to append to conftest.sed.
-  echo 'cat >> conftest.sed <<CONFEOF' >> config.status
-  cat conftest.s1 >> config.status
-  echo 'CONFEOF' >> config.status
-  rm -f conftest.s1 conftest.sh
-  mv conftest.s2 conftest.sh
-done
-rm -f conftest.sh
-
-# Now back to your regularly scheduled config.status.
-cat >> config.status <<\EOF
-# This sed command replaces #undef's with comments.  This is necessary, for
-# example, in the case of _POSIX_SOURCE, which is predefined and required
-# on some systems where configure will not decide to define it in
-# tmp/plConfig.h tmp/plDevs.h.
-cat >> conftest.sed <<\CONFEOF
-s,^[ 	]*#[ 	]*undef[ 	][ 	]*[a-zA-Z_][a-zA-Z_0-9]*,/* & */,
-CONFEOF
-rm -f conftest.h
-# Break up the sed commands because old seds have small limits.
-ac_max_sed_lines=20
-
-CONFIG_HEADERS=${CONFIG_HEADERS-"tmp/plConfig.h tmp/plDevs.h"}
-for ac_file in .. ${CONFIG_HEADERS}; do if test "x$ac_file" != x..; then
   echo creating $ac_file
 
-  cp $ac_given_srcdir/$ac_file.in conftest.h1
-  cp conftest.sed conftest.stm
-  while :
-  do
-    ac_lines=`grep -c . conftest.stm`
-    if test -z "$ac_lines" || test "$ac_lines" -eq 0; then break; fi
-    rm -f conftest.s1 conftest.s2 conftest.h2
-    sed ${ac_max_sed_lines}q conftest.stm > conftest.s1 # Like head -20.
-    sed 1,${ac_max_sed_lines}d conftest.stm > conftest.s2 # Like tail +21.
-    sed -f conftest.s1 < conftest.h1 > conftest.h2
-    rm -f conftest.s1 conftest.h1 conftest.stm
-    mv conftest.h2 conftest.h1
-    mv conftest.s2 conftest.stm
-  done
-  rm -f conftest.stm conftest.h
+  rm -f conftest.frag conftest.in conftest.out
+  cp `if test -f $ac_file_in; then echo $ac_file_in; else echo $ac_given_srcdir/$ac_file_in; fi` conftest.in
+
+EOF
+
+# Transform confdefs.h into a sed script conftest.vals that substitutes
+# the proper values into config.h.in to produce config.h.  And first:
+# Protect against being on the right side of a sed subst in config.status. 
+# Protect against being in an unquoted here document in config.status.
+rm -f conftest.vals
+cat > conftest.hdr <<\EOF
+s/[\\&%]/\\&/g
+s%[\\$`]%\\&%g
+s%#define \([A-Za-z_][A-Za-z0-9_]*\) \(.*\)%${ac_dA}\1${ac_dB}\1${ac_dC}\2${ac_dD}%gp
+s%ac_d%ac_u%gp
+s%ac_u%ac_e%gp
+EOF
+sed -n -f conftest.hdr confdefs.h > conftest.vals
+rm -f conftest.hdr
+
+# This sed command replaces #undef with comments.  This is necessary, for
+# example, in the case of _POSIX_SOURCE, which is predefined and required
+# on some systems where configure will not decide to define it.
+cat >> conftest.vals <<\EOF
+s%^[ 	]*#[ 	]*undef[ 	][ 	]*[a-zA-Z_][a-zA-Z_0-9]*%/* & */%
+EOF
+
+# Break up conftest.vals because some shells have a limit on
+# the size of here documents, and old seds have small limits too.
+# Maximum number of lines to put in a single here document.
+ac_max_here_lines=12
+
+rm -f conftest.tail
+while :
+do
+  ac_lines=`grep -c . conftest.vals`
+  # grep -c gives empty output for an empty file on some AIX systems.
+  if test -z "$ac_lines" || test "$ac_lines" -eq 0; then break; fi
+  # Write a limited-size here document to conftest.frag.
+  echo '  cat > conftest.frag <<CEOF' >> $CONFIG_STATUS
+  sed ${ac_max_here_lines}q conftest.vals >> $CONFIG_STATUS
+  echo 'CEOF
+  sed -f conftest.frag conftest.in > conftest.out
+  rm -f conftest.in
+  mv conftest.out conftest.in
+' >> $CONFIG_STATUS
+  sed 1,${ac_max_here_lines}d conftest.vals > conftest.tail
+  rm -f conftest.vals
+  mv conftest.tail conftest.vals
+done
+rm -f conftest.vals
+
+cat >> $CONFIG_STATUS <<\EOF
+  rm -f conftest.frag conftest.h
   echo "/* $ac_file.  Generated automatically by configure.  */" > conftest.h
-  cat conftest.h1 >> conftest.h
-  rm -f conftest.h1
+  cat conftest.in >> conftest.h
+  rm -f conftest.in
   if cmp -s $ac_file conftest.h 2>/dev/null; then
-    # The file exists and we would not be changing it.
     echo "$ac_file is unchanged"
     rm -f conftest.h
   else
@@ -3763,13 +4430,57 @@ for ac_file in .. ${CONFIG_HEADERS}; do if test "x$ac_file" != x..; then
     mv conftest.h $ac_file
   fi
 fi; done
-rm -f conftest.sed
 
 
 
 exit 0
 EOF
-chmod +x config.status
-# Some shells look in PATH for config.status without the "./".
-test -n "$no_create" || ${CONFIG_SHELL-/bin/sh} ./config.status
+chmod +x $CONFIG_STATUS
+rm -fr confdefs* $ac_clean_files
+test "$no_create" = yes || ${CONFIG_SHELL-/bin/sh} $CONFIG_STATUS || exit 1
 
+
+# ----------------------------------------------------------------------------
+# Print out some of the more important settings.
+#
+# IMPORTANT: the with_<foo> and enable_<bar> vars are printed as
+# with-<foo> and enable-<bar>.  Yes, this is confusing.  I really wish the
+# same syntax were used for both the command line switch and the variable
+# it is setting.  The possibility for confusion is much higher if I don't
+# write them the same in the status message as they appear in the command
+# line.  The only occasion you will have to set the variable directly is
+# in ~/config/cf_plplot.in if you use it, and just make sure you remember
+# to use an underscore in that case.
+# ----------------------------------------------------------------------------
+
+plplot_config_result_msg="Configuration results:
+
+system:		$system
+prefix:		$prefix
+CC:		$CC $CC_FLAGS
+CXX:		$CXX $CXX_FLAGS
+F77:		$F77 $F77_FLAGS
+LDC:		$LDC $LDC_FLAGS
+LDF:		$LDF $LDF_FLAGS
+INCS:		$INCS
+LIBS:		$LIBS
+LIB_TAG:	$LIB_TAG
+devices:	$DEVICES
+
+with-shlib:	$with_shlib		with-double:	$with_double
+with-debug:	$with_debug		with-opt:	$with_opt
+with-warn:	$with_warn		with-profile:	$with_profile
+with-f2c:	$with_f2c		with-gcc:	$with_gcc
+
+enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
+enable-tk:	$enable_tk		enable-dp:	$enable_dp
+enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
+enable-cxx:	$enable_cxx
+"
+
+
+cat << EOF > config.summary
+$plplot_config_result_msg
+EOF
+
+echo "$ac_t""$plplot_config_result_msg" 1>&6
