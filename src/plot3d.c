@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/04/08 12:34:21  mjl
+ * Revision 1.11  1994/05/13 22:56:35  mjl
+ * Fixed an old bug -- it was innocuous in the company of the allocation bugs
+ * fixed in the last update, which is why it wasn't discovered before now.
+ * Now plots correctly as well as frees all memory allocated.
+ *
+ * Revision 1.10  1994/04/08  12:34:21  mjl
  * Fixed some cases of allocating memory and never freeing it.  Also changed
  * some previously fatal errors into recoverable ones.
  *
@@ -638,11 +643,11 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	if (newhiview != NULL) {
 	    newhiview = 
 		(PLINT *) realloc((void *) newhiview,
-				  (size_t) (2 * newhisize * sizeof(PLINT)));
+				  (size_t) (newhisize * sizeof(PLINT)));
 	}
 	else {
 	    newhiview = 
-		(PLINT *) malloc((size_t) (2 * newhisize * sizeof(PLINT)));
+		(PLINT *) malloc((size_t) (newhisize * sizeof(PLINT)));
 	}
 	if ( ! newhiview)
 	    myexit("plnxtvhi: Out of memory.");
@@ -889,11 +894,11 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	if (newloview != NULL) {
 	    newloview = 
 		(PLINT *) realloc((void *) newloview,
-				  (size_t) (2 * newlosize * sizeof(PLINT)));
+				  (size_t) (newlosize * sizeof(PLINT)));
 	}
 	else {
 	    newloview = 
-		(PLINT *) malloc((size_t) (2 * newlosize * sizeof(PLINT)));
+		(PLINT *) malloc((size_t) (newlosize * sizeof(PLINT)));
 	}
 	if ( ! newloview)
 	    myexit("plnxtvlo: Out of memory.");
@@ -1155,7 +1160,7 @@ swaploview(void)
 
     if (pl3upv != 0) {
 	mlo = xxlo / 2;
-	tmp = newloview;
+	tmp = oldloview;
 	oldloview = newloview;
 	newloview = tmp;
     }
