@@ -29,12 +29,13 @@
  * RCS: @(#) $Id$
  */
 
-/* Note the define of _POSIX_SOURCE must come before tcl.h is included.  One
- * way to do this is to include plplot.h first.
- */
+#include <tcl.h>
 #include "plplot/plplot.h"
 
-#include <tcl.h>
+/* From tclIntDecls.h */
+
+EXTERN int		TclFormatInt _ANSI_ARGS_((char * buffer, long n));
+EXTERN int		TclObjCommandComplete _ANSI_ARGS_((Tcl_Obj * cmdPtr));
 
 # undef TCL_STORAGE_CLASS
 # define TCL_STORAGE_CLASS DLLEXPORT
