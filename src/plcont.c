@@ -106,7 +106,7 @@ void c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig)
     sigprec = sigdig;
 }
 
-void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance, PLINT *lastindex)
+static void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance, PLINT *lastindex)
 {
     PLFLT currx_old, curry_old,	delta_x, delta_y;
 
@@ -153,7 +153,7 @@ void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance, PLINT
  * print the label 
  */
 
-void plfloatlabel(PLFLT value, char *string)
+static void plfloatlabel(PLFLT value, char *string)
 {
     PLINT  setpre, precis;
     char   form[10], tmpstring[10];
@@ -213,7 +213,7 @@ void plfloatlabel(PLFLT value, char *string)
 
 /* physical coords (x) to world coords */
 
-PLFLT
+static PLFLT
 plP_pcwcx(PLINT x)
 {
     return ((x-plsc->wpxoff)/plsc->wpxscl);
@@ -221,7 +221,7 @@ plP_pcwcx(PLINT x)
 
 /* physical coords (y) to world coords */
 
-PLFLT
+static PLFLT
 plP_pcwcy(PLINT y)
 {
     return ((y-plsc->wpyoff)/plsc->wpyscl);

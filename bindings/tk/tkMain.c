@@ -244,8 +244,7 @@ pltkMain(int argc, char **argv, char *RcFileName,
         return TCL_ERROR;
     }
 
-    if (Tcl_Eval(interp, "auto_mkindex_parser::slavehook { _%@namespace import -
-force ::itcl::* ::itk::* }") != TCL_OK) {
+    if (Tcl_Eval(interp, "auto_mkindex_parser::slavehook { _%@namespace import -force ::itcl::* ::itk::* }") != TCL_OK) {
         return TCL_ERROR;
     }
 #endif

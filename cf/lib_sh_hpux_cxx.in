@@ -1,0 +1,23 @@
+# -*-makefile-*----------------------------------------------------------------
+# $Id$
+#
+# Dean Clamons
+# Naval Research Lab, Code 7420
+# 20-Feb-2001
+#
+# PLplot build rules for C++ archive and shared library under hpux.
+# -----------------------------------------------------------------------------
+
+$(CXXLIB_AR):	$(CXX_OBJS)
+	-$(RM) $(CXXLIB_AR)
+	@echo ""; echo "Building archive library"; echo ""
+	$(ARLIB_BUILD) $(CXXLIB_AR) $(CXX_OBJS)
+	$(RANLIB) $(CXXLIB_AR)
+
+$(CXXLIB_SO):	$(CXX_OBJS)
+	-$(RM) $(CXXLIB_SO)
+	@echo ""; echo "Building shared library"; echo ""
+	cd shared; \
+	$(SHLIB_BUILD) ../$(CXXLIB_SO) $(CXX_OBJS)
+	@echo ""
+

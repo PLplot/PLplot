@@ -47,7 +47,7 @@ plstrip_gen(PLStrip *strip);
 static void
 plstrip_legend(PLStrip *strip, int flag);
 
-char *strdup(char *);
+char *strdup(const char *);
 /*--------------------------------------------------------------------------*\
  * plstripc
  *
@@ -130,7 +130,7 @@ c_plstripc( PLINT *id, char *xspec, char *yspec,
 	plstrip_legend(stripc,1);
 }
 
-void plstrip_legend(PLStrip *stripc, int first)
+static void plstrip_legend(PLStrip *stripc, int first)
 {
 	int i;
 	PLFLT sc, dy;
@@ -160,7 +160,7 @@ void plstrip_legend(PLStrip *stripc, int first)
 \*--------------------------------------------------------------------------*/
 
 PLFLT oxm,oxM, oym,oyM;
-void plstrip_gen( PLStrip *strip )
+static void plstrip_gen( PLStrip *strip )
 {
     int i;
     PLFLT x[]={0.,1.,1.,0.}, y[]={0.,0.,1.,1.};

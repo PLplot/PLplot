@@ -138,7 +138,7 @@ if test -z "$CC"; then
 	    CC="cc -ansi"
 	;;
 	hp*|HP* ) 
-	    CC=c89
+	    CC="cc -Ae"
 	;;
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
 	    CC="cc"

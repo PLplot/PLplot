@@ -497,7 +497,13 @@ if test "$with_shlib" = "yes"; then
     SCO* )
         cat $srcdir/cf/lib_sh_sco.in    >>Makefile.in
 	;;
-	* )
+	HP-UX* )
+	  cat $srcdir/cf/lib_sh_hpux.in    >>Makefile.in
+	  if test "$enable_cxx" = "yes"; then
+	    cat $srcdir/cf/lib_sh_hpux_cxx.in       >>Makefile.in
+	  fi
+	;;
+        * )
 	    cat $srcdir/cf/lib_sh.in	>>Makefile.in
 	;;
     esac
@@ -514,6 +520,19 @@ cat $srcdir/cf/demos.in		>>Makefile.in
 # Installation and miscellaneous.
 
 cat $srcdir/cf/install.in	>>Makefile.in 
+case $system in
+  HP-UX* )
+    cat >> Makefile.in <<EOF
+LP=lp
+EOF
+  ;;
+  * )
+    cat >> Makefile.in <<EOF
+LP=lpr
+EOF
+  ;;
+esac
+
 cat $srcdir/cf/inst_lib.in		>>Makefile.in
 cat $srcdir/cf/misc.in		>>Makefile.in 
 

@@ -612,7 +612,7 @@ if test -z "$EXTRA_LIBS"; then
 	    EXTRA_LIBS="$EXTRA_LIBS -lm"
 	;;
 	HP-UX* )
-	    EXTRA_LIBS="-ldld -lm"
+	    EXTRA_LIBS="-lm"
 	;;
 	Linux* )
 	    if test "$enable_f77" = "yes"; then
