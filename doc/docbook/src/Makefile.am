@@ -27,6 +27,7 @@ SOURCE_FILES = \
   advanced.xml \
   api.xml \
   api-c.xml \
+  api-compat.xml \
   api-fortran.xml \
   bibliography.xml \
   c.xml \
@@ -44,7 +45,8 @@ SOURCE_FILES = \
   simple.xml \
   tcl.xml \
   wish.xml \
-  math.ent
+  math.ent \
+  plplot.sym
 
 STYLESHEET_HTML = plplotdoc-html.dsl
 STYLESHEET_PRINT = plplotdoc-print.dsl

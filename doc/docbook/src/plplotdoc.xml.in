@@ -57,6 +57,8 @@
 <!ENTITY chap-api SYSTEM "api.xml">
 <!ENTITY chap-api-c SYSTEM "api-c.xml">
 <!ENTITY chap-api-fortran SYSTEM "api-fortran.xml">
+<!ENTITY chap-api-compat SYSTEM "api-compat.xml">
+<!ENTITY symfile SYSTEM "plplot.sym">
 <!ENTITY chap-os-notes SYSTEM "os_notes.xml">
 <!ENTITY plP_checkdriverinit '<link linkend="plP_checkdriverinit"><function>plP_checkdriverinit</function></link>'>
 <!ENTITY plP_getinitdriverlist '<link linkend="plP_getinitdriverlist"><function>plP_getinitdriverlist</function></link>'>
@@ -342,6 +344,7 @@
     &chap-api;
     &chap-api-c;
     &chap-api-fortran;
+    &chap-api-compat;
     &chap-os-notes;
   </part>
 
