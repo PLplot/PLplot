@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/07/02 07:22:14  mjl
-   Namespace changes.
+   Revision 1.8  1993/07/16 22:26:14  mjl
+   Added explicit support for color vs monochrome postscript output,
+   arrays and constant definitions used in driver interface.
 
+ * Revision 1.7  1993/07/02  07:22:14  mjl
+ * Namespace changes.
+ *
  * Revision 1.6  1993/04/26  20:00:10  mjl
  * The beginnings of a TK driver added.
  *
@@ -41,27 +45,40 @@
 #include <math.h>
 #include "drivers.h"
 
-/*----------------------------------------------------------------------*\
-* PLPLOT internal variables are listed below.
-*
-* ipls		Stream number
-* font..	Current default font and control parameters
-\*----------------------------------------------------------------------*/
+/* Constants used in the driver interface layer */
 
-static PLINT ipls;			/* stream number */
+#define PLDI_MAP	0x01
+#define PLDI_ORI	0x02
+#define PLDI_PLT	0x04
+#define PLDI_DEV	0x08
+
+/* Static function prototypes */
+
+static void	plGetDev	(void);
+static void	grline		(short *, short *, PLINT);
+static void	grpolyline	(short *, short *, PLINT);
+static void	difilt		(PLINT *, PLINT *, PLINT,
+				 PLINT *, PLINT *, PLINT *, PLINT *);
+/* Static variables */
+
+static PLINT xscl[PL_MAXPOLYLINE], yscl[PL_MAXPOLYLINE];
+static PLINT xscl1[PL_MAXPOLYLINE], yscl1[PL_MAXPOLYLINE];
+
 static PLINT font, initfont, fontset;	/* font control parameters */
 static PLINT offset;			/* offset for dispatch calls */
 
-/*
-* PLStream data structure (defined in plstream.h).
-* It contains a copy of every variable that is stream dependent.
+/*----------------------------------------------------------------------*\
+* Allocate a PLStream data structure (defined in plstream.h).
+*
+* This struct contains a copy of every variable that is stream dependent.
 * Only the first [index=0] stream is statically allocated; the rest
-* are dynamically allocated when you switch streams.  Yes, it is legal
-* to only initialize the first element of the array of pointers.
-*/
+* are dynamically allocated when you switch streams (yes, it is legal
+* to only initialize the first element of the array of pointers).
+\*----------------------------------------------------------------------*/
 
 static PLStream pls0;			/* preallocated stream */
 static PLStream *plsc = &pls0;		/* current stream pointer */
+static PLINT ipls;			/* current stream number */
 
 static PLStream *pls[PL_NSTREAMS] = {&pls0};	/* Array of stream pointers */
 
@@ -75,20 +92,12 @@ static PLStream *pls[PL_NSTREAMS] = {&pls0};	/* Array of stream pointers */
 * pl_type	0 for file-oriented device, 1 for interactive
 *		(the null driver uses -1 here)
 *
-* pl_setup	Use this routine to set orientation, x and y  resolution
-*		(dots/mm)  and x and y page widths. Some device drivers
-*		may  choose to ignore any or all of these. A call to
-*		this routine is optional. If a particular driver requires
-*		any of these parameters and they are not set by a call to
-*		pl_setup() then they should be prompted for in pl_init().
-*		The user may call this routine only once and it is called
-*		before plstar() or plbeg(). 
-*
-* pl_orient	Sets orientation of output to landscape or portrait.
-*
 * pl_init	Initialize device.  This routine may also prompt the user
-*		for certain device parameters or open a graphics file (see
-*		note). Called only once to set things up. 
+*		for certain device parameters or open a graphics file
+*		(see note).  Called only once to set things up.  Certain
+*		options such as familying and resolution (dots/mm) should
+*		be set up before calling this routine (note: some drivers
+*		ignore these).
 *
 * pl_line	Draws a line between two points. 
 *
@@ -111,13 +120,16 @@ static PLStream *pls[PL_NSTREAMS] = {&pls0};	/* Array of stream pointers */
 *
 * pl_esc	Escape function for driver-specific commands.
 *
-* NOTE: Most devices allow multi-page plots to be stored in a single 
-*	graphics file, in which case the graphics file should be opened 
-*	in the pl_init() routine, closed in pl_tidy(), and page advances
-*	done by pl_adv(). If multi-page plots need to be stored in
-*	different files then pl_bop() should open the file and pl_eop()
-*	should close it. Do NOT open files in both pl_init() and pl_bop()
-*	or close files in both pl_eop() and pl_tidy().
+*
+* Notes:
+*
+* Most devices allow multi-page plots to be stored in a single graphics
+* file, in which case the graphics file should be opened in the pl_init()
+* routine, closed in pl_tidy(), and page advances done by calling pl_eop
+* and pl_bop() in sequence. If multi-page plots need to be stored in
+* different files then pl_bop() should open the file and pl_eop() should
+* close it.  Do NOT open files in both pl_init() and pl_bop() or close
+* files in both pl_eop() and pl_tidy().
 \*----------------------------------------------------------------------*/
 
 typedef struct {
@@ -144,10 +156,10 @@ typedef struct {
 * makefile.  When installing plplot you may wish to exclude devices not 
 * present on your system in order to reduce screen clutter.
 *
-* If you hit a <CR> in response to plstar() prompt, you get the FIRST one
-* active below, so arrange them accordingly for your system (i.e. all the
-* system-specific ones should go first, since they won't appear on most
-* systems.) 
+* If you hit a <CR> in response to the plinit() prompt, you get the FIRST
+* one active below, so arrange them accordingly for your system (i.e. all
+* the system-specific ones should go first, since they won't appear on
+* most systems.)
 \*----------------------------------------------------------------------*/
 
 static PLDispatchTable dispatch_table[] = {
@@ -386,10 +398,26 @@ static PLDispatchTable dispatch_table[] = {
 
 #ifdef PS
     {
-	"PostScript File",
+	"PostScript File (monochrome)",
 	"ps",
 	0,
-	plD_init_ps,
+	plD_init_psm,
+	plD_line_ps,
+	plD_polyline_ps,
+	plD_eop_ps,
+	plD_bop_ps,
+	plD_tidy_ps,
+	plD_color_ps,
+	plD_text_ps,
+	plD_graph_ps,
+	plD_width_ps,
+	plD_esc_ps
+    },
+    {
+	"PostScript File (color)",
+	"psc",
+	0,
+	plD_init_psc,
 	plD_line_ps,
 	plD_polyline_ps,
 	plD_eop_ps,
