@@ -1,11 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/02/23 05:35:47  mjl
-   Converted to new plplot command-line handling functions, resulting in
-   a considerable reduction in the amount of actual code.  Miscellaneous bugs in
-   file seeking fixed.  Extraneous page printed on a -p command eliminated.
-   Many other small improvements.
+   Revision 1.8  1993/02/23 05:54:25  mjl
+   A couple of minor documentation and code changes.
 
+ * Revision 1.7  1993/02/23  05:35:47  mjl
+ * Converted to new plplot command-line handling functions, resulting in
+ * a considerable reduction in the amount of actual code.  Miscellaneous bugs in
+ * file seeking fixed.  Extraneous page printed on a -p command eliminated.
+ * Many other small improvements.
+ *
  * Revision 1.6  1993/01/23  06:16:08  mjl
  * Formatting changes only to pltek.  plrender changes include: support for
  * polylines (even converts connected lines while reading into polylines for
@@ -870,16 +873,16 @@ ungetcommand(U_CHAR c)
 * system may use either as its erase key.  <Page Up> is present on some
 * keyboards (different from keypad key).
 *
-* No client data is passed in this case, although a test case is
+* No user data is passed in this case, although a test case is
 * illustrated. 
 *
 * Illegal input is ignored.
 \*----------------------------------------------------------------------*/
 
 static void
-plr_KeyEH(PLKey *key, void *client_data, int *p_exit_eventloop)
+plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 {
-    char *tst = (char *) client_data;
+    char *tst = (char *) user_data;
     int input_num;
 
 /* TEST */
@@ -913,10 +916,6 @@ plr_KeyEH(PLKey *key, void *client_data, int *p_exit_eventloop)
 /* 
 * Seek to specified page, or page advance.
 * Not done until user hits <return>.
-* When this routine is called, the metafile pointer is situated just past
-* the page header for the next page, so we need to adjust the relative
-* targets downward by one.
-* 
 * Need to check for both <LF> and <CR> for portability.
 */
     if (key->code == PLK_Return ||
