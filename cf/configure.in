@@ -709,7 +709,7 @@ cat $srcdir/cf/misc.in		>>Makefile.in
 
 # Object file dependencies
 
-cat $srcdir/cf/deps.in >>Makefile.in
+cat $srcdir/cf/autodeps.in >>Makefile.in
 
 # ----------------------------------------------------------------------------
 # Now build Makedemo.in.
