@@ -19,7 +19,7 @@ rationale and intended usage for the bundled C++ language support.
 PLplot has a fairly complex C API.  There are lots of functions, and
 several facilities have multiple entry points with similar names but
 different argument lists.  (Think contouring, shading).  Often these
-differing argument lists are to accomodate a variety of data storage
+differing argument lists are to accommodate a variety of data storage
 paradigms, one of which you are expected to be using!
     </para>
 
@@ -37,7 +37,7 @@ contained data ever needed to get plotted.
     <para>
 Besides the 2-d API functions, there is also the multiple output
 stream capability of PLplot.  Anyone who knows C++ well, and who has
-used multple output streams in PLplot, has probably noticed striking
+used multiple output streams in PLplot, has probably noticed striking
 similarities between the PLplot <literal>PLStream</literal> pointer and the C++ 
 <literal>this</literal> pointer.  Although multiple output streams have not been 
 widely used in PLplot applications in the past, the availability of
@@ -63,7 +63,7 @@ Beyond this, the C API is downright "ugly" for a significant number of
 the functions, particularly those which return values by accepting
 pointers to variables in their argument lists, and then changing them
 in that way.  Sophisticated C++ users generally take considerable
-pride in bannishing the offensive bare pointer from their code, and
+pride in banishing the offensive bare pointer from their code, and
 consider it disgusting to have to insert &'s just in order to make a
 call to an API function.
     </para>
@@ -181,7 +181,7 @@ data layout.
 
     <para>
 Note that this does /not/ mean that the C++ user's internal data
-layout must be derived from PLplot's Contourable_Data class.  Suupsoe
+layout must be derived from PLplot's Contourable_Data class.  Suppose
 for example that the user data is stored in a C++ "matrix" class.
 To make this data contourable, the user may define a class which
 specializes the indexing concept of the PLplot Contourable_Data class
@@ -213,11 +213,11 @@ moronic data layout constraints imposed by PLplot's C or Fortran API.
   <title>Collapsing the API</title>
 
     <para>
-Use of astraction as in C) above will allow a single method in
+Use of abstraction as in C) above will allow a single method in
 <literal>plstream</literal> to perform the services of multiple functions in the C API.
 In those cases where multiple functions were provided with different
 data layout specifications, but similar functionality, these can all
-be collapsed into one, through the use of the abstract inteface
+be collapsed into one, through the use of the abstract interface
 technique described above.
 
 Moreover, function name overloading can be used to simplify the
