@@ -232,6 +232,7 @@ setup:
 	$(CP) $(GENERICTCLDIR)\*.h plplot
 	$(CP) $(OLDTKDIR)\*.h plplot
 	$(CP) $(GENERICTKDIR)\*.h plplot
+	$(CP) tclIndex $(ROOT)\examples\tcl
 
 install:	$(PROJECT).dll
 	-@md $(INSTALLDIR)
