@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/07/17 21:31:55  mjl
-   Improved error message for out of range indices.
+   Revision 1.10  1993/11/15 08:36:12  mjl
+   Updated the documentation.
 
+ * Revision 1.9  1993/07/17  21:31:55  mjl
+ * Improved error message for out of range indices.
+ *
  * Revision 1.8  1993/07/01  22:13:34  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
@@ -150,16 +153,8 @@ plf2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 /*----------------------------------------------------------------------*\
 * void plcont()
 *
-* Draws a contour plot from data in f(nx,ny), using the subarray
-* from kx to lx in the x direction and from ky to ly in the y
-* direction. The array of contour levels is clevel(nlevel), and
-* "pltr" is the name of a subroutine which transforms array indicies
-* into world coordinates.
-*
-* Note that the fortran-like minimum and maximum indices (kx, lx,
-* ky, ly) are translated into more C-like ones.  I've only kept them
-* as they are for the plcont() argument list because of backward
-* compatibility.
+* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
+* plcontf, with a particular choice for f2eval and f2eval_data.
 \*----------------------------------------------------------------------*/
 
 void
@@ -179,15 +174,18 @@ c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 /*----------------------------------------------------------------------*\
 * void plcontf()
 *
-* Draws a contour plot from data in f(nx,ny), using the subarray
-* from kx to lx in the x direction and from ky to ly in the y
-* direction. The array of contour levels is clevel(nlevel), and
-* "pltr" is the name of a subroutine which transforms array indicies
-* into world coordinates.
+* Draws a contour plot using the function evaluator f2eval and data stored
+* by way of the f2eval_data pointer.  This allows arbitrary organizations
+* of 2d array data to be used.
+*
+* The subrange of indices used for contouring is kx to lx in the x
+* direction and from ky to ly in the y direction. The array of contour
+* levels is clevel(nlevel), and "pltr" is the name of a function which
+* transforms array indicies into world coordinates.
 *
 * Note that the fortran-like minimum and maximum indices (kx, lx,
 * ky, ly) are translated into more C-like ones.  I've only kept them
-* as they are for the plcont() argument list because of backward
+* as they are for the plcontf() argument list because of backward
 * compatibility.
 \*----------------------------------------------------------------------*/
 
@@ -205,15 +203,15 @@ plcontf(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     my = ly - ky + 1;
 
     if (kx < 1 || kx >= lx)
-	plexit("plcont: indices must satisfy  1 <= kx <= lx <= nx.");
+	plexit("plcontf: indices must satisfy  1 <= kx <= lx <= nx.");
 
     if (ky < 1 || ky >= ly)
-	plexit("plcont: indices must satisfy  1 <= ky <= ly <= ny.");
+	plexit("plcontf: indices must satisfy  1 <= ky <= ly <= ny.");
 
     nstor = mx * my;
     heapc = (PLINT *) malloc((size_t) (mx + 2 * nstor) * sizeof(PLINT));
     if (heapc == NULL)
-	plexit("plcont: Out of memory.");
+	plexit("plcontf: Out of memory.");
 
     for (i = 0; i < nlevel; i++) {
 	plcntr(f2eval, f2eval_data,
@@ -464,7 +462,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		else if (iy > krow) {
 		    *p_kstor = *p_kstor + 1;
 		    if (*p_kstor > nstor) {
-			plexit("plcont: Heap exhausted.");
+			plexit("plcontf: Heap exhausted.");
 		    }
 		    ixstor[*p_kstor - 1] = ix;
 		    iystor[*p_kstor - 1] = iy;
