@@ -9,9 +9,9 @@ BuildRoot: /tmp/software/redhat_install_area/plplot
 Summary: PLPlot 2D/3D plotting library
 Packager: Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 Name: plplot
-Version: 5.0.4
-Release: 5
-Source0: http://prdownloads.sourceforge.net/plplot/plplot-5.0.4.tar.gz
+Version: 5.1.0
+Release: 1
+Source0: http://prdownloads.sourceforge.net/plplot/plplot-5.1.0.tar.gz
 URL: http://plplot.sourceforge.net
 Copyright: LGPL with some exceptions, see file "Copyright"
 Group: Applications/Math
@@ -29,27 +29,24 @@ of plotting are configurable.
 Notes on the plplot configuration underlying this package for the
 RH 7.1 build environment: 
 
-(i) We use --with-double=yes to give double precision.
+(i) We use --with-double --enable-dyndrivers --enable-gnome --enable-ntk  
+to give double precision, dynamic drivers, and the experimental gnome
+and ntp drivers.  We do not enable java.
 
-(ii) A large number of drivers are configured by default including tk, ps,
-psc, png and jpeg, and we also explicitly configure --enable-gnome to
-include the experimental gnome driver.
+(ii) A large number of drivers are also configured by default including tk, ps,
+psc, png and jpeg.
 
-(iii) We explicitly configure --enable-octave, but octave is not supported
+(iii) --enable-octave is configured by default, but octave is not supported
 on RedHat 7.1 because of a missing matwrap package.  Thus, the configure
 script automatically disables it, and to be consistent with that result we
 must comment out the octave files from the file list.  To get around this
 problem we will some day make a matwrap rpm (which should be easy to do
 since no compilation is involved).  But not today!
 
-(iv) itcl support does not work with RH7.1 so we disable that.  There is
-a bug in the RH7.1 itcl package; it should include the itclDecls.h file
-and does not.  A bug report has been sent, but so far no action.
-
 %prep
 %setup
 make configure
-./configure --prefix=/usr --with-double --enable-octave --enable-gnome --disable-itcl
+./configure --prefix=/usr --with-double --enable-dyndrivers --enable-gnome --enable-ntk
 %build
 make 
 %install
@@ -82,15 +79,15 @@ cp plplotdoc-info-*/* $RPM_BUILD_ROOT/usr/share/info
 # make sure can redo this script in case of --short-circuit
 rm -f plplotdoc-info-*/*
 # install man pages
-install -m 755 -d $RPM_BUILD_ROOT/usr/man/man1
-cp plm2gif.1 plpr.1 plrender.1 plserver.1 pltcl.1 pltek.1 $RPM_BUILD_ROOT/usr/man/man1
-pushd $RPM_BUILD_ROOT/usr/man/man1
+install -m 755 -d $RPM_BUILD_ROOT/usr/share/man/man1
+cp plm2gif.1 plpr.1 plrender.1 plserver.1 pltcl.1 pltek.1 $RPM_BUILD_ROOT/usr/share/man/man1
+pushd $RPM_BUILD_ROOT/usr/share/man/man1
 gzip plm2gif.1 plpr.1 plrender.1 plserver.1 pltcl.1 pltek.1
 popd
 tar zxf plplotdoc-man-*.tar.gz
 gzip plplotdoc-man-*/*
-install -m 755 -d $RPM_BUILD_ROOT/usr/man/man3
-cp plplotdoc-man-*/*.gz $RPM_BUILD_ROOT/usr/man/man3
+install -m 755 -d $RPM_BUILD_ROOT/usr/share/man/man3
+cp plplotdoc-man-*/*.gz $RPM_BUILD_ROOT/usr/share/man/man3
 # make sure can redo this script in case of --short-circuit
 rm -f plplotdoc-man-*/*
 cd ..
@@ -104,21 +101,22 @@ fi
 %postun
 /sbin/ldconfig
 %files
-# doc plus examples (for now)
+# doc
 %attr(-, root, root) %doc /usr/share/doc/plplot
-%attr(-, root, root) %doc /usr/man/man1/plm2gif.1.gz 
-%attr(-, root, root) %doc /usr/man/man1/plpr.1.gz 
-%attr(-, root, root) %doc /usr/man/man1/plrender.1.gz 
-%attr(-, root, root) %doc /usr/man/man1/plserver.1.gz 
-%attr(-, root, root) %doc /usr/man/man1/pltcl.1.gz
-%attr(-, root, root) %doc /usr/man/man1/pltek.1.gz 
-%attr(-, root, root) %doc /usr/man/man3/*.3plplot.gz 
+%attr(-, root, root) %doc /usr/share/man/man1/plm2gif.1.gz 
+%attr(-, root, root) %doc /usr/share/man/man1/plpr.1.gz 
+%attr(-, root, root) %doc /usr/share/man/man1/plrender.1.gz 
+%attr(-, root, root) %doc /usr/share/man/man1/plserver.1.gz 
+%attr(-, root, root) %doc /usr/share/man/man1/pltcl.1.gz
+%attr(-, root, root) %doc /usr/share/man/man1/pltek.1.gz 
+%attr(-, root, root) %doc /usr/share/man/man3/*.3plplot.gz 
 # octave support files for Plplot.
 # Not available because of matwrap%attr(-, root, root) /usr/share/plplot-octave
-# python module
+# python modules
 %attr(-, root, root) /usr/lib/python1.5/site-packages/plmodule.so
-# fonts and maps (and tcl data once we move away from RH 6.2)
-%attr(-, root, root) /usr/lib/plplot5.0.4
+%attr(-, root, root) /usr/lib/python1.5/site-packages/pyqt_plmodule.so
+# fonts, maps, tcl data, dyndrivers, and examples
+%attr(-, root, root) /usr/lib/plplot5.1.0
 # info files
 %attr(-, root, root) /usr/share/info/plplotdoc.info*.gz
 # headers
