@@ -173,7 +173,7 @@ fi
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
 	FIND_LIB_BEGIN(tcl, TCLLIBDIR)
-	for version in 7.4 ""; do
+	for version in 7.4 7.5 ""; do
 	    if test -n "$TCLLIBDIR"; then
 		break
 	    fi
@@ -235,7 +235,7 @@ fi
 if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
 	FIND_LIB_BEGIN(tk, TKLIBDIR)
-	for version in 4.0 ""; do
+	for version in 4.0 4.1 ""; do
 	    if test -n "$TKLIBDIR"; then
 		break
 	    fi
@@ -481,6 +481,9 @@ if test -z "$EXTRA_LIBS"; then
 	;;
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
 	    EXTRA_LIBS="$EXTRA_LIBS -lm"
+	;;
+	HP-UX* )
+	    EXTRA_LIBS="-ldld -lm"
 	;;
 	* ) 	
 	    AC_CHECK_LIB(Xbsd,   main, [EXTRA_LIBS="$EXTRA_LIBS -lXbsd"])
