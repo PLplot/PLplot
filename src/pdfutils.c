@@ -1,30 +1,33 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/08/25 04:04:06  mjl
- * Eliminated an unnecessary header file inclusion.
+ * Revision 1.12  1995/03/16 23:50:56  mjl
+ * Fixed up Copyright message.
  *
- * Revision 1.10  1994/06/30  18:21:56  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
+ * Revision 1.11  1994/08/25  04:04:06  mjl
+ * Eliminated an unnecessary header file inclusion.
 */
 
 /*--------------------------------------------------------------------------*\
 
     pdf_utils.c
 
-    Copyright (C) 1992 by Maurice J. LeBrun
+    Copyright (C) 1992, 1993, 1994, 1995
+    Maurice LeBrun			mjl@dino.ph.utexas.edu
+    Institute for Fusion Studies	University of Texas at Austin
 
-    This software may be freely copied, modified and redistributed without
-    fee provided that this copyright notice is preserved intact on all
-    copies and modified copies.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
 
-    There is no warranty or other guarantee of fitness of this software.
-    It is provided solely "as is". The author(s) disclaim(s) all
-    responsibility and liability with respect to this software's usage or
-    its effect upon hardware or computer systems.
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free
+    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -53,12 +56,12 @@ pdf_set(char *option, int value)
 	debug = value;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_fopen()
  *
  * Initializes a PDFstrm for a file oriented device.
  * Used exactly like fopen().
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 PDFstrm *
 pdf_fopen(char *filename, char *mode)
@@ -82,12 +85,12 @@ pdf_fopen(char *filename, char *mode)
     return pdfs;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_bopen()
  *
  * Initializes a PDFstrm for reading/writing to a memory buffer.
  * If buffer is NULL, a standard buffer is allocated.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 PDFstrm *
 pdf_bopen(U_CHAR *buffer, long bufmax)
@@ -123,12 +126,12 @@ pdf_bopen(U_CHAR *buffer, long bufmax)
     return pdfs;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_finit()
  *
  * Initializes a PDFstrm for a file oriented device.
  * Like pdf_fopen() but an existing file handle is specified.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 PDFstrm *
 pdf_finit(FILE *file)
@@ -147,12 +150,12 @@ pdf_finit(FILE *file)
     return pdfs;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_close()
  *
  * Closes a PDFstrm.
  * Used exactly like fclose().
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_close(PDFstrm *pdfs)
@@ -171,11 +174,11 @@ pdf_close(PDFstrm *pdfs)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pdf_putc()
  *
  * Writes a single character.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_putc(int c, PDFstrm *pdfs)
@@ -206,11 +209,11 @@ pdf_putc(int c, PDFstrm *pdfs)
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pdf_getc()
  *
  * Reads a single character.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_getc(PDFstrm *pdfs)
@@ -231,11 +234,11 @@ pdf_getc(PDFstrm *pdfs)
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pdf_ungetc()
  *
  * Push back the last command read.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_ungetc(int c, PDFstrm *pdfs)
@@ -259,11 +262,11 @@ pdf_ungetc(int c, PDFstrm *pdfs)
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pdf_wrx()
  *
  * Writes a record.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
@@ -294,11 +297,11 @@ pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pdf_rdx()
  *
  * Reads a record.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 pdf_rdx(U_CHAR *x, long nitems, PDFstrm *pdfs)
@@ -321,13 +324,13 @@ pdf_rdx(U_CHAR *x, long nitems, PDFstrm *pdfs)
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_wr_header()
  *
  * Writes a header string.  Input string must be NULL-terminated.  The
  * written string is terminated by a new-line, not a NULL.  This is done
  * so you can type e.g. "% strings <file> | head" and get sensible output.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_wr_header(PDFstrm *pdfs, char *header)
@@ -348,12 +351,12 @@ pdf_wr_header(PDFstrm *pdfs, char *header)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pdf_rd_header
  *
  * Reads a newline-terminated header string from PDFstrm *pdfs, and
  * converts to a usual NULL-terminated string.  80 chars maximum assumed.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_rd_header(PDFstrm *pdfs, char *header)
@@ -373,11 +376,11 @@ pdf_rd_header(PDFstrm *pdfs, char *header)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pdf_wr_1byte()
  *
  * Writes a U_CHAR as a single byte.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_wr_1byte(PDFstrm *pdfs, U_CHAR s)
@@ -391,11 +394,11 @@ pdf_wr_1byte(PDFstrm *pdfs, U_CHAR s)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pdf_rd_1byte()
  *
  * Reads a single byte, storing into a U_CHAR.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_rd_1byte(PDFstrm *pdfs, U_CHAR *ps)
@@ -409,11 +412,11 @@ pdf_rd_1byte(PDFstrm *pdfs, U_CHAR *ps)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_wr_2bytes()
  *
  * Writes a U_SHORT as two single bytes, low end first.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_wr_2bytes(PDFstrm *pdfs, U_SHORT s)
@@ -429,11 +432,11 @@ pdf_wr_2bytes(PDFstrm *pdfs, U_SHORT s)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_rd_2bytes()
  *
  * Reads a U_SHORT from two single bytes, low end first.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_rd_2bytes(PDFstrm *pdfs, U_SHORT *ps)
@@ -450,11 +453,11 @@ pdf_rd_2bytes(PDFstrm *pdfs, U_SHORT *ps)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_wr_2nbytes()
  *
  * Writes n U_SHORT's as 2n single bytes, low end first.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_wr_2nbytes(PDFstrm *pdfs, U_SHORT *s, PLINT n)
@@ -472,11 +475,11 @@ pdf_wr_2nbytes(PDFstrm *pdfs, U_SHORT *s, PLINT n)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_rd_2nbytes()
  *
  * Reads n U_SHORT's from 2n single bytes, low end first.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_rd_2nbytes(PDFstrm *pdfs, U_SHORT *s, PLINT n)
@@ -495,11 +498,11 @@ pdf_rd_2nbytes(PDFstrm *pdfs, U_SHORT *s, PLINT n)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_wr_4bytes()
  *
  * Writes an unsigned long as four single bytes, low end first.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_wr_4bytes(PDFstrm *pdfs, U_LONG s)
@@ -517,11 +520,11 @@ pdf_wr_4bytes(PDFstrm *pdfs, U_LONG s)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pdf_rd_4bytes()
  *
  * Reads an unsigned long from 4 single bytes, low end first.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_rd_4bytes(PDFstrm *pdfs, U_LONG *ps)
@@ -540,7 +543,7 @@ pdf_rd_4bytes(PDFstrm *pdfs, U_LONG *ps)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Here is the IEEE floating point specification in both 32 bit and 64 bit
  * precisions, from page 9 of "IEEE Standard for Binary Floating-Point
  * Arithmetic", copyright 1985, IEEE Std 754-1985:
@@ -593,13 +596,13 @@ pdf_rd_4bytes(PDFstrm *pdfs, U_LONG *ps)
  * 
  * (Thanks to: Tom Bjorkholm(TBJORKHOLM@abo.fi))
  * 
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pdf_wr_ieeef()
  *
  * Writes a float in IEEE single precision (32 bit) format.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_wr_ieeef(PDFstrm *pdfs, float f)
@@ -658,11 +661,11 @@ pdf_wr_ieeef(PDFstrm *pdfs, float f)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pdf_rd_ieeef()
  *
  * Reads a float from a IEEE single precision (32 bit) format.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pdf_rd_ieeef(PDFstrm *pdfs, float *pf)
@@ -704,14 +707,14 @@ pdf_rd_ieeef(PDFstrm *pdfs, float *pf)
     return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * print_ieeef()
  *
  * Prints binary representation for numbers pointed to by arguments.
  * The first argument is the original float, the second is the
  * IEEE representation.  They should be the same on any machine that
  * uses IEEE floats.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 print_ieeef(void *vx, void *vy)
@@ -747,13 +750,13 @@ print_ieeef(void *vx, void *vy)
     return;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plAlloc2dGrid()
  *
  * Allocates a block of memory for use as a 2-d grid of PLFLT's.
  * Resulting array can be indexed as f[i][j] anywhere.  This is to be used
  * instead of PLFLT f[nx][ny], which is less useful.  Note that this type
- * of allocation is required by the PLPLOT functions which take a 2-d
+ * of allocation is required by the PLplot functions which take a 2-d
  * grids of PLFLT's as an argument, such as plcont() and plot3d().
  * Example usage:
  *
@@ -761,7 +764,7 @@ print_ieeef(void *vx, void *vy)
  *
  *   Alloc2dGrid(&z, XPTS, YPTS);
  *
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
@@ -774,11 +777,11 @@ plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Free2dGrid()
  *
  * Frees a block of memory allocated with Alloc2dGrid().
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny)
