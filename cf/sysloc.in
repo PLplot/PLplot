@@ -704,6 +704,7 @@ if test "$with_shlib" = "yes"; then
 	    AC_MSG_RESULT(okay)
 	    SHLIB_BUILD="$CC -shared -o"
 	    LDSHARED="ld -shared"
+	    RPATH="-rpath ."
 	;;
 	* )
 	    with_shlib=no
@@ -716,6 +717,7 @@ AC_SUBST(SHLIB_BUILD)
 AC_SUBST(SA)
 AC_SUBST(SO)
 AC_SUBST(LDSHARED)
+AC_SUBST(RPATH)
 
 AC_SUBST(SOVERSION)
 
