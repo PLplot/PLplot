@@ -398,34 +398,14 @@ fi
 
 # Define tags to be used in multiple-precision library names
 #
-# Single precision: tag with "f"
 # Double precision: tag with "d"
+# Single precision: tag with no symbol
 
 if test "$with_double" = "yes"; then
-    TAG_PREC="d"
+    LIB_TAG="d"
 else
-    TAG_PREC="f"
+    LIB_TAG=
 fi
-
-# Add suffix of:
-#	b	for baseline library (no X or TK)
-#	X	with X support enabled
-#	tk	with X, TK, and/or Tcl-DP support enabled
-#
-# Build those best suited to your system and softlink to libplplotf
-# and libplplotd to create the system default.  
-
-TAG_ENABLE="b"
-if test "$enable_xwin" = "yes"; then
-    TAG_ENABLE="X"
-fi
-if test "$enable_tk" = "yes"; then
-    TAG_ENABLE="tk"
-fi
-
-# Put them together
-
-LIB_TAG="$TAG_PREC$TAG_ENABLE"
 
 AC_SUBST(LIB_TAG)
 
