@@ -1,11 +1,9 @@
-
-
-!--------------------------------------------------------------------------
-! main
-!
-! Does a series of 3-d plots for a given data set, with different
-! viewing options in each plot.
-!--------------------------------------------------------------------------
+C--------------------------------------------------------------------------
+C      main
+C
+C      Does a series of 3-d plots for a given data set, with different
+C      viewing options in each plot.
+C--------------------------------------------------------------------------
 
       program x18f
       implicit none
@@ -27,65 +25,61 @@
       data alt / 20.0d0, 35.0d0, 50.0d0, 65.0d0 /
       data az  / 30.0d0, 40.0d0, 50.0d0, 60.0d0 /
 
-! Parse and process command line arguments
+C      Parse and process command line arguments
 
-      ! TODO: plParseOpts()
+C      TODO: plParseOpts()
 
-! Initialize plplot
+C      Initialize plplot
 
       call plinit()
 
-      do 110 k = 1, 4
-         call test_poly(k, alt(k), az(k))
-  110 continue
+      do k = 1, 4
+        call test_poly(k, alt(k), az(k))
+      enddo
 
-! From the mind of a sick and twisted physicist...
+C      From the mind of a sick and twisted physicist...
 
-      do 120 i = 1,NPTS
-         z(i) = -1.d0 + 2.d0 * dble (i-1) / dble (NPTS)
+      do i = 1,NPTS
+        z(i) = -1.d0 + 2.d0 * dble (i-1) / dble (NPTS)
 
-! Pick one ...
+C        Pick one ...
 
-!        r = 1. - dble (i-1) / dble (NPTS)
-         r = z(i)
+C        r = 1. - dble (i-1) / dble (NPTS)
+        r = z(i)
 
-         x(i) = r * cos( 2.d0 * PI * 6.d0 * dble (i-1) / dble (NPTS) )
-         y(i) = r * sin( 2.d0 * PI * 6.d0 * dble (i-1) / dble (NPTS) )
-  120 continue
+        x(i) = r * cos( 2.d0 * PI * 6.d0 * dble (i-1) / dble (NPTS) )
+        y(i) = r * sin( 2.d0 * PI * 6.d0 * dble (i-1) / dble (NPTS) )
+      enddo
 
-      do 130 k = 1, 4
-         call pladv(0)
-         call plvpor(0.0d0,  1.0d0, 0.0d0,
-     &               0.9d0)
-         call plwind(-1.0d0, 1.0d0, -0.9d0,
-     &               1.1d0)
-         call plcol0(1)
-         call plw3d(1.0d0,  1.0d0,  1.0d0,
-     &              -1.0d0, 1.0d0,  -1.0d0,
-     &              1.0d0,  -1.0d0, 1.0d0,
-     &              alt(k), az(k))
-         call plbox3('bnstu', 'x axis', 0.0d0, 0,
-     &               'bnstu', 'y axis', 0.0d0, 0,
-     &               'bcdmnstuv', 'z axis', 0.0d0, 0)
+      do k = 1, 4
+        call pladv(0)
+        call plvpor(0.0d0, 1.0d0, 0.0d0, 0.9d0)
+        call plwind(-1.0d0, 1.0d0, -0.9d0, 1.1d0)
+        call plcol0(1)
+        call plw3d(1.0d0, 1.0d0, 1.0d0,
+     &    -1.0d0, 1.0d0, -1.0d0, 1.0d0, -1.0d0, 1.0d0,
+     &    alt(k), az(k))
+        call plbox3('bnstu', 'x axis', 0.0d0, 0,
+     &    'bnstu', 'y axis', 0.0d0, 0,
+     &    'bcdmnstuv', 'z axis', 0.0d0, 0)
 
-         call plcol0(2)
+        call plcol0(2)
 
-         if ( opt(k).gt. 0 ) then
-            call plline3( NPTS, x, y, z )
-         else
-            call plpoin3( NPTS, x, y, z, 1 )
-         endif
-
-         call plcol0(3)
-         write( title,
-     &   '(''#frPLplot Example 18 - Alt='',f10.0d0,''Az='',f10.0d0)' )
-     &       alt(k), az(k)
-         call plmtex('t', 1.0d0, 0.5d0, 0.5d0,
-     &           title)
-  130 continue
+        if ( opt(k).gt. 0 ) then
+          call plline3( NPTS, x, y, z )
+        else
+          call plpoin3( NPTS, x, y, z, 1 )
+        endif
+        
+        call plcol0(3)
+        write( title, '(a,i2,a,i2)')
+     &    '#frPLplot Example 18 - Alt=', nint(alt(k)),
+     &    ', Az=', nint(az(k))
+        call plmtex('t', 1.0d0, 0.5d0, 0.5d0,
+     &    title)
+      enddo
 
       call plend()
-      stop
       end
 
       subroutine test_poly(k, alt, az)
@@ -98,92 +92,63 @@
       real*8 pi, two_pi
       parameter ( pi     = 3.1415926535897932384d0 )
       parameter ( two_pi = 2.0d0*pi                )
-      real*8 draw(4,4)
+      integer draw(4,4)
       DATA draw /
-     &      1, 1, 1, 1,
-     &      1, 0, 1, 0,
-     &      0, 1, 0, 1,
-     &      1, 1, 0, 0 /
+     &  1, 1, 1, 1,
+     &  1, 0, 1, 0,
+     &  0, 1, 0, 1,
+     &  1, 1, 0, 0 /
       real*8 theta, phi, a
       THETA(a) = (two_pi * (a) /20.d0)
       PHI(a)   = (pi * (a) / 20.1d0)
 
       call pladv(0)
-      call plvpor(0.0d0,  1.0d0, 0.0d0,  0.9d0)
+      call plvpor(0.0d0, 1.0d0, 0.0d0, 0.9d0)
       call plwind(-1.0d0, 1.0d0, -0.9d0, 1.1d0)
       call plcol0(1)
-      call plw3d(1.0d0,  1.0d0,  1.0d0,
-     &           -1.0d0, 1.0d0,  -1.0d0,
-     &           1.0d0,  -1.0d0, 1.0d0,
-     &           alt, az)
+      call plw3d(1.0d0, 1.0d0, 1.0d0, 
+     &  -1.0d0, 1.0d0, -1.0d0, 1.0d0,  -1.0d0, 1.0d0,
+     &  alt, az)
       call plbox3('bnstu', 'x axis', 0.0d0, 0,
-     &            'bnstu', 'y axis', 0.0d0, 0,
-     &            'bcdmnstuv', 'z axis', 0.0d0, 0)
-
+     &  'bnstu', 'y axis', 0.0d0, 0,
+     &  'bcdmnstuv', 'z axis', 0.0d0, 0)
+      
       call plcol0(2)
 
 
-!
-!  x = r sin(phi) cos(theta)
-!  y = r sin(phi) sin(theta)
-!  z = r cos(phi)
-!  r = 1 :=)
-!/
+C      x = r sin(phi) cos(theta)
+C      y = r sin(phi) sin(theta)
+C      z = r cos(phi)
+C      r = 1 :=)
 
-      do 120 i=1,20
-         do 110 j=1,20
-            x(1) = sin( PHI(j) ) * cos( THETA(i) )
-            y(1) = sin( PHI(j) ) * sin( THETA(i) )
-            z(1) = cos( PHI(j) )
-
-            x(2) = sin( PHI(j+1) ) * cos( THETA(i) )
-            y(2) = sin( PHI(j+1) ) * sin( THETA(i) )
-            z(2) = cos( PHI(j+1) )
-
-            x(3) = sin( PHI(j+1) ) * cos( THETA(i+1) )
-            y(3) = sin( PHI(j+1) ) * sin( THETA(i+1) )
-            z(3) = cos( PHI(j+1) )
-
-            x(4) = sin( PHI(j) ) * cos( THETA(i+1) )
-            y(4) = sin( PHI(j) ) * sin( THETA(i+1) )
-            z(4) = cos( PHI(j) )
-
-            x(5) = sin( PHI(j) ) * cos( THETA(i) )
-            y(5) = sin( PHI(j) ) * sin( THETA(i) )
-            z(5) = cos( PHI(j) )
-
-            call plpoly3( 5, x, y, z, draw(1,k), 1 )
-  110    continue
-  120 continue
+      do i=0,19
+        do j=0,19
+          x(1) = sin( PHI(j) ) * cos( THETA(i) )
+          y(1) = sin( PHI(j) ) * sin( THETA(i) )
+          z(1) = cos( PHI(j) )
+          
+          x(2) = sin( PHI(j+1) ) * cos( THETA(i) )
+          y(2) = sin( PHI(j+1) ) * sin( THETA(i) )
+          z(2) = cos( PHI(j+1) )
+          
+          x(3) = sin( PHI(j+1) ) * cos( THETA(i+1) )
+          y(3) = sin( PHI(j+1) ) * sin( THETA(i+1) )
+          z(3) = cos( PHI(j+1) )
+          
+          x(4) = sin( PHI(j) ) * cos( THETA(i+1) )
+          y(4) = sin( PHI(j) ) * sin( THETA(i+1) )
+          z(4) = cos( PHI(j) )
+          
+          x(5) = sin( PHI(j) ) * cos( THETA(i) )
+          y(5) = sin( PHI(j) ) * sin( THETA(i) )
+          z(5) = cos( PHI(j) )
+          
+          call plpoly3( 5, x, y, z, draw(1,k), 1 )
+        enddo
+      enddo
 
       call plcol0(3)
       call plmtex('t', 1.0d0, 0.5d0, 0.5d0,
-     &        'unit radius sphere' )
-      return
-      end
-
-      real function PHI( j )
-
-      implicit none
-      real*8 pi, two_pi
-      parameter ( pi     = 3.1415926535897932384d0 )
-      parameter ( two_pi = 2.0d0*pi                )
-
-      integer j
-
-      PHI = pi * (j-1) / 20.1d0
-      return
-      end
-
-      real function THETA( j )
-
-      implicit none
-      real*8 pi, two_pi
-      parameter ( pi     = 3.1415926535897932384d0 )
-      parameter ( two_pi = 2.0d0*pi                )
-
-      integer j
-
-      THETA = two_pi * (j-1) / 20.0d0
+     &  'unit radius sphere' )
       return
       end
