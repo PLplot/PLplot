@@ -1074,10 +1074,9 @@ if test "$enable_tk" = "yes"; then
     $srcdir/bindings/tk/*.h \
     plplot 2>/dev/null
     
-    # tkwin stuff (excluding nameclashed pltools.tcl and plwidget.tcl).
+    # tkwin stuff
     ln -s \
-    `ls $srcdir/bindings/tk-x-plat/*.* |grep -v '\.h$' \
-    | grep -v 'pltools.tcl' |grep -v 'plwidget.tcl'` \
+    `ls $srcdir/bindings/tk-x-plat/*.* |grep -v '\.h$'` \
     . 2>/dev/null
     ln -s \
     $srcdir/bindings/tk-x-plat/*.h \
