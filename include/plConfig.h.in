@@ -69,6 +69,6 @@
 #undef TCL_DIR
 
 /* Package version */
-#undef PLPLOT_VERSION
+#undef VERSION
 
 #endif	/* __PLCONFIG_H__ */

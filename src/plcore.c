@@ -1798,7 +1798,7 @@ plgesc(char *p_esc)
 void
 c_plgver(char *p_ver)
 {
-    strcpy(p_ver, PLPLOT_VERSION);
+    strcpy(p_ver, VERSION);
 }
 
 /* Set inferior X window */
