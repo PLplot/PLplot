@@ -1,3 +1,7 @@
 *.flc
+Makefile
 Makefile.in
-stamp-h*.in
+stamp-h*
+plConfig.h
+plDevs.h
+
