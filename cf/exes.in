@@ -48,28 +48,17 @@ plserver$E:	$(PLLIBS) plserver$O
 
 # -----------------------------------------------------------------------------
 # note this only builds something that can be used if PYTHONPATH is set 
-# to tmp.  Also RPATH puts current directory first.  Therefore only
-# really useful for temporary tests in tmp until it is decided to
-# do the install.
-plmodule$(SO): $(PLLIBS) python_dynamic/plmodule.c
+# to tmp.  Therefore only really useful for temporary tests in tmp until 
+# it is decided to do the install.
+# N.B. the --flat option for setup.py takes care of different logic required
+# for the case of the flat tmp directory.
+plmodule$(SO) pyqt_plmodule$(SO): $(PLLIBS) plmodule.c pyqt_plmodule.c
 	@echo " "
-	@echo "Building Python module."
+	@echo "Building Python modules."
 	@echo " "
-	@cd python_dynamic ; make -s -f Makefile.pre.in distclean
-	@echo '*shared*' > python_dynamic/Setup.in
-	echo 'pl plmodule.c -I. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) -L.. $(PLLIB_LDC) $(LDC_LIBS) $(RPATH)' >> python_dynamic/Setup.in
-	cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
-	$(MV) $(PYTHON_EXE) ..
-
-pyqt_plmodule$(SO): $(PLLIBS) python_dynamic/pyqt_plmodule.c
-	@echo " "
-	@echo "Building PyQt Python module."
-	@echo " "
-	@cd python_dynamic ; make -s -f Makefile.pre.in distclean
-	@echo '*shared*' > python_dynamic/Setup.in
-	echo 'pyqt_pl pyqt_plmodule.c -I. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) -L.. $(PLLIB_LDC) $(LDC_LIBS) $(RPATH)' >> python_dynamic/Setup.in
-	cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
-	$(MV) $(PYQT_PYTHON_EXE) ..
+	# Start fresh (--force) each time since previous build may
+	# be for an installation rather than for present plplot/tmp location.
+	python setup.py build --force --build-temp="./" --build-lib="./" --flat
 
 # -----------------------------------------------------------------------------
 # Font files.
