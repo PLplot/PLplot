@@ -354,7 +354,7 @@ extern void pltr2 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*,
   sv = $source;
   if (! SvIOK (sv)) 
     croak ("PLINT_parseopt_mode* must an integer");
-  temp = (PLINT) (SvIV (sv) | PL_PARSE_NOPROGRAM);
+  temp = (PLINT) SvIV (sv);
   $target = (PLINT_parseopt_mode*) &temp;
 }
 
