@@ -1042,7 +1042,7 @@ InitMain(PLStream *pls)
     XSizeHints hint;
     int x, y;
     U_INT width, height, border, depth;
-    char header[80];
+    char header[1024];
 
     dbug_enter("InitMain");
 
