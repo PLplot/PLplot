@@ -376,12 +376,12 @@ itcl::class ColorEditor {
 # Buttons0 implements the buttons on the main window.
 
 itcl::class Buttons0 {
-    constructor {w plot} {
+    constructor {w plot plw} {
 	frame $w
 	button $w.savep -text "Save Palette" \
 	    -command "$this savePalette"
 	button $w.loadp -text "Load Palette" \
-	    -command "$this loadPalette $plot"
+	    -command "$this loadPalette $plot $plw"
 	button $w.ok -text "OK" \
 	    -command "$this ok"
 
@@ -402,9 +402,9 @@ itcl::class Buttons0 {
 	$palette savePalette
     }
 
-    method loadPalette {plot} {
+    method loadPalette {plot plw} {
 	global palette
-	$palette loadPalette $plot
+	$palette loadPalette $plot $plw
     }
 }
 
@@ -414,7 +414,7 @@ itcl::class ColorPalette0 {
     variable w {}
     variable editor {}
 
-    constructor {_w plot} {
+    constructor {_w plot plw} {
 	set w $_w
 	global ncol0 plcmap0_col
 	frame $w -bd 2 -relief raised
@@ -426,7 +426,7 @@ itcl::class ColorPalette0 {
 	    label $w.$i.color -width 14 \
 		-anchor w 
 	    button $w.$i.patch -text Edit \
-		-command "$this edit $i $plot"
+		-command "$this edit $i $plot $plw"
 	    pack append $w.$i \
 		$w.$i.color "right frame e" \
 		$w.$i.patch "left padx 4 pady 4 frame w"
@@ -451,7 +451,7 @@ itcl::class ColorPalette0 {
 	}
     }
 
-    method loadPalette {plot} {
+    method loadPalette {plot plw} {
 	set file [plfile_open r]
 	if {$file != {}} {
 	    global ncol0 plcmap0_col
@@ -467,9 +467,9 @@ itcl::class ColorPalette0 {
 		set plcmap0_col($i) [lindex $line 0]
 	    }
 	    close $f
-	    setcmap $plot
+	    setcmap $plot $plw
 	    destroy .edit.palette
-	    ColorPalette0 \#auto .edit.palette $plot
+	    ColorPalette0 \#auto .edit.palette $plot $plw
 	    pack append .edit .edit.palette "left filly"
 	}
     }
@@ -482,13 +482,13 @@ itcl::class ColorPalette0 {
 	}
     }
 
-    method edit {i plot} {
+    method edit {i plot plw} {
 	global ncol0 plcmap0_col
-	global static_redraw dynamic_redraw
+	global plopt_static_redraw plopt_dynamic_redraw
 	set orig [getColor $i]
 	set color [$editor run \
 		       [lindex [$w.$i.patch config -background] 4] \
-		       $this colChanged $i $plot]
+		       $this colChanged $i $plot $plw]
 
 	if {$color != {}} {
 	    set plcmap0_col($i) $color
@@ -499,33 +499,34 @@ itcl::class ColorPalette0 {
 	$w.$i.color config -text $color
 	$w.$i.patch config -background $color
 	$plot scol0 $i $color
-	if $static_redraw {
+	if $plopt_static_redraw($plw) {
 	    $plot redraw
 	}
     }
 
     method colChanged {data color} {
-	global static_redraw dynamic_redraw
+	global plopt_static_redraw plopt_dynamic_redraw
 	set i    [lindex $data 0]
 	set plot [lindex $data 1]
+	set plw  [lindex $data 2]
 
 	$w.$i.color config -text $color
 	$w.$i.patch config -background $color
 	$plot scol0 $i $color
-	if $dynamic_redraw {
+	if $plopt_dynamic_redraw($plw) {
 	    $plot redraw
 	}
     }
 
-    method setcmap {plot} {
+    method setcmap {plot plw} {
 	global ncol0 plcmap0_col 
-	global static_redraw dynamic_redraw
+	global plopt_static_redraw plopt_dynamic_redraw
 	set cmap0 ""
 	for {set i 0} {$i < $ncol0} {incr i} {
 	    set cmap0 "$cmap0 $plcmap0_col($i)"
 	}
 	$plot scmap0 $ncol0 $cmap0
-	if $static_redraw {
+	if $plopt_static_redraw($plw) {
 	    $plot redraw
 	}
     }
@@ -537,7 +538,7 @@ itcl::class ColorPalette0 {
 
 # External entry point
 
-proc plcmap0_edit {plot} {
+proc plcmap0_edit {plot plw} {
     global ncol0 plcmap0_col palette
 
     catch {destroy .edit}
@@ -546,11 +547,11 @@ proc plcmap0_edit {plot} {
     wm title .edit "Color Map 0 Editor"
     wm iconname .edit "Cmap0 Editor"
     wm minsize .edit 100 100
-    Buttons0 \#auto .edit.buttons $plot
+    Buttons0 \#auto .edit.buttons $plot $plw
     pack append .edit .edit.buttons \
       "top fillx"
     
-    set palette [ColorPalette0 \#auto .edit.palette $plot]
+    set palette [ColorPalette0 \#auto .edit.palette $plot $plw]
     pack append .edit .edit.palette \
       "left filly"
 }
@@ -564,12 +565,12 @@ proc plcmap0_edit {plot} {
 # Buttons1 implements the buttons on the main window.
 
 itcl::class Buttons1 {
-    constructor {w plot} {
+    constructor {w plot plw} {
 	frame $w
 	button $w.savep -text "Save Palette" \
 	    -command "$this savePalette"
 	button $w.loadp -text "Load Palette" \
-	    -command "$this loadPalette $plot"
+	    -command "$this loadPalette $plot $plw"
 	button $w.ok -text "OK" \
 	    -command [code $this ok]
 
@@ -590,9 +591,9 @@ itcl::class Buttons1 {
 	$palette savePalette
     }
 
-    method loadPalette {plot} {
+    method loadPalette {plot plw} {
 	global palette
-	$palette loadPalette $plot
+	$palette loadPalette $plot $plw
     }
 }
 
@@ -605,7 +606,7 @@ itcl::class ColorPalette1 {
     variable w {}
     variable editor {}
 
-    constructor {_w plot} {
+    constructor {_w plot plw} {
 	set w $_w
 	global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
 
@@ -641,11 +642,11 @@ itcl::class ColorPalette1 {
 	    frame $w.l.$i
 	    label $w.l.$i.color -width 14 -anchor w
 	    button $w.l.$i.patch -text Edit \
-		-command "$this edit $i $plot"
+		-command "$this edit $i $plot $plw"
 
 	    scale $w.l.$i.scale -from 0 -to 100 -length 8c \
 		-orient horizontal \
-		-command "$this posChanged $i $plot"
+		-command "$this posChanged $i $plot $plw"
 
 	# I only decorate the movable sliders (i.e. not endpoints) by +/-
 	# buttons.  But the sliders themselves are a good visual cue as to
@@ -680,7 +681,7 @@ itcl::class ColorPalette1 {
 	    if {$i < $ncol1-1} {
 		checkbutton $w.r.$i.rev \
 		    -variable plcmap1_rev($i) -relief flat \
-		    -command "$this setcmap $plot"
+		    -command "$this setcmap $plot $plw"
 		pack append $w.r.$i \
 		    $w.r.$i.rev "right padx .5c" 
 	    }
@@ -713,7 +714,7 @@ itcl::class ColorPalette1 {
 	}
     }
 
-    method loadPalette {plot} {
+    method loadPalette {plot plw} {
 	set file [plfile_open r]
 	if {$file != {}} {
 	    set f [open $file "r"]
@@ -735,9 +736,9 @@ itcl::class ColorPalette1 {
 		}
 	    }
 	    close $f
-	    setcmap $plot
+	    setcmap $plot $plw
 	    destroy .edit.palette
-	    ColorPalette1 \#auto .edit.palette $plot
+	    ColorPalette1 \#auto .edit.palette $plot $plw
 	    pack append .edit .edit.palette "left filly"
 	}
     }
@@ -746,13 +747,13 @@ itcl::class ColorPalette1 {
 	$w.l.$i.scale set [expr [$w.l.$i.scale get]+$inc]
     }
 
-    method posChanged {i plot args} {
+    method posChanged {i plot plw args} {
 	global plcmap1_pos
 	set curr [getpos $i]
 
 	$w.l.$i.scale set $curr
 	set plcmap1_pos($i) $curr
-	setcmap $plot 1
+	setcmap $plot $plw 1
     }
 
     method getpos {i} {
@@ -796,13 +797,13 @@ itcl::class ColorPalette1 {
 	}
     }
 
-    method edit {i plot} {
+    method edit {i plot plw} {
 	global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
-	global static_redraw dynamic_redraw
+	global plopt_static_redraw plopt_dynamic_redraw
 	set orig [$this getColor $i]
 	set color [$editor run \
 		       [lindex [$w.l.$i.patch config -background] 4] \
-		       $this colChanged $i $plot]
+		       $this colChanged $i $plot $plw]
 
 	if {$color != {}} {
 	    set plcmap1_col($i) $color
@@ -813,35 +814,37 @@ itcl::class ColorPalette1 {
 	$w.l.$i.color config -text $color
 	$w.l.$i.patch config -background $color
 	$plot scol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
-	if $static_redraw {
+	if $plopt_static_redraw($plw) {
 	    $plot redraw
 	}
     }
 
     method colChanged {data color} {
 	global plcmap1_pos plcmap1_rev
-	global static_redraw dynamic_redraw
+	global plopt_static_redraw plopt_dynamic_redraw
 	set i    [lindex $data 0]
 	set plot [lindex $data 1]
+	set plw  [lindex $data 2]
 
 	$w.l.$i.color config -text $color
 	$w.l.$i.patch config -background $color
 	$plot scol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
-	if $dynamic_redraw {
+	if $plopt_dynamic_redraw($plw) {
 	    $plot redraw
 	}
     }
 
-    method setcmap {plot {dynamic 0}} {
+    method setcmap {plot plw {dynamic 0}} {
 	global ncol1 plcmap1_col plcmap1_pos plcmap1_rev
-	global static_redraw dynamic_redraw
+	global plopt_static_redraw plopt_dynamic_redraw
 	set cmap1 ""
 	for {set i 0} {$i < $ncol1} {incr i} {
 	    set cmap1 \
 		"$cmap1 $plcmap1_col($i) $plcmap1_pos($i) $plcmap1_rev($i)"
 	}
 	$plot scmap1 $ncol1 $cmap1
-	if { (!$dynamic && $static_redraw) || ($dynamic && $dynamic_redraw) } {
+	if { (!$dynamic && $plopt_static_redraw($plw)) || 
+	     ($dynamic && $plopt_dynamic_redraw($plw)) } {
 	    $plot redraw
 	}
     }
@@ -853,7 +856,7 @@ itcl::class ColorPalette1 {
 
 # External entry point
 
-proc plcmap1_edit {plot} {
+proc plcmap1_edit {plot plw} {
     global ncol1 plcmap1_col plcmap1_pos palette
 
     catch {destroy .edit}
@@ -862,10 +865,10 @@ proc plcmap1_edit {plot} {
     wm title .edit "Color Map 1 Editor"
     wm iconname .edit "Cmap1 Editor"
     wm minsize .edit 100 100
-    Buttons1 \#auto .edit.buttons $plot
+    Buttons1 \#auto .edit.buttons $plot $plw
     pack append .edit .edit.buttons \
       "top fillx"
-    set palette [ColorPalette1 \#auto .edit.palette $plot]
+    set palette [ColorPalette1 \#auto .edit.palette $plot $plw]
     pack append .edit .edit.palette \
 	 "left filly"
 }

@@ -530,7 +530,7 @@ proc plw_create_pmenu_redraw {w} {
 
 proc plw_create_pmenu_palettes {w} {
     global pmenu; set m $pmenu($w).palettes
-    global static_redraw dynamic_redraw
+    global plopt_static_redraw plopt_dynamic_redraw
 
 # The palette tools require Itcl 3.0 or later.
 
@@ -559,20 +559,20 @@ proc plw_create_pmenu_palettes {w} {
     }
 
     if $rwcolorcells {
-	set static_redraw 0
-	set dynamic_redraw 0
+	set plopt_static_redraw($w) 0
+	set plopt_dynamic_redraw($w) 0
     } else {
-	set static_redraw 1
-	set dynamic_redraw 1
+	set plopt_static_redraw($w) 1
+	set plopt_dynamic_redraw($w) 1
     }
 
 # Set up palette tools
 
     $m add command -label "Palette 0" \
-	-command "plcmap0_edit $w.plwin" 
+	-command "plcmap0_edit $w.plwin $w" 
 
     $m add command -label "Palette 1" \
-	-command "plcmap1_edit $w.plwin" 
+	-command "plcmap1_edit $w.plwin $w" 
 
 # Palettes - options (another cascade)
 
@@ -583,10 +583,10 @@ proc plw_create_pmenu_palettes {w} {
 # will be used to allow overrides that way too, but for now this will do.
 
     $m.options add check -label "Enable static plot redraws" \
-	-variable static_redraw
+	-variable plopt_static_redraw($w)
 
     $m.options add check -label "Enable dynamic plot redraws" \
-	-variable dynamic_redraw
+	-variable plopt_dynamic_redraw($w)
 
 # Set up traces to force the following logical relationship:
 #
@@ -594,17 +594,17 @@ proc plw_create_pmenu_palettes {w} {
 #
 # and its contrapositive.
 
-    trace variable static_redraw w plw_pmenu_palettes_checkvars
-    trace variable dynamic_redraw w plw_pmenu_palettes_checkvars
+    trace variable plopt_static_redraw($w) w plw_pmenu_palettes_checkvars
+    trace variable plopt_dynamic_redraw($w) w plw_pmenu_palettes_checkvars
 }
 
-proc plw_pmenu_palettes_checkvars {n1 n2 op} {
-    global static_redraw dynamic_redraw
-    if { $n1 == "dynamic_redraw" } {
-	if $dynamic_redraw { set static_redraw 1 }
+proc plw_pmenu_palettes_checkvars {var w op} {
+    global plopt_static_redraw plopt_dynamic_redraw
+    if { $var == "plopt_dynamic_redraw" } {
+	if $plopt_dynamic_redraw($w) { set plopt_static_redraw($w) 1 }
     }
-    if { $n1 == "static_redraw" } {
-	if !$static_redraw { set dynamic_redraw 0 }
+    if { $var == "plopt_static_redraw" } {
+	if !$plopt_static_redraw($w) { set plopt_dynamic_redraw($w) 0 }
     }
 }
 
