@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/03/03 19:42:16  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.4  1993/03/08 21:47:48  mjl
+   Added a type field for each driver to the dispatch table.  Used for
+   determining whether a device is file-oriented or not.
 
+ * Revision 1.3  1993/03/03  19:42:16  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.2  1993/02/23  04:53:14  mjl
  * Eliminated xxx_adv (gradv) driver function prototypes.
  *
@@ -51,6 +55,9 @@ static PLStream pls[PL_NSTREAMS];
 * pl_MenuStr	Pointer to string that is printed in device menu. 
 *
 * pl_DevName	A short device "name" for device selection by name. 
+*
+* pl_type	0 for file-oriented device, 1 for interactive
+*		(the null driver uses -1 here)
 *
 * pl_setup	Use this routine to set orientation, x and y  resolution
 *		(dots/mm)  and x and y page widths. Some device drivers
@@ -103,6 +110,7 @@ static PLStream pls[PL_NSTREAMS];
 typedef struct {
    char *pl_MenuStr;
    char *pl_DevName;
+   int  pl_type;
    void (*pl_init)	(PLStream *);
    void (*pl_line)	(PLStream *, short, short, short, short);
    void (*pl_polyline)	(PLStream *, short *, short *, PLINT);
@@ -137,6 +145,7 @@ static PLDispatchTable dispatch_table[] = {
     {
         "NeXT Display",
         "next",
+	1,
         nx_init,
         nx_line,
         nx_polyline,
@@ -155,6 +164,7 @@ static PLDispatchTable dispatch_table[] = {
    {
 	"Amiga Window",
 	"amiwn",
+	1,
 	amiwn_init,
 	amiwn_line,
 	amiwn_polyline,
@@ -173,6 +183,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"OS/2 PM Screen",
 	"os2",
+	1,
 	os2_init,
 	os2_line,
 	os2_polyline,
@@ -191,6 +202,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"X-Window Screen (Motif)",
 	"xm",
+	1,
 	xm_init,
 	xm_line,
 	xm_polyline,
@@ -209,6 +221,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"X-Window Screen (Xlib)",
 	"xwin",
+	1,
 	xw_init,
 	xw_line,
 	xw_polyline,
@@ -227,6 +240,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"DOS VGA Screen",
 	"vga",
+	1,
 	vga_init,
 	vga_line,
 	vga_polyline,
@@ -245,6 +259,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"DOS SVGA Screen",
 	"svga",
+	1,
 	svga_init,
 	svga_line,
 	svga_polyline,
@@ -263,6 +278,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"Xterm Window",
 	"xterm",
+	1,
 	xte_init,
 	xte_line,
 	xte_polyline,
@@ -281,6 +297,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"Tektronix Terminal",
 	"tekt",
+	1,
 	tekt_init,
 	tek_line,
 	tek_polyline,
@@ -299,6 +316,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"DG300 Terminal",
 	"dg300",
+	1,
 	dg_init,
 	dg_line,
 	dg_polyline,
@@ -319,6 +337,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"PLPLOT Native Meta-File",
 	"plmeta",
+	0,
 	plm_init,
 	plm_line,
 	plm_polyline,
@@ -337,6 +356,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"Tektronix File",
 	"tekf",
+	0,
 	tekf_init,
 	tek_line,
 	tek_polyline,
@@ -355,6 +375,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"PostScript File",
 	"ps",
+	0,
 	ps_init,
 	ps_line,
 	ps_polyline,
@@ -373,6 +394,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"Xfig file",
 	"xfig",
+	0,
 	xfig_init,
 	xfig_line,
 	xfig_polyline,
@@ -391,6 +413,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"LaserJet II Bitmap File (150 dpi)",
 	"ljii",
+	0,
 	jet_init,
 	jet_line,
 	jet_polyline,
@@ -409,6 +432,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"Amiga Printer (prefs settings)",
 	"amipr",
+	0,
 	amipr_init,
 	amipr_line,
 	amipr_polyline,
@@ -427,6 +451,7 @@ static PLDispatchTable dispatch_table[] = {
    {
 	"IFF Graphics File",
 	"iff",
+	0,
 	iff_init,
 	iff_line,
 	iff_polyline,
@@ -445,6 +470,7 @@ static PLDispatchTable dispatch_table[] = {
    {
 	"Aegis Draw File",
 	"aegis",
+	0,
 	aegis_init,
 	aegis_line,
 	aegis_polyline,
@@ -463,6 +489,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"HP 7470 Plotter File (HPGL Cartridge, Small Plotter)",
 	"hp7470",
+	0,
 	hp7470_init,
 	hp7470_line,
 	hp7470_polyline,
@@ -481,6 +508,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"HP 7580 Plotter File (Large Plotter)",
 	"hp7580",
+	0,
 	hp7580_init,
 	hp7580_line,
 	hp7580_polyline,
@@ -499,6 +527,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"Impress File",
 	"imp",
+	0,
 	imp_init,
 	imp_line,
 	imp_polyline,
@@ -517,6 +546,7 @@ static PLDispatchTable dispatch_table[] = {
     {
 	"Null device",
 	"null",
+	-1,
 	null_init,
 	null_line,
 	null_polyline,
