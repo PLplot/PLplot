@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/06/30 18:22:11  mjl
+ * Revision 1.14  1994/07/20 06:09:22  mjl
+ * Changed syntax of the new 3d functions plline3() and plpoly3() to be more
+ * like plline(), and moved to this file.
+ *
+ * Revision 1.13  1994/06/30  18:22:11  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -96,6 +100,112 @@ c_plline(PLINT n, PLFLT *x, PLFLT *y)
 	return;
     }
     plP_drawor_poly(x, y, n);
+}
+
+/*----------------------------------------------------------------------*\
+ * void plline3(n, x, y, z)
+ *
+ * Draws a line in 3 space.  You must first set up the viewport, the
+ * 2d viewing window (in world coordinates), and the 3d normalized
+ * coordinate box.  See x18c.c for more info.
+\*----------------------------------------------------------------------*/
+
+void
+c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
+{
+    int i;
+    PLFLT u, v;
+
+    if (plsc->level < 3) {
+	myabort("plline3: Please set up window first");
+	return;
+    }
+
+    for( i=0; i < n; i++ ) {
+	u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
+	v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
+	if (i==0)
+	    plP_movphy(u,v);
+	else
+	    plP_draphy(u,v);
+    }
+    return;
+}
+
+/*----------------------------------------------------------------------*\
+ * void plpoly3( n, x, y, z, draw )
+ *
+ * Draws a polygon in 3 space.  This differs from plline3() in that
+ * this attempts to determine if the polygon is viewable.  If the back
+ * of polygon is facing the viewer, then it isn't drawn.  If this
+ * isn't what you want, then use plline3 instead.
+ *
+ * n specifies the number of points.  They are assumed to be in a
+ * plane, and the directionality of the plane is determined from the
+ * first three points.  Additional points do not /have/ to lie on the
+ * plane defined by the first three, but if they do not, then the
+ * determiniation of visibility obviously can't be 100% accurate...
+ * So if you're 3 space polygons are too far from planar, consider
+ * breaking them into smaller polygons.  "3 points define a plane" :-).
+ *
+ * The directionality of the polygon is determined by assuming the
+ * points are laid out in clockwise order.  If you are drawing them in
+ * counter clockwise order, make n the negative of the number of
+ * points.
+ *
+ * BUGS:  If one of the first two segments is of zero length, or if
+ * they are colinear, the calculation of visibility has a 50/50 chance
+ * of being correct.  Avoid such situations :-).  See x18c for an
+ * example of this problem.  (Search for "20.1").
+\*----------------------------------------------------------------------*/
+
+void
+c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw)
+{
+    int i, nn;
+    PLFLT u, v;
+    PLFLT u1, v1, u2, v2, u3, v3;
+    PLFLT c;
+
+    if (plsc->level < 3) {
+	myabort("plpoly3: Please set up window first");
+	return;
+    }
+
+    nn = abs(n);
+    if ( nn < 3 ) {
+	myabort("plpoly3: Must specify at least 3 points");
+	return;
+    }
+
+/* Now figure out which side this is. */
+
+    u1 = plP_wcpcx(plP_w3wcx( x[0], y[0], z[0] ));
+    v1 = plP_wcpcy(plP_w3wcy( x[0], y[0], z[0] ));
+
+    u2 = plP_wcpcx(plP_w3wcx( x[1], y[1], z[1] ));
+    v2 = plP_wcpcy(plP_w3wcy( x[1], y[1], z[1] ));
+
+    u3 = plP_wcpcx(plP_w3wcx( x[2], y[2], z[2] ));
+    v3 = plP_wcpcy(plP_w3wcy( x[2], y[2], z[2] ));
+
+    c = (u1-u2)*(v3-v2)-(v1-v2)*(u3-u2);
+
+    if ( c * n < 0. )
+	return;
+
+    for( i=0; i < nn; i++ ) {
+	u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
+	v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
+	if (i==0)
+	    plP_movphy(u,v);
+	else if (draw[i])
+	    plP_draphy(u,v);
+	else
+	    plP_movphy(u,v);
+    }
+
+    return;
 }
 
 /*----------------------------------------------------------------------*\
