@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/07/12 19:18:19  mjl
+ * Revision 1.11  1994/07/20 04:03:47  mjl
+ * Eliminated include of plplot.h if it's already been included (this file
+ * uses a search path since it may be included into user code).
+ *
+ * Revision 1.10  1994/07/12  19:18:19  mjl
  * Put CADDR_T_HACK code in proper location.
  *
  * Revision 1.9  1994/07/01  22:38:09  mjl
@@ -12,34 +16,6 @@
  * shared (allocated colors, graphics contexts, etc).  The drawback is that
  * colors are no longer independent between windows, if created by a single
  * process (but this can also be an advantage).
- *
- * Revision 1.8  1994/06/09  20:30:50  mjl
- * Changed to storing the Visual instead of VisualInfo pointer.
- *
- * Revision 1.7  1994/05/23  22:09:24  mjl
- * Eliminated the "pixels" var as it is no longer being used.
- *
- * Revision 1.6  1994/05/16  21:26:53  mjl
- * Added ncol0 for storing number of colors allocated in cmap0.
- *
- * Revision 1.5  1994/05/07  03:20:40  mjl
- * Added entry for: XVisualInfo *vi to XwDev struct, and prototype for new
- * global function PLX_save_colormap.
- *
- * Revision 1.4  1994/04/30  16:16:32  mjl
- * Eliminated unused variables xold, yold, from XwDev definition.
- *
- * Revision 1.3  1994/04/08  12:15:16  mjl
- * Added CADDR_T_HACK -- define this and the typedef of caddr_t will be
- * made here for braindead systems.  Added prototype for user specified
- * X event handler (MasterEH).  Include of plstream.h now uses the
- * search path.
- *
- * Revision 1.2  1994/03/23  07:06:22  mjl
- * Properly wrapped and commented.
- *
- * Revision 1.1  1993/12/08  06:20:38  mjl
- * Added for all code/data shared with the xwin driver.
 */
 
 /*	plplotX.h
@@ -51,8 +27,15 @@
 #ifndef __PLPLOTX_H__
 #define __PLPLOTX_H__
 
+/* Several of the PLplot header files must be included first */
+/* I only do this conditionally because of the search path */
+
+#ifndef __PLPLOT_H__
 #include <plplot.h>
+#endif
+#ifndef __PLSTREAM_H__
 #include <plstream.h>
+#endif
 
 /* System headers */
 
