@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/07/16 22:29:17  mjl
-   Definition of standard meta coordinates now done here.  Prototypes for
-   several new functions added.
+   Revision 1.3  1993/07/28 05:50:12  mjl
+   Removed some unnecessary code (under ANSI C) for handling signed chars;
+   added free_mem() utility macro.
 
+ * Revision 1.2  1993/07/16  22:29:17  mjl
+ * Definition of standard meta coordinates now done here.  Prototypes for
+ * several new functions added.
+ *
  * Revision 1.1  1993/07/02  07:27:16  mjl
  * Created to hold private PLPLOT macros, declarations, and prototypes.
  * Included by all PLPLOT source files.
@@ -94,6 +98,12 @@
 #endif
 #endif
 
+#ifdef MSDOS
+#ifdef PL_NEED_MALLOC
+#include <malloc.h>
+#endif
+#endif
+
 #ifdef AMIGA
 #ifndef NO_ANSI_LIBC		/* NO_ANSI_LIBC is required by SAS/C 5.X */
 #define NO_ANSI_LIBC		/* (still pretty prevalent, so..) */
@@ -121,21 +131,9 @@
 \*----------------------------------------------------------------------*/
 
 /* Signed char type, in case we ever need it. */
+/* This should always work now since the standard demands it */
 
-#ifdef VAXC
-#define NO_SIGNED_CHAR
-#endif
-
-#ifdef sun
-#define NO_SIGNED_CHAR
-#endif
-
-#ifdef NO_SIGNED_CHAR
-   typedef char        SCHAR;
-#else
-   typedef signed char SCHAR;
-#endif
-
+typedef signed char SCHAR;
 
 /* Some unsigned types */
 
@@ -192,6 +190,9 @@
 #else
 #define dbug_enter(a)
 #endif
+
+#define free_mem(a) \
+    if (a != NULL) { free((void *) a); a = NULL; }
 
 #ifndef MAX
 #define MAX(a,b)    (((a) > (b)) ? (a) : (b))
