@@ -75,7 +75,7 @@ PLStream *plsc = &pls0;
  * most systems.)
 \*--------------------------------------------------------------------------*/
 
-static PLDispatchTable *dispatch_table = 0;
+static PLDispatchTable **dispatch_table = 0;
 static int npldrivers = 0;
 
 static PLDispatchTable static_devices[] = {
@@ -86,6 +86,7 @@ static PLDispatchTable static_devices[] = {
     {
         "Macintosh Display; 8 windows",
         "mac8",
+        plDevType_Interactive,
         1,
         (plD_init_fp) plD_init_mac8,
         (plD_line_fp) plD_line_mac,
@@ -99,7 +100,8 @@ static PLDispatchTable static_devices[] = {
     {
         "Macintosh Display; 1 window, no pausing",
         "mac1",
-        1,
+        plDevType_Interactive,
+        2,
         (plD_init_fp) plD_init_mac1,
         (plD_line_fp) plD_line_mac,
         (plD_polyline_fp) plD_polyline_mac,
@@ -115,7 +117,8 @@ static PLDispatchTable static_devices[] = {
     {
         "NeXT Display",
         "next",
-	1,
+	plDevType_Interactive,
+        3,
         (plD_init_fp) plD_init_nx,
         (plD_line_fp) plD_line_nx,
         (plD_polyline_fp) plD_polyline_nx,
@@ -131,7 +134,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"OS/2 PM Screen",
 	"os2",
-	1,
+	plDevType_Interactive,
+        4,
 	(plD_init_fp) plD_init_os2,
 	(plD_line_fp) plD_line_os2,
 	(plD_polyline_fp) plD_polyline_os2,
@@ -147,7 +151,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"X-Window (Xlib)",
 	"xwin",
-	1,
+        plDevType_Interactive,
+        5,
 	(plD_init_fp) plD_init_xw,
 	(plD_line_fp) plD_line_xw,
 	(plD_polyline_fp) plD_polyline_xw,
@@ -163,7 +168,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Gnome Canvas",
 	"gnome",
-	1,
+	plDevType_Interactive,
+        6,
 	(plD_init_fp) plD_init_gnome,
 	(plD_line_fp) plD_line_gnome,
 	(plD_polyline_fp) plD_polyline_gnome,
@@ -179,7 +185,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Tcl/TK Window",
 	"tk",
-	1,
+	plDevType_Interactive,
+        7,
 	(plD_init_fp) plD_init_tk,
 	(plD_line_fp) plD_line_tk,
 	(plD_polyline_fp) plD_polyline_tk,
@@ -195,7 +202,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Linux console VGA Screen",
 	"vga",
-	1,
+	plDevType_Interactive,
+        8,
 	(plD_init_fp) plD_init_vga,
 	(plD_line_fp) plD_line_vga,
 	(plD_polyline_fp) plD_polyline_vga,
@@ -211,7 +219,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"MGR Window",
 	"mgr",
-	1,
+	plDevType_Interactive,
+        9,
 	(plD_init_fp) plD_init_mgr,
 	(plD_line_fp) plD_line_mgr,
 	(plD_polyline_fp) plD_polyline_mgr,
@@ -227,7 +236,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Windows 3.x Driver",
 	"win3",
-	1,
+	plDevType_Interactive,
+        10,
 	(plD_init_fp) plD_init_win3,
 	(plD_line_fp) plD_line_win3,
 	(plD_polyline_fp) plD_polyline_win3,
@@ -243,7 +253,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"DOS VGA Screen (msc)",
 	"vga",
-	1,
+	plDevType_Interactive,
+        11,
 	(plD_init_fp) plD_init_vga,
 	(plD_line_fp) plD_line_vga,
 	(plD_polyline_fp) plD_polyline_vga,
@@ -259,7 +270,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"VGA Screen (BGI)",
 	"vga",
-	1,
+	plDevType_Interactive,
+        12,
 	(plD_init_fp) plD_init_vga,
 	(plD_line_fp) plD_line_vga,
 	(plD_polyline_fp) plD_polyline_vga,
@@ -275,7 +287,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"SVGA Screen (GRX20)",
 	"vga",
-	1,
+	plDevType_Interactive,
+        13,
 	(plD_init_fp) plD_init_vga,
 	(plD_line_fp) plD_line_vga,
 	(plD_polyline_fp) plD_polyline_vga,
@@ -291,7 +304,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"TIFF File (TIFFLIB / GRX20)",
 	"tiff",
-	0,
+	plDevType_FileOriented,
+        14,
 	(plD_init_fp) plD_init_tiff,
 	(plD_line_fp) plD_line_vga,
 	(plD_polyline_fp) plD_polyline_vga,
@@ -307,7 +321,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"JPEG File (Independent JPEG Group based on GRX20)",
 	"jpg",
-	0,
+	plDevType_FileOriented,
+        15,
 	(plD_init_fp) plD_init_jpg,
 	(plD_line_fp) plD_line_vga,
 	(plD_polyline_fp) plD_polyline_vga,
@@ -323,7 +338,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Windows Bitmap File (GRX20)",
 	"bmp",
-	0,
+	plDevType_FileOriented,
+        16,
 	(plD_init_fp) plD_init_bmp,
 	(plD_line_fp) plD_line_vga,
 	(plD_polyline_fp) plD_polyline_vga,
@@ -339,7 +355,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"VGA Screen (emx)",
 	"vga",
-	1,
+	plDevType_Interactive,
+        17,
 	(plD_init_fp) plD_init_vga,
 	(plD_line_fp) plD_line_vga,
 	(plD_polyline_fp) plD_polyline_vga,
@@ -355,7 +372,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Xterm Window",
 	"xterm",
-	1,
+	plDevType_Interactive,
+        18,
 	(plD_init_fp) plD_init_xterm,
 	(plD_line_fp) plD_line_tek,
 	(plD_polyline_fp) plD_polyline_tek,
@@ -371,7 +389,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Tektronix Terminal (4010)",
 	"tekt",
-	1,
+	plDevType_Interactive,
+        19,
 	(plD_init_fp) plD_init_tekt,
 	(plD_line_fp) plD_line_tek,
 	(plD_polyline_fp) plD_polyline_tek,
@@ -387,7 +406,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Tektronix Terminal (4105/4107)",
 	"tek4107t",
-	1,
+	plDevType_Interactive,
+        20,
 	(plD_init_fp) plD_init_tek4107t,
 	(plD_line_fp) plD_line_tek,
 	(plD_polyline_fp) plD_polyline_tek,
@@ -403,7 +423,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"MS-Kermit emulator",
 	"mskermit",
-	1,
+	plDevType_Interactive,
+        21,
 	(plD_init_fp) plD_init_mskermit,
 	(plD_line_fp) plD_line_tek,
 	(plD_polyline_fp) plD_polyline_tek,
@@ -419,7 +440,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Versaterm vt100/tek emulator",
 	"versaterm",
-	1,
+	plDevType_Interactive,
+        22,
 	(plD_init_fp) plD_init_versaterm,
 	(plD_line_fp) plD_line_tek,
 	(plD_polyline_fp) plD_polyline_tek,
@@ -435,7 +457,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"VLT vt100/tek emulator",
 	"vlt",
-	1,
+	plDevType_Interactive,
+        23,
 	(plD_init_fp) plD_init_vlt,
 	(plD_line_fp) plD_line_tek,
 	(plD_polyline_fp) plD_polyline_tek,
@@ -451,7 +474,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Conex vt320/tek emulator",
 	"conex",
-	1,
+	plDevType_Interactive,
+        24,
 	(plD_init_fp) plD_init_conex,
 	(plD_line_fp) plD_line_tek,
 	(plD_polyline_fp) plD_polyline_tek,
@@ -467,7 +491,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"DG300 Terminal",
 	"dg300",
-	1,
+	plDevType_Interactive,
+        25,
 	(plD_init_fp) plD_init_dg,
 	(plD_line_fp) plD_line_dg,
 	(plD_polyline_fp) plD_polyline_dg,
@@ -485,7 +510,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"PLplot Native Meta-File",
 	"plmeta",
-	0,
+	plDevType_FileOriented,
+        26,
 	(plD_init_fp) plD_init_plm,
 	(plD_line_fp) plD_line_plm,
 	(plD_polyline_fp) plD_polyline_plm,
@@ -501,7 +527,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Tektronix File (4010)",
 	"tekf",
-	0,
+	plDevType_FileOriented,
+        27,
 	(plD_init_fp) plD_init_tekf,
 	(plD_line_fp) plD_line_tek,
 	(plD_polyline_fp) plD_polyline_tek,
@@ -517,7 +544,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Tektronix File (4105/4107)",
 	"tek4107f",
-	0,
+	plDevType_FileOriented,
+        28,
 	(plD_init_fp) plD_init_tek4107f,
 	(plD_line_fp) plD_line_tek,
 	(plD_polyline_fp) plD_polyline_tek,
@@ -533,7 +561,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"PostScript File (monochrome)",
 	"ps",
-	0,
+	plDevType_FileOriented,
+        29,
 	(plD_init_fp) plD_init_psm,
 	(plD_line_fp) plD_line_ps,
 	(plD_polyline_fp) plD_polyline_ps,
@@ -546,7 +575,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"PostScript File (color)",
 	"psc",
-	0,
+	plDevType_FileOriented,
+        30,
 	(plD_init_fp) plD_init_psc,
 	(plD_line_fp) plD_line_ps,
 	(plD_polyline_fp) plD_polyline_ps,
@@ -562,7 +592,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Xfig file",
 	"xfig",
-	0,
+	plDevType_FileOriented,
+        31,
 	(plD_init_fp) plD_init_xfig,
 	(plD_line_fp) plD_line_xfig,
 	(plD_polyline_fp) plD_polyline_xfig,
@@ -578,7 +609,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"LaserJet IIp/deskjet compressed graphics",
 	"ljiip",
-	0,
+	plDevType_FileOriented,
+        32,
 	(plD_init_fp) plD_init_ljiip,
 	(plD_line_fp) plD_line_ljiip,
 	(plD_polyline_fp) plD_polyline_ljiip,
@@ -594,7 +626,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"LaserJet II Bitmap File (150 dpi)",
 	"ljii",
-	0,
+	plDevType_FileOriented,
+        33,
 	(plD_init_fp) plD_init_ljii,
 	(plD_line_fp) plD_line_ljii,
 	(plD_polyline_fp) plD_polyline_ljii,
@@ -610,7 +643,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"HP 7470 Plotter File (HPGL Cartridge, Small Plotter)",
 	"hp7470",
-	0,
+	plDevType_FileOriented,
+        34,
 	(plD_init_fp) plD_init_hp7470,
 	(plD_line_fp) plD_line_hpgl,
 	(plD_polyline_fp) plD_polyline_hpgl,
@@ -626,7 +660,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"HP 7580 Plotter File (Large Plotter)",
 	"hp7580",
-	0,
+	plDevType_FileOriented,
+        35,
 	(plD_init_fp) plD_init_hp7580,
 	(plD_line_fp) plD_line_hpgl,
 	(plD_polyline_fp) plD_polyline_hpgl,
@@ -642,7 +677,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"HP Laserjet III, HPGL emulation mode",
 	"lj_hpgl",
-	0,
+	plDevType_FileOriented,
+        36,
 	(plD_init_fp) plD_init_lj_hpgl,
 	(plD_line_fp) plD_line_hpgl,
 	(plD_polyline_fp) plD_polyline_hpgl,
@@ -658,7 +694,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Impress File",
 	"imp",
-	0,
+	plDevType_FileOriented,
+        37,
 	(plD_init_fp) plD_init_imp,
 	(plD_line_fp) plD_line_imp,
 	(plD_polyline_fp) plD_polyline_imp,
@@ -674,7 +711,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"PDB (PPM) Driver",
 	"pbm",
-	0,
+	plDevType_FileOriented,
+        38,
 	(plD_init_fp) plD_init_pbm,
 	(plD_line_fp) plD_line_pbm,
 	(plD_polyline_fp) plD_polyline_pbm,
@@ -690,7 +728,8 @@ static PLDispatchTable static_devices[] = {
     {
         "PNG Driver",
 	"png",
-	0,
+	plDevType_FileOriented,
+        39,
 	(plD_init_fp) plD_init_png,
 	(plD_line_fp) plD_line_png,
 	(plD_polyline_fp) plD_polyline_png,
@@ -706,7 +745,8 @@ static PLDispatchTable static_devices[] = {
     {
         "JPEG File (Independent JPEG Group based on libgd)",
 	"jpeg",
-	0,
+	plDevType_FileOriented,
+        40,
 	(plD_init_fp) plD_init_png,
 	(plD_line_fp) plD_line_png,
 	(plD_polyline_fp) plD_polyline_png,
@@ -722,7 +762,8 @@ static PLDispatchTable static_devices[] = {
     {
 	"Null device",
 	"null",
-	-1,
+	plDevType_Null,
+        41,
 	(plD_init_fp) plD_init_null,
 	(plD_line_fp) plD_line_null,
 	(plD_polyline_fp) plD_polyline_null,
