@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1994/07/20 06:08:03  mjl
+ * Revision 1.20  1995/01/14 06:04:05  mjl
+ * Fixed plscmap1l documentation and changed call syntax to pass "rev" array.
+ *
+ * Revision 1.19  1994/07/20  06:08:03  mjl
  * Added Fortran interface routines to handle the new 3d functions plline3(),
  * plpoin3(), and plpoly3().
  *
@@ -366,9 +369,9 @@ PLSCMAP0N(PLINT *n)
 
 void
 PLSCMAP1L(PLINT *itype, PLINT *npts, PLFLT *intensity,
-	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3)
+	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev)
 {
-    c_plscmap1l(*itype, *npts, intensity, coord1, coord2, coord3);
+    c_plscmap1l(*itype, *npts, intensity, coord1, coord2, coord3, rev);
 }
 
 void

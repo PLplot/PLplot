@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1995/01/10 09:38:04  mjl
+ * Revision 1.30  1995/01/14 06:03:45  mjl
+ * Fixed plscmap1l documentation and changed call syntax to pass "rev" array.
+ *
+ * Revision 1.29  1995/01/10  09:38:04  mjl
  * Fixed some braindamage incurred last update.
  *
  * Revision 1.28  1995/01/09  22:13:24  mjl
@@ -395,9 +398,14 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
  * boundary control points.  This allows the highs and lows to be very
  * easily distinguished.
  *
- * Each control point must specify the position in cmap 1 as well as
- * three coordinates in HLS or RGB space.  The first point MUST correspond
- * to position = 0, and the last to position = 1.
+ * Each control point must specify the position in cmap 1 as well as three
+ * coordinates in HLS or RGB space.  The first point MUST correspond to
+ * position = 0, and the last to position = 1.  
+ *
+ * The hue is interpolated around the "front" of the color wheel
+ * (red->green->blue->red) unless the "rev" flag is set, in which case
+ * interpolation proceeds around the back (reverse) side.  Specifying
+ * rev=NULL is equivalent to setting rev[]=0 for every control point.
  *
  * Bounds on RGB coordinates:
  *	R,G,B		[0, 1]		magnitude
@@ -414,11 +422,12 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
  *	coord1[]	first coordinate for each control point
  *	coord2[]	second coordinate for each control point
  *	coord3[]	third coordinate for each control point 
+ *	rev[]		reverse flag for each control point
 \*----------------------------------------------------------------------*/
 
 void
 c_plscmap1l(PLINT itype, PLINT npts, PLFLT *pos,
-	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3)
+	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev)
 {
     int n;
     PLFLT h, l, s, r, g, b;
@@ -463,6 +472,11 @@ c_plscmap1l(PLINT itype, PLINT npts, PLFLT *pos,
 	plsc->cmap1cp[n].l = l;
 	plsc->cmap1cp[n].s = s;
 	plsc->cmap1cp[n].p = pos[n];
+
+	if (rev == NULL)
+	    plsc->cmap1cp[n].rev = 0;
+	else
+	    plsc->cmap1cp[n].rev = rev[n];
     }
 
 /* Calculate and set color map */
@@ -481,8 +495,8 @@ void
 plcmap1_calc(void)
 {
     int i, n;
-    PLFLT icmap1, delta, dp, dh, dl, ds;
-    PLFLT h, l, s, r, g, b;
+    PLFLT delta, dp, dh, dl, ds;
+    PLFLT h, l, s, p, r, g, b;
 
 /* Loop over all control point pairs */
 
@@ -507,14 +521,14 @@ plcmap1_calc(void)
     /* cmap1 space)  between n_th and n+1_th control points */
 
 	for (i = 0; i < plsc->ncol1; i++) {
-	    icmap1 = (double) i / (plsc->ncol1 - 1.0);
-	    if ( (icmap1 < plsc->cmap1cp[n].p) ||
-		 (icmap1 > plsc->cmap1cp[n+1].p) )
+	    p = (double) i / (plsc->ncol1 - 1.0);
+	    if ( (p < plsc->cmap1cp[n].p) ||
+		 (p > plsc->cmap1cp[n+1].p) )
 		continue;
 
 	/* Interpolate based on position of color cell in cmap1 space */
 
-	    delta = (icmap1 - plsc->cmap1cp[n].p) / dp;
+	    delta = (p - plsc->cmap1cp[n].p) / dp;
 
 	/* Linearly interpolate to get color cell h, l, s values */
 
@@ -663,7 +677,7 @@ plCmap1_init(void)
     s[2] = 1;
     s[3] = 1;
 
-    c_plscmap1l(0, 4, i, h, l, s);
+    c_plscmap1l(0, 4, i, h, l, s, NULL);
 }
 
 /*----------------------------------------------------------------------*\
