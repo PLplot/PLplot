@@ -313,6 +313,7 @@ typedef struct {
     unsigned char r;		/* red */
     unsigned char g;		/* green */
     unsigned char b;		/* blue */
+    char *name;
 } PLColor;
 
 /* PLControlPt is how cmap1 control points are represented. */
