@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/11/02 19:55:50  mjl
+ * Revision 1.15  1995/03/16 23:43:46  mjl
+ * Old cursorX, cursorY variables replaced with a PLGraphicsIn structure.
+ * Also variables added for dealing with graphic crosshairs.
+ *
+ * Revision 1.14  1994/11/02  19:55:50  mjl
  * Added cursorX, cursorY for holding coordinates at mouse click.
  *
  * Revision 1.13  1994/10/11  18:59:57  mjl
@@ -65,13 +69,14 @@
 /* display */
 
 typedef struct {
-    int		count;			/* Number of streams using display */
+    int		nstreams;		/* Number of streams using display */
     int		ixwd;			/* Specifies xwDisplay number */
     char	*displayName;		/* Name of X display */
     int		screen;			/* X screen */
     Display	*display;		/* X display */
     Visual	*visual;		/* X Visual */
     GC		gc;			/* Graphics context */
+    GC		gcXor;			/* Graphics context */
     Colormap	map;			/* Colormap */
     unsigned	depth;			/* display depth */
     int		color;			/* Set to 1 if a color output device */
@@ -81,7 +86,7 @@ typedef struct {
     XColor	cmap1[256];		/* Color entries for cmap 1 */
     XColor	fgcolor;		/* Foreground color (if grayscale) */
     XColor	curcolor;		/* Current pen color */
-    Cursor	cross_cursor;		/* Crosshair cursor */
+    Cursor	xhair_cursor;		/* Crosshair cursor */
 } XwDisplay;
 
 /* One of these holds the X driver state information */
@@ -93,6 +98,7 @@ typedef struct {
     Window	window;			/* X window id */
     Pixmap	pixmap;			/* Off-screen pixmap */
 
+    long	event_mask;		/* Event mask */
     int		exit_eventloop;		/* Breaks the event loop when set */
     long	init_width;		/* Initial window width */
     long	init_height;		/* Initial window height */
@@ -106,10 +112,17 @@ typedef struct {
 
     short	xlen, ylen;		/* Lengths of device coord space */
 
-    float	cursorX, cursorY;	/* coordinates for mouse event */
-
     int		write_to_window;	/* Set if plotting direct to window */
     int		write_to_pixmap;	/* Set if plotting to pixmap */
+
+    int		instr;			/* Instruction timer */
+    int		max_instr;		/* Limit before X server is queried */
+
+    PLGraphicsIn gin;			/* Graphics input structure */
+
+    int		locate_mode;		/* Set while in locate mode */
+    int		drawing_xhairs;		/* Set during xhair draws */
+    XPoint	xhair_x[2], xhair_y[2];	/* Crosshair lines */
 
     void (*MasterEH) (PLStream *, XEvent *);	/* Master X event handler */
 } XwDev;
