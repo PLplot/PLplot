@@ -1,6 +1,16 @@
 /* $Id$
  * $Log$
- * Revision 1.54  1995/09/22 16:04:11  mjl
+ * Revision 1.55  1996/02/23 21:03:57  furnish
+ * Introduce support for rubber banding in the plframe.  This entails
+ * adding new functions to support drawing, updating, etc, the rubber
+ * band, and also fixing some of the old event handlers for the xhairs so
+ * that they work for both the xhairs and the rubber band, possibly even
+ * both simultaneously.  Initial testing seems to indicate this is
+ * working just fine.  However, we probably need to add some more
+ * configuration support so Tcl apps can query, set, and otherwise
+ * manipulate the rubber band ends.  Anyway, it is a good start.
+ *
+ * Revision 1.54  1995/09/22  16:04:11  mjl
  * Fixes to names of member variables of PLiodev structs.
  *
  * Revision 1.53  1995/09/18  20:15:46  furnish
@@ -235,6 +245,12 @@ typedef struct {
     XPoint xhair_x[2];		/* Points for horizontal xhair line */
     XPoint xhair_y[2];		/* Points for vertical xhair line */
 
+/* Used for drawing a rubber band lilne segment */
+
+    int rband;			/* Configuration option to turn on rband */
+    int drawing_rband;		/* See if we are currently drawing rband */
+    XPoint rband_pt[2];		/* Ends of rubber band line */
+
 } PlFrame;
 
 /*
@@ -302,6 +318,8 @@ static Tk_ConfigSpec configSpecs[] = {
 	DEF_PLFRAME_WIDTH, Tk_Offset(PlFrame, width), 0},
     {TK_CONFIG_BOOLEAN, "-xhairs", (char *) NULL, (char *) NULL,
 	"0", Tk_Offset(PlFrame, xhairs), TK_CONFIG_DONT_SET_DEFAULT},
+    {TK_CONFIG_BOOLEAN, "-rubberband", (char *) NULL, (char *) NULL,
+	"0", Tk_Offset(PlFrame, rband), TK_CONFIG_DONT_SET_DEFAULT},
     {TK_CONFIG_STRING, "-xscrollcommand", "xScrollCommand", "ScrollCommand",
 	(char *) NULL, Tk_Offset(PlFrame, xScrollCmd), TK_CONFIG_NULL_OK},
     {TK_CONFIG_STRING, "-yscrollcommand", "yScrollCommand", "ScrollCommand",
@@ -355,6 +373,13 @@ static void  CreateXhairs	(PlFrame *);
 static void  DestroyXhairs	(PlFrame *);
 static void  DrawXhairs		(PlFrame *, int, int);
 static void  UpdateXhairs	(PlFrame *);
+
+/* Routines for manipulating the rubberband line */
+
+static void  CreatRband		(PlFrame *);
+static void  DestroyRband	(PlFrame *);
+static void  DrawRband		(PlFrame *, int, int);
+static void  UpdateRband	(PlFrame *);
 
 /* Utility routines */
 
@@ -428,6 +453,8 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->eopCmd = NULL;
     plFramePtr->xhairs = 0;
     plFramePtr->drawing_xhairs = 0;
+    plFramePtr->rband = 0;
+    plFramePtr->drawing_rband = 0;
     plFramePtr->xScrollCmd = NULL;
     plFramePtr->yScrollCmd = NULL;
     plFramePtr->xl = 0.;
@@ -883,7 +910,7 @@ PlFrameExposeEH(ClientData clientData, register XEvent *eventPtr)
 
 /* Set up the area to refresh */
 
-    if ( ! plFramePtr->drawing_xhairs) {
+    if ( ! (plFramePtr->drawing_xhairs || plFramePtr->drawing_rband) ) {
 	int x0_old, x1_old, y0_old, y1_old, x0_new, x1_new, y0_new, y1_new;
 
 	x0_old = plFramePtr->pldis.x;
@@ -942,6 +969,9 @@ PlFrameMotionEH(ClientData clientData, register XEvent *eventPtr)
     if (plFramePtr->drawing_xhairs) {
 	DrawXhairs(plFramePtr, event->x, event->y);
     }
+    if (plFramePtr->drawing_rband) {
+	DrawRband(plFramePtr, event->x, event->y);
+    }
 }
 
 /*
@@ -968,8 +998,15 @@ PlFrameEnterEH(ClientData clientData, register XEvent *eventPtr)
 
     dbug_enter("PlFrameEnterEH");
 
-    DrawXhairs(plFramePtr, crossingEvent->x, crossingEvent->y);
-    plFramePtr->drawing_xhairs = 1;
+    if (plFramePtr->xhairs) {
+	DrawXhairs(plFramePtr, crossingEvent->x, crossingEvent->y);
+	plFramePtr->drawing_xhairs = 1;
+    }
+    if (plFramePtr->rband) {
+	plFramePtr->drawing_rband = 1;
+	UpdateRband(plFramePtr);
+	DrawRband(plFramePtr, crossingEvent->x, crossingEvent->y);
+    }
 }
 
 /*
@@ -995,8 +1032,14 @@ PlFrameLeaveEH(ClientData clientData, register XEvent *eventPtr)
 
     dbug_enter("PlFrameLeaveEH");
 
-    UpdateXhairs(plFramePtr);
-    plFramePtr->drawing_xhairs = 0;
+    if (plFramePtr->drawing_xhairs) {
+	UpdateXhairs(plFramePtr);
+	plFramePtr->drawing_xhairs = 0;
+    }
+    if (plFramePtr->drawing_rband) {
+	UpdateRband(plFramePtr);
+	plFramePtr->drawing_rband = 0;
+    }
 }
 
 /*
@@ -1143,14 +1186,16 @@ CreateXhairs(PlFrame *plFramePtr)
 
 /* Catch PointerMotion and crossing events so we can update them properly */
 
-    Tk_CreateEventHandler(tkwin, PointerMotionMask,
-			  PlFrameMotionEH, (ClientData) plFramePtr);
+    if (!plFramePtr->drawing_rband) {
+	Tk_CreateEventHandler(tkwin, PointerMotionMask,
+			      PlFrameMotionEH, (ClientData) plFramePtr);
 
-    Tk_CreateEventHandler(tkwin, EnterWindowMask,
-			  PlFrameEnterEH, (ClientData) plFramePtr);
+	Tk_CreateEventHandler(tkwin, EnterWindowMask,
+			      PlFrameEnterEH, (ClientData) plFramePtr);
 
-    Tk_CreateEventHandler(tkwin, LeaveWindowMask,
-			  PlFrameLeaveEH, (ClientData) plFramePtr);
+	Tk_CreateEventHandler(tkwin, LeaveWindowMask,
+			      PlFrameLeaveEH, (ClientData) plFramePtr);
+    }
 
 /* Catch KeyPress events so we can filter them */
 
@@ -1175,14 +1220,16 @@ DestroyXhairs(PlFrame *plFramePtr)
 
 /* Don't catch PointerMotion or crossing events any more */
 
-    Tk_DeleteEventHandler(tkwin, PointerMotionMask,
-			  PlFrameMotionEH, (ClientData) plFramePtr);
+    if (!plFramePtr->drawing_rband) {
+	Tk_DeleteEventHandler(tkwin, PointerMotionMask,
+			      PlFrameMotionEH, (ClientData) plFramePtr);
 
-    Tk_DeleteEventHandler(tkwin, EnterWindowMask,
-			  PlFrameEnterEH, (ClientData) plFramePtr);
+	Tk_DeleteEventHandler(tkwin, EnterWindowMask,
+			      PlFrameEnterEH, (ClientData) plFramePtr);
 
-    Tk_DeleteEventHandler(tkwin, LeaveWindowMask,
-			  PlFrameLeaveEH, (ClientData) plFramePtr);
+	Tk_DeleteEventHandler(tkwin, LeaveWindowMask,
+			      PlFrameLeaveEH, (ClientData) plFramePtr);
+    }
 
     Tk_DeleteEventHandler(tkwin, KeyPressMask,
 			  PlFrameKeyEH, (ClientData) plFramePtr);
@@ -1235,6 +1282,131 @@ UpdateXhairs(PlFrame *plFramePtr)
 
     XDrawLines(Tk_Display(tkwin), Tk_WindowId(tkwin),
 	       plFramePtr->xorGC, plFramePtr->xhair_y, 2,
+	       CoordModeOrigin);
+}
+
+/*--------------------------------------------------------------------------*\
+ * CreateRband()
+ *
+ * Initiate rubber banding.
+\*--------------------------------------------------------------------------*/
+
+static void
+CreateRband(PlFrame *plFramePtr)
+{
+    register Tk_Window tkwin = plFramePtr->tkwin;
+    Window root, child;
+    int root_x, root_y, win_x, win_y;
+    unsigned int mask;
+
+/* Find current pointer location, and initiate rubber banding. */
+
+    if (XQueryPointer(plFramePtr->display, Tk_WindowId(tkwin),
+		      &root, &child, &root_x, &root_y, &win_x, &win_y,
+		      &mask)) {
+
+	if (win_x >= 0 && win_x < Tk_Width(tkwin) &&
+	    win_y >= 0 && win_y < Tk_Height(tkwin)) {
+
+	/* Okay, pointer is in our window. */
+	    plFramePtr->rband_pt[0].x = win_x;
+	    plFramePtr->rband_pt[0].y = win_y;
+
+	    DrawRband(plFramePtr, win_x, win_y);
+	    plFramePtr->drawing_rband = 1;
+	} else {
+	/* Hmm, somehow they turned it on without even being in the window.
+	   Just put the anchor in top left, they'll soon realize this is a
+	   mistake... */
+
+	    plFramePtr->rband_pt[0].x = 0;
+	    plFramePtr->rband_pt[0].y = 0;
+
+	    DrawRband(plFramePtr, win_x, win_y);
+	    plFramePtr->drawing_rband = 1;
+	}
+    }
+
+/* Catch PointerMotion and crossing events so we can update them properly */
+
+    if (!plFramePtr->drawing_xhairs) {
+	Tk_CreateEventHandler(tkwin, PointerMotionMask,
+			      PlFrameMotionEH, (ClientData) plFramePtr);
+
+	Tk_CreateEventHandler(tkwin, EnterWindowMask,
+			      PlFrameEnterEH, (ClientData) plFramePtr);
+
+	Tk_CreateEventHandler(tkwin, LeaveWindowMask,
+			      PlFrameLeaveEH, (ClientData) plFramePtr);
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * DestroyRband()
+ *
+ * Turn off rubber banding.
+\*--------------------------------------------------------------------------*/
+
+static void
+DestroyRband(PlFrame *plFramePtr)
+{
+    register Tk_Window tkwin = plFramePtr->tkwin;
+
+/* Don't catch PointerMotion or crossing events any more */
+
+    if (!plFramePtr->drawing_xhairs) {
+	Tk_DeleteEventHandler(tkwin, PointerMotionMask,
+			      PlFrameMotionEH, (ClientData) plFramePtr);
+
+	Tk_DeleteEventHandler(tkwin, EnterWindowMask,
+			      PlFrameEnterEH, (ClientData) plFramePtr);
+
+	Tk_DeleteEventHandler(tkwin, LeaveWindowMask,
+			      PlFrameLeaveEH, (ClientData) plFramePtr);
+    }
+
+/* This draw removes the residual rubber band. */
+
+    UpdateRband(plFramePtr);
+    plFramePtr->drawing_rband = 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * DrawRband()
+ *
+ * Draws a rubber band from the anchor to the current cursor location.
+\*--------------------------------------------------------------------------*/
+
+static void
+DrawRband(PlFrame *plFramePtr, int x0, int y0)
+{
+    register Tk_Window tkwin = plFramePtr->tkwin;
+    int xmin = 0, xmax = Tk_Width(tkwin) - 1;
+    int ymin = 0, ymax = Tk_Height(tkwin) - 1;
+
+/* If the line is already up, clear it. */
+
+    if (plFramePtr->drawing_rband)
+	UpdateRband(plFramePtr);
+
+    plFramePtr->rband_pt[1].x = x0; plFramePtr->rband_pt[1].y = y0;
+
+    UpdateRband(plFramePtr);
+}
+
+/*--------------------------------------------------------------------------*\
+ * UpdateRband()
+ *
+ * Updates rubber band.  If already there, it is erased.
+\*--------------------------------------------------------------------------*/
+
+static void
+UpdateRband(PlFrame *plFramePtr)
+{
+    register Tk_Window tkwin = plFramePtr->tkwin;
+
+    XDrawLines(Tk_Display(tkwin), Tk_WindowId(tkwin),
+	       plFramePtr->xorGC, plFramePtr->rband_pt, 2,
 	       CoordModeOrigin);
 }
 
@@ -1291,6 +1463,9 @@ PlFrameInit(ClientData clientData)
 
     if (plFramePtr->xhairs)
 	CreateXhairs(plFramePtr);
+
+    if (plFramePtr->rband)
+	CreateRband(plFramePtr);
 }
 
 /*
@@ -1462,6 +1637,12 @@ DisplayPlFrame(ClientData clientData)
 
 	if (plFramePtr->drawing_xhairs) {
 	    UpdateXhairs(plFramePtr);
+	}
+
+    /* Update rubber band if necessary. */
+
+	if (plFramePtr->drawing_rband) {
+	    UpdateRband(plFramePtr);
 	}
     }
 }
@@ -1894,6 +2075,19 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	else {
 	    if (plFramePtr->drawing_xhairs)
 		DestroyXhairs(plFramePtr);
+	}
+    }
+
+/* Create or destroy rubber band as specified */
+
+    if (Tk_IsMapped(tkwin)) {
+	if (plFramePtr->rband) {
+	    if (! plFramePtr->drawing_rband)
+		CreateRband(plFramePtr);
+	}
+	else {
+	    if (plFramePtr->drawing_rband)
+		DestroyRband(plFramePtr);
 	}
     }
 
