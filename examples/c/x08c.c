@@ -24,7 +24,8 @@ static char *title[4] =
  * cmap1_init1
  *
  * Initializes color map 1 in HLS space.
- * Basic grayscale variation from dark to light.
+ * Basic grayscale variation from half-dark (which makes more interesting
+ * looking plot compared to dark) to light.
  * An interesting variation on this:
  *	s[1] = 1.0
 \*--------------------------------------------------------------------------*/
@@ -40,12 +41,13 @@ cmap1_init(void)
     h[0] = 0.0;		/* hue -- low: red (arbitrary if s=0) */
     h[1] = 0.0;		/* hue -- high: red (arbitrary if s=0) */
 
-    l[0] = 0.5;		/* lightness -- low: dark */
+    l[0] = 0.5;		/* lightness -- low: half-dark */
     l[1] = 1.0;		/* lightness -- high: light */
 
     s[0] = 0.0;		/* minimum saturation */
     s[1] = 0.0;		/* minimum saturation */
 
+    plscmap1n(256);
     c_plscmap1l(0, 2, i, h, l, s, NULL);
 }
 
@@ -94,7 +96,6 @@ main(int argc, char *argv[])
     }
 
     pllightsource(1.,1.,1.);
-    plscmap1n(256);
     cmap1_init();
     	
     for (k = 0; k < 4; k++) {
