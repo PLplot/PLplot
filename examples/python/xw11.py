@@ -9,8 +9,8 @@ alt = [33.0, 17.0]
 
 az = [24.0, 115.0]
 
-title = ["#frPLplot Example 11 - Alt=33, Az=17, Opt=3",
-	 "#frPLplot Example 11 - Alt=24, Az=115, Opt=3"]
+title = ["#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
+	 "#frPLplot Example 11 - Alt=17, Az=115, Opt=3"]
 
 # Routine for restoring colour map1 to default.
 # See static void plcmap1_def(void) in plctrl.c for reference.

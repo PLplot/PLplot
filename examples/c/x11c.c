@@ -16,8 +16,8 @@ static PLFLT az[] = {24.0, 115.0};
 
 static char *title[4] =
 {
-    "#frPLplot Example 11 - Alt=33, Az=17, Opt=3",
-    "#frPLplot Example 11 - Alt=24, Az=115, Opt=3",
+    "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
+    "#frPLplot Example 11 - Alt=17, Az=115, Opt=3",
 };
 
 static void

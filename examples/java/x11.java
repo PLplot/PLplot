@@ -25,8 +25,8 @@ class x11 {
 
     static String[] title =
     {
-        "#frPLplot Example 11 - Alt=33, Az=17, Opt=3",
-        "#frPLplot Example 11 - Alt=24, Az=115, Opt=3"
+        "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
+        "#frPLplot Example 11 - Alt=17, Az=115, Opt=3"
     };
 
     void cmap1_init()
