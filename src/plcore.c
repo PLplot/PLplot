@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1994/07/08 22:50:31  mjl
+ * Revision 1.37  1994/07/12 19:20:31  mjl
+ * Two bugs fixed: cmap1 palette should now "stick" on plots saved from Tk
+ * driver, and the code won't complain when a bop isn't preceded by an eop.
+ *
+ * Revision 1.36  1994/07/08  22:50:31  mjl
  * Fixed bug that was hosing the background color in plots saved from the
  * Tk/DP driver menu.
  *
@@ -145,16 +149,13 @@ plP_eop(void)
 /* Set up new page. */
 /* The plot buffer must be called last */
 /* Ignore if the bop was already issued. */
-/* Print a warning if an eop wasn't issued previously */
+/* It's not actually necessary to be AT_EOP here, so don't check for it. */
 
 void
 plP_bop(void)
 {
     if (plsc->status == AT_BOP)
 	return;
-
-    if (plsc->status != AT_EOP) 
-	plwarn("plP_bop: missing call to pleop");
 
     plsc->status = AT_BOP;
 
@@ -1315,6 +1316,8 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	plsc->cmap0setcol[i] = plsr->cmap0setcol[i];
 	cp_color(&plsc->cmap0[i], &plsr->cmap0[i]);
     }
+
+    plsc->cmap1set = plsr->cmap1set;
     for (i = 0; i < 256; i++) {
 	cp_color(&plsc->cmap1[i], &plsr->cmap1[i]);
     }
