@@ -115,12 +115,10 @@
  * Only those that are necessary for function prototypes are defined here.
  * Notes:
  *
- * PLINT is typedef'd to an int by default.  This is a change from some
- * previous versions, where a long was used.  Under MSDOS, a PLINT is
- * typedef'd to a long, since 16 bits is too inaccurate for some PLplot
- * functions.  So under MSDOS you must use type PLINT for integer array
- * arguments to PLplot functions, but on other systems you can just use
- * an int.
+ * PLINT is typedef'd to a long by default.  This is a change from some
+ * previous versions, where a int was used.  However, so long as you have
+ * used type PLINT for integer array arguments as specified by the API,
+ * this change will be transparent for you.
  *
  * short is currently used for device page coordinates, so they are
  * bounded by (-32767, 32767).  This gives a max resolution of about 3000
@@ -137,11 +135,7 @@ typedef float PLFLT;
 #define PLFLT_MIN  FLT_MIN
 #endif
 
-#if defined(MSDOS) && !defined(__WIN32__)
 typedef long PLINT;
-#else
-typedef int PLINT;
-#endif
 
 /* For passing user data, as with X's XtPointer */
 
