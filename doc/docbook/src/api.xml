@@ -6285,9 +6285,284 @@ characters and their corresponding decimal ASCII values:
 
   </sect1>
 
+  <sect1 id="plshades" renderas="sect3">
+    <title>
+      <function>plshades</function>: Shade regions on the basis of value
+    </title> 
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+        <funcdef>
+           <function>plshades</function>
+        </funcdef>
+        <paramdef><parameter>a</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>defined</parameter></paramdef>
+        <paramdef><parameter>xmin</parameter></paramdef>
+        <paramdef><parameter>xmax</parameter></paramdef>
+        <paramdef><parameter>ymin</parameter></paramdef>
+        <paramdef><parameter>ymax</parameter></paramdef>
+        <paramdef><parameter>clevel</parameter></paramdef>
+        <paramdef><parameter>nlevel</parameter></paramdef>
+        <paramdef><parameter>fill_width</parameter></paramdef>
+        <paramdef><parameter>cont_color</parameter></paramdef>
+        <paramdef><parameter>cont_width</parameter></paramdef>
+        <paramdef><parameter>fill</parameter></paramdef>
+        <paramdef><parameter>rectangular</parameter></paramdef>
+        <paramdef><parameter>pltr</parameter></paramdef>
+        <paramdef><parameter>pltr_data</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis> 
+    </para> 
+
+    <para>
+      Shade regions on the basis of value.  This is the high-level routine
+      for making continuous color shaded plots with cmap1 while
+      &plshade; (or &plshade1;) are used for individual shaded regions
+      using either cmap0 or cmap1.
+      <filename>examples/c/x16c.c</filename> shows a number of examples
+      for using this function.
+      See the following discussion of the
+      arguments and <xref linkend="contour-plots"/> for
+      more information.    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>a</parameter> 
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+             Contains ** pointer to array to be plotted. The array must have been declared
+	     as PLFLT a[nx][ny].
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx</parameter> 
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            First dimension of arrays "a" and "defined".
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ny</parameter> 
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Second dimension of arrays "a" and "defined".
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>defined</parameter> 
+	  (<literal>const char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Contains pointer to array of flags, 1 = data is valid, 0 = data is not
+	    valid. This array determines which sections of the data is to be
+	    plotted. This argument can be NULL if all the values are valid.
+	    Must have been declared as char defined[nx][ny].
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>xmin</parameter> 
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+             Defines the "grid" coordinates.  The data a[0][0] has a
+	     position of (xmin,ymin).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>xmax</parameter> 
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+             Defines the "grid" coordinates.  The data a[0][0] has a
+	     position of (xmin,ymin).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ymin</parameter> 
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+             Defines the "grid" coordinates.  The data a[0][0] has a
+	     position of (xmin,ymin).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ymax</parameter> 
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+             Defines the "grid" coordinates.  The data a[0][0] has a
+	     position of (xmin,ymin).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>clevel</parameter> 
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Pointer to array containing the data levels corresponding to
+	    the edges of each shaded region that will be plotted by this
+	    function.  To work properly the levels should be monotonic.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nlevel</parameter> 
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Number of shades plus 1 (i.e., the number of shade edge values
+	    in <literal><parameter>nlevel</parameter></literal>).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>fill_width</parameter> 
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Defines width used by the fill pattern.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>cont_color</parameter> 
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Defines pen color used for contours defining edges of shaded
+	    regions.  The pen color is only temporary set for the
+	    contour drawing.  Set this value to zero or less if no shade edge contours are wanted.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>cont_width</parameter> 
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Defines pen width used for contours defining edges of shaded
+	    regions.  This value may not be honored by all drivers.
+	    The pen width is only temporary set for the
+	    contour drawing.  Set this value to zero or less if no shade edge contours are wanted.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>fill</parameter> 
+	  (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            Routine used to fill the region.  Use &plfill;.  Future version of
+	    plplot may have other fill routines.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>rectangular</parameter> 
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Set <literal><parameter>rectangular</parameter></literal> to 1
+	  if rectangles map to rectangles after coordinate transformation
+	  with <literal><parameter>pltrl</parameter></literal>.  Otherwise,
+	  set <literal><parameter>rectangular</parameter></literal> to 0.
+	  If <literal><parameter>rectangular</parameter></literal>
+	  is set to 1, plshade tries to save time by
+	  filling large rectangles.  This optimization fails if 
+	  the coordinate transformation distorts the shape of rectangles.
+	  For example a plot in polor coordinates has to have rectangular 
+	  set to 0.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>pltr</parameter> 
+	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
+           </literal>, input) 
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to function that defines transformation between indices
+	    in array <literal><parameter>z</parameter></literal> and the
+	    world coordinates (C only).  Transformation functions are
+	    provided in the PLplot library: 
+	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
+	    arbitrary mappings respectively defined by one- and 
+	    two-dimensional arrays.  In addition, user-supplied routines
+	    for the transformation can be used as well.  Examples of
+	    all of these approaches are given in 
+	    <xref linkend="contour-plots-c"/>.
+	    The transformation function should
+	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>pltr_data</parameter>
+	  (<literal>PLPointer</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Extra parameter to help
+	    pass information to &pltr0;, &pltr1;, &pltr2;, or whatever routine
+	    that is externally supplied.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="plshade" renderas="sect3">
     <title>
-      <function>plshade</function>:  Shade regions on the basis of value
+      <function>plshade</function>:  Shade individual region on the basis of value
     </title> 
 
     <para>
@@ -6322,10 +6597,11 @@ characters and their corresponding decimal ASCII values:
     </para> 
 
     <para> 
-      Shade regions on the basis of value.  Can be used to shade contour
-      plots or alone. &plshade; is identical to &plshade1; 
-      except for the type of the first and fourth parameters.
-      See &plshade1; for a description of the parameters.
+      Shade individual region on the basis of value.  Use &plshades; if you want to
+      shade a number of regions using continuous colors.
+      &plshade; is identical to &plshade1; 
+      except for the type of the first parameter.
+      See &plshade1; for further discussion.
     </para>
 
     <variablelist>
@@ -6362,7 +6638,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>defined</parameter> 
-	  (<literal>const char **</literal>, input)
+	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -6546,7 +6822,7 @@ characters and their corresponding decimal ASCII values:
 
   <sect1 id="plshade1" renderas="sect3">
     <title>
-      <function>plshade1</function>: Shade regions on the basis of value
+      <function>plshade1</function>: Shade individual region on the basis of value
     </title> 
 
     <para>
@@ -6581,15 +6857,19 @@ characters and their corresponding decimal ASCII values:
     </para> 
 
     <para>
-      Shade regions on the basis of value.  Can be used to shade contour
-      plots or alone.  Only differs from &plshade; by the type of the first
-      and fourth arguments.  Look at the argument list below, &plcont; and
+      Shade individual region on the basis of value.  Use &plshades; if you want to
+      shade a number of contiguous regions using continuous colors.  In
+      particular the edge contours are treated properly in &plshades;.
+      If you attempt to do contiguous regions with &plshade1; (or &plshade;)
+      the contours at the edge of the shade are partially obliterated by subsequent
+      plots of contiguous shaded regions.
+      &plshade1; differs from &plshade; by the type of the first
+      argument.  Look at the argument list below, &plcont; and
       <xref linkend="contour-plots"/> for
       more information about the transformation from grid to world
-      coordinates.  The color information NEEDS DOCUMENTATION, but
-      as a stopgap look at how this function is used in
-      <filename>examples/c/x15c.c</filename> and
-      <filename>examples/c/x16c.c</filename>.
+      coordinates.  Shading NEEDS DOCUMENTATION, but
+      as a stopgap look at how &plshade; is used in
+      <filename>examples/c/x15c.c</filename>
     </para>
 
     <variablelist>
@@ -6601,7 +6881,7 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
              Contains array to be plotted. The array must have been declared
-	     as PLFLT a[nx][ny].  See following note on fortran-style arrays.
+	     as PLFLT a[nx][ny].
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6634,7 +6914,7 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-	    Contains array of flags, 1 = data is valid, 0 = data is not
+	    Contains pointer to array of flags, 1 = data is valid, 0 = data is not
 	    valid. This array determines which sections of the data is to be
 	    plotted. This argument can be NULL if all the values are valid.
 	    Must have been declared as char defined[nx][ny].
@@ -6710,7 +6990,7 @@ characters and their corresponding decimal ASCII values:
 	  <para>
             Defines the interval to be shaded. If shade_max &leq; shade_min,
 	    &plshade1; does nothing.
-	  w</para>
+	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
@@ -6731,7 +7011,8 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            Defines color map index.
+            Defines color map index if cmap0 or color map input value (ranging
+	    from 0. to 1.) if cmap1.
 	  </para>
 	</listitem>
       </varlistentry>

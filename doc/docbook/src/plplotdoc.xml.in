@@ -122,6 +122,7 @@
 <!ENTITY plsfam '<link linkend="plsfam"><function>plsfam</function></link>'>
 <!ENTITY plsfile '<link linkend="plsfile"><function>plsfile</function></link>'>
 <!ENTITY plsfnam '<link linkend="plsfnam"><function>plsfnam</function></link>'>
+<!ENTITY plshades '<link linkend="plshades"><function>plshades</function></link>'>
 <!ENTITY plshade '<link linkend="plshade"><function>plshade</function></link>'>
 <!ENTITY plshade1 '<link linkend="plshade1"><function>plshade1</function></link>'>
 <!ENTITY plsmaj '<link linkend="plsmaj"><function>plsmaj</function></link>'>
