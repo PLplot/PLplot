@@ -8,12 +8,24 @@
 # Basic make assignments for PLplot under Unix (driven by "configure").
 # -----------------------------------------------------------------------
 
+# Yes, this means that SunOS apps linked to PLplot shared libraries will
+# break at 5.0.  No way around it though.
+
+MAJOR_VERSION	= 4
+MINOR_VERSION	= 99g
+
+# Utilities
+
 CC		= @CC@
 LDC		= $(CC)
 OCC		= @OCC@
 F77		= @F77@
 LDF		= $(F77)
 M4		= m4
+RANLIB		= @RANLIB@
+LIB_BUILD	= ar q
+
+# Flags, names, and other miscellanea
 
 CC_FLAGS	= @CC_FLAGS@ @INCS@
 F77_FLAGS	= @F77_FLAGS@
@@ -23,9 +35,7 @@ LDC_LIBS	= @LIBS@
 LDF_LIBS	= @LIBS@
 LIBS		= @LIBS@
 LIB_TAG		= @LIB_TAG@
-RANLIB		= @RANLIB@
 INSTALL_DIR	= @prefix@
-LIB_BUILD	= ar q
 SHLIB_SUFFIX	= @SHLIB_SUFFIX@
 SHLIB_BUILD	= @SHLIB_BUILD@
 TO		= -o
