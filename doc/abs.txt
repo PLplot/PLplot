@@ -33,11 +33,15 @@ This is the bibliography (lifted from 1995 latexinfo version of documentation)
 \c 
 \c \end{thebibliography}
 
-\c  \node Concept Index, Top, First Chapter, Top
- \node Concept Index,, Bibliography, Top
-\c  \unnumbered{Concept Index}
+This was lifted from another bibligraphic source (plotdoc.bbl) which
+I believe was from an older source the preceded the latexinfo (1995) version
+of the documenation.
+\begin{thebibliography}{1}
 
-\twocolumn
-\printindex{cp}
+\bibitem{lebrun89a}
+M.~J. LeBrun and T.~Tajima.
+\newblock Particle simulation in curvilinear coordinate systems.
+\newblock Technical Report 374, Institute for Fusion Studies, University of
+  Texas at Austin, 1989.
 
-\end{document}
+\end{thebibliography}
