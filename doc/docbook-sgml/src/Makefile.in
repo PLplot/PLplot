@@ -28,7 +28,7 @@ SGML_SOURCES = \
 	inline-html.ent  inline-print.ent
 
 OTHER_SOURCES = \
-	CHANGES Makefile.in README configure configure.in \
+	NEWS ChangeLog Makefile.in README configure configure.in \
 	eps2jpeg.pl.in included-html-files.pl inline-greek.pl.in \
 	jadetex.cfg over-under.tex parse-api.pl parse.pl tex2eps.pl.in \
 	$(STYLESHEET_HTML).in $(STYLESHEET_PRINT)
