@@ -260,6 +260,9 @@ fi
 cat cf/initlib.in	>>tmp/Makefile.in
 
 if test "$with_shlib" = "yes"; then
+    if test ! -d tmp/shared; then
+	mkdir tmp/shared
+    fi
     case $system in 
 	SunOS-4* ) 
 	    cat cf/lib_sh_sun.in	>>tmp/Makefile.in
@@ -430,10 +433,6 @@ if test ! -f tmp/plcore.c; then
 
     ln -s ../cf/*.in cvtdeps .
     cd ..
-fi
-
-if test ! -d tmp/shared; then
-    mkdir tmp/shared
 fi
 
 # --------------------------------------------------------------------
