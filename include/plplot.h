@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.81  1995/07/19 18:51:31  mjl
+ * Revision 1.82  1995/10/16 18:20:52  mjl
+ * Added prototype & defines for plgdev API function.
+ *
+ * Revision 1.81  1995/07/19  18:51:31  mjl
  * Added define for new parse option, PL_PARSE_SKIP.
  *
  * Revision 1.80  1995/05/07  02:27:21  mjl
@@ -460,6 +463,7 @@ typedef struct {
 #define    plgchr	c_plgchr
 #define    plgcol0	c_plgcol0
 #define    plgcolbg	c_plgcolbg
+#define    plgdev	c_plgdev
 #define    plgdidev	c_plgdidev
 #define    plgdiori	c_plgdiori
 #define    plgdiplt	c_plgdiplt
@@ -569,6 +573,7 @@ typedef struct {
 #define    c_plgchr	plgchr
 #define    c_plgcol0	plgcol0
 #define    c_plgcolbg	plgcolbg
+#define    c_plgdev	plgdev
 #define    c_plgdidev	plgdidev
 #define    c_plgdiori	plgdiori
 #define    c_plgdiplt	plgdiplt
@@ -831,6 +836,11 @@ c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b);
 
 void
 c_plgcolbg(PLINT *r, PLINT *g, PLINT *b);
+
+/* Get the current device (keyword) name */
+
+void
+c_plgdev(char *p_dev);
 
 /* Retrieve current window into device space */
 
