@@ -18,7 +18,7 @@ TCL_OBJ_SA	= tclMain$O
 TCL_EXE		= pltcl$E tclIndex
 TCL_DEMOS	= *.tcl *.log *.dat README.tcldemos
 
-MAKEINDEX	= $(srcdir)/scripts/mktclIndex
+MAKEINDEX	= @MKINDEX@
 
 MAT_C		= tclMatrix.c matrixInit.c
 MAT_OBJS	= tclMatrix$O matrixInit$O
