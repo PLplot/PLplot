@@ -51,7 +51,7 @@ void plD_dispatch_init_pstex( PLDispatchTable *pdt )
     pdt->pl_MenuStr  ="Postscript/LaTeX device" ;
     pdt->pl_DevName  = "pstex";
     pdt->pl_type     = plDevType_FileOriented;
-    pdt->pl_seq      = 42;
+    pdt->pl_seq      = 41;
     pdt->pl_init     = (plD_init_fp)     plD_init_pstex;
     pdt->pl_line     = (plD_line_fp)     plD_line_ps;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_ps;

@@ -159,7 +159,7 @@ void plD_dispatch_init_cgm( PLDispatchTable *pdt )
     pdt->pl_MenuStr  = "CGM (Computer Graphics metafile) file";
     pdt->pl_DevName  = "cgm";
     pdt->pl_type     = plDevType_FileOriented;
-    pdt->pl_seq      = 40;
+    pdt->pl_seq      = 44;
     pdt->pl_init     = (plD_init_fp)     plD_init_cgm;
     pdt->pl_line     = (plD_line_fp)     plD_line_cgm;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cgm;

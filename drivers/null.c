@@ -25,7 +25,7 @@ void plD_dispatch_init_null( PLDispatchTable *pdt )
     pdt->pl_MenuStr  = "Null device";
     pdt->pl_DevName  = "null";
     pdt->pl_type     = plDevType_Null;
-    pdt->pl_seq      = 41;
+    pdt->pl_seq      = 42;
     pdt->pl_init     = (plD_init_fp)     plD_init_null;
     pdt->pl_line     = (plD_line_fp)     plD_line_null;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_null;

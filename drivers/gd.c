@@ -99,7 +99,7 @@ void plD_dispatch_init_png( PLDispatchTable *pdt )
     pdt->pl_MenuStr  = "PNG file";
     pdt->pl_DevName  = "png";
     pdt->pl_type     = plDevType_FileOriented;
-    pdt->pl_seq      = 31;
+    pdt->pl_seq      = 39;
     pdt->pl_init     = (plD_init_fp)     plD_init_png;
     pdt->pl_line     = (plD_line_fp)     plD_line_png;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_png;
@@ -119,7 +119,7 @@ void plD_dispatch_init_jpeg( PLDispatchTable *pdt )
     pdt->pl_MenuStr  = "JPEG File";
     pdt->pl_DevName  = "jpeg";
     pdt->pl_type     = plDevType_FileOriented;
-    pdt->pl_seq      = 31;
+    pdt->pl_seq      = 40;
     pdt->pl_init     = (plD_init_fp)     plD_init_png;
     pdt->pl_line     = (plD_line_fp)     plD_line_png;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_png;
