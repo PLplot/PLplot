@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.3  1994/07/27 17:45:09  furnish
+# Revision 1.4  1994/10/12 17:17:45  mjl
+# Made it possible to create arbitrarily many toplevels.
+#
+# Revision 1.3  1994/07/27  17:45:09  furnish
 # Elucidate bug in plframe destruction mechanism.
 #
 # Revision 1.2  1994/07/24  07:42:59  mjl
@@ -18,86 +21,103 @@
 #
 ###############################################################################
 
+# Note: I defer running "open_main" until later to make sure everything
+# has been sourced.
+
 wm title . "tk03"
 plstdwin .
 
+set child_count 1
+
 ###############################################################################
-# Set up the menubar and message widgets.
+# Set up the menubar and message widgets for main window.
 
-frame .menu -relief raised -borderwidth 3
+proc open_main {} {
 
-button .menu.one -text "One" -command "1 .plw.plwin"
-pack append .menu .menu.one {left expand fill}
+    global child_count
 
-button .menu.two -text "Two" -command "2 .plw.plwin"
-pack append .menu .menu.two {left expand fill}
+    frame .menu -relief raised -borderwidth 3
 
-button .menu.exit -text "Exit" -command "destroy ." 
+    button .menu.one -text "One" -command "1 .plw.plwin"
+    pack append .menu .menu.one {left expand fill}
+
+    button .menu.two -text "Two" -command "2 .plw.plwin"
+    pack append .menu .menu.two {left expand fill}
+
+    button .menu.open -text "Open new" -command "open_child"
+    pack append .menu .menu.open {left expand fill}
+
+    button .menu.exit -text "Exit" -command "destroy ." 
 
 #"quit 0"
 
-pack append .menu .menu.exit {right expand fill}
+    pack append .menu .menu.exit {right expand fill}
 
-message .msg \
+    message .msg \
 	-font -Adobe-helvetica-medium-r-normal--*-240* -aspect 200 \
-	 -width 500 -borderwidth 1 \
+	-width 500 -borderwidth 1 \
 	-text "TK03: Multiple toplevels with plframes"
 
-pack append . \
+    pack append . \
 	.menu {top fillx} \
 	.msg {top padx 5 pady 5 fill} 
 
-tk_menuBar .menu .menu.one .menu.two .menu.exit
+    tk_menuBar .menu .menu.one .menu.two .menu.exit
 
-###############################################################################
-#
 # This creates the plframe "megawidget".  If you just want a bare plframe,
 # change "plxframe" to "plframe".
 
-plxframe .plw
-pack append . .plw {left expand fill}
+    plxframe .plw
+    pack append . .plw {left expand fill}
+}
 
 ###############################################################################
 # Set up the second toplevel
 
-toplevel .1
-plstdwin .1
+proc open_child {} {
 
-###############################################################################
+    global child_count
+
+    set w .$child_count
+
+    toplevel $w
+    plstdwin $w
+
 # Set up the second menubar and message widgets.
 
-frame .1.menu -relief raised -borderwidth 3
+    frame $w.menu -relief raised -borderwidth 3
 
-button .1.menu.three -text "Three" -command "plot2 .1.plw.plwin"
-pack append .1.menu .1.menu.three {left expand fill}
+    button $w.menu.three -text "Three" -command "plot2 $w.plw.plwin"
+    pack append $w.menu $w.menu.three {left expand fill}
 
-button .1.menu.four -text "Four" -command "plot3 .1.plw.plwin"
-pack append .1.menu .1.menu.four {left expand fill}
+    button $w.menu.four -text "Four" -command "plot3 $w.plw.plwin"
+    pack append $w.menu $w.menu.four {left expand fill}
 
-button .1.menu.exit -text "Exit" -command "destroy .1"
-pack append .1.menu .1.menu.exit {right expand fill}
+    button $w.menu.exit -text "Dismiss" -command "destroy $w"
+    pack append $w.menu $w.menu.exit {right expand fill}
 
-message .1.msg \
+    message $w.msg \
 	-font -Adobe-helvetica-medium-r-normal--*-240* -aspect 200 \
-	 -width 500 -borderwidth 1 \
-	-text "TK03: Multiple toplevels with plframes"
+	-width 500 -borderwidth 1 \
+	-text "TK03: toplevel $child_count"
 
-pack append .1 \
-	.1.menu {top fillx} \
-	.1.msg {top padx 5 pady 5 fill} 
+    pack append $w \
+	$w.menu {top fillx} \
+	$w.msg {top padx 5 pady 5 fill} 
 
-tk_menuBar .1.menu .1.menu.three .1.menu.four
+    tk_menuBar $w.menu $w.menu.three $w.menu.four
 
-###############################################################################
-#
 # This creates the plframe "megawidget".  If you just want a bare plframe,
 # change "plxframe" to "plframe".
 
-plxframe .1.plw
-pack append .1 .1.plw {left expand fill}
+    plxframe $w.plw
+    pack append $w $w.plw {left expand fill}
+
+    incr child_count
+}
 
 ###############################################################################
-# Definitions of procedures used in this script.
+# Utility routines
 
 # Punch eject and hold onto your seat !!!
 
@@ -110,6 +130,10 @@ proc quit a {
 proc dpos w {
     wm geometry $w +300+300
 }
+
+###############################################################################
+# Plotting routines
+###############################################################################
 
 proc 1 {w} {
     global xscale yscale xoff yoff
@@ -247,3 +271,6 @@ proc plot3 {w} {
 }
 
 ###############################################################################
+
+open_main
+
