@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.18  1993/03/06 05:06:50  mjl
-   Inserted sick hack so that Suns without an ANSI libc can use fseek/ftell
-   instead of fsetpos/fgetpos.
+   Revision 1.19  1993/03/10 05:02:26  mjl
+   Changed documentation slightly, and inserted #ifndef _POSIX_SOURCE before
+   the define of _POSIX_SOURCE for an eensy weensy little bit of added safety.
 
+ * Revision 1.18  1993/03/06  05:06:50  mjl
+ * Inserted sick hack so that Suns without an ANSI libc can use fseek/ftell
+ * instead of fsetpos/fgetpos.
+ *
  * Revision 1.17  1993/03/03  19:42:18  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
@@ -91,8 +95,16 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define _POSIX_SOURCE
 #define PLPLOT_VERSION "4.99a"
+
+/*
+* The define of _POSIX_SOURCE is slightly dangerous.  Should probably be
+* replaced by a define only seen internally.
+*/
+
+#ifndef _POSIX_SOURCE
+#define _POSIX_SOURCE
+#endif
 
 /*----------------------------------------------------------------------*\
 *    USING PLPLOT
@@ -281,8 +293,9 @@ typedef void* PLPointer;
 *                       Utility macros
 \*----------------------------------------------------------------------*/
 
-/* Some systems need the "b" flag when opening binary files.
-   Other systems will choke on it, hence the need for this silliness.
+/*
+* Some systems need the "b" flag when opening binary files.
+* Other systems will choke on it, hence the need for this silliness.
 */
 
 #ifdef MSDOS
@@ -359,7 +372,7 @@ typedef void* PLPointer;
 
 #define PL_SET_RGB	1	/* obsolete */
 #define PL_ALLOC_NCOL	2	/* obsolete */
-#define PL_SET_LPB	3
+#define PL_SET_LPB	3	/* probably soon to be obsolete */
 
 /* Default size for family files, in KB.
 *  If you want it bigger, set it from the makefile or at runtime.
@@ -421,46 +434,58 @@ typedef struct {
 
 /* See plcont.c for examples of all of these */
 
-/* PLfGrid is for passing (as a pointer to the first element) an arbitrarily
-   dimensioned array.  The grid dimensions MUST be stored, with a maximum of
-   3 dimensions assumed for now. */
+/*
+* PLfGrid is for passing (as a pointer to the first element) an arbitrarily
+* dimensioned array.  The grid dimensions MUST be stored, with a maximum of 3
+* dimensions assumed for now.
+*/
 
 typedef struct {
     PLFLT *f;
     PLINT nx, ny, nz;
 } PLfGrid;
 
-/* PLfGrid2 is for passing (as an array of pointers) a 2d function array */
-/* The grid dimensions are passed for possible bounds checking. */
+/*
+* PLfGrid2 is for passing (as an array of pointers) a 2d function array.  The
+* grid dimensions are passed for possible bounds checking.
+*/
 
 typedef struct {
     PLFLT **f;
     PLINT nx, ny;
 } PLfGrid2;
 
-/* NOTE: a PLfGrid3 is a good idea here but there is no way to exploit it */
- /* yet so I'll leave it out for now. */
+/*
+* NOTE: a PLfGrid3 is a good idea here but there is no way to exploit it yet
+* so I'll leave it out for now.
+*/
 
-/* PLcGrid is for passing (as a pointer to the first element) arbitrarily
-   dimensioned coordinate transformation arrays.  The grid dimensions MUST be
-   stored, with a maximum of 3 dimensions assumed for now. */
+/*
+* PLcGrid is for passing (as a pointer to the first element) arbitrarily
+* dimensioned coordinate transformation arrays.  The grid dimensions MUST be
+* stored, with a maximum of 3 dimensions assumed for now.
+*/
 
 typedef struct {
     PLFLT *xg, *yg, *zg;
     PLINT nx, ny, nz;
 } PLcGrid;
 
-/* PLcGrid2 is for passing (as arrays of pointers) 2d coordinate
-   transformation arrays.  The grid dimensions are passed for possible
-   bounds checking.  */
+/*
+* PLcGrid2 is for passing (as arrays of pointers) 2d coordinate
+* transformation arrays.  The grid dimensions are passed for possible bounds
+* checking.
+*/
 
 typedef struct {
     PLFLT **xg, **yg, **zg;
     PLINT nx, ny;
 } PLcGrid2;
 
-/* NOTE: a PLcGrid3 is a good idea here but there is no way to exploit it */
- /* yet so I'll leave it out for now. */
+/*
+* NOTE: a PLcGrid3 is a good idea here but there is no way to exploit it yet
+* so I'll leave it out for now.
+*/
 
 /* PLColor is the usual way to pass an rgb color value. */
 
@@ -472,36 +497,36 @@ typedef struct {
 *		BRAINDEAD-ness
 *
 *  Some systems allow the Fortran & C namespaces to clobber each other.
-*  For plplot to work from Fortran on these systems, we must name the
-*  the externally callable C functions something other than their Fortran
-*  entry names.  In order to make this as easy as possible for the casual
-*  user, yet reversible to those who abhor my solution, I have done the
+*  For plplot to work from Fortran on these systems, we must name the the
+*  externally callable C functions something other than their Fortran entry
+*  names.  In order to make this as easy as possible for the casual user,
+*  yet reversible to those who abhor my solution, I have done the
 *  following:
 *
-*	The C-language bindings are actually different from those 
-*	described in the manual.  Macros are used to convert the 
-*	documented names to the names used in this package.  The 
-*	user MUST include plplot.h in order to get the name 
+*	The C-language bindings are actually different from those
+*	described in the manual.  Macros are used to convert the
+*	documented names to the names used in this package.  The
+*	user MUST include plplot.h in order to get the name
 *	redefinition correct.
 *
-*  Sorry to have to resort to such an ugly kludge, but it is really the best
-*  way to handle the situation at present.  If all available compilers offer
-*  a way to correct this stupidity, then perhaps we can eventually reverse
-*  it (there is a way now, by throwing the -DNOBRAINDEAD switch, but I
-*  discourage you from doing this unless you know what you are doing).  If
-*  you feel like screaming at someone (I sure do), please direct it at your
-*  nearest system vendor who has a braindead shared C/Fortran namespace.
-*  Some vendors do offer compiler switches that change the object names,
-*  but then everybody who wants to use the package must throw these same
-*  switches, leading to no end of trouble.
+*  Sorry to have to resort to such an ugly kludge, but it is really the
+*  best way to handle the situation at present.  If all available compilers
+*  offer a way to correct this stupidity, then perhaps we can eventually
+*  reverse it (there is a way now, by throwing the -DNOBRAINDEAD switch,
+*  but I discourage you from doing this unless you know what you are
+*  doing).  If you feel like screaming at someone (I sure do), please
+*  direct it at your nearest system vendor who has a braindead shared
+*  C/Fortran namespace.  Some vendors do offer compiler switches that
+*  change the object names, but then everybody who wants to use the package
+*  must throw these same switches, leading to no end of trouble.
 *
 *  Note that this definition should not cause any noticable effects, with
 *  the exception of when doing PLPLOT debugging, in which case you will
-*  need to remember the real function names (same as before but with
-*  a 'c_' prepended).
+*  need to remember the real function names (same as before but with a 'c_'
+*  prepended).
 *
-*  Also, to avoid macro conflicts, the BRAINDEAD part must not be
-*  expanded in the stub routines.
+*  Also, to avoid macro conflicts, the BRAINDEAD part must not be expanded
+*  in the stub routines.
 \*----------------------------------------------------------------------*/
 
 #ifndef BRAINDEAD
