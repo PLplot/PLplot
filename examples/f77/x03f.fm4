@@ -1,6 +1,6 @@
-!
-! Generates polar plot with, 1-1 scaling
-!
+C
+C      Generates polar plot with, 1-1 scaling
+C
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
@@ -11,79 +11,75 @@
       integer i, j, nsp
 
       dtr = PI/180.0d0
-      do 1 i=0,360
+      do i=0,360
         x0(i) = cos(dtr * dble (i))
         y0(i) = sin(dtr * dble (i))
-    1 continue
+      enddo
+C      Parse and process command line arguments
 
-! Parse and process command line arguments
+C      TODO: plParseOpts()
 
-      ! TODO: plParseOpts()
-
-! Initialize plplot
+C      Initialize PLplot
 
       call plinit()
 
-! Set up viewport and window, but do not draw box
+C      Set up viewport and window, but do not draw box
 
-      call plenv(-1.3d0, 1.3d0, -1.3d0,
-     &  1.3d0, 1, -2)
-      do 2 i = 1,10
-        do 3 j = 0,360
+      call plenv(-1.3d0, 1.3d0, -1.3d0, 1.3d0, 1, -2)
+      do i = 1,10
+        do j = 0,360
           x(j) = 0.1d0*i*x0(j)
           y(j) = 0.1d0*i*y0(j)
-    3   continue
-
-! Draw circles for polar grid
+        enddo
+C        Draw circles for polar grid
 
         call plline(361,x,y)
-    2 continue
-
+      enddo
       call plcol0(2)
-      do 4 i = 0,11
+      do i = 0,11
         theta = 30.0d0*i
         dx = cos(dtr*theta)
         dy = sin(dtr*theta)
 
-! Draw radial spokes for polar grid
+C        Draw radial spokes for polar grid
 
         call pljoin(0.0d0, 0.0d0, dx, dy)
         write (text,'(i3)') nint(theta)
 
-! Write labels for angle
+C        Write labels for angle
 
         text = text(nsp(text):)
-        if (dx.ge.0) then
+C        Slightly off zero to avoid floating point logic flips at
+C        90 and 270 deg.
+        if (dx.ge.-0.00001d0) then
           call plptex(dx, dy, dx, dy, -0.15d0, text)
         else
           call plptex(dx, dy, -dx, -dy, 1.15d0, text)
         end if
-    4 continue
+      enddo
+C      Draw the graph
 
-! Draw the graph
-
-      do 5 i=0,360
+      do i=0,360
         r = sin(dtr*dble (5*i))
         x(i) = x0(i) * r
         y(i) = y0(i) * r
-    5 continue
+      enddo
       call plcol0(3)
       call plline(361,x,y)
 
       call plcol0(4)
-      call plmtex
-     &  ('t', 2.0d0, 0.5d0, 0.5d0,
-     &  '#frPLPLOT Example 3 - r(#gh)=sin 5#gh')
+      call plmtex('t', 2.0d0, 0.5d0, 0.5d0,
+     &  '#frPLplot Example 3 - r(#gh)=sin 5#gh')
 
-! Close the plot at end
+C      Close the plot at end
 
       call plend
       end
 
       integer function nsp(text)
-!     ==================
+C      ==================
 
-! Find first non-space character
+C      Find first non-space character
       implicit none
 
       character*(*) text
@@ -91,8 +87,7 @@
 
       l = len(text)
       nsp = 1
-    1 if (text(nsp:nsp).eq.' ' .and. nsp.lt.l) then
+      do while(text(nsp:nsp).eq.' ' .and. nsp.lt.l)
         nsp = nsp+1
-        goto 1
-      end if
+      enddo
       end
