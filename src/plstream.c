@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/07/01 22:13:43  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.6  1993/07/16 22:37:04  mjl
+   Eliminated obsolete functions, moved function for setting filename here.
 
+ * Revision 1.5  1993/07/01  22:13:43  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+ *
  * Revision 1.4  1993/04/26  19:57:59  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
@@ -58,12 +61,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "plstream.h"
-
-/* Functions only in this file */
-
-static void plSclSetup(PLStream *, PLDev *);
-
-static char line[80];
 
 /*----------------------------------------------------------------------*\
 * color_def()
@@ -168,6 +165,7 @@ void
 plOpenFile(PLStream *pls)
 {
     int i = 0;
+    char line[256];
 
     while (!pls->OutFile) {
 	if (!pls->fileset) {
@@ -175,10 +173,7 @@ plOpenFile(PLStream *pls)
 	    fgets(line, sizeof(line), stdin);
 	    line[strlen(line) - 1] = '\0';
 
-	    strncpy(pls->FileName, line, sizeof(pls->FileName) - 1);
-	    pls->FileName[sizeof(pls->FileName) - 1] = '\0';
-	    pls->fileset = 1;
-	    strcpy(pls->FamilyName, pls->FileName);
+	    plP_sfnam(pls, line);
 	}
 	if (!strcmp(pls->FileName, "-")) {
 	    pls->OutFile = stdout;
@@ -200,6 +195,36 @@ plOpenFile(PLStream *pls)
 	else
 	    printf("Created %s\n", pls->FileName);
     }
+}
+
+/*----------------------------------------------------------------------*\
+* plP_sfnam()
+*
+* Sets up file name & family stem name.
+* Reserve some extra space (5 chars) to hold an optional member number.
+\*----------------------------------------------------------------------*/
+
+void
+plP_sfnam(PLStream *pls, char *fnam)
+{
+    pls->OutFile = NULL;
+    pls->fileset = 1;
+
+    if (pls->FileName != NULL)
+	free((void *) pls->FileName);
+
+    pls->FileName = (char *)
+	malloc(6 + (strlen(fnam)) * sizeof(char));
+
+    strcpy(pls->FileName, fnam);
+
+    if (pls->FamilyName != NULL)
+	free((void *) pls->FamilyName);
+
+    pls->FamilyName = (char *)
+	malloc(6 + (strlen(fnam)) * sizeof(char));
+
+    strcpy(pls->FamilyName, fnam);
 }
 
 /*----------------------------------------------------------------------*\
@@ -256,6 +281,7 @@ plGetInt(char *s)
 {
     PLINT m;
     int i = 0;
+    char line[256];
 
     while (i++ < 10) {
 	printf(s);
@@ -284,6 +310,7 @@ plGetFlt(char *s)
 {
     PLFLT m;
     int i = 0;
+    char line[256];
 
     while (i++ < 10) {
 	printf(s);
@@ -346,63 +373,3 @@ plRotPhy(PLINT orient, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
     }
 }
 
-/*----------------------------------------------------------------------*\
-* plSclPhy()
-*
-* Scales physical coordinates to get a specified aspect ratio on plot.
-\*----------------------------------------------------------------------*/
-
-void
-plSclPhy(PLStream *pls, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
-{
-    int x1o, y1o, x2o, y2o;
-
-    if (pls->aspect <= 0.)	/* Failsafe (should never happen) */
-	return;
-
-    x1o = *px1;
-    y1o = *py1;
-    x2o = *px2;
-    y2o = *py2;
-
-    if (pls->aspectset) {
-	plSclSetup(pls, dev);
-	pls->aspectset = 0;
-    }
-    *px1 = (int) (dev->sclxmin + (x1o - dev->xmin) * dev->rsclx);
-    *px2 = (int) (dev->sclxmin + (x2o - dev->xmin) * dev->rsclx);
-    *py1 = (int) (dev->sclymin + (y1o - dev->ymin) * dev->rscly);
-    *py2 = (int) (dev->sclymin + (y2o - dev->ymin) * dev->rscly);
-}
-
-/*----------------------------------------------------------------------*\
-* plSclSetup()
-*
-* Gets physical scaling factors in response to given aspect ratio request.
-* Largest box that satisfies given aspect ratio that fits on the page
-* or subpage will be used.
-\*----------------------------------------------------------------------*/
-
-static void
-plSclSetup(PLStream *pls, PLDev *dev)
-{
-    PLINT sclxlen, sclylen, devxlen, devylen;
-
-/* Get global aspect scaling factors */
-
-    devxlen = dev->xmax - dev->xmin;
-    devylen = dev->ymax - dev->ymin;
-
-    sclylen = devylen;
-    sclxlen = sclylen / pls->aspect;
-    if (sclxlen > devxlen) {
-	sclxlen = devxlen;
-	sclylen = sclxlen * pls->aspect;
-    }
-
-    dev->sclxmin = dev->xmin + (dev->xmax - sclxlen) / 2.0;
-    dev->sclymin = dev->ymin + (dev->ymax - sclylen) / 2.0;
-
-    dev->rsclx = (double) sclxlen / (double) devxlen;
-    dev->rscly = (double) sclylen / (double) devylen;
-}
