@@ -1,8 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/05/26 20:41:34  mjl
-   Fixed my fix to my fix to work under non-ANSI C (i.e. SUNOS).
+   Revision 1.5  1992/05/27 00:01:12  furnish
+   Having now verified that my change to plfill.c works on dino, ctrss2 and
+   ctribm1 (at a total time cost of less than 10 minutes) I am now committing
+   yet another fix to plfill.c.  Anyone who touches this file in the next
+   four days will die!
 
+ * Revision 1.4  1992/05/26  20:41:34  mjl
+ * Fixed my fix to my fix to work under non-ANSI C (i.e. SUNOS).
+ *
  * Revision 1.3  1992/05/26  18:27:49  mjl
  * Fixed (hopefully for the last time) the problems introduced with the
  * last "fix".
@@ -268,7 +274,7 @@ PLINT x1, y1;
 
 #ifdef PLSTDC
 int 
-compar((const void *, const void *));
+compar(const void *pnum1, const void *pnum2)
 #else
 int 
 compar(pnum1, pnum2)
