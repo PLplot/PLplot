@@ -561,7 +561,7 @@ plD_esc_ps(PLStream *pls, PLINT op, void *ptr)
       fill_polygon(pls);
       break;
     case PLESC_HAS_TEXT:
-      proc_str(pls, ptr);
+      proc_str(pls, (EscText *)ptr);
       break;
     }
 }
