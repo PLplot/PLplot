@@ -1,9 +1,0 @@
-*.flc
-Makefile
-Makefile.in
-.deps
-.libs
-*.la
-*.lo
-plplot_stub.m
-plplot_octave_path.m

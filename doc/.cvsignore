@@ -1,9 +1,0 @@
-*.aux
-*.cp
-*.log
-*.toc
-*.dvi
-*.info
-*.ps
-Makefile
-Makefile.in

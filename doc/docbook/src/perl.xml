@@ -1,8 +1,0 @@
-<chapter id="perl">
-  <title>Using PLplot from Perl</title>
-  <para>
-Documentation for the PLplot Perl binding goes here.  This is not implemented
-in the slightest yet, but this neat
-idea may eventually (some time in 2001?) be implemented using swig.
-  </para>
-</chapter>
