@@ -10,7 +10,7 @@
 #-----------------------------------------------------------------------------#
 #\
 exec tclsh "$0" ${1+"$@"}
-package require Itcl
+catch {package require Itcl}
 
 # Think there are enough naming conventions?
 auto_mkindex . *.tcl *.itcl *.itk *.ith *.itm
