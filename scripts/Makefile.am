@@ -42,4 +42,5 @@ EXTRA_DIST = \
 	htdocs-replace.sh \
 	make-cvs-tarball.sh \
 	make_tarball.sh \
-	mktclIndex
+	mktclIndex \
+	upload-cvs-tarball.sh
