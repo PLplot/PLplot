@@ -1,9 +1,13 @@
 /* $Id$
-   $Log$
-   Revision 1.10  1993/08/04 18:27:03  mjl
-   Modified -bg argument handler to strip leading '#' off hex color value if
-   present, to allow it to deal with TCL-style color values.
-
+ * $Log$
+ * Revision 1.11  1993/08/11 19:21:58  mjl
+ * Changed definition of plHelp() and plSyntax() to take a mode flag
+ * as argument.  Currently used to govern handling of invisible options.
+ *
+ * Revision 1.10  1993/08/04  18:27:03  mjl
+ * Modified -bg argument handler to strip leading '#' off hex color value if
+ * present, to allow it to deal with TCL-style color values.
+ *
  * Revision 1.9  1993/08/03  01:46:56  mjl
  * Changes to eliminate warnings when compiling with gcc -Wall.
  *
@@ -113,10 +117,12 @@
 /* Support functions */
 /* INDENT OFF */
 
-static void Usage	(char *);
 static int  ParseOpt	(int *, char ***, int *, char ***, PLOptionTable *);
 static int  ProcessOpt	(char *, PLOptionTable *, int *, char ***, int *);
 static int  GetOptarg	(char **, int *, char ***, int *);
+static void Usage	(char *);
+static void Help	(void);
+static void Syntax	(void);
 
 static void (*UsageH) (char *) = Usage;
 
@@ -209,6 +215,13 @@ static int	mode_override;
 
 static PLOptionTable ploption_table[] = {
 {
+    "showall",			/* Turns on invisible options */
+    NULL,
+    &mode_showall,
+    PL_OPT_BOOL | PL_OPT_ENABLED | PL_OPT_INVISIBLE,
+    "-showall",
+    "Turns on invisible options" },
+{
     "h",			/* Help */
     opt_h,
     NULL,
@@ -229,13 +242,6 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-dev name",
     "Output device name" },
-{
-    "showall",			/* Turns on invisible options */
-    NULL,
-    &mode_showall,
-    PL_OPT_BOOL | PL_OPT_ENABLED | PL_OPT_INVISIBLE,
-    "-showall",
-    "Turns on invisible options" },
 {
     "o",			/* Output filename */
     opt_o,
@@ -421,66 +427,29 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 /*----------------------------------------------------------------------*\
 * plSyntax()
 *
-* Print syntax message appropriate for plplot.
+* Front-end to Syntax() for external use.
+* Accepts mode flag (right now only PL_PARSE_SHOWALL bit is used).
 \*----------------------------------------------------------------------*/
 
 void
-plSyntax()
+plSyntax(PLINT mode)
 {
-    PLOptionTable *tab;
-    int col, len;
-
-    fprintf(stderr, "\nplplot options:");
-
-    col = 80;
-    for (tab = ploption_table; tab->opt; tab++) {
-	if ( ! (tab->mode & PL_OPT_ENABLED))
-	    continue;
-
-	if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
-	    continue;
-
-	if (tab->syntax == NULL)
-	    continue;
-
-	len = 3 + strlen(tab->syntax);		/* space [ string ] */
-	if (col + len > 79) {
-	    fprintf(stderr, "\r\n   ");		/* 3 spaces */
-	    col = 3;
-	}
-	fprintf(stderr, " [%s]", tab->syntax);
-	col += len;
-    }
-    fprintf(stderr, "\r\n");
+    mode_showall   = mode & PL_PARSE_SHOWALL;
+    Syntax();
 }
 
 /*----------------------------------------------------------------------*\
 * plHelp()
 *
-* Print long help message appropriate for plplot.
+* Front-end to Help() for external use.
+* Accepts mode flag (right now only PL_PARSE_SHOWALL bit is used).
 \*----------------------------------------------------------------------*/
 
 void
-plHelp(void)
+plHelp(PLINT mode)
 {
-    PLOptionTable *tab;
-
-    fprintf(stderr, "\nplplot options:\n");
-    for (tab = ploption_table; tab->syntax; tab++) {
-	if ( ! (tab->mode & PL_OPT_ENABLED))
-	    continue;
-
-	if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
-	    continue;
-
-	if (tab->desc == NULL)
-	    continue;
-
-	if (tab->mode & PL_OPT_INVISIBLE) 
-	    fprintf(stderr, " *  %-20s %s\n", tab->syntax, tab->desc);
-	else 
-	    fprintf(stderr, "    %-20s %s\n", tab->syntax, tab->desc);
-    }
+    mode_showall   = mode & PL_PARSE_SHOWALL;
+    Help();
 }
 
 /*----------------------------------------------------------------------*\
@@ -833,10 +802,75 @@ Usage(char *badOption)
     fprintf(stderr, "\nUsage:\n        %s [plplot options]\n",
 	    program_name);
 
-    plSyntax();
+    Syntax();
 
     fprintf(stderr, "\r\n\nType %s -h for a full description.\r\n\n",
 	    program_name);
+}
+
+/*----------------------------------------------------------------------*\
+* Syntax()
+*
+* Print syntax message appropriate for plplot.
+\*----------------------------------------------------------------------*/
+
+static void
+Syntax(void)
+{
+    PLOptionTable *tab;
+    int col, len;
+
+    fprintf(stderr, "\nplplot options:");
+
+    col = 80;
+    for (tab = ploption_table; tab->opt; tab++) {
+	if ( ! (tab->mode & PL_OPT_ENABLED))
+	    continue;
+
+	if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
+	    continue;
+
+	if (tab->syntax == NULL)
+	    continue;
+
+	len = 3 + strlen(tab->syntax);		/* space [ string ] */
+	if (col + len > 79) {
+	    fprintf(stderr, "\r\n   ");		/* 3 spaces */
+	    col = 3;
+	}
+	fprintf(stderr, " [%s]", tab->syntax);
+	col += len;
+    }
+    fprintf(stderr, "\r\n");
+}
+
+/*----------------------------------------------------------------------*\
+* Help()
+*
+* Print long help message appropriate for plplot.
+\*----------------------------------------------------------------------*/
+
+static void
+Help(void)
+{
+    PLOptionTable *tab;
+
+    fprintf(stderr, "\nplplot options:\n");
+    for (tab = ploption_table; tab->opt; tab++) {
+	if ( ! (tab->mode & PL_OPT_ENABLED))
+	    continue;
+
+	if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
+	    continue;
+
+	if (tab->desc == NULL)
+	    continue;
+
+	if (tab->mode & PL_OPT_INVISIBLE) 
+	    fprintf(stderr, " *  %-20s %s\n", tab->syntax, tab->desc);
+	else 
+	    fprintf(stderr, "    %-20s %s\n", tab->syntax, tab->desc);
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -859,7 +893,7 @@ opt_h(char *opt, char *optarg)
 	fprintf(stderr, "\nUsage:\n        %s [plplot options]\n",
 		program_name);
 
-	plHelp();
+	Help();
 	plNotes();
     }
     return 1;
