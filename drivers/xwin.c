@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1994/05/07 03:03:32  mjl
+ * Revision 1.36  1994/05/09 19:54:53  mjl
+ * Some bug fixes for non-color displays.
+ *
+ * Revision 1.35  1994/05/07  03:03:32  mjl
  * Massively restructured initialization to handle custom color maps.
  * Switched to XCreateWindow instead of XCreateSimpleWindow for more power.
  * Initialization of custom color map fairly complex in order to lead to
@@ -1128,8 +1131,6 @@ Driver will redraw the entire plot to handle expose events.\n");
 * at least 40 or so free.
 \*----------------------------------------------------------------------*/
 
-#define USE_CUSTOM_COLOR_MAP
-
 #define XWM_COLORS 70
 #define CMAP0_COLORS 16
 #define CMAP1_COLORS 100
@@ -1152,6 +1153,10 @@ Init_Colormap(PLStream *pls)
     int gslevbg, gslevfg;
 
     dbug_enter("Init_Colormap");
+
+/* Grab default color map */
+
+    default_map = DefaultColormap(dev->display, dev->screen);
 
 /*
  * Figure out if we have a color display or not.
@@ -1202,15 +1207,13 @@ Init_Colormap(PLStream *pls)
 /* If we're not on a color system, just allocate bg & fg then return */
 
     if ( ! dev->color) {
-	PLColor_to_XColor(&pls->cmap0[i], &dev->cmap0[i]);
-	XAllocColor(dev->display, default_map, &dev->cmap0[i]);
+	PLColor_to_XColor(&pls->cmap0[0], &dev->cmap0[0]);
+	XAllocColor(dev->display, default_map, &dev->cmap0[0]);
 	XAllocColor(dev->display, default_map, &dev->fgcolor);
 	return;
     }
 
 /* Determine current default colors */
-
-    default_map = DefaultColormap(dev->display, dev->screen);
 
     for (i = 0; i < MAX_COLORS; i++) {
 	xwm_colors[i].pixel = i;
@@ -1241,7 +1244,7 @@ Init_Colormap(PLStream *pls)
     }
     XAllocColor(dev->display, default_map, &dev->fgcolor);
 
-#ifdef USE_CUSTOM_COLOR_MAP
+/* Get visual and create custom color map */
 
     vTemplate.screen = dev->screen;
     vTemplate.depth = 8;
@@ -1254,8 +1257,6 @@ Init_Colormap(PLStream *pls)
 	plexit("Unable to allocate adequate visuals.");
 
     dev->vi = &visualList[0];	/* Chose # 0 for lack of a better idea. */
-
-    printf("colormap_size is %d.\n", dev->vi->colormap_size);
 
     dev->depth = vTemplate.depth;
     dev->pixels = 1 << dev->depth;
@@ -1315,10 +1316,6 @@ Init_Colormap(PLStream *pls)
 	if (pixels[i] != 0)
 	    XFreeColors(dev->display, dev->map, &pixels[i], 1, 0);
     }
-
-#else
-    dev->map = DefaultColormap(dev->display, dev->screen);
-#endif
 
 /* Allocate colors in cmap 1 */
 
