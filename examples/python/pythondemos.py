@@ -28,8 +28,7 @@ import xw05
 import xw06
 import xw07
 import xw08
-#avoid segfault for now 
-#import xw09
+import xw09
 import xw10
 import xw11
 import xw12
