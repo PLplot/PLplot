@@ -3,12 +3,14 @@ C      Shade plot demo.
 C      Does a variety of shade plots.
       implicit none
 
-      integer  XPTS, YPTS
-      parameter( XPTS = 35, YPTS = 46 )
+      integer  xdim, ydim, XPTS, YPTS
+C      xdim and ydim are the static dimensions of the 2D arrays while
+C      NX and NY are the defined area.
+      parameter( xdim = 99, XPTS = 35, ydim = 100, YPTS = 46 )
 
       integer i,  j
       real*8  xx, yy
-      real*8  z(XPTS,YPTS), zmin, zmax
+      real*8  z(xdim, ydim), zmin, zmax
 
       integer PL_PARSE_FULL
       parameter(PL_PARSE_FULL = 1)
@@ -34,10 +36,10 @@ C      Set up data array
         enddo
       enddo
 
-      call a2mnmx(z, XPTS, YPTS, zmin, zmax)
+      call a2mnmx(z, XPTS, YPTS, zmin, zmax, xdim)
 
-      call plot1(z, XPTS, YPTS, zmin, zmax)
-      call plot2(z, XPTS, YPTS, zmin, zmax)
+      call plot1(z, XPTS, YPTS, zmin, zmax, xdim)
+      call plot2(z, XPTS, YPTS, zmin, zmax, xdim)
 
       call plend()
       end
@@ -140,11 +142,11 @@ C
 C      Illustrates a single shaded region.
 C -------------------------------------------------------------------------
 
-      subroutine plot1(z, XPTS, YPTS, zmin, zmax)
+      subroutine plot1(z, XPTS, YPTS, zmin, zmax, xdim)
       implicit none
 
-      integer XPTS, YPTS
-      real*8  z(XPTS,YPTS), zmin, zmax
+      integer xdim, XPTS, YPTS
+      real*8  z(xdim,YPTS), zmin, zmax
 
       character*1 undefined
       real*8  shade_min, shade_max, sh_color
@@ -179,7 +181,7 @@ C      Use plshade0 instead of plshade1 - identity mapping
      &  -1.d0, 1.d0, -1.d0, 1.d0,
      &  shade_min, shade_max,
      &  sh_cmap, sh_color, sh_width,
-     &  min_color, min_width, max_color, max_width)
+     &  min_color, min_width, max_color, max_width, xdim)
 
       call plcol0(1)
       call plbox('bcnst', 0.0d0, 0, 'bcnstv', 0.0d0, 0)
@@ -195,11 +197,11 @@ C      Illustrates multiple adjacent shaded regions, using different fill
 C      patterns for each region.
 C -------------------------------------------------------------------------
 
-      subroutine plot2(z, XPTS, YPTS, zmin, zmax)
+      subroutine plot2(z, XPTS, YPTS, zmin, zmax, xdim)
       implicit none
 
-      integer XPTS, YPTS
-      real*8  z(XPTS,YPTS), zmin, zmax
+      integer xdim, XPTS, YPTS
+      real*8  z(xdim,YPTS), zmin, zmax
 
       character*1 undefined
       real*8  shade_min, shade_max, sh_color
@@ -230,7 +232,7 @@ C        Use plshade0 instead of plshade1 - identity mapping
      &    -1.d0, 1.d0, -1.d0, 1.d0,
      &    shade_min, shade_max,
      &    sh_cmap, sh_color, sh_width,
-     &    min_color, min_width, max_color, max_width)
+     &    min_color, min_width, max_color, max_width, xdim)
       enddo
 
       call plcol0(1)
@@ -244,11 +246,11 @@ C----------------------------------------------------------------------------
 C      Subroutine a2mnmx
 C      Minimum and the maximum elements of a 2-d array.
 
-      subroutine a2mnmx(f, nx, ny, fmin, fmax)
+      subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
       implicit none
 
-      integer   i, j, nx, ny
-      real*8    f(nx, ny), fmin, fmax
+      integer   i, j, nx, ny, xdim
+      real*8    f(xdim, ny), fmin, fmax
 
       fmax = f(1, 1)
       fmin = fmax

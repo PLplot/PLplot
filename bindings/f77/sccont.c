@@ -318,24 +318,31 @@ PLSHADE07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	  PLFLT *shade_min, PLFLT *shade_max,
 	  PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
 	  PLINT *min_color, PLINT *min_width,
-	  PLINT *max_color, PLINT *max_width)
+	  PLINT *max_color, PLINT *max_width, PLINT *lx)
 {
-    PLfGrid fgrid;
-    PLINT rect = 1;
+   PLINT rect = 1;
+   PLFLT ** a;
+   int i,j;
+   
+/* Create a vectored a array from transpose of the fortran z array. */
+   plAlloc2dGrid(&a, *nx, *ny);
+   for (i = 0; i < *nx; i++) {
+      for (j = 0; j < *ny; j++) {
+	 a[i][j] = z[i +j * *lx];
+      }
+   }
+   
+   c_plshade( a, *nx, *ny, NULL,
+	      *xmin, *xmax, *ymin, *ymax,
+	      *shade_min, *shade_max,
+	      *sh_cmap, *sh_color, *sh_width,
+	      *min_color, *min_width, *max_color, *max_width,
+	      c_plfill, rect, NULL, NULL);
 
-    fgrid.nx = *nx;
-    fgrid.ny = *ny;
-    fgrid.f = z;
-
-    plfshade(plf2evalr, (PLPointer) &fgrid,
-	     NULL, NULL,
-	     *nx, *ny,
-	     *xmin, *xmax, *ymin, *ymax,
-	     *shade_min, *shade_max,
-	     *sh_cmap, *sh_color, *sh_width,
-	     *min_color, *min_width, *max_color, *max_width,
-	     c_plfill, rect, NULL, NULL);
+/* Clean up memory allocated for a */
+   plFree2dGrid(a, *nx, *ny);
 }
+
 
 /* 1-d transformation */
 
@@ -346,29 +353,34 @@ PLSHADE17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	  PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
 	  PLINT *min_color, PLINT *min_width,
 	  PLINT *max_color, PLINT *max_width,
-	  PLFLT *xg, PLFLT *yg)
+	  PLFLT *xg1, PLFLT *yg1, PLINT *lx)
 {
-    PLfGrid fgrid;
-    PLcGrid cgrid;
-    PLINT rect = 1;
+   PLINT rect = 1;
+   PLFLT ** a;
+   int i,j;
+   PLcGrid cgrid;
+   
+/* Create a vectored a array from transpose of the fortran z array. */
+   plAlloc2dGrid(&a, *nx, *ny);
+   for (i = 0; i < *nx; i++) {
+      for (j = 0; j < *ny; j++) {
+	 a[i][j] = z[i +j * *lx];
+      }
+   }
+   
+   cgrid.nx = *nx;
+   cgrid.ny = *ny;
+   cgrid.xg = xg1;
+   cgrid.yg = yg1;
+   c_plshade( a, *nx, *ny, NULL,
+	      *xmin, *xmax, *ymin, *ymax,
+	      *shade_min, *shade_max,
+	      *sh_cmap, *sh_color, *sh_width,
+	      *min_color, *min_width, *max_color, *max_width,
+	      c_plfill, rect, pltr1, (PLPointer) &cgrid);
 
-    fgrid.nx = *nx;
-    fgrid.ny = *ny;
-    fgrid.f = z;
-
-    cgrid.nx = *nx;
-    cgrid.ny = *ny;
-    cgrid.xg = xg;
-    cgrid.yg = yg;
-
-    plfshade(plf2evalr, (PLPointer) &fgrid,
-	     NULL, NULL,
-	     *nx, *ny,
-	     *xmin, *xmax, *ymin, *ymax,
-	     *shade_min, *shade_max,
-	     *sh_cmap, *sh_color, *sh_width,
-	     *min_color, *min_width, *max_color, *max_width,
-	     c_plfill, rect, pltr1, (PLPointer) &cgrid);
+/* Clean up memory allocated for a */
+   plFree2dGrid(a, *nx, *ny);
 }
 
 /* 2-d transformation */
@@ -380,29 +392,39 @@ PLSHADE27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	  PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
 	  PLINT *min_color, PLINT *min_width,
 	  PLINT *max_color, PLINT *max_width,
-	  PLFLT *xg, PLFLT *yg)
+	  PLFLT *xg2, PLFLT *yg2, PLINT *lx)
 {
-    PLfGrid fgrid;
-    PLcGrid cgrid;
-    PLINT rect = 0;
+   PLINT rect = 0;
+   PLFLT **a;
+   int i,j;
+   PLcGrid2 cgrid2;
 
-    fgrid.nx = *nx;
-    fgrid.ny = *ny;
-    fgrid.f = z;
+/* Create a vectored a array from transpose of the fortran z array. */
+   plAlloc2dGrid(&a, *nx, *ny);
+   plAlloc2dGrid(&cgrid2.xg, *nx, *ny);
+   plAlloc2dGrid(&cgrid2.yg, *nx, *ny);
+   cgrid2.nx = *nx;
+   cgrid2.ny = *ny;
+   for (i = 0; i < *nx; i++) {
+      for (j = 0; j < *ny; j++) {
+	 a[i][j] = z[i +j * *lx];
+	 cgrid2.xg[i][j] = xg2[i +j * *lx];
+	 cgrid2.yg[i][j] = yg2[i +j * *lx];
+      }
+   }
 
-    cgrid.nx = *nx;
-    cgrid.ny = *ny;
-    cgrid.xg = xg;
-    cgrid.yg = yg;
+   c_plshade( a, *nx, *ny, NULL,
+	      *xmin, *xmax, *ymin, *ymax,
+	      *shade_min, *shade_max,
+	      *sh_cmap, *sh_color, *sh_width,
+	      *min_color, *min_width, *max_color, *max_width,
+	      c_plfill, rect, pltr2, (void *) &cgrid2);
 
-    plfshade(plf2evalr, (PLPointer) &fgrid,
-	     NULL, NULL,
-	     *nx, *ny,
-	     *xmin, *xmax, *ymin, *ymax,
-	     *shade_min, *shade_max,
-	     *sh_cmap, *sh_color, *sh_width,
-	     *min_color, *min_width, *max_color, *max_width,
-	     c_plfill, rect, pltr2f, (PLPointer) &cgrid);
+/* Clean up memory allocated for a */
+   plFree2dGrid(a, *nx, *ny);
+   plFree2dGrid(cgrid2.xg, *nx, *ny);
+   plFree2dGrid(cgrid2.yg, *nx, *ny);
+   
 }
 
 void
@@ -411,23 +433,29 @@ PLSHADE7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	 PLFLT *shade_min, PLFLT *shade_max,
 	 PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
 	 PLINT *min_color, PLINT *min_width,
-	 PLINT *max_color, PLINT *max_width, PLFLT *ftr)
+	 PLINT *max_color, PLINT *max_width, PLFLT *ftr, PLINT *lx)
 {
-    PLfGrid fgrid;
-    PLINT rect = 1;
+   PLINT rect = 1;
+   PLFLT ** a;
+   int i,j;
+   
+/* Create a vectored a array from transpose of the fortran z array. */
+   plAlloc2dGrid(&a, *nx, *ny);
+   for (i = 0; i < *nx; i++) {
+      for (j = 0; j < *ny; j++) {
+	 a[i][j] = z[i +j * *lx];
+      }
+   }
+   
+   c_plshade( a, *nx, *ny, NULL,
+	      *xmin, *xmax, *ymin, *ymax,
+	      *shade_min, *shade_max,
+	      *sh_cmap, *sh_color, *sh_width,
+	      *min_color, *min_width, *max_color, *max_width,
+	      c_plfill, rect, pltr, (void *) ftr);
 
-    fgrid.nx = *nx;
-    fgrid.ny = *ny;
-    fgrid.f = z;
-
-    plfshade(plf2evalr, (PLPointer) &fgrid,
-	     NULL, NULL,
-	     *nx, *ny,
-	     *xmin, *xmax, *ymin, *ymax,
-	     *shade_min, *shade_max,
-	     *sh_cmap, *sh_color, *sh_width,
-	     *min_color, *min_width, *max_color, *max_width,
-	     c_plfill, rect, pltr, (void *) ftr);
+/* Clean up memory allocated for a */
+   plFree2dGrid(a, *nx, *ny);
 }
 
 /*----------------------------------------------------------------------*\
@@ -437,7 +465,7 @@ PLSHADE7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
  * - plshades1	linear interpolation from singly dimensioned coord arrays
  * - plshades2	linear interpolation from doubly dimensioned coord arrays
  * - plshades   pass tr information with plplot common block (and
- *              then pass tr as last argument of PLSHADE7)
+ *              then pass tr as last argument of PLSHADES7)
 \*----------------------------------------------------------------------*/
 
 void
@@ -512,8 +540,8 @@ PLSHADES27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 {
    PLINT rect = 0;
    PLFLT **a;
-   PLcGrid2 cgrid2;
    int i,j;
+   PLcGrid2 cgrid2;
    
 /* Create a vectored a array from transpose of the fortran z array. */
    plAlloc2dGrid(&a, *nx, *ny);
@@ -521,7 +549,6 @@ PLSHADES27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
    plAlloc2dGrid(&cgrid2.yg, *nx, *ny);
    cgrid2.nx = *nx;
    cgrid2.ny = *ny;
-   
    for (i = 0; i < *nx; i++) {
       for (j = 0; j < *ny; j++) {
 	 a[i][j] = z[i +j * *lx];

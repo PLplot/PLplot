@@ -30,10 +30,12 @@ C      Plot function using the identity transform
       subroutine rect()
 
       implicit none
-      integer   NX, NY, NCONTR
-      parameter (NX = 35, NY = 46, NCONTR = 14)
+      integer   xdim, ydim, NX, NY, NCONTR
+C      xdim and ydim are the static dimensions of the 2D arrays while
+C      NX and NY are the defined area.
+      parameter (xdim = 99, NX = 35, ydim = 100, NY = 46, NCONTR = 14)
 
-      real*8    z(NX, NY), w(NX, NY), clevel(NCONTR)
+      real*8    z(xdim, ydim), w(xdim, ydim), clevel(NCONTR)
       real*8    xmin, xmax, ymin, ymax, zmin, zmax, x, y
       real*8    shade_min, shade_max, sh_color
       integer   i, j, sh_cmap, sh_width
@@ -63,7 +65,7 @@ C      Set up data arrays
         enddo
       enddo
 
-      call a2mnmx(z, NX, NY, zmin, zmax)
+      call a2mnmx(z, NX, NY, zmin, zmax, xdim)
       do  i = 1, NCONTR
         clevel(i) = zmin + (zmax - zmin) * (i + 0.5d0) /
      &    dble (NCONTR)
@@ -87,7 +89,7 @@ C      Plot using identity transform
      &    dble ( -1.d0), 1.0d0, -1.0d0, 1.0d0,
      &    shade_min, shade_max,
      &    sh_cmap, sh_color, sh_width,
-     &    min_color, min_width, max_color, max_width)
+     &    min_color, min_width, max_color, max_width, xdim)
       enddo
 
       call plcol(1)
@@ -102,13 +104,17 @@ C      Routine for demonstrating use of transformation arrays in contour plots.
       subroutine polar()
 
       implicit none
-      integer   NX, NY, NCONTR, NBDRY
+      integer   xdim, ydim, NX, NY, NCONTR, NBDRY
       real*8    TWOPI
-      parameter (NX = 40, NY = 64, NCONTR = 14, NBDRY=200)
+C      xdim and ydim are the static dimensions of the 2D arrays while
+C      NX and NY are the defined area.
+      parameter (xdim = 99, NX = 40, ydim = 100, NY = 64)
+      parameter (NCONTR = 14, NBDRY=200)
       parameter (TWOPI=6.2831853071795864768d0)
 
-      real*8    z(NX, NY), ztmp(NX, NY+1)
-      real*8    xg(NX, NY+1), yg(NX, NY+1), xtm(NBDRY), ytm(NBDRY)
+      real*8    z(xdim, ydim), ztmp(xdim, ydim+1)
+      real*8    xg(xdim, ydim+1), yg(xdim, ydim+1), 
+     &   xtm(NBDRY), ytm(NBDRY)
       real*8    clevel(NCONTR)
       real*8    xmin, xmax, ymin, ymax, zmin, zmax
       real*8    xpmin, xpmax, ypmin, ypmax
@@ -151,8 +157,8 @@ C      Tack on extra cell in theta to handle periodicity.
         xg(i, NY+1) = xg(i, 1)
         yg(i, NY+1) = yg(i, 1)
       enddo
-      call a2mnmx(xg, NX, NY, xmin, xmax)
-      call a2mnmx(yg, NX, NY, ymin, ymax)
+      call a2mnmx(xg, NX, NY, xmin, xmax, xdim)
+      call a2mnmx(yg, NX, NY, ymin, ymax, xdim)
 
       rmax = r
       x0 = (xmin + xmax)/2.d0
@@ -197,7 +203,7 @@ C      Tack on extra cell in theta to handle periodicity.
         enddo
         ztmp(i, NY+1) = z(i, 1)
       enddo
-      call a2mnmx(z, NX, NY, zmin, zmax)
+      call a2mnmx(z, NX, NY, zmin, zmax, xdim)
 
 C      Set up contour levels.
 
@@ -249,7 +255,7 @@ C      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
      &    -1.0d0, 1.0d0, -1.0d0, 1.0d0,
      &    shade_min, shade_max,
      &    sh_cmap, sh_color, sh_width,
-     &    min_color, min_width, max_color, max_width, xg, yg)
+     &    min_color, min_width, max_color, max_width, xg, yg, xdim)
       enddo
 
 C      Draw boundary.
@@ -272,11 +278,11 @@ C----------------------------------------------------------------------------
 C      Subroutine a2mnmx
 C      Minimum and the maximum elements of a 2-d array.
 
-      subroutine a2mnmx(f, nx, ny, fmin, fmax)
+      subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
       implicit none
 
-      integer   i, j, nx, ny
-      real*8    f(nx, ny), fmin, fmax
+      integer   i, j, nx, ny, xdim
+      real*8    f(xdim, ny), fmin, fmax
 
       fmax = f(1, 1)
       fmin = fmax
