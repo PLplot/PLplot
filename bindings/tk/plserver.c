@@ -32,6 +32,7 @@
     command-line option is not supported).  
 */
 
+#define NEED_PLDEBUG
 #include "plplot/plserver.h"
 
 /* Application-specific command-line options */

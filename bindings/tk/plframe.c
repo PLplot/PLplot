@@ -41,6 +41,7 @@
 #define DEBUG
 */
 
+#define NEED_PLDEBUG
 #include "plplot/plserver.h"
 #include "plplot/plxwd.h"
 #include "plplot/tcpip.h"
