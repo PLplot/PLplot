@@ -638,6 +638,15 @@ if test "$enable_python" = "yes"; then
     . 2>/dev/null
 fi
 
+# Just go ahead and set up the Python stuff needed to do staging.
+
+ln -s $srcdir/bindings/python/Plframe.py .
+ln -s $srcdir/bindings/python/TclSup.py .
+ln -s $srcdir/bindings/python/plmodule.c .
+ln -s $srcdir/bindings/python/plmodule2.c .
+ln -s $srcdir/bindings/python/plmodule.h .
+ln -s $srcdir/bindings/python/setup.py .
+
 if test "$enable_tcl" = "yes"; then
     ln -s \
     $srcdir/bindings/tcl/*.* \
