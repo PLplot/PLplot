@@ -1411,6 +1411,16 @@ void
 plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, int *),
 	    void *ButtonEH_data);
 
+/* Sets an optional user bop handler */
+
+void
+plsbopH(void (*handler) (void *, int *), void *handler_data);
+
+/* Sets an optional user eop handler */
+
+void
+plseopH(void (*handler) (void *, int *), void *handler_data);
+
 /* Set the variables to be used for storing error info */
 
 void
