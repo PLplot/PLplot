@@ -203,10 +203,6 @@ AC_SUBST(MKINDEX)
 # tk.h
 # ----------------------------------------------------------------------------
 
-if test "$enable_tcl" = "no" -o "$have_x" != "yes"; then
-    enable_tk=no
-fi
-
 if test "$enable_tk" = "yes"; then
     if test -z "$TKINCDIR"; then
         PL_FIND_INC(tk, TKINCDIR, enable_tk)
@@ -217,10 +213,6 @@ fi
 # tkInt.h (and indirectly tclInt.h) required by plplotter.c which is
 # required by tkwin device
 # ----------------------------------------------------------------------------
-
-if test "$enable_tcl" = "no" -o "$have_x" != "yes"; then
-    enable_tkwin=no
-fi
 
 if test "$enable_tkwin" = "yes"; then
     if test -z "$TKPRIVATEINCDIR"; then
@@ -279,13 +271,6 @@ fi
 
 if test "$enable_itk" = "yes"; then
     AC_DEFINE(HAVE_ITK, [], [Define if [incr Tk] is available])
-fi
-
-#-----------------------------------------------------------------------------
-# ntk driver
-#-----------------------------------------------------------------------------
-if test "$enable_tk" = "no" -o "$enable_tcl" = "no"; then
-    enable_ntk="no"
 fi
 
 ### automake symbols for system-dependent results
