@@ -286,6 +286,8 @@ if_sunos({
 # if the openwin directory is absent.  If this is the case, you must
 # specify -DNO_OPENWIN when building the makefile with m4.
 
+define({TK},)
+
 CC = gcc
 #CC = acc
 
@@ -454,6 +456,8 @@ LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBF) -lm
 })if_linux({
 #		LINUX definitions
 
+define({TK},)
+
 PLDEVICES = -DPLMETA -DNULLDEV -DPS -DLJII DEF_XWIN() DEF_TK()
 SYS_FLAGS_C =
 
@@ -513,6 +517,8 @@ LDFFLAGS= $(LIBF) -lm
 })if_aix({
 #		A/IX definitions
 
+define({TK},)
+
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS -DXFIG \
 	     DEF_XWIN() DEF_TK()
 SYS_FLAGS_C =
@@ -544,6 +550,8 @@ LDFFLAGS= $(PROFILE_FLAG_F) $(LIBF) -lm
 #----------------------------------------------------------------------#
 })if_unicos({
 #	UNICOS defs.
+
+define({TK},)
 
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK4010 -DTEK4107 -DDG300 \
 	    -DPS -DXFIG -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
