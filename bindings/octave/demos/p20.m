@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -48,8 +48,8 @@ function p20
   p14(1)
   subwindow(1 ,2)
   p12
-  subwindow(3, 4)
-  p17
+  subwindow(4, 4)
+  p17(1)
   oneplot;
 
 endfunction
