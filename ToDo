@@ -2,44 +2,109 @@
 Areas currently under development
 ---------------------------------
 
-o The manual needs BADLY to be updated.
+ - The manual needs BADLY to be updated.
 
-o New color model.  Palette to consist of three parts: 1) Color map 0 --
-fixed colors for plotting axes, lines, labels, whatever.  Maximum number
-of colors is 16.  2) Color map 1 -- only referenced indirectly, through
-"intensity" levels.  For mapping function values to color levels, through
-a user-specified mapping (default mapping given in HLS coordinates;
-eventually a nice input mechanism will be available for the Tcl/TK driver
-at least).  3) Window manager colors.  Known only to driver.  For example,
-if you have a color palette of 256 colors total, you might have 16 colors
-in color map 0, leave the 8 or so colors the window manager is using
-alone, leaving 232 colors for shading (pretty reasonable).  The idea is to
-still get reasonable output even if you have far less colors to choose
-from.  The preliminary work here is done but there's still a ways to go.
+ - Exercise Tcl/TK driver using direct widget control!
 
-o Exercise Tcl/TK driver using (a) invocation from plserver by spawning a
-background command, and (b) direct plotting to widgets.  Investigate using
-Tcl-DP to send messages between the tk driver and plserver, since using
-TK send over a network sucks (for other than local communication).
+ - Install custom colormaps under X.  The current scheme will work even
+   for multiple plplot apps, as long as there are enough colors for just
+   one of the colormaps and the plplot apps use the same color schemes
+   (because identical rgb color cells will be shared).  Either that, or
+   the color allocations have to fail in exactly the same way (a stretch).
+   The custom color maps that are eventually installed should copy colors
+   in use by existing apps (such as the window manager) if reasonable
+   in order to reduce flicker.  Not sure how to do that, though.
 
-o Color fill support at the driver level, for devices that support it.
-Incorporate at a high level in two ways: solid fills for use in plshade,
-and a shading routine that uses all the available colors in color map 1.
+ - finish cmap1 dialog for TK driver
 
-o Fix all 2d array plotters to have similar syntax.  This includes the
-contourers, mesh plots, and plshade.  Most general function in each
-category should accept transformer function and transformer data, to work
-with arbitrary data layouts.  So far this is only implemented in the
-contouring routines.
+ - fix 2d function plotter API's: Most general function in each
+   category should accept transformer function and transformer data, to work
+   with arbitrary data layouts, but there should also be FE's for the
+   "usual data types".  Work to be done:
+	- add contour plotter FE's
+	- add condition code array handler to plshade
+	  (upgrade plAlloc.. to handle char variables?)
+	- fix API for surface plotter
+	- add vector field plot?
+	- better document the 2d function plotter API in plfcont, etc.
 
-o Give file familying a good workout, since it is most probably busted in
-some respect or another.
+ - Give file familying a good workout, since it is most probably busted in
+   some respect or another.
 
-o Need developers to adopt the DOS, OS/2 ports, since original developers
-no longer use those systems.
+ - See if ps output files work with up(1).
 
-o Still some bugs in the Amiga drivers.  Also looking for an individual
-to adopt this port.
+ - Various color drivers should be upgraded to work similar to the tek
+   driver, with support for setting the color palette from the user
+   program as well as cmap1.  I (Maurice) will probably only be supporting
+   the tek, X, ps, and Amiga drivers in this regard, so contributions are
+   welcomed.  The tek driver shows how to get the most out of a 16 color
+   display.
+
+ - Write plcfill() or whatever to cheaply fill 2d functions based
+   on cell value only.  Should be faster than plshade for many grid
+   points (e.g. 128**2).
+
+ - The color map selection in the versaterm driver still doesn't work
+   quite right.  When running x16c, the following happens:
+	o one or more of the early fills is "lost"
+	o using a black background, the background is not set (a bug?),
+	  there is a red band where black should be, and the high end
+	  goes to brown, not red.
+	o with a white background (FFF), it looks almost OK, except for
+	  the lost fill.
+
+   The vlt driver almost always works fine, except when running under
+   amuw, the first time you start up it may lose some of the initial color
+   map select and a fill or more.  This almost never happens if the
+   graphics screen is already up, which tells me it's a timing problem
+   (the info is coming too fast).  But I don't know what to do about it.
+
+ - implement some sort of raster-oriented output.  GIF might be good since
+   it runs on lots of machines (originated with PC's but now supported
+   under Unix and Amiga).  Any PD code for writing it from Unix?
+
+ - support command line arg reading from Fortran under the big 4 if
+   possible: HP, Sunos, Unicos, AIX.
+
+ - metafile produced on the Amiga isn't quite right!  Compiler bug?
+
+ - How can I modify the surface plotter to do color overlays?
+
+ - Get x14c working, write x14f and x15f?
+
+ - add more utility functions to make example programs easier to write?  
+
+ - start using m4 to preprocess the Fortran demos?
+
+ - Fix DP driver as needed, especially from Crays
+
+ - figure out why plrender is barfing on my old metafiles under ~/data
+
+ - find bug in contour plotter?  (spurious; unfortunately I didn't
+   keep the data that caused it -- from Monte-4 run)
+
+ - add support for shared libs on SunOS, AIX
+
+ - check out shared library support under SAS/C -- supposed to be easy
+   (6.0 and later)
+
+ - Put Tcl/TK shared lib build fixes for AIX, HPUX in shared lib package.
+
+ - Build TKNX and get it to work with Tcl-DP driver?
+
+ - put pen width option in TK driver
+
+ - const'ify plplot API
+
+ - Switch to vfork() for TK driver on Cray.
+
+ - Option in TK driver to preserve aspect ratio during zooms.
+
+ - fix bugs in Amiga print driver.
+
+ - mouse dragging in TK driver text window should cause a scroll.
+
+ - get plplot up under gcc on the Amiga?
 
 
 
@@ -62,10 +127,16 @@ should be capable of using postscript fonts instead of the Hershey fonts.
 
 o Explicit support for plotting points, lines in 3d space.
 
-o Vector field plotter.
-
-o The dashed line draws are incredibly slow and should be optimized.
-
 o Cloned streams, for plotting to multiple devices simultaneously.
 
 o Fully document the plplot-driver interface.
+
+o Japanese plplot/TK extensions?
+
+o Japanese font extensions?
+
+o Need developers to adopt the DOS, OS/2 ports, since original developers
+no longer use those systems.  Also looking for an individual to adopt this
+port.
+
+
