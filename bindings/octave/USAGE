@@ -16,12 +16,12 @@ change the legend:
 
 	plot(x,sin(x),';Sin(x);')
 
-set the title
+set the title and plot data points
 	
 	title "My first plot";
-	plot(x,sin(x),';Sin(x);')
+	plot(x,sin(x),'-o;Sin(x);')
 
-change the plot position
+change the legend position
 
 	legend ("opaque",0.8,0.5);
 	plot(x,sin(x),';Sin(x);');
@@ -37,6 +37,9 @@ and see the result
 create a new plot window using the tk driver
 
 	fig(1,"tk")
+
+Use uper an subscript in captions
+
 	title("Sin(x#u2#d)")
 	plot(x,sin(x),'-o;Sin(x#u2#d);',x,cos(x),'y');
 
@@ -60,8 +63,7 @@ You also have access to the PLplot API,
 
 		   plfill(n, x, y) ...
 
-Notice that you don't have the need to specify vector or matrix
-dimensions.
+Notice that you don't need to specify vector or matrix dimensions.
 
 
 --- Plot window control
@@ -160,17 +162,11 @@ clip 		-- Clip values outside the range to the value at the boundary of the rang
 tdeblank	-- Remove trailing amd leading blanks from string.
 
 --- Misc
-pldef		-- set some defaults.
+pldef		-- set your defaults.
+plsetopt	-- set/view/reset/aplly plplot options.
 plimage		-- *very* preliminary!
 
 use_plplot	-- Use/stop using plplot. Not working!
 plplot_octave_path -- set or return octave_plplot scripts directory path.
 
 plplot_stub	-- Definition of all implemented plplot API functions.
-
-
-
-
-
-
-
