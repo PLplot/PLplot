@@ -1,0 +1,33 @@
+#!c:sksh
+
+#*************************************************************************
+#
+# mkexam -- full build of an example program, under SKsh.
+#
+# This is just an example, using the typical compiler flags I use.
+# You should edit it to reflect your setup/shell/whatever.
+#
+# Requires in lib: ->
+#		plplotf.lib
+#		reqtools.lib
+#
+# Requires plplot.h in include path.
+# Written for SAS/C 6.x.
+#
+#*************************************************************************
+
+if [ $# -lt 1 -o "$1" = '-?' ]
+then
+   echo 'Usage:' $(basename $0) 'files...'
+   echo '  (builds plplot example programs [specify basename only])'
+   return 1
+fi
+
+numloop i = 1 $#
+do
+    sc "math=ieee" nover "dbg=symbol" "ign=84,89,147,161"  $1.c
+    slink  lib:c.o $1.o lib lib:plplotf.lib lib:scmieee.lib lib:sc.lib \
+	   lib:amiga.lib lib:reqtools.lib  to $1
+    shift
+done
+

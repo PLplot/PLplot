@@ -537,8 +537,14 @@ ifelse(COMPILER,LATTICE5.X,{
 CC		= lc
 LDC		= blink 
 LIBC		= lib:lc.lib lib:amiga.lib
-OPT_FLAG_C	= -O
+
+if_debug({
 DEBUG_FLAG_C	= -d2
+})
+
+if_opt({
+OPT_FLAG_C	= -O
+})
 
 ifelse(MATH,FFP,{
 MATHFLAGS	= -ff
@@ -575,8 +581,14 @@ ifelse(COMPILER,SAS6.X,{
 CC		= sc
 LDC		= slink 
 LIBC		= lib:sc.lib lib:amiga.lib
-OPT_FLAG_C	= optimize
+
+if_debug({
 DEBUG_FLAG_C	= dbg=symbol
+})
+
+if_opt({
+OPT_FLAG_C	= optimize
+})
 
 define(GST,{plplot.gst})
 

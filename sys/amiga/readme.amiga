@@ -92,8 +92,10 @@ want to use FFP math, you would build the makefile via:
 
 	% m4 -DAMIGA -DMATH=FFP <makefile.m4 >makefile
 
-I only support SAS/C 6.x, although I've left in the flags I used under 
-SAS/C 5.x.
+I only support SAS/C 6.x, although I've left in the flags I used under SAS/C
+5.x (try building the makefile with -DCOMPILER=LATTICE5.X on the m4 command
+line).  I believe it will work but no guarantees (pre-6.x versions of SAS/C
+were not 100% ANSI compliant).
 
 Then, while in the tmp directory:
 
@@ -114,13 +116,14 @@ for the first C demo, or
 
 	% make cdemos
 
-for all demos.  To build plrender:
+for all demos.  Also provided is a short SKsh script for building
+any of the demos (mkexam).  After putting the plplot library(s) in
+lib:, it is a good idea to modify the script to work on your system
+and then build the example programs with that rather than the makefile.
+
+To build plrender:
 
 	% make plrender
 
 Don't forget to copy the font files from the lib directory to a more
 suitable place, preferably fonts:plplot or some such.
-
-Maurice LeBrun				mjl@dino.ph.utexas.edu
-Institute for Fusion Studies
-University of Texas at Austin
