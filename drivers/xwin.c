@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.68  1996/02/24 04:47:32  shouman
+ * Revision 1.69  1996/10/31 05:08:04  furnish
+ * Hack in support for using read only shared color cells when the visual
+ * does not support read write private color cells.  Also, switch
+ * DEVAULT_VISUAL to 0, so that we have a chance of locating a
+ * conventional PseudoColor visual.
+ *
+ * Revision 1.68  1996/02/24  04:47:32  shouman
  * Added call to XFlush in plD_tidy_xw, causing closed plot stream windows to
  * disappear promptly.  Formerly, if another stream using the same display
  * were open a zombied window would remain on screen.
@@ -138,7 +144,8 @@ static int synchronize = 0;	/* change to 1 for synchronized operation */
  * match.
  */
 
-#define DEFAULT_VISUAL 1
+#define DEFAULT_VISUAL 0
+/*#define HACK_STATICCOLOR*/
 
 /* Number of instructions to skip between querying the X server for events */
 
@@ -2068,16 +2075,103 @@ GetVisual(PLStream *pls)
 				     VisualScreenMask | VisualDepthMask,
 				     &vTemplate, &visuals_matched );
 
+#ifdef HACK_STATICCOLOR
+	if (visuals_matched) {
+	    int i, found = 0;
+	    printf( "visuals_matched = %d\n", visuals_matched );
+	    for( i=0; i < visuals_matched && !found; i++ ) {
+		Visual *v = visualList[i].visual;
+		printf( "Checking visual %d: ", i );
+		switch( v->class ) {
+		case PseudoColor:
+		    printf( "PseudoColor\n" );
+		    break;
+		case GrayScale:
+		    printf( "GrayScale\n" );
+		    break;
+		case DirectColor:
+		    printf( "DirectColor\n" );
+		    break;
+		case TrueColor:
+		    printf( "TrueColor\n" );
+		    break;
+		case StaticColor:
+		    printf( "StaticColor\n" );
+		    break;
+		case StaticGray:
+		    printf( "StaticGray\n" );
+		    break;
+		default:
+		    printf( "Unknown.\n" );
+		    break;
+		}
+		if (v->class == StaticColor) {
+		    xwd->visual = v;
+		    xwd->depth = visualList[i].depth;
+		    found = 1;
+		}
+	    }
+	    if (!found) {
+		printf( "Unable to get a StaticColor visual.\n" );
+		exit(1);
+	    }
+	    printf( "Found StaticColor visual, depth=%d\n", xwd->depth );
+	}
+#else
 	if (visuals_matched) {
 	    xwd->visual = visualList->visual;	/* Choose first match. */
 	    xwd->depth = vTemplate.depth;
 	}
+#endif
     }
 #endif
 
     if ( ! visuals_matched) {
 	xwd->visual = DefaultVisual( xwd->display, xwd->screen );
 	xwd->depth = DefaultDepth( xwd->display, xwd->screen );
+    }
+
+/* Check to see if we expect to be able to allocate r/w color cells. */
+
+    switch(xwd->visual->class) {
+    case TrueColor:
+    case StaticColor:
+    case StaticGray:
+	xwd->rw_cmap = 0;
+    default:
+	xwd->rw_cmap = 1;
+    }
+    
+/*xwd->rw_cmap = 0; /* debugging hack. */
+
+/* Just for kicks, see what kind of visual we got. */
+
+    if (pls->verbose) {
+	fprintf( stderr, "XVisual class == " );
+	switch(xwd->visual->class) {
+	case PseudoColor:
+	    fprintf( stderr, "PseudoColor\n" );
+	    break;
+	case GrayScale:
+	    fprintf( stderr, "GrayScale\n" );
+	    break;
+	case DirectColor:
+	    fprintf( stderr, "DirectColor\n" );
+	    break;
+	case TrueColor:
+	    fprintf( stderr, "TrueColor\n" );
+	    break;
+	case StaticColor:
+	    fprintf( stderr, "StaticColor\n" );
+	    break;
+	case StaticGray:
+	    fprintf( stderr, "StaticGray\n" );
+	    break;
+	default:
+	    fprintf( stderr, "Unknown.\n" );
+	    break;
+	}
+	fprintf( stderr, "xwd->rw_cmap = %d\n", xwd->rw_cmap );
     }
 }
 
@@ -2107,12 +2201,18 @@ AllocBGFG(PLStream *pls)
 
 /* Allocate r/w color cell for background */
 
-    if (XAllocColorCells(xwd->display, xwd->map, False,
-			 plane_masks, 0, pixels, 1)) {
+    if ( xwd->rw_cmap &&
+	 XAllocColorCells(xwd->display, xwd->map, False,
+			  plane_masks, 0, pixels, 1)) {
 	xwd->cmap0[0].pixel = pixels[0];
     }
     else {
-	plexit("couldn't allocate background color cell");
+	xwd->cmap0[0].pixel = BlackPixel(xwd->display, xwd->screen);
+	xwd->fgcolor.pixel = WhitePixel(xwd->display, xwd->screen);
+	xwd->rw_cmap = 0;
+	if (pls->verbose)
+	    fprintf( stderr, "Downgrading to r/o cmap.\n" );
+	return;
     }
 
 /* Allocate as many colors as we can */
@@ -2199,7 +2299,7 @@ plX_setBGFG(PLStream *pls)
 
 /* Now store */
 
-    if (xwd->color) {
+    if (xwd->rw_cmap && xwd->color) {
 	XStoreColor(xwd->display, xwd->map, &xwd->fgcolor);
 	XStoreColor(xwd->display, xwd->map, &xwd->cmap0[0]);
     } else {
@@ -2368,24 +2468,47 @@ AllocCmap0(PLStream *pls)
 
     dbug_enter("AllocCmap0");
 
-/* Allocate and assign colors in cmap 0 */
+    if (xwd->rw_cmap) {
+    /* Allocate and assign colors in cmap 0 */
 
-    npixels = pls->ncol0-1;
-    for (;;) {
-	if (XAllocColorCells(xwd->display, xwd->map, False,
-			     plane_masks, 0, &pixels[1], npixels))
-	    break;
-	npixels--;
-	if (npixels == 0)
-	    plexit("couldn't allocate any colors");
+	npixels = pls->ncol0-1;
+	for (;;) {
+	    if (XAllocColorCells(xwd->display, xwd->map, False,
+				 plane_masks, 0, &pixels[1], npixels))
+		break;
+	    npixels--;
+	    if (npixels == 0)
+		plexit("couldn't allocate any colors");
+	}
+
+	xwd->ncol0 = npixels+1;
+	for (i = 1; i < xwd->ncol0; i++) {
+	    xwd->cmap0[i].pixel = pixels[i];
+	}
+
+	StoreCmap0(pls);
     }
+    else {
+	if (pls->verbose)
+	    fprintf( stderr, "Attempting to allocate r/o colors in cmap0.\n" );
 
-    xwd->ncol0 = npixels+1;
-    for (i = 1; i < xwd->ncol0; i++) {
-	xwd->cmap0[i].pixel = pixels[i];
+	for (i = 1; i < 16; i++) {
+	    int r;
+	    XColor c;
+	    PLColor_to_XColor(&pls->cmap0[i], &c);
+	    r = XAllocColor( xwd->display, xwd->map, &c );
+	    if (pls->verbose)
+		fprintf( stderr, "i=%d, r=%d, pixel=%d\n", i, r, c.pixel );
+	    if ( r )
+		xwd->cmap0[i] = c;
+	    else
+		break;
+	}
+	xwd->ncol0 = i;
+
+	if (pls->verbose)
+	    fprintf( stderr, "Allocated %d colors in cmap0.\n", xwd->ncol0 );
     }
-
-    StoreCmap0(pls);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2406,46 +2529,89 @@ AllocCmap1(PLStream *pls)
 
     dbug_enter("AllocCmap1");
 
-/* Allocate colors in cmap 1 */
+    if (xwd->rw_cmap) {
+    /* Allocate colors in cmap 1 */
 
-    npixels = MAX(2, MIN(CMAP1_COLORS, pls->ncol1));
-    for (;;) {
-	if (XAllocColorCells(xwd->display, xwd->map, False,
-			     plane_masks, 0, pixels, npixels))
-	    break;
-	npixels--;
-	if (npixels == 0)
-	    break;
-    }
+	npixels = MAX(2, MIN(CMAP1_COLORS, pls->ncol1));
+	for (;;) {
+	    if (XAllocColorCells(xwd->display, xwd->map, False,
+				 plane_masks, 0, pixels, npixels))
+		break;
+	    npixels--;
+	    if (npixels == 0)
+		break;
+	}
 
-    if (npixels < 2) {
-	xwd->ncol1 = -1;
-	fprintf(stderr,
-		"Warning: unable to allocate sufficient colors in cmap1\n");
-	return;
-    } 
-    else {
-	xwd->ncol1 = npixels;
-	if (pls->verbose)
-	    fprintf(stderr, "AllocCmap1 (xwin.c): Allocated %d colors in cmap1\n", npixels);
-    }
+	if (npixels < 2) {
+	    xwd->ncol1 = -1;
+	    fprintf(stderr,
+		    "Warning: unable to allocate sufficient colors in cmap1.\n");
+	    return;
+	} 
+	else {
+	    xwd->ncol1 = npixels;
+	    if (pls->verbose)
+		fprintf(stderr, "AllocCmap1 (xwin.c): Allocated %d colors in cmap1.\n", npixels);
+	}
 
 /* Don't assign pixels sequentially, to avoid strange problems with xor GC's */
 /* Skipping by 2 seems to do the job best */
 
-    for (j = i = 0; i < xwd->ncol1; i++) {
-	while (pixels[j] == 0) 
-	    j++;
+	for (j = i = 0; i < xwd->ncol1; i++) {
+	    while (pixels[j] == 0) 
+		j++;
 
-	xwd->cmap1[i].pixel = pixels[j];
-	pixels[j] = 0;
+	    xwd->cmap1[i].pixel = pixels[j];
+	    pixels[j] = 0;
 
-	j += 2;
-	if (j >= xwd->ncol1)
-	    j = 0;
+	    j += 2;
+	    if (j >= xwd->ncol1)
+		j = 0;
+	}
+
+	StoreCmap1(pls);
     }
+    else {
+	int i, r, ncolors;
+	PLColor cmap1color;
+	XColor xcol;
 
-    StoreCmap1(pls);
+	if (pls->verbose)
+	    fprintf( stderr, "Attempting to allocate r/o colors in cmap1.\n" );
+
+	switch(xwd->visual->class) {
+	case TrueColor:
+	    ncolors = 200;
+	    break;
+	default:
+	    ncolors = 50;
+	}
+
+	for( i = 0; i < ncolors; i++ ) {
+	    plcol_interp( pls, &cmap1color, i, ncolors );
+	    PLColor_to_XColor( &cmap1color, &xcol );
+	    
+	    r = XAllocColor( xwd->display, xwd->map, &xcol );
+	    if (pls->verbose)
+		fprintf(stderr, "i=%d, r=%d, pixel=%d\n", i, r, xcol.pixel );
+	    if ( r )
+		xwd->cmap1[i] = xcol;
+	    else
+		break;
+
+	}
+	if (i < ncolors) {
+	    xwd->ncol1 = -1;
+	    fprintf(stderr,
+		    "Warning: unable to allocate sufficient colors in cmap1\n");
+	    return;
+	} 
+	else {
+	    xwd->ncol1 = ncolors;
+	    if (pls->verbose)
+		fprintf(stderr, "AllocCmap1 (xwin.c): Allocated %d colors in cmap1\n", ncolors );
+	}
+    }
 }
 
 /*--------------------------------------------------------------------------*\
