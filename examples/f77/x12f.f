@@ -1,4 +1,12 @@
-*     Demonstration program for PLPLOT: Bar chart example. */
+! $Id$
+! $Log$
+! Revision 1.2  1994/05/26 19:34:26  mjl
+! Inserted missing CVS Id and Log fields for all Fortran demos.  Comment
+! character changed to "!" everywhere, to work well with font-lock in Lucid
+! emacs (requires a small change to fortran-mode.el).
+!
+!
+!     Demonstration program for PLPLOT: Bar chart example. 
 
       character*20 string
       real y0(10)
@@ -37,12 +45,12 @@
          call plmtex("b",1.,(i+1)*.1-.05,.5,string)
 1     continue
 
-*     Don't forget to call PLEND to finish off! 
+!     Don't forget to call PLEND to finish off!
       call plend
 
       end
 
-*     Suck up leading spaces
+!     Suck up leading spaces
       subroutine lalign(string)
       character*(*) string
       

@@ -1,4 +1,12 @@
-*     Demonstration of mesh plotting 
+! $Id$
+! $Log$
+! Revision 1.2  1994/05/26 19:34:25  mjl
+! Inserted missing CVS Id and Log fields for all Fortran demos.  Comment
+! character changed to "!" everywhere, to work well with font-lock in Lucid
+! emacs (requires a small change to fortran-mode.el).
+!
+!
+!     Demonstration of mesh plotting 
 
       parameter (NPTS=41)
       integer opt(4)

@@ -1,4 +1,13 @@
-*     Demonstration program for PLPLOT: */
+! $Id$
+! $Log$
+! Revision 1.2  1994/05/26 19:34:27  mjl
+! Inserted missing CVS Id and Log fields for all Fortran demos.  Comment
+! character changed to "!" everywhere, to work well with font-lock in Lucid
+! emacs (requires a small change to fortran-mode.el).
+!
+!
+!     Demonstration program for PLPLOT: 
+
       parameter (PI=3.14156)
       real just, x(500), y(500), per(5)
       character*20 text(5)
@@ -9,14 +18,14 @@
       per(3) = 12.
       per(4) = 30.
       per(5) = 16.
-*
-* Ask user to specify the output device.
-* Note that for this demo, neither the global aspect ratio flag nore
-* the global orientation flag give the desired results, since plenv is told
-* to do scaling based on physical dimensions.
-* Thus we MUST print to a physical device and not globally mess with
-* orientation or aspect ratio (this may be improved in the future). 
-*
+
+! Ask user to specify the output device.
+! Note that for this demo, neither the global aspect ratio flag nore
+! the global orientation flag give the desired results, since plenv is told
+! to do scaling based on physical dimensions.
+! Thus we MUST print to a physical device and not globally mess with
+! orientation or aspect ratio (this may be improved in the future). 
+
       call plinit()
 
       call plenv(0.,10.,0.,10.,1,-2)

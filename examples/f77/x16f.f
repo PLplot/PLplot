@@ -1,30 +1,37 @@
-c
-c     program example16
-c     =================
-c
-c Demonstration of plshade plotting      
+! $Id$
+! $Log$
+! Revision 1.2  1994/05/26 19:34:28  mjl
+! Inserted missing CVS Id and Log fields for all Fortran demos.  Comment
+! character changed to "!" everywhere, to work well with font-lock in Lucid
+! emacs (requires a small change to fortran-mode.el).
+!
+!
+!     program example16
+!     =================
+!
+! Demonstration of plshade plotting      
 
-c Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+! Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
 
       call plscmap0n(3)
 
-c Initialize plplot
+! Initialize plplot
 
       call plinit()
 
-c Rectangular coordinate plot
+! Rectangular coordinate plot
 
       call rect()
 
-c Polar coordinate plot
+! Polar coordinate plot
 
       call polar()
 
       call plend
       end
 
-c----------------------------------------------------------------------------!
-c Plot function using the identity transform
+!----------------------------------------------------------------------------!
+! Plot function using the identity transform
 
       subroutine rect()
 
@@ -43,7 +50,7 @@ c Plot function using the identity transform
       xmax =  1.
       ymax =  1.
 
-c Set up for plshade call
+! Set up for plshade call
 
       sh_cmap = 1
       min_color = 1
@@ -51,7 +58,7 @@ c Set up for plshade call
       max_color = 0
       max_width = 0
 
-c Set up data arrays
+! Set up data arrays
 
       do 12 i = 1, NX
          x = (i - 1 - (NX/2)) / real(NX/2)
@@ -67,7 +74,7 @@ c Set up data arrays
          clevel(i) = zmin + (zmax - zmin) * (i + 0.5) / real(NCONTR)
  20   continue
 
-c Plot using identity transform 
+! Plot using identity transform 
 
       call pladv(0)
       call plvpor(0.1, 0.9, 0.1, 0.9)
@@ -96,8 +103,8 @@ c Plot using identity transform
       return
       end
 
-c----------------------------------------------------------------------------!
-c Routine for demonstrating use of transformation arrays in contour plots.
+!----------------------------------------------------------------------------!
+! Routine for demonstrating use of transformation arrays in contour plots.
 
       subroutine polar()
 
@@ -125,7 +132,7 @@ c Routine for demonstrating use of transformation arrays in contour plots.
       integer	min_color, min_width, max_color, max_width
       character*8 xopt, yopt
 
-c Set up for plshade call
+! Set up for plshade call
 
       sh_cmap = 1
       min_color = 1
@@ -138,8 +145,8 @@ c Set up for plshade call
       ky = 1
       ly = NY
 
-c Set up r-theta grids
-c Tack on extra cell in theta to handle periodicity.
+! Set up r-theta grids
+! Tack on extra cell in theta to handle periodicity.
 
       do 12 i = 1, NX
          r = i - 0.5
@@ -158,10 +165,10 @@ c Tack on extra cell in theta to handle periodicity.
       x0 = (xmin + xmax)/2.
       y0 = (ymin + ymax)/2.
 
-c Potential inside a conducting cylinder (or sphere) by method of images.
-c Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
-c Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
-c Also put in smoothing term at small distances.
+! Potential inside a conducting cylinder (or sphere) by method of images.
+! Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+! Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+! Also put in smoothing term at small distances.
 
       eps = 2.
 
@@ -189,7 +196,7 @@ c Also put in smoothing term at small distances.
  20      continue
  22   continue
 
-c Tack on extra cell in theta to handle periodicity.
+! Tack on extra cell in theta to handle periodicity.
 
       do 32 i = 1, NX
          do 30 j = 1, NY
@@ -199,13 +206,13 @@ c Tack on extra cell in theta to handle periodicity.
  32   continue
       call a2mnmx(z, NX, NY, zmin, zmax)
 
-c Set up contour levels.
+! Set up contour levels.
 
       do 40 i = 1, NCONTR
          clevel(i) = zmin + (i-0.5)*abs(zmax - zmin)/float(NCONTR)
  40   continue
 
-c Advance graphics frame and get ready to plot.
+! Advance graphics frame and get ready to plot.
 
       ncolbox = 1
       ncollab = 2
@@ -213,8 +220,8 @@ c Advance graphics frame and get ready to plot.
       call pladv(0)
       call plcol(ncolbox)
 
-c Scale window to user coordinates.
-c Make a bit larger so the boundary does not get clipped.
+! Scale window to user coordinates.
+! Make a bit larger so the boundary does not get clipped.
 
       eps = 0.05
       xpmin = xmin - abs(xmin)*eps
@@ -234,7 +241,7 @@ c Make a bit larger so the boundary does not get clipped.
 
       call plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
 
-c Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
+! Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
 
       do 100 i = 1, NCONTR
          shade_min = zmin + (zmax - zmin) * real(i - 1) / real(NCONTR)
@@ -251,7 +258,7 @@ c Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
 
  100  continue
 
-c Draw boundary.
+! Draw boundary.
 
       do 110 i = 1, NBDRY
          theta = (TWOPI)/(NBDRY-1) * float(i-1)
@@ -268,11 +275,11 @@ c Draw boundary.
       return
       end
 
-c----------------------------------------------------------------------------!
-c Subroutine a2mnmx
-c----------------------------------------------------------------------------!
-c Minimum and the maximum elements of a 2-d array.
-c----------------------------------------------------------------------------!
+!----------------------------------------------------------------------------!
+! Subroutine a2mnmx
+!----------------------------------------------------------------------------!
+! Minimum and the maximum elements of a 2-d array.
+!----------------------------------------------------------------------------!
 
       subroutine a2mnmx(f, nx, ny, fmin, fmax)
 

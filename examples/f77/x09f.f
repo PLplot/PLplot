@@ -1,27 +1,32 @@
-*
+! $Id$
+! $Log$
+! Revision 1.2  1994/05/26 19:34:23  mjl
+! Inserted missing CVS Id and Log fields for all Fortran demos.  Comment
+! character changed to "!" everywhere, to work well with font-lock in Lucid
+! emacs (requires a small change to fortran-mode.el).
+!
+!
       program example09
-*     =================
-*
-* Demonstration of contour plotting      
-*      
+!     =================
+!
+! Demonstration of contour plotting      
+
       integer i,j,nptsx,nptsy
       parameter (nptsx=41,nptsy=35)
-*
+
       real z(nptsx,nptsy), w(nptsx,nptsy), clevel(11)
       real xmin, xmax, ymin, ymax, x, y
-*
-      common /plplot/ tr(6)
-*
-      data clevel /-1.,-.8,-.6,-.4,-.2,0,.2,.4,.6,.8,1./
-*
 
+      common /plplot/ tr(6)
+
+      data clevel /-1.,-.8,-.6,-.4,-.2,0,.2,.4,.6,.8,1./
       tr(1) = 0.05
       tr(2) = 0.0
       tr(3) = -1.0
       tr(4) = 0.0
       tr(5) = 0.05
       tr(6) = -1.0
-*
+
       x = 1.0
       y = 1.0
       xmin = tr(1) * (x-1) + tr(2) * (y-1) + tr(3)
@@ -30,7 +35,7 @@
       y = nptsy
       xmax = tr(1) * (x-1) + tr(2) * (y-1) + tr(3)
       ymax = tr(4) * (x-1) + tr(5) * (y-1) + tr(6)
-*            
+
       do 2 i=1,nptsx
         xx = (i-1-(nptsx/2))/real(nptsx/2)
         do 3 j=1,nptsy
@@ -39,7 +44,7 @@
           w(i,j) = 2*xx*yy
     3   continue
     2 continue
-*
+
       call plinit()
       call plenv(xmin,xmax,ymin,ymax,0,0)
       call plcol(2)
@@ -52,13 +57,13 @@
      *           'Contour Plots of Saddle Points')
 
       call polar()
-*
+
       call plend
       end
 
-c----------------------------------------------------------------------------!
-c Routine for demonstrating use of transformation arrays in contour plots.
-c Sorry for the formatting, as this has been through a preprocessor.
+!----------------------------------------------------------------------------!
+! Routine for demonstrating use of transformation arrays in contour plots.
+! Sorry for the formatting, as this has been through a preprocessor.
 
       subroutine polar()
 
@@ -79,8 +84,8 @@ c Sorry for the formatting, as this has been through a preprocessor.
       ky = 1
       ly = ny
 
-c Set up r-theta grids
-c Tack on extra cell in theta to handle periodicity.
+! Set up r-theta grids
+! Tack on extra cell in theta to handle periodicity.
 
       do 23000 i = 1, nx
          r = i - 0.5
@@ -98,10 +103,10 @@ c Tack on extra cell in theta to handle periodicity.
       x0 = (xmin + xmax)/2.
       y0 = (ymin + ymax)/2.
 
-c Potential inside a conducting cylinder (or sphere) by method of images.
-c Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
-c Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
-c Also put in smoothing term at small distances.
+! Potential inside a conducting cylinder (or sphere) by method of images.
+! Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+! Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+! Also put in smoothing term at small distances.
 
       eps = 2.
 
@@ -129,7 +134,7 @@ c Also put in smoothing term at small distances.
 23006    continue
 23004 continue
 
-c Tack on extra cell in theta to handle periodicity.
+! Tack on extra cell in theta to handle periodicity.
 
       do 23008 i = 1, nx
          do 23010 j = 1, ny
@@ -139,7 +144,7 @@ c Tack on extra cell in theta to handle periodicity.
 23008 continue
       call a2mnmx(z, nx, ny, zmin, zmax)
 
-c Set up contour levels.
+! Set up contour levels.
 
       nlevel = 20
       dz = abs(zmax - zmin)/float(nlevel)
@@ -147,9 +152,9 @@ c Set up contour levels.
          clevel(i) = zmin + (i-0.5)*dz
 23012 continue
 
-c Split contours into two parts, z > 0, and z < 0.
-c Dashed contours will be at levels 'ilevlt' through 'ilevlt+nlevlt'.
-c Solid  contours will be at levels 'ilevgt' through 'ilevgt+nlevgt'.
+! Split contours into two parts, z > 0, and z < 0.
+! Dashed contours will be at levels 'ilevlt' through 'ilevlt+nlevlt'.
+! Solid  contours will be at levels 'ilevgt' through 'ilevgt+nlevgt'.
 
       ilevlt = 1
       nlevlt = 0
@@ -161,7 +166,7 @@ c Solid  contours will be at levels 'ilevgt' through 'ilevgt+nlevgt'.
       ilevgt = ilevlt + nlevlt
       nlevgt = nlevel - nlevlt
 
-c Advance graphics frame and get ready to plot.
+! Advance graphics frame and get ready to plot.
 
       ncollin = 11
       ncolbox = 1
@@ -170,8 +175,8 @@ c Advance graphics frame and get ready to plot.
       call pladv(0)
       call plcol(ncolbox)
 
-c Scale window to user coordinates.
-c Make a bit larger so the boundary doesn't get clipped.
+! Scale window to user coordinates.
+! Make a bit larger so the boundary doesn't get clipped.
 
       eps = 0.05
       xpmin = xmin - abs(xmin)*eps
@@ -191,7 +196,7 @@ c Make a bit larger so the boundary doesn't get clipped.
 
       call plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
 
-c Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
+! Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
 
       call plcol(ncollin)
       if(nlevlt .gt. 0) then
@@ -205,7 +210,7 @@ c Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
      &nlevgt, xg, yg)
       endif
 
-c Draw boundary.
+! Draw boundary.
 
       do 23016 i = 1, NPLT
          theta = (TWOPI)/(NPLT-1) * float(i-1)
@@ -222,11 +227,11 @@ c Draw boundary.
       return
       end
 
-c----------------------------------------------------------------------------!
-c Subroutine a2mnmx
-c----------------------------------------------------------------------------!
-c Minimum and the maximum elements of a 2-d array.
-c----------------------------------------------------------------------------!
+!----------------------------------------------------------------------------!
+! Subroutine a2mnmx
+!----------------------------------------------------------------------------!
+! Minimum and the maximum elements of a 2-d array.
+!----------------------------------------------------------------------------!
 
       subroutine a2mnmx(f, nx, ny, fmin, fmax)
 
