@@ -506,12 +506,13 @@ LIBS=""
 
 if test "$enable_python" = "yes"; then
    AM_PATH_PYTHON(1.5)
-if test -z "$PYTHON_INSTDIR"; then
+### PYTHON_INSTDIR is the same as $pythondir except that the
+### symbolic prefix is replaced by the actual prefix.
+### The actual prefix is required in examples/python/plplot_python_start.py
+### (the only place that PYTHON_INSTDIR is used).
    PYTHON_INSTDIR=`echo $pythondir |sed 's%${prefix}/%%'`
    PYTHON_INSTDIR="$prefix/$PYTHON_INSTDIR"
-fi
-AC_SUBST(PYTHON_INSTDIR)
-
+   AC_SUBST(PYTHON_INSTDIR)
 fi
 
 # Optional packages
