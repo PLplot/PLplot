@@ -3,21 +3,25 @@
 # This script is intended to generate a tarball of source code and screenshots,
 # 'htdocs_plot_examples.tgz', that will be part of the 'examples' web page,
 #
-# The tarball must be unpacked at the top of the htdocs directory,
-# i.e. 'htdocs' must appear when a 'ls' is issued.
-# 
-# The tarball can be copied to sf as, e.g.,
-#    scp htdocs_plot_examples.tgz \
-#        USER@login.sf.net:/home/groups/p/pl/plplot/htdocs_plot_examples.tgz
-#
 # This script must be run in the top plplot source directory as:
+#
 #     scripts/htdocs-gen_plot-examples.sh
+# 
+# The tarball will be copied to SourceForge and unpacked at the www area.  
+# If your user name (as given by the environment variable USER) is different
+# as that at SF, then launch the script like this:
+#     
+#     USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
+#
+# To avoid rebuild launch it like this:
+#     build=false scripts/htdocs-gen_plot-examples.sh
+
 
 # a fresh make, with minimum bindings
 
-build=true
+build=${build:-true}
 
-if $build="true"; then
+if test "$build" = true; then
     make clean
     make configure
 
@@ -38,6 +42,8 @@ rm -rf htdocs
 # hack, x20c needs lena in the current directory
 cp examples/c/lena.pgm .
 
+EXDIR=htdocs/examples-data
+
 for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21; do
 
     echo Working in example ${exe}
@@ -53,14 +59,14 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21; do
 
     # move to www directory.
     echo populatting www directory demo${exe}
-    mkdir -p htdocs/examples/demo${exe}
-    mv *${exe}.??.png htdocs/examples/demo${exe}/
+    mkdir -p $EXDIR/demo${exe}
+    mv *${exe}.??.png $EXDIR/demo${exe}/
     cp examples/c/x${exe}c.c examples/tcl/x${exe}.tcl examples/java/x${exe}.java \
 	examples/f77/x${exe}f.f bindings/octave/demos/x${exe}c.m \
-	examples/python/xw${exe}.py htdocs/examples/demo${exe}
+	examples/python/xw${exe}.py $EXDIR/demo${exe}
 
     # rename executables, to avoid browsers trying to execute files instead of showing them.
-    (cd  htdocs/examples/demo${exe};
+    (cd  htdocs/examples-data/demo${exe};
     for j in *.c *.f *.m *.tcl *.java *.py; do
 	    mv $j $j-
     done
@@ -72,6 +78,24 @@ done
 rm -f lena.pgm
 
 # create the tarball
+TARBALL=htdocs-plot-demos.tgz
 find htdocs -size 0 -exec rm {} \;
-tar cvzf htdocs_plot_examples.tgz htdocs
+tar cvzf $TARBALL htdocs
 rm -rf htdocs
+
+# Transfer the tarball to Sourceforge and unpack it, such that the files will
+# appear in the PLplot web site
+
+WWW_HOST=${USER:+$USER@}shell.sf.net
+WWW_DIR=/home/groups/p/pl/plplot
+
+echo Copying the tarball to WWW site
+scp $TARBALL $WWW_HOST:$WWW_DIR
+echo Changing its permission to allow group access
+ssh $WWW_HOST chmod g=u $WWW_DIR/$TARBALL
+echo Unpacking the remote tarball
+ssh $WWW_HOST tar -x -z -C $WWW_DIR -f $WWW_DIR/$TARBALL
+echo Changing its group permissions of the remote demo direcotry
+ssh $WWW_HOST chmod -R g=u $WWW_DIR/$EXDIR
+echo Removing the remote tarball
+ssh $WWW_HOST rm -f $WWW_DIR/$TARBALL
