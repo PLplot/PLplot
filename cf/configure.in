@@ -794,7 +794,9 @@ if test "$enable_dyndrivers" = "yes"; then
     touch drivers/drivers.db
 
     # Now add a line for each supported loadable device.  Format is:
-    #     device name : description : driver name : device number: symbol tag
+    #     device name : description : type : driver name : device number: symbol tag
+    #
+    # (type=1 if interactive, 0 if file-oriented, -1 for other).
     #
     # Note the device name that appears first in the db line is not
     # necessarily the same as the device name in the DYNAMIC_DEVICES (or
@@ -804,94 +806,94 @@ if test "$enable_dyndrivers" = "yes"; then
     for drv in $DYNAMIC_DEVICES; do
 	case $drv in
 	    null )
-	    echo "null:Null device:null.drv:42:null" >> drivers/drivers.db
+	    echo "null:Null device:-1:null.drv:42:null" >> drivers/drivers.db
 	    ;;
 	    plmeta )
-	    echo "plmeta:PLplot Native Meta-File:plmeta.drv:26:plm" >> drivers/drivers.db
+	    echo "plmeta:PLplot Native Meta-File:0:plmeta.drv:26:plm" >> drivers/drivers.db
 	    ;;
 	    xfig )
-	    echo "xfig:Fig file:xfig.drv:31:xfig" >> drivers/drivers.db
+	    echo "xfig:Fig file:0:xfig.drv:31:xfig" >> drivers/drivers.db
 	    ;;
 	    pstex )
-	    echo "pstex:Postscript/LaTeX file:pstex.drv:41:pstex" >> drivers/drivers.db
+	    echo "pstex:Postscript/LaTeX file:0:pstex.drv:41:pstex" >> drivers/drivers.db
 	    ;;
 	    png )
-	    echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
+	    echo "png:PNG file:0:gd.drv:39:png" >> drivers/drivers.db
 	    ;;
 	    jpeg )
-	    echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
+	    echo "jpeg:JPEG file:0:gd.drv:40:jpeg" >> drivers/drivers.db
 	    ;;
 	    cgm )
-	    echo "cgm:CGM file:cgm.drv:44:cgm" >> drivers/drivers.db
+	    echo "cgm:CGM file:0:cgm.drv:44:cgm" >> drivers/drivers.db
 	    ;;
 	    xterm )
-	    echo "xterm:Xterm Window:tek.drv:18:xterm" >> drivers/drivers.db
+	    echo "xterm:Xterm Window:1:tek.drv:18:xterm" >> drivers/drivers.db
 	    ;;
 	    tek4010 )
-	    echo "tekt:Tektronix Terminal (4010):tek.drv:19:tekt" >> drivers/drivers.db
+	    echo "tekt:Tektronix Terminal (4010):1:tek.drv:19:tekt" >> drivers/drivers.db
 	    ;;
 	    tek4107 )
-	    echo "tek4107t:Tektronix Terminal (4105/4107):tek.drv:20:tek4107t" >> drivers/drivers.db
+	    echo "tek4107t:Tektronix Terminal (4105/4107):1:tek.drv:20:tek4107t" >> drivers/drivers.db
 	    ;;
 	    vlt )
-	    echo "vlt:VLT vt100/tek emulator:tek.drv:23:vlt" >> drivers/drivers.db
+	    echo "vlt:VLT vt100/tek emulator:1:tek.drv:23:vlt" >> drivers/drivers.db
 	    ;;
 	    conex )
-	    echo "conex:Conex vt320/tek emulator:tek.drv:24:conex" >> drivers/drivers.db
+	    echo "conex:Conex vt320/tek emulator:1:tek.drv:24:conex" >> drivers/drivers.db
 	    ;;
 	    versaterm )
-	    echo "versaterm:Versaterm vt100/tek emulator:tek.drv:22:versaterm" >> drivers/drivers.db
+	    echo "versaterm:Versaterm vt100/tek emulator:1:tek.drv:22:versaterm" >> drivers/drivers.db
 	    ;;
 	    mskermit )
-	    echo "mskermit:MS-Kermit emulator:tek.drv:21:mskermit" >> drivers/drivers.db
+	    echo "mskermit:MS-Kermit emulator:1:tek.drv:21:mskermit" >> drivers/drivers.db
 	    ;;
 	    tek4010f )
-	    echo "tekf:Tektronix File (4010):tek.drv:27:tekf" >> drivers/drivers.db
+	    echo "tekf:Tektronix File (4010):0:tek.drv:27:tekf" >> drivers/drivers.db
 	    ;;
 	    tek4107f )
-	    echo "tek4107f:Tektronix File (4105/4107):tek.drv:28:tek4107f" >> drivers/drivers.db
+	    echo "tek4107f:Tektronix File (4105/4107):0:tek.drv:28:tek4107f" >> drivers/drivers.db
 	    ;;
 	    pbm )
-	    echo "pbm:PDB (PPM) Driver:pbm.drv:38:pbm" >> drivers/drivers.db
+	    echo "pbm:PDB (PPM) Driver:0:pbm.drv:38:pbm" >> drivers/drivers.db
 	    ;;
 	    hp7470 )
-	    echo "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):hpgl.drv:34:hp7470" >> drivers/drivers.db
+	    echo "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl.drv:34:hp7470" >> drivers/drivers.db
 	    ;;
 	    hp7580 )
-	    echo "hp7580:HP 7580 Plotter File (Large Plotter):hpgl.drv:35:hp7580" >> drivers/drivers.db
+	    echo "hp7580:HP 7580 Plotter File (Large Plotter):0:hpgl.drv:35:hp7580" >> drivers/drivers.db
 	    ;;
 	    lj_hpgl )
-	    echo "lj_hpgl:HP Laserjet III, HPGL emulation mode:hpgl.drv:36:lj_hpgl" >> drivers/drivers.db
+	    echo "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl.drv:36:lj_hpgl" >> drivers/drivers.db
 	    ;;
 	    dg300 )
-	    echo "dg300:DG300 Terminal:dg300.drv:25:dg300" >> drivers/drivers.db
+	    echo "dg300:DG300 Terminal:0:dg300.drv:25:dg300" >> drivers/drivers.db
 	    ;;
 	    ljii )
-	    echo "ljii:LaserJet II Bitmap File (150 dpi):ljii.drv:33:ljii" >> drivers/drivers.db
+	    echo "ljii:LaserJet II Bitmap File (150 dpi):0:ljii.drv:33:ljii" >> drivers/drivers.db
 	    ;;
 	    ljiip )
-	    echo "ljiip:LaserJet IIp/deskjet compressed graphics:ljiip.drv:32:ljiip" >> drivers/drivers.db
+	    echo "ljiip:LaserJet IIp/deskjet compressed graphics:0:ljiip.drv:32:ljiip" >> drivers/drivers.db
 	    ;;
 	    imp )
-	    echo "imp:Impress File:impress.drv:37:imp" >> drivers/drivers.db
+	    echo "imp:Impress File:0:impress.drv:37:imp" >> drivers/drivers.db
 	    ;;
 	    gnome )
-	    echo "gnome:Gnome Canvas:gnome.drv:6:gnome" >> drivers/drivers.db
+	    echo "gnome:Gnome Canvas:1:gnome.drv:6:gnome" >> drivers/drivers.db
 	    ;;
 	    ps )
-	    echo "ps:PostScript File (monochrome):ps.drv:29:psm" >> drivers/drivers.db
+	    echo "ps:PostScript File (monochrome):0:ps.drv:29:psm" >> drivers/drivers.db
 	    ;;
 	    psc )
-	    echo "psc:PostScript File (color):ps.drv:30:psc" >> drivers/drivers.db
+	    echo "psc:PostScript File (color):0:ps.drv:30:psc" >> drivers/drivers.db
 	    ;;
 	    xwin )
-	    echo "xwin:X-Window (Xlib):xwin.drv:5:xw" >> drivers/drivers.db
+	    echo "xwin:X-Window (Xlib):1:xwin.drv:5:xw" >> drivers/drivers.db
 	    ;;
 	    tk )
-	    echo "tk:Tcl/TK Window:tk.drv:7:tk" >> drivers/drivers.db
+	    echo "tk:Tcl/TK Window:1:tk.drv:7:tk" >> drivers/drivers.db
 	    ;;
 	    ntk )
-	    echo "ntk:New tk driver:ntk.drv:43:ntk" >> drivers/drivers.db
+	    echo "ntk:New tk driver:1:ntk.drv:43:ntk" >> drivers/drivers.db
 	    ;;
 	esac
     done
