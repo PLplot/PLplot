@@ -1309,7 +1309,29 @@ c_plend(void)
 #ifdef ENABLE_DYNDRIVERS
 /* Release the libltdl resources */
     lt_dlexit();
+/* Free up memory allocated to the dispatch tables */
+    for (i = 0; i < npldynamicdevices; i++) {
+      free_mem(loadable_device_list[i].devnam);
+      free_mem(loadable_device_list[i].description);
+      free_mem(loadable_device_list[i].drvnam);
+      free_mem(loadable_device_list[i].tag);
+    }
+    free_mem(loadable_device_list);
+    for (i = 0; i < nloadabledrivers; i++) {
+      free_mem(loadable_driver_list[i].drvnam);
+    }
+    free_mem(loadable_driver_list);
+    for (i = nplstaticdevices; i < npldrivers; i++) {
+      free_mem(dispatch_table[i]->pl_MenuStr);
+      free_mem(dispatch_table[i]->pl_DevName);
+      free_mem(dispatch_table[i]);
+    }
 #endif
+    for (i = 0; i < nplstaticdevices; i++) {
+      free_mem(dispatch_table[i]);
+    }
+    free_mem(dispatch_table);
+    lib_initialized = 0;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1673,6 +1695,10 @@ plInitDispatchTable()
     DIR* dp_drvdir = NULL;
     struct dirent* entry;
     /* lt_dlhandle dlhand; */
+
+    /* Make sure driver counts are zeroed */
+    npldynamicdevices = 0;
+    nloadabledrivers = 0;
 
 /* Open a temporary file in which all the plD_DEVICE_INFO_<driver> strings
    will be stored */
