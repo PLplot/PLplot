@@ -546,14 +546,17 @@ fi
 if test -z "$LIB_DIR"; then
     LIB_DIR=$prefix/lib
 fi
+if test -z "$PLPLOT_PREFIX"; then
+    PLPLOT_PREFIX=$prefix/lib/plplot$MAJOR_VERSION.$MINOR_VERSION.$RELEASE_VERSION
+fi
 if test -z "$DATA_DIR"; then
-    DATA_DIR=$prefix/lib/plplot$MAJOR_VERSION.$MINOR_VERSION.$RELEASE_VERSION
+    DATA_DIR=$PLPLOT_PREFIX/data
 fi
 if test -z "$BIN_DIR"; then
     BIN_DIR=$prefix/bin
 fi
 if test -z "$TCL_DIR"; then
-    TCL_DIR=$DATA_DIR/tcl
+    TCL_DIR=$PLPLOT_PREFIX/tcl
 fi
 if test -z "$DOC_DIR"; then
     DOC_DIR=$prefix/share/doc/plplot
