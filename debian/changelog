@@ -1,16 +1,15 @@
-plplot (5.2.1.cvs.20031231-2) unstable; urgency=low
+plplot (5.2.1.cvs.20040104-1) unstable; urgency=low
 
-  * NOT YET RELEASED!
   * debian/control: Added pkg-config to build-dependencies and to
     libplplot-dev Recommends:.
-  * debian/rules: 
+  * debian/rules:
     - Added option --with-pkg-config to configure command.
     - Set environment variable PKG_CONFIG_ENV to " " when calling
       condfigure.  This allows a cleaner line when launching make fro
       the installed examples/* directories, since setting PKG_CONFIG_PATH is
       not necessary in Debian.
 
- -- 
+ -- Rafael Laboissiere <rafael@debian.org>  Sat,  3 Jan 2004 20:24:53 +0100
 
 plplot (5.2.1.cvs.20031231-1) unstable; urgency=low
 
