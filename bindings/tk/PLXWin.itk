@@ -7,7 +7,16 @@
 # $Id$
 #
 # $Log$
-# Revision 1.3  1998/11/18 06:05:33  furnish
+# Revision 1.4  1999/01/23 05:07:11  furnish
+# Pull out all the bazillions of itcl::'s that I put in in the prior
+# patch.  That was a total botch.  I had completely misdiagnosed the
+# problem.  The real problem was that I didn't set up the Itcl/Itk
+# interpretter correctly--or to be more precise, I didn't set it up the
+# same way that itkwish does--so my prior solution of inserting itcl::
+# all over the place was seriously misguided.  This patch reverts things
+# to the sane state.
+#
+# Revision 1.3  1998/11/18  06:05:33  furnish
 # Itcl 3.x has class in namespace itcl, and it must be so qualified at
 # all times.  Guess JO had some problems with the Itcl namespace system,
 # and I haven't yet unlearned everything that will need to be unleared
@@ -48,14 +57,12 @@
 #
 ###############################################################################
 
-itcl::class PLXWin {
+class PLXWin {
     inherit PLWin
 
     constructor {args} {
 	eval PLWin::constructor $args
     } {
-	puts "in PLXWin ctor"
-
     # Set up defaults
 
 	plw_setup_defaults $hull
