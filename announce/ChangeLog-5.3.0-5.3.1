@@ -1,3 +1,63 @@
+Commit from rlaboiss (2004-02-27 02:28 CET)
+--------------------
+
+Call to PL_GET_DLLNAME conditionally on enable_java=yes.
+
+  plplot  cf/java.ac  1.3
+
+
+Commit from rlaboiss (2004-02-27 02:27 CET)
+--------------------
+
+In PL_GET_DL(L)NAME, compile a dummy C file with libtool to be linked later.
+This fixed the configuration problem on Mac OS X.
+
+  plplot  cf/acinclude.m4  1.6
+
+
+Commit from rlaboiss (2004-02-27 00:29 CET)
+--------------------
+
+Oops, wrong argument in AC_MSG_RESULT
+
+  plplot  cf/acinclude.m4  1.5
+
+
+Commit from rlaboiss (2004-02-26 23:56 CET)
+--------------------
+
+Added pairs of AC_MSG_CHECKING/AC_MSG_RESULT in the macros PL_GET_DLNAME and
+PL_GET_DLLNAME to help diagnosing problems in the future.
+
+  plplot  cf/acinclude.m4  1.4
+
+
+Commit from airwin (2004-02-26 19:04 CET)
+------------------
+
+Replace bashisms for calculating swig_required_version and
+swig_available_version.
+
+  plplot  cf/swig.m4  1.3
+
+
+Commit from airwin (2004-02-26 19:03 CET)
+------------------
+
+Ignore Makefile, Makefile.in
+
+  plplot  cf/.cvsignore  1.6
+
+
+Commit from andrewross (2004-02-26 18:50 CET)
+----------------------
+
+New version of the contouring routines. All contours in the examples
+now plot correctly. Labels will not be plotted upside down.
+
+  plplot  src/plcont.c  1.25
+
+
 Commit from arjenmarkus (2004-02-26 10:31 CET)
 -----------------------
 
