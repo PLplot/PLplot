@@ -18,7 +18,6 @@
 static void	grline		(short *, short *, PLINT);
 static void	grpolyline	(short *, short *, PLINT);
 static void	grfill		(short *, short *, PLINT);
-static void	plGetDev	(void);
 static void	plSelectDev	(void);
 static void	pldi_ini	(void);
 static void	calc_diplt	(void);
