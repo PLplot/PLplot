@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/03/15 21:45:18  mjl
-   Changed _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.6  1993/04/26 20:00:10  mjl
+   The beginnings of a TK driver added.
 
+ * Revision 1.5  1993/03/15  21:45:18  mjl
+ * Changed _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.4  1993/03/08  21:47:48  mjl
  * Added a type field for each driver to the dispatch table.  Used for
  * determining whether a device is file-oriented or not.
@@ -199,22 +202,22 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef MOTIF
+#ifdef TK
     {
-	"X-Window Screen (Motif)",
-	"xm",
+	"TCL/TK Screen",
+	"tk",
 	1,
-	xm_init,
-	xm_line,
-	xm_polyline,
-	xm_eop,
-	xm_bop,
-	xm_tidy,
-	xm_color,
-	xm_text,
-	xm_graph,
-	xm_width,
-	xm_esc
+	tk_init,
+	tk_line,
+	tk_polyline,
+	tk_eop,
+	tk_bop,
+	tk_tidy,
+	tk_color,
+	tk_text,
+	tk_graph,
+	tk_width,
+	tk_esc
     },
 #endif
 

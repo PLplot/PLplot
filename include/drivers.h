@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/03/15 21:45:05  mjl
-   Changed _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.5  1993/04/26 20:00:09  mjl
+   The beginnings of a TK driver added.
 
+ * Revision 1.4  1993/03/15  21:45:05  mjl
+ * Changed _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.3  1993/03/03  19:42:15  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
@@ -44,17 +47,17 @@ void xte_graph		(PLStream *);
 void xte_width		(PLStream *);
 void xte_esc		(PLStream *, PLINT, char *);
 
-void xm_init		(PLStream *);
-void xm_line		(PLStream *, short, short, short, short);
-void xm_polyline	(PLStream *, short *, short *, PLINT);
-void xm_eop		(PLStream *);
-void xm_bop		(PLStream *);
-void xm_tidy		(PLStream *);
-void xm_color		(PLStream *);
-void xm_text		(PLStream *);
-void xm_graph		(PLStream *);
-void xm_width		(PLStream *);
-void xm_esc		(PLStream *, PLINT, char *);
+void tk_init		(PLStream *);
+void tk_line		(PLStream *, short, short, short, short);
+void tk_polyline	(PLStream *, short *, short *, PLINT);
+void tk_eop		(PLStream *);
+void tk_bop		(PLStream *);
+void tk_tidy		(PLStream *);
+void tk_color		(PLStream *);
+void tk_text		(PLStream *);
+void tk_graph		(PLStream *);
+void tk_width		(PLStream *);
+void tk_esc		(PLStream *, PLINT, char *);
 
 void xw_init		(PLStream *);
 void xw_line		(PLStream *, short, short, short, short);
