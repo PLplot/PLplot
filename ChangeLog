@@ -1,5 +1,9 @@
 2002-12-24  Maurice LeBrun <mlebrun@users.sourceforge.net>
 
+	* examples/tcl/x??: Added script file front-ends to Tcl example
+	  programs.  Locates pltcl via PATH.
+	* examples/tcl/Makefile.am: install rule for these
+	
 	* examples/*/Makefile.examples.in: Explicitly specify --mode=link
 	  to plplot_libtool in order to correctly work with vendor compilers.
 
