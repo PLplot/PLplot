@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.7  1993/08/13 06:41:58  mjl
+# Revision 1.8  1993/08/18 20:24:06  mjl
+# Added Form2d proc, based on earlier EnterCoords proc, for entering values
+# in a 2d form layout.  Better than EnterCoords but still more work needed
+# before it's useful in a general context.
+#
+# Revision 1.7  1993/08/13  06:41:58  mjl
 # Fixed broken font setting in GetItem proc.
 #
 # Revision 1.6  1993/08/13  04:36:00  mjl
@@ -37,12 +42,13 @@ proc null_command {cmd_name} {
 }
 
 #----------------------------------------------------------------------------
-# bogon_alert
+# bogue_out
 #
-# Invokes a dialog explaining that the user bogued out.
+# Invokes a dialog explaining that the user bogued out (messed up, blew
+# it, puked on the system console, etc).
 #----------------------------------------------------------------------------
 
-proc bogon_alert {msg} {
+proc bogue_out {msg} {
     set dialog_args "-text \"$msg\" -aspect 800 -justify left"
     mkDialog .bogus $dialog_args {OK {}}
     dpos .bogus
@@ -326,7 +332,7 @@ proc mkDialog {w msgArgs args} {
 }
 
 #----------------------------------------------------------------------------
-# EnterCoords
+# Form2d
 #
 # Create a top-level window that displays a bunch of entries used for
 # entering window coordinates.
@@ -336,21 +342,21 @@ proc mkDialog {w msgArgs args} {
 #    desc	Short description of coordinates to be entered.
 #
 # Global variables referenced:
-#    xmin	Relative min in x (0-1)
-#    ymin	Relative min in y (0-1)
-#    xmax	Relative max in x (0-1)
-#    ymax	Relative max in y (0-1)
+#    fv00	fn00
+#    fv01	fn01
+#    fv10	fn10
+#    fv11	fn11
 #
 # The global variables are modified by the entry widgets and may be
 # overwritten at any time so the caller must wait for the dialog to be
-# destroyed and then use them immediately.  Note: there is no bounds
-# checking done here on the global min/max variables.
+# destroyed and then use them immediately.  
 #----------------------------------------------------------------------------
 
-proc EnterCoords {w desc} {
+proc Form2d {w desc} {
     global dialog_font dialog_bold_font
     global tabList
-    global xmin ymin xmax ymax
+    global fv00 fv01 fv10 fv11
+    global fn00 fn01 fn10 fn11
 
     catch {destroy $w}
     toplevel $w
@@ -367,58 +373,59 @@ proc EnterCoords {w desc} {
     pack append $w \
 	$w.msg {top fill}
 
-    set rows {min max}
-    set cols {x y}
+    set rows {0 1}
+    set cols {0 1}
     set tabList ""
 
-    foreach j $rows {
-	frame $w.$j
+    foreach i $rows {
+	frame $w.$i
 
-	foreach i $cols {
-            set var $i$j
-	    frame $w.$j.$i -bd 1m
+	foreach j $cols {
+            set name [set fn$i$j]
+            set value [set fv$i$j]
+	    frame $w.$i.$j -bd 1m
 
-	    entry $w.$j.$i.entry -relief sunken -width 10
-	    $w.$j.$i.entry insert 0 [set $var]
-	    bind $w.$j.$i.entry <Tab> "EnterCoords_tab \$tabList"
-	    bind $w.$j.$i.entry <Return> "EnterCoords_destroy $w"
-            set tabList [concat $tabList $w.$j.$i.entry]
+	    entry $w.$i.$j.entry -relief sunken -width 10
+	    $w.$i.$j.entry insert 0 $value
+	    bind $w.$i.$j.entry <Tab> "Form2d_tab \$tabList"
+	    bind $w.$i.$j.entry <Return> "Form2d_destroy $w"
+            set tabList [concat $tabList $w.$i.$j.entry]
 
-	    label $w.$j.$i.label -width 10
-	    $w.$j.$i.label config -text "$var:"
+	    label $w.$i.$j.label -width 10
+	    $w.$i.$j.label config -text "$name:"
 
-	    pack append $w.$j.$i \
-		$w.$j.$i.entry right \
-		$w.$j.$i.label left
+	    pack append $w.$i.$j \
+		$w.$i.$j.entry right \
+		$w.$i.$j.label left
 
-	    pack append $w.$j \
-		$w.$j.$i {left fillx}
+	    pack append $w.$i \
+		$w.$i.$j {left fillx}
 	}
 
 	pack append $w \
-	    $w.$j {top fillx} 
+	    $w.$i {top fillx} 
     }
 
-    button $w.ok -text OK -command "EnterCoords_destroy $w"
+    button $w.ok -text OK -command "Form2d_destroy $w"
     pack append $w \
 	$w.ok {bottom fill}
 
     tkwait visibility $w
     grab $w
-    focus $w.min.x.entry
+    focus $w.0.0.entry
 }
 
 # This procedure is invoked when the top level entry dialog is destroyed.
 # It updates the global vars used to communicate the entry values then
 # destroys the window.
 
-proc EnterCoords_destroy {w} {
-    global xmin ymin xmax ymax
+proc Form2d_destroy {w} {
+    global fv00 fv01 fv10 fv11
 
-    set xmin [$w.min.x.entry get]
-    set ymin [$w.min.y.entry get]
-    set xmax [$w.max.x.entry get]
-    set ymax [$w.max.y.entry get]
+    set fv00 [$w.0.0.entry get]
+    set fv01 [$w.0.1.entry get]
+    set fv10 [$w.1.0.entry get]
+    set fv11 [$w.1.1.entry get]
 
     destroy $w
 }
@@ -429,7 +436,7 @@ proc EnterCoords_destroy {w} {
 #
 # list -	Ordered list of windows to receive focus
 
-proc EnterCoords_tab {list} {
+proc Form2d_tab {list} {
     set i [lsearch $list [focus]]
     if {$i < 0} {
 	set i 0
