@@ -740,7 +740,9 @@ if test "$enable_octave" = "yes"; then
 
 # check for user supplied mkoctfile
     if test "$enable_octave" = "yes"; then
-        AC_ARG_WITH(mkoctfile, [  --with-mkoctfile=file   Specify mkoctfile], MKOCTFILE="$withval", MKOCTFILE="mkoctfile")
+        AC_ARG_WITH(mkoctfile, 
+            AC_HELP_STRING([--with-mkoctfile=file], [Specify mkoctfile]), 
+            MKOCTFILE="$withval", MKOCTFILE="mkoctfile")
         MKOCTFILE=`basename $MKOCTFILE`
         AC_CHECK_PROG(has_mkoctfile, $MKOCTFILE, yes, no)
         if test "$has_mkoctfile" = "no"; then
@@ -751,7 +753,9 @@ if test "$enable_octave" = "yes"; then
 
 # check for user supplied Octave
     if test "$enable_octave" = "yes"; then
-        AC_ARG_WITH(octavex, [  --with-octavex=file      Specify Octave], OCTAVE="$withval", OCTAVE="octave")
+        AC_ARG_WITH(octavex, 
+            AC_HELP_STRING([--with-octavex=file], [Specify Octave]), 
+            OCTAVE="$withval", OCTAVE="octave")
         OCTAVE=`basename $OCTAVE`
         AC_CHECK_PROG(has_octave, $OCTAVE, yes, no)
         if test "$has_octave" = "no"; then
@@ -771,12 +775,16 @@ EOF`])
     if test "$enable_octave" = "yes"; then
 
         # Get Octave version
+        AC_MSG_CHECKING([Octave version])
         OCTAVE_VERSION=`$OCTAVE --version | sed 's/^.*version //;q' \
                         | sed 's/ .*$//'`
+        AC_MSG_RESULT($OCTAVE_VERSION)
 
 	# This is the directory for installation of the PLplot_Octave
         # specific m files
+        AC_MSG_CHECKING([Octave prefix])
         PLPLOT_OCTAVE_DIR=${prefix}/share/plplot_octave
+        AC_MSG_RESULT($PLPLOT_OCTAVE_DIR)
 
 	# Get Configuration default values for Octave
         OCTAVE_PREFIX=OCTAVE_CONFIG_INFO(prefix)
@@ -798,6 +806,10 @@ EOF`])
                                    | sed "s:$OCTAVE_PREFIX/*::"`	
   	    OCTAVE_OCT_DIR=$PLPLOT_OCTAVE_DIR
 	fi
+        AC_MSG_CHECKING([Octave m dir])
+        AC_MSG_RESULT($OCTAVE_M_DIR)
+        AC_MSG_CHECKING([Octave oct dir])
+        AC_MSG_RESULT($OCTAVE_OCT_DIR)
 
     fi
 
