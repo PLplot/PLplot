@@ -447,21 +447,23 @@ typedef struct {
  * unicode glyph indices.  Thus to distinguish it from those, the FCI is marked
  * by 0x1 in the most significant 4 bits.  The remaining 7 hex digits
  * stored in the 32-bit integer characterize 7 different font attributes.
- * The most signficant 3 of these are currently reserved for future use.
- * the remaining four font attributes are interpreted as follows:
- * Font attribute          Possible attribute values
- *                      0        1          2        3       4        5
- * font-family     sans-serif  serif    monospace  script  symbol |fantasy
- * font-style        upright   italic    oblique |
- * font-variant      normal |small caps
- * font-weight       medium    bold  |   bolder    light  lighter
+ * The font attributes are interpreted as follows:
+ * hexdigit =>                    0        1          2        3       4        5
+ * hexpower   Font attribute               Possible attribute values
+ *    0       font-family     sans-serif  serif    monospace  script  symbol |fantasy
+ *    1       font-style        upright   italic    oblique |
+ *    2       font-weight       medium     bold  |   bolder    light  lighter
+ *    3       font-variant      normal | small caps
  * 
  * Everything to the right of the vertical bars is not implemented and is
  * subject to change.  The four font attributes (font-family, font-style,
- * font-variant, and font-weight are stored in the FCI in the order of
- * decreasing significance so that the font-weight value is stored in
- * the least significant hex digit of the FCI.
- * 
+ * font-weight, and font-variant are stored in the FCI in the order of
+ * hexpower, the left shift that is applied to the hex digit to place the
+ * hexdigit in the FCI.  The hexpower = 3 position is essentially undefined
+ * since there is currently only one hexdigit (0) defined, and similarly
+ * for hexpower = 4-6 so there is room for expansion of this scheme into more
+ * font attributes if required.  (hexpower = 7 is reserved for the 0x1 marker 
+ * of the FCI.)
 \*--------------------------------------------------------------------------*/
 
 #define PL_MAX_CMAP1CP 256

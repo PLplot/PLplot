@@ -991,20 +991,20 @@ c_plfont(PLINT ifont)
     switch(ifont)
      {
       case 1:
-	/* normal = (sans serif, upright, normal, medium) */
+	/* normal = (medium, upright, sans serif) */
 	plsfci(0x10000000);
 	break;
-	/* roman = (serif, upright, normal, medium) */
+	/* roman = (medium, upright, serif) */
       case 2:
-	plsfci(0x10001000);
+	plsfci(0x10000001);
 	break;
-	/* italic = (serif, italic, normal, medium) */
+	/* italic = (medium, italic, serif) */
       case 3:
-	plsfci(0x10001100);
+	plsfci(0x10000011);
 	break;
-	/* script = (script, upright, normal, medium) */
+	/* script = (medium, upright, script) */
       case 4:
-	plsfci(0x10003000);
+	plsfci(0x10000003);
 	break;
      }
 }
