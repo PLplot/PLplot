@@ -1,0 +1,88 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# Basic make assignments for PLplot under Unix (driven by "configure").
+# -----------------------------------------------------------------------
+
+CC		= @CC@
+LDC		= $(CC)
+OCC		= @OCC@
+F77		= @F77@
+LDF		= $(F77)
+M4		= m4
+
+CC_FLAGS	= @CC_FLAGS@ @INCS@
+F77_FLAGS	= @F77_FLAGS@
+LDC_FLAGS	= @LDC_FLAGS@
+LDF_FLAGS	= @LDF_FLAGS@
+LDC_LIBS	= @LIBS@
+LDF_LIBS	= @LIBS@
+LIBS		= @LIBS@
+LIB_TAG		= @LIB_TAG@
+RANLIB		= @RANLIB@
+INSTALL_DIR	= @prefix@
+LIB_BUILD	= ar q
+SHLIB_SUFFIX	= @SHLIB_SUFFIX@
+SHLIB_BUILD	= @SHLIB_BUILD@
+TO		= -o
+
+# Hacks to deal with optimizer failures.
+
+CC_FLAGS_SCCONT = @CC_FLAGS_SCCONT@ @INCS@
+CC_FLAGS_XWIN	= @CC_FLAGS_XWIN@   @INCS@
+
+# -----------------------------------------------------------------------
+# Inference rules
+# -----------------------------------------------------------------------
+
+# Clear the suffix list, to avoid any possible problems with funny suffixes.
+# I can add them back as necessary.
+
+.SUFFIXES:
+
+# The order here is important.  
+
+.SUFFIXES: .o .cc .c .p .f .q .h .i .ccm4 .cm4 .pm4 .fm4 .hm4 .im4
+
+.c.o:
+	$(CC) $(CC_FLAGS) $*.c
+
+.f.o:
+	$(F77) $(F77_FLAGS) $*.f
+
+.fm4.f:
+	$(M4) $(M4_FLAGS) $< >$*.f
+
+# -----------------------------------------------------------------------
+# Dependent directories
+# -----------------------------------------------------------------------
+
+PLLIB_DIR	= ../lib
+PLFNT_DIR	= ../lib
+PLLIB_PATH	= $(PLLIB_DIR)/
+PLFNT_PATH	= $(PLFNT_DIR)/
+
+LIB_DIR		= $(INSTALL_DIR)/lib
+DOC_DIR		= $(INSTALL_DIR)/doc
+BIN_DIR		= $(INSTALL_DIR)/bin
+INFO_DIR	= $(INSTALL_DIR)/info
+INCLUDE_DIR	= $(INSTALL_DIR)/include
+TCL_DIR		= $(INSTALL_DIR)/tcl
+
+# This is used for making the install versions of plrender & plserver
+# (Must relink after installing shared library!)
+
+LIB_INSTALL	= -L$(LIB_DIR) -lplplot$(LIB_TAG)
+
+# These are what we link against.
+
+PLLIB_LDC	= -L$(PLLIB_DIR) -lplplot$(LIB_TAG)
+PLLIB_LDF	= -L$(PLLIB_DIR) -lplplot$(LIB_TAG)
+
+# The default target -- a convenient forward reference
+
+default: everything

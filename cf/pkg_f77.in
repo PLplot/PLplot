@@ -1,0 +1,17 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# Make assignments and targets for PLplot/Fortran interface layer.
+# -----------------------------------------------------------------------
+
+FSTUB_OBJ = \
+	sc3d.o \
+	sccont.o \
+	scstubs.o \
+	strutil.o \
+	sfstubs.o 
+

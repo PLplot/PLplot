@@ -1,0 +1,21 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# PLplot build rule for shared library under Unix.
+# -----------------------------------------------------------------------
+
+PLSHLIB		= $(PLLIB_PATH)libplplot$(LIB_TAG)$(SHLIB_SUFFIX)
+
+libs:	$(PLSHLIB) $(PLLIB)
+
+LIB_OBJS = $(OBJ) $(TCL_OBJ) $(TK_OBJ) $(DRIVERS_OBJ) $(FSTUB_OBJ)
+
+$(PLSHLIB):	$(LIB_OBJS)
+	-rm $(PLSHLIB)
+	$(SHLIB_BUILD) $(PLSHLIB) $(LIB_OBJS)
+	$(RANLIB) $(PLSHLIB)
+

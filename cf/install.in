@@ -1,0 +1,48 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# Make assignments and targets for installation.
+#
+# It is strongly encouraged that you use a dedicated directory such as
+# /usr/local/plplot (read the FAQ on this topic).  The install directory
+# will be created if necessary, as will subdirectories bin, doc, examples,
+# include, lib, man (eventually), and tcl. 
+# -----------------------------------------------------------------------
+
+install: install_lib install_utils $(TCL_INSTALL) $(TK_INSTALL) \
+	install_examples
+
+install_lib:
+	-if [ ! -d $(INSTALL_DIR) ] ; then mkdir -p $(INSTALL_DIR); fi
+	-if [ ! -d $(INCLUDE_DIR) ] ; then mkdir -p $(INCLUDE_DIR); fi
+	-if [ ! -d $(LIB_DIR) ] ; then mkdir -p $(LIB_DIR); fi
+	-if [ ! -d $(DOC_DIR) ] ; then mkdir -p $(DOC_DIR); fi
+	-if [ ! -d $(BIN_DIR) ] ; then mkdir -p $(BIN_DIR); fi
+	-if [ ! -d $(INFO_DIR) ] ; then mkdir -p $(INFO_DIR); fi
+	-cp ../mklinks $(INSTALL_DIR)
+	-cp ../lib/libplplot* ../lib/*.fnt $(LIB_DIR)
+	$(RANLIB) $(LIB_DIR)/libplplot*.*
+	-cd ..; cp README* Changes.log COPYRIGHTS FAQ ToDo $(DOC_DIR)
+	-cd ../scripts; cp pl* $(BIN_DIR)
+	-cd ../include; \
+	cp plplotP.h plplot.h plplotX.h plplotTK.h \
+	   plevent.h plstream.h pdf.h tclMatrix.h \
+		$(INCLUDE_DIR)
+
+install_examples:
+	cp -r ../examples $(INSTALL_DIR)
+	-rm -r $(INSTALL_DIR)/examples/CVS
+	-rm -r $(INSTALL_DIR)/examples/*/CVS
+
+install_utils:
+	$(LDC) $(LDC_FLAGS) plrender.o $(LIB_INSTALL) \
+		-o plrender $(LDC_PATH) $(LDC_LIBS)
+	$(LDC) $(LDC_FLAGS) pltek.o $(LIB_INSTALL) \
+		-o pltek $(LDC_PATH) $(LDC_LIBS)
+	-strip plrender pltek
+	-cp plrender pltek $(BIN_DIR)
+

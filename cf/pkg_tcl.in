@@ -1,0 +1,25 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# Make assignments and targets for PLplot/Tcl support.
+# -----------------------------------------------------------------------
+
+TCL_OBJ = \
+	tclAPI.o \
+	tclMain.o \
+	tclMatrix.o
+
+TCL_EXE	= pltcl
+
+TCL_INSTALL = install_tcl
+
+install_tcl:
+	$(LDC) $(LDC_FLAGS) pltcl.o $(LIB_INSTALL) \
+		-o pltcl $(LDC_PATH) $(LDC_LIBS)
+	-strip pltcl
+	-cp pltcl $(BIN_DIR)
+
