@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/08/05 22:24:05  mjl
+ * Revision 1.12  1994/11/02 21:14:33  mjl
+ * Name changes to locator coordinate variables.
+ *
+ * Revision 1.11  1994/08/05  22:24:05  mjl
  * Made new test code a bit more robust and unobtrusive.
  *
  * Revision 1.10  1994/07/29  20:13:02  mjl
@@ -112,8 +115,8 @@ main(int argc, char *argv[])
 	    pltext();
 	    printf(" wx = %f\n",plc.wX);
 	    printf(" wy = %f\n",plc.wY);
-	    printf(" vx = %f\n",plc.vpX);
-	    printf(" vy = %f\n",plc.vpY);
+	    printf(" vx = %f\n",plc.vdX);
+	    printf(" vy = %f\n",plc.vdY);
 	    plgra();
 	    co = 1;
 	}
