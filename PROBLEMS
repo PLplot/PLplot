@@ -20,6 +20,10 @@ of Joao, Maurice, or Geoffrey?
 
 Essential, minor effort required.
 
+* sort out option implications for --disable-shared.  For example, we
+cannot build dynamic drivers in this case, and this also kills python and
+octave so sysloc.in should be adjusted accordingly.
+
 * Check that make DESTDIR=/tmp/staging install works so that our package is
 build-relocatable.  This facility is essential so that our rpm and deb
 packages build correctly.
