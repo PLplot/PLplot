@@ -45,3 +45,16 @@ should be capable of using postscript fonts instead of the Hershey fonts.
 o Explicit support for plotting points, lines in 3d space.
 
 o Vector field plotter.
+
+o The dashed line draws are incredibly slow and should be optimized.
+
+o When first implementing the multiple stream capability, I had intended to
+also develop a "multiple device" capability.  The idea here would be that
+while multiple streams are independent, multiple devices (existing in a given
+stream) simply clone the plot calls over each device.  An application of this
+would be to simultaneously plot something while making a plplot metafile as a
+permanent record.  Or, simultaneously plot to multiple X-windows displays (a
+great way to show a collaborator what's going on).  But I ran out of steam
+before really getting underway, and now the device-dependent and
+stream-dependent stuff are pretty mixed up.  I may get it all unsorted
+and implemented eventually if there is a need for this kind of capability.
