@@ -7,31 +7,20 @@
 # $Id$
 ###############################################################################
 
+package require Itk
+
 itcl::class PLWin {
     inherit itk::Widget
 
     protected variable hull
-#    protected variable oldthis
-
     protected variable width 20c
     protected variable height 15c
-
     protected variable plwin
 
     constructor {args} {
 	set hull $itk_component(hull)
-#	set oldthis [info namespace tail $this]
 
 	eval itk_initialize $args
-
-#	itk_component add plwin {
-#	    eval plframe $hull.plwin $args
-#	    pack $hull.plwin
-#	} {
-#	    keep -width -height -background
-#	    rename -background -plwinbg plwinbg Background
-#	}
-#	set plwin $itk_component(plwin)
 
 	uplevel \#0 plframe $hull.plwin $args -width $width -height $height
 	set plwin $hull.plwin
