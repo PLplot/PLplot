@@ -22,6 +22,7 @@
 AM_CPPFLAGS = @INCLTDL@
 examples_f77dir = ${prefix}/@DATA_DIR@/../examples/f77
 f77m4_source = \
+  fmacs.m4 \
   x01f.fm4 \
   x02f.fm4 \
   x03f.fm4 \
@@ -89,4 +90,4 @@ SUFFIXES = .fm4
 .fm4.f:
 	$(M4) @M4_FLAGS@ $< >$*.f
 
-EXTRA_DIST = $(f77m4_source) $(examples_f77_DATA)
+EXTRA_DIST = $(f77m4_source)
