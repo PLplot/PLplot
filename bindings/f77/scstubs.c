@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1993/08/09 22:15:08  mjl
+ * Revision 1.14  1993/08/26 20:00:17  mjl
+ * Inserted stub function PLINIT().
+ *
+ * Revision 1.13  1993/08/09  22:15:08  mjl
  * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
  *
  * Revision 1.12  1993/07/02  07:11:39  mjl
@@ -213,6 +216,12 @@ void
 PLHLS(PLFLT *hue, PLFLT *light, PLFLT *sat)
 {
     c_plhls(*hue, *light, *sat);
+}
+
+void
+PLINIT(void)
+{
+    c_plinit();
 }
 
 void
