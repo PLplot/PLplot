@@ -231,22 +231,6 @@ Setup_options () {
 
 	case "$system" in
 
-	hp*|HP*)
-		system="HP"
-		;;
-
-	sun*|SUN*|Sun*)
-		system="SUN"
-		;;
-
-	unicos*|Unicos*|UNICOS*|Cray*|cray*|sn*)
-		system="UNICOS"
-		;;
-
-	sx*|Sx*|SX*|monte*|Monte*|MONTE*)
-		system="SX"
-		;;
-
 	aix*|AIX*|rs*|RS*|ibm*|IBM*)
 		system="AIX"
 		;;
@@ -255,28 +239,48 @@ Setup_options () {
 		system="ALPHAOSF"
 		;;
 
-	irix*|IRIX*|Irix*|sgi*|SGI*)
-		system="IRIX"
-		;;
-
-	sysv*|SYSV*|Sysv*)
-		system="SYSV"
-		;;
-
 	bsd*|BSD*)
 		system="BSD"
 		;;
 
-	ultrix*|ULTRIX*)
-		system="ULTRIX"
+	convex*|ConvexOS*)
+		system="CONVEX"
 		;;
 
 	dg*|DG*)
 		system="DGUX"
 		;;
 
+	hp*|HP*)
+		system="HP"
+		;;
+
+	irix*|IRIX*|Irix*|sgi*|SGI*)
+		system="IRIX"
+		;;
+
 	linux*|LINUX*|Linux*)
 		system="LINUX"
+		;;
+
+	sun*|SUN*|Sun*)
+		system="SUN"
+		;;
+
+	sx*|Sx*|SX*|monte*|Monte*|MONTE*)
+		system="SX"
+		;;
+
+	sysv*|SYSV*|Sysv*)
+		system="SYSV"
+		;;
+
+	ultrix*|ULTRIX*)
+		system="ULTRIX"
+		;;
+
+	unicos*|Unicos*|UNICOS*|Cray*|cray*|sn*)
+		system="UNICOS"
 		;;
 
 	*)	
