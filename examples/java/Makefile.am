@@ -75,23 +75,25 @@ if enable_java
 examples_javadir = $(DATA_DIR)/examples/java
 examples_java_DATA = $(javademos)
 
-examples_execjavadir = $(datadir)/java/plplot/examples
-examples_execjava_DATA = $(javademos) $(example_classes) README.javademos
+examples_execjavadir = $(datadir)/java
+examples_execjava_DATA = $(javademos) README.javademos
 
 # Note the Java binding classes are actually generated in the java bindings
 # directory (path = "plplot.core").  Since the examples classes are #
 # generated here (path = "plplot.examples") but both must be included in the
 # jar file, this later is generated here.
 
-plplotjavadir = $(datadir)/java/
+plplotjavadir = $(datadir)/java
 plplotjava_DATA = plplot.jar
 
 $(top_builddir)/bindings/java/jar-stamp:
 	( cd $(top_builddir)/bindings/java ; make jar-stamp )
 
-plplot.jar: $(example_classes) $(top_builddir)/bindings/java/jar-stamp
-	$(JAR) -cf plplot.jar -C $(top_builddir)/bindings/java/ plplot \
-	                      -C . plplot  
+plplot.jar: $(example_classes) $(top_builddir)/bindings/java/jar-stamp \
+            README.javademos $(javafiles)
+	$(JAR) -cf plplot.jar \
+	       -C $(top_builddir)/bindings/java/ README.javaAPI plplot \
+	       -C . README.javademos $(javafiles) plplot
 
 endif
 
