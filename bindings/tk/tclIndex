@@ -7,6 +7,11 @@ exit_app plserver.tcl
 null_command pltools.tcl
 bogon_alert pltools.tcl
 dpos pltools.tcl
+normal_text_setup pltools.tcl
+text_scroll pltools.tcl
+text_scroll_by_line pltools.tcl
+text_scroll_by_page pltools.tcl
+insertWithTags pltools.tcl
 min pltools.tcl
 max pltools.tcl
 getItem pltools.tcl
@@ -38,3 +43,10 @@ pl_zoom_start plwidget.tcl
 pl_zoom_draw plwidget.tcl
 pl_zoom_select plwidget.tcl
 pl_view plwidget.tcl
+about about.tcl
+help_gui help_gui.tcl
+help_keys help_keys.tcl
+help_tcltk help_tcltk.tcl
+mkStyles mkStyles.tcl
+insertWithTags mkStyles.tcl
+plconfig plconfig.tcl
