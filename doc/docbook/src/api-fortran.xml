@@ -886,6 +886,51 @@ fortran
 
   </sect1>
 
+  <sect1 id="plparseoptsfortran" renderas="sect3">
+    <title>
+      <function>plparseopts</function>: parse arguments for fortran
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plparseopts</function>
+	</funcdef>
+        <paramdef><parameter>mode</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para> When called from Fortran, this routine has the same effect as
+      when invoked from C (see &plparseopts;) except that the argument list
+      just contains the parsing mode and the fortran system routines
+      <function>iargc</function> and <function>getarg</function> 
+      are used internally to obtain the number of arguments and
+      argument values.  (Note, during configuration, the user's
+      fortran compiler
+      is checked to see whether it supports 
+      <function>iargc</function> and <function>getarg</function>.  If it
+      does not, the fortran plparseopts simply writes a warning message
+      and returns.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>mode</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Parsing mode; see &plparseopts; for details.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="plsescfortran" renderas="sect3">
     <title>
       <function>plsesc</function>: Set the escape character for text strings

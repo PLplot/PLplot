@@ -46,8 +46,8 @@
     <para>
       PLplot supports a large number of command line arguments, but it is
       up to the user to pass these to PLplot for processing at the
-      beginning of execution.  The function
-      plParseInternalOpts (*** UNDOCUMENTED ***) is responsible for parsing
+      beginning of execution.
+      &plparseopts; is responsible for parsing
       the argument list, removing all that are recognized by PLplot, and
       taking the appropriate action before returning.  There are an
       extensive number of options available to affect this process.  The
@@ -642,7 +642,7 @@ Enter device number or keyword: <!--
 	    The <literal>-dev</literal> <replaceable>device</replaceable>
 	    command line argument, if the program's command line arguments
 	    are being passed to the PLplot function
-	    <function>plParseInternalOpts</function>.
+	    &plparseopts;.
 	  </para>
 	</listitem>
       </itemizedlist>

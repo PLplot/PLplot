@@ -5527,6 +5527,108 @@ default
       </varlistentry>
     </variablelist>
 
+    </sect1>
+  <sect1 id="plparseopts" renderas="sect3">
+    <title>
+      <function>plparseopts</function>: Parse command-line arguments
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plparseopts</function>
+	</funcdef>
+        <paramdef><parameter>p_argc</parameter></paramdef>
+        <paramdef><parameter>argv</parameter></paramdef>
+        <paramdef><parameter>mode</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+    Parse command-line arguments.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>p_argc</parameter>
+	  (<literal>int *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    pointer to number of arguments.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>argv</parameter>
+	  (<literal>char **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to character array containing
+	    <literal><parameter>*p_argc</parameter></literal> command-line
+	    arguments.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>mode</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Parsing mode with the following possibilities:
+<itemizedlist>
+<listitem>
+<para>
+PL_PARSE_FULL (1) -- Full parsing of command line and all error messages
+enabled, including program exit when an error occurs.  Anything on the
+command line that isn't recognized as a valid option or option argument is
+flagged as an error.
+</para>
+</listitem>
+<listitem>
+<para>
+PL_PARSE_QUIET (2) -- Turns off all output except in the case of errors.
+</para>
+</listitem>
+<listitem>
+<para>
+PL_PARSE_NODELETE (4) -- Turns off deletion of processed arguments.
+</para>
+</listitem>
+<listitem>
+<para>
+PL_PARSE_SHOWALL (8) -- Show invisible options
+</para>
+</listitem>
+<listitem>
+<para>
+PL_PARSE_NOPROGRAM (32) -- Specified if argv[0] is NOT a pointer to the
+program name.
+</para>
+</listitem>
+<listitem>
+<para>
+PL_PARSE_NODASH (64) -- Set if leading dash is NOT required.
+</para>
+</listitem>
+<listitem>
+<para>
+PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
+</para>
+</listitem>
+</itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
   </sect1>
 
   <sect1 id="plpoin" renderas="sect3">
