@@ -15,20 +15,22 @@ DYNLOAD_STUFF := dynamic_drivers_target
 dynamic_drivers_target: $(dynamic_drivers)
 	@echo "dynamic_drivers built: $(dynamic_drivers)"
 
+driverlibs := -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+
 # no driver needs this:
 # -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
 
 drivers/null.drv : shared/null$O
-	$(SHLIB_BUILD) $@ $< 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/plmeta.drv : shared/plmeta$O
-	$(SHLIB_BUILD) $@ $< 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/ps.drv : shared/ps$O
-	$(SHLIB_BUILD) $@ $< 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/xfig.drv : shared/xfig$O
-	$(SHLIB_BUILD) $@ $< 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/gd.drv : shared/gd$O
 	$(SHLIB_BUILD) $@ $< @GDLIBS@
@@ -39,28 +41,28 @@ drivers/gd.drv : shared/gd$O
 # Not done yet!
 
 drivers/pstex.drv : shared/pstex$O drivers/ps.drv
-	$(SHLIB_BUILD) $@ $< drivers/ps.drv 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/tek.drv : shared/tek$O
-	$(SHLIB_BUILD) $@ $< 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/pbm.drv : shared/pbm$O
-	$(SHLIB_BUILD) $@ $<
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/hpgl.drv : shared/hpgl$O
-	$(SHLIB_BUILD) $@ $< 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/dg300.drv : shared/dg300$O
-	$(SHLIB_BUILD) $@ $< 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/ljii.drv : shared/ljii$O
-	$(SHLIB_BUILD) $@ $< 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/ljiip.drv : shared/ljiip$O
-	$(SHLIB_BUILD) $@ $< 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/impress.drv : shared/impress$O
-	$(SHLIB_BUILD) $@ $< 
+	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/gnome.drv : shared/gnome$O
 	$(SHLIB_BUILD) $@ $< @GNOMELIBS@
