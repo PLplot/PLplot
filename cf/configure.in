@@ -92,7 +92,7 @@ enable_python=yes
 enable_java=no
 enable_tcl=yes
 enable_itcl=yes
-enable_octave=no
+enable_octave=yes
 #explicit default values must be specified here for library and header 
 #searching to work right for the following variables.  Note these variables
 #also have a driver role to play, but unlike these, pure-driver variables
@@ -111,14 +111,14 @@ divert(-1)
 
 # Including a driver in the below list includes it by default.
 # Note that "ps" stands for both the ps and psc drivers in ps.c and
-# plcore.h.  Most (all?) other drivers are treated separately (e.g.,
+# plcore.h.  Most (all?) other drivers are treated separately WHY? (e.g.,
 # tek4010, tek4107) even though they appear in the same source code
 # file (i.e., tek.c in the case of tek4010 and tek4107).
 
 define(PL_DRIVER_LIST,
-[plmeta, null, xterm, tek4010, tek4107, mskermit,
-conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, xfig, ljii, hp7470, hp7580,
-lj_hpgl, imp, xwin, tk, pbm, gnome, pstex])
+[plmeta, null, xterm, tek4010, tek4010f, tek4107, tek4107f, mskermit,
+conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, psc, xfig, ljii,
+hp7470, hp7580, lj_hpgl, imp, xwin, tk, pbm, gnome, pstex])
 
 # Note specifically which drivers are known to be loadable.
 # Eventually, hopefully, every driver will show up on this list.
@@ -126,7 +126,9 @@ lj_hpgl, imp, xwin, tk, pbm, gnome, pstex])
 # peculiarities in the build process.
 
 define([PL_DYNAMIC_DRIVER_LIST],
-[null plmeta ps])
+[null plmeta ps psc xfig png jpeg pstex xterm tekt tek4107t \
+tekf tek4107f mskermit versaterm vlt conex pbm hp7470 hp7580 \
+lj_hpgl dg300 ljii ljiip imp gnome])
 
 # We think of a "device" as the output medium.  Could be a machine
 # style (Tektronix, X11), or a file format (Postscript).
@@ -144,11 +146,11 @@ define([PL_DYNAMIC_DRIVER_LIST],
 
 define([PL_device_driver_pair_list],
 [plmeta:plmeta null:null \
-xterm:tek tek4010:tek tek4107:tek mskermit:tek \
-versaterm:tek vlt:tek conex:tek \
-linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd ps:ps xfig:xfig \
+xterm:tek tekt:tek tek4107t:tek mskermit:tek \
+versaterm:tek vlt:tek conex:tek tekf:tek tek4107f:tek \
+linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd psc:ps ps:ps xfig:xfig \
 ljiip:ljiip ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
-imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome ])
+imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:pstex])
 
 # Macro to set one driver enable value
 
@@ -777,7 +779,7 @@ if test "$enable_dynamic_drivers" = "yes"; then
 
     # Clear out any prior drivers.
     if test -e drivers/drivers.db; then
-	rm drivers.db
+	rm drivers/drivers.db
     fi
     touch drivers/drivers.db
 
@@ -787,13 +789,79 @@ if test "$enable_dynamic_drivers" = "yes"; then
     for drv in PL_DYNAMIC_DRIVER_LIST; do
 	case $drv in
 	    null)
-	    echo "null:Null device:null.drv:41:null" >> drivers/drivers.db
+	    echo "null:Null device:null.drv:42:null" >> drivers/drivers.db
 	    ;;
 	    plmeta)
 	    echo "plmeta:PLplot Native Meta-File:plmeta.drv:26:plm" >> drivers/drivers.db
 	    ;;
+	    xfig)
+	    echo "xfig:Fig file:xfig.drv:31:xfig" >> drivers/drivers.db
+	    ;;
+	    pstex)
+	    echo "pstex:Postscript/LaTeX file:pstex.drv:41:pstex" >> drivers/drivers.db
+	    ;;
+	    gd)
+	    echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
+	    echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
+	    ;;
+	    xterm)
+	    echo "xterm:Xterm Window:tek.drv:18:xterm" >> drivers/drivers.db
+	    ;;
+	    pbm)
+	    echo "pbm:PDB (PPM) Driver:pbm.drv:38:pbm" >> drivers/drivers.db
+	    ;;
+	    hp7470)
+	    echo "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):hpgl.drv:34:hp7470" >> drivers/drivers.db
+	    ;;
+	    hp7580)
+	    echo "hp7580:HP 7580 Plotter File (Large Plotter):hpgl.drv:35:hp7580" >> drivers/drivers.db
+	    ;;
+	    lj_hpgl)
+	    echo "lj_hpgl:HP Laserjet III, HPGL emulation mode:hpgl.drv:36:lj_hpgl" >> drivers/drivers.db
+	    ;;
+	    dg300)
+	    echo "dg300:DG300 Terminal:dg300.drv:25:dg300" >> drivers/drivers.db
+	    ;;
+	    ljii)
+	    echo "ljii:LaserJet II Bitmap File (150 dpi):ljii.drv:33:ljii" >> drivers/drivers.db
+	    ;;
+	    ljiip)
+	    echo "ljiip:LaserJet IIp/deskjet compressed graphics:ljiip.drv:32:ljiip" >> drivers/drivers.db
+	    ;;
+	    imp)
+	    echo "imp:Impress File:impress.drv:37:imp" >> drivers/drivers.db
+	    ;;
+	    tekt)
+	    echo "tekt:Tektronix Terminal (4010):tek.drv:19:tekt" >> drivers/drivers.db
+	    ;;
+	    tek4107t)
+	    echo "tek4107t:Tektronix Terminal (4105/4107):tek.drv:20:tek4107t" >> drivers/drivers.db
+	    ;;
+	    mskermit)
+	    echo "mskermit:MS-Kermit emulator:tek.drv:21:mskermit" >> drivers/drivers.db
+	    ;;
+	    versaterm)
+	    echo "versaterm:Versaterm vt100/tek emulator:tek.drv:22:versaterm" >> drivers/drivers.db
+	    ;;
+	    vlt)
+	    echo "vlt:VLT vt100/tek emulator:tek.drv:23:vlt" >> drivers/drivers.db
+	    ;;
+	    conex)
+	    echo "conex:Conex vt320/tek emulator:tek.drv:24:conex" >> drivers/drivers.db
+	    ;;
+	    tekf)
+	    echo "tekf:Tektronix File (4010):tek.drv:27:tekf" >> drivers/drivers.db
+	    ;;
+	    tek4107f)
+	    echo "tek4107f:Tektronix File (4105/4107):tek.drv:28:tek4107f" >> drivers/drivers.db
+	    ;;
+	    gnome)
+	    echo "gnome:Gnome Canvas:gnome.drv:6:gnome" >> drivers/drivers.db
+	    ;;
 	    ps)
 	    echo "ps:PostScript File (monochrome):ps.drv:29:psm" >> drivers/drivers.db
+	    ;;
+	    psc)
 	    echo "psc:PostScript File (color):ps.drv:30:psc" >> drivers/drivers.db
 	    ;;
 	esac

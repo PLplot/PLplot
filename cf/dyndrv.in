@@ -24,3 +24,35 @@ drivers/plmeta.drv : shared/plmeta$O
 drivers/ps.drv : shared/ps$O
 	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
 
+drivers/xfig.drv : shared/xfig$O
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
+
+drivers/gd.drv : shared/gd$O
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
+
+drivers/pstex.drv : shared/pstex$O shared/ps$O
+	$(SHLIB_BUILD) $@ $< shared/ps$O -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
+
+drivers/tek.drv : shared/tek$O
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
+
+drivers/pbm.drv : shared/pbm$O
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
+
+drivers/hpgl.drv : shared/hpgl$O
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
+
+drivers/dg300.drv : shared/dg300$O
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
+
+drivers/ljii.drv : shared/ljii$O
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
+
+drivers/ljiip.drv : shared/ljiip$O
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
+
+drivers/impress.drv : shared/impress$O
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
+
+drivers/gnome.drv : shared/gnome$O
+	$(SHLIB_BUILD) $@ $< -L. -lplplot $(MAT_LINK) $(LDC_LIBS)
