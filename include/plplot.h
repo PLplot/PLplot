@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.85  1996/06/26 21:32:21  furnish
+ * Revision 1.86  1996/10/11 23:32:17  furnish
+ * Bump version for snapshot.
+ *
+ * Revision 1.85  1996/06/26  21:32:21  furnish
  * Update version to reflect new snapshot.
  *
  * Revision 1.84  1996/02/24  05:04:29  shouman
@@ -93,7 +96,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99-ss960626"
+#define PLPLOT_VERSION "4.99-ss961011"
 
 /*--------------------------------------------------------------------------*\
  *    USING PLplot
