@@ -26,9 +26,6 @@
 /* Define if dynamic drivers are enabled.*/
 #undef ENABLE_DYNDRIVERS
 
-/* Define if drivers database is specified.*/
-#undef DRIVERS_DB
-
 /* Define if [incr Tcl] is available */
 #undef HAVE_ITCL
 
