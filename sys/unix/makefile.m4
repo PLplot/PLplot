@@ -62,11 +62,11 @@ define(if_tk,    {$2})dnl
 define(if_tk,    {ifdef({TK},    {$1},{$2})})dnl
 })dnl
 
-define(if_debug,   {ifdef({DEBUG},     {$1},{$2})})dnl
-define(if_dbl,     {ifdef({DOUBLE},    {$1},{$2})})dnl
-define(if_opt,     {ifdef({OPT},       {$1},{$2})})dnl
-define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
-define(if_shareable, {ifdef({NO_SHARE},	{$2},{$1})})dnl
+define(if_debug,{ifdef({DEBUG},		{$1},{$2})})dnl
+define(if_dbl,	{ifdef({DOUBLE},	{$1},{$2})})dnl
+define(if_opt,	{ifdef({OPT},		{$1},{$2})})dnl
+define(if_prof,	{ifdef({PROFILE},	{$1},{$2})})dnl
+define(if_shr,	{ifdef({NO_SHARE},	{$2},{$1})})dnl
 
 ##############################################################################
 #
@@ -175,6 +175,7 @@ if_unix({
 # Directory structure.  Note most of these aren't used at present.
 # See right before rule declaration for plot library specifications.
 
+INSTALL_DIR	= /usr/local/plplot
 PLLIB_DIR	= ../lib
 PLFNT_DIR	= ../lib
 PLLIB_PATH	= $(PLLIB_DIR)/
@@ -182,7 +183,7 @@ PLFNT_PATH	= $(PLFNT_DIR)/
 FONTFLAG	=
 TK_INCDIR	= /usr/local/{include}
 TK_LINKDIR	= /usr/local/lib
-SYS_LIBS=
+SYS_LIBS	=
 
 # Note there is no "standard" way to invoke double precision in Fortran
 # from the command line, although several systems do provide a way (see
@@ -196,7 +197,7 @@ DBL_FLAG_C	=
 DBL_FLAG_F      =
 })
 
-if_profile({
+if_prof({
 PROFILE_FLAG_C	= -p
 PROFILE_FLAG_LC	= -p
 },{
@@ -232,8 +233,8 @@ LIB_TK    = -ltk -ltcl
 define(DEF_TK,   {if_tk({-DTK})})
 define(DEF_XWIN, {if_xwin({-DXWIN})})
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
-	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK4010 -DTEK4107 -DDG300 \
+	    -DPS -DXFIG -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
 
 # Compiler/linker macros.
 # These are pretty generic to many unix systems and may work as-is.
@@ -288,7 +289,8 @@ if_sunos({
 CC = gcc
 #CC = acc
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS -DXFIG \
+	    DEF_XWIN() DEF_TK()
 SYS_FLAGS_C =
 
 if_dbl({dnl
@@ -301,7 +303,7 @@ OPENWIN_DIR = -L/usr/openwin/lib
 OPENWIN_DIR =
 })
 
-if_profile({
+if_prof({
 PROFILE_FLAG_LC = -p -static
 })
 
@@ -323,13 +325,14 @@ LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 
 define({TK},)
 
-PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DXFIG  DEF_XWIN() DEF_TK()
+PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK4010 -DTEK4107 -DPS -DXFIG \
+	     DEF_XWIN() DEF_TK()
 
 if_dbl({dnl
 DBL_FLAG_F      = -R8
 })dnl
 
-if_profile({
+if_prof({
 PROFILE_FLAG_C	= -G
 PROFILE_FLAG_F	= -G
 PROFILE_FLAG_LC	= -G
@@ -341,7 +344,7 @@ F77	= fort77
 
 SYS_FLAGS_C	= 
 
-if_shareable({
+if_shr({
 BUILD		= ld -b -o
 LIBSUF		= sl
 SHARE_FLAG_C	= +z
@@ -368,8 +371,8 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm -g
 #		SYSV definitions
 # Do we need to have different sections for SVR4 vs older versions?
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DDG300 -DPS -DXFIG \
-	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DDG300 -DPS
+	    -DXFIG -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
 
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
@@ -389,8 +392,8 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 })if_irix({
 #		IRIX definitions (SGI machines)
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DDG300 -DPS -DXFIG \
-	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DDG300 -DPS \
+	    -DXFIG -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
 
 CFLAGS	= -c -ansi $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
@@ -410,8 +413,8 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 
 SYS_FLAGS_C = -hansi
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DDG300 -DPS -DXFIG \
-	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DDG300 -DPS \
+	    -DXFIG -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
 
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
@@ -429,7 +432,8 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 })if_dgux({
 #		DG/UX definitions
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS -DXFIG \
+	     DEF_XWIN() DEF_TK()
 SYS_FLAGS_C = -Dunix -DSTUB_LINKAGE=STUB_LAU -ansi
 SYS_FLAGS_F = -novms
 
@@ -509,7 +513,8 @@ LDFFLAGS= $(LIBF) -lm
 })if_aix({
 #		A/IX definitions
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS -DXFIG \
+	     DEF_XWIN() DEF_TK()
 SYS_FLAGS_C =
 
 # Note that A/IX 3.0 has a bug in that getenv() calls in a C routine
@@ -540,8 +545,8 @@ LDFFLAGS= $(PROFILE_FLAG_F) $(LIBF) -lm
 })if_unicos({
 #	UNICOS defs.
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
-	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK4010 -DTEK4107 -DDG300 \
+	    -DPS -DXFIG -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
 
 SYS_FLAGS_C =
 
@@ -551,7 +556,7 @@ SYS_FLAGS_C =
 F77	= cf77
 LDF	= segldr
 
-if_profile({
+if_prof({
 PROFILE_FLAG_C = -Gp
 PROFILE_FLAG_LC = -lprof -lsci
 })
@@ -577,7 +582,8 @@ LDFFLAGS= $(PROFILE_FLAG_F) $(LIBF) -lm -lnet
 # mess up some diagonal dashed lines.  The double precision flags have not
 # been tested in an actual library build.
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_TK()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS -DXFIG \
+	     DEF_XWIN() DEF_TK()
 
 SYS_FLAGS_C = -std
 
@@ -589,7 +595,7 @@ if_dbl({dnl
 DBL_FLAG_F      = -r8
 })dnl
 
-if_profile({
+if_prof({
 PROFILE_FLAG_F = -p
 PROFILE_FLAG_LF = -p
 })
@@ -641,10 +647,18 @@ TAG_INCLUDE	= b
 })})
 
 PLLIB_MAIN	= $(PLLIB_PATH)libplplot$(TAG_PREC)$(TAG_INCLUDE).$(LIBSUF)
+PLLIB_LINK	= -lplplot$(TAG_PREC)$(TAG_INCLUDE)
 
 PLLIB_C		= $(PLLIB_MAIN)
 PLLIB_F		= $(PLLIB_MAIN)
-PLLIB_LDC	= if_tk({-L$(TK_LINKDIR)}) $(PLLIB_C)
+
+PLLIB_LDC	= $(PLLIB_MAIN) 
+PLLIB_LDF	= $(PLLIB_MAIN) 
+
+# These are used for making the install versions of plrender & plserver
+
+LIB_SEARCH	= -L$(INSTALL_DIR) if_tk({-L$(TK_LINKDIR)}) 
+LIB_INSTALL	= $(LIB_SEARCH) $(PLLIB_LINK)
 
 })
 
@@ -717,7 +731,7 @@ PLLIB_MAIN	= $(PLLIB_PATH)plplotd.lib
 CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) -v $(OPT_FLAG_C) \
 		  $(DEBUG_FLAG_C) -j89i
 
-PLDEVICES	= -DPLMETA -DNULLDEV -DTEK -DPS -DLJII \
+PLDEVICES	= -DPLMETA -DNULLDEV -DTEK4010 -DTEK4107 -DPS -DLJII \
 	    	  -DHP7470 -DHP7580 -DIMP -DIFF
 })
 
@@ -881,8 +895,7 @@ DRIVERS_OBJ = \
 	ps.o \
 	tek.o \
 	xfig.o \
-	xwin.o \
-	xterm.o
+	xwin.o
 
 #----------------------------------------------------------------------#
 # Rules
@@ -1084,11 +1097,8 @@ plmeta.o:	plplotP.h plplot.h plstream.h drivers.h metadefs.h plmeta.c
 xfig.o:		plplotP.h plplot.h plstream.h drivers.h xfig.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xfig.c
 
-xwin.o:		plplotP.h plplot.h plstream.h drivers.h xwin.c
+xwin.o:		plplotP.h plplot.h plstream.h drivers.h xwin.h xwin.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xwin.c
-
-xterm.o:	plplotP.h plplot.h plstream.h drivers.h xterm.c
-	$(CC) $(CFLAGS) $(PLDEVICES) xterm.c
 
 # TK driver
 
@@ -1113,7 +1123,7 @@ plrender:	$(PLLIB_MAIN) plrender.o
 plserver.o:	plserver.h plplotP.h plplot.h plstream.h plserver.c
 	$(CC) -I $(TK_INCDIR) $(CFLAGS) plserver.c
 
-plframe.o:	plframe.c
+plframe.o:	plserver.h plplotP.h plplot.h plstream.h xwin.h plframe.c
 	$(CC) -I $(TK_INCDIR) $(CFLAGS) plframe.c
 
 plr.o:		plserver.h plplotP.h plplot.h plstream.h \
@@ -1184,43 +1194,43 @@ FDEMOS = x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f x12f x13f
 fdemos:	$(FDEMOS)
 
 x01f:	$(PLLIB_F) x01f.o
-	$(LDF) x01f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x01f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x02f:	$(PLLIB_F) x02f.o
-	$(LDF) x02f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x02f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x03f:	$(PLLIB_F) x03f.o
-	$(LDF) x03f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x03f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x04f:	$(PLLIB_F) x04f.o
-	$(LDF) x04f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x04f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x05f:	$(PLLIB_F) x05f.o
-	$(LDF) x05f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x05f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x06f:	$(PLLIB_F) x06f.o
-	$(LDF) x06f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x06f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x07f:	$(PLLIB_F) x07f.o
-	$(LDF) x07f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x07f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x08f:	$(PLLIB_F) x08f.o
-	$(LDF) x08f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x08f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x09f:	$(PLLIB_F) x09f.o
-	$(LDF) x09f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x09f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x10f:	$(PLLIB_F) x10f.o
-	$(LDF) x10f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x10f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x11f:	$(PLLIB_F) x11f.o
-	$(LDF) x11f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x11f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x12f:	$(PLLIB_F) x12f.o
-	$(LDF) x12f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x12f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 x13f:	$(PLLIB_F) x13f.o
-	$(LDF) x13f.o $(PLLIB_F) $(TO) $@ $(LDFFLAGS)
+	$(LDF) x13f.o $(PLLIB_LDF) $(TO) $@ $(LDFFLAGS)
 
 #----------------------------------------------------------------------#
 # First time only, should be executed from $(PLTMP_DIR)
@@ -1278,15 +1288,17 @@ realclean:
 # There must also be directories /usr/local/plplot/include and 
 # /usr/local/plplot/tcl.
 
-INSTALL_DIR = /usr/local/plplot
-
 install:
-	-strip plrender
-	-cp plrender ../lib/libplplot* ../lib/*.fnt $(INSTALL_DIR)
+	-cp ../lib/libplplot* ../lib/*.fnt $(INSTALL_DIR)
 	-cd ..; cp README* Changes.log COPYRIGHTS ToDo $(INSTALL_DIR)
 	-cd ../{include}; \
 		cp plplotP.h plplot.h plplotio.h plevent.h plstream.h pdf.h \
 		$(INSTALL_DIR)/{include}
+if_shr({	$(LDC) plrender.o $(LIB_INSTALL) -o plrender $(LDCFLAGS)
+if_tk({		$(LDC) $(SERVER_OBJ) $(LIB_INSTALL) -o plserver $(LDCFLAGS)
+})})	-strip plrender
+	-cp plrender $(INSTALL_DIR)
 if_tk({	-strip plserver
 	-cp plserver $(INSTALL_DIR)
-	-cp ../drivers/tk/*.tcl ../drivers/tk/tclIndex $(INSTALL_DIR)/tcl })
+	-cp ../drivers/tk/*.tcl ../drivers/tk/tclIndex $(INSTALL_DIR)/tcl
+})
