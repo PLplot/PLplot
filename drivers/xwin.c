@@ -75,8 +75,6 @@ typedef struct {
     double		yscale;
     double		xscale_dev;
     double		yscale_dev;
-    int			ignore_next_expose;
-    int			in_main_loop;
 
     int			monochrome;
     XColor		cmap0[16];
@@ -407,7 +405,7 @@ xw_Xinit(PLStream *pls)
 	sprintf(header, "plplot_%d", idev);
 
 /* Window creation */
-/* Why is X ignoring the x & y values??? */
+/* Why is the server ignoring the x & y values??? */
 
     xwd->window =
 	XCreateSimpleWindow(xwd->display,
@@ -422,37 +420,40 @@ xw_Xinit(PLStream *pls)
 
     xwd->gc = XCreateGC(xwd->display, xwd->window, 0, 0);
 
-/* set cursor to crosshair */
+/* Set cursor to crosshair */
 
     cross_cursor = XCreateFontCursor(xwd->display, XC_crosshair);
     XDefineCursor(xwd->display, xwd->window, cross_cursor);
 
-/* input event selection */
+/* Input event selection */
 
     XSelectInput(xwd->display, xwd->window,
 		 ButtonPressMask | KeyPressMask |
 		 ExposureMask | StructureNotifyMask);
 
-/* window mapping */
+/* Window mapping */
 
     XMapRaised(xwd->display, xwd->window);
 
     XSetBackground(xwd->display, xwd->gc, xwd->cmap0[0].pixel);
     xw_color(pls);
 
-/* wait for exposure */
+/* Wait for exposure */
+/* Also need to remove extraneous expose events from the event queue */
 
     for (;;) {
 	XNextEvent(xwd->display, &xwd->theEvent);
-	if (xwd->theEvent.xexpose.count == 0)
+	if (xwd->theEvent.type == Expose) {
+	    while (XCheckMaskEvent(xwd->display, ExposureMask, &xwd->theEvent))
+		;
 	    break;
+	}
     }
 
 /* Get initial drawing area dimensions */
 
-    (void) XGetGeometry(xwd->display, xwd->window,
-			&root, &x, &y, &width, &height,
-			&border_width, &depth);
+    (void) XGetGeometry(xwd->display, xwd->window, &root, &x, &y,
+			&width, &height, &border_width, &depth);
 
     xwd->init_width = width;
     xwd->init_height = height;
@@ -618,6 +619,7 @@ MouseEH(PLStream *pls, XEvent *event)
 * ExposeEH()
 *
 * Event handler routine for expose events.
+* These are "pure" exposures (no resize), so don't need to clear window.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -626,15 +628,13 @@ ExposeEH(PLStream *pls, XEvent *event)
     int id = devtable[pls->ipls][pls->ipld];
     XwDev *xwd = &(xwdev[id]);
 
-    if (event->xexpose.count == 0) {
-	if (!xwd->ignore_next_expose) {
-	    XFlush(xwd->display);
-	    plRemakePlot(pls);
-	}
-	else {
-	    xwd->ignore_next_expose = FALSE;
-	}
-    }
+    XFlush(xwd->display);
+    plRemakePlot(pls);
+
+/* Remove extraneous expose events from the event queue */
+
+    while (XCheckMaskEvent(xwd->display, ExposureMask, event))
+	;
 }
 
 /*----------------------------------------------------------------------*\
@@ -662,13 +662,19 @@ ResizeEH(PLStream *pls, XEvent *event)
     xwd->xscale = xwd->xscale * xwd->xscale_dev;
     xwd->yscale = xwd->yscale * xwd->yscale_dev;
 
-    if (old_width != xwd->cur_width || old_height != xwd->cur_height) {
-	XFlush(xwd->display);
-	plRemakePlot(pls);
-    }
+/* Only need to refresh if size is actually changed */
 
-    if (xwd->cur_width > old_width || xwd->cur_height > old_height)
-	xwd->ignore_next_expose = TRUE;
+    if (old_width == xwd->cur_width && old_height == xwd->cur_height)
+	return;
+
+    XFlush(xwd->display);
+    XClearWindow(xwd->display, xwd->window);
+    plRemakePlot(pls);
+
+/* Remove extraneous expose events from the event queue */
+
+    while (XCheckMaskEvent(xwd->display, ExposureMask, event))
+	;
 }
 
 /*----------------------------------------------------------------------*\
