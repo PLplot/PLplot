@@ -22,11 +22,20 @@ file.
 
 * sc3d.c contains complete stubs for plmesh and plot3d.
 
-* sfstubs.fm4 has a name which is a historical artifact because it was
-thought this file needed processing to convert to single precision.  But
-since all the real*8 variables in this file refer to arguments which by
-default are pass by reference rather than pass by value, the single-precison
-processing should not be needed, and this file is simply copied to sfstubs.f.
+* sfstubs.fm4 has a name which is a historical artifact because originally
+this was an odd mixture of fortran and m4 processing directives which were
+processed to form either a single-precision or double-precision version.
+Now it is the double-precision form of the code only which is simply
+copied when double-precision libraries are wanted, and a simple sed script
+double2single.sed is used to convert to single-precision when single-precision
+libraries are wanted.
+
+* double2single.sed.  Simple sed commands to convert from sfstubs.fm4 from
+double to single precision.  Currently the only double-precision construct
+occurring in sfstubs.fm4 is "real*8" so that is the only string that
+double2single.sed converts.  But if sfstubs.fm4 is changed to include
+other double-precison constructs such as double-precision numbers, then
+it will be necessary to change double2single.sed to deal with it.
 
 * sfstubs.f is copied from sfstubs.fm4 at build time.  It (and sfstubs.fm4)
 contains all PLplot fortran API where character strings or other

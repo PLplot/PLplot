@@ -44,17 +44,19 @@ libplplotf77@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplo
 libplplotf77@LIB_TAG@_la_LIBADD  = $(FLIBS)
 
 # Must be explicit here with dependencies.  Otherwise solaris "make" chokes.
-sfstubs.f: sfstubs.h sfstubs.fm4
+sfstubs.f: sfstubs.h
 
-# Just use copy here for double-precision version.  Single-precision version
-# probably not needed since the real*8 fortran variables are simply
-# parameters passed via the stub routines as pointers where the type of
-# the variable pointed to does not matter.
-
+# cp for the double-precision case, convert with sed for the 
+# single-precision case.
+if with_double
 .fm4.f:
 	cp $< $*.f
+else
+.fm4.f:
+	sed -f double2single.sed $< > $*.f
+endif
 
-EXTRA_DIST = fmacs.m4 sfstubs.fm4
+EXTRA_DIST = sfstubs.fm4 double2single.sed README.f77API
 CLEANFILES = sfstubs.f
 
 SUFFIXES = .fm4
