@@ -11,7 +11,7 @@
 
 # Miscellaneous variables set by configure.
 
-CC_FLAGS_DEMOS	= -c -O -Wall -I$(INCLUDE_DIR2) -I.
+CC_FLAGS_DEMOS	= -c -O -Wall -I$(INCLUDE_DIRF) -I.
 
 # This is intentionally NOT set.
 
