@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.16  1993/03/03 17:05:27  mjl
-   Changed orient-setting code to switch on the basis of orient%2 and orient%4,
-   so that any value of orient gives valid output.
+   Revision 1.17  1993/03/03 19:43:47  mjl
+   Changed PLSHORT -> short.  Also put in some explicit casts to remove warnings
+   using SUN acc compiler.
 
+ * Revision 1.16  1993/03/03  17:05:27  mjl
+ * Changed orient-setting code to switch on the basis of orient%2 and orient%4,
+ * so that any value of orient gives valid output.
+ *
  * Revision 1.15  1993/02/27  20:38:04  mjl
  * Fixed yet another bug dealing with packed, partially complete pages
  * and seeking.  Who knows, it might actually be right now.
@@ -195,17 +199,17 @@ static U_SHORT	lpbpxmi, lpbpxma, lpbpymi, lpbpyma;
 
 /* Plot dimensions */
 
-static U_SHORT	xmin = 0;
-static U_SHORT	xmax = PLMETA_X_OLD;
-static U_SHORT	ymin = 0;
-static U_SHORT	ymax = PLMETA_Y_OLD;
+static short	xmin = 0;
+static short	xmax = PLMETA_X_OLD;
+static short	ymin = 0;
+static short	ymax = PLMETA_Y_OLD;
 static PLINT	xlen, ylen;
 
 static float	pxlx = PIXEL_RES_X_OLD;
 static float	pxly = PIXEL_RES_Y_OLD;
 
 static PLFLT	dev_xpmm, dev_ypmm;
-static PLINT	dev_xmin, dev_xmax, dev_ymin, dev_ymax;
+static PLINT	dev_xmin, dev_xmax, dev_ymin, dev_ymax, dev_xlen, dev_ylen;
 static PLFLT	vpxmin, vpxmax, vpxlen, vpymin, vpymax, vpylen;
 
 /* Miscellaneous */
@@ -456,9 +460,11 @@ plr_init(U_CHAR c)
 * be zero, and is set to the natural ratio of the metafile coordinate system.
 * The aspect ratio set from the command line overrides this.
 */
+    xlen = xmax - xmin;
+    ylen = ymax - ymin;
+
     if (aspect == 0.0)
-	aspect = ((float) (ymax - ymin) / pxly) /
-	    ((float) (xmax - xmin) / pxlx);
+	aspect = (ylen / pxly) / (xlen / pxlx);
 
     if (aspect <= 0.)
 	fprintf(stderr,
@@ -472,8 +478,10 @@ plr_init(U_CHAR c)
     gphy(&dev_xmin, &dev_xmax, &dev_ymin, &dev_ymax);
     gpixmm(&dev_xpmm, &dev_ypmm);
 
-    dev_aspect = ((dev_ymax - dev_ymin) / dev_ypmm) /
-	((dev_xmax - dev_xmin) / dev_xpmm);
+    dev_xlen = dev_xmax - dev_xmin;
+    dev_ylen = dev_ymax - dev_ymin;
+
+    dev_aspect = (dev_ylen / dev_ypmm) / (dev_xlen / dev_xpmm);
 
     if (dev_aspect <= 0.)
 	fprintf(stderr,
@@ -489,9 +497,6 @@ plr_init(U_CHAR c)
     vpymin = 0.5 - vpylen / 2.;
     vpxmax = vpxmin + vpxlen;
     vpymax = vpymin + vpylen;
-
-    xlen = xmax - xmin;
-    ylen = ymax - ymin;
 
 /*
 * If ratio < 1, you are requesting an aspect ratio (y/x) less than the
@@ -590,7 +595,7 @@ static void
 get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 {
     PLINT i;
-    PLSHORT xs[PL_MAXPOLYLINE], ys[PL_MAXPOLYLINE];
+    short xs[PL_MAXPOLYLINE], ys[PL_MAXPOLYLINE];
 
     plm_rd(read_2nbytes(MetaFile, (U_SHORT *) xs, n));
     plm_rd(read_2nbytes(MetaFile, (U_SHORT *) ys, n));
@@ -599,8 +604,8 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 
       case 1:
 	for (i = 0; i < n; i++) {
-	    x[i] = xmax - (ymax - ys[i]) * xlen / ylen;
-	    y[i] = ymax - (xs[i] - xmin) * ylen / xlen;
+	    x[i] = xmax - (ymax - ys[i]) * (xlen / ylen);
+	    y[i] = ymax - (xs[i] - xmin) * (ylen / xlen);
 	}
 	return;
 
@@ -613,8 +618,8 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 
       case 3:
 	for (i = 0; i < n; i++) {
-	    x[i] = xmin + (ymax - ys[i]) * xlen / ylen;
-	    y[i] = ymin + (xs[i] - xmin) * ylen / xlen;
+	    x[i] = xmin + (ymax - ys[i]) * (xlen / ylen);
+	    y[i] = ymin + (xs[i] - xmin) * (ylen / xlen);
 	}
 	return;
 
@@ -1329,22 +1334,26 @@ ReadFileHeader(void)
 	    break;
 
 	if (!strcmp(tag, "xmin")) {
-	    plm_rd(read_2bytes(MetaFile, &xmin));
+	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	    xmin = dum_ushort;
 	    continue;
 	}
 
 	if (!strcmp(tag, "xmax")) {
-	    plm_rd(read_2bytes(MetaFile, &xmax));
+	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	    xmax = dum_ushort;
 	    continue;
 	}
 
 	if (!strcmp(tag, "ymin")) {
-	    plm_rd(read_2bytes(MetaFile, &ymin));
+	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	    ymin = dum_ushort;
 	    continue;
 	}
 
 	if (!strcmp(tag, "ymax")) {
-	    plm_rd(read_2bytes(MetaFile, &ymax));
+	    plm_rd(read_2bytes(MetaFile, &dum_ushort));
+	    ymax = dum_ushort;
 	    continue;
 	}
 
