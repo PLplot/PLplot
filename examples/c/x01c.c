@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/06/30 17:57:10  mjl
+ * Revision 1.10  1994/07/29 20:13:02  mjl
+ * Added cursor-reporting test code at the end of the page.
+ * Contributed by Paul Casteels.
+ *
+ * Revision 1.9  1994/06/30  17:57:10  mjl
  * All C example programs: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
@@ -24,6 +28,7 @@
 
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
+static PLCursor plc;
 
 /* Function prototypes */
 
@@ -48,6 +53,7 @@ main(int argc, char *argv[])
 {
     PLINT digmax;
     char ver[80];
+    int co;
 
 /* plplot initialization */
 /* Divide page into 2x2 plots unless user overrides */
@@ -94,6 +100,19 @@ main(int argc, char *argv[])
     plot2();
 
     plot3();
+
+/* Let's get some user input */
+
+    do {
+	co = 0;
+	if (plGetCursor(&plc)) {
+	    printf(" wx = %f\n",plc.wX);
+	    printf(" wy = %f\n",plc.wY);
+	    co = 1;
+	}
+	printf(" vx = %f\n",plc.vpX);
+	printf(" vy = %f\n",plc.vpY);
+    } while (co);
 
 /* Don't forget to call PLEND to finish off! */
 
