@@ -4341,9 +4341,9 @@ device coordinates
         <paramdef><parameter>h</parameter></paramdef>
         <paramdef><parameter>l</parameter></paramdef>
         <paramdef><parameter>s</parameter></paramdef>
-        <paramdef><parameter>p_r/parameter></paramdef>
+        <paramdef><parameter>p_r</parameter></paramdef>
         <paramdef><parameter>p_g</parameter></paramdef>
-        <paramdef><parameter>p_b/parameter></paramdef>
+        <paramdef><parameter>p_b</parameter></paramdef>
       </funcprototype>
       </funcsynopsis>
     </para>
