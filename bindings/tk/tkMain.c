@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1996/06/26 21:35:16  furnish
+ * Revision 1.6  1996/10/18 19:56:43  furnish
+ * Initialize itcl/itk if so configured.
+ *
+ * Revision 1.5  1996/06/26  21:35:16  furnish
  * Various hacks to support Tcl 7.5 and Tk 4.1.
  *
  * Revision 1.4  1995/10/22  17:30:35  mjl
@@ -68,6 +71,12 @@
 #include <stdlib.h>
 #include <tcl.h>
 #include <tk.h>
+#ifdef HAVE_ITCL
+#include <itcl.h>
+#endif
+#ifdef HAVE_ITK
+#include <itk.h>
+#endif
 
 /*
  * Declarations for various library procedures and variables (don't want
@@ -225,6 +234,16 @@ pltkMain(int argc, char **argv, char *RcFileName,
     if ( Tk_Init( interp ) == TCL_ERROR ) {
 	return TCL_ERROR;
     }
+#ifdef HAVE_ITCL
+    if ( Itcl_Init( interp ) == TCL_ERROR ) {
+	return TCL_ERROR;
+    }
+#endif
+#ifdef HAVE_ITK
+    if ( Itk_Init( interp ) == TCL_ERROR ) {
+	return TCL_ERROR;
+    }
+#endif
 #endif
 
     /*
