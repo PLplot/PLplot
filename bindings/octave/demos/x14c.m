@@ -45,7 +45,7 @@ function ix14c
 
   printf("Demo of multiple output streams via the %s driver.\n", device);
   printf("Running with the second (right) window as slave.\n");
-  printf("To advance to the next plot, press the third mouse button ");
+  printf("To advance to the next plot, press the third mouse button\n");
   printf("or the enter key in the first (left) window\n");
 
   fflush(stdout);
