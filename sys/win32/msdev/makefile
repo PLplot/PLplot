@@ -58,7 +58,6 @@ links:
   @copy $(PLDIR)\utils\*.c $(PLTMP)\*.cpp
   @copy $(PLDIR)\lib\*.fnt $(PLTMP)\*.fnt
   @copy $(PLDIR)\lib\*.map $(PLTMP)\*.map
-  @copy $(PLDIR)\src\setup.py $(PLTMP)\setup.py
   @copy $(PLDIR)\bindings\python\plmodule.c $(PLTMP)\plmodule.c
   @copy $(PLDIR)\bindings\python\plmodule.h $(PLTMP)\plplot\plmodule.h
   @copy $(PLDIR)\bindings\python\pyqt_plmodule.c $(PLTMP)\pyqt_plmodule.c
@@ -69,6 +68,7 @@ links:
   @copy src\win3.cpp $(PLTMP)
   @copy src\plstub.cpp $(PLTMP)
   @copy src\resource.h $(PLTMP)\plplot
+  @copy src\setup.py $(PLTMP)\setup.py
 #  @copy src\*.rc $(PLTMP)
 #  @copy src\*.ico $(PLTMP)
 #  @copy src\*.def $(PLTMP)
