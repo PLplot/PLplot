@@ -28,5 +28,5 @@ all: x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c \
 clean:
 	rm x??c
 
-%: %.c
+.c:
 	plplot_libtool --mode=link $(CC) $< $(INCLUDEANDLIB) -o $@
