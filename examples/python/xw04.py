@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	Log plot demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -20,14 +6,6 @@ from pl import *
 # Illustration of logarithmic axes, and redefinition of window.
 
 def main():
-
-    # Parse and process command line arguments
-
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-
-    plinit()
 
     pladv(0)
     plfont(2)
@@ -40,7 +18,6 @@ def main():
 
     plvpor(0.15, 0.85, 0.1, 0.9)
     plwind(1.0, 6.0, -80.0, 0.0)
-    plcol0(1)
     plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0)
     plcol0(2)
     plline(freql, ampl)
@@ -62,4 +39,8 @@ def main():
 
     pleop()
 
+    # restore defaults
+    plfont(1)
+    plcol0(1)
+    
 main()

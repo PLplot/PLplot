@@ -16,13 +16,14 @@ more investigation is necessary before we adopt that option.
 So for now, we are not supporting x??.py examples and pytkdemo which uses
 those examples.  But it is on our, ahem, dynamic agenda for the future.
 
-We *are* however supporting the standalone xw??.py demos which were created
+We *are* however supporting the xw??.py demos which were created
 initially from their x??.py equivalents and modified to work with the dynamic
 loading method.  All ordinary drivers (including the tk one) are available
 with these standalone examples.  Their only limitation is they cannot use
-the plframe widget.
+the plframe widget.  Also, these are no longer meant to be standalone demos.
+Instead, they are designed to be called from pythondemos.py
 
-To try out these examples, simply type their names.  See note below on the
+To try out these examples, simply run pythondemos.py. See note below on the
 PYTHONPATH and PLPLOT_LIB variables that may have to be set.
 
 All these xw??.py examples have been thoroughly tested under Linux and
@@ -54,7 +55,7 @@ installed case you do not have to set PLPLOT_LIB.  Thus, for installations
 with a prefix of /usr there is nothing more to be done; it should just work
 just as in case (1).
 
-(4) The installed versions of xw??.py are filtered so that python is
+(4) The installed version of pythondemos.py is filtered so that python is
 informed of the installed location of plmodule.so.  (This does not matter in
 case (3) since plmodule.so is in the correct place expected by python in any
 case.) If you install with a prefix other than /usr (usually for tarball

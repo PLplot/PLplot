@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	Multiple window and color map 0 demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -21,12 +7,6 @@ def main():
 
     # Divide screen into 16 regions
     plssub(4, 4)
-
-    # Parse and process command line arguments
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-    plinit()
 
     plschr(0.0, 3.5)
     plfont(4)
@@ -46,7 +26,9 @@ def main():
 	plwid(1)
 	plptex(0.5, 0.5, 1.0, 0.0, 0.5, `i`)
 
-    # Now finish up.
-    plend()
+    #restore defaults
+    plssub(1, 1)
+    plfont(1)
+    plcol0(1)
 
 main()

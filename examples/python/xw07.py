@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	Font demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -23,16 +9,6 @@ def main():
 
     base = [0, 200, 500, 600, 700, 800, 900, 2000, 2100,
 	    2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900]
-
-    # Parse and process command line arguments
-
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-
-    plinit()
-
-    plfontld(1)
 
     for l in range(17):
 	pladv(0)
@@ -74,6 +50,7 @@ def main():
 
 	pleop()
 
-    plend()
+    #restore defaults
+    plcol0(1)
 
 main()

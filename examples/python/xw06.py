@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	Font demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -20,14 +6,6 @@ from pl import *
 # Displays the entire "plpoin" symbol (font) set.
 
 def main():
-
-    # Parse and process command line arguments
-
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-
-    plinit()
 
     pladv(0)
 
@@ -67,6 +45,8 @@ def main():
 
     plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols")
     pleop()
-    plend()
+
+    #restore defaults
+    plcol0(1)
 
 main()

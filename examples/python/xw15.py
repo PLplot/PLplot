@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	Shade plot demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 

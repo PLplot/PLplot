@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	Bar chart demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -21,14 +7,6 @@ from pl import *
 # unavailable, pattern fill is used instead (automatic).
 
 def main():
-
-    # Parse and process command line arguments
-
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-
-    plinit()
 
     pladv(0)
     plvsta()
@@ -49,7 +27,6 @@ def main():
 	plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string)
 
     pleop()
-    plend()
 
 def fbox( x0, y0 ):
 

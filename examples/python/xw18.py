@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	3-d line and point plot demo.  Adapted from x08c.c.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -29,14 +15,6 @@ az = [30.0, 40.0, 50.0, 60.0]
 NPTS = 1000
 
 def main():
-
-	# Parse and process command line arguments
-
-	plParseOpts(sys.argv, PARSE_FULL)
-
-	# Initialize plplot
-
-	plinit()
 
 	for k in range(4):
 		test_poly(k)
@@ -69,8 +47,6 @@ def main():
 		title = "#frPLplot Example 18 - Alt=%.0f, Az=%.0f" % (alt[k],
 								      az[k])
 		plmtex("t", 1.0, 0.5, 0.5, title)
-
-	plend()
 
 def THETA(a):
     return 2. * pi * (a) / 20.

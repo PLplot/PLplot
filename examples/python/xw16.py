@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-# plshade demo, using color fill.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -52,13 +38,6 @@ def main():
     xg2 = xx + distort*cos((0.5*pi)*xx)*cos((0.5*pi)*yy)
     yg2 = yy - distort*cos((0.5*pi)*xx)*cos((0.5*pi)*yy)
 
-    # Parse and process command line arguments
-
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-
-    plinit()
     # Plot using identity transform
 
     pladv(0)
@@ -188,6 +167,5 @@ def main():
 
     plcol0(2)
     pllab( "", "",  "Tokamak Bogon Instability" )
-    plend()
 
 main()

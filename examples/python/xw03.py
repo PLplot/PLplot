@@ -1,16 +1,3 @@
-#!/usr/bin/env python
-#	Polar plot demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -23,15 +10,6 @@ def main():
     dtr = pi / 180.0
     x0 = cos(dtr*arrayrange(361))
     y0 = sin(dtr*arrayrange(361))
-
-    # Parse and process command line arguments
-
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-
-    plinit()
-    plcol0(1)
 
     # Set up viewport and window, but do not draw box
 
@@ -81,9 +59,9 @@ def main():
     plcol0(4)
     plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh")
 
-    # Close the plot at end
-
     pleop()
-    plend()
+
+    #restore defaults
+    plcol0(1)
 
 main()

@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	3-d plot demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -35,14 +21,6 @@ title = ["#frPLplot Example 8 - Alt=60, Az=30, Opt=1",
 # viewing options in each plot.
 
 def main():
-
-    # Parse and process command line arguments
-
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-
-    plinit()
 
     x = (arrayrange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
     y = (arrayrange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
@@ -68,7 +46,8 @@ def main():
 	plmtex("t", 1.0, 0.5, 0.5, title[k])
 
 	pleop()
-	
-    plend()
 
+    #restore defaults
+    plcol0(1)
+	
 main()

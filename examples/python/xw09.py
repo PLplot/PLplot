@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	contour plot demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -24,14 +10,6 @@ def main():
     space = 1500
     
     clevel = arange(-1., 1., 0.2)
-
-    # Parse and process command line arguments
-
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-
-    plinit()
 
     xx = (arrayrange(XPTS) - XPTS/2) / float((XPTS/2))
     yy = (arrayrange(YPTS) - YPTS/2) / float((YPTS/2)) - 1.
@@ -54,6 +32,8 @@ def main():
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     pleop()
-    plend()
+
+    #restore defaults
+    plcol0(1)
 
 main()

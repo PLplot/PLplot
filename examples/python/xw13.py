@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	Pie chart demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -26,14 +12,6 @@ text = ["Maurice",
 # Does a simple pie chart.
 
 def main():
-
-    # Parse and process command line arguments
-
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-
-    plinit()
 
     plenv(0., 10., 0., 10., 1, -2)
     plcol0(2)
@@ -77,6 +55,7 @@ def main():
     plptex(5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales")
 
     pleop()
-    plend()
-
+    # restore default
+    plfont(1)
+	
 main()

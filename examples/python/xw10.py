@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-
-#	Window positioning demo.
-
-import sys
-import os
-
-module_dir = "@MODULE_DIR@"
-
-if module_dir[0] == '@':
-	module_dir = os.getcwd ()
-
-sys.path.insert (0, module_dir)
-
 from Numeric import *
 from pl import *
 
@@ -20,14 +6,6 @@ from pl import *
 # Demonstrates absolute positioning of graphs on a page.
 
 def main():
-
-    # Parse and process command line arguments
-
-    plParseOpts(sys.argv, PARSE_FULL)
-
-    # Initialize plplot
-
-    plinit()
 
     pladv(0)
     plvpor(0.0, 1.0, 0.0, 1.0)
@@ -40,6 +18,4 @@ def main():
     plptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,50,100)")
     pleop()
     
-    plend()
-
 main()
