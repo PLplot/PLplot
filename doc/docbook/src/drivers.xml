@@ -25,21 +25,6 @@
 
   </sect1>
 
-  <sect1 id="tcl-dp-driver">
-    <title>The Tcl-DP Driver</title>
-    
-    <para> 
-      is another example of how awesome Tcl is.  Useful for many users who
-      wish to use the PLplot programming API, but who do not need to embed
-      PLplot output in a larger Tk interface of their own creation.
-    </para>
-
-    <para>
-      This driver ...
-    </para>
-
-  </sect1>
-
 </chapter>
 
 <chapter id="output-drivers">

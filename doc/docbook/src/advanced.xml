@@ -53,23 +53,22 @@
 	
 Plotting Options:
  &lt; 1> xwin       X-Window (Xlib)
- &lt; 2> dp         Tcl-DP/TK Window
- &lt; 3> tk         Tcl/TK Window
- &lt; 4> xterm      Xterm Window
- &lt; 5> tekt       Tektronix Terminal (4010)
- &lt; 6> tek4107t   Tektronix Terminal (4105/4107)
- &lt; 7> mskermit   MS-Kermit emulator
- &lt; 8> versaterm  Versaterm vt100/tek emulator
- &lt; 9> vlt        VLT vt100/tek emulator
- &lt;10> plmeta     PLPLOT Native Meta-File
- &lt;11> tekf       Tektronix File (4010)
- &lt;12> tek4107f   Tektronix File (4105/4107)
- &lt;13> ps         PostScript File (monochrome)
- &lt;14> psc        PostScript File (color)
- &lt;15> xfig       Xfig file
- &lt;16> ljiip      LaserJet IIp/deskjet compressed graphics
- &lt;17> ljii       LaserJet II Bitmap File (150 dpi)
- &lt;18> null       Null device
+ &lt; 2> tk         Tcl/TK Window
+ &lt; 3> xterm      Xterm Window
+ &lt; 4> tekt       Tektronix Terminal (4010)
+ &lt; 5> tek4107t   Tektronix Terminal (4105/4107)
+ &lt; 6> mskermit   MS-Kermit emulator
+ &lt; 7> versaterm  Versaterm vt100/tek emulator
+ &lt; 8> vlt        VLT vt100/tek emulator
+ &lt; 9> plmeta     PLPLOT Native Meta-File
+ &lt;10> tekf       Tektronix File (4010)
+ &lt;11> tek4107f   Tektronix File (4105/4107)
+ &lt;12> ps         PostScript File (monochrome)
+ &lt;13> psc        PostScript File (color)
+ &lt;14> xfig       Xfig file
+ &lt;15> ljiip      LaserJet IIp/deskjet compressed graphics
+ &lt;16> ljii       LaserJet II Bitmap File (150 dpi)
+ &lt;17> null       Null device
 
 Enter device number or keyword: <!--
    --></screen>
@@ -234,9 +233,6 @@ plplot options:
     -db                  Double buffer X window output
     -np                  No pause between pages
     -server_name name    Main window name of plplot server (tk driver)
-    -server_host name    Host to run plplot server on (dp driver)
-    -server_port name    Port to talk to plplot server on (dp driver)
-    -user name           User name on remote node (dp driver)
 
 All parameters must be white-space delimited.  Some options are driver
 dependent.  Please see the plplot reference document for more detail.<!--

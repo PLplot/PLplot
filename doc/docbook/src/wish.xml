@@ -133,18 +133,13 @@
 	which is well read, and an excellent place for people to get
 	oriented, find help, etc.  Highly recommended.
       </para>
-      
-      <para>
-	In any event, in order to use the Tk and Tcl-DP drivers in PLplot,
-	you will need at a minimum, <filename>tcl7.3.tar.gz</filename>,
-	<filename>tk3.6.tar.gz</filename> and
-	<filename>tcl-dp-3.1.tar.gz</filename>.  Additionally, in order to
-	use the extended WISH paradigm (described below) you will need
-	<filename>itcl-1.5.tar.gz</filename>.  Because of these
-	dependencies, the PLplot ftp archive site provides these files as
-	well.  You can retrieve them when you get PLplot.
+
+      <para> In any event, in order to use the Tk driver in PLplot, you will
+	need Tcl-8.2 and Tk-8.2 (or higher versions). Additionally, in order
+	to use the extended WISH paradigm (described below) you will need
+	iTcl-3.1 (or a higher version).
       </para>
-      
+
       <para>
 	However, you will quite likely find Tcl/Tk to be very addictive,
 	and the great plethora of add-ons available at
@@ -220,7 +215,7 @@ pack .hello<!--
     </para>
     
     <para>
-      A look at the interface provided by the PLplot Tk and Tcl-DP drivers
+      A look at the interface provided by the PLplot Tk driver
       should help give you a better idea of what you can do with this
       paradigm.  Also check out some of the contributed Tcl/Tk packages
       available at harbor.  There are high quality Tk interfaces to a great
@@ -360,9 +355,7 @@ pack .plw<!--
       simply writes a shell script to be executed by the Tk windowing
       shell, <command>wish</command>.  It is in vogue for each Tcl/Tk
       extension package to build it's own <quote>extended WISH</quote>.
-      Tcl-DP, for example builds <command>dpwish</command> which users can
-      use to evaluate scripts combining Tcl-DP commands with standard
-      Tcl/Tk.  There are many examples of this, and indeed even PLplot's
+      There are many examples of this, and indeed even PLplot's
       <command>plserver</command> program, described in an earlier chapter,
       could just as easily have been called <command>plwish</command>.
     </para>
