@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.49  1993/12/06 07:44:53  mjl
+ * Revision 1.50  1993/12/08 06:20:02  mjl
+ * Miscellaneous cleaning up.
+ *
+ * Revision 1.49  1993/12/06  07:44:53  mjl
  * Some more support for new color model.
  *
  * Revision 1.48  1993/11/19  08:21:01  mjl
@@ -21,81 +24,6 @@
  *
  * Revision 1.44  1993/11/07  09:03:22  mjl
  * Added prototype for plsexit, the new exit-handler setting function.
- *
- * Revision 1.43  1993/10/21  19:25:32  mjl
- * Added prototype for plFindName().
- *
- * Revision 1.42  1993/10/18  19:43:20  mjl
- * Added prototype for plFindCommand function.
- *
- * Revision 1.41  1993/09/28  21:30:17  mjl
- * Made the bomb-out for non-ANSI | non-C++ compilers more explicit.
- *
- * Revision 1.40  1993/09/24  20:33:14  furnish
- * Went wild with "const correctness".  Can now pass a C++ String type to
- * most (all that I know of) PLPLOT functions.  This works b/c String has
- * an implicit conversion to const char *.  Now that PLPLOT routines take
- * const char * rather than char *, use from C++ is much easier.
- *
- * Revision 1.39  1993/09/17  06:43:19  mjl
- * Now accepts -DDOUBLE as well as -DPL_DOUBLE for setting double precision
- * floating points.
- *
- * Revision 1.38  1993/09/08  02:34:44  mjl
- * Added function prototype for plGetName, moved some others from plstream.h
- * into here.
- *
- * Revision 1.37  1993/08/28  06:35:37  mjl
- * Added client_data variable to PLOptionTable definition.
- *
- * Revision 1.36  1993/08/26  21:18:16  mjl
- * Previous safety check a little too safe -- changed to allow C++ compilers.
- *
- * Revision 1.35  1993/08/26  05:35:54  mjl
- * Put in test for __STDC__ defined, for a little added safety.
- *
- * Revision 1.34  1993/08/18  19:09:19  mjl
- * Fixed function prototypes for driver interface functions.  Added macro
- * PL_NOTSET for use in plsdidev() to leave specific variables unaltered by
- * the function call.  May be supported by other functions later.
- *
- * Revision 1.33  1993/08/11  19:27:12  mjl
- * Changed prototypes for plHelp() and plSyntax().
- *
- * Revision 1.32  1993/08/09  22:18:00  mjl
- * Added function prototypes for pleop(), plbop(), eliminated them for plclr()
- * and plpage().  Inserted defines to translate from the latter in case
- * someone actually uses them.  Fixed prototype for plcpstrm().
- *
- * Revision 1.31  1993/08/05  22:35:19  mjl
- * Eliminated prototypes for nonexistant functions.
- *
- * Revision 1.30  1993/08/03  01:46:49  mjl
- * Changes to eliminate warnings when compiling with gcc -Wall.
- *
- * Revision 1.29  1993/07/31  08:09:18  mjl
- * Cleaned up a bit.
- *
- * Revision 1.28  1993/07/16  22:28:09  mjl
- * Added prototypes for driver interface functions, new plshade function,
- * plgFileDevs (for retrieving file device list) function.  Simplified PLKey
- * definition by removing attribute info (not really necessary).
- *
- * Revision 1.27  1993/07/02  07:23:35  mjl
- * Now holds only those symbols absolutely needed by applications to use
- * PLPLOT.  Includes typedefs and function prototypes, maybe an occaisional
- * macro only.  _POSIX_SOURCE no longer defined here!
- *
- * Revision 1.26  1993/05/08  16:08:30  mjl
- * Bumped version number to 4.99d, but the 4.99d release won't happen for
- * some time yet.
- *
- * Revision 1.25  1993/04/26  20:00:53  mjl
- * Configuration info added for a DEC Alpha-based machine running OSF/1.
- *
- * Revision 1.24  1993/03/28  08:45:05  mjl
- * Added support for NEC SX-3.  Also moved determination of stub name handling
- * to plstubs.h (more appropriate).
 */
 
 /*

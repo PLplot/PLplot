@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.14  1993/11/19 07:41:52  mjl
-   define NO_ANSI_LIBC if on Convex (may be overkill but it works..)
+   Revision 1.15  1993/12/08 06:20:04  mjl
+   Miscellaneous cleaning up.
 
+ * Revision 1.14  1993/11/19  07:41:52  mjl
+ * define NO_ANSI_LIBC if on Convex (may be overkill but it works..)
+ *
  * Revision 1.13  1993/11/15  08:34:23  mjl
  * Prototype section completely reworked.  Now each prototype taken directly
  * from the definition (so includes variable names) and is accompanied by a
@@ -12,51 +15,6 @@
  *
  * Revision 1.12  1993/11/07  09:03:42  mjl
  * Added escape code for flush handling.
- *
- * Revision 1.11  1993/10/06  19:52:57  mjl
- * Disabled the POSIX_TTY stuff (because it requires ANSI atexit()) when
- * NO_ANSI_LIBC is defined, and no longer define this by default for SunOS.
- * May require linking with -lansi on some systems (using acc).
- *
- * Revision 1.10  1993/09/24  20:33:16  furnish
- * Went wild with "const correctness".  Can now pass a C++ String type to
- * most (all that I know of) PLPLOT functions.  This works b/c String has
- * an implicit conversion to const char *.  Now that PLPLOT routines take
- * const char * rather than char *, use from C++ is much easier.
- *
- * Revision 1.9  1993/09/14  22:25:19  mjl
- * Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
- *
- * Revision 1.8  1993/08/18  20:29:04  mjl
- * Added utility macro for updating stream variables from input values.
- *
- * Revision 1.7  1993/08/09  22:18:02  mjl
- * Added function prototypes for pleop(), plbop(), eliminated them for plclr()
- * and plpage().  Inserted defines to translate from the latter in case
- * someone actually uses them.  Fixed prototype for plcpstrm().
- *
- * Revision 1.6  1993/08/05  22:35:21  mjl
- * Eliminated prototypes for nonexistant functions.
- *
- * Revision 1.5  1993/08/03  01:46:51  mjl
- * Changes to eliminate warnings when compiling with gcc -Wall.
- *
- * Revision 1.4  1993/07/31  08:10:42  mjl
- * Macros for use in escape function changed to have a prefix PLESC_, similarly
- * those used in the state function start with PLSTATE_.  Some function
- * prototypes added/deleted.
- *
- * Revision 1.3  1993/07/28  05:50:12  mjl
- * Removed some unnecessary code (under ANSI C) for handling signed chars;
- * added free_mem() utility macro.
- *
- * Revision 1.2  1993/07/16  22:29:17  mjl
- * Definition of standard meta coordinates now done here.  Prototypes for
- * several new functions added.
- *
- * Revision 1.1  1993/07/02  07:27:16  mjl
- * Created to hold private PLPLOT macros, declarations, and prototypes.
- * Included by all PLPLOT source files.
 */
 
 /*
@@ -112,51 +70,51 @@
 
 #define POSIX_TTY
 
-#ifdef __aix
+#ifdef __aix			/* AIX */
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
 #endif
 #endif
 
-#ifdef __hpux
+#ifdef __hpux			/* HPUX */
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
 #endif
 #endif
 
-#ifdef sun			/* Now assumes an ANSI libc */
-#ifndef NULL			/* If you don't have one, use -DNO_ANSI_LIBC */
-#define NULL	0
+#ifdef sun			/* Sun */
+#ifndef NULL			/* Now assumes an ANSI libc */
+#define NULL	0		/* If you don't have one, use -DNO_ANSI_LIBC */
 #endif
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
 #endif
 #endif
 
-#ifdef CRAY
+#ifdef CRAY			/* Cray */
 #undef _POSIX_SOURCE		/* because of moronic broken X headers */
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
 #endif
 #endif
 
-#ifdef __convexc__
+#ifdef __convexc__		/* Convex */
 #ifndef NO_ANSI_LIBC		/* Is this really necessary? */
 #define NO_ANSI_LIBC
 #endif
 #endif
 
-#ifdef SX
+#ifdef SX			/* NEC SX-3 */
 #undef POSIX_TTY		/* Not POSIX I'm afraid */
 #endif
 
-#ifdef MSDOS
+#ifdef MSDOS			/* MSDOS */
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
 #endif
 #endif
 
-#ifdef AMIGA
+#ifdef AMIGA			/* Amiga */
 #ifndef NO_ANSI_LIBC		/* NO_ANSI_LIBC is required by SAS/C 5.X */
 #define NO_ANSI_LIBC		/* (still pretty prevalent, so..) */
 #endif
