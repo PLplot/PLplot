@@ -247,9 +247,11 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
             /* If user has changed subwindow, make shure we have the correct one */
                 plvsta();
                 plwind(stripc->wxmin, stripc->wxmax, stripc->wymin, stripc->wymax); /* FIXME - can exist some redundancy here */
-
 		plcol(stripc->colline[p]); pllsty(stripc->styline[p]);
-		plP_movwor(stripc->x[p][stripc->npts[p]-2], stripc->y[p][stripc->npts[p]-2]);
+		if ((stripc->npts[p]-2) < 0)
+		  plP_movwor(stripc->x[p][stripc->npts[p]-1], stripc->y[p][stripc->npts[p]-1]);
+		else
+		  plP_movwor(stripc->x[p][stripc->npts[p]-2], stripc->y[p][stripc->npts[p]-2]);
 		plP_drawor(stripc->x[p][stripc->npts[p]-1], stripc->y[p][stripc->npts[p]-1]);
 		plflush();
             }
