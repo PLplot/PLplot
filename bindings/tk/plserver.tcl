@@ -1,6 +1,12 @@
 # $Id$
 # $Log$
-# Revision 1.4  1993/08/03 20:29:27  mjl
+# Revision 1.5  1993/09/01 14:51:05  mjl
+# Removed window specification for top level TK driver window.  This might
+# have had something to do with the window coming up on the wrong screen
+# under tvtwm, and there appears to be no problem under VUE this way
+# (although at one time I did have problems, dunno why).
+#
+# Revision 1.4  1993/08/03  20:29:27  mjl
 # Put security hole plug in a more useful spot.
 #
 # Revision 1.3  1993/07/31  08:05:49  mjl
@@ -61,7 +67,7 @@ proc plserver_init {} {
     if { ! [ info exists geometry ] } {
 	set width  [expr "$root_width / 16 * 10"]
 	set height [expr "$root_height / 16 * 11"]
-	set geometry ${width}x${height}+200+0
+	set geometry ${width}x${height}
     }
     wm geometry . $geometry
 
