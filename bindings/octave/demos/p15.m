@@ -23,12 +23,14 @@ function p15
   ylabel "";
   [x, y, z] = rosenbrock; z = log(z);
   set_view(30, -60);
-  plcolormap('default');
+  colormap('default');
   surfl(x, y, z);
   pause(1);
   set_view(50, 40);
-  plcolormap(gray);
-  surfl(x, y, z);
+  colormap(bgr);
+  surf(x, y, z);
+  colormap('default');
+
   automatic_replot = t;
 
 endfunction

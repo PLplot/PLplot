@@ -14,19 +14,17 @@
 
 function p7
 
-  ## uncomment the colormap() if you are in a Pseudo Color Xserver (<256 colors)
-
   [x y z]=rosenbrock;z=log(z);
 
   t = automatic_replot;
   automatic_replot = 0;
 
   title("Shade example");
-  plcolormap('default')
+  colormap('default')
   shade(x,y,z,15)
   pause(1)
 
-  plcolormap(pink);
+  colormap(pink);
   axis([0.5 1.2 0 1.3]);
   hold on;
   shade(x,y,z,15,3);

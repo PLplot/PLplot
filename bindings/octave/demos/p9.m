@@ -16,19 +16,28 @@
 function p9
 
   t = automatic_replot;
-  automatic_replot = 0;
+  as = autostyle;
+  ls = legend;
 
   legend "off"
-  x = -2:.2:2;
-  y = -2:.2:2;
+  automatic_replot = 0;
+  autostyle ("off");
+
+  step = 0.2;
+  x = -2:step:2;
+  y = -2:step:2;
   [xx,yy] = meshgrid(x,y);
-  z = yy .* exp(-xx.^2 - yy.^2);
-  [gy, gx] = gradn(z,.2,.2);
+  z = xx .* exp(-xx.^2 - yy.^2);
+  [gy, gx] = gradn(z,step,step);
   title("Vector field example");
   contour(x,y,z)
-  hold on, arrows(yy,xx,gx./2,gy./2), hold off
+  hold on;
+  arrows(yy,xx,gx./2,gy./2);
+  hold off
   plflush;
-  legend "on"
+
+  legend(ls);
   automatic_replot = t;
+  autostyle(as); 
 
 endfunction

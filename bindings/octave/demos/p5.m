@@ -23,7 +23,7 @@ function p5
   grid "on"
   title("Polar example");
   polar(x,y)
-  ##grid "off"
+  grid "off"
 
   automatic_replot = t;
 
