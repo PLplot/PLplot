@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.28.4.1  2000/07/27 16:11:05  airwin
+ * AWI: apply initial pltcl.patch for TEA-based approach
+ *
  * Revision 1.28  1995/10/14 17:13:12  mjl
  * Fixed bugs associated with writing the metafile to stdout instad of a file.
  *
@@ -376,7 +379,7 @@ plD_state_plm(PLStream *pls, PLINT op)
     dbug_enter("plD_state_plm");
 
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
-    plm_wr( pdf_wr_1byte(pls->pdfs, op) );
+    plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) op) );
 
     switch (op) {
 

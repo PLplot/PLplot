@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.40.2.1  2000/07/27 16:11:05  airwin
+ * AWI: apply initial pltcl.patch for TEA-based approach
+ *
  * Revision 1.40  2000/07/19 21:12:31  furnish
  * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
  * surface plotter, contour labelling, and demo updates to show off these
@@ -119,6 +122,9 @@
 #endif
 #include <errno.h>
 #endif
+
+/* Used my any external init code to suggest a path */
+char* plplotLibDir = 0;
 
 /* Static functions */
 
@@ -1260,6 +1266,24 @@ plLibOpen(char *fn)
         goto done;
 #endif /* macintosh */
 
+    if (plplotLibDir != NULL) {
+	plGetName(plplotLibDir, "", fn, &fs);
+	if ((file = fopen(fs, "rb")) != NULL)
+	    goto done;
+
+    }
+
+#if defined(__WIN32__)
+/**** search in the env variable set by the Tcl init script ****/
+    if ((dn = getenv("PL_LIB")) != NULL) {
+	plGetName(dn, "", fn, &fs);
+
+	if ((file = fopen(fs, "rb")) != NULL)
+	    goto done;
+
+    }
+#endif /* __WIN32__ */
+	
 /**** 	not found, give up 	****/
 
     pltext();

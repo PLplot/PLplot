@@ -6,6 +6,9 @@
 
 /* $Id$
  * $Log$
+ * Revision 1.2.4.1  2000/07/27 16:11:05  airwin
+ * AWI: apply initial pltcl.patch for TEA-based approach
+ *
  * Revision 1.2  1999/06/24 20:53:02  furnish
  * Add c_ prefixes to some functions which slipped by unnoticed
  * previously.  The c_ prefixes are needed to keep the C and Fortran
@@ -73,7 +76,9 @@ plstrip_gen(PLStrip *strip);
 static void
 plstrip_legend(PLStrip *strip, int flag);
 
+#if defined(__WIN32__) && !defined(__MWERKS__)
 char *strdup(char *);
+#endif
 /*--------------------------------------------------------------------------*\
  * plstripc
  *
