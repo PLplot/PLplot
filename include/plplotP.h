@@ -96,7 +96,9 @@ typedef char * caddr_t;
 #include <string.h>
 #include <limits.h>
 #include <float.h>
+#ifndef PLPLOT_WINTK
 #include <unistd.h>
+#endif
 
 #if HAVE_DIRENT_H
 /* The following conditional is a workaround for a bug in the MacOSX system.

@@ -1,4 +1,5 @@
 puts stdout "Making plplotter starkit" ; update
+set execdir E:/Apps
 catch {
     console show
     wm withdraw .
@@ -43,6 +44,6 @@ puts $fout "set dir \[file normalize \[file dirname \[info script\]\]\]"
 puts $fout "lappend auto_path \[file join \$dir lib\]"
 puts $fout "source \[file join \$dir examples tk runAllDemos.tcl\]"
 close $fout
-exec tclkitsh C:/Apps/sdx.kit wrap plplotter.kit -writable
+exec $execdir/tclkitsh $execdir/sdx.kit wrap plplotter.kit -writable
 #file delete -force plplotter.vfs
 puts "Done making plplotter.kit"
