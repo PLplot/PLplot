@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/03/03 19:41:59  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.9  1993/03/10 05:00:25  mjl
+   Actually works now.  Yay!
 
+ * Revision 1.8  1993/03/03  19:41:59  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.7  1993/03/03  16:17:08  mjl
  * Fixed orientation-swapping code.
  *
@@ -54,9 +57,12 @@
 static void setpoint(PLINT, PLINT);
 
 /* top level declarations */
-
+/*
 #define JETX     1409
 #define JETY     1103
+*/
+#define JETX     1103
+#define JETY     1409
 
 #define DPI      150		/* Resolution Dots per Inch */
 #define CURX     51
@@ -170,6 +176,11 @@ jet_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     PLINT x1b, y1b, x2b, y2b;
     float length, fx, fy, dx, dy;
+
+/* Take mirror image, since PCL expects (0,0) to be at top left */
+
+    y1 = dev->ymax - (y1 - dev->ymin);
+    y2 = dev->ymax - (y2 - dev->ymin);
 
 /* Because portrait mode addressing is used here, we need to complement
    the orientation flag to get the right mapping. */
