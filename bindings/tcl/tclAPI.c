@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1995/01/27 03:56:24  mjl
+ * Revision 1.10  1995/03/17 07:54:33  mjl
+ * Fixed Copyright message and other cleaning up.
+ *
+ * Revision 1.9  1995/01/27  03:56:24  mjl
  * Added "loopback" command: gobbles the following word, which must be "cmd",
  * and processes the remaining arguments as any other plplot/Tcl command.
  * This allows scripts involving widget commands -- of the form <widget> cmd
@@ -15,43 +18,36 @@
  *
  * Revision 1.6  1994/09/23  07:53:14  mjl
  * New Tcl API functions added: plend, plend1, plsstrm, and plinit.
- *
- * Revision 1.5  1994/07/19  22:33:05  mjl
- * Internal header file inclusion changed to /not/ use a search path so that
- * it will work better with makedepend.
- *
- * Revision 1.4  1994/06/30  18:52:09  mjl
- * Added API calls for: plfont, plfontld, plhist, pljoin, plmtex, plptex,
- * plschr, plssub, plsym, plvpor, plwid.
- *
- * Revision 1.3  1994/06/25  20:37:12  mjl
- * Added API calls for pladv, plbop, plbox, pleop, plstyl, plvsta, plwind.
- *
- * Revision 1.2  1994/06/24  20:38:21  mjl
- * Changed name of struct to tclMatrix to avoid conflicts with C++ Matrix
- * classes.
- *
- * Revision 1.1  1994/06/23  22:45:50  mjl
- * Contains functions, a command table, a hash table, and other tools to
- * support calling PLplot functions via Tcl commands.  Support for calling
- * PLplot directly (from pltcl) or by widget commands (from plframe) is
- * provided.
  */
 
-/*----------------------------------------------------------------------*\
- * 
- * pltclAPI.c --
- *
- *	This module implements a Tcl command set for interpretively
- *	calling PLplot functions.  Each Tcl command is responsible for
- *	calling the appropriate underlying function in the C API.  Can be
- *	used with any driver, in principle. 
- *
- * Maurice LeBrun
- * IFS, University of Texas at Austin
- * 19-Jun-1994
- *
-\*----------------------------------------------------------------------*/
+/*
+    tclAPI.c
+
+    Copyright 1994, 1995
+    Maurice LeBrun			mjl@dino.ph.utexas.edu
+    Institute for Fusion Studies	University of Texas at Austin
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free
+    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	
+    This module implements a Tcl command set for interpretively calling
+    PLplot functions.  Each Tcl command is responsible for calling the
+    appropriate underlying function in the C API.  Can be used with any
+    driver, in principle.
+*/
 
 #include "plplotP.h"
 #include "pltcl.h"
@@ -161,11 +157,11 @@ static CmdInfo Cmds[] = {
 static int cmdTable_initted;
 static Tcl_HashTable cmdTable;
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Append_Cmdlist
  *
  * Generates command list from Cmds, storing into interp->result.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 Append_Cmdlist(Tcl_Interp *interp)
@@ -176,14 +172,14 @@ Append_Cmdlist(Tcl_Interp *interp)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plTclCmd_Init
  *
  * Sets up command hash table for use with plframe to PLplot Tcl API.
  *
  * Right now all API calls are allowed, although some of these may not
  * make much sense when used with a widget.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plTclCmd_Init(Tcl_Interp *interp)
@@ -211,7 +207,7 @@ plTclCmd_Init(Tcl_Interp *interp)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plTclCmd
  *
  * Front-end to PLplot/Tcl API for use from Tcl commands (e.g. plframe).
@@ -221,7 +217,7 @@ plTclCmd_Init(Tcl_Interp *interp)
  * plotting interface to the PLplot library.  This routine can be called
  * from other commands that want a similar capability.
  *
- * In a widget-based application, a plplot "command" doesn't make much
+ * In a widget-based application, a PLplot "command" doesn't make much
  * sense by itself since it isn't connected to a specific widget.
  * Instead, you have widget commands.  This allows arbitrarily many
  * widgets and requires a slightly different syntax than if there were
@@ -230,7 +226,7 @@ plTclCmd_Init(Tcl_Interp *interp)
  * must come first.  The plframe widget checks first for one of its
  * internal subcommands, those specifically designed for use with the
  * plframe widget.  If not found, control comes here. 
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plTclCmd(char *cmdlist, Tcl_Interp *interp, int argc, char **argv)
@@ -245,7 +241,7 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp, int argc, char **argv)
 	plTclCmd_Init(interp);
     }
 
-/* no option -- return list of available PLPlot commands */
+/* no option -- return list of available PLplot commands */
 
     if (argc == 0) {
 	Tcl_AppendResult(interp, cmdlist, (char *) NULL);
@@ -270,19 +266,19 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp, int argc, char **argv)
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * loopbackCmd
  *
  * Loop-back command for Tcl interpreter.  Main purpose is to enable a
  * compatible command syntax whether you are executing directly through a
  * Tcl interpreter or a plframe widget.  I.e. the syntax is:
  *
- *	<widget> cmd <plplot command>		(widget command)
- *	loopback cmd <plplot command>		(pltcl command)
+ *	<widget> cmd <PLplot command>		(widget command)
+ *	loopback cmd <PLplot command>		(pltcl command)
  *
  * This routine is essentially the same as plTclCmd but without some of
  * the window dressing required by the plframe widget.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 loopbackCmd(ClientData clientData, Tcl_Interp *interp,
@@ -305,7 +301,7 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
 	plTclCmd_Init(interp);
     }
 
-/* no option -- return list of available PLPlot commands */
+/* no option -- return list of available PLplot commands */
 
     argc--; argv++;
     if (argc == 0) {
@@ -331,13 +327,13 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Pltcl_Init
  *
  * Initialization routine for extended wish'es.
  * Creates the matrix command, as well as numerous commands for
  * interfacing to PLplot.  Should not be used in a widget-based system.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 Pltcl_Init( Tcl_Interp *interp )
@@ -360,7 +356,7 @@ Pltcl_Init( Tcl_Interp *interp )
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * PLplot API Calls
  *
  * Any call that results in something actually being plotted must be
@@ -370,15 +366,15 @@ Pltcl_Init( Tcl_Interp *interp )
  * before graphics commands, so a plgra() is not necessary in this case.
  * Although if you switch to the text screen via user control (instead of
  * using pltext()), the device will get confused.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 /* TEMPLATE */
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plxxxCmd
  *
  * Processes plxxx Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plxxxCmd(ClientData clientData, Tcl_Interp *interp,
@@ -396,11 +392,11 @@ plxxxCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pladvCmd
  *
  * Processes pladv Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 pladvCmd(ClientData clientData, Tcl_Interp *interp,
@@ -424,11 +420,11 @@ pladvCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plbopCmd
  *
  * Processes plbop Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plbopCmd(ClientData clientData, Tcl_Interp *interp,
@@ -447,11 +443,11 @@ plbopCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plboxCmd
  *
  * Processes plbox Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plboxCmd(ClientData clientData, Tcl_Interp *interp,
@@ -482,11 +478,11 @@ plboxCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plcol0Cmd
  *
  * Processes plcol0 Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plcol0Cmd(ClientData clientData, Tcl_Interp *interp,
@@ -508,11 +504,11 @@ plcol0Cmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plcontCmd
  *
  * Processes plcont Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 PLFLT tclMatrix_feval (PLINT i, PLINT j, PLPointer p)
 {
@@ -538,8 +534,6 @@ plcontCmd(ClientData clientData, Tcl_Interp *interp,
     mat = Tcl_GetVar( interp, argv[1], 0 );
     matPtr = Tcl_GetMatrixPtr( interp, mat );
 
-    printf( "matPtr = %x\n", matPtr );
-
     mat = Tcl_GetVar( interp, argv[2], 0 );
     pclev = Tcl_GetMatrixPtr( interp, mat );
 
@@ -553,7 +547,7 @@ plcontCmd(ClientData clientData, Tcl_Interp *interp,
 	return TCL_ERROR;
     }
 
-    /* contour the data.*/
+/* contour the data.*/
 
     plcontf( tclMatrix_feval, matPtr,
 	     matPtr->n[0], matPtr->n[1],
@@ -564,11 +558,11 @@ plcontCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plendCmd
  *
  * Processes plend Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plendCmd(ClientData clientData, Tcl_Interp *interp,
@@ -585,11 +579,11 @@ plendCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plend1Cmd
  *
  * Processes plend1 Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plend1Cmd(ClientData clientData, Tcl_Interp *interp,
@@ -606,11 +600,11 @@ plend1Cmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plenvCmd
  *
  * Processes plenv Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plenvCmd(ClientData clientData, Tcl_Interp *interp,
@@ -639,11 +633,11 @@ plenvCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pleopCmd
  *
  * Processes pleop Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 pleopCmd(ClientData clientData, Tcl_Interp *interp,
@@ -662,11 +656,11 @@ pleopCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plfontCmd
  *
  * Processes plfont Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plfontCmd(ClientData clientData, Tcl_Interp *interp,
@@ -688,11 +682,11 @@ plfontCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plfontldCmd
  *
  * Processes plfontld Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plfontldCmd(ClientData clientData, Tcl_Interp *interp,
@@ -714,11 +708,11 @@ plfontldCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plgraCmd
  *
  * Processes plgra Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plgraCmd(ClientData clientData, Tcl_Interp *interp,
@@ -736,11 +730,11 @@ plgraCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plhistCmd
  *
  * Processes plhist Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plhistCmd(ClientData clientData, Tcl_Interp *interp,
@@ -771,20 +765,16 @@ plhistCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plinitCmd
  *
  * Processes plinit Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plinitCmd(ClientData clientData, Tcl_Interp *interp,
 	  int argc, char **argv)
 {
-    PLINT n, nbin, oldwin;
-    PLFLT *data, datmin, datmax;
-    tclMatrix *mat;
-
     if (argc != 1 ) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
 			 argv[0], "\"", (char *) NULL);
@@ -796,11 +786,11 @@ plinitCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pljoinCmd
  *
  * Processes pljoin Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 pljoinCmd(ClientData clientData, Tcl_Interp *interp,
@@ -826,11 +816,11 @@ pljoinCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pllabCmd
  *
  * Processes pllab Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 pllabCmd(ClientData clientData, Tcl_Interp *interp,
@@ -849,11 +839,11 @@ pllabCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pllineCmd
  *
  * Processes plline Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 pllineCmd(ClientData clientData, Tcl_Interp *interp,
@@ -886,11 +876,11 @@ pllineCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plmtexCmd
  *
  * Processes plmtex Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plmtexCmd(ClientData clientData, Tcl_Interp *interp,
@@ -918,11 +908,11 @@ plmtexCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plpoinCmd
  *
  * Processes plpoin Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plpoinCmd(ClientData clientData, Tcl_Interp *interp,
@@ -956,11 +946,11 @@ plpoinCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plptexCmd
  *
  * Processes plptex Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plptexCmd(ClientData clientData, Tcl_Interp *interp,
@@ -989,11 +979,11 @@ plptexCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plschrCmd
  *
  * Processes plschr Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plschrCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1016,12 +1006,12 @@ plschrCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plsetoptCmd
  *
  * Processes plsetopt Tcl command.
  * Just calls plSetInternalOpt() 
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plsetoptCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1039,7 +1029,7 @@ plsetoptCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plshadeCmd
  *
  * Processes plshade Tcl command.
@@ -1054,7 +1044,7 @@ plsetoptCmd(ClientData clientData, Tcl_Interp *interp,
  * nx and ny, so no need for those.  Toss defined.  Toss plfill since
  * it is the only valid choice anyway, and assume rect==1 and no
  * transformation, since I don't know how to do anything else anyway.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plshadeCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1119,11 +1109,11 @@ plshadeCmd(ClientData clientData, Tcl_Interp *interp,
     return result;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plssubCmd
  *
  * Processes plssub Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plssubCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1147,11 +1137,11 @@ plssubCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plsstrmCmd
  *
  * Processes plsstrm Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plsstrmCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1173,11 +1163,11 @@ plsstrmCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plstylCmd
  *
  * Processes plstyl Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plstylCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1204,11 +1194,11 @@ plstylCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plsxaxCmd
  *
  * Processes plsxax Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plsxaxCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1230,11 +1220,11 @@ plsxaxCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plsyaxCmd
  *
  * Processes plsyax Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plsyaxCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1256,11 +1246,11 @@ plsyaxCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plsymCmd
  *
  * Processes plsym Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plsymCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1294,11 +1284,11 @@ plsymCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * pltextCmd
  *
  * Processes pltext Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 pltextCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1316,11 +1306,11 @@ pltextCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plvporCmd
  *
  * Processes plvpor Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plvporCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1345,11 +1335,11 @@ plvporCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plvstaCmd
  *
  * Processes plvsta Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plvstaCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1367,11 +1357,11 @@ plvstaCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plwidCmd
  *
  * Processes plwid Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plwidCmd(ClientData clientData, Tcl_Interp *interp,
@@ -1393,11 +1383,11 @@ plwidCmd(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plwindCmd
  *
  * Processes plwind Tcl command.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plwindCmd(ClientData clientData, Tcl_Interp *interp,
