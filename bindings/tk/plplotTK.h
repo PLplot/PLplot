@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1995/03/16 23:42:04  mjl
+ * Revision 1.6  1995/05/07 02:29:59  mjl
+ * Added include of pltk.h, dp.h (if DP extensions requested), and added new
+ * variables updatecmd and child_pid to state structure.
+ *
+ * Revision 1.5  1995/03/16  23:42:04  mjl
  * Old cursorX, cursorY variables replaced with a PLGraphicsIn structure.
  * Also variables instr, max_instr, and locate_mode added.
  *
@@ -33,11 +37,17 @@
 #ifndef __PLPLOT_H__
 #include <plplot.h>
 #endif
+#ifndef __PLTK_H__
+#include <pltk.h>
+#endif
 #ifndef __PDF_H__
 #include <pdf.h>
 #endif
 
 #include <tk.h>
+#ifdef PLD_dp
+#include <dp.h>
+#endif
 
 /* One of these holds the TK driver state information */
 
@@ -50,6 +60,8 @@ typedef struct {
     char	*cmdbuf;		/* Command buffer */
     int		cmdbuf_len;		/* and its length */
     PLiodev	*iodev;			/* I/O device info */
+    char	*updatecmd;		/* Name of update command */
+    pid_t	child_pid;		/* PID for child process */
     int		instr;			/* Instruction timer */
     int		max_instr;		/* Limit before issuing an update */
     int		locate_mode;		/* Set while in locate mode */
