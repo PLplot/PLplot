@@ -159,11 +159,6 @@ Program $1 not found.
 popdef([PROG])
 ])
 
-DOCBOOK2TEXIXML=`pwd`/doc/docbook/perl/docbook2texixml
-AC_SUBST(DOCBOOK2TEXIXML)
-TEXI_XML=`pwd`/doc/docbook/perl/db2x_texixml
-AC_SUBST(TEXI_XML)
-
 AC_DEFUN(CHECK_PM, [
 AC_CACHE_CHECK( $1, pldb_cv_$2, [
 cat > conftest.pl << EOF

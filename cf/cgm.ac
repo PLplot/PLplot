@@ -25,6 +25,8 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+CDLIBSTR=-lcd
+
 if test "$enable_cgm" = "yes"; then
     AC_MSG_CHECKING(for libcd header files)
     if test -z "$CDINCDIR"; then

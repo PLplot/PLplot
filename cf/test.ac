@@ -1,6 +1,6 @@
-dnl cf/c++.ac for PLplot  -*- autoconf -*-
+dnl cf/test.ac for PLplot  -*- autoconf -*-
 dnl
-dnl C++ binding
+dnl Test suite configuration
 dnl
 dnl Copyright (C) 1994, 2004  Maurice LeBrun
 dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
@@ -22,37 +22,21 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-PL_ARG_ENABLE(cxx, [compile C++ interface code], yes)
+### Create list of valid examples subdirectories
 
-PL_ARG_WITH(debug, [Adjust debug compilation flags for KAI C++], no)
+EXAMPLES_DIRECTORIES=c
+test "$enable_cxx" = yes && EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES c++"
+test "$enable_f77" = yes && EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES f77"
+test "$enable_tk" = yes  && EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES tk"
 
-if test "$enable_cxx" = yes; then
-    # If KAI C++ (Kuck and Associates) is available, use that.
-    found_cxx=no
-    if test -z "$CXX" -o "$CXX" = "KCC"; then
-	found_kcc=
-	AC_CHECK_PROG(found_kcc, KCC, yes, no)
-	if test "$found_kcc" = "yes" ; then
-	    found_cxx=yes
-	    AC_MSG_WARN([Found KAI C++, using that!])
-	    CXX=KCC
-	    if test -z "$CXXFLAGS"; then
-		if test -z "$with_debug"; then
-		    CXXFLAGS="+K0"
-		else
-		    CXXFLAGS="+K2 -O2"
-		fi
-	    fi
-	fi
-    fi
-fi
+AC_SUBST(EXAMPLES_DIRECTORIES)
 
-AC_PROG_CXX
-
-AC_SUBST(enable_cxx)
+define([TEST_CONFIG_FILES],[
 
 AC_CONFIG_FILES([
-    bindings/c++/Makefile
-    examples/c++/Makefile
-    examples/c++/Makefile.examples
-])
+    test/Makefile
+    test/plplot-test.sh
+    test/test_f77.sh
+    test/test_python.sh
+    ],
+    [chmod +x test/plplot-test.sh test/test_f77.sh test/test_python.sh])

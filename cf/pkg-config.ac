@@ -55,5 +55,8 @@ AC_SUBST(pkg_config_true)
 AC_SUBST(pkg_config_false)
 AC_SUBST(PKG_CONFIG_DIR)
 AC_SUBST(PKG_CONFIG_ENV)
-AM_CONDITIONAL(with_pkg_config, [test "$with_pkg_config" = yes])
 
+AC_CONFIG_FILES([
+    pkgcfg/Makefile
+    pkgcfg/gen-pc-files.pl
+])

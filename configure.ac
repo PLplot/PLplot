@@ -115,17 +115,6 @@ PL_ARG_ENABLE(dyndrivers, [enable dynamic loading of drivers], yes)
 PL_INCLUDE(libtool.ac)
 AM_PROG_LIBTOOL
 
-PL_ARG_WITH(freetype,
-  [enable driver options for using freetype library for fonts],
-  yes)
-
-# use pthreads with the xwin driver
-
-PL_ARG_WITH(pthreads, [use pthreads with the xwin driver], no)
-
-PL_ARG_WITH(qhull, [enable use of the Qhull library], yes)
-PL_ARG_WITH(csa, [enable use of the csa library], yes)
-
 PL_ARG_ENABLE(drivers, [enable all device drivers], yes)
 
 # Set driver enable values
@@ -166,394 +155,62 @@ AC_CHECK_LIB(m, sin)
 ### already be too late).
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
-### Python binding
-
-PL_ARG_ENABLE(python, [compile Python interface code], yes)
-
-if test "$enable_python" = "yes"; then
-    ### Redefine AC_MSG_ERROR as AC_MSG_WARN around the call to
-    ### AM_PATH_PYTHON, such that if python is not found, configure will
-    ### not stop.
-    pushdef([AC_MSG_ERROR],defn([AC_MSG_WARN]))
-    AM_PATH_PYTHON(1.5)
-    popdef([AC_MSG_ERROR])
-    if test -n "$PYTHON_VERSION" ; then
-### PYTHON_INSTDIR is the same as $pythondir except that the
-### symbolic prefix is replaced by the actual prefix.
-### The actual prefix is required in examples/python/plplot_python_start.py
-### (the only place that PYTHON_INSTDIR is used).
-        PL_EXPAND_EXPRESSION(PYTHON_INSTDIR, $pythondir)
-    fi
-fi
-AC_SUBST(PYTHON_INSTDIR)
-
 ### The following seems to be necessary because the replacement of
 ### the default value for exec_prefix only happens in AC_OUTPUT (it would
 ### already be too late).
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-PL_ARG_ENABLE(java, [compile Java interface code], yes)
+PL_INCLUDE(python.ac)
+
+PL_INCLUDE(java.ac)
 
 PL_INCLUDE(drivers.ac)
 
 ### Modify system-dependent results based on availability
-PL_INCLUDE(sysloc.in)
+PL_INCLUDE(freetype.ac)
+
+PL_INCLUDE(octave.ac)
+
+PL_INCLUDE(swig.ac)
+
+PL_INCLUDE(pthread.ac)
+
+# ----------------------------------------------------------------------------
+# Check for inclusion of sys/types.h before dirent.h in broken MacOSX systems
+# ----------------------------------------------------------------------------
+
+case "$host_os" in
+    darwin*)
+        AC_DEFINE(NEED_SYS_TYPE_H, [], [Include sys/type.h if needed])
+    ;;
+esac
+
+# ----------------------------------------------------------------------------
+# Now do the variable substitutions.
+# ----------------------------------------------------------------------------
+
+AC_SUBST(ARLIB_BUILD)
+AC_SUBST(ARLIB_BUILD_CXX)
+AC_SUBST(SHLIB_BUILD)
+AC_SUBST(SHLIB_BUILD_CXX)
+AC_SUBST(SONAME_FLAGS)
+AC_SUBST(SA)
+AC_SUBST(SO)
+AC_SUBST(LDSHARED)
+
+AC_SUBST(SHLIB_CCFLAGS)
+AC_SUBST(SHLIB_CXXFLAGS)
+AC_SUBST(SHLIB_F77FLAGS)
+AC_SUBST(SHLIB_LIBS)
 
 # Disable LIBS so we don't have all libraries mentioned
 LIBS=""
 
 # Optional packages
 
-if test "$enable_java" = yes; then
-### Java stanza completely different from others.  sysloc.in must have
-### found both $JAVAINCDIR and $JAVAMDINCDIR if $enable_java is still yes.
-   JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
-### bindings/java/config.java.in requires JAVA_INSTDIR
-### The symbolic exec_prefix must be replaced by the actual exec_prefix.
-   PL_EXPAND_EXPRESSION(JAVA_INSTDIR, $libdir/java/plplot/core)
-fi
-AC_SUBST(JAVAINCCMD)
-AC_SUBST(JAVA_INSTDIR)
+PL_INCLUDE(tcl.ac)
 
-### tcl binding
-
-PL_ARG_ENABLE(tcl, [compile Tcl interface code], yes)
-
-PL_ARG_ENABLE(itcl, [enable incr Tcl interface code], yes)
-
-# ----------------------------------------------------------------------------
-# Make some guesses where the Tcl/Tk include files and libraries are.
-# Look first in the Tcl/Tk distributions and then move on to the standard
-# include file/library locations.  If it's still not found I assume it's
-# not here.
-#
-# Note: it is important to check in user directories _before_ checking
-# anywhere else.  That way you can easily compile custom versions (of Tcl, Tk,
-# etc), put them in your file space, and have them be found first.  Some
-# examples: libraries compiled with debugging turned on, or from a different
-# revision of the (Tcl, Tk, etc) package.  Also, when dealing with multiple
-# versions, check for the newer version first.
-# ----------------------------------------------------------------------------
-
-# Default directories to search for include files
-
-# Linux has a peculiar ambiguity where identical tcl.h files are found both in
-# /usr/include and /usr/include/tcl<version>/generic.  The latter is
-# *much* preferred because it has everything else as well having to do with tcl.
-# So the generic include site is first on the list.  Note that prefix can be
-# "/usr" which would give bad result under Linux without this ordering.
-
-incdirs_default="\
-/usr/include/tcl8.4/tcl-private/generic \
-/usr/include/tcl8.4/tk-private/generic \
-/usr/include/tcl8.4/itcl-private/generic \
-/usr/include/tcl8.4 \
-/usr/include/tcl8.3/tcl-private/generic \
-/usr/include/tcl8.3/tk-private/generic \
-/usr/include/tcl8.3/itcl-private/generic \
-/usr/include/tcl8.3 \
-/usr/include/tcl8.2/generic \
-$prefix/include/itcl \
-/usr/include/itcl3.1/generic/ \
-$prefix/include \
-$HOME/local/include \
-$HOME/include \
-/usr/local/include \
-/usr/include/tcl \
-/usr/include"
-
-# Default directories to search for library files
-
-libdirs_default="\
-$prefix/lib/itcl \
-$prefix/lib \
-$HOME/local/lib \
-$HOME/lib \
-/usr/local/lib \
-/usr/lib"
-
-incdirs=$incdirs_default
-libdirs=$libdirs_default
-
-if test -n "$with_pkgdir"; then
-    incdirs="$with_pkgdir/include $incdirs"
-    libdirs="$with_pkgdir/lib $libdirs"
-fi
-
-# ----------------------------------------------------------------------------
-# tcl.h
-# ----------------------------------------------------------------------------
-
-if test "$enable_tcl" = "yes"; then
-    if test -z "$TCLINCDIR"; then
-        PL_FIND_INC(tcl, TCLINCDIR, enable_tcl)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# libtcl
-#
-# Includes checks against old versions of tcl no longer supported.
-# But you can *try* linking against ANY non-versioned tcl.
-# ----------------------------------------------------------------------------
-
-if test "$enable_tcl" = "yes"; then
-    if test -z "$TCLLIBDIR"; then
-        PL_FIND_LIB_BEGIN(tcl, TCLLIBDIR)
-        for version in 8.4 8.3 8.2 8.1 8.0 ""; do
-            PL_FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
-            if test -n "$TCLLIBDIR"; then
-                break
-            fi
-        done
-        if test -n "$version"; then
-            for oldversion in 8.1 8.0; do
-                if test "$version" = "$oldversion"; then
-                    AC_MSG_WARN([Tcl version $oldversion not supported.])
-		    AC_MSG_WARN([Please upgrade!])
-                    enable_tcl="no"
-                    break
-                fi
-            done
-        fi
-        PL_FIND_LIB_END(tcl, TCLLIBDIR, enable_tcl)
-    fi
-    if test "$enable_tcl" = "yes"; then
-        if test -r $TCLLIBDIR/tclConfig.sh; then
-            . $TCLLIBDIR/tclConfig.sh
-        fi
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# itcl.h
-# ----------------------------------------------------------------------------
-
-if test "$enable_tcl" = "no"; then
-    enable_itcl=no
-fi
-
-if test "$enable_itcl" = "yes"; then
-    if test -z "$ITCLINCDIR"; then
-        PL_FIND_INC(itcl, ITCLINCDIR, enable_itcl)
-    fi
-fi
-
-# There should be an itclDecls.h with the other itcl includes.
-# This is missing on some distributions, so define HAVE_ITCLDECLS_H if found.
-
-if test "$enable_itcl" = "yes"; then
-    old_CPPFLAGS=$CPPFLAGS
-    CPPFLAGS=-I$ITCLINCDIR
-    AC_CHECK_HEADERS([itclDecls.h], [], [], [#include <itcl.h>])
-    CPPFLAGS=$old_CPPFLAGS
-fi
-
-# ----------------------------------------------------------------------------
-# libitcl ([incr Tcl])
-# ----------------------------------------------------------------------------
-
-if test "$enable_itcl" = "yes"; then
-    if test -z "$ITCLLIBDIR"; then
-        PL_FIND_LIB_BEGIN(itcl, ITCLLIBDIR)
-        for version in 3.3 3.2 3.1 3.0 2.1 2.0 ""; do
-            if test -n "$ITCLLIBDIR"; then
-                break
-            fi
-            PL_FIND_LIB_SET(itcl$version, ITCLLIBDIR, ITCLLIBSTR)
-        done
-        PL_FIND_LIB_END(itcl, ITCLLIBDIR, enable_itcl)
-    fi
-    if test "$enable_itcl" = "yes"; then
-        if test -r $ITCLLIBDIR/itclConfig.sh; then
-            . $ITCLLIBDIR/itclConfig.sh
-        fi
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# figure out how to build tclIndex
-# ----------------------------------------------------------------------------
-
-if test "$enable_tcl" = "yes"; then
-    if test "$enable_itcl" = "yes"; then
-        MKINDEX="$srcdir/scripts/mktclIndex -itcl"
-    else
-        MKINDEX="$srcdir/scripts/mktclIndex -tcl"
-    fi
-else
-# shouldn't ever be used
-    MKINDEX=echo
-fi
-
-AC_SUBST(MKINDEX)
-
-# ----------------------------------------------------------------------------
-# tk.h
-# ----------------------------------------------------------------------------
-
-if test "$enable_tcl" = "no" -o "$have_x" != "yes"; then
-    enable_tk=no
-fi
-
-if test "$enable_tk" = "yes"; then
-    if test -z "$TKINCDIR"; then
-        PL_FIND_INC(tk, TKINCDIR, enable_tk)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# tkInt.h (and indirectly tclInt.h) required by plplotter.c which is
-# required by tkwin device
-# ----------------------------------------------------------------------------
-
-if test "$enable_tcl" = "no" -o "$have_x" != "yes"; then
-    enable_tkwin=no
-fi
-
-if test "$enable_tkwin" = "yes"; then
-    if test -z "$TKPRIVATEINCDIR"; then
-        PL_FIND_INC(tkInt, TKPRIVATEINCDIR, enable_tkwin)
-    fi
-fi
-
-if test "$enable_tkwin" = "yes"; then
-    if test -z "$TCLPRIVATEINCDIR"; then
-        PL_FIND_INC(tclInt, TCLPRIVATEINCDIR, enable_tkwin)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# libtk
-# ----------------------------------------------------------------------------
-
-if test "$enable_tk" = "yes"; then
-    if test -z "$TKLIBDIR"; then
-        PL_FIND_LIB_BEGIN(tk, TKLIBDIR)
-        for version in 8.4 8.3 8.2 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
-            if test -n "$TKLIBDIR"; then
-                break
-            fi
-            PL_FIND_LIB_SET(tk$version, TKLIBDIR, TKLIBSTR)
-        done
-        PL_FIND_LIB_END(tk, TKLIBDIR, enable_tk)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# libitk
-# ----------------------------------------------------------------------------
-
-enable_itk="yes"
-if test "$enable_tk" = "no" -o "$enable_itcl" = "no"; then
-    enable_itk="no"
-fi
-
-if test "$enable_itk" = "yes"; then
-    if test -z "$ITKLIBDIR"; then
-        PL_FIND_LIB_BEGIN(itk, ITKLIBDIR)
-        for version in 3.3 3.2 3.1 3.0 2.1 2.0 ""; do
-            if test -n "$ITKLIBDIR"; then
-                break
-            fi
-            PL_FIND_LIB_SET(itk$version, ITKLIBDIR, ITKLIBSTR)
-        done
-        PL_FIND_LIB_END(itk, ITKLIBDIR, enable_itk)
-    fi
-fi
-
-if test "$enable_itcl" = "yes"; then
-    AC_DEFINE(HAVE_ITCL, [], [Define if [incr Tcl] is available])
-fi
-
-if test "$enable_itk" = "yes"; then
-    AC_DEFINE(HAVE_ITK, [], [Define if [incr Tk] is available])
-fi
-
-#-----------------------------------------------------------------------------
-# ntk driver
-#-----------------------------------------------------------------------------
-if test "$enable_tk" = "no" -o "$enable_tcl" = "no"; then
-    enable_ntk="no"
-fi
-
-### automake symbols for system-dependent results
-
-if test "$enable_itcl" = yes; then
-   if test "$ITCLINCDIR" != default; then
-      ITCLINCCMD="-I$ITCLINCDIR"
-   fi
-   if test "$ITCLLIBDIR" = default; then
-      ITCLLIBCMD="$ITCLLIBSTR"
-   else
-      ITCLLIBCMD="-L$ITCLLIBDIR $ITCLLIBSTR"
-   fi
-fi
-AC_SUBST(ITCLINCCMD)
-AC_SUBST(ITCLLIBCMD)
-
-###sysloc.in doesn't define all itk related symbols so this stanza changed
-###accordingly
-if test "$enable_itk" = yes; then
-#   if test "$ITKINCDIR" != default; then
-#      ITKINCCMD="-I"$ITKINCDIR
-#   fi
-   if test "$ITKLIBDIR" = default; then
-      ITKLIBCMD="$ITKLIBSTR"
-   else
-      ITKLIBCMD="-L$ITKLIBDIR $ITKLIBSTR"
-   fi
-fi
-#AC_SUBST(ITKINCCMD)
-AC_SUBST(ITKLIBCMD)
-
-if test "$enable_tcl" = yes; then
-   if test "$TCLINCDIR" != default; then
-      TCLINCCMD="-I$TCLINCDIR"
-   fi
-   if test "$TCLLIBDIR" = default; then
-      TCLLIBCMD="$TCLLIBSTR"
-   else
-      TCLLIBCMD="-L$TCLLIBDIR $TCLLIBSTR"
-   fi
-fi
-AC_SUBST(TCLINCCMD)
-AC_SUBST(TCLLIBCMD)
-
-if test "$enable_tk" = yes; then
-# Must add in X_CFLAGS for some platforms to work.
-   if test "$TKINCDIR" = default; then
-      TKINCCMD="$X_CFLAGS"
-   else
-      TKINCCMD="-I$TKINCDIR $X_CFLAGS"
-   fi
-   if test "$TKLIBDIR" = default; then
-      TKLIBCMD="$TKLIBSTR"
-   else
-      TKLIBCMD="-L$TKLIBDIR $TKLIBSTR"
-   fi
-fi
-AC_SUBST(TKINCCMD)
-AC_SUBST(TKLIBCMD)
-
-# Need to AC_SUBST some of these for plplot-test.sh script.
-AC_SUBST(enable_python)
-AC_SUBST(enable_java)
-AC_SUBST(enable_tcl)
-
-### Create list of valid examples subdirectories
-
-EXAMPLES_DIRECTORIES=c
-if test "$enable_cxx" = yes; then
-   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES c++"
-fi
-if test "$enable_f77" = yes; then
-   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES f77"
-fi
-if test "$enable_tk" = yes; then
-   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES tk"
-fi
-AC_SUBST(EXAMPLES_DIRECTORIES)
+PL_INCLUDE(test.ac)
 
 ### Double vs single precison
 
@@ -578,31 +235,6 @@ DEFINE_PL_DOUBLE=
 test "$with_double" = yes && DEFINE_PL_DOUBLE="#define PL_DOUBLE"
 AC_SUBST(DEFINE_PL_DOUBLE)
 
-
-### These various DLNAME variables are used to configure the names of
-### the libplplot and libplplottcltk libraries for use in the various
-### pkgIndex.tcl scripts.  At run time those scripts currently search first
-### for the double-precision form of DLNAME, and if that does not exist
-### searches for the single-precision version.  Thus, we must supply both
-### double- and single-precision names for libplplot and libplplottcltk.
-
-### This macro may only be used after AM_PROG_LIBTOOL and the definitions of
-### $SOVERSION (and $LIB_TAG if we ever have separate double and single
-### precision forms of the pkgIndex.tcl scripts).
-PL_GET_DLNAME([plplot], [$SOVERSION], [DLNAME_LIBPLPLOT])
-PL_GET_DLNAME([plplotd], [$SOVERSION], [DLNAME_LIBPLPLOTD])
-PL_GET_DLNAME([plplottcltk], [$SOVERSION], [DLNAME_LIBPLPLOTTCLTK])
-PL_GET_DLNAME([plplottcltkd], [$SOVERSION], [DLNAME_LIBPLPLOTTCLTKD])
-AC_SUBST(DLNAME_LIBPLPLOT)
-AC_SUBST(DLNAME_LIBPLPLOTD)
-AC_SUBST(DLNAME_LIBPLPLOTTCLTK)
-AC_SUBST(DLNAME_LIBPLPLOTTCLTKD)
-
-### bindings/java/config.java.in needs the complete name of the
-### plplotjavac_wrap DLL.
-PL_GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
-AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
-
 PL_INCLUDE(c++.ac)
 
 PL_INCLUDE(f77.ac)
@@ -612,25 +244,6 @@ PL_INCLUDE(f77.ac)
 if test "$enable_dyndrivers" = yes -a "$enable_pstex" = yes ; then
   enable_ps=yes
 fi
-
-AM_CONDITIONAL(with_double, [test "$with_double" = yes])
-AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
-AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
-AM_CONDITIONAL(enable_java, [test "$enable_java" = yes])
-AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
-AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])
-AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
-AM_CONDITIONAL(enable_pbm, [test "$enable_pbm" = yes])
-AM_CONDITIONAL(enable_ps, [test "$enable_ps" = yes])
-AM_CONDITIONAL(enable_pstex, [test "$enable_pstex" = yes])
-AM_CONDITIONAL(enable_python, [test "$enable_python" = yes])
-AM_CONDITIONAL(enable_tcl, [test "$enable_tcl" = yes])
-AM_CONDITIONAL(enable_tk, [test "$enable_tk" = yes])
-AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
-AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
-AM_CONDITIONAL(enable_xwin, [test "$enable_xwin" = yes])
-AM_CONDITIONAL(with_qhull, [test "$with_qhull" = yes])
-AM_CONDITIONAL(with_csa, [test "$with_csa" = yes])
 
 ### Checks for existence of headers
 
@@ -752,7 +365,41 @@ else
 fi
 AC_SUBST(RPATH)
 AC_SUBST(RPATHCMD)
+
+dnl All the AM_CONDITIONALs *_must_* appear in configure.ac, and not in
+dnl cf/*.ac, otherwise they will be hidden from Automake
+
+AM_CONDITIONAL(with_double, [test "$with_double" = yes])
+AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
+AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])
+AM_CONDITIONAL(enable_pbm, [test "$enable_pbm" = yes])
+AM_CONDITIONAL(enable_ps, [test "$enable_ps" = yes])
+AM_CONDITIONAL(enable_pstex, [test "$enable_pstex" = yes])
+AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
+AM_CONDITIONAL(enable_xwin, [test "$enable_xwin" = yes])
 AM_CONDITIONAL(with_rpath, [test "$with_rpath" = yes])
+AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers"= yes])
+AM_CONDITIONAL(enable_cxx, [test "$enable_cxx" = yes])
+AM_CONDITIONAL(with_csa, [test "$with_csa" = yes])
+AM_CONDITIONAL(with_qhull, [test "$with_qhull" = yes])
+AM_CONDITIONAL(docbook_build, [test $with_prebuiltdoc = no])
+AM_CONDITIONAL(enable_docbook,
+               [test $enable_builddoc = yes -o $with_prebuiltdoc = yes])
+AM_CONDITIONAL(has_onsgmls, [test "$has_onsgmls" = found])
+# This is for conditional compilation of plplot_octave_txt in bindings/octave
+AM_CONDITIONAL(has_xml_pm,
+  [test "$pldb_cv_xml_dom" = yes -a "$pldb_cv_xml_parser" = yes])
+AM_CONDITIONAL(enable_f77, [test "$enable_f77" = yes])
+AM_CONDITIONAL(enable_gnome, [test "$enable_gnome" = yes])
+AM_CONDITIONAL(enable_java, [test "$enable_java" = yes])
+AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
+AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
+AM_CONDITIONAL(with_pkg_config, [test "$with_pkg_config" = yes])
+AM_CONDITIONAL(enable_python, [test "$enable_python" = yes])
+AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
+AM_CONDITIONAL(enable_tcl, [test "$enable_tcl" = yes])
+AM_CONDITIONAL(enable_tk, [test "$enable_tk" = yes])
+AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
 
 
 ### Build configuration files
@@ -761,62 +408,18 @@ AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	include/Makefile
-	lib/Makefile
-	lib/nn/Makefile
-	lib/csa/Makefile
 	data/Makefile
 	bindings/Makefile
-	bindings/c++/Makefile
-	bindings/f77/Makefile
-	bindings/f77/configurable.f
-	bindings/python/Makefile
-	bindings/tcl/Makefile
-	bindings/tcl/pkgIndex.tcl
-	bindings/tk/Makefile
-	bindings/tk/pkgIndex.tcl
-	bindings/tk-x-plat/pkgIndex.tcl
-	bindings/octave/Makefile
-        bindings/octave/plplot_octave.h
-        bindings/octave/PLplot/Makefile
-	bindings/octave/PLplot/plplot_octave_path.m
-	bindings/octave/PLplot/support/Makefile
-	bindings/octave/demos/Makefile
-	bindings/octave/misc/Makefile
-	bindings/java/Makefile
-	bindings/java/config.java
 	drivers/Makefile
 	examples/Makefile
 	examples/Makefile.examples
 	examples/c/Makefile
 	examples/c/Makefile.examples
-	examples/c++/Makefile
-	examples/c++/Makefile.examples
-	examples/f77/Makefile
-	examples/f77/Makefile.examples
-	examples/python/Makefile
-	examples/python/plplot_python_start.py
-	examples/tcl/Makefile
-	examples/tk/Makefile
-	examples/tk/Makefile.examples
-	examples/java/Makefile
 	examples/perl/Makefile
-	test/Makefile
-	test/plplot-test.sh
-	test/test_f77.sh
-	test/test_python.sh
 	utils/Makefile
 	scripts/Makefile
 	doc/Makefile
 	scripts/plplot-config
-	pkgcfg/Makefile
-	pkgcfg/gen-pc-files.pl
-	doc/docbook/Makefile
-	doc/docbook/src/Makefile
-	doc/docbook/src/plplotdoc.xml
-	doc/docbook/src/plplotdoc-html.dsl
-	doc/docbook/src/plplotdoc-print.dsl
-	doc/docbook/bin/api2man.pl
-	doc/docbook/www/index.html.in
 	])
 
 AC_OUTPUT

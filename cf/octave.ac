@@ -135,6 +135,16 @@ AC_SUBST(OCTAVE_M_DIR)
 AC_SUBST(PLPLOT_OCTAVE_DIR)
 AC_SUBST(enable_octave)
 
+AC_CONFIG_FILES([
+    bindings/octave/Makefile
+    bindings/octave/plplot_octave.h
+    bindings/octave/PLplot/Makefile
+    bindings/octave/PLplot/plplot_octave_path.m
+    bindings/octave/PLplot/support/Makefile
+    bindings/octave/demos/Makefile
+    bindings/octave/misc/Makefile
+])
+
 dnl Variables for mkoctfile
 dnl ******************************************************************
 dnl WARNING: The stuff below is just transient and should disappear as

@@ -36,9 +36,10 @@ if test $enable_builddoc = yes -a $with_prebuiltdoc = yes ; then
 exclusive and must not be given simultaneously.  Giving up.])
 fi
 
-AM_CONDITIONAL(docbook_build, [test $with_prebuiltdoc = no])
-AM_CONDITIONAL(enable_docbook,
-               [test $enable_builddoc = yes -o $with_prebuiltdoc = yes])
+DOCBOOK2TEXIXML=`pwd`/doc/docbook/perl/docbook2texixml
+AC_SUBST(DOCBOOK2TEXIXML)
+TEXI_XML=`pwd`/doc/docbook/perl/db2x_texixml
+AC_SUBST(TEXI_XML)
 
 dnl Web site Installation
 
@@ -262,11 +263,6 @@ DOC_OUTPUT_COMMANDS
 
 fi # enable_builddoc
 
-AM_CONDITIONAL(has_onsgmls, [test "$has_onsgmls" = found])
-# This is for conditional compilation of plplot_octave_txt in bindings/octave
-AM_CONDITIONAL(has_xml_pm,
-  [test "$pldb_cv_xml_dom" = yes -a "$pldb_cv_xml_parser" = yes])
-
 BASE=$PACKAGE-$VERSION
 AC_SUBST(BASE)
 
@@ -291,3 +287,12 @@ AC_SUBST(BASE_MAN)
 MANVOL=3plplot
 AC_SUBST(MANVOL)
 
+AC_CONFIG_FILES([
+    doc/docbook/Makefile
+    doc/docbook/src/Makefile
+    doc/docbook/src/plplotdoc.xml
+    doc/docbook/src/plplotdoc-html.dsl
+    doc/docbook/src/plplotdoc-print.dsl
+    doc/docbook/bin/api2man.pl
+    doc/docbook/www/index.html.in
+])

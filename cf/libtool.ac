@@ -42,8 +42,6 @@ fi
 AC_SUBST(INCLTDL)
 AC_SUBST(LIBLTDL)
 
-AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
-
 dnl This required for dll support under cygwin.  Must occur before
 dnl AM_PROG_LIBTOOL
 

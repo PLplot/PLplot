@@ -73,6 +73,7 @@ if test "$enable_gnome" = "yes"; then
   fi
 fi
 
+#
+# GNOMELIBS all libs needed by the gnome driver.
 AC_SUBST(GNOMELIBS)
 
-AM_CONDITIONAL(enable_gnome, [test "$enable_gnome" = yes])
