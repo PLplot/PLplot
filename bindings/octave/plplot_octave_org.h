@@ -716,7 +716,7 @@ void c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 /* Set xor mode; 1-enter, 0-leave */
 
-void c_plxormod(PLINT mode); //%name plxormod
+void c_plxormod(PLINT mode, PLINT *status); //%name plxormod //%output status
 
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
