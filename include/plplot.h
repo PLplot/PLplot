@@ -1,10 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.27  1993/07/02 07:23:35  mjl
-   Now holds only those symbols absolutely needed by applications to use
-   PLPLOT.  Includes typedefs and function prototypes, maybe an occaisional
-   macro only.  _POSIX_SOURCE no longer defined here!
+   Revision 1.28  1993/07/16 22:28:09  mjl
+   Added prototypes for driver interface functions, new plshade function,
+   plgFileDevs (for retrieving file device list) function.  Simplified PLKey
+   definition by removing attribute info (not really necessary).
 
+ * Revision 1.27  1993/07/02  07:23:35  mjl
+ * Now holds only those symbols absolutely needed by applications to use
+ * PLPLOT.  Includes typedefs and function prototypes, maybe an occaisional
+ * macro only.  _POSIX_SOURCE no longer defined here!
+ *
  * Revision 1.26  1993/05/08  16:08:30  mjl
  * Bumped version number to 4.99d, but the 4.99d release won't happen for
  * some time yet.
@@ -271,14 +276,6 @@ typedef struct {
 
 typedef struct {
     unsigned long code;
-
-    int isKeypadKey;
-    int isCursorKey;
-    int isPFKey;
-    int isFunctionKey;
-    int isMiscFunctionKey;
-    int isModifierKey;
-
     char string[PL_NKEYSTRING];
 } PLKey;
 
@@ -407,6 +404,7 @@ typedef struct {
 #define    plclr	c_plclr
 #define    plcol	c_plcol
 #define    plcont	c_plcont
+#define    plcpstrm	c_plcpstrm
 #define    plend	c_plend
 #define    plend1	c_plend1
 #define    plenv	c_plenv
@@ -438,6 +436,7 @@ typedef struct {
 #define    plline	c_plline
 #define    pllsty	c_pllsty
 #define    plmesh	c_plmesh
+#define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
 #define    plpage	c_plpage
@@ -446,6 +445,7 @@ typedef struct {
 #define    plprec	c_plprec
 #define    plpsty	c_plpsty
 #define    plptex	c_plptex
+#define    plreplot	c_plreplot
 #define    plrgb	c_plrgb
 #define    plrgb1	c_plrgb1
 #define    plsasp	c_plsasp
@@ -461,6 +461,7 @@ typedef struct {
 #define    plsdiplt	c_plsdiplt
 #define    plsdiplz	c_plsdiplz
 #define    plsdidev	c_plsdidev
+#define    plsdimap	c_plsdimap
 #define    plsdiori	c_plsdiori
 #define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
@@ -502,6 +503,7 @@ typedef struct {
 #define    c_plbox3	plbox3
 #define    c_plclr	plclr
 #define    c_plcol	plcol
+#define    c_plcpstrm	plcpstrm
 #define    c_plcont	plcont
 #define    c_plend	plend
 #define    c_plend1	plend1
@@ -533,6 +535,7 @@ typedef struct {
 #define    c_plline	plline
 #define    c_pllsty	pllsty
 #define    c_plmesh	plmesh
+#define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
 #define    c_plpage	plpage
@@ -541,6 +544,7 @@ typedef struct {
 #define    c_plprec	plprec
 #define    c_plpsty	plpsty
 #define    c_plptex	plptex
+#define    c_plreplot	plreplot
 #define    c_plrgb	plrgb
 #define    c_plrgb1	plrgb1
 #define    c_plsasp	plsasp
@@ -556,6 +560,7 @@ typedef struct {
 #define    c_plsdiplt	plsdiplt
 #define    c_plsdiplz	plsdiplz
 #define    c_plsdidev	plsdidev
+#define    c_plsdimap	plsdimap
 #define    c_plsdiori	plsdiori
 #define    c_plsesc	plsesc
 #define    c_plsfam	plsfam
@@ -629,6 +634,8 @@ void plcontf	(PLFLT (*) (PLINT, PLINT, PLPointer),
 		 void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		 PLPointer);
 
+void c_plcpstrm	(PLINT *, char *, char *);
+
 void c_plend	(void);
 
 void c_plend1	(void);
@@ -688,6 +695,8 @@ void c_pllsty	(PLINT);
 void c_plmesh	(PLFLT *, PLFLT *, PLFLT **, 
 		 PLINT, PLINT, PLINT);
 
+void c_plmkstrm	(PLINT *);
+
 void c_plmtex	(char *, PLFLT, PLFLT, PLFLT, char *);
 
 void c_plot3d	(PLFLT *, PLFLT *, PLFLT **, 
@@ -705,27 +714,29 @@ void c_plpsty	(PLINT);
 
 void c_plptex	(PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, char *);
 
+void c_plreplot	(void);
+
 void c_plrgb	(PLFLT, PLFLT, PLFLT);
 
-void c_plrgb1	(PLINT r, PLINT g, PLINT b);
+void c_plrgb1	(PLINT, PLINT, PLINT);
 
 void c_plsasp	(PLFLT);
 
 void c_plschr	(PLFLT, PLFLT);
 
-void c_plscm0	(PLINT * r, PLINT * g, PLINT * b, PLINT ncol0);
+void c_plscm0	(PLINT *, PLINT *, PLINT *, PLINT);
 
 void c_plscm0n	(PLINT);
 
-void c_plscm1	(PLINT * r, PLINT * g, PLINT * b);
+void c_plscm1	(PLINT *, PLINT *, PLINT *);
 
-void c_plscm1f1	(PLINT itype, PLFLT * param);
+void c_plscm1f1	(PLINT, PLFLT *);
 
-void c_plscol0	(PLINT icol0, PLINT r, PLINT g, PLINT b);
+void c_plscol0	(PLINT, PLINT, PLINT, PLINT);
 
-void c_plscolbg	(PLINT r, PLINT g, PLINT b);
+void c_plscolbg	(PLINT, PLINT, PLINT);
 
-void c_plscolor	(PLINT color);
+void c_plscolor	(PLINT);
 
 void c_plsdev	(char *);
 
@@ -735,6 +746,8 @@ void c_plsdiplz	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 void c_plsdidev	(PLFLT, PLFLT, PLFLT, PLFLT);
 
+void c_plsdimap	(PLINT, PLINT, PLINT, PLINT, PLFLT, PLFLT);
+
 void c_plsdiori	(PLFLT);
 
 void c_plsesc	(char);
@@ -742,6 +755,11 @@ void c_plsesc	(char);
 void c_plsfam	(PLINT, PLINT, PLINT);
 
 void c_plsfnam	(char *);
+
+void plshade	(PLFLT *, PLINT, PLINT, char *, PLFLT, 
+		 PLFLT, PLFLT, PLFLT, void (*)(), 
+		 PLFLT, PLFLT, PLINT, PLINT, PLINT, PLINT,
+		 PLINT, PLINT, void (*)(), PLINT);
 
 void c_plslpb	(PLFLT, PLFLT, PLFLT, PLFLT);
 
@@ -798,6 +816,14 @@ void c_plwid	(PLINT);
 void c_plwind	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 	/* The rest for use from C only */
+
+void plgdiplt	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+
+void plgdidev	(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+
+void plgdiori	(PLFLT *);
+
+void plgFileDevs(char ***, char ***, int *);
 
 void plsKeyEH	(void (*)(PLKey *, void *, int *), void *);
 
