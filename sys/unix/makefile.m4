@@ -291,6 +291,7 @@ CC = acc
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS -DXFIG \
 	    DEF_XWIN() DEF_TK()
 SYS_FLAGS_C =
+#SYS_FLAGS_C =	-I/usr/local/X11R5/{include}	# Taylor hall, grrr..
 
 if_dbl({dnl
 DBL_FLAG_F      = -r8
