@@ -4,6 +4,50 @@
 
 /*
  * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    adv
+ * Signature: (I)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_adv( JNIEnv *env, jobject jthis, jint page )
+{
+    pladv(page);
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    box
+ * Signature: (Ljava/lang/String;FILjava/lang/String;FI)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_box( JNIEnv *env, jobject jthis,
+                               jstring jxopt, jfloat xtick, jint nxsub,
+                               jstring jyopt, jfloat ytick, jint nysub )
+{
+    const char *xopt = (*env)->GetStringUTFChars( env, jxopt, 0 );
+    const char *yopt = (*env)->GetStringUTFChars( env, jyopt, 0 );
+
+    plbox( xopt, xtick, nxsub, yopt, ytick, nysub );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    box3
+ * Signature: (Ljava/lang/String;Ljava/lang/String;FILjava/lang/String;Ljava/lan
+g/String;FILjava/lang/String;Ljava/lang/String;FI)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_box3( JNIEnv *env, jobject jthis,
+                                jstring xopt, jstring xlabel, jfloat xtick, jint nsubx,
+                                jstring yopt, jstring ylabel, jfloat ytick, jint nsuby,
+                                jstring zopt, jstring zlabel, jfloat ztick, jint nsubz )
+{
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
  * Method:    col0
  * Signature: (I)V
  */
@@ -114,4 +158,55 @@ Java_plplot_core_PLStream_poin( JNIEnv *env, jobject jthis,
     plpoin( n, x, y, code );
 }
 
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    styl
+ * Signature: (III)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_styl( JNIEnv *env, jobject jthis,
+                                jint nms, jint mark, jint space )
+{
+    plstyl( nms, (PLINT *) &mark, (PLINT *) &space );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    syax
+ * Signature: (II)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_syax( JNIEnv *env, jobject jthis,
+                                jint digmax, jint digits )
+{
+    plsyax( digmax, digits );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    vsta
+ * Signature: ()V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_vsta( JNIEnv *env, jobject jthis )
+{
+    plvsta();
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    wind
+ * Signature: (FFFF)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_wind( JNIEnv *env, jobject this,
+                                jfloat xmin, jfloat xmax,
+                                jfloat ymin, jfloat ymax )
+{
+    plwind( xmin, xmax, ymin, ymax );
+}
 
