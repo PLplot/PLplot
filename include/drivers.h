@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.15  1994/03/23 06:57:46  mjl
-   Changed function names in prototypes for xterm, mskermit, and added
-   prototypes for versaterm and vlt drivers (minor tek devices).
+   Revision 1.16  1994/04/08 12:09:37  mjl
+   Added prototypes for new ljiip driver.
 
+ * Revision 1.15  1994/03/23  06:57:46  mjl
+ * Changed function names in prototypes for xterm, mskermit, and added
+ * prototypes for versaterm and vlt drivers (minor tek devices).
+ *
  * Revision 1.14  1994/01/15  17:32:14  mjl
  * Added include of pdf.h.
  *
@@ -155,14 +158,23 @@ void plD_tidy_xfig		(PLStream *);
 void plD_state_xfig		(PLStream *, PLINT);
 void plD_esc_xfig		(PLStream *, PLINT, void *);
 
-void plD_init_jet		(PLStream *);
-void plD_line_jet		(PLStream *, short, short, short, short);
-void plD_polyline_jet		(PLStream *, short *, short *, PLINT);
-void plD_eop_jet		(PLStream *);
-void plD_bop_jet		(PLStream *);
-void plD_tidy_jet		(PLStream *);
-void plD_state_jet		(PLStream *, PLINT);
-void plD_esc_jet		(PLStream *, PLINT, void *);
+void plD_init_ljiip		(PLStream *);
+void plD_line_ljiip		(PLStream *, short, short, short, short);
+void plD_polyline_ljiip		(PLStream *, short *, short *, PLINT);
+void plD_eop_ljiip		(PLStream *);
+void plD_bop_ljiip		(PLStream *);
+void plD_tidy_ljiip		(PLStream *);
+void plD_state_ljiip		(PLStream *, PLINT);
+void plD_esc_ljiip		(PLStream *, PLINT, void *);
+
+void plD_init_ljii		(PLStream *);
+void plD_line_ljii		(PLStream *, short, short, short, short);
+void plD_polyline_ljii		(PLStream *, short *, short *, PLINT);
+void plD_eop_ljii		(PLStream *);
+void plD_bop_ljii		(PLStream *);
+void plD_tidy_ljii		(PLStream *);
+void plD_state_ljii		(PLStream *, PLINT);
+void plD_esc_ljii		(PLStream *, PLINT, void *);
 
 void plD_init_psm		(PLStream *);
 void plD_init_psc		(PLStream *);
