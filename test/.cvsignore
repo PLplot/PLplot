@@ -16,3 +16,7 @@ test_octave.sh
 test_tcl.sh
 test_perl.sh
 *.ps
+*.fig*
+*.png*
+*.gif*
+*..jpeg*
