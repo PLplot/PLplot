@@ -183,6 +183,11 @@ if test "$enable_tcl" = "yes"; then
 	done
 	FIND_LIB_END(tcl, TCLLIBDIR, enable_tcl)
     fi
+    if test "$enable_tcl" = "yes"; then
+	if test -r $TCLLIBDIR/tclConfig.sh; then
+	    . $TCLLIBDIR/tclConfig.sh
+	fi
+    fi
 fi
 
 # ----------------------------------------------------------------------------
@@ -278,6 +283,44 @@ if test "$enable_itk" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# makeindex - figure out how we're gonna generate tclIndex
+# ----------------------------------------------------------------------------
+
+if test -z "$MAKEINDEX"; then
+    MAKEINDEX='BOGUS'
+fi
+
+if test "$enable_tcl" = "yes"; then
+    if test "$TCLLIBDIR" = "default"; then
+	MAKEINDEX="/usr/bin/tclsh$TCL_VERSION"
+    else
+	tclbindir="`echo $TCLLIBDIR | sed 's,/lib,,'`/bin"
+#	echo "tclbindir = $tclbindir"
+	if test -r "$tclbindir/tclsh$TCL_VERSION"; then
+	    MAKEINDEX="$tclbindir/tclsh$TCL_VERSION"
+#	    echo "setting MAKEINDEX to $MAKEINDEX"
+	fi
+    fi
+    TCL_INDEX_FILES="*.tcl"
+fi
+
+if test "$enable_itcl" = "yes"; then
+    itclbindir="`echo $ITCLLIBDIR | sed 's,/itcl/lib,,'`'/bin'"
+#    echo "itclbindir = $itclbindir"
+    if test -r "$itclbindir/ish"; then
+	MAKEINDEX="$itclbindir/ish"
+    fi
+    TCL_INDEX_FILES="*.tcl"
+fi
+
+if test "$enable_tcl" = "yes" -a "$MAKEINDEX" = "BOGUS"; then
+    AC_MSG_RESULT([warning: you must edit Makefile to fix MAKEINDEX.])
+fi
+
+AC_SUBST(MAKEINDEX)
+AC_SUBST(TCL_INDEX_FILES)
+
+# ----------------------------------------------------------------------------
 # dp.h
 # ----------------------------------------------------------------------------
 
@@ -350,6 +393,9 @@ fi
 if test "$enable_xwin" = "yes"; then
     ADD_TO_LIBS($XLIBDIR, $XLIBSTR, LIBS, LIBPATH)
 fi
+if test ! -z "$TCL_DL_LIBS"; then
+    ADD_TO_LIBS( default, $TCL_DL_LIBS, LIBS, LIBPATH)
+fi
 
 # ----------------------------------------------------------------------------
 # Debugging malloc
@@ -411,6 +457,7 @@ fi
 if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
 	incdirs="\
+	$prefix/include/python1.4 \
 	$prefix/include/Py \
 	$HOME/local/include/Py \
 	$HOME/local/python/include/Py \
@@ -420,6 +467,15 @@ if test "$enable_python" = "yes"; then
 	/usr/local/include/Py"
 
 	FIND_INC(Python, PYTHON_INC_DIR, enable_python)
+
+	if test "$enable_python" = "yes"; then
+	    FIND_INC(arrayobject, PYTHON_INC_DIR, numeric_python)
+	    if test "$numeric_python" = "no"; then
+		AC_MSG_RESULT([plmodule needs Python numeric extension.])
+		AC_MSG_RESULT([Setting enable_python to no])
+		enable_python=no
+	    fi
+	fi
     fi
 fi
 
@@ -435,16 +491,29 @@ if test "$enable_python" = "yes"; then
 	fi
 
 	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[[^/]]*/[[^/]]*$,,'`
-	PYTHON_MOD_DIR=$python_dir/lib/python/$MACHDEP
+	PYTHON_MOD_DIR=$python_dir/lib/python
+	PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
 	if test ! -d "$PYTHON_MOD_DIR"; then
-	    AC_MSG_RESULT([PYTHON_MOD_DIR not found, setting enable_python to no])
-	    enable_python=no
+	    # tricky, must be a new style
+	    python_ver=`echo $PYTHON_INC_DIR|sed 's,/.*/,,'`
+	    PYTHON_MOD_DIR=$python_dir/lib/$python_ver
+	    PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
+	    if test ! -d "$PYTHON_MOD_DIR"; then
+		enable_python=no
+
+		AC_MSG_RESULT([PYTHON_MOD_DIR not found, setting enable_python to no])
+		enable_python=no
+	    fi
+
 	fi
+	PYTHON_CFG_DIR=$PYTHON_MOD_DIR/config
     fi
 fi
 
 AC_SUBST(PYTHON_INC_DIR)
 AC_SUBST(PYTHON_MOD_DIR)
+AC_SUBST(PYTHON_MACH_DIR)
+AC_SUBST(PYTHON_CFG_DIR)
 
 # ----------------------------------------------------------------------------
 # libf2c
@@ -505,6 +574,9 @@ if test -z "$EXTRA_LIBS"; then
 	HP-UX* )
 	    EXTRA_LIBS="-ldld -lm"
 	;;
+	Linux* )
+	    EXTRA_LIBS="-ldl -lm"
+	;;
 	* ) 	
 	    AC_CHECK_LIB(Xbsd,   main, [EXTRA_LIBS="$EXTRA_LIBS -lXbsd"])
 	    AC_CHECK_LIB(socket, main, [EXTRA_LIBS="$EXTRA_LIBS -lsocket"])
@@ -563,13 +635,15 @@ if test "$with_shlib" = "yes"; then
 	    # Should do something to make sure this is an ELF system, as
 	    # don't have patience for DLL...
 	    AC_MSG_RESULT([Assuming Linux ELF.  Otherwise, reconfigure --without-shlib])
-	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+#	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	    SHLIB_BUILD="gcc -shared -fpic -o"
 
 	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
 
 	    # Hmm, would be good to replace that trailing .0 with the
 	    # compilation number or some such.  Have to think about that.
+
+	    LDSHARED='gcc -fpic -shared'
 	;;
 	HP-UX-* )
 	    SO=".sl"
