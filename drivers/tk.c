@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.49  1995/03/11 21:42:14  mjl
+ * Revision 1.50  1995/04/12 08:07:30  mjl
+ * Offloaded the C code for cleaning up from tk.c into the proc
+ * plclient_link_end in plclient.tcl.  The Tcl code was modified to better
+ * handshake with plserver.
+ *
+ * Revision 1.49  1995/03/11  21:42:14  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.  Changed structure for graphics input to a PLGraphicsIn (was PLCursor).
  * Substantially rewrote input loop to handle new locate mode (type 'L' while
@@ -746,30 +751,7 @@ tk_stop(PLStream *pls)
 
 /* Kill plserver */
 
-    if (Tcl_GetVar(dev->interp, "plserver_exited", TCL_GLOBAL_ONLY) == NULL) {
-	server_cmd( pls, "$plw_end_proc $plwindow", 1 );
-    }
-
-/* Blow away main window (Tk driver) */
-
-    if ( ! pls->dp) {
-	tcl_cmd(pls, "destroy .");
-    }
-
-/* This cleanup is necessary because of some bogosity in Tcl 7.3 and/or 
- * Tcl-DP 3.2. Tcl_DeleteInterp() doesn't provide all the necessary
- * cleanup when exiting, and a filehandler event for the old interpreter
- * is generated /after/ the old interpreter has been deleted.  This
- * results in an attempt to use a hash table that has already been
- * deleted, and a panic.  I tried to find the offending code while in the
- * debugger but it looks like a tough one to crack, hence this workaround.
- * Mostly seen when using multiple DP output streams from pltcl.
- */
-
-    else {
-	tcl_cmd(pls, "catch dp_CloseRPC $client");
-	tcl_cmd(pls, "dp_update");
-    }
+    tcl_cmd(pls, "plclient_link_end");
 
 /* Blow away interpreter */
 
@@ -877,7 +859,7 @@ pltkdriver_Init(PLStream *pls)
     Tcl_CreateCommand(interp, "keypress", KeyEH,
 		      (ClientData) pls, (void (*) (ClientData)) NULL);
 
-    Tcl_CreateCommand(interp, "button", ButtonEH,
+    Tcl_CreateCommand(interp, "buttonpress", ButtonEH,
 		      (ClientData) pls, (void (*)()) NULL);
 
 /* Set some relevant interpreter variables */
@@ -1283,7 +1265,7 @@ plwindow_init(PLStream *pls)
 
 /* Start up remote PLplot */
 
-    server_cmd( pls, "$plw_start_proc $plwindow [list $client]", 1 );
+    server_cmd( pls, "$plw_start_proc $plwindow", 1 );
     tk_wait(pls, "[info exists widget_is_ready]" );
 }
 
