@@ -10,6 +10,11 @@
 #include <unistd.h>
 #endif
 
+/* Variables for holding error return info from PLplot */
+
+static PLINT errcode;
+static char errmsg[160];
+
 /*--------------------------------------------------------------------------*\
  * main program
 \*--------------------------------------------------------------------------*/
@@ -79,17 +84,13 @@ main(int argc, char *argv[])
 
     plinit();
 
-/* An ugly hack to ensure a terminal device type was selected */
-
-    {
-	char fnam[80];
-	plgfnam(fnam);
-	if (strlen(fnam) > 0)
-	    plexit("must be a terminal type!");
-    }
-
     pladv(0);    
     plvsta();    
+
+/* Register our error variables with PLplot */
+/* From here on, we're handling all errors here */
+
+    plsError(&errcode, errmsg);
 
     plstripc(&id1, "bcnst", "bcnstv",
 	     tmin, tmax, tjump, ymin, ymax,
@@ -98,6 +99,15 @@ main(int argc, char *argv[])
 	     colbox, collab,
 	     colline, styline, legline, 
 	     "t", "", "Strip chart demo"); 
+
+    if (errcode) {
+	fprintf(stderr, "%s\n", errmsg);
+	exit(1);
+    }
+
+/* Let plplot handle errors from here on */
+
+    plsError(NULL, NULL);
 
     autoy = 0;	/* autoscale y */
     acc = 1;	/* accumulate */
