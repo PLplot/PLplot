@@ -813,7 +813,14 @@ EOF`])
         AC_MSG_RESULT($OCTAVE_M_DIR)
 
         AC_MSG_CHECKING([Octave oct dir])
-        OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(octfiledir)	
+	if test -n "`echo $OCTAVE_VERSION | sed 's/^2.1//p;d;q'`" ; then
+            # Octave version 2.1
+            OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(localoctfiledir)	
+        else
+            # Octave version 2.0
+            OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(localoctfilepath)
+            [OCTAVE_OCT_DIR=`echo $OCTAVE_OCT_DIR | sed 's/[^:]*://g;s://$::'`]
+        fi
 	if test "$OCTAVE_PREFIX" != "$prefix" ; then
   	    OCTAVE_OCT_DIR=$PLPLOT_OCTAVE_DIR
 	fi
