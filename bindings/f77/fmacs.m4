@@ -22,10 +22,16 @@ divert(-1)dnl
 #
 # The text (comments) in this file are discarded by the divert().
 #
-# At the end of the file the comment introducer is changed to a "*".
+# At the end of the file the m4 comments are turned off.
 #
 # $Id$
 # $Log$
+# Revision 1.5  2000/12/24 01:44:52  airwin
+# At end of file turn off m4 commenting.  Before it was set to * to end of
+# line which meant that any fortran line with "*" in it had everything after
+# that "*" ignored for m4 processing.  (Not good! for type conversions that
+# AWI needs in arithmetic statements.)
+#
 # Revision 1.4  2000/12/23 23:09:18  airwin
 # For fortran conversions using m4 define DBLE to be either dble or real
 # depending on whether DOUBLE is set.  Also, for linux attempt to
@@ -220,5 +226,5 @@ ifdef({INCLUDED_FMACS},,{
 #============================================================================#
 
 })
-changecom(*)
+changecom
 divert(0)dnl
