@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.28  1993/07/16 22:28:09  mjl
-   Added prototypes for driver interface functions, new plshade function,
-   plgFileDevs (for retrieving file device list) function.  Simplified PLKey
-   definition by removing attribute info (not really necessary).
+   Revision 1.29  1993/07/31 08:09:18  mjl
+   Cleaned up a bit.
 
+ * Revision 1.28  1993/07/16  22:28:09  mjl
+ * Added prototypes for driver interface functions, new plshade function,
+ * plgFileDevs (for retrieving file device list) function.  Simplified PLKey
+ * definition by removing attribute info (not really necessary).
+ *
  * Revision 1.27  1993/07/02  07:23:35  mjl
  * Now holds only those symbols absolutely needed by applications to use
  * PLPLOT.  Includes typedefs and function prototypes, maybe an occaisional
@@ -20,86 +23,6 @@
  * Revision 1.24  1993/03/28  08:45:05  mjl
  * Added support for NEC SX-3.  Also moved determination of stub name handling
  * to plstubs.h (more appropriate).
- *
- * Revision 1.23  1993/03/18  07:05:47  mjl
- * Bumped version to 4.99c.
- *
- * Revision 1.22  1993/03/16  06:54:18  mjl
- * Minor documentation change.
- *
- * Revision 1.21  1993/03/16  06:47:39  mjl
- * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
- * more robust.
- *
- * Revision 1.20  1993/03/15  21:51:24  mjl
- * Bumped version number to 4.99b.
- *
- * Revision 1.19  1993/03/10  05:02:26  mjl
- * Changed documentation slightly, and inserted #ifndef _POSIX_SOURCE before
- * the define of _POSIX_SOURCE for an eensy weensy little bit of added safety.
- *
- * Revision 1.18  1993/03/06  05:06:50  mjl
- * Inserted sick hack so that Suns without an ANSI libc can use fseek/ftell
- * instead of fsetpos/fgetpos.
- *
- * Revision 1.17  1993/03/03  19:42:18  mjl
- * Changed PLSHORT -> short everywhere; now all device coordinates are expected
- * to fit into a 16 bit address space (reasonable, and good for performance).
- *
- * Revision 1.16  1993/03/03  16:58:19  mjl
- * Added prototype for plscolbg().
- *
- * Revision 1.15  1993/03/02  19:00:19  mjl
- * Added prototype for plgver() and its stub name def'n.
- *
- * Revision 1.14  1993/02/26  06:05:41  mjl
- * Surrounded the test for NULL being defined with an "#ifdef sun" since it
- * is bound to cause problems otherwise.
- *
- * Revision 1.13  1993/02/26  05:19:39  mjl
- * Fix for SUNOS -- NULL isn't always defined.  Should it be?  Anyhow this
- * was the easiest way to fix it.
- *
- * Revision 1.12  1993/02/25  18:43:54  mjl
- * Eliminated obsolete typedef.
- *
- * Revision 1.11  1993/02/23  04:54:45  mjl
- * Added support data structures and constant definitions for plplot options
- * handling code.  Added function prototypes for new functions and deleted
- * a couple.  Eliminated case of VOID == char since that should never be
- * necessary with ANSI C.
- *
- * Revision 1.10  1993/01/23  05:37:43  mjl
- * Elimination of many function prototypes (and a few added), caused by
- * many routines becoming static in reorganization.
- *
- * Revision 1.8  1992/11/07  08:03:26  mjl
- * Added prototypes for a couple new set/get routines (gscale/sscale).
- *
- * Revision 1.7  1992/10/27  22:14:00  mjl
- * Support for plflush() function.
- *
- * Revision 1.6  1992/10/20  20:14:11  mjl
- * Added prototypes, definitions for new routine plfamadv(), for advancing
- * to next family member file.
- *
- * Revision 1.5  1992/10/12  17:10:32  mjl
- * Added support for PL_NEED_SIZE_T switch to plplot.h and reworked comments.
- * Moved plamiga.h to sys/amiga/src.
- *
- * Revision 1.4  1992/09/30  18:25:34  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.3  1992/09/29  04:45:32  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.2  1992/07/31  06:05:16  mjl
- * Added prototype for new function used in contour plots (pltrf0).
- *
- * Revision 1.1  1992/05/20  21:33:43  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*
