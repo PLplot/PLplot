@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.11  1993/09/08 18:39:15  mjl
+# Revision 1.12  1993/10/04 21:48:09  mjl
+# Fixed "Save As" command under TK 3.3, broken because of the change in the
+# way glob works.  The old way was better.
+#
+# Revision 1.11  1993/09/08  18:39:15  mjl
 # Added global cascade_arrow variable to fake cascade menu arrows under
 # Tk 3.2 (Tk 3.3 has default ones that are much nicer).
 #
@@ -445,10 +449,15 @@ proc plw_print {w} {
 # plw_saveas
 #
 # Saves plot to specified device.
+# I have to go through a bit of trickery to get "~" expanded, since the
+# Tcl 7.0 glob no longer expands names if the file doesn't already exist.
 #----------------------------------------------------------------------------
 
 proc plw_saveas {w dev} {
-    set file [lindex [glob -nocomplain [getItem "Enter file name"]] 0]
+    set file [getItem "Enter file name"]
+    if { [string index $file 0] == "~" } {
+	set file [glob ~][string trimleft $file ~]
+    }
     if { [string length $file] > 0 } {
 	if { [file exists $file] } {
 	    if { ! [confirm "File $file already exists.  Are you sure?"] } {
