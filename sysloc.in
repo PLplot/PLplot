@@ -999,11 +999,11 @@ if test "$with_pthreads" = "yes" -a "$enable_xwin" = "yes"; then
         PTHREADLIBS="-lpthread" ], [ with_pthreads="no"])
 
     case "$host_os" in
-        darwin*)
-            PLPLOT_MUTEX_RECURSIVE=PTHREAD_MUTEX_RECURSIVE
+        linux*)
+            PLPLOT_MUTEX_RECURSIVE=PTHREAD_MUTEX_RECURSIVE_NP
 	;;
 	*)	    
-            PLPLOT_MUTEX_RECURSIVE=PTHREAD_MUTEX_RECURSIVE_NP
+            PLPLOT_MUTEX_RECURSIVE=PTHREAD_MUTEX_RECURSIVE
         ;;
     esac
 
