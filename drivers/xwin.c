@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1993/12/06 07:42:31  mjl
+ * Revision 1.29  1993/12/08 06:17:33  mjl
+ * Split off definition of state structure into header file.  Changed end of
+ * page handler to check for and process events even if not pausing before
+ * the next page.
+ *
+ * Revision 1.28  1993/12/06  07:42:31  mjl
  * Changed escape flush function to also handle any pending events.
  *
  * Revision 1.27  1993/11/15  08:29:56  mjl
@@ -9,51 +14,6 @@
  * Revision 1.26  1993/11/07  09:02:33  mjl
  * Some minor optimizations.  Also added escape function handling for dealing
  * with flushes.
- *
- * Revision 1.25  1993/10/01  23:18:33  mjl
- * Inserted XSync after creation of pixmap in CreatePixmap() to ensure
- * the test for a bad allocation is really completed.
- *
- * Revision 1.24  1993/09/14  22:25:44  mjl
- * One of the safety checks was mistakenly commented out.
- *
- * Revision 1.23  1993/08/28  06:29:42  mjl
- * Added a safety check that the escape function pointer for resizes is
- * initialized, and moved some XSync commands (deep magic, don't ask).
- *
- * Revision 1.22  1993/08/11  19:22:23  mjl
- * Fixed warning under Sun's acc.
- *
- * Revision 1.21  1993/07/31  07:58:33  mjl
- * Several driver functions consolidated, for all drivers.  The width and color
- * commands are now part of a more general "state" command.  The text and
- * graph commands used for switching between modes is now handled by the
- * escape function (very few drivers require it).  The color initialization
- * was modified to work better with the TK driver, and the function to detect
- * grayscale displays made external for use from tk.c.
- *
- * Revision 1.20  1993/07/28  05:34:45  mjl
- * Added error handler to trap pixmap allocation errors, and switch to a
- * slower method (redraw) of refreshing window on exposes.  Also added
- * globally visible utility functions for converting between a PLColor and
- * an XColor, as well as other minor changes.
- *
- * Revision 1.19  1993/07/16  22:17:00  mjl
- * Added escape function to redraw plot (unlike resize, the window size remains
- * unchanged).  Changed draw functions to only draw to the pixmap during page
- * redraws.  Pixmap is then copied to the actual window when done, for faster
- * and more smooth response.
- *
- * Revision 1.18  1993/07/01  22:05:48  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
- * now start with "pl"; device driver functions start with "plD_".  X driver
- * enhanced to plot to a specified window id.  A pixmap is now used for
- * handling expose events.  External entries for doing expose, resize, and
- * redraw events were created using the escape function (for use from TK
- * plframe widget).  The X-driver device data is now dynamically allocated,
- * for use by multiple streams.  The default size of the created X window
- * has been reduced some.
 */
 
 /*	xwin.c
@@ -63,58 +23,12 @@
 #ifdef XWIN
 
 #include "plplotP.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/cursorfont.h>
-#include <X11/keysym.h>
-
+#include "plplotX.h"
 #include "drivers.h"
 #include "plevent.h"
-#include "xwin.h"
-
-/* Struct to hold device-specific info. */
-/* INDENT OFF */
-
-typedef struct {
-    int		exit_eventloop;
-    long	init_width;
-    long	init_height;
-
-    U_INT	width, height;
-    U_INT	depth, border;
-
-    double	xscale;
-    double	yscale;
-    double	xscale_dev;
-    double	yscale_dev;
-
-    short xold, yold;		/* Coordinates of last point plotted */
-    short xlen, ylen;		/* Lengths of device coordinate space */
-
-    int		color;
-    XColor	cmap0[16];
-    XColor	bgcolor;
-    XColor	fgcolor;
-    XColor	curcolor;
-
-    int		write_to_window;
-    int		write_to_pixmap;
-
-    int		is_main;
-    int		screen;
-    Display	*display;
-    Window	window;
-    GC		gc;
-    Colormap	map;
-    Pixmap	pixmap;
-} XwDev;
 
 /* Function prototypes */
+/* INDENT OFF */
 
 static void  Init		(PLStream *);
 static void  Init_main		(PLStream *);
@@ -635,8 +549,10 @@ WaitForPage(PLStream *pls)
 
     dbug_enter("WaitForPage");
 
-    if (pls->nopause || ! dev->is_main)
+    if (pls->nopause || ! dev->is_main) {
+	HandleEvents(pls);	/* Check for events */
 	return;
+    }
 
     while ( ! dev->exit_eventloop) {
 	XNextEvent(dev->display, &event);
@@ -678,7 +594,7 @@ static void
 EventHandler(PLStream *pls, XEvent *event)
 {
     switch (event->type) {
-	case KeyPress:
+      case KeyPress:
 	KeyEH(pls, event);
 	break;
 
