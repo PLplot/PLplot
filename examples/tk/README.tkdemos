@@ -24,7 +24,7 @@ examples using the plframe widget:
 
 (1) 
 plserver
-source tcldemos.tcl
+source tkdemos.tcl
 1
 2
 ....

@@ -171,9 +171,9 @@ imp,
 linuxvga, 
 ljii, 
 ljiip, 
+ntk, 
 null, 
 pbm, 
-ntk, 
 plmeta, 
 ps, psc, 
 pstex, 
@@ -202,9 +202,9 @@ imp \
 linuxvga \
 ljii \
 ljiip \
+ntk \
 null \
 pbm \
-ntk \
 plmeta \
 ps psc \
 pstex \
@@ -242,9 +242,9 @@ imp:impress \
 linuxvga:linuxvga \
 ljii:ljii \
 ljiip:ljiip \
+ntk:ntk \
 null:null \
 pbm:pbm \
-ntk:ntk \
 plmeta:plmeta \
 ps:ps psc:ps \
 pstex:pstex \
@@ -554,7 +554,7 @@ AC_SUBST(LIB_TAG)
 AC_DEFINE_UNQUOTED(DRIVERS_DB, "$DRIVERS_DB")
 
 ### Dynamic driver conditional
-AM_CONDITIONAL(enable_dyndrivers, [test "$with_double" = yes])
+AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
 
 
 ### C++ binding
