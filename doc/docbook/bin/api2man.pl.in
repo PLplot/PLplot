@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 # File: api2man.pl
-# Description: Convert the PLplot API chapter (file api.xml of the DocBook 
+# Description: Convert the PLplot API chapter (file api.xml of the DocBook
 #              manual) into a series of man pages.
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Mon Dec  4 16:35:32 CET 2000
-# Last modified on: Tue Dec  5 08:56:41 CET 2000
+# Last modified on: Mon Mar 17 15:19:31 CET 2003
 # $Id$
 
 # This script relies on the present structure of the API chapter (file
@@ -62,11 +62,21 @@ while (<MASTER>) {
   if (/^(<!DOCTYPE.*)\[/) {
     $api .= "$1 \"\" [\n";
   }
-  elsif (/^(<\?xml|<!ENTITY pl)/) {
-    $api .= "$_";
+  elsif (/^<\?xml/) {
+    $api .= '<?xml version="1.0" standalone="yes"?>
+';
+  }
+  elsif (/^<!ENTITY pl/) {
+    $api .= $_;
   }
 }
-$api .= "]>\n";
+$api .= "<!ENTITY amp '#38;#38;'>
+<!ENTITY deg ' degrees'>
+<!ENTITY gt '&#x003E;'>
+<!ENTITY leq '&#38;#60;='>
+<!ENTITY lt '&#38;#60;'>
+<!ENTITY ndash '--'>
+]>\n";
 close MASTER;
 
 open (API, "< $ARGV[1]");
@@ -80,8 +90,8 @@ $date =~ s/\n.*//;
 $opening = ".\\\" This page was automatically generated.  Do not edit!\n.\\\" \n";
 $closing = "
 .SH AUTHORS
-Geoffrey Furnish and Maurice LeBrun wrote and maintain PLplot.  This man page 
-was automatically generated from the DocBook source of the PLplot 
+Geoffrey Furnish and Maurice LeBrun wrote and maintain PLplot.  This man page
+was automatically generated from the DocBook source of the PLplot
 documentation, maintained by Alan W. Irwin and Rafael Laboissiere.
 .SH SEE ALSO
 PLplot documentation at http://@PLPLOT_WEBSITE@/resources.
@@ -110,38 +120,38 @@ sub process_node {
       }
       elsif  ($tag eq "function") {
         $ret .= "\\fB" . process_node ($e) . "\\fP";
-      }      
+      }
       elsif  ($tag eq "link") {
         $ret .= process_node ($e) . "($manvol)";
-      }      
+      }
       elsif  ($tag eq "funcprototype") {
         $startproto = 1;
 	my $p = process_node ($e);
 	$p =~ s/ +$//;
         $ret .= $p . ")";
-      }      
+      }
       elsif  ($tag eq "paramdef") {
 	my $p = process_node ($e);
 	$p =~ s/ +$//;
         $ret .= ($startproto ? "(" : ", ") . $p;
         $startproto = 0;
-      }      
+      }
       elsif  ($tag eq "term") {
         $ret .= ".TP\n" . process_node ($e) . "\n";
-      }      
+      }
       elsif  ($tag eq "listitem") {
         $ret .= process_node ($e) . "\n";
-      }      
+      }
       elsif  ($tag eq "xref") {
         $ret .= "the PLplot documentation";
-      }      
+      }
       else {
         $ret .= process_node ($e);
-      }    
+      }
     }
     else {
       $ret .= process_node ($e);
-    }    
+    }
   }
   $ret =~ s/^\s+//;
   return $ret;
