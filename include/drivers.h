@@ -153,6 +153,25 @@ void plD_tidy_vga		(PLStream *);
 void plD_state_vga		(PLStream *, PLINT);
 void plD_esc_vga		(PLStream *, PLINT, void *);
 
+void plD_init_tiff		(PLStream *);
+void plD_eop_tiff		(PLStream *);
+void plD_bop_tiff		(PLStream *);
+void plD_tidy_tiff		(PLStream *);
+void plD_esc_tiff		(PLStream *, PLINT, void *);
+
+void plD_init_bmp		(PLStream *);
+void plD_eop_bmp		(PLStream *);
+void plD_bop_bmp		(PLStream *);
+void plD_tidy_bmp		(PLStream *);
+void plD_esc_bmp		(PLStream *, PLINT, void *);
+
+void plD_init_jpeg		(PLStream *);
+void plD_eop_jpeg		(PLStream *);
+void plD_bop_jpeg		(PLStream *);
+void plD_tidy_jpeg		(PLStream *);
+void plD_esc_jpeg		(PLStream *, PLINT, void *);
+
+
 void plD_init_mac1		(PLStream *);
 void plD_init_mac8		(PLStream *);
 void plD_line_mac		(PLStream *, short, short, short, short);

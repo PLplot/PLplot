@@ -306,7 +306,7 @@ static PLDispatchTable dispatch_table[] = {
 
 #ifdef PLD_gnusvga
     {
-	"SVGA Screen (djgpp)",
+	"SVGA Screen (GRX20)",
 	"vga",
 	1,
 	plD_init_vga,
@@ -317,6 +317,54 @@ static PLDispatchTable dispatch_table[] = {
 	plD_tidy_vga,
 	plD_state_vga,
 	plD_esc_vga
+    },
+#endif
+
+#ifdef PLD_tiff
+    {
+	"TIFF File (TIFFLIB / GRX20)",
+	"tiff",
+	0,
+	plD_init_tiff,
+	plD_line_vga,
+	plD_polyline_vga,
+	plD_eop_tiff,
+	plD_bop_tiff,
+	plD_tidy_tiff,
+	plD_state_vga,
+	plD_esc_tiff
+    },
+#endif
+
+#ifdef PLD_jpeg
+    {
+	"JPEG File (Independent JPEG Group/ GRX20)",
+	"jpeg",
+	0,
+	plD_init_jpeg,
+	plD_line_vga,
+	plD_polyline_vga,
+	plD_eop_jpeg,
+	plD_bop_jpeg,
+	plD_tidy_jpeg,
+	plD_state_vga,
+	plD_esc_jpeg
+    },
+#endif
+
+#ifdef PLD_bmp
+    {
+	"Windows Bitmap File (GRX20)",
+	"bmp",
+	0,
+	plD_init_bmp,
+	plD_line_vga,
+	plD_polyline_vga,
+	plD_eop_bmp,
+	plD_bop_bmp,
+	plD_tidy_bmp,
+	plD_state_vga,
+	plD_esc_bmp
     },
 #endif
 
