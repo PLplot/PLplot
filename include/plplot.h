@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.51  1993/12/08 06:43:37  mjl
+ * Revision 1.52  1994/01/15 17:33:42  mjl
+ * Bumped version number, defined prototype wrapper macro.
+ *
+ * Revision 1.51  1993/12/08  06:43:37  mjl
  * Bumped version to 4.99f.
  *
  * Revision 1.50  1993/12/08  06:20:02  mjl
@@ -56,7 +59,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99f"
+#define PLPLOT_VERSION "4.99g"
 
 /*----------------------------------------------------------------------*\
 *    USING PLPLOT
@@ -130,6 +133,10 @@ plplot (not ANSI-compliant).  Time to get a new one.
 #define __unix
 #endif
 #endif
+
+/* A wrapper used in some header files so they can be compiled with cc */
+
+#define PLARGS(a)	a
 
 /*----------------------------------------------------------------------*\
 * Base types for PLPLOT
