@@ -44,7 +44,6 @@ java/plplot/examples/%.class : %.java
 	javac -d java $<
 
 java_build_target: $(jclss)
-	@echo "Java targets rebuilt"
 
 jdemos: $(java_demo_clss)
 
