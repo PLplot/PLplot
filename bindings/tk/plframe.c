@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.55  1996/02/23 21:03:57  furnish
+ * Revision 1.56  1996/02/24 05:06:30  shouman
+ * Added #ifdef to allow compilation without itcl.
+ * Set value of ndev on call to plgFileDevs (bounds check).
+ *
+ * Revision 1.55  1996/02/23  21:03:57  furnish
  * Introduce support for rubber banding in the plframe.  This entails
  * adding new functions to support drawing, updating, etc, the rubber
  * band, and also fixing some of the old event handlers for the xhairs so
@@ -178,7 +182,9 @@ typedef struct {
     Tcl_Interp *interp;		/* Interpreter associated with
 				 * widget.  Used to delete widget
 				 * command.  */
+#ifdef HAVE_ITCL
     Tcl_Command widgetCmd;	/* Token for frame's widget command. */
+#endif
     Tk_3DBorder border;		/* Structure used to draw 3-D border and
 				 * background. */
     int borderWidth;		/* Width of 3-D border (if any). */
@@ -491,6 +497,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 	plFramePtr->devDesc[i] = NULL;
 	plFramePtr->devName[i] = NULL;
     }
+    ndev = NDEV;
     plgFileDevs(&plFramePtr->devDesc, &plFramePtr->devName, &ndev);
 
 /* Start up event handlers and other good stuff */
