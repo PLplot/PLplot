@@ -127,7 +127,7 @@ EOT
 
   plenv (1, $width, 1, $height, 1, -1);
 
-  pllab ((not $nointeractive
+  pllab (((not $nointeractive)
           ? "Set and drag Button 1 to (re)set selection, Button 2 to finish."
           : ""), " ", "Lena...");
 
@@ -225,7 +225,7 @@ sub get_clip {
         $sy->index (4) .= $yyi;
       }
 
-      if ($gin{state} && 0x100) {
+      if ($gin{state} & 0x100) {
         $xxe = $gin{wX};
         $yye = $gin{wY};
 
