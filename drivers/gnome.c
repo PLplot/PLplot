@@ -17,6 +17,8 @@
 /*#undef DEBUG*/
 #define DEBUG
 
+#define USE_THREADS
+
 #undef ANTIALISED_CANVAS
 
 /* Physical dimensions */
@@ -39,6 +41,10 @@
 
 /* Magnification factor for the PLplot physical dimensions */
 #define MAG_FACTOR 10
+
+#ifndef ABS
+#define ABS(x) ((x < 0) ? (-(x)) : (x))
+#endif
 
 #ifdef PLD_gnome
 
@@ -97,6 +103,8 @@ typedef struct {
   guint npages;
   GnomePLdevPage** page;
   guint parent_is_from_driver;
+  PLINT pattern;
+  GdkBitmap* pattern_stipple[2];
 } GnomePLdev;
 
 void
@@ -662,6 +670,9 @@ gnome_pldev_create (PLStream* pls)
   dev = g_malloc (sizeof (GnomePLdev));
   pls->dev = dev;
   dev->npages = 0;
+  dev->pattern = 0;
+  dev->pattern_stipple[0] = NULL;
+  dev->pattern_stipple[1] = NULL;
   vbox = gtk_vbox_new (FALSE, 0);
   dev->root = vbox;
 
@@ -745,7 +756,7 @@ plD_init_gnome (PLStream *pls)
 
     gtk_window_set_policy (GTK_WINDOW (window), TRUE, TRUE, TRUE);
 
-    gtk_window_set_default_size (GTK_WINDOW (window), 300, 300);
+    gtk_window_set_default_size (GTK_WINDOW (window), 700, 565);
 
     gtk_container_add (GTK_CONTAINER (window), dev->root);
 
@@ -759,7 +770,11 @@ plD_init_gnome (PLStream *pls)
 
   gnome_is_initialized = TRUE;
 
+#ifdef USE_THREADS
+
   pthread_create (&tid, NULL, init, NULL); 
+
+#endif
 
 }
 
@@ -839,6 +854,7 @@ plD_line_gnome(PLStream *pls, short x1, short y1, short x2, short y2)
   y[1] = y2;
 
   plD_polyline_gnome(pls, x, y, (PLINT) 2);
+
 }
 
 /*--------------------------------------------------------------------------*\
@@ -916,7 +932,17 @@ plD_bop_gnome(PLStream *pls)
 void
 plD_tidy_gnome(PLStream *pls)
 {
+
+#ifdef USE_THREADS
+
   pthread_join (tid, NULL);
+
+#else
+
+  gtk_main();
+
+#endif
+
 }
 
 /*--------------------------------------------------------------------------*\
@@ -947,6 +973,107 @@ plD_state_gnome(PLStream *pls, PLINT op)
   }
 }
 
+static void
+generate_pattern_fill (PLStream* pls)
+{
+  GnomePLdev* dev = pls->dev;
+  int i;
+
+  if (dev->pattern == pls->patt)
+    return;
+  
+  dev->pattern = pls->patt;
+  
+  for (i = 0; i < pls->nps; i++) {
+    int j;
+    PLINT incl;
+    double tani;
+    double dist; /* in pixels */
+    int width;
+    int height;
+    int cols;
+    double inclr;
+    double sini;
+    double cosi;
+    GdkGC* gc;
+    GdkColor color;
+    
+    dist = (pls->delta[i]/1e3) * PIXELS_PER_MM;
+    
+    incl = pls->inclin[i] % 3600;
+    if (incl > 900)
+      incl = incl - 900;
+    else if (incl < -900)
+      incl = incl + 900;
+    
+    inclr = PI * incl / 1800.0;
+    sini = sin (inclr);
+    cosi = cos (inclr);
+    
+    if (ABS (sini) < cosi) {
+      if (sini == 0.0) {
+	width = (int) dist;
+	height = 2;
+      }
+      else {
+	width = MIN (ABS (dist / sini), 64);
+	height = MAX (dist / cosi, 2);
+      }
+    }
+    else {
+      if (ABS(incl) == 900) {
+	width = 2;
+	height = (int) dist;
+      }
+      else {
+	width = MAX (ABS (dist / sini), 2);
+	height = MIN (dist / cosi, 64);
+      }
+    }
+    
+    if (dev->pattern_stipple[i] != NULL)
+      gdk_pixmap_unref (dev->pattern_stipple[i]);
+    else
+      dev->pattern_stipple[i] = gdk_pixmap_new (NULL, width, height, 1);
+
+    gc = gdk_gc_new (dev->pattern_stipple[i]);
+
+    gdk_color_parse ("white", &color);
+    gdk_gc_set_background (gc, &color);
+
+    gdk_color_parse ("black", &color);
+    gdk_gc_set_foreground (gc, &color);
+    gdk_gc_set_line_attributes (gc, 2, GDK_LINE_SOLID, 0, 0);
+
+    printf ("cosi = %f    width = %d     height = %d\n", cosi, width, height);
+    fflush (stdout);
+
+    if (sini < 0) {
+      gdk_draw_line (dev->pattern_stipple[i], gc, 0, 0, width, height);
+      /*      gdk_draw_line (dev->pattern_stipple[i], gc, 0, -height, 2*width, height);
+      gdk_draw_line (dev->pattern_stipple[i], gc, -width, 0, width, 2*height);
+      */
+    }
+    else {
+      gdk_draw_line (dev->pattern_stipple[i], gc, width, 0, 0, height);
+      /*      gdk_draw_line (dev->pattern_stipple[i], gc, 2*width, 0, 0, 2*height);
+      gdk_draw_line (dev->pattern_stipple[i], gc,
+      width, -height, -width, height); */
+    }
+
+    gdk_gc_set_clip_mask (gc, dev->pattern_stipple[i]);
+    gdk_gc_set_clip_origin (gc, 0, 0);
+    gdk_draw_pixmap (dev->pattern_stipple[i], gc,
+		     dev->pattern_stipple[i], 0, 0, 0, 0, width, height);
+
+    gdk_gc_unref (gc);
+
+    debug ("Got out\n");
+
+  }
+}
+
+
 static void 
 fill_polygon (PLStream* pls)
 {
@@ -958,12 +1085,6 @@ fill_polygon (PLStream* pls)
   GnomeCanvas* canvas;
   guint i;
 
-  /* Experimental stuff for pattern fill */
-  GdkPixmap* bitmap;
-  char const pattern[8] =   {
-    0x81, 0xc0, 0x60, 0x30, 0x18, 0x0c, 0x06, 0x03
-  }; 
-  
   dev = pls->dev;
 
   gdk_threads_enter ();
@@ -985,19 +1106,19 @@ fill_polygon (PLStream* pls)
 
   /* Experimental stuff for pattern fill */
   if (pls->patt < 0) {
-    
-    bitmap = gdk_bitmap_create_from_data (NULL, pattern, 8, 8);
-    
-    item = gnome_canvas_item_new (group,
-				  gnome_canvas_polygon_get_type (),
-				  "points", points,
-				  "fill_stipple", bitmap,
-				  "fill_color_rgba",
-				  plcolor_to_rgba (pls->curcolor, 0xFF),
-				  "width_units", 0.0,
-				  NULL);
+    int i;
 
-    gdk_pixmap_unref (bitmap);
+    generate_pattern_fill (pls);
+
+    for (i = 0; i < pls->nps; i++) 
+      item = gnome_canvas_item_new (group,
+				    gnome_canvas_polygon_get_type (),
+				    "points", points,
+				    "fill_stipple", dev->pattern_stipple[i],
+				    "fill_color_rgba",
+				    plcolor_to_rgba (pls->curcolor, 0xFF),
+				    "width_units", 0.0,
+				    NULL);
   }
   else
     item = gnome_canvas_item_new (group,
