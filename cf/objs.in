@@ -22,6 +22,8 @@ mgr$O: mgr.c plDevs.h
 next$O: next.c plDevs.h
 null$O: null.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
   drivers.h
+pbm$O: pbm.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
 pdfutils$O: pdfutils.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
 plargs$O: plargs.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
 plbox$O: plbox.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h

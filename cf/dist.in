@@ -84,6 +84,7 @@ DRIVERS_C = \
 	ljii.c \
 	next.c \
 	null.c \
+	pbm.c \
 	plbuf.c \
 	plmeta.c \
 	ps.c \
@@ -100,6 +101,7 @@ DRIVERS_OBJ = \
 	ljii$O \
 	next$O \
 	null$O \
+	pbm$O \
 	plbuf$O \
 	plmeta$O \
 	ps$O \

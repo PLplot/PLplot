@@ -1,7 +1,10 @@
 /* -*-C-*- */
 /* $Id$
  * $Log$
- * Revision 1.5  1995/06/12 02:52:31  mjl
+ * Revision 1.6  1996/10/08 18:38:44  furnish
+ * New file for the pbm driver.
+ *
+ * Revision 1.5  1995/06/12  02:52:31  mjl
  * Changes to allow linuxvga driver to be configured in under Linux.
  * Contributed by Mark Olesen.
  *
@@ -57,5 +60,6 @@
 #undef PLD_xwin
 #undef PLD_tk
 #undef PLD_dp
+#undef PLD_pbm
 
 #endif	/* __PLDEVS_H__ */
