@@ -608,6 +608,11 @@ fi
 
 ### Double vs single precison
 
+MY_ARG_WITH(double,
+  AC_HELP_STRING([--with-double],
+    [Compile the library with double precision floating point
+     ($with_double)]))
+
 if test "$with_double" = yes; then
   AC_DEFINE(PL_DOUBLE, [],
             [Define if you want PLplot's float type to be double])
