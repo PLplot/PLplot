@@ -87,6 +87,7 @@ void plplot_canvas_get_viewport(PlplotCanvas* self,gdouble xmin1,
 void plplot_canvas_use_text(PlplotCanvas* self,gboolean use_text);
 void plplot_canvas_use_fast_rendering(PlplotCanvas* self,
 				      gboolean use_fast_rendering);
+void plplot_canvas_use_pixmap(PlplotCanvas* self,gboolean use_pixmap);
 void plplot_canvas_use_foreground_group(PlplotCanvas* self);
 void plplot_canvas_use_background_group(PlplotCanvas* self);
 void plplot_canvas_use_default_group(PlplotCanvas* self);

@@ -177,6 +177,12 @@ void plplot_canvas_use_fast_rendering(PlplotCanvas* self,
   gcw_use_fast_rendering(GNOME_CANVAS(self),use_fast_rendering);
 }
 
+void plplot_canvas_use_pixmap(PlplotCanvas* self,gboolean use_pixmap)
+{
+  plsstrm(self->Nstream); /* Select stream before plplot call */
+  gcw_use_pixmap(GNOME_CANVAS(self),use_pixmap);
+}
+
 void plplot_canvas_use_foreground_group(PlplotCanvas* self)
 {
   plsstrm(self->Nstream); /* Select stream before plplot call */
