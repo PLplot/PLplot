@@ -70,6 +70,32 @@ cmap1_init(int gray)
  * viewing options in each plot.
 \*--------------------------------------------------------------------------*/
 
+
+static int rosen;
+
+static PLOptionTable options[] = {
+{
+    "rosen",			/* Turns on test of API locate function */
+    NULL,
+    NULL,
+    &rosen,
+    PL_OPT_BOOL,
+    "-rosen",
+    "Use the Rosenbrock function." },
+{
+    NULL,			/* option */
+    NULL,			/* handler */
+    NULL,			/* client data */
+    NULL,			/* address of variable to set */
+    0,				/* mode flag */
+    NULL,			/* short syntax */
+    NULL }			/* long syntax */
+};
+
+char *notes[] = {"Make sure you get it right!", NULL};
+
+#define LEVELS 10
+
 int
 main(int argc, char *argv[])
 {
@@ -77,9 +103,12 @@ main(int argc, char *argv[])
   PLFLT *x, *y, **z;
   PLFLT xx, yy, r;
   PLINT ifshade;
+  PLFLT zmin, zmax, step;
+  PLFLT clevel[LEVELS];
+  PLINT nlevel=LEVELS;
 
   /* Parse and process command line arguments */
-
+  plMergeOpts(options, "x08c options", notes);
   (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
   /* Initialize plplot */
@@ -92,52 +121,67 @@ main(int argc, char *argv[])
 
   for (i = 0; i < XPTS; i++) {
     z[i] = (PLFLT *) malloc(YPTS * sizeof(PLFLT));
-    x[i] = (double) (i - (XPTS / 2)) / (double) (XPTS / 2);
+    x[i] = ((double) (i - (XPTS / 2)) / (double) (XPTS / 2));
+    if (rosen)
+      x[i] *=  1.5;
   }
 
-  for (i = 0; i < YPTS; i++)
+  for (i = 0; i < YPTS; i++) {
     y[i] = (double) (i - (YPTS / 2)) / (double) (YPTS / 2);
+    if (rosen)
+      y[i] += 0.5;
+  }
 
   for (i = 0; i < XPTS; i++) {
     xx = x[i];
     for (j = 0; j < YPTS; j++) {
       yy = y[j];
-      r = sqrt(xx * xx + yy * yy);
-      z[i][j] = exp(-r * r) * cos(2.0 * PI * r);
+      if (rosen)
+	z[i][j] = log(pow(1. - xx,2) + 100 * pow(yy - pow(xx,2),2));
+      else {
+	r = sqrt(xx * xx + yy * yy);
+	z[i][j] = exp(-r * r) * cos(2.0 * PI * r);
+      }
     }
   }
 
+  plMinMax2dGrid(z, XPTS, YPTS, &zmax, &zmin);
+  step = (zmax-zmin)/nlevel;
+  for (i=0; i<LEVELS; i++)
+      clevel[i] = zmin + i*step;
+  
   pllightsource(1.,1.,1.);
     	
   for (k = 0; k < 4; k++) {
-    for (ifshade = 0; ifshade < 4; ifshade++) {
-      pladv(0);
-      plvpor(0.0, 1.0, 0.0, 0.9);
-      plwind(-1.0, 1.0, -0.9, 1.1);
-      plcol0(1);
-      plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
-      plbox3("bnstu", "x axis", 0.0, 0,
-	     "bnstu", "y axis", 0.0, 0,
-	     "bcdmnstuv", "z axis", 0.0, 0);
-      plcol0(2);
+      for (ifshade = 0; ifshade < 4; ifshade++) {
+	  pladv(0);
+	  plvpor(0.0, 1.0, 0.0, 0.9);
+	  plwind(-1.0, 1.0, -0.9, 1.1);
+	  plcol0(1);
+	  if (rosen)
+	    plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, -5.0, 7.0, alt[k], az[k]);
+	  else
+	    plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
 
-      if (ifshade == 0)        /* wireframe plot */
-	plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
-      else if (ifshade == 1) { /* light difused shaded plot */
-	cmap1_init(1);
-	plotsh3d(x, y, z, XPTS, YPTS, 0);
-      } else {                 /* false color plot */
-	cmap1_init(0);
-	plotfc3d(x, y, z, XPTS, YPTS, 0);
-	if (ifshade == 3) {    /* add wireframe to false color plot */
-	  plcol0(0);
-	  plot3d(x, y, z, XPTS, YPTS, opt[k], 0);
-	}
+	  plbox3("bnstu", "x axis", 0.0, 0,
+		 "bnstu", "y axis", 0.0, 0,
+		 "bcdmnstuv", "z axis", 0.0, 0);
+	  plcol0(2);
+
+	  if (ifshade == 0)        /* wireframe plot */
+	      plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
+	  else if (ifshade == 1) { /* light difused shaded plot */
+	      cmap1_init(1);
+	      plotsh3d(x, y, z, XPTS, YPTS, 0);
+	  } else if (ifshade == 2) { /* false color plot */
+	      cmap1_init(0);
+	      plotfc3d(x, y, z, XPTS, YPTS, 0, clevel, nlevel);
+	  } else    /* false color plot with contours */
+	      plotfc3d(x, y, z, XPTS, YPTS, SURF_CONT | BASE_CONT, clevel, nlevel);
       }
       plcol0(3);
       plmtex("t", 1.0, 0.5, 0.5, title[k]);
-    }   
-  }
+  }   
 
   plend();
   exit(0);
