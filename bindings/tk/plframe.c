@@ -515,6 +515,20 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 
     dbug_enter("PlFrameWidgetCmd");
 
+#ifdef DEBUG
+    {
+        int i;
+        PLStream *pls;
+        plgpls(pls);
+        printf( "Current stream %d, frame stream %d\n",
+                pls->ipls, plFramePtr->ipls );
+        printf( "PlFrameWidgetCmd: " );
+        for( i=0; i < argc; i++ )
+            printf( " %s", argv[i] );
+        printf( "\n" );
+    }
+#endif
+
     if (argc < 2) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
 		argv[0], " option ?arg arg ...?\"", (char *) NULL);
@@ -523,18 +537,6 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     Tk_Preserve((ClientData) plFramePtr);
     c = argv[1][0];
     length = strlen(argv[1]);
-
-#ifdef DEBUG
-    {
-        int i;
-        printf( "Current stream %d, frame stream %d\n",
-                plsc->ipls, plFramePtr->ipls );
-        printf( "PlFrameWidgetCmd: " );
-        for( i=0; i < argc; i++ )
-            printf( " %s", argv[i] );
-        printf( "\n" );
-    }
-#endif
 
 /* First, before anything else, we have to set the stream to be the one that
  * corresponds to this widget. */
@@ -1971,7 +1973,8 @@ ColorManip(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
 
 	if (changed) {
-	    plsc->ncp1 = ncp1;
+            PLStream *pls = plFramePtr->pls;
+	    pls->ncp1 = ncp1;
 	    plcmap1_calc();
 	}
     }
