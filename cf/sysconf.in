@@ -89,9 +89,10 @@ M4=m4
 # that I've decided to make it the default.  
 
 if test "$with_double" = "yes"; then
-    DBL_FLAG_C=-DDOUBLE
-    DBL_FLAG_CXX=-DDOUBLE
-    DBL_FLAG_M4=-DDOUBLE
+#    DBL_FLAG_C=-DDOUBLE
+#    DBL_FLAG_CXX=-DDOUBLE
+#    DBL_FLAG_M4=-DDOUBLE
+    AC_DEFINE(PL_DOUBLE)
     DBL_FLAG_F=-r8
 fi
 
