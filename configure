@@ -2870,6 +2870,29 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_mskermit\${ac_dB}PLD_mskermit\${ac_dC}1\
 
     DEVICES="$DEVICES mskermit"
 fi
+# check whether --enable-conex was given
+enableval="$enable_conex"
+if test -n "$enableval"; then
+  :
+else
+  enable_conex="yes"
+fi
+
+if test "$enable_conex" = "yes"; then
+    
+{
+test -n "$verbose" && \
+echo "	defining PLD_conex"
+echo "#define" PLD_conex "1" >> confdefs.h
+DEFS="$DEFS -DPLD_conex=1"
+ac_sed_defs="${ac_sed_defs}\${ac_dA}PLD_conex\${ac_dB}PLD_conex\${ac_dC}1\${ac_dD}
+\${ac_uA}PLD_conex\${ac_uB}PLD_conex\${ac_uC}1\${ac_uD}
+\${ac_eA}PLD_conex\${ac_eB}PLD_conex\${ac_eC}1\${ac_eD}
+"
+}
+
+    DEVICES="$DEVICES conex"
+fi
 # check whether --enable-vlt was given
 enableval="$enable_vlt"
 if test -n "$enableval"; then
@@ -3337,7 +3360,7 @@ with-debug:	$with_debug		with-opt:	$with_opt
 with-warn:	$with_warn		with-profile:	$with_profile
 with-f2c:	$with_f2c		with-gcc:	$with_gcc
 
-enable-xwin:	$enable-xwin		enable-tcl:	$enable_tcl
+enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
 enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
 "

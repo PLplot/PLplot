@@ -313,8 +313,9 @@ fi
 # --disable-<driver>) or via the cf_plplot.in file (remember to use
 # underscores instead of dashes here).
 
-PL_DRIVERS(plmeta, null, xterm, tek4010, tek4107, mskermit, vlt, versaterm, 
-dg300, ps, xfig, ljii, hp7470, hp7580, lj_hpgl, imp, xwin, tk, dp)
+PL_DRIVERS(plmeta, null, xterm, tek4010, tek4107, mskermit, conex, vlt,
+versaterm, dg300, ps, xfig, ljii, hp7470, hp7580, lj_hpgl, imp, xwin, tk,
+dp)
 
 # --------------------------------------------------------------------
 # Set up variables that specify install directories
@@ -449,7 +450,7 @@ with-debug:	$with_debug		with-opt:	$with_opt
 with-warn:	$with_warn		with-profile:	$with_profile
 with-f2c:	$with_f2c		with-gcc:	$with_gcc
 
-enable-xwin:	$enable-xwin		enable-tcl:	$enable_tcl
+enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
 enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
 "
