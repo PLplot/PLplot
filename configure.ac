@@ -963,7 +963,7 @@ with_warn:	$with_warn		with_profile:	$with_profile
 
 enable_shared:	$enable_shared		enable_static:	$enable_static
 with_rpath:	$with_rpath		with_double:	$with_double
-with_freetype:	$with_freetype
+with_freetype:	$with_freetype		with_qhull:	$with_qhull
 
 enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
 enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
