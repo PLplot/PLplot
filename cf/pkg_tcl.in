@@ -22,7 +22,7 @@ MAKEINDEX	= $(srcdir)/scripts/mktclIndex
 
 MAT_C		= tclMatrix.c matrixInit.c
 MAT_OBJS	= tclMatrix$O matrixInit$O
-MAT_OBJS_SO	=
+MAT_OBJS_SO	=tclMatrix$O matrixInit$O
 MAT_OBJS_SA	=
 
 # Variables used in accessing libraries.
