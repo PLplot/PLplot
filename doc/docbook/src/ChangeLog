@@ -1,0 +1,4 @@
+2000-11-19  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Released overhauled version with Automake support and XML
+	translation. 
