@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.67  1995/08/22 16:10:58  mjl
+ * Revision 1.68  1996/02/24 04:47:32  shouman
+ * Added call to XFlush in plD_tidy_xw, causing closed plot stream windows to
+ * disappear promptly.  Formerly, if another stream using the same display
+ * were open a zombied window would remain on screen.
+ *
+ * Revision 1.67  1995/08/22  16:10:58  mjl
  * Fixed bug associated with drawing to off-screen windows, which results in
  * non-portable behavior (sometimes works, sometimes fills window with
  * garbage).  Instead, write to pixmap always done first, which is then blitted
@@ -543,6 +548,7 @@ plD_tidy_xw(PLStream *pls)
 	XDestroyWindow(xwd->display, dev->window);
 	if (dev->write_to_pixmap) 
 	    XFreePixmap(xwd->display, dev->pixmap);
+	XFlush(xwd->display);
     }
 
     xwd->nstreams--;
