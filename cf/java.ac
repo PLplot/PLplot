@@ -50,7 +50,6 @@ if test "$enable_java" = "yes"; then
 
     if test -n "$with_java_home" ; then
         JAVA_HOME=$with_java_home
-    else
     fi
 
     # Check in with_java_home subdirs
