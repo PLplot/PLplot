@@ -33,7 +33,7 @@ Name: PLplot #NAME#
 Description: Scientific plotting library (#DESC#' . $float . ' precision)
 Requires: #REQ#
 Version: @VERSION@
-Libs: -L${libdir} -l#LIB# #DEPLIBS#
+Libs: -L${libdir} -l#LIB# @PTHREADLIBS@ #DEPLIBS#
 Cflags: -I${includedir} #INC#
 ';
 
