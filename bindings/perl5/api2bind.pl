@@ -62,39 +62,47 @@ sub funcptr_stub {
   my @arglist = map {$_ . " arg" . ++$i} @args;
   $i = 0;
   my @decls = map {
-      $i++;
-      if (/(PLPointer|\*)/) {
-        "SV arg" . $i . "_SV;\n";
-      }
-      else {
-        undef;
-      }
+      "SV* arg" . ++$i . "_SV;\n";
     } @args;
   $i = 0;
   my @xpush = map {
     $i++;
-    if (/(PLPointer|\*)/) {
-	"XPUSHs (newRV (\&arg" . $i . "_SV));\n";
-      }
-      elsif (/PLINT/) {
-        "XPUSHs (newSViv ((IV) arg" . $i . "));\n";
+    my $mortal = "";   
+    if (/\*/) {
+      if (/PLINT/) {
+        $mortal = "arg" . $i . "_SV " 
+        . "= sv_2mortal(newRV(sv_2mortal(newSViv ((IV) *arg" . $i . "))));";
       }
       elsif (/PLFLT/) {
-        "XPUSHs (newSViv ((double) arg" . $i . "));\n";
+        $mortal = "arg" . $i . "_SV " 
+        . "= sv_2mortal(newRV(sv_2mortal(newSVnv ((double) *arg" . $i . "))));";
       }
-      else {
-	undef;
+    }   
+    else {
+      if (/PLINT/) {
+	$mortal = "arg" . $i . "_SV "
+	  . " = sv_2mortal(newSViv ((IV) arg" . $i . "));";
       }
+      elsif (/PLFLT/) {
+	$mortal = "arg" . $i . "_SV "
+	  . "= sv_2mortal(newSVnv ((double) arg" . $i . "));";
+      }
+      elsif (/PLPointer/) {
+	$mortal = "arg" . $i . "_SV "
+	  . " = (SV*) arg" . $i . ";\n";
+      }
+    }
+    $mortal . "\n  XPUSHs (arg" . $i . "_SV);\n";
     } @args;
   $i = 0;
   my @return = map {
       $i++;
       if (/\*/) {
 	if (/PLINT/) {
-	  "*arg" . $i . " = SvIV (&arg" . $i . "_SV);\n";
+	  "*arg" . $i . " = SvIV (SvRV (arg" . $i . "_SV));\n";
 	}
 	elsif (/PLFLT/) {
-	  "*arg" . $i . " = SvNV (&arg" . $i . "_SV);\n";
+	  "*arg" . $i . " = SvNV (SvRV (arg" . $i . "_SV));\n";
 	}
       }
       else {
