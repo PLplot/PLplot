@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.15  1993/08/26 18:29:08  mjl
-   Put in fix for name translation under UNICOS.
+   Revision 1.16  1993/08/26 19:59:43  mjl
+   Inserted stub name definition for PLINIT().
 
+ * Revision 1.15  1993/08/26  18:29:08  mjl
+ * Put in fix for name translation under UNICOS.
+ *
  * Revision 1.14  1993/07/20  06:50:28  mjl
  * Eliminated obsolete type declarations for string conversions.
  *
@@ -178,6 +181,7 @@
 #define    PLGZAX	FNAME(PLGZAX,plgzax)
 #define    PLHIST	FNAME(PLHIST,plhist)
 #define    PLHLS        FNAME(PLHLS,plhls)
+#define    PLINIT       FNAME(PLINIT,plinit)
 #define    PLJOIN	FNAME(PLJOIN,pljoin)
 #define    PLLAB_	FNAME(PLLAB_,pllab_)
 #define    PLLINE	FNAME(PLLINE,plline)
