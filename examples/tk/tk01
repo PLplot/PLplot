@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.8  1995/04/17 19:24:13  furnish
+# Revision 1.9  1995/05/08 20:31:24  mjl
+# Eliminated the old enter-leave crosshair bindings since now this is done
+# by the plframe automatically (and done better).
+#
+# Revision 1.8  1995/04/17  19:24:13  furnish
 # Embellished to demonstrate (test :-) ways of using Tk bindings with
 # plframes.  Boundless possibilities.  Time to stand up and SHOUT!!!
 #
@@ -70,22 +74,19 @@ pack append . .plw {left expand fill}
 
 ###############################################################################
 # Here we show off some of what you can do with Tk bindings and PLplot.
+# Bring up graphic crosshairs.
 
-# These bindings cause the giant cross hair to always be active
-# whenever the cursor is in the plframe, and not otherwise.
+.plw.plwin configure -xhairs 1
 
-bind .plw.plwin <Enter> { .plw.plwin configure -xhairs 1 }
-bind .plw.plwin <Leave> { .plw.plwin configure -xhairs 0 }
-
-# Here is a binding which allows you to obtain the world coordinates
-# of a point at any time you want it.  This is better than the "locate
-# mode" of the X driver per se, since it is appears modeless to the
-# user.  Note especially that in the body of this example "get_coords"
-# proc, you can do anything you can do from Tcl.  In particular, you
-# need not put the data out to stdout (which is pretty boring).
-# Instead, you can use this to feed the world coords to some more
-# complicated Tcl proc of your choosing.  Use the regexp parser to
-# pull out the world x and y coordinates, etc.  Have fun!
+# Here is a binding which allows you to obtain the world coordinates of a
+# point at any time you want it.  This is better than the "locate mode" of
+# the X driver per se, since it is appears modeless to the user.  Note
+# especially that in the body of this example "get_coords" proc, you can do
+# anything you can do from Tcl.  In particular, you need not put the data
+# out to stdout (which is pretty boring).  Instead, you can use this to feed
+# the world coords to some more complicated Tcl proc of your choosing.  Use
+# the regexp parser to pull out the world x and y coordinates, etc.  Have
+# fun!
 
 bind .plw.plwin <Shift-1> { get_coords %x %y };
 
