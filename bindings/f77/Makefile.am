@@ -3,24 +3,24 @@
 ### Process this file with automake to produce Makefile.in
 ###
 # Copyright (C) 2002, 2003  Rafael Laboissiere
-# Copyright (C) 2002  Alan W. Irwin
-# 
-#This file is part of PLplot.
+# Copyright (C) 2002, 2004  Alan W. Irwin
 #
-#This file is free software; you can redistribute it and/or modify
-#it under the terms of the GNU Library General Public License as published by
-#the Free Software Foundation; version 2 of the License.
+# This file is part of PLplot.
 #
-#This file is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU Library General Public License for more details.
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Library General Public License as published by
+# the Free Software Foundation; version 2 of the License.
 #
-#You should have received a copy of the GNU Library General Public License
-#along with the file; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+# This file is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+# License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with the file; if not, write to the Free Software Foundation, Inc.,
+# 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-libplplot = ../../src/libplplot$(LIB_TAG).la
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
 if enable_f77
 lib_LTLIBRARIES = libplplotf77@LIB_TAG@.la
@@ -48,14 +48,13 @@ sfstubs.f: sfstubs.h sfstubs.fm4
 
 # Just use copy here for double-precision version.  Single-precision version
 # probably not needed since the real*8 fortran variables are simply
-# parameters passed via the stub routines as pointers where the type of 
+# parameters passed via the stub routines as pointers where the type of
 # the variable pointed to does not matter.
 
 .fm4.f:
 	cp $< $*.f
 
-EXTRA_DIST = fmacs.m4 sfstubs.fm4 configurable.f.in
+EXTRA_DIST = fmacs.m4 sfstubs.fm4
 CLEANFILES = sfstubs.f
-DISTCLEANFILES = configurable.f
 
 SUFFIXES = .fm4
