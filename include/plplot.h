@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.50  1993/12/08 06:20:02  mjl
+ * Revision 1.51  1993/12/08 06:43:37  mjl
+ * Bumped version to 4.99f.
+ *
+ * Revision 1.50  1993/12/08  06:20:02  mjl
  * Miscellaneous cleaning up.
  *
  * Revision 1.49  1993/12/06  07:44:53  mjl
@@ -53,7 +56,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99e"
+#define PLPLOT_VERSION "4.99f"
 
 /*----------------------------------------------------------------------*\
 *    USING PLPLOT
