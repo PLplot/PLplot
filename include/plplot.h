@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.55  1994/03/23 07:03:36  mjl
+ * Revision 1.56  1994/04/08 12:12:27  mjl
+ * Moved PLESC tags to this file to make them more accessible to users.
+ * Added PLESC_EH tag for flushing the event queue only.  Added PLMouse
+ * event struct typedef.  Changed prototype for plsexit().
+ *
+ * Revision 1.55  1994/03/23  07:03:36  mjl
  * plplot.h now includes stdio.h and stdlib.h !  This change afforded a
  * significant simplification of the header file structure, and should
  * rarely be an imposition (most files require these anyway).  Many new
@@ -15,34 +20,6 @@
  *
  * Revision 1.52  1994/01/15  17:33:42  mjl
  * Bumped version number, defined prototype wrapper macro.
- *
- * Revision 1.51  1993/12/08  06:43:37  mjl
- * Bumped version to 4.99f.
- *
- * Revision 1.50  1993/12/08  06:20:02  mjl
- * Miscellaneous cleaning up.
- *
- * Revision 1.49  1993/12/06  07:44:53  mjl
- * Some more support for new color model.
- *
- * Revision 1.48  1993/11/19  08:21:01  mjl
- * Fixed busted ifdef syntax from last commit.
- *
- * Revision 1.47  1993/11/19  07:32:40  mjl
- * Added Convex support.
- *
- * Revision 1.46  1993/11/15  08:34:07  mjl
- * Prototype section completely reworked.  Now each prototype taken directly
- * from the definition (so includes variable names) and is accompanied by a
- * brief description of what the function does.  This makes the header file
- * much more useful as a quick reminder of the argument syntax for each
- * function (i.e. a poor man's manual).
- *
- * Revision 1.45  1993/11/07  22:49:00  mjl
- * Bumped version number to 4.99e.
- *
- * Revision 1.44  1993/11/07  09:03:22  mjl
- * Added prototype for plsexit, the new exit-handler setting function.
 */
 
 /*
@@ -196,6 +173,23 @@ typedef void* PLPointer;
 * Complex data types and other good stuff
 \*----------------------------------------------------------------------*/
 
+/* Switches for escape function call. */
+/* Some of these are obsolete but are retained in order to process
+   old metafiles */
+
+#define PLESC_SET_RGB		1	/* obsolete */
+#define PLESC_ALLOC_NCOL	2	/* obsolete */
+#define PLESC_SET_LPB		3	/* obsolete */
+#define PLESC_EXPOSE		4	/* handle window expose */
+#define PLESC_RESIZE		5	/* handle window resize */
+#define PLESC_REDRAW		6	/* handle window redraw */
+#define PLESC_TEXT		7	/* switch to text screen */
+#define PLESC_GRAPH		8	/* switch to graphics screen */
+#define PLESC_FILL		9	/* fill polygon */
+#define PLESC_DI		10	/* handle DI command */
+#define PLESC_FLUSH		11	/* flush output */
+#define PLESC_EH		12      /* handle Window events */
+
 /* Plplot Option table & support constants */
 
 /* Option-specific settings */
@@ -243,6 +237,15 @@ typedef struct {
     unsigned long code;
     char string[PL_NKEYSTRING];
 } PLKey;
+
+/* Plplot Mouse structure */
+
+typedef struct {
+    int button;
+    int state;
+    PLFLT x;
+    PLFLT y;
+} PLMouse;
 
 /* Window structure for doing resizes without calling the X driver directly */
 /* May add other attributes in time */
@@ -1222,10 +1225,10 @@ plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev);
 void
 plsKeyEH(void (*KeyEH) (PLKey *, void *, int *), void *KeyEH_data);
 
-/* Sets the exit handler to use instead of exit(). */
+/* Sets an optional user exit handler. */
 
 void
-plsexit(void (*handler) (void));
+plsexit(int (*handler) (char *));
 
 	/* Transformation routines */
 
