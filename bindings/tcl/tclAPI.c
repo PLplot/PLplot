@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/09/23 07:53:14  mjl
+ * Revision 1.7  1994/10/10 17:25:30  furnish
+ * Add knowledge of contouring.
+ *
+ * Revision 1.6  1994/09/23  07:53:14  mjl
  * New Tcl API functions added: plend, plend1, plsstrm, and plinit.
  *
  * Revision 1.5  1994/07/19  22:33:05  mjl
@@ -49,6 +52,7 @@ static int pladvCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plbopCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plboxCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plcol0Cmd	(ClientData, Tcl_Interp *, int, char **);
+static int plcontCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pleopCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plendCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plend1Cmd	(ClientData, Tcl_Interp *, int, char **);
@@ -105,6 +109,7 @@ static CmdInfo Cmds[] = {
     {"plbox",		plboxCmd},
     {"plcol",		plcol0Cmd},
     {"plcol0",		plcol0Cmd},
+    {"plcont",		plcontCmd},
     {"pleop",		pleopCmd},
     {"plend",		plendCmd},
     {"plend1",		plend1Cmd},
@@ -424,6 +429,71 @@ plcol0Cmd(ClientData clientData, Tcl_Interp *interp,
 
     plcol0( col );
 
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * plcontCmd
+ *
+ * Processes plcont Tcl command.
+\*----------------------------------------------------------------------*/
+
+PLFLT tclMatrix_feval (PLINT i, PLINT j, PLPointer p)
+{
+    tclMatrix *matPtr = (tclMatrix *) p;
+
+    return matPtr->fdata[I2D(i,j)];
+}
+
+static int
+plcontCmd(ClientData clientData, Tcl_Interp *interp,
+	 int argc, char **argv)
+{
+    char *mat;
+    tclMatrix *matPtr, *pclev;
+
+    printf( "argc = %d\n", argc );
+
+    { int i;
+    for( i=0; i < argc; i++ )
+	printf( "argv_i = %s\n", argv[i] );
+    }
+
+    if (argc != 3 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " data clev\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    mat = Tcl_GetVar( interp, argv[1], 0 );
+    matPtr = Tcl_GetMatrixPtr( interp, mat );
+
+    printf( "matPtr = %x\n", matPtr );
+
+    mat = Tcl_GetVar( interp, argv[2], 0 );
+    pclev = Tcl_GetMatrixPtr( interp, mat );
+
+    if (matPtr->dim != 2) {
+	interp->result = "Must use 2-d data.";
+	return TCL_ERROR;
+    }
+
+    if (pclev->dim != 1) {
+	interp->result = "clev must be 1-d matrix.";
+	return TCL_ERROR;
+    }
+
+    /* contour the data.*/
+
+    plcontf( tclMatrix_feval, matPtr,
+	     matPtr->n[0], matPtr->n[1],
+	     1, matPtr->n[0], 1, matPtr->n[1],
+	     pclev->fdata, pclev->n[0], pltr0, NULL );
+
+    printf( "Drawing the contour.\n" );
+
+    plflush();
     return TCL_OK;
 }
 
