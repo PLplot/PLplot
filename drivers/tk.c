@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1993/12/09 21:19:40  mjl
+ * Revision 1.22  1993/12/15 09:04:31  mjl
+ * Added support for Tcl-DP style communication.  Many small tweaks to
+ * driver-plserver interactions made.  server_cmdbg() added for sending
+ * commands to the server in the background (infrequently used because it
+ * does not intercept errors).
+ *
+ * Revision 1.21  1993/12/09  21:19:40  mjl
  * Changed call syntax for tk_toplevel().
  *
  * Revision 1.20  1993/12/09  20:35:14  mjl
@@ -95,6 +101,7 @@ static void  bgcolor_init	(PLStream *);
 static void  tk_wait		(PLStream *, char *);
 static void  abort_session	(PLStream *, char *);
 static void  server_cmd		(PLStream *, char *);
+static void  server_cmdbg	(PLStream *, char *);
 static void  tcl_cmd		(PLStream *, char *);
 static int   tcl_eval		(PLStream *, char *);
 static void  copybuf		(PLStream *pls, char *cmd);
@@ -504,9 +511,11 @@ tk_start(PLStream *pls)
 
     dbug_enter("tk_start");
 
-/* Instantiate a TCL interpreter. */
+/* Instantiate a TCL interpreter, and get rid of the exec command */
 
     dev->interp = Tcl_CreateInterp();
+    tcl_cmd(pls, "rename exec {}");
+    tcl_cmd(pls, "set plsend send");
 
 /* Initialize top level window */
 /* Request pls->program (if set) for the main window name */
@@ -518,13 +527,42 @@ tk_start(PLStream *pls)
 		    pls->program))
 	abort_session(pls, "Unable to create top-level window");
 
-/* Initialize stuff known to interpreter */
+/* Initialize interpreter */
+/* pltk_init_proc is autoloaded, so the user can customize if desired */
+/* (maybe in a future rev.) */
 
     tk_configure(pls);
+/*    tcl_cmd(pls, "pltk_init"); */
+    tcl_cmd(pls, "set plw_create_proc plw_create");
+    tcl_cmd(pls, "set plw_init_proc plw_init");
+    tcl_cmd(pls, "set plw_flash_proc plw_flash");
+    tcl_cmd(pls, "set plw_end_proc plw_end");
+
+/* Eval startup procs */
+
+    if (Tcl_AppInit(dev->interp) != TCL_OK) {
+	abort_session(pls, "");
+    }
+
+/* If we are using Tcl-DP, set up communications port */
+
+#ifdef TCL_DP
+    if (pls->dp) {
+	tcl_cmd(pls, "set plsend dp_RPC");
+	tcl_cmd(pls, "set client_host localhost");
+	tcl_cmd(pls, "set client_port [dp_MakeRPCServer]");
+    }
+#endif
 
 /* Launch server process if necessary */
 
     launch_server(pls);
+
+/* By now we should be done with all autoloaded procs, so blow away */
+/* the open command just in case security has been compromised */
+
+    tcl_cmd(pls, "rename open {}");
+    tcl_cmd(pls, "rename rename {}");
 
 /* Initialize widgets */
 
@@ -568,14 +606,11 @@ tk_stop(PLStream *pls)
 	dev->file = NULL;
     }
 
-/* If we launched server, blow it away */
-/* First unset its client variable so it won't try communicating */
+/* Kill plserver */
 
-    if (tcl_eval(pls, "winfo $plserver exists")) {
-	server_cmd( pls, "$plw_end $plwindow" );
-	if (dev->launched_server) {
-	    server_cmd( pls, "after 1 destroy ." );
-	}
+    if (Tcl_GetVar(dev->interp, "plserver", TCL_GLOBAL_ONLY) != NULL) {
+	server_cmd( pls, "after 1 $plw_end_proc $plwindow" );
+	tcl_cmd(pls, "unset plserver");
     }
 
 /* Blow away main window */
@@ -603,13 +638,6 @@ abort_session(PLStream *pls, char *msg)
     TkDev *dev = (TkDev *) pls->dev;
 
     dbug_enter("abort_session");
-
-/* Safety check for out of control code */
-
-    if (dev->pass_thru)
-	return;
-
-    dev->pass_thru = 1;
 
     pls->nopause = TRUE;
     plexit(msg);
@@ -640,25 +668,6 @@ tk_configure(PLStream *pls)
 
     Tcl_CreateCommand(dev->interp, "keypress", KeyEH,
 		      (ClientData) pls, (void (*) (ClientData)) NULL);
-
-/* Blow away exec and open commands for some additional security */
-
-    tcl_cmd(pls, "rename exec {}");
-    tcl_cmd(pls, "rename open {}");
-    tcl_cmd(pls, "rename rename {}");
-
-/* Set default names for server widget procs */
-
-    Tcl_SetVar(dev->interp, "plserver_init", "plserver_init", 0);
-    Tcl_SetVar(dev->interp, "plw_create",    "plw_create", 0);
-    Tcl_SetVar(dev->interp, "plw_init",      "plw_init", 0);
-    Tcl_SetVar(dev->interp, "plw_flash",     "plw_flash", 0);
-    Tcl_SetVar(dev->interp, "plw_end",       "plw_end", 0);
-
-/* Eval user-specified TCL command -- can be used to modify defaults */
-
-    if (pls->tcl_cmd != NULL)
-	tcl_cmd(pls, pls->tcl_cmd);
 }
 
 /*----------------------------------------------------------------------*\
@@ -698,6 +707,7 @@ launch_server(PLStream *pls)
 #endif
 
 /* Check for already existing server */
+/* This sucks and will have to be fixed for remote servers */
 
     if (pls->plserver != NULL) {
 	Tcl_SetVar(dev->interp, "plserver", pls->plserver, 0);
@@ -715,7 +725,7 @@ launch_server(PLStream *pls)
     i = 0;
     argv[i++] = pls->plserver;		/* Name of server */
 
-    argv[i++] = "-client";		/* Send back notification */
+    argv[i++] = "-client";		/* Name of client */
     argv[i++] = dev->program;
 
     argv[i++] = "-child";		/* Tell plserver its ancestry */
@@ -734,6 +744,18 @@ launch_server(PLStream *pls)
 	argv[i++] = "-geometry";	/* Top level window geometry */
 	argv[i++] = pls->geometry;
     }
+
+/* If communicating via Tcl-DP, send communications port id */
+
+#ifdef TCL_DP
+    if (pls->dp) {
+	argv[i++] = "-client_host";
+	argv[i++] = Tcl_GetVar(dev->interp, "client_host", TCL_GLOBAL_ONLY);
+
+	argv[i++] = "-client_port";
+	argv[i++] = Tcl_GetVar(dev->interp, "client_port", TCL_GLOBAL_ONLY);
+    }
+#endif
 
 /* Start server process */
 
@@ -754,13 +776,27 @@ launch_server(PLStream *pls)
 /*
 * Wait for server to send back notification.
 *
-* The true server main window name will then be given by $plserver.
-* This is not always the same as the name of the application since you
-* could have multiple copies running on the display (resulting in
-* names of the form "plserver #2", etc).
+* In addition to setting $server_is_ready to signal readiness to proceed,
+* plserver sets variables in the tk driver's interpreter necessary for
+* communication.  
+*
+* When TK send's are being used to communicate, the true server main
+* window name is stored in $plserver.  This is not always the same as the
+* name of the application since you could have multiple copies running on
+* the display (resulting in names of the form "plserver #2", etc).
+*
+* When Tcl-DP dp_RPC's are being used, the host and port id's are stored
+* in $server_host and $server_port, respectively.
 */
 
-    tcl_cmd(pls, "tkwait variable plserver");
+    tcl_cmd(pls, "tkwait variable server_is_ready");
+
+#ifdef TCL_DP
+    if (pls->dp) {
+	tcl_cmd(pls,
+		"set plserver [dp_MakeRPCClient $server_host $server_port]");
+    }
+#endif
 
     dev->launched_server = 1;
 }
@@ -778,13 +814,13 @@ launch_server(PLStream *pls)
 * These can be used to set up the desired widget configuration.  The procs
 * invoked from this driver currently include:
 *
-*    $plw_create	Creates the widget environment
-*    $plw_init		Initializes the widget(s)
-*    $plw_end		Prepares for shutdown
-*    $plw_flash		Invoked when waiting for page advance
+*    $plw_create_proc		Creates the widget environment
+*    $plw_init_proc		Initializes the widget(s)
+*    $plw_end_proc		Prepares for shutdown
+*    $plw_flash_proc		Invoked when waiting for page advance
 *
 * Since all of these are interpreter variables, they can be trivially
-* changed by the user (use the -tcl_cmd option).
+* changed by the user.
 *
 * Each of these utility procs is called with a widget name ($plwindow)
 * as argument.  "plwindow" is set from the value of pls->plwindow, and
@@ -794,11 +830,11 @@ launch_server(PLStream *pls)
 * usage in all the TCL procs is consistent.
 *
 * In order that the TK driver be able to invoke the actual plplot
-* widget, the proc "$plw_init" deposits the widget name in the local
+* widget, the proc "$plw_init_proc" deposits the widget name in the local
 * interpreter variable "plwidget".
 *
 * In addition, the name of the client main window is given as (2nd)
-* argument to "$plw_init".  This establishes the client name used
+* argument to "$plw_init_proc".  This establishes the client name used
 * for communication for all child widgets that require it.
 \*----------------------------------------------------------------------*/
 
@@ -834,7 +870,7 @@ plwindow_init(PLStream *pls)
 /* Create the plframe widget & anything else you want with it. */
 
 	server_cmd( pls, "update" );
-	server_cmd( pls, "$plw_create $plwindow" );
+	server_cmd( pls, "$plw_create_proc $plwindow" );
     }
     else {
 	Tcl_SetVar(dev->interp, "plwindow", pls->plwindow, 0);
@@ -843,12 +879,11 @@ plwindow_init(PLStream *pls)
 /* Initialize the widget(s) */
 
     server_cmd( pls, "update" );
-    server_cmd( pls, "[list $plw_init $plwindow $client]" );
+    server_cmdbg( pls, "$plw_init_proc $plwindow [list $client]" );
+    tcl_cmd(pls, "tkwait variable plwidget");
 
 /* Now we should have the actual plplot widget name in $plwidget */
 /* Configure remote plplot stream. */
-
-    server_cmd( pls, "update" );
 
 /* Send background command */
 
@@ -976,11 +1011,12 @@ WaitForPage(PLStream *pls)
     if (pls->bytecnt > 0) 
 	flush_output(pls);
 
-    server_cmd( pls, "after 1 $plw_flash $plwindow" );
-    tk_wait(pls, "[info exists advance] && ($advance == 1)" );
-    server_cmd( pls, "after 1 $plw_flash $plwindow" );
+    server_cmd( pls, "after 1 $plw_flash_proc $plwindow" );
 
-    Tcl_SetVar(dev->interp, "advance", "0", 0);
+    tcl_cmd(pls, "tkwait variable advance");
+    tcl_cmd(pls, "unset advance");
+
+    server_cmd( pls, "after 1 $plw_flash_proc $plwindow" );
 
     HandleEvents(pls);
 }
@@ -1165,14 +1201,13 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 	advance = TRUE;
 
     if (advance)
-	Tcl_SetVar(dev->interp, "advance", "1", 0);
+	tcl_cmd(pls, "set advance 1");
 
 /* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
 
-    if (key.string[0] == 'Q') {
-	pls->nopause = TRUE;
-	plexit("");
-    }
+    if (key.string[0] == 'Q') 
+	tcl_cmd(pls, "after 1 abort");
+
     return TCL_OK;
 }
 
@@ -1222,9 +1257,45 @@ server_cmd(PLStream *pls, char *cmd)
     fprintf(stderr, "Sending command: %s\n", cmd);
 #endif
 
-    if (Tcl_VarEval(dev->interp, "send $plserver ", cmd, (char **) NULL)) {
+    if (Tcl_VarEval(dev->interp, "$plsend $plserver ", cmd, (char **) NULL)) {
 	fprintf(stderr, "Server command \"%s\" failed:\n\t %s\n",
 		cmd, dev->interp->result);
+	abort_session(pls, "");
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* server_cmdbg
+*
+* Sends specified command to server in the background.
+* I don't think an abort is possible here, but I left the test in
+* nevertheless.  This routine should be used with caution since it doesn't
+* verify the remote command is actually successful.  Some cases where
+* you may want to use it include:
+*
+*  - When issuing a command to the server right before a tkwait.
+*    Otherwise, the server could satisfy the tkwait'ed condition too
+*    quickly, causing a hang!  (E.g. when waiting for a variable to
+*    change.) 
+*
+*  - When high performance is the most important thing and the chances
+*    of failure are deemed to be small.
+\*----------------------------------------------------------------------*/
+
+static void
+server_cmdbg(PLStream *pls, char *cmdbg)
+{
+    TkDev *dev = (TkDev *) pls->dev;
+
+    dbug_enter("server_cmdbg");
+#ifdef DEBUG_ENTER
+    fprintf(stderr, "Sending command: %s\n", cmdbg);
+#endif
+
+    if (Tcl_VarEval(dev->interp, "after 1 [list $plsend [list $plserver] ",
+		    cmdbg, "]", (char **) NULL)) {
+	fprintf(stderr, "Server command \"%s\" failed:\n\t %s\n",
+		cmdbg, dev->interp->result);
 	abort_session(pls, "");
     }
 }
