@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -20,16 +20,16 @@
 
 function out = lp_setup(command)
 
-  global __lp_options
+  global __pl
 
-  if (!exist("__lp_options"))
-    __lp_options = "lpr";
+  if (!exist("__pl.lp_options"))
+    __pl.lp_options = "lpr";
   endif
 
   if (nargin == 1 && isstr(command))
-    __lp_options = command;
+    __pl.lp_options = command;
   endif
 
-  out = __lp_options;
+  out = __pl.lp_options;
 
 endfunction
