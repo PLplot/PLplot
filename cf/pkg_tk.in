@@ -42,7 +42,7 @@ install_tk_scripts:
 # just simply mean the rules for install_tcl_demos got executed twice.
 install_tk_demos:
 	@-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi; \
-	  $(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk; \
+	  $(LN) ../Makefile $(DEMOS_DIR)/tk; \
 	  cd $(top_srcdir)/examples/tk; $(CP) $(TK_DEMOS) $(DEMOS_DIR)/tk ; \
 	  cd $(DEMOS_DIR)/tk ; \
 	  for filename in ../tcl/x??.tcl ; \

@@ -32,7 +32,7 @@ install_demos:
 	@-if test ! -d $(DEMOS_DIR); then mkdir -p $(DEMOS_DIR); fi; \
 	  if test ! -d $(DEMOS_DIR)/c; then mkdir -p $(DEMOS_DIR)/c; fi; \
 	  $(CP) Makedemo $(DEMOS_DIR)/Makefile; \
-	  $(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c; \
+	  $(LN) ../Makefile $(DEMOS_DIR)/c; \
 	  cd $(top_srcdir)/examples/c; \
 	  $(CP) *.c $(DEMOS_DIR)/c; \
 	  $(CP) *.h $(INCLUDE_DIR)

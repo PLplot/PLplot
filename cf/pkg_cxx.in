@@ -36,7 +36,7 @@ install_cxx_includes:
 
 install_cxx_demos:
 	@-if test ! -d $(DEMOS_DIR)/c++; then mkdir -p $(DEMOS_DIR)/c++; fi; \
-	  $(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c++; \
+	  $(LN) ../Makefile $(DEMOS_DIR)/c++; \
 	  cd $(top_srcdir)/examples/c++; $(CP) *.cc $(DEMOS_DIR)/c++
 
 install_cxx: install_cxx_includes install_cxx_demos
