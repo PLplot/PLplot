@@ -1,3 +1,16 @@
+plplot (5.0.1-0.potato.4) unstable; urgency=low
+
+  * debian/rules: Excluding examples/ dir from list of compressible files
+    by dh_compress.
+  * debian/control: Build-depends on iTcl.  This will make the plplot-tcl
+    package [incr Tcl]-able.  This is needed to run the tk/tk01 and
+    tk/tk04 examples (thanks to Alan Irwin <irwin@beluga.phys.uvic.ca> for
+    pointing this out).
+  * examples/c/plcdemos.h: Removed #definition of PL_DOUBLE, as it is
+    already done by plConfig.h.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Thu, 15 Feb 2001 11:01:52 +0100
+
 plplot (5.0.1-0.potato.3) unstable; urgency=low
 
   * debian/control: Make plplot-common conflict with older version of

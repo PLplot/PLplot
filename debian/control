@@ -3,7 +3,7 @@ Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@icp.inpg.fr>
 Standards-Version: 3.1.0
-Build-Depends: debhelper, tcl8.2-dev | tcl8.3-dev, tk8.2-dev | tk8.3-dev, xlibs-dev | xlib6g-dev
+Build-Depends: debhelper, tcl8.2-dev | tcl8.3-dev, tk8.2-dev | tk8.3-dev, itcl3.1-dev, xlibs-dev | xlib6g-dev
 
 Package: plplot
 Architecture: any

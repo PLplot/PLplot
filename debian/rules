@@ -103,7 +103,7 @@ binary-arch: build install
 	cp $(debbase)/plrender.1 $(debbase)/plplot-xwin/usr/share/man/man1
 
 	dh_strip -a
-	dh_compress -a
+	dh_compress -a -Xexamples/
 	dh_fixperms -a
 	dh_suidregister -a
 	dh_makeshlibs -a
