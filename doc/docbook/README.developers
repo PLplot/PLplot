@@ -1,7 +1,8 @@
 		PLPLOT DOCUMENTATION IN THE DOCBOOK FORMAT
 		    (Notes for contributors/developers)
 
-	      Author: Rafael Laboissière <rafael@icp.inpg.fr>
+	      Authors: Rafael Laboissière <rafael@icp.inpg.fr>
+	              Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 		 Created on: Thu May 20 11:14:38 CEST 1999
 	      Last modified on: Mon Oct 30 14:13:59 CET 2000
      $Id$
@@ -11,38 +12,78 @@
 Introduction
 ============
 
-You will find here the conversion of the old PLplot documentation in
-LateXInfo format into the DocBook format.  This is work in progress, being
-maintained by Alan W. Irwin (irwin@beluga.phys.uvic.ca) and Rafael Laboissière
-(rafael@icp.inpg.fr).
+You will find in this directory tree the latest PLplot documentation in
+DocBook 4.1 XML format.  You will find in the current file
+(README.developers) instructions for building the documentation from the
+DocBook source files in this directory. The documentation that is built
+includes man pages of the API as well
+as complete versions of the documentation in html, dvi, postscript,
+pdf, and info form.
 
-All the relevant files are under the src/ directory.  The file organisation
-is not very clean and the configure/build system is not yet perfect.
-Although, it should be usable now and we are aiming to achieve the goal
-"build-ability for anyone".  
+This documentation project started as a conversion (under the direction of
+Rafael Laboissière) of the old (1995 or earlier) version of the PLplot
+documentation in latexinfo format to DocBook SGML.  Since that conversion,
+there has been a lot of work by RL to upgrade to DocBook 4.1 XML, improve
+the configuration of the documentation builds, and to extend the output
+forms to many different formats. The build system has now been essentially
+stabilized.
 
-This project will be subjected a complete overhaul in the near future.  The
-SGML files will be converted to the XML format and we will eventually use
-automake as part of the configuration process.  Also, the autoconf process
-will be integrated into the top-level PLplot configuration system.
+Another aspect of this project (under the direction of Alan W. Irwin) has
+been to improve the content of the documentation that was converted from the
+1995 version.
 
+The content improvement that has occurred so far has mostly to do with the
+API description.  For the functions not documented in the older
+documentation there is at least now a short description (lifted directly
+from the code comments if nothing else was available) for all functions in
+the public PLplot API.
 
+Work continues on the documentation content.  For example, most of these
+previously undocumented functions need their arguments documented. Also, we
+need appendix items (from an even earlier 1994 latex version of the
+documentation) converted and modernized so we have a description of, e.g.,
+familying.  Also, we urgently need general overviews of the PLplot color
+system, shade plots, The PLplot X Driver Family, The PLplot Output Driver
+Family, Constructing Graphical Interfaces with PLplot, Using PLplot from
+Perl, Using PLplot from Python, and Using PLplot from Scheme. Finally,
+although plplot has remained relatively unchanged over the last 5 years, we
+have recently brought out a bug-fixed version 5.0, and the documentation
+should be updated to be consistent with that rather than the version of
+plplot that was available in 1995.  Thus, there is still a lot of work
+required to improve the documentation content, and AWI invites your help
+with this on-going project.
 
-Configuring and building
+Configuring and Building
 ========================
 
-There is now a autoconf script src/configure.  To configure the package
-just do:
+If you help with improving the content, you will want to build the
+documentation from the DocBook source so you can immediately see and
+evaluate the results of your efforts.
 
-    $ cd src
-    $ ./configure
+Here is how.  It is assumed you have the appropriate automake, autoconf, and
+DocBook software packages loaded on your machine (see package list below for
+both Debian and Cygnus/RedHat 6.2 systems.)
 
-If you are a developer, you can make modifications to the src/configure.in
-file.  In this case, you will need to run `autoconf' inside the src/
-directory in order to get the new src/configure script generated.
+(I) Debian
 
-The configure script checks for the following programs: jade, jadetex, perl,
-latex, dvips, and mogrify.  You should have them installed and present in
+Within this directory execute
+
+./bootstrap.sh
+
+./configure --with-www-user=$YOUR_SHELL1_USERNAME
+
+($YOUR_SHELL1_USERNAME is set to airwin in my case.  Drop the
+--with-www-user altogether if you don't have a shell1.sourceforge.net
+account.  This username is only used for updating the live web site, and you
+won't be able to do that if you don't have a shell1 account with the
+appropriate privileges.
+
+The above ./configure will have lots of warning messages
+because it doesn't allow for the possibility of building the info
+documentation.  If you want to do that, check the INFO NOTE below.
+
+The configure script checks for the following programs: jade, jadetex,
+pdfjadetex, perl, and dvips  You should have them installed and present in
 the path in order to build the HTML and PostScript versions of the PLplot
 manual (see package lists below).  You may also specify the locations of
 these programs with the configure options --with-<prog>.  Type `./configure
@@ -57,7 +98,53 @@ and contain entries mapping DTD public identifiers into system identifiers.
 
 See below for further details on SGML catalogs.
 
+The configure script also checks for certain essential perl modules (see
+package list below).
 
+
+After the ./configure is completed (possibly with warning messages but
+no error messages are allowed), execute
+
+make
+
+to build all forms of the documentation.
+
+(II) Cygnus DocBook systems on RedHat 6.2
+
+Although Cygnus has been bought out by RedHat, Cygnus actively
+maintains a DocBook system that has much higher recommendations than the
+vanilla RedHat DocBook.  See the Cygnus package list comments below for
+instructions about how to remove vanilla RedHat DocBook and replace it
+with Cygnus.  Once you have Cygnus DocBook installed here is what you do.
+
+Within this directory execute
+
+./bootstrap.sh
+
+./configure --with-www-user=$YOUR_SHELL1_USERNAME \
+--with-sgml-catalogs=/etc/sgml/catalog \
+--with-xml-declaration=/usr/share/sgml/xml.dcl
+
+The configure with have lots of warnings (just as for Debian) if you
+don't have the info-generating software installed.  If you want to
+build info, then see NOTE INFO below.
+
+make; make; make
+
+The 3 makes are required to get by some minor errors that are still in
+the Cygnus packages.  The final make finds a major bug
+in the Cygnus system; it cannot currently build pdf, but that may change
+soon.  If you want to build the info documentation you must load
+the software (NOTE INFO below) and also work around this final
+major bug for pdf by executing:
+
+cd src; make info
+
+(see the Debian instructions above for more details).
+
+AWI has checked that output versions of the documentation (except for pdf)
+are built on Cygnus systems to the same quality (with a few minor
+exceptions) as on Debian systems.
 
 Note on SGML Catalogs
 =====================
@@ -67,79 +154,42 @@ The jade program, as well as the programs in the sp suite
 are files present in the system.  These files are referred to as "system
 identifiers" in the SGML jargon.
 
-The PLplot DocBook SGML sources uses "public identifiers" for declaring the
+The PLplot DocBook XML sources uses "public identifiers" for declaring the
 included DTDs.  Here is the complete list that is currently needed by
 the PLplot documentation project:
 
 "-//James Clark//DTD DSSSL Style Sheet//EN"
 "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
 "-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN"
-"-//OASIS//DTD DocBook V3.1//EN"
+"-//OASIS//DTD DocBook XML V4.1//EN"
 
-You will find these public identifiers referred to in plplotdoc.sgml,
-plplotdoc-print.dsl and plplotdoc-html.dsl:
+You will find where these public identifiers are used in the XML source by:
 
-grep PUBLIC plplotdoc*
-plplotdoc-html.dsl:<!DOCTYPE style-sheet PUBLIC "-//James Clark//DTD DSSSL
-Style Sheet//EN" [
-plplotdoc-html.dsl:  PUBLIC "-//Norman Walsh//DOCUMENT DocBook HTML
-Stylesheet//EN"
-plplotdoc-print.dsl:<!DOCTYPE style-sheet PUBLIC "-//James Clark//DTD DSSSL
-Style Sheet//EN" [
-plplotdoc-print.dsl:  PUBLIC "-//Norman Walsh//DOCUMENT DocBook Print
-Stylesheet//EN"
-plplotdoc.sgml:<!doctype book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+find src -type f | xargs grep PUBLIC
+src/plplotdoc-html.dsl.in:<!DOCTYPE style-sheet PUBLIC "@DSSSL_DTD_PUBID@" [
+src/plplotdoc-html.dsl.in:  PUBLIC "@DB_SS_HTML_PUBID@"
+src/plplotdoc-print.dsl.in:<!DOCTYPE style-sheet PUBLIC "@DSSSL_DTD_PUBID@" [
+src/plplotdoc-print.dsl.in:  PUBLIC "@DB_SS_PRINT_PUBID@"
+src/plplotdoc.xml.in:<!DOCTYPE book PUBLIC "@DOCBOOK_DTD_PUBID@" [
 
-On Debian GNU/Linux (version Potato) systems, the actual files (system
-identifiers) that corresponds to the above 4 public identifiers are
-respectively:
+where the various symbols are defined in configure
+grep PUBID= configure
+DSSSL_DTD_PUBID="-//James Clark//DTD DSSSL Style Sheet//EN"
+DB_SS_HTML_PUBID="-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
+DB_SS_PRINT_PUBID="-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN"
+DOCBOOK_DTD_PUBID="-//OASIS//DTD DocBook XML V4.1//EN"
 
-/usr/lib/sgml/dtd/style-sheet.dtd
-/usr/lib/sgml/stylesheet/dsssl/docbook/nwalsh/html/docbook.dsl
-/usr/lib/sgml/stylesheet/dsssl/docbook/nwalsh/print/docbook.dsl
-/usr/lib/sgml/dtd/docbook-3.1/docbook.dtd.  
-
-The mapping between the pubid and the sysid is realized through the default
-catalog file /usr/lib/sgml/catalog which contains, for example, the following entry:
-
-    PUBLIC "-//OASIS//DTD DocBook V3.1//EN" "dtd/docbook-3.1/docbook.dtd"
-
-Similarly, if you search in /usr/lib/sgml/catalog on Debian potato systems
-for the 3 other public identifiers that we need above you will find the
-corresponding file entry.
-
-**So the key on any Linux/Unix docbook system is to find the catalog file(s)
+**the key on any Linux/Unix docbook system is to find the catalog file(s)
 with the correct mapping between the required pubid's and the system files.**
 
-On RedHat 6.2 systems (with all packages updated as of 1 November 2000, see
-any redhat update mirror for at least 3 updated rpm's corresponding to the
-package list below) the actual files that correspond to the above 4 public
-identifiers are
+On Debian GNU/Linux (version Potato) systems, the actual files (system
+identifiers) that corresponds to the above 4 public identifiers are properly
+identified with the default catalog file: /usr/lib/sgml/catalog
 
-/usr/lib/sgml/style-sheet.dtd
-/usr/lib/sgml/stylesheets/nwalsh-modular/html/docbook.dsl
-/usr/lib/sgml/stylesheets/nwalsh-modular/print/docbook.dsl
-/usr/lib/sgml/docbook.dtd
-
-The default catalog file is located at /usr/lib/sgml/CATALOG.  However, that
-file is partially broken.  The entries corresponding to the Norman Walsh
-style sheets point to the wrong directory [!]. Therefore, to get Redhat 6.2
-build systems configured correctly you must execute
-
-./configure --with-sgml-catalogs=/usr/lib/sgml/stylesheets/nwalsh-modular/catalog
-
-On RH 6.2 systems that particular non-default catalog file maps to the
-correct Norm Walsh stylesheet directories (and I presume the rest are taken
-from the remaining entries [which are correct] in the default
-/usr/lib/sgml/CATALOG).
-
-The highly recommended Cygnus version of the DocBook suite of programmes
-(see package list below) can also be used to build plplot documentation on
-RedHat (and other rpm-based?) systems.  Use
-
-./configure --with-sgml-catalogs=/etc/sgml/sgml-docbook-3.1.cat
-
-before building the documentation on Cygnus DocBook systems.
+On Cygnus systems the default catalog is broken, but there is nevertheless
+an excellent non-default catalog that has everything you need. So that is
+why you have to specify that non-default catalog in the Cygnus
+./configure command discussed above.
 
 The current configure script has some stringent tests for checking that the
 appropriate catalog entries are found with working maps between the pubid's
@@ -150,7 +200,46 @@ above 4 pubid's, then it will be necessary to find a system catalog that
 points to the correct files or to make such a catalog.  If you need help
 with this procedure, feel free to consult with either Alan or Rafael.
 
+INFO NOTE
+=========
 
+Here is the cookbook for building the info documentation.  This has
+been checked both on Debian and Cygnus systems.
+
+Please, customize the two first lines.  In particular you may want to
+put DOCBOOK2X in a more permanent spot.
+
+setenv DOCBOOK2X /var/tmp
+setenv PLPLOTDOCBOOK /path/to/plplot/doc/docbook
+cd $PLPLOTDOCBOOK
+cvs update    
+cd $DOCBOOK2X    
+wget http://download.sourceforge.net/docbook2x/docbook2X-0.6.0.tar.gz
+tar xfz docbook2X-0.6.0.tar.gz
+cd docbook2X
+patch < $PLPLOTDOCBOOK/docbook2texixml.patch
+patch < $PLPLOTDOCBOOK/texi_xml.patch
+
+n.b. this downloading and patching only has to be done once and the
+following lines should then work from then on without fooling around with
+docbook2x any more.  However, you do have to have the two customized variables
+DOCBOOK2X and PLPLOTDOCBOOK defined.
+
+cd $PLPLOTDOCBOOK
+rm -f config.cache #if you are not using a fresh copy, otherwise use
+                   #./bootstrap.sh as above
+./configure --with-www-user=$YOUR_SHELL1_USERNAME \
+--with-docbook2texixml=$DOCBOOK2X/docbook2X/docbook2texixml \
+--with-texi_xml=$DOCBOOK2X/docbook2X/texi_xml \
+--with-docbook2x-incdir=$DOCBOOK2X/docbook2X/
+
+This is the Debian version.  For the Cygnus version you must, of course, add
+the continuation lines
+
+--with-sgml-catalogs=/etc/sgml/catalog \
+--with-xml-declaration=/usr/share/sgml/xml.dcl
+
+to the above command.
 
 Package Lists
 =============
@@ -161,14 +250,22 @@ documentation:
 
 Debian potato:
 
-    jade
-    jadetex
-    docbook
-    docbook-stylesheests
-    tetex
-    imagemagick
+    tetex-bin (to obtain dvips)
+    perl-5.005 (to obtain perl)
+    task-sgml-dev and task-sgml
+(Metapackages containing dependencies for a complete SGML and XML support
+environment.  This includes, jade, jadetex, pdfjadetex, required
+perl extension modules for processing XML, and all required DocBook packages.)
     
-RedHat 6.2 (updated as of 2000 November 1, but later updates should work also):
+    docbook-xml_4.1.2-1.deb
+This last package is from woody. The potato 3.1 XML version (a dependency of
+task-sgml) is grossly out of date.  Eventually we will move to the woody
+versions of everything once woody (or more likely testing, the more stable
+version of woody) becomes stable enough for production work.
+    
+RedHat 6.2 vanilla DocBook is not recommended, but we list the package
+list so you can strip it out in favor of the Cygnus DocBook version
+that we do support on RedHat 6.2.
 
 docbook-3.1-4.noarch.rpm
 jade-1.2.1-9.i386.rpm
@@ -177,88 +274,88 @@ sgml-common-0.1-8.noarch.rpm
 sgml-tools-1.0.9-5.i386.rpm
 stylesheets-1.54.13rh-1.noarch.rpm
 
-Another possibility on RedHat (and other rpm-based systems?) is the Cygnus
-DocBook packages.  Although Cygnus is now part of RedHat they maintain their
-own set of DocBook packages.  These come highly recommended by the KDE2 documentation
-project and can be accessed from
+Although The Cygnus company is now part of RedHat they maintain their own
+set of DocBook packages.  These come highly recommended by the KDE2
+documentation project and can be accessed from
 ftp://sourceware.cygnus.com/pub/docbook-tools/new-trials/RPMS.  (Note this
-site has high traffic so you may have to use a mirror.)  The current set of
+site has high traffic so you may have to use a mirror.) The current set of
 Cygnus rpm's that allow building the DocBook documentation are
 
 docbook-dtd31-sgml-1.0-6.noarch.rpm
+docbook-dtd41-sgml-1.0-6.noarch.rpm
+docbook-dtd41-xml-1.0-2.noarch.rpm
 docbook-style-dsssl-1.57-2.noarch.rpm
 docbook-utils-0.6-1.noarch.rpm
 jade-1.2.1-6.i386.rpm
 jadetex-2.20-4.noarch.rpm
+libxml-1.8.6-2.i386.rpm
+libxml-devel-1.8.6-2.i386.rpm
 perl-SGMLSpm-1.03ii-3.noarch.rpm
 sgml-common-0.4-1.noarch.rpm
 
+You also need the following RedHat 6.2 packages:
 
+tetex-dvips-1.0.6-11 (for dvips)
+perl-5.00503-12 (for perl)
 
-Finishing the install
-=====================
+In order to build info and man pages, you also need the expat package and
+additional perl extension modules to help with processing XML. The modules
+are probably best obtained with CPAN, and AWI will insert the cookbook here
+once somebody else figures it out. But because AWI has no perl or CPAN
+expertise, he got the required modules the old fashioned way as tarballs.
 
-Do the usual
+Here is the list of tarballs, source for them, and installation technique.
 
-make
-make install
+Process in this order since later steps depend on earlier:
 
-Currently the Debian make produces no jade severe warnings (a jade message
-with "E"), but the RedHat make produces several of these which (AWI) is
-working at removing.  Despite the warning messages on the RedHat system, the
-output html (try netscape book1.html) still looks good.  Currently there is
-a problem with the redhat system.  The html file suffixes are htm rather
-than html so the make install does not work, but this is a minor glitch
-that will soon be fixed.
+obtained expat-1.95.1.tar.gz from http://sourceforge.net/projects/expat/
+./configure; make; make install (last step with root)
+
+All the perl module tarballs can be obtained from a search of
+http://www.cpan.org/ and are installed with the commands
+perl Makefile.PL ; make; make test; make install (last as root)
+
+make uninstall removes them if required.
+
+From here on I just list the names of the perl module tarballs in the order I
+installed them.
+
+XML-Parser-2.30.tar.gz 
+
+libxml-perl-0.07.tar.gz
+
+XML-Writer-0.4.tar.gz 
+
+XML-DOM-1.25.tar.gz
+
+(Note the make test failed for this last module, and it is somewhat dated.
+A more modern version of this module is part of libxml-enno-1.02.tar.gz. We
+may switch to that eventually, [especially if somebody gets CPAN to work
+properly], but it has a large number of required perl extensions which in
+turn require other extensions so we stuck with XML-DOM and it worked okay
+for generating our info results even though the special test generated by
+make test failed for XML-DOM.)
+
 
 Installing at the live site for www.plplot.org
 ==============================================
 
-The make install step copies all relevant files from src to html. After
-these output results are tested (browsed with a browser, etc.), this whole
-directory should be copied to the appropriate sourceforge site.
-One way of doing this is
+After the output results are tested (man pages checked with nroff -man,
+html browsed with a browser, dvi viewed with xdvi, postscript
+viewed with gv, pdf viewed with acroread (or gv), info files viewed
+with the info command), the results should be copied
+to the plplot live web site if you have an account on shell1.sourceforge.net.
 
-ssh USERNAME@shell1.sourceforge.net 'rm -rf /home/groups/plplot/docbook-manual'
-scp -pr html USERNAME@shell1.sourceforge.net:/home/groups/plplot/docbook-manual
-ssh USERNAME@shell1.sourceforge.net 
-  once logged in, then look at /home/groups/plplot/htdocs-replace.csh for
-  any changes, then execute it.
+The following command uses ssh a lot so you will be entering your password
+a lot at shell1 unless you remember to execute ssh-agent and ssh-add
+first.  It is only this command which uses your login id at shell1
+which you entered (didn't you?) in the ./configure step above.
 
-The first of these commands completely removes the docbook-manual tree at
-sourceforge.  It is a potentially dangerous command (see below)
-which doesn't need to be executed every time, but the occasional cleanup
-of docbook-manual should be done with this command.
+To copy all results to the live website use:
 
-The second command copies the html tree to the (just removed) sourceforge
-docbook-manual tree.  If you haven't cleaned out the docbook-manual tree
-with the first command, then this command will overwrite files with the same
-name and leave unreferenced additional files that were on site before if
-there has been a name change for those files.  (And at first, you can
-probably expect plenty of name changes.)
+make www-install
 
-The third command executes a script that takes about 2 seconds to finish at
-sourceforge.  (You probably have to be actually logged in to sourceforge for
-that script to work since there is interaction with the user.) Currently,
-htdocs-replace.csh removes the live website at sourceforge
-(/home/groups/plplot/htdocs) and recreates that live website using cvs export
-and cp -a of docbook-manual (just updated by the second command) to the
-appropriate place within htdocs.
-
-All 3 of these commands could make a huge mess if done incorrectly (i.e.
-think of the consequences if you dropped the "docbook-manual" from the first
-command!) so be careful out there!  In particular, it is an excellent idea
-to look at htdocs-replace.csh before execution since Maurice has plans to
-modify it.  Eventually, as we get this system for updating the live site
-more finalized, we will probably want to put htdocs-replace.csh (or its
-replacement if Maurice wants to rename it) under cvs control.
-
-
-
-
-Prolog (the settings below are for Emacs)
-=========================================
-
-Local Variables: 
-mode: indented-text
-End:
+(You should use this command with discretion after you have carefully
+checked all the documentation forms you have created since it completely
+removes the old documentation from the live web site and replaces it with
+exactly what you have created.)
