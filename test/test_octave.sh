@@ -44,11 +44,11 @@ endfor
 # These require octave-2.1.50 so comment out since not everybody has
 # this.
 
-#for i=[1:7 8 9 13 15 16];
-#   figure(i,"$device",sprintf("p%d.$dsuffix",i));
-#   feval(sprintf("p%d",i))
-#   closefig
-#endfor
+for i=[1:7 8 9 13 15 16];
+   figure(i,"$device",sprintf("p%d.$dsuffix",i));
+   feval(sprintf("p%d",i))
+   closefig
+endfor
 
 #plot equivalent of x??c examples.  These only required octave-2.0.x
 #For file output 14 and 17 are not suitable, and 19 is not done

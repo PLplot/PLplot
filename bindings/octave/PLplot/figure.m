@@ -50,9 +50,9 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
     v = split(version ,'.');
     if (! (str2num(v(1,:)) >= 2 &&
            str2num(v(2,:)) >= 1 &&
-           str2num(v(3,:)) >= 50))
+           str2num(v(3,:)) >= 57))
         error("The PLplot-Octave scripts need an Octave version \n\
-        greater then or equal to 2.1.50.\n");
+        greater then or equal to 2.1.57.\n");
     endif
 
     plplot_stub;
