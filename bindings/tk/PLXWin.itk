@@ -7,7 +7,13 @@
 # $Id$
 #
 # $Log$
-# Revision 1.2  1995/10/26 07:12:04  furnish
+# Revision 1.3  1998/11/18 06:05:33  furnish
+# Itcl 3.x has class in namespace itcl, and it must be so qualified at
+# all times.  Guess JO had some problems with the Itcl namespace system,
+# and I haven't yet unlearned everything that will need to be unleared
+# in order to cope with JO's always-unique view of Itcl.
+#
+# Revision 1.2  1995/10/26  07:12:04  furnish
 # Hacked in a very hacky hack which seems to bring back the plxframe
 # menus.  Not much testing done yet though.
 #
@@ -42,7 +48,7 @@
 #
 ###############################################################################
 
-class PLXWin {
+itcl::class PLXWin {
     inherit PLWin
 
     constructor {args} {
