@@ -1,6 +1,16 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1994/01/15 17:28:22  mjl
+ * Revision 1.17  1994/01/25 06:38:26  mjl
+ * -db option (double buffering) added, for use with any of the X-based
+ * drivers.  This holds the window fixed while drawing only into the pixmap,
+ * until the end of page is seen.  Then the contents of the pixmap are
+ * blitted to the window.  This allows for an animation-type facility for
+ * properly constructed sequences (e.g. fixed axes) of plots.  Note, however,
+ * that this is no substitute for a /real/ animation capability since
+ * the speed of playback is determined by how much data has to be read
+ * and processed for each frame (thus can be somewhat variable).
+ *
+ * Revision 1.16  1994/01/15  17:28:22  mjl
  * Added new args: -server_name, -server_host, -server_port.  -server_name is
  * used with the TK driver to specify plserver's TK main window name, if
  * already running.  -server_host and -server_port are used for the DP
@@ -181,6 +191,7 @@ static int opt_fam		(char *, char *, void *);
 static int opt_fsiz		(char *, char *, void *);
 static int opt_bufmax		(char *, char *, void *);
 static int opt_nopixmap		(char *, char *, void *);
+static int opt_db		(char *, char *, void *);
 static int opt_np		(char *, char *, void *);
 static int opt_px		(char *, char *, void *);
 static int opt_py		(char *, char *, void *);
@@ -427,6 +438,14 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ENABLED,
     "-nopixmap",
     "Don't use pixmaps in X-based drivers" },
+{
+    "db",			/* Double buffering on switch */
+    opt_db,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED,
+    "-db",
+    "Double buffer X window output" },
 {
     "np",			/* Page pause off switch */
     opt_np,
@@ -1322,6 +1341,25 @@ opt_nopixmap(char *opt, char *optarg, void *client_data)
 
     plgpls(&pls);
     pls->nopixmap = 1;
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* opt_db()
+*
+* Performs appropriate action for option "db".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_db(char *opt, char *optarg, void *client_data)
+{
+    PLStream *pls;
+
+/* Double buffer X output (update only done on eop or Expose) */
+
+    plgpls(&pls);
+    pls->db = 1;
 
     return 0;
 }
