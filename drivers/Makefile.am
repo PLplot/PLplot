@@ -260,7 +260,73 @@ else
 
 noinst_LTLIBRARIES = libplplotdrv.la
 
-libplplotdrv_la_SOURCES =
+if enable_tk
+# All source that is in libplplottcltk.
+tksources = \
+	../bindings/tcl/tclAPI.c \
+	../bindings/tcl/tclMain.c \
+	../bindings/tk/Pltk_Init.c \
+	../bindings/tk/plframe.c \
+	../bindings/tk/plr.c \
+	../bindings/tk/tcpip.c \
+	../bindings/tk/tkMain.c
+							
+endif
+
+# This is an effective duplicate of what occurs in bindings/tcl to generate
+# include files for tclAPI.c.  So this duplicate work required duplicate
+# maintenance, but this is required because of the special nature of static
+# drivers and their linking constraints.
+
+plapi.tpl: ../bindings/tcl/plapi.tpl
+	cp ../bindings/tcl/plapi.tpl plapi.tpl
+
+tclcmd.tpl: ../bindings/tcl/tclcmd.tpl
+	cp ../bindings/tcl/tclcmd.tpl tclcmd.tpl
+
+tclgen.h tclgen_s.h tclgen.c : ../bindings/tcl/pltclgen plapi.tpl tclcmd.tpl
+	perl ../bindings/tcl/pltclgen
+
+../bindings/tcl/tclAPI.c: tclgen.h tclgen_s.h tclgen.c
+
+if enable_tcl
+# All source that is in libtclmatrix.
+matrixsources = \
+	../bindings/tcl/tclMatrix.c \
+	../bindings/tcl/matrixInit.c
+endif
+
+if enable_tkwin
+
+if enable_tk
+# These additions required for tkwin driver if already have additions for
+# tk driver in place.  These correspond to objects normally included in 
+# the tkwin driver in any case.
+
+tkwinsources = \
+	../bindings/tk-x-plat/Plplotter_Init.c \
+	../bindings/tk-x-plat/plplotter.c
+else
+# tkwin driver on its own without tk driver (but tcl must be enabled so
+# that in this case the matrix source is already in.  Thus, only need to
+# put in the tksource plus the two extra above.
+
+tkwinsources = \
+	../bindings/tcl/tclAPI.c \
+	../bindings/tcl/tclMain.c \
+	../bindings/tk/Pltk_Init.c \
+	../bindings/tk/plframe.c \
+	../bindings/tk/plr.c \
+	../bindings/tk/tcpip.c \
+	../bindings/tk/tkMain.c \
+	../bindings/tk-x-plat/Plplotter_Init.c \
+	../bindings/tk-x-plat/plplotter.c
+
+endif
+endif
+
+# For AM_CONDITIONALS must use SOURCES, not LIBADD
+libplplotdrv_la_SOURCES = $(tksources) $(matrixsources) $(tkwinsources)
 EXTRA_libplplotdrv_la_SOURCES = \
 	cgm.c \
 	dg300.c \
@@ -281,7 +347,9 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	tk.c \
 	tkwin.c \
 	xfig.c \
-	xwin.c
+	xwin.c \
+	$(extra_tksources) \
+	$(extra_tkwinsources)
 
 # All -I preprocessor flags apparently must be lumped together for all source
 # in this directory.  Some day when automake grows up, convert these
@@ -329,14 +397,16 @@ xwin_lo_CFLAGS = @X_CFLAGS@
 # tkwin covers ntk, tk, and tkwin
 # Following line did not work so try lumped alternative with AM_CPPFLAGS
 # libplplotdrv_la_CFLAGS = \
+# Also add itcl compile flags just in case the tk extra objects are compiled.
 AM_CPPFLAGS = \
 	$(cgm_lo_CFLAGS) \
 	$(gd_lo_CFLAGS) \
 	$(gnome_lo_CFLAGS) \
 	$(tkwin_lo_CFLAGS) \
-	$(xwin_lo_CFLAGS)
+	$(xwin_lo_CFLAGS) \
+	@ITCLINCCMD@
 
-libplplotdrv_la_LIBADD = @STATIC_DRIVERS@
+libplplotdrv_la_LIBADD = @STATIC_DRIVERS@ 
 libplplotdrv_la_LDFLAGS = \
 	@CDLIBCMD@ \
 	@GDLIBCMD@ \
@@ -344,9 +414,13 @@ libplplotdrv_la_LDFLAGS = \
 	@LINUXVGALIBS@ \
 	@TCLLIBCMD@ \
 	@TKLIBCMD@ \
+	@ITCLLIBCMD@ \
+	@ITKLIBCMD@ \
 	@X_LIBS@ -lX11
 
-libplplotdrv_la_DEPENDENCIES = @STATIC_DRIVERS@
+# These dependencies required for some reason if using the LIBADD method.
+libplplotdrv_la_DEPENDENCIES = $(libplplotdrv_la_LIBADD)
 
 # end of static driver case.
 endif
+CLEANFILES = plapi.tpl tclcmd.tpl tclgen.h tclgen_s.h tclgen.c 

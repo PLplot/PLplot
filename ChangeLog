@@ -1,3 +1,8 @@
+2002-12-07  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* drivers/Makefile.am: Make tk and tkwin static drivers work. This
+	  completes the static drivers configuration.
+
 2002-12-06  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
         * Configure test executables in examples for c++, f77, and tk.  make

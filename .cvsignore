@@ -17,3 +17,8 @@ ltmain.sh
 config.sub
 config.guess
 autom4te.cache
+plapi.tpl
+tclcmd.tpl 
+tclgen.h 
+tclgen_s.h 
+tclgen.c
