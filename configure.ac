@@ -615,8 +615,27 @@ AC_DEFINE_UNQUOTED(DRIVERS_DB, "$DRIVERS_DB")
 
 MY_ARG_ENABLE(cxx,
   [  --enable-cxx            compile C++ interface code ($enable_cxx)])
-if test "$enable_cxx" = yes ; then
-  AC_PROG_CXX
+if test "$enable_cxx" = yes; then
+
+    # If KAI C++ (Kuck and Associates) is available, use that.
+    found_cxx=no
+    if test -z "$CXX" -o "$CXX" = "KCC"; then
+	found_kcc=
+	AC_CHECK_PROG(found_kcc, KCC, yes, no)
+	if test "$found_kcc" = "yes" ; then
+	    found_cxx=yes
+	    AC_MSG_RESULT([Found KAI C++, using that!])
+	    CXX=KCC
+	    if test -z "$CXXFLAGS"; then
+		if test -z "$with_debug"; then
+		    CXXFLAGS="+K0"
+		else
+		    CXXFLAGS="+K2 -O2"
+		fi
+	    fi
+	fi
+    fi
+    AC_PROG_CXX
 fi
 
 ### Fortran 77 binding
@@ -936,21 +955,18 @@ plplot_config_result_msg="Configure results:
 command:	$plplot_config_invocation
 system:		$host
 prefix:		$prefix
-CC:		$CC $CC_FLAGS
-LDC:		$LDC $LDC_FLAGS"
+CC:		$CC $CC_FLAGS"
 
 if test "$enable_cxx" = "yes"; then
     plplot_config_result_msg=\
 "$plplot_config_result_msg
-CXX:		$CXX $CXX_FLAGS
-LDCXX:		$LDCXX $LDCXX_FLAGS"
+CXX:		$CXX $CXX_FLAGS"
 fi
 
 if test "$enable_f77" = "yes"; then
     plplot_config_result_msg=\
 "$plplot_config_result_msg
-F77:		$F77 $F77_FLAGS
-LDF:		$LDF $LDF_FLAGS"
+F77:		$F77 $F77_FLAGS"
 fi
 
 plplot_config_result_msg=\
