@@ -30,8 +30,8 @@ function p3
   n=5;
   
   for i=1:n
-    xs(i) = x(i * 10 + 3); xe(i) = rand;
-    ys(i) = y(i * 10 + 3); yel(i) = ys(i) - 4*rand; yer(i) = ys(i) + 4*rand;
+    xs(i) = x(i * 10 + 3); xe(i) = i/5;
+    ys(i) = y(i * 10 + 3); yel(i) = ys(i) - i; yer(i) = ys(i) + 2*i;
   endfor
 
   ## Plot the data points */
