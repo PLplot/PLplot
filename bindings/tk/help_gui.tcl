@@ -75,7 +75,7 @@ on different machines.  The existence of an interpreter in each process
 and robust method of sending commands between processes.  The data goes
 through via an alternate channel for maximum speed.
 
-      Also supported are some alternate configurations:
+Also supported are some alternate configurations:
 
 (a) the server creates widgets, then launches applications passing the
       name of the plframe widget to plot to.  You could launch multiple
@@ -86,15 +86,17 @@ through via an alternate channel for maximum speed.
       work being done in one process, but has the disadvantage that the
       user interface goes "dead" while the calculation is proceeding.
 
-      By offloading the GUI-building code into a simple script language, it becomes
-easy to build menus, buttons, scrollbars, etc.  All of these are configurable
-by the user, as well as the ability to map events (such as button presses) to
-functions calls in your own program. Note: the alternate configurations as
-well as the customization options are not yet fully tested.
+      By offloading the GUI-building code into a simple script language, it 
+becomes easy to build menus, buttons, scrollbars, etc.  All of these are
+configurable by the user, as well as the ability to map events (such as
+button presses) to functions calls in your own program. Note: the
+alternate configurations as well as the customization options are not yet
+fully tested.
 
-      Most of the currently supported operations of the PLPLOT/TK user interface
-are self-explanatory, and can be understood with a bit of experimentation.
-Better documentation will eventually follow.  Some points to remember: 
+      Most of the currently supported operations of the PLPLOT/TK user 
+interface are self-explanatory, and can be understood with a bit of
+experimentation.  Better documentation will eventually follow.  Some
+points to remember:
 
 	1. When the plframe widget is created, it grabs the input focus to
 allow easy advancement to the next plot by hitting <Return> (note: TK focus
