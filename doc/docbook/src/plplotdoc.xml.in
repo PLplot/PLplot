@@ -43,6 +43,7 @@
 <!ENTITY chap-intro SYSTEM "intro.xml">
 <!ENTITY chap-simple SYSTEM "simple.xml">
 <!ENTITY chap-advanced SYSTEM "advanced.xml">
+<!ENTITY chap-deploying SYSTEM "deploying.xml">
 <!ENTITY chap-drivers SYSTEM "drivers.xml">
 <!ENTITY chap-c SYSTEM "c.xml">
 <!ENTITY chap-fortran SYSTEM "fortran.xml">
@@ -319,6 +320,7 @@
     <title> Programming </title>
       &chap-simple;
       &chap-advanced;
+      &chap-deploying;
       &chap-drivers;
   </part>
 

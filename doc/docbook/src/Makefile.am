@@ -30,6 +30,7 @@ SOURCE_FILES = \
   api-fortran.xml \
   bibliography.xml \
   c.xml \
+  deploying.xml \
   fortran.xml \
   cplus.xml \
   drivers.xml \
