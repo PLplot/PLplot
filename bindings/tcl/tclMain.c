@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1995/10/22 17:37:25  mjl
+ * Revision 1.6  1995/11/30 20:03:04  furnish
+ * Correct the order of argument processing so that PLplot command line
+ * arguments are removed before the argc/argv list is set for Tcl.  This
+ * greatly improves the support for building custom pltcl shells.
+ *
+ * Revision 1.5  1995/10/22  17:37:25  mjl
  * Added command line argument parsing ala plParseOpts.  Previously, no args
  * except the file name were parsed, they were merely shoved into the Tcl
  * variables argc, argv, and argv0.  Even -f was ignored (try it yourself:
@@ -190,9 +195,16 @@ pltclMain(int argc, char **argv, char *RcFileName,
 	    (Tcl_CmdDeleteProc *) NULL);
 #endif
 
+    /* Now process the args using the PLplot parser. */
+
+    plMergeOpts(options, "pltcl options", NULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
+    Tcl_SetVar(interp, "argv0", (fileName != NULL) ? fileName : argv[0],
+	    TCL_GLOBAL_ONLY);
+
     /*
-     * Make command-line arguments available in the Tcl variables "argc"
-     * and "argv".  
+     * Make (remaining) command-line arguments available in the Tcl variables
+     * "argc" and "argv".  
      */
 
     args = Tcl_Merge(argc-1, argv+1);
@@ -200,13 +212,6 @@ pltclMain(int argc, char **argv, char *RcFileName,
     ckfree(args);
     sprintf(buffer, "%d", argc-1);
     Tcl_SetVar(interp, "argc", buffer, TCL_GLOBAL_ONLY);
-
-    /* Now process the args using the PLplot parser. */
-
-    plMergeOpts(options, "pltcl options", NULL);
-    (void) plParseOpts(&argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
-    Tcl_SetVar(interp, "argv0", (fileName != NULL) ? fileName : argv[0],
-	    TCL_GLOBAL_ONLY);
 
     /*
      * Set the "tcl_interactive" variable.
