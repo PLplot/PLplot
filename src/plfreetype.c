@@ -475,13 +475,10 @@ void plD_FreeType_init(PLStream *pls)
  *  pay the extra 15c and get a REAL separator???)
  */
 
-#ifdef DJGPP
-	    if ((strchr(FT->font_name[i],'/')) ||
-		(strchr(FT->font_name[i],'\\')) )
-#elif MSDOS
-	    if (strchr(FT->font_name[i],'\\'))
+#ifdef MSDOS
+	    if (a[1]==':') /* check for MS-DOS absolute path */
 #else
-	    if (strchr(FT->font_name[i],'/'))
+	    if ((a[0]=='/')||(a[0]=='~')) /* check for unix abs path */
 #endif
 		strcpy(FT->font_name[i],a);
 
