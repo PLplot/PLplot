@@ -462,8 +462,8 @@ typedef struct {
   /* variables for plimage() */
 
     PLINT dev_nptsX, dev_nptsY;
-    PLINT *dev_ix, *dev_iy;
-    PLFLT *dev_z;
+    short *dev_ix, *dev_iy;
+    unsigned short *dev_z;
     PLINT imclxmin, imclxmax, imclymin, imclymax;
 
   /* end of variables for plimage() */
