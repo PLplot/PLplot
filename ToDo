@@ -6,7 +6,7 @@ Areas currently under development
    the many platforms it runs on.  If you want it to run correctly on your
    platform it needs your support.  Current system supporters include:
 
-	Maurice LeBrun			HP-UX
+	Maurice LeBrun			HP-UX, Super-UX
 	mjl@dino.ph.utexas.edu
 
 	Geoff Furnish			Linux
@@ -30,12 +30,12 @@ Areas currently under development
 	the various DOS drivers
 	Irix
 	Ultrix
+	SunOS 5.x
 	(any other *ix not mentioned)
 	Amiga
-	UNICOS
-	SunOS
-	Super-UX
+	Unicos
 	AIX
+	SunOS 4.x
 
     (also VMS, if anyone ever gets the package working there again)
     (also Macintosh -- there is a very old port for it around somewhere)
@@ -105,9 +105,6 @@ Areas currently under development
 
  - File familying is hosed.
 
- - The DP driver still doesn't work from Crays.  What do I have to do
-   to make this work!?!?!
-
  - Various color drivers should be upgraded to work similar to the tek
    driver, with support for setting the color palette from the user
    program as well as cmap1.  I (Maurice) will probably only be supporting
@@ -141,26 +138,22 @@ Areas currently under development
 
  - Write Fortran counterparts to x14c and x15c?
 
- - add more utility functions to make example programs easier to write?  
-
  - start using m4 to preprocess the Fortran demos?
 
  - figure out why plrender is barfing on my old metafiles under ~/data
 
- - add support for shared libs on SunOS, AIX
+ - add support for shared libs on AIX
 
  - check out shared library support under SAS/C -- supposed to be easy
    (6.0 and later)
 
- - Put Tcl/TK shared lib build fixes for AIX, HPUX in shared lib package.
+ - Do something about the Tcl/TK shared lib situation.
 
- - Build TKNX and get it to work with Tcl-DP driver?
+ - Split off Tcl-DP stuff from Tk stuff better, get it working with DP-lite.
 
  - put pen width option in TK driver
 
  - const'ify plplot API
-
- - Switch to vfork() for TK driver on Cray.
 
  - Option in TK driver to preserve aspect ratio during zooms.
 
