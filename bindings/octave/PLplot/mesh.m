@@ -40,7 +40,7 @@ function mesh (x, y, z)
       x = (1:rz)'; 
       y = (1:cz)'; 
 
-      __pl_mesh(x, y, z)
+      __pl_mesh(x, y, z, 0, 0)
     else
       error ("mesh: argument must be a matrix");
     endif
@@ -56,7 +56,7 @@ function mesh (x, y, z)
           x = x';
         endif
 
-	__pl_mesh(x, y, z)
+	__pl_mesh(x, y, z, 0, 0)
       else
         msg = "mesh: rows (z) must be the same as length (x) and";
         msg = sprintf ("%s\ncolumns (z) must be the same as length (y)", msg);

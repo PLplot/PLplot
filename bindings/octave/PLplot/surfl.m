@@ -28,7 +28,7 @@
 ##
 ## `s', if existent, set the light source in cartesian coordinates [Sx Sy Sz]
 ## or [Saz Sel] in spherical coordinates.
-## Ilumination can also be set by pllightsource(Sx,Sy, Sz)
+## Ilumination can also be set by pllightsource(Sx, Sy, Sz)
 ##
 ## See also: plot, semilogx, semilogy, loglog, polar, meshgrid, meshdom,
 ##           contour, bar, stairs, gplot, gsplot, replot, xlabel, ylabel, title
@@ -62,7 +62,7 @@ function surfl (x, y, z, s)
       x = (1:rz)'; 
       y = (1:cz)'; 
 
-      __pl_mesh(x, y, z, s)
+      __pl_mesh(x, y, z, s, 1)
     else
       error ("surfl: argument must be a matrix");
     endif
@@ -80,7 +80,7 @@ function surfl (x, y, z, s)
           x = x';
         endif
 
-	__pl_mesh(x, y, z, s)
+	__pl_mesh(x, y, z, s, 1)
       else
         msg = "mesh: rows (z) must be the same as length (x) and";
         msg = sprintf ("%s\ncolumns (z) must be the same as length (y)", msg);

@@ -12,7 +12,7 @@
 ##
 ## This file is part of plplot_octave.
 
-function __pl_mesh(x, y, z, s)
+function __pl_mesh(x, y, z, s, type)
 
   global __pl
   __pl_strm = __pl_init;
@@ -48,11 +48,13 @@ function __pl_mesh(x, y, z, s)
 	 "bcmnstuv", tdeblank(__pl.zlabel(__pl_strm,:)), 0.0, 0);
   plcol(1)
 
-  if (nargin == 3 || s == 0)        
+  if (type == 0)
     plmesh(x, y, z, 3);
-  else
+  elseif (type == 1)
     pllightsource(s(1), s(2), s(3));
     plotsh3d(x, y, z, 0)
+  elseif (type == 2)
+    plotfc3d(x, y, z, 0)
   endif	
   
   plcol(15);
