@@ -28,9 +28,11 @@ class x07 {
     public x07( String[] args )
     {
         pls = new PLStream();
-        NumberFormat nf = NumberFormat.getNumberInstance();
+//        NumberFormat nf = NumberFormat.getNumberInstance();
+//        Change to this custom format to get stupid locale commas
+//        separating hundreds and thousands place out of labels.
+        DecimalFormat nf = new DecimalFormat("#####");
 
-        String text;
         int i, j, k, l;
         double x, y;
 
@@ -60,7 +62,7 @@ class x07 {
 
             pls.col0(15);
             for (i = 0; i <= 9; i++) {
-                text = nf.format(i);
+                String text = nf.format(i);
                 pls.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
             }
 
@@ -69,7 +71,7 @@ class x07 {
 
             // Write the digits to the left of the frame.
 
-                text = nf.format( base[l] + 10*i );
+                String text = nf.format( base[l] + 10*i );
                 pls.mtex("lv", 1.0, (0.95 - 0.1 * i), 1.0, text);
                 for( j = 0; j <= 9; j++ ) {
                     x = 0.1 * j + 0.05;
