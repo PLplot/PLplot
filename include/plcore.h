@@ -910,7 +910,7 @@ static PLDispatchTable static_devices[] = {
         "CGM File (Computer Graphics Metafile libcd)",
 	"cgm",
 	plDevType_FileOriented,
-        43,
+        44,
 	(plD_init_fp) plD_init_cgm,
 	(plD_line_fp) plD_line_cgm,
 	(plD_polyline_fp) plD_polyline_cgm,
