@@ -374,11 +374,11 @@ fi
 if test "$enable_dp" = "yes"; then
     ADD_TO_LIBS($DPLIBDIR, -ldpnetwork)
 fi
+if test "$enable_itcl" = "yes"; then
+    ADD_TO_LIBS($ITCLLIBDIR, -litk -litcl)
+fi
 if test "$enable_tk" = "yes"; then
     ADD_TO_LIBS($TKLIBDIR, -ltk)
-fi
-if test "$enable_itcl" = "yes"; then
-    ADD_TO_LIBS($ITCLLIBDIR, -litcl)
 fi
 if test "$enable_tcl" = "yes"; then
     ADD_TO_LIBS($TCLLIBDIR, -ltcl)
