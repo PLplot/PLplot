@@ -1628,58 +1628,93 @@ reference stream to the current stream
 	    <itemizedlist>
 	      <listitem>
 		<para>
-		  <literal>-2</literal>: No box or annotation.
+		  <literal>-2</literal>: draw no box, no tick marks, no
+numeric tick labels, no axes.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>-1</literal>: Draw box only.
+		  <literal>-1</literal>: draw box only.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>0</literal>: Draw box, labeled with coordinate
-		  values around edge.
+		  <literal>0</literal>: draw box, ticks, and numeric tick labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>1</literal>: In addition to box and labels, draw
-		  the two axes <literal>x=0</literal> and
-		  <literal>y=0</literal>.
+		  <literal>1</literal>: also draw coordinate axes at 
+		  <literal>x=0</literal> and <literal>y=0</literal>.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>2</literal>: As for <literal>axis=1</literal>,
-		  but also draw a grid at the major tick interval.
+		  <literal>2</literal>: also draw a grid at major tick
+positions in both coordinates.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>10</literal>: Logarithmic x axis, linear y axis.
+		  <literal>10</literal>: same as 0 except logarithmic 
+		  <literal>x</literal> tick marks. (The <literal>x</literal> 
+		  data have to be converted to logarithms separately.)
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>11</literal>: Logarithmic x axis, linear y axis
-		  and draw line <literal>y=0</literal>.
+		  <literal>11</literal>: same as 1 except logarithmic
+		  <literal>x</literal> tick marks. (The <literal>x</literal>
+                  data have to be converted to logarithms separately.)
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>20</literal>: Linear x axis, logarithmic y axis.
+		  <literal>12</literal>: same as 2 except logarithmic
+		  <literal>x</literal> tick marks. (The <literal>x</literal>
+                  data have to be converted to logarithms separately.)
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>21</literal>: Linear x axis, logarithmic y axis
-		  and draw line <literal>x=0</literal>.
+		  <literal>20</literal>: same as 0 except logarithmic 
+		  <literal>y</literal> tick marks. (The <literal>y</literal> 
+		  data have to be converted to logarithms separately.)
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>30</literal>: Logarithmic x and y axes.
+		  <literal>21</literal>: same as 1 except logarithmic
+		  <literal>y</literal> tick marks. (The <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>22</literal>: same as 2 except logarithmic
+		  <literal>y</literal> tick marks. (The <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>30</literal>: same as 0 except logarithmic 
+		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal> 
+		  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>31</literal>: same as 1 except logarithmic
+		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal>
+                  data have to be converted to logarithms separately.)
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>32</literal>: same as 2 except logarithmic
+		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal>
+                  data have to be converted to logarithms separately.)
 		</para>
 	      </listitem>
 	    </itemizedlist>
