@@ -1195,9 +1195,7 @@ if test "$enable_python" = "yes"; then
     fi
 fi
 
-if test -z "$PYTHON_INSTDIR"; then
-    PYTHON_INSTDIR=`echo $PYTHON_DIR | sed s%$prefix/%%`
-fi
+PYTHON_INSTDIR=`echo $PYTHON_DIR | sed s%$prefix/%%`
 
 AC_SUBST(PYTHON_INC_DIR)
 AC_SUBST(PYTHON_NUM_DIR)
