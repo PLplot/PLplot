@@ -1,3 +1,4 @@
 usr/include
 usr/lib/libplplotd.la
-usr/lib/libplplotd.so 
+usr/lib/libplplotd.so
+usr/share/doc/libplplot-dev
