@@ -26,5 +26,14 @@ libnn_la_SOURCES = delaunay.c hash.c istack.c linear.c \
 libnn_la_LDFLAGS = -version 0:0:0 -lm
 AM_CPPFLAGS = -I.
 
-EXTRA_DIST = delaunay.h hash.h istack.h nan.h nn.h version.h
+EXTRA_DIST = delaunay.h hash.h istack.h nan.h nn.h version.h \
+             README README.1st
+	     
+docdir = $(DOCDIR)
+doc_DATA = README.nn README.1st.nn
+
+%.nn: %
+	  cp $< $@
+
+CLEANFILES = $(doc_DATA)
 

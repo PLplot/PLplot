@@ -25,4 +25,13 @@ libcsa_la_SOURCES = csa.c
 libcsa_la_LDFLAGS = -version 0:0:0 -lm
 AM_CPPFLAGS = -I.
 
-EXTRA_DIST = csa.h csa_internal.h nan.h version.h
+EXTRA_DIST = csa.h csa_internal.h nan.h version.h README README.1st
+	     
+docdir = $(DOCDIR)
+doc_DATA = README.csa README.1st.csa
+
+%.csa: %
+	  cp $< $@
+
+CLEANFILES = $(doc_DATA)
+
