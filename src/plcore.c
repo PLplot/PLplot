@@ -999,6 +999,25 @@ c_plflush(void)
 \*--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------*\
+ * void pllib_init()
+ *
+ * Initialize library.  Called internally by every startup routine.
+ * Everything you want to always be initialized before plinit() is called
+ * you should put here.  E.g. dispatch table setup, rcfile read, etc.
+\*--------------------------------------------------------------------------*/
+
+void
+pllib_init()
+{
+    if (lib_initialized++) return;
+
+/* Initialize the dispatch table with the info from the static drivers table
+   and the available dynamic drivers. */
+
+    plInitDispatchTable();
+}
+
+/*--------------------------------------------------------------------------*\
  * void plstar(nx, ny)
  *
  * Initialize PLplot, passing in the windows/page settings.
@@ -1007,6 +1026,8 @@ c_plflush(void)
 void
 c_plstar(PLINT nx, PLINT ny)
 {
+    pllib_init();
+
     if (plsc->level != 0)
 	plend1();
 
@@ -1024,6 +1045,8 @@ c_plstar(PLINT nx, PLINT ny)
 void
 c_plstart(const char *devname, PLINT nx, PLINT ny)
 {
+    pllib_init();
+
     if (plsc->level != 0)
 	plend1();
 
@@ -1044,6 +1067,8 @@ c_plinit(void)
 {
     PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_old, aspect_new;
     PLINT mk = 0, sp = 0, inc = 0, del = 2000;
+
+    pllib_init();
 
     if (plsc->level != 0)
 	plend1();
@@ -1410,17 +1435,6 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	plinit();
 }
 
-static int plDispatchSequencer( const void *p1, const void *p2 )
-{
-    const PLDispatchTable* t1 = *(PLDispatchTable **) p1;
-    const PLDispatchTable* t2 = *(PLDispatchTable **) p2;
-
-/*     printf( "sorting: t1.name=%s t1.seq=%d t2.name=%s t2.seq=%d\n", */
-/*             t1->pl_DevName, t1->pl_seq, t2->pl_DevName, t2->pl_seq ); */
-
-    return t1->pl_seq - t2->pl_seq;
-}
-
 /*--------------------------------------------------------------------------*\
  * void plGetDev()
  *
@@ -1428,7 +1442,7 @@ static int plDispatchSequencer( const void *p1, const void *p2 )
  * the situation is a bit more complicated now in the dynloadable drivers
  * era.  We have to:
  * 1) Make sure the dispatch table is initialized to the union of static
- *    drivers and available dynamic drivers.
+ *    drivers and available dynamic drivers (done from pllib_init now).
  * 2) Allow the user to select the desired device.
  * 3) Initiailize the dispatch table entries for the selected device, in the
  *    case that it is a dynloadable driver that has not yet been loaded.
@@ -1438,13 +1452,6 @@ static void
 plGetDev()
 {
     int n;
-
-/* Start by checking to see that the dispatch table has been initialized with
- * the info from the static drivers table and the available dynamic
- * drivers. */
-
-    if (!dispatch_table_inited)
-        plInitDispatchTable();
 
     plSelectDev();
 
@@ -1459,6 +1466,17 @@ plGetDev()
  *
  * ...
 \*--------------------------------------------------------------------------*/
+
+static int plDispatchSequencer( const void *p1, const void *p2 )
+{
+    const PLDispatchTable* t1 = *(PLDispatchTable **) p1;
+    const PLDispatchTable* t2 = *(PLDispatchTable **) p2;
+
+/*     printf( "sorting: t1.name=%s t1.seq=%d t2.name=%s t2.seq=%d\n", */
+/*             t1->pl_DevName, t1->pl_seq, t2->pl_DevName, t2->pl_seq ); */
+
+    return t1->pl_seq - t2->pl_seq;
+}
 
 static void
 plInitDispatchTable()
@@ -1494,7 +1512,8 @@ plInitDispatchTable()
 #endif
 
 /* Allocate space for the dispatch table. */
-    dispatch_table = (PLDispatchTable **)malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable *) );
+    dispatch_table = (PLDispatchTable **) 
+	malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable *) );
 
 /* Initialize the dispatch table entries for the static devices by calling
    the dispatch table initialization function for each static device.  This
@@ -1592,8 +1611,6 @@ plInitDispatchTable()
 
     qsort( dispatch_table, npldrivers, sizeof(PLDispatchTable*),
            plDispatchSequencer );
-
-    dispatch_table_inited = 1;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1831,7 +1848,7 @@ c_plreplot(void)
 void
 plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
 {
-  plgdevlst(*p_menustr, *p_devname, p_ndev, 0);
+    plgdevlst(*p_menustr, *p_devname, p_ndev, 0);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1843,13 +1860,15 @@ plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
 void
 plgDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
 {
-  plgdevlst(*p_menustr, *p_devname, p_ndev, -1);
+    plgdevlst(*p_menustr, *p_devname, p_ndev, -1);
 }
 
 static void
 plgdevlst(char **p_menustr, char **p_devname, int *p_ndev, int type)
 {
     int i, j;
+
+    pllib_init();
 
     for (i = j = 0; i < npldrivers; i++) {
 	if (type < 0 || dispatch_table[i]->pl_type == type) {
