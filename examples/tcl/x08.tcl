@@ -24,16 +24,9 @@ proc restore_cmap1 {w} {
    # Hue for control points.  Blue-violet to red
    matrix h f 6 = {260., 260., 260., 0., 0., 0.}
    # Lightness ranging from medium to vertex to medium
-   # do this the long way because constructs like
-   # matrix l f 6  = {0.5, $midpt, $vertex, $vertex, $midpt, 0.5}
-   # don't work properly (sets zero value for interior points).
-   matrix l f 6
-   l 0 = 0.5
-   l 1 = $midpt
-   l 2 = $vertex
-   l 3 = $vertex
-   l 4 = $midpt
-   l 5 = 0.5
+   # double quotes required rather than braces so that variables
+   # get evaluated for initialization.
+   matrix l f 6  = "0.5, $midpt, $vertex, $vertex, $midpt, 0.5"
    # Saturation is complete for default
    matrix s f 6 = {1., 1., 1., 1., 1., 1.}
    # Integer flag array is zero (no interpolation along far-side of colour
