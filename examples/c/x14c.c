@@ -28,7 +28,7 @@ void plot5();
 \*--------------------------------------------------------------------------*/
 
 int
-main(void)
+main(int argc, char *argv[])
 {
     int i, digmax;
     int xleng0 = 400, yleng0 = 300, xoff0 = 200, yoff0 = 200;
@@ -41,6 +41,17 @@ main(void)
     char driver[] = "tk";
     char geometry_master[] = "500x410+100+200";
     char geometry_slave[]  = "500x410+650+200";
+
+    char driver_orig[80];
+
+/* plplot initialization */
+/* Parse and process command line arguments */
+
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+
+    plgdev(driver_orig);
+    if (strcmp(driver_orig, "tk"))
+	plexit("Demo for TK driver only.");
 
     printf("Demo of multiple output streams via the %s driver.\n", driver);
     printf("Running with the second window as slave.\n");
