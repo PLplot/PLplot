@@ -8,15 +8,217 @@
 // $Id$
 //
 // $Log$
-// Revision 1.1  1994/10/06 07:24:47  furnish
+// Revision 1.2  1994/10/18 16:12:39  furnish
+// Beginnings of 2-d abstraction for contouring and shading.  Better
+// constructors.  Names for colors.  Other minor stuff.  Still need to do
+// major hacking on the 2-d abstraction, and also need to remove large
+// numbers of unnecessary methods.
+//
+// Revision 1.1  1994/10/06  07:24:47  furnish
 // New C++ wrapper around the PLplot API.  Needs much work.
 //
 //---------------------------------------------------------------------------//
 
 #include "stream.h"
 
+#include <iostream.h>
+
+PLFLT Contourable_Data_evaluator( PLINT i, PLINT j, PLPointer p )
+{
+    const Contourable_Data& d = *(Contourable_Data *) p;
+
+    return d(i,j);
+}
+
+void Coord_Xform_evaluator( PLFLT ox, PLFLT oy,
+			    PLFLT *nx, PLFLT *ny, PLPointer p )
+{
+    const Coord_Xformer& xf = *(Coord_Xformer *) p;
+
+    xf.xform( ox, oy, *nx, *ny );
+}
+
+// A specific case for handling transformation defined by 2-d grid vertex
+// specification matricies.
+
+cxx_pltr2::cxx_pltr2( Coord_2d& cx, Coord_2d& cy )
+    : xg(cx), yg(cy)
+{}
+
+// Next routine copied and modified for C++ from PLPLOT 4.99d.
+
+/*----------------------------------------------------------------------*\
+* pltr2()
+*
+* Does linear interpolation from doubly dimensioned coord arrays
+* (column dominant, as per normal C 2d arrays).
+*
+* This routine includes lots of checks for out of bounds.  This would
+* occur occasionally due to some bugs in the contour plotter (now fixed).
+* If an out of bounds coordinate is obtained, the boundary value is provided
+* along with a warning.  These checks should stay since no harm is done if
+* if everything works correctly.
+\*----------------------------------------------------------------------*/
+
+void cxx_pltr2::xform( PLFLT x, PLFLT y, PLFLT& tx, PLFLT& ty ) const
+{
+    int nx, ny;
+    xg.elements( nx, ny );
+
+    int ul, ur, vl, vr;
+    float du, dv;
+
+    float xll, xlr, xrl, xrr;
+    float yll, ylr, yrl, yrr;
+    float xmin, xmax, ymin, ymax;
+
+    ul = (int) x;
+    ur = ul + 1;
+    du = x - ul;
+
+    vl = (int) y;
+    vr = vl + 1;
+    dv = y - vl;
+
+    xmin = 0;
+    xmax = nx - 1;
+    ymin = 0;
+    ymax = ny - 1;
+
+    if (x < xmin || x > xmax || y < ymin || y > ymax) {
+	cerr << "cxx_pltr2::xform, Invalid coordinates\n";
+	
+	if (x < xmin) {
+
+	    if (y < ymin) {
+		tx = xg(0,0);
+		ty = yg(0,0);
+	    }
+	    else if (y > ymax) {
+		tx = xg(0, ny-1);
+		ty = yg(0, ny-1);
+	    }
+	    else {
+		xll = xg(0, vl);
+		yll = yg(0, vl);
+		xlr = xg(0, vr);
+		ylr = yg(0, vr);
+
+		tx = xll * (1 - dv) + xlr * (dv);
+		ty = yll * (1 - dv) + ylr * (dv);
+	    }
+	}
+	else if (x > xmax) {
+
+	    if (y < ymin) {
+		tx = xg(nx-1, 0);
+		ty = yg(nx-1, 0);
+	    }
+	    else if (y > ymax) {
+		tx = xg(nx-1, ny-1);
+		ty = yg(nx-1, ny-1);
+	    }
+	    else {
+		xll = xg(nx-1, vl);
+		yll = yg(nx-1, vl);
+		xlr = xg(nx-1, vr);
+		ylr = yg(nx-1, vr);
+
+		tx = xll * (1 - dv) + xlr * (dv);
+		ty = yll * (1 - dv) + ylr * (dv);
+	    }
+	}
+	else {
+	    if (y < ymin) {
+		xll = xg(ul, 0);
+		xrl = xg(ur, 0);
+		yll = yg(ul, 0);
+		yrl = yg(ur, 0);
+
+		tx = xll * (1 - du) + xrl * (du);
+		ty = yll * (1 - du) + yrl * (du);
+	    }
+	    else if (y > ymax) {
+		xlr = xg(ul, ny-1);
+		xrr = xg(ur, ny-1);
+		ylr = yg(ul, ny-1);
+		yrr = yg(ur, ny-1);
+
+		tx = xlr * (1 - du) + xrr * (du);
+		ty = ylr * (1 - du) + yrr * (du);
+	    }
+	}
+    }
+
+/* Normal case.
+   Look up coordinates in row-dominant array.
+   Have to handle right boundary specially -- if at the edge, we'd
+   better not reference the out of bounds point. */
+
+    else {
+
+	xll = xg(ul, vl);
+	yll = yg(ul, vl);
+
+/* ur is out of bounds */
+
+	if (ur == nx && vr < ny) {
+
+	    xlr = xg(ul, vr);
+	    ylr = yg(ul, vr);
+
+	    tx = xll * (1 - dv) + xlr * (dv);
+	    ty = yll * (1 - dv) + ylr * (dv);
+	}
+
+/* vr is out of bounds */
+
+	else if (ur < nx && vr == ny) {
+
+	    xrl = xg(ur, vl);
+	    yrl = yg(ur, vl);
+
+	    tx = xll * (1 - du) + xrl * (du);
+	    ty = yll * (1 - du) + yrl * (du);
+	}
+
+/* both ur and vr are out of bounds */
+
+	else if (ur == nx && vr == ny) {
+
+	    tx = xll;
+	    ty = yll;
+	}
+
+/* everything in bounds */
+
+	else {
+
+	    xrl = xg(ur, vl);
+	    xlr = xg(ul, vr);
+	    xrr = xg(ur, vr);
+
+	    yrl = yg(ur, vl);
+	    ylr = yg(ul, vr);
+	    yrr = yg(ur, vr);
+
+	    tx = xll * (1 - du) * (1 - dv) + xlr * (1 - du) * (dv) +
+		xrl * (du) * (1 - dv) + xrr * (du) * (dv);
+
+	    ty = yll * (1 - du) * (1 - dv) + ylr * (1 - du) * (dv) +
+		yrl * (du) * (1 - dv) + yrr * (du) * (dv);
+	}
+    }
+}
+
 int plstream::next_stream = 0;
 int plstream::active_streams = 0;
+
+plstream::plstream()
+{
+    ::c_plinit();
+    ::c_plgstrm( &stream );
+}
 
 plstream::plstream( PLS::stream_id sid, int strm /*=0*/ )
 {
@@ -30,7 +232,7 @@ plstream::plstream( PLS::stream_id sid, int strm /*=0*/ )
 	break;
 
     case PLS::Specific:
-//	throw( "plstream ctor option not implemented." );
+	stream = strm;
 	break;
 
     default:
@@ -134,14 +336,13 @@ plstream::box3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	    zopt, zlabel, ztick, nsubz );
 }
 
-/* Set color, map 0.  Argument is integer between 0 and 15. */
+// Set the color using a descriptive name.  Replaces plcol0().
 
-void
-plstream::col0(PLINT icol0)
+void plstream::col( PLcolor c )
 {
     set_stream();
 
-    plcol0(icol0);
+    plcol0( (int) c );
 }
 
 /* Set color, map 1.  Argument is a float between 0. and 1. */
@@ -961,6 +1162,30 @@ plstream::shade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
 	     sh_cmap, sh_color, sh_width,
 	     min_color, min_width, max_color, max_width,
 	     fill, rectangular, pltr, pltr_data );
+}
+
+void
+plstream::shade( Contourable_Data& d, PLFLT xmin, PLFLT xmax,
+		 PLFLT ymin, PLFLT ymax, PLFLT shade_min, PLFLT shade_max,
+		 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+		 PLINT min_color, PLINT min_width,
+		 PLINT max_color, PLINT max_width,
+		 PLINT rectangular,
+		 Coord_Xformer *pcxf )
+{
+    set_stream();
+
+    int nx, ny;
+    d.elements( nx, ny );
+
+    ::plfshade( Contourable_Data_evaluator, &d,
+		NULL, NULL,
+		nx, ny,
+		xmin, xmax, ymin, ymax, shade_min, shade_max,
+		sh_cmap, sh_color, sh_width,
+		min_color, min_width, max_color, max_width,
+		::plfill, rectangular,
+		Coord_Xform_evaluator, pcxf );
 }
 
 void 

@@ -8,7 +8,13 @@
 // $Id$
 //
 // $Log$
-// Revision 1.1  1994/10/06 07:24:44  furnish
+// Revision 1.2  1994/10/18 16:12:36  furnish
+// Beginnings of 2-d abstraction for contouring and shading.  Better
+// constructors.  Names for colors.  Other minor stuff.  Still need to do
+// major hacking on the 2-d abstraction, and also need to remove large
+// numbers of unnecessary methods.
+//
+// Revision 1.1  1994/10/06  07:24:44  furnish
 // New C++ wrapper around the PLplot API.  Needs much work.
 //
 //---------------------------------------------------------------------------//
@@ -21,6 +27,46 @@
 class PLS {
   public:
     enum stream_id { Next, Current, Specific };
+};
+
+enum PLcolor { Black=0, Red, Yellow, Green,
+	       Cyan, Pink, Tan, Grey,
+	       DarkRed, DeepBlue, Purple, LIghtCyan,
+	       LightBlue, Orchid, Mauve, White };
+
+// A class for assisting in generalizing the data prescription
+// interface to the contouring routines.
+
+class Contourable_Data {
+    int _nx, _ny;
+  public:
+    Contourable_Data( int nx, int ny ) : _nx(nx), _ny(ny) {}
+    virtual void elements( int& nx, int& ny ) const { nx = _nx; ny=_ny; }
+    virtual PLFLT operator()( int i, int j ) const =0;
+};
+
+PLFLT Contourable_Data_evaluator( PLINT i, PLINT j, PLPointer p );
+
+class Coord_Xformer {
+  public:
+    virtual void xform( PLFLT ox, PLFLT oy, PLFLT& nx, PLFLT& ny ) const =0;
+};
+
+void Coord_Xform_evaluator( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer );
+
+class Coord_2d {
+  public:
+    virtual float operator() ( int ix, int iy ) const =0;
+    virtual void elements( int& _nx, int& _ny ) =0;
+    virtual void min_max( float& _min, float& _max ) =0;
+};
+
+class cxx_pltr2 : public Coord_Xformer {
+    Coord_2d& xg;
+    Coord_2d& yg;
+  public:
+    cxx_pltr2( Coord_2d& cx, Coord_2d& cy );
+    void xform( PLFLT x, PLFLT y, PLFLT& tx, PLFLT& ty ) const;
 };
 
 //===========================================================================//
@@ -45,6 +91,7 @@ class plstream {
     void set_stream() { ::c_plsstrm(stream); }
 
   public:
+    plstream();
     plstream( PLS::stream_id sid, int strm =0 );
     plstream( int _stream ) : stream(_stream) {}
     plstream( int nx /*=1*/, int ny /*=1*/, const char *driver =NULL );
@@ -57,8 +104,7 @@ class plstream {
 
 /* Advance to subpage "page", or to the next one if "page" = 0. */
 
-void
-adv(PLINT page);
+    void adv(PLINT page);
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
@@ -92,8 +138,10 @@ box3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
-void
-col0(PLINT icol0);
+// void
+// col0(PLINT icol0);
+
+    void col( PLcolor c );
 
 /* Set color, map 1.  Argument is a float between 0. and 1. */
 
@@ -514,6 +562,18 @@ shade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
 	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
 	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	  PLPointer pltr_data);
+
+// Would be nice to fix this even more, say by stuffing xmin, xmax,
+// ymin, ymax, rectangular, and pcxf all into the contourable data
+// class.  Have to think more on that.  Or maybe the coordinate info.
+
+    void shade( Contourable_Data& d, PLFLT xmin, PLFLT xmax,
+		PLFLT ymin, PLFLT ymax, PLFLT shade_min, PLFLT shade_max,
+		PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+		PLINT min_color, PLINT min_width,
+		PLINT max_color, PLINT max_width,
+		PLINT rectangular,
+		Coord_Xformer *pcxf );
 
 void 
 shade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
