@@ -11,7 +11,7 @@
 # If your user name (as given by the environment variable USER) is different
 # as that at SF, then launch the script like this:
 #     
-#     USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
+#     WWW_USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
 #
 # To avoid rebuild launch it like this:
 #     build=false scripts/htdocs-gen_plot-examples.sh
@@ -44,7 +44,7 @@ cp examples/c/lena.pgm .
 
 EXDIR=htdocs/examples-data
 
-for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21; do
+for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21 22; do
 
     echo Working in example ${exe}
 
@@ -64,11 +64,12 @@ for exe in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19 20 21; do
     cp examples/c/x${exe}c.c examples/tcl/x${exe}.tcl               \
        examples/java/x${exe}.java examples/f77/x${exe}f.f           \
        bindings/octave/demos/x${exe}c.m	examples/python/xw${exe}.py \
-       examples/c++/x${exe}.cc 	$EXDIR/demo${exe}
+       examples/c++/x${exe}.cc 	examples/perl/x${exe}.pl            \
+       $EXDIR/demo${exe}
 
     # rename executables, to avoid browsers trying to execute files instead of showing them.
     (cd  htdocs/examples-data/demo${exe};
-    for j in *.c *.cc *.f *.m *.tcl *.java *.py; do
+    for j in *.c *.cc *.f *.m *.tcl *.java *.py *.pl; do
 	    mv $j $j-
     done
     )  
