@@ -211,13 +211,18 @@ fi
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLLIBDIR"; then
 	FIND_LIB_BEGIN(itcl, ITCLLIBDIR)
-	for version in 2.1 2.0 ""; do
+	for version in 3.2 3.1 3.0 2.1 2.0 ""; do
 	    if test -n "$ITCLLIBDIR"; then
 		break
 	    fi
 	    FIND_LIB_SET(itcl$version, ITCLLIBDIR, ITCLLIBSTR)
 	done
 	FIND_LIB_END(itcl, ITCLLIBDIR, enable_itcl)
+    fi
+    if test "$enable_itcl" = "yes"; then
+	if test -r $ITCLLIBDIR/itclConfig.sh; then
+	    . $ITCLLIBDIR/itclConfig.sh
+	fi
     fi
 fi
 
@@ -264,7 +269,7 @@ fi
 if test "$enable_itk" = "yes"; then
     if test -z "$ITKLIBDIR"; then
 	FIND_LIB_BEGIN(itk, ITKLIBDIR)
-	for version in 2.1 2.0 ""; do
+	for version in 3.2 3.1 3.0 2.1 2.0 ""; do
 	    if test -n "$ITKLIBDIR"; then
 		break
 	    fi
@@ -295,22 +300,19 @@ if test "$enable_tcl" = "yes"; then
 	MAKEINDEX="/usr/bin/tclsh$TCL_VERSION"
     else
 	tclbindir="`echo $TCLLIBDIR | sed 's,/lib,,'`/bin"
-#	echo "tclbindir = $tclbindir"
 	if test -r "$tclbindir/tclsh$TCL_VERSION"; then
 	    MAKEINDEX="$tclbindir/tclsh$TCL_VERSION"
-#	    echo "setting MAKEINDEX to $MAKEINDEX"
 	fi
     fi
     TCL_INDEX_FILES="*.tcl"
 fi
 
 if test "$enable_itcl" = "yes"; then
-    itclbindir="`echo $ITCLLIBDIR | sed 's,/lib/itcl,,'`/bin"
-#    echo "itclbindir = $itclbindir"
-    if test -r "$itclbindir/itclsh"; then
-	MAKEINDEX="$itclbindir/itclsh"
+    itclbindir="`echo $ITCLLIBDIR | sed 's,/lib,,'`/bin"
+    if test -r "$itclbindir/itclsh$ITCL_VERSION"; then
+	MAKEINDEX="$itclbindir/itclsh$ITCL_VERSION"
     fi
-    TCL_INDEX_FILES="*.tcl"
+    TCL_INDEX_FILES="*.tcl *.itk"
 fi
 
 if test "$enable_tcl" = "yes" -a "$MAKEINDEX" = "BOGUS"; then
