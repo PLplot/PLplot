@@ -2,8 +2,6 @@
 
 # Generate an Encapsulated Postscript file (eps) from the
 # PLplot pstex driver generated files. 
-#
-#
 
 if test $# = "0"; then
 	echo -e "\n\
@@ -17,7 +15,10 @@ if test $# = "0"; then
 	\n\
 	The Computer Modern Type 1 fonts will be included in the output\n\
 	eps file. If you intent to use the plot figure in LaTeX, just\n\
-	use a plain \include{<filename_t>} in your latex file.\n"
+	use a plain \include{<filename_t>} in your latex file.\n\
+	\n\
+	Warning: the ghostscript utility 'ps2epsi', used in this script,\n\
+	can mis-calculate the postscript Bounding Box.\n"
 	exit 1
 fi
 
