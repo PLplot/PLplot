@@ -647,13 +647,9 @@ if test "$with_shlib" = "yes"; then
 	    # Should do something to make sure this is an ELF system, as
 	    # don't have patience for DLL...
 	    AC_MSG_RESULT([Assuming Linux ELF.  Otherwise, reconfigure --without-shlib])
-#	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	    SHLIB_BUILD="gcc -shared -fpic -o"
 
-	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
-
-	    # Hmm, would be good to replace that trailing .0 with the
-	    # compilation number or some such.  Have to think about that.
+	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)'
 
 	    LDSHARED='gcc -fpic -shared'
 	    RPATH="-Wl,-rpath -Wl,.:$prefix/lib"
