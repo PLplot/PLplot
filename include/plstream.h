@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/01/23 05:39:16  mjl
-   Added to hold definition of PLStream data structure.  Included by all files
-   dealing with streams (and is included by driver.h).
+   Revision 1.2  1993/02/23 04:58:33  mjl
+   Added to the stream data structure: a device name, and the value of the
+   escape character.  Added function prototype for plgpls and some minor
+   documentation changes.
 
+ * Revision 1.1  1993/01/23  05:39:16  mjl
+ * Added to hold definition of PLStream data structure.  Included by all files
+ * dealing with streams (and is included by driver.h).
+ *
 */
 
 /*	plstream.h
@@ -47,10 +52,16 @@ typedef struct {
 * but it is doubtful streams will ever be fully independent (perhaps
 * neither necessary nor desirable? -- time will tell).
 *
+* There are undoubtably some inconsistencies in the declaration & use of
+* the variables below.  This is a result of the continuing evolution of
+* plplot and the numerous authors involved.  Hopefully in time the function
+* of all variables can be fully documented and made more consistent.
+*
 * The quantities in each stream are as follows:
 *
 * ipls		Stream number
 * ipld		Device number
+* DevName	Device name
 *
 * OutFile	Output file pointer
 * FamilyName	Output family name (i.e. stem)
@@ -129,6 +140,7 @@ typedef struct {
 * nsub...	Number of subpages on physical device
 * cursub	Current subpage
 * width		Current pen width
+* esc		Text string escape character
 * scale		Scaling factor for chr, sym, maj, min.
 * chr...	Character default height and current (scaled) height
 * sym...	Symbol    default height and current (scaled) height
@@ -185,6 +197,8 @@ typedef struct {
 
 typedef struct {
     PLINT ipls, ipld;
+    char DevName[80];
+
     FILE *OutFile;
     char FamilyName[80], FileName[90];
 
@@ -231,6 +245,7 @@ typedef struct {
     PLINT nsubx, nsuby, cursub;
     PLINT width, style;
     PLINT orient;
+    char  esc;
     PLFLT xdpi, ydpi;
     PLINT xlength, ylength;
     PLINT xoffset, yoffset;
@@ -273,6 +288,7 @@ typedef struct {
 * Prototypes for stream & device utility functions.
 \*----------------------------------------------------------------------*/
 
+void  plgpls		(PLStream *);
 void  plCmaps_init	(PLStream *);
 void  plOpenFile	(PLStream *);
 void  plFamInit		(PLStream *);
