@@ -1,3 +1,11 @@
+plplot (5.2.0.cvs.20030214-2) unstable; urgency=low
+
+  * debian/rules: Removed hacks for getting the Octave files correctly
+    installed, since this is fixed in CVS now.
+  * NOT YET RELEASED!
+
+ --
+
 plplot (5.2.0.cvs.20030214-1) unstable; urgency=low
 
   * New upstream release, built directly from the CVS sources.

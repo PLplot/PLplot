@@ -58,15 +58,6 @@ install-stamp: build-stamp
 	mv $(debdoc)/plplot $(debdoc)/libplplot5
 	mv $(debex) $(debdoc)/libplplot5
 
-# The following completes the installation of the octave-plplot package.
-# This should be done upstream, though
-	mkdir -p $(debshr)/octave/site/m/PLplot
-	mv $(debshr)/plplot_octave/use_plplot.m \
-	   $(debshr)/plplot_octave/plplot_octave_path.m \
-	   $(debshr)/octave/site/m/PLplot
-	mkdir -p $(deboct)
-	mv $(debshr)/plplot_octave/plplot_octave.oct $(deboct)
-
 	touch install-stamp
 
 # Build architecture-independent files here.
@@ -75,7 +66,7 @@ binary-indep: build install
 	dh_testroot -i
 	dh_installdirs -i
 	dh_installdocs --package=plplot-doc
-# It ought to be a better way to not installing the following directory	
+# It ought to be a better way to not installing the following directory
 	rm -rf $(debbase)/plplot-doc/usr/share/doc
 	ln -fs libplplot5 $(debdoc)/plplot-doc
 	dh_movefiles -i

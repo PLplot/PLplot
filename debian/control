@@ -47,7 +47,7 @@ Depends: ${shlibs:Depends}
 Conflicts: plplot-lib, plplot (<< 5)
 Description: Scientific plotting library (X11 driver)
  This package provides the X11 driver module for PLplot, a scientific
- plotting library. 
+ plotting library.
  .
  See http://www.plplot.org for more information on PLplot.
 
@@ -56,7 +56,7 @@ Architecture: any
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library (Gnome canvas driver)
  This package provides the Gnome canvas driver module for PLplot, a
- scientific plotting library.   
+ scientific plotting library.
  .
  See http://www.plplot.org for more information on PLplot.
 
