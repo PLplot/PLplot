@@ -2343,6 +2343,18 @@ static PyObject * pl_GetCursor(PyObject *self, PyObject *args)
     return result;
 }
 
+
+static char doc_xormod[]="enter/leave xor mode";
+
+static PyObject * pl_xormod(PyObject *self, PyObject *args)
+{
+	PLINT mode,st;
+	TRY (PyArg_ParseTuple(args, "i", &mode));
+	plxormod(mode, &st);	
+	return Py_BuildValue("i", st);
+}
+
+
 static PyMethodDef pl_methods[] = {
     {"pladv",			pl_adv, 1, doc_pladv},
     {"plarrows",		pl_arrows, 1, doc_plarrows},
@@ -2458,6 +2470,7 @@ static PyMethodDef pl_methods[] = {
     {"plw3d",		pl_w3d, 1, doc_plw3d},
     {"plwid",			pl_wid, 1, doc_plwid},
     {"plwind",		pl_wind, 1, doc_plwind},
+    {"plxormod",	pl_xormod, 1, doc_xormod},
     {"plParseOpts",	pl_ParseOpts, 1, doc_plParseOpts},
     {"plsetopt",		pl_setopt, 1, doc_plsetopt},
     {"plGetCursor",	pl_GetCursor, 1, doc_plGetCursor},
