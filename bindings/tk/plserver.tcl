@@ -1,43 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.14  1994/05/14 05:41:53  mjl
-# Added a missing global declaration for the geometry variable.
+# Revision 1.15  1994/06/09 20:16:28  mjl
+# Moved the key_filter proc to plwidget.tcl, since it is better put there.
+# Some cleaning up also.
 #
-# Revision 1.13  1994/05/07  03:11:35  mjl
-# Ripped out code dependent on tk3.2 since it finally started to get in the
-# way.  Also improved some documentation.
-#
-# Revision 1.12  1994/04/25  18:57:07  mjl
-# Removed the rename of open since now we need it for reading/writing
-# palette files (I hope everyone's security is up to par by now).  Deleted
-# options menu -- now these are associated with the plframe widget.  Added
-# shift and control attributes to key_filter as well as speeded up
-# scrolling.  Shift+cursor gives the fast setting and Shift+Control+cursor
-# gives the faster setting.
-#
-# Revision 1.11  1994/04/08  11:57:12  mjl
-# Now the default resources are first loaded, then the user's customizations,
-# if present.  A keystroke filtering proc was added to allow binding useful
-# GUI operations to keystrokes.  The defaults are pretty reasonable, set
-# in the pldefaults proc (and should be modified in plconfig).  Supported
-# operations are "z" to zoom, "r" to reset zoom, "p" to print, "s" to save
-# again, <Right>, <Left>, <Up>, <Down>, to scroll by cursor key while in
-# zoom mode (units scrolled is user alterable as well).
-#
-# Revision 1.10  1994/01/15  17:43:21  mjl
-# Added procs to handle communication link.  plserver_link_init gets invoked
-# automatically when plserver is started by the Tcl/TK/DP driver.
-# plserver_start is used when running plserver in stand-alone mode.
-#
-# Revision 1.9  1993/12/21  10:22:43  mjl
-# Now route ALL communication to the client through the client_cmd proc.
-# This part reworked to not suck when using Tcl-DP.
-#
-# Revision 1.8  1993/12/15  09:17:57  mjl
-# Changes to support Tcl-DP and an atexit tweak.
-#
-# Revision 1.7  1993/12/09  20:34:45  mjl
-# Added code to tell client to abort when exit is selected.
 
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer menu procs
@@ -45,7 +11,9 @@
 # 26-Apr-1993
 # IFS, University of Texas at Austin
 #
-# Includes some code borrowed from the TCL/TK widget demo.
+# This file includes the main initialization, cleanup, and communication
+# procs.  Those dealing with the plframe widget and "megawidget" are kept
+# elsewhere.
 #----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
@@ -62,7 +30,7 @@ proc plserver_init {} {
     pldefaults
     plconfig
 
-# I refuse to allow exec's, ever.
+# I refuse to allow exec's since there's no need for them now.
 # Open's have to remain, however, to read/write palette info.
 
     rename exec {}
@@ -80,7 +48,7 @@ proc plserver_init {} {
 # Depart from square slightly to account for menu bar.
 
     global geometry
-    if { ! [ info exists geometry ] } {
+    if { ! [ info exists geometry ] } then {
 	set width  [expr "$root_width / 16 * 10"]
 	set height [expr "$root_height / 16 * 11"]
 	set geometry ${width}x${height}
@@ -109,7 +77,7 @@ proc plserver_init {} {
 	-command about \
 	-underline 0
 
-#    if { ! [ info exists child ] } {
+#    if { ! [ info exists child ] } then {
 #	.menu.file.m add command \
 #	    -label "Launch client..." \
 #	    -command {null_command "Launch client..."} \
@@ -131,7 +99,7 @@ proc plserver_init {} {
 # Debug menu
 #--------------
 
-    if {[info exists debug_on]} {
+    if {[info exists debug_on]} then {
 	menubutton .menu.debug -text "Debug" -menu .menu.debug.m -underline 0
 	menu .menu.debug.m
 
@@ -187,66 +155,12 @@ proc plserver_init {} {
 proc exit_app {} {
     global client
 
-    if { [ info exists client ] } {
+    if { [ info exists client ] } then {
 	client_cmd $client "unset server"
 	client_cmd $client "abort"
 	update
     }
     after 1 exit
-}
-
-#----------------------------------------------------------------------------
-# key_filter
-#
-# Front-end to key handler.
-# For supported operations it's best to modify the global key variables
-# to get the desired action.  More advanced stuff can be done with the
-# $user_key_filter proc.  Find anything particularly useful?  Let me know,
-# so it can be added to the default behavior.
-#----------------------------------------------------------------------------
-
-proc key_filter {w client k n a shift control} {
-    global user_key_filter
-
-    global key_zoom_select
-    global key_zoom_reset
-    global key_print
-    global key_save_again
-    global key_scroll_right
-    global key_scroll_left
-    global key_scroll_up
-    global key_scroll_down
-    global key_scroll_slow
-    global key_scroll_fast
-    global key_scroll_faster
-
-#    puts "keypress: $k $n $a"
-
-    if {[info exists user_key_filter]} then {
-	$user_key_filter $w $client $k $n $a
-    }
-
-    if {$shift} then {
-	if {$control} then {
-	    set s $key_scroll_faster
-	} else {
-	    set s $key_scroll_fast
-	}
-    } else {
-	set s $key_scroll_slow
-    }
-
-    switch $k \
-	$key_zoom_select	"plw_zoom_select $w" \
-	$key_zoom_reset		"plw_zoom_reset $w" \
-	$key_print		"plw_print $w" \
-	$key_save_again		"plw_save $w" \
-	$key_scroll_right	"plw_view_scroll $w  $s  0" \
-	$key_scroll_left	"plw_view_scroll $w -$s  0" \
-	$key_scroll_up		"plw_view_scroll $w  0 -$s" \
-	$key_scroll_down	"plw_view_scroll $w  0  $s" 
-
-    client_cmd [list $client] "keypress $k $n $a"
 }
 
 #----------------------------------------------------------------------------
@@ -261,13 +175,14 @@ proc key_filter {w client k n a shift control} {
 #
 # The second "after 1" (or the dp_RDO if Tcl-DP rpc is used) ensures that
 # the client process doesn't try to send a reply.  Also good for
-# performance but more importantly in case the server has already terminated.
+# performance but also prevents the client from timing out if the server
+# exits before it can reply.
 #----------------------------------------------------------------------------
 
 proc client_cmd {client msg} {
     global dp
 
-    if { $dp } {
+    if { $dp } then {
 	after 1 catch [list "dp_RDO [list $client] $msg"]
     } else {
 	after 1 catch [list "send [list $client] after 1 $msg"]
@@ -283,10 +198,10 @@ proc client_cmd {client msg} {
 proc plserver_link_init {} {
     global dp client
 
-    if { $dp } {
+    if { $dp } then {
 	global client_host client_port server_host server_port
 
-	if { ! [ info exists client_host ] } {
+	if { ! [ info exists client_host ] } then {
 	    set client_host localhost
 	}
 
@@ -307,7 +222,6 @@ proc plserver_link_init {} {
 	send $client "set server_name [list $server_name]"
 	send $client "set client [list $client]"
     }
-
 }
 
 #----------------------------------------------------------------------------
@@ -323,7 +237,7 @@ proc plserver_start {{use_dp 0}} {
 
     set dp $use_dp
 
-    if { $dp } {
+    if { $dp } then {
 	global client_host client_port server_host server_port
 
 	set server_host [host_id]
