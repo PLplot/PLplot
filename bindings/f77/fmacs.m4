@@ -26,7 +26,10 @@ divert(-1)dnl
 #
 # $Id$
 # $Log$
-# Revision 1.2  1994/03/30 08:28:56  mjl
+# Revision 1.3  1994/07/12 19:21:32  mjl
+# Fixed type definitions to help generated text stay within 72 columns.
+#
+# Revision 1.2  1994/03/30  08:28:56  mjl
 # Fixed broken macro definition.
 #
 # Revision 1.1  1994/03/30  07:29:39  mjl
@@ -183,23 +186,23 @@ ifdef({INCLUDED_FMACS},,{
 # There should be a better way..
 
   if_unicos({
-	define(REAL,		{ real })
-	define(COMPLEX,		{ complex })
-	define(IMPLICIT_REAL,	{ implicit real(a-h,o-z) })
-	define(DREAL,		{ real })
-	define(IMAG,		{ aimag {} ifelse({$*},,,{($*)}) })
+	define(REAL,		{real})
+	define(COMPLEX,		{complex})
+	define(IMPLICIT_REAL,	{implicit real(a-h,o-z)})
+	define(DREAL,		{real})
+	define(IMAG,		{aimag {} ifelse({$*},,,{($*)})})
   },{
-	define(IMAG,		{ imag {} ifelse({$*},,,{($*)}) })
+	define(IMAG,		{imag {} ifelse({$*},,,{($*)})})
     if_dbl({
-	define(REAL,		{ real*8 })
-	define(COMPLEX,		{ complex*16 })
-	define(IMPLICIT_REAL,	{ implicit real*8(a-h,o-z) })
-	define(DREAL,		{ real*16 })
+	define(REAL,		{real*8})
+	define(COMPLEX,		{complex*16})
+	define(IMPLICIT_REAL,	{implicit real*8(a-h,o-z)})
+	define(DREAL,		{real*16})
     },{
-	define(REAL,		{ real*4 })
-	define(COMPLEX,		{ complex*8 })
-	define(IMPLICIT_REAL,	{ implicit real*4(a-h,o-z) })
-	define(DREAL,		{ real*8 })
+	define(REAL,		{real*4})
+	define(COMPLEX,		{complex*8})
+	define(IMPLICIT_REAL,	{implicit real*4(a-h,o-z)})
+	define(DREAL,		{real*8})
     })
   })
 
