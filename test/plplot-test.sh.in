@@ -19,7 +19,6 @@ usage()
    cat <<EOF
 Usage: plplot-test.sh [OPTIONS]
 Options:
-   [--flat] (Use this option when running this script from plplot/tmp)
    [--device=DEVICE] (DEVICE = one of psc [default], ps, png, jpeg, cgm, xfig, or plmeta.
    [--front-end=FE] (FE = one of c, cxx, f77, java, octave, python, or tcl. If this option is not specified, then all front-ends will be tested.
    [--version]
