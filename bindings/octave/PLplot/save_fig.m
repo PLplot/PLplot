@@ -127,7 +127,7 @@ function save_fig(file, device, rev)
       endif
 
       plinit;
-      pladv(0);
+      ## pladv(0); # This worked, but not any more. Changes in plplot?
       
       plcpstrm(cur_fig, 0); # copy parameters
 
