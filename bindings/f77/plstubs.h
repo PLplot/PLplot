@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.14  1993/07/20 06:50:28  mjl
-   Eliminated obsolete type declarations for string conversions.
+   Revision 1.15  1993/08/26 18:29:08  mjl
+   Put in fix for name translation under UNICOS.
 
+ * Revision 1.14  1993/07/20  06:50:28  mjl
+ * Eliminated obsolete type declarations for string conversions.
+ *
  * Revision 1.13  1993/07/16  22:31:41  mjl
  * Changed method for getting stub conversion right.  Now need to define
  * the macro STUB_LINKAGE with any of the supported conversion types.
@@ -16,41 +19,18 @@
  * Revision 1.10  1993/03/28  08:45:07  mjl
  * Added support for NEC SX-3.  Also moved determination of stub name handling
  * to plstubs.h (more appropriate).
- *
- * Revision 1.9  1993/03/02  19:00:21  mjl
- * Added prototype for plgver() and its stub name def'n.
- *
- * Revision 1.8  1993/02/23  04:59:00  mjl
- * Added and deleted some function prototypes.
- *
- * Revision 1.7  1993/01/23  05:39:55  mjl
- * Changes in function prototypes to reflect reorganization, new color
- * model support.
- *
- * Revision 1.5  1992/10/27  22:49:49  mjl
- * Reduced stub routine definition to ONE set of defines through a clever
- * macro, FNAME.  Will work in principle for all systems.
- *
- * Revision 1.4  1992/10/27  22:14:02  mjl
- * Support for plflush() function.
- *
- * Revision 1.3  1992/10/22  17:05:19  mjl
- * Fixed warnings, errors generated when compling with HP C++.
- *
- * Revision 1.2  1992/10/20  20:14:12  mjl
- * Added prototypes, definitions for new routine plfamadv(), for advancing
- * to next family member file.
- *
- * Revision 1.1  1992/05/20  21:33:44  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*
-  plstubs.h
+   plstubs.h
 
-  Header file for plplot Fortran interface stubs.
-  THIS FILE IS NOT FOR INCLUSION BY USER CODES!!
+   Maurice LeBrun
+   IFS, University of Texas
+
+   Header file for plplot Fortran interface stubs.
+   THIS FILE IS NOT FOR INCLUSION BY USER CODES!!
+
+   This software is in the public domain. 
 */
 
 #ifndef INCLUDED_PLSTUBS
@@ -77,9 +57,7 @@
 *	STUB_FORTRAN	use "fortran" keyword (MS-DOS convention)
 *
 * If no choice is made, the default is set to STUB_LAU.  This should
-* handle most generic Unix boxes not already accounted for.  Note that
-* since the stub routine names are uppercase already, the STUB_U option
-* (required only on UNICOS so far) results in nothing being done.
+* handle most generic Unix boxes not already accounted for.  
 *
 * ** Namespace collision **
 *
@@ -146,16 +124,16 @@
 \*----------------------------------------------------------------------*/
 
 #if STUB_LINKAGE==STUB_LAU
-#define FNAME(x,y)     y##_
+#define FNAME(x,y)	y##_
 
 #elif STUB_LINKAGE == STUB_L
-#define FNAME(x,y)     y
+#define FNAME(x,y)	y
 
 #elif STUB_LINKAGE == STUB_U
-    /* do nothing */
+#define FNAME(x,y)	x
 
 #elif STUB_LINKAGE == STUB_FORTRAN
-#define FNAME(x,y)     fortran x
+#define FNAME(x,y)	fortran x
 
 #else
 #error "Illegal setting for STUB_LINKAGE"
