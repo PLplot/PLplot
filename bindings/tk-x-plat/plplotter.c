@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.5  2002/07/10 14:02:28  vincentdarley
+ * remove need for internal tcl
+ *
  * Revision 1.4  2002/07/10 13:59:25  vincentdarley
  * removing symbols conflict with xwin and use tk.h
  *
@@ -232,7 +235,6 @@ extern void XWarpPointer(
 );
 #endif
 
-#define _TCLINT
 #ifdef USE_TCL_STUBS
 /* Unfortunately, tkInt.h ends up loading Malloc.h under Windows */
 /* So we have to deal with this mess */
