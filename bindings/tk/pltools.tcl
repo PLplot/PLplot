@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.9  1993/09/01 14:52:24  mjl
+# Revision 1.10  1993/09/08 02:33:18  mjl
+# Folded window positioning for dialogs (dpos $w) into the mkDialog proc,
+# since these are easy to forget (and I missed one last time).
+#
+# Revision 1.9  1993/09/01  14:52:24  mjl
 # Modified the dpos proc to always bring up new toplevel window a specified
 # distance from the upper left corner of ".", which is much nicer (and
 # should work correctly under tvtwm).
@@ -40,7 +44,6 @@ proc null_command {cmd_name} {
     set dialog_args "-text {Command \"$cmd_name\" not yet implemented.} \
 		     -aspect 500 -justify left"
     mkDialog .null $dialog_args {OK {}}
-    dpos .null
     tkwait visibility .null
     grab .null
     tkwait window .null
@@ -56,7 +59,6 @@ proc null_command {cmd_name} {
 proc bogue_out {msg} {
     set dialog_args "-text \"$msg\" -aspect 800 -justify left"
     mkDialog .bogus $dialog_args {OK {}}
-    dpos .bogus
     tkwait visibility .bogus
     grab .bogus
     focus .bogus
@@ -292,6 +294,7 @@ proc confirm {msg} {
 proc mkDialog {w msgArgs args} {
     catch {destroy $w}
     toplevel $w -class Dialog
+    dpos $w
     wm title $w "Dialog box"
     wm iconname $w "Dialog"
 
