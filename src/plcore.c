@@ -362,18 +362,18 @@ plP_fill(short *x, short *y, PLINT npts)
 #define hex2dec( a ) isdigit(a) ? a - 48 : (toupper(a) - 65) + 10
 
 /*--------------------------------------------------------------------------*\
- *  int text2num( char *text, char end, unsigned int *num)
+ *  int text2num( char *text, char end, PLUNICODE *num)
  *       char *text - pointer to the text to be parsed
  *       char end   - end character (i.e. ')' or ']' to stop parsing
- *       unsigned int *num - pointer to an unsigned int to store the value
+ *       PLUNICODE *num - pointer to an PLUNICODE to store the value
  *
  *    Function takes a string, which can be either hex or decimal,
- *    and converts it into an unsigned int, stopping at either a null,
+ *    and converts it into an PLUNICODE, stopping at either a null,
  *    or the character pointed to by 'end'. It is a bit brain-dead,
  *    and probably should make more checks, but it works.
 \*--------------------------------------------------------------------------*/
 
-int text2num( const char *text, char end, unsigned int *num)
+int text2num( const char *text, char end, PLUNICODE *num)
 {
   int base=10;
   unsigned short i=0;
@@ -451,7 +451,7 @@ int text2fci( const char *text, unsigned char *hexvalue, unsigned char *hexshift
    return(0);
 }
 
-unsigned int unicode_buffer[1024];
+PLUNICODE unicode_buffer[1024];
 
 void
 plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
@@ -465,7 +465,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
       short len=0;
       char skip;
       unsigned short i,j, k;
-      unsigned int code;
+      PLUNICODE code;
       char esc;
       int idx;
 
@@ -480,7 +480,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
         {
 
 	  PLINT ig;
-	  unsigned int fci, fcisave;
+	  PLUNICODE fci, fcisave;
 	  unsigned char hexcode, hexshift;
           if (string!=NULL)         /* If the string isn't blank, then we will continue */
           {
@@ -510,7 +510,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			 fcisave = fci;
 			 plP_hex2fci(4, 3, &fci);
 			 unicode_buffer[j++]= fci;
-			 unicode_buffer[j++]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
+			 unicode_buffer[j++]=(PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
 			 fci = fcisave;
 			 unicode_buffer[j]= fci;
 			 skip=1;
@@ -615,7 +615,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			      if (ig >= 24)
 				ig = ig + 100 - 24;
 			      idx=plhershey2unicode(ig+527);
-			      unicode_buffer[j++]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
+			      unicode_buffer[j++]=(PLUNICODE)hershey_to_unicode_lookup_table[idx].Unicode;
 			      i+=2;
 			      skip=1;  /* skip is set if we have copied something into the unicode table */
 			   }
@@ -623,7 +623,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 			   {
 			      /* Use "unknown" unicode character if string[i+2] is not in
 			       * the Greek array.*/
-			      unicode_buffer[j++]=(unsigned int)0x00;
+			      unicode_buffer[j++]=(PLUNICODE)0x00;
 			      i+=2;
 			      skip=1;  /* skip is set if we have copied something into the unicode table */
 			   }
@@ -2756,7 +2756,7 @@ plgesc(char *p_esc)
  * drivers.  
  */
 void
-c_plsfci(unsigned int fci)
+c_plsfci(PLUNICODE fci)
 {
    /* Always mark FCI as such with 0x1 in leftmost hex digit. */
    plP_hex2fci(0x1, 7, &fci);
@@ -2767,7 +2767,7 @@ c_plsfci(unsigned int fci)
  * drivers.  
  */
 void
-c_plgfci(unsigned int *pfci)
+c_plgfci(PLUNICODE *pfci)
 {
    if (plsc->fci == 0)
      /* Always mark FCI as such with 0x1 in leftmost hex digit. */
@@ -2779,25 +2779,25 @@ c_plgfci(unsigned int *pfci)
  * into pre-existing FCI. 
  */
 void
-plP_hex2fci(unsigned char hexvalue, unsigned char hexdigit, unsigned int *pfci)
+plP_hex2fci(unsigned char hexvalue, unsigned char hexdigit, PLUNICODE *pfci)
 {
-   unsigned int mask;
+   PLUNICODE mask;
    hexdigit = hexdigit & 0x0f;
-   mask = ~ ((((unsigned int) 0xf) << (4*hexdigit)));
+   mask = ~ ((((PLUNICODE) 0xf) << (4*hexdigit)));
    *pfci = (*pfci & mask & 
-		(((unsigned int) hexvalue) << (4*hexdigit)));
+		(((PLUNICODE) hexvalue) << (4*hexdigit)));
 }
 
 /* Retrieve hex value from FCI that is masked and shifted to the
  * right by hexdigit hexadecimal digits. */
 void
-plP_fci2hex(unsigned int fci, unsigned char *phexvalue, unsigned char hexdigit)
+plP_fci2hex(PLUNICODE fci, unsigned char *phexvalue, unsigned char hexdigit)
 {
-   unsigned int mask;
+   PLUNICODE mask;
    hexdigit = hexdigit & 0x0f;
-   mask = (((unsigned int) 0xf) << ((unsigned int) (4*hexdigit)));
+   mask = (((PLUNICODE) 0xf) << ((PLUNICODE) (4*hexdigit)));
    *phexvalue = (unsigned char) ((fci & mask) >> 
-				 ((unsigned int) (4*hexdigit)));
+				 ((PLUNICODE) (4*hexdigit)));
 }
 
 /* Get the current library version number */

@@ -25,7 +25,7 @@
 */
 
 typedef struct {
-	unsigned int Unicode;
+	PLUNICODE Unicode;
 	unsigned char Type1;
 } Unicode_to_Type1_table;
 

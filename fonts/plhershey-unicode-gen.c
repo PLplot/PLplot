@@ -147,7 +147,7 @@ if ((fw=fopen(argv[2],"w"))!=NULL)
 
   fprintf(fw, "const int number_of_entries_in_hershey_to_unicode_table=%d;\n\n",number_of_lines);
 
-  fprintf(fw, "typedef struct {\n\tunsigned int Hershey;\n\tunsigned int Unicode;\n\tchar Font;\n} Hershey_to_Unicode_table;\n\n");
+  fprintf(fw, "typedef struct {\n\tunsigned int Hershey;\n\tPLUNICODE Unicode;\n\tchar Font;\n} Hershey_to_Unicode_table;\n\n");
   fprintf(fw, "const Hershey_to_Unicode_table hershey_to_unicode_lookup_table[%d] = {\n",number_of_lines);
 
   for (i=0;i<number_of_lines;i++)

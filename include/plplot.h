@@ -123,6 +123,11 @@
  * short is currently used for device page coordinates, so they are
  * bounded by (-32767, 32767).  This gives a max resolution of about 3000
  * dpi, and improves performance in some areas over using a PLINT.
+ * 
+ * PLUNICODE should be a 32-bit unsigned integer on all platforms.
+ * For now, we are using unsigned int for our Linux ix86 unicode experiments, 
+ * but that doesn't guarantee 32 bits exactly on all platforms so this will 
+ * be subject to change.
 \*--------------------------------------------------------------------------*/
 
 #if defined(PL_DOUBLE) || defined(DOUBLE)
@@ -136,6 +141,9 @@ typedef float PLFLT;
 #endif
 
 typedef long PLINT;
+
+/* Subject to change. */
+typedef unsigned int PLUNICODE;
 
 /* For passing user data, as with X's XtPointer */
 
@@ -816,7 +824,7 @@ c_plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax);
 /* Get FCI (font characterization integer) */
 
 void
-c_plgfci(unsigned int *pfci);
+c_plgfci(PLUNICODE *pfci);
 
 /* Get family file parameters */
 
@@ -1177,7 +1185,7 @@ c_plsfam(PLINT fam, PLINT num, PLINT bmax);
 /* Set FCI (font characterization integer) */
 
 void
-c_plsfci(unsigned int fci);
+c_plsfci(PLUNICODE fci);
 
 /* Set the output file name. */
 

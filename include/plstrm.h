@@ -153,7 +153,7 @@ typedef struct {
  * plbuf_write	PLINT	Set if driver needs to use the plot buffer
  * dev_fill0	PLINT	Set if driver can do solid area fills
  * dev_text	PLINT	Set if driver want to do it's only text drawing
- * dev_unicode	PLINT	Set if driver wants unicdoe
+ * dev_unicode	PLINT	Set if driver wants unicode
  * dev_fill1	PLINT	Set if driver can do pattern area fills
  * dev_dash     PLINT   Set if driver can do dashed lines
  * dev_di	PLINT	Set if driver wants to handle DI commands
@@ -660,7 +660,7 @@ typedef struct {
 
   PLINT dev_compression;
   PLINT cfont;
-  unsigned int fci;
+  PLUNICODE fci;
   
   void *FT;
 

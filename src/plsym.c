@@ -222,7 +222,7 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 {
 EscText args;
 int idx;
-unsigned int unicode_char;
+PLUNICODE unicode_char;
 
   if ((plsc->dev_text)&&(plsc->dev_unicode))       /* Check to see if the device understands unicode */
     {
@@ -230,7 +230,7 @@ unsigned int unicode_char;
       unicode_char=hershey_to_unicode_lookup_table[idx].Unicode;
 
     /*
-     *  Test to see if there is a defined unicode glpy for this hershey code;
+     *  Test to see if there is a defined unicode glyph for this hershey code;
      *  if there isn't, then we pass the glyph to plhersh, and have it
      *  rendered the old fashioned way.
      *  Otherwise, we let the driver render it as unicode
@@ -1146,7 +1146,7 @@ int plhershey2unicode ( int in )
 	  return (jmid);
      }
    /* jlo is invalid or it is valid and in > hershey_to_unicode_lookup_table[jlo].Hershey.
-    * jhi is invalid or it is valid and index < hershey_to_unicode_lookup_table[jhi].Hershey.
+    * jhi is invalid or it is valid and in < hershey_to_unicode_lookup_table[jhi].Hershey.
     * All these conditions together imply in cannot be found in
     * hershey_to_unicode_lookup_table[j].Hershey, for all j.
     */

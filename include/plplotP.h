@@ -367,7 +367,7 @@ extern PLStream	*plsc;
 
 typedef struct {
 	unsigned int Hershey;
-	unsigned int Unicode;
+	PLUNICODE Unicode;
 	char Font;
 } Hershey_to_Unicode_table;
 
@@ -422,11 +422,11 @@ plP_clip_poly(int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset);
 
 /* Stores hex value into FCI (font characterization integer). */
 void
-plP_hex2fci(unsigned char hexvalue, unsigned char hexdigit, unsigned int *pfci);
+plP_hex2fci(unsigned char hexvalue, unsigned char hexdigit, PLUNICODE *pfci);
 
 /* Retrieves hex value from FCI (font characterization integer). */
 void
-plP_fci2hex(unsigned int fci, unsigned char *phexvalue, unsigned char hexdigit);
+plP_fci2hex(PLUNICODE fci, unsigned char *phexvalue, unsigned char hexdigit);
 
 /* Pattern fills in software the polygon bounded by the input points. */
 
@@ -522,8 +522,8 @@ typedef struct {
   PLINT refx; /* processed ref. point--after justification, displacement, etc, processing */
   PLINT refy;
   char font_face; /* font face OPTIONALLY used for rendering hershey codes */
-  unsigned int  unicode_char;   /* an int to hold either a Hershey, ASC-II, or Unicode value for plsym calls */
-  unsigned int *unicode_array;   /* a pointer to an array of ints holding either a Hershey, ASC-II, or Unicode value for cached plsym */
+  PLUNICODE  unicode_char;   /* an int to hold either a Hershey, ASC-II, or Unicode value for plsym calls */
+  PLUNICODE  *unicode_array;   /* a pointer to an array of ints holding either a Hershey, ASC-II, or Unicode value for cached plsym */
   unsigned short unicode_array_len;
   const char *string; /* text to draw */
 }EscText;
@@ -950,11 +950,22 @@ void plfvect(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
 		PLPointer pltr_data);
 
 /*
- *  Function to get an index to the hershey table
+ *  Internal function to get an index to the hershey table
  */
 int
 plhershey2unicode ( int in );
 
+/* struct used for FCI to FontName lookups. */
+typedef struct 
+{   
+   PLUNICODE fci;
+   unsigned char *pfont;
+} FCI_to_FontName_Table;
+
+/* Internal function to obtain a pointer to a valid font name. */
+char *
+plP_FCI2FontName ( PLUNICODE fci, 
+		   const FCI_to_FontName_Table lookup[], const int nlookup);
 
 #ifdef __cplusplus
 }
