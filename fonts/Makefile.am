@@ -20,9 +20,6 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-noinst_PROGRAMS = plhershey-unicode-gen
-plhershey_unicode_gen_SOURCES = plhershey-unicode-gen.c
-
 EXTRA_DIST =       \
 	README     \
 	stndfont.c \
