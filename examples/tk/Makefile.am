@@ -70,7 +70,26 @@ examples_tk_SCRIPTS = \
 	mkdir -p .samename
 	cp Makefile.examples .samename/Makefile
 
-$(generated_files): 
+$(generated_files): \
+	../tcl/x01.tcl \
+	../tcl/x02.tcl \
+	../tcl/x03.tcl \
+	../tcl/x04.tcl \
+	../tcl/x05.tcl \
+	../tcl/x06.tcl \
+	../tcl/x07.tcl \
+	../tcl/x08.tcl \
+	../tcl/x09.tcl \
+	../tcl/x10.tcl \
+	../tcl/x11.tcl \
+	../tcl/x12.tcl \
+	../tcl/x13.tcl \
+	../tcl/x14.tcl \
+	../tcl/x15.tcl \
+	../tcl/x16.tcl \
+	../tcl/x17.tcl \
+	../tcl/x18.tcl \
+	../tcl/x19.tcl
 	cp ../tcl/x??.tcl .
 	$(mkindex)
 
