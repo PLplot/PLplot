@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/07/31 08:16:12  mjl
-   Flags added to change plot window (-wplt), device window (-wdev).
-   Orientation flag (-ori) changed to use new driver interface.  Aspect flag
-   (-a) deleted.
+   Revision 1.9  1993/08/03 01:46:56  mjl
+   Changes to eliminate warnings when compiling with gcc -Wall.
 
+ * Revision 1.8  1993/07/31  08:16:12  mjl
+ * Flags added to change plot window (-wplt), device window (-wdev).
+ * Orientation flag (-ori) changed to use new driver interface.  Aspect flag
+ * (-a) deleted.
+ *
  * Revision 1.7  1993/07/28  05:54:29  mjl
  * Added support for -nopixmap option.
  *
@@ -780,35 +783,34 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 static int
 GetOptarg(char **poptarg, int *p_myargc, char ***p_argv, int *p_argc)
 {
-    int error = 0;
+    int result = 0;
 
     --(*p_myargc);
 
     if ((*p_myargc) <= 0)		/* oops, no more arguments */
-	error = 1;
+	result = 1;
 
-    if ( ! error) {
+    if ( ! result) {
 	(*p_argv)++;
 	if ((*p_argv)[0][0] == '-' && isalpha((*p_argv)[0][1])) {
 
 	    (*p_argv)--;		/* oops, next arg is a flag */
-	    error = 1;
+	    result = 1;
 	}
     }
 
-    if ( ! error) {			/* yeah, the user got it right */
+    if ( ! result) {			/* yeah, the user got it right */
 	(*p_argc)--;
 	*poptarg = (*p_argv)[0];
-	return 0;
     }
     else {
 	if ( ! mode_quiet) {
 	    fprintf(stderr, "Argument missing for %s option.\n",
 		    (*p_argv)[0]); 
 	    (*UsageH) ("");
-	    return 1;
 	}
     }
+    return result;
 }
 
 /*----------------------------------------------------------------------*\
@@ -918,8 +920,6 @@ opt_o(char *opt, char *optarg)
 static int
 opt_a(char *opt, char *optarg)
 {
-    PLFLT aspect;
-
     fprintf(stderr, "-a option obsolete -- use -wdev instead\n");
 
     return 1;

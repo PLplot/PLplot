@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.26  1993/07/31 08:20:53  mjl
-   Removed code that is now handled in the driver interface, also changes
-   to reflect new driver functions.
+   Revision 1.27  1993/08/03 01:47:04  mjl
+   Changes to eliminate warnings when compiling with gcc -Wall.
 
+ * Revision 1.26  1993/07/31  08:20:53  mjl
+ * Removed code that is now handled in the driver interface, also changes
+ * to reflect new driver functions.
+ *
  * Revision 1.25  1993/07/16  22:20:18  mjl
  * Eliminated obsolete flags and processing of metafile tags (still read for
  * backward compatibility).  To be replaced by operations in the driver
@@ -93,7 +96,6 @@ static int Opt_h	(char *, char *);
 static int Opt_v	(char *, char *);
 static int Opt_i	(char *, char *);
 static int Opt_p	(char *, char *);
-static int Opt_a	(char *, char *);
 static int Opt_mar	(char *, char *);
 
 /* Global variables */
@@ -126,7 +128,6 @@ static char	mf_magic[40], mf_version[40];
 
 static U_CHAR	dum_uchar;
 static U_SHORT	dum_ushort;
-static char	dum_char80[80];
 static float	dum_float;
 
 /* Plot dimensions */
@@ -257,6 +258,7 @@ NULL};
 * plrender -- render a PLPLOT metafile.
 \*----------------------------------------------------------------------*/
 
+int
 main(int argc, char *argv[])
 {
     static U_CHAR c;
@@ -316,8 +318,6 @@ main(int argc, char *argv[])
 static void
 process_next(U_CHAR c)
 {
-    U_CHAR op;
-
     switch ((int) c) {
 
       case INITIALIZE:

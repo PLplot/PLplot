@@ -1,11 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/07/01 22:07:38  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl", device driver functions start with "plD_", PDF functions
-   start with "pdf_".
+   Revision 1.4  1993/08/03 01:46:55  mjl
+   Changes to eliminate warnings when compiling with gcc -Wall.
 
+ * Revision 1.3  1993/07/01  22:07:38  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl", device driver functions start with "plD_", PDF functions
+ * start with "pdf_".
+ *
  * Revision 1.2  1993/02/23  05:00:24  mjl
  * Added some casts for more portable code (found when compiling with all
  * warnings on).
@@ -61,7 +64,6 @@
 
 static void print_ieeef(void *, void *);
 
-static int foo;
 static int debug = 0;
 
 /*--------------------------------------------------------------------------*\
@@ -416,20 +418,10 @@ pdf_wr_ieeef(FILE *file, float f)
 
     value = s_ieee | e_ieee | f_ieee;
 
-    if (istat = pdf_wr_4bytes(file, value))
+    if ((istat = pdf_wr_4bytes(file, value)))
 	return (istat);
 
     if (debug) {
-/*
-	if (foo == 0) {
-	    printf("Size of float  is: %d\n", sizeof(float));
-	    printf("Size of double is: %d\n", sizeof(double));
-	    printf("Size of short  is: %d\n", sizeof(short));
-	    printf("Size of int    is: %d\n", sizeof(int));
-	    printf("Size of long   is: %d\n", sizeof(long));
-	    foo = 1;
-	}
-*/
 	printf("Float value (written):       %g\n", fsgl);
 	print_ieeef(&fsgl, &value);
     }
@@ -451,7 +443,7 @@ pdf_rd_ieeef(FILE *file, float *pf)
     int istat, exp, bias = 127;
     U_LONG value, s_ieee, e_ieee, f_ieee;
 
-    if (istat = pdf_rd_4bytes(file, &value))
+    if ((istat = pdf_rd_4bytes(file, &value)))
 	return (istat);
 
     s_ieee = (value & (U_LONG) 0x80000000) >> 31;

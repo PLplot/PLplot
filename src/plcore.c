@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.14  1993/07/31 08:17:37  mjl
-   Action for driver interface setup functions now deferred until after
-   plinit() called so that these can be set via command line arguments.
-   Drivers that request it can handle these directly.
+   Revision 1.15  1993/08/03 01:46:58  mjl
+   Changes to eliminate warnings when compiling with gcc -Wall.
 
+ * Revision 1.14  1993/07/31  08:17:37  mjl
+ * Action for driver interface setup functions now deferred until after
+ * plinit() called so that these can be set via command line arguments.
+ * Drivers that request it can handle these directly.
+ *
  * Revision 1.13  1993/07/28  05:53:23  mjl
  * Put in code to ensure all malloc'ed memory is freed upon exit.
  *
@@ -506,7 +509,6 @@ plgdidev(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax)
 static void
 calc_didev(void)
 {
-    PLFLT wxmin, wxmax, wymin, wymax;
     PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
 
     if (plsc->dev_di) {
@@ -1489,7 +1491,7 @@ c_plgver(char *p_ver)
 /* For plotting into an inferior X window */
 
 void
-plsxwin(long window_id)
+plsxwin(PLINT window_id)
 {
     plsc->window_id = window_id;
 }

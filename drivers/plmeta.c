@@ -1,13 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.17  1993/07/31 07:56:41  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
+   Revision 1.18  1993/08/03 01:46:41  mjl
+   Changes to eliminate warnings when compiling with gcc -Wall.
 
+ * Revision 1.17  1993/07/31  07:56:41  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.16  1993/07/16  22:13:48  mjl
  * Switched coordinates to standard meta coords.  Eliminated obsolete low-level
  * operations.  Added write of some state information (colors and pen width)
@@ -233,14 +236,11 @@ plD_eop_plm(PLStream *pls)
 * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
-static long bytecnt_last;
-
 void
 plD_bop_plm(PLStream *pls)
 {
     PLDev *dev = (PLDev *) pls->dev;
     U_CHAR c = (U_CHAR) PAGE;
-    U_LONG foo;
     FPOS_T cp_offset=0, fwbyte_offset=0, bwbyte_offset=0;
 
     dbug_enter("plD_bop_plm");
@@ -258,9 +258,9 @@ plD_bop_plm(PLStream *pls)
 
     if (pls->lp_offset > 0) {
 #ifdef DEBUG
+	U_LONG foo;
 	printf("Location: %d, seeking to: %d\n", cp_offset, pls->lp_offset);
 #endif
-
 	fwbyte_offset = pls->lp_offset + 7;
 	if (pl_fsetpos(pls->OutFile, &fwbyte_offset))
 	    plexit("plD_bop_plm: fsetpos call failed");

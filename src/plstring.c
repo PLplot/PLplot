@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/07/01 22:13:44  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.4  1993/08/03 01:47:00  mjl
+   Changes to eliminate warnings when compiling with gcc -Wall.
 
+ * Revision 1.3  1993/07/01  22:13:44  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+ *
  * Revision 1.2  1993/02/23  05:22:44  mjl
  * Split off code to write a stroke font character into its own function for
  * clarity.  Changed character-decoding routine to use stream-dependent escape
@@ -576,7 +579,7 @@ plP_strpos(char *str, int chr)
 {
     char *temp;
 
-    if (temp = strchr(str, chr))
+    if ((temp = strchr(str, chr)))
 	return ((PLINT) (temp - str));
     else
 	return ((PLINT) -1);

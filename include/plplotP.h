@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/07/31 08:10:42  mjl
-   Macros for use in escape function changed to have a prefix PLESC_, similarly
-   those used in the state function start with PLSTATE_.  Some function
-   prototypes added/deleted.
+   Revision 1.5  1993/08/03 01:46:51  mjl
+   Changes to eliminate warnings when compiling with gcc -Wall.
 
+ * Revision 1.4  1993/07/31  08:10:42  mjl
+ * Macros for use in escape function changed to have a prefix PLESC_, similarly
+ * those used in the state function start with PLSTATE_.  Some function
+ * prototypes added/deleted.
+ *
  * Revision 1.3  1993/07/28  05:50:12  mjl
  * Removed some unnecessary code (under ANSI C) for handling signed chars;
  * added free_mem() utility macro.
@@ -565,9 +568,7 @@ void plP_page		(void);
 
 void plP_tidy		(void);
 
-void plP_color		(void);
-
-void plP_width		(void);
+void plP_state		(PLINT);
 
 void plP_esc		(PLINT, void *);
 

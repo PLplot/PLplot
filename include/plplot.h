@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.29  1993/07/31 08:09:18  mjl
-   Cleaned up a bit.
+   Revision 1.30  1993/08/03 01:46:49  mjl
+   Changes to eliminate warnings when compiling with gcc -Wall.
 
+ * Revision 1.29  1993/07/31  08:09:18  mjl
+ * Cleaned up a bit.
+ *
  * Revision 1.28  1993/07/16  22:28:09  mjl
  * Added prototypes for driver interface functions, new plshade function,
  * plgFileDevs (for retrieving file device list) function.  Simplified PLKey
@@ -711,6 +714,8 @@ void c_plstyl	(PLINT, PLINT *, PLINT *);
 void c_plsvpa	(PLFLT, PLFLT, PLFLT, PLFLT);
 
 void c_plsxax	(PLINT, PLINT);
+
+void plsxwin	(PLINT);
 
 void c_plsyax	(PLINT, PLINT);
 

@@ -1,13 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.14  1993/07/31 07:56:44  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
+   Revision 1.15  1993/08/03 01:46:42  mjl
+   Changes to eliminate warnings when compiling with gcc -Wall.
 
+ * Revision 1.14  1993/07/31  07:56:44  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.13  1993/07/28  05:38:59  mjl
  * Merged with xterm code, and added code to handle Tektronix 4105/4107
  * (color) devices.  For now just the color index selection is supported.
@@ -36,6 +39,7 @@
 
 #include "plplotP.h"
 #include <stdio.h>
+#include <ctype.h>
 #include "drivers.h"
 #include "plevent.h"
 

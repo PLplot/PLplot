@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/07/31 08:06:54  mjl
-   More consolidation of driver functions.
+   Revision 1.5  1993/08/03 01:46:46  mjl
+   Changes to eliminate warnings when compiling with gcc -Wall.
 
+ * Revision 1.4  1993/07/31  08:06:54  mjl
+ * More consolidation of driver functions.
+ *
  * Revision 1.3  1993/07/28  05:42:38  mjl
  * Some minor changes to aid debugging.
  *
@@ -64,7 +67,7 @@
 /* Some wrapper macros to return (-1) on error */
 
 #define plr_rd(code) \
-if (code) { fprintf(stderr, "Unable to read from %s in %s at line %s\n", \
+if (code) { fprintf(stderr, "Unable to read from %s in %s at line %d\n", \
 		      plr->filetype, __FILE__, __LINE__); return(-1); }
 
 #define plr_cmd(code) \
@@ -77,9 +80,9 @@ if ((code) == -1) return(-1);
 
 /* Static function prototypes. */
 
-static int	plr_process1 	(PLRDev *, U_CHAR);
+static int	plr_process1 	(PLRDev *, int);
 static int	plr_init	(PLRDev *);
-static int	plr_line	(PLRDev *, U_CHAR);
+static int	plr_line	(PLRDev *, int);
 static int	plr_eop		(PLRDev *);
 static int	plr_bop 	(PLRDev *);
 static int	plr_state	(PLRDev *);
@@ -93,8 +96,6 @@ static int	get_ncoords	(PLRDev *, PLFLT *, PLFLT *, PLINT);
 static int	csave = -1;
 static U_CHAR	dum_uchar;
 static U_SHORT	dum_ushort;
-static char	dum_char80[80];
-static float	dum_float;
 
 /*----------------------------------------------------------------------*\
 * plr_start()
@@ -132,7 +133,7 @@ plr_process(PLRDev *plr)
     while (plr->nbytes > 0) {
 	plr_cmd( c = plr_get(plr) );
 	csave = c;
-	plr_cmd( plr_process1(plr, (U_CHAR) c) );
+	plr_cmd( plr_process1(plr, c) );
     }
     return 0;
 }
@@ -148,9 +149,9 @@ plr_process(PLRDev *plr)
 \*----------------------------------------------------------------------*/
 
 static int
-plr_process1(PLRDev *plr, U_CHAR c)
+plr_process1(PLRDev *plr, int c)
 {
-    switch ((int) c) {
+    switch (c) {
 
       case INITIALIZE:
 	plr_cmd( plr_init(plr) );
@@ -266,9 +267,9 @@ plr_init(PLRDev *plr)
 \*----------------------------------------------------------------------*/
 
 static int
-plr_line(PLRDev *plr, U_CHAR c)
+plr_line(PLRDev *plr, int c)
 {
-    U_CHAR c1;
+    int c1;
     U_SHORT npts;
     PLFLT x[PL_MAXPOLYLINE], y[PL_MAXPOLYLINE];
 
@@ -291,7 +292,7 @@ plr_line(PLRDev *plr, U_CHAR c)
 
 	    plr_cmd( c1 = plr_get(plr) );
 	    if (c1 != LINETO) {
-		plr_cmd( plr_unget(plr, c1) );
+		plr_cmd( plr_unget(plr, (U_CHAR) c1) );
 		break;
 	    }
 	}
