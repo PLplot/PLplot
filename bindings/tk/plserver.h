@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1994/06/16 19:07:08  mjl
+ * Revision 1.17  1994/06/23 22:34:22  mjl
+ * Now includes pltcl.h for all Tcl API stuff.
+ *
+ * Revision 1.16  1994/06/16  19:07:08  mjl
  * Include-guarded.  Now includes file tclMatrix.h, to pick up the new matrix
  * command support.  Prototype for plframe() moved here from plplot.h since
  * it shouldn't be necessary for the user to explicitly refer to it any more
@@ -29,8 +32,7 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
-
-#include "tclMatrix.h"
+#include <pltcl.h>
 
 /* State info for the rendering code */
 
