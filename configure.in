@@ -196,12 +196,13 @@ fi
 if test "$enable_tk" = "yes"; then
     cat cf/pkg_tk.in	>>tmp/Makefile.in 
 fi
-cat cf/deps.in		>>tmp/Makefile.in 
+cat cf/objs.in		>>tmp/Makefile.in 
 cat cf/lib.in		>>tmp/Makefile.in 
 if test "$with_shlib" = "yes"; then
     echo "creating shared lib"
     cat cf/shlib.in	>>tmp/Makefile.in
 fi
+cat cf/exes.in		>>tmp/Makefile.in 
 cat cf/install.in	>>tmp/Makefile.in 
 cat cf/clean.in		>>tmp/Makefile.in 
 

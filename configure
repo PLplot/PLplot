@@ -392,7 +392,7 @@ else
 fi
 
 LIBS=""
-INCS=""
+INCS="-I."
 
 # -----------------------------------------------------------------------
 # First get system using uname.
@@ -489,7 +489,9 @@ fi
 # -----------------------------------------------------------------------
 
 test -n "$silent" || echo "checking for POSIXized ISC"
-if grep _POSIX_VERSION /usr/include/sys/unistd.h >/dev/null 2>&1
+if \
+     grep _POSIX_VERSION /usr/include/unistd.h >/dev/null 2>&1 ||
+     grep _POSIX_VERSION /usr/include/sys/unistd.h >/dev/null 2>&1
 then
   echo "yup, it's POSIX"
   ISC=1 # If later tests want to check for ISC.
@@ -811,7 +813,7 @@ case $system in
 
     linux*|LINUX*|Linux* ) 
 
-	CC="gcc -ansi"
+	CC="gcc"
 	LDC=$CC
 
 	# script front-end to f2c
@@ -1557,13 +1559,14 @@ if test $enable_tcl = "yes"; then
 
 	places="\
 	/usr/local/include \
+	/usr/include/tcl \
+	/usr/include \
 	/usr/local/tcl7.3/include \
 	$HOME/local/tcl7.3/include \
 	$prefix/include \
 	$PWD/../tcl7.3 \
 	$XINCDIR/tk \
-	$XINCDIR \
-	/usr/include"
+	$XINCDIR"
 
 	for dir in $places; do
 	    if test -r $dir/tcl.h ; then
@@ -2465,12 +2468,13 @@ fi
 if test "$enable_tk" = "yes"; then
     cat cf/pkg_tk.in	>>tmp/Makefile.in 
 fi
-cat cf/deps.in		>>tmp/Makefile.in 
+cat cf/objs.in		>>tmp/Makefile.in 
 cat cf/lib.in		>>tmp/Makefile.in 
 if test "$with_shlib" = "yes"; then
     echo "creating shared lib"
     cat cf/shlib.in	>>tmp/Makefile.in
 fi
+cat cf/exes.in		>>tmp/Makefile.in 
 cat cf/install.in	>>tmp/Makefile.in 
 cat cf/clean.in		>>tmp/Makefile.in 
 
