@@ -46,10 +46,6 @@ EXTRA_DIST = \
 	plplotjavac.i \
 	$(javagenfiles)
 
-libplplot = ../../src/libplplot$(LIB_TAG).la
-
-lib_LTLIBRARIES = libplplotjava@LIB_TAG@.la
-
 AM_CPPFLAGS = $(INCLTDL) $(JAVAINCCMD)
 version = -version-info $(SOVERSION)
 
@@ -59,6 +55,10 @@ $(javagenfiles): plplotjavac.i plplotcapi.i
 	$(SWIG) -java -package plplot.core -DPL_DOUBLE plplotjavac.i
 
 if enable_java
+
+libplplot = ../../src/libplplot$(LIB_TAG).la
+
+lib_LTLIBRARIES = libplplotjava@LIB_TAG@.la
 
 nodist_libplplotjava@LIB_TAG@_la_SOURCES  = $(sources)
 libplplotjava@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
