@@ -301,7 +301,7 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 
   }
 
-  return FALSE;
+  return TRUE;
 }
 
 
@@ -362,10 +362,18 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
   
   switch (event->keyval) {
   case GDK_minus:
-    page->ppu /= 1.4142;
-    break;
+  case GDK_plus:
   case GDK_equal:
-    page->ppu *= 1.4142;
+    switch (event->keyval) {
+    case GDK_minus:
+      page->ppu /= 1.4142;
+      break;
+    case GDK_plus:
+    case GDK_equal:
+      page->ppu *= 1.4142;
+      break;
+    }
+    gnome_canvas_set_pixels_per_unit (GNOME_CANVAS (widget), page->ppu);
     break;
   case GDK_Return:
     if (quit_dialog () == TRUE)
@@ -389,26 +397,31 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
     gtk_notebook_set_page (notebook, curpage + 1);
     break;
   case GDK_Right:
-    add_to_adj (page->hadj, page->ppu);
-    break;
   case GDK_Left:
-    add_to_adj (page->hadj, -page->ppu);
-    break;
   case GDK_Up:
-    add_to_adj (page->vadj, page->ppu);
-    break;
   case GDK_Down:
-    add_to_adj (page->vadj, -page->ppu);
+    switch (event->keyval) {
+    case GDK_Right:
+      add_to_adj (page->hadj, page->ppu);
+      break;
+    case GDK_Left:
+      add_to_adj (page->hadj, -page->ppu);
+      break;
+    case GDK_Up:
+      add_to_adj (page->vadj, page->ppu);
+      break;
+    case GDK_Down:
+      add_to_adj (page->vadj, -page->ppu);
+      break;
+    }
+    page->hadj->step_increment = page->ppu;
+    page->hadj->step_increment = page->ppu;
+    gtk_adjustment_changed (page->hadj);
+    gtk_adjustment_changed (page->vadj);
     break;
   default:
     break;
   }
-
-  page->hadj->step_increment = page->ppu;
-  page->hadj->step_increment = page->ppu;
-  gtk_adjustment_changed (page->hadj);
-  gtk_adjustment_changed (page->vadj);
-  gnome_canvas_set_pixels_per_unit (GNOME_CANVAS (widget), page->ppu);
 
   return TRUE;
 }
@@ -944,6 +957,12 @@ fill_polygon (PLStream* pls)
   GnomeCanvas* canvas;
   guint i;
 
+  /* Experimental stuff for pattern fill */
+  GdkPixmap* bitmap;
+  char const pattern[8] =   {
+    0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55
+  }; 
+  
   dev = pls->dev;
 
   gdk_threads_enter ();
@@ -963,13 +982,21 @@ fill_polygon (PLStream* pls)
       ((double) -pls->dev_y[i]/MAG_FACTOR) * PIXELS_PER_DU;
   }
 
-  item = gnome_canvas_item_new(group,
+  /* Experimental stuff for pattern fill */
+  bitmap = gdk_bitmap_create_from_data (NULL, pattern, 8, 8);
+
+  item = gnome_canvas_item_new (group,
                                 gnome_canvas_polygon_get_type (),
-                                "points", points,
+				"points", points,
+				/* Experimental stuff for pattern fill */
+				/* "fill_stipple", bitmap, */
                                 "fill_color_rgba",
  				plcolor_to_rgba (pls->curcolor, 0xFF),
                                 "width_units", 0.0,
                                 NULL);
+
+  /* Experimental stuff for pattern fill */
+  gdk_pixmap_unref (bitmap);
 
   set_color (item, 1, ((double) pls->icol1)/pls->ncol1);
 
