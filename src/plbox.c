@@ -1,44 +1,23 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/11/19 07:29:18  mjl
-   Changed the minimum distance a grid line must be from the boundary in
-   order for it to be drawn.  It was set before at 0.5 ticks (undocumented
-   and hardwired) and I changed this to 0.1 ticks while documenting it in the
-   code and making it easier to alter (but only through changing the source).
-   Maybe in the long term this should become a settable parameter.
+   Revision 1.10  1994/03/23 07:54:08  mjl
+   Replaced call to plexit() on simple (recoverable) errors with simply
+   printing the error message (via plabort()) and returning.  Should help
+   avoid loss of computer time in some critical circumstances (during a long
+   batch run, for example).
 
+ * Revision 1.9  1993/11/19  07:29:18  mjl
+ * Changed the minimum distance a grid line must be from the boundary in
+ * order for it to be drawn.  It was set before at 0.5 ticks (undocumented
+ * and hardwired) and I changed this to 0.1 ticks while documenting it in the
+ * code and making it easier to alter (but only through changing the source).
+ * Maybe in the long term this should become a settable parameter.
+ *
  * Revision 1.8  1993/09/24  20:33:23  furnish
  * Went wild with "const correctness".  Can now pass a C++ String type to
  * most (all that I know of) PLPLOT functions.  This works b/c String has
  * an implicit conversion to const char *.  Now that PLPLOT routines take
  * const char * rather than char *, use from C++ is much easier.
- *
- * Revision 1.7  1993/07/01  22:13:32  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
- *
- * Revision 1.6  1993/04/26  20:04:03  mjl
- * Tweaks for placement of exponential label to ensure it doesn't interfere
- * with axes labels.
- *
- * Revision 1.5  1993/03/17  17:01:39  mjl
- * Eliminated some dead assignments that turned up when running with SAS/C's
- * global optimizer enabled on the Amiga.
- *
- * Revision 1.4  1993/01/23  05:44:58  mjl
- * Now holds all box-related routines.
- *
- * Revision 1.3  1992/09/30  18:25:42  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:45:45  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:34:14  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	plbox.c
@@ -47,7 +26,7 @@
 */
 
 #include "plplotP.h"
-#include <stdio.h>
+
 #include <math.h>
 #include <string.h>
 
@@ -123,8 +102,10 @@ c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
     PLFLT pos, tn, tp, temp, offset, height, xcrit, ycrit;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plbox: Please set up window first.");
+    if (level < 3) {
+	plabort("plbox: Please set up window first");
+	return;
+    }
 
     /* Open  the clip limits to the subpage limits */
 
@@ -560,8 +541,10 @@ c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
     PLFLT pos, tn, tp, temp, offset, height;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plaxes: Please set up window first.");
+    if (level < 3) {
+	plabort("plaxes: Please set up window first");
+	return;
+    }
 
     /* Open  the clip limits to the subpage limits */
 
@@ -846,8 +829,10 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
     PLINT zdigmax, zdigits;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plbox3: Please set up window first.");
+    if (level < 3) {
+	plabort("plbox3: Please set up window first");
+	return;
+    }
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     plP_gdom(&xmin, &xmax, &ymin, &ymax);
