@@ -100,6 +100,7 @@
       *temp = (PLINT) SvIV (sv);
     else
       *temp = (PLINT) SvNV (sv);
+    printf("Got here: %d\n", (int) *temp); fflush(stdout);
   }
   else
     croak ("Wrong type for PLINT* input");
@@ -137,6 +138,18 @@
 }
 %typemap(perl5,argout) PLFLT_p_output* {
   sv_setnv (SvRV(ST(count++)), (double) *$source);
+  argvi--;
+}
+
+%typemap(perl5,in) PLINT_p_output* (PLINT fltemp, int count) {
+  count = 0;
+  if (! SvROK($source))
+    croak ("PLINT* output should be a reference");
+  ST(argvi++) = $source;
+  $target = &fltemp;
+}
+%typemap(perl5,argout) PLINT_p_output* {
+  sv_setiv (SvRV(ST(count++)), (double) *$source);
   argvi--;
 }
 
