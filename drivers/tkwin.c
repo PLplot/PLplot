@@ -4,10 +4,10 @@
  *
  * This device driver is designed to be used by a PlPlotter, and in fact requires
  * the existence of an enclosing PlPlotter.
- * 
+ *
  * The idea is that this should develop into a completely cross-platform driver
  * for use by the cross platform Tk system.
- * 
+ *
 */
 
 #include "plDevs.h"
@@ -27,7 +27,7 @@
 #ifdef USE_TCL_STUBS
 /* Unfortunately, tkInt.h ends up loading Malloc.h under Windows */
 /* So we have to deal with this mess */
-    #undef malloc 
+    #undef malloc
     #undef free
     #undef realloc
     #undef calloc
@@ -66,7 +66,7 @@ char* plD_DEVICE_INFO_tkwin = "tkwin:New tk driver:1:tkwin:45:tkwin";
 
 void *	ckcalloc(size_t nmemb, size_t size);
 
-/* 
+/*
  * We want to use the 'pure Tk' interface.  On Unix we can use
  * some direct calls to X instead of Tk, if we want, although
  * that code hasn't been tested for some time.  So this define
@@ -89,11 +89,11 @@ typedef struct PlPlotter {
 		     */
   Display *display;  /* Display containing widget. Used, among
 		      * other things, so that resources can be
-		      * freed even after tkwin has gone away. 
+		      * freed even after tkwin has gone away.
 		      */
   Tcl_Interp *interp;  /* Interpreter associated with
 			* widget. Used to delete widget
-			* command. 
+			* command.
 			*/
 } PlPlotter;
 
@@ -118,9 +118,9 @@ static int synchronize = 0; /* change to 1 for synchronized operation */
  *
  * ccmap  When set, turns on custom color map
  *
- * XWM_COLORS  Number of low "pixel" values to copy. 
- * CMAP0_COLORS  Color map 0 entries. 
- * CMAP1_COLORS  Color map 1 entries. 
+ * XWM_COLORS  Number of low "pixel" values to copy.
+ * CMAP0_COLORS  Color map 0 entries.
+ * CMAP1_COLORS  Color map 1 entries.
  * MAX_COLORS  Maximum colors period.
  *
  * See Init_CustomCmap() and Init_DefaultCmap() for more info.
@@ -221,34 +221,34 @@ plD_init_tkwin(PLStream *pls)
     int xmax = PIXELS_X - 1;
     int ymin = 0;
     int ymax = PIXELS_Y - 1;
-    
+
     dbug_enter("plD_init_tkw");
-    
+
     pls->termin = 1;  /* Is an interactive terminal */
     pls->dev_flush = 1;  /* Handle our own flushes */
     pls->dev_fill0 = 1;  /* Handle solid fills */
     pls->plbuf_write = 1; /* Activate plot buffer */
-    
+
     /* The real meat of the initialization done here */
-    
+
     if (pls->dev == NULL)
 	plD_open_tkwin(pls);
-	
+
     dev = (TkwDev *) pls->dev;
-	
+
     Init(pls);
-    
+
     /* Get ready for plotting */
-    
+
     dev->xlen = xmax - xmin;
     dev->ylen = ymax - ymin;
-    
+
     dev->xscale_init = dev->init_width / (double) dev->xlen;
     dev->yscale_init = dev->init_height / (double) dev->ylen;
 
     dev->xscale = dev->xscale_init;
     dev->yscale = dev->yscale_init;
-    
+
 #if PHYSICAL
     pxlx = (PLFLT) ((double) PIXELS_X / dev->width * DPMM);
     pxly = (PLFLT) ((double) PIXELS_Y / dev->height * DPMM);
@@ -256,7 +256,7 @@ plD_init_tkwin(PLStream *pls)
     pxlx = (PLFLT) ((double) PIXELS_X / LPAGE_X);
     pxly = (PLFLT) ((double) PIXELS_Y / LPAGE_Y);
 #endif
-    
+
     plP_setpxl(pxlx, pxly);
     plP_setphy(xmin, xmax, ymin, ymax);
 }
@@ -276,27 +276,27 @@ plD_open_tkwin(PLStream *pls)
     TkwDev *dev;
     TkwDisplay *tkwd;
     int i;
-    
+
     dbug_enter("plD_open_tkw");
-    
+
     /* Allocate and initialize device-specific data */
-    
+
     if (pls->dev != NULL)
 	plwarn("plD_open_tkw: device pointer is already set");
-    
+
     pls->dev = (TkwDev*) calloc(1, (size_t) sizeof(TkwDev));
     if (pls->dev == NULL)
 	plexit("plD_init_tkw: Out of memory.");
-    
+
     dev = (TkwDev *) pls->dev;
-    
+
     /* Variables used in querying the X server for events */
-    
+
     dev->instr = 0;
     dev->max_instr = MAX_INSTR;
 
     /* See if display matches any already in use, and if so use that */
-    
+
     dev->tkwd = NULL;
     for (i = 0; i < PLTKDISPLAYS; i++) {
 	if (tkwDisplay[i] == NULL) {
@@ -316,32 +316,32 @@ plD_open_tkwin(PLStream *pls)
     }
 
     /* If no display matched, create a new one */
-    
+
     if (dev->tkwd == NULL) {
 	dev->tkwd = (TkwDisplay *) calloc(1, (size_t) sizeof(TkwDisplay));
 	if (dev->tkwd == NULL)
 	    plexit("Init: Out of memory.");
-	
+
 	for (i = 0; i < PLTKDISPLAYS; i++) {
 	    if (tkwDisplay[i] == NULL)
 		break;
 	}
-	if (i == PLTKDISPLAYS) 
+	if (i == PLTKDISPLAYS)
 	    plexit("Init: Out of tkwDisplay's.");
-	
+
 	tkwDisplay[i] = tkwd = (TkwDisplay *) dev->tkwd;
 	tkwd->nstreams = 1;
-	
-	/* 
+
+	/*
 	 * If we don't have a tk widget we're being called on, then
-	 * abort operations now 
+	 * abort operations now
 	 */
 	if (pls->plPlotterPtr == NULL) {
 	    fprintf(stderr, "No tk plframe widget to connect to\n");
 	    exit(1);
 	}
 	/* Old version for MacOS Tk8.0 */
-	/* 
+	/*
 	 * char deflt[] = "Macintosh:0";
 	 * pls->FileName = deflt;
 	 * tkwd->display = (Display*) TkpOpenDisplay(pls->FileName);
@@ -350,7 +350,7 @@ plD_open_tkwin(PLStream *pls)
 	/* Open display */
 #if defined(MAC_TCL) || defined(__WIN32__)
 	if(!pls->FileName) {
-	    /* 
+	    /*
 	     * Need to strdup because Tk has allocated the screen name,
 	     * but we will actually 'free' it later ourselves, and therefore
 	     * need to own the memory.
@@ -371,14 +371,14 @@ plD_open_tkwin(PLStream *pls)
 	    XSynchronize(tkwd->display, 1);
 	}
 	/* Get colormap and visual */
-	
+
 	tkwd->map = Tk_Colormap(pls->plPlotterPtr->tkwin);
 	GetVisual(pls);
-	
+
 	/*
 	 * Figure out if we have a color display or not.
 	 * Default is color IF the user hasn't specified and IF the output device is
-	 * not grayscale. 
+	 * not grayscale.
 	 */
 
 	if (pls->colorset)
@@ -387,15 +387,15 @@ plD_open_tkwin(PLStream *pls)
 	    pls->color = 1;
 	    tkwd->color = ! pltk_AreWeGrayscale(pls->plPlotterPtr);
 	}
-	
+
 	/* Allocate & set background and foreground colors */
-	
+
 	AllocBGFG(pls);
 	pltkwin_setBGFG(pls);
     }
-    
+
     /* Display matched, so use existing display data */
-    
+
     else {
 	tkwd = (TkwDisplay *) dev->tkwd;
 	tkwd->nstreams++;
@@ -418,22 +418,22 @@ plD_line_tkwin(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
     if (dev->flags & 1) return;
-    
+
     y1 = dev->ylen - y1;
     y2 = dev->ylen - y2;
-    
+
     x1 = (int) (x1 * dev->xscale);
     x2 = (int) (x2 * dev->xscale);
     y1 = (int) (y1 * dev->yscale);
     y2 = (int) (y2 * dev->yscale);
-    
+
     if (dev->write_to_window)
 	XDrawLine(tkwd->display, dev->window, dev->gc, x1, y1, x2, y2);
-    
+
     if (dev->write_to_pixmap)
 	XDrawLine(tkwd->display, dev->pixmap, dev->gc, x1, y1, x2, y2);
 }
-      
+
 /*--------------------------------------------------------------------------*\
  * plD_polyline_tkwin()
  *
@@ -445,20 +445,20 @@ plD_polyline_tkwin(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    
+
     PLINT i;
     XPoint pts[PL_MAXPOLY];
-    
+
     if (dev->flags & 1) return;
 
     if (npts > PL_MAXPOLY)
 	plexit("plD_polyline_tkw: Too many points in polyline\n");
-    
+
     for (i = 0; i < npts; i++) {
 	pts[i].x = (short) (dev->xscale * xa[i]);
 	pts[i].y = (short) (dev->yscale * (dev->ylen - ya[i]));
     }
-    
+
     if (dev->write_to_window)
 	XDrawLines(tkwd->display, dev->window, dev->gc, pts, npts,
 		   CoordModeOrigin);
@@ -467,7 +467,7 @@ plD_polyline_tkwin(PLStream *pls, short *xa, short *ya, PLINT npts)
 	XDrawLines(tkwd->display, dev->pixmap, dev->gc, pts, npts,
 		   CoordModeOrigin);
 }
-	
+
 /*--------------------------------------------------------------------------*\
  * plD_eop_tkwin()
  *
@@ -482,14 +482,14 @@ plD_eop_tkwin(PLStream *pls)
 
     dbug_enter("plD_eop_tkw");
     if (dev->flags & 1) return;
-    
+
     XFlush(tkwd->display);
     if (pls->db)
 	ExposeCmd(pls, NULL);
 
     if (!pls->nopause)
 	WaitForPage(pls);
- 
+
 }
 
 /*--------------------------------------------------------------------------*\
@@ -518,11 +518,11 @@ WaitForPage(PLStream *pls)
     while (!(dev->flags) && !Tcl_InterpDeleted(plf->interp) && (Tk_GetNumMainWindows() > 0)) {
     	Tcl_DoOneEvent(0);
     }
-    
+
     if (Tcl_InterpDeleted(plf->interp) || (Tk_GetNumMainWindows() <= 0)) {
 	dev->flags |= 1;
     }
-    
+
     dev->flags &= 1;
 }
 
@@ -541,10 +541,10 @@ plD_bop_tkwin(PLStream *pls)
     XRectangle xrect;
     xrect.x = 0; xrect.y = 0;
     xrect.width = dev->width; xrect.height = dev->height;
-    
+
     dbug_enter("plD_bop_tkw");
     if (dev->flags & 1) return;
-    
+
     if (dev->write_to_window) {
 #ifdef MAC_TCL
 	/* MacTk only has these X calls */
@@ -576,7 +576,7 @@ plD_tidy_tkwin(PLStream *pls)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    
+
     dbug_enter("plD_tidy_tkw");
 
     tkwd->nstreams--;
@@ -588,7 +588,7 @@ plD_tidy_tkwin(PLStream *pls)
 #endif
 	free_mem(tkwDisplay[ixwd]);
     }
-    /* 
+    /*
      * Vince removed this November 1999.  It seems as if a simple
      * 'plframe .p ; destroy .p' leaves a temporary buf file open
      * if we clear this flag here.  It should be checked and then
@@ -605,7 +605,7 @@ plD_tidy_tkwin(PLStream *pls)
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*--------------------------------------------------------------------------*/
 
-void 
+void
 plD_state_tkwin(PLStream *pls, PLINT op)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
@@ -614,7 +614,7 @@ plD_state_tkwin(PLStream *pls, PLINT op)
     if (dev->flags & 1) return;
 
     switch (op) {
-	
+
 	case PLSTATE_WIDTH:
 	    break;
 
@@ -637,19 +637,19 @@ plD_state_tkwin(PLStream *pls, PLINT op)
 
 	case PLSTATE_COLOR1:{
 	    int icol1;
-	    
+
 	    if (tkwd->ncol1 == 0)
 		AllocCmap1(pls);
-	    
+
 	    if (tkwd->ncol1 < 2)
 		break;
 
 	    icol1 = (pls->icol1 * (tkwd->ncol1-1)) / (pls->ncol1-1);
-	    if (tkwd->color) 
+	    if (tkwd->color)
 		dev->curcolor = tkwd->cmap1[icol1];
-	    else 
+	    else
 		dev->curcolor = tkwd->fgcolor;
-	    
+
 	    XSetForeground(tkwd->display, dev->gc, dev->curcolor.pixel);
 	    break;
 	}
@@ -658,7 +658,7 @@ plD_state_tkwin(PLStream *pls, PLINT op)
 	    pltkwin_setBGFG(pls);
 	    StoreCmap0(pls);
 	    break;
-	    
+
 	case PLSTATE_CMAP1:
 	    StoreCmap1(pls);
 	    break;
@@ -686,10 +686,10 @@ plD_esc_tkwin(PLStream *pls, PLINT op, void *ptr)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    
+
     dbug_enter("plD_esc_tkw");
     if (dev->flags & 1) return;
-    
+
     switch (op) {
 	case PLESC_EH:
 #ifndef USE_TK
@@ -729,7 +729,7 @@ plD_esc_tkwin(PLStream *pls, PLINT op, void *ptr)
 /* Added by Vince, disabled by default since we want a minimal patch */
 #ifdef USING_PLESC_COPY
 	case PLESC_COPY:
-	    CopyCommand(pls);  
+	    CopyCommand(pls);
 	    break;
 #endif
     }
@@ -742,7 +742,7 @@ plD_esc_tkwin(PLStream *pls, PLINT op, void *ptr)
  * Points described in first 3 elements of pls->dev_x[] and pls->dev_y[].
 \*--------------------------------------------------------------------------*/
 
-static void 
+static void
 CopyCommand (PLStream *pls)
 {
     int x0,w,x1,y0,h,y1;
@@ -755,11 +755,11 @@ CopyCommand (PLStream *pls)
     y1 = (int) (dev->yscale * (dev->ylen - pls->dev_y[2]));
     w = (int) (dev->xscale * (pls->dev_x[1]-pls->dev_x[0]));
     h = (int) (-dev->yscale * (pls->dev_y[1]-pls->dev_y[0]));
- 
+
     if (dev->write_to_window)
 	XCopyArea(tkwd->display, dev->window, dev->window, dev->gc,
 		  x0,y0,w,h,x1,y1);
-	
+
     if (dev->write_to_pixmap)
 	XCopyArea(tkwd->display, dev->pixmap, dev->pixmap, dev->gc,
 		  x0,y0,w,h,x1,y1);
@@ -779,30 +779,30 @@ FillPolygonCmd(PLStream *pls)
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     XPoint pts[PL_MAXPOLY];
     int i;
-    
+
     if (pls->dev_npts > PL_MAXPOLY)
 	plexit("FillPolygonCmd: Too many points in polygon\n");
-    
-    
+
+
     for (i = 0; i < pls->dev_npts; i++) {
 	pts[i].x = (short) (dev->xscale * pls->dev_x[i]);
 	pts[i].y = (short) (dev->yscale * (dev->ylen - pls->dev_y[i]));
     }
-    
-    /* Fill polygons */
-    
+
+/* Fill polygons */
+
     if (dev->write_to_window)
 	XFillPolygon(tkwd->display, dev->window, dev->gc,
 		     pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
-	
+
     if (dev->write_to_pixmap)
 	XFillPolygon(tkwd->display, dev->pixmap, dev->gc,
 		     pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
 
-    /* If in debug mode, draw outline of boxes being filled */
+/* If in debug mode, draw outline of boxes being filled */
 
 #ifdef DEBUG
-    if (plsc->debug) {
+    if (pls->debug) {
 	XSetForeground(tkwd->display, dev->gc, tkwd->fgcolor.pixel);
 	if (dev->write_to_window)
 	    XDrawLines(tkwd->display, dev->window, dev->gc, pts, pls->dev_npts,
@@ -825,7 +825,7 @@ FillPolygonCmd(PLStream *pls)
  * Controlling routine for X window creation and/or initialization.
  * The user may customize the window in the following ways:
  *
- * display: pls->OutFile (use plsfnam() or -display option) 
+ * display: pls->OutFile (use plsfnam() or -display option)
  * size: pls->xlength, pls->ylength (use plspage() or -geo option)
  * bg color: pls->cmap0[0] (use plscolbg() or -bg option)
 \*--------------------------------------------------------------------------*/
@@ -840,51 +840,49 @@ Init(PLStream *pls)
     dbug_enter("Init");
 
     dev->window = pls->window_id;
-    
+
     plf = pls->plPlotterPtr;
     if (plf == NULL) {
 	plwarn("Init: Illegal call --- driver can't find enclosing PlPlotter");
 	return;
     }
-    
-    /* Initialize colors */
+
+/* Initialize colors */
     InitColors(pls);
 #ifndef MAC_TCL
     XSetWindowColormap( tkwd->display, dev->window, tkwd->map );
 #else
 #endif
 
-    /* Set up GC for ordinary draws */
-    
-    if ( ! dev->gc) 
+/* Set up GC for ordinary draws */
+    if ( ! dev->gc)
 	dev->gc = XCreateGC(tkwd->display, dev->window, 0, 0);
 
-    /* Set up GC for rubber-band draws */
-    
+/* Set up GC for rubber-band draws */
     if ( ! tkwd->gcXor) {
 	XGCValues gcValues;
 	unsigned long mask;
-	
+
 	gcValues.background = tkwd->cmap0[0].pixel;
 	gcValues.foreground = 0xFF;
 	gcValues.function = GXxor;
 	mask = GCForeground | GCBackground | GCFunction;
-	
+
 	tkwd->gcXor = XCreateGC(tkwd->display, dev->window, mask, &gcValues);
     }
-    
-    /* Get initial drawing area dimensions */
+
+/* Get initial drawing area dimensions */
     dev->width = Tk_Width(plf->tkwin);
     dev->height = Tk_Height(plf->tkwin);
     dev->border = Tk_InternalBorderWidth(plf->tkwin);
-    tkwd->depth = Tk_Depth(plf->tkwin); 
-    
+    tkwd->depth = Tk_Depth(plf->tkwin);
+
     dev->init_width = dev->width;
     dev->init_height = dev->height;
-    
+
     /* Set up flags that determine what we are writing to */
     /* If nopixmap is set, ignore db */
-    
+
     if (pls->nopixmap) {
 	dev->write_to_pixmap = 0;
 	pls->db = 0;
@@ -892,19 +890,19 @@ Init(PLStream *pls)
 	dev->write_to_pixmap = 1;
     }
     dev->write_to_window = ! pls->db;
-    
+
     /* Create pixmap for holding plot image (for expose events). */
-    
-    if (dev->write_to_pixmap) 
+
+    if (dev->write_to_pixmap)
 	CreatePixmap(pls);
 
     /* Set drawing color */
-    
+
     plD_state_tkwin(pls, PLSTATE_COLOR0);
-    
+
     XSetWindowBackground(tkwd->display, dev->window, tkwd->cmap0[0].pixel);
     XSetBackground(tkwd->display, dev->gc, tkwd->cmap0[0].pixel);
-    
+
 }
 
 /*--------------------------------------------------------------------------*\
@@ -920,9 +918,9 @@ ExposeCmd(PLStream *pls, PLDisplay *pldis)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     int x, y, width, height;
-    
+
     dbug_enter("ExposeCmd");
-    
+
     /* Return if plD_init_tkw hasn't been called yet */
 
     if (dev == NULL) {
@@ -931,7 +929,7 @@ ExposeCmd(PLStream *pls, PLDisplay *pldis)
     }
 
     /* Exposed area. If unspecified, the entire window is used. */
-    
+
     if (pldis == NULL) {
 	x = 0;
 	y = 0;
@@ -943,17 +941,17 @@ ExposeCmd(PLStream *pls, PLDisplay *pldis)
 	width = pldis->width;
 	height = pldis->height;
     }
-    
+
     /* Usual case: refresh window from pixmap */
     /* DEBUG option: draws rectangle around refreshed region */
-    
+
     XSync(tkwd->display, 0);
     if (dev->write_to_pixmap) {
 	XCopyArea(tkwd->display, dev->pixmap, dev->window, dev->gc,
 		  x, y, width, height, x, y);
 	XSync(tkwd->display, 0);
 #ifdef DEBUG
-	if (plsc->debug) {
+	if (pls->debug) {
 	    XPoint pts[5];
 	    int x0 = x, x1 = x+width, y0 = y, y1 = y+height;
 	    pts[0].x = x0; pts[0].y = y0;
@@ -961,7 +959,7 @@ ExposeCmd(PLStream *pls, PLDisplay *pldis)
 	    pts[2].x = x1; pts[2].y = y1;
 	    pts[3].x = x0; pts[3].y = y1;
 	    pts[4].x = x0; pts[4].y = y0;
-	    
+
 	    XDrawLines(tkwd->display, dev->window, dev->gc, pts, 5,
 		       CoordModeOrigin);
 	}
@@ -984,34 +982,34 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     int write_to_window = dev->write_to_window;
-    
+
     dbug_enter("ResizeCmd");
-    
+
     /* Return if plD_init_tkw hasn't been called yet */
-    
+
     if (dev == NULL) {
 	plwarn("ResizeCmd: Illegal call -- driver uninitialized");
 	return;
     }
-    
+
     /* Return if pointer to window not specified. */
-    
+
     if (pldis == NULL) {
 	plwarn("ResizeCmd: Illegal call -- window pointer uninitialized");
 	return;
     }
-    
+
     /* Reset current window bounds */
-    
+
     dev->width = pldis->width;
     dev->height = pldis->height;
 
     dev->xscale = dev->width / (double) dev->init_width;
     dev->yscale = dev->height / (double) dev->init_height;
-    
+
     dev->xscale = dev->xscale * dev->xscale_init;
     dev->yscale = dev->yscale * dev->yscale_init;
-    
+
 #if PHYSICAL
     {
 	float pxlx = (double) PIXELS_X / dev->width * DPMM;
@@ -1023,14 +1021,14 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
     /* Note: the following order MUST be obeyed -- if you instead redraw into
      * the window and then copy it to the pixmap, off-screen parts of the window
      * may contain garbage which is then transferred to the pixmap (and thus
-     * will not go away after an expose). 
+     * will not go away after an expose).
      */
 
     /* Resize pixmap using new dimensions */
 
     if (dev->write_to_pixmap) {
 	dev->write_to_window = 0;
-#if defined(__WIN32__) || defined(MAC_TCL) 
+#if defined(__WIN32__) || defined(MAC_TCL)
 	Tk_FreePixmap(tkwd->display, dev->pixmap);
 #else
 	/* Vince's original driver code used
@@ -1045,7 +1043,7 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 	 *    Tk_FreeXId(display, (XID) pixmap);
 	 * }
 	 * But that bombed under Linux and tcl/tk8.2 so now just call
-	 * XFreePixmap directly.  (Not recommended as permanent solution 
+	 * XFreePixmap directly.  (Not recommended as permanent solution
 	 * because you eventually run out of resources according to man
 	 * page if you don't call Tk_FreeXId.)  Vince is still looking into
 	 * how to resolve this problem.
@@ -1054,15 +1052,15 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 #endif
 	CreatePixmap(pls);
     }
-    
+
     /* Initialize & redraw (to pixmap, if available). */
-    
+
     plD_bop_tkwin(pls);
     plRemakePlot(pls);
     XSync(tkwd->display, 0);
 
     /* If pixmap available, fake an expose */
-    
+
     if (dev->write_to_pixmap) {
 	dev->write_to_window = write_to_window;
 	XCopyArea(tkwd->display, dev->pixmap, dev->window, dev->gc, 0, 0,
@@ -1084,29 +1082,29 @@ RedrawCmd(PLStream *pls)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     int write_to_window = dev->write_to_window;
-    
+
     dbug_enter("RedrawCmd");
-    
+
     /* Return if plD_init_tkw hasn't been called yet */
-    
+
     if (dev == NULL) {
 	plwarn("RedrawCmd: Illegal call -- driver uninitialized");
 	return;
     }
 
     /* Initialize & redraw (to pixmap, if available). */
-    
+
     if (dev->write_to_pixmap)
 	dev->write_to_window = 0;
-    
+
     plD_bop_tkwin(pls);
     plRemakePlot(pls);
     XSync(tkwd->display, 0);
-    
+
     dev->write_to_window = write_to_window;
-    
+
     /* If pixmap available, fake an expose */
-    
+
     if (dev->write_to_pixmap) {
 	XCopyArea(tkwd->display, dev->pixmap, dev->window, dev->gc, 0, 0,
 		  dev->width, dev->height, 0, 0);
@@ -1127,13 +1125,13 @@ CreatePixmap(PLStream *pls)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     Tk_Window tkwin = pls->plPlotterPtr->tkwin;
-    
+
 #if !defined(MAC_TCL) && !defined(__WIN32__)
     int (*oldErrorHandler)();
     oldErrorHandler = XSetErrorHandler(CreatePixmapErrorHandler);
     CreatePixmapStatus = Success;
 #endif
- 
+
 #ifdef MAC_TCL
     /* MAC_TCL's version of XCreatePixmap doesn't like 0 by 0 maps */
     if(dev->width == 0) { dev->width = 10; }
@@ -1152,7 +1150,7 @@ dev->pixmap = Tk_GetPixmap(tkwd->display, dev->window,
  * with that value.  Thus, we now use tkwd->display, and that works well.
  * Vince is looking into why Tk_Display(tkwin) is badly defined under 8.2.
  * old code:
- 
+
     dev->pixmap = Tk_GetPixmap(Tk_Display(tkwin), Tk_WindowId(tkwin),
 	    Tk_Width(tkwin), Tk_Height(tkwin),
 	    DefaultDepthOfScreen(Tk_Screen(tkwin)));
@@ -1170,7 +1168,7 @@ dev->pixmap = Tk_GetPixmap(tkwd->display, dev->window,
       Warning: pixmap could not be allocated (insufficient memory on server).\n\
       Driver will redraw the entire plot to handle expose events.\n");
     }
-  
+
     XSetErrorHandler(oldErrorHandler);
 #endif
 }
@@ -1192,15 +1190,15 @@ GetVisual(PLStream *pls)
     int depth;
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    
+
     dbug_enter("GetVisual");
-    
-    tkwd->visual = Tk_GetVisual(pls->plPlotterPtr->interp, 
-				pls->plPlotterPtr->tkwin, 
+
+    tkwd->visual = Tk_GetVisual(pls->plPlotterPtr->interp,
+				pls->plPlotterPtr->tkwin,
 				"best",
 				&depth, NULL);
     tkwd->depth = depth;
-    
+
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1216,30 +1214,30 @@ AllocBGFG(PLStream *pls)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    
+
 #ifndef USE_TK
     int i, j, npixels;
     unsigned long plane_masks[1], pixels[MAX_COLORS];
 #endif
-    
+
     dbug_enter("AllocBGFG");
-    
+
     /* If not on a color system, just return */
 
-    if ( ! tkwd->color) 
+    if ( ! tkwd->color)
 	return;
 #ifndef USE_TK
     /* Allocate r/w color cell for background */
-    
+
     if (XAllocColorCells(tkwd->display, tkwd->map, False,
 			 plane_masks, 0, pixels, 1)) {
 	tkwd->cmap0[0].pixel = pixels[0];
     } else {
 	plexit("couldn't allocate background color cell");
     }
-    
+
     /* Allocate as many colors as we can */
-    
+
     npixels = MAX_COLORS;
     for (;;) {
 	if (XAllocColorCells(tkwd->display, tkwd->map, False,
@@ -1252,14 +1250,14 @@ AllocBGFG(PLStream *pls)
 
     /* Find the color with pixel = xor of the bg color pixel. */
     /* If a match isn't found, the last pixel allocated is used. */
-    
+
     for (i = 0; i < npixels-1; i++) {
 	if (pixels[i] == (~tkwd->cmap0[0].pixel & 0xFF))
 	    break;
     }
 
     /* Use this color cell for our foreground color. Then free the rest. */
-    
+
     tkwd->fgcolor.pixel = pixels[i];
     for (j = 0; j < npixels; j++) {
 	if (j != i)
@@ -1282,7 +1280,7 @@ pltkwin_setBGFG(PLStream *pls)
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     PLColor fgcolor;
     int gslevbg, gslevfg;
-    
+
     dbug_enter("pltkwin_setBGFG");
 
     /*
@@ -1300,7 +1298,7 @@ pltkwin_setBGFG(PLStream *pls)
 	       (long) pls->cmap0[0].b) / 3;
 
     PLColor_to_TkColor(&pls->cmap0[0], &tkwd->cmap0[0]);
-    
+
     /*
      * Set foreground color.
      *
@@ -1311,13 +1309,13 @@ pltkwin_setBGFG(PLStream *pls)
      * Note that white/black allocations never fail.
      */
 
-    if (gslevbg > 0x7F) 
+    if (gslevbg > 0x7F)
 	gslevfg = 0;
-    else 
+    else
 	gslevfg = 0xFF;
 
     fgcolor.r = fgcolor.g = fgcolor.b = gslevfg;
-    
+
     PLColor_to_TkColor(&fgcolor, &tkwd->fgcolor);
 
     /* Now store */
@@ -1346,12 +1344,12 @@ InitColors(PLStream *pls)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    
+
     dbug_enter("InitColors");
-    
+
     /* Allocate and initialize color maps. */
     /* Defer cmap1 allocation until it's actually used */
-    
+
     if (tkwd->color) {
 	if (plplot_tkwin_ccmap) {
 	    AllocCustomMap(pls);
@@ -1376,15 +1374,15 @@ InitColors(PLStream *pls)
  *  colormap and the custom colormap to reduce flicker.
  *
  * CMAP1_COLORS Color map 1 entries. There should be as many as practical
- *  available for smooth shading. On the order of 50-100 is 
+ *  available for smooth shading. On the order of 50-100 is
  *  pretty reasonable. You don't really need all 256,
  *  especially if all you're going to do is to print it to
  *  postscript (which doesn't have any intrinsic limitation on
  *  the number of colors).
  *
- * It's important to leave some extra colors unallocated for Tk. In 
+ * It's important to leave some extra colors unallocated for Tk. In
  * particular the palette tools require a fair amount. I recommend leaving
- * at least 40 or so free. 
+ * at least 40 or so free.
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -1392,18 +1390,18 @@ AllocCustomMap(PLStream *pls)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    
+
     XColor xwm_colors[MAX_COLORS];
     int i;
 #ifndef USE_TK
     int npixels;
     unsigned long plane_masks[1], pixels[MAX_COLORS];
 #endif
-    
+
     dbug_enter("AllocCustomMap");
-    
+
     /* Determine current default colors */
-    
+
     for (i = 0; i < MAX_COLORS; i++) {
 	xwm_colors[i].pixel = i;
     }
@@ -1423,7 +1421,7 @@ AllocCustomMap(PLStream *pls)
 
     tkwd->map = XCreateColormap( tkwd->display, DefaultRootWindow(tkwd->display),
 				tkwd->visual, AllocNone );
-    
+
     /* Now allocate all colors so we can fill the ones we want to copy */
 
 #ifndef USE_TK
@@ -1436,21 +1434,21 @@ AllocCustomMap(PLStream *pls)
 	if (npixels == 0)
 	    plexit("couldn't allocate any colors");
     }
-    
+
     /* Fill the low colors since those are in use by the window manager */
-    
+
     for (i = 0; i < XWM_COLORS; i++) {
 	XStoreColor(tkwd->display, tkwd->map, &xwm_colors[i]);
 	pixels[xwm_colors[i].pixel] = 0;
     }
-    
+
     /* Fill the ones we will use in cmap0 */
-    
+
     for (i = 0; i < tkwd->ncol0; i++) {
 	XStoreColor(tkwd->display, tkwd->map, &tkwd->cmap0[i]);
 	pixels[tkwd->cmap0[i].pixel] = 0;
     }
-    
+
   /* Finally, if the colormap was saved by an external agent, see if there are
    * any differences from the current default map and save those! A very cool
    * (or sick, depending on how you look at it) trick to get over some X and
@@ -1462,7 +1460,7 @@ AllocCustomMap(PLStream *pls)
 	    if ((xwm_colors[i].red != sxwm_colors[i].red) ||
 		(xwm_colors[i].green != sxwm_colors[i].green) ||
 		(xwm_colors[i].blue != sxwm_colors[i].blue) ) {
-		
+
 		if (pixels[i] != 0) {
 		    XStoreColor(tkwd->display, tkwd->map, &xwm_colors[i]);
 		    pixels[i] = 0;
@@ -1470,9 +1468,9 @@ AllocCustomMap(PLStream *pls)
 	    }
 	}
     }
-    
+
     /* Now free the ones we're not interested in */
-    
+
     for (i = 0; i < npixels; i++) {
 	if (pixels[i] != 0)
 	    XFreeColors(tkwd->display, tkwd->map, &pixels[i], 1, 0);
@@ -1494,17 +1492,17 @@ AllocCmap0(PLStream *pls)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    
+
 #ifndef USE_TK
     int npixels;
     int i;
     unsigned long plane_masks[1], pixels[MAX_COLORS];
 #endif
-    
+
     dbug_enter("AllocCmap0");
-    
+
     /* Allocate and assign colors in cmap 0 */
-    
+
 #ifndef USE_TK
     npixels = pls->ncol0-1;
     for (;;) {
@@ -1515,7 +1513,7 @@ AllocCmap0(PLStream *pls)
 	if (npixels == 0)
 	    plexit("couldn't allocate any colors");
     }
-  
+
     tkwd->ncol0 = npixels+1;
     for (i = 1; i < tkwd->ncol0; i++) {
 	tkwd->cmap0[i].pixel = pixels[i];
@@ -1539,17 +1537,17 @@ AllocCmap1(PLStream *pls)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    
+
     int npixels;
 #ifndef USE_TK
     int i, j;
     unsigned long plane_masks[1], pixels[MAX_COLORS];
 #endif
-    
+
     dbug_enter("AllocCmap1");
-    
+
     /* Allocate colors in cmap 1 */
-    
+
     npixels = MAX(2, MIN(CMAP1_COLORS, pls->ncol1));
 #ifndef USE_TK
     for (;;) {
@@ -1560,7 +1558,7 @@ AllocCmap1(PLStream *pls)
 	if (npixels == 0)
 	    break;
     }
-    
+
     if (npixels < 2) {
 	tkwd->ncol1 = -1;
 	fprintf(stderr,
@@ -1571,17 +1569,17 @@ AllocCmap1(PLStream *pls)
 	if (pls->verbose)
 	    fprintf(stderr, "AllocCmap1 (xwin.c): Allocated %d colors in cmap1\n", npixels);
     }
-    
+
     /* Don't assign pixels sequentially, to avoid strange problems with xor GC's */
     /* Skipping by 2 seems to do the job best */
-    
+
     for (j = i = 0; i < tkwd->ncol1; i++) {
-	while (pixels[j] == 0) 
+	while (pixels[j] == 0)
 	    j++;
 
 	tkwd->cmap1[i].pixel = pixels[j];
 	pixels[j] = 0;
-	
+
 	j += 2;
 	if (j >= tkwd->ncol1)
 	    j = 0;
@@ -1604,10 +1602,10 @@ StoreCmap0(PLStream *pls)
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     int i;
-    
-    if ( ! tkwd->color) 
+
+    if ( ! tkwd->color)
 	return;
-    
+
     for (i = 1; i < tkwd->ncol0; i++) {
 	PLColor_to_TkColor(&pls->cmap0[i], &tkwd->cmap0[i]);
 #ifndef USE_TK
@@ -1637,11 +1635,11 @@ StoreCmap1(PLStream *pls)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-    
+
     PLColor cmap1color;
     int i;
-    
-    if ( ! tkwd->color) 
+
+    if ( ! tkwd->color)
 	return;
 
     for (i = 0; i < tkwd->ncol1; i++) {
@@ -1654,7 +1652,7 @@ StoreCmap1(PLStream *pls)
 #endif
     }
 }
-      
+
 void Tkw_StoreColor(PLStream* pls, TkwDisplay* tkwd, XColor* col) {
     XColor *xc;
 #ifndef USE_TK
@@ -1663,7 +1661,7 @@ void Tkw_StoreColor(PLStream* pls, TkwDisplay* tkwd, XColor* col) {
     /* We're probably losing memory here */
     xc = Tk_GetColorByValue(pls->plPlotterPtr->tkwin,col);
     CopyColour(xc,col);
-#endif 
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1716,7 +1714,7 @@ PLColor_from_TkColor_Changed(PLColor *plcolor, XColor *xcolor)
     int changed = 0;
     int color;
     color = ToPLColor(xcolor->red);
-    
+
     if(plcolor->r != color) {
         changed = 1;
         plcolor->r = color;
@@ -1738,7 +1736,7 @@ PLColor_from_TkColor_Changed(PLColor *plcolor, XColor *xcolor)
  * int pltk_AreWeGrayscale(PlPlotter *plf)
  *
  * Determines if we're using a monochrome or grayscale device.
- * gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland. 
+ * gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland.
  * Changed July 1996 by Vince: now uses Tk to check the enclosing PlPlotter
 \*--------------------------------------------------------------------------*/
 
@@ -1780,7 +1778,7 @@ CreatePixmapErrorHandler(Display *display, XErrorEvent *error)
 	fprintf(stderr, "Error in XCreatePixmap: %s.\n", buffer);
     }
     return 1;
-} 
+}
 #endif
 
 #else
@@ -1801,17 +1799,16 @@ void *	ckcalloc(size_t nmemb, size_t size) {
 	return(0);
 
 #if !__POWERPC__
-    
+
     for (size = (size / sizeof(long)) + 1, p = ptr; --size;)
 	*p++ = 0;
-    
+
 #else
-	
+
     for (size = (size / sizeof(long)) + 1, p = ptr - 1; --size;)
 	*++p = 0;
 
 #endif
-	
+
     return(ptr);
 }
-

@@ -29,10 +29,10 @@
 #if HAVE_UNISTD_H
 # include <unistd.h>
 #endif
-#include <sys/types.h> 
-#if HAVE_SYS_WAIT_H 
-# include <sys/wait.h> 
-#endif 
+#include <sys/types.h>
+#if HAVE_SYS_WAIT_H
+# include <sys/wait.h>
+#endif
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -199,7 +199,7 @@ init(PLStream *pls)
     pls->dev_flush = 1;		/* Handle our own flushes */
     pls->dev_fill0 = 1;		/* Handle solid fills */
     pls->dev_fill1 = 1;		/* Handle pattern fills */
-    pls->server_nokill = 1;     /* don't kill if ^C */ 
+    pls->server_nokill = 1;     /* don't kill if ^C */
     pls->dev_xor = 1;           /* device support xor mode */
     pls->plbuf_write = 1;       /* Activate plot buffer. To
     programmatically save a file we can't call plreplot(), but instead
@@ -365,7 +365,7 @@ plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
 /*--------------------------------------------------------------------------*\
  * plD_eop_tk()
  *
- * End of page.  
+ * End of page.
  * User must hit <RETURN> to continue.
 \*--------------------------------------------------------------------------*/
 
@@ -425,7 +425,7 @@ plD_tidy_tk(PLStream *pls)
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*--------------------------------------------------------------------------*/
 
-void 
+void
 plD_state_tk(PLStream *pls, PLINT op)
 {
     U_CHAR c = (U_CHAR) CHANGE_STATE;
@@ -739,7 +739,7 @@ tk_start(PLStream *pls)
 
     /* tk_init needs this. Use pls->FileName first, then DISPLAY, then :0.0 */
 
-        if (pls->FileName != NULL) 
+        if (pls->FileName != NULL)
             Tcl_SetVar2(dev->interp, "env", "DISPLAY", pls->FileName, TCL_GLOBAL_ONLY);
 	else if (getenv("DISPLAY") != NULL)
             Tcl_SetVar2(dev->interp, "env", "DISPLAY", getenv("DISPLAY"), TCL_GLOBAL_ONLY); /* tk_init need this */
@@ -758,17 +758,17 @@ tk_start(PLStream *pls)
     }
 
     if (pls->debug)
-	tcl_cmd(pls, "global auto_path; puts \"auto_path: $auto_path\""); 
+	tcl_cmd(pls, "global auto_path; puts \"auto_path: $auto_path\"");
 
 /* Other initializations. */
 /* Autoloaded, so the user can customize it if desired */
 
-    tcl_cmd(pls, "plclient_init"); 
+    tcl_cmd(pls, "plclient_init");
 
 /* A different way to customize the interface. */
 /* E.g. used by plrender to add a back page button. */
 
-    if (pls->tcl_cmd) 
+    if (pls->tcl_cmd)
 	tcl_cmd(pls, pls->tcl_cmd);
 
 /* Initialize server process */
@@ -821,10 +821,10 @@ tk_stop(PLStream *pls)
     if (dev->child_pid) {
     	waitpid(dev->child_pid, NULL, 0);
 /*
-	problems if parent has not caught/ignore SIGCHLD. Returns -1 and errno=EINTR    	
+	problems if parent has not caught/ignore SIGCHLD. Returns -1 and errno=EINTR
 	if (waitpid(dev->child_pid, NULL, 0) != dev->child_pid)
 	    fprintf(stderr, "tk_stop: waidpid error");
-*/	    
+*/
     }
 
 /* Blow away interpreter */
@@ -847,9 +847,9 @@ tk_stop(PLStream *pls)
 /*--------------------------------------------------------------------------*\
  * abort_session
  *
- * Terminates with an error.  
+ * Terminates with an error.
  * Cleanup is done here, and once pls->level is cleared the driver will
- * never be called again. 
+ * never be called again.
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -933,7 +933,7 @@ pltkdriver_Init(PLStream *pls)
 
 /* Set some relevant interpreter variables */
 
-    if ( ! pls->dp) 
+    if ( ! pls->dp)
 	tcl_cmd(pls, "set client_name [winfo name .]");
 
     if (pls->server_name != NULL)
@@ -968,31 +968,31 @@ pltkdriver_Init(PLStream *pls)
  *	 Actions: fork plserver, passing it our TK main window name
  *		  for communication.  Once started, plserver will send
  *		  back its main window name.
- * 
+ *
  *    2. Driver: dp
  *	 Flags: <none>
  *	 Meaning: need to start up plserver (same host)
  *	 Actions: fork plserver, passing it our Tcl-DP communication port
  *		  for communication. Once started, plserver will send
  *		  back its created message port number.
- * 
+ *
  *    3. Driver: tk
  *	 Flags: -server_name
  *	 Meaning: plserver already running (same host)
  *	 Actions: communicate to plserver our TK main window name.
- * 
+ *
  *    4. Driver: dp
  *	 Flags: -server_port
  *	 Meaning: plserver already running (same host)
  *	 Actions: communicate to plserver our Tcl-DP port number.
- * 
+ *
  *    5. Driver: dp
  *	 Flags: -server_host
  *	 Meaning: need to start up plserver (remote host)
  *	 Actions: rsh (remsh) plserver, passing it our host ID and Tcl-DP
  *		  port for communication. Once started, plserver will send
  *		  back its created message port number.
- * 
+ *
  *    6. Driver: dp
  *	 Flags: -server_host -server_port
  *	 Meaning: plserver already running (remote host)
@@ -1001,17 +1001,17 @@ pltkdriver_Init(PLStream *pls)
  *
  * For a bit more flexibility, you can change the name of the process
  * invoked from "plserver" to something else, using the -plserver flag.
- * 
+ *
  * The startup procedure involves some rather involved handshaking between
  * client and server.  This is made easier by using the Tcl variables:
  *
- *	client_host client_port server_host server_port 
+ *	client_host client_port server_host server_port
  *
  * when using Tcl-DP sends and
  *
  *	client_name server_name
  *
- * when using TK sends.  The global Tcl variables 
+ * when using TK sends.  The global Tcl variables
  *
  *	client server
  *
@@ -1068,7 +1068,7 @@ init_server(PLStream *pls)
 /* If server didn't need launching, contact it here */
 
     if (server_exists)
-	tcl_cmd(pls, "plclient_link_init"); 
+	tcl_cmd(pls, "plclient_link_init");
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1086,7 +1086,7 @@ launch_server(PLStream *pls)
 
     dbug_enter("launch_server");
 
-    if (pls->plserver == NULL) 
+    if (pls->plserver == NULL)
 	pls->plserver = "plserver";
 
 /* Build argument list */
@@ -1127,7 +1127,7 @@ launch_server(PLStream *pls)
  */
 
     argv[i++] = "-file";			/* Startup file */
-    if (pls->tk_file) 
+    if (pls->tk_file)
         argv[i++] = pls->tk_file;
     else
     argv[i++] = "/dev/null";
@@ -1135,19 +1135,19 @@ launch_server(PLStream *pls)
 
 /*
    Give interpreter the base name of the plwindow.
-   Usefull to know the interpreter name
+   Useful to know the interpreter name
 */
- 
-    if (plsc->plwindow != NULL) {
+
+    if (pls->plwindow != NULL) {
         char *t, *tmp;
         argv[i++] = "-name";            /* plserver name */
-	tmp = plstrdup(plsc->plwindow + 1); /* get rid of the initial dot */
-        argv[i++] = tmp;	
+	tmp = plstrdup(pls->plwindow + 1); /* get rid of the initial dot */
+        argv[i++] = tmp;
         if ((t = strchr(tmp, '.')) != NULL)
             *t = '\0';			/* and keep only the base name */
     } else {
         argv[i++] = "-name";            /* plserver name */
-        argv[i++] = pls->program;	
+        argv[i++] = pls->program;
     }
 
     if (pls->auto_path != NULL) {
@@ -1202,7 +1202,7 @@ launch_server(PLStream *pls)
     if (pls->debug) {
 	int j;
 	fprintf(stderr, "argument list: \n   ");
-	for (j = 0; j < i; j++) 
+	for (j = 0; j < i; j++)
 	    fprintf(stderr, "%s ", argv[j]);
 	fprintf(stderr, "\n");
     }
@@ -1263,7 +1263,7 @@ launch_server(PLStream *pls)
 /*--------------------------------------------------------------------------*\
  * plwindow_init
  *
- * Configures the widget hierarchy we are sending the data stream to.  
+ * Configures the widget hierarchy we are sending the data stream to.
  *
  * If a widget name (identifying the actual widget or a container widget)
  * hasn't been supplied already we assume it needs to be created.
@@ -1326,7 +1326,7 @@ plwindow_init(PLStream *pls)
 
 /* nopixmap option */
 
-    if (pls->nopixmap) 
+    if (pls->nopixmap)
 	server_cmd( pls, "$plwidget cmd plsetopt -nopixmap", 0 );
 
 /* debugging */
@@ -1370,14 +1370,14 @@ set_windowname(PLStream *pls)
   int i;
 
   /* Set to "plclient" if not initialized via plargs or otherwise */
-    
+
   if (pls->program == NULL)
     pls->program = "plclient";
 
   /* Eliminate any leading path specification */
 
   pname = strrchr(pls->program, '/');
-  if (pname) 
+  if (pname)
     pname++;
   else
     pname = pls->program;
@@ -1426,7 +1426,7 @@ link_init(PLStream *pls)
 
 	iodev->fileName = (char *) tmpnam(NULL);
 	if (mkfifo(iodev->fileName,
-		   S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0) 
+		   S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0)
 	    abort_session(pls, "mkfifo error");
 
     /* Tell plframe widget to open FIFO (for reading). */
@@ -1437,7 +1437,7 @@ link_init(PLStream *pls)
     /* Open the FIFO for writing */
     /* This will block until the server opens it for reading */
 
-	if ((iodev->fd = open(iodev->fileName, O_WRONLY)) == -1) 
+	if ((iodev->fd = open(iodev->fileName, O_WRONLY)) == -1)
 	    abort_session(pls, "Error opening fifo for write");
 
     /* Create stream interface (C file handle) to FIFO */
@@ -1449,7 +1449,7 @@ link_init(PLStream *pls)
 /* Unlink FIFO so that it isn't left around if program crashes. */
 /* This also ensures no other program can mess with it. */
 
-	if (unlink(iodev->fileName) == -1) 
+	if (unlink(iodev->fileName) == -1)
 	    abort_session(pls, "Error removing fifo");
     }
 
@@ -1935,7 +1935,7 @@ LocateButton(PLStream *pls)
  * command.  The API entry point is the call plGetCursor(), which initiates
  * locate mode and does not return until input has been obtained.  The
  * driver entry point is by entering a 'L' while the driver is waiting for
- * events.  
+ * events.
  *
  * Locate mode input is reported in one of three ways:
  * 1. Through a returned PLGraphicsIn structure, when user has specified a
@@ -1975,7 +1975,7 @@ Locate(PLStream *pls)
 
 	    if (dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER) {
 		pltext();
-		if (gin->keysym < 0xFF && isprint(gin->keysym)) 
+		if (gin->keysym < 0xFF && isprint(gin->keysym))
 		    printf("%f %f %c\n", gin->wX, gin->wY, gin->keysym);
 		else
 		    printf("%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym);
@@ -2029,7 +2029,7 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp)
  *
  * Waits for the specified expression to evaluate to true before
  * proceeding.  While we are waiting to proceed, all events (for this
- * or other interpreters) are handled.  
+ * or other interpreters) are handled.
  *
  * Use a static string buffer to hold the command, to ensure it's in
  * writable memory (grrr...).
@@ -2086,15 +2086,15 @@ server_cmd(PLStream *pls, char *cmd, int nowait)
     pldebug("server_cmd", "Sending command: %s\n", cmd);
 
     if (pls->dp) {
-	if (nowait) 
+	if (nowait)
 	    result = Tcl_VarEval(dev->interp, dpsend_cmd1, cmd,
 				 (char **) NULL);
 	else
 	    result = Tcl_VarEval(dev->interp, dpsend_cmd0, cmd,
 				 (char **) NULL);
-    } 
+    }
     else {
-	if (nowait) 
+	if (nowait)
 	    result = Tcl_VarEval(dev->interp, tksend_cmd1, "[list ",
 				 cmd, "]", (char **) NULL);
 	else

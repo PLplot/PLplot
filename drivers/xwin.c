@@ -29,14 +29,14 @@ static int synchronize = 0;	/* change to 1 for X synchronized operation */
                                 /* Use "-drvopt sync" cmd line option to set. */
 
 static int nobuffered = 0;      /* make it a buffered device by default */
-                                /* use "-drvopt unbuffered" to make it unbuffered */ 
+                                /* use "-drvopt unbuffered" to make it unbuffered */
 
 static int noinitcolors = 0;    /* Call InitColors by default */
-                                /* use "-drvopt noinitcolors" to leave colors uninitialized */ 
+                                /* use "-drvopt noinitcolors" to leave colors uninitialized */
 
-static int defaultvisual = 0;   /* use "-drvopt defvis" to use the default visual */ 
+static int defaultvisual = 0;   /* use "-drvopt defvis" to use the default visual */
 
-/* 
+/*
  * When -drvopt defvis is defined, DefaultVisual() is used to get the visual.
  * Otherwise, the visual is obtained using XGetVisualInfo() to make a match.
  */
@@ -63,9 +63,9 @@ static int defaultvisual = 0;   /* use "-drvopt defvis" to use the default visua
  *
  * ccmap		When set, turns on custom color map
  *
- * XWM_COLORS		Number of low "pixel" values to copy.  
- * CMAP0_COLORS		Color map 0 entries.  
- * CMAP1_COLORS		Color map 1 entries.  
+ * XWM_COLORS		Number of low "pixel" values to copy.
+ * CMAP0_COLORS		Color map 0 entries.
+ * CMAP1_COLORS		Color map 1 entries.
  * MAX_COLORS		Maximum colors period.
  *
  * See Init_CustomCmap() and  Init_DefaultCmap() for more info.
@@ -417,7 +417,7 @@ plD_eop_xw(PLStream *pls)
     XFlush(xwd->display);
     if (pls->db)
 	ExposeCmd(pls, NULL);
-	
+
     if (dev->is_main && ! pls->nopause)
 	WaitForPage(pls);
 
@@ -487,7 +487,7 @@ plD_tidy_xw(PLStream *pls)
 
     if (dev->is_main) {
 	XDestroyWindow(xwd->display, dev->window);
-	if (dev->write_to_pixmap) 
+	if (dev->write_to_pixmap)
 	    XFreePixmap(xwd->display, dev->pixmap);
 	XFlush(xwd->display);
     }
@@ -508,7 +508,7 @@ plD_tidy_xw(PLStream *pls)
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*--------------------------------------------------------------------------*/
 
-void 
+void
 plD_state_xw(PLStream *pls, PLINT op)
 {
     XwDev *dev = (XwDev *) pls->dev;
@@ -525,7 +525,7 @@ plD_state_xw(PLStream *pls, PLINT op)
     switch (op) {
 
     case PLSTATE_WIDTH:
-        XSetLineAttributes( xwd->display, dev->gc, pls->width, 
+        XSetLineAttributes( xwd->display, dev->gc, pls->width,
 			    LineSolid, CapRound, JoinMiter);
 	break;
 
@@ -560,9 +560,9 @@ plD_state_xw(PLStream *pls, PLINT op)
 	    break;
 
 	icol1 = (pls->icol1 * (xwd->ncol1-1)) / (pls->ncol1-1);
-	if (xwd->color) 
+	if (xwd->color)
 	    dev->curcolor = xwd->cmap1[icol1];
-	else 
+	else
 	    dev->curcolor = xwd->fgcolor;
 
 	XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
@@ -721,10 +721,10 @@ GetCursorCmd(PLStream *pls, PLGraphicsIn *ptr)
     }
     *ptr = *gin;
     if (dev->locate_mode) {
-      dev->locate_mode = 0;
-      DestroyXhairs(pls);
+	dev->locate_mode = 0;
+	DestroyXhairs(pls);
     }
-   }
+}
 
 /*--------------------------------------------------------------------------*\
  * FillPolygonCmd()
@@ -736,46 +736,46 @@ GetCursorCmd(PLStream *pls, PLGraphicsIn *ptr)
 static void
 FillPolygonCmd(PLStream *pls)
 {
-  XwDev *dev = (XwDev *) pls->dev;
-  XwDisplay *xwd = (XwDisplay *) dev->xwd;
-  XPoint pts[PL_MAXPOLY];
-  int i;
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    XPoint pts[PL_MAXPOLY];
+    int i;
 
-  if (pls->dev_npts > PL_MAXPOLY)
-    plexit("FillPolygonCmd: Too many points in polygon\n");
+    if (pls->dev_npts > PL_MAXPOLY)
+	plexit("FillPolygonCmd: Too many points in polygon\n");
 
-  CheckForEvents(pls);
+    CheckForEvents(pls);
 
-  for (i = 0; i < pls->dev_npts; i++) {
-    pts[i].x = dev->xscale * pls->dev_x[i];
-    pts[i].y = dev->yscale * (dev->ylen - pls->dev_y[i]);
-  }
+    for (i = 0; i < pls->dev_npts; i++) {
+	pts[i].x = dev->xscale * pls->dev_x[i];
+	pts[i].y = dev->yscale * (dev->ylen - pls->dev_y[i]);
+    }
 
-  /* Fill polygons */
-    
+/* Fill polygons */
+
     if (dev->write_to_window)
-      XFillPolygon(xwd->display, dev->window, dev->gc,
-		   pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
-    
-    if (dev->write_to_pixmap)
-      XFillPolygon(xwd->display, dev->pixmap, dev->gc,
-		   pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
+	XFillPolygon(xwd->display, dev->window, dev->gc,
+		     pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
 
-  /* If in debug mode, draw outline of boxes being filled */
+    if (dev->write_to_pixmap)
+	XFillPolygon(xwd->display, dev->pixmap, dev->gc,
+		     pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
+
+/* If in debug mode, draw outline of boxes being filled */
 
 #ifdef DEBUG
-  if (plsc->debug) {
-    XSetForeground(xwd->display, dev->gc, xwd->fgcolor.pixel);
-    if (dev->write_to_window)
-      XDrawLines(xwd->display, dev->window, dev->gc, pts, pls->dev_npts,
-		 CoordModeOrigin);
+    if (pls->debug) {
+	XSetForeground(xwd->display, dev->gc, xwd->fgcolor.pixel);
+	if (dev->write_to_window)
+	    XDrawLines(xwd->display, dev->window, dev->gc, pts, pls->dev_npts,
+		       CoordModeOrigin);
 
-    if (dev->write_to_pixmap)
-      XDrawLines(xwd->display, dev->pixmap, dev->gc, pts, pls->dev_npts,
-		 CoordModeOrigin);
+	if (dev->write_to_pixmap)
+	    XDrawLines(xwd->display, dev->pixmap, dev->gc, pts, pls->dev_npts,
+		       CoordModeOrigin);
 
-    XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
-  }
+	XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
+    }
 #endif
 }
 
@@ -844,7 +844,7 @@ OpenXwin(PLStream *pls)
 	    if (xwDisplay[i] == NULL)
 		break;
 	}
-	if (i == PLXDISPLAYS) 
+	if (i == PLXDISPLAYS)
 	    plexit("Init: Out of xwDisplay's.");
 
 	xwDisplay[i] = xwd = (XwDisplay *) dev->xwd;
@@ -862,7 +862,7 @@ OpenXwin(PLStream *pls)
 	}
 	xwd->displayName = pls->FileName;
 	xwd->screen = DefaultScreen(xwd->display);
-	if (synchronize) 
+	if (synchronize)
 	    XSynchronize(xwd->display, 1);
 
 /* Get colormap and visual */
@@ -874,7 +874,7 @@ OpenXwin(PLStream *pls)
 /*
  * Figure out if we have a color display or not.
  * Default is color IF the user hasn't specified and IF the output device is
- * not grayscale.  
+ * not grayscale.
  */
 
 	if (pls->colorset)
@@ -907,7 +907,7 @@ OpenXwin(PLStream *pls)
  * Controlling routine for X window creation and/or initialization.
  * The user may customize the window in the following ways:
  *
- * display:	pls->OutFile (use plsfnam() or -display option) 
+ * display:	pls->OutFile (use plsfnam() or -display option)
  * size:	pls->xlength, pls->ylength (use plspage() or -geo option)
  * bg color:	pls->cmap0[0] (use plscolbg() or -bg option)
 \*--------------------------------------------------------------------------*/
@@ -941,7 +941,7 @@ Init(PLStream *pls)
 
 /* Set up GC for ordinary draws */
 
-    if ( ! dev->gc) 
+    if ( ! dev->gc)
 	dev->gc = XCreateGC(xwd->display, dev->window, 0, 0);
 
 /* Set up GC for rubber-band draws */
@@ -980,7 +980,7 @@ Init(PLStream *pls)
 
 /* Create pixmap for holding plot image (for expose events). */
 
-    if (dev->write_to_pixmap) 
+    if (dev->write_to_pixmap)
 	CreatePixmap(pls);
 
 /* Set drawing color */
@@ -992,7 +992,7 @@ Init(PLStream *pls)
 
 /* If main window, need to map it and wait for exposure */
 
-    if (dev->is_main) 
+    if (dev->is_main)
 	MapMain(pls);
 }
 
@@ -1051,14 +1051,14 @@ InitMain(PLStream *pls)
 
 /* Window title */
 
-    if (plsc->plwindow){    /* allow -plwindow to specify wm decoration name */
-       sprintf(header, "%s", plsc->plwindow);
+    if (pls->plwindow){    /* allow -plwindow to specify wm decoration name */
+	sprintf(header, "%s", pls->plwindow);
     }
-    else if(plsc->program) {
-       sprintf(header, "%s", plsc->program); /* else program name */
+    else if(pls->program) {
+	sprintf(header, "%s", pls->program); /* else program name */
     }
     else
-       sprintf(header,"%s","Plplot");
+	sprintf(header,"%s","Plplot");
 
 /* Window creation */
 
@@ -1091,7 +1091,7 @@ MapMain(PLStream *pls)
 
 /* Input event selection */
 
-    dev->event_mask = 
+    dev->event_mask =
 	ButtonPressMask      |
 	KeyPressMask         |
 	ExposureMask         |
@@ -1172,7 +1172,7 @@ events_thread(void *pls)
   XEvent event;
   long event_mask;
   sigset_t set;
-  
+
   /*
    * only treats exposures and resizes, but remove usual events from queue,
    * as it can be disturbing to not have them acknowledged in real time,
@@ -1190,13 +1190,13 @@ events_thread(void *pls)
    */
 
   event_mask =  ExposureMask | StructureNotifyMask;
-  
+
   /* block all signal for this thread */
   sigemptyset(&set);
   /* sigfillset(&set);  can't be all signals, decide latter */
-  sigaddset(&set, SIGINT); 
+  sigaddset(&set, SIGINT);
 
-  sigprocmask(SIG_BLOCK, &set, NULL); 
+  sigprocmask(SIG_BLOCK, &set, NULL);
 
   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
@@ -1263,7 +1263,7 @@ CheckForEvents(PLStream *pls)
  * HandleEvents()
  *
  * Just a front-end to MasterEH(), for use when not actually waiting for an
- * event but only checking the event queue.  
+ * event but only checking the event queue.
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -1298,12 +1298,12 @@ static void
 MasterEH(PLStream *pls, XEvent *event)
 {
   XwDev *dev = (XwDev *) pls->dev;
-  
+
   if (dev->MasterEH != NULL)
     (*dev->MasterEH) (pls, event);
-  
+
   switch (event->type) {
-    
+
     case KeyPress:
         KeyEH(pls, event);
 	break;
@@ -1682,7 +1682,7 @@ LocateButton(PLStream *pls)
  * command.  The API entry point is the call plGetCursor(), which initiates
  * locate mode and does not return until input has been obtained.  The
  * driver entry point is by entering a 'L' while the driver is waiting for
- * events.  
+ * events.
  *
  * Locate mode input is reported in one of three ways:
  * 1. Through a returned PLGraphicsIn structure, when user has specified a
@@ -1722,7 +1722,7 @@ Locate(PLStream *pls)
 
 	    if (dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER) {
 		pltext();
-		if (gin->keysym < 0xFF && isprint(gin->keysym)) 
+		if (gin->keysym < 0xFF && isprint(gin->keysym))
 		    printf("%f %f %c\n", gin->wX, gin->wY, gin->keysym);
 		else
 		    printf("%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym);
@@ -2056,7 +2056,7 @@ ExposeCmd(PLStream *pls, PLDisplay *pldis)
 		  x, y, width, height, x, y);
 	XSync(xwd->display, 0);
 #ifdef DEBUG
-	if (plsc->debug) {
+	if (pls->debug) {
 	    XPoint pts[5];
 	    int x0 = x, x1 = x+width, y0 = y, y1 = y+height;
 	    pts[0].x = x0; pts[0].y = y0;
@@ -2127,7 +2127,7 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 /* Note: the following order MUST be obeyed -- if you instead redraw into
  * the window and then copy it to the pixmap, off-screen parts of the window
  * may contain garbage which is then transferred to the pixmap (and thus
- * will not go away after an expose).  
+ * will not go away after an expose).
  */
 
 /* Resize pixmap using new dimensions */
@@ -2250,7 +2250,7 @@ CreatePixmapErrorHandler(Display *display, XErrorEvent *error)
 	fprintf(stderr, "Error in XCreatePixmap: %s.\n", buffer);
     }
     return 1;
-}	
+}
 
 /*--------------------------------------------------------------------------*\
  * CreatePixmap()
@@ -2388,7 +2388,7 @@ GetVisual(PLStream *pls)
     default:
 	xwd->rw_cmap = 1;
     }
-    
+
 /*xwd->rw_cmap = 0;*/ /* debugging hack. */
 
 /* Just for kicks, see what kind of visual we got. */
@@ -2443,7 +2443,7 @@ AllocBGFG(PLStream *pls)
 
 /* If not on a color system, just return */
 
-    if ( ! xwd->color) 
+    if ( ! xwd->color)
 	return;
 
 /* Allocate r/w color cell for background */
@@ -2535,9 +2535,9 @@ SetBGFG(PLStream *pls)
  * Note that white/black allocations never fail.
  */
 
-    if (gslevbg > 0x7F) 
+    if (gslevbg > 0x7F)
 	gslevfg = 0;
-    else 
+    else
 	gslevfg = 0xFF;
 
     fgcolor.r = fgcolor.g = fgcolor.b = gslevfg;
@@ -2597,15 +2597,15 @@ InitColors(PLStream *pls)
  *		colormap and the custom colormap to reduce flicker.
  *
  * CMAP1_COLORS	Color map 1 entries.  There should be as many as practical
- *		available for smooth shading.  On the order of 50-100 is 
+ *		available for smooth shading.  On the order of 50-100 is
  *		pretty reasonable.  You don't really need all 256,
  *		especially if all you're going to do is to print it to
  *		postscript (which doesn't have any intrinsic limitation on
  *		the number of colors).
  *
- * It's important to leave some extra colors unallocated for Tk.  In 
+ * It's important to leave some extra colors unallocated for Tk.  In
  * particular the palette tools require a fair amount.  I recommend leaving
- * at least 40 or so free.  
+ * at least 40 or so free.
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -2717,7 +2717,7 @@ AllocCmap0(PLStream *pls)
 
     if (xwd->rw_cmap) {
     /* Allocate and assign colors in cmap 0 */
-        
+
 	npixels = pls->ncol0-1;
 	for (;;) {
 	    if (XAllocColorCells(xwd->display, xwd->map, False,
@@ -2822,7 +2822,7 @@ AllocCmap1(PLStream *pls)
 	    fprintf(stderr,
 		    "Warning: unable to allocate sufficient colors in cmap1.\n");
 	    return;
-	} 
+	}
 	else {
 	    xwd->ncol1 = npixels;
 	    if (pls->verbose)
@@ -2833,7 +2833,7 @@ AllocCmap1(PLStream *pls)
 /* Skipping by 2 seems to do the job best */
 
 	for (j = i = 0; i < xwd->ncol1; i++) {
-	    while (pixels[j] == 0) 
+	    while (pixels[j] == 0)
 		j++;
 
 	    xwd->cmap1[i].pixel = pixels[j];
@@ -2865,7 +2865,7 @@ AllocCmap1(PLStream *pls)
 	for( i = 0; i < ncolors; i++ ) {
 	    plcol_interp( pls, &cmap1color, i, ncolors );
 	    PLColor_to_XColor( &cmap1color, &xcol );
-	    
+
 	    r = XAllocColor( xwd->display, xwd->map, &xcol );
 	    if (pls->verbose)
 		fprintf(stderr, "i=%d, r=%d, pixel=%d\n", i, r, (int) xcol.pixel );
@@ -2880,7 +2880,7 @@ AllocCmap1(PLStream *pls)
 	    fprintf(stderr,
 		    "Warning: unable to allocate sufficient colors in cmap1\n");
 	    return;
-	} 
+	}
 	else {
 	    xwd->ncol1 = ncolors;
 	    if (pls->verbose)
@@ -2902,7 +2902,7 @@ StoreCmap0(PLStream *pls)
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
     int i;
 
-    if ( ! xwd->color) 
+    if ( ! xwd->color)
 	return;
 
     for (i = 1; i < xwd->ncol0; i++) {
@@ -2929,7 +2929,7 @@ StoreCmap1(PLStream *pls)
     PLColor cmap1color;
     int i;
 
-    if ( ! xwd->color) 
+    if ( ! xwd->color)
 	return;
 
     for (i = 0; i < xwd->ncol1; i++) {
@@ -2937,7 +2937,7 @@ StoreCmap1(PLStream *pls)
 	PLColor_to_XColor(&cmap1color, &xwd->cmap1[i]);
 	if (xwd->rw_cmap)
 	  XStoreColor(xwd->display, xwd->map, &xwd->cmap1[i]);
-	else 
+	else
 	  XAllocColor(xwd->display, xwd->map, &xwd->cmap1[i]);
     }
 }
@@ -2981,7 +2981,7 @@ PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
  * AreWeGrayscale(Display *display)
  *
  * Determines if we're using a monochrome or grayscale device.
- * gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland. 
+ * gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland.
 \*--------------------------------------------------------------------------*/
 
 static int
@@ -3063,7 +3063,7 @@ GetImageErrorHandler(Display *display, XErrorEvent *error)
 	fprintf(stderr, "xwin: Error in XGetImage: %s.\n", buffer);
     }
     return 1;
-}	
+}
 
 /*--------------------------------------------------------------------------*\
  * DrawImage()
@@ -3075,71 +3075,70 @@ GetImageErrorHandler(Display *display, XErrorEvent *error)
 static void
 DrawImage(PLStream *pls)
 {
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    XImage *ximg = NULL;
+    XColor curcolor;
+    PLINT xmin, xmax, ymin, ymax, icol1;
 
-  XwDev *dev = (XwDev *) pls->dev;
-  XwDisplay *xwd = (XwDisplay *) dev->xwd;
-  XImage *ximg = NULL;
-  XColor curcolor;
-  PLINT xmin, xmax, ymin, ymax, icol1;
+    int (*oldErrorHandler)();
 
-  int (*oldErrorHandler)();
+    float mlr, mtb;
+    float blt, brt, brb, blb;
+    float left, right;
+    int kx, ky;
+    int nx, ny, ix, iy;
+    int i, corners[4], r[4];
 
-  float mlr, mtb;
-  float blt, brt, brb, blb;
-  float left, right;
-  int kx, ky;
-  int nx, ny, ix, iy;
-  int i, corners[4], r[4];
+    struct {
+	float x, y;
+    } Ppts[4];
 
-  struct {
-    float x, y;
-  } Ppts[4];
- 
-  CheckForEvents(pls);
-  
-  xmin = dev->xscale * plsc->imclxmin;
-  xmax = dev->xscale * plsc->imclxmax;
-  ymin = dev->yscale * plsc->imclymin;
-  ymax = dev->yscale * plsc->imclymax;
-  
-  nx = pls->dev_nptsX;
-  ny = pls->dev_nptsY;
+    CheckForEvents(pls);
 
-  /* XGetImage() call fails if either the pixmap or window is not fully viewable! */
-  oldErrorHandler = XSetErrorHandler(GetImageErrorHandler);
+    xmin = dev->xscale * pls->imclxmin;
+    xmax = dev->xscale * pls->imclxmax;
+    ymin = dev->yscale * pls->imclymin;
+    ymax = dev->yscale * pls->imclymax;
 
-  XFlush(xwd->display); 
-  if (dev->write_to_pixmap)
-    ximg =  XGetImage( xwd->display, dev->pixmap, 0, 0, dev->width, dev->height,
-    		       AllPlanes, ZPixmap);
+    nx = pls->dev_nptsX;
+    ny = pls->dev_nptsY;
 
-  if (dev->write_to_window)
-    ximg =  XGetImage( xwd->display, dev->window, 0, 0, dev->width, dev->height,
-		       AllPlanes, ZPixmap);
+/* XGetImage() call fails if either the pixmap or window is not fully viewable! */
+    oldErrorHandler = XSetErrorHandler(GetImageErrorHandler);
 
-  XSetErrorHandler(oldErrorHandler);
+    XFlush(xwd->display);
+    if (dev->write_to_pixmap)
+	ximg = XGetImage( xwd->display, dev->pixmap, 0, 0, dev->width, dev->height,
+			  AllPlanes, ZPixmap);
 
-  if (ximg == NULL) {
-    plabort("Can't get image, the window must be partly off-screen, move it to fit screen");
-    return;
-  }
+    if (dev->write_to_window)
+	ximg = XGetImage( xwd->display, dev->window, 0, 0, dev->width, dev->height,
+			  AllPlanes, ZPixmap);
 
-  if (xwd->ncol1 == 0)
-    AllocCmap1(pls);
-  if (xwd->ncol1 < 2)
-    return;
+    XSetErrorHandler(oldErrorHandler);
 
-  /* translate array for rotation */
-  switch ((int)(plsc->diorot - 4.*floor(plsc->diorot/4.))) {
-  case 0:
-    r[0]=0; r[1]=1; r[2]=2; r[3]=3; break;
-  case 1:
-    r[0]=1; r[1]=2; r[2]=3; r[3]=0; break;
-  case 2: 
-    r[0]=2; r[1]=3; r[2]=0; r[3]=1; break;
-  case 3:
-    r[0]=3; r[1]=0; r[2]=1; r[3]=2;
-  }
+    if (ximg == NULL) {
+	plabort("Can't get image, the window must be partly off-screen, move it to fit screen");
+	return;
+    }
+
+    if (xwd->ncol1 == 0)
+	AllocCmap1(pls);
+    if (xwd->ncol1 < 2)
+	return;
+
+/* translate array for rotation */
+    switch ((int)(pls->diorot - 4.*floor(pls->diorot/4.))) {
+    case 0:
+	r[0]=0; r[1]=1; r[2]=2; r[3]=3; break;
+    case 1:
+	r[0]=1; r[1]=2; r[2]=3; r[3]=0; break;
+    case 2:
+	r[0]=2; r[1]=3; r[2]=0; r[3]=1; break;
+    case 3:
+	r[0]=3; r[1]=0; r[2]=1; r[3]=2;
+    }
 
   /* after rotation and coordinate translation, each fill
      lozangue will have coordinates (Ppts), slopes (m...)
@@ -3148,7 +3147,7 @@ DrawImage(PLStream *pls)
            Ppts[3]
              /\
     mlr,blt /  \ mtb,brt
-           /    \ 
+           /    \
    Ppts[0]<      > Ppts[2]
            \    /
     mtb,blt \  / mlr,brb
@@ -3156,121 +3155,120 @@ DrawImage(PLStream *pls)
            Ppts[1]
   */
 
-  /* slope of left/right and top/bottom edges */
-  mlr = (dev->yscale * (plsc->dev_iy[1] - plsc->dev_iy[0])) /
-    (dev->xscale * (plsc->dev_ix[1] - plsc->dev_ix[0]));
+/* slope of left/right and top/bottom edges */
+    mlr = (dev->yscale * (pls->dev_iy[1] - pls->dev_iy[0])) /
+	(dev->xscale * (pls->dev_ix[1] - pls->dev_ix[0]));
 
-  mtb = (dev->yscale * (plsc->dev_iy[ny] - plsc->dev_iy[0])) /
-    (dev->xscale * (plsc->dev_ix[ny] - plsc->dev_ix[0]));
+    mtb = (dev->yscale * (pls->dev_iy[ny] - pls->dev_iy[0])) /
+	(dev->xscale * (pls->dev_ix[ny] - pls->dev_ix[0]));
 
-  for(ix = 0; ix < nx-1; ix++) {
-    for(iy = 0; iy < ny-1; iy++) {
-      corners[0] = ix*ny+iy; /* [ix][iy] */
-      corners[1] = (ix+1)*ny+iy; /* [ix+1][iy] */
-      corners[2] = (ix+1)*ny+iy+1; /* [ix+1][iy+1] */
-      corners[3] = ix*ny+iy+1; /* [ix][iy+1] */
+    for(ix = 0; ix < nx-1; ix++) {
+	for(iy = 0; iy < ny-1; iy++) {
+	    corners[0] = ix*ny+iy; /* [ix][iy] */
+	    corners[1] = (ix+1)*ny+iy; /* [ix+1][iy] */
+	    corners[2] = (ix+1)*ny+iy+1; /* [ix+1][iy+1] */
+	    corners[3] = ix*ny+iy+1; /* [ix][iy+1] */
 
-      for (i=0; i<4; i++) {
-	Ppts[i].x = dev->xscale * (plsc->dev_ix[corners[r[i]]]);
-	Ppts[i].y = dev->yscale * (plsc->dev_iy[corners[r[i]]]);
-      }
-
-      /* if any corner is inside the draw area */
-      if (Ppts[0].x >= xmin || Ppts[2].x <= xmax ||
-	  Ppts[1].y >= ymin || Ppts[3].y <= ymax) {
-
-	Ppts[0].x = MAX(Ppts[0].x, xmin);
-	Ppts[2].x = MIN(Ppts[2].x, xmax);
-	Ppts[1].y = MAX(Ppts[1].y, ymin);
-	Ppts[3].y = MIN(Ppts[3].y, ymax);
-	
-	/* the Z array has size (nx-1)*(ny-1) */
-	icol1 = plsc->dev_z[ix*(ny-1)+iy];
-
-	/* only plot points within zmin/zmax range */
-	if (icol1 < plsc->dev_zmin || icol1 > plsc->dev_zmax)
-	  continue;
-
-	icol1 = icol1/(float)USHRT_MAX * (xwd->ncol1-1);
-	if (xwd->color)
-	  curcolor = xwd->cmap1[icol1];
-	else 
-	  curcolor = xwd->fgcolor;
-
-	/* Fill square between current and next points. */
-
-	/* If the fill area is a single dot, accelerate the fill. */	   
-	if ( (fabs(Ppts[2].x - Ppts[0].x) == 1) &&
-	    (fabs(Ppts[3].y - Ppts[1].y) == 1)) {
-	  XPutPixel(ximg, Ppts[0].x, dev->height-1 - Ppts[0].y, curcolor.pixel);
-
-	  /* integer rotate, accelerate */
-	} else if (plsc->diorot == floor(plsc->diorot)) {
-	  for( ky = Ppts[1].y; ky < Ppts[3].y; ky++)
-	    for( kx = Ppts[0].x; kx < Ppts[2].x; kx++)
-	      XPutPixel(ximg, kx, dev->height-1 - ky, curcolor.pixel);
-
-	  /* lozangue, scanline fill it */
-	} else {
-
-	  /* y interception point of left/right top/bottom edges */	    
-	  blt = Ppts[0].y - mlr * Ppts[0].x;
-	  brb = Ppts[2].y - mlr * Ppts[2].x;
-	    
-	  brt = Ppts[2].y - mtb * Ppts[2].x;
-	  blb = Ppts[0].y - mtb * Ppts[0].x;
-
-	  for( ky = Ppts[1].y; ky < Ppts[3].y; ky++) {
-	    left = MAX(((ky-blt)/mlr), ((ky-blb)/mtb));
-	    right = MIN(((ky-brt)/mtb), ((ky-brb)/mlr));
-	    for( kx = Ppts[0].x; kx < Ppts[2].x; kx++) {
-	      if (kx >= rint(left) && kx <= rint(right)) {
-		XPutPixel(ximg, kx, dev->height-1 - ky, curcolor.pixel);
-	      }
+	    for (i=0; i<4; i++) {
+		Ppts[i].x = dev->xscale * (pls->dev_ix[corners[r[i]]]);
+		Ppts[i].y = dev->yscale * (pls->dev_iy[corners[r[i]]]);
 	    }
-	  }
+
+	/* if any corner is inside the draw area */
+	    if (Ppts[0].x >= xmin || Ppts[2].x <= xmax ||
+		Ppts[1].y >= ymin || Ppts[3].y <= ymax) {
+
+		Ppts[0].x = MAX(Ppts[0].x, xmin);
+		Ppts[2].x = MIN(Ppts[2].x, xmax);
+		Ppts[1].y = MAX(Ppts[1].y, ymin);
+		Ppts[3].y = MIN(Ppts[3].y, ymax);
+
+	    /* the Z array has size (nx-1)*(ny-1) */
+		icol1 = pls->dev_z[ix*(ny-1)+iy];
+
+	    /* only plot points within zmin/zmax range */
+		if (icol1 < pls->dev_zmin || icol1 > pls->dev_zmax)
+		    continue;
+
+		icol1 = icol1/(float)USHRT_MAX * (xwd->ncol1-1);
+		if (xwd->color)
+		    curcolor = xwd->cmap1[icol1];
+		else
+		    curcolor = xwd->fgcolor;
+
+	    /* Fill square between current and next points. */
+
+	    /* If the fill area is a single dot, accelerate the fill. */
+		if ( (fabs(Ppts[2].x - Ppts[0].x) == 1) &&
+		     (fabs(Ppts[3].y - Ppts[1].y) == 1)) {
+		    XPutPixel(ximg, Ppts[0].x, dev->height-1 - Ppts[0].y, curcolor.pixel);
+
+		/* integer rotate, accelerate */
+		} else if (pls->diorot == floor(pls->diorot)) {
+		    for( ky = Ppts[1].y; ky < Ppts[3].y; ky++)
+			for( kx = Ppts[0].x; kx < Ppts[2].x; kx++)
+			    XPutPixel(ximg, kx, dev->height-1 - ky, curcolor.pixel);
+
+		/* lozangue, scanline fill it */
+		} else {
+
+		/* y interception point of left/right top/bottom edges */
+		    blt = Ppts[0].y - mlr * Ppts[0].x;
+		    brb = Ppts[2].y - mlr * Ppts[2].x;
+
+		    brt = Ppts[2].y - mtb * Ppts[2].x;
+		    blb = Ppts[0].y - mtb * Ppts[0].x;
+
+		    for( ky = Ppts[1].y; ky < Ppts[3].y; ky++) {
+			left = MAX(((ky-blt)/mlr), ((ky-blb)/mtb));
+			right = MIN(((ky-brt)/mtb), ((ky-brb)/mlr));
+			for( kx = Ppts[0].x; kx < Ppts[2].x; kx++) {
+			    if (kx >= rint(left) && kx <= rint(right)) {
+				XPutPixel(ximg, kx, dev->height-1 - ky, curcolor.pixel);
+			    }
+			}
+		    }
+		}
+	    }
 	}
-      }
     }
-  }
 
-  if (dev->write_to_pixmap)
-    XPutImage( xwd->display, dev->pixmap, dev->gc, ximg, 0, 0, 0, 0, dev->width, dev->height);
-    
-  if (dev->write_to_window)
-    XPutImage( xwd->display, dev->window, dev->gc, ximg, 0, 0,
-	       0, 0, dev->width, dev->height);
+    if (dev->write_to_pixmap)
+	XPutImage( xwd->display, dev->pixmap, dev->gc, ximg, 0, 0, 0, 0, dev->width, dev->height);
 
-  XDestroyImage(ximg);
+    if (dev->write_to_window)
+	XPutImage( xwd->display, dev->window, dev->gc, ximg, 0, 0,
+		   0, 0, dev->width, dev->height);
+
+    XDestroyImage(ximg);
 }
 
 static void
 imageops(PLStream *pls, int *ptr)
 {
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
-  XwDev *dev = (XwDev *) pls->dev;
-  XwDisplay *xwd = (XwDisplay *) dev->xwd;
+/* TODO: store/revert to/from previous state */
 
-  /* TODO: store/revert to/from previous state */
+    switch (*ptr) {
+    case ZEROW2D:
+	dev->write_to_window = 0;
+	break;
 
-  switch (*ptr) {
-  case ZEROW2D:
-    dev->write_to_window = 0;
-    break;
+    case ONEW2D:
+	dev->write_to_window = 1;
+	break;
 
-  case ONEW2D:
-    dev->write_to_window = 1;
-    break;
+    case ZEROW2B:
+	dev->write_to_pixmap = 0;
+	break;
 
-  case ZEROW2B:
-    dev->write_to_pixmap = 0;
-    break;
-
-  case ONEW2B:
-    XFlush(xwd->display);
-    dev->write_to_pixmap = 1;
-    break;
-  }
+    case ONEW2B:
+	XFlush(xwd->display);
+	dev->write_to_pixmap = 1;
+	break;
+    }
 }
 
 #else
