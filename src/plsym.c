@@ -503,6 +503,8 @@ c_plptex(PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
     PLINT x, y, refx, refy;
     PLFLT xdv, ydv, xmm, ymm, refxmm, refymm, shift, cc, ss;
     PLFLT xform[4], diag;
+    PLFLT chrdef, chrht;
+    PLFLT dispx, dispy;
 
     if (plsc->level < 3) {
 	plabort("plptex: Please set up window first");
@@ -527,10 +529,16 @@ c_plptex(PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
     xdv = plP_wcdcx(wx);
     ydv = plP_wcdcy(wy);
 
+    dispx = 0.;
+    dispy = 0.;
+
+/* Convert to physical units (mm) and compute shifts */
+
+    plgchr(&chrdef, &chrht);
     shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
 
-    xmm = plP_dcmmx(xdv);
-    ymm = plP_dcmmy(ydv);
+    xmm = plP_dcmmx(xdv) + dispx * chrht;
+    ymm = plP_dcmmy(ydv) + dispy * chrht;
     refxmm = xmm - shift * xform[0];
     refymm = ymm - shift * xform[2];
 

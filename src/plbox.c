@@ -754,8 +754,10 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
        PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 {
     PLINT x, y, refx, refy;
-    PLFLT shift, cc, ss, def, ht, wx, wy;
+    PLFLT shift, cc, ss, wx, wy;
     PLFLT xdv, ydv, xmm, ymm, refxmm, refymm, xform[4], diag;
+    PLFLT dispx, dispy;
+    PLFLT chrdef, chrht;
 
     cc = plsc->wmxscl * (wx2 - wx1);
     ss = plsc->wmyscl * (wy2 - wy1);
@@ -773,11 +775,14 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
     xdv = plP_wcdcx(wx);
     ydv = plP_wcdcy(wy);
 
-    plgchr(&def, &ht);
+    dispx = 0.;
+    dispy = -disp;
+
+    plgchr(&chrdef, &chrht);
     shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
 
-    xmm = plP_dcmmx(xdv);
-    ymm = plP_dcmmy(ydv) - disp * ht;
+    xmm = plP_dcmmx(xdv) + dispx * chrht;
+    ymm = plP_dcmmy(ydv) + dispy * chrht;
     refxmm = xmm - shift * xform[0];
     refymm = ymm - shift * xform[2];
 
@@ -977,8 +982,10 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 {
     PLINT refx = 0, refy = 0, x = 0, y = 0, vert = 0;
-    PLFLT shift, cc, ss, def, ht, wy;
+    PLFLT shift, cc, ss, wy;
     PLFLT xdv, ydv, xmm, ymm, refxmm, refymm, xform[4], diag;
+    PLFLT dispx, dispy;
+    PLFLT chrdef, chrht;
 
     cc = plsc->wmxscl * dx;
     ss = plsc->wmyscl * dy;
@@ -1007,12 +1014,14 @@ plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
     xdv = plP_wcdcx(wx);
     ydv = plP_wcdcy(wy);
 
-    plgchr(&def, &ht);
+    dispx = -disp * cc;
+    dispy = -disp * ss;
+
+    plgchr(&chrdef, &chrht);
     shift = (just == 0.0) ? 0.0 : plstrl(text) * just;
 
-    xmm = plP_dcmmx(xdv) - disp * ht * cc;
-    ymm = plP_dcmmy(ydv) - disp * ht * ss;
-
+    xmm = plP_dcmmx(xdv) + dispx * chrht;
+    ymm = plP_dcmmy(ydv) + dispy * chrht;
     refxmm = xmm - shift * xform[0];
     refymm = ymm - shift * xform[2];
 
