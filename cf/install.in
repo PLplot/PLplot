@@ -33,6 +33,8 @@ install_demos:
 	@-if test ! -d $(DEMOS_DIR); then mkdir -p $(DEMOS_DIR); fi; \
 	  if test ! -d $(DEMOS_DIR)/c; then mkdir -p $(DEMOS_DIR)/c; fi; \
 	  $(CP) Makedemo $(DEMOS_DIR)/Makefile; \
+	  $(CP) ../test/test_*.sh plplot-test.sh $(DEMOS_DIR); \
+	  chmod a+x $(DEMOS_DIR)/plplot-test.sh; \
 	  $(LN) ../Makefile $(DEMOS_DIR)/c; \
 	  cd $(top_srcdir)/examples/c; \
 	  $(CP) *.c $(DEMOS_DIR)/c; \
@@ -50,8 +52,8 @@ install_pltek:
 	@-strip pltek$E; $(CP) pltek$E $(BIN_DIR)
 
 install_plplot_config:
-	@chmod +x plplot-config; \
-	 $(CP) plplot-config $(BIN_DIR)
+	 @$(CP) plplot-config $(BIN_DIR); \
+	 chmod a+x $(BIN_DIR)/plplot-config
 
 install_utils: install_plrender install_pltek install_plplot_config
 

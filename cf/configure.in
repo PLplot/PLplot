@@ -466,6 +466,12 @@ cat $srcdir/cf/dist.in		>>Makefile.in
 
 # Optional packages
 
+# Need to AC_SUBST some of these for plplot-test.sh script.
+AC_SUBST(enable_cxx)
+AC_SUBST(enable_f77)
+AC_SUBST(enable_python)
+AC_SUBST(enable_tcl)
+
 if test "$enable_cxx" = "yes"; then
     cat $srcdir/cf/pkg_cxx.in	>>Makefile.in 
 fi
@@ -774,6 +780,7 @@ fi
 
 ln -s \
 `ls $srcdir/examples/c/*.* |grep -v '\.h$'` \
+$srcdir/test/test_*.sh \
 $srcdir/utils/*.c \
 $srcdir/fonts/*.c \
 $srcdir/scripts/pl* \
@@ -790,7 +797,7 @@ plplot 2>/dev/null
 # Create output files.
 # ----------------------------------------------------------------------------
 
-AC_OUTPUT(Makefile Makedemo plplot-config)
+AC_OUTPUT(Makefile Makedemo plplot-config plplot-test.sh)
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.

@@ -1,0 +1,125 @@
+#!/bin/sh
+# $Id: 
+# test suite for executing all configured demos (either in plplot/tmp 
+# or else in the install area) capable of file output.  Our ultimate aim
+# is to compare the generated files with results generated on a system
+# that is known to give good results.  However, single-precision
+# contamination (even when double is configured) and the consequent large
+# roundoff error is currently hampering our cross-platform comparisons.
+# So for now, this is only a test suite in the sense that it checks the
+# files corresponding to our demo plots can all be generated.  It is
+# up to the user to display those files with the appropriate software
+# (gv for postscript files and kview or a browser for png or jpeg files
+# on Linux systems) to make sure they display properly.
+
+version=@PLPLOT_VERSION@
+
+usage()
+{
+   cat <<EOF
+Usage: plplot-test.sh [OPTIONS]
+Options:
+   [--tmp-test] (Use this option when running this script from plplot/tmp)
+   [--driver=DRIVER] (DRIVER = one of psc [default], ps, png, jpeg, or plmeta.
+   [--version]
+   [--help]
+EOF
+   exit $1
+}
+
+# These variables set by default assuming you are going to run this
+# script from the installed demos directory $prefix/share/doc/plplot/examples.
+export cdir=c
+export cxxdir=c++
+export f77dir=f77
+export pythondir=python
+export tcldir=tcl
+export installbindir=@BIN_DIR@
+
+if test $# -eq 0; then
+   usage 1 1>&2
+fi
+
+while test $# -gt 0; do
+   case "$1" in
+   -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+   *) optarg= ;;
+   esac
+
+   case $1 in
+      --tmp-test)
+#        We are running this script from the plplot/tmp directory.
+         export cdir=.
+	 export cxxdir=.
+	 export f77dir=.
+	 export pythondir=.
+	 export tcldir=.
+	 export installbindir=.
+	 ;;
+      --driver=*)
+         export driver=$optarg
+         ;;
+      --version)
+         echo $version
+	 exit 0
+         ;;
+      --help)
+         usage 0 1>&2
+         ;;
+      *)
+         usage 1 1>&2
+         ;;
+   esac
+   shift
+done
+
+if test -z "$driver"; then
+   export driver=psc
+fi
+
+case $driver in
+   ps|psc)
+      export dsuffix=ps
+      export options=
+      ;;
+   png)
+      export dsuffix=png
+      export options="-fam -fflen 2"
+      ;;
+   jpeg)
+      export dsuffix=jpeg
+      export options="-fam -fflen 2"
+      ;;
+   plmeta)
+      export dsuffix=plmeta
+      export options=
+      ;;
+   *)
+      usage 1 1>&2
+      ;;
+esac
+
+# Find out what options have been configured, and test accordingly.
+test_f77=@enable_f77@
+test_cxx=@enable_cxx@
+test_python=@enable_python@
+test_tcl=@enable_tcl@
+
+# The C examples should always be available if PLplot works at all.
+./test_c.sh
+
+if test "$test_f77" = "yes" ; then
+   ./test_f77.sh
+fi
+
+if test "$test_cxx" = "yes" ; then
+   ./test_cxx.sh
+fi
+
+if test "$test_python" = "yes" ; then
+   ./test_python.sh
+fi
+
+if test "$test_tcl" = "yes" ; then
+   ./test_tcl.sh
+fi
