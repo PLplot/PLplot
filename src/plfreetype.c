@@ -531,9 +531,13 @@ for (i=0;i<5;i++)
         strcat(FT->font_name[i],default_font_names[i]);
        }
 
-     if (access(FT->font_name[i], F_OK)!=0)
-        plwarn("Possible error defining one of the freetype compatible fonts.");
-
+    if (access(FT->font_name[i], F_OK)!=0) {
+	char msgbuf[1024];
+	sprintf(msgbuf, 
+		"Possible error defining one of the freetype compatible fonts:\n %s",
+		FT->font_name[i]);
+        plwarn(msgbuf);
+    }
    }
 
 
