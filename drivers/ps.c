@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1993/11/19 07:29:50  mjl
+ * Revision 1.20  1993/12/08 06:08:20  mjl
+ * Fixes to work better with Lucid emacs hilite mode.
+ *
+ * Revision 1.19  1993/11/19  07:29:50  mjl
  * Fixed the bounding box maxima (bug reported by Jan Thorbecke).
  *
  * Revision 1.18  1993/08/09  22:13:32  mjl
@@ -50,12 +53,12 @@ static void ps_init	(PLStream *);
 
 #define LINELENGTH      70
 #define COPIES          1
-#define XSIZE           540	/* 7.5" x 10"  (72 points equal 1 inch) */
+#define XSIZE           540	/* 7.5 x 10 [inches] (72 points = 1 inch) */
 #define YSIZE           720
 #define ENLARGE         5
 #define XPSSIZE         ENLARGE*XSIZE
 #define YPSSIZE         ENLARGE*YSIZE
-#define XOFFSET         36	/* Offsets are .5" each */
+#define XOFFSET         36	/* Offsets are .5 inches each */
 #define YOFFSET         36
 #define PSX             XPSSIZE-1
 #define PSY             YPSSIZE-1
