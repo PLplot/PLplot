@@ -24,6 +24,7 @@ pkginclude_HEADERS = \
   drivers.h \
   metadefs.h \
   pdf.h \
+  plConfig.h \
   plcore.h \
   pldebug.h \
   plevent.h \
