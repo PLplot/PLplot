@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/10/22 17:05:33  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.4  1992/11/07 08:04:57  mjl
+   Minor change in a structure declaration.
 
+ * Revision 1.3  1992/10/22  17:05:33  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.2  1992/09/29  04:45:49  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -69,7 +72,7 @@ c_plancol( PLINT icolor, char *name )
 	plexit("Please call plstar before calling plancol.");
 
     col.icolor = (int) icolor;
-    col.name   = name;
+    (void) strncpy(col.name, name, 79); col.name[79] = '\0';
 
     gresc((PLINT) PL_ALLOC_NCOL, ptr);
 }
