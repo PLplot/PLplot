@@ -5917,7 +5917,7 @@ linkend="color-map-0"/>).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to device (keyword) name string.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6233,8 +6233,8 @@ coordinates
 
   <sect1 id="plsdiplz" renderas="sect3">
     <title>
-      <function>plsdiplz</function>: Set window into plot space
-incrementally (zoom)
+      <function>plsdiplz</function>: Set parameters incrementally (zoom mode)
+      that define current plot-space window
     </title> 
 
     <para>
@@ -6252,7 +6252,15 @@ incrementally (zoom)
     </para> 
 
     <para>
-      Set window into plot space incrementally (zoom).
+      Set relative minima and maxima incrementally (zoom mode)
+      that define the current plot-space window.  This function has
+      the same effect as &plsdiplt; if that function has not been previously
+      called.  Otherwise, this function implements zoom mode using the
+      transformation <literal>min_used = old_min + old_length*min </literal> 
+      and <literal>max_used = old_min + old_length*max </literal> for
+      each axis.  For example, if <literal>min = 0.05</literal> and 
+      <literal>max = 0.95</literal> for each axis, repeated calls to 
+      &plsdiplz; will zoom in by 10 per cent for each call.
     </para>
 
     <variablelist>
@@ -6263,7 +6271,7 @@ incrementally (zoom)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative (incremental) minimum in x.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6274,7 +6282,7 @@ incrementally (zoom)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative (incremental) minimum in y.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6285,7 +6293,7 @@ incrementally (zoom)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative (incremental) maximum in x.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6296,7 +6304,7 @@ incrementally (zoom)
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative (incremental) maximum in y.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6321,9 +6329,10 @@ incrementally (zoom)
     </para> 
 
     <para>
-    Set the escape character for text strings.  From C you can pass as a
-    character. Only
-    selected characters are allowed to prevent the user from shooting
+    Set the escape character for text strings.  From C (in contrast to
+    fortran, see &plsescfortran;) you pass
+    <literal><parameter>esc</parameter></literal> as a character.
+    Only selected characters are allowed to prevent the user from shooting
     himself in the foot (For example, a <quote>\</quote> isn't allowed since it conflicts with C's use
     of backslash as a character escape).  Here are the allowed escape
 characters and their corresponding decimal ASCII values:
@@ -6384,7 +6393,7 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Escape character.
 	  </para>
 	</listitem>
       </varlistentry>
