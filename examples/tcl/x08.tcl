@@ -14,24 +14,47 @@ proc restore_cmap1 {w} {
    set vertex [expr ($rbg + $gbg + $bbg)/(3.*255.)]
    if {$vertex < 0.5} {
       set vertex 0.01
+      set midpt 0.10
    } else {
       set vertex 0.99
+      set midpt 0.90
    }
    # Independent variable of control points.
-   matrix i f 4 = { 0., 0.45, 0.55, 1.}
+   matrix i f 6 = {0., 0.44, 0.50, 0.50, 0.56, 1.}
    # Hue for control points.  Blue-violet to red
-   matrix h f 4 = { 260., 260., 0., 0.}
+   matrix h f 6 = {260., 260., 260., 0., 0., 0.}
    # Lightness ranging from medium to vertex to medium
-   matrix l f 4 = { 0.5, $vertex, $vertex, 0.5}
+   matrix l f 6 = {0.5, $midpt, $vertex, $vertex, $midpt, 0.5}
    # Saturation is complete for default
-   matrix s f 4 = { 1., 1., 1., 1.}
+   matrix s f 6 = {1., 1., 1., 1., 1., 1.}
    # Integer flag array is zero (no interpolation along far-side of colour
    # figure
-   matrix rev i 4 = { 0, 0, 0, 0}
+   matrix rev i 6 = {0, 0, 0, 0, 0, 0}
    # Default number of cmap1 colours
    $w cmd plscmap1n 128
    # Interpolate between control points to set up default cmap1.
-   $w cmd plscmap1l 0 4 i h l s rev
+   $w cmd plscmap1l 0 6 i h l s rev
+}
+
+# Routine for initializing color map 1 in HLS space.
+# Basic grayscale variation from half-dark (which makes more interesting
+# looking plot compared to dark) to light.
+proc cmap1_init {w} {
+   # Independent variable of control points.
+   matrix i f 2 = {0., 1.}
+   # Hue for control points.  Doesn't matter since saturation is zero.
+   matrix h f 2 = {0., 0.}
+   # Lightness ranging from half-dark (for interest) to light.
+   matrix l f 2 = {0.5, 1.}
+   # Gray scale has zero saturation.
+   matrix s f 2 = {0., 0.}
+   # Integer flag array is zero (no interpolation along far-side of colour
+   # figure
+   matrix rev i 2 = {0, 0}
+   # Number of cmap1 colours is 256 in this case. 
+   $w cmd plscmap1n 256
+   # Interpolate between control points to set up default cmap1.
+   $w cmd plscmap1l 0 2 i h l s rev
 }
 
 proc x08 {{w loopback}} {
@@ -48,9 +71,6 @@ proc x08 {{w loopback}} {
     matrix x f $xpts
     matrix y f $ypts
     matrix z f $xpts $ypts
-    matrix rr i $n_col
-    matrix gg i $n_col
-    matrix bb i $n_col
 
     for {set i 0} {$i < $xpts} {incr i} {
 	x $i = [expr ($i - ($xpts/2)) / double($xpts/2) ]
@@ -70,12 +90,7 @@ proc x08 {{w loopback}} {
 	}
     }
     $w cmd pllightsource 1. 1. 1.
-    for {set k 0} {$k < $n_col} {incr k} {
-       rr $k = [expr $k]
-       gg $k = [expr $k]
-       bb $k = [expr $k]
-    }
-    $w cmd  plscmap1 rr gg bb $n_col
+    cmap1_init $w
     for {set k 0} {$k < 4} {incr k} {
        for {set ifshade 0} {$ifshade < 2} {incr ifshade} {
   	  $w cmd pladv 0
