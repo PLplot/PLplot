@@ -33,9 +33,10 @@ docfiles = README README.1st
 
 install-data-hook:
 	$(mkinstalldirs) $(DESTDIR)$(docdir)
+	(cd $(top_srcdir)/lib/nn ; \
 	for i in $(docfiles) ; do \
 	  $(INSTALL) $$i $(DESTDIR)$(docdir)/$$i.nn ; \
-	done
+	done )
 
 EXTRA_DIST = delaunay.h hash.h istack.h nan.h nn.h version.h \
              $(docfiles)

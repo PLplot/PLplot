@@ -32,8 +32,9 @@ docfiles = README README.1st
 
 install-data-hook:
 	$(mkinstalldirs) $(DESTDIR)$(docdir)
+	(cd $(top_srcdir)/lib/csa ; \
 	for i in $(docfiles) ; do \
 	  $(INSTALL) $$i $(DESTDIR)$(docdir)/$$i.csa ; \
-	done
+	done )
 
 EXTRA_DIST = csa.h nan.h version.h $(docfiles)

@@ -60,7 +60,7 @@ dist_examples_tcl_DATA = \
 	x19.tcl \
 	x22.tcl 
 
-nodist_examples_tcl_DATA = tclIndex
+nodist_examples_tcl_DATA = $(top_srcdir)/examples/tcl/tclIndex
 
 dist_examples_tcl_SCRIPTS = \
 	x01 \
@@ -84,9 +84,10 @@ dist_examples_tcl_SCRIPTS = \
 	x19 \
 	x22
 
-tclIndex:
+$(top_srcdir)/examples/tcl/tclIndex:
+	cd $(top_srcdir)/examples/tcl ; \
 	$(mkindex)
 
-CLEANFILES = tclIndex
+CLEANFILES = $(top_srcdir)/examples/tcl/tclIndex
 
 endif

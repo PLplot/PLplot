@@ -49,34 +49,36 @@ check_DATA = \
 	x16.tcl \
 	x17.tcl \
 	x18.tcl \
-	x19.tcl
+	x19.tcl \
+	x22.tcl
 
 ### x01.tcl stands symbolically for x??.tcl.  If specify $(check_DATA)
 ### instead, then for loop below is usually incorrectly repeated for each file
 ### in check_DATA (depending on coarseness of timer).
 x01.tcl: \
-	../tcl/x01.tcl \
-	../tcl/x02.tcl \
-	../tcl/x03.tcl \
-	../tcl/x04.tcl \
-	../tcl/x05.tcl \
-	../tcl/x06.tcl \
-	../tcl/x07.tcl \
-	../tcl/x08.tcl \
-	../tcl/x09.tcl \
-	../tcl/x10.tcl \
-	../tcl/x11.tcl \
-	../tcl/x12.tcl \
-	../tcl/x13.tcl \
-	../tcl/x14.tcl \
-	../tcl/x15.tcl \
-	../tcl/x16.tcl \
-	../tcl/x17.tcl \
-	../tcl/x18.tcl \
-	../tcl/x19.tcl
-	( cd ../tcl ; \
+	$(top_srcdir)/examples/tcl/x01.tcl \
+	$(top_srcdir)/examples/tcl/x02.tcl \
+	$(top_srcdir)/examples/tcl/x03.tcl \
+	$(top_srcdir)/examples/tcl/x04.tcl \
+	$(top_srcdir)/examples/tcl/x05.tcl \
+	$(top_srcdir)/examples/tcl/x06.tcl \
+	$(top_srcdir)/examples/tcl/x07.tcl \
+	$(top_srcdir)/examples/tcl/x08.tcl \
+	$(top_srcdir)/examples/tcl/x09.tcl \
+	$(top_srcdir)/examples/tcl/x10.tcl \
+	$(top_srcdir)/examples/tcl/x11.tcl \
+	$(top_srcdir)/examples/tcl/x12.tcl \
+	$(top_srcdir)/examples/tcl/x13.tcl \
+	$(top_srcdir)/examples/tcl/x14.tcl \
+	$(top_srcdir)/examples/tcl/x15.tcl \
+	$(top_srcdir)/examples/tcl/x16.tcl \
+	$(top_srcdir)/examples/tcl/x17.tcl \
+	$(top_srcdir)/examples/tcl/x18.tcl \
+	$(top_srcdir)/examples/tcl/x19.tcl \
+	$(top_srcdir)/examples/tcl/x22.tcl
+	( cd $(top_srcdir)/examples/tcl ; \
 	  for file in x??.tcl ; do \
-	    rm -f ../tk/$$file; $(LN_S) ../tcl/$$file ../tk/$$file ; \
+	    rm -f $(BUILD_DIR)/examples/tk/$$file; $(LN_S) $(top_srcdir)/examples/tcl/$$file $(BUILD_DIR)/examples/tk/$$file ; \
 	  done )
 
 data_files = \
@@ -108,7 +110,7 @@ check_PROGRAMS = \
 	xtk02 \
 	xtk04
 
-cflags = -I$(top_builddir)/bindings/tk -I$(top_builddir)/bindings/tcl $(TCLINCCMD) $(TKINCCMD)
+cflags = -I$(top_srcdir)/include -I$(top_srcdir)/bindings/tk -I$(top_srcdir)/bindings/tcl $(TCLINCCMD) $(TKINCCMD)
 xtk01_CFLAGS = $(cflags)
 xtk02_CFLAGS = $(cflags)
 xtk04_CFLAGS = $(cflags)

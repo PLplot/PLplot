@@ -48,7 +48,7 @@ sources = \
 
 if enable_cxx
 
-AM_CPPFLAGS = $(INCLTDL) -I$(top_builddir)/bindings/c++
+AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL) -I$(top_srcdir)/bindings/c++
 examples_cxxdir = $(DATA_DIR)/examples/c++
 examples_cxx_DATA = \
 	$(sources) \

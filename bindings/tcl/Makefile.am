@@ -49,7 +49,8 @@ tclIndex: $(generated_scripts)
 
 pkginclude_HEADERS = pltcl.h tclMatrix.h
 
-tclAPI.c: tclgen.h tclgen_s.h tclgen.c
+tclgenfiles = tclgen.h tclgen_s.h tclgen.c
+$(top_srcdir)/bindings/tcl/tclAPI.c: $(tclgenfiles)
 
 # ITKINCCMD same as TCLINCCMD so not defined in top-level configure.in
 AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL) $(TCLINCCMD) $(ITCLINCCMD) $(TKINCCMD)
@@ -64,8 +65,8 @@ libtclmatrix@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined \
 
 if enable_tcl
 tclsources = \
-	tclAPI.c \
-	tclMain.c
+	$(top_srcdir)/bindings/tcl/tclAPI.c \
+	$(top_srcdir)/bindings/tcl/tclMain.c
 endif
 
 if enable_tk
@@ -94,8 +95,6 @@ libplplottcltk@LIB_TAG@_la_LDFLAGS  = \
         $(ITCLLIBCMD) \
 	$(TCLLIBCMD) \
 	$(X_LIBS) -lX11 -lm
-
-tclgenfiles = tclgen.h tclgen_s.h tclgen.c
 
 PLTCLGEN = $(top_srcdir)/bindings/tcl/pltclgen
 $(tclgenfiles): $(PLTCLGEN) plapi.tpl tclcmd.tpl
