@@ -42,8 +42,9 @@ static long cur_pos;
 static FILE *fp;
 static int  color = 1;
 
-static DrvOpt pstex_options[] = {{"color", DRV_INT, &color, "Color Postscript/LaTeX (color=1|0)"},
-				  {NULL, DRV_INT, NULL, NULL}};
+static DrvOpt pstex_options[] = {{"color", DRV_INT, &color,
+				  "Color Postscript/LaTeX (color=1|0)"},
+				 {NULL, DRV_INT, NULL, NULL}};
 
 void plD_dispatch_init_pstex( PLDispatchTable *pdt )
 {
@@ -263,10 +264,12 @@ parse_str(const char *str, char *dest)
   int  n, opened = 0, raised = 0, overline = 0, underline = 0, fontset = 0, math = 0;
   char *tp = dest, c, esc;
   char greek[] = "abgGdDezyhHiklLmncCopPrsStuUfFxqQwW";
-  char *mathgreek[] = {"alpha", "beta", "gamma", "Gamma", "delta", "Delta", "epsilon",
-		       "zeta", "eta", "theta", "Theta", "iota", "kappa", "lambda", "Lambda", "mu", "nu",
-		       "xi", "Xi", "o", "pi", "Pi", "rho", "sigma", "Sigma", "tau", "upsilon",
-		       "Upsilon", "phi", "Phi", "chi", "psi", "Psi", "omega", "Omega"};
+  char *mathgreek[] = {"alpha", "beta", "gamma", "Gamma", "delta", "Delta",
+		       "epsilon", "zeta", "eta", "theta", "Theta", "iota",
+		       "kappa", "lambda", "Lambda", "mu", "nu", "xi", "Xi",
+		       "o", "pi", "Pi", "rho", "sigma", "Sigma", "tau",
+		       "upsilon", "Upsilon", "phi", "Phi", "chi",
+		       "psi", "Psi", "omega", "Omega"};
 
   plgesc(&esc);
 
