@@ -18,6 +18,7 @@ CORE_C = \
 	pdfutils.c \
 	plargs.c \
 	plbox.c \
+	plbuf.c \
 	plcont.c \
 	plcore.c \
 	plctrl.c \
@@ -41,6 +42,7 @@ CORE_OBJ = \
 	pdfutils$O \
 	plargs$O \
 	plbox$O \
+	plbuf$O \
 	plcont$O \
 	plcore$O \
 	plctrl$O \
@@ -88,7 +90,6 @@ DRIVERS_C = \
 	next.c \
 	null.c \
 	pbm.c \
-	plbuf.c \
 	plmeta.c \
 	ps.c \
 	tek.c \
@@ -106,7 +107,6 @@ DRIVERS_OBJ = \
 	next$O \
 	null$O \
 	pbm$O \
-	plbuf$O \
 	plmeta$O \
 	ps$O \
 	tek$O \
