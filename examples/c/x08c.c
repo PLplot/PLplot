@@ -61,7 +61,7 @@ main(int argc, char *argv[])
 	for (j = 0; j < YPTS; j++) {
 	    yy = y[j];
 	    r = sqrt(xx * xx + yy * yy);
-	    z[i][j] = exp(-r * r) * cos(2.0 * 3.141592654 * r);
+	    z[i][j] = exp(-r * r) * cos(2.0 * PI * r);
 	}
     }
 

@@ -94,7 +94,7 @@ void test_poly(int k)
 		      { 0, 1, 0, 1 },
 		      { 1, 1, 0, 0 } };
 
-    pi = 3.1415927, two_pi = 2. * pi;
+    pi = PI, two_pi = 2. * pi;
 
     x = (PLFLT *) malloc(5 * sizeof(PLFLT));
     y = (PLFLT *) malloc(5 * sizeof(PLFLT));

@@ -56,7 +56,7 @@ plot1(int type)
 	freql[i] = -2.0 + i / 20.0;
 	freq = pow(10.0, freql[i]);
 	ampl[i] = 20.0 * log10(1.0 / sqrt(1.0 + pow((freq / f0), 2.)));
-	phase[i] = -(180.0 / 3.141592654) * atan(freq / f0);
+	phase[i] = -(180.0 / PI) * atan(freq / f0);
     }
 
     plvpor(0.15, 0.85, 0.1, 0.9);

@@ -127,7 +127,7 @@ main(int argc, char *argv[])
 	t = (double)n * dt;
 	noise = drand48() - 0.5;
 	y1 = y1 + noise;
-	y2 = sin(t*3.1415926/18.);
+	y2 = sin(t*PI/18.);
 	y3 = y2 * noise;
 	y4 = y2 + noise/3.;
 

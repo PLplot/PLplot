@@ -29,7 +29,7 @@ main(int argc, char *argv[])
 
 /* Fill up data points */
 
-    delta = 2.0 * 3.141592654 / (double) NPTS;
+    delta = 2.0 * PI / (double) NPTS;
     for (i = 0; i < NPTS; i++)
 	data[i] = sin(i * delta);
 

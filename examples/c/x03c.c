@@ -20,7 +20,7 @@ main(int argc, char *argv[])
     static PLFLT x0[361], y0[361];
     static PLFLT x[361], y[361];
 
-    dtr = 3.141592654 / 180.0;
+    dtr = PI / 180.0;
     for (i = 0; i <= 360; i++) {
 	x0[i] = cos(dtr * i);
 	y0[i] = sin(dtr * i);
