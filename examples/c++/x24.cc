@@ -128,10 +128,7 @@ char* x24::peace[] = {
 
 x24::x24(int argc, char *argv[])
 {
-  PLFLT xmin, xmax, ymin, ymax, ycharacter_scale, yoffset;
-  PLFLT chardef, charht, deltax, deltay, x, y;
-  int i, j, page, length, slice;
-  char cmdString[20];
+  int i, j;
 
   pls = new plstream();
 
