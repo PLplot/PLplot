@@ -103,6 +103,7 @@ fi
       [user-specified directory for freetype fonts],
       [])
 
+    if test -z "$with_freetype_font_dir" ; then
     case "$host_os" in
       *msys | *cygwin | *mingw32 | *pw32 )
         # Windows defines go here
@@ -112,6 +113,7 @@ fi
         with_freetype_font_dir=/usr/share/fonts/truetype/freefont
         ;;
     esac
+    fi
 
 PL_ARG_WITH(freetype-sans-font,
   [user-specified sans-serif, medium-weight, upright font that is accessible with freetype],
