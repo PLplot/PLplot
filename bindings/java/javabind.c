@@ -20,7 +20,7 @@
 
 #include <jni.h>
 
-#include "plplot/plplot.h"
+#include "plplot/plplotP.h"
 
 static jclass cls_PLStream = 0;
 static jfieldID fid_sid = 0;
@@ -54,6 +54,105 @@ Java_plplot_core_PLStream_mkstrm( JNIEnv *env, jobject jthis )
     plmkstrm( &sid );
     return sid;
 }
+
+/*---------------------------------------------------------------------------//
+// First the arg parsing support routines.
+//---------------------------------------------------------------------------*/
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    ClearOpts
+ * Signature: ()V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_ClearOpts( JNIEnv *env, jobject jthis )
+{
+    set_PLStream(env,jthis);
+    plClearOpts();
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    ResetOpts
+ * Signature: ()V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_ResetOpts( JNIEnv *env, jobject jthis )
+{
+    set_PLStream(env,jthis);
+    plResetOpts();
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    SetUsage
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_SetUsage( JNIEnv *env, jobject jthis,
+                                    jstring program_string, jstring usage_string )
+{
+    const char *pgm_str = (*env)->GetStringUTFChars( env, program_string, 0 );
+    const char *usg_str = (*env)->GetStringUTFChars( env, usage_string, 0 );
+
+    set_PLStream(env,jthis);
+    plSetUsage( plstrdup(pgm_str), plstrdup(usg_str) );
+}
+
+/* MergeOpts should go here. */
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    ParseOpts
+ * Signature: ([Ljava/lang/String;I)I
+ */
+
+JNIEXPORT jint JNICALL
+Java_plplot_core_PLStream_ParseOpts( JNIEnv *env, jobject jthis,
+                                     jobjectArray jargs, jint mode )
+{
+    int argc;
+    char **argv;
+    int i, rc;
+    set_PLStream(env,jthis);
+
+/* Extract the string args from the java side. */
+    argc = (*env)->GetArrayLength( env, jargs );
+
+    argv = (char **) malloc( argc * sizeof(char *) );
+    for( i=0; i < argc; i++ )
+    {
+        jstring jarg = (*env)->GetObjectArrayElement( env, jargs, i );
+        argv[i] = plstrdup( (*env)->GetStringUTFChars( env, jarg, 0 ) );
+    }
+
+/* Note that in Java we don't get the usual C-style argv[0] program name. */
+    rc = plParseOpts( &argc, argv, mode | PL_PARSE_NOPROGRAM );
+
+/* Take stesp to update jargs with modifications made by plParseOpts(). */
+
+    return rc;
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    OptUsage
+ * Signature: ()V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_OptUsage( JNIEnv *env, jobject jthis )
+{
+    set_PLStream(env,jthis);
+    plOptUsage();
+}
+
+/*---------------------------------------------------------------------------//
+// Now the actual plotting API functions.
+//---------------------------------------------------------------------------*/
 
 /*
  * Class:     plplot_0002fcore_0002fPLStream

@@ -19,6 +19,26 @@ package plplot.core;
 
 public class PLStream {
 
+// Arg parsing support.
+    public final int PL_PARSE_PARTIAL      = 0x0000;
+    public final int PL_PARSE_FULL         = 0x0001;
+    public final int PL_PARSE_QUIET        = 0x0002;
+    public final int PL_PARSE_NODELETE     = 0x0004;
+
+    public final int PL_PARSE_SHOWALL      = 0x0008;
+    public final int PL_PARSE_OVERRIDE     = 0x0010;
+    public final int PL_PARSE_NOPROGRAM    = 0x0020;
+    public final int PL_PARSE_NODASH       = 0x0040;
+    public final int PL_PARSE_SKIP         = 0x0080;
+
+    public native void ClearOpts();
+    public native void ResetOpts();
+// public native int MergeOpts(...);
+    public native void SetUsage( String program_string, String usage_string );
+// setopt()/SetOpt() ???
+    public native int ParseOpts( String[] argv, int mode );
+    public native void OptUsage();
+
 // The PLplot core API function calls.
     public native void adv( int page );
     public native void box( String xopt, float xtick, int nxsub,
