@@ -311,13 +311,13 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
     else
 	found=0
 	for drv in $STATIC_DRIVERS; do
-	    if test "$drv" = "$driver$LIB_TAG"".lo"; then
+	    if test "$drv" = "$driver"".lo"; then
 		found=1
 		break
 	    fi
 	done
 	if test $found = 0; then
-	    STATIC_DRIVERS="$STATIC_DRIVERS $driver$LIB_TAG"".lo"
+	    STATIC_DRIVERS="$STATIC_DRIVERS $driver"".lo"
 	fi
     fi
 
