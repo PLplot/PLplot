@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.39  1994/08/25 04:06:26  mjl
+ * Revision 1.40  1994/09/23 07:52:08  mjl
+ * Changed a PLINT to an int to make a DOS compiler happy about its use as a
+ * for loop index.  Now plsc->ipls is set as soon as a new stream is created
+ * (by plsstrm).  Last: when stream 0 is ended by plend1() or plend(), the
+ * stream data is zeroed out to prevent garbage values from hanging around.
+ *
+ * Revision 1.39  1994/08/25  04:06:26  mjl
  * Moved call of plClrCWindows() to plP_eop where it belongs.
  *
  * Revision 1.38  1994/08/10  05:30:18  mjl
@@ -1057,13 +1063,13 @@ c_plinit(void)
     if (plsc->level != 0)
 	plend1();
 
-/* Set device number */
-
-    plGetDev();
-
 /* Stream number */
 
     plsc->ipls = ipls;
+
+/* Set device number */
+
+    plGetDev();
 
 /* Initialize color maps */
 
@@ -1174,12 +1180,15 @@ c_plend1(void)
     free_mem(plsc->dev);
     free_mem(plsc->BaseName);
 
-/* Free malloc'ed stream if not in initial stream */
+/* Free malloc'ed stream if not in initial stream, else clear it out */
 
     if (ipls > 0) {
 	free_mem(plsc);
 	pls[ipls] = NULL;
 	plsstrm(0);
+    }
+    else {
+	memset((char *) pls[ipls], 0, sizeof(PLStream));
     }
 }
 
@@ -1208,6 +1217,7 @@ c_plsstrm(PLINT strm)
 	    memset((char *) pls[ipls], 0, sizeof(PLStream));
 	}
 	plsc = pls[ipls];
+	plsc->ipls = ipls;
     }
 }
 
@@ -1351,7 +1361,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 static void
 plGetDev()
 {
-    PLINT dev, i, count, length;
+    int dev, i, count, length;
     char response[80];
 
 /* Device name already specified.  See if it is valid. */
@@ -1403,8 +1413,8 @@ plGetDev()
 	    length--;
 
 	for (i = 0; i < npldrivers; i++) {
-	    if (!strncmp(response, dispatch_table[i].pl_DevName,
-			 (unsigned int) length))
+	    if ( ! strncmp(response, dispatch_table[i].pl_DevName,
+			   (unsigned int) length))
 		break;
 	}
 	if (i < npldrivers) {
