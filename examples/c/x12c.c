@@ -3,7 +3,7 @@
 	Bar chart demo.
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 void
 plfbox(PLFLT x0, PLFLT y0);

@@ -37,7 +37,9 @@ sources = \
   plcvt.c \
   pldtik.c \
   plfill.c \
+  plfreetype.c \
   plhist.c \
+  plimage.c \
   plline.c \
   plmap.c \
   plot3d.c \
@@ -48,15 +50,16 @@ sources = \
   plsym.c \
   pltick.c \
   plvpor.c \
-  plwind.c
+  plwind.c \
+  ../drivers/plbuf.c
 
 libplplot_la_SOURCES  = $(sources)
 libplplotd_la_SOURCES = $(sources)
 
-libplplot_la_LDFLAGS  = $(version)
-libplplotd_la_LDFLAGS = $(version)
+libplplot_la_LDFLAGS  = $(version) -lm -ldl -lfreetype
+libplplotd_la_LDFLAGS = $(version) -lm -ldl -lfreetype
 
-libdrv = ../drivers/libpldrv.la
+##libdrv = ../drivers/libpldrv.la
 
-libplplot_la_LIBADD  = $(libdrv)
-libplplotd_la_LIBADD = $(libdrv)
+##libplplot_la_LIBADD  = $(libdrv)
+##libplplotd_la_LIBADD = $(libdrv)

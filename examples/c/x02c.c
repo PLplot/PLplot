@@ -3,7 +3,7 @@
 	Multiple window and color map 0 demo.
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 /*--------------------------------------------------------------------------*\
  * main

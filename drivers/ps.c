@@ -174,7 +174,7 @@ ps_init(PLStream *pls)
     fprintf(OF, "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n");
 
     fprintf(OF, "%%%%Title: PLplot Graph\n");
-    fprintf(OF, "%%%%Creator: PLplot Version %s\n", PLPLOT_VERSION);
+    fprintf(OF, "%%%%Creator: PLplot Version %s\n", VERSION);
     fprintf(OF, "%%%%CreationDate: %s\n", ps_getdate());
     fprintf(OF, "%%%%Pages: (atend)\n");
     fprintf(OF, "%%%%EndComments\n\n");

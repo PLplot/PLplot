@@ -23,13 +23,12 @@ dnl -----------------------------------------------------------------------
 dnl The first part of this script (between "divert(0)" and
 dnl "divert(-1)" below came from Marice LeBrun's original
 dnl cf/configure.in.  It makes possible to give default values to the
-dnl configure options.  The only thing that has been removed is the
-dnl definition and use of PL_DRIVER_LIST.
+dnl configure options and set up appropriate device and driver lists.
 dnl
 dnl After that part, a whole rewrite for Automake/Libtool has been
 dnl done by Rafael Laboissiere. 
 dnl
-divert(0)dnl
+divert(0)dnl --*-Autoconf-*--
 #!/bin/sh
 #
 # configure.in
@@ -114,23 +113,169 @@ with_fseek=no
 with_pkgdir=
 with_rpath=yes
 with_nobraindead=no
+with_freetype=no
 
 enable_drivers=yes
+#no required by default because yes needs shared libraries which we don't know
+#about at this point.
+enable_dyndrivers=no
 enable_f77=yes
 enable_cxx=yes
-enable_python=yes
-enable_tcl=yes
-enable_itcl=yes
+enable_python=no
+enable_java=no
+enable_tcl=no
+enable_itcl=no
 enable_octave=no
 #explicit default values must be specified here for library and header 
 #searching to work right for the following variables.  Note these variables
 #also have a driver role to play, but unlike these, pure-driver variables
 #(e.g., enable_tek4010) do not require a default to be specified here.
 enable_gnome=no
-enable_png=yes 
-enable_jpeg=yes 
-enable_tk=yes
+enable_ntk=no
+enable_tkwin=no
+enable_png=yes
+enable_jpeg=yes
+enable_cgm=yes
+enable_tk=no
 enable_xwin=yes
+
+# separate the concept of desiring a driver (above) with
+# having system support for it.
+has_x11=yes
+has_tcl=yes
+has_tk=yes
+
+divert(-1)
+
+# ------------------------------------------------------------------------
+# Support macros for driver inclusion and help entries.
+
+# Including a driver in the below list includes it by default.
+# Note that each driver should be treated separately even if
+# they are in the same source code file.
+# For example, the ps and psc drivers are defined in the ps.c source
+# code file.
+
+define(PL_DRIVER_LIST,
+[plmeta, null, xterm, tek4010, tek4010f, tek4107, tek4107f, mskermit,
+conex, linuxvga, vlt, versaterm, dg300, png, jpeg, cgm, ps, psc, xfig, ljii,
+hp7470, hp7580, lj_hpgl, ljiip, imp, xwin, tk, pbm, gnome, pstex, ntk, tkwin])
+
+# Note specifically which drivers are known to be loadable.  Eventually,
+# hopefully, every driver will show up on this list.  However, we add them one
+# at a time since each will have its own peculiarities in the build process
+# (none missing at present).
+
+define([PL_DYNAMIC_DRIVER_LIST],
+[plmeta null xterm tek4010 tek4010f tek4107 tek4107f mskermit \
+conex linuxvga vlt versaterm dg300 png jpeg cgm ps psc xfig ljii \
+hp7470 hp7580 lj_hpgl ljiip imp xwin tk pbm gnome pstex ntk tkwin])
+
+# We think of a "device" as the output medium.  Could be a machine
+# style (Tektronix, X11), or a file format (Postscript).
+#
+# A "driver" is the PLplot code that produces the output on the
+# medium.
+#
+# Some drivers support multiple devices.  But we we need to make sure
+# we compile only the selected drivers.  That is, if a driver supports
+# devices not selected, we don't want to compile it at all.  Or if it
+# supports multiple selected devices, we only want to compile it
+# once.  To support this, we build an association list between devices
+# and drivers.  This will be inspected to build up the set of drivers
+# to be compiled based on which devices are selected.
+
+define([PL_device_driver_pair_list],
+[plmeta:plmeta null:null \
+xterm:tek tek4010:tek tek4107:tek mskermit:tek \
+versaterm:tek vlt:tek conex:tek tek4010f:tek tek4107f:tek \
+linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd cgm:cgm psc:ps ps:ps xfig:xfig \
+ljiip:ljiip ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
+imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:pstex ntk:ntk \
+tkwin:tkwin])
+
+# Macro to set one driver enable value
+
+define(PL_ADD_DRIVER,[dnl
+MY_ARG_ENABLE($1, builtin(format,
+[  --enable-%-14s enable %s device driver ($enable_$1)], $1, $1))
+if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
+    enable_$1="yes"
+
+    driver_is_dynamic=0
+    if test "$enable_dyndrivers" = "yes"; then
+	for drv in PL_DYNAMIC_DRIVER_LIST; do
+	    if test "$drv" = "$1"; then
+		driver_is_dynamic=1
+		break
+	    fi
+	done
+    fi
+
+#    echo "1 = $1"
+#    echo "driver_is_dynamic: $driver_is_dynamic"
+
+    driver=""
+    for devdrv in PL_device_driver_pair_list; do
+	device=`echo $devdrv | cut -d: -f1`
+	if test "$device" = "$1"; then
+	    driver=`echo $devdrv | cut -d: -f2`
+	    break
+	fi
+    done
+
+    if test $driver_is_dynamic != 0; then
+	found=0
+	for drv in $DYNAMIC_DRIVERS; do
+	    if test "$drv" = "$driver$LIB_TAG"; then
+		found=1
+		break
+	    fi
+	done
+	if test $found = 0; then
+	    DYNAMIC_DRIVERS="$DYNAMIC_DRIVERS $driver$LIB_TAG"
+	    echo -n $driver ""
+	fi
+
+	DYNAMIC_DEVICES="$DYNAMIC_DEVICES $1"
+    elif test "$driver" = "xwin" -o "$driver" = "tkwin"; then
+	found=0
+	for drv in $TCL_STATIC_DRIVERS; do
+	    if test "$drv" = "$driver"; then
+		found=1
+		break
+	    fi
+	done
+	if test $found = 0; then
+	    TCL_STATIC_DRIVERS="$TCL_STATIC_DRIVERS $driver"
+	fi
+    else
+	found=0
+	for drv in $STATIC_DRIVERS; do
+	    if test "$drv" = "$driver"; then
+		found=1
+		break
+	    fi
+	done
+	if test $found = 0; then
+	    STATIC_DRIVERS="$STATIC_DRIVERS $driver"
+	fi
+    fi
+
+    AC_DEFINE(PLD_$1)
+    DEVICES="$DEVICES $1"
+else
+    enable_$1="no"
+fi
+])dnl
+
+# Recursive macro to set up all driver help entries
+
+define(PL_DRIVERS,[ifelse($1,,,[PL_ADD_DRIVER($1)dnl
+PL_DRIVERS(builtin([shift],$*))])])
+
+# ------------------------------------------------------------------------
+divert(0)dnl
 
 # Special cases
 
@@ -143,6 +288,10 @@ case "$system" in
 	with_gcc=yes
     ;;
     linux*|LINUX*|Linux* ) 
+	with_gcc=yes
+    ;;
+    Darwin* ) 
+        # Apparently, this is gcc with some add-ons, ugh!
 	with_gcc=yes
     ;;
     next*|NeXT*|NEXT* ) 
@@ -160,8 +309,7 @@ esac
 # before expanding ac_init) so that the user can override if necessary.
 
 with_defaults=yes
-for option
-    do
+for option in $*; do
     case "$option" in
 	-with-defaults | --with-defaults | -with-defaults=yes | --with-defaults=yes )
 	    with_defaults=yes
@@ -212,15 +360,72 @@ AC_SUBST(SOVERSION)
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
 
+MY_ARG_WITH(freetype,
+  [  --with-freetype         enable driver options for using freetype library for fonts ($with_freetype)])
+
+MY_ARG_ENABLE(drivers,
+  [  --enable-drivers        enable all device drivers ($enable_drivers)])
+
+MY_ARG_ENABLE(dyndrivers,
+  [  --enable-dyndrivers     enable dynamic loading of drivers ($enable_dyndrivers)])
+
+MY_ARG_ENABLE(python,
+  [  --enable-python         compile Python interface code ($enable_python)])
+
+MY_ARG_ENABLE(java,
+  [  --enable-java           compile Java interface code ($enable_java)])
+
+MY_ARG_ENABLE(octave,
+  [  --enable-octave         compile Octave interface code ($enable_octave)])
+
+MY_ARG_ENABLE(tcl,
+  [  --enable-tcl            compile Tcl interface code ($enable_tcl)])
+
+MY_ARG_ENABLE(itcl,
+  [  --enable-itcl           enable incr Tcl interface code ($enable_itcl)])
+
+# Set driver enable values
+#
+# You can enable/disable drivers either by the command line
+# (--enable-<driver> or --disable-<driver>) or via the cf_plplot.in file
+# (remember to use underscores instead of dashes here).  You can disable
+# all drivers by default by using --disable-drivers.
+
+# Special cases
+
+case $system in
+    Linux* )
+	if test -z "$enable_linuxvga"; then
+ 	   enable_linuxvga=$enable_drivers
+	fi
+    ;;
+    * )
+	enable_linuxvga="no"
+    ;;
+esac
+
+# ----------------------------------------------------------------------------
+# Set flag to enable searching for dynloadable drivers, if appropriate.
+# ----------------------------------------------------------------------------
+
+if test "$enable_dyndrivers" = "yes"; then
+    AC_DEFINE(ENABLE_DYNDRIVERS)
+fi
+
 ### Double vs single precison
 
-MY_ARG_WITH(double,
-  [  --with-double           use double precision floats ($with_double)])
 if test "$with_double" = yes; then
   AC_DEFINE(PL_DOUBLE)
   DBL_FLAG_M4=-DDOUBLE
+  DRIVERS_DB="driversd.db"
+  LIB_TAG="d"
+else
+  DRIVERS_DB="drivers.db"
+  LIB_TAG=""
 fi
 AM_CONDITIONAL(with_double, test "$with_double" = yes)
+AC_SUBST(LIB_TAG)
+AC_DEFINE_UNQUOTED(DRIVERS_DB, "$DRIVERS_DB")
 
 ### C++ bindings
 
@@ -271,7 +476,7 @@ AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN))
 
 ### Directory for PLplot specific data files
 
-DATA_DIR=lib/${PACKAGE}${VERSION} 
+DATA_DIR=lib/${PACKAGE}${VERSION}/data 
 AC_DEFINE_UNQUOTED(DATA_DIR, "$prefix/$DATA_DIR")
 AC_SUBST(DATA_DIR)
 
@@ -282,52 +487,148 @@ AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
 ### Modules 
 
 AC_PATH_XTRA
-MODULES="xwin.la"
+MODULES="xwin"$LIB_TAG"_drv.la ps"$LIB_TAG"_drv.la"
 AC_SUBST(MODULES)
 
 ### Drivers
 
-define(PL_DRIVER_LIST, [
-  dg300,
-  gd,
-  gnome,
-  hpgl,
-  impress,
-  linuxvga,
-  ljii,
-  ljiip,
-  next,
-  null,
-  pbm,
-  plbuf,
-  plmeta,
-  ps,
-  tek,
-  tk,
-  xfig,
-  xwin])
-
-# Macro to set one driver enable value
-
-define(PL_ADD_DRIVER,[dnl
-MY_ARG_ENABLE($1, builtin(format,
-[  --enable-%-14s enable %s device driver ($enable_$1)], $1, $1))
-if test "$enable_$1" = "yes" ; then
-  enable_$1="yes"
-  AC_DEFINE(PLD_$1)
-  DRIVERS="$DRIVERS $1.lo"
-else
-  enable_$1="no"
-fi
-])dnl
-
-# Recursive macro to set up all driver help entries
-
-define(PL_DRIVERS,[ifelse($1,,,[PL_ADD_DRIVER($1)dnl
-PL_DRIVERS(builtin([shift],$*))])])
-
+AC_MSG_CHECKING( for dynamic drivers)
 PL_DRIVERS(PL_DRIVER_LIST)
-AC_SUBST(DRIVERS)
+AC_MSG_RESULT
+AC_SUBST(STATIC_DRIVERS)
+AC_SUBST(TCL_STATIC_DRIVERS)
+AC_SUBST(DYNAMIC_DRIVERS)
+
+# ----------------------------------------------------------------------------
+# Now build the dynamic driver database.
+# ----------------------------------------------------------------------------
+
+if test "$enable_dyndrivers" = "yes"; then
+
+    AC_MSG_RESULT(creating drivers/$DRIVERS_DB)
+
+    # Dynamic (loadable) drivers go in a subdir all their own.
+    if test ! -d drivers; then
+	mkdir drivers
+    fi
+
+    # Clear out any prior drivers.
+    if test -e drivers/$DRIVERS_DB; then
+	rm drivers/$DRIVERS_DB
+    fi
+    touch drivers/$DRIVERS_DB
+
+    # Now add a line for each supported loadable device.  Format is:
+    #     device name : description : type : driver name : device number: symbol tag
+    #
+    # (type=1 if interactive, 0 if file-oriented, -1 for other).
+    #
+    # Note the device name that appears first in the db line is not
+    # necessarily the same as the device name in the DYNAMIC_DEVICES (or
+    # DEVICES) list!  Rather, it's the name that appears in the old dispatch
+    # table entry (cf. tekt vs tek4010).  Oh well..
+
+    for drv in $DYNAMIC_DEVICES; do
+	case $drv in
+	    null )
+	    echo "null:Null device:-1:null"$LIB_TAG"_drv.so:42:null" >> drivers/$DRIVERS_DB
+	    ;;
+	    plmeta )
+	    echo "plmeta:PLplot Native Meta-File:0:plmeta"$LIB_TAG"_drv.so:26:plm" >> drivers/$DRIVERS_DB
+	    ;;
+	    xfig )
+	    echo "xfig:Fig file:0:xfig"$LIB_TAG"_drv.so:31:xfig" >> drivers/$DRIVERS_DB
+	    ;;
+	    pstex )
+	    echo "pstex:Combined Postscript/LaTeX files:0:ps"$LIB_TAG"_drv.so:41:pstex" >> drivers/$DRIVERS_DB
+	    ;;
+	    png )
+	    echo "png:PNG file:0:gd"$LIB_TAG"_drv.so:39:png" >> drivers/$DRIVERS_DB
+	    ;;
+	    jpeg )
+	    echo "jpeg:JPEG file:0:gd"$LIB_TAG"_drv.so:40:jpeg" >> drivers/$DRIVERS_DB
+	    ;;
+	    cgm )
+	    echo "cgm:CGM file:0:cgm"$LIB_TAG"_drv.so:44:cgm" >> drivers/$DRIVERS_DB
+	    ;;
+	    xterm )
+	    echo "xterm:Xterm Window:1:tek"$LIB_TAG"_drv.so:18:xterm" >> drivers/$DRIVERS_DB
+	    ;;
+	    tek4010 )
+	    echo "tekt:Tektronix Terminal (4010):1:tek"$LIB_TAG"_drv.so:19:tekt" >> drivers/$DRIVERS_DB
+	    ;;
+	    tek4107 )
+	    echo "tek4107t:Tektronix Terminal (4105/4107):1:tek"$LIB_TAG"_drv.so:20:tek4107t" >> drivers/$DRIVERS_DB
+	    ;;
+	    vlt )
+	    echo "vlt:VLT vt100/tek emulator:1:tek"$LIB_TAG"_drv.so:23:vlt" >> drivers/$DRIVERS_DB
+	    ;;
+	    conex )
+	    echo "conex:Conex vt320/tek emulator:1:tek"$LIB_TAG"_drv.so:24:conex" >> drivers/$DRIVERS_DB
+	    ;;
+	    versaterm )
+	    echo "versaterm:Versaterm vt100/tek emulator:1:tek"$LIB_TAG"_drv.so:22:versaterm" >> drivers/$DRIVERS_DB
+	    ;;
+	    mskermit )
+	    echo "mskermit:MS-Kermit emulator:1:tek"$LIB_TAG"_drv.so:21:mskermit" >> drivers/$DRIVERS_DB
+	    ;;
+	    tek4010f )
+	    echo "tekf:Tektronix File (4010):0:tek"$LIB_TAG"_drv.so:27:tekf" >> drivers/$DRIVERS_DB
+	    ;;
+	    tek4107f )
+	    echo "tek4107f:Tektronix File (4105/4107):0:tek"$LIB_TAG"_drv.so:28:tek4107f" >> drivers/$DRIVERS_DB
+	    ;;
+	    pbm )
+	    echo "pbm:PDB (PPM) Driver:0:pbm"$LIB_TAG"_drv.so:38:pbm" >> drivers/$DRIVERS_DB
+	    ;;
+	    hp7470 )
+	    echo "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl"$LIB_TAG"_drv.so:34:hp7470" >> drivers/$DRIVERS_DB
+	    ;;
+	    hp7580 )
+	    echo "hp7580:HP 7580 Plotter File (Large Plotter):0:hpgl"$LIB_TAG"_drv.so:35:hp7580" >> drivers/$DRIVERS_DB
+	    ;;
+	    lj_hpgl )
+	    echo "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl"$LIB_TAG"_drv.so:36:lj_hpgl" >> drivers/$DRIVERS_DB
+	    ;;
+	    dg300 )
+	    echo "dg300:DG300 Terminal:0:dg300"$LIB_TAG"_drv.so:25:dg300" >> drivers/$DRIVERS_DB
+	    ;;
+	    ljii )
+	    echo "ljii:LaserJet II Bitmap File (150 dpi):0:ljii"$LIB_TAG"_drv.so:33:ljii" >> drivers/$DRIVERS_DB
+	    ;;
+	    ljiip )
+	    echo "ljiip:LaserJet IIp/deskjet compressed graphics:0:ljiip"$LIB_TAG"_drv.so:32:ljiip" >> drivers/$DRIVERS_DB
+	    ;;
+	    imp )
+	    echo "imp:Impress File:0:impress"$LIB_TAG"_drv.so:37:imp" >> drivers/$DRIVERS_DB
+	    ;;
+	    gnome )
+	    echo "gnome:Gnome Canvas:1:gnome"$LIB_TAG"_drv.so:6:gnome" >> drivers/$DRIVERS_DB
+	    ;;
+	    ps )
+	    echo "ps:PostScript File (monochrome):0:ps"$LIB_TAG"_drv.so:29:psm" >> drivers/$DRIVERS_DB
+	    ;;
+	    psc )
+	    echo "psc:PostScript File (color):0:ps"$LIB_TAG"_drv.so:30:psc" >> drivers/$DRIVERS_DB
+	    ;;
+	    xwin )
+	    echo "xwin:X-Window (Xlib):1:xwin"$LIB_TAG"_drv.so:5:xw" >> drivers/$DRIVERS_DB
+	    ;;
+	    tk )
+	    echo "tk:Tcl/TK Window:1:tk"$LIB_TAG"_drv.so:7:tk" >> drivers/$DRIVERS_DB
+	    ;;
+	    tkwin )
+	    echo "tkwin:New tk driver:1:tkwin"$LIB_TAG"_drv.so:45:tkwin" >> drivers/$DRIVERS_DB
+	    ;;
+	    ntk )
+	    echo "ntk:New tk driver:1:ntk"$LIB_TAG"_drv.so:43:ntk" >> drivers/$DRIVERS_DB
+	    ;;
+	    linuxvga )
+	    echo "linuxvga:Linux VGA driver:0:linuxvga"$LIB_TAG"_drv.so:8:vga" >> drivers/$DRIVERS_DB
+	    ;;
+	esac
+    done
+fi
 
 ### Build Makefiles
 
@@ -374,16 +675,22 @@ LIBS:		$LIBS
 LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
 
+Available device drivers
+static:		$STATIC_DRIVERS $TCL_STATIC_DRIVERS
+dynamic:	$DYNAMIC_DRIVERS
+
 with_shlib:	$with_shlib		with_double:	$with_double
 with_debug:	$with_debug		with_opt:	$with_opt
 with_warn:	$with_warn		with_profile:	$with_profile
 with_gcc:	$with_gcc		with_rpath:	$with_rpath
+with_freetype:	$with_freetype
 
 enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
 enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
 enable_cxx:	$enable_cxx		enable_python:	$enable_python
-enable_f77:	$enable_f77		enable_gnome:	$enable_gnome
-enable_octave:	$enable_octave
+enable_f77:	$enable_f77		enable_java:	$enable_java
+enable_octave:	$enable_octave		enable_gnome:	$enable_gnome
+enable_tkwin:	$enable_tkwin
 "
 
 cat << EOF > config.summary

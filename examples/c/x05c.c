@@ -3,7 +3,7 @@
 	Histogram demo.
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 #define NPTS 2047
 

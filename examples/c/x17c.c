@@ -3,7 +3,7 @@
  * Plots a simple stripchart with four pens.
  */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #else

@@ -22,35 +22,44 @@
 noinst_LTLIBRARIES = libpldrv.la
 
 libpldrv_la_SOURCES = 
-libpldrv_la_LIBADD = @DRIVERS@
-libpldrv_la_DEPENDENCIES = @DRIVERS@
+libpldrv_la_LIBADD = @STATIC_DRIVERS@
+libpldrv_la_DEPENDENCIES = @STATIC_DRIVERS@
 EXTRA_libpldrv_la_SOURCES = \
-  dg300.c \
-  gd.c \
-  gnome.c \
-  hpgl.c \
-  impress.c \
-  linuxvga.c \
-  ljii.c \
-  ljiip.c \
-  next.c \
   null.c \
-  pbm.c \
-  plbuf.c \
   plmeta.c \
   ps.c \
   tek.c \
-  tk.c \
-  xfig.c \
-  xwin.c
+  xfig.c
 
 # what
-EXTRA_LTLIBRARIES = xwin.la
+if with_double
+   EXTRA_LTLIBRARIES = xwind_drv.la psd_drv.la
+else
+   EXTRA_LTLIBRARIES = xwin_drv.la ps_drv.la
+endif
 # to
-pkglib_LTLIBRARIES = @MODULES@
+driversdir = ${prefix}/@DATA_DIR@/../drivers
+drivers_LTLIBRARIES = @MODULES@
+if with_double
+   drivers_DATA = driversd.db
+   libplplot = ../src/libplplotd.la
+else
+   drivers_DATA = drivers.db
+   libplplot = ../src/libplplotd.la
+endif
 # from
-xwin_la_SOURCES = xwin.c
+xwin_drv_la_SOURCES = xwin.c
+xwind_drv_la_SOURCES = xwin.c
+ps_drv_la_SOURCES = ps.c
+psd_drv_la_SOURCES = ps.c
 # how
-INCLUDES = @X_CFLAGS@
-xwin_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
-xwin_la_LIBADD = @X_LIBS@ -lX11
+xwin_drv_la_INCLUDES = @X_CFLAGS@
+xwin_drv_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
+xwin_drv_la_LIBADD = @X_LIBS@ -lX11
+xwind_drv_la_INCLUDES = @X_CFLAGS@
+xwind_drv_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
+xwind_drv_la_LIBADD = @X_LIBS@ -lX11
+ps_drv_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
+ps_drv_la_LIBADD = $(libplplot)
+psd_drv_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
+psd_drv_la_LIBADD = $(libplplot)

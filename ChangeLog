@@ -1,0 +1,23 @@
+2002-11-22  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* Initial creation (from resurrected AM-LT merged into 20021122 MAIN HEAD)
+	and checkin of AT branch.  Details given on plplot_devel list.
+	* .cvsignore files: convenience changes.
+	* Makefile.am: reorder src first, then drivers (since dynamic 
+	drivers depend on src).  Will take care of static drivers later.
+	* acconfig.h: ENABLE_DYNDRIVERS DRIVERS_DB, and switch drivers list
+	to complete devices list.
+	* configure.in: incorporate HEAD static and dynamic driver handling
+	from old cf/configure.in. Changed DATA_DIR back to current standard
+	ENABLE_DYNDRIVERS, DRIVERS_DB. Current standard for dynamic driver
+	names.
+	* drivers/Makefile.am: Current static drivers don't work, but
+	added working versions of xwin and ps dynamic drivers.
+	* drivers/ps.c: PLPLOT_VERSION ==> VERSION
+	* examples/c/*.c examples/c/*.h: change to old include style without
+	the "plplot/".
+	* src/Makefile.am: completed list of files to include in libplplot;
+	hacked in -lm -ldl -lfreetype (freetype should be option); and
+	disabled use of convenience library for static drivers (to be
+	revisited later).
+	

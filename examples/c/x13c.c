@@ -3,7 +3,7 @@
 	Pie chart demo.
 */
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 static char *text[] =
 {

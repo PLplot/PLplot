@@ -1,1 +1,1 @@
-SUBDIRS = drivers src include lib bindings
+SUBDIRS = src drivers include lib bindings

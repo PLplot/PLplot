@@ -7,8 +7,8 @@
 #ifndef __PLCDEMOS_H__
 #define __PLCDEMOS_H__
 
-#include "plplot/plConfig.h"
-#include "plplot/plplot.h"
+#include "plConfig.h"
+#include "plplot.h"
 #include <math.h>
 #include <string.h>
 #include <ctype.h>

@@ -37,6 +37,12 @@
 /* If you don't know what this is for, you shouldn't be using it */
 #undef NOBRAINDEAD
 
+/* Define if dynamic drivers are enabled.*/
+#undef ENABLE_DYNDRIVERS
+
+/* Define if drivers database is specified.*/
+#undef DRIVERS_DB
+
 /* Define if [incr Tcl] is available */
 #undef HAVE_ITCL
 
@@ -55,21 +61,35 @@
 
 #endif	/* __PLCONFIG_H__ */
 
+#undef PLD_cgm
+#undef PLD_conex
 #undef PLD_dg300
-#undef PLD_gd
 #undef PLD_gnome
-#undef PLD_hpgl
-#undef PLD_impress
+#undef PLD_hp7470
+#undef PLD_hp7580
+#undef PLD_imp
+#undef PLD_jpeg
 #undef PLD_linuxvga
+#undef PLD_lj_hpgl
 #undef PLD_ljii
 #undef PLD_ljiip
-#undef PLD_next
+#undef PLD_mskermit
+#undef PLD_ntk
 #undef PLD_null
 #undef PLD_pbm
-#undef PLD_plbuf
 #undef PLD_plmeta
+#undef PLD_png
 #undef PLD_ps
-#undef PLD_tek
+#undef PLD_psc
+#undef PLD_pstex
+#undef PLD_tek4010
+#undef PLD_tek4010f
+#undef PLD_tek4107
+#undef PLD_tek4107f
+#undef PLD_tkwin
 #undef PLD_tk
+#undef PLD_versaterm
+#undef PLD_vlt
 #undef PLD_xfig
+#undef PLD_xterm
 #undef PLD_xwin

@@ -7,7 +7,7 @@
 #pragma optimize("",off)
 #endif
 
-#include "plplot/plcdemos.h"
+#include "plcdemos.h"
 
 static int base[17] =
 {0, 200, 500, 600, 700, 800, 900,
