@@ -17,6 +17,7 @@ static int yp = 20;
 static int nl = 15;
 static int knn_order = 20;
 static PLFLT threshold = 1.001;
+static PLFLT wmin = -1e3;
 static int randn = 0;
 static int rosen = 0;
 
@@ -149,6 +150,7 @@ main(int argc, char *argv[])
   plMergeOpts(options, "x21c options", NULL);
   plParseOpts(&argc, argv, PL_PARSE_FULL);
 
+  opt[2] = wmin;
   opt[3] = (PLFLT) knn_order;
   opt[4] = threshold;
 
