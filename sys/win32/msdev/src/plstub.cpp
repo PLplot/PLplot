@@ -1,9 +1,9 @@
 #define __PLSTUBS_H__
-#include "plplot/plplot.h"
+#include "plplot.h"
 #include <math.h>
 #include <windows.h>
 
-extern void *h_pldll;
+void *h_pldll;
 
 extern "C" int APIENTRY
   DllMain(HINSTANCE hInstance,DWORD dwReason,LPVOID lpReserved) {
@@ -227,6 +227,13 @@ plgdiori(PLFLT *p_rot) {
 	c_plgdiori(p_rot);
 }
 
+/* Wait for graphics input event and translate to world coordinates */
+
+void WINAPI
+win_plGetCursor(PLGraphicsIn *gin ) {
+	plGetCursor(gin);
+}
+
 /* Retrieve current window into plot space */
 
 void WINAPI
@@ -364,6 +371,14 @@ pllsty(PLINT lin) {
 	c_pllsty(lin);
 }
 
+/* Merge user option table into internal info structure. */
+
+int WINAPI
+win_plMergeOpts(PLOptionTable *options, char *name, char **notes) {
+    return plMergeOpts( options, name, notes) ;
+}
+
+
 void WINAPI
 plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt) {
 	c_plmesh(x,y,z,nx,ny,opt);
@@ -393,6 +408,13 @@ plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	c_plot3d(x,y,z,nx,ny,opt,side);
 }
 
+/* Process options list using current options info. */
+
+int WINAPI
+win_plParseOpts(int *p_argc, char **argv, PLINT mode) {
+    return plParseOpts(p_argc, argv, mode) ;
+}
+
 /* Set fill pattern directly. */
 
 void WINAPI
@@ -417,8 +439,8 @@ plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code) {
 /* Draws a polygon in 3 space.  */
 
 void WINAPI
-plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw) {
-	c_plpoly3(n,x,y,z,draw);
+plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc) {
+	c_plpoly3(n,x,y,z,draw,ifcc);
 }
 
 /* Set the floating point precision (in number of places) in numeric labels. */
@@ -595,16 +617,18 @@ plsfnam(const char *fnam) {
 }
 
 /* Shade region. */
+typedef int  DefineFuncPtr( PLFLT, PLFLT ) ;
+typedef void *FillFuncPtr(PLINT, PLFLT *, PLFLT *) ;
+typedef void *PlotFuncPtr(PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer) ;
 
 void  WINAPI
-plshade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
+plshade(PLFLT **a, PLINT nx, PLINT ny, DefineFuncPtr defined,
 	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	  PLFLT shade_min, PLFLT shade_max,
 	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	  PLINT min_color, PLINT min_width,
 	  PLINT max_color, PLINT max_width,
-	  void (API *fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
-	  void (API *pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	  FillFuncPtr fill, PLINT rectangular, PlotFuncPtr pltr,
 	  PLPointer pltr_data) { 
 	c_plshade(a,nx,ny,defined,
 		left,right,bottom,top,
@@ -618,14 +642,14 @@ plshade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
 }
 
 void WINAPI
-plshade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+plshade1(PLFLT *a, PLINT nx, PLINT ny, DefineFuncPtr defined,
 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	 PLFLT shade_min, PLFLT shade_max,
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	 PLINT min_color, PLINT min_width,
 	 PLINT max_color, PLINT max_width,
-	 void (API *fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
-	 void (API *pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	 FillFuncPtr fill, PLINT rectangular,
+	 PlotFuncPtr pltr,
 	 PLPointer pltr_data) {
 	c_plshade1(a,nx,ny,defined,
 	 left,right,bottom,top,
