@@ -87,4 +87,6 @@ typedef struct {
     plD_esc_fp     pl_esc;
 } PLDispatchTable;
 
+typedef void (*PLDispatchInit)( PLDispatchTable *pdt );
+
 #endif /* __DISPATCH_H__ */
