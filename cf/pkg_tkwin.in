@@ -8,22 +8,29 @@ TKWIN_C		= Plplotter_Init.c plplotter.c
 TKWIN_OBJ	= Plplotter_Init$O plplotter$O
 TKWIN_OBJ_SA	=
 TKWIN_EXE	=
+
+# Variables for use in "make" and "make install".
+
+INSTALL_TKWIN	= install_tkwin
+
+# this target depends on install_tcl_pkgIndex correctly overwriting the old file
+install_tkwin_pkgIndex:
+	@-cd $(top_srcdir)/bindings/tk-x-plat; \
+	  cat pkgIndex.tcl.in >>$(DATA_DIR)/../pkgIndex.tcl
+
+# May install all *.tcl files eventually, but for now do nothing
+install_tkwin_scripts:
+
+install_tkwin: install_tkwin_scripts install_tkwin_pkgIndex
+
 ifneq ($(DYNAMIC_DRIVERS),)
 TKWIN_DRV	= tkwin_drv
-
 # target for rebuilding the tkwin driver with correct rpath for install.
 # The tkwin shared object includes TKWIN_OBJ (because the tkwin object
 # depends on the functions in TKWIN_OBJ).
-tkwin_drv: shared/tkwin$O install_tkwin_scripts
+tkwin_drv: shared/tkwin$O
 	@$(SHLIB_BUILD) $(DATA_DIR)/../drivers/tkwin$(LIB_TAG)_drv.so \
 	$(TKWIN_OBJ:%=shared/%) \
 	$< @TKLIBS@ -L. $(TCL_LINK) $(INSTALL_RPATH)
 endif
-
-# May install all *.tcl files eventually, but for now just stick with 
-# installing pkgIndex.tcl for now
-install_tkwin_scripts:
-	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi; \
-	cd $(top_srcdir)/bindings/tk-x-plat; \
-	$(CP) pkgIndex.tcl  $(TCL_DIR)/..
 
