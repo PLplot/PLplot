@@ -114,9 +114,9 @@ proc pldefaults {} {
 	# A white background looks better on grayscale or mono.
 	
 	if {[winfo depth .] == 1} {
-	    option add *plwin.background		white
+	    option add *Plframe.background		white
 	} else {
-	    option add *plwin.background		black
+	    option add *Plframe.background		black
 	}
 
 	#----------------------------------------------------------------------------

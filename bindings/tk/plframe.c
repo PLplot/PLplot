@@ -441,7 +441,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Start up event handlers and other good stuff */
 
-    Tk_SetClass(new, "plframe");
+    Tk_SetClass(new, "Plframe");
 
     Tk_CreateEventHandler(plFramePtr->tkwin, StructureNotifyMask,
 			  PlFrameConfigureEH, (ClientData) plFramePtr);

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.8  2002/07/12 16:59:26  vincentdarley
+ * option class for plframes fixed
+ *
  * Revision 1.7  2002/07/11 08:52:03  vincentdarley
  * resolve name conflict between tk, tk-x-plat
  *
@@ -562,7 +565,7 @@ plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
     if (tkwin == NULL) {
         return TCL_ERROR;
     }
-    Tk_SetClass(tkwin, "plframe");
+    Tk_SetClass(tkwin, "Plframe");
 
     plPlotterPtr = (PlPlotter *) malloc(sizeof(PlPlotter));
     plPlotterPtr->tkwin = tkwin;
