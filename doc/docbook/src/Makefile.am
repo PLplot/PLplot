@@ -51,19 +51,21 @@ STYLESHEETS_IN = \
   $(STYLESHEET_HTML).in \
   $(STYLESHEET_PRINT).in
 
+built_files = \
+  $(INFO_MANIFEST) $(HTML_MANIFEST) $(MAN_MANIFEST) \
+  $(BASE).jadetex $(BASE).dvi \
+  $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA) \
+  plplotdoc.txml plplotdoc.xml-info plplotdoc.texi
+
 EXTRA_DIST = \
   $(SOURCE_FILES) $(STYLESHEETS_IN) \
-  jadetex.cfg stylesheet.css \
-  $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA)
+  jadetex.cfg stylesheet.css $(built_files)
 
 CLEANFILES = \
   *.aux inline.ent *.log *.eps TMP.* *-tmp *.out
 
 MAINTAINERCLEANFILES = \
-  $(MASTER_XML) $(STYLESHEET_HTML) $(STYLESHEET_PRINT) \
-  $(INFO_MANIFEST) $(HTML_MANIFEST) $(MAN_MANIFEST) \
-  *.jadetex $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA) \
-  *.txml *.xml-info *.texi
+  $(MASTER_XML) $(STYLESHEET_HTML) $(STYLESHEET_PRINT) $(built_files)
 
 if enable_docbook
 
@@ -71,7 +73,7 @@ htmldir = $(prefix)/share/doc/$(PACKAGE)/html
 html_DATA = $(shell ls *.html)
 
 printdir = $(prefix)/share/doc/$(PACKAGE)
-print_DATA = $(BASE).ps.gz $(BASE).dvi $(BASE).pdf
+print_DATA = $(BASE).ps.gz $(BASE).pdf
 
 man3_MANS = $(shell ls *.$(MANVOL))
 
