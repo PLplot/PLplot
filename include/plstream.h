@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/03/17 17:03:09  mjl
-   Fixed some subtle pointer vs pointer-to-pointer bugs in some infrequently
-   used functions.
+   Revision 1.8  1993/04/26 19:57:52  mjl
+   Fixes to allow (once again) output to stdout and plrender to function as
+   a filter.  A type flag was added to handle file vs stream differences.
 
+ * Revision 1.7  1993/03/17  17:03:09  mjl
+ * Fixed some subtle pointer vs pointer-to-pointer bugs in some infrequently
+ * used functions.
+ *
  * Revision 1.6  1993/03/16  06:48:11  mjl
  * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
  * more robust.
@@ -84,6 +88,7 @@ typedef struct {
 * OutFile	Output file pointer
 * FamilyName	Output family name (i.e. stem)
 * FileName	Output file name
+* output_type	0 for file, 1 for stream
 *
 * plbuf_enable	Set if driver needs to use the plot buffer
 * plbuf_read	Set if reading from the plot buffer
@@ -222,11 +227,12 @@ typedef struct {
 
     FILE *OutFile;
     char FamilyName[80], FileName[90];
+    int  output_type;
 
-    int		plbuf_enable;
-    int		plbuf_read;
-    int		plbuf_write;
-    FILE	*plbufFile;
+    int  plbuf_enable;
+    int  plbuf_read;
+    int  plbuf_write;
+    FILE *plbufFile;
 
     PLINT orientset;
     PLINT fileset;

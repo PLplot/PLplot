@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.13  1993/03/18 07:05:17  mjl
-   Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
-   driver and renderer.  These are really not necessary when a metafile is
-   being used and can be aggravating when using the xterm driver.
+   Revision 1.14  1993/04/26 19:57:48  mjl
+   Fixes to allow (once again) output to stdout and plrender to function as
+   a filter.  A type flag was added to handle file vs stream differences.
 
+ * Revision 1.13  1993/03/18  07:05:17  mjl
+ * Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
+ * driver and renderer.  These are really not necessary when a metafile is
+ * being used and can be aggravating when using the xterm driver.
+ *
  * Revision 1.12  1993/03/16  06:47:35  mjl
  * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
  * more robust.
@@ -286,14 +290,16 @@ plm_bop(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) PAGE;
     U_LONG foo;
-    FPOS_T cp_offset, fwbyte_offset, bwbyte_offset;
+    FPOS_T cp_offset=0, fwbyte_offset=0, bwbyte_offset=0;
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
     fflush(pls->OutFile);
-    if (pl_fgetpos(pls->OutFile, &cp_offset))
-	plexit("plm_bop: fgetpos call failed");
+    if (pls->output_type == 0) {
+	if (pl_fgetpos(pls->OutFile, &cp_offset))
+	    plexit("plm_bop: fgetpos call failed");
+    }
 
 /* Seek back to previous page header and write forward byte offset. */
 

@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/03/19 20:58:13  mjl
-   Added code to check if user has passed a NULL to plsdev or plstart.
+   Revision 1.10  1993/04/26 19:57:58  mjl
+   Fixes to allow (once again) output to stdout and plrender to function as
+   a filter.  A type flag was added to handle file vs stream differences.
 
+ * Revision 1.9  1993/03/19  20:58:13  mjl
+ * Added code to check if user has passed a NULL to plsdev or plstart.
+ *
  * Revision 1.8  1993/03/17  17:03:12  mjl
  * Fixed some subtle pointer vs pointer-to-pointer bugs in some infrequently
  * used functions.
@@ -356,7 +360,7 @@ c_plinit()
 *
 * If the the user has not already specified the output device, or the
 * one specified is either: (a) not available, (b) "?", or (c) NULL, the
-* user is prompted for it.  A file name of "-" indicates output to stdout.
+* user is prompted for it.  
 * 
 * Prompting quits after 10 unsuccessful tries in case the user has
 * run the program in the background with insufficient input.

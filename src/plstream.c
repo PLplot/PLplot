@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/03/03 17:04:50  mjl
-   Changed orient-setting code to switch on the basis of orient%4, so that
-   any value of orient give valid output.
+   Revision 1.4  1993/04/26 19:57:59  mjl
+   Fixes to allow (once again) output to stdout and plrender to function as
+   a filter.  A type flag was added to handle file vs stream differences.
 
+ * Revision 1.3  1993/03/03  17:04:50  mjl
+ * Changed orient-setting code to switch on the basis of orient%4, so that
+ * any value of orient give valid output.
+ *
  * Revision 1.2  1993/02/23  05:21:09  mjl
  * Eliminated negative orientations.  Recognized settings are now 0, 1, 2, 3
  * (multiply by 90 degrees to get orientation).
@@ -152,6 +156,7 @@ plCmaps_init(PLStream *pls)
 *
 * Opens file for output, prompting if not set.
 * Prints extra newline at end to make output look better in batch runs.
+* A file name of "-" indicates output to stdout.
 \*----------------------------------------------------------------------*/
 
 void
@@ -170,8 +175,14 @@ plOpenFile(PLStream *pls)
 	    pls->fileset = 1;
 	    strcpy(pls->FamilyName, pls->FileName);
 	}
+	if (!strcmp(pls->FileName, "-")) {
+	    pls->OutFile = stdout;
+	    pls->output_type = 1;
+	    break;
+	}
 	if (pls->family) {
-	    (void) sprintf(pls->FileName, "%s.%i", pls->FamilyName, pls->member);
+	    (void) sprintf(pls->FileName, "%s.%i",
+			   pls->FamilyName, pls->member);
 	}
 
 	if (i++ > 10)

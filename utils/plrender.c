@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.22  1993/03/28 08:47:36  mjl
-   Changed handling of -mar, -jx, -jy flags to allow zooming.
+   Revision 1.23  1993/04/26 19:58:03  mjl
+   Fixes to allow (once again) output to stdout and plrender to function as
+   a filter.  A type flag was added to handle file vs stream differences.
 
+ * Revision 1.22  1993/03/28  08:47:36  mjl
+ * Changed handling of -mar, -jx, -jy flags to allow zooming.
+ *
  * Revision 1.21  1993/03/18  07:05:23  mjl
  * Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
  * driver and renderer.  These are really not necessary when a metafile is
@@ -192,9 +196,10 @@ static FPOS_T	nextpage_loc;	/* Byte position of next page header */
 
 /* File info */
 
+static int	input_type;	/* 0 for file, 1 for stream */
 static FILE	*MetaFile;
 static char	BaseName[70] = "", FamilyName[80] = "", FileName[90] = "";
-static PLINT	is_family, member=1, is_filter;
+static PLINT	is_family, member=1;
 static char	mf_magic[40], mf_version[40];
 
 /* Dummy vars for reading stuff that is to be thrown away */
@@ -1047,6 +1052,9 @@ SeekToPage(long target_page)
 {
     long delta;
 
+    if (input_type > 0)
+	return;
+
     if ((target_page - 1 == curpage) && at_eop)
 	return;
 
@@ -1151,8 +1159,10 @@ ReadPageHeader(void)
 
 /* Read page header */
 
-    if (pl_fgetpos(MetaFile, &curpage_loc))
-	plexit("plrender: fgetpos call failed");
+    if (input_type == 0) {
+	if (pl_fgetpos(MetaFile, &curpage_loc))
+	    plexit("plrender: fgetpos call failed");
+    }
 
     c = getcommand();
     if (c != PAGE && c != ADVANCE) 
@@ -1231,10 +1241,10 @@ Init(int argc, char **argv)
 static void
 OpenMetaFile(int *p_argc, char **argv)
 {
-    if (is_filter)
-	MetaFile = stdin;
+    if (!strcmp(FileName, "-"))
+	input_type = 1;
 
-    else if (!strcmp(FileName, "-"))
+    if (input_type == 1)
 	MetaFile = stdin;
 
     else {
@@ -1545,7 +1555,7 @@ HandleOption_f(char *opt, char *optarg)
 
 /* Filter option */
 
-    is_filter = 1;
+    input_type = 1;
 
     return(0);
 }

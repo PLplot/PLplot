@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/03/17 17:01:37  mjl
-   Eliminated some dead assignments that turned up when running with SAS/C's
-   global optimizer enabled on the Amiga.
+   Revision 1.4  1993/04/26 19:57:56  mjl
+   Fixes to allow (once again) output to stdout and plrender to function as
+   a filter.  A type flag was added to handle file vs stream differences.
 
+ * Revision 1.3  1993/03/17  17:01:37  mjl
+ * Eliminated some dead assignments that turned up when running with SAS/C's
+ * global optimizer enabled on the Amiga.
+ *
  * Revision 1.2  1993/03/03  17:03:20  mjl
  * Changed the -bg flag to accept a full-color argument in the form
  * -bg rrggbb, with rr, gg, bb corresponding to the background RGB
@@ -554,10 +558,7 @@ HandleOption_o(char *opt, char *optarg)
 {
 /* Output file */
 
-    if (!strcmp(optarg, "-"))
-	plsfile(stdout);
-    else
-	plsfnam(optarg);
+    plsfnam(optarg);
 
     return(0);
 }
