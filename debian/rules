@@ -24,7 +24,7 @@ debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
 debex		:= $(debshr)/plplot$(version)/examples
 
-include /usr/share/dpatch/dpatch.make
+# include /usr/share/dpatch/dpatch.make
 
 autotools: autotools-stamp
 autotools-stamp:
@@ -119,12 +119,12 @@ binary-arch: build install
 	dh_installdocs --package=$(libpkg)
 	dh_installchangelogs --package=$(libpkg)
 
-	dh_python
+#	dh_python
 	dh_strip -a
 	dh_compress -a -Xexamples/
 	dh_fixperms -a
 	dh_makeshlibs -V -a
-	dh_shlibdeps -a -L $(libpkg) \
+	dh_shlibdeps -a \
           -l $(debbase)/$(libpkg)/usr/lib:$(debbase)/plplot-tcl/usr/lib
 	dh_installdeb -a
 	dh_gencontrol -a

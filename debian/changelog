@@ -1,3 +1,20 @@
+plplot (5.3.1-0.woody.1) unstable; urgency=low
+
+  * Backported to Debian woody.
+  * debian/control: Changed Build-Deps and Depends accordingly.
+  * debian/rules:
+    - Commented out the use of dpatch.
+    - Do not call dh_python.
+    - Do not use -L option of dh_shlibdeps.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu,  5 Aug 2004 13:56:43 +0200
+
+plplot (5.3.1-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 25 Jun 2004 10:15:00 +0200
+
 plplot (5.3.0.rc2.5.3.1-1) unstable; urgency=low
 
   * New upstream release.
