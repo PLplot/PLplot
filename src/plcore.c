@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1993/08/09 22:20:34  mjl
+ * Revision 1.17  1993/08/11 19:19:03  mjl
+ * Changed debugging code to print to stderr instead of stdout, fixed
+ * up some minor type mismatches.
+ *
+ * Revision 1.16  1993/08/09  22:20:34  mjl
  * Fixed plcpstrm() so that it no longer sucks.
  *
  * Revision 1.15  1993/08/03  01:46:58  mjl
@@ -982,11 +986,11 @@ c_plsstrm(PLINT strm)
     else {
 	ipls = strm;
 	if (pls[ipls] == NULL) {
-	    pls[ipls] = malloc((size_t) sizeof(PLStream));
+	    pls[ipls] = (PLStream *) malloc((size_t) sizeof(PLStream));
 	    if (pls[ipls] == NULL)
 		plexit("plsstrm: Out of memory.");
 
-	    memset(pls[ipls], 0, sizeof(PLStream));
+	    memset((char *) pls[ipls], 0, sizeof(PLStream));
 	}
 	plsc = pls[ipls];
     }
@@ -1692,7 +1696,8 @@ c_plscm1(PLINT *r, PLINT *g, PLINT *b)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    printf("plscm1: Invalid RGB color: %d, %d, %d\n", r[i], g[i], b[i]);
+	    fprintf(stderr, "plscm1: Invalid RGB color: %d, %d, %d\n",
+		    r[i], g[i], b[i]);
 	    plexit("");
 	}
 	plsc->cmap1[i].r = r[i];
@@ -1747,7 +1752,8 @@ c_plscm1f1(PLINT itype, PLFLT *param)
 	}
 
 	if ((r < 0. || r > 1.) || (g < 0. || g > 1.) || (b < 0. || b > 1.)) {
-	    printf("plscm1f1: Invalid RGB color: %f, %f, %f\n", r, g, b);
+	    fprintf(stderr, "plscm1f1: Invalid RGB color: %f, %f, %f\n",
+		    r, g, b);
 	    plexit("");
 	}
 	plsc->cmap1[i].r = MIN(255, (int) (256. * r));
