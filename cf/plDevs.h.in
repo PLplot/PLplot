@@ -27,7 +27,7 @@
 #undef PLD_linuxvga
 #undef PLD_dg300
 #undef PLD_png
-#undef PLD_jpeg
+#undef PLD_jpg
 #undef PLD_ps
 #undef PLD_xfig
 #undef PLD_ljii
