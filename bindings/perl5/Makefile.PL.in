@@ -3,8 +3,8 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
 	      NAME => "PLplot",
 	      AUTHOR => "Rafael Laboissiere <rafael\@laboissiere.net>",
-	      CCFLAGS => "-fvolatile",
-	      INC => "-I.",
+	      CCFLAGS => "-fvolatile -DHAVE_PDL",
+	      INC => "-I. -I/usr/lib/perl5/5.005/i386-linux/PDL/Core/",
               LIBS => "@LIBS@",
 	      OBJECT => 'PLplot_wrap.o', 
 	      MAKEFILE => "Makeperl",

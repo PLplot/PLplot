@@ -13,6 +13,10 @@
 
 %inline %{
 #include "plplot/plplot.h"
+#ifdef HAVE_PDL
+#include <pdl.h>
+#include <pdlcore.h>
+#endif
 %}
 
 
@@ -33,13 +37,56 @@
 // Utility function
 %inline %{
 
+#ifdef HAVE_PDL
+static Core* PDL = NULL;
+#endif
+
 void
 PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
 {
   int i;
   svtype type;
   AV* av;
-  
+
+  // Get referenced object, if that is needed  
+  // sv = SvROK (sv) ?  SvRV (sv) : sv;
+
+#ifdef HAVE_PDL
+  // Check if object is a piddle
+  if (sv_isobject(sv) && sv_derived_from(sv, "PDL")) {
+    pdl* piddle;
+    int i[1];
+    int n;
+    PLFLT* p;
+    SV* svcore; 
+
+    if (PDL == NULL) {
+      svcore = (SV*) perl_get_sv ("PDL::SHARE", FALSE);
+      if (svcore != NULL)
+	PDL = (Core*) SvIV (svcore);
+      else
+	croak
+	  ("Given PDL object as PLFLT* argument, but PDL module not loaded");
+    }
+
+    piddle = (pdl*) PDL->SvPDLV (sv);
+
+    if (piddle->ndims != 1)
+      croak ("PLFLT* as pdl object must have dim = 1");
+
+    // The following does not work with slices.  Should use something like:    
+    //    PDL->make_physvaffine (piddle);
+
+    n = piddle->nvals;
+    p = *ptr = (PLFLT*) malloc (n * sizeof (PLFLT));
+    
+    for (*i = 0; *i < n; (*i)++)
+      p[*i] = (PLFLT) PDL->get (piddle, &i[0]);
+
+    return;
+  }
+#endif
+
   sv = SvROK (sv) ?  SvRV (sv) : sv;
   type = SvTYPE (sv);
   if (type == SVt_PVAV) {
@@ -72,6 +119,7 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
 %}
 
 // Allocate array of PLFLT
+// temp should be freed!!
 %typemap(perl5,in) PLFLT_p_input* (PLFLT* temp) {
   int i;
   SV* sv;
@@ -83,7 +131,7 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
 }
 
 // Allocate array of PLFLT*
-// FIXME: the code belo does not free memeory in case of errors
+// FIXME: the code belo does not free memory in case of errors
 %typemap(perl5,in) PLFLT_pp_input** (PLFLT** temp) {
   int i;
   SV* sv;
