@@ -101,12 +101,13 @@ cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
   && echo "CVS distribution tarball: $TARBALL" \
   && test "$do_check" = yes \
   && tar xfvz $TARBALL \
-  && ( rm -rf $DISTDIR \
-       && tar xfz $TARBALL \
-       && cd $DISTDIR \
+  && rm -rf $DISTDIR \
+  && tar xfz $TARBALL \
+  && ( cd $DISTDIR \
        && ./configure ${prefix:+--prefix=$prefix} $config_opt  \
        && make check \
        && test -n "$prefix" \
-       && make install \
-       && test "$clean_prefix" = yes \
-       && rm -rf "$prefix" )
+       && make install ) \
+  rm -rf $DISTDIR \
+  && test "$clean_prefix" = yes \
+  && rm -rf "$prefix"
