@@ -290,9 +290,11 @@
       <itemizedlist>
         <listitem>
           <para>
-            The PLplot Documentation in DocBook format is released now under
-            Free Software terms, with a license similar similar to the
-            FreeBSD Documentation License.
+            The PLplot Documentation in DocBook format is released now
+            under Free Software terms, with a license similar similar to
+            the <ulink
+            url="http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/ln16.html">FreeBSD
+            Documentation License</ulink>.
           </para>
         </listitem>
         <listitem>
