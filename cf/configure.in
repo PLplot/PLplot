@@ -401,8 +401,8 @@ if test -z "$PYTHON_DIR"; then
 fi
 if test "$enable_python" = "yes"; then
     if test "$PYTHON_DIR" != "$PYTHON_MOD_DIR"; then
-	AC_MSG_RESULT(python module will be installed in $PYTHON_DIR);
-	AC_MSG_RESULT(remember to soft-link it to $PYTHON_MOD_DIR);
+	AC_MSG_RESULT(note: python module will be installed in $PYTHON_DIR);
+	AC_MSG_RESULT(note: it should be soft-linked to $PYTHON_MOD_DIR);
     fi
 fi
 if test -z "$DOC_DIR"; then
@@ -526,9 +526,9 @@ AC_OUTPUT(Makefile Makedemo)
 # to use an underscore in that case.
 # ----------------------------------------------------------------------------
 
-plplot_config_result_msg="
-Results of command \"$plplot_config_invocation\":
+plplot_config_result_msg="Configure results:
 
+command:	$plplot_config_invocation
 system:		$system
 prefix:		$prefix
 CC:		$CC $CC_FLAGS
