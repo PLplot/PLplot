@@ -790,7 +790,8 @@ if test "$enable_octave" = "yes"; then
 
 # Check that plplot was built with shared libs
     if test "$enable_shared" != "yes"; then
-        AC_MSG_WARN([Octave support requires enable_shared=yes, setting enable_octave=no]);
+        AC_MSG_WARN([Octave support requires enable_shared=yes,])
+        AC_MSG_WARN([setting enable_octave=no]);
         enable_octave=no;
     fi
 
