@@ -25,7 +25,7 @@
 # To build the f77 examples before running this script do the following:
 # pushd $f77dir; make; popd
 
-if test "@F77PARSE_CL@" = ".true."; then
+if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
 # This stanza only works if fortran has command-line parsing capability.
 # However, this is the preferred method because it allows access to
 # command-line parsing of the $options (e.g., familying options for png
