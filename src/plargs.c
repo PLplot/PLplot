@@ -1493,7 +1493,7 @@ opt_ori(char *opt, char *optarg, void *client_data)
 static int
 opt_freeaspect(char *opt, char *optarg, void *client_data)
 {
-    plsfreeaspect(1);
+    plsc->freeaspect = 1;
     return 0;
 }
 
@@ -1501,15 +1501,27 @@ opt_freeaspect(char *opt, char *optarg, void *client_data)
  * opt_portrait()
  *
  * Performs appropriate action for option "portrait":
- * Sets portrait mode (both orientation and aspect ratio) for those drivers
- * e.g., (ljii, ljiip, psc, ps, and pstek) which have a 90-deg rotation between
- * landscape and portrait mode.
+ * Set portrait mode.  If plsc->portrait = 1, then the orientation for certain 
+ * drivers is changed by 90 deg to portrait orientation from the default
+ * landscape orientation used by PLplot while the  aspect ratio allowed to
+ * adjust using freeaspect.
+ * N.B. the driver list where this flag is honored is currently limited
+ * to ljii, ljiip, psc, ps, and pstex.  A 90 deg rotation is just not
+ * appropriate for certain other drivers.  These drivers where portrait
+ * mode is ignored include display drivers (e.g., xwin, tk), drivers 
+ * which are subequently going to be transformed to another form 
+ * (e.g., meta or pbm), or drivers which are normally used for web 
+ * publishing (e.g., png, jpeg).  That said, the case is not entirely clear
+ * for all drivers so the list of drivers where portrait mode is honored
+ * may increase in the future. To add to the list simply copy the small
+ * bit of code from  ps.c that has to do with pls->portrait to the 
+ * appropriate driver file.
 \*--------------------------------------------------------------------------*/
 
 static int
 opt_portrait(char *opt, char *optarg, void *client_data)
 {
-    plsportrait(1);
+    plsc->portrait = 1;
     return 0;
 }
 

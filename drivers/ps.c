@@ -126,7 +126,7 @@ ps_init(PLStream *pls)
 
     if (pls->portrait) {
        plsdiori((PLFLT)(4 - ORIENTATION));
-       plsfreeaspect(1);
+       pls->freeaspect = 1;
     }
 
 /* Header comments into PostScript file */

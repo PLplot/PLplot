@@ -131,7 +131,7 @@ plD_init_ljiip(PLStream *pls)
 
     if (pls->portrait) {
        plsdiori((PLFLT)(4 - ORIENTATION));
-       plsfreeaspect(1);
+       pls->freeaspect = 1;
     }
 
 /* Allocate storage for bit map matrix */
