@@ -4,9 +4,9 @@ libdir=@libdir@
 includedir=@includedir@/plplot
 bindir=@bindir@
 
-Name: PLplot
-Description: Scientific plotting library (single precision)
+Name: #NAME#
+Description: #DESC#
 Requires:
 Version: @VERSION@
-Libs: -L${libdir} -lplplot #DEPLIBS#
+Libs: -L${libdir} -l#LIB# #DEPLIBS#
 Cflags: -I${includedir}

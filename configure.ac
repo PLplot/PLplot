@@ -1175,8 +1175,7 @@ AC_CONFIG_FILES([
 	doc/Makefile
 	scripts/plplot-config	
 	pkgcfg/Makefile
-	pkgcfg/plplot.pc
-	pkgcfg/plplot-float.pc
+	pkgcfg/plplot-master-pc
 	doc/docbook/Makefile
 	doc/docbook/src/Makefile
 	doc/docbook/src/plplotdoc.xml
