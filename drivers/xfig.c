@@ -109,7 +109,6 @@ plD_init_xfig(PLStream *pls)
     dev->yscale_dev = DPI/25.4;
     offset_inc = dev->ymax * (PLINT)dev->yscale_dev;
     offset = - offset_inc;
-
     pls->dev_fill0 = 1;	    /* Handle solid fills */
     if (!pls->colorset)
       pls->color = 1;         /* Is a color device */
@@ -342,7 +341,7 @@ plD_state_xfig(PLStream *pls, PLINT op)
   case PLSTATE_WIDTH:
     flushbuffer(pls);
     firstline = 1;
-    curwid = pls->width;
+    curwid = pls->width < 1 ? 1: pls->width;
     break;
 
   case PLSTATE_COLOR0:
