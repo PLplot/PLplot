@@ -9,11 +9,11 @@
 # scripts/make_tarball.sh -I /home/software/autotools/install/share/libtool/libltdl
 
 # Add in generated documentation from our website.
-cd doc
-wget -r -l 1 -L -nH --no-parent --cut-dirs=2 \
-http://plplot.sourceforge.net/resources/docbook-manual/
-tar zxf plplotdoc-html-0.4.3.tar.gz
-cd ..
+#cd doc
+#wget -r -l 1 -L -nH --no-parent --cut-dirs=2 \
+#http://plplot.sourceforge.net/resources/docbook-manual/
+#tar zxf plplotdoc-html-0.4.3.tar.gz
+#cd ..
 
 # Fix permissions screwup(s) in freshly checked out CVS
 # Nothing to do for the moment thanks to Rafael's efforts
