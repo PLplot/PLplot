@@ -850,6 +850,25 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
      free($2[i]);
    free($2);
 }
-  
+
+#if 0
+%typemap(in) PLGraphicsIn *gin (PLGraphicsIn tmp) {
+  if(!PySequence_Check($input) || PySequence_Size($input) != 2) {
+    PyErr_SetString(PyExc_ValueError, "Expecting a sequence of 2 numbers.");
+    return NULL;
+  }
+  $1 = &tmp;
+  $1->dX = PyFloat_AsDouble(PySequence_Fast_GET_ITEM($input, 0));
+  $1->dY = PyFloat_AsDouble(PySequence_Fast_GET_ITEM($input, 1));
+}
+%typemap(argout) PLGraphicsIn *gin {
+  PyObject *o;
+  o = PyFloat_FromDouble($1->wX);
+  resultobj = t_output_helper(resultobj, o);
+  o = PyFloat_FromDouble($1->wY);
+  resultobj = t_output_helper(resultobj, o);
+}
+#endif
+
 /* swig compatible PLplot API definitions from here on. */
 %include plplotcapi.i
