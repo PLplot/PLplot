@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1994/02/07 22:57:14  mjl
+ * Revision 1.13  1994/03/22 23:17:35  furnish
+ * Avoid collision with user code when he wants to make a custom wish
+ * combined with PLPLOT.
+ *
+ * Revision 1.12  1994/02/07  22:57:14  mjl
  * Fixed up prototypes for pl_PacketReceive and pl_PacketSend.
  *
  * Revision 1.11  1994/01/15  17:40:04  mjl
@@ -80,7 +84,7 @@ tk_source(Tk_Window w, Tcl_Interp *interp, char *script);
 /* performs application-specific initialization */
 
 int
-Tcl_AppInit(Tcl_Interp *interp);
+plTcl_AppInit(Tcl_Interp *interp);
 
 /* Sets up auto_path variable */
 

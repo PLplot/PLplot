@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1994/01/17 21:32:14  mjl
+ * Revision 1.22  1994/03/22 23:17:34  furnish
+ * Avoid collision with user code when he wants to make a custom wish
+ * combined with PLPLOT.
+ *
+ * Revision 1.21  1994/01/17  21:32:14  mjl
  * Eliminated -mkidx flag as it is unnecessary.  Replace with the alias:
  * alias mktclidx	"echo 'auto_mkindex . *.tcl; destroy .' | wish"
  *
@@ -283,7 +287,7 @@ main(argc, argv)
      * Invoke application-specific initialization.
      */
 
-    if (Tcl_AppInit(interp) != TCL_OK) {
+    if (plTcl_AppInit(interp) != TCL_OK) {
 	abort_session(interp->result);
 	Tcl_Eval(interp, "exit");
     }

@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/01/15 17:48:31  mjl
+ * Revision 1.10  1994/03/22 23:17:39  furnish
+ * Avoid collision with user code when he wants to make a custom wish
+ * combined with PLPLOT.
+ *
+ * Revision 1.9  1994/01/15  17:48:31  mjl
  * Added built-in Tcl commands: wait_until (for general use -- waits until
  * the specified condition evaluates to true) and host_id (Tcl-DP only).
  *
@@ -146,7 +150,7 @@ tk_source(Tk_Window w, Tcl_Interp *interp, char *script)
  */
 
 int
-Tcl_AppInit(Tcl_Interp *interp)
+plTcl_AppInit(Tcl_Interp *interp)
 {
     Tk_Window main;
 

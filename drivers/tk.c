@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1994/02/07 23:02:11  mjl
+ * Revision 1.30  1994/03/22 23:17:37  furnish
+ * Avoid collision with user code when he wants to make a custom wish
+ * combined with PLPLOT.
+ *
+ * Revision 1.29  1994/02/07  23:02:11  mjl
  * Changed to using pl_PacketSend for data transfer, which now requires no
  * communication between interpreters.  Communication parameters stored in
  * the dev->iodev structure.
@@ -621,7 +625,7 @@ tk_start(PLStream *pls)
 
 /* Eval startup procs */
 
-    if (Tcl_AppInit(dev->interp) != TCL_OK) {
+    if (plTcl_AppInit(dev->interp) != TCL_OK) {
 	abort_session(pls, "");
     }
 
