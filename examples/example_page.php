@@ -52,11 +52,11 @@ END;
     $fname = "x" . $demo_str . "c.c-";
   }
 
-  echo '<OBJECT TYPE="text/plain" DATA="' . "$demo_dir/$fname"
+  echo '<OBJECT CLASS="code" TYPE="text/plain" DATA="' . "$demo_dir/$fname"
     . '" WIDTH=600 height=200></object>';
 
   print <<<END
-<hr>
+<br>
 <br>
 
 <div ALIGN="CENTER">
