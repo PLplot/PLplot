@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.6  1992/10/22 17:05:45  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.7  1992/10/24 05:18:08  mjl
+   Added PL_NEED_SIZE_T defines where necessary.
 
+ * Revision 1.6  1992/10/22  17:05:45  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.5  1992/10/12  17:05:36  mjl
  * Converted to string-integer equivalence method for C-Fortran string passing.
  *
@@ -31,6 +34,7 @@
 
 #include "plstubs.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 /*----------------------------------------------------------------------*\
 * pltr0f()

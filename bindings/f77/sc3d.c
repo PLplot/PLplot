@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/10/22 17:05:44  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.5  1992/10/24 05:18:07  mjl
+   Added PL_NEED_SIZE_T defines where necessary.
 
+ * Revision 1.4  1992/10/22  17:05:44  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.3  1992/09/30  18:25:59  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -24,6 +27,7 @@
 #define PL_NEED_SIZE_T
 
 #include "plstubs.h"
+#include <stdlib.h>
 
 void
 PLMESH( PLFLT *x, PLFLT *y, PLFLT *z,
