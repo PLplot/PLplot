@@ -61,6 +61,10 @@ if [ ! "$gcc" ]; then
 	gcc=off
 fi
 
+if [ ! "$f2c" ]; then
+	f2c=off
+fi
+
 if [ ! "$no_tk" ]; then
 	no_tk=off
 fi
@@ -94,6 +98,7 @@ $e "	opt		$opt"
 $e "	warn		$warn"
 $e "	profile		$profile"
 $e "	gcc		$gcc"
+$e "	f2c		$f2c"
 $e "	no_x		$no_x"
 $e "	no_tk		$no_tk"
 $e "	no_dp		$no_dp"
@@ -129,6 +134,7 @@ $e "	double	   [=on|off]	double precision"
 $e "	debug	   [=on|off]	debugging"
 $e "	profile	   [=on|off]	profiling"
 $e "	gcc	   [=on|off]	use gcc instead of native compiler"
+$e "	f2c	   [=on|off]	use f2c instead of native compiler"
 $e "	no_x	   [=on|off]	no X linkage"
 $e "	no_tk	   [=on|off]	no Tcl/TK linkage"
 $e "	no_dp	   [=on|off]	no Tcl-DP linkage"
@@ -198,6 +204,12 @@ Parse_args () {
 			;;
 		gcc)
 			gcc=on
+			;;
+		f2c=*)
+			f2c=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
+			;;
+		f2c)
+			f2c=on
 			;;
 		no_x=*)
 			no_x=`echo $arg | sed 's/[-a-z_0-9 ]*=//'`
@@ -351,6 +363,9 @@ Setup_options () {
 	if [ "$gcc" = "on" ]; then
 		gcc_flag="-DGCC"
 	fi
+	if [ "$f2c" = "on" ]; then
+		f2c_flag="-DF2C"
+	fi
 	if [ "$no_x" = "on" ]; then
 		no_x_flag="-DNO_X"
 	fi
@@ -365,7 +380,7 @@ Setup_options () {
 	fi
 
 	all_flags="$system_flag $machine_flag $double_flag $debug_flag \
-$opt_flag $warn_flag $profile_flag $gcc_flag $no_x_flag $no_tk_flag \
+$opt_flag $warn_flag $profile_flag $gcc_flag $f2c_flag $no_x_flag $no_tk_flag \
 $no_dp_flag $no_share_flag"
 }
 
