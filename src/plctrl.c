@@ -1512,7 +1512,6 @@ plGetFam(PLStream *pls)
 	    plP_tidy();
 	    pls->member += pls->finc;
 	    pls->famadv = 0;
-	    pls->page = 0;
 	    plP_init();
 	    return;
 	}
