@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/04/30 16:16:32  mjl
+ * Revision 1.5  1994/05/07 03:20:40  mjl
+ * Added entry for: XVisualInfo *vi to XwDev struct, and prototype for new
+ * global function PLX_save_colormap.
+ *
+ * Revision 1.4  1994/04/30  16:16:32  mjl
  * Eliminated unused variables xold, yold, from XwDev definition.
  *
  * Revision 1.3  1994/04/08  12:15:16  mjl
@@ -14,7 +18,6 @@
  *
  * Revision 1.1  1993/12/08  06:20:38  mjl
  * Added for all code/data shared with the xwin driver.
- *
 */
 
 /*	plplotX.h
@@ -44,20 +47,6 @@
 typedef char * caddr_t;
 #endif
 
-/* X driver utility functions */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void  PLColor_to_XColor		(PLColor *, XColor *);
-void  PLColor_from_XColor	(PLColor *, XColor *);
-int   pl_AreWeGrayscale		(Display *);
-
-#ifdef __cplusplus
-}
-#endif
-
 /* One of these holds the X driver state information */
 
 typedef struct {
@@ -67,6 +56,7 @@ typedef struct {
 
     unsigned	width, height;		/* Current window dimensions */
     unsigned	depth, border;		/* window depth & border size */
+    unsigned	pixels;			/* Number of colors available */
 
     double	xscale_init;		/* initial pixels/lx (virt. coords) */
     double	yscale_init;		/* initial pixels/ly (virt. coords) */
@@ -90,11 +80,44 @@ typedef struct {
     int		screen;			/* X screen */
     Display	*display;		/* X display */
     Window	window;			/* X window id */
+    XVisualInfo *vi;			/* X Visual info */
     GC		gc;			/* Graphics context */
     Colormap	map;			/* Colormap */
     Pixmap	pixmap;			/* Off-screen pixmap */
 
     void (*MasterEH) (PLStream *, XEvent *);	/* Master X event handler */
 } XwDev;
+
+/*----------------------------------------------------------------------*\
+*		Function Prototypes
+\*----------------------------------------------------------------------*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Copies the supplied PLColor to an XColor */
+
+void
+PLColor_to_XColor(PLColor *plcolor, XColor *xcolor);
+
+/* Copies the supplied XColor to a PLColor */
+
+void
+PLColor_from_XColor(PLColor *plcolor, XColor *xcolor);
+
+/* Determines if we're using a monochrome or grayscale device */
+
+int
+pl_AreWeGrayscale(Display *display);
+
+/* Saves RGB components of given colormap */
+
+void
+PLX_save_colormap(Display *display, Colormap map);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* __PLPLOTX_H__ */
