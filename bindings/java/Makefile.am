@@ -54,7 +54,7 @@ javaclasses = \
 	plplot/core/SWIGTYPE_p_p_char.class\
 	plplot/core/plplotjavacConstants.class \
 	plplot/core/plplotjavac.class \
-	plplot/core/Plplot.class
+	plplot/core/PLplot.class
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
