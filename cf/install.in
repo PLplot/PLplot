@@ -17,6 +17,7 @@
 #	if Tcl support is not included, TCL_INSTALL will be null.
 #	if C++ support is not included, CXX_INSTALL will be null.
 #
+# If a shared library was built, rebuild executables before installing.
 # -----------------------------------------------------------------------
 
 install: install_lib install_utils \
@@ -59,23 +60,31 @@ install_demos:
 	-$(LN) $(DEMOS_DIR)/tcl/x??.tcl $(DEMOS_DIR)/tk
 
 install_utils:
-	$(LDC) $(LDC_FLAGS) plrender$O $(LIB_INSTALL) \
-		-o plrender$E $(LDC_LIBS)
-	$(LDC) $(LDC_FLAGS) pltek$O $(LIB_INSTALL) \
-		-o pltek$E $(LDC_LIBS)
+	-if [ -d shared ] ; then \
+		 $(LDC) $(LDC_FLAGS) plrender$O $(LIB_INSTALL) \
+			-o plrender$E $(LDC_LIBS); \
+	 fi
+	-if [ -d shared ] ; then \
+		 $(LDC) $(LDC_FLAGS) pltek$O $(LIB_INSTALL) \
+			-o pltek$E $(LDC_LIBS); \
+	 fi
 	-strip plrender$E pltek$E
 	-cp plrender$E pltek$E $(BIN_DIR)
 
 install_tcl:
-	$(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) \
-		-o pltcl$E $(LDC_LIBS)
+	-if [ -d shared ] ; then \
+		 $(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) \
+			-o pltcl$E $(LDC_LIBS); \
+	 fi
 	-strip pltcl$E
 	-cp pltcl$E $(BIN_DIR)
 
 install_tk:
 	-if [ ! -d $(TCL_DIR) ] ; then mkdir -p $(TCL_DIR); fi
-	$(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
-		-o plserver$E $(LDC_LIBS)
+	-if [ -d shared ] ; then \
+		 $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
+			-o plserver$E $(LDC_LIBS); \
+	 fi
 	-strip plserver$E
 	-cp plserver$E $(BIN_DIR)
 	-cd ../drivers/tk; cp *.tcl *.pal tclIndex $(TCL_DIR)
