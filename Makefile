@@ -41,8 +41,8 @@ install:	tmp/Makefile
 clean:		tmp/Makefile
 	cd tmp; $(MAKE) clean
 
-realclean:	tmp/Makefile
-	cd tmp; $(MAKE) realclean
+distclean:	tmp/Makefile
+	cd tmp; $(MAKE) distclean
 
 makefile:	tmp/Makefile
 	cd tmp; $(MAKE) makefile
