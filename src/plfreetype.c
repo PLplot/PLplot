@@ -258,8 +258,14 @@ FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
  * anyway...)
  */
 
+/* (RL, on 2005-01-23) Removed the shift bellow to avoid truncation errors 
+ * later.
     *yy=y>> 6;
     *xx=x>> 6;
+ */
+    *yy = y;
+    *xx = x;
+  
 }
 
 /*----------------------------------------------------------------------*\
@@ -886,9 +892,9 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  * was previously multiplied by height_factor.
  */
 
-    adjust.y = - (FT_Pos) (h / (height_factor * height_factor) / 2.0);
+    adjust.y = - ((FT_Pos) (h / (height_factor * height_factor) / 2.0) >> 6);
 
-    adjust.x=args->just*w;    /* was *-1; but just minus it in a few line time now */
+    adjust.x = args->just * (w >> 6);    /* was *-1; but just minus it in a few line time now */
 
     }
   
