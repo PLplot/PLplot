@@ -509,6 +509,11 @@ fi
 
 AC_PATH_XTRA
 
+### The following seems to be necessary because the replacement of
+### the default value for prefix only happens in AC_OUTPUT (it would be
+### already too late)
+test "x$prefix" = xNONE && prefix=$ac_default_prefix
+
 ### Modify system-dependent results based on availability
 AC_INCLUDE(sysloc.in)
 #disable LIBS so we don't have all libraries mentioned
@@ -794,11 +799,6 @@ AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE, [],
                                [Define if finite is available]))
 AC_CHECK_FUNC(isnan, AC_DEFINE(HAVE_ISNAN, [],
                                [Define if isnan is available]))
-
-### The following seems to be necessary because the replacement of
-### the default value for prefix only happens in AC_OUTPUT (it is already
-### too late)
-test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 ### Define PLplot default install locations:
 ### DATA_DIR, LIB_DIR, INCLUDE_DIR, BIN_DIR, TCL_DIR
