@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/04/08 11:46:44  mjl
+ * Revision 1.2  1994/04/09 03:10:43  furnish
+ * Teeny typo correction to remove duplicate symbols which caused HP to
+ * be unable to produce shared lib.
+ *
+ * Revision 1.1  1994/04/08  11:46:44  mjl
  * New LaserJet IIp driver by Wesley Ebisuzaki, based on old ljii driver.
  * Has compression and other optimizations.
  *
@@ -424,7 +428,7 @@ setpoint(PLINT x, PLINT y)
 
 #else
 int 
-pldummy_ljii()
+pldummy_ljiip()
 {
     return 0;
 }
