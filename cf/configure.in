@@ -1087,6 +1087,8 @@ if test "$enable_tcl" = "yes"; then
     $srcdir/bindings/tcl/tclgen.h \
     $srcdir/bindings/tcl/tclgen_s.h \
     plplot 2>/dev/null
+    # start constructing pkgIndex.tcl
+    cat $srcdir/bindings/tcl/pkgIndex.tcl.in >pkgIndex.tcl
 fi
 
 if test "$enable_tk" = "yes"; then
@@ -1099,6 +1101,9 @@ if test "$enable_tk" = "yes"; then
     ln -s \
     $srcdir/bindings/tk/*.h \
     plplot 2>/dev/null
+
+    # add to pkgIndex.tcl
+    cat $srcdir/bindings/tk/pkgIndex.tcl.in >>pkgIndex.tcl
     
     # tkwin stuff
     # Exclude headers and plwidget2.tcl from the generic symlinks.
@@ -1122,6 +1127,9 @@ if test "$enable_tk" = "yes"; then
 #      ln -s $filename . 2>/dev/null
 #    done
 #    cd $srcdir/tmp
+
+    # add to pkgIndex.tcl
+    cat $srcdir/bindings/tk-x-plat/pkgIndex.tcl.in >>pkgIndex.tcl
 fi
 
 #    $srcdir/bindings/tk/tclIndex 
