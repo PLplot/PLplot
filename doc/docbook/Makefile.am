@@ -40,7 +40,8 @@ $(TARBALL): $(INDEX_HTML)
 	( cd src ; \
           $(MAKE) print )
 	tar cfz $(TARBALL) $(HTML_TARBALL) $(BASE).tar.gz \
-                -C www index.html -C ../src $(BASE).ps.gz $(BASE).dvi
+                -C www index.html \
+                -C ../src $(BASE).ps.gz $(BASE).pdf.gz $(BASE).dvi
 
 www-uninstall:
 	$(RSH_COMMAND) rm -rf $(WWW_DIR)

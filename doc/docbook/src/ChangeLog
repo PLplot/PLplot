@@ -1,3 +1,18 @@
+2000-11-26  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* api.xml: Make pdfjadetex work by getting rid of hyperlinks in
+	functions titles.
+	* Makefile.am (print): Added PDF file dependency.
+	($(BASE).pdf): New rule.
+	(CLEANFILES): Added pattern *.pdf.gz.
+
+2000-11-26  Alan W, Irwin  <irwin@beluga.phys.uvic.ca>
+
+	* Makefile.am ($(HTML_MANIFEST)): Fixed source dependency.
+
+	* api.xml: Improved documentation for plshade and plshade1.
+	* advanced.xml: Minor fixes.
+
 2000-11-24  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* plplotdoc-print.dsl.in, plplotdoc-html.dsl.in (element

@@ -1486,7 +1486,7 @@ origin
     <title>
       <function>plcont</function>: Contour plot, fixed linear mapping (C
       function. For documentation of the equivalent Fortran subroutine see
-      &plcontfortran;)
+      plcontfortran)
     </title>
 
     <para>
@@ -1676,7 +1676,7 @@ origin
     <title>
       <function>plcont</function>: Contour plot, fixed linear mapping
       (Fortran subroutine. For documentation of the equivalent C function
-      see &plcont;)
+      see plcont)
     </title>
 
     <para>
@@ -3923,7 +3923,7 @@ space for this (80 characters is safe).
   <sect1 id="plmesh" renderas="sect3">
     <title>
       <function>plmesh</function>: Plot surface mesh 
-(C function. For documentation of the equivalent Fortran subroutine see &plmeshfortran;)
+(C function. For documentation of the equivalent Fortran subroutine see plmeshfortran)
     </title>
 
     <para>
@@ -4063,7 +4063,7 @@ space for this (80 characters is safe).
   <sect1 id="plmeshfortran" renderas="sect3">
     <title>
       <function>plmesh</function>: Plot surface mesh
-(Fortran subroutine. For documentation of the equivalent C function see &plmesh;)
+(Fortran subroutine. For documentation of the equivalent C function see plmesh)
     </title>
 
     <para>
@@ -4293,7 +4293,7 @@ default
     <title>
       <function>plot3d</function>: Plot 3-d surface plot
 (C function. For documentation of the equivalent Fortran subroutine see
-&plot3dfortran;)
+plot3dfortran)
     </title>
 
     <para>
@@ -4447,7 +4447,7 @@ default
   <sect1 id="plot3dfortran" renderas="sect3">
     <title>
       <function>plot3d</function>: Plot 3-d surface plot
-(Fortran subroutine. For documentation of the equivalent C function see &plot3d;)
+(Fortran subroutine. For documentation of the equivalent C function see plot3d)
     </title>
 
     <para>

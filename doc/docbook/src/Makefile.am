@@ -2,7 +2,7 @@
 # Description: Automake template for the PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Fri Nov 24 18:34:49 CET 2000
+# Last modified on: Sun Nov 26 14:37:21 CET 2000
 # $Id$
 
 MASTER_XML = plplotdoc.xml
@@ -36,10 +36,11 @@ STYLESHEETS_IN = \
 EXTRA_DIST = $(SOURCE_FILES) $(STYLESHEETS_IN)
 CLEANFILES = \
   *.$(HTML_EXT) *.$(JPEG_EXT) $(HTML_MANIFEST) $(JPEG_MANIFEST) \
-  *.jadetex *.aux *.dvi *.ps.gz inline.ent *.log *.eps TMP.*
+  *.jadetex *.aux *.dvi *.ps.gz *.pdf* inline.ent *.log *.eps TMP.*
 
 JADE = @JADE@
 JADETEX = @JADETEX@
+PDFJADETEX = @PDFJADETEX@
 PERL = @PERL@
 LATEX = @LATEX@
 DVIPS = @DVIPS@
@@ -75,16 +76,20 @@ over-under.jpeg: over-under-big.eps $(BINDIR)/eps2jpeg.pl.in
 	$(PERL) $(BINDIR)/eps2jpeg.pl -g 35% -i over-under-big.eps -o $@
 
 
-print: $(BASE).ps.gz $(BASE).dvi
+print: $(BASE).ps.gz $(BASE).dvi $(BASE).pdf.gz
 
 %.ps.gz: %.dvi
 	$(DVIPS) -f $< | gzip -c > $@
 
+$(BASE).pdf.gz: $(BASE).dvi
+	-$(PDFJADETEX) $(BASE).jadetex 
+	gzip -9 $(BASE).pdf
+
 $(BASE).dvi: $(BASE).jadetex over-under.eps
 	$(JADETEX) $< 
-	if ! cmp $(shell basename $< .tex).aux prior.aux 2>/dev/null && \
+	if ! cmp $(BASE).aux prior.aux 2>/dev/null && \
 	   expr $(MAKELEVEL) '<' $(MAX_TEX_RECURSION); then \
-	        cp -pf $(shell basename $< .tex).aux prior.aux ; \
+	        cp -pf $(BASE).aux prior.aux ; \
 		rm -f $@ ; \
 		$(MAKE) $@ ; \
 	fi

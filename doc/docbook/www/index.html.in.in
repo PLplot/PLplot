@@ -8,7 +8,8 @@
     <h1>PLplot Documentation</h1>
     <ul>
       <li> <a href="@BASE_HTML@">Browse the latest on-line documentation</a>
-      <li> <a href="@BASE@.ps.gz">Postscript form of documentation @SIZE@</a>
+      <li> <a href="@BASE@.ps.gz">PostScript form of documentation @SIZE@</a>
+      <li> <a href="@BASE@.pdf.gz">PDF form of documentation @SIZE@</a>
       <li> <a href="@BASE@.dvi">DVI form of documentation @SIZE@</a>
       <li> <a href="@BASE@.tar.gz">DocBook source tarball @SIZE@</a>
       <li> <a href="@BASE_HTML@.tar.gz">HTML results tarball @SIZE@</a>

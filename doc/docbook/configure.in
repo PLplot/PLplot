@@ -216,6 +216,7 @@ dnl Check programs
 
 CHECK_PROG(jade, [HTML PRINT], http://www.jclark.com/jade/)
 CHECK_PROG(jadetex, PRINT, http://www.tug.org/applications/jadetex/)
+CHECK_PROG(pdfjadetex, PRINT, http://www.tug.org/applications/jadetex/)
 CHECK_PROG(perl, [HTML PRINT], http://www.perl.com)
 CHECK_PROG(mogrify, HTML, ftp://ftp.wizards.dupont.com/pub/ImageMagick/)
 CHECK_PROG(latex, PRINT, http://www.ctan.org)

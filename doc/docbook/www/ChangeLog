@@ -1,3 +1,11 @@
+2000-11-26  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* index.html.in.in: Added link to PDF form of documentation.
+
+2000-11-25  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* File www/index.html.in is renamed to www/index.html.in.in.  
+	
 2000-11-24  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* index.html.in: Added link to DVI form of documentation.
