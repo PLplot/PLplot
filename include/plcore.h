@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/03/08 21:47:48  mjl
-   Added a type field for each driver to the dispatch table.  Used for
-   determining whether a device is file-oriented or not.
+   Revision 1.5  1993/03/15 21:45:18  mjl
+   Changed _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.
 
+ * Revision 1.4  1993/03/08  21:47:48  mjl
+ * Added a type field for each driver to the dispatch table.  Used for
+ * determining whether a device is file-oriented or not.
+ *
  * Revision 1.3  1993/03/03  19:42:16  mjl
  * Changed PLSHORT -> short everywhere; now all device coordinates are expected
  * to fit into a 16 bit address space (reasonable, and good for performance).
@@ -78,13 +82,10 @@ static PLStream pls[PL_NSTREAMS];
 *
 * pl_polyline	Draws a polyline (no broken segments).
 *
-* pl_clear	Clears screen or ejects page or closes file (see note). 
+* pl_eop	Finishes out current page (see note). 
 *
-* pl_page	Set up for plotting on a new page. May also open a new
+* pl_bop	Set up for plotting on a new page. May also open a new
 *		a new graphics file (see note). 
-*
-* pl_adv	Advances to new page.  Same as a pl_clear followed by a
-*		pl_page on most devices.
 *
 * pl_tidy	Tidy up. May close graphics file (see note). 
 *
@@ -102,9 +103,9 @@ static PLStream pls[PL_NSTREAMS];
 *	graphics file, in which case the graphics file should be opened 
 *	in the pl_init() routine, closed in pl_tidy(), and page advances
 *	done by pl_adv(). If multi-page plots need to be stored in
-*	different files then pl_page() should open the file and pl_clear()
-*	should close it. Do NOT open files in both pl_init() and pl_page()
-*	or close files in both pl_clear() and pl_tidy().
+*	different files then pl_bop() should open the file and pl_eop()
+*	should close it. Do NOT open files in both pl_init() and pl_bop()
+*	or close files in both pl_eop() and pl_tidy().
 \*----------------------------------------------------------------------*/
 
 typedef struct {
@@ -114,8 +115,8 @@ typedef struct {
    void (*pl_init)	(PLStream *);
    void (*pl_line)	(PLStream *, short, short, short, short);
    void (*pl_polyline)	(PLStream *, short *, short *, PLINT);
-   void (*pl_clear)	(PLStream *);
-   void (*pl_page)	(PLStream *);
+   void (*pl_eop)	(PLStream *);
+   void (*pl_bop)	(PLStream *);
    void (*pl_tidy)	(PLStream *);
    void (*pl_color)	(PLStream *);
    void (*pl_text)	(PLStream *);
@@ -149,8 +150,8 @@ static PLDispatchTable dispatch_table[] = {
         nx_init,
         nx_line,
         nx_polyline,
-        nx_clear,
-        nx_page,
+        nx_eop,
+        nx_bop,
         nx_tidy,
         nx_color,
         nx_text,
@@ -168,8 +169,8 @@ static PLDispatchTable dispatch_table[] = {
 	amiwn_init,
 	amiwn_line,
 	amiwn_polyline,
-	amiwn_clear,
-	amiwn_page,
+	amiwn_eop,
+	amiwn_bop,
 	amiwn_tidy,
 	amiwn_color,
 	amiwn_text,
@@ -187,8 +188,8 @@ static PLDispatchTable dispatch_table[] = {
 	os2_init,
 	os2_line,
 	os2_polyline,
-	os2_clear,
-	os2_page,
+	os2_eop,
+	os2_bop,
 	os2_tidy,
 	os2_color,
 	os2_text,
@@ -206,8 +207,8 @@ static PLDispatchTable dispatch_table[] = {
 	xm_init,
 	xm_line,
 	xm_polyline,
-	xm_clear,
-	xm_page,
+	xm_eop,
+	xm_bop,
 	xm_tidy,
 	xm_color,
 	xm_text,
@@ -225,8 +226,8 @@ static PLDispatchTable dispatch_table[] = {
 	xw_init,
 	xw_line,
 	xw_polyline,
-	xw_clear,
-	xw_page,
+	xw_eop,
+	xw_bop,
 	xw_tidy,
 	xw_color,
 	xw_text,
@@ -244,8 +245,8 @@ static PLDispatchTable dispatch_table[] = {
 	vga_init,
 	vga_line,
 	vga_polyline,
-	vga_clear,
-	vga_page,
+	vga_eop,
+	vga_bop,
 	vga_tidy,
 	vga_color,
 	vga_text,
@@ -263,8 +264,8 @@ static PLDispatchTable dispatch_table[] = {
 	svga_init,
 	svga_line,
 	svga_polyline,
-	svga_clear,
-	svga_page,
+	svga_eop,
+	svga_bop,
 	svga_tidy,
 	svga_color,
 	svga_text,
@@ -282,8 +283,8 @@ static PLDispatchTable dispatch_table[] = {
 	xte_init,
 	xte_line,
 	xte_polyline,
-	xte_clear,
-	xte_page,
+	xte_eop,
+	xte_bop,
 	xte_tidy,
 	xte_color,
 	xte_text,
@@ -301,8 +302,8 @@ static PLDispatchTable dispatch_table[] = {
 	tekt_init,
 	tek_line,
 	tek_polyline,
-	tek_clear,
-	tek_page,
+	tek_eop,
+	tek_bop,
 	tek_tidy,
 	tek_color,
 	tek_text,
@@ -320,8 +321,8 @@ static PLDispatchTable dispatch_table[] = {
 	dg_init,
 	dg_line,
 	dg_polyline,
-	dg_clear,
-	dg_page,
+	dg_eop,
+	dg_bop,
 	dg_tidy,
 	dg_color,
 	dg_text,
@@ -341,8 +342,8 @@ static PLDispatchTable dispatch_table[] = {
 	plm_init,
 	plm_line,
 	plm_polyline,
-	plm_clear,
-	plm_page,
+	plm_eop,
+	plm_bop,
 	plm_tidy,
 	plm_color,
 	plm_text,
@@ -360,8 +361,8 @@ static PLDispatchTable dispatch_table[] = {
 	tekf_init,
 	tek_line,
 	tek_polyline,
-	tek_clear,
-	tek_page,
+	tek_eop,
+	tek_bop,
 	tek_tidy,
 	tek_color,
 	tek_text,
@@ -379,8 +380,8 @@ static PLDispatchTable dispatch_table[] = {
 	ps_init,
 	ps_line,
 	ps_polyline,
-	ps_clear,
-	ps_page,
+	ps_eop,
+	ps_bop,
 	ps_tidy,
 	ps_color,
 	ps_text,
@@ -398,8 +399,8 @@ static PLDispatchTable dispatch_table[] = {
 	xfig_init,
 	xfig_line,
 	xfig_polyline,
-	xfig_clear,
-	xfig_page,
+	xfig_eop,
+	xfig_bop,
 	xfig_tidy,
 	xfig_color,
 	xfig_text,
@@ -417,8 +418,8 @@ static PLDispatchTable dispatch_table[] = {
 	jet_init,
 	jet_line,
 	jet_polyline,
-	jet_clear,
-	jet_page,
+	jet_eop,
+	jet_bop,
 	jet_tidy,
 	jet_color,
 	jet_text,
@@ -436,8 +437,8 @@ static PLDispatchTable dispatch_table[] = {
 	amipr_init,
 	amipr_line,
 	amipr_polyline,
-	amipr_clear,
-	amipr_page,
+	amipr_eop,
+	amipr_bop,
 	amipr_tidy,
 	amipr_color,
 	amipr_text,
@@ -455,8 +456,8 @@ static PLDispatchTable dispatch_table[] = {
 	iff_init,
 	iff_line,
 	iff_polyline,
-	iff_clear,
-	iff_page,
+	iff_eop,
+	iff_bop,
 	iff_tidy,
 	iff_color,
 	iff_text,
@@ -474,8 +475,8 @@ static PLDispatchTable dispatch_table[] = {
 	aegis_init,
 	aegis_line,
 	aegis_polyline,
-	aegis_clear,
-	aegis_page,
+	aegis_eop,
+	aegis_bop,
 	aegis_tidy,
 	aegis_color,
 	aegis_text,
@@ -493,8 +494,8 @@ static PLDispatchTable dispatch_table[] = {
 	hp7470_init,
 	hp7470_line,
 	hp7470_polyline,
-	hp7470_clear,
-	hp7470_page,
+	hp7470_eop,
+	hp7470_bop,
 	hp7470_tidy,
 	hp7470_color,
 	hp7470_text,
@@ -512,8 +513,8 @@ static PLDispatchTable dispatch_table[] = {
 	hp7580_init,
 	hp7580_line,
 	hp7580_polyline,
-	hp7580_clear,
-	hp7580_page,
+	hp7580_eop,
+	hp7580_bop,
 	hp7580_tidy,
 	hp7580_color,
 	hp7580_text,
@@ -531,8 +532,8 @@ static PLDispatchTable dispatch_table[] = {
 	imp_init,
 	imp_line,
 	imp_polyline,
-	imp_clear,
-	imp_page,
+	imp_eop,
+	imp_bop,
 	imp_tidy,
 	imp_color,
 	imp_text,
@@ -550,8 +551,8 @@ static PLDispatchTable dispatch_table[] = {
 	null_init,
 	null_line,
 	null_polyline,
-	null_clear,
-	null_page,
+	null_eop,
+	null_bop,
 	null_tidy,
 	null_color,
 	null_text,
