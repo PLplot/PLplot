@@ -243,6 +243,7 @@ plD_init_vga(PLStream *pls)
     pls->page = 0;
     pls->graphx = TEXT_MODE;
     pls->dev_fill0 = 1;
+    pls->dev_xor = 1;           /* device support xor mode */
 
     if (!pls->colorset)
 	pls->color = 1;
