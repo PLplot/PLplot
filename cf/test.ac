@@ -22,7 +22,11 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-### Create list of valid examples subdirectories
+dnl Find dirname program, needed by test/plplot-test.sh
+
+AC_CHECK_PROGS(DIRNAME, dirname, [])
+
+dnl Create list of valid examples subdirectories
 
 EXAMPLES_DIRECTORIES=c
 test "$enable_cxx" = yes && EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES c++"
