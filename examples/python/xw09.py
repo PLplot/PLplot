@@ -211,16 +211,16 @@ def main():
 	    
     # Plot using mypltr (scaled identity) transformation used to create
     # xg0 and yg0
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, clevel, mypltr, tr)
-    plstyl([mark], [space])
-    plcol0(3)
-    plcont(w, clevel, mypltr, tr)
-    plstyl([], [])
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+#    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+#    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
+#    plcol0(2)
+#    plcont(z, clevel, mypltr, tr)
+#    plstyl([mark], [space])
+#    plcol0(3)
+#    plcont(w, clevel, mypltr, tr)
+#    plstyl([], [])
+#    plcol0(1)
+#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
@@ -245,19 +245,19 @@ def main():
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, clevel, pltr1, xg1, yg1)
-    plstyl([mark], [space])
-    plcol0(3)
-    plcont(w, clevel, pltr1, xg1, yg1)
-    plstyl([], [])
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+#    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
+#    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
+#    plcol0(2)
+#    plcont(z, clevel, pltr1, xg1, yg1)
+#    plstyl([mark], [space])
+#    plcol0(3)
+#    plcont(w, clevel, pltr1, xg1, yg1)
+#    plstyl([], [])
+#    plcol0(1)
+#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+#    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+#
     # Plot using 2D coordinate transformation.
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
     plcont(z, clevel, pltr2, xg2, yg2)
@@ -268,28 +268,28 @@ def main():
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, clevel, pltr2, xg2, yg2)
-    plstyl([mark], [space])
-    plcol0(3)
-    plcont(w, clevel, pltr2, xg2, yg2)
-    plstyl([], [])
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+#    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
+#    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
+#    plcol0(2)
+#    plcont(z, clevel, pltr2, xg2, yg2)
+#    plstyl([mark], [space])
+#    plcol0(3)
+#    plcont(w, clevel, pltr2, xg2, yg2)
+#    plstyl([], [])
+#    plcol0(1)
+#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+#
 #   polar contour examples.
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
     polar()
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-    polar()
+#    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
+#    polar()
 
 #   potential contour examples.
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
     potential()
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-    potential()
+#    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
+#    potential()
 
 # Restore defaults
     plcol0(1)
