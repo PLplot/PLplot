@@ -1,7 +1,10 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.10  1995/03/21 19:40:32  mjl
+ * Revision 1.11  1995/06/01 21:19:29  mjl
+ * Eliminated extraneous include of tcl.h.
+ *
+ * Revision 1.10  1995/03/21  19:40:32  mjl
  * Added interpreter to tclMatrix struct for more robust resource recovery.
  *
  * Revision 1.9  1994/08/11  01:43:07  furnish
@@ -266,8 +269,6 @@ class TclMatFloat {
 extern "C" {
 /*---------------------------------------------------------------------------*/
 #endif
-
-#include <tcl.h>
 
 /* This procedure is invoked to process the "matrix" Tcl command. */
 
