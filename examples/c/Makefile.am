@@ -45,7 +45,8 @@ examples_c_DATA = \
 	x17c.c \
 	x18c.c \
 	x19c.c \
-	x20c.c
+	x20c.c \
+	x21c.c
 
 .samename/Makefile: Makefile.examples
 	mkdir -p .samename
@@ -73,7 +74,8 @@ check_PROGRAMS = \
 	x17c \
 	x18c \
 	x19c \
-	x20c
+	x20c \
+	x21c
 
 x01c_LDFLAGS = $(libplplot)
 x02c_LDFLAGS = $(libplplot)
@@ -95,6 +97,7 @@ x17c_LDFLAGS = $(libplplot)
 x18c_LDFLAGS = $(libplplot)
 x19c_LDFLAGS = $(libplplot)
 x20c_LDFLAGS = $(libplplot)
+x21c_LDFLAGS = $(libplplot)
 
 EXTRA_DIST = $(examples_c_DATA) Makefile.examples.in
 DISTCLEANFILES = Makefile.examples .samename/Makefile
