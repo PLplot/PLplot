@@ -23,6 +23,9 @@ TKLIBSTR=-ltk
 ITCLLIBSTR=-litcl
 TCLLIBSTR=-ltcl
 XLIBSTR=-lX11
+GDLIBSTR=-lgd
+PNGLIBSTR=-lpng
+ZLIBLIBSTR=-lz
 
 # Add the current directory to the include path.  This must occur
 # first in the list, before we add the directories for any auxilliary
@@ -73,7 +76,7 @@ if test "$enable_xwin" = "yes"; then
 	    /usr/local/include \
 	    /usr/unsupported/include"
 
-	    for dir in $places; do
+	    for dir in $incdirs; do
 		if test -r "$dir/X11/Intrinsic.h"; then
 		    XINCDIR="$dir"
 		    break
@@ -106,7 +109,7 @@ if test "$enable_xwin" = "yes"; then
 	    /usr/local/lib \
 	    /usr/unsupported/lib"
 
-	    for dir in $places; do
+	    for dir in $libdirs; do
 		if test -r "$dir/libX11.a"; then
 		    XLIBDIR="$dir"
 		    break
@@ -115,11 +118,155 @@ if test "$enable_xwin" = "yes"; then
 	    if test -z "$XLIBDIR"; then
 		AC_MSG_RESULT(warning: X11 library not found)
 		XLIBDIR=default
+		enable_xwin=no
 	    fi ])
 	fi
 	if test "$XLIBDIR" = "/usr/lib"; then
 	    XLIBDIR=default
 	fi
+    fi
+fi
+
+# ----------------------------------------------------------------------------
+# Find libgd, libpng, and zlib libraries and headers required for building 
+# gd_png driver.  Written by Alan W. Irwin following what is done for X.
+# ----------------------------------------------------------------------------
+
+if test "$enable_gd" = "yes"; then
+    if test -z "$GDINCDIR"; then
+        AC_TRY_CPP([#include <gd.h>], [ GDINCDIR=default ], [
+	incdirs="\
+	/usr/include \
+	/usr/local/include"
+
+        for dir in $incdirs; do
+	    if test -r "$dir/gd.h"; then
+	       GDINCDIR="$dir"
+	       break
+	    fi
+	done
+	if test -z "$GDINCDIR"; then
+	    AC_MSG_RESULT(warning: gd header files not found)
+	    GDINCDIR=default
+	    enable_gd=no
+	fi ])
+    fi
+    if test "$GDINCDIR" = "/usr/include"; then
+        GDINCDIR=default
+    fi
+
+    if test -z "$GDLIBDIR"; then
+        AC_CHECK_LIB(gd, main, [ GDLIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libgd.a"; then
+	        GDLIBDIR="$dir"
+		break
+	    fi
+	done
+	if test -z "$GDLIBDIR"; then
+	    AC_MSG_RESULT(warning: gd library not found)
+	    GDLIBDIR=default
+	    enable_gd=no
+	fi ])
+    fi
+    if test "$GDLIBDIR" = "/usr/lib"; then
+        GDLIBDIR=default
+    fi
+fi
+
+if test "$enable_gd" = "yes"; then
+    if test -z "$PNGINCDIR"; then
+        AC_TRY_CPP([#include <png.h>], [ PNGINCDIR=default ], [
+	incdirs="\
+	/usr/include \
+	/usr/local/include"
+
+        for dir in $incdirs; do
+	    if test -r "$dir/png.h"; then
+	       PNGINCDIR="$dir"
+	       break
+	    fi
+	done
+	if test -z "$PNGINCDIR"; then
+	    AC_MSG_RESULT(warning: png header files not found)
+	    PNGINCDIR=default
+	    enable_gd=no
+	fi ])
+    fi
+    if test "$PNGINCDIR" = "/usr/include"; then
+        PNGINCDIR=default
+    fi
+
+    if test -z "$PNGLIBDIR"; then
+        AC_CHECK_LIB(png, main, [ PNGLIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libpng.a"; then
+	        PNGLIBDIR="$dir"
+		break
+	    fi
+	done
+	if test -z "$PNGLIBDIR"; then
+	    AC_MSG_RESULT(warning: png library not found)
+	    PNGLIBDIR=default
+	    enable_gd=no
+	fi ])
+    fi
+    if test "$PNGLIBDIR" = "/usr/lib"; then
+        PNGLIBDIR=default
+    fi
+fi
+
+if test "$enable_gd" = "yes"; then
+    if test -z "$ZLIBINCDIR"; then
+        AC_TRY_CPP([#include <zlib.h>], [ ZLIBINCDIR=default ], [
+	incdirs="\
+	/usr/include \
+	/usr/local/include"
+
+        for dir in $incdirs; do
+	    if test -r "$dir/zlib.h"; then
+	       ZLIBINCDIR="$dir"
+	       break
+	    fi
+	done
+	if test -z "$ZLIBINCDIR"; then
+	    AC_MSG_RESULT(warning: zlib header files not found)
+	    ZLIBINCDIR=default
+	    enable_gd=no
+	fi ])
+    fi
+    if test "$ZLIBINCDIR" = "/usr/include"; then
+        ZLIBINCDIR=default
+    fi
+
+    if test -z "$ZLIBLIBDIR"; then
+        AC_CHECK_LIB(z, main, [ ZLIBLIBDIR=default ], [
+	libdirs="\
+	/usr/lib \
+	/usr/local/lib"
+
+        for dir in $libdirs; do
+	    if test -r "$dir/libz.a"; then
+	        ZLIBLIBDIR="$dir"
+		break
+	    fi
+	done
+	if test -z "$ZLIBLIBDIR"; then
+	    AC_MSG_RESULT(warning: zlib library not found)
+	    ZLIBLIBDIR=default
+	    enable_gd=no
+	fi ])
+    fi
+    if test "$ZLIBLIBDIR" = "/usr/lib"; then
+        ZLIBLIBDIR=default
     fi
 fi
 
@@ -325,6 +472,11 @@ fi
 if test "$enable_xwin" = "yes"; then
     ADD_TO_INCS($XINCDIR, INCS, INCPATH)
 fi
+if test "$enable_gd" = "yes"; then
+    ADD_TO_INCS($GDINCDIR, INCS, INCPATH)
+    ADD_TO_INCS($PNGINCDIR, INCS, INCPATH)
+    ADD_TO_INCS($ZLIBINCDIR, INCS, INCPATH)
+fi
 if test "$enable_tcl" = "yes"; then
     ADD_TO_INCS($TCLINCDIR, INCS, INCPATH)
 fi
@@ -360,6 +512,11 @@ if test "$enable_tcl" = "yes"; then
 fi
 if test "$enable_xwin" = "yes"; then
     ADD_TO_LIBS($XLIBDIR, $XLIBSTR, LIBS, LIBPATH)
+fi
+if test "$enable_gd" = "yes"; then
+    ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, LIBS, LIBPATH)
+    ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, LIBS, LIBPATH)
+    ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, LIBS, LIBPATH)
 fi
 if test ! -z "$TCL_DL_LIBS"; then
     ADD_TO_LIBS( default, $TCL_DL_LIBS, LIBS, LIBPATH)
