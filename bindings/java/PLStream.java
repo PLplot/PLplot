@@ -42,10 +42,22 @@ public class PLStream {
 // The PLplot core API function calls.
     public native void adv( int page );
 
-// arrows
-// axes
-// bin
-// bop
+    public native void arrows( float[] u, float[] v, float[] x, float[] y,
+                               int n, float scale, float dx, float dy );
+    public native void arrows( double[] u, double[] v, double[] x, double[] y,
+                               int n, double scale, double dx, double dy );
+
+    public native void axes( float x0, float y0,
+                             String xopt, float xtick, int nxsub,
+                             String yopt, float ytick, int nysub );
+    public native void axes( double x0, double y0,
+                             String xopt, double xtick, int nxsub,
+                             String yopt, double ytick, int nysub );
+
+    public native void bin( int nbin, float[] x, float[] y, int center );
+    public native void bin( int nbin, double[] x, double[] y, int center );
+
+    public native void bop();
 
     public native void box( String xopt, float xtick, int nxsub,
                             String yopt, float ytick, int nysub );
@@ -74,17 +86,22 @@ public class PLStream {
 
     public native void end();
 
-// end1
+// end1?
 
     public native void env( float xmin, float xmax, float ymin, float ymax,
                             int just, int axis );
     public native void env( double xmin, double xmax, double ymin, double ymax,
                             int just, int axis );
 
-// eop
-// errx
-// erry
-// famadv
+    public native void eop();
+
+    public native void errx( int n, float[] xmin, float[] xmax, float[] y );
+    public native void errx( int n, double[] xmin, double[] xmax, double[] y );
+
+    public native void erry( int n, float[] x, float[] ymin, float[] ymax );
+    public native void erry( int n, double[] x, double[] ymin, double[] ymax );
+
+    public native void famadv();
 
     public native void fill( int n, float[] x, float[] y );
     public native void fill( int n, double[] x, double[] y );
