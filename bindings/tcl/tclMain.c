@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/06/30 18:52:53  mjl
+ * Revision 1.4  1994/09/18 07:15:39  mjl
+ * Changed the syntax for pltclMain() in order for it to work better with
+ * shared libraries.  In particular, Tcl_AppInit is no longer external but
+ * passed as a function pointer.
+ *
+ * Revision 1.3  1994/06/30  18:52:53  mjl
  * Minor change to eliminate a warning.
  *
  * Revision 1.2  1994/06/24  20:40:45  mjl
@@ -21,9 +26,10 @@
  *
  * Modifications include:
  * 1. main() changed to pltclMain().
- * 2. tcl_RcFileName changed to pltcl_RcFileName.
- * 3. Changes to work with ANSI C
- * 4. Changes to support user-installable error handler.
+ * 2. tcl_RcFileName -> RcFileName, now passed in through the argument list. 
+ * 3. Tcl_AppInit -> AppInit, now passed in through the argument list.
+ * 4. Changes to work with ANSI C
+ * 5. Changes to support user-installable error handler.
  *
  * The original notes follow.
  */
@@ -75,11 +81,6 @@ extern char *		strcpy _ANSI_ARGS_((char *dst, CONST char *src));
 static Tcl_Interp *interp;	/* Interpreter for application. */
 static Tcl_DString command;	/* Used to buffer incomplete commands being
 				 * read from stdin. */
-char *pltcl_RcFileName = NULL;	/* Name of a user-specific startup script
-				 * to source if the application is being run
-				 * interactively (e.g. "~/.tclshrc").  Set
-				 * by Tcl_AppInit.  NULL means don't source
-				 * anything ever. */
 #ifdef TCL_MEM_DEBUG
 static char dumpFile[100];	/* Records where to dump memory allocation
 				 * information. */
@@ -121,7 +122,8 @@ void (*tclErrorHandler)
  */
 
 int
-pltclMain(int argc, char **argv)
+pltclMain(int argc, char **argv, char *RcFileName,
+	  int (*AppInit)(Tcl_Interp *interp))
 {
     char buffer[1000], *cmd, *args, *fileName;
     int code, gotPartial, tty;
@@ -166,8 +168,8 @@ pltclMain(int argc, char **argv)
      * Invoke application-specific initialization.
      */
 
-    if (Tcl_AppInit(interp) != TCL_OK) {
-	fprintf(stderr, "Tcl_AppInit failed: %s\n", interp->result);
+    if ((*AppInit)(interp) != TCL_OK) {
+	fprintf(stderr, "(*AppInit) failed: %s\n", interp->result);
     }
 
     /*
@@ -186,15 +188,15 @@ pltclMain(int argc, char **argv)
 
     /*
      * We're running interactively.  Source a user-specific startup
-     * file if Tcl_AppInit specified one and if the file exists.
+     * file if the name was specified and if the file exists.
      */
 
-    if (pltcl_RcFileName != NULL) {
+    if (RcFileName != NULL) {
 	Tcl_DString buffer;
 	char *fullName;
 	FILE *f;
 
-	fullName = Tcl_TildeSubst(interp, pltcl_RcFileName, &buffer);
+	fullName = Tcl_TildeSubst(interp, RcFileName, &buffer);
 	if (fullName == NULL) {
 	    fprintf(stderr, "%s\n", interp->result);
 	} else {

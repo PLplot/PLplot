@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/08/25 04:05:16  mjl
+ * Revision 1.6  1994/09/18 07:15:42  mjl
+ * Changed the syntax for pltclMain() in order for it to work better with
+ * shared libraries.  In particular, Tcl_AppInit is no longer external but
+ * passed as a function pointer.
+ *
+ * Revision 1.5  1994/08/25  04:05:16  mjl
  * Fixed error output; removes spurious <RET> at end.
  *
  * Revision 1.4  1994/07/19  22:33:16  mjl
@@ -45,6 +50,9 @@
 static void
 plErrorHandler(Tcl_Interp *interp, int code, int tty);
 
+static int
+AppInit(Tcl_Interp *interp);
+
 extern void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty);
 
 /*----------------------------------------------------------------------*\
@@ -63,7 +71,7 @@ main(int argc, char **argv)
 {
     (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
 
-    exit(pltclMain(argc, argv));
+    exit(pltclMain(argc, argv, NULL, AppInit));
 }
 
 /*----------------------------------------------------------------------*\
@@ -95,7 +103,7 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_AppInit --
+ * AppInit --
  *
  *	This procedure performs application-specific initialization.
  *	Most applications, especially those that incorporate additional
@@ -111,9 +119,8 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
  *----------------------------------------------------------------------
  */
 
-int
-Tcl_AppInit(interp)
-    Tcl_Interp *interp;		/* Interpreter for application. */
+static int
+AppInit(Tcl_Interp *interp)
 {
     /*
      * Call the init procedures for included packages.  Each call should
