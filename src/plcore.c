@@ -1,6 +1,17 @@
 /* $Id$
  * $Log$
- * Revision 1.32  1994/06/09 20:31:30  mjl
+ * Revision 1.33  1994/06/30 18:26:16  mjl
+ * All core source files: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), and other minor changes.  Now each file has
+ * global access to the plstream pointer via extern; many accessor functions
+ * eliminated as a result.  Driver interface changed to keep track of current
+ * status; plsc->status is set to one of AT_BOP, DRAWING, or AT_EOP.  This
+ * makes it easy to catch missing plbop/pleop's, and to collapse multiple
+ * plbop's or pleop's into a single one.  Subpage initialization code moved
+ * to plpage.c.
+ *
+ * Revision 1.32  1994/06/09  20:31:30  mjl
  * Small changes to the way plmkstrm() works.
  *
  * Revision 1.31  1994/05/07  03:23:07  mjl
@@ -41,18 +52,6 @@
  * Revision 1.25  1994/01/17  21:36:51  mjl
  * Added function c_plgcol0 for retrieving RGB color values from cmap0
  * entries.  User-contributed (I lost track of who sent it).
- *
- * Revision 1.24  1993/12/06  07:46:52  mjl
- * More modifications to support new color model.
- *
- * Revision 1.23  1993/11/15  08:38:35  mjl
- * Added documentation.  Fixed plflush to be callable from Fortran.
- * Moved plexit to this file and changed it to set nopause before issuing the
- * final end-of-page command.
- *
- * Revision 1.22  1993/11/07  09:07:38  mjl
- * Changed plflush() to call escape function if driver wants to handle
- * flushes itself.  Also found & fixed a bug in plcpstrm.
 */
 
 /*	plcore.c
@@ -67,33 +66,35 @@
 #include "plcore.h"
 
 /*----------------------------------------------------------------------*\
-* Driver Interface
-*
-* These routines are the low-level interface to the driver -- all calls
-* to driver functions must pass through here.  For implementing driver-
-* specific functions, the escape function is provided.  The command stream
-* gets duplicated to the plot buffer here.
-*
-* All functions that result in graphics actually being plotted (rather
-* than just a change of state) are filtered as necessary before being
-* passed on.  The default settings do not require any filtering, i.e.
-* plplot physical coordinates are the same as the device physical
-* coordinates (currently this can't be changed anyway), and a global view
-* equal to the entire page is used.
-*
-* The reason one wants to put view-specific filtering here is that if
-* enabled, the plot buffer should receive the unfiltered data stream.
-* This allows a specific view to be used from an interactive device
-* (e.g. TCL/TK driver) but be restored to the full view at any time
-* merely by reprocessing the contents of the plot buffer.
-*
-* The metafile, on the other hand, *should* be affected by changes in the
-* view, since this is a crucial editing capability.  It is recommended
-* that the initial metafile be created without a restricted global view,
-* and modification of the view done on a per-plot basis as desired during
-* subsequent processing.
-*
+ * Driver Interface
+ *
+ * These routines are the low-level interface to the driver -- all calls
+ * to driver functions must pass through here.  For implementing driver-
+ * specific functions, the escape function is provided.  The command
+ * stream gets duplicated to the plot buffer here.
+ *
+ * All functions that result in graphics actually being plotted (rather
+ * than just a change of state) are filtered as necessary before being
+ * passed on.  The default settings do not require any filtering, i.e.
+ * plplot physical coordinates are the same as the device physical
+ * coordinates (currently this can't be changed anyway), and a global view
+ * equal to the entire page is used.
+ *
+ * The reason one wants to put view-specific filtering here is that if
+ * enabled, the plot buffer should receive the unfiltered data stream.
+ * This allows a specific view to be used from an interactive device
+ * (e.g. TCL/TK driver) but be restored to the full view at any time
+ * merely by reprocessing the contents of the plot buffer.
+ *
+ * The metafile, on the other hand, *should* be affected by changes in the
+ * view, since this is a crucial editing capability.  It is recommended
+ * that the initial metafile be created without a restricted global view,
+ * and modification of the view done on a per-plot basis as desired during
+ * subsequent processing.
+ *
 \*----------------------------------------------------------------------*/
+
+enum {AT_BOP, DRAWING, AT_EOP};
 
 /* Initialize device. */
 /* The plot buffer must be called last */
@@ -101,6 +102,8 @@
 void
 plP_init(void)
 {
+    plsc->status = AT_EOP;
+
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_init) (plsc);
 
@@ -110,10 +113,16 @@ plP_init(void)
 
 /* End of page */
 /* The plot buffer must be called first */
+/* Ignore instruction if there's nothing drawn */
 
 void
 plP_eop(void)
 {
+    if (plsc->status != DRAWING)
+	return;
+
+    plsc->status = AT_EOP;
+
     if (plsc->plbuf_write)
 	plbuf_eop(plsc);
 
@@ -123,10 +132,20 @@ plP_eop(void)
 
 /* Set up new page. */
 /* The plot buffer must be called last */
+/* Ignore if the bop was already issued. */
+/* Print a warning if an eop wasn't issued previously */
 
 void
 plP_bop(void)
 {
+    if (plsc->status == AT_BOP)
+	return;
+
+    if (plsc->status != AT_EOP) 
+	plwarn("plP_bop: missing call to pleop");
+
+    plsc->status = AT_BOP;
+
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_bop) (plsc);
 
@@ -180,7 +199,7 @@ plP_esc(PLINT op, void *ptr)
 }
 
 /*----------------------------------------------------------------------*\
-*  Drawing commands.
+ *  Drawing commands.
 \*----------------------------------------------------------------------*/
 
 /* Draw line between two points */
@@ -190,6 +209,8 @@ void
 plP_line(short *x, short *y)
 {
     PLINT i, npts = 2, clpxmi, clpxma, clpymi, clpyma;
+
+    plsc->status = DRAWING;
 
     if (plsc->plbuf_write)
 	plbuf_line(plsc, x[0], y[0], x[1], y[1]);
@@ -215,6 +236,8 @@ plP_polyline(short *x, short *y, PLINT npts)
 {
     PLINT i, clpxmi, clpxma, clpymi, clpyma;
 
+    plsc->status = DRAWING;
+
     if (plsc->plbuf_write)
 	plbuf_polyline(plsc, x, y, npts);
 
@@ -239,6 +262,8 @@ void
 plP_fill(short *x, short *y, PLINT npts)
 {
     PLINT i, clpxmi, clpxma, clpymi, clpyma;
+
+    plsc->status = DRAWING;
 
     if (plsc->plbuf_write) {
 	plsc->dev_npts = npts;
@@ -313,23 +338,23 @@ grfill(short *x, short *y, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* void difilt
-*
-* Driver interface filter -- passes all coordinates through a variety
-* of filters.  These include filters to change :
-*
-*	- mapping of meta to physical coordinates
-*	- plot orientation
-*	- window into plot (zooms)
-*	- window into device (i.e set margins)
-*
-* The filters are applied in the order specified above.  Because the
-* orientation change comes first, subsequent window specifications affect
-* the new coordinates (i.e. after a 90 degree flip, what was x is now y).
-* This is the only way that makes sense from a graphical interface
-* (e.g. TCL/TK driver).
-*
-* Where appropriate, the page clip limits are modified.
+ * void difilt
+ *
+ * Driver interface filter -- passes all coordinates through a variety
+ * of filters.  These include filters to change :
+ *
+ *	- mapping of meta to physical coordinates
+ *	- plot orientation
+ *	- window into plot (zooms)
+ *	- window into device (i.e set margins)
+ *
+ * The filters are applied in the order specified above.  Because the
+ * orientation change comes first, subsequent window specifications affect
+ * the new coordinates (i.e. after a 90 degree flip, what was x is now y).
+ * This is the only way that makes sense from a graphical interface
+ * (e.g. TCL/TK driver).
+ *
+ * Where appropriate, the page clip limits are modified.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -389,10 +414,10 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
 }
 
 /*----------------------------------------------------------------------*\
-* void pldi_ini
-*
-* Updates driver interface, making sure everything is in order.
-* Even if filter is not being used, the defaults need to be set up.
+ * void pldi_ini
+ *
+ * Updates driver interface, making sure everything is in order.
+ * Even if filter is not being used, the defaults need to be set up.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -444,12 +469,12 @@ pldi_ini(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void pldid2pc
-*
-* Converts input values from relative device coordinates to relative plot
-* coordinates.  This function must be called when selecting a plot window
-* from a display driver, since the coordinates chosen by the user are
-* necessarily device-specific.
+ * void pldid2pc
+ *
+ * Converts input values from relative device coordinates to relative plot
+ * coordinates.  This function must be called when selecting a plot window
+ * from a display driver, since the coordinates chosen by the user are
+ * necessarily device-specific.
 \*----------------------------------------------------------------------*/
 
 void
@@ -494,10 +519,10 @@ pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 }
 
 /*----------------------------------------------------------------------*\
-* void pldip2dc
-*
-* Converts input values from relative plot coordinates to relative
-* device coordinates.
+ * void pldip2dc
+ *
+ * Converts input values from relative plot coordinates to relative
+ * device coordinates.
 \*----------------------------------------------------------------------*/
 
 void
@@ -542,9 +567,9 @@ pldip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
 }
 
 /*----------------------------------------------------------------------*\
-* void plsdiplt
-*
-* Set window into plot space
+ * void plsdiplt
+ *
+ * Set window into plot space
 \*----------------------------------------------------------------------*/
 
 void
@@ -565,9 +590,9 @@ c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
 }
 
 /*----------------------------------------------------------------------*\
-* void plsdiplz
-*
-* Set window into plot space incrementally (zoom)
+ * void plsdiplz
+ *
+ * Set window into plot space incrementally (zoom)
 \*----------------------------------------------------------------------*/
 
 void
@@ -584,14 +609,14 @@ c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
 }
 
 /*----------------------------------------------------------------------*\
-* void calc_diplt
-*
-* Calculate transformation coefficients to set window into plot space.
-*
-* Note: if driver has requested to handle these commands itself, we must
-* send the appropriate escape command.  If the driver succeeds it will
-* cancel the filter operation.  The command is deferred until this point
-* to ensure that the driver has been initialized.
+ * void calc_diplt
+ *
+ * Calculate transformation coefficients to set window into plot space.
+ *
+ * Note: if driver has requested to handle these commands itself, we must
+ * send the appropriate escape command.  If the driver succeeds it will
+ * cancel the filter operation.  The command is deferred until this point
+ * to ensure that the driver has been initialized.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -624,9 +649,9 @@ calc_diplt(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void plgdiplt
-*
-* Retrieve current window into plot space
+ * void plgdiplt
+ *
+ * Retrieve current window into plot space
 \*----------------------------------------------------------------------*/
 
 void
@@ -639,14 +664,14 @@ c_plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax)
 }
 
 /*----------------------------------------------------------------------*\
-* void plsdidev
-*
-* Set window into device space using margin, aspect ratio, and
-* justification.  If you want to just use the previous value for any of
-* these, just pass in the magic value PL_NOTSET.
-*
-* It is unlikely that one should ever need to change the aspect ratio
-* but it's in there for completeness.
+ * void plsdidev
+ *
+ * Set window into device space using margin, aspect ratio, and
+ * justification.  If you want to just use the previous value for any of
+ * these, just pass in the magic value PL_NOTSET.
+ *
+ * It is unlikely that one should ever need to change the aspect ratio
+ * but it's in there for completeness.
 \*----------------------------------------------------------------------*/
 
 void
@@ -668,10 +693,10 @@ c_plsdidev(PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy)
 }
 
 /*----------------------------------------------------------------------*\
-* void calc_didev
-*
-* Calculate transformation coefficients to set window into device space.
-* Calculates relative window bounds and calls plsdidxy to finish the job.
+ * void calc_didev
+ *
+ * Calculate transformation coefficients to set window into device space.
+ * Calculates relative window bounds and calls plsdidxy to finish the job.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -752,9 +777,9 @@ calc_didev(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void plgdidev
-*
-* Retrieve current window into device space
+ * void plgdidev
+ *
+ * Retrieve current window into device space
 \*----------------------------------------------------------------------*/
 
 void
@@ -767,9 +792,9 @@ c_plgdidev(PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy)
 }
 
 /*----------------------------------------------------------------------*\
-* void plsdiori
-*
-* Set plot orientation, specifying rotation in units of pi/2.
+ * void plsdiori
+ *
+ * Set plot orientation, specifying rotation in units of pi/2.
 \*----------------------------------------------------------------------*/
 
 void
@@ -787,10 +812,10 @@ c_plsdiori(PLFLT rot)
 }
 
 /*----------------------------------------------------------------------*\
-* void calc_diori
-*
-* Calculate transformation coefficients to arbitrarily orient plot.
-* Preserve aspect ratios so the output doesn't suck.
+ * void calc_diori
+ *
+ * Calculate transformation coefficients to arbitrarily orient plot.
+ * Preserve aspect ratios so the output doesn't suck.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -853,9 +878,9 @@ calc_diori(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void plgdiori
-*
-* Get plot orientation
+ * void plgdiori
+ *
+ * Get plot orientation
 \*----------------------------------------------------------------------*/
 
 void
@@ -865,12 +890,12 @@ c_plgdiori(PLFLT *p_rot)
 }
 
 /*----------------------------------------------------------------------*\
-* void plsdimap
-*
-* Set up transformation from metafile coordinates.
-* The size of the plot is scaled so as to preserve aspect ratio.
-* This isn't intended to be a general-purpose facility just yet
-* (not sure why the user would need it, for one).
+ * void plsdimap
+ *
+ * Set up transformation from metafile coordinates.
+ * The size of the plot is scaled so as to preserve aspect ratio.
+ * This isn't intended to be a general-purpose facility just yet
+ * (not sure why the user would need it, for one).
 \*----------------------------------------------------------------------*/
 
 void
@@ -889,12 +914,12 @@ c_plsdimap(PLINT dimxmin, PLINT dimxmax, PLINT dimymin, PLINT dimymax,
 }
 
 /*----------------------------------------------------------------------*\
-* void calc_dimap
-*
-* Set up transformation from metafile coordinates.
-* The size of the plot is scaled so as to preserve aspect ratio.
-* This isn't intended to be a general-purpose facility just yet
-* (not sure why the user would need it, for one).
+ * void calc_dimap
+ *
+ * Set up transformation from metafile coordinates.  The size of the plot
+ * is scaled so as to preserve aspect ratio.  This isn't intended to be a
+ * general-purpose facility just yet (not sure why the user would need it,
+ * for one).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -937,9 +962,9 @@ calc_dimap()
 }
 
 /*----------------------------------------------------------------------*\
-* void plflush()
-*
-* Flushes the output stream.  Use sparingly, if at all.
+ * void plflush()
+ *
+ * Flushes the output stream.  Use sparingly, if at all.
 \*----------------------------------------------------------------------*/
 
 void
@@ -954,13 +979,13 @@ c_plflush(void)
 }
 
 /*----------------------------------------------------------------------*\
-* Startup routines.
+ * Startup routines.
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* void plstar(nx, ny)
-*
-* Initialize plplot, passing in the windows/page settings.
+ * void plstar(nx, ny)
+ *
+ * Initialize plplot, passing in the windows/page settings.
 \*----------------------------------------------------------------------*/
 
 void
@@ -975,9 +1000,9 @@ c_plstar(PLINT nx, PLINT ny)
 }
 
 /*----------------------------------------------------------------------*\
-* void plstart(devname, nx, ny)
-*
-* Initialize plplot, passing the device name and windows/page settings. 
+ * void plstart(devname, nx, ny)
+ *
+ * Initialize plplot, passing the device name and windows/page settings. 
 \*----------------------------------------------------------------------*/
 
 void
@@ -993,16 +1018,15 @@ c_plstart(const char *devname, PLINT nx, PLINT ny)
 }
 
 /*----------------------------------------------------------------------*\
-* void plinit()
-*
-* Initializes plplot, using preset or default options.
+ * void plinit()
+ *
+ * Initializes plplot, using preset or default options.
 \*----------------------------------------------------------------------*/
 
 void
 c_plinit(void)
 {
-    PLFLT gscale, hscale;
-    PLFLT size_chr, size_sym, size_maj, size_min, lx, ly;
+    PLFLT lx, ly;
     PLINT mk = 0, sp = 0, inc = 0, del = 2000;
 
     if (plsc->level != 0)
@@ -1011,14 +1035,6 @@ c_plinit(void)
 /* Set device number */
 
     plGetDev();
-
-/* Subpage checks */
-
-    if (plsc->nsubx <= 0)
-	plsc->nsubx = 1;
-    if (plsc->nsuby <= 0)
-	plsc->nsuby = 1;
-    plsc->cursub = 0;
 
 /* Stream number */
 
@@ -1046,30 +1062,9 @@ c_plinit(void)
 
     plP_bop();
 
-/*
-* Set default sizes
-* Global scaling:
-*	Normalize to the page length for more uniform results.
-* 	A virtual page length of 200 mm is assumed.
-* Subpage scaling:
-*	Reduce sizes with plot area (non-proportional, so that character
-*	size doesn't get too small).
-*/
-    gscale = 0.5 *
-	((plsc->phyxma - plsc->phyxmi) / plsc->xpmm +
-	 (plsc->phyyma - plsc->phyymi) / plsc->ypmm) / 200.0;
+/* Set up subpages */
 
-    hscale = gscale / sqrt((double) plsc->nsuby);
-
-    size_chr = 4.0;
-    size_sym = 4.0;		/* All these in virtual plot units */
-    size_maj = 3.0;
-    size_min = 1.5;
-
-    plP_schr((PLFLT) (size_chr * hscale), (PLFLT) (size_chr * hscale));
-    plP_ssym((PLFLT) (size_sym * hscale), (PLFLT) (size_sym * hscale));
-    plP_smaj((PLFLT) (size_maj * hscale), (PLFLT) (size_maj * hscale));
-    plP_smin((PLFLT) (size_min * hscale), (PLFLT) (size_min * hscale));
+    plP_subpInit();
 
 /* Set up number of allowed digits before switching to scientific notation */
 /* The user can always change this */
@@ -1110,9 +1105,9 @@ c_plinit(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void plend()
-*
-* End a plotting session for all open streams.
+ * void plend()
+ *
+ * End a plotting session for all open streams.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1131,12 +1126,12 @@ c_plend(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void plend1()
-*
-* End a plotting session for the current stream only.
-* After the stream is ended the memory associated with the stream's
-* PLStream data structure is freed (for stream > 0), and the stream
-* counter is set to 0 (the default).
+ * void plend1()
+ *
+ * End a plotting session for the current stream only.  After the stream
+ * is ended the memory associated with the stream's PLStream data
+ * structure is freed (for stream > 0), and the stream counter is set to 0
+ * (the default).
 \*----------------------------------------------------------------------*/
 
 void
@@ -1145,7 +1140,7 @@ c_plend1(void)
     if (plsc->level > 0) {
 	plP_eop();
 	plP_tidy();
-	plP_slev(0);
+	plsc->level = 0;
     }
 
 /* Free all malloc'ed stream memory */
@@ -1165,10 +1160,10 @@ c_plend1(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void plsstrm
-*
-* Set stream number.  If the data structure for a new stream is
-* unallocated, we allocate it here.
+ * void plsstrm
+ *
+ * Set stream number.  If the data structure for a new stream is
+ * unallocated, we allocate it here.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1176,8 +1171,8 @@ c_plsstrm(PLINT strm)
 {
     if (strm < 0 || strm >= PL_NSTREAMS) {
 	fprintf(stderr,
-		"plsstrm: Illegal stream number %ld, must be in [0, %d]\n",
-		strm, PL_NSTREAMS);
+		"plsstrm: Illegal stream number %d, must be in [0, %d]\n",
+		(int) strm, PL_NSTREAMS);
     }
     else {
 	ipls = strm;
@@ -1193,9 +1188,9 @@ c_plsstrm(PLINT strm)
 }
 
 /*----------------------------------------------------------------------*\
-* void plgstrm
-*
-* Get current stream number.
+ * void plgstrm
+ *
+ * Get current stream number.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1205,16 +1200,16 @@ c_plgstrm(PLINT *p_strm)
 }
 
 /*----------------------------------------------------------------------*\
-* void plmkstrm
-*
-* Creates a new stream and makes it the default.  Differs from using
-* plsstrm(), in that a free stream number is found, and returned.
-*
-* Unfortunately, I /have/ to start at stream 1 and work upward, since
-* stream 0 is preallocated.  One of the BIG flaws in the PLplot API is
-* that no initial, library-opening call is required.  So stream 0 must be
-* preallocated, and there is no simple way of determining whether it is
-* already in use or not.
+ * void plmkstrm
+ *
+ * Creates a new stream and makes it the default.  Differs from using
+ * plsstrm(), in that a free stream number is found, and returned.
+ *
+ * Unfortunately, I /have/ to start at stream 1 and work upward, since
+ * stream 0 is preallocated.  One of the BIG flaws in the PLplot API is
+ * that no initial, library-opening call is required.  So stream 0 must be
+ * preallocated, and there is no simple way of determining whether it is
+ * already in use or not.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1238,17 +1233,17 @@ c_plmkstrm(PLINT *p_strm)
 }
 
 /*----------------------------------------------------------------------*\
-* void plcpstrm
-*
-* Copies state parameters from the reference stream to the current stream.
-* Tell driver interface to map device coordinates unless flags == 1.
-*
-* This function is used for making save files of selected plots (e.g.
-* from the TK driver).  After initializing, you can get a copy of the
-* current plot to the specified device by switching to this stream and
-* issuing a plcpstrm() and a plreplot(), with calls to plbop() and
-* pleop() as appropriate.  The plot buffer must have previously been
-* enabled (done automatically by some display drivers, such as X).
+ * void plcpstrm
+ *
+ * Copies state parameters from the reference stream to the current stream.
+ * Tell driver interface to map device coordinates unless flags == 1.
+ *
+ * This function is used for making save files of selected plots (e.g.
+ * from the TK driver).  After initializing, you can get a copy of the
+ * current plot to the specified device by switching to this stream and
+ * issuing a plcpstrm() and a plreplot(), with calls to plbop() and
+ * pleop() as appropriate.  The plot buffer must have previously been
+ * enabled (done automatically by some display drivers, such as X).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1267,7 +1262,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 
     plsr = pls[iplsr];
     if (plsr == NULL) {
-	fprintf(stderr, "plcpstrm: stream %ld not in use\n", iplsr);
+	fprintf(stderr, "plcpstrm: stream %d not in use\n", (int) iplsr);
 	return;
     }
 
@@ -1317,14 +1312,14 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 }
 
 /*----------------------------------------------------------------------*\
-* void plGetDev()
-*
-* If the the user has not already specified the output device, or the
-* one specified is either: (a) not available, (b) "?", or (c) NULL, the
-* user is prompted for it.
-*
-* Prompting quits after 10 unsuccessful tries in case the user has
-* run the program in the background with insufficient input.
+ * void plGetDev()
+ *
+ * If the the user has not already specified the output device, or the
+ * one specified is either: (a) not available, (b) "?", or (c) NULL, the
+ * user is prompted for it.
+ *
+ * Prompting quits after 10 unsuccessful tries in case the user has
+ * run the program in the background with insufficient input.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1363,13 +1358,14 @@ plGetDev()
     while (dev < 1 || dev > npldrivers) {
 	printf("\nPlotting Options:\n");
 	for (i = 0; i < npldrivers; i++) {
-	    printf(" <%2ld> %-10s %s\n", i + 1, dispatch_table[i].pl_DevName,
+	    printf(" <%2d> %-10s %s\n", i + 1, dispatch_table[i].pl_DevName,
 		   dispatch_table[i].pl_MenuStr);
 	}
 	if (ipls == 0)
 	    printf("\nEnter device number or keyword: ");
 	else
-	    printf("\nEnter device number or keyword (stream %ld): ", ipls);
+	    printf("\nEnter device number or keyword (stream %d): ",
+		   (int) ipls);
 
 	fgets(response, sizeof(response), stdin);
 
@@ -1402,9 +1398,30 @@ plGetDev()
 }
 
 /*----------------------------------------------------------------------*\
-* void plfontld()
-*
-* Load specified font set.
+ * void c_plfont(ifont)
+ *
+ * Sets the global font flag to 'ifont'.
+\*----------------------------------------------------------------------*/
+
+void
+c_plfont(PLINT ifont)
+{
+    if (plsc->level < 1) {
+	plabort("plfont: Please call plinit first");
+	return;
+    }
+    if (ifont < 1 || ifont > 4) {
+	plabort("plfont: Invalid font");
+	return;
+    }
+
+    font = ifont;
+}
+
+/*----------------------------------------------------------------------*\
+ * void plfontld()
+ *
+ * Load specified font set.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1422,9 +1439,9 @@ c_plfontld(PLINT fnt)
 }
 
 /*----------------------------------------------------------------------*\
-* void plreplot()
-*
-* Replays contents of plot buffer to current device/file.
+ * void plreplot()
+ *
+ * Replays contents of plot buffer to current device/file.
 \*----------------------------------------------------------------------*/
 
 void
@@ -1439,12 +1456,12 @@ c_plreplot(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void plgFileDevs()
-*
-* Returns a list of file-oriented device names and their menu strings,
-* for use in a graphical interface.  The caller must allocate enough
-* space for (*p_menustr) and (*p_devname) to hold a pointer for each
-* device -- 20 or so is plenty.  E.g. char *menustr[20].
+ * void plgFileDevs()
+ *
+ * Returns a list of file-oriented device names and their menu strings,
+ * for use in a graphical interface.  The caller must allocate enough
+ * space for (*p_menustr) and (*p_devname) to hold a pointer for each
+ * device -- 20 or so is plenty.  E.g. char *menustr[20].
 \*----------------------------------------------------------------------*/
 
 void
@@ -1465,7 +1482,7 @@ plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
 }
 
 /*----------------------------------------------------------------------*\
-*  Various external access routines.
+ *  Various external access routines.
 \*----------------------------------------------------------------------*/
 
 /* Get output device parameters. */
@@ -1510,14 +1527,13 @@ c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
 void
 c_plssub(PLINT nx, PLINT ny)
 {
-    if (plsc->level > 0) {
-	plwarn("plssub: Must be called before plinit.");
-	return;
-    }
     if (nx > 0)
 	plsc->nsubx = nx;
     if (ny > 0)
 	plsc->nsuby = ny;
+
+    if (plsc->level > 0)
+	plP_subpInit();
 }
 
 /* Set the device (keyword) name */
@@ -1570,10 +1586,10 @@ c_plsori(PLINT ori)
 }
 
 /*
-* Set pen width.  Can be done any time, but before calling plinit is best
-* since otherwise it may be volatile (i.e. reset on next page advance). 
-* If width <= 0 or is unchanged by the call, nothing is done.
-*/
+ * Set pen width.  Can be done any time, but before calling plinit is best
+ * since otherwise it may be volatile (i.e. reset on next page advance). 
+ * If width <= 0 or is unchanged by the call, nothing is done.
+ */
 
 void
 c_plwid(PLINT width)
@@ -1663,12 +1679,12 @@ plP_gprec(PLINT *p_setp, PLINT *p_prec)
 }
 
 /*
-* Set the escape character for text strings.
-* From C you can pass as a character, from Fortran it needs to be the decimal
-* ASCII value.  Only selected characters are allowed to prevent the user from
-* shooting himself in the foot (a '\' isn't allowed since it conflicts with
-* C's use of backslash as a character escape).
-*/
+ * Set the escape character for text strings.
+ * From C you can pass as a character, from Fortran it needs to be the decimal
+ * ASCII value.  Only selected characters are allowed to prevent the user from
+ * shooting himself in the foot (a '\' isn't allowed since it conflicts with
+ * C's use of backslash as a character escape).
+ */
 
 void
 c_plsesc(char esc)
@@ -1720,12 +1736,12 @@ plsxwin(PLINT window_id)
 }
 
 /*----------------------------------------------------------------------*\
-*  These set/get information for family files, and may be called prior
-*  to plinit to set up the necessary parameters.  Arguments:
-*
-*	fam	familying flag (boolean)
-*	num	member number
-*	bmax	maximum member size
+ *  These set/get information for family files, and may be called prior
+ *  to plinit to set up the necessary parameters.  Arguments:
+ *
+ *	fam	familying flag (boolean)
+ *	num	member number
+ *	bmax	maximum member size
 \*----------------------------------------------------------------------*/
 
 /* Get family file parameters */
@@ -1763,8 +1779,8 @@ c_plfamadv(void)
 }
 
 /*----------------------------------------------------------------------*\
-*  Interface routines for axis labling parameters.
-*  See pldtik.c for more info.
+ *  Interface routines for axis labling parameters.
+ *  See pldtik.c for more info.
 \*----------------------------------------------------------------------*/
 
 /* Get x axis labeling parameters */
@@ -1831,80 +1847,8 @@ c_plgchr(PLFLT *p_def, PLFLT *p_ht)
 }
 
 /*----------------------------------------------------------------------*\
-*  These should not be called by the user.
+ *  These should not be called by the user.
 \*----------------------------------------------------------------------*/
-
-/* Get plot level */
-
-void
-plP_glev(PLINT *p_n)
-{
-    *p_n = plsc->level;
-}
-
-/* Set plot level */
-
-void
-plP_slev(PLINT n)
-{
-    plsc->level = n;
-}
-
-/* Get parameters for 3d plot base */
-
-void
-plP_gbase(PLFLT *p_x, PLFLT *p_y, PLFLT *p_xc, PLFLT *p_yc)
-{
-    *p_x = plsc->base3x;
-    *p_y = plsc->base3y;
-    *p_xc = plsc->basecx;
-    *p_yc = plsc->basecy;
-}
-
-/* Set parameters for 3d plot base */
-
-void
-plP_sbase(PLFLT x, PLFLT y, PLFLT xc, PLFLT yc)
-{
-    plsc->base3x = x;
-    plsc->base3y = y;
-    plsc->basecx = xc;
-    plsc->basecy = yc;
-}
-
-/* Get number of elements for current broken line style */
-
-void
-plP_gnms(PLINT *p_n)
-{
-    *p_n = plsc->nms;
-}
-
-/* Set number of elements for current broken line style */
-
-void
-plP_snms(PLINT n)
-{
-    plsc->nms = n;
-}
-
-/* Get physical coordinates of current point */
-
-void
-plP_gcurr(PLINT *p_ix, PLINT *p_iy)
-{
-    *p_ix = plsc->currx;
-    *p_iy = plsc->curry;
-}
-
-/* Set physical coordinates of current point */
-
-void
-plP_scurr(PLINT ix, PLINT iy)
-{
-    plsc->currx = ix;
-    plsc->curry = iy;
-}
 
 /* Get x-y domain in world coordinates for 3d plots */
 
@@ -1917,17 +1861,6 @@ plP_gdom(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
     *p_ymax = plsc->domyma;
 }
 
-/* Set x-y domain in world coordinates for 3d plots */
-
-void
-plP_sdom(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
-{
-    plsc->domxmi = xmin;
-    plsc->domxma = xmax;
-    plsc->domymi = ymin;
-    plsc->domyma = ymax;
-}
-
 /* Get vertical (z) scale parameters for 3-d plot */
 
 void
@@ -1936,16 +1869,6 @@ plP_grange(PLFLT *p_zscl, PLFLT *p_zmin, PLFLT *p_zmax)
     *p_zscl = plsc->zzscl;
     *p_zmin = plsc->ranmi;
     *p_zmax = plsc->ranma;
-}
-
-/* Set vertical (z) scale parameters for 3-d plot */
-
-void
-plP_srange(PLFLT zscl, PLFLT zmin, PLFLT zmax)
-{
-    plsc->zzscl = zscl;
-    plsc->ranmi = zmin;
-    plsc->ranma = zmax;
 }
 
 /* Get parameters used in 3d plots */
@@ -1958,18 +1881,6 @@ plP_gw3wc(PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy, PLFLT *p_dyz)
     *p_dyx = plsc->cyx;
     *p_dyy = plsc->cyy;
     *p_dyz = plsc->cyz;
-}
-
-/* Set parameters used in 3d plots */
-
-void
-plP_sw3wc(PLFLT dxx, PLFLT dxy, PLFLT dyx, PLFLT dyy, PLFLT dyz)
-{
-    plsc->cxx = dxx;
-    plsc->cxy = dxy;
-    plsc->cyx = dyx;
-    plsc->cyy = dyy;
-    plsc->cyz = dyz;
 }
 
 /* Get viewport boundaries in physical coordinates */
@@ -2003,17 +1914,6 @@ plP_gspp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
     *p_ixmax = plsc->sppxma;
     *p_iymin = plsc->sppymi;
     *p_iymax = plsc->sppyma;
-}
-
-/* Set subpage boundaries in physical coordinates */
-
-void
-plP_sspp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
-{
-    plsc->sppxmi = ixmin;
-    plsc->sppxma = ixmax;
-    plsc->sppymi = iymin;
-    plsc->sppyma = iymax;
 }
 
 /* Get clip boundaries in physical coordinates */
@@ -2080,24 +1980,6 @@ plP_ssub(PLINT nx, PLINT ny, PLINT cs)
     plsc->cursub = cs;
 }
 
-/* Get number of micrometers in a pixel */
-
-void
-plP_gumpix(PLINT *p_ix, PLINT *p_iy)
-{
-    *p_ix = plsc->umx;
-    *p_iy = plsc->umy;
-}
-
-/* Set number of micrometers in a pixel */
-
-void
-plP_sumpix(PLINT ix, PLINT iy)
-{
-    plsc->umx = ix;
-    plsc->umy = iy;
-}
-
 /* Get font and color attributes */
 
 void
@@ -2116,38 +1998,6 @@ plP_satt(PLINT ifnt, PLINT icol0)
     plsc->icol0 = icol0;
 }
 
-/* Get current color, map 0 */
-
-void
-plP_gcol(PLINT *p_icol0)
-{
-    *p_icol0 = plsc->icol0;
-}
-
-/* Set current color, map 0 */
-
-void
-plP_scol(PLINT icol0)
-{
-    plsc->icol0 = icol0;
-}
-
-/* Get pen width */
-
-void
-plP_gwid(PLINT *p_pwid)
-{
-    *p_pwid = plsc->width;
-}
-
-/* Set pen width */
-
-void
-plP_swid(PLINT pwid)
-{
-    plsc->width = pwid;
-}
-
 /* Get subpage boundaries in normalized device coordinates */
 
 void
@@ -2157,17 +2007,6 @@ plP_gspd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
     *p_xmax = plsc->spdxma;
     *p_ymin = plsc->spdymi;
     *p_ymax = plsc->spdyma;
-}
-
-/* Set subpage boundaries in normalized device coordinates */
-
-void
-plP_sspd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
-{
-    plsc->spdxmi = xmin;
-    plsc->spdxma = xmax;
-    plsc->spdymi = ymin;
-    plsc->spdyma = ymax;
 }
 
 /* Get viewport boundaries in normalized device coordinates */
@@ -2251,42 +2090,22 @@ plP_setpxl(PLFLT xpmm0, PLFLT ypmm0)
 void
 plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
 {
-    PLFLT xpmm, ypmm, mpxscl, mpyscl;
+    PLFLT mpxscl, mpyscl;
 
     plP_sphy(xmin, xmax, ymin, ymax);
-    plP_sdp((PLFLT) (xmax - xmin), (PLFLT) (xmin), (PLFLT) (ymax - ymin),
-	    (PLFLT) (ymin));
 
-    plP_gpixmm(&xpmm, &ypmm);
-    mpxscl = xpmm;
+    plsc->dpxscl = xmax - xmin;
+    plsc->dpxoff = xmin;
+    plsc->dpyscl = ymax - ymin;
+    plsc->dpyoff = ymin;
+
+    mpxscl = plsc->xpmm;
     if (xmax <= xmin)
-	mpxscl = -xpmm;
-    mpyscl = ypmm;
+	mpxscl = -plsc->xpmm;
+    mpyscl = plsc->ypmm;
     if (ymax <= ymin)
-	mpyscl = -ypmm;
+	mpyscl = -plsc->ypmm;
     plP_smp(mpxscl, (PLFLT) (xmin), mpyscl, (PLFLT) (ymin));
-}
-
-/* Get transformation variables for world to physical conversion */
-
-void
-plP_gwp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
-{
-    *p_xscl = plsc->wpxscl;
-    *p_xoff = plsc->wpxoff;
-    *p_yscl = plsc->wpyscl;
-    *p_yoff = plsc->wpyoff;
-}
-
-/* Set transformation variables for world to physical conversion */
-
-void
-plP_swp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
-{
-    plsc->wpxscl = xscl;
-    plsc->wpxoff = xoff;
-    plsc->wpyscl = yscl;
-    plsc->wpyoff = yoff;
 }
 
 /* Get transformation variables for world coordinates to mm */
@@ -2311,28 +2130,6 @@ plP_swm(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
     plsc->wmyoff = yoff;
 }
 
-/* Get transformation variables for device to physical conversion */
-
-void
-plP_gdp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
-{
-    *p_xscl = plsc->dpxscl;
-    *p_xoff = plsc->dpxoff;
-    *p_yscl = plsc->dpyscl;
-    *p_yoff = plsc->dpyoff;
-}
-
-/* Set transformation variables for device to physical conversion */
-
-void
-plP_sdp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
-{
-    plsc->dpxscl = xscl;
-    plsc->dpxoff = xoff;
-    plsc->dpyscl = yscl;
-    plsc->dpyoff = yoff;
-}
-
 /* Get transformation variables for millimeters from bottom left */
 
 void
@@ -2353,159 +2150,4 @@ plP_smp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
     plsc->mpxoff = xoff;
     plsc->mpyscl = yscl;
     plsc->mpyoff = yoff;
-}
-
-/* Set character default height and current (scaled) height */
-
-void
-plP_schr(PLFLT def, PLFLT ht)
-{
-    plsc->chrdef = def;
-    plsc->chrht = ht;
-}
-
-/* Get symbol default height and current (scaled) height */
-
-void
-plP_gsym(PLFLT *p_def, PLFLT *p_ht)
-{
-    *p_def = plsc->symdef;
-    *p_ht = plsc->symht;
-}
-
-/* Set symbol default height and current (scaled) height */
-
-void
-plP_ssym(PLFLT def, PLFLT ht)
-{
-    plsc->symdef = def;
-    plsc->symht = ht;
-}
-
-/* Get major tick default height and current (scaled) height */
-
-void
-plP_gmaj(PLFLT *p_def, PLFLT *p_ht)
-{
-    *p_def = plsc->majdef;
-    *p_ht = plsc->majht;
-}
-
-/* Set major tick default height and current (scaled) height */
-
-void
-plP_smaj(PLFLT def, PLFLT ht)
-{
-    plsc->majdef = def;
-    plsc->majht = ht;
-}
-
-/* Get minor tick default height and current (scaled) height */
-
-void
-plP_gmin(PLFLT *p_def, PLFLT *p_ht)
-{
-    *p_def = plsc->mindef;
-    *p_ht = plsc->minht;
-}
-
-/* Set minor tick default height and current (scaled) height */
-
-void
-plP_smin(PLFLT def, PLFLT ht)
-{
-    plsc->mindef = def;
-    plsc->minht = ht;
-}
-
-/* Get defining parameters for pattern fill */
-
-void
-plP_gpat(PLINT *p_inc[], PLINT *p_del[], PLINT *p_nlin)
-{
-    *p_inc = plsc->inclin;
-    *p_del = plsc->delta;
-    *p_nlin = plsc->nps;
-}
-
-/* Set defining parameters for pattern fill */
-
-void
-plP_spat(PLINT inc[], PLINT del[], PLINT nlin)
-{
-    PLINT i;
-
-    plsc->nps = nlin;
-    for (i = 0; i < nlin; i++) {
-	plsc->inclin[i] = inc[i];
-	plsc->delta[i] = del[i];
-    }
-}
-
-/* Get pattern fill number. */
-
-void
-plP_gpsty(PLINT *patt)
-{
-    *patt = plsc->patt;
-}
-
-/* Set pattern fill number */
-
-void
-plP_spsty(PLINT patt)
-{
-    if (patt != plsc->patt) {
-	plsc->patt = patt;
-
-	if (plsc->level > 0) {
-	    plP_state(PLSTATE_FILL);
-	}
-    }
-}
-
-/* Get defining parameters for broken lines */
-
-void
-plP_gmark(PLINT *p_mar[], PLINT *p_spa[], PLINT *p_nms)
-{
-    *p_mar = plsc->mark;
-    *p_spa = plsc->space;
-    *p_nms = plsc->nms;
-}
-
-/* Set defining parameters for broken lines */
-
-void
-plP_smark(PLINT mar[], PLINT spa[], PLINT nms)
-{
-    PLINT i;
-
-    plsc->nms = nms;
-    for (i = 0; i < nms; i++) {
-	plsc->mark[i] = mar[i];
-	plsc->space[i] = spa[i];
-    }
-}
-
-/* Get work variables used in broken line draws */
-
-void
-plP_gcure(PLINT **p_cur, PLINT **p_pen, PLINT **p_tim, PLINT **p_ala)
-{
-    *p_cur = &(plsc->curel);
-    *p_pen = &(plsc->pendn);
-    *p_tim = &(plsc->timecnt);
-    *p_ala = &(plsc->alarm);
-}
-
-/* Set work variables used in broken line draws */
-
-void
-plP_scure(PLINT cur, PLINT pen, PLINT tim, PLINT ala)
-{
-    plsc->curel = cur;
-    plsc->pendn = pen;
-    plsc->timecnt = tim;
-    plsc->alarm = ala;
 }
