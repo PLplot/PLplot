@@ -1,4 +1,10 @@
 /* 
+/* $Id$
+ * $Log$
+ * Revision 1.2  1994/05/26 22:38:08  mjl
+ * Added missing CVS Id and Log fields.
+ *
+ *
  * tkAppInit.c --
  *
  *	Provides a default version of the Tcl_AppInit procedure for
