@@ -2136,7 +2136,7 @@ for (i=0;i<PL_NSTREAMS;++i)
 PLINT plP_checkdriverinit( char *names)
 {
 char *buff;
-char *tok;
+char *tok=NULL;
 PLINT ret=0;   /* set up return code to 0, the value if no devices match*/
 
 buff=(char *)malloc((size_t) PL_NSTREAMS*8); /* Allocate enough memory for 8 
@@ -2147,10 +2147,10 @@ if (buff!=NULL)
     memset(buff,0,PL_NSTREAMS*8);    /* Make sure we clear it               */
     plP_getinitdriverlist(buff);     /* Get the list of initialised devices */
 
-    for (tok = strtok(names, " ,");  /* Check each "name" supplied to the   */
-         tok; tok=strtok(0, " ,"))   /* subroutine against the device list  */
+    for (tok = strtok(buff, " ,");   /* Check each device against the "name" */
+         tok; tok=strtok(0, " ,"))   /* supplied to the subroutine   */
         {
-        if (strstr(buff,tok)!=NULL)  /* Check to see if the device has been initialised */
+        if (strstr(names,tok)!=NULL)  /* Check to see if the device has been initialised */
            {
             ret++;                   /* Bump the return code if it has      */
            }                    
