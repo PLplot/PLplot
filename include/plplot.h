@@ -143,7 +143,13 @@ typedef float PLFLT;
 typedef long PLINT;
 
 /* Subject to change. */
+#if defined(HAVE_STDINT_H)
+#include <stdint.h>
+/* This is apparently portable if stdint.h exists. */
+typedef uint32_t PLUNICODE;
+#else
 typedef unsigned int PLUNICODE;
+#endif
 
 /* For passing user data, as with X's XtPointer */
 
