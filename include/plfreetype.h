@@ -52,7 +52,6 @@ typedef struct FT_Data {
 
     char *textbuf;		/* temporary string buffer */
 
-    PLFLT		scale;
 /*
  *  If set to 1, scale won't do anything, but this is an "arbitrary" scale
  *  factor for the transformation between virtual and real coordinates. This
@@ -63,22 +62,23 @@ typedef struct FT_Data {
  *  "pls", not "dev", but at this late stage, we can just live with it
  *  now...
  */
+    PLFLT		scale;
 
     unsigned char       greek;
 
-    unsigned char       invert_y;
 /*
  *  Set "invert_y" to 1 if the y coordinates need to be inverted for
  *  plotting. Most bitmaps will need this.
  */
+    unsigned char       invert_y;
 
-    short               ymax;
 /*
  *  ymax should be equal to, what it says - the maximum y coordinate of the
  *  bitmap. This is used in the process of calculating the inversion of the
  *  bitmap when invert_y is set to 1. If invert_y isn't set, this setting is
  *  ignored.
  */
+    short               ymax;
 
 
     plD_pixel_fp        pixel;          /* pointer to a function which draws a single pixel */
@@ -89,20 +89,21 @@ typedef struct FT_Data {
     int smooth_text;      /* Flag to indicate type of anti-aliasing used, if freetype text is active */
 
 
-    char                font_name[5][1024];
 /*
  *  List of font names and paths corresponding to the "predefined" fonts of
  *  plplot. 1024 chars is presumably generous for each one's length, but at
  *  least we probably won't get in trouble this way.
  */
 
+    /* 30 = five families * 3 styles * 2 weights = N_TrueTypeLookup */
+    char                font_name[30][1024];
 
-    PLINT               cfont;
 /*
- *  This is a mirror of pls->cfont and is basically used for detecting when
+ *  This is a mirror of pls->fci and is basically used for detecting when
  *  fonts have been changed .
  */
 
+    PLUNICODE               fci;
     PLFLT chrht; /* Mirror of pls's copy so we can detect when the font SIZE has been changed */
 
     FT_Matrix           matrix;         /* used for rotating etc... the font. */
