@@ -49,7 +49,7 @@ plplotcmodule.c: plplotcmodule.i makedocstrings.py
 	swig -python -o plplotcmodule_p.c_single -c++ plplotcmodule.i
 	python makedocstrings.py plplotcmodule_p.c_single plplotcmodule.c_single
 
-install_python: $(PLLIBS) plplotcmodule.c plplot_widgetmodule.c
+install_python: $(PLLIBS) plplotcmodule.c plplot_widgetmodule.c python.py
 	@echo " "
 	@echo "Building and installing Python modules."
 	@echo " "
@@ -60,6 +60,7 @@ install_python: $(PLLIBS) plplotcmodule.c plplot_widgetmodule.c
 	@-if test ! -d $(PYTHON_INSTDIR); then mkdir -p $(PYTHON_INSTDIR); fi
 	@-$(CP) $(PYTHON_EXE) $(PYTHON_INSTDIR)
 	@-$(CP) $(PYTHON_WIDGET_EXE) $(PYTHON_INSTDIR)
+	@-$(CP) python.py $(PYTHON_INSTDIR)
 	@-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
 	  echo "PLplot Python module installation warning:" ; \
 	  echo "" ; \
