@@ -50,10 +50,6 @@ $(MAN_TARBALL): src/$(MAN_MANIFEST)
 	tar cfz $(MAN_TARBALL) $(BASE_MAN)
 	rm -rf $(BASE_MAN)
 
-$(BASE).tar.gz: dist-stamp
-dist-stamp:
-	$(MAKE) dist && touch dist-stamp
-
 # size-href.pl requires as input (for size) every file mentioned as
 # an href in $(INDEX_HTML).in with a @SIZE@ attribute.  Make the 
 # prerequisite list consistent with this requirement.
