@@ -2,7 +2,7 @@
 # Description: Automake template for the PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Mon Dec  4 17:18:04 CET 2000
+# Last modified on: Fri Feb 14 10:20:02 CET 2003
 # $Id$
 
 MASTER_XML = plplotdoc.xml
@@ -51,6 +51,11 @@ MAX_TEX_RECURSION = 4
 
 BINDIR = ../bin
 
+htmldir = $(prefix)/share/doc/$(PACKAGE)/html
+html_DATA = $(shell ls *.html)
+
+pdfdir = $(prefix)/share/doc/$(PACKAGE)
+pdf_DATA = $(BASE).pdf
 
 all: @TARGETS@
 
@@ -69,7 +74,7 @@ print: $(BASE).ps.gz $(BASE).dvi $(BASE).pdf.gz
 	$(DVIPS) -f $< | gzip -c > $@
 
 $(BASE).dvi: $(BASE).jadetex jadetex.cfg
-	-$(JADETEX) $< 
+	-$(JADETEX) $<
 	if ! cmp $(BASE).aux prior-dvi.aux 2>/dev/null && \
 	   expr $(MAKELEVEL) '<' $(MAX_TEX_RECURSION); then \
 	        cp -pf $(BASE).aux prior-dvi.aux ; \
