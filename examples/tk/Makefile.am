@@ -111,7 +111,7 @@ xtk04_LDFLAGS = $(libplplottcltk)
 
 EXTRA_DIST = $(data_files) $(examples_tk_SCRIPTS)
 CLEANFILES = $(generated_files)
-DISTCLEANFILES = Makefile.examples .samename/Makefile
+DISTCLEANFILES = .samename/Makefile
 
 # enable_tk
 endif
