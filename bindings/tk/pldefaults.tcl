@@ -73,7 +73,7 @@ proc pldefaults {} {
 
 #----------------------------------------------------------------------------
 # Color-related resources. 
-# Sets colors in a Motif-like way.
+# Sort of Motif-y.
 # It doesn't actually hurt to do this if not on a color system.
 
     set gen_bg		lightgray
@@ -90,7 +90,7 @@ proc pldefaults {} {
     option add *disabledForeground		gray45
     option add *Checkbutton.selector		yellow
     option add *Radiobutton.selector		yellow
-    option add *Entry.background		#c07070
+    #option add *Entry.background		#c07070
     option add *Entry.foreground		black
     option add *Entry.insertBackground		black
     option add *Listbox.background		$gen_darker_bg
@@ -99,16 +99,8 @@ proc pldefaults {} {
     option add *Scale.background		$gen_bg
     option add *Scale.sliderForeground		$gen_bg
     option add *Scale.sliderBackground		$gen_darker_bg
-
-    if {$tk_version < 4.0} then {
-	option add *Scrollbar.foreground	$gen_bg
-	option add *Scrollbar.activeForeground	$gen_bg
-	option add *Scrollbar.background	$gen_darker_bg
-
-    } else {
-	option add *Scrollbar.background	$gen_bg
-	option add *Scrollbar.troughColor	$gen_darker_bg
-    }
+    option add *Scrollbar.background		$gen_bg
+    option add *Scrollbar.troughColor		$gen_darker_bg
 
 # End of page indicator
 
@@ -145,9 +137,7 @@ proc pldefaults {} {
 # Have focus follow mouse, only available in Tk 4.0+
 # This is needed if you want to control scales using keystrokes.
 
-    if {$tk_version >= 4.0} then {
-	tk_focusFollowsMouse
-    }
+    tk_focusFollowsMouse
 
 # Various options -- use global variables for simplicity.
 # Not a great solution but will have to do for now.
@@ -167,20 +157,9 @@ proc pldefaults {} {
     global saveopt_1;		set saveopt_1 0
 
 # Scale widget bindings
-# Emulate the Tk 3.6 behavior in Tk 4.0+ for button-1 presses.
-# Emulate the Tk 4.0+ behavior in Tk 3.6 for keystroke presses.
 
-    if {$tk_version >= 4.0} then {
-	bind Scale <Button-1>  {%W set [%W get %x %y] }
-	bind Scale <B1-Motion> {%W set [%W get %x %y] }
-    } else {
-	bind Scale <Any-Enter> "focus %W"
-	bind Scale <Any-Leave> "focus none"
-	bind Scale <Left>  {%W set [expr [%W get] - 1]}
-	bind Scale <Right> {%W set [expr [%W get] + 1]}
-	bind Scale <Down>  {%W set [expr [%W get] - 1]}
-	bind Scale <Up>    {%W set [expr [%W get] + 1]}
-    }
+    bind Scale <Button-1>  {%W set [%W get %x %y] }
+    bind Scale <B1-Motion> {%W set [%W get %x %y] }
 
 # Key shortcut definitions -- change them if you want!
 # Turn them into an empty string to disable.
