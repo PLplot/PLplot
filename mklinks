@@ -5,7 +5,7 @@
 # $Id$
 #
 # mklinks - makes (or removes) soft-links from distribution directory to
-#           more appropriate places (typically under usr/local).
+#           more appropriate places (typically under /usr/local).
 #
 # Maurice LeBrun (mjl@dino.ph.utexas.edu)
 # IFS, University of Texas at Austin
