@@ -33,6 +33,16 @@ first page is skipped.
 "Would be nice", major effort required.
 ***************************************
 
+* Fix bad-looking surface contours for plsurf.  The problem goes away if the
+plP_fill call is commented out in the normal series of alternating calls to 
+plP_fill and plline3 that are used to generate the surface and the surface
+contours.  So I conclude there is some inconsistency between the edge of
+the triangles as defined for the surface contours plotted by plline3
+and the edge of the triangles being filled.  Low resolution devices have
+worse problems than high resolution devices.  Surface contours look bad
+for png, better (but still not acceptable for publication) for psc, better
+still for xwin, and I could not find any problems at all for tk.
+
 * Move from DSSL based docbook stylesheets to XSL.  Rafael, as soon as
 the XSL results look as good (pdf currently a problem) as the DSSL results.
 
@@ -57,27 +67,6 @@ caused by my rather old versions of the X and Tk libraries not being
 valgrind clean or it may be that our drivers do not properly close those
 libraries.
 
-* invalid file descriptor 6 error for ./x14c -dev tk.  Here are the
-valgrind results:
-Badly formatted packet, numRead = 8
-==14506== Warning: invalid file descriptor 6 in syscall write()
-Packet send failed:
-         pl_PacketSend -- error writing to fifo: bad file number
-	 TCL command "plclient_link_end" failed:
-	 no application named "plclient_1"
-
-* ./x??f -dev tk memory management problems:
-==21151== Invalid read of size 1
-==21151==    at 0x4001FD90: strrchr (mac_replace_strmem.c:104)
-==21151==    by 0x407FD8CE: set_windowname (tk.c:1397)
-==21151==    by 0x407FCD4A: tk_start (tk.c:751)
-==21151==    by 0x407FBBBD: init (tk.c:266)
-==21151==    Address 0xBFFFDEEC is not stack'd, malloc'd or free'd
-
-This only happens for combination of fortran example and -dev tk.
-Another symptom of this problem is all fortran examples have strange
--dev tk GUI window names, e.g., 0H\x01\b for ./x01f -dev tk.
-
 * Maurice plans to finish his changes to implement handling strings as
 strings in the metafile format.
 
@@ -93,12 +82,18 @@ with the remaining rotation problems for the font handling, but those issues
 should not be tackled until the parallelogram core problem is straightened
 out.
 
-* Put in index limits for the plot3d, plmesh, and plsurf3d API's so they can
-handle non-rectangular x,y regions.  This is a useful facility to have (and
-has been in gnuplot, for example, for a long time.
+* Put in index limits for the plot3d API's so they can handle
+non-rectangular x,y regions.  This has already been done for plsurf and
+needs to be extended to plot3d.
 
-* Much more extended plarrows API.  Question on list about this as of 2003
-September, but no decision made.
+* Put in variation of "defined" callback function with user-defined data
+for plshade and plshades.  Rafael?
+
+* Put in "defined" callback function with user-defined data for for plcont,
+plot3d, and plsurf.  This will supersede the non-rectangular x,y regions
+change already done for plsurf and planned for plot3d, but this programming
+is harder than those previous or planned changes so it will probably take
+longer. Rafael?
 
 "Would be nice", minor effort required.
 ***************************************
@@ -148,15 +143,6 @@ w3c verification tests for web sites) to be sure our results conform to the
 published pdf standards.  Currently there is no idea whether such a pdf
 verification tool exists, but acroread is buggy on Linux so that is not good
 enough as a verification tool.
-
-* Split fortran library into fortran part (with same name) and a C part
-which the fortran part links to.  This change should solve all our FLIBS
-troubles on various platforms.
-
-* Use -no-undefined for java interface build (should not require extra
-library linking) and for python interface build (which will require linking
-to libpython$PYVERSION and finding that library at the ./configure stage).
-
 
 * Replace all configure-related environment variables, e.g.,
 
