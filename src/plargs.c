@@ -1,16 +1,21 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/02/23 05:28:26  mjl
-   Added code to parse command line arguments.  Accepts a data structure with
-   argument specification, syntax, description, mode flag, and function handler
-   (called if option is found).  Usable both to parse plplot command flags and
-   user command flags.  The latter is facilitated by input of user routines to
-   handle usage and help messages.  The plplot command line parser removes all
-   arguments it recognizes, allowing the user to detect invalid input.  See
-   plrender.c for a working example of usage of the case of user
-   command flags; the simpler case with no user command flags is illustrated
-   by any of the (C) example programs.
+   Revision 1.2  1993/03/03 17:03:20  mjl
+   Changed the -bg flag to accept a full-color argument in the form
+   -bg rrggbb, with rr, gg, bb corresponding to the background RGB
+   values in hex.  Example: -bg FFFF00 to get a yellow background.
 
+ * Revision 1.1  1993/02/23  05:28:26  mjl
+ * Added code to parse command line arguments.  Accepts a data structure with
+ * argument specification, syntax, description, mode flag, and function handler
+ * (called if option is found).  Usable both to parse plplot command flags and
+ * user command flags.  The latter is facilitated by input of user routines to
+ * handle usage and help messages.  The plplot command line parser removes all
+ * arguments it recognizes, allowing the user to detect invalid input.  See
+ * plrender.c for a working example of usage of the case of user
+ * command flags; the simpler case with no user command flags is illustrated
+ * by any of the (C) example programs.
+ *
 */
 
 /*
@@ -163,7 +168,7 @@ static PLOptionTable option_table[] = {
     HandleOption_ori,
     PL_PARSE_ARG,
     "-ori orient",
-    "Plot orientation (0=landscape, 1,-1=portrait)" },
+    "Plot orientation (0,2=landscape, 1,3=portrait)" },
 {
     "width",			/* Pen width */
     HandleOption_width,
@@ -624,12 +629,15 @@ HandleOption_width(char *opt, char *optarg)
 static int
 HandleOption_bg(char *opt, char *optarg)
 {
-    int bgcolor;
+    long bgcolor, r, g, b;
 
 /* Background */
 
-    bgcolor = atoi(optarg);
-    plscol0(0, bgcolor, bgcolor, bgcolor);
+    bgcolor = strtol(optarg, NULL, 16);
+    r = (bgcolor & 0xFF0000) >> 16;
+    g = (bgcolor & 0x00FF00) >> 8;
+    b = (bgcolor & 0x0000FF);
+    plscolbg(r, g, b);
 
     return(0);
 }
