@@ -1037,7 +1037,7 @@ c_plstart(const char *devname, PLINT nx, PLINT ny)
 void
 c_plinit(void)
 {
-    PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_loc;
+    PLFLT lx, ly, xpmm_loc, ypmm_loc, aspect_old, aspect_new, aspect_fact;
     PLINT mk = 0, sp = 0, inc = 0, del = 2000;
 
     if (plsc->level != 0)
@@ -1061,17 +1061,31 @@ c_plinit(void)
     plP_bop();
     plsc->level = 1;
 
-/* Special handling of xpmm and ypmm for 90 degree rotations and
- * freeaspect such that character aspect ratio is preserved when
- * overall aspect ratio is swapped. */
-
-    if (plsc->freeaspect && ABS(cos(plsc->diorot * PI / 2.)) <= 1.e-5) {
+/* Special handling of xpmm and ypmm such that character aspect ratio
+ * is preserved when overall aspect ratio is changed. */
+   
+/* Save local value of xpmm and ypmm to be used later in this routine. */
+    plP_gpixmm(&xpmm_loc, &ypmm_loc);
+/* Case where plsc->aspect has a value.... (e.g., -a aspect on the
+ * command line.) */
+    if (plsc->aspect > 0.) {
        lx = plsc->phyxlen / plsc->xpmm;
        ly = plsc->phyylen / plsc->ypmm;
-       aspect_loc = lx / ly;
-       plP_gpixmm(&xpmm_loc, &ypmm_loc);
-       plP_setpxl(xpmm_loc*aspect_loc, ypmm_loc/aspect_loc); 
+       aspect_old = lx / ly;
+       aspect_new = plsc->aspect;
+       aspect_fact = sqrt(aspect_old/aspect_new);
     }
+/* Case of 90 deg rotations with -freeaspect. */
+    else if (plsc->freeaspect && ABS(cos(plsc->diorot * PI / 2.)) <= 1.e-5) {
+       lx = plsc->phyxlen / plsc->xpmm;
+       ly = plsc->phyylen / plsc->ypmm;
+       aspect_old = lx / ly;
+       aspect_new = ly / lx;
+       aspect_fact = sqrt(aspect_old/aspect_new);
+    }
+
+    else
+       aspect_fact = 1.;
 
 /* Load fonts */
 
@@ -1118,6 +1132,14 @@ c_plinit(void)
 /* Initialize driver interface */
 
     pldi_ini();
+
+/* Apply compensating factor to original xpmm and ypmm so that 
+ * character aspect ratio is preserved when overall aspect ratio
+ * is changed.  This must appear here in the code because previous
+ * code in this routine and in routines that it calls use the original
+ * values of xpmm and ypmm before the compensating factor is applied.  */
+
+    plP_setpxl(xpmm_loc*aspect_fact, ypmm_loc/aspect_fact); 
 }
 
 /*--------------------------------------------------------------------------*\
