@@ -1289,8 +1289,8 @@ PLFLT x, y, *tx, *ty;
 
 	<informaltable frame="none" pgwide="0">
 	  <TGROUP ALIGN="center" COLS="3">
-	  <colspec colnum="1" align="right" colwidth="0.2*">
-	  <colspec colnum="2" align="center" colwidth="0.2*">
+	  <colspec colnum="1" align="right" colwidth="1*">
+	  <colspec colnum="2" align="center" colwidth="1*">
 	  <colspec colnum="3" align="left" colwidth="1*">
 	    <TBODY>
 	      <ROW>
