@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.32  1994/08/25 04:03:43  mjl
+ * Revision 1.33  1995/01/06 07:48:29  mjl
+ * Made window coordinate structure a stream variable as it should be.
+ *
+ * Revision 1.32  1994/08/25  04:03:43  mjl
  * Added include of pdf.h, since the PLStream data structure requires it
  * in any case.
  *
@@ -401,6 +404,13 @@ typedef struct {
  *
  ***********************************************************************
  *
+ * Variables for keeping track of world coordinate windows on a page.
+ *
+ * nCWindows	Number of coordinate windows on current page
+ * windows	Array of plCWindow's for current page
+ *
+ ***********************************************************************
+ *
  * Variables governing subpages and viewports.
  *
  * nsub...	Number of subpages on physical device
@@ -556,12 +566,10 @@ typedef struct {
     PLFLT zzscl, ranmi, ranma;
     PLFLT cxx, cxy, cyx, cyy, cyz;
 
-/* Transformation variables */
+/* Variables for keeping track of world coordinate windows on a page. */
 
-    PLFLT wpxscl, wpxoff, wpyscl, wpyoff;
-    PLFLT dpxscl, dpxoff, dpyscl, dpyoff;
-    PLFLT mpxscl, mpxoff, mpyscl, mpyoff;
-    PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
+    int nCWindows;
+    plCWindow windows[PL_MAXWINDOWS];
 
 /* Variables governing subpages and viewports. */
 
@@ -569,6 +577,13 @@ typedef struct {
     PLFLT spdxmi, spdxma, spdymi, spdyma;
     PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
+
+/* Transformation variables */
+
+    PLFLT wpxscl, wpxoff, wpyscl, wpyoff;
+    PLFLT dpxscl, dpxoff, dpyscl, dpyoff;
+    PLFLT mpxscl, mpxoff, mpyscl, mpyoff;
+    PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
 
 } PLStream;
 
