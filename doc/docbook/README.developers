@@ -126,8 +126,8 @@ and contain entries mapping DTD public identifiers into system identifiers.
 
 On Debian, the default catalog is /etc/sgml/catalog, and it is set up
 perfectly to find all the DTD's required.  Our catalog experience with RH
-6.2 was terrible, but it now looks like RedHat 7.1 (and presumably 7.2,
-although we haven't seen it) has a similar catalog setup to Debian.
+6.2 was terrible, but it now looks like RedHat 7.x has a similar catalog
+setup to Debian.
 
 The configure script also checks for certain essential perl modules (see
 package list above).
@@ -163,6 +163,12 @@ If you don't run out of tex resources, then
 make
 
 builds all forms of the documentation.
+
+(To just build the html part use the command
+
+make plplotdoc-html-0.4.3.tar.gz
+
+)
 
 F. Test documentation
 
