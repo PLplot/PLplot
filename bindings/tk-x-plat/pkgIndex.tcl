@@ -1,12 +1,19 @@
 
 if {[info exists tcl_platform(debug)]} {
-    set file [file join $dir plplot51d[info sharedlibextension]]
+    set file [file join $dir plplot510d[info sharedlibextension]]
 } else {
-    set file [file join $dir plplot51[info sharedlibextension]]
+    set file [file join $dir plplot510[info sharedlibextension]]
 }
 
-package ifneeded Plplotter 5.1 "
+# This little helper is needed to deal seamlessly with the
+# possibility that either or both $dir and $file may contain
+# spaces, or characters like []{}
+proc loadPlplot {dir file} {
+    global pllibrary
     set pllibrary $dir
     load $file Plplotter
-"
+    rename loadPlplot {}
+}
+
+package ifneeded Plplotter 5.1.0 [list loadPlplot $dir $file]
 unset file

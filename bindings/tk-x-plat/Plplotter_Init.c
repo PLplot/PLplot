@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.2  2002/07/04 15:14:54  vincentdarley
+ * handle plplot version info directly
+ *
  * Revision 1.1  2002/07/02 09:03:44  vincentdarley
  * x-platform tk code
  *
@@ -116,7 +119,7 @@ Plplotter_Init( Tcl_Interp *interp )
     }
 #endif
 
-    Tcl_PkgProvide(interp,"Plplotter","5.1");
+    Tcl_PkgProvide(interp,"Plplotter",PLPLOT_VERSION);
     return TCL_OK;
 }
 

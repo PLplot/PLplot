@@ -338,10 +338,10 @@ int
 PlbasicInit( Tcl_Interp *interp )
 {
     static char initScript[] = 
-    "tcl_findLibrary plplot 5.1 \"\" plplot.tcl PL_LIBRARY pllibrary";
+    "tcl_findLibrary plplot " PLPLOT_VERSION " \"\" plplot.tcl PL_LIBRARY pllibrary";
 #ifdef PLPLOT_EXTENDED_SEARCH
     static char initScriptExtended[] = 
-    "tcl_findLibrary plplot 5.1.0/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
+    "tcl_findLibrary plplot " PLPLOT_VERSION "/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
 #endif
     char *libDir = NULL;
 #ifdef USE_TCL_STUBS
@@ -375,9 +375,14 @@ PlbasicInit( Tcl_Interp *interp )
 #endif
 #endif
     
-    Tcl_SetVar(interp, "plversion", "5.1", TCL_GLOBAL_ONLY);
+    Tcl_SetVar(interp, "plversion", PLPLOT_VERSION, TCL_GLOBAL_ONLY);
     if (Tcl_Eval(interp, initScript) != TCL_OK) {
 #ifdef PLPLOT_EXTENDED_SEARCH
+	/* 
+	 * This unset is only needed for Tcl < 8.4 support.
+	 * Bug #577033 in Tcl has since been fixed, so for
+	 * Tcl 8.4 or newer this line is not needed.
+	 */
 	Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
 	if (Tcl_Eval(interp, initScriptExtended) != TCL_OK) {
 	    /* Last chance, look in '.' */
@@ -461,7 +466,7 @@ Pltcl_Init( Tcl_Interp *interp )
 /* We really need this so the TEA based 'make install' can 
  * properly determine the package we have installed */
     
-    Tcl_PkgProvide(interp, "Pltcl", "5.1");
+    Tcl_PkgProvide(interp, "Pltcl", PLPLOT_VERSION);
     return TCL_OK;
 }
 
