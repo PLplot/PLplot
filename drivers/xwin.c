@@ -14,7 +14,7 @@
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
  * Revision 1.2  1992/07/31  06:06:48  mjl
- * Swapped background/foreground colors for monochrome X output.
+ * Swapped background/foreground colors for grayscale X output.
  *
  * Revision 1.1  1992/05/20  21:32:46  furnish
  * Initial checkin of the whole PLPLOT project.
@@ -43,18 +43,18 @@
 /* Function prototypes */
 /* INDENT OFF */
 
-static void	xw_Xinit	( PLStream * );
-static void	WaitForPage	( PLStream * );
-static void	EventHandler	( PLStream *pls, XEvent *event );
-static void	xw_colini	( PLStream *pls );
-static int	AreWeMonochrome ( Display * );
-static void	PLColor_to_XColor(XColor *, PLColor *);
-static void	XColor_to_XColor (XColor *, XColor *);
+static void  xw_Xinit		(PLStream *);
+static void  WaitForPage	(PLStream *);
+static void  EventHandler	(PLStream *, XEvent *);
+static void  xw_colini		(PLStream *);
+static int   AreWeGrayscale	(Display *);
+static void  PLColor_to_XColor	(XColor *, PLColor *);
+static void  XColorcpy		(XColor *, XColor *);
 
-static void	KeyEH		(PLStream *, XEvent *);
-static void	MouseEH		(PLStream *, XEvent *);
-static void	ExposeEH	(PLStream *, XEvent *);
-static void	ResizeEH	(PLStream *, XEvent *);
+static void  KeyEH		(PLStream *, XEvent *);
+static void  MouseEH		(PLStream *, XEvent *);
+static void  ExposeEH		(PLStream *, XEvent *);
+static void  ResizeEH		(PLStream *, XEvent *);
 
 /* top level declarations */
 
@@ -76,8 +76,9 @@ typedef struct {
     double		xscale_dev;
     double		yscale_dev;
 
-    int			monochrome;
+    int			grayscale;
     XColor		cmap0[16];
+    XColor		bgcolor;
     XColor		fgcolor;
     XColor		curcolor;
 
@@ -274,18 +275,22 @@ xw_color(PLStream *pls)
     XwDev *xwd = &(xwdev[id]);
     int icol0 = pls->icol0;
 
-    if (icol0 == PL_RGB_COLOR) {
-	xwd->curcolor.red = (pls->curcolor.r << 8);
-	xwd->curcolor.green = (pls->curcolor.g << 8);
-	xwd->curcolor.blue = (pls->curcolor.b << 8);
+    if (!pls->color)
+	xwd->curcolor.pixel = xwd->fgcolor.pixel;
+    else {
+	if (icol0 == PL_RGB_COLOR) {
+	    xwd->curcolor.red = (pls->curcolor.r << 8);
+	    xwd->curcolor.green = (pls->curcolor.g << 8);
+	    xwd->curcolor.blue = (pls->curcolor.b << 8);
 
-	if (!XAllocColor(xwd->display, xwd->map, &xwd->curcolor))
-	    xwd->curcolor.pixel = xwd->fgcolor.pixel;
+	    if (!XAllocColor(xwd->display, xwd->map, &xwd->curcolor))
+		xwd->curcolor.pixel = xwd->fgcolor.pixel;
 
-	XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
+	    XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
+	}
+	else
+	    XSetForeground(xwd->display, xwd->gc, xwd->cmap0[icol0].pixel);
     }
-    else
-	XSetForeground(xwd->display, xwd->gc, xwd->cmap0[icol0].pixel);
 }
 
 /*----------------------------------------------------------------------*\
@@ -411,7 +416,7 @@ xw_Xinit(PLStream *pls)
 	XCreateSimpleWindow(xwd->display,
 			    DefaultRootWindow(xwd->display),
 			    hint.x, hint.y, hint.width, hint.height,
-			    border, xwd->fgcolor.pixel, xwd->cmap0[0].pixel);
+			    border, xwd->fgcolor.pixel, xwd->bgcolor.pixel);
 
     XSetStandardProperties(xwd->display, xwd->window, header, header,
 			   None, 0, 0, &hint);
@@ -435,7 +440,7 @@ xw_Xinit(PLStream *pls)
 
     XMapRaised(xwd->display, xwd->window);
 
-    XSetBackground(xwd->display, xwd->gc, xwd->cmap0[0].pixel);
+    XSetBackground(xwd->display, xwd->gc, xwd->bgcolor.pixel);
     xw_color(pls);
 
 /* Wait for exposure */
@@ -687,13 +692,14 @@ xw_colini(PLStream *pls)
     XwDev *xwd = &(xwdev[id]);
     int i, gslevbg, gslevfg;
 
-    xwd->monochrome = AreWeMonochrome(xwd->display);
+    xwd->grayscale = AreWeGrayscale(xwd->display);
 
-/* Default is color IF the user hasn't specified and IF the output device
-   is not monochrome or grayscale. */
-
+/*
+* Default is color IF the user hasn't specified and IF the output device is
+* not grayscale.  
+*/
     if (!pls->colorset) {
-	if (xwd->monochrome)
+	if (xwd->grayscale)
 	    pls->color = 0;
 	else
 	    pls->color = 1;
@@ -701,41 +707,52 @@ xw_colini(PLStream *pls)
 
 /*
 * Allocate background color.
+*
+* Background defaults to black on color screens, white on grayscale (many
+* grayscale monitors have poor contrast, and black-on-white looks better).
 * Note that black & white allocations should never fail.
 */
 
-    gslevbg = ((float) pls->cmap0[0].r +
-	       (float) pls->cmap0[0].g +
-	       (float) pls->cmap0[0].b) / 3.;
+    if (xwd->grayscale && !pls->bgcolorset) {
+	pls->bgcolor.r = 255;
+	pls->bgcolor.g = 255;
+	pls->bgcolor.b = 255;
+    }
 
-    if (!XAllocColor(xwd->display, xwd->map, &xwd->cmap0[0])) {
+    gslevbg = ((float) pls->bgcolor.r +
+	       (float) pls->bgcolor.g +
+	       (float) pls->bgcolor.b) / 3.;
+
+    if (xwd->grayscale) {
 	if (gslevbg < 128)
 	    gslevbg = 0;
 	else
 	    gslevbg = 255;
 
-	pls->cmap0[0].r = gslevbg;
-	pls->cmap0[0].g = gslevbg;
-	pls->cmap0[0].b = gslevbg;
+	pls->bgcolor.r = gslevbg;
+	pls->bgcolor.g = gslevbg;
+	pls->bgcolor.b = gslevbg;
+    }
 
-	PLColor_to_XColor(&xwd->cmap0[0], &pls->cmap0[0]);
+    PLColor_to_XColor(&xwd->bgcolor, &pls->bgcolor);
 
-	if (!XAllocColor(xwd->display, xwd->map, &xwd->cmap0[0])) {
-	    fprintf(stderr, "Can't allocate background color\n");
-	    exit(1);
-	}
+    if (!XAllocColor(xwd->display, xwd->map, &xwd->bgcolor)) {
+	fprintf(stderr, "Can't allocate background color\n");
+	exit(1);
     }
 
 /*
 * Foreground color.
-* Normally there is no use for a "foreground color", since a palette with
-* a variety of colors is used.  But for grayscale output it makes sense to
-* use it, otherwise the plots can become nearly unreadable (i.e. if colors
-* get mapped onto grayscale values).  In this case it becomes the grayscale
-* level for all draws, and is taken to be black if the background is light,
-* and white if the background is dark.  Also, the X initialization routines
-* require you to input a foreground color, although this is irrelevant if
-* a color palette is being used.
+*
+* Normally there is no use for a "foreground color", since a palette with a
+* variety of colors is used.  But for grayscale output it makes sense to use
+* it, otherwise the plots can become nearly unreadable (i.e. if colors get
+* mapped onto grayscale values).  In this case it becomes the grayscale level
+* for all draws, and is taken to be black if the background is light, and
+* white if the background is dark.  We also use the foreground color for (a)
+* input to XCreateSimpleWindow (although the choice is basically irrelevant
+* since a color palette is being used), and (b) as the color to use if the
+* call to XAllocColor fails at runtime.
 */
 
     if (gslevbg < 128)
@@ -754,22 +771,16 @@ xw_colini(PLStream *pls)
 	exit(1);
     }
 
-    if (xwd->monochrome) {
-	for (i = 1; i < pls->ncol0; i++) {
-	    pls->cmap0[i].r = pls->fgcolor.r;
-	    pls->cmap0[i].g = pls->fgcolor.g;
-	    pls->cmap0[i].b = pls->fgcolor.b;
-	}
-    }
-
 /* Allocate colors in palette 0 */
 
-    for (i = 1; i < pls->ncol0; i++) {
+    if (pls->color) {
+	for (i = 1; i < pls->ncol0; i++) {
 
-	PLColor_to_XColor(&xwd->cmap0[i], &pls->cmap0[i]);
+	    PLColor_to_XColor(&xwd->cmap0[i], &pls->cmap0[i]);
 
-	if (!XAllocColor(xwd->display, xwd->map, &xwd->cmap0[i]))
-	    XColor_to_XColor(&xwd->cmap0[i], &xwd->fgcolor);
+	    if (!XAllocColor(xwd->display, xwd->map, &xwd->cmap0[i]))
+		XColorcpy(&xwd->cmap0[i], &xwd->fgcolor);
+	}
     }
 }
 
@@ -788,13 +799,13 @@ PLColor_to_XColor(XColor *xcolor, PLColor *plcolor)
 }
 
 /*----------------------------------------------------------------------*\
-* void XColor_to_XColor()
+* void XColorcpy()
 *
 * Self-explanatory.
 \*----------------------------------------------------------------------*/
 
 static void
-XColor_to_XColor(XColor *xcolor1, XColor *xcolor2)
+XColorcpy(XColor *xcolor1, XColor *xcolor2)
 {
     xcolor1->red = xcolor2->red;
     xcolor1->green = xcolor2->green;
@@ -809,7 +820,7 @@ XColor_to_XColor(XColor *xcolor1, XColor *xcolor2)
 /* gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland. */
 
 static int
-AreWeMonochrome(Display *display)
+AreWeGrayscale(Display *display)
 {
 #if defined(__cplusplus) || defined(c_plusplus)
 #define THING c_class
