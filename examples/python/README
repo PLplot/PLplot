@@ -1,0 +1,27 @@
+The Status of the Python Examples
+
+I (Alan W. Irwin) could never get pytkdemo (which calls all the old x??.py
+examples) to work on Linux.  I therefore made some new stand-alone
+widgetless examples xw??.py (note the different name than x??.py) that do
+work under Linux.  The xw??.py files were made from the corresponding x??.py
+file, but with the w argument (required for widgets) removed, plinit and
+plend inserted, the correct modules loaded, and several bugs elminated.
+With the new recommended method of creating and installing the dynamically
+loadable python plplot module, plmodule.so (which now occurs by default)
+these xw??.py examples all work under Linux. To try out these examples,
+simply type their names (or if python is not located in the standard place
+[/usr/bin/python]) then type "python xw01.py", etc.
+
+All these xw??.py examples should also work under Unix systems according to
+the python team comments on dynamic loading, but that is yet to be tested
+as of 2001 January 7.
+
+Eventually, we also plan to get pytkdemo (and tutor.py and xtkpy?) working
+for the default dynamic loading method, but the core group doesn't currently
+have the python skills to do this.  If anybody can make some variation of
+pytkdemo work, please get in touch with Alan W. Irwin
+(irwin@beluga.phys.uvic.ca).  Note there are some obvious bugs in some of
+the x??.py demos, and to sort these out, inspect the equivalent xw??.py
+demo. In all cases the xw??.py demos have been thoroughly debugged (albeit
+without the "w" arguments that are absolutely necessary to get the widget
+x??.py examples to work.)
