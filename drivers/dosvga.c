@@ -1,44 +1,20 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/07/16 22:11:14  mjl
-   Eliminated low-level coordinate scaling; now done by driver interface.
+   Revision 1.11  1993/07/31 07:56:28  mjl
+   Several driver functions consolidated, for all drivers.  The width and color
+   commands are now part of a more general "state" command.  The text and
+   graph commands used for switching between modes is now handled by the
+   escape function (very few drivers require it).  The device-specific PLDev
+   structure is now malloc'ed for each driver that requires it, and freed when
+   the stream is terminated.
 
+ * Revision 1.10  1993/07/16  22:11:14  mjl
+ * Eliminated low-level coordinate scaling; now done by driver interface.
+ *
  * Revision 1.9  1993/07/01  21:59:32  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
  * now start with "pl"; device driver functions start with "plD_".
- *
- * Revision 1.8  1993/03/15  21:39:04  mjl
- * Changed all _clear/_page driver functions to the names _eop/_bop, to be
- * more representative of what's actually going on.
- *
- * Revision 1.7  1993/03/03  19:41:54  mjl
- * Changed PLSHORT -> short everywhere; now all device coordinates are expected
- * to fit into a 16 bit address space (reasonable, and good for performance).
- *
- * Revision 1.6  1993/02/27  04:46:31  mjl
- * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
- * always be included first.
- *
- * Revision 1.5  1993/02/22  23:10:50  mjl
- * Eliminated the plP_adv() driver calls, as these were made obsolete by
- * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
- *
- * Revision 1.4  1993/01/23  05:41:39  mjl
- * Changes to support new color model, polylines, and event handler support
- * (interactive devices only).
- *
- * Revision 1.3  1992/11/07  07:48:37  mjl
- * Fixed orientation operation in several files and standardized certain startup
- * operations. Fixed bugs in various drivers.
- *
- * Revision 1.2  1992/09/29  04:44:39  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:32  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*
@@ -48,13 +24,6 @@
 	
 	This file constitutes the driver for a VGA display under DOS or
 	OS/2 DOS mode.  It is based on the xterm driver.
-
-	UPDATE: 5-3-91
-	It became apparent during my initial day of development with this
-	software that the structure of the Xterm driver was too pathetic
-	for description in polite company.  At this point I am performing a
-	massive overhaul of the entire basic structure.  Hoepfully the result
-	will be usable.
 
 	NOTE:
 	This file is intended to be compiled with Microsoft C or QuickC.
@@ -79,7 +48,9 @@
 	I think we can safely forget about non-ANSI compilers raising their
 	ugly heads here... */
 
-static void pause(void);
+static void	pause		(void);
+static void	vga_text	(PLStream *);
+static void	vga_graph	(PLStream *);
 
 #define VGAX	639
 #define VGAY	479
@@ -97,11 +68,6 @@ static int mode = TEXT_MODE;
 #define DIRTY 1
 
 static page_state;
-
-/* (dev) will get passed in eventually, so this looks weird right now */
-
-static PLDev device;
-static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
 * plD_init_vga()
@@ -124,18 +90,11 @@ plD_init_vga(PLStream *pls)
 
 /* Set up device parameters */
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
-    dev->xmin = 0;
-    dev->xmax = VGAX;
-    dev->ymin = 0;
-    dev->ymax = VGAY;
-
-    plP_setpxl(2.5, 2.5);		/* My best guess.  Seems to work okay. */
+    plP_setpxl(2.5, 2.5);	/* My best guess.  Seems to work okay. */
 
     plP_setphy((PLINT) 0, (PLINT) VGAX, (PLINT) 0, (PLINT) VGAY);
 
-    plD_graph_vga(pls);
+    vga_graph(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -211,79 +170,44 @@ plD_bop_vga(PLStream *pls)
 void
 plD_tidy_vga(PLStream *pls)
 {
-    plD_text_vga(pls);
+    vga_text(pls);
     pls->page = 0;
     pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
-* plD_color_vga()
+* plD_state_vga()
 *
-* Set pen color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-void
-plD_color_vga(PLStream *pls)
+void 
+plD_state_vga(PLStream *pls, PLINT op)
 {
-    static long cmap[16] = {
-	_WHITE, _RED, _LIGHTYELLOW, _GREEN,
-	_CYAN, _WHITE, _WHITE, _GRAY,
-	_WHITE, _BLUE, _GREEN, _CYAN,
-	_RED, _MAGENTA, _LIGHTYELLOW, _WHITE
-    };
+    switch (op) {
 
-    if (pls->icol0 < 0 || pls->icol0 > 15)
-	pls->icol0 = 15;
+    case PLSTATE_WIDTH:
+	break;
 
-    _remappalette((short) pls->icol0, cmap[pls->icol0]);
-    _setcolor((short) pls->icol0);
-}
+    case PLSTATE_COLOR0:{
+	static long cmap[16] = {
+	    _WHITE, _RED, _LIGHTYELLOW, _GREEN,
+	    _CYAN, _WHITE, _WHITE, _GRAY,
+	    _WHITE, _BLUE, _GREEN, _CYAN,
+	    _RED, _MAGENTA, _LIGHTYELLOW, _WHITE
+	    };
 
-/*----------------------------------------------------------------------*\
-* plD_text_vga()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
+	if (pls->icol0 < 0 || pls->icol0 > 15)
+	    pls->icol0 = 15;
 
-void
-plD_text_vga(PLStream *pls)
-{
-    if (pls->graphx == GRAPHICS_MODE) {
-	if (page_state == DIRTY)
-	    pause();
-	_setvideomode(_DEFAULTMODE);
-	pls->graphx = TEXT_MODE;
+	_remappalette((short) pls->icol0, cmap[pls->icol0]);
+	_setcolor((short) pls->icol0);
+	break;
     }
-}
 
-/*----------------------------------------------------------------------*\
-* plD_graph_vga()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_graph_vga(PLStream *pls)
-{
-    if (pls->graphx == TEXT_MODE) {
-	if (!_setvideomode(_VRES16COLOR)) {
-	    printf("Unable to set graphics mode.");
-	    exit(0);
-	}
-	pls->graphx = GRAPHICS_MODE;
-	page_state = CLEAN;
+    case PLSTATE_COLOR1:
+	break;
     }
-}
-
-/*----------------------------------------------------------------------*\
-* plD_width_vga()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void
-plD_width_vga(PLStream *pls)
-{
 }
 
 /*----------------------------------------------------------------------*\
@@ -295,6 +219,52 @@ plD_width_vga(PLStream *pls)
 void
 plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
 {
+    switch (op) {
+
+      case PLESC_TEXT:
+	vga_text(pls);
+	break;
+
+      case PLESC_GRAPH:
+	vga_graph(pls);
+	break;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* vga_text()
+*
+* Switch to text mode.
+\*----------------------------------------------------------------------*/
+
+void
+vga_text(PLStream *pls)
+{
+    if (pls->graphx == GRAPHICS_MODE) {
+	if (page_state == DIRTY)
+	    pause();
+	_setvideomode(_DEFAULTMODE);
+	pls->graphx = TEXT_MODE;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* vga_graph()
+*
+* Switch to graphics mode.
+\*----------------------------------------------------------------------*/
+
+void
+vga_graph(PLStream *pls)
+{
+    if (pls->graphx == TEXT_MODE) {
+	if (!_setvideomode(_VRES16COLOR)) {
+	    printf("Unable to set graphics mode.");
+	    exit(0);
+	}
+	pls->graphx = GRAPHICS_MODE;
+	page_state = CLEAN;
+    }
 }
 
 /*----------------------------------------------------------------------*\

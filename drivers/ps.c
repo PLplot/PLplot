@@ -1,8 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.16  1993/07/16 22:14:18  mjl
-   Simplified and fixed dpi settings.
+   Revision 1.17  1993/07/31 07:56:43  mjl
+   Several driver functions consolidated, for all drivers.  The width and color
+   commands are now part of a more general "state" command.  The text and
+   graph commands used for switching between modes is now handled by the
+   escape function (very few drivers require it).  The device-specific PLDev
+   structure is now malloc'ed for each driver that requires it, and freed when
+   the stream is terminated.
 
+ * Revision 1.16  1993/07/16  22:14:18  mjl
+ * Simplified and fixed dpi settings.
+ *
  * Revision 1.15  1993/07/01  21:59:43  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
@@ -10,60 +18,6 @@
  *
  * Revision 1.14  1993/04/26  20:01:59  mjl
  * Changed time type from long to time_t.
- *
- * Revision 1.13  1993/03/28  08:44:21  mjl
- * Eliminated name conflict of getdate() function with builtin of same name
- * on some systems.
- *
- * Revision 1.12  1993/03/15  21:39:19  mjl
- * Changed all _clear/_page driver functions to the names _eop/_bop, to be
- * more representative of what's actually going on.
- *
- * Revision 1.11  1993/03/06  04:57:25  mjl
- * Fix to ensure that a new segment is begun after a line width change.
- *
- * Revision 1.10  1993/03/03  19:42:06  mjl
- * Changed PLSHORT -> short everywhere; now all device coordinates are expected
- * to fit into a 16 bit address space (reasonable, and good for performance).
- *
- * Revision 1.9  1993/03/03  16:18:35  mjl
- * Cleaned up prolog block, fixed (?) default line width setting.
- *
- * Revision 1.8  1993/02/27  04:46:40  mjl
- * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
- * always be included first.
- *
- * Revision 1.7  1993/02/22  23:15:12  mjl
- * Eliminated the plP_adv() driver calls, as these were made obsolete by recent
- * changes to plmeta and plrender.  Also eliminated page clear commands from
- * plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.  Eliminated
- * the (atend) specification for BoundingBox, since this isn't recognized by
- * some programs; instead enough space is left for it and a rewind and
- * subsequent write is done from plD_tidy_ps().  Familying is no longer directly
- * supported by the PS driver as a result.  The output done by the @end
- * function was eliminated to reduce aggravation when viewing with ghostview.
- *
- * Revision 1.6  1993/01/23  05:41:51  mjl
- * Changes to support new color model, polylines, and event handler support
- * (interactive devices only).
- *
- * Revision 1.5  1992/11/07  07:48:47  mjl
- * Fixed orientation operation in several files and standardized certain startup
- * operations. Fixed bugs in various drivers.
- *
- * Revision 1.4  1992/10/22  17:04:56  mjl
- * Fixed warnings, errors generated when compling with HP C++.
- *
- * Revision 1.3  1992/09/30  18:24:58  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:44:48  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:42  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	ps.c
@@ -81,8 +35,8 @@
 
 /* Prototypes for functions in this file. */
 
-static char *pl_getdate(void);
-static void plD_init_ps(PLStream *);
+static char *ps_getdate	(void);
+static void ps_init	(PLStream *);
 
 /* top level declarations */
 
@@ -102,12 +56,6 @@ static void plD_init_ps(PLStream *);
 
 static char outbuf[128];
 static int llx = XPSSIZE, lly = YPSSIZE, urx = 0, ury = 0, ptcnt;
-static PLINT orient;
-
-/* (dev) will get passed in eventually, so this looks weird right now */
-
-static PLDev device;
-static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
 * plD_init_ps()
@@ -120,19 +68,20 @@ plD_init_psm(PLStream *pls)
 {
     if (!pls->colorset)
 	pls->color = 0;		/* no color by default: user can override */
-    plD_init_ps(pls);
+    ps_init(pls);
 }
 
 void
 plD_init_psc(PLStream *pls)
 {
     pls->color = 1;		/* always color */
-    plD_init_ps(pls);
+    ps_init(pls);
 }
 
 static void
-plD_init_ps(PLStream *pls)
+ps_init(PLStream *pls)
 {
+    PLDev *dev;
     float r, g, b;
     float pxlx = YPSSIZE/LPAGE_X;
     float pxly = XPSSIZE/LPAGE_Y;
@@ -157,29 +106,21 @@ plD_init_ps(PLStream *pls)
 
     plOpenFile(pls);
 
-/* Set up device parameters */
+/* Allocate and initialize device-specific data */
+
+    dev = plAllocDev(pls);
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
     plP_setpxl(pxlx, pxly);
 
-/* Because portrait mode addressing is used by postscript, we need to
-   rotate by 90 degrees to get the right mapping. */
+/* Rotate by 90 degrees since portrait mode addressing is used */
 
     dev->xmin = 0;
     dev->ymin = 0;
-
-    orient = pls->orient + 1;
-    if (orient%2 == 1) {
-	dev->xmax = PSY;
-	dev->ymax = PSX;
-    }
-    else {
-	dev->xmax = PSX;
-	dev->ymax = PSY;
-    }
-
+    dev->xmax = PSY;
+    dev->ymax = PSX;
     dev->xlen = dev->xmax - dev->xmin;
     dev->ylen = dev->ymax - dev->ymin;
 
@@ -193,7 +134,7 @@ plD_init_ps(PLStream *pls)
 
     fprintf(OF, "%%%%Title: PLPLOT Graph\n");
     fprintf(OF, "%%%%Creator: PLPLOT Version 4.0\n");
-    fprintf(OF, "%%%%CreationDate: %s\n", pl_getdate());
+    fprintf(OF, "%%%%CreationDate: %s\n", ps_getdate());
     fprintf(OF, "%%%%Pages: (atend)\n");
     fprintf(OF, "%%%%EndComments\n\n");
 
@@ -335,6 +276,7 @@ plD_init_ps(PLStream *pls)
 void
 plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
+    PLDev *dev = (PLDev *) pls->dev;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
     if (pls->linepos + 21 > LINELENGTH) {
@@ -346,11 +288,9 @@ plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
     pls->bytecnt++;
 
-/* Because portrait mode addressing is used here, we need to complement
-   the orientation flag to get the right mapping. */
+/* Rotate by 90 degrees */
 
-    orient = pls->orient + 1;
-    plRotPhy(orient, dev, &x1, &y1, &x2, &y2);
+    plRotPhy(1, dev, &x1, &y1, &x2, &y2);
 
     if (x1 == dev->xold && y1 == dev->yold && ptcnt < 40) {
 	sprintf(outbuf, "%d %d D", x2, y2);
@@ -412,6 +352,8 @@ plD_eop_ps(PLStream *pls)
 void
 plD_bop_ps(PLStream *pls)
 {
+    PLDev *dev = (PLDev *) pls->dev;
+
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
@@ -457,63 +399,41 @@ plD_tidy_ps(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_color_ps()
+* plD_state_ps()
 *
-* Set pen color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-void
-plD_color_ps(PLStream *pls)
+void 
+plD_state_ps(PLStream *pls, PLINT op)
 {
-    float r, g, b;
+    PLDev *dev = (PLDev *) pls->dev;
 
-    if (pls->color) {
-	r = ((float) pls->curcolor.r) / 255.0;
-	g = ((float) pls->curcolor.g) / 255.0;
-	b = ((float) pls->curcolor.b) / 255.0;
+    switch (op) {
 
-	fprintf(OF, " S %f %f %f setrgbcolor\n", r, g, b);
+    case PLSTATE_WIDTH:
+	if (pls->width < 1 || pls->width > 10)
+	    fprintf(stderr, "\nInvalid pen width selection.");
+	else 
+	    fprintf(OF, " S\n/lw %d def\n@lwidth\n", pls->width);
+
+	dev->xold = UNDEFINED;
+	dev->yold = UNDEFINED;
+	break;
+
+    case PLSTATE_COLOR0:
+	if (pls->color) {
+	    float r = ((float) pls->curcolor.r) / 255.0;
+	    float g = ((float) pls->curcolor.g) / 255.0;
+	    float b = ((float) pls->curcolor.b) / 255.0;
+
+	    fprintf(OF, " S %f %f %f setrgbcolor\n", r, g, b);
+	}
+	break;
+
+    case PLSTATE_COLOR1:
+	break;
     }
-}
-
-/*----------------------------------------------------------------------*\
-* plD_text_ps()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_text_ps(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
-* plD_graph_ps()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_graph_ps(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
-* plD_width_ps()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void
-plD_width_ps(PLStream *pls)
-{
-    if (pls->width < 1 || pls->width > 10)
-	fprintf(stderr, "\nInvalid pen width selection.");
-    else {
-	fprintf(OF, " S\n/lw %d def\n@lwidth\n", pls->width);
-    }
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
 }
 
 /*----------------------------------------------------------------------*\
@@ -528,13 +448,13 @@ plD_esc_ps(PLStream *pls, PLINT op, void *ptr)
 }
 
 /*----------------------------------------------------------------------*\
-* pl_getdate()
+* ps_getdate()
 *
 * Get the date and time
 \*----------------------------------------------------------------------*/
 
 static char *
-pl_getdate(void)
+ps_getdate(void)
 {
     int len;
     time_t t;

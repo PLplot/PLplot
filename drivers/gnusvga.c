@@ -1,44 +1,20 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/07/16 22:11:15  mjl
-   Eliminated low-level coordinate scaling; now done by driver interface.
+   Revision 1.11  1993/07/31 07:56:30  mjl
+   Several driver functions consolidated, for all drivers.  The width and color
+   commands are now part of a more general "state" command.  The text and
+   graph commands used for switching between modes is now handled by the
+   escape function (very few drivers require it).  The device-specific PLDev
+   structure is now malloc'ed for each driver that requires it, and freed when
+   the stream is terminated.
 
+ * Revision 1.10  1993/07/16  22:11:15  mjl
+ * Eliminated low-level coordinate scaling; now done by driver interface.
+ *
  * Revision 1.9  1993/07/01  21:59:33  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
  * now start with "pl"; device driver functions start with "plD_".
- *
- * Revision 1.8  1993/03/15  21:39:06  mjl
- * Changed all _clear/_page driver functions to the names _eop/_bop, to be
- * more representative of what's actually going on.
- *
- * Revision 1.7  1993/03/03  19:41:55  mjl
- * Changed PLSHORT -> short everywhere; now all device coordinates are expected
- * to fit into a 16 bit address space (reasonable, and good for performance).
- *
- * Revision 1.6  1993/02/27  04:46:32  mjl
- * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
- * always be included first.
- *
- * Revision 1.5  1993/02/22  23:10:51  mjl
- * Eliminated the plP_adv() driver calls, as these were made obsolete by
- * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
- *
- * Revision 1.4  1993/01/23  05:41:40  mjl
- * Changes to support new color model, polylines, and event handler support
- * (interactive devices only).
- *
- * Revision 1.3  1992/11/07  07:48:38  mjl
- * Fixed orientation operation in several files and standardized certain startup
- * operations. Fixed bugs in various drivers.
- *
- * Revision 1.2  1992/09/29  04:44:40  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:33  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*
@@ -76,8 +52,10 @@
 
 /* Prototypes:	Since GNU CC, we can rest in the safety of ANSI prototyping. */
 
-static void pause(void);
-static void init_palette(void);
+static void	pause		(void);
+static void	init_palette	(void);
+static void	svga_text	(PLStream *);
+static void	svga_graph	(PLStream *);
 
 static PLINT vgax = 639;
 static PLINT vgay = 479;
@@ -97,11 +75,6 @@ static int totcol = 16;
 #define DIRTY 1
 
 static page_state;
-
-/* (dev) will get passed in eventually, so this looks weird right now */
-
-static PLDev device;
-static PLDev *dev = &device;
 
 typedef struct {
     int r;
@@ -131,13 +104,13 @@ static RGB colors[] = {
 
 
 /*----------------------------------------------------------------------*\
-* splD_init_vga()
+* plD_init_svga()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-splD_init_vga(PLStream *pls)
+plD_init_svga(PLStream *pls)
 {
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
@@ -151,32 +124,25 @@ splD_init_vga(PLStream *pls)
 
 /* Set up device parameters */
 
-    splD_graph_vga(pls);		/* Can't get current device info unless in
+    svga_graph(pls);		/* Can't get current device info unless in
 				   graphics mode. */
 
     vgax = GrSizeX() - 1;	/* should I use -1 or not??? */
     vgay = GrSizeY() - 1;
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
-    dev->xmin = 0;
-    dev->xmax = vgax;
-    dev->ymin = 0;
-    dev->ymax = vgay;
-
-    plP_setpxl(2.5, 2.5);		/* My best guess.  Seems to work okay. */
+    plP_setpxl(2.5, 2.5);	/* My best guess.  Seems to work okay. */
 
     plP_setphy(0, vgax, 0, vgay);
 }
 
 /*----------------------------------------------------------------------*\
-* splD_line_vga()
+* plD_line_svga()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-splD_line_vga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_svga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
@@ -189,28 +155,28 @@ splD_line_vga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* splD_polyline_vga()
+* plD_polyline_svga()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-splD_polyline_vga(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_svga(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	splD_line_vga(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	plD_line_svga(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* splD_eop_vga()
+* plD_eop_svga()
 *
 * End of page.
 \*----------------------------------------------------------------------*/
 
 void
-splD_eop_vga(PLStream *pls)
+plD_eop_svga(PLStream *pls)
 {
     if (page_state == DIRTY)
 	pause();
@@ -222,53 +188,96 @@ splD_eop_vga(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* splD_bop_vga()
+* plD_bop_svga()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-splD_bop_vga(PLStream *pls)
+plD_bop_svga(PLStream *pls)
 {
     pls->page++;
-    splD_eop_vga(pls);
+    plD_eop_svga(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* splD_tidy_vga()
+* plD_tidy_svga()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-splD_tidy_vga(PLStream *pls)
+plD_tidy_svga(PLStream *pls)
 {
-    splD_text_vga(pls);
+    svga_text(pls);
     pls->page = 0;
     pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
-* splD_color_vga()
+* plD_state_svga()
 *
-* Set pen color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-void
-splD_color_vga(PLStream *pls)
+void 
+plD_state_svga(PLStream *pls, PLINT op)
 {
-    col = pls->icol0;
+    switch (op) {
+
+    case PLSTATE_WIDTH:
+	break;
+
+    case PLSTATE_COLOR0:
+	col = pls->icol0;
+	break;
+
+    case PLSTATE_COLOR1:
+	break;
+    }
 }
 
 /*----------------------------------------------------------------------*\
-* splD_text_vga()
+* plD_esc_svga()
+*
+* Escape function.
+\*----------------------------------------------------------------------*/
+
+void
+plD_esc_svga(PLStream *pls, PLINT op, void *ptr)
+{
+    switch (op) {
+	case PLESC_SET_RGB:{
+	    pleRGB *cols = (pleRGB *) ptr;
+	    int r = 255 * cols->red;
+	    int g = 255 * cols->green;
+	    int b = 255 * cols->blue;
+	    if (totcol < 255) {
+		GrSetColor(++totcol, r, g, b);
+		col = totcol;
+	    }
+	}
+	break;
+
+      case PLESC_TEXT:
+	svga_text(pls);
+	break;
+
+      case PLESC_GRAPH:
+	svga_graph(pls);
+	break;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* svga_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
 
-void
-splD_text_vga(PLStream *pls)
+static void
+svga_text(PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
@@ -279,7 +288,7 @@ splD_text_vga(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* splD_graph_vga()
+* svga_graph()
 *
 * Switch to graphics mode.
 *
@@ -292,8 +301,8 @@ splD_text_vga(PLStream *pls)
 * saving the RGB info used so far, which is not currently done.
 \*----------------------------------------------------------------------*/
 
-void
-splD_graph_vga(PLStream *pls)
+static void
+svga_graph(PLStream *pls)
 {
     if (pls->graphx == TEXT_MODE) {
 	GrSetMode(GR_default_graphics);	/* Destroys the palette */
@@ -302,41 +311,6 @@ splD_graph_vga(PLStream *pls)
 				   indicies */
 	pls->graphx = GRAPHICS_MODE;
 	page_state = CLEAN;
-    }
-}
-
-/*----------------------------------------------------------------------*\
-* splD_width_vga()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void
-splD_width_vga(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
-* splD_esc_vga()
-*
-* Escape function.
-\*----------------------------------------------------------------------*/
-
-void
-splD_esc_vga(PLStream *pls, PLINT op, void *ptr)
-{
-    switch (op) {
-	case PL_SET_RGB:{
-	    pleRGB *cols = (pleRGB *) ptr;
-	    int r = 255 * cols->red;
-	    int g = 255 * cols->green;
-	    int b = 255 * cols->blue;
-	    if (totcol < 255) {
-		GrSetColor(++totcol, r, g, b);
-		col = totcol;
-	    }
-	}
-	break;
     }
 }
 

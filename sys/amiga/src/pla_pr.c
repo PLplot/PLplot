@@ -1,14 +1,17 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/07/01 21:59:53  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl"; device driver functions start with "plD_".
+   Revision 1.3  1993/07/31 07:56:55  mjl
+   Several driver functions consolidated, for all drivers.  The width and color
+   commands are now part of a more general "state" command.  The text and
+   graph commands used for switching between modes is now handled by the
+   escape function (very few drivers require it).  The device-specific PLDev
+   structure is now malloc'ed for each driver that requires it, and freed when
+   the stream is terminated.
 
- * Revision 1.1  1993/03/15  21:34:24  mjl
- * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
- * OS 2.0 capabilities.
- *
+ * Revision 1.2  1993/07/01  21:59:53  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".
 */
 
 /*	pla_pr.c
@@ -28,11 +31,6 @@
 static long bmapx, bmapy, bmapxmax, bmapymax, xdpi, ydpi;
 static long dwidth, dheight;
 
-/* (dev) will get passed in eventually, so this looks weird right now */
-
-static PLDev device;
-static PLDev (*dev) = &device;
-
 /*----------------------------------------------------------------------*\
 * plD_init_amipr()
 *
@@ -42,6 +40,7 @@ static PLDev (*dev) = &device;
 void
 plD_init_amipr(PLStream *pls)
 {
+    PLDev *dev;
     int mode;
 
     pls->termin = 0;		/* not an interactive terminal */
@@ -73,7 +72,9 @@ plD_init_amipr(PLStream *pls)
     dwidth = bmapx - 2;
     dheight = bmapy - 2;
 
-/* Set up device parameters */
+/* Allocate and initialize device-specific data */
+
+    dev = plAllocDev(pls);
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -82,14 +83,8 @@ plD_init_amipr(PLStream *pls)
     dev->ymin = 0;
     dev->ymax = bmapymax;
 
-    if (!pls->orient) {
-	plP_setpxl((PLFLT) (ydpi / 25.4), (PLFLT) (xdpi / 25.4));
-	plP_setphy(0, bmapymax, 0, bmapxmax);
-    }
-    else {
-	plP_setpxl((PLFLT) (xdpi / 25.4), (PLFLT) (ydpi / 25.4));
-	plP_setphy(0, bmapxmax, 0, bmapymax);
-    }
+    plP_setpxl((ydpi / 25.4), (xdpi / 25.4));
+    plP_setphy(0, bmapymax, 0, bmapxmax);
 
 /* Allocate bitmap and initial for line drawing */
 
@@ -108,38 +103,22 @@ plD_init_amipr(PLStream *pls)
 void 
 plD_line_amipr(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
+    PLDev *dev = (PLDev *) pls->dev;
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     long xn1, yn1, xn2, yn2;
 
-    if (!pls->orient) {
-	xn1 = (x1 * dheight) / bmapymax;
-	yn1 = (y1 * dwidth) / bmapxmax;
-	xn2 = (x2 * dheight) / bmapymax;
-	yn2 = (y2 * dwidth) / bmapxmax;
-	switch (pls->width) {
-	case 3:
-	    mapline(yn1, xn1, yn2, xn2);
-	case 2:
-	    mapline(yn1 + 2, xn1 + 2, yn2 + 2, xn2 + 2);
-	case 1:
-	default:
-	    mapline(yn1 + 1, xn1 + 1, yn2 + 1, xn2 + 1);
-	}
-    }
-    else {
-	xn1 = (x1 * dwidth) / bmapxmax;
-	yn1 = (y1 * dheight) / bmapymax;
-	xn2 = (x2 * dwidth) / bmapxmax;
-	yn2 = (y2 * dheight) / bmapymax;
-	switch (pls->width) {
-	case 3:
-	    mapline(xn1, dheight - yn1, xn2, dheight - yn2);
-	case 2:
-	    mapline(xn1 + 2, dheight - yn1 + 2, xn2 + 2, dheight - yn2 + 2);
-	case 1:
-	default:
-	    mapline(xn1 + 1, dheight - yn1 + 1, xn2 + 1, dheight - yn2 + 1);
-	}
+    xn1 = (x1 * dheight) / bmapymax;
+    yn1 = (y1 * dwidth) / bmapxmax;
+    xn2 = (x2 * dheight) / bmapymax;
+    yn2 = (y2 * dwidth) / bmapxmax;
+    switch (pls->width) {
+    case 3:
+	mapline(yn1, xn1, yn2, xn2);
+    case 2:
+	mapline(yn1 + 2, xn1 + 2, yn2 + 2, xn2 + 2);
+    case 1:
+    default:
+	mapline(yn1 + 1, xn1 + 1, yn2 + 1, xn2 + 1);
     }
 }
 
@@ -202,51 +181,23 @@ plD_tidy_amipr(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_color_amipr()
+* plD_state_amipr()
 *
-* Set pen color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
 void 
-plD_color_amipr(PLStream *pls)
+plD_state_amipr(PLStream *pls, PLINT op)
 {
-}
+    switch (op) {
 
-/*----------------------------------------------------------------------*\
-* plD_text_amipr()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
-
-void 
-plD_text_amipr(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
-* plD_graph_amipr()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
-
-void 
-plD_graph_amipr(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
-* plD_width_amipr()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void 
-plD_width_amipr(PLStream *pls)
-{
-    if (pls->width < 1)
-	pls->width = 1;
-    else if (pls->width > 3)
-	pls->width = 3;
+      case PLSTATE_WIDTH:
+	if (pls->width < 1)
+	    pls->width = 1;
+	else if (pls->width > 3)
+	    pls->width = 3;
+	break;
+    }
 }
 
 /*----------------------------------------------------------------------*\

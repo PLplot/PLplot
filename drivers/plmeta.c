@@ -1,10 +1,18 @@
 /* $Id$
    $Log$
-   Revision 1.16  1993/07/16 22:13:48  mjl
-   Switched coordinates to standard meta coords.  Eliminated obsolete low-level
-   operations.  Added write of some state information (colors and pen width)
-   at the beginning of each page to aid seeking while in renderer.
+   Revision 1.17  1993/07/31 07:56:41  mjl
+   Several driver functions consolidated, for all drivers.  The width and color
+   commands are now part of a more general "state" command.  The text and
+   graph commands used for switching between modes is now handled by the
+   escape function (very few drivers require it).  The device-specific PLDev
+   structure is now malloc'ed for each driver that requires it, and freed when
+   the stream is terminated.
 
+ * Revision 1.16  1993/07/16  22:13:48  mjl
+ * Switched coordinates to standard meta coords.  Eliminated obsolete low-level
+ * operations.  Added write of some state information (colors and pen width)
+ * at the beginning of each page to aid seeking while in renderer.
+ *
  * Revision 1.15  1993/07/01  22:00:51  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
@@ -14,58 +22,6 @@
  * Revision 1.14  1993/04/26  19:57:48  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
- *
- * Revision 1.13  1993/03/18  07:05:17  mjl
- * Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
- * driver and renderer.  These are really not necessary when a metafile is
- * being used and can be aggravating when using the xterm driver.
- *
- * Revision 1.12  1993/03/16  06:47:35  mjl
- * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
- * more robust.
- *
- * Revision 1.11  1993/03/15  21:39:18  mjl
- * Changed all _clear/_page driver functions to the names _eop/_bop, to be
- * more representative of what's actually going on.
- *
- * Revision 1.10  1993/03/03  19:42:05  mjl
- * Changed PLSHORT -> short everywhere; now all device coordinates are expected
- * to fit into a 16 bit address space (reasonable, and good for performance).
- *
- * Revision 1.9  1993/03/03  16:17:59  mjl
- * Added #include <stdlib.h> since the code needs to exit(1) on some errors.
- *
- * Revision 1.8  1993/02/27  04:50:33  mjl
- * Simplified fgetpos/fsetpos usage, to where it will now actually work on rays,
- * and I hope the Amiga and Linux also.  Lesson to all: seeking in C is fragile!
- * Also added lots of diagnostics, enabled when DEBUG is defined.
- *
- * Revision 1.7  1993/02/27  01:41:39  mjl
- * Changed from ftell/fseek to fgetpos/fsetpos.
- *
- * Revision 1.6  1993/02/22  23:11:01  mjl
- * Eliminated the plP_adv() driver calls, as these were made obsolete by
- * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
- *
- * Revision 1.5  1993/01/23  05:41:50  mjl
- * Changes to support new color model, polylines, and event handler support
- * (interactive devices only).
- *
- * Revision 1.4  1992/11/07  07:48:46  mjl
- * Fixed orientation operation in several files and standardized certain startup
- * operations. Fixed bugs in various drivers.
- *
- * Revision 1.3  1992/09/30  18:24:57  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:44:47  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:41  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*
@@ -105,13 +61,6 @@
 
 static void WriteHeader		(PLStream *);
 
-/* top level declarations */
-
-/* (dev) will get passed in eventually, so this looks weird right now */
-
-static PLDev device;
-static PLDev *dev = &device;
-
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
 * plD_init_plm()
@@ -122,6 +71,7 @@ static PLDev *dev = &device;
 void
 plD_init_plm(PLStream *pls)
 {
+    PLDev *dev;
     U_CHAR c = (U_CHAR) INITIALIZE;
 
     dbug_enter("plD_init_plm");
@@ -141,7 +91,9 @@ plD_init_plm(PLStream *pls)
 
     plOpenFile(pls);
 
-/* Set up device parameters */
+/* Allocate and initialize device-specific data */
+
+    dev = plAllocDev(pls);
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -175,6 +127,7 @@ plD_init_plm(PLStream *pls)
 void
 plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
 {
+    PLDev *dev = (PLDev *) pls->dev;
     U_CHAR c;
     U_SHORT xy[4];
 
@@ -240,6 +193,7 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
 void
 plD_polyline_plm(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
+    PLDev *dev = (PLDev *) pls->dev;
     U_CHAR c = (U_CHAR) POLYLINE;
 
     dbug_enter("plD_polyline_plm");
@@ -284,6 +238,7 @@ static long bytecnt_last;
 void
 plD_bop_plm(PLStream *pls)
 {
+    PLDev *dev = (PLDev *) pls->dev;
     U_CHAR c = (U_CHAR) PAGE;
     U_LONG foo;
     FPOS_T cp_offset=0, fwbyte_offset=0, bwbyte_offset=0;
@@ -352,8 +307,8 @@ plD_bop_plm(PLStream *pls)
 /* Write some page state information just to make things nice later on */
 /* Eventually there will be more */
 
-    plD_width_plm(pls);
-    plD_color_plm(pls);
+    plD_state_plm(pls, PLSTATE_WIDTH);
+    plD_state_plm(pls, PLSTATE_COLOR0);
 }
 
 /*----------------------------------------------------------------------*\
@@ -379,73 +334,48 @@ plD_tidy_plm(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_color_plm()
+* plD_state_plm()
 *
-* Set pen color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-void
-plD_color_plm(PLStream *pls)
+void 
+plD_state_plm(PLStream *pls, PLINT op)
 {
-    U_CHAR c = (U_CHAR) NEW_COLOR;
+    U_CHAR c = (U_CHAR) CHANGE_STATE;
 
-    dbug_enter("plD_color_plm");
+    dbug_enter("plD_state_plm");
 
     plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
 
-    plm_wr(pdf_wr_1byte(pls->OutFile, (U_CHAR) pls->icol0));
-    pls->bytecnt++;
+    switch (op) {
 
-    if (pls->icol0 == PL_RGB_COLOR) {
-	plm_wr(pdf_wr_1byte(pls->OutFile, pls->curcolor.r));
-	plm_wr(pdf_wr_1byte(pls->OutFile, pls->curcolor.g));
-	plm_wr(pdf_wr_1byte(pls->OutFile, pls->curcolor.b));
+    case PLSTATE_WIDTH:
+	plm_wr(pdf_wr_1byte(pls->OutFile, op));
+	pls->bytecnt++;
+
+	plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->width)));
+	pls->bytecnt += 2;
+	break;
+
+    case PLSTATE_COLOR0:
+	plm_wr(pdf_wr_1byte(pls->OutFile, op));
+	pls->bytecnt++;
+
+	plm_wr(pdf_wr_1byte(pls->OutFile, (U_CHAR) pls->icol0));
+	pls->bytecnt++;
+
+	if (pls->icol0 == PL_RGB_COLOR) {
+	    plm_wr(pdf_wr_1byte(pls->OutFile, pls->curcolor.r));
+	    plm_wr(pdf_wr_1byte(pls->OutFile, pls->curcolor.g));
+	    plm_wr(pdf_wr_1byte(pls->OutFile, pls->curcolor.b));
+	}
+	break;
+
+    case PLSTATE_COLOR1:
+	break;
     }
-}
-
-/*----------------------------------------------------------------------*\
-* plD_text_plm()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_text_plm(PLStream *pls)
-{
-    dbug_enter("plD_text_plm");
-}
-
-/*----------------------------------------------------------------------*\
-* plD_graph_plm()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_graph_plm(PLStream *pls)
-{
-    dbug_enter("plD_graph_plm");
-}
-
-/*----------------------------------------------------------------------*\
-* plD_width_plm()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void
-plD_width_plm(PLStream *pls)
-{
-    U_CHAR c = (U_CHAR) NEW_WIDTH;
-
-    dbug_enter("plD_width_plm");
-
-    plm_wr(pdf_wr_1byte(pls->OutFile, c));
-    pls->bytecnt++;
-
-    plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->width)));
-    pls->bytecnt += 2;
 }
 
 /*----------------------------------------------------------------------*\
@@ -489,6 +419,8 @@ plD_esc_plm(PLStream *pls, PLINT op, void *ptr)
 static void
 WriteHeader(PLStream *pls)
 {
+    PLDev *dev = (PLDev *) pls->dev;
+
     dbug_enter("WriteHeader(PLStream *pls");
 
     plm_wr(pdf_wr_header(pls->OutFile, PLMETA_HEADER));

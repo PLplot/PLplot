@@ -1,8 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/07/28 05:35:50  mjl
-   Fixed a cast in argument to free().
+   Revision 1.13  1993/07/31 07:56:33  mjl
+   Several driver functions consolidated, for all drivers.  The width and color
+   commands are now part of a more general "state" command.  The text and
+   graph commands used for switching between modes is now handled by the
+   escape function (very few drivers require it).  The device-specific PLDev
+   structure is now malloc'ed for each driver that requires it, and freed when
+   the stream is terminated.
 
+ * Revision 1.12  1993/07/28  05:35:50  mjl
+ * Fixed a cast in argument to free().
+ *
  * Revision 1.11  1993/07/16  22:11:18  mjl
  * Eliminated low-level coordinate scaling; now done by driver interface.
  *
@@ -10,42 +18,6 @@
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
  * now start with "pl"; device driver functions start with "plD_".
- *
- * Revision 1.9  1993/03/15  21:39:09  mjl
- * Changed all _clear/_page driver functions to the names _eop/_bop, to be
- * more representative of what's actually going on.
- *
- * Revision 1.8  1993/03/03  19:41:58  mjl
- * Changed PLSHORT -> short everywhere; now all device coordinates are expected
- * to fit into a 16 bit address space (reasonable, and good for performance).
- *
- * Revision 1.7  1993/02/27  04:46:35  mjl
- * Fixed errors in ordering of header file inclusion.  "plplotP.h" should
- * always be included first.
- *
- * Revision 1.6  1993/02/22  23:10:54  mjl
- * Eliminated the plP_adv() driver calls, as these were made obsolete by
- * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
- *
- * Revision 1.5  1993/01/23  05:41:43  mjl
- * Changes to support new color model, polylines, and event handler support
- * (interactive devices only).
- *
- * Revision 1.4  1992/11/07  07:48:42  mjl
- * Fixed orientation operation in several files and standardized certain startup
- * operations. Fixed bugs in various drivers.
- *
- * Revision 1.3  1992/09/30  18:24:53  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:44:43  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:36  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	impress.c
@@ -95,11 +67,6 @@ static short FirstLine;
 static int penchange = 0, penwidth;
 static short count;
 
-/* (dev) will get passed in eventually, so this looks weird right now */
-
-static PLDev device;
-static PLDev *dev = &device;
-
 /*----------------------------------------------------------------------*\
 * plD_init_imp()
 *
@@ -109,6 +76,8 @@ static PLDev *dev = &device;
 void
 plD_init_imp(PLStream *pls)
 {
+    PLDev *dev;
+
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
     pls->color = 0;
@@ -124,27 +93,16 @@ plD_init_imp(PLStream *pls)
 
     plOpenFile(pls);
 
-/* Set up device parameters */
+/* Allocate and initialize device-specific data */
+
+    dev = plAllocDev(pls);
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
     dev->xmin = 0;
     dev->ymin = 0;
-
-    switch (pls->orient) {
-
-      case 1:
-      case -1:
-	dev->xmax = IMPY;
-	dev->ymax = IMPX;
-	break;
-
-      default:
-	dev->xmax = IMPX;
-	dev->ymax = IMPY;
-	break;
-    }
-
+    dev->xmax = IMPX;
+    dev->ymax = IMPY;
     dev->xlen = dev->xmax - dev->xmin;
     dev->ylen = dev->ymax - dev->ymin;
 
@@ -171,9 +129,8 @@ plD_init_imp(PLStream *pls)
 void
 plD_line_imp(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
+    PLDev *dev = (PLDev *) pls->dev;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
-
-    plRotPhy(pls->orient, dev, &x1, &y1, &x2, &y2);
 
     if (FirstLine) {
 	if (penchange) {
@@ -253,6 +210,8 @@ plD_eop_imp(PLStream *pls)
 void
 plD_bop_imp(PLStream *pls)
 {
+    PLDev *dev = (PLDev *) pls->dev;
+
     FirstLine = 1;
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -280,50 +239,28 @@ plD_tidy_imp(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_color_imp()
+* plD_state_imp()
 *
-* Set pen color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-void
-plD_color_imp(PLStream *pls)
+void 
+plD_state_imp(PLStream *pls, PLINT op)
 {
-}
+    switch (op) {
 
-/*----------------------------------------------------------------------*\
-* plD_text_imp()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
+    case PLSTATE_WIDTH:
+	if (pls->width > 0 && pls->width <= 20) {
+	    penwidth = pls->width;
+	    penchange = 1;
+	}
+	break;
 
-void
-plD_text_imp(PLStream *pls)
-{
-}
+    case PLSTATE_COLOR0:
+	break;
 
-/*----------------------------------------------------------------------*\
-* plD_graph_imp()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_graph_imp(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
-* plD_width_imp()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void
-plD_width_imp(PLStream *pls)
-{
-    if (pls->width > 0 && pls->width <= 20) {
-	penwidth = pls->width;
-	penchange = 1;
+    case PLSTATE_COLOR1:
+	break;
     }
 }
 

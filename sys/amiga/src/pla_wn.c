@@ -1,25 +1,20 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/07/16 22:18:51  mjl
-   Eliminated obsolete low-level scaling, now done in driver interface.
+   Revision 1.6  1993/07/31 07:56:57  mjl
+   Several driver functions consolidated, for all drivers.  The width and color
+   commands are now part of a more general "state" command.  The text and
+   graph commands used for switching between modes is now handled by the
+   escape function (very few drivers require it).  The device-specific PLDev
+   structure is now malloc'ed for each driver that requires it, and freed when
+   the stream is terminated.
 
+ * Revision 1.5  1993/07/16  22:18:51  mjl
+ * Eliminated obsolete low-level scaling, now done in driver interface.
+ *
  * Revision 1.4  1993/07/01  21:59:54  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
  * now start with "pl"; device driver functions start with "plD_".
- *
- * Revision 1.3  1993/03/17  17:01:44  mjl
- * Eliminated some dead assignments that turned up when running with SAS/C's
- * global optimizer enabled on the Amiga.
- *
- * Revision 1.2  1993/03/16  06:49:26  mjl
- * Changed driver functions that check for events to do so only after a
- * specified number of calls, to reduce overhead.
- *
- * Revision 1.1  1993/03/15  21:34:26  mjl
- * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
- * OS 2.0 capabilities.
- *
 */
 
 /*	pla_win.c
@@ -52,9 +47,6 @@ struct Process *myproc;
 
 PlAmigaWin PlAmigadev;
 PlAmigaWin (*pla) = &PlAmigadev;
-
-static PLDev device;
-static PLDev (*dev) = &device;
 
 PLStream *the_pls;
 APTR oldwinptr;
@@ -199,6 +191,7 @@ struct NewMenu PlplotNewMenu[] = {
 void
 plD_init_amiwn(PLStream *pls)
 {
+    PLDev *dev;
     PLFLT Initdpmx, Initdpmy;
     struct Screen *wb_screen;
     
@@ -269,7 +262,9 @@ plD_init_amiwn(PLStream *pls)
     pla->xscale = (double) pla->cur_width / pla->init_width;
     pla->yscale = (double) pla->cur_height / pla->init_height;
 
-/* Set up device parameters */
+/* Allocate and initialize device-specific data */
+
+    dev = plAllocDev(pls);
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -304,6 +299,7 @@ plD_init_amiwn(PLStream *pls)
 void 
 plD_line_amiwn(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
+    PLDev *dev = (PLDev *) pls->dev;
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
     static long count = 0, max_count = 10;
 
@@ -332,6 +328,7 @@ plD_line_amiwn(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 void 
 plD_polyline_amiwn (PLStream *pls, short *xa, short *ya, PLINT npts)
 {
+    PLDev *dev = (PLDev *) pls->dev;
     PLINT i, j;
     static long count = 0, max_count = 5;
 
@@ -383,6 +380,8 @@ plD_eop_amiwn(PLStream *pls)
 void 
 plD_bop_amiwn(PLStream *pls)
 {
+    PLDev *dev = (PLDev *) pls->dev;
+
     setpen(0);
     RectFill(pla->WRPort, pla->xoffset, pla->yoffset,
 	     pla->cur_width + pla->xoffset, pla->cur_height + pla->yoffset);
@@ -413,61 +412,38 @@ plD_tidy_amiwn(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_color_amiwn()
+* plD_state_amiwn()
 *
-* Set pen color.
-* Best to never draw in color 0, since for the Amiga driver that is
-* always the background.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
 void 
-plD_color_amiwn(PLStream *pls)
+plD_state_amiwn(PLStream *pls, PLINT op)
 {
     U_CHAR icol0;
 
-    HandleEvents(pls);	/* Check for intuition messages */
+    switch (op) {
 
-    icol0 = pls->icol0;
-    if (icol0 < 1 || icol0 >= pla->maxcolors)
-	icol0 = 1;
+    case PLSTATE_WIDTH:
+	break;
 
-    setpen(icol0);
-}
+/* Set color map 0 index */
+/* Best to never draw in color 0, since for the Amiga driver that is */
+/* always the background. */
 
-/*----------------------------------------------------------------------*\
-* plD_text_amiwn()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
+    case PLSTATE_COLOR0:
+	HandleEvents(pls);	/* Check for intuition messages */
 
-void 
-plD_text_amiwn(PLStream *pls)
-{
-    HandleEvents(pls);	/* Check for intuition messages */
-}
+	icol0 = pls->icol0;
+	if (icol0 < 1 || icol0 >= pla->maxcolors)
+	    icol0 = 1;
 
-/*----------------------------------------------------------------------*\
-* plD_graph_amiwn()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
+	setpen(icol0);
+	break;
 
-void 
-plD_graph_amiwn(PLStream *pls)
-{
-    HandleEvents(pls);	/* Check for intuition messages */
-}
-
-/*----------------------------------------------------------------------*\
-* plD_width_amiwn()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void 
-plD_width_amiwn(PLStream *pls)
-{
-    HandleEvents(pls);	/* Check for intuition messages */
+    case PLSTATE_COLOR1:
+	break;
+    }
 }
 
 /*----------------------------------------------------------------------*\

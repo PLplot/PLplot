@@ -1,50 +1,20 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/07/16 22:11:19  mjl
-   Eliminated low-level coordinate scaling; now done by driver interface.
+   Revision 1.13  1993/07/31 07:56:34  mjl
+   Several driver functions consolidated, for all drivers.  The width and color
+   commands are now part of a more general "state" command.  The text and
+   graph commands used for switching between modes is now handled by the
+   escape function (very few drivers require it).  The device-specific PLDev
+   structure is now malloc'ed for each driver that requires it, and freed when
+   the stream is terminated.
 
+ * Revision 1.12  1993/07/16  22:11:19  mjl
+ * Eliminated low-level coordinate scaling; now done by driver interface.
+ *
  * Revision 1.11  1993/07/01  21:59:37  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
  * now start with "pl"; device driver functions start with "plD_".
- *
- * Revision 1.10  1993/03/15  21:39:11  mjl
- * Changed all _clear/_page driver functions to the names _eop/_bop, to be
- * more representative of what's actually going on.
- *
- * Revision 1.9  1993/03/10  05:00:25  mjl
- * Actually works now.  Yay!
- *
- * Revision 1.8  1993/03/03  19:41:59  mjl
- * Changed PLSHORT -> short everywhere; now all device coordinates are expected
- * to fit into a 16 bit address space (reasonable, and good for performance).
- *
- * Revision 1.7  1993/03/03  16:17:08  mjl
- * Fixed orientation-swapping code.
- *
- * Revision 1.6  1993/02/22  23:10:55  mjl
- * Eliminated the plP_adv() driver calls, as these were made obsolete by
- * recent changes to plmeta and plrender.  Also eliminated page clear commands
- * from plP_tidy() -- plend now calls plP_clr() and plP_tidy() explicitly.
- *
- * Revision 1.5  1993/01/23  05:41:45  mjl
- * Changes to support new color model, polylines, and event handler support
- * (interactive devices only).
- *
- * Revision 1.4  1992/11/07  07:48:43  mjl
- * Fixed orientation operation in several files and standardized certain startup
- * operations. Fixed bugs in various drivers.
- *
- * Revision 1.3  1992/09/30  18:24:54  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:44:44  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:32:37  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	ljii.c
@@ -69,10 +39,7 @@
 static void setpoint(PLINT, PLINT);
 
 /* top level declarations */
-/*
-#define JETX     1409
-#define JETY     1103
-*/
+
 #define JETX     1103
 #define JETY     1409
 
@@ -99,12 +66,6 @@ static char mask[8] =
 #endif
 
 static char _HUGE *bitmap;	/* points to memory area NBYTES in size */
-static PLINT orient;
-
-/* (dev) will get passed in eventually, so this looks weird right now */
-
-static PLDev device;
-static PLDev *dev = &device;
 
 /*----------------------------------------------------------------------*\
 * plD_init_jet()
@@ -115,6 +76,8 @@ static PLDev *dev = &device;
 void
 plD_init_jet(PLStream *pls)
 {
+    PLDev *dev;
+
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
     pls->color = 0;
@@ -130,7 +93,9 @@ plD_init_jet(PLStream *pls)
 
     plOpenFile(pls);
 
-/* Set up device parameters */
+/* Allocate and initialize device-specific data */
+
+    dev = plAllocDev(pls);
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -139,22 +104,12 @@ plD_init_jet(PLStream *pls)
 
     plP_setpxl((PLFLT) 5.905, (PLFLT) 5.905);
 
-/* Because portrait mode addressing is used by the LJII, we need to
-   rotate by 90 degrees to get the right mapping. */
+/* Rotate by 90 degrees since portrait mode addressing is used */
 
     dev->xmin = 0;
     dev->ymin = 0;
-
-    orient = pls->orient + 1;
-    if (orient%2 == 1) {
-	dev->xmax = JETY;
-	dev->ymax = JETX;
-    }
-    else {
-	dev->xmax = JETX;
-	dev->ymax = JETY;
-    }
-
+    dev->xmax = JETY;
+    dev->ymax = JETX;
     dev->xlen = dev->xmax - dev->xmin;
     dev->ylen = dev->ymax - dev->ymin;
 
@@ -184,6 +139,7 @@ plD_init_jet(PLStream *pls)
 void
 plD_line_jet(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
+    PLDev *dev = (PLDev *) pls->dev;
     int i;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     PLINT x1b, y1b, x2b, y2b;
@@ -194,11 +150,9 @@ plD_line_jet(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     y1 = dev->ymax - (y1 - dev->ymin);
     y2 = dev->ymax - (y2 - dev->ymin);
 
-/* Because portrait mode addressing is used here, we need to complement
-   the orientation flag to get the right mapping. */
+/* Rotate by 90 degrees */
 
-    orient = pls->orient + 1;
-    plRotPhy(orient, dev, &x1, &y1, &x2, &y2);
+    plRotPhy(1, dev, &x1, &y1, &x2, &y2);
 
     x1b = x1, x2b = x2, y1b = y1, y2b = y2;
     length = (float) sqrt((double)
@@ -304,46 +258,13 @@ plD_tidy_jet(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_color_jet()
+* plD_state_jet()
 *
-* Set pen color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-void
-plD_color_jet(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
-* plD_text_jet()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_text_jet(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
-* plD_graph_jet()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
-
-void
-plD_graph_jet(PLStream *pls)
-{
-}
-
-/*----------------------------------------------------------------------*\
-* plD_width_jet()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void
-plD_width_jet(PLStream *pls)
+void 
+plD_state_jet(PLStream *pls, PLINT op)
 {
 }
 

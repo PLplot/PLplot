@@ -1,12 +1,20 @@
 /* $Id$
    $Log$
-   Revision 1.13  1993/07/28 05:38:59  mjl
-   Merged with xterm code, and added code to handle Tektronix 4105/4107
-   (color) devices.  For now just the color index selection is supported.
-   Added code to change terminal line to noncanonical (cbreak) mode on
-   POSIX systems so that entered keystrokes (including <Backspace> and "Q"
-   from plrender) do not require a <CR> to be recognized.
+   Revision 1.14  1993/07/31 07:56:44  mjl
+   Several driver functions consolidated, for all drivers.  The width and color
+   commands are now part of a more general "state" command.  The text and
+   graph commands used for switching between modes is now handled by the
+   escape function (very few drivers require it).  The device-specific PLDev
+   structure is now malloc'ed for each driver that requires it, and freed when
+   the stream is terminated.
 
+ * Revision 1.13  1993/07/28  05:38:59  mjl
+ * Merged with xterm code, and added code to handle Tektronix 4105/4107
+ * (color) devices.  For now just the color index selection is supported.
+ * Added code to change terminal line to noncanonical (cbreak) mode on
+ * POSIX systems so that entered keystrokes (including <Backspace> and "Q"
+ * from plrender) do not require a <CR> to be recognized.
+ *
  * Revision 1.12  1993/07/16  22:11:22  mjl
  * Eliminated low-level coordinate scaling; now done by driver interface.
  *
@@ -37,6 +45,8 @@
 static void	WaitForPage	(PLStream *);
 static void	EventHandler	(PLStream *, int);
 static void	tek_init	(PLStream *);
+static void	tek_text	(PLStream *);
+static void	tek_graph	(PLStream *);
 
 /* Stuff for handling tty cbreak mode */
 
@@ -88,12 +98,12 @@ static exit_eventloop = 0;
 *
 * pls->termin		if a terminal device
 * pls->color		if color
-* pls->dual_screen	if device has separate text and graphics screens
+* pls->dev_dual		if device has separate text and graphics screens
 *
 * It is possible to modify these from the user code directly by using
 * plgpls() to get the stream pointer, then setting the appropriate
 * attribute.  For example, I use a tek4107 emulator that has dual text
-* and graphics screens, so I set the dual_screen attribute.  If you have
+* and graphics screens, so I set the dev_dual attribute.  If you have
 * a real tek4107 you may want to unset this.
 \*----------------------------------------------------------------------*/
 
@@ -101,7 +111,7 @@ void
 plD_init_xte (PLStream *pls)
 {
     pls->termin = 1;
-    pls->dual_screen = 1;
+    pls->dev_dual = 1;
     tek_init(pls);
 }
 
@@ -122,7 +132,7 @@ void
 plD_init_t4107t(PLStream *pls)
 {
     pls->termin = 1;
-    pls->dual_screen = 1;
+    pls->dev_dual = 1;
     pls->color = 1;
     tek_init(pls);
 }
@@ -150,16 +160,7 @@ tek_init(PLStream *pls)
 
 /* Allocate and initialize device-specific data */
 
-    if (pls->dev != NULL)
-	free((void *) pls->dev);
-
-    pls->dev = calloc(1, (size_t) sizeof(PLDev));
-    if (pls->dev == NULL)
-	plexit("tek_init: Out of memory.");
-
-    dev = (PLDev *) pls->dev;
-
-/* Set up device */
+    dev = plAllocDev(pls);
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -194,12 +195,12 @@ tek_init(PLStream *pls)
 #endif
 
     pls->graphx = GRAPHICS_MODE;
-    if (pls->dual_screen)
+    if (pls->dev_dual)
 	fprintf(pls->OutFile, "%c[?38h", ESC);	/* open graphics window */
 
     fprintf(pls->OutFile, "%c", GS);		/* set to vector mode */
     if (pls->termin)
-	fprintf(pls->OutFile, "%c%c", ESC, FF);	/* ???????? */
+	fprintf(pls->OutFile, "%c%c", ESC, FF);	/* erase and home */
 }
 
 /*----------------------------------------------------------------------*\
@@ -314,8 +315,8 @@ plD_tidy_tek(PLStream *pls)
 	fclose(pls->OutFile);
     }
     else {
-	plD_graph_tek(pls);
-	plD_text_tek(pls);
+	tek_graph(pls);
+	tek_text(pls);
 	fflush(pls->OutFile);
     }
     pls->fileset = 0;
@@ -324,69 +325,29 @@ plD_tidy_tek(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_color_tek()
+* plD_state_tek()
 *
-* Set pen color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
 void 
-plD_color_tek (PLStream *pls)
+plD_state_tek(PLStream *pls, PLINT op)
 {
-    int lo, icol0 = pls->icol0;
+    switch (op) {
 
-    if (pls->color) {
-	if (icol0 != PL_RGB_COLOR) {
-	    lo = icol0 + 48;
-	    printf("%cML%c", ESC, lo);
+    case PLSTATE_WIDTH:
+	break;
+
+    case PLSTATE_COLOR0:
+	if (pls->color) {
+	    if (pls->icol0 != PL_RGB_COLOR)
+		fprintf(pls->OutFile, "%cML%c", ESC, pls->icol0 + 48);
 	}
+	break;
+
+    case PLSTATE_COLOR1:
+	break;
     }
-}
-
-/*----------------------------------------------------------------------*\
-* plD_text_tek()
-*
-* Switch to text mode.
-\*----------------------------------------------------------------------*/
-
-void 
-plD_text_tek (PLStream *pls)
-{
-    if (pls->dual_screen) {
-	if (pls->graphx == GRAPHICS_MODE) {
-	    pls->graphx = TEXT_MODE;
-	    printf("%c%c", US, CAN);
-	    printf("%c%c", ESC, ETX);
-	    printf("%c%c", US, CAN);
-	}
-    }
-}
-
-/*----------------------------------------------------------------------*\
-* plD_graph_tek()
-*
-* Switch to graphics mode.
-\*----------------------------------------------------------------------*/
-
-void 
-plD_graph_tek (PLStream *pls)
-{
-    if (pls->dual_screen) {
-	if (pls->graphx == TEXT_MODE) {
-	    pls->graphx = GRAPHICS_MODE;
-	    printf("%c[?38h", ESC);
-	}
-    }
-}
-
-/*----------------------------------------------------------------------*\
-* plD_width_tek()
-*
-* Set pen width.
-\*----------------------------------------------------------------------*/
-
-void 
-plD_width_tek (PLStream *pls)
-{
 }
 
 /*----------------------------------------------------------------------*\
@@ -396,8 +357,57 @@ plD_width_tek (PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void 
-plD_esc_tek (PLStream *pls, PLINT op, void *ptr)
+plD_esc_tek(PLStream *pls, PLINT op, void *ptr)
 {
+    switch (op) {
+
+      case PLESC_TEXT:
+	tek_text(pls);
+	break;
+
+      case PLESC_GRAPH:
+	tek_graph(pls);
+	break;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* tek_text()
+*
+* Switch to text screen (or alpha mode, for vanilla tek's).
+\*----------------------------------------------------------------------*/
+
+static void 
+tek_text(PLStream *pls)
+{
+    if (pls->termin && (pls->graphx == GRAPHICS_MODE)) {
+	pls->graphx = TEXT_MODE;
+	if (pls->dev_dual) {
+	    printf("%c%c", US, CAN);
+	    printf("%c%c", ESC, ETX);
+	    printf("%c%c", US, CAN);
+	}
+	else
+	    printf("%c", US);
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* tek_graph()
+*
+* Switch to graphics screen (or vector mode, for vanilla tek's).
+\*----------------------------------------------------------------------*/
+
+static void 
+tek_graph(PLStream *pls)
+{
+    if (pls->termin && (pls->graphx == TEXT_MODE)) {
+	pls->graphx = GRAPHICS_MODE;
+	if (pls->dev_dual) 
+	    printf("%c[?38h", ESC);
+	else
+	    printf("%c", GS);
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -465,8 +475,8 @@ EventHandler(PLStream *pls, int input_char)
 
 #ifdef DEBUG
     pltext();
-    printf("Input char %x, Keycode %x, string: %s\n",
-	   input_char, key.code, key.string);
+    fprintf(stderr, "Input char %x, Keycode %x, string: %s\n",
+	    input_char, key.code, key.string);
     plgra();
 #endif
 
