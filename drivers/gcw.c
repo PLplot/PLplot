@@ -47,8 +47,6 @@ DEVELOPMENT NOTES
 
 BUGS
 
-  Greek symbols don't seem to work for HAS_TEXT escape function calls.
-
   The dashed line function doesn't yet work properly.
 
 */
@@ -93,11 +91,13 @@ char* plD_DEVICE_INFO_libgcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 /* Globals */
 static int text = 0;
 static int aa = 1;
+static int unicode = 0;
 
 static DrvOpt gcw_options[] = 
   {
     {"text", DRV_INT, &text, "Use truetype fonts (text=0|1)"},
     {"aa", DRV_INT, &aa, "Use antialiasing (aa=0|1)"},
+    {"unicode", DRV_INT, &unicode, "Use unicode (aa=0|1)"},
     {NULL, DRV_INT, NULL, NULL}
   };
 
@@ -197,10 +197,12 @@ void zoom_out(GtkWidget *widget, gpointer data ) {
   zoom(data,0);
 }
 
-/* Zoom callback when +/- keys are pressed */
-void key_zoom(GtkWidget *widget, GdkEventKey  *event, gpointer data ) {
-  if(event->keyval == '+')  zoom(data,TRUE);
-  if(event->keyval == '-')  zoom(data,FALSE);
+/* Callback when keys are released */
+void key_release(GtkWidget *widget, GdkEventKey  *event, gpointer data ) {
+  if(event->keyval == '+')  zoom(data,2);
+  if(event->keyval == '=')  zoom(data,1);
+  if(event->keyval == '-')  zoom(data,0);
+  if(event->keyval == 'q')  destroy(widget,data);
 }
 
 void install_canvas(PLStream *pls)
@@ -249,7 +251,7 @@ void install_canvas(PLStream *pls)
     gtk_notebook_set_scrollable(GTK_NOTEBOOK(dev->notebook),TRUE);
     gtk_box_pack_start(GTK_BOX(hbox),GTK_WIDGET(dev->notebook),TRUE,TRUE,0);
     g_signal_connect(G_OBJECT(dev->notebook), "key_release_event",
-                         G_CALLBACK(key_zoom), G_OBJECT(dev->notebook));
+                         G_CALLBACK(key_release), G_OBJECT(dev->notebook));
 
     /* Use a few labels as spacers */
     gtk_box_pack_start(GTK_BOX(vbox),GTK_WIDGET(gtk_label_new(" ")),
@@ -268,7 +270,7 @@ void install_canvas(PLStream *pls)
     g_signal_connect (G_OBJECT(button), "clicked",
 		      G_CALLBACK(zoom_in), G_OBJECT(dev->notebook));
     g_signal_connect(G_OBJECT(button), "key_release_event",
-                         G_CALLBACK(key_zoom), G_OBJECT(dev->notebook));
+                         G_CALLBACK(key_release), G_OBJECT(dev->notebook));
 
     /* Add zoom100 button and create callbacks */
     image = gtk_image_new_from_stock(GTK_STOCK_ZOOM_100,
@@ -288,7 +290,7 @@ void install_canvas(PLStream *pls)
     g_signal_connect (G_OBJECT(button), "clicked",
 		      G_CALLBACK(zoom_out), G_OBJECT(dev->notebook));
     g_signal_connect(G_OBJECT(button), "key_release_event",
-                         G_CALLBACK(key_zoom), G_OBJECT(dev->notebook));
+                         G_CALLBACK(key_release), G_OBJECT(dev->notebook));
   }
 
   /* Create a new canvas */
@@ -705,6 +707,12 @@ void plD_init_gcw(PLStream *pls)
   else {
     pls->dev_text = FALSE;
     dev->use_text = FALSE;
+  }
+  if(text && unicode) {
+    pls->dev_unicode = TRUE;
+  }
+  else {
+    pls->dev_unicode = FALSE;
   }
 
   /* Only initialize the zoom after all other initialization is complete */
@@ -1182,6 +1190,7 @@ static char adobe_symbol_enc (char in)
   return retval;
 }
 
+
 /*--------------------------------------------------------------------------*\
  * proc_str()
  *
@@ -1192,44 +1201,47 @@ static char adobe_symbol_enc (char in)
 
 void proc_str(PLStream *pls, EscText *args)
 {
-  PLFLT *t = args->xform, tt[4]; /* Transform matrices */
-  PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
-
-  gint size;
-  double width[200],height[200];
-  char *fontname;
-  char *symbolfontname = "Numbus Sans L Standard Symbols L";
-
-  gdouble affine_baseline[6] = {0.,0.,0.,0.,0.,0.};
-  gdouble affine_translate[6] = {0.,0.,0.,0.,0.,0.};
-  gdouble affine_plplot[6] = {0.,0.,0.,0.,0.,0.};
-
-  gdouble tmp;
+  PLFLT *t = args->xform; /* Transform matrix for string */
 
   GnomeCanvasGroup* group;
   GcwPLdev* dev = pls->dev;
   GnomeCanvas* canvas;
 
-  GnomeCanvasItem* item[200];
+  guchar *fontname;
+  guchar *symbolfontname = "Standard Symbols L Regular";
+  guchar *curfontname; /* The current font name; points to one of above */
+  guchar *psfontname;  /* The actual postscript font name */
+
+  gint font_size;
+
   GnomeFont *font;
   GnomeFontFace *face;
   GnomeGlyphList *glyphlist;
 
-  ArtDRect bbox;
+  gdouble affine_baseline[6] = {0.,0.,0.,0.,0.,0.}; /* Affine transforms */
+  gdouble affine_translate[6] = {0.,0.,0.,0.,0.,0.};
+  gdouble affine_plplot[6] = {0.,0.,0.,0.,0.,0.};
 
-  char *str,*c1,*c2;
+  PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
+
+  GnomeCanvasItem* item[200]; /* List of string segments */
+  double width[200],height[200]; /* Height and width of string segment */
+  double up_list[200]; /* Indicates sub/sup position of string segment */
+  double up=0,scale=1; /* Used to create superscripts and subscripts */
+
+  ArtDRect bbox; /* Bounding box for each segment to get width & height */
+
+  char *str,*c1,*c2; /* The string and pointers to it */
   int i,N=0;
   double total_width=0,sum_width=0;
 
-  double advance = 1.5;
-  double up=0,scale=1;
-  double up_list[200];
+  gboolean is_end_of_string = FALSE; /* Flag at end of the string */
 
-  gboolean flag = FALSE;
-
-  gboolean symbol = FALSE;
+  gboolean is_symbol = FALSE; /* Flag while processing a symbol */
 
   char esc,c;
+
+  guint symbol;
 
 #ifdef DEBUG_GCW
   debug("<proc_str>\n");
@@ -1241,6 +1253,9 @@ void proc_str(PLStream *pls, EscText *args)
   if(dev->group_hidden==NULL) plD_bop_gcw(pls);
   group = dev->group_current;
 
+  /* Retrieve the escape character */
+  plgesc(&esc);
+
   /* Put the transform matrix values in the order expected by libart.
    * Note that the plplot transform matrix only has a rotation and shear;
    * plplot's rotation direction and shear are opposite from that expected 
@@ -1251,26 +1266,24 @@ void proc_str(PLStream *pls, EscText *args)
   affine_plplot[2] = -t[1]; /* a cos(theta) - sin(theta) */
   affine_plplot[3] = t[3];  /* a sin(theta) + cos(theta) */
 
-  /* Apply plplot difilt transformations */
+  /* Apply plplot difilt transformations; i.e., determine the string
+   * position and clip limits.
+   */
   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
 
-  /* Font height: size is in pixels. chrht is in mm.
+  /* Font size: size is in pixels but chrht is in mm.
    * The factor at the end matches the font size to plplot's native
    * font size.
    */
-  size = (gint)(pls->chrht/MM_PER_IN*DU_PER_IN*PIXELS_PER_DU/2.75);
-  advance *= (float)size / 11.;
+  font_size = (gint)(pls->chrht/MM_PER_IN*DU_PER_IN*PIXELS_PER_DU/2.75);
 
-  /* apply transformations */
-  difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
-
-  /* Determine the font */
+  /* Determine the default font */
   switch (pls->cfont) {
     case (1): 
       fontname = "Nimbus Sans L Regular"; 
       break;
     case (2): 
-      fontname = "Nimbus Roman No9 L Regular";
+      fontname = "Times New Roman Regular"; //"Nimbus Roman No9 L Regular";
       break;
     case (3): 
       fontname = "Nimbus Roman No9 L Regular Italic"; 
@@ -1289,23 +1302,31 @@ void proc_str(PLStream *pls, EscText *args)
     return;
   }
 
-  c1 = c2 = str; 
+  /* Start the pointers at the beginning of the string */
+  c1 = c2 = str;
 
-  plgesc(&esc);
 
-  while(!flag) {
+  /* Break the string into segments of constant font and size */
+  while(!is_end_of_string) {
 
+    /* The string pointers c1 and c2 always start at the same place.  
+     * Use c1 to mark the beginning of the segment, and c2 to find 
+     * the end.
+     */
+
+    /* Process escape characters */
     if(*c1 == esc) {
       c1++; c2++;
 
       if (*c1 == esc) { /* <esc><esc> */
 	c2++;
       }
-      else switch (*c1) {
+      else switch(*c1) {
 
+      /* Determine the font */
       case 'f':
 	c1++; c2++;
-	switch (*c1) {
+	switch(*c1) {
 	case 'n': 
 	  fontname = "Nimbus Sans L Regular"; 
 	  break;
@@ -1325,35 +1346,36 @@ void proc_str(PLStream *pls, EscText *args)
 	c1++; c2++;
 	break;
 	
+      /* Move to lower sub/sup position */
       case 'd':
 	if(up>0.) scale *= 1.25;  /* Subscript scaling parameter */
 	else scale *= 0.8;  /* Subscript scaling parameter */
-	up -= size / 2.;
+	up -= font_size / 2.;
 	c1++; c2++;
 	break;
 
+      /* Move to higher sub/sup position */
       case 'u':
 	if(up<0.) scale *= 1.25;  /* Subscript scaling parameter */
 	else scale *= 0.8;  /* Subscript scaling parameter */
-	up += size / 2.;
+	up += font_size / 2.;
 	c1++; c2++;
 	break;
 
+      /* Greek characters */
       case 'g':
 	c1++; c2++;
-	*c1 = adobe_symbol_enc(*c1);
-	symbol = TRUE;
+	//*c1 = adobe_symbol_enc(*c1);
+	is_symbol = TRUE;
 	break;
 
-	/* ignore the next sequences */
-
+      /* Ignore the next sequences */
       case '+':
       case '-':
       case 'b':
 	plwarn("'+', '-', and 'b' text escape sequences not processed.");
 	c1++; c2++;
 	break;
-
       case '(':
 	plwarn("'g(...)' text escape sequence not processed.");
 	while (*c1++ != ')' && *c1!='\0') c2++;
@@ -1361,29 +1383,108 @@ void proc_str(PLStream *pls, EscText *args)
       }
     }
 
+    /* Save the sub/sup position */
     up_list[N] = up;
 
-    /* Move c2 along to the next stop point */
-    if(symbol) c2++;
-    while(!symbol && *c2!='\0' && *c2!=esc) c2++;
+    /* Move c2 along to the next stop point; i.e., next byte after
+     * greek character, next escape character, or end-of-string.
+     */
+    if(is_symbol) c2++;
+    while(!is_symbol && *c2!='\0' && *c2!=esc) c2++;
 
-    if(*c2=='\0') flag = TRUE;
+    if(*c2=='\0') is_end_of_string = TRUE;
     else {
-      c = *c2;
-      *c2 = '\0';
+      c = *c2;     /* Save the character */
+      *c2 = '\0';  /* Terminate string segment (will put c back later) */
     }
 
-    /* Get the font */
-    if(symbol) face = gnome_font_face_find_closest(symbolfontname);
-    else face = gnome_font_face_find_closest(fontname);
+    /* Get the current font name */
+    if(is_symbol) curfontname = symbolfontname;
+    else curfontname = fontname;
 
-    font = gnome_font_face_get_font_default(face,size*scale);
+    /* Get the font face */
+    face = gnome_font_face_find_closest(curfontname);
+
+    /* Check to make sure we found the right font */
+    /*
+    psfontname = (guchar*)gnome_font_face_get_ps_name(face);
+    printf("Current font is %s, asked for %s\n",psfontname,curfontname);
+    */
+
+    /* Get the font */
+    font = gnome_font_face_get_font_default(face,font_size*scale);
 
     /* Get the glyphs */
-    glyphlist = gnome_glyphlist_from_text_dumb(font,dev->color,0.,0.,c1);
+    if(is_symbol) {
+      glyphlist = gnome_glyphlist_new ();
+      gnome_glyphlist_font(glyphlist, font);
+      gnome_glyphlist_color(glyphlist,dev->color);
+      gnome_glyphlist_advance(glyphlist, TRUE);
+      gnome_glyphlist_kerning(glyphlist, 0.);
+      gnome_glyphlist_letterspace(glyphlist,0.);
+
+      /* Get the glyph index for the greek character */
+      switch(*c1) {
+
+      case 'a': symbol=65; break;
+      case 'b': symbol=66; break;
+      case 'g': symbol=71; break;
+      case 'd': symbol=68; break;
+      case 'e': symbol=69; break;
+      case 'z': symbol=90; break;
+      case 'y': symbol=72; break;
+      case 'h': symbol=81; break;
+      case 'i': symbol=73; break;
+      case 'k': symbol=75; break;
+      case 'l': symbol=76; break;
+      case 'm': symbol=77; break;
+      case 'n': symbol=78; break;
+      case 'c': symbol=88; break;
+      case 'o': symbol=79; break;
+      case 'p': symbol=80; break;
+      case 'r': symbol=82; break;
+      case 's': symbol=83; break;
+      case 't': symbol=84; break;
+      case 'u': symbol=85; break;
+      case 'f': symbol=70; break;
+      case 'x': symbol=67; break;
+      case 'q': symbol=89; break;
+      case 'w': symbol=87; break;
+
+      case 'A': symbol=65-32; break;
+      case 'B': symbol=66-32; break;
+      case 'G': symbol=71-32; break;
+      case 'D': symbol=68-32; break;
+      case 'E': symbol=69-32; break;
+      case 'Z': symbol=90-32; break;
+      case 'Y': symbol=72-32; break;
+      case 'H': symbol=81-32; break;
+      case 'I': symbol=73-32; break;
+      case 'K': symbol=75-32; break;
+      case 'L': symbol=76-32; break;
+      case 'M': symbol=77-32; break;
+      case 'N': symbol=78-32; break;
+      case 'C': symbol=88-32; break;
+      case 'O': symbol=79-32; break;
+      case 'P': symbol=80-32; break;
+      case 'R': symbol=82-32; break;
+      case 'S': symbol=83-32; break;
+      case 'T': symbol=84-32; break;
+      case 'U': symbol=85-32; break;
+      case 'F': symbol=70-32; break;
+      case 'X': symbol=67-32; break;
+      case 'Q': symbol=89-32; break;
+      case 'W': symbol=87-32; break;
+      }
+
+      gnome_glyphlist_glyph(glyphlist,symbol);
+    }
+    else {
+      glyphlist = gnome_glyphlist_from_text_dumb(font,dev->color,0.,0.,c1);
+    }
 
     /* Replace the deleted character */
-    if(!flag) *c2 = c;
+    if(!is_end_of_string) *c2 = c;
 
     /* Determine the bounding box of the text */
     gnome_glyphlist_bbox(glyphlist,NULL,0,&bbox);
@@ -1401,14 +1502,21 @@ void proc_str(PLStream *pls, EscText *args)
 				     "y",0.,
 				     NULL);
 
-    /* Advance */
-    symbol = FALSE;
+    /* Advance to next string segment */
+    is_symbol = FALSE;
     c1=c2;
     N++;
+
+    /* Don't overflow buffer */
+    if(N==200) {
+      fprintf(stderr,"\n\n*** GCW driver error: too many string segments.\n");
+      break;
+    }
   }
 
-  total_width += (N-1)*advance;
-
+  /* We have all of the string segments.  Place each on the canvas 
+   * appropriately.
+   */
   for(i=0;i<N;i++) {
 
     /* Calculate and apply the affine transforms */
@@ -1421,7 +1529,7 @@ void proc_str(PLStream *pls, EscText *args)
     gnome_canvas_item_affine_relative(item[i],affine_plplot);
     gnome_canvas_item_affine_relative(item[i],affine_baseline);
 
-    sum_width += width[i] + advance;
+    sum_width += width[i]; /* Keep track of the position in the string */
   }
 }
 /*--------------------------------------------------------------------------*\
