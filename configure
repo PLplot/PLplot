@@ -1495,26 +1495,17 @@ esac
 # Assemble finished compiler flags.
 # ----------------------------------------------------------------------------
 
-CC_FLAGS=\
-"-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C $OPT_FLAG_C"
-
-LDC_FLAGS=\
-"$PROF_FLAG_LC $SYS_FLAGS_LC $DEBUG_FLAG_LC"
+CC_FLAGS="-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C $OPT_FLAG_C"
+LDC_FLAGS="$PROF_FLAG_LC $SYS_FLAGS_LC $DEBUG_FLAG_LC"
 
 if test "$enable_cxx" = "yes"; then
-    CXX_FLAGS=\
-    "-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX $OPT_FLAG_CXX"
-
-    LDCXX_FLAGS=\
-    "$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX"
+    CXX_FLAGS="-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX $OPT_FLAG_CXX"
+    LDCXX_FLAGS="$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX"
 fi
 
 if test "$enable_f77" = "yes"; then
-    F77_FLAGS=\
-    "-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F $OPT_FLAG_F"
-
-    LDF_FLAGS=\
-    "$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
+    F77_FLAGS="-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F $OPT_FLAG_F"
+    LDF_FLAGS="$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
 fi
 
 M4_FLAGS="-S2000 -B8192"
@@ -1550,7 +1541,7 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1554 "configure"
+#line 1545 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1564,7 +1555,7 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1568 "configure"
+#line 1559 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1707,7 +1698,7 @@ test -z "$x_direct_test_library" && x_direct_test_library=Xt
 test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
 test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
 cat > conftest.$ac_ext <<EOF
-#line 1711 "configure"
+#line 1702 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
@@ -1770,7 +1761,7 @@ rm -f conftest*
 ac_save_LIBS="$LIBS"
 LIBS="-l$x_direct_test_library $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1774 "configure"
+#line 1765 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -1778,7 +1769,8 @@ int t() {
 ${x_direct_test_function}()
 ; return 0; }
 EOF
-if eval $ac_link; then
+cp conftest* /tmp
+if eval $ac_link -v; then
   rm -rf conftest*
   LIBS="$ac_save_LIBS" no_x= ac_x_libraries=
 else
@@ -1856,7 +1848,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 1860 "configure"
+#line 1852 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -1913,7 +1905,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1917 "configure"
+#line 1909 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -1921,7 +1913,8 @@ int t() {
 main()
 ; return 0; }
 EOF
-if eval $ac_link; then
+cp conftest* /tmp
+if eval $ac_link -v; then
   rm -rf conftest*
   eval "ac_cv_lib_X11=yes"
 else
@@ -2813,7 +2806,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lf2c  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2817 "configure"
+#line 2810 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2821,7 +2814,8 @@ int t() {
 main()
 ; return 0; }
 EOF
-if eval $ac_link; then
+cp conftest* /tmp
+if eval $ac_link -v; then
   rm -rf conftest*
   eval "ac_cv_lib_f2c=yes"
 else
@@ -2856,10 +2850,15 @@ fi
 # On some systems the linker doesn't return an error code to the shell if
 # you try to link with nonexistant libraries, so need to handle these
 # explicitly.
+#
+# Note: these tests do not work right when LIBS is set.  So save the value
+# and set it to null temporarily, restoring when done.
 # ----------------------------------------------------------------------------
 
 if test -z "$EXTRA_LIBS"; then
     EXTRA_LIBS=
+    SAVE_LIBS=$LIBS
+    LIBS=
     case $system in 
 	CRAY* ) 
 	    EXTRA_LIBS="$EXTRA_LIBS -lm"
@@ -2875,7 +2874,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2879 "configure"
+#line 2878 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2883,7 +2882,8 @@ int t() {
 main()
 ; return 0; }
 EOF
-if eval $ac_link; then
+cp conftest* /tmp
+if eval $ac_link -v; then
   rm -rf conftest*
   eval "ac_cv_lib_Xbsd=yes"
 else
@@ -2916,7 +2916,8 @@ int t() {
 main()
 ; return 0; }
 EOF
-if eval $ac_link; then
+cp conftest* /tmp
+if eval $ac_link -v; then
   rm -rf conftest*
   eval "ac_cv_lib_socket=yes"
 else
@@ -2941,7 +2942,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2945 "configure"
+#line 2946 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2949,7 +2950,8 @@ int t() {
 main()
 ; return 0; }
 EOF
-if eval $ac_link; then
+cp conftest* /tmp
+if eval $ac_link -v; then
   rm -rf conftest*
   eval "ac_cv_lib_nsl=yes"
 else
@@ -2974,7 +2976,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2978 "configure"
+#line 2980 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2982,7 +2984,8 @@ int t() {
 main()
 ; return 0; }
 EOF
-if eval $ac_link; then
+cp conftest* /tmp
+if eval $ac_link -v; then
   rm -rf conftest*
   eval "ac_cv_lib_ieee=yes"
 else
@@ -3007,7 +3010,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3011 "configure"
+#line 3014 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3015,7 +3018,8 @@ int t() {
 main()
 ; return 0; }
 EOF
-if eval $ac_link; then
+cp conftest* /tmp
+if eval $ac_link -v; then
   rm -rf conftest*
   eval "ac_cv_lib_m=yes"
 else
@@ -3035,7 +3039,9 @@ fi
 
 	;;
     esac
+    LIBS=$SAVE_LIBS
 fi
+
 LIBS="$LIBS $EXTRA_LIBS"
 
 
@@ -3048,113 +3054,115 @@ LIBS="$LIBS $EXTRA_LIBS"
 # This is really a mess.
 # ----------------------------------------------------------------------------
 
-echo $ac_n "checking how to make shared libraries""... $ac_c" 1>&6
+if test "$with_shlib" = "yes"; then
+    echo $ac_n "checking how to make shared libraries""... $ac_c" 1>&6
 
-SA=".sa"
-SO=".so"
-LDSHARED="ld"
-SHLIB_LIBS=$LIBS
+    SA=".sa"
+    SO=".so"
+    LDSHARED="ld"
+    SHLIB_LIBS=$LIBS
 
-if test "$with_gcc" = "yes"; then
-    SHLIB_CCFLAGS=-fpic
-    SHLIB_CXXFLAGS=-fpic
-    SHLIB_BUILD="gcc -shared -fpic -o"
-else
-    SHLIB_CCFLAGS=
-    SHLIB_CXXFLAGS=
-    SHLIB_BUILD=
-fi
-
-case "$system" in 
-    SunOS-4* ) 
-	SHLIB_F77FLAGS=-pic
-# Commented out for now
-#	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
-#	SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
-	echo "$ac_t""okay" 1>&6
-	if test "$with_gcc" = "no"; then
-	    SHLIB_CCFLAGS=-pic
-	    SHLIB_CXXFLAGS=-pic
-	    SHLIB_BUILD="ld -assert pure-text -o"
-	fi
-    ;;
-    Linux* )
-	# Should do something to make sure this is an ELF system, as
-	# don't have patience for DLL...
-	echo "$ac_t""Assuming Linux ELF.  If not, reconfigure --without-shlib" 1>&6
-	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+    if test "$with_gcc" = "yes"; then
+	SHLIB_CCFLAGS=-fpic
+	SHLIB_CXXFLAGS=-fpic
 	SHLIB_BUILD="gcc -shared -fpic -o"
+    else
+	SHLIB_CCFLAGS=
+	SHLIB_CXXFLAGS=
+	SHLIB_BUILD=
+    fi
 
-	SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
-
-	# Hmm, would be good to replace that trailing .0 with the
-	# compilation number or some such.  Have to think about that.
-    ;;
-    HP-UX-* )
-	SO=".sl"
-	SHLIB_F77FLAGS="+z"
-	echo "$ac_t""okay" 1>&6
-	if test "$with_gcc" = "no"; then
-	    SHLIB_CCFLAGS=+z
-	    SHLIB_CXXFLAGS=+z
-	    SHLIB_F77FLAGS=+z
-	    SHLIB_BUILD="ld -b -o"
-	else
-	    echo "$ac_t""warning: shared libs on HP with gcc is experimental" 1>&6
-	fi
-	LDSHARED="ld -b"
-    ;;
-    AIX-* )
-	SO=".a"
-	SHLIB_F77FLAGS=-fpic
-	if test "$with_gcc" = "no"; then
+    case "$system" in 
+	SunOS-4* ) 
+	    SHLIB_F77FLAGS=-pic
+	    # Forget version numbers for now
+	    #	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	    #	SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	    echo "$ac_t""okay" 1>&6
-	    SHLIB_CCFLAGS=-fpic
-	    SHLIB_CXXFLAGS=-fpic
-	    SHLIB_BUILD="ar q"
-	    if test "$enable_cxx" = "yes"; then
-		SHLIB_LIBS="-L/usr/lpp/xlC/lib -lC $LIBS"
+	    if test "$with_gcc" = "no"; then
+		SHLIB_CCFLAGS=-pic
+		SHLIB_CXXFLAGS=-pic
+		SHLIB_BUILD="ld -assert pure-text -o"
 	    fi
-	else
+	;;
+	Linux* )
+	    # Should do something to make sure this is an ELF system, as
+	    # don't have patience for DLL...
+	    echo "$ac_t""Assuming Linux ELF.  Otherwise, reconfigure --without-shlib" 1>&6
+	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	    SHLIB_BUILD="gcc -shared -fpic -o"
+
+	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
+
+	    # Hmm, would be good to replace that trailing .0 with the
+	    # compilation number or some such.  Have to think about that.
+	;;
+	HP-UX-* )
+	    SO=".sl"
+	    SHLIB_F77FLAGS="+z"
+	    echo "$ac_t""okay" 1>&6
+	    if test "$with_gcc" = "no"; then
+		SHLIB_CCFLAGS=+z
+		SHLIB_CXXFLAGS=+z
+		SHLIB_F77FLAGS=+z
+		SHLIB_BUILD="ld -b -o"
+	    else
+		echo "$ac_t""warning: shared libs on HP with gcc is experimental" 1>&6
+	    fi
+	    LDSHARED="ld -b"
+	;;
+	AIX-* )
+	    SO=".a"
+	    SHLIB_F77FLAGS=-fpic
+	    if test "$with_gcc" = "no"; then
+		echo "$ac_t""okay" 1>&6
+		SHLIB_CCFLAGS=-fpic
+		SHLIB_CXXFLAGS=-fpic
+		SHLIB_BUILD="ar q"
+		if test "$enable_cxx" = "yes"; then
+		    SHLIB_LIBS="-L/usr/lpp/xlC/lib -lC $LIBS"
+		fi
+	    else
+		with_shlib=no
+	    fi
+	;;
+
+	# The rest are probably broken.  Someone please fix them.
+	# Remove the 'with_shlib=no' line, comments, and go wild.
+
+	SunOS-5* )
 	    with_shlib=no
-	fi
-    ;;
-
-    # The rest are probably broken.  Someone please fix them.
-    # Remove the 'with_shlib=no' line, comments, and go wild.
-
-    SunOS-5* )
-	with_shlib=no
-	echo "$ac_t""unknown" 1>&6
-#	SHLIB_CCFLAGS="-K pic"
-#	SHLIB_F77FLAGS="-K pic"
-#	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -G"
-    ;;
-    OSF-1.* )
-	with_shlib=no
-	echo "$ac_t""unknown" 1>&6
-#	SHLIB_CCFLAGS=-fpic
-#	SHLIB_F77FLAGS=-fpic
-#	SHLIB_BUILD="$CC -shared"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -shared -expect_unresolved \"*\""
-    ;;
-    IRIX-5.* )
-	with_shlib=no
-	echo "$ac_t""unknown" 1>&6
-#	SHLIB_CCFLAGS=-KPIC
-#	SHLIB_F77FLAGS=-KPIC
-#	SHLIB_BUILD="$CC -shared"
-#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
-	LDSHARED="ld -shared"
-    ;;
-    * )
-	with_shlib=no
-	echo "$ac_t""unknown" 1>&6
-    ;;
-esac
+	    echo "$ac_t""unknown" 1>&6
+	    #	SHLIB_CCFLAGS="-K pic"
+	    #	SHLIB_F77FLAGS="-K pic"
+	    #	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
+	    #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	    LDSHARED="ld -G"
+	;;
+	OSF-1.* )
+	    with_shlib=no
+	    echo "$ac_t""unknown" 1>&6
+	    #	SHLIB_CCFLAGS=-fpic
+	    #	SHLIB_F77FLAGS=-fpic
+	    #	SHLIB_BUILD="$CC -shared"
+	    #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	    LDSHARED="ld -shared -expect_unresolved \"*\""
+	;;
+	IRIX-5.* )
+	    with_shlib=no
+	    echo "$ac_t""unknown" 1>&6
+	    #	SHLIB_CCFLAGS=-KPIC
+	    #	SHLIB_F77FLAGS=-KPIC
+	    #	SHLIB_BUILD="$CC -shared"
+	    #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	    LDSHARED="ld -shared"
+	;;
+	* )
+	    with_shlib=no
+	    echo "$ac_t""unknown" 1>&6
+	;;
+    esac
+fi
 
 
 
@@ -3179,7 +3187,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3183 "configure"
+#line 3191 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3200,7 +3208,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3204 "configure"
+#line 3212 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3222,7 +3230,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3226 "configure"
+#line 3234 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3240,7 +3248,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3244 "configure"
+#line 3252 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3261,7 +3269,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3265 "configure"
+#line 3273 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3298,7 +3306,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3302 "configure"
+#line 3310 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3359,7 +3367,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3363 "configure"
+#line 3371 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3391,7 +3399,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3395 "configure"
+#line 3403 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -3425,7 +3433,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3429 "configure"
+#line 3437 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -3540,7 +3548,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3544 "configure"
+#line 3552 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -3562,7 +3570,8 @@ popen();
 
 ; return 0; }
 EOF
-if eval $ac_link; then
+cp conftest* /tmp
+if eval $ac_link -v; then
   rm -rf conftest*
   eval "ac_cv_func_popen=yes"
 else
@@ -3595,7 +3604,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3599 "configure"
+#line 3608 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -4642,14 +4651,11 @@ test "$no_create" = yes || ${CONFIG_SHELL-/bin/sh} $CONFIG_STATUS || exit 1
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
 #
-# IMPORTANT: the with_<foo> and enable_<bar> vars are printed as
-# with-<foo> and enable-<bar>.  Yes, this is confusing.  I really wish the
-# same syntax were used for both the command line switch and the variable
-# it is setting.  The possibility for confusion is much higher if I don't
-# write them the same in the status message as they appear in the command
-# line.  The only occasion you will have to set the variable directly is
-# in ~/config/cf_plplot.in if you use it, and just make sure you remember
-# to use an underscore in that case.
+# In a reversal of previous practice, I print the actual variables in the
+# configure log.  This is to remind the user of the difference between the
+# command line syntax (which you can always get help on by issuing a --help
+# option) and the internal representation.  It's necessary to remember this
+# for when you want to set the variable directly via ~/config/cf_plplot.in.
 # ----------------------------------------------------------------------------
 
 plplot_config_result_msg="Configure results:
@@ -4681,15 +4687,15 @@ LIBS:		$LIBS
 LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
 
-with-shlib:	$with_shlib		with-double:	$with_double
-with-debug:	$with_debug		with-opt:	$with_opt
-with-warn:	$with_warn		with-profile:	$with_profile
-with-f2c:	$with_f2c		with-gcc:	$with_gcc
+with_shlib:	$with_shlib		with_double:	$with_double
+with_debug:	$with_debug		with_opt:	$with_opt
+with_warn:	$with_warn		with_profile:	$with_profile
+with_f2c:	$with_f2c		with_gcc:	$with_gcc
 
-enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
-enable-tk:	$enable_tk		enable-dp:	$enable_dp
-enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
-enable-cxx:	$enable_cxx		enable_python:	$enable_python
+enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
+enable_tk:	$enable_tk		enable_dp:	$enable_dp
+enable_itcl:	$enable_itcl		enable_f77:	$enable_f77
+enable_cxx:	$enable_cxx		enable_python:	$enable_python
 "
 
 cat << EOF > config.summary
