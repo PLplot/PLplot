@@ -65,7 +65,6 @@ type cf\djgpp.in	>>tmp\Makedemo
 type cf\initdemo.in	>>tmp\Makedemo
 
 type cf\demos.in	>>tmp\Makedemo
-type cf\Miscdemo.in	>>tmp\Makedemo
 
 REM  Fix up CR/LF now
 
