@@ -126,15 +126,21 @@
  * Each stub must have an entry here.
 \*----------------------------------------------------------------------*/
 
-#define    PL_SETCONTLABELFORMAT	FNAME(PL_SETCONTLABELFORMAT,pl_setcontlabelformat)
-#define    PL_SETCONTLABELPARAM		FNAME(PL_SETCONTLABELPARAM,pl_setcontlabelparam)
+/* N.B. By default the g77 compiler appends second underscore to name if 
+ * the original name contains any underscore at all.  According to info
+ * g77, "This is done to ensure compatibility with code produced by many
+ * UNIX Fortran compilers."
+ */
+
+#define    PL_SETCONTLABELFORMAT	FNAME(PL_SETCONTLABELFORMAT,pl_setcontlabelformat_)
+#define    PL_SETCONTLABELPARAM		FNAME(PL_SETCONTLABELPARAM,pl_setcontlabelparam_)
 #define    PLADV	FNAME(PLADV,pladv)
 #define    PLAXES7	FNAME(PLAXES7,plaxes7)
 #define    PLBIN	FNAME(PLBIN,plbin)
 #define    PLBOP	FNAME(PLBOP,plbop)
 #define    PLBOX37	FNAME(PLBOX37,plbox37)
 #define    PLBOX7	FNAME(PLBOX7,plbox7)
-#define    PLCALC_WORLD	FNAME(PLCALC_WORLD,plcalc_world)
+#define    PLCALC_WORLD	FNAME(PLCALC_WORLD,plcalc_world_)
 #define    PLCLEAR	FNAME(PLCLEAR,plclear)
 #define    PLCLR	FNAME(PLCLR,plclr)
 #define    PLCOL	FNAME(PLCOL,plcol)
