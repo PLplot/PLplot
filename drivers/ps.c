@@ -845,8 +845,6 @@ proc_str (PLStream *pls, EscText *args)
 	clipxmax=pls->clpxma;
 	clipymin=pls->clpymi;
 	clipymax=pls->clpyma;
-	//difilt(&clipxmin, &clipymin, 1, &clxmin, &clxmax, &clymin, &clymax);
-	//difilt(&clipxmax, &clipymax, 1, &clxmin, &clxmax, &clymin, &clymax);
 	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
 	         &clipxmin, &clipymin);
 	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
