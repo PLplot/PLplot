@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.8  1992/10/27 22:14:11  mjl
-   Support for plflush() function.
+   Revision 1.9  1992/10/29 16:03:13  mjl
+   Attached an ID string here too as an experiment.
 
+ * Revision 1.8  1992/10/27  22:14:11  mjl
+ * Support for plflush() function.
+ *
  * Revision 1.7  1992/10/24  05:17:31  mjl
  * Fixed a stupidity I made earlier in plspage().
  *
@@ -41,6 +44,8 @@
 * ipls		Stream number
 * font..	Current default font and control parameters
 \*----------------------------------------------------------------------*/
+
+char ident[]="@(#) $Id$";
 
 #include "plplot.h"
 #include <stdio.h>
