@@ -769,29 +769,31 @@ GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
 AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
 
 
-### pkg-config checks and settings.  See examples/*/Makefile.examples.am for
-### the use of the AM_CONDITIONAL have_pkg_config.
+### pkg-config checks and settings.
 
 AC_ARG_WITH(pkg-config,
   AC_HELP_STRING([--with-pkg-config],
-                 [Use pkg-config in Makefile.examples.  If value is "check"
+                 [Use pkg-config in Makefile.examples.  If value is "yes"
                   then check for availability of the program in the system.
-                  Default value is "check".]),
+                  Default value is "no".]),
   [with_pkg_config="$withval"],
-  [with_pkg_config=check])
+  [with_pkg_config=no])
 
-if test "$with_pkg_config" = check ; then
+if test "$with_pkg_config" = yes ; then
   AC_CHECK_PROG(PKG_CONFIG, pkg-config, found, "not found")
-  test "$PKG_CONFIG" = found  &&  with_pkg_config=yes
-else 
-  if test "$with_pkg_config" != yes -o "$with_pkg_config" != no ; then
-    AC_MSG_WARN([--with-pkg-config must be given one of "yes", "no",])
-    AC_MSG_WARN([or "check".  Setting its value to "no".])
-    with_pkg_config=no
-  fi
+  test "$PKG_CONFIG" != found  &&  with_pkg_config=no
 fi
 
-AM_CONDITIONAL(have_pkg_config, [test "$with_pkg_config" = yes])
+if test "$with_pkg_config" = yes ; then
+  pkg_config_true=""
+  pkg_config_false="# "
+else
+  pkg_config_true="# "
+  pkg_config_false=""
+fi
+
+AC_SUBST(pkg_config_true)
+AC_SUBST(pkg_config_false)
 
 
 ### C++ binding
