@@ -31,6 +31,9 @@
 /* Define if popen is available.  */
 #undef HAVE_POPEN
 
+/* Define if usleep is available.  */
+#undef HAVE_USLEEP
+
 /* Define if isinf is available.  */
 #undef HAVE_ISINF
 
