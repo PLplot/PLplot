@@ -13,8 +13,8 @@
 # changes (depending on OS), and right now this doesn't mean much, so
 # by default these are not yet used.
 
-MAJOR_VERSION	= 4
-MINOR_VERSION	= 99
+MAJOR_VERSION	= 5
+MINOR_VERSION	= 1
 
 # Utilities
 
