@@ -59,15 +59,6 @@ void plD_tidy_tek		(PLStream *);
 void plD_state_tek		(PLStream *, PLINT);
 void plD_esc_tek		(PLStream *, PLINT, void *);
 
-void plD_init_mgr		(PLStream *);
-void plD_line_mgr		(PLStream *, short, short, short, short);
-void plD_polyline_mgr		(PLStream *, short *, short *, PLINT);
-void plD_eop_mgr		(PLStream *);
-void plD_bop_mgr		(PLStream *);
-void plD_tidy_mgr		(PLStream *);
-void plD_state_mgr		(PLStream *, PLINT);
-void plD_esc_mgr		(PLStream *, PLINT, void *);
-
 void plD_init_dg		(PLStream *);
 void plD_line_dg		(PLStream *, short, short, short, short);
 void plD_polyline_dg		(PLStream *, short *, short *, PLINT);

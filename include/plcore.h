@@ -256,22 +256,6 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef PLD_mgr
-    {
-	"MGR Window",
-	"mgr",
-	1,
-	plD_init_mgr,
-	plD_line_mgr,
-	plD_polyline_mgr,
-	plD_eop_mgr,
-	plD_bop_mgr,
-	plD_tidy_mgr,
-	plD_state_mgr,
-	plD_esc_mgr
-    },
-#endif
-
 #ifdef PLD_win3
     {
 	"Windows 3.x Driver",
