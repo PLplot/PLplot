@@ -517,9 +517,9 @@ Configure () {
 
     echo "Building makefile in tmp directory with command:"
     echo ""
-    echo "m4 $all_flags makefile.m4 >Makefile"
+    echo "m4 $all_flags <makefile.m4 >Makefile"
 
-    m4 $all_flags makefile.m4 >Makefile
+    m4 $all_flags <makefile.m4 >Makefile
 }
 
 #****************************************************************************
