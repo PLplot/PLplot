@@ -13,7 +13,6 @@ docdir = $(datadir)/doc/plplot
 
 doc_DATA = \
 	AUTHORS \
-	COPYING \
 	COPYING.LIB \
 	ChangeLog \
 	Copyright \
