@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/02/23 04:58:33  mjl
-   Added to the stream data structure: a device name, and the value of the
-   escape character.  Added function prototype for plgpls and some minor
-   documentation changes.
+   Revision 1.3  1993/02/27 01:43:11  mjl
+   Changed prototype for file offset to work with fgetpos/fsetpos.
 
+ * Revision 1.2  1993/02/23  04:58:33  mjl
+ * Added to the stream data structure: a device name, and the value of the
+ * escape character.  Added function prototype for plgpls and some minor
+ * documentation changes.
+ *
  * Revision 1.1  1993/01/23  05:39:16  mjl
  * Added to hold definition of PLStream data structure.  Included by all files
  * dealing with streams (and is included by driver.h).
@@ -217,7 +220,7 @@ typedef struct {
     PLINT bytecnt;
     PLINT page;
     PLINT linepos;
-    U_LONG lp_offset;
+    fpos_t lp_offset;
 
 /* Colormaps */
 
