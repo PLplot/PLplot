@@ -9,7 +9,7 @@
 #ifndef __PLSTRM_H__
 #define __PLSTRM_H__
 
-#include "plplot/dispatch.h"
+#include "plplot/disptab.h"
 
 /*--------------------------------------------------------------------------*\
  * Define the PLDev data structure.

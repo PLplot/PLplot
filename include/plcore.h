@@ -10,7 +10,7 @@
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
 #include "plplot/plDevs.h"
-#include "plplot/dispatch.h"
+#include "plplot/disptab.h"
 
 
 /* Static function prototypes */
