@@ -8,6 +8,8 @@ can find at
 
 As usual, you should get the last version, 0.57 at the time of this
 writing. You also need perl.
+If you don't have Holt's matwrap, don't worry, a copy is available
+in this distribution and will be automatically used.
 
 You must compile PLplot with shared libraries, which 'configure' does
 by default if your OS is supported.
@@ -21,8 +23,8 @@ Make sure that you have a correctly installed octave, configured with
 should report octave dynamic libs, liboctave.so, libcruft.so and
 liboctinterp.so
 
-Configure PLplot with the --enable-octave plus any other options in
-the main directory, e.g.,
+Configure PLplot with the --enable-octave, which is the default,
+plus any other options in the main directory, e.g.,
 
 	./configure --enable-octave
 
@@ -40,7 +42,8 @@ the apostrophe in plgver, meaning transpose). You should get the same
 version that you have just compiled, not the installed version.
 
 Invoke octave, (the variable  LOADPATH is automatically set to
-	LOADPATH="../bindings/octave//:" because of the file .octaverc)
+	LOADPATH="../bindings/octave//:"
+because of the file .octaverc which exists in the tmp directory)
 
 There are several Octave demos, 'p1' up to 'p20'. Try them:
 
@@ -92,7 +95,7 @@ You can use the standard Octave plot commands if in the LOADPATH a
 
 LOADPATH=":/usr/share/plplot_octave//:<other path>:<other path>";
 
-You can use the (not yet working) command 'use_plplot(""yes"|"no")' to
+You can use the (not yet working) command 'use_plplot("yes"|"no")' to
 change between the two sets of commands.
 
 You are done. You can now use almost all the standard Octave plot
@@ -112,8 +115,8 @@ To print or save a plot, use
 
 Use `lp_setup' to setup your printer.
 
-You might have problems saving/printing from the tk driver using this
-method; use the menus in the tk plot window instead.
+You might have problems (not anymore) saving/printing from the tk
+driver using this method; use the menus in the tk plot window instead.
 
 If you just want to use the PLplot API, use it as you would from a C
 program, with the exception that you don't need to specify matrices
@@ -130,7 +133,7 @@ You have a 'demo' directory, with the equivalent octave script files
 x??c.m of PLplot C demos, and some new demos, p??.m.
 
 You have a 'PLplot' directory with modified versions of the standard
-octave plot command, plus a lot of new ones ready for Octave use. You
+octave plot command, plus a lot of new ones ready for Octave usage. You
 must have it on your LOADPATH before the standard octave/gnuplot plot
 scripts. If you install it in the default directory, use the octave
 command `octave_plplot_path' to setup the path. You can change between
@@ -139,7 +142,8 @@ the default gnuplot plotter and octave_plplot using the octave command
 
 You have a misc directory with some other octave demos/utilities.
 
-You have an etc directory where the "documentation" is.
+You have an etc directory where the "documentation" is (not anymore,
+documentation is built from the main documentation file, api.xml.
 
 You have the directory where the README, INSTALL, PROBLEMS,
 BUGS, ToDo, are, plus 'plplot_octave_org.h', massage.c, etc.
