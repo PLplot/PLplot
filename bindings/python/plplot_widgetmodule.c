@@ -13,6 +13,7 @@
 static char doc_partialInitXw[]="Partially init a new device (X Window) ";
 
 #ifndef WIN32
+#include "plplot/plxwd.h"
 static PyObject * pl_partialInitXw(PyObject *self, PyObject *args)
 {
     PLINT ipls;
