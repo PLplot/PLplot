@@ -81,6 +81,7 @@ with_warn=no
 with_dbmalloc=no
 with_fseek=no
 with_pkgdir=
+with_rpath=yes
 with_nobraindead=no
 
 enable_drivers=yes
@@ -295,6 +296,9 @@ MY_ARG_WITH(pkgdir,
 
 MY_ARG_WITH(fseek,
   [  --with-fseek            use fseek/ftell rather than fsetpos/fgetpos ($with_fseek)])
+
+MY_ARG_WITH(rpath,
+  [  --with-rpath            link libraries with -rpath option ($with_rpath)])
 
 MY_ARG_WITH(nobraindead)
 
@@ -785,7 +789,7 @@ devices:	$DEVICES
 with_shlib:	$with_shlib		with_double:	$with_double
 with_debug:	$with_debug		with_opt:	$with_opt
 with_warn:	$with_warn		with_profile:	$with_profile
-with_gcc:	$with_gcc
+with_gcc:	$with_gcc		with_rpath:	$with_rpath
 
 enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
 enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
