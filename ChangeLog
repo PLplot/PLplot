@@ -1,3 +1,16 @@
+2003-01-04  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* Make 9th and 11th Java examples consistent with recently changed C
+	  examples.  This concludes the Java consistency effort (at least
+	  until the next change in the C examples).  Most java examples
+	  agree exactly with their C counterpart.  The worst difference is a
+	  long-standing discrepancy in the last page of example 9 where the
+	  potential plot contours are slightly but visibly different between
+	  C and Java no matter what I try.  The two other example
+	  discrepancies that show up with diff are quite minor and don't
+	  seem to correspond to anything visible.
+	  
+
 2003-01-02  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Make 8th Java example give the same result (to 1 unit in last
