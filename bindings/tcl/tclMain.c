@@ -231,7 +231,7 @@ pltclMain(int argc, char **argv, char *RcFileName /* OBSOLETE */,
     sprintf(usage, "\nUsage:\n        %s [filename] [options]\n", argv[0]);
     plSetUsage(NULL, usage);
     plMergeOpts(options, "pltcl options", pltcl_notes);
-    (void) plParseOpts(&argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
+    (void) plparseopts(&argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
 
     /*
      * Make (remaining) command-line arguments available in the Tcl variables
