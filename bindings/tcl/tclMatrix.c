@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1995/09/21 10:20:31  furnish
+ * Revision 1.13  1995/10/19 00:03:35  mjl
+ * Added a "redim" matrix command, only permitted with 1d matrices.  Switched
+ * to using standard malloc/free so that they could be used with dbmalloc.
+ *
+ * Revision 1.12  1995/09/21  10:20:31  furnish
  * Fix info command to not append trailing space, as this wrecks Tcl
  * expressions which want to treat the element as a number.
  *
@@ -230,7 +234,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Create matrix data structure */
 
-    matPtr = (tclMatrix *) ckalloc(sizeof(tclMatrix));
+    matPtr = (tclMatrix *) malloc(sizeof(tclMatrix));
     matPtr->fdata = NULL;
     matPtr->idata = NULL;
     matPtr->name = NULL;
@@ -248,7 +252,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     if (Tcl_GetCommandInfo(interp, argv[0], &infoPtr)) {
 	Tcl_AppendResult(interp, "Matrix operator \"", argv[0], 
 	    "\" already in use", (char *) NULL);
-	ckfree((char *) matPtr);
+	free((void *) matPtr);
 	return TCL_ERROR;
     }
 
@@ -256,11 +260,11 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	Tcl_AppendResult(interp, "Illegal name for Matrix operator \"", 
 	    argv[0], "\": local variable of same name is active", 
 	    (char *) NULL);
-	ckfree((char *) matPtr);
+	free((void *) matPtr);
 	return TCL_ERROR;
     }
 
-    matPtr->name = (char *) ckalloc(strlen(argv[0])+1);
+    matPtr->name = (char *) malloc(strlen(argv[0])+1);
     strcpy(matPtr->name, argv[0]);
 
 /* Initialize type */
@@ -340,13 +344,13 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
     switch (matPtr->type) {
     case TYPE_FLOAT:
-	matPtr->fdata = (Mat_float *) ckalloc(matPtr->len * sizeof(Mat_float));
+	matPtr->fdata = (Mat_float *) malloc(matPtr->len * sizeof(Mat_float));
 	for (i = 0; i < matPtr->len; i++)
 	    matPtr->fdata[i] = 0.0;
 	break;
 
     case TYPE_INT:
-	matPtr->idata = (Mat_int *) ckalloc(matPtr->len * sizeof(Mat_int));
+	matPtr->idata = (Mat_int *) malloc(matPtr->len * sizeof(Mat_int));
 	for (i = 0; i < matPtr->len; i++)
 	    matPtr->idata[i] = 0;
 	break;
@@ -567,6 +571,14 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     int nmin[MAX_ARRAY_DIM], nmax[MAX_ARRAY_DIM];
     int i, j, k;
 
+/* Initialize */
+
+    if (argc < 2) {
+	Tcl_AppendResult(interp, "wrong # args, type: \"",
+		argv[0], " help\" for more info", (char *) NULL);
+	return TCL_ERROR;
+    }
+
     for (i = 0; i < MAX_ARRAY_DIM; i++) {
 	nmin[i] = 0;
 	nmax[i] = matPtr->n[i]-1;
@@ -586,7 +598,7 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	    for (j = nmin[1]; j <= nmax[1]; j++) {
 		for (k = nmin[2]; k <= nmax[2]; k++) {
 		    (*matPtr->get)((ClientData) matPtr, I3D(i,j,k), tmp);
-		    printf(tmp);
+		    printf("%s ", tmp);
 		}
 		if (matPtr->dim > 2)
 		    printf("\n");
@@ -608,6 +620,15 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	return TCL_OK;
     }
 
+/* help */
+
+    else if ((c == 'h') && (strncmp(argv[0], "help", length) == 0)) {
+	Tcl_AppendResult(interp, 
+	    "So you really thought there'd be help, eh?  Sucker.", 
+	    (char *) NULL);
+	return TCL_OK;
+    }
+
 /* info */
 
     else if ((c == 'i') && (strncmp(argv[0], "info", length) == 0)) {
@@ -623,9 +644,52 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     }
 
 /* redim */
+/* Only works on 1d matrices */
 
     else if ((c == 'r') && (strncmp(argv[0], "redim", length) == 0)) {
-	fprintf(stderr, "Redimensioning array %s... NOT!\n", name);
+	int newlen;
+	void *data;
+
+	if (argc != 2 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+			     name, " ", argv[0], " length\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	if (matPtr->dim != 1) {
+	    Tcl_AppendResult(interp, "can only redim a 1d matrix",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	newlen = atoi(argv[1]);
+	switch (matPtr->type) {
+	case TYPE_FLOAT:
+	    data = realloc(matPtr->fdata, newlen * sizeof(Mat_float));
+	    if (data == NULL) {
+		Tcl_AppendResult(interp, "redim failed!",
+				 (char *) NULL);
+		return TCL_ERROR;
+	    }
+	    matPtr->fdata = (Mat_float *) data;
+	    for (i = matPtr->len; i < newlen; i++)
+		matPtr->fdata[i] = 0.0;
+	    break;
+
+	case TYPE_INT:
+	    data = realloc(matPtr->idata, newlen * sizeof(Mat_int));
+	    if (data == NULL) {
+		Tcl_AppendResult(interp, "redim failed!",
+				 (char *) NULL);
+		return TCL_ERROR;
+	    }
+	    matPtr->idata = (Mat_int *) data;
+	    for (i = matPtr->len; i < newlen; i++)
+		matPtr->idata[i] = 0;
+	    break;
+	}
+	matPtr->n[0] = matPtr->len = newlen;
 	return TCL_OK;
     }
 
@@ -850,11 +914,11 @@ DeleteMatrixCmd(ClientData clientData)
 /* Free data */
 
     if (matPtr->fdata != NULL) {
-	ckfree((char *) matPtr->fdata);
+	free((void *) matPtr->fdata);
 	matPtr->fdata = NULL;
     }
     if (matPtr->idata != NULL) {
-	ckfree((char *) matPtr->idata);
+	free((void *) matPtr->idata);
 	matPtr->idata = NULL;
     }
 
@@ -873,14 +937,14 @@ DeleteMatrixCmd(ClientData clientData)
 /* Free name.  */
 
     if (matPtr->name != NULL) {
-	ckfree((char *) matPtr->name);
+	free((void *) matPtr->name);
 	matPtr->name = NULL;
     }
 
 /* Free tclMatrix */
 
     if ( ! matPtr->tracing)
-	ckfree((char *) matPtr);
+	free((void *) matPtr);
 #ifdef DEBUG
     else
 	fprintf(stderr, "OOPS!  You just lost %d bytes\n", sizeof(tclMatrix));
