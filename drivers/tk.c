@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1993/08/18 19:05:41  mjl
+ * Revision 1.9  1993/08/20 19:40:44  mjl
+ * Now causes proc to update scrollbars to be evaluated when the driver
+ * interface values are changed.  So settings zoom from the command line
+ * using -wplt option will bring up scrollbars.
+ *
+ * Revision 1.8  1993/08/18  19:05:41  mjl
  * Changed way device window parameters are passed -- now via the command
  * line flags -mar, -a, -jx, and -jy.
  *
@@ -480,6 +485,11 @@ tk_di(PLStream *pls)
 	server_cmd( pls, "$plwidget cmd setopt -jy $jy" );
 	pls->difilt &= ~PLDI_DEV;
     }
+
+/* Update view */
+
+    server_cmd( pls, "update" );
+    server_cmd( pls, "plw_update_view $plwindow" );
 }
 
 /*----------------------------------------------------------------------*\
