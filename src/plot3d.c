@@ -28,7 +28,13 @@ static PLINT mlo, xxlo, newlosize;
 
 /* Light source for shading */
 static PLFLT xlight, ylight, zlight;
+
+/* define WANT_MISSING_TRIANGLES if you want to enable the old buggy way in plotsh3 */
+/* #define WANT_MISSING_TRIANGLES 1 */
+
+#if WANT_MISSING_TRIANGLES
 static PLINT threedshading;
+#endif
 
 /* Prototypes for static functions */
 
@@ -106,7 +112,7 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
  * values are in the 2-d array z[][]. 
 \*--------------------------------------------------------------------------*/
 
-#if 0
+#if WANT_MISSING_TRIANGLES
 void
 c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 		 PLINT nx, PLINT ny, PLINT side)
@@ -149,6 +155,7 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     init = 1;
+
     /* Extract shading info */
     threedshading = 1;
 	
@@ -202,7 +209,7 @@ static void shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
 
   /* arrays fro interface to core functions */
   PLFLT x[3], y[3], z[3], c;
-  short u[3], v[3];
+  PLINT u[4], v[4];
 
   x[0] = x0; x[1] = x1; x[2] = x2;
   y[0] = y0; y[1] = y1; y[2] = y2;
@@ -213,8 +220,10 @@ static void shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
     u[i] = plP_wcpcx(plP_w3wcx(x[i], y[i], z[i]));
     v[i] = plP_wcpcy(plP_w3wcy(x[i], y[i], z[i]));
   }
+  u[3] = u[0];
+  v[3] = v[0];
   plcol1(c);
-  plP_fill(u, v, 3);
+  plP_plfclp(u, v, 4, plsc->clpxmi, plsc->clpxma, plsc->clpymi, plsc->clpyma, plP_fill);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -223,6 +232,15 @@ static void shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
  * Plots a 3-d representation of the function z[x][y]. The x values
  * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
  * values are in the 2-d array z[][]. 
+ *
+ * This code is a complete departure from the approach taken in the old version
+ * of this routine. Formerly to code attempted to use the logic for the hidden
+ * line algorithm to draw the hidden surface. This was really hard. This code
+ * below uses a simple back to front (painters) algorithm. All the the
+ * triangles are drawn.
+ *
+ * There are multitude of ways this code could be optimized. Given the
+ * problems with the old code, I tried to focus on clarity here. 
 \*--------------------------------------------------------------------------*/
 
 void
@@ -453,7 +471,9 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     /* fprintf(stderr, "cxx=%g cxy=%g cyx=%g cyy=%g cyz=%g\n", cxx, cxy, cyx, cyy, cyz); */
     init = 1;
+#if WANT_MISSING_TRIANGLES
     threedshading = 0;
+#endif
 /* Call 3d line plotter.  Each viewing quadrant 
    (perpendicular to x-y plane) must be handled separately. */ 
 
@@ -620,6 +640,7 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
     while (1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny) {
 	x2d = plP_w3wcx(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	y2d = plP_w3wcy(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
+#if WANT_MISSING_TRIANGLES
 	if (threedshading) {
 	    fill3x[threedcount] = x[x0-1];
 	    fill3y[threedcount] = y[y0-1];
@@ -630,6 +651,7 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 		c[n] = plGetAngleToLight(fill3x,fill3y,fill3z);
 	    }
 	}
+#endif
 	u[n] = plP_wcpcx(x2d);
 	v[n] = plP_wcpcy(y2d);
 
@@ -661,11 +683,13 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
     }
 
 /* Get initial color value by linear interpolation. */
+#if WANT_MISSING_TRIANGLES
     if (threedshading) {
 	c[1] = 2*c[2] - c[3];
 	if (c[1] < 0) c[1] = 0;
 	if (c[1] > 1) c[1] = 1;
     }
+#endif
 
     if (flag == 1 || flag == -2) {
 	if (flag == 1) {
@@ -679,6 +703,7 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 	if (1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny) {
 	    x2d = plP_w3wcx( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 	    y2d = plP_w3wcy( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
+#if WANT_MISSING_TRIANGLES
 	/* Although this is a rare boundary case, it's good to be safe */
 	    if (threedshading) {
 		fill3x[threedcount] = x[x0-1];
@@ -690,6 +715,7 @@ plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 		    c[n] = plGetAngleToLight(fill3x,fill3y,fill3z);
 		}
 	    }
+#endif
 	    u[n] = plP_wcpcx(x2d);
 	    v[n] = plP_wcpcy(y2d);
 	    n++;
@@ -1175,6 +1201,7 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 	     * I'm beginning to thing it will take a thorough rewrite to fix
 	     * this. 
 	     */
+#if WANT_MISSING_TRIANGLES
 		if (threedshading && (j > 1)) {
 		    PLINT cx0, cy0, cx1 = cx, cy1 = cy, cx2, cy2;
 		    PLINT su0 = u[j-2], sv0 = v[j-2];
@@ -1204,6 +1231,7 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 			    plP_fill3(cx0, cy0, su1, sv1, cx1, cy1, j);
 		    }
 		}
+#endif
 #endif
 	    }
 	}
@@ -1244,7 +1272,7 @@ plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move)
     static int count = 0;
     static int vcount = 0;
     static short px[MAX_POLY], py[MAX_POLY];
-
+#if WANT_MISSING_TRIANGLES
     if (threedshading) {
     /*
      * Use two circular buffers for coordinates.
@@ -1274,6 +1302,9 @@ plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move)
 	    }
 	}
     } else {
+#else
+    {
+#endif
 	if (move)
 	    plP_movphy(x, y);
 	else
