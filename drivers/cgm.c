@@ -19,7 +19,8 @@
  * V1.3 of the library. The original host site for the library no longer
  * exists, so probably the best source of the library presently is:
  * 
- * http://www.uni-koeln.de/themen/Graphik/ImageProcessing/cd.html 
+ * http://www.pa.msu.edu/reference/cgmdraw_ref.html
+ * http://www.pa.msu.edu/ftp/pub/unix/ 
  */
 
 
