@@ -108,10 +108,12 @@ proc x08 {{w loopback}} {
 	for {set j 0} {$j < $ypts} {incr j} {
 	    set yy [y $j]
 	    if {$rosen == 1} {
-	      z $i $j = [expr log(pow(1. - $xx,2) + \
+	      z $i $j = [expr (pow(1. - $xx,2) + \
 		100 * pow($yy - pow($xx,2),2))]
 	      set zz [z $i $j]
-	      if {$zz <= -1.e300} {
+	      if {$zz > 0.} {
+		z $i $j = [expr (log($zz))]
+	      } else {
 		z $i $j = [expr -5]
 	      }
 	    } else {

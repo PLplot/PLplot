@@ -5,19 +5,6 @@
 
 #include "plcdemos.h"
 
-/*
- Note that isinf() is not needed with the standard XPTS, YPTS
- and x and y minimum and maximum values, but if the user changes
- any of these, then we can get the log of a negative number.
-*/
-
-#if !defined(HAVE_ISINF) && defined(HAVE_FINITE)
-#define isinf(x) ((x) == (x) && ! finite((x)))
-/* if x is not a NaN (x==x) and is not finite, it must be infinite */
-#else
-#define isinf(x) (0) /* believe in probabilities (i.e., luck :) */
-#endif
-
 #define XPTS   35		/* Data points in x */
 #define YPTS   46		/* Datat points in y */
 
@@ -148,8 +135,11 @@ main(int argc, char *argv[])
     for (j = 0; j < YPTS; j++) {
       yy = y[j];
       if (rosen) {
-	z[i][j] = log(pow(1. - xx, 2.) + 100. * pow(yy - pow(xx, 2.), 2.));
-	if (isinf(z[i][j])) /* the log() of the function may become -inf */
+	z[i][j] = pow(1. - xx, 2.) + 100. * pow(yy - pow(xx, 2.), 2.);
+	/* The log argument may be zero for just the right grid.  */
+	if (z[i][j] > 0.)
+	  z[i][j] = log(z[i][j]);
+	else
 	  z[i][j] = -5.; /* -MAXFLOAT would mess-up up the scale */
       }
       else {

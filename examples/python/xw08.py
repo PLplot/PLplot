@@ -82,8 +82,9 @@ def main():
     x.shape = (-1,1)
     r2 = (x*x) + (y*y)
     if rosen == 1:
-	z = log((1. - x)*(1. - x) + 100 * (x*x - y)*(x*x - y))
-	# the log() of the function may become -inf
+	z = (1. - x)*(1. - x) + 100 * (x*x - y)*(x*x - y)
+	# The log argument may be zero for just the right grid.  */
+	z = log(choose(greater(z,0.), (exp(-5.), z)))
     else:
 	z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
 

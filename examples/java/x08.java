@@ -148,10 +148,12 @@ class x08 {
             {
 	       yy = y[j];
 	       if (rosen) {
-		  z[i][j] = Math.log(Math.pow(1. - xx,2.) + 100 * 
-				     Math.pow(yy - Math.pow(xx,2.),2.));
-		  
-		  if (Double.isInfinite(z[i][j])) /* the log() of the function may become -inf */
+		  z[i][j] = Math.pow(1. - xx,2.) + 100 * 
+				     Math.pow(yy - Math.pow(xx,2.),2.);
+	          /* The log argument may be zero for just the right grid.  */
+		  if (z[i][j] > 0.)
+		    z[i][j] = Math.log(z[i][j]);
+		  else
 		    z[i][j] = -5.; /* -MAXFLOAT would mess-up up the scale */
 	       }
 	       else {

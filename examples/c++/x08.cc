@@ -193,7 +193,7 @@ x08::x08( int argc, char **argv ) {
 	  if (rosen) {
 	    z[i][j] = std::pow(1. - xx,2.) + 100 * 
 			       std::pow(yy - std::pow(xx,2.),2.);
-		  
+	    /* The log argument may be zero for just the right grid.  */
 	    if (z[i][j] > 0.)
 	       z[i][j] = std::log(z[i][j]);
 	    else
