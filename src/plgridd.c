@@ -1,12 +1,18 @@
 
 #include "plplotP.h"
 
+#ifdef WITH_CSA
 #include "../lib/csa/csa.h"
-#include "../lib/csa/nan.h"
+#endif
+#include "../lib/csa/nan.h" /* this is handy */
 
 #ifdef HAVE_QHULL
 #include "../lib/nn/nn.h"
 #include <qhull/qhull_a.h>
+#endif
+
+#if !defined(HAVE_ISNAN)
+#define isnan(x) ((x) != (x))
 #endif
 
 /* forward declarations */
@@ -24,9 +30,11 @@ grid_nnidw (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	    PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg,
 	    int knn_order);
 
+#ifdef WITH_CSA
 static void
 grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	  PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg);
+#endif
 
 #ifdef HAVE_QHULL
 static void
@@ -118,7 +126,11 @@ c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   switch (type) {
     
   case (GRID_CSA):     /*  Bivariate Cubic Spline Approximation */
+#ifdef WITH_CSA
     grid_csa(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
+#else
+    plabort("plgriddata(): PLplot was configured to not use GRID_CSA.");
+#endif
     break;
 
   case (GRID_NNIDW): /* Nearest Neighbors Inverse Distance Weighted */
@@ -154,6 +166,7 @@ c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 }
 
+#ifdef WITH_CSA
 /* 
  * Bivariate Cubic Spline Approximation using Pavel Sakov's csa package
  *
@@ -209,6 +222,7 @@ grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   free(pin);
   free(pgrid); 
 }
+#endif /* WITH_CSA */
 
 /* Nearest Neighbors Inverse Distance Weighted, brute force approach.
  *
