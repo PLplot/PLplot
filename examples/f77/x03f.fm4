@@ -87,9 +87,9 @@ include(fmacs.m4)dnl
       implicit_none
 
       character*(*) text
-      integer l, len
+      integer l, {len}
 
-      l = len (text)
+      l = {len}(text)
       nsp = 1
     1 if (text(nsp:nsp).eq.' ' .and. nsp.lt.l) then
         nsp = nsp+1

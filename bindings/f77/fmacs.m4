@@ -134,8 +134,12 @@ ifdef({INCLUDED_FMACS},,{
 #
 # Default
 # Implicit character almost as good as implicit none.
+# This may have been true in old days, but this seriously screws
+# up solaris fortran compiler so put implicit none as default instead
+# since m4 is screwed up on solaris and will not recognize esyscmd above
 
-    define(implicit_none, {implicit character(a-z)})
+#    define(implicit_none, {implicit character(a-z)})
+    define(implicit_none, {implicit none})
 
 # "implicit undefined" is used in many "f77" compatible compilers
 

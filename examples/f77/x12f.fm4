@@ -57,10 +57,10 @@ include(fmacs.m4)dnl
 
       subroutine lalign(string)
       implicit_none
-      integer i, j, k, max, len
+      integer i, j, k, max, {len}
       character*(*) string
       
-      max = len (string)
+      max = {len}(string)
 
       do 1 i = 1, max
          if (string(i:i) .ne. ' ') then
