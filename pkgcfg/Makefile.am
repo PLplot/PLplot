@@ -60,11 +60,12 @@ install-data-hook:
 	        lib=`echo $$i | sed 's:^/.*/lib:-l:' | sed 's/.la$$//'` ; \
 	        deplibs="$$deplibs $$lib" ; \
 	    done ; \
-	    sed -i "s:#DEPLIBS#:$$deplibs:" \
-	        $(DESTDIR)$(pkgconfigdir)/$$pcfile.pc ; \
+	    pcfile_inst=$(DESTDIR)$(pkgconfigdir)/$$pcfile.pc ; \
+	    sed "s:#DEPLIBS#:$$deplibs:" < $$pcfile_inst > temp ; \
+	    mv temp $$pcfile_inst ; \
 	done
 
 EXTRA_DIST = gen-pc-files.sh README
-CLEANFILES = *.pc pc-stamp
+CLEANFILES = *.pc pc-stamp temp
 
 
