@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.39  2000/05/10 20:40:51  furnish
+ * ifdef out use of strdup (nonstandard routine not in Mac libraries).
+ * There must be a better option here but I don't think it is likely to
+ * be used on the Mac.  Rob Managan.
+ *
  * Revision 1.38  1999/06/19 05:38:58  furnish
  * Integrated patch set from Joao Cardoso.
  *
@@ -1818,10 +1823,12 @@ opt_plserver(char *opt, char *optarg, void *client_data)
 static int
 opt_plwindow(char *opt, char *optarg, void *client_data)
 {
+#ifndef macintosh
     char *strdup();
 
 /* jc:    plsc->plwindow = optarg; */
     plsc->plwindow = strdup(optarg);	/* jc: somehow the original string is lost */
+#endif
     return 0;
 }
 
