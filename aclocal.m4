@@ -1,8 +1,9 @@
 dnl> $Id$
 dnl> 
-dnl> Local autoconf extensions.
-dnl> These are based on the autoconf builtin macros, and you can do what
-dnl> you want with them.
+dnl> Local autoconf extensions.  These are based on the autoconf builtin
+dnl> macros, and you can do what you want with them.  Side note: if you
+dnl> introduce all comments as done here, the m4 file is more readable and
+dnl> you can do emacs adaptive fills.
 dnl> 
 dnl> Maurice LeBrun
 dnl> IFS, University of Texas at Austin
@@ -17,13 +18,12 @@ dnl> ignore everything inside the brackets.
 dnl>
 define([AC_IGNORE],)dnl
 dnl>
-dnl> Guess the value for the `prefix' variable by looking for
-dnl> the argument program along PATH and taking its parent.
-dnl> Example: if the argument is `gcc' and we find /usr/local/gnu/bin/gcc,
-dnl> set `prefix' to /usr/local/gnu.  Unlike the builtin AC_PREFIX, this
-dnl> one tries to follow any symbolic links back to their terminus, and
-dnl> also determines if a non-standard installation is being used.  It
-dnl> works as follows:
+dnl> Guess the value for the `prefix' variable by looking for the argument
+dnl> program along PATH and taking its parent.  Example: if the argument
+dnl> is `gcc' and we find /usr/local/gnu/bin/gcc, set `prefix' to
+dnl> /usr/local/gnu.  Unlike the builtin AC_PREFIX, this one tries to
+dnl> follow any symbolic links back to their terminus, and also determines
+dnl> if a non-standard installation is being used.  It works as follows:
 dnl>
 dnl>  	prefix=`ls -l $ac_dir/$1 | awk '{print $NF}'`
 dnl>
