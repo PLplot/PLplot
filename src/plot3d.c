@@ -251,12 +251,12 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   int   ct, ix, iy;
 
   if (plsc->level < 3) {
-    myabort("plotsh3d: Please set up window first");
+    myabort("plsurf3d: Please set up window first");
     return;
   }
     
   if (nx <= 0 || ny <= 0) {
-    myabort("plotsh3d: Bad array dimensions.");
+    myabort("plsurf3d: Bad array dimensions.");
     return;
   }
 
@@ -279,7 +279,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
   for (i = 0; i < nx - 1; i++) {
     if (x[i] >= x[i + 1]) {
-      myabort("plotsh3d: X array must be strictly increasing");
+      myabort("plsurf3d: X array must be strictly increasing");
       return;
     }
     if (x[i] < xmin && x[i+1] >= xmin)
@@ -289,7 +289,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   }
   for (i = 0; i < ny - 1; i++) {
     if (y[i] >= y[i + 1]) {
-      myabort("plotsh3d: Y array must be strictly increasing");
+      myabort("plsurf3d: Y array must be strictly increasing");
       return;
     }
     if (y[i] < ymin && y[i+1] >= ymin)
