@@ -131,7 +131,14 @@ fi
 
 # Default directories to search for include files
 
+# In Linux have a peculiar ambiguity where identical tcl.h files are found
+# both in /usr/include and /usr/include/tcl8.2/generic.  The latter is *much*
+# preferred because has everything else as well having to do with tcl.  Thus,
+# AWI puts the generic include site first on the list (note that prefix can be
+# "/usr" which would give bad result under Linux without this ordering.)
+
 incdirs_default="\
+/usr/include/tcl8.2/generic \
 $prefix/include/itcl \
 $prefix/include \
 $HOME/local/include \
