@@ -62,6 +62,41 @@ typedef struct {
 
 static char outbuf[128];
 
+#ifdef ENABLE_DYNAMIC_DRIVERS
+void plD_line_psm(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+{
+    return plD_line_ps( pls, x1a, y1a, x2a, y2a );
+}
+void plD_line_psc(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+{
+    return plD_line_ps( pls, x1a, y1a, x2a, y2a );
+}
+
+void plD_polyline_psm(PLStream *pls, short *xa, short *ya, PLINT npts)
+{
+    return plD_polyline_ps( pls, xa, ya, npts );
+}
+void plD_polyline_psc(PLStream *pls, short *xa, short *ya, PLINT npts)
+{
+    return plD_polyline_ps( pls, xa, ya, npts );
+}
+
+void plD_eop_psm(PLStream *pls) { return plD_eop_ps(pls); }
+void plD_eop_psc(PLStream *pls) { return plD_eop_ps(pls); }
+
+void plD_bop_psm(PLStream *pls) { return plD_eop_ps(pls); }
+void plD_bop_psc(PLStream *pls) { return plD_eop_ps(pls); }
+
+void plD_tidy_psm(PLStream *pls) { return plD_eop_ps(pls); }
+void plD_tidy_psc(PLStream *pls) { return plD_eop_ps(pls); }
+
+void plD_state_psm(PLStream *pls, PLINT op) { return plD_state_ps(pls,op); }
+void plD_state_psc(PLStream *pls, PLINT op) { return plD_state_ps(pls,op); }
+
+void plD_esc_psm(PLStream *pls, PLINT op, void *ptr) { return plD_esc_ps(pls,op,ptr); }
+void plD_esc_psc(PLStream *pls, PLINT op, void *ptr) { return plD_esc_ps(pls,op,ptr); }
+#endif
+
 /*--------------------------------------------------------------------------*\
  * plD_init_ps()
  *
