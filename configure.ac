@@ -98,23 +98,41 @@ enable_octave=no
 #searching to work right for the following variables.  Note these variables
 #also have a driver role to play, but unlike these, pure-driver variables
 #(e.g., enable_tek4010) do not require a default to be specified here.
-enable_gnome=no
-enable_ntk=yes
 enable_tkwin=yes
 enable_png=yes
 enable_jpeg=yes
 enable_cgm=yes
 enable_tk=yes
 enable_xwin=yes
+# Not currently supported, but that may change in future.
+enable_gnome=no
+enable_ntk=no
 
 # am_conditional on the following flags required because these drivers
 # need the math library linked in.
-enable_ljii=yes
-enable_ljiip=yes
 enable_pbm=yes
 enable_ps=yes
 enable_pstex=yes
 enable_xfig=yes
+# Disable by default since hardware is getting scarce.
+enable_ljii=no
+enable_ljiip=no
+
+# disable some pure drivers by default where the hardware is getting
+# scarce.
+enable_dg300=no
+enable_imp=no
+enable_conex=no
+enable_mskermit=no
+enable_tek4010=no
+enable_tek4010f=no
+enable_tek4107=no
+enable_tek4107f=no
+enable_versaterm=no
+enable_vlt=no
+# disable this low-quality driver by default (without disabling this
+# last one, all the tek.c drivers are enabled for some reason).
+enable_xterm=no
 
 # separate the concept of desiring a driver (above) with
 # having system support for it.
