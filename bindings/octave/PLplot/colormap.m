@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -67,6 +67,7 @@ function ccmap = colormap(map)
   plscmap1n(rows(map)); # number of colors
   plscmap1(map(:,1), map(:,2), map(:,3));
   plflush;#pleop;
+  __pl_plotit;
 
   if (nargout)
     ccmap = cmap;
