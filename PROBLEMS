@@ -92,6 +92,17 @@ September, but no decision made.
 "Would be nice", minor effort required.
 ***************************************
 
+* 2003-09-20: The generated info files should have their root name changed
+from plplotdoc (plplotdoc.info, etc.) to plplot$version like the rest of the
+generated files (plplot-5.2.1.cvs.20030915.dvi, etc.) Note this change would
+require that packagers' scripts that execute install-info would need a
+change to use the versioned name, but this should be straightforward to do
+both for RedHat and Debian packages.
+
+* 2003-09-20: References are not there in info bibliography section (chapter
+14).  Tentatively classified as minor effort, but it may be a matter of
+a major effort or merely wait for better backend software for docbook xml.
+
 * plplot_general list 2003-08-26: Arjen Markus <arjen.markus@wldelft.nl> "I
 have found that with the X Window driver the values returned by plgspa()
 are/can be too small by a factor of approximately 1.4."  This should be
