@@ -33,14 +33,6 @@ Anybody with good understanding of that code section?  Joao is planning to
 make an internal pllib_end function called from plend where overall memory
 that is allocated at pllib_init is released again.
 
-* Move to modern autoconf API.  There are lots of warnings now about the
-deprecated functions that we use.
-
-* plplot-config is currently not supported under the autotools approach. We
-should bring this back (including targets for libplplotcxx, f77, and tcltk),
-but to make it cross-platform we should put in a warning that the results
-are meant to be used with plplot_libtool.  Alan
-
 * If x08.tcl (or any other multi-page example) is executed first, then the
 first page is skipped.
 
