@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.3  1994/06/10 20:48:34  furnish
+# Revision 1.4  1994/06/16 19:29:31  mjl
+# Changes to use new plframe/matrix API for functions that require array
+# arguments.
+#
+# Revision 1.3  1994/06/10  20:48:34  furnish
 # Do a lot more from Tcl.  Still needs work, but waiting on the API
 # mirroring to catch up.
 #
@@ -71,11 +75,11 @@ pack append .menu .menu.three {left expand fill}
 button .menu.four -text "Four" -command "myplot 4"
 pack append .menu .menu.four {left expand fill}
 
-button .menu.five -text "Five" -command "bozoplot"
+button .menu.five -text "Five" -command "gumbyplot"
 pack append .menu .menu.five {left expand fill}
 
 button .menu.exit -text "Exit" -command "quit 0"
-pack append .menu .menu.exit {right expand}
+pack append .menu .menu.exit {right expand fill}
 
 message .msg \
 	-font -Adobe-helvetica-medium-r-normal--*-240* -aspect 200 \
@@ -115,20 +119,27 @@ proc myplot1 {} {
 proc plot1 {} {
     global xscale yscale xoff yoff
 
-    for {set i 2} {$i < 60} {incr i 10} {
+    set x1 [matrix float 10]
+    set y1 [matrix float 10]
+
+    for {set i 2; set n1 0} {$i < 60} {incr i 10; incr n1} {
 	set x [expr $xoff + $xscale * ($i + 1) / 60]
-	set y [expr $yoff + $yscale * pow($x,2)]
-	lappend data [list $x $y]
+	$x1 $n1 = $x
+	$y1 $n1 = [expr $yoff + $yscale * pow($x,2)]
     }
 
-    for {set i 0} {$i < 60} {incr i} {
-	set x [expr $xoff + $xscale * ($i + 1) / 60]
-	set y [expr $yoff + $yscale * pow($x,2)]
-	lappend pairs [list $x $y]
+    set n2 60
+    set x2 [matrix float $n2]
+    set y2 [matrix float $n2]
+
+    for {set i 0} {$i < $n2} {incr i} {
+	set x [expr $xoff + $xscale * ($i + 1) / $n2]
+	$x2 $i = $x
+	$y2 $i = [expr $yoff + $yscale * pow($x,2)]
     }
 
-    set xmax $x
-    set ymax $y
+    set xmax [$x2 [expr $n2-1]]
+    set ymax [$y2 [expr $n2-1]]
 
     .plw plcol 1
     .plw plenv $xoff $xmax $yoff $ymax 0 0
@@ -138,12 +149,12 @@ proc plot1 {} {
     # plot the data points
 
     .plw plcol 9
-    .plw plpoin $data 9
+    .plw plpoin $n1 $x1 $y1 9
 
     # plot the data points
 
     .plw plcol 4
-    .plw plline $pairs
+    .plw plline $n2 $x2 $y2
 }
 
 # This is supposed to work just like the plot2() in x01c.c/xtk02.c
@@ -156,38 +167,36 @@ proc plot2 {} {
 
     # Fill up the array
 
-    for {set i 0} {$i < 100} {incr i} {
+    set x1 [matrix float 101]
+    set y1 [matrix float 101]
+
+    for {set i 0} {$i < 101} {incr i} {
 	set x [expr ($i - 19.)/6.]
-	set y 1
-	if {$x != 0} { set y [expr sin($x)/$x] }
-	lappend pairs [list $x $y]
+	$x1 $i = $x
+	$y1 $i = 1
+	if {$x != 0} { $y1 $i = [expr sin($x)/$x] }
     }
 
     .plw plcol 3
-    .plw plline $pairs
+    .plw plline 101 $x1 $y1
 }
 
-proc bozoplot {} {
+proc gumbyplot {} {
     .plw plcol 1
     .plw plenv 0 1 0 1 0 0
     .plw plcol 6
     .plw pllab "(x)" "(y)" "#frPLplot Example 1 - y=1-2x+2x#u2"
 
-    for {set x 0} {$x < 1} {set x [expr $x+.01]} {
-	set y [expr 1 - 2 * $x + 2 * $x * $x]
-	lappend pairs [list $x $y]
+    set x1 [matrix float 101]
+    set y1 [matrix float 101]
+
+    for {set i 0} {$i < 101} {incr i} {
+	set x [expr $i * .01]
+	$x1 $i = $x
+	$y1 $i = [expr 1 - 2 * $x + 2 * $x * $x]
     }
 
-    .plw plline $pairs
-
-    set pairs {}
-
-    for {set x 0} {$x < 1} {set x [expr $x+.1]} {
-	set y [expr 1 - 2 * $x + 2 * $x * $x]
-	lappend pairs [list $x $y]
-    }
-
-    .plw plpoin $pairs 9
+    .plw plline 101 $x1 $y1
 }
 
 # Punch eject and hold onto your seat !!!
