@@ -158,7 +158,7 @@ static DrvOpt gcw_options[] =
   {
     {"aa", DRV_INT, &aa, "Use antialiased canvas (aa=0|1)"},
     {"text", DRV_INT, &text, "Use truetype fonts (text=0|1)"},
-    {"hrshsym", DRV_INT, &hrshsym, "Don't use Hershey symbol set (hrshsym=0|1)"},
+    {"hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)"},
     {"fast", DRV_INT, &fast, "Use fast rendering (fast=0|1)"},
     {"pixmap", DRV_INT, &pixmap, "Use pixmap for plotting shades (pixmap=0|1)"},
     {NULL, DRV_INT, NULL, NULL}
@@ -357,10 +357,14 @@ void install_canvas(PLStream *pls)
   }
 
   /* Create a new canvas */
-  if(aa)
+  if(aa) {
     canvas = GNOME_CANVAS(gnome_canvas_new_aa());
-  else
+    dev->aa = TRUE;
+  }
+  else {
     canvas = GNOME_CANVAS(gnome_canvas_new());
+    dev->aa = FALSE;
+  }
 
   gcw_set_canvas(pls,canvas);
   gcw_set_canvas_zoom(canvas,ZOOM100);
@@ -416,6 +420,10 @@ void gcw_set_canvas(PLStream* pls,GnomeCanvas* canvas)
 
   /* Attach the device to the canvas widget */
   g_object_set_data(G_OBJECT(canvas),"dev",(gpointer)dev);
+
+  /* Determine if the canvas is antialiased */
+  g_object_get(G_OBJECT(canvas),"aa",&(dev->aa),NULL);
+
 
   /* Add the background to the canvas and move it to the back */
   if(!GNOME_IS_CANVAS_ITEM(
@@ -620,6 +628,64 @@ void gcw_get_canvas_viewport(GnomeCanvas* canvas,PLFLT xmin1,PLFLT xmax1,
 
 
 /*--------------------------------------------------------------------------*\
+ * gcw_use_text()
+ *
+ * Used to turn text usage on and off.
+\*--------------------------------------------------------------------------*/
+void gcw_use_text(GnomeCanvas* canvas,gboolean use_text)
+{
+  GcwPLdev* dev;
+
+#ifdef DEBUG_GCW
+  debug("<gcw_use_text>\n");
+#endif
+
+  if(!GNOME_IS_CANVAS(canvas)) {
+    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
+    return;
+  }
+
+  /* Retrieve the device */
+  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+
+#ifdef HAVE_FREETYPE
+  dev->use_text = use_text;
+
+  /* Use a hack to the plplot escape mechanism to update text handling */
+  plP_esc(PLESC_HAS_TEXT,NULL);
+#endif
+
+}
+
+
+/*--------------------------------------------------------------------------*\
+ * gcw_use_fast_rendering()
+ *
+ * Used to turn fast rendering on and off.  This matters in 
+ * plD_polyline_gcw, where fast rendering can cause errors on the
+ * GnomeCanvas.
+\*--------------------------------------------------------------------------*/
+void gcw_use_fast_rendering(GnomeCanvas* canvas,gboolean use_fast_rendering)
+{
+  GcwPLdev* dev;
+
+#ifdef DEBUG_GCW
+  debug("<gcw_use_fast_rendering>\n");
+#endif
+
+  if(!GNOME_IS_CANVAS(canvas)) {
+    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
+    return;
+  }
+
+  /* Retrieve the device */
+  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+
+  dev->use_fast_rendering = use_fast_rendering;
+}
+
+
+/*--------------------------------------------------------------------------*\
  * gcw_use_pixmap()
  *
  * Used to turn pixmap usage on and off for polygon fills (used during
@@ -670,62 +736,6 @@ void gcw_use_pixmap(GnomeCanvas* canvas,gboolean use_pixmap)
   dev->pixmap_has_data=FALSE;
 }
 
-
-/*--------------------------------------------------------------------------*\
- * gcw_use_text()
- *
- * Used to turn text usage on and off.
-\*--------------------------------------------------------------------------*/
-void gcw_use_text(GnomeCanvas* canvas,gboolean use_text)
-{
-  GcwPLdev* dev;
-
-#ifdef DEBUG_GCW
-  debug("<gcw_use_text>\n");
-#endif
-
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
-
-  /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
-
-#ifdef HAVE_FREETYPE
-  dev->use_text = use_text;
-
-  /* Use a hack to the plplot escape mechanism to update text handling */
-  plP_esc(PLESC_HAS_TEXT,NULL);
-#endif
-
-}
-
-/*--------------------------------------------------------------------------*\
- * gcw_use_fast_rendering()
- *
- * Used to turn fast rendering on and off.  This matters in 
- * plD_polyline_gcw, where fast rendering can cause errors on the
- * GnomeCanvas.
-\*--------------------------------------------------------------------------*/
-void gcw_use_fast_rendering(GnomeCanvas* canvas,gboolean use_fast_rendering)
-{
-  GcwPLdev* dev;
-
-#ifdef DEBUG_GCW
-  debug("<gcw_use_fast_rendering>\n");
-#endif
-
-  if(!GNOME_IS_CANVAS(canvas)) {
-    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
-    return;
-  }
-
-  /* Retrieve the device */
-  dev = g_object_get_data(G_OBJECT(canvas),"dev");
-
-  dev->use_fast_rendering = use_fast_rendering;
-}
 
 /*--------------------------------------------------------------------------*\
  * gcw_use_*_group()
@@ -1075,6 +1085,8 @@ void plD_eop_gcw(PLStream *pls)
   int i;
   short x, y;
 
+  gdouble dx, dy;
+
 #ifdef DEBUG_GCW
   debug("<plD_eop_gcw>\n");
 #endif
@@ -1098,11 +1110,15 @@ void plD_eop_gcw(PLStream *pls)
 	return;
       }
 
+      /* Different offsets depending on the type of canvas */
+      if(dev->aa) { dx=0.; dy=0.; }
+      else { dx=1.; dy=1.; }
+
       item = gnome_canvas_item_new (dev->group_current,
 				    GNOME_TYPE_CANVAS_PIXBUF,
 				    "pixbuf",pixbuf,
-				    "x", 0.,
-				    "y", -dev->height+0.,
+				    "x", dx,
+				    "y", -dev->height+dy,
 				    "width", dev->width,
 				    "height", dev->height,
 				    NULL);
