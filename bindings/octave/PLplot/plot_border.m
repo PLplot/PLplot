@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -15,5 +15,5 @@
 ## FIXME: This does not work in plplot!
 
 function plot_border (...)
-  warning("plot_border: This does not work in PLplot!");
+  warning("plot_border: This does not works in PLplot!");
 endfunction

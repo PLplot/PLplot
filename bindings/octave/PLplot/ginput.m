@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -13,7 +13,7 @@
 ## This file is part of plplot_octave.
 
 ##   [x, y, button] = ginput([n])
-#
+##
 ##   gets n points (default 1e6) from the current axes and returns
 ##       the x- and y-coordinates in length N vectors X and Y.  The cursor
 ##       can be positioned using a mouse (or by using the Arrow Keys on some
