@@ -25,7 +25,7 @@ ZLIBLIBSTR=-lz
 FREETYPELIBSTR=-lfreetype
 QHULLLIBS=""
 NNLIBS=""
-CSALIBS='$(top_builddir)/lib/csa/libcsa.la'
+CSALIBS="$(top_builddir)/lib/csa/libcsa.la"
 
 # ----------------------------------------------------------------------------
 # Attempt to find jni.h, if java support is enabled.
@@ -905,20 +905,11 @@ fi
 # ----------------------------------------------------------------------------
 
 if test "$with_qhull" = "yes"; then
-    if test "$with_double" = "yes"; then
-        AC_CHECK_LIB(qhull, qh_new_qhull, [ HAS_QHULL=yes])
-        if test "$HAS_QHULL" = "yes"; then
-            AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
-            if test "$enable_dyndrivers" = "yes"; then
-                QHULLIBS="-lqhull"
-                NNLIBS="$(top_builddir)/lib/nn/libnn.la'"
-            else
-                LIBS="$LIBS -lqhull -lnn"
-            fi
-        fi
-    else
-        AC_MSG_WARN([To use Qhull/nn plplot must be configured with doubles])
-	with_qhull=no;
+    AC_CHECK_LIB(qhull, qh_new_qhull, [ HAS_QHULL=yes])
+    if test "$HAS_QHULL" = "yes"; then
+        AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
+        QHULLLIBS="-lqhull"
+        NNLIBS="$(top_builddir)/lib/nn/libnn.la"
     fi
 fi
 
