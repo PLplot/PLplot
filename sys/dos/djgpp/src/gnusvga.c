@@ -1,13 +1,13 @@
 /* $Id$
 */
 
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #if defined(GRX_DO_TIFF) || defined(GRX_DO_BMP) || defined(GRX_DO_JPEG) || defined (PLD_gnusvga) || defined(PLD_bmp) || defined(PLD_jpg) || defined(PLD_tiff)
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
-#include "plplot/plevent.h"
+#include "plplotP.h"
+#include "drivers.h"
+#include "plevent.h"
 
 #include <grx20.h>
 
@@ -18,25 +18,25 @@
  *  the plfreetype.c module, and implemented as a driver-specific optional
  *  extra invoked via the -drvopt command line toggle. It uses the
  *  "PLESC_HAS_TEXT" command for rendering within the driver.
- *  
+ *
  *  Freetype support is turned on/off at compile time by defining
  *  "HAVE_FREETYPE".
- *  
+ *
  *  To give the user some level of control over the fonts that are used,
  *  environmental variables can be set to over-ride the definitions used by
  *  the five default plplot fonts.
- *  
+ *
  *  Freetype rendering is used with the command line "-drvopt text".
  *  Anti-aliased fonts can be used by issuing "-drvopt text,smooth"
- *  
+ *
  *  Freetype rendering, and smoothing, can be turned on by default by
  *  setting any of the following environmental variables to 1:
  *  PLPLOT_GNUSVGA_TEXT,PLPLOT_GNUSVGA_SMOOTH,PLPLOT_TIFF_TEXT,
  *  PLPLOT_TIFF_SMOOTH,PLPLOT_JPG_TEXT PLPLOT_JPG_SMOOTH,PLPLOT_BMP_TEXT,
  *  and PLPLOT_BMP_SMOOTH.
- *  
+ *
  *  If it has been set by default from enviro variables, it can be turned
- *  off on the command line like thus: "-drvopt text=0,smooth=0" 
+ *  off on the command line like thus: "-drvopt text=0,smooth=0"
  */
 
 #include "plplot/plfreetype.h"
