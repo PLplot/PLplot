@@ -774,11 +774,14 @@ if test "$enable_python" = "yes"; then
     fi
 fi
 
+PYTHON_INSTDIR=`echo $PYTHON_DIR | sed s%$prefix/%%`
+
 AC_SUBST(PYTHON_INC_DIR)
 AC_SUBST(PYTHON_NUM_DIR)
 AC_SUBST(PYTHON_MOD_DIR)
 AC_SUBST(PYTHON_MACH_DIR)
 AC_SUBST(PYTHON_DIR)
+AC_SUBST(PYTHON_INSTDIR)
 AC_SUBST(PYTHON_CFG_DIR)
 
 # ----------------------------------------------------------------------------
