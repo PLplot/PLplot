@@ -35,6 +35,7 @@ sources = \
 	sccont.c \
 	scstubs.c \
 	strutil.f \
+	sfstubs.h \
 	sfstubs.f
 
 libplplotf77@LIB_TAG@_la_SOURCES  = $(sources)
@@ -43,10 +44,15 @@ libplplotf77@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplo
 EXTRA_DIST = fmacs.m4 sfstubs.fm4
 
 # Must be explicit here with dependencies.  Otherwise solaris "make" chokes.
-sfstubs.f: fmacs.m4 sfstubs.fm4
+sfstubs.f: sfstubs.h sfstubs.fm4
+
+# Just use copy here for double-precision version.  Single-precision version
+# probably not needed since the real*8 fortran variables are simply
+# parameters passed via the stub routines as pointers where the type of 
+# the variable pointed to does not matter.
 
 .fm4.f:
-	$(M4) $(M4_FLAGS) $< >$*.f
+	cp $< $*.f
 
 CLEANFILES = sfstubs.f
 SUFFIXES = .fm4
