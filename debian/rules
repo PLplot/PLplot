@@ -57,11 +57,7 @@ config-stamp: autotools-stamp
                     --enable-gnome --with-double --disable-linuxvga    \
                     --infodir=/usr/share/info --with-freetype          \
                     --without-rpath --with-prebuiltdoc
-	( python_version=`egrep "^PYTHON_VERSION =" Makefile           \
-	      | sed "s/PYTHON_VERSION = *//" | sed 's/ *$$//'`       ; \
-	  echo "python:Depends=python$$python_version"                 \
-	      > debian/python-plplot.substvars ;                       \
-	  octver=`egrep "^OCTAVE_VERSION =" Makefile                   \
+	( octver=`egrep "^OCTAVE_VERSION =" Makefile                   \
 	      | sed "s/OCTAVE_VERSION = *//" | sed 's/ *$$//'`       ; \
 	  next=`echo $$octver                                          \
 	      | perl -ne '/(\d+\.\d+\.)(\d+)/;print($$1,$$2+1)'`     ; \
@@ -146,6 +142,7 @@ binary-arch: build install
 	dh_installdocs --package=libplplot5
 	dh_installchangelogs --package=libplplot5
 
+	dh_python
 	dh_strip -a
 	dh_compress -a -Xexamples/
 	dh_fixperms -a

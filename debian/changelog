@@ -1,3 +1,13 @@
+plplot (5.2.1-18) unstable; urgency=low
+
+  * debian/rules: Use dh_python to correctly generate python version
+    dependencies in debian/python-plplot.substvars.  This will guarantee
+    clean upgrades (closes: #207314).
+  * Regenerated configuration files with latest versions of the autotools in
+    Debian sid (automake 1.7.7 and libtool 1.5).
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 15 Sep 2003 10:21:09 +0200
+
 plplot (5.2.1-17) unstable; urgency=low
 
   * Rebuilt against the new python2.3-dev itcl/itk 3.2 and iwidgets4
