@@ -1016,7 +1016,9 @@ AC_CONFIG_FILES([
 	doc/docbook/www/index.html.in
 	])
 
+CFFILES_SAVE
 AC_OUTPUT
+CFFILES_RESTORE_MAYBE
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
