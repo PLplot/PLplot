@@ -418,6 +418,8 @@ divert(-1)
 
 AC_REVISION($Revision$)
 AC_INIT(src/plcore.c)
+AM_MAINTAINER_MODE
+
 ### Configuration headers
 
 AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
