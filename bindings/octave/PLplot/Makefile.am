@@ -40,6 +40,7 @@ binding_m_files = \
 	contour.m \
 	cool.m \
 	copper.m \
+	drawnow.m \
 	fig.m \
 	fig_raise.m \
 	fig_state.m \
@@ -88,6 +89,7 @@ binding_m_files = \
 	shade.m \
 	shading.m \
 	shg.m \
+	stopdraw.m \
 	stripc.m \
 	stripc_add.m \
 	stripc_del.m \
