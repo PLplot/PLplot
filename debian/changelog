@@ -1,5 +1,6 @@
-plplot (5.2.1.rc1.5.3.0-2) unstable; urgency=low
+plplot (5.2.1.rc2.5.3.0-1) unstable; urgency=low
 
+  * Second release candiate tarball for version 5.3.0.
   * debian/control: Removed most of the Conflicts/Replaces/Provides
     fields, since they where legacies from the libplplot5 packages.  The
     libplplot9 and libplplot5 still cannot co-exist (although this is
