@@ -31,7 +31,7 @@ EXTRA_DIST = \
 	gcwmodule.c \
 	plplotcanvas.py \
         cplplotcanvasmodule.c \
-	cplplotcanvasmodule.override \
+	cplplotcanvas.override \
 	$(MAINTAINERCLEANFILES)
 
 
@@ -84,9 +84,9 @@ cplplotcanvas.c: plplotcanvas.defs cplplotcanvas.override
 
 plplotcanvas.defs: 
 	/usr/share/pygtk/2.0/codegen/h2def.py \
-	$(top_srcdir)/include/plplotcanvas.h > tmp.defs
-	sed -e s/PLINT/long/ -e s/PLFLT/double/ tmp.defs > plplotcanvas.defs
-
+	$(top_srcdir)/include/plplotcanvas.h > tmp.defs ; \
+	sed -e s/PLINT/long/ -e s/PLFLT/double/ tmp.defs > plplotcanvas.defs ; \
+	rm -f tmp.defs
 
 gcwmodule_la_SOURCES  = gcwmodule.c
 gcwmodule_la_CFLAGS = $(GCW_CFLAGS) $(PYGCW_CFLAGS)
@@ -112,17 +112,5 @@ endif # enable_python
 
 
 CLEANFILES = \
-	*.pyc \
 	cplplotcanvas.c \
-	tmp.defs \
-	gcwmodule.loT \
-	cplplotcanvasmodule_la-cplplotcanvas.loT \
-	plplotcanvas.defs
-
-MAINTAINERCLEANFILES = \
-	*.pyc \
-	cplplotcanvas.c \
-	tmp.defs \
-	gcwmodule.loT \
-	cplplotcanvasmodule_la-cplplotcanvas.loT \
 	plplotcanvas.defs
