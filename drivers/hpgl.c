@@ -1,10 +1,16 @@
 /* ///////////////////////////////////////////////////////////////////
 // $Id$
 // $Log$
-// Revision 1.3  1994/07/19 22:30:17  mjl
-// All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
-// is xwin, ps, etc.  See plDevs.h for more detail.
+// Revision 1.4  1994/07/25 06:03:13  mjl
+// Added new driver -- HP Laserjet III in HPGL emulation mode (lj_hpgl).
+// Produces fairly small output files (compared to the LJIIP compressed
+// rasters, MUCH smaller than the LJII full rasters).  Contributed by Conrad
+// Steenberg.
 //
+ * Revision 1.3  1994/07/19  22:30:17  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
+ *
  * Revision 1.2  1994/05/26  19:21:45  mjl
  * Minor changes to bring up to spec with the other drivers.
  *
@@ -15,7 +21,7 @@
 //
 //  File:       hpgl.c
 //
-//  Descript:   hp7470 and hp7580 drivers
+//  Descript:   hp7470, hp7580, and lj_hpgl drivers
 //
 //  Library:    ---
 //
@@ -23,6 +29,7 @@
 //
 //  Public:     plD_init_hp7470()
 //              plD_init_hp7580()
+//              plD_init_lj_hpgl()
 //              plD_line_hpgl()
 //              plD_polyline_hpgl()
 //              plD_eop_hpgl()
@@ -46,7 +53,7 @@
 
 #include "plDevs.h"
 
-#if defined(PLD_hp7470) || defined(PLD_hp7580)
+#if defined(PLD_hp7470) || defined(PLD_hp7580) || defined(PLD_lj_hpgl)
 
 #include "plplotP.h"
 #include <stdio.h>
@@ -67,6 +74,11 @@
 #define HP7580_YMIN  -2790
 #define HP7580_YMAX   2790
 
+#define LJIII_XMIN  0
+#define LJIII_XMAX  11000
+#define LJIII_YMIN  500
+#define LJIII_YMAX  7700
+
 /*----------------------------------------------------------------------*\
  * initialize_hpgl_pls()
  *
@@ -76,17 +88,24 @@
 static void
 initialize_hpgl_pls(PLStream *pls)
 {
+    PLDev *dev = (PLDev *) pls->dev;
+
     pls->termin = 0;            /* not an interactive terminal */
     pls->icol0 = 1;
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
 
-    if (!pls->colorset)
-      pls->color = 1;
-
     plFamInit(pls);             /* Initialize family file info */
     plOpenFile(pls);            /* get file name if not already set */
+
+    dev->xold = UNDEFINED;
+    dev->yold = UNDEFINED;
+    dev->xlen = dev->xmax - dev->xmin;
+    dev->ylen = dev->ymax - dev->ymin;
+
+    plP_setpxl((PLFLT) 40., (PLFLT) 40.);
+    plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 }
 
 /*----------------------------------------------------------------------*\
@@ -101,21 +120,15 @@ plD_init_hp7470(PLStream *pls)
 {
     PLDev *dev;
 
-    initialize_hpgl_pls(pls);   /* initialize plot stream */
-
+    pls->color = 1;
     dev = plAllocDev(pls);      /* Allocate device-specific data */
-
-    dev->xold = UNDEFINED;      /* initialize device-specific data */
-    dev->yold = UNDEFINED;
     dev->xmin = HP7470_XMIN;
     dev->xmax = HP7470_XMAX;
     dev->ymin = HP7470_YMIN;
     dev->ymax = HP7470_YMAX;
-    dev->xlen = dev->xmax - dev->xmin;
-    dev->ylen = dev->ymax - dev->ymin;
 
-    plP_setpxl((PLFLT) 40., (PLFLT) 40.);
-    plP_setphy( dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+    initialize_hpgl_pls(pls);   /* initialize plot stream */
+
     fputs( "\x1b.I200;;17:\x1b.N;19:\x1b.M;;;10:IN;\n", pls->OutFile );
 }
 #endif          /* PLD_hp7470 */
@@ -132,26 +145,50 @@ plD_init_hp7580(PLStream *pls)
 {
     PLDev *dev;
 
-    initialize_hpgl_pls(pls);   /* initialize plot stream */
-
+    pls->color = 1;
     dev = plAllocDev(pls);      /* Allocate device-specific data */
-
-    dev->xold = UNDEFINED;      /* initialize device-specific data */
-    dev->yold = UNDEFINED;
     dev->xmin = HP7580_XMIN;
     dev->xmax = HP7580_XMAX;
     dev->ymin = HP7580_YMIN;
     dev->ymax = HP7580_YMAX;
-    dev->xlen = dev->xmax - dev->xmin;
-    dev->ylen = dev->ymax - dev->ymin;
 
-    plP_setpxl((PLFLT) 40., (PLFLT) 40.);
-    plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
+    initialize_hpgl_pls(pls);   /* initialize plot stream */
 
     fputs( "\x1b.I200;;17:\x1b.N;19:\x1b.M;;;10:IN;\n", pls->OutFile );
     fputs( "RO90;IP;SP4;PA;\n", pls->OutFile );
 }
 #endif  /* PLD_hp7580 */
+
+/*----------------------------------------------------------------------*\
+ * plD_init_lj_hpgl()
+ *
+ * Initialize device.
+\*----------------------------------------------------------------------*/
+
+#ifdef PLD_lj_hpgl
+void
+plD_init_lj_hpgl(PLStream *pls)
+{
+    PLDev *dev;
+
+    dev = plAllocDev(pls);      /* Allocate device-specific data */
+    dev->xmin = LJIII_XMIN;
+    dev->xmax = LJIII_XMAX;
+    dev->ymin = LJIII_YMIN;
+    dev->ymax = LJIII_YMAX;
+
+    initialize_hpgl_pls(pls);   /* initialize plot stream */
+
+/* HP III changes here up to .I200 puts printer in HPGL/2 emulation
+   with 300DPI printing.
+   Next line : added pw 0.2 for pen width 0.2 (of an inch ?)
+*/
+    fputs("\x1b*T300R\x1b%1B;\x1b.I200;;17:\x1b.N;19:\x1b.M;;;10:IN;\n",
+	  pls->OutFile);
+
+    fputs("RO90;IP;PW 0.2;SP 1;PA;", pls->OutFile);
+}
+#endif  /* PLD_lj_hpgl */
 
 /*----------------------------------------------------------------------*\
  * plD_line_hpgl()
@@ -289,4 +326,4 @@ pldummy_hpgl(void)
     return 0;
 }
 
-#endif                          /* PLD_hp7470 || PLD_hp7580 */
+#endif		/* PLD_hp7470 || PLD_hp7580 || PLD_lj_hpgl */
