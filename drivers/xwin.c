@@ -150,7 +150,7 @@ static void  XorMod		(PLStream *pls, PLINT *mod);
 static void  StoreCmap0		(PLStream *pls);
 static void  StoreCmap1		(PLStream *pls);
 
-/* jc: X protocol error caused by trying to stop color on True Color*/
+/* jc: X protocol error caused by trying to store color on True Color. Not needed anymore
 #include <X11/Xproto.h>
 
 int XErrorProc(Display *dpy, XErrorEvent *errEventPtr)
@@ -166,6 +166,7 @@ int XErrorProc(Display *dpy, XErrorEvent *errEventPtr)
         errEventPtr->minor_code);
     return 1;
 }
+*/
 
 void plD_dispatch_init_xw( PLDispatchTable *pdt )
 {
@@ -908,7 +909,7 @@ InitMain(PLStream *pls)
 
     XSetStandardProperties(xwd->display, dev->window, header, header,
 			   None, 0, 0, &hint);
-    XSetErrorHandler(XErrorProc); /* jc: */ 
+    /* jc: not needed anymore XSetErrorHandler(XErrorProc); */
 }
 
 /*--------------------------------------------------------------------------*\

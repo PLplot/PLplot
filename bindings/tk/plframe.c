@@ -265,7 +265,7 @@ static Tk_ConfigSpec configSpecs[] = {
 
 /* Externals */
 
-int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
+ int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **); 
 
 /* These are invoked by the TK dispatcher */
 
@@ -353,7 +353,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     register PlFrame *plFramePtr;
     register PLRDev *plr;
     int i, ndev;
-    extern int XErrorProc(); /* jc: storecolor */
+    /* jc: not needed anymore extern int XErrorProc(); *//* jc: storecolor error */
 
     dbug_enter("plFrameCmd");
 
@@ -447,7 +447,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     /* jc: try to catch XStoreColor bug on True Color Display
      * by setting up a X error handler
      */
-    XSetErrorHandler(XErrorProc);
+     /* jc: not needed anymore XSetErrorHandler(XErrorProc); */
 
 #ifdef HAVE_ITCL
     plFramePtr->widgetCmd =
