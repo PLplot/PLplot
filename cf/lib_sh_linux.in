@@ -17,7 +17,7 @@ ifeq ($(with_gcc),yes)
 # Need to figure out if this is GCC version 3 or not.
 gcc_major := $(shell gcc -v 2>&1 | grep version | \
 			cut '-d ' -f 3 | cut -d. -f 1 )
-gcc_v3 := $(shell expr $gcc_major \>= 3)
+gcc_v3 := $(shell expr $(gcc_major) \>= 3)
 
 ifeq ($(gcc_v3),1)
 define compile-c-and-emit-deps
@@ -27,8 +27,10 @@ automatic_deps := yes
 else
 define compile-c-and-emit-deps
 $(CC) $(1) -c $(2).c -o $(3)
+$(CC) $(1) -MM $(2).c | \
+	 sed -e 's|$(2)$O:|$@:|g' > $(@:$(2)$O=.d.$(2)) 
 endef
-automatic_deps := not_yet
+automatic_deps := yes
 endif
 
 else
