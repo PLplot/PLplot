@@ -321,7 +321,7 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 	fi
     fi
 
-    AC_DEFINE(PLD_$1)
+    AC_DEFINE(PLD_$1, [], [Define if $1 driver is present])
     DEVICES="$DEVICES $1"
 else
     enable_$1="no"
@@ -482,7 +482,8 @@ esac
 # ----------------------------------------------------------------------------
 
 if test "$enable_dyndrivers" = "yes"; then
-    AC_DEFINE(ENABLE_DYNDRIVERS)
+    AC_DEFINE(ENABLE_DYNDRIVERS, [], 
+              [Define if there is support for dynamically loaded drivers])
 fi
 
 ### Modify system-dependent results based on availability
@@ -615,7 +616,8 @@ fi
 ### Double vs single precison
 
 if test "$with_double" = yes; then
-  AC_DEFINE(PL_DOUBLE)
+  AC_DEFINE(PL_DOUBLE, [], 
+            [Define if you want PLplot's float type to be double])
   DBL_FLAG_M4=-DDOUBLE
   DRIVERS_DB="driversd.db"
   LIB_TAG="d"
@@ -624,7 +626,8 @@ else
   LIB_TAG=""
 fi
 AC_SUBST(LIB_TAG)
-AC_DEFINE_UNQUOTED(DRIVERS_DB, "$DRIVERS_DB")
+AC_DEFINE_UNQUOTED(DRIVERS_DB, "$DRIVERS_DB", 
+                   [Define if drivers database is specified])
 
 ### C++ binding
 
@@ -729,10 +732,14 @@ AC_CHECK_TYPE(caddr_t, char *)
 ### Check for functions
 
 AC_FUNC_VFORK
-AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN))
-AC_CHECK_FUNC(usleep, AC_DEFINE(HAVE_USLEEP))
-AC_CHECK_FUNC(isinf, AC_DEFINE(HAVE_ISINF))
-AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE))
+AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN, [], 
+                               [Define if popen is available]))
+AC_CHECK_FUNC(usleep, AC_DEFINE(HAVE_USLEEP, [],
+                               [Define if usleep is available]))
+AC_CHECK_FUNC(isinf, AC_DEFINE(HAVE_ISINF, [],
+                               [Define if isinf is available]))
+AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE, [],
+                               [Define if finite is available]))
 
 ### Define PLplot default install locations:
 ### DATA_DIR, LIB_DIR, INCLUDE_DIR, BIN_DIR, TCL_DIR
@@ -760,14 +767,18 @@ AC_SUBST(INCLUDE_DIR)
 
 ### Configuration headers
 
-AM_CONFIG_HEADER(include/plConfig.h include/plDevs.h)
+AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 # Location substitutions for header files as well
 
-AC_DEFINE_UNQUOTED(DATA_DIR, "$prefix/$DATA_DIR")
-AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR")
-AC_DEFINE_UNQUOTED(BIN_DIR, "$BIN_DIR")
-AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR")
+AC_DEFINE_UNQUOTED(DATA_DIR, "$prefix/$DATA_DIR",
+                   [Location of package data files])
+AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR",
+                   [Location of library files])
+AC_DEFINE_UNQUOTED(BIN_DIR, "$BIN_DIR",
+                   [Location of executables])
+AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR",
+                   [Location of Tcl stuff])
 
 AC_SUBST(DATA_DIR)
 AC_SUBST(LIB_DIR)

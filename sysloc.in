@@ -506,7 +506,7 @@ FREETYPELIBPATH=""
 if test "$with_freetype" = "yes"; then
     ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCS, FREETYPEINCPATH)
     ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBS, FREETYPELIBPATH)
-    AC_DEFINE(HAVE_FREETYPE)
+    AC_DEFINE(HAVE_FREETYPE, [], [Define if [freetype] is available])
     AC_SUBST(FREETYPELIBS)
     
 fi
@@ -761,11 +761,11 @@ if test "$enable_itk" = "yes"; then
 fi
 
 if test "$enable_itcl" = "yes"; then
-    AC_DEFINE(HAVE_ITCL)
+    AC_DEFINE(HAVE_ITCL, [], [Define if [incr Tcl] is available])
 fi
 
 if test "$enable_itk" = "yes"; then
-    AC_DEFINE(HAVE_ITK)
+    AC_DEFINE(HAVE_ITK, [], [Define if [incr Tk] is available])
 fi
 
 # ----------------------------------------------------------------------------
@@ -1082,7 +1082,8 @@ if test "$with_dbmalloc" = "yes"; then
 fi
 
 if test "with_dbmalloc" = "yes"; then
-    AC_DEFINE(DEBUGGING_MALLOC)
+    AC_DEFINE(DEBUGGING_MALLOC, [], 
+              [Define if we're using a debugging malloc])
 fi
 
 # -----------------------------------------------------------------------
