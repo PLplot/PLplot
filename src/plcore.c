@@ -253,6 +253,10 @@ plP_polyline(short *x, short *y, PLINT npts)
 
 /* Fill polygon */
 /* The plot buffer must be called first */
+/* Here if the desired area fill capability isn't present, we mock up */
+/* something in software */
+
+static int foo;
 
 void
 plP_fill(short *x, short *y, PLINT npts)
@@ -268,17 +272,41 @@ plP_fill(short *x, short *y, PLINT npts)
 	plbuf_esc(plsc, PLESC_FILL, NULL);
     }
 
-    if (plsc->difilt) {
-	for (i = 0; i < npts; i++) {
-	    xscl[i] = x[i];
-	    yscl[i] = y[i];
+/* Account for driver ability to do fills */
+
+    if (plsc->patt == 0 && ! plsc->dev_fill0) {
+	if ( ! foo) {
+	    plwarn("Driver does not support hardware solid fills, switching to software fill.\n");
+	    foo = 1;
 	}
-	difilt(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma);
-	plP_plfclp(xscl, yscl, npts, clpxmi, clpxma, clpymi, clpyma,
-		   grfill);
+	plsc->patt = 8;
+	plpsty(plsc->patt);
     }
+    if (plsc->dev_fill1) {
+	plsc->patt = -ABS(plsc->patt);
+    }
+
+/* Perform fill.  Here we MUST NOT allow the software fill to pass through the
+   driver interface filtering twice, else we get the infamous 2*rotation for
+   software fills on orientation swaps. 
+*/
+
+    if (plsc->patt > 0)
+	plfill_soft(x, y, npts);
+
     else {
-	grfill(x, y, npts);
+	if (plsc->difilt) {
+	    for (i = 0; i < npts; i++) {
+		xscl[i] = x[i];
+		yscl[i] = y[i];
+	    }
+	    difilt(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma);
+	    plP_plfclp(xscl, yscl, npts, clpxmi, clpxma, clpymi, clpyma,
+		       grfill);
+	}
+	else {
+	    grfill(x, y, npts);
+	}
     }
 }
 
@@ -315,36 +343,15 @@ grpolyline(short *x, short *y, PLINT npts)
     (*dispatch_table[offset].pl_polyline) (plsc, x, y, npts);
 }
 
-/* Here if the desired area fill capability isn't present, we mock up */
-/* something in software */
-
-static int foo;
-
 static void
 grfill(short *x, short *y, PLINT npts)
 {
-    if (plsc->patt == 0 && ! plsc->dev_fill0) {
-	if ( ! foo) {
-	    plwarn("Driver does not support hardware solid fills, switching to software fill.\n");
-	    foo = 1;
-	}
-	plsc->patt = 8;
-	plpsty(plsc->patt);
-    }
-    if (plsc->dev_fill1) {
-	plsc->patt = -ABS(plsc->patt);
-    }
+    plsc->dev_npts = npts;
+    plsc->dev_x = x;
+    plsc->dev_y = y;
 
-    if (plsc->patt <= 0) {
-	plsc->dev_npts = npts;
-	plsc->dev_x = x;
-	plsc->dev_y = y;
-
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_esc) (plsc, PLESC_FILL, NULL);
-    }
-    else
-	plfill_soft(x, y, npts);
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_esc) (plsc, PLESC_FILL, NULL);
 }
 
 /*--------------------------------------------------------------------------*\
