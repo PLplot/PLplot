@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1994/07/26 21:14:36  mjl
+ * Revision 1.24  1995/10/22 17:31:18  mjl
+ * Moved pls_auto_path to tclAPI.c, for use by both Tcl and Tcl/TK interfaces.
+ *
+ * Revision 1.23  1994/07/26  21:14:36  mjl
  * Improvements to the way PLplot looks for various files.  Now more
  * consistent and flexible.  In particular, environmentals can be set for
  * locations of each directory (for Tcl, binary, and library files).
@@ -43,16 +46,6 @@
  */
 
 #include "plserver.h"
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
-/* Static functions */
-
-/* Evals the specified command, aborting on an error. */
-
-static int
-tcl_cmd(Tcl_Interp *interp, char *cmd);
 
 /*----------------------------------------------------------------------*\
  * Pltk_Init
@@ -112,128 +105,6 @@ Pltk_Init( Tcl_Interp *interp )
     }
 #endif
     return TCL_OK;
-}
-
-/*----------------------------------------------------------------------*\
- * pls_auto_path
- *
- * Sets up auto_path variable.  
- * Directories are added to the FRONT of autopath.  Therefore, they are
- * searched in reverse order of how they are listed below.
- *
- * Note: there is no harm in adding extra directories, even if they don't
- * actually exist (aside from a slight increase in processing time when
- * the autoloaded proc is first found).
-\*----------------------------------------------------------------------*/
-
-int
-pls_auto_path(Tcl_Interp *interp)
-{
-    char *buf, *ptr=NULL, *dn;
-#ifdef DEBUG
-    char *path;
-#endif
-
-    dbug_enter("set_auto_path");
-    buf = (char *) malloc(256 * sizeof(char));
-
-/* Add TCL_DIR */
-
-#ifdef TCL_DIR
-    Tcl_SetVar(interp, "dir", TCL_DIR, TCL_GLOBAL_ONLY);
-    if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
-	return TCL_ERROR;
-#ifdef DEBUG
-    fprintf(stderr, "adding %s to auto_path\n", TCL_DIR);
-    path = Tcl_GetVar(interp, "auto_path", 0);
-    fprintf(stderr, "auto_path is %s\n", path);
-#endif
-#endif
-
-/* Add $HOME/tcl */
-
-    if ((dn = getenv("HOME")) != NULL) {
-	plGetName(dn, "tcl", "", &ptr);
-	Tcl_SetVar(interp, "dir", ptr, 0);
-	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
-	    return TCL_ERROR;
-#ifdef DEBUG
-	fprintf(stderr, "adding %s to auto_path\n", ptr);
-	path = Tcl_GetVar(interp, "auto_path", 0);
-	fprintf(stderr, "auto_path is %s\n", path);
-#endif
-    }
-
-/* Add PL_TCL_ENV = $(PL_TCL) */
-
-#if defined (PL_TCL_ENV)
-    if ((dn = getenv(PL_TCL_ENV)) != NULL) {
-	plGetName(dn, "", "", &ptr);
-	Tcl_SetVar(interp, "dir", ptr, 0);
-	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
-	    return TCL_ERROR;
-#ifdef DEBUG
-	fprintf(stderr, "adding %s to auto_path\n", ptr);
-	path = Tcl_GetVar(interp, "auto_path", 0);
-	fprintf(stderr, "auto_path is %s\n", path);
-#endif
-    }
-#endif  /* PL_TCL_ENV */
-
-/* Add PL_HOME_ENV/tcl = $(PL_HOME_ENV)/tcl */
-
-#if defined (PL_HOME_ENV)
-    if ((dn = getenv(PL_HOME_ENV)) != NULL) {
-	plGetName(dn, "tcl", "", &ptr);
-	Tcl_SetVar(interp, "dir", ptr, 0);
-	if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
-	    return TCL_ERROR;
-#ifdef DEBUG
-	fprintf(stderr, "adding %s to auto_path\n", ptr);
-	path = Tcl_GetVar(interp, "auto_path", 0);
-	fprintf(stderr, "auto_path is %s\n", path);
-#endif
-    }
-#endif  /* PL_HOME_ENV */
-
-/* Add cwd */
-
-    if (getcwd(buf, 256) == NULL) 
-	return TCL_ERROR;
-
-    Tcl_SetVar(interp, "dir", buf, 0);
-    if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
-	return TCL_ERROR;
-
-#ifdef DEBUG
-    fprintf(stderr, "adding %s to auto_path\n", buf);
-    path = Tcl_GetVar(interp, "auto_path", 0);
-    fprintf(stderr, "auto_path is %s\n", path);
-#endif
-
-    free_mem(buf);
-    free_mem(ptr);
-
-    return TCL_OK;
-}
-
-/*----------------------------------------------------------------------*\
- * tcl_cmd
- *
- * Evals the specified command, aborting on an error.
-\*----------------------------------------------------------------------*/
-
-static int
-tcl_cmd(Tcl_Interp *interp, char *cmd)
-{
-    int result;
-
-    result = Tcl_VarEval(interp, cmd, (char **) NULL);
-    if (result != TCL_OK) {
-	fprintf(stderr, "TCL command \"%s\" failed:\n\t %s\n",
-		cmd, interp->result);
-    }
-    return result;
 }
 
 /*----------------------------------------------------------------------*\
