@@ -461,12 +461,13 @@ AC_SUBST(CPP_SOVERSION)
 PLPLOT_TCL_VERSION=5
 AC_SUBST(PLPLOT_TCL_VERSION)
 
-### Test for programs
-AC_LIBTOOL_DLOPEN
-AC_LIBLTDL_CONVENIENCE
-AC_CONFIG_SUBDIRS(libltdl)
-AC_SUBST(INCLTDL)
-AC_SUBST(LIBLTDL)
+if test "$enable_dyndrivers" = "yes"; then
+  AC_LIBTOOL_DLOPEN
+  AC_LIBLTDL_CONVENIENCE
+  AC_CONFIG_SUBDIRS(libltdl)
+  AC_SUBST(INCLTDL)
+  AC_SUBST(LIBLTDL)
+fi
 
 # This required for dll support under cygwin.  Must occur before
 # AC_PROG_LIBTOOL (AM_PROG_LIBTOOL? FIXME).
@@ -540,8 +541,8 @@ AC_PATH_XTRA
 AC_CHECK_LIB(m, sin)
 
 ### The following seems to be necessary because the replacement of
-### the default value for prefix only happens in AC_OUTPUT (it would be
-### already too late)
+### the default value for prefix only happens in AC_OUTPUT (it would
+### already be too late).
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 if test "$enable_python" = "yes"; then
@@ -680,11 +681,25 @@ if test "$enable_tk" = yes; then
    AC_SUBST(TKLIBCMD)
 fi
 
-# Java stanza completely different from others.  sysloc.in must have
-# found both $JAVAINCDIR and $JAVAMDINCDIR if $enable_java is still yes.
+### The following seems to be necessary because the replacement of
+### the default value for exec_prefix only happens in AC_OUTPUT (it would
+### already be too late).
+test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
+
 if test "$enable_java" = yes; then
+### Java stanza completely different from others.  sysloc.in must have
+### found both $JAVAINCDIR and $JAVAMDINCDIR if $enable_java is still yes.
    JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
    AC_SUBST(JAVAINCCMD)
+### bindings/java/config.java.in requires JAVA_INSTDIR
+### The symbolic exec_prefix must be replaced by the actual exec_prefix.
+   JAVA_INSTDIR=`echo $libdir |sed 's%${exec_prefix}/%%'`
+   JAVA_INSTDIR="$exec_prefix/$JAVA_INSTDIR/java/plplot/core"
+### The actual exec_prefix may be the symbolic prefix which must be replaced 
+### by its actual value.
+   JAVA_INSTDIR=`echo $JAVA_INSTDIR |sed 's%${prefix}/%%'`
+   JAVA_INSTDIR="$prefix/$JAVA_INSTDIR"
+   AC_SUBST(JAVA_INSTDIR)
 fi
 
 ### Double vs single precison
@@ -723,6 +738,11 @@ AC_SUBST(DLNAME_LIBPLPLOT)
 AC_SUBST(DLNAME_LIBPLPLOTD)
 AC_SUBST(DLNAME_LIBPLPLOTTCLTK)
 AC_SUBST(DLNAME_LIBPLPLOTTCLTKD)
+
+### bindings/java/config.java.in needs the complete name of the
+### plplotjavac_wrap DLL.
+GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
+AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
 
 ### C++ binding
 
