@@ -105,4 +105,28 @@ autoconf --version |sed 1q
 automake --version |sed 1q
 libtool  --version |sed 1q
 
-run autoreconf -vfi -I cf
+# We use the specific commands below rather than the recommended autoreconf
+# because the particular way we use libltdl demands the
+# --ltdl option for libtoolize.  We may change the way we use libltdl in
+# the future in which case we should be able to replace the commands below
+# with "run autoreconf -vfi -I cf".
+
+
+run aclocal -I cf  \
+  && run autoheader \
+  && rm -rf libltdl \
+  && run libtoolize --force --copy --ltdl --automake \
+  && run automake --add-missing --copy \
+  && run autoconf \
+  && ( echo -n "Regenerating libltdl/aclocal+configure..."; \
+       cd libltdl ; \
+       aclocal 2>&1 | filter && \
+       automake ; \
+       if [ ! -e configure.ac ] ; then \
+           cp configure.in configure.ac ; \
+           autoconf 2>/dev/null ; \
+           rm -f configure.ac ; \
+       else \
+           autoconf 2>/dev/null ; \
+       fi && \
+       echo " done" )
