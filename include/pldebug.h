@@ -24,7 +24,7 @@
 #ifdef DEBUG_ENTER
 #define dbug_enter(a) \
 if (plsc->debug) \
-    fprintf(stderr, "Entered %s (%s)\n", a, __FILE__);
+    fprintf(stderr, "    entered %s (%s, line %d)\n", a, __FILE__, __LINE__);
 
 #else
 #define dbug_enter(a)
@@ -43,31 +43,39 @@ if (plsc->debug) \
  * enable printing of debugging output, you must #define DEBUG before
  * including plplotP.h or specify -DDEBUG in the compile line.  When running
  * the program you must in addition specify -debug.  This allows debugging
- * output to be available when asked for.
+ * output to be available when asked for but otherwise be fairly unobtrusive.
  *
  * Syntax:
- *	pldebug(function_name, format, arg1, arg2...);
+ *	pldebug(label, format [, arg1, arg2, ...] );
+ *
+ * The label is typically the calling function name.
 \*--------------------------------------------------------------------------*/
 
 static void
-pldebug( const char *fname, ... )
+pldebug( const char *label, ... )
 {
 #ifdef DEBUG
     va_list args;
+    char *fmt;
 
     if (plsc->debug) {
-	c_pltext();
-	va_start(args, fname);
+	if (plsc->termin)
+	    c_pltext();
+	va_start(args, label);
 
-    /* print out name of caller and source file */
+    /* print out identifying tag */
 
-	fprintf(stderr, "%s (%s): ", fname, __FILE__);
+	fprintf(stderr, "%s: ", label);
 
     /* print out remainder of message */
+    /* Need to get fmt BEFORE it's used in the vfprintf */
 
-	vfprintf(stderr, (char *) va_arg(args, char *), args);
+	fmt = (char *) va_arg(args, char *);
+	vfprintf(stderr, fmt, args);
+
 	va_end(args);
-	c_plgra();
+	if (plsc->termin)
+	    c_plgra();
     }
 #endif
 }
