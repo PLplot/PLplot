@@ -52,6 +52,27 @@ Areas currently under development
      colors
    . fix cmap0 tool so that setting the background (color 0) works
 
+ - Add an initialization file capability.  This would be very nice from a
+   customization standpoint, and inevitably I will want to add it before
+   long.  But it has some problems.  For example, when does it get read?
+   If when you call plinit(), it may overwrite previous variables set by
+   the API or command-line.  This is a thorny problem.  A secondary issue
+   is deciding what libraries it should depend on.  Using libX11 makes it
+   easier for color support, and Tcl for parsing, but with a bit extra
+   effort, I could support non-Unix systems too. 
+
+   The real problem is that plplot has no command to "open the library".
+   I am VERY tempted to require a call to plopen() as the FIRST plplot
+   library call, just so that it could be absolutely sure it was the
+   first.  Then, it could read the startup file.  You could do this with
+   the Tk plframe widget because it must be created before you can send
+   commands to it, and the command to read the init file could be buried
+   in there.  But it would probably be a bad idea to have one output
+   driver read an init file and another one ignore it, since most people
+   (myself included) rely on output from one driver to the next to be
+   basically the same, contingent on driver capabilities that is.  So this
+   capability really needs to go into the core.
+
  - fix additional problems with custom color map support:
    . Add command line switch to enable it, maybe switches to for all the
      preprocessor constants in xwin.c controlling cmap allocation.

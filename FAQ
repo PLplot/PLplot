@@ -27,8 +27,6 @@ first column:
 
 I will feel free to not mark trivial changes (misspellings, grammar, etc).
 
-Note: this is the first release of this FAQ, so I omit all change markers.
-
 ==============================================================================
 Contents
 --------
@@ -41,41 +39,53 @@ Contents
 ==============================================================================
 Section 1: Installing PLplot
 
- 1.1  How do I build & install PLplot?
- 1.2  Why should I use PLplot?
- 1.3  I don't have an ANSI compiliant C compiler.  How do I compile PLplot?
- 1.4  I don't have a fortran compiler; how do I compile PLplot?
- 1.5  The linker complains of unresolved functions atexit(), fsetpos(),
+=1.1  How do I build & install PLplot?
++1.2  Where do I install PLplot?
+ 1.3  Why should I use PLplot?
+=1.4  I don't have an ANSI compiliant C compiler.  How do I compile PLplot?
+=1.5  I don't have a fortran compiler; how do I compile PLplot?
+=1.6  The linker complains of unresolved functions atexit(), fsetpos(),
       fgetpos(), and so on.
- 1.6  The compiler complains about the use of "malloc" or "size_t".
- 1.7  The compiler complains about "caddr_t" in one of the X support files.
- 1.8  configure script doesn't run correctly
- 1.9  makefile doesn't build correctly using m4.
- 1.10 The linker complains that it can't resolve Tcl_AppInit. 
+ 1.7  The compiler complains about the use of "malloc" or "size_t".
+ 1.8  The compiler complains about "caddr_t" in one of the X support files.
+=1.9  configure script doesn't run correctly
+=1.10 makefile doesn't build correctly using m4.
+=1.11 The linker complains that it can't resolve Tcl_AppInit. 
 
 ==============================================================================
 Section 2: General features
 
- 2.1  The manual doesn't mention capability X.
+=2.1  The manual doesn't mention capability...
  2.2  How do I change to change the default background color?
  2.3  I'm getting core dumps when calling a contour function from C.
++2.4  Changing the default line width doesn't have any affect.
++2.5  How can I generate more than 16 line colors?
++2.6  What 2-d array organization am I supposed to use from C?
++2.7  On stretched windows, the string characters look bad..
++2.8  I would like to capture key sequences..
++2.9  How can I get more information about the function/capability..
 
 ==============================================================================
 Section 3: X-based drivers (includes Tcl/TK, Tcl-DP)
 
- 3.1  Where do I get Tcl/TK?   
+#3.1  Where do I get Tcl/TK or Tcl-DP?
  3.2  How do I use "xauth"?
  3.3  How do I use the Tcl/TK driver?
- 3.4  I've been having trouble getting the TK/TCL and PLplot working on...
+=3.4  I've been having trouble getting the TK/TCL and PLplot working on...
  3.5  I would like to issue a plot command, have the window appear,...
  3.6  The X driver seems to run slower than on older versions of PLplot.
- 3.7  How do I change the title on the TK window menu bar, i.e.,...
+ 3.7  How do I change the title on the TK window menu bar, i.e...
++3.8  I want to run plserver as a daemon...
++3.9  Problems printing from the Tk driver..
++3.10 Problems compiling xwin.c...
 
 ==============================================================================
 Section 4: All other drivers & supported platforms
 
- 4.1  What about support for platform X?
+=4.1  What about support for platform..
  4.2  What about PLplot support for VMS?
++4.3  PLplot is aborting with: Error opening plot data storage file.
++4.4  Is there a Windows port of PLplot?
 
 ==============================================================================
 Section 1: Installing PLplot
@@ -84,31 +94,110 @@ Section 1: Installing PLplot
  1.1  How do I build & install PLplot?
 
 Read the system dependent notes, in sys/<system>.  On a Unix-like system,
-"configure" is NOT the GNU auto-configure script.  The preferred way to
-configure and build PLplot is the following:
+simply type "configure" in the distribution directory, or "../configure"
+in the tmp/ subdir.  You can build and install the package from either
+location, but the Makefile in tmp/ has more targets.  An example
+build:
 
 % cd tmp
 % ../configure
 % make
+% make cdemos fdemos
+
+  <run the test programs>
+
 % make install
 
-Alternately, you can run configure and make from the top-level PLplot
-directory, but not all targets are supported from there.  You should check
-the readme file first, though (especially before typing "make install").
-I strongly recommend that you configure & build PLplot along these lines.
-I regularly build and install PLplot on 8 different systems, which
-includes 5 different OS's.  My scheme has evolved to the point that I
-typically unpack the archive, then from the tmp directory type
-"../configure opt" and then "make" then "make install".  Site-specific
-stuff goes in cf_plplot.m4, which I have placed in ~/config.  The
-configure script uses this when building the Makefile, allowing
-site-specific customizations.  This will typically not need modification
-after the first time you set it up.
+or a quick one, from the distribution directory:
 
-For more info on the Unix build scripts, see m4/README.
+% configure
+% make
+% make install
+
+Make sure you check the "prefix" variable before typing "make install",
+as this determines where the files are installed.  By default, the
+configure script chooses the most powerful configuration of PLplot
+supported on your system, based on a search for all the include files and
+libraries that PLplot can use.  If it is unable to locate a library
+that /is/ available on your system, either you need to change the
+location of the library, put in a soft link to a more common place, 
+request for the directory to be added to the search path, or set up
+the directory in a site specific way (more on that below).
+
+"configure" IS NOW generated by the GNU autoconf facility, although
+it didn't used to be.  Normally you don't need to create a new configure
+script, just use the one that comes with the package.  If you do want
+to recreate it, you need to have the autoconf package and GNU m4
+installed. 
+
+There are many ways in which to influence the configure process.  It's
+best to run configure once to see what options are set already.  You can
+enable/disable packages (or device drivers) with a --enable-<pkg> or
+--disable-<pkg> switch, and set/unset options with a --with-<option> or
+--without-<option> switch.
+
+If you want configure to remember certain settings each time it is run
+for your site, you can create a file ~/config/cf_plplot.in.  If found,
+this file is sourced by configure.  An example cf_plplot.in file is
+given in the cf/README file.
 
 
- 1.2  Why should I use PLplot?
++1.2  Where should I install PLplot?
+
+There are two basic answers to this question: whereever you want, and
+whereever I want.
+
+The configure script and Makefile are set up so that you can put the
+various components of PLplot virtually anywhere.  By default, it
+installs into a directory with the following subdirectories: 
+
+bin       doc       examples  include   info      lib       tcl
+
+As for the directory to install into, I recommend on Unix systems a
+directory just for PLplot.  On Unix systems, under /usr/local is a good
+place.  For one, it's not too difficult to get a system administrator to
+give you ownership of a directory somewhere in the public hierarchy.  On a
+smaller system, giving the package it's own directory helps maintain
+system integrity.  The paradigm of dropping everything under /usr/local
+(or even worse, /usr) makes everything simple to install initially but
+leads to a system that's difficult to organize and maintain.  There's
+the possibility for file name collisions -- stuff that isn't in your
+search path but needed anyway (readme, doc, and config files).  There's no
+way to cleanly & robustly back out the revision.  There's no way to tell
+where each file in /usr/local/bin (lib, etc) came from.
+
+Any sufficiently large/complicated package has this problem.  Dedicating a
+directory tree is the only way to preserve the package's integrity.  The
+only good reason I've heard so far for NOT doing this (apart from laziness
+when installing) is that people then have to modify their search paths,
+etc, to use the new package.  Therefore, I've written a script that takes
+care of that.  Run docs/mklinks from the install directory, to install
+softlinks from the install directory into ../bin, ../lib, ../include, and
+../man as appropriate.  Just as important, you can run it again TO
+COMPLETELY REMOVE THEM.  Thus it becomes trivial to install and back
+down a revision.  All software should work this way.
+
+Note, I've written a similar script for Tcl/TK and extensions, called
+"installtk".  A copy is on harbor, hopefully current (if not send me
+email).  I've brought up and backed out a TK rev on several occasions, and
+found it immensely useful at the time, which is why I wrote it :-).  I
+think it is the most handy in two cases: 1) when developing using new
+betas, or 2) in a production environment, where you want to bring up a new
+package but still have the old one available in case programs break.  In
+the latter case, the only sensible scheme is to have the package in its
+own directory.
+
+Now, if after all that you STILL want to break the package up, just set
+the appropriate shell variables for the install directories before running
+configure, in ~/config/cf_plplot.in (see configure notes).  That way you
+can put the docs, examples, and tcl files under $prefix/plplot, and
+everything else under $prefix/bin, $prefix/lib, $prefix/include,
+$prefix/man (imagine $prefix=/usr or $prefix=/usr/local and this will make
+perfect sense).  OK, there are no man pages yet, but there will be one of
+these days.
+
+
+ 1.3  Why should I use PLplot?
 
 This is probably the first question I was ever asked, and it continues
 to come up often enough to dwell on it a bit.
@@ -202,14 +291,14 @@ broad changes to the package, but any of the following would be great:
 	help rewriting the manual?  (OK, so I'm really reaching here)
 
 
- 1.3  I don't have an ANSI compiliant C compiler.  How do I compile PLplot?
+ 1.4  I don't have an ANSI compiliant C compiler.  How do I compile PLplot?
 
 Get an ANSI C compiler.  The cheap solution is to get gcc up if it has
 been ported to your machine.  This is not unreasonable IMHO -- the C
 standard was approved in 1989.  Isn't it about time you upgraded?
 
 
- 1.4  I don't have a fortran compiler; how do I compile PLplot?
+ 1.5  I don't have a fortran compiler; how do I compile PLplot?
 
 The Fortran files are only part of the interface layer for Fortran codes
 that use PLplot.  If you don't need this capability the layer can be
@@ -226,7 +315,7 @@ Alternately, you can use 'f2c' (freeware fortran-to-C translator) to
 compile the layer, assuming it (f2c) has been ported to your system.
 
 
- 1.5  The linker complains of unresolved functions atexit(), fsetpos(),
+ 1.6  The linker complains of unresolved functions atexit(), fsetpos(),
       fgetpos(), and so on.
 
 This is caused by a non-ANSI libc.  It /is/ possible to run PLplot on such
@@ -244,7 +333,7 @@ this switch is to use the following in ~/config/cf_plplot.m4 --
 EXT_FLAGS_C	= -DNO_ANSI_LIBC
 
 
- 1.6  The compiler complains about the use of "malloc" or "size_t".
+ 1.7  The compiler complains about the use of "malloc" or "size_t".
 
 Once upon a time, the source code went to some lengths to make sure
 these were properly prototyped/typedef'ed even on systems that weren't
@@ -267,10 +356,10 @@ long as you "wrap" it, e.g.:
 #  endif /* _SIZE_T */
 
 Then add an identical declaration where it is *supposed* to be.  The
-second way is to hack PLplot.h to explicitly prototype/typedef it.
+second way is to hack plplot.h to explicitly prototype/typedef it.
 
 
- 1.7  The compiler complains about "caddr_t" in one of the X support files.
+ 1.8  The compiler complains about "caddr_t" in one of the X support files.
 
 This is sometimes seen on systems that have X11R4 and claim POSIX
 conformance but that don't quite have their act together.  Typically on
@@ -281,15 +370,33 @@ or (d) add -DCADDR_T_HACK to the compile line, which inserts the
 appropriate typedef for caddr_t explicitly inside of plplotX.h.
 
 
- 1.8  configure script doesn't run correctly
+ 1.9  configure script doesn't run correctly
 
-Look around for a different shell to run it under (posix shell, ksh).
-E.g. under Ultrix there should be a non-braindead shell named /bin/sh5 that
-will do the trick.  Ask your system administrator to "cd /bin; mv sh sh_old;
-ln sh5 sh".  It is completely backwardly compatible with sh I believe.
+The current configure script should work under even some very old versions
+of "sh".  But in the event of problems, look around for a different shell
+to run it under (posix shell, ksh, /bin/sh5, etc).
+
+Be sure to check that the system name is being set correctly.  Your system
+must have the "uname" program.  If not, you can roll your own easily
+enough -- here's one for HPUX:
+
+--cut-here--cut-here--cut-here--cut-here--cut-here--cut-here--cut-here-
+#!/bin/sh
+#
+#       File: uname
+#       Usage: uname
+#
+#       Minimal implementation of the uname command -- no arguments
+#       supported.
+#
+echo "HP-UX"
+--cut-here--cut-here--cut-here--cut-here--cut-here--cut-here--cut-here-
+
+Alternately, you can explicitly set "system" either as a shell variable or
+in the defaults file.
 
 
- 1.9  makefile doesn't build correctly using m4.
+ 1.10  makefile doesn't build correctly using m4.
 
 Some m4's do not handle the -D<macro-def> switch correctly.  In this case
 I suggest installing GNU m4, as it installs easily (for me) and works
@@ -302,7 +409,7 @@ Since the configure script uses the -D <macro-def> syntax, however,
 the best thing to do is to find a non-braindead m4 and use that.
 
 
- 1.10 The linker complains that it can't resolve Tcl_AppInit. 
+ 1.11 The linker complains that it can't resolve Tcl_AppInit. 
 
 The Tcl7.0/TK3.3 and later libraries contain a function called "main".
 As a result, when linking you don't always get the correct main program.
@@ -329,19 +436,27 @@ main, in which case the true main is in libf2c.a.  In this case, putting
 ==============================================================================
 Section 2: General features
 
- 2.1  The manual doesn't mention capability X.
+=2.1  The manual doesn't mention capability...
  2.2  How do I change to change the default background color?
  2.3  I'm getting core dumps when calling a contour function from C.
++2.4  Changing the default line width doesn't have any affect.
++2.5  How can I generate more than 16 line colors?
++2.6  What 2-d array organization am I supposed to use from C?
++2.7  On stretched windows, the string characters look bad..
++2.8  I would like to capture key sequences..
++2.9  How can I get more information about the function/capability..
 
 ==============================================================================
 
- 2.1  The manual doesn't mention capability X.
+=2.1  The manual doesn't mention capability..
 
 The manual is waaay out of date.  Consult the last few update files to
 keep tabs of what's going on.  Take a look if there are are any
-substantial new capabilities in the example programs.  Sorry, I'll try to
-update the manual as soon as practical (writing code is so much more
-interesting..).
+substantial new capabilities in the example programs.  We went wild on the
+manual a while back, rewriting it in LaTeXinfo so that we could publish it
+in info file form.  That info file is available in the doc directory, but
+unfortunately (a) it still needs some polish and (b) it is still waaay out
+of date.  The next big push will see the end of it.
 
 
  2.2  How do I change to change the default background color?
@@ -361,32 +476,196 @@ document in this area.  Unfortunately it may be too late I think to change
 the minimum index to 0, since by now many people are used to this way.
 Maybe add some new function calls to fix up the API..
 
+
++2.4  Changing the default line width doesn't have any effect.
+
+Not all drivers support multiple line widths, in particular,
+pixel-oriented ones such as all the Tek drivers.  Further, it may not even
+mean the same thing from driver to driver.  If this ever becomes a serious
+enough inconvenience I may take a harder look at it.  One problem is that
+display devices typically don't have the resolution for resolving the
+difference between different line widths.  For example, you can output
+a plot using different line widths to a postscript file, and the lines
+don't appear any visibly thicker until you hit 5 or so (so 1-4 look the
+same, same for 5-8, and 9-10, or something like that).  The only real
+way to see the difference is to print it.  Another problem is that there
+may be no device support for multiple line widths.  In this case you
+can mock it up by drawing lines multiple times (very close together),
+but this is a real pain.
+
+The driver does initialize the width to something reasonable, but only
+if the user hasn't already set it (i.e. it is zero).  The postscript
+driver uses a line width of 3 as a default, since this produces pretty
+good results.  
+
+
++2.5  How can I generate more than 16 line colors?
+
+You can use cmap1 to do it, via plcol1().  Each color will be interpolated
+along a piecewise linear curve in HLS space.  Eventually I will allow
+the user to ask for arbitrarily large palettes in cmap0 too, but it's
+not a high priority, since the smooth color variation supported by cmap1
+is often excellently suited to the task.
+
+
++2.6  What 2-d array organization am I supposed to use from C?
+
+The 2d array organization has an interesting history.  Back in plplot 2.6b
+all the C API functions that took 2d arrays used column dominant
+contiguous storage, while the corresponding Fortran API functions used row
+dominant contiguous storage (naturally).  The latter allocated temporary
+arrays and performed a transpose before calling the C API.  With plplot
+3.0 Tony Richardson changed the C API to use arrays-of-arrays of pointers
+to increase performance on some platforms.  Unfortunately on high end
+platforms (vector machines or superscalar RISC workstations) performance
+can actually be worse as a result -- slowdowns due to memory access can be
+much worse than doing extra computation.  
+
+As a result the situation re: 2d array organization in C became somewhat
+confusing -- now there was a /third/ type of array organization, or /four/
+if you want to count "normal" C array-of-pointers organization.  So I
+decided, years ago, that I wanted to have a general way of specifying
+array organization to be used by the 2d function API, with front-end
+routines used for converting from popular techniques.  But as it isn't so
+glamorous a pursuit, I've been slow to get it finished. :-\
+
+The key idea is that for each major capability, there should exist a core
+function that takes the array in a totally arbitrary way -- as a function
+evaluator and its data.  This can be used directly if desired -- for
+example by a C++ user with his own matrix class.  However I also will
+provide front-end C API calls to handle the various popular 2d array
+organizations.  These front-ends merely pass in the appropriate function
+evaluator to the core routine, passing the user's array as data.  This
+results in calls like plfcont(), which is the core routine, and plcont1(),
+plcont2(), etc, which are the front-end routines.  
+
+The core routine can do one of two things: it can either use function
+evaluations in place of the 2d array lookups in its computations, or
+create a temporary array in some standard internal format for its
+computations.  Both have their merits.  On low-end machines, the function
+evaluator approach is better (since there is little loss of pipelining and
+no temporary memory hit), while on high-end machines the reverse is true.
+On the other hand, on high-end machines the odds are better that you are
+spending most of the CPU time on things other than graphics, and
+efficiency is less important.  So I tend toward using the function
+evaluator where it is convenient.  In the contour plotter the function
+acceses are clear and it was easy to substitute a function evaluator.  In
+plshade, however, the code is a bit too involved for this to be done
+easily so instead I've gone the temporary array route.  Either way, as
+long as the API is put in place and documented, I can always go back and
+change things around internally later on.
+
+My intentions right now is to give this a good look very soon, so that
+if I need to break the C API to make it more consistent, it happens
+before I release 5.0.
+
+
++2.7  On stretched windows, the string characters look bad..
+
+> - If I make a window of say y=100 and x=1000 the character are rather
+>   stretched. Is there a way to avoid this.
+
+I haven't had the need for it and am barely familiar with how to do it.
+The best way to fix it won't happen until I support actual text by the
+driver, which is a long ways off yet.  But I think you can specify
+physical dimensions of your output device using plspage().  In fact,
+plspage() is called by the argument parser for the -geometry flag, but the
+options specifying physical dimensions -- xpmm and ypmm -- aren't filled
+in.  I can put changing this on my todo list.  But if it works, it will
+only work as long as the window isn't resized.
+
+Eventually, the driver and internal page representation will be
+intelligent enough to support page resizing without changing the aspect
+ratios of certain objects such as characters, strings, fixed aspect
+viewports, etc.  But like I said, it's a way off.
+
+
++2.8  I would like to capture key sequences..
+
+>   Also, I would like to be able to capture the PF2 and PF4 keys. My
+>   application consistently uses these keys for particular responses. If
+>   I can catch them, the application can take appropriate action.
+
+You can catch these now from C by installing a keyboard event handler,
+via the function:
+
+/* Set the function pointer for the keyboard event handler */
+
+void
+plsKeyEH(void (*KeyEH) (PLKey *, void *, int *), void *KeyEH_data);
+
+You can look at the code in plrender as an example.  It uses a keyboard
+event handler in order to detect & act on page seeking commands.  It would
+be possible to mock something up for Fortran too if needed.  There is no
+problem with doing this from X since only a single key code is
+transmitted, but an xterm sends an escape sequence.  Your event handler
+would be called for each key code which makes recognition a bit harder but
+still doable (if in an xterm).  Let me know if this helps.
+
+
++2.9  How can I get more information about the function/capability..
+
+> I would like to be able to take advantage of the new routines that came
+> with 4.99g, but to do this I need to know the argument list that is
+> supplied to each one - the additional docs that came with 4.99g are very
+> sketchy on this.
+> 
+> I would particularly like to use plscmap1l, which I have had trouble
+> with,  also the following which are not explained:
+> 
+>  *      plwarn plexit plcol0 plcol1 plrgb plrgb1 plscolbg plscol0 plgcol0
+>  *      plscmap1 plscmap1f1 plscolor
+> 
+> Any details would be gratefully received.
+
+Well for me to really explain would be basically the same as finishing the
+docs, which I don't have time for right now.  I suggest looking at the
+example programs and especially the source.  Now, I know that might not
+sound like fun, but some of the source code is a fairly easy read.  Look
+in "plplot.h" -- each function has a prototype that lists arguments and
+has a one-line description.  The description is usually an abbreviated
+version of the comments written with the function itself.  
+
+If you are an emacs user, browsing the source code is very easy with
+'tags'.  From the tmp directory, type 'etags *.c'.  Then edit plplot.h,
+move the cursor to the name of the function you are interested in, and
+type ESC-.  <poof>, you are there.  Happy hunting.
+
+p.s. Some of the new capabilities are illustrated in C example programs
+but not Fortran, e.g. see x15c and x16c.  x17c isn't working yet.
+
+
 ==============================================================================
 Section 3: X-based drivers (includes Tcl/TK, Tcl-DP)
 
- 3.1  Where do I get Tcl/TK?   
+#3.1  Where do I get Tcl/TK or Tcl-DP?
  3.2  How do I use "xauth"?
  3.3  How do I use the Tcl/TK driver?
- 3.4  I've been having trouble getting the TK/TCL and PLplot working on...
+=3.4  I've been having trouble getting the TK/TCL and PLplot working on...
  3.5  I would like to issue a plot command, have the window appear,...
  3.6  The X driver seems to run slower than on older versions of PLplot.
- 3.7  The linker complains that it can't resolve Tcl_AppInit. 
- 3.8  How do I change the title on the TK window menu bar, i.e.,...
+ 3.7  How do I change the title on the TK window menu bar, i.e.,...
++3.8  I want to run plserver as a daemon...
++3.9  Problems printing from the Tk driver..
++3.10 Problems compiling xwin.c...
 
 ==============================================================================
 
- 3.1  Where do I get Tcl/TK?   
+#3.1  Where do I get Tcl/TK or Tcl-DP?
 
 You can get the Tcl/TK package by anonymous ftp from sprite.berkeley.edu
 in the tcl subdirectory (or from harbor.ecn.purdue.edu in directory
-pub/tcl).  Also consult with the comp.lang.tcl newsgroup on Usenet.  Pick
-up Tcl-DP too, since the DP driver is the best one.  At the time of this
-writing, the minimum versions that are fairly certain to work with PLplot
-are:
+pub/tcl).  Also consult with the comp.lang.tcl newsgroup on Usenet.
+Tcl-DP can be obtained by anonymous ftp from mm-ftp.cs.berkeley.edu in
+pub/multimedia/Tcl-DP, and is highly recommended.  At the time of this
+writing, the versions that are fairly certain to work with PLplot are:
 
 tcl7.3
 tk3.6
 tcl-dp3.1
+tcl-dp3.2 (has been tested under HPUX)
+
+Earlier versions may be iffy. 
 
 Note: to build, you need to have the Tcl/TK header files where they can be
 found by the C compiler (e.g. /usr/local/include, or softlinks to it will
@@ -446,7 +725,7 @@ Get it going with the example programs, and play with it.  Read the online
 docs.
 
 
- 3.4  I've been having trouble getting the TK/TCL and PLplot working on
+=3.4  I've been having trouble getting the TK/TCL and PLplot working on
 my Indigo running IRIX 4.0.5. I got TCL7.0 and TK3.3 as advised and built the
 libraries and moved them to "/usr/lib" directory and then went about 
 (re)building PLplot. I then compiled the c-demos and ran them. The tk driver
@@ -477,6 +756,23 @@ compiles a custom version of wish with some extra functionality just for
 the test suite.  But most of the tests will do ok.  If not, you hosed
 the installation and that would explain the observed behavior.  If not
 we need to do some more hunting.  
+
+Here are some more things to try: define DEBUG at the head of the files:
+
+	plserver.c	(will give you information at startup)
+	tk.c		(this does the launching of plserver)
+
+This should tell you at the very least if plserver is getting started
+correctly.  In addition, to get a whole LOT of output about the current
+state of the code, you can define also DEBUG_ENTER in:
+
+	plserver.c
+	tk.c
+
+and even:
+	plframe.c (also define DEBUG here, but be ready for lots of output)
+
+The resulting messages often prove useful.
 
 
  3.5  I would like to issue a plot command, have the window appear,
@@ -567,25 +863,132 @@ dump) you will get the mysterious _#2 appended (and _#3, and so on; note
 there are utilities [zapinterps or delinterp] that will delete these zombie
 interpreters).
 
++3.8  I want to run plserver as a daemon...
+
+> What would be really desirable, would be to make plserver into an
+> actual daemon, as described in Stevens UNP.  Very cool idea, how
+> daemons work.  The plan would be to have a guy sitting there
+> monitoring a port/pipe/whatever, and when a connection request comes
+> in, he forks, and calls back to the app with directives to use a new,
+> previously unused (or reclaimed) port.  Then the daemon goes back to
+> listening.  That way, you could run multiple apps simultaneously, each
+> getting a new plserver if a spare one isn't already available...
+> 
+> I think the default action would be that when you punch >> on the last
+> plot, the client goes ahead and terminates, but plserver stays up, for
+> future invocations.  But when the user wants to get rid of it, if he
+> doesn't plan to plot for a while, then there's a kill/off button
+> somewhere on the pannel.
+
+Actually it is possible now to start up a plserver and connect to it,
+using the DP driver.  But one of the problems with this is the security
+issue.  I get around the problem now by only allowing connects during
+the brief time between the fork/exec and when the connection succeeds.
+If it was open for longer we run into the same old possibility for
+nasty interpreter commands being sent.  Dunno if there's a good way
+around this.
+
+
++3.9  Problems printing from the Tk driver..
+
+> We're having some big problems with the latest release of PLPLOT.
+> Basically, we can't print and we can't save Postscript files. When we
+> try to print we get
+> 
+> *** PLPLOT ERROR ***
+> process_next: Unrecognized command
+> Program aborted
+> lpr: standard input: empty input file
+
+Interesting.  Sounds like maybe an incompatibility with the plplot library
+output and plrender [note: turns out it was indeed a previous version of
+plrender in the user's search path].  The 'print' command saves the page
+as a plplot metafile, and then invokes plrender to turn it into
+postscript.  Either it was installed incorrectly, or (more likely), it is
+a bug.  I have printed plots by this method without problem since the
+4.99g release, but probably I didn't exercise everything.  Maybe try "Save
+As.." with a variety of file types and see if anything turns out.  
+
+> I have my PRINTER environment variable set. Am I supposed to do
+> something else?  As for saving Postscript files, it seems to write part
+> of the file and then just stop in the middle. It appears that some
+> buffer is not getting flushed.  Any ideas?
+
+Take a look at the plpr script, it is braindead, but I never had much time
+to embellish it.  It doesn't allow you to set a particular printer, which
+I guess is what you want.  You can always edit the file, for site-wise
+customization.  Of course, this sucks, but is the best I have for now.
+Isn't "lpr" supposed to obey the setting of PRINTER?  Even if so/not,
+there's the question of how to render the saved metafile.  I use mono ps,
+since that's usually what people want.  But sometimes I've wanted to print
+grayscale output, and hit print without thinking, and got a nice,
+completely black, plot. :-) So not only do I have to provide for a way to
+select this in the GUI but also a way to read customized settings
+automatically at startup.  Which brings up init file issues.. (see the
+ToDo file).
+
+So for now just modify plpr to your tastes and stick it in your path :-).
+It should be located BEFORE the installed copy of plpr, which should just
+be the site-wise default.  I usually have ~/bin before most significant
+directories in my path anyway.  The exec() call used to invoke it does use
+your path I believe.  And if you embellish it significantly, feel free to
+send me a copy.
+
+
++3.10 Problems compiling xwin.c...
+
+> I am trying to install PLPLOT on a DECstation 5000/240 running Ultrix
+> 4.2a and an earlier version of X11R4. I am using gcc with the -ansi
+> option.  Running make gives me the following errors:
+> 
+> In file included from xwin.c:50:
+> /usr/local/lib/gcc-lib/decstation-ultrix4.2a/2.4.5/include/X11/Xlib.h:3958: parse error before `XSizeHints'
+
+After poking around some on this system I found out that the header files
+were hosed.  This is the kind of thing that crops up only when using an
+ANSI compiler or C++ since it's in the function prototypes.  In
+particular, Xlib.h uses XSizeHints before it's defined (in Xutil.h).  In
+the X11R5 header files from HP-UX, all of the functions needing to
+reference a variable of type XSizeHints* are prototyped in Xutil.h, after
+the declaration of XSizeHints.  
+
+I don't know how many systems I've seen with broken X11R4 header files --
+a lot.  Seems the X11R4 distribution was partly to blame, but you'd think
+the vendor would have at least checked to see whether an ANSI C compiler
+would work with them.  In any case, there /should/ be an upgrade to fix
+problems like this.  At worst, you can pull over a later X11 distribution
+(as I write this X11R6 just came out) and build it yourself.  I do know
+that some PLplot runs OK on some Ultrix systems so there should be an
+upgrade available.  
+
+
 ==============================================================================
 Section 4: All other drivers & supported platforms
 
- 4.1  What about support for platform X?
+=4.1  What about support for platform..
  4.2  What about PLplot support for VMS?
++4.3  PLplot is aborting with: Error opening plot data storage file.
++4.4  Is there a Windows port of PLplot?
 
 ==============================================================================
 
- 4.1  What about support for platform X?
+=4.1  What about support for platform..
 
-We are most likely to have the package be up-to-date on the following
-systems: HP-UX, Linux; less likely on the following: SunOS, AIX, Unicos,
-Super-UX, Amiga, and maybe not at all on any others.  I'd love to have
-volunteers to pick up the slack here.  I could get prerelease versions to
-you in order to make whatever fixes are needed ahead of time.  I am
-gradually moving away from supporting the Amiga driver so could use some
-help here.  Geoff has abandoned the DOS and OS/2 drivers, so here target
-platform developers are needed.  Tony Richardson no longer has access to a
-NeXT, so also the NeXT is no longer supported by anyone.
+Right now the package is most likely to be up-to-date under HP-UX and
+Linux, since those are the two systems used most extensively by Maurice
+and Geoff.  However we also use SunOS, AIX, UNICOS, and SUPER-UX enough
+that probably there will be no problems on those systems also.  The DOS
+and OS/2 support is being done mostly by other parties at this point (see
+the README).  Any other systems are suspect.  Other Unix variants (IRIX,
+OSF/1) are reasonably safe since the PLplot configure script is fairly
+sophisticated and portable -- system dependencies tend to drop out without
+notice.  I can't make any promises as to the Amiga support since I rarely
+compile PLplot there these days.  Also no one is currently supporting the
+NeXT.  As always, I'm looking for volunteers to help pick up the slack on
+these systems (really, any other than say HPUX and Linux).  At the minimum
+this means getting pre-beta releases and testing them, submitting any
+fixes that need to be made, that's it!  If you have more ambitious plans
+for supporting a particular platform, that'd be great -- let me know.
 
 
  4.2  What about PLplot support for VMS?
@@ -599,5 +1002,77 @@ still be people out there who would find it useful under VMS, so if anyone
 succeeds in making PLplot work and want to continue supporting it there,
 the job is yours for the asking.  I don't have the time or patience for
 it.
+
+
++4.3  PLplot is aborting with: Error opening plot data storage file.
+
+The most common reason I've seen for this is that the temporary file area
+is set up incorrectly (wrong permissions).  Note: this directory is where
+tmpfile() opens its temporaries, which may NOT be /tmp.  You can find the
+true location typically by looking in stdio.h.  For example, on my HP
+in stdio.h there is:
+
+#  define _P_tmpdir "/usr/tmp/"
+
+look for something similar on your machine, and make sure the directory
+has the appropriate permissions (it should have global write set).
+
+
++4.4  Is there a Windows port of PLplot?
+
+Look under sys/dos/bcc, there you'll see a file win3.c, which is a Windows
+port by Paul Casteels.  I don't know much about it having never tried it,
+but have heard some good comments about it.  One nice enhancement is the
+ability to print the current plot.
+
+
++4.5  I'd like to develop a windowed interface to PLplot for..
+
+For the systems that I've used, developing windowed interfaces is a fair
+amount of work.  Most of my experience developing graphical interfaces is
+under Unix (and a little on the Amiga).  Unix/X/Tcl/Tk on a fast
+workstation makes for an excellent starting point -- it is powerful, and
+the final product is fairly portable.  Virtually all my professional work
+is on Unix machines, which also drives my effort -- the Tk driver is where
+most of my attention has been going.  But it's still a /lot/ of work.
+
+Of course there are still many reasons for using or developing on a
+microcomputer -- if I used my Amiga more I'd be more inclined to spend
+more time improving the interface there.  As it was, the Amiga had the
+first PLplot windowed interface, and it gave me many ideas about how to
+proceed with the Tk one.  Unfortunately, too many of these features were
+built into the Amiga screen driver instead of the core, and didn't help
+directly when I was doing the Tk driver.  So when I improved the package
+in order to support the Tk driver I tried to make changes where they could
+potentially benefit other windowing drivers.  This should help developers
+of other windowed drivers some.
+
+I originally started developing a Motif-based driver, but abandoned the
+effort when I saw how much easier Tk-based ones are to construct (and Tk
+is free to boot).  At this point I'm very happy with Tcl/TK and am
+probably finished with Motif.  There are still some reasons for going with
+Motif -- such as needing a specific Motif widget or to satisfy company
+policy, market demand, or whatever.  Also the recent development of
+interpretive Motif environments that rival Tcl/TK in their ease of use and
+prototyping speed (or so I've heard) makes Motif-based GUI construction
+more palatable.  If you just want Motif widgets inside your app, you can
+do this in Tk (see the comp.lang.tcl FAQ for more info).  Right now there
+is no way to do the reverse as far as I know -- include Tk widgets inside
+a Motif app, but maybe eventually there will be a way (I mention this
+because the development of the plframe widget was the most time-consuming
+single thing I've done as regards PLplot).
+
+Under Windows, try the driver by Paul Casteels (see FAQ 4.4).  At the time
+of this writing it is still somewhat sparse, but as per the comments above
+it may not be unreasonable to extend it in the same directions as the Tk
+driver.  Another alternative is to actually use Tk -- there are several
+ports of Tk to Windows in various stages of completion.  I'd like to hear
+about people's experiences with these, especially with PLplot.
+
+I've been asked several times about a Mac interface.  There was supposedly
+a port of PLplot to the Mac some time back, but I never even saw it.  I
+don't know beans about programming the Mac, so if some one /else/ wants
+to investigate and let me know the status I will include it here.
+
 
 ==============================================================================
