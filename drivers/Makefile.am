@@ -61,8 +61,9 @@ get_drv_info_SOURCES = get-drv-info.c
 get_drv_info_LDADD = $(LIBLTDL)
 get_drv_info_CFLAGS = $(INCLTDL)
 
-%.rc: %.la get-drv-info
-	./get-drv-info $(<:.la=) > $@
+SUFFIXES = .la .rc
+.la.rc: get-drv-info
+	./get-drv-info `echo $< | sed 's/.la//'` > $@
 
 libplplot = ../src/libplplot$(LIB_TAG).la
 libplplottcltk = ../bindings/tcl/libplplottcltk$(LIB_TAG).la

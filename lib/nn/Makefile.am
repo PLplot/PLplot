@@ -4,7 +4,7 @@
 ###
 # Copyright (C) 2003 Joao Cardoso
 # Copyright (C) 2003 Rafael Laboissiere
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -26,14 +26,14 @@ libnn_la_SOURCES = delaunay.c hash.c istack.c linear.c \
 libnn_la_LDFLAGS = -version 0:0:0 -lm
 AM_CPPFLAGS = -I.
 
-EXTRA_DIST = delaunay.h hash.h istack.h nan.h nn.h version.h \
-             README README.1st
-	     
 docdir = $(DOCDIR)
-doc_DATA = README.nn README.1st.nn
+docfiles = README README.1st
 
-%.nn: %
-	  cp $< $@
+install-data-hook:
+	$(mkinstalldirs) $(DESTDIR)$(docdir)
+	for i in $(docfiles) ; do \
+	  $(INSTALL) $$i $(DESTDIR)$(docdir)/$$i.nn ; \
+	done
 
-CLEANFILES = $(doc_DATA)
-
+EXTRA_DIST = delaunay.h hash.h istack.h nan.h nn.h version.h \
+             $(docfiles)

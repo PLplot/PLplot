@@ -25,13 +25,13 @@ libcsa_la_SOURCES = csa.c
 libcsa_la_LDFLAGS = -version 0:0:0 -lm
 AM_CPPFLAGS = -I.
 
-EXTRA_DIST = csa.h csa_internal.h nan.h version.h README README.1st
-	     
 docdir = $(DOCDIR)
-doc_DATA = README.csa README.1st.csa
+docfiles = README README.1st
 
-%.csa: %
-	  cp $< $@
+install-data-hook:
+	$(mkinstalldirs) $(DESTDIR)$(docdir)
+	for i in $(docfiles) ; do \
+	  $(INSTALL) $$i $(DESTDIR)$(docdir)/$$i.csa ; \
+	done
 
-CLEANFILES = $(doc_DATA)
-
+EXTRA_DIST = csa.h csa_internal.h nan.h version.h $(docfiles)

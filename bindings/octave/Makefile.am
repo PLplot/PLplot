@@ -22,14 +22,19 @@
 
 SUBDIRS = PLplot demos misc
 
-EXTRA_DIST = \
+docdir = $(DOCDIR)
+
+docfiles = \
   BUGS \
-  COPYING \
   FGA \
   INSTALL \
   README \
   ToDo \
-  USAGE \
+  USAGE
+
+EXTRA_DIST = \
+  COPYING \
+  $(docfiles) \
   globals-in-scripts \
   massage.c \
   plplot_octave_org.h \
@@ -71,6 +76,10 @@ install-data-hook: plplot_octave-libdir.oct
 	$(mkinstalldirs) $(DESTDIR)$(octavesharedir)
 	$(INSTALL) plplot_octave-libdir.oct \
 	  $(DESTDIR)$(octavesharedir)/plplot_octave.oct
+	$(mkinstalldirs) $(DESTDIR)$(docdir)
+	for i in $(docfiles) ; do \
+	  $(INSTALL) $$i $(DESTDIR)$(docdir)/$$i.octave ; \
+	done
 
 octavesharedir = $(OCTAVE_OCT_DIR)
 octaveshare_SCRIPTS = plplot_octave.oct
@@ -113,19 +122,6 @@ plplot_stub.m: doc-stamp tmp_stub massage
 plplot_octavedir = $(PLPLOT_OCTAVE_DIR)
 plplot_octave_DATA = plplot_stub.m
 
-docdir = $(DOCDIR)
-
-doc_DATA =       \
-  BUGS.octave    \
-  INSTALL.octave \
-  FGA.octave     \
-  ToDo.octave    \
-  USAGE.octave   \
-  README.octave
-
-%.octave: %
-	  cp $< $@
-
 else
 
 install-data-hook:
@@ -135,6 +131,6 @@ endif
 
 CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
 	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave*.oct \
-	plplot_stub.m missing_help $(doc_DATA)
+	plplot_stub.m missing_help
 
 MAINTAINERCLEANFILES = doc-stamp plplot_octave_txt/*
