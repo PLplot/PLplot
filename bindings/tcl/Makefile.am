@@ -56,7 +56,7 @@ $(tclgenfiles): $(PLTCLGEN) plapi.tpl tclcmd.tpl
 	$(PERL) $(PLTCLGEN) $(top_srcdir)/bindings/tcl
 
 # Build these files first to sort out dependency issues:
-tclAPI.c: $(tclgenfiles)
+$(top_srcdir)/bindings/tcl/tclAPI.c: $(tclgenfiles)
 
 # uninstalled header files that should be distributed
 noinst_HEADERS = $(tclgenfiles)
