@@ -21,7 +21,7 @@
 
 #if defined(__GNUC__)
 static const double NaN = 0.0 / 0.0;
-#elif defined(BIG_ENDIAN)
+#elif defined(BIG_ENDIAN) || defined(_BIG_ENDIAN)
 static const long long lNaN = 0x7fffffffffffffff;
 
 #define NaN (*(double*)&lNaN)
