@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.52  1994/01/15 17:33:42  mjl
+ * Revision 1.53  1994/01/17 21:34:21  mjl
+ * Added function prototype for c_plgcol0().
+ *
+ * Revision 1.52  1994/01/15  17:33:42  mjl
  * Bumped version number, defined prototype wrapper macro.
  *
  * Revision 1.51  1993/12/08  06:43:37  mjl
@@ -369,6 +372,7 @@ typedef struct {
 #define    plfont	c_plfont
 #define    plfontld	c_plfontld
 #define    plgchr	c_plgchr
+#define    plgcol0	c_plgcol0
 #define    plgdidev	c_plgdidev
 #define    plgdiori	c_plgdiori
 #define    plgdiplt	c_plgdiplt
@@ -471,6 +475,7 @@ typedef struct {
 #define    c_plfont	plfont
 #define    c_plfontld	plfontld
 #define    c_plgchr	plgchr
+#define    c_plgcol0	plgcol0
 #define    c_plgdidev	plgdidev
 #define    c_plgdiori	plgdiori
 #define    c_plgdiplt	plgdiplt
@@ -713,6 +718,11 @@ c_plfontld(PLINT fnt);
 
 void
 c_plgchr(PLFLT *p_def, PLFLT *p_ht);
+
+/* Returns 8 bit RGB values for given color from color map 0 */
+
+void
+c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b);
 
 /* Retrieve current window into device space */
 
