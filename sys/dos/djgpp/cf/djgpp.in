@@ -105,6 +105,19 @@ GRX_DO_BMP = 1
 
 #LDC_LIBS_PNG=-lgd -lpng -lz
 
+# If you want to use the CGM device driver, you will need to make
+# sure that you have compiled and installed libcd. Details about
+# obtaining libcd can be found at:
+#  http://sourceforge.net/project/showfiles.php?group_id=2915 
+#                        or
+#  http://www.pa.msu.edu/reference/cgmdraw_ref.html
+#   
+# To activate the CGM driver, edit "pldev.h" and define "PLD_cgm".
+# Then make sure the next line is uncommented: 
+
+#LDC_LIBS_CGM=-lcd
+
+
 links: linkmain
 
 linkmain:

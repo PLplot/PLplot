@@ -20,6 +20,7 @@ DRIVERS_C = \
 	pstex.c \
 	tek.c \
 	xfig.c \
+	cgm.c \
 	xwin.c
 
 DRIVERS_OBJ = \
@@ -40,5 +41,6 @@ DRIVERS_OBJ = \
 	pstex$O \
 	tek$O \
 	xfig$O \
+	cgm$O \
 	xwin$O
 

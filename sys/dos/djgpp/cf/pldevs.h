@@ -38,6 +38,7 @@
 #undef PLD_jpg
 #undef PLD_jpeg
 #undef PLD_png
+#undef PLD_cgm
   
 #define PLD_gnusvga
 #define PLD_hp7470
