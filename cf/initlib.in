@@ -10,7 +10,8 @@
 
 # Package major/minor version number, for shared libraries on some systems
 # (e.g. SunOS).  Warning: apps linked to it may fail on major version
-# changes (depending on OS).
+# changes (depending on OS), and right now this doesn't mean much, so
+# by default these are not yet used.
 
 MAJOR_VERSION	= 4
 MINOR_VERSION	= 99
@@ -23,21 +24,19 @@ SHLIB_BUILD	= @SHLIB_BUILD@
 
 # Flags and other miscellanea
 
+SO		= @SO@
+SA		= @SA@
+SHARED		= @SHARED@
+
 CC_FLAGS	= @CC_FLAGS@ @INCS@
-CXX_FLAGS	= @CXX_FLAGS@ -I. @INCS@
-CC_FLAGS_DEMOS	= @CC_FLAGS@ -I. @INCS@
-CXX_FLAGS_DEMOS	= @CXX_FLAGS@ -I. @INCS@
+CXX_FLAGS	= @CXX_FLAGS@
+
 SHLIB_CCFLAGS	= @SHLIB_CCFLAGS@
 SHLIB_CXXFLAGS	= @SHLIB_CXXFLAGS@
 SHLIB_F77FLAGS	= @SHLIB_F77FLAGS@
-SHLIB_SUFFIX	= @SHLIB_SUFFIX@
-SALIB_SUFFIX	= @SALIB_SUFFIX@
-SHARED		= @SHARED@
 
-# Hacks to deal with optimizer failures.
-
-CC_FLAGS_SCCONT = @CC_FLAGS_SCCONT@ @INCS@
-CC_FLAGS_XWIN	= @CC_FLAGS_XWIN@ @INCS@
+CC_FLAGS_DEMOS	= @CC_FLAGS@ @INCS@
+CXX_FLAGS_DEMOS	= @CXX_FLAGS@
 
 # Dependent directories
 
@@ -55,8 +54,8 @@ LIB_OBJS	= $(LIB_OBJS_SO) $(LIB_OBJS_SA)
 # Library names
 
 PLLIB_AR	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$A
-PLLIB_SH	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SHLIB_SUFFIX)
-PLLIB_SA	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SALIB_SUFFIX)
+PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
+PLLIB_SA	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SA)
 
 # This is used for making the install versions of plrender & plserver
 # (Must relink after installing shared library!)
@@ -88,4 +87,3 @@ everything: libs plrender$E pltek$E $(PYTHON_EXE) $(TCL_EXE) $(TK_EXE)
 
 .fm4.f:
 	$(M4) $(M4_FLAGS) $< >$*.f
-
