@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1994/05/07 03:00:04  mjl
+ * Revision 1.25  1994/06/30 17:52:25  mjl
+ * Made another pass to eliminate warnings when using gcc -Wall, especially
+ * those created by changing a PLINT from a long to an int.
+ *
+ * Revision 1.24  1994/05/07  03:00:04  mjl
  * Changed all occurances of bgcolor to cmap0[0].
  *
  * Revision 1.23  1994/04/30  16:14:46  mjl
@@ -26,24 +30,6 @@
  *
  * Revision 1.20  1993/12/08  06:08:20  mjl
  * Fixes to work better with Lucid emacs hilite mode.
- *
- * Revision 1.19  1993/11/19  07:29:50  mjl
- * Fixed the bounding box maxima (bug reported by Jan Thorbecke).
- *
- * Revision 1.18  1993/08/09  22:13:32  mjl
- * Changed call syntax to plRotPhy to allow easier usage.  Added struct
- * specific to PS driver to improve reentrancy.
- *
- * Revision 1.17  1993/07/31  07:56:43  mjl
- * Several driver functions consolidated, for all drivers.  The width and color
- * commands are now part of a more general "state" command.  The text and
- * graph commands used for switching between modes is now handled by the
- * escape function (very few drivers require it).  The device-specific PLDev
- * structure is now malloc'ed for each driver that requires it, and freed when
- * the stream is terminated.
- *
- * Revision 1.16  1993/07/16  22:14:18  mjl
- * Simplified and fixed dpi settings.
 */
 
 /*	ps.c
@@ -101,9 +87,9 @@ typedef struct {
 static char outbuf[128];
 
 /*----------------------------------------------------------------------*\
-* plD_init_ps()
-*
-* Initialize device.
+ * plD_init_ps()
+ *
+ * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
@@ -272,7 +258,7 @@ ps_init(PLStream *pls)
 
 /* Default line width */
 
-    fprintf(OF, "/lw %ld def\n", pls->width);
+    fprintf(OF, "/lw %d def\n", (int) pls->width);
 
 /* Setup user specified offsets, scales, sizes for clipping */
 
@@ -319,9 +305,9 @@ ps_init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_line_ps()
-*
-* Draw a line in the current color from (x1,y1) to (x2,y2).
+ * plD_line_ps()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
@@ -371,9 +357,9 @@ plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_polyline_ps()
-*
-* Draw a polyline in the current color.
+ * plD_polyline_ps()
+ *
+ * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
@@ -386,9 +372,9 @@ plD_polyline_ps(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_eop_ps()
-*
-* End of page.
+ * plD_eop_ps()
+ *
+ * End of page.
 \*----------------------------------------------------------------------*/
 
 void
@@ -398,9 +384,9 @@ plD_eop_ps(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_bop_ps()
-*
-* Set up for the next page.
+ * plD_bop_ps()
+ *
+ * Set up for the next page.
 \*----------------------------------------------------------------------*/
 
 void
@@ -412,7 +398,7 @@ plD_bop_ps(PLStream *pls)
     dev->yold = UNDEFINED;
 
     pls->page++;
-    fprintf(OF, "%%%%Page: %ld %ld\n", pls->page, pls->page);
+    fprintf(OF, "%%%%Page: %d %d\n", (int) pls->page, (int) pls->page);
     fprintf(OF, "bop\n");
     pls->linepos = 0;
 
@@ -422,9 +408,9 @@ plD_bop_ps(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_tidy_ps()
-*
-* Close graphics file or otherwise clean up.
+ * plD_tidy_ps()
+ *
+ * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
@@ -449,7 +435,7 @@ plD_tidy_ps(PLStream *pls)
     dev->urx += 1;
     dev->ury += 1;
 
-    fprintf(OF, "%%%%Pages: %ld\n", pls->page);
+    fprintf(OF, "%%%%Pages: %d\n", (int) pls->page);
     fprintf(OF, "@end\n");
 
 /* Backtrack to write the BoundingBox at the beginning */
@@ -463,9 +449,9 @@ plD_tidy_ps(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_state_ps()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
+ * plD_state_ps()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
 void 
@@ -479,7 +465,7 @@ plD_state_ps(PLStream *pls, PLINT op)
 	if (pls->width < 1 || pls->width > 10)
 	    fprintf(stderr, "\nInvalid pen width selection.");
 	else 
-	    fprintf(OF, " S\n%ld W", pls->width);
+	    fprintf(OF, " S\n%d W", (int) pls->width);
 
 	dev->xold = UNDEFINED;
 	dev->yold = UNDEFINED;
@@ -499,9 +485,9 @@ plD_state_ps(PLStream *pls, PLINT op)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_esc_ps()
-*
-* Escape function.
+ * plD_esc_ps()
+ *
+ * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
@@ -515,10 +501,10 @@ plD_esc_ps(PLStream *pls, PLINT op, void *ptr)
 }
 
 /*----------------------------------------------------------------------*\
-* fill_polygon()
-*
-* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
-* Only solid color fill supported.
+ * fill_polygon()
+ *
+ * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+ * Only solid color fill supported.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -576,9 +562,9 @@ fill_polygon(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* ps_getdate()
-*
-* Get the date and time
+ * ps_getdate()
+ *
+ * Get the date and time
 \*----------------------------------------------------------------------*/
 
 static char *

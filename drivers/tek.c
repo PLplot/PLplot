@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1994/06/24 04:38:35  mjl
+ * Revision 1.28  1994/06/30 17:52:35  mjl
+ * Made another pass to eliminate warnings when using gcc -Wall, especially
+ * those created by changing a PLINT from a long to an int.
+ *
+ * Revision 1.27  1994/06/24  04:38:35  mjl
  * Greatly reworked the POSIX_TTY code that puts the terminal into cbreak
  * mode.  Now, initially both the original and modified terminal states are
  * saved.  When the terminal goes into graphics mode, it is also put into
@@ -35,7 +39,6 @@
 #include <ctype.h>
 
 /* Static function prototypes */
-/* INDENT OFF */
 
 static void	WaitForPage	(PLStream *pls);
 static void	EventHandler	(PLStream *pls, int input_char);
@@ -100,23 +103,25 @@ static char *kermit_color[15]= {
     "\033[1;35m","\033[1;32m","\033[1;36m","\033[0;34m",
     "\033[0;33m"};
 
-/* INDENT ON */
 /*----------------------------------------------------------------------*\
-* plD_init_xterm()	xterm 
-* plD_init_tekt()	Tek 4010 terminal
-* plD_init_tekf()	Tek 4010 file
-* plD_init_tek4107t()	Tek 4105/4107 terminal
-* plD_init_tek4107f()	Tek 4105/4107 file
-* plD_init_mskermit()	MS-Kermit emulator (DOS)
-* plD_init_vlt()	VLT emulator (Amiga)
-* plD_init_versaterm()	VersaTerm emulator (Mac)
-*
-* Initialize device.  These just set attributes for the particular tektronix
-* device, then call tek_init().  The following attributes can be set:
-*
-* pls->termin		if a terminal device
-* pls->color		if color
-*
+ * plD_init_xterm()	xterm 
+ * plD_init_tekt()	Tek 4010 terminal
+ * plD_init_tekf()	Tek 4010 file
+ * plD_init_tek4107t()	Tek 4105/4107 terminal
+ * plD_init_tek4107f()	Tek 4105/4107 file
+ * plD_init_mskermit()	MS-Kermit emulator (DOS)
+ * plD_init_vlt()	VLT emulator (Amiga)
+ * plD_init_versaterm()	VersaTerm emulator (Mac)
+ *
+ * Initialize device.  These just set attributes for the particular
+ * tektronix device, then call tek_init().  The following attributes can
+ * be set:
+ *
+ * pls->termin		if a terminal device
+ * pls->color		if color
+ * pls->dev_fill0	if can handle solid area fill
+ * pls->dev_fill1	if can handle pattern area fill
+ *
 \*----------------------------------------------------------------------*/
 
 void 
@@ -188,16 +193,15 @@ plD_init_versaterm(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tek_init()
-*
-* Generic tektronix device initialization.
+ * tek_init()
+ *
+ * Generic tektronix device initialization.
 \*----------------------------------------------------------------------*/
 
 static void
 tek_init(PLStream *pls)
 {
     PLDev *dev;
-    int i;
 
     pls->icol0 = 1;
     pls->width = 1;
@@ -280,9 +284,9 @@ tek_init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_line_tek()
-*
-* Draw a line from (x1,y1) to (x2,y2).
+ * plD_line_tek()
+ *
+ * Draw a line from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
@@ -307,9 +311,9 @@ plD_line_tek(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_polyline_tek()
-*
-* Draw a polyline in the current color.
+ * plD_polyline_tek()
+ *
+ * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
@@ -322,9 +326,9 @@ plD_polyline_tek(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_eop_tek()
-*
-* End of page.  User must hit a <CR> to continue (terminal output).
+ * plD_eop_tek()
+ *
+ * End of page.  User must hit a <CR> to continue (terminal output).
 \*----------------------------------------------------------------------*/
 
 void
@@ -340,11 +344,11 @@ plD_eop_tek(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_bop_tek()
-*
-* Set up for the next page.
-* Advance to next family file if necessary (file output).
-* Devices that share graphics/alpha screens need a page clear.
+ * plD_bop_tek()
+ *
+ * Set up for the next page.  Advance to next family file if necessary
+ * (file output).  Devices that share graphics/alpha screens need a page
+ * clear.
 \*----------------------------------------------------------------------*/
 
 void
@@ -374,9 +378,9 @@ plD_bop_tek(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_tidy_tek()
-*
-* Close graphics file or otherwise clean up.
+ * plD_tidy_tek()
+ *
+ * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
@@ -392,9 +396,10 @@ plD_tidy_tek(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_state_tek()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
+ * plD_state_tek()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute,
+ * etc).
 \*----------------------------------------------------------------------*/
 
 void 
@@ -445,9 +450,9 @@ plD_state_tek(PLStream *pls, PLINT op)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_esc_tek()
-*
-* Escape function.
+ * plD_esc_tek()
+ *
+ * Escape function.
 \*----------------------------------------------------------------------*/
 
 void 
@@ -470,9 +475,9 @@ plD_esc_tek(PLStream *pls, PLINT op, void *ptr)
 }
 
 /*----------------------------------------------------------------------*\
-* fill_polygon()
-*
-* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+ * fill_polygon()
+ *
+ * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
 \*----------------------------------------------------------------------*/
 
 static void
@@ -512,21 +517,21 @@ fill_polygon(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tek_text()
-*
-* Switch to text screen (or alpha mode, for vanilla tek's).
-* Restore terminal to its original state, to better handle user input if
-* necessary. 
-*
-* Note: xterm behaves strangely in the following circumstance: switch to
-* the text screen, print a string, and switch to the graphics screen, all
-* done in quick succession.  The first character of the printed string
-* usually comes out blank -- but only apparently so, because if you force
-* a refresh of the screen in this area it will reappear.  This is a
-* reproducible bug on the HP 720 under X11R5.  If you insert a sleep(1)
-* after the switch to text screen or before the switch to graphics screen,
-* the string is printed correctly.  I've been unable to find a workaround
-* for this problem (and I've tried, you can believe eet man).
+ * tek_text()
+ *
+ * Switch to text screen (or alpha mode, for vanilla tek's).  Restore
+ * terminal to its original state, to better handle user input if
+ * necessary.
+ *
+ * Note: xterm behaves strangely in the following circumstance: switch to
+ * the text screen, print a string, and switch to the graphics screen, all
+ * done in quick succession.  The first character of the printed string
+ * usually comes out blank -- but only apparently so, because if you force
+ * a refresh of the screen in this area it will reappear.  This is a
+ * reproducible bug on the HP 720 under X11R5.  If you insert a sleep(1)
+ * after the switch to text screen or before the switch to graphics
+ * screen, the string is printed correctly.  I've been unable to find a
+ * workaround for this problem (and I've tried, you can believe eet man).
 \*----------------------------------------------------------------------*/
 
 static void 
@@ -563,11 +568,11 @@ tek_text(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* tek_graph()
-*
-* Switch to graphics screen (or vector mode, for vanilla tek's).
-* Also switch terminal to cbreak mode, to allow single keystrokes to
-* govern actions at end of page.
+ * tek_graph()
+ *
+ * Switch to graphics screen (or vector mode, for vanilla tek's).  Also
+ * switch terminal to cbreak mode, to allow single keystrokes to govern
+ * actions at end of page.
 \*----------------------------------------------------------------------*/
 
 static void 
@@ -602,11 +607,11 @@ tek_graph(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* encode_int()
-*
-* Encodes a single int into standard tek integer format, storing into a
-* NULL-terminated character string (must be length 4 or greater).  This
-* scheme does not work for negative integers less than 15.
+ * encode_int()
+ *
+ * Encodes a single int into standard tek integer format, storing into a
+ * NULL-terminated character string (must be length 4 or greater).  This
+ * scheme does not work for negative integers less than 15.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -638,11 +643,11 @@ encode_int(char *c, int i)
 }
 
 /*----------------------------------------------------------------------*\
-* encode_vector()
-*
-* Encodes an xy vector (2 ints) into standard tek vector format, storing
-* into a NULL-terminated character string of length 5.  Note that the
-* y coordinate always comes first.
+ * encode_vector()
+ *
+ * Encodes an xy vector (2 ints) into standard tek vector format, storing
+ * into a NULL-terminated character string of length 5.  Note that the y
+ * coordinate always comes first.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -656,10 +661,10 @@ encode_vector(char *c, int x, int y)
 }
 
 /*----------------------------------------------------------------------*\
-* tek_vector()
-*
-* Issues a vector draw command, assuming we are in vector plot mode.
-* XY coordinates are encoded according to the standard xy encoding scheme. 
+ * tek_vector()
+ *
+ * Issues a vector draw command, assuming we are in vector plot mode.  XY
+ * coordinates are encoded according to the standard xy encoding scheme.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -676,11 +681,10 @@ tek_vector(PLStream *pls, int x, int y)
 }
 
 /*----------------------------------------------------------------------*\
-* scolor()
-*
-* Sets a color by tek-encoded RGB values.
-* Need to convert PLPLOT RGB color range (0 to 255) to Tek RGB color 
-* range (0 to 100).
+ * scolor()
+ *
+ * Sets a color by tek-encoded RGB values.  Need to convert PLPLOT RGB
+ * color range (0 to 255) to Tek RGB color range (0 to 100).
 \*----------------------------------------------------------------------*/
 
 static void
@@ -697,9 +701,9 @@ scolor(int icol, int r, int g, int b)
 }
 
 /*----------------------------------------------------------------------*\
-* setcmap()
-*
-* Sets up color palette.
+ * setcmap()
+ *
+ * Sets up color palette.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -724,10 +728,10 @@ setcmap(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* WaitForPage()
-*
-* This routine waits for the user to advance the plot, while handling
-* all other events.
+ * WaitForPage()
+ *
+ * This routine waits for the user to advance the plot, while handling
+ * all other events.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -746,10 +750,9 @@ WaitForPage(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* EventHandler()
-*
-* Event handler routine for xterm.  
-* Just reacts to keyboard input.
+ * EventHandler()
+ *
+ * Event handler routine for xterm.  Just reacts to keyboard input.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -816,10 +819,10 @@ EventHandler(PLStream *pls, int input_char)
 }
 
 /*----------------------------------------------------------------------*\
-* tty cbreak-mode handlers
-*
-* Taken from "Advanced Programming in the UNIX(R) Environment", 
-* by W. Richard Stevens.
+ * tty cbreak-mode handlers
+ *
+ * Taken from "Advanced Programming in the UNIX(R) Environment", 
+ * by W. Richard Stevens.
 \*----------------------------------------------------------------------*/
 
 #ifdef POSIX_TTY
