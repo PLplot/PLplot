@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/01/23 06:05:28  mjl
-   Stubs for new color functions added.
+   Revision 1.9  1993/02/23 05:29:34  mjl
+   Added stubs for functions PLSDEV, PLSESC, and PLSSUB, and deleted stub for
+   PLBEG.
 
+ * Revision 1.8  1993/01/23  06:05:28  mjl
+ * Stubs for new color functions added.
+ *
  * Revision 1.7  1992/10/28  22:20:07  mjl
  * Fixed stupid bug in new plflush() function.
  *
@@ -48,12 +52,6 @@ PLAXES_(PLFLT *x0, PLFLT *y0, char *xopt, PLFLT *xtick,
 	PLINT *nxsub, char *yopt, PLFLT *ytick, PLINT *nysub)
 {
     c_plaxes(*x0, *y0, xopt, *xtick, *nxsub, yopt, *ytick, *nysub);
-}
-
-void
-PLBEG(PLINT *dev, PLINT *nx, PLINT *ny)
-{
-    c_plbeg(*dev, *nx, *ny);
 }
 
 void
@@ -341,6 +339,18 @@ PLSCOLOR(PLINT *color)
 }
 
 void
+PLSDEV_(char *dev)
+{
+    c_plsdev(dev);
+}
+
+void
+PLSESC_(PLINT *esc)
+{
+    c_plsesc((char) *esc);
+}
+
+void
 PLSFAM(PLINT *fam, PLINT *num, PLINT *bmax)
 {
     c_plsfam(*fam, *num, *bmax);
@@ -393,6 +403,12 @@ void
 PLSSTRM(PLINT *strm)
 {
     c_plsstrm(*strm);
+}
+
+void
+PLSSUB(PLINT *nx, PLINT *ny)
+{
+    c_plssub(*nx, *ny);
 }
 
 void
