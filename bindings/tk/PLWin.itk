@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.2  1995/10/26 07:12:03  furnish
+# Revision 1.3  1998/11/18 06:03:44  furnish
+# Mindless hacks to convert to Itcl 3.x.
+#
+# Revision 1.2  1995/10/26  07:12:03  furnish
 # Hacked in a very hacky hack which seems to bring back the plxframe
 # menus.  Not much testing done yet though.
 #
@@ -60,11 +63,11 @@
 #
 ###############################################################################
 
-class PLWin {
+itcl::class PLWin {
     inherit itk::Widget
 
     protected variable hull
-    protected variable oldthis
+#    protected variable oldthis
 
     protected variable width 20c
     protected variable height 15c
@@ -73,7 +76,7 @@ class PLWin {
 
     constructor {args} {
 	set hull $itk_component(hull)
-	set oldthis [info namespace tail $this]
+#	set oldthis [info namespace tail $this]
 
 	eval itk_initialize $args
 
