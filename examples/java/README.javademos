@@ -6,10 +6,12 @@ Here is the cookbook for compiling and running these examples.
 (1) Install a Java SDK (Software Development Kit).  I use
 IBMJava2-SDK-14.tgz which is freely downloadable from IBM.  (See
 http://www-106.ibm.com/developerworks/java/jdk/linux/tested.html for product
-description.)
+description.) Plplot is also known to work with the Sun JDK, gcj/gij and 
+jikes/sablevm.
 
 (2) Set environment variables (under tcsh.  For bash use the export
-variable=value syntax.)
+variable=value syntax.) Depending on your installation this step may be 
+optional.
 # Your location for the java SDK will vary depending on where you unpack the
 # tarball of the SDK.
 setenv JAVA_HOME /home/software/java/IBMJava2-14/
