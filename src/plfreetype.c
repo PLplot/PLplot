@@ -853,8 +853,30 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
     adjust.y=0;
 #endif
 
+/* (RL, on 2005-01-21) The hack below is intended to align single
+ * glyphs being generated via plpoin.  The way to detect this
+ * situation is completely hackish, I must admit, by checking whether the
+ * length of the Unicode array is equal 2 and whether the first
+ * character is actually a font-changing command to font number 4 (for
+ * symbols).  This is ugly because it depends on definitions set
+ * elsewhere, but it works.
+ *
+ * The computation of the vertical and horizontal adjustments are
+ * based on the bouding box of the glyph being loaded (since there is
+ * only one glyph in the string in this case, we are okay here).
+ */
+  
+    if ((args->unicode_array_len == 2) 
+      && (args->unicode_array[0] == 0x10000004)) 
+    {
+        adjust.x = args->just * (FT->face->glyph->metrics.width >> 6);
+        adjust.y = (FT_Pos) (FT->face->glyph->metrics.height / 2.0) >> 6;
+    }
+    else 
+    {
+  
 /* (RL, on 2005-01-21) The vertical adjustment is set below, making
- * the code above moot.  I use the value of h as return by FT_StrX_YW,
+ * the DODGIE conditional moot.  I use the value of h as return by FT_StrX_YW,
  * which should correspond to the total height of the text being
  * drawn.  Freetype aligns text around the baseline, while PLplot
  * aligns to the center of the ascender portion.  We must then adjust
@@ -866,9 +888,10 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
 
     adjust.y = - (FT_Pos) (h / (height_factor * height_factor) / 2.0);
 
-
     adjust.x=args->just*w;    /* was *-1; but just minus it in a few line time now */
 
+    }
+  
     FT_Vector_Transform( &adjust, &FT->matrix);    /* was /&matrix); -  was I using the wrong matrix all this time ?*/
 
     x-=adjust.x;
