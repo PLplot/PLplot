@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.18  1995/09/18 20:15:01  furnish
+# Revision 1.19  1995/11/29 20:55:13  furnish
+# Hack the itcl file selection support for itcl 2.  itcl 1.5 is no
+# longer supported.
+#
+# Revision 1.18  1995/09/18  20:15:01  furnish
 # Move aside the evil class system so it isn't fouling up the new itcl.
 #
 # Revision 1.17  1995/06/01  21:27:51  mjl
@@ -286,7 +290,15 @@ proc getSaveFile {devkey} {
 	    "plmeta"	"set filter *.plm" \
 	    "xfig"	"set filter *.fig"
 
-	FileSelect .fs -title "Enter file name" -full 0 -filter $filter
+#	FileSelect .fs -title "Enter file name" -full 0 -filter $filter
+
+    # Modify for [incr Tcl] 2.x (which uses the iwidgets package...
+
+	if {![winfo exist .fs]} {
+	    FileSelectionDialog .fs -title "Enter file name" \
+		-mask $filter \
+		-modality application
+	}
 
 	if {[.fs activate]} {
 	    set file [.fs get]
@@ -294,7 +306,8 @@ proc getSaveFile {devkey} {
 	    set file ""
 	}
 
-	destroy .fs
+#	destroy .fs
+	.fs deactivate
 
     } else {
 	set file [getItem "Enter save file name"]
@@ -319,7 +332,16 @@ proc getSaveFile {devkey} {
 
 proc getPaletteFile {} {
     if { [info commands itcl_class] != "" } then {
-	FileSelect .fs -title "Enter file name" -full 0 -filter *.pal
+
+	if {![winfo exist .fs]} {
+	    FileSelectionDialog .fs -title "Enter file name" \
+		-mask *.pal \
+		-modality application
+	}
+    # Should probably try to do something to fix the filter if it
+    # /does/ already exist...  
+
+#	FileSelect .fs -title "Enter file name" -full 0 -filter *.pal
 
 	if {[.fs activate]} {
 	    set file [.fs get]
@@ -327,7 +349,8 @@ proc getPaletteFile {} {
 	    set file ""
 	}
 
-	destroy .fs
+#	destroy .fs
+	.fs deactivate
 
     } else {
 	set file [getItem "Enter palette file name"]
