@@ -70,6 +70,12 @@ proc cmap1_init {w gray} {
 
 proc x08 {{w loopback}} {
 
+    # this should be defined elsewhere.
+    set SURF_CONT 0x10
+    set BASE_CONT 0x20
+    set FACETED   0x80
+    set MAG_COLOR 0x04
+
     matrix opt i 4 = {1, 2, 3, 3}
     matrix alt f 4 = {60.0, 20.0, 60.0, 60.0}
     matrix az  f 4 = {30.0, 60.0, 120.0, 160.0}
@@ -100,40 +106,64 @@ proc x08 {{w loopback}} {
 	    z $i $j = [expr exp(-$r * $r) * cos( $two_pi * $r ) ]
 	}
     }
+
+    set zmin [z min [ expr $xpts * $ypts]]
+    set zmax [z max [ expr $xpts * $ypts]]
+
+    set nlev 10
+    matrix clev f $nlev
+    set step [expr ($zmax-$zmin)/$nlev]
+    for {set i 0} {$i < $nlev} {incr i} {
+	# odd, there seems to be some floating point problems here, I have to
+	# add a small number, else I get the runtime error:
+	# "plcol1: Invalid color map position: -0.000000, aborting operation"
+	# humm, I remember to see something about tcl precision -- numbers are stored
+	# as strings with a small default precision?
+	clev $i = [expr $zmin + $i * $step + 0.000001]
+    }
+
     $w cmd pllightsource 1. 1. 1.
     for {set k 0} {$k < 4} {incr k} {
-       for {set ifshade 0} {$ifshade < 4} {incr ifshade} {
-  	  $w cmd pladv 0
-  	  $w cmd plvpor 0.0 1.0 0.0 0.9
-  	  $w cmd plwind -1.0 1.0 -0.9 1.1
-  	  $w cmd plcol0 1
-  	  $w cmd plw3d 1.0 1.0 1.0 -1.0 1.0 -1.0 1.0 -1.0 1.0 [alt $k] [az $k]
-  	  $w cmd plbox3 "bnstu" "x axis" 0.0 0 \
+	for {set ifshade 0} {$ifshade < 6} {incr ifshade} {
+	    $w cmd pladv 0
+	    $w cmd plvpor 0.0 1.0 0.0 0.9
+	    $w cmd plwind -1.0 1.0 -0.9 1.1
+	    $w cmd plcol0 3
+	    set title [format "#frPLplot Example 8 - Alt=%.0f, Az=%.0f, Opt=%d" \
+			   [alt $k] [az $k] [opt $k] ]
+	$w cmd plmtex "t" 1.0 0.5 0.5 $title
+	$w cmd plcol0 1
+	$w cmd plw3d 1.0 1.0 1.0 -1.0 1.0 -1.0 1.0 -1.0 1.0 [alt $k] [az $k]
+	$w cmd plbox3 "bnstu" "x axis" 0.0 0 \
 	    "bnstu" "y axis" 0.0 0 \
 	    "bcdmnstuv" "z axis" 0.0 0
   	  $w cmd plcol0 2
 	  if {$ifshade == 0} {
+	      cmap1_init $w 1
 	     $w cmd plot3d x y z [opt $k] 1
 	  } elseif {$ifshade == 1} {
+	      cmap1_init $w 0
+	      $w cmd plmesh x y z [expr [opt $k] | $MAG_COLOR]
+	  } elseif {$ifshade == 2} {
 	     #set up modified gray scale cmap1.
 	     cmap1_init $w 1
-	     $w cmd plotsh3d x y z 0
+	     $w cmd plsurf3d x y z 0
+	  } elseif {$ifshade == 3} {
+	     #set up modified false colour cmap1.
+	     cmap1_init $w 0
+	     $w cmd plsurf3d x y z [expr [opt $k] | $MAG_COLOR]
+	  } elseif {$ifshade == 4} {
+	     #set up modified false colour cmap1.
+	     cmap1_init $w 0
+	     $w cmd plsurf3d x y z [expr [opt $k] | $MAG_COLOR | $FACETED]
 	  } else {
 	     #set up false colour cmap1.
 	     cmap1_init $w 0
-	     $w cmd plotfc3d x y z 0
-	     if {$ifshade == 3} {
-		# add black wireframe to false color plot
-		$w cmd plcol0 0
-		$w cmd plot3d x y z [opt $k] 0
+	     $w cmd plsurf3d x y z $xpts $ypts \
+		 [expr [opt $k] | $MAG_COLOR | $SURF_CONT | $BASE_CONT] clev $nlev
 	     }
 	  }
-  	  $w cmd plcol0 3
-  	  set title [format "#frPLplot Example 8 - Alt=%.0f, Az=%.0f, Opt=%d" \
-	    [alt $k] [az $k] [opt $k] ]
-  	  $w cmd plmtex "t" 1.0 0.5 0.5 $title
        }
-    }
 
 # Restore defaults
     $w cmd plcol0 1
