@@ -11,16 +11,23 @@
 #\
 exec tclsh "$0" ${1+"$@"}
 
-if {[catch {package require Itcl}]} {
+# If itcl is configured in, -itcl flag will be present.
+set HAVE_ITCL 0
+if {$argc > 0} {
+    foreach arg $argv {
+	if {$arg == "-itcl"} {set HAVE_ITCL 1}
+    }
+}
 
-# Error including Itcl -- only include tcl files
-    auto_mkindex . *.tcl
-
-} else {
-
-# Package require succeeded -- include all itcl, itk files.
-# Think there are enough naming conventions?
-    auto_mkindex . *.tcl *.itcl *.itk *.ith *.itm
+# Catch errors in case there are no tcl files, although this shouldn't happen
+catch {
+    if $HAVE_ITCL {
+    # Include all itcl, itk files.
+	auto_mkindex . *.tcl *.itcl *.itk *.ith *.itm
+    } else {
+    # Just include tcl files
+	auto_mkindex . *.tcl
+    }
 }
 
 exit
