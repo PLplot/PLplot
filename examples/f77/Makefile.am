@@ -72,53 +72,52 @@ f77m4_sources = \
 	x22f.fm4 
 
 # Need explicit dependencies for Solaris make.
-x01f.f: x01f.fm4
+x01f.f: x01f.fm4 $(top_builddir)/config.status
 
-x02f.f: x02f.fm4
+x02f.f: x02f.fm4 $(top_builddir)/config.status
 
-x03f.f: x03f.fm4
+x03f.f: x03f.fm4 $(top_builddir)/config.status
 
-x04f.f: x04f.fm4
+x04f.f: x04f.fm4 $(top_builddir)/config.status
 
-x05f.f: x05f.fm4
+x05f.f: x05f.fm4 $(top_builddir)/config.status
 
-x06f.f: x06f.fm4
+x06f.f: x06f.fm4 $(top_builddir)/config.status
 
-x07f.f: x07f.fm4
+x07f.f: x07f.fm4 $(top_builddir)/config.status
 
-x08f.f: x08f.fm4
+x08f.f: x08f.fm4 $(top_builddir)/config.status
 
-x09f.f: x09f.fm4
+x09f.f: x09f.fm4 $(top_builddir)/config.status
 
-x10f.f: x10f.fm4
+x10f.f: x10f.fm4 $(top_builddir)/config.status
 
-x11f.f: x11f.fm4
+x11f.f: x11f.fm4 $(top_builddir)/config.status
 
-x12f.f: x12f.fm4
+x12f.f: x12f.fm4 $(top_builddir)/config.status
 
-x13f.f: x13f.fm4
+x13f.f: x13f.fm4 $(top_builddir)/config.status
 
-x14f.f: x14f.fm4
+x14f.f: x14f.fm4 $(top_builddir)/config.status
 
-x15f.f: x15f.fm4
+x15f.f: x15f.fm4 $(top_builddir)/config.status
 
-x16f.f: x16f.fm4
+x16f.f: x16f.fm4 $(top_builddir)/config.status
 
-x16af.f: x16af.fm4
+x16af.f: x16af.fm4 $(top_builddir)/config.status
 
-x17f.f: x17f.fm4
+x17f.f: x17f.fm4 $(top_builddir)/config.status
 
-x18f.f: x18f.fm4
+x18f.f: x18f.fm4 $(top_builddir)/config.status
 
-x22f.f: x22f.fm4
+x22f.f: x22f.fm4 $(top_builddir)/config.status
 
 SUFFIXES = .fm4
 
+.fm4.f: 
 if with_double
-.fm4.f:
 	cp $< $*.f
 else
-.fm4.f:
 	sed -f double2single.sed $< > $*.f
 endif
 
