@@ -8,6 +8,12 @@
 
 struct PLStream_struct;
 
+enum {
+    plDevType_FileOriented = 0,
+    plDevType_Interactive = 1,
+    plDevType_Null = -1
+};
+
 /*--------------------------------------------------------------------------*\
  * Define structure containing pointers to device dependent functions.
  *
@@ -17,6 +23,10 @@ struct PLStream_struct;
  *
  * pl_type	0 for file-oriented device, 1 for interactive
  *		(the null driver uses -1 here)
+ *
+ * pl_seq       The sequence number for ordering the presentation list of the
+ *              available drivers.  This is an ordering only, not an absolute
+ *              position in the list.
  *
  * pl_init	Initialize device.  This routine may also prompt the user
  *		for certain device parameters or open a graphics file
@@ -66,6 +76,7 @@ typedef struct {
     char *pl_MenuStr;
     char *pl_DevName;
     int  pl_type;
+    int  pl_seq;
     plD_init_fp     pl_init;
     plD_line_fp     pl_line;
     plD_polyline_fp pl_polyline;
