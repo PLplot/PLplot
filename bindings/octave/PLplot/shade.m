@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998, 1999, 2000, 2001, 2002 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -20,9 +20,6 @@
 ## or a vector, specifying where the shade level must be
 ## if contour exists, each shade level will be contoured with 'countour' color
 
-## FIXME use plshades() for this! Its faster
-## plshades(z,'0',minx,maxx,miny,maxy,linspace(minz,maxz,20)',1,3,0,1,tr)
-
 function shade(x, y, z, levels, cont )
 
   global __pl
@@ -34,13 +31,13 @@ function shade(x, y, z, levels, cont )
   if (nargin == 1 && is_matrix(x))
     levels = 20;
     cont = 0;
-    z = x; x = 1:rows(z); y = 1:columns(z);
+    z = x; y = 1:rows(z); x = 1:columns(z);
   elseif (nargin == 2 && is_matrix(x))
     cont = 0; levels = y;
-    z = x; x = 1:rows(z); y = 1:columns(z);
+    z = x; y = 1:rows(z); x = 1:columns(z);
   elseif (nargin == 3 && is_scalar(z))
     levels = y; cont = z;
-    z = x; x = 1:rows(z); y = 1:columns(z);
+    z = x; y = 1:rows(z); x = 1:columns(z);
   elseif (nargin == 3)
     levels = 20;
     cont = 0;
@@ -57,9 +54,9 @@ function shade(x, y, z, levels, cont )
   max_color = 0; max_width = 0;
   
   if (cont)
-    min_color = cont; min_width = 1;
+    cont_color = cont; cont_width = 1;
   else
-    min_color = 0; min_width = 0;
+    cont_color = 0; cont_width = 0;
   endif
 
   xlen = length (x); ylen = length (y);
@@ -111,7 +108,7 @@ function shade(x, y, z, levels, cont )
   endif
 
   maxx = max(x); maxy = max(y); minx = min(x); miny = min(y);
-  tr = [(maxx-minx)/(xlen-1); 0; xmm; 0; (maxy-miny)/(ylen-1); ymm];
+  
   
   if (!is_scalar(levels))
     n = length(levels)-1;
@@ -128,13 +125,23 @@ function shade(x, y, z, levels, cont )
   __pl.pllsty(__pl_strm) = 1;	
   __pl.lab_pos(__pl_strm) = 1;
 
+  tr = [(maxx-minx)/(xlen-1); 0; xmm; 0; (maxy-miny)/(ylen-1); ymm];
   plpsty(0);
+  if (1) ## it turns out that plshades() is slower than several calls to plshade() !? and plshades() sometimes fails ?!
+
+    for i = 1:n
+      plshade(z', '0', minx, maxx, miny, maxy, 
+	      clevel(i), clevel(i+1),
+	      1, (i-1) / (n-1), 1,
+	      cont_color, cont_width, max_color, max_width, 1, tr);
+    endfor
+  else
+
+    plshadesx(z, minx, maxx, miny, maxy, 
+	     clevel', 1, cont_color, cont_width, 1, tr);
+  endif
+
   for i = 1:n
-    plshade(z, '0', minx, maxx, miny, maxy, 
-	    clevel(i), clevel(i+1),
-	    1, (i-1) / (n-1), 1,
-	    min_color, min_width, max_color, max_width, 1, tr);
-    
     __pl.lab_str = [__pl.lab_str; sprintf("%#+.2G", cclevel(i))];
     __pl.lab_col(__pl_strm,__pl.lab_pos(__pl_strm)) = __pl.plcol(__pl_strm);
     __pl.lab_lsty(__pl_strm,__pl.lab_pos(__pl_strm)) = __pl.pllsty(__pl_strm);
@@ -161,5 +168,5 @@ function shade(x, y, z, levels, cont )
   pllab(tdeblank(__pl.xlabel(__pl_strm,:)), tdeblank(__pl.ylabel(__pl_strm,:)), tdeblank(__pl.tlabel(__pl_strm,:)));
   plflush;
   empty_list_elements_ok = old_empty_list_elements_ok;
-      
+  
 endfunction

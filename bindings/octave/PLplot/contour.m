@@ -48,7 +48,7 @@ function contour (z, n, x, y)
 
   if (nargin == 1 || nargin == 2)
     if (is_matrix (z))
-      __pl_contour(1:rows(z), 1:columns(z), z, n);      
+      __pl_contour(1:columns(z), 1:rows(z), z', n);      
     else
       error ("contour: argument must be a matrix");
     endif
@@ -61,7 +61,7 @@ function contour (z, n, x, y)
       temp1 = z; y = n; z = x; x = temp1;
     endif	
     if (is_vector (x) && is_vector (y) && is_matrix (z))
-      if (length (x) == rows (z) && length (y) == columns (z))
+      if (length (x) == columns (z) && length (y) == rows (z))
 	if (rows (x) == 1)
 	  x = x';
 	endif
@@ -69,7 +69,7 @@ function contour (z, n, x, y)
 	  y = y';
 	endif
 	
-	__pl_contour(x, y, z, lines);
+	__pl_contour(x, y, z', lines);
       else
         msg = "contour: rows (z) must be the same as length (x) and";
         msg = sprintf ("%s\ncolumns (z) must be the same as length (y)", msg);
