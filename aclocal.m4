@@ -37,7 +37,7 @@ dnl>
 dnl> This strips off the last part of the file name.  "prefix" should
 dnl> now hold the absolute pathname of the containing directory.
 dnl>
-dnl>	dirname=`echo $prefix | awk '{FS="/"; print $NF}'`
+dnl>	dirname=`echo $prefix | sed 's%/.*/%%'`
 dnl>
 dnl> This strips off the last "/"-delimited field and stores into
 dnl> "dirname".  
@@ -62,7 +62,7 @@ changequote(,)dnl
       # Not all systems have dirname.
       prefix=`ls -l $ac_dir/$1 | awk '{print $NF}'`
       prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
-      dirname=`echo $prefix | awk '{FS="/"; print $NF}'`
+      dirname=`echo $prefix | sed 's%/.*/%%'`
       if test $dirname = "bin"; then
         prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
       else
