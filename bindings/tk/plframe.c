@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1994/04/08 11:47:41  mjl
+ * Revision 1.25  1994/04/25 18:53:39  mjl
+ * Added the PLStream pointer to the widget structure, to allow faster access
+ * to PLplot internals.  Added "cmd" widget commands "scmap0", "gcmap0",
+ * "scmap1", "gcmap1" for setting/getting palette settings.
+ *
+ * Revision 1.24  1994/04/08  11:47:41  mjl
  * Fixed some casts.
  *
  * Revision 1.23  1994/02/07  22:55:21  mjl
@@ -46,7 +51,7 @@
  *
  *	This module implements "plframe" widgets for the Tk toolkit.
  *	These are frames that have extra logic to allow them to be
- *	interfaced with the plplot X driver.  These are then drawn
+ *	interfaced with the PLPlot X driver.  These are then drawn
  *	into and respond to keyboard and mouse events.
  *
  * Maurice LeBrun
@@ -66,6 +71,7 @@
 \*----------------------------------------------------------------------*/
 
 #include "plserver.h"
+#include "plstream.h"
 
 #define NDEV	20		/* Max number of output device types */
 
@@ -125,9 +131,10 @@ typedef struct {
     /* control stuff */
 
     int tkwin_initted;		/* Set first time widget is mapped */
-    int plplot_initted;		/* Set first time plplot is initialized */
-    PLINT ipls;			/* Plplot stream number */
-    PLINT ipls_save;		/* Plplot stream number, save files */
+    int plplot_initted;		/* Set first time PLPlot is initialized */
+    PLStream *plsc;		/* PLPlot stream pointer */
+    PLINT ipls;			/* PLPlot stream number */
+    PLINT ipls_save;		/* PLPlot stream number, save files */
 
     PLRDev *plr;		/* Renderer state information.  Malloc'ed */
     XColor *bgColor;		/* Background color */
@@ -491,7 +498,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     c = argv[1][0];
     length = strlen(argv[1]);
 
-/* cmd -- issue a command to the plplot library */
+/* cmd -- issue a command to the PLPlot library */
 
     if ((c == 'c') && (strncmp(argv[1], "cmd", length) == 0)) {
 	result = Cmd(interp, plFramePtr, argc-2, argv+2);
@@ -709,7 +716,7 @@ DestroyPlFrame(ClientData clientData)
     ckfree((char *) plFramePtr->plr);
     ckfree((char *) plFramePtr);
 
-/* Tell plplot to clean up */
+/* Tell PLPlot to clean up */
 
     plend();
 }
@@ -793,7 +800,7 @@ PlFrameEventProc(ClientData clientData, register XEvent *eventPtr)
  *	None.
  *
  * Side effects:
- *	Plplot internal parameters and device driver are initialized.
+ *	PLPlot internal parameters and device driver are initialized.
  *
  *---------------------------------------------------------------------------
  */
@@ -811,11 +818,14 @@ PlFrameInit(ClientData clientData)
     plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
 
 /* First-time initialization */
-/* Plplot calls to set driver and related variables are made. */
+/* PLPlot calls to set driver and related variables are made. */
 /* The call to plinit() must come AFTER this section of code */
 /* This part will require modification to support >1 embedded widgets */
 
     if ( ! plFramePtr->tkwin_initted) {
+	plgpls(&plFramePtr->plsc);
+	plgstrm(&plFramePtr->ipls);
+
 	plsdev("xwin");
 	plsxwin(Tk_WindowId(tkwin));
 	plspause(0);
@@ -900,7 +910,7 @@ DisplayPlFrame(ClientData clientData)
 		plFramePtr->borderWidth, plFramePtr->relief);
     }
 
-/* If plplot not initialized yet, return and cancel pending refresh */
+/* If PLPlot not initialized yet, return and cancel pending refresh */
 
     if ( ! plFramePtr->plplot_initted) {
 	plFramePtr->flags &= ~REFRESH_PENDING;
@@ -959,23 +969,24 @@ DisplayPlFrame(ClientData clientData)
 * Cmd
 *
 * Processes "cmd" widget command.
-* Handles commands that go more or less directly to the plplot library.
+* Handles commands that go more or less directly to the PLPlot library.
 * This function will probably become much larger, as additional direct
-* plplot commands are supported.
+* PLPlot commands are supported.
 \*----------------------------------------------------------------------*/
 
 static int
 Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int argc, char **argv)
 {
+    PLStream *plsc = plFramePtr->plsc;
     int length;
     char c;
     int result = TCL_OK;
 
-/* no option -- return list of available plplot commands */
+/* no option -- return list of available PLPlot commands */
 
     if (argc == 0) {
-	Tcl_SetResult(interp, "init setopt", TCL_VOLATILE);
+	Tcl_SetResult(interp, "init setopt", TCL_STATIC);
 	return TCL_OK;
     }
 
@@ -991,7 +1002,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    result = TCL_ERROR;
 	}
 	else if ( ! plFramePtr->tkwin_initted) {
-	    Tcl_AppendResult(interp, "widget creation must precede plplot",
+	    Tcl_AppendResult(interp, "widget creation must precede PLPlot",
 		    "init command", (char *) NULL);
 	    result = TCL_ERROR;
 	}
@@ -1002,7 +1013,145 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
     }
 
-/* setopt -- set a plplot option (command-line syntax) */
+/* gcmap0 -- get color map 0 */
+/* first arg is number of colors, the rest are hex number specifications */
+
+    else if ((c == 'g') && (strncmp(argv[0], "gcmap0", length) == 0)) {
+	int i;
+	unsigned long plcolor;
+	char str[10];
+
+	sprintf(str, "%d", plsc->ncol0);
+	Tcl_AppendElement(interp, str);
+	for (i = 0; i < plsc->ncol0; i++) {
+	    plcolor = ((plsc->cmap0[i].r << 16) | 
+		       (plsc->cmap0[i].g << 8) |
+		       (plsc->cmap0[i].b));
+
+	    sprintf(str, "#%06x", (plcolor & 0xFFFFFF));
+	    Tcl_AppendElement(interp, str);
+	}
+	result = TCL_OK;
+    }
+
+/* scmap0 -- set color map 0 */
+/* first arg is number of colors, the rest are hex number specifications */
+
+    else if ((c == 's') && (strncmp(argv[0], "scmap0", length) == 0)) {
+	int i, j = 1, status, ncol0 = atoi(argv[j]);
+	char *color;
+	XColor xcolor;
+
+	if (ncol0 > 16 || ncol0 < 1) {
+	    Tcl_AppendResult(interp, "illegal number of colors in cmap0: ",
+			     argv[1], (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	plsc->ncol0 = ncol0;
+	color = strtok(argv[2], " ");
+	for (i = 0; i < plsc->ncol0; i++) {
+	    if ( color == NULL )
+		break;
+
+	    status = XParseColor(plFramePtr->display,
+				 Tk_Colormap(plFramePtr->tkwin),
+				 color, &xcolor);
+
+	    if ( ! status) {
+		fprintf(stderr, "Couldn't parse color %s\n", color);
+		break;
+	    }
+
+	    plsc->cmap0[i].r = (unsigned) (xcolor.red   & 0xFF00) >> 8;
+	    plsc->cmap0[i].g = (unsigned) (xcolor.green & 0xFF00) >> 8;
+	    plsc->cmap0[i].b = (unsigned) (xcolor.blue  & 0xFF00) >> 8;
+
+	    color = strtok(NULL, " ");
+	}
+
+	plP_state(PLSTATE_CMAP0);
+    }
+
+/* gcmap1 -- get color map 1 */
+/* first arg is number of control points */
+/* the rest are hex number specifications followed by positions (0-100) */
+
+    else if ((c == 'g') && (strncmp(argv[0], "gcmap1", length) == 0)) {
+	int i;
+	unsigned long plcolor;
+	char str[10];
+	PLFLT h, l, s, r, g, b;
+	int r1, g1, b1;
+
+	sprintf(str, "%d", plsc->ncp1);
+	Tcl_AppendElement(interp, str);
+	for (i = 0; i < plsc->ncp1; i++) {
+	    h = plsc->cmap1cp[i].h;
+	    l = plsc->cmap1cp[i].l;
+	    s = plsc->cmap1cp[i].s;
+
+	    plHLS_RGB(h, l, s, &r, &g, &b);
+
+	    r1 = MAX(0, MIN(255, (int) (256. * r)));
+	    g1 = MAX(0, MIN(255, (int) (256. * g)));
+	    b1 = MAX(0, MIN(255, (int) (256. * b)));
+
+	    plcolor = ((r1 << 16) | (g1 << 8) | (b1));
+
+	    sprintf(str, "#%06x", (plcolor & 0xFFFFFF));
+	    Tcl_AppendElement(interp, str);
+
+	    sprintf(str, "%02d", (int) (100*plsc->cmap1cp[i].i));
+	    Tcl_AppendElement(interp, str);
+	}
+	result = TCL_OK;
+    }
+
+/* scmap1 -- set color map 1 */
+/* first arg is number of colors, the rest are hex number specifications */
+
+    else if ((c == 's') && (strncmp(argv[0], "scmap1", length) == 0)) {
+	int i, j = 1, status, ncp1 = atoi(argv[j]);
+	char *color, *loc;
+	XColor xcolor;
+	PLFLT r[32], g[32], b[32], l[32];
+
+	if (ncp1 > 32 || ncp1 < 1) {
+	    Tcl_AppendResult(interp,
+			     "illegal number of control points in cmap1: ",
+			     argv[1], (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	color = strtok(argv[2], " ");
+	loc = strtok(NULL, " ");
+	for (i = 0; i < ncp1; i++) {
+	    if ( color == NULL )
+		break;
+
+	    status = XParseColor(plFramePtr->display,
+				 Tk_Colormap(plFramePtr->tkwin),
+				 color, &xcolor);
+
+	    if ( ! status) {
+		fprintf(stderr, "Couldn't parse color %s\n", color);
+		break;
+	    }
+
+	    r[i] = ((PLFLT) ((unsigned) (xcolor.red   & 0xFF00) >> 8)) / 255.0;
+	    g[i] = ((PLFLT) ((unsigned) (xcolor.green & 0xFF00) >> 8)) / 255.0;
+	    b[i] = ((PLFLT) ((unsigned) (xcolor.blue  & 0xFF00) >> 8)) / 255.0;
+	    l[i] = atof(loc) / 100.0;
+
+	    color = strtok(NULL, " ");
+	    loc = strtok(NULL, " ");
+	}
+
+	plscmap1l(1, ncp1, l, r, g, b);
+    }
+
+/* setopt -- set a PLPlot option (command-line syntax) */
 /* Just calls plSetInternalOpt() */
 
     else if ((c == 's') && (strncmp(argv[0], "setopt", length) == 0)) {
@@ -1076,8 +1225,8 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	return TCL_ERROR;
     }
 
-/* Set background color.  Need to store in the plplot stream structure */
-/* since redraws are handled from the plplot X driver. */
+/* Set background color.  Need to store in the PLPlot stream structure */
+/* since redraws are handled from the PLPlot X driver. */
 
     Tk_SetBackgroundFromBorder(plFramePtr->tkwin, plFramePtr->border);
 
@@ -1206,7 +1355,7 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* no option -- return list of available info commands */
 
     if (argc == 0) {
-	Tcl_SetResult(interp, "devices", TCL_VOLATILE);
+	Tcl_SetResult(interp, "devices", TCL_STATIC);
 	return TCL_OK;
     }
 
@@ -1608,9 +1757,6 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	plreplot();
 	plflush();
 	plsstrm(plFramePtr->ipls);
-#ifdef DEBUG
-	fprintf(stderr, "Saved plot to file %s\n", plFramePtr->SaveFnam);
-#endif
 	return TCL_OK;
     }
 
@@ -1626,10 +1772,6 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	} 
 	idev = atoi(argv[1]);
-#ifdef DEBUG
-	fprintf(stderr, "Trying to save to device %s file %s\n",
-		plFramePtr->devName[idev], argv[2]);
-#endif
 
 /* If save previously in effect, delete old stream */
 
@@ -1670,20 +1812,6 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	plreplot();
 	plflush();
 	plsstrm(plFramePtr->ipls);
-
-/* Save file name */
-
-#ifdef DEBUG
-	if (plFramePtr->SaveFnam != NULL)
-	    free((void *) plFramePtr->SaveFnam);
-
-	plFramePtr->SaveFnam = (char *)
-	    ckalloc(1 + strlen(argv[2]));
-
-	strcpy(plFramePtr->SaveFnam, argv[2]);
-
-	fprintf(stderr, "Saved plot to file %s\n", plFramePtr->SaveFnam);
-#endif
     }
 
 /* close save file */
@@ -1985,7 +2113,7 @@ gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, char **argv)
  * MapPlFrame --
  *
  *	This procedure is invoked as a when-idle handler to map a
- *	newly-created top-level frame.  Since plplot widgets in
+ *	newly-created top-level frame.  Since PLPlot widgets in
  *	practice never get created at top-level, this routine is
  *	never called.
  *
