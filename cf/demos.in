@@ -1,0 +1,240 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 22-Jul-1994
+#
+# PLplot demo file dependencies and targets.
+# 
+# Targets supported here include: 
+#
+#	cdemos		All the C demos
+#	fdemos		All the Fortran demos
+#	x??[cf]		Demo number ??, C or fortran version
+#	xtk??		Extended wish demos
+#
+# I keep these together in one place just for convenience.
+# -----------------------------------------------------------------------
+
+# -----------------------------------------------------------------------
+# Example programs, in C.
+
+CDEMOS= x01c x02c x03c x04c x05c x06c x07c x08c x09c x10c x11c \
+	x12c x13c x14c x15c x16c x17c x18c tutor
+
+cdemos:	$(CDEMOS)
+
+x01c.o:	x01c.c
+	$(CC) $(CC_FLAGS_DEMOS) x01c.c
+
+x01c:	$(PLLIBS) x01c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x01c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x02c.o:	x02c.c
+	$(CC) $(CC_FLAGS_DEMOS) x02c.c
+
+x02c:	$(PLLIBS) x02c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x02c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x03c.o:	x03c.c
+	$(CC) $(CC_FLAGS_DEMOS) x03c.c
+
+x03c:	$(PLLIBS) x03c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x03c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x04c.o:	x04c.c
+	$(CC) $(CC_FLAGS_DEMOS) x04c.c
+
+x04c:	$(PLLIBS) x04c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x04c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x05c.o:	x05c.c
+	$(CC) $(CC_FLAGS_DEMOS) x05c.c
+
+x05c:	$(PLLIBS) x05c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x05c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x06c.o:	x06c.c
+	$(CC) $(CC_FLAGS_DEMOS) x06c.c
+
+x06c:	$(PLLIBS) x06c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x06c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x07c.o:	x07c.c
+	$(CC) $(CC_FLAGS_DEMOS) x07c.c
+
+x07c:	$(PLLIBS) x07c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x07c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x08c.o:	x08c.c
+	$(CC) $(CC_FLAGS_DEMOS) x08c.c
+
+x08c:	$(PLLIBS) x08c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x08c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x09c.o:	x09c.c
+	$(CC) $(CC_FLAGS_DEMOS) x09c.c
+
+x09c:	$(PLLIBS) x09c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x09c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x10c.o:	x10c.c
+	$(CC) $(CC_FLAGS_DEMOS) x10c.c
+
+x10c:	$(PLLIBS) x10c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x10c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x11c.o:	x11c.c
+	$(CC) $(CC_FLAGS_DEMOS) x11c.c
+
+x11c:	$(PLLIBS) x11c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x11c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x12c.o:	x12c.c
+	$(CC) $(CC_FLAGS_DEMOS) x12c.c
+
+x12c:	$(PLLIBS) x12c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x12c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x13c.o:	x13c.c
+	$(CC) $(CC_FLAGS_DEMOS) x13c.c
+
+x13c:	$(PLLIBS) x13c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x13c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x14c.o:	x14c.c
+	$(CC) $(CC_FLAGS_DEMOS) x14c.c
+
+x14c:	$(PLLIBS) x14c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x14c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x15c.o:	x15c.c
+	$(CC) $(CC_FLAGS_DEMOS) x15c.c
+
+x15c:	$(PLLIBS) x15c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x15c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x16c.o:	x16c.c
+	$(CC) $(CC_FLAGS_DEMOS) x16c.c
+
+x16c:	$(PLLIBS) x16c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x16c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x17c.o:	x17c.c
+	$(CC) $(CC_FLAGS_DEMOS) x17c.c
+
+x17c:	$(PLLIBS) x17c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x17c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+x18c.o:	x18c.c
+	$(CC) $(CC_FLAGS_DEMOS) x18c.c
+
+x18c:	$(PLLIBS) x18c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x18c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+tutor.o:	tutor.c
+	$(CC) $(CC_FLAGS_DEMOS) tutor.c
+
+tutor:	$(PLLIBS) tutor.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+# -----------------------------------------------------------------------
+# Example programs, in Fortran.
+
+FDEMOS= x01f x02f x03f x04f x05f x06f x07f x08f x09f x10f x11f \
+	x12f x13f x16f
+
+fdemos:	$(FDEMOS)
+
+x01f:	$(PLLIBS) x01f.o
+	$(LDF) $(LDF_FLAGS) x01f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x02f:	$(PLLIBS) x02f.o
+	$(LDF) $(LDF_FLAGS) x02f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x03f:	$(PLLIBS) x03f.o
+	$(LDF) $(LDF_FLAGS) x03f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x04f:	$(PLLIBS) x04f.o
+	$(LDF) $(LDF_FLAGS) x04f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x05f:	$(PLLIBS) x05f.o
+	$(LDF) $(LDF_FLAGS) x05f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x06f:	$(PLLIBS) x06f.o
+	$(LDF) $(LDF_FLAGS) x06f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x07f:	$(PLLIBS) x07f.o
+	$(LDF) $(LDF_FLAGS) x07f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x08f:	$(PLLIBS) x08f.o
+	$(LDF) $(LDF_FLAGS) x08f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x09f:	$(PLLIBS) x09f.o
+	$(LDF) $(LDF_FLAGS) x09f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x10f:	$(PLLIBS) x10f.o
+	$(LDF) $(LDF_FLAGS) x10f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x11f:	$(PLLIBS) x11f.o
+	$(LDF) $(LDF_FLAGS) x11f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x12f:	$(PLLIBS) x12f.o
+	$(LDF) $(LDF_FLAGS) x12f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x13f:	$(PLLIBS) x13f.o
+	$(LDF) $(LDF_FLAGS) x13f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+x16f:	$(PLLIBS) x16f.o
+	$(LDF) $(LDF_FLAGS) x16f.o \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
+
+# -----------------------------------------------------------------------
+# TK example programs.
+
+TKDEMOS = xtk01 xtk02
+
+tkdemos: $(TKDEMOS)
+
+xtk01:  $(PLLIBS) xtk01.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk01.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
+xtk02:  $(PLLIBS) xtk02.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk02.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
