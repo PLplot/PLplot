@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.9  1992/10/29 16:03:13  mjl
-   Attached an ID string here too as an experiment.
+   Revision 1.10  1992/11/07 08:04:27  mjl
+   Fixed a problem encountered when a user tried to change the default
+   character/symbol scale heights.
 
+ * Revision 1.9  1992/10/29  16:03:13  mjl
+ * Attached an ID string here too as an experiment.
+ *
  * Revision 1.8  1992/10/27  22:14:11  mjl
  * Support for plflush() function.
  *
@@ -45,8 +49,6 @@
 * font..	Current default font and control parameters
 \*----------------------------------------------------------------------*/
 
-char ident[]="@(#) $Id$";
-
 #include "plplot.h"
 #include <stdio.h>
 #include <string.h>
@@ -76,6 +78,7 @@ grinit (void)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_init) (&pls[ipls]);
+    plbuf_init(&pls[ipls]);
 }
 
  /* Draw line between two points */
@@ -84,6 +87,7 @@ grline (PLINT x1, PLINT y1, PLINT x2, PLINT y2)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_line) (&pls[ipls], x1, y1, x2, y2);
+    plbuf_line(&pls[ipls], x1, y1, x2, y2);
 }
 
  /* Clear screen (or eject page). */
@@ -92,6 +96,7 @@ grclr (void)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_clear) (&pls[ipls]);
+    plbuf_clear(&pls[ipls]);
 }
 
  /* Set up new page. */
@@ -100,6 +105,7 @@ grpage (void)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_page) (&pls[ipls]);
+    plbuf_page(&pls[ipls]);
 }
 
  /* Advance to new page. */
@@ -108,6 +114,7 @@ gradv (void)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_adv) (&pls[ipls]);
+    plbuf_adv(&pls[ipls]);
 }
 
  /* Tidy up device (flush buffers, close file, etc.) */
@@ -116,6 +123,7 @@ grtidy (void)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_tidy) (&pls[ipls]);
+    plbuf_tidy(&pls[ipls]);
 }
 
  /* Change pen color. */
@@ -124,6 +132,7 @@ grcol (void)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_color) (&pls[ipls]);
+    plbuf_color(&pls[ipls]);
 }
 
  /* Switch to text mode (or screen). */
@@ -132,6 +141,7 @@ grtext (void)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_text) (&pls[ipls]);
+    plbuf_text(&pls[ipls]);
 }
 
  /* Switch to graphics mode (or screen). */
@@ -140,6 +150,7 @@ grgra (void)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_graph) (&pls[ipls]);
+    plbuf_graph(&pls[ipls]);
 }
 
  /* Set pen width. */
@@ -148,6 +159,7 @@ grwid (void)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_width) (&pls[ipls]);
+    plbuf_width(&pls[ipls]);
 }
 
  /* Escape function, for driver-specific commands. */
@@ -156,6 +168,7 @@ gresc (PLINT op, char *ptr)
 {
     offset = pls[ipls].device - 1;
     (*plDispatchTable[offset].pl_esc) (&pls[ipls], op, ptr);
+    plbuf_esc(&pls[ipls], op, ptr);
 }
 
 /*----------------------------------------------------------------------*\
@@ -198,11 +211,12 @@ grbeg (PLINT dev)
     gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
     gpixmm(&xpmm, &ypmm);
     scale = 0.5 * ((phyxma-phyxmi)/xpmm + (phyyma-phyymi)/ypmm)/ 200.0;
+    sscale(scale);
 
-    plschr((PLFLT) (4.0 * scale), 1.0);
-    plssym((PLFLT) (4.0 * scale), 1.0);
-    plsmaj((PLFLT) (3.0 * scale), 1.0);
-    plsmin((PLFLT) (1.5 * scale), 1.0);
+    plschr(4.0, 1.0);
+    plssym(4.0, 1.0);
+    plsmaj(3.0, 1.0);
+    plsmin(1.5, 1.0);
 
 /* Switch to graphics mode and set color */
 
@@ -241,16 +255,16 @@ c_plfontld( PLINT fnt )
 \*----------------------------------------------------------------------*/
 
 void 
-c_plgpage( PLFLT *pxp, PLFLT *pyp,
-	  PLINT *pxleng, PLINT *pyleng, PLINT *pxoff, PLINT *pyoff )
+c_plgpage( PLFLT *p_xp, PLFLT *p_yp,
+	  PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT *p_yoff )
 
 {
-    *pxp = pls[ipls].xdpi;
-    *pyp = pls[ipls].ydpi;
-    *pxleng = pls[ipls].xlength;
-    *pyleng = pls[ipls].ylength;
-    *pxoff = pls[ipls].xoffset;
-    *pyoff = pls[ipls].yoffset;
+    *p_xp = pls[ipls].xdpi;
+    *p_yp = pls[ipls].ydpi;
+    *p_xleng = pls[ipls].xlength;
+    *p_yleng = pls[ipls].ylength;
+    *p_xoff = pls[ipls].xoffset;
+    *p_yoff = pls[ipls].yoffset;
 }
 
 void
@@ -269,9 +283,9 @@ c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
 }
 
 void 
-c_plgstrm( PLINT *pstrm )
+c_plgstrm( PLINT *p_strm )
 {
-    *pstrm = ipls;
+    *p_strm = ipls;
 }
 
 void 
@@ -378,11 +392,11 @@ c_plspause( PLINT pause )
 \*----------------------------------------------------------------------*/
 
 void 
-c_plgfam( PLINT *pfam, PLINT *pnum, PLINT *pbmax )
+c_plgfam( PLINT *p_fam, PLINT *p_num, PLINT *p_bmax )
 {
-    *pfam = pls[ipls].family;
-    *pnum = pls[ipls].member;
-    *pbmax = pls[ipls].bytemax;
+    *p_fam = pls[ipls].family;
+    *p_num = pls[ipls].member;
+    *p_bmax = pls[ipls].bytemax;
 }
 
 void 
@@ -408,10 +422,10 @@ c_plfamadv( void )
 \*----------------------------------------------------------------------*/
 
 void 
-c_plgxax( PLINT *pdigmax, PLINT *pdigits )
+c_plgxax( PLINT *p_digmax, PLINT *p_digits )
 {
-    *pdigmax = pls[ipls].xdigmax;
-    *pdigits = pls[ipls].xdigits;
+    *p_digmax = pls[ipls].xdigmax;
+    *p_digits = pls[ipls].xdigits;
 }
 
 void 
@@ -422,10 +436,10 @@ c_plsxax( PLINT digmax, PLINT digits )
 }
 
 void 
-c_plgyax( PLINT *pdigmax, PLINT *pdigits )
+c_plgyax( PLINT *p_digmax, PLINT *p_digits )
 {
-    *pdigmax = pls[ipls].ydigmax;
-    *pdigits = pls[ipls].ydigits;
+    *p_digmax = pls[ipls].ydigmax;
+    *p_digits = pls[ipls].ydigits;
 }
 
 void 
@@ -436,10 +450,10 @@ c_plsyax( PLINT digmax, PLINT digits )
 }
 
 void 
-c_plgzax( PLINT *pdigmax, PLINT *pdigits )
+c_plgzax( PLINT *p_digmax, PLINT *p_digits )
 {
-    *pdigmax = pls[ipls].zdigmax;
-    *pdigits = pls[ipls].zdigits;
+    *p_digmax = pls[ipls].zdigmax;
+    *p_digits = pls[ipls].zdigits;
 }
 
 void 
@@ -454,9 +468,9 @@ c_plszax( PLINT digmax, PLINT digits )
 \*----------------------------------------------------------------------*/
 
 void 
-glev (PLINT *pn)
+glev (PLINT *p_n)
 {
-    *pn = pls[ipls].level;
+    *p_n = pls[ipls].level;
 }
 
 void 
@@ -466,12 +480,12 @@ slev (PLINT n)
 }
 
 void 
-gbase (PLFLT *px, PLFLT *py, PLFLT *pxc, PLFLT *pyc)
+gbase (PLFLT *p_x, PLFLT *p_y, PLFLT *p_xc, PLFLT *p_yc)
 {
-    *px = pls[ipls].base3x;
-    *py = pls[ipls].base3y;
-    *pxc = pls[ipls].basecx;
-    *pyc = pls[ipls].basecy;
+    *p_x = pls[ipls].base3x;
+    *p_y = pls[ipls].base3y;
+    *p_xc = pls[ipls].basecx;
+    *p_yc = pls[ipls].basecy;
 }
 
 void sbase (PLFLT x, PLFLT y, PLFLT xc, PLFLT yc)
@@ -483,9 +497,9 @@ void sbase (PLFLT x, PLFLT y, PLFLT xc, PLFLT yc)
 }
 
 void 
-gnms (PLINT *pn)
+gnms (PLINT *p_n)
 {
-    *pn = pls[ipls].nms;
+    *p_n = pls[ipls].nms;
 }
 
 void 
@@ -495,11 +509,11 @@ snms (PLINT n)
 }
 
 void 
-gdev (PLINT *pdev, PLINT *pterm, PLINT *pgra)
+gdev (PLINT *p_dev, PLINT *p_term, PLINT *p_gra)
 {
-    *pdev = pls[ipls].device;
-    *pterm = pls[ipls].termin;
-    *pgra = pls[ipls].graphx;
+    *p_dev = pls[ipls].device;
+    *p_term = pls[ipls].termin;
+    *p_gra = pls[ipls].graphx;
 }
 
 void 
@@ -511,9 +525,9 @@ sdev (PLINT dev, PLINT term, PLINT gra)
 }
 
 void 
-gdevice (PLINT *pdev)
+gdevice (PLINT *p_dev)
 {
-    *pdev = pls[ipls].device;
+    *p_dev = pls[ipls].device;
 }
 
 void 
@@ -523,9 +537,9 @@ sdevice (PLINT dev)
 }
 
 void 
-ggra (PLINT *pgra)
+ggra (PLINT *p_gra)
 {
-    *pgra = pls[ipls].graphx;
+    *p_gra = pls[ipls].graphx;
 }
 
 void 
@@ -541,10 +555,10 @@ smod (PLINT term)
 }
 
 void 
-gcurr (PLINT *pix, PLINT *piy)
+gcurr (PLINT *p_ix, PLINT *p_iy)
 {
-    *pix = pls[ipls].currx;
-    *piy = pls[ipls].curry;
+    *p_ix = pls[ipls].currx;
+    *p_iy = pls[ipls].curry;
 }
 
 void 
@@ -555,12 +569,12 @@ scurr (PLINT ix, PLINT iy)
 }
 
 void 
-gdom (PLFLT *pxmin, PLFLT *pxmax, PLFLT *pymin, PLFLT *pymax)
+gdom (PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
 {
-    *pxmin = pls[ipls].domxmi;
-    *pxmax = pls[ipls].domxma;
-    *pymin = pls[ipls].domymi;
-    *pymax = pls[ipls].domyma;
+    *p_xmin = pls[ipls].domxmi;
+    *p_xmax = pls[ipls].domxma;
+    *p_ymin = pls[ipls].domymi;
+    *p_ymax = pls[ipls].domyma;
 }
 
 void sdom (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
@@ -572,11 +586,11 @@ void sdom (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 }
 
 void 
-grange (PLFLT *pzscl, PLFLT *pzmin, PLFLT *pzmax)
+grange (PLFLT *p_zscl, PLFLT *p_zmin, PLFLT *p_zmax)
 {
-    *pzscl = pls[ipls].zzscl;
-    *pzmin = pls[ipls].ranmi;
-    *pzmax = pls[ipls].ranma;
+    *p_zscl = pls[ipls].zzscl;
+    *p_zmin = pls[ipls].ranmi;
+    *p_zmax = pls[ipls].ranma;
 }
 
 void srange (PLFLT zscl, PLFLT zmin, PLFLT zmax)
@@ -587,13 +601,13 @@ void srange (PLFLT zscl, PLFLT zmin, PLFLT zmax)
 }
 
 void 
-gw3wc (PLFLT *pdxx, PLFLT *pdxy, PLFLT *pdyx, PLFLT *pdyy, PLFLT *pdyz)
+gw3wc (PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy, PLFLT *p_dyz)
 {
-    *pdxx = pls[ipls].cxx;
-    *pdxy = pls[ipls].cxy;
-    *pdyx = pls[ipls].cyx;
-    *pdyy = pls[ipls].cyy;
-    *pdyz = pls[ipls].cyz;
+    *p_dxx = pls[ipls].cxx;
+    *p_dxy = pls[ipls].cxy;
+    *p_dyx = pls[ipls].cyx;
+    *p_dyy = pls[ipls].cyy;
+    *p_dyz = pls[ipls].cyz;
 }
 
 void sw3wc (PLFLT dxx, PLFLT dxy, PLFLT dyx, PLFLT dyy, PLFLT dyz)
@@ -606,12 +620,12 @@ void sw3wc (PLFLT dxx, PLFLT dxy, PLFLT dyx, PLFLT dyy, PLFLT dyz)
 }
 
 void 
-gvpp (PLINT *pixmin, PLINT *pixmax, PLINT *piymin, PLINT *piymax)
+gvpp (PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
-    *pixmin = pls[ipls].vppxmi;
-    *pixmax = pls[ipls].vppxma;
-    *piymin = pls[ipls].vppymi;
-    *piymax = pls[ipls].vppyma;
+    *p_ixmin = pls[ipls].vppxmi;
+    *p_ixmax = pls[ipls].vppxma;
+    *p_iymin = pls[ipls].vppymi;
+    *p_iymax = pls[ipls].vppyma;
 }
 
 void 
@@ -624,12 +638,12 @@ svpp (PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
 }
 
 void 
-gspp (PLINT *pixmin, PLINT *pixmax, PLINT *piymin, PLINT *piymax)
+gspp (PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
-    *pixmin = pls[ipls].sppxmi;
-    *pixmax = pls[ipls].sppxma;
-    *piymin = pls[ipls].sppymi;
-    *piymax = pls[ipls].sppyma;
+    *p_ixmin = pls[ipls].sppxmi;
+    *p_ixmax = pls[ipls].sppxma;
+    *p_iymin = pls[ipls].sppymi;
+    *p_iymax = pls[ipls].sppyma;
 }
 
 void 
@@ -642,12 +656,12 @@ sspp (PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
 }
 
 void 
-gclp (PLINT *pixmin, PLINT *pixmax, PLINT *piymin, PLINT *piymax)
+gclp (PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
-    *pixmin = pls[ipls].clpxmi;
-    *pixmax = pls[ipls].clpxma;
-    *piymin = pls[ipls].clpymi;
-    *piymax = pls[ipls].clpyma;
+    *p_ixmin = pls[ipls].clpxmi;
+    *p_ixmax = pls[ipls].clpxma;
+    *p_iymin = pls[ipls].clpymi;
+    *p_iymax = pls[ipls].clpyma;
 }
 
 void 
@@ -660,12 +674,12 @@ sclp (PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
 }
 
 void 
-gphy (PLINT *pixmin, PLINT *pixmax, PLINT *piymin, PLINT *piymax)
+gphy (PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
-    *pixmin = pls[ipls].phyxmi;
-    *pixmax = pls[ipls].phyxma;
-    *piymin = pls[ipls].phyymi;
-    *piymax = pls[ipls].phyyma;
+    *p_ixmin = pls[ipls].phyxmi;
+    *p_ixmax = pls[ipls].phyxma;
+    *p_iymin = pls[ipls].phyymi;
+    *p_iymax = pls[ipls].phyyma;
 }
 
 void 
@@ -678,11 +692,11 @@ sphy (PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
 }
 
 void 
-gsub (PLINT *pnx, PLINT *pny, PLINT *pcs)
+gsub (PLINT *p_nx, PLINT *p_ny, PLINT *p_cs)
 {
-    *pnx = pls[ipls].nsubx;
-    *pny = pls[ipls].nsuby;
-    *pcs = pls[ipls].cursub;
+    *p_nx = pls[ipls].nsubx;
+    *p_ny = pls[ipls].nsuby;
+    *p_cs = pls[ipls].cursub;
 }
 
 void 
@@ -694,10 +708,10 @@ ssub (PLINT nx, PLINT ny, PLINT cs)
 }
 
 void 
-gumpix (PLINT *pix, PLINT *piy)
+gumpix (PLINT *p_ix, PLINT *p_iy)
 {
-    *pix = pls[ipls].umx;
-    *piy = pls[ipls].umy;
+    *p_ix = pls[ipls].umx;
+    *p_iy = pls[ipls].umy;
 }
 
 void 
@@ -708,10 +722,10 @@ sumpix (PLINT ix, PLINT iy)
 }
 
 void 
-gatt (PLINT *pifnt, PLINT *picol)
+gatt (PLINT *p_ifnt, PLINT *p_icol)
 {
-    *pifnt = font;
-    *picol = pls[ipls].color;
+    *p_ifnt = font;
+    *p_icol = pls[ipls].color;
 }
 
 void 
@@ -722,9 +736,9 @@ satt (PLINT ifnt, PLINT icol)
 }
 
 void 
-gcol (PLINT *picol)
+gcol (PLINT *p_icol)
 {
-    *picol = pls[ipls].color;
+    *p_icol = pls[ipls].color;
 }
 
 void 
@@ -734,9 +748,9 @@ scol (PLINT icol)
 }
 
 void 
-gwid (PLINT *ppwid)
+gwid (PLINT *p_pwid)
 {
-    *ppwid = pls[ipls].width;
+    *p_pwid = pls[ipls].width;
 }
 
 void 
@@ -746,12 +760,12 @@ swid (PLINT pwid)
 }
 
 void 
-gspd (PLFLT *pxmin, PLFLT *pxmax, PLFLT *pymin, PLFLT *pymax)
+gspd (PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
 {
-    *pxmin = pls[ipls].spdxmi;
-    *pxmax = pls[ipls].spdxma;
-    *pymin = pls[ipls].spdymi;
-    *pymax = pls[ipls].spdyma;
+    *p_xmin = pls[ipls].spdxmi;
+    *p_xmax = pls[ipls].spdxma;
+    *p_ymin = pls[ipls].spdymi;
+    *p_ymax = pls[ipls].spdyma;
 }
 
 void sspd (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
@@ -763,12 +777,12 @@ void sspd (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 }
 
 void 
-gvpd (PLFLT *pxmin, PLFLT *pxmax, PLFLT *pymin, PLFLT *pymax)
+gvpd (PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
 {
-    *pxmin = pls[ipls].vpdxmi;
-    *pxmax = pls[ipls].vpdxma;
-    *pymin = pls[ipls].vpdymi;
-    *pymax = pls[ipls].vpdyma;
+    *p_xmin = pls[ipls].vpdxmi;
+    *p_xmax = pls[ipls].vpdxma;
+    *p_ymin = pls[ipls].vpdymi;
+    *p_ymax = pls[ipls].vpdyma;
 }
 
 void svpd (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
@@ -780,12 +794,12 @@ void svpd (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 }
 
 void 
-gvpw (PLFLT *pxmin, PLFLT *pxmax, PLFLT *pymin, PLFLT *pymax)
+gvpw (PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
 {
-    *pxmin = pls[ipls].vpwxmi;
-    *pxmax = pls[ipls].vpwxma;
-    *pymin = pls[ipls].vpwymi;
-    *pymax = pls[ipls].vpwyma;
+    *p_xmin = pls[ipls].vpwxmi;
+    *p_xmax = pls[ipls].vpwxma;
+    *p_ymin = pls[ipls].vpwymi;
+    *p_ymax = pls[ipls].vpwyma;
 }
 
 void svpw (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
@@ -797,10 +811,10 @@ void svpw (PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 }
 
 void 
-gpixmm (PLFLT *px, PLFLT *py)
+gpixmm (PLFLT *p_x, PLFLT *p_y)
 {
-    *px = pls[ipls].xpmm;
-    *py = pls[ipls].ypmm;
+    *p_x = pls[ipls].xpmm;
+    *p_y = pls[ipls].ypmm;
 }
 
 void spixmm (PLFLT x, PLFLT y)
@@ -844,12 +858,12 @@ setphy (PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
 }
 
 void 
-gwp (PLFLT *pxscl, PLFLT *pxoff, PLFLT *pyscl, PLFLT *pyoff)
+gwp (PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
-    *pxscl = pls[ipls].wpxscl;
-    *pxoff = pls[ipls].wpxoff;
-    *pyscl = pls[ipls].wpyscl;
-    *pyoff = pls[ipls].wpyoff;
+    *p_xscl = pls[ipls].wpxscl;
+    *p_xoff = pls[ipls].wpxoff;
+    *p_yscl = pls[ipls].wpyscl;
+    *p_yoff = pls[ipls].wpyoff;
 }
 
 void swp (PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
@@ -861,12 +875,12 @@ void swp (PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
 }
 
 void 
-gwm (PLFLT *pxscl, PLFLT *pxoff, PLFLT *pyscl, PLFLT *pyoff)
+gwm (PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
-    *pxscl = pls[ipls].wmxscl;
-    *pxoff = pls[ipls].wmxoff;
-    *pyscl = pls[ipls].wmyscl;
-    *pyoff = pls[ipls].wmyoff;
+    *p_xscl = pls[ipls].wmxscl;
+    *p_xoff = pls[ipls].wmxoff;
+    *p_yscl = pls[ipls].wmyscl;
+    *p_yoff = pls[ipls].wmyoff;
 }
 
 void swm (PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
@@ -878,12 +892,12 @@ void swm (PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
 }
 
 void 
-gdp (PLFLT *pxscl, PLFLT *pxoff, PLFLT *pyscl, PLFLT *pyoff)
+gdp (PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
-    *pxscl = pls[ipls].dpxscl;
-    *pxoff = pls[ipls].dpxoff;
-    *pyscl = pls[ipls].dpyscl;
-    *pyoff = pls[ipls].dpyoff;
+    *p_xscl = pls[ipls].dpxscl;
+    *p_xoff = pls[ipls].dpxoff;
+    *p_yscl = pls[ipls].dpyscl;
+    *p_yoff = pls[ipls].dpyoff;
 }
 
 void sdp (PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
@@ -895,12 +909,12 @@ void sdp (PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
 }
 
 void 
-gmp (PLFLT *pxscl, PLFLT *pxoff, PLFLT *pyscl, PLFLT *pyoff)
+gmp (PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
-    *pxscl = pls[ipls].mpxscl;
-    *pxoff = pls[ipls].mpxoff;
-    *pyscl = pls[ipls].mpyscl;
-    *pyoff = pls[ipls].mpyoff;
+    *p_xscl = pls[ipls].mpxscl;
+    *p_xoff = pls[ipls].mpxoff;
+    *p_yscl = pls[ipls].mpyscl;
+    *p_yoff = pls[ipls].mpyoff;
 }
 
 void smp (PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
@@ -912,10 +926,10 @@ void smp (PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
 }
 
 void 
-gchr (PLFLT *pdef, PLFLT *pht)
+gchr (PLFLT *p_def, PLFLT *p_ht)
 {
-    *pdef = pls[ipls].chrdef;
-    *pht = pls[ipls].chrht;
+    *p_def = pls[ipls].chrdef;
+    *p_ht = pls[ipls].chrht;
 }
 
 void schr (PLFLT def, PLFLT ht)
@@ -925,10 +939,21 @@ void schr (PLFLT def, PLFLT ht)
 }
 
 void 
-gsym (PLFLT *pdef, PLFLT *pht)
+gscale (PLFLT *p_scale)
 {
-    *pdef = pls[ipls].symdef;
-    *pht = pls[ipls].symht;
+    *p_scale = pls[ipls].scale;
+}
+
+void sscale (PLFLT scale)
+{
+    pls[ipls].scale = scale;
+}
+
+void 
+gsym (PLFLT *p_def, PLFLT *p_ht)
+{
+    *p_def = pls[ipls].symdef;
+    *p_ht = pls[ipls].symht;
 }
 
 void ssym (PLFLT def, PLFLT ht)
@@ -938,10 +963,10 @@ void ssym (PLFLT def, PLFLT ht)
 }
 
 void 
-gmaj (PLFLT *pdef, PLFLT *pht)
+gmaj (PLFLT *p_def, PLFLT *p_ht)
 {
-    *pdef = pls[ipls].majdef;
-    *pht = pls[ipls].majht;
+    *p_def = pls[ipls].majdef;
+    *p_ht = pls[ipls].majht;
 }
 
 void smaj (PLFLT def, PLFLT ht)
@@ -951,10 +976,10 @@ void smaj (PLFLT def, PLFLT ht)
 }
 
 void 
-gmin (PLFLT *pdef, PLFLT *pht)
+gmin (PLFLT *p_def, PLFLT *p_ht)
 {
-    *pdef = pls[ipls].mindef;
-    *pht = pls[ipls].minht;
+    *p_def = pls[ipls].mindef;
+    *p_ht = pls[ipls].minht;
 }
 
 void smin (PLFLT def, PLFLT ht)
@@ -964,11 +989,11 @@ void smin (PLFLT def, PLFLT ht)
 }
 
 void 
-gpat (PLINT *pinc[], PLINT *pdel[], PLINT *pnlin)
+gpat (PLINT *p_inc[], PLINT *p_del[], PLINT *p_nlin)
 {
-    *pinc = pls[ipls].inclin;
-    *pdel = pls[ipls].delta;
-    *pnlin = pls[ipls].nps;
+    *p_inc = pls[ipls].inclin;
+    *p_del = pls[ipls].delta;
+    *p_nlin = pls[ipls].nps;
 }
 
 void 
@@ -984,11 +1009,11 @@ spat (PLINT inc[], PLINT del[], PLINT nlin)
 }
 
 void 
-gmark (PLINT *pmar[], PLINT *pspa[], PLINT **pnms)
+gmark (PLINT *p_mar[], PLINT *p_spa[], PLINT **p_nms)
 {
-    *pmar = pls[ipls].mark;
-    *pspa = pls[ipls].space;
-    *pnms = &(pls[ipls].nms);
+    *p_mar = pls[ipls].mark;
+    *p_spa = pls[ipls].space;
+    *p_nms = &(pls[ipls].nms);
 }
 
 void 
@@ -1004,12 +1029,12 @@ smark (PLINT mar[], PLINT spa[], PLINT nms)
 }
 
 void 
-gcure (PLINT **pcur, PLINT **ppen, PLINT **ptim, PLINT **pala)
+gcure (PLINT **p_cur, PLINT **p_pen, PLINT **p_tim, PLINT **p_ala)
 {
-    *pcur = &(pls[ipls].curel);
-    *ppen = &(pls[ipls].pendn);
-    *ptim = &(pls[ipls].timecnt);
-    *pala = &(pls[ipls].alarm);
+    *p_cur = &(pls[ipls].curel);
+    *p_pen = &(pls[ipls].pendn);
+    *p_tim = &(pls[ipls].timecnt);
+    *p_ala = &(pls[ipls].alarm);
 }
 
 void 
