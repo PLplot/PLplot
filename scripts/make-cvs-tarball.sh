@@ -78,7 +78,7 @@ cleanup
 cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
   && cd $CVSTMPDIR \
   && ./bootstrap.sh ${VERSION:---date-version} \
-  && ./configure $DOC_ARG \
+  && ./configure $DOC_ARG --enable-octave \
   && make dist \
   && TARBALL=`ls plplot-*.tar.gz` \
   && mv $TARBALL .. \
