@@ -52,7 +52,7 @@ function __pl_contour(x, y, z, n)
       __pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
     endif
     
-    __pl.type = -3;
+    __pl.type = 0; ## was -3 ??
     __pl.plcol(__pl_strm) = 1;
     __pl.pllsty(__pl_strm) = 1;	
     __pl.lab_pos(__pl_strm) = 1;
