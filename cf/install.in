@@ -7,10 +7,10 @@
 #
 # Make assignments and targets for installation.
 #
-# It is strongly encouraged that you use a dedicated directory such as
+# It is recommended that you use a dedicated directory such as
 # /usr/local/plplot (read the FAQ on this topic).  The install directory
 # will be created if necessary, as will subdirectories bin, doc, examples,
-# include, lib, man (eventually), and tcl. 
+# include, lib, man (eventually), and tcl.
 # -----------------------------------------------------------------------
 
 install: install_lib install_utils $(TCL_INSTALL) $(TK_INSTALL) install_demos
