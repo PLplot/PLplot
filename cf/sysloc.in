@@ -438,15 +438,26 @@ fi
 # Xbsd library is really needed.  libsocket and libnsl are needed on
 # some SysV systems.  libieee.a is supposed to be a Linux deal, dunno if
 # it's important either.
+#
+# On some systems the linker doesn't return an error code to the shell if
+# you try to link with nonexistant libraries, so need to handle these
+# explicitly.
 #--------------------------------------------------------------------
 
 if test -z "$EXTRA_LIBS"; then
     EXTRA_LIBS=
-    AC_HAVE_LIBRARY(Xbsd,   [EXTRA_LIBS="$EXTRA_LIBS -lXbsd"])
-    AC_HAVE_LIBRARY(socket, [EXTRA_LIBS="$EXTRA_LIBS -lsocket"])
-    AC_HAVE_LIBRARY(nsl,    [EXTRA_LIBS="$EXTRA_LIBS -lnsl"])
-    AC_HAVE_LIBRARY(ieee,   [EXTRA_LIBS="$EXTRA_LIBS -lieee"])
-    AC_HAVE_LIBRARY(m,      [EXTRA_LIBS="$EXTRA_LIBS -lm"])
+    case $system in 
+	CRAY* ) 
+	    EXTRA_LIBS="$EXTRA_LIBS -lm"
+	;;
+	* ) 	
+	    AC_HAVE_LIBRARY(Xbsd,   [EXTRA_LIBS="$EXTRA_LIBS -lXbsd"])
+	    AC_HAVE_LIBRARY(socket, [EXTRA_LIBS="$EXTRA_LIBS -lsocket"])
+	    AC_HAVE_LIBRARY(nsl,    [EXTRA_LIBS="$EXTRA_LIBS -lnsl"])
+	    AC_HAVE_LIBRARY(ieee,   [EXTRA_LIBS="$EXTRA_LIBS -lieee"])
+	    AC_HAVE_LIBRARY(m,      [EXTRA_LIBS="$EXTRA_LIBS -lm"])
+	;;
+    esac
 fi
 LIBS="$LIBS $EXTRA_LIBS"
 
