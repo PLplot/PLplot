@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1993/09/14 22:25:44  mjl
+ * Revision 1.25  1993/10/01 23:18:33  mjl
+ * Inserted XSync after creation of pixmap in CreatePixmap() to ensure
+ * the test for a bad allocation is really completed.
+ *
+ * Revision 1.24  1993/09/14  22:25:44  mjl
  * One of the safety checks was mistakenly commented out.
  *
  * Revision 1.23  1993/08/28  06:29:42  mjl
@@ -984,6 +988,7 @@ CreatePixmap(XwDev *dev)
 #endif
     dev->pixmap = XCreatePixmap(dev->display, dev->window,
 				dev->width, dev->height, dev->depth);
+    XSync(dev->display, 0);
     if (CreatePixmapStatus != Success) {
 	dev->write_to_pixmap = 0;
 	fprintf(stderr, "\n\
