@@ -244,7 +244,7 @@ plstream::plstream( int nx, int ny, const char *driver, const char *file )
     ::c_plssub( nx, ny );
     //::c_plinit();
 
-    //::c_plgstrm( &stream );
+    ::c_plgstrm( &stream );
 
     active_streams++;
 }
@@ -261,7 +261,7 @@ plstream::plstream( int nx, int ny, int r, int g, int b, const char *driver, con
     ::c_plscolbg( r, g, b );
     //::c_plinit();
 
-    //::c_plgstrm( &stream );
+    ::c_plgstrm( &stream );
 
     active_streams++;
 }
