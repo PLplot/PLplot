@@ -30,17 +30,12 @@ static int nobuffered = 0;      /* make it a buffered device by default */
 
 #define MAX_INSTR 20
 
-/* Pixels/mm */
-
 /* The xwin driver uses the xscale and yscale values to convert from virtual
  * to real pixels using the current size in pixels of the display window.
  * We define PHYSICAL here so that PLplot core knows about this rescaling
  * and mm values are converted to virtual pixels at a ratio consistent with
  * a constant ratio of DPMM real pixels per mm. */
 #define PHYSICAL	1
-/* Desktop monitors of reasonable quality typically have 0.25 mm spacing 
- * between dots which corresponds to 4.0 dots per mm. */
-#define DPMM		4.0
 
 /* These need to be distinguished since the handling is slightly different. */
 
