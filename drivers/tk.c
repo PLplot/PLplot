@@ -168,7 +168,13 @@ init(PLStream *pls)
     pls->dev_flush = 1;		/* Handle our own flushes */
     pls->dev_fill0 = 1;		/* Handle solid fills */
     pls->dev_fill1 = 1;		/* Handle pattern fills */
-    pls->server_nokill = 1; /* jc: dont kill if ^C */
+    pls->server_nokill = 1;     /* don't kill if ^C */ 
+    pls->plbuf_write = 1;       /* Activate plot buffer. To
+    programmatically save a file we can't call plreplot(), but instead
+    one must send a command to plserver. As there is no API call for
+    this, the user must use the plserver "save/print" menu
+    entries. Activating the plot buffer enables the normal
+    plmkstrm/plcpstrm/plreplot/plend1 way of saving plots. */
 
 /* Specify buffer size if not yet set (can be changed by -bufmax option).  */
 /* A small buffer works best for socket communication */
