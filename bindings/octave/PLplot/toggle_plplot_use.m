@@ -31,25 +31,28 @@ else
   endif
 endif
 
-path = plplot_octave_path;
-ix = findstr (LOADPATH, path);
-if (!isempty (ix))
-  LOADPATH (ix(1):ix(1)+length( path)-1)= "";
+use_plplot_path = plplot_octave_path;
+use_plplot_i = findstr (LOADPATH, use_plplot_path);
+if (!isempty (use_plplot_i))
+  LOADPATH (use_plplot_i(1):use_plplot_i(1)+length(use_plplot_path)-1)= "";
   LOADPATH = strrep (LOADPATH, "::", ":");
 endif
 
 if (strcmp (use_plplot_state, "on"))
-  LOADPATH = [path, ":", LOADPATH];
+  LOADPATH = [use_plplot_path, ":", LOADPATH];
   plplot_stub;
 elseif (strcmp (use_plplot_state, "off"))
-  LOADPATH = [LOADPATH, ":", path];
+  LOADPATH = [LOADPATH, ":", use_plplot_path];
 endif
 
-lcd = pwd;
-cd (path);
-t = [ glob ("*.m "); glob ("support/*.m ") ];
-for i = t'
-  clear (strrep (strrep (deblank(i'), ".m", ""), "support/", ""));
+use_plplot_lcd = pwd;
+cd (use_plplot_path);
+for use_plplot_i = [ glob ("*.m "); glob ("support/*.m ") ]'
+  clear (strrep (strrep (deblank(use_plplot_i'), ".m", ""), "support/", ""));
 end
+cd (use_plplot_lcd);
+
+clear use_plplot_path use_plplot_lcd use_plplot_i
 
 printf ("Use PLplot: %s\n", use_plplot_state);
+
