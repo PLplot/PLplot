@@ -94,7 +94,6 @@ CORE_C = \
 	plpage.c \
 	plsdef.c \
 	plshade.c \
-	plstream.c \
 	plsym.c \
 	pltick.c \
 	plvpor.c \
@@ -117,7 +116,6 @@ CORE_OBJ = \
 	plpage$O \
 	plsdef$O \
 	plshade$O \
-	plstream$O \
 	plsym$O \
 	pltick$O \
 	plvpor$O \
@@ -753,7 +751,6 @@ plot3d$O : plot3d.c plplotP.h plConfig.h plplot.h pdf.h plstream.h
 plpage$O : plpage.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plsdef$O : plsdef.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plshade$O : plshade.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plstream$O : plstream.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plsym$O : plsym.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 pltick$O : pltick.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plvpor$O : plvpor.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 

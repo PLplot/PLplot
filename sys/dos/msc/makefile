@@ -80,7 +80,6 @@ OBJ =	\
 	plpage.o \
 	plsdef.o \
 	plshade.o \
-	plstream.o \
 	plsym.o \
 	pltick.o \
 	plvpor.o \

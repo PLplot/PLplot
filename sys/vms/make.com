@@ -40,7 +40,6 @@ $ 'cc''copt' 'src'plot3d
 $ 'cc''copt' 'src'plpage
 $ 'cc''copt' 'src'plsdef
 $ 'cc''copt' 'src'plshade
-$ 'cc''copt' 'src'plstream
 $ 'cc''copt' 'src'plstring
 $ 'cc''copt' 'src'plsym
 $ 'cc''copt' 'src'pltick
