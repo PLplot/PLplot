@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.4  1994/09/27 21:56:30  mjl
+# Revision 1.5  1995/01/13 23:19:50  mjl
+# Made a bunch of settings global.
+#
+# Revision 1.4  1994/09/27  21:56:30  mjl
 # Changed print key to "P" because it's too easy to hit by mistake.
 #
 # Revision 1.3  1994/06/17  21:22:15  mjl
@@ -56,6 +59,14 @@
 #----------------------------------------------------------------------------
 
 proc pldefaults {} {
+    global gen_font
+    global gen_bold_font
+    global gen_menu_font
+    global gen_italic_font
+    global gen_font_small
+    global gen_bold_font_small
+    global gen_fixed_font
+
     global dialog_font
     global dialog_bold_font
 
