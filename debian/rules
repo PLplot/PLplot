@@ -24,8 +24,13 @@ debinfo		:= $(debshr)/info
 debex		:= $(deblib)/plplot$(version)/examples
 deboct		:= $(debtmp)$(shell octave-config --oct-site-dir)
 
+autotools:
+	-rm -f config.sub config.guess
+	ln -s /usr/share/misc/config.sub config.sub
+	ln -s /usr/share/misc/config.guess config.guess
+
 config: config-stamp
-config-stamp:
+config-stamp: autotools
 	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
                     --enable-tk --enable-gd --enable-dyndrivers        \
                     --disable-static --enable-python --enable-octave   \
@@ -123,4 +128,4 @@ source diff:
 	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary config
+.PHONY: build clean binary-indep binary-arch binary config autotools

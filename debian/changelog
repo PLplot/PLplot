@@ -1,3 +1,11 @@
+plplot (5.2.0.cvs.20030403-1) unstable; urgency=low
+
+  * Built with new CVS sources.
+  * Added build depends on autotools-dev and let debian/rules update
+    config.sub and config.guess.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu,  3 Apr 2003 16:52:17 +0200
+
 plplot (5.2.0.cvs.20030401-1) unstable; urgency=low
 
   * Built with new CVS sources.
