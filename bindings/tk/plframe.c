@@ -1862,6 +1862,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* first arg is number of colors, the rest are hex number specifications */
 
     else if ((c3 == 's') && (strncmp(argv[0], "plscmap1", length) == 0)) {
+#if 0
 	int i, changed = 1, ncp1 = atoi(argv[1]);
 	char *col, *pos, *rev;
 
@@ -1892,6 +1893,25 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    plsc->ncp1 = ncp1;
 	    plcmap1_calc();
 	}
+#else
+        PLINT *r;
+        tclMatrix *matr;
+        PLINT *g;
+        tclMatrix *matg;
+        PLINT *b;
+        tclMatrix *matb;
+        PLINT ncol1;
+
+        matr = Tcl_GetMatrixPtr( interp, argv[1+0] );
+        r = matr->idata;
+        matg = Tcl_GetMatrixPtr( interp, argv[1+1] );
+        g = matg->idata;
+        matb = Tcl_GetMatrixPtr( interp, argv[1+2] );
+        b = matb->idata;
+        ncol1 = atoi(argv[1+3]);
+
+        plscmap1 ( r, g, b, ncol1 );
+#endif
     }
 
 /* plscol0 -- set single color in cmap0 */
