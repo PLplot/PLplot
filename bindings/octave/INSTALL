@@ -21,13 +21,18 @@ Make sure that you have a correctly installed octave, configured with
 should report octave dynamic libs, liboctave.so, libcruft.so and
 liboctinterp.so
 
-Configure PLplot --with-octave=yes in the main directory, and then 'make'.
+Configure PLplot with the --enable-octave plus any other options in
+the main directory, e.g.,
+
+	./configure --enable-octave
+
+and then type 'make'.
 
 Testing:
 
 Before installing, you can test plplot_octave:
 
-'cd' to directory plplot/tmp.
+'cd' to the source distribution directory tmp.
 
 If you have another version of plplot installed, check, after invoking
 octave and making same plots, the plplot version, typing "plgver'" (note
@@ -45,12 +50,70 @@ and a set of script files that emulate the well known x??c plplot demos. Try:
 
 octave> plplot_octave_demo
 
-# demo x14c might fail, if you have problems with tk.
+Demo x14c might fail, if you have problems with tk.
 
 You can set some preferences in the file 'pldef.m'
 
-The default path to instalation is $prefix/share/plplot_octave. You must
-set your LOADPATH to include it *before* the standard Octave LOADPATH.
+Don't worry if you see the following warning:
+
+	warning: empty matrix found in matrix list
+
+You can avoid it setting "empty_list_elements_ok = 1;" in your
+~/.octaverc Octave startup file (see bellow). This is beeing corrected
+in plplot_octave, meanwhile keep remembering me :-).
+
+
+Using:
+
+After testing, type "make install". The default path to instalation is
+$prefix/share/plplot_octave. If you don't like it, reconfigure PLplot
+using the configure option --prefix=<preferred path> and rebuild and
+install, or try "make install PREFIX=<install path>"; this last option
+might not yet work.
+
+If you want to test the installation, call octave and set the LOADPATH as
+
+LOADPATH ="/usr/local/test/share/doc/plplot/examples/octave//\
+:/usr/local/test/share/plplot_octave//:"
+
+You can now repeat the demos you already tried. Or just type 'p1'<CR>,
+'p2'<CR> ... my preferred test is "plot(sin(1:10),'-o')". As usual,
+'help command' gives you some help.
+
+For everyday usage, you must setup your LOADPATH to include the install
+path *before* the standard Octave LOADPATH. The best way of doing it
+is to use the file ~/.octaverc to set it up. Add the following line to
+it, using of course the real install prefix:
+
+LOADPATH="/usr/share/plplot_octave//:<other path>:<other path>";
+
+You can use the standard Octave plot commands if in the LOADPATH a
+":" appears *before* the plplot_octave path, as in
+
+LOADPATH=":/usr/share/plplot_octave//:<other path>:<other path>";
+
+You can use the (not yet working) command 'use_plplot(""yes"|"no")' to
+change between the two sets of commands.
+
+You are done. You can now use almost all the standard Octave plot
+commands plus a hole bunch of new ones.
+
+If you want to use another driver othen than the "xwin" one, which is
+the defaul, you must first open a new plot window using "figure", e.g.
+
+	figure(1,"tk")
+	p1
+	fig(2,"xwin")	# fig() is an alias to figure()
+	p2
+
+To print or save a plot, use
+	save_fig("foo.ps")
+	save_fig("|lp","ps")
+
+Use `lp_setup' to setup your printer.
+
+You might have problems saving/printing from the tk driver using this
+method; use the menus in the tk plot window instead.
 
 If you just want to use the PLplot API, use it as you would from a C
 program, with the exception that you don't need to specify matrices
