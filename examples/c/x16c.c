@@ -14,9 +14,6 @@
 static int ns = 20;		/* Default number of shade levels */
 static int nx = 35;		/* Default number of data points in x */
 static int ny = 46;		/* Default number of data points in y */
-/* solaris compiler prefers defines for dimensions of arrays.*/
-#define XPTS  35
-#define YPTS  46
 
 /* Transformation function */
 
@@ -90,7 +87,7 @@ main(int argc, char *argv[])
     PLFLT x, y, argx, argy, distort;
 
     PLFLT **z, **w, zmin, zmax;
-    char zdefined[XPTS][YPTS];
+    char* zdefined;
     PLFLT *clevel, *shedge, *xg1, *yg1;
     PLcGrid  cgrid1;
     PLcGrid2 cgrid2;
@@ -102,6 +99,10 @@ main(int argc, char *argv[])
     plMergeOpts(options, "x16c options", notes);
     plParseOpts(&argc, argv, PL_PARSE_FULL);
 
+/* Allocate zdefined */
+  
+    zdefined = malloc(nx * ny);
+  
 /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
 
     plscmap0n(3);
@@ -175,9 +176,9 @@ main(int argc, char *argv[])
 	   /* out of laziness reuse this scratch variable*/
 	   argx = sqrt(cgrid2.xg[i][j]*cgrid2.xg[i][j] + cgrid2.yg[i][j]*cgrid2.yg[i][j]);
 	   if(argx < 0.4 || argx > 0.6)
-	     zdefined[i][j] = 1;
+	     zdefined[i*nx + j] = 1;
 	   else
-	     zdefined[i][j] = 0;
+	     zdefined[i*nx + j] = 0;
 	}
     }
 
@@ -271,7 +272,7 @@ main(int argc, char *argv[])
 
     plpsty(0);
 
-    plshades(z, nx, ny, &zdefined[0][0], -1., 1., -1., 1., 
+    plshades(z, nx, ny, zdefined, -1., 1., -1., 1., 
 	     shedge, ns+1, fill_width,
 	     cont_color, cont_width,
 	     plfill, 0, pltr2, (void *) &cgrid2);
