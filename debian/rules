@@ -25,7 +25,8 @@ debex		:= $(deblib)/plplot$(version)/examples
 
 # Architecture exclusion for octave-plplot package
 arch		:= $(shell dpkg-architecture -qDEB_HOST_ARCH)
-ifeq ($(shell if test "$(arch)" = hppa -o "$(arch)" = powerpc ; then \
+ifeq ($(shell if test "$(arch)" = hppa -o "$(arch)" = powerpc \
+                 -o "$(arch)" = m68k ; then \
                 echo yes ; \
               else \
                 echo no ; \

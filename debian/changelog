@@ -1,3 +1,13 @@
+plplot (5.2.1-10) unstable; urgency=low
+
+  * debian/control: Added m68k to the list of excluded architectures of
+    package octave2.*-header in Build-Depends.  Added dependency on
+    python-numeric to package python-plplot.
+  * debian/rules: Exclude building of Octave bindings for m68k
+    architecture.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 22 May 2003 11:26:52 +0200
+
 plplot (5.2.1-9) unstable; urgency=low
 
   * debian/control: Restored "Architecture: any" for the octave-plplot
