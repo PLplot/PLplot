@@ -89,11 +89,7 @@
     distributions. (See http://plplot.sourceforge.net/resources/index.html
     for locations of debs and rpms.) Build the application on the build
     machine using the results of the "plplot-config --cflags --libs" command,
-    and copy the resulting executable(s) to the users' machines.  Note, you
-    will probably have to edit the plplot-config script to change all
-    instances of the PLplot prefix you use on the build machine (say,
-    /usr/local/plplot) to /usr to be consistent with the deb and rpm install
-    prefix of /usr.
+    and copy the resulting executable(s) to the users' machines.
   </para>
 
   <para>
