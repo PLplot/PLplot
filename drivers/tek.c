@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.30  1994/07/22 22:21:28  mjl
+ * Revision 1.31  1994/07/23 04:44:27  mjl
+ * Added conditional compilation of atexit() code based on STDC_HEADERS.
+ *
+ * Revision 1.30  1994/07/22  22:21:28  mjl
  * Eliminated a gcc -Wall warning.
  *
  * Revision 1.29  1994/07/19  22:30:29  mjl
@@ -860,9 +863,10 @@ tty_setup(void)				/* setup for terminal operations */
     termios_cbreak.c_cc[VMIN] = 1;		/* 1 byte at a time */
     termios_cbreak.c_cc[VTIME] = 0;		/* no timer */
 
+#ifdef STDC_HEADERS
     if (atexit(tty_atexit))
 	fprintf(stderr, "Unable to set up atexit handler.\n");
-
+#endif
     return;
 }
 
