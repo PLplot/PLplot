@@ -90,118 +90,131 @@ limexp = 4;
 static PLINT
 sigprec = 2;
 
+/******** contour lines storage ****************************/
 
-typedef struct cont3D {
-    PLFLT level;
-    PLINT npts;
-    PLFLT *x;
-    PLFLT *y;
-} cont3D;
+static CONT_LEVEL *startlev = NULL;
+static CONT_LEVEL *currlev;
+static CONT_LINE *currline;
 
-#define MAX_NODE_ITEMS 512
-#define MAX_NODES 5120
+static int cont3d = 0;
 
-cont3D *lev[MAX_NODES];
-static int nlev = -1;
-int cont3d = 0;
-
-cont3D *alloc_cont3d(PLFLT level)
+static CONT_LINE *
+alloc_line(CONT_LEVEL *node)
 {
-    cont3D *node;
-    PLFLT *xp, *yp;
+  CONT_LINE *line;
 
-    node = (cont3D *) malloc(sizeof(cont3D));
-    xp = (PLFLT *) malloc(MAX_NODE_ITEMS*sizeof(PLFLT));
-    yp = (PLFLT *) malloc(MAX_NODE_ITEMS*sizeof(PLFLT));
-    node->x = xp;
-    node->y = yp;
-    node->level = level;
-    node->npts = 0;
-    return node;
+  line = (CONT_LINE *) malloc(sizeof(CONT_LINE));
+  line->x = (PLFLT *) malloc(LINE_ITEMS*sizeof(PLFLT));
+  line->y = (PLFLT *) malloc(LINE_ITEMS*sizeof(PLFLT));
+  line->npts = 0;
+  line->next = NULL;
+ 
+  return line;
 }
 
-void
-cont_cl_store(void)
+static CONT_LEVEL *
+alloc_level(PLFLT level)
 {
-    int i,j,k,n;
-    PLFLT z[1000], x[1000], y[1000];
+  CONT_LEVEL *node;
 
-    if (nlev != -1) {
-	printf("clean store:\n");
-	for (i=0; i<=nlev; i++) {
-	    printf("lev=%d level=%f npts=%d\n", i, lev[i]->level, lev[i]->npts);
+  node = (CONT_LEVEL *) malloc(sizeof(CONT_LEVEL));
+  node->level = level;
+  node->next = NULL;
+  node->line = alloc_line(node);
 
-	    n = lev[i]->npts;
-
-	    if(0) {
-	    plP_movwor(lev[i]->x[0],lev[i]->y[0]); 
-	    for (j=1; j<n; j++)
-		plP_drawor(lev[i]->x[j],lev[i]->y[j]); 
-	    } else {
-		if (n == 0)
-		    continue;
-		plcol0(0);
-		for (j=0; j<n; j++) {
-		    z[j] = lev[i]->level;
-		    x[j] = lev[i]->x[j];
-		    y[j] = lev[i]->y[j];
-		}
-		plline3(n, x, y, z);plflush();
-	    }
-
-	    free(lev[i]->x);
-	    free(lev[i]->y);
-	    free(lev[i]);
-	}
-	nlev = -1;
-    }
+  return node;
 }
 
-void
+static void
+realloc_line(CONT_LINE *line)
+{
+  line->x = (PLFLT *) realloc(line->x, 
+			      (line->npts + LINE_ITEMS)*sizeof(PLFLT));
+  line->y = (PLFLT *) realloc(line->y, 
+			      (line->npts + LINE_ITEMS)*sizeof(PLFLT));
+}
+
+
+/* new contour level */
+static void
 cont_new_store(PLFLT level)
 {
-    if (cont3d) {
-	if (nlev == MAX_NODES)
-	    plexit("cont3D: too many nodes.");
-
-	lev[++nlev] = alloc_cont3d(level);
-	printf("new_store: nlev=%d level=%f\n", nlev, level);
+  if (cont3d) {
+    if (startlev == NULL) {
+      startlev = alloc_level(level);
+      currlev = startlev;
+    } else {
+      currlev->next = alloc_level(level);
+      currlev = currlev->next; 
     }
+    currline = currlev->line;
+  }
 }
 
 void
+cont_clean_store(CONT_LEVEL *ct)
+{
+  CONT_LINE *tline, *cline;
+  CONT_LEVEL *tlev, *clevel;
+
+  if (ct != NULL) {
+    clevel = ct;
+
+    do {
+      cline = clevel->line;
+      do {
+#ifdef CONT_PLOT_DEBUG /* for 2D plots. For 3D plots look at plot3.c:plotsh3di() */
+	plP_movwor(cline->x[0],cline->y[0]); 
+	for (j=1; j<cline->npts; j++)
+	  plP_drawor(cline->x[j], cline->y[j]); 
+#endif
+	tline = cline->next;
+	free(cline->x);
+	free(cline->y);
+	free(cline);
+	cline = tline;
+      }
+      while(cline != NULL);
+      tlev = clevel->next;
+      free(clevel);
+      clevel = tlev;
+    }
+    while(clevel != NULL);
+    startlev = NULL;
+  }
+}
+
+static void
 cont_xy_store(PLFLT xx, PLFLT yy)
 {
-    if (cont3d) {
-	if (lev[nlev]->npts == MAX_NODE_ITEMS)
-	    plexit("cont3D: too items in node.");
+  if (cont3d) {
+    PLINT pts = currline->npts;
 
-	lev[nlev]->x[lev[nlev]->npts] = xx;
-	lev[nlev]->y[lev[nlev]->npts] = yy;
-	lev[nlev]->npts++;
-    } else 
-	plP_drawor(xx, yy);   
+    if (pts % LINE_ITEMS == 0)
+      realloc_line(currline);
+
+    currline->x[pts] = xx;
+    currline->y[pts] = yy;
+    currline->npts++;
+  } else 
+    plP_drawor(xx, yy);   
 }
 
-void
+static void
 cont_mv_store(PLFLT xx, PLFLT yy)
 {
-    if (cont3d) {
-	if (nlev == MAX_NODES)
-	    plexit("cont3D: too many nodes.");
+  if (cont3d) {
+    if (currline->npts != 0) { /* not an empty list, allocate new */
+      currline->next = alloc_line(currlev);
+      currline = currline->next;
+    }
 
-	if (lev[nlev]->npts != 0) { /* not an empty list, alloc new */
-	    lev[nlev+1] = alloc_cont3d(lev[nlev]->level);
-	    nlev++;
-	    printf("mv_store: nlev=%d nptr = %d\n", nlev , lev[nlev]->npts);;
-	}
-    
-	/* and fill first element */
-	lev[nlev]->x[0] = xx;
-	lev[nlev]->y[0] = yy;
-	lev[nlev]->npts = 1;
-    } else 
-	plP_movwor(xx, yy);   
+    /* and fill first element */
+    currline->x[0] = xx;
+    currline->y[0] = yy;
+    currline->npts = 1;
+  } else 
+    plP_movwor(xx, yy);   
 }
 
 /* small routine to set offset and spacing of contour labels, see desciption above */
@@ -232,7 +245,7 @@ static void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance
 
     *distance += sqrt(delta_x*delta_x + delta_y*delta_y);
 
-    cont_xy_store(tpx,tpy); //plP_drawor(tpx, tpy);
+    plP_drawor(tpx, tpy);
 
     if ((int )(fabs(*distance/contlabel_space)) > *lastindex) {
 	PLFLT scale, vec_x, vec_y, mx, my, dev_x, dev_y, off_x, off_y;
@@ -253,11 +266,11 @@ static void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance
 	off_y = dev_y/scale;
 
 	plptex(tpx+off_x, tpy+off_y, vec_x, vec_y, 0.5, flabel);
-	cont_mv_store(tpx, tpy); // plP_movwor(tpx, tpy);
+	plP_movwor(tpx, tpy);
 	(*lastindex)++;
 
     } else
-	cont_mv_store(tpx, tpy); // plP_movwor(tpx, tpy);
+	plP_movwor(tpx, tpy);
 }
 
 
@@ -400,6 +413,31 @@ plf2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 }
 
 /*--------------------------------------------------------------------------*\
+ * 
+ * cont_store:
+ *
+ * Draw contour lines in memory.
+ * cont_clean_store() must be called after use to release allocated memory.
+ *
+\*--------------------------------------------------------------------------*/
+
+void
+cont_store(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+	   PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, CONT_LEVEL **contour)
+{
+  PLcGrid grid1;
+
+  cont3d = 1;
+
+  grid1.nx = nx; grid1.ny = ny; grid1.xg = x; grid1.yg = y;
+  plcont(z, nx, ny, 1, nx, 1, ny, clevel, nlevel,
+	 pltr1,  (void *) & grid1 );
+
+  *contour = startlev;
+  cont3d = 0;
+}
+
+/*--------------------------------------------------------------------------*\
  * void plcont()
  *
  * Draws a contour plot from data in f(nx,ny).  Is just a front-end to
@@ -465,8 +503,6 @@ plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	plabort("plfcont: out of memory in heap allocation");
 	return;
     }
-
-    cont_cl_store();
 
     for (i = 0; i < nlevel; i++) {
 	plcntr(f2eval, f2eval_data,
@@ -657,7 +693,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		    if (contlabel_active)
 		      pl_drawcontlabel(tpx, tpy, flabel, &distance, &lastindex);
 		    else
-		      cont_xy_store(tpx,tpy); //plP_drawor(tpx, tpy);
+		      cont_xy_store(tpx,tpy); /* plP_drawor(tpx, tpy); */
 
 		    dx = dist * ixg;
 		    dy = dist * iyg;
@@ -680,11 +716,11 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		if (contlabel_active)
 		  pl_drawcontlabel(tpx, tpy, flabel, &distance, &lastindex);
 		else
-		  cont_xy_store(tpx,tpy); //plP_drawor(tpx, tpy);
+		  cont_xy_store(tpx,tpy); /* plP_drawor(tpx, tpy); */
 	    }
 	    else {
 		(*pltr) (xnew, ynew, &tpx, &tpy, pltr_data);
-		cont_mv_store(tpx,tpy); //plP_movwor(tpx, tpy);
+		cont_mv_store(tpx,tpy); /* plP_movwor(tpx, tpy); */
 	    }
 	    xlas = xnew;
 	    ylas = ynew;
@@ -697,7 +733,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		if (contlabel_active)
 		  pl_drawcontlabel(tpx, tpy, flabel, &distance, &lastindex);
 		else
-		  cont_xy_store(tpx,tpy); //plP_drawor(tpx, tpy);
+		  cont_xy_store(tpx,tpy); /* plP_drawor(tpx, tpy); */
 		return;
 	    }
 	    ifirst = 0;
@@ -761,7 +797,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	(*pltr) (xnew, ynew, &tpx, &tpy, pltr_data);
         /* distance = 0.0; */
 
-	cont_xy_store(tpx,tpy); //plP_drawor(tpx, tpy);
+	cont_xy_store(tpx,tpy); /* plP_drawor(tpx, tpy); */
     }
 }
 
