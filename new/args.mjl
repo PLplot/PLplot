@@ -1,7 +1,0 @@
-p.s. I notice in your example program you explicitly cast the constant
-arguments to plplot.  While maybe a good idea in general, in principle you
-don't need to do it, the compiler (if ANSI) is supposed to take care of it.
-But Lattice C 5.10 for the Amiga messes it up (no other ones do that I've
-tried).  So I explicitly cast in the example programs since I occasionally
-run it at home.  I probably should make a note of this in the docs
-somewhere. 
