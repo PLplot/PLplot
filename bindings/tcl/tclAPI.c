@@ -300,7 +300,8 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
 
     argc--; argv++;
     if (argc == 0 || (strcmp(argv[0], "cmd") != 0)) {
-	Tcl_AppendResult(interp, "bad option to \"loopback\": must be ",
+	Tcl_AppendResult(interp, "bad option \"", argv[0],
+			 "\" to \"loopback\": must be ",
 			 "\"cmd ?options?\" ", (char *) NULL);
 	return TCL_ERROR;
     }
@@ -324,8 +325,8 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
 
     hPtr = Tcl_FindHashEntry(&cmdTable, argv[0]);
     if (hPtr == NULL) {
-	Tcl_AppendResult(interp,
-			 "bad option to \"loopback cmd\": must be one of ",
+	Tcl_AppendResult(interp, "bad option \"", argv[0],
+			 "\" to \"loopback cmd\": must be one of ",
 			 (char *) NULL);
 	Append_Cmdlist(interp);
 	result = TCL_ERROR;
