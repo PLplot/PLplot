@@ -1,13 +1,13 @@
 #!c:sksh
 
 #*************************************************************************
-# Makes links to all PLPLOT source files using the SKsh ln script.
+# Makes links to all PLPLOT source files using the SKsh lnsoft script.
 #*************************************************************************
 
-./ln ../src/*.c .
-./ln ../include/*.h .
-./ln ../drivers/*.c .
-./ln ../utils/*.c .
-./ln ../examples/C/*.c .
-./ln ../sys/amiga/src/*.c .
-./ln ../sys/amiga/src/*.h .
+lnsoft ../src/*.c .
+lnsoft ../include/*.h .
+lnsoft ../drivers/*.c .
+lnsoft ../utils/*.c .
+lnsoft ../examples/C/*.c .
+lnsoft ../sys/amiga/src/*.c .
+lnsoft ../sys/amiga/src/*.h .
