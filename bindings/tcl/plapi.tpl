@@ -15,7 +15,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.4  1995/06/30 13:57:03  furnish
+# Revision 1.5  1995/07/01 20:26:22  furnish
+# Implemented plot3d and plmesh, so prototypes removed from here.  Many
+# other things still require cleaning, however.
+#
+# Revision 1.4  1995/06/30  13:57:03  furnish
 # Tyop introduced last update, grrrr.
 #
 # Revision 1.3  1995/06/30  13:47:02  furnish
@@ -396,12 +400,6 @@ plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *),
 	    PLFLT dlong, PLFLT dlat,
 	    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
 
-# Plots a mesh representation of the function z[x][y].
-# pltclgen ...
-
-void
-c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt);
-
 # Creates a new stream and makes it the default.
 # We don't need this in Tcl do we?
 
@@ -416,12 +414,6 @@ disp	PLFLT
 pos	PLFLT
 just	PLFLT
 text	char *
-
-# Plots a 3-d representation of the function z[x][y].
-
-void
-c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
-	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
 
 # Set fill pattern directly.
 
