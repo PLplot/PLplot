@@ -67,7 +67,8 @@ proc plclient_link_init {} {
     } else {
 	global client_name
 
-	send [list $server] "after 1 set client_name [list $client_name]"
+	send [list $server] "after 1 {set client_name [list $client_name]}"
+	send [list $server] "after 2 plserver_start"
     }
 
     wait_until {[info exists client]}

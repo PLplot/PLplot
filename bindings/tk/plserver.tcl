@@ -16,7 +16,10 @@
 #----------------------------------------------------------------------------
 
 proc plserver_init {} {
-global file_menu_on
+global file_menu_on  plserver_init_done
+
+if { ! [info exists plserver_init_done] } {
+set plserver_init_done 1
 
 # Set up toplevel
 
@@ -24,7 +27,7 @@ global file_menu_on
 
 # Create the window for the menu bar
 
-# jc: no File/Help menu! save plot area!
+# No File/Help menu! save plot area! Set in plconfig.tcl
 if $file_menu_on then {
     frame .menu -relief raised -borderwidth 1
     pack append . .menu {top fillx}
@@ -117,6 +120,7 @@ if $file_menu_on then {
 	focus default .
     }
 }
+}
 # Set up initial link to client.
 
     plserver_link_init
@@ -144,7 +148,7 @@ proc client_cmd {msg} {
     if { $dp } then {
 	after 1 catch [list "dp_RDO [list $client] $msg"]
     } else {
-#jc:	after 1 catch [list "send [list $client] after 1 $msg"]
+#	after 1 catch [list "send [list $client] after 1 $msg"]
 	after 1 catch [list "send -async [list $client] $msg"]
     }
 }
@@ -232,9 +236,9 @@ proc plserver_link_end {} {
 proc plserver_start {{use_dp 0}} {
     global dp client
 
-    plserver_init
-
     set dp $use_dp
+
+    plserver_init
 
     if { $dp } then {
 	global client_host client_port server_host server_port
@@ -251,9 +255,9 @@ proc plserver_start {{use_dp 0}} {
 
     } else {
 	global client_name server_name
-
-	puts stderr "Please start client with flags: "
-	puts stderr "  -server_name $server_name"
+	
+	#puts stderr "Please start client with flags: "
+	#puts stderr "  -server_name $server_name"
 	tkwait variable client_name
 
 	set client $client_name
