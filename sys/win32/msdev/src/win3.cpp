@@ -27,10 +27,15 @@ win3.cpp
 
 static int       color   = 1;
 static unsigned int      hwnd = 0;
+static unsigned int      buffered = 1;
+
+
+
 static MSG       msg;
 static DrvOpt    win3_options[] = {
 	{"color", DRV_INT, &color, "Use color (color=0|1)"},
 	{"hwnd", DRV_INT, &hwnd, "Windows HWND handle (not supposed to be given as a command line argument)"},
+	{"buffered", DRV_INT, &buffered, "Sets buffered operation"},
 	{NULL, DRV_INT, NULL, NULL}
 };
 
@@ -49,7 +54,9 @@ void plD_bop_win3(PLStream *pls);
 void plD_tidy_win3(PLStream *pls);
 void plD_state_win3(PLStream *pls, PLINT op);
 void plD_esc_win3(PLStream *pls, PLINT op , void *ptr);
-static void FillPolygonCmd (PLStream *pls);
+void FillPolygonCmd (PLStream *pls);
+void plD_DrawImage_win3(PLStream *pls);
+void imageops(PLStream *pls, int *ptr);
 /* BOOL CALLBACK AbortProc( HDC hDC, int Error ); */
 
 void plD_dispatch_init_win3	( PLDispatchTable *pdt )
@@ -77,7 +84,7 @@ typedef struct {
 	HDC 	hdc;
 	HPALETTE 	hpal;		
 	HBRUSH	hbr, hbrOld;
-	
+
 	float 	xScale,yScale;
 	int     xPhMax,yPhMax;
 	int 	nextPlot; 	  
@@ -85,8 +92,17 @@ typedef struct {
 	int 	rePaintBsy;       /* if we are repainting block the rest */
 	int     externalWindow;   /* if true the window is provided externally */
 	
+        int	write_to_window;	/* Set if plotting direct to window */
+        int	write_to_pixmap;	/* Set if plotting to pixmap */
+
 	int 	newCursor, button, state;
 	float 	cursorX,cursorY;
+
+	HBITMAP db_bmp;		
+	HDC		db_hdc;		
+	long	PenColor;
+	int		PenWidth;
+	long    backGroundColor;
 	
 } WinDev;
 
@@ -122,7 +138,7 @@ void plD_init_win3(PLStream *pls)
 	HINSTANCE hInstance;
 	WinDev    *dev;
 	int       greyvalue;
-	long      backGroundColor;
+	//long      backGroundColor;
 	
 	/* Initial window position */
 	int xPos    = 100;
@@ -149,9 +165,13 @@ void plD_init_win3(PLStream *pls)
 	pls->width       = 1; /* current pen width */
 	pls->bytecnt     = 0;
 	pls->page        = 0;
-	pls->plbuf_write = 1; /* buffer the output */
+	if (buffered)
+		pls->plbuf_write = 1; /* buffer the output */
+	else
+		pls->plbuf_write = 0; 
 	pls->dev_flush   = 1; /* flush as we like */
 	pls->dev_fill0   = 1;	
+	pls->dev_fastimg = 1; /* is a fast image device */
 	pls->dev_xor     = 1; /* device support xor mode */
 	if (pls->dev != NULL) delete pls->dev;
 	pls->dev = new WinDev;
@@ -159,13 +179,25 @@ void plD_init_win3(PLStream *pls)
 	
 	dev = (WinDev *) pls->dev;
 	dev->nextPlot = 0;
-	dev->hPen     = CreatePen(PS_SOLID,0,
-		RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b));
+	dev->write_to_window = 1;
+	dev->write_to_pixmap = 0;
+	dev->PenColor=RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b);
+	dev->PenWidth=0;
+	
+	dev->hPen     = CreatePen(PS_SOLID,dev->PenWidth,dev->PenColor);
 	dev->hPenOld = (HPEN)SelectObject(dev->hdc,dev->hPen);
 	dev->hbr      = CreateSolidBrush(RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b));
 	dev->hbrOld   = (HBRUSH)SelectObject(dev->hdc,dev->hbr);
 	dev->hMenu    = NULL;
+
 	
+	if (pls->color) {
+		dev->backGroundColor = RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b);
+	} else {
+		greyvalue = (pls->cmap0[0].r+pls->cmap0[0].g+pls->cmap0[0].b)/3;
+		dev->backGroundColor = RGB(greyvalue,greyvalue,greyvalue);
+	}
+
 	if (!hwnd) {
 		/* Window created by the driver */
 		dev->externalWindow = 0;
@@ -178,13 +210,7 @@ void plD_init_win3(PLStream *pls)
 		wndclass.hInstance = hInstance;
 		wndclass.hIcon = LoadIcon(hInstance,"PLICON");
 		wndclass.hCursor = LoadCursor(NULL,IDC_ARROW);
-		if (pls->color) {
-			backGroundColor = RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b);
-		} else {
-			greyvalue = (pls->cmap0[0].r+pls->cmap0[0].g+pls->cmap0[0].b)/3;
-			backGroundColor = RGB(greyvalue,greyvalue,greyvalue);
-		}
-        wndclass.hbrBackground = (struct HBRUSH__ *)CreateSolidBrush(backGroundColor);
+        wndclass.hbrBackground = (struct HBRUSH__ *)CreateSolidBrush(dev->backGroundColor);
 		wndclass.lpszMenuName = NULL;
 		wndclass.lpszClassName = szPlPlotClass;
 		RegisterClass (&wndclass);
@@ -207,33 +233,55 @@ void plD_init_win3(PLStream *pls)
 		dev->hwnd = (HWND)hwnd;
 		dev->externalWindow = 1;
 	}
+
+
 	dev->hdc = GetDC(dev->hwnd);
+
 	SetPolyFillMode(dev->hdc,WINDING);
 	
 	plP_setpxl(xmax/150.0/nWidth*nHeight,ymax/150.0);
 	plP_setphy(xmin,xmax,ymin,ymax);
+
+
+	if (pls->db)
+	{
+     	// create a compatible device context
+     	dev->db_hdc = CreateCompatibleDC(dev->hdc);
+     	dev->db_bmp = CreateCompatibleBitmap(dev->hdc, nWidth,nHeight);
+		SelectObject(dev->db_hdc, dev->db_bmp);
+		dev->hdc=dev->db_hdc;
+	}
 }
 
+
+void setPen(PLStream *pls)
+{
+	WinDev *dev = (WinDev *) pls->dev;
+	SelectObject(dev->hdc, dev->hPenOld);
+	SelectObject(dev->hdc, dev->hbrOld);
+	DeleteObject(dev->hPen);
+	DeleteObject(dev->hbr);
+	dev->lp.lopnColor=dev->PenColor;
+	dev->lb.lbColor=dev->PenColor;
+	dev->hPen = CreatePen(PS_SOLID,dev->PenWidth,dev->PenColor);
+	dev->hbr= CreateSolidBrush(dev->PenColor);
+	dev->hPenOld = (HPEN)SelectObject(dev->hdc,dev->hPen);
+	dev->hbrOld   = (HBRUSH)SelectObject(dev->hdc,dev->hbr);
+
+}
 
 /*--------------------------------------------------------------------------*\
 * setColor()
 *
 * Change the color of the pen and the brush
 \*--------------------------------------------------------------------------*/
+
+
 void setColor(PLStream *pls, int r, int g, int b)
 {
-	long color = RGB(r,g,b);
 	WinDev *dev = (WinDev *) pls->dev;
-	SelectObject(dev->hdc, dev->hPenOld);
-	SelectObject(dev->hdc, dev->hbrOld);
-	DeleteObject(dev->hPen);
-	DeleteObject(dev->hbr);
-	dev->lp.lopnColor=color;
-	dev->lb.lbColor=color;
-	dev->hPen = CreatePen(PS_SOLID,0,color);
-	dev->hbr= CreateSolidBrush(color);
-	dev->hPenOld = (HPEN)SelectObject(dev->hdc,dev->hPen);
-	dev->hbrOld   = (HBRUSH)SelectObject(dev->hdc,dev->hbr);
+	dev->PenColor=RGB(r,g,b);
+	setPen(pls);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -241,15 +289,23 @@ void setColor(PLStream *pls, int r, int g, int b)
 *
 * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*--------------------------------------------------------------------------*/
+
+
 void plD_state_win3(PLStream *pls, PLINT op)
 {
 	int cores, greyvalue;
 	HPEN oldPen;
 	
 	switch(op) {
-	case PLSTATE_WIDTH:
+
+	case PLSTATE_WIDTH:	
+		{
+			WinDev *dev = (WinDev *) pls->dev;
+			dev->PenWidth=pls->width;
+			setPen(pls);
+		}
 		break;
-		
+
 	case PLSTATE_COLOR0:
 		if ( ! pls->color ) {
 			if ((pls->cmap0[0].r+pls->cmap0[0].g+pls->cmap0[0].b)/3 > 128) {
@@ -263,13 +319,26 @@ void plD_state_win3(PLStream *pls, PLINT op)
 		}
 		/* else fallthrough */
 	case PLSTATE_COLOR1:
-		if (pls->color) 
+	        if (pls->color) {
 			setColor(pls,pls->curcolor.r,pls->curcolor.g,pls->curcolor.b);
-		else {
+	        } else {
 			greyvalue = (pls->curcolor.r+pls->curcolor.g+pls->curcolor.b)/3;
 			setColor(pls,greyvalue,greyvalue,greyvalue);
 		}
 		break;
+
+    case PLSTATE_CMAP0:
+		{
+			WinDev *dev = (WinDev *) pls->dev;
+			if (pls->color) {
+				dev->backGroundColor = RGB(pls->cmap0[0].r,pls->cmap0[0].g,pls->cmap0[0].b);
+			} else {
+				int greyvalue = (pls->cmap0[0].r+pls->cmap0[0].g+pls->cmap0[0].b)/3;
+				dev->backGroundColor = RGB(greyvalue,greyvalue,greyvalue);
+			}
+		}
+		break;
+
 	}
 }
 /*--------------------------------------------------------------------------*\
@@ -312,8 +381,8 @@ void plD_eop_win3(PLStream *pls)
 {
 	WinDev *dev = (WinDev *)pls->dev;
 	HCURSOR hCursor;
-	
-	ReleaseDC(dev->hwnd,dev->hdc);
+	if (!pls->db)
+		ReleaseDC(dev->hwnd,dev->hdc);
 	if (!dev->externalWindow) {
 	       /* EnableMenuItem(dev->hMenu,CM_PRINTPLOT,MF_ENABLED); */
 	       /* EnableMenuItem(dev->hMenu,CM_NEXTPLOT,MF_ENABLED);  */
@@ -326,10 +395,30 @@ void plD_eop_win3(PLStream *pls)
 			   DispatchMessage(&msg);
 		   }
 	}
-	InvalidateRect(dev->hwnd,NULL,TRUE);
-	UpdateWindow(dev->hwnd);
+	if (!pls->db)
+	{
+		InvalidateRect(dev->hwnd,NULL,TRUE);
+		//UpdateWindow(dev->hwnd);
+		PAINTSTRUCT ps;
+		HDC winDC;
+		winDC = BeginPaint(dev->hwnd, &ps);
+		EndPaint(dev->hwnd,  &ps);
+
+	}
+	else
+	{
+		RECT rect;
+		GetClientRect(dev->hwnd,&rect);
+		HBRUSH hbr = CreateSolidBrush(dev->backGroundColor);
+		FillRect(dev->hdc, &rect,hbr);
+	}
+
+
 	dev->nextPlot = 0;
 }
+
+
+
 
 /*--------------------------------------------------------------------------*\
 * plD_bop_win3()
@@ -345,12 +434,18 @@ void plD_bop_win3(PLStream *pls)
 	
 	/*	EnableMenuItem(dev->hMenu,CM_PRINTPLOT,MF_GRAYED); */
 	/*	EnableMenuItem(dev->hMenu,CM_NEXTPLOT,MF_GRAYED);  */
+	if (!dev->externalWindow) {
+		hCursor = LoadCursor(NULL,IDC_WAIT);
+		SetClassLong(GetActiveWindow(),GCL_HCURSOR,(long)hCursor);
+		SetCursor(hCursor);
+	}
+
+	if (pls->db)
+		dev->hdc = dev->db_hdc;
+	else
+		dev->hdc = GetDC(dev->hwnd);
+
 	
-	hCursor = LoadCursor(NULL,IDC_WAIT);
-	SetClassLong(GetActiveWindow(),GCL_HCURSOR,(long)hCursor);
-	SetCursor(hCursor);
-	
-	dev->hdc = GetDC(dev->hwnd);
 	GetClientRect(dev->hwnd,&rect);
 	dev->xPhMax = rect.right;
 	dev->yPhMax = rect.bottom;
@@ -385,6 +480,9 @@ void plD_tidy_win3(PLStream *pls)
 *
 * Escape function.
 \*--------------------------------------------------------------------------*/
+
+#define DPMM 4.0
+
 void plD_esc_win3(PLStream *pls, PLINT op , void *ptr)
 {
 	WinDev *dev = (WinDev *)pls->dev;
@@ -435,14 +533,60 @@ void plD_esc_win3(PLStream *pls, PLINT op , void *ptr)
 			dev->yPhMax = rect.bottom;
 			dev->xScale = rect.right / ((float)PIXELS_X);
 			dev->yScale = rect.bottom / ((float)PIXELS_Y);
-			InvalidateRect(dev->hwnd,NULL,TRUE);
+			
+
+			{
+			PLFLT pxlx = DPMM/dev->xScale;
+			PLFLT pxly = DPMM/dev->yScale;
+			plP_setpxl(pxlx, pxly);
+			}
+
+
+			if (pls->db)
+			{
+				//SetBitmapDimensionEx(dev->db_bmp,rect.right,rect.bottom,NULL);
+				DeleteObject(dev->db_bmp);
+		     	dev->db_bmp = CreateCompatibleBitmap(dev->hdc, rect.right,rect.bottom);
+				SelectObject(dev->db_hdc, dev->db_bmp);
+				dev->hdc = dev->db_hdc;
+				HBRUSH hbr = CreateSolidBrush( dev->backGroundColor);
+				FillRect(dev->hdc, &rect,hbr);
+				plreplot ();
+			}
+			else
+				InvalidateRect(dev->hwnd,NULL,TRUE);
+			
 		}
 		break;
 		
 	case PLESC_EXPOSE:
-		plreplot ();
+		if (pls->db)
+		{
+			PAINTSTRUCT ps;
+			HDC winDC;
+			RECT r;
+
+			// Set up a display context to begin painting
+			winDC = BeginPaint(dev->hwnd, &ps);
+			GetClientRect(dev->hwnd, &r);
+
+     		// copy the buffer to the screen
+     		BitBlt(GetDC(dev->hwnd), 0, 0, r.right, r.bottom, dev->db_hdc, 0, 0, SRCCOPY);
+
+			// Tell Windows you are done painting
+			EndPaint(dev->hwnd,  &ps);
+		}
+		else
+			plreplot ();
 		break;      
 		
+        case PLESC_IMAGE:
+                plD_DrawImage_win3(pls);
+                break;
+
+        case PLESC_IMAGEOPS:
+                imageops(pls, (PLINT *) ptr);
+                break;
 	}
 }
 
@@ -460,6 +604,159 @@ static void FillPolygonCmd(PLStream *pls) {
 		pt[i].y = (PIXELS_Y - pls->dev_y[i]) * dev->yScale;
 	}
 	Polygon(dev->hdc,pt,pls->dev_npts);
+}
+
+/*--------------------------------------------------------------------------*\
+ * plD_DrawImage_win3()
+ *
+ * Experimental! Currently only works on 32-bit displays
+\*--------------------------------------------------------------------------*/
+
+
+void plD_DrawImage_win3(PLStream *pls)
+{
+  WinDev *dev = (WinDev *) pls->dev;
+  HDC hdcMemory;
+
+  HBITMAP bitmap, bitmapOld;
+  BYTE    *byteArray;
+	
+  int     byteArrayXsize, byteArrayYsize;
+  int     imageX0, imageY0, imageWX, imageWY;
+  int     image_kx_start, image_ky_start, image_kx_end, image_ky_end, image_wkx, image_wky;
+  int     imageXmin, imageXmax, imageYmin, imageYmax;
+
+  int i, npts, nx, ny, ix, iy, corners[5], Ppts_x[5], Ppts_y[5];
+  int clpxmi, clpxma, clpymi, clpyma, icol1;
+
+  int level; 
+  float wcxmi, wcxma, wcymi, wcyma;
+  long ptr1, ptr2;
+
+  clpxmi = plsc->imclxmin;
+  clpxma = plsc->imclxmax;
+  clpymi = plsc->imclymin;
+  clpyma = plsc->imclymax;
+
+  //  printf("clpxmi %d %d %d %d\n", clpxmi, clpxma, clpymi, clpyma);
+
+  wcxmi = (clpxmi - pls->wpxoff)/pls->wpxscl;
+  wcxma = (clpxma - pls->wpxoff)/pls->wpxscl;
+  wcymi = (clpymi - pls->wpyoff)/pls->wpyscl;
+  wcyma = (clpyma - pls->wpyoff)/pls->wpyscl;
+
+  npts = plsc->dev_nptsX*plsc->dev_nptsY;
+  
+  nx = pls->dev_nptsX;
+  ny = pls->dev_nptsY;
+
+  imageXmin = pls->dev_ix[0];
+  imageYmin = pls->dev_iy[0];
+  imageXmax = pls->dev_ix[nx*ny-1];
+  imageYmax = pls->dev_iy[nx*ny-1];
+
+  //  printf("imageXmin %d %d %d %d\n", imageXmin, imageXmax, imageYmin, imageYmax);
+
+  if (clpxmi > imageXmin) {
+    imageX0 = dev->xScale * clpxmi+1;
+    image_kx_start = (int)wcxmi;
+  } else {
+    imageX0 = dev->xScale * imageXmin+1;
+    image_kx_start = 0;
+  }
+
+  if (clpxma < imageXmax) {
+    imageWX = dev->xScale*clpxma-imageX0;
+    image_kx_end = (int)wcxma;
+    image_wkx =  image_kx_end-image_kx_start+1;
+  } else {
+    imageWX = dev->xScale * imageXmax - imageX0;
+    image_kx_end = image_kx_start+nx;
+    image_wkx = nx;
+  }
+
+  if (clpymi > imageYmin) {
+    imageY0 = dev->yScale*(PIXELS_Y-clpyma)+1;
+    image_ky_start = ny - 1 - (int)wcyma;
+  } else {
+    imageY0 = dev->yScale * (PIXELS_Y - imageYmax)+1;
+    image_ky_start = 0;
+  }
+
+  if (clpyma < imageYmax) {
+    imageWY = dev->yScale*(PIXELS_Y-clpymi)-imageY0;
+    image_ky_end = ny -1 - (int)(wcymi);
+    image_wky = image_ky_end-image_ky_start+1;
+  } else {
+    imageWY = dev->yScale * (PIXELS_Y - imageYmin) - imageY0;
+    image_ky_end = ny - 1 - image_ky_start;
+    image_wky = ny;
+  }
+
+  //  printf("imageX0 %d %d %d %d\n", imageX0, imageY0, imageWX, imageWY);
+  //  printf("kx %d %d %d %d\n", image_kx_start, image_kx_end, image_ky_start, image_ky_end);
+  //  printf("Before malloc... %d %d \n", nx, ny);
+  byteArray = (BYTE*)malloc(nx*ny*sizeof(BYTE)*4);
+  //  printf("After malloc...\n");
+
+  for (ix=0; ix<nx; ix++)
+    if ((ix >= image_kx_start) || (ix <= image_kx_end))
+      {
+	ptr1 = 4*ix;
+	for (iy=0; iy<ny; iy++) 
+	  if ((iy >= image_ky_start) || (iy <= image_ky_end))
+	  {
+	    icol1 = pls->dev_z[ix*(ny-1)+iy]/65535.*pls->ncol1;
+	    icol1 = MIN(icol1, pls->ncol1-1);
+	    ptr2 = ptr1+4*(ny-iy-1)*nx;
+	    //	    printf("%d  ", ptr2);
+	    *(BYTE*)(byteArray+sizeof(BYTE)*ptr2++) = pls->cmap1[icol1].b;
+	    *(BYTE*)(byteArray+sizeof(BYTE)*ptr2++) = pls->cmap1[icol1].g;
+	    *(BYTE*)(byteArray+sizeof(BYTE)*ptr2++) = pls->cmap1[icol1].r;
+	    *(BYTE*)(byteArray+sizeof(BYTE)*ptr2) = 255;
+	  }
+      }
+  //  printf("Before CreateCompatibleBitmap...\n");
+  bitmap = CreateCompatibleBitmap(dev->hdc, nx, ny);
+  SetBitmapBits(bitmap, 4*npts, (const void*)byteArray);
+
+  //  printf("Before CreateCompatibleDC...\n");
+  hdcMemory = CreateCompatibleDC(dev->hdc);
+  bitmapOld = (HBITMAP)SelectObject(hdcMemory, bitmap);
+  SetStretchBltMode(dev->hdc, HALFTONE);
+  //  printf("%d %d %d %d %d %d %d %d\n",imageX0, imageY0, imageWX, imageWY, image_kx_start, image_ky_start, image_wkx, image_wky); 
+  StretchBlt(dev->hdc, imageX0, imageY0, imageWX, imageWY, hdcMemory, image_kx_start, image_ky_start, image_wkx, image_wky, SRCCOPY);
+  SelectObject(hdcMemory, bitmapOld);
+  DeleteObject(bitmap);
+  ReleaseDC(dev->hwnd,hdcMemory);				
+  free(byteArray);
+}
+
+void imageops(PLStream *pls, int *ptr)
+{
+
+  WinDev *dev = (WinDev *) pls->dev;
+
+  /* TODO: store/revert to/from previous state */
+
+  switch (*ptr) {
+  case ZEROW2D:
+    dev->write_to_window = 0;
+    break;
+
+  case ONEW2D:
+    dev->write_to_window = 1;
+    break;
+
+  case ZEROW2B:
+    dev->write_to_pixmap = 0;
+    break;
+
+  case ONEW2B:
+    //    XFlush(xwd->display);
+    dev->write_to_pixmap = 1;
+    break;
+  }
 }
 
 LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,	UINT wParam,LONG lParam)
@@ -508,6 +805,7 @@ LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,	UINT wParam,LONG
 	case WM_PAINT :
 		if (dev) {
 			if (dev->rePaint) {
+			        HDC hdc_old = dev->hdc;
 				dev->rePaint = 0;
 				dev->rePaintBsy = 1;
 				hcurSave = SetCursor(LoadCursor(NULL,IDC_WAIT));
@@ -520,7 +818,9 @@ LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,	UINT wParam,LONG
 				plRemakePlot(pls);
 				dev->rePaintBsy = 0;
 				SetCursor(hcurSave);
-				ReleaseDC(dev->hwnd,dev->hdc);				
+				ReleaseDC(dev->hwnd,dev->hdc);
+ 	                        dev->hdc = hdc_old;
+				plD_state_win3(pls, PLSTATE_COLOR0); /* Set drawing color */
 			}
 			BeginPaint(hwnd,&ps);
 			EndPaint(hwnd,&ps);
@@ -630,7 +930,3 @@ pldummy_win3() {
 	return 0;
 }
 #endif   //WIN3
-
-
-
-
