@@ -1,6 +1,16 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1995/07/01 20:25:57  furnish
+ * Revision 1.17  1995/07/04 18:53:48  furnish
+ * Reimplemented the Tcl contouring support.  This time I made a serious
+ * attempt to support coordinate mappings from Tcl.  Built in support is
+ * provided for pltr0, pltr1, and pltr2.  NO support is available for
+ * user defined coordinate transformation functions.  They'll just have
+ * to set up coordinate arrays and use pltr2, I guess.  To ameliorate
+ * this, I did however add support for one very common thing people need
+ * to do, which is to support plotting of data defined on a grid which is
+ * wrapped in one coordinate or the other.  Much testing still to do..
+ *
+ * Revision 1.16  1995/07/01  20:25:57  furnish
  * Implemented plot3d and plmesh.
  *
  * Revision 1.15  1995/06/29  20:23:13  furnish
@@ -595,47 +605,294 @@ plcol0Cmd(ClientData clientData, Tcl_Interp *interp,
  * plcontCmd
  *
  * Processes plcont Tcl command.
+ * 
+ * The C function is:
+ * void
+ * c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+ * 	 PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
+ * 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+ * 	 PLPointer pltr_data);
+ * 
+ * Since f will be specified by a Tcl Matrix, nx and ny are redundant, and
+ * are automatically eliminated.  Same for nlevel, since clevel will be a 1-d
+ * Tcl Matrix.  Since most people plot the whole data set, we will allow kx,
+ * lx and ky, ly to be defaulted--either you specify all four, or none of
+ * them.  We allow three ways of specifying the coordinate transforms: 1)
+ * Nothing, in which case we will use the identity mapper pltr0 2) pltr1, in
+ * which case the next two args must be 1-d Tcl Matricies 3) pltr2, in which
+ * case the next two args must be 2-d Tcl Matricies.  Finally, a new
+ * paramater is allowed at the end to specify which, if either, of the
+ * coordinates wrap on themselves.  Can be 1 or x, or 2 or y.  Nothing or 0
+ * specifies that neither coordinate wraps.
+ * 
+ * So, the new call from Tcl is:
+ * 	plcont f [kx lx ky ly] clev [pltr x y] [wrap]
+ * 
 \*--------------------------------------------------------------------------*/
+
+static int tclmateval_modx, tclmateval_mody;
 
 PLFLT tclMatrix_feval (PLINT i, PLINT j, PLPointer p)
 {
     tclMatrix *matPtr = (tclMatrix *) p;
 
+    i = i % tclmateval_modx;
+    j = j % tclmateval_mody;
+
+/*    printf( "tclMatrix_feval: i=%d j=%d f=%f\n", i, j,
+      matPtr->fdata[I2D(i,j)] );
+	    */
     return matPtr->fdata[I2D(i,j)];
 }
 
 static int
-plcontCmd(ClientData clientData, Tcl_Interp *interp,
-	 int argc, char **argv)
+plcontCmd( ClientData clientData, Tcl_Interp *interp,
+	   int argc, char *argv[] )
 {
-    tclMatrix *matPtr, *pclev;
+    tclMatrix *matPtr, *matf, *matclev;
+    PLINT nx, ny, kx, lx, ky, ly, nclev;
+    char *pltrname = "pltr0";
+    tclMatrix *mattrx, *mattry;
 
-    if (argc != 3 ) {
-	Tcl_AppendResult(interp, "wrong # args: should be \"",
-			 argv[0], " data clev\"",
-			 (char *) NULL);
+    int arg3_is_kx = 1, i, j;
+    void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
+    PLPointer pltr_data = NULL;
+    PLcGrid  cgrid1;
+    PLcGrid2 cgrid2;
+
+    int wrap = 0;
+
+    if (argc  < 3 ) {
+	Tcl_AppendResult( interp, "wrong # args: see documentation for ",
+			 argv[0], (char *) NULL);
 	return TCL_ERROR;
     }
 
-    matPtr = Tcl_GetMatrixPtr( interp, argv[1] );
-    pclev = Tcl_GetMatrixPtr( interp, argv[2] );
+    matf = Tcl_GetMatrixPtr( interp, argv[1] );
 
-    if (matPtr->dim != 2) {
+    if (matf->dim != 2) {
 	interp->result = "Must use 2-d data.";
 	return TCL_ERROR;
+    } else {
+	nx = matf->n[0];
+	ny = matf->n[1];
+
+	tclmateval_modx = nx;
+	tclmateval_mody = ny;
+
+	kx = 1; lx = nx;
+	ky = 1; ly = ny;
     }
 
-    if (pclev->dim != 1) {
+/* Now check the next argument.  If it is all digits, then it must be kx,
+   otherwise it is the name of clev. */
+
+    for( i=0; i < strlen( argv[2] ) && arg3_is_kx; i++ )
+	if (!isdigit(argv[2][i]))
+	    arg3_is_kx = 0;
+
+    if (arg3_is_kx) {
+    /* Check that there are enough args */
+	if (argc < 7) {
+	    interp->result = "plcont, bogus syntax";
+	    return TCL_ERROR;
+	}
+
+    /* Peel off the ones we need */
+	kx = atoi( argv[3] );
+	lx = atoi( argv[4] );
+	ky = atoi( argv[5] );
+	ly = atoi( argv[6] );
+
+    /* adjust argc, argv to reflect our consumption */
+	argc -= 6, argv += 6;
+    } else {
+	argc -= 2, argv += 2;
+    }
+
+/* The next argument has to be clev */
+
+    if (argc < 1) {
+	interp->result = "plcont, bogus syntax";
+	return TCL_ERROR;
+    }
+
+    matclev = Tcl_GetMatrixPtr( interp, argv[0] );
+    nclev = matclev->n[0];
+
+    if (matclev->dim != 1) {
 	interp->result = "clev must be 1-d matrix.";
 	return TCL_ERROR;
     }
 
+    argc--, argv++;
+
+/* Now handle trailing optional parameters, if any */
+
+    if (argc >= 3) {
+    /* There is a pltr spec, parse it. */
+	pltrname = argv[0];
+	mattrx = Tcl_GetMatrixPtr( interp, argv[1] );
+	mattry = Tcl_GetMatrixPtr( interp, argv[2] );
+
+	argc -= 3, argv += 3;
+    }
+
+    if (argc) {
+    /* There is a wrap spec, get it. */
+	wrap = atoi( argv[0] );
+
+    /* Hmm, I said the the doc they could also say x or y, have to come back
+       to this... */
+
+	argc--, argv++;
+    }
+
+/* There had better not be anything else on the command line by this point. */
+
+    if (argc) {
+	interp->result = "plcont, bogus syntax, too many args.";
+	return TCL_ERROR;
+    }
+
+/* Now we need to set up the data for contouring. */
+
+    if ( !strcmp( pltrname, "pltr0" ) ) {
+	pltr = pltr0;
+
+    /* wrapping is only supported for pltr2. */
+	if (wrap) {
+	    interp->result = "Must use pltr2 if want wrapping.";
+	    return TCL_ERROR;
+	}
+    }
+    else if ( !strcmp( pltrname, "pltr1" ) ) {
+	pltr = pltr1;
+	cgrid1.xg = mattrx->fdata;
+	cgrid1.nx = nx;
+	cgrid1.yg = mattry->fdata;
+	cgrid1.ny = ny;
+
+    /* wrapping is only supported for pltr2. */
+	if (wrap) {
+	    interp->result = "Must use pltr2 if want wrapping.";
+	    return TCL_ERROR;
+	}
+
+	if (mattrx->dim != 1 || mattry->dim != 1) {
+	    interp->result = "Must use 1-d coord arrays with pltr1.";
+	    return TCL_ERROR;
+	}
+
+	pltr_data = &cgrid1;
+    }
+    else if ( !strcmp( pltrname, "pltr2" ) ) {
+    /* printf( "plcont, setting up for pltr2\n" ); */
+	if (!wrap) {
+	/* printf( "plcont, no wrapping is needed.\n" ); */
+	    plAlloc2dGrid( &cgrid2.xg, nx, ny );
+	    plAlloc2dGrid( &cgrid2.yg, nx, ny );
+	    cgrid2.nx = nx;
+	    cgrid2.ny = ny;
+
+	    matPtr = mattrx;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
+
+	    matPtr = mattry;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+	}
+	else if (wrap == 1) {
+	    plAlloc2dGrid( &cgrid2.xg, nx+1, ny );
+	    plAlloc2dGrid( &cgrid2.yg, nx+1, ny );
+	    cgrid2.nx = nx+1;
+	    cgrid2.ny = ny;
+
+	    matPtr = mattrx;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
+
+	    matPtr = mattry;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+
+	    for( j=0; j < ny; j++ ) {
+		cgrid2.xg[nx][j] = cgrid2.xg[0][j];
+		cgrid2.yg[nx][j] = cgrid2.yg[0][j];
+	    }
+
+	    nx++;
+	}
+	else if (wrap == 2) {
+	    plAlloc2dGrid( &cgrid2.xg, nx, ny+1 );
+	    plAlloc2dGrid( &cgrid2.yg, nx, ny+1 );
+	    cgrid2.nx = nx;
+	    cgrid2.ny = ny+1;
+
+	    matPtr = mattrx;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.xg[i][j] = mattrx->fdata[ I2D(i,j) ];
+
+	    matPtr = mattry;
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ )
+		    cgrid2.yg[i][j] = mattry->fdata[ I2D(i,j) ];
+
+	    for( i=0; i < nx; i++ ) {
+		cgrid2.xg[i][ny] = cgrid2.xg[i][0];
+		cgrid2.yg[i][ny] = cgrid2.yg[i][0];
+	    }
+
+	    ny++;
+	}
+	else {
+	    interp->result =
+		"Invalid wrap specifier, must be <empty>, 1 or 2.";
+	    return TCL_ERROR;
+	}
+
+	pltr = pltr2;
+	pltr_data = &cgrid2;
+    }
+    else {
+	Tcl_AppendResult( interp,
+			  "Unrecognized coordinate transformation spec:",
+			  pltrname, ", must be pltr0 pltr1 or pltr2.",
+			  (char *) NULL );
+	return TCL_ERROR;
+    }
+/*
+    printf( "plcont: nx=%d ny=%d kx=%d lx=%d ky=%d ly=%d\n",
+	    nx, ny, kx, lx, ky, ly );
+    printf( "plcont: tclmateval_modx=%d tclmateval_mody=%d\n",
+	    tclmateval_modx, tclmateval_mody );
+    printf( "plcont: nclev=%d\n", nclev );
+    */
+
 /* contour the data.*/
 
-    plcontf( tclMatrix_feval, matPtr,
-	     matPtr->n[0], matPtr->n[1],
-	     1, matPtr->n[0], 1, matPtr->n[1],
-	     pclev->fdata, pclev->n[0], pltr0, NULL );
+    plcontf( tclMatrix_feval, matf, nx, ny,
+	     kx, lx, ky, ly,
+	     matclev->fdata, nclev,
+	     pltr, pltr_data );
+
+/* Now free up any space which got allocated for our coordinate trickery. */
+
+    if (pltr == pltr1) {
+    /* Hmm, actually, nothing to do here currently, since we just used the
+       Tcl Matrix data directly, rather than allocating private space. */
+    }
+    else if (pltr == pltr2) {
+    /* printf( "plcont, freeing space for grids used in pltr2\n" ); */
+	plFree2dGrid( cgrid2.xg, nx, ny );
+	plFree2dGrid( cgrid2.yg, nx, ny );
+    }
 
     plflush();
     return TCL_OK;
