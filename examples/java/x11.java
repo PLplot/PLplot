@@ -27,8 +27,6 @@ class x11 {
         "#frPLplot Example 11 - Alt=60, Az=160, Opt=3"
     };
 
-    PLStream pls;
-
 // Does a series of mesh plots for a given data set, with different viewing
 // options in each plot.
 
@@ -39,7 +37,8 @@ class x11 {
 
     public x11( String[] args )
     {
-        pls = new PLStream();
+       PLStreamc plsdummy = new PLStreamc();
+       plplotjavac pls = new plplotjavac();
 
         int i, j, k;
 
@@ -51,11 +50,11 @@ class x11 {
 
     // Parse and process command line arguments.
 
-        pls.ParseOpts( args, pls.PL_PARSE_FULL );
+//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
 
     // Initialize plplot.
 
-        pls.init();
+        pls.plinit();
 
         for( i=0; i < XPTS; i++ )
             x[i] = (double) (i - (XPTS/2)) / (double) (XPTS/2);
@@ -75,24 +74,24 @@ class x11 {
 
         for( k = 0; k < 4; k++ )
         {
-            pls.adv(0);
-	    pls.col0(1);
-            pls.vpor(0.0, 1.0, 0.0, 0.8);
-	    pls.wind(-1.0, 1.0, -1.0, 1.5);
+            pls.pladv(0);
+	    pls.plcol0(1);
+            pls.plvpor(0.0, 1.0, 0.0, 0.8);
+	    pls.plwind(-1.0, 1.0, -1.0, 1.5);
 
-            pls.w3d( 1.0, 1.0, 1.2, -1.0, 1.0, -1.0, 1.0, -1.5, 1.5,
+            pls.plw3d( 1.0, 1.0, 1.2, -1.0, 1.0, -1.0, 1.0, -1.5, 1.5,
                      alt[k], az[k] );
-            pls.box3( "bnstu", "x axis", 0.0, 0,
+            pls.plbox3( "bnstu", "x axis", 0.0, 0,
                       "bnstu", "y axis", 0.0, 0,
                       "bcdmnstuv", "z axis", 0.0, 4 );
 
-            pls.col0(2);
-            pls.mesh( x, y, z, opt[k] );
-            pls.col0(3);
-            pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
+            pls.plcol0(2);
+            pls.plmesh( x, y, z, opt[k] );
+            pls.plcol0(3);
+            pls.plmtex("t", 1.0, 0.5, 0.5, title[k]);
         }
 
-        pls.end();
+        pls.plend();
     }
 }
 

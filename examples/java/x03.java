@@ -13,8 +13,6 @@ import java.text.*;
 
 class x03 {
 
-    PLStream pls;
-
     public static void main( String[] args ) 
     {
         x03 x = new x03( args );
@@ -22,7 +20,8 @@ class x03 {
 
     public x03( String[] args )
     {
-        pls = new PLStream();
+       PLStreamc plsdummy = new PLStreamc();
+       plplotjavac pls = new plplotjavac();
         NumberFormat nf = NumberFormat.getNumberInstance();
 
         int i, j;
@@ -42,15 +41,15 @@ class x03 {
 
     // Parse and process command line arguments.
 
-        pls.ParseOpts( args, pls.PL_PARSE_FULL );
+//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
 
     // Initialize plplot.
 
-        pls.init();
+        pls.plinit();
 
     // Set up viewport and window, but do not draw box.
 
-        pls.env(-1.3, 1.3, -1.3, 1.3, 1, -2);
+        pls.plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
         for (i = 1; i <= 10; i++) {
             for (j = 0; j <= 360; j++) {
                 x[j] = 0.1 * i * x0[j];
@@ -59,10 +58,10 @@ class x03 {
 
         // Draw circles for polar grid.
 
-            pls.line(361, x, y);
+            pls.plline(x, y);
         }
 
-        pls.col0(2);
+        pls.plcol0(2);
         for (i = 0; i <= 11; i++) {
             theta = 30.0 * i;
             dx = Math.cos(dtr * theta);
@@ -70,16 +69,16 @@ class x03 {
 
         // Draw radial spokes for polar grid.
 
-            pls.join(0.0, 0.0, dx, dy);
+            pls.pljoin(0.0, 0.0, dx, dy);
             String text = nf.format(theta);
 
         // Write labels for angle.
 
 	//Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
             if (dx >= -0.00001)
-                pls.ptex(dx, dy, dx, dy, -0.15, text);
+                pls.plptex(dx, dy, dx, dy, -0.15, text);
             else
-                pls.ptex(dx, dy, -dx, -dy, 1.15, text);
+                pls.plptex(dx, dy, -dx, -dy, 1.15, text);
         }
 
     // Draw the graph.
@@ -89,15 +88,15 @@ class x03 {
             x[i] = x0[i] * r;
             y[i] = y0[i] * r;
         }
-        pls.col0(3);
-        pls.line(361, x, y);
+        pls.plcol0(3);
+        pls.plline(x, y);
 
-        pls.col0(4);
-        pls.mtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh");
+        pls.plcol0(4);
+        pls.plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh");
 
     // Close the plot at end.
 
-        pls.end();
+        pls.plend();
     }
 }
 

@@ -1,3 +1,12 @@
+2002-12-27  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* Implement new swig-based Java API.  Two-dimensional arrays are
+	  not implemented yet which means 6 of the examples do not work,
+	  but the rest do work, and in fact example 18 works completely
+	  for the first time ever because all PLplot functions in the common
+	  API that have variable or one-dimensional array arguments have been 
+	  completely implemented in Java.
+
 2002-12-24  Maurice LeBrun <mlebrun@users.sourceforge.net>
 
 	* examples/tcl/x??: Added script file front-ends to Tcl example

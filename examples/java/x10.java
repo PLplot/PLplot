@@ -19,26 +19,27 @@ class x10 {
 
     public x10( String[] args )
     {
-        PLStream pls = new PLStream();
+       PLStreamc plsdummy = new PLStreamc();
+       plplotjavac pls = new plplotjavac();
 
     // Parse and process command line arguments.
 
-        pls.ParseOpts( args, pls.PL_PARSE_FULL );
+//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
 
     // Initialize plplot.
 
-        pls.init();
+        pls.plinit();
 
-        pls.adv(0);
-        pls.vpor(0.0, 1.0, 0.0, 1.0);
-        pls.wind(0.0, 1.0, 0.0, 1.0);
-        pls.box("bc", 0.0, 0, "bc", 0.0, 0);
+        pls.pladv(0);
+        pls.plvpor(0.0, 1.0, 0.0, 1.0);
+        pls.plwind(0.0, 1.0, 0.0, 1.0);
+        pls.plbox("bc", 0.0, 0, "bc", 0.0, 0);
 
-        pls.svpa(50.0, 150.0, 50.0, 100.0);
-        pls.wind(0.0, 1.0, 0.0, 1.0);
-        pls.box("bc", 0.0, 0, "bc", 0.0, 0);
-        pls.ptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,50,100)");
-        pls.end();
+        pls.plsvpa(50.0, 150.0, 50.0, 100.0);
+        pls.plwind(0.0, 1.0, 0.0, 1.0);
+        pls.plbox("bc", 0.0, 0, "bc", 0.0, 0);
+        pls.plptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,50,100)");
+        pls.plend();
     }
 }
 

@@ -15,7 +15,8 @@ class x12 {
 
     static double y0[] = {5., 15., 12., 24., 28., 30., 20., 8., 12., 3.};
    
-    PLStream pls;
+   PLStreamc plsdummy = new PLStreamc();
+   plplotjavac pls = new plplotjavac();
    
     public static void main( String[] args ) 
     {
@@ -24,36 +25,35 @@ class x12 {
 
     public x12( String[] args )
     {
-        pls = new PLStream();
         NumberFormat nf = NumberFormat.getNumberInstance();
 //        Change to this custom format to get stupid locale commas
 //        separating hundreds and thousands place out of labels.
 	DecimalFormat nf4 = new DecimalFormat("####");
 	int i;
 
-        pls.ParseOpts( args, pls.PL_PARSE_FULL );
+//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
 
-        pls.init();
+        pls.plinit();
 
-        pls.adv(0);
-        pls.vsta();
-        pls.wind(1980.0, 1990.0, 0.0, 35.0);
-        pls.box("bc", 1.0, 0, "bcnv", 10.0, 0);
-        pls.col0(2);
-        pls.lab("Year", "Widget Sales (millions)", "#frPLplot Example 12");
+        pls.pladv(0);
+        pls.plvsta();
+        pls.plwind(1980.0, 1990.0, 0.0, 35.0);
+        pls.plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
+        pls.plcol0(2);
+        pls.pllab("Year", "Widget Sales (millions)", "#frPLplot Example 12");
         for (i = 0; i < 10; i++) {
-            pls.col0(i + 1);
-//             pls.col1((double) ((i + 1)/10.0));
-            pls.psty(0);
+            pls.plcol0(i + 1);
+//             pls.plcol1((double) ((i + 1)/10.0));
+            pls.plpsty(0);
             plfbox((1980. + i), y0[i]);
 //	   sprintf(string, "%.0f", y0[i]);
             String text = nf.format( (int) (y0[i]+0.5));
-            pls.ptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, text);
+            pls.plptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, text);
 //	   sprintf(string, "%d", 1980 + i);
             String text1 = nf4.format( 1980 + i );
-            pls.mtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, text1);
+            pls.plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, text1);
 	}
-        pls.end();
+        pls.plend();
     }
 
     void plfbox(double x0, double y0)
@@ -69,10 +69,10 @@ class x12 {
 	y[2] = y0;
 	x[3] = x0 + 1.;
 	y[3] = 0.;
-        pls.fill(4, x, y);
-	pls.col0(1);
-        pls.lsty(1);
-	pls.line(4, x, y);
+        pls.plfill(x, y);
+	pls.plcol0(1);
+        pls.pllsty(1);
+	pls.plline(x, y);
     }
 }
 

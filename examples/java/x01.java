@@ -12,30 +12,17 @@ import java.lang.Math;
 
 class x01 {
 
-    double[] x, y, xs, ys;
     double xscale, yscale, xoff, yoff;
-    PLStream pls;
+    PLStreamc plsdummy = new PLStreamc();
+    plplotjavac pls = new plplotjavac();
 
-    public static void main( String[] args ) 
-    {
-    // Now get on with the Java OO way of doing things...
-        x01 x = new x01();
-        x.run( args );
-    }
-
-    x01()
-    {
-    // Java lacks static arrays.
-        x = new double[101];
-        y = new double[101];
-
-        xs = new double[6];
-        ys = new double[6];
-    }
-
-    public void run( String[] args )
-    {
-        pls = new PLStream();
+   public static void main( String[] args ) 
+     {
+        x01 x = new x01( args );
+     }
+   
+   public x01( String[] args )
+     {
 
     // The following is drawn from x01c.c, but I don't currently know exactly
     // how to implement this stuff in Java, so I'm including it here for
@@ -46,12 +33,12 @@ class x01 {
     // plplot initialization
     // Divide page into 2x2 plots unless user overrides.
 
-        pls.ssub(2, 2);
+        pls.plssub(2, 2);
 
     // Parse and process command line arguments.
 
 //         plMergeOpts(options, "x01c options", notes);
-        pls.ParseOpts( args, pls.PL_PARSE_FULL );
+//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
 
 //     // Get version number, just for kicks.
 
@@ -60,10 +47,10 @@ class x01 {
 
 
     // Initialize PLplot.
-        pls.init();
+        pls.plinit();
 
     // Select the multi-stroke font.
-        pls.fontld( 1 );
+        pls.plfontld( 1 );
 
     // Set up the data
     // Original case
@@ -85,7 +72,7 @@ class x01 {
     // Do a plot
 
         int digmax = 5;
-        pls.syax(digmax, 0);
+        pls.plsyax(digmax, 0);
 
         plot1(1);
 
@@ -113,13 +100,17 @@ class x01 {
 //         }
 
     // Don't forget to call plend() to finish off!
-        pls.end();
+        pls.plend();
     }
 
     void plot1( int do_test )
     {
         int i;
         double xmin, xmax, ymin, ymax;
+        double x[] = new double[60];
+        double y[] = new double[60];
+        double xs[] = new double[6];
+        double ys[] = new double[6];
 
         for( i=0; i < 60; i++ )
         {
@@ -142,34 +133,36 @@ class x01 {
     // 6.0, and the range in Y is 0.0 to 30.0. The axes are scaled separately
     // (just = 0), and we just draw a labelled box (axis = 0).
 
-        pls.col0(1);
-        pls.env( xmin, xmax, ymin, ymax, 0, 0 );
-        pls.col0(2);
-        pls.lab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
+        pls.plcol0(1);
+        pls.plenv( xmin, xmax, ymin, ymax, 0, 0 );
+        pls.plcol0(2);
+        pls.pllab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
 
     // Plot the data points.
 
-        pls.col0(4);
-        pls.poin( 6, xs, ys, 9 );
+        pls.plcol0(4);
+        pls.plpoin( xs, ys, 9 );
 
     // Draw the line through the data.
 
-        pls.col0(3);
-        pls.line(60, x, y);
+        pls.plcol0(3);
+        pls.plline(x, y);
     }
 
     void plot2()
     {
         int i;
+        double x[] = new double[100];
+        double y[] = new double[100];
 
     // Set up the viewport and window using PLENV. The range in X is -2.0 to
     // 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled
     // separately (just = 0), and we draw a box with axes (axis = 1).
 
-        pls.col0(1);
-        pls.env(-2.0, 10.0, -0.4, 1.2, 0, 1);
-        pls.col0(2);
-        pls.lab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
+        pls.plcol0(1);
+        pls.plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
+        pls.plcol0(2);
+        pls.pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
     // Fill up the arrays.
 
@@ -182,43 +175,48 @@ class x01 {
 
     // Draw the line.
 
-        pls.col0(3);
-        pls.wid(2);
-        pls.line(100, x, y);
-        pls.wid(1);
+        pls.plcol0(3);
+        pls.plwid(2);
+        pls.plline(x, y);
+        pls.plwid(1);
     }
 
     void plot3()
     {
-        int space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
         int i;
+        int space0[] = {};
+        int mark0[] = {};
+        int space1[] = {1500};
+        int mark1[] = {1500};
+        double x[] = new double[101];
+        double y[] = new double[101];
 
     // For the final graph we wish to override the default tick intervals,
     // and so do not use plenv().
 
-        pls.adv(0);
+        pls.pladv(0);
 
     // Use standard viewport, and define X range from 0 to 360 degrees, Y
     // range from -1.2 to 1.2.
 
-        pls.vsta();
-        pls.wind( 0.0, 360.0, -1.2, 1.2 );
+        pls.plvsta();
+        pls.plwind( 0.0, 360.0, -1.2, 1.2 );
 
     // Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
-        pls.col0(1);
-        pls.box("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
+        pls.plcol0(1);
+        pls.plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
     // Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
     // plstyl expects a pointer!
 
-        pls.styl(1, mark1, space1);
-        pls.col0(2);
-        pls.box("g", 30.0, 0, "g", 0.2, 0);
-        pls.styl(0, mark0, space0);
+        pls.plstyl(mark1, space1);
+        pls.plcol0(2);
+        pls.plbox("g", 30.0, 0, "g", 0.2, 0);
+        pls.plstyl(mark0, space0);
 
-        pls.col0(3);
-        pls.lab( "Angle (degrees)", "sine",
+        pls.plcol0(3);
+        pls.pllab( "Angle (degrees)", "sine",
                  "#frPLplot Example 1 - Sine function" );
 
         for (i = 0; i < 101; i++) {
@@ -226,8 +224,8 @@ class x01 {
             y[i] = Math.sin(x[i] * Math.PI / 180.0);
         }
 
-        pls.col0(4);
-        pls.line(101, x, y);
+        pls.plcol0(4);
+        pls.plline(x, y);
     }
 }
 

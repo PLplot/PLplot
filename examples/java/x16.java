@@ -23,7 +23,8 @@ class x16 {
    final double YSPA =  2./(YPTS-1);
    final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
-   PLStream pls;
+   PLStreamc plsdummy = new PLStreamc();
+   plplotjavac pls = new plplotjavac();
 
    double fmin, fmax;
 
@@ -79,7 +80,7 @@ class x16 {
        * than the normal plshade drawing which gets partially blocked
        * when sequential shading is done as in the present case */
       
-	   pls.shade(a, xmin, xmax, ymin, ymax,
+	   pls.plshade(a, xmin, xmax, ymin, ymax,
 		   shade_min, shade_max,
 		   1, shade_color, fill_width,
 		   0, 0, 0, 0,
@@ -88,9 +89,9 @@ class x16 {
 	if(cont_color > 0 && cont_width > 0) {
 	   // Note, don't bother with cont_color and cont_width setting.
 	   // since this local plshades will disappear soon in any case.
-//	   pls.col0(cont_color);
-//	   pls.wid(cont_width);
-	   pls.cont(a, clevel, x, y, wrap);
+//	   pls.plcol0(cont_color);
+//	   pls.plwid(cont_width);
+	   pls.plcont(a, clevel, x, y, wrap);
 	}
 }
    void plshades_local2(double [][] a,
@@ -118,7 +119,7 @@ class x16 {
        * than the normal plshade drawing which gets partially blocked
        * when sequential shading is done as in the present case */
       
-	   pls.shade(a, xmin, xmax, ymin, ymax,
+	   pls.plshade(a, xmin, xmax, ymin, ymax,
 		   shade_min, shade_max,
 		   1, shade_color, fill_width,
 		   0, 0, 0, 0,
@@ -127,9 +128,9 @@ class x16 {
 	if(cont_color > 0 && cont_width > 0) {
 	   // Note, don't bother with cont_color and cont_width setting.
 	   // since this local plshades will disappear soon in any case.
-//	   pls.col0(cont_color);
-//	   pls.wid(cont_width);
-	   pls.cont(a, clevel, x, y, wrap);
+//	   pls.plcol0(cont_color);
+//	   pls.plwid(cont_width);
+	   pls.plcont(a, clevel, x, y, wrap);
    }
 }
    
@@ -142,7 +143,6 @@ class x16 {
 
    public x16( String[] args )
      {
-        pls = new PLStream();
 	int i, j;
 	double x, y, argx, argy, distort, r, t, zmin, zmax;
 	double[] px = new double[PERIMETERPTS];
@@ -160,15 +160,15 @@ class x16 {
 	final int fill_width = 2, cont_color = 0, cont_width = 0;
 
 	// Parse and process command line arguments.
-	pls.ParseOpts( args, pls.PL_PARSE_FULL );
+//	pls.plParseOpts( args, pls.PL_PARSE_FULL );
 
 	// Reduce colors in cmap 0 so that cmap 1 is useful on a 
 	//16-color display
-	pls.scmap0n(3);
+	pls.plscmap0n(3);
 
 	//Initialize plplot
          
-          pls.init();
+          pls.plinit();
 	// Set up data array
 
 	for (i = 0; i < XPTS; i++) {
@@ -216,79 +216,79 @@ class x16 {
 
 	// Plot using identity transform
 
-	pls.adv(0);
-	pls.vpor(0.1, 0.9, 0.1, 0.9);
-	pls.wind(-1.0, 1.0, -1.0, 1.0);
+	pls.pladv(0);
+	pls.plvpor(0.1, 0.9, 0.1, 0.9);
+	pls.plwind(-1.0, 1.0, -1.0, 1.0);
 
-	pls.psty(0);
+	pls.plpsty(0);
 
 	plshades_local1(z, -1., 1., -1., 1., 
 		 shedge, NSHADES+1, fill_width,
 		 cont_color, cont_width,
 		 1, xg0, yg0, 0);
 
-	pls.col0(1);
-	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-	pls.col0(2);
-	pls.lab("distance", "altitude", "Bogon density");
+	pls.plcol0(1);
+	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+	pls.plcol0(2);
+	pls.pllab("distance", "altitude", "Bogon density");
 
 	// Plot using 1d coordinate transform
     
-	pls.adv(0);
-	pls.vpor(0.1, 0.9, 0.1, 0.9);
-	pls.wind(-1.0, 1.0, -1.0, 1.0);
+	pls.pladv(0);
+	pls.plvpor(0.1, 0.9, 0.1, 0.9);
+	pls.plwind(-1.0, 1.0, -1.0, 1.0);
 
-	pls.psty(0);
+	pls.plpsty(0);
 
 	plshades_local1(z, -1., 1., -1., 1., 
 	     shedge, NSHADES+1, fill_width,
 	     cont_color, cont_width,
 	     1, xg1, yg1, 0);
 
-	pls.col0(1);
-	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-	pls.col0(2);
+	pls.plcol0(1);
+	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+	pls.plcol0(2);
 
-	pls.lab("distance", "altitude", "Bogon density");
+	pls.pllab("distance", "altitude", "Bogon density");
 
 	// Plot using 2d coordinate transform
 
-	pls.adv(0);
-	pls.vpor(0.1, 0.9, 0.1, 0.9);
-	pls.wind(-1.0, 1.0, -1.0, 1.0);
+	pls.pladv(0);
+	pls.plvpor(0.1, 0.9, 0.1, 0.9);
+	pls.plwind(-1.0, 1.0, -1.0, 1.0);
 
-	pls.psty(0);
+	pls.plpsty(0);
 
 	plshades_local2(z, -1., 1., -1., 1., 
 		 shedge, NSHADES+1, fill_width,
 		 cont_color, cont_width,
 		 0, xg2, yg2, 0);
 
-	pls.col0(1);
-	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-	pls.col0(2);
-	pls.cont(w, clevel, xg2, yg2, 0);
+	pls.plcol0(1);
+	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+	pls.plcol0(2);
+	pls.plcont(w, clevel, xg2, yg2, 0);
 
-	pls.lab("distance", "altitude", "Bogon density, with streamlines");
+	pls.pllab("distance", "altitude", "Bogon density, with streamlines");
 
 	// Plot using 2d coordinate transform
 
-	pls.adv(0);
-	pls.vpor(0.1, 0.9, 0.1, 0.9);
-	pls.wind(-1.0, 1.0, -1.0, 1.0);
+	pls.pladv(0);
+	pls.plvpor(0.1, 0.9, 0.1, 0.9);
+	pls.plwind(-1.0, 1.0, -1.0, 1.0);
 
-	pls.psty(0);
+	pls.plpsty(0);
 
 	plshades_local2(z, -1., 1., -1., 1., 
 		 shedge, NSHADES+1, fill_width,
 		 2, 3,
 		 0, xg2, yg2, 0);
 
-	pls.col0(1);
-	pls.box("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
-	pls.col0(2);
+	pls.plcol0(1);
+	pls.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+	pls.plcol0(2);
 
-	pls.lab("distance", "altitude", "Bogon density");
+	pls.pllab("distance", "altitude", "Bogon density");
 
 	// Note this exclusion API will probably change so don't bother
 	// with it for x16.java example.
@@ -296,11 +296,11 @@ class x16 {
 
 	//Example with polar coordinates.
 
-	pls.adv(0);
-	pls.vpor( .1, .9, .1, .9 );
-	pls.wind( -1., 1., -1., 1. );
+	pls.pladv(0);
+	pls.plvpor( .1, .9, .1, .9 );
+	pls.plwind( -1., 1., -1., 1. );
 
-	pls.psty(0);
+	pls.plpsty(0);
 
 	// Build new coordinate matrices.
     
@@ -334,17 +334,17 @@ class x16 {
 	   px[i] = Math.cos(t);
 	   py[i] = Math.sin(t);
 	}
-	pls.col0(1);
-	pls.line(PERIMETERPTS, px, py);
+	pls.plcol0(1);
+	pls.plline(PERIMETERPTS, px, py);
                   
 	// And label the plot.
 
-	pls.col0(2);
-	pls.lab( "", "",  "Tokamak Bogon Instability" );
+	pls.plcol0(2);
+	pls.pllab( "", "",  "Tokamak Bogon Instability" );
 
 	// Clean up 
 
-	pls.end();
+	pls.plend();
 
      }
 }

@@ -13,8 +13,6 @@ import java.text.*;
 
 class x02 {
 
-    PLStream pls;
-
     public static void main( String[] args ) 
     {
         x02 x = new x02( args );
@@ -26,44 +24,45 @@ class x02 {
         double vmin, vmax;
         NumberFormat nf = NumberFormat.getNumberInstance();
 
-        pls = new PLStream();
+       PLStreamc plsdummy = new PLStreamc();
+       plplotjavac pls = new plplotjavac();
 
     // Divide screen into 16 regions.
 
-        pls.ssub(4, 4);
+        pls.plssub(4, 4);
 
     // Parse and process command line arguments.
 
-        pls.ParseOpts( args, pls.PL_PARSE_FULL );
+//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
 
     // Initialize plplot.
 
-        pls.init();
+        pls.plinit();
 
-        pls.schr(0.0, 3.5);
-        pls.font(4);
+        pls.plschr(0.0, 3.5);
+        pls.plfont(4);
 
         for (i = 0; i <= 15; i++) {
-            pls.col0(i);
+            pls.plcol0(i);
 
             String text = nf.format(i);
 
-            pls.adv(0);
+            pls.pladv(0);
             vmin = 0.1;
             vmax = 0.9;
             for (j = 0; j <= 2; j++) {
-                pls.wid(j + 1);
-                pls.vpor(vmin, vmax, vmin, vmax);
-                pls.wind(0.0, 1.0, 0.0, 1.0);
-                pls.box("bc", 0.0, 0, "bc", 0.0, 0);
+                pls.plwid(j + 1);
+                pls.plvpor(vmin, vmax, vmin, vmax);
+                pls.plwind(0.0, 1.0, 0.0, 1.0);
+                pls.plbox("bc", 0.0, 0, "bc", 0.0, 0);
                 vmin = vmin + 0.1;
                 vmax = vmax - 0.1;
             }
-            pls.wid(1);
-            pls.ptex(0.5, 0.5, 1.0, 0.0, 0.5, text);
+            pls.plwid(1);
+            pls.plptex(0.5, 0.5, 1.0, 0.0, 0.5, text);
         }
 
-        pls.end();
+        pls.plend();
     }
 }
 

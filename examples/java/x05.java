@@ -14,8 +14,6 @@ class x05 {
 
     final int NPTS = 2047;
 
-    PLStream pls;
-
     public static void main( String[] args ) 
     {
         x05 x = new x05( args );
@@ -23,7 +21,8 @@ class x05 {
 
     public x05( String[] args )
     {
-        pls = new PLStream();
+       PLStreamc plsdummy = new PLStreamc();
+       plplotjavac pls = new plplotjavac();
 
         int i;
         double[] data = new double[NPTS];
@@ -31,11 +30,11 @@ class x05 {
 
     // Parse and process command line arguments.
 
-        pls.ParseOpts( args, pls.PL_PARSE_FULL );
+//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
 
     // Initialize plplot.
 
-        pls.init();
+        pls.plinit();
 
     // Fill up data points.
 
@@ -43,13 +42,13 @@ class x05 {
         for (i = 0; i < NPTS; i++)
             data[i] = Math.sin(i * delta);
 
-        pls.col0(1);
-        pls.hist( NPTS, data, -1.1, 1.1, 44, 0);
-        pls.col0(2);
-        pls.lab( "#frValue", "#frFrequency",
+        pls.plcol0(1);
+        pls.plhist(data, -1.1, 1.1, 44, 0);
+        pls.plcol0(2);
+        pls.pllab( "#frValue", "#frFrequency",
                  "#frPLplot Example 5 - Probability function of Oscillator" );
 
-        pls.end();
+        pls.plend();
     }
 }
 

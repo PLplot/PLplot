@@ -33,7 +33,10 @@ endif
 AM_CPPFLAGS = @INCLTDL@ @JAVAINCCMD@
 version = -version-info @SOVERSION@
 
-sources = javabind.c
+sources = plplotjavac_wrap.c
+
+plplotjavac_wrap.c plplotjavac.java: plplotjavac.i plplotcapi.i
+	swig -java -package plplot.core -DPL_DOUBLE plplotjavac.i
 
 libplplotjava_la_SOURCES  = $(sources)
 libplplotjava_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
@@ -45,17 +48,29 @@ javadir = $(libdir)/java/plplot/core
 # At some point specify javaJAVA for gcj support when gcc-3.2 becomes
 # widespread.
 java_DATA = \
-	java/plplot/core/PLStream.class \
-	java/plplot/core/config.class \
-	README.javaAPI
-	
-java/plplot/core/PLStream.class java/plplot/core/config.class: \
-	PLStream.java config.java
+	README.javaAPI \
+	PLStreamc.java \
+	SWIGTYPE_p_double.java \
+	SWIGTYPE_p_p_char.java \
+	SWIGTYPE_p_p_double.java \
+	config.java \
+	plplotjavac.java \
+	plplotjavacJNI.java
+
+java/plplot/core/PLStreamc.class java/plplot/core/config.class: \
+	PLStreamc.java config.java
 	mkdir -p java/plplot/core
-	ln -sf ../../../PLStream.java java/plplot/core
-	ln -sf ../../../config.java java/plplot/core
+	cd java/plplot/core ; ln -sf ../../../*.java .
 	javac -d java config.java
-	javac -d java PLStream.java
+	javac -d java PLStreamc.java
+
+CLEANFILES = \
+	SWIGTYPE_p_double.java \
+	SWIGTYPE_p_p_char.java \
+	SWIGTYPE_p_p_double.java \
+	plplotjavac.java \
+	plplotjavacJNI.java \
+	plplotjavac_wrap.c
 
 # if enable_java
 endif

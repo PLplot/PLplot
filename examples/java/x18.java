@@ -17,7 +17,9 @@ class x18 {
    static int opt[] = { 1, 0, 1, 0 };
    static double alt[] = {20.0, 35.0, 50.0, 65.0};
    static double az[] = {30.0, 40.0, 50.0, 60.0};
-   PLStream pls;
+   PLStreamc plsdummy = new PLStreamc();
+   plplotjavac pls = new plplotjavac();
+
    double THETA(int a)
      {
 	return 2. * Math.PI * (double) a/20.;
@@ -40,16 +42,16 @@ class x18 {
 	double [] y = new double [5];
 	double [] z = new double [5];
 
-	pls.adv(0);
-	pls.vpor(0.0, 1.0, 0.0, 0.9);
-	pls.wind(-1.0, 1.0, -0.9, 1.1);
-	pls.col0(1);
-	pls.w3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
-	pls.box3("bnstu", "x axis", 0.0, 0,
+	pls.pladv(0);
+	pls.plvpor(0.0, 1.0, 0.0, 0.9);
+	pls.plwind(-1.0, 1.0, -0.9, 1.1);
+	pls.plcol0(1);
+	pls.plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
+	pls.plbox3("bnstu", "x axis", 0.0, 0,
 		 "bnstu", "y axis", 0.0, 0,
 		 "bcdmnstuv", "z axis", 0.0, 0);
 	
-	pls.col0(2);
+	pls.plcol0(2);
 
 	// x = r sin(phi) cos(theta)
 	// y = r sin(phi) sin(theta)
@@ -78,12 +80,12 @@ class x18 {
 	      y[4] = Math.sin( PHI(j) ) * Math.sin( THETA(i) );
 	      z[4] = Math.cos( PHI(j) );
 
-//API	      pls.poly3( 5, x, y, z, draw[k], 1 );
+	      pls.plpoly3(x, y, z, draw[k], 1 );
 	   }
 	}
 
-	pls.col0(3);
-	pls.mtex("t", 1.0, 0.5, 0.5, "unit radius sphere" );
+	pls.plcol0(3);
+	pls.plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" );
      }
    // Does a series of 3-d plots for a given data set, with different
    // viewing options in each plot.
@@ -94,17 +96,16 @@ class x18 {
    
    public x18( String[] args )
      {
-	pls = new PLStream();
 	NumberFormat nf = NumberFormat.getNumberInstance();
 	
 	int i, j, k;
 	double r;
 
         // Parse and process command line arguments.
-	pls.ParseOpts( args, pls.PL_PARSE_FULL );
+//	pls.plParseOpts( args, pls.PL_PARSE_FULL );
 
 	// Initialize plplot.
-	pls.init();
+	pls.plinit();
 
 	for( k=0; k < 4; k++ )
 	  test_poly(k);
@@ -128,31 +129,31 @@ class x18 {
 	}
 
 	for (k = 0; k < 4; k++) {
-	   pls.adv(0);
-	   pls.vpor(0.0, 1.0, 0.0, 0.9);
-	   pls.wind(-1.0, 1.0, -0.9, 1.1);
-	   pls.col0(1);
-	   pls.w3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
-	   pls.box3("bnstu", "x axis", 0.0, 0,
+	   pls.pladv(0);
+	   pls.plvpor(0.0, 1.0, 0.0, 0.9);
+	   pls.plwind(-1.0, 1.0, -0.9, 1.1);
+	   pls.plcol0(1);
+	   pls.plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
+	   pls.plbox3("bnstu", "x axis", 0.0, 0,
 		    "bnstu", "y axis", 0.0, 0,
 		    "bcdmnstuv", "z axis", 0.0, 0);
 	   
-	   pls.col0(2);
+	   pls.plcol0(2);
 	   
 	   if (opt[k]>0)
-	     pls.line3( NPTS, x, y, z );
-//API	   else
-//API	     pls.poin3( NPTS, x, y, z, 1 );
+	     pls.plline3( x, y, z );
+	   else
+	     pls.plpoin3( x, y, z, 1 );
 	   
-	   pls.col0(3);
+	   pls.plcol0(3);
 	   String title =  "#frPLplot Example 18 - Alt=" + 
 	     nf.format((int) alt[k]) +
 	     ", Az=" + 
 	     nf.format((int) az[k]);
-	   pls.mtex("t", 1.0, 0.5, 0.5, title);
+	   pls.plmtex("t", 1.0, 0.5, 0.5, title);
 	}
 	
-	pls.end();
+	pls.plend();
      }
    
 }

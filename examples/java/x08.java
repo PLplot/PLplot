@@ -27,8 +27,9 @@ class x08 {
         "#frPLplot Example 8 - Alt=60, Az=160"
     };
 
-    PLStream pls;
-   
+   PLStreamc plsdummy = new PLStreamc();
+   plplotjavac pls = new plplotjavac();
+
     // cmap1_init1
     
     // Initializes color map 1 in HLS space.
@@ -72,8 +73,8 @@ class x08 {
         rev[0] = 0;         // interpolate on front side of colour wheel.
         rev[1] = 0;         // interpolate on front side of colour wheel.
 	  
-        pls.scmap1n(256);
-        pls.scmap1l(0, 2, i, h, l, s, rev);
+        pls.plscmap1n(256);
+        pls.plscmap1l(0, i, h, l, s, rev);
     }
 
 // Does a series of 3-d plots for a given data set, with different viewing
@@ -86,8 +87,6 @@ class x08 {
 
     public x08( String[] args )
     {
-        pls = new PLStream();
-
         int i, j, k;
 	final int LEVELS = 10;
 
@@ -103,11 +102,11 @@ class x08 {
 
     // Parse and process command line arguments.
 
-        pls.ParseOpts( args, pls.PL_PARSE_FULL );
+//        pls.plParseOpts( args, pls.PL_PARSE_FULL );
 
     // Initialize plplot.
 
-        pls.init();
+        pls.plinit();
 
         for( i=0; i < XPTS; i++ )
             x[i] = (double) (i - (XPTS/2)) / (double) (XPTS/2);
@@ -134,44 +133,44 @@ class x08 {
 	for (i=0; i<LEVELS; i++)
 	    clev[i] = zmin + step*i;
 
-        pls.lightsource( 1., 1., 1. );
+        pls.pllightsource( 1., 1., 1. );
         for( k = 0; k < 4; k++ )
         {
 	   for( ifshade = 0; ifshade < 6; ifshade++)
 	   {
-	      pls.adv(0);
-	      pls.vpor(0.0, 1.0, 0.0, 0.9);
-	      pls.wind(-1.0, 1.0, -0.9, 1.1);
-	      pls.col0(3);
-	      pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
-	      pls.col0(1);
-	      pls.w3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
+	      pls.pladv(0);
+	      pls.plvpor(0.0, 1.0, 0.0, 0.9);
+	      pls.plwind(-1.0, 1.0, -0.9, 1.1);
+	      pls.plcol0(3);
+	      pls.plmtex("t", 1.0, 0.5, 0.5, title[k]);
+	      pls.plcol0(1);
+	      pls.plw3d( 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
 		       alt[k], az[k] );
-	      pls.box3( "bnstu", "x axis", 0.0, 0,
+	      pls.plbox3( "bnstu", "x axis", 0.0, 0,
 			"bnstu", "y axis", 0.0, 0,
 			"bcdmnstuv", "z axis", 0.0, 0 );
 
-	      pls.col0(2);
+	      pls.plcol0(2);
 	      if( ifshade == 0) // wireframe plot
-		pls.plot3d( x, y, z, opt[k], 1 );
+		pls.plplot3d( x, y, z, opt[k], 1 );
 	      else if (ifshade == 1) { // mag colored mesh plot
 		cmap1_init(0);
-		pls.mesh( x, y, z, opt[k] | pls.MAG_COLOR);
+		pls.plmesh( x, y, z, opt[k] | pls.MAG_COLOR);
 	      } else if (ifshade == 2) { // reflected light surface plot
 		cmap1_init(1);
-		pls.surf3d( x, y, z, 0, null);
+		pls.plsurf3d( x, y, z, 0, null);
 	      } else if (ifshade == 3) { // magnitude colored surface
 		 cmap1_init(0);
-		 pls.surf3d(x, y, z, pls.MAG_COLOR, null);
+		 pls.plsurf3d(x, y, z, pls.MAG_COLOR, null);
 	      } else if (ifshade == 4) { //  magnitude colored surface with faceted squares
-		  pls.surf3d(x, y, z, pls.MAG_COLOR | pls.FACETED, null);
+		  pls.plsurf3d(x, y, z, pls.MAG_COLOR | pls.FACETED, null);
 	      } else { //  magnitude colored surface with surface and xy plane contour lines
-		  pls.surf3d(x, y, z, pls.MAG_COLOR | pls.SURF_CONT | pls.BASE_CONT, clev);
+		  pls.plsurf3d(x, y, z, pls.MAG_COLOR | pls.SURF_CONT | pls.BASE_CONT, clev);
 	      }
 	   }
         }
 
-        pls.end();
+        pls.plend();
     }
 }
 
