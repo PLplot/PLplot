@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.5  2002/07/09 19:57:59  airwin
+ * Change tkwin driver sequence number to 45 (to avoid clash with cgm driver).
+ *
  * Revision 1.4  2002/07/05 17:17:46  vincentdarley
  * removed compiler warnings
  *
@@ -237,7 +240,7 @@ void plD_dispatch_init_tkwin( PLDispatchTable *pdt )
     pdt->pl_MenuStr  = "PLplot Tk plotter";
     pdt->pl_DevName  = "tkwin";
     pdt->pl_type     = plDevType_Interactive;
-    pdt->pl_seq      = 44;
+    pdt->pl_seq      = 45;
     pdt->pl_init     = (plD_init_fp)     plD_init_tkwin;
     pdt->pl_line     = (plD_line_fp)     plD_line_tkwin;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_tkwin;
