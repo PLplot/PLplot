@@ -64,14 +64,22 @@ fi
 # Can be used to dramatically reduce the time spent configuring.
 # Should be done before command-line flags are handled so that the user
 # can override if necessary.
+#
+# The special command line flag --nodefaults (must come first) can be used
+# to skip sourcing the defaults file.
 # -----------------------------------------------------------------------
 
-initfile="$HOME/config/cf_plplot.in"
-if test -f $initfile; then
-    echo "Getting default settings from $initfile."
-    . $initfile
+if test "$1" = "--nodefaults"; then
+    shift
+    echo "Performing full configure."
 else
-    echo "No defaults file found, performing full configure."
+    initfile="$HOME/config/cf_plplot.in"
+    if test -f $initfile; then
+	echo "Getting default settings from $initfile."
+	. $initfile
+    else
+	echo "No defaults file found, performing full configure."
+    fi
 fi
 
 LIBS=""
@@ -112,6 +120,23 @@ AC_WITH(gcc, ,     with_gcc="no")
 AC_WITH(warn, ,    with_warn="no")
 
 AC_ENABLE(f77, , enable_f77="yes")
+
+# --------------------------------------------------------------------
+# Set up prefix
+#
+# I recommend using a separate directory tree for PLplot files.  You can
+# use the "mklinks" script for soft-linking the bin, lib, and include
+# files to the usual places under /usr/local or /usr.  See the discussion
+# of this in the FAQ for more info.
+# --------------------------------------------------------------------
+
+if test -z "$prefix"; then
+    AC_PREFIX(plrender)
+    if test -z "$prefix"; then
+	prefix="/usr/local/plplot"
+	echo "Unable to determine prefix; using $prefix"
+    fi
+fi
 
 # -----------------------------------------------------------------------
 # This is where the real work is done.
@@ -173,23 +198,6 @@ LIB_TAG="$TAG_PREC$TAG_ENABLE"
 
 AC_SUBST(LIB_TAG)
 
-# --------------------------------------------------------------------
-# Set up prefix
-#
-# I strongly recommend using a separate directory tree for PLplot files.
-# You can use the "mklinks" script for soft-linking the bin, lib, and
-# include files to the usual places under /usr/local or /usr.  See the
-# discussion of this in the FAQ for more info.
-# --------------------------------------------------------------------
-
-if test -z "$prefix"; then
-    AC_PREFIX(plrender)
-    if test -z "$prefix"; then
-	prefix="/usr/local/plplot"
-	echo "Unable to determine prefix; using $prefix"
-    fi
-fi
-
 # -----------------------------------------------------------------------
 # Now build up Makefile.in, out of all the eensy-weensy little pieces.
 # -----------------------------------------------------------------------
@@ -212,9 +220,9 @@ if test "$enable_tk" = "yes"; then
     cat cf/pkg_tk.in	>>tmp/Makefile.in 
 fi
 
-# Add object file dependencies, targets
+# Add source and object file lists
 
-cat cf/objs.in		>>tmp/Makefile.in 
+cat cf/dist.in		>>tmp/Makefile.in 
 
 # Add library targets
 
@@ -228,14 +236,19 @@ else
     fi
 fi
 
-# Add program file dependencies, targets
+# Add program and demo file dependencies, targets
 
 cat cf/exes.in		>>tmp/Makefile.in 
+cat cf/demos.in		>>tmp/Makefile.in 
 
-# Installation and cleanup.
+# Installation and miscellaneous.
 
 cat cf/install.in	>>tmp/Makefile.in 
-cat cf/clean.in		>>tmp/Makefile.in 
+cat cf/misc.in		>>tmp/Makefile.in 
+
+# Add object file dependencies
+
+cat cf/objs.in		>>tmp/Makefile.in 
 
 # --------------------------------------------------------------------
 # Set up variables governing device driver inclusion.

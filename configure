@@ -64,14 +64,22 @@ fi
 # Can be used to dramatically reduce the time spent configuring.
 # Should be done before command-line flags are handled so that the user
 # can override if necessary.
+#
+# The special command line flag --nodefaults (must come first) can be used
+# to skip sourcing the defaults file.
 # -----------------------------------------------------------------------
 
-initfile="$HOME/config/cf_plplot.in"
-if test -f $initfile; then
-    echo "Getting default settings from $initfile."
-    . $initfile
+if test "$1" = "--nodefaults"; then
+    shift
+    echo "Performing full configure."
 else
-    echo "No defaults file found, performing full configure."
+    initfile="$HOME/config/cf_plplot.in"
+    if test -f $initfile; then
+	echo "Getting default settings from $initfile."
+	. $initfile
+    else
+	echo "No defaults file found, performing full configure."
+    fi
 fi
 
 LIBS=""
@@ -514,6 +522,48 @@ else
   enable_f77="yes"
 fi
 
+
+# --------------------------------------------------------------------
+# Set up prefix
+#
+# I recommend using a separate directory tree for PLplot files.  You can
+# use the "mklinks" script for soft-linking the bin, lib, and include
+# files to the usual places under /usr/local or /usr.  See the discussion
+# of this in the FAQ for more info.
+# --------------------------------------------------------------------
+
+if test -z "$prefix"; then
+    if test -z "$prefix"
+then
+  test -n "$silent" || echo "checking for plrender to derive installation directory prefix"
+  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="$IFS:"
+  for ac_dir in $PATH; do
+    test -z "$ac_dir" && ac_dir=.
+    if test $ac_dir != . && test -f $ac_dir/plrender; then
+      # Not all systems have dirname.
+      prefix=`ls -l $ac_dir/plrender | awk '{print $NF}'`
+      prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
+      dirname=`echo $prefix | sed 's%/.*/%%'`
+      if test $dirname = "bin"; then
+        prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
+      else
+        echo ""
+	echo "dirname is: $dirname"
+        echo "Warning: Non-standard installed distribution (plrender not stored under bin)."
+        echo "Please completely delete old files before installation."
+      fi
+      break
+    fi
+  done
+  IFS="$ac_save_ifs"
+  test -n "$verbose" && echo "	chose installation directory prefix ${prefix}"
+fi
+
+    if test -z "$prefix"; then
+	prefix="/usr/local/plplot"
+	echo "Unable to determine prefix; using $prefix"
+    fi
+fi
 
 # -----------------------------------------------------------------------
 # This is where the real work is done.
@@ -1402,7 +1452,7 @@ else
 
 	    for dir in $places; do
 		if test -r "$dir/X11/Intrinsic.h"; then
-		    XINCDIR=$dir
+		    XINCDIR="$dir"
 		    break
 		fi
 	    done
@@ -1457,7 +1507,7 @@ else
 
 	    for dir in $places; do
 		if test -r "$dir/libX11.a"; then
-		    XLIBDIR=$dir
+		    XLIBDIR="$dir"
 		    break
 		fi
 	    done
@@ -1529,7 +1579,7 @@ if test "$enable_tcl" = "yes"; then
 
 	for dir in $places; do
 	    if test -r "$dir/tcl.h"; then
-		TCLINCDIR=$dir
+		TCLINCDIR="$dir"
 		break
 	    fi
 	done
@@ -1575,7 +1625,7 @@ if test "$enable_tcl" = "yes"; then
 
 	for dir in $places; do
 	    if test -r "$dir/libtcl.a" -o -r "$dir/libtcl.sl"; then
-		TCLLIBDIR=$dir
+		TCLLIBDIR="$dir"
 		break
 	    fi
 	done
@@ -1666,7 +1716,7 @@ if test "$enable_itcl" = "yes"; then
 
 	for dir in $places; do
 	    if test -r "$dir/libitcl.a" -o -r "$dir/libitcl.sl"; then
-		ITCLLIBDIR=$dir
+		ITCLLIBDIR="$dir"
 		break
 	    fi
 	done
@@ -1710,7 +1760,7 @@ if test "$enable_tk" = "yes"; then
 
 	for dir in $places; do
 	    if test -r "$dir/tk.h"; then
-		TKINCDIR=$dir
+		TKINCDIR="$dir"
 		break
 	    fi
 	done
@@ -1755,7 +1805,7 @@ if test "$enable_tk" = "yes"; then
 
 	for dir in $places; do
 	    if test -r "$dir/libtk.a" -o -r "$dir/libtk.sl"; then
-		TKLIBDIR=$dir
+		TKLIBDIR="$dir"
 		break
 	    fi
 	done
@@ -2336,48 +2386,6 @@ LIB_TAG="$TAG_PREC$TAG_ENABLE"
 
 
 
-# --------------------------------------------------------------------
-# Set up prefix
-#
-# I strongly recommend using a separate directory tree for PLplot files.
-# You can use the "mklinks" script for soft-linking the bin, lib, and
-# include files to the usual places under /usr/local or /usr.  See the
-# discussion of this in the FAQ for more info.
-# --------------------------------------------------------------------
-
-if test -z "$prefix"; then
-    if test -z "$prefix"
-then
-  test -n "$silent" || echo "checking for plrender to derive installation directory prefix"
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="$IFS:"
-  for ac_dir in $PATH; do
-    test -z "$ac_dir" && ac_dir=.
-    if test $ac_dir != . && test -f $ac_dir/plrender; then
-      # Not all systems have dirname.
-      prefix=`ls -l $ac_dir/plrender | awk '{print $NF}'`
-      prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
-      dirname=`echo $prefix | sed 's%/.*/%%'`
-      if test $dirname = "bin"; then
-        prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
-      else
-        echo ""
-	echo "dirname is: $dirname"
-        echo "Warning: Non-standard installed distribution (plrender not stored under bin)."
-        echo "Please completely delete old files before installation."
-      fi
-      break
-    fi
-  done
-  IFS="$ac_save_ifs"
-  test -n "$verbose" && echo "	chose installation directory prefix ${prefix}"
-fi
-
-    if test -z "$prefix"; then
-	prefix="/usr/local/plplot"
-	echo "Unable to determine prefix; using $prefix"
-    fi
-fi
-
 # -----------------------------------------------------------------------
 # Now build up Makefile.in, out of all the eensy-weensy little pieces.
 # -----------------------------------------------------------------------
@@ -2400,9 +2408,9 @@ if test "$enable_tk" = "yes"; then
     cat cf/pkg_tk.in	>>tmp/Makefile.in 
 fi
 
-# Add object file dependencies, targets
+# Add source and object file lists
 
-cat cf/objs.in		>>tmp/Makefile.in 
+cat cf/dist.in		>>tmp/Makefile.in 
 
 # Add library targets
 
@@ -2416,14 +2424,19 @@ else
     fi
 fi
 
-# Add program file dependencies, targets
+# Add program and demo file dependencies, targets
 
 cat cf/exes.in		>>tmp/Makefile.in 
+cat cf/demos.in		>>tmp/Makefile.in 
 
-# Installation and cleanup.
+# Installation and miscellaneous.
 
 cat cf/install.in	>>tmp/Makefile.in 
-cat cf/clean.in		>>tmp/Makefile.in 
+cat cf/misc.in		>>tmp/Makefile.in 
+
+# Add object file dependencies
+
+cat cf/objs.in		>>tmp/Makefile.in 
 
 # --------------------------------------------------------------------
 # Set up variables governing device driver inclusion.
