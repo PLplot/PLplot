@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/02/01 22:49:37  mjl
+ * Revision 1.23  1994/02/07 22:55:21  mjl
+ * Data read is now done by a file handler for both FIFO or socket reads.
+ * This has much better performance than the old way since no communication
+ * between interpreters is needed.  The end of page indicator is now lit by
+ * detecting eop/bop in the data stream.  The old widget command to read
+ * the data stream is gone.
+ *
+ * Revision 1.22  1994/02/01  22:49:37  mjl
  * Changes to handle only partially received socket packets due to a slow
  * network connection.  Right now it just polls; this will be improved soon.
  *
@@ -61,7 +68,11 @@
 
 /* If set, BUFFER_FIFO causes FIFO i/o to be buffered */
 
-#define BUFFER_FIFO 0
+#define BUFFER_FIFO 1
+
+/* If set, causes a file handler to be used with FIFO */
+
+#define FH_FIFO 0
 
 /* A handy command wrapper */
 
@@ -112,7 +123,6 @@ typedef struct {
 
     int tkwin_initted;		/* Set first time widget is mapped */
     int plplot_initted;		/* Set first time plplot is initialized */
-    int comm_type;		/* Communication channel type */
     PLINT ipls;			/* Plplot stream number */
     PLINT ipls_save;		/* Plplot stream number, save files */
 
@@ -147,6 +157,12 @@ typedef struct {
     char *xScrollCmd;		/* Command prefix for communicating with
 				 * horizontal scrollbar.  NULL means no
 				 * command to issue.  Malloc'ed. */
+
+    /* Used for flashing bop or eop condition */
+
+    char *bopCmd;		/* Proc to call at bop */
+    char *eopCmd;		/* Proc to call at eop */
+
 } PlFrame;
 
 /*
@@ -209,6 +225,10 @@ static Tk_ConfigSpec configSpecs[] = {
 	DEF_PLFRAME_CURSOR, Tk_Offset(PlFrame, cursor), TK_CONFIG_NULL_OK},
     {TK_CONFIG_STRING, "-geometry", "geometry", "Geometry",
 	DEF_PLFRAME_GEOMETRY, Tk_Offset(PlFrame, geometry), TK_CONFIG_NULL_OK},
+    {TK_CONFIG_STRING, "-bopcmd", "bopcmd", "PgCommand",
+	(char *) NULL, Tk_Offset(PlFrame, bopCmd), TK_CONFIG_NULL_OK},
+    {TK_CONFIG_STRING, "-eopcmd", "eopcmd", "PgCommand",
+	(char *) NULL, Tk_Offset(PlFrame, eopCmd), TK_CONFIG_NULL_OK},
     {TK_CONFIG_PIXELS, "-height", "height", "Height",
 	DEF_PLFRAME_HEIGHT, Tk_Offset(PlFrame, height), 0},
     {TK_CONFIG_RELIEF, "-relief", "relief", "Relief",
@@ -239,6 +259,7 @@ static void  PlFrameInit	(ClientData);
 static void  PlFrameEventProc	(ClientData, XEvent *);
 static int   PlFrameWidgetCmd	(ClientData, Tcl_Interp *, int, char **);
 static void  MapPlFrame 	(ClientData);
+static int   ReadData		(ClientData, int);
 
 /* These are invoked by PlFrameWidgetCmd to process widget commands */
 
@@ -250,7 +271,6 @@ static int   Openlink		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Orient		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Page		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Print		(Tcl_Interp *, PlFrame *, int, char **);
-static int   ReadData		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Redraw		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Save		(Tcl_Interp *, PlFrame *, int, char **);
 static int   View		(Tcl_Interp *, PlFrame *, int, char **);
@@ -382,6 +402,8 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->plplot_initted = 0;
     plFramePtr->bgColor = NULL;
     plFramePtr->plpr_cmd = NULL;
+    plFramePtr->bopCmd = NULL;
+    plFramePtr->eopCmd = NULL;
     plFramePtr->yScrollCmd = NULL;
     plFramePtr->xScrollCmd = NULL;
     plFramePtr->xl = 0.;
@@ -395,6 +417,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->plr = (PLRDev *) ckalloc(sizeof(PLRDev));
     plr = plFramePtr->plr;
     plr->pdfs = NULL;
+    plr->iodev = (PLiodev *) ckalloc(sizeof(PLiodev));
     plr_start(plr);
 
 /* Set up stuff for rubber-band drawing */
@@ -540,20 +563,6 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	result = Print(interp, plFramePtr, argc-2, argv+2);
     }
 
-/* read -- read <nbytes> of data from fifo or socket */
-
-    else if ((c == 'r') && (strncmp(argv[1], "read", length) == 0)) {
-	if (argc == 2 || argc > 3) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		    argv[0], " read nbytes\"", (char *) NULL);
-	    result = TCL_ERROR;
-	    goto done;
-	}
-	else {
-	    result = ReadData(interp, plFramePtr, argc-2, argv+2);
-	}
-    }
-
 /* redraw -- redraw plot */
 
     else if ((c == 'r') && (strncmp(argv[1], "redraw", length) == 0)) {
@@ -613,7 +622,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
 	 "\":  must be cmd, configure, draw, info, ",
-	 "openlink, orient, page, print, read, redraw, save, view, ",
+	 "openlink, orient, page, print, rsock, redraw, save, view, ",
 	 "xscroll, or yscroll", (char *) NULL);
 
 	result = TCL_ERROR;
@@ -690,6 +699,7 @@ DestroyPlFrame(ClientData clientData)
 /* Clean up data connection */
 
     pdf_close(plr->pdfs);
+    ckfree((char *) plFramePtr->plr->iodev);
 
 /* Delete main data structures */
 
@@ -1239,8 +1249,10 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	 int argc, char **argv)
 {
     register PLRDev *plr = plFramePtr->plr;
+    register PLiodev *iodev = plr->iodev;
+
     char c = argv[0][0];
-    int fd, length = strlen(argv[0]);
+    int length = strlen(argv[0]);
 
     dbug_enter("Openlink");
 
@@ -1254,23 +1266,14 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 			     (char *) NULL);
 	    return TCL_ERROR;
 	}
-
-	if ((fd = open (argv[1], O_RDONLY)) == -1) {
+	if ((iodev->fd = open (argv[1], O_RDONLY)) == -1) {
 	    Tcl_AppendResult(interp, "cannot open fifo ", argv[1],
 			     " for read", (char *) NULL);
 	    return TCL_ERROR;
 	}
-
-	plFramePtr->comm_type = 0;
-#if BUFFER_FIFO
-	plr->pdfs = pdf_bopen( NULL, 4200 );
-	plr->fifo = fdopen(fd, "rb");
-	plr->filetype = "buffer";
-#else
-	plr->pdfs = pdf_finit( fdopen(fd, "rb") );
-	plr->filetype = "fifo";
-#endif
-
+	iodev->type = 0;
+	iodev->typename = "fifo";
+	iodev->file = fdopen(iodev->fd, "rb");
     }
 
 /* Open socket */
@@ -1279,15 +1282,18 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 	if (argc < 1) {
 	    Tcl_AppendResult(interp, "bad command -- must be: ",
-			     "openlink socket <socket>",
+			     "openlink socket <sock-id>",
 			     (char *) NULL);
 	    return TCL_ERROR;
 	}
-
-	plFramePtr->comm_type = 1;
-	plr->pdfs = pdf_bopen( NULL, 4200 );
-	plr->filetype = "buffer";
-	plr->socket = Tcl_GetVar(interp, "data_sock", 0);
+	iodev->type = 1;
+	iodev->typename = "socket";
+	iodev->filehandle = argv[1];
+	if (Tcl_GetOpenFile(interp, iodev->filehandle,
+			    0, 1, &iodev->file) != TCL_OK) {
+	    return TCL_ERROR;
+	}
+	iodev->fd = fileno(iodev->file);
     }
 
 /* unrecognized */
@@ -1299,7 +1305,96 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	return TCL_ERROR;
     }
 
+    plr->pdfs = pdf_bopen( NULL, 4200 );
+    Tk_CreateFileHandler(iodev->fd, TK_READABLE, (Tk_FileProc *) ReadData,
+			 (ClientData) plFramePtr);
+
     return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+* process_data
+*
+* Utility function for processing data and other housekeeping.
+\*----------------------------------------------------------------------*/
+
+static int
+process_data(Tcl_Interp *interp, register PlFrame *plFramePtr)
+{
+    register PLRDev *plr = plFramePtr->plr;
+    register PLiodev *iodev = plr->iodev;
+    int result = TCL_OK;
+
+/* Process data */
+
+    if (plr_process(plr) == -1) {
+	Tcl_AppendResult(interp, "unable to read from ", iodev->typename,
+			 (char *) NULL);
+	result = TCL_ERROR;
+    }
+
+/* Signal bop if necessary */
+
+    if (plr->at_bop && plFramePtr->bopCmd != NULL) {
+	plr->at_bop = 0;
+	if (Tcl_Eval(interp, plFramePtr->bopCmd) != TCL_OK)
+	    fprintf(stderr, "Command \"%s\" failed:\n\t %s\n",
+		    plFramePtr->bopCmd, interp->result);
+    }
+
+/* Signal eop if necessary */
+
+    if (plr->at_eop && plFramePtr->eopCmd != NULL) {
+	plr->at_eop = 0;
+	if (Tcl_Eval(interp, plFramePtr->eopCmd) != TCL_OK)
+	    fprintf(stderr, "Command \"%s\" failed:\n\t %s\n",
+		    plFramePtr->eopCmd, interp->result);
+    }
+
+    return result;
+}
+
+/*----------------------------------------------------------------------*\
+* ReadData
+*
+* Reads & processes data.
+* Intended to be installed as a filehandler command.
+\*----------------------------------------------------------------------*/
+
+static int
+ReadData(ClientData clientData, int mask)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+    register Tcl_Interp *interp = plFramePtr->interp;
+
+    register PLRDev *plr = plFramePtr->plr;
+    register PLiodev *iodev = plr->iodev;
+    register PDFstrm *pdfs = plr->pdfs;
+    int result = TCL_OK;
+
+    if (mask & TK_READABLE) {
+
+/* Read from FIFO or socket */
+
+	if (pl_PacketReceive(interp, iodev, pdfs)) {
+	    Tcl_AppendResult(interp, "Packet receive failed:\n\t %s\n",
+			     interp->result, (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+/* If the packet isn't complete it will be put back and we just return.
+ * Otherwise, the buffer pointer is saved and then cleared so that reads
+ * from the buffer start at the beginning.
+ */
+	if (pdfs->bp == 0)
+	    return TCL_OK;
+
+	plr->nbytes = pdfs->bp;
+	pdfs->bp = 0;
+	result = process_data(interp, plFramePtr);
+    }
+
+    return result;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1454,80 +1549,6 @@ Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     plsdidev(atof(argv[0]), atof(argv[1]), atof(argv[2]), atof(argv[3]));
     return(Redraw(interp, plFramePtr, argc-1, argv+1));
-}
-
-/*----------------------------------------------------------------------*\
-* ReadData
-*
-* Processes "read" widget command.
-* Reads & processes data.
-\*----------------------------------------------------------------------*/
-
-static int
-ReadData(Tcl_Interp *interp, register PlFrame *plFramePtr,
-	 int argc, char **argv)
-{
-    register PLRDev *plr = plFramePtr->plr;
-    PDFstrm *pdfs = plr->pdfs;
-    int result = TCL_OK;
-
-    plr->nbytes = atoi(argv[0]);
-
-#ifdef DEBUG
-    fprintf(stderr, "%s: Reading %d characters\n", __FILE__, plr->nbytes);
-    fflush(stderr);
-#endif
-
-/* Read from FIFO */
-/* If we are not buffering, the PDF routines will do the actual read */
-
-    if (plFramePtr->comm_type == 0) {
-#if BUFFER_FIFO
-	pdfs->bp = 0;
-	if (fread(pdfs->buffer, 1, plr->nbytes, plr->fifo) != plr->nbytes) {
-	    Tcl_AppendResult(interp, "unable to read from ", plr->filetype,
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-#endif
-    }
-
-/* Read from socket */
-
-/* Note: the buffer pointer needs to be cleared before the read so we can
- * test it to check for an incomplete packet, and after the read so that
- * reads from the buffer start at the beginning.
- */
-
-    else {
-	pdfs->bp = 0;
-	for (;;) {
-	    if (pl_PacketReceive(interp, plr->socket, 0, plr->pdfs)) {
-		fprintf(stderr, "Packet receive failed:\n\t %s\n",
-			interp->result);
-		client_cmd(interp, "set proceed 1", 1, 1);
-		return TCL_ERROR;
-	    }
-	    if (pdfs->bp == plr->nbytes)
-		break;
-	}
-	pdfs->bp = 0;
-    }
-
-/* Read (from data buffer or FIFO) and process data */
-
-    if (plr_process(plr) == -1) {
-	Tcl_AppendResult(interp, "unable to read from ", plr->filetype,
-			 (char *) NULL);
-	result = TCL_ERROR;
-    }
-
-#ifdef DEBUG
-    fprintf(stderr, "%s: Done with read\n", __FILE__);
-    fflush(stderr);
-#endif
-
-    return result;
 }
 
 /*----------------------------------------------------------------------*\
