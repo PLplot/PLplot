@@ -56,6 +56,7 @@ install_demos:
 	-cp ../examples/f77/* $(DEMOS_DIR)/f77
 	-cp ../examples/tcl/* $(DEMOS_DIR)/tcl
 	-cp ../examples/tk/* $(DEMOS_DIR)/tk
+	-$(LN) $(DEMOS_DIR)/tcl/x??.tcl $(DEMOS_DIR)/tk
 
 install_utils:
 	$(LDC) $(LDC_FLAGS) plrender$O $(LIB_INSTALL) \
