@@ -229,7 +229,7 @@ class x09 {
 	}
 
 	pls.col0(2);
-        pls.cont( z, lev, xg, yg, 2 );
+        pls.cont( z, lev, xg, yg, 0 );
 	pls.col0(1);
 	pls.lab("", "", "Polar Contour Plot");
     }
@@ -262,8 +262,10 @@ class x09 {
 	double [][] z = new double[PRPTS][PPERIMETERPTS] ;
 	int nlevelneg, nlevelpos;
 	double dz, clevel;
-	double [] clevelneg = new double[PNLEVEL];
-	double [] clevelpos = new double[PNLEVEL];
+	double [] clevelneg_store = new double[PNLEVEL];
+	double [] clevelpos_store = new double[PNLEVEL];
+	double [] clevelneg = new double[PNLEVEL/2];
+	double [] clevelpos = new double[PNLEVEL/2];
 	int  ncollin, ncolbox, ncollab;
 	double [] px = new double[PPERIMETERPTS];
 	double [] py = new double[PPERIMETERPTS];
@@ -276,7 +278,7 @@ class x09 {
 	for (i = 0; i < PRPTS; i++) {
             r = 0.5 + (double) i;
             for (j = 0; j < PTHETAPTS; j++) {
-                theta = (2.*Math.PI/(double)(PTHETAPTS))*(0.5 + (double) j);
+                theta = (2.*Math.PI/(double)(PTHETAPTS-1))*(0.5 + (double) j);
                 xg[i][j] = r*Math.cos(theta);
                 yg[i][j] = r*Math.sin(theta);
             }
@@ -337,9 +339,12 @@ class x09 {
 
     /*	printf("%.15g %.15g %.15g %.15g %.15g %.15g %.15g %.15g \n",
         q1, d1, q1i, d1i, q2, d2, q2i, d2i);
-	printf("%.15g %.15g %.15g %.15g %.15g %.15g \n",
-        xmin, xmax, ymin, ymax, zmin, zmax);
-    */
+	System.out.println(xmin);
+	System.out.println(xmax);
+	System.out.println(ymin);
+	System.out.println(ymax);
+	System.out.println(zmin);
+	System.out.println(zmax); */
 
     // Positive and negative contour levels.
 	dz = (zmax-zmin)/(double) PNLEVEL;
@@ -348,10 +353,20 @@ class x09 {
 	for (i = 0; i < PNLEVEL; i++) {
             clevel = zmin + ((double) i + 0.5)*dz;
             if (clevel <= 0.)
-                clevelneg[nlevelneg++] = clevel;
+                clevelneg_store[nlevelneg++] = clevel;
             else
-                clevelpos[nlevelpos++] = clevel;
+                clevelpos_store[nlevelpos++] = clevel;
 	}
+       // The point here is to copy results into an array of the correct size.
+       // This only works if nlevelneg = nlevelpos = PNLEVEL/2, the size
+       // of the pre-allocated space for clevelpos and clevelneg.  A much
+       // better approach would be to use a dynamic object such as a vector,
+       // but AWI cannot find a clear tutorial about using them, and it is
+       // also not clear (to AWI) whether vectors would work as plcont
+       // arguments.  Over to you Geoffrey!
+	System.arraycopy(clevelneg_store, 0, clevelneg, 0, nlevelneg);
+	System.arraycopy(clevelpos_store, 0, clevelpos, 0, nlevelpos);
+
     // Colours!
 	ncollin = 11;
 	ncolbox = 1;
@@ -369,13 +384,13 @@ class x09 {
 	if(nlevelneg >0) {
         // Negative contours
             pls.lsty(2);
-            pls.cont( z, clevelneg, xg, yg, 2 );
+            pls.cont( z, clevelneg, xg, yg, 0 );
 	}
 
 	if(nlevelpos >0) {
         // Positive contours
             pls.lsty(1);
-            pls.cont( z, clevelpos, xg, yg, 2 );
+            pls.cont( z, clevelpos, xg, yg, 0 );
 	}
 		 
     // Draw outer boundary
