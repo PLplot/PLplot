@@ -1564,11 +1564,11 @@ plInitDispatchTable()
     int i, j, driver_found, done=0;
     FILE *fp_drvdb = 0;
 
-    fp_drvdb = plLibOpen( "drivers/drivers.db" );
+    fp_drvdb = plLibOpen( "drivers/" DRIVERS_DB );
 
     if (!fp_drvdb)
     /* Try to fool plLibOpen into looking under $prefix/lib/plplot$version. */
-        fp_drvdb = plLibOpen( "../drivers/drivers.db" );
+        fp_drvdb = plLibOpen( "../drivers/" DRIVERS_DB );
 
     if (fp_drvdb) {
     /* Count the number of dynamic devices. */
@@ -1583,7 +1583,7 @@ plInitDispatchTable()
             npldynamicdevices++;
         }
     } else {
-        fprintf( stderr, "Can't open drivers/drivers.db\n" );
+        fprintf( stderr, "Can't open drivers/" DRIVERS_DB "\n" );
     }
 #endif
 
@@ -1605,7 +1605,7 @@ plInitDispatchTable()
     npldrivers = nplstaticdevices;
 
 #ifdef ENABLE_DYNDRIVERS
-/*     printf( "Ready to read drivers/drivers.db\n" ); */
+/*     printf( "Ready to read drivers/" DRIVERS_DB "\n" ); */
 
 /* Allocate space for the device and driver specs.  We may not use all of
  * these driver descriptors, but we obviously won't need more drivers than
