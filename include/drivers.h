@@ -53,6 +53,7 @@ void plD_dispatch_init_hpgl	( PLDispatchTable *pdt );
 void plD_dispatch_init_imp	( PLDispatchTable *pdt );
 void plD_dispatch_init_pbm	( PLDispatchTable *pdt );
 void plD_dispatch_init_png	( PLDispatchTable *pdt );
+void plD_dispatch_init_cgm	( PLDispatchTable *pdt );
 void plD_dispatch_init_null	( PLDispatchTable *pdt );
 void plD_dispatch_init_pstex	( PLDispatchTable *pdt );
 void plD_dispatch_init_ntk	( PLDispatchTable *pdt );
@@ -252,6 +253,17 @@ void plD_tidy_png               (PLStream *);
 void plD_state_png              (PLStream *, PLINT);
 void plD_esc_png                (PLStream *, PLINT, void *);
 void plD_eop_jpeg                (PLStream *);
+
+/* These are for the CGM driver based on libcd */
+void plD_init_cgm		(PLStream *);
+void plD_line_cgm		(PLStream *, short, short, short, short);
+void plD_polyline_cgm		(PLStream *, short *, short *, PLINT);
+void plD_eop_cgm		(PLStream *);
+void plD_bop_cgm		(PLStream *);
+void plD_tidy_cgm		(PLStream *);
+void plD_state_cgm		(PLStream *, PLINT);
+void plD_esc_cgm		(PLStream *, PLINT, void *);
+
 #endif
 
 /* Prototypes for plot buffer calls. */

@@ -199,6 +199,9 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_ntk) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_ntk,
 #endif
+#ifdef PLD_cgm
+    plD_dispatch_init_cgm,
+#endif
 #if defined(PLD_null) && !defined(ENABLE_DYNAMIC_DRIVERS)
     plD_dispatch_init_null,
 #endif
@@ -867,6 +870,24 @@ static PLDispatchTable static_devices[] = {
 	(plD_esc_fp) plD_esc_png
     },
 #endif
+
+#ifdef PLD_cgm
+    {
+        "CGM File (Computer Graphics Metafile libcd)",
+	"cgm",
+	plDevType_FileOriented,
+        40,
+	(plD_init_fp) plD_init_cgm,
+	(plD_line_fp) plD_line_cgm,
+	(plD_polyline_fp) plD_polyline_cgm,
+	(plD_eop_fp) plD_eop_cgm,
+	(plD_bop_fp) plD_bop_cgm,
+	(plD_tidy_fp) plD_tidy_cgm,
+	(plD_state_fp) plD_state_cgm,
+	(plD_esc_fp) plD_esc_cgm
+    },
+#endif
+
 
 #ifdef PLD_pstex
     {
