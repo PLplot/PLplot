@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/02/23 05:23:11  mjl
-   Changed references in error messages from plstar to plinit.
+   Revision 1.5  1993/03/28 08:46:25  mjl
+   Changes to allow viewports bigger than display area.  This allows enlargement
+   of plots.
 
+ * Revision 1.4  1993/02/23  05:23:11  mjl
+ * Changed references in error messages from plstar to plinit.
+ *
  * Revision 1.3  1993/01/23  06:02:29  mjl
  * Now holds all routines dealing with viewport generation.
  *
@@ -158,6 +162,8 @@ c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLFLT spdxmi, spdxma, spdymi, spdyma;
     PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;
     PLINT vppxmi, vppxma, vppymi, vppyma;
+    PLINT clpxmi, clpxma, clpymi, clpyma;
+    PLINT phyxmi, phyxma, phyymi, phyyma;
     PLINT nx, ny, cs;
     PLINT level;
 
@@ -165,8 +171,7 @@ c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     if (level < 1)
 	plexit("plvpor: Please call plinit first.");
 
-    if ((xmin >= xmax) || (ymin >= ymax) || (xmin < 0.) ||
-	(ymin < 0.) || (xmax > 1.) || (ymax > 1.))
+    if ((xmin >= xmax) || (ymin >= ymax))
 	plexit("plvpor: Invalid limits.");
 
     gsub(&nx, &ny, &cs);
@@ -185,7 +190,14 @@ c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     vppymi = dcpcy(vpdymi);
     vppyma = dcpcy(vpdyma);
     svpp(vppxmi, vppxma, vppymi, vppyma);
-    sclp(vppxmi, vppxma, vppymi, vppyma);
+
+    gphy(&phyxmi, &phyxma, &phyymi, &phyyma);
+    clpxmi = MAX(vppxmi, phyxmi);
+    clpxma = MIN(vppxma, phyxma);
+    clpymi = MAX(vppymi, phyymi);
+    clpyma = MIN(vppyma, phyyma);
+    sclp(clpxmi, clpxma, clpymi, clpyma);
+
     slev(2);
 }
 
@@ -208,8 +220,7 @@ c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
     if (level < 1)
 	plexit("plvpas: Please call plinit first.");
 
-    if ((xmin >= xmax) || (ymin >= ymax) || (xmin < 0.) ||
-	(ymin < 0.) || (xmax > 1.) || (ymax > 1.))
+    if ((xmin >= xmax) || (ymin >= ymax))
 	plexit("plvpas: Invalid limits.");
 
     if (aspect <= 0.0) {
@@ -321,7 +332,7 @@ c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     if (level < 1)
 	plexit("plsvpa: Please call plinit first.");
 
-    if ((xmin >= xmax) || (ymin >= ymax) || (xmin < 0.) || (ymin < 0.))
+    if ((xmin >= xmax) || (ymin >= ymax))
 	plexit("plsvpa: Invalid limits.");
 
     gsub(&nx, &ny, &cs);
