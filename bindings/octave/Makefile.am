@@ -4,7 +4,7 @@
 ###
 # Copyright (C) 2002 Alan W. Irwin
 # Copyright (C) 2002 Joao Cardoso
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -45,39 +45,25 @@ plplot_octave.cc tmp_stub: plplot_octave.h
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
 # 'mkoctfile' does not accept -rpath, use LD_RUN_PATH
-# build area version
-plplot_octave.oct plplot_octave.o: plplot_octave.cc
-	LD_RUN_PATH=`pwd`/../../src/.libs/ @MKOCTFILE@ -v -I. \
-	-L../../src/.libs plplot_octave.cc $(octave_libs)
+plplot_octave.oct: plplot_octave.o
 
-# installed version
-.samename/plplot_octave.oct ./samename/plplot_octave.o: plplot_octave.cc
-	mkdir -p .samename
-	cd .samename; ln -sf ../plplot_octave.cc
-	cd .samename ; \
-	LD_RUN_PATH=$(libdir) @MKOCTFILE@ -v -I.. \
-	-L../../../src/.libs plplot_octave.cc $(octave_libs)
+plplot_octave.o: plplot_octave.cc
+if octave_install_local
+	LD_RUN_PATH=`pwd`/../../src/.libs/ @MKOCTFILE@ -v -I. \
+	plplot_octave.o -L../../src/.libs $(octave_libs)
+else
+	LD_RUN_PATH=$(libdir)  @MKOCTFILE@ -v -I. \
+	plplot_octave.o -L$(libdir) $(octave_libs)
+fi
 
 octavesharedir = $(OCTAVE_OCT_DIR)
 
 # Ultimately, we may want to switch to the normal LT method of building
-# shared objects cross-platform, using 
+# shared objects cross-platform, using
 # octaveshare_LTLIBRARIES = plplot_octave.la
 # but octave may not be able to handle libtool-created .la files
-
-# install area version is done with install-exec-local so can do special
-# stuff that the SCRIPTS or DATA targets do not allow.
-
-install-exec-local: .samename/plplot_octave.oct
-# NEEDS $(DESTDIR) prepended to keep install relocatibility since this
-# is a local rule.
-	cd .samename
-	mkdir -p $(DESTDIR)$(octavesharedir)
-	$(INSTALL) plplot_octave.oct $(DESTDIR)$(octavesharedir)
-
-# build area version
 # SCRIPTS rather than DATA because you want to preserve the permissions.
-noinst_SCRIPTS = plplot_octave.oct
+octaveshare_SCRIPTS = plplot_octave.oct
 
 noinst_PROGRAMS = massage
 massage_SOURCES = massage.c
@@ -121,9 +107,7 @@ doc_DATA =       \
 	  cp $< $@
 
 CLEANFILES = plplot_octave.h tmp_plplot_octave.cc \
-	plplot_octave.cc plplot_octave.o \
-	.samename/plplot_octave.cc .samename/plplot_octave.o \
-	tmp_stub plplot_octave.oct .samename/plplot_octave.oct \
+	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave.oct \
 	plplot_stub.m missing_help $(doc_DATA)
 
 #enable_octave

@@ -814,16 +814,28 @@ AC_SUBST(DOCDIR)
 
 ### DocBook documentation
 
-AC_ARG_ENABLE(docbook, 
+AC_ARG_ENABLE(docbook,
     [--enable-docbook          Enable build of DocBook documentation],
     [enable_docbook="$enableval"],
     [enable_docbook=no])
 
-echo 666 $enable_docbook
 if test $enable_docbook = yes ; then
 AC_INCLUDE(doc/docbook/configure.ac)
 fi
 AM_CONDITIONAL(enable_docbook, [test "$enable_docbook" = yes])
+
+### Local installation of Octave bindings
+
+AC_ARG_ENABLE(octave-install-local,
+[  --enable-octave-install-local    Allow Octave bindings to work with the
+                                    PLplot library present in the source tree],
+[case "${enableval}" in
+  yes) octave_install_local=true ;;
+   no) octave_install_local=false ;;
+    *) AC_MSG_ERROR(bad value ${enableval} for --enable-octave-install-local);;
+esac],[octave_install_local=false])
+AM_CONDITIONAL(octave_install_local, test x$octave_install_local = xtrue)
+
 
 ### Build Makefiles
 
@@ -867,16 +879,16 @@ AC_OUTPUT([
 	test/plplot-test.sh
 	utils/Makefile
 	scripts/Makefile
-	doc/Makefile	
+	doc/Makefile
 	plplot.pc
 	plplot-double.pc
-        doc/docbook/Makefile                                            
+        doc/docbook/Makefile
         doc/docbook/src/Makefile
 	doc/docbook/src/plplotdoc.xml
 	doc/docbook/src/plplotdoc-html.dsl
-        doc/docbook/src/plplotdoc-print.dsl                              
+        doc/docbook/src/plplotdoc-print.dsl
         doc/docbook/bin/Makefile
-	doc/docbook/bin/api2man.pl                          
+	doc/docbook/bin/api2man.pl
         doc/docbook/www/index.html.in
 	])
 
