@@ -204,7 +204,7 @@ AC_INIT(src/plcore.c)
 # PLplot package 
 # ----------------------------------------------------------------------------
 
-PACKAGE_VERSION(5,0,1)
+PACKAGE_VERSION(5,0,2)
 
 # ----------------------------------------------------------------------------
 # The configure script must be run in a separate build directory.  If the
