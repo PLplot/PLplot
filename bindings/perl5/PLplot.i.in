@@ -74,8 +74,8 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
     if (piddle->ndims != 1)
       croak ("PLFLT* as pdl object must have dim = 1");
 
-    // The following does not work with slices.  Should use something like:    
-    //    PDL->make_physvaffine (piddle);
+    // Make slices work
+    PDL->make_physical (piddle);
 
     n = piddle->nvals;
     p = *ptr = (PLFLT*) malloc (n * sizeof (PLFLT));
