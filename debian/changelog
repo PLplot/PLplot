@@ -1,3 +1,22 @@
+plplot (5.2.1-13) unstable; urgency=low
+
+  * Use new upstream version of sysloc.in, with better
+    AC_MSG_CHECKING/AC_MSG_RESULT settings for the Octave checks.  This
+    will help in interpreting the buildd logs for some architectures for
+    which the building is failing.
+  * debian/control: Added build-dependency on g++-3.2, since its path is
+    hardcoded in /usr/bin/mkoctfile for some architectures.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue,  3 Jun 2003 23:20:16 +0200
+
+plplot (5.2.1-12) unstable; urgency=low
+
+  * Enable building of octave-plplot for all architectures.  The octave2.1
+    package (version 2.1.49-3*) is working now in all 11 architectures of
+    Debian sarge.  Hopefully, PLplot will now make its way into testing.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue,  3 Jun 2003 10:49:11 +0200
+
 plplot (5.2.1-11) unstable; urgency=low
 
   * debian/control: Added arm to the list of excluded architectures of
