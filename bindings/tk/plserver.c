@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1994/09/23 07:40:19  mjl
+ * Revision 1.32  1994/09/27 21:56:50  mjl
+ * Minor exit handling fix for Tk communication.
+ *
+ * Revision 1.31  1994/09/23  07:40:19  mjl
  * Now does a bit more complete cleanup at exit when communicating with the
  * Tcl-DP driver, to avoid potential problems.
  *
@@ -286,6 +289,8 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
     if (client_name != NULL) {
 	client_name = NULL;
+	Tcl_VarEval(interp, "send $client set plserver_exited 1",
+		    (char **) NULL);
 	Tcl_VarEval(interp, "send $client after 1 abort", (char **) NULL);
     }
     else if (client_port != NULL) {
