@@ -1,5 +1,12 @@
+pc-stamp
+plplot-c++.pc
+plplot-f77.pc
+plplot-master-pc
+plplot-tcl.pc
 plplot.pc
-plplot-float.pc
-plplot-double.pc
+plplotd-c++.pc
+plplotd-f77.pc
+plplotd-tcl.pc
+plplotd.pc
 Makefile.in
 Makefile
