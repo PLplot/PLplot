@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1995/03/21 19:47:44  mjl
+ * Revision 1.36  1995/04/12 08:22:30  mjl
+ * Eliminated SCHAR in favor of simply "signed char".  Removed prototypes
+ * for obsolete functions.
+ *
+ * Revision 1.35  1995/03/21  19:47:44  mjl
  * Moved inclusion of <math.h>, <string.h>, and <ctype.h> to plplotP.h, since
  * they are strictly needed by plplot.h.
  *
@@ -158,10 +162,6 @@
 #ifndef __PLCORE_H__
 extern PLStream	*plsc;
 #endif
-
-/* Signed char type, for the font tables */
-
-typedef signed char SCHAR;
 
 /*--------------------------------------------------------------------------*\
  *                       Utility macros
@@ -407,12 +407,6 @@ plCmap1_init(void);
 void
 plcmap1_calc(void);
 
-/* Writes the Hershey symbol "ch" centred at the physical coordinate */
-/* (x,y). */
-
-void
-plhrsh(PLINT ch, PLINT x, PLINT y);
-
 /* Draws a slanting tick at position (mx,my) (measured in mm) of */
 /* vector length (dx,dy). */
 
@@ -480,11 +474,6 @@ plP_ssub(PLINT nx, PLINT ny, PLINT cs);
 
 void
 plP_subpInit(void);
-
-/* Get font and color attributes */
-
-void
-plP_gatt(PLINT *p_ifnt, PLINT *p_icol0);
 
 /* Get viewport boundaries in normalized device coordinates */
 
@@ -560,11 +549,6 @@ plP_gprec(PLINT *p_setp, PLINT *p_prec);
 
 PLFLT
 plstrl(const char *string);
-
-/* Gets the character digitisation of Hershey table entry "char". */
-
-PLINT
-plcvec(PLINT ch, SCHAR ** xygr);
 
 /* Similar to strpos, but searches for occurence of string str2. */
 
