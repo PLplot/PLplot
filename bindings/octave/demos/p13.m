@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1999-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -19,7 +19,7 @@ function p13
 
   legend("opaque");
   title("Matrix with individual line attributes");
-  fmt=["bo-;elf dist;"; "-15;norm porc;"; "@-g;cat peroi;"];
+  fmt=["bo-;Complex;"; "-15;Trivial;"; "@-g;Normal;"];
 
   g = [ 1.0026965  -0.7056316   0.5318182
        -1.2488487   0.0075065   0.3397433
