@@ -13,36 +13,36 @@
 ## This file is part of plplot_octave.
 ## It is based on the corresponding demo function of PLplot.
 
-# Draws a histogram from sample data.
+## Draws a histogram from sample data.
 
 1;
 
 function go
 
-NPTS=2047;
+  NPTS=2047;
 
-# Parse and process command line arguments */
+  ## Parse and process command line arguments */
 
-#    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+  ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
-# Initialize plplot */
-	global pldevice
-	plsdev(pldevice)
-    plinit();
+  ## Initialize plplot */
+  global pldevice
+  plsdev(pldevice)
+  plinit();
 
-# Fill up data points */
+  ## Fill up data points */
 
-    delta = 2.0 * pi /  NPTS;
-    for i=1:NPTS
-		data(i) = sin(i * delta);
-	endfor
-	
-    plcol0(1);
-    plhist(data, -1.1, 1.1, 44, 0);
-    plcol0(2);
-    pllab("#frValue", "#frFrequency",
-	  "#frPLplot Example 5 - Probability function of Oscillator");
-    plend();
+  delta = 2.0 * pi /  NPTS;
+  for i=1:NPTS
+    data(i) = sin(i * delta);
+  endfor
+  
+  plcol0(1);
+  plhist(data, -1.1, 1.1, 44, 0);
+  plcol0(2);
+  pllab("#frValue", "#frFrequency",
+	"#frPLplot Example 5 - Probability function of Oscillator");
+  plend();
 endfunction
 
 go

@@ -15,329 +15,331 @@
 
 #	Demo of multiple stream/window capability (requires Tk or Tcl-DP).
 #
-# Plots several simple functions from other example programs.
+## Plots several simple functions from other example programs.
 #
-# This version sends the output of the first 4 plots (one page) to two
-# independent streams.  
+## This version sends the output of the first 4 plots (one page) to two
+## independent streams.  
 
 1;
 
 function go(arg)
 
-printf("If you dont have built PLplot with Tcl/Tk support this demo (x14c) will fail.\n");
+  global pldevice
 
-xleng0 = 400; yleng0 = 300; xoff0 = 200; yoff0 = 200;
-xleng1 = 400; yleng1 = 300; xoff1 = 500; yoff1 = 500;
+  ## printf("If you dont have built PLplot with Tcl/Tk support this demo (x14c) will fail.\n");
 
-# Select either TK or DP driver and use a small window */
-# Using DP results in a crash at the end due to some odd cleanup problems */
-# The geometry strings MUST be in writable memory */
+  xleng0 = 400; yleng0 = 300; xoff0 = 200; yoff0 = 200;
+  xleng1 = 400; yleng1 = 300; xoff1 = 500; yoff1 = 500;
 
-plsfnam(getenv("DISPLAY")); # This shouldnt be necessary!
-driver = "tk";
-geometry_master = "500x410+100+200";
-geometry_slave  = "500x410+650+200";
+  ## Select either TK or DP driver and use a small window */
+  ## Using DP results in a crash at the end due to some odd cleanup problems */
+  ## The geometry strings MUST be in writable memory */
 
-    printf("Demo of multiple output streams via the %s driver.\n", driver);
-    printf("Running with the second window as slave.\n");
-    printf("To advance to the next plot, press the \">>\" button in the window\n");
-    printf("labeled \"plclient\", or hit the <Enter> key with the focus on that window.\n");
-    fflush(stdout);
+  ## plsfnam(getenv("DISPLAY")); ## This shouldnt be necessary!
+  ## driver = "tk";
+  geometry_master = "500x410+100+200";
+  geometry_slave  = "500x410+650+200";
 
-# Set up first stream */
+  printf("Demo of multiple output streams via the %s driver.\n", pldevice);
+  printf("Running with the second window as slave.\n");
+  printf("To advance to the next plot, press the \">>\" button in the window\n");
+  printf("labeled \"plclient\", or hit the <Enter> key with the focus on that window.\n");
+  fflush(stdout);
 
-    plSetOpt("geometry", geometry_master);
+  ## Set up first stream */
 
-    plsdev(driver);
-    plssub(2,2);
-    plinit();
+  plSetOpt("geometry", geometry_master);
 
-# Start next stream */
+  plsdev(pldevice);
+  plssub(2,2);
+  plinit();
 
-    plsstrm(1);
+  ## Start next stream */
 
-# Turn off pause to make this a slave (must follow master) */
+  plsstrm(1);
 
-    plSetOpt("geometry", geometry_slave);
-    plspause(0);
-    plsdev(driver);
-    plsfnam(getenv("DISPLAY"));
-    plinit();
+  ## Turn off pause to make this a slave (must follow master) */
 
-# Set up the data & plot */
-# Original case */
+  plSetOpt("geometry", geometry_slave);
+  plspause(0);
+  plsdev(pldevice);
+  ##plsfnam(getenv("DISPLAY"));
+  plinit();
 
-    plsstrm(0);
+  ## Set up the data & plot */
+  ## Original case */
 
-    xscale = 6.;
-    yscale = 1.;
-    xoff = 0.;
-    yoff = 0.;
-    plot1(xoff,xscale,yoff,yscale);
+  plsstrm(0);
 
-# Set up the data & plot */
+  xscale = 6.;
+  yscale = 1.;
+  xoff = 0.;
+  yoff = 0.;
+  plot1(xoff,xscale,yoff,yscale);
 
-    xscale = 1.;
-    yscale = 1.e+6;
-    plot1(xoff,xscale,yoff,yscale);
+  ## Set up the data & plot */
 
-# Set up the data & plot */
+  xscale = 1.;
+  yscale = 1.e+6;
+  plot1(xoff,xscale,yoff,yscale);
 
-    xscale = 1.;
-    yscale = 1.e-6;
-    digmax = 2;
-    plsyax(digmax, 0);
-    plot1(xoff,xscale,yoff,yscale);
+  ## Set up the data & plot */
 
-# Set up the data & plot */
+  xscale = 1.;
+  yscale = 1.e-6;
+  digmax = 2;
+  plsyax(digmax, 0);
+  plot1(xoff,xscale,yoff,yscale);
 
-    xscale = 1.;
-    yscale = 0.0014;
-    yoff = 0.0185;
-    digmax = 5;
-    plsyax(digmax, 0);
-    plot1(xoff,xscale,yoff,yscale);
+  ## Set up the data & plot */
 
-# To slave */
-# The pleop() ensures the eop indicator gets lit. */
+  xscale = 1.;
+  yscale = 0.0014;
+  yoff = 0.0185;
+  digmax = 5;
+  plsyax(digmax, 0);
+  plot1(xoff,xscale,yoff,yscale);
 
-    plsstrm(1);
-    plot4();
-    pleop();
+  ## To slave */
+  ## The pleop() ensures the eop indicator gets lit. */
 
-# Back to master */
+  plsstrm(1);
+  plot4();
+  pleop();
 
-    plsstrm(0);
-    plot2();
-    plot3();
+  ## Back to master */
 
-# To slave */
+  plsstrm(0);
+  plot2();
+  plot3();
 
-    plsstrm(1);
-    plot5();
-    pleop();
+  ## To slave */
 
-# Back to master to wait for user to advance */
+  plsstrm(1);
+  plot5();
+  pleop();
 
-    plsstrm(0);
-    pleop();
+  ## Back to master to wait for user to advance */
 
-# Call plend to finish off. */
+  plsstrm(0);
+  pleop();
 
-    plend();
-    
+  ## Call plend to finish off. */
+
+  plend();
+  
 endfunction
 
 
 function plot1(xoff,xscale,yoff,yscale)
 
-    for i=0:59
-	x(i+1) = xoff + xscale * (i + 1) / 60.0;
-	y(i+1) = yoff + yscale * x(i+1).^2.;
-    endfor
+  for i=0:59
+    x(i+1) = xoff + xscale * (i + 1) / 60.0;
+    y(i+1) = yoff + yscale * x(i+1).^2.;
+  endfor
 
-    xmin = min(x);
-    xmax = max(x);
-    ymin = min(y);
-    ymax = max(y);
+  xmin = min(x);
+  xmax = max(x);
+  ymin = min(y);
+  ymax = max(y);
 
-    for i=0:5
-	xs(i+1) = x(i * 10 + 3 +1);
-	ys(i+1) = y(i * 10 + 3 +1);
-    endfor
+  for i=0:5
+    xs(i+1) = x(i * 10 + 3 +1);
+    ys(i+1) = y(i * 10 + 3 +1);
+  endfor
 
-# Set up the viewport and window using PLENV. The range in X is */
-# 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are */
-# scaled separately (just = 0), and we just draw a labelled */
-# box (axis = 0). */
+  ## Set up the viewport and window using PLENV. The range in X is */
+  ## 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are */
+  ## scaled separately (just = 0), and we just draw a labelled */
+  ## box (axis = 0). */
 
-    plcol(1);
-    plenv(xmin, xmax, ymin, ymax, 0, 0);
-    plcol(6);
-    pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
+  plcol(1);
+  plenv(xmin, xmax, ymin, ymax, 0, 0);
+  plcol(6);
+  pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
-# Plot the data points */
+  ## Plot the data points */
 
-    plcol(9);
-    plpoin(xs, ys, 9);
+  plcol(9);
+  plpoin(xs, ys, 9);
 
-# Draw the line through the data */
+  ## Draw the line through the data */
 
-    plcol(4);
-    plline(x, y);
-    plflush;#pleop();
-    
+  plcol(4);
+  plline(x, y);
+  plflush;#pleop();
+  
 endfunction
 
 function plot2()
 
-# Set up the viewport and window using PLENV. The range in X is -2.0 to
-#       10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
-#       (just = 0), and we draw a box with axes (axis = 1).
+  ## Set up the viewport and window using PLENV. The range in X is -2.0 to
+  ##       10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
+  ##       (just = 0), and we draw a box with axes (axis = 1).
 
-    plcol(1);
-    plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
-    plcol(2);
-    pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
+  plcol(1);
+  plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
+  plcol(2);
+  pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
-# Fill up the arrays */
+  ## Fill up the arrays */
 
-    for i=0:99
-	x(i+1) = (i - 19.0) / 6.0;
-	y(i+1) = 1.0;
-	if (x(i+1) != 0.0)
-	    y(i+1) = sin(x(i+1)) / x(i+1);
+  for i=0:99
+    x(i+1) = (i - 19.0) / 6.0;
+    y(i+1) = 1.0;
+    if (x(i+1) != 0.0)
+      y(i+1) = sin(x(i+1)) / x(i+1);
     endif
-    endfor
+  endfor
 
-# Draw the line */
+  ## Draw the line */
 
-    plcol(3);
-    plline(x, y);
-    plflush;#pleop();
+  plcol(3);
+  plline(x, y);
+  plflush;#pleop();
 endfunction
 
 function plot3()
 
-space0 = 0; mark0 = 0; space1 = 1500; mark1 = 1500;
-# For the final graph we wish to override the default tick intervals, and
-#       so do not use PLENV */
+  space0 = 0; mark0 = 0; space1 = 1500; mark1 = 1500;
+  ## For the final graph we wish to override the default tick intervals, and
+  ##       so do not use PLENV */
 
-    pladv(0);
+  pladv(0);
 
-# Use standard viewport, and define X range from 0 to 360 degrees, Y range
-#       from -1.2 to 1.2. */
+  ## Use standard viewport, and define X range from 0 to 360 degrees, Y range
+  ##       from -1.2 to 1.2. */
 
-    plvsta();
-    plwind(0.0, 360.0, -1.2, 1.2);
+  plvsta();
+  plwind(0.0, 360.0, -1.2, 1.2);
 
-    # Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
+  ## Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
 
-    plcol(1);
-    plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
+  plcol(1);
+  plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
-# Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
-#       expects a pointer!! */
+  ## Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
+  ##       expects a pointer!! */
 
-    plstyl(1, mark1, space1);
-    plcol(2);
-    plbox("g", 30.0, 0, "g", 0.2, 0);
-    plstyl(0, mark0, space0);
+  plstyl(1, mark1, space1);
+  plcol(2);
+  plbox("g", 30.0, 0, "g", 0.2, 0);
+  plstyl(0, mark0, space0);
 
-    plcol(3);
-    pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
+  plcol(3);
+  pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
 
-    for i = 0:100
-	x(i+1) = 3.6 * i;
-	y(i+1) = sin(x(i+1) * 3.141592654 / 180.0);
-    endfor
+  for i = 0:100
+    x(i+1) = 3.6 * i;
+    y(i+1) = sin(x(i+1) * 3.141592654 / 180.0);
+  endfor
 
-    plcol(4);
-    plline(x, y);
-    plflush;#pleop();
+  plcol(4);
+  plline(x, y);
+  plflush;#pleop();
 
-    endfunction
+endfunction
 
 function plot4()
 
-    dtr = 3.141592654 / 180.0;
+  dtr = 3.141592654 / 180.0;
 
-    zz=0:360;
-	x0 = cos(dtr * zz');
-	y0 = sin(dtr * zz');
+  zz=0:360;
+  x0 = cos(dtr * zz');
+  y0 = sin(dtr * zz');
 
 
-# Set up viewport and window, but do not draw box */
+  ## Set up viewport and window, but do not draw box */
 
-    plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
-    
-    for i = 1:10
-	    x = 0.1 * i * x0;
-	    y = 0.1 * i * y0;
+  plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
+  
+  for i = 1:10
+    x = 0.1 * i * x0;
+    y = 0.1 * i * y0;
 
-# Draw circles for polar grid */
+    ## Draw circles for polar grid */
 
-	plline(x, y);
-    endfor
-    
-    plcol(2);
-    for i = 0:11
-	theta = 30.0 * i;
-	dx = cos(dtr * theta);
-	dy = sin(dtr * theta);
-
-# Draw radial spokes for polar grid */
-
-	pljoin(0.0, 0.0, dx, dy);
-	text=sprintf("%d", round(theta));
-
-# Write labels for angle */
-
-	if (dx >= 0)
-	    plptex(dx, dy, dx, dy, -0.15, text);
-	else
-	    plptex(dx, dy, -dx, -dy, 1.15, text);
-    endif
-    endfor
-
-# Draw the graph */
-
-	r = sin(dtr * (5 * zz'));
-	x = x0 .* r;
-	y = y0 .* r;
-    
-    plcol(3);
     plline(x, y);
+  endfor
+  
+  plcol(2);
+  for i = 0:11
+    theta = 30.0 * i;
+    dx = cos(dtr * theta);
+    dy = sin(dtr * theta);
 
-    plcol(4);
-    plmtex("t", 2.0, 0.5, 0.5,
-	   "#frPLplot Example 3 - r(#gh)=sin 5#gh");
-    plflush;#pleop();
+    ## Draw radial spokes for polar grid */
+
+    pljoin(0.0, 0.0, dx, dy);
+    text=sprintf("%d", round(theta));
+
+    ## Write labels for angle */
+
+    if (dx >= 0)
+      plptex(dx, dy, dx, dy, -0.15, text);
+    else
+      plptex(dx, dy, -dx, -dy, 1.15, text);
+    endif
+  endfor
+
+  ## Draw the graph */
+
+  r = sin(dtr * (5 * zz'));
+  x = x0 .* r;
+  y = y0 .* r;
+  
+  plcol(3);
+  plline(x, y);
+
+  plcol(4);
+  plmtex("t", 2.0, 0.5, 0.5,
+	 "#frPLplot Example 3 - r(#gh)=sin 5#gh");
+  plflush;#pleop();
 endfunction
 
-# Demonstration of contour plotting */
+## Demonstration of contour plotting */
 
 function plot5()
 
-XPTS=      35;
-YPTS=      46;
-XSPA=      2./(XPTS-1);
-YSPA=      2./(YPTS-1);
+  XPTS=      35;
+  YPTS=      46;
+  XSPA=      2./(XPTS-1);
+  YSPA=      2./(YPTS-1);
 
-tr=[XSPA, 0.0, -1.0, 0.0, YSPA, -1.0]';
+  tr=[XSPA, 0.0, -1.0, 0.0, YSPA, -1.0]';
 
-# this is builtin in plplot_octave
-## It is based on the corresponding demo function of PLplot.# 
-# mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
-# {
-#    *tx = tr(0) * x + tr(1) * y + tr(2);
-#    *ty = tr(3) * x + tr(4) * y + tr(5);
-# }
+  ## this is builtin in plplot_octave
+  ## It is based on the corresponding demo function of PLplot.## 
+  ## mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
+  ## {
+  ##    *tx = tr(0) * x + tr(1) * y + tr(2);
+  ##    *ty = tr(3) * x + tr(4) * y + tr(5);
+  ## }
 
-clevel =[-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.]';
+  clevel =[-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.]';
 
-mark = 1500; space = 1500;
+  mark = 1500; space = 1500;
 
-# Set up function arrays */
+  ## Set up function arrays */
 
-    for i = 0:XPTS-1
-	xx = (i - (XPTS / 2)) / (XPTS / 2);
-	for j = 0:YPTS-1
-	    yy = (j - (YPTS / 2)) / (YPTS / 2) - 1.0;
-	    z(i+1,j+1) = xx * xx - yy * yy;
-	    w(i+1,j+1) = 2 * xx * yy;
-	endfor
+  for i = 0:XPTS-1
+    xx = (i - (XPTS / 2)) / (XPTS / 2);
+    for j = 0:YPTS-1
+      yy = (j - (YPTS / 2)) / (YPTS / 2) - 1.0;
+      z(i+1,j+1) = xx * xx - yy * yy;
+      w(i+1,j+1) = 2 * xx * yy;
     endfor
+  endfor
 
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol(2);
-    plcont(z, 1, XPTS, 1, YPTS, clevel, tr, 0);
-    plstyl(1, mark, space);
-    plcol(3);
-    plcont(w, 1, XPTS, 1, YPTS, clevel, tr, 0);
-    plcol(1);
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-    plflush;#pleop();
+  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
+  plcol(2);
+  plcont(z, 1, XPTS, 1, YPTS, clevel, tr, 0);
+  plstyl(1, mark, space);
+  plcol(3);
+  plcont(w, 1, XPTS, 1, YPTS, clevel, tr, 0);
+  plcol(1);
+  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+  plflush;#pleop();
 endfunction
 
 go

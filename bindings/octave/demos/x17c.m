@@ -17,94 +17,96 @@
 
 function go
 
-# If db is used the plot is much more smooth. However, because of the
-# async X behaviour, one does not have a real-time scripcharter.
-#    plSetOpt("db", ""); 
+  ## If db is used the plot is much more smooth. However, because of the
+  ## async X behaviour, one does not have a real-time scripcharter.
+  ##    plSetOpt("db", ""); 
 
-    plSetOpt("np", "");
-    
-# Specify some reasonable defaults for ymin and ymax */
-# The plot will grow automatically if needed (but not shrink) */
+  global pldevice
+  plSetOpt("np", "");
 
-    ymin = -1.0;
-    ymax =  1.0;
+  ## Specify some reasonable defaults for ymin and ymax */
+  ## The plot will grow automatically if needed (but not shrink) */
 
-# Specify initial tmin and tmax -- this determines length of window. */
-# Also specify maximum jump in t */
-# This can accomodate adaptive timesteps */
+  ymin = -1.0;
+  ymax =  1.0;
 
-    tmin = 0.;
-    tmax = 10.;
-    tjump = 0.3;	# percentage of plot to jump
+  ## Specify initial tmin and tmax -- this determines length of window. */
+  ## Also specify maximum jump in t */
+  ## This can accomodate adaptive timesteps */
 
-# Axes options same as plbox. */
-# Only automatic tick generation and label placement allowed */
-# Eventually I'll make this fancier */
+  tmin = 0.;
+  tmax = 10.;
+  tjump = 0.3;	## percentage of plot to jump
 
-    colbox = 1;
-    collab = 3;
-    styline(1) = colline(1) = 2;	# pens color and line style
-    styline(2) = colline(2) = 3;
-    styline(3) = colline(3) = 4;
-    styline(4) = colline(4) = 5;    
+  ## Axes options same as plbox. */
+  ## Only automatic tick generation and label placement allowed */
+  ## Eventually I'll make this fancier */
 
-#    legline = ["sum"; "sin"; "sin*noi"; "sin+noi";];
+  colbox = 1;
+  collab = 3;
+  styline(1) = colline(1) = 2;	## pens color and line style
+  styline(2) = colline(2) = 3;
+  styline(3) = colline(3) = 4;
+  styline(4) = colline(4) = 5;    
+
+  ##    legline = ["sum"; "sin"; "sin*noi"; "sin+noi";];
 
 
-    xlab = 0.; ylab = 0.25;	# legend position 
-    
-    autoy = 0;	# autoscale y
-    acc = 1;	# dont strip, accumulate
+  xlab = 0.; ylab = 0.25;	## legend position 
+  
+  autoy = 0;	## autoscale y
+  acc = 1;	## dont strip, accumulate
 
-# Initialize plplot */
+  ## Initialize plplot */
 
-    plinit();
-    pladv(0);    
-    plvsta();    
-    id1= plstripc("bcnst", "bcnstv",
+  plsdev(pldevice);
+  plinit();
+  pladv(0);    
+  plvsta();    
+  id1= plstripc("bcnst", "bcnstv",
 		tmin, tmax, tjump, ymin, ymax,
 		xlab, ylab,
 		autoy, acc,
 		colbox, collab,
 		colline, styline, "sum", "sin", "sin*noi", "sin+noi",
-	     "t", "pois", "Strip chart demo");
+		"t", "pois", "Strip chart demo");
 
-# This is to represent a loop over time */
-# Let's try a random walk process */
+  ## This is to represent a loop over time */
+  ## Let's try a random walk process */
 
-    y1 = y2 = y3 = y4 = 0.0;
-    dt = 0.1;
+  y1 = y2 = y3 = y4 = 0.0;
+  dt = 0.1;
 
-    for n = 0:1000
-		t = n * dt;
-		noise = randn/2;
-		y1 = y1 + noise;
-		y2 = sin(t*pi/18.);
-		y3 = y2 * noise;
-		y4 = y2 + noise;
-	
-	# there is no need for all pens to have the same number of points
-	# or beeing equally time spaced.
-		
-		if (rem(n,2))	
-			plstripa(id1, 0, t, y1);
-		endif
-		if rem(n,3)
-			plstripa(id1, 1, t, y2);
-		endif
-		if rem(n,4)
-			plstripa(id1, 2, t, y3);
-		endif
-		if rem(n,5)
-			plstripa(id1, 3, t, y4);
-		endif
-    endfor
-
-# Destroy strip chart and it's memory */
-
-    plstripd(id1);
-    plend;
+  for n = 0:1000
+    t = n * dt;
+    noise = randn/2;
+    y1 = y1 + noise;
+    y2 = sin(t*pi/18.);
+    y3 = y2 * noise;
+    y4 = y2 + noise;
     
+    ## there is no need for all pens to have the same number of points
+    ## or beeing equally time spaced.
+    
+    if (rem(n,2))	
+      plstripa(id1, 0, t, y1);
+    endif
+    if rem(n,3)
+      plstripa(id1, 1, t, y2);
+    endif
+    if rem(n,4)
+      plstripa(id1, 2, t, y3);
+    endif
+    if rem(n,5)
+      plstripa(id1, 3, t, y4);
+    endif
+  endfor
+
+  ## Destroy strip chart and it's memory */
+
+  plstripd(id1);
+  plend;
+  
 endfunction
 
 go

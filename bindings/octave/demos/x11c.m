@@ -13,69 +13,69 @@
 ## This file is part of plplot_octave.
 ## It is based on the corresponding demo function of PLplot.
 
-# Does a series of mesh plots for a given data set, with different
-# viewing options in each plot.
+## Does a series of mesh plots for a given data set, with different
+## viewing options in each plot.
 
 1;
 
 function go
 
-XPTS = 35;		# Data points in x */
-YPTS = 46;		# Datat points in y */
+  XPTS = 35;		## Data points in x */
+  YPTS = 46;		## Datat points in y */
 
-opt = [1, 2, 3, 3]';
-alt = [60.0, 20.0, 60.0, 60.0]';
-az = [30.0, 60.0, 120.0, 160.0]';
+  opt = [1, 2, 3, 3]';
+  alt = [60.0, 20.0, 60.0, 60.0]';
+  az = [30.0, 60.0, 120.0, 160.0]';
 
-title = ["#frPLplot Example 11 - Alt=60, Az=30, Opt=1",
-    "#frPLplot Example 11 - Alt=20, Az=60, Opt=2",
-    "#frPLplot Example 11 - Alt=60, Az=120, Opt=3",
-    "#frPLplot Example 11 - Alt=60, Az=160, Opt=3"];
+  title = ["#frPLplot Example 11 - Alt=60, Az=30, Opt=1",
+	   "#frPLplot Example 11 - Alt=20, Az=60, Opt=2",
+	   "#frPLplot Example 11 - Alt=60, Az=120, Opt=3",
+	   "#frPLplot Example 11 - Alt=60, Az=160, Opt=3"];
 
-# Parse and process command line arguments */
+  ## Parse and process command line arguments */
 
-#    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+  ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
-# Initialize plplot */
+  ## Initialize plplot */
 
-    global pldevice
-    plsdev(pldevice)
-        
-    plinit();
+  global pldevice
+  plsdev(pldevice)
+  
+  plinit();
 
-    for i=0: XPTS-1
-		x(i+1) =   (i - (XPTS / 2)) /   (XPTS / 2);
+  for i=0: XPTS-1
+    x(i+1) =   (i - (XPTS / 2)) /   (XPTS / 2);
+  endfor
+
+  for i=0:YPTS-1
+    y(i+1) =   (i - (YPTS / 2)) /   (YPTS / 2);
+  endfor
+  
+  for i=0:XPTS-1
+    xx = x(i+1);
+    for j=0:YPTS-1
+      yy = y(j+1);
+      z(i+1,j+1) = cos(2.0 * pi * xx) * sin(2.0 * pi * yy);
     endfor
+  endfor
 
-    for i=0:YPTS-1
-		y(i+1) =   (i - (YPTS / 2)) /   (YPTS / 2);
-	endfor
-	
-    for i=0:XPTS-1
-		xx = x(i+1);
-		for j=0:YPTS-1
-	    	yy = y(j+1);
-		    z(i+1,j+1) = cos(2.0 * pi * xx) * sin(2.0 * pi * yy);
-		endfor
-	endfor
-
-    for k=0:3
-	 	pladv(0);
-		plcol0(1);
-		plvpor(0.0, 1.0, 0.0, 0.8);
-		plwind(-1.0, 1.0, -1.0, 1.5);
-	
-		plw3d(1.0, 1.0, 1.2, -1.0, 1.0, -1.0, 1.0, -1.5, 1.5, alt(k+1), az(k+1));
-		plbox3("bnstu", "x axis", 0.0, 0,
-		       "bnstu", "y axis", 0.0, 0,
-		       "bcdmnstuv", "z axis", 0.0, 4);
-	
-		plcol0(2);
-		plmesh(x, y, z, opt(k+1));
-		plcol0(3);
-		plmtex("t", 1.0, 0.5, 0.5, title(k+1,:));
-    endfor
-    plend();
+  for k=0:3
+    pladv(0);
+    plcol0(1);
+    plvpor(0.0, 1.0, 0.0, 0.8);
+    plwind(-1.0, 1.0, -1.0, 1.5);
+    
+    plw3d(1.0, 1.0, 1.2, -1.0, 1.0, -1.0, 1.0, -1.5, 1.5, alt(k+1), az(k+1));
+    plbox3("bnstu", "x axis", 0.0, 0,
+	   "bnstu", "y axis", 0.0, 0,
+	   "bcdmnstuv", "z axis", 0.0, 4);
+    
+    plcol0(2);
+    plmesh(x, y, z, opt(k+1));
+    plcol0(3);
+    plmtex("t", 1.0, 0.5, 0.5, title(k+1,:));
+  endfor
+  plend();
 endfunction
 
 go

@@ -13,33 +13,32 @@
 ## This file is part of plplot_octave.
 ## It is based on the corresponding demo function of PLplot.
 
-# Demonstrates absolute positioning of graphs on a page.
+## Demonstrates absolute positioning of graphs on a page.
 
 1;
 
 function go
 
+  ## Parse and process command line arguments */
 
-# Parse and process command line arguments */
+  ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
-#    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+  ## Initialize plplot */
+  global pldevice
+  plsdev(pldevice)
+  
+  plinit();
 
-# Initialize plplot */
-    global pldevice
-    plsdev(pldevice)
-                
-    plinit();
+  pladv(0);
+  plvpor(0.0, 1.0, 0.0, 1.0);
+  plwind(0.0, 1.0, 0.0, 1.0);
+  plbox("bc", 0.0, 0, "bc", 0.0, 0);
 
-    pladv(0);
-    plvpor(0.0, 1.0, 0.0, 1.0);
-    plwind(0.0, 1.0, 0.0, 1.0);
-    plbox("bc", 0.0, 0, "bc", 0.0, 0);
-
-    plsvpa(50.0, 150.0, 100.0, 150.0);
-    plwind(0.0, 1.0, 0.0, 1.0);
-    plbox("bc", 0.0, 0, "bc", 0.0, 0);
-    plptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,100,150)");
-    plend();    
+  plsvpa(50.0, 150.0, 100.0, 150.0);
+  plwind(0.0, 1.0, 0.0, 1.0);
+  plbox("bc", 0.0, 0, "bc", 0.0, 0);
+  plptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,100,150)");
+  plend();    
 endfunction
 
 go

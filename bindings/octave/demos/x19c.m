@@ -12,8 +12,9 @@
 ##
 ## This file is part of plplot_octave.
 ## It is based on the corresponding demo function of PLplot.
+
 printf("\n\n\
 This demo can't run in Octave, as a pointer to an Octave function is necessary,\n\
-and, even if Matwrap did support it, it would be very inefficient anyway.\n\n");
+    and, even if Matwrap did support it, it would be very inefficient anyway.\n\n");
 fflush(stdout);
 kbhit;

@@ -13,64 +13,64 @@
 ## This file is part of plplot_octave.
 ## It is based on the corresponding demo function of PLplot.
 
-# Displays the entire "plpoin" symbol (font) set.
+## Displays the entire "plpoin" symbol (font) set.
 
 1;
 
 function go
 
-# Parse and process command line arguments */
+  ## Parse and process command line arguments */
 
-#    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+  ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
-# Initialize plplot */
-	global pldevice
-	plsdev(pldevice)
-    plinit();
+  ## Initialize plplot */
+  global pldevice
+  plsdev(pldevice)
+  plinit();
 
-    pladv(0);
+  pladv(0);
 
-# Set up viewport and window */
+  ## Set up viewport and window */
 
-    plcol0(2);
-    plvpor(0.1, 1.0, 0.1, 0.9);
-    plwind(0.0, 1.0, 0.0, 1.3);
+  plcol0(2);
+  plvpor(0.1, 1.0, 0.1, 0.9);
+  plwind(0.0, 1.0, 0.0, 1.3);
 
-# Draw the grid using plbox */
+  ## Draw the grid using plbox */
 
-    plbox("bcgt", 0.1, 0, "bcgt", 0.1, 0);
+  plbox("bcgt", 0.1, 0, "bcgt", 0.1, 0);
 
-# Write the digits below the frame */
+  ## Write the digits below the frame */
 
-    plcol0(15);
-    for i=0:9
-	text=sprintf("%d", i);
-	plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
+  plcol0(15);
+  for i=0:9
+    text=sprintf("%d", i);
+    plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
+  endfor
+
+  k = 0;
+  for i=0:12
+
+    ## Write the digits to the left of the frame */
+
+    text=sprintf("%d", 10 * i);
+    plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, text);
+    for j=0:9
+      x = 0.1 * j + 0.05;
+      y = 1.25 - 0.1 * i;
+
+      ## Display the symbols (plpoin expects that x and y are arrays so */
+      ## pass pointers) */
+
+      if (k < 128)
+	plpoin(x, y, k);
+      endif
+      k = k + 1;
     endfor
+  endfor
 
-    k = 0;
-    for i=0:12
-
-    # Write the digits to the left of the frame */
-
-	text=sprintf("%d", 10 * i);
-	plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, text);
-	for j=0:9
-	    x = 0.1 * j + 0.05;
-	    y = 1.25 - 0.1 * i;
-
-	# Display the symbols (plpoin expects that x and y are arrays so */
-	# pass pointers) */
-
-	    if (k < 128)
-			plpoin(x, y, k);
-		endif
-	    k = k + 1;
-	endfor
-    endfor
-
-    plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
-    plend();
+  plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
+  plend();
 endfunction
 
 go
