@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.1  1994/06/30 18:49:38  mjl
+# Revision 1.2  1994/08/09 08:23:26  mjl
+# Changed to new tclMatrix notation.
+#
+# Revision 1.1  1994/06/30  18:49:38  mjl
 # Tcl demo programs, which fully reproduce their x??c counterpart.
 #
 #----------------------------------------------------------------------------
@@ -41,13 +44,13 @@ proc 6 {} {
 
 	plmtex "lv" 1.0 [expr 1.0 - (2 * $i + 1)/26.0] 1.0 [expr 10*$i]
 	for {set j 0} {$j <= 9} {incr j} {
-	    $x 0 = [expr 0.1 * $j + 0.05]
-	    $y 0 = [expr 1.25 - 0.1 * $i]
+	    x 0 = [expr 0.1 * $j + 0.05]
+	    y 0 = [expr 1.25 - 0.1 * $i]
 
 # Display the symbols
 
 	    if {$k < 128} {
-		plpoin 1 $x $y $k
+		plpoin 1 x y $k
 	    }
 	    incr k
 	}

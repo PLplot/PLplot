@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.1  1994/06/30 18:49:39  mjl
+# Revision 1.2  1994/08/09 08:23:27  mjl
+# Changed to new tclMatrix notation.
+#
+# Revision 1.1  1994/06/30  18:49:39  mjl
 # Tcl demo programs, which fully reproduce their x??c counterpart.
 #
 #----------------------------------------------------------------------------
@@ -45,15 +48,15 @@ proc 7 {} {
 # Write the digits to the left of the frame
 
 	    plmtex "lv" 1.0 [expr (0.95 - 0.1 * $i)] 1.0 \
-		[expr [$base $l] + 10*$i]
+		[expr [base $l] + 10*$i]
 
 	    for {set j 0} {$j <= 9} {incr j} {
-		$x 0 = [expr 0.1 * $j + 0.05]
-		$y 0 = [expr 0.95 - 0.1 * $i]
+		x 0 = [expr 0.1 * $j + 0.05]
+		y 0 = [expr 0.95 - 0.1 * $i]
 
 # Display the symbols
 
-		plsym 1 $x $y [expr [$base $l] + $k]
+		plsym 1 x y [expr [base $l] + $k]
 		incr k
 	    }
 	}

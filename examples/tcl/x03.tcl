@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.2  1994/07/19 22:36:49  mjl
+# Revision 1.3  1994/08/09 08:23:23  mjl
+# Changed to new tclMatrix notation.
+#
+# Revision 1.2  1994/07/19  22:36:49  mjl
 # Sped up some by eliminating half of the points.
 #
 # Revision 1.1  1994/06/30  18:49:35  mjl
@@ -25,8 +28,8 @@ proc 3 {} {
     set dtheta [expr $dtr * 360. / $npts]
 
     for {set i 0} {$i <= $npts} {incr i} {
-	$x0 $i = [expr cos($dtheta * $i)]
-	$y0 $i = [expr sin($dtheta * $i)]
+	x0 $i = [expr cos($dtheta * $i)]
+	y0 $i = [expr sin($dtheta * $i)]
     }
 
 # Set up viewport and window, but do not draw box 
@@ -36,13 +39,13 @@ proc 3 {} {
     plenv -1.3 1.3 -1.3 1.3 1 -2
     for {set i 1} {$i <= 10} {incr i} {
 	for {set j 0} {$j <= $npts} {incr j} {
-	    $x $j = [expr 0.1 * $i * [$x0 $j]]
-	    $y $j = [expr 0.1 * $i * [$y0 $j]]
+	    x $j = [expr 0.1 * $i * [x0 $j]]
+	    y $j = [expr 0.1 * $i * [y0 $j]]
 	}
 
 # Draw circles for polar grid
 
-	plline $npts1 $x $y
+	plline $npts1 x $y
     }
 
     plcol 2
@@ -73,11 +76,11 @@ proc 3 {} {
 
     for {set i 0} {$i <= $npts} {incr i} {
 	set r [expr sin($dtheta * (5 * $i))]
-	$x $i = [expr [$x0 $i] * $r]
-	$y $i = [expr [$y0 $i] * $r]
+	x $i = [expr [x0 $i] * $r]
+	y $i = [expr [y0 $i] * $r]
     }
     plcol 3
-    plline $npts1 $x $y
+    plline $npts1 x $y
 
     plcol 4
     plmtex "t" 2.0 0.5 0.5 "#frPLplot Example 3 - r(#gh)=sin 5#gh"

@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.1  1994/06/30 18:49:37  mjl
+# Revision 1.2  1994/08/09 08:23:25  mjl
+# Changed to new tclMatrix notation.
+#
+# Revision 1.1  1994/06/30  18:49:37  mjl
 # Tcl demo programs, which fully reproduce their x??c counterpart.
 #
 #----------------------------------------------------------------------------
@@ -20,11 +23,11 @@ proc 5 {} {
 
     set delta [expr 2.0 * 3.141592654 / $npts]
     for {set i 0} {$i < $npts} {incr i} {
-	$data $i = [expr sin($i * $delta)]
+	data $i = [expr sin($i * $delta)]
     }
 
     plcol 1
-    plhist $npts $data -1.1 1.1 44 0
+    plhist $npts data -1.1 1.1 44 0
 
     plcol 2
     pllab "#frValue" "#frFrequency" \

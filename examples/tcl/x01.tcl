@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.2  1994/06/30 18:47:52  mjl
+# Revision 1.3  1994/08/09 08:23:22  mjl
+# Changed to new tclMatrix notation.
+#
+# Revision 1.2  1994/06/30  18:47:52  mjl
 # Minor label and commenting changes.
 #
 # Revision 1.1  1994/06/25  20:34:24  mjl
@@ -58,20 +61,20 @@ proc plot1 {} {
     matrix y f $npts
 
     for {set i 0} {$i < $npts} {incr i} {
-	$x $i = [expr $xoff + $xscale * ($i + 1) / $npts]
-	$y $i = [expr $yoff + $yscale * pow([$x $i],2)]
+	x $i = [expr $xoff + $xscale * ($i + 1) / $npts]
+	y $i = [expr $yoff + $yscale * pow([x $i],2)]
     }
 
-    set xmax [$x [expr $npts-1]]
-    set ymax [$y [expr $npts-1]]
+    set xmax [x [expr $npts-1]]
+    set ymax [y [expr $npts-1]]
 
     matrix x1 f 6
     matrix y1 f 6
 
     for {set i 0} {$i < 6} {incr i} {
 	set j [expr $i*10+3]
-	$x1 $i = [$x $j]
-	$y1 $i = [$y $j]
+	x1 $i = [x $j]
+	y1 $i = [y $j]
     }
 
     plcol 1
@@ -82,12 +85,12 @@ proc plot1 {} {
     # plot the data points
 
     plcol 9
-    plpoin 6 $x1 $y1 9
+    plpoin 6 x1 y1 9
 
     # draw the line through the data
 
     plcol 4
-    plline $npts $x $y
+    plline $npts x y
 }
 
 # This is supposed to work just like the plot2() in x01c.c
@@ -105,13 +108,13 @@ proc plot2 {} {
 
     for {set i 0} {$i < 101} {incr i} {
 	set x [expr ($i - 19.)/6.]
-	$x1 $i = $x
-	$y1 $i = 1
-	if {$x != 0} { $y1 $i = [expr sin($x)/$x] }
+	x1 $i = $x
+	y1 $i = 1
+	if {$x != 0} { y1 $i = [expr sin($x)/$x] }
     }
 
     plcol 3
-    plline 101 $x1 $y1
+    plline 101 x1 y1
 }
 
 # This is supposed to work just like the plot3() in x01c.c
@@ -133,16 +136,16 @@ proc plot3 {} {
     matrix mark i 1
     matrix space i 1
 
-    $mark 0 = 1500
-    $space 0 = 1500
-    plstyl 1 $mark $space
+    mark 0 = 1500
+    space 0 = 1500
+    plstyl 1 mark space
 
     plcol 2
     plbox "g" 30.0 0 "g" 0.2 0
 
-    $mark 0 = 0
-    $space 0 = 0
-    plstyl 0 $mark $space
+    mark 0 = 0
+    space 0 = 0
+    plstyl 0 mark space
 
     plcol 3
     pllab "Angle (degrees)" "sine" "#frPLplot Example 1 - Sine function"
@@ -151,10 +154,10 @@ proc plot3 {} {
     matrix y f 101
 
     for {set i 0} {$i < 101} {incr i} {
-	$x $i = [expr 3.6 * $i]
-	$y $i = [expr sin([$x $i] * 3.141592654 / 180.0)]
+	x $i = [expr 3.6 * $i]
+	y $i = [expr sin([x $i] * 3.141592654 / 180.0)]
     }
 
     plcol 4
-    plline 101 $x $y
+    plline 101 x y
 }
