@@ -1,3 +1,13 @@
+plplot (5.3.0.rc2.5.3.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/rules: Removed old code for architecture-specific exclusion of
+    the octave-plplot package.
+  * debian/struct_contain.m: Removed this file, since it has been
+    included upstream.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 18 Jun 2004 07:52:54 +0200
+
 plplot (5.3.0.rc1.5.3.1-5) unstable; urgency=low
 
   * debian/control:  Make the build-dependencies on atlas/lapack specific
