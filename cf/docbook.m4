@@ -1,9 +1,9 @@
-dnl doc/docbook/docbook.m4 for PLplot
+dnl cf/docbook.m4 for PLplot
 dnl
 dnl Autoconf macros for the DocBook documentation of PLplot
 dnl
 dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
-dnl Copyright (C) 2003  Rafael Laboissiere
+dnl Copyright (C) 2003, 2004  Rafael Laboissiere
 dnl
 dnl This file is part of PLplot.
 dnl
@@ -22,89 +22,6 @@ dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 dnl ### AC_INIT(src/plplotdoc.xml.in)
 dnl ### AM_INIT_AUTOMAKE(plplotdoc, 0.4.3)
-
-dnl Web site Installation
-
-AC_ARG_WITH(www-user,
-  AC_HELP_STRING([--with-www-user=NAME], [User name at WWW host]),
-  [WWW_USER="$withval"],
-  [WWW_USER=""])
-AC_SUBST(WWW_USER)
-
-AC_ARG_WITH(www-group,
-  AC_HELP_STRING([--with-www-group=NAME], [Group name at WWW host]),
-  [WWW_GROUP="$withval"],
-  [WWW_GROUP="plplot"])
-AC_SUBST(WWW_GROUP)
-
-AC_ARG_WITH(www-host,
-  AC_HELP_STRING([--with-www-host=NAME], [Host name at WWW host]),
-  [WWW_HOST="$withval"],
-  [WWW_HOST="shell1.sourceforge.net"])
-AC_SUBST(WWW_HOST)
-
-AC_ARG_WITH(www-dir,
-  AC_HELP_STRING([--with-www-dir=NAME], [Dir name at WWW host]),
-  [WWW_DIR="$withval"],
-  [WWW_DIR="/home/groups/p/pl/plplot/htdocs/docbook-manual"])
-AC_SUBST(WWW_DIR)
-
-AC_ARG_WITH(rsh-command,
-  AC_HELP_STRING([--with-rsh-command=NAME], [Remote shell command]),
-  [RSH="$withval"],
-  [RSH="ssh"])
-AC_SUBST(RSH)
-
-AC_ARG_WITH(rcp-command,
-  AC_HELP_STRING([--with-rcp-command=NAME], [Remote copy command]),
-  [RCP="$withval"],
-  [RCP="scp"])
-AC_SUBST(RCP)
-
-
-dnl Website of the PLplot project
-
-AC_ARG_WITH(plplot-website,
-  AC_HELP_STRING([--with-plplot-website=NAME], [PLplot web site]),
-  [PLPLOT_WEBSITE="$withval"],
-  [PLPLOT_WEBSITE="plplot.sf.net"])
-AC_SUBST(PLPLOT_WEBSITE)
-
-
-dnl System wide XML declaration
-
-XML_DECL=/usr/share/xml/declaration/xml.dcl
-AC_ARG_WITH(xml-declaration,
-  AC_HELP_STRING([--with-xml-declaration=FILE],
-    [System wide file containing the SGML declaration for XML.
-     Must be a absolute file name.
-     Default: /usr/share/xml/declaration/xml.dcl]),
-  [XML_DECL=$withval])
-AC_SUBST(XML_DECL)
-
-
-dnl Jade output log
-
-jadelog=jadeout.log
-rm -f $jadelog
-JADELOG=$jadelog
-AC_SUBST(JADELOG)
-
-
-dnl DTD definitions.
-dnl
-dnl The following public identifiers should correspond to those in the
-dnl SGML source files.
-
-DSSSL_DTD_PUBID="-//James Clark//DTD DSSSL Style Sheet//EN"
-DB_SS_HTML_PUBID="-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
-DB_SS_PRINT_PUBID="-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN"
-DOCBOOK_DTD_PUBID="-//OASIS//DTD DocBook XML V4.2//EN"
-
-AC_SUBST(DSSSL_DTD_PUBID)
-AC_SUBST(DB_SS_HTML_PUBID)
-AC_SUBST(DB_SS_PRINT_PUBID)
-AC_SUBST(DOCBOOK_DTD_PUBID)
 
 dnl Utility macros
 
@@ -140,11 +57,6 @@ Program $1 not found.
 [fi], has_$1=$has_$1)
 popdef([PROG])
 ])
-
-PRINT=print
-HTML=html
-INFO=info
-MAN=man
 
 dnl CHECK_DTD(title, cache-id, dsssl_dtd, docbookb_ss_dtd, style_spec_use,
 dnl           external_specification, docbook_dtd, jade_output_type,
@@ -197,30 +109,6 @@ dtd_$2="$8"
 ])
 ])
 
-dnl SGML catalogs
-
-AC_ARG_WITH(sgml-catalogs,
-  AC_HELP_STRING([--with-sgml-catalogs=CATALOGS],
-    [SGML catalogs in a colon (:) separated list.
-     Must contain only existent files.]),
-  [SGML_CATALOGS=$withval],
-  [SGML_CATALOGS=""])
-
-[
-for i in `echo $SGML_CATALOGS | sed "s/:/ /g"` ; do
-  if test ! -f $i ; then ]
-AC_MSG_ERROR([Catalog file $i is not valid.
-    Specify only existent files with option --with-sgml-catalogs.])[
-  fi
-done
-
-if test ! "$SGML_CATALOGS" = "" ;then
-  SGML_CATALOGS="-c `echo $SGML_CATALOGS | sed 's/:/ -c /g'`"
-fi
-]
-
-AC_SUBST(SGML_CATALOGS)
-
 dnl File extensions
 
 AC_DEFUN([FILE_EXT], [
@@ -233,8 +121,6 @@ AC_ARG_WITH($1-extension,
 AC_SUBST(FILE[_EXT])
 popdef([FILE])
 ])
-
-FILE_EXT(html)
 
 dnl Info building
 
@@ -304,9 +190,6 @@ pldb_cv_$2=$pldb_cv_$2
 ])
 ])
 
-DOCBOOK2X_INC=-I`pwd`/doc/docbook/perl
-AC_SUBST(DOCBOOK2X_INC)
-
 dnl Output commands
 
 AC_DEFUN(DOC_OUTPUT_COMMANDS, [
@@ -346,27 +229,6 @@ fi], [
 print=$PRINT; html=$HTML; info=$INFO; man=$MAN
 ])
 ])
-
-dnl Control build of man and info pages
-
-AC_ARG_ENABLE(info,
-  AC_HELP_STRING([--disable-info], [Disable build of info pages]),
-  [if test "$enable_info" = "no" ; then
-    INFO=""
-    AC_MSG_WARN([
-Info pages will not be build at your request.])
-   fi])
-AC_ARG_ENABLE(man,
-  AC_HELP_STRING([--disable-man], [Disable build of man pages]),
-  [if test "$enable_man" = "no" ; then
-    MAN=""
-    AC_MSG_WARN([
-Man pages will not be build at your request.])
-    fi])
-
-TARGETS="$PRINT $HTML $INFO $MAN"
-AC_SUBST(TARGETS)
-
 
 dnl ### AC_OUTPUT([Makefile
 dnl ###          src/Makefile src/plplotdoc.xml src/plplotdoc-html.dsl

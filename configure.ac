@@ -1,4 +1,4 @@
-dnl configure.ac for PLplot
+dnl configure.ac for PLplot  -*- autoconf -*-
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -21,7 +21,7 @@ dnl
 dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
-dnl
+
 dnl Note: to recover legacy behavior as regards (site-specific) defaults
 dnl files, configure using:
 dnl
@@ -36,10 +36,20 @@ dnl   version number, otherwise it will fool up the bootstrap.sh script.  By
 dnl   the way, the line below can be changed using options --version and
 dnl   --date-version of that script. ]
 AC_INIT(plplot, 5.3.0.cvs.20040211, plplot-devel@lists.sourceforge.net)
-AC_CONFIG_SRCDIR(src/plcore.c)
+
+dnl Date of release.  This can be set by hand, but the prefered method
+dnl is by specifying one of the option --version of --date-version to
+dnl bootstrap.sh
+
+RELEASE_DATE=2004-02-05
+AC_SUBST(RELEASE_DATE)
+
 AC_REVISION($Revision$)
 
-### Use cf dir instead of the top dir for all autotools-related files
+AC_CONFIG_SRCDIR(src/plcore.c)
+
+dnl Use cf dir instead of the top dir for all autotools-related files
+
 AC_CONFIG_AUX_DIR(cf)
 AC_CONFIG_MACRO_DIR(cf)
 
@@ -49,13 +59,6 @@ AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 ### Automake initialization
 AM_INIT_AUTOMAKE
-
-### Date of release.  This can be set by hand, but the prefered method
-### is by specifying one of the option --version of --date-version to
-### bootstrap.sh
-
-RELEASE_DATE=2004-02-05
-AC_SUBST(RELEASE_DATE)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
 ### library version consistent with the package version in direct
@@ -107,36 +110,9 @@ if test "$enable_shared" != yes ; then
     enable_dyndrivers=no
 fi
 
-### Libtool settings
-
-PL_ARG_WITH(ltdlsystem,
-  [Use installed version of libltdl library (if it exists), instead of
-   building the convenience version shipped with the sources],
-  no)
-
 PL_ARG_ENABLE(dyndrivers, [enable dynamic loading of drivers], yes)
 
-if test "$enable_dyndrivers" = "yes"; then
-  AC_LIBTOOL_DLOPEN
-  AC_CHECK_LIB(ltdl, lt_dlinit, [libltdl_in_system=yes],
-    [libltdl_in_system=no])
-  if test "$with_ltdlsystem" = no -o "$libltdl_in_system" = no ; then
-    with_ltdlsystem=no
-    AC_LIBLTDL_CONVENIENCE
-    AC_CONFIG_SUBDIRS(libltdl)
-  else
-    AC_LIBLTDL_INSTALLABLE
-  fi
-fi
-AC_SUBST(INCLTDL)
-AC_SUBST(LIBLTDL)
-
-AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
-
-# This required for dll support under cygwin.  Must occur before
-# AM_PROG_LIBTOOL
-AC_LIBTOOL_WIN32_DLL
-
+PL_INCLUDE(libtool.ac)
 AM_PROG_LIBTOOL
 
 PL_ARG_WITH(freetype,
@@ -181,12 +157,6 @@ if test "$enable_dyndrivers" = "yes"; then
               [Define if there is support for dynamically loaded drivers])
 fi
 
-### define X_CFLAGS, X_PRE_LIBS, X_LIBS, and X_EXTRA_LIBS
-### must occur before sysloc.in is included since sysloc.in logic depends
-### on it.
-
-AC_PATH_XTRA
-
 ### Add libm to LIBS, as some non linux unices might require this.
 ### This must be done before sysloc.in is included.
 AC_CHECK_LIB(m, sin)
@@ -224,79 +194,10 @@ test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
 PL_ARG_ENABLE(java, [compile Java interface code], yes)
 
-### Drivers
-
-# ------------------------------------------------------------------------
-# Support macros for driver inclusion and help entries.
-
-# Including a driver in the below list includes it by default.
-# Note that each driver should be treated separately even if
-# they are in the same source code file.
-# For example, the ps and psc drivers are defined in the ps.c source
-# code file.
-
-# N.B. This is ordered the same as the *driver pair* list below to help
-# humans keep the associations straight, but this is not necessary.
-
-# Note specifically which drivers are known to be loadable.  Eventually,
-# hopefully, every driver will show up on this list.  However, we add them one
-# at a time since each will have its own peculiarities in the build process
-# (none missing at present).
-
-# N.B. This is ordered the same as the *driver pair* list below to help
-# humans keep the associations straight, but this is not necessary.
-
-# We think of a "device" as the output medium.  Could be a machine
-# style (Tektronix, X11), or a file format (Postscript).
-#
-# A "driver" is the PLplot code that produces the output on the
-# medium.
-#
-# Some drivers support multiple devices.  But we we need to make sure
-# we compile only the selected drivers.  That is, if a driver supports
-# devices not selected, we don't want to compile it at all.  Or if it
-# supports multiple selected devices, we only want to compile it
-# once.  To support this, we build an association list between devices
-# and drivers.  This will be inspected to build up the set of drivers
-# to be compiled based on which devices are selected.
-
-# Ordered alphabetically by second in each pair (the driver) for human
-# consumption, but this is not necessary.
-
-AC_MSG_CHECKING(for dynamic drivers)
-AC_DEFUN([PL_DRIVERS_DEVICE_LIST],
-  [cgm:cgm:yes,
-  dg300:dg300:no,
-  png:gd:yes, jpeg:gd:yes,
-  gnome:gnome:no,
-  hp7470:hpgl:yes, hp7580:hpgl:yes, lj_hpgl:hpgl:yes,
-  imp:impress:no,
-  linuxvga:linuxvga:yes,
-  ljii:ljii:no,
-  ljiip:ljiip:no,
-  mem:mem:yes,
-  ntk:ntk:no,
-  null:null:yes,
-  pbm:pbm:yes,
-  plmeta:plmeta:yes,
-  ps:ps:yes, psc:ps:yes,
-  pstex:pstex:yes,
-  xterm:tek:no, tek4010:tek:no, tek4107:tek:no, mskermit:tek:no,
-  versaterm:tek:no, vlt:tek:no, conex:tek:no, tek4010f:tek:no,
-  tek4107f:tek:no,
-  tk:tk:yes,
-  tkwin:tkwin:yes,
-  xfig:xfig:yes,
-  xwin:xwin:yes])
-PL_ARG_ENABLE_DRIVERS(PL_DRIVERS_DEVICE_LIST)
-AC_MSG_RESULT
-AC_SUBST(STATIC_DRIVERS)
-AC_SUBST(DYNAMIC_DRIVERS)
+PL_INCLUDE(drivers.ac)
 
 ### Modify system-dependent results based on availability
 PL_INCLUDE(sysloc.in)
-
-PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
 
 # Disable LIBS so we don't have all libraries mentioned
 LIBS=""
@@ -636,12 +537,9 @@ AC_SUBST(TKINCCMD)
 AC_SUBST(TKLIBCMD)
 
 # Need to AC_SUBST some of these for plplot-test.sh script.
-AC_SUBST(enable_cxx)
-AC_SUBST(enable_f77)
 AC_SUBST(enable_python)
 AC_SUBST(enable_java)
 AC_SUBST(enable_tcl)
-AC_SUBST(enable_octave)
 
 ### Create list of valid examples subdirectories
 
@@ -705,89 +603,9 @@ AC_SUBST(DLNAME_LIBPLPLOTTCLTKD)
 PL_GET_DLLNAME([plplotjavac_wrap], [PLPLOTJAVAC_WRAP_DLL])
 AC_SUBST(PLPLOTJAVAC_WRAP_DLL)
 
-### C++ binding
+PL_INCLUDE(c++.ac)
 
-PL_ARG_ENABLE(cxx, [compile C++ interface code], yes)
-
-PL_ARG_WITH(debug, [Adjust debug compilation flags for KAI C++], no)
-
-if test "$enable_cxx" = yes; then
-
-    # If KAI C++ (Kuck and Associates) is available, use that.
-    found_cxx=no
-    if test -z "$CXX" -o "$CXX" = "KCC"; then
-	found_kcc=
-	AC_CHECK_PROG(found_kcc, KCC, yes, no)
-	if test "$found_kcc" = "yes" ; then
-	    found_cxx=yes
-	    AC_MSG_WARN([Found KAI C++, using that!])
-	    CXX=KCC
-	    if test -z "$CXXFLAGS"; then
-		if test -z "$with_debug"; then
-		    CXXFLAGS="+K0"
-		else
-		    CXXFLAGS="+K2 -O2"
-		fi
-	    fi
-	fi
-    fi
-fi
-AC_PROG_CXX
-
-### Fortran 77 binding
-
-PL_ARG_ENABLE(f77, [compile Fortran-77 interface code], yes)
-
-if test "$enable_f77" = yes ; then
-  AC_PROG_F77
-  # If no F77 compiler is found, then disable f77 bindings building
-  if test -z "$F77" ; then
-    enable_f77=no
-    AC_MSG_WARN([Disabling F77 bindings building because no compiler was found])
-  fi
-fi
-if test "$enable_f77" = yes ; then
-  HAVE_F77PARSE_CL=yes
-  AC_LANG_PUSH([Fortran 77])
-  AC_MSG_CHECKING([if fortran command-line parsing is possible])
-  AC_RUN_IFELSE([
-      implicit none
-      character*100 command
-      integer narg, iargc
-c      get number of command-line arguments
-      narg = iargc()
-c      get command name.  Apparently this does not always give back the
-c      command name on all systems, but all that is required for the
-c      getarg(0 call by the interface logic is that a valid string is
-c      returned.  (All we are really interested in is the subsequent
-c      arguments.)
-      call getarg(0, command)
-      if(narg.gt.0) call getarg(1, command)
-c     ran into one case (Cygwin) where under certain badly linked
-c     circumstances, iargc() could return -1
-      if(narg.lt.0) then
-        call exit(1)
-      else
-        call exit(0)
-      endif
-      stop
-      end],
-  AC_MSG_RESULT(yes),
-  AC_MSG_RESULT(no); HAVE_F77PARSE_CL=no)
-  AC_LANG_POP([Fortran 77])
-  if test "$HAVE_F77PARSE_CL" = yes ; then
-    HAVE_F77PARSE_CL_TRUE=""
-    HAVE_F77PARSE_CL_FALSE="C "
-  else
-    HAVE_F77PARSE_CL_TRUE="C "
-    HAVE_F77PARSE_CL_FALSE=""
-  fi
-fi
-
-AC_SUBST(HAVE_F77PARSE_CL_TRUE)
-AC_SUBST(HAVE_F77PARSE_CL_FALSE)
-
-PL_ARG_ENABLE(octave, [compile Octave interface code], no)
+PL_INCLUDE(f77.ac)
 
 # Conditionals to control various Makefile.am files.
 
@@ -797,9 +615,6 @@ fi
 
 AM_CONDITIONAL(with_double, [test "$with_double" = yes])
 AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
-AM_CONDITIONAL(enable_cxx, [test "$enable_cxx" = yes])
-AM_CONDITIONAL(enable_f77, [test "$enable_f77" = yes])
-AM_CONDITIONAL(enable_gnome, [test "$enable_gnome" = yes])
 AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
 AM_CONDITIONAL(enable_java, [test "$enable_java" = yes])
 AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
@@ -920,180 +735,9 @@ AC_SUBST(TCL_DIR)
 AC_SUBST(DRV_DIR)
 AC_SUBST(BUILD_DIR)
 
+PL_INCLUDE(docbook.ac)
 
-### DocBook documentation
-
-PL_ARG_ENABLE(builddoc,
-  [Enable configuration checks and build of DocBook documentation], no)
-
-PL_ARG_WITH(prebuiltdoc,
-  [Assume that the DocBook documentation is already built and present in
-   doc/docbook/src, ready to be installed. This option is useful for
-   package maintainers.],
-  no)
-
-if test $enable_builddoc = yes -a $with_prebuiltdoc = yes ; then
-  AC_MSG_ERROR([Options --enable-builddoc and --with-prebuiltdoc are logically
-exclusive and must not be given simultaneously.  Giving up.])
-fi
-
-AM_CONDITIONAL(docbook_build, [test $with_prebuiltdoc = no])
-AM_CONDITIONAL(enable_docbook,
-               [test $enable_builddoc = yes -o $with_prebuiltdoc = yes])
-
-PL_INCLUDE(docbook.in)
-
-CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
-PERL=${PERL:-"-@echo perl program not available #"}
-
-if test $enable_builddoc = yes -o \
-\( $enable_octave = yes -a $with_prebuiltdoc = no \) ; then
-CHECK_PM(XML::DOM, xml_dom, [INFO MAN])
-CHECK_PM(XML::Parser, xml_parser, [INFO MAN])
-fi
-
-if test $enable_builddoc = yes ; then
-
-dnl Check for GNU make
-CHECK_GNU_MAKE
-
-dnl Check programs
-
-CHECK_PROG(openjade, [HTML PRINT], http://www.openjade.org)
-CHECK_PROG(jadetex, PRINT, http://jadetex.sourceforge.net/)
-CHECK_PROG(pdfjadetex, PRINT, http://jadetex.sourceforge.net/)
-CHECK_PROG(dvips, PRINT, http://www.ctan.org)
-CHECK_PROG(onsgmls, [], http://www.openjade.org)
-CHECK_PROG(makeinfo, [INFO], [http://www.gnu.org])
-
-dnl Check public identifiers
-
-CHECK_DTD(
-  [DSSSL Style Sheet DTD],
-  [dsssl_dtd],
-  [],
-  [],
-  [],
-  [[[<!ELEMENT book - O (#PCDATA)>]]],
-  [sgml],
-  [\"$DSSSL_DTD_PUBID\"],
-  [style-sheet.dtd],
-  [jade],
-  [PRINT HTML])
-
-CHECK_DTD(
-  [DocBook HTML Stylesheet],
-  [html_ss],
-  [[[<!ENTITY dbstyle PUBLIC \"$DB_SS_HTML_PUBID\" CDATA DSSSL>]]],
-  [use=\"docbook\"],
-  [<external-specification id=\"docbook\" document=\"dbstyle\">],
-  [[[<!ELEMENT book - O (#PCDATA)>]]],
-  [sgml],
-  [\"$DB_SS_HTML_PUBID\"],
-  [html/docbook.dsl],
-  [docbook-stylesheets],
-  [HTML])
-
-CHECK_DTD(
-  [DocBook Print Stylesheet],
-  [print_ss],
-  [[[<!ENTITY dbstyle PUBLIC \"$DB_SS_PRINT_PUBID\" CDATA DSSSL>]]],
-  [use=\"docbook\"],
-  [<external-specification id=\"docbook\" document=\"dbstyle\">],
-  [[[<!ELEMENT book - O (#PCDATA)>]]],
-  [tex],
-  [\"$DB_SS_PRINT_PUBID\"],
-  [print/docbook.dsl],
-  [docbook-stylesheets],
-  [PRINT])
-
-CHECK_DTD(
-  [DocBook DTD],
-  [db_dtd],
-  [],
-  [],
-  [],
-  [PUBLIC \"$DOCBOOK_DTD_PUBID\"],
-  [sgml],
-  [\"$DOCBOOK_DTD_PUBID\"],
-  [docbookx.dtd],
-  [docbook-xml (DTD version 3.1.3)],
-  [PRINT HTML])
-
-# These checks only work if perl is checked first (see above)!
-CHECK_PM(XML::Parser::PerlSAX, xml_parser_perlsax, [INFO])
-CHECK_PM(XML::Writer, xml_writer, [INFO])
-
-DOC_OUTPUT_COMMANDS
-
-fi # enable_builddoc
-
-AM_CONDITIONAL(has_onsgmls, [test "$has_onsgmls" = found])
-# This is for conditional compilation of plplot_octave_txt in bindings/octave
-AM_CONDITIONAL(has_xml_pm,
-  [test "$pldb_cv_xml_dom" = yes -a "$pldb_cv_xml_parser" = yes])
-
-BASE=$PACKAGE-$VERSION
-AC_SUBST(BASE)
-
-HTML_MANIFEST=HTML-MANIFEST
-AC_SUBST(HTML_MANIFEST)
-
-BASE_HTML=$PACKAGE-html-$VERSION
-AC_SUBST(BASE_HTML)
-
-INFO_MANIFEST=INFO-MANIFEST
-AC_SUBST(INFO_MANIFEST)
-
-BASE_INFO=$PACKAGE-info-$VERSION
-AC_SUBST(BASE_INFO)
-
-MAN_MANIFEST=MAN-MANIFEST
-AC_SUBST(MAN_MANIFEST)
-
-BASE_MAN=$PACKAGE-man-$VERSION
-AC_SUBST(BASE_MAN)
-
-MANVOL=3plplot
-AC_SUBST(MANVOL)
-
-
-### pkg-config checks and settings.
-
-PL_ARG_WITH(pkg-config,
-  [Use pkg-config in Makefile.examples.  If value is "yes"
-   then check for availability of the program in the system.],
-  no)
-
-if test "$with_pkg_config" = yes ; then
-  AC_CHECK_PROG(PKG_CONFIG, pkg-config, found, "not found")
-  test "$PKG_CONFIG" != found  &&  with_pkg_config=no
-  if test "$has_perl" = no ; then
-    AC_MSG_WARN([pkg-config support needs perl to be built.])
-    AC_MSG_WARN([Setting with_pkg_config=no.])
-    with_pkg_config=no
-  fi
-fi
-
-if test "$with_pkg_config" = yes ; then
-  pkg_config_true=""
-  pkg_config_false="# "
-else
-  pkg_config_true="# "
-  pkg_config_false=""
-fi
-
-PKG_CONFIG_DIR='${libdir}/pkgconfig'
-
-if test -z "$PKG_CONFIG_ENV" ; then
-  PL_EXPAND_EXPRESSION(PKG_CONFIG_ENV, PKG_CONFIG_PATH=$PKG_CONFIG_DIR)
-fi
-
-AC_SUBST(pkg_config_true)
-AC_SUBST(pkg_config_false)
-AC_SUBST(PKG_CONFIG_DIR)
-AC_SUBST(PKG_CONFIG_ENV)
-AM_CONDITIONAL(with_pkg_config, [test "$with_pkg_config" = yes])
+PL_INCLUDE([pkg-config.ac])
 
 ### rpath setting
 
@@ -1109,25 +753,6 @@ fi
 AC_SUBST(RPATH)
 AC_SUBST(RPATHCMD)
 AM_CONDITIONAL(with_rpath, [test "$with_rpath" = yes])
-
-
-### Variables for mkoctfile
-### ******************************************************************
-### WARNING: The stuff below is just transient and should disappear as
-### soon as the brokenness of NetBSD is fixed.
-### ******************************************************************
-### Variables are set only if the C++ compiler is g++
-
-MKOCTFILE_VARS=
-case "$system" in
-    NetBSD* )
-        if test "$CXX" = g++ ; then
-            MKOCTFILE_VARS='SH_LD="g++" SH_LDFLAGS="-shared"'
-	    AC_MSG_WARN([Setting mkoctfile variables for broken NetBSD system])
-        fi
-    ;;
-esac
-AC_SUBST(MKOCTFILE_VARS)
 
 
 ### Build configuration files
@@ -1196,71 +821,4 @@ AC_CONFIG_FILES([
 
 AC_OUTPUT
 
-# ----------------------------------------------------------------------------
-# Print out some of the more important settings.
-#
-# In a reversal of previous practice, I print the actual variables in the
-# configure log.  This is to remind the user of the difference between the
-# command line syntax (which you can always get help on by issuing a --help
-# option) and the internal representation.  It's necessary to remember this
-# for when you want to set the variable directly via ~/config/cf_plplot.in.
-# ----------------------------------------------------------------------------
-
-plplot_config_invocation="$0 `./config.status --version \
-  | grep 'with options' \
-  | grep \' | cut -d\' -f2`"
-
-plplot_config_result_msg="
-Configure results:
-
-command:	$plplot_config_invocation
-system:		$host
-have_x:		$have_x
-prefix:		$prefix
-CC:		$CC $CC_FLAGS"
-
-if test "$enable_cxx" = "yes"; then
-    plplot_config_result_msg=\
-"$plplot_config_result_msg
-CXX:		$CXX $CXX_FLAGS"
-fi
-
-if test "$enable_f77" = "yes"; then
-    plplot_config_result_msg=\
-"$plplot_config_result_msg
-F77:		$F77 $F77_FLAGS"
-fi
-
-plplot_config_result_msg=\
-"$plplot_config_result_msg
-LIB_TAG:	$LIB_TAG
-devices:	$DEVICES
-
-Available device drivers:
-static:		$STATIC_DRIVERS
-dynamic:	$DYNAMIC_DRIVERS
-
-Compilation options:
-with_debug:	$with_debug
-
-Library options:
-enable_shared:	$enable_shared		enable_static:	$enable_static
-with_rpath:	$with_rpath		with_double:	$with_double
-
-Optional libraries:
-with_qhull:	$with_qhull		with_csa:	$with_csa
-with_freetype:	$with_freetype		with_pthreads:	$with_pthreads
-
-
-Language Bindings:
-enable_tcl:	$enable_tcl		enable_itcl:	$enable_itcl
-enable_cxx:	$enable_cxx		enable_f77:	$enable_f77
-enable_java:	$enable_java		enable_python:	$enable_python
-enable_octave:	$enable_octave
-"
-
-cat << EOF > config.summary
-$plplot_config_result_msg
-EOF
-
-AC_MSG_NOTICE($plplot_config_result_msg)
+PL_INCLUDE(summary.ac)
