@@ -100,7 +100,7 @@ trap "cleanup" 0 HUP INT QUIT PIPE TERM
 cleanup
 
 test $bypass_rtag = yes \
-  || date_tag=cvs-tarball_`date +%Y-%m-%d-%H-%M-%S` \
+  || date_tag=cvs-tarball_`date --utc +%Y-%m-%d-%H-%M-%S` \
   && echo "Tagging repository with $date_tag" \
   && cvs -d${WWW_USER}@$CVSROOTDIR rtag $BRANCH $date_tag plplot \
   && BRANCH="-r $date_tag"
