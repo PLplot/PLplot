@@ -17,6 +17,44 @@
 # ----------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------
+# Configure library recognition for various systems.
+# ----------------------------------------------------------------------------
+
+LIBEXTNS="a"
+
+case "$system" in 
+#    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+#	CC=xlc
+#    ;;
+    alpha*|ALPHA*|Alpha*|OSF* ) 
+	LIBEXTNS="so a"
+    ;;
+#    convex*|ConvexOS* ) 
+#	CC="cc -std"
+#	with_gcc=no
+#    ;;
+#    dg*|DG* ) 
+#	CC="cc -ansi"
+#    ;;
+    hp*|HP* ) 
+	LIBEXTNS="sl a"
+    ;;
+#    irix*|IRIX*|Irix*|sgi*|SGI* ) 
+#	CC="cc -ansi"
+#    ;;
+#    SunOS-4* )
+#	CC=acc
+#    ;;
+#    sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
+#	CC="cc -hansi"
+#	with_gcc=no
+#    ;;
+#    CRAY* ) 
+#	with_gcc=no
+#    ;;
+esac
+
+# ----------------------------------------------------------------------------
 # Compiler/linker variables
 #
 # The following shell variables are used.  They can be redefined as

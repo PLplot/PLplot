@@ -378,12 +378,17 @@ define(FIND_LIB_BEGIN, [
 ])
 define(FIND_LIB_SET, [
     for dir in $libdirs; do
-	if test -f "$dir/lib$1.a"; then
-	    $2="$dir"
-	    $3="-l$1"
-	    AC_MSG_RESULT($dir/lib$1.a)
-	    break
+	if test -z "$LIBEXTNS"; then
+	    LIBEXTNS=a
 	fi
+	for suffix in $LIBEXTNS; do
+	    if test -f "$dir/lib$1.$suffix"; then
+		$2="$dir"
+		$3="-l$1"
+		AC_MSG_RESULT($dir/lib$1.$suffix)
+		break 2
+	    fi
+	done
     done
 ])
 define(FIND_LIB_END, [
