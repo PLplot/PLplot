@@ -12,7 +12,7 @@
 #define NEED_PLDEBUG
 #include "plplot/plcore.h"
 
-#ifdef ENABLE_DYNAMIC_DRIVERS
+#ifdef ENABLE_DYNDRIVERS
 #include <dlfcn.h>
 #endif
 
@@ -1487,7 +1487,7 @@ plInitDispatchTable()
     int i, j, n, driver_found, done=0;
     FILE *fp_drvdb = 0;
 
-#ifdef ENABLE_DYNAMIC_DRIVERS
+#ifdef ENABLE_DYNDRIVERS
     fp_drvdb = plLibOpen( "drivers/drivers.db" );
 
     if (!fp_drvdb)
@@ -1528,7 +1528,7 @@ plInitDispatchTable()
     }
     npldrivers = nplstaticdevices;
 
-#ifdef ENABLE_DYNAMIC_DRIVERS
+#ifdef ENABLE_DYNDRIVERS
 /*     printf( "Ready to read drivers/drivers.db\n" ); */
 
 /* Allocate space for the device and driver specs.  We may not use all of
@@ -1712,7 +1712,7 @@ plSelectDev()
 static void
 plLoadDriver(void)
 {
-#ifdef ENABLE_DYNAMIC_DRIVERS
+#ifdef ENABLE_DYNDRIVERS
     int i, drvidx;
     char sym[60];
     char *tag;

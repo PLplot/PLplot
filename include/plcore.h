@@ -88,13 +88,13 @@ static PLDispatchInit static_device_initializers[] = {
 #ifdef PLD_os2pm
     plD_dispatch_init_os2,
 #endif
-#if defined(PLD_xwin) /* && !defined(ENABLE_DYNAMIC_DRIVERS)*/
+#if defined(PLD_xwin) /* && !defined(ENABLE_DYNDRIVERS)*/
     plD_dispatch_init_xw,
 #endif
-#if defined(PLD_gnome) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_gnome) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_gnome,
 #endif
-#if defined(PLD_tk) /* && !defined(ENABLE_DYNAMIC_DRIVERS)*/
+#if defined(PLD_tk) /* && !defined(ENABLE_DYNDRIVERS)*/
     plD_dispatch_init_tk,
 #endif
 #ifdef PLD_linuxvga
@@ -121,89 +121,89 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_jpg)
     plD_dispatch_init_jpg,
 #endif
-#if defined(PLD_bmp)  && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_bmp)  && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_bmp,
 #endif
 #ifdef PLD_emxvga		       /* graphics for emx+gcc */
     plD_dispatch_init_vga,
 #endif
-#if defined(PLD_xterm) && !defined(ENABLE_DYNAMIC_DRIVERS) 
+#if defined(PLD_xterm) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_xterm,
 #endif
-#if defined(PLD_tek4010) && !defined(ENABLE_DYNAMIC_DRIVERS) 
+#if defined(PLD_tek4010) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_tekt,
 #endif
-#if defined(PLD_tek4107) && !defined(ENABLE_DYNAMIC_DRIVERS) 
+#if defined(PLD_tek4107) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_tek4107t,
 #endif
-#if defined(PLD_mskermit) && !defined(ENABLE_DYNAMIC_DRIVERS) 
+#if defined(PLD_mskermit) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_mskermit,
 #endif
-#if defined(PLD_versaterm) && !defined(ENABLE_DYNAMIC_DRIVERS) 
+#if defined(PLD_versaterm) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_versaterm,
 #endif
-#if defined(PLD_vlt) && !defined(ENABLE_DYNAMIC_DRIVERS) 
+#if defined(PLD_vlt) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_vlt,
 #endif
-#if defined(PLD_conex) && !defined(ENABLE_DYNAMIC_DRIVERS) 
+#if defined(PLD_conex) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_conex,
 #endif
-#if defined(PLD_dg300) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_dg300) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_dg,
 #endif
-#if defined(PLD_plmeta) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_plmeta) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_plm,
 #endif
-#if defined(PLD_tek4010) && !defined(ENABLE_DYNAMIC_DRIVERS) 
+#if defined(PLD_tek4010) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_tekf,
 #endif
-#if defined(PLD_tek4107) && !defined(ENABLE_DYNAMIC_DRIVERS) 
+#if defined(PLD_tek4107) && !defined(ENABLE_DYNDRIVERS) 
     plD_dispatch_init_tek4107f,
 #endif
-#if defined(PLD_ps) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_ps) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_psm,
     plD_dispatch_init_psc,
 #endif
-#if defined(PLD_xfig) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_xfig) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_xfig,
 #endif
-#if defined(PLD_ljiip) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_ljiip) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_ljiip,
 #endif
-#if defined(PLD_ljii) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_ljii) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_ljii,
 #endif
-#if defined( PLD_hp7470) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined( PLD_hp7470) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_hp7470,
 #endif
-#if defined( PLD_hp7580) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined( PLD_hp7580) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_hp7580,
 #endif
-#if defined( PLD_lj_hpgl) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined( PLD_lj_hpgl) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_hpgl,
 #endif
-#if defined( PLD_imp) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined( PLD_imp) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_imp,
 #endif
-#if defined( PLD_pbm) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined( PLD_pbm) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_pbm,
 #endif
-#if defined(PLD_png) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_png) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_png,
 #endif
-#if defined(PLD_jpeg) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_jpeg) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_jpeg,
 #endif
-#if defined(PLD_pstex) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_pstex) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_pstex,
 #endif
-#if defined(PLD_ntk) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_ntk) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_ntk,
 #endif
-#if defined(PLD_cgm) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_cgm) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_cgm,
 #endif
-#if defined(PLD_null) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_null) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_null,
 #endif
 };

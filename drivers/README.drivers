@@ -43,7 +43,7 @@ function, and the definitions of these routines afterwards.
    Append lines similar to the following into the static_device_initializers
    definition part of this file.
 
-#if defined(PLD_cgm) && !defined(ENABLE_DYNAMIC_DRIVERS)
+#if defined(PLD_cgm) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_cgm,
 #endif
 
