@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/07/29 20:29:24  mjl
+ * Revision 1.9  1994/11/02 19:58:16  mjl
+ * Changed plAddCWindow() call syntax.
+ *
+ * Revision 1.8  1994/07/29  20:29:24  mjl
  * Change so that window coordinates are added to the window list each time
  * plwind() is called.  Contributed by Paul Casteels.
  *
@@ -32,10 +35,8 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
     PLINT vppxmi, vppxma, vppymi, vppyma;
     PLFLT dx, dy;
-    PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT vpxmi, vpxma, vpymi, vpyma;
     PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
-    CWindow w;
 
     if (plsc->level < 2) {
 	plabort("plwind: Please set up viewport first");
@@ -62,15 +63,15 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 /* The true plot window is made slightly larger than requested so that */
 /* the end limits will be on the graph  */
 
-    plP_svpw((PLFLT) (xmin - dx), (PLFLT) (xmax + dx),
-	 (PLFLT) (ymin - dy), (PLFLT) (ymax + dy));
-
-    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
+    plsc->vpwxmi = xmin - dx;
+    plsc->vpwxma = xmax + dx;
+    plsc->vpwymi = ymin - dy;
+    plsc->vpwyma = ymax + dy;
 
 /* Compute the scaling between coordinate systems */
 
-    dx = vpwxma - vpwxmi;
-    dy = vpwyma - vpwymi;
+    dx = plsc->vpwxma - plsc->vpwxmi;
+    dy = plsc->vpwyma - plsc->vpwymi;
 
     plsc->wpxscl = (vppxma - vppxmi) / dx;
     plsc->wpxoff = (xmax * vppxmi - xmin * vppxma) / dx;
@@ -90,17 +91,8 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     plP_swm(wmxscl, wmxoff, wmyscl, wmyoff);
 
 /* Add coordinates of window to windows list */
-/* By Paul Casteels */
 
-    w.wx1 = xmin;
-    w.wx2 = xmax;
-    w.wy1 = ymin;
-    w.wy2 = ymax;
-    w.vpx1 = vppxmi;
-    w.vpx2 = vppxma;
-    w.vpy1 = vppymi;
-    w.vpy2 = vppyma;
-    plAddCWindow(w);
+    plAddCWindow();
 
     plsc->level = 3;
 }
