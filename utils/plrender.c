@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.46  1995/04/14 21:45:45  mjl
+ * Revision 1.47  1995/05/07 03:16:24  mjl
+ * Changed debugging output to use pldebug().  Updated option tables to
+ * eliminate references to PL_OPTION_ENABLE.  Changed some color setting
+ * commands to go through API functions plscol0n() and plscol1n() since now
+ * these do real work.
+ *
+ * Revision 1.46  1995/04/14  21:45:45  mjl
  * Added termination in case of bad arguments.
  *
  * Revision 1.45  1995/03/17  00:24:09  mjl
@@ -196,7 +202,7 @@ static PLOptionTable options[] = {
     Opt_v,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_NODELETE,
+    PL_OPT_FUNC | PL_OPT_NODELETE,
     "-v",
     "Print out the plrender version number" },
 {
@@ -204,7 +210,7 @@ static PLOptionTable options[] = {
     Opt_i,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-i name",
     "Input filename" },
 {
@@ -212,7 +218,7 @@ static PLOptionTable options[] = {
     NULL,
     NULL,
     &input_type,
-    PL_OPT_BOOL | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_BOOL | PL_OPT_ARG,
     "-f",
     "Filter option -- equivalent to \"-i - -o -\"" },
 {
@@ -220,7 +226,7 @@ static PLOptionTable options[] = {
     Opt_b,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-b number",
     "Beginning page number" },
 {
@@ -228,7 +234,7 @@ static PLOptionTable options[] = {
     Opt_e,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-e number",
     "End page number" },
 {
@@ -236,7 +242,7 @@ static PLOptionTable options[] = {
     Opt_p,
     NULL,
     NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    PL_OPT_FUNC | PL_OPT_ARG,
     "-p page",
     "Plot given page only" },
 {
@@ -473,9 +479,7 @@ OpenMetaFile(char *filename)
  *	<FileName>.plm
  *	<FileName>.plm.1
  */
-#ifdef DEBUG
-	fprintf(stderr, "Trying to open metafile %s.\n", FileName);
-#endif
+	pldebug("OpenMetaFile", "Trying to open metafile %s.\n", FileName);
 	strncpy(name, FileName, sizeof(name) - 1);
 	name[sizeof(name) - 1] = '\0';
 
@@ -864,13 +868,15 @@ plr_state(U_CHAR op)
 	U_CHAR ncol0;
 
 	plm_rd(pdf_rd_1byte(pdfs, &ncol0));
-	plsc->ncol0 = ncol0;
+	plscmap0n(ncol0);
 	for (i = 0; i < plsc->ncol0; i++) {
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].r));
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].g));
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap0[i].b));
-	    plsc->cmap0setcol[i] = 1;
 	}
+	if (plsc->level > 0)
+	    plP_state(PLSTATE_CMAP0);
+
 	break;
     }
 
@@ -878,13 +884,15 @@ plr_state(U_CHAR op)
 	U_SHORT ncol1;
 
 	plm_rd(pdf_rd_2bytes(pdfs, &ncol1));
-	plsc->ncol1 = ncol1;
+	plscmap1n(ncol1);
 	for (i = 0; i < plsc->ncol1; i++) {
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap1[i].r));
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap1[i].g));
 	    plm_rd(pdf_rd_1byte(pdfs, &plsc->cmap1[i].b));
 	}
-	plsc->cmap1set = 1;
+	if (plsc->level > 0)
+	    plP_state(PLSTATE_CMAP1);
+
 	break;
     }
     }
@@ -1128,9 +1136,7 @@ plr_KeyEH(PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop)
     char *tst = (char *) user_data;
     int input_num, dun_seek = 0, terminator_seen = 0;
 
-#ifdef DEBUG
-    fprintf(stderr, "gin->keysym = %x\n", gin->keysym);
-#endif
+    pldebug("plr_KeyEH", "gin->keysym = %x\n", gin->keysym);
 
 /* TEST */
 
@@ -1278,11 +1284,9 @@ SeekToDisp(long target_disp)
 
 /* Anything else requires at least one seek */
 
-#ifdef DEBUG
-    fprintf(stderr,
+    pldebug("SeekToDisp",
 	    "Before seek: target_page = %d, curpage = %d, curdisp = %d\n",
 	    target_page, curpage, curdisp);
-#endif
 
 /* <Return> while drawing any page but the last */
 
@@ -1306,10 +1310,9 @@ SeekToDisp(long target_disp)
 	SeekOnePage();
 
  done:
-#ifdef DEBUG
-    fprintf(stderr, "After seek: curpage = %d, curdisp = %d, cursub = %d\n",
+    pldebug("SeekToDisp",
+	    "After seek: curpage = %d, curdisp = %d, cursub = %d\n",
 	    curpage, curdisp, cursub);
-#endif
 
     end_of_page = 1;
     return;
@@ -1343,11 +1346,9 @@ SeekOnePage(void)
     }
 
     delta = target_page - curpage;
-
-#ifdef DEBUG
-    fprintf(stderr, "Now at page %d, disp %d, delta %d\n",
+    pldebug("SeekOnePage", "Now at page %d, disp %d, delta %d\n",
 	    curpage, curdisp, delta);
-#endif
+
     return;
 }
 
@@ -1426,10 +1427,7 @@ SeekToPrevPage(void)
 static void
 SeekTo(FPOS_T loc)
 {
-#ifdef DEBUG
-    fprintf(stderr, "Seeking to: %d\n", loc);
-#endif
-
+    pldebug("SeekTo", "Seeking to: %d\n", loc);
     doseek(loc);
 
 /* Update page links */
@@ -1523,10 +1521,7 @@ ReadPageHeader(void)
 	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	}
     }
-
-#ifdef DEBUG
-    fprintf(stderr, "Now at page %d, disp %d\n", curpage, curdisp);
-#endif
+    pldebug("ReadPageHeader", "Now at page %d, disp %d\n", curpage, curdisp);
 }
 
 /*--------------------------------------------------------------------------*\
