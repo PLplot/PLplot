@@ -650,6 +650,7 @@ if test "$with_shlib" = "yes"; then
 	    # compilation number or some such.  Have to think about that.
 
 	    LDSHARED='gcc -fpic -shared'
+	    RPATH="-Wl,-rpath -Wl,."
 	;;
 	HP-UX-* )
 	    SO=".sl"
