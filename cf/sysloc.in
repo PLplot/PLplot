@@ -518,6 +518,9 @@ if test -z "$EXTRA_LIBS"; then
 	CRAY* ) 
 	    EXTRA_LIBS="$EXTRA_LIBS -lm"
 	;;
+	irix*|IRIX*|Irix*|sgi*|SGI* ) 
+	    EXTRA_LIBS="$EXTRA_LIBS -lm"
+	;;
 	* ) 	
 	    AC_CHECK_LIB(Xbsd,   main, [EXTRA_LIBS="$EXTRA_LIBS -lXbsd"])
 	    AC_CHECK_LIB(socket, main, [EXTRA_LIBS="$EXTRA_LIBS -lsocket"])
