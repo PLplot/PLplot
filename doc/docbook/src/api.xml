@@ -2587,7 +2587,7 @@ space for this (80 characters is safe).
 
     <para>
       Gets information about current family file, if familying is
-      enabled.  See Section \ref{sec:family} for more information.
+      enabled.  See <xref linkend="familying"/> for more information.
     </para>
     
     <variablelist>
@@ -6112,7 +6112,7 @@ characters and their corresponding decimal ASCII values:
     <para>
       Sets variables dealing with output file familying.  Does nothing if
       familying not supported by the driver.  This routine, if used, must
-      be called before initializing PLplot.  See Section \ref{sec:family}
+      be called before initializing PLplot.  See <xref linkend="familying"/>
       for more information.
     </para>
 
