@@ -13,7 +13,8 @@
 
 #include <unistd.h>
 
-#undef DEBUG
+//#undef DEBUG
+#define DEBUG
 
 #undef ANTIALISED_CANVAS
 
@@ -31,6 +32,9 @@
 /* Default dimensions of the canvas (in inches) */
 #define WIDTH (9)
 #define HEIGHT (6.5)
+
+/* Magnification factor for the PLplot physical dimensions */
+#define MAG_FACTOR 10
 
 #ifdef PLD_gnome
 
@@ -57,8 +61,9 @@ typedef enum {
   GNOME_PLDEV_ZOOM_MODE,
   GNOME_PLDEV_NONE_MODE
 } GnomePLdevCanvasMode;
-  
+
 typedef struct {
+  GtkScrolledWindow* sw;
   GnomeCanvas* canvas;
   GnomePLdevCanvasMode mode;
   GnomeCanvasItem* hlocline;
@@ -132,13 +137,11 @@ void *init(void *args)
   gtk_main();
   gdk_threads_leave ();
   pthread_exit(NULL);
-
 }
 
 static gboolean
 quit_dialog (void)
 {
-
   GtkWidget* dialog;
   gint answer;
 
@@ -176,6 +179,8 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
   GdkCursor *cursor;
   char buffer[128];
   PLGraphicsIn* gin = &(page->gin);
+  guint color;
+  GnomeCanvasItem* item_at_cursor;
 
   move = FALSE;
 
@@ -189,10 +194,7 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
     
     if (event->button.button == 1) {
 
-      gnome_canvas_item_show (page->hlocline);
       gnome_canvas_item_raise_to_top (page->hlocline);
-      
-      gnome_canvas_item_show (page->vlocline);
       gnome_canvas_item_raise_to_top (page->vlocline);
       
       move = TRUE;
@@ -204,7 +206,7 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 			     cursor,
 			     event->button.time);
       gdk_cursor_destroy(cursor);
-
+      
       // FIXME : Terrible global variable hack
       gtk_statusbar_push (sb, page->context, "");
 
@@ -239,6 +241,22 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 
   if (move) {
 
+    gnome_canvas_item_hide (page->hlocline);
+    gnome_canvas_item_hide (page->vlocline);
+
+    item_at_cursor = gnome_canvas_get_item_at (page->canvas,
+					       event->button.x,
+					       event->button.y);
+
+    if (item_at_cursor != NULL)
+      color = * (guint *) gtk_object_get_data (GTK_OBJECT (item_at_cursor),
+					       "color");
+    else
+      color = -1;
+
+    gnome_canvas_item_show (page->hlocline);
+    gnome_canvas_item_show (page->vlocline);
+
     gnome_canvas_item_move (page->hlocline,
 			    0.0, event->button.y - page->vpos);    
     page->vpos = event->button.y;
@@ -252,7 +270,9 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 
     plTranslateCursor (gin);
 
-    sprintf (buffer, "   x = %f   y = %f", gin->wX, gin->wY);
+    sprintf (buffer, "   x = %f   y = %f   color = %d",
+	     gin->wX, gin->wY, color);
+
     // FIXME : Terrible global variable hack
     gtk_statusbar_pop (sb, page->context);
     // FIXME : Terrible global variable hack
@@ -294,6 +314,13 @@ setup_item(GnomeCanvasItem *item)
 
 static double ppu = 1.0;
 
+static void
+add_to_adj (GtkAdjustment* adj, gfloat add)
+{
+  gfloat value = adj->value + add;
+  gtk_adjustment_set_value (adj, value);
+}
+
 static gint
 key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
 {
@@ -330,9 +357,26 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
     change_mode (page, GNOME_PLDEV_ZOOM_MODE);
     //gdk_threads_leave ();
     break;
+  case GDK_Right:
+    //    add_to_adj (page->hadj, 1.0);
+    break;
+  case GDK_Left:
+    //add_to_adj (page->hadj, -1.0);
+    break;
+  case GDK_Up:
+    //add_to_adj (page->vadj, 1.0);
+    break;
+  case GDK_Down:
+    //add_to_adj (page->vadj, -1.0);
+    break;
   default:
     break;
   }
+
+  //  printf ("Hadj->value = %f\n",
+  //	  gtk_scrolled_window_get_hadjustment (page->sw)->value); 
+  //  fflush (stdout);
+
   gnome_canvas_set_pixels_per_unit (GNOME_CANVAS (widget), ppu);
   return TRUE;
 }
@@ -370,15 +414,26 @@ plcolor_to_rgba_inv (PLColor color, guchar alpha)
 }
 
 static void
+set_color (GnomeCanvasItem* item, gint color)
+{
+  gint* colorp;
+
+  colorp = g_malloc (sizeof (gint));
+  *colorp = color;
+
+  gtk_object_set_data (GTK_OBJECT (item), "color", colorp);
+}
+
+static void
 new_page (PLStream* pls)
 {
+  GtkAdjustment* adj;
   GnomeCanvasGroup* group;
   GnomeCanvasItem* background;
   GnomeCanvas* canvas;
   GnomePLdev* dev;
   GnomePLdevPage* page;
   GnomeCanvasPoints* points;
-  GtkScrolledWindow* sw;
   guint np;
   guint32 loclinecolor;
   char buffer[32];
@@ -427,6 +482,8 @@ new_page (PLStream* pls)
 				      "fill_color", (pls->cmap0[0]).name,
 				      "width_units", 0.0,
 				      NULL);
+
+  set_color (background, 0);
 
   points = gnome_canvas_points_new (2);
 
@@ -500,13 +557,27 @@ new_page (PLStream* pls)
   gtk_signal_connect (GTK_OBJECT (canvas), "key_press_event",
 		      GTK_SIGNAL_FUNC (key_cb), pls);
 
-  sw = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (NULL, NULL));
+  //  page->hadj = GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 1.0,
+  //					   1.0, 10.0, 1.0)); 
+//  page->vadj = GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 1.0,
+  //					   1.0, 10.0, 1.0)); 
+  //  page->sw = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (page->hadj,
+  //							   page->vadj));
+  page->sw = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (NULL, NULL));
 
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
+  gtk_scrolled_window_set_policy (page->sw,
 				  GTK_POLICY_AUTOMATIC,
 				  GTK_POLICY_AUTOMATIC);
 
-  gtk_container_add (GTK_CONTAINER (sw), GTK_WIDGET (canvas));
+  adj = gtk_scrolled_window_get_vadjustment (page->sw);
+  adj->step_increment = 1.0;
+  gtk_scrolled_window_set_vadjustment (page->sw, adj);
+
+  adj = gtk_scrolled_window_get_hadjustment (page->sw);
+  adj->step_increment = 1.0;
+  gtk_scrolled_window_set_hadjustment (page->sw, adj);
+
+  gtk_container_add (GTK_CONTAINER (page->sw), GTK_WIDGET (canvas));
 
   if (np == 0) 
     dev->page = g_malloc (sizeof (GnomePLdevPage*));
@@ -520,7 +591,7 @@ new_page (PLStream* pls)
   gtk_notebook_set_show_tabs (dev->notebook, (np > 0));
 
   sprintf (buffer, "Page %d", np+1);
-  gtk_notebook_append_page (dev->notebook, GTK_WIDGET (sw),
+  gtk_notebook_append_page (dev->notebook, GTK_WIDGET (page->sw),
 			    gtk_label_new (buffer));
 
   gtk_widget_show_all (dev->parent);
@@ -632,7 +703,8 @@ plD_init_gnome (PLStream *pls)
   }
 
   plP_setpxl (phys2canvas, phys2canvas);
-  plP_setphy (0, WIDTH/DRAWING_UNIT, 0, HEIGHT/DRAWING_UNIT);
+  plP_setphy (0, MAG_FACTOR * WIDTH/DRAWING_UNIT,
+	      0, MAG_FACTOR * HEIGHT/DRAWING_UNIT);
 
   gnome_is_initialized = TRUE;
 
@@ -671,8 +743,8 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
   points = gnome_canvas_points_new (npts);
 
   for ( i = 0; i < npts; i++ ) {
-    points->coords[2*i] = ((double) x[i]) * PIXELS_PER_DU;
-    points->coords[2*i + 1] = ((double) -y[i]) * PIXELS_PER_DU;;
+    points->coords[2*i] = ((double) x[i]/MAG_FACTOR) * PIXELS_PER_DU;
+    points->coords[2*i + 1] = ((double) -y[i]/MAG_FACTOR) * PIXELS_PER_DU;;
   }
 
   item = gnome_canvas_item_new (group,
@@ -685,6 +757,8 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
                                 "width_units",
 				MAX ((double) pls->width, 3.0) * PIXELS_PER_DU,
                                 NULL);
+
+  set_color (item, pls->icol0);
 
   gtk_signal_connect (GTK_OBJECT (item), "event",
                       (GtkSignalFunc) canvas_pressed_cb,
@@ -846,8 +920,10 @@ fill_polygon (PLStream* pls)
   points = gnome_canvas_points_new (pls->dev_npts);
 
   for ( i = 0; i < pls->dev_npts; i++ ) {
-    points->coords[2*i] = ((double) pls->dev_x[i]) * PIXELS_PER_DU;
-    points->coords[2*i + 1] = ((double) -pls->dev_y[i]) * PIXELS_PER_DU;
+    points->coords[2*i] =
+      ((double) pls->dev_x[i]/MAG_FACTOR) * PIXELS_PER_DU;
+    points->coords[2*i + 1] =
+      ((double) -pls->dev_y[i]/MAG_FACTOR) * PIXELS_PER_DU;
   }
 
   item = gnome_canvas_item_new(group,
@@ -857,6 +933,8 @@ fill_polygon (PLStream* pls)
  				plcolor_to_rgba (pls->curcolor, 0xFF),
                                 "width_units", 0.0,
                                 NULL);
+
+  set_color (item, pls->icol1);
 
   gtk_signal_connect (GTK_OBJECT (item), "event",
                       (GtkSignalFunc) canvas_pressed_cb,
