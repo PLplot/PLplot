@@ -104,7 +104,7 @@ typedef struct {
  *
  ***************************************************************************
  *
- * Variables governing pen width 
+ * Variables governing pen width
  *
  * width	Current pen width
  * widthset	Set if pen width was specified
@@ -112,7 +112,7 @@ typedef struct {
  *
  ***************************************************************************
  *
- * Variables used to pass information between the core and the driver 
+ * Variables used to pass information between the core and the driver
  *
  * It would be nice to use the "dev_" prefix uniformly but changing
  * all that old code would be quite a lot of work..
@@ -154,17 +154,17 @@ typedef struct {
  * These are used by the escape function (for area fill, etc).
  *
  * dev_npts	PLINT	Number of points we are plotting
- * dev_x	short*	Pointer to array of x values 
- * dev_y	short*	Pointer to array of x values 
+ * dev_x	short*	Pointer to array of x values
+ * dev_y	short*	Pointer to array of x values
  *
  * For images
  * dev_nptsX	PLINT	Number of points we are plotting in X
  * dev_nptsY	PLINT	Number of points we are plotting in Y
- * dev_z	ushort*	Pointer to array of z values for the color 
+ * dev_z	ushort*	Pointer to array of z values for the color
  * dev_zmin,
  * dev_zmax     ushort  Min and max values of z to plot
  *
- * The following pointer is for drivers that require device-specific 
+ * The following pointer is for drivers that require device-specific
  * data.  At initialization the driver should malloc the necessary
  * space and set pls->dev to point to this area.  This way there can
  * be multiple streams using the same driver without conflict.
@@ -253,10 +253,10 @@ typedef struct {
  *
  * difilt	PLINT	Driver interface filter flag
  *
- * dipxmin	PLFLT	
+ * dipxmin	PLFLT
  * dipymin	PLFLT	Min, max relative plot coordinates
  * dipxmax	PLFLT
- * dipymax	PLFLT	
+ * dipymax	PLFLT
  * dipxax 	PLFLT	Plot window transformation:
  * dipxb 	PLFLT	  x' = dipxax * x + dipxb
  * dipyay 	PLFLT
@@ -291,10 +291,10 @@ typedef struct {
  * dioyay	PLFLT
  * dioyb 	PLFLT
  *
- * dimxmin	PLFLT	
+ * dimxmin	PLFLT
  * dimymin	PLFLT	Target coordinate system parameters.
  * dimxmax	PLFLT
- * dimymax	PLFLT	
+ * dimymax	PLFLT
  * dimxpmm	PLFLT
  * dimypmm	PLFLT
  * dimxax 	PLFLT	Map meta to physical coordinates:
@@ -306,7 +306,7 @@ typedef struct {
  *
  ***************************************************************************
  *
- * Fill pattern state information. 
+ * Fill pattern state information.
  * patt < 0: Hardware fill, if available (not implemented yet)
  * patt ==0: Hardware fill, if available, solid
  * patt > 0: Software fill
@@ -402,7 +402,7 @@ typedef struct {
  * wm....	Transformation variables for world coordinates to mm
  *
  ****************************************************************************
- * 
+ *
  * Other variables
  *
  * dev_compression Compression level for supporting devices
@@ -602,9 +602,11 @@ typedef struct {
     PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
 
 /* Other variables */
-   
+
   PLINT dev_compression;
   PLINT cfont;
+  
+  void *FT;
 
 /* Stuff used by the Tkwin driver for Plframe */
   struct PlPlotter *plPlotterPtr;
