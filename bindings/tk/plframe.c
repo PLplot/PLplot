@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.44  1995/04/12 08:08:09  mjl
+ * Revision 1.45  1995/04/17 19:21:52  furnish
+ * Implemented a new "report" widget command for performing on-demand
+ * translations of window coordinates to world coordinates.  This is
+ * especiallly useful when invoked from within a Tk binding.
+ *
+ * Revision 1.44  1995/04/12  08:08:09  mjl
  * A data link cleanup command added.
  *
  * Revision 1.43  1995/03/16  23:07:26  mjl
@@ -295,6 +300,7 @@ static int   Save		(Tcl_Interp *, PlFrame *, int, char **);
 static int   View		(Tcl_Interp *, PlFrame *, int, char **);
 static int   xScroll		(Tcl_Interp *, PlFrame *, int, char **);
 static int   yScroll		(Tcl_Interp *, PlFrame *, int, char **);
+static int   report		(Tcl_Interp *, PlFrame *, int, char **);
 
 /* Routines for manipulating graphic crosshairs */
 
@@ -573,6 +579,12 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	else {
 	    result = Redraw(interp, plFramePtr, argc-2, argv+2);
 	}
+    }
+
+/* report -- find out useful info about the plframe (GMF) */
+
+    else if ((c == 'r') && (strncmp(argv[1], "report", length) == 0)) {
+	result = report( interp, plFramePtr, argc-2, argv+2 );
     }
 
 /* save -- saves plot to the specified plot file type */
@@ -2566,6 +2578,56 @@ yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     plFramePtr->flags |= UPDATE_V_SCROLLBAR | UPDATE_H_SCROLLBAR;
     return (Redraw(interp, plFramePtr, argc, argv));
+}
+
+/*--------------------------------------------------------------------------*\
+ * report
+ *
+ * 4/17/95 GMF
+ * Processes "report" widget command.
+\*--------------------------------------------------------------------------*/
+
+static int
+report( Tcl_Interp *interp, register PlFrame *plFramePtr,
+	int argc, char **argv )
+{
+    float x, y;
+/*    fprintf( stdout, "Made it into report, argc=%d\n", argc ); */
+
+    if (argc == 0) {
+	interp->result = "report what?";
+	return TCL_ERROR;
+    }
+
+    if (!strcmp( argv[0], "wc" )) {
+
+	XwDev *dev = (XwDev *) plFramePtr->pls->dev;
+	PLGraphicsIn *gin = &(dev->gin);
+
+	if (argc != 3) {
+	    interp->result = "Wrong # of args: report wc x y";
+	    return TCL_ERROR;
+	}
+
+	x = atof( argv[1] );
+	y = atof( argv[2] );
+
+	gin->dX = (PLFLT) x / (dev->width - 1);
+	gin->dY = 1.0 - (PLFLT) y / (dev->height - 1);
+
+    /* Try to locate cursor */
+
+	if (plTranslateCursor(gin)) {
+	    sprintf( interp->result, "wx=%f wy=%f", gin->wX, gin->wY );
+	    return TCL_OK;
+	}
+
+	interp->result = "Cannot locate";
+	return TCL_OK;
+    }
+
+    interp->result = "nonsensical request.";
+    return TCL_ERROR;
 }
 
 /*--------------------------------------------------------------------------*\
