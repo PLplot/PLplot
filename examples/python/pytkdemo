@@ -36,7 +36,7 @@ class DemoApp(Frame):
 	print "Building the Python Tk demo application main window."
 
 	s.create_widgets()
-	s.pack()
+	s.pack( expand=1, fill=BOTH )
 
 	plspause(1)
 
@@ -53,10 +53,10 @@ class DemoApp(Frame):
 	s.f2.reload.pack( side=LEFT, expand=1, fill=X )
 	s.f2.quit = Button( s.f2, text="Dismiss", command=s.master.destroy )
 	s.f2.quit.pack( side=LEFT, expand=1, fill=X )
-	s.f2.pack( side=BOTTOM, expand=1, fill=X )
+	s.f2.pack( side=BOTTOM, fill=X )
 
-	s.f.pack( side=LEFT, expand=1, fill=Y )
-	s.plf.pack( side=RIGHT )
+	s.f.pack( side=LEFT )
+	s.plf.pack( side=RIGHT, expand=1, fill=BOTH )
 
     def make_demo_bar( s, f ):
 	f.x01 = Button( f, text="Example 1", command=s.demo_x01 )
