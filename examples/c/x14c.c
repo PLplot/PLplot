@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/06/30 17:57:54  mjl
+ * Revision 1.10  1994/08/10 05:28:50  mjl
+ * Ensured that geometry strings are in writable memory as required, and
+ * other minor tweaks to improve the demo.
+ *
+ * Revision 1.9  1994/06/30  17:57:54  mjl
  * All C example programs: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
@@ -58,9 +62,12 @@ main(void)
     int xleng0 = 400, yleng0 = 300, xoff0 = 200, yoff0 = 200;
     int xleng1 = 400, yleng1 = 300, xoff1 = 500, yoff1 = 500;
 
-/* Tcl-DP driver the only one that really gets this right */
+/* Select Tcl-DP driver and use a smaller window geometry than the default */
+/* The geometry strings MUST be in writable memory */
 
     char driver[] = "dp";
+    char geometry_master[] = "500x410+100+200";
+    char geometry_slave[]  = "500x410+650+200";
 
     printf("Demo of multiple output streams via the DP driver.\n");
     printf("Running with the second window as slave.\n");
@@ -68,7 +75,7 @@ main(void)
 
 /* Set up first stream */
 
-    plSetInternalOpt("geometry", "400x300+100+200");
+    plSetInternalOpt("geometry", geometry_master);
 
     plsdev(driver);
     plssub(2, 2);
@@ -80,7 +87,7 @@ main(void)
 
 /* Turn off pause to make this a slave (must follow master) */
 
-    plSetInternalOpt("geometry", "400x300+550+200");
+    plSetInternalOpt("geometry", geometry_slave);
     plspause(0);
     plsdev(driver);
     plinit();
@@ -120,9 +127,11 @@ main(void)
     plot1();
 
 /* To slave */
+/* The pleop() ensures the eop indicator gets lit. */
 
     plsstrm(1);
     plot4();
+    pleop();
 
 /* Back to master */
 
@@ -134,8 +143,14 @@ main(void)
 
     plsstrm(1);
     plot5();
+    pleop();
 
-/* Don't forget to call PLEND to finish off! */
+/* Back to master to wait for user to advance */
+
+    plsstrm(0);
+    pleop();
+
+/* Call plend to finish off. */
 
     plend();
     exit(0);
@@ -183,6 +198,7 @@ plot1(void)
 
     plcol(4);
     plline(60, x, y);
+    plflush();
 }
 
 
@@ -215,7 +231,7 @@ plot2(void)
 
     plcol(3);
     plline(100, x, y);
-
+    plflush();
 }
 
  /* =============================================================== */
@@ -259,6 +275,7 @@ plot3(void)
 
     plcol(4);
     plline(101, x, y);
+    plflush();
 }
 
  /* =============================================================== */
@@ -324,6 +341,7 @@ plot4(void)
     plcol(4);
     plmtex("t", 2.0, 0.5, 0.5,
 	   "#frPLplot Example 3 - r(#gh)=sin 5#gh");
+    plflush();
 }
 
  /* =============================================================== */
@@ -378,4 +396,5 @@ plot5(void)
     plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
     plcol(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    plflush();
 }
