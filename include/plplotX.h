@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/05/07 03:20:40  mjl
+ * Revision 1.6  1994/05/16 21:26:53  mjl
+ * Added ncol0 for storing number of colors allocated in cmap0.
+ *
+ * Revision 1.5  1994/05/07  03:20:40  mjl
  * Added entry for: XVisualInfo *vi to XwDev struct, and prototype for new
  * global function PLX_save_colormap.
  *
@@ -66,6 +69,7 @@ typedef struct {
     short	xlen, ylen;		/* Lengths of device coord space */
 
     int		color;			/* Set to 1 if a color output device */
+    int		ncol0;			/* Number of cmap 0 colors allocated */
     int		ncol1;			/* Number of cmap 1 colors allocated */
     XColor	cmap0[16];		/* Color entries for cmap 0 */
     XColor	cmap1[256];		/* Color entries for cmap 1 */
