@@ -450,8 +450,6 @@ typedef struct {
 #define    plline	c_plline
 #define    plline3	c_plline3
 #define    pllsty	c_pllsty
-#define    plmap	c_plmap
-#define    plmeridians	c_plmeridians
 #define    plmesh	c_plmesh
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
@@ -571,8 +569,6 @@ typedef struct {
 #define    c_plline	plline
 #define    c_plline3	plline3
 #define    c_pllsty	pllsty
-#define    c_plmap	plmap
-#define    c_plmeridians	plmeridians
 #define    c_plmesh	plmesh
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
@@ -959,13 +955,13 @@ c_pllsty(PLINT lin);
 /* plot continental outline in world coordinates */
 
 void
-c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 /* Plot the latitudes and longitudes on the background. */
 
 void 
-c_plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
                PLFLT dlong, PLFLT dlat,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 

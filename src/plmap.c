@@ -64,7 +64,7 @@
 #define W_BUFSIZ	(32*1024)
 
 void
-c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
          PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
     PLINT wrap, sign;
@@ -204,7 +204,7 @@ c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 #define NSEG 100
 
 void 
-c_plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
                PLFLT dlong, PLFLT dlat,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
