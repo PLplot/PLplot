@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.4  2000/05/10 20:35:58  furnish
+ * Include plConfig.h to get PLDOUBLE definition.  Rob Managan.
+ *
  * Revision 1.3  1995/06/01 21:40:04  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
@@ -21,6 +24,7 @@
 #ifndef __PLCDEMOS_H__
 #define __PLCDEMOS_H__
 
+#include "plConfig.h"
 #include "plplot.h"
 #include <math.h>
 #include <string.h>
