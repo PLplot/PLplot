@@ -47,7 +47,7 @@
       PLplot supports a large number of command line arguments, but it is
       up to the user to pass these to PLplot for processing at the
       beginning of execution.  The function
-      <function>plParseInternalOpts</function> is responsible for parsing
+      plParseInternalOpts (*** UNDOCUMENTED ***) is responsible for parsing
       the argument list, removing all that are recognized by PLplot, and
       taking the appropriate action before returning.  There are an
       extensive number of options available to affect this process.  The
@@ -79,12 +79,13 @@ PLplot options:
     -jy justy            Page justification in y (-0.5 to 0.5, def 0)
     -ori orient          Plot orientation (0,2=landscape, 1,3=portrait)
     -freeaspect          Do not preserve aspect ratio on orientation swaps
+    -portrait            Sets portrait mode (both orientation and aspect ratio)
     -width width         Sets pen width (1 &lt;= width &lt;= 10)
     -bg color            Background color (0=black, FFFFFF=white)
     -ncol0 n             Number of colors to allocate in cmap 0 (upper bound)
     -ncol1 n             Number of colors to allocate in cmap 1 (upper bound)
     -fam                 Create a family of output files
-    -fsiz size           Output family file size in MB (e.g. -fsiz 1.0)
+    -fsiz size[kKmMgG]   Output family file size in MB (e.g. -fsiz 0.5G, def MB)
     -fbeg number         First family member number on output
     -finc number         Increment between family members
     -fflen length        Family member number minimum field width
@@ -92,13 +93,21 @@ PLplot options:
     -db                  Double buffer X window output
     -np                  No pause between pages
     -server_name name    Main window name of PLplot server (tk driver)
-    -server_host name    Host to run PLplot server on (dp driver)
-    -server_port name    Port to talk to PLplot server on (dp driver)
-    -user name           User name on remote node (dp driver)
-
-All parameters must be white-space delimited.  Some options are driver
-dependent.  Please see the PLplot reference document for more detail.
+    -dpi dpi             Resolution, in dots per inch (e.g. -dpi 360x360)
+    -compression num     Sets compression level in supporting devices
+    -drvopt option[=value][,option[=value]]* Driver specific options
 </screen>
+    </para>
+
+    <para>
+    The command-line options can also be set using the &plsetopt; function, if invoked before &plinit;.
+    </para>
+
+    <para>
+      Some options are may not be recognized by individual drivers.  If an option is not recognized but should be, please contact the driver author via the plplot mailing lists.
+    </para>
+
+    <para>Many drivers have specific options that can be set using the -drvopt command line option or with &plsetopt;.  These options are documented in <xref linkend="x-drivers"/> and <xref linkend="output-drivers"/>.
     </para>
 
   </sect1>
@@ -417,12 +426,13 @@ PLplot options:
     -jy justy            Page justification in y (-0.5 to 0.5, def 0)
     -ori orient          Plot orientation (0,2=landscape, 1,3=portrait)
     -freeaspect          Do not preserve aspect ratio on orientation swaps
+    -portrait            Sets portrait mode (both orientation and aspect ratio)
     -width width         Sets pen width (1 &lt;= width &lt;= 10)
     -bg color            Background color (0=black, FFFFFF=white)
     -ncol0 n             Number of colors to allocate in cmap 0 (upper bound)
     -ncol1 n             Number of colors to allocate in cmap 1 (upper bound)
     -fam                 Create a family of output files
-    -fsiz size           Output family file size in MB (e.g. -fsiz 1.0)
+    -fsiz size[kKmMgG]   Output family file size in MB (e.g. -fsiz 0.5G, def MB)
     -fbeg number         First family member number on output
     -finc number         Increment between family members
     -fflen length        Family member number minimum field width
@@ -430,12 +440,9 @@ PLplot options:
     -db                  Double buffer X window output
     -np                  No pause between pages
     -server_name name    Main window name of PLplot server (tk driver)
-    -server_host name    Host to run PLplot server on (dp driver)
-    -server_port name    Port to talk to PLplot server on (dp driver)
-    -user name           User name on remote node (dp driver)
-
-All parameters must be white-space delimited.  Some options are driver
-dependent.  Please see the PLplot reference document for more detail.
+    -dpi dpi             Resolution, in dots per inch (e.g. -dpi 360x360)
+    -compression num     Sets compression level in supporting devices
+    -drvopt option[=value][,option[=value]]* Driver specific options
 </screen>
 </para>
 
