@@ -1,9 +1,13 @@
+#!/usr/bin/env python
 #----------------------------------------------------------------------------
 # PLplot Python demo #16
 #
 # Based heavily on the Tcl demo 16.
 #
 # $Log$
+# Revision 1.3  2001/04/01 00:33:37  airwin
+# Replace #!/usr/local/bin/python with #!/usr/bin/env python
+#
 # Revision 1.2  1996/10/22 19:43:24  furnish
 # Updated python examples to work with new python Tk demo app.
 #
