@@ -46,20 +46,17 @@ endfunction
     XPTS=35;		## Data points in x
     YPTS=46;		## Datat points in y
 
+    DRAW_LINEXY = 3;
     MAG_COLOR = 4;
-    SURF_CONT = hex2dec("10");
-    BASE_CONT = hex2dec("20");
-    FACETED = hex2dec("80");
+    BASE_CONT = 8;
+    SURF_CONT = 32;
+    FACETED = 128;
 
-    opt=[1, 2, 3, 3];
-    alt=[60.0, 20.0, 60.0, 60.0];
-    az =[30.0, 60.0, 120.0, 160.0];
+    alt=[60.0, 20.0];
+    az =[30.0, 60.0];
 
     title=["#frPLplot Example 8 - Alt=60, Az=30",
-	   "#frPLplot Example 8 - Alt=20, Az=60",
-	   "#frPLplot Example 8 - Alt=60, Az=120",
-	   "#frPLplot Example 8 - Alt=60, Az=160"];
-
+	   "#frPLplot Example 8 - Alt=20, Az=60"];
 
     ## Parse and process command line arguments
 
@@ -68,11 +65,23 @@ endfunction
     ## Initialize plplot
     plinit();
 
+    rosen = 1;
+
     x = ((0:XPTS-1) - (XPTS / 2)) / (XPTS / 2);
     y = ((0:YPTS-1) - (YPTS / 2)) / (YPTS / 2);
+    if (rosen)
+      x = x * 1.5;
+      y = y + 0.5;
+    endif
     [xx, yy] = meshgrid(x,y);
-    r = sqrt(xx .* xx + yy .* yy);
-    z = exp(-r .* r) .* cos(2.0 * 3.141592654 .* r);
+
+    if (rosen)
+      z = log((1 - xx) .^ 2 + 100 .* (yy - xx .^ 2) .^ 2);
+      z(isinf(z)) = -5;
+    else
+      r = sqrt(xx .* xx + yy .* yy);
+      z = exp(-r .* r) .* cos(2.0 * 3.141592654 .* r);
+    endif
 
     pllightsource(1.,1.,1.);
 
@@ -82,10 +91,11 @@ endfunction
     nlevel = 10;
     zmax = max(max(z));
     zmin = min(min(z));
-    clevel = linspace(zmin, zmax, nlevel)';
+    step = (zmax-zmin)/(nlevel+1);
+    clevel = linspace(zmin+step, zmax-step, nlevel)';
 
-    for k=1:4
-      for ifshade=0:5
+    for k=1:2
+      for ifshade=0:3
 
 	pladv(0);
 	plvpor(0.0, 1.0, 0.0, 0.9);
@@ -93,7 +103,14 @@ endfunction
 	plcol0(3);
 	plmtex("t", 1.0, 0.5, 0.5, title(k,:));
 	plcol0(1);
-	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt(k), az(k));
+	if (rosen)
+	  plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, -5.0, 7.0, alt(k), \
+		az(k));
+	else
+	  plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, \
+		alt(k), az(k));
+	endif
+
 	plbox3("bnstu", "x axis", 0.0, 0,
 	       "bnstu", "y axis", 0.0, 0,
 	       "bcdmnstuv", "z axis", 0.0, 0);      
@@ -101,21 +118,15 @@ endfunction
 
 	switch(ifshade)
 	  case 0
-	    plot3d(x', y', z', opt(k), 1);
+	    cmap1_init(1);
+	    plsurf3d(x', y', z', 0, 0, 0);
 	  case 1
 	    cmap1_init(0);
-	    plmesh(x', y', z', opt(k) + MAG_COLOR);
+	    plsurf3d(x', y', z', MAG_COLOR, 0, 0);
 	  case 2
-	    cmap1_init(1);
-	    plsurf3d(x', y', z', 0, 0);
-	  case 3
-	    cmap1_init(0);
-	    plsurf3d(x', y', z', MAG_COLOR, 0);
-	  case 4
-	    cmap1_init(0);
-	    plsurf3d(x', y', z', MAG_COLOR + FACETED, 0);
+	    plsurf3d(x', y', z', MAG_COLOR + FACETED, 0, 0);
 	  otherwise
-	    plsurf3d(x', y', z',MAG_COLOR + SURF_CONT + BASE_CONT, clevel);	    
+	    plsurf3d(x', y', z', MAG_COLOR + SURF_CONT + BASE_CONT, clevel);
 	endswitch
       endfor
     endfor

@@ -217,7 +217,7 @@ function ix09c
 	  endfor
 
 	  ## Plot using identity transform
-
+if (0)
 	  pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 	  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	  plcol0(2);
@@ -228,7 +228,7 @@ function ix09c
 	  plstyl(0, mark, space);
 	  plcol0(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+endif
 	  pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	  plcol0(2);
@@ -272,7 +272,7 @@ function ix09c
 	  plstyl(0, mark, space);
 	  plcol0(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+if(0)
 	  pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	  plcol0(2);
@@ -283,7 +283,7 @@ function ix09c
 	  plstyl(0, mark, space);
 	  plcol0(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+endif
 	  ## Plot using 2d coordinate transform
 
 	  pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
@@ -296,7 +296,7 @@ function ix09c
 	  plstyl(0, mark, space);
 	  plcol(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+if(0)
 	  pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	  plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	  plcol0(2);
@@ -307,17 +307,17 @@ function ix09c
 	  plstyl(0, mark, space);
 	  plcol0(1);
 	  pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+endif
 	  pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 	  _polar();
-	  pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-	  _polar();
+	  ## pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+	  ## _polar();
 
 
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
     potential();
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-    potential();
+    ## pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+    ## potential();
 
 
 	  plend1();

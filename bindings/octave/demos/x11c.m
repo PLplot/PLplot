@@ -16,7 +16,20 @@
 ## Does a series of mesh plots for a given data set, with different
 ## viewing options in each plot.
 
-function x11c
+1;
+
+function cmap1_init()
+  i = [0; 1];           # left boundary, right boundary
+
+  h = [240; 0];       # blue -> green -> yellow -> red
+  l = [0.6; 0.6];
+  s = [0.8; 0.8];
+
+  plscmap1n(256);
+  plscmap1l(0, i, h, l, s, zeros(2,1));
+endfunction
+
+function ix11c
 
   if (!exist("plinit"))
     plplot_stub
@@ -29,14 +42,16 @@ function x11c
   XPTS = 35;		## Data points in x */
   YPTS = 46;		## Datat points in y */
 
-  opt = [1, 2, 3, 3]';
-  alt = [60.0, 20.0, 60.0, 60.0]';
-  az = [30.0, 60.0, 120.0, 160.0]';
+  DRAW_LINEXY = 3;
+  MAG_COLOR = 4;
+  BASE_CONT = 8;
 
-  title = ["#frPLplot Example 11 - Alt=60, Az=30, Opt=1",
-	   "#frPLplot Example 11 - Alt=20, Az=60, Opt=2",
-	   "#frPLplot Example 11 - Alt=60, Az=120, Opt=3",
-	   "#frPLplot Example 11 - Alt=60, Az=160, Opt=3"];
+  opt = [DRAW_LINEXY,  DRAW_LINEXY ]';
+  alt = [33, 17]';
+  az = [24, 115]';
+
+  title = ["#frPLplot Example 11 - Alt=33, Az=33, Opt=3",
+	   "#frPLplot Example 11 - Alt=24, Az=115, Opt=3"];
 
   ## Parse and process command line arguments */
 
@@ -45,37 +60,52 @@ function x11c
   ## Initialize plplot */
   plinit();
 
-  for i=0: XPTS-1
-    x(i+1) =   (i - (XPTS / 2)) /   (XPTS / 2);
-  endfor
+  xx = linspace(-3, 3, XPTS);
+  yy = linspace(-3, 3, YPTS);
+  [x,y] = meshgrid (xx,yy);
 
-  for i=0:YPTS-1
-    y(i+1) =   (i - (YPTS / 2)) /   (YPTS / 2);
-  endfor
-  
-  for i=0:XPTS-1
-    xx = x(i+1);
-    for j=0:YPTS-1
-      yy = y(j+1);
-      z(i+1,j+1) = cos(2.0 * pi * xx) * sin(2.0 * pi * yy);
+  z = 3 * (1-x).^2 .* exp(-(x.^2) - (y+1).^2) - ...
+      10 * (x/5 - x.^3 - y.^5) .* exp(-x.^2 - y.^2)- ...
+      1/3 * exp(-(x+1).^2 - y.^2);
+
+  nlevel = 10;
+  zmax = max(max(z));
+  zmin = min(min(z));
+  step = (zmax-zmin)/(nlevel+1);
+  clevel = linspace(zmin+step, zmax-step, nlevel)';
+
+  cmap1_init;
+
+  for k=1:2
+    for i=0:3
+      pladv(0);
+      plcol0(1);
+      plvpor(0, 1, 0, 0.9);
+      plwind(-1, 1, -1, 1.5);
+      
+      plw3d(1, 1, 1.2, -3, 3, -3, 3, -7, 8, alt(k), az(k));
+      plbox3("bnstu", "x axis", 0, 0,
+	     "bnstu", "y axis", 0, 0,
+	     "bcdmnstuv", "z axis", 0, 4);
+      
+      plcol0(2);
+
+      switch (i)
+	case 0
+	  plmesh(xx', yy', z', opt(k));
+	case 1
+	  plmesh(xx', yy', z', opt(k) + MAG_COLOR);
+	case 2
+	  plot3d(xx', yy', z', opt(k) + MAG_COLOR, 1);
+	case 3
+	  plmeshc(xx', yy', z', opt(k) + MAG_COLOR + BASE_CONT, clevel);
+      endswitch
+
+      plcol0(3);
+      plmtex("t", 1.0, 0.5, 0.5, title(k,:));
     endfor
-  endfor
-
-  for k=0:3
-    pladv(0);
-    plcol0(1);
-    plvpor(0.0, 1.0, 0.0, 0.8);
-    plwind(-1.0, 1.0, -1.0, 1.5);
-    
-    plw3d(1.0, 1.0, 1.2, -1.0, 1.0, -1.0, 1.0, -1.5, 1.5, alt(k+1), az(k+1));
-    plbox3("bnstu", "x axis", 0.0, 0,
-	   "bnstu", "y axis", 0.0, 0,
-	   "bcdmnstuv", "z axis", 0.0, 4);
-    
-    plcol0(2);
-    plmesh(x, y, z, opt(k+1));
-    plcol0(3);
-    plmtex("t", 1.0, 0.5, 0.5, title(k+1,:));
   endfor
   plend1();
 endfunction
+
+ix11c
