@@ -42,6 +42,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp install-stamp
 	-$(MAKE) clean
+	find . -name config.log -o -name config.status | xargs rm -f
 	dh_clean
 
 install: install-stamp

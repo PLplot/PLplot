@@ -1,10 +1,14 @@
-plplot (5.2.0.cvs.20030214-2) unstable; urgency=low
+plplot (5.2.0.cvs.20030217-1) unstable; urgency=low
 
-  * debian/rules: Removed hacks for getting the Octave files correctly
-    installed, since this is fixed in CVS now.
-  * NOT YET RELEASED!
+  * Built with new CVS sources.
+  * debian/rules:
+    - Removed hacks for getting the Octave files correctly installed,
+      since this is fixed in CVS now.
+    - Added command to remove config.log and config.status files.  This
+      makes lintian happy.
+  * debian/octave-plplot.files: Included usr/share/doc/libplplot5/*.octave.
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 17 Feb 2003 18:34:29 +0100
 
 plplot (5.2.0.cvs.20030214-1) unstable; urgency=low
 
