@@ -744,6 +744,31 @@ gnome_pldev_create (PLStream* pls)
 
 void plD_open_gnome(PLStream *pls);
 
+void plD_init_gnome		(PLStream *);
+void plD_line_gnome		(PLStream *, short, short, short, short);
+void plD_polyline_gnome		(PLStream *, short *, short *, PLINT);
+void plD_eop_gnome			(PLStream *);
+void plD_bop_gnome			(PLStream *);
+void plD_tidy_gnome		(PLStream *);
+void plD_state_gnome		(PLStream *, PLINT);
+void plD_esc_gnome			(PLStream *, PLINT, void *);
+
+void plD_dispatch_init_gnome( PLDispatchTable *pdt )
+{
+    pdt->pl_MenuStr  = "Gnome Canvas";
+    pdt->pl_DevName  = "gnome";
+    pdt->pl_type     = plDevType_Interactive;
+    pdt->pl_seq      = 6;
+    pdt->pl_init     = (plD_init_fp)     plD_init_gnome;
+    pdt->pl_line     = (plD_line_fp)     plD_line_gnome;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_gnome;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_gnome;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_gnome;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_gnome;
+    pdt->pl_state    = (plD_state_fp)    plD_state_gnome;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_gnome;
+}
+
 /*--------------------------------------------------------------------------*\
  * plD_init_gnome()
  *
