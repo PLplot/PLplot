@@ -7,9 +7,9 @@ package.  Development releases represent a "work in progress", and
 we expect to provide installments in the 5.5.x series every few weeks.  
 The next full release will be 5.6.0.
 
-Feedback on this development release can be communicated to PLplot
-developers via the mailing lists at 
-http://sourceforge.net/mail/?group_id=2915 .
+If you encounter a problem that is not already documented in the PROBLEMS
+file then please send bug reports to PLplot developers via the mailing lists
+at http://sourceforge.net/mail/?group_id=2915 .
 
 Please see the license under which this software is distributed, and the
 disclaimer of all warrantees, given in the COPYING.LIB file.
