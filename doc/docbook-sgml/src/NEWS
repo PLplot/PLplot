@@ -1,7 +1,26 @@
-This file summarises changes to the cvs of the plplot documentation project.
-For some background about that project see README. Alan W. Irwin (AWI) and
-Rafael Laboissiere (RL) have been the principal contributors to this project
-so far.
+This file gives an overview of changes to the cvs of the plplot
+documentation project. For some background about that project see README.
+Alan W. Irwin (AWI) and Rafael Laboissiere (RL) have been the principal
+contributors to this project so far.
+
+2000 November 13: AWI moved CHANGES NEWS  (which is the more appropriate
+name for this file).  AWI also put information about Cygnus DocBook into
+README.developers.
+
+2000 November 12: RL removes "forgot $" bug in configure.  AWI confirms that
+the refined configuration system properly checks catalogs again.
+
+2000 November 10: AWI made extensive improvements to all sgml source using
+the "aspell" spell-checker.
+
+2000 November 9: AWI converted remaining latexinfo source to cplus.sgml,
+tcl.sgml, gui.sgml, perl.sgml, python.sgml, and scheme.sgml. The first two
+add a large amount of documentation while the last 4 are simply placeholders
+waiting for documenters to get busy.  This completes the conversion of the
+1995 latexinfo to DocBook, but there are some possible 1994 latex (as
+opposed to latexinfo) appendix files that may be useful enough to convert as
+well but which were not included in the 1995 conversion of the documentation
+from latex to latexinfo.
 
 2000 November 4 (AWI): extensive changes to Makefile.in plus split
 functionality of old README into README plus CHANGES.
