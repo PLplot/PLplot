@@ -46,6 +46,17 @@ static void     plD_init_png_Dev(PLStream *pls);
 
 #define NCOLOURS 256    /* Hardwire this for now */
 
+/* In an attempt to fix a problem with the hidden line removal functions
+ * that results in hidden lines *not* being removed from "small" plot
+ * pages (ie, like a normal video screen), a "virtual" page of much
+ * greater size is used to trick the algorithm into working correctly.
+ * If, in future, this gets fixed on its own, then don't define
+ * "use_experimental_hidden_line_hack"
+ */
+
+#define use_experimental_hidden_line_hack
+
+
 /* Struct to hold device-specific info. */
 
 typedef struct {
@@ -65,6 +76,9 @@ typedef struct {
         int colour;                             /* Current Colour               */
         int totcol;                             /* Total number of colours      */
         int ncol1;                              /* Actual size of ncol1 we got  */
+
+	int scale;                              /* scaling factor to "blow up" to */
+	                                        /* the "virtual" page in removing hidden lines*/
 
 } png_Dev;
 
@@ -152,6 +166,22 @@ void plD_init_png(PLStream *pls)
      dev->pngx = pls->xlength - 1;	/* should I use -1 or not??? */
      dev->pngy = pls->ylength - 1;
 
+#ifdef use_experimental_hidden_line_hack
+
+     if (dev->pngx>dev->pngy)    /* Work out the scaling factor for the  */
+        {                        /* "virtual" (oversized) page           */
+        dev->scale=PIXELS_X/dev->pngx;
+        }
+     else
+        {
+        dev->scale=PIXELS_Y/dev->pngy;
+        }
+#else
+
+     dev->scale=1;
+
+#endif   
+
      if (pls->xdpi<=0) 
      {
 /* This corresponds to a typical monitor resolution of 4 pixels/mm. */
@@ -162,9 +192,9 @@ void plD_init_png(PLStream *pls)
         pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
      } 
 /* Convert DPI to pixels/mm */
-     plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4);
+     plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
 
-     plP_setphy(0, dev->pngx, 0, dev->pngy);
+     plP_setphy(0, dev->scale*dev->pngx, 0, dev->scale*dev->pngy);
 
 }
 
@@ -178,7 +208,7 @@ void
 plD_line_png(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     png_Dev *dev=(png_Dev *)pls->dev;
-    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
+    int x1 = x1a/dev->scale, y1 = y1a/dev->scale, x2 = x2a/dev->scale, y2 = y2a/dev->scale;
     y1 = dev->pngy - y1;
     y2 = dev->pngy - y2;
 
@@ -223,8 +253,8 @@ png_Dev *dev=(png_Dev *)pls->dev;
 
      for (i = 0; i < pls->dev_npts; i++) 
          {
-	   points[i].x = pls->dev_x[i];
-	   points[i].y = dev->pngy - pls->dev_y[i];
+	   points[i].x = pls->dev_x[i]/dev->scale;
+	   points[i].y = dev->pngy - (pls->dev_y[i]/dev->scale);
          }
 
    gdImageFilledPolygon(dev->im_out, points, pls->dev_npts, dev->colour_index[dev->colour]);
