@@ -19,7 +19,7 @@ static short int numberfonts, numberchars;
 static short int indxleng;
 
 static short fontloaded = 0;
-/* moved to plstr.h, plsc->cfont static PLINT font = 1; current font */
+/* moved to plstr.h, plsc->cfont  static PLINT font = 1;  current font */
 
 #define PLMAXSTR	300
 #define STLEN		250
@@ -546,7 +546,6 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
     
     PLINT ch, i, length, level = 0, style, oline = 0, uline = 0;
     PLFLT width = 0., xorg = 0., yorg = 0., def, ht, dscale, scale;
-	PLFLT r,g,b;
 
 	/* program flow should never arrive here if dev_text == 1, but if it does */
 	if (plsc->dev_text) {
