@@ -3,7 +3,7 @@
 // Geoffrey Furnish
 // Sep 21 1994
 //
-// Copyright (C) 2004  Andrew Ross
+// Copyright (C) 2004,2005  Andrew Ross
 // Copyright (C) 2004  Alan W. Irwin
 //
 // This file is part of PLplot.
@@ -695,6 +695,15 @@ void plstream::gdiplt( PLFLT& xmin, PLFLT& ymin, PLFLT& xmax, PLFLT& ymax )
     plgdiplt( &xmin, &ymin, &xmax, &ymax );
 }
 
+// Get FCI (font characterization integer)
+
+void plstream::gfci( PLUNICODE& pfci )
+{
+    set_stream();
+
+    plgfci(&pfci);
+}
+
 // Get family file parameters.
 
 void plstream::gfam( PLINT& fam, PLINT& num, PLINT& bmax )
@@ -1317,6 +1326,15 @@ void plstream::sfam( PLINT fam, PLINT num, PLINT bmax )
     set_stream();
 
     plsfam(fam,num,bmax);
+}
+
+// Set FCI (font characterization integer)
+
+void plstream::sfci( PLUNICODE fci )
+{
+    set_stream();
+
+    plsfci(fci);
 }
 
 /* Set the output file name. */

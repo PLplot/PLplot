@@ -3,7 +3,7 @@
 // Geoffrey Furnish
 // Sep 21 1994
 //
-// Copyright (C) 2004  Andrew Ross
+// Copyright (C) 2004,2005  Andrew Ross
 // Copyright (C) 2004  Alan W. Irwin
 //
 // This file is part of PLplot.
@@ -294,6 +294,10 @@ class plstream {
 // Retrieve current window into plot space.
 
     void gdiplt( PLFLT& xmin, PLFLT& ymin, PLFLT& xmax, PLFLT& ymax );
+
+// Get FCI (font characterization integer)
+
+    void gfci( PLUNICODE& pfci);
 
 // Get family file parameters.
 
@@ -587,6 +591,10 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 /* Set family file parameters */
 
     void sfam( PLINT fam, PLINT num, PLINT bmax );
+
+/* Set FCI (font characterization integer) */
+
+    void sfci( PLUNICODE fci);
 
 /* Set the output file name. */
 
