@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/07/19 22:34:23  mjl
+ * Revision 1.4  1995/05/07 03:00:25  mjl
+ * Added prototype for pltclMain().
+ *
+ * Revision 1.3  1994/07/19  22:34:23  mjl
  * Internal header file inclusion changed to /not/ use a search path so that
  * it will work better with makedepend.
  *
@@ -26,10 +29,14 @@
 #include <tcl.h>
 #include "tclMatrix.h"
 
-/* Function prototypes. */
+/* tclMain.c */
+/* Main program for a Tcl-based shell that reads Tcl commands from stdin. */
 
-/* From tclAPI.c */
+int
+pltclMain(int argc, char **argv, char *RcFileName,
+	  int (*AppInit)(Tcl_Interp *interp));
 
+/* tclAPI.c */
 /* Front-end to PLplot/Tcl API for use from Tcl commands (e.g. plframe). */
 
 int
@@ -41,8 +48,7 @@ plTclCmd(char *cmdlist, Tcl_Interp *interp,
 int
 Pltcl_Init( Tcl_Interp *interp );
 
-/* From tkshell.c */
-
+/* tkshell.c */
 /* Sets up auto_path variable */
 
 int
@@ -58,8 +64,7 @@ plWait_Until(ClientData, Tcl_Interp *, int, char **);
 int
 plHost_ID(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
 
-/* From tcpip.c */
-
+/* tcpip.c */
 /* Modified version of the "Tdp_PacketSend" command. */
 
 int
