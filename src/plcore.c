@@ -1654,7 +1654,7 @@ plInitDispatchTable()
 /* Finally, write the device entries to the temporary file */
 		fprintf (fp_drvdb, "%s\n", *info);
 	    }
-	    lt_dlclose (dlhand);
+/*	    lt_dlclose (dlhand); */
 	}
     }
 
