@@ -102,7 +102,7 @@ void plD_init_aqt(PLStream *pls)
    //
    // Set up device parameters
    //
-   plP_setpxl(DPI/25.4, DPI/25.4);           /* Pixels/mm. */
+   plP_setpxl(DPI/25.4/SCALE, DPI/25.4/SCALE);           /* Pixels/mm. */
    //
    // Set the bounds for plotting.  default is AQT_Max_X x AQT_Max_Y unless otherwise specified.
    //
@@ -346,7 +346,7 @@ void proc_str (PLStream *pls, EscText *args)
 
    //  Set the font height - the 1.2 factor was trial and error
 
-   ft_ht = 1.2*pls->chrht * SCALE*DPI/25.4; /* ft_ht in points. ht is in mm */
+   ft_ht = 1.2*pls->chrht * DPI/25.4; /* ft_ht in points. ht is in mm */
 
    //
    //  Now find the angle of the text relative to the screen...
