@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1995/05/06 16:50:19  mjl
+ * Revision 1.28  1995/10/14 17:13:12  mjl
+ * Fixed bugs associated with writing the metafile to stdout instad of a file.
+ *
+ * Revision 1.27  1995/05/06  16:50:19  mjl
  * Changed debugging output to use new pldebug() function.
  *
  * Revision 1.26  1995/03/11  21:38:33  mjl
@@ -255,44 +258,48 @@ plD_bop_plm(PLStream *pls)
     dev->yold = UNDEFINED;
 
     fflush(file);
+
+/* If writing to a file, find out where we are */
+
     if (pls->output_type == 0) {
 	if (pl_fgetpos(file, &cp_offset))
 	    plexit("plD_bop_plm: fgetpos call failed");
-    }
 
-/* Seek back to previous page header and write forward byte offset. */
+    /* Seek back to previous page header and write forward byte offset. */
 
-    if (dev->lp_offset > 0) {
+	if (dev->lp_offset > 0) {
 #ifdef DEBUG
-	U_LONG foo;
+	    U_LONG foo;
 #endif
-	pldebug("plD_bop_plm",
-		"Location: %d, seeking to: %d\n", cp_offset, dev->lp_offset);
-	fwbyte_offset = dev->lp_offset + 7;
-	if (pl_fsetpos(file, &fwbyte_offset))
-	    plexit("plD_bop_plm: fsetpos call failed");
-
-#ifdef DEBUG
-	if (pl_fgetpos(file, &fwbyte_offset))
-	    plexit("plD_bop_plm: fgetpos call failed");
-
-	pldebug("plD_bop_plm",
-		"Now at: %d, to write: %d\n", fwbyte_offset, cp_offset);
-#endif
-
-	plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) cp_offset) );
-	fflush(file);
+	    pldebug("plD_bop_plm",
+		    "Location: %d, seeking to: %d\n",
+		    cp_offset, dev->lp_offset);
+	    fwbyte_offset = dev->lp_offset + 7;
+	    if (pl_fsetpos(file, &fwbyte_offset))
+		plexit("plD_bop_plm: fsetpos call failed");
 
 #ifdef DEBUG
-	if (pl_fsetpos(file, &fwbyte_offset))
-	    plexit("plD_bop_plm: fsetpos call failed");
+	    if (pl_fgetpos(file, &fwbyte_offset))
+		plexit("plD_bop_plm: fgetpos call failed");
 
-	plm_rd(pdf_rd_4bytes(pls->pdfs, &foo));
-	pldebug("plD_bop_plm", "Value read as: %d\n", foo);
+	    pldebug("plD_bop_plm",
+		    "Now at: %d, to write: %d\n", fwbyte_offset, cp_offset);
 #endif
 
-	if (pl_fsetpos(file, &cp_offset))
-	    plexit("plD_bop_plm: fsetpos call failed");
+	    plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) cp_offset) );
+	    fflush(file);
+
+#ifdef DEBUG
+	    if (pl_fsetpos(file, &fwbyte_offset))
+		plexit("plD_bop_plm: fsetpos call failed");
+
+	    plm_rd(pdf_rd_4bytes(pls->pdfs, &foo));
+	    pldebug("plD_bop_plm", "Value read as: %d\n", foo);
+#endif
+
+	    if (pl_fsetpos(file, &cp_offset))
+		plexit("plD_bop_plm: fsetpos call failed");
+	}
     }
 
 /* Start next family file if necessary. */
@@ -307,15 +314,17 @@ plD_bop_plm(PLStream *pls)
 /* Update table of contents info.  Right now only number of pages. */
 /* The order here is critical */
 
-    if (dev->toc_offset > 0) {
-	if (pl_fsetpos(file, &dev->toc_offset))
-	    plexit("plD_bop_plm: fsetpos call failed");
+    if (pls->output_type == 0) {
+	if (dev->toc_offset > 0) {
+	    if (pl_fsetpos(file, &dev->toc_offset))
+		plexit("plD_bop_plm: fsetpos call failed");
 
-	plm_wr( pdf_wr_header(pls->pdfs, "pages") );
-	plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->page) );
+	    plm_wr( pdf_wr_header(pls->pdfs, "pages") );
+	    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->page) );
 
-	if (pl_fsetpos(file, &cp_offset))
-	    plexit("plD_bop_plm: fsetpos call failed");
+	    if (pl_fsetpos(file, &cp_offset))
+		plexit("plD_bop_plm: fsetpos call failed");
+	}
     }
 
 /* Write new page header */
