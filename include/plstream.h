@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/03/03 17:00:15  mjl
-   Split background color off from color map 0 palette -- previously it
-   was cmap[0], which turned out to be a poor idea.
+   Revision 1.5  1993/03/06 05:06:10  mjl
+   Eliminated plbufFnam since it is now obsolete.
 
+ * Revision 1.4  1993/03/03  17:00:15  mjl
+ * Split background color off from color map 0 palette -- previously it
+ * was cmap[0], which turned out to be a poor idea.
+ *
  * Revision 1.3  1993/02/27  01:43:11  mjl
  * Changed prototype for file offset to work with fgetpos/fsetpos.
  *
@@ -78,7 +81,6 @@ typedef struct {
 * plbuf_read	Set if reading from the plot buffer
 * plbuf_write	Set if writing to the plot buffer
 * plbufFile	Plot buffer file pointer
-* plbufFnam	Plot buffer file name
 *
 * orientset	Set if orientation was specified
 * fileset	Set if file name or file pointer was specified
@@ -217,7 +219,6 @@ typedef struct {
     int		plbuf_read;
     int		plbuf_write;
     FILE	*plbufFile;
-    char	plbufFnam[90];
 
     PLINT orientset;
     PLINT fileset;
