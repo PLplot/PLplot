@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.59  1995/04/12 21:10:17  mjl
+ * Revision 1.60  1995/05/06 17:06:07  mjl
+ * Changed debugging output to use new pldebug() function and improved.
+ * Reduced max number of cmap1 colors to try to allocate to reduce conflicts
+ * with other programs (like Mosaic).  Added event handling for EnterNotify
+ * and LeaveNotify events, to draw or eliminate crosshairs (if being drawn),
+ * respectively.
+ *
+ * Revision 1.59  1995/04/12  21:10:17  mjl
  * Made the ordinary graphics context and the current color a device-dependent
  * quantity rather than a display-dependent one, to fix problems with color
  * selection when plotting to separate streams/xwindows.  Thanks to Radey
@@ -71,8 +78,9 @@
 */
 #include "plDevs.h"
 
-#ifdef PLD_xwin
+#define DEBUG
 
+#ifdef PLD_xwin
 #include "plplotP.h"
 #include "plplotX.h"
 #include "drivers.h"
@@ -114,14 +122,14 @@ int plplot_ccmap = 0;
 
 #define XWM_COLORS 70
 #define CMAP0_COLORS 16
-#define CMAP1_COLORS 100
+#define CMAP1_COLORS 50
 #define MAX_COLORS 256
 
 /* Variables to hold RGB components of given colormap. */
 /* Used in an ugly hack to get past some X11R5 and TK limitations. */
 
 static int  sxwm_colors_set;
-static XColor sxwm_colors[256];
+static XColor sxwm_colors[MAX_COLORS];
 
 /* Keep pointers to all the displays in use */
 
@@ -153,6 +161,7 @@ static void  MasterEH		(PLStream *pls, XEvent *event);
 static void  ExposeEH		(PLStream *pls, XEvent *event);
 static void  ResizeEH		(PLStream *pls, XEvent *event);
 static void  MotionEH		(PLStream *pls, XEvent *event);
+static void  CrossingEH		(PLStream *pls, XEvent *event);
 static void  KeyEH		(PLStream *pls, XEvent *event);
 static void  ButtonEH		(PLStream *pls, XEvent *event);
 static void  LookupXKeyEvent	(PLStream *pls, XEvent *event);
@@ -681,7 +690,6 @@ FillPolygonCmd(PLStream *pls)
  * For an interesting effect during fills, turn on outline_only.
  * Mostly for debugging.
  */
-
     if (outline_only) {
 	if (dev->write_to_window)
 	    XDrawLines(xwd->display, dev->window, dev->gc, pts, pls->dev_npts,
@@ -1030,6 +1038,11 @@ MasterEH(PLStream *pls, XEvent *event)
     case MotionNotify:
 	MotionEH(pls, event);
 	break;
+
+    case EnterNotify:
+    case LeaveNotify:
+	CrossingEH(pls, event);
+	break;
     }
 }
 
@@ -1114,9 +1127,8 @@ LookupXKeyEvent(PLStream *pls, XEvent *event)
     nchars = XLookupString(keyEvent, gin->string, ncmax, &keysym, &cs);
     gin->string[nchars] = '\0';
 
-#ifdef DEBUG
-    fprintf(stderr, "Keysym %x, translation: %s\n", keysym, gin->string);
-#endif
+    pldebug("LookupXKeyEvent",
+	    "Keysym %x, translation: %s\n", keysym, gin->string);
 
     switch (keysym) {
 
@@ -1146,6 +1158,10 @@ LookupXButtonEvent(PLStream *pls, XEvent *event)
     XwDev *dev = (XwDev *) pls->dev;
     PLGraphicsIn *gin = &(dev->gin);
     XButtonEvent *buttonEvent = (XButtonEvent *) event;
+
+    pldebug("LookupXButtonEvent",
+	    "Button: %d, x: %d, y: %d\n",
+	    buttonEvent->button, buttonEvent->x, buttonEvent->y);
 
     gin->pX = buttonEvent->x;
     gin->pY = buttonEvent->y;
@@ -1453,6 +1469,24 @@ MotionEH(PLStream *pls, XEvent *event)
 }
 
 /*--------------------------------------------------------------------------*\
+ * CrossingEH()
+ *
+ * Event handler routine for EnterNotify or LeaveNotify events.
+ * If drawing crosshairs, a draw must be done here to start off the new
+ * set or erase the last set.
+\*--------------------------------------------------------------------------*/
+
+static void
+CrossingEH(PLStream *pls, XEvent *event)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+
+    if (dev->drawing_xhairs) {
+	UpdateXhairs(pls);
+    }
+}
+
+/*--------------------------------------------------------------------------*\
  * CreateXhairs()
  *
  * Creates graphic crosshairs at current pointer location.
@@ -1479,6 +1513,11 @@ CreateXhairs(PLStream *pls)
 
     if (XQueryPointer(xwd->display, dev->window, &root, &child,
 		      &root_x, &root_y, &win_x, &win_y, &mask)) {
+
+	fprintf(stderr,
+		"Root: %d, child: %d, root_x: %d, root_y: %d, win_x: %d win_y: %d\n",
+		root, child, root_x, root_y, win_x, win_y); 
+
 	DrawXhairs(pls, win_x, win_y);
     }
 
@@ -1489,10 +1528,10 @@ CreateXhairs(PLStream *pls)
 			     PointerMotionMask, &event))
 	;
 
-/* Catch PointerMotion events so we can update them */
+/* Catch PointerMotion and crossing events so we can update them properly */
 
     dev->drawing_xhairs = 1;
-    dev->event_mask |= PointerMotionMask;
+    dev->event_mask |= PointerMotionMask | EnterWindowMask | LeaveWindowMask;
     XSelectInput(xwd->display, dev->window, dev->event_mask);
 }
 
@@ -1586,13 +1625,11 @@ ExposeEH(PLStream *pls, XEvent *event)
 
     dbug_enter("ExposeEH");
 
-#ifdef DEBUG
-    fprintf(stderr,
-	    "Expose, x = %d, y = %d, width = %d, height = %d, count = %d, pending = %d\n",
+    pldebug("ExposeEH",
+	    "x = %d, y = %d, width = %d, height = %d, count = %d, pending = %d\n",
 	    exposeEvent->x, exposeEvent->y,
 	    exposeEvent->width, exposeEvent->height,
 	    exposeEvent->count, XPending(xwd->display));
-#endif
 
 /* Handle expose */
 /* If we have anything overlaid (like crosshairs), we need to refresh the */
@@ -1633,17 +1670,24 @@ ResizeEH(PLStream *pls, XEvent *event)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    XConfigureEvent *configEvent = (XConfigureEvent *) event;
     PLDisplay pldis;
 
     dbug_enter("ResizeEH");
 
-    pldis.width  = event->xconfigure.width;
-    pldis.height = event->xconfigure.height;
+    pldis.width  = configEvent->width;
+    pldis.height = configEvent->height;
 
 /* Only need to resize if size is actually changed */
 
     if (pldis.width == dev->width && pldis.height == dev->height)
 	return;
+
+    pldebug("ResizeEH",
+	    "x = %d, y = %d, pending = %d\n",
+	    configEvent->width, configEvent->height, XPending(xwd->display));
+
+/* Handle resize */
 
     ResizeCmd(pls, &pldis);
     if (dev->drawing_xhairs) {
@@ -1653,9 +1697,6 @@ ResizeEH(PLStream *pls, XEvent *event)
 /* Remove extraneous Expose and ConfigureNotify events from the event queue */
 /* Exposes do not need to be handled since we've redrawn the whole plot */
 
-#ifdef DEBUG
-    fprintf(stderr, "Resize, pending = %d\n", XPending(xwd->display));
-#endif
     XFlush(xwd->display);
     while (XCheckWindowEvent(xwd->display, dev->window,
 			     ExposureMask | StructureNotifyMask, event))
@@ -1709,7 +1750,7 @@ ExposeCmd(PLStream *pls, PLDisplay *pldis)
 		  x, y, width, height, x, y);
 	XSync(xwd->display, 0);
 #ifdef DEBUG
-	{
+	if (plsc->debug) {
 	    XPoint pts[5];
 	    int x0 = x, x1 = x+width, y0 = y, y1 = y+height;
 	    pts[0].x = x0; pts[0].y = y0;
@@ -1839,9 +1880,11 @@ CreatePixmapErrorHandler(Display *display, XErrorEvent *error)
     if (error->error_code == BadAlloc) {
 	CreatePixmapStatus = error->error_code;
     }
-    else
-	fprintf(stderr, "Something bad just happened.\n");
-
+    else {
+	char buffer[256];
+	XGetErrorText(display, error->error_code, buffer, 256);
+	fprintf(stderr, "Error in XCreatePixmap: %s.\n", buffer);
+    }
     return 1;
 }	
 
@@ -1863,10 +1906,10 @@ CreatePixmap(PLStream *pls)
     oldErrorHandler = XSetErrorHandler(CreatePixmapErrorHandler);
 
     CreatePixmapStatus = Success;
-#ifdef DEBUG
-    fprintf(stderr, "Creating pixmap of width %d, height %d, depth %d\n",
+    pldebug("CreatePixmap",
+	    "creating pixmap: width = %d, height = %d, depth = %d\n",
 	    dev->width, dev->height, xwd->depth);
-#endif
+
     dev->pixmap = XCreatePixmap(xwd->display, dev->window,
 				dev->width, dev->height, xwd->depth);
     XSync(xwd->display, 0);
@@ -1965,10 +2008,10 @@ AllocBGFG(PLStream *pls)
 	plexit("couldn't allocate background color cell");
     }
 
-/* Allocate as many colors as we can (max of 256) */
+/* Allocate as many colors as we can */
 
-    npixels = 256;
-    while(1) {
+    npixels = MAX_COLORS;
+    for (;;) {
 	if (XAllocColorCells(xwd->display, xwd->map, False,
 			     plane_masks, 0, pixels, npixels))
 	    break;
@@ -2095,8 +2138,11 @@ InitColors(PLStream *pls)
  *		colormap and the custom colormap to reduce flicker.
  *
  * CMAP1_COLORS	Color map 1 entries.  There should be as many as practical
- *		available for smooth shading.  On the order of 100 is 
- *		pretty reasonable.  You don't really need all 256.  
+ *		available for smooth shading.  On the order of 50-100 is 
+ *		pretty reasonable.  You don't really need all 256,
+ *		especially if all you're going to do is to print it to
+ *		postscript (which doesn't have any intrinsic limitation on
+ *		the number of colors).
  *
  * It's important to leave some extra colors unallocated for Tk.  In 
  * particular the palette tools require a fair amount.  I recommend leaving
@@ -2138,7 +2184,7 @@ AllocCustomMap(PLStream *pls)
 /* Now allocate all colors so we can fill the ones we want to copy */
 
     npixels = MAX_COLORS;
-    while(1) {
+    for (;;) {
 	if (XAllocColorCells(xwd->display, xwd->map, False,
 			     plane_masks, 0, pixels, npixels))
 	    break;
@@ -2212,8 +2258,8 @@ AllocCmap0(PLStream *pls)
 
 /* Allocate and assign colors in cmap 0 */
 
-    npixels = 15;
-    while(1) {
+    npixels = pls->ncol0-1;
+    for (;;) {
 	if (XAllocColorCells(xwd->display, xwd->map, False,
 			     plane_masks, 0, &pixels[1], npixels))
 	    break;
@@ -2251,7 +2297,7 @@ AllocCmap1(PLStream *pls)
 /* Allocate colors in cmap 1 */
 
     npixels = MAX(2, MIN(CMAP1_COLORS, pls->ncol1));
-    while(1) {
+    for (;;) {
 	if (XAllocColorCells(xwd->display, xwd->map, False,
 			     plane_masks, 0, pixels, npixels))
 	    break;
@@ -2260,31 +2306,16 @@ AllocCmap1(PLStream *pls)
 	    break;
     }
 
-/* If using the default map, free them all and start with a reduced number */
-
-    if ( ! plplot_ccmap) {
-	XFreeColors(xwd->display, xwd->map, pixels, npixels, 0);
-
-	npixels = MAX(npixels - 30, 10);
-	while(1) {
-	    if (XAllocColorCells(xwd->display, xwd->map, False,
-				 plane_masks, 0, pixels, npixels))
-		break;
-	    npixels--;
-	    if (npixels == 0)
-		plexit("couldn't allocate any colors");
-	}
-    }
-
     if (npixels < 2) {
+	xwd->ncol1 = -1;
 	fprintf(stderr,
 		"Warning: unable to allocate sufficient colors in cmap1\n");
-	xwd->ncol1 = -1;
 	return;
-    }
+    } 
     else {
-	fprintf(stderr, "Allocated %d colors in cmap1\n", npixels);
 	xwd->ncol1 = npixels;
+	if (pls->verbose)
+	    fprintf(stderr, "xwin.c: Allocated %d colors in cmap1\n", npixels);
     }
 
 /* Don't assign pixels sequentially, to avoid strange problems with xor GC's */
@@ -2436,13 +2467,13 @@ PLX_save_colormap(Display *display, Colormap colormap)
 	return;
 
     sxwm_colors_set = 1;
-    for (i = 0; i < 256; i++) {
+    for (i = 0; i < MAX_COLORS; i++) {
 	sxwm_colors[i].pixel = i;
     }
-    XQueryColors(display, colormap, sxwm_colors, 256);
+    XQueryColors(display, colormap, sxwm_colors, MAX_COLORS);
 /*
     printf("\nAt startup, default colors are: \n\n");
-    for (i = 0; i < 256; i++) {
+    for (i = 0; i < MAX_COLORS; i++) {
 	printf(" i: %d,  pixel: %d,  r: %d,  g: %d,  b: %d\n",
 	       i, sxwm_colors[i].pixel,
 	       sxwm_colors[i].red, sxwm_colors[i].green, sxwm_colors[i].blue);
