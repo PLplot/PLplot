@@ -218,7 +218,7 @@ class plstream {
 
 // Flushes the output stream.  Use sparingly, if at all.
 
-    void plflush();
+    void flush();
 
 // Sets the global font flag to 'ifont'.
 
@@ -835,7 +835,7 @@ void spage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 /* Front-end to driver escape function. */
 
-    void pl_cmd( PLINT op, void *ptr );
+    void cmd( PLINT op, void *ptr );
 
 /* Return full pathname for given file if executable */
 

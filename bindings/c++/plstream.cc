@@ -11,6 +11,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 PLFLT Contourable_Data_evaluator( PLINT i, PLINT j, PLPointer p )
 {
     const Contourable_Data& d = *(Contourable_Data *) p;
@@ -74,7 +76,7 @@ void cxx_pltr2::xform( PLFLT x, PLFLT y, PLFLT& tx, PLFLT& ty ) const
     ymax = ny - 1;
 
     if (x < xmin || x > xmax || y < ymin || y > ymax) {
-	std::cerr << "cxx_pltr2::xform, Invalid coordinates\n";
+	cerr << "cxx_pltr2::xform, Invalid coordinates\n";
 	
 	if (x < xmin) {
 
@@ -536,7 +538,7 @@ void plstream::fill( PLINT n, PLFLT *x, PLFLT *y )
 
 // Flushes the output stream.  Use sparingly, if at all.
 
-void plstream::plflush()
+void plstream::flush()
 {
     set_stream();
 
@@ -1835,7 +1837,7 @@ void plstream::gesc( char *p_esc )
 
 /* Front-end to driver escape function. */
 
-void plstream::pl_cmd( PLINT op, void *ptr )
+void plstream::cmd( PLINT op, void *ptr )
 {
     set_stream();
 
