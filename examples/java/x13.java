@@ -46,7 +46,7 @@ class x13 {
 
     public x13( String[] args )
     {
-        Plplot pls = new Plplot();
+        PLplot pls = new PLplot();
 
 	int i, j, dthet, theta0, theta1, theta;
 	double just, dx, dy;
@@ -100,7 +100,7 @@ class x13 {
 	pls.font(2);
 	pls.schr(0., 1.3);
 	pls.ptex(5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales");
-        pls.close();
+        pls.end();
     }
 }
 

@@ -47,7 +47,7 @@ class x02 {
         double vmin, vmax;
         NumberFormat nf = NumberFormat.getNumberInstance();
 
-        Plplot pls = new Plplot();
+        PLplot pls = new PLplot();
 
     // Divide screen into 16 regions.
 
@@ -84,7 +84,7 @@ class x02 {
             pls.ptex(0.5, 0.5, 1.0, 0.0, 0.5, text);
         }
 
-        pls.close();
+        pls.end();
     }
 }
 

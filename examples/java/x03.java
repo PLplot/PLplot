@@ -43,7 +43,7 @@ class x03 {
 
     public x03( String[] args )
     {
-        Plplot pls = new Plplot();
+        PLplot pls = new PLplot();
         NumberFormat nf = NumberFormat.getNumberInstance();
 
         int i, j;
@@ -118,7 +118,7 @@ class x03 {
 
     // Close the plot at end.
 
-        pls.close();
+        pls.end();
     }
 }
 

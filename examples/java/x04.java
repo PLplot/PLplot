@@ -35,7 +35,7 @@ import java.lang.Math;
 
 class x04 {
 
-    Plplot pls = new Plplot();
+    PLplot pls = new PLplot();
 
     public static void main( String[] args ) 
     {
@@ -58,7 +58,7 @@ class x04 {
         plot1(0);
         plot1(1);
 
-        pls.close();
+        pls.end();
     }
 
 // Log-linear plot.

@@ -38,7 +38,7 @@ class x22 {
     double MIN(double x, double y) { return (x<y?x:y);}
     double MAX(double x, double y) { return (x>y?x:y);}
 
-    Plplot pls = new Plplot();
+    PLplot pls = new PLplot();
   
     double[][] u = null;
     double[][] v = null;
@@ -284,7 +284,7 @@ class x22 {
 
 	potential();
 
-	pls.close();
+	pls.end();
     }
 
     public static void main( String[] args ) {

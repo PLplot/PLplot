@@ -40,7 +40,7 @@ class x18 {
    static int opt[] = { 1, 0, 1, 0 };
    static double alt[] = {20.0, 35.0, 50.0, 65.0};
    static double az[] = {30.0, 40.0, 50.0, 60.0};
-   Plplot pls = new Plplot();
+   PLplot pls = new PLplot();
 
    double THETA(int a)
      {
@@ -175,7 +175,7 @@ class x18 {
 	   pls.mtex("t", 1.0, 0.5, 0.5, title);
 	}
 	
-	pls.close();
+	pls.end();
      }
    
 }

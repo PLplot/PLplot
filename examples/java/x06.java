@@ -43,7 +43,7 @@ class x06 {
 
     public x06( String[] args )
     {
-       Plplot pls = new Plplot();
+       PLplot pls = new PLplot();
 
         NumberFormat nf = NumberFormat.getNumberInstance();
 
@@ -100,7 +100,7 @@ class x06 {
         }
 
         pls.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
-        pls.close();
+        pls.end();
     }
 }
 

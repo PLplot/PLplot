@@ -40,7 +40,7 @@ class x08 {
     static final int XPTS = 35;
     static final int YPTS = 46;
 
-    Plplot pls = new Plplot();
+    PLplot pls = new PLplot();
 
     static double alt[] = {60.0, 20.0};
     static double az[] = {30.0, 60.0};
@@ -210,7 +210,7 @@ class x08 {
 	   }
         }
 
-        pls.close();
+        pls.end();
     }
 }
 

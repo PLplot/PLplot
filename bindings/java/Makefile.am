@@ -42,7 +42,7 @@ swiggenfiles = $(swigjavafiles) $(swigcfiles)
 javafiles = \
 	config.java \
 	PLStreamc.java \
-	Plplot.java \
+	PLplot.java \
 	$(swigjavafiles)
 
 # Note : the order of these is important since there is no formal 
@@ -61,7 +61,7 @@ javaclasses = \
 EXTRA_DIST = \
 	PLStream.java \
 	PLStreamc.java \
-	Plplot.java \
+	PLplot.java \
 	README.javaAPI \
 	javabind.c \
 	plplotjavac.i \

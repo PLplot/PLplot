@@ -55,7 +55,7 @@ class x09 {
 // Transformation function
     final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
    
-    Plplot pls = new Plplot();
+    PLplot pls = new PLplot();
 
 // State data used by f2mnmx
     double fmin, fmax;
@@ -213,7 +213,7 @@ class x09 {
 	potential();
 	pls.setcontlabelparam(0.006, 0.3, 0.1, 0);
 */
-	pls.close();
+	pls.end();
     }
 
     void polar()

@@ -44,7 +44,7 @@ class x05 {
 
     public x05( String[] args )
     {
-       Plplot pls = new Plplot();
+       PLplot pls = new PLplot();
 
         int i;
         double[] data = new double[NPTS];
@@ -70,7 +70,7 @@ class x05 {
         pls.lab( "#frValue", "#frFrequency",
                  "#frPLplot Example 5 - Probability function of Oscillator" );
 
-        pls.close();
+        pls.end();
     }
 }
 

@@ -18,7 +18,7 @@
 // along with PLplot; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
-// This class provides a more object orientated wrapper to the Plplot library
+// This class provides a more object orientated wrapper to the PLplot library
 // for java. It is currently very similar to the C++ plstream class.
 // Each instance of the class corresponds to a plplot stream. Calling a 
 // method in the class will ensure the stream is correctly set before 
@@ -29,7 +29,7 @@ package plplot.core;
 
 import java.io.*;
 
-public class Plplot implements plplotjavacConstants {
+public class PLplot implements plplotjavacConstants {
 
 // Class data.
     int stream_id = -1;
@@ -38,7 +38,7 @@ public class Plplot implements plplotjavacConstants {
     static int active_streams = 0;
 
 // Constructor
-public Plplot() {
+public PLplot() {
     // If this is the first instance of the class we
     // need to load the C part of the bindings
     if (active_streams == 0) {
@@ -46,16 +46,22 @@ public Plplot() {
     }
     
     stream_id = next_stream;
-    if (set_stream() == -1) return;
-    
-    next_stream++;
     active_streams++;
+    next_stream++;
+
+    // Create stream and check it worked ok.
+    if(set_stream() == -1) {
+        System.err.println("Error creating plplot stream");
+	stream_id = -1;
+	active_streams--;
+	next_stream--;
+    }
 }
 
 // Ensure this is the current stream
 public int set_stream() {
-    if (stream_id == -1) {
-        System.err.println("Error: This stream has already been closed");
+    if ((stream_id == -1) || (active_streams == 0)) {
+        System.err.println("Error: This stream is not active");
 	return -1;
     }
     plplotjavac.plsstrm(stream_id);
@@ -93,20 +99,6 @@ public void openlib() {
 	 System.exit(1);
      }
 
-}
-
-// Close the stream and update the active stream count.
-// If all streams are closed then call plend to tidy up the library.
-public void close() {
-    if (set_stream() == -1) return;
-    plplotjavac.plend1();
-
-    active_streams--;
-    stream_id = -1;
-
-    if (active_streams == 0) {
-        plplotjavac.plend();
-    }
 }
 
 // The following are wrappers to the C API methods, or their derivatives
@@ -187,21 +179,22 @@ public void cpstrm(int iplsr, int flags) {
     plplotjavac.plcpstrm(iplsr, flags);
 }
 
-// We don't use the C API plend functions directly as we want to keep track
-// of the stream state and the count of active streams. 
-// Instead use the new close() method. Unlike C++, java classes don't have
-// destructors so we can't tie this in with the destruction of the instance 
-// of the class.
-//
-//public void end() {
-//    if (set_stream() == -1) return;
-//    plplotjavac.plend();
-//}
+// The end / end1 functions have extra code in to keep track of the
+// stream references in the class. 
+public void end() {
+    if (set_stream() == -1) return;
+    plplotjavac.plend();
+    active_streams = 0;
+    stream_id = -1;
+}
 
-//public void end1() {
-//    if (set_stream() == -1) return;
-//    plplotjavac.plend1();
-//}
+public void end1() {
+    if (set_stream() == -1) return;
+    plplotjavac.plend1();
+
+    active_streams--;
+    stream_id = -1;
+}
 
 public void env(double xmin, double xmax, double ymin, double ymax, int just, int axis) {
     if (set_stream() == -1) return;

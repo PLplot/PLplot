@@ -43,7 +43,7 @@ class x15 {
    final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
 
-   Plplot pls = new Plplot();
+   PLplot pls = new PLplot();
 
     double fmin, fmax;
 
@@ -118,7 +118,7 @@ class x15 {
 	plot1( xg0, yg0, z, zmin, zmax );
 	plot2( xg0, yg0, z, zmin, zmax );
 	
-        pls.close();
+        pls.end();
     }
 
 // Illustrates a single shaded region.

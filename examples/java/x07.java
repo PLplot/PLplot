@@ -48,7 +48,7 @@ class x07 {
 
     public x07( String[] args )
     {
-       Plplot pls = new Plplot();
+       PLplot pls = new PLplot();
 
 //        NumberFormat nf = NumberFormat.getNumberInstance();
 //        Change to this custom format to get stupid locale commas
@@ -110,7 +110,7 @@ class x07 {
 
             pls.mtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols");
         }
-        pls.close();
+        pls.end();
     }
 }
 

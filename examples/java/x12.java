@@ -38,7 +38,7 @@ class x12 {
 
     static double y0[] = {5., 15., 12., 24., 28., 30., 20., 8., 12., 3.};
    
-    Plplot pls = new Plplot();
+    PLplot pls = new PLplot();
    
     public static void main( String[] args ) 
     {
@@ -75,7 +75,7 @@ class x12 {
             String text1 = nf4.format( 1980 + i );
             pls.mtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, text1);
 	}
-        pls.close();
+        pls.end();
     }
 
     void plfbox(double x0, double y0)

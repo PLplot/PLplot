@@ -46,7 +46,7 @@ class x16 {
    static final double YSPA =  2./(YPTS-1);
    final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
-   Plplot pls = new Plplot();
+   PLplot pls = new PLplot();
 
    double fmin, fmax;
 
@@ -276,7 +276,7 @@ class x16 {
 
 	// Clean up 
 
-	pls.close();
+	pls.end();
 
      }
 }

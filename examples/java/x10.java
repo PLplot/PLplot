@@ -42,7 +42,7 @@ class x10 {
 
     public x10( String[] args )
     {
-       Plplot pls = new Plplot();
+       PLplot pls = new PLplot();
 
     // Parse and process command line arguments.
 
@@ -61,7 +61,7 @@ class x10 {
         pls.wind(0.0, 1.0, 0.0, 1.0);
         pls.box("bc", 0.0, 0, "bc", 0.0, 0);
         pls.ptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,50,100)");
-        pls.close();
+        pls.end();
     }
 }
 
