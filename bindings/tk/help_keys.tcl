@@ -1,4 +1,4 @@
-##########################################################################
+#----------------------------------------------------------------------------
 # help_keys w
 #
 # Create a top-level window that displays info for On keys.. help item.
@@ -7,7 +7,7 @@
 #
 # Arguments:
 #    w -	Name to use for new top-level window.
-##########################################################################
+#----------------------------------------------------------------------------
 
 proc help_keys {{w .help_keys}} {
     catch {destroy $w}
@@ -23,7 +23,7 @@ its remote TK driver.  The default actions of the keyboard handler are as
 follows:
 
 "Q"				Terminate program
-<CR> or <Page Down>		Advance to the next page
+<Return> or <Page Down>		Advance to the next page
 
 The user code can supply its own keyboard handler, and thereby add to
 or modify these actions (this is in fact what is done by plrender).
@@ -38,10 +38,10 @@ plrender} bold
 <Delete>	Back page
 <Page up>
 
-+<num><CR>	Seek forward <num> pages.
--<num><CR>	Seek backward <num> pages.
++<num><Return>	Seek forward <num> pages.
+-<num><Return>	Seek backward <num> pages.
 
-<num><CR>	Seek to page <num>.
+<num><Return>	Seek to page <num>.
 
 Both <Backspace> and <Delete> are recognized for a back-page since the
 target system may use either as its erase key.  <Page Up> is present on

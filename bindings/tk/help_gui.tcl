@@ -128,7 +128,7 @@ commands in the following order:
 	 user-specified directory(s)	(set by -auto_load argument)
 	 Current directory
 	 $PL_LIBRARY 
-	 $HOME/bin 
+	 $HOME/tcl
 	 /usr/local/plplot/tcl 
 
 I'll probably think of more later..

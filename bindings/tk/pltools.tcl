@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.4  1993/08/03 20:30:11  mjl
+# Revision 1.5  1993/08/09 22:21:49  mjl
+# Removed all absolute references to fonts.  Now only accessed through
+# global variables set in plconfig.tcl, for easier per-user customization.
+#
+# Revision 1.4  1993/08/03  20:30:11  mjl
 # Made min & max procs compatible with the ones used by a different TCL
 # package.
 #
@@ -73,6 +77,8 @@ proc dpos w {
 #----------------------------------------------------------------------------
 
 proc normal_text_setup {w {width 60} {height 30}} {
+    global dialog_font dialog_bold_font
+
     button $w.ok -text OK -command "destroy $w"
     text $w.t -relief raised -bd 2 -yscrollcommand "$w.s set" -setgrid true \
 	    -width $width -height $height
@@ -82,9 +88,8 @@ proc normal_text_setup {w {width 60} {height 30}} {
 
 # Set up display styles
 
-    $w.t tag configure normal -font -Adobe-Times-Medium-R-Normal--*-180-*
-    $w.t tag configure bold -font -Adobe-Times-Bold-R-Normal-*-180-*
-    $w.t tag configure big -font -Adobe-Times-Bold-R-Normal-*-240-*
+    $w.t tag configure normal -font $dialog_font
+    $w.t tag configure bold -font $dialog_bold_font
 
     if {[tk colormodel $w] == "color"} {
 	$w.t tag configure color1 -background #eed5b7
@@ -210,7 +215,9 @@ proc max {args} {
 #----------------------------------------------------------------------------
 
 proc getItem {item} {
+    global dialog_font dialog_bold_font
     global itemval
+
     set w .entry
     set itemval ""
 
@@ -219,8 +226,7 @@ proc getItem {item} {
     dpos $w
     wm title $w "Entry"
     wm iconname $w "Entry"
-    message $w.msg -font -Adobe-times-medium-r-normal--*-180* -aspect 800 \
-	    -text $item
+    message $w.msg -font -$dialog_font -aspect 800 -text $item
 
     frame $w.frame -borderwidth 10
     pack append $w.frame \
@@ -350,8 +356,9 @@ proc mkDialog {w msgArgs args} {
 #----------------------------------------------------------------------------
 
 proc EnterCoords {w desc} {
-    global xmin ymin xmax ymax
+    global dialog_font dialog_bold_font
     global tabList
+    global xmin ymin xmax ymax
 
     catch {destroy $w}
     toplevel $w
@@ -361,7 +368,7 @@ proc EnterCoords {w desc} {
     wm iconname $w "Entry"
 
     message $w.msg \
-	-font -Adobe-times-medium-r-normal--*-180* \
+	-font $dialog_font \
 	-aspect 700 \
 	-text "Enter $desc.  Each coordinate should range from 0 to 1, with (0,0) corresponding to the lower left hand corner.  Click \"OK\" button when finished."
 

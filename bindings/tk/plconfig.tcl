@@ -24,18 +24,23 @@
 #	 user-specified directory(s) (set by -auto_load argument)
 #	 Current directory
 #	 $PL_LIBRARY 
-#	 $HOME/bin 
+#	 $HOME/tcl
 #	 /usr/local/plplot/tcl 
 #----------------------------------------------------------------------------
 
 proc plconfig {} {
-    
+    global dialog_font
+    global dialog_bold_font
+
 # Font-related resources.
 
-    set gen_font	-*-helvetica-medium-r-normal-*-18-*-*-*-*-*-*-*
-    set gen_bold_font	-*-helvetica-bold-r-normal-*-18-*-*-*-*-*-*-*
-    set gen_menu_font	-*-helvetica-medium-o-normal-*-18-*-*-*-*-*-*-*
-    set gen_italic_font	-*-helvetica-bold-o-normal-*-18-*-*-*-*-*-*-*
+    set gen_font	-*-helvetica-medium-r-normal-*-*-180-*-*-*-*-*-*
+    set gen_bold_font	-*-helvetica-bold-r-normal-*-*-180-*-*-*-*-*-*
+    set gen_menu_font	-*-helvetica-medium-o-normal-*-*-180-*-*-*-*-*-*
+    set gen_italic_font	-*-helvetica-bold-o-normal-*-*-180-*-*-*-*-*-*
+
+    set dialog_font		-*-Times-Medium-R-Normal--*-180-*
+    set dialog_bold_font	-*-Times-Bold-R-Normal--*-180-*
 
     option add *font		$gen_font
     option add *Entry.font	$gen_font
