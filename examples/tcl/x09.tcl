@@ -1,34 +1,5 @@
 #----------------------------------------------------------------------------
-# PLplot Tcl demo #9
-#
 # $Id$
-# $Log$
-# Revision 1.6  1995/07/04 21:51:18  furnish
-# Tcl demos need to set the color before doing any drawing since they
-# may not be the first thing run, and so the color on entry to a Tcl
-# demo might be something other than 1.
-#
-# Revision 1.5  1995/07/04  19:40:48  furnish
-# Added plot to demonstrate the Tcl support for contouring of data
-# defined on wrapped coords.
-#
-# Revision 1.4  1995/07/04  18:58:29  furnish
-# First real implementation of this Tcl demo.  No way to exactly
-# reproduce the first plot from x09c.c, since no Tcl support for user
-# defined coordinate transformation functions.  However the second and
-# third come out exactly right.  Need to embellish this demo to show off
-# the Tcl support for contouring of data defined on wrapped grids.
-#
-# Revision 1.3  1995/04/24  21:28:18  mjl
-# Made the widget name default to "loopback" for easier use from pltcl.
-#
-# Revision 1.2  1995/01/27  02:49:53  mjl
-# New Tcl example files.  Can now be run from either pltcl -- using the
-# "loopback" command as argument, or from plserver (or other plplot-aware
-# extended wish) -- using the widget name as argument.
-#
-# Revision 1.1  1994/06/30  18:50:15  mjl
-# Tcl demo programs, just a template for now.
 #----------------------------------------------------------------------------
 
 # Contour plot demo.

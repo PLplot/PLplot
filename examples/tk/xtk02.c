@@ -1,47 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.13  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.12  1999/01/23 05:13:39  furnish
- * Remove punchy blabber that clutters the screen trying to draw
- * attention to cool "embedded Tcl" programming techniques.  Now we'll
- * just rely on the curiosity of the gifted to take them to the
- * interesting stuff on its own...
- *
- * Revision 1.11  1996/10/18  20:02:03  furnish
- * Remove work now handled by pltkMain().
- *
- * Revision 1.10  1995/09/18  20:11:38  furnish
- * Initialize [incr Tk] extension.
- *
- * Revision 1.9  1995/06/01  21:43:24  mjl
- * Change to header file inclusion: to get PLplot/Tk global function
- * prototypes, must now include pltk.h.  Some cleaning up.
- *
- * Revision 1.8  1994/09/23  07:47:30  mjl
- * Modified to use the new syntax for pltkMain().
- *
- * Revision 1.7  1994/07/01  20:44:35  mjl
- * Cruft elimination.
- *
- * Revision 1.6  1994/06/30  05:46:21  furnish
- * Another plot command in tk02 which invokes a private tclMatrix
- * extension for demo purposes.  xtk02.c adds a new tclMatrix subcommand
- * "stuff", and tk02 exercises it.  Dumb, but shows how it all works.
- *
- * Revision 1.5  1994/06/23  22:40:29  mjl
- * Fix to get prototype of pltkMain() correct, and some cleaning up.
- *
- * Revision 1.4  1994/06/16  19:30:25  mjl
- * Changes to use pltkMain() for creating extended wish.  Should be more
- * portable and robust than old method.
- *
- * Revision 1.3  1994/06/10  20:47:34  furnish
- * Big time clean up.
- *
- * Revision 1.2  1994/05/26  22:38:08  mjl
- * Added missing CVS Id and Log fields.
  */
 
 #include "plplot/pltk.h"

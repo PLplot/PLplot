@@ -1,5 +1,6 @@
 #----------------------------------------------------------------------------
 # $Id$
+#
 # Interactive plotting driver for pltcl (plplot-enhanced tclsh)
 # 
 # Maurice LeBrun
@@ -89,20 +90,6 @@
 #	5	x
 #	6	box (what, again?)
 #	7	triangle
-#
-#----------------------------------------------------------------------------
-# $Log$
-# Revision 1.5  2000/12/29 05:59:51  airwin
-# Improve the self-documentation.
-#
-# Revision 1.4  1996/04/18 19:31:42  mjl
-# Implemented ability to plot multiple columns of data or any subset thereof.
-# Added ability to filter and switched to using new min/max matrix commands.
-#
-# Revision 1.3  1995/10/19  00:04:37  mjl
-# Massively rewritten, is now quite powerful.  For a full features list, see
-# the internal documentation.
-#
 #----------------------------------------------------------------------------
 
 proc plot {{file {}} {columns {}}} {

@@ -1,47 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.16  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.15  1995/06/01 21:40:13  mjl
- * All C demo files: changed file inclusion to use quotes instead of angle
- * brackets so that dependencies are retained during development.
- *
- * Revision 1.14  1995/05/06  21:28:44  mjl
- * Changed to use Tk driver instead of DP, since DP doesn't handle cleanup
- * from multiple interpreters correctly (problem is in Tcl-DP I think).
- *
- * Revision 1.13  1995/04/12  08:19:00  mjl
- * Changes to all C demos: now include "plcdemos.h" to get all startup
- * definitions and includes that are useful to share between them.
- *
- * Revision 1.12  1995/03/16  23:18:57  mjl
- * All example C programs: changed plParseInternalOpts() call to plParseOpts().
- *
- * Revision 1.11  1994/08/25  04:02:32  mjl
- * Now can work with either TK or Tcl-DP.  Changed to use TK by default.
- *
- * Revision 1.10  1994/08/10  05:28:50  mjl
- * Ensured that geometry strings are in writable memory as required, and
- * other minor tweaks to improve the demo.
- *
- * Revision 1.9  1994/06/30  17:57:54  mjl
- * All C example programs: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), eliminated redundant casts, put in more
- * uniform comments, and other minor changes.
- *
- * Revision 1.8  1994/05/14  05:43:56  mjl
- * Now uses the DP driver and finally works the way I always wanted it to.
- *
- * Revision 1.7  1994/03/30  07:21:58  mjl
- * Changes to all C example programs: special handling for malloc re: header
- * files eliminated, include of stdio.h and stdlib.h eliminated (now done
- * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
- * simpler builds by the general user, some cleaning up also.
-*/
-
-/*	x14c.c
 
 	Demo of multiple stream/window capability (requires Tk or Tcl-DP).
 

@@ -1,44 +1,5 @@
 /* $Id$
- * $Log$
- * Revision 1.8  2000/12/18 21:01:48  airwin
- * Change to new style plplot/*.h header file locations.
  *
- * Revision 1.7  1996/06/26 21:35:11  furnish
- * Various hacks to support Tcl 7.5 and Tk 4.1.
- *
- * Revision 1.6  1995/11/30  20:03:04  furnish
- * Correct the order of argument processing so that PLplot command line
- * arguments are removed before the argc/argv list is set for Tcl.  This
- * greatly improves the support for building custom pltcl shells.
- *
- * Revision 1.5  1995/10/22  17:37:25  mjl
- * Added command line argument parsing ala plParseOpts.  Previously, no args
- * except the file name were parsed, they were merely shoved into the Tcl
- * variables argc, argv, and argv0.  Even -f was ignored (try it yourself:
- * "tclsh -f <file>" doesn't work! ..amazing).  Now acts similar to plserver,
- * in that -e and -f options are obeyed as well as all underlying plplot
- * options.
- *
- * Revision 1.4  1994/09/18  07:15:39  mjl
- * Changed the syntax for pltclMain() in order for it to work better with
- * shared libraries.  In particular, Tcl_AppInit is no longer external but
- * passed as a function pointer.
- *
- * Revision 1.3  1994/06/30  18:52:53  mjl
- * Minor change to eliminate a warning.
- *
- * Revision 1.2  1994/06/24  20:40:45  mjl
- * Created function to handle error condition.  Is handled by indirection
- * through a global pointer, so can be replaced.  This call has to bypass
- * the interpreter since it's important that the interp->result string is
- * not modified.
- *
- * Revision 1.1  1994/06/23  22:43:34  mjl
- * Handles nearly all the important setup for extended tclsh's.  Taken from
- * tclMain.c of Tcl 7.3, and modified minimally to support my needs.
-*/
-
-/*
  * Modified version of tclMain.c, from Tcl 7.3.
  * Maurice LeBrun
  * 23-Jun-1994

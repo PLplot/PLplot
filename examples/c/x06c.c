@@ -1,30 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.12  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.11  1996/11/18 19:18:38  furnish
- * Lengthen buffer for safety.
- *
- * Revision 1.10  1995/06/01  21:40:07  mjl
- * All C demo files: changed file inclusion to use quotes instead of angle
- * brackets so that dependencies are retained during development.
- *
- * Revision 1.9  1995/04/12  08:18:55  mjl
- * Changes to all C demos: now include "plcdemos.h" to get all startup
- * definitions and includes that are useful to share between them.
- *
- * Revision 1.8  1995/03/16  23:18:51  mjl
- * All example C programs: changed plParseInternalOpts() call to plParseOpts().
- *
- * Revision 1.7  1994/06/30  17:57:29  mjl
- * All C example programs: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), eliminated redundant casts, put in more
- * uniform comments, and other minor changes.
-*/
-
-/*	x06c.c
 
 	Font demo.
 */

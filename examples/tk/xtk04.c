@@ -1,27 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.7  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.6  1996/10/18 20:02:04  furnish
- * Remove work now handled by pltkMain().
- *
- * Revision 1.5  1996/02/23  16:50:12  furnish
- * Initialize [incr Tk].
- *
- * Revision 1.4  1995/06/09  22:50:19  mjl
- * Eliminated vestigial lookup of tclMatrix variable (no longer works).
- *
- * Revision 1.3  1995/06/01  21:43:25  mjl
- * Change to header file inclusion: to get PLplot/Tk global function
- * prototypes, must now include pltk.h.  Some cleaning up.
- *
- * Revision 1.2  1994/10/10  19:45:04  furnish
- * Imlemented plshade from Tcl.
- *
- * Revision 1.1  1994/10/10  17:22:51  furnish
- * New Tk demo to show off the 2-d api.
- *
  */
 
 #include "plplot/pltk.h"

@@ -23,32 +23,6 @@
 # using these should be sufficiently perfunctory to be amenable to an
 # approach like that used here.  Automatic support for the 2-d API is
 # probably unrealistic.
-#
-# $Log$
-# Revision 1.4  1995/10/23 07:32:48  mjl
-# Support for storing return results into return string.  Now most accessor
-# type functions act similar to the "gets" command -- if the necessary
-# variable names are specified, the result gets stored into them, otherwise
-# it is returned.  So e.g. "set level [plglevel]" and "plglevel level" now
-# have the same effect.
-#
-# Revision 1.3  1995/10/16  18:27:01  mjl
-# Gave script the ability to deal with "const char *" and char&, improved help
-# entry by eliminating extra blanks.
-#
-# Revision 1.2  1995/06/29  20:20:15  furnish
-# Support defaultable arguments.  Change the handling for reference
-# arguments.  Previously their value was stuffed into the result string.
-# Now they work like the C API--the actual Tcl variable is changed,
-# result string remains empty.
-#
-# Revision 1.1  1995/06/28  14:58:33  furnish
-# A PERL script to automatically generate Tcl command procedure
-# interface functions for accessing the PLplot API.  Initial version
-# handles all the easy cases, including reference arguments.  Support
-# for pointer arguments should be added, as that would allow automating
-# all the 1-d multivalue input functions.
-#
 ###############################################################################
 
 require "getopts.pl";

@@ -1,45 +1,11 @@
 #!xtk01 -f
-# Geoffrey Furnish                     -*-tcl-*-
+#                     -*-tcl-*-
+# $Id$
+#
+# Geoffrey Furnish
 # 11 April 1994
 #
 # @> A script for using Tk to control xtk01
-#
-# $Id$
-#
-# $Log$
-# Revision 1.12  1996/02/23 21:04:56  furnish
-# Add some support for showing off the new rubber banding support in the
-# plframe.
-#
-# Revision 1.11  1995/08/22  16:18:38  mjl
-# Rearranged and changed the locator handling to be modal.  Hit 'L' to
-# activate.
-#
-# Revision 1.10  1995/06/29  18:46:57  mjl
-# Added code to make it easy to switch between using plframe's and plxframes,
-# as a test of each.
-#
-# Revision 1.9  1995/05/08  20:31:24  mjl
-# Eliminated the old enter-leave crosshair bindings since now this is done
-# by the plframe automatically (and done better).
-#
-# Revision 1.8  1995/04/17  19:24:13  furnish
-# Embellished to demonstrate (test :-) ways of using Tk bindings with
-# plframes.  Boundless possibilities.  Time to stand up and SHOUT!!!
-#
-# Revision 1.7  1994/07/24  07:42:57  mjl
-# Eliminated "destroy ." in favor of "exit".
-#
-# Revision 1.6  1994/07/01  20:43:59  mjl
-# Modified to use startup proc plstdwin when configuring main window.
-#
-# Revision 1.5  1994/06/17  21:23:09  mjl
-# Removed option database settings since they were the same as those set
-# in the pldefaults proc.
-#
-# Revision 1.4  1994/06/09  20:28:15  mjl
-# Changed to new improved megawidget instantiation method.
-#
 ###############################################################################
 
 wm title . "x01c -- TK version"

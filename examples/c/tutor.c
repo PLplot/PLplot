@@ -1,22 +1,5 @@
 /* $Id$
- * $Log$
- * Revision 1.11  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
  *
- * Revision 1.10  1995/06/01 21:40:04  mjl
- * All C demo files: changed file inclusion to use quotes instead of angle
- * brackets so that dependencies are retained during development.
- *
- * Revision 1.9  1995/04/12  08:18:50  mjl
- * Changes to all C demos: now include "plcdemos.h" to get all startup
- * definitions and includes that are useful to share between them.
- *
- * Revision 1.8  1995/03/16  23:18:48  mjl
- * All example C programs: changed plParseInternalOpts() call to plParseOpts().
-*/
-
-/*
- * tutor.c
  * Tony Richardson
  *
  * This program is intended to be used as a template for creating simple

@@ -1,25 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.5  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.4  1995/06/01 21:40:15  mjl
- * All C demo files: changed file inclusion to use quotes instead of angle
- * brackets so that dependencies are retained during development.
- *
- * Revision 1.3  1995/04/12  08:19:03  mjl
- * Changes to all C demos: now include "plcdemos.h" to get all startup
- * definitions and includes that are useful to share between them.
- *
- * Revision 1.2  1995/03/16  23:19:00  mjl
- * All example C programs: changed plParseInternalOpts() call to plParseOpts().
- *
- * Revision 1.1  1994/07/29  20:14:45  mjl
- * Demo for generating world map backgrounds.
- * Contributed by Wesley Ebisuzaki.
-*/
-
-/*	x19c.c
 
 	Illustrates backdrop plotting of world, US maps.
 	Contributed by Wesley Ebisuzaki.

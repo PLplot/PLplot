@@ -1,14 +1,5 @@
 #----------------------------------------------------------------------------
-# PLplot Tcl demo #18
-#
 # $Id$
-# $Log$
-# Revision 1.2  1995/06/30 13:57:39  furnish
-# Eliminate debugging hacks since the demo works now.
-#
-# Revision 1.1  1995/06/30  13:48:57  furnish
-# Tcl version of demo 18.
-#
 #----------------------------------------------------------------------------
 
 proc x18 {{w loopback}} {

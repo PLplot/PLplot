@@ -1,47 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.10  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.9  2000/11/29 00:06:11  airwin
- * c_plshade defined region functionality and working example.
- *
- * Revision 1.8  1995/06/01 21:40:51  mjl
- * All C demo files: changed file inclusion to use quotes instead of angle
- * brackets so that dependencies are retained during development.  Fixed bogus
- * options table specification.
- *
- * Revision 1.7  1995/05/06  21:30:55  mjl
- * All data structures now allocated at runtime to allow greater flexibility.
- * Command line options added: -ns <n>, sets number of shaded levels, -nx <n>
- * and -ny <n> set number of data points in x and y, respectively.
- *
- * Revision 1.6  1995/04/12  08:19:01  mjl
- * Changes to all C demos: now include "plcdemos.h" to get all startup
- * definitions and includes that are useful to share between them.
- *
- * Revision 1.5  1995/03/16  23:18:58  mjl
- * All example C programs: changed plParseInternalOpts() call to plParseOpts().
- *
- * Revision 1.4  1994/06/30  17:57:58  mjl
- * All C example programs: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), eliminated redundant casts, put in more
- * uniform comments, and other minor changes.
- *
- * Revision 1.3  1994/04/25  19:02:55  mjl
- * Increased the number of shade regions to make it a bit more interesting
- * when playing with the palette.
- *
- * Revision 1.2  1994/04/08  12:08:21  mjl
- * Cleaned up some, switched to more interesting test function.
- *
- * Revision 1.1  1994/03/30  07:22:55  mjl
- * Added to test specifically color fill capability of plshade, with optional
- * coordinate mapping.
-*/
-
-/*	x16c.c
 
 	plshade demo, using color fill.
 

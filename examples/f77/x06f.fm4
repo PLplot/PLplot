@@ -1,30 +1,6 @@
 divert(-1)dnl
 !***********************************************************************
 ! $Id$
-! $Log$
-! Revision 1.2  2000/12/24 19:02:28  airwin
-! For these m4 source files remove DBLE (a poorly chosen name) and replace
-! with REAL_FUN.  REAL_FUN is applied to constants and expressions that are
-! surrounded by parentheses.  It gets replaced by real if single precision and
-! by dble if double precision.
-!
-! Revision 1.1  2000/12/23 23:19:24  airwin
-! Double precision handled by m4. These are the m4 source files for the *.f
-! files that are compiled for examples.  m4 source is fairly close to
-! old version of the *.f file, but with a header prepended, and REAL,
-! implicit_none, and DBLE translated appropriately.  In particular the
-! implicit_none demanded a lot of changes in these examples, and
-! single-precision arguments to plplot routines were converted using
-! DBLE (which translates to dble or real depending on DOUBLE).
-!
-! Revision 1.2  1994/05/26 19:34:19  mjl
-! Inserted missing CVS Id and Log fields for all Fortran demos.  Comment
-! character changed to "!" everywhere, to work well with font-lock in Lucid
-! emacs (requires a small change to fortran-mode.el).
-!
-!
-      program example06
-!     =================
 !
 !***********************************************************************
 ! Uses implicit_none, REAL, and REAL_FUN from fmacs.m4.

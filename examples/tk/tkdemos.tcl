@@ -1,4 +1,6 @@
 #----------------------------------------------------------------------------
+# $Id$
+#
 # PLplot TK demos
 # 
 # Maurice LeBrun
@@ -13,19 +15,6 @@
 # or "loopback" if being run from pltcl.  In the latter case, the
 # "loopback cmd" does nothing, but is required two make the two styles of
 # Tcl scripts compatible.
-#
-# $Id$
-# $Log$
-# Revision 1.3  2000/12/17 23:45:20  airwin
-# correct the path for the tcl scripts
-#
-# Revision 1.2  1995/06/30 13:48:29  furnish
-# Update loop limit to reflect the two new demo files.
-#
-# Revision 1.1  1995/01/27  02:52:54  mjl
-# New front-end demo file for use from plserver.  It uses the same example
-# program files as pltcl but passes the name of the widget.
-#
 #----------------------------------------------------------------------------
 
 plstdwin .

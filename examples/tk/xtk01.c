@@ -1,25 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.12  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.11  1996/10/18 20:02:02  furnish
- * Remove work now handled by pltkMain().
- *
- * Revision 1.10  1996/06/26  21:35:21  furnish
- * Various hacks to support Tcl 7.5 and Tk 4.1.
- *
- * Revision 1.9  1995/06/01  21:43:48  mjl
- * Change to header file inclusion: to get PLplot/Tk global function
- * prototypes, must now include pltk.h.  Some cleaning up and resource leaks
- * plugged.
- *
- * Revision 1.8  1995/03/16  23:23:14  mjl
- * Changed one of the plots to a plshade demo, in order to make it easier to
- * investigate cmap1-related behavior when the widget is being driven directly.
- *
- * Revision 1.7  1994/09/23  07:47:29  mjl
- * Modified to use the new syntax for pltkMain().
  */
 
 #include "plplot/pltk.h"

@@ -1,27 +1,5 @@
 #----------------------------------------------------------------------------
-# PLplot Tcl demo #1
-#
 # $Id$
-# $Log$
-# Revision 1.6  1995/05/06 21:34:05  mjl
-# Changed comment syntax to "the one true way".
-#
-# Revision 1.5  1995/04/24  21:28:13  mjl
-# Made the widget name default to "loopback" for easier use from pltcl.
-#
-# Revision 1.4  1995/01/27  02:49:45  mjl
-# New Tcl example files.  Can now be run from either pltcl -- using the
-# "loopback" command as argument, or from plserver (or other plplot-aware
-# extended wish) -- using the widget name as argument.
-#
-# Revision 1.3  1994/08/09  08:23:22  mjl
-# Changed to new tclMatrix notation.
-#
-# Revision 1.2  1994/06/30  18:47:52  mjl
-# Minor label and commenting changes.
-#
-# Revision 1.1  1994/06/25  20:34:24  mjl
-# Demo program 1.  Now fully reproduces x01c plots.
 #----------------------------------------------------------------------------
 
 proc x01 {{w loopback}} {

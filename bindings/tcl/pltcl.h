@@ -1,30 +1,5 @@
 /* $Id$
- * $Log$
- * Revision 1.7  2000/12/18 21:01:48  airwin
- * Change to new style plplot/*.h header file locations.
  *
- * Revision 1.6  1995/06/02 20:30:03  mjl
- * Made C++ friendly.
- *
- * Revision 1.5  1995/06/01  21:19:14  mjl
- * Split off IPC routine prototypes (not needed by user) into tcpip.h.
- *
- * Revision 1.4  1995/05/07  03:00:25  mjl
- * Added prototype for pltclMain().
- *
- * Revision 1.3  1994/07/19  22:34:23  mjl
- * Internal header file inclusion changed to /not/ use a search path so that
- * it will work better with makedepend.
- *
- * Revision 1.2  1994/06/30  18:37:49  mjl
- * Moved function prototypes for generic Tcl support calls into this file.
- *
- * Revision 1.1  1994/06/23  22:41:36  mjl
- * Holds function prototypes and other declarations dealing with Tcl API.
- */
-
-/* 
- * pltcl.h
  * Maurice LeBrun
  * 21-Jun-94
  *
