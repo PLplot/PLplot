@@ -21,8 +21,6 @@
 
 lib_LTLIBRARIES = libplplot.la
 
-CFLAGS += -I$(top_srcdir)/include
-
 libplplot_la_SOURCES = \
   pdfutils.c \
   plargs.c \
