@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.32  1994/06/15 17:21:32  furnish
+ * Revision 1.33  1994/06/16 19:03:18  mjl
+ * Changed "cmd plline" and "cmd plpoin" widget commands to use new Matrix
+ * notation/capabilities/etc.
+ *
+ * Revision 1.32  1994/06/15  17:21:32  furnish
  * Fix cleanup so that killing a plframe doesn't core the app.
  *
  * Revision 1.31  1994/06/10  20:46:10  furnish
@@ -15,68 +19,6 @@
  * streams with different widgets without user intervention.  The call to
  * plinit() now done automatically when the widget is first mapped, and
  * the "<widget> cmd init" command no longer supported.  Some reorganization.
- *
- * Revision 1.29  1994/05/23  22:09:04  mjl
- * Fixed some minor omissions regarding the xorGC.
- *
- * Revision 1.28  1994/05/10  21:49:52  mjl
- * Added new, more efficient ways to set colors via plframe "cmd" -- now you
- * can change only a single cmap0 entry or cmap1 control point color instead
- * of the whole map.  Took out call to XSetWMColormapWindows except when it
- * is absolutely needed.
- *
- * Revision 1.27  1994/05/07  03:09:52  mjl
- * After initializing plplot, now installs the X window colormap as the top
- * level Tk color map.  This is necessary so that the color palette tools
- * display the same colors as the plot.
- *
- * Revision 1.26  1994/04/30  16:14:56  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.25  1994/04/25  18:53:39  mjl
- * Added the PLStream pointer to the widget structure, to allow faster access
- * to PLplot internals.  Added "cmd" widget commands "scmap0", "gcmap0",
- * "scmap1", "gcmap1" for setting/getting palette settings.
- *
- * Revision 1.24  1994/04/08  11:47:41  mjl
- * Fixed some casts.
- *
- * Revision 1.23  1994/02/07  22:55:21  mjl
- * Data read is now done by a file handler for both FIFO or socket reads.
- * This has much better performance than the old way since no communication
- * between interpreters is needed.  The end of page indicator is now lit by
- * detecting eop/bop in the data stream.  The old widget command to read
- * the data stream is gone.
- *
- * Revision 1.22  1994/02/01  22:49:37  mjl
- * Changes to handle only partially received socket packets due to a slow
- * network connection.  Right now it just polls; this will be improved soon.
- *
- * Revision 1.21  1994/01/15  17:37:51  mjl
- * Added compile-time mode to route FIFO i/o through a memory buffer.
- * Changed "openfifo" widget command to "openlink" with the first argument
- * to be either "fifo" or "socket".  Added ability to create and read
- * socket for data transfer.
- *
- * Revision 1.20  1993/12/21  10:19:01  mjl
- * Added some debugging output.
- *
- * Revision 1.19  1993/12/15  08:57:36  mjl
- * Eliminated all direct knowledge plframe widget has of client code.  Now
- * all interactions to the client code are handled by the wrapper procs only.
- * Previously the plframe widget notified the client code when it was
- * destroyed, but this is not only bad at times but is also not necessary
- * (the same thing can be done in the wrapper procs through event bindings).
- *
- * Revision 1.18  1993/12/08  06:18:06  mjl
- * Changed to include new plplotX.h header file.
- *
- * Revision 1.17  1993/12/06  07:43:09  mjl
- * Fixed bogus tmpnam call.
- *
- * Revision 1.16  1993/11/19  07:55:42  mjl
- * Added missing CVS id and log fields.
  */
 
 /*----------------------------------------------------------------------*\
@@ -1073,13 +1015,14 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int length;
     char c, c3;
     int result = TCL_OK;
+    char cmdlist[] = "\
+plcol0 plenv plgcmap0 plgcmap1 pllab plline plpoin plscmap0 plscmap1\
+plscol0 plscol1 plsetopt";
 
 /* no option -- return list of available PLPlot commands */
 
     if (argc == 0) {
-	Tcl_AppendResult(interp,
-	 "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1",
-			 "plsetopt", (char *) NULL);
+	Tcl_AppendResult(interp, cmdlist, (char *) NULL);
 	return TCL_OK;
     }
 
@@ -1136,117 +1079,6 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	result = TCL_OK;
     }
 
-/* Simple routine for labelling graphs. */
-
-    else if ((c3 == 'l') && (strncmp(argv[0], "pllab", length) == 0)) {
-
-	if (argc != 4 ) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		     argv[0], "  xlabel ylabel tlabel\"",
-		     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	pllab( argv[1], argv[2], argv[3] );
-
-	result = TCL_OK;
-    }
-
-/* Draws line segments connecting a series of points. */
-
-    else if ((c3 == 'l') && (strncmp(argv[0], "plline", length) == 0)) {
-
-	int elsc, i;
-	char **elsv;
-	PLFLT *x, *y;
-
-	if (argc != 2 ) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-			     " pairs-list\"",
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	Tcl_SplitList( interp, argv[1], &elsc, &elsv );
-
-	if ( elsc < 2 ) {
-	    Tcl_AppendResult(interp, "Malformed list.",
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	x = (float *) malloc( sizeof(float) * elsc );
-	y = (float *) malloc( sizeof(float) * elsc );
-
-	for( i=0; i < elsc; i++ ) {
-	    int xyc;
-	    char **xyv;
-
-	    Tcl_SplitList( interp, elsv[i], &xyc, &xyv );
-	    if ( xyc != 2 ) {
-		interp->result = "Malformed list.";
-		return TCL_ERROR;
-	    }
-
-	    x[i] = atof( xyv[0] );
-	    y[i] = atof( xyv[1] );
-	}
-
-	plline( elsc, x, y );
-	free(x), free(y);
-
-	result = TCL_OK;
-    }
-
-/* Mirror plpoin */
-
-    else if ((c3 == 'p') && (strncmp(argv[0], "plpoin", length) == 0)) {
-
-	int elsc, i;
-	char **elsv;
-	PLFLT *x, *y;
-	int marker;
-
-	if (argc != 3 ) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-			     " pairs-list marker\"",
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	Tcl_SplitList( interp, argv[1], &elsc, &elsv );
-
-	if ( elsc < 2 ) {
-	    Tcl_AppendResult(interp, "Malformed list.",
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	x = (float *) malloc( sizeof(float) * elsc );
-	y = (float *) malloc( sizeof(float) * elsc );
-
-	for( i=0; i < elsc; i++ ) {
-	    int xyc;
-	    char **xyv;
-
-	    Tcl_SplitList( interp, elsv[i], &xyc, &xyv );
-	    if ( xyc != 2 ) {
-		interp->result = "Malformed list.";
-		return TCL_ERROR;
-	    }
-
-	    x[i] = atof( xyv[0] );
-	    y[i] = atof( xyv[1] );
-	}
-
-	marker = atoi( argv[2] );
-	plpoin( elsc, x, y, marker );
-	free(x), free(y);
-
-	result = TCL_OK;
-    }
-
-
 /* plgcmap0 -- get color map 0 */
 /* first arg is number of colors, the rest are hex number specifications */
 
@@ -1300,6 +1132,83 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    sprintf(str, "%02d", (int) (100*plsc->cmap1cp[i].p));
 	    Tcl_AppendElement(interp, str);
 	}
+	result = TCL_OK;
+    }
+
+/* Simple routine for labelling graphs. */
+
+    else if ((c3 == 'l') && (strncmp(argv[0], "pllab", length) == 0)) {
+
+	if (argc != 4 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+		     argv[0], "  xlabel ylabel tlabel\"",
+		     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	pllab( argv[1], argv[2], argv[3] );
+
+	result = TCL_OK;
+    }
+
+/* Draws line segments connecting a series of points. */
+
+    else if ((c3 == 'l') && (strncmp(argv[0], "plline", length) == 0)) {
+	PLFLT *x, *y;
+	Matrix *matx, *maty;
+	int npts;
+
+	if (argc != 4 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+			     " <npts> <x-array-name> <y-array-name>\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	matx = Tcl_GetMatrixPtr(interp, argv[2]);
+	x = matx->fdata;
+	maty = Tcl_GetMatrixPtr(interp, argv[3]);
+	y = maty->fdata;
+
+	if (strncmp(argv[1], "*", 1) == 0)
+	    npts = MIN(matx->len, maty->len);
+	else
+	    npts = atoi(argv[1]);
+
+	plline( npts, x, y );
+
+	result = TCL_OK;
+    }
+
+/* Plots array y against x for n points using ASCII code "code".*/
+
+    else if ((c3 == 'p') && (strncmp(argv[0], "plpoin", length) == 0)) {
+
+	PLFLT *x, *y;
+	Matrix *matx, *maty;
+	int npts, code;
+
+	if (argc != 5 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+			     " <npts> <x-array-name> <y-array-name> <code>\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	matx = Tcl_GetMatrixPtr(interp, argv[2]);
+	x = matx->fdata;
+	maty = Tcl_GetMatrixPtr(interp, argv[3]);
+	y = maty->fdata;
+
+	if (strncmp(argv[1], "*", 1) == 0)
+	    npts = MIN(matx->len, maty->len);
+	else
+	    npts = atoi(argv[1]);
+
+	code = atoi( argv[4] );
+
+	plpoin( npts, x, y, code );
+
 	result = TCL_OK;
     }
 
@@ -1515,9 +1424,8 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* unrecognized */
 
     else {
-	Tcl_AppendResult(interp, "bad option to \"cmd\": must be one of ", 
-	 "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1",
-	 "plsetopt", (char *) NULL);
+	Tcl_AppendResult(interp, "bad option to \"cmd\": must be one of ",
+			 cmdlist, (char *) NULL);
 
 	result = TCL_ERROR;
     }
