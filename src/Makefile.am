@@ -54,15 +54,11 @@ sources = \
   plwind.c \
   ../drivers/plbuf.c
 
+AM_CPPFLAGS = @FREETYPEINCCMD@
 libplplot_la_SOURCES  = $(sources)
 libplplotd_la_SOURCES = $(sources)
 
-if with_freetype
-libplplot_la_LDFLAGS  = $(version) -no-undefined -lm -ldl -lfreetype
-else
-libplplot_la_LDFLAGS  = $(version) -no-undefined -lm -ldl
-endif
-
+libplplot_la_LDFLAGS  = $(version) -no-undefined -lm -ldl @FREETYPELIBCMD@
 libplplotd_la_LDFLAGS = $(libplplot_la_LDFLAGS)
 
 ##libdrv = ../drivers/libpldrv.la

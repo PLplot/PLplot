@@ -498,10 +498,23 @@ MODULES="xwin"$LIB_TAG"_drv.la ps"$LIB_TAG"_drv.la"
 AC_SUBST(MODULES)
 
 ### Modify system-dependent results based on availability
-###AC_INCLUDE(sysloc.in)
+AC_INCLUDE(sysloc.in)
+#disable LIBS so we don't have all libraries mentioned
+LIBS=""
 
-### automake conditionals for system-dependent results
-AM_CONDITIONAL(with_freetype, test "$with_freetype" = yes)
+### automake symbols for system-dependent results
+if test "$with_freetype" = yes; then
+   if test "$FREETYPEINCDIR" != default; then
+      FREETYPEINCCMD="-I"$FREETYPEINCDIR
+      AC_SUBST(FREETYPEINCCMD)
+   fi
+   if test "$FREETYPELIBDIR" = default; then
+      FREETYPELIBCMD=$FREETYPELIBSTR
+   else
+      FREETYPELIBCMD="-L "$FREETYPELIBDIR" "$FREETYPELIBSTR
+   fi
+   AC_SUBST(FREETYPELIBCMD)
+fi
 
 ### Drivers
 
@@ -683,8 +696,6 @@ fi
 
 plplot_config_result_msg=\
 "$plplot_config_result_msg
-INCS:		$INCS
-LIBS:		$LIBS
 LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
 
