@@ -546,6 +546,7 @@ typedef struct {
 #define    c_plbox	plbox
 #define    c_plbox3	plbox3
 #define    c_plcalc_world	plcalc_world
+#define    c_plclear	plclear
 #define    c_plcol0	plcol0
 #define    c_plcol1	plcol1
 #define    c_plcpstrm	plcpstrm
@@ -744,6 +745,11 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 void
 c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window);
+   
+/* Clear current subpage. */
+   
+void
+c_plclear(void);
 
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 

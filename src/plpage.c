@@ -47,7 +47,7 @@ c_pladv(PLINT page)
 \*--------------------------------------------------------------------------*/
 
 void
-c_plclear()
+c_plclear(void)
 {
     if (plsc->level < 1) {
 	plabort("plclear: Please call plinit first");
