@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1993/09/08 02:40:16  mjl
+ * Revision 1.10  1994/01/15 17:28:45  mjl
+ * Changed to new PDF function call syntax.
+ *
+ * Revision 1.9  1993/09/08  02:40:16  mjl
  * Added search of INSTALL_DIR, passed in from makefile.  Directories
  * now can be specified without the trailing slash, and the path name
  * is built up correctly (I hope) on Unix, Amiga, and MS-DOS (so special
@@ -173,7 +176,8 @@ plfntld(PLINT fnt)
 {
     static PLINT charset;
     short bffrleng;
-    FILE *fontfile;
+    FILE *file;
+    PDFstrm *pdfs;
 
     if (fontloaded && (charset == fnt))
 	return;
@@ -183,45 +187,49 @@ plfntld(PLINT fnt)
     charset = fnt;
 
     if (fnt)
-	fontfile = plfontopen(PL_XFONT);
+	file = plfontopen(PL_XFONT);
     else
-	fontfile = plfontopen(PL_SFONT);
+	file = plfontopen(PL_SFONT);
+
+    pdfs = pdf_finit(file);
+    if ( ! pdfs)
+	plexit("plfntld: Out of memory while allocating PDF stream data.");
 
 /* Read fntlkup[] */
 
-    pdf_rd_2bytes(fontfile, (U_SHORT *) &bffrleng);
+    pdf_rd_2bytes(pdfs, (U_SHORT *) &bffrleng);
     numberfonts = bffrleng / 256;
     numberchars = bffrleng & 0xff;
     bffrleng = numberfonts * numberchars;
     fntlkup = (short int *) malloc(bffrleng * sizeof(short int));
-    if (!fntlkup) 
+    if ( ! fntlkup) 
 	plexit("plfntld: Out of memory while allocating font buffer.");
 
-    pdf_rd_2nbytes(fontfile, (U_SHORT *) fntlkup, bffrleng);
+    pdf_rd_2nbytes(pdfs, (U_SHORT *) fntlkup, bffrleng);
 
 /* Read fntindx[] */
 
-    pdf_rd_2bytes(fontfile, (U_SHORT *) &indxleng);
+    pdf_rd_2bytes(pdfs, (U_SHORT *) &indxleng);
     fntindx = (short int *) malloc(indxleng * sizeof(short int));
-    if (!fntindx) 
+    if ( ! fntindx) 
 	plexit("plfntld: Out of memory while allocating font buffer.");
 
-    pdf_rd_2nbytes(fontfile, (U_SHORT *) fntindx, indxleng);
+    pdf_rd_2nbytes(pdfs, (U_SHORT *) fntindx, indxleng);
 
 /* Read fntbffr[] */
 /* Since this is an array of char, there are no endian problems */
 
-    pdf_rd_2bytes(fontfile, (U_SHORT *) &bffrleng);
+    pdf_rd_2bytes(pdfs, (U_SHORT *) &bffrleng);
     fntbffr = (SCHAR *) malloc(2 * bffrleng * sizeof(SCHAR));
-    if (!fntbffr) 
+    if ( ! fntbffr) 
 	plexit("plfntld: Out of memory while allocating font buffer.");
 
     fread((void *) fntbffr, (size_t) sizeof(SCHAR),
-	  (size_t) (2 * bffrleng), fontfile);
+	  (size_t) (2 * bffrleng), pdfs->file);
 
 /* Done */
 
-    fclose(fontfile);
+    pdf_close(pdfs);
 }
 
 /*----------------------------------------------------------------------*\
@@ -234,12 +242,12 @@ plfntld(PLINT fnt)
 static FILE *
 plfontopen(char *fn)
 {
-    FILE *plfp;
+    FILE *file;
     char *fs = NULL, *dn = NULL;
 
 /****	search current directory	****/
 
-    if ((plfp = fopen(fn, BINARY_READ)) != NULL)
+    if ((file = fopen(fn, BINARY_READ)) != NULL)
 	goto done;
 
 /**** 	search $(HOME)/lib	****/
@@ -248,7 +256,7 @@ plfontopen(char *fn)
     if ((dn = getenv("HOME")) != NULL) {
 	plGetName(dn, "lib", fn, &fs);
 
-	if ((plfp = fopen(fs, BINARY_READ)) != NULL)
+	if ((file = fopen(fs, BINARY_READ)) != NULL)
 	    goto done;
     }
 #endif
@@ -259,7 +267,7 @@ plfontopen(char *fn)
     if ((dn = getenv(PLFONTENV)) != NULL) {
 	plGetName(dn, "", fn, &fs);
 
-	if ((plfp = fopen(fs, BINARY_READ)) != NULL)
+	if ((file = fopen(fs, BINARY_READ)) != NULL)
 	    goto done;
     }
 #endif
@@ -269,28 +277,28 @@ plfontopen(char *fn)
 #ifdef INSTALL_DIR
     plGetName(INSTALL_DIR, "", fn, &fs);
 
-    if ((plfp = fopen(fs, BINARY_READ)) != NULL)
+    if ((file = fopen(fs, BINARY_READ)) != NULL)
 	goto done;
 #endif
 
 #ifdef PLFONTDEV1
     plGetName(PLFONTDEV1, "", fn, &fs);
 
-    if ((plfp = fopen(fs, BINARY_READ)) != NULL)
+    if ((file = fopen(fs, BINARY_READ)) != NULL)
 	goto done;
 #endif
 
 #ifdef PLFONTDEV2
     plGetName(PLFONTDEV2, "", fn, &fs);
 
-    if ((plfp = fopen(fs, BINARY_READ)) != NULL)
+    if ((file = fopen(fs, BINARY_READ)) != NULL)
 	goto done;
 #endif
 
 #ifdef PLFONTDEV3
     plGetName(PLFONTDEV3, "", fn, &fs);
 
-    if ((plfp = fopen(fs, BINARY_READ)) != NULL)
+    if ((file = fopen(fs, BINARY_READ)) != NULL)
 	goto done;
 #endif
 
@@ -301,7 +309,7 @@ plfontopen(char *fn)
 
  done:
     free_mem(fs);
-    return (plfp);
+    return (file);
 }
 
 /*----------------------------------------------------------------------*\
