@@ -283,7 +283,52 @@ public class PLStream {
 // void
 // c_plsfnam(const char *fnam);
 
-// shade API
+    public native void shade( float[][] a,
+                              float left, float right, float bottom, float top,
+                              float shade_min, float shade_max,
+                              int sh_cmap, float sh_color, int sh_width,
+                              int min_color, int min_width,
+                              int max_color, int max_width,
+                              int rect );
+    public native void shade( double[][] a,
+                              double left, double right, double bottom, double top,
+                              double shade_min, double shade_max,
+                              int sh_cmap, double sh_color, int sh_width,
+                              int min_color, int min_width,
+                              int max_color, int max_width,
+                              int rect );
+
+// pltr1
+    public native void shade( float[][] a,
+                              float left, float right, float bottom, float top,
+                              float shade_min, float shade_max,
+                              int sh_cmap, float sh_color, int sh_width,
+                              int min_color, int min_width,
+                              int max_color, int max_width,
+                              int rect, float[] xg, float[] yg, int wrap );
+    public native void shade( double[][] a,
+                              double left, double right, double bottom, double top,
+                              double shade_min, double shade_max,
+                              int sh_cmap, double sh_color, int sh_width,
+                              int min_color, int min_width,
+                              int max_color, int max_width,
+                              int rect, double[] xg, double[] yg, int wrap );
+
+// pltr2
+    public native void shade( float[][] a,
+                              float left, float right, float bottom, float top,
+                              float shade_min, float shade_max,
+                              int sh_cmap, float sh_color, int sh_width,
+                              int min_color, int min_width,
+                              int max_color, int max_width,
+                              int rect, float[][] xg, float[][] yg, int wrap );
+    public native void shade( double[][] a,
+                              double left, double right, double bottom, double top,
+                              double shade_min, double shade_max,
+                              int sh_cmap, double sh_color, int sh_width,
+                              int min_color, int min_width,
+                              int max_color, int max_width,
+                              int rect, double[][] xg, double[][] yg, int wrap );
 
 // smaj
 // smin
