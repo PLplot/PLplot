@@ -4,7 +4,7 @@
 ###
 # Copyright (C) 2002 Alan W. Irwin
 # Copyright (C) 2002 Joao Cardoso
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -20,13 +20,9 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if enable_octave
-
 SUBDIRS = support
 
-plplot_octavedir = $(PLPLOT_OCTAVE_DIR)
-
-plplot_octave_DATA = \
+binding_m_files =
 	arrow.m \
 	arrows.m \
 	autostyle.m \
@@ -110,10 +106,18 @@ plplot_octave_DATA = \
 	zlabel.m \
 	zoom.m
 
-octave_mdir = $(OCTAVE_M_DIR)/PLplot
-
-octave_m_DATA = \
+system_m_files = \
 	use_plplot.m \
 	plplot_octave_path.m
+
+EXTRA_DIST = $(binding_m_files) $(system_m_files)
+
+if enable_octave
+
+plplot_octavedir = $(PLPLOT_OCTAVE_DIR)
+plplot_octave_DATA = $(binding_m_files)
+
+octave_mdir = $(OCTAVE_M_DIR)/PLplot
+octave_m_DATA = $(system_m_files)
 
 endif

@@ -20,9 +20,24 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if enable_octave
-
 SUBDIRS = PLplot demos misc
+
+EXTRA_DIST = \
+  BUGS \
+  COPYING \
+  FGA \
+  INSTALL \
+  README \
+  ToDo \
+  USAGE \
+  globals-in-scripts \
+  massage.c \
+  plplot_octave_org.h \
+  plplot_octave_rej.h \
+  etc \
+  matwrap
+
+if enable_octave
 
 if with_double
 sed_command = 's/REPLACE_ME/typedef double PLFLT;/'
