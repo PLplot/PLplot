@@ -1351,6 +1351,122 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 /*--------------------------------------------------------------------------*\
  * void plGetDev()
  *
+ * plGetDev() used to be what is now shown as plSelectDev below.  However,
+ * the situation is a bit more complicated now in the dynloadable drivers
+ * era.  We have to:
+ * 1) Make sure the dispatch table is initialized to the union of static
+ *    drivers and available dynamic drivers.
+ * 2) Allow the user to select the desired device.
+ * 3) Initiailize the dispatch table entries for the selected device, in the
+ *    case that it is a dynloadable driver that has not yet been loaded.
+\*--------------------------------------------------------------------------*/
+
+static void
+plGetDev()
+{
+/* Start by checking to see that the dispatch table has been initialized with
+ * the info from the static drivers table and the available dynamic
+ * drivers. */
+
+    if (!dispatch_table_inited)
+        plInitDispatchTable();
+
+    plSelectDev();
+}
+
+static void
+plInitDispatchTable()
+{
+    char buf[300];
+    char *devnam, *devdesc, *driver, *tag;
+    int n, done=0;
+    int ndynamicdevices = 0;
+
+#ifdef ENABLE_DYNAMIC_DRIVERS
+    FILE *fp_drvdb = plLibOpen( "drivers/drivers.db" );
+
+    if (!fp_drvdb) {
+        fprintf( stderr, "Can't open drivers/drivers.db\n" );
+        return;
+    }
+
+/* Count the number of dynamic devices. */
+    while( !done ) {
+        char *p = fgets( buf, 300, fp_drvdb );
+
+        if (p == 0) {
+            done = 1;
+            continue;
+        }
+
+        ndynamicdevices++;
+    }
+#endif
+
+/* Allocate space for the dispatch table. */
+    dispatch_table = malloc( (nplstaticdevices + ndynamicdevices) * sizeof(PLDispatchTable) );
+
+/* Copy the static devices into the dispatch table */
+    for( n=0; n < nplstaticdevices; n++ )
+    {
+        dispatch_table[n].pl_MenuStr = static_devices[n].pl_MenuStr;
+        dispatch_table[n].pl_DevName = static_devices[n].pl_DevName;
+        dispatch_table[n].pl_type = static_devices[n].pl_type;
+        dispatch_table[n].pl_init = static_devices[n].pl_init;
+        dispatch_table[n].pl_line = static_devices[n].pl_line;
+        dispatch_table[n].pl_polyline = static_devices[n].pl_polyline;
+        dispatch_table[n].pl_eop = static_devices[n].pl_eop;
+        dispatch_table[n].pl_bop = static_devices[n].pl_bop;
+        dispatch_table[n].pl_tidy = static_devices[n].pl_tidy;
+        dispatch_table[n].pl_state = static_devices[n].pl_state;
+        dispatch_table[n].pl_esc = static_devices[n].pl_esc;
+    }
+    npldrivers = nplstaticdevices;
+
+#ifdef ENABLE_DYNAMIC_DRIVERS
+    printf( "Ready to read drivers/drivers.db\n" );
+
+    rewind( fp_drvdb );
+    done = 0;
+    while( !done ) {
+        char *p = fgets( buf, 300, fp_drvdb );
+
+        if (p == 0) {
+            done = 1;
+            continue;
+        }
+
+        devnam  = strtok( buf, ":" );
+        devdesc = strtok( 0, ":" );
+        driver  = strtok( 0, ":" );
+        tag     = strtok( 0, "\n" );
+
+        printf( "Devspec: %s", buf );
+        printf( "dev=%s desc=%s driver=%s tag=%s\n",
+                devnam, devdesc, driver, tag );
+
+        n = npldrivers++;
+
+        dispatch_table[n].pl_MenuStr = plstrdup(devdesc);
+        dispatch_table[n].pl_DevName = plstrdup(devnam);
+        dispatch_table[n].pl_type = 0;
+        dispatch_table[n].pl_init = 0;
+        dispatch_table[n].pl_line = 0;
+        dispatch_table[n].pl_polyline = 0;
+        dispatch_table[n].pl_eop = 0;
+        dispatch_table[n].pl_bop = 0;
+        dispatch_table[n].pl_tidy = 0;
+        dispatch_table[n].pl_state = 0;
+        dispatch_table[n].pl_esc = 0;
+    }
+#endif
+
+    dispatch_table_inited = 1;
+}
+
+/*--------------------------------------------------------------------------*\
+ * void plSelectDev()
+ *
  * If the the user has not already specified the output device, or the
  * one specified is either: (a) not available, (b) "?", or (c) NULL, the
  * user is prompted for it.
@@ -1360,7 +1476,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 \*--------------------------------------------------------------------------*/
 
 static void
-plGetDev()
+plSelectDev()
 {
     int dev, i, count, length;
     char response[80];
