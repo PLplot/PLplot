@@ -562,6 +562,7 @@ fi
 if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
     ADD_TO_INCS($GDINCDIR, INCS, INCPATH)
     ADD_TO_INCS($PNGINCDIR, INCS, INCPATH)
+    ADD_TO_INCS($JPEGINCDIR, INCS, INCPATH)
     ADD_TO_INCS($ZLIBINCDIR, INCS, INCPATH)
 fi
 if test "$enable_tcl" = "yes"; then
@@ -603,6 +604,7 @@ fi
 if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
     ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, LIBS, LIBPATH)
     ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, LIBS, LIBPATH)
+    ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, LIBS, LIBPATH)
     ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, LIBS, LIBPATH)
 fi
 if test ! -z "$TCL_DL_LIBS"; then
