@@ -919,11 +919,18 @@ InitMain(PLStream *pls)
 /* Window creation */
 
     dev->window =
-	XCreateWindow( xwd->display,
+/*AWI	XCreateWindow( xwd->display,
 		       DefaultRootWindow(xwd->display),
 		       hint.x, hint.y, hint.width, hint.height,
 		       dev->border, xwd->depth,
 		       InputOutput, xwd->visual,
+		       0, NULL );*/
+
+	XCreateWindow( xwd->display,
+		       DefaultRootWindow(xwd->display),
+		       hint.x, hint.y, hint.width, hint.height,
+		       dev->border, XDefaultDepth(xwd->display,xwd->screen),
+		       InputOutput, XDefaultVisual(xwd->display,xwd->screen),
 		       0, NULL );
 
     XSetStandardProperties(xwd->display, dev->window, header, header,
