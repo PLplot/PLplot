@@ -4,9 +4,10 @@ using "sed".  The order of concatenation should be:
 
 	init.in			(initialization)
 	<pkg files>		(optional packages)
-	deps.in			(basic dependencies & targets)
+	objs.in			(object file dependencies & targets)
 	lib.in			(library target)
 	shlib.in		(shared library target, if supported)
+	exes.in			(program file dependencies & targets)
 	install.in		(installation targets)
 	clean.in		(cleanup targets)
 
