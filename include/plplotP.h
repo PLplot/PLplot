@@ -51,7 +51,9 @@
 #include "plplot/plConfig.h"
 #ifdef caddr_t
 #undef caddr_t
+#ifndef __USE_BSD
 typedef char * caddr_t;
+#endif
 #endif
 
 /* System headers */
@@ -142,7 +144,7 @@ extern PLStream	*plsc;
 
 /* A coordinate value that should never occur */
 
-#define UNDEFINED -9999999
+#define PL_UNDEFINED -9999999
 
 /*--------------------------------------------------------------------------*\
  *                       PLPLOT control macros
