@@ -412,6 +412,12 @@ PLSMIN(PLFLT *def, PLFLT *scale)
 }
 
 void
+PLSETOPT7(char *opt, char *optarg)
+{
+    c_plSetOpt(opt, optarg);
+}
+
+void
 PLSORI(PLINT *ori)
 {
     c_plsori(*ori);

@@ -194,6 +194,7 @@
 #define    PLSCOLBG	FNAME(PLSCOLBG,plscolbg)
 #define    PLSCOLOR	FNAME(PLSCOLOR,plscolor)
 #define    PLSDEV7	FNAME(PLSDEV7,plsdev7)
+#define    PLSETOPT7	FNAME(PLSETOPT7,plsetopt7)
 #define    PLSESC	FNAME(PLSESC,plsesc)
 #define    PLSFAM	FNAME(PLSFAM,plsfam)
 #define    PLSFNAM7	FNAME(PLSFNAM7,plsfnam7)

@@ -35,6 +35,20 @@ define(include_strings,{
 !
 !***********************************************************************
 
+	subroutine plsetopt(opt, optarg)
+
+        implicit_none
+	character*(*) opt, optarg
+        include_strings
+
+	call plstrf2c(opt, string1, maxlen)
+	call plstrf2c(optarg, string2, maxlen)
+	call plsetopt7(s1, s2)
+
+	end
+
+!***********************************************************************
+
 	subroutine plsdev(dnam)
 
         implicit_none
