@@ -45,7 +45,7 @@ SONAME_FLAGS	= @SONAME_FLAGS@
 
 PLLIB_DIR	= .
 PLFNT_DIR	= .
-PLLIB_PATH	= $(PLLIB_DIR)/
+PLLIB_PATH	= 
 PLFNT_PATH	= $(PLFNT_DIR)/
 
 # The library components
