@@ -404,6 +404,10 @@ AC_INIT(src/plcore.c)
 AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 ### Package version number
+### [ If changing the line below by hand, please keep the format up to the
+###   version number, otherwise it will fool up the bootstrap.sh script.  By
+###   the way, the line below can be changed using options --version and
+###   --date-version of that script. ]
 AM_INIT_AUTOMAKE(plplot, 5.2.0)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
