@@ -1044,9 +1044,8 @@ if test "$enable_octave" = "yes"; then
     ln -s $srcdir/bindings/octave/plplot_octave_rej.h plplot 2>/dev/null
     ln -s $srcdir/bindings/octave/massage.c . 2>/dev/null
     ln -s $srcdir/bindings/octave/.octaverc . 2>/dev/null
-# quick hack. The medium term solution is to modify massage.c
-#  and/or use docs from docbook
-    ln -s $srcdir/bindings/octave/etc . 2>/dev/null
+    mkdir -p plplot_octave_txt
+    (cd plplot_octave_txt; $srcdir/doc/docbook/bin/api2text.pl $srcdir/doc/docbook/src/plplotdoc.xml.in $srcdir/doc/docbook/src/api.xml; ln -s $srcdir/bindings/octave/etc/plplot.doc .)
 fi
 
 # Miscellaneous

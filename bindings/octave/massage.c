@@ -17,9 +17,9 @@
 /*
  * Add online help to functions, parsing 'tmp_stub' and looking
  * for function definitions; for each function found, scans directory
- * 'etc/po' for a file with the same basename as function and extension
+ * 'plplot_octave_txt' for a file with the same basename as function and extension
  * '.txt'; if found, incorporates it as the function online help, else,
- * looks in 'etc/plplot.doc' for a one-line description of the function
+ * looks in 'plplot.doc' for a one-line description of the function
  * and adds it.
  */
 
@@ -37,8 +37,8 @@ main()
 	FILE	*fp, *fp1;
 	struct stat buf;
 	
-	if ((fp = fopen("etc/plplot.doc","r")) == NULL) {
-		perror("etc/plplot.doc not found:");
+	if ((fp = fopen("plplot_octave_txt/plplot.doc","r")) == NULL) {
+		perror("plplot.doc not found:");
 		exit(1);
 	}
 
@@ -67,7 +67,7 @@ main()
 			printf("%s", b);
 			fgets(b, sizeof(b), fp);printf("%s%%\n", b);	// % function ... = ...(
 				
-			sprintf(b,"etc/txt/%s.txt", tok);
+			sprintf(b,"plplot_octave_txt/%s.txt", tok);
 			if (stat(b, &buf) && errno == ENOENT) {
 				fprintf(stderr,"%s not found, using plplot.doc\n", b);
 				strcat(tok, "\t");
