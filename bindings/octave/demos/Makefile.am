@@ -20,11 +20,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if enable_octave
-
-examples_octavedir = ${prefix}/@DATA_DIR@/../examples/octave
-
-examples_octave_DATA = \
+examples_octave = \
 	p1.m \
 	p10.m \
 	p11.m \
@@ -63,6 +59,15 @@ examples_octave_DATA = \
 	x16c.m \
 	x17c.m \
 	x18c.m \
-	x19c.m
+	x19c.m \
+	lena.img
+
+EXTRA_DIST = $(examples_octave)
+
+if enable_octave
+
+examples_octavedir = ${prefix}/@DATA_DIR@/../examples/octave
+
+examples_octave_DATA = $(examples_octave)
 
 endif
