@@ -34,6 +34,7 @@
 //---------------------------------------------------------------------------//
 
 package plplot.core;
+import java.io.*;
 
 public class PLStreamc {
 
@@ -43,12 +44,35 @@ public class PLStreamc {
 
 // Static code block to get the PLplot java wrapper dynamic library loaded in.
    static {
+      File libname = null;
+
       try {
-	 System.load( plplot.core.config.libname );
-      } catch (UnsatisfiedLinkError e) {
-	 System.err.println("Native code library failed to load. See the chapter on Dynamic Linking Problems in the SWIG Java documentation for help.\n" + e);
+         String libdir = System.getProperty("plplot.libdir");
+	 libname = new File(libdir+File.separatorChar+plplot.core.config.libname);
+         if (! libname.exists()) {
+            libname = null;
+	 }
+      } catch ( Exception e) {
+      }
+      if (libname == null) {
+	 libname = new File(plplot.core.config.libdir+File.separatorChar+plplot.core.config.libname);
+         if ( ! libname.exists() ) {
+            libname = null;
+	 }
+      }
+      if (libname != null) {
+         try {
+	    System.load( libname.getAbsolutePath() );
+         } catch (UnsatisfiedLinkError e) {
+	    System.err.println("Native code library failed to load. See the chapter on Dynamic Linking Problems in the SWIG Java documentation for help.\n" + e);
+	    System.exit(1);
+         }
+      } 
+      else {
+	 System.err.println("Unable to find native code library.\n");
 	 System.exit(1);
       }
+
    }
 
 // Class data.
