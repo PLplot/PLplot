@@ -325,7 +325,7 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
 
 	    case 'g':  /* Greek font */
 	    case 'G':
-                FT->greek=pls->cfont;
+                FT->greek = FT->cfont;
                 FT_SetFace( pls, 5 );
 
                 FT=(FT_Data *)pls->FT;
