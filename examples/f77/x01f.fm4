@@ -2,6 +2,12 @@ divert(-1)dnl
 !***********************************************************************
 ! $Id$
 ! $Log$
+! Revision 1.2  2000/12/24 19:02:28  airwin
+! For these m4 source files remove DBLE (a poorly chosen name) and replace
+! with REAL_FUN.  REAL_FUN is applied to constants and expressions that are
+! surrounded by parentheses.  It gets replaced by real if single precision and
+! by dble if double precision.
+!
 ! Revision 1.1  2000/12/23 23:19:24  airwin
 ! Double precision handled by m4. These are the m4 source files for the *.f
 ! files that are compiled for examples.  m4 source is fairly close to
@@ -28,7 +34,7 @@ divert(-1)dnl
 !
 ! Plots three simple functions, each function occupies a separate page
 !***********************************************************************
-! Uses implicit_none, REAL, and DBLE from fmacs.m4.
+! Uses implicit_none, REAL, and REAL_FUN from fmacs.m4.
 divert(1)dnl
 include(fmacs.m4)dnl
 
@@ -85,7 +91,7 @@ include(fmacs.m4)dnl
         call plcol(1)
         
       call plenv( 
-     & DBLE (-2.0), DBLE (10.0), DBLE (-0.4), DBLE (1.2), 0, 1 )
+     & REAL_FUN (-2.0), REAL_FUN (10.0), REAL_FUN (-0.4), REAL_FUN (1.2), 0, 1 )
       call plcol(2)
       call pllab( '(x)', 'sin(x)/x', 
      &            '#frPLPLOT Example 1 - Sinc Function' )
@@ -114,19 +120,19 @@ include(fmacs.m4)dnl
 !  Y range from -1.2 to 1.2.
 
       call plvsta()
-      call plwind( DBLE (0.0), DBLE (360.0), DBLE (-1.2), DBLE (1.2) )
+      call plwind( REAL_FUN (0.0), REAL_FUN (360.0), REAL_FUN (-1.2), REAL_FUN (1.2) )
 
 ! Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
       call plcol(1)
-      call plbox( 'bcnst', DBLE (60.0), 2, 'bcnstv', DBLE (0.2), 2 )
+      call plbox( 'bcnst', REAL_FUN (60.0), 2, 'bcnstv', REAL_FUN (0.2), 2 )
 
 ! Superimpose a dashed line grid, with 1.5 mm marks and spaces. With
 !  only a single mark and space element, we do not need arrays
 
       call plstyl( 1, 1500, 1500 )
       call plcol(2)
-      call plbox( 'g', DBLE (30.0), 0, 'g', DBLE (0.2), 0 )
+      call plbox( 'g', REAL_FUN (30.0), 0, 'g', REAL_FUN (0.2), 0 )
       call plstyl( 0, 0, 0 )
 
       call plcol(3)

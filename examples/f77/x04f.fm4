@@ -2,6 +2,12 @@ divert(-1)dnl
 !***********************************************************************
 ! $Id$
 ! $Log$
+! Revision 1.2  2000/12/24 19:02:28  airwin
+! For these m4 source files remove DBLE (a poorly chosen name) and replace
+! with REAL_FUN.  REAL_FUN is applied to constants and expressions that are
+! surrounded by parentheses.  It gets replaced by real if single precision and
+! by dble if double precision.
+!
 ! Revision 1.1  2000/12/23 23:19:24  airwin
 ! Double precision handled by m4. These are the m4 source files for the *.f
 ! files that are compiled for examples.  m4 source is fairly close to
@@ -21,7 +27,7 @@ divert(-1)dnl
 !     =================
 !
 !***********************************************************************
-! Uses implicit_none, REAL, and DBLE from fmacs.m4.
+! Uses implicit_none, REAL, and REAL_FUN from fmacs.m4.
 divert(1)dnl
 include(fmacs.m4)dnl
 ! Illustration of logarithmic axes, and redefinition of window
@@ -35,38 +41,38 @@ include(fmacs.m4)dnl
 
       f0 = 1000.0
       do 1 i=0,100
-        freql(i)=1.0+real(i)/20.0
+        freql(i)=1.0+ REAL_FUN (i)/20.0
         freq=10.0**freql(i)
         ampl(i)=20.0*log10(1.0/sqrt(1.0+(freq/f0)**2))
         phase(i)=-(180.0/3.141592654)*atan(freq/f0)
     1 continue
 
-      call plvpor(DBLE (0.15), DBLE (0.85), DBLE (0.1), DBLE (0.9)) 
-      call plwind(DBLE (1.0), DBLE (6.0), DBLE (-80.0), DBLE (0.0)) 
+      call plvpor(REAL_FUN (0.15), REAL_FUN (0.85), REAL_FUN (0.1), REAL_FUN (0.9)) 
+      call plwind(REAL_FUN (1.0), REAL_FUN (6.0), REAL_FUN (-80.0), REAL_FUN (0.0)) 
       call plcol(1)
-      call plbox('bclnst', DBLE (0.0), 0, 'bnstv', DBLE (0.0), 0)
+      call plbox('bclnst', REAL_FUN (0.0), 0, 'bnstv', REAL_FUN (0.0), 0)
       call plcol(2)
       call plline(101,freql,ampl)
       call plcol(1)
-      call plptex(DBLE (5.0), DBLE (-30.0), DBLE (1.0), DBLE (-20.0),
-     &  DBLE (0.5), '-20 dB/decade')
-      call plwind(DBLE (1.0), DBLE (6.0), DBLE (-100.0), DBLE (0.0)) 
-      call plbox(' ', DBLE (0.0), 0, 'cmstv', DBLE (30.0), 3)
+      call plptex(REAL_FUN (5.0), REAL_FUN (-30.0), REAL_FUN (1.0), REAL_FUN (-20.0),
+     &  REAL_FUN (0.5), '-20 dB/decade')
+      call plwind(REAL_FUN (1.0), REAL_FUN (6.0), REAL_FUN (-100.0), REAL_FUN (0.0)) 
+      call plbox(' ', REAL_FUN (0.0), 0, 'cmstv', REAL_FUN (30.0), 3)
       call plcol(3)
       call plline(101,freql,phase)
 
       call plcol(1)
-      call plmtex('b', DBLE (3.2), DBLE (0.5), DBLE (0.5), 'Frequency')
-      call plmtex('t',DBLE (2.0), DBLE (0.5), DBLE (0.5),
+      call plmtex('b', REAL_FUN (3.2), REAL_FUN (0.5), REAL_FUN (0.5), 'Frequency')
+      call plmtex('t',REAL_FUN (2.0), REAL_FUN (0.5), REAL_FUN (0.5),
      &  'Single Pole Low-Pass Filter')
       call plcol(2)
-      call plmtex('l', DBLE (5.0), DBLE (0.5), DBLE (0.5),
+      call plmtex('l', REAL_FUN (5.0), REAL_FUN (0.5), REAL_FUN (0.5),
      &  'Amplitude (dB)')
       call plcol(3)
 divert(-1)dnl
 !      shift in curly brackets to escape it from m4 machinations.
 divert(1)dnl
-      call plmtex('r', DBLE (5.0), DBLE (0.5), DBLE (0.5),
+      call plmtex('r', REAL_FUN (5.0), REAL_FUN (0.5), REAL_FUN (0.5),
      &  'Phase {shift} (degrees)')
 
       call plend      

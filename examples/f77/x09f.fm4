@@ -2,6 +2,12 @@ divert(-1)dnl
 !***********************************************************************
 ! $Id$
 ! $Log$
+! Revision 1.2  2000/12/24 19:02:28  airwin
+! For these m4 source files remove DBLE (a poorly chosen name) and replace
+! with REAL_FUN.  REAL_FUN is applied to constants and expressions that are
+! surrounded by parentheses.  It gets replaced by real if single precision and
+! by dble if double precision.
+!
 ! Revision 1.1  2000/12/23 23:19:24  airwin
 ! Double precision handled by m4. These are the m4 source files for the *.f
 ! files that are compiled for examples.  m4 source is fairly close to
@@ -21,7 +27,7 @@ divert(-1)dnl
 !     =================
 !
 !***********************************************************************
-! Uses implicit_none, REAL, and DBLE from fmacs.m4.
+! Uses implicit_none, REAL, and REAL_FUN from fmacs.m4.
 divert(1)dnl
 include(fmacs.m4)dnl
 ! Demonstration of contour plotting      
@@ -53,9 +59,9 @@ include(fmacs.m4)dnl
       ymax = tr(4) * (x-1) + tr(5) * (y-1) + tr(6)
 
       do 2 i=1,nptsx
-        xx = (i-1-(nptsx/2))/DBLE (nptsx/2)
+        xx = (i-1-(nptsx/2))/REAL_FUN (nptsx/2)
         do 3 j=1,nptsy
-          yy = (j-1-(nptsy/2))/DBLE (nptsy/2) - 1.0
+          yy = (j-1-(nptsy/2))/REAL_FUN (nptsy/2) - 1.0
           z(i,j) = xx*xx - yy*yy
           w(i,j) = 2*xx*yy
     3   continue
@@ -116,7 +122,7 @@ include(fmacs.m4)dnl
       do 23000 i = 1, nx
          r = i - 0.5
          do 23002 j = 1, ny
-            theta = TWOPI/DBLE (ny) * (j-0.5)
+            theta = TWOPI/REAL_FUN (ny) * (j-0.5)
             xg(i,j) = r * cos(theta)
             yg(i,j) = r * sin(theta)
 23002    continue
@@ -173,7 +179,7 @@ include(fmacs.m4)dnl
 ! Set up contour levels.
 
       nlevel = 20
-      dz = abs(zmax - zmin)/DBLE (nlevel)
+      dz = abs(zmax - zmin)/REAL_FUN (nlevel)
       do 23012 i = 1, nlevel
          clevel(i) = zmin + (i-0.5)*dz
 23012 continue
@@ -210,8 +216,8 @@ include(fmacs.m4)dnl
       ypmin = ymin - abs(ymin)*eps
       ypmax = ymax + abs(ymax)*eps
 
-      call plvpas(DBLE (0.1), DBLE (0.9), DBLE (0.1),
-     &  DBLE (0.9), DBLE (1.0) )
+      call plvpas(REAL_FUN (0.1), REAL_FUN (0.9), REAL_FUN (0.1),
+     &  REAL_FUN (0.9), REAL_FUN (1.0) )
       call plwind(xpmin, xpmax, ypmin, ypmax)
 
       xopt = ' '
@@ -240,7 +246,7 @@ include(fmacs.m4)dnl
 ! Draw boundary.
 
       do 23016 i = 1, NPLT
-         theta = (TWOPI)/(NPLT-1) * DBLE (i-1)
+         theta = (TWOPI)/(NPLT-1) * REAL_FUN (i-1)
          xtm(i) = x0 + rmax * cos(theta)
          ytm(i) = y0 + rmax * sin(theta)
 23016 continue

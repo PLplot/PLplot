@@ -2,6 +2,12 @@ divert(-1)dnl
 !***********************************************************************
 ! $Id$
 ! $Log$
+! Revision 1.2  2000/12/24 19:02:28  airwin
+! For these m4 source files remove DBLE (a poorly chosen name) and replace
+! with REAL_FUN.  REAL_FUN is applied to constants and expressions that are
+! surrounded by parentheses.  It gets replaced by real if single precision and
+! by dble if double precision.
+!
 ! Revision 1.1  2000/12/23 23:19:24  airwin
 ! Double precision handled by m4. These are the m4 source files for the *.f
 ! files that are compiled for examples.  m4 source is fairly close to
@@ -22,7 +28,7 @@ divert(-1)dnl
 !
 !
 !***********************************************************************
-! Uses implicit_none, REAL, and DBLE from fmacs.m4.
+! Uses implicit_none, REAL, and REAL_FUN from fmacs.m4.
 divert(1)dnl
 include(fmacs.m4)dnl
 !     Demonstration program for PLPLOT: Bar chart example. 
@@ -36,8 +42,8 @@ include(fmacs.m4)dnl
 
       call pladv(0)
       call plvsta
-      call plwind( DBLE (1980.), DBLE (1990.), DBLE (0.), DBLE (35.) )
-      call plbox( 'bc', DBLE (1.), 0, 'bcnv', DBLE (10.), 0 )
+      call plwind( REAL_FUN (1980.), REAL_FUN (1990.), REAL_FUN (0.), REAL_FUN (35.) )
+      call plbox( 'bc', REAL_FUN (1.), 0, 'bcnv', REAL_FUN (10.), 0 )
       call plcol(2)
       call pllab( 'Year', 'Widget Sales (millions)', 
      &		  '#frPLPLOT Example 12' )
@@ -56,15 +62,15 @@ include(fmacs.m4)dnl
       do 1 i = 0, 9
          call plcol(i + 1)
          call plpsty(0)
-         call plfbox( DBLE (1980.+i), y0(i+1) )
+         call plfbox( REAL_FUN (1980.+i), y0(i+1) )
          write (string, '(i8)')int(y0(i+1))
          call lalign(string)
-         call plptex( DBLE (1980.+i+.5), y0(i+1)+1.,
-     &     DBLE (1.), DBLE (0.), DBLE (.5), string )
+         call plptex( REAL_FUN (1980.+i+.5), y0(i+1)+1.,
+     &     REAL_FUN (1.), REAL_FUN (0.), REAL_FUN (.5), string )
          write (string, '(i8)')1980+i
          call lalign(string)
-         call plmtex( 'b', DBLE (1.), DBLE ((i+1)*.1-.05),
-     &     DBLE (.5), string )
+         call plmtex( 'b', REAL_FUN (1.), REAL_FUN ((i+1)*.1-.05),
+     &     REAL_FUN (.5), string )
 1     continue
 
 !     Don't forget to call PLEND to finish off!

@@ -2,6 +2,12 @@ divert(-1)dnl
 !***********************************************************************
 ! $Id$
 ! $Log$
+! Revision 1.2  2000/12/24 19:02:28  airwin
+! For these m4 source files remove DBLE (a poorly chosen name) and replace
+! with REAL_FUN.  REAL_FUN is applied to constants and expressions that are
+! surrounded by parentheses.  It gets replaced by real if single precision and
+! by dble if double precision.
+!
 ! Revision 1.1  2000/12/23 23:19:24  airwin
 ! Double precision handled by m4. These are the m4 source files for the *.f
 ! files that are compiled for examples.  m4 source is fairly close to
@@ -21,7 +27,7 @@ divert(-1)dnl
 !     =================
 !
 !***********************************************************************
-! Uses implicit_none, REAL, and DBLE from fmacs.m4.
+! Uses implicit_none, REAL, and REAL_FUN from fmacs.m4.
 divert(1)dnl
 include(fmacs.m4)dnl
 ! Demonstration of 3-d plotting      
@@ -43,8 +49,8 @@ include(fmacs.m4)dnl
      *            '#frPLPLOT Example 8 - Alt=60, Az=160, Opt=3'/
 
       do 1 i=1,npts
-        x(i) = (i-1-(npts/2))/DBLE (npts/2)
-        y(i) = (i-1-(npts/2))/DBLE (npts/2)
+        x(i) = (i-1-(npts/2))/REAL_FUN (npts/2)
+        y(i) = (i-1-(npts/2))/REAL_FUN (npts/2)
     1 continue
 
       do 2 i=1,npts
@@ -60,18 +66,18 @@ include(fmacs.m4)dnl
       do 5 k=1,4
          call pladv(0)
          call plcol(1)
-         call plvpor(DBLE (0.0), DBLE (1.0), DBLE (0.0), DBLE (0.9) )
-         call plwind(DBLE (-1.0), DBLE (1.0), DBLE (-0.9), DBLE (1.1) )
-         call plw3d(DBLE (1.0), DBLE (1.0), DBLE (1.0), DBLE (-1.0),
-     &     DBLE (1.0), DBLE (-1.0), DBLE (1.0), DBLE (-1.0),
-     &     DBLE (1.0), alt(k),az(k))
-         call plbox3('bnstu','x axis', DBLE (0.0), 
-     &     0, 'bnstu', 'y axis', DBLE (0.0), 0,
-     &     'bcdmnstuv','z axis', DBLE (0.0), 0)
+         call plvpor(REAL_FUN (0.0), REAL_FUN (1.0), REAL_FUN (0.0), REAL_FUN (0.9) )
+         call plwind(REAL_FUN (-1.0), REAL_FUN (1.0), REAL_FUN (-0.9), REAL_FUN (1.1) )
+         call plw3d(REAL_FUN (1.0), REAL_FUN (1.0), REAL_FUN (1.0), REAL_FUN (-1.0),
+     &     REAL_FUN (1.0), REAL_FUN (-1.0), REAL_FUN (1.0), REAL_FUN (-1.0),
+     &     REAL_FUN (1.0), alt(k),az(k))
+         call plbox3('bnstu','x axis', REAL_FUN (0.0), 
+     &     0, 'bnstu', 'y axis', REAL_FUN (0.0), 0,
+     &     'bcdmnstuv','z axis', REAL_FUN (0.0), 0)
          call plcol(2)
          call plot3d(x,y,z,npts,npts,opt(k),1,npts)
          call plcol(3)
-         call plmtex('t', DBLE (1.0), DBLE (0.5), DBLE (0.5), title(k))
+         call plmtex('t', REAL_FUN (1.0), REAL_FUN (0.5), REAL_FUN (0.5), title(k))
 
     5 continue
       call plend
