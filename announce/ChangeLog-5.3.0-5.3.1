@@ -332,7 +332,6 @@ Commit from aroach (2004-06-03 05:57 CEST)
 
 Changed the line termination back to LF after accidentally changing
 it to CR/LF yesterday . My Bad - sorry :-(
-----------------------------------------------------------------------
 
   plplot  examples/c/x20c.c  1.15
 
@@ -349,7 +348,6 @@ Commit from aroach (2004-06-02 06:34 CEST)
 ------------------
 
 Changes to get DJGPP working with latest snapshot
-----------------------------------------------------------------------
 
   plplot  sys/dos/djgpp/cf/demos.in  1.2
   plplot  sys/dos/djgpp/cf/dist.in   1.2
@@ -360,7 +358,6 @@ Commit from aroach (2004-06-02 06:30 CEST)
 ------------------
 
 Small change to get x20c working with DJGPP.
-----------------------------------------------------------------------
 
   plplot  examples/c/x20c.c  1.14
 
@@ -386,8 +383,6 @@ another window momentarily on top of it, or minimising it then
 immediately maximising it again, then the text will be redrawn in
 the correct size. Not sure if this is an API, freetype, or wingcc
 problem.
-
-----------------------------------------------------------------------
 
   plplot  drivers/wingcc.c  1.2
 
@@ -698,7 +693,6 @@ Commit from aroach (2004-05-19 05:43 CEST)
 
 Added a quick fix which should stop out of bounds setting of the
 colour map by the freetype driver while it is smoothing.
-----------------------------------------------------------------------
 
   plplot  src/plfreetype.c  1.18
 
@@ -709,7 +703,6 @@ Commit from aroach (2004-05-18 13:47 CEST)
 Fixed up the problem with freetype not printing out all the
 characters above 156. Came down to a prob with unsigned/signed ints,
 and a small shifting of ASCII values to hide it.
-----------------------------------------------------------------------
 
   plplot  src/plfreetype.c  1.17
 
@@ -760,7 +753,6 @@ Commit from aroach (2004-05-17 14:53 CEST)
 
 Small change to plfreetype to get it working with WIN32 platforms
 properly.
-----------------------------------------------------------------------
 
   plplot  src/plfreetype.c  1.16
 
@@ -854,7 +846,7 @@ I prefer it to the black colour so I will leave it that way.
 Commit from rlaboiss (2004-05-14 15:01 CEST)
 --------------------
 
-Added initial implementation of thje x14 example in PErDL, with boilerplates
+Added initial implementation of the x14 example in PerDL, with boilerplates
 for the functions plot1..5.
 
   plplot  examples/perl/x14.pl  1.2
@@ -1028,16 +1020,9 @@ existing writing about the inconsistent install location option.
 Commit from rlaboiss (2004-05-07 18:08 CEST)
 --------------------
 
-
-
-  plplot  doc/docbook/src/plplotdoc.xml.in  1.37
-
-
-Commit from rlaboiss (2004-05-07 18:08 CEST)
---------------------
-
 Added chapter "Deploying programs that use PLplot" by Arjen Markus.
 
+  plplot  doc/docbook/src/plplotdoc.xml.in  1.37
   plplot  doc/docbook/src/Makefile.am    1.59
 + plplot  doc/docbook/src/deploying.xml  1.1
 
@@ -2276,7 +2261,7 @@ file drivers.ac was initially added on branch CFDIR.
 Commit from rlaboiss on branch CFDIR (2004-02-22 19:45 CET)
 ------------------------------------
 
-In configure.ac, do not include cf/drivres.ac, because nested m4_include
+In configure.ac, do not include cf/drivers.ac, because nested m4_include
 cause problems with aclocal.  cf/drivers.ac is removed from the project and
 broken into two smaller parts, cf/drivers-post.ac and cf/drivers-pre.ac.
 
@@ -2332,7 +2317,7 @@ Commit from rlaboiss (2004-02-22 13:24 CET)
 --------------------
 
 Adjustments to allow bootstrapping of PLplot with Automake 1.8.2.  These
-changes should have not impact with Automake 1.7, but I cannot really test,
+changes should have no impact with Automake 1.7, but I cannot really test,
 because I already upgraded to 1.8 and am not willing to revert.  Please test
 and report problems to plplot-devel.
 
@@ -2365,7 +2350,7 @@ Commit from rlaboiss on branch CFDIR (2004-02-21 17:29 CET)
 Final cleanup of configure.ac.  This file is close to release quality now.
 Some of the other cf/*.ac files are still messy, albeit functional.
 
-I finally succeed to get aroung the nested m4_include calls in
+I finally succeeded to get aroung the nested m4_include calls in
 cf/drivers.ac, thanks to definition of the environment variable M4PATH in
 cf/bootstrap.sh.
 
@@ -2425,7 +2410,8 @@ Improve the swig.m4 subset of acinclude.m4.
 
 * Improve the messages.
 
-* Disable swig in a self-documenting way when the version check does not succeed.
+* Disable swig in a self-documenting way when the version check does not
+  succeed. 
 
   plplot  acinclude.m4  1.19
 
@@ -2557,12 +2543,12 @@ Commit from rlaboiss on branch CFDIR (2004-02-19 17:26 CET)
 ------------------------------------
 
 Removed the redefinitions of AC_CACHE_LOAD and AC_CACHE_SAVE macros.  The
-purpose of these redefinitions is not clear to, probably to avoid problems
-with cached variable not being overridden.  However, at least for Autoconf
-2.59, making AC_CACHE_LOAD and AC_CACHE_SAVE ineffective is a big mistake,
-because it prevents users to use cache files through the configure option
---cache-file (something really useful, you should learn about that).  The
-default value for that option is /dev/null, so that no caching is done
+purpose of these redefinitions is not clear to me, it is probably to avoid
+problems with cached variable not being overridden.  However, at least for
+Autoconf 2.59, making AC_CACHE_LOAD and AC_CACHE_SAVE ineffective is a big
+mistake, because it prevents users to use cache files through the configure
+option --cache-file (something really useful, you should learn about that).
+The default value for that option is /dev/null, so that no caching is done
 without explicitly asking for it.
 
   plplot  cf/acinclude.m4  1.1.2.11
@@ -2913,11 +2899,11 @@ Boy, this legacy code is badly convoluted!
 Commit from rlaboiss on branch CFDIR (2004-02-16 16:30 CET)
 ------------------------------------
 
-This is a blind try to break configure.ac, sysloca.in,a nd docbook.m4 into
+This is a blind try to break configure.ac, sysloc.in, and docbook.m4 into
 smaller pieces.
 
-GD library configurationis temporarily broken (this issue will be
-investigated later) and the jave, tcl, and python stuff accross configure.ac
+GD library configuration is temporarily broken (this issue will be
+investigated later) and the java, tcl, and python stuff accross configure.ac
 and sysloc.in are quite messy.  I am living like that for now.
 
 + plplot  cf/docbook.m4     1.1.2.3
@@ -3594,41 +3580,6 @@ variable was introduced in bindings/python/Makefile.am, such that copies of
 the modules with the correct names are created in bindings/python/.libs
 (similarly to what is done in install-exec-hook, but also strip "module"
 from the file names.)
-
-Index: bindings/python/Makefile.am
-RCS file: /cvsroot/plplot/plplot/bindings/python/Makefile.am,v
-retrieving revision 1.26
-diff -u -r1.26 Makefile.am
---- bindings/python/Makefile.am	10 Feb 2004 17:36:14 -0000	1.26
-+++ bindings/python/Makefile.am	12 Feb 2004 16:26:57 -0000
-@@ -101,6 +101,14 @@
- ourexecpython_DATA = plplot.py plplotc.py
- ourexecpython_LTLIBRARIES = UNDERSCORE_plplotcmodule.la plplot_widgetmodule.la
-
-+check_DATA = .libs/check-stamp
-+.libs/check-stamp:
-+	( cd .libs ; \
-+	  for f in UNDERSCORE_plplot* ; do \
-+             cp $$f `echo $$f | sed s/UNDERSCORE// | sed s/module//` ; \
-+          done ; \
-+	  touch check-stamp )
-+
- # enable_python
- endif
-
-Index: test/test_python.sh.in
-RCS file: /cvsroot/plplot/plplot/test/test_python.sh.in,v
-retrieving revision 1.3
-diff -u -r1.3 test_python.sh.in
---- test/test_python.sh.in	12 Feb 2004 08:47:28 -0000	1.3
-+++ test/test_python.sh.in	12 Feb 2004 16:26:57 -0000
-@@ -21,5 +21,5 @@
-
- # This is called from plplot-test.sh with $pythondir, $device, $dsuffix,
- # and $options defined.
--export PYTHONPATH=$EXAMPLES_DIR/../bindings/python
-+export PYTHONPATH=$EXAMPLES_DIR/../bindings/python:$EXAMPLES_DIR/../bindings/python/.libs
- @PYTHON@ $pythondir/pythondemos.py -dev $device -o pythondemos.$dsuffix $options
 
   plplot  bindings/python/Makefile.am  1.27
   plplot  test/test_python.sh.in       1.4
