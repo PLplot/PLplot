@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1993/12/09 20:33:41  mjl
+ * Revision 1.9  1993/12/09 21:19:26  mjl
+ * Changed prototype for tk_toplevel().
+ *
+ * Revision 1.8  1993/12/09  20:33:41  mjl
  * Eliminated unneccessary system header file inclusions.
  *
  * Revision 1.7  1993/12/08  06:18:08  mjl
@@ -34,10 +37,6 @@
 #include <math.h>
 #include <ctype.h>
 
-/* Macro settings */
-
-#define NOMAP		0x01		/* Do not map toplevel window */
-
 /* This data structure holds all state info for the rendering code */
 
 typedef struct {
@@ -60,7 +59,7 @@ typedef struct {
 
 int
 tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
-	    char *display, char *basename, char *classname, int options);
+	    char *display, char *basename, char *classname);
 
 /* Run a script */
 
