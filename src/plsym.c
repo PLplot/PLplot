@@ -50,7 +50,7 @@ static short fontloaded = 0;
 #define PLMAXSTR	300
 #define STLEN		250
 
-static char font_types[] = "nris";
+static const char font_types[] = "nris";
 
 static short symbol_buffer[PLMAXSTR];
 static signed char xygrid[STLEN];
@@ -915,7 +915,7 @@ pldeco(short int **symbol, PLINT *length, const char *text)
 \*--------------------------------------------------------------------------*/
 
 PLINT
-plP_strpos(char *str, int chr)
+plP_strpos(const char *str, int chr)
 {
     char *temp;
 

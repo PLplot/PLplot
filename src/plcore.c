@@ -373,7 +373,7 @@ plP_fill(short *x, short *y, PLINT npts)
  *    and probably should make more checks, but it works.
 \*--------------------------------------------------------------------------*/
 
-int text2num( char *text, char end, unsigned int *num)
+int text2num( const char *text, char end, unsigned int *num)
 {
   int base=10;
   unsigned short i=0;
@@ -487,6 +487,13 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 
 
                 if (skip==0) unicode_buffer[j]=string[i];
+		/* if skip != 0 and 
+		 * unicode_buffer[j] corresponds to the escape character
+		 * must unescape it by appending one more.  This will probably
+		 * always be necessary since it is unlikely unicode_buffer
+		 * will ever be free of real escape characters.
+		 */
+		else if (unicode_buffer[j]==esc) unicode_buffer[++j]=esc;
                 j++;
               }
               args.unicode_array_len=j; /* Much easier to set the length than work it out later :-) */
