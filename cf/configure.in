@@ -552,9 +552,6 @@ fi
 if test -z "$TCL_DIR"; then
     TCL_DIR=$prefix/tcl
 fi
-if test -z "$PYTHON_DIR"; then
-    PYTHON_DIR=$prefix/python
-fi
 if test -z "$DOC_DIR"; then
     DOC_DIR=$prefix/doc
 fi
@@ -575,7 +572,6 @@ AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR")
 AC_SUBST(LIB_DIR)
 AC_SUBST(BIN_DIR)
 AC_SUBST(TCL_DIR)
-AC_SUBST(PYTHON_DIR)
 AC_SUBST(DOC_DIR)
 AC_SUBST(INFO_DIR)
 AC_SUBST(INCLUDE_DIR)
