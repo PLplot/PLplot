@@ -2,8 +2,54 @@
 \c Geoffrey Furnish
 \c 9 May 1994
 
-\node Extended WISH, API, Advanced Use, Top
+\node Extended WISH, API, Drivers, Top
 \chapter{Building an Extended WISH}
+\cindex{wish}
+\cindex{Tcl Extensions}
 
-This explains how to make an extended WISH.
+Beginning with PLplot 5.0, a new and powerful paradigm for interaction
+with PLplot is introduced.  This new paradigm consists of an
+integration of PLplot with a powerful scripting language (Tcl), and
+extensions to that language to support X Windows interface development
+(Tk) and object oriented programming ([incr Tcl]).  Taken together,
+these four software systems (Tcl/Tk/itcl/PLplot) comprise a powerful
+environment for the rapid prototyping and development of
+sophisticated, flexible, X Windows applications with access to the
+PLplot API.  Yet that is only the beginning--Tcl was born to be
+extended.  The true power of this paradigm is achieved when you add
+your own, powerful, application specific extensions to the above
+quartet, thus creating an environment for the development of wholly
+new applications with only a few keystrokes of shell programming ...
 
+\begin{menu}
+* Tcl Intro::		The Tool Command Language
+* Tk Intro::		User Interface Programming with Scripts
+* Itcl Intro::		All the above with Object Orientation
+* PLplot Extensions::	Using PLplot from Tcl.
+* Custom Extensions::	Making your own WISH
+\end{menu}
+
+\node Tcl Intro, Tk Intro, Extended WISH, Extended WISH
+\section{Introduction to Tcl}
+
+Tcl is cool.  Ask JO.
+
+\node Tk Intro, Itcl Intro, Tcl Intro, Extended WISH
+\section{Introduction to Tk}
+
+Tk is hot.  Ask JO.
+
+\node Itcl Intro, PLplot Extensions, Tk Intro, Extended WISH
+\section{Introduction to [incr Tcl]}
+
+itcl is awesome, ask MM.
+
+\node PLplot Extensions, Custom Extensions, Itcl Intro, Extended WISH
+\section{PLplot Extensions to Tcl}
+
+It's amazing, ask us.
+
+\node Custom Extensions, , PLplot Extensions, Extended WISH
+\section{Custom Extensions to Tcl}
+
+It's gonna be great, go wild.
