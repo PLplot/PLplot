@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.44  1995/04/12 08:23:18  mjl
+ * Revision 1.45  1995/04/12 21:15:25  mjl
+ * Made the plsc->plwin array circular so that if we run out of windows we just
+ * start over from 0.  Also, plTranslateCursor now starts with the most
+ * recently created windows, rather than the oldest, since newer windows are
+ * more likely to be relevant.  Contributed by Radey Shouman.
+ *
+ * Revision 1.44  1995/04/12  08:23:18  mjl
  * Moved font-related code into plsym.c.
  *
  * Revision 1.43  1995/03/17  00:07:33  mjl
@@ -208,12 +214,7 @@ plP_swin(PLWindow *plwin)
     if (plsc->plbuf_write)
 	plbuf_esc(plsc, PLESC_SWIN, (void *) plwin);
 
-    if (plsc->nplwin >= PL_MAXWINDOWS) {
-	plabort("Too many windows/page to keep track of\n");
-	return;
-    }
-
-    w = &plsc->plwin[plsc->nplwin++];
+    w = &plsc->plwin[plsc->nplwin++ % PL_MAXWINDOWS];
 
     w->dxmi = plwin->dxmi;
     w->dxma = plwin->dxma;

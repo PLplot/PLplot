@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1995/03/17 00:13:17  mjl
+ * Revision 1.15  1995/04/12 21:15:26  mjl
+ * Made the plsc->plwin array circular so that if we run out of windows we just
+ * start over from 0.  Also, plTranslateCursor now starts with the most
+ * recently created windows, rather than the oldest, since newer windows are
+ * more likely to be relevant.  Contributed by Radey Shouman.
+ *
+ * Revision 1.14  1995/03/17  00:13:17  mjl
  * plGetCursor() changed to take a (PLGraphicsIn *).  Now this function is
  * just a front-end.  plTranslateCursor() added to do the work of looking up
  * the world coordinates.  Eliminated plClrCWindows().
@@ -235,12 +241,14 @@ int
 plTranslateCursor(PLGraphicsIn *plg)
 {
     int i;
+    int lastwin = plsc->nplwin - 1;
+    int firstwin = MAX(plsc->nplwin - PL_MAXWINDOWS, 0);
     PLWindow *w;
 
     plg->wX = 0;
     plg->wY = 0;
-    for (i = 0; i < plsc->nplwin; i++) {
-	w = &plsc->plwin[i];
+    for (i = lastwin; i >= firstwin; i--) {
+	w = &plsc->plwin[i % PL_MAXWINDOWS];
 	if ((plg->dX >= w->dxmi) &&
 	    (plg->dX <= w->dxma) &&
 	    (plg->dY >= w->dymi) &&
