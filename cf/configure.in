@@ -113,6 +113,7 @@ define(PL_ADD_DRIVER,[dnl
 MY_ARG_ENABLE($1, builtin(format,
 [  --enable-%-14s enable %s device driver ($enable_$1)], $1, $1))
 if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes"; then
+    enable_$1="yes"
     AC_DEFINE(PLD_$1)
     DEVICES="$DEVICES $1"
 fi
