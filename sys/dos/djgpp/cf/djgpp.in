@@ -146,9 +146,9 @@ linkmain:
 	copy ..\cf\*.h .
 
 	copy ..\cf\plconfig.in .\plconfig.h
-	echo >>.\plconfig.h "#define VERSION \"$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)\""
-	echo >>.\plconfig.h "#endif"
-	echo >>.\plconfig.h "#endif	/* __PLCONFIG_H__ */"
+	echo >>.\plconfig.h #define VERSION "$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)"
+	echo >>.\plconfig.h #endif
+	echo >>.\plconfig.h #endif	/* __PLCONFIG_H__ */
 
 	utod *.c
 	utod *.h
@@ -176,9 +176,9 @@ movemain:
 	copy ..\cf\*.h .
 
 	copy ..\cf\plconfig.in .\plconfig.h
-	echo >>.\plconfig.h "#define VERSION \"$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)\""
-	echo >>.\plconfig.h "#endif"
-	echo >>.\plconfig.h "#endif	/* __PLCONFIG_H__ */"
+	echo >>.\plconfig.h #define VERSION "$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)"
+	echo >>.\plconfig.h #endif
+	echo >>.\plconfig.h #endif	/* __PLCONFIG_H__ */
 
 	utod *.c
 	utod *.h

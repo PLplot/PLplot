@@ -17,8 +17,8 @@ SHLIB_BUILD	= @SHLIB_BUILD@
 
 # Flags and other miscellanea
 
-CC_FLAGS	:= $(CC_FLAGS) -c -O -m486 -I.
-CC_FLAGS_DEMOS	= -c -O -m486 -I.
+CC_FLAGS	:= $(CC_FLAGS) -c -O -I.
+CC_FLAGS_DEMOS	= -c -O -I.
 SHLIB_CCFLAGS	= @SHLIB_CCFLAGS@
 SHLIB_F77FLAGS	= @SHLIB_F77FLAGS@
 SHLIB_SUFFIX	= @SHLIB_SUFFIX@
@@ -26,8 +26,8 @@ SALIB_SUFFIX	= @SALIB_SUFFIX@
 
 # Hacks to deal with optimizer failures.
 
-CC_FLAGS_SCCONT = -c -O -m486 -I.
-CC_FLAGS_XWIN	= -c -O -m486 -I.
+CC_FLAGS_SCCONT = -c -O -I.
+CC_FLAGS_XWIN	= -c -O -I.
 
 # Dependent directories
 
