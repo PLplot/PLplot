@@ -80,6 +80,7 @@ EXTRA_DIST = \
 	FAQ \
 	PROBLEMS \
 	README.developers \
+	README.release \
 	SERVICE \
 	TODO.AM-LT \
 	ToDo
