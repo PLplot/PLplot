@@ -1,3 +1,8 @@
+# $Id$
+# $Log$
+# Revision 1.4  1994/05/26 19:23:20  mjl
+# Inserted missing CVS Id and Log fields.
+#
 #----------------------------------------------------------------------------
 # help_keys w
 #
