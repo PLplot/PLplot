@@ -330,7 +330,7 @@ GDLIBS=""
 GDINCS=""
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     ADD_TO_INCS($GDINCDIR, GDINCS, INCPATH)
-    if test "$enable_dynamic_drivers" = "yes"; then
+    if test "$enable_dyndrivers" = "yes"; then
 	ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, GDLIBS, LIBPATH)
 	ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, GDLIBS, LIBPATH)
 	ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, GDLIBS, LIBPATH)
@@ -436,7 +436,7 @@ CDLIBS=""
 CDINCS=""
 if test "$enable_cgm" = "yes"; then
     ADD_TO_INCS($CDINCDIR, CDINCS, INCPATH)
-    if test "$enable_dynamic_drivers" = "yes"; then
+    if test "$enable_dyndrivers" = "yes"; then
 	ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBS, LIBPATH)
     fi
 fi
@@ -704,7 +704,7 @@ if test "$enable_itk" = "yes"; then
 fi
 if test "$enable_tk" = "yes"; then
 #jc: uncomment the if/fi when tk/xwin becomes dyndrv
-#    if test "$enable_dynamic_drivers" != "yes"; then
+#    if test "$enable_dyndrivers" != "yes"; then
 	ADD_TO_LIBS($TKLIBDIR, $TKLIBSTR, LIBS, LIBPATH)
 #    fi
 fi
@@ -713,19 +713,19 @@ if test "$enable_itcl" = "yes"; then
 fi
 if test "$enable_tcl" = "yes"; then
 #jc: uncomment the if/fi when tk/xwin becomes dyndrv
-#    if test "$enable_dynamic_drivers" != "yes"; then
+#    if test "$enable_dyndrivers" != "yes"; then
 	ADD_TO_LIBS($TCLLIBDIR, $TCLLIBSTR, LIBS, LIBPATH)
 #    fi
 fi
 if test "$enable_xwin" = "yes"; then
 #jc: uncomment the if/fi when tk/xwin becomes dyndrv
-#    if test "$enable_dynamic_drivers" != "yes"; then
+#    if test "$enable_dyndrivers" != "yes"; then
 	ADD_TO_LIBS($XLIBDIR, $XLIBSTR, LIBS, LIBPATH)
 #    fi
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
-    if test "$enable_dynamic_drivers" != "yes"; then
+    if test "$enable_dyndrivers" != "yes"; then
 	ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, LIBS, LIBPATH)
 	ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, LIBS, LIBPATH)
 	ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, LIBS, LIBPATH)
@@ -734,7 +734,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 fi
 
 if test "$enable_cgm" = "yes"; then
-    if test "$enable_dynamic_drivers" != "yes"; then
+    if test "$enable_dyndrivers" != "yes"; then
 	ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, LIBS, LIBPATH)
     fi
 fi
@@ -746,7 +746,7 @@ fi
 TKPATH="" 
 TKLIBS=""
 if test "$has_x11" = "yes" -a "$has_tcl" = "yes" -a "$has_tk" = "yes"; then
-    if test "$enable_dynamic_drivers" = "yes"; then
+    if test "$enable_dyndrivers" = "yes"; then
 	ADD_TO_LIBS($TCLLIBDIR, $TCLLIBSTR, TKLIBS, TKPATH)
 	ADD_TO_LIBS($TKLIBDIR, $TKLIBSTR, TKLIBS, TKPATH)
 	ADD_TO_LIBS($XLIBDIR, $XLIBSTR, TKLIBS, TKPATH)
@@ -773,7 +773,7 @@ if test "$enable_gnome" = "yes"; then
   if test "$enable_gnome" = "yes"; then
 
     # Include Gtk and Gnome libs
-    if test "$enable_dynamic_drivers" != "yes"; then
+    if test "$enable_dyndrivers" != "yes"; then
 	for i in $GTK_LIBS $GNOME_LIBDIR $GNOMEUI_LIBS ; do
 	    case $i in 
 	    -L* )

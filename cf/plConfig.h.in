@@ -68,7 +68,7 @@
 #undef PL_DOUBLE
 
 /* Define if you will be using dynloadable drivers */
-#undef ENABLE_DYNAMIC_DRIVERS
+#undef ENABLE_DYNDRIVERS
 
 /* Define if you want to force the X11 visual to the default */
 #undef USE_DEFAULT_VISUAL

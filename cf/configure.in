@@ -85,7 +85,7 @@ with_rpath=yes
 with_nobraindead=no
 
 enable_drivers=yes
-enable_dynamic_drivers=no
+enable_dyndrivers=no
 enable_f77=yes
 enable_cxx=yes
 enable_python=yes
@@ -172,7 +172,7 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 #    echo "[PL_device_driver_pair_list] = PL_device_driver_pair_list"
 
     driver_is_dynamic=0
-    if test "$enable_dynamic_drivers" = "yes"; then
+    if test "$enable_dyndrivers" = "yes"; then
 	for drv in PL_DYNAMIC_DRIVER_LIST;
 	    do
 	    if test "$drv" = "$1"; then
@@ -405,8 +405,8 @@ MY_ARG_WITH(nobraindead)
 MY_ARG_ENABLE(drivers,
   [  --enable-drivers        enable all device drivers ($enable_drivers)])
 
-MY_ARG_ENABLE(dynamic-drivers,
-  [  --enable-dynamic-drivers    enable dynamic loading of drivers ($enable_dynamic_drivers)])
+MY_ARG_ENABLE(dyndrivers,
+  [  --enable-dyndrivers     enable dynamic loading of drivers ($enable_dyndrivers)])
 
 MY_ARG_ENABLE(f77,
   [  --enable-f77            compile Fortran-77 interface code ($enable_f77)])
@@ -455,8 +455,8 @@ dnl> PL_DRIVERS(PL_DRIVER_LIST)
 # Set flag to enable searching for dynloadable drivers, if appropriate.
 # ----------------------------------------------------------------------------
 
-if test "$enable_dynamic_drivers" = "yes"; then
-    AC_DEFINE(ENABLE_DYNAMIC_DRIVERS)
+if test "$enable_dyndrivers" = "yes"; then
+    AC_DEFINE(ENABLE_DYNDRIVERS)
 fi
 
 # ----------------------------------------------------------------------------
@@ -616,7 +616,7 @@ AC_SUBST(enable_java)
 AC_SUBST(enable_tcl)
 AC_SUBST(enable_octave)
 
-if test "$enable_dynamic_drivers" = "yes"; then
+if test "$enable_dyndrivers" = "yes"; then
     cat $srcdir/cf/dyndrv.in    >>Makefile.in
 fi
 if test "$enable_cxx" = "yes"; then
@@ -787,7 +787,7 @@ AC_SUBST_STRIP(SHARED,prefix)
 # Now build the dynamic driver database.
 # ----------------------------------------------------------------------------
 
-if test "$enable_dynamic_drivers" = "yes"; then
+if test "$enable_dyndrivers" = "yes"; then
 
     AC_MSG_RESULT(creating drivers/drivers.db)
 
