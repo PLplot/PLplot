@@ -3,6 +3,7 @@
 ### Process this file with automake to produce Makefile.in
 ###
 # Copyright (C) 2002 Alan W. Irwin
+# Copyright (C) 2003 Rafael Laboissiere
 #
 #This file is part of PLplot.
 #
@@ -21,8 +22,7 @@
 
 AM_CPPFLAGS = $(INCLTDL)
 examples_cdir = ${prefix}/$(DATA_DIR)/../examples/c
-examples_c_DATA = \
-	Makefile.examples \
+sources = \
 	plcdemos.h \
 	lena.pgm \
 	tutor.c \
@@ -47,6 +47,9 @@ examples_c_DATA = \
 	x19c.c \
 	x20c.c \
 	x21c.c
+examples_c_DATA = \
+	$(sources) \
+	Makefile.examples
 
 install-data-hook:
 	( cd $(DESTDIR)/$(examples_cdir) ; mv Makefile.examples Makefile )
@@ -78,4 +81,4 @@ check_PROGRAMS = \
 
 LDADD = $(libplplot)
 
-EXTRA_DIST = $(examples_c_DATA)
+EXTRA_DIST = $(sources) Makefile.examples.in
