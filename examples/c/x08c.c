@@ -26,7 +26,7 @@ static char *title[4] =
  * Initializes color map 1 in HLS space.
  * Basic grayscale variation from dark to light.
  * An interesting variation on this:
- *	l[1] = 0.5; s[1] = 1.0
+ *	s[1] = 1.0
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -40,7 +40,7 @@ cmap1_init(void)
     h[0] = 0.0;		/* hue -- low: red (arbitrary if s=0) */
     h[1] = 0.0;		/* hue -- high: red (arbitrary if s=0) */
 
-    l[0] = 0.0;		/* lightness -- low: dark */
+    l[0] = 0.5;		/* lightness -- low: dark */
     l[1] = 1.0;		/* lightness -- high: light */
 
     s[0] = 0.0;		/* minimum saturation */
