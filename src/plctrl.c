@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1994/09/27 22:07:48  mjl
+ * Revision 1.28  1995/01/09 22:13:24  mjl
+ * Function plscol0 now sets pls->nobg if a negative number is specified for
+ * the background color (first cmap0 entry).  Interpolation of control points
+ * in cmap1 space (between n and n+1th control points) now goes around the
+ * "back" side in hue (hue = 0) if cmap1cp[n].rev is set.  There are some
+ * smooth color maps that are unattainable without this capability.
+ *
+ * Revision 1.27  1994/09/27  22:07:48  mjl
  * Ifdef inserted to handle pathnames under VMS.
  *
  * Revision 1.26  1994/09/02  05:09:42  mjl
@@ -200,6 +207,10 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 {
     if (icol0 < 0 || icol0 > 15) {
 	plabort("plscol0: Illegal color table value");
+	return;
+    }
+    if ((icol0 == 0) && (r < 0 || g < 0 || b < 0)) {
+	plsc->nobg = 1;
 	return;
     }
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
@@ -473,13 +484,30 @@ void
 plcmap1_calc(void)
 {
     int i, n;
-    PLFLT icmap1, delta;
+    PLFLT icmap1, delta, dp, dh, dl, ds;
     PLFLT h, l, s, r, g, b;
+
+/* Loop over all control point pairs */
 
     for (n = 0; n < plsc->ncp1-1; n++) {
 
 	if ( plsc->cmap1cp[n].p == plsc->cmap1cp[n+1].p )
 	    continue;
+
+    /* Differences in p, h, l, s between ctrl pts */
+
+	dp = plsc->cmap1cp[n+1].p - plsc->cmap1cp[n].p;
+	dh = plsc->cmap1cp[n+1].h - plsc->cmap1cp[n].h;
+	dl = plsc->cmap1cp[n+1].l - plsc->cmap1cp[n].l;
+	ds = plsc->cmap1cp[n+1].s - plsc->cmap1cp[n].s;
+
+    /* Adjust dh if we are to go around "the back side" */
+
+	if (plsc->cmap1cp[n].rev)
+	    dh = (dh > 0) ? dh-360 : dh+360;
+
+    /* Loop over all color cells.  Only interested in cells located (in */
+    /* cmap1 space)  between n_th and n+1_th control points */
 
 	for (i = 0; i < plsc->ncol1; i++) {
 	    icmap1 = (double) i / (plsc->ncol1 - 1.0);
@@ -487,15 +515,21 @@ plcmap1_calc(void)
 		 (icmap1 > plsc->cmap1cp[n+1].p) )
 		continue;
 
-	    delta = (icmap1 - plsc->cmap1cp[n].p) /
-		(plsc->cmap1cp[n+1].p - plsc->cmap1cp[n].p);
+	/* Interpolate based on position of color cell in cmap1 space */
 
-	    h = plsc->cmap1cp[n].h +
-		(plsc->cmap1cp[n+1].h - plsc->cmap1cp[n].h) * delta;
-	    l = plsc->cmap1cp[n].l +
-		(plsc->cmap1cp[n+1].l - plsc->cmap1cp[n].l) * delta;
-	    s = plsc->cmap1cp[n].s +
-		(plsc->cmap1cp[n+1].s - plsc->cmap1cp[n].s) * delta;
+	    delta = (icmap1 - plsc->cmap1cp[n].p) / dp;
+
+	/* Linearly interpolate to get color cell h, l, s values */
+
+	    h = plsc->cmap1cp[n].h + dh * delta;
+	    l = plsc->cmap1cp[n].l + dl * delta;
+	    s = plsc->cmap1cp[n].s + ds * delta;
+
+	    while (h >= 360.)
+		h -= 360.;
+
+	    while (h < 0.)
+		h += 360.;
 
 	    plHLS_RGB(h, l, s, &r, &g, &b);
 
