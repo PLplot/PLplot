@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/07/20 06:06:12  mjl
+ * Revision 1.4  1994/07/21 10:12:10  mjl
+ * Changed plpoin3 to use fast point draw (code=-1).
+ *
+ * Revision 1.3  1994/07/20  06:06:12  mjl
  * Minor changes to make it easier to play with the altitude/azimuth
  * settings.  Changed to the new API calls for the 3d functions.
  *
@@ -36,7 +39,7 @@ void test_poly();
  * viewing options in each plot.
 \*----------------------------------------------------------------------*/
 
-#define NPTS 500
+#define NPTS 1000
 #define PI 3.1415927
 
 int
@@ -91,7 +94,7 @@ main(int argc, char *argv[])
 	if (opt[k])
 	    plline3( NPTS, x, y, z );
 	else
-	    plpoin3( NPTS, x, y, z, 1 );
+	    plpoin3( NPTS, x, y, z, -1 );
 
 	plcol(3);
 	sprintf(title, "#frPLplot Example 18 - Alt=%.0f, Az=%.0f",
