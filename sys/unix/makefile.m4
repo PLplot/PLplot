@@ -90,6 +90,9 @@ define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
 #    redirection:
 #	m4 -DAMIGA <makefile.m4 >makefile
 #
+# 4. Do not bother with the Motif driver!  It is in the developmental stages
+#    only, and in fact is currently broken.
+#
 # Other notes:
 #
 # 1. The font locating code looks in the following places for the fonts:
