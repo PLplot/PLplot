@@ -1596,6 +1596,7 @@ plInitDispatchTable()
 
 #ifdef ENABLE_DYNDRIVERS
     char buf[300];
+    char* drvdir;
     char *devnam, *devdesc, *devtype, *driver, *tag, *seqstr;
     int seq;
     int i, j, driver_found, done=0;
@@ -1608,8 +1609,14 @@ plInitDispatchTable()
    will be stored */
     fp_drvdb = tmpfile ();
 
-/* Open the drivers directory in DATA_DIR */
-    dp_drvdir = opendir (DATA_DIR "/" DRV_DIR);
+/* Open the drivers directory in PLPLOT_DRV_DIR or DATA_DIR/DRV_DIR */
+    drvdir = getenv ("PLPLOT_DRV_DIR");
+    if (drvdir == NULL)
+      drvdir = DATA_DIR "/" DRV_DIR;
+    printf("Got it: %s\n", drvdir);
+    dp_drvdir = opendir (drvdir);
+    if (dp_drvdir == NULL)
+      plabort ("plInitDispatchTable: Could not open drivers directory");
 
 /* Loop over each entry in the drivers directory */
     while ((entry = readdir (dp_drvdir)) != NULL) 
@@ -1624,9 +1631,15 @@ plInitDispatchTable()
             FILE* fd;
 	 
 /* Open the driver's info file */
-            sprintf (path, "%s/%s/%s", DATA_DIR, DRV_DIR, name);
+            sprintf (path, "%s/%s", drvdir, name);
             fd = fopen (path, "r");
-	    
+            if (fd == NULL) {
+	        sprintf (buf,
+                    "plInitDispatchTable: Could not open driver info file %s",
+		    name);
+	        plabort (buf);
+	    }
+
 /* Each line in the <driver>.rc file corresponds to a specicfic device.
  * Write it to the drivers db file and take care of leading newline 
  * character */
