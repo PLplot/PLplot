@@ -18,8 +18,14 @@ static void flushbuffer(PLStream *);
 #define FIGX	297 /* portrait A4 mm */
 #define FIGY    210
 #define DPI	1200
+
+/* it looks like xfig-3.2.3c has a bug. A4 papersize is 297x210 mm,
+   and at 1200 dpi this gives 14031x9921 dots. In a file saved from
+   xfig, with a box of A4 size, the reported sizes are 13365x9450 */
+
 #define BSIZE	25
-#define XFIG_COLBASE 33 /* xfig first user color */
+#define XFIG_COLBASE 33 /* xfig first user color, plplot colormap0[0],
+                           the background color */
 
 static short *buffptr, bufflen;
 static short count;
@@ -43,7 +49,7 @@ void
 plD_init_xfig(PLStream *pls)
 {
     PLDev *dev;
-    int i;
+    int t;
 
 /* Initialize family file info */
 
@@ -73,7 +79,7 @@ plD_init_xfig(PLStream *pls)
       pls->color = 1;         /* Is a color device */
 
     plP_setpxl(dev->xscale_dev, dev->xscale_dev); /* dpmm -- dots per mm */
-    plP_setphy(0, FIGX * dev->xscale_dev, 0, FIGY * dev->xscale_dev); /* physical dimension in mm */ 
+    plP_setphy(0, FIGX * dev->xscale_dev, 0, FIGY * dev->yscale_dev); /* physical dimension in mm */ 
 
 /* Write out header */
 
@@ -89,13 +95,13 @@ plD_init_xfig(PLStream *pls)
     fprintf(pls->OutFile, "%d 2\n", DPI);
 
     /* user defined colors, for colormap0 */
-    cmap0_ncol = pls->ncol0;
+    cmap0_ncol = 2 * pls->ncol0; /* allow for a maximum of 2x the default cmap0 entries */
     cmap0_pos = ftell(pls->OutFile);
     stcmap0(pls);
 
     /* user defined colors, for colormap1 */
-    cmap1_pos = ftell(pls->OutFile);
-    cmap1_ncol = pls->ncol1;
+    cmap1_ncol = 2 * pls->ncol1; /* allow for a maximum of  2x the default cmap1 entries */
+    cmap1_pos = ftell(pls->OutFile); 
     stcmap1(pls);
 
     bufflen = 2 * BSIZE;
@@ -120,9 +126,14 @@ stcmap0(PLStream *pls)
 	exit(0);
       }
 
+      /* fill the colormap */
       for (i=0; i<pls->ncol0; i++)
 	fprintf(pls->OutFile,"0 %d #%.2x%.2x%.2x\n", i+XFIG_COLBASE,
 		pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
+
+      /* fill the nonspecified entries colormap */
+      for (i=pls->ncol0; i<cmap0_ncol; i++)
+	fprintf(pls->OutFile,"0 %d #000000\n", i+XFIG_COLBASE);
 
       if (cur_pos != cmap0_pos)
 	fseek(pls->OutFile, cur_pos, SEEK_SET);
@@ -144,9 +155,14 @@ stcmap1(PLStream *pls)
 	exit(0);
       }
 
+      /* fill the colormap */
       for (i=0; i<pls->ncol1; i++)
 	fprintf(pls->OutFile,"0 %d #%.2x%.2x%.2x\n", i+XFIG_COLBASE+cmap0_ncol,
 		pls->cmap1[i].r, pls->cmap1[i].g, pls->cmap1[i].b);
+
+      /* fill the nonspecified entries colormap */
+      for (i=pls->ncol1; i<cmap1_ncol; i++)
+	fprintf(pls->OutFile,"0 %d #000000\n", i+XFIG_COLBASE+cmap0_ncol);
 
       if (cur_pos != cmap1_pos)
 	fseek(pls->OutFile, cur_pos, SEEK_SET);
@@ -253,6 +269,18 @@ plD_bop_xfig(PLStream *pls)
     pls->page++;
 
     offset += offset_inc;
+    flushbuffer(pls);
+    
+    /* create background */
+    curcol = XFIG_COLBASE; /* colormap entry 0, background */
+    fprintf(pls->OutFile, "2 1 0 1 %d %d 50 0 20 0.0 0 0 -1 0 0 5\n", curcol, curcol );
+    fprintf(pls->OutFile, "%d %d %d %d %d %d %d %d %d %d\n",
+	    0, offset,
+	    0, (int) (FIGY * dev->yscale_dev) + offset,
+	    (int) (FIGX * dev->xscale_dev), (int) (FIGY * dev->yscale_dev) + offset,
+	    (int) (FIGX * dev->xscale_dev), offset,
+	    0, offset);
+    
 }
 
 /*--------------------------------------------------------------------------*\
