@@ -1,12 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.13  1993/11/15 08:34:23  mjl
-   Prototype section completely reworked.  Now each prototype taken directly
-   from the definition (so includes variable names) and is accompanied by a
-   brief description of what the function does.  This makes the header file
-   much more useful as a quick reminder of the argument syntax for each
-   function (i.e. a poor man's manual).
+   Revision 1.14  1993/11/19 07:41:52  mjl
+   define NO_ANSI_LIBC if on Convex (may be overkill but it works..)
 
+ * Revision 1.13  1993/11/15  08:34:23  mjl
+ * Prototype section completely reworked.  Now each prototype taken directly
+ * from the definition (so includes variable names) and is accompanied by a
+ * brief description of what the function does.  This makes the header file
+ * much more useful as a quick reminder of the argument syntax for each
+ * function (i.e. a poor man's manual).
+ *
  * Revision 1.12  1993/11/07  09:03:42  mjl
  * Added escape code for flush handling.
  *
@@ -134,6 +137,12 @@
 #undef _POSIX_SOURCE		/* because of moronic broken X headers */
 #ifdef PL_NEED_MALLOC
 #include <malloc.h>
+#endif
+#endif
+
+#ifdef __convexc__
+#ifndef NO_ANSI_LIBC		/* Is this really necessary? */
+#define NO_ANSI_LIBC
 #endif
 #endif
 
