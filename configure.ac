@@ -694,6 +694,10 @@ MY_ARG_ENABLE(octave,
 
 # Conditionals to control various Makefile.am files.
 
+if test "$enable_dyndrivers" = yes -a "$enable_pstex" = yes ; then
+  enable_ps=yes
+fi
+
 AM_CONDITIONAL(with_double, [test "$with_double" = yes])
 AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
 AM_CONDITIONAL(enable_cxx, [test "$enable_cxx" = yes])

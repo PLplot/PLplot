@@ -147,7 +147,7 @@ plmeta_la_LDFLAGS = $(ldflags) $(libplplot)
 
 if enable_ps
 lmflag = -lm
-ps_la_SOURCES = ps.c pstex.c
+ps_la_SOURCES = ps.c
 ps_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 endif
 
