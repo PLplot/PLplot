@@ -8,3 +8,5 @@ Makefile.in
 .libs
 *.la
 *.lo
+plplotcmodule_p_single.c
+plplotc.py
