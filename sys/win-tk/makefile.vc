@@ -232,7 +232,11 @@ setup:
 	$(CP) $(GENERICTCLDIR)\*.h plplot
 	$(CP) $(OLDTKDIR)\*.h plplot
 	$(CP) $(GENERICTKDIR)\*.h plplot
+	$(CP) tclIndex $(ROOT)\examples\tcl
 
+starkit:
+	$(TCL)\bin\tclsh84.exe makePlplotStarkit.tcl
+	
 install-examples:
 	-@md $(INSTALLDIR)
 	-@md $(INSTALLDIR)\examples
