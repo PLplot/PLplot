@@ -1,19 +1,22 @@
-* $Id$
-* $Log$
-* Revision 1.1  1994/03/30 07:29:40  mjl
-* Moved fortran interface files up one level -- no longer separate single
-* and double precision files.  Implemented m4 expansion of REAL into either
-* real*4 or real*8 depending on configure settings, for portable builds
-* of either the single or double precision library without copying files.
-* Files with .fm4 suffix must be run through m4 to become normal fortran
-* files.
-*
+! $Id$
+! $Log$
+! Revision 1.2  1994/04/08 12:27:25  mjl
+! Added missing variable declarations.
+!
+! Revision 1.1  1994/03/30  07:29:40  mjl
+! Moved fortran interface files up one level -- no longer separate single
+! and double precision files.  Implemented m4 expansion of REAL into either
+! real*4 or real*8 depending on configure settings, for portable builds
+! of either the single or double precision library without copying files.
+! Files with .fm4 suffix must be run through m4 to become normal fortran
+! files.
+!
 
-************************************************************************
-*
-*  sfstubs.f
-*
-*  This file contains all the fortran stub routines.
+!***********************************************************************
+!
+!  sfstubs.f
+!
+!  This file contains all the fortran stub routines.
 
 include(fmacs.m4)dnl
 define(include_strings,{
@@ -32,7 +35,7 @@ define(include_strings,{
 	common /zzplstr5/ string5
 	common /zzplstr6/ string6
 })dnl
-************************************************************************
+!***********************************************************************
 
 	subroutine plsdev(dnam)
 
@@ -45,7 +48,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plsfnam(fnam)
 
@@ -58,7 +61,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plgfnam(fnam)
 
@@ -71,7 +74,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plgver(ver)
 
@@ -84,7 +87,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plaxes(x0,y0,xopt,xtick,nxsub,yopt,ytick,nysub)
 
@@ -101,7 +104,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plbox(xopt,xtick,nxsub,yopt,ytick,nysub)
 
@@ -118,7 +121,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plbox3(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub,
      &		    zopt,zlabel,ztick,nzsub)
@@ -142,7 +145,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plcon0(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
 
@@ -154,7 +157,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plcon1(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
 
@@ -166,7 +169,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plcon2(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
 
@@ -178,7 +181,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plcont(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
 
@@ -192,7 +195,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plshade0(z, nx, ny, defined, 
      &       xmin, xmax, ymin, ymax,
@@ -205,10 +208,10 @@ define(include_strings,{
 	integer nx, ny, sh_cmap, sh_width
         integer min_color, min_width, max_color, max_width
         REAL	shade_min, shade_max, sh_color
-	REAL	z(nx, ny)
+	REAL	z(nx, ny), xmin, xmax, ymin, ymax
         include_strings
 
-*	call plstrf2c(dnam, string1, maxlen)
+!	call plstrf2c(dnam, string1, maxlen)
 
         call plshade07(z, nx, ny, s1, 
      &       xmin, xmax, ymin, ymax,
@@ -218,7 +221,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plshade1(z, nx, ny, defined, 
      &       xmin, xmax, ymin, ymax,
@@ -232,10 +235,10 @@ define(include_strings,{
 	integer nx, ny, sh_cmap, sh_width
         integer min_color, min_width, max_color, max_width
         REAL	shade_min, shade_max, sh_color
-	REAL	z(nx, ny), xg(nx), yg(ny)
+	REAL	z(nx, ny), xmin, xmax, ymin, ymax, xg(nx), yg(ny)
         include_strings
 
-*	call plstrf2c(dnam, string1, maxlen)
+!	call plstrf2c(dnam, string1, maxlen)
 
         call plshade17(z, nx, ny, s1, 
      &       xmin, xmax, ymin, ymax,
@@ -246,7 +249,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plshade2(z, nx, ny, defined, 
      &       xmin, xmax, ymin, ymax,
@@ -260,10 +263,10 @@ define(include_strings,{
 	integer nx, ny, sh_cmap, sh_width
         integer min_color, min_width, max_color, max_width, rectangular
         REAL	shade_min, shade_max, sh_color
-	REAL	z(nx, ny), xg(nx, ny), yg(nx, ny)
+	REAL	z(nx, ny), xmin, xmax, ymin, ymax, xg(nx, ny), yg(nx, ny)
         include_strings
 
-*	call plstrf2c(dnam, string1, maxlen)
+!	call plstrf2c(dnam, string1, maxlen)
 
         call plshade27(z, nx, ny, s1, 
      &       xmin, xmax, ymin, ymax,
@@ -274,7 +277,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine pllab(xlab,ylab,title)
 
@@ -290,7 +293,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plmtex(side,disp,pos,xjust,text)
 
@@ -306,7 +309,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plptex(x,y,dx,dy,xjust,text)
 
@@ -321,7 +324,7 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
 
 	subroutine plstart(devname, nx, ny)
 
@@ -336,4 +339,4 @@ define(include_strings,{
 
 	end
 
-************************************************************************
+!***********************************************************************
