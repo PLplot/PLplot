@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1994/08/10 01:13:57  mjl
+ * Revision 1.25  1994/08/25 04:08:09  mjl
+ * Fixed limiting saturation value in a case that was affecting grayscale
+ * output.  Contributed by Radey Shouman.  Also modified pltext/plgra to
+ * return silently if plinit not yet called.
+ *
+ * Revision 1.24  1994/08/10  01:13:57  mjl
  * Fixed hardwired DOS/GNUSVGA directory location.
  *
  * Revision 1.23  1994/07/29  20:23:53  mjl
@@ -23,57 +28,6 @@
  * (now included by plplot.h), and other minor changes.  Now each file has
  * global access to the plstream pointer via extern; many accessor functions
  * eliminated as a result.
- *
- * Revision 1.19  1994/05/24  19:56:47  mjl
- * Changed INSTALL_DIR to BIN_DIR for locating executables.
- *
- * Revision 1.18  1994/05/10  21:52:10  mjl
- * Split off cmap1 calculation into plcmap1_calc() to make it easier to just
- * change a single control point from the plframe widget.
- *
- * Revision 1.17  1994/05/07  03:23:46  mjl
- * Eliminated all references to fgcolor and bgcolor.  Operations involving
- * the latter changed to deal with cmap0[0].
- *
- * Revision 1.16  1994/04/30  16:15:09  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.15  1994/04/25  19:08:28  mjl
- * Lots of fixes/improvements to plscmap1l to support TK palette
- * manipulators.  New function plRGB_HLS added.
- *
- * Revision 1.14  1994/04/08  12:33:22  mjl
- * Changed exit handler behavior.  Now it is called /prior/ to the stream
- * cleanup, which is more useful.  Also it is passed the error message and
- * is expected to return (if it returns) an exit code.  Prototype is:
- * static int    (*exit_handler) (char *);
- *
- * Revision 1.13  1994/03/30  07:27:16  mjl
- * Put in better handling for roundoff-generated errors in color map
- * selection.
- *
- * Revision 1.12  1994/03/23  08:11:11  mjl
- * Many functions moved into this file (from plcore.c):
- *
- * 	plwarn plexit plcol0 plcol1 plrgb plrgb1 plscolbg plscol0 plgcol0
- * 	plscmap1 plscmap1f1 plscolor
- *
- * Significant changes made to operation of old routines that manipulate the
- * color map.  plscmap1l added to set color map 1 colors using a piece-wise
- * linear relationship between intensity [0,1] (cmap 1 index) and position in
- * HLS or RGB color space.  plscmap0n added to determine the number of colors
- * to use in cmap 0 (must be called before plinit, or cmap 0 allocation).
- * This helps free up unused colors that can be used in cmap 1.
- *
- * Color 0 (in cmap 0) now defaults to black.  This is done for consistency
- * with 16 color tek displays, where color 0 is the background.  You can
- * always change it back if you want the old way (in fact, you are encouraged
- * to not rely on the default color map now that there's a supported way of
- * changing it).
- *
- * plabort() added to be almost identical to plwarn(), except for message
- * content.  Now used before a return on most error conditions.
 */
 
 /*	plctrl.c
@@ -837,7 +791,7 @@ plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
     l = (rgb_min+rgb_max) / 2.0;
 
     if (rgb_min == rgb_max) {
-	s = 1;
+	s = 0;
 	h = 0;
     } 
     else {
@@ -884,20 +838,17 @@ plwarn(char *errormsg)
 {
     int was_gfx = 0;
 
-    if (plsc->level > 0) {
-	if (plsc->graphx == 1) {
-	    was_gfx = 1;
-	    pltext();
-	}
+    if (plsc->graphx == 1) {
+	was_gfx = 1;
+	pltext();
     }
 
     fprintf(stderr, "\n*** PLPLOT WARNING ***\n");
     if (*errormsg != '\0')
 	fprintf(stderr, "%s\n", errormsg);
 
-    if (was_gfx == 1) {
+    if (was_gfx == 1)
 	plgra();
-    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -913,20 +864,17 @@ plabort(char *errormsg)
 {
     int was_gfx = 0;
 
-    if (plsc->level > 0) {
-	if (plsc->graphx == 1) {
-	    was_gfx = 1;
-	    pltext();
-	}
+    if (plsc->graphx == 1) {
+	was_gfx = 1;
+	pltext();
     }
 
     fprintf(stderr, "\n*** PLPLOT WARNING ***\n");
     if (*errormsg != '\0')
 	fprintf(stderr, "%s, aborting operation\n", errormsg);
 
-    if (was_gfx == 1) {
+    if (was_gfx == 1)
 	plgra();
-    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -975,17 +923,18 @@ plsexit(int (*handler) (char *))
 /*----------------------------------------------------------------------*\
  * void plgra()
  *
- * Switches to graphics screen.
+ * Switches to graphics screen.  
+ *
+ * Here and in pltext() it's a good idea to return silently if plinit()
+ * hasn't yet been called, since plwarn() calls pltext() and plgra(), and
+ * plwarn() may be called at any time.
 \*----------------------------------------------------------------------*/
 
 void
 c_plgra(void)
 {
-    if (plsc->level < 1) {
-	plabort("plgra: Please call plinit first");
-	return;
-    }
-    plP_esc(PLESC_GRAPH, NULL);
+    if (plsc->level > 0)
+	plP_esc(PLESC_GRAPH, NULL);
 }
 
 /*----------------------------------------------------------------------*\
@@ -997,11 +946,8 @@ c_plgra(void)
 void
 c_pltext(void)
 {
-    if (plsc->level < 1) {
-	plabort("pltext: Please call plinit first");
-	return;
-    }
-    plP_esc(PLESC_TEXT, NULL);
+    if (plsc->level > 0) 
+	plP_esc(PLESC_TEXT, NULL);
 }
 
 /*----------------------------------------------------------------------*\
