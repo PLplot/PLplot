@@ -70,7 +70,7 @@ Description: Scientific plotting library
 
 Package: plplot-tcl
 Architecture: any
-Depends: plplot-common, ${shlibs:Depends}
+Depends: plplot-common, itk3.1, ${shlibs:Depends}
 Conflicts: plplot-xwin
 Replaces: plplot-xwin
 Provides: plplot-lib

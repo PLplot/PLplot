@@ -2,14 +2,19 @@ plplot (5.0.1-0.potato.4) unstable; urgency=low
 
   * debian/rules: Excluding examples/ dir from list of compressible files
     by dh_compress.
+    Make x16.py non-executable, since it is lacking the initial #! line.
+    Give explicit -l options for dh_shlibdeps for packages plplot-tcl and
+    plplot-xwin.  This will avoid the wrong dependencies that were being
+    generated.
   * debian/control: Build-depends on iTcl.  This will make the plplot-tcl
     package [incr Tcl]-able.  This is needed to run the tk/tk01 and
     tk/tk04 examples (thanks to Alan Irwin <irwin@beluga.phys.uvic.ca> for
-    pointing this out).
+    pointing this out).  Also, made plplot-tcl depend on itk3.1.
   * examples/c/plcdemos.h: Removed #definition of PL_DOUBLE, as it is
     already done by plConfig.h.
+  * cf/sysloc.in: Added /usr/include/itcl3.1/generic to incdirs_default.
 
- -- Rafael Laboissiere <rafael@icp.inpg.fr>  Thu, 15 Feb 2001 11:01:52 +0100
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Thu, 15 Feb 2001 13:47:16 +0100
 
 plplot (5.0.1-0.potato.3) unstable; urgency=low
 
