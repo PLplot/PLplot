@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.1  1993/07/02 06:58:33  mjl
+# Revision 1.2  1993/07/16 22:03:15  mjl
+# Inserted hack to partially plug TK's security problem.  Also hard-coded
+# font selection temporarily (see explanation within).  Made debug menu
+# normally invisible.
+#
+# Revision 1.1  1993/07/02  06:58:33  mjl
 # The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
 #
 
@@ -20,14 +25,27 @@
 
 proc plserver_init {} {
     
-# First I change the default font.  To get a different font just modify the
-# resource.  For example, if you want helvetica 240 instead, type:
-#
-# echo "plserver*font: -adobe-helvetica-medium-r-normal--*-240*" | xrdb -merge
+# Hack to plug TK's gaping security hole.  This is a minimal set.
 
-    if { ! [ string compare "[option get . font Font]" "" ] } {
+    rename exec {}
+    rename open {}
+
+# First I change the default font.  Ideally, we would first check the
+# options database to see if an appropriate resource specification already
+# exists.  The problem with this is that if you have multiple plservers
+# running, you need to specify either (a) a resource for each one (for some
+# reason, under HP/UX at least, plserver*font is not matched if the main
+# window name is "plserver #2"), or (b) an unqualified resource i.e. *font.
+# Neither is a particularly attractive solution, and for now I just
+# hardwire the font to be used.  Aside: on systems that want you to use
+# "xrdb" to initialize the resource database, a syntax like the following
+# is used:
+#
+# echo "plserver*font: -adobe-helvetica-medium-r-normal--*-180*" | xrdb -merge
+
+#    if { ! [ string compare "[option get . font Font]" "" ] } {
 	option add *font -adobe-helvetica-medium-r-normal--*-180*
-    }
+#    }
 
 # Create the main window
 # Use the default window title.
@@ -128,15 +146,17 @@ proc plserver_init {} {
 # Debug menu
 #--------------
 
-    menubutton .menu.debug -text "Debug" -menu .menu.debug.m -underline 0
-    menu .menu.debug.m
+    if {[info exists debug_on]} {
+	menubutton .menu.debug -text "Debug" -menu .menu.debug.m -underline 0
+	menu .menu.debug.m
 
-    .menu.debug.m add command \
-	-label "Execute TCL command" \
-	-command {evalCmd} \
-	-underline 0
+	.menu.debug.m add command \
+	    -label "Execute TCL command" \
+	    -command {evalCmd} \
+	    -underline 0
 
-    pack append .menu .menu.debug {left}
+	pack append .menu .menu.debug {left}
+    }
 
 #--------------
 # Help menu
