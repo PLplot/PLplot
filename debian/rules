@@ -24,6 +24,12 @@ debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
 debex		:= $(debshr)/plplot$(version)/examples
 
+javasetup	:= $(shell \
+                      if test ! -f /usr/include/jni.h \
+                              -a -f /usr/lib/kaffe/include/jni.h ; then \
+		          echo --with-java-home=/usr/lib/kaffe ; \
+		      fi)
+
 include /usr/share/dpatch/dpatch.make
 
 autotools: autotools-stamp
@@ -41,8 +47,8 @@ config-stamp: autotools-stamp
                     --enable-static --enable-python --with-pkg-config   \
                     --enable-gnome --with-double --disable-linuxvga     \
                     --infodir=/usr/share/info --with-freetype           \
-                    --without-rpath --with-prebuiltdoc --disable-java   \
-                    --with-pthreads --with-ltdlsystem
+                    --without-rpath --with-prebuiltdoc --enable-java    \
+		    $(javasetup) --with-pthreads --with-ltdlsystem
 	( octver=`egrep "^OCTAVE_VERSION =" Makefile                   \
               | sed "s/OCTAVE_VERSION = *//" | sed 's/ *$$//'`       ; \
           octpkgver=`echo $$octver | sed 's/\.[0-9]*$$//'`           ; \
@@ -82,10 +88,8 @@ install-stamp: build-stamp
 	mv $(debdoc)/plplot $(debdoc)/$(libpkg)
 	mv $(debex) $(debdoc)/$(libpkg)
 
-	for i in libplplot-dev plplot-tcl plplot-tcl-dev plplot-doc  \
-	         plplot9-driver-gd plplot9-driver-xwin plplot9-driver-gnome \
-                 octave-plplot python-plplot plplot-bin libplplot-c++9 \
-		 libcsiro0 ; do \
+	for i in `grep ^Package: debian/control | grep -v libplplot9$ \
+	          | sed 's/Package: //'` ; do \
 	  ln -s $(libpkg) $(debdoc)/$$i ; \
 	done
 
