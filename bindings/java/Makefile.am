@@ -20,6 +20,21 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 
+CLEANFILES = \
+	java/plplot/core/SWIGTYPE_p_p_char.class \
+	java/plplot/core/PLStreamc.class \
+	java/plplot/core/config.class \
+	java/plplot/core/plplotjavac.class \
+	java/plplot/core/plplotjavacJNI.class
+
+javagenfiles = \
+	SWIGTYPE_p_p_char.java \
+	plplotjavac.java \
+	plplotjavacJNI.java \
+	plplotjavac_wrap.c
+
+MAINTAINERCLEANFILES = $(javagenfiles)
+
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = \
@@ -28,11 +43,8 @@ EXTRA_DIST = \
 	README.javaAPI \
 	javabind.c \
 	plplotcapi.i \
-	plplotjavac.i
-
-if enable_java
-
-EXTRA_DIST += $(MAINTAINERCLEANFILES)
+	plplotjavac.i \
+	$(javagenfiles)
 
 libplplot = ../../src/libplplot$(LIB_TAG).la
 
@@ -43,8 +55,10 @@ version = -version-info $(SOVERSION)
 
 sources = plplotjavac_wrap.c
 
-$(MAINTAINERCLEANFILES): plplotjavac.i plplotcapi.i
+$(javagenfiles): plplotjavac.i plplotcapi.i
 	$(SWIG) -java -package plplot.core -DPL_DOUBLE plplotjavac.i
+
+if enable_java
 
 nodist_libplplotjava@LIB_TAG@_la_SOURCES  = $(sources)
 libplplotjava@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
@@ -52,6 +66,17 @@ libplplotjava@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplpl
 javadir = $(libdir)/java/plplot/core
 # At some point specify javaJAVA for gcj support when gcc-3.2 becomes
 # widespread.
+java/plplot/core/SWIGTYPE_p_p_char.class java/plplot/core/PLStreamc.class \
+	java/plplot/core/config.class \
+	java/plplot/core/plplotjavac.class \
+	java/plplot/core/plplotjavacJNI.class: \
+	SWIGTYPE_p_p_char.java \
+	PLStreamc.java config.java plplotjavac.java plplotjavacJNI.java
+	mkdir -p java/plplot/core
+	cd java/plplot/core ; ln -sf ../../../*.java .
+	javac -d java SWIGTYPE_p_p_char.java PLStreamc.java \
+	config.java plplotjavac.java plplotjavacJNI.java 
+
 java_DATA = \
 	README.javaAPI \
 	SWIGTYPE_p_p_char.java \
@@ -64,30 +89,6 @@ java_DATA = \
 	java/plplot/core/plplotjavac.class \
 	plplotjavacJNI.java \
 	java/plplot/core/plplotjavacJNI.class
-
-java/plplot/core/SWIGTYPE_p_p_char.class java/plplot/core/PLStreamc.class \
-	java/plplot/core/config.class \
-	java/plplot/core/plplotjavac.class \
-	java/plplot/core/plplotjavacJNI.class: \
-	SWIGTYPE_p_p_char.java \
-	PLStreamc.java config.java plplotjavac.java plplotjavacJNI.java
-	mkdir -p java/plplot/core
-	cd java/plplot/core ; ln -sf ../../../*.java .
-	javac -d java SWIGTYPE_p_p_char.java PLStreamc.java \
-	config.java plplotjavac.java plplotjavacJNI.java 
-
-CLEANFILES = \
-	java/plplot/core/SWIGTYPE_p_p_char.class \
-	java/plplot/core/PLStreamc.class \
-	java/plplot/core/config.class \
-	java/plplot/core/plplotjavac.class \
-	java/plplot/core/plplotjavacJNI.class
-
-MAINTAINERCLEANFILES = \
-	SWIGTYPE_p_p_char.java \
-	plplotjavac.java \
-	plplotjavacJNI.java \
-	plplotjavac_wrap.c
 
 # if enable_java
 endif
