@@ -17,8 +17,9 @@ cd ..
 zoo a plplot plplot/README
 zoo a plplot plplot/README.1st
 zoo a plplot plplot/COPYRIGHTS
-zoo a plplot plplot/Installation
 zoo a plplot plplot/Changes
+zoo a plplot plplot/Changes.old
+zoo a plplot plplot/ToDo
 zoo a plplot plplot/pltar*
 zoo a plplot plplot/plzoo*
 zoo a plplot plplot/plzip*
