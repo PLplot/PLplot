@@ -1,6 +1,16 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
+ * Revision 1.17  2000/05/15 15:46:05  furnish
+ * Include plplot.h so we can determine the setting for PLFLT.  This way
+ * the Tcl matrix extension and the PLplot library won't become
+ * discombobulated with respect to whether we're supposed to be using
+ * floats or doubles.
+ *
+ * If we ever want the Tcl matrix to be distributed seperately from
+ * PLplot, we would have to revisit this, but for now they ship together,
+ * so they might as well /work/ together...
+ *
  * Revision 1.16  1996/07/26 18:50:02  furnish
  * Correct bug in tclMatrix assertions.
  *
@@ -92,13 +102,10 @@
 #ifndef __TCLMATRIX_H__
 #define __TCLMATRIX_H__
 
+#include "plplot.h"
 #include <tcl.h>
 
-#ifdef DOUBLE
-typedef double Mat_float;
-#else
-typedef float  Mat_float;
-#endif
+typedef PLFLT Mat_float;
 
 #if defined(MSDOS)
 typedef long  Mat_int;
