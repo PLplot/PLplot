@@ -208,6 +208,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
+#ifdef PLD_gnome  
     {
 	"Gnome Canvas",
 	"gnome",
@@ -221,7 +222,8 @@ static PLDispatchTable dispatch_table[] = {
 	plD_state_gnome,
 	plD_esc_gnome
     },
-
+#endif
+  
 #ifdef PLD_tk
     {
 	"Tcl/TK Window",
