@@ -1,13 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/07/31 07:56:30  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
+   Revision 1.12  1993/12/08 06:12:22  mjl
+   Miscellaneous bug fixes contributed by Paul Kirschner.
 
+ * Revision 1.11  1993/07/31  07:56:30  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.10  1993/07/16  22:11:15  mjl
  * Eliminated low-level coordinate scaling; now done by driver interface.
  *
@@ -181,7 +184,6 @@ plD_eop_svga(PLStream *pls)
     if (page_state == DIRTY)
 	pause();
 
-    GrSetMode(GR_default_graphics);
     init_palette();
 
     page_state = CLEAN;
@@ -231,6 +233,15 @@ plD_state_svga(PLStream *pls, PLINT op)
 
     case PLSTATE_COLOR0:
 	col = pls->icol0;
+	if (col == PL_RGB_COLOR) {
+	    int r = pls->curcolor.r;
+	    int g = pls->curcolor.g;
+	    int b = pls->curcolor.b;
+	    if (totcol < 255) {
+		GrSetColor(++totcol, r, g, b);
+		col = totcol;
+	    }
+	}
 	break;
 
     case PLSTATE_COLOR1:
@@ -248,18 +259,6 @@ void
 plD_esc_svga(PLStream *pls, PLINT op, void *ptr)
 {
     switch (op) {
-	case PLESC_SET_RGB:{
-	    pleRGB *cols = (pleRGB *) ptr;
-	    int r = 255 * cols->red;
-	    int g = 255 * cols->green;
-	    int b = 255 * cols->blue;
-	    if (totcol < 255) {
-		GrSetColor(++totcol, r, g, b);
-		col = totcol;
-	    }
-	}
-	break;
-
       case PLESC_TEXT:
 	svga_text(pls);
 	break;
@@ -284,6 +283,7 @@ svga_text(PLStream *pls)
 	    pause();
 	GrSetMode(GR_default_text);
 	pls->graphx = TEXT_MODE;
+	page_state = CLEAN;
     }
 }
 
