@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/07/16 22:32:35  mjl
-   Fixed bug encountered when setting option via plSetInternalOpt().
+   Revision 1.7  1993/07/28 05:54:29  mjl
+   Added support for -nopixmap option.
 
+ * Revision 1.6  1993/07/16  22:32:35  mjl
+ * Fixed bug encountered when setting option via plSetInternalOpt().
+ *
  * Revision 1.5  1993/07/01  22:27:59  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Many changes to capabilities of argument parser.  New mode
@@ -141,6 +144,7 @@ static int opt_bg		(char *, char *);
 static int opt_fam		(char *, char *);
 static int opt_fsiz		(char *, char *);
 static int opt_bufmax		(char *, char *);
+static int opt_nopixmap		(char *, char *);
 static int opt_np		(char *, char *);
 static int opt_px		(char *, char *);
 static int opt_py		(char *, char *);
@@ -326,6 +330,13 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-fsiz size",
     "Output family file size in MB (e.g. -fsiz 1.0)" },
+{
+    "nopixmap",			/* Do not use pixmaps */
+    opt_nopixmap,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED,
+    "-nopixmap",
+    "Don't use pixmaps in X-based drivers" },
 {
     "np",			/* Page pause off switch */
     opt_np,
@@ -1042,6 +1053,25 @@ opt_np(char *opt, char *optarg)
 /* No pause between pages */
 
     plspause(0);
+
+    return(0);
+}
+
+/*----------------------------------------------------------------------*\
+* opt_nopixmap()
+*
+* Performs appropriate action for option "nopixmap".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_nopixmap(char *opt, char *optarg)
+{
+    PLStream *pls;
+
+/* Don't use pixmaps in X drivers */
+
+    plgpls(&pls);
+    pls->nopixmap = 1;
 
     return(0);
 }
