@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/03/15 21:39:19  mjl
-   Changed all _clear/_page driver functions to the names _eop/_bop, to be
-   more representative of what's actually going on.
+   Revision 1.13  1993/03/28 08:44:21  mjl
+   Eliminated name conflict of getdate() function with builtin of same name
+   on some systems.
 
+ * Revision 1.12  1993/03/15  21:39:19  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
  * Revision 1.11  1993/03/06  04:57:25  mjl
  * Fix to ensure that a new segment is begun after a line width change.
  *
@@ -66,7 +70,7 @@
 
 /* Prototypes for functions in this file. */
 
-static char *getdate(void);
+static char *pl_getdate(void);
 
 /* top level declarations */
 
@@ -167,7 +171,7 @@ ps_init(PLStream *pls)
 
     fprintf(OF, "%%%%Title: PLPLOT Graph\n");
     fprintf(OF, "%%%%Creator: PLPLOT Version 4.0\n");
-    fprintf(OF, "%%%%CreationDate: %s\n", getdate());
+    fprintf(OF, "%%%%CreationDate: %s\n", pl_getdate());
     fprintf(OF, "%%%%Pages: (atend)\n");
     fprintf(OF, "%%%%EndComments\n\n");
 
@@ -520,13 +524,13 @@ ps_esc(PLStream *pls, PLINT op, char *ptr)
 }
 
 /*----------------------------------------------------------------------*\
-* getdate()
+* pl_getdate()
 *
 * Get the date and time
 \*----------------------------------------------------------------------*/
 
 static char *
-getdate(void)
+pl_getdate(void)
 {
     int len;
     long t;
