@@ -229,10 +229,10 @@ proc x09_potential {{w loopback}} {
     for {set i 0} {$i < $xpts} {incr i} {
 	set r [expr 0.5 + $i]
 	for {set j 0} {$j < $ylim} {incr j} {
-	    set theta [expr (2. * $pi  / ($ypts - 1.))*(0.5 + $j)]
+	    set theta [expr {(2. * $pi  / ($ypts - 1.))*(0.5 + $j)}]
 
-	    xg $i $j = [expr $r * cos($theta)]
-	    yg $i $j = [expr $r * sin($theta)]
+	    xg $i $j = [expr {$r * cos($theta)}]
+	    yg $i $j = [expr {$r * sin($theta)}]
 	}
     }
 
@@ -281,11 +281,11 @@ proc x09_potential {{w loopback}} {
 
     for {set i 0} {$i < $xpts} {incr i} {
 	for {set j 0} {$j < $ylim} {incr j} {
-  	   set div1 [expr sqrt(pow([xg $i $j]-$d1,2) + pow([yg $i $j]-$d1,2) + pow($eps,2))]
-  	   set div1i [expr sqrt(pow([xg $i $j]-$d1i,2) + pow([yg $i $j]-$d1i,2) + pow($eps,2))]
-  	   set div2 [expr sqrt(pow([xg $i $j]-$d2,2) + pow([yg $i $j]+$d2,2) + pow($eps,2))]
-  	   set div2i [expr sqrt(pow([xg $i $j]-$d2i,2) + pow([yg $i $j]+$d2i,2) + pow($eps,2))]
-	   z $i $j = [expr $q1/$div1 + $q1i/$div1i + $q2/$div2 + $q2i/$div2i]
+  	   set div1 [expr {sqrt(pow([xg $i $j]-$d1,2) + pow([yg $i $j]-$d1,2) + pow($eps,2))}]
+  	   set div1i [expr {sqrt(pow([xg $i $j]-$d1i,2) + pow([yg $i $j]-$d1i,2) + pow($eps,2))}]
+  	   set div2 [expr {sqrt(pow([xg $i $j]-$d2,2) + pow([yg $i $j]+$d2,2) + pow($eps,2))}]
+  	   set div2i [expr {sqrt(pow([xg $i $j]-$d2i,2) + pow([yg $i $j]+$d2i,2) + pow($eps,2))}]
+	   z $i $j = [expr {$q1/$div1 + $q1i/$div1i + $q2/$div2 + $q2i/$div2i}]
 	}
      }
 
@@ -305,7 +305,7 @@ proc x09_potential {{w loopback}} {
     matrix clevelneg f $nlevel
     matrix clevelpos f $nlevel
     for {set i 0} {$i < $nlevel} {incr i} {
-       set clevel [expr $zmin + ($i + 0.5)*$dz]
+       set clevel [expr {$zmin + ($i + 0.5)*$dz}]
        if {$clevel <= 0.} {
      	  clevelneg $nlevelneg = $clevel; incr nlevelneg
        } else {
@@ -353,9 +353,9 @@ proc x09_potential {{w loopback}} {
     matrix px f $perimeterpts
     matrix py f $perimeterpts
     for {set i 0} {$i < $perimeterpts} {incr i} {
-       set t [expr (2.*$pi/($perimeterpts-1))*$i]
-	px $i = [expr $x0 + $rmax*cos($t)]
-	py $i = [expr $y0 + $rmax*sin($t)]
+       set t [expr {(2.*$pi/($perimeterpts-1))*$i}]
+	px $i = [expr {$x0 + $rmax*cos($t)}]
+	py $i = [expr {$y0 + $rmax*sin($t)}]
     }
 
     $w cmd plcol0 $ncolbox
