@@ -33,10 +33,7 @@
 function contour (z, n, x, y)
 
   global __pl
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
+  __pl_init;
   
   if (nargin == 1)
     n = 8;
@@ -51,9 +48,7 @@ function contour (z, n, x, y)
 
   if (nargin == 1 || nargin == 2)
     if (is_matrix (z))
-
-      __pl_contour(1:rows(z), 1:columns(z), z, n);
-      
+      __pl_contour(1:rows(z), 1:columns(z), z, n);      
     else
       error ("contour: argument must be a matrix");
     endif

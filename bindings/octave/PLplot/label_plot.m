@@ -28,15 +28,11 @@
 function label_plot( data, label, class, names)
 
   global __pl
-
+  __pl_strm = __pl_init;
   static j;
 
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
-
   set_axis = 0;	# signal that I set the axis
-  if (!__pl.axis_st(plgstrm+1))
+  if (!__pl.axis_st(__pl_strm))
     axis([min(data(:,1)), max(data(:,1)), min(data(:,2)), max(data(:,2))]);
     set_axis = 1;
   endif

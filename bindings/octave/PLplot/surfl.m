@@ -64,7 +64,7 @@ function surfl (x, y, z, s)
 
       __pl_mesh(x, y, z, s)
     else
-      error ("mesh: argument must be a matrix");
+      error ("surfl: argument must be a matrix");
     endif
 
   elseif (nargin == 3 || nargin == 4)

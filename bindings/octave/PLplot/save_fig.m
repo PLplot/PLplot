@@ -44,8 +44,9 @@
 function save_fig(file, device, rev)
 
   global __pl __lp_options FIGDIR
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
+  __pl_strm = __pl_init;
+  
+  if (plglevel != 3)
     warning("Nothing to save");
     return
   endif
@@ -53,8 +54,6 @@ function save_fig(file, device, rev)
   if (!exist("__lp_options"))
     __lp_options = "lp -c";
   endif
-
-  __pl_strm = plgstrm + 1;
 
   if (nargin < 3)
     rev = 1;
@@ -71,7 +70,8 @@ function save_fig(file, device, rev)
   ## FIXME -- this should be get from plgDevs()
   vdev = [ "xwin"; "tk"; "xterm"; "tekt"; "tek4107t"; "mskermit"; "versaterm";
 	  "vlt"; "conex"; "dg300"; "plmeta"; "tekf"; "tek4107f"; "ps"; "psc";
-	  "xfig"; "ljiip"; "ljii"; "hp7470"; "hp7580"; "lj_hpgl"; "imp"; "pbm"];
+	  "xfig"; "ljiip"; "ljii"; "hp7470"; "hp7580"; "lj_hpgl"; \
+	  "imp"; "pbm"; "png"; "jpeg"];
 
   dev = "";
   for i=1:rows(vdev)
@@ -122,8 +122,9 @@ function save_fig(file, device, rev)
       endif
     endif
 
+    plsetopt "apply"
     plinit;
-        
+    
     plcpstrm(cur_fig, 0); # copy parameters
 
     if (rev_done == 1) # and exchange black/white if needed, after plinit()

@@ -35,10 +35,7 @@
 function [x, y, but] = ginput(n)
 
   global __pl
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
+  __pl_init;
 
   if (nargin == 0)
     n = 1e6;

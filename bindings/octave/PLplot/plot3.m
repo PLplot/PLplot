@@ -30,12 +30,7 @@
 function plot3 (x, y, z, fmt)
 
   global __pl
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
-
-  __pl_strm = plgstrm+1;
+  __pl_strm = __pl_init;
 
   if (nargin != 4 & nargin != 3)
     error("plot3: not yet.\n");

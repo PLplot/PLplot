@@ -24,11 +24,7 @@ function __pl_plotit
   old_empty_list_elements_ok = empty_list_elements_ok;
   empty_list_elements_ok = 1;
 
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
-
-  __pl_strm = plgstrm+1;
+  __pl_strm = __pl_init;
 
   ## character height, to correctly position labels
 
@@ -274,7 +270,7 @@ function __pl_plotit
 		  and a bar is plotted from x-dx to x+dx;\n\
 		  if it has three columns, it is interpreted as (x, xmin, xmax)");			
 	    endif
-	    
+	    pllsty(1); # solid bars
 	    if (xc == 2)
 	      xm = x(:,1) .- x(:,2); xM = x(:,1) .+ x(:,2);
 	    elseif (xc == 3)
@@ -293,6 +289,7 @@ function __pl_plotit
 	    if (yc != 1)
 	      plerry( x(:,1), ym, yM);
 	    endif
+	    pllsty(__pl.pllsty(__pl_strm)); # recover linestyle
 	    
 	  otherwise
 	    plline(x(:,i),y(:,j));

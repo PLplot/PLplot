@@ -33,12 +33,7 @@
 function subwindow (xn, yn)
 
   global __pl
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
-
-  __pl_strm = plgstrm + 1;
+  __pl_strm = __pl_init;
 
   if (nargin != 2 && nargin != 0)
     usage ("subwindow (xn, yn)");

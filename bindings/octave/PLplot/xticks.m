@@ -21,8 +21,8 @@ function xticks (int, num)
 
   global __pl
 
-  __pl_strm = plgstrm+1;
-  
+  __pl_strm = __pl_init;
+
   if (nargin >= 3)
     help xticks;
     return

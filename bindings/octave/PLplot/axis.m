@@ -37,8 +37,7 @@ function curr_axis = axis (ax)
   ## as setup by the user, or automaticaly. It interacts with hold mode.
 
   global __pl
-
-  __pl_strm = plgstrm+1;
+  __pl_strm = __pl_init;
 
   if (nargin > 1)
     usage ("axis ([xmin, xmax, ymin, ymax, zmin, zmax])");

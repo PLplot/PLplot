@@ -21,11 +21,8 @@
 function st = axis_set
 
   global __pl
+  __pl_strm = __pl_init;
 
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
-
-  st = __pl.axis_st(plgstrm + 1);
+  st = __pl.axis_st(__pl_strm);
 
 endfunction

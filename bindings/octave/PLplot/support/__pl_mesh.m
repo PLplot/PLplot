@@ -15,12 +15,7 @@
 function __pl_mesh(x, y, z, s)
 
   global __pl
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0)
-  endif
-
-  __pl_strm = plgstrm + 1;
+  __pl_strm = __pl_init;
 
   xm = min(min(x)); xM = max(max(x));
   ym = min(min(y)); yM = max(max(y));

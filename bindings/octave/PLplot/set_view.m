@@ -42,12 +42,7 @@
 function set_view (alt, az)
 
   global __pl 
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
-
-  __pl_strm = plgstrm + 1;
+  __pl_strm = __pl_init;
 
   callback = 0;
   if (nargin == 2)

@@ -33,12 +33,7 @@
 function oneplot ()
 
   global __pl
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
-
-  __pl_strm = plgstrm + 1;
+  __pl_strm = __pl_init;
 
   __pl.multi_row(__pl_strm)=1;
   __pl.multi_col(__pl_strm)=1;

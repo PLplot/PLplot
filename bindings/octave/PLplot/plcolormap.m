@@ -23,10 +23,7 @@
 function ccmap = plcolormap(map)
 
   global __pl
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
+  __pl_init;
 
   if (nargin == 0)
     if (struct_contains(__pl, "colormap"))

@@ -39,8 +39,8 @@
 function mplot (...)
 
   global __pl
+  __pl_strm = __pl_init;
 
-  __pl_strm = plgstrm + 1;
   __pl.multi_cur(__pl_strm) = rem(__pl.multi_cur(__pl_strm)+1,
 				  __pl.multi_row(__pl_strm) * 
 				  __pl.multi_col(__pl_strm)+1);

@@ -26,15 +26,10 @@
 function shade(x, y, z, levels, cont )
 
   global __pl
+  __pl_strm = __pl_init;
 
   old_empty_list_elements_ok = empty_list_elements_ok;
   empty_list_elements_ok = 1;
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
-
-  __pl_strm = plgstrm + 1;
 
   if (nargin == 1 && is_matrix(x))
     levels = 20;

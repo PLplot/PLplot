@@ -51,16 +51,12 @@ function text = title (text)
 
   global __pl
 
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
+  __pl_strm = __pl_init;
 
   if (nargin > 1)
     usage ("title (text)");
   endif
   
-  __pl_strm = plgstrm+1;
-
   if (nargin == 1 && isempty(text))
     text = " ";
   endif

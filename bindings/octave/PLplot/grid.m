@@ -35,12 +35,7 @@
 function grid (x)
 
   global __pl
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
-
-  __pl_strm = plgstrm+1;
+  __pl_strm = __pl_init;
 
   if (nargin == 0)
     __pl.grid(__pl_strm) = 1;

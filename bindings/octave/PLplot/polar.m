@@ -36,6 +36,7 @@ function polar (x1, x2, fmt)
   ## no way to determine their current values.
 
   global __pl
+  __pl_init;
 
   __pl.type = -1;
   __pl.items = 1;

@@ -21,15 +21,16 @@
 ## Use the tk driver for zooming and panning.
 
 function zoom(arg)
+  
+  global __pl
+  __pl_init;
 
   if (nargin == 1)
-    if strcmp(arg, "off")
+    if (strcmp(arg, "off"))
       axis;
       return
     endif
   endif
-  
-  global __pl
 
   [x1, y1, b1] = ginput(1);
   if (b1 == 3)

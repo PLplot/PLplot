@@ -34,12 +34,7 @@
 function id = stripc (xmin, xmax, xjump, ymin, ymax, leg1, leg2, leg3, leg4, acc, autoy)
 
   global __pl
-
-  if (!struct_contains (__pl,"inited") || plglevel == 0)
-    figure(0);
-  endif
-
-  __pl_strm = plgstrm+1;
+  __pl_strm = __pl_init;
 
   colbox =  collab = 15;
   styline(1)  = 1;	# pens line style

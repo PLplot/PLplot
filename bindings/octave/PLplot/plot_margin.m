@@ -22,8 +22,8 @@ function ost = plot_margin(st)
   ## ploted over the box.
 
   global __pl
-  
-  n = plgstrm+1;
+  n = __pl_init;
+
   ost = __pl.margin(n);
 
   if (nargin == 1)
