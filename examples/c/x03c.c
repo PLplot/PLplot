@@ -1,31 +1,29 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/03/30 07:21:46  mjl
- * Changes to all C example programs: special handling for malloc re: header
- * files eliminated, include of stdio.h and stdlib.h eliminated (now done
- * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
- * simpler builds by the general user, some cleaning up also.
+ * Revision 1.9  1994/06/30 17:57:13  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
  *
- * Revision 1.7  1993/08/23  19:34:04  mjl
- * Fixed a bug that caused polar axis labels to be messed up.  Only showed
- * up for some compilers & flag combinations.
- *
- * Revision 1.6  1993/07/02  07:06:07  mjl
- * Added definition for ROUND macro.
- *
- * Revision 1.5  1993/02/22  23:16:11  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
 */
 
-/* Illustration of 1-1 scaling for polar plot */
+/*	x03c.c
+
+	Polar plot demo.
+*/
 
 #include <plplot.h>
-#include <math.h>
 
 #ifndef ROUND
 #define ROUND(a)    (PLINT)((a)<0. ? ((a)-.5) : ((a)+.5))
 #endif
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Generates polar plot, with 1-1 scaling.
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -52,7 +50,7 @@ main(int argc, char *argv[])
 
 /* Set up viewport and window, but do not draw box */
 
-    plenv((PLFLT) -1.3, (PLFLT) 1.3, (PLFLT) -1.3, (PLFLT) 1.3, 1, -2);
+    plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
     for (i = 1; i <= 10; i++) {
 	for (j = 0; j <= 360; j++) {
 	    x[j] = 0.1 * i * x0[j];
@@ -72,7 +70,7 @@ main(int argc, char *argv[])
 
 /* Draw radial spokes for polar grid */
 
-	pljoin((PLFLT) 0.0, (PLFLT) 0.0, dx, dy);
+	pljoin(0.0, 0.0, dx, dy);
 	sprintf(text, "%d", ROUND(theta));
 
 /* Write labels for angle */
@@ -95,8 +93,7 @@ main(int argc, char *argv[])
     plline(361, x, y);
 
     plcol(4);
-    plmtex("t", (PLFLT) 2.0, (PLFLT) 0.5, (PLFLT) 0.5,
-	   "#frPLPLOT Example 3 - r(#gh)=sin 5#gh");
+    plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh");
 
 /* Close the plot at end */
 

@@ -1,33 +1,41 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/03/30 07:21:53  mjl
+ * Revision 1.10  1994/06/30 17:57:41  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.9  1994/03/30  07:21:53  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.8  1993/12/06  22:38:14  mjl
- * Added #include <stdio.h> to pick up definition of NULL under SunOS.
- *
- * Revision 1.7  1993/08/11  19:26:49  mjl
- * Fixed a minor macro definition problem.
- *
- * Revision 1.6  1993/07/02  07:07:33  mjl
- * No more VOID.  Now simply "void" (ahhh, much better).
 */
 
-/* Demonstration of contour plotting */
+/*	x09c.c
+
+	Contour plot demo.
+*/
 
 #include <plplot.h>
-#include <math.h>
 
-#define XPTS    35
-#define YPTS    46
+#define XPTS    35		/* Data points in x */
+#define YPTS    46		/* Datat points in y */
+
 #define XSPA    2./(XPTS-1)
 #define YSPA    2./(YPTS-1)
+
+static PLFLT clevel[11] =
+{-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
+
+/* Utility macros */
+
 #ifndef PI
 #define PI	3.1415926535897932384
 #endif
+
+/* Transformation function */
 
 PLFLT tr[6] =
 {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
@@ -39,8 +47,11 @@ mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
 
-static PLFLT clevel[11] =
-{-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Does several contour plots using different coordinate mappings.
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])

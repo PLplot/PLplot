@@ -1,20 +1,30 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/03/30 07:21:54  mjl
+ * Revision 1.6  1994/06/30 17:57:43  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.5  1994/03/30  07:21:54  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.4  1993/02/22  23:16:18  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
 */
 
-/* Demonstration program for PLPLOT illustrating absolute positioning */
-/* of graphs on a page */
+/*	x10c.c
+
+	Window positioning demo.
+*/
 
 #include <plplot.h>
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Demonstrates absolute positioning of graphs on a page.
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -29,15 +39,14 @@ main(int argc, char *argv[])
     plinit();
 
     pladv(0);
-    plvpor((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 1.0);
-    plwind((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 1.0);
-    plbox("bc", (PLFLT) 0.0, 0, "bc", (PLFLT) 0.0, 0);
+    plvpor(0.0, 1.0, 0.0, 1.0);
+    plwind(0.0, 1.0, 0.0, 1.0);
+    plbox("bc", 0.0, 0, "bc", 0.0, 0);
 
-    plsvpa((PLFLT) 50.0, (PLFLT) 150.0, (PLFLT) 100.0, (PLFLT) 150.0);
-    plwind((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 1.0);
-    plbox("bc", (PLFLT) 0.0, 0, "bc", (PLFLT) 0.0, 0);
-    plptex((PLFLT) 0.5, (PLFLT) 0.5, (PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 0.5,
-	   "BOX at (50,150,100,150)");
+    plsvpa(50.0, 150.0, 100.0, 150.0);
+    plwind(0.0, 1.0, 0.0, 1.0);
+    plbox("bc", 0.0, 0, "bc", 0.0, 0);
+    plptex(0.5, 0.5, 1.0, 0.0, 0.5, "BOX at (50,150,100,150)");
     plend();
     exit(0);
 }

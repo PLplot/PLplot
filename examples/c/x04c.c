@@ -1,20 +1,30 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/03/30 07:21:47  mjl
+ * Revision 1.7  1994/06/30 17:57:14  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.6  1994/03/30  07:21:47  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.5  1993/02/22  23:16:12  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
 */
 
-/* Illustration of logarithmic axes, and redefinition of window */
+/*	x04c.c
+
+	Log plot demo.
+*/
 
 #include <plplot.h>
-#include <math.h>
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Illustration of logarithmic axes, and redefinition of window.
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -42,27 +52,27 @@ main(int argc, char *argv[])
 	phase[i] = -(180.0 / 3.141592654) * atan(freq / f0);
     }
 
-    plvpor((PLFLT) 0.15, (PLFLT) 0.85, (PLFLT) 0.1, (PLFLT) 0.9);
-    plwind((PLFLT) 1.0, (PLFLT) 6.0, (PLFLT) -80.0, (PLFLT) 0.0);
+    plvpor(0.15, 0.85, 0.1, 0.9);
+    plwind(1.0, 6.0, -80.0, 0.0);
     plcol(1);
-    plbox("bclnst", (PLFLT) 0.0, 0, "bnstv", (PLFLT) 0.0, 0);
+    plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0);
     plcol(2);
     plline(101, freql, ampl);
     plcol(1);
-    plptex((PLFLT) 5.0, (PLFLT) -30.0, (PLFLT) 1.0, (PLFLT) -20.0, (PLFLT) 0.5,
-	   "-20 dB/decade");
-    plwind((PLFLT) 1.0, (PLFLT) 6.0, (PLFLT) -100.0, (PLFLT) 0.0);
-    plbox("", (PLFLT) 0.0, 0, "cmstv", (PLFLT) 30.0, 3);
+    plptex(5.0, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade");
+
+    plwind(1.0, 6.0, -100.0, 0.0);
+    plbox("", 0.0, 0, "cmstv", 30.0, 3);
     plcol(3);
     plline(101, freql, phase);
 
     plcol(1);
-    plmtex("b", (PLFLT) 3.2, (PLFLT) 0.5, (PLFLT) 0.5, "Frequency");
-    plmtex("t", (PLFLT) 2.0, (PLFLT) 0.5, (PLFLT) 0.5, "Single Pole Low-Pass Filter");
+    plmtex("b", 3.2, 0.5, 0.5, "Frequency");
+    plmtex("t", 2.0, 0.5, 0.5, "Single Pole Low-Pass Filter");
     plcol(2);
-    plmtex("l", (PLFLT) 5.0, (PLFLT) 0.5, (PLFLT) 0.5, "Amplitude (dB)");
+    plmtex("l", 5.0, 0.5, 0.5, "Amplitude (dB)");
     plcol(3);
-    plmtex("r", (PLFLT) 5.0, (PLFLT) 0.5, (PLFLT) 0.5, "Phase shift (degrees)");
+    plmtex("r", 5.0, 0.5, 0.5, "Phase shift (degrees)");
 
     plend();
     exit(0);

@@ -1,31 +1,24 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/03/30 07:21:51  mjl
+ * Revision 1.9  1994/06/30 17:57:34  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.8  1994/03/30  07:21:51  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.7  1993/07/28  05:47:23  mjl
- * Some minor desuckification.
- *
- * Revision 1.6  1993/07/02  07:06:50  mjl
- * Changed window bounds to fit well within the graphics window (page).
- *
- * Revision 1.5  1993/02/22  23:16:15  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
- *
- * Revision 1.4  1993/01/23  06:10:27  mjl
- * Instituted exit codes for all example codes.  Also deleted color functions
- * no longer supported (plancol).  Enhanced x09c to exploit new contour
- * capabilities.
 */
 
-/* Displays the plotter symbols for PLSYM */
+/*	x07c.c
+
+	Font demo.
+*/
 
 #ifdef MSDOS
-#pragma message("Microsoft programmers are sissies.")
 #pragma optimize("",off)
 #endif
 
@@ -34,6 +27,12 @@
 static int base[17] =
 {0, 200, 500, 600, 700, 800, 900,
  2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900};
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Displays the entire "plsym" symbol (font) set.
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -69,7 +68,7 @@ main(int argc, char *argv[])
 	plcol(15);
 	for (i = 0; i <= 9; i++) {
 	    sprintf(text, "%d", i);
-	    plmtex("b", (PLFLT) 1.5, (0.1 * i + 0.05), (PLFLT) 0.5, text);
+	    plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
 	}
 
 	k = 0;
@@ -78,7 +77,7 @@ main(int argc, char *argv[])
 /* Write the digits to the left of the frame */
 
 	    sprintf(text, "%d", base[l] + 10 * i);
-	    plmtex("lv", (PLFLT) 1.0, (0.95 - 0.1 * i), (PLFLT) 1.0, text);
+	    plmtex("lv", 1.0, (0.95 - 0.1 * i), 1.0, text);
 	    for (j = 0; j <= 9; j++) {
 		x = 0.1 * j + 0.05;
 		y = 0.95 - 0.1 * i;
@@ -90,8 +89,7 @@ main(int argc, char *argv[])
 	    }
 	}
 
-	plmtex("t", (PLFLT) 1.5, (PLFLT) 0.5, (PLFLT) 0.5,
-	       "PLPLOT Example 7 - PLSYM symbols");
+	plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols");
     }
     plend();
     exit(0);

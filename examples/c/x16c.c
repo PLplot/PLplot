@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/04/25 19:02:55  mjl
+ * Revision 1.4  1994/06/30 17:57:58  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.3  1994/04/25  19:02:55  mjl
  * Increased the number of shade regions to make it a bit more interesting
  * when playing with the palette.
  *
@@ -10,19 +16,30 @@
  * Revision 1.1  1994/03/30  07:22:55  mjl
  * Added to test specifically color fill capability of plshade, with optional
  * coordinate mapping.
- *
 */
 
-/* Demonstration of plshade plotting */
+/*	x16c.c
+
+	plshade demo, using color fill.
+
+	Maurice LeBrun
+	IFS, University of Texas at Austin
+	20 Mar 1994
+*/
 
 #include <plplot.h>
-#include <math.h>
 
-#define NCONTR	30
-#define XPTS    35
-#define YPTS    46
+#define NCONTR	30		/* Number of contours */
+#define XPTS    35		/* Data points in x */
+#define YPTS    46		/* Datat points in y */
+
 #define XSPA    2./(XPTS-1)
 #define YSPA    2./(YPTS-1)
+
+static PLFLT clevel[NCONTR];
+
+/* Utility macros */
+
 #ifndef PI
 #define PI	3.1415926535897932384
 #endif
@@ -33,27 +50,34 @@
 #define MIN(a,b)    (((a) < (b)) ? (a) : (b))
 #endif
 
+/* Transformation function */
+
 PLFLT tr[6] =
 {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
-void
+static void
 mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 {
     *tx = tr[0] * x + tr[1] * y + tr[2];
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
 
-static PLFLT clevel[NCONTR];
+/* Function prototypes */
 
-void
+static void
 f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax);
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Does several shade plots using different coordinate mappings.
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
 {
     int i, j;
     PLFLT x, y, argx, argy, distort;
-    static PLINT mark = 1500, space = 1500;
 
     PLFLT **z, **w, zmin, zmax;
     PLFLT xg1[XPTS], yg1[YPTS];
@@ -219,12 +243,12 @@ main(int argc, char *argv[])
 }
 
 /*----------------------------------------------------------------------*\
-* f2mnmx
-*
-* Returns min & max of input 2d array.
+ * f2mnmx
+ *
+ * Returns min & max of input 2d array.
 \*----------------------------------------------------------------------*/
 
-void
+static void
 f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
 {
     int i, j;

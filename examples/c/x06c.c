@@ -1,24 +1,30 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/03/30 07:21:49  mjl
+ * Revision 1.7  1994/06/30 17:57:29  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.6  1994/03/30  07:21:49  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.5  1993/02/22  23:16:14  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
- *
- * Revision 1.4  1993/01/23  06:10:26  mjl
- * Instituted exit codes for all example codes.  Also deleted color functions
- * no longer supported (plancol).  Enhanced x09c to exploit new contour
- * capabilities.
 */
 
-/* Displays the plotter symbols for PLPOIN */
+/*	x06c.c
+
+	Font demo.
+*/
 
 #include <plplot.h>
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Displays the entire "plpoin" symbol (font) set.
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -40,19 +46,19 @@ main(int argc, char *argv[])
 /* Set up viewport and window */
 
     plcol(2);
-    plvpor((PLFLT) 0.1, (PLFLT) 1.0, (PLFLT) 0.1, (PLFLT) 0.9);
-    plwind((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 1.3);
+    plvpor(0.1, 1.0, 0.1, 0.9);
+    plwind(0.0, 1.0, 0.0, 1.3);
 
 /* Draw the grid using plbox */
 
-    plbox("bcgt", (PLFLT) 0.1, 0, "bcgt", (PLFLT) 0.1, 0);
+    plbox("bcgt", 0.1, 0, "bcgt", 0.1, 0);
 
 /* Write the digits below the frame */
 
     plcol(15);
     for (i = 0; i <= 9; i++) {
 	sprintf(text, "%d", i);
-	plmtex("b", (PLFLT) 1.5, (0.1 * i + 0.05), (PLFLT) 0.5, text);
+	plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, text);
     }
 
     k = 0;
@@ -61,7 +67,7 @@ main(int argc, char *argv[])
 /* Write the digits to the left of the frame */
 
 	sprintf(text, "%d", 10 * i);
-	plmtex("lv", (PLFLT) 1.0, (1.0 - (2 * i + 1) / 26.0), (PLFLT) 1.0, text);
+	plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, text);
 	for (j = 0; j <= 9; j++) {
 	    x = 0.1 * j + 0.05;
 	    y = 1.25 - 0.1 * i;
@@ -75,8 +81,7 @@ main(int argc, char *argv[])
 	}
     }
 
-    plmtex("t", (PLFLT) 1.5, (PLFLT) 0.5, (PLFLT) 0.5,
-	   "PLPLOT Example 6 - PLPOIN symbols");
+    plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 6 - plpoin symbols");
     plend();
     exit(0);
 }

@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/04/08 12:07:55  mjl
+ * Revision 1.6  1994/06/30 17:57:56  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.5  1994/04/08  12:07:55  mjl
  * Changed to only pattern shade.
  *
  * Revision 1.4  1994/03/30  07:22:00  mjl
@@ -11,19 +17,11 @@
  *
  * Revision 1.3  1993/12/06  22:38:16  mjl
  * Added #include <stdio.h> to pick up definition of NULL under SunOS.
- *
- * Revision 1.2  1993/08/31  17:57:11  mjl
- * Actually works now.  Makes three plots, shading a single or multiple
- * regions.
- *
- * Revision 1.1  1993/08/18  19:06:44  mjl
- * This file for testing plshade capability.  Just sketched out at this
- * point.
 */
 
 /*	x15c.c
 
-	plshade test functions.
+	Shade plot demo.
 
 	Maurice LeBrun
 	IFS, University of Texas at Austin
@@ -31,7 +29,11 @@
 */
 
 #include <plplot.h>
-#include <math.h>
+
+#define XPTS    35		/* Data points in x */
+#define YPTS    46		/* Datat points in y */
+
+PLFLT z[XPTS][YPTS], zmin, zmax;
 
 /* Utility macros */
 
@@ -53,17 +55,10 @@ static void	f2mnmx		(PLFLT *, PLINT, PLINT, PLFLT *, PLFLT *);
 static void	cmap1_init1	(void);
 static void	cmap1_init2	(void);
 
-/* Data to plot */
-
-#define XPTS    35
-#define YPTS    46
-
-PLFLT z[XPTS][YPTS], zmin, zmax;
-
 /*----------------------------------------------------------------------*\
-* main
-*
-* Does a variety of shade plots.
+ * main
+ *
+ * Does a variety of shade plots.
 \*----------------------------------------------------------------------*/
 
 int
@@ -108,9 +103,9 @@ main(int argc, char *argv[])
 }
 
 /*----------------------------------------------------------------------*\
-* cmap1_init1
-*
-* Initializes color map 1 in HLS space.
+ * cmap1_init1
+ *
+ * Initializes color map 1 in HLS space.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -149,9 +144,9 @@ cmap1_init1(void)
 }
 
 /*----------------------------------------------------------------------*\
-* cmap1_init2
-*
-* Initializes color map 1 in HLS space.
+ * cmap1_init2
+ *
+ * Initializes color map 1 in HLS space.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -190,12 +185,12 @@ cmap1_init2(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plot1
-*
-* Illustrates a single shaded region.
+ * plot1
+ *
+ * Illustrates a single shaded region.
 \*----------------------------------------------------------------------*/
 
-void 
+static void 
 plot1(void)
 {
     PLFLT shade_min, shade_max, sh_color;
@@ -231,13 +226,13 @@ plot1(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plot2
-*
-* Illustrates multiple adjacent shaded regions, using different fill
-* patterns for each region. 
+ * plot2
+ *
+ * Illustrates multiple adjacent shaded regions, using different fill
+ * patterns for each region. 
 \*----------------------------------------------------------------------*/
 
-void 
+static void 
 plot2(void)
 {
     PLFLT shade_min, shade_max, sh_color;
@@ -272,14 +267,14 @@ plot2(void)
 }
 
 /*----------------------------------------------------------------------*\
-* f2mnmx
-*
-* Returns min & max of input 2d array.
+ * f2mnmx
+ *
+ * Returns min & max of input 2d array.
 \*----------------------------------------------------------------------*/
 
 #define F(a,b) (f[a*ny+b])
 
-void
+static void
 f2mnmx(PLFLT *f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
 {
     int i, j;

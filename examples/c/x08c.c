@@ -1,31 +1,27 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/03/30 07:21:52  mjl
+ * Revision 1.8  1994/06/30 17:57:37  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.7  1994/03/30  07:21:52  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.6  1993/07/28  05:47:24  mjl
- * Some minor desuckification.
- *
- * Revision 1.5  1993/02/22  23:16:16  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
- *
- * Revision 1.4  1993/01/23  06:10:28  mjl
- * Instituted exit codes for all example codes.  Also deleted color functions
- * no longer supported (plancol).  Enhanced x09c to exploit new contour
- * capabilities.
 */
 
-/* Demonstration of 3-d plotting */
+/*	x08c.c
+
+	3-d plot demo.
+*/
 
 #include <plplot.h>
-#include <math.h>
 
-#define   XPTS   35
-#define   YPTS   46
+#define XPTS    35		/* Data points in x */
+#define YPTS    46		/* Datat points in y */
 
 static int opt[] =
 {1, 2, 3, 3};
@@ -38,11 +34,18 @@ static PLFLT az[] =
 
 static char *title[4] =
 {
-    "#frPLPLOT Example 8 - Alt=60, Az=30, Opt=1",
-    "#frPLPLOT Example 8 - Alt=20, Az=60, Opt=2",
-    "#frPLPLOT Example 8 - Alt=60, Az=120, Opt=3",
-    "#frPLPLOT Example 8 - Alt=60, Az=160, Opt=3"
+    "#frPLplot Example 8 - Alt=60, Az=30, Opt=1",
+    "#frPLplot Example 8 - Alt=20, Az=60, Opt=2",
+    "#frPLplot Example 8 - Alt=60, Az=120, Opt=3",
+    "#frPLplot Example 8 - Alt=60, Az=160, Opt=3"
 };
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Does a series of 3-d plots for a given data set, with different
+ * viewing options in each plot.
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -86,8 +89,10 @@ main(int argc, char *argv[])
 	plwind(-1.0, 1.0, -0.9, 1.1);
 	plcol(1);
 	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
-	plbox3("bnstu", "x axis", 0.0, 0, "bnstu", "y axis", 0.0, 0,
+	plbox3("bnstu", "x axis", 0.0, 0,
+	       "bnstu", "y axis", 0.0, 0,
 	       "bcdmnstuv", "z axis", 0.0, 0);
+
 	plcol(2);
 	plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
 	plcol(3);

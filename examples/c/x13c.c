@@ -1,20 +1,24 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/03/30 07:21:57  mjl
+ * Revision 1.7  1994/06/30 17:57:51  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.6  1994/03/30  07:21:57  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.5  1993/02/22  23:16:21  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
 */
 
-/* Demonstration program for PLPLOT: */
+/*	x13c.c
+
+	Pie chart demo.
+*/
 
 #include <plplot.h>
-#include <math.h>
 
 #ifndef PI
 #define PI      3.141592654
@@ -28,6 +32,12 @@ static char *text[] =
     "Steve",
     "Warner"
 };
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Does a simple pie chart.
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -50,7 +60,7 @@ main(int argc, char *argv[])
 
     plinit();
 
-    plenv((PLFLT) 0., (PLFLT) 10., (PLFLT) 0., (PLFLT) 10., 1, -2);
+    plenv(0., 10., 0., 10., 1, -2);
     plcol(2);
 
     theta0 = 0.;
@@ -74,20 +84,17 @@ main(int argc, char *argv[])
 	just = (theta0 + theta1) / 2.;
 	dx = .25 * cos(just);
 	dy = .25 * sin(just);
-	if (just < PI / 2 || just > 3 * PI / 2) {
+	if (just < PI / 2 || just > 3 * PI / 2) 
 	    just = 0.;
-	}
-	else {
+	else 
 	    just = 1.;
-	}
-	plptex((x[j / 2] + dx), (y[j / 2] + dy), (PLFLT) 1., (PLFLT) 0.,
-	       just, text[i]);
+
+	plptex((x[j / 2] + dx), (y[j / 2] + dy), 1.0, 0.0, just, text[i]);
 	theta0 = theta - dthet;
     }
     plfont(2);
-    plschr((PLFLT) 0., (PLFLT) 1.3);
-    plptex((PLFLT) 5., (PLFLT) 9., (PLFLT) 1., (PLFLT) 0., (PLFLT) .5,
-	   "Percentage of Sales");
+    plschr(0., 1.3);
+    plptex(5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales");
 
 /* Don't forget to call PLEND to finish off! */
 

@@ -1,26 +1,27 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/03/30 07:21:55  mjl
+ * Revision 1.9  1994/06/30 17:57:46  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.8  1994/03/30  07:21:55  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.7  1993/12/08  20:25:58  mjl
- * Eliminated final pltext() call (unnecessary).
- *
- * Revision 1.6  1993/02/22  23:16:19  mjl
- * Changed over to new style of initialization using plinit(), and added
- * function to parse plplot command line flags.
 */
 
-/* Demonstration of mesh plotting (just like x08c but mesh) */
+/*	x11c.c
+
+	Mesh plot demo.
+*/
 
 #include <plplot.h>
-#include <math.h>
 
-#define   XPTS   35
-#define   YPTS   46
+#define XPTS    35		/* Data points in x */
+#define YPTS    46		/* Datat points in y */
 
 static int opt[] =
 {1, 2, 3, 3};
@@ -33,11 +34,24 @@ static PLFLT az[] =
 
 static char *title[4] =
 {
-    "#frPLPLOT Example 11 - Alt=60, Az=30, Opt=1",
-    "#frPLPLOT Example 11 - Alt=20, Az=60, Opt=2",
-    "#frPLPLOT Example 11 - Alt=60, Az=120, Opt=3",
-    "#frPLPLOT Example 11 - Alt=60, Az=160, Opt=3"
+    "#frPLplot Example 11 - Alt=60, Az=30, Opt=1",
+    "#frPLplot Example 11 - Alt=20, Az=60, Opt=2",
+    "#frPLplot Example 11 - Alt=60, Az=120, Opt=3",
+    "#frPLplot Example 11 - Alt=60, Az=160, Opt=3"
 };
+
+/* Utility macros */
+
+#ifndef PI
+#define PI	3.1415926535897932384
+#endif
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Does a series of mesh plots for a given data set, with different
+ * viewing options in each plot.
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -69,26 +83,25 @@ main(int argc, char *argv[])
 	xx = x[i];
 	for (j = 0; j < YPTS; j++) {
 	    yy = y[j];
-	    z[i][j] = cos(2.0 * 3.141592654 * xx) * sin(2.0 * 3.141592654 * yy);
+	    z[i][j] = cos(2.0 * PI * xx) * sin(2.0 * PI * yy);
 	}
     }
 
     for (k = 0; k < 4; k++) {
 	pladv(0);
 	plcol(1);
-	plvpor((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 0.8);
-	plwind((PLFLT) -1.0, (PLFLT) 1.0, (PLFLT) -1.0, (PLFLT) 1.5);
+	plvpor(0.0, 1.0, 0.0, 0.8);
+	plwind(-1.0, 1.0, -1.0, 1.5);
 
-	plw3d((PLFLT) 1.0, (PLFLT) 1.0, (PLFLT) 1.2, (PLFLT) -1.0, (PLFLT) 1.0,
-	      (PLFLT) -1.0, (PLFLT) 1.0, (PLFLT) -1.5, (PLFLT) 1.5,
-	      alt[k], az[k]);
-	plbox3("bnstu", "x axis", (PLFLT) 0.0, 0, "bnstu",
-	       "y axis", (PLFLT) 0.0, 0, "bcdmnstuv",
-	       "z axis", (PLFLT) 0.0, 4);
+	plw3d(1.0, 1.0, 1.2, -1.0, 1.0, -1.0, 1.0, -1.5, 1.5, alt[k], az[k]);
+	plbox3("bnstu", "x axis", 0.0, 0,
+	       "bnstu", "y axis", 0.0, 0,
+	       "bcdmnstuv", "z axis", 0.0, 4);
+
 	plcol(2);
 	plmesh(x, y, z, XPTS, YPTS, opt[k]);
 	plcol(3);
-	plmtex("t", (PLFLT) 1.0, (PLFLT) 0.5, (PLFLT) 0.5, title[k]);
+	plmtex("t", 1.0, 0.5, 0.5, title[k]);
     }
 
     plend();

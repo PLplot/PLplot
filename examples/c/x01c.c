@@ -1,36 +1,47 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/03/30 07:21:44  mjl
+ * Revision 1.9  1994/06/30 17:57:10  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.8  1994/03/30  07:21:44  mjl
  * Changes to all C example programs: special handling for malloc re: header
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.7  1993/07/02  07:04:40  mjl
- * Eliminated plrgb calls (to be deprecated in 5.0).
- *
- * Revision 1.6  1993/03/02  18:58:46  mjl
- * Inserted a retrieve & display of the plplot library version as a
- * demonstration.
 */
 
-/* Demonstration program for PLPLOT: */
-/* Plots several simple functions */
+/*	x01c.c
+
+	Simple line plot and multiple windows demo.
+*/
 
 #include <plplot.h>
-#include <math.h>
 
-static PLFLT xs[6] =
-{1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-static PLFLT ys[6] =
-{1.0, 4.0, 9.0, 16.0, 25.0, 36.0};
+/* Variables and data arrays used by plot generators */
+
 static PLFLT x[101], y[101];
-static PLFLT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
-static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
+static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
+
+/* Function prototypes */
 
 void plot1(void);
 void plot2(void);
 void plot3(void);
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Generates several simple line plots.  Demonstrates:
+ *   - subwindow capability
+ *   - setting up the window, drawing plot, and labelling
+ *   - changing the color
+ *   - automatic axis rescaling to exponential notation
+ *   - placing the axes in the middle of the box
+ *   - gridded coordinate axes
+\*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -109,8 +120,8 @@ plot1(void)
     ymax = y[59];
 
     for (i = 0; i < 6; i++) {
-	xs1[i] = x[i * 10 + 3];
-	ys1[i] = y[i * 10 + 3];
+	xs[i] = x[i * 10 + 3];
+	ys[i] = y[i * 10 + 3];
     }
 
 /* Set up the viewport and window using PLENV. The range in X is 
@@ -121,12 +132,12 @@ plot1(void)
     plcol(1);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     plcol(2);
-    pllab("(x)", "(y)", "#frPLPLOT Example 1 - y=x#u2");
+    pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
 /* Plot the data points */
 
     plcol(4);
-    plpoin(6, xs1, ys1, 9);
+    plpoin(6, xs, ys, 9);
 
 /* Draw the line through the data */
 
@@ -148,7 +159,7 @@ plot2(void)
     plcol(1);
     plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
     plcol(2);
-    pllab("(x)", "sin(x)/x", "#frPLPLOT Example 1 - Sinc Function");
+    pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
 /* Fill up the arrays */
 
@@ -170,6 +181,7 @@ plot2(void)
 void
 plot3(void)
 {
+    PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
     int i;
 
 /* For the final graph we wish to override the default tick intervals, and
@@ -197,7 +209,7 @@ plot3(void)
     plstyl(0, &mark0, &space0);
 
     plcol(3);
-    pllab("Angle (degrees)", "sine", "#frPLPLOT Example 1 - Sine function");
+    pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
 
     for (i = 0; i < 101; i++) {
 	x[i] = 3.6 * i;

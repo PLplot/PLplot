@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/05/14 05:43:56  mjl
+ * Revision 1.9  1994/06/30 17:57:54  mjl
+ * All C example programs: made another pass to eliminate warnings when using
+ * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
+ * (now included by plplot.h), eliminated redundant casts, put in more
+ * uniform comments, and other minor changes.
+ *
+ * Revision 1.8  1994/05/14  05:43:56  mjl
  * Now uses the DP driver and finally works the way I always wanted it to.
  *
  * Revision 1.7  1994/03/30  07:21:58  mjl
@@ -8,34 +14,24 @@
  * files eliminated, include of stdio.h and stdlib.h eliminated (now done
  * by plplot.h), include of "plplot.h" changed to <plplot.h> to enable
  * simpler builds by the general user, some cleaning up also.
- *
- * Revision 1.6  1993/07/02  07:04:41  mjl
- * Eliminated plrgb calls (to be deprecated in 5.0).
 */
 
-/* 
-* Demonstration program for PLPLOT: 
-* Plots several simple functions from other example programs.
-*
-* This version sends the output of the first 4 plots (one page) to two
-* independent streams.  The X driver is chosen since that makes for a
-* rather nice display, although the offset flags do not yet work
-* correctly.
+/*	x14c.c
+
+	Demo of multiple stream/window capability (requires Tcl-DP).
+
+	Maurice LeBrun
+	IFS, University of Texas at Austin
 */
 
 #include <plplot.h>
-#include <math.h>
 
 #ifndef ROUND
 #define ROUND(a)    (PLINT)((a)<0. ? ((a)-.5) : ((a)+.5))
 #endif
 
-static PLFLT xs[6] =
-{1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-static PLFLT ys[6] =
-{1.0, 4.0, 9.0, 16.0, 25.0, 36.0};
 static PLFLT x[101], y[101];
-static PLFLT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
+static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
 static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
 
 void plot1();
@@ -43,6 +39,17 @@ void plot2();
 void plot3();
 void plot4();
 void plot5();
+
+/*----------------------------------------------------------------------*\
+ * main
+ *
+ * Plots several simple functions from other example programs.
+ *
+ * This version sends the output of the first 4 plots (one page) to two
+ * independent streams.  The X driver is chosen since that makes for a
+ * rather nice display, although the offset flags do not yet work
+ * correctly.
+\*----------------------------------------------------------------------*/
 
 int
 main(void)
@@ -153,8 +160,8 @@ plot1(void)
     ymax = y[59];
 
     for (i = 0; i < 6; i++) {
-	xs1[i] = x[i * 10 + 3];
-	ys1[i] = y[i * 10 + 3];
+	xs[i] = x[i * 10 + 3];
+	ys[i] = y[i * 10 + 3];
     }
 
 /* Set up the viewport and window using PLENV. The range in X is */
@@ -165,12 +172,12 @@ plot1(void)
     plcol(1);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     plcol(6);
-    pllab("(x)", "(y)", "#frPLPLOT Example 1 - y=x#u2");
+    pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
 /* Plot the data points */
 
     plcol(9);
-    plpoin(6, xs1, ys1, 9);
+    plpoin(6, xs, ys, 9);
 
 /* Draw the line through the data */
 
@@ -193,7 +200,7 @@ plot2(void)
     plcol(1);
     plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
     plcol(2);
-    pllab("(x)", "sin(x)/x", "#frPLPLOT Example 1 - Sinc Function");
+    pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function");
 
 /* Fill up the arrays */
 
@@ -243,7 +250,7 @@ plot3(void)
     plstyl(0, &mark0, &space0);
 
     plcol(3);
-    pllab("Angle (degrees)", "sine", "#frPLPLOT Example 1 - Sine function");
+    pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
 
     for (i = 0; i < 101; i++) {
 	x[i] = 3.6 * i;
@@ -316,7 +323,7 @@ plot4(void)
 
     plcol(4);
     plmtex("t", 2.0, 0.5, 0.5,
-	   "#frPLPLOT Example 3 - r(#gh)=sin 5#gh");
+	   "#frPLplot Example 3 - r(#gh)=sin 5#gh");
 }
 
  /* =============================================================== */
