@@ -18,6 +18,7 @@ static PLGraphicsIn gin;
 static int locate_mode;
 static int test_xor;
 static int fontset = 1;
+static char *f_name = NULL;
 
 /* Options data structure definition. */
 
@@ -46,6 +47,14 @@ static PLOptionTable options[] = {
     PL_OPT_INT,
     "-font number",
     "Selects stroke font set (0 or 1, def:1)" },
+{
+    "save",			/* For saving in postscript */
+    NULL,
+    NULL,
+    &f_name,
+    PL_OPT_STRING,
+    "-save filename",
+      "Save plot in color postscript `file'" },
 {
     NULL,			/* option */
     NULL,			/* handler */
@@ -79,7 +88,7 @@ void plot3(void);
 int
 main(int argc, char *argv[])
 {
-    PLINT digmax;
+  PLINT digmax, cur_strm, new_strm;
     char ver[80];
 
 /* plplot initialization */
@@ -136,6 +145,28 @@ main(int argc, char *argv[])
     plot2();
 
     plot3();
+
+      /* 
+       * Show how to save a plot:
+       * Open a new device, make it current, copy parameters,
+       * and replay the plot buffer 
+       */
+
+    if (f_name) { /* command line option '-save filename' */
+
+      printf("The current plot was saved in color Postscript under the name `%s'.\n", f_name);
+      plgstrm(&cur_strm);    /* get current stream */
+      plmkstrm(&new_strm);   /* create a new one */ 
+    
+      plsfnam(f_name);       /* file name */
+      plsdev("psc");         /* device type */
+
+      plcpstrm(cur_strm, 0); /* copy old stream parameters to new stream */
+      plreplot();	     /* do the save by replaying the plot buffer */
+      plend1();              /* finish the device */
+
+      plsstrm(cur_strm);     /* return to previous stream */
+    }
 
 /* Let's get some user input */
 
