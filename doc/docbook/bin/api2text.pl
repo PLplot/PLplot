@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 # File: api2man.pl
-# Description: Convert the PLplot API chapter (file api.xml of the DocBook 
+# Description: Convert the PLplot API chapter (file api.xml of the DocBook
 #              manual) into a series of man pages.
-# Author: Rafael Laboissière <rafael@icp.inpg.fr>
+# Author: Rafael Laboissière <rafael@debian.org>
 # Created on: Mon Dec  4 16:35:32 CET 2000
-# Last modified on: Tue Dec  5 08:56:41 CET 2000
+# Last modified on: Mon Mar 10 17:56:02 CET 2003
 # $Id$
 
 # This script relies on the present structure of the API chapter (file
@@ -62,11 +62,21 @@ while (<MASTER>) {
   if (/^(<!DOCTYPE.*)\[/) {
     $api .= "$1 \"\" [\n";
   }
-  elsif (/^(<\?xml|<!ENTITY pl)/) {
-    $api .= "$_";
+  elsif (/^<\?xml/) {
+    $api .= '<?xml version="1.0" standalone="yes"?>
+';
+  }
+  elsif (/^<!ENTITY pl/) {
+    $api .= $_;
   }
 }
-$api .= "]>\n";
+$api .= "<!ENTITY amp '#38;#38;'>
+<!ENTITY deg ' degrees'>
+<!ENTITY gt '&#x003E;'>
+<!ENTITY leq '&#38;#60;='>
+<!ENTITY lt '&#38;#60;'>
+<!ENTITY ndash '--'>
+]>\n";
 close MASTER;
 
 open (API, "< $ARGV[1]");
@@ -96,28 +106,28 @@ sub process_node {
       }
       elsif  ($tag eq "function") {
         $ret .= process_node ($e);
-      }      
+      }
       elsif  ($tag eq "link") {
         $ret .= process_node ($e) ;
-      }      
+      }
       elsif  ($tag eq "funcprototype") {
         $startproto = 1;
 	my $p = process_node ($e);
 	$p =~ s/ +$//;
         $ret .= $p . ")";
-      }      
+      }
       elsif  ($tag eq "paramdef") {
 	my $p = process_node ($e);
 	$p =~ s/ +$//;
         $ret .= ($startproto ? "(" : ", ") . $p;
         $startproto = 0;
-      }      
+      }
       elsif  ($tag eq "term") {
         $ret .= "\n" . process_node ($e) . ":";
-      }      
+      }
       elsif  ($tag eq "listitem") {
         $ret .= "\t" . process_node ($e) . "\n";
-      }      
+      }
       elsif  ($tag eq "xref") {
         $ret .= "the PLplot documentation";
       }
@@ -126,11 +136,11 @@ sub process_node {
       }
       else {
         $ret .= process_node ($e);
-      }    
+      }
     }
     else {
       $ret .= process_node ($e);
-    }    
+    }
   }
   $ret =~ s/^\s+//;
   return $ret;
