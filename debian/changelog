@@ -1,3 +1,9 @@
+plplot (5.2.1.cvs.20031226-1) unstable; urgency=low
+
+  * New cvs snapshot upstream release.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 26 Dec 2003 16:48:05 +0100
+
 plplot (5.2.1.cvs.20031030-2) unstable; urgency=low
 
   * debian/rules: Call configure with --enable-static, such that the
