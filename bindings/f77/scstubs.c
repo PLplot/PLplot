@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.6  1992/10/27 22:14:20  mjl
-   Support for plflush() function.
+   Revision 1.7  1992/10/28 22:20:07  mjl
+   Fixed stupid bug in new plflush() function.
 
+ * Revision 1.6  1992/10/27  22:14:20  mjl
+ * Support for plflush() function.
+ *
  * Revision 1.5  1992/10/22  17:05:46  mjl
  * Fixed warnings, errors generated when compling with HP C++.
  *
@@ -135,7 +138,7 @@ PLFILL( PLINT *n, PLFLT *x, PLFLT *y )
 }
 
 void 
-PLFLUSH_( void )
+PLFLUSH( void )
 {
     c_plflush();
 }
