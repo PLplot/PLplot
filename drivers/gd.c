@@ -295,7 +295,7 @@ if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
 /* Initialize any remaining slots for cmap1 */
 
 
-    ncol1 = NCOLOURS;
+    ncol1 = NCOLOURS-pls->ncol0;
     for (i = 0; i < ncol1; i++) {
 	plcol_interp(pls, &cmap1col, i, ncol1);
         dev->colour_index[i + pls->ncol0]=gdImageColorAllocate(dev->im_out,
