@@ -866,9 +866,6 @@ AC_OUTPUT([
 	scripts/Makefile
 	doc/Makefile	
 	plplot.pc
-	])
-	
-AC_OUTPUT([	
 	plplot-double.pc
         doc/docbook/Makefile                                            
         doc/docbook/src/Makefile
