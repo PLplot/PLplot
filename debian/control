@@ -39,6 +39,24 @@ Description: Scientific plotting library (development files)
  .
  Homepage: http://www.plplot.org
 
+Package: plplot-bin
+Architecture: any
+Section:
+Conflicts: libplplot9 (<= 5.3.0-4), plplot (<< 5)
+Depends: ${shlibs:Depends}
+Description: Scientific plotting library (utilities)
+ This package contains the follwoing utilities associated with PLplot,
+ a scientific plotting library:
+ .
+   plrender - render a PLplot metafile
+   pltek - review a Tektronix vector file
+   plm2gif - converts PLplot metafiles to GIF files
+   plpr - converts PLplot metafile to something the printer will
+          understand
+   pstex2eps - Generate EPS file from PLplot pstex driver
+ .
+ Homepage: http://www.plplot.org
+
 Package: plplot9-driver-xwin
 Architecture: any
 Section: libs

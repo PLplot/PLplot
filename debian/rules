@@ -103,14 +103,15 @@ install-stamp: build-stamp
 
 	for i in libplplot-dev plplot-tcl plplot-tcl-dev plplot-doc  \
 	         plplot9-driver-gd plplot9-driver-xwin plplot9-driver-gnome \
-                 $(octave_pkg) python-plplot ; do \
+                 $(octave_pkg) python-plplot plplot-bin ; do \
 	  ln -s $(libpkg) $(debdoc)/$$i ; \
 	done
 
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
-	                $(octave_xcl)
+	                --no-package=plplot-bin $(octave_xcl)
 	dh_movefiles -i
 	dh_movefiles --package=libplplot-dev
+	dh_movefiles --package=plplot-bin	
 	dh_movefiles --package=$(libpkg)
 
 	touch install-stamp

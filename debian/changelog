@@ -1,3 +1,11 @@
+plplot (5.3.0-5) unstable; urgency=low
+
+  * Remove the programs in /usr/bin from the libplplot9 package and put
+    them into the new package plplot-bin.  This will avoid future
+    conflicts when the soversion of the library will be incremented.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sat, 28 Feb 2004 14:24:56 +0100
+
 plplot (5.3.0-4) unstable; urgency=low
 
   * debian/control: Made libplplot9 conflict with the old plplot package
