@@ -527,7 +527,6 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    for( i=0; i < nx; i++ ) {
       (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
       (*jenv)->DeleteLocalRef(jenv, ai[i]);
-      (*jenv)->DeleteLocalRef(jenv, adat[i]);
    }
    
 
@@ -582,7 +581,6 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    for( i=0; i < nx; i++ ) {
       (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
       (*jenv)->DeleteLocalRef(jenv, ai[i]);
-      (*jenv)->DeleteLocalRef(jenv, adat[i]);
    }
 
    free(adat);
@@ -634,7 +632,6 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    for( i=0; i < nx; i++ ) {
       (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
       (*jenv)->DeleteLocalRef(jenv, ai[i]);
-      (*jenv)->DeleteLocalRef(jenv, adat[i]);
    }
 
    free(adat);
@@ -692,7 +689,6 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    for( i=0; i < nx; i++ ) {
       (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
       (*jenv)->DeleteLocalRef(jenv, ai[i]);
-      (*jenv)->DeleteLocalRef(jenv, adat[i]);
    }
 
    free(adat);
@@ -763,7 +759,6 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    for( i=0; i < nx; i++ ) {
       (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
       (*jenv)->DeleteLocalRef(jenv, ai[i]);
-      (*jenv)->DeleteLocalRef(jenv, adat[i]);
    }
 
    free(adat);
@@ -826,7 +821,6 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    for( i=0; i < nx; i++ ) {
       (*jenv)->ReleasePLFLTArrayElements( jenv, ai[i], adat[i], 0 );
       (*jenv)->DeleteLocalRef(jenv, ai[i]);
-      (*jenv)->DeleteLocalRef(jenv, adat[i]);
    }
 
    free(adat);
