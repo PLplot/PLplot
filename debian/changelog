@@ -1,3 +1,13 @@
+plplot (5.2.0.cvs.20030219-1) unstable; urgency=low
+
+  * Built with new CVS sources.  The plplot_octave.oct file is installed
+    in localoctfiledir, instead of octfiledir.  This avoids the versioned
+    installation directory.
+  * debian/control: octave-plplot does not depend anymore on a specific
+    version of Octave.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Wed, 19 Feb 2003 12:06:33 +0100
+
 plplot (5.2.0.cvs.20030218-2) unstable; urgency=low
 
   * Something was strangely broken with the inclusion of files in the
