@@ -1,10 +1,14 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.5  1993/02/22 23:16:09  mjl
-   Changed over to new style of initialization using plinit(), and added
-   function to parse plplot command line flags.
+   Revision 1.6  1993/03/02 18:58:46  mjl
+   Inserted a retrieve & display of the plplot library version as a
+   demonstration.
 
+ * Revision 1.5  1993/02/22  23:16:09  mjl
+ * Changed over to new style of initialization using plinit(), and added
+ * function to parse plplot command line flags.
+ *
  * Revision 1.4  1993/01/23  06:10:21  mjl
  * Instituted exit codes for all example codes.  Also deleted color functions
  * no longer supported (plancol).  Enhanced x09c to exploit new contour
@@ -47,6 +51,7 @@ int
 main(int argc, char *argv[])
 {
     PLINT digmax;
+    char ver[80];
 
 /* plplot initialization */
 /* Divide page into 2x2 plots unless user overrides */
@@ -56,6 +61,11 @@ main(int argc, char *argv[])
 /* Parse and process command line arguments */
 
     (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+
+/* Get version number, just for kicks */
+
+    plgver(ver);
+    printf("Plplot library version: %s\n", ver);
 
 /* Initialize plplot */
 
