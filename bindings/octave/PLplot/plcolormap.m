@@ -48,7 +48,7 @@ function ccmap = plcolormap(map)
 	l = [0.5; vertex; vertex; 0.5];	# lightness
 	s = [1; 1; 1; 1];		# saturation
 	plscmap1l(0,i,h,l,s,zeros(4,1))
-	plflush;pleop;
+	plflush;#pleop;
       endif		
 
       ## Ok, it works, but I want the rgb map array to be stored in __pl.colormap. how?
@@ -70,7 +70,7 @@ function ccmap = plcolormap(map)
   if (nargin == 1 && isstr(map) && strcmp(map, 'default'))
     plscmap1n(0);
     cmap = plcolormap;
-    plflush;pleop;
+    plflush;#pleop;
     if (nargout)
       ccmap = cmap;
     endif
@@ -89,7 +89,7 @@ function ccmap = plcolormap(map)
 
   plscmap1n(rows(map)); # number of colors
   plscmap1(map(:,1), map(:,2), map(:,3));
-  plflush;pleop;
+  plflush;#pleop;
 
   if (nargout)
     ccmap = cmap;
