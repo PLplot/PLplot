@@ -61,9 +61,9 @@ itkdata = \
 	PLXWin.itk
 
 if enable_itcl
-mkindex = $(top_srcdir)/scripts/mktclIndex -itcl
+mkindex = ../../scripts/mktclIndex -itcl
 else
-mkindex = $(top_srcdir)/scripts/mktclIndex -tcl
+mkindex = ../../scripts/mktclIndex -tcl
 endif
 
 $(top_srcdir)/bindings/tk/tclIndex: $(tcldata) $(itkdata)
