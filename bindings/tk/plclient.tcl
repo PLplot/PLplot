@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.3  1994/02/07 22:52:38  mjl
+# Revision 1.4  1994/06/09 20:07:54  mjl
+# Eliminated references to a plw_init_proc, now obsolete.
+#
+# Revision 1.3  1994/02/07  22:52:38  mjl
 # Removed references to plw_flash (no longer invoked from client side).
 #
 # Revision 1.2  1994/01/17  21:30:23  mjl
@@ -30,14 +33,14 @@
 #
 # plserver_init_proc	proc to initialize plserver
 # plw_create_proc	proc to create the plframe widget
-# plw_init_proc		proc to initialize the plframe widget
+# plw_start_proc	proc to manage the plframe widget
 # plw_flash_proc	proc to handle end of page condition
 # plw_end_proc		proc to detach the plframe widget from the client 
 #----------------------------------------------------------------------------
 
 proc plclient_init {} {
 
-    global plserver_init_proc plw_create_proc plw_init_proc \
+    global plserver_init_proc plw_create_proc \
 	plw_start_proc plw_end_proc \
 	dp client_host client_port update_proc
 
@@ -48,7 +51,6 @@ proc plclient_init {} {
 # These govern the plframe and associated widgets
 
     set plw_create_proc		plw_create
-    set plw_init_proc		plw_init
     set plw_start_proc		plw_start
     set plw_end_proc 		plw_end
 
