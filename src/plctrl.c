@@ -1262,11 +1262,11 @@ plLibOpenPdfstrm(char *fn)
     }
     
 /**** 	not found, give up 	****/
-    pldebug("plLibOpenPdfstr(): File %s not found.\n", fn);
+    pldebug("plLibOpenPdfstr", "File %s not found.\n", fn);
     return NULL;
 
  done:
-    pldebug("plLibOpenPdfstr(): Found file %s\n", fs);
+    pldebug("plLibOpenPdfstr", "Found file %s\n", fs);
     free_mem(fs);
     return (file);
 }
@@ -1492,9 +1492,9 @@ plOpenFile(PLStream *pls)
 	    plexit("Too many tries.");
 
 	if ((pls->OutFile = fopen(pls->FileName, "wb+")) == NULL) 
-	    fprintf(stdout, "Can't open %s.\n", pls->FileName);
+	    fprintf(stderr, "Can't open %s.\n", pls->FileName);
 	else
-	    fprintf(stderr, "Opened %s\n", pls->FileName);
+	    pldebug("plOpenFile", "Opened %s\n", pls->FileName);
     }
 }
 
