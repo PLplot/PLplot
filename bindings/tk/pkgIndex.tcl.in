@@ -36,7 +36,7 @@ proc load_pkg_Pltk {dir} {
 	set stem libplplot
 	set searchdirs ". ..";		# Need ".." for installed image
 	set tags "d {}";		# prefer double precision version
-	set ver 5.1.0
+	set ver @VERSION@
 	set suf [info sharedlibextension].$ver
 
 	set file ""
@@ -71,5 +71,5 @@ proc load_pkg_Pltk {dir} {
     rename load_pkg_Pltk {}
 }
 
-package ifneeded Pltk 5.1.0 [list load_pkg_Pltk $dir]
+package ifneeded Pltk @VERSION@ [list load_pkg_Pltk $dir]
 

@@ -24,15 +24,15 @@ SUBDIRS = c++ f77 python tcl tk octave java
 abovedatadir = ${prefix}/@DATA_DIR@/..
 
 if enable_tcl
-  index_tcl = tcl/pkgIndex.tcl.in
+  index_tcl = tcl/pkgIndex.tcl
 endif
 
 if enable_tk
-  index_tk = tk/pkgIndex.tcl.in
+  index_tk = tk/pkgIndex.tcl
 endif
 
 if enable_tkwin
-  index_tkwin = tk-x-plat/pkgIndex.tcl.in
+  index_tkwin = tk-x-plat/pkgIndex.tcl
 endif
 
 index = $(index_tcl) $(index_tk) $(index_tkwin)
@@ -44,4 +44,4 @@ pkgIndex.tcl: $(index)
 	cat $(index) > pkgIndex.tcl
 
 endif
-CLEANFILES = pkgIndex.tcl
+CLEANFILES = pkgIndex.tcl $(index)

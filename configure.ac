@@ -837,7 +837,10 @@ AC_OUTPUT([
 	bindings/f77/Makefile
 	bindings/python/Makefile
 	bindings/tcl/Makefile
+	bindings/tcl/pkgIndex.tcl
 	bindings/tk/Makefile
+	bindings/tk/pkgIndex.tcl
+	bindings/tk-x-plat/pkgIndex.tcl
 	bindings/octave/Makefile
 	bindings/octave/PLplot/Makefile
 	bindings/octave/PLplot/plplot_octave_path.m
