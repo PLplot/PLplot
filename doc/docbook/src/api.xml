@@ -9291,6 +9291,7 @@ stripchart
 	  <function>plxormod</function>
 	</funcdef>
         <paramdef><parameter>mode</parameter></paramdef>
+        <paramdef><parameter>status</parameter></paramdef>
       </funcprototype>
       </funcsynopsis>
     </para>
@@ -9298,8 +9299,8 @@ stripchart
     <para>
       Enter (mode !=0) or leave (mode == 0) xor mode for those drivers 
       (e.g., the xwin driver) that support it.  Enables erasing plots by
-      drawing twice the same line,
-      symbol, etc.
+      drawing twice the same line, symbol, etc.  If driver is not capable
+      of xor operation returns status of 0.
     </para>
 
     <variablelist>
@@ -9312,6 +9313,18 @@ stripchart
 	  <para>
 	  mode != 0 means enter xor mode and mode == 0 means leave xor
 	  mode.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>status</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Pointer to status. Returned status == 1 (0) means driver is capable
+	  (incapable) of xor mode.
 	  </para>
 	</listitem>
       </varlistentry>
