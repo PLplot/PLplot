@@ -32,7 +32,7 @@ PYTHON_LIBS=
 PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
-PYTHON_DEMOS	= README pytkdemo *.py
+PYTHON_DEMOS	= README.python pytkdemo *.py
 
 # Variables for use in "make" and "make install".
 
