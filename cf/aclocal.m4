@@ -866,4 +866,15 @@ dnl
 AC_DEFUN([GNOME_INIT],[
 	GNOME_INIT_HOOK([],fail,$1)
 ])
-
+dnl> ------------------------------------------------------------------------
+dnl> AC substitution of stripped paths
+dnl>     AC_SUBST_STRIP(PATH,PREFIX)
+dnl> Essentially, do an AC_SUBST of PATH variable, but previously suppress
+dnl> the leading PREFIX.
+dnl> This is needed for relocatability, i.e. installing the package in a
+dnl> different prefix from that used at build time.
+dnl> Added by Rafael Laboissiere on Wed Mar 21 22:57:57 CET 2001
+AC_DEFUN([AC_SUBST_STRIP],[
+  $1=`echo $]$1[ | sed s%$]$2[/%%`
+  AC_SUBST($1)
+])
