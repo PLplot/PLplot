@@ -205,6 +205,17 @@ extern PLStream	*plsc;
 #define LPAGE_X		254.0		/* Page length in x in virtual mm */
 #define LPAGE_Y		190.5		/* Page length in y in virtual mm */
 
+/* This defines the first argument of the plRotPhy invocation that is made
+ * in a number of device drivers (e.g., found in ljii.c, ljiip.c, ps.c,
+ * and pstex.c) to rotate them "permanently" from portrait mode to non-
+ * portrait mode.  ORIENTATION of 1 corresponds to seascape mode (90 deg
+ * clockwise rotation from portrait).  This is the traditional value 
+ * effectively used in all older versions of PLplot. ORIENTATION of 3 
+ * corresponds to landscape mode (90 deg *counter*-clockwise rotation from 
+ * portrait) which is the new default non-portrait orientation. */
+
+#define ORIENTATION	3
+
 /* Switches for state function call. */
 
 #define PLSTATE_WIDTH		1	/* pen width */
