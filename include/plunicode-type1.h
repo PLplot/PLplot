@@ -24,14 +24,14 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-const int number_of_entries_in_unicode_to_dingbat_table=188;
+const int number_of_entries_in_unicode_to_dingbats_table=188;
 
 typedef struct {
 	unsigned int Unicode;
 	unsigned char Type1;
-} Unicode_to_Dingbat_table;
+} Unicode_to_Dingbats_table;
 
-const Unicode_to_Dingbat_table unicode_to_dingbat_lookup_table[188] = {
+const Unicode_to_Dingbats_table unicode_to_dingbats_lookup_table[188] = {
 {0x0020,32},
 {0x2192,213},
 {0x2194,214},
@@ -284,7 +284,7 @@ const Unicode_to_Standard_table unicode_to_standard_lookup_table[55] = {
 {0x203a,173},
 {0x2044,164},
 {0xfb01,174},
-{0xfb02,175},
+{0xfb02,175}
 };
 
 const int number_of_entries_in_unicode_to_symbol_table=163;
@@ -457,5 +457,5 @@ const Unicode_to_Symbol_table unicode_to_symbol_lookup_table[163] = {
 {0x2660,170},
 {0x2663,167},
 {0x2665,169},
-{0x2666,168},
+{0x2666,168}
 };
