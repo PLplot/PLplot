@@ -22,10 +22,12 @@
 ## If "help" is specified as an option, all options and help are printed.
 ## If "apply" is specified as an option, all set options are applied.
 
-function plsetopt(option, value)
+function ret = plsetopt(option, value)
 
   options = ["reset"; "Reset options";
-	     "show"; "Show set options"
+	     "show"; "Show set options";
+	     "help"; "Show all possible options";
+	     "apply"; "Apply the set options";
 	     "display"; "X server to contact";
 	     "server_name"; "Main window name of PLplot server (tk driver)";
 	     "server_host";"Host to run PLplot server on (dp driver)";
@@ -101,8 +103,9 @@ function plsetopt(option, value)
     for i=1:2:rows(set_options)
       if (!isempty(deblank((set_options(i,:)))))
 	if (strcmp(option, "show"))
-	  printf("%d %s: %s\n", i, deblank(options(i,:)), \
+	  printf("%s: %s\n", deblank(options(i,:)), \
 		 deblank(set_options(i,:)));
+	  ret = deblank(set_options(i,:));
 	else
 	  plSetOpt(deblank(options(i,:)), deblank(set_options(i,:)));
 	endif
