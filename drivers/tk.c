@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1993/08/28 06:34:00  mjl
+ * Revision 1.11  1993/09/08 04:52:23  mjl
+ * Fixes made for TK3.3b3.  Now searches for plserver before doing fork/exec,
+ * checking the following locations: ".", ${PLPLOT_DIR}, INSTALL_DIR (defined
+ * in the makefile).  If plserver not found, aborts gracefully.
+ *
+ * Revision 1.10  1993/08/28  06:34:00  mjl
  * Put several send commands in background; should help over a slow network.
  *
  * Revision 1.9  1993/08/20  19:40:44  mjl
@@ -114,6 +119,8 @@ static void  flush_output	(PLStream *);
 static void  plwindow_init	(PLStream *);
 static void  link_init		(PLStream *);
 static void  bgcolor_init	(PLStream *);
+static char *find_plserver	(char *);
+static int   findname		(char *);
 
 /* Tcl/TK utility commands */
 
@@ -684,7 +691,7 @@ static void
 launch_server(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char *argv[20];
+    char *argv[20], *plserver_cmd;
     int i;
     pid_t pid;
 
@@ -735,16 +742,18 @@ launch_server(PLStream *pls)
 
 /* Start server process */
 
+    plserver_cmd = find_plserver(pls->plserver);
     if ( (pid = FORK()) < 0) {
 	abort_session(pls, "fork error");
     }
     else if (pid == 0) {
 	argv[i++] = NULL;
-	if (execvp("plserver", argv)) {
-	    fprintf(stderr, "execvp error\n");
+	if (execv(plserver_cmd, argv)) {
+	    fprintf(stderr, "execv error\n");
 	    _exit(1);
 	}
     }
+    free_mem(plserver_cmd);
 
 /*
 * Wait for server to send back notification.
@@ -1259,7 +1268,7 @@ tcl_eval(PLStream *pls, char *cmd)
     TkDev *dev = (TkDev *) pls->dev;
 
     copybuf(pls, cmd);
-    return(Tcl_Eval(dev->interp, dev->cmdbuf, 0, (char **) NULL));
+    return(Tcl_VarEval(dev->interp, dev->cmdbuf, (char **) NULL));
 }
 
 /*----------------------------------------------------------------------*\
@@ -1286,6 +1295,116 @@ copybuf(PLStream *pls, char *cmd)
     }
 
     strcpy(dev->cmdbuf, cmd);
+}
+
+/*----------------------------------------------------------------------*\
+* char *find_plserver
+*
+* Looks for plserver in a few places:
+*	current directory
+*	$(PLPLOT_DIR)
+*	INSTALL_DIR
+\*----------------------------------------------------------------------*/
+
+static char *
+find_plserver(char *fn)
+{
+    char *fs = NULL, *dn = NULL;
+
+/* Current directory */
+
+    fs = fn;
+    if ( ! findname(fs))
+	return fs;
+
+/* $(PLPLOT_DIR) */
+
+    if ((dn = getenv("PLPLOT_DIR")) != NULL) {
+	plGetName(dn, "", fn, &fs);
+	if ( ! findname(fs))
+	    return fs;
+    }
+
+/* INSTALL_DIR */
+
+#ifdef INSTALL_DIR
+    plGetName(INSTALL_DIR, "", fn, &fs);
+    if ( ! findname(fs))
+	return fs;
+#endif
+
+/* Crapped out */
+
+    free_mem(fs);
+    plexit("plserver cannot be found or is not executable");
+}
+
+/*----------------------------------------------------------------------*\
+* int findname
+*
+* Authors: Paul Dubois (LLNL), others?
+* This function is in the public domain.
+*
+* Given a pathname, determine if it is a symbolic link.  If so, continue
+* searching to the ultimate terminus - there may be more than one link.
+* Use the error value to determine when the terminus is reached, and to
+* determine if the pathname really exists.  Then stat it to determine
+* whether it's executable.  Return 0 for an executable, errno otherwise.
+* Note that 'p' _must_ have at least one '/' character - it does by
+* construction in this program.  The contents of the array pointed to by
+* 'p' are changed to the actual pathname if findname is successful.
+\*----------------------------------------------------------------------*/
+
+static int 
+findname(char *p)
+{
+    int n;
+    char buf[1024], *cp;
+    extern int errno;
+    struct stat sbuf;
+
+    while ((n = readlink(p, buf, 1024)) > 0) {
+#ifdef DEBUG
+	fprintf(stderr, "Readlink read %d chars at: %s\n", n, p);
+#endif
+	if (buf[0] == '/') {	/* Link is an absolute path */
+	    strncpy(p, buf, n);
+	    p[n] = '\0';
+#ifdef DEBUG
+	    fprintf(stderr, "Link is absolute: %s\n", p);
+#endif
+	}
+	else {			/* Link is relative to its directory; make it
+				   absolute */
+	    cp = 1 + strrchr(p, '/');
+	    strncpy(cp, buf, n);
+	    cp[n] = '\0';
+#ifdef DEBUG
+	    fprintf(stderr, "Link is relative: %s\n\tTotal path: %s\n", cp, p);
+#endif
+	}
+    }
+
+/* SGI machines return ENXIO instead of EINVAL Dubois 11/92 */
+
+    if (errno == EINVAL || errno == ENXIO) {
+#ifdef DEBUG
+	fprintf(stderr, "%s may be the one ...", p);
+#endif
+#ifdef SX
+#define S_ISREG(mode)   (mode & S_IFREG)
+#endif
+	if ((stat(p, &sbuf) == 0) && S_ISREG(sbuf.st_mode)) {
+#ifdef DEBUG
+	    fprintf(stderr, "regular file\n");
+#endif
+	    return (access(p, X_OK));
+	}
+    }
+#ifdef DEBUG
+    fprintf(stderr, "not executable\n");
+#endif
+    return (errno ? errno : -1);
 }
 
 /*----------------------------------------------------------------------*/
