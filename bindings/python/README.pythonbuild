@@ -1,16 +1,27 @@
-Oct 23, 1996
-Geoffrey Furnish
-
 How to build yourself a python with PLplot support
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are two possibilities.  You can try to build a dynamically
-loadable python module, or you can modify the python build to include
-the plplot module.  The former is what configure will try to do if you
-use --enable-python (which is the default).  Currently this does not
-work very well.  I have had some success with this plan on Linux, but
-not on other Unices yet.  So, I suggest, and this document describes,
-to modify the python and rebuild it.  Configure plplot with
+There are two possibilities.  You can try to build a dynamically loadable
+python module, or you can modify the python build to include the plplot
+module.  The former is what configure will try to do if you use
+--enable-python (which is the default).  This is the procedure that is
+recommended by the Python 2.1 documentation.  It has been been thoroughly
+tested under Linux and works well except for the limitation that we have not
+yet implemented a clone of the plframe widget.  (And under this approach a
+clone is required and not the real thing because apparently there is no way
+to hook up our plframe widget with the python tkinter environment without
+modifying python.) However, there is a beginnings of a pyqt widget (try
+prova.py from examples) that does work with the dynamically loadable
+approach so that may eventually get generalized to a clone of our plframe
+widget.
+
+The remainder of this document describes an alternative build approach that
+does make the plframe widget available under python.  Geoffrey tells us
+this method is still working, but the instructions have not been updated
+since 1996 so there may be some changes which you should ask him about.
+The approach requires that you modify python and rebuild it.
+
+Configure plplot with
 --disable-python, and follow these steps.  This will be a little bit
 of work, and you may have to think on your feet...
 
