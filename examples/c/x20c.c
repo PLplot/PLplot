@@ -5,6 +5,7 @@
 */
 
 #include "plplot/plcdemos.h"
+#include "plplot/plevent.h"
 #include <math.h>
 
 #define XDIM 200
@@ -13,7 +14,7 @@
 int
 main(int argc, char *argv[])
 {
-  PLFLT x[XDIM], y[YDIM], **z;
+  PLFLT x[XDIM], y[YDIM], **z, **r;
   int i, j, st;
   static PLGraphicsIn gin;
   PLFLT xi, yi, xe, ye, start;
@@ -34,9 +35,10 @@ main(int argc, char *argv[])
   /* Initialize plplot */
 
   plinit();
-  plenv(1., (PLFLT) XDIM, 1., (PLFLT) XDIM, 1, -2); /* no plot box */
+  plenv(1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 1, 0); /* no plot box */
 
   plAlloc2dGrid(&z, XDIM, YDIM);
+  plAlloc2dGrid(&r, XDIM, YDIM);
 
   /* build a square -- diagnostics */
   for (i=0; i<XDIM; i++)
@@ -56,28 +58,34 @@ main(int argc, char *argv[])
     printf("\n");}
   */
 
-  pllab("...around a blue square."," ","Should appear a red border...");
+  pllab("...around a blue square."," ","A red border should appear...");
   plimage(z, XDIM, YDIM,
-	  1., (PLFLT) XDIM, 1., (PLFLT) XDIM,
-	  1., (PLFLT) XDIM, 1., (PLFLT) XDIM);
+	  1., (PLFLT) XDIM, 1., (PLFLT) YDIM,
+	  1., (PLFLT) XDIM, 1., (PLFLT) YDIM);
+  plptex(XDIM/2., YDIM-20, 0.0, 0.0, 0.5, "Matrix bottom"); 
   pladv(0);
 
   plcol0(2); /* draw a yellow plot box, useful for diagnostics! :( */
-  plenv(-1., 1., -1., 1., 1, -1);
+  plenv(0., 2.*PI, 0, 3.*PI, 1, 0);
 
   for (i=0; i<XDIM; i++)
-    x[i] = cos(i*4.*PI/XDIM);
+    x[i] = i*2.*PI/XDIM;
   for (i=0; i<YDIM; i++)
-    y[i] = sin(i*4.*PI/YDIM);
+    y[i] = i*4.*PI/YDIM;
 
   for (i=0; i<XDIM; i++)
-    for (j=0; j<YDIM; j++)
-      z[i][j] = x[i]*y[j];
+    for (j=0; j<YDIM; j++) {
+      r[i][j] = sqrt(x[i]*x[i]+y[j]*y[j])+1e-3;
+      z[i][j] = sin(r[i][j]) / (r[i][j]);
+    }
 
-  pllab("...around the plot."," ","Should appear a yellow box...");
-  plimage(z, XDIM, YDIM, -1., 1., -1., 1., -1., 1., -1., 1.);
+  pllab("...around the plot."," ","A yellow box should appear...");
+  plimage(z, XDIM, YDIM, 0., 2.*PI, 0, 3.*PI, 0., 2.*PI, 0, 3.*PI); 
+
+
   pladv(0);
   plFree2dGrid(z, XDIM, YDIM);
+  plFree2dGrid(r, XDIM, YDIM);
 
   /* set gray colormap */
   for (i=0; i<=n_col; i++)
@@ -116,12 +124,12 @@ main(int argc, char *argv[])
   /* the code bellow should only be executed by an interative device.
      How to get this info? */
 
+  xi = 200.; xe = 330.;
+  yi = 280.; ye = 220.;
+
   plxormod(1, &st); /* enter xor mode to draw a selection rectangle */
   if (st) {
     start = 0;
-    xi = ye = 0.;
-    xe = width/2.; yi = height/2.;
-
 
     while(1) {
       PLFLT sx[5], sy[5];
@@ -138,7 +146,7 @@ main(int argc, char *argv[])
 	sx[4] = xi; sy[4] = yi;
       }
 
-      if (gin.state == 0x100) {
+      if (gin.state && 0x100) {
 	xe = gin.wX; ye = gin.wY;
 	if (start)
 	  plline(5, sx, sy); /* clear previous rectangle */
@@ -150,14 +158,27 @@ main(int argc, char *argv[])
 	plline(5, sx, sy); /* draw new rectangle */
       }
 
-      if (gin.button == 3) {
+      if (gin.button == 3 || gin.keysym == PLK_Return || gin.keysym == 'Q') {
 	if (start)
 	  plline(5, sx, sy); /* clear previous rectangle */
 	break;
       }      
     }
     plxormod(0, &st); /* leave xor mod */
-  
+
+    if (xe < xi) {
+      PLFLT t;
+      t=xi; xi=xe; xe=t;
+    }
+
+    if (yi < ye) {
+      PLFLT t;
+      t=yi; yi=ye; ye=t;
+    }
+
+    if (gin.keysym == 'Q')
+      exit(0);
+  }  
     /* 
        I'm unable to continue, clearing the plot and advancing to the next
        one, without hiting the enter key, or pressing the button... help!
@@ -184,7 +205,7 @@ main(int argc, char *argv[])
     plenv(xi, xe, ye, yi, 1, -1);
     plimage(img_f, width, height, 1., width, 1., height, xi, xe, ye, yi);
     pladv(0);
-  }
+
   plFree2dGrid(img_f, width, height);
   free(img);
 
