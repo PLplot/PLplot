@@ -17,7 +17,7 @@ function __comet(x,y)
   symbol = 13;
   tail = length(x);
 
-  delay = 100000;
+  delay = 10000;
 
   plline(x', y');
   plpoin(x(tail), y(tail), symbol);
