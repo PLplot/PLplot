@@ -37,9 +37,10 @@ version=@VERSION@
 dirname=@DIRNAME@
 
 EXAMPLES_DIR=${EXAMPLES_DIR:-.}
+SRC_EXAMPLES_DIR=${SRC_EXAMPLES_DIR:-.}
 OUTPUT_DIR=${OUTPUT_DIR:-.}
 device=${DEVICE:-psc}
-export EXAMPLES_DIR OUTPUT_DIR device 
+export EXAMPLES_DIR SRC_EXAMPLES_DIR OUTPUT_DIR device 
 
 usage()
 {
@@ -49,12 +50,14 @@ Usage: plplot-test.sh [OPTIONS]
 Options:
    [--device=DEVICE] (DEVICE = one of psc [default], ps, png, jpeg, cgm,
                       xfig, or plmeta)
-   [--front-end=FE]  (FE = one of c, cxx, f77, java, octave, python, or tcl)
+   [--front-end=FE]  (FE = one of c, cxx, f77, java, octave, python, tcl, or perl)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
                      this --front-end="c cxx"
    [--examples-dir=/path/to/examples/dir]
                      Specify path to the examples directory.  Defaults to "."
+   [--src-examples-dir=/path/to/src/examples/dir]
+                     Specify path to the src examples directory.  Defaults to "."
    [--output-dir=/path/to/output/dir]
                      Specify location where the resulting files are stored.
                      Defaults to "."
@@ -62,10 +65,12 @@ Options:
    [--help]
 
 Environment variables:
-   DEVICE, FRONT_END, EXAMPLES_DIR, and OUTPUT_DIR can be used to
-   specify the devices, front-ends, and the examples and output
-    directories, but are overriden by the options --device,
-    --front-end, --examples-dir and --output-dir, respectively.
+   DEVICE, FRONT_END, EXAMPLES_DIR, SRC_EXAMPLES_DIR, and OUTPUT_DIR can be 
+   used to specify the devices, front-ends, the examples directory, the
+   source examples directory (used for the special case of build-tree checks 
+   when that tree is separated from the source tree), and output directory.
+   These environment variables are overriden by the options --device,
+   --front-end, --examples-dir, --src-examples-dir, and --output-dir.
 EOF
    exit $1
 }
@@ -94,11 +99,15 @@ while test $# -gt 0; do
               -o $i = "octave" \
               -o $i = "python" \
               -o $i = "tcl"    \
+              -o $i = "perl"    \
          || usage 0 1>&2
          done
 	 ;;
       --examples-dir=*)
          EXAMPLES_DIR=$optarg
+         ;;
+      --src-examples-dir=*)
+         SRC_EXAMPLES_DIR=$optarg
          ;;
       --output-dir=*)
          OUTPUT_DIR=$optarg
@@ -131,12 +140,14 @@ cdir=$EXAMPLES_DIR/c
 cxxdir=$EXAMPLES_DIR/c++
 f77dir=$EXAMPLES_DIR/f77
 pythondir=$EXAMPLES_DIR/python
-tcldir=$EXAMPLES_DIR/tcl
+pythonsrcdir=$SRC_EXAMPLES_DIR/python
+tcldir=$SRC_EXAMPLES_DIR/tcl
+perldir=$SRC_EXAMPLES_DIR/perl
 javadir=$EXAMPLES_DIR/java
 octave=@OCTAVE@
 octavedir=$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:
 PATH=$EXAMPLES_DIR/../utils:@exec_prefix@/bin:$PATH
-export cdir cxxdir f77dir pythondir tcldir javadir octave octavedir PATH
+export cdir cxxdir f77dir pythondir pythonsrcdir javadir octave octavedir tcldir perldir PATH
 
 fe=""
 
@@ -185,6 +196,7 @@ if test -z "$FRONT_END" ; then
    test @enable_octave@ = yes && FRONT_END="$FRONT_END octave"
    test @enable_python@ = yes && FRONT_END="$FRONT_END python"
    test @enable_tcl@ = yes    && FRONT_END="$FRONT_END tcl"
+   test @HAS_PDL@ = yes       && FRONT_END="$FRONT_END perl"
 fi
 
 # Find where the front-end scripts are by looking at the dirname of the
