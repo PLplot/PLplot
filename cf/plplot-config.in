@@ -1,6 +1,6 @@
 #!/bin/sh
 
-plplot_libs="@LDC_FLAGS@ -L@LIB_DIR@ -l@PLLIB_NAME@@LIB_TAG@ -l@MATLIB_NAME@ @LIBS@"
+plplot_libs="@LDC_FLAGS@ -L@LIB_DIR@ -l@PLLIB_NAME@@LIB_TAG@ -l@MATLIB_NAME@ @LIBS@ @INSTALL_RPATH@"
 plplot_cflags="@INCS@"
 plplot_cxx_lib="-l@CXXLIB_NAME@@LIB_TAG@"
 
