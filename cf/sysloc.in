@@ -680,10 +680,16 @@ fi
 # ----------------------------------------------------------------------------
 
 if test "$enable_octave" = "yes"; then
-    AC_CHECK_PROG(has_octave, mkoctfile, yes, no)
-    if test "$has_octave" = "no"; then
-	AC_MSG_RESULT([warning: 'mkoctfile' was not found, disabling Octave support])
+    if test "$with_shlib" = "no"; then
+	AC_MSG_RESULT([warning: For Octave support PLplot must be build with shared libs. Disabling Octave support.]);
 	enable_octave=no
+    else
+	AC_CHECK_PROG(has_octave, mkoctfile, yes, no)
+	AC_CHECK_PROG(has_matwrap, matwrap, yes, no)
+	if test "$has_octave" = "no" -o "$has_matwrap" = "no"; then
+	    AC_MSG_RESULT([warning: 'mkoctfile' or 'matwrap' was not found, disabling Octave support.])
+	    enable_octave=no
+	fi
     fi
 fi
 
