@@ -295,7 +295,7 @@ case $system in
 
     linux*|LINUX*|Linux* ) 
 
-	CC="gcc -ansi"
+	CC="gcc"
 	LDC=$CC
 
 	# script front-end to f2c
