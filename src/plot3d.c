@@ -322,7 +322,7 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
       PLINT color = plsc->icol0;
       PLFLT bx[3], by[3], bz[3];
       PLFLT tick=0, tp;
-      PLINT nsub;
+      PLINT nsub=0;
 
       /* get the tick spacing */
       pldtik(zmin, zmax, &tick, &nsub);
@@ -1112,7 +1112,7 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
      * and segment coordinates appropriately.
      */
 
-	ptold = ((oldhiview[2 * i] < u[j] && i < mhi) || j >= n);
+	ptold = (j >= n || (i < mhi && oldhiview[2 * i] < u[j]));
 	if (ptold) {
 	    px = oldhiview[2 * i];
 	    py = oldhiview[2 * i + 1];
