@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.25  2000/05/10 20:39:39  furnish
+ * Edit to give two macintosh options.  Rob Managan.
+ *
  * Revision 1.24  1996/10/08 18:37:46  furnish
  * First cut on a new driver for portable bitmaps.
  *
@@ -183,7 +186,8 @@ void plD_tidy_vga		(PLStream *);
 void plD_state_vga		(PLStream *, PLINT);
 void plD_esc_vga		(PLStream *, PLINT, void *);
 
-void plD_init_mac		(PLStream *);
+void plD_init_mac1		(PLStream *);
+void plD_init_mac8		(PLStream *);
 void plD_line_mac		(PLStream *, short, short, short, short);
 void plD_polyline_mac		(PLStream *, short *, short *, PLINT);
 void plD_eop_mac		(PLStream *);
