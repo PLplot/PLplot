@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1994/05/09 18:01:36  furnish
+# Revision 1.2  1994/06/09 20:29:22  mjl
+# Changed to new improved megawidget instantiation method.
+#
+# Revision 1.1  1994/05/09  18:01:36  furnish
 # A new Tk demo, combining [incr Tcl] mega widget and the PLplot Tcl
 # extensions.  Much more along these lines should be done.
 #
@@ -77,8 +80,6 @@ message .msg \
 
 option add *plwin.background black
 
-#plw_create .plw
-
 PLWin .plw -name foo
 
 pack append . .menu {top fillx} \
@@ -86,10 +87,6 @@ pack append . .menu {top fillx} \
     .plw {bottom expand fill}
 
 update
-
-#.plw.plwin cmd init
-
-.plw init
 
 option add "*font" "-Adobe-helvetica-medium-r-normal--*-180*"
 
@@ -102,7 +99,7 @@ proc bozoplot {} {
     .plw plcol 1
     .plw plenv 0 1 0 1 0 0
     .plw plcol 6
-    .plw pllab "(x)" "(y)" "#frPLPLOT Example 1 - y=1-2x+2x#u2"
+    .plw pllab "(x)" "(y)" "#frPLplot Example 1 - y=1-2x+2x#u2"
 
     for {set x 0} {$x < 1} {set x [expr $x+.01]} {
 	set y [expr 1 - 2 * $x + 2 * $x * $x]
