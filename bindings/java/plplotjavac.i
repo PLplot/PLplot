@@ -30,7 +30,7 @@ A SWIG interface to PLplot for Java. This wrapper does the following:
    3) it works both with the single and double-precision versions of the
       PLplot library.
 
-This is known to work with swig-1.3.17 on Linux.
+This is known to work with swig-1.3.21.
 
 */
 %module plplotjavac
@@ -224,6 +224,7 @@ Naming rules:
       printf("Vectors must be same length.\n");
       return;
    }
+   $2 = (*jenv)->GetArrayLength( jenv, $input );
    setup_array_1d_i( &$1, jydata, Alen);
    (*jenv)->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
 }
@@ -238,7 +239,7 @@ Naming rules:
    return $jnicall;
 }
 
-/* check consistency with previous, but not preceding or trailing count */
+/* check consistency with previous, but no preceding or trailing count */
 %typemap(in) PLINT *ArrayCk {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
@@ -922,7 +923,7 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    /* make a copy of each string */
    for (i = 0; i<size; i++) {
       jstring j_string = (jstring)(*jenv)->GetObjectArrayElement(jenv, $input, i);
-      const char * c_string = (*jenv)->GetStringUTFChars(jenv, j_string, 0);
+      const char * c_string = (char *) (*jenv)->GetStringUTFChars(jenv, j_string, 0);
 /* Commented out version straight from swig documentation, but I think
  * it is wrong.
  *    $2[i] = malloc(strlen((c_string)+1)*sizeof(const char *)); */
