@@ -35,7 +35,7 @@ export f77dir=f77
 export pythondir=python
 export tcldir=tcl
 export octavedir=octave
-export installbindir=@BIN_DIR@
+export installbindir=@prefix@/@BIN_DIR@
 
 while test $# -gt 0; do
    case "$1" in
