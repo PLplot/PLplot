@@ -74,25 +74,10 @@ Areas currently under development
    basically the same, contingent on driver capabilities that is.  So this
    capability really needs to go into the core.
 
- - fix additional problems with custom color map support:
-   . Add command line switch to enable it, maybe switches to for all the
-     preprocessor constants in xwin.c controlling cmap allocation.
-   . When a custom colormap is used, it becomes the new top level TK
-     colormap, since the palette modification tools need to be using the
-     same colormap in order for the colors to come out the same.  But
-     there is a minimum of color changing when the colormaps are swapped
-     (i.e. focus goes into or out of the plplot/TK application) because
-     the xwin driver copies as many colors out of the default as is
-     reasonable.  Cases where this still isn't quite good enough include
-     the text widgets (such as help windows), for which the color is not
-     preallocated, and sometimes the TK menu bar, for which I think the
-     color is preallocated but exactly matches one already in use by the
-     window manager and thus does not get copied.  Some strategies in
-     fixing this include: (a) providing a list of colors for the xwin
-     driver to copy and allocate and (b) do not install the xwin colormap
-     in the main window and instead share the colormap with windows that
-     want it through a plframe extension.  Right now because of continued
-     uncertainties the custom colormap option in xwin.c is disabled.
+ - 3-D plots should be clipped at the 3-D box boundary.  Right now the 3-d
+   data is immediately transformed to 2-d lines on the projection plane.
+   No intermediate clipping is performed, meaning that only the 2-d
+   projected part is clipped.
 
  - fix 2d function plotter API's: Most general function in each
    category should accept transformer function and transformer data, to work
@@ -134,6 +119,26 @@ Areas currently under development
  - support command line arg reading from Fortran under whatever important
    OS's support it.  One trouble here is that it may require an additional
    oddball library to be linked in, and I'm not thrilled about that.
+
+ - fix additional problems with custom color map support under X:
+   . Add command line switch to enable it, maybe switches to for all the
+     preprocessor constants in xwin.c controlling cmap allocation.
+   . When a custom colormap is used, it becomes the new top level TK
+     colormap, since the palette modification tools need to be using the
+     same colormap in order for the colors to come out the same.  But
+     there is a minimum of color changing when the colormaps are swapped
+     (i.e. focus goes into or out of the plplot/TK application) because
+     the xwin driver copies as many colors out of the default as is
+     reasonable.  Cases where this still isn't quite good enough include
+     the text widgets (such as help windows), for which the color is not
+     preallocated, and sometimes the TK menu bar, for which I think the
+     color is preallocated but exactly matches one already in use by the
+     window manager and thus does not get copied.  Some strategies in
+     fixing this include: (a) providing a list of colors for the xwin
+     driver to copy and allocate and (b) do not install the xwin colormap
+     in the main window and instead share the colormap with windows that
+     want it through a plframe extension.  Right now because of continued
+     uncertainties the custom colormap option in xwin.c is disabled.
 
  - metafile produced on the Amiga isn't quite right!  Compiler bug?
 
