@@ -231,20 +231,22 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
   n = plP_clip_poly(n, V, 2,  1, -zmin);
   n = plP_clip_poly(n, V, 2, -1,  zmax);
 
-  for(i=0; i<n; i++) {
-    u[i] = plP_wcpcx(plP_w3wcx(x[i], y[i], z[i]));
-    v[i] = plP_wcpcy(plP_w3wcy(x[i], y[i], z[i]));
-    }
-  u[n] = u[0];
-  v[n] = v[0];
+  if(n > 0) {
+     for(i=0; i<n; i++) {
+	u[i] = plP_wcpcx(plP_w3wcx(x[i], y[i], z[i]));
+	v[i] = plP_wcpcy(plP_w3wcy(x[i], y[i], z[i]));
+     }
+     u[n] = u[0];
+     v[n] = v[0];
 
 #ifdef SHADE_DEBUG /* show triangles */
-  plcol0(1);
-  x[3]=x[0]; y[3]=y[0]; z[3]=z[0];
-  plline3(4,x,y,z);
+     plcol0(1);
+     x[3]=x[0]; y[3]=y[0]; z[3]=z[0];
+     plline3(4,x,y,z);
 #else /* fill triangles */
-  plP_fill(u, v, n+1);
+     plP_fill(u, v, n+1);
 #endif
+  }
 }
 
 /*--------------------------------------------------------------------------*\
