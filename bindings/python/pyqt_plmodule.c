@@ -6,6 +6,7 @@
 /* ##############################################################################*/
 static char doc_partialInitXw[]="Partially init a new device (X Window) ";
 
+#ifndef WIN32
 static PyObject * pl_partialInitXw(PyObject *self, PyObject *args)
 {
     PLINT ipls;
@@ -22,9 +23,10 @@ static PyObject * pl_partialInitXw(PyObject *self, PyObject *args)
 
     plD_open_xw(pls);
     printf("plD_open_xw  OK \n"); 
- 
+
     return Py_BuildValue("i", ipls);
 }
+#endif 
 
 
 static char doc_resize[]="resize the window";
@@ -64,7 +66,9 @@ static PyMethodDef pyqt_pl_methods[] = {
     /* These are a few functions  that I found I needed
        to call in order to initialise the pyqt widget  */
 
-    {"plpartialInitXw",	pl_partialInitXw, METH_VARARGS, doc_partialInitXw},
+#ifndef WIN32
+    {"plpartialInitXw",	pl_partialInitXw, 1, doc_partialInitXw},
+#endif
 
     /* These are a few functions  that I found I needed
        to filtering events in  pyqt widget  */
