@@ -1,13 +1,17 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/07/31 07:56:57  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
+   Revision 1.7  1994/01/17 21:16:06  mjl
+   Changed virt window from 25 to 16x larger than workbench window
+   to fix problem with overflows (submitted by Wesley Ebisuzaki).
 
+ * Revision 1.6  1993/07/31  07:56:57  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.5  1993/07/16  22:18:51  mjl
  * Eliminated obsolete low-level scaling, now done in driver interface.
  *
@@ -252,10 +256,10 @@ plD_init_amiwn(PLStream *pls)
 
     pla_InitDisplay();
 
-/* Virtual screen is 25 times the actual one. */
+/* Virtual screen is 16 times the actual one. */
 
-    pla->init_width = pla->cur_width * 25;
-    pla->init_height = pla->cur_height * 25;
+    pla->init_width = pla->cur_width * 16;
+    pla->init_height = pla->cur_height * 16;
 
 /* Set up plotting scale factors */
 
