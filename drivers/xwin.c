@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.65  1995/06/23 02:56:11  mjl
+ * Revision 1.66  1995/06/29 18:09:42  mjl
+ * Changed the window initialization back to use XGetGeometry instead of the
+ * DisplayWidth and DisplayHeight macros.  These were wreaking havoc on virtual
+ * window managers such as tvtwm.
+ *
+ * Revision 1.65  1995/06/23  02:56:11  mjl
  * Fix to crossing event handling after leaving locate mode.  Inserted
  * experimental code for using physical window dimensions in the library.
  * Still needs work.
@@ -872,19 +877,14 @@ InitMain(PLStream *pls)
     dbug_enter("InitMain");
 
 /* Get root window geometry */
-/*
+
     (void) XGetGeometry(xwd->display, DefaultRootWindow(xwd->display),
 			&root, &x, &y, &width, &height, &border, &depth);
-			*/
-    width = DisplayWidth(xwd->display, 0);
-    height = DisplayHeight(xwd->display, 0);
-
-    dev->border = 5;
-    hint.flags = 0;
 
 /* Set window size */
 /* Need to be careful to set XSizeHints flags correctly */
 
+    hint.flags = 0;
     if (pls->xlength == 0 && pls->ylength == 0)
 	hint.flags |= PSize;
     else
@@ -898,6 +898,7 @@ InitMain(PLStream *pls)
 
     hint.width  = (int) pls->xlength;
     hint.height = (int) pls->ylength;
+    dev->border = 5;
 
 /* Set window position if specified by the user. */
 /* Otherwise leave up to the window manager */
