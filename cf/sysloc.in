@@ -15,12 +15,12 @@
 # -----------------------------------------------------------------------
 # Run xmkmf to check for location of X libraries and includes.
 # If not found, I have to assume that X isn't available (it happens).
-# Can disable explicitly by specifying --disable-x11.
+# Can disable explicitly by specifying --disable-xwin.
 # -----------------------------------------------------------------------
 
-AC_ENABLE(x11, , enable_x11="yes")
+AC_ENABLE(xwin, , enable_xwin="yes")
 
-if test "$enable_x11" = "yes"; then
+if test "$enable_xwin" = "yes"; then
     if test -z "$XINCDIR" -o -z "$XLIBDIR"; then
 	AC_FIND_X
 
@@ -53,7 +53,7 @@ if test "$enable_x11" = "yes"; then
 	    if test -z "$XINCDIR"; then
 		echo "Warning:  couldn't find any X11 include files."
 		XINCDIR="default"
-		enable_x11="no"
+		enable_xwin="no"
 	    fi ])
 	fi
 	if test "$XINCDIR" = "/usr/include"; then
@@ -105,7 +105,7 @@ fi
 # tcl.h
 # -----------------------------------------------------------------------
 
-AC_ENABLE(tcl, , enable_tcl=$enable_x11)
+AC_ENABLE(tcl, , enable_tcl=$enable_xwin)
 header="tcl.h"
 
 if test "$enable_tcl" = "yes"; then
@@ -416,7 +416,7 @@ fi
 
 inc_path=""
 
-if test "$enable_x11" = "yes"; then
+if test "$enable_xwin" = "yes"; then
     XINCSW=""
     if test "$XINCDIR" != "default"; then
 	XINCSW="-I$XINCDIR"
@@ -570,7 +570,7 @@ if test "$enable_tcl" = "yes"; then
     lib_path="$lib_path $TCLLIBDIR"
 fi
 
-if test "$enable_x11" = "yes"; then
+if test "$enable_xwin" = "yes"; then
     XLIBSW=""
     if test "$XLIBDIR" != "default"; then
 	XLIBSW="-L$XLIBDIR"
