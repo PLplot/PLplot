@@ -14,6 +14,7 @@ def main():
     delta = 2.0 * pi / NPTS
     data = sin(delta*arrayrange(NPTS))
 
+    plcol0(1)
     plhist(data, -1.1, 1.1, 44, 0)
     plcol0(2)
     pllab("#frValue", "#frFrequency",
