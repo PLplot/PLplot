@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.1  1993/07/02 06:58:34  mjl
+# Revision 1.2  1993/07/16 22:04:02  mjl
+# Added several utility procs, mostly for getting info or confirmation from
+# the user.
+#
+# Revision 1.1  1993/07/02  06:58:34  mjl
 # The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
 #
 
@@ -22,11 +26,27 @@
 proc null_command {cmd_name} {
     set dialog_args "-text {Command \"$cmd_name\" not yet implemented.} \
 		     -aspect 500 -justify left"
-    mkDialog .modal $dialog_args {OK {}}
-    dpos .modal
-    tkwait visibility .modal
-    grab .modal
-    tkwait window .modal
+    mkDialog .null $dialog_args {OK {}}
+    dpos .null
+    tkwait visibility .null
+    grab .null
+    tkwait window .null
+}
+
+#----------------------------------------------------------------------------
+# bogon_alert
+#
+# Invokes a dialog explaining that the user bogued out.
+#----------------------------------------------------------------------------
+
+proc bogon_alert {msg} {
+    set dialog_args "-text \"$msg\" -aspect 800 -justify left"
+    mkDialog .bogus $dialog_args {OK {}}
+    dpos .bogus
+    tkwait visibility .bogus
+    grab .bogus
+    focus .bogus
+    tkwait window .bogus
 }
 
 #----------------------------------------------------------------------------
@@ -37,6 +57,81 @@ proc null_command {cmd_name} {
 
 proc dpos w {
     wm geometry $w +300+300
+}
+
+#----------------------------------------------------------------------------
+# Numeric utility procs:
+#
+#    min	returns minimum of two numeric arguments
+#    max	returns maximum of two numeric arguments
+#----------------------------------------------------------------------------
+
+proc min {x y} {
+    return [expr "$x < $y ? $x : $y"]
+}
+
+proc max {x y} {
+    return [expr "$x > $y ? $x : $y"]
+}
+
+#----------------------------------------------------------------------------
+# getItem
+#
+# Asks user to input something, returning the result.
+# Selecting "Cancel" returns the empty string.
+#----------------------------------------------------------------------------
+
+proc getItem {item} {
+    global itemval
+    set w .entry
+    set itemval ""
+
+    catch {destroy $w}
+    toplevel $w
+    dpos $w
+    wm title $w "Entry"
+    wm iconname $w "Entry"
+    message $w.msg -font -Adobe-times-medium-r-normal--*-180* -aspect 800 \
+	    -text $item
+
+    frame $w.frame -borderwidth 10
+    pack append $w.frame \
+	[entry $w.frame.e1 -relief sunken] {top pady 10 fillx} 
+
+    button $w.ok -text OK -command \
+	"set itemval \[$w.frame.e1 get\]; destroy $w"
+    button $w.cancel -text Cancel -command "destroy $w"
+
+    bind $w.frame.e1 <Return> \
+	"set itemval \[$w.frame.e1 get\]; destroy $w"
+
+    pack append $w $w.msg {top fill} $w.frame {top expand fill} \
+	$w.ok {left expand fill} $w.cancel {left expand fill}
+
+    tkwait visibility $w
+    grab $w
+    focus $w.frame.e1
+    tkwait window $w
+    return $itemval
+}
+
+#----------------------------------------------------------------------------
+# confirm
+#
+# Sure about that, buddy?
+#----------------------------------------------------------------------------
+
+proc confirm {msg} {
+    global confirm_flag
+    set dialog_args "-text {$msg} \
+		     -aspect 500 -justify left"
+    mkDialog .confirm $dialog_args \
+	"OK {set confirm_flag 1}" "Cancel {set confirm_flag 0}"
+    tkwait visibility .confirm
+    grab .confirm
+    focus .confirm
+    tkwait window .confirm
+    return $confirm_flag
 }
 
 #----------------------------------------------------------------------------
@@ -105,6 +200,122 @@ proc mkDialog {w msgArgs args} {
 }
 
 #----------------------------------------------------------------------------
+# EnterCoords
+#
+# Create a top-level window that displays a bunch of entries used for
+# entering window coordinates.
+#
+# Arguments:
+#    w		Name of top level window
+#    desc	Short description of coordinates to be entered.
+#
+# Global variables referenced:
+#    xmin	Relative min in x (0-1)
+#    ymin	Relative min in y (0-1)
+#    xmax	Relative max in x (0-1)
+#    ymax	Relative max in y (0-1)
+#
+# The global variables are modified by the entry widgets and may be
+# overwritten at any time so the caller must wait for the dialog to be
+# destroyed and then use them immediately.  Note: there is no bounds
+# checking done here on the global min/max variables.
+#----------------------------------------------------------------------------
+
+proc EnterCoords {w desc} {
+    global xmin ymin xmax ymax
+    global tabList
+
+    catch {destroy $w}
+    toplevel $w
+    dpos $w
+
+    wm title $w "Entry window"
+    wm iconname $w "Entry"
+
+    message $w.msg \
+	-font -Adobe-times-medium-r-normal--*-180* \
+	-aspect 700 \
+	-text "Enter $desc.  Each coordinate should range from 0 to 1, with (0,0) corresponding to the lower left hand corner.  Click \"OK\" button when finished."
+
+    pack append $w \
+	$w.msg {top fill}
+
+    set rows {min max}
+    set cols {x y}
+    set tabList ""
+
+    foreach j $rows {
+	frame $w.$j
+
+	foreach i $cols {
+            set var $i$j
+	    frame $w.$j.$i -bd 1m
+
+	    entry $w.$j.$i.entry -relief sunken -width 10
+	    $w.$j.$i.entry insert 0 [set $var]
+	    bind $w.$j.$i.entry <Tab> "EnterCoords_tab \$tabList"
+	    bind $w.$j.$i.entry <Return> "EnterCoords_destroy $w"
+            set tabList [concat $tabList $w.$j.$i.entry]
+
+	    label $w.$j.$i.label -width 10
+	    $w.$j.$i.label config -text "$var:"
+
+	    pack append $w.$j.$i \
+		$w.$j.$i.entry right \
+		$w.$j.$i.label left
+
+	    pack append $w.$j \
+		$w.$j.$i {left fillx}
+	}
+
+	pack append $w \
+	    $w.$j {top fillx} 
+    }
+
+    button $w.ok -text OK -command "EnterCoords_destroy $w"
+    pack append $w \
+	$w.ok {bottom fill}
+
+    tkwait visibility $w
+    grab $w
+    focus $w.min.x.entry
+}
+
+# This procedure is invoked when the top level entry dialog is destroyed.
+# It updates the global vars used to communicate the entry values then
+# destroys the window.
+
+proc EnterCoords_destroy {w} {
+    global xmin ymin xmax ymax
+
+    set xmin [$w.min.x.entry get]
+    set ymin [$w.min.y.entry get]
+    set xmax [$w.max.x.entry get]
+    set ymax [$w.max.y.entry get]
+
+    destroy $w
+}
+
+# The procedure below is invoked in response to tabs in the entry
+# windows.  It moves the focus to the next window in the tab list.
+# Arguments:
+#
+# list -	Ordered list of windows to receive focus
+
+proc EnterCoords_tab {list} {
+    set i [lsearch $list [focus]]
+    if {$i < 0} {
+	set i 0
+    } else {
+	incr i
+	if {$i >= [llength $list]} {
+	    set i 0
+	}
+    }
+    focus [lindex $list $i]
+}
+
+#----------------------------------------------------------------------------
 # evalCmd w
 #
 # Create a top-level window containing a text widget that allows you
@@ -143,7 +354,6 @@ or click on "Execute".
     pack append $w $w.cmd {top fill} \
 	    $w.ok {bottom fillx} $w.t {expand fill}
 }
-
 
 #------------------------------------------------------------------------------
 # Proc to set up debug bindings.
