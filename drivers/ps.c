@@ -848,10 +848,10 @@ proc_str (PLStream *pls, EscText *args)
 
   /* Parse string for escape sequences and print everything out */
 
+  cur_strp = cur_str;
   do {
 
     strp = str;
-    cur_strp = cur_str;
     font = ofont;
     symbol = 0;
 
@@ -1024,7 +1024,7 @@ plunicode2type1 (const unsigned int index,
 	  jhi = jmid;
 	else
 	  /* We have found it!
-	   * index == lookup[jlo].Unicode 
+	   * index == lookup[jmid].Unicode 
 	   */
 	  return (lookup[jmid].Type1);
      }
