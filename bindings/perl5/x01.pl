@@ -5,20 +5,32 @@
 
 use PLplot qw(:all);
 
+use Getopt::Long;
+
 # plplot initialization
 # Divide page into 2x2 plots
 
 plssub (2,2);
 
-if (! defined $fontset) {
-  $fontset = 1;
+Getopt::Long::Configure ("pass_through");
+GetOptions qw(-locate! -fontset=i -xor! -h!);
+
+if (defined $opt_h) {
+  print "\n$0 options:\n" .
+    "    -locate\t\t Turns on test of API locate function\n" .
+    "    -fontset\t\t Selects stroke font set (0 or 1, def:1)\n" .
+    "    -xor\t\t Turns on test of XOR\n";
+  push @ARGV, "-h";
 }
 
-if (! defined $text_xor) {
-  $text_xor = 0;
-}
+$locate_mode = (defined $opt_locate) ? 1 : 0;
+$fontset = (defined $opt_fontset) ? $opt_fontset : 1;
+$test_xor = (defined $opt_xor) ? $opt_xor : 0;
 
-plParseOpts_p (\@ARGV, ("PL_PARSE_FULL"));
+# Also possible: 
+#    plParseOpts_p (\@ARGV, "PL_PARSE_FULL", "PL_PARSE_NOPROGRAM");
+
+plParseOpts_p ([$0, @ARGV], "PL_PARSE_FULL");
 
 # Get version number, just for kicks
 
