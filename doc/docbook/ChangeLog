@@ -1,3 +1,8 @@
+2000-12-04  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* configure.in: Only INFO build depends on Perl.  Check also for
+	Perl module XML::DOM. 
+
 2000-11-30  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* configure.in (AM_INIT_AUTOMAKE): Upgraded release version to
