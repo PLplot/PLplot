@@ -11,10 +11,58 @@
 #define XDIM 260
 #define YDIM 220
 
-void save_plot(void);
+void save_plot(char *);
 void gray_cmap(int);
 int read_img(char *, PLFLT ***, int *, int *, int *);
 int get_clip(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
+
+int dbg = 0;
+int nosombrero = 0;
+int nointeractive = 0;
+char *f_name = NULL;
+
+static PLOptionTable options[] = {
+{
+    "dbg",			/* extra debugging plot */
+    NULL,
+    NULL,
+    &dbg,
+    PL_OPT_BOOL,
+    "-dbg",
+    "Extra debugging plot" },
+{
+    "nosombrero",			/* Turns on test of xor function */
+    NULL,
+    NULL,
+    &nosombrero,
+    PL_OPT_BOOL,
+    "-nosombrero",
+    "No sombrero plot" },
+{
+    "nointeractive",			/* Turns on test of xor function */
+    NULL,
+    NULL,
+    &nointeractive,
+    PL_OPT_BOOL,
+    "-nointeractive",
+    "No interactive selection" },
+{
+    "save",			/* For saving in postscript */
+    NULL,
+    NULL,
+    &f_name,
+    PL_OPT_STRING,
+    "-save filename",
+      "Save sombrero plot in color postscript `filename'" },
+{
+    NULL,			/* option */
+    NULL,			/* handler */
+    NULL,			/* client data */
+    NULL,			/* address of variable to set */
+    0,				/* mode flag */
+    NULL,			/* short syntax */
+    NULL }			/* long syntax */
+};
 
 int
 main(int argc, char *argv[])
@@ -36,6 +84,7 @@ main(int argc, char *argv[])
 
   /* Parse and process command line arguments */
 
+  plMergeOpts(options, "x20c options", NULL);
   plParseOpts(&argc, argv, PL_PARSE_FULL);
 
   /* Initialize plplot */
@@ -44,7 +93,8 @@ main(int argc, char *argv[])
 
   plAlloc2dGrid(&z, XDIM, YDIM);
 
-  if (1) { /* view image border pixels */
+  /* view image border pixels */
+  if (dbg) { 
     plenv(1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 1, 1); /* no plot box */
     
     /* build a one pixel square border, for diagnostics */
@@ -66,9 +116,9 @@ main(int argc, char *argv[])
 
     pladv(0);
   }
-  /* plend();exit(0); */
 
-  if (1) { /* sombrero-like demo */
+  /* sombrero-like demo */
+  if (!nosombrero) { 
     plAlloc2dGrid(&r, XDIM, YDIM);
     plcol0(2); /* draw a yellow plot box, useful for diagnostics! :( */
     plenv(0., 2.*PI, 0, 3.*PI, 1, -1);
@@ -90,16 +140,16 @@ main(int argc, char *argv[])
 	    0., 2.*PI, 0, 3.*PI); 
     plFree2dGrid(r, XDIM, YDIM);
 
-    /* show how to save a plot */
-    save_plot();
+    /* save the plot */
+    if (f_name)
+      save_plot(f_name);
 
     pladv(0);
-  }
-  /* plend();exit(0); */
+    }
 
   plFree2dGrid(z, XDIM, YDIM);
 
-  /* read image */
+  /* read Lena image */
   if (read_img("lena.pgm", &img_f, &width, &height, &num_col)) {
     plabort("No such file");
     plend();
@@ -109,14 +159,21 @@ main(int argc, char *argv[])
   /* set gray colormap */
   gray_cmap(num_col);
 
+  /* display Lena */
   plenv(1., width, 1., height, 1, -1);
-  pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...");
+
+  if (!nointeractive)
+    pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...");
+  else
+    pllab(""," ","Lena...");
+
   plimage(img_f, width, height, 1., width, 1., height, 0., 0.,
 	  1., width, 1., height);
 
   /* plend();exit(0); */
 
-  if (1) { /* selection/expansion demo */
+  /* selection/expansion demo */
+  if (!nointeractive) { 
     xi = 200.; xe = 330.;
     yi = 280.; ye = 220.;
 
@@ -148,11 +205,13 @@ main(int argc, char *argv[])
     plspause(0);
     pladv(0);
 
+    /* display selection only */
     plimage(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
 
     plspause(1);
     pladv(0);
 
+    /* zoom in selection */
     plenv(xi, xe, ye, yi, 1, -1);
     plimage(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
     pladv(0);
@@ -164,6 +223,7 @@ main(int argc, char *argv[])
   exit(0);
 }
 
+/* read image from file in binary ppm format */
 int read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num_col)
 {
   FILE *fp;
@@ -199,8 +259,8 @@ int read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num_col)
 
   for (i=0; i<w; i++)
     for (j=0; j<h; j++)
-      imf[i][j] = img[(h-j)*w+i];
-
+      imf[i][j] = img[(h-1-j)*w+i]; /* flip image up-down */
+      
   free(img);
 
   *width = w;
@@ -209,15 +269,16 @@ int read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num_col)
   return 0;
 }
 
-void save_plot()   /* save plot */
+/* save plot */
+void save_plot(char *fname)   
 {
   int cur_strm, new_strm; 
 
   plgstrm(&cur_strm); /* get current stream */
   plmkstrm(&new_strm); /* create a new one */ 
     
-  plsdev("psc"); /* new device type */
-  plsfnam("foo.ps"); /* file name */
+  plsdev("psc"); /* new device type. Use a known existing driver */
+  plsfnam(fname); /* file name */
 
   plcpstrm(cur_strm, 0); /* copy old stream parameters to new stream */
   plreplot();	/* do the save */
@@ -226,6 +287,7 @@ void save_plot()   /* save plot */
   plsstrm(cur_strm);	/* and return to previous one */
 }
 
+/*  get selection square interactively */
 int get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye)
 {
   PLGraphicsIn gin;
@@ -234,7 +296,7 @@ int get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye)
 
   plxormod(1, &st); /* enter xor mode to draw a selection rectangle */
 
-  if (st) { /* driver has xormod capability */
+  if (st) { /* driver has xormod capability, continue */
     while(1) {
       PLFLT sx[5], sy[5];
 
@@ -287,6 +349,7 @@ int get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye)
   return (gin.keysym == 'Q');
 }
 
+/* set gray colormap */
 void gray_cmap(PLINT num_col)
 {
   PLFLT r[2], g[2], b[2], pos[2];
