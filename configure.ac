@@ -217,6 +217,13 @@ if test "$enable_python" = "yes"; then
 fi
 AC_SUBST(PYTHON_INSTDIR)
 
+### The following seems to be necessary because the replacement of
+### the default value for exec_prefix only happens in AC_OUTPUT (it would
+### already be too late).
+test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
+
+PL_ARG_ENABLE(java, [compile Java interface code], yes)
+
 ### Drivers
 
 # ------------------------------------------------------------------------
@@ -296,27 +303,16 @@ LIBS=""
 
 # Optional packages
 
-# Need to AC_SUBST some of these for plplot-test.sh script.
-AC_SUBST(enable_cxx)
-AC_SUBST(enable_f77)
-AC_SUBST(enable_python)
-AC_SUBST(enable_java)
-AC_SUBST(enable_tcl)
-AC_SUBST(enable_octave)
-
-### Create list of valid examples subdirectories
-
-EXAMPLES_DIRECTORIES=c
-if test "$enable_cxx" = yes; then
-   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES c++"
+if test "$enable_java" = yes; then
+### Java stanza completely different from others.  sysloc.in must have
+### found both $JAVAINCDIR and $JAVAMDINCDIR if $enable_java is still yes.
+   JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
+### bindings/java/config.java.in requires JAVA_INSTDIR
+### The symbolic exec_prefix must be replaced by the actual exec_prefix.
+   PL_EXPAND_EXPRESSION(JAVA_INSTDIR, $libdir/java/plplot/core)
 fi
-if test "$enable_f77" = yes; then
-   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES f77"
-fi
-if test "$enable_tk" = yes; then
-   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES tk"
-fi
-AC_SUBST(EXAMPLES_DIRECTORIES)
+AC_SUBST(JAVAINCCMD)
+AC_SUBST(JAVA_INSTDIR)
 
 ### tcl binding
 
@@ -639,21 +635,27 @@ fi
 AC_SUBST(TKINCCMD)
 AC_SUBST(TKLIBCMD)
 
-### The following seems to be necessary because the replacement of
-### the default value for exec_prefix only happens in AC_OUTPUT (it would
-### already be too late).
-test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
+# Need to AC_SUBST some of these for plplot-test.sh script.
+AC_SUBST(enable_cxx)
+AC_SUBST(enable_f77)
+AC_SUBST(enable_python)
+AC_SUBST(enable_java)
+AC_SUBST(enable_tcl)
+AC_SUBST(enable_octave)
 
-if test "$enable_java" = yes; then
-### Java stanza completely different from others.  sysloc.in must have
-### found both $JAVAINCDIR and $JAVAMDINCDIR if $enable_java is still yes.
-   JAVAINCCMD="-I$JAVAINCDIR -I$JAVAMDINCDIR"
-### bindings/java/config.java.in requires JAVA_INSTDIR
-### The symbolic exec_prefix must be replaced by the actual exec_prefix.
-   PL_EXPAND_EXPRESSION(JAVA_INSTDIR, $libdir/java/plplot/core)
+### Create list of valid examples subdirectories
+
+EXAMPLES_DIRECTORIES=c
+if test "$enable_cxx" = yes; then
+   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES c++"
 fi
-AC_SUBST(JAVAINCCMD)
-AC_SUBST(JAVA_INSTDIR)
+if test "$enable_f77" = yes; then
+   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES f77"
+fi
+if test "$enable_tk" = yes; then
+   EXAMPLES_DIRECTORIES="$EXAMPLES_DIRECTORIES tk"
+fi
+AC_SUBST(EXAMPLES_DIRECTORIES)
 
 ### Double vs single precison
 
@@ -784,8 +786,6 @@ fi
 
 AC_SUBST(HAVE_F77PARSE_CL_TRUE)
 AC_SUBST(HAVE_F77PARSE_CL_FALSE)
-
-PL_ARG_ENABLE(java, [compile Java interface code], yes)
 
 PL_ARG_ENABLE(octave, [compile Octave interface code], no)
 
