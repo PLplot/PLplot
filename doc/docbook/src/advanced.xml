@@ -5,6 +5,7 @@
     Copyright (C) 1999, 2000, 2001, 2002, 2005 Alan W. Irwin
     Copyright (C) 1999, 2000, 2001, 2002, 2003 Rafael Laboissiere
     Copyright (C) 2004 Andrew Roach
+    Copyright (C) 2005 Thomas J. Duck
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -163,6 +164,7 @@ the Appendix for more details.
 <row><entry>DG300 Terminal</entry><entry>dg300</entry><entry>dg300.c</entry></row>
 <row><entry>NeXT display (unsupported)</entry><entry>nx</entry><entry>next.c</entry></row>
 <row><entry>GNOME display</entry><entry>gnome</entry><entry>gnome.c</entry></row>
+<row><entry>GNOME Canvas Widget / Display</entry><entry>gcw</entry><entry>gcw.c</entry></row>
 </tbody>
 </tgroup>
 </table>
@@ -1667,8 +1669,8 @@ plcmap1_def(void)
       western-European languages) and much better display of characters on
       computer screens using anti-aliasing and hinting.  Unicode fonts are
       obtained by specifying a command-line option of -drvopt text for
-      the devices (currently ps, psc, png, jpeg, and gif) where it has
-      been implemented.
+      the devices (currently ps, psc, png, jpeg, gif, gcw, and wingcc) 
+      where it has been implemented.
     </para>
     <para>
       For the ps and psc devices, there is a fixed relationship between the
