@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/09/18 07:15:42  mjl
+ * Revision 1.7  1994/09/23 07:54:17  mjl
+ * Changed to a more powerful prompt mechanism.  Prompt now gives program
+ * name (pltcl) followed by an underscore and the current stream number.
+ * Very handy when doing multiple stream work.
+ *
+ * Revision 1.6  1994/09/18  07:15:42  mjl
  * Changed the syntax for pltclMain() in order for it to work better with
  * shared libraries.  In particular, Tcl_AppInit is no longer external but
  * passed as a function pointer.
@@ -100,6 +105,27 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     return TCL_OK;
 }
 
+/*----------------------------------------------------------------------*\
+ * prPromptCmd
+ *
+ * PLplot/Tcl extension command -- print the prompt.
+ * Allows much more flexible setting of the prompt.
+\*----------------------------------------------------------------------*/
+
+static int
+prPromptCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
+{
+    PLStream *pls;
+    char prompt[80];
+
+    plgpls(&pls);
+
+    sprintf(prompt, "pltext; puts -nonewline \"pltcl_%d%% \"", pls->ipls);
+    Tcl_VarEval(interp, prompt, 0);
+
+    return TCL_OK;
+}
+
 /*
  *----------------------------------------------------------------------
  *
@@ -149,13 +175,16 @@ AppInit(Tcl_Interp *interp)
     Tcl_CreateCommand(interp, "exit", plExitCmd,
                       (ClientData) NULL, (void (*)(ClientData)) NULL);
 
+    Tcl_CreateCommand(interp, "pr_prompt", prPromptCmd,
+                      (ClientData) NULL, (void (*)(ClientData)) NULL);
+
 /* Initialize graphics package */
 
     plinit();
 
-/* Make sure we are in text mode when interactively entering commands */
+/* Custom prompt, to make sure we are in text mode when entering commands */
 
-    Tcl_SetVar(interp, "tcl_prompt1", "pltext; puts -nonewline \"% \"", 0);
+    Tcl_SetVar(interp, "tcl_prompt1", "pr_prompt", 0);
 
 /* Also before an error is printed.  Can't use normal call mechanism here */
 /* because it trashes the interp->result string. */
