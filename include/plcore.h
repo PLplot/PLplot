@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/07/19 22:36:10  mjl
+ * Revision 1.23  1994/07/25 06:05:35  mjl
+ * Added dispatch table entry for new lj_hpgl driver.
+ *
+ * Revision 1.22  1994/07/19  22:36:10  mjl
  * Included plDevs.h.  Driver enabling macro renamed to PLD_<driver>, where
  * <driver> is xwin, ps, etc.  See plDevs.h for more detail.
  *
@@ -651,6 +654,22 @@ static PLDispatchTable dispatch_table[] = {
 	"hp7580",
 	0,
 	plD_init_hp7580,
+	plD_line_hpgl,
+	plD_polyline_hpgl,
+	plD_eop_hpgl,
+	plD_bop_hpgl,
+	plD_tidy_hpgl,
+	plD_state_hpgl,
+	plD_esc_hpgl
+    },
+#endif
+
+#ifdef PLD_lj_hpgl
+    {
+	"HP Laserjet III, HPGL emulation mode",
+	"lj_hpgl",
+	0,
+	plD_init_lj_hpgl,
 	plD_line_hpgl,
 	plD_polyline_hpgl,
 	plD_eop_hpgl,
