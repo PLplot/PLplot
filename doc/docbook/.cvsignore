@@ -1,4 +1,4 @@
 Makefile Makefile.in aclocal.m4
 *.tar.gz plplotdoc-html* plplotdoc-info-*
 config.* configure *-stamp
-tarball.tgz
+tarball.tgz *.prcs_aux conftest.* *.out *.log *.prj
