@@ -9,8 +9,15 @@
 
 cd [file join [file dirname [info script]] .. tcl]
 lappend auto_path [pwd]
-catch {package require Plplotter}
-plframe .p
+if {[catch {package require Plplotter}]} {
+    # use non shared-lib way 9e.g. 'plserver'
+    plstdwin .
+    plxframe .p
+    set plwin .p.plwin
+} else {
+    plframe .p
+    set plwin .p
+}
 grid .p -columnspan 5 -sticky news
 grid rowconfigure . 0 -weight 1
 for {set i 0} {$i < 5} {incr i} {
@@ -18,12 +25,12 @@ for {set i 0} {$i < 5} {incr i} {
 }
 
 # turn on pauses
-.p cmd plspause 1
+$plwin cmd plspause 1
 
 button .cexit -text "Quit" -command exit
 button .cshell -text "Shell" -command "console show"
 button .creload -text "Reload" -command reload
-button .bnextpage -text "Page" -command ".p nextpage"
+button .bnextpage -text "Page" -command "$plwin nextpage"
 
 set buttons [list .cexit .cshell .creload .bnextpage]
 
@@ -36,16 +43,16 @@ proc reload {} {
 }
 
 proc run {demo} {
-    .p configure -eopcmd [list .bnextpage configure -state normal]
+    global plwin
+    $plwin configure -eopcmd [list .bnextpage configure -state normal]
     .l configure -text "Starting $demo"
     setButtonState disabled
     update idletasks
-    .p cmd plbop
-    if {[catch {$demo .p} err]} {
+    $plwin cmd plbop
+    if {[catch {$demo $plwin} err]} {
 	puts stderr $err
     }
-    .p cmd pleop
-    focus .p
+    $plwin cmd pleop
     .l configure -text "$demo complete"
     setButtonState normal
     .bnextpage configure -state disabled

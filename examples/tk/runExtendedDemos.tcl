@@ -27,8 +27,17 @@ for {set i 0} {$i < 5} {incr i} {
 button .cexit -text "Quit" -command exit
 button .cshell -text "Shell" -command "console show"
 button .creload -text "Reload" -command reload
+button .ctoggle -text "Toggle Menu" -command toggleMenu
 
-set buttons [list .cexit .cshell]
+set buttons [list .cexit .cshell .creload .ctoggle]
+
+proc toggleMenu {} {
+    if {[.p cget -menulocation] == "menubar"} {
+	.p configure -menulocation local
+    } else {
+	.p configure -menulocation menubar
+    }
+}
 
 proc reload {} {
     global demos
