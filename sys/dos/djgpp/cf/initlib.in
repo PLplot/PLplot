@@ -17,7 +17,7 @@ SHLIB_BUILD	= @SHLIB_BUILD@
 
 # Flags and other miscellanea
 
-CC_FLAGS	= -c -O -m486 -I.
+CC_FLAGS	:= $(CC_FLAGS) -c -O -m486 -I.
 CC_FLAGS_DEMOS	= -c -O -m486 -I.
 SHLIB_CCFLAGS	= @SHLIB_CCFLAGS@
 SHLIB_F77FLAGS	= @SHLIB_F77FLAGS@
