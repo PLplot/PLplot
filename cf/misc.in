@@ -13,8 +13,8 @@
 clean:
 	-rm * shared/* ../lib/libpl*
 
-# Autogeneration of dependencies.
-# I use gcc -MM because otherwise sytem headers get included, which sucks.
+# Autogeneration of dependencies.  Use gcc -MM because X11's "makedepend"
+# includes system headers, and that really sucks.
 
 depend:
 	gcc -MM $(CORE_C) $(DRIVERS_C) $(UTIL_C) $(FSTUB_C) $(TCL_C) $(TK_C) \
