@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1993/10/21 19:27:07  mjl
+ * Revision 1.16  1993/11/15 08:40:57  mjl
+ * Added stub for PLSCOLBG.
+ *
+ * Revision 1.15  1993/10/21  19:27:07  mjl
  * Changed all names that ended with an underscore (as part of the C/Fortran
  * linkage) to end with a '7' instead, to avoid problems with f2c.
  *
@@ -148,6 +151,7 @@ PLGCHR(PLFLT *chrdef, PLFLT *chrht)
 {
     c_plgchr(chrdef, chrht);
 }
+
 void
 PLGFAM(PLINT *fam, PLINT *num, PLINT *bmax)
 {
@@ -340,6 +344,12 @@ void
 PLSCOL0(PLINT *icol0, PLINT *r, PLINT *g, PLINT *b)
 {
     c_plscol0(*icol0, *r, *g, *b);
+}
+
+void
+PLSCOLBG(PLINT *r, PLINT *g, PLINT *b)
+{
+    c_plscolbg(*r, *g, *b);
 }
 
 void
