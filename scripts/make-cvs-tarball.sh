@@ -72,7 +72,7 @@ do
     r) test -n "$OPTARG" || usage 1 ; BRANCH="-r $OPTARG" ;;
     t) test -n "$OPTARG" || usage 1 ; CVSTMPDIR=$OPTARG ;;
     u) test -n "$OPTARG" || usage 1 ; WWW_USER=$OPTARG ;;
-    v) test -n "$OPTARG" || usage 1 ; VERSION=$OPTARG ;;
+    v) test -n "$OPTARG" || usage 1 ; VERSION="--version=$OPTARG" ;;
     w) test -n "$OPTARG" || usage 1 ; CVSROOTDIR=$OPTARG ;;
     *) usage 1 ;;
   esac
