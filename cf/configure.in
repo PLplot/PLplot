@@ -236,6 +236,9 @@ if test `pwd` = "$srcdir"; then
 	mkdir tmp
     fi
     cd tmp
+    if test -f $srcdir/cf_plplot.in ; then
+        ln -s $srcdir/cf_plplot.in . 2>/dev/null
+    fi
     exec $srcdir/configure "$@"
 fi
 
