@@ -444,17 +444,6 @@ AC_SUBST(SOVERSION)
 CPP_SOVERSION=9:0:0
 AC_SUBST(CPP_SOVERSION)
 
-### LIBRARY_VERSION must be kept consistent with the libtool SOVERSION so
-### that the various configured pkgIndex.tcl scripts know the numerical
-### suffix of the PLplot libraries.  This may generate cross-platform
-### tcl/tk issues for certain unices which do not have a numerical suffix
-### on their shared libraries, but this should be addressed when the rest
-### of the tcl/tk PLplot configuration is updated to work for the non-Linux 
-### case.
-
-LIBRARY_VERSION=5.3.0
-AC_SUBST(LIBRARY_VERSION)
-
 ### According to man package, PLPLOT_TCL_VERSION (used in the various
 ### pkgIndex.tcl scripts) should be strictly numbers alternativing with
 ### decimal points with the first number (the major number) signifying
@@ -697,6 +686,25 @@ else
   LIB_TAG=""
 fi
 AC_SUBST(LIB_TAG)
+
+### These various DLNAME variables are used to configure the names of
+### the libplplot and libplplottcltk libraries for use in the various
+### pkgIndex.tcl scripts.  At run time those scripts currently search first 
+### for the double-precision form of DLNAME, and if that does not exist
+### searches for the single-precision version.  Thus, we must supply both
+### double- and single-precision names for libplplot and libplplottcltk.
+
+### This macro may only be used after AM_PROG_LIBTOOL and the definitions of
+### $SOVERSION (and $LIB_TAG if we ever have separate double and single
+### precision forms of the pkgIndex.tcl scripts).
+GET_DLNAME([plplot], [$SOVERSION], [DLNAME_LIBPLPLOT])
+GET_DLNAME([plplotd], [$SOVERSION], [DLNAME_LIBPLPLOTD])
+GET_DLNAME([plplottcltk], [$SOVERSION], [DLNAME_LIBPLPLOTTCLTK])
+GET_DLNAME([plplottcltkd], [$SOVERSION], [DLNAME_LIBPLPLOTTCLTKD])
+AC_SUBST(DLNAME_LIBPLPLOT)
+AC_SUBST(DLNAME_LIBPLPLOTD)
+AC_SUBST(DLNAME_LIBPLPLOTTCLTK)
+AC_SUBST(DLNAME_LIBPLPLOTTCLTKD)
 
 ### C++ binding
 
