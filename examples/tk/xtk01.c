@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1996/06/26 21:35:21  furnish
+ * Revision 1.11  1996/10/18 20:02:02  furnish
+ * Remove work now handled by pltkMain().
+ *
+ * Revision 1.10  1996/06/26  21:35:21  furnish
  * Various hacks to support Tcl 7.5 and Tk 4.1.
  *
  * Revision 1.9  1995/06/01  21:43:48  mjl
@@ -98,14 +101,7 @@ AppInit(Tcl_Interp *interp)
  *
  * where "Mod" is the name of the module.
  */
-/*
-    if (Tcl_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    if (Tk_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    */
+
     if (Pltk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }

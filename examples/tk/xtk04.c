@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1996/02/23 16:50:12  furnish
+ * Revision 1.6  1996/10/18 20:02:04  furnish
+ * Remove work now handled by pltkMain().
+ *
+ * Revision 1.5  1996/02/23  16:50:12  furnish
  * Initialize [incr Tk].
  *
  * Revision 1.4  1995/06/09  22:50:19  mjl
@@ -19,7 +22,7 @@
  */
 
 #include "pltk.h"
-#include <itcl.h>
+
 #include <math.h>
 
 static int
@@ -128,18 +131,6 @@ AppInit(Tcl_Interp *interp)
  * where "Mod" is the name of the module.
  */
 
-    if (Tcl_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    if (Tk_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    if (Itcl_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    if (Itk_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
     if (Pltk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
