@@ -9,4 +9,3 @@ Makefile.examples
 plplot-test.sh
 test_python.sh
 test_f77.sh
-gen-pc-files.pl
