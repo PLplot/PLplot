@@ -103,6 +103,8 @@ Dont't forget to finish the plot with the <Enter> or <ESC> key\n");
       if (status != 0)
 	printf("wx=%.3f wy=%.3f dx=%.3f dy=%.3f c=0x%02x str=%s mb=%d mod=%0x swin=%d\n", ...
 	       wX, wY, dX, dY, keysym, string, button, mod, swin);
+      else
+        break;       
       endif
 
       fflush(stdout);
