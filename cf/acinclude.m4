@@ -27,7 +27,7 @@ dnl along with PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 dnl
 dnl ------------------------------------------------------------------------
-dnl It's kind of nice to have an include macro.
+dnl Include macro which knows about the cf/ directory
 dnl
 define([PL_INCLUDE],[builtin([include],[cf/$1])])dnl
 dnl
@@ -45,13 +45,13 @@ dnl 	$1 - the include file name, the part before the .h
 dnl	$2 - a variable that holds the matched directory name
 dnl	$3 - a variable indicating if the search succeeded ("yes"/"no")
 dnl	     (if missing, we exit)
-dnl Use just FIND_INC, or the FIND_INC_<...> set for more control.
+dnl Use just PL_FIND_INC, or the PL_FIND_INC_<...> set for more control.
 dnl
-define(FIND_INC_BEGIN, [
+define(PL_FIND_INC_BEGIN, [
     AC_MSG_CHECKING(for $1.h)
     $2=""
 ])
-define(FIND_INC_SET, [
+define(PL_FIND_INC_SET, [
     for dir in $incdirs; do
 	if test -r "$dir/$1.h"; then
 	    $2="$dir"
@@ -60,7 +60,7 @@ define(FIND_INC_SET, [
 	fi
     done
 ])
-define(FIND_INC_END, [
+define(PL_FIND_INC_END, [
     if test -z "$$2"; then
 	ifelse($3,,[
 	    AC_MSG_RESULT(not found -- exiting)
@@ -75,36 +75,36 @@ define(FIND_INC_END, [
 	$2="default"
     fi
 ])
-define(FIND_INC, [
-    FIND_INC_BEGIN($*)
-    FIND_INC_SET($*)
-    FIND_INC_END($*)
+define(PL_FIND_INC, [
+    PL_FIND_INC_BEGIN($*)
+    PL_FIND_INC_SET($*)
+    PL_FIND_INC_END($*)
 ])
 dnl ------------------------------------------------------------------------
 dnl The following macro searches a list of directories for the given
 dnl library file and takes appropriate actions if found or not.
-dnl Use just FIND_LIB, or the FIND_LIB_<...> set for more control.
+dnl Use just PL_FIND_LIB, or the PL_FIND_LIB_<...> set for more control.
 dnl
 dnl Arguments:
 dnl 	$1 - the library name, the part after the -l and before the "."
 dnl	$2 - a variable that holds the matched directory name
 dnl
-dnl FIND_LIB_SET takes:
+dnl PL_FIND_LIB_SET takes:
 dnl	$3 - a variable that holds the matched library name in a form
 dnl	     suitable for input to the linker (without the suffix, so that
 dnl	     any shared library form is given preference).
 dnl
-dnl FIND_LIB_END takes:
+dnl PL_FIND_LIB_END takes:
 dnl	$3 - a variable indicating if the search succeeded ("yes"/"no")
 dnl	     (if missing, we exit)
 dnl
-dnl FIND_LIB takes these as $3 and $4, respectively.
+dnl PL_FIND_LIB takes these as $3 and $4, respectively.
 dnl
-define(FIND_LIB_BEGIN, [
+define(PL_FIND_LIB_BEGIN, [
     AC_MSG_CHECKING(for lib$1)
     $2=""
 ])
-define(FIND_LIB_SET, [
+define(PL_FIND_LIB_SET, [
     for dir in $libdirs; do
 	if test -z "$LIBEXTNS"; then
 	    LIBEXTNS="so a"
@@ -119,7 +119,7 @@ define(FIND_LIB_SET, [
 	done
     done
 ])
-define(FIND_LIB_END, [
+define(PL_FIND_LIB_END, [
     if test -z "$$2"; then
 	ifelse($3,,[
 	    AC_MSG_ERROR(not found -- exiting)
@@ -133,10 +133,10 @@ define(FIND_LIB_END, [
 	$2="default"
     fi
 ])
-define(FIND_LIB, [
-    FIND_LIB_BEGIN($1, $2)
-    FIND_LIB_SET($1, $2, $3)
-    FIND_LIB_END($1, $2, $4)
+define(PL_FIND_LIB, [
+    PL_FIND_LIB_BEGIN($1, $2)
+    PL_FIND_LIB_SET($1, $2, $3)
+    PL_FIND_LIB_END($1, $2, $4)
 ])
 dnl ------------------------------------------------------------------------
 dnl The following macro makes it easier to add includes without adding
@@ -146,7 +146,7 @@ dnl 	$1 - the searched directory name
 dnl	$2 - a variable that holds the include specification
 dnl	$3 - a variable that holds all the directories searched so far
 dnl
-define([ADD_TO_INCS],[
+define([PL_ADD_TO_INCS],[
     INCSW=""
     if test "$1" != "default"; then
 	INCSW="-I$1"
@@ -171,7 +171,7 @@ dnl	$2 - the command line option to give to the linker (e.g. -lfoo)
 dnl	$3 - a variable that holds the library specification
 dnl	$4 - a variable that holds all the directories searched so far
 dnl
-define([ADD_TO_LIBS],[
+define([PL_ADD_TO_LIBS],[
     LIBSW=""
     if test "$1" != "default"; then
 	LIBSW="-L$1"
@@ -218,16 +218,6 @@ dnl stability over speed any day.
 dnl
 define([AC_CACHE_LOAD],)
 define([AC_CACHE_SAVE],)
-dnl ------------------------------------------------------------------------
-dnl Define the package version
-AC_DEFUN([PLPLOT_PACKAGE_VERSION],
-[builtin(include, version.in)
-PLPLOT_VERSION=$MAJOR_VERSION.$MINOR_VERSION.$RELEASE_VERSION
-AC_SUBST(MAJOR_VERSION)
-AC_SUBST(MINOR_VERSION)
-AC_SUBST(RELEASE_VERSION)
-AC_SUBST(PLPLOT_VERSION)
-AC_DEFINE_UNQUOTED(PLPLOT_VERSION, "$PLPLOT_VERSION")])
 dnl ------------------------------------------------------------------------
 dnl Gnome configuration function.
 dnl Adapted from that distributed by the Gnome Project
@@ -451,4 +441,5 @@ AC_DEFUN([PL_EXPAND_EXPRESSION],[
      test "$str1" = "$str2" && break
      str1="$str2"
    done
-   $1="$str2"])
+   $1="$str2"
+])

@@ -155,7 +155,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     fi
     GDINCCMD=""
     GDINCPATH=""
-    ADD_TO_INCS($GDINCDIR, GDINCCMD, GDINCPATH)
+    PL_ADD_TO_INCS($GDINCDIR, GDINCCMD, GDINCPATH)
 
 fi
 
@@ -185,7 +185,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     fi
     GDLIBCMD=""
     GDLIBPATH=""
-    ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, GDLIBCMD, GDLIBPATH)
+    PL_ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, GDLIBCMD, GDLIBPATH)
 
 fi
 
@@ -213,7 +213,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test "$PNGLIBDIR" = "/usr/lib"; then
         PNGLIBDIR=default
     fi
-    ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, GDLIBCMD, GDLIBPATH)
+    PL_ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, GDLIBCMD, GDLIBPATH)
 
 fi
 
@@ -241,7 +241,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test "$JPEGLIBDIR" = "/usr/lib"; then
         JPEGLIBDIR=default
     fi
-    ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, GDLIBCMD, GDLIBPATH)
+    PL_ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, GDLIBCMD, GDLIBPATH)
 
 fi
 
@@ -269,7 +269,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test "$ZLIBLIBDIR" = "/usr/lib"; then
         ZLIBLIBDIR=default
     fi
-    ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, GDLIBCMD, GDLIBPATH)
+    PL_ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, GDLIBCMD, GDLIBPATH)
 
 fi
 
@@ -383,8 +383,8 @@ CDINCPATH=""
 CDLIBCMD=""
 CDLIBPATH=""
 if test "$enable_cgm" = "yes"; then
-    ADD_TO_INCS($CDINCDIR, CDINCCMD, CDINCPATH)
-    ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBCMD, CDLIBPATH)
+    PL_ADD_TO_INCS($CDINCDIR, CDINCCMD, CDINCPATH)
+    PL_ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBCMD, CDLIBPATH)
 fi
 AC_SUBST(CDINCCMD)
 AC_SUBST(CDLIBCMD)
@@ -454,8 +454,8 @@ FREETYPELIBCMD=""
 FREETYPELIBPATH=""
 if test "$with_freetype" = "yes"; then
     AC_DEFINE(HAVE_FREETYPE, [], [Define if [freetype] is available])
-    ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCCMD, FREETYPEINCPATH)
-    ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBCMD, FREETYPELIBPATH)
+    PL_ADD_TO_INCS($FREETYPEINCDIR, FREETYPEINCCMD, FREETYPEINCPATH)
+    PL_ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBCMD, FREETYPELIBPATH)
 fi
 AC_SUBST(FREETYPEINCCMD)
 AC_SUBST(FREETYPELIBCMD)
@@ -525,7 +525,7 @@ fi
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLINCDIR"; then
-        FIND_INC(tcl, TCLINCDIR, enable_tcl)
+        PL_FIND_INC(tcl, TCLINCDIR, enable_tcl)
     fi
 fi
 
@@ -538,9 +538,9 @@ fi
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
-        FIND_LIB_BEGIN(tcl, TCLLIBDIR)
+        PL_FIND_LIB_BEGIN(tcl, TCLLIBDIR)
         for version in 8.4 8.3 8.2 8.1 8.0 ""; do
-            FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
+            PL_FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
             if test -n "$TCLLIBDIR"; then
                 break
             fi
@@ -557,7 +557,7 @@ if test "$enable_tcl" = "yes"; then
                 fi
             done
         fi
-        FIND_LIB_END(tcl, TCLLIBDIR, enable_tcl)
+        PL_FIND_LIB_END(tcl, TCLLIBDIR, enable_tcl)
     fi
     if test "$enable_tcl" = "yes"; then
         if test -r $TCLLIBDIR/tclConfig.sh; then
@@ -579,7 +579,7 @@ fi
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLINCDIR"; then
-        FIND_INC(itcl, ITCLINCDIR, enable_itcl)
+        PL_FIND_INC(itcl, ITCLINCDIR, enable_itcl)
     fi
 fi
 
@@ -599,14 +599,14 @@ fi
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLLIBDIR"; then
-        FIND_LIB_BEGIN(itcl, ITCLLIBDIR)
+        PL_FIND_LIB_BEGIN(itcl, ITCLLIBDIR)
         for version in 3.3 3.2 3.1 3.0 2.1 2.0 ""; do
             if test -n "$ITCLLIBDIR"; then
                 break
             fi
-            FIND_LIB_SET(itcl$version, ITCLLIBDIR, ITCLLIBSTR)
+            PL_FIND_LIB_SET(itcl$version, ITCLLIBDIR, ITCLLIBSTR)
         done
-        FIND_LIB_END(itcl, ITCLLIBDIR, enable_itcl)
+        PL_FIND_LIB_END(itcl, ITCLLIBDIR, enable_itcl)
     fi
     if test "$enable_itcl" = "yes"; then
         if test -r $ITCLLIBDIR/itclConfig.sh; then
@@ -643,7 +643,7 @@ fi
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKINCDIR"; then
-        FIND_INC(tk, TKINCDIR, enable_tk)
+        PL_FIND_INC(tk, TKINCDIR, enable_tk)
     fi
 fi
 
@@ -658,13 +658,13 @@ fi
 
 if test "$enable_tkwin" = "yes"; then
     if test -z "$TKPRIVATEINCDIR"; then
-        FIND_INC(tkInt, TKPRIVATEINCDIR, enable_tkwin)
+        PL_FIND_INC(tkInt, TKPRIVATEINCDIR, enable_tkwin)
     fi
 fi
 
 if test "$enable_tkwin" = "yes"; then
     if test -z "$TCLPRIVATEINCDIR"; then
-        FIND_INC(tclInt, TCLPRIVATEINCDIR, enable_tkwin)
+        PL_FIND_INC(tclInt, TCLPRIVATEINCDIR, enable_tkwin)
     fi
 fi
 
@@ -674,14 +674,14 @@ fi
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
-        FIND_LIB_BEGIN(tk, TKLIBDIR)
+        PL_FIND_LIB_BEGIN(tk, TKLIBDIR)
         for version in 8.4 8.3 8.2 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
             if test -n "$TKLIBDIR"; then
                 break
             fi
-            FIND_LIB_SET(tk$version, TKLIBDIR, TKLIBSTR)
+            PL_FIND_LIB_SET(tk$version, TKLIBDIR, TKLIBSTR)
         done
-        FIND_LIB_END(tk, TKLIBDIR, enable_tk)
+        PL_FIND_LIB_END(tk, TKLIBDIR, enable_tk)
     fi
 fi
 
@@ -696,14 +696,14 @@ fi
 
 if test "$enable_itk" = "yes"; then
     if test -z "$ITKLIBDIR"; then
-        FIND_LIB_BEGIN(itk, ITKLIBDIR)
+        PL_FIND_LIB_BEGIN(itk, ITKLIBDIR)
         for version in 3.3 3.2 3.1 3.0 2.1 2.0 ""; do
             if test -n "$ITKLIBDIR"; then
                 break
             fi
-            FIND_LIB_SET(itk$version, ITKLIBDIR, ITKLIBSTR)
+            PL_FIND_LIB_SET(itk$version, ITKLIBDIR, ITKLIBSTR)
         done
-        FIND_LIB_END(itk, ITKLIBDIR, enable_itk)
+        PL_FIND_LIB_END(itk, ITKLIBDIR, enable_itk)
     fi
 fi
 
@@ -755,10 +755,10 @@ if test "$enable_gnome" = "yes"; then
         case $i in
         -L* )
             d=`echo $i | sed 's/-L//'`
-            ADD_TO_LIBS( $d, "", GNOMELIBS, GNOMEPATH)
+            PL_ADD_TO_LIBS( $d, "", GNOMELIBS, GNOMEPATH)
         ;;
         -l* )
-            ADD_TO_LIBS( default, $i, GNOMELIBS, GNOMEPATH)
+            PL_ADD_TO_LIBS( default, $i, GNOMELIBS, GNOMEPATH)
         ;;
         *)
         ;;
@@ -921,7 +921,7 @@ if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
         incdirs="$prefix/include/python$PYTHON_VERSION \
 	         /usr/include/python$PYTHON_VERSION"
-        FIND_INC(Python, PYTHON_INC_DIR, enable_python)
+        PL_FIND_INC(Python, PYTHON_INC_DIR, enable_python)
 
 	if test "$enable_python" = no ; then
 	    AC_MSG_WARN([Header file for Python version $PYTHON_VERSION has not been found.])
@@ -939,7 +939,7 @@ if test "$enable_python" = "yes"; then
         incdirs="\
         $PYTHON_INC_DIR \
         $PYTHON_INC_DIR/Numeric"
-        FIND_INC(arrayobject, PYTHON_NUM_DIR, numeric_python)
+        PL_FIND_INC(arrayobject, PYTHON_NUM_DIR, numeric_python)
         if test "$numeric_python" = "no"; then
             AC_MSG_RESULT([plplot module needs Python numeric extension.])
             AC_MSG_RESULT([Setting enable_python to no])
@@ -997,12 +997,12 @@ if test "$enable_linuxvga" = "yes"; then
         $prefix/lib \
         /usr/lib"
 
-        FIND_LIB(vga, VGALIBDIR, VGALIBSTR, enable_linuxvga)
+        PL_FIND_LIB(vga, VGALIBDIR, VGALIBSTR, enable_linuxvga)
     fi
     if test -n "$VGALIBDIR"; then
         LINUXVGALIBS=""
         LINUXVGAPATH=""
-        ADD_TO_LIBS($VGALIBDIR, -lvga, LINUXVGALIBS, LINUXVGAPATH)
+        PL_ADD_TO_LIBS($VGALIBDIR, -lvga, LINUXVGALIBS, LINUXVGAPATH)
     fi
 fi
 
