@@ -77,9 +77,9 @@ def plcont(z, *args):
     else:
 	raise ValueError, 'Missing clev argument'
 
-    if len(args) > 0 and (
-    type(args[0]) == types.StringType or
-    type(args[0]) == types.FunctionType or
+    if len(args) > 0 and ( \
+    type(args[0]) == types.StringType or \
+    type(args[0]) == types.FunctionType or \
     type(args[0]) == types.BuiltinFunctionType):
 	pltr = args[0]
 	# Handle the string names for the callbacks though specifying the
@@ -115,18 +115,19 @@ def plcont(z, *args):
 	    if len(args) == 3:
 	     if type(args[-1]) == types.IntType:
 	      wrap = args[-1]
-	      if len(xg.shape) == 2 and len(yg.shape) == 2:
+	      if len(xg.shape) == 2 and len(yg.shape) == 2 and  \
+	      z.shape == xg.shape and z.shape == yg.shape:
 		# handle wrap
 		if wrap == 1:
 		    z = Numeric.resize(z, (z.shape[0]+1, z.shape[1]))
 		    xg = Numeric.resize(xg, (xg.shape[0]+1, xg.shape[1]))
 		    yg = Numeric.resize(yg, (yg.shape[0]+1, yg.shape[1]))
 		elif wrap == 2:
-		    z = Numeric.transpose(Numeric.resize(
+		    z = Numeric.transpose(Numeric.resize( \
 		    Numeric.transpose(z), (z.shape[1]+1, z.shape[0])))
-		    xg = Numeric.transpose(Numeric.resize(
+		    xg = Numeric.transpose(Numeric.resize( \
 		    Numeric.transpose(xg), (xg.shape[1]+1, xg.shape[0])))
-		    yg = Numeric.transpose(Numeric.resize(
+		    yg = Numeric.transpose(Numeric.resize( \
 		    Numeric.transpose(yg), (yg.shape[1]+1, yg.shape[0])))
 		elif wrap != 0:
 		    raise ValueError, "Invalid wrap specifier, must be 0, 1 or 2."
