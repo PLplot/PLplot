@@ -627,7 +627,7 @@ process_next(U_CHAR c)
 static void
 plr_init(U_CHAR c)
 {
-    float aspect, dev_aspect, ratio;
+    PLFLT aspect, dev_aspect, ratio;
 
     dbug_enter("plr_init");
 
@@ -900,7 +900,7 @@ plr_state(U_CHAR op)
 	PLFLT col1;
 
 	plm_rd( pdf_rd_2bytes(pdfs, &icol1) );
-	col1 = (float) icol1 / (float) plsc->ncol1;
+	col1 = (PLFLT) icol1 / (PLFLT) plsc->ncol1;
 	plcol1(col1);
 	break;
     }
@@ -1017,7 +1017,7 @@ plresc_fill(void)
 static void
 plresc_rgb(void)
 {
-    float red, green, blue;
+    PLFLT red, green, blue;
     U_SHORT ired, igreen, iblue;
 
     dbug_enter("plresc_rgb");
