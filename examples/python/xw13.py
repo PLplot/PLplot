@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-#Have not yet converted to arrays.
 
 #	Pie chart demo.
 
-import math
 import sys
 import os
 
@@ -39,40 +37,40 @@ def main():
 
     plenv(0., 10., 0., 10., 1, -2)
     plcol0(2)
-
-    per = [10, 32, 12, 30, 16]
-    theta0 = 0.
-    dthet = 2 * math.pi / 500
+    #if these don't add up to 100, the logic adds to the last to make
+    #up the balance.
+    per = [10., 32., 12., 30., 16.]
+    theta0 = 0
 
     for i in range(5):
-	x = [5.]
-	y = [5.]
-	theta1 = theta0 + 2 * math.pi * per[i] / 100.
+	#theta quantities scaled as integers to make logic independent of
+	#floating point considerations.
+	#n.b. theta multiplied by 2 pi/500 afterward so per is in fact 
+	#interpreted as a percentage.
+	theta1 = theta0 + int(5.*per[i])
 	if i == 4:
-	    theta1 = 2 * math.pi
+	    theta1 = 500
 
-	theta = theta0
-	while theta <= theta1:
-	    x.append(5 + 3 * math.cos(theta))
-	    y.append(5 + 3 * math.sin(theta))
-	    theta = theta + dthet
+	theta = arrayrange(theta0,theta1+1)
+	x = concatenate((array([5.]), (5. + 3.*cos((2.*pi/500.)*theta))))
+	y = concatenate((array([5.]), (5. + 3.*sin((2.*pi/500.)*theta))))
 
 	plcol0(i + 1)
 	plpsty((i + 3) % 8 + 1)
 	plfill(x, y)
 	plcol0(1)
 	plline(x, y)
-	just = (theta0 + theta1) / 2.
-	dx = .25 * math.cos(just)
-	dy = .25 * math.sin(just)
-	if just < math.pi / 2 or just > 3 * math.pi / 2:
+	just = (2.*pi/500.)*(theta0 + theta1) / 2.
+	dx = .25 * cos(just)
+	dy = .25 * sin(just)
+	if (theta0 + theta1) < 250 or (theta0 + theta1) > 750:
 	    just = 0.
 	else:
 	    just = 1.
 
 	mid = len(x) / 2
 	plptex((x[mid] + dx), (y[mid] + dy), 1.0, 0.0, just, text[i])
-	theta0 = theta - dthet
+	theta0 = theta[-1]
 
     plfont(2)
     plschr(0., 1.3)
