@@ -60,9 +60,6 @@ Description: Scientific plotting library (Gnome canvas driver)
  scientific plotting library.
  .
  See http://www.plplot.org for more information on PLplot.
- .
- THIS IS AN EXPERIMENTAL PACKAGE, BUILT FROM CVS SOURCES.  NO
- WARRANTY.  USE IT AT YOUR OWN RISK.
 
 Package: plplot-tcl
 Architecture: any
@@ -99,9 +96,6 @@ Description: Scientific plotting library (GD driver)
  PLplot programs.
  .
  See http://www.plplot.org for more information on PLplot.
- .
- THIS IS AN EXPERIMENTAL PACKAGE, BUILT FROM CVS SOURCES.  NO
- WARRANTY.  USE IT AT YOUR OWN RISK.
 
 Package: python-plplot
 Architecture: any
@@ -124,9 +118,6 @@ Description: Octave support for PLplot, a plotting library
  Gnuplot graphical interface in Octave. Examples are also provided.
  .
  See http://www.plplot.org for more information on PLplot.
- .
- THIS IS AN EXPERIMENTAL PACKAGE, BUILT FROM CVS SOURCES.  NO
- WARRANTY.  USE IT AT YOUR OWN RISK.
 
 Package: plplot-doc
 Architecture: all
