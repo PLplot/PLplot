@@ -1,8 +1,0 @@
-*.flc
-Makefile
-Makefile.in
-.deps
-.libs
-*.la
-*.lo
-*.nn
