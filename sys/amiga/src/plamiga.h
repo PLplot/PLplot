@@ -1,24 +1,10 @@
 /* $Id$
-   $Log$
-   Revision 1.4  1994/03/23 08:56:55  mjl
-   Added prototype for plamiga_saveiff().
-
- * Revision 1.3  1993/03/15  21:34:28  mjl
- * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
- * OS 2.0 capabilities.
+ * $Log$
+ * Revision 1.5  1994/08/23 16:39:03  mjl
+ * Minor fixes to work with PLplot 4.99h distribution and other cleaning up.
  *
- * Revision 1.2  1993/01/23  06:12:46  mjl
- * Preliminary work on new graphical interface (2.04-specific) for the Amiga.
- *
- * Revision 1.1  1992/10/12  17:11:23  mjl
- * Amiga-specific mods, including ANSI-fication.
- *
- * Revision 1.2  1992/09/29  04:45:31  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:33:41  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.4  1994/03/23  08:56:55  mjl
+ * Added prototype for plamiga_saveiff().
 */
 
 /* These are needed by GadTools-generated display routines */
@@ -37,7 +23,6 @@
 #include <clib/gadtools_protos.h>
 #include <clib/graphics_protos.h>
 #include <clib/utility_protos.h>
-#include <string.h>
 
 /* Everything else */
 /* Includes header files for using reqtools.library and iff.library */

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/05/23 22:11:59  mjl
+ * Revision 1.10  1994/08/23 16:39:02  mjl
+ * Minor fixes to work with PLplot 4.99h distribution and other cleaning up.
+ *
+ * Revision 1.9  1994/05/23  22:11:59  mjl
  * Minor incompatibilities with main sources fixed.
  *
  * Revision 1.8  1994/03/23  09:00:20  mjl
@@ -14,7 +17,7 @@
  * to fix problem with overflows (submitted by Wesley Ebisuzaki).
 */
 
-/*	pla_win.c
+/*	pla_wn.c
 
 	PLPLOT Amiga window device driver.
 */
@@ -25,7 +28,6 @@
 #include "pla_menu.h"
 
 #include <graphics/gfxmacros.h>
-#include <math.h>
 
 /* Function prototypes */
 
@@ -44,7 +46,6 @@ struct Process *myproc;
 PlAmigaWin PlAmigadev;
 PlAmigaWin (*pla) = &PlAmigadev;
 
-PLStream *plsc;
 APTR oldwinptr;
 static struct DrawInfo *drInfo;
 static int tidy_when_done;
@@ -94,18 +95,12 @@ struct ColorSpec ScreenColors[] = {
     14, 0x00, 0x0B, 0x00,
     15, 0x00, 0x03, 0x06,
     ~0, 0x00, 0x00, 0x00 };
-/*
-UWORD DriPens[] = {
-    1, 0, 0, 1, 3, 2, 0, 1, 1, (UWORD) ~0 };
-*/
+
 UWORD DriPens[] = {
     0, 1, 1, 2, 1, 3, 1, 0, 2, (UWORD) ~0 };
 
-/*
-UWORD DriPens[] = { (UWORD) ~0 };
-*/
 /*----------------------------------------------------------------------*\
-* Utility macros/functions
+ * Utility macros/functions
 \*----------------------------------------------------------------------*/
 
 #define ami_cmd(code) \
@@ -150,7 +145,7 @@ PLDraw(PLINT x, PLINT y)
 }
 
 /*----------------------------------------------------------------------*\
-* Initialization of Menus follows.
+ * Initialization of Menus follows.
 \*----------------------------------------------------------------------*/
 
 struct NewMenu PlplotNewMenu[] = {
@@ -239,9 +234,9 @@ struct NewMenu PlplotNewMenu[] = {
     NM_END, NULL, NULL, 0, 0L, NULL };
 
 /*----------------------------------------------------------------------*\
-* plD_init_amiwn()
-*
-* Initialize device.
+ * plD_init_amiwn()
+ *
+ * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
@@ -251,7 +246,6 @@ plD_init_amiwn(PLStream *pls)
     PLFLT Initdpmx, Initdpmy;
     struct Screen *wb_screen;
     
-    plsc = pls;
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
     pls->width = 1;
@@ -263,8 +257,6 @@ plD_init_amiwn(PLStream *pls)
 
     if (!pls->colorset)
         pls->color = 1;
-
-    plsc = pls;
 
 /* Open the required libraries. */
 
@@ -289,10 +281,10 @@ plD_init_amiwn(PLStream *pls)
     oldwinptr = myproc->pr_WindowPtr;
 
 /*
-* Set up default screen & window parameters.  Take the default screen
-* parameters from Workbench -- the user can always change it and save the
-* configuration.
-*/
+ * Set up default screen & window parameters.  Take the default screen
+ * parameters from Workbench -- the user can always change it and save the
+ * configuration.
+ */
 
     pla->scr_displayID	= INVALID_ID;
     wb_screen = LockPubScreen("Workbench");
@@ -368,9 +360,9 @@ plD_init_amiwn(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_line_amiwn()
-*
-* Draw a line in the current color from (x1,y1) to (x2,y2).
+ * plD_line_amiwn()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void 
@@ -397,9 +389,9 @@ plD_line_amiwn(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_polyline_amiwn()
-*
-* Draw a polyline in the current color.
+ * plD_polyline_amiwn()
+ *
+ * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void 
@@ -427,9 +419,9 @@ plD_polyline_amiwn (PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_eop_amiwn()
-*
-* End of page. 
+ * plD_eop_amiwn()
+ *
+ * End of page. 
 \*----------------------------------------------------------------------*/
 
 void 
@@ -450,10 +442,10 @@ plD_eop_amiwn(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_bop_amiwn()
-*
-* Set up for the next page.  
-* Advance to next family file if necessary (file output).
+ * plD_bop_amiwn()
+ *
+ * Set up for the next page.  
+ * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void 
@@ -472,9 +464,9 @@ plD_bop_amiwn(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_tidy_amiwn()
-*
-* Close graphics file or otherwise clean up.
+ * plD_tidy_amiwn()
+ *
+ * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void 
@@ -490,9 +482,9 @@ plD_tidy_amiwn(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_state_amiwn()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
+ * plD_state_amiwn()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
 void 
@@ -536,9 +528,9 @@ plD_state_amiwn(PLStream *pls, PLINT op)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_esc_amiwn()
-*
-* Escape function.
+ * plD_esc_amiwn()
+ *
+ * Escape function.
 \*----------------------------------------------------------------------*/
 
 void 
@@ -553,10 +545,10 @@ plD_esc_amiwn(PLStream *pls, PLINT op, char *ptr)
 }
 
 /*----------------------------------------------------------------------*\
-* fill_polygon()
-*
-* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
-* Only solid color fill supported.
+ * fill_polygon()
+ *
+ * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+ * Only solid color fill supported.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -583,9 +575,9 @@ fill_polygon(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* setcmap()
-*
-* Sets up color palette.
+ * setcmap()
+ *
+ * Sets up color palette.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -610,9 +602,9 @@ setcmap(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* pla_InitDisplay()
-*
-* Initialize display and other associated parameters.
+ * pla_InitDisplay()
+ *
+ * Initialize display and other associated parameters.
 \*----------------------------------------------------------------------*/
 
 void 
@@ -668,11 +660,11 @@ pla_InitDisplay(void)
 }
 
 /*----------------------------------------------------------------------*\
-* pla_SetFont()
-*
-* Set up font for menus, screen bar.  May eventually be user-settable.
-* For now, just select between topaz 8 and topaz 11 on the basis of number
-* of lines in the display.
+ * pla_SetFont()
+ *
+ * Set up font for menus, screen bar.  May eventually be user-settable.
+ * For now, just select between topaz 8 and topaz 11 on the basis of number
+ * of lines in the display.
 \*----------------------------------------------------------------------*/
 
 void
@@ -685,9 +677,8 @@ pla_SetFont(void)
 }
 
 /*----------------------------------------------------------------------*\
-* pla_OpenScreen()
+ * pla_OpenScreen()
 \*----------------------------------------------------------------------*/
-/* INDENT OFF */
 
 int pla_OpenScreen(void)
 {
@@ -720,10 +711,9 @@ int pla_OpenScreen(void)
 
     return(0L);
 }
-/* INDENT ON */
 
 /*----------------------------------------------------------------------*\
-* pla_CloseScreen()
+ * pla_CloseScreen()
 \*----------------------------------------------------------------------*/
 
 void pla_CloseScreen(void)
@@ -745,9 +735,8 @@ void pla_CloseScreen(void)
 }
 
 /*----------------------------------------------------------------------*\
-* pla_OpenWindow()
+ * pla_OpenWindow()
 \*----------------------------------------------------------------------*/
-/* INDENT OFF */
 
 int pla_OpenWindow(void)
 {
@@ -779,10 +768,9 @@ int pla_OpenWindow(void)
 
     return(0L);
 }
-/* INDENT ON */
 
 /*----------------------------------------------------------------------*\
-* pla_CloseWindow()
+ * pla_CloseWindow()
 \*----------------------------------------------------------------------*/
 
 void pla_CloseWindow(void)
@@ -800,10 +788,10 @@ void pla_CloseWindow(void)
 }
 
 /*----------------------------------------------------------------------*\
-* WaitForPage()
-*
-* This routine waits for the user to advance the plot, while handling
-* all other events.
+ * WaitForPage()
+ *
+ * This routine waits for the user to advance the plot, while handling
+ * all other events.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -821,10 +809,10 @@ WaitForPage(PLStream *pls)
 
 
 /*----------------------------------------------------------------------*\
-* HandleEvents()
-*
-* Just a front-end to HandlePlplotIDCMP() to make sure the stream
-* pointer is saved where the event-handling code can access it.
+ * HandleEvents()
+ *
+ * Just a front-end to HandlePlplotIDCMP() to make sure the stream
+ * pointer is saved where the event-handling code can access it.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -834,9 +822,9 @@ HandleEvents(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* HandlePlplotIDCMP
-*
-* Responds to all events that PLPLOT cares about.
+ * HandlePlplotIDCMP
+ *
+ * Responds to all events that PLPLOT cares about.
 \*----------------------------------------------------------------------*/
 
 int HandlePlplotIDCMP(void)
@@ -881,7 +869,7 @@ int HandlePlplotIDCMP(void)
 }
 
 /*----------------------------------------------------------------------*\
-* Libraries
+ * Libraries
 \*----------------------------------------------------------------------*/
 
 void 

@@ -1,20 +1,14 @@
 /* $Id$
-   $Log$
-   Revision 1.4  1994/05/23 22:11:57  mjl
-   Minor incompatibilities with main sources fixed.
-
+ * $Log$
+ * Revision 1.5  1994/08/23 16:39:00  mjl
+ * Minor fixes to work with PLplot 4.99h distribution and other cleaning up.
+ *
+ * Revision 1.4  1994/05/23  22:11:57  mjl
+ * Minor incompatibilities with main sources fixed.
+ *
  * Revision 1.3  1994/03/23  08:57:43  mjl
  * Header file rearrangement.  Broke code for saving an iff file from the
  * current screen off into plamiga_saveiff().
- *
- * Revision 1.2  1993/07/01  21:59:51  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
- * now start with "pl"; device driver functions start with "plD_".
- *
- * Revision 1.1  1993/03/15  21:34:22  mjl
- * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
- * OS 2.0 capabilities.
 */
 
 /*	pla_menu.c
@@ -26,20 +20,15 @@
 #include "drivers.h"
 #include "plamiga.h"
 #include "plevent.h"
-
-#include <string.h>
 #include <ctype.h>
-#include <math.h>
-
-extern PLStream *plsc;
 
 int saveiff(char *);
 
 /*----------------------------------------------------------------------*\
-* plamiga_Open()
-*
-* For opening a file.  User must enable by setting an open-file handler.
-* See plrender.c for more detail.
+ * plamiga_Open()
+ *
+ * For opening a file.  User must enable by setting an open-file handler.
+ * See plrender.c for more detail.
 \*----------------------------------------------------------------------*/
 
 int
@@ -50,9 +39,9 @@ plamiga_Open(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_Save()
-*
-* Save to existing file.
+ * plamiga_Save()
+ *
+ * Save to existing file.
 \*----------------------------------------------------------------------*/
 
 int
@@ -63,9 +52,9 @@ plamiga_Save(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_SaveAs_ILBM()
-*
-* Screen dump.  
+ * plamiga_SaveAs_ILBM()
+ *
+ * Screen dump.  
 \*----------------------------------------------------------------------*/
 
 int
@@ -90,9 +79,9 @@ plamiga_SaveAs_ILBM(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_saveiff()
-*
-* Screen dump work routine.
+ * plamiga_saveiff()
+ *
+ * Screen dump work routine.
 \*----------------------------------------------------------------------*/
 
 int
@@ -109,9 +98,9 @@ plamiga_saveiff(char *filename)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_Print_Bitmap()
-*
-* Self-explanatory.
+ * plamiga_Print_Bitmap()
+ *
+ * Self-explanatory.
 \*----------------------------------------------------------------------*/
 
 int
@@ -122,9 +111,9 @@ plamiga_Print_Bitmap(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_Print_landscape()
-*
-* Self-explanatory.
+ * plamiga_Print_landscape()
+ *
+ * Self-explanatory.
 \*----------------------------------------------------------------------*/
 
 int
@@ -135,9 +124,9 @@ plamiga_Print_landscape(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_Print_portrait()
-*
-* Self-explanatory.
+ * plamiga_Print_portrait()
+ *
+ * Self-explanatory.
 \*----------------------------------------------------------------------*/
 
 int
@@ -148,9 +137,9 @@ plamiga_Print_portrait(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_About()
-*
-* Self-explanatory.
+ * plamiga_About()
+ *
+ * Self-explanatory.
 \*----------------------------------------------------------------------*/
 
 int
@@ -161,9 +150,9 @@ plamiga_About(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_Quit()
-*
-* Self-explanatory.
+ * plamiga_Quit()
+ *
+ * Self-explanatory.
 \*----------------------------------------------------------------------*/
 
 int
@@ -175,9 +164,9 @@ plamiga_Quit(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_Screenmode()
-*
-* Brings up ReqTools Screenmode requester.
+ * plamiga_Screenmode()
+ *
+ * Brings up ReqTools Screenmode requester.
 \*----------------------------------------------------------------------*/
 
 int
@@ -227,9 +216,9 @@ plamiga_Screenmode(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_Palette0()
-*
-* Brings up ReqTools palette requester for setting cmap0.
+ * plamiga_Palette0()
+ *
+ * Brings up ReqTools palette requester for setting cmap0.
 \*----------------------------------------------------------------------*/
 
 int
@@ -242,9 +231,9 @@ plamiga_Palette0(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_Palette1()
-*
-* Currently unimplemented.
+ * plamiga_Palette1()
+ *
+ * Currently unimplemented.
 \*----------------------------------------------------------------------*/
 
 int
@@ -255,9 +244,9 @@ plamiga_Palette1(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_LoadConfig()
-*
-* Load configuration.
+ * plamiga_LoadConfig()
+ *
+ * Load configuration.
 \*----------------------------------------------------------------------*/
 
 int
@@ -268,9 +257,9 @@ plamiga_LoadConfig(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_SaveConfigAs()
-*
-* Save configuration to specified file.
+ * plamiga_SaveConfigAs()
+ *
+ * Save configuration to specified file.
 \*----------------------------------------------------------------------*/
 
 int
@@ -281,9 +270,9 @@ plamiga_SaveConfigAs(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_SaveConfig()
-*
-* Save configuration.
+ * plamiga_SaveConfig()
+ *
+ * Save configuration.
 \*----------------------------------------------------------------------*/
 
 int
@@ -294,9 +283,9 @@ plamiga_SaveConfig(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_DUMMY()
-*
-* User menus to go here.
+ * plamiga_DUMMY()
+ *
+ * User menus to go here.
 \*----------------------------------------------------------------------*/
 
 int
@@ -307,9 +296,9 @@ plamiga_DUMMY(void)
 }
 
 /*----------------------------------------------------------------------*\
-* plamiga_KEY()
-*
-* Keypress handler.
+ * plamiga_KEY()
+ *
+ * Keypress handler.
 \*----------------------------------------------------------------------*/
 
 int
