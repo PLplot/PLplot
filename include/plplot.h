@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.69  1994/07/29 20:17:02  mjl
+ * Revision 1.70  1994/08/25 05:19:18  mjl
+ * Bumped version number.
+ *
+ * Revision 1.69  1994/07/29  20:17:02  mjl
  * Added typedef for new PLCursor struct and driver escape code for the get
  * cursor operation (contributed by Paul Casteels).  Added prototypes for
  * plmap() and plmeridians() (contributed by Wesley Ebisuzaki).
@@ -32,47 +35,6 @@
  *
  * Revision 1.62  1994/06/16  19:48:36  mjl
  * Inserted prototype for pltkMain(), removed prototype for plframeCmd().
- *
- * Revision 1.61  1994/05/14  05:45:17  mjl
- * Added a new parse flage -- PL_PARSE_NODASH -- for allowing options
- * that don't begin with a dash.  Used for plSetInternalOpt, where
- * now the user can either include the dash or not.
- *
- * Revision 1.60  1994/05/10  21:50:26  mjl
- * Changed name of position field in PLControlPt typedef.
- *
- * Revision 1.59  1994/04/25  19:04:51  mjl
- * Added typedef for PLControlPt, used in specifying cmap1.  Added function
- * prototypes for plHLS_RGB (new) and plRGB_HLS (now global), for converting
- * between HLS and RGB color specifications.
- *
- * Revision 1.58  1994/04/18  20:02:59  furnish
- * Autodetect inclusion of tk.h.
- *
- * Revision 1.57  1994/04/18  19:23:25  furnish
- * Added new function Pltk_Init to allow users to easily construct PLPLOT
- * enhanced application specific extended wishen.  Works great, needs advert.
- *
- * Revision 1.56  1994/04/08  12:12:27  mjl
- * Moved PLESC tags to this file to make them more accessible to users.
- * Added PLESC_EH tag for flushing the event queue only.  Added PLMouse
- * event struct typedef.  Changed prototype for plsexit().
- *
- * Revision 1.55  1994/03/23  07:03:36  mjl
- * plplot.h now includes stdio.h and stdlib.h !  This change afforded a
- * significant simplification of the header file structure, and should
- * rarely be an imposition (most files require these anyway).  Many new
- * function prototypes added, such as the color and colormap setting
- * functions for dealing with cmap 1, and plshade and its siblings.
- *
- * Revision 1.54  1994/03/22  23:18:01  furnish
- * Include a prototype for plFrameCmd if using Tk.
- *
- * Revision 1.53  1994/01/17  21:34:21  mjl
- * Added function prototype for c_plgcol0().
- *
- * Revision 1.52  1994/01/15  17:33:42  mjl
- * Bumped version number, defined prototype wrapper macro.
 */
 
 /*
@@ -102,7 +64,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99h"
+#define PLPLOT_VERSION "4.99i"
 
 /*----------------------------------------------------------------------*\
  *    USING PLplot
@@ -429,7 +391,7 @@ typedef struct {
  * Aside: the reason why a shared Fortran/C namespace is deserving of the
  * BRAINDEAD characterization is that it completely precludes the the kind
  * of universal API that is attempted (more or less) with PLplot, without
- * Herculean efforts (e.g. remapping all of the c bindings by macros as
+ * Herculean efforts (e.g. remapping all of the C bindings by macros as
  * done here).  The vendors of such a scheme, in order to allow a SINGLE
  * type of argument to be passed transparently between C and Fortran,
  * namely, a pointer to a conformable data type, have slammed the door on
