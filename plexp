@@ -39,6 +39,7 @@ tar cvf plplot.tar \
 	! -path \*.a \
 	! -path \*.sl \
 	! -path \*.dat \
+	! -path \*.flc \
         -type f`
 
 gzip ${tarfile}
