@@ -93,6 +93,9 @@ help you archive all the source files using 'zoo', 'tar', or 'zip'.
 ---------------------------------------------------------------------------
 2. System specific notes
 
+Gradually these will disappear, to reappear in the FAQ.  Look there
+first if you have problems.
+
 ---
 2.1 SunOS: be on the lookout for a non-ANSI libc.  Old versions of acc and
 self-installed gcc's are vulnerable to this.  See the FAQ item 1.5 for a
@@ -134,31 +137,6 @@ hacked cf_depend.m4 to get around it temporarily.  I have had no luck
 getting Tcl/TK to build on this machine (the 32 bit ints/longs, 64 bit
 pointers causes headaches for a LOT of codes).
 
----
-2.5 Ultrix: The stock Bourne shell on some systems will not run the
-configure script correctly.  Look for a shell named "sh5" or try ksh if
-this is so.
-
----
-2.6 Unicos: see 2.7
-
----
-2.7 DG/UX: On older versions of the OS (pre 5.42) the error
-"parse error before `caddr_t'" would crop up inside of the Xutil.h
-header file.  This is often seen on systems that have X11R4 and
-claim POSIX conformance but that don't quite have their act together
-(also seen on old versions of UNICOS).  Some possible ways of fixing
-it includes: (a) undefine _POSIX_SOURCE after the include of plplotP.h
-(b) add the appropriate typedef for caddr_t explicitly at the head
-of the file.  For the DG, the support rep replied:
-
-  Took another look at /usr/include/sys/types.h and found that the 
-  #define "_USING_SYSV3_OR_BSD_OR_DGUX" is not being defined. You can 
-  work around this problem by changing your make files to include the 
-  following additional #define:
-       -D_USING_SYSV3_OR_BSD_OR_DGUX.
-  It turns out that this is a header file bug that is fixed starting 
-  with rev 5.42. bob.
 
 ---------------------------------------------------------------------------
 3. Using f2c to compile fortran stubs
