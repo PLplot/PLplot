@@ -1,6 +1,6 @@
-\chapter {PLPLOT Subroutine Reference} \label{reference}
+\chapter {PLplot Subroutine Reference} \label{reference}
 
-All the PLPLOT subroutines are listed below in alphabetical order.
+All the PLplot subroutines are listed below in alphabetical order.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -10,12 +10,12 @@ All the PLPLOT subroutines are listed below in alphabetical order.
 \descr{ Advances to the next subpage if {\tt sub=0}, performing a page
 advance if there are no remaining subpages on the current page.  If
 subwindowing isn't being used, {\tt pladv(0)} will always advance the page.
-If {\tt sub>0}, PLPLOT switches to the specified subpage.  Note that this
+If {\tt sub>0}, PLplot switches to the specified subpage.  Note that this
 allows you to overwrite a plot on the specified subpage; if this is not what
 you intended, use {\tt plclr} followed by {\tt plpage} to first advance the
 page.  This routine is called automatically (with {\tt sub=0}) by {\tt
 plenv}, but if {\tt plenv} is not used, {\tt pladv} must be called after
-initializing PLPLOT but before defining the viewport.}
+initializing PLplot but before defining the viewport.}
 
 \argu{ {\tt sub} (PLINT, input)}{Specifies the subpage number (starting from
 1 in the top left corner and increasing along the rows) to which to advance.
@@ -104,11 +104,11 @@ also specified.
 \end{itemize}}
 
 \argu{ {\tt xtick} (PLFLT, input)}{World coordinate interval between major
-ticks on the x~axis.  If it is set to zero, PLPLOT automatically generates a
+ticks on the x~axis.  If it is set to zero, PLplot automatically generates a
 suitable tick interval.}
 
 \argu{ {\tt nxsub} (PLINT, input)}{Number of subintervals between major
-x~axis ticks for minor ticks.  If it is set to zero, PLPLOT automatically
+x~axis ticks for minor ticks.  If it is set to zero, PLplot automatically
 generates a suitable minor tick interval.}
 
 \argu{ {\tt yopt} (char *, input)}{Pointer to character string specifying
@@ -120,11 +120,11 @@ parallel to the base of the graph, rather than parallel to the axis.}
 \end{itemize} }
 
 \argu{ {\tt ytick} (real, input)}{World coordinate interval between major
-ticks on the y~axis.  If it is set to zero, PLPLOT automatically generates a
+ticks on the y~axis.  If it is set to zero, PLplot automatically generates a
 suitable tick interval.}
 
 \argu{ {\tt nysub} (PLINT, input)}{Number of subintervals between major
-y~axis ticks for minor ticks.  If it is set to zero, PLPLOT automatically
+y~axis ticks for minor ticks.  If it is set to zero, PLplot automatically
 generates a suitable minor tick interval.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,11 +166,11 @@ text label for the x~axis.  It is only drawn if {\tt u} is in the {\tt xopt}
 string.}
 
 \argu{ {\tt xtick} (PLFLT, input)}{World coordinate interval between major
-ticks on the x~axis.  If it is set to zero, PLPLOT automatically generates a
+ticks on the x~axis.  If it is set to zero, PLplot automatically generates a
 suitable tick interval.}
 
 \argu{ {\tt nxsub} (PLINT, input)}{Number of subintervals between major
-x~axis ticks for minor ticks.  If it is set to zero, PLPLOT automatically
+x~axis ticks for minor ticks.  If it is set to zero, PLplot automatically
 generates a suitable minor tick interval.}
 
 \argu{ {\tt yopt} (char *, input)}{Pointer to character string specifying
@@ -182,11 +182,11 @@ text label for the y~axis.  It is only drawn if {\tt u} is in the {\tt yopt}
 string.}
 
 \argu{ {\tt ytick} (PLFLT, input)}{World coordinate interval between major
-ticks on the y~axis.  If it is set to zero, PLPLOT automatically generates a
+ticks on the y~axis.  If it is set to zero, PLplot automatically generates a
 suitable tick interval.}
 
 \argu{ {\tt nysub} (PLINT, input)}{Number of subintervals between major
-y~axis ticks for minor ticks.  If it is set to zero, PLPLOT automatically
+y~axis ticks for minor ticks.  If it is set to zero, PLplot automatically
 generates a suitable minor tick interval.}
 
 \argu{ {\tt zopt} (char *, input)}{Pointer to character string specifying
@@ -221,11 +221,11 @@ text label for the z~axis.  It is only drawn if {\tt u} or {\tt v} are in
 the {\tt zopt} string.}
 
 \argu{ {\tt ztick} (PLFLT, input)}{World coordinate interval between major
-ticks on the z~axis.  If it is set to zero, PLPLOT automatically generates a
+ticks on the z~axis.  If it is set to zero, PLplot automatically generates a
 suitable tick interval.}
 
 \argu{ {\tt nzsub} (PLINT, input)}{Number of subintervals between major
-z~axis ticks for minor ticks.  If it is set to zero, PLPLOT automatically
+z~axis ticks for minor ticks.  If it is set to zero, PLplot automatically
 generates a suitable minor tick interval.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -452,7 +452,7 @@ containing data to be contoured.}
 transformation between indicies in array {\tt z} and the world coordinates
 (C only).  Two transformation functions are provided:  {\tt xform}, for
 simple linear mappings, and {\tt pltr0}, if no mapping is required.  {\tt
-xform} is not actually compiled into the PLPLOT library due to the need for
+xform} is not actually compiled into the PLplot library due to the need for
 external data; instead you must include it as part of your program.  The
 function should have the form
 \name{pltr(x, y, tx, ty)}
@@ -572,7 +572,7 @@ upper endpoint of error bar.}
 \addcontentsline{toc}{subsection}{plexit}
 
 \descr{ This routine is called in case an error is encountered during
-execution of a PLPLOT routine.  It prints the error message, tries to
+execution of a PLplot routine.  It prints the error message, tries to
 release allocated resources, calls {\tt pl\_exit} and then exits.  If
 cleanup needs to be done in the driver program then the user may want to
 supply his/her own version of {\tt pl\_exit}.}
@@ -632,7 +632,7 @@ unless the extended character set is loaded (see {\tt plfontld}).
 \addcontentsline{toc}{subsection}{plfontld}
 
 \descr{ Sets the character set to use for subsequent character drawing.
-May be called before calling initializing PLPLOT.}
+May be called before calling initializing PLplot.}
 
 \argu{ {\tt set} (PLINT, input)}{Specifies the character set to load:
 \begin{itemize}
@@ -710,22 +710,22 @@ See also {\tt pltext}.}
 \bname{plgspa(xmin, xmax, ymin, ymax)}\label{plgspa}
 \addcontentsline{toc}{subsection}{plgspa}
 
-\descr{ Gets the size of the current subpage in millimetres measured from
+\descr{ Gets the size of the current subpage in millimeters measured from
 the bottom left hand corner of the output device page or screen.  Can be
 used in conjunction with {\tt plsvpa} for setting the size of a viewport in
-absolute coordinates (millimetres).}
+absolute coordinates (millimeters).}
 
 \argu{ {\tt xmin} (PLFLT *, output)}{Pointer to variable with position of
-left hand edge of subpage in millimetres.}
+left hand edge of subpage in millimeters.}
 
 \argu{ {\tt xmax} (PLFLT *, output)}{Pointer to variable with position of
-right hand edge of subpage in millimetres.}
+right hand edge of subpage in millimeters.}
 
 \argu{ {\tt ymin} (PLFLT *, output)}{Pointer to variable with position of
-bottom edge of subpage in millimetres.}
+bottom edge of subpage in millimeters.}
 
 \argu{ {\tt ymax} (PLFLT *, output)}{Pointer to variable with position of
-top edge of subpage in millimetres.}
+top edge of subpage in millimeters.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1055,7 +1055,7 @@ values for the points.}
 
 \descr{ Sets the number of places after the decimal point in numeric labels.}
 
-\argu{ {\tt set} (PLINT, input)}{ If {\tt set} is equal to 0 then PLPLOT
+\argu{ {\tt set} (PLINT, input)}{ If {\tt set} is equal to 0 then PLplot
 automatically determines the number of places to use after the decimal point
 in numeric labels (like those used to label axes).  If {\tt set} is 1 then
 {\tt prec} sets the number of places.}
@@ -1112,7 +1112,7 @@ values of {\tt just} give intermediate justifications.}
 
 \descr{ This sets up the aspect ratio for all subsequent pages, if
 supported by the driver.  This routine, if used, must be called before
-initializing PLPLOT.  This routine at present does not always give good
+initializing PLplot.  This routine at present does not always give good
 results; the user is encouraged to instead plot to viewports of definite
 aspect ratios via the {\tt plvasp} or {\tt plvpas} routines.  Note that
 {\tt plrender} is capable of scaled aspect ratio plots to any device
@@ -1131,7 +1131,7 @@ actual height of a character is the product of the default character size
 and a scaling factor.}
 
 \argu{ {\tt def} (PLFLT, input)}{The default height of a character in
-millimetres, should be set to zero if the default height is to remain
+millimeters, should be set to zero if the default height is to remain
 unchanged.}
 
 \argu{ {\tt scale} (PLFLT, input)}{Scale factor to be applied to default to
@@ -1144,7 +1144,7 @@ get actual character height.}
 
 \descr{ Sets variables dealing with output file familying.  Does nothing if
 familying not supported by the driver.  This routine, if used, must be
-called before initializing PLPLOT.  See Section \ref{sec:family} for more
+called before initializing PLplot.  See Section \ref{sec:family} for more
 information.}
 
 \argu{ {\tt fam} (PLINT, input)}{Family flag (boolean).  If nonzero, 
@@ -1163,7 +1163,7 @@ for a family file.}
 \descr{ Sets the current output file handle, if applicable.  If the file has
 has not been previously opened and is required by the driver, the user will
 be prompted for the file name.  This routine, if used, must be called before
-initializing PLPLOT.}
+initializing PLplot.}
 
 \argu{ {\tt file} (FILE *, output)}{File pointer.}
 
@@ -1178,7 +1178,7 @@ NOTE: cannot be called from Fortran.
 has not been specified and is required by the driver, the user will be
 prompted for it.  If using the X-windows output driver, this sets the
 display name.  This routine, if used, must be called before initializing
-PLPLOT.}
+PLplot.}
 
 \argu{ {\tt fnam} (char *, output)}{Pointer to file name string.}
 
@@ -1192,7 +1192,7 @@ the product of the default length and a scaling factor as for character
 height.}
 
 \argu{ {\tt def} (PLFLT, input)}{The default length of a major tick in
-millimetres, should be set to zero if the default length is to remain
+millimeters, should be set to zero if the default length is to remain
 unchanged.}
 
 \argu{ {\tt scale} (PLFLT, input)}{Scale factor to be applied to default to
@@ -1208,7 +1208,7 @@ terminals on error bars.  The actual length is the product of the default
 length and a scaling factor as for character height.}
 
 \argu{ {\tt def} (PLFLT, input)}{The default length of a minor tick in
-millimetres, should be set to zero if the default length is to remain
+millimeters, should be set to zero if the default length is to remain
 unchanged.}
 
 \argu{ {\tt scale} (PLFLT, input)}{Scale factor to be applied to default to
@@ -1224,7 +1224,7 @@ get actual tick length.}
 the page), otherwise portrait is used.  This option is not supported by all
 output drivers (in particular, most interactive screen drivers ignore the
 orientation).  This routine, if used, must be called before initializing
-PLPLOT.}
+PLplot.}
 
 \argu{ {\tt ori} (PLINT, output)}{Orientation value.}
 
@@ -1236,7 +1236,7 @@ PLPLOT.}
 \descr{ Sets the page configuration (optional).  Not all parameters
 recognized by all drivers.  The X-window driver uses the length and offset
 parameters to determine the window size and location.  This routine, if
-used, must be called before initializing PLPLOT.}
+used, must be called before initializing PLplot.}
 
 \argu{ {\tt xp} (PLINT *, output)}{ Number of pixels, x.}
 \argu{ {\tt yp} (PLINT *; output)}{ Number of pixels, y.}
@@ -1252,7 +1252,7 @@ used, must be called before initializing PLPLOT.}
 
 \descr{ Sets the number of the current output stream.  The stream number
 defaults to 0 unless changed by this routine.  The first use of this routine
-must be followed by a call initializing PLPLOT (e.g.~{\tt plstar}).}
+must be followed by a call initializing PLplot (e.g.~{\tt plstar}).}
 
 \argu{ {\tt strm} (PLINT *, output)}{Pointer to current stream number.}
 
@@ -1266,7 +1266,7 @@ plpoin} and {\tt plsym}.  The actual height of a symbol is the product of
 the default symbol size and a scaling factor as for the character height.  }
 
 \argu{ {\tt def} (PLFLT, input)}{The default height of a symbol in
-millimetres, should be set to zero if the default height is to remain
+millimeters, should be set to zero if the default height is to remain
 unchanged.}
 
 \argu{ {\tt scale} (PLFLT, input)}{Scale factor to be applied to default to
@@ -1280,7 +1280,7 @@ get actual symbol height.}
 \descr{ Initializing the plotting package.  The program prompts for the
 device keyword or number of the desired output device.  Hitting a RETURN in
 response to the prompt is the same as selecting the first device.  If only
-one device is enabled when PLPLOT is installed, {\tt plstar} will issue no
+one device is enabled when PLplot is installed, {\tt plstar} will issue no
 prompt.  The output device is divided into {\tt nx} by {\tt ny} sub-pages,
 each of which may be used independently.  The subroutine {\tt pladv} is used
 to advance from one subpage to the next.}
@@ -1332,10 +1332,10 @@ elements in a line.  Thus a simple broken line can be obtained by setting
 {\tt nels=1}.  A continuous line is specified by setting {\tt nels=0}.}
 
 \argu{ {\tt mark} (PLINT *, input)} {Pointer to array with the lengths of
-the segments during which the pen is down, measured in micrometres.}
+the segments during which the pen is down, measured in micrometers.}
 
 \argu{ {\tt space} (PLINT *, input)} {Pointer to array with the lengths of
-the segments during which the pen is up, measured in micrometres.}
+the segments during which the pen is up, measured in micrometers.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1344,20 +1344,20 @@ the segments during which the pen is up, measured in micrometres.}
 
 \descr{ Alternate routine to {\tt plvpor} for setting up the viewport.  This
 routine should be used only if the viewport is required to have a definite
-size in millimetres.  The routine {\tt plgspa} is useful for finding out the
+size in millimeters.  The routine {\tt plgspa} is useful for finding out the
 size of the current subpage.  }
 
 \argu{ {\tt xmin} (PLFLT, input)}{The distance of the left-hand edge of the
-viewport from the left-hand edge of the subpage in millimetres.}
+viewport from the left-hand edge of the subpage in millimeters.}
 
 \argu{ {\tt xmax} (PLFLT, input)}{The distance of the right-hand edge of the
-viewport from the left-hand edge of the subpage in millimetres.}
+viewport from the left-hand edge of the subpage in millimeters.}
 
 \argu{ {\tt ymin} (PLFLT, input)}{The distance of the bottom edge of the
-viewport from the bottom edge of the subpage in millimetres.}
+viewport from the bottom edge of the subpage in millimeters.}
 
 \argu{ {\tt ymax} (PLFLT, input)}{The distance of the top edge of the
-viewport from the top edge of the subpage in millimetres.}
+viewport from the top edge of the subpage in millimeters.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
