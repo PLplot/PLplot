@@ -46,26 +46,30 @@ sub plstyl_p ($$) {
   plstyl ($n, $x, $y);
 }
 
-%_plParseOpts_parse_mode = \{
+%_plParseOpts_parse_mode = (
   PL_PARSE_PARTIAL	=> 0x0000, # For backward compatibility 
   PL_PARSE_FULL		=> 0x0001, # Process fully & exit if error 
   PL_PARSE_QUIET	=> 0x0002, # Don't issue messages 
-  PL_PARSE_NODELETE	=> 0x0004, # Don't delete options after 
-  				   # processing
+  PL_PARSE_NODELETE	=> 0x0004, # Don't delete options after processing
   PL_PARSE_SHOWALL	=> 0x0008, # Show invisible options 
   PL_PARSE_OVERRIDE	=> 0x0010, # Obsolete 
   PL_PARSE_NOPROGRAM	=> 0x0020, # Program name NOT in *argv[0].. 
   PL_PARSE_NODASH	=> 0x0040, # Set if leading dash NOT required 
   PL_PARSE_SKIP		=> 0x0080  # Skip over unrecognized args 
-};
+);
 
-sub plParseOpts_p ($$) {
+sub plParseOpts_p ($@) {
   my $argv = shift;
-  my $mode = shift;
+  my @mode = @_;
 
   my $m = 0;
   foreach my $i (@mode) {
-    $m |= $_plParseOpts_parse_mode{$i};
+    if (! exists $_plParseOpts_parse_mode{$i}) {
+      carp "plParseOpts_p: undefined parse mode $i";
+    }
+    else {
+      $m |= $_plParseOpts_parse_mode{$i};
+    }
   }
 
   my $argc = scalar @$argv;  
