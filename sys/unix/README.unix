@@ -7,13 +7,14 @@ From the top level directory, just type the following:
 
 The makefile will then be built by running the file makefile.m4 through
 the m4 macro processor with an appropriate value for the SYSTEM macro
-(this is a bit different from how it was handled prior to 4.99d).  The
-configure script automatically gets the system name right, using the
+(this is a bit different from how it was handled prior to 4.99d).  All of
+the m4 scripts used in the build are located in the m4 directory; see the
+README file there for details on their construction (normally you don't
+need to know what's going on unless you need to change a config file).
+The configure script automatically gets the system name right, using the
 output of `uname`.  There are many other options you can give configure,
 or you can specify these as environmental or shell variables if you like.
-Type ../configure h for more information.  The files used in construction
-of the makefile are stored in the m4 subdirectory; see the README file
-there for more info.
+Type ../configure h for more information.
 
 You must ensure that the appropriate system header files can be found by the
 generated makefile.  This is occasionally a problem for X11 header files,
@@ -41,18 +42,17 @@ for the first C demo, or
 
 for the first Fortran demo.
 
-The easiest way to install the library is to type "make install".  This
-assumes there exists a directory /usr/local/plplot and
-/usr/local/plplot/include that you can write into.  I've found it is not
-difficult to get the system administrator to give you ownership of such
-a directory on systems that you use.  At the sysadm's option, softlinks
-can be made to /usr/local/lib, /usr/local/bin, /usr/local/include, or
-whatever, leaving you free to install new plplot versions as they become
-available.
+The easiest way to install the library is to type "make install".  It
+installs into directory /usr/local/plplot by default.  I've found it is
+not difficult to get the system administrator to give you ownership of
+such a directory on systems that you use.  At the sysadm's option,
+softlinks can be made to /usr/local/lib, /usr/local/bin,
+/usr/local/include, or whatever, leaving you free to install new plplot
+versions as they become available.
 
-The font files will be put into /usr/local/plplot by "make install", but
-there are actually several places where PLPLOT looks for them.  The default
-search path is:
+The font files (located in the lib directory) will be put into
+/usr/local/plplot by "make install", but there are actually several places
+where PLPLOT looks for them.  The default search path is:
 
 	current directory
 	$(HOME)/lib
@@ -63,7 +63,7 @@ search path is:
 	PLFONTDEV3      (/usr/local/plplot)
 
 You probably should also print & read the TeX documentation on the Unix
-installation.
+installation (NOTE: currently very out of date).
 
-Finally, there's a bunch of shell scripts in the plplot directory to help
-you archive all the source files using 'zoo', 'tar', or 'zip'.  
+Finally, there are several shell scripts in the top level directory to
+help you archive all the source files using 'zoo', 'tar', or 'zip'.
