@@ -81,7 +81,7 @@ Pltk_Init( Tcl_Interp *interp )
     }
 #endif
 
-    Tcl_PkgProvide(interp,"Pltk","4.99");
+    Tcl_PkgProvide(interp,"Pltk",PLPLOT_VERSION);
 
     return TCL_OK;
 }
