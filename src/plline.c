@@ -1,8 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/03/28 08:45:53  mjl
-   Minor change to eliminate a warning on some systems.
+   Revision 1.8  1993/07/01 22:18:13  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".  Added new function plP_pllclp()
+   to clip a polyline within input clip limits and using the input function
+   to do the actual draw.  Used from the new driver interface functions.
 
+ * Revision 1.7  1993/03/28  08:45:53  mjl
+ * Minor change to eliminate a warning on some systems.
+ *
  * Revision 1.6  1993/03/17  17:01:40  mjl
  * Eliminated some dead assignments that turned up when running with SAS/C's
  * global optimizer enabled on the Amiga.
@@ -32,13 +39,13 @@
 	Routines dealing with line generation.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <math.h>
 
-#define INSIDE(ix,iy) (BETW(ix,clpxmi,clpxma) && BETW(iy,clpymi,clpyma))
+#define INSIDE(ix,iy) (BETW(ix,xmin,xmax) && BETW(iy,ymin,ymax))
 
-static short xline[PL_MAXPOLYLINE], yline[PL_MAXPOLYLINE];
+static PLINT xline[PL_MAXPOLYLINE], yline[PL_MAXPOLYLINE];
 static short xclp[PL_MAXPOLYLINE], yclp[PL_MAXPOLYLINE];
 
 static PLINT lastx = UNDEFINED, lasty = UNDEFINED;
@@ -46,14 +53,14 @@ static PLINT lastx = UNDEFINED, lasty = UNDEFINED;
 /* Function prototypes */
 /* INDENT OFF */
 
-static void pllclp	(short *, short *, PLINT);
+static void pllclp	(PLINT *, PLINT *, PLINT);
 static int  clipline	(PLINT *, PLINT *, PLINT *, PLINT *,
 			 PLINT, PLINT, PLINT, PLINT);
 static void genlin	(short *, short *, PLINT);
 static void plupd	(PLINT, PLINT *, PLINT *, PLINT *,
 			 PLINT *, PLINT *, PLINT *);
-static void grdashline	(short, short, short, short,
-			 PLINT *, PLINT *, PLINT);
+static void grdashline	(short *, short *, PLINT *, PLINT *, PLINT);
+
 /* INDENT ON */
 
 /*----------------------------------------------------------------------*\
@@ -65,8 +72,8 @@ static void grdashline	(short, short, short, short,
 void
 c_pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2)
 {
-    movwor(x1, y1);
-    drawor(x2, y2);
+    plP_movwor(x1, y1);
+    plP_drawor(x2, y2);
 }
 
 /*----------------------------------------------------------------------*\
@@ -80,11 +87,11 @@ c_plline(PLINT n, PLFLT *x, PLFLT *y)
 {
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 3)
 	plexit("plline: Please set up window first.");
 
-    drawor_poly(x, y, n);
+    plP_drawor_poly(x, y, n);
 }
 
 /*----------------------------------------------------------------------*\
@@ -100,7 +107,7 @@ c_plstyl(PLINT nms, PLINT *mark, PLINT *space)
     short int i;
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plstyl: Please call plinit first.");
 
@@ -112,33 +119,34 @@ c_plstyl(PLINT nms, PLINT *mark, PLINT *space)
 	    plexit("plstyl: Mark and space lengths must be > 0.");
     }
 
-    smark(mark, space, nms);
-    scure(0, 1, 0, (nms > 0 ? mark[0] : 0));
+    plP_smark(mark, space, nms);
+    plP_scure(0, 1, 0, (nms > 0 ? mark[0] : 0));
 }
 
 /*----------------------------------------------------------------------*\
-* void movphy()
+* void plP_movphy()
 *
 * Move to physical coordinates (x,y).
 \*----------------------------------------------------------------------*/
 
 void
-movphy(PLINT x, PLINT y)
+plP_movphy(PLINT x, PLINT y)
 {
-    scurr(x, y);
+    plP_scurr(x, y);
 }
 
 /*----------------------------------------------------------------------*\
-* void draphy()
+* void plP_draphy()
 *
 * Draw to physical coordinates (x,y).
 \*----------------------------------------------------------------------*/
 
 void
-draphy(PLINT x, PLINT y)
+plP_draphy(PLINT x, PLINT y)
 {
     PLINT currx, curry;
-    gcurr(&currx, &curry);
+
+    plP_gcurr(&currx, &curry);
     xline[0] = currx;
     xline[1] = x;
     yline[0] = curry;
@@ -148,38 +156,39 @@ draphy(PLINT x, PLINT y)
 }
 
 /*----------------------------------------------------------------------*\
-* void movwor()
+* void plP_movwor()
 *
 * Move to world coordinates (x,y).
 \*----------------------------------------------------------------------*/
 
 void
-movwor(PLFLT x, PLFLT y)
+plP_movwor(PLFLT x, PLFLT y)
 {
-    scurr(wcpcx(x), wcpcy(y));
+    plP_scurr(plP_wcpcx(x), plP_wcpcy(y));
 }
 
 /*----------------------------------------------------------------------*\
-* void drawor()
+* void plP_drawor()
 *
 * Draw to world coordinates (x,y).
 \*----------------------------------------------------------------------*/
 
 void
-drawor(PLFLT x, PLFLT y)
+plP_drawor(PLFLT x, PLFLT y)
 {
     PLINT currx, curry;
-    gcurr(&currx, &curry);
+
+    plP_gcurr(&currx, &curry);
     xline[0] = currx;
-    xline[1] = wcpcx(x);
+    xline[1] = plP_wcpcx(x);
     yline[0] = curry;
-    yline[1] = wcpcy(y);
+    yline[1] = plP_wcpcy(y);
 
     pllclp(xline, yline, 2);
 }
 
 /*----------------------------------------------------------------------*\
-* void draphy_poly()
+* void plP_draphy_poly()
 *
 * Draw polyline in physical coordinates.
 * Need to draw buffers in increments of (PL_MAXPOLYLINE-1) since the
@@ -187,7 +196,7 @@ drawor(PLFLT x, PLFLT y)
 \*----------------------------------------------------------------------*/
 
 void
-draphy_poly(PLINT *x, PLINT *y, PLINT n)
+plP_draphy_poly(PLINT *x, PLINT *y, PLINT n)
 {
     PLINT i, j, ib, ilim;
 
@@ -204,7 +213,7 @@ draphy_poly(PLINT *x, PLINT *y, PLINT n)
 }
 
 /*----------------------------------------------------------------------*\
-* void drawor_poly()
+* void plP_drawor_poly()
 *
 * Draw polyline in world coordinates.
 * Need to draw buffers in increments of (PL_MAXPOLYLINE-1) since the
@@ -212,7 +221,7 @@ draphy_poly(PLINT *x, PLINT *y, PLINT n)
 \*----------------------------------------------------------------------*/
 
 void
-drawor_poly(PLFLT *x, PLFLT *y, PLINT n)
+plP_drawor_poly(PLFLT *x, PLFLT *y, PLINT n)
 {
     PLINT i, j, ib, ilim;
 
@@ -221,8 +230,8 @@ drawor_poly(PLFLT *x, PLFLT *y, PLINT n)
 
 	for (i = 0; i < ilim; i++) {
 	    j = ib + i;
-	    xline[i] = wcpcx(x[j]);
-	    yline[i] = wcpcy(y[j]);
+	    xline[i] = plP_wcpcx(x[j]);
+	    yline[i] = plP_wcpcy(y[j]);
 	}
 	pllclp(xline, yline, ilim);
     }
@@ -232,16 +241,32 @@ drawor_poly(PLFLT *x, PLFLT *y, PLINT n)
 * void pllclp()
 *
 * Draws a polyline within the clip limits.
+* Merely a front-end to plP_pllclp().
 \*----------------------------------------------------------------------*/
 
 static void
-pllclp(short *x, short *y, PLINT npts)
+pllclp(PLINT *x, PLINT *y, PLINT npts)
+{
+    PLINT clpxmi, clpxma, clpymi, clpyma;
+
+    plP_gclp(&clpxmi, &clpxma, &clpymi, &clpyma);
+    plP_pllclp(x, y, npts, clpxmi, clpxma, clpymi, clpyma, genlin);
+}
+
+/*----------------------------------------------------------------------*\
+* void plP_pllclp()
+*
+* Draws a polyline within the clip limits.
+\*----------------------------------------------------------------------*/
+
+void
+plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
+	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
+	   void (*draw) (short *, short *, PLINT))
 {
     PLINT x1, x2, y1, y2;
-    PLINT clpxmi, clpxma, clpymi, clpyma, i, iclp;
+    PLINT i, iclp;
     int drawable;
-
-    gclp(&clpxmi, &clpxma, &clpymi, &clpyma);
 
     iclp = 0;
     for (i = 0; i < npts - 1; i++) {
@@ -252,8 +277,7 @@ pllclp(short *x, short *y, PLINT npts)
 
 	drawable = (INSIDE(x1, y1) && INSIDE(x2, y2));
 	if (!drawable)
-	    drawable = !clipline(&x1, &y1, &x2, &y2,
-				 clpxmi, clpxma, clpymi, clpyma);
+	    drawable = !clipline(&x1, &y1, &x2, &y2, xmin, xmax, ymin, ymax);
 
 	if (drawable) {
 
@@ -280,7 +304,7 @@ pllclp(short *x, short *y, PLINT npts)
 
 	    else {
 		if (iclp + 1 >= 2)
-		    genlin(xclp, yclp, iclp + 1);
+		    (*draw)(xclp, yclp, iclp + 1);
 		iclp = 0;
 		xclp[iclp] = x1;
 		yclp[iclp] = y1;
@@ -294,9 +318,9 @@ pllclp(short *x, short *y, PLINT npts)
 /* Handle remaining polyline */
 
     if (iclp + 1 >= 2)
-	genlin(xclp, yclp, iclp + 1);
+	(*draw)(xclp, yclp, iclp + 1);
 
-    scurr(x2, y2);
+    plP_scurr(x[npts-1], y[npts-1]);
 }
 
 /*----------------------------------------------------------------------*\
@@ -307,39 +331,39 @@ pllclp(short *x, short *y, PLINT npts)
 
 static int
 clipline(PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
-	 PLINT clpxmi, PLINT clpxma, PLINT clpymi, PLINT clpyma)
+	 PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
 {
     PLINT t, dx, dy, flipx, flipy;
     PLFLT slope;
 
 /* If both points are outside clip region, return with an error */
 
-    if ((*p_x1 <= clpxmi && *p_x2 <= clpxmi) ||
-	(*p_x1 >= clpxma && *p_x2 >= clpxma) ||
-	(*p_y1 <= clpymi && *p_y2 <= clpymi) ||
-	(*p_y1 >= clpyma && *p_y2 >= clpyma))
+    if ((*p_x1 <= xmin && *p_x2 <= xmin) ||
+	(*p_x1 >= xmax && *p_x2 >= xmax) ||
+	(*p_y1 <= ymin && *p_y2 <= ymin) ||
+	(*p_y1 >= ymax && *p_y2 >= ymax))
 	return (1);
 
     flipx = 0;
     flipy = 0;
 
     if (*p_x2 < *p_x1) {
-	*p_x1 = 2 * clpxmi - *p_x1;
-	*p_x2 = 2 * clpxmi - *p_x2;
-	clpxma = 2 * clpxmi - clpxma;
-	t = clpxma;
-	clpxma = clpxmi;
-	clpxmi = t;
+	*p_x1 = 2 * xmin - *p_x1;
+	*p_x2 = 2 * xmin - *p_x2;
+	xmax = 2 * xmin - xmax;
+	t = xmax;
+	xmax = xmin;
+	xmin = t;
 	flipx = 1;
     }
 
     if (*p_y2 < *p_y1) {
-	*p_y1 = 2 * clpymi - *p_y1;
-	*p_y2 = 2 * clpymi - *p_y2;
-	clpyma = 2 * clpymi - clpyma;
-	t = clpyma;
-	clpyma = clpymi;
-	clpymi = t;
+	*p_y1 = 2 * ymin - *p_y1;
+	*p_y2 = 2 * ymin - *p_y2;
+	ymax = 2 * ymin - ymax;
+	t = ymax;
+	ymax = ymin;
+	ymin = t;
 	flipy = 1;
     }
 
@@ -349,41 +373,41 @@ clipline(PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
     if (dx != 0)
 	slope = (double) dy / (double) dx;
 
-    if (*p_x1 < clpxmi) {
+    if (*p_x1 < xmin) {
 	if (dx != 0 && dy != 0)
-	    *p_y1 = *p_y1 + ROUND(slope * (clpxmi - *p_x1));
-	*p_x1 = clpxmi;
+	    *p_y1 = *p_y1 + ROUND(slope * (xmin - *p_x1));
+	*p_x1 = xmin;
     }
 
-    if (*p_y1 < clpymi) {
+    if (*p_y1 < ymin) {
 	if (dx != 0 && dy != 0)
-	    *p_x1 = *p_x1 + ROUND((clpymi - *p_y1) / slope);
-	*p_y1 = clpymi;
+	    *p_x1 = *p_x1 + ROUND((ymin - *p_y1) / slope);
+	*p_y1 = ymin;
     }
 
-    if (*p_x1 >= clpxma || *p_y1 >= clpyma)
+    if (*p_x1 >= xmax || *p_y1 >= ymax)
 	return (1);
 
-    if (*p_y2 > clpyma) {
+    if (*p_y2 > ymax) {
 	if (dx != 0 && dy != 0)
-	    *p_x2 = *p_x2 - ROUND((*p_y2 - clpyma) / slope);
-	*p_y2 = clpyma;
+	    *p_x2 = *p_x2 - ROUND((*p_y2 - ymax) / slope);
+	*p_y2 = ymax;
     }
 
-    if (*p_x2 > clpxma) {
+    if (*p_x2 > xmax) {
 	if (dx != 0 && dy != 0)
-	    *p_y2 = *p_y2 - ROUND((*p_x2 - clpxma) * slope);
-	*p_x2 = clpxma;
+	    *p_y2 = *p_y2 - ROUND((*p_x2 - xmax) * slope);
+	*p_x2 = xmax;
     }
 
     if (flipx) {
-	*p_x1 = 2 * clpxma - *p_x1;
-	*p_x2 = 2 * clpxma - *p_x2;
+	*p_x1 = 2 * xmax - *p_x1;
+	*p_x2 = 2 * xmax - *p_x2;
     }
 
     if (flipy) {
-	*p_y1 = 2 * clpyma - *p_y1;
-	*p_y2 = 2 * clpyma - *p_y2;
+	*p_y1 = 2 * ymax - *p_y1;
+	*p_y2 = 2 * ymax - *p_y2;
     }
 
     return (0);
@@ -394,7 +418,7 @@ clipline(PLINT *p_x1, PLINT *p_y1, PLINT *p_x2, PLINT *p_y2,
 *
 * General line-drawing routine.  Takes line styles into account.
 * If only 2 points are in the polyline, it is more efficient to use
-* grline() rather than grpolyline().
+* plP_line() rather than plP_polyline().
 \*----------------------------------------------------------------------*/
 
 static void
@@ -404,20 +428,20 @@ genlin(short *x, short *y, PLINT npts)
 
 /* Check for solid line */
 
-    gmark(&mark, &space, &nms);
+    plP_gmark(&mark, &space, &nms);
     if (nms == 0) {
-	if (npts > 2)
-	    grpolyline(x, y, npts);
+	if (npts== 2)
+	    plP_line(x, y);
 	else
-	    grline(x[0], y[0], x[1], y[1]);
+	    plP_polyline(x, y, npts);
     }
 
-/* Right now dashed lines don't use polyline driver capability -- this
+/* Right now dashed lines don't use polyline capability -- this
    should be improved */
 
     else {
 	for (i = 0; i < npts - 1; i++) {
-	    grdashline(x[i], y[i], x[i + 1], y[i + 1], mark, space, nms);
+	    grdashline(x+i, y+i, mark, space, nms);
 	}
     }
 }
@@ -426,38 +450,38 @@ genlin(short *x, short *y, PLINT npts)
 * void grdashline()
 *
 * Plot a dashed line using current pattern.
-* This routine is disgustingly slow.
+* This routine is disgustingly slow -- somebody please fix it!
 \*----------------------------------------------------------------------*/
 
 static void
-grdashline(short x1, short y1, short x2, short y2,
-	   PLINT *mark, PLINT *space, PLINT nms)
+grdashline(short *x, short *y, PLINT *mark, PLINT *space, PLINT nms)
 {
     PLINT nx, ny, nxp, nyp;
     PLINT *timecnt, *alarm, *pendn, *curel;
-    PLINT modulo, incr, dx, dy, diax, diay, i, temp, x, y;
+    PLINT modulo, incr, dx, dy, diax, diay, i, temp, xtmp, ytmp;
     PLINT px, py, tstep;
     PLINT umx, umy;
+    short xl[2], yl[2];
     double nxstep, nystep;
 
 /* Check if pattern needs to be restarted */
 
-    gcure(&curel, &pendn, &timecnt, &alarm);
-    if (x1 != lastx || y1 != lasty) {
+    plP_gcure(&curel, &pendn, &timecnt, &alarm);
+    if (x[0] != lastx || y[0] != lasty) {
 	*curel = 0;
 	*pendn = 1;
 	*timecnt = 0;
 	*alarm = mark[0];
     }
 
-    lastx = x1;
-    lasty = y1;
+    lastx = x[0];
+    lasty = y[0];
 
-    if (x1 == x2 && y1 == y2)
+    if (x[0] == x[1] && y[0] == y[1])
 	return;
 
-    nx = x2 - x1;
-    ny = y2 - y1;
+    nx = x[1] - x[0];
+    ny = y[1] - y[0];
 
     nxp = ABS(nx);
     nyp = ABS(ny);
@@ -479,46 +503,56 @@ grdashline(short x1, short y1, short x2, short y2,
     diay = (ny > 0) ? 1 : -1;
 
     temp = modulo / 2;
-    x = x1;
-    y = y1;
+    xtmp = x[0];
+    ytmp = y[0];
 
 /* Compute the timer step */
 
-    gumpix(&umx, &umy);
+    plP_gumpix(&umx, &umy);
     nxstep = nxp * umx;
     nystep = nyp * umy;
     tstep = sqrt( nxstep * nxstep + nystep * nystep ) / modulo;
 
     for (i = 0; i < modulo; i++) {
 	temp = temp + incr;
-	px = x;
-	py = y;
+	px = xtmp;
+	py = ytmp;
 	if (temp > modulo) {
 	    temp = temp - modulo;
-	    x = x + diax;
-	    y = y + diay;
+	    xtmp = xtmp + diax;
+	    ytmp = ytmp + diay;
 	}
 	else {
-	    x = x + dx;
-	    y = y + dy;
+	    xtmp = xtmp + dx;
+	    ytmp = ytmp + dy;
 	}
 	*timecnt += tstep;
 
 	if (*timecnt >= *alarm) {
 	    plupd(nms, mark, space, curel, pendn, timecnt, alarm);
-	    if (*pendn == 0)
-		grline(lastx, lasty, px, py);
-	    lastx = x;
-	    lasty = y;
+	    if (*pendn == 0) {
+		xl[0] = lastx;
+		yl[0] = lasty;
+		xl[1] = px;
+		yl[1] = py;
+		plP_line(xl, yl);
+	    }
+	    lastx = xtmp;
+	    lasty = ytmp;
 	}
     }
 
 /* Finish up */
 
-    if (*pendn != 0)
-	grline(lastx, lasty, x, y);
-    lastx = x2;
-    lasty = y2;
+    if (*pendn != 0) {
+	xl[0] = lastx;
+	yl[0] = lasty;
+	xl[1] = xtmp;
+	yl[1] = ytmp;
+	plP_line(xl, yl);
+    }
+    lastx = x[1];
+    lasty = y[1];
 }
 
 /*----------------------------------------------------------------------*\
