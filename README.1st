@@ -15,6 +15,17 @@ In particular, look at FAQ section 1, on installing PLplot.
 Also see the system-specific documentation under sys/<system-name>.
 The manual is being updated!  More below.
 
+	*** NOTE: NEW LOCATION OF DISTRIBUTION ***
+
+You can get the PLplot distribution by anonymous ftp from:
+
+	/anonymous@dino.ph.utexas.edu:/plplot
+
+in either .zip or .tar.gz form.  The most up-to-date (not very, at this
+point) manual (in .ps and .dvi form) and info document files are available
+there as well.
+
+
 For more detail of these changes, consult Changes.log.
 
 **************************************************************************
