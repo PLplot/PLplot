@@ -23,8 +23,6 @@
  * express or implied warranty.
 \*----------------------------------------------------------------------*/
 
-#define DEBUG
-
 #include "plserver.h"
 #include "tkConfig.h"
 #include "tk.h"
@@ -921,7 +919,7 @@ DisplayPlFrame(ClientData clientData)
 
 	if (plFramePtr->flags & REDRAW_PENDING) {
 	    plFramePtr->flags &= ~REDRAW_PENDING;
-	    pl_cmd(PL_REDRAW, (void *) NULL);
+	    pl_cmd(PLESC_REDRAW, (void *) NULL);
 	    return;
 	}
 
@@ -933,7 +931,7 @@ DisplayPlFrame(ClientData clientData)
 	    window.width = Tk_Width(tkwin);
 	    window.height = Tk_Height(tkwin);
 
-	    pl_cmd(PL_RESIZE, (void *) &window);
+	    pl_cmd(PLESC_RESIZE, (void *) &window);
 	    plFramePtr->prevWidth = Tk_Width(tkwin);
 	    plFramePtr->prevHeight = Tk_Height(tkwin);
 	}
@@ -941,7 +939,7 @@ DisplayPlFrame(ClientData clientData)
 /* Expose -- if window bounds are unchanged */
 
 	else {
-	    pl_cmd(PL_EXPOSE, NULL);
+	    pl_cmd(PLESC_EXPOSE, NULL);
 	}
     }
 }
@@ -1053,17 +1051,18 @@ static int
 ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 		 int argc, char **argv, int flags)
 {
-    int i=0, j=0;
     PLColor plbg;
 
-    dbug_enter("ConfigurePlFrame");
-#ifdef DEBUG_ENTER
-    fprintf(stderr, "Arguments are:");
+#ifdef DEBUG
+    int i;
+    fprintf(stderr, "Arguments to configure are:");
     for (i = 0; i < argc; i++) {
 	fprintf(stderr, " %s", argv[i]);
     }
     fprintf(stderr, "\n");
 #endif
+
+    dbug_enter("ConfigurePlFrame");
 
     if (Tk_ConfigureWidget(interp, plFramePtr->tkwin, configSpecs,
 	    argc, argv, (char *) plFramePtr, flags) != TCL_OK) {
@@ -1074,16 +1073,9 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* since redraws are handled from the plplot X driver. */
 
     Tk_SetBackgroundFromBorder(plFramePtr->tkwin, plFramePtr->border);
+
     PLColor_from_XColor(&plbg, plFramePtr->bgColor);
     plscolbg(plbg.r, plbg.g, plbg.b);
-#ifdef DEBUG
-    fprintf(stderr, "Background XColor is r: %x, g: %x, b: %x\n",
-	    plFramePtr->bgColor->red,
-	    plFramePtr->bgColor->green,
-	    plFramePtr->bgColor->blue);
-    fprintf(stderr, "Background PLColor is r: %x, g: %x, b: %x\n",
-	    plbg.r, plbg.g, plbg.b);
-#endif
 
     Tk_SetInternalBorder(plFramePtr->tkwin, plFramePtr->borderWidth);
     if (plFramePtr->geometry != NULL) {
@@ -1125,9 +1117,6 @@ Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int result = TCL_OK;
     char c = argv[0][0];
     int length = strlen(argv[0]);
-    int x0, y0, x1, y1;
-    int xmin = 0, xmax = Tk_Width(tkwin) - 1;
-    int ymin = 0, ymax = Tk_Height(tkwin) - 1;
 
 /* init -- sets up for rubber-band drawing */
 
@@ -1153,6 +1142,10 @@ Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    result = TCL_ERROR;
 	}
 	else {
+	    int x0, y0, x1, y1;
+	    int xmin = 0, xmax = Tk_Width(tkwin) - 1;
+	    int ymin = 0, ymax = Tk_Height(tkwin) - 1;
+
 	    x0 = atoi(argv[1]);
 	    y0 = atoi(argv[2]);
 	    x1 = atoi(argv[3]);
@@ -1199,7 +1192,7 @@ static int
 Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
      int argc, char **argv)
 {
-    int i, length;
+    int length;
     char c;
     int result = TCL_OK;
 
@@ -1216,7 +1209,7 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* devices -- return list of supported device types */
 
     if ((c == 'd') && (strncmp(argv[0], "devices", length) == 0)) {
-	i = 0;
+	int i = 0;
 	while (plFramePtr->devDesc[i] != NULL) {
 	    Tcl_AppendElement(interp, plFramePtr->devDesc[i++], 0);
 	}
@@ -1279,12 +1272,12 @@ Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
        int argc, char **argv)
 {
     int result = TCL_OK;
-    PLFLT rot;
-    char result_str[128];
 
 /* orient -- return orientation of current plot window */
 
     if (argc == 0) {
+	PLFLT rot;
+	char result_str[128];
 	plgdiori(&rot);
 	sprintf(result_str, "%f", rot);
 	Tcl_SetResult(interp, result_str, TCL_VOLATILE);
@@ -1313,11 +1306,11 @@ Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
 {
     int result = TCL_OK;
     PLFLT xl, xr, yl, yr;
-    char result_str[128];
 
 /* page -- return coordinates of current device window */
 
     if (argc == 0) {
+	char result_str[128];
 	plgdidev(&xl, &yl, &xr, &yr);
 	sprintf(result_str, "%g %g %g %g", xl, yl, xr, yr);
 	Tcl_SetResult(interp, result_str, TCL_VOLATILE);
@@ -1410,8 +1403,7 @@ static int
 Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
      int argc, char **argv)
 {
-    int i, idev, result = TCL_OK;
-    char *desc;
+    int idev, result = TCL_OK;
 
 /* save -- save to already open file */
 
@@ -1468,11 +1460,11 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int length;
     char c;
     PLFLT xl, xr, yl, yr;
-    char result_str[128];
 
 /* view -- return coordinates of current plot window */
 
     if (argc == 0) {
+	char result_str[128];
 	plgdiplt(&xl, &yl, &xr, &yr);
 	sprintf(result_str, "%g %g %g %g", xl, yl, xr, yr);
 	Tcl_SetResult(interp, result_str, TCL_VOLATILE);
