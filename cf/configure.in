@@ -89,12 +89,17 @@ enable_f77=yes
 enable_cxx=yes
 enable_python=yes
 enable_tcl=yes
-enable_tk=yes
 enable_itcl=yes
-enable_xwin=yes
-enable_gnome=no
 enable_octave=no
-enable_png=yes #required for library and header searching to work right.
+#explicit default values must be specified here for library and header 
+#searching to work right for the following variables.  Note these variables
+#also have a driver role to play, but unlike these, pure-driver variables
+#(e.g., enable_tek4010) do not require a default to be specified here.
+enable_gnome=no
+enable_png=yes 
+enable_jpg=yes 
+enable_tk=yes
+enable_xwin=yes
 
 divert(-1)
 
