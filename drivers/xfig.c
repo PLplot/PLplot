@@ -10,7 +10,7 @@
 #include "drivers.h"
 
 /* Device info */
-char* DEVICE_INFO_xfig = "xfig:Fig file:0:xfig:31:xfig";
+char* plD_DEVICE_INFO_xfig = "xfig:Fig file:0:xfig:31:xfig";
 
 /* Function prototypes */
 

@@ -22,7 +22,7 @@
 #endif
 
 /* Device info */
-char* DEVICE_INFO_ljii =
+char* plD_DEVICE_INFO_ljii =
   "ljii:LaserJet II Bitmap File (150 dpi):0:ljii:33:ljii";
 
 /* Function prototypes */

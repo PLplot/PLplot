@@ -72,11 +72,11 @@ driver to this dynamic list.
 
 png:gd jpeg:gd
 
-Add a definition for DEVICE_INFO_<file> in the driver source <file>.c:
+Add a definition for plD_DEVICE_INFO_<file> in the driver source <file>.c:
 
 /* Device info */
-char* DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
-                       "png:PNG file:0:gd:39:png";
+char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
+                           "png:PNG file:0:gd:39:png";
 
 If more than one device is provided in <file>.c, their entries should be
 separated by "\n".  Notice that the last entry has no leading "\n".

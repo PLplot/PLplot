@@ -14,7 +14,7 @@
 #include "plevent.h"
 
 /* Device info */
-char* DEVICE_INFO_xwin = "xwin:X-Window (Xlib):1:xwin:5:xw";
+char* plD_DEVICE_INFO_xwin = "xwin:X-Window (Xlib):1:xwin:5:xw";
 
 static int synchronize = 0;	/* change to 1 for X synchronized operation */
                                 /* Use "-drvopt sync" cmd line option to set. */

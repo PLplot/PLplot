@@ -23,7 +23,7 @@
 
 /* Device info */
 
-char* DEVICE_INFO_tek = 
+char* plD_DEVICE_INFO_tek = 
   "conex:Conex vt320/tek emulator:1:tek:24:conex\n"
   "mskermit:MS-Kermit emulator:1:tek:21:mskermit\n"
   "tek4107t:Tektronix Terminal (4105/4107):1:tek:20:tek4107t\n"

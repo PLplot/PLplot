@@ -90,7 +90,7 @@
 #include <gd.h>
 
 /* Device info */
-char* DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
+char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
                        "png:PNG file:0:gd:39:png";
 
 

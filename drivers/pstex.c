@@ -12,7 +12,7 @@
 #include "ps.h"
 
 /* Device info */
-char* DEVICE_INFO_pstex =
+char* plD_DEVICE_INFO_pstex =
   "pstex:Combined Postscript/LaTeX files:0:pstex:41:pstex";
 
 /*--------------------------------------------------------------------------*\

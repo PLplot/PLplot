@@ -16,10 +16,17 @@
 
 /* Device info */
 
-char* DEVICE_INFO_ps = 
-  "ps:PostScript File (monochrome):0:ps:29:psm\n"
-  "psc:PostScript File (color):0:ps:30:psc";
+char* DEVICES_ps      = "ps:psc";
 
+char* DESCRIPTION_ps  = "PostScript File (monochrome)";
+int   TYPE_ps         = plDevType_FileOriented;
+int   SEQNUM_ps       = 29;
+char* SYMTAG_ps       = "psm";
+
+char* DESCRIPTION_psc = "PostScript File (color)";
+int   TYPE_psc        = plDevType_FileOriented;
+int   SEQNUM_psc      = 30;
+char* SYMTAG_psc      = "psc";
 
 /* Prototypes for functions in this file. */
 
@@ -66,16 +73,16 @@ static void ps_dispatch_init_helper( PLDispatchTable *pdt,
 void plD_dispatch_init_psm	( PLDispatchTable *pdt )
 {
     ps_dispatch_init_helper( pdt,
-                             "PostScript File (monochrome)", "ps",
-                             plDevType_FileOriented, 29,
+                             DESCRIPTION_ps, "ps",
+                             TYPE_ps, SEQNUM_ps,
                              (plD_init_fp) plD_init_psm );
 }
 
 void plD_dispatch_init_psc	( PLDispatchTable *pdt )
 {
     ps_dispatch_init_helper( pdt,
-                             "PostScript File (color)", "psc",
-                             plDevType_FileOriented, 30,
+                             DESCRIPTION_psc, "psc",
+                             TYPE_psc, SEQNUM_psc,
                              (plD_init_fp) plD_init_psc );
 }
 

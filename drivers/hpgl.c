@@ -37,7 +37,7 @@
 #include "drivers.h"
 
 /* Device info */
-char* DEVICE_INFO_hpgl =
+char* plD_DEVICE_INFO_hpgl =
   "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl:34:hp7470\n"
   "hp7580:HP 7580 Plotter File (Large Plotter):0:hpgl:35:hp7580\n"
   "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl:36:lj_hpgl";

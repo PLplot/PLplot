@@ -27,7 +27,7 @@
 #endif
 
 /* Device info */
-char* DEVICE_INFO_ljiip =
+char* plD_DEVICE_INFO_ljiip =
   "ljiip:LaserJet IIp/deskjet compressed graphics:0:ljiip:32:ljiip";
 
 /* Function prototypes */

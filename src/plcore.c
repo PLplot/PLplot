@@ -1604,7 +1604,7 @@ plInitDispatchTable()
     struct dirent* entry;
     lt_dlhandle dlhand;
 
-/* Open a temporary file in which all the DEVICE_INFO_<driver> strings
+/* Open a temporary file in which all the plD_DEVICE_INFO_<driver> strings
    will be stored */
     fp_drvdb = tmpfile ();
 
@@ -1633,8 +1633,8 @@ plInitDispatchTable()
             sprintf (path, "%s/%s/%s", DATA_DIR, DRV_DIR, driver);
             dlhand = lt_dlopenext (path);
 
-/* Look for symbol DEVICE_INFO_<driver> */
-	    sprintf (sym, "DEVICE_INFO_%s", driver);
+/* Look for symbol plD_DEVICE_INFO_<driver> */
+	    sprintf (sym, "plD_DEVICE_INFO_%s", driver);
 	    info = (char **) lt_dlsym (dlhand, sym);
 
 /* DEVICE_INFO_<driver> may contain more than one device entry and they

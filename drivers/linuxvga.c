@@ -18,7 +18,7 @@
 #include <vga.h>
 
 /* Device info */
-char* DEVICE_INFO_linuxvga = "linuxvga:Linux VGA driver:0:linuxvga:8:vga";
+char* plD_DEVICE_INFO_linuxvga = "linuxvga:Linux VGA driver:0:linuxvga:8:vga";
 
 
 /* Function prototypes */

@@ -19,7 +19,7 @@
 #include <unistd.h>
 
 /* Device info */
-char* DEVICE_INFO_gnome = "gnome:Gnome Canvas:1:gnome:6:gnome";
+char* plD_DEVICE_INFO_gnome = "gnome:Gnome Canvas:1:gnome:6:gnome";
 
 /*#undef DEBUG*/
 #define DEBUG
@@ -761,7 +761,7 @@ void plD_dispatch_init_gnome( PLDispatchTable *pdt )
     pdt->pl_MenuStr  = "Gnome Canvas";
     pdt->pl_DevName  = "gnome";
     pdt->pl_type     = plDevType_Interactive;
-    pdt->pl_seq      = 6;
+    pdt->pl_seq      = 1;
     pdt->pl_init     = (plD_init_fp)     plD_init_gnome;
     pdt->pl_line     = (plD_line_fp)     plD_line_gnome;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_gnome;
