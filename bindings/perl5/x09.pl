@@ -26,13 +26,10 @@ sub mypltr
   my $y = shift;
   my $tx = shift;
   my $ty = shift;
-  my $data = shift;
   
   $$tx = $tr[0] * $x + $tr[1] * $y + $tr[2];
   $$ty = $tr[3] * $x + $tr[4] * $y + $tr[5];
 
-  print "Called with $data\n";
-    
 }
 
 # --------------------------------------------------------------------------
@@ -70,14 +67,17 @@ for ($i = 0; $i < $XPTS; $i++) {
     $argy = $yy * $PI/2;
     $distort = 0.4;
     
-    $cgrid1{xg}[$i] = $xx + $distort * cos($argx);
-    $cgrid1{yg}[$j] = $yy - $distort * cos($argy);
+    $g1{xg}[$i] = $xx + $distort * cos($argx);
+    $g1{yg}[$j] = $yy - $distort * cos($argy);
     
-    $cgrid2{xg}[$i][$j] = $xx + $distort * cos($argx) * cos($argy);
-    $cgrid2{yg}[$i][$j] = $yy - $distort * cos($argx) * cos($argy);
+    $g2{xg}[$i][$j] = $xx + $distort * cos($argx) * cos($argy);
+    $g2{yg}[$i][$j] = $yy - $distort * cos($argx) * cos($argy);
 
   }
 }
+
+$cgrid1 = plgrid_new (\%g1);
+# $cgrid2 = plgrid_new (\%g2);
 
 # Plot using identity transform
 
@@ -91,52 +91,53 @@ plstyl (0, $mark, $space);
 plcol0 (1);
 pllab ("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
+pl_setcontlabelparam (0.006, 0.3, 0.1, 1);
+plenv (-1.0, 1.0, -1.0, 1.0, 0, 0);
+plcol0 (2);
+plcont (\@z, $XPTS, $YPTS, 1, $XPTS, 1, $YPTS, \@clevel, 11, "mypltr", 0);
+plstyl (1, $mark, $space);
+plcol0 (3);
+plcont (\@w, $XPTS, $YPTS, 1, $XPTS, 1, $YPTS, \@clevel, 11, "mypltr", 0);
+plstyl(0, $mark, $space);
+plcol0 (1);
+pllab ("X Coordinate", "Y Coordinate", "Streamlines of flow");
+    
+# Plot using 1d coordinate transform
+
+pl_setcontlabelparam (0.006, 0.3, 0.1, 0);
+
+plenv (-1.0, 1.0, -1.0, 1.0, 0, 0);
+plcol0 (2);
+plcont (\@z, $XPTS, $YPTS, 1, $XPTS, 1, $YPTS, \@clevel, 11,
+	"pltr1", $cgrid1);
+
+plstyl (1, $mark, $space);
+plcol0 (3);
+plcont (\@w, $XPTS, $YPTS, 1, $XPTS, 1, $YPTS, \@clevel, 11,
+	"pltr1", $cgrid1);
+plstyl (0, $mark, $space);
+plcol0 (1);
+pllab ("X Coordinate", "Y Coordinate", "Streamlines of flow");
+
+pl_setcontlabelparam (0.006, 0.3, 0.1, 1);
+plenv (-1.0, 1.0, -1.0, 1.0, 0, 0);
+plcol0 (2);
+plcont (\@z, $XPTS, $YPTS, 1, $XPTS, 1, $YPTS, \@clevel, 11,
+	"pltr1", $cgrid1);
+
+plstyl (1, $mark, $space);
+plcol0 (3);
+plcont (\@w, $XPTS, $YPTS, 1, $XPTS, 1, $YPTS, \@clevel, 11,
+	"pltr1", $cgrid1);
+plstyl (0, $mark, $space);
+plcol0 (1);
+pllab ("X Coordinate", "Y Coordinate", "Streamlines of flow");
+pl_setcontlabelparam (0.006, 0.3, 0.1, 0);
+    
 plend ();
 
 __DATA__
 
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol0(2);
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
-    plstyl(1, &mark, &space);
-    plcol0(3);
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
-    plstyl(0, &mark, &space);
-    plcol0(1);
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
-    
-/* Plot using 1d coordinate transform */
-
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol0(2);
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr1, (void *) &cgrid1);
-
-    plstyl(1, &mark, &space);
-    plcol0(3);
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr1, (void *) &cgrid1);
-    plstyl(0, &mark, &space);
-    plcol0(1);
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
-    plcol0(2);
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr1, (void *) &cgrid1);
-
-    plstyl(1, &mark, &space);
-    plcol0(3);
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
-	   pltr1, (void *) &cgrid1);
-    plstyl(0, &mark, &space);
-    plcol0(1);
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
-    
 /* Plot using 2d coordinate transform */
 
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
@@ -171,20 +172,3 @@ __DATA__
     free((void *) z);
     exit(0);
 }
-
-sub cb {
-  my $a1 = shift;
-  my $a2 = shift;
-  my $a3 = shift;
-  my $a4 = shift;
-  my $a5 = shift;
-
-  print "$a1:$a2:$$a3:$$a4:$a5:\n";
-
-  $$a3 = 5 * $a1;
-  $$a4 = 6 * $a2;
-
-}
-
-PLplot::test_fp ("cb", "Hello");
-

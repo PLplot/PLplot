@@ -44,9 +44,9 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
   type = SvTYPE (sv);
   if (type == SVt_PVAV) {
     av = (AV*) sv;
-    *n = av_len (av);
-    *ptr = (PLFLT*) malloc ((*n+1) * sizeof (PLFLT));
-    for (i = 0; i <= *n; i++) {
+    *n = av_len (av) + 1;
+    *ptr = (PLFLT*) malloc ((*n) * sizeof (PLFLT));
+    for (i = 0; i < *n; i++) {
       SV* elem = *(av_fetch(av, i, 0));
       type = SvTYPE (elem);
       if (type == SVt_NV || type >= SVt_PVNV )
@@ -199,7 +199,6 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
   $target = (PLPointer*) &temp;
 }
 
-
 //***********************************************************************
 //* Function pointer stubs
 //***********************************************************************
@@ -213,26 +212,71 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
 
 @PROTOTYPES@
 
-// The following  decalarations are in api-c.xml
+// PLgrid & pltr* support
 
-extern void pltr0 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
-                   PLPointer_input);
-extern void pltr1 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
-                   PLPointer_input);
-extern void pltr2 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
-                   PLPointer_input);
+%typedef PLcGrid PLcGrid_hash;
+%typedef PLPointer PLcGrid_ref;
+
+
+%typemap(perl5,in) PLcGrid_hash* {
+  SV* sv;
+  HV* hv;
+  I32 nx, ny, nz;
+
+  sv = SvROK ($source) ?  SvRV ($source) : $source;
+  if (SvTYPE (sv) != SVt_PVHV)
+    croak ("PLcGrid_hash* argument must be a hash");
+  hv = (HV*) sv;
+
+  $target = (PLcGrid_hash*) malloc (sizeof (PLcGrid));
+
+  if (hv_exists (hv, "xg", 2)) {
+    PLplot_perl_get_array_of_double (*hv_fetch(hv, "xg", 2, 0),
+				     &nx, &($target->xg));
+    $target->nx = nx;
+  }
+  else 
+    $target->nx = 0;
+
+  if (hv_exists (hv, "yg", 2)) {
+    PLplot_perl_get_array_of_double (*hv_fetch(hv, "yg", 2, 0),
+				     &ny, &($target->yg));
+    $target->ny = ny;
+  }
+  else 
+    $target->ny = 0;
+
+  if (hv_exists (hv, "zg", 2)) {
+    PLplot_perl_get_array_of_double (*hv_fetch(hv, "zg", 2, 0),
+				     &nz, &($target->zg));
+    $target->nz = nz;
+  }
+  else 
+    $target->nz = 0;
+}
+%typemap(perl5,argout) PLcGrid_hash* {
+  $target = sv_newmortal ();
+  sv_mortalcopy (newSVrv ($target, "PLplot::PLcGrid"));
+  sv_setiv (SvRV ($target), (IV) $source);
+  argvi++;
+}
+
+%typemap(perl5,in) PLcGrid_ref* (PLPointer temp) {
+  if (! sv_isa ($source, "PLplot::PLcGrid"))
+    croak ("PLcGrid_ref* argument is not a PLplot::PLcGrid object");
+  temp = (PLPointer) SvIV (SvRV ($source));
+  $target = &temp;
+}
 
 %inline %{
-void
-test_fp (funcptr0 f, PLPointer_input p)
-{
-  PLFLT a = 0.2;
-  PLFLT b = 0.3;
-
-  f(0.0, 0.1, &a, &b, p);
-
-  printf("a = %f\nb = %f\n", a, b);
-  fflush (stdout);
-}
+void plgrid_new (PLcGrid_hash g) {}
 %}
+
+
+extern void pltr0 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
+                   PLcGrid_ref);
+extern void pltr1 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
+                   PLcGrid_ref);
+extern void pltr2 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
+                   PLcGrid_ref);
 

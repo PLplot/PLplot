@@ -10,7 +10,9 @@ require DynaLoader;
 bootstrap PLplot;
 var_PLplot_init();
 
-%EXPORT_TAGS = (all => [qw(&plline_p &plstyl_p @EXPORTS@)]);
+%EXPORT_TAGS = (all => [qw(&plline_p &plstyl_p &plgrid_new 
+                           &pltr0 &pltr1 &pltr2
+                           @EXPORTS@)]);
 
 Exporter::export_ok_tags('all');
 
