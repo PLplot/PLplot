@@ -4,10 +4,11 @@
 # Makes links to all PLPLOT source files using the SKsh ln script.
 #*************************************************************************
 
-ln ../src/*.c .
-ln ../drivers/*.c .
-ln ../utils/*.c .
-ln ../fonts/*.c .
-ln ../examples/C/*.c .
-ln ../sys/amiga/src/*.c .
-ln ../sys/amiga/src/*.h .
+./ln ../src/*.c .
+./ln ../include/*.h .
+./ln ../drivers/*.c .
+./ln ../utils/*.c .
+./ln ../fonts/*.c .
+./ln ../examples/C/*.c .
+./ln ../sys/amiga/src/*.c .
+./ln ../sys/amiga/src/*.h .
