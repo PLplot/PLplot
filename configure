@@ -2648,6 +2648,9 @@ LIB_TAG="$TAG_PREC$TAG_ENABLE"
 # Now build up Makefile.in, out of all the eensy-weensy little pieces.
 # -----------------------------------------------------------------------
 
+if test ! -d tmp; then
+    mkdir tmp
+fi
 echo "creating tmp/Makefile.in"
 
 # Makefile initialization
