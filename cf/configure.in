@@ -473,46 +473,63 @@ AC_SUBST(SHARED)
 
 AC_MSG_RESULT(creating links...)
 
-# Source, driver, interface files
+# Source, driver, and include files
     
 ln -s \
 $srcdir/src/*.c \
-$srcdir/src/*.cc \
-$srcdir/src/tcl/*.c \
-$srcdir/src/stubc/*.c \
 $srcdir/drivers/*.c \
-$srcdir/drivers/tk/*.* \
-$srcdir/drivers/tk/tclIndex \
 $srcdir/include/*.h \
 . 2>/dev/null
 
-# Demos, miscellaneous
+# Packages (interfaces) and demos associated with them
+
+if test "$enable_cxx" = "yes"; then
+    ln -s \
+    $srcdir/bindings/c++/*.* \
+    $srcdir/examples/c++/*.* \
+    . 2>/dev/null
+fi
+
+if test "$enable_tcl" = "yes"; then
+    ln -s \
+    $srcdir/bindings/tcl/*.* \
+    $srcdir/examples/tcl/*.* \
+    . 2>/dev/null
+fi
+
+if test "$enable_tk" = "yes"; then
+    ln -s \
+    $srcdir/bindings/tk/*.* \
+    $srcdir/bindings/tk/tclIndex \
+    $srcdir/examples/tk/*.c \
+    $srcdir/examples/tk/tk* \
+    . 2>/dev/null
+fi
+
+# Note that double precision Fortran files in the stub interface are
+# obtained entirely by m4 macro expansion.  This should work anywhere.
+# Double precision example programs are obtained through automatic compiler
+# promotion, however.  Your compiler needs to be able to automatically
+# promote all real variables and constants for this to work (the HPUX 8.x
+# compiler did not support this, but it's supported under 9.0).
+
+if test "$enable_f77" = "yes"; then
+    ln -s \
+    $srcdir/bindings/f77/*.* \
+    $srcdir/examples/f77/*.* \
+    . 2>/dev/null
+fi
+
+# Miscellaneous
 
 ln -s \
 $srcdir/examples/c/*.* \
-$srcdir/examples/tcl/*.tcl \
-$srcdir/examples/tk/*.c \
-$srcdir/examples/tk/tk* \
-$srcdir/examples/c++/*.* \
 $srcdir/utils/*.c \
 $srcdir/fonts/*.c \
 $srcdir/scripts/pl* \
 $srcdir/lib/*.fnt \
 $srcdir/lib/*.map \
 $srcdir/cf/*.in \
-. 2>/dev/null
-
-# Fortran files.  
-# Double precision Fortran files in the stub interface are obtained
-# entirely by m4 macro expansion.  This should work anywhere.  Double
-# precision example programs are obtained through automatic compiler
-# promotion.  Your compiler needs to be able to automatically promote
-# all real variables and constants for this to work (note: the HPUX 8.x
-# compiler did not support this, but it's supported under 9.0).
-
-ln -s \
-$srcdir/src/stubf/*.* \
-$srcdir/examples/f77/*.* \
 . 2>/dev/null
 
 # ----------------------------------------------------------------------------
