@@ -41,8 +41,8 @@ function __pl_draw_legend(xm, xM, ym, yM)
       k++;
     endif
   endfor
+  k--;
 
-  ## yyb = (__pl.legend_ypos(__pl_strm) - ch_height * __pl.lab_pos(__pl_strm));
   yyb = (__pl.legend_ypos(__pl_strm) - ch_height * k);
 
   if (__pl.legend(__pl_strm) == 2)	# opaque
@@ -56,7 +56,7 @@ function __pl_draw_legend(xm, xM, ym, yM)
     minx = xxl; maxx = xxr;
     miny = yyb; maxy = yyt;
 
-    n = __pl.lab_pos(__pl_strm);
+    n = __pl.lab_pos(__pl_strm)-1;
     clevel = linspace(0,1,n+1);
     z = fliplr([clevel; clevel]);
 
@@ -73,21 +73,22 @@ function __pl_draw_legend(xm, xM, ym, yM)
     plline([xxl;xxr;xxr;xxl;xxl], [yyb; yyb; yyt; yyt;yyb]);
   endif
 
-  k=1;	
+  k=0.5;	
   for i=1:__pl.lab_pos(__pl_strm)-1
     if (length(tdeblank(__pl.lab_str(i,:))) != 0)
       xx = __pl.legend_xpos(__pl_strm);
-      yy = (__pl.legend_ypos(__pl_strm) - ch_height * k++);
+      yy = (__pl.legend_ypos(__pl_strm) - ch_height * k++ );
       
       plcol(15);
       plptex(xx, yy, 0, 0, __pl.legend_xpos(__pl_strm), __pl.lab_str(i,:));
       if(__pl.type != -2)
-	plcol(__pl.lab_col(__pl_strm,i)); pllsty(__pl.lab_lsty(__pl_strm,i));
-	plline([xxl; xxr],[yy-ch_height/2; yy-ch_height/2]);
-	try if (__pl.lab_sym(__pl_strm,i) != 0)
-	    plpoin(xxl + ch_height/3 ,yy , __pl.lab_sym(__pl_strm,i));
-	  endif
-	catch; end_try_catch
+			plcol(__pl.lab_col(__pl_strm,i)); pllsty(__pl.lab_lsty(__pl_strm,i));
+			plline([xxl; xxr],[yy-ch_height/2; yy-ch_height/2]);
+			try
+				if (__pl.lab_sym(__pl_strm,i) != 0)
+	    			plpoin(xxl + ch_height/3 ,yy , __pl.lab_sym(__pl_strm,i));
+	  		endif
+			catch; end_try_catch
       endif
     endif
   endfor

@@ -119,6 +119,7 @@ function shade(x, y, z, levels, cont )
   else
     n = levels;
     clevel = linspace(zm, zM, levels+1);
+    cclevel = linspace(zm, zM, levels);
   endif
 
   __pl.type = -2;
@@ -134,7 +135,7 @@ function shade(x, y, z, levels, cont )
 	    1, (i-1) / (n-1), 1,
 	    min_color, min_width, max_color, max_width, 1, tr);
     
-    __pl.lab_str = [__pl.lab_str; sprintf("%#+.2G", clevel(i))];
+    __pl.lab_str = [__pl.lab_str; sprintf("%#+.2G", cclevel(i))];
     __pl.lab_col(__pl_strm,__pl.lab_pos(__pl_strm)) = __pl.plcol(__pl_strm);
     __pl.lab_lsty(__pl_strm,__pl.lab_pos(__pl_strm)) = __pl.pllsty(__pl_strm);
     __pl.lab_pos(__pl_strm) = __pl.lab_pos(__pl_strm) + 1;				
