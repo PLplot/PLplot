@@ -54,7 +54,7 @@ STYLESHEETS_IN = \
 EXTRA_DIST = \
   $(SOURCE_FILES) $(STYLESHEETS_IN) \
   jadetex.cfg stylesheet.css \
-  $(html_DATA) $(pdf_DATA) $(man3_MANS) $(geninfo_DATA)
+  $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA)
 
 CLEANFILES = \
   $(INFO_MANIFEST) \
@@ -63,7 +63,7 @@ CLEANFILES = \
 
 MAINTAINERCLEANFILES = \
   $(HTML_MANIFEST) $(MAN_MANIFEST) \
-  *.$(HTML_EXT) *.pdf* *.info* *.$(MANVOL) *.dvi *.ps*
+  $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA)
 
 if enable_docbook
 
@@ -74,8 +74,8 @@ BINDIR = ../bin
 htmldir = $(prefix)/share/doc/$(PACKAGE)/html
 html_DATA = $(shell ls *.html)
 
-pdfdir = $(prefix)/share/doc/$(PACKAGE)
-pdf_DATA = $(BASE).pdf
+printdir = $(prefix)/share/doc/$(PACKAGE)
+print_DATA = $(BASE).ps.gz $(BASE).dvi $(BASE).pdf
 
 man3_MANS = $(shell ls *.$(MANVOL))
 
@@ -94,7 +94,7 @@ $(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML) inline-html.ent
 	  $(XML_DECL) $(MASTER_XML)
 
 
-print: $(BASE).ps.gz $(BASE).dvi $(BASE).pdf
+print: $(print_DATA)
 
 %.ps.gz: %.dvi
 	$(DVIPS) -f $< | gzip -c > $@
