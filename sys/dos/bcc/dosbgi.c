@@ -1,10 +1,39 @@
 /* $Id$
    $Log$
-   Revision 1.1  1994/05/25 09:18:40  mjl
-   The new locations for DOS BGI (bcc) files.
+   Revision 1.2  1994/05/25 22:08:19  mjl
+   Win3 driver added, other changes to bring DOS/BGI (bcc) support
+   up to date, contributed by Paul Casteels.
 
- * Revision 1.1  1993/10/18  17:07:14  mjl
- * Initial checkin of files for DOS/Borland C.
+ * Revision 1.8  1993/03/15  21:39:04  mjl
+ * Changed all _clear/_page driver functions to the names _eop/_bop, to be
+ * more representative of what's actually going on.
+ *
+ * Revision 1.7  1993/03/03  19:41:54  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
+ * Revision 1.6  1993/02/27  04:46:31  mjl
+ * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * always be included first.
+ *
+ * Revision 1.5  1993/02/22  23:10:50  mjl
+ * Eliminated the gradv() driver calls, as these were made obsolete by
+ * recent changes to plmeta and plrender.  Also eliminated page clear commands
+ * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ *
+ * Revision 1.4  1993/01/23  05:41:39  mjl
+ * Changes to support new color model, polylines, and event handler support
+ * (interactive devices only).
+ *
+ * Revision 1.3  1992/11/07  07:48:37  mjl
+ * Fixed orientation operation in several files and standardized certain startup
+ * operations. Fixed bugs in various drivers.
+ *
+ * Revision 1.2  1992/09/29  04:44:39  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
+ * Revision 1.1  1992/05/20  21:32:32  furnish
+ * Initial checkin of the whole PLPLOT project.
  *
 */
 
@@ -19,7 +48,7 @@
   Compile this with Borland C 3.1
 
 */
-#ifdef __BORLANDC__                    /* Only compile for Borland */
+#ifdef BGI
 
 #include "plplotP.h"
 #include <stdio.h>
@@ -29,9 +58,7 @@
 #include <process.h>
 #include <conio.h>
 
-static void	pause		(void);
-static void	vga_text	(PLStream *);
-static void	vga_graph	(PLStream *);
+static void pause(PLStream *pls);
 
 /* A flag to tell us whether we are in text or graphics mode */
 
@@ -59,33 +86,59 @@ int gdriver,gmode,errorcode;
 
 int Tseng4Mode(void)
 {
-  /* return(Mode640x400);       /**/
-  /* return(Mode640x480);       /**/
-  return(Mode800x600);  /**/
-  /* return(Mode1024x768);      /**/
+//  return(Mode640x400);
+//  return(Mode640x480);
+  return(Mode800x600);
+//  return(Mode1024x768);
 }
 #endif
 
+/*----------------------------------------------------------------------*\
+* bgi_graph()
+*
+* Switch to graphics mode.
+\*----------------------------------------------------------------------*/
+
+void
+bgi_graph(PLStream *pls)
+{
+  char *bgidir;
+
+	 if (pls->graphx == TEXT_MODE) {
+	gdriver = DETECT;
+	if ((bgidir = getenv("BGIDIR")) != NULL)
+	  initgraph(&gdriver,&gmode,bgidir);
+	else
+	  initgraph(&gdriver,&gmode,"\\bc4\\bgi");
+	errorcode = graphresult();
+	if (errorcode != grOk) {
+		 printf("Unable to set graphics mode.");
+		 exit(0);
+	}
+	pls->graphx = GRAPHICS_MODE;
+	page_state = CLEAN;
+	 }
+}
 
 /*----------------------------------------------------------------------*\
-* plD_init_vga()
+* bgi_init()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-plD_init_vga(PLStream *pls)
+plD_init_bgi(PLStream *pls)
 {
   int driver;
 
-    pls->termin = 1;            /* is an interactive terminal */
-    pls->icol0 = 1;
-    pls->width = 1;
-    pls->bytecnt = 0;
-    pls->page = 0;
-    pls->graphx = TEXT_MODE;
+	 pls->termin = 1;            /* is an interactive terminal */
+	 pls->icol0 = 1;
+	 pls->width = 1;
+	 pls->bytecnt = 0;
+	 pls->page = 0;
+	 pls->graphx = TEXT_MODE;
 
-    if (!pls->colorset)
+	 if (!pls->colorset)
 	pls->color = 1;
 
 /* Set up device parameters */
@@ -96,116 +149,119 @@ plD_init_vga(PLStream *pls)
 
   errorcode = graphresult();
   if (errorcode != grOk) {
-    printf("Graphics error: %s\n", grapherrormsg(errorcode));
-    printf("Press any key to halt:");
-    getch();
-    exit(1); /* terminate with an error code */
+	 printf("Graphics error: %s\n", grapherrormsg(errorcode));
+	 printf("Press any key to halt:");
+	 getch();
+	 exit(1); /* terminate with an error code */
   }
 #endif
 
-    plD_graph_vga(pls);
+	 bgi_graph(pls);
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
-    dev->xmin = 0;
-    dev->xmax = getmaxx();
-    dev->ymin = 0;
-    dev->ymax = getmaxy();
+	 dev->xold = UNDEFINED;
+	 dev->yold = UNDEFINED;
+	 dev->xmin = 0;
+	 dev->xmax = getmaxx();
+	 dev->ymin = 0;
+	 dev->ymax = getmaxy();
 
-    setpxl(2.5, 2.5);           /* Pixels/mm. */
+	 plP_setpxl(2.5, 2.5);           /* Pixels/mm. */
 
-    setphy((PLINT) 0, (PLINT) dev->xmax, (PLINT) 0, (PLINT) dev->ymax);
+	 plP_setphy((PLINT) 0, (PLINT) dev->xmax, (PLINT) 0, (PLINT) dev->ymax);
 
 }
 
 /*----------------------------------------------------------------------*\
-* plD_line_vga()
+* bgi_line()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-plD_line_vga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_bgi(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
-    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
-
-    if (pls->pscale)
+	 int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
+/*
+	 if (pls->pscale)
 	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
+*/
+	 y1 = dev->ymax - y1;
+	 y2 = dev->ymax - y2;
 
-    y1 = dev->ymax - y1;
-    y2 = dev->ymax - y2;
+	 moveto(x1, y1);
+	 lineto(x2, y2);
 
-    moveto(x1, y1);
-    lineto(x2, y2);
-
-    page_state = DIRTY;
+	 page_state = DIRTY;
 }
 
 /*----------------------------------------------------------------------*\
-* plD_polyline_vga()
+* bgi_polyline()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-plD_polyline_vga(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_bgi(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
-    PLINT i;
+	 PLINT i;
 
-    for (i = 0; i < npts - 1; i++)
-	plD_line_vga(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	 for (i = 0; i < npts - 1; i++)
+	plD_line_bgi(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* plD_eop_vga()
+* bgi_eop()
 *
 * End of page.
 \*----------------------------------------------------------------------*/
 
 void
-plD_eop_vga(PLStream *pls)
+plD_eop_bgi(PLStream *pls)
 {
-    if (page_state == DIRTY)
+	 if (page_state == DIRTY)
 	pause(pls);
-    if (pls->graphx == GRAPHICS_MODE) {
-      clearviewport();
-    }
+	 if (pls->graphx == GRAPHICS_MODE) {
+		clearviewport();
+	 }
 //    _eopscreen(_GCLEARSCREEN);
-    page_state = CLEAN;
+	 page_state = CLEAN;
 }
 
 /*----------------------------------------------------------------------*\
-* plD_bop_vga()
+* bgi_bop()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-plD_bop_vga(PLStream *pls)
+plD_bop_bgi(PLStream *pls)
 {
-    pls->page++;
-    plD_eop_vga(pls);
+	 pls->page++;
+	 plD_eop_bgi(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* plD_tidy_vga()
+* bgi_tidy()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-plD_tidy_vga(PLStream *pls)
+plD_tidy_bgi(PLStream *pls)
 {
-    plD_text_vga(pls);
-    pls->page = 0;
-    pls->OutFile = NULL;
+/*
+	 bgi_text(pls);
+*/
+	 closegraph();
+	 pls->page = 0;
+	 pls->OutFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
-* plD_state_vga()
+* bgi_color()
 *
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
+* Set pen color.
 \*----------------------------------------------------------------------*/
 
 /*
@@ -217,7 +273,7 @@ enum COLORS {
     RED,
     MAGENTA,
     BROWN,
-    LIGHTGRAY,
+	 LIGHTGRAY,
     DARKGRAY,
     LIGHTBLUE,
     LIGHTGREEN,
@@ -227,102 +283,96 @@ enum COLORS {
     YELLOW,
     WHITE
 };
+//#endif
 */
 
-void 
-plD_state_vga(PLStream *pls, PLINT op)
-{
-    switch (op) {
-
-    case PLSTATE_WIDTH:
-	break;
-
-    case PLSTATE_COLOR0:{
-	static long cmap[16] = {
-	    _WHITE, _RED, _LIGHTYELLOW, _GREEN,
-	    _CYAN, _WHITE, _WHITE, _GRAY,
-	    _WHITE, _BLUE, _GREEN, _CYAN,
-	    _RED, _MAGENTA, _LIGHTYELLOW, _WHITE
-	    };
-
-	if (pls->icol0 < 0 || pls->icol0 > 15)
-	    pls->icol0 = 15;
-
-	setcolor(pls->icol0);
-//	_remappalette((short) pls->icol0, cmap[pls->icol0]);
-//	_setcolor((short) pls->icol0);
-	break;
-    }
-
-    case PLSTATE_COLOR1:
-	break;
-    }
-}
-
-/*----------------------------------------------------------------------*\
-* plD_esc_vga()
-*
-* Escape function.
-\*----------------------------------------------------------------------*/
-
 void
-plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
+bgi_color(PLStream *pls)
 {
-    switch (op) {
+  int i;
+	 static int cmap[16] = {
+	WHITE, RED, YELLOW, GREEN,
+	CYAN, WHITE, WHITE, LIGHTGRAY,
+	WHITE, BLUE, GREEN, CYAN,
+	RED, MAGENTA, YELLOW, WHITE
+	 };
 
-      case PLESC_TEXT:
-	bgi_text(pls);
-	break;
+	 if (pls->icol0 < 0 || pls->icol0 > 15)
+	pls->icol0 = 15;
 
-      case PLESC_GRAPH:
-	bgi_graph(pls);
-	break;
-    }
+/*
+  for (i=0;i<=15;i++)
+	 setpalette(i,cmap[i]);
+*/
+//  setpalette(0,WHITE);
+  setcolor(pls->icol0);
+
+//    _remappalette((short) pls->icol0, cmap[pls->icol0]);
+//    _setcolor((short) pls->icol0);
+
 }
+
+void plD_state_bgi(PLStream *pls,PLINT op) {
+//  PSDev *dev = (PSDev *) pls->dev;
+  static int cmap[16] = {
+	WHITE, RED, YELLOW, GREEN,
+	CYAN, WHITE, WHITE, LIGHTGRAY,
+	WHITE, BLUE, GREEN, CYAN,
+	RED, MAGENTA, YELLOW, WHITE
+	 };
+
+
+  switch(op) {
+  case PLSTATE_WIDTH:
+	 break;
+  case PLSTATE_COLOR0:
+	 if (pls->color) {
+		setcolor(pls->icol0);
+	 }
+	 break;
+  }
+}
+
 
 /*----------------------------------------------------------------------*\
 * bgi_text()
 *
 * Switch to text mode.
 \*----------------------------------------------------------------------*/
-
-static void
+/*
+void
 bgi_text(PLStream *pls)
 {
-    if (pls->graphx == GRAPHICS_MODE) {
+	 if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
-	    pause(pls);
+		 pause(pls);
 	restorecrtmode();
 //      _setvideomode(_DEFAULTMODE);
 	pls->graphx = TEXT_MODE;
-    }
+	 }
+}
+*/
+
+/*----------------------------------------------------------------------*\
+* bgi_width()
+*
+* Set pen width.
+\*----------------------------------------------------------------------*/
+
+void
+bgi_width(PLStream *pls)
+{
 }
 
 /*----------------------------------------------------------------------*\
-* bgi_graph()
+* bgi_esc()
 *
-* Switch to graphics mode.
+* Escape function.
 \*----------------------------------------------------------------------*/
 
-static void
-bgi_graph(PLStream *pls)
+void
+plD_esc_bgi(PLStream *pls, PLINT op, void *ptr)
 {
-  char *bgidir;
-
-    if (pls->graphx == TEXT_MODE) {
-	gdriver = DETECT;
-	if ((bgidir = getenv("BGIDIR")) != NULL)
-	  initgraph(&gdriver,&gmode,bgidir);
-	else
-	  initgraph(&gdriver,&gmode,"\\borlandc\\bgi");
-	errorcode = graphresult();
-	if (errorcode != grOk) {
-	    printf("Unable to set graphics mode.");
-	    exit(0);
-	}
-	pls->graphx = GRAPHICS_MODE;
-	page_state = CLEAN;
-    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -352,4 +402,4 @@ pldummy_dosbgi()
     return 0;
 }
 
-#endif                          /* __BORLANDC__ */
+#endif

@@ -1,7 +1,8 @@
 /* $Id$
    $Log$
-   Revision 1.1  1994/05/25 09:18:44  mjl
-   The new locations for DOS BGI (bcc) files.
+   Revision 1.2  1994/05/25 22:08:25  mjl
+   Win3 driver added, other changes to bring DOS/BGI (bcc) support
+   up to date, contributed by Paul Casteels.
 
  * Revision 1.1  1993/10/18  17:07:17  mjl
  * Initial checkin of files for DOS/Borland C.
@@ -14,11 +15,16 @@
 */
 
 #define PL_NEED_MALLOC
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <stdio.h>
+/* 
+  PaulC added stdlib.h 
+  changed PLPLOT5_FONT in PLPLOT51_FONT to inhibit the use of
+  write_2byte and write_2nbyte
+*/
+#include <stdlib.h>
 #include <string.h>
-#include <alloc.h>
 #include "pdf.h"
 
 extern short int *hersh[];
@@ -49,7 +55,7 @@ main (void)
     }
 
     htab = 4 * 256 + 176;       /* # of fonts in upper byte # of chars in lower */
-#ifdef PLPLOT5_FONTS
+#ifdef PLPLOT51_FONTS
     write_2bytes(fontfile, htab);
     write_2nbytes(fontfile, (U_SHORT *) hrshlst, 4 * 176);
 #else
@@ -61,7 +67,7 @@ main (void)
     zero = 0;
     nindx = 0;
     fpos = ftell(fontfile);
-#ifdef PLPLOT5_FONTS
+#ifdef PLPLOT51_FONTS
     write_2bytes(fontfile, nindx);
 #else
     fwrite((char *) &nindx, sizeof(short), 1, fontfile);
@@ -70,7 +76,7 @@ main (void)
 	for (k = 0; k < 100; k++) {
 	    ib = *(findex[j] + k);
 	    if (ib == 0) {
-#ifdef PLPLOT5_FONTS
+#ifdef PLPLOT51_FONTS
 		write_2bytes(fontfile, zero);
 #else
 		fwrite((char *) &zero, sizeof(short), 1, fontfile);
@@ -78,7 +84,7 @@ main (void)
 		nindx++;
 	    }
 	    else {
-#ifdef PLPLOT5_FONTS
+#ifdef PLPLOT51_FONTS
 		write_2bytes(fontfile, nleng);
 #else
 		fwrite((char *) &nleng, sizeof(short), 1, fontfile);
@@ -100,7 +106,7 @@ main (void)
 	}
     }
     fseek(fontfile, fpos, 0);
-#ifdef PLPLOT5_FONTS
+#ifdef PLPLOT51_FONTS
     write_2bytes(fontfile, nindx);
 #else
     fwrite((char *) &nindx, sizeof(short), 1, fontfile);
@@ -110,7 +116,7 @@ main (void)
     fpos = ftell(fontfile);
     nleng = 1;
     nchars = 0;
-#ifdef PLPLOT5_FONTS
+#ifdef PLPLOT51_FONTS
     write_2bytes(fontfile, nleng);
 #else
     fwrite((char *) &nleng, sizeof(short), 1, fontfile);
@@ -139,7 +145,7 @@ main (void)
     }
     nleng--;
     fseek(fontfile, fpos, 0);
-#ifdef PLPLOT5_FONTS
+#ifdef PLPLOT51_FONTS
     write_2bytes(fontfile, nleng);
 #else
     fwrite((char *) &nleng, sizeof(short), 1, fontfile);

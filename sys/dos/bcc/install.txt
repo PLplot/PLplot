@@ -1,0 +1,21 @@
+1. Place all this files in \plplot\sys\dosbgi
+2. copy makefile to \plplot\tmp
+3. comment out win3 if you want the dosbgi version
+4. cd \plplot\tmp
+   make links
+   make libc
+   make fonts
+   e.g. make x11c
+5. In this version (4.99f) there is a bug in the plot3d routine that
+causes the x11c demo to fail with a memory allocation problem.
+(This works in windows : more memory is available)
+I think/hope this will be fixed in 4.99g.
+
+Everything works for me with Borland C++ 3.1,4.0 and plplot 4.99f
+
+Paul Casteels           casteels@uia.ac.be
+University of Antwerp
+Dpt.Physics
+Universiteitsplein 1
+B-2610 Wilrijk
+Belgium
