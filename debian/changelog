@@ -1,3 +1,11 @@
+plplot (5.3.0.cvs.20040324-3) unstable; urgency=low
+
+  * NOT YET RELEASED!
+  * debian/control: Removed build-dependency on g++-3.3 | g++-3.2, since
+    g++ is a build-essential package (closes: #244007).
+
+ --
+
 plplot (5.3.0.cvs.20040324-2) unstable; urgency=low
 
   * Patched the configure script to avoid stderr messages to interfere with
