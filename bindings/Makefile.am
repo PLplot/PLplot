@@ -44,4 +44,5 @@ pkgIndex.tcl: $(index)
 	cat $(index) > pkgIndex.tcl
 
 endif
-CLEANFILES = pkgIndex.tcl $(index)
+CLEANFILES = pkgIndex.tcl 
+DISTCLEANFILES = $(index)
