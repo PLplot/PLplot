@@ -82,7 +82,7 @@ sub plot1
   # Draw the line through the data
   
   plcol0 (3);
-  plline (60, \@x, \@y);
+  plline_p (\@x, \@y);
 }
 
 # =============================================================== 
@@ -111,15 +111,13 @@ sub plot2
   # Draw the line 
 
   plcol0 (3);
-  plline (100, \@x, \@y);
+  plline_p (\@x, \@y);
 }
 
 # ===============================================================
 
 sub plot3
 {
-  $space0 = 0;
-  $mark0 = 0;
   $space1 = 1500;
   $mark1 = 1500;
 
@@ -142,10 +140,10 @@ sub plot3
   # Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
   # plstyl expects a pointer!
   
-  plstyl (1, $mark1, $space1);
+  plstyl_p ($mark1, $space1);
   plcol0 (2);
   plbox ("g", 30.0, 0, "g", 0.2, 0);
-  plstyl (0, $mark0, $space0);
+  plstyl_p ([], []);
 
   plcol0 (3);
   pllab ("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
@@ -154,6 +152,6 @@ sub plot3
   @y = map { sin($_ * 3.141592654 / 180.0) } @x;
 
   plcol0 (4);
-  plline (101, \@x, \@y);
-  plline (101, \@x, \@y);
+  plline_p (\@x, \@y);
+  plline_p (\@x, \@y);
 }
