@@ -762,7 +762,7 @@ EOF`])
 
         # Get Octave version
         OCTAVE_VERSION=`$OCTAVE --version | sed 's/^.*version // ; q'`
-echo Octave version: $OCTAVE_VERSION
+
 	# This is the directory for installation of the PLplot_Octave
         # specific m files
         PLPLOT_OCTAVE_DIR=${prefix}/share/plplot_octave
