@@ -990,7 +990,8 @@ if test "$enable_octave" = "yes"; then
 	MATWRAP=matwrap
 	AC_CHECK_PROG(has_matwrap, matwrap, yes, no)
 	if test "$has_matwrap" = "no"; then
-	    MATWRAP="./matwrap"
+	    MATWRAP=`pwd`"/bindings/octave/matwrap/matwrap"
+	    AC_MSG_RESULT([warning: Using builtin matwrap.]);
 	fi
     fi
 
