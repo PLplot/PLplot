@@ -21,6 +21,7 @@
 <!ENTITY chap-api SYSTEM "api.xml">
 <!ENTITY chap-api-c SYSTEM "api-c.xml">
 <!ENTITY chap-api-fortran SYSTEM "api-fortran.xml">
+<!ENTITY chap-os-notes SYSTEM "os_notes.xml">
 <!ENTITY plP_checkdriverinit '<link linkend="plP_checkdriverinit"><function>plP_checkdriverinit</function></link>'>
 <!ENTITY plP_getinitdriverlist '<link linkend="plP_getinitdriverlist"><function>plP_getinitdriverlist</function></link>'>
 <!ENTITY pl_setcontlabelparam '<link linkend="pl_setcontlabelparam"><function>pl_setcontlabelparam</function></link>'>
@@ -293,6 +294,7 @@
     &chap-api;
     &chap-api-c;
     &chap-api-fortran;
+    &chap-os-notes;
   </part>
 
 </book>

@@ -23,6 +23,7 @@ SOURCE_FILES = \
   inline-html.ent \
   inline-print.ent \
   intro.xml \
+  os_notes.xml \
   perl.xml \
   python.xml \
   simple.xml \
