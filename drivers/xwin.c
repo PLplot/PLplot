@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1993/11/15 08:29:56  mjl
+ * Revision 1.28  1993/12/06 07:42:31  mjl
+ * Changed escape flush function to also handle any pending events.
+ *
+ * Revision 1.27  1993/11/15  08:29:56  mjl
  * Added a cast to eliminate a warning.
  *
  * Revision 1.26  1993/11/07  09:02:33  mjl
@@ -423,6 +426,7 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 	break;
 
       case PLESC_FLUSH:
+	HandleEvents(pls);	/* Check for events */
 	XFlush(dev->display);
 	break;
     }
@@ -645,9 +649,7 @@ WaitForPage(PLStream *pls)
 * HandleEvents()
 *
 * Just a front-end to EventHandler(), for use when not actually waiting for
-* an event but only checking the event queue.  Right now the ONLY event we
-* check for is a KeyPress or ButtonPress, since the plot buffer logic does
-* not support multiple writes of the plot buffer in a single page.
+* an event but only checking the event queue.  
 \*----------------------------------------------------------------------*/
 
 static void
@@ -656,7 +658,8 @@ HandleEvents(PLStream *pls)
     XwDev *dev = (XwDev *) pls->dev;
     XEvent event;
 
-    if (XCheckMaskEvent(dev->display, ButtonPressMask | KeyPressMask, &event))
+    if (XCheckMaskEvent(dev->display, ButtonPressMask | KeyPressMask |
+			ExposureMask | StructureNotifyMask, &event))
 	EventHandler(pls, &event);
 }
 
