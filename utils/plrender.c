@@ -27,7 +27,7 @@
 
 char ident[] = "@(#) $Id$";
 
-/*#define DEBUG*/
+#define DEBUG
 
 #define NEED_PLDEBUG
 #include "plplotP.h"
@@ -404,7 +404,7 @@ ProcessFile(int argc, char **argv)
     if (addeof_beg) disp_beg += pages;
     if (addeof_end) disp_end += pages;
 
-    plSetInternalOpt("-tcl_cmd", "set plw_create_proc plr_create");
+/*    plSetInternalOpt("-tcl_cmd", "set plw_create_proc plr_create"); */
 
 /*
  * Read & process metafile commands.
