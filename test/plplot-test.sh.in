@@ -29,7 +29,7 @@
 # So for now, this is only a test suite in the sense that it checks the
 # files corresponding to our demo plots can all be generated.  It is
 # up to the user to display those files with the appropriate software
-# (e.g., gv for postscript files and kview or a browser for png
+# (e.g., gv for postscript files and kview or a browser for png, gif,
 # or jpeg files on Linux systems) to make sure they display properly.
 
 version=@VERSION@
@@ -48,7 +48,7 @@ usage()
 Usage: plplot-test.sh [OPTIONS]
 
 Options:
-   [--device=DEVICE] (DEVICE = one of psc [default], ps, png, jpeg, cgm,
+   [--device=DEVICE] (DEVICE = one of psc [default], ps, png, gif, jpeg, cgm,
                       xfig, or plmeta)
    [--front-end=FE]  (FE = one of c, cxx, f77, java, octave, python, tcl, or perl)
                      If this option is not specified, then all front-ends will
@@ -158,6 +158,11 @@ case "$device" in
       ;;
    png)
       dsuffix=png
+      options="-fam -fflen 2"
+      export dsuffix options
+      ;;
+   gif)
+      dsuffix=gif
       options="-fam -fflen 2"
       export dsuffix options
       ;;
