@@ -112,16 +112,22 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 	    while (bufx[i] > maxlong) {
 		bufx[i] -= 360.0;
 	    }
-
 	}
-
-
-       if (mapform != NULL) (*mapform)(n,bufx,bufy); /* moved transformation to here   */
-                                                     /* so bound-checking worked right */
 
 	/* remove last 2 points if both outside of domain and won't plot */
 
-	while (n > 1) {
+/* AR: 18/11/01 
+*       I have commented out the next section which supposedly
+*       removes points that do not plot within the domain. 
+*       
+*       This code appears at any rate to be superseded by the next
+*       block of code that checks for wrapping problems. Removing
+*       this code seems to have fixed up the problems with mapping
+*       function, but I do not wish to delete it outright just now in
+*       case I have managed to miss something.
+*/
+
+/*	while (n > 1) {
 	    if ((bufx[n-1] < minlong && bufx[n-2] < minlong) ||
 		(bufx[n-1] > maxlong && bufx[n-2] > maxlong) ||
 		(bufy[n-1] < minlat && bufy[n-2] < minlat) ||
@@ -133,11 +139,15 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 	    }
 	}
 	if (n <= 1) continue;
+*/
+
+       if (mapform != NULL) (*mapform)(n,bufx,bufy); /* moved transformation to here   */
+                                                     /* so bound-checking worked right */
 
 	wrap = 0;
 	/* check for wrap around problems */
 	for (i = 0; i < n-1; i++) {
-	    test[i] = (abs(bufx[i]-bufx[i+1]) > 30.0); /* AFR: what does THIS do ? */
+	    test[i] = (abs(bufx[i]-bufx[i+1]) > abs(bufy[i]/3)); /* Changed this from 30 degrees so it is now "polar sensitive" */
 	    if (test[i]) wrap = 1;
 	}
 
@@ -153,7 +163,7 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 		if (test[i] == 0) {
 		    plline(2,x,y);
 		}
-		else {
+		else {  /* this code seems to supercede the block commented out above */
 		    /* segment goes off the edge */
 		    sign = (x[1] > x[0]) ? 1 : -1;
 		    x[1] -= sign * 360.0;
