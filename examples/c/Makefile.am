@@ -51,7 +51,7 @@ examples_c_DATA = \
 install-data-hook:
 	( cd $(DESTDIR)/$(examples_cdir) ; mv Makefile.examples Makefile )
 
-libplplot = ../../src/libplplot$(LIB_TAG).la
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
 check_PROGRAMS = \
 	x01c \
@@ -76,7 +76,7 @@ check_PROGRAMS = \
 	x20c \
 	x21c
 
-AM_LDFLAGS = $(libplplot)
+LDADD = $(libplplot)
 
 EXTRA_DIST = $(examples_c_DATA)
 DISTCLEANFILES = Makefile.examples
