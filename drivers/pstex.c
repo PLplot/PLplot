@@ -14,13 +14,17 @@
 /*--------------------------------------------------------------------------*\
  * plD_init_pstex()
  *
- * Initialize device (terminal).
+ * Initialize device.
 \*--------------------------------------------------------------------------*/
 
 static void parse_str(const char *str, char *dest);
 static void proc_str (PLStream *pls, EscText *args);
 static long cur_pos;
 static FILE *fp;
+static int  color = 1;
+
+static DrvOpt driver_options[] = {{"color", DRV_INT, &color, "Color Postscript/LaTeX (color=1|0)"},
+              {NULL, DRV_INT, NULL, NULL}};
 
 void
 plD_init_pstex(PLStream *pls)
@@ -29,7 +33,13 @@ plD_init_pstex(PLStream *pls)
   PLFLT rot_scale;
 
   pls->dev_text = 1; /* want to draw text */
-  plD_init_psc(pls); /* init postscript driver-- FIXME: add color/no color to pstex */
+
+  plParseDrvOpts(driver_options);
+
+  if (color)
+    plD_init_psc(pls); /* init color postscript driver */
+  else
+    plD_init_psm(pls); /* init monochrome postscript driver */
 
   /* open latex output file */
   strncpy(ofile, pls->FileName, 80);
@@ -52,11 +62,6 @@ plD_init_pstex(PLStream *pls)
 \\selectfont}%%
 \\fi\\endgroup%%\n", 
      rot_scale, pls->FileName, 72./25.4/pls->xpmm);
-
-  /* prevent long text from flowing outside the figure. Don't work!
-fprintf(fp, "\\special{ps: /x1 100 def /x2 6000 def /y1 100 def /y2 2000 def
-x1 y1 moveto x1 y2 lineto x2 y2 lineto x2 x1 lineto closepath gsave stroke
-grestore gsave clip}"); */
 
   cur_pos = ftell(fp);
   fprintf(fp,"\\begin{picture}(xxxxxx,xxxxxx)(xxxxxx,xxxxxx)%%\n");
@@ -126,11 +131,13 @@ proc_str (PLStream *pls, EscText *args)
   /* parse string for format (escape) characters */
   parse_str(args->string, cptr);
 
-  /* Reference point (center baseline of string, not latex character reference point). 
-     If base = 0, it is aligned with the center of the text box
-     If base = 1, it is aligned with the baseline of the text box
-     If base = 2, it is aligned with the top of the text box
-     Currently plplot only uses base=0 */
+  /* 
+   * Reference point (center baseline of string, not latex character reference point). 
+   *  If base = 0, it is aligned with the center of the text box
+   *  If base = 1, it is aligned with the baseline of the text box
+   *  If base = 2, it is aligned with the top of the text box
+   *  Currently plplot only uses base=0
+   */
 
   if (args->base == 2) /* not supported by plplot */
     ref = 't';
@@ -139,10 +146,12 @@ proc_str (PLStream *pls, EscText *args)
   else
     ref = 'c';
 
-  /* Text justification.  Left, center and right justification, which
-     are the more common options, are supported; variable justification is
-     only approximate, based on plplot computation of it's string lenght */
-  
+  /* 
+   * Text justification.  Left, center and right justification, which
+   *  are the more common options, are supported; variable justification is
+   *  only approximate, based on plplot computation of it's string lenght
+   */
+
   if (args->just == 0.5)
     jst = 'c';
   else if (args->just == 1.)
@@ -154,142 +163,146 @@ proc_str (PLStream *pls, EscText *args)
   }
 
   plRotPhy(pls->diorot+1, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
-	   &(args->x), &(args->y));
+      &(args->x), &(args->y));
 #ifdef DEBUG
   fprintf(fp,"\\put(%d,%d){\\circle{10}}\n",
-	  args->x, args->y);
+     args->x, args->y);
 #endif
   fprintf(fp,"\\put(%d,%d){\\rotatebox{%.1f}{\\makebox(0,0)[%c%c]
 {\\SetFigFont{%.1f}{12}",
-	  args->x, args->y, alpha, jst, ref, ft_ht);
-  
-  /* font family, serie and shape. Currently not supported by plplot */
+     args->x, args->y, alpha, jst, ref, ft_ht);
 
-  /* Use current font instead:
-     1: Normal font (latex document default font)
-     2: Roman font
-     3: Italic font (most probably latex slanted)
-     4: Script font (latex sans serif)
-  */
+  /*
+   *  font family, serie and shape. Currently not supported by plplot
+   *
+   *  Use current font instead:
+   *  1: Normal font (latex document default font)
+   *  2: Roman font
+   *  3: Italic font (most probably latex slanted)
+   *  4: Script font (latex sans serif)
+   */
 
   switch (pls->cfont) {
   case (1): fprintf(fp, "{\\familydefault}"); break;
   case (2): fprintf(fp, "{\\rmdefault}"); break;
   case (3): fprintf(fp, "{\\itdefault}"); break;
   case (4): fprintf(fp, "{\\sfdefault}"); break;
-  default: fprintf(fp, "{\\familydefault}");
+  default:  fprintf(fp, "{\\familydefault}");
   }
 
   fprintf(fp,"{\\mddefault}{\\updefault}\n");
 
   /* font color. */
-  fprintf(fp,"\\special{ps: %.3f %.3f %.3f setrgbcolor}{
-%% Your text follows:
+
+  if (color)
+    fprintf(fp,"\\special{ps: %.3f %.3f %.3f setrgbcolor}{",
+       pls->curcolor.r /255., pls->curcolor.g /255., pls->curcolor.b /255.);
+  else
+    fprintf(fp,"\\special{ps: 0 0 0 setrgbcolor}{");
+
+  fprintf(fp,"%% Your text follows:
 %s
-}}}}",
-	  pls->curcolor.r /255., pls->curcolor.g /255.,
-	  pls->curcolor.b /255., cptr);
+}}}}", cptr);
+  
+  /*
+   * keep ps driver happy -- needed for background and orientation.
+   * arghhh! can't calculate it, as I only have the string reference
+   * point, not its extent!
+   * The solution will be to use the current latex font size in pt?
+   * Also need to take into account rotation and justification?!
+   * Quick (and final?) *hack*, ASSUME that no more than a char height
+   * extents after/before the string reference point.
+   */
 
-  /* keep ps driver happy -- needed for background and orientation.
-     arghhh! can't calculate it, as I only have the string reference
-     point, not its extent!
-     The solution will be to use the current latex font size in pt?
-     Also need to take into account rotation and justification?!
-     Quick (and final?) *hack*, ASSUME that no more than a char height
-     extents after/before the string reference point. */
-
-      dev->llx = MIN(dev->llx, args->x - ft_ht * 25.4 / 72. * pls->xpmm);
-      dev->lly = MIN(dev->lly, args->y - ft_ht * 25.4 / 72. * pls->xpmm);
-      dev->urx = MAX(dev->urx, args->x + ft_ht * 25.4 / 72. * pls->xpmm);
-      dev->ury = MAX(dev->ury, args->y + ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->llx = MIN(dev->llx, args->x - ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->lly = MIN(dev->lly, args->y - ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->urx = MAX(dev->urx, args->x + ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->ury = MAX(dev->ury, args->y + ft_ht * 25.4 / 72. * pls->xpmm);
 }
 
 void
 parse_str(const char *str, char *dest)
 {
-int n, opened = 0, raised = 0, overline = 0, underline = 0, fontset = 0, math = 0;
-char *tp = dest;
-char c, esc;
-char raise_lower[] = "\\raisebox{%.2fex}{";
- static char greek[] = "abgGdDezyhHiklLmncCopPrsStuUfFxqQwW";
- static char *mathgreek[] = {"alpha", "beta", "gamma", "Gamma", "delta", "Delta", "epsilon",
-				"zeta", "eta", "theta", "Theta", "iota", "kappa", "lambda",
-			       "Lambda", "mu", "nu", "xi", "Xi", "o", "pi", "Pi", "rho",
-			       "sigma", "Sigma", "tau", "upsilon", ",Upsilon", "phi", "Phi",
-			       "chi", "psi", "Psi", "omega", "Omega"};
- 
+int  n, opened = 0, raised = 0, overline = 0, underline = 0, fontset = 0, math = 0;
+char *tp = dest, c, esc;
+char greek[] = "abgGdDezyhHiklLmncCopPrsStuUfFxqQwW";
+char *mathgreek[] = {"alpha", "beta", "gamma", "Gamma", "delta", "Delta", "epsilon",
+  "zeta", "eta", "theta", "Theta", "iota", "kappa", "lambda", "Lambda", "mu", "nu",
+  "xi", "Xi", "o", "pi", "Pi", "rho", "sigma", "Sigma", "tau", "upsilon",
+  "Upsilon", "phi", "Phi", "chi", "psi", "Psi", "omega", "Omega"};
+
  plgesc(&esc);
 
  while (*str) {
 
-    if (*str != esc) {
-      *tp++ = *str++;
-      continue;
-    }
-    str++;
+   if (*str != esc) {
+     *tp++ = *str++;
+     continue;
+   }
+   str++;
 
-    switch (*str++) {
+   switch (*str++) {
 
-       case 'u': /* up one level */
-	 if (raised < 0) {
-            *tp++ = '}';
-	    opened--;
-         } else {
-            n = sprintf(tp, raise_lower, 0.6);
-	    tp += n; opened++;
-         }
-	 raised++;
-	 break;
+   case 'u': /* up one level */
+     if (raised < 0) {
+       *tp++ = '}';
+       opened--;
+     } else {
+       n = sprintf(tp, "\\raisebox{%.2fex}{", 0.6);
+       tp += n; opened++;
+     }
+     raised++;
+     break;
 
-       case 'd': /* down one level */
-	 if (raised > 0) {
-            *tp++ = '}';
-	    opened--;
-         } else {
-             n = sprintf(tp, raise_lower, -0.6);
-	     tp += n; opened++;
-         }
-	 raised--;
-	 break;
+   case 'd': /* down one level */
+     if (raised > 0) {
+       *tp++ = '}';
+       opened--;
+     } else {
+       n = sprintf(tp, "\\raisebox{%.2fex}{", -0.6);
+       tp += n; opened++;
+     }
+     raised--;
+     break;
 
-        case 'b': /* backspace */
-	  n = sprintf(tp,"\\hspace{-1em}");
-	  tp += n;
-	  break;
+   case 'b': /* backspace */
+     n = sprintf(tp,"\\hspace{-1em}");
+     tp += n;
+     break;
           
-        case '+': /* toggles overline mode. Side effect, enter math mode. */
-	  if (overline) {
-             if (--math)
-	       *tp++ = '}';
-	     else {
-               n = sprintf(tp, "}$");
-               tp += n;
-             }
-             overline--; opened--;
-          } else {
-             if (!math)
-                *tp++ = '$';
+   case '+': /* toggles overline mode. Side effect, enter math mode. */
+     if (overline) {
+       if (--math)
+    *tp++ = '}';
+       else {
+         n = sprintf(tp, "}$");
+         tp += n;
+       }
+       overline--; opened--;
+     } else {
+       if (!math)
+         *tp++ = '$';
 
-	     n = sprintf(tp, "\\overline{");
-	     tp += n; overline++; opened++; math++;
-          }
-	  break;
+       n = sprintf(tp, "\\overline{");
+       tp += n; overline++; opened++; math++;
+     }
+     break;
 
     case '-': /* toggles underline mode. Side effect, enter math mode. */
       if (underline) {
-         if (--math)
-            *tp++ = '}';
-         else {
-            n = sprintf(tp, "}$");
-            tp += n;
-         }
-         underline--; opened--;
+        if (--math)
+     *tp++ = '}';
+   else {
+          n = sprintf(tp, "}$");
+     tp += n;
+        }
+   underline--; opened--;
       } else {
-         if (!math)
-	   *tp++ = '$';
+        if (!math)
+     *tp++ = '$';
 
-         n = sprintf(tp, "\\underline{");      
-	 tp += n; underline++; opened++; math++;
+   n = sprintf(tp, "\\underline{");      
+   tp += n; underline++; opened++; math++;
       }
       break;
 
@@ -297,78 +310,78 @@ char raise_lower[] = "\\raisebox{%.2fex}{";
       c = *str++;
       n = plP_strpos(greek, c);
       if (n != -1) {
-         if (!math) 
-	   *tp++ = '$';
+        if (!math) 
+     *tp++ = '$';
 
-	 *tp++ = '\\';
-	 strcpy(tp, mathgreek[n]);
-	 if (isupper(c))
-	   *tp = toupper(*tp);
-	 tp += strlen(mathgreek[n]);
-	 if (!math) 
-	   *tp++ = '$';
+    *tp++ = '\\';
+    strcpy(tp, mathgreek[n]);
+    if (isupper(c))
+      *tp = toupper(*tp);
+    tp += strlen(mathgreek[n]);
+    if (!math) 
+      *tp++ = '$';
 
        } else
-	 *tp++ = c;
+    *tp++ = c;
 
       break;
 
     case '(': /* Hershey symbol number (nnn) (any number of digits) FIXME ???*/
-	while (*str++ != ')');
-	break;
+   while (*str++ != ')');
+   break;
 
     case 'f': /* switch font */
      
       switch (*str++) {
-	 case 'n': /* Normal */
-	   while (fontset--) {
+    case 'n': /* Normal */
+      while (fontset--) {
               *tp++ = '}';
-	      opened--;
+         opened--;
            }
 
-	   if (math) {
+      if (math) {
               *tp++ = '$';
               math = 0;
            }
 
-	   n = sprintf(tp, "\\normalfont ");
-	   tp += n;
-	   break;
+      n = sprintf(tp, "\\normalfont ");
+      tp += n;
+      break;
 
-	 case 'r': /* Roman */
-	   if (math)
-	     n = sprintf(tp, "\\mathrm{");
-	   else
-	     n = sprintf(tp, "\\textrm{");
+    case 'r': /* Roman */
+      if (math)
+        n = sprintf(tp, "\\mathrm{");
+      else
+        n = sprintf(tp, "\\textrm{");
 
-	   tp += n; opened++; fontset++;
-	   break;
+      tp += n; opened++; fontset++;
+      break;
 
-	 case 'i': /* Italic */
-	   if (math)
-	     n = sprintf(tp, "\\mathit{");
-	   else
-	     n = sprintf(tp, "\\textit{");
+    case 'i': /* Italic */
+      if (math)
+        n = sprintf(tp, "\\mathit{");
+      else
+        n = sprintf(tp, "\\textit{");
 
-	   tp += n; opened++; fontset++;
-	   break;
+      tp += n; opened++; fontset++;
+      break;
 
-	 case 's': /* Script. Don't, use sans serif */
-	   if (math)
-	     n = sprintf(tp, "\\mathsf{");
-	   else
-	     n = sprintf(tp, "\\textsf{");
+    case 's': /* Script. Don't, use sans serif */
+      if (math)
+        n = sprintf(tp, "\\mathsf{");
+      else
+        n = sprintf(tp, "\\textsf{");
 
-	   tp += n; opened++; fontset++;
-	   break;
+      tp += n; opened++; fontset++;
+      break;
 
-	     }
+        }
 
       default:
-	if (*str == esc)
-	  *tp++ = esc;
-	     }
-	     }
+   if (*str == esc)
+     *tp++ = esc;
+        }
+        }
 
   while(opened--)
     *tp++ = '}';
