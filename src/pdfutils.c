@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/03/23 07:26:56  mjl
+ * Revision 1.9  1994/04/08 12:29:00  mjl
+ * Now always keeps track of bytes written or read, for use by drivers
+ * that need that info.
+ *
+ * Revision 1.8  1994/03/23  07:26:56  mjl
  * Changed Alloc2dGrid to plAlloc2dGrid, Free2dGrid to plFree2dGrid.
  * Eliminated special malloc include handling.
  *
@@ -194,9 +198,10 @@ pdf_putc(int c, PDFstrm *pdfs)
 {
     int result = EOF;
 
-    if (pdfs->file != NULL)
+    if (pdfs->file != NULL) {
 	result = putc(c, pdfs->file);
-
+	pdfs->bp++;
+    }
     else if (pdfs->buffer != NULL) {
 	if (pdfs->bp >= pdfs->bufmax) {
 	    pdfs->bufmax += 512;
@@ -228,9 +233,10 @@ pdf_getc(PDFstrm *pdfs)
 {
     int result = EOF;
 
-    if (pdfs->file != NULL)
+    if (pdfs->file != NULL) {
 	result = getc(pdfs->file);
-
+	pdfs->bp++;
+    }
     else if (pdfs->buffer != NULL) {
 	if (pdfs->bp < pdfs->bufmax)
 	    result = pdfs->buffer[pdfs->bp++];
@@ -252,9 +258,11 @@ pdf_ungetc(int c, PDFstrm *pdfs)
 {
     int result = EOF;
 
-    if (pdfs->file != NULL)
+    if (pdfs->file != NULL) {
 	result = ungetc(c, pdfs->file);
-
+	if (pdfs->bp > 0) 
+	    pdfs->bp--;
+    }
     else if (pdfs->buffer != NULL) {
 	if (pdfs->bp > 0) {
 	    pdfs->buffer[--pdfs->bp] = c;
@@ -278,9 +286,10 @@ pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
 {
     int i, result = 0;
 
-    if (pdfs->file != NULL)
+    if (pdfs->file != NULL) {
 	result = fwrite(x, 1, nitems, pdfs->file);
-
+	pdfs->bp += nitems;
+    }
     else if (pdfs->buffer != NULL) {
 	for (i = 0; i < nitems; i++) {
 	    if (pdfs->bp >= pdfs->bufmax) {
@@ -312,9 +321,10 @@ pdf_rdx(U_CHAR *x, long nitems, PDFstrm *pdfs)
 {
     int i, result = 0;
 
-    if (pdfs->file != NULL)
+    if (pdfs->file != NULL) {
 	result = fread(x, 1, nitems, pdfs->file);
-
+	pdfs->bp += nitems;
+    }
     else if (pdfs->buffer != NULL) {
 	for (i = 0; i < nitems; i++) {
 	    if (pdfs->bp > pdfs->bufmax)
