@@ -112,7 +112,7 @@ more powerful than C so that it makes sense to write the UF interface in
 java rather than C. Note the raw interface only allows two-dimensional xg,
 and yg arrays to plcont, plshades, and plshade. The options of no xg, yg,
 and one-dimensional xg, and yg should also be allowed for the UI interface.
-Also note the raw interface to plParseOpts demands you must be explicit
+Also note the raw interface to plparseopts demands you must be explicit
 about ORing in pls.PL_PARSE_NOPROGRAM to the parse mode parameter.  This
 idiosyncrasy of Java should be hidden for the UF interface.
 
