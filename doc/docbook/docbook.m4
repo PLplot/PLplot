@@ -46,7 +46,7 @@ AC_SUBST(WWW_HOST)
 AC_ARG_WITH(www-dir,
   AC_HELP_STRING([--with-www-dir=NAME], [Dir name at WWW host]),
   [WWW_DIR="$withval"],
-  [WWW_DIR="/home/groups/p/pl/plplot/htdocs/resources/docbook-manual"])
+  [WWW_DIR="/home/groups/p/pl/plplot/htdocs/docbook-manual"])
 AC_SUBST(WWW_DIR)
 
 AC_ARG_WITH(rsh-command,
