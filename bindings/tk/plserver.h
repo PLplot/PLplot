@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1993/12/09 21:19:26  mjl
+ * Revision 1.10  1993/12/15 08:59:28  mjl
+ * Added prototypes for Tcl_AppInit() and set_autopath().
+ *
+ * Revision 1.9  1993/12/09  21:19:26  mjl
  * Changed prototype for tk_toplevel().
  *
  * Revision 1.8  1993/12/09  20:33:41  mjl
@@ -53,7 +56,7 @@ typedef struct {
 
 /* External function prototypes. */
 
-/* from tk.c */
+/* from tkshell.c */
 
 /* Create top level window */
 
@@ -65,6 +68,16 @@ tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 
 int
 tk_source(Tk_Window w, Tcl_Interp *interp, char *script);
+
+/* performs application-specific initialization */
+
+int
+Tcl_AppInit(Tcl_Interp *interp);
+
+/* Sets up auto_path variable */
+
+int
+set_auto_path(Tcl_Interp *interp);
 
 /* from plr.c */
 
