@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.17  1993/12/06 07:41:47  mjl
-   Changed to not turn off echo when changing tty settings.
+   Revision 1.18  1993/12/08 06:14:43  mjl
+   Now send an initial page clear (tek devices only) on a beginning of page.
+   This helps when there is only one graphics/alpha screen, otherwise is
+   harmless.
 
+ * Revision 1.17  1993/12/06  07:41:47  mjl
+ * Changed to not turn off echo when changing tty settings.
+ *
  * Revision 1.16  1993/09/14  22:25:15  mjl
  * Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
  *
@@ -294,6 +299,8 @@ plD_eop_tek(PLStream *pls)
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
+* Send an initial page clear for devices which share graphics/alpha
+* screens (it's harmless if not).
 \*----------------------------------------------------------------------*/
 
 void
@@ -304,7 +311,9 @@ plD_bop_tek(PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
-    if ( ! pls->termin)
+    if (pls->termin)
+	fprintf(pls->OutFile, "%c%c", ESC, FF);
+    else
 	plGetFam(pls);
 
     pls->page++;
