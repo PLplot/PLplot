@@ -1085,7 +1085,7 @@ origin
   <sect1 id="plcalc_world" renderas="sect3">
     <title>
       <function>plcalc_world</function>: Calculate world coordinates and
-subpage from relative device coordinates
+corresponding window index from relative device coordinates
     </title>
 
     <para>
@@ -1098,30 +1098,18 @@ subpage from relative device coordinates
         <paramdef><parameter>ry</parameter></paramdef>
         <paramdef><parameter>wx</parameter></paramdef>
         <paramdef><parameter>wy</parameter></paramdef>
-        <paramdef><parameter>subpage</parameter></paramdef>
+        <paramdef><parameter>window</parameter></paramdef>
       </funcprototype>
       </funcsynopsis>
     </para>
     <para>
 Calculate world coordinates,
 <literal><parameter>wx</parameter></literal> and
-<literal><parameter>wy</parameter></literal>, 
+<literal><parameter>wy</parameter></literal>, and corresponding
+<literal><parameter>window</parameter></literal> index
 from relative device coordinates, 
 <literal><parameter>rx</parameter></literal> and
 <literal><parameter>ry</parameter></literal>.
-Also, return the 
-<literal><parameter>subpage</parameter></literal>
-number for which the world coordinates are valid.
-<literal><parameter>subpage</parameter></literal>
-is set to -1 and 
-<literal><parameter>wx</parameter></literal> and
-<literal><parameter>wy</parameter></literal> to 0.
-if 
-<literal><parameter>rx</parameter></literal> and
-<literal><parameter>ry</parameter></literal>
-do not 
-correspond to valid world coordinates for any currently existing
-subpage.
     </para>
 
     <variablelist>
@@ -1132,7 +1120,7 @@ subpage.
 	</term>
 	<listitem>
 	  <para>
-	    Relative device coordinate (ranging from 0. to 1.) for the
+	    Input relative device coordinate (ranging from 0. to 1.) for the
 	    x coordinate.
 	  </para>
 	</listitem>
@@ -1144,7 +1132,7 @@ subpage.
 	</term>
 	<listitem>
 	  <para>
-	    Relative device coordinate (ranging from 0. to 1.) for the
+	    Input relative device coordinate (ranging from 0. to 1.) for the
 	    y coordinate.
 	  </para>
 	</listitem>
@@ -1156,8 +1144,8 @@ subpage.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to world x coordinate corresponding to the relative device
-	    coordinates
+	    Pointer to the returned world coordinate for x corresponding
+	    to the relative device coordinates
 	    <literal><parameter>rx</parameter></literal> and
 	    <literal><parameter>ry</parameter></literal>.
 	  </para>
@@ -1170,8 +1158,8 @@ subpage.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to world y coordinate corresponding to the relative device
-	    coordinates
+	    Pointer to the returned world coordinate for y corresponding
+	    to the relative device coordinates
 	    <literal><parameter>rx</parameter></literal> and
 	    <literal><parameter>ry</parameter></literal>.
 	  </para>
@@ -1179,15 +1167,33 @@ subpage.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>subpage</parameter>
+	  <parameter>window</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to subpage number corresponding to the relative device
-	    coordinates
+	    Pointer to the returned last defined window index that corresponds to the
+	    input relative device coordinates (and the returned world
+	    coordinates).  To give some background on the window index,
+	    for each page the initial window index is set to
+	    zero, and each time &plwind; is called within the page, world
+	    and device coordinates are stored for the window and the window
+	    index is incremented.  Thus, for a simple page layout with
+	    non-overlapping viewports and one window per viewport,
+	    <literal><parameter>window</parameter></literal> corresponds to
+	    the viewport index (in the order which the viewport/windows 
+	    were created) of the only viewport/window corresponding to
 	    <literal><parameter>rx</parameter></literal> and
-	    <literal><parameter>ry</parameter></literal>.
+	    <literal><parameter>ry</parameter></literal>.  However, for
+	    more complicated layouts with potentially overlapping viewports
+	    and possibly more than one window (set of world coordinates) per
+	    viewport, <literal><parameter>window</parameter></literal>
+	    and the corresponding output world coordinates
+	    corresponds to the last window created that fulfils the criterion 
+	    that the relative device coordinates are inside it.  Finally, in
+	    all cases where the input relative device coordinates are not
+	    inside any viewport/window, then
+	    <literal><parameter>window</parameter></literal> is set to -1.
 	  </para>
 	</listitem>
       </varlistentry>
