@@ -528,14 +528,11 @@ AC_OUTPUT(Makefile Makedemo)
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
 #
-# IMPORTANT: the with_<foo> and enable_<bar> vars are printed as
-# with-<foo> and enable-<bar>.  Yes, this is confusing.  I really wish the
-# same syntax were used for both the command line switch and the variable
-# it is setting.  The possibility for confusion is much higher if I don't
-# write them the same in the status message as they appear in the command
-# line.  The only occasion you will have to set the variable directly is
-# in ~/config/cf_plplot.in if you use it, and just make sure you remember
-# to use an underscore in that case.
+# In a reversal of previous practice, I print the actual variables in the
+# configure log.  This is to remind the user of the difference between the
+# command line syntax (which you can always get help on by issuing a --help
+# option) and the internal representation.  It's necessary to remember this
+# for when you want to set the variable directly via ~/config/cf_plplot.in.
 # ----------------------------------------------------------------------------
 
 plplot_config_result_msg="Configure results:
@@ -567,15 +564,15 @@ LIBS:		$LIBS
 LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
 
-with-shlib:	$with_shlib		with-double:	$with_double
-with-debug:	$with_debug		with-opt:	$with_opt
-with-warn:	$with_warn		with-profile:	$with_profile
-with-f2c:	$with_f2c		with-gcc:	$with_gcc
+with_shlib:	$with_shlib		with_double:	$with_double
+with_debug:	$with_debug		with_opt:	$with_opt
+with_warn:	$with_warn		with_profile:	$with_profile
+with_f2c:	$with_f2c		with_gcc:	$with_gcc
 
-enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
-enable-tk:	$enable_tk		enable-dp:	$enable_dp
-enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
-enable-cxx:	$enable_cxx		enable_python:	$enable_python
+enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
+enable_tk:	$enable_tk		enable_dp:	$enable_dp
+enable_itcl:	$enable_itcl		enable_f77:	$enable_f77
+enable_cxx:	$enable_cxx		enable_python:	$enable_python
 "
 
 cat << EOF > config.summary
