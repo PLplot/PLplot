@@ -1,3 +1,11 @@
+plplot (5.3.0.rc1.5.3.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/patches: Removed all Octave patches, since they have been
+    applied upstream.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 14 Jun 2004 20:40:46 +0200
+
 plplot (5.3.0.cvs.20040520-0.sarge.2) unstable; urgency=low
 
   * debian/control: Add dpendencies to libplplot9 (= ${Source-Version}),
