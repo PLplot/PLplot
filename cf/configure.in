@@ -615,7 +615,7 @@ if test -z "$INCLUDE_DIR"; then
     INCLUDE_DIR=$prefix/include/plplot
 fi
 if test -z "$DEMOS_DIR"; then
-    DEMOS_DIR=$DOC_DIR/examples
+    DEMOS_DIR=$PLPLOT_PREFIX/examples
 fi
 
 AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR")
