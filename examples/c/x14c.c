@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/08/10 05:28:50  mjl
+ * Revision 1.11  1994/08/25 04:02:32  mjl
+ * Now can work with either TK or Tcl-DP.  Changed to use TK by default.
+ *
+ * Revision 1.10  1994/08/10  05:28:50  mjl
  * Ensured that geometry strings are in writable memory as required, and
  * other minor tweaks to improve the demo.
  *
@@ -22,7 +25,7 @@
 
 /*	x14c.c
 
-	Demo of multiple stream/window capability (requires Tcl-DP).
+	Demo of multiple stream/window capability (requires Tk or Tcl-DP).
 
 	Maurice LeBrun
 	IFS, University of Texas at Austin
@@ -50,9 +53,7 @@ void plot5();
  * Plots several simple functions from other example programs.
  *
  * This version sends the output of the first 4 plots (one page) to two
- * independent streams.  The X driver is chosen since that makes for a
- * rather nice display, although the offset flags do not yet work
- * correctly.
+ * independent streams.  
 \*----------------------------------------------------------------------*/
 
 int
@@ -62,14 +63,14 @@ main(void)
     int xleng0 = 400, yleng0 = 300, xoff0 = 200, yoff0 = 200;
     int xleng1 = 400, yleng1 = 300, xoff1 = 500, yoff1 = 500;
 
-/* Select Tcl-DP driver and use a smaller window geometry than the default */
+/* Select either TK or DP driver and use a small window */
 /* The geometry strings MUST be in writable memory */
 
-    char driver[] = "dp";
+    char driver[] = "tk";
     char geometry_master[] = "500x410+100+200";
     char geometry_slave[]  = "500x410+650+200";
 
-    printf("Demo of multiple output streams via the DP driver.\n");
+    printf("Demo of multiple output streams via the %s driver.\n", driver);
     printf("Running with the second window as slave.\n");
     printf("\n");
 
