@@ -371,6 +371,7 @@ libplplotdrv_la_LDFLAGS = \
 	$(ITCLLIBCMD) \
 	$(TCLLIBCMD) \
 	$(FREETYPELIBCMD) \
+   $(GDI32LIBCMD) \
 	$(xflags) $(lmflag)
 
 # These dependencies required for some reason if using the LIBADD method.
