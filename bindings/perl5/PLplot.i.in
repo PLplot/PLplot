@@ -157,40 +157,31 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
   $target = SvPVX (SvROK ($source) ? SvRV ($source) : $source);
 }
 
-%typemap(perl5,in) char_p_output* (char buf[1024], int count) {
-  count = 0;
+%typemap(perl5,in) char_p_output* (char buf[1024]) {
   if (! SvROK($source))
     croak ("char* output must be a reference");
-  ST(argvi++) = $source;
   $target = buf;
 }
 %typemap(perl5,argout) char_p_output* {
-  sv_setpv (SvRV(ST(count++)), (char *) $source);
-  argvi--;
+  sv_setpv (SvRV ($arg), (char *) $source);
 }
 
-%typemap(perl5,in) PLFLT_p_output* (PLFLT fltemp, int count) {
-  count = 0;
+%typemap(perl5,in) PLFLT_p_output* (PLFLT temp) {
   if (! SvROK($source))
     croak ("PLFLT* output must be a reference");
-  ST(argvi++) = $source;
-  $target = &fltemp;
+  $target = &temp;
 }
 %typemap(perl5,argout) PLFLT_p_output* {
-  sv_setnv (SvRV(ST(count++)), (double) *$source);
-  argvi--;
+  sv_setnv (SvRV ($arg), (double) *$source);
 }
 
-%typemap(perl5,in) PLINT_p_output* (PLINT fltemp, int count) {
-  count = 0;
+%typemap(perl5,in) PLINT_p_output* (PLINT temp) {
   if (! SvROK($source))
     croak ("PLINT* output must be a reference");
-  ST(argvi++) = $source;
-  $target = &fltemp;
+  $target = &temp;
 }
 %typemap(perl5,argout) PLINT_p_output* {
-  sv_setiv (SvRV(ST(count++)), (double) *$source);
-  argvi--;
+  sv_setiv (SvRV ($arg), (IV) *$source);
 }
 
 %typemap(perl5,in) PLINT_input* (PLINT temp) {
