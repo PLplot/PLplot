@@ -24,8 +24,11 @@ define(if_irix,     {ifdef({IRIX},	{$1},{$2})})dnl
 define(if_ultrix,   {ifdef({ULTRIX},	{$1},{$2})})dnl
 define(if_next,	    {ifdef({NEXT},	{$1},{$2})})dnl
 define(if_linux,    {ifdef({LINUX},	{$1},{$2})})dnl
-define(if_sx,	    {ifdef({SX},	{$1},{$2})})dnl
 define(if_alphaosf, {ifdef({ALPHAOSF},	{$1},{$2})})dnl
+
+ifdef({M4},	    {define({SX})})dnl
+ifdef({MONTE4},	    {define({SX})})dnl
+define(if_sx,	    {ifdef({SX},	{$1},{$2})})dnl
 
 define(if_unix,  {ifdef({UNIX},  {$1},{$2})})dnl
 define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
@@ -417,6 +420,18 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 SYS_FLAGS_C = -hansi
 SYS_FLAGS_F = -Wf "-e2" -Wf "-pvctl nomsg"
 F77	= f77
+
+if_opt({
+OPT_FLAG_C	= -O
+OPT_FLAG_F	= -Wf "-O"
+},{
+OPT_FLAG_C	= 
+OPT_FLAG_F	= 
+})
+
+if_dbl({dnl
+DBL_FLAG_F      = -Wf "-A dbl4"
+})dnl
 
 # Install under $(HOME) since it's unlikely I have the root password.
 
@@ -1054,8 +1069,17 @@ pdfutils.o:	plplotP.h plplot.h pdfutils.c
 # C language stubs for linking Plplot to Fortran.
 
 sc3d.o:		plstubs.h plplotP.h plplot.h sc3d.c
-sccont.o:	plstubs.h plplotP.h plplot.h sccont.c
 scstubs.o:	plstubs.h plplotP.h plplot.h scstubs.c
+
+# Optimizer on SX-3 makes bogus code here.
+
+if_sx({
+XCFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(SYS_FLAGS_C) $(PROFILE_FLAG_C)
+sccont.o:	plstubs.h plplotP.h plplot.h sccont.c
+	$(CC) $(XCFLAGS) sccont.c
+},{
+sccont.o:	plstubs.h plplotP.h plplot.h sccont.c
+})
 
 # Fortran language stubs for linking Plplot to Fortran.
 
