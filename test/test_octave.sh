@@ -7,7 +7,7 @@
 # WARNING, 'octave' can be defined at 'configure' time, to
 # allow for different installed versions. (work in progress)
 
-octave -f -q -p $octavedir//: <<EOF
+octave -f -q -p $octavedir <<EOF
 plplot_stub;
 t = split("$options", "-"); t(1,:)="";
 for i=1:rows(t)
