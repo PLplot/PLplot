@@ -67,7 +67,7 @@ install_python: python_dynamic/plmodule.c \
 	fi
 	@-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
 	@-cd $(top_srcdir)/examples/python ; \
-	$(CP) README.python $(DEMOS_DIR)/python ; \
+	$(CP) README.pythondemos $(DEMOS_DIR)/python ; \
 	for i in $(PYTHON_DEMOS) ; do \
 	  sed 's:@MODULE_DIR@:$(PYTHON_DIR):' < $$i > $(DEMOS_DIR)/python/$$i ; \
 	  chmod a+rx $(DEMOS_DIR)/python/$$i ; \
