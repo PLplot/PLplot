@@ -22,14 +22,11 @@ dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 PL_ARG_ENABLE(pdl, [enable perl examples in tests (requires pdl)], no)
 
+if test "$enable_pdl" = yes ; then
+
 AC_CHECK_PROGS(PERL, perl, no)
 
-if test "$enable_pdl" = "no" ; then
-
-# Requires placeholder action like this in order for following elif to work.
-    enable_pdl=no
-
-elif test "$PERL" = no ; then
+if test "$PERL" = no ; then
 
     enable_pdl=no
     
@@ -65,6 +62,8 @@ else
     fi
 
 fi    
+
+fi
 
 AC_SUBST(enable_pdl)
 AM_CONDITIONAL(enable_pdl, [test "$enable_pdl" = yes])
