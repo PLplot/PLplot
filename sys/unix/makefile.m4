@@ -9,7 +9,6 @@
 # Set up the m4 macros.
 
 changequote({,})dnl
-define(ignore,)dnl
 
 # Some utility macros.
 
@@ -22,7 +21,7 @@ define(if_unicos,{ifdef({UNICOS},{$1},{$2})})dnl
 define(if_sunos, {ifdef({SUNOS}, {$1},{$2})})dnl
 define(if_ultrix,{ifdef({ULTRIX},{$1},{$2})})dnl
 define(if_next,  {ifdef({NEXT},  {$1},{$2})})dnl
-define(if_linux, {ifdef({LINUX},  {$1},{$2})})dnl
+define(if_linux, {ifdef({LINUX}, {$1},{$2})})dnl
 
 if_aix(   {define({UNIX})})dnl
 if_hpux(  {define({UNIX})})dnl
@@ -32,14 +31,14 @@ if_bsd(   {define({UNIX})})dnl
 if_unicos({define({UNIX})})dnl
 if_sunos( {define({UNIX})})dnl
 if_next(  {define({UNIX})})dnl
-if_linux(  {define({UNIX},)})dnl
+if_linux( {define({UNIX},)define({NO_FORTRAN},)})dnl
 if_ultrix({define({UNIX})define({SUNOS})})dnl
 
 define(if_ranlib,{ifdef({RANLIB},{$1},{$2})})dnl
 if_sunos( {define({RANLIB})})dnl
 if_next(  {define({RANLIB})})dnl
 if_bsd(   {define({RANLIB})})dnl
-if_linux(   {define({RANLIB},)})dnl
+if_linux( {define({RANLIB},)})dnl
 
 define(if_unix,  {ifdef({UNIX},  {$1},{$2})})dnl
 define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
@@ -70,28 +69,26 @@ define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
 # definitions (for compiler, etc) for it to work on yours.
 #
 # The available output devices are controlled by the PLDEVICES variable,
-# a list of defines for the C preprocessor (affecting only dispatch.c).
-# When installing plplot you may wish to exclude devices not present
-# on your system in order to reduce screen clutter.  The default setting
-# is to include all supported devices.
+# a list of defines for the C preprocessor.  When installing plplot it's a
+# good idea to exclude devices not present on your system in order to reduce
+# screen clutter.  The default setting is to include all supported devices.
 # 
 # Problems/bugs:
 #
-# 1. When editing from the PLTMP directory, you must use the true path name
-#    (not that of the softlink) and the timestamp on the softlink will be
-#    automatically changed.  Otherwise the "permanent" sources may not
-#    be changed (depends on editor; emacs makes a copy, but vi updates
-#    the original).
+# 1. When editing from the tmp directory, some editors do not update the
+#    pointed-to source, but instead make a copy in the tmp directory.
+#    Editors known to work correctly include vi and GNU emacs (18.58 or
+#    later). 
 #
-# 2. The dependencies on the header files have been omitted, for simplicity.
-#    If you change any of the header files, assume that the whole package 
-#    must be rebuilt.
-#
-# 3. Some versions of m4 (like the one distributed with the NeXT) don't
+# 2. Some versions of m4 (like the one distributed with the NeXT) don't
 #    recognize the -D option.  Either get a better version of m4 or use the
 #    following trick
 #      echo 'define(NEXT)' | cat - makefile.m4 | m4 > makefile
 #    to generate the makefile.
+#
+# 3. Some versions of m4 (e.g. on the Amiga) require both input and output
+#    redirection:
+#	m4 -DAMIGA <makefile.m4 >makefile
 #
 # Other notes:
 #
@@ -156,6 +153,7 @@ define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
 # Directory structure.  Note most of these aren't used at present.
 # See right before rule declaration for plot library specifications.
 
+PLPLOT_H	= plplot.h
 PLLIB_DIR	= ../lib
 PLFNT_DIR	= ../lib
 PLLIB_PATH	= $(PLLIB_DIR)/
@@ -210,7 +208,7 @@ PLLIB_LDC	= $(PLLIB_C)
 
 # Enable X driver by default if a Unix system.
 
-if_unix({define({X11},)})
+if_unix({define({X11})})
 
 CFLAGS_MOTIF = -I/usr/{include}/Motif1.1
 
@@ -278,7 +276,7 @@ if_sunos({
 
 CC = gcc
 
-define({MOTIF})
+#define({MOTIF})
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_X11() DEF_MOTIF()
 SYS_FLAGS_C =
 
@@ -310,7 +308,7 @@ LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 })if_hpux({
 #		HP-UX definitions
 
-define({MOTIF})
+#define({MOTIF})
 PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DXFIG  DEF_X11() DEF_MOTIF()
 SYS_FLAGS_C =
 
@@ -392,7 +390,7 @@ PLDEVICES = -DPLMETA -DNULLDEV -DPS -DLJII DEF_X11()
 SYS_FLAGS_C =
 
 CC	= gcc
-F77	= f77
+F77	= 
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
 
@@ -517,8 +515,6 @@ PLFNT_PATH = $(PLFNT_DIR)/
 
 SYS_LIBS=
 
-# Compiler/linker macros for Lattice C.
-
 # Switch on floating point format.  Choices: 
 #	FFP	Motorola fast floating point
 #	IEEEF	IEEE floating point, using libs:mathieeedoubbas.library
@@ -527,6 +523,17 @@ SYS_LIBS=
 # Default is: IEEEF
 
 ifdef({MATH},,define(MATH,IEEEF))
+ifdef({COMPILER},,define(COMPILER,SAS6.X))
+
+#-------- Compiler/linker macros for Lattice C 5.x. -------------------------
+
+ifelse(COMPILER,LATTICE5.X,{
+
+#CC		= sc5
+#LDC		= slink 
+CC		= lc
+LDC		= blink 
+LIBC		= lib:lc.lib lib:amiga.lib
 
 ifelse(MATH,FFP,{
 MATHFLAGS	= -ff
@@ -549,13 +556,58 @@ DBL_FLAG_C	= -DDOUBLE_PREC
 PLLIB_MAIN	= $(PLLIB_PATH)plplotd.lib
 })
 
-CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) -i/{include} -v -d2 -j89i
-CC		= lc
-LDC		= blink 
+CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) -v -d2 -j89i
+PLDEVICES	= -DPLMETA -DNULLDEV -DTEK -DPS -DLJII \
+	    	  -DHP7470 -DHP7580 -DIMP -DIFF
+})
+
+#-------- Compiler/linker macros for SAS C 6.x. -----------------------------
+
+ifelse(COMPILER,SAS6.X,{
+
+CC		= sc
+LDC		= slink 
+LIBC		= lib:sc.lib lib:amiga.lib
+
+define(GST,{plplot.gst})
+
+ifdef({GST},{
+PLPLOT_H	= plplot.h GST
+})
+
+ifelse(MATH,FFP,{
+MATHFLAGS	= math=ffp
+LIBM		= lib:scmffp.lib
+DBL_FLAG_C	=
+PLLIB_MAIN	= $(PLLIB_PATH)plplotffp.lib
+})
+
+ifelse(MATH,IEEEF,{
+MATHFLAGS	= math=ieee
+LIBM		= lib:scmieee.lib
+DBL_FLAG_C	= 
+PLLIB_MAIN	= $(PLLIB_PATH)plplotf.lib
+})
+
+ifelse(MATH,IEEED,{
+MATHFLAGS	= math=ieee
+LIBM		= lib:scmieee.lib
+DBL_FLAG_C	= -DDOUBLE_PREC
+PLLIB_MAIN	= $(PLLIB_PATH)plplotd.lib
+})
+
+CFLAGS		= $(MATHFLAGS) $(DBL_FLAG_C) nover dbg=symbol \
+		  ign=84,89,161 ifdef({GST},{gst=GST})
+
+# Sigh
+
+PLDEVICES 	= def PLMETA def NULLDEV def PS def IFF
+
+})
+
 LDCFLAGS	= 
 STARTUP 	= lib:c.o
 TO		= to
-LIBC		= lib:lc.lib
 
 F77		= f77
 FFLAGS		= -c
@@ -564,74 +616,34 @@ LDFFLAGS	=
 LN		= copy
 
 PLLIB_C		= $(PLLIB_MAIN)
-PLLIB_LDC	= lib $(LIBM) $(PLLIB_C) $(LIBC)
+PLLIB_LDC	= lib $(PLLIB_C) $(LIBM) $(LIBC)
 
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DDG300 -DPS -DLJII \
-	    -DHP7470 -DHP7580 -DIMP -DIFF -DAEGIS
 })
 #----------------------------------------------------------------------#
 # Object file macros
 # Main sources.
 
 OBJ =	\
-	base.o \
-	convert.o \
-	genlin.o \
-	move.o \
-	pladv.o \
-	plaxes.o \
-	plbeg.o \
-	plbin.o \
 	plbox.o \
-	plbox3.o \
-	plccal.o \
-	plcntr.o \
-	plcol.o \
 	plcont.o \
-	plconf.o \
+	plctrl.o \
+	plcvt.o \
 	pldtik.o \
-	plend.o \
-	plenv.o \
-	plerr.o \
-	plexit.o \
 	plfill.o \
 	plfont.o \
-	plform.o \
-	plgra.o \
-	plgrid3.o \
-	plgspa.o \
 	plhist.o \
-	pljoin.o \
-	pllab.o \
-	pllclp.o \
 	plline.o \
-	pllsty.o \
-	plmesh.o \
-	plmtex.o \
-	plnxtv.o \
 	plot3d.o \
-	plpat.o \
-	plpsty.o \
-	plptex.o \
-	plrot.o \
+	plpage.o \
 	plsdef.o \
-	plside3.o \
-	plstar.o \
-	plstyl.o \
-	plsvpa.o \
+	plstring.o \
 	plsym.o \
-	plt3zz.o \
 	pltick.o \
-	plvasp.o \
-	plvpas.o \
 	plvpor.o \
-	plvsta.o \
-	plw3d.o \
-	plwid.o \
 	plwind.o \
-	plxybx.o \
-	plzbx.o \
-	string.o 
+	pdfutils.o \
+	plstream.o \
+	plcore.o 
 
 # Support files for font generators.
 
@@ -652,7 +664,7 @@ FONT_OBJ = \
 
 CSTUB_OBJ = \
 	sc3d.o \
-	scconf.o \
+	sccont.o \
 	scstubs.o
 
 # Fortran language stubs for linking Plplot to Fortran.
@@ -673,7 +685,7 @@ MOTIF_OBJ = \
 # Amiga
 
 AMIGA_OBJ = \
-	aegis.o \
+	aminew.o \
 	amiwn.o \
 	amipr.o \
 	iff.o \
@@ -686,7 +698,6 @@ AMIGA_OBJ = \
 
 DRIVERS_OBJ = if_motif({$(MOTIF_OBJ)}) \
 	dg300.o \
-	dispatch.o \
 	hp7470.o \
 	hp7580.o \
 	impress.o \
@@ -695,7 +706,6 @@ DRIVERS_OBJ = if_motif({$(MOTIF_OBJ)}) \
 	null.o \
 	plbuf.o \
 	plmeta.o \
-	pdfutils.o \
 	ps.o \
 	tek.o \
 	xfig.o \
@@ -759,13 +769,13 @@ fonts:	sfont xfont
 sfont:	$(PLFNT_DIR)plstnd.fnt
 xfont:	$(PLFNT_DIR)plxtnd.fnt
 
-$(PLFNT_DIR)plstnd.fnt: stndfont.o $(FONT_OBJ)
-	$(LDC) -o stndfont stndfont.o $(FONT_OBJ) $(LDCFLAGS)
+$(PLFNT_DIR)plstnd.fnt: stndfont.o pdfutils.o $(FONT_OBJ)
+	$(LDC) -o stndfont stndfont.o pdfutils.o $(FONT_OBJ) $(LDCFLAGS)
 	-./stndfont
 	mv *.fnt $(PLFNT_DIR)
 
-$(PLFNT_DIR)plxtnd.fnt: xtndfont.o $(FONT_OBJ)
-	$(LDC) -o xtndfont xtndfont.o $(FONT_OBJ) $(LDCFLAGS)
+$(PLFNT_DIR)plxtnd.fnt: xtndfont.o pdfutils.o $(FONT_OBJ)
+	$(LDC) -o xtndfont xtndfont.o pdfutils.o $(FONT_OBJ) $(LDCFLAGS)
 	-./xtndfont
 	mv *.fnt $(PLFNT_DIR)
 
@@ -774,167 +784,137 @@ $(PLFNT_DIR)plxtnd.fnt: xtndfont.o $(FONT_OBJ)
 
 # source files
 
-base.o:		plplot.h dispatch.h base.c 
-convert.o:	plplot.h convert.c 
-genlin.o:	plplot.h genlin.c 
-move.o:		plplot.h move.c 
-pladv.o:	plplot.h pladv.c 
-plaxes.o:	plplot.h plaxes.c 
-plbeg.o:	plplot.h plbeg.c 
-plbin.o:	plplot.h plbin.c 
-plbox.o:	plplot.h plbox.c 
-plbox3.o:	plplot.h plbox3.c 
-plccal.o:	plplot.h plccal.c 
-plcntr.o:	plplot.h plcntr.c 
-plcol.o:	plplot.h plcol.c 
-plcont.o:	plplot.h plcont.c 
-plconf.o:	plplot.h plconf.c 
-pldtik.o:	plplot.h pldtik.c 
-plend.o:	plplot.h plend.c 
-plenv.o:	plplot.h plenv.c 
-plerr.o:	plplot.h plerr.c 
-plexit.o:	plplot.h plexit.c 
-plfill.o:	plplot.h plfill.c 
-plfont.o:	plplot.h plfont.c 
-plform.o:	plplot.h plform.c 
-plgra.o:	plplot.h plgra.c 
-plgrid3.o:	plplot.h plgrid3.c 
-plgspa.o:	plplot.h plgspa.c 
-plhist.o:	plplot.h plhist.c 
-pljoin.o:	plplot.h pljoin.c 
-pllab.o:	plplot.h pllab.c 
-pllclp.o:	plplot.h pllclp.c 
-plline.o:	plplot.h plline.c 
-pllsty.o:	plplot.h pllsty.c 
-plmesh.o:	plplot.h plmesh.c 
-plmtex.o:	plplot.h plmtex.c 
-plnxtv.o:	plplot.h plnxtv.c 
-plot3d.o:	plplot.h plot3d.c 
-plpat.o:	plplot.h plpat.c 
-plpsty.o:	plplot.h plpsty.c 
-plptex.o:	plplot.h plptex.c 
-plrot.o:	plplot.h plrot.c 
-plsdef.o:	plplot.h plsdef.c 
-plside3.o:	plplot.h plside3.c 
-plstar.o:	plplot.h dispatch.h plstar.c 
-plstyl.o:	plplot.h plstyl.c 
-plsvpa.o:	plplot.h plsvpa.c 
-plsym.o:	plplot.h plsym.c 
-plt3zz.o:	plplot.h plt3zz.c 
-pltick.o:	plplot.h pltick.c 
-plvasp.o:	plplot.h plvasp.c 
-plvpas.o:	plplot.h plvpas.c 
-plvpor.o:	plplot.h plvpor.c 
-plvsta.o:	plplot.h plvsta.c 
-plw3d.o:	plplot.h plw3d.c 
-plwid.o:	plplot.h plwid.c 
-plwind.o:	plplot.h plwind.c 
-plxybx.o:	plplot.h plxybx.c 
-plzbx.o:	plplot.h plzbx.c 
-string.o:	plplot.h string.c 
+plbox.o:	$(PLPLOT_H) plbox.c 
+plcont.o:	$(PLPLOT_H) plcont.c 
+plctrl.o:	$(PLPLOT_H) plctrl.c 
+plcvt.o:	$(PLPLOT_H) plcvt.c 
+pldtik.o:	$(PLPLOT_H) pldtik.c 
+plfill.o:	$(PLPLOT_H) plfill.c 
+plfont.o:	$(PLPLOT_H) plfont.c 
+plhist.o:	$(PLPLOT_H) plhist.c 
+plline.o:	$(PLPLOT_H) plline.c 
+plot3d.o:	$(PLPLOT_H) plot3d.c 
+plpage.o:	$(PLPLOT_H) plpage.c 
+plsdef.o:	$(PLPLOT_H) plsdef.c 
+plstring.o:	$(PLPLOT_H) plstring.c 
+plsym.o:	$(PLPLOT_H) plsym.c 
+pltick.o:	$(PLPLOT_H) pltick.c 
+plvpor.o:	$(PLPLOT_H) plvpor.c 
+plwind.o:	$(PLPLOT_H) plwind.c 
+pdfutils.o:	$(PLPLOT_H) pdfutils.c
+
+# Stream/device support library
+
+plstream.o:	$(PLPLOT_H) plstream.h plstream.c
 
 # C language stubs for linking Plplot to Fortran.
 
-sc3d.o:		plstubs.h plplot.h sc3d.c
-scconf.o:	plstubs.h plplot.h scconf.c
-scstubs.o:	plstubs.h plplot.h scstubs.c
+sc3d.o:		plstubs.h $(PLPLOT_H) sc3d.c
+sccont.o:	plstubs.h $(PLPLOT_H) sccont.c
+scstubs.o:	plstubs.h $(PLPLOT_H) scstubs.c
 
 # Fortran language stubs for linking Plplot to Fortran.
 
 strutil.o:	strutil.f
 sfstubs.o:	sfstubs.f
 
-# System-specific files.
-
 # Amiga
 
-aegis.o:	plplot.h dispatch.h plamiga.h aegis.c
-amiwn.o:	plplot.h dispatch.h plamiga.h amiwn.c
-amipr.o:	plplot.h dispatch.h plamiga.h amipr.c
-iff.o:		plplot.h dispatch.h plamiga.h iff.c
-plmenu.o:	plplot.h plamiga.h plmenu.c
-plprefs.o:	plplot.h plamiga.h plprefs.c
-plsupport.o:	plplot.h plamiga.h plsupport.c
-plwindow.o :	plplot.h plamiga.h plwindow.c
+if_amiga({
+
+aminew.o:	$(PLPLOT_H) drivers.h plamiga.h aminew.c
+amiwn.o:	$(PLPLOT_H) drivers.h plamiga.h amiwn.c
+amipr.o:	$(PLPLOT_H) drivers.h plamiga.h amipr.c
+iff.o:		$(PLPLOT_H) drivers.h plamiga.h iff.c
+plmenu.o:	$(PLPLOT_H) plamiga.h plmenu.c
+plprefs.o:	$(PLPLOT_H) plamiga.h plprefs.c
+plsupport.o:	$(PLPLOT_H) plamiga.h plsupport.c
+plwindow.o :	$(PLPLOT_H) plamiga.h plwindow.c
+
+ifdef({GST},{
+GST :		plplot.h plamiga.h
+	$(CC) makegst GST $(CFLAGS) $(PLDEVICES) gstskel.c
+})
+})
 
 #----------------------------------------------------------------------#
 # Explicit rules
 #
 # plfont.c may have font flags passed in
 
-plfont.o:	plplot.h plfont.c
+plfont.o:	$(PLPLOT_H) plfont.c
 	$(CC) $(CFLAGS) $(FONTFLAG) plfont.c
 
-# dispatch.c and all the drivers need to know $(PLDEVICES).  The guts
+# plcore.c and all the drivers need to know $(PLDEVICES).  The guts
 # of the driver routine are not compiled if its name is not present in
 # the device list.  You may want to leave drivers for specific systems
 # (Amiga, MS-DOS, OS/2, etc) out of this list.
 
-dispatch.o:	plplot.h dispatch.h dispatch.c
-	$(CC) $(CFLAGS) $(PLDEVICES) dispatch.c
+plcore.o:	$(PLPLOT_H) plcore.h drivers.h plstream.h plcore.c
+	$(CC) $(CFLAGS) $(PLDEVICES) plcore.c
 
-dg300.o:	plplot.h dispatch.h dg300.c
+dg300.o:	$(PLPLOT_H) plstream.h drivers.h dg300.c
 	$(CC) $(CFLAGS) $(PLDEVICES) dg300.c
 
-hp7470.o:	plplot.h dispatch.h hp7470.c
+hp7470.o:	$(PLPLOT_H) plstream.h drivers.h hp7470.c
 	$(CC) $(CFLAGS) $(PLDEVICES) hp7470.c
 
-hp7580.o:	plplot.h dispatch.h hp7580.c
+hp7580.o:	$(PLPLOT_H) plstream.h drivers.h hp7580.c
 	$(CC) $(CFLAGS) $(PLDEVICES) hp7580.c
 
-impress.o:	plplot.h dispatch.h impress.c
+impress.o:	$(PLPLOT_H) plstream.h drivers.h impress.c
 	$(CC) $(CFLAGS) $(PLDEVICES) impress.c
 
-ljii.o:		plplot.h dispatch.h ljii.c
+ljii.o:		$(PLPLOT_H) plstream.h drivers.h ljii.c
 	$(CC) $(CFLAGS) $(PLDEVICES) ljii.c
 
-next.o:		plplot.h dispatch.h next.c
+next.o:		$(PLPLOT_H) plstream.h drivers.h next.c
 	$(CC) $(CFLAGS) $(PLDEVICES) next.c
 
-null.o:		plplot.h dispatch.h null.c
+null.o:		$(PLPLOT_H) plstream.h drivers.h null.c
 	$(CC) $(CFLAGS) $(PLDEVICES) null.c
 
-ps.o:		plplot.h dispatch.h ps.c
+ps.o:		$(PLPLOT_H) plstream.h drivers.h ps.c
 	$(CC) $(CFLAGS) $(PLDEVICES) ps.c
 
-tek.o:		plplot.h dispatch.h tek.c
+tek.o:		$(PLPLOT_H) plstream.h drivers.h tek.c
 	$(CC) $(CFLAGS) $(PLDEVICES) tek.c
 
-plbuf.o:	plplot.h dispatch.h metadefs.h plbuf.c
+plbuf.o:	$(PLPLOT_H) plstream.h drivers.h metadefs.h plbuf.c
 	$(CC) $(CFLAGS) plbuf.c
 
-plmeta.o:	plplot.h dispatch.h metadefs.h plmeta.c
+plmeta.o:	$(PLPLOT_H) plstream.h drivers.h metadefs.h plmeta.c
 	$(CC) $(CFLAGS) $(PLDEVICES) plmeta.c
 
-xfig.o:		plplot.h dispatch.h xfig.c
+xfig.o:		$(PLPLOT_H) plstream.h drivers.h xfig.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xfig.c
 
-xwin.o:		plplot.h dispatch.h xwin.c
+xwin.o:		$(PLPLOT_H) plstream.h drivers.h xwin.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xwin.c
 
-xterm.o:	plplot.h dispatch.h xterm.c
+xterm.o:	$(PLPLOT_H) plstream.h drivers.h xterm.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xterm.c
 
 # Motif driver
 
-xm.o:		plplot.h dispatch.h xm.h xmMenu.h xmIcon.h xm.c
+xm.o:		$(PLPLOT_H) plstream.h drivers.h xm.h xmMenu.h xmIcon.h xm.c
 	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) $(PLDEVICES) xm.c
 
-xmsupport.o:	plplot.h xm.h xmsupport.c
+xmsupport.o:	$(PLPLOT_H) xm.h xmsupport.c
 	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) xmsupport.c
 
-xmMenu.o: 	plplot.h xm.h xmMenu.h xmMenu.c
+xmMenu.o: 	$(PLPLOT_H) xm.h xmMenu.h xmMenu.c
 	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) xmMenu.c
 
 #----------------------------------------------------------------------#
 # Utility programs.
 
-plrender.o:	plplot.h metadefs.h pdf.h plrender.c
+plrender.o:	$(PLPLOT_H) metadefs.h pdf.h plrender.c
 
 pltek:	pltek.o
 	$(LDC) $(STARTUP) pltek.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
-plrender: plrender.o 
+plrender: plrender.o  $(PLLIB_MAIN)
 	$(LDC) $(STARTUP) plrender.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
 #----------------------------------------------------------------------#
