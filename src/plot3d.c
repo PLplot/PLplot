@@ -181,7 +181,7 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
   n = 3;
 
   if (falsecolor)
-    c = ((z[0] + z[1] + z[2]) /3. - fc_minz) / (fc_maxz - fc_minz); /* the median should be better for vertically long and thin triangles ? */
+    c = ((z[0] + z[1] + z[2]) /3. - fc_minz) / (fc_maxz - fc_minz); /* is the median better for long and thin triangles ? */
   else
     c = plGetAngleToLight(x, y, z);
 
@@ -197,7 +197,7 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
   for(i=0; i<n; i++) {
     u[i] = plP_wcpcx(plP_w3wcx(x[i], y[i], z[i]));
     v[i] = plP_wcpcy(plP_w3wcy(x[i], y[i], z[i]));
-  }
+    }
   u[n] = u[0];
   v[n] = v[0];
   plcol1(c);
@@ -210,15 +210,6 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
  * Plots a 3-d representation of the function z[x][y]. The x values
  * are stored as x[0..nx-1], the y values as y[0..ny-1], and the z
  * values are in the 2-d array z[][]. 
- *
- * This code is a complete departure from the approach taken in the old version
- * of this routine. Formerly to code attempted to use the logic for the hidden
- * line algorithm to draw the hidden surface. This was really hard. This code
- * below uses a simple back to front (painters) algorithm. All the the
- * triangles are drawn.
- *
- * There are multitude of ways this code could be optimized. Given the
- * problems with the old code, I tried to focus on clarity here. 
 \*--------------------------------------------------------------------------*/
 
 void
@@ -246,6 +237,17 @@ c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z,
   plotsh3di(x,y,z,nx,ny,side);
 }
 
+/*--------------------------------------------------------------------------*\
+ * This code is a complete departure from the approach taken in the old version
+ * of this routine. Formerly to code attempted to use the logic for the hidden
+ * line algorithm to draw the hidden surface. This was really hard. This code
+ * below uses a simple back to front (painters) algorithm. All the the
+ * triangles are drawn.
+ *
+ * There are multitude of ways this code could be optimized. Given the
+ * problems with the old code, I tried to focus on clarity here. 
+\*--------------------------------------------------------------------------*/
+
 static void
 plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z,
 	  PLINT nx, PLINT ny, PLINT side)
@@ -257,6 +259,7 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z,
     PLINT iFast, iSlow;
     PLINT iX[2][2], iY[2][2];
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
+    PLFLT xm, ym, zm;
     PLINT ixmin=0, ixmax=nx, iymin=0, iymax=ny;
 
     if (plsc->level < 3) {
@@ -389,12 +392,43 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z,
 	}
 
 	/* now draw the quad as two triangles (4 might be better) */
+
+	/* 
+	 * two/four triangles. Four is better, but slower.
+	 * The x08c demo takes more 50% of execution time. Is it worth? 
+	 */
+
+	/* #define TWO_TRI /**/
+#ifdef TWO_TRI
 	shade_triangle(x[iX[0][0]], y[iY[0][0]], z[iX[0][0]][iY[0][0]],
 		       x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]],
 		       x[iX[0][1]], y[iY[0][1]], z[iX[0][1]][iY[0][1]]);
 	shade_triangle(x[iX[0][1]], y[iY[0][1]], z[iX[0][1]][iY[0][1]],
 		       x[iX[1][1]], y[iY[1][1]], z[iX[1][1]][iY[1][1]],
 		       x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]]);
+
+#else
+	xm = ( x[iX[0][0]] + x[iX[0][1]] + x[iX[1][0]] + x[iX[1][1]]) / 4.;
+	ym = ( y[iY[0][0]] + y[iY[0][1]] + y[iY[1][0]] + y[iY[1][1]]) / 4.;
+	zm = ( z[iX[0][0]][iY[0][0]] + z[iX[0][1]][iY[0][1]] +
+	       z[iX[1][0]][iY[1][0]] + z[iX[1][1]][iY[1][1]]) / 4.;
+
+	shade_triangle(x[iX[0][0]], y[iY[0][0]], z[iX[0][0]][iY[0][0]],
+		       xm, ym, zm,
+		       x[iX[0][1]], y[iY[0][1]], z[iX[0][1]][iY[0][1]]);
+	
+	shade_triangle(x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]],
+		       xm, ym, zm,
+		       x[iX[1][1]], y[iY[1][1]], z[iX[1][1]][iY[1][1]]);
+
+	shade_triangle(x[iX[0][0]], y[iY[0][0]], z[iX[0][0]][iY[0][0]],
+		       xm, ym, zm,
+		       x[iX[1][0]], y[iY[1][0]], z[iX[1][0]][iY[1][0]]);
+
+	shade_triangle(x[iX[1][1]], y[iY[1][1]], z[iX[1][1]][iY[1][1]],
+		       xm, ym, zm,
+		       x[iX[0][1]], y[iY[0][1]], z[iX[0][1]][iY[0][1]]);
+#endif /* TWO_TRI */
       }
     }
 
@@ -418,7 +452,6 @@ plotsh3di(PLFLT *x, PLFLT *y, PLFLT **z,
 		       x[iX[0][0]], y[iY[0][0]], zmin);
       }
     }
-
 }
 
 /*--------------------------------------------------------------------------*\
