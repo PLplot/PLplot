@@ -1,0 +1,15 @@
+#!/bin/sh
+# version
+# Geoffrey Furnish
+#
+# Dumb hack script to keep track of how many compiles we've done.
+
+if test ! -r version.dat; then
+    echo 0 >version.dat
+    echo 0
+else
+    ver=`cat version.dat`
+    ver=`expr $ver + 1`
+    echo $ver >version.dat
+    echo $ver
+fi
