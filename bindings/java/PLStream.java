@@ -312,7 +312,8 @@ public class PLStream {
     public native void svpa( float xmin, float xmax, float ymin, float ymax );
     public native void svpa( double xmin, double xmax, double ymin, double ymax );
 
-// sxax
+    public native void sxax( int digmax, int digits );
+
 // sxwin
 
     public native void syax( int digmax, int digits );
@@ -322,10 +323,14 @@ public class PLStream {
     public native void sym( float x, float y, int code ); // API addition
     public native void sym( double x, double y, int code ); // API addition
 
-// szax
-// text
-// vasp
-// vpas
+    public native void szax( int digmax, int digits );
+    public native void text();
+
+    public native void vasp( float aspect );
+    public native void vasp( double aspect );
+
+    public native void vpas( float xmin, float xmax, float ymin, float ymax, float aspect );
+    public native void vpas( double xmin, double xmax, double ymin, double ymax, double aspect );
 
     public native void vpor( float xmin, float xmax, float ymin, float ymax );
     public native void vpor( double xmin, double xmax, double ymin, double ymax );

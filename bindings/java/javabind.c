@@ -589,10 +589,13 @@ static PLFLT f2eval2( PLINT ix, PLINT iy, PLPointer plf2eval_data )
  * Signature: ([[F[F[F[FI)V
  */
 
-/* JNIEXPORT void JNICALL */
-/* Java_plplot_core_PLStream_cont___3_3F_3F_3F_3FI(JNIEnv *, jobject, jobjectArray, jfloatArray, jfloatArray, jfloatArray, jint) */
-/* { */
-/* } */
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_cont___3_3F_3F_3F_3FI(
+    JNIEnv *env, jobject jthis,
+    jobjectArray jz, jfloatArray jclev,
+    jfloatArray jxg, jfloatArray jyg, jint wrap )
+{
+}
 
 /*
  * Class:     plplot_core_PLStream
@@ -603,7 +606,7 @@ static PLFLT f2eval2( PLINT ix, PLINT iy, PLPointer plf2eval_data )
 JNIEXPORT void JNICALL
 Java_plplot_core_PLStream_cont___3_3D_3D_3D_3DI(
     JNIEnv *env, jobject jthis,
-    jobjectArray jz, jdoubleArray jclevel,
+    jobjectArray jz, jdoubleArray jclev,
     jdoubleArray jxg, jdoubleArray jyg, jint wrap )
 {
     jdouble **zdat;
@@ -619,9 +622,9 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3D_3DI(
 
     int kx, ky, lx, ly;
 
-    jdouble *clevel_dat = (*env)->GetDoubleArrayElements( env, jclevel, 0 );
-    PLFLT *clevel;
-    int nlevel = (*env)->GetArrayLength( env, jclevel );
+    int nlev = (*env)->GetArrayLength( env, jclev );
+    jdouble *clevdat = (*env)->GetDoubleArrayElements( env, jclev, 0 );
+    PLFLT *clev;
 
     PLfGrid2 fgrid;
     PLcGrid cgrid;
@@ -639,13 +642,13 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3D_3DI(
     }
 
     if (sizeof(PLFLT) == sizeof(jdouble)) {
-        clevel = (PLFLT *) clevel_dat;
+        clev = (PLFLT *) clevdat;
         xg = (PLFLT *) xgdat;
         yg = (PLFLT *) ygdat;
         z  = (PLFLT **) zdat;
     } else {
 /* No, we have to actually copy the data. */
-        clevel = (PLFLT *) malloc( nlevel * sizeof(PLFLT) );
+        clev = (PLFLT *) malloc( nlev * sizeof(PLFLT) );
         xg = (PLFLT *) malloc( nx * sizeof(PLFLT) );
         yg = (PLFLT *) malloc( ny * sizeof(PLFLT) );
 
@@ -657,8 +660,8 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3D_3DI(
                 z[i][j] = zdat[i][j];
         }
 
-        for( i=0; i < nlevel; i++ )
-            clevel[i] = clevel_dat[i];
+        for( i=0; i < nlev; i++ )
+            clev[i] = clevdat[i];
 
         for( i=0; i < nx; i++ )
             xg[i] = xgdat[i];
@@ -682,13 +685,12 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3D_3DI(
     ky = 1; ly = ny;
 
     set_PLStream(env,jthis);
-/*     plcont( z, nx, ny, kx, lx, ky, ly, clev, nlev,  */
 
     plfcont( f2eval2, &fgrid, nx, ny, kx, lx, ky, ly,
-             clevel, nlevel, pltr1, &cgrid );
+             clev, nlev, pltr1, &cgrid );
 
     if (must_free_buffers) {
-        (*env)->ReleaseDoubleArrayElements( env, jclevel, clevel_dat, 0 );
+        (*env)->ReleaseDoubleArrayElements( env, jclev, clevdat, 0 );
         (*env)->ReleaseDoubleArrayElements( env, jxg, xgdat, 0 );
         (*env)->ReleaseDoubleArrayElements( env, jyg, ygdat, 0 );
     }
@@ -703,10 +705,13 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3D_3DI(
  * Signature: ([[F[F[[F[[FI)V
  */
 
-/* JNIEXPORT void JNICALL */
-/* Java_plplot_core_PLStream_cont___3_3F_3F_3_3F_3_3FI(JNIEnv *, jobject, jobjectArray, jfloatArray, jobjectArray, jobjectArray, jint) */
-/* { */
-/* } */
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_cont___3_3F_3F_3_3F_3_3FI(
+    JNIEnv *env, jobject jthis,
+    jobjectArray jz, jfloatArray jclev,
+    jobjectArray jxg, jobjectArray jyg, jint wrap )
+{
+}
 
 /*
  * Class:     plplot_core_PLStream
@@ -714,10 +719,236 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3D_3DI(
  * Signature: ([[D[D[[D[[DI)V
  */
 
-/* JNIEXPORT void JNICALL */
-/* Java_plplot_core_PLStream_cont___3_3D_3D_3_3D_3_3DI(JNIEnv *, jobject, jobjectArray, jdoubleArray, jobjectArray, jobjectArray, jint) */
-/* { */
-/* } */
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_cont___3_3D_3D_3_3D_3_3DI(
+    JNIEnv *env, jobject jthis,
+    jobjectArray jz, jdoubleArray jclev,
+    jobjectArray jxg, jobjectArray jyg, jint wrap )
+{
+    jdouble **zdat;
+    jobject *zi;
+
+    jdouble **xgdat;
+    jobject *xgi;
+
+    jdouble **ygdat;
+    jobject *ygi;
+
+    int znx  = (*env)->GetArrayLength( env, jz ),  zny  = -1;
+    int xgnx = (*env)->GetArrayLength( env, jxg ), xgny = -1;
+    int ygnx = (*env)->GetArrayLength( env, jyg ), ygny = -1;
+
+    PLFLT **z, **xg, **yg;
+
+    int kx, ky, lx, ly;
+    int nx, ny;
+
+    int nlev = (*env)->GetArrayLength( env, jclev );
+    jdouble *clevdat = (*env)->GetDoubleArrayElements( env, jclev, 0 );
+    PLFLT *clev;
+
+    PLfGrid2 fgrid;
+    PLcGrid2 cgrid;
+
+    int must_free_buffers = 0;
+    int i, j;
+
+/* Extract the z data. */
+    zi = (jobject *) malloc( znx * sizeof(jobject) );
+    zdat = (jdouble **) malloc( znx * sizeof(jdouble *) );
+
+    for( i=0; i < znx; i++ )
+    {
+        zi[i] = (*env)->GetObjectArrayElement( env, jz, i );
+        zdat[i] = (*env)->GetDoubleArrayElements( env, zi[i], 0 );
+
+        if (zny == -1)
+            zny = (*env)->GetArrayLength( env, zi[i] );
+        else if (zny != (*env)->GetArrayLength( env, zi[i] )) {
+            printf( "Misshapen z array.\n" );
+            return;
+        }
+    }
+
+/* Extract the xg data. */
+    xgi = (jobject *) malloc( xgnx * sizeof(jobject) );
+    xgdat = (jdouble **) malloc( xgnx * sizeof(jdouble *) );
+
+    for( i=0; i < xgnx; i++ )
+    {
+        xgi[i] = (*env)->GetObjectArrayElement( env, jxg, i );
+        xgdat[i] = (*env)->GetDoubleArrayElements( env, xgi[i], 0 );
+
+        if (xgny == -1)
+            xgny = (*env)->GetArrayLength( env, xgi[i] );
+        else if (xgny != (*env)->GetArrayLength( env, xgi[i] )) {
+            printf( "Misshapen xg array.\n" );
+            return;
+        }
+    }
+
+/* Extract the yg data. */
+    ygi = (jobject *) malloc( ygnx * sizeof(jobject) );
+    ygdat = (jdouble **) malloc( ygnx * sizeof(jdouble *) );
+
+    for( i=0; i < ygnx; i++ )
+    {
+        ygi[i] = (*env)->GetObjectArrayElement( env, jyg, i );
+        ygdat[i] = (*env)->GetDoubleArrayElements( env, ygi[i], 0 );
+
+        if (ygny == -1)
+            ygny = (*env)->GetArrayLength( env, ygi[i] );
+        else if (ygny != (*env)->GetArrayLength( env, ygi[i] )) {
+            printf( "Misshapen yg array.\n" );
+            return;
+        }
+    }
+
+    if (znx != xgnx || znx != ygnx) {
+        printf( "Improper x dimensions.\n" );
+        return;
+    }
+    if (zny != xgny || zny != ygny) {
+        printf( "Improper y dimensions.\n" );
+        return;
+    }
+
+    nx = znx; ny = zny;
+
+/* See if PLFLT is compatible with the java numeric type. */
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+    /* Yes, we can just initialize the pointers.  Note the cast is so the
+     * compiler will be happy in the case where PLFLT does NOT match the java
+     * type, in which case this pathway isn't executed. */
+        clev = (PLFLT *) clevdat;
+        xg = (PLFLT **) xgdat;
+        yg = (PLFLT **) ygdat;
+        z  = (PLFLT **) zdat;
+    } else {
+    /* No, we have to actually copy the data. */
+        clev = (PLFLT *) malloc( nlev * sizeof(PLFLT) );
+
+        for( i=0; i < nlev; i++ )
+            clev[i] = clevdat[i];
+
+        z = (PLFLT **) malloc( znx * sizeof(PLFLT*) );
+        z[0] = (PLFLT *) malloc( znx * zny * sizeof(PLFLT) );
+        for( i=0; i < znx; i++ )
+        {
+            z[i] = z[0] + i*zny;
+            for( j=0; j < zny; j++ )
+                z[i][j] = zdat[i][j];
+        }
+
+        xg = (PLFLT **) malloc( xgnx * sizeof(PLFLT*) );
+        xg[0] = (PLFLT *) malloc( xgnx * xgny * sizeof(PLFLT) );
+        for( i=0; i < xgnx; i++ )
+        {
+            xg[i] = xg[0] + i*xgny;
+            for( j=0; j < xgny; j++ )
+                xg[i][j] = xgdat[i][j];
+        }
+
+        yg = (PLFLT **) malloc( ygnx * sizeof(PLFLT*) );
+        yg[0] = (PLFLT *) malloc( ygnx * ygny * sizeof(PLFLT) );
+        for( i=0; i < ygnx; i++ )
+        {
+            yg[i] = yg[0] + i*ygny;
+            for( j=0; j < ygny; j++ )
+                yg[i][j] = ygdat[i][j];
+        }
+
+        must_free_buffers = 1;
+    }
+
+    fgrid.f = z;
+    fgrid.nx = znx;
+    fgrid.ny = zny;
+
+/* Better hav xgnx == ygnx and xgny == ygny */
+
+    if (wrap == 0) {
+        cgrid.xg = xg;
+        cgrid.yg = yg;
+        cgrid.nx = xgnx;
+        cgrid.ny = xgny;
+    } else if (wrap == 1) {
+        plAlloc2dGrid( &cgrid.xg, nx+1, ny );
+        plAlloc2dGrid( &cgrid.yg, nx+1, ny );
+
+        cgrid.nx = nx+1;
+        cgrid.ny = ny;
+
+        for( i=0; i < nx; i++ )
+            for( j=0; j < ny; j++ ) {
+                cgrid.xg[i][j] = xg[i][j];
+                cgrid.yg[i][j] = yg[i][j];
+            }
+
+        for( j=0; j < ny; j++ ) {
+            cgrid.xg[nx][j] = cgrid.xg[0][j];
+            cgrid.yg[nx][j] = cgrid.yg[0][j];
+        }
+
+        ny++;
+    } else if (wrap == 2) {
+        plAlloc2dGrid( &cgrid.xg, nx, ny+1 );
+        plAlloc2dGrid( &cgrid.yg, nx, ny+1 );
+
+        cgrid.nx = nx;
+        cgrid.ny = ny+1;
+
+        for( i=0; i < nx; i++ )
+            for( j=0; j < ny; j++ ) {
+                cgrid.xg[i][j] = xg[i][j];
+                cgrid.yg[i][j] = yg[i][j];
+            }
+
+        for( i=0; i < nx; i++ ) {
+            cgrid.xg[i][ny] = cgrid.xg[i][0];
+            cgrid.yg[i][ny] = cgrid.yg[i][0];
+        }
+
+        ny++;
+    } else {
+        printf( "Invalid wrapping specification.\n" );
+    }
+
+    kx = 1; lx = nx;
+    ky = 1; ly = ny;
+
+    set_PLStream(env,jthis);
+
+    plfcont( f2eval2, &fgrid, nx, ny, kx, lx, ky, ly,
+             clev, nlev, pltr2, &cgrid );
+
+    if (must_free_buffers) {
+    /* Need to go through an free all the data arrays we malloced. */
+        free( clev );
+
+        free( z[0] );
+        free( z );
+
+        free( xg[0] );
+        free( xg );
+
+        free( yg[0] );
+        free( yg );
+    }
+
+    (*env)->ReleaseDoubleArrayElements( env, jclev, clevdat, 0 );
+    for( i=0; i < znx; i++ )
+        (*env)->ReleaseDoubleArrayElements( env, zi[i], zdat[i], 0 );
+    for( i=0; i < xgnx; i++ )
+        (*env)->ReleaseDoubleArrayElements( env, xgi[i], xgdat[i], 0 );
+    for( i=0; i < ygnx; i++ )
+        (*env)->ReleaseDoubleArrayElements( env, ygi[i], ygdat[i], 0 );
+
+    if (wrap != 0) {
+        plFree2dGrid( cgrid.xg, nx, ny );
+        plFree2dGrid( cgrid.yg, nx, ny );
+    }
+}
 
 /*
 /*
@@ -2621,6 +2852,20 @@ Java_plplot_core_PLStream_svpa__DDDD( JNIEnv *env, jobject jthis,
 
 /*
  * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    sxax
+ * Signature: (II)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_sxax( JNIEnv *env, jobject jthis,
+                                jint digmax, jint digits )
+{
+    set_PLStream(env,jthis);
+    plsxax( digmax, digits );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
  * Method:    syax
  * Signature: (II)V
  */
@@ -2755,6 +3000,99 @@ Java_plplot_core_PLStream_sym__DDI( JNIEnv *env, jobject jthis,
     PLFLT x = jx, y = jy;
     set_PLStream(env,jthis);
     plsym( 1, &x, &y, code );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    szax
+ * Signature: (II)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_szax( JNIEnv *env, jobject jthis,
+                                jint digmax, jint digits )
+{
+    set_PLStream(env,jthis);
+    plszax( digmax, digits );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    text
+ * Signature: ()V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_text( JNIEnv *env, jobject jthis )
+{
+    set_PLStream(env,jthis);
+    pltext();
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    vasp
+ * Signature: (F)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_vasp__F( JNIEnv *env, jobject jthis, jfloat jaspect )
+{
+    PLFLT aspect = jaspect;
+    set_PLStream(env,jthis);
+    plvasp( aspect );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    vasp
+ * Signature: (D)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_vasp__D( JNIEnv *env, jobject jthis, jdouble jaspect )
+{
+    PLFLT aspect = jaspect;
+    set_PLStream(env,jthis);
+    plvasp( aspect );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    vpas
+ * Signature: (FFFFF)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_vpas__FFFFF( JNIEnv *env, jobject jthis,
+                                       jfloat jxmin, jfloat jxmax,
+                                       jfloat jymin, jfloat jymax,
+                                       jfloat jaspect )
+{
+    PLFLT xmin = jxmin, xmax = jxmax;
+    PLFLT ymin = jymin, ymax = jymax;
+    PLFLT aspect = jaspect;
+    set_PLStream(env,jthis);
+    plvpas( xmin, xmax, ymin, ymax, aspect );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    vpas
+ * Signature: (DDDDD)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_vpas__DDDDD( JNIEnv *env, jobject jthis,
+                                       jdouble jxmin, jdouble jxmax,
+                                       jdouble jymin, jdouble jymax,
+                                       jdouble jaspect )
+{
+    PLFLT xmin = jxmin, xmax = jxmax;
+    PLFLT ymin = jymin, ymax = jymax;
+    PLFLT aspect = jaspect;
+    set_PLStream(env,jthis);
+    plvpas( xmin, xmax, ymin, ymax, aspect );
 }
 
 /*
