@@ -1472,6 +1472,10 @@ plInitDispatchTable()
 #ifdef ENABLE_DYNAMIC_DRIVERS
     fp_drvdb = plLibOpen( "drivers/drivers.db" );
 
+    if (!fp_drvdb)
+    /* Try to fool plLibOpen into looking under $prefix/lib. */
+        fp_drvdb = plLibOpen( "../../drivers/drivers.db" );
+
     if (fp_drvdb) {
     /* Count the number of dynamic devices. */
         while( !done ) {
@@ -1733,12 +1737,22 @@ plLoadDriver(void)
 /* Load the driver if it hasn't been loaded yet. */
     if (!driver->dlhand)
     {
-        char drvspec[ 100 ];
+        char drvspec[ 400 ];
         sprintf( drvspec, "./drivers/%s", driver->drvnam );
 
 /*         printf( "Trying to load %s\n", driver->drvnam ); */
 
         driver->dlhand = dlopen( drvspec, RTLD_NOW );
+
+        if (!driver->dlhand)
+        {
+            sprintf( drvspec, "%s/%s/%s",
+                     LIB_DIR, "drivers", driver->drvnam );
+
+/*             printf( "Trying to load %s\n", drvspec ); */
+
+            driver->dlhand = dlopen( drvspec, RTLD_NOW );
+        }
     }
 
 /* If it still isn't loaded, then we're doomed. */
