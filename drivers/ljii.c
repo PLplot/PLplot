@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/02/22 23:10:55  mjl
-   Eliminated the gradv() driver calls, as these were made obsolete by
-   recent changes to plmeta and plrender.  Also eliminated page clear commands
-   from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+   Revision 1.7  1993/03/03 16:17:08  mjl
+   Fixed orientation-swapping code.
 
+ * Revision 1.6  1993/02/22  23:10:55  mjl
+ * Eliminated the gradv() driver calls, as these were made obsolete by
+ * recent changes to plmeta and plrender.  Also eliminated page clear commands
+ * from grtidy() -- plend now calls grclr() and grtidy() explicitly.
+ *
  * Revision 1.5  1993/01/23  05:41:45  mjl
  * Changes to support new color model, polylines, and event handler support
  * (interactive devices only).
@@ -120,19 +123,14 @@ jet_init(PLStream *pls)
     dev->xmin = 0;
     dev->ymin = 0;
 
-    orient = pls->orient - 1;
-    switch (orient) {
-
-      case 1:
-      case -1:
+    orient = pls->orient + 1;
+    if (orient%2 == 1) {
 	dev->xmax = JETY;
 	dev->ymax = JETX;
-	break;
-
-      default:
+    }
+    else {
 	dev->xmax = JETX;
 	dev->ymax = JETY;
-	break;
     }
 
     dev->xlen = dev->xmax - dev->xmin;
@@ -172,7 +170,7 @@ jet_line(PLStream *pls, PLSHORT x1a, PLSHORT y1a, PLSHORT x2a, PLSHORT y2a)
 /* Because portrait mode addressing is used here, we need to complement
    the orientation flag to get the right mapping. */
 
-    orient = pls->orient - 1;
+    orient = pls->orient + 1;
     plRotPhy(orient, dev, &x1, &y1, &x2, &y2);
 
     if (pls->pscale)

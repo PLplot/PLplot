@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/02/27 04:46:41  mjl
-   Fixed errors in ordering of header file inclusion.  "plplot.h" should
-   always be included first.
+   Revision 1.8  1993/03/03 16:17:09  mjl
+   Fixed orientation-swapping code.
 
+ * Revision 1.7  1993/02/27  04:46:41  mjl
+ * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * always be included first.
+ *
  * Revision 1.6  1993/02/22  23:11:02  mjl
  * Eliminated the gradv() driver calls, as these were made obsolete by
  * recent changes to plmeta and plrender.  Also eliminated page clear commands
@@ -123,20 +126,15 @@ tek_init(PLStream *pls)
     dev->xmin = 0;
     dev->ymin = 0;
 
-    switch (pls->orient) {
-
-      case 1:
-      case -1:
+    if (pls->orient%2 == 1) {
 	dev->xmax = TEKY * 16;
 	dev->ymax = TEKX * 16;
 	setpxl((PLFLT) (4.653 * 16), (PLFLT) (4.771 * 16));
-	break;
-
-      default:
+    }
+    else {
 	dev->xmax = TEKX * 16;
 	dev->ymax = TEKY * 16;
 	setpxl((PLFLT) (4.771 * 16), (PLFLT) (4.653 * 16));
-	break;
     }
 
     dev->xlen = dev->xmax - dev->xmin;
