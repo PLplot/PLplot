@@ -371,10 +371,6 @@ case "$system" in
     next*|NeXT*|NEXT* ) 
     ;;
     SunOS-* )
-	if test "$with_opt" = "yes" -a "$with_f2c" = "no"; then
-	    OPT_FLAG_F="-fast"
-	    OPT_FLAG_LF="-fast"
-	fi
 	if test "$with_profile" = "yes"; then
 	    PROF_FLAG_LC="-p -static"
 	fi

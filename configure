@@ -795,7 +795,7 @@ if test -z "$CC"; then
 	next*|NeXT*|NEXT* ) 
 	    with_gcc="yes"
 	;;
-	SunOS-* )
+	SunOS-4* )
 	    CC="acc"
 	;;
 	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
@@ -1051,10 +1051,6 @@ case "$system" in
     next*|NeXT*|NEXT* ) 
     ;;
     SunOS-* )
-	if test "$with_opt" = "yes" -a "$with_f2c" = "no"; then
-	    OPT_FLAG_F="-fast"
-	    OPT_FLAG_LF="-fast"
-	fi
 	if test "$with_profile" = "yes"; then
 	    PROF_FLAG_LC="-p -static"
 	fi
@@ -1151,28 +1147,28 @@ case "$system" in
     ;;
 
     # The rest are probably broken.  Someone please fix them.
-    # Remove the 'with_shlib="no"' line and go wild.
+    # Remove the 'with_shlib="no"' line, comments, and go wild.
 
     SunOS-5* )
 	with_shlib="no"
-	SHLIB_CCFLAGS="-K pic"
-	SHLIB_F77FLAGS="-K pic"
-	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
-	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+#	SHLIB_CCFLAGS="-K pic"
+#	SHLIB_F77FLAGS="-K pic"
+#	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
+#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
     ;;
     OSF-1.* )
 	with_shlib="no"
-	SHLIB_CCFLAGS="-fpic"
-	SHLIB_F77FLAGS="-fpic"
-	SHLIB_BUILD="$CC -shared"
-	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+#	SHLIB_CCFLAGS="-fpic"
+#	SHLIB_F77FLAGS="-fpic"
+#	SHLIB_BUILD="$CC -shared"
+#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
     ;;
     IRIX-5.* )
 	with_shlib="no"
-	SHLIB_CCFLAGS="-KPIC"
-	SHLIB_F77FLAGS="-KPIC"
-	SHLIB_BUILD="$CC -shared"
-	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+#	SHLIB_CCFLAGS="-KPIC"
+#	SHLIB_F77FLAGS="-KPIC"
+#	SHLIB_BUILD="$CC -shared"
+#	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
     ;;
     * )
 	echo "Don't know how to make shared libraries for $system"
