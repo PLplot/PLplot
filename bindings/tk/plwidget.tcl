@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.5  1993/08/09 22:22:18  mjl
+# Revision 1.6  1993/08/13 06:42:36  mjl
+# Added bulletproofing for when idiot user selects "Cancel" in GetItem.
+#
+# Revision 1.5  1993/08/09  22:22:18  mjl
 # Added "Close" entry in Plot menu, for closing out save file.
 #
 # Revision 1.4  1993/07/31  08:04:31  mjl
@@ -10,15 +13,6 @@
 # Changed << and >> buttons when running plrender to simulate keyboard
 # input, by sending a <Backspace> and <CR>, respectively (works better
 # this way).
-#
-# Revision 1.2  1993/07/16  22:06:40  mjl
-# Changed top row of widgets.  Now most commands accessible through the "plot"
-# menu.  Many additions, including save, save as, orient.., zoom.., page..,
-# and so on.  Procs added to handle the new options as well as support for
-# scrollbars on zooms.
-#
-# Revision 1.1  1993/07/02  06:58:35  mjl
-# The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
 
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer
@@ -405,12 +399,14 @@ proc plw_close {w} {
 
 proc plw_saveas {w dev} {
     set file [getItem "Enter file name"]
-    if { [file exists $file] } {
-	if { ! [confirm "File $file already exists.  Are you sure?"] } {
-	    return
+    if { [string length $file] > 0 } {
+	if { [file exists $file] } {
+	    if { ! [confirm "File $file already exists.  Are you sure?"] } {
+		return
+	    }
 	}
+	$w.plwin save as $dev $file
     }
-    $w.plwin save as $dev $file
 }
 
 #----------------------------------------------------------------------------
