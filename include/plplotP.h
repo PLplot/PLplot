@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1994/08/25 04:03:17  mjl
+ * Revision 1.30  1994/10/11 18:59:03  mjl
+ * Virtual coordinate space for X-based drivers and metafile increased to
+ * 32K by 32K, in order to improve appearance of plots at high levels of
+ * magnification.
+ *
+ * Revision 1.29  1994/08/25  04:03:17  mjl
  * Eliminated an unnecessary header file inclusion.
  *
  * Revision 1.28  1994/08/03  20:12:43  mjl
@@ -212,8 +217,8 @@ typedef struct {
 
 /* These define the metafile & X driver (virtual) coordinate systems */
 
-#define PIXELS_X	8192		/* Number of virtual pixels in x */
-#define PIXELS_Y	8192		/* Number of virtual pixels in x */
+#define PIXELS_X	32768		/* Number of virtual pixels in x */
+#define PIXELS_Y	32768		/* Number of virtual pixels in x */
 #define LPAGE_X		254.0		/* Page length in x in virtual mm */
 #define LPAGE_Y		190.5		/* Page length in y in virtual mm */
 
