@@ -117,6 +117,18 @@ ps_init(PLStream *pls)
 
     plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
+/* If portrait mode is specified, then set up an additional rotation 
+ * transformation with aspect ratio allowed to adjust via freeaspect.  
+ * Default orientation is landscape (ORIENTATION == 3 or 90 deg rotation 
+ * counter-clockwise from portrait).  (Legacy PLplot used seascape
+ * which was equivalent to ORIENTATION == 1 or 90 deg clockwise rotation 
+ * from portrait.) */
+
+    if (pls->portrait) {
+       plsdiori((PLFLT)(4 - ORIENTATION));
+       plsfreeaspect(1);
+    }
+
 /* Header comments into PostScript file */
 
     fprintf(OF, "%%!PS-Adobe-2.0 EPSF-2.0\n");
