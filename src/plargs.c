@@ -394,7 +394,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG,
     "-width width",
-    "Sets pen width (1 <= width <= 10)" },
+    "Sets pen width (0 <= width)" },
 {
     "bg",			/* Background color */
     opt_bg,
@@ -1554,7 +1554,7 @@ opt_width(char *opt, char *optarg, void *client_data)
     int width;
 
     width = atoi(optarg);
-    if (width == 0) {
+    if (width < 0) {
 	fprintf(stderr, "?invalid width\n");
 	return 1;
     }

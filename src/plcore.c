@@ -2130,13 +2130,13 @@ c_plsori(PLINT ori)
 /*
  * Set pen width.  Can be done any time, but before calling plinit is best
  * since otherwise it may be volatile (i.e. reset on next page advance). 
- * If width <= 0 or is unchanged by the call, nothing is done.
+ * If width < 0 or is unchanged by the call, nothing is done.
  */
 
 void
 c_plwid(PLINT width)
 {
-    if (width != plsc->width && width > 0) {
+    if (width != plsc->width && width >= 0) {
 	plsc->width = width;
 
 	if (plsc->level > 0) {
