@@ -66,6 +66,7 @@ define(if_debug,   {ifdef({DEBUG},     {$1},{$2})})dnl
 define(if_dbl,     {ifdef({DOUBLE},    {$1},{$2})})dnl
 define(if_opt,     {ifdef({OPT},       {$1},{$2})})dnl
 define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
+define(if_shareable, {ifdef({NO_SHARE},	{$2},{$1})})dnl
 
 ##############################################################################
 #
@@ -180,6 +181,7 @@ PLLIB_PATH	= $(PLLIB_DIR)/
 PLFNT_PATH	= $(PLFNT_DIR)/
 FONTFLAG	=
 TK_INCDIR	= /usr/local/{include}
+TK_LINKDIR	= /usr/local/lib
 SYS_LIBS=
 
 # Note there is no "standard" way to invoke double precision in Fortran
@@ -335,14 +337,22 @@ F77	= fort77
 
 SYS_FLAGS_C	= 
 
+if_shareable({
+SHARE_FLAG_C	= +z
+SHARE_FLAG_F	= +z
+},{
+SHARE_FLAG_C	=
+SHARE_FLAG_F	=
+})
+
 LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
 LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
-	     $(PROFILE_FLAG_C)
+	     $(PROFILE_FLAG_C) $(SHARE_FLAG_C)
 
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
-	     $(PROFILE_FLAG_F)
+	     $(PROFILE_FLAG_F) $(SHARE_FLAG_F)
 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm -g
 LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm -g
@@ -632,7 +642,7 @@ PLLIB_MAIN	= $(PLLIB_PATH)libplplotfb.a
 
 PLLIB_C		= $(PLLIB_MAIN)
 PLLIB_F		= $(PLLIB_MAIN)
-PLLIB_LDC	= $(PLLIB_C)
+PLLIB_LDC	= if_tk({-L$(TK_LINKDIR)}) $(PLLIB_C)
 
 })
 
@@ -926,11 +936,14 @@ $(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ)
 	-rm $(PLLIB_MAIN)
 	ar q $(PLLIB_MAIN) $(OBJ) $(DRIVERS_OBJ)
 	if_ranlib({ranlib $(PLLIB_MAIN)})
+	if_shareable({ld -b -o $(PLLIB_MAIN:.a=.sl) $(OBJ) $(DRIVERS_OBJ)},)
 },{
 $(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ) $(CSTUB_OBJ) $(FSTUB_OBJ)
 	-rm $(PLLIB_MAIN)
 	ar q $(PLLIB_MAIN) $(OBJ) $(DRIVERS_OBJ) $(CSTUB_OBJ) $(FSTUB_OBJ)
 	if_ranlib({ranlib $(PLLIB_MAIN)})
+	if_shareable({ld -b -o $(PLLIB_MAIN:.a=.sl) $(OBJ) $(DRIVERS_OBJ) \
+		$(CSTUB_OBJ) $(FSTUB_OBJ)},)
 })})
 
 if_amiga({
@@ -1102,9 +1115,11 @@ plserver.o:	plserver.h plplotP.h plplot.h plstream.h plserver.c
 	$(CC) -I $(TK_INCDIR) $(CFLAGS) plserver.c
 
 plframe.o:	plframe.c
+	$(CC) -I $(TK_INCDIR) $(CFLAGS) plframe.c
 
 plr.o:		plserver.h plplotP.h plplot.h plstream.h \
 		metadefs.h pdf.h plevent.h plr.c
+	$(CC) -I $(TK_INCDIR) $(CFLAGS) plr.c
 
 plserver:	$(PLLIB_MAIN) $(SERVER_OBJ)
 	$(LDC) $(STARTUP) $(SERVER_OBJ) $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
