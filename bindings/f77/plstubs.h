@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.13  1993/07/16 22:31:41  mjl
-   Changed method for getting stub conversion right.  Now need to define
-   the macro STUB_LINKAGE with any of the supported conversion types.
+   Revision 1.14  1993/07/20 06:50:28  mjl
+   Eliminated obsolete type declarations for string conversions.
 
+ * Revision 1.13  1993/07/16  22:31:41  mjl
+ * Changed method for getting stub conversion right.  Now need to define
+ * the macro STUB_LINKAGE with any of the supported conversion types.
+ *
  * Revision 1.12  1993/07/02  07:26:10  mjl
  * Changed include of plplot.h to plplotP.h.  Also added IRIX support.
  *
@@ -54,11 +57,6 @@
 #define INCLUDED_PLSTUBS
 
 #include "plplotP.h"
-
-/* These are needed for system-independent Fortran->C string linkage. */
-
-extern char cstring1[300], cstring2[300], cstring3[300];
-extern char cstring4[300], cstring5[300], cstring6[300];
 
 /*----------------------------------------------------------------------*\
 * Select name transformation based on system type.
