@@ -5,22 +5,10 @@
 
 use PLplot qw(:all);
 
-use Getopt::Long;
-
 # plplot initialization
 # Divide page into 2x2 plots
 
 plssub (2,2);
-
-Getopt::Long::Configure ("pass_through");
-GetOptions qw(-locate! -h!);
-
-$locate_mode = (defined $opt_locate) ? 1 : 0;
-
-if (defined $opt_h) {
-  print "$0 option:\n\t-locate\t Do locate\n";
-  push @ARGV, "-h";
-}
 
 plParseOpts_p (\@ARGV, ("PL_PARSE_FULL"));
 
