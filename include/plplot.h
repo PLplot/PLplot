@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.48  1993/11/19 08:21:01  mjl
+ * Revision 1.49  1993/12/06 07:44:53  mjl
+ * Some more support for new color model.
+ *
+ * Revision 1.48  1993/11/19  08:21:01  mjl
  * Fixed busted ifdef syntax from last commit.
  *
  * Revision 1.47  1993/11/19  07:32:40  mjl
@@ -412,7 +415,8 @@ typedef struct {
 #define    plbop	c_plbop
 #define    plbox	c_plbox
 #define    plbox3	c_plbox3
-#define    plcol	c_plcol
+#define    plcol0	c_plcol0
+#define    plcol1	c_plcol1
 #define    plcont	c_plcont
 #define    plcpstrm	c_plcpstrm
 #define    plend	c_plend
@@ -462,10 +466,9 @@ typedef struct {
 #define    plrgb1	c_plrgb1
 #define    plsasp	c_plsasp
 #define    plschr	c_plschr
-#define    plscm0	c_plscm0
-#define    plscm0n	c_plscm0n
-#define    plscm1	c_plscm1
-#define    plscm1f1	c_plscm1f1
+#define    plscmap0	c_plscmap0
+#define    plscmap1	c_plscmap1
+#define    plscmap1f1	c_plscmap1f1
 #define    plscol0	c_plscol0
 #define    plscolbg	c_plscolbg
 #define    plscolor	c_plscolor
@@ -514,7 +517,8 @@ typedef struct {
 #define    c_plbop	plbop
 #define    c_plbox	plbox
 #define    c_plbox3	plbox3
-#define    c_plcol	plcol
+#define    c_plcol0	plcol0
+#define    c_plcol1	plcol1
 #define    c_plcpstrm	plcpstrm
 #define    c_plcont	plcont
 #define    c_plend	plend
@@ -563,10 +567,9 @@ typedef struct {
 #define    c_plrgb1	plrgb1
 #define    c_plsasp	plsasp
 #define    c_plschr	plschr
-#define    c_plscm0	plscm0
-#define    c_plscm0n	plscm0n
-#define    c_plscm1	plscm1
-#define    c_plscm1f1	plscm1f1
+#define    c_plscmap0	plscmap0
+#define    c_plscmap1	plscmap1
+#define    c_plscmap1f1	plscmap1f1
 #define    c_plscol0	plscol0
 #define    c_plscolbg	plscolbg
 #define    c_plscolor	plscolor
@@ -609,8 +612,13 @@ typedef struct {
 
 /* Redefine some old function names for backward compatibility */
 
+#ifndef INCLUDED_PLSTUBS	/* i.e. do not expand this in the stubs */
+
 #define    plclr	pleop
 #define    plpage	plbop
+#define    plcol	plcol0
+
+#endif /* INCLUDED_PLSTUBS */
 
 /*----------------------------------------------------------------------*\
 *		Function Prototypes
@@ -659,10 +667,15 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz);
 
-/* Set color, map 0 */
+/* Set color, map 0.  Argument is integer between 0 and 15. */
 
 void
-c_plcol(PLINT icol0);
+c_plcol0(PLINT icol0);
+
+/* Set color, map 1.  Argument is a float between 0. and 1. */
+
+void
+c_plcol1(PLFLT col1);
 
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
 * plcontf, with a particular choice for f2eval and f2eval_data. */
@@ -940,23 +953,18 @@ c_plschr(PLFLT def, PLFLT scale);
 /* Set color map 0 colors by 8 bit RGB values */
 
 void
-c_plscm0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0);
-
-/* Set number of colors in color map 0 */
-
-void
-c_plscm0n(PLINT ncol0);
+c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0);
 
 /* Set color map 1 colors by 8 bit RGB values */
 
 void
-c_plscm1(PLINT *r, PLINT *g, PLINT *b);
+c_plscmap1(PLINT *r, PLINT *g, PLINT *b);
 
 /* Set color map 1 colors using a linear relationship between function */
 /*  height and position in HLS or RGB color space. */
 
 void
-c_plscm1f1(PLINT itype, PLFLT *param);
+c_plscmap1f1(PLINT itype, PLFLT *param);
 
 /* Set a given color from color map 0 by 8 bit RGB value */
 
