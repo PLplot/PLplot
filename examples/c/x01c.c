@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1995/01/06 07:58:20  mjl
+ * Revision 1.14  1995/03/16 23:21:50  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ * Changed locate code to new syntax (using a PLGraphicsIn).  Added a command
+ * line option "-locate" to turn on the locate code (off by default).  This
+ * also illustrates how easy it is for PLplot to parse user command line flags.
+ *
+ * Revision 1.13  1995/01/06  07:58:20  mjl
  * Switched to the new syntax for the window structure variables and
  * shortened the info printed out by the get cursor loop.
  *
@@ -33,12 +39,30 @@
 */
 
 #include <plplot.h>
+#include <plevent.h>
 
 /* Variables and data arrays used by plot generators */
 
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
-static PLCursor plc;
+static PLGraphicsIn gin;
+
+static int locate_mode;
+
+/* Options data structure definition. */
+
+static PLOptionTable options[] = {
+{
+    "locate",			/* Turns on test of API locate function */
+    NULL,
+    NULL,
+    &locate_mode,
+    PL_OPT_BOOL | PL_OPT_ENABLED,
+    "-locate",
+    "Turns on test of API locate function" },
+};
+
+char *notes[] = {"Make sure you get it right!", NULL};
 
 /* Function prototypes */
 
@@ -46,7 +70,7 @@ void plot1(void);
 void plot2(void);
 void plot3(void);
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Generates several simple line plots.  Demonstrates:
@@ -56,14 +80,13 @@ void plot3(void);
  *   - automatic axis rescaling to exponential notation
  *   - placing the axes in the middle of the box
  *   - gridded coordinate axes
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
 {
     PLINT digmax;
     char ver[80];
-    int co;
 
 /* plplot initialization */
 /* Divide page into 2x2 plots unless user overrides */
@@ -72,7 +95,10 @@ main(int argc, char *argv[])
 
 /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    plMergeOpts(options, "x01c options", notes);
+
+    if (plParseOpts(&argc, argv, PL_PARSE_FULL))
+	exit(1);
 
 /* Get version number, just for kicks */
 
@@ -105,6 +131,7 @@ main(int argc, char *argv[])
 
     digmax = 5;
     plsyax(digmax, 0);
+
     plot1();
 
     plot2();
@@ -113,23 +140,24 @@ main(int argc, char *argv[])
 
 /* Let's get some user input */
 
-    do {
-	co = 0;
-	if (plGetCursor(&plc)) {
+    if (locate_mode) {
+	while (1) {
+	    if (! plGetCursor(&gin)) break;
+	    if (gin.keysym == PLK_Escape) break;
+
 	    pltext();
-	    if (isprint(plc.c)) 
-		printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = \"%c\"\n",
-		       plc.wX, plc.wY, plc.dX, plc.dY, plc.c);
+	    if (gin.keysym < 0xFF && isprint(gin.keysym)) 
+		printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = '%c'\n",
+		       gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
 	    else
-		printf("wx = %f,  wy = %f, dx = %f,  dy = %f\n",
-		       plc.wX, plc.wY, plc.dX, plc.dY);
+		printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = 0x%02x\n",
+		       gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
 
 	    plgra();
-	    co = 1;
 	}
-    } while (co);
+    }
 
-/* Don't forget to call PLEND to finish off! */
+/* Don't forget to call plend() to finish off! */
 
     plend();
     exit(0);
@@ -189,7 +217,7 @@ plot2(void)
 /* Set up the viewport and window using PLENV. The range in X is -2.0 to
  * 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
  * (just = 0), and we draw a box with axes (axis = 1). 
- */
+*/
     plcol(1);
     plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
     plcol(2);
@@ -219,13 +247,13 @@ plot3(void)
     int i;
 
 /* For the final graph we wish to override the default tick intervals, and
- * so do not use PLENV 
- */
+ * so do not use plenv().
+*/
     pladv(0);
 
 /* Use standard viewport, and define X range from 0 to 360 degrees, Y range
  * from -1.2 to 1.2. 
- */
+*/
     plvsta();
     plwind(0.0, 360.0, -1.2, 1.2);
 
@@ -235,8 +263,8 @@ plot3(void)
     plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
 /* Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
- * plstyl expects a pointer!! 
- */
+ * plstyl expects a pointer!
+*/
     plstyl(1, &mark1, &space1);
     plcol(2);
     plbox("g", 30.0, 0, "g", 0.2, 0);
