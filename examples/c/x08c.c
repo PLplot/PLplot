@@ -161,9 +161,9 @@ main(int argc, char *argv[])
   }
 
   plMinMax2dGrid(z, XPTS, YPTS, &zmax, &zmin);
-  step = (zmax-zmin)/nlevel;
+  step = (zmax-zmin)/(nlevel+1);
   for (i=0; i<nlevel; i++)
-    clevel[i] = zmin + i*step;
+    clevel[i] = zmin + step + step*i;
   
   pllightsource(1.,1.,1.);
     	
