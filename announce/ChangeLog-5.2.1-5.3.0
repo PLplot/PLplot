@@ -1,3 +1,459 @@
+Commit from vincentdarley (2004-01-09 17:35 CET)
+-------------------------
+
+compilation fixes for latest plplot and win-tk build
+
+  plplot  sys/win-tk/makePlplotStarkit.tcl  1.4
+  plplot  sys/win-tk/makefile.vc            1.13
+  plplot  include/plplotP.h                 1.73
+
+
+Commit from airwin (2004-01-07 17:47 CET)
+------------------
+
+Define two alternates of each of the embedded underscore names
+(PL_SETCONTLABELFORMAT, PL_SETCONTLABELPARAM, and PLCALC_WORLD).  One has an
+extra trailing underscore (required by g77 and friends for names with
+embedded underscores), and one does not (for those compilers that don't
+follow this convention by default).
+
+  plplot  bindings/f77/plstubs.h  1.33
+  plplot  bindings/f77/scstubs.c  1.33
+
+
+Commit from rlaboiss (2004-01-07 10:04 CET)
+--------------------
+
+Disable pthreads by default.
+
+  plplot  configure.ac  1.148
+
+
+Commit from airwin (2004-01-07 06:36 CET)
+------------------
+
+f77_examples is a list of the generated *.f files.  It should be cleaned
+rather than maintainercleaned.  This problem caught me tonight when I
+reconfigured for single precision, yet make clean did not get rid of these
+generated files.
+
+  plplot  examples/f77/Makefile.am  1.18
+
+
+Commit from airwin (2004-01-07 06:21 CET)
+------------------
+
+Compile error solved in single-precision case by new double ==> new PLFLT
+
+  plplot  examples/c++/x05.cc  1.3
+
+
+Commit from airwin (2004-01-07 05:22 CET)
+------------------
+
+For the double-precision case simply copy the double-precision code in
+sfstubs.fm4 to sfstubs.f.  For the single precision case use sed commands
+contained in double2single.sed to convert sfstubs.fm4 to single-precision
+sfstubs.f.
+
+  plplot  bindings/f77/Makefile.am        1.16
+  plplot  bindings/f77/README.f77API      1.3
++ plplot  bindings/f77/double2single.sed  1.1
+
+
+Commit from airwin (2004-01-07 05:19 CET)
+------------------
+
+Remove from cvs control because this file is only of historical interest.
+
+- plplot  bindings/f77/fmacs.m4  1.9
+
+
+Commit from airwin (2004-01-07 05:05 CET)
+------------------
+
+Tweak EXTRA_DIST to add README.f77demos. Note README.f77demos is only
+suitable for the build tree, and it would not be appropriate to install it.
+
+  plplot  examples/f77/Makefile.am  1.17
+
+
+Commit from airwin (2004-01-07 04:46 CET)
+------------------
+
+Initial commit of a sed script to convert *.fm4 example files from
+double- to single-precision and a file that documents the fortran examples.
+
+Makefile.am changes to take advantage of the sed script.
+
+  plplot  examples/f77/Makefile.am        1.16
++ plplot  examples/f77/README.f77demos    1.1
++ plplot  examples/f77/double2single.sed  1.1
+
+
+Commit from airwin (2004-01-07 02:03 CET)
+------------------
+
+Tweak (gen-pc-files.pl)
+
+  plplot  pkgcfg/.cvsignore  1.3
+
+
+Commit from airwin (2004-01-07 02:03 CET)
+------------------
+
+Oops, revert back gen-pc-files.pl (wrong directory).
+
+  plplot  test/.cvsignore  1.6
+
+
+Commit from airwin (2004-01-07 02:00 CET)
+------------------
+
+Tweak (gen-pc-files.pl)
+
+  plplot  test/.cvsignore  1.5
+
+
+Commit from airwin (2004-01-07 01:33 CET)
+------------------
+
+Fortran API change as discussed on the list.
+
+All plshade[0-2] and plshade fortran calls now have a last parameter which
+is the first dimension of the 2D arrays.  This extra parameter is similar to
+what is currently done for the fortran versions of plmesh, plmeshc, plot3d,
+plot3dc, plshades[0-2], and plshades.  It allows large static 2D arrays to
+be dimensioned in fortran apps which call these PLplot functions (plcon[0-2]
+and plcont have similar possibilities for large static arrays done a
+different way).  This in turn allows smaller areas of the fortran array to
+be populated as needed (interactively from input, say) without having to
+recompile for every change in size of the defined part of the array.
+
+These recent Fortran API changes have been tested for fortran examples 15
+and 16a (now both changes to use static arrays dimensioned larger than the
+defined area), and identical results to the previous are obtained.
+Furthermore, memory management has been changed substantially for fortran
+plshade[0-2] and plshade, and valgrind applied to fortran examples 15 and
+16a show no problems with these memory management changes.
+
+  plplot  bindings/f77/sccont.c     1.8
+  plplot  bindings/f77/sfstubs.fm4  1.11
+  plplot  examples/f77/x15f.fm4     1.4
+  plplot  examples/f77/x16af.fm4    1.4
+
+
+Commit from rlaboiss (2004-01-06 23:36 CET)
+--------------------
+
+  * debian/control: Made Build-Conflicts on libplplot5 unversioned.
+
+  plplot  debian/changelog  1.66
+  plplot  debian/control    1.42
+
+
+Commit from airwin (2004-01-06 22:51 CET)
+------------------
+
+Use this new-fangled construction (:-)) called for loops to substantially
+shorten and simplify these scripts.  This should make Rafael's eyes hurt
+less.... :-)
+
+  plplot  test/test_c.sh       1.8
+  plplot  test/test_cxx.sh     1.7
+  plplot  test/test_f77.sh.in  1.3
+  plplot  test/test_java.sh    1.4
+
+
+Commit from rlaboiss (2004-01-06 22:25 CET)
+--------------------
+
+Restructured the pkg-config support.
+
+Everything that was scattered across pkgcfg/gen-pc-files.sh and
+pkgcfg/Makefile.am (shell code) as well as pkgcfg/plplot-master-pc.in (.pc
+file template) is now regrouped in the single Perl script
+gen-pc-files.pl.in, configurable through configure.
+
+Since Perl is needed now, the code in configure.ac was changed, such that
+pkg-config support is disabled if Perl cannot found in the system. Also the
+pkg-config section in configure.ac was moved after the call to
+CHECK_PROG(perl).
+
+The Tcl/Tk specific cflags for include directories are now integrated in
+plplot*-tcl.pc.  The file examples/tk/Makefile.examples.in was changed
+accordingly.
+
+  plplot  configure.ac                      1.147
+  plplot  examples/tk/Makefile.examples.in  1.14
+  plplot  pkgcfg/Makefile.am                1.9
++ plplot  pkgcfg/gen-pc-files.pl.in         1.1
+- plplot  pkgcfg/gen-pc-files.sh            1.4
+- plplot  pkgcfg/plplot-master-pc.in        1.2
+
+
+Commit from rlaboiss (2004-01-06 22:02 CET)
+--------------------
+
+Removed the obsolete file setup.py.in for EXTRA_DIST.
+
+  plplot  bindings/python/Makefile.am  1.22
+
+
+Commit from rlaboiss (2004-01-06 21:37 CET)
+--------------------
+
+Removed cruft from EXTRA_DIST and DISTCLEAN variables.
+
+  plplot  examples/tk/Makefile.am      1.12
+  plplot  examples/python/Makefile.am  1.8
+
+
+Commit from rlaboiss (2004-01-06 21:13 CET)
+--------------------
+
+Removed *.sh.in from EXTRA_DIST and *.sh from DISTCLEANFILES, since Automake
+takes care of this.
+
+  plplot  test/Makefile.am  1.10
+
+
+Commit from rlaboiss (2004-01-06 21:05 CET)
+--------------------
+
+Removed configurable.f.in from EXTRA_DIST and configurable.f.in from
+DISTCLEANFILES, since Automake takes care of this.
+
+Also, updated and reformatted the copyright notice and replace "../.." by
+the more robust "$(top_builddir)", as it was done for other Makefile.am's.
+
+  plplot  bindings/f77/Makefile.am  1.15
+
+
+Commit from airwin (2004-01-06 20:44 CET)
+------------------
+
+Run the fortran examples in different ways depending on whether command-line
+parsing is available for fortran or not.
+
+  plplot  test/.cvsignore      1.4
+  plplot  test/test_f77.sh.in  1.2
+
+
+Commit from airwin (2004-01-06 20:25 CET)
+------------------
+
+Make test_f77.sh configurable.
+
+  plplot  configure.ac         1.146
+  plplot  test/Makefile.am     1.9
+- plplot  test/test_f77.sh     1.7
++ plplot  test/test_f77.sh.in  1.1
+
+
+Commit from airwin (2004-01-06 20:24 CET)
+------------------
+
+Add a call to fortran plparseopts so that these examples are able to
+use command-line parsing.
+
+  plplot  examples/f77/x01f.fm4   1.12
+  plplot  examples/f77/x02f.fm4   1.8
+  plplot  examples/f77/x03f.fm4   1.10
+  plplot  examples/f77/x04f.fm4   1.9
+  plplot  examples/f77/x05f.fm4   1.10
+  plplot  examples/f77/x06f.fm4   1.9
+  plplot  examples/f77/x07f.fm4   1.9
+  plplot  examples/f77/x08f.fm4   1.11
+  plplot  examples/f77/x09f.fm4   1.9
+  plplot  examples/f77/x10f.fm4   1.8
+  plplot  examples/f77/x11f.fm4   1.9
+  plplot  examples/f77/x12f.fm4   1.9
+  plplot  examples/f77/x13f.fm4   1.9
+  plplot  examples/f77/x15f.fm4   1.3
+  plplot  examples/f77/x16af.fm4  1.3
+  plplot  examples/f77/x16f.fm4   1.10
+  plplot  examples/f77/x17f.fm4   1.4
+  plplot  examples/f77/x18f.fm4   1.4
+  plplot  examples/f77/x19f.fm4   1.3
+
+
+Commit from airwin (2004-01-06 19:34 CET)
+------------------
+
+Tweak EXTRA_DIST and DISTCLEANFILES to deal with new configurable.f.in and
+its configured result configurable.f.
+
+  plplot  bindings/f77/Makefile.am  1.14
+
+
+Commit from airwin (2004-01-06 19:31 CET)
+------------------
+
+Implement plparseopts, the fortran function that allows parsing
+the PLplot command-line options from fortran.
+
+  plplot  bindings/f77/.cvsignore         1.4
++ plplot  bindings/f77/configurable.f.in  1.1
+
+
+Commit from airwin (2004-01-06 18:24 CET)
+------------------
+
+Implement plparseopts, the fortran function that allows parsing
+the PLplot command-line options from fortran.
+
+  plplot  bindings/f77/Makefile.am    1.13
+  plplot  bindings/f77/README.f77API  1.2
+  plplot  bindings/f77/plstubs.h      1.32
+  plplot  bindings/f77/scstubs.c      1.32
+
+
+Commit from airwin (2004-01-06 18:19 CET)
+------------------
+
+Install configuration test for the fortran capability of command-line parsing
+and use the results to configure bindings/f77/configurable.f
+
+  plplot  configure.ac  1.145
+
+
+Commit from rlaboiss (2004-01-06 13:38 CET)
+--------------------
+
+Variable substitution for generation of bindings/octave/plplot_octave.h is
+now done with help of autoconf/automake.
+
+A new AC_SUBST variable called DEFINE_PL_DOUBLE is defined in configure.ac,
+which is set to "#define PL_DOUBLE" if $with_double == yes, or a null string
+otherwise.
+
+The old file plplot_octave_org.h has been renamed to plplot_octave.h.in and
+its name is included in the AC_CONFIG_FILES list in configure.ac.  It
+contains the token @DEFINE_PL_DOUBLE@ at the place of the old REPLACEME
+token.
+
+Since everything is set up automatically by Automake, the rule for building
+plplot_octave.h is removed from bindings/octave/Makefile.am.  Also, there is
+no need to include plplot_octave.h in the CLEANFILES list.
+
+  plplot  configure.ac                         1.144
+  plplot  bindings/octave/Makefile.am          1.37
++ plplot  bindings/octave/plplot_octave.h.in   1.1
+- plplot  bindings/octave/plplot_octave_org.h  1.19
+
+
+Commit from mlebrun (2004-01-06 10:13 CET)
+-------------------
+
+Fix for the "centuries old" very irritating bogus warning messages about
+itclDecls.h during configuration (this should improve your day :).
+
+The problem was, itclDecls.h apparently is not meant to be included except
+from itcl.h, or after itcl.h has been included first.  So, this dependency
+needed to be accounted for, and fortunately there is an autoconf construct
+to do it.  As is often the case with these things, very simple once you know
+what to do.
+
+  plplot  sysloc.in  1.65
+
+
+Commit from mlebrun (2004-01-06 04:59 CET)
+-------------------
+
+Increased size of a string buffer for safety.
+
+  plplot  drivers/xwin.c  1.116
+
+
+Commit from rlaboiss (2004-01-05 20:24 CET)
+--------------------
+
+Commented out the call to AC_F77_LIBRARY_LDFLAGS until it proves to be
+necessary/useful for proper compilation of F77 bindings and exmaples
+
+  plplot  configure.ac  1.143
+
+
+Commit from airwin (2004-01-05 19:43 CET)
+------------------
+
+Demonstrate use of large static dimensions with a potentially dynamic smaller
+defined area for all 2D arrays.
+
+  plplot  examples/f77/x08f.fm4  1.10
+  plplot  examples/f77/x09f.fm4  1.8
+  plplot  examples/f77/x16f.fm4  1.9
+
+
+Commit from mlebrun (2004-01-05 02:29 CET)
+-------------------
+
+Added some commentary.
+
+  plplot  configure.ac  1.142
+
+
+Commit from airwin (2004-01-05 00:22 CET)
+------------------
+
+Use the convenient plplot-config front end to plplot_libtool rather than
+the raw plplot_libtool itself.
+
+  plplot  examples/c/Makefile.examples.in    1.18
+  plplot  examples/c++/Makefile.examples.in  1.17
+  plplot  examples/f77/Makefile.examples.in  1.18
+  plplot  examples/tk/Makefile.examples.in   1.13
+
+
+Commit from airwin (2004-01-05 00:20 CET)
+------------------
+
+Update this script so the configured result handles the -I options correctly
+for each of c, c++, f77, and tcltk.  Also make the script a little more
+robust.
+
+  plplot  scripts/plplot-config.in  1.3
+
+
+Commit from mlebrun (2004-01-05 00:05 CET)
+-------------------
+
+Chopped out plplot-centric support for defaults files in favor of the (now)
+official site files.  The following places are checked, in order:
+    $CONFIG_SITE
+    $prefix/share/config.site
+    $prefix/etc/config.site
+
+So to reproduce the previous plplot config file behavior, do:
+$ CONFIG_SITE=~/config/cf_plplot.in ./configure
+
+The latter is the *only* way currently to set prefix via a config file.  In
+this case, set ac_default_prefix appropriately ("pl_prefix" was previously
+used for this purpose).  Also some obsolete commentary removed.
+
+  plplot  configure.ac  1.141
+
+
+Commit from jcard (2004-01-04 19:04 CET)
+-----------------
+
+Correct typo: require Octave >= 2.1.50 and not 2.1.51
+
+  plplot  bindings/octave/PLplot/figure.m  1.19
+
+
+Commit from jcard (2004-01-04 19:02 CET)
+-----------------
+
+Don't include config.h in plplot_octave_org.h, as it might clash with Octave's config.h
+
+Instead, extract PL_DOUBLE from config.h and insert into plplot_octave_org.h
+
+  plplot  bindings/octave/Makefile.am          1.36
+  plplot  bindings/octave/plplot_octave_org.h  1.18
+
+
 Commit from rlaboiss (2004-01-04 18:45 CET)
 --------------------
 
