@@ -56,11 +56,20 @@ fi
 if test "$enable_xwin" = "yes"; then
     if test -z "$XINCDIR" -o -z "$XLIBDIR"; then
 	AC_PATH_X
+	# These notes and logic changes by AWI.
+	# If AC_PATH_X succeeds it sets $x_includes and $x_libraries to
+	# the correct values, but the behaviour is not specified when it
+	# fails on one or both of these searches.  To account for this
+	# ambiguity while still being efficient simply put x_includes and 
+	# x_libraries first in the appropriate search path if AC_TRY_CPP
+	# or AC_CHECK_LIB fails to find the headers or libraries in
+	# the default location.
 
-	XINCDIR="$x_includes"
-	if test -z "$XINCDIR"; then
-	    AC_TRY_CPP([#include <X11/Intrinsic.h>], [ XINCDIR=default ], [
+	XINCDIR=""
+	AC_TRY_CPP([#include <X11/Intrinsic.h>], [ XINCDIR=default ], [
 	    incdirs="\
+	    $x_includes \
+	    /usr/X11R6/include \
 	    /usr/include \
 	    /usr/include/X11 \
 	    /usr/include/X11R5 \
@@ -76,7 +85,7 @@ if test "$enable_xwin" = "yes"; then
 	    /usr/include/X11R4 \
 	    /usr/local/include \
 	    /usr/unsupported/include"
-
+	    
 	    for dir in $incdirs; do
 		if test -r "$dir/X11/Intrinsic.h"; then
 		    XINCDIR="$dir"
@@ -88,15 +97,16 @@ if test "$enable_xwin" = "yes"; then
 		XINCDIR=default
 		enable_xwin=no
 	    fi ])
-	fi
+
 	if test "$XINCDIR" = "/usr/include"; then
 	    XINCDIR=default
 	fi
 
-	XLIBDIR="$x_libraries"
-	if test -z "$XLIBDIR"; then
-	    AC_CHECK_LIB(X11, main, [ XLIBDIR=default ], [
+	XLIBDIR=""
+	AC_CHECK_LIB(X11, main, [ XLIBDIR=default ], [
 	    libdirs="\
+	    $x_libraries \
+	    /usr/X11R6/lib \
 	    /lib \
 	    /usr/lib \
 	    /usr/lib/X11R5 \
@@ -113,6 +123,7 @@ if test "$enable_xwin" = "yes"; then
 	    for dir in $libdirs; do
 		if test -r "$dir/libX11.a"; then
 		    XLIBDIR="$dir"
+		    AC_MSG_RESULT(but found in $dir)
 		    break
 		fi
 	    done
@@ -121,7 +132,7 @@ if test "$enable_xwin" = "yes"; then
 		XLIBDIR=default
 		enable_xwin=no
 	    fi ])
-	fi
+
 	if test "$XLIBDIR" = "/usr/lib"; then
 	    XLIBDIR=default
 	fi
@@ -167,6 +178,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         for dir in $libdirs; do
 	    if test -r "$dir/libgd.a"; then
 	        GDLIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
 		break
 	    fi
 	done
@@ -192,6 +204,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         for dir in $libdirs; do
 	    if test -r "$dir/libpng.a"; then
 	        PNGLIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
 		break
 	    fi
 	done
@@ -217,6 +230,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         for dir in $libdirs; do
 	    if test -r "$dir/libjpeg.a"; then
 	        JPEGLIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
 		break
 	    fi
 	done
@@ -242,6 +256,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         for dir in $libdirs; do
 	    if test -r "$dir/libz.a"; then
 	        ZLIBLIBDIR="$dir"
+		AC_MSG_RESULT(but found in $dir)
 		break
 	    fi
 	done
