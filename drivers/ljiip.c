@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/07/19 22:30:21  mjl
+ * Revision 1.5  1995/01/04 04:43:20  mjl
+ * Minor tweek.  Modified the pixel width to depend on the slope of the line.
+ * Makes diagonal lines thinner.  Contributed by Wesley Ebisuzaki.
+ *
+ *
+ * Revision 1.4  1994/07/19  22:30:21  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.
  *
@@ -171,12 +176,11 @@ plD_line_ljiip(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     PLDev *dev = (PLDev *) pls->dev;
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int abs_dx, abs_dy, dx, dy, incx, incy;
-    int i, width, residual;
-    PLINT j;
-    width = pls->width;
+    int i, j, width, residual;
+    PLFLT tmp;
 
-    if (width > MAX_WID) width = MAX_WID;
-
+    width = MIN(pls->width, MAX_WID);
+ 
 /* Take mirror image, since PCL expects (0,0) to be at top left */
 
     y1 = dev->ymax - (y1 - dev->ymin);
@@ -206,6 +210,22 @@ plD_line_ljiip(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 	abs_dy = dy;
 	incy = 1;
     }
+
+/* make pixel width narrower for diag lines */
+
+    if (abs_dy <= abs_dx) {
+	if (abs_dx == 0)
+	    tmp = 1.0;
+	else
+	    tmp = 1.0 - (PLFLT) abs_dy / abs_dx;
+    }
+    else {
+	tmp = 1.0 - (PLFLT) abs_dx / abs_dy;
+    }
+
+    width = floor(0.5 + width * (tmp*tmp*tmp*(1.0-0.707107) + 0.707107));
+
+    if (width < 1) width = 1;
     if (width > 1) {
 	for (i = 0; i < width; i++) {
 	    for (j = 0; j < width; j++) {
