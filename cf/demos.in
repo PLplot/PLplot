@@ -38,140 +38,140 @@ x01c$O: x01c.c
 
 x01c$E:	$(PLLIBS) x01c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x01c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x02c$O: x02c.c
 	$(CC) $(CC_FLAGS_DEMOS) x02c.c
 
 x02c$E:	$(PLLIBS) x02c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x02c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x03c$O: x03c.c
 	$(CC) $(CC_FLAGS_DEMOS) x03c.c
 
 x03c$E:	$(PLLIBS) x03c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x03c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x04c$O: x04c.c
 	$(CC) $(CC_FLAGS_DEMOS) x04c.c
 
 x04c$E:	$(PLLIBS) x04c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x04c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x05c$O: x05c.c
 	$(CC) $(CC_FLAGS_DEMOS) x05c.c
 
 x05c$E:	$(PLLIBS) x05c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x05c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x06c$O: x06c.c
 	$(CC) $(CC_FLAGS_DEMOS) x06c.c
 
 x06c$E:	$(PLLIBS) x06c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x06c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x07c$O: x07c.c
 	$(CC) $(CC_FLAGS_DEMOS) x07c.c
 
 x07c$E:	$(PLLIBS) x07c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x07c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x08c$O: x08c.c
 	$(CC) $(CC_FLAGS_DEMOS) x08c.c
 
 x08c$E:	$(PLLIBS) x08c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x08c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x09c$O: x09c.c
 	$(CC) $(CC_FLAGS_DEMOS) x09c.c
 
 x09c$E:	$(PLLIBS) x09c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x09c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x10c$O: x10c.c
 	$(CC) $(CC_FLAGS_DEMOS) x10c.c
 
 x10c$E:	$(PLLIBS) x10c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x10c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x11c$O: x11c.c
 	$(CC) $(CC_FLAGS_DEMOS) x11c.c
 
 x11c$E:	$(PLLIBS) x11c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x11c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x12c$O: x12c.c
 	$(CC) $(CC_FLAGS_DEMOS) x12c.c
 
 x12c$E:	$(PLLIBS) x12c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x12c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x13c$O: x13c.c
 	$(CC) $(CC_FLAGS_DEMOS) x13c.c
 
 x13c$E:	$(PLLIBS) x13c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x13c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x14c$O: x14c.c
 	$(CC) $(CC_FLAGS_DEMOS) x14c.c
 
 x14c$E:	$(PLLIBS) x14c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x14c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x15c$O: x15c.c
 	$(CC) $(CC_FLAGS_DEMOS) x15c.c
 
 x15c$E:	$(PLLIBS) x15c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x15c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x16c$O: x16c.c
 	$(CC) $(CC_FLAGS_DEMOS) x16c.c
 
 x16c$E:	$(PLLIBS) x16c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x16c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x17c$O: x17c.c
 	$(CC) $(CC_FLAGS_DEMOS) x17c.c
 
 x17c$E:	$(PLLIBS) x17c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x17c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x18c$O: x18c.c
 	$(CC) $(CC_FLAGS_DEMOS) x18c.c
 
 x18c$E:	$(PLLIBS) x18c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x18c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 x19c$O: x19c.c
 	$(CC) $(CC_FLAGS_DEMOS) x19c.c
 
 x19c$E:	$(PLLIBS) x19c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x19c$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 tutor$O: tutor.c
 	$(CC) $(CC_FLAGS_DEMOS) tutor.c
 
 tutor$E: $(PLLIBS) tutor$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 # -----------------------------------------------------------------------------
 # Example programs, in Fortran.
@@ -333,5 +333,5 @@ x01cc$O: x01cc.cc
 
 x01cc$E:  $(PLLIBS) x01cc$O
 	$(LDCXX) $(LDCXX_FLAGS) $(STARTUP) x01cc$O \
-	       	$(PLLIB_LDC) $(TO) $@ $(LDCXX_LIBS)
+	       	$(PLLIB_LDC) $(TO) $@ $(LDCXX_LIBS) $(RPATH)
 
