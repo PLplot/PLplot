@@ -10,15 +10,15 @@
 cd [file join [file dirname [info script]] .. tcl]
 lappend auto_path [pwd]
 if {[catch {package require Plplotter}]} {
-    # use non shared-lib way 9e.g. 'plserver'
+    # use non shared-lib way e.g. 'plserver'
     plstdwin .
     plxframe .p
     set plwin .p.plwin
-    button .bnextpage -text "Page" -command [list $plwin nextpage]
+    button .bnextpage -text "Page" -command [list event generate $plwin <Enter>]
 } else {
     plframe .p
     set plwin .p
-    button .bnextpage -text "Page" -command [list event generate $plwin <Enter>]
+    button .bnextpage -text "Page" -command [list $plwin nextpage]
 }
 grid .p -columnspan 5 -sticky news
 grid rowconfigure . 0 -weight 1
