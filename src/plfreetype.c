@@ -70,6 +70,7 @@
 #include "plDevs.h"
 #include "plplotP.h"
 #include "drivers.h"
+#include "plfci.h"
 #ifdef HAVE_FREETYPE
 #include "plfreetype.h"
 
@@ -122,8 +123,49 @@ static void FT_SetFace( PLStream *pls, int fnt );
 static PLFLT CalculateIncrement( int bg, int fg, int levels);
 static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args);
 static FT_ULong hershey_to_unicode (char in);
-static void FT_WriteStrW(PLStream *pls,const unsigned int  *text, short len, int x, int y);
-static void FT_StrX_YW(PLStream *pls,const unsigned int *text, short len, int *xx, int *yy);
+static void FT_WriteStrW(PLStream *pls,const PLUNICODE  *text, short len, int x, int y);
+static void FT_StrX_YW(PLStream *pls,const PLUNICODE *text, short len, int *xx, int *yy);
+
+/*--------------------------------------------------------------------------*\
+ *  char *
+ *  plP_FCI2FontName ( PLUNICODE fci, 
+ *                     const FCI_to_FontName_Table lookup[], const int nlookup)
+ *
+ *  Function takes an input FCI (font characterization integer) index, 
+ *  looks through the lookup table (which must be sorted by PLUNICODE fci),
+ *  then returns the corresponding pointer to a valid font name.  If the FCI
+ *  index is not present the returned value is NULL.
+ \*--------------------------------------------------------------------------*/
+
+char *
+plP_FCI2FontName ( PLUNICODE fci, 
+		     const FCI_to_FontName_Table lookup[], const int nlookup)
+{
+   int jlo = -1, jmid, jhi = nlookup;
+   while (jhi - jlo > 1) 
+     {
+	/* Note that although jlo or jhi can be just outside valid
+	 * range (see initialization above) because of while condition
+	 * jlo < jmid < jhi and jmid must be in valid range.
+	 */
+	jmid = (jlo+jhi)/2;
+	if (fci > lookup[jmid].fci)
+	  jlo = jmid;
+	else if (fci < lookup[jmid].fci)
+	  jhi = jmid;
+	else
+	  /* We have found it!
+	   * fci == lookup[jmid].fci 
+	   */
+	  return (lookup[jmid].pfont);
+     }
+   /* jlo is invalid or it is valid and fci > lookup[jlo].Unicode.
+    * jhi is invalid or it is valid and fci < lookup[jhi].Unicode.
+    * All these conditions together imply fci index cannot be found in lookup.
+    * Mark lookup failure with NULL pointer.
+    */
+   return(NULL);
+}
 
 /*----------------------------------------------------------------------*\
  * FT_StrX_YW()
@@ -136,7 +178,7 @@ static void FT_StrX_YW(PLStream *pls,const unsigned int *text, short len, int *x
 \*----------------------------------------------------------------------*/
 
 void
-FT_StrX_YW(PLStream *pls, const unsigned int *text, short len, int *xx, int *yy)
+FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
 {
     FT_Data *FT=(FT_Data *)pls->FT;
     short i=0;
@@ -246,7 +288,7 @@ FT_StrX_YW(PLStream *pls, const unsigned int *text, short len, int *xx, int *yy)
 \*----------------------------------------------------------------------*/
 
 void
-FT_WriteStrW(PLStream *pls, const unsigned int *text, short len, int x, int y)
+FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
 {
     FT_Data *FT=(FT_Data *)pls->FT;
     short i=0,last_char=-1;
@@ -932,7 +974,7 @@ static void pl_save_FreeType_text_to_buffer (PLStream *pls, EscText *args)
 
   if (args->string!=NULL) len=strlen(args->string); /* If no string, then the length will be 0 */
   unicode_len=args->unicode_array_len;      /* Length of the unicode string */
-  mem_used_by_unicode=sizeof(unsigned int)*unicode_len;
+  mem_used_by_unicode=sizeof(PLUNICODE)*unicode_len;
 
 
 /*
@@ -1064,8 +1106,8 @@ void pl_RemakeFreeType_text_from_buffer (PLStream *pls)
             }
           else if (text.unicode_array_len>0)
             {
-              text.unicode_array=&FT->text_cache[i];
-              i+=text.unicode_array_len*sizeof(unsigned int);
+              text.unicode_array= (PLUNICODE *) &FT->text_cache[i];
+              i+=text.unicode_array_len*sizeof(PLUNICODE);
             }
           i+=(len+1);
 
