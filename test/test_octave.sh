@@ -77,6 +77,6 @@ if ! isempty (failed)
         printf ("x%.2dc.m", failed (i));
     endfor
     printf ("\n");
+    exit (1);
 endif
-exit (1);
 EOF
