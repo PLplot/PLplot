@@ -1,5 +1,5 @@
 from Numeric import *
-from pl import *
+from plplot import *
 
 # main
 # 

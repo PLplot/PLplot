@@ -1,5 +1,5 @@
 from Numeric import *
-from pl import *
+from plplot import *
 
 XPTS = 35		# Data points in x
 YPTS = 46		# Data points in y

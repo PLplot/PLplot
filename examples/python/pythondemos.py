@@ -12,7 +12,7 @@ if module_dir[0] == '@':
 
 sys.path.insert (0, module_dir)
 
-from pl import *
+from plplot import *
 
 # Parse and process command line arguments
 plParseOpts(sys.argv, PL_PARSE_FULL)

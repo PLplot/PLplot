@@ -1,7 +1,7 @@
 #	Simple line plot and multiple windows demo.
 
 from Numeric import *
-from pl import *
+from plplot import *
 
 # main
 #

@@ -17,7 +17,7 @@
 # Plots a simple stripchart with four pens.
 
 from Numeric import *
-from pl import *
+from plplot import *
 from random import random
 from time import sleep
 

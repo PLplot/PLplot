@@ -1,5 +1,5 @@
 from Numeric import *
-from pl import *
+from plplot import *
 
 opt = [1, 0, 1, 0]
 
