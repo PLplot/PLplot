@@ -58,9 +58,10 @@ links:
   @copy $(PLDIR)\utils\*.c $(PLTMP)\*.c
   @copy $(PLDIR)\lib\*.fnt $(PLTMP)\*.fnt
   @copy $(PLDIR)\lib\*.map $(PLTMP)\*.map
-  @copy $(PLDIR)\bindings\python\plmodule.c $(PLTMP)\plmodule.c
-  @copy $(PLDIR)\bindings\python\plmodule.h $(PLTMP)\plplot\plmodule.h
-  @copy $(PLDIR)\bindings\python\pyqt_plmodule.c $(PLTMP)\pyqt_plmodule.c
+#  @copy $(PLDIR)\bindings\python\plmodule.c $(PLTMP)\plmodule.c
+#  @copy $(PLDIR)\bindings\python\plmodule.h $(PLTMP)\plplot\plmodule.h
+  @copy $(PLDIR)\bindings\python\plplotcmodule.i $(PLTMP)\plplotcmodule.i
+  @copy $(PLDIR)\bindings\python\plplot_widgetmodule.c $(PLTMP)\plplot_widgetmodule.c
 #
 # Copy the local source files to temp\
 #
