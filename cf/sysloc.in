@@ -475,19 +475,26 @@ fi
 if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_MOD_DIR" -o ! -d "$PYTHON_MOD_DIR"; then
 	if test -z "$MACHDEP"; then
-	    ac_sys_system=`uname -s | tr -d ' ' | tr '[[A-Z]]' '[[a-z]]'`
-	    ac_sys_release=`uname -r | tr -d ' ' | sed 's/\..*//'`
-	    MACHDEP="$ac_sys_system$ac_sys_release"
-	    case MACHDEP in
-		'')	MACHDEP=unknown;;
-	    esac
+#	    ac_sys_system=`uname -s | tr -d ' ' | tr '[[A-Z]]' '[[a-z]]'`
+#	    ac_sys_release=`uname -r | tr -d ' ' | sed 's/\..*//'`
+#	    MACHDEP="$ac_sys_system$ac_sys_release"
+#	    case MACHDEP in
+#		'')	MACHDEP=unknown;;
+#	    esac
+	    # Know this is correct for Debian potato and RedHat 6.2
+	    # But this comes directly from python Makefile.pre.in for dynamic
+	    # loading of packages so my guess is this is now good for all Unix.
+	    # This is the sub-directory where dynamically loadable modules reside
+	    # (or where a symlink exists to the true location)
+	    MACHDEP=site-packages
 	fi
 
 	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[[^/]]*/[[^/]]*$,,'`
 	PYTHON_MOD_DIR=$python_dir/lib/python
 	PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
 	if test ! -d "$PYTHON_MOD_DIR"; then
-	    # tricky, must be a new style
+	    # account for the usual case where python directories 
+	    # have a version number now.
 	    python_ver=`echo $PYTHON_INC_DIR|sed 's,/.*/,,'`
 	    PYTHON_MOD_DIR=$python_dir/lib/$python_ver
 	    PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
