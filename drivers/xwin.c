@@ -16,12 +16,11 @@
 static int synchronize = 0;	/* change to 1 for synchronized operation */
 				/* for debugging only */
 
-/* When DEFAULT_VISUAL is 1, DefaultVisual() is used to get the visual.
- * Otherwise, the visual is obtained using XGetVisualInfo() to make a
- * match.
+/* When USE_DEFAULT_VISUAL is defined, DefaultVisual() is used to get the
+ * visual.  Otherwise, the visual is obtained using XGetVisualInfo() to make a
+ * match.  USE_DEFAULT_VISUAL is set by the configure script.
  */
 
-#define DEFAULT_VISUAL 0
 /*#define HACK_STATICCOLOR*/
 
 /* Number of instructions to skip between querying the X server for events */
@@ -906,18 +905,11 @@ InitMain(PLStream *pls)
 /* Window creation */
 
     dev->window =
-/*AWI	XCreateWindow( xwd->display,
+	XCreateWindow( xwd->display,
 		       DefaultRootWindow(xwd->display),
 		       hint.x, hint.y, hint.width, hint.height,
 		       dev->border, xwd->depth,
 		       InputOutput, xwd->visual,
-		       0, NULL );*/
-
-	XCreateWindow( xwd->display,
-		       DefaultRootWindow(xwd->display),
-		       hint.x, hint.y, hint.width, hint.height,
-		       dev->border, XDefaultDepth(xwd->display,xwd->screen),
-		       InputOutput, XDefaultVisual(xwd->display,xwd->screen),
 		       0, NULL );
 
     XSetStandardProperties(xwd->display, dev->window, header, header,
@@ -2080,7 +2072,7 @@ GetVisual(PLStream *pls)
 
     dbug_enter("GetVisual");
 
-#if DEFAULT_VISUAL == 0
+#ifndef USE_DEFAULT_VISUAL
     {
 	XVisualInfo vTemplate, *visualList;
 
@@ -2142,7 +2134,7 @@ GetVisual(PLStream *pls)
 	}
 #endif /* HACK_STATICCOLOR */
     }
-#endif /* DEFAULT_VISUAL == 0 */
+#endif /* USE_DEFAULT_VISUAL */
 
     if ( ! visuals_matched) {
 	xwd->visual = DefaultVisual( xwd->display, xwd->screen );
