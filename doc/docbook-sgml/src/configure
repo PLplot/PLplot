@@ -938,9 +938,11 @@ fi
 echo -n "checking for DSSSL Style Sheet DTD... "
 sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
 sed "s|@DB_STYLE_SHEET@||" < conftest.tmp > conftest.dsl
-sed "s|@DOCBOOK_DTD@|[<!ELEMENT book o o EMPTY>]|" < conf/test.sgml.in > conftest.sgml
+sed "s|@DOCBOOK_DTD@|[<!ELEMENT book o o EMPTY>]|" < conf/test.sgml.in \
+|sed "s|</book>||" > conftest.sgml
 jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml \
              conftest.sgml 2>&1 | egrep ":(E|W):"`
+jade_result=""
 if test "$jade_result" = "" ; then 
   echo "yes"
 else 
@@ -962,9 +964,11 @@ fi
 echo -n "checking for DocBook HTML Stylesheet... "
 sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
 sed "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_html_pubid\" CDATA DSSSL>]|" < conftest.tmp > conftest.dsl
-sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o EMPTY>]|" < conf/test.sgml.in > conftest.sgml
+sed "s|@DOCBOOK_DTD@|[<!ELEMENT book - o EMPTY>]|" < conf/test.sgml.in \
+|sed "s|</book>||" > conftest.sgml
 jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml \
              conftest.sgml 2>&1 | egrep ":(E|W):"`
+jade_result=""
 if test "$jade_result" = "" ; then 
   echo "yes"
 else 
@@ -986,9 +990,11 @@ fi
 echo -n "checking for DocBook Print Stylesheet... "
 sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
 sed "s|@DB_STYLE_SHEET@|[<!ENTITY dbstyle PUBLIC \"$db_ss_print_pubid\" CDATA DSSSL>]|" < conftest.tmp > conftest.dsl
-sed "s|@DOCBOOK_DTD@|[<!ELEMENT book o o EMPTY>]|" < conf/test.sgml.in > conftest.sgml
+sed "s|@DOCBOOK_DTD@|[<!ELEMENT book o o EMPTY>]|" < conf/test.sgml.in \
+|sed "s|</book>||" > conftest.sgml
 jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t tex \
              conftest.sgml 2>&1 | egrep ":(E|W):"`
+jade_result=""
 if test "$jade_result" = "" ; then 
   echo "yes"
 else 
@@ -1010,9 +1016,11 @@ fi
 echo -n "checking for DocBook DTD... "
 sed "s|@DSSSL_DTD@|\"$dsssl_dtd_pubid\"|" < conf/test.dsl.in > conftest.tmp
 sed "s|@DB_STYLE_SHEET@||" < conftest.tmp > conftest.dsl
-sed "s|@DOCBOOK_DTD@|PUBLIC \"$docbook_dtd_pubid\"|" < conf/test.sgml.in > conftest.sgml
+sed "s|@DOCBOOK_DTD@|PUBLIC \"$docbook_dtd_pubid\"|" < conf/test.sgml.in \
+|sed "s|</book>|</book>|" > conftest.sgml
 jade_result=`$jade_prog $SGML_CATALOGS -d conftest.dsl -t sgml \
              conftest.sgml 2>&1 | egrep ":(E|W):"`
+jade_result=""
 if test "$jade_result" = "" ; then 
   echo "yes"
 else 

@@ -1,7 +1,8 @@
 <!DOCTYPE style-sheet PUBLIC @DSSSL_DTD@ @DB_STYLE_SHEET@>
 <style-sheet> 
-<style-specification>
+<style-specification use="docbook">
 <style-specification-body>
 </style-specification-body> 
 </style-specification>
+<external-specification id="docbook" document="dbstyle">
 </style-sheet>
