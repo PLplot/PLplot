@@ -141,13 +141,12 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 
       if (nargin == 6 && strcmp("tk", sprintf("%s",plgdev')))
 	if (! exist("tk_start"))
-	  if  (! exist("tk_init"))
-	    error("Can't use this tk feature of PLplot until tk_octave is installed!\n")
-	  else
-	    tk_init;
-	  endif
+	  error("Can't use this Tk feature of PLplot until tk_octave is installed!\n")
 	endif
-	
+	if  (! exist("__tk_name"))
+	  tk_init;
+	endif
+
 	init_file = tmpnam();
 	fp = fopen (init_file,"w");
 
@@ -155,10 +154,10 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	fprintf(fp, "set octave_interp_pid %d\n", getpid);
 	fprintf(fp, "send -async $octave_interp to_octave intp=\"[tk appname]\"\n");
 	fprintf(fp, "source {%s}\n", tk_file);
-	fprintf(fp, "proc to_octave {a args} {\n",
-		"global octave_interp octave_interp_pid; \n",
-		"send -async $octave_interp to_octave \"$a $args\"; \n",
-		"#exec kill -16 $octave_interp_pid \n}");
+	fprintf(fp, "proc to_octave {a args} {\n"),
+   fprintf(fp, "global octave_interp octave_interp_pid; \n");   
+   fprintf(fp, "send -async $octave_interp to_octave \"$a $args\"; \n");   
+   fprintf(fp, "#exec kill -16 $octave_interp_pid \n}");   
 	
 	fclose(fp);
 
