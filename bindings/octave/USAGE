@@ -2,7 +2,7 @@ You must add the plplot_octave script installation directory to Octave
 LOADPATH *before* the standard Octave LOADPATH. The best way is to
 create a ~/.octaverc file. By default
 
-LOADPATH ="/usr/local/share/plplot_octave//:"
+LOADPATH ="<install-directory>/share/plplot_octave//:"
 
 Then, invoke Octave and create a vector, say
 
@@ -63,7 +63,9 @@ You also have access to the PLplot API,
 
 		   plfill(n, x, y) ...
 
-Notice that you don't need to specify vector or matrix dimensions.
+NOTES: - You don't need to specify vector or matrix dimensions.
+       - When setting Octave variable "automatic_replot = 1", changes take
+	 effect immediately, otherwise they only take effect at the next plot.
 
 
 --- Plot window control
@@ -92,9 +94,14 @@ fill 		-- Draw filled 2-D polygons.
 arrows		-- Plot an array of arrows.
 
 --- 3D plots
-mesh		-- Surface plot.
-plot3		-- three-dimensional analogue of plot.
-surfl		-- Shaded Surface plot with lighting.
+mesh		-- Mesh surface plot.
+meshc		-- mesh() with contour at base xy plane.
+meshz		-- mesh() with a courtain.
+plot3		-- Three-dimensional analogue of plot.
+surf		-- Surface plot
+surfc		-- surf() with contour at base xy plane.
+surfl		-- surf() with lighting.
+shading		-- Specifies how the surf() surface is plotted.
 
 --- Plot control and decorations
 top_title,
@@ -113,7 +120,7 @@ plot_margin	-- Set/return the status of the plot margin around the plot.
 
 autostyle	-- If set increases line style after each plot. 
 legend		-- Sets the legend position and mode.
-grid		-- Turn on/off grid lines at major ticks.
+grid		-- Turn on/off grid lines at major/minor ticks.
 
 axis		-- Sets the axis limits.
 axis_set	-- Return current axis status.
@@ -128,6 +135,7 @@ stripc,
 stripc_add,
 stripc_del,	-- creates/plot/delete a four pen stripchart.
 comet		-- Displays an animated comet plot of one the vector. 
+plrb		-- Iteractively selects a rectangular region of the plot. 
 
 --- Interative utilities
 text		-- Place text on a 2-D graph at x y positions.
@@ -146,9 +154,9 @@ blue, bone,
 cool, green,
 hot, copper,
 pink, prism,
-red, hsv	-- Several colormaps.
+red, hsv, bgr	-- Several colormaps.
 
-plcolormap	-- Set colormap1.
+colormap	-- Set colormap1.
 hls2rgb		-- Hue-lightness-saturation to red-green-blue conversion. 
 rgb2hls		-- red-green-blue to hue-lightness-saturation conversion. 
 rgbplot		-- Plot color map.
@@ -164,7 +172,7 @@ tdeblank	-- Remove trailing amd leading blanks from string.
 --- Misc
 pldef		-- set your defaults.
 plsetopt	-- set/view/reset/aplly plplot options.
-plimage		-- *very* preliminary!
+plimage		-- display octave images.
 
 use_plplot	-- Use/stop using plplot. Not working!
 plplot_octave_path -- set or return octave_plplot scripts directory path.
