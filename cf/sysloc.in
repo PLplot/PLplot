@@ -473,7 +473,7 @@ if test "$enable_python" = "yes"; then
 	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[[^/]]*/[[^/]]*$,,'`
 	PYTHON_MOD_DIR=$python_dir/lib/python/$MACHDEP
 	if test ! -d "$PYTHON_MOD_DIR"; then
-	    AC_MSG_RESULT(couldn't find PYTHON_MOD_DIR, setting enable_python to no)
+	    AC_MSG_RESULT([couldn't find PYTHON_MOD_DIR, setting enable_python to no])
 	    enable_python=no
 	fi
     fi
