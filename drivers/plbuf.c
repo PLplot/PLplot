@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1993/09/27 20:33:51  mjl
+ * Revision 1.16  1993/09/28 21:25:08  mjl
+ * Now discards the old temp file and opens a new one on each new page.  This
+ * avoids a lot of problems redisplaying partially filled pages -- we can
+ * just read to EOF without worrying about junk in the file from previous
+ * writes.  The old method never did work perfectly.
+ *
+ * Revision 1.15  1993/09/27  20:33:51  mjl
  * Insignificant change to eliminate a gcc -Wall warning.
  *
  * Revision 1.14  1993/09/08  02:27:11  mjl
@@ -89,8 +95,8 @@ static short xpoly[PL_MAXPOLYLINE], ypoly[PL_MAXPOLYLINE];
 * plbuf_init()
 *
 * Initialize device.
-* Allow for the possibility that multiple streams are sharing a single
-* plot buffer (one stream may be cloned).
+* Actually just disables writes if plot buffer is already open (occurs
+* when one stream is cloned, as in printing).
 \*----------------------------------------------------------------------*/
 
 void
@@ -98,13 +104,7 @@ plbuf_init(PLStream *pls)
 {
     dbug_enter("plbuf_init");
 
-    if (pls->plbufFile == NULL) {
-	pls->plbufFile = tmpfile();
-	pls->plbufOwner = 1;
-	if (pls->plbufFile == NULL) 
-	    plexit("plbuf_init: Error opening plot data storage file.");
-    }
-    if ( ! pls->plbufOwner)
+    if (pls->plbufFile != NULL) 
 	pls->plbuf_write = 0;
 }
 
@@ -164,14 +164,16 @@ void
 plbuf_eop(PLStream *pls)
 {
     dbug_enter("plbuf_eop");
-
-    wr_command(pls, (U_CHAR) EOP);
 }
 
 /*----------------------------------------------------------------------*\
 * plbuf_bop()
 *
 * Set up for the next page.
+* To avoid problems redisplaying partially filled pages, on each BOP the
+* old file is thrown away and a new one is obtained.  This way we can just
+* read up to EOF to get everything on the current page.
+*
 * Also write state information to ensure the next page is correct.
 \*----------------------------------------------------------------------*/
 
@@ -180,8 +182,12 @@ plbuf_bop(PLStream *pls)
 {
     dbug_enter("plbuf_bop");
 
-    rewind(pls->plbufFile);
-    wr_command(pls, (U_CHAR) BOP);
+    plbuf_tidy(pls);
+
+    pls->plbufFile = tmpfile();
+    if (pls->plbufFile == NULL) 
+	plexit("plbuf_init: Error opening plot data storage file.");
+
     plP_state(PLSTATE_COLOR0);
     plP_state(PLSTATE_WIDTH);
 }
@@ -197,8 +203,11 @@ plbuf_tidy(PLStream *pls)
 {
     dbug_enter("plbuf_tidy");
 
-    if (pls->plbufOwner)
-	fclose(pls->plbufFile);
+    if (pls->plbufFile == NULL)
+	return;
+
+    fclose(pls->plbufFile);
+    pls->plbufFile = NULL;
 }
 
 /*----------------------------------------------------------------------*\
@@ -249,7 +258,6 @@ plbuf_state(PLStream *pls, PLINT op)
 *
 * Escape function.  Note that any data written must be in device
 * independent form to maintain the transportability of the metafile.
-* Don't actually write escape command unless necessary.
 *
 * Functions:
 *
@@ -259,11 +267,12 @@ void
 plbuf_esc(PLStream *pls, PLINT op, void *ptr)
 {
     dbug_enter("plbuf_esc");
+
+    wr_command(pls, (U_CHAR) ESCAPE);
+    wr_command(pls, (U_CHAR) op);
 /*
     switch (op) {
     case ?:
-	wr_command(pls, (U_CHAR) ESCAPE);
-	wr_command(pls, (U_CHAR) op);
 	break;
     }
 */
@@ -294,10 +303,12 @@ rdbuf_init(PLStream *pls)
 void
 rdbuf_line(PLStream *pls)
 {
+    PLINT npts = 2;
+
     dbug_enter("rdbuf_line");
 
-    fread(xpoly, sizeof(short), 2, pls->plbufFile);
-    fread(ypoly, sizeof(short), 2, pls->plbufFile);
+    fread(xpoly, sizeof(short), npts, pls->plbufFile);
+    fread(ypoly, sizeof(short), npts, pls->plbufFile);
 
     plP_line(xpoly, ypoly);
 }
@@ -435,14 +446,15 @@ void
 rdbuf_esc(PLStream *pls)
 {
     U_CHAR op;
-/*    void *ptr = NULL;*/
 
     dbug_enter("rdbuf_esc");
 
     fread(&op, sizeof(U_CHAR), 1, pls->plbufFile);
+
 /* None are currently supported!
     switch (op) {
-      case ?:
+    void *ptr = NULL;
+    case ?:
 	plP_esc(op, ptr);
 	break;
     }
@@ -461,22 +473,17 @@ plRemakePlot(PLStream *pls)
 {
     U_CHAR c;
     int plbuf_status;
-    long eofpos;
 
     dbug_enter("plRemakePlot");
 
     if (pls->plbufFile == NULL)
 	return;
 
-    fflush(pls->plbufFile);
-    eofpos = ftell(pls->plbufFile);
     rewind(pls->plbufFile);
 
     plbuf_status = pls->plbuf_write;
     pls->plbuf_write = FALSE;
-    while ((ftell(pls->plbufFile) <= eofpos) && rd_command(pls, &c)) {
-	if (c == EOP)
-	    break;
+    while (rd_command(pls, &c)) {
 	plbuf_control(pls, c);
     }
 
@@ -546,10 +553,6 @@ rd_command(PLStream *pls, U_CHAR *p_c)
     int count;
     
     count = fread(p_c, sizeof(U_CHAR), 1, pls->plbufFile);
-#ifdef DEBUG
-    if (count == 0) 
-	fprintf(stderr, "Cannot read from plot buffer, char: %d\n", *p_c);
-#endif
     return (count);
 }
 
@@ -566,9 +569,5 @@ wr_command(PLStream *pls, U_CHAR c)
     int count;
 
     count = fwrite(&c1, sizeof(U_CHAR), 1, pls->plbufFile);
-#ifdef DEBUG
-    if (count == 0) 
-	fprintf(stderr, "Cannot write to plot buffer\n");
-#endif
     return (count);
 }
