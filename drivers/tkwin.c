@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.3  2002/07/02 11:09:05  vincentdarley
+ * configuration for tkwin driver
+ *
  * Revision 1.2  2002/07/02 09:58:28  vincentdarley
  * cross platform tk driver
  *
@@ -231,7 +234,7 @@ void plD_dispatch_init_tkwin( PLDispatchTable *pdt )
     pdt->pl_MenuStr  = "PLplot Tk plotter";
     pdt->pl_DevName  = "tkwin";
     pdt->pl_type     = plDevType_Interactive;
-    pdt->pl_seq      = 43;
+    pdt->pl_seq      = 44;
     pdt->pl_init     = (plD_init_fp)     plD_init_tkwin;
     pdt->pl_line     = (plD_line_fp)     plD_line_tkwin;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_tkwin;
