@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.6  1994/03/23 08:56:30  mjl
-   Header file rearrangement.
+   Revision 1.7  1994/05/23 22:12:00  mjl
+   Minor incompatibilities with main sources fixed.
 
+ * Revision 1.6  1994/03/23  08:56:30  mjl
+ * Header file rearrangement.
+ *
  * Revision 1.5  1993/07/01  21:59:55  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
@@ -462,7 +465,7 @@ static struct iffhead {
     short pw, ph;
     char cmapname[4];
     long cmaplen;
-    U_CHAR r0, g0, b0, r1, g1, b1;
+    unsigned char r0, g0, b0, r1, g1, b1;
     char bodyname[4];
     long bodylen;		/* fill me in */
 } iffhead = { {'F','O','R','M'}, 0, {'I','L','B','M'}, {'B','M','H','D'}, 20,

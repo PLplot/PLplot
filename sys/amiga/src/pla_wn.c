@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/03/23 09:00:20  mjl
+ * Revision 1.9  1994/05/23 22:11:59  mjl
+ * Minor incompatibilities with main sources fixed.
+ *
+ * Revision 1.8  1994/03/23  09:00:20  mjl
  * Much rearrangement and decruftifying.  Added support for cmap1, color map
  * state changes, solid polygon fills.  Screen now defaults to 16 color, and
  * palette can be set by calling program.  Added hack to capture screen
@@ -41,10 +44,10 @@ struct Process *myproc;
 PlAmigaWin PlAmigadev;
 PlAmigaWin (*pla) = &PlAmigadev;
 
-PLStream *the_pls;
+PLStream *plsc;
 APTR oldwinptr;
-
 static struct DrawInfo *drInfo;
+static int tidy_when_done;
 
 /* Data structure for polyline call */
 
@@ -201,16 +204,16 @@ struct NewMenu PlplotNewMenu[] = {
     NM_ITEM, (STRPTR)"Screen Mode", NULL, 0, 0L,
     (APTR)plamiga_Screenmode,
 
-/* Bring up palette requester, color map 0 */
+/* Bring up palette requester */
 
-    NM_ITEM, (STRPTR)"Palette 0", (STRPTR)"U", 0, 0L,
+    NM_ITEM, (STRPTR)"Palette", (STRPTR)"U", 0, 0L,
     (APTR)plamiga_Palette0,
 
 /* Bring up cmap 1 modifier (not ready yet) */
-
+/*
     NM_ITEM, (STRPTR)"Palette 1", NULL, NM_ITEMDISABLED, 0L,
     (APTR)plamiga_Palette1,
-
+*/
     NM_ITEM, (STRPTR)NM_BARLABEL, NULL, 0, 0L, NULL,
 
 /* Load config file */
@@ -248,6 +251,7 @@ plD_init_amiwn(PLStream *pls)
     PLFLT Initdpmx, Initdpmy;
     struct Screen *wb_screen;
     
+    plsc = pls;
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
     pls->width = 1;
@@ -255,15 +259,17 @@ plD_init_amiwn(PLStream *pls)
     pls->page = 0;
     pls->plbuf_write = 1;
     pls->dev_fill0 = 1;
+    tidy_when_done = 0;
 
     if (!pls->colorset)
         pls->color = 1;
 
-    the_pls = pls;
+    plsc = pls;
 
 /* Open the required libraries. */
 
     pla_OpenLibs();
+    tidy_when_done = 1;
 
 /* Check for hack mode */
 
@@ -474,11 +480,13 @@ plD_bop_amiwn(PLStream *pls)
 void 
 plD_tidy_amiwn(PLStream *pls)
 {
-    myproc->pr_WindowPtr = oldwinptr;
+    if (tidy_when_done) {
+	myproc->pr_WindowPtr = oldwinptr;
 
-    pla_CloseWindow();
-    pla_CloseScreen();
-    pla_CloseLibs();
+	pla_CloseWindow();
+	pla_CloseScreen();
+	pla_CloseLibs();
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -631,7 +639,7 @@ pla_InitDisplay(void)
 
 /* Drawing info */
 
-    setcmap(the_pls);
+    setcmap(plsc);
     setpen(1);
 /*
     drInfo = GetScreenDrawInfo(pla->screen);
@@ -822,7 +830,6 @@ WaitForPage(PLStream *pls)
 static void
 HandleEvents(PLStream *pls)
 {
-    the_pls = pls;
     HandlePlplotIDCMP();
 }
 
@@ -905,7 +912,7 @@ pla_OpenLibs(void)
     else
 	puts("\nError opening Intuition library.");
 
-    pl_exit();
+    plexit("Initialization failure");
 }
 
 void 

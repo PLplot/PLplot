@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.3  1994/03/23 08:57:43  mjl
-   Header file rearrangement.  Broke code for saving an iff file from the
-   current screen off into plamiga_saveiff().
+   Revision 1.4  1994/05/23 22:11:57  mjl
+   Minor incompatibilities with main sources fixed.
 
+ * Revision 1.3  1994/03/23  08:57:43  mjl
+ * Header file rearrangement.  Broke code for saving an iff file from the
+ * current screen off into plamiga_saveiff().
+ *
  * Revision 1.2  1993/07/01  21:59:51  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
@@ -12,7 +15,6 @@
  * Revision 1.1  1993/03/15  21:34:22  mjl
  * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
  * OS 2.0 capabilities.
- *
 */
 
 /*	pla_menu.c
@@ -29,7 +31,7 @@
 #include <ctype.h>
 #include <math.h>
 
-extern PLStream *the_pls;
+extern PLStream *plsc;
 
 int saveiff(char *);
 
@@ -214,7 +216,7 @@ plamiga_Screenmode(void)
 
 /* Redraw the plot */
 
-	    plRemakePlot(the_pls);
+	    plRemakePlot(plsc);
 	}
 	rtFreeRequest (scrmodereq);
     }
@@ -233,7 +235,7 @@ plamiga_Screenmode(void)
 int
 plamiga_Palette0(void)
 {
-    (void) rtPaletteRequest ("Change Color Map 0", NULL, RT_LockWindow, 1,
+    (void) rtPaletteRequest ("Change Color Map", NULL, RT_LockWindow, 1,
 			     TAG_END); 
 
     return(1);
@@ -364,8 +366,8 @@ plamiga_KEY(void)
 /* Since this is called first, the user can disable all plplot internal
    event handling by setting key.code to 0 and key.string to '\0' */
 
-    if (the_pls->KeyEH != NULL)
-	(*the_pls->KeyEH) (&key, NULL, &pla->exit_eventloop);
+    if (plsc->KeyEH != NULL)
+	(*plsc->KeyEH) (&key, NULL, &pla->exit_eventloop);
 
 /* Handle internal events */
 
