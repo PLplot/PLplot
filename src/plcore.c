@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1994/07/02 21:32:11  mjl
+ * Revision 1.35  1994/07/03 05:50:22  mjl
+ * Added fix to prevent an infinite loop while exiting under certain error
+ * conditions, submitted by Radey Shouman.
+ *
+ * Revision 1.34  1994/07/02  21:32:11  mjl
  * Ensure that fflush() is never called with a null pointer, since some
  * systems don't like it (submitted by Neal Holtz).
  *
@@ -1144,9 +1148,9 @@ void
 c_plend1(void)
 {
     if (plsc->level > 0) {
+	plsc->level = 0;
 	plP_eop();
 	plP_tidy();
-	plsc->level = 0;
     }
 
 /* Free all malloc'ed stream memory */
