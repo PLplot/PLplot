@@ -1,44 +1,79 @@
 # $Id$
 #----------------------------------------------------------------------------
-#
 # Sets default configuration options for plplot/TK driver.
 # Maurice LeBrun
 # IFS, University of Texas
 #
-# This is largely based on options.motif.tk from Ioi K Lam's Tix package.
-# The TK options are set to be fairly Motif-like.
-#
 # It is very easy to customize plplot/TK settings for a particular site
 # or user.  The steps are:
 #
-# 1. Copy the desired settings from here into the plconfig proc in
-#    plconfig.tcl, modifying them to taste
+# 1. Create a directory for holding app-defaults files.  $HOME/app-defaults/
+#    is a good choice.  Then set the XAPPLRESDIR environmental to this
+#    pathname (keep trailing slash).
 #
-# 2. Deposit the modified plconfig.tcl in the desired directory for
-#    autoloading. The autoload path used by the TK driver and plserver is
-#    as follows:
+# 2. Create a plplot app-defaults file by the name of PLplot or plplot (PLplot
+#    is loaded last and thus has preference, if both exist).  It should use
+#    standard X11 resource syntax.
 #
-#	 user-specified directory(s) (set by -auto_load argument)
-#	 Current directory
-#	 $PL_LIBRARY 
-#	 $HOME/tcl
-#	 INSTALL_DIR/tcl
+# 3. If you wish to load resources based on a different class name, you should
+#    call loadAppDefaults with suitable arguments after the pldefaults call.
 #
-# 3. Create a tclIndex file for plconfig.tcl in the same directory.  I
-#    use an alias that makes this easy:
+# The older syntax using the plconfig.tcl file may still work but is
+# deprecated. 
 #
-#    alias mktclidx  "echo 'auto_mkindex . *.tcl; destroy .' | wish"
+# BUGS:
+#  - should probably replace some of the global variables with resources.
 #
-#    Then just "mktclidx" will do the trick.
-#
-#
-# This scheme allows for a clear and easy way to selectively modify
-# defaults on a site, user, or project dependent basis (more easily than
-# can be done with resources alone).
+# Use something like this for widget font settings:
+# option add Tk.BoldFont "*-lucida sans-Bold-R-Normal-*-100-*" widgetDefault
 #
 #----------------------------------------------------------------------------
 
+# From the TK FAQ, and modified to taste.
+
+# pl_getenv varName
+#   Looks up the environment variable named $varName and returns its value
+#   OR {} if it does not exist
+
+proc pl_getenv varName {
+    global env
+    if {[info exists env($varName)]} { return $env($varName) }
+}
+
+# loadAppDefaults classNameList ?priority?
+#   Searches for the app-default files corresponding to classNames in
+#   the order specified by X Toolkit Intrinsics, and loads them with
+#   the priority specified (default: startupFile).  Stops after first
+#   file found for each class.
+
+proc pl_loadAppDefaults {classNameList {priority startupFile}} {
+    set filepath "[split [pl_getenv XUSERFILESEARCHPATH] :] \
+                  [pl_getenv XAPPLRESDIR] \
+                  [split [pl_getenv XFILESEARCHPATH] :] \
+                  /usr/lib/X11"
+    foreach i $classNameList {
+	foreach j $filepath {
+	    if {[file exists $j/$i]} {
+		option readfile $j/$i $priority; break
+	    }
+	}
+    }
+}
+
+#----------------------------------------------------------------------------
+# Called by plplot based Tcl apps at startup to set resources.
+
 proc pldefaults {} {
+    pl_libdefaults
+    pl_loadAppDefaults {plplot PLplot} userDefault
+}
+
+#----------------------------------------------------------------------------
+# Default resources.
+# This is largely based on options.motif.tk from Ioi K Lam's Tix package.
+# The TK options are set to be somewhat Motif-like.
+
+proc pl_libdefaults {} {
     global tk_version
     global gen_font
     global gen_bold_font
@@ -78,6 +113,11 @@ proc pldefaults {} {
 
     global tcl_platform
     if {$tcl_platform(platform) == "unix"} {
+    # geometry of main window if plstdwin is used
+    # "auto" means derive size from root window dimensions
+	option add *geometry		auto			startupFile
+
+    # fonts
 	option add *font		$gen_font		startupFile
 	option add *Entry.font		$gen_font		startupFile
 	option add *Menu*font		$gen_menu_font		startupFile
@@ -85,6 +125,7 @@ proc pldefaults {} {
 	option add *Scale.font		$gen_bold_font_small	startupFile
 	option add *color.font		$gen_fixed_font		startupFile
 
+    # colors
 	option add *background			$gen_bg		startupFile
 	option add *foreground			$gen_fg		startupFile
 	option add *activeBackground		$gen_active_bg	startupFile
@@ -104,13 +145,13 @@ proc pldefaults {} {
 	option add *Scrollbar.background	$gen_bg		startupFile
 	option add *Scrollbar.troughColor	$gen_darker_bg	startupFile
 
-	# End of page indicator
+    # End of page indicator
 
 	option add *leop.off			$gen_bg		startupFile
 	option add *leop.on			gray45		startupFile
 
-	# This specifies the default plplot widget background color.
-	# A white background looks better on grayscale or mono.
+    # This specifies the default plplot widget background color.
+    # A white background looks better on grayscale or mono.
 
 	if {[winfo depth .] == 1} {
 	    option add *Plframe.background	white		startupFile
@@ -118,8 +159,8 @@ proc pldefaults {} {
 	    option add *Plframe.background	black		startupFile
 	}
 
-	#----------------------------------------------------------------------------
-	# Miscellaneous 
+    #----------------------------------------------------------------------------
+    # Miscellaneous 
 
 	option add *anchor			w		startupFile
 	option add *Button.borderWidth		2		startupFile
@@ -131,13 +172,13 @@ proc pldefaults {} {
 	option add *Entry.relief		sunken		startupFile
 	option add *Scrollbar.relief		sunken		startupFile
 
-	# I have this in here so that applications written before Tk 4.0 still
-	# look the same.  More selectivity might be better.
+    # I have this in here so that applications written before Tk 4.0 still
+    # look the same.  More selectivity might be better.
 
 	option add *highlightThickness		0		startupFile
 
-	# Have focus follow mouse, only available in Tk 4.0+
-	# This is needed if you want to control scales using keystrokes.
+    # Have focus follow mouse, only available in Tk 4.0+
+    # This is needed if you want to control scales using keystrokes.
 
 	tk_focusFollowsMouse
     }
