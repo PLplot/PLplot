@@ -49,7 +49,10 @@ function p21
   for i = [GRID_CSA GRID_DTLI GRID_NNI GRID_NNIDW GRID_NNLI GRID_NNAIDW]
     pladv(j++);
     zg = griddata(x, y, z, xg, yg, i, opt(i));
+    ## zg(isnan(zg)) = 0;
+    ofi = do_fortran_indexing;  do_fortran_indexing = 1;
     zg(isnan(zg)) = 0;
+    do_fortran_indexing = ofi;
     title(alg(i,:));
     meshc(xg, yg, zg');
   endfor
