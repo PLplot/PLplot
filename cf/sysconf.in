@@ -52,18 +52,6 @@
 
 M4=m4
 
-# Debugging
-
-if test "$with_debug" = "yes"; then
-    with_opt=no
-    DEBUG_FLAG_C=-g
-    DEBUG_FLAG_CXX=-g
-    DEBUG_FLAG_F=-g
-    DEBUG_FLAG_LC=-g
-    DEBUG_FLAG_LCXX=-g
-    DEBUG_FLAG_LF=-g
-fi
-
 # Optimization
 
 if test "$with_opt" = "yes"; then
@@ -213,6 +201,21 @@ if test "$enable_cxx" = "yes"; then
 	AC_MSG_RESULT([warning: cannot find C++ compiler, setting enable_cxx=no])
 	enable_cxx=no
     fi
+fi
+
+# ----------------------------------------------------------------------------
+# Debugging
+
+if test "$with_debug" = "yes"; then
+    if test ! "$with_gcc" = "yes"; then
+	with_opt=no
+    fi
+    DEBUG_FLAG_C=-g
+    DEBUG_FLAG_CXX=-g
+    DEBUG_FLAG_F=-g
+    DEBUG_FLAG_LC=-g
+    DEBUG_FLAG_LCXX=-g
+    DEBUG_FLAG_LF=-g
 fi
 
 # ----------------------------------------------------------------------------
