@@ -1763,7 +1763,7 @@ proc plw_label_push {w msg} {
     global plot_menu_on; if !$plot_menu_on return
 
     global plmenu_lstat plmenu_lstat_depth
-    if ![info exists plmenu_lstat_depth] { 
+    if { ![info exists plmenu_lstat_depth] || ![info exists plmenu_lstat_depth($w)] } { 
 	set plmenu_lstat_depth($w) -1
     }
     if {$plmenu_lstat_depth($w) < 9} {
