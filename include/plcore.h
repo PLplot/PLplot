@@ -11,9 +11,14 @@
 #include "drivers.h"
 #include "plDevs.h"
 #include "disptab.h"
+
 #ifdef ENABLE_DYNDRIVERS
 #include <ltdl.h>
+typedef lt_ptr (*PLDispatchInit)( PLDispatchTable *pdt );
+#else
+typedef void (*PLDispatchInit)( PLDispatchTable *pdt );
 #endif
+    
 
 
 /* Static function prototypes */

@@ -7,10 +7,6 @@
 #define __DISPATCH_H__
 
 #include "plConfig.h"
-#ifdef ENABLE_DYNDRIVERS
-#include <ltdl.h>
-#endif
-
 
 struct PLStream_struct;
 
@@ -92,11 +88,5 @@ typedef struct {
     plD_state_fp    pl_state;
     plD_esc_fp     pl_esc;
 } PLDispatchTable;
-
-#ifdef ENABLE_DYNDRIVERS
-typedef lt_ptr (*PLDispatchInit)( PLDispatchTable *pdt );
-#else
-typedef void (*PLDispatchInit)( PLDispatchTable *pdt );
-#endif
 
 #endif /* __DISPATCH_H__ */
