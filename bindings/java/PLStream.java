@@ -42,6 +42,11 @@ public class PLStream {
 // The PLplot core API function calls.
     public native void adv( int page );
 
+// arrows
+// axes
+// bin
+// bop
+
     public native void box( String xopt, float xtick, int nxsub,
                             String yopt, float ytick, int nysub );
     public native void box( String xopt, double xtick, int nxsub,
@@ -57,17 +62,61 @@ public class PLStream {
         String zopt, String zlabel, double ztick, int nsubz );
 
     public native void col0( int icol );
+
+    public native void col1( float col1 );
+    public native void col1( double col1 );
+
+// cont
+// fcont
+// cpstrm?
+// did2pc
+// dip2dc
+
     public native void end();
+
+// end1
 
     public native void env( float xmin, float xmax, float ymin, float ymax,
                             int just, int axis );
     public native void env( double xmin, double xmax, double ymin, double ymax,
                             int just, int axis );
 
+// eop
+// errx
+// erry
+// famadv
+
+    public native void fill( int n, float[] x, float[] y );
+    public native void fill( int n, double[] x, double[] y );
+
+    public native void fill3( int n, float[] x, float[] y, float[] z );
+    public native void fill3( int n, double[] x, double[] y, float[] z );
+
     public native void flush();
     public native void font( int fnt );
     public native void fontld( int fnt );
+
+// gchr
+// gcol0
+// gcolbg
+// gcompression
+// gdev
+// gdidev
+// gdiori
+// gdiplt
+// gfam
+// gfnam
+// glevel
+// gpage
+// gra
+// gspa
+
     public native int gstrm();
+
+// gver
+// gxax
+// gyax
+// gzax
 
     public native void hist( int n, float[] data, float datmin, float datmax,
                              int nbin, int oldwin );
@@ -87,8 +136,18 @@ public class PLStream {
     public native void line( int n, float[] x, float[] y );
     public native void line( int n, double[] x, double[] y );
 
+    public native void line3( int n, float[] x, float[] y, float[] z );
+    public native void line3( int n, double[] x, double[] y, double[] z );
+
+    public native void lsty( int lin );
+
+// map
+// meridians
+
     public native void mesh( float[] x, float[] y, float[][] z, int opt );
     public native void mesh( double[] x, double[] y, double[][] z, int opt );
+
+// mkstrm?
 
     public native void mtex( String side,
                              float disp, float pos, float just,
@@ -105,15 +164,27 @@ public class PLStream {
     public native void plotsh3d( float[] x, float[] y, float[][] z, int side );
     public native void plotsh3d( double[] x, double[] y, double[][] z, int side );
 
+// pat
+
     public native void poin( int n, float[] x, float[] y, int code );
     public native void poin( int n, double[] x, double[] y, int code );
     public native void poin( float x, float y, int code ); // API addition
     public native void poin( double x, double y, int code ); // API addition
 
+// poin3
+// poly3
+// plprec
+
+    public native void psty( int patt );
+
     public native void ptex( float x, float y, float dx, float dy,
                              float just, String text );
     public native void ptex( double x, double y, double dx, double dy,
                              double just, String text );
+
+// replot
+// rgb
+// rgb1
 
     public native void schr( float def, float scale );
     public native void schr( double def, double scale );
@@ -194,24 +265,47 @@ public class PLStream {
 
 // shade API
 
+// smaj
+// smin
+// sori
+
 // void
 // c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 // 	  PLINT xoff, PLINT yoff);
 
     public native void spause( int pause );
 
+// sstrm?
+
     public native void ssub( int nx, int ny );
+
+// ssym
+// star
+// start
+// stripc
+// stripa
+// stripd
+// image
+
     public native void styl( int nms, int mark, int space );
 
     public native void svpa( float xmin, float xmax, float ymin, float ymax );
     public native void svpa( double xmin, double xmax, double ymin, double ymax );
 
+// sxax
+// sxwin
+
     public native void syax( int digmax, int digits );
 
     public native void sym( int n, float[] x, float[] y, int code );
     public native void sym( int n, double[] x, double[] y, int code );
-    public native void sym( float x, float y, int code );
-    public native void sym( double x, double y, int code );
+    public native void sym( float x, float y, int code ); // API addition
+    public native void sym( double x, double y, int code ); // API addition
+
+// szax
+// text
+// vasp
+// vpas
 
     public native void vpor( float xmin, float xmax, float ymin, float ymax );
     public native void vpor( double xmin, double xmax, double ymin, double ymax );
