@@ -1069,6 +1069,7 @@ if test "$enable_tk" = "yes"; then
     `ls $srcdir/bindings/tk/*.* |grep -v '\.h$'` \
     $srcdir/examples/tk/*.c \
     $srcdir/examples/tk/tk* \
+    $srcdir/examples/tk/r*.tcl \
     . 2>/dev/null
     ln -s \
     $srcdir/bindings/tk/*.h \
