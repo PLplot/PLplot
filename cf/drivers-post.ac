@@ -22,11 +22,22 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
-
 if test "$enable_dyndrivers" = yes -a "$enable_pstex" = yes ; then
     enable_ps=yes
 fi
+
+dnl Disable the Tk drivers is Tcl is disable or system has not X Window
+
+if test "$enable_tcl" = "no" -o "$have_x" != "yes"; then
+    enable_tk=no
+    enable_tkwin=no
+fi
+
+if test "$enable_tk" = "no" -o "$enable_tcl" = "no"; then
+    enable_ntk="no"
+fi
+
+PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
 
 AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
 AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])

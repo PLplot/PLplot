@@ -138,7 +138,7 @@ AC_HEADER_SYS_WAIT
 AC_HEADER_DIRENT
 
 dnl Check for inclusion of sys/types.h before dirent.h in broken MacOSX
-dnl systems 
+dnl systems
 
 case "$host_os" in
     darwin*)
@@ -190,19 +190,6 @@ m4_include(cf/instdirs.ac)
 
 
 dnl =======================================================================
-dnl PLplot drivers
-dnl =======================================================================
-
-m4_include(cf/drivers-pre.ac)
-m4_include(cf/gd.ac)
-m4_include(cf/cgm.ac)
-m4_include(cf/gnome.ac)
-m4_include(cf/linuxvga.ac)
-m4_include(cf/xwin.ac)
-m4_include(cf/drivers-post.ac)
-
-
-dnl =======================================================================
 dnl Language bindings
 dnl =======================================================================
 
@@ -213,6 +200,19 @@ m4_include(cf/octave.ac)
 m4_include(cf/tcl.ac)
 m4_include(cf/c++.ac)
 m4_include(cf/f77.ac)
+
+
+dnl =======================================================================
+dnl PLplot drivers
+dnl =======================================================================
+
+m4_include(cf/drivers-pre.ac)
+m4_include(cf/gd.ac)
+m4_include(cf/cgm.ac)
+m4_include(cf/gnome.ac)
+m4_include(cf/linuxvga.ac)
+m4_include(cf/xwin.ac)
+m4_include(cf/drivers-post.ac)
 
 
 dnl =======================================================================

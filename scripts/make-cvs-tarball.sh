@@ -26,7 +26,7 @@
 usage () {
   local prog=`basename $0`
   echo "Usage: $prog [-n] [-u user] [-t tmpdir] [-w remote dir] \\"
-  echo "          [-r branch] [-v version] [-c]"
+  echo "          [-r branch] [-v version] [-c] [-i prefix]"
   echo "       $prog -d"
   echo "       $prog -h"
   echo
@@ -35,7 +35,7 @@ usage () {
   echo "When option -v is not given, a tarball is produced with version and"
   echo "  label containing today's date string."
   echo "When option -c is given, the tarball is unpacked and make check"
-  echo "  is run"
+  echo "  is run.  For exercising make install, use option -i."
   exit $1
 }
 
@@ -57,22 +57,27 @@ print_defaults () {
 }
 
 do_check=no
+prefix=""
 
-while getopts "cdhnv:r:u:t:w:" option
+while getopts "cdhi:nr:t:u:v:w:" option
 do
   case $option in
     c) do_check=yes ;;
     d) print_defaults ;;
     h) usage 0 ;;
+    i) test -n "$OPTARG" || usage 1 ; prefix=$OPTARG ;;
     n) DOC_ARG= ;;
     r) test -n "$OPTARG" || usage 1 ; BRANCH="-r $OPTARG" ;;
     t) test -n "$OPTARG" || usage 1 ; CVSTMPDIR=$OPTARG ;;
-    v) test -n "$OPTARG" || usage 1 ; VERSION=$OPTARG ;;
     u) test -n "$OPTARG" || usage 1 ; WWW_USER=$OPTARG ;;
+    v) test -n "$OPTARG" || usage 1 ; VERSION=$OPTARG ;;
     w) test -n "$OPTARG" || usage 1 ; CVSROOTDIR=$OPTARG ;;
     *) usage 1 ;;
   esac
 done
+
+clean_prefix=yes
+test -d "$prefix" && clean_prefix=no
 
 cleanup ( ) {
     rm -rf $CVSTMPDIR
@@ -97,5 +102,9 @@ cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
   && ( rm -rf $DISTDIR \
        && tar xfz $TARBALL \
        && cd $DISTDIR \
-       && ./configure $config_opt  \
-       && make check )
+       && ./configure ${prefix:+--prefix=$prefix} $config_opt  \
+       && make check \
+       && test -n "$prefix" \
+       && make install \
+       && test "$clean_prefix" = yes \
+       && rm -rf "$prefix" )
