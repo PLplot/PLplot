@@ -1,7 +1,7 @@
 HOST = shell.sourceforge.net
 
-ifdef USER
-    USER_AT_HOST = $(USER)@$(HOST)
+ifdef SF_USER
+    USER_AT_HOST = $(SF_USER)@$(HOST)
 else
     USER_AT_HOST = $(HOST)
 endif
