@@ -1,0 +1,36 @@
+2000-11-10  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Makefile.in (OTHER_SOURCES): Added extension .in to
+	STYLESHEET_HTML. 
+
+2000-11-09  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Makefile.in (HTML_EXT): New variable. 
+	(MAIN_HTML): Use it.
+	(clean): Use it.
+
+	* configure.in (HTML_EXT): New variable, associated with option
+	--with-html-extension.  AC_SUBST'ituted.
+	(AC_OUTPUT): Added plplotdoc-html.dsl.
+
+	* plplotdoc-html.dsl.in: Renamed from plplotdoc-html.dsl.  Added
+	autoconf replacement string @HTML_EXT@.
+	
+
+1999-05-20  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+        * Changes contributed by Alan W. Irwin <irwin@beluga.phys.uvic.ca>.
+
+        * simple.sgml: Several <sect1> fragments corrected to <sect2>.
+
+        * wish.sgml: Translated body of wish.tex into DocBook
+        format. 
+
+        * drivers.sgml: Translated body of drivers.tex into DocBook
+        format. 
+
+        * plplotdoc.sgml: Inserted lacking </para> in Copyright notice.
+
+1999-03-29  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+        * Initial release.
