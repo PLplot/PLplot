@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1993/12/09 20:25:57  mjl
+ * Revision 1.16  1993/12/09 21:29:47  mjl
+ * Fixed another bug generated in the reorganization dealing with cleanup.
+ *
+ * Revision 1.15  1993/12/09  20:25:57  mjl
  * Completely reorganized, using the source for wish (tkMain.c) as a starting
  * point.  Will now be able to track changes to Tcl/TK more easily, and can
  * use plserver exactly like wish (including interactive usage).  Fixed a bug
@@ -317,8 +320,8 @@ main(argc, argv)
      * to do additional cleanup.
      */
 
-    abort_session("");
     Tcl_Eval(interp, "exit");
+    exit(1);
 
 error:
     msg = Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);
