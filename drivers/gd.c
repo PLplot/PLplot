@@ -55,7 +55,7 @@ typedef struct {
         PLINT pngy;
 
 /* GD does "funny" things with the colour map.
- * It can't guarentee that the colours will be where you think they are.
+ * It can't guarantee that the colours will be where you think they are.
  * So we need this "colour_index" table to store where the colour we
  * requested happens to be. Messy, but it works.
  */
@@ -263,10 +263,10 @@ setcmap(PLStream *pls)
             }
         }
 
-    if (ncol0>NCOLOURS)       /* Check for rediculous number of colours */
+    if (ncol0>NCOLOURS/2)     /* Check for ridiculous number of colours */
        {                      /* in ncol0, and appropriately adjust the */ 
-        plwarn("Too many colours in cmap0.");      /* number, issuing a */ 
-        if (ncol1<NCOLOURS) ncol0=NCOLOURS-ncol1;  /*warning if it does */
+        plwarn("Too many colours in cmap0.");     /* number, issuing a  */ 
+        ncol0=NCOLOURS/2;                         /* warning if it does */
         pls->ncol0=ncol0;
        }
 
@@ -473,13 +473,20 @@ void plD_esc_png(PLStream *pls, PLINT op, void *ptr)
 
 void plD_bop_png(PLStream *pls)
 {
-    png_Dev *dev=(png_Dev *)pls->dev;
+    png_Dev *dev;
 
     plGetFam(pls);
 /* force new file if pls->family set for all subsequent calls to plGetFam 
  * n.b. putting this after plGetFam call is important since plinit calls
  * bop, and you don't want the familying sequence started until after
  * that first call to bop.*/
+
+/* n.b. pls->dev can change because of an indirect call to plD_init_png 
+ * from plGetFam if familying is enabled.  Thus, wait to define dev until
+ * now. */
+
+    dev = (png_Dev *) pls->dev;
+
     pls->famadv = 1;
 
     pls->page++;
