@@ -42,7 +42,7 @@ install_lib:
 	-cp $(top_srcdir)/doc/*.info $(INFO_DIR)
 	-cd $(top_srcdir)/scripts; cp pl* $(BIN_DIR)
 	-cd $(top_srcdir)/include; \
-	 cp plplotP.h plplot.h plplotX.h plevent.h plstrm.h pdf.h \
+	 cp plplotP.h plplot.h plxwd.h plevent.h plstrm.h pdf.h \
 	    $(INCLUDE_DIR)
 
 install_demos:
@@ -99,8 +99,8 @@ install_tk:
 	-strip plserver$E
 	-cp plserver$E $(BIN_DIR)
 	-cd $(top_srcdir)/bindings/tk; \
-	 cp pltk.h plplotTK.h $(INCLUDE_DIR); \
+	 cp pltk.h $(INCLUDE_DIR); \
 	 cp *.tcl *.pal tclIndex $(TCL_DIR)
 
 install_cxx:
-	-cd $(top_srcdir)/bindings/c++; cp stream.h $(INCLUDE_DIR)
+	-cd $(top_srcdir)/bindings/c++; cp plstream.h $(INCLUDE_DIR)
