@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1993/08/28 06:38:05  mjl
+ * Revision 1.14  1993/12/06 07:46:11  mjl
+ * Eliminated the obsolete -color flag.
+ *
+ * Revision 1.13  1993/08/28  06:38:05  mjl
  * The option table now requires passing of a pointer to user-defined data,
  * similar in spirit to that used in Xt or TK callbacks.  If unused, simply
  * initialize as NULL.  All option handlers changed to accept this pointer
@@ -162,7 +165,6 @@ static int opt_jy		(char *, char *, void *);
 static int opt_mar		(char *, char *, void *);
 static int opt_ori		(char *, char *, void *);
 static int opt_width		(char *, char *, void *);
-static int opt_color		(char *, char *, void *);
 static int opt_bg		(char *, char *, void *);
 static int opt_fam		(char *, char *, void *);
 static int opt_fsiz		(char *, char *, void *);
@@ -378,14 +380,6 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-width width",
     "Sets pen width (1 <= width <= 10)" },
-{
-    "color",			/* Color on switch */
-    opt_color,
-    NULL,
-    NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED,
-    "-color",
-    "Enables color output (e.g. for PS driver)" },
 {
     "bg",			/* Background color */
     opt_bg,
@@ -1214,23 +1208,6 @@ opt_wplt(char *opt, char *optarg, void *client_data)
     yr = atof(field);
 
     plsdiplt(xl, yl, xr, yr);
-    return 0;
-}
-
-/*----------------------------------------------------------------------*\
-* opt_color()
-*
-* Performs appropriate action for option "color".
-\*----------------------------------------------------------------------*/
-
-static int
-opt_color(char *opt, char *optarg, void *client_data)
-{
-
-/* Color */
-
-    plscolor(1);
-
     return 0;
 }
 
