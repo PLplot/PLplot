@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/06/23 22:40:06  mjl
+ * Revision 1.7  1994/09/23 07:47:29  mjl
+ * Modified to use the new syntax for pltkMain().
+ *
+ * Revision 1.6  1994/06/23  22:40:06  mjl
  * Fix to get prototype of pltkMain() correct.
  *
  * Revision 1.5  1994/06/16  19:30:14  mjl
@@ -21,6 +24,9 @@
 #include <tk.h>
 #include <math.h>
 
+static int
+AppInit(Tcl_Interp *interp);
+
 /*----------------------------------------------------------------------*\
  * main --
  *
@@ -35,13 +41,13 @@
 int
 main(int argc, char **argv)
 {
-    exit(pltkMain(argc, argv));
+    exit(pltkMain(argc, argv, NULL, AppInit));
 }
 
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_AppInit --
+ * AppInit --
  *
  *	This procedure performs application-specific initialization.
  *	Most applications, especially those that incorporate additional
@@ -80,9 +86,8 @@ main(int argc, char **argv)
 
 int   myplotCmd        (ClientData, Tcl_Interp *, int, char **);
 
-int
-Tcl_AppInit(interp)
-    Tcl_Interp *interp;		/* Interpreter for application. */
+static int
+AppInit(Tcl_Interp *interp)
 {
     Tk_Window main;
 

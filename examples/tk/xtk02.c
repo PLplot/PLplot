@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/07/01 20:44:35  mjl
+ * Revision 1.8  1994/09/23 07:47:30  mjl
+ * Modified to use the new syntax for pltkMain().
+ *
+ * Revision 1.7  1994/07/01  20:44:35  mjl
  * Cruft elimination.
  *
  * Revision 1.6  1994/06/30  05:46:21  furnish
@@ -31,6 +34,9 @@
 #include <math.h>
 
 #include "tclMatrix.h"
+
+static int
+AppInit(Tcl_Interp *interp);
 
 /* A pithy little proc to show off how to install and use a tclMatrix
    extension subcommand. This example is silly--only intended to show
@@ -74,13 +80,13 @@ int stuff( tclMatrix *pm, Tcl_Interp *interp,
 int
 main(int argc, char **argv)
 {
-    exit(pltkMain(argc, argv));
+    exit(pltkMain(argc, argv, NULL, AppInit));
 }
 
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_AppInit --
+ * AppInit --
  *
  *	This procedure performs application-specific initialization.
  *	Most applications, especially those that incorporate additional
@@ -119,9 +125,8 @@ main(int argc, char **argv)
 
 int   myplotCmd        (ClientData, Tcl_Interp *, int, char **);
 
-int
-Tcl_AppInit(interp)
-    Tcl_Interp *interp;		/* Interpreter for application. */
+static int
+AppInit(Tcl_Interp *interp)
 {
     Tk_Window main;
 
