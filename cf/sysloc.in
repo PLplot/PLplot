@@ -325,6 +325,35 @@ if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
     fi
 fi
 
+#next test requires C language
+AC_LANG_SAVE
+AC_LANG_C
+if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
+# All required headers and libraries are present for libgd, libpng, libjpeg,
+# and zlib.  Now check if this version of libgd supports jpeg.
+
+    CFLAGS_SAVE=$CFLAGS
+    LIBS_SAVE=$LIBS
+    LDFLAGS_SAVE=$LDFLAGS
+
+    CFLAGS="-I$GDINCDIR -I$PNGINCDIR -I$JPEGINCDIR -I$ZLIBINCDIR"
+    LIBS="-L$GDLIBDIR -L$PNGLIBDIR -L$JPEGLIBDIR -L$ZLIBLIBDIR $GDLIBSTR $PNGLIBSTR $JPEGLIBSTR $ZLIBLIBSTR"
+    LDFLAGS=
+
+    AC_TRY_LINK_FUNC([
+      gdImageJpeg
+    ], [], [
+      enable_jpg=no
+    ])
+
+    CFLAGS=$CFLAGS_SAVE
+    LIBS=$LIBS_SAVE
+    LDFLAGS=$LDFLAGS_SAVE
+
+fi
+#restore the language the way it was before this test
+AC_LANG_RESTORE
+
 # ----------------------------------------------------------------------------
 # Make some guesses where the Tcl/Tk include files and libraries are.
 # Look first in the Tcl/Tk distributions and then move on to the standard

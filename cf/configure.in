@@ -95,7 +95,6 @@ enable_xwin=yes
 enable_gnome=no
 enable_octave=no
 enable_png=yes #required for library and header searching to work right.
-enable_jpg=no #temporary until version logic on gd library is put into configuration
 
 divert(-1)
 
