@@ -94,7 +94,7 @@ dist_examples_tk_DATA = $(data_files)
 
 nodist_examples_tk_DATA = Makefile.examples tclIndex
 
-tclIndex:
+tclIndex: x01.tcl
 	$(mkindex)
 
 examples_tk_SCRIPTS = \
