@@ -21,16 +21,15 @@ function p7
   title("Shade example");
   plcolormap('default')
   shade(x,y,z,15)
+  pause(1)
 
-  pause(1)
-  plcolormap(bone)
-  pause(1)
-  plcolormap(pink)
+  plcolormap(pink);
   axis([0.5 1.2 0 1.3]);
-  hold on
+  hold on;
   shade(x,y,z,15,3);
-  hold off
   pause(1)
+  hold off
+
   shade(x,y,z,15,3);
   axis;
 
