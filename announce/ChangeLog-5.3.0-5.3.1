@@ -1,3 +1,336 @@
+Commit from rlaboiss (2004-06-14 00:05 CEST)
+--------------------
+
+Insure that libplplot.so is built before generating plplot-symbols.txt
+
+  plplot  doc/docbook/src/Makefile.am  1.62
+
+
+Commit from rlaboiss (2004-06-13 23:10 CEST)
+--------------------
+
+Added missing entity definitions plmeshc and plot3dc
+
+  plplot  doc/docbook/src/plplotdoc.xml.in  1.40
+
+
+Commit from airwin (2004-06-13 19:26 CEST)
+------------------
+
+host-os ==> host_os.  Apparently, this part of the code was not exercised
+under the IBM SDK, but is under the Blackdown SDK.
+
+  plplot  cf/java.ac  1.5
+
+
+Commit from airwin (2004-06-13 19:24 CEST)
+------------------
+
+Comment out plgver call since it causes catastrophic errors in Blackdown
+j2sdk-1.4.2-rc1 case (and also doesn't work under other SDKs as well.)
+
+  plplot  examples/java/x01.java  1.19
+
+
+Commit from airwin (2004-06-13 04:40 CEST)
+------------------
+
+Sorted out logic issue for case when perl modules not available.
+
+  plplot  bindings/octave/Makefile.am  1.45
+
+
+Commit from aroach (2004-06-05 11:11 CEST)
+------------------
+
+Added a test to freetype to check for the font size, so the freetype
+font size will be changed with the plplot one. Interestingly, no one
+noticed this big before ! Luckily, this is a case of "killing two
+bugs with one commit" because it also fixes up the error in the
+wingcc driver where the font size was not changed until after the
+labels on the axis had been drawn when a redraw command was issued.
+
+  plplot  include/plfreetype.h  1.7
+  plplot  src/plfreetype.c      1.20
+
+
+Commit from aroach (2004-06-03 05:57 CEST)
+------------------
+
+Changed the line termination back to LF after accidentally changing
+it to CR/LF yesterday . My Bad - sorry :-(
+----------------------------------------------------------------------
+
+  plplot  examples/c/x20c.c  1.15
+
+
+Commit from arjenmarkus (2004-06-02 14:26 CEST)
+-----------------------
+
+Fixed problem with updating the screen (corrected option for opening buffer file and made sure the window handler always redraws via the buffer file)
+
+  plplot  sys/win32/msdev/src/win3.cpp  1.10
+
+
+Commit from aroach (2004-06-02 06:34 CEST)
+------------------
+
+Changes to get DJGPP working with latest snapshot
+----------------------------------------------------------------------
+
+  plplot  sys/dos/djgpp/cf/demos.in  1.2
+  plplot  sys/dos/djgpp/cf/dist.in   1.2
+  plplot  sys/dos/djgpp/cf/objs.in   1.4
+
+
+Commit from aroach (2004-06-02 06:30 CEST)
+------------------
+
+Small change to get x20c working with DJGPP.
+----------------------------------------------------------------------
+
+  plplot  examples/c/x20c.c  1.14
+
+
+Commit from aroach (2004-05-30 07:02 CEST)
+------------------
+
+Changes to wingcc.c to get freetype support working.
+
+This has involved adding a new backend into freetype and a local
+text cache.
+
+There are some minor caveats with the driver at present:
+1) Occasionally the pen colours are getting messed up on redraws
+when freetype text is being used. I am not sure why just yet;
+2) if freetype is used without smoothing, sometimes the incorrect
+pen colour is used for the text (the correct one is always used with
+smoothing); and,
+3) If a window is RESIZED, the label text wont change sizes
+initially - all other text will though. BUT if you cause another
+redraw of the window, for example, by violently moving it, putting
+another window momentarily on top of it, or minimising it then
+immediately maximising it again, then the text will be redrawn in
+the correct size. Not sure if this is an API, freetype, or wingcc
+problem.
+
+----------------------------------------------------------------------
+
+  plplot  drivers/wingcc.c  1.2
+
+
+Commit from aroach (2004-05-30 07:00 CEST)
+------------------
+
+Changes to the freetype routines to add text buffering support.
+
+While adding freetype support to the wingcc driver I discovered that
+"plRemakePlot()" caches line drawing commands, and things line
+changes to the pen, but it does not cache text commands (well, it
+does... sort of... as line drawing primitives). That meant that
+every time a "plRemakePlot(pls);" was issued, the text would
+disappear. To QUICKLY compensate for this limitation without major
+changes to the API, these changes add a text cache to freetype.
+These changes are really for interactive terminals that may get a
+"redraw" command, and use plRemakePlot to refresh the display.
+
+There is one new "public" function, one function-like macro, a
+private function, and some changes to the FT structure to
+accommodate the new cache.
+
+The new cache is "activated" if "pls->plbuf_write" is set to one
+before the freetype engine is initialised. Then, there are only
+three more things the user has to do:
+1) to the "plD_bop_[...]" function, add a call to
+"pl_FreeTypeBOP();", which resets the text cache for the new page;
+2) Add a "pl_RemakeFreeType_text_from_buffer(pls);" command after
+your "plRemakePlot(pls)" command; and,
+3) If there is a "resize" command, update a couple of freetype
+internals so they know of the new size, i.e.
+          if (FT)
+            {
+              FT->scale=dev->scale;
+              FT->ymax=dev->height;
+            }
+
+To have a look at it "working" examine wingcc.c
+
+  plplot  include/plfreetype.h  1.6
+  plplot  src/plfreetype.c      1.19
+
+
+Commit from rlaboiss (2004-05-28 22:36 CEST)
+--------------------
+
+Changed some old constructs "plfunc()" into calls to xml entities "&plfunc;".
+
+  plplot  doc/docbook/src/api.xml  1.65
+
+
+Commit from aroach (2004-05-25 08:44 CEST)
+------------------
+
+The wingcc driver was written so that users of GCC windows compilers
+, such as mingw, could have an interactive terminal. This simple
+driver at present just does the basics, like line drawing, filling,
+and line width changes. Freeetype support is embedded within it but
+is not working 100% correctly yet; however, the driver does perform
+its basic job which is simple interactive displays. No fancy features
+like zooming, cross hairs or double buffering are present yet, but the
+device does support resizing at least.
+
+The driver has only been tested with Mingw + Msys, and builds after
+a configure make.
+
++ plplot  drivers/wingcc.c  1.1
+
+
+Commit from aroach (2004-05-25 08:40 CEST)
+------------------
+
+Configure script for the wingcc driver. This driver should work with
+any win32 gcc compiler. It tests for gdi32 - the only library it
+needs link against.
+
++ plplot  cf/wingcc.ac  1.1
+
+
+Commit from aroach (2004-05-25 08:37 CEST)
+------------------
+
+Changes to configure scripts et al to enable the new wingcc driver
+to build. This means that people with (at least) mingw and msys will
+be able to do a configure and make and now have a simple intaractive
+terminal.
+
+  plplot  configure.ac         1.179
+  plplot  cf/drivers-init.ac   1.2
+  plplot  drivers/Makefile.am  1.43
+  plplot  include/drivers.h    1.45
+  plplot  include/plDevs.h.in  1.4
+  plplot  include/plcore.h     1.67
+
+
+Commit from rlaboiss (2004-05-23 23:08 CEST)
+--------------------
+
+Added a paragraph in doc/docbook/src/api-compat.xml about ABI compatibility.
+The external files included in this chapter of the manual,
+plplot-symbols.txt and plplot-structs.txt, are automatically generated fronm
+plplot.h and libplplot.so by the new scripts bin/get-library-structs.pl and
+bin/get-library-symbols.pl.
+
+In doc/docbook/src/plplotdoc.xml.in, a ne entity is created for
+Release-Date, which is also used in api-compat.xml.
+
++ plplot  doc/docbook/bin/get-library-structs.pl  1.1
++ plplot  doc/docbook/bin/get-library-symbols.pl  1.1
+  plplot  doc/docbook/src/.cvsignore              1.9
+  plplot  doc/docbook/src/Makefile.am             1.61
+  plplot  doc/docbook/src/api-compat.xml          1.4
+- plplot  doc/docbook/src/plplot.sym              1.2
+  plplot  doc/docbook/src/plplotdoc.xml.in        1.39
+
+
+Commit from rlaboiss (2004-05-22 12:02 CEST)
+--------------------
+
+[These changes were instigated by Alan Irwin.]
+
+The files cf/drivers-pre.ac and cf/drivers-post.ac are renamed to
+cf/drivers-init.ac and cf/drivers-finish.ac, respectively, what corresponds
+to their functions.  The ps driver specific initialization that used to be
+in cf/drivers-post.ac is now moved into the new file cf/ps.ac.
+configure.ac is changed accordingly to include the right files.
+
+Moreover, some unnecessary AM_CONDITIONALs are removed from
+cf/drivers-finish.ac.  They are not really needed in drivers/Makefile.am,
+because they only enclosed definitions of *_SOURCES and *_LDDFLAGS
+variables, which do not trigger the inclusion of build rules in the final
+Makefile.  The variable lmflags has a more coherent treatment now.
+
+  plplot  configure.ac          1.178
+  plplot  drivers/Makefile.am   1.42
++ plplot  cf/drivers-finish.ac  1.1
++ plplot  cf/drivers-init.ac    1.1
+- plplot  cf/drivers-pre.ac     1.3
+- plplot  cf/drivers-post.ac    1.4
++ plplot  cf/ps.ac              1.1
+
+
+Commit from rlaboiss (2004-05-22 11:36 CEST)
+--------------------
+
+Backslash aesthetics
+
+  plplot  cf/Makefile.am  1.6
+
+
+Commit from airwin (2004-05-21 18:49 CEST)
+------------------
+
+Update these configuration instructions to be consistent with the new cf
+subdirectory organization of our configuration system.
+
+  plplot  drivers/README.drivers  1.6
+
+
+Commit from andrewross (2004-05-21 17:09 CEST)
+----------------------
+
+
+Add plvect and plsvect to the common API.
+
+Add java, python and tcl bindings and examples for plvect and plsvect.
+
+Modify example 22 and make C, C++, fortran, java, python and tcl versions
+consistent. C, C++, fortran and tcl versions of example 22 now produce
+identical results. There appear to be some rounding errors with java and
+python.
+
+  plplot  bindings/java/plplotjavac.i         1.11
+  plplot  bindings/python/plplot.py           1.12
+  plplot  bindings/python/plplotcmodule.i     1.19
+  plplot  bindings/swig-support/plplotcapi.i  1.5
+  plplot  bindings/tcl/plapi.tpl              1.17
+  plplot  bindings/tcl/tclAPI.c               1.56
+  plplot  examples/c/x22c.c                   1.7
+  plplot  examples/c++/x22.cc                 1.7
+  plplot  examples/f77/x22f.fm4               1.3
+  plplot  examples/java/Makefile.am           1.6
++ plplot  examples/java/x22.java              1.1
+  plplot  examples/python/Makefile.am         1.13
+  plplot  examples/python/pythondemos.py      1.10
++ plplot  examples/python/xw22.py             1.1
+  plplot  examples/tcl/Makefile.am            1.12
++ plplot  examples/tcl/x22                    1.1
++ plplot  examples/tcl/x22.tcl                1.1
+  plplot  include/plplot.h                    1.153
+  plplot  src/plvect.c                        1.6
+
+
+Commit from airwin (2004-05-20 21:58 CEST)
+------------------
+
+Restore to previous version since the plgver error never occurred before,
+and the reasons for the current problem are not understood since there were
+no PLplot changes that seem relevant to this sudden misbehaviour, there were
+no swig or java changes on my system, the swig typemap is taken directly
+from a swig example, and whatever this problem, I don't want to sweep it
+under the rug by ignoring it.
+
+  plplot  examples/java/x01.java  1.18
+
+
+Commit from rlaboiss (2004-05-20 12:12 CEST)
+--------------------
+
+Updated AC_INIT and RELEASE_DATE according to the new CVS release tarball
+(5.3.0.cvs.20040520).
+
+  plplot  configure.ac  1.177
+
+
 Commit from airwin (2004-05-20 00:51 CEST)
 ------------------
 
