@@ -211,7 +211,9 @@ plot1(int do_test)
 	if (st) {
 	  for (i=0; i<60; i++) {
 	    plpoin(1, x+i, y+i,9);	/* draw a point */
+#ifndef WIN32
 	    usleep(50000);		/* wait a little */
+#endif
 	    plflush();			/* force an update of the tk driver */
 	    plpoin(1, x+i, y+i,9);	/* erase point */
 	  }

@@ -26,7 +26,7 @@ main(int argc, char *argv[])
   PLFLT **img_f;
 
   PLINT n_col = 255;
-  PLINT rr[n_col], gg[n_col], bb[n_col];
+  PLINT rr[255], gg[255], bb[255];
 
   /* Parse and process command line arguments */
 
