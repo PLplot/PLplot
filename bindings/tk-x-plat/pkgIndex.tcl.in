@@ -15,19 +15,16 @@ proc load_pkg_Plplotter {dir} {
 
     if {$tcl_platform(platform) == "unix"} {
 	set stem tkwin
-	set searchdirs drivers
-	set tags "d {}";		# prefer double precision version
-	set suf _drv[info sharedlibextension]
+	set searchdirs "driversd drivers"; # prefer double precision version
+	set suf [info sharedlibextension]
 
 	set file ""
 	foreach reldir $searchdirs {
-	    foreach tag $tags {
-		set driver [file join $dir $reldir $stem$tag$suf]
-		#puts "looking for driver file: $driver"
-		if [file exists $driver] {
-		    set file $driver
-		    break
-		}
+	    set driver [file join $dir $reldir $stem$suf]
+	    #puts "looking for driver file: $driver"
+	    if [file exists $driver] {
+	        set file $driver
+	        break
 	    }
 	    if { $file != "" } { break }
 	}
