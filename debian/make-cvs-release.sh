@@ -6,26 +6,16 @@
 # This will prepare a PLplot source tree for a release <version>.cvs.<date>
 # of Debian packages.  Run it from the top dir.
 
-if test "$1" = "-u" ; then
-  cvsrel=
+if [ "$1" = "" ] ; then
+  optver=--date-version
 else
-  cvsrel=.cvs.`date '+%Y%m%d'`
+  optver="--version=$1"
 fi
-
-echo -n "Patching configure.ac ... "
-perl -pi -e \
-  's/^(AM_INIT_AUTOMAKE\(plplot, )(\d\.\d\.\d)([^)]*\))/$1$2'$cvsrel')/' \
-  configure.ac
-echo done
-
-if test "$1" != "-u" ; then
-  ./bootstrap.sh
-  ./configure --enable-docbook --enable-python --enable-octave
-  ( cd doc/docbook ; make )
-  cp config.status config.status-save
-  fakeroot debian/rules clean
-  mv config.status-save config.status
-  make dist
-  version=`debian/get-upstream-version.pl < configure.ac`
-  mv plplot-$version.tar.gz ../plplot_$version.orig.tar.gz
-fi
+./bootstrap.sh $optver
+rm -f config.status
+fakeroot debian/rules clean
+./configure --enable-docbook --enable-python --enable-octave --enable-f77 \
+            --enable-smart-ac-output
+make dist
+version=`debian/get-upstream-version.pl < configure.ac`
+mv plplot-$version.tar.gz ../plplot_$version.orig.tar.gz

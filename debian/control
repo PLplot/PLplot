@@ -3,8 +3,8 @@ Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.5.8
-Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev | xlib6g-dev, g77, itk3.1-dev, python2.2-numeric, python2.2-dev, octave2.1-headers, libgd2-dev, libgnome-dev, libfreetype6-dev, m4
-Build-Conflicts: f2c, fort77, python2.1-dev, python2.1
+Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev, g77, itk3.1-dev, python-numeric | python2.2-numeric, python-dev | python2.2-dev, octave2.0-headers | octave2.1-headers, libgd2-dev, libgnome-dev, libfreetype6-dev, m4, perl, libqhull-dev, libpng2-dev | libpng3-dev, libjpeg62-dev
+Build-Conflicts: f2c, fort77
 
 Package: libplplot5
 Architecture: any
@@ -31,10 +31,10 @@ Description: Scientific plotting library
 
 Package: libplplot-dev
 Architecture: all
-Conflicts: plplot-dev, plplot-c++, libplplot5 (<= 5.2.0.cvs.20030227-2)
+Conflicts: plplot-dev, plplot-c++, libplplot5 (<< 5.2.0.cvs.20030317)
 Replaces: plplot-dev
 Suggests: plplot-doc
-Depends: libplplot5
+Depends: libplplot5, libqhull-dev, libfreetype6-dev
 Description: Scientific plotting library (development files)
  This package contains all that is needed for doing development in C, C++,
  and Fortran, a scientific plotting library.  Examples of programs for these
@@ -76,7 +76,7 @@ Package: plplot-tcl
 Architecture: any
 Priority: extra
 Depends: plplot-xwin, iwidgets3.1, ${shlibs:Depends}
-Conflicts: plplot-lib
+Conflicts: plplot-lib, libplplot5 (<< 5.2.0.cvs.20030317)
 Description: Tcl/Tk support for PLplot, a plotting library
  This package contains the Tcl/Tk support for PLplot, a scientific
  plotting library: shared libraries, Tcl modules, the Tk driver, and
@@ -118,7 +118,7 @@ Description: Scientific plotting library (GD driver)
 
 Package: python-plplot
 Architecture: any
-Depends: ${shlibs:Depends}, python2.2
+Depends: ${shlibs:Depends}, ${python:Depends}
 Description: Python support for PLplot, a plotting library
  This package contains the library plmodule.so for gluing the PLplot
  scientific plotting library into Python applications.  Examples are also
@@ -132,7 +132,7 @@ Description: Python support for PLplot, a plotting library
 Package: octave-plplot
 Architecture: any
 Priority: extra
-Depends: ${shlibs:Depends}, octave2.1
+Depends: ${shlibs:Depends}, ${octave:Depends}
 Description: Octave support for PLplot, a plotting library
  This package contains the Octave bindings for PLplot, a scientific plotting
  library.  It provides an almost drop-in replacement for the traditional

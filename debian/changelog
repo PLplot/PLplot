@@ -1,3 +1,28 @@
+plplot (5.2.0.cvs.20030317-1) unstable; urgency=low
+
+  * Built with new CVS sources: fixes in the Octave bindings and in the
+    Docbook documentation.  The configure script does not choke anymore if
+    the swig program is not available (closes: #184694, closes: #183947).
+  * Fixed the mess with the Python version.  Now, both Python 2.1 and 2.2
+    are accepted and the dependency field of package python-plplot is
+    obtained through the substvar ${python:Depends}, which is set in the
+    rule config of debian/rules.
+  * PLplot installs now the .oct file in a versioned directory.  The
+    correct dependency of octave-plplot is now obtained through the
+    substvar ${octave:Depends (closes: #183913).
+  * debian/control:
+      - Added dependencies on libqhull-dev and libfreetype6-dev to
+        libplplot-dev, such that the examples will compile.
+      - Removed build-dependency to xlib6g-dev.
+  * debian/rules added --enable-smart-ac-output option to configure, to
+    avoid needless recompilation of the documentation.
+  * Moved the plplot_libtool script from libplplot5 into libplplot-dev.
+  * The ntk driver is now correctly put in the plplot-tcl package, instead
+    of libplplot5.  This was forcing the erroneous dependency of
+    libplplot5 on Tcl/Tk 8.3.  Shame on me!
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sun, 16 Mar 2003 15:09:45 +0100
+
 plplot (5.2.0.cvs.20030307-1) unstable; urgency=low
 
   * Built with new CVS sources: that are slight improvements in the Octave

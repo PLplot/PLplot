@@ -31,7 +31,20 @@ config-stamp:
                     --disable-static --enable-python --enable-octave   \
                     --enable-gnome --with-double --disable-linuxvga    \
                     --infodir=/usr/share/info --with-freetype          \
-                    --without-rpath --enable-docbook
+                    --without-rpath --enable-docbook                   \
+                    --disable-docbook-build
+	( python_version=`egrep "^PYTHON_VERSION =" Makefile           \
+	      | sed "s/PYTHON_VERSION = *//" | sed 's/ *$$//'`       ; \
+	  echo "python:Depends=python$$python_version"                 \
+	      > debian/python-plplot.substvars ;                       \
+	  octver=`egrep "^OCTAVE_VERSION =" Makefile                   \
+	      | sed "s/OCTAVE_VERSION = *//" | sed 's/ *$$//'`       ; \
+	  next=`echo $$octver                                          \
+	      | perl -ne '/(\d+\.\d+\.)(\d+)/;print($$1,$$2+1)'`     ; \
+	  octpkgver=`echo $$octver | sed 's/\.[0-9]*$$//'`           ; \
+	  pv=octave$$octpkgver                                       ; \
+	  echo "octave:Depends=$$pv (>= $$octver), $$pv (<< $$next)"   \
+	      > debian/octave-plplot.substvars )
 	touch config-stamp
 
 build: build-stamp
