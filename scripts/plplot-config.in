@@ -8,15 +8,10 @@
 # Spits out cflags
 
 output_cflags () {
-    if test ${prefix}/include != /usr/include ; then
-	includes=-I${prefix}/include
-	for i in $plplot_cflags ; do
-	    if test $i = -I${prefix}/include ; then
-		includes=""
-	    fi
-	done
+    OUT="$OUT @INCLUDE_DIR_CMD@"
+    if test "$with_tcl" = "yes" -a "$enable_tcl" = "yes" ; then
+        OUT="$OUT @TCLINCCMD@ @TKINCCMD@"
     fi
-    echo $includes $plplot_cflags -I/usr/X11R6/include 
 }
 
 #----------------------------------------------------------------------------
@@ -71,7 +66,7 @@ emit_lib_output () {
 	    libs="$libs $i"
 	fi
     done
-    echo $libs
+    OUT="$OUT $libs"
 }
 
 #----------------------------------------------------------------------------
@@ -89,6 +84,8 @@ Options:
         [--with-f77]
         [--with-tcl]
 	[--help]
+
+Note: --with-c++, --with-f77, and --with-tcl are mutually exclusive
 EOF
 	exit $1
 }
@@ -96,7 +93,6 @@ EOF
 #----------------------------------------------------------------------------
 # Set up config/control variables
 
-plplot_cflags=""
 prefix=@prefix@
 version=@VERSION@
 enable_cxx=@enable_cxx@
@@ -132,12 +128,21 @@ while test $# -gt 0; do
 	    echo_libs=yes
 	    ;;
 	--with-c++)
+	    if test "$with_f77" = "yes" -o "$with_tcl" = "yes"; then 
+	      usage 1 1>&2
+	    fi
 	    with_cxx=yes
 	    ;;
 	--with-f77)
+	    if test "$with_cxx" = "yes" -o "$with_tcl" = "yes"; then 
+	      usage 1 1>&2
+	    fi
 	    with_f77=yes
 	    ;;
 	--with-tcl)
+	    if test "$with_f77" = "yes" -o "$with_cxx" = "yes"; then 
+	      usage 1 1>&2
+	    fi
 	    with_tcl=yes
 	    ;;
 	--help)
@@ -147,6 +152,7 @@ while test $# -gt 0; do
     shift
 done
 
+OUT=""
 if test "$echo_cflags" = "yes"; then
     output_cflags
 fi
@@ -154,3 +160,4 @@ fi
 if test "$echo_libs" = "yes"; then
     output_libs
 fi
+echo $OUT
