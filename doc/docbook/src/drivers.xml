@@ -4,6 +4,7 @@
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
     Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
+    Copyright (C) 2005 Thomas J. Duck
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -45,10 +46,42 @@
     <title>The Xwin Driver</title>
     
     <para> 
-      is cool.
+      The Xwin driver draws plots in an X-window using Xlib.  The raster
+      output is rather coarse, but renders very fast.  The Xwin driver
+      is excellent for quick-look plots, and is the reference driver
+      for plplot.  However, it should be noted that the Xwin driver 
+      is not unicode-enabled.
     </para>
 
+    <para>
+      The Xwin driver displays plots one page at a time.  The pager
+      is advanced by pressing the Enter key.
+    </para> 
   </sect1>
+
+  <sect1 id="gcw-driver">
+    <title>The GCW Driver</title>
+    
+    <para> 
+      The GCW (Gnome Canvas Widget) driver produces high-quality output
+      in a Gnome window, but renders slower than the Xwin driver.  The
+      GCW driver can also be used to embed plots in Gnome applications,
+      and this is described in the section on Embedding Plots in Gnome
+      Applications.  The GCW driver is unicode enabled.
+    </para>
+
+    <para>
+      Plots are presented in separate tabs.  There are a variety of hot keys
+      that may be used:
+      <itemizedlist>
+	<listitem><para>Arrows : Change page</para></listitem>
+	<listitem><para>+ : Zooms in</para></listitem>
+	<listitem><para>- : Zooms out</para></listitem>
+	<listitem><para>= : Zooms to 100%</para></listitem>
+	<listitem><para>q : Quits</para></listitem>
+      </itemizedlist>
+    </para>
+      </sect1>
 
   <sect1 id="tk-driver">
     <title>The Tk Driver</title>
@@ -75,7 +108,25 @@
     <title>The Postscript Driver</title>
     
     <para> 
-      makes .ps output, how cool.
+      The Postscript driver produces publication-quality postscript
+      output.  This driver is unicode enabled.
+    </para>
+
+    <para>
+    </para>
+
+  </sect1>
+
+  <sect1 id="gd-driver">
+    <title>The GD Driver</title>
+    
+    <para> 
+      The GD driver is used to produce high-quality png, jpeg, and 
+      gif images, using devices by the same name.  All of the GD 
+      devices are unicode enabled.
+    </para>
+
+    <para>
     </para>
 
   </sect1>
