@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1994/06/23 22:37:30  mjl
+ * Revision 1.19  1994/06/30 18:44:18  mjl
+ * Cleaning up, also moved Tk-driver-specific functions to tk.c
+ *
+ * Revision 1.18  1994/06/23  22:37:30  mjl
  * Minor cosmetic changes.
  *
  * Revision 1.17  1994/06/16  19:15:17  mjl
@@ -18,11 +21,11 @@
  * Maurice LeBrun
  * 6-May-93
  *
- * Functions to handle creation & initialization of TCL interpreter and
- * main window.  
+ * A miscellaneous assortment of Tcl support functions.
  */
 
 #include "plserver.h"
+#include <unistd.h>
 
 /* Static functions */
 
@@ -30,96 +33,6 @@
 
 static int
 tcl_cmd(Tcl_Interp *interp, char *cmd);
-
-/* Evals the specified string, returning the result. */
-
-static int
-tcl_eval(Tcl_Interp *interp, char *cmd);
-
-/*----------------------------------------------------------------------*\
- *
- * pltk_toplevel --
- *
- *	Create top level window without mapping it.
- *
- * Results:
- *	Returns 1 on error.
- *
- * Side effects:
- *	Returns window ID as *w.
- *
-\*----------------------------------------------------------------------*/
-
-int
-pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
-	      char *display, char *basename, char *classname)
-{
-    char *new_name;
-    static char wcmd[] = "wm withdraw .";
-
-/*
- * Determine server name.  If it contains any forward slashes ("/"), only
- * use the part following the last "/" so that name can be loaded with 
- * argv[0] by caller.
- */
-    new_name = strrchr(basename, '/');
-    if (new_name != NULL) 
-	basename = ++new_name;
-
-    new_name = strrchr(classname, '/');
-    if (new_name != NULL) 
-	classname = ++new_name;
-
-/* Create the main window without mapping it */
-
-    *w = Tk_CreateMainWindow(interp, display, basename, classname);
-
-    if (*w == NULL) {
-	fprintf(stderr, "%s\n", (interp)->result);
-	return(1);
-    }
-
-    Tcl_VarEval(interp, wcmd, (char *) NULL);
-
-    return(0);
-}
-
-/*----------------------------------------------------------------------*\
- *
- * pltk_source --
- *
- *	Run a script.
- *
- * Results:
- *	Returns 1 on error.
- *
- * Side effects:
- *	None.
- *
-\*----------------------------------------------------------------------*/
-
-int
-pltk_source(Tk_Window w, Tcl_Interp *interp, char *script)
-{
-    int result;
-    char *msg;
-
-/* Execute TCL/TK initialization script. */
-
-    if (script != NULL) {
-	result = Tcl_VarEval(interp, "source ", script, (char *) NULL);
-
-	if (result != TCL_OK) {
-	    msg = Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);
-	    if (msg == NULL) {
-		msg = interp->result;
-	    }
-	    fprintf(stderr, "%s\n", msg);
-	    return(1);
-	}
-    }
-    return(0);
-}
 
 /*----------------------------------------------------------------------*\
  * Pltk_Init
@@ -177,12 +90,12 @@ Pltk_Init( Tcl_Interp *interp )
 }
 
 /*----------------------------------------------------------------------*\
-* pls_auto_path
-*
-* Sets up auto_path variable
-* Note: there is no harm in adding extra directories, even if they don't
-* actually exist (aside from a slight increase in processing time when
-* the autoloaded proc is first found).
+ * pls_auto_path
+ *
+ * Sets up auto_path variable
+ * Note: there is no harm in adding extra directories, even if they don't
+ * actually exist (aside from a slight increase in processing time when
+ * the autoloaded proc is first found).
 \*----------------------------------------------------------------------*/
 
 int
@@ -261,20 +174,15 @@ pls_auto_path(Tcl_Interp *interp)
 }
 
 /*----------------------------------------------------------------------*\
-* tcl_cmd
-*
-* Evals the specified command, aborting on an error.
+ * tcl_cmd
+ *
+ * Evals the specified command, aborting on an error.
 \*----------------------------------------------------------------------*/
 
 static int
 tcl_cmd(Tcl_Interp *interp, char *cmd)
 {
     int result;
-
-    dbug_enter("tcl_cmd");
-#ifdef DEBUG_ENTER
-    fprintf(stderr, "evaluating command %s\n", cmd);
-#endif
 
     result = Tcl_VarEval(interp, cmd, (char **) NULL);
     if (result != TCL_OK) {
@@ -285,18 +193,18 @@ tcl_cmd(Tcl_Interp *interp, char *cmd)
 }
 
 /*----------------------------------------------------------------------*\
-* plWait_Until
-*
-* Tcl command -- wait until the specified condition is satisfied.
-* Processes all events while waiting.
-*
-* This command is more capable than tkwait, and has the added benefit
-* of working with Tcl-DP as well.  Example usage:
-*
-*	wait_until {[info exists foobar]}
-*
-* Note the [info ...] command must be protected by braces so that it
-* isn't actually evaluated until passed into this routine.
+ * plWait_Until
+ *
+ * Tcl command -- wait until the specified condition is satisfied.
+ * Processes all events while waiting.
+ *
+ * This command is more capable than tkwait, and has the added benefit
+ * of working with Tcl-DP as well.  Example usage:
+ *
+ *	wait_until {[info exists foobar]}
+ *
+ * Note the [info ...] command must be protected by braces so that it
+ * isn't actually evaluated until passed into this routine.
 \*----------------------------------------------------------------------*/
 
 int
@@ -319,4 +227,3 @@ plWait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     }
     return TCL_OK;
 }
-
