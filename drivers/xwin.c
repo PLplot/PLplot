@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.51  1994/09/16 06:27:51  mjl
+ * Revision 1.52  1994/09/16 19:14:57  mjl
+ * Color allocation changed: now cmap1 entries aren't allocated until the
+ * first time a cmap1 color is requested.  This will help prevent running out
+ * of colors when many PLplot X windows from independent processes are active
+ * (as long as cmap1 isn't being used).
+ *
+ * Revision 1.51  1994/09/16  06:27:51  mjl
  * Fixed problem with if-test for display name introduced last update.
  *
  * Revision 1.50  1994/09/16  05:35:45  mjl
@@ -115,19 +121,18 @@ static XwDisplay *xwDisplay[PLXDISPLAYS];
 /* Function prototypes */
 
 static void  Init		(PLStream *pls);
-static void  Init_main		(PLStream *pls);
-static void  Init_Colors	(PLStream *pls);
-static void  Init_CustomCmap	(PLStream *pls);
-static void  Init_DefaultCmap	(PLStream *pls);
-static void  Map_main		(PLStream *pls);
+static void  InitMain		(PLStream *pls);
+static void  InitColors		(PLStream *pls);
+static void  AllocCustomMap	(PLStream *pls);
+static void  AllocCmap0		(PLStream *pls);
+static void  AllocCmap1		(PLStream *pls);
+static void  MapMain		(PLStream *pls);
 static void  WaitForPage	(PLStream *pls);
 static void  HandleEvents	(PLStream *pls);
-static void  ColorInit		(PLStream *pls);
-static void  Cmap0Init		(PLStream *pls);
-static void  Cmap1Init		(PLStream *pls);
+static void  StoreCmap0		(PLStream *pls);
+static void  StoreCmap1		(PLStream *pls);
 static void  CreatePixmap	(PLStream *pls);
-static void  fill_polygon	(PLStream *pls);
-static void  Colorcpy		(XColor *, XColor *);
+static void  FillPolygon	(PLStream *pls);
 
 static void  MasterEH		(PLStream *, XEvent *);
 static void  KeyEH		(PLStream *, XEvent *);
@@ -413,7 +418,15 @@ plD_state_xw(PLStream *pls, PLINT op)
     }
 
     case PLSTATE_COLOR1:{
-	int icol1 = (pls->icol1 * (xwd->ncol1-1)) / (pls->ncol1-1);
+	int icol1;
+
+	if (xwd->ncol1 == 0)
+	    AllocCmap1(pls);
+
+	if (xwd->ncol1 < 2)
+	    break;
+
+	icol1 = (pls->icol1 * (xwd->ncol1-1)) / (pls->ncol1-1);
 	if ( ! xwd->color) {
 	    xwd->curcolor.pixel = xwd->fgcolor.pixel;
 	    XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
@@ -425,11 +438,11 @@ plD_state_xw(PLStream *pls, PLINT op)
     }
 
     case PLSTATE_CMAP0:
-	Cmap0Init(pls);
+	StoreCmap0(pls);
 	break;
 
     case PLSTATE_CMAP1:
-	Cmap1Init(pls);
+	StoreCmap1(pls);
 	break;
     }
 }
@@ -477,7 +490,7 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 	break;
 
     case PLESC_FILL:
-	fill_polygon(pls);
+	FillPolygon(pls);
 	break;
 
     case PLESC_EH:
@@ -487,14 +500,14 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 }
 
 /*----------------------------------------------------------------------*\
- * fill_polygon()
+ * FillPolygon()
  *
  * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
  * Only solid color fill supported.
 \*----------------------------------------------------------------------*/
 
 static void
-fill_polygon(PLStream *pls)
+FillPolygon(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
@@ -620,14 +633,14 @@ Init(PLStream *pls)
 	if (synchronize) 
 	    XSynchronize(xwd->display, 1);
 
-	Init_Colors(pls);
+	InitColors(pls);
     }
 
 /* If not plotting into a child window, need to create main window now */
 
     if (pls->window_id == 0) {
 	dev->is_main = TRUE;
-	Init_main(pls);
+	InitMain(pls);
     }
     else {
 	dev->is_main = FALSE;
@@ -664,17 +677,17 @@ Init(PLStream *pls)
 /* If main window, need to map it and wait for exposure */
 
     if (dev->is_main) 
-	Map_main(pls);
+	MapMain(pls);
 }
 
 /*----------------------------------------------------------------------*\
- * Init_main()
+ * InitMain()
  *
  * Create main window using standard Xlib calls.
 \*----------------------------------------------------------------------*/
 
 static void
-Init_main(PLStream *pls)
+InitMain(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
@@ -686,7 +699,7 @@ Init_main(PLStream *pls)
     char header[80];
     Cursor cross_cursor;
 
-    dbug_enter("Init_main");
+    dbug_enter("InitMain");
 
 /* Get root window geometry */
 
@@ -750,20 +763,20 @@ Init_main(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
- * Map_main()
+ * MapMain()
  *
  * Sets up event handlers, maps main window and waits for exposure.
 \*----------------------------------------------------------------------*/
 
 static void
-Map_main(PLStream *pls)
+MapMain(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
     XEvent the_event;
 
-    dbug_enter("Map_main");
+    dbug_enter("MapMain");
 
 /* Input event selection */
 
@@ -1243,27 +1256,26 @@ Driver will redraw the entire plot to handle expose events.\n");
 }
 
 /*----------------------------------------------------------------------*\
- * Init_Colors()
+ * InitColors()
  *
  * Does all color initialization.
 \*----------------------------------------------------------------------*/
 
 static void
-Init_Colors(PLStream *pls)
+InitColors(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
-    Colormap default_map;
     PLColor fgcolor;
     int gslevbg, gslevfg;
     int visuals_matched = 0;
 
-    dbug_enter("Init_Colors");
+    dbug_enter("InitColors");
 
-/* Grab default color map */
+/* Grab default color map.  Can always overwrite it later. */
 
-    default_map = DefaultColormap(xwd->display, xwd->screen);
+    xwd->map = DefaultColormap(xwd->display, xwd->screen);
 
 /* Get visual info.
  * 
@@ -1350,21 +1362,24 @@ Init_Colors(PLStream *pls)
 
     if ( ! xwd->color) {
 	PLColor_to_XColor(&pls->cmap0[0], &xwd->cmap0[0]);
-	XAllocColor(xwd->display, default_map, &xwd->cmap0[0]);
-	XAllocColor(xwd->display, default_map, &xwd->fgcolor);
+	XAllocColor(xwd->display, xwd->map, &xwd->cmap0[0]);
+	XAllocColor(xwd->display, xwd->map, &xwd->fgcolor);
 	return;
     }
 
-/* Create custom color map and initialize cmap0 */
+/* Allocate and initialize color maps. */
+/* Defer cmap1 allocation until it's actually used */
 
-    if (plplot_ccmap) 
-	Init_CustomCmap(pls);
-    else 
-	Init_DefaultCmap(pls);
+    if (plplot_ccmap) {
+	AllocCustomMap(pls);
+    }
+    else {
+	AllocCmap0(pls);
+    }
 }
 
 /*----------------------------------------------------------------------*\
- * Init_CustomCmap()
+ * AllocCustomMap()
  *
  * Initializes custom color map and all the cruft that goes with it.
  *
@@ -1387,56 +1402,33 @@ Init_Colors(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 static void
-Init_CustomCmap(PLStream *pls)
+AllocCustomMap(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
-    Colormap default_map;
     XColor xwm_colors[MAX_COLORS];
-    int i, j, npixels;
-    unsigned long plane_masks[1];
-    unsigned long pixel, pixels[MAX_COLORS];
+    int i, npixels;
+    unsigned long plane_masks[1], pixels[MAX_COLORS];
 
     dbug_enter("Init_Colormap");
-
-/* Grab default color map */
-
-    default_map = DefaultColormap(xwd->display, xwd->screen);
 
 /* Determine current default colors */
 
     for (i = 0; i < MAX_COLORS; i++) {
 	xwm_colors[i].pixel = i;
     }
-    XQueryColors(xwd->display, default_map, xwm_colors, MAX_COLORS);
+    XQueryColors(xwd->display, xwd->map, xwm_colors, MAX_COLORS);
 
 /* Allocate cmap0 colors in the default colormap.
  * The custom cmap0 colors are later stored at the same pixel values.
  * This is a really cool trick to reduce the flicker when changing colormaps.
  */
 
-    npixels = MIN(pls->ncol0, MAX_COLORS);
-    while(1) {
-	if (XAllocColorCells(xwd->display, default_map, False,
-			     plane_masks, 0, pixels, npixels))
-	    break;
-	npixels--;
-	if (npixels == 0)
-	    plexit("couldn't allocate any colors");
-    }
+    AllocCmap0(pls);
+    XAllocColor(xwd->display, xwd->map, &xwd->fgcolor);
 
-    xwd->ncol0 = npixels;
-    for (i = 0; i < xwd->ncol0; i++) {
-
-	PLColor_to_XColor(&pls->cmap0[i], &xwd->cmap0[i]);
-
-	xwd->cmap0[i].pixel = pixels[i];
-	XStoreColor(xwd->display, default_map, &xwd->cmap0[i]);
-    }
-    XAllocColor(xwd->display, default_map, &xwd->fgcolor);
-
-/* Create color map */
+/* Create new color map */
 
     xwd->map = XCreateColormap( xwd->display, DefaultRootWindow(xwd->display),
 				xwd->visual, AllocNone );
@@ -1496,49 +1488,25 @@ Init_CustomCmap(PLStream *pls)
 
 /* Allocate colors in cmap 1 */
 
-    npixels = MAX(2, MIN(CMAP1_COLORS, pls->ncol1));
-    while(1) {
-	if (XAllocColorCells(xwd->display, xwd->map, False,
-			     plane_masks, 0, pixels, npixels))
-	    break;
-	npixels--;
-	if (npixels == 0)
-	    plexit("couldn't allocate any colors");
-    }
-
-    fprintf(stderr, "Allocated %d colors in cmap1\n", npixels);
-    xwd->ncol1 = npixels;
-    for (i = 0; i < xwd->ncol1; i++) {
-	xwd->cmap1[i].pixel = pixels[i];
-    }
-
-    Cmap1Init(pls);
+    AllocCmap1(pls);
 }
 
 /*----------------------------------------------------------------------*\
- * Init_DefaultCmap()
+ * AllocCmap0()
  *
- * Initializes default color map and all the cruft that goes with it.
- * Have to severely limit number of colors in cmap1 otherwise TK won't
- * have enough.
+ * Allocate & initialize cmap0 entries.
 \*----------------------------------------------------------------------*/
 
 static void
-Init_DefaultCmap(PLStream *pls)
+AllocCmap0(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
-    Colormap default_map;
-    int i, j, npixels;
-    unsigned long plane_masks[1];
-    unsigned long pixel, pixels[MAX_COLORS];
+    int i, npixels;
+    unsigned long plane_masks[1], pixels[MAX_COLORS];
 
-    dbug_enter("Init_DefaultCmap");
-
-/* Grab default color map */
-
-    xwd->map = DefaultColormap(xwd->display, xwd->screen);
+    dbug_enter("AllocCmap0");
 
 /* Allocate and assign colors in cmap 0 */
 
@@ -1557,7 +1525,26 @@ Init_DefaultCmap(PLStream *pls)
 	xwd->cmap0[i].pixel = pixels[i];
     }
 
-    Cmap0Init(pls);
+    StoreCmap0(pls);
+}
+
+/*----------------------------------------------------------------------*\
+ * AllocCmap1()
+ *
+ * Allocate & initialize cmap1 entries.  If using the default color map,
+ * must severely limit number of colors otherwise TK won't have enough.
+\*----------------------------------------------------------------------*/
+
+static void
+AllocCmap1(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
+    int i, j, npixels;
+    unsigned long plane_masks[1], pixels[MAX_COLORS];
+
+    dbug_enter("AllocCmap1");
 
 /* Allocate colors in cmap 1 */
 
@@ -1568,25 +1555,35 @@ Init_DefaultCmap(PLStream *pls)
 	    break;
 	npixels--;
 	if (npixels == 0)
-	    plexit("couldn't allocate any colors");
-    }
-
-/* Now free them all and start with a reduced number */
-
-    XFreeColors(xwd->display, xwd->map, pixels, npixels, 0);
-
-    npixels = MAX(npixels - 30, 10);
-    while(1) {
-	if (XAllocColorCells(xwd->display, xwd->map, False,
-			     plane_masks, 0, pixels, npixels))
 	    break;
-	npixels--;
-	if (npixels == 0)
-	    plexit("couldn't allocate any colors");
     }
 
-    fprintf(stderr, "Allocated %d colors in cmap1\n", npixels);
-    xwd->ncol1 = npixels;
+/* If using the default map, free them all and start with a reduced number */
+
+    if ( ! plplot_ccmap) {
+	XFreeColors(xwd->display, xwd->map, pixels, npixels, 0);
+
+	npixels = MAX(npixels - 30, 10);
+	while(1) {
+	    if (XAllocColorCells(xwd->display, xwd->map, False,
+				 plane_masks, 0, pixels, npixels))
+		break;
+	    npixels--;
+	    if (npixels == 0)
+		plexit("couldn't allocate any colors");
+	}
+    }
+
+    if (npixels < 2) {
+	fprintf(stderr,
+		"Warning: unable to allocate sufficient colors in cmap1\n");
+	xwd->ncol1 = -1;
+	return;
+    }
+    else {
+	fprintf(stderr, "Allocated %d colors in cmap1\n", npixels);
+	xwd->ncol1 = npixels;
+    }
 
 /* Don't assign pixels sequentially, to avoid strange problems with xor GC's */
 /* Skipping by 2 seems to do the job best */
@@ -1603,17 +1600,17 @@ Init_DefaultCmap(PLStream *pls)
 	    j = 0;
     }
 
-    Cmap1Init(pls);
+    StoreCmap1(pls);
 }
 
 /*----------------------------------------------------------------------*\
- * Cmap0Init()
+ * StoreCmap0()
  *
- * Initializes cmap 0
+ * Stores cmap 0 entries in X-server colormap.
 \*----------------------------------------------------------------------*/
 
 static void
-Cmap0Init(PLStream *pls)
+StoreCmap0(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
@@ -1626,13 +1623,13 @@ Cmap0Init(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
- * Cmap1Init()
+ * StoreCmap1()
  *
- * Initializes cmap 1
+ * Stores cmap 1 entries in X-server colormap.
 \*----------------------------------------------------------------------*/
 
 static void
-Cmap1Init(PLStream *pls)
+StoreCmap1(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
@@ -1645,21 +1642,6 @@ Cmap1Init(PLStream *pls)
 	PLColor_to_XColor(&cmap1color, &xwd->cmap1[i]);
 	XStoreColor(xwd->display, xwd->map, &xwd->cmap1[i]);
     }
-}
-
-/*----------------------------------------------------------------------*\
- * void Colorcpy()
- *
- * Self-explanatory.
-\*----------------------------------------------------------------------*/
-
-static void
-Colorcpy(XColor *xcolor1, XColor *xcolor2)
-{
-    xcolor1->red = xcolor2->red;
-    xcolor1->green = xcolor2->green;
-    xcolor1->blue = xcolor2->blue;
-    xcolor1->pixel = xcolor2->pixel;
 }
 
 /*----------------------------------------------------------------------*\
