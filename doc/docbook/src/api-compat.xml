@@ -39,12 +39,14 @@
 
   <para>
     This chapter presents the formal definition of what is considered to be
-    in the PLplot library API.  The PLplot developers commit to introduce
-    backwards compatibilities as few as possible, such that stability
-    across releases is practically guaranteed.  However, in the eventuality
-    that the interface or the behavior of any function in the API changes,
-    then the library soname will be changed (in systems that support
-    versioned shared libraries).
+    in the PLplot library API.  It is assumed that major new releases of
+    PLplot will have substantial backwards incompatible changes in the API,
+    but the PLplot developers commit to introducing as few as possible of
+    such incompatibilities between minor releases such that stability
+    across those minor releases is practically guaranteed.  In all cases
+    where backwards incompatible changes have been introduced, then the
+    library soname will be changed (for operating systems such as Linux
+    that support versioned shared libraries).
   </para>
 
   <sect1>
