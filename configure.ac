@@ -617,10 +617,13 @@ if test "$enable_tcl" = yes; then
 fi
 
 if test "$enable_tk" = yes; then
-   if test "$TKINCDIR" != default; then
-      TKINCCMD="-I$TKINCDIR"
-      AC_SUBST(TKINCCMD)
+# Must add in X_CFLAGS for some platforms to work.
+   if test "$TKINCDIR" = default; then
+      TKINCCMD="$X_CFLAGS"
+   else
+      TKINCCMD="-I$TKINCDIR $X_CFLAGS"
    fi
+   AC_SUBST(TKINCCMD)
    if test "$TKLIBDIR" = default; then
       TKLIBCMD="$TKLIBSTR"
    else
