@@ -18,6 +18,6 @@ $cdir/x13c -dev $driver -o x13c.$dsuffix $options
 #skip x14c since uses tk driver.
 $cdir/x15c -dev $driver -o x15c.$dsuffix $options
 $cdir/x16c -dev $driver -o x16c.$dsuffix $options
-$cdir/x17c -dev $driver -o x17c.$dsuffix $options
+#skip x17c which is only meant for interactive execution
 $cdir/x18c -dev $driver -o x18c.$dsuffix $options
 $cdir/x19c -dev $driver -o x19c.$dsuffix $options
