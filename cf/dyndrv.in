@@ -15,10 +15,10 @@ DYNLOAD_STUFF := dynamic_drivers_target
 dynamic_drivers_target: $(dynamic_drivers)
 	@echo "dynamic_drivers built: $(dynamic_drivers)"
 
-driverlibs := -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
-
-# no driver needs this:
-# -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+# Decause of the bindings to interpreted languages such as Python or Java,
+# dynamically linked drivers need to be linked againts libplplot:
+#driverlibs := -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
+driverlibs := -L. -l$(PLLIB_NAME)$(LIB_TAG)
 
 drivers/null.drv : shared/null$O
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
