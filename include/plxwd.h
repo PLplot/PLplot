@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1995/06/01 21:45:26  mjl
+ * Revision 1.2  1996/10/31 05:05:08  furnish
+ * Add new member for tracking whether the chosen visual supports mutable
+ * color cells.
+ *
+ * Revision 1.1  1995/06/01  21:45:26  mjl
  * Created to hold definitions and prototypes specific to the X-driver.  The
  * user shouldn't need to access this file but it's here just in case.
  *
@@ -74,6 +78,7 @@ typedef struct {
     XColor	cmap1[256];		/* Color entries for cmap 1 */
     XColor	fgcolor;		/* Foreground color (if grayscale) */
     Cursor	xhair_cursor;		/* Crosshair cursor */
+    int		rw_cmap;		/* Can we allocate r/w color cells? */
 } XwDisplay;
 
 /* One of these holds the X driver state information */
