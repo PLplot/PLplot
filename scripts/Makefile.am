@@ -36,6 +36,7 @@ EXTRA_DIST = \
 	check-tarball-cvs.sh \
 	check-year-author.pl \
 	fixfort \
+	get-dependency-libs.sh \
 	htdocs-gen_plot-examples.sh \
 	htdocs-replace.sh \
 	make-cvs-tarball.sh \
