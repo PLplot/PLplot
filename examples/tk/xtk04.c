@@ -96,9 +96,7 @@ int   get_dataCmd        (ClientData, Tcl_Interp *, int, char **);
 static int
 AppInit(Tcl_Interp *interp)
 {
-    Tk_Window main;
-
-    main = Tk_MainWindow(interp);
+    Tk_Window mainWindow = Tk_MainWindow(interp);
 
 /*
  * Call the init procedures for included packages.  Each call should
@@ -121,7 +119,7 @@ AppInit(Tcl_Interp *interp)
  */
 
     Tcl_CreateCommand(interp, "get_data", get_dataCmd,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
+                      (ClientData) mainWindow, (void (*)(ClientData)) NULL);
 
     Tcl_MatrixInstallXtnsn( "max", mat_max );
     Tcl_MatrixInstallXtnsn( "min", mat_min );

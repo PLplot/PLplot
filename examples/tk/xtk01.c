@@ -69,9 +69,7 @@ int   myplotCmd        (ClientData, Tcl_Interp *, int, char **);
 static int
 AppInit(Tcl_Interp *interp)
 {
-    Tk_Window main;
-
-    main = Tk_MainWindow(interp);
+    Tk_Window mainWindow = Tk_MainWindow(interp);
 
 /*
  * Call the init procedures for included packages.  Each call should
@@ -94,7 +92,7 @@ AppInit(Tcl_Interp *interp)
  */
 
     Tcl_CreateCommand(interp, "myplot", myplotCmd,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
+                      (ClientData) mainWindow, (void (*)(ClientData)) NULL);
 
     return TCL_OK;
 }
@@ -107,10 +105,6 @@ AppInit(Tcl_Interp *interp)
 	Simple line plot and multiple windows demo.
 */
 
-static PLFLT xs[6] =
-{1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-static PLFLT ys[6] =
-{1.0, 4.0, 9.0, 16.0, 25.0, 36.0};
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
 static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
@@ -336,7 +330,7 @@ f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax);
  * Does several shade plots using different coordinate mappings.
 \*--------------------------------------------------------------------------*/
 
-int
+void
 shade(void)
 {
     int i, j;

@@ -159,9 +159,7 @@ PLplot/Tk driver.\n\n(wish) ");
 static int
 AppInit(Tcl_Interp *interp)
 {
-    Tk_Window main;
-
-    main = Tk_MainWindow(interp);
+    Tk_Window mainWindow = Tk_MainWindow(interp);
 
 /*
  * Call the init procedures for included packages.  Each call should
@@ -173,30 +171,6 @@ AppInit(Tcl_Interp *interp)
  *
  * where "Mod" is the name of the module.
  */
-
-#if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
-    if (Tcl_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    if (main && Tk_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-#endif
-/* #ifdef HAVE_ITCL */
-/*     if (Itcl_Init(interp) == TCL_ERROR) { */
-/* 	return TCL_ERROR; */
-/*     } */
-/* #endif */
-/* #ifdef HAVE_ITK */
-/*     if (Itk_Init(interp) == TCL_ERROR) { */
-/* 	return TCL_ERROR; */
-/*     } */
-/* #endif */
-#ifdef PLD_dp
-    if (Tdp_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-#endif
     if (Pltk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
@@ -242,7 +216,7 @@ AppInit(Tcl_Interp *interp)
     tcl_cmd(interp, "rename exit tkexit");
 
     Tcl_CreateCommand(interp, "exit", plExitCmd,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
+                      (ClientData) mainWindow, (void (*)(ClientData)) NULL);
 
     return TCL_OK;
 }
