@@ -100,17 +100,19 @@ if [ $set_date = yes ] ; then
   echo done
 fi
 
-echo "Autotools versions are the following:"
-autoconf --version |sed 1q
-automake --version |sed 1q
-libtool  --version |sed 1q
+# The following lines give redundant informations and are commented out 
+# for now, until we decide the best way to present the program versions.
+#
+# echo "Autotools versions are the following:"
+# autoconf --version |sed 1q
+# automake --version |sed 1q
+# libtool  --version |sed 1q
 
 # We use the specific commands below rather than the recommended autoreconf
 # because the particular way we use libltdl demands the
 # --ltdl option for libtoolize.  We may change the way we use libltdl in
 # the future in which case we should be able to replace the commands below
 # with "run autoreconf -vfi -I cf".
-
 
 run aclocal -I cf  \
   && run autoheader \
