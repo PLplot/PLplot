@@ -1,5 +1,5 @@
 %define name    plplot
-%define version 5.2.1.rc1.5.3.0
+%define version 5.3.0
 %define release 1mdk
 %define lib_name_orig libplplot
 %define lib_major 9
@@ -13,7 +13,7 @@
 %define libnamestaticdevel		%mklibname plplot %{lib_major} -s -d
 
 Summary: Scientific 2D/3D plotting library
-#Packager: Conrad Steenberg <conrad@hep.caltech.edu>
+Packager: Brian D. Wright <bdwright@phy.ucsf.edu>
 Name:    %{name}
 Version: %{version}
 Release: %{release}
@@ -323,10 +323,12 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 %{_bindir}/pstex2eps
 
 # fonts and maps 
+%dir %{_datadir}/plplot%{version}
 %{_datadir}/plplot%{version}/*.fnt
 %{_datadir}/plplot%{version}/*.map
 
 %files -n %{lib_name}
+%defattr(-,root,root)
 # libraries
 %{_libdir}/*plplotf77*.so.*
 %{_libdir}/*plplotcxx*.so.*
@@ -334,8 +336,13 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 %{_libdir}/*nn*.so.*
 %{_libdir}/*csa*.so.*
 
+# driver area
+%dir %{_libdir}/plplot%{version}
+%dir %{_libdir}/plplot%{version}/driversd
+
 # Base drivers package
 %files -n %{lib_name}-drivers
+%defattr(-,root,root)
 # drivers
 %{_libdir}/plplot%{version}/driversd/cgm*
 %{_libdir}/plplot%{version}/driversd/dg300*
@@ -355,6 +362,7 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 
 # Devel package
 %files -n %{lib_name_devel}
+%defattr(-,root,root)
 # More extensive documentation
 %{_mandir}/man3/*.3plplot.bz2 
 %doc doc/docbook/src/plplot-%{version}.dvi doc/docbook/src/plplot-%{version}.pdf doc/docbook/src/plplot-%{version}.ps.gz doc/html README.pkg-config
@@ -364,6 +372,7 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 %{_mandir}/man1/plplot_libtool.1.bz2
 %{_bindir}/plplot_libtool
 # headers
+%dir %{_includedir}/plplot
 %{_includedir}/plplot/disptab.h
 %{_includedir}/plplot/drivers.h
 %{_includedir}/plplot/pdf.h
@@ -389,6 +398,7 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 %{_libdir}/*csa*.la
 
 %{_libdir}/pkgconfig
+%dir %{_datadir}/plplot%{version}/examples
 %{_datadir}/plplot%{version}/examples/Makefile
 %{_datadir}/plplot%{version}/examples/c
 %{_datadir}/plplot%{version}/examples/c++
@@ -400,6 +410,7 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 %{_datadir}/plplot%{version}/examples/test_f77.sh
 
 %files -n %{lib_name_static_devel}
+%defattr(-,root,root)
 %{_libdir}/*plplotf77*.a
 %{_libdir}/*plplotcxx*.a
 %{_libdir}/*plplotd.a
@@ -408,20 +419,24 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 
 # for gd
 %files -n %{lib_name}-driver-gd
+%defattr(-,root,root)
 %{_libdir}/plplot%{version}/driversd/gd*
 
 # for gnome
 %files -n %{lib_name}-driver-gnome
+%defattr(-,root,root)
 %{_libdir}/plplot%{version}/driversd/gnome*
 
 # for python
 %files -n %{lib_name_orig}-python
+%defattr(-,root,root)
 %{_libdir}/python*
 %{_datadir}/plplot%{version}/examples/test_python.sh
 %{_datadir}/plplot%{version}/examples/python
 
 # for octave
 %files -n %{lib_name_orig}-octave
+%defattr(-,root,root)
 %{_libdir}/octave
 %{_datadir}/plplot%{version}/examples/test_octave.sh
 %{_datadir}/plplot%{version}/examples/octave
@@ -431,11 +446,13 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 
 # for java
 %files -n %{lib_name}-java
+%defattr(-,root,root)
 %{_libdir}/java
 %{_datadir}/plplot%{version}/examples/test_java.sh
 
 # for tcltk apps
 %files -n %{name}-tcltk
+%defattr(-,root,root)
 %{_mandir}/man1/plserver.1.bz2
 %{_mandir}/man1/pltcl.1.bz2
 %{_bindir}/plserver
@@ -443,6 +460,7 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 
 # for tcltk
 %files -n %{lib_name}-tcltk
+%defattr(-,root,root)
 %{_libdir}/*tcl*.so.*
 %{_datadir}/plplot%{version}/pkgIndex.tcl
 %{_datadir}/plplot%{version}/tcl
@@ -450,6 +468,7 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 
 # for tcltk-devel
 %files -n %{lib_name}-tcltk-devel
+%defattr(-,root,root)
 %{_libdir}/*tcl*.so
 %{_libdir}/*tcl*.la
 %{_includedir}/plplot/pltcl.h
@@ -461,10 +480,19 @@ rm -rf %{buildroot}/%{_datadir}/doc/plplot
 
 # for tcltk-static-devel
 %files -n %{lib_name}-tcltk-static-devel
+%defattr(-,root,root)
 %{_libdir}/*tcl*.a
 
 %changelog
+* Tue Jan 27 2004 Brian D. Wright <bdwright@phy.ucsf.edu> 5.2.1.rc2.5.3.0-2mdk
+- Added explicit directories for proper cleanup on uninstall.
+- Added missing defattrs.
+
+* Tue Jan 27 2004 Brian D. Wright <bdwright@phy.ucsf.edu> 5.2.1.rc2.5.3.0-1mdk
+- Update for new release candidate.
+
 * Tue Jan 20 2004 Brian D. Wright <bdwright@phy.ucsf.edu> 5.2.1.rc1.5.3.0-1mdk
 - Update for new release candidate.
 - Set --with-pkg-config option in configure.
 - Moved data and examples to datadir install locations.
+
