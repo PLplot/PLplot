@@ -89,9 +89,7 @@ class x11 {
                       "bcdmnstuv", "z axis", 0.0, 4 );
 
             pls.col0(2);
-//temporary
-	    pls.plot3d( x, y, z, opt[k], 1 );
-//N.I.            pls.mesh( x, y, z, opt[k] );
+            pls.mesh( x, y, z, opt[k] );
             pls.col0(3);
             pls.mtex("t", 1.0, 0.5, 0.5, title[k]);
         }
