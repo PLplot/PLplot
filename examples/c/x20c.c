@@ -28,6 +28,20 @@ main(int argc, char *argv[])
   PLINT n_col = 255;
   PLINT rr[255], gg[255], bb[255];
 
+  /*
+    Bugs in plimage():
+     -if the plot window is not totally visible, plimage() fails!
+       (creating an image instead of retrieving the existing one will
+        obliterate any plot already made, so this is no solution)
+     -at high magnifications, the left and right edge are ragged, try
+        ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
+     
+    Bugs in x20c.c:
+     -if the window is resized after a selection is made on "lena", when
+      making a new selection the old one will re-appear.
+     -sometimes the selected area will be twisted after the selection finishes!?!
+  */
+
   /* Parse and process command line arguments */
 
   plParseOpts(&argc, argv, PL_PARSE_FULL);
@@ -74,7 +88,6 @@ main(int argc, char *argv[])
       z[i][j] = sin(r[i][j]) / (r[i][j]);
     }
 
-  //pllab("...around the plot."," ","A yellow box should appear...");
   plimage(z, XDIM, YDIM, 0., 2.*PI, 0, 3.*PI, 0., 2.*PI, 0, 3.*PI); 
 
   pladv(0);
@@ -125,12 +138,15 @@ main(int argc, char *argv[])
     while(1) {
       PLFLT sx[5], sy[5];
 
+      plxormod(0, &st);
       plGetCursor(&gin);
+      plxormod(1, &st);
 
       if (gin.button == 1) {
 	xi = gin.wX; yi = gin.wY;
 	if (start)
 	  plline(5, sx, sy); /* clear previous rectangle */
+
 	start = 0;
 
 	sx[0] = xi; sy[0] = yi;
@@ -141,6 +157,7 @@ main(int argc, char *argv[])
 	xe = gin.wX; ye = gin.wY;
 	if (start)
 	  plline(5, sx, sy); /* clear previous rectangle */
+
 	start = 1;
   
 	sx[2] = xe; sy[2] = ye;
@@ -178,7 +195,7 @@ main(int argc, char *argv[])
      xhairs (in GetCursorCmd()) solves some problems, but I still have
      to press the enter key or press Button-2 to go to next plot, even
      if a pladv() is not present!  Using plbop() solves the problem, but
-     it should'nt be needed! 
+     it shouldn't be needed! 
   */
 
   /* plbop(); */
