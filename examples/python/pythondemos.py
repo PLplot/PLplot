@@ -27,15 +27,12 @@ import xw10
 import xw11
 import xw12
 import xw13
-import xw14
+# xw14.py must be standalone so cannot be run from pythondemos.py
 import xw15
 import xw16
-# Comment out xw17.py until can figure a way to bypass this for 
-# non-interactive plotting devices where it cannot work.
-# import xw17
+# xw17.py must be standalone and interactive so cannot be run from pythondemos.py
 import xw18
 import xw19
-
 
 # Terminate plplot
 plend()
