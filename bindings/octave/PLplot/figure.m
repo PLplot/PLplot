@@ -56,14 +56,10 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
     __pl.inited = 1;
 
     if (automatic_replot == 0)
-      warning("Setting 'automatic_replot' to 1");
-      automatic_replot = 1;
+      warning("It is recommended that you set 'automatic_replot=1' \n\
+	  in your ~/.octaverc file.");
+      ##automatic_replot = 1;
     endif
-
-    ##if (nargin == 0)
-    ##  n=0; driver=""; intp="";
-    ##  return;
-    ##endif
   endif
 
   if (nargin == 0)
@@ -111,17 +107,18 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       ##endif
       __pl.legend_xpos(strm) = 1;	# legend x position
       __pl.legend_ypos(strm) = 1;	# legend y position
-      __pl.legend(strm) = 2;	# legend type
-      __pl.lab_pos(strm) = 0;	# label position
+      __pl.legend(strm) = 2;	        # legend type
+      __pl.lab_pos(strm) = 1;	        # label position
       __pl.lab_lsty(strm,1) = 0;	# label (line) style
       __pl.lab_col(strm,1) = 0;	# label color
+      __pl.lab_sym(strm,:) = 0;	# label symbol
       __pl.multi_row(strm) = 1;	# multiplot state
       __pl.multi_col(strm) = 1;	# multiplot columns
       __pl.multi_cur(strm) = 1;	# current multiplot
       __pl.multi(strm) = 0;	# multiplot rows
-      __pl.aspect(strm) = 0;       # plot aspect ratio (auto)
+      __pl.aspect(strm) = 0;    # plot aspect ratio (auto)
       __pl.axis_st(strm) = 0;	# axis state
-      __pl.axis(strm,:) = zeros(1,6);	# current axis
+      __pl.axis(strm,:) = zeros(1,6);	  # current axis
       ## xticks(1) xticks interval, xticks(2) number of sub-ticks
       ## xticks(3) ticks disabled, xticks(4) tick labels disabled
       __pl.xticks(strm,:) = [0, 0, 1, 1]; # xtick interval, number of minor xticks
@@ -138,7 +135,6 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       __pl.line_style(strm) = 0;  # don't increase line style after plot
       __pl.az(strm) = -60;	# azimuth
       __pl.alt(strm) = 30;	# altitude
-      __pl.grid(strm) = 0;	# grid state
       __pl.plcol(strm) = 1;	# current plot color
       __pl.pllsty(strm) = 1;	# current plot style
       __pl.line_count(strm) = 1;      # current label counter
@@ -146,6 +142,11 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       __pl.open(strm) = 1;            # figure state
       __pl.margin(strm) = 1;	   # keep a small margin around box
       __pl.stopdraw(strm) = 0;	   # don't hold draw until drawnow().
+      __pl.grid(strm) = 0;	   # grid state
+
+      if (!struct_contains(__pl, "lab_str"))
+	__pl.lab_str(strm) = "";	# label string
+      endif
 
       if (struct_contains(__pl, "xlabel"))
 	__pl.xlabel = __pl_matstr( __pl.xlabel, "X", strm); # x,y,z,title labels text
