@@ -21,26 +21,15 @@ from plplotc import *
 import types
 import Numeric
 
+#  Redefine plcont to have the user-friendly interface
 #  Allowable syntaxes:
 
-#  plcont( z, kx, lx, ky, ly, clev, pltr, xg, yg, wrap )
-#  plcont( z, clev, pltr, xg, yg, wrap )
+#  plcont( z, [kx, lx, ky, ly], clev, [pltr, xg, yg], [wrap] )
+#  all arguments within brackets must all be present or all be missing.
+#  Furthermore, z must be a 2D array, kx, lx, ky, ly must all be integers,
+#  clev must be a 1D array, pltr can be a function reference or string
+#  xg and yg are either 1D or 2D arrays, and wrap is an integer.
 
-#  where in both cases, parameters from pltr to the end are optional.
-
-#  First case, arg count = 6 +3? +1?
-#  Second case, arg count = 2 +3? +1?
-#
-#  The only way I see to disambiguate this is to either be able to
-#  nondestructively hand parse the arg list, or to mandate fewer valid forms.
-#  Since I cannot find info on how to do a nondestructive trial parse, we opt
-#  for the second.  Thus, by fiat, I declare the following forms to be
-#  admissible:
-#
-#  plcont( z, kx, lx, ky, ly, clev, [pltr, xg, yg, wrap] )
-#  plcont( z, clev, pltr, xg, yg, wrap )
-
-# redefine plcont to have the funky interface
 _plcont = plcont
 def plcont(z, *args):
   z = Numeric.asarray(z)
@@ -67,7 +56,7 @@ def plcont(z, *args):
   pltr = pltr0
   xg = None
   yg = None
-  wrap = None
+  wrap = 0
 
   try:
     pltr = args[0]
@@ -102,7 +91,7 @@ def plcont(z, *args):
     elif pltr == 'pltr2':
       pltr = pltr2
     else:
-      raise ValueError, 'pltr is unrecognized'
+      raise ValueError, 'pltr string is unrecognized'
 
   if default:
     kx = 1
