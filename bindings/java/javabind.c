@@ -30,7 +30,7 @@ static jfieldID fid_sid = 0;
 #define set_PLStream(env,obj) plsstrm( (*env)->GetIntField(env,obj,fid_sid) )
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    mkstrm
  * Signature: ()I
  */
@@ -60,7 +60,7 @@ Java_plplot_core_PLStream_mkstrm( JNIEnv *env, jobject jthis )
 //---------------------------------------------------------------------------*/
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    ClearOpts
  * Signature: ()V
  */
@@ -73,7 +73,7 @@ Java_plplot_core_PLStream_ClearOpts( JNIEnv *env, jobject jthis )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    ResetOpts
  * Signature: ()V
  */
@@ -86,7 +86,7 @@ Java_plplot_core_PLStream_ResetOpts( JNIEnv *env, jobject jthis )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    SetUsage
  * Signature: (Ljava/lang/String;Ljava/lang/String;)V
  */
@@ -105,7 +105,7 @@ Java_plplot_core_PLStream_SetUsage( JNIEnv *env, jobject jthis,
 /* MergeOpts should go here. */
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    ParseOpts
  * Signature: ([Ljava/lang/String;I)I
  */
@@ -138,7 +138,7 @@ Java_plplot_core_PLStream_ParseOpts( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    OptUsage
  * Signature: ()V
  */
@@ -155,7 +155,7 @@ Java_plplot_core_PLStream_OptUsage( JNIEnv *env, jobject jthis )
 //---------------------------------------------------------------------------*/
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    adv
  * Signature: (I)V
  */
@@ -168,7 +168,7 @@ Java_plplot_core_PLStream_adv( JNIEnv *env, jobject jthis, jint page )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    arrows
  * Signature: ([F[F[F[FIFFF)V
  */
@@ -229,7 +229,7 @@ Java_plplot_core_PLStream_arrows___3F_3F_3F_3FIFFF(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    arrows
  * Signature: ([D[D[D[DIDDD)V
  */
@@ -290,7 +290,7 @@ Java_plplot_core_PLStream_arrows___3D_3D_3D_3DIDDD(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    axes
  * Signature: (FFLjava/lang/String;FILjava/lang/String;FI)V
  */
@@ -311,7 +311,7 @@ Java_plplot_core_PLStream_axes__FFLjava_lang_String_2FILjava_lang_String_2FI(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    axes
  * Signature: (DDLjava/lang/String;DILjava/lang/String;DI)V
  */
@@ -332,7 +332,7 @@ Java_plplot_core_PLStream_axes__DDLjava_lang_String_2DILjava_lang_String_2DI(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    bin
  * Signature: (I[F[FI)V
  */
@@ -380,7 +380,7 @@ Java_plplot_core_PLStream_bin__I_3F_3FI( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    bin
  * Signature: (I[D[DI)V
  */
@@ -428,7 +428,7 @@ Java_plplot_core_PLStream_bin__I_3D_3DI( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    bop
  * Signature: ()V
  */
@@ -441,7 +441,7 @@ Java_plplot_core_PLStream_bop( JNIEnv *env, jobject jthis )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    box
  * Signature: (Ljava/lang/String;FILjava/lang/String;FI)V
  */
@@ -461,7 +461,7 @@ Java_plplot_core_PLStream_box__Ljava_lang_String_2FILjava_lang_String_2FI(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    box
  * Signature: (Ljava/lang/String;DILjava/lang/String;DI)V
  */
@@ -535,7 +535,7 @@ Java_plplot_core_PLStream_box3__Ljava_lang_String_2Ljava_lang_String_2DILjava_la
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    col0
  * Signature: (I)V
  */
@@ -548,7 +548,7 @@ Java_plplot_core_PLStream_col0( JNIEnv *env, jobject jthis, jint icol )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    col1
  * Signature: (F)V
  */
@@ -561,7 +561,7 @@ Java_plplot_core_PLStream_col1__F( JNIEnv *env, jobject jthis, jfloat col1 )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    col1
  * Signature: (D)V
  */
@@ -1287,7 +1287,7 @@ Java_plplot_core_PLStream_cont___3_3D_3D_3_3D_3_3DI(
 
 /*
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    end
  * Signature: ()V
  */
@@ -1300,7 +1300,7 @@ Java_plplot_core_PLStream_end( JNIEnv *env, jobject jthis )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    env
  * Signature: (FFFFII)V
  */
@@ -1318,7 +1318,7 @@ Java_plplot_core_PLStream_env__FFFFII( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    env
  * Signature: (DDDDII)V
  */
@@ -1336,7 +1336,7 @@ Java_plplot_core_PLStream_env__DDDDII( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    eop
  * Signature: ()V
  */
@@ -1349,7 +1349,7 @@ Java_plplot_core_PLStream_eop( JNIEnv *env, jobject jthis )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    errx
  * Signature: (I[F[F[F)V
  */
@@ -1403,7 +1403,7 @@ Java_plplot_core_PLStream_errx__I_3F_3F_3F( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    errx
  * Signature: (I[D[D[D)V
  */
@@ -1457,7 +1457,7 @@ Java_plplot_core_PLStream_errx__I_3D_3D_3D( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    erry
  * Signature: (I[F[F[F)V
  */
@@ -1510,7 +1510,7 @@ Java_plplot_core_PLStream_erry__I_3F_3F_3F( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    erry
  * Signature: (I[D[D[D)V
  */
@@ -1563,7 +1563,7 @@ Java_plplot_core_PLStream_erry__I_3D_3D_3D( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    famadv
  * Signature: ()V
  */
@@ -1576,7 +1576,7 @@ Java_plplot_core_PLStream_famadv( JNIEnv *env, jobject jthis )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    fill
  * Signature: (I[F[F)V
  */
@@ -1623,7 +1623,7 @@ Java_plplot_core_PLStream_fill__I_3F_3F( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    fill
  * Signature: (I[D[D)V
  */
@@ -1670,7 +1670,7 @@ Java_plplot_core_PLStream_fill__I_3D_3D( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    fill3
  * Signature: (I[F[F[F)V
  */
@@ -1723,7 +1723,7 @@ Java_plplot_core_PLStream_fill3__I_3F_3F_3F( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    fill3
  * Signature: (I[D[D[F)V
  */
@@ -1776,7 +1776,7 @@ Java_plplot_core_PLStream_fill3__I_3D_3D_3F( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    flush
  * Signature: ()V
  */
@@ -1789,7 +1789,7 @@ Java_plplot_core_PLStream_flush( JNIEnv *env, jobject jthis )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    font
  * Signature: (I)V
  */
@@ -1802,7 +1802,7 @@ Java_plplot_core_PLStream_font( JNIEnv *env, jobject jthis, jint fnt )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    fontld
  * Signature: (I)V
  */
@@ -1815,7 +1815,7 @@ Java_plplot_core_PLStream_fontld( JNIEnv *env, jobject jthis, jint fnt )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    gstrm
  * Signature: ()I
  */
@@ -1829,7 +1829,7 @@ Java_plplot_core_PLStream_gstrm( JNIEnv *env, jobject jthis )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    hist
  * Signature: (I[FFFII)V
  */
@@ -1869,7 +1869,7 @@ Java_plplot_core_PLStream_hist__I_3FFFII( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    hist
  * Signature: (I[DDDII)V
  */
@@ -1909,7 +1909,7 @@ Java_plplot_core_PLStream_hist__I_3DDDII( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    init
  * Signature: ()V
  */
@@ -1922,7 +1922,7 @@ Java_plplot_core_PLStream_init( JNIEnv *env, jobject jthis )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    join
  * Signature: (FFFF)V
  */
@@ -1937,7 +1937,7 @@ Java_plplot_core_PLStream_join__FFFF( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    join
  * Signature: (DDDD)V
  */
@@ -1952,7 +1952,7 @@ Java_plplot_core_PLStream_join__DDDD( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    lab
  * Signature: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
  */
@@ -2000,7 +2000,7 @@ Java_plplot_core_PLStream_lightsource__DDD( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    line
  * Signature: (I[F[F)V
  */
@@ -2047,7 +2047,7 @@ Java_plplot_core_PLStream_line__I_3F_3F( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    line
  * Signature: (I[D[D)V
  */
@@ -2094,7 +2094,7 @@ Java_plplot_core_PLStream_line__I_3D_3D( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    line3
  * Signature: (I[F[F[F)V
  */
@@ -2147,7 +2147,7 @@ Java_plplot_core_PLStream_line3__I_3F_3F_3F( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    line3
  * Signature: (I[D[D[D)V
  */
@@ -2200,7 +2200,7 @@ Java_plplot_core_PLStream_line3__I_3D_3D_3D( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    lsty
  * Signature: (I)V
  */
@@ -2213,7 +2213,7 @@ Java_plplot_core_PLStream_lsty( JNIEnv *env, jobject jthis, jint lin )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    mesh
  * Signature: ([F[F[[FI)V
  */
@@ -2293,7 +2293,7 @@ Java_plplot_core_PLStream_mesh___3F_3F_3_3FI( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    mesh
  * Signature: ([D[D[[DI)V
  */
@@ -2373,7 +2373,7 @@ Java_plplot_core_PLStream_mesh___3D_3D_3_3DI( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    mtex
  * Signature: (Ljava/lang/String;FFFLjava/lang/String;)V
  */
@@ -2393,7 +2393,7 @@ Java_plplot_core_PLStream_mtex__Ljava_lang_String_2FFFLjava_lang_String_2(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    mtex
  * Signature: (Ljava/lang/String;DDDLjava/lang/String;)V
  */
@@ -2735,7 +2735,7 @@ Java_plplot_core_PLStream_plotsh3d___3D_3D_3_3DI(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    poin
  * Signature: (I[F[FI)V
  */
@@ -2782,7 +2782,7 @@ Java_plplot_core_PLStream_poin__I_3F_3FI( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    poin
  * Signature: (I[D[DI)V
  */
@@ -2828,7 +2828,7 @@ JNIEXPORT void JNICALL Java_plplot_core_PLStream_poin__I_3D_3DI(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    poin
  * Signature: (FFI)V
  */
@@ -2843,7 +2843,7 @@ Java_plplot_core_PLStream_poin__FFI( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    poin
  * Signature: (DDI)V
  */
@@ -2858,7 +2858,7 @@ Java_plplot_core_PLStream_poin__DDI( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    psty
  * Signature: (I)V
  */
@@ -2871,7 +2871,7 @@ Java_plplot_core_PLStream_psty( JNIEnv *env, jobject jthis, jint patt )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    ptex
  * Signature: (FFFFFLjava/lang/String;)V
  */
@@ -2890,7 +2890,7 @@ Java_plplot_core_PLStream_ptex__FFFFFLjava_lang_String_2
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    ptex
  * Signature: (DDDDDLjava/lang/String;)V
  */
@@ -2909,7 +2909,7 @@ Java_plplot_core_PLStream_ptex__DDDDDLjava_lang_String_2
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    plschr
  * Signature: (FF)V
  */
@@ -2923,7 +2923,7 @@ Java_plplot_core_PLStream_schr__FF( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    plschr
  * Signature: (DD)V
  */
@@ -3111,7 +3111,7 @@ Java_plplot_core_PLStream_setcontlabelformat( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    shade
  * Signature: ([[FFFFFFFIFIIIIII)V
  */
@@ -3129,7 +3129,7 @@ Java_plplot_core_PLStream_shade___3_3FFFFFFFIFIIIIII(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    shade
  * Signature: ([[DDDDDDDIDIIIIII)V
  */
@@ -3209,7 +3209,7 @@ Java_plplot_core_PLStream_shade___3_3DDDDDDDIDIIIIII(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    shade
  * Signature: ([[FFFFFFFIFIIIIII[F[FI)V
  */
@@ -3227,7 +3227,7 @@ Java_plplot_core_PLStream_shade___3_3FFFFFFFIFIIIIII_3F_3FI(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    shade
  * Signature: ([[DDDDDDDIDIIIIII[D[DI)V
  */
@@ -3245,7 +3245,7 @@ Java_plplot_core_PLStream_shade___3_3DDDDDDDIDIIIIII_3D_3DI(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    shade
  * Signature: ([[FFFFFFFIFIIIIII[[F[[FI)V
  */
@@ -3263,7 +3263,7 @@ Java_plplot_core_PLStream_shade___3_3FFFFFFFIFIIIIII_3_3F_3_3FI(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    shade
  * Signature: ([[DDDDDDDIDIIIIII[[D[[DI)V
  */
@@ -3294,7 +3294,7 @@ Java_plplot_core_PLStream_spause( JNIEnv *env, jobject jthis, jint pause )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    ssub
  * Signature: (II)V
  */
@@ -3308,7 +3308,7 @@ Java_plplot_core_PLStream_ssub( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    styl
  * Signature: (III)V
  */
@@ -3322,7 +3322,7 @@ Java_plplot_core_PLStream_styl( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    svpa
  * Signature: (FFFF)V
  */
@@ -3339,7 +3339,7 @@ Java_plplot_core_PLStream_svpa__FFFF( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    svpa
  * Signature: (DDDD)V
  */
@@ -3356,7 +3356,7 @@ Java_plplot_core_PLStream_svpa__DDDD( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    sxax
  * Signature: (II)V
  */
@@ -3370,7 +3370,7 @@ Java_plplot_core_PLStream_sxax( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    syax
  * Signature: (II)V
  */
@@ -3508,7 +3508,7 @@ Java_plplot_core_PLStream_sym__DDI( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    szax
  * Signature: (II)V
  */
@@ -3522,7 +3522,7 @@ Java_plplot_core_PLStream_szax( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    text
  * Signature: ()V
  */
@@ -3535,7 +3535,7 @@ Java_plplot_core_PLStream_text( JNIEnv *env, jobject jthis )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    vasp
  * Signature: (F)V
  */
@@ -3549,7 +3549,7 @@ Java_plplot_core_PLStream_vasp__F( JNIEnv *env, jobject jthis, jfloat jaspect )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    vasp
  * Signature: (D)V
  */
@@ -3563,7 +3563,7 @@ Java_plplot_core_PLStream_vasp__D( JNIEnv *env, jobject jthis, jdouble jaspect )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    vpas
  * Signature: (FFFFF)V
  */
@@ -3582,7 +3582,7 @@ Java_plplot_core_PLStream_vpas__FFFFF( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    vpas
  * Signature: (DDDDD)V
  */
@@ -3601,7 +3601,7 @@ Java_plplot_core_PLStream_vpas__DDDDD( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    vpor
  * Signature: (FFFF)V
  */
@@ -3619,7 +3619,7 @@ Java_plplot_core_PLStream_vpor__FFFF( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    vpor
  * Signature: (DDDD)V
  */
@@ -3637,7 +3637,7 @@ Java_plplot_core_PLStream_vpor__DDDD( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    vsta
  * Signature: ()V
  */
@@ -3700,7 +3700,7 @@ Java_plplot_core_PLStream_w3d__DDDDDDDDDDD(
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    wid
  * Signature: (I)V
  */
@@ -3713,7 +3713,7 @@ Java_plplot_core_PLStream_wid( JNIEnv *env, jobject jthis, jint width )
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    wind
  * Signature: (FFFF)V
  */
@@ -3730,7 +3730,7 @@ Java_plplot_core_PLStream_wind__FFFF( JNIEnv *env, jobject jthis,
 }
 
 /*
- * Class:     plplot_0002fcore_0002fPLStream
+ * Class:     plplot_core_PLStream
  * Method:    wind
  * Signature: (DDDD)V
  */
