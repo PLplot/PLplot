@@ -61,7 +61,7 @@ EXTRA_DIST = \
 	plplotjavac.i \
 	$(swiggenfiles)
 
-$(swiggenfiles): $(PLPLOTJAVAC_I) plplotjavac.i
+$(swiggenfiles): $(PLPLOTJAVAC_I) plplotjavac.i $(PLPLOTCAPI_I)
 	$(SWIG_CMD) -package plplot.core plplotjavac.i
 
 # Must have "exec" in the name.
