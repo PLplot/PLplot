@@ -768,11 +768,11 @@ plP_checkdriverinit( char *names);
 
   /* disable writing to plot buffer and pixmap */
 void
-NoBufferNoPixmap( );
+NoBufferNoPixmap(void);
 
   /* restart writing to plot buffer and pixmap */
 void
-RestoreWrite2BufferPixmap();
+RestoreWrite2BufferPixmap(void);
 
 void
 grimage(PLINT *x, PLINT *y, PLFLT *z, PLINT nx, PLINT ny);
