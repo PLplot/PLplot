@@ -1,74 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/05/26 19:22:04  mjl
- * Supplied some missing variable initializations.
+ * Revision 1.26  1994/06/23 22:32:07  mjl
+ * Now ensures that device is in graphics mode before issuing any graphics
+ * instruction.
  *
- * Revision 1.24  1994/05/14  08:30:41  mjl
- * Changed to correctly set background color.  Added initialization hack to
- * improve color fill behavior using the vlt driver.
- *
- * Revision 1.23  1994/04/30  16:14:48  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.22  1994/04/08  11:36:01  mjl
- * Put nopause support back into the drivers where it is better off.
- * I don't know WHAT I was thinking.
- *
- * Revision 1.21  1994/03/23  06:50:49  mjl
- * Added new drivers: Versaterm (Mac), and VLT (Amiga).  Tek4107 driver
- * improved to actually work on a real tek 4107 (contributed by Paul
- * Kirschner), and the driver keyword changed to "tek4107t" or "tek4107f"
- * (was "t4107t" or "t4107f").  Introduced idea of minor devices -- each
- * variation on the tektronix instruction set is a new minor device.
- *
- * Added support for: color map 1 color selection, color map 0 or color map 1
- * state change (palette change), polygon fills, both solid and pattern (use
- * negative fill pattern number to get hardware pattern).  Color map now set
- * FROM PLPLOT!!  May require some additional effort to work for all minor
- * devices.
- *
- * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
- * stdlib.h now included automatically by plplotP.h), extraneous clears
- * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
- * driver interface or driver initialization as appropriate).  Special
- * handling for malloc includes eliminated (no longer needed) and malloc
- * prototypes fixed as necessary.
- *
- * Revision 1.20  1993/12/15  08:53:23  mjl
- * Fixed mskermit driver initialization.
- *
- * Revision 1.19  1993/12/08  20:25:34  mjl
- * Added changes for MS-Kermit emulator (submitted by Paul Kirschner).
- *
- * Revision 1.18  1993/12/08  06:14:43  mjl
- * Now send an initial page clear (tek devices only) on a beginning of page.
- * This helps when there is only one graphics/alpha screen, otherwise is
- * harmless.
- *
- * Revision 1.17  1993/12/06  07:41:47  mjl
- * Changed to not turn off echo when changing tty settings.
- *
- * Revision 1.16  1993/09/14  22:25:15  mjl
- * Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
- *
- * Revision 1.15  1993/08/03  01:46:42  mjl
- * Changes to eliminate warnings when compiling with gcc -Wall.
- *
- * Revision 1.14  1993/07/31  07:56:44  mjl
- * Several driver functions consolidated, for all drivers.  The width and color
- * commands are now part of a more general "state" command.  The text and
- * graph commands used for switching between modes is now handled by the
- * escape function (very few drivers require it).  The device-specific PLDev
- * structure is now malloc'ed for each driver that requires it, and freed when
- * the stream is terminated.
- *
- * Revision 1.13  1993/07/28  05:38:59  mjl
- * Merged with xterm code, and added code to handle Tektronix 4105/4107
- * (color) devices.  For now just the color index selection is supported.
- * Added code to change terminal line to noncanonical (cbreak) mode on
- * POSIX systems so that entered keystrokes (including <Backspace> and "Q"
- * from plrender) do not require a <CR> to be recognized.
 */
 
 /*	tek.c
@@ -353,6 +288,8 @@ plD_line_tek(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     PLDev *dev = (PLDev *) pls->dev;
     int x1 = x1a >> 4, y1 = y1a >> 4, x2 = x2a >> 4, y2 = y2a >> 4;
 
+    tek_graph(pls);
+
 /* If continuation of previous line just send new point */
 
     if (x1 != dev->xold || y1 != dev->yold) {
@@ -390,6 +327,8 @@ plD_polyline_tek(PLStream *pls, short *xa, short *ya, PLINT npts)
 void
 plD_eop_tek(PLStream *pls)
 {
+    tek_graph(pls);
+
     if (pls->termin) {
 	if ( ! pls->nopause) 
 	    WaitForPage(pls);
@@ -466,6 +405,7 @@ plD_state_tek(PLStream *pls, PLINT op)
     case PLSTATE_COLOR0:
 	if (pls->color) {
 	    int icol0 = pls->icol0;
+	    tek_graph(pls);
 	    if (icol0 != PL_RGB_COLOR) {
 		curcolor = icol0;
 		switch (pls->dev_minor) {
@@ -483,6 +423,7 @@ plD_state_tek(PLStream *pls, PLINT op)
     case PLSTATE_COLOR1:
 	if (pls->color) {
 	    int icol1, ncol1;
+	    tek_graph(pls);
 	    if ((ncol1 = MIN(16 - pls->ncol0, pls->ncol1)) < 1)
 		break;
 
@@ -539,6 +480,8 @@ fill_polygon(PLStream *pls)
 
     if (pls->dev_npts < 1)
 	return;
+
+    tek_graph(pls);
 
     encode_int(fillcol, -curcolor);
     encode_vector(firstpoint, pls->dev_x[0]>>4, pls->dev_y[0]>>4);
@@ -751,6 +694,8 @@ setcmap(PLStream *pls)
 {
     int i, ncol1 = MIN(16 - pls->ncol0, pls->ncol1);
     PLColor cmap1col;
+
+    tek_graph(pls);
 
 /* Initialize cmap 0 colors */
 
