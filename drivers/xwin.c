@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1993/03/15 21:42:14  mjl
+ * Revision 1.17  1993/03/16 06:49:24  mjl
+ * Changed driver functions that check for events to do so only after a
+ * specified number of calls, to reduce overhead.
+ *
+ * Revision 1.16  1993/03/15  21:42:14  mjl
  * Changed _clear/_page driver functions to the names _eop/_bop, to be
  * more representative of what's actually going on.  Also moved clear window
  * call to the _bop function to support plot interrupts by plrender (seeks
@@ -184,6 +188,12 @@ xw_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     int id = devtable[pls->ipls][pls->ipld];
     XwDev *xwd = &(xwdev[id]);
     PLDev *pld = &(pldev[id]);
+    static long count = 0, max_count = 20;
+
+    if ( (++count/max_count)*max_count == count) {
+	count = 0;
+	HandleEvents(pls);	/* Check for events */
+    }
 
     y1 = pld->ylen - y1;
     y2 = pld->ylen - y2;
@@ -210,8 +220,12 @@ xw_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
     int id = devtable[pls->ipls][pls->ipld];
     XwDev *xwd = &(xwdev[id]);
     PLDev *pld = &(pldev[id]);
+    static long count = 0, max_count = 10;
 
-    HandleEvents(pls);	/* Check for events */
+    if ( (++count/max_count)*max_count == count) {
+	count = 0;
+	HandleEvents(pls);	/* Check for events */
+    }
 
     if (npts > PL_MAXPOLYLINE)
 	plexit("Error -- too many points in polyline\n");

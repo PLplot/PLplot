@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/03/15 21:34:26  mjl
-   Reorganization and update of Amiga drivers.  Window driver now uses Amiga
-   OS 2.0 capabilities.
+   Revision 1.2  1993/03/16 06:49:26  mjl
+   Changed driver functions that check for events to do so only after a
+   specified number of calls, to reduce overhead.
 
+ * Revision 1.1  1993/03/15  21:34:26  mjl
+ * Reorganization and update of Amiga drivers.  Window driver now uses Amiga
+ * OS 2.0 capabilities.
+ *
 */
 
 /*	pla_win.c
@@ -289,6 +293,12 @@ void
 amiwn_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1=x1a, y1=y1a, x2=x2a, y2=y2a;
+    static long count = 0, max_count = 10;
+
+    if ( (++count/max_count)*max_count == count) {
+	count = 0;
+	HandleEvents(pls);      /* Check for events */
+    }
 
     if (x1 == dev->xold && y1 == dev->yold) {
 	PLDraw(x2, y2);
@@ -311,8 +321,12 @@ void
 amiwn_polyline (PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i, j;
+    static long count = 0, max_count = 5;
 
-    HandleEvents(pls);	/* Check for intuition messages */
+    if ( (++count/max_count)*max_count == count) {
+	count = 0;
+	HandleEvents(pls);      /* Check for events */
+    }
 
 /* Old way */
 /*
