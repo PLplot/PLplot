@@ -4,10 +4,12 @@
  */
 
 #include "plplot/plcdemos.h"
-#ifdef HAS_POLL
-#include <poll.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
 #else
-#include <unistd.h>
+# ifdef HAS_POLL
+#  include <poll.h>
+# endif
 #endif
 
 /* Variables for holding error return info from PLplot */
@@ -119,10 +121,12 @@ main(int argc, char *argv[])
     dt = 0.1;
 
     for (n = 0; n < nsteps; n++) {
-#ifdef HAS_POLL
-	poll(0,0,10);
-#else
+#ifdef HAVE_USLEEP
 	usleep(10000);	/* wait a little (10 ms) to simulate time elapsing */
+#else
+# ifdef HAS_POLL
+	poll(0,0,10);
+# endif
 #endif
 	t = (double)n * dt;
 	noise = drand48() - 0.5;
