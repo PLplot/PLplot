@@ -437,7 +437,9 @@ plr_state(PLRDev *plr)
     }
 
     case PLSTATE_CMAP1:{
-	U_SHORT ncol1;
+	U_SHORT ncol1, ncp1;
+	float h, l, s;
+	U_CHAR rev;
 
 	plr_rd( pdf_rd_2bytes(plr->pdfs, &ncol1) );
 	plscmap1n((PLINT) ncol1);
@@ -445,6 +447,20 @@ plr_state(PLRDev *plr)
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap1[i].r) );
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap1[i].g) );
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap1[i].b) );
+	}
+    /* Get the control points */
+	plr_rd( pdf_rd_2bytes(plr->pdfs, &ncp1) );
+	plsc->ncp1 = ncp1;
+	for (i = 0; i < plsc->ncp1; i++) {
+	    plr_rd( pdf_rd_ieeef(plr->pdfs, &h) );
+	    plr_rd( pdf_rd_ieeef(plr->pdfs, &l) );
+	    plr_rd( pdf_rd_ieeef(plr->pdfs, &s) );
+	    plr_rd( pdf_rd_1byte(plr->pdfs, &rev) );
+
+	    plsc->cmap1cp[i].h = h;
+	    plsc->cmap1cp[i].l = l;
+	    plsc->cmap1cp[i].s = s;
+	    plsc->cmap1cp[i].rev = rev;
 	}
 	plP_state(PLSTATE_CMAP1);
 	break;
@@ -487,7 +503,7 @@ plr_esc(PLRDev *plr)
 /*--------------------------------------------------------------------------*\
  * plresc_fill()
  *
- * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+ * Fill polygon described in points plsc->dev_x[] and plsc->dev_y[].
 \*--------------------------------------------------------------------------*/
 
 static int
