@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/01/23 05:55:21  mjl
-   Formatting changes only, I think.
+   Revision 1.6  1993/02/23 05:14:32  mjl
+   Changed reference in error message from plstar to plinit.
 
+ * Revision 1.5  1993/01/23  05:55:21  mjl
+ * Formatting changes only, I think.
+ *
  * Revision 1.4  1992/10/12  17:08:04  mjl
  * Added PL_NEED_SIZE_T define to those files that need to know the value
  * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
@@ -27,10 +30,10 @@
 
 #define PL_NEED_MALLOC
 #define PL_NEED_SIZE_T
-
 #include "plplot.h"
-#include <math.h>
+
 #include <stdlib.h>
+#include <math.h>
 
 /*----------------------------------------------------------------------*\
 * void plhist()
@@ -51,7 +54,7 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 
     glev(&level);
     if (level < 1)
-	plexit("plhist: Please call plstar first.");
+	plexit("plhist: Please call plinit first.");
 
     if (level < 3 && oldwin)
 	plexit("plhist: Please set up window first.");

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/01/23 05:54:32  mjl
-   Added support for device-independent font files.
+   Revision 1.6  1993/02/23 05:14:13  mjl
+   Changed reference in error message from plstar to plinit.
 
+ * Revision 1.5  1993/01/23  05:54:32  mjl
+ * Added support for device-independent font files.
+ *
  * Revision 1.4  1992/10/22  17:05:35  mjl
  * Fixed warnings, errors generated when compling with HP C++.
  *
@@ -53,15 +56,17 @@
 
 #define PL_NEED_MALLOC
 #include "plplot.h"
+
 #include <stdio.h>
-#include <stddef.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
-#include "pdf.h"
 
 #ifdef MSDOS
 #include <malloc.h>
 #endif
+
+#include "pdf.h"
 
  /* MSDOS search path */
 
@@ -161,7 +166,7 @@ c_plfont(PLINT ifont)
 
     glev(&level);
     if (level < 1)
-	plexit("plfont: Please call plstar first.");
+	plexit("plfont: Please call plinit first.");
 
     if (ifont < 1 || ifont > 4)
 	plexit("plfont: Invalid font.");
