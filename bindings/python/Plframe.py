@@ -40,7 +40,6 @@ class Plframe(Widget):
 
     def cmd( s, *args ):
 	"Invoke a subcommand on the plframe widget."
-        print "in Plframe::cmd"
 	apply( s.tk.call, (s._w, 'cmd',) + _flatten(args) )
 
     def info(s, what):
@@ -93,11 +92,40 @@ class PlXframe(Frame):
 
 	s.setup_defaults()
 
+        # We will be using the grid geometry manager to pack a plframe
+        # widget along with some additional addornments.  The top row
+        # (row 0) will contain the menubar.  The next row (row 1) will
+        # hold the actual plframe, as well as the vertical scrollbar
+        # when present..  And the last row (row 2) will hold the
+        # horizontal scrollbar when present.  We want the menubar and
+        # the horizontal scrollbar to use only the required space, and
+        # we want the plframe to expand to fill any remaining space.
+        # To accomplish this we set the weights for the top and bottom
+        # row to zero, thus preventing them from expanding.
+
+	s.rowconfigure( 0, weight=0, minsize=0 )
 	s.rowconfigure( 1, weight=1, minsize=0 )
-	s.rowconfigure( 2, weight=1, minsize=0 )
+	s.rowconfigure( 2, weight=0, minsize=0 )
+
+        # Similarly for the columns, we will use the left column (col
+        # 0) for the plframe and the horizontal scrollbar, and the
+        # right column (col 1) for the vertical scrollbar.  Moreover, the
+        # menubar in the top row will span columns 0 and 1.  Again, we
+        # want the rightmost column (col 0) to stay at whatever is the
+        # minimum width to display its contents, and want the plframe
+        # in the leftmost column to grow to fill all space.
+
+        s.columnconfigure( 0, weight=1, minsize=0 )
+        s.columnconfigure( 1, weight=0, minsize=0 )
+
+        # Okay, now get the actual plframe widget so we can display
+        # it.  And we pack it into its grid cell with all four sides
+        # of the plframe sticking to the expandable size of the
+        # enclosing grid cell, as arranged by the row,col weighting
+        # scheme described above.
 
         s.plf = Plframe( s, kw )
-        s.plf.grid( row=1, column=0 )
+        s.plf.grid( row=1, column=0, sticky=NSEW )
 
 	s.build_menu_bar()
 
