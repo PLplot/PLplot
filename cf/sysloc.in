@@ -463,6 +463,8 @@ fi
 # "/usr" which would give bad result under Linux without this ordering.)
 
 incdirs_default="\
+/usr/include/tcl8.3/tcl-private/generic \
+/usr/include/tcl8.3/tk-private/generic \
 /usr/include/tcl8.3/itcl-private/generic \
 /usr/include/tcl8.3 \
 /usr/include/tcl8.2/generic \
@@ -600,6 +602,27 @@ if test "$has_tk" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# tkInt.h (and indirectly tclInt.h) required by plplotter.c which is 
+# required by tkwin device
+# ----------------------------------------------------------------------------
+
+if test "$has_tcl" = "no" -o "$has_x11" = "no"; then
+    enable_tkwin=no
+fi
+
+if test "$enable_tkwin" = "yes"; then
+    if test -z "$TKPRIVATEINCDIR"; then
+	FIND_INC(tkInt, TKPRIVATEINCDIR, enable_tkwin)
+    fi
+fi
+
+if test "$enable_tkwin" = "yes"; then
+    if test -z "$TCLPRIVATEINCDIR"; then
+	FIND_INC(tclInt, TCLPRIVATEINCDIR, enable_tkwin)
+    fi
+fi
+
+# ----------------------------------------------------------------------------
 # libtk
 # ----------------------------------------------------------------------------
 
@@ -680,6 +703,10 @@ if test "$enable_itcl" = "yes"; then
 fi
 if test "$enable_tk" = "yes"; then
     ADD_TO_INCS($TKINCDIR, INCS, INCPATH)
+fi
+if test "$enable_tkwin" = "yes"; then
+    ADD_TO_INCS($TKPRIVATEINCDIR, INCS, INCPATH)
+    ADD_TO_INCS($TCLPRIVATEINCDIR, INCS, INCPATH)
 fi
 
 # ----------------------------------------------------------------------------
