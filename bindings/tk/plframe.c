@@ -2652,6 +2652,8 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     plsdev("plmeta");
     plsfile(sfile);
+/* FIXME: plmeta/plrender need to honor these, needed to preserve the aspect ratio */
+    plspage( 0., 0., plFramePtr->width, plFramePtr->height, 0, 0 );
     plcpstrm(plFramePtr->ipls, 0);
     pladv(0);
 
@@ -2779,6 +2781,8 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 	plsstrm(plFramePtr->ipls_save);
+    /* Note: many drivers ignore these, needed to preserve the aspect ratio */
+        plspage( 0., 0., plFramePtr->width, plFramePtr->height, 0, 0 );
 	plcpstrm(plFramePtr->ipls, 0);
 	pladv(0);
 	plreplot();
@@ -2830,6 +2834,8 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 	plsdev(argv[1]);
 	plsfile(sfile);
+    /* Note: many drivers ignore these, needed to preserve the aspect ratio */
+        plspage( 0., 0., plFramePtr->width, plFramePtr->height, 0, 0 );
 	plcpstrm(plFramePtr->ipls, 0);
 	pladv(0);
 
