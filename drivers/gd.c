@@ -393,16 +393,7 @@ void plD_init_png(PLStream *pls)
 #ifdef HAVE_FREETYPE
 if (pls->dev_text)
    {
-/* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
- * call in plscmap0 which (a) leads to segfaults since the GD image is
- * not defined at this point and (b) would be inefficient in any case since
- * setcmap is always called later (see plD_bop_png) to update the driver
- * color palette to be consistent with cmap0. */
-    PLINT level_save;
-    level_save = pls->level;
-    pls->level = 0;
     init_freetype_lv2(pls);
-    pls->level = level_save;
    }
 #endif
 
@@ -1049,7 +1040,18 @@ if (FT->smooth_text==1)
     FT->ncol0_width=FT->ncol0_xtra/(pls->ncol0-1);              /* find out how many different shades of anti-aliasing we can do */
     if (FT->ncol0_width>64) FT->ncol0_width=64;                 /* set a maximum number of shades */
     plscmap0n(FT->ncol0_org+(FT->ncol0_width*pls->ncol0));      /* redefine the size of cmap0 */
-    pl_set_extended_cmap0(pls, FT->ncol0_width, FT->ncol0_org); /* call the function to add the extra cmap0 entries and calculate stuff */
+/* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
+ * call in plscmap0 which (a) leads to segfaults since the GD image is
+ * not defined at this point and (b) would be inefficient in any case since
+ * setcmap is always called later (see plD_bop_png) to update the driver
+ * color palette to be consistent with cmap0. */
+    {
+       PLINT level_save;
+       level_save = pls->level;
+       pls->level = 0;
+       pl_set_extended_cmap0(pls, FT->ncol0_width, FT->ncol0_org); /* call the function to add the extra cmap0 entries and calculate stuff */
+       pls->level = level_save;
+    }
    }
 
 }
