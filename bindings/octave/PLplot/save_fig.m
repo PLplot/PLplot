@@ -16,7 +16,7 @@
 ##
 ## Save current plot figure in 'file' for 'device' type.
 ## If reverse is 1 and the background is black, reverse black and white.
-## 	(This feature been tested with the xwin and tk driver only)
+## 	(This feature has been tested with the xwin and tk driver only)
 ##
 ## If the global variable FIGDIR exists, `file' is appended to FIGDIR
 ## if `file' does not start with any of `/~.'
@@ -103,86 +103,37 @@ function save_fig(file, device, rev)
 
     eval(sprintf("save %s device", file),"error('Can\\'t create file\\n'); return");
 
-    ## unfortunately the procedure is different for the xwin and tk driver
+    cur_fig = plgstrm;
+    f = free_fig; # find new stream and make it default
+    if (isempty(f))
+      f = plmkstrm;
+    endif
+    
+    plsstrm(f); # set stream type and output file
+    plsfnam(file);
+    plsdev(device);
 
-    if (strcmp("xwin", sprintf("%s",plgdev')))
-
-      cur_fig = plgstrm;
-      f = min(find(__pl.open == 0)); # find new stream and make it default
-      if (isempty(f))
-	f = plmkstrm;
-      endif
-      
-      plsstrm(f); # set stream type and output file
-      plsfnam(file);
-      plsdev(device);
-
-      rev_done = 0;
-      if (rev == 1) # exchange background before plinit(), if needed
-	[r, g, b] = plgcolbg;
-	if (r == 0 && g == 0 && b == 0)	# black background
-	  rev_done = 1;
-	  plSetOpt("bg", "FFFFFF");	# set it white
-	endif
-      endif
-
-      plinit;
-      ## pladv(0); # This worked, but not any more. Changes in plplot?
-      
-      plcpstrm(cur_fig, 0); # copy parameters
-
-      if (rev_done == 1) # and exchange black/white if needed, after plinit()
-	plscol0(0, 255, 255, 255);
-	plscol0(15, 0, 0, 0);
-      endif
-
-      plreplot;	# do the save
-
-      plend1;
-      plsstrm(cur_fig);	# return to previous stream
-
-    elseif (strcmp("tk", sprintf("%s",plgdev')))
-      if (! exist("tk_start"))
-	if  (! exist("tk_init"))
-	  error("Can't use this tk feature of PLplot until tk_octave is installed!\n")
-	else
-	  tk_init;
-	endif
-      endif
-
-      [cur_fig, driver, intp] = figure;
-      intp = tdeblank(intp);
-      
-      if (1)
-	## This works! not anymore, `client' blocks!
-	client = tk_cmd(intp, "set client_name",1);
-	wind = tk_cmd(client,"set plwindow",1);
-      else
-	## A small patch to plwidget.tcl makes this work:
-	## (make plwidget global and setting it to `w' in `plxframe'
-	wind = tk_cmd(intp,"set plwidget",1);
-      endif
-      
-      rev_done = 0;
-      if (rev == 1)
-	t = tk_cmd(intp, sprintf("%s.plwin configure -bg", wind), 1);
-	t = split(t," ");
-	if (strcmp(tdeblank(t(5,:)) , "black"))
-	  rev_done = 1;
-	  tk_cmd(intp, sprintf("%s.plwin configure -bg white", wind), 0);
-	  tk_cmd(intp, sprintf("%s.plwin cmd plscol0 0 white", wind), 0);
-	  tk_cmd(intp, sprintf("%s.plwin cmd plscol0 15 black", wind), 0);
-	endif
-      endif
-
-      tk_cmd(intp, sprintf("%s.plwin save as %s %s", wind, device, file), 0);
-      tk_cmd(intp, sprintf("%s.plwin save close", wind), 0);
-      if (rev_done == 1)
-	tk_cmd(intp, sprintf("%s.plwin configure -bg black", wind), 0);
-	tk_cmd(intp, sprintf("%s.plwin cmd plscol0 0 black", wind), 0);
-	tk_cmd(intp, sprintf("%s.plwin cmd plscol0 15 white", wind), 0);			
+    rev_done = 0;
+    if (rev == 1) # exchange background before plinit(), if needed
+      [r, g, b] = plgcolbg;
+      if (r == 0 && g == 0 && b == 0)	# black background
+	rev_done = 1;
+	plSetOpt("bg", "FFFFFF");	# set it white
       endif
     endif
+
+    plinit;
+        
+    plcpstrm(cur_fig, 0); # copy parameters
+
+    if (rev_done == 1) # and exchange black/white if needed, after plinit()
+      plscol0(0, 255, 255, 255);
+      plscol0(15, 0, 0, 0);
+    endif
+
+    plreplot;	# do the save
+    plend1;
+    plsstrm(cur_fig);	# return to previous stream
 
     if (to_prt == 1)
       system(sprintf("%s %s;", __lp_options, file));
