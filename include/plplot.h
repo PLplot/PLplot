@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1993/08/26 21:18:16  mjl
+ * Revision 1.37  1993/08/28 06:35:37  mjl
+ * Added client_data variable to PLOptionTable definition.
+ *
+ * Revision 1.36  1993/08/26  21:18:16  mjl
  * Previous safety check a little too safe -- changed to allow C++ compilers.
  *
  * Revision 1.35  1993/08/26  05:35:54  mjl
@@ -219,7 +222,8 @@ typedef void* PLPointer;
 
 typedef struct {
     char *opt;
-    int  (*handler)	(char *, char *);
+    int  (*handler)	(char *, char *, void *);
+    void *client_data;
     void *var;
     long mode;
     char *syntax;
