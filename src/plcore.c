@@ -1299,6 +1299,8 @@ c_plend(void)
 {
     PLINT i;
 
+    if (lib_initialized == 0) return;
+
     for (i = PL_NSTREAMS-1; i >= 0; i--) {
 	if (pls[i] != NULL) {
 	    plsstrm(i);
