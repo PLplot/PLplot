@@ -783,11 +783,13 @@ void
 plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, PLINT *),
 	    void *ButtonEH_data);
 #endif
-/* Set the variables to be used for storing error info */
 
 #if 0
+/* Cannot get this to work since plsError is not simply an output
+ * of an internal integer and character string. */
+DOC(plsError, "Set the variables to be used for storing error info.")
 void
-plsError(PLINT *errcode, char *errmsg);
+plsError(PLINT *OUTPUT, char *OUTPUT);
 #endif
 
 /* Sets an optional user exit handler. */
