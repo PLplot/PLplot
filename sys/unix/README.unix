@@ -2,13 +2,15 @@ Here's how to make *everything* conveniently on a unix-like system.
 
 The makefile is built by running the file makefile.m4 through the m4 macro
 processor with an appropriate system macro defined.  This allows multiple
-configurations to be easily supported, similar to 'imake'.  Macros for system
-type include: HPUX, SUNOS, AIX, UNICOS, SYSV, DGUX, LINUX, NEXT, ULTRIX, BSD,
-AMIGA.  One of these *must* be specified, or if necessary you can add system
-specific defines analogous to the existing ones.  There are also the macros
-DOUBLE (for double precision), DEBUG (debugging), PROFILE (for enabling
-profiling code, if supported by the compiler) and OPT (optimization).  Please
-look at the comments in makefile.m4 for more info.
+configurations to be easily supported, similar to 'imake'.  Macros for
+system type include: HPUX, SUNOS, AIX, UNICOS, SYSV, DGUX, LINUX, NEXT,
+ULTRIX, BSD, AMIGA.  One of these *must* be specified, or if necessary you
+can add system specific defines analogous to the existing ones.  There are
+also the macros DOUBLE (for double precision), DEBUG (debugging), PROFILE
+(for enabling profiling code, if supported by the compiler), OPT
+(optimization), OPTF (full optimization), NO_SHARE (no shared libraries),
+NO_X (no X-windows), NO_TK (no TK driver), and probably more by now.
+Please look at the comments in makefile.m4 for more info.
 
 You must ensure that the appropriate system header files can be found by the
 generated makefile.  This is occasionally a problem for X11 header files,
@@ -17,28 +19,32 @@ e.g. they might be in /usr/include/X11, /usr/include/X11R4/X11,
 appropriate environmental variables.  For example, under HPUX 9.01 I have the
 following set in my .login:
 
-setenv CCOPTS	"-I/usr/include/X11R5"
-setenv CXXOPTS	"-I/usr/include/X11R5"
-setenv LDOPTS	"-L/usr/lib/X11R5 -L/usr/lib/Motif1.1"
+	setenv CCOPTS	"-I/usr/include/X11R5"
+	setenv CXXOPTS	"-I/usr/include/X11R5"
+	setenv LDOPTS	"-L/usr/lib/X11R5 -L/usr/lib/Motif1.1"
 
+Not all C compilers have such switches, however, so the other nice way
+of doing it is e.g.
+
+	ln -s /usr/include/X11R5/X11 ~/include/X11
+
+which will be found since the makefile specifies that ~/include be checked
+in the include path.
 
 To build the makefile, starting from the plplot directory:
 
 	% cd tmp
-	% cp ../sys/unix/makefile.m4 .
+	% cp ../config/*.m4 .
 	% m4 -D<sys> <makefile.m4 >makefile
 
 where <sys> is the appropriate system name.
-Then, while in the tmp directory:
-
-	% make links
-
-sets up links to all the files you will ever need.
+Then, while in the tmp directory
 
 	% make
 
-makes the main library, for the default precision (probably single on a
-workstation).  Finally, to make a demo,
+sets up soft links to all the source files, makes the main library
+(default precision, probably single on a workstation), makes the renderer
+and the server (if the TK driver is specified).  Finally, to make a demo,
 
 	% make x01c
 
@@ -61,12 +67,13 @@ The font files will be put into /usr/local/plplot by "make install", but
 there are actually several places where PLPLOT looks for them.  The default
 search path is:
 
-       current directory
-       $(HOME)/lib/
-       $(PLFONTS)
-       PLFONTDEV1      (/usr/local/lib/)
-       PLFONTDEV2      (/usr/local/lib/plplot/
-       PLFONTDEV3      (/usr/local/plplot/)
+	current directory
+	$(HOME)/lib
+	INSTALL_DIR	(typically /usr/local/plplot)
+	$(PLFONTS)
+	PLFONTDEV1      (/usr/local/lib)
+	PLFONTDEV2      (/usr/local/lib/plplot)
+	PLFONTDEV3      (/usr/local/plplot)
 
 You probably should also print & read the TeX documentation on the Unix
 installation.
