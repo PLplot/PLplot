@@ -159,7 +159,7 @@ c_plaxes(PLFLT x0, PLFLT y0,
     xtick1 = llx ? 1.0 : xtick;
     ytick1 = lly ? 1.0 : ytick;
 
-    plP_gvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
+    plgvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
 /* n.b. large change; vpwxmi always numerically less than vpwxma, and
  * similarly for vpwymi */
     vpwxmi = (vpwxmax > vpwxmin) ? vpwxmin : vpwxmax;
@@ -1059,7 +1059,7 @@ grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
     lhy = plP_stsearch(yopt, 'h');
     lly = plP_stsearch(yopt, 'l');
 
-    plP_gvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
+    plgvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
 /* n.b. large change; vpwxmi always numerically less than vpwxma, and
  * similarly for vpwymi */
     vpwxmi = (vpwxmax > vpwxmin) ? vpwxmin : vpwxmax;
@@ -1164,7 +1164,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     lty = plP_stsearch(yopt, 't');
     lvy = plP_stsearch(yopt, 'v');
 
-    plP_gvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
+    plgvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
 /* n.b. large change; vpwxmi always numerically less than vpwxma, and
  * similarly for vpwymi */
     vpwxmi = (vpwxmax > vpwxmin) ? vpwxmin : vpwxmax;

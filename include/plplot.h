@@ -452,6 +452,8 @@ typedef struct {
 #define    plgspa	c_plgspa
 #define    plgstrm	c_plgstrm
 #define    plgver	c_plgver
+#define    plgvpd	c_plgvpd
+#define    plgvpw	c_plgvpw
 #define    plgxax	c_plgxax
 #define    plgyax	c_plgyax
 #define    plgzax	c_plgzax
@@ -576,6 +578,8 @@ typedef struct {
 #define    c_plgspa	plgspa
 #define    c_plgstrm	plgstrm
 #define    c_plgver	plgver
+#define    c_plgvpd	plgvpd
+#define    c_plgvpw	plgvpw
 #define    c_plgxax	plgxax
 #define    c_plgyax	plgyax
 #define    c_plgzax	plgzax
@@ -667,7 +671,9 @@ typedef struct {
 #define    plcontf	plfcont
 #define	   Alloc2dGrid	plAlloc2dGrid
 #define	   Free2dGrid	plFree2dGrid
-#define    MinMax2dGrid plMinMax2dGrid 
+#define    MinMax2dGrid plMinMax2dGrid
+#define    plP_gvpd	plgvpd
+#define    plP_gvpw	plgvpw
 
 #endif /* __PLSTUBS_H__ */
 
@@ -930,6 +936,16 @@ c_plgstrm(PLINT *p_strm);
 
 void
 c_plgver(char *p_ver);
+
+/* Get viewport boundaries in normalized device coordinates */
+
+void
+c_plgvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
+
+/* Get viewport boundaries in world coordinates */
+
+void
+c_plgvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
 
 /* Get x axis labeling parameters */
 

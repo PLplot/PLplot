@@ -2382,6 +2382,28 @@ c_plgchr(PLFLT *p_def, PLFLT *p_ht)
     *p_ht = plsc->chrht;
 }
 
+/* Get viewport boundaries in normalized device coordinates */
+
+void
+c_plgvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
+{
+    *p_xmin = plsc->vpdxmi;
+    *p_xmax = plsc->vpdxma;
+    *p_ymin = plsc->vpdymi;
+    *p_ymax = plsc->vpdyma;
+}
+
+/* Get viewport boundaries in world coordinates */
+
+void
+c_plgvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
+{
+    *p_xmin = plsc->vpwxmi;
+    *p_xmax = plsc->vpwxma;
+    *p_ymin = plsc->vpwymi;
+    *p_ymax = plsc->vpwyma;
+}
+
 /*--------------------------------------------------------------------------*\
  *  These should not be called by the user.
 \*--------------------------------------------------------------------------*/
@@ -2470,28 +2492,6 @@ plP_ssub(PLINT nx, PLINT ny, PLINT cs)
     plsc->nsubx = nx;
     plsc->nsuby = ny;
     plsc->cursub = cs;
-}
-
-/* Get viewport boundaries in normalized device coordinates */
-
-void
-plP_gvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
-{
-    *p_xmin = plsc->vpdxmi;
-    *p_xmax = plsc->vpdxma;
-    *p_ymin = plsc->vpdymi;
-    *p_ymax = plsc->vpdyma;
-}
-
-/* Get viewport boundaries in world coordinates */
-
-void
-plP_gvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
-{
-    *p_xmin = plsc->vpwxmi;
-    *p_xmax = plsc->vpwxma;
-    *p_ymin = plsc->vpwymi;
-    *p_ymax = plsc->vpwyma;
 }
 
 /* Get number of pixels to a millimeter */

@@ -113,7 +113,7 @@ c_plbin(PLINT nbin, PLFLT *x, PLFLT *y, PLINT flags)
 	}
     }
 
-    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
+    plgvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
     if (!(flags & 1)) {
 	for (i = 0; i < nbin - 1; i++) {
 	    if (!(flags & 4) || (y[i] != vpwymi)) {

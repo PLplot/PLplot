@@ -498,16 +498,6 @@ plP_ssub(PLINT nx, PLINT ny, PLINT cs);
 void
 plP_subpInit(void);
 
-/* Get viewport boundaries in normalized device coordinates */
-
-void
-plP_gvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
-
-/* Get viewport boundaries in world coordinates */
-
-void
-plP_gvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax);
-
 /* Get number of pixels to a millimeter */
 
 void
