@@ -341,6 +341,8 @@ ps_init(PLStream *pls)
     fprintf(OF, "/SW {stringwidth 2 index mul exch 2 index mul exch rmoveto pop} bind def\n");
     fprintf(OF, "/B {Z %d %d M %d %d D %d %d D %d %d D %d %d closepath} def\n",
 	    XMIN, YMIN, XMIN, YMAX, XMAX, YMAX, XMAX, YMIN, XMIN, YMIN);
+    fprintf(OF, "/CL {/y2 exch def /x2 exch def /y1 exch def /x1 exch def newpath ");
+    fprintf(OF, "x1 y1 M x2 y1 D x2 y2 D x1 y2 D closepath clip} def\n");
 
 /* End of dictionary definition */
 
@@ -711,6 +713,7 @@ proc_str (PLStream *pls, EscText *args)
      cur_str[PROC_STR_STRING_LENGTH];
   float font_factor = 1.4;
   PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
+  PLINT clipxmin, clipxmax, clipymin, clipymax; /* Current clip limits */
 
   PLFLT scale = 1., up = 0.; /* Font scaling and shifting parameters */
 
@@ -836,8 +839,19 @@ proc_str (PLStream *pls, EscText *args)
 	/* Determine the adjustment for page orientation */
 	theta += 90. - 90.*pls->diorot;
 	
-	
 	/* Output */
+	/* Set clipping */
+	clipxmin=pls->clpxmi;
+	clipxmax=pls->clpxma;
+	clipymin=pls->clpymi;
+	clipymax=pls->clpyma;
+	//difilt(&clipxmin, &clipymin, 1, &clxmin, &clxmax, &clymin, &clymax);
+	//difilt(&clipxmax, &clipymax, 1, &clxmin, &clxmax, &clymin, &clymax);
+	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
+	         &clipxmin, &clipymin);
+	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
+		 &clipxmax, &clipymax);
+	fprintf(OF," gsave %d %d %d %d CL\n",clipxmin, clipymin, clipxmax, clipymax);
 	
 	/* move to string reference point */
 	fprintf(OF, " %d %d M\n", args->x, args->y );
@@ -954,6 +968,7 @@ proc_str (PLStream *pls, EscText *args)
 	}while(*cur_strp);
 	
 	fprintf(OF, "grestore\n");
+	fprintf(OF, "grestore\n");
 	
 	/*
 	 * keep driver happy -- needed for background and orientation.
@@ -1043,7 +1058,6 @@ plunicode2type1 (const PLUNICODE index,
     */
    return(32);
 }
-
 
 #else
 int 
