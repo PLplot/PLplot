@@ -139,12 +139,12 @@ define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
 #    (In other words, the libraries linked with are the same as long as
 #    you stick with the default Fortran precision.)  
 #
-#    Note that there is no good, standard way to convert a Fortran code
-#    to double precision to the command line.  Compilers under SunOS,
-#    HPUX, and A/IX do offer a way to do this however, and building
-#    the double precision library including the fortran stubs should
-#    work fine on these platforms.  For other systems, you must add
-#    the appropriate compiler flag.
+#    Note that there is no standard way to convert a Fortran code to
+#    double precision to the command line.  Compilers under SunOS, HPUX,
+#    and A/IX do offer a way to do this however, and building the double
+#    precision library including the fortran stubs should work fine on
+#    these platforms.  For other systems, you must add the appropriate
+#    compiler flag.
 #
 # 3. To link the library without the fortran stub routines (in case
 #    you don't have a fortran compiler handy), specify -DNO_FORTRAN
@@ -173,7 +173,7 @@ PLFNT_DIR	= ../lib
 PLLIB_PATH	= $(PLLIB_DIR)/
 PLFNT_PATH	= $(PLFNT_DIR)/
 FONTFLAG	=
-
+TK_INCDIR	= /usr/local/{include}
 SYS_LIBS=
 
 # Note there is no "standard" way to invoke double precision in Fortran
@@ -740,9 +740,12 @@ PLLIB_LDC	= lib $(PLLIB_C) $(LIBM) $(LIBC) \
 # Main sources.
 
 OBJ =	\
+	pdfutils.o \
 	plargs.o \
 	plbox.o \
 	plcont.o \
+	plcore.o \
+	plctest.o \
 	plctrl.o \
 	plcvt.o \
 	pldtik.o \
@@ -753,14 +756,13 @@ OBJ =	\
 	plot3d.o \
 	plpage.o \
 	plsdef.o \
+	plshade.o \
+	plstream.o \
 	plstring.o \
 	plsym.o \
 	pltick.o \
 	plvpor.o \
-	plwind.o \
-	pdfutils.o \
-	plstream.o \
-	plcore.o 
+	plwind.o 
 
 # Support files for font generators.
 
@@ -844,14 +846,34 @@ DRIVERS_OBJ = \
 
 #----------------------------------------------------------------------#
 # Targets
-# The default is to make all the object libraries.
-# You can make everything (except demos) by typing 'make everything'
-# but you must create the links ('make links') beforehand.
+# The default is now to make all the object libraries, plrender, and
+# plserver (if the TK driver is being used).  Other targets:
+#
+#	links		make soft links to source files (must be done first)
+#	libs		object libraries
+#	plrender
+#	plserver
+#	cdemos		all the C demos
+#	fdemos		all the Fortran demos
+#	x??[cf]		demo number ??, C or fortran version
+#	clean		cleans up demo executables, output files
+#	realclean	cleans up object files, soft-links
+#	install		installs files user will need into public location
 
-default: libs
-everything: libs plrender plserver pltek
+default: plrender if_tk({plserver}) libs
+
+everything: plrender if_tk({plserver}) libs
 
 libs:	$(PLLIB_MAIN)
+
+# This serves to make soft links to the source files automatically the
+# first time you run make.  Once the link to plplotP.h is made, it will
+# never be made again since ".dummy" is older.
+
+if_unix({
+plplotP.h: .dummy
+	make links
+})
 
 #----------------------------------------------------------------------#
 # Plot libraries.
@@ -913,6 +935,7 @@ $(PLFNT_PATH)plxtnd.fnt: xtndfont.o pdfutils.o $(FONT_OBJ)
 plargs.o:	plplotP.h plplot.h plstream.h plargs.c
 plbox.o:	plplotP.h plplot.h plbox.c 
 plcont.o:	plplotP.h plplot.h plcont.c 
+plctest.o:	plplotP.h plplot.h plctest.c 
 plctrl.o:	plplotP.h plplot.h plctrl.c 
 plcvt.o:	plplotP.h plplot.h plcvt.c 
 pldtik.o:	plplotP.h plplot.h pldtik.c 
@@ -923,6 +946,7 @@ plline.o:	plplotP.h plplot.h plline.c
 plot3d.o:	plplotP.h plplot.h plot3d.c 
 plpage.o:	plplotP.h plplot.h plpage.c 
 plsdef.o:	plplotP.h plplot.h plsdef.c 
+plshade.o:	plplotP.h plplot.h plshade.c 
 plstream.o:	plplotP.h plplot.h plstream.h plstream.c
 plstring.o:	plplotP.h plplot.h plstring.c 
 plsym.o:	plplotP.h plplot.h plsym.c 
@@ -1021,10 +1045,10 @@ xterm.o:	plplotP.h plplot.h plstream.h drivers.h xterm.c
 
 tk.o:		plserver.h plplotP.h plplot.h plstream.h \
 		drivers.h metadefs.h pdf.h plevent.h tk.c
-	$(CC) $(CFLAGS) $(PLDEVICES) tk.c
+	$(CC) -I $(TK_INCDIR) $(CFLAGS) $(PLDEVICES) tk.c
 
 tkshell.o:	plserver.h plplotP.h plplot.h plstream.h tkshell.c
-	$(CC) $(CFLAGS) $(PLDEVICES) tkshell.c
+	$(CC) -I $(TK_INCDIR) $(CFLAGS) $(PLDEVICES) tkshell.c
 
 #----------------------------------------------------------------------#
 # Utility programs.
@@ -1038,6 +1062,7 @@ plrender:	$(PLLIB_MAIN) plrender.o
 	$(LDC) $(STARTUP) plrender.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
 plserver.o:	plserver.h plplotP.h plplot.h plstream.h plserver.c
+	$(CC) -I $(TK_INCDIR) $(CFLAGS) plserver.c
 
 plframe.o:	plframe.c
 
