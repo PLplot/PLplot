@@ -1036,9 +1036,15 @@ fi
 # If gcc has been specified, use that.  Otherwise do NOT use gcc.
 # Mixing/matching compilers is best left to the experts.
 
+if test "$with_gcc"; then
+    if test ! "$enable_cxx" = "no"; then
+	enable_cxx=yes
+    fi
+fi
+
 if test "$enable_cxx" = "yes"; then
     if test -z "$CXX"; then
-	if test "$enable_gcc"; then
+	if test "$with_gcc"; then
 	    CXX=gcc
 	else
 	    CXX=CC
@@ -1516,7 +1522,7 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1520 "configure"
+#line 1526 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1530,7 +1536,7 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1534 "configure"
+#line 1540 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1673,7 +1679,7 @@ test -z "$x_direct_test_library" && x_direct_test_library=Xt
 test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
 test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
 cat > conftest.$ac_ext <<EOF
-#line 1677 "configure"
+#line 1683 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
@@ -1736,7 +1742,7 @@ rm -f conftest*
 ac_save_LIBS="$LIBS"
 LIBS="-l$x_direct_test_library $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1740 "configure"
+#line 1746 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -1822,7 +1828,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 1826 "configure"
+#line 1832 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -1879,7 +1885,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1883 "configure"
+#line 1889 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2028,11 +2034,12 @@ if test "$enable_tcl" = "yes"; then
 	/usr/lib"
 
 	
-    echo $ac_n "checking for -ltcl""... $ac_c" 1>&6
+    echo $ac_n "checking for libtcl""... $ac_c" 1>&6
     TCLLIBDIR=""
 
     for dir in $places; do
-	if test -r "$dir/libtcl.a" -o -r "$dir/libtcl.sl"; then
+	ls $dir/libtcl.* >/dev/null 2>&1
+	if test $? = 0; then
 	    TCLLIBDIR="$dir"
 	    echo "$ac_t""$dir" 1>&6
 	    break
@@ -2040,7 +2047,7 @@ if test "$enable_tcl" = "yes"; then
     done
     if test -z "$TCLLIBDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find tcl library, setting enable_tcl to no" 1>&6
+	echo "$ac_t""warning: can't find libtcl, setting enable_tcl to no" 1>&6
 	enable_tcl="no"
     fi
     if test "$TCLLIBDIR" = "/usr/lib"; then
@@ -2129,11 +2136,12 @@ if test "$enable_itcl" = "yes"; then
 	/usr/lib"
 
 	
-    echo $ac_n "checking for -litcl""... $ac_c" 1>&6
+    echo $ac_n "checking for libitcl""... $ac_c" 1>&6
     ITCLLIBDIR=""
 
     for dir in $places; do
-	if test -r "$dir/libitcl.a" -o -r "$dir/libitcl.sl"; then
+	ls $dir/libitcl.* >/dev/null 2>&1
+	if test $? = 0; then
 	    ITCLLIBDIR="$dir"
 	    echo "$ac_t""$dir" 1>&6
 	    break
@@ -2141,7 +2149,7 @@ if test "$enable_itcl" = "yes"; then
     done
     if test -z "$ITCLLIBDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find itcl library, setting enable_itcl to no" 1>&6
+	echo "$ac_t""warning: can't find libitcl, setting enable_itcl to no" 1>&6
 	enable_itcl="no"
     fi
     if test "$ITCLLIBDIR" = "/usr/lib"; then
@@ -2240,11 +2248,12 @@ if test "$enable_tk" = "yes"; then
 	/usr/lib"
 
 	
-    echo $ac_n "checking for -ltk""... $ac_c" 1>&6
+    echo $ac_n "checking for libtk""... $ac_c" 1>&6
     TKLIBDIR=""
 
     for dir in $places; do
-	if test -r "$dir/libtk.a" -o -r "$dir/libtk.sl"; then
+	ls $dir/libtk.* >/dev/null 2>&1
+	if test $? = 0; then
 	    TKLIBDIR="$dir"
 	    echo "$ac_t""$dir" 1>&6
 	    break
@@ -2252,7 +2261,7 @@ if test "$enable_tk" = "yes"; then
     done
     if test -z "$TKLIBDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find tk library, setting enable_tk to no" 1>&6
+	echo "$ac_t""warning: can't find libtk, setting enable_tk to no" 1>&6
 	enable_tk="no"
     fi
     if test "$TKLIBDIR" = "/usr/lib"; then
@@ -2347,11 +2356,12 @@ if test "$enable_dp" = "yes"; then
 	/usr/lib"
 
 	
-    echo $ac_n "checking for -ldpnetwork""... $ac_c" 1>&6
+    echo $ac_n "checking for libdpnetwork""... $ac_c" 1>&6
     DPLIBDIR=""
 
     for dir in $places; do
-	if test -r "$dir/libdpnetwork.a" -o -r "$dir/libdpnetwork.sl"; then
+	ls $dir/libdpnetwork.* >/dev/null 2>&1
+	if test $? = 0; then
 	    DPLIBDIR="$dir"
 	    echo "$ac_t""$dir" 1>&6
 	    break
@@ -2359,7 +2369,7 @@ if test "$enable_dp" = "yes"; then
     done
     if test -z "$DPLIBDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find dpnetwork library, setting enable_dp to no" 1>&6
+	echo "$ac_t""warning: can't find libdpnetwork, setting enable_dp to no" 1>&6
 	enable_dp="no"
     fi
     if test "$DPLIBDIR" = "/usr/lib"; then
@@ -2593,11 +2603,12 @@ if test "$with_dbmalloc" = "yes"; then
 	/usr/lib"
 
 	
-    echo $ac_n "checking for -ldbmalloc""... $ac_c" 1>&6
+    echo $ac_n "checking for libdbmalloc""... $ac_c" 1>&6
     DBMALLOCLIBDIR=""
 
     for dir in $places; do
-	if test -r "$dir/libdbmalloc.a" -o -r "$dir/libdbmalloc.sl"; then
+	ls $dir/libdbmalloc.* >/dev/null 2>&1
+	if test $? = 0; then
 	    DBMALLOCLIBDIR="$dir"
 	    echo "$ac_t""$dir" 1>&6
 	    break
@@ -2605,7 +2616,7 @@ if test "$with_dbmalloc" = "yes"; then
     done
     if test -z "$DBMALLOCLIBDIR"; then
 	echo "$ac_t""no" 1>&6
-	echo "$ac_t""warning: can't find dbmalloc library, setting with_dbmalloc to no" 1>&6
+	echo "$ac_t""warning: can't find libdbmalloc, setting with_dbmalloc to no" 1>&6
 	with_dbmalloc="no"
     fi
     if test "$DBMALLOCLIBDIR" = "/usr/lib"; then
@@ -2753,7 +2764,7 @@ if test "$enable_python" = "yes"; then
 	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[^/]*/[^/]*$,,'`
 	PYTHON_MOD_DIR=$python_dir/lib/python/$MACHDEP
 	if test ! -d "$PYTHON_MOD_DIR"; then
-	    echo "$ac_t""couldn't find PYTHON_MOD_DIR" 1>&6
+	    echo "$ac_t""couldn't find PYTHON_MOD_DIR, setting enable_python to no" 1>&6
 	    enable_python=no
 	fi
     fi
@@ -2774,7 +2785,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lf2c  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2778 "configure"
+#line 2789 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2825,6 +2836,9 @@ if test -z "$EXTRA_LIBS"; then
 	CRAY* ) 
 	    EXTRA_LIBS="$EXTRA_LIBS -lm"
 	;;
+	Linux* )
+	    EXTRA_LIBS="$EXTRA_LIBS -lieee -lm"
+	;;
 	* ) 	
 	    echo $ac_n "checking for -lXbsd""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_lib_Xbsd'+set}'`\" = set"; then
@@ -2833,7 +2847,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2837 "configure"
+#line 2851 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2866,7 +2880,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2870 "configure"
+#line 2884 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2899,7 +2913,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2903 "configure"
+#line 2917 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2932,7 +2946,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2936 "configure"
+#line 2950 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2965,7 +2979,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2969 "configure"
+#line 2983 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3035,6 +3049,18 @@ case "$system" in
 	    SHLIB_CXXFLAGS=-pic
 	    SHLIB_BUILD="ld -assert pure-text -o"
 	fi
+    ;;
+    Linux* )
+	# Should do something to make sure this is an ELF system, as
+	# don't have patience for DLL...
+	echo "$ac_t""Assuming Linux ELF.  If not, reconfigure --without-shlib" 1>&6
+	SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	SHLIB_BUILD="gcc -shared -fpic -o"
+
+	SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
+
+	# Hmm, would be good to replace that trailing .0 with the
+	# compilation number or some such.  Have to think about that.
     ;;
     HP-UX-* )
 	SO=".sl"
@@ -3114,6 +3140,8 @@ esac
 
 
 
+
+
 # If we cannot run a trivial program, we must be cross compiling.
 echo $ac_n "checking whether cross-compiling""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_c_cross'+set}'`\" = set"; then
@@ -3123,7 +3151,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3127 "configure"
+#line 3155 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3144,7 +3172,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3148 "configure"
+#line 3176 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3166,7 +3194,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3170 "configure"
+#line 3198 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3184,7 +3212,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3188 "configure"
+#line 3216 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3205,7 +3233,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3209 "configure"
+#line 3237 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3242,7 +3270,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3246 "configure"
+#line 3274 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3303,7 +3331,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3307 "configure"
+#line 3335 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3335,7 +3363,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3339 "configure"
+#line 3367 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -3369,7 +3397,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3373 "configure"
+#line 3401 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -3484,7 +3512,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3488 "configure"
+#line 3516 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -3539,7 +3567,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3543 "configure"
+#line 3571 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3675,6 +3703,9 @@ if test "$with_shlib" = "yes"; then
 	;;
 	AIX-* ) 
 	    cat $srcdir/cf/lib_sh_aix.in	>>Makefile.in
+	;;
+	Linux* )
+	    cat $srcdir/cf/lib_sh_linux.in	>>Makefile.in
 	;;
 	* )
 	    cat $srcdir/cf/lib_sh.in	>>Makefile.in
@@ -4151,6 +4182,15 @@ fi
 if test -z "$TCL_DIR"; then
     TCL_DIR=$prefix/tcl
 fi
+if test -z "$PYTHON_DIR"; then
+    PYTHON_DIR=$prefix/python
+fi
+if test "$enable_python" = "yes"; then
+    if test "$PYTHON_DIR" != "$PYTHON_MOD_DIR"; then
+	echo "$ac_t""python module will be installed in $PYTHON_DIR" 1>&6;
+	echo "$ac_t""remember to soft-link it to $PYTHON_MOD_DIR" 1>&6;
+    fi
+fi
 if test -z "$DOC_DIR"; then
     DOC_DIR=$prefix/doc
 fi
@@ -4175,6 +4215,7 @@ EOF
 cat >> confdefs.h <<EOF
 #define TCL_DIR "$TCL_DIR"
 EOF
+
 
 
 
@@ -4258,6 +4299,7 @@ $srcdir/scripts/pl* \
 $srcdir/lib/*.fnt \
 $srcdir/lib/*.map \
 $srcdir/cf/*.in \
+$srcdir/sys/unix/version \
 . 2>/dev/null
 
 # ----------------------------------------------------------------------------
@@ -4392,6 +4434,7 @@ s%@SHLIB_BUILD@%$SHLIB_BUILD%g
 s%@SA@%$SA%g
 s%@SO@%$SO%g
 s%@LDSHARED@%$LDSHARED%g
+s%@SOVERSION@%$SOVERSION%g
 s%@SHLIB_CCFLAGS@%$SHLIB_CCFLAGS%g
 s%@SHLIB_CXXFLAGS@%$SHLIB_CXXFLAGS%g
 s%@SHLIB_F77FLAGS@%$SHLIB_F77FLAGS%g
@@ -4401,6 +4444,7 @@ s%@LIB_TAG@%$LIB_TAG%g
 s%@LIB_DIR@%$LIB_DIR%g
 s%@BIN_DIR@%$BIN_DIR%g
 s%@TCL_DIR@%$TCL_DIR%g
+s%@PYTHON_DIR@%$PYTHON_DIR%g
 s%@DOC_DIR@%$DOC_DIR%g
 s%@INFO_DIR@%$INFO_DIR%g
 s%@INCLUDE_DIR@%$INCLUDE_DIR%g
