@@ -214,7 +214,7 @@ FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
                 break;
 	    }
 
-        } else if ((text[i] & PL_FCI_MARK) == PL_FCI_MARK) {
+        } else if (text[i] & PL_FCI_MARK) {
 	   /* FCI in text stream; change font accordingly. */
 	   FT_SetFace(pls , text[i]);
         } else {
@@ -353,7 +353,7 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
                 break;
 	    }
 
-        } else if ((text[i] & PL_FCI_MARK) == PL_FCI_MARK) {
+        } else if (text[i] & PL_FCI_MARK) {
 	   /* FCI in text stream; change font accordingly. */
 	   FT_SetFace(pls , text[i]);
 	   FT=(FT_Data *)pls->FT;

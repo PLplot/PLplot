@@ -8,7 +8,7 @@
 
 
   Copyright (C) 2004  Joao Cardoso
-  Copyright (C) 2004  Rafael Laboissiere
+  Copyright (C) 2004, 2005  Rafael Laboissiere
   Copyright (C) 2004  Andrew Ross
   Copyright (C) 2004  Andrew Roach
   Copyright (C) 2005  Alan W. Irwin
@@ -537,7 +537,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 		     i+=2;
 		     if ('0' <= string[i] && string[i] <= '9' ) {
 			i+=text2num(&string[i],'>', &code);
-			if ((code & PL_FCI_MARK) == PL_FCI_MARK) {
+			if (code & PL_FCI_MARK) {
 			   /* code is a complete FCI (font characterization 
 			    * integer): change FCI to this value.
 			    */
