@@ -31,13 +31,13 @@ bin_PROGRAMS = plrender pltek
 endif
 
 plrender_SOURCES = plrender.c
-plrender_LDFLAGS = -rpath $(libdir) -no-undefined
+plrender_LDFLAGS = $(RPATH) -no-undefined
 plrender_LDADD = $(libplplot)
 
 pltek_SOURCES = pltek.c
-pltek_LDFLAGS = -rpath $(libdir) -no-undefined
+pltek_LDFLAGS = $(RPATH) -no-undefined
 pltek_LDADD = $(libplplot)
 
 pltcl_SOURCES = pltcl.c
-pltcl_LDFLAGS = -rpath $(libdir) -no-undefined $(TCLLIBCMD) $(ITCLLIBCMD)
+pltcl_LDFLAGS = $(RPATH) -no-undefined $(TCLLIBCMD) $(ITCLLIBCMD)
 pltcl_LDADD = $(libplplottcltk)

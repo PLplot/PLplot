@@ -4,7 +4,7 @@
 ###
 # Copyright (C) 2002 Rafael Laboissiere
 # Copyright (C) 2002 Alan W. Irwin
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -49,12 +49,11 @@ sources = \
   plvpor.c \
   plwind.c \
   plbuf.c
-  
 
 AM_CPPFLAGS = $(FREETYPEINCCMD) $(INCLTDL)
 
 libplplot@LIB_TAG@_la_SOURCES  = $(sources)
-libplplot@LIB_TAG@_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(FREETYPELIBCMD) -lm
+libplplot@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(FREETYPELIBCMD) -lm
 if !enable_dyndrivers
 libdrv = ../drivers/libplplotdrv.la
 endif

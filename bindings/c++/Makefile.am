@@ -36,5 +36,5 @@ version = -version-info $(SOVERSION)
 sources = plstream.cc
 
 libplplotcxx@LIB_TAG@_la_SOURCES  = $(sources)
-libplplotcxx@LIB_TAG@_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
+libplplotcxx@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
 

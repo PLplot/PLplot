@@ -34,7 +34,7 @@ plplotjavac_wrap.c plplotjavac.java: plplotjavac.i plplotcapi.i
 	$(SWIG) -java -package plplot.core -DPL_DOUBLE plplotjavac.i
 
 nodist_libplplotjava@LIB_TAG@_la_SOURCES  = $(sources)
-libplplotjava@LIB_TAG@_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
+libplplotjava@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
 
 javadir = $(libdir)/java/plplot/core
 # At some point specify javaJAVA for gcj support when gcc-3.2 becomes

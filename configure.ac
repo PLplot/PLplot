@@ -552,8 +552,8 @@ fi
 if test "$enable_png" = yes -o "$enable_jpeg" = yes; then
    if test "$GDINCDIR" != default; then
       GDINCCMD="-I$GDINCDIR"
-      AC_SUBST(GDINCCMD)
    fi
+   AC_SUBST(GDINCCMD)
    if test "$GDLIBDIR" = default; then
       GDLIBCMD="$GDLIBSTR"
    else
@@ -834,6 +834,14 @@ AC_INCLUDE(doc/docbook/configure.ac)
 fi
 AM_CONDITIONAL(enable_docbook, [test "$enable_docbook" = yes])
 
+### rpath setting
+
+if test "$with_rpath"= yes ; then
+  RPATH='-rpath $(libdir)'
+else
+  RPATH=
+fi  
+AC_SUBST(RPATH)
 
 ### Build Makefiles
 

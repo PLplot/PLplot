@@ -63,7 +63,7 @@ libtclmatrix@LIB_TAG@_la_SOURCES  = \
 	tclMatrix.c \
 	matrixInit.c
 
-libtclmatrix@LIB_TAG@_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined \
+libtclmatrix@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined \
 	$(TCLLIBCMD)
 
 if enable_tcl
@@ -88,8 +88,7 @@ libplplottcltk@LIB_TAG@_la_SOURCES  = $(tclsources) $(tksources)
 
 libplplottcltk@LIB_TAG@_la_LDFLAGS  = \
 	$(version) \
-	-rpath \
-	$(libdir) \
+	$(RPATH) \
 	-no-undefined \
 	$(TCLLIBCMD) \
         $(ITCLLIBCMD) \

@@ -35,7 +35,7 @@ AM_CPPFLAGS = \
 pkginclude_HEADERS = pltk.h
 bin_PROGRAMS = plserver
 plserver_SOURCES = plserver.c
-plserver_LDFLAGS = -rpath $(libdir) -no-undefined
+plserver_LDFLAGS = $(RPATH) -no-undefined
 plserver_LDADD = $(libplplottcltk)
 
 tcldata = \
