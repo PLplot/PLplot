@@ -29,15 +29,21 @@ static void flushbuffer(PLStream *);
 
 static short *buffptr, bufflen;
 static short count;
-static int curwid = 1;
-static int curcol = 1;
-static int firstline = 1;
-static long cmap0_pos, cmap1_pos;
-static int cmap0_ncol, cmap1_ncol;
-static int offset, offset_inc;
+static int   curwid = 1;
+static int   curcol = 1;
+static int   firstline = 1;
+static long  cmap0_pos, cmap1_pos;
+static int   cmap0_ncol, cmap1_ncol;
+static int   offset, offset_inc;
 
 static void stcmap0(PLStream *);
 static void stcmap1(PLStream *);
+static void proc_str (PLStream *, EscText *);
+
+static int text=0;
+
+static DrvOpt driver_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=1|0)"},
+				  {NULL, DRV_INT, NULL, NULL}};
 
 /*--------------------------------------------------------------------------*\
  * plD_init_xfig()
@@ -49,7 +55,10 @@ void
 plD_init_xfig(PLStream *pls)
 {
     PLDev *dev;
-    int t;
+
+    plParseDrvOpts(driver_options);
+    if (text)
+      pls->dev_text = 1; /* want to draw text */
 
 /* Initialize family file info */
 
@@ -83,7 +92,6 @@ plD_init_xfig(PLStream *pls)
 
 /* Write out header */
 
-    /* still much work to do */
     fprintf(pls->OutFile, "#FIG 3.2\n");
     fprintf(pls->OutFile, "Landscape\n");
     fprintf(pls->OutFile, "Center\n");
@@ -365,6 +373,10 @@ plD_esc_xfig(PLStream *pls, PLINT op, void *ptr)
 
     fprintf(pls->OutFile, "\n");
     break;
+
+  case PLESC_HAS_TEXT:
+    proc_str(pls, ptr);
+    break;
   }  
 }
 
@@ -390,6 +402,89 @@ flushbuffer(PLStream *pls)
   }
   fprintf(pls->OutFile, "\n");
   count = 0;
+}
+
+void
+proc_str (PLStream *pls, EscText *args)
+{
+  PLFLT *t = args->xform;
+  PLFLT a1, alpha, ft_ht, angle, ref;
+  PLDev *dev = (PLDev *) pls->dev;
+  int jst, font;
+
+  /* font height */
+  ft_ht = pls->chrht * 72.0/25.4; /* ft_ht in points. ht is in mm */
+
+  /* calculate baseline text angle */
+  angle = pls->diorot * 90.;
+  a1 = acos(t[0]) * 180. / PI;
+  if (t[2] > 0.)
+    alpha = a1 - angle;
+  else
+    alpha = 360. - a1 - angle;
+
+  alpha = alpha * PI / 180.;
+
+  /* TODO: parse string for format (escape) characters */
+  //parse_str(args->string, return_string);
+
+  /* 
+   * Text justification.  Left, center and right justification, which
+   *  are the more common options, are supported; variable justification is
+   *  only approximate, based on plplot computation of it's string lenght
+   */
+
+  if (args->just == 0.5)
+    jst = 1; /* center */
+  else if (args->just == 1.)
+    jst = 2; /* right */
+  else {
+    jst = 0; /* left */
+    args->x = args->refx; /* use hints provided by plplot */
+    args->y = args->refy;
+  }
+
+  /* 
+   * Reference point (center baseline of string, not latex character reference point). 
+   *  If base = 0, it is aligned with the center of the text box
+   *  If base = 1, it is aligned with the baseline of the text box
+   *  If base = 2, it is aligned with the top of the text box
+   *  Currently plplot only uses base=0
+   *  xfig use base=1
+   */ 
+
+  if (args->base == 2) /* not supported by plplot */
+    ref = - DPI/72. * ft_ht / 2.; /* half font height in xfig unities (1/1200 inches) */
+  else if (args->base == 1)
+    ref = 0.;
+  else
+    ref = DPI/72. * ft_ht / 2.;
+
+  /* rotate point in xfig is lower left corner, compensate */
+  args->y = offset + dev->ymax * (int)dev->xscale_dev - (args->y - ref*cos(alpha));
+  args->x = args->x + ref*sin(alpha);
+
+  /*
+   *  font family, serie and shape. Currently not supported by plplot
+   *
+   *  Use Postscript Times
+   *  1: Normal font
+   *  2: Roman font
+   *  3: Italic font
+   *  4: sans serif
+   */
+
+  switch (pls->cfont) {
+  case (1): font = 0; break;
+  case (2): font = 1; break;
+  case (3): font = 3; break;
+  case (4): font = 4; break;
+  default:  font = 0;
+  }
+
+  fprintf(pls->OutFile,"4 %d %d 50 0 %d %f %f 4 1 1 %d %d %s\\001\n",
+	  jst, curcol, font, 1.8 /*!*/ * ft_ht, alpha, args->x, args->y, args->string);
+
 }
 
 #else
