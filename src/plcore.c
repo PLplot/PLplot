@@ -68,6 +68,8 @@ plP_init(void)
 void
 plP_eop(void)
 {
+    int skip_driver_eop = 0;
+
     if (plsc->page_status != DRAWING)
 	return;
 
@@ -76,7 +78,13 @@ plP_eop(void)
     if (plsc->plbuf_write)
 	plbuf_eop(plsc);
 
-    (*plsc->dispatch_table->pl_eop) ((struct PLStream_struct *) plsc);
+/* Call user eop handler if present. */
+
+    if (plsc->eop_handler != NULL)
+	(*plsc->eop_handler) (plsc->eop_data, &skip_driver_eop);
+
+    if (!skip_driver_eop)
+	(*plsc->dispatch_table->pl_eop) ((struct PLStream_struct *) plsc);
 }
 
 /* Set up new page. */
@@ -87,6 +95,8 @@ plP_eop(void)
 void
 plP_bop(void)
 {
+    int skip_driver_bop = 0;
+
     plP_subpInit();
     if (plsc->page_status == AT_BOP)
 	return;
@@ -94,7 +104,13 @@ plP_bop(void)
     plsc->page_status = AT_BOP;
     plsc->nplwin = 0;
 
-    (*plsc->dispatch_table->pl_bop) ((struct PLStream_struct *) plsc);
+/* Call user bop handler if present. */
+
+    if (plsc->bop_handler != NULL)
+	(*plsc->bop_handler) (plsc->bop_data, &skip_driver_bop);
+
+    if (!skip_driver_bop)
+	(*plsc->dispatch_table->pl_bop) ((struct PLStream_struct *) plsc);
 
     if (plsc->plbuf_write)
 	plbuf_bop(plsc);
@@ -2014,6 +2030,24 @@ plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, int *),
 {
     plsc->ButtonEH = ButtonEH;
     plsc->ButtonEH_data = ButtonEH_data;
+}
+
+/* Sets an optional user bop handler. */
+
+void
+plsbopH(void (*handler) (void *, int *), void *handler_data)
+{
+    plsc->bop_handler = handler;
+    plsc->bop_data = handler_data;
+}
+
+/* Sets an optional user eop handler. */
+
+void
+plseopH(void (*handler) (void *, int *), void *handler_data)
+{
+    plsc->eop_handler = handler;
+    plsc->eop_data = handler_data;
 }
 
 /* Set the variables to be used for storing error info */
