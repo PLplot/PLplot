@@ -44,7 +44,8 @@ sources = \
 	x19.cc \
 	x20.cc \
 	x21.cc \
-	x22.cc
+	x22.cc \
+	x23.cc
 
 if enable_cxx
 
@@ -79,7 +80,8 @@ check_PROGRAMS = \
 	x19 \
 	x20 \
 	x21 \
-	x22
+	x22 \
+	x23
 
 check_DATA = lena.pgm
 
@@ -111,6 +113,7 @@ x19_SOURCES = x19.cc
 x20_SOURCES = x20.cc
 x21_SOURCES = x21.cc
 x22_SOURCES = x22.cc
+x23_SOURCES = x23.cc
 
 LDADD = $(libplplotcxx)
 
