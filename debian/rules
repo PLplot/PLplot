@@ -88,7 +88,7 @@ install-stamp: build-stamp
 	mv $(debdoc)/plplot $(debdoc)/$(libpkg)
 	mv $(debex) $(debdoc)/$(libpkg)
 
-	for i in `grep ^Package: debian/control | grep -v libplplot9$ \
+	for i in `grep ^Package: debian/control | grep -v libplplot9$$ \
 	          | sed 's/Package: //'` ; do \
 	  ln -s $(libpkg) $(debdoc)/$$i ; \
 	done

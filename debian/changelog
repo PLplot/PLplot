@@ -1,9 +1,14 @@
 plplot (5.3.1.cvs-1) unstable; urgency=low
 
-  * New upstream release (DEBIAN PACKAGES NOT YET RELEASED!!!).
-  * debian/rules: enable-java & $(javasetup)
-  * debian/control: Build-depends on libgcj4-dev | kaffe-dev and 
-    fastjar | kaffe.
+  * New upstream release (DEBIAN PACKAGES NOT YET RELEASED!!!). A Java
+    binding package is created (libplplot9-java).
+  * debian/libplplot9-java.files: New dh_movefiles file containing the files
+    for the Java package.
+  * debian/rules: Enable java build.  Give option --enable-java to configure
+    and use variable $(javasetup) to specify the --with-java-home option when
+    building the package with kaffe
+  * debian/control: Add Java releated packages to Build-Depends.  Create
+    entry for the libplplot9-java binary package.
 
  -- Rafael Laboissiere <rafael@debian.org>  Fri,  2 Jul 2004 18:12:40 +0200
 

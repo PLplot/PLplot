@@ -1,5 +1,5 @@
 plplot-doc plplot-tcl python-plplot plplot-xwin plplot-gnome
 plplot-gd octave-plplot libplplot5 libplplot-dev plplot-tcl-dev tmp
 libplplot9 plplot9-driver-gd plplot9-driver-gnome plplot9-driver-xwin
-libcsiro0 libplplot-c++9 plplot-bin libplplot-java
+libcsiro0 libplplot-c++9 plplot-bin libplplot9-java
 *.debhelper *substvars files patched
