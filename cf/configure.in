@@ -505,7 +505,7 @@ if test "$with_shlib" = "yes"; then
 	mkdir shared
 	#following needed for includes to work properly with new plplot/*.h style
 	cd shared
-	ln -s ../plplot
+	ln -s ../plplot .
 	cd ..
     fi
     case $system in 
