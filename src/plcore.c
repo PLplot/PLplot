@@ -1,9 +1,19 @@
 /* $Id$
  * $Log$
- * Revision 1.52  1996/02/24 05:04:14  shouman
+ * Revision 1.53  1996/03/02 10:54:39  shouman
+ * Fixed botch in last commit.
+ *
+ * Revision 1.52  1996/02/24  05:04:14  shouman
  * Added plgDevs() routine like plgFileDevs(), to return a list of all drivers
  * present.  Made ndev argument to both be interpreted on input as the
  * dimension of the input arrays so as to stay in bounds.
+ *
+ * Revision 1.51  1995/10/23  07:24:52  mjl
+ * Added glevel() accessor function, for returning the run level.  Also added
+ * plsError() function for setting error control variables.
+ *
+ * Revision 1.50  1995/10/16  18:20:28  mjl
+ * Added plgdev API function to return current device name.
  *
  * Revision 1.49  1995/06/29  18:10:44  mjl
  * Moved invocation of plP_subpInit() to a less bogus place in plP_bop().
