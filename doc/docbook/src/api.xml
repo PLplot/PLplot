@@ -9144,7 +9144,7 @@ characters and their corresponding decimal ASCII values:
       <varlistentry>
 	<term>
 	  <parameter>id</parameter>
-	  (<literal>PLINT *</literal>, input)
+	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
