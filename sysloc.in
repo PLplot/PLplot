@@ -25,7 +25,7 @@ ZLIBLIBSTR=-lz
 FREETYPELIBSTR=-lfreetype
 QHULLLIBS=""
 NNLIBS=""
-CSALIBS=-lcsa
+CSALIBS='$(top_builddir)/lib/csa/libcsa.la'
 
 # ----------------------------------------------------------------------------
 # Attempt to find jni.h, if java support is enabled.
@@ -911,7 +911,7 @@ if test "$with_qhull" = "yes"; then
             AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
             if test "$enable_dyndrivers" = "yes"; then
                 QHULLIBS="-lqhull"
-                NNLIBS="-lnn"
+                NNLIBS="$(top_builddir)/lib/nn/libnn.la'"
             else
                 LIBS="$LIBS -lqhull -lnn"
             fi
