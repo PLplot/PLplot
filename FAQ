@@ -78,6 +78,7 @@ Section 3: X-based drivers (includes Tcl/TK, Tcl-DP)
  3.8  I want to run plserver as a daemon...
  3.9  Problems printing from the Tk driver..
  3.10 Problems compiling xwin.c...
++3.11 Problems saving files from the Tk driver.
 
 ==============================================================================
 Section 4: All other drivers & supported platforms
@@ -860,6 +861,22 @@ problems like this.  At worst, you can pull over a later X11 distribution
 (as I write this X11R6 just came out) and build it yourself.  I do know
 that some PLplot runs OK on some Ultrix systems so there should be an
 upgrade available.  
+
+
++3.11 Problems saving files from the Tk driver.
+
+> When I tried to save
+> the .ps files (both color and mono) using "Save as.." in plrender,
+> it doesn't seem to terminate the file properly. I had to add a
+> "showpage" statement at the end before I send it to the printer 
+> in order for my printer to print it properly. On the other hand, if
+> I select the drivers (ps or psc) at the command line or upon start
+> of the program, the output files looked fine. 
+
+You either need to quit the program or pick "save close" before displaying
+the saved file.  This is because "save as" leaves the file open so that
+you can use "save" on multiple plots, each going to the same file.
+
 
 
 ==============================================================================
