@@ -1,8 +1,0 @@
-usr/lib
-usr/bin
-usr/share/man
-usr/share/plplot*/*.map
-usr/share/plplot*/*.fnt
-usr/share/doc/libplplot9
-
-
