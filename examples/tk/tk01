@@ -1,5 +1,5 @@
 #!xtk01 -f
-# Geoffrey Furnish
+# Geoffrey Furnish                     -*-tcl-*-
 # 11 April 1994
 #
 # @> A script for using Tk to control xtk01
@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.2  1994/05/07 03:16:33  mjl
+# Revision 1.3  1994/05/09 18:00:37  furnish
+# Hack for tcl-mode with font-lock, etc.
+#
+# Revision 1.2  1994/05/07  03:16:33  mjl
 # Changes to bring up PLplot "megawidget".  Still needs work, in that there
 # are several widgets not appropriate for this application.  The PLplot
 # "megawidget" should really be rewritten in itcl, but for now I'll hack
