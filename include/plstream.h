@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1995/03/16 23:50:23  mjl
+ * Revision 1.38  1995/05/07 02:32:51  mjl
+ * Added new stream variables: verbose (be more verbose than usual), debug
+ * (print debugging output to stderr), and initialized (set if the stream has
+ * been initialized).  Eliminated cmap0setcol and cmap1set.  Changed cmap0 and
+ * cmap1 declarations to be just pointers (allocation now done during stream
+ * initialization).
+ *
+ * Revision 1.37  1995/03/16  23:50:23  mjl
  * Added variable plbuf_read for use when reading from the plot buffer.  Added
  * variable dev_swin for drivers that need calls to set plot window parameters
  * directed their way. Changed the name *MouseEH to *ButtonEH.  Changed event
@@ -138,6 +145,9 @@ typedef struct {
  * ipls		PLINT	Stream number
  * level	PLINT	Initialization level
  * program	char*	Program name
+ * verbose	PLINT	Be more verbose than usual
+ * debug	PLINT	Generate debugging output
+ * initialized	PLINT	Set if the stream has been initialized
  *
  ***************************************************************************
  *
@@ -145,10 +155,10 @@ typedef struct {
  *
  * Color map 0 is intended for static objects, such as boxes, lines, points,
  * labels, etc.  These should be allocated before calling plinit (else you
- * get all 16 by default, which can be undesirable on some platforms).
- * These are then explicitly selected by number (in order of allocation).
- * The lowest number is 0, but this is used for the background color,
- * so all color drivers start with 1 as the default color.  
+ * get 16 by default, which can be undesirable on some platforms).  These
+ * are then explicitly selected by number (in order of allocation).  The
+ * lowest number is 0, but this is used for the background color, so all
+ * color drivers start with 1 as the default color.
  *
  * Color map 1 is for continuous-tone plots, where color is used to
  * represent function value or intensity.  These are set in a relative way
@@ -163,19 +173,16 @@ typedef struct {
  * supported but highly discouraged (colors so written will be affected
  * unpredictably by the palette tools).
  *
- * icol0	PLINT	Color map 0 entry, current color (0 <= icol0 <= 15)
+ * icol0	PLINT	Color map 0 entry, current color (0 <= icol0 <= ncol0)
  * ncol0	PLINT	Number of colors allocated in color map 0.
- * icol1	PLINT	Color map 1 entry, current color (0 <= icol1 <= 255)
+ * icol1	PLINT	Color map 1 entry, current color (0 <= icol1 <= ncol1)
  * ncol1	PLINT	Number of colors allocated in color map 1.
  * ncol1cp	PLINT	Number of control points in cmap1 allocation (max 32)
  * lcol1cp	PLFLT	Locations of control points in cmap1 [0,1]
  * curcmap	PLINT	Current color map
  * curcolor	RGB[]	Current color
- * cmap0 	RGB[]	Color map 0: maximum of 16 RGB 8-bit values
- * cmap1 	RGB[]	Color map 1: maximum of 256 RGB 8-bit values
- *
- * cmap0setcol	int[]	Set for initialized cmap0 colors.
- * cmap1set	int	Set if cmap 1 has been initialized
+ * cmap0 	RGB[]	Color map 0: maximum of ncol0 RGB 8-bit values
+ * cmap1 	RGB[]	Color map 1: maximum of ncol1 RGB 8-bit values
  *
  ***************************************************************************
  *
@@ -452,18 +459,16 @@ typedef struct {
 
 /* Misc control information */
 
-    PLINT ipls;
-    PLINT level;
+    PLINT ipls, level, verbose, debug, initialized;
     char *program;
 
 /* Colormaps */
 
     PLINT icol0, ncol0, icol1, ncol1, ncp1, curcmap;
-    int   cmap0setcol[16], cmap1set;
 
     PLColor curcolor;
-    PLColor cmap0[16];
-    PLColor cmap1[256];
+    PLColor *cmap0;
+    PLColor *cmap1;
 
     PLControlPt cmap1cp[32];
 
