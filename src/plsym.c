@@ -390,7 +390,7 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 {
     PLINT clpxmi, clpxma, clpymi, clpyma;
     PLINT vert, refx, refy, x, y;
-    PLFLT xdv, ydv, xmm, ymm, shift, xform[4];
+    PLFLT xdv, ydv, xmm, ymm, refxmm, refymm, shift, xform[4];
     PLFLT chrdef, chrht;
 
     if (plsc->level < 2) {
@@ -409,55 +409,72 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
     if (plP_stsearch(side, 'b')) {
 	vert = 0;
 	xdv = plsc->vpdxmi + (plsc->vpdxma - plsc->vpdxmi) * pos;
-	ymm = plP_dcmmy(plsc->vpdymi) - disp * chrht;
-	x = plP_dcpcx(xdv);
-	refx = x - shift * plsc->xpmm;
-	y = refy = plP_mmpcy(ymm);
-    }
-    else if (plP_stsearch(side, 't')) {
+	ydv = plsc->vpdymi;
+
+	xmm = plP_dcmmx(xdv);
+	ymm = plP_dcmmy(ydv) - disp * chrht;
+	refxmm = xmm - shift;
+	refymm = ymm;
+
+    } else if (plP_stsearch(side, 't')) {
 	vert = 0;
 	xdv = plsc->vpdxmi + (plsc->vpdxma - plsc->vpdxmi) * pos;
-	ymm = plP_dcmmy(plsc->vpdyma) + disp * chrht;
-	x = plP_dcpcx(xdv);
-	refx = x - shift * plsc->xpmm;
-	y = refy = plP_mmpcy(ymm);
-    }
-    else if (plP_stindex(side, "LV") != -1 || plP_stindex(side, "lv") != -1) {
+	ydv = plsc->vpdyma;
+
+	xmm = plP_dcmmx(xdv);
+	ymm = plP_dcmmy(ydv) + disp * chrht;
+	refxmm = xmm - shift;
+	refymm = ymm;
+
+    } else if (plP_stindex(side, "LV") != -1 || plP_stindex(side, "lv") != -1) {
 	vert = 0;
-	xmm = plP_dcmmx(plsc->vpdxmi) - disp * chrht;
+	xdv = plsc->vpdxmi;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-	x = plP_mmpcx(xmm);
-	refx = x - plP_mmpcx(shift);
-	y = refy = plP_dcpcy(ydv);
-    }
-    else if (plP_stindex(side, "RV") != -1 || plP_stindex(side, "rv") != -1) {
+
+	xmm = plP_dcmmx(xdv) - disp * chrht;
+	ymm = plP_dcmmy(ydv);
+	refxmm = xmm - shift;
+	refymm = ymm;
+
+    } else if (plP_stindex(side, "RV") != -1 || plP_stindex(side, "rv") != -1) {
 	vert = 0;
-	xmm = plP_dcmmx(plsc->vpdxma) + disp * chrht;
+	xdv = plsc->vpdxma;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-	x = plP_mmpcx(xmm);
-	refx = x - plP_mmpcx(shift);
-	y = refy = plP_dcpcy(ydv);
-    }
-    else if (plP_stsearch(side, 'l')) {
+
+	xmm = plP_dcmmx(xdv) + disp * chrht;
+	ymm = plP_dcmmy(ydv);
+	refxmm = xmm - shift;
+	refymm = ymm;
+
+    } else if (plP_stsearch(side, 'l')) {
 	vert = 1;
-	xmm = plP_dcmmx(plsc->vpdxmi) - disp * chrht;
+	xdv = plsc->vpdxmi;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-	x = refx = plP_mmpcx(xmm);
-	y = plP_dcpcy(ydv);
-	refy = y - shift * plsc->ypmm;
-    }
-    else if (plP_stsearch(side, 'r')) {
+
+	xmm = plP_dcmmx(xdv) - disp * chrht;
+	ymm = plP_dcmmy(ydv);
+	refxmm = xmm;
+	refymm = ymm - shift;
+
+    } else if (plP_stsearch(side, 'r')) {
 	vert = 1;
-	xmm = plP_dcmmx(plsc->vpdxma) + disp * chrht;
+	xdv = plsc->vpdxma;
 	ydv = plsc->vpdymi + (plsc->vpdyma - plsc->vpdymi) * pos;
-	x = refx = plP_mmpcx(xmm);
-	y = plP_dcpcy(ydv);
-	refy = y - shift * plsc->ypmm;
-    }
-    else {
+
+	xmm = plP_dcmmx(xdv) + disp * chrht;
+	ymm = plP_dcmmy(ydv);
+	refxmm = xmm;
+	refymm = ymm - shift;
+
+    } else {
 	plP_sclp(clpxmi, clpxma, clpymi, clpyma); /* restore initial clip limits */
 	return;
     }
+
+    x = plP_mmpcx(xmm);
+    y = plP_mmpcy(ymm);
+    refx = plP_mmpcx(refxmm);
+    refy = plP_mmpcy(refymm);
 
     if (vert != 0) {
 	xform[0] = 0.0;
@@ -479,19 +496,19 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 /*--------------------------------------------------------------------------*\
  * void plptex()
  *
- * Prints out "text" at world cooordinate (x,y). The text may be
+ * Prints out "text" at world cooordinate (wx,wy). The text may be
  * at any angle "angle" relative to the horizontal. The parameter
  * "just" adjusts the horizontal justification of the string:
- *	just = 0.0 => left hand edge of string is at (x,y)
- *	just = 1.0 => right hand edge of string is at (x,y)
- *	just = 0.5 => center of string is at (x,y) etc.
+ *	just = 0.0 => left hand edge of string is at (wx,wy)
+ *	just = 1.0 => right hand edge of string is at (wx,wy)
+ *	just = 0.5 => center of string is at (wx,wy) etc.
 \*--------------------------------------------------------------------------*/
 
 void
-c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
+c_plptex(PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
 {
-    PLINT refx, refy;
-    PLFLT shift, cc, ss;
+    PLINT x, y, refx, refy;
+    PLFLT xmm, ymm, refxmm, refymm, shift, cc, ss;
     PLFLT xform[4], diag;
 
     if (plsc->level < 3) {
@@ -515,10 +532,17 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
     xform[2] = ss;
     xform[3] = cc;
 
-    refx = plP_wcpcx(x) - shift * cc * plsc->xpmm;
-    refy = plP_wcpcy(y) - shift * ss * plsc->ypmm;
+    xmm = plP_wcmmx(wx);
+    ymm = plP_wcmmy(wy);
+    refxmm = xmm - shift * cc;
+    refymm = ymm - shift * ss;
 
-    plP_text(0, just, xform, plP_wcpcx(x), plP_wcpcy(y), refx, refy, text);      
+    x = plP_mmpcx(xmm);
+    y = plP_mmpcy(ymm);
+    refx = plP_mmpcx(refxmm);
+    refy = plP_mmpcy(refymm);
+
+    plP_text(0, just, xform, x, y, refx, refy, text);      
 }
 
 /*--------------------------------------------------------------------------*\
