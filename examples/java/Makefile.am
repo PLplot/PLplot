@@ -19,8 +19,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-javademos = \
-	README.javademos \
+javafiles = \
 	x01.java \
 	x02.java \
 	x03.java \
@@ -41,14 +40,24 @@ javademos = \
 	x18.java \
 	x19.java
 
+javademos = README.javademos $(javafiles)
 
 if enable_java
 
-java_DATA = $(javademos)
-javadir = $(libdir)/java/plplot/examples
+# Must have "exec" in the name.
+ourexecjavadir = $(libdir)/java/plplot/examples
+
+ourexecjava_DATA = $(javademos)
 
 endif
 
+### Use install-hook to compile the java files that have been installed.
+
+install-exec-hook:
+if enable_java
+	( cd $(DESTDIR)$(ourexecjavadir) ; \
+	  javac -d ../../../java $(javafiles))
+endif
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = $(javademos)
