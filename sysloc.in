@@ -574,7 +574,7 @@ fi
 if test "$enable_itcl" = "yes"; then
     old_CPPFLAGS=$CPPFLAGS
     CPPFLAGS=-I$ITCLINCDIR
-    AC_CHECK_HEADER(itclDecls.h)
+    AC_CHECK_HEADERS([itclDecls.h], [], [], [#include <itcl.h>])
     CPPFLAGS=$old_CPPFLAGS
 fi
 
