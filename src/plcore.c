@@ -1,6 +1,17 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1993/08/11 19:19:03  mjl
+ * Revision 1.18  1993/08/18 20:33:22  mjl
+ * Many changes to driver interface to properly modify the device window
+ * based on orientation and coordinate mapping.  Orientation switches now
+ * automatically set the device window so as to preserve the aspect ratio.
+ * Ditto for coordinate mapping (only used when copying stream parameters
+ * from one to another, such as used when dumping a plot to disk from the TK
+ * driver).  Switched over to new page description variables mar, aspect, jx,
+ * and jy, and deleted the old ones.  Added a variable widthlock that is set
+ * when -width is used to modify the pen width, so that subsequent plwid()
+ * calls are ignored.
+ *
+ * Revision 1.17  1993/08/11  19:19:03  mjl
  * Changed debugging code to print to stderr instead of stdout, fixed
  * up some minor type mismatches.
  *
@@ -354,6 +365,156 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
 }
 
 /*----------------------------------------------------------------------*\
+* void pldi_ini
+*
+* Updates driver interface, making sure everything is in order.
+* Even if filter is not being used, the defaults need to be set up.
+\*----------------------------------------------------------------------*/
+
+static void
+setdef_diplt()
+{
+    plsc->dipxmin = 0.0;
+    plsc->dipxmax = 1.0;
+    plsc->dipymin = 0.0;
+    plsc->dipymax = 1.0;
+}
+
+static void
+setdef_didev()
+{
+    plsc->mar = 0.0;
+    plsc->aspect = 0.0;
+    plsc->jx = 0.0;
+    plsc->jy = 0.0;
+}
+
+static void
+setdef_diori()
+{
+    plsc->diorot = 0.;
+}
+
+static void
+pldi_ini(void)
+{
+    if (plsc->level >= 1) {
+	if (plsc->difilt & PLDI_ORI)	/* Orientation */
+	    calc_diori();
+	else
+	    setdef_diori();
+
+	if (plsc->difilt & PLDI_PLT) 	/* Plot window */
+	    calc_diplt();
+	else
+	    setdef_diplt();
+
+	if (plsc->difilt & PLDI_DEV)	/* Device window */
+	    calc_didev();
+	else
+	    setdef_didev();
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* void pldid2pc
+*
+* Converts input values from relative device coordinates to relative plot
+* coordinates.  This function must be called when selecting a plot window
+* from a display driver, since the coordinates chosen by the user are
+* necessarily device-specific.
+\*----------------------------------------------------------------------*/
+
+void
+pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
+{
+    PLFLT pxmin, pymin, pxmax, pymax;
+    PLFLT sxmin, symin, sxmax, symax;
+    PLFLT rxmin, rymin, rxmax, rymax;
+
+#ifdef DEBUG
+    fprintf(stderr, "Relative device coordinates (input): %f, %f, %f, %f\n",
+	    *xmin, *ymin, *xmax, *ymax);
+#endif
+
+    if (plsc->difilt & PLDI_DEV) {
+
+	pxmin = plsc->phyxmi + (plsc->phyxma - plsc->phyxmi) * *xmin;
+	pymin = plsc->phyymi + (plsc->phyyma - plsc->phyymi) * *ymin;
+	pxmax = plsc->phyxmi + (plsc->phyxma - plsc->phyxmi) * *xmax;
+	pymax = plsc->phyymi + (plsc->phyyma - plsc->phyymi) * *ymax;
+
+	sxmin = (pxmin - plsc->didxb) / plsc->didxax;
+	symin = (pymin - plsc->didyb) / plsc->didyay;
+	sxmax = (pxmax - plsc->didxb) / plsc->didxax;
+	symax = (pymax - plsc->didyb) / plsc->didyay;
+
+	rxmin = (sxmin - plsc->phyxmi) / (plsc->phyxma - plsc->phyxmi);
+	rymin = (symin - plsc->phyymi) / (plsc->phyyma - plsc->phyymi);
+	rxmax = (sxmax - plsc->phyxmi) / (plsc->phyxma - plsc->phyxmi);
+	rymax = (symax - plsc->phyymi) / (plsc->phyyma - plsc->phyymi);
+
+	*xmin = (rxmin < 0) ? 0 : rxmin;
+	*xmax = (rxmax > 1) ? 1 : rxmax;
+	*ymin = (rymin < 0) ? 0 : rymin;
+	*ymax = (rymax > 1) ? 1 : rymax;
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "Relative plot coordinates (output): %f, %f, %f, %f\n",
+	    rxmin, rymin, rxmax, rymax);
+#endif
+}
+
+/*----------------------------------------------------------------------*\
+* void pldip2dc
+*
+* Converts input values from relative plot coordinates to relative
+* device coordinates.
+\*----------------------------------------------------------------------*/
+
+void
+pldip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax)
+{
+    PLFLT pxmin, pymin, pxmax, pymax;
+    PLFLT sxmin, symin, sxmax, symax;
+    PLFLT rxmin, rymin, rxmax, rymax;
+
+#ifdef DEBUG
+    fprintf(stderr, "Relative plot coordinates (input): %f, %f, %f, %f\n",
+	    *xmin, *ymin, *xmax, *ymax);
+#endif
+
+    if (plsc->difilt & PLDI_DEV) {
+
+	pxmin = plsc->phyxmi + (plsc->phyxma - plsc->phyxmi) * *xmin;
+	pymin = plsc->phyymi + (plsc->phyyma - plsc->phyymi) * *ymin;
+	pxmax = plsc->phyxmi + (plsc->phyxma - plsc->phyxmi) * *xmax;
+	pymax = plsc->phyymi + (plsc->phyyma - plsc->phyymi) * *ymax;
+
+	sxmin = pxmin * plsc->didxax + plsc->didxb;
+	symin = pymin * plsc->didyay + plsc->didyb;
+	sxmax = pxmax * plsc->didxax + plsc->didxb;
+	symax = pymax * plsc->didyay + plsc->didyb;
+
+	rxmin = (sxmin - plsc->phyxmi) / (plsc->phyxma - plsc->phyxmi);
+	rymin = (symin - plsc->phyymi) / (plsc->phyyma - plsc->phyymi);
+	rxmax = (sxmax - plsc->phyxmi) / (plsc->phyxma - plsc->phyxmi);
+	rymax = (symax - plsc->phyymi) / (plsc->phyyma - plsc->phyymi);
+
+	*xmin = (rxmin < 0) ? 0 : rxmin;
+	*xmax = (rxmax > 1) ? 1 : rxmax;
+	*ymin = (rymin < 0) ? 0 : rymin;
+	*ymax = (rymax > 1) ? 1 : rymax;
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "Relative device coordinates (output): %f, %f, %f, %f\n",
+	    rxmin, rymin, rxmax, rymax);
+#endif
+}
+
+/*----------------------------------------------------------------------*\
 * void plsdiplt
 *
 * Set window into plot space
@@ -362,42 +523,18 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
 void
 c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
 {
-    if (xmin == 0. && xmax == 1. && ymin == 0. && ymax == 1.) {
-	plsc->difilt &= ~PLDI_PLT;
-	return;
-    }
-    plsc->difilt |= PLDI_PLT;
-
     plsc->dipxmin = (xmin < xmax) ? xmin : xmax;
     plsc->dipxmax = (xmin < xmax) ? xmax : xmin;
     plsc->dipymin = (ymin < ymax) ? ymin : ymax;
     plsc->dipymax = (ymin < ymax) ? ymax : ymin;
 
-    if (plsc->level >= 1)
-	calc_diplt();
-}
-
-/*----------------------------------------------------------------------*\
-* void plgdiplt
-*
-* Retrieve current window into plot space
-\*----------------------------------------------------------------------*/
-
-void
-plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax)
-{
-    if (plsc->difilt & PLDI_PLT) {
-	*p_xmin = plsc->dipxmin;
-	*p_xmax = plsc->dipxmax;
-	*p_ymin = plsc->dipymin;
-	*p_ymax = plsc->dipymax;
+    if (xmin == 0. && xmax == 1. && ymin == 0. && ymax == 1.)  {
+	plsc->difilt &= ~PLDI_PLT;
+	return;
     }
-    else {
-	*p_xmin = 0.;
-	*p_ymin = 0.;
-	*p_xmax = 1.;
-	*p_ymax = 1.;
-    }
+
+    plsc->difilt |= PLDI_PLT;
+    pldi_ini();
 }
 
 /*----------------------------------------------------------------------*\
@@ -460,62 +597,61 @@ calc_diplt(void)
 }
 
 /*----------------------------------------------------------------------*\
-* void plsdidev
+* void plgdiplt
 *
-* Set window into device space.
-* The transformation here is precisely the inverse of the last. 
+* Retrieve current window into plot space
 \*----------------------------------------------------------------------*/
 
 void
-c_plsdidev(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
+c_plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax)
 {
-    if (xmin == 0. && xmax == 1. && ymin == 0. && ymax == 1.) {
-	plsc->difilt &= ~PLDI_DEV;
-	return;
-    }
-    plsc->difilt |= PLDI_DEV;
-
-    plsc->didxmin = (xmin < xmax) ? xmin : xmax;
-    plsc->didxmax = (xmin < xmax) ? xmax : xmin;
-    plsc->didymin = (ymin < ymax) ? ymin : ymax;
-    plsc->didymax = (ymin < ymax) ? ymax : ymin;
-
-    if (plsc->level >= 1)
-	calc_didev();
+    *p_xmin = plsc->dipxmin;
+    *p_xmax = plsc->dipxmax;
+    *p_ymin = plsc->dipymin;
+    *p_ymax = plsc->dipymax;
 }
 
 /*----------------------------------------------------------------------*\
-* void plgdidev
+* void plsdidev
 *
-* Retrieve current window into device space
+* Set window into device space using margin, aspect ratio, and
+* justification.  If you want to just use the previous value for any of
+* these, just pass in the magic value PL_NOTSET.
+*
+* It is unlikely that one should ever need to change the aspect ratio
+* but it's in there for completeness.
 \*----------------------------------------------------------------------*/
 
 void
-plgdidev(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax)
+c_plsdidev(PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy)
 {
-    if (plsc->difilt & PLDI_DEV) {
-	*p_xmin = plsc->didxmin;
-	*p_xmax = plsc->didxmax;
-	*p_ymin = plsc->didymin;
-	*p_ymax = plsc->didymax;
+    plsetvar(plsc->mar, mar);
+    plsetvar(plsc->aspect, aspect);
+    plsetvar(plsc->jx, jx);
+    plsetvar(plsc->jy, jy);
+
+    if (mar == 0. && aspect == 0. && jx == 0. && jy == 0. && 
+	! (plsc->difilt & PLDI_ORI)) {
+	plsc->difilt &= ~PLDI_DEV;
+	return;
     }
-    else {
-	*p_xmin = 0.;
-	*p_ymin = 0.;
-	*p_xmax = 1.;
-	*p_ymax = 1.;
-    }
+
+    plsc->difilt |= PLDI_DEV;
+    pldi_ini();
 }
 
 /*----------------------------------------------------------------------*\
 * void calc_didev
 *
 * Calculate transformation coefficients to set window into device space.
+* Calculates relative window bounds and calls plsdidxy to finish the job.
 \*----------------------------------------------------------------------*/
 
 static void
 calc_didev(void)
 {
+    PLFLT lx, ly, aspect, aspdev;
+    PLFLT xmin, xmax, xlen, ymin, ymax, ylen;
     PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
 
     if (plsc->dev_di) {
@@ -526,10 +662,54 @@ calc_didev(void)
     if ( ! (plsc->difilt & PLDI_DEV))
 	return;
 
-    pxmin = plsc->didxmin * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
-    pxmax = plsc->didxmax * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
-    pymin = plsc->didymin * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
-    pymax = plsc->didymax * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
+/* Calculate aspect ratio of physical device */
+
+    lx = (plsc->phyxma - plsc->phyxmi + 1) / plsc->xpmm;
+    ly = (plsc->phyyma - plsc->phyymi + 1) / plsc->ypmm;
+    aspdev = lx / ly;
+
+    if (plsc->difilt & PLDI_ORI)
+	aspect = plsc->aspori;
+    else
+	aspect = plsc->aspect;
+
+    if (aspect <= 0.)
+	aspect = plsc->aspdev;
+/*
+#ifdef DEBUG
+    fprintf(stderr, "Device aspect ratio: %f\n", aspdev);
+    fprintf(stderr, "Specified aspect ratio: %f\n", aspect);
+#endif
+*/
+/* Failsafe */
+
+    plsc->mar = (plsc->mar > 0.5) ? 0.5 : plsc->mar;
+    plsc->mar = (plsc->mar < 0.0) ? 0.0 : plsc->mar;
+    plsc->jx = (plsc->jx >  0.5) ?  0.5 : plsc->jx;
+    plsc->jx = (plsc->jx < -0.5) ? -0.5 : plsc->jx;
+    plsc->jy = (plsc->jy >  0.5) ?  0.5 : plsc->jy;
+    plsc->jy = (plsc->jy < -0.5) ? -0.5 : plsc->jy;
+
+/* Relative device coordinates that neutralize aspect ratio difference */
+
+    xlen = (aspect < aspdev) ? (aspect / aspdev) : 1.0;
+    ylen = (aspect < aspdev) ? 1.0 : (aspdev / aspect);
+
+    xlen *= (1.0 - 2.*plsc->mar);
+    ylen *= (1.0 - 2.*plsc->mar);
+
+    xmin = (1. - xlen) * (0.5 + plsc->jx);
+    xmax = xmin + xlen;
+
+    ymin = (1. - ylen) * (0.5 + plsc->jy);
+    ymax = ymin + ylen;
+
+/* Calculate transformation coefficients */
+
+    pxmin = xmin * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
+    pxmax = xmax * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
+    pymin = ymin * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
+    pymax = ymax * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
 
     pxlen = pxmax - pxmin;
     pylen = pymax - pymin;
@@ -547,6 +727,33 @@ calc_didev(void)
     plsc->diclpxma = plsc->didxax * plsc->phyxma + plsc->didxb;
     plsc->diclpymi = plsc->didyay * plsc->phyymi + plsc->didyb;
     plsc->diclpyma = plsc->didyay * plsc->phyyma + plsc->didyb;
+
+/* Transformation test */
+/*
+#ifdef DEBUG
+    pxmin = plsc->didxax * plsc->phyxmi + plsc->didxb;
+    pxmax = plsc->didxax * plsc->phyxma + plsc->didxb;
+    pymin = plsc->didyay * plsc->phyymi + plsc->didyb;
+    pymax = plsc->didyay * plsc->phyyma + plsc->didyb;
+    fprintf(stderr, "pxmin, pymin, pxmax, pymax: %d, %d, %d, %d\n",
+	    pxmin, pymin, pxmax, pymax);
+#endif
+*/
+}
+
+/*----------------------------------------------------------------------*\
+* void plgdidev
+*
+* Retrieve current window into device space
+\*----------------------------------------------------------------------*/
+
+void
+c_plgdidev(PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy)
+{
+    *p_mar = plsc->mar;
+    *p_aspect = plsc->aspect;
+    *p_jx = plsc->jx;
+    *p_jy = plsc->jy;
 }
 
 /*----------------------------------------------------------------------*\
@@ -559,43 +766,29 @@ calc_didev(void)
 void
 c_plsdiori(PLFLT rot)
 {
+    plsc->diorot = rot;
     if (rot == 0.) {
 	plsc->difilt &= ~PLDI_ORI;
+	pldi_ini();
 	return;
     }
 
     plsc->difilt |= PLDI_ORI;
-    plsc->diorot = rot;
-
-    if (plsc->level >= 1)
-	calc_diori();
-}
-
-/*----------------------------------------------------------------------*\
-* void plgdiori
-*
-* Get plot orientation
-\*----------------------------------------------------------------------*/
-
-void
-plgdiori(PLFLT *p_rot)
-{
-    if (plsc->difilt & PLDI_ORI) 
-	*p_rot = plsc->diorot;
-    else 
-	*p_rot = 0.;
+    pldi_ini();
 }
 
 /*----------------------------------------------------------------------*\
 * void calc_diori
 *
 * Calculate transformation coefficients to arbitrarily orient plot.
+* Preserve aspect ratios so the output doesn't suck.
 \*----------------------------------------------------------------------*/
 
 static void
 calc_diori(void)
 {
-    PLFLT r11, r21, r12, r22, x0, y0, lx, ly;
+    PLFLT r11, r21, r12, r22, cost, sint;
+    PLFLT x0, y0, lx, ly, aspect;
 
     if (plsc->dev_di) {
 	offset = plsc->device - 1;
@@ -605,11 +798,10 @@ calc_diori(void)
     if ( ! (plsc->difilt & PLDI_ORI))
 	return;
 
+/* Center point of rotation */
+
     x0 = (plsc->phyxma + plsc->phyxmi) / 2.;
     y0 = (plsc->phyyma + plsc->phyymi) / 2.;
-
-    lx = plsc->phyxma - plsc->phyxmi;
-    ly = plsc->phyyma - plsc->phyymi;
 
 /* Rotation matrix */
 
@@ -618,39 +810,112 @@ calc_diori(void)
     r12 = -r21;
     r22 = r11;
 
+    cost = ABS(r11);
+    sint = ABS(r21);
+
+/* Flip aspect ratio as necessary.  Grungy but I don't see a better way */
+
+    aspect = plsc->aspect;
+    if (aspect == 0.)
+	aspect = plsc->aspdev;
+
+    plsc->aspori = (aspect * cost + sint) / (aspect * sint + cost);
+
+    if ( ! (plsc->difilt & PLDI_DEV)) {
+	plsc->difilt |= PLDI_DEV;
+	setdef_didev();
+    }
+    calc_didev();
+
+/* Compute scale factors */
+
+    lx = plsc->phyxma - plsc->phyxmi;
+    ly = plsc->phyyma - plsc->phyymi;
+
 /* Transformation coefficients */
 
     plsc->dioxax = r11;
-    plsc->dioxay = r21 * lx / ly;
-    plsc->dioxb = (1. - r11) * x0 - r21 * y0 * lx / ly;
+    plsc->dioxay = r21 * (lx / ly);
+    plsc->dioxb = (1. - r11) * x0 - r21 * y0 * (lx / ly);
 
-    plsc->dioyax = r12 * ly / lx;
+    plsc->dioyax = r12 * (ly / lx);
     plsc->dioyay = r22;
-    plsc->dioyb = (1. - r22) * y0 - r12 * x0 * ly / lx;
+    plsc->dioyb = (1. - r22) * y0 - r12 * x0 * (ly / lx);
+
+/* Transformation test */
+
+#ifdef DEBUG
+{
+    PLINT x1, y1, px1, py1;
+    fprintf(stderr, "plsc->phyxmi: %d,  plsc->phyxma: %d\n",
+	    plsc->phyxmi, plsc->phyxma);
+
+    fprintf(stderr, "plsc->phyymi: %d,  plsc->phyyma: %d\n",
+	    plsc->phyymi, plsc->phyyma);
+
+    x1 = plsc->phyxmi; y1 = plsc->phyymi;
+    px1 = plsc->dioxax * x1 + plsc->dioxay * y1 + plsc->dioxb;
+    py1 = plsc->dioyax * x1 + plsc->dioyay * y1 + plsc->dioyb;
+    fprintf(stderr, "Point %d %d is transformed to %d %d\n", x1, y1, px1, py1);
+
+    x1 = plsc->phyxmi; y1 = plsc->phyyma;
+    px1 = plsc->dioxax * x1 + plsc->dioxay * y1 + plsc->dioxb;
+    py1 = plsc->dioyax * x1 + plsc->dioyay * y1 + plsc->dioyb;
+    fprintf(stderr, "Point %d %d is transformed to %d %d\n", x1, y1, px1, py1);
+
+    x1 = plsc->phyxma; y1 = plsc->phyymi;
+    px1 = plsc->dioxax * x1 + plsc->dioxay * y1 + plsc->dioxb;
+    py1 = plsc->dioyax * x1 + plsc->dioyay * y1 + plsc->dioyb;
+    fprintf(stderr, "Point %d %d is transformed to %d %d\n", x1, y1, px1, py1);
+
+    x1 = plsc->phyxma; y1 = plsc->phyyma;
+    px1 = plsc->dioxax * x1 + plsc->dioxay * y1 + plsc->dioxb;
+    py1 = plsc->dioyax * x1 + plsc->dioyay * y1 + plsc->dioyb;
+    fprintf(stderr, "Point %d %d is transformed to %d %d\n", x1, y1, px1, py1);
+}
+#endif
+}
+
+/*----------------------------------------------------------------------*\
+* void plgdiori
+*
+* Get plot orientation
+\*----------------------------------------------------------------------*/
+
+void
+c_plgdiori(PLFLT *p_rot)
+{
+    *p_rot = plsc->diorot;
 }
 
 /*----------------------------------------------------------------------*\
 * void plsdimap
 *
-* Set up transformation from metafile coordinates
-* The size of the plot is scaled so as to preserve aspect ratio
+* Set up transformation from metafile coordinates.
+* The size of the plot is scaled so as to preserve aspect ratio.
 * This isn't intended to be a general-purpose facility just yet
 * (not sure why the user would need it, for one).
 \*----------------------------------------------------------------------*/
 
 void
-c_plsdimap(PLINT phyxmi, PLINT phyxma, PLINT phyymi, PLINT phyyma,
-	   PLFLT xpmm, PLFLT ypmm)
+c_plsdimap(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax,
+	   PLFLT ixpmm, PLFLT iypmm)
 {
-    PLFLT lpage_x, lpage_y, lpage_xdev, lpage_ydev;
-    PLFLT aspect_v, aspect_p, ratio;
-    PLFLT xmin, xmax, xlen, ymin, ymax, ylen;
-    PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
-    PLFLT xax, xab, yay, yab;
-    PLFLT pxax, pxab, pyay, pyab;
+    PLFLT lx, ly;
+    PLINT pxmin, pxmax, pymin, pymax;
+    PLFLT ixlen, iylen, pxlen, pylen;
 
     if (plsc->level < 1)
 	plexit("plsdimap: Please call plinit first.");
+
+    if ((ixmin == plsc->phyxmi) && (ixmax == plsc->phyxma) &&
+	(iymin == plsc->phyymi) && (iymax == plsc->phyyma) &&
+	(ixpmm == plsc->xpmm) && (iypmm == plsc->ypmm)) {
+	plsc->difilt &= ~PLDI_MAP;
+	return;
+    }
+
+    plsc->difilt |= PLDI_MAP;
 
 #ifdef DEBUG
     fprintf(stderr, "plsc->phyxmi: %d,  plsc->phyxma: %d\n",
@@ -662,69 +927,28 @@ c_plsdimap(PLINT phyxmi, PLINT phyxma, PLINT phyymi, PLINT phyyma,
     fprintf(stderr, "plsc->xpmm: %f,  plsc->ypmm: %f\n",
 	    plsc->xpmm, plsc->ypmm);
 
-    fprintf(stderr, "phyxmi: %d,  phyxma: %d\n",
-	    phyxmi, phyxma);
+    fprintf(stderr, "ixmin: %d,  ixmax: %d\n",
+	    ixmin, ixmax);
 
-    fprintf(stderr, "phyymi: %d,  phyyma: %d\n",
-	    phyymi, phyyma);
+    fprintf(stderr, "iymin: %d,  iymax: %d\n",
+	    iymin, iymax);
 
-    fprintf(stderr, "xpmm: %f,  ypmm: %f\n",
-	    xpmm, ypmm);
+    fprintf(stderr, "ixpmm: %f,  iypmm: %f\n",
+	    ixpmm, iypmm);
 #endif
 
-    if ((phyxmi == plsc->phyxmi) && (phyxma == plsc->phyxma) &&
-	(phyymi == plsc->phyymi) && (phyyma == plsc->phyyma) &&
-	(xpmm == plsc->xpmm) && (ypmm == plsc->ypmm)) {
-	plsc->difilt &= ~PLDI_MAP;
-	return;
-    }
+/* Set default aspect ratio */
 
-/* Calculate physical aspect ratio between systems */
+    lx = (ixmax - ixmin + 1) / ixpmm;
+    ly = (iymax - iymin + 1) / iypmm;
 
-    lpage_x = (phyxma - phyxmi + 1) / xpmm;
-    lpage_y = (phyyma - phyymi + 1) / ypmm;
-
-    lpage_xdev = (plsc->phyxma - plsc->phyxmi + 1) / plsc->xpmm;
-    lpage_ydev = (plsc->phyyma - plsc->phyymi + 1) / plsc->ypmm;
-
-    aspect_v = lpage_y / lpage_x; 
-    aspect_p = lpage_ydev / lpage_xdev;
-
-    ratio = aspect_v / aspect_p;
-    if (ratio <= 0) {
-	fprintf(stderr, "plsdimap: Invalid ratio -- %f\n", ratio);
-	return;
-    }
-    plsc->difilt |= PLDI_MAP;
-
-/* Relative device coordinates that neutralize aspect ratio difference */
-
-    xlen = 1.0;
-    ylen = 1.0;
-    if (ratio < 1)
-	ylen = ratio;
-    else
-	xlen = 1. / ratio;
-
-    xmin = (1. - xlen) * 0.5;
-    xmax = xmin + xlen;
-
-    ymin = (1. - ylen) * 0.5;
-    ymax = ymin + ylen;
-
-#ifdef DEBUG
-    fprintf(stderr, "xmin: %f,  xmax: %f,  ymin: %f,  ymax: %f\n",
-	    xmin, xmax, ymin, ymax);
-#endif
-
-/* Build transformation to relative device coordinates */
-
-    xax = xlen / (phyxma - phyxmi);
-    xab = xmin - xax * phyxmi;
-    yay = ylen / (phyyma - phyymi);
-    yab = ymin - yay * phyymi;
+    plsc->aspdev = lx / ly;
+    pldi_ini();
 
 /* Build transformation to correct physical coordinates */
+
+    ixlen = ixmax - ixmin;
+    iylen = iymax - iymin;
 
     pxmin = plsc->phyxmi;
     pxmax = plsc->phyxma;
@@ -733,30 +957,24 @@ c_plsdimap(PLINT phyxmi, PLINT phyxma, PLINT phyymi, PLINT phyyma,
     pxlen = pxmax - pxmin;
     pylen = pymax - pymin;
 
+    plsc->dimxax = pxlen / ixlen;
+    plsc->dimyay = pylen / iylen;
+    plsc->dimxb = pxmin - pxlen * ixmin / ixlen;
+    plsc->dimyb = pymin - pylen * iymin / iylen;
+
 #ifdef DEBUG
     fprintf(stderr, "pxmin: %d,  pxmax: %d,  pymin: %d,  pymax: %d\n",
 	    pxmin, pxmax, pymin, pymax);
 
-    fprintf(stderr, "pxlen: %d,  pylen: %d\n", pxlen, pylen);
-#endif
+    fprintf(stderr, "dimxax: %f,  dimxb: %f,  dimyay: %f,  dimyb: %f\n",
+	    plsc->dimxax, plsc->dimxb, plsc->dimyay, plsc->dimyb);
 
-    pxax = pxlen / xlen;
-    pxab = pxmin - pxax * xmin;
-    pyay = pylen / ylen;
-    pyab = pymin - pyay * ymin;
+    fprintf(stderr, "pxlen: %f,  pylen: %f\n", pxlen, pylen);
 
-/* Combine the two transformations for the final coefficients */
-
-    plsc->dimxax = pxax * xax;
-    plsc->dimyay = pyay * yay;
-    plsc->dimxb = pxax * xab + pxab;
-    plsc->dimyb = pyay * yab + pyab;
-
-#ifdef DEBUG
-    pxmin = phyxmi * plsc->dimxax + plsc->dimxb;
-    pxmax = phyxma * plsc->dimxax + plsc->dimxb;
-    pymin = phyymi * plsc->dimyay + plsc->dimyb;
-    pymax = phyyma * plsc->dimyay + plsc->dimyb;
+    pxmin = ixmin * plsc->dimxax + plsc->dimxb;
+    pxmax = ixmax * plsc->dimxax + plsc->dimxb;
+    pymin = iymin * plsc->dimyay + plsc->dimyb;
+    pymax = iymax * plsc->dimyay + plsc->dimyb;
 
     fprintf(stderr, "Transformation test:\n\
 pxmin: %d,  pxmax: %d,  pymin: %d,  pymax: %d\n",
@@ -814,7 +1032,7 @@ void
 c_plinit()
 {
     PLFLT gscale, hscale;
-    PLFLT size_chr, size_sym, size_maj, size_min;
+    PLFLT size_chr, size_sym, size_maj, size_min, lx, ly;
     PLINT mk = 0, sp = 0, inc = 0, del = 2000;
 
     if (plsc->level != 0)
@@ -899,16 +1117,15 @@ c_plinit()
     plsc->clpymi = plsc->phyymi;
     plsc->clpyma = plsc->phyyma;
 
-/* Initialize driver interface if necessary */
+/* Page aspect ratio. */
 
-    if (plsc->difilt & PLDI_PLT) 
-	calc_diplt();
+    lx = (plsc->phyxma - plsc->phyxmi) / plsc->xpmm;
+    ly = (plsc->phyyma - plsc->phyymi) / plsc->ypmm;
+    plsc->aspdev = lx / ly;
 
-    if (plsc->difilt & PLDI_DEV)
-	calc_didev();
+/* Initialize driver interface */
 
-    if (plsc->difilt & PLDI_ORI)
-	calc_diori();
+    pldi_ini();
 }
 
 /*----------------------------------------------------------------------*\
@@ -1101,7 +1318,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	plsdiplt(plsr->dipxmin, plsr->dipymin, plsr->dipxmax, plsr->dipymax);
 
     if (plsr->difilt & PLDI_DEV)
-	plsdidev(plsr->didxmin, plsr->didymin, plsr->didxmax, plsr->didymax);
+	plsdidev(plsr->mar, plsr->aspect, plsr->jx, plsr->jy);
 
     if (plsr->difilt & PLDI_ORI)
 	plsdiori(plsr->diorot);
@@ -1379,8 +1596,10 @@ c_plwid(PLINT width)
 {
     plsc->width = width;
 
-    if (plsc->level > 0)
-	plP_state(PLSTATE_WIDTH);
+    if (plsc->level > 0) {
+	if ( ! plsc->widthlock) 
+	    plP_state(PLSTATE_WIDTH);
+    }
     else
 	plsc->widthset = 1;
 }
