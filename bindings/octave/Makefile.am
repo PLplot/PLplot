@@ -64,7 +64,7 @@ endif
 
 if enable_octave
 
-octave_libs = -L../../src/.libs -lplplot$(LIB_TAG)
+octave_libs = -L$(top_builddir)/src/.libs -lplplot$(LIB_TAG)
 
 deplibs = `$(top_builddir)/scripts/get-dependency-libs.sh \
                $(top_builddir)/src/.libs/libplplot$(LIB_TAG).la`
@@ -77,18 +77,24 @@ plplot_octave.cc tmp_stub: plplot_octave.h
 	mv -f plplot_octave.cc tmp_plplot_octave.cc
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
+if with_csa
+LDRPATH_CSA = :$(top_builddir)/lib/csa/.libs
+endif
+if with_qhull
+LDRPATH_NN = :$(top_builddir)/lib/nn/.libs
+endif
+SET_LDRPATH = LD_RUN_PATH=$(top_builddir)/src/.libs$(LDRPATH_CSA)$(LDRPATH_NN)
+
 plplot_octave.oct plplot_octave.o: plplot_octave.cc
-	LD_RUN_PATH=`pwd`/../../src/.libs $(MKOCTFILE_VARS) \
+	$(SET_LDRPATH) $(MKOCTFILE_VARS) \
 	    $(MKOCTFILE) -v -I. plplot_octave.cc $(octave_libs) $(deplibs)
 
 if with_rpath
-SET_LDRPATH = LD_RUN_PATH=$(libdir)
-else
-SET_LDRPATH =
+SET_LDRPATH_LIBDIR = LD_RUN_PATH=$(libdir)
 endif
 
 plplot_octave-libdir.oct: plplot_octave.o
-	$(SET_LDRPATH) $(MKOCTFILE_VARS) \
+	$(SET_LDRPATH_LIBDIR) $(MKOCTFILE_VARS) \
 	    $(MKOCTFILE) -v -I. plplot_octave.o \
 	    -o plplot_octave-libdir.oct $(octave_libs) $(deplibs)
 

@@ -1106,6 +1106,15 @@ if test "$with_qhull" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# Automake conditionals for the qhull and csa libraries (to be used 
+# primarily in bindings/octave/Makefile.am) 
+#
+---------------------------------------------------------------------------
+
+AM_CONDITIONAL(with_csa, [test "$with_csa" = yes])
+AM_CONDITIONAL(with_qhull, [test "$with_qhull" = yes])
+
+# ----------------------------------------------------------------------------
 # Check for inclusion of sys/types.h before dirent.h in broken MacOSX systems
 # ----------------------------------------------------------------------------
 
