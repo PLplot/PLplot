@@ -1,6 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.40  1994/09/23 07:39:14  mjl
+ * Revision 1.41  1994/10/11 18:54:50  mjl
+ * Now uses "early initialization" of PLplot X driver so that the fg/bg
+ * colors can be set from the plframe widget.  This ensures that fg/bg colors
+ * are consistent in both the widget and the driver, even if the bg color is
+ * changed dynamically (through program or user interface control).  A bug
+ * fixed in the xor GC also.  This fixes problems with the rubber-band
+ * drawing (used in zooms), where the line color would sometimes change or be
+ * hard to see against the background.
+ *
+ * Revision 1.40  1994/09/23  07:39:14  mjl
  * Incorrect order of calls to freeing malloc'ed memory at exit fixed, found
  * by Brent Townshend.
  *
@@ -139,7 +148,7 @@ typedef struct {
     /* control stuff */
 
     int tkwin_initted;		/* Set first time widget is mapped */
-    PLStream *plsc;		/* PLplot stream pointer */
+    PLStream *pls;		/* PLplot stream pointer */
     PLINT ipls;			/* PLplot stream number */
     PLINT ipls_save;		/* PLplot stream number, save files */
 
@@ -327,8 +336,6 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     register PlFrame *plFramePtr;
     register PLRDev *plr;
     int i, ndev;
-    XGCValues gcValues;
-    unsigned long mask;
 
     dbug_enter("plFrameCmd");
 
@@ -384,18 +391,16 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 /* Associate new PLplot stream with this widget */
 
     plmkstrm(&plFramePtr->ipls);
-    plgpls(&plFramePtr->plsc);
+    plgpls(&plFramePtr->pls);
 
 /* Set up stuff for rubber-band drawing */
 
-    gcValues.background = 0;
-    gcValues.foreground = 1;
-    gcValues.function = GXxor;
-    mask = GCForeground | GCBackground | GCFunction;
-    plFramePtr->xorGC = Tk_GetGC(plFramePtr->tkwin, mask, &gcValues);
-
     plFramePtr->draw_cursor =
 	Tk_GetCursor(plFramePtr->interp, plFramePtr->tkwin, "crosshair");
+
+/* Partially initialize X driver. */
+
+    plD_open_xw(plFramePtr->pls);
 
 /* Create list of valid device names and keywords for page dumps */
 
@@ -797,10 +802,10 @@ PlFrameInit(ClientData clientData)
 	plsxwin(Tk_WindowId(tkwin));
 	plspause(0);
 	plinit();
-	if (plplot_ccmap)
+	if (plplot_ccmap) {
 	    Install_cmap(plFramePtr);
-
-	pladv(0);
+	}
+	plbop();
 
 	plFramePtr->tkwin_initted = 1;
 	plFramePtr->prevWidth = Tk_Width(tkwin);
@@ -839,7 +844,7 @@ Install_cmap(PlFrame *plFramePtr)
 
 #define INSTALL_COLORMAP_IN_TK
 #ifdef  INSTALL_COLORMAP_IN_TK
-    dev = (XwDev *) plFramePtr->plsc->dev;
+    dev = (XwDev *) plFramePtr->pls->dev;
     Tk_SetWindowColormap(Tk_MainWindow(plFramePtr->interp), dev->xwd->map);
 
 /*
@@ -987,7 +992,7 @@ static int
 Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int argc, char **argv)
 {
-    PLStream *plsc = plFramePtr->plsc;
+    PLStream *pls = plFramePtr->pls;
     int length;
     char c3;
     int result = TCL_OK;
@@ -1010,12 +1015,12 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	unsigned long plcolor;
 	char str[10];
 
-	sprintf(str, "%d", (int) plsc->ncol0);
+	sprintf(str, "%d", (int) pls->ncol0);
 	Tcl_AppendElement(interp, str);
-	for (i = 0; i < plsc->ncol0; i++) {
-	    plcolor = ((plsc->cmap0[i].r << 16) | 
-		       (plsc->cmap0[i].g << 8) |
-		       (plsc->cmap0[i].b));
+	for (i = 0; i < pls->ncol0; i++) {
+	    plcolor = ((pls->cmap0[i].r << 16) | 
+		       (pls->cmap0[i].g << 8) |
+		       (pls->cmap0[i].b));
 
 	    sprintf(str, "#%06lx", (plcolor & 0xFFFFFF));
 	    Tcl_AppendElement(interp, str);
@@ -1034,12 +1039,12 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	PLFLT h, l, s, r, g, b;
 	int r1, g1, b1;
 
-	sprintf(str, "%d", (int) plsc->ncp1);
+	sprintf(str, "%d", (int) pls->ncp1);
 	Tcl_AppendElement(interp, str);
-	for (i = 0; i < plsc->ncp1; i++) {
-	    h = plsc->cmap1cp[i].h;
-	    l = plsc->cmap1cp[i].l;
-	    s = plsc->cmap1cp[i].s;
+	for (i = 0; i < pls->ncp1; i++) {
+	    h = pls->cmap1cp[i].h;
+	    l = pls->cmap1cp[i].l;
+	    s = pls->cmap1cp[i].s;
 
 	    plHLS_RGB(h, l, s, &r, &g, &b);
 
@@ -1052,7 +1057,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    sprintf(str, "#%06lx", (plcolor & 0xFFFFFF));
 	    Tcl_AppendElement(interp, str);
 
-	    sprintf(str, "%02d", (int) (100*plsc->cmap1cp[i].p));
+	    sprintf(str, "%02d", (int) (100*pls->cmap1cp[i].p));
 	    Tcl_AppendElement(interp, str);
 	}
 	result = TCL_OK;
@@ -1072,9 +1077,9 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 
-	plsc->ncol0 = ncol0;
+	pls->ncol0 = ncol0;
 	color = strtok(argv[2], " ");
-	for (i = 0; i < plsc->ncol0; i++) {
+	for (i = 0; i < pls->ncol0; i++) {
 	    if ( color == NULL )
 		break;
 
@@ -1087,9 +1092,9 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 		break;
 	    }
 
-	    plsc->cmap0[i].r = (unsigned) (xcolor.red   & 0xFF00) >> 8;
-	    plsc->cmap0[i].g = (unsigned) (xcolor.green & 0xFF00) >> 8;
-	    plsc->cmap0[i].b = (unsigned) (xcolor.blue  & 0xFF00) >> 8;
+	    pls->cmap0[i].r = (unsigned) (xcolor.red   & 0xFF00) >> 8;
+	    pls->cmap0[i].g = (unsigned) (xcolor.green & 0xFF00) >> 8;
+	    pls->cmap0[i].b = (unsigned) (xcolor.blue  & 0xFF00) >> 8;
 
 	    color = strtok(NULL, " ");
 	}
@@ -1150,7 +1155,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	XColor xcolor;
 	PLINT r, g, b;
 
-	if (i > plsc->ncol0 || i < 0) {
+	if (i > pls->ncol0 || i < 0) {
 	    Tcl_AppendResult(interp, "illegal color number in cmap0: ",
 			     argv[1], (char *) NULL);
 	    return TCL_ERROR;
@@ -1176,13 +1181,13 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	g = (unsigned) (xcolor.green & 0xFF00) >> 8;
 	b = (unsigned) (xcolor.blue  & 0xFF00) >> 8;
 
-	if ( (plsc->cmap0[i].r != r) ||
-	     (plsc->cmap0[i].g != g) ||
-	     (plsc->cmap0[i].b != b) ) {
+	if ( (pls->cmap0[i].r != r) ||
+	     (pls->cmap0[i].g != g) ||
+	     (pls->cmap0[i].b != b) ) {
 
-	    plsc->cmap0[i].r = r;
-	    plsc->cmap0[i].g = g;
-	    plsc->cmap0[i].b = b;
+	    pls->cmap0[i].r = r;
+	    pls->cmap0[i].g = g;
+	    pls->cmap0[i].b = b;
 
 	    plP_state(PLSTATE_CMAP0);
 	}
@@ -1197,7 +1202,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	XColor xcolor;
 	PLFLT h, l, s, r, g, b, p;
 
-	if (i > plsc->ncp1 || i < 0) {
+	if (i > pls->ncp1 || i < 0) {
 	    Tcl_AppendResult(interp, "illegal control point number in cmap1: ",
 			     argv[1], (char *) NULL);
 	    return TCL_ERROR;
@@ -1233,15 +1238,15 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 	p = atof(pos) / 100.0;
 
-	if ( (plsc->cmap1cp[i].h != h) ||
-	     (plsc->cmap1cp[i].l != l) ||
-	     (plsc->cmap1cp[i].s != s) ||
-	     (plsc->cmap1cp[i].p != p) ) {
+	if ( (pls->cmap1cp[i].h != h) ||
+	     (pls->cmap1cp[i].l != l) ||
+	     (pls->cmap1cp[i].s != s) ||
+	     (pls->cmap1cp[i].p != p) ) {
 	     
-	    plsc->cmap1cp[i].h = h;
-	    plsc->cmap1cp[i].l = l;
-	    plsc->cmap1cp[i].s = s;
-	    plsc->cmap1cp[i].p = p;
+	    pls->cmap1cp[i].h = h;
+	    pls->cmap1cp[i].l = l;
+	    pls->cmap1cp[i].s = s;
+	    pls->cmap1cp[i].p = p;
 
 	    plcmap1_calc();
 	    plP_state(PLSTATE_CMAP0);
@@ -1282,7 +1287,12 @@ static int
 ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 		 int argc, char **argv, int flags)
 {
-    PLColor plbg;
+    register Tk_Window tkwin = plFramePtr->tkwin;
+    PLStream *pls = plFramePtr->pls;
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    XGCValues gcValues;
+    unsigned long mask;
 
 #ifdef DEBUG
     int i;
@@ -1295,21 +1305,40 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     dbug_enter("ConfigurePlFrame");
 
-    if (Tk_ConfigureWidget(interp, plFramePtr->tkwin, configSpecs,
+    if (Tk_ConfigureWidget(interp, tkwin, configSpecs,
 	    argc, argv, (char *) plFramePtr, flags) != TCL_OK) {
 	return TCL_ERROR;
     }
 
-/* Set background color.  Need to store in the PLplot stream structure */
-/* since redraws are handled from the PLplot X driver. */
-
-    Tk_SetBackgroundFromBorder(plFramePtr->tkwin, plFramePtr->border);
+/*
+ * Set background color using xwin driver's pixel value.  Done this way so
+ * that (a) we can use r/w color cells, and (b) the BG pixel values as set
+ * here and in the xwin driver are consistent.
+ */
 
     plsstrm(plFramePtr->ipls);
-    PLColor_from_XColor(&plbg, plFramePtr->bgColor);
-    plscolbg(plbg.r, plbg.g, plbg.b);
+    PLColor_from_XColor(&pls->cmap0[0], plFramePtr->bgColor);
+    pls->cmap0setcol[0] = 1;
+    plX_setBGFG(pls);
 
-    Tk_SetInternalBorder(plFramePtr->tkwin, plFramePtr->borderWidth);
+    Tk_SetWindowBackground(tkwin, xwd->cmap0[0].pixel);
+    Tk_SetWindowBorder(tkwin, xwd->cmap0[0].pixel);
+
+/* Set up GC for rubber-band draws */
+
+    gcValues.background = xwd->cmap0[0].pixel;
+    gcValues.foreground = 0xFF;
+    gcValues.function = GXxor;
+    mask = GCForeground | GCBackground | GCFunction;
+
+    if (plFramePtr->xorGC != NULL)
+	Tk_FreeGC(plFramePtr->display, plFramePtr->xorGC);
+
+    plFramePtr->xorGC = Tk_GetGC(plFramePtr->tkwin, mask, &gcValues);
+
+/* Geometry settings */
+
+    Tk_SetInternalBorder(tkwin, plFramePtr->borderWidth);
     if (plFramePtr->geometry != NULL) {
 	int height, width;
 
@@ -1318,14 +1347,14 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 		    "\": expected widthxheight", (char *) NULL);
 	    return TCL_ERROR;
 	}
-	Tk_GeometryRequest(plFramePtr->tkwin, width, height);
+	Tk_GeometryRequest(tkwin, width, height);
     }
     else if ((plFramePtr->width > 0) && (plFramePtr->height > 0)) {
-	Tk_GeometryRequest(plFramePtr->tkwin, plFramePtr->width,
+	Tk_GeometryRequest(tkwin, plFramePtr->width,
 		plFramePtr->height);
     }
 
-    if (Tk_IsMapped(plFramePtr->tkwin)
+    if (Tk_IsMapped(tkwin)
 	    && !(plFramePtr->flags & REFRESH_PENDING)) {
 	Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
 	plFramePtr->flags |= REFRESH_PENDING|CLEAR_NEEDED;
@@ -1361,6 +1390,13 @@ Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
     else if ((c == 'e') && (strncmp(argv[0], "end", length) == 0)) {
 
 	Tk_DefineCursor(tkwin, plFramePtr->cursor);
+	if (plFramePtr->continue_draw) {
+	    XDrawLines(Tk_Display(tkwin), Tk_WindowId(tkwin),
+		       plFramePtr->xorGC, plFramePtr->pts, 5,
+		       CoordModeOrigin);
+	    XSync(Tk_Display(tkwin), 0);
+	}
+
 	plFramePtr->continue_draw = 0;
     }
 
@@ -1374,6 +1410,10 @@ Draw(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    result = TCL_ERROR;
 	}
 	else {
+	    PLStream *pls = plFramePtr->pls;
+	    XwDev *dev = (XwDev *) pls->dev;
+	    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
 	    int x0, y0, x1, y1;
 	    int xmin = 0, xmax = Tk_Width(tkwin) - 1;
 	    int ymin = 0, ymax = Tk_Height(tkwin) - 1;
