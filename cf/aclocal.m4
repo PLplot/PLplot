@@ -367,11 +367,12 @@ dnl> The following macro searches a list of directories for the given
 dnl> library file and takes appropriate actions if found or not.
 dnl
 define(FIND_LIB, [
-    AC_MSG_CHECKING(for -l$1)
+    AC_MSG_CHECKING(for lib$1)
     $2=""
 
     for dir in $places; do
-	if test -r "$dir/lib$1.a" -o -r "$dir/lib$1.sl"; then
+	ls $dir/lib$1.* >/dev/null 2>&1
+	if test $? = 0; then
 	    $2="$dir"
 	    AC_MSG_RESULT($dir)
 	    break
@@ -379,7 +380,7 @@ define(FIND_LIB, [
     done
     if test -z "$$2"; then
 	AC_MSG_RESULT(no)
-	AC_MSG_RESULT([warning: can't find $1 library, setting $3 to no])
+	AC_MSG_RESULT([warning: can't find lib$1, setting $3 to no])
 	$3="no"
     fi
     if test "$$2" = "/usr/lib"; then
