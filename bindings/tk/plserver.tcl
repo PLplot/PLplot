@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.9  1993/12/21 10:22:43  mjl
+# Revision 1.10  1994/01/15 17:43:21  mjl
+# Added procs to handle communication link.  plserver_link_init gets invoked
+# automatically when plserver is started by the Tcl/TK/DP driver.
+# plserver_start is used when running plserver in stand-alone mode.
+#
+# Revision 1.9  1993/12/21  10:22:43  mjl
 # Now route ALL communication to the client through the client_cmd proc.
 # This part reworked to not suck when using Tcl-DP.
 #
@@ -234,8 +239,9 @@ proc exit_app {} {
     if { [ info exists client ] } {
 	client_cmd $client "unset server"
 	client_cmd $client "abort"
+	update
     }
-    after 1 destroy .
+    after 1 exit
 }
 
 #----------------------------------------------------------------------------
@@ -243,6 +249,14 @@ proc exit_app {} {
 #
 # Send string to client.  Does it in the background and catches errors
 # (if client is busy it won't respond).
+#
+# The first "after 1" ensures the command is issued in the server's
+# background, so that we always continue processing events.  This is
+# important for handshaking and for good performance.
+#
+# The second "after 1" (or the dp_RDO if Tcl-DP rpc is used) ensures that
+# the client process doesn't try to send a reply.  Also good for
+# performance but more importantly in case the server has already terminated.
 #----------------------------------------------------------------------------
 
 proc client_cmd {client msg} {
@@ -251,6 +265,80 @@ proc client_cmd {client msg} {
     if { $dp } {
 	after 1 catch [list "dp_RDO [list $client] $msg"]
     } else {
-	after 1 catch [list "after 1 send [list $client] $msg"]
+	after 1 catch [list "send [list $client] after 1 $msg"]
+    }
+}
+
+#----------------------------------------------------------------------------
+# plserver_link_init
+#
+# Set up initial link to client.
+#----------------------------------------------------------------------------
+
+proc plserver_link_init {} {
+    global dp client
+
+    if { $dp } {
+	global client_host client_port server_host server_port
+
+	if { ! [ info exists client_host ] } {
+	    set client_host localhost
+	}
+
+	set server_host [host_id]
+	set server_port [dp_MakeRPCServer]
+	set client [dp_MakeRPCClient $client_host $client_port]
+
+	dp_RDO [list $client] set server_host $server_host
+	dp_RDO [list $client] set server_port $server_port
+	dp_RDO [list $client] set client [list $client]
+
+    } else {
+	global client_name server_name
+
+	set server_name [winfo name .]
+	set client $client_name
+
+	send $client "set server_name [list $server_name]"
+	send $client "set client [list $client]"
+    }
+
+}
+
+#----------------------------------------------------------------------------
+# plserver_start
+#
+# Startup proc when client is run independently.
+#----------------------------------------------------------------------------
+
+proc plserver_start {{use_dp 0}} {
+    global dp client
+
+    plserver_init
+
+    set dp $use_dp
+
+    if { $dp } {
+	global client_host client_port server_host server_port
+
+	set server_host [host_id]
+	set server_port [dp_MakeRPCServer]
+
+	puts stderr "Please start client with flags: "
+	puts stderr "  -server_host $server_host -server_port $server_port"
+
+	wait_until {[info exists client_port]}
+	set client "[dp_MakeRPCClient $client_host $client_port]"
+	dp_RDO [list $client] set client [list $client]
+
+    } else {
+	global client_name server_name
+
+	puts stderr "Please start client with flags: "
+	puts stderr "  -server_name $server_name"
+	tkwait variable client_name
+
+	set client $client_name
+	send $client "set client [list $client]"
     }
 }
