@@ -24,13 +24,16 @@
 // Implementation of PLplot example 1 in C++.
 //---------------------------------------------------------------------------//
 
+#include "plstream.h"
+#include "plevent.h"
+
 #include <cstdlib>
 #include <cctype>
 #include <iostream>
 #include <cmath>
-
-#include "plstream.h"
-#include "plevent.h"
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 static PLGraphicsIn gin;
 
@@ -216,6 +219,7 @@ x01::x01( int argc, char ** argv ) {
 void x01::plot1( int do_test )
 {
   int i;
+  PLINT st;
   PLFLT xmin, xmax, ymin, ymax;
   PLFLT *x = new PLFLT[60];
   PLFLT *y = new PLFLT[60];
@@ -262,13 +266,13 @@ void x01::plot1( int do_test )
 /* it does not work in double buffering mode, however */
 
   if (do_test && test_xor) {
-#ifdef HAVE_USLEEP_notimplemented
+#ifdef HAVE_USLEEP
     pls->xormod(1, &st); /* enter xor mode */
     if (st) {
       for (i=0; i<60; i++) {
 	pls->poin(1, x+i, y+i,9);      /* draw a point */
 	usleep(50000);              /* wait a little */
-	pls->flush();                  /* force an update of the tk driver */
+	pls->plflush();                  /* force an update of the tk driver */
 	pls->poin(1, x+i, y+i,9);      /* erase point */
       }
       pls->xormod(0, &st);                     /* leave xor mode */

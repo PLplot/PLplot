@@ -24,6 +24,8 @@
 // Implementation of PLplot example 17 in C++.
 //---------------------------------------------------------------------------//
 
+#include "plstream.h"
+
 #include <cstdlib>
 #include <cctype>
 #include <iostream>
@@ -35,7 +37,6 @@
 #  include <poll.h>
 # endif
 #endif
-#include "plstream.h"
 
 class x17 {
 
@@ -141,7 +142,7 @@ x17::x17( int argc, char ** argv ) {
   dt = 0.1;
   
   for (n = 0; n < nsteps; n++) {
-#ifdef HAVE_USLEEP_notimplemented
+#ifdef HAVE_USLEEP
     usleep(10000);  /* wait a little (10 ms) to simulate time elapsing */
 #else
 # ifdef HAS_POLL
