@@ -657,7 +657,7 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     PLFLT Sin_A,Cos_A;
     FT_Vector adjust;
     PLUNICODE fci;
-
+    FT_Fixed height;
 
 /*
  *  First of all we will see if we are buffering the output. If we are,
@@ -718,16 +718,20 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  * I wish I knew.
  */
 
+    height = (FT_Fixed) 
+             (0x10000 * (FT->face->ascender - FT->face->descender) 
+                              / FT->face->ascender);
+
 #ifdef DJGPP
-    FT->matrix.xx =(FT_Fixed)0x10000*t[0];
-    FT->matrix.xy =(FT_Fixed)0x10000*t[2];
-    FT->matrix.yx =(FT_Fixed)0x10000*t[1];
-    FT->matrix.yy =(FT_Fixed)0x10000*t[3];
+    FT->matrix.xx = height * t[0];
+    FT->matrix.xy = height * t[2];
+    FT->matrix.yx = height * t[1];
+    FT->matrix.yy = height * t[3];
 #else
-    FT->matrix.xx =(FT_Fixed)0x10000*t[0];
-    FT->matrix.xy =(FT_Fixed)0x10000*t[1];
-    FT->matrix.yx =(FT_Fixed)0x10000*t[2];
-    FT->matrix.yy =(FT_Fixed)0x10000*t[3];
+    FT->matrix.xx = height * t[0];
+    FT->matrix.xy = height * t[1];
+    FT->matrix.yx = height * t[2];
+    FT->matrix.yy = height * t[3];
 #endif
 
 
