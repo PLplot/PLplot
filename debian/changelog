@@ -1,3 +1,11 @@
+plplot (5.0.2-0.potato.1) unstable; urgency=low
+
+  * New upstream release.
+  * Backported patch from CVS for using fseek/ftell everywhere to
+    eliminate non-portable behavior (closes: #86512).
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Wed, 21 Mar 2001 18:22:07 +0100
+
 plplot (5.0.1-0.potato.5) unstable; urgency=low
 
   * debian/control: Changed section of plplot-dev to devel (to avoid mail

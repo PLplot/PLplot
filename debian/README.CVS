@@ -32,19 +32,20 @@ Upgrading
   cd plplot-$NEW_VERSION
   rm -f $FILES
   cvs update -kk -rDEBIAN
-  cvs update -j v`echo $CURRENT_VERSION | tr . -` \
-             -j v`echo $NEW_VERSION | tr . -` $FILES
+  cvs update -j v`echo $CURRENT_VERSION | tr . _` \
+             -j v`echo $NEW_VERSION | tr . _` $FILES
 
   After that, solve all conflicts and make the Debian package work.  If
   some of the patched files finish being the same as the upstream ones,
   just delete them from the DEBIAN branch using the "cvs remove" command.
   Here is the recipe:
-  
-  rm -f file
-  cvs remove file
+
+  file=name
+  rm -f $file
+  cvs remove $file
   cvs commit -m "Removed from DEBIAN branch. After conflict resolution it \
-    became the same as in version $NEW_VERSION" file
-  cvs update -r v`echo $NEW_VERSION | tr . _` file 
+    became the same as in version $NEW_VERSION" $file
+  cvs update -r v`echo $NEW_VERSION | tr . _` $file 
 
   
 Tagging and committing
