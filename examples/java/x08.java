@@ -28,6 +28,42 @@ class x08 {
     };
 
     PLStream pls;
+   
+    // cmap1_init1
+    
+    // Initializes color map 1 in HLS space.
+    // Basic grayscale variation from half-dark (which makes more interesting
+    // looking plot compared to dark) to light.
+    // An interesting variation on this:
+    // s[1] = 1.0
+    
+    void cmap1_init()
+    {
+	double [] i = new double[2];
+	double [] h = new double[2];
+	double [] l = new double[2];
+	double [] s = new double[2];
+	int [] rev = new int[2];
+	  
+        i[0] = 0.0;         // left boundary
+        i[1] = 1.0;         // right boundary
+	  
+        h[0] = 0.0;         // hue -- low: red (arbitrary if s=0)
+        h[1] = 0.0;         // hue -- high: red (arbitrary if s=0)
+	  
+        l[0] = 0.5;         // lightness -- low: half-dark
+        l[1] = 1.0;         // lightness -- high: light
+	  
+        s[0] = 0.0;         // minimum saturation
+        s[1] = 0.0;         // minimum saturation
+        rev[0] = 0;         // interpolate on front side of colour wheel.
+        rev[1] = 0;         // interpolate on front side of colour wheel.
+	  
+        pls.scmap1n(256);
+        //API pls.scmap1l(0, 2, i, h, l, s, rev);
+    }
+   
+     
 
 // Does a series of 3-d plots for a given data set, with different viewing
 // options in each plot.
@@ -49,10 +85,6 @@ class x08 {
 
         double xx, yy, r;
 
-        int n_col = 256;
-        int[] rr = new int[256];
-        int[] gg = new int[256];
-        int[] bb = new int[256];
         int ifshade;
 
     // Parse and process command line arguments.
@@ -81,9 +113,7 @@ class x08 {
         }
 
         pls.lightsource( 1., 1., 1. );
-        for( i=0; i < n_col; i++ )
-            rr[i] = gg[i] = bb[i] = i*256/n_col;
-        pls.scmap1( rr, gg, bb, n_col );
+        cmap1_init();
     	
         for( k = 0; k < 4; k++ )
         {
