@@ -217,14 +217,14 @@ FT_StrX_YW(PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy)
  * anyway...)
  */
 
-/* (RL, on 2005-01-23) Removed the shift bellow to avoid truncation errors 
+/* (RL, on 2005-01-23) Removed the shift bellow to avoid truncation errors
  * later.
     *yy=y>> 6;
     *xx=x>> 6;
  */
     *yy = y;
     *xx = x;
-  
+
 }
 
 /*----------------------------------------------------------------------*\
@@ -270,7 +270,7 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
 
 /* (RL) adjust.y is zeroed below,, making the code above (around
  * DODGIE_DECENDER_HACK) completely useless.  This is necessary for
- * getting the vertical alignement of text right, which is coped with
+ * getting the vertical alignment of text right, which is coped with
  * in function plD_render_freetype_text now.
  */
 
@@ -279,6 +279,19 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
     FT_Vector_Transform( &adjust, &FT->matrix);
     x+=adjust.x;
     y-=adjust.y;
+
+/* (RL, on 2005-01-25) The computation of cumulated glyph width within
+ * the text is done now with full precision, using 26.6 Freetype
+ * arithmetics.  We should then shift the x and y variables by 6 bits,
+ * as below.  Inside the character for loop, all operations regarding
+ * x and y will be done in 26.6 mode and  these variables will be
+ * converted to integers when passed to FT_PlotChar.  Notrice that we
+ * are using ROUND and float division instead of ">> 6" now.  This
+ * minimizes truncation errors.
+*/
+
+    x <<= 6;
+    y <<= 6;
 
 /* walk through the text character by character */
 
@@ -299,7 +312,7 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
 
 	    case 'u': /* super script */
 	    case 'U': /* super script */
-                adjust.y= (FT->face->size->metrics.height >> 6)/2;
+                adjust.y = FT->face->size->metrics.height / 2;
                 adjust.x=0;
                 FT_Vector_Transform( &adjust, &FT->matrix);
                 x+=adjust.x;
@@ -309,7 +322,7 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
 
 	    case 'd': /* subscript */
 	    case 'D': /* subscript */
-                adjust.y= (FT->face->size->metrics.height >> 6)/-2;
+                adjust.y = -FT->face->size->metrics.height / 2;
                 adjust.x=0;
                 FT_Vector_Transform( &adjust, &FT->matrix);
                 x+=adjust.x;
@@ -330,17 +343,18 @@ FT_WriteStrW(PLStream *pls, const PLUNICODE *text, short len, int x, int y)
 				text[last_char],
 				text[i],
 				ft_kerning_default, &akerning );
-		x+= (akerning.x >> 6);        /* add (or subtract) the kerning */
-		y-= (akerning.y >> 6);        /* Do I need this in case of rotation ? */
+		x += akerning.x;        /* add (or subtract) the kerning */
+                y -= akerning.y;        /* Do I need this in case of rotation ? */
 
             }
 
 
        FT_Load_Char( FT->face, text[i], (FT->smooth_text==0) ? FT_LOAD_MONOCHROME+FT_LOAD_RENDER : FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT);
-	    FT_PlotChar(pls,FT, FT->face->glyph,  x, y, 2 ); /* render the text */
+       FT_PlotChar(pls,FT, FT->face->glyph,
+                   ROUND (x / 64.0), ROUND (y / 64.0), 2 ); /* render the text */
 
-	    x += (FT->face->glyph->advance.x >> 6);
-	    y -= (FT->face->glyph->advance.y >> 6);
+	    x += FT->face->glyph->advance.x;
+            y -= FT->face->glyph->advance.y;
 
 	    last_char=i;
 	}
@@ -520,8 +534,8 @@ void plD_FreeType_init(PLStream *pls)
 #endif
 
 /*
- * The driver looks for N_TrueTypeLookup  environmental variables 
- * where the path and name of these fonts can be OPTIONALLY set, 
+ * The driver looks for N_TrueTypeLookup  environmental variables
+ * where the path and name of these fonts can be OPTIONALLY set,
  * overriding the configured default values.
  */
 
@@ -592,19 +606,19 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci)
 	   plwarn("FT_SetFace: Bad FCI.  Falling back to previous font.");
       } else {
 	 FT->fci=fci;
-	 
+
 	 if (FT->face!=NULL) {
 	    FT_Done_Face(FT->face);
 	    FT->face=NULL;
 	 }
-	 
+
 	 if (FT->face==NULL) {
 	    if (FT_New_Face( FT->library,font_name, 0,&FT->face))
 	      plexit("FT_SetFace: Error loading a font in freetype");
 	 }
       }
    }
-   FT_Set_Char_Size(FT->face,0, 
+   FT_Set_Char_Size(FT->face,0,
 		    font_size * 64/TEXT_SCALING_FACTOR,pls->xdpi,
 		    pls->ydpi );
 }
@@ -702,7 +716,7 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  * always a negative quantity.
  */
 
-    height_factor = (PLFLT) (FT->face->ascender - FT->face->descender) 
+    height_factor = (PLFLT) (FT->face->ascender - FT->face->descender)
                     / FT->face->ascender;
     height = (FT_Fixed) (0x10000 * height_factor);
 
@@ -768,7 +782,6 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
     FT_Set_Transform( FT->face, &FT->matrix, &FT->pos );
 
 
-
 /*                            Rotate the Page
  *
  *  If the page has been rotated using -ori, this is we recalculate the
@@ -818,11 +831,11 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
     adjust.y=0;
 #endif
 
-/* (RL, on 2005-01-24) The code below uses floating point and division 
- * operations instead of integer shift used before. This is slower but 
- * gives accurate placement of text in plots.  
+/* (RL, on 2005-01-24) The code below uses floating point and division
+ * operations instead of integer shift used before. This is slower but
+ * gives accurate placement of text in plots.
  */
-  
+
 /* (RL, on 2005-01-21) The hack below is intended to align single
  * glyphs being generated via plpoin.  The way to detect this
  * situation is completely hackish, I must admit, by checking whether the
@@ -835,31 +848,31 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  * based on the bouding box of the glyph being loaded (since there is
  * only one glyph in the string in this case, we are okay here).
  */
-  
-    if ((args->unicode_array_len == 2) 
-      && (args->unicode_array[0] == 0x10000004)) 
+
+    if ((args->unicode_array_len == 2)
+      && (args->unicode_array[0] == 0x10000004))
     {
         adjust.x = args->just * ROUND (FT->face->glyph->metrics.width / 64.0);
         adjust.y = (FT_Pos) ROUND (FT->face->glyph->metrics.height / 128.0);
     }
-    else 
+    else
     {
-  
+
 /* (RL, on 2005-01-21) The vertical adjustment is set below, making
  * the DODGIE conditional moot.  I use the value of h as return by FT_StrX_YW,
  * which should correspond to the total height of the text being
  * drawn.  Freetype aligns text around the baseline, while PLplot
  * aligns to the center of the ascender portion.  We must then adjust
  * by half of the ascender and this is why there is a division by
- * height_factor below. 
+ * height_factor below.
  */
 
-      adjust.y = (FT_Pos) 
+      adjust.y = (FT_Pos)
           ROUND (FT->face->size->metrics.height / height_factor / 128.0);
       adjust.x = (FT_Pos) (args->just * ROUND (w / 64.0));
 
     }
-  
+
     FT_Vector_Transform( &adjust, &FT->matrix);    /* was /&matrix); -  was I using the wrong matrix all this time ?*/
 
     x-=adjust.x;
