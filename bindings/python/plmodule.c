@@ -187,10 +187,6 @@ static int pl_PyList_SetFromStringArray (PyObject *, char **, int);
     return 1;
 }
 
-/* Go pick up the cont and shade functions, which are in plmodule2.c. */
-
-#include "plmodule2.c"
-
 static char doc_pladv[] = "Advance to subpage \"page\", or to the next one if \"page\" = 0";
 
 static PyObject * pl_adv(PyObject *self, PyObject *args)
@@ -1986,6 +1982,8 @@ void initpl()
     PyObject *m;
     PyObject *d;
     PyObject *v;
+
+    import_array();
 
     /* Create the module and add the functions */
     m = Py_InitModule("pl", pl_methods);
