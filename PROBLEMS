@@ -242,14 +242,6 @@ II. Font problems associated with ps.c and either -dev psc or -dev ps.
 
 III. Other font problems/issues.
 
-* Use of the -ori 1 option changes the overall scale, and the Hershey fonts
-  automatically respond to that changed scale.  However, neither ps.c or
-  plfreetype.c (called by gd.c) apparently has code to deal with changing
-  scale so the fonts remain the same size for the -ori 1 option for either
-  -dev psc or -dev png, and the result looks badly out of proportion.  In
-  fact, the relative size of fonts to the circle in example 13 or so large
-  for -ori 1 that in the -dev psc case "Maurice" gets clipped.
-
 * Both pstex.c and xfig.c currently use EscText so they presumably need some
   work to utilize the new core unicode font handling.
 
