@@ -100,3 +100,7 @@ Responsible for the DOS/BGI (bcc) port.
 	John C. Peterson		jcp@trg.saic.com
 
 Responsible for the OS/2 port.
+
+	Paul Kirschner			pek@logos.res.utc.com
+
+Responsible for the DOS/DJGPP port.

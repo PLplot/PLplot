@@ -8,7 +8,7 @@
 # Note that Fortran support in is the makefile and uses f2c and gcc,
 #
 # Questions or problems, send (e)mail to:
-#       <insert supporter's name here>
+#	Paul Kirschner			pek@logos.res.utc.com
 
 PLDIR	= c:\plplotp\
 PLLIBS	= ..\lib

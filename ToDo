@@ -18,6 +18,9 @@ Areas currently under development
 	John C. Peterson		OS/2
 	jcp@trg.saic.com
 
+	Paul Kirschner			DOS/DJGPP
+	pek@logos.res.utc.com
+
    This is not to say that other platforms are unsupported, as often we do
    work on other platforms, and will fix whatever problems we encounter.
    But there is no guarantee PLplot will work without problems on such
