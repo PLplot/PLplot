@@ -189,6 +189,8 @@ proc pldefaults {} {
     global plot_menu_on;	set plot_menu_on "1"
     
     bind . <m> {toggle_menus %W}
+
+    setup_cursorkeybindings
 }
 
 proc toggle_menus {w} {
@@ -216,24 +218,25 @@ proc plw_moveCursor {w x y xd yd} {
 
 # Set up cursor-keybindings so that they can be used to
 # manipulate the pointer on top of active Plframes.
-foreach combo {
-    {} 
-    Shift Option Control 
-    {Shift Option} {Shift Control} {Option Control}
-    {Shift Option Control}
-} {
-    set multiply 1
-    for {set i 0} {$i < [llength $combo]} {incr i} {
-	set multiply [expr {$multiply * 5}]
-    }
-    if {[llength $combo]} {
-	set prefix "[join $combo -]-"
-    } else {
-	set prefix ""
-    }
-    foreach dir {Left Right Up Down} x {-1 1 0 0} y {0 0 -1 1} {
-	bind Plframe <${prefix}$dir> "plw_moveCursor %W %x %y\
-	  [expr {$x * $multiply}] [expr {$y * $multiply}]"
+proc setup_cursorkeybindings {} {
+    foreach combo {
+	{} 
+	Shift Option Control 
+	{Shift Option} {Shift Control} {Option Control}
+	{Shift Option Control}
+    } {
+	set multiply 1
+	for {set i 0} {$i < [llength $combo]} {incr i} {
+	    set multiply [expr {$multiply * 5}]
+	}
+	if {[llength $combo]} {
+	    set prefix "[join $combo -]-"
+	} else {
+	    set prefix ""
+	}
+	foreach dir {Left Right Up Down} x {-1 1 0 0} y {0 0 -1 1} {
+	    bind Plframe <${prefix}$dir> "plw_moveCursor %W %x %y\
+		  [expr {$x * $multiply}] [expr {$y * $multiply}]"
+	}
     }
 }
-
