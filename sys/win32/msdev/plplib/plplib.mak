@@ -1,19 +1,15 @@
-# Microsoft Developer Studio Generated NMAKE File, Format Version 4.00
-# ** DO NOT EDIT **
-
-# TARGTYPE "Win32 (x86) Static Library" 0x0104
-
+# Microsoft Developer Studio Generated NMAKE File, Based on plplib.dsp
 !IF "$(CFG)" == ""
 CFG=plplib - Win32 Release
-!MESSAGE No configuration specified.  Defaulting to plplib - Win32 Release.
+!MESSAGE No configuration specified. Defaulting to plplib - Win32 Debug.
 !ENDIF 
 
 !IF "$(CFG)" != "plplib - Win32 Release" && "$(CFG)" != "plplib - Win32 Debug"
 !MESSAGE Invalid configuration "$(CFG)" specified.
-!MESSAGE You can specify a configuration when running NMAKE on this makefile
-!MESSAGE by defining the macro CFG on the command line.  For example:
+!MESSAGE You can specify a configuration when running NMAKE
+!MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "plplib.mak" CFG="plplib - Win32 Release"
+!MESSAGE NMAKE /f "plplib.mak" CFG="plplib - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -28,772 +24,424 @@ NULL=
 !ELSE 
 NULL=nul
 !ENDIF 
-################################################################################
-# Begin Project
-# PROP Target_Last_Scanned "plplib - Win32 Debug"
+
 CPP=cl.exe
+F90=df.exe
+RSC=rc.exe
 
 !IF  "$(CFG)" == "plplib - Win32 Release"
 
-# PROP BASE Use_MFC 0
-# PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "Release"
-# PROP BASE Intermediate_Dir "Release"
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 0
-# PROP Output_Dir ""
-# PROP Intermediate_Dir "Release"
-# PROP Target_Dir ""
-OUTDIR=.
+OUTDIR=.\Release
 INTDIR=.\Release
 
-ALL : "$(OUTDIR)\plplot.lib"
+ALL : ".\plplot.lib"
 
-CLEAN : 
+
+CLEAN :
+	-@erase "$(INTDIR)\null.obj"
+	-@erase "$(INTDIR)\pbm.obj"
+	-@erase "$(INTDIR)\pdfutils.obj"
+	-@erase "$(INTDIR)\plargs.obj"
+	-@erase "$(INTDIR)\plbox.obj"
+	-@erase "$(INTDIR)\plbuf.obj"
+	-@erase "$(INTDIR)\plcont.obj"
+	-@erase "$(INTDIR)\plcore.obj"
+	-@erase "$(INTDIR)\plctrl.obj"
+	-@erase "$(INTDIR)\plcvt.obj"
+	-@erase "$(INTDIR)\pldtik.obj"
+	-@erase "$(INTDIR)\plfill.obj"
+	-@erase "$(INTDIR)\plhist.obj"
+	-@erase "$(INTDIR)\plimage.obj"
+	-@erase "$(INTDIR)\plline.obj"
+	-@erase "$(INTDIR)\plmap.obj"
+	-@erase "$(INTDIR)\plmeta.obj"
+	-@erase "$(INTDIR)\plot3d.obj"
+	-@erase "$(INTDIR)\plpage.obj"
+	-@erase "$(INTDIR)\plrender.obj"
+	-@erase "$(INTDIR)\plsdef.obj"
+	-@erase "$(INTDIR)\plshade.obj"
+	-@erase "$(INTDIR)\plstripc.obj"
+	-@erase "$(INTDIR)\plsym.obj"
+	-@erase "$(INTDIR)\pltick.obj"
+	-@erase "$(INTDIR)\plvpor.obj"
+	-@erase "$(INTDIR)\plwind.obj"
+	-@erase "$(INTDIR)\ps.obj"
+	-@erase "$(INTDIR)\vc60.idb"
+	-@erase "$(INTDIR)\win3.obj"
 	-@erase ".\plplot.lib"
-	-@erase ".\Release\pltick.obj"
-	-@erase ".\Release\plfill.obj"
-	-@erase ".\Release\ps.obj"
-	-@erase ".\Release\plmeta.obj"
-	-@erase ".\Release\win3.obj"
-	-@erase ".\Release\plcvt.obj"
-	-@erase ".\Release\plsdef.obj"
-	-@erase ".\Release\plsym.obj"
-	-@erase ".\Release\plargs.obj"
-	-@erase ".\Release\plctrl.obj"
-	-@erase ".\Release\plhist.obj"
-	-@erase ".\Release\plvpor.obj"
-	-@erase ".\Release\plpage.obj"
-	-@erase ".\Release\plcont.obj"
-	-@erase ".\Release\plbox.obj"
-	-@erase ".\Release\hpgl.obj"
-	-@erase ".\Release\plwind.obj"
-	-@erase ".\Release\pldtik.obj"
-	-@erase ".\Release\null.obj"
-	-@erase ".\Release\plcore.obj"
-	-@erase ".\Release\plline.obj"
-	-@erase ".\Release\plbuf.obj"
-	-@erase ".\Release\plshade.obj"
-	-@erase ".\Release\plmap.obj"
-	-@erase ".\Release\plot3d.obj"
-	-@erase ".\Release\xfig.obj"
-	-@erase ".\Release\pdfutils.obj"
 
-"$(INTDIR)" :
-    if not exist "$(INTDIR)/$(NULL)" mkdir "$(INTDIR)"
+"$(OUTDIR)" :
+    if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
-CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS"\
- /Fp"$(INTDIR)/plplib.pch" /YX /Fo"$(INTDIR)/" /c 
-CPP_OBJS=.\Release/
-CPP_SBRS=
+F90_PROJ=/compile_only /include:"$(INTDIR)\\" /nologo /warn:nofileopt /module:"Release/" /object:"Release/" 
+F90_OBJS=.\Release/
+CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-BSC32_FLAGS=/nologo /o"$(OUTDIR)/plplib.bsc" 
-BSC32_SBRS=
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc" 
+BSC32_SBRS= \
+	
 LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"plplot.lib"
-LIB32_FLAGS=/nologo /out:"$(OUTDIR)/plplot.lib" 
+LIB32_FLAGS=/nologo /out:"plplot.lib" 
 LIB32_OBJS= \
-	"$(INTDIR)/pltick.obj" \
-	"$(INTDIR)/plfill.obj" \
-	"$(INTDIR)/ps.obj" \
-	"$(INTDIR)/plmeta.obj" \
-	"$(INTDIR)/win3.obj" \
-	"$(INTDIR)/plcvt.obj" \
-	"$(INTDIR)/plsdef.obj" \
-	"$(INTDIR)/plsym.obj" \
-	"$(INTDIR)/plargs.obj" \
-	"$(INTDIR)/plctrl.obj" \
-	"$(INTDIR)/plhist.obj" \
-	"$(INTDIR)/plvpor.obj" \
-	"$(INTDIR)/plpage.obj" \
-	"$(INTDIR)/plcont.obj" \
-	"$(INTDIR)/plbox.obj" \
-	"$(INTDIR)/hpgl.obj" \
-	"$(INTDIR)/plwind.obj" \
-	"$(INTDIR)/pldtik.obj" \
-	"$(INTDIR)/null.obj" \
-	"$(INTDIR)/plcore.obj" \
-	"$(INTDIR)/plline.obj" \
-	"$(INTDIR)/plbuf.obj" \
-	"$(INTDIR)/plshade.obj" \
-	"$(INTDIR)/plmap.obj" \
-	"$(INTDIR)/plot3d.obj" \
-	"$(INTDIR)/xfig.obj" \
-	"$(INTDIR)/pdfutils.obj"
+	"$(INTDIR)\plcore.obj" \
+	"$(INTDIR)\win3.obj" \
+	"$(INTDIR)\plargs.obj" \
+	"$(INTDIR)\pbm.obj" \
+	"$(INTDIR)\null.obj" \
+	"$(INTDIR)\ps.obj" \
+	"$(INTDIR)\plbuf.obj" \
+	"$(INTDIR)\plcont.obj" \
+	"$(INTDIR)\plctrl.obj" \
+	"$(INTDIR)\plcvt.obj" \
+	"$(INTDIR)\plfill.obj" \
+	"$(INTDIR)\plhist.obj" \
+	"$(INTDIR)\plimage.obj" \
+	"$(INTDIR)\plline.obj" \
+	"$(INTDIR)\plmap.obj" \
+	"$(INTDIR)\plmeta.obj" \
+	"$(INTDIR)\plot3d.obj" \
+	"$(INTDIR)\plpage.obj" \
+	"$(INTDIR)\plrender.obj" \
+	"$(INTDIR)\plsdef.obj" \
+	"$(INTDIR)\plshade.obj" \
+	"$(INTDIR)\plstripc.obj" \
+	"$(INTDIR)\plsym.obj" \
+	"$(INTDIR)\plbox.obj" \
+	"$(INTDIR)\plvpor.obj" \
+	"$(INTDIR)\pltick.obj" \
+	"$(INTDIR)\plwind.obj" \
+	"$(INTDIR)\pdfutils.obj" \
+	"$(INTDIR)\pldtik.obj"
 
-"$(OUTDIR)\plplot.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
+".\plplot.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
   $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
 <<
 
 !ELSEIF  "$(CFG)" == "plplib - Win32 Debug"
 
-# PROP BASE Use_MFC 0
-# PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug"
-# PROP BASE Intermediate_Dir "Debug"
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 1
-# PROP Output_Dir ""
-# PROP Intermediate_Dir "Debug"
-# PROP Target_Dir ""
-OUTDIR=.
+OUTDIR=.\Debug
 INTDIR=.\Debug
+# Begin Custom Macros
+OutDir=.\Debug
+# End Custom Macros
 
-ALL : "$(OUTDIR)\plplot.lib"
+ALL : "$(OUTDIR)\plplib.lib"
 
-CLEAN : 
-	-@erase ".\plplot.lib"
-	-@erase ".\Debug\plsdef.obj"
-	-@erase ".\Debug\plbuf.obj"
-	-@erase ".\Debug\plargs.obj"
-	-@erase ".\Debug\hpgl.obj"
-	-@erase ".\Debug\plmap.obj"
-	-@erase ".\Debug\plctrl.obj"
-	-@erase ".\Debug\null.obj"
-	-@erase ".\Debug\pltick.obj"
-	-@erase ".\Debug\plpage.obj"
-	-@erase ".\Debug\plcont.obj"
-	-@erase ".\Debug\plwind.obj"
-	-@erase ".\Debug\plcvt.obj"
-	-@erase ".\Debug\pldtik.obj"
-	-@erase ".\Debug\plshade.obj"
-	-@erase ".\Debug\plcore.obj"
-	-@erase ".\Debug\xfig.obj"
-	-@erase ".\Debug\plsym.obj"
-	-@erase ".\Debug\plline.obj"
-	-@erase ".\Debug\plhist.obj"
-	-@erase ".\Debug\plvpor.obj"
-	-@erase ".\Debug\win3.obj"
-	-@erase ".\Debug\plot3d.obj"
-	-@erase ".\Debug\plbox.obj"
-	-@erase ".\Debug\plfill.obj"
-	-@erase ".\Debug\pdfutils.obj"
-	-@erase ".\Debug\plmeta.obj"
-	-@erase ".\Debug\ps.obj"
 
-"$(INTDIR)" :
-    if not exist "$(INTDIR)/$(NULL)" mkdir "$(INTDIR)"
+CLEAN :
+	-@erase "$(INTDIR)\null.obj"
+	-@erase "$(INTDIR)\pbm.obj"
+	-@erase "$(INTDIR)\pdfutils.obj"
+	-@erase "$(INTDIR)\plargs.obj"
+	-@erase "$(INTDIR)\plbox.obj"
+	-@erase "$(INTDIR)\plbuf.obj"
+	-@erase "$(INTDIR)\plcont.obj"
+	-@erase "$(INTDIR)\plcore.obj"
+	-@erase "$(INTDIR)\plctrl.obj"
+	-@erase "$(INTDIR)\plcvt.obj"
+	-@erase "$(INTDIR)\pldtik.obj"
+	-@erase "$(INTDIR)\plfill.obj"
+	-@erase "$(INTDIR)\plhist.obj"
+	-@erase "$(INTDIR)\plimage.obj"
+	-@erase "$(INTDIR)\plline.obj"
+	-@erase "$(INTDIR)\plmap.obj"
+	-@erase "$(INTDIR)\plmeta.obj"
+	-@erase "$(INTDIR)\plot3d.obj"
+	-@erase "$(INTDIR)\plpage.obj"
+	-@erase "$(INTDIR)\plrender.obj"
+	-@erase "$(INTDIR)\plsdef.obj"
+	-@erase "$(INTDIR)\plshade.obj"
+	-@erase "$(INTDIR)\plstripc.obj"
+	-@erase "$(INTDIR)\plsym.obj"
+	-@erase "$(INTDIR)\pltick.obj"
+	-@erase "$(INTDIR)\plvpor.obj"
+	-@erase "$(INTDIR)\plwind.obj"
+	-@erase "$(INTDIR)\ps.obj"
+	-@erase "$(INTDIR)\vc60.idb"
+	-@erase "$(INTDIR)\vc60.pdb"
+	-@erase "$(INTDIR)\win3.obj"
+	-@erase "$(OUTDIR)\plplib.lib"
 
-# ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
-CPP_PROJ=/nologo /MLd /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS"\
- /Fp"$(INTDIR)/plplib.pch" /YX /Fo"$(INTDIR)/" /c 
-CPP_OBJS=.\Debug/
-CPP_SBRS=
+"$(OUTDIR)" :
+    if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
+
+F90_PROJ=/check:bounds /compile_only /debug:full /include:"$(INTDIR)\\" /nologo /traceback /warn:argument_checking /warn:nofileopt /module:"Debug/" /object:"Debug/" /pdbfile:"Debug/DF60.PDB" 
+F90_OBJS=.\Debug/
+CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"$(INTDIR)\plplib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ  /c 
 BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-BSC32_FLAGS=/nologo /o"$(OUTDIR)/plplib.bsc" 
-BSC32_SBRS=
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc" 
+BSC32_SBRS= \
+	
 LIB32=link.exe -lib
-# ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"plplot.lib"
-LIB32_FLAGS=/nologo /out:"$(OUTDIR)/plplot.lib" 
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)\plplib.lib" 
 LIB32_OBJS= \
-	"$(INTDIR)/plsdef.obj" \
-	"$(INTDIR)/plbuf.obj" \
-	"$(INTDIR)/plargs.obj" \
-	"$(INTDIR)/hpgl.obj" \
-	"$(INTDIR)/plmap.obj" \
-	"$(INTDIR)/plctrl.obj" \
-	"$(INTDIR)/null.obj" \
-	"$(INTDIR)/pltick.obj" \
-	"$(INTDIR)/plpage.obj" \
-	"$(INTDIR)/plcont.obj" \
-	"$(INTDIR)/plwind.obj" \
-	"$(INTDIR)/plcvt.obj" \
-	"$(INTDIR)/pldtik.obj" \
-	"$(INTDIR)/plshade.obj" \
-	"$(INTDIR)/plcore.obj" \
-	"$(INTDIR)/xfig.obj" \
-	"$(INTDIR)/plsym.obj" \
-	"$(INTDIR)/plline.obj" \
-	"$(INTDIR)/plhist.obj" \
-	"$(INTDIR)/plvpor.obj" \
-	"$(INTDIR)/win3.obj" \
-	"$(INTDIR)/plot3d.obj" \
-	"$(INTDIR)/plbox.obj" \
-	"$(INTDIR)/plfill.obj" \
-	"$(INTDIR)/pdfutils.obj" \
-	"$(INTDIR)/plmeta.obj" \
-	"$(INTDIR)/ps.obj"
+	"$(INTDIR)\plcore.obj" \
+	"$(INTDIR)\win3.obj" \
+	"$(INTDIR)\plargs.obj" \
+	"$(INTDIR)\pbm.obj" \
+	"$(INTDIR)\null.obj" \
+	"$(INTDIR)\ps.obj" \
+	"$(INTDIR)\plbuf.obj" \
+	"$(INTDIR)\plcont.obj" \
+	"$(INTDIR)\plctrl.obj" \
+	"$(INTDIR)\plcvt.obj" \
+	"$(INTDIR)\plfill.obj" \
+	"$(INTDIR)\plhist.obj" \
+	"$(INTDIR)\plimage.obj" \
+	"$(INTDIR)\plline.obj" \
+	"$(INTDIR)\plmap.obj" \
+	"$(INTDIR)\plmeta.obj" \
+	"$(INTDIR)\plot3d.obj" \
+	"$(INTDIR)\plpage.obj" \
+	"$(INTDIR)\plrender.obj" \
+	"$(INTDIR)\plsdef.obj" \
+	"$(INTDIR)\plshade.obj" \
+	"$(INTDIR)\plstripc.obj" \
+	"$(INTDIR)\plsym.obj" \
+	"$(INTDIR)\plbox.obj" \
+	"$(INTDIR)\plvpor.obj" \
+	"$(INTDIR)\pltick.obj" \
+	"$(INTDIR)\plwind.obj" \
+	"$(INTDIR)\pdfutils.obj" \
+	"$(INTDIR)\pldtik.obj"
 
-"$(OUTDIR)\plplot.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
+"$(OUTDIR)\plplib.lib" : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
     $(LIB32) @<<
   $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
 <<
 
 !ENDIF 
 
-.c{$(CPP_OBJS)}.obj:
-   $(CPP) $(CPP_PROJ) $<  
+.c{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
-.cpp{$(CPP_OBJS)}.obj:
-   $(CPP) $(CPP_PROJ) $<  
+.cpp{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
-.cxx{$(CPP_OBJS)}.obj:
-   $(CPP) $(CPP_PROJ) $<  
+.cxx{$(INTDIR)}.obj::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
-.c{$(CPP_SBRS)}.sbr:
-   $(CPP) $(CPP_PROJ) $<  
+.c{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
-.cpp{$(CPP_SBRS)}.sbr:
-   $(CPP) $(CPP_PROJ) $<  
+.cpp{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
-.cxx{$(CPP_SBRS)}.sbr:
-   $(CPP) $(CPP_PROJ) $<  
+.cxx{$(INTDIR)}.sbr::
+   $(CPP) @<<
+   $(CPP_PROJ) $< 
+<<
 
-################################################################################
-# Begin Target
+.SUFFIXES: .fpp
 
-# Name "plplib - Win32 Release"
-# Name "plplib - Win32 Debug"
+.for{$(F90_OBJS)}.obj:
+   $(F90) $(F90_PROJ) $<  
 
-!IF  "$(CFG)" == "plplib - Win32 Release"
+.f{$(F90_OBJS)}.obj:
+   $(F90) $(F90_PROJ) $<  
 
-!ELSEIF  "$(CFG)" == "plplib - Win32 Debug"
+.f90{$(F90_OBJS)}.obj:
+   $(F90) $(F90_PROJ) $<  
+
+.fpp{$(F90_OBJS)}.obj:
+   $(F90) $(F90_PROJ) $<  
+
+
+!IF "$(NO_EXTERNAL_DEPS)" != "1"
+!IF EXISTS("plplib.dep")
+!INCLUDE "plplib.dep"
+!ELSE 
+!MESSAGE Warning: cannot find "plplib.dep"
+!ENDIF 
+!ENDIF 
+
+
+!IF "$(CFG)" == "plplib - Win32 Release" || "$(CFG)" == "plplib - Win32 Debug"
+SOURCE=..\..\..\..\tmp\null.cpp
+
+"$(INTDIR)\null.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\pbm.cpp
+
+"$(INTDIR)\pbm.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\pdfutils.cpp
+
+"$(INTDIR)\pdfutils.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plargs.cpp
+
+"$(INTDIR)\plargs.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plbox.cpp
+
+"$(INTDIR)\plbox.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plbuf.cpp
+
+"$(INTDIR)\plbuf.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plcont.cpp
+
+"$(INTDIR)\plcont.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plcore.cpp
+
+"$(INTDIR)\plcore.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plctrl.cpp
+
+"$(INTDIR)\plctrl.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plcvt.cpp
+
+"$(INTDIR)\plcvt.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\pldtik.cpp
+
+"$(INTDIR)\pldtik.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plfill.cpp
+
+"$(INTDIR)\plfill.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plhist.cpp
+
+"$(INTDIR)\plhist.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plimage.cpp
+
+"$(INTDIR)\plimage.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plline.cpp
+
+"$(INTDIR)\plline.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plmap.cpp
+
+"$(INTDIR)\plmap.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plmeta.cpp
+
+"$(INTDIR)\plmeta.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plot3d.cpp
+
+"$(INTDIR)\plot3d.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plpage.cpp
+
+"$(INTDIR)\plpage.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plrender.cpp
+
+"$(INTDIR)\plrender.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plsdef.cpp
+
+"$(INTDIR)\plsdef.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plshade.cpp
+
+"$(INTDIR)\plshade.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plstripc.cpp
+
+"$(INTDIR)\plstripc.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plsym.cpp
+
+"$(INTDIR)\plsym.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\pltick.cpp
+
+"$(INTDIR)\pltick.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plvpor.cpp
+
+"$(INTDIR)\plvpor.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\plwind.cpp
+
+"$(INTDIR)\plwind.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\ps.cpp
+
+"$(INTDIR)\ps.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+SOURCE=..\..\..\..\tmp\win3.cpp
+
+"$(INTDIR)\win3.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
 
 !ENDIF 
 
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\xfig.cpp
-DEP_CPP_XFIG_=\
-	".\..\..\..\..\tmp\plDevs.h"\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\drivers.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\xfig.obj" : $(SOURCE) $(DEP_CPP_XFIG_) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\win3.cpp
-
-!IF  "$(CFG)" == "plplib - Win32 Release"
-
-DEP_CPP_WIN3_=\
-	".\..\..\..\..\tmp\plDevs.h"\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\drivers.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\win3.obj" : $(SOURCE) $(DEP_CPP_WIN3_) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-!ELSEIF  "$(CFG)" == "plplib - Win32 Debug"
-
-DEP_CPP_WIN3_=\
-	".\..\..\..\..\tmp\plDevs.h"\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\drivers.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-NODEP_CPP_WIN3_=\
-	".\..\..\..\..\tmp\PrintDlg"\
-	
-
-"$(INTDIR)\win3.obj" : $(SOURCE) $(DEP_CPP_WIN3_) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-!ENDIF 
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\ps.cpp
-DEP_CPP_PS_CP=\
-	".\..\..\..\..\tmp\plDevs.h"\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\drivers.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\ps.obj" : $(SOURCE) $(DEP_CPP_PS_CP) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plwind.cpp
-DEP_CPP_PLWIN=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plwind.obj" : $(SOURCE) $(DEP_CPP_PLWIN) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plvpor.cpp
-DEP_CPP_PLVPO=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plvpor.obj" : $(SOURCE) $(DEP_CPP_PLVPO) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\pltick.cpp
-DEP_CPP_PLTIC=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\pltick.obj" : $(SOURCE) $(DEP_CPP_PLTIC) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plsym.cpp
-DEP_CPP_PLSYM=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plsym.obj" : $(SOURCE) $(DEP_CPP_PLSYM) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plshade.cpp
-DEP_CPP_PLSHA=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plshade.obj" : $(SOURCE) $(DEP_CPP_PLSHA) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plsdef.cpp
-DEP_CPP_PLSDE=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plsdef.obj" : $(SOURCE) $(DEP_CPP_PLSDE) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plpage.cpp
-DEP_CPP_PLPAG=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plpage.obj" : $(SOURCE) $(DEP_CPP_PLPAG) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plot3d.cpp
-DEP_CPP_PLOT3=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plot3d.obj" : $(SOURCE) $(DEP_CPP_PLOT3) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plmeta.cpp
-DEP_CPP_PLMET=\
-	".\..\..\..\..\tmp\plDevs.h"\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\drivers.h"\
-	".\..\..\..\..\tmp\metadefs.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plmeta.obj" : $(SOURCE) $(DEP_CPP_PLMET) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plmap.cpp
-DEP_CPP_PLMAP=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plmap.obj" : $(SOURCE) $(DEP_CPP_PLMAP) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plline.cpp
-DEP_CPP_PLLIN=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plline.obj" : $(SOURCE) $(DEP_CPP_PLLIN) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plhist.cpp
-DEP_CPP_PLHIS=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plhist.obj" : $(SOURCE) $(DEP_CPP_PLHIS) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plfill.cpp
-DEP_CPP_PLFIL=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plfill.obj" : $(SOURCE) $(DEP_CPP_PLFIL) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\pldtik.cpp
-DEP_CPP_PLDTI=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\pldtik.obj" : $(SOURCE) $(DEP_CPP_PLDTI) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plcvt.cpp
-DEP_CPP_PLCVT=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plcvt.obj" : $(SOURCE) $(DEP_CPP_PLCVT) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plctrl.cpp
-DEP_CPP_PLCTR=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	{$(INCLUDE)}"\sys\TYPES.H"\
-	{$(INCLUDE)}"\sys\STAT.H"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plctrl.obj" : $(SOURCE) $(DEP_CPP_PLCTR) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plcore.cpp
-DEP_CPP_PLCOR=\
-	".\..\..\..\..\tmp\plcore.h"\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\drivers.h"\
-	".\..\..\..\..\tmp\plDevs.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plcore.obj" : $(SOURCE) $(DEP_CPP_PLCOR) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plcont.cpp
-DEP_CPP_PLCON=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plcont.obj" : $(SOURCE) $(DEP_CPP_PLCON) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plbuf.cpp
-DEP_CPP_PLBUF=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\drivers.h"\
-	".\..\..\..\..\tmp\metadefs.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plbuf.obj" : $(SOURCE) $(DEP_CPP_PLBUF) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plbox.cpp
-DEP_CPP_PLBOX=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plbox.obj" : $(SOURCE) $(DEP_CPP_PLBOX) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\plargs.cpp
-DEP_CPP_PLARG=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\plargs.obj" : $(SOURCE) $(DEP_CPP_PLARG) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\pdfutils.cpp
-DEP_CPP_PDFUT=\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\pdfutils.obj" : $(SOURCE) $(DEP_CPP_PDFUT) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\null.cpp
-DEP_CPP_NULL_=\
-	".\..\..\..\..\tmp\plDevs.h"\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\drivers.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\null.obj" : $(SOURCE) $(DEP_CPP_NULL_) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=\plplot\tmp\hpgl.cpp
-DEP_CPP_HPGL_=\
-	".\..\..\..\..\tmp\plDevs.h"\
-	".\..\..\..\..\tmp\plplotP.h"\
-	".\..\..\..\..\tmp\drivers.h"\
-	".\..\..\..\..\tmp\plConfig.h"\
-	".\..\..\..\..\tmp\plplot.h"\
-	".\..\..\..\..\tmp\plstrm.h"\
-	".\..\..\..\..\tmp\pldebug.h"\
-	".\..\..\..\..\tmp\pdf.h"\
-	
-
-"$(INTDIR)\hpgl.obj" : $(SOURCE) $(DEP_CPP_HPGL_) "$(INTDIR)"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-# End Source File
-# End Target
-# End Project
-################################################################################

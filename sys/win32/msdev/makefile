@@ -13,7 +13,7 @@
 #
 # Location of plplot directories
 #
-PLDIR = c:\plplot
+PLDIR = ..\..\..
 PLTMP = $(PLDIR)\tmp
 PLLIB = $(PLDIR)\lib
 PLBIN = $(PLDIR)\bin
@@ -21,14 +21,16 @@ PLBIN = $(PLDIR)\bin
 #
 # Device selection
 #
-META =  PLD_plmeta
-#PS = PLD_ps
+META = PLD_plmeta
+PS   = PLD_ps
+CPS  = PLD_cps
+NULL = PLD_null
+#PBM  = PLD_pbm
 #XFIG = PLD_xfig
 #LJII = PLD_ljii
 #HPGL = PLD_hp7470
 #HPGLL = PLD_hp7580
 #LJHPGL = PLD_lj_hpgl
-#NULL = PLD_null
 
 #BGI = PLD_bgi
 WIN3 = PLD_win3
@@ -48,6 +50,8 @@ links:
   @copy $(PLDIR)\examples\c\*.h $(PLTMP)\plplot
   @copy $(PLDIR)\drivers\*.c $(PLTMP)\*.cpp
   @copy $(PLDIR)\utils\*.c $(PLTMP)\*.cpp
+  @copy $(PLDIR)\lib\*.fnt $(PLTMP)\*.fnt
+  @copy $(PLDIR)\lib\*.map $(PLTMP)\*.map
 #
 # Copy the local source files to temp\
 #
@@ -93,6 +97,12 @@ common:
 !ifdef PS
 #define PLD_ps
 !endif
+!ifdef CPS
+#define PLD_cps
+!endif
+!ifdef PBM
+#define PLD_pbm
+!endif
 !ifdef XFIG 
 #define PLD_xfig
 !endif
@@ -118,5 +128,5 @@ common:
 install:
         @copy $(PLDIR)\sys\win32\msdev\plplib\plplot.lib $(PLLIB)
 #        @copy $(PLDIR)\sys\win32\msdev\plpdll\Debug\plplotd.lib $(PLLIB)
-        @copy $(PLDIR)\sys\win32\msdev\plpdll\Release\plplotd.lib $(PLLIB)
-        @copy $(PLDIR)\sys\win32\msdev\plpdll\plplotd.dll $(PLBIN)
+#        @copy $(PLDIR)\sys\win32\msdev\plpdll\Release\plplotd.lib $(PLLIB)
+#        @copy $(PLDIR)\sys\win32\msdev\plpdll\plplotd.dll $(PLBIN)
