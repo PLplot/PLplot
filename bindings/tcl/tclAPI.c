@@ -42,8 +42,7 @@ static int loopbackCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plcontCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plmeshCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plot3dCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plotfc3dCmd	(ClientData, Tcl_Interp *, int, char **);
-static int plotsh3dCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plsurf3dCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plshadeCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plshadesCmd	(ClientData, Tcl_Interp *, int, char **);
@@ -80,8 +79,7 @@ static CmdInfo Cmds[] = {
     {"plmeridians",	plmeridiansCmd},
     {"plmesh",		plmeshCmd},
     {"plot3d",		plot3dCmd},
-    {"plotfc3d",	plotfc3dCmd},
-    {"plotsh3d",	plotsh3dCmd},
+    {"plsurf3d",	plsurf3dCmd},
     {"plsetopt",	plsetoptCmd},
     {"plshade",		plshadeCmd},
     {"plshades",	plshadesCmd},
@@ -1253,33 +1251,121 @@ plot3dCmd( ClientData clientData, Tcl_Interp *interp,
 }
 
 /*--------------------------------------------------------------------------*\
- * plotfc3dCmd
+ * plsurf3dCmd
  *
- * Processes plotfc3d Tcl command.
+ * Processes plsurf3d Tcl command.
  *
- * We support 3 different invocation forms:
- * 1)	plotfc3d x y z nx ny side
- * 2)	plotfc3d x y z side
- * 3)	plotfc3d z side
+ * We support 5 different invocation forms:
+ * 1)	plsurf3d x y z nx ny opt clevel nlevel
+ * 2)	plsurf3d x y z nx ny opt clevel
+ * 3)	plsurf3d x y z nx ny opt
+ * 4)	plsurf3d x y z opt
+ * 5)	plsurf3d z opt
  *
- * Form 1) is an exact mirror of the usual C API.  In form 2) we infer nx and
- * ny from the input data, and in form 3 we infer nx and ny, and also take
+ * Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
+ * In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
+ * ny from the input data, and in form 5 we infer nx and ny, and also take
  * the x and y arrays to just be integral spacing.
 \*--------------------------------------------------------------------------*/
 
 static int
-plotfc3dCmd( ClientData clientData, Tcl_Interp *interp,
+plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
 	   int argc, char *argv[] )
 {
-    PLINT nx, ny, side;
+    PLINT nx, ny, opt, nlev;
     PLFLT *x, *y, **z;
-    tclMatrix *matx, *maty, *matz, *matPtr;
+    PLFLT *clev = NULL;
+
+    tclMatrix *matx, *maty, *matz, *matPtr, *matlev;
     int i;
 
-    if (argc == 7) {
+    if (argc == 9) {
+	nlev = atoi( argv[8] );
 	nx   = atoi( argv[4] );
 	ny   = atoi( argv[5] );
-	side  = atoi( argv[6] );
+	opt  = atoi( argv[6] );
+
+	matx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (matx == NULL) return TCL_ERROR;
+	maty = Tcl_GetMatrixPtr( interp, argv[2] );
+	if (maty == NULL) return TCL_ERROR;
+	matz = Tcl_GetMatrixPtr( interp, argv[3] );
+	if (matz == NULL) return TCL_ERROR;
+	matPtr = matz;		/* For dumb indexer macro, grrrr. */
+
+	matlev = Tcl_GetMatrixPtr( interp, argv[7] );
+	if (matlev == NULL) return TCL_ERROR;
+
+	if ( matx->type != TYPE_FLOAT ||
+	     maty->type != TYPE_FLOAT ||
+	     matz->type != TYPE_FLOAT ||
+	     matlev->type != TYPE_FLOAT) {
+	    interp->result = "x y z and clevel must all be float";
+	    return TCL_ERROR;
+	}
+
+	if ( matx->dim != 1 || matx->n[0] != nx ||
+	     maty->dim != 1 || maty->n[0] != ny ||
+	     matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
+	     matlev->dim != 1 || matlev->n[0] != nlev) {
+	    interp->result = "popo Inconsistent dimensions";
+	    return TCL_ERROR;
+	}
+
+	x = matx->fdata;
+	y = maty->fdata;
+	clev = matlev->fdata;
+
+	z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
+	for( i=0; i < nx; i++ )
+	    z[i] = &matz->fdata[ I2D(i,0) ];
+    }
+
+    else if (argc == 8) {
+	nx   = atoi( argv[4] );
+	ny   = atoi( argv[5] );
+	opt  = atoi( argv[6] );
+
+	matx = Tcl_GetMatrixPtr( interp, argv[1] );
+	if (matx == NULL) return TCL_ERROR;
+	maty = Tcl_GetMatrixPtr( interp, argv[2] );
+	if (maty == NULL) return TCL_ERROR;
+	matz = Tcl_GetMatrixPtr( interp, argv[3] );
+	if (matz == NULL) return TCL_ERROR;
+	matPtr = matz;		/* For dumb indexer macro, grrrr. */
+	matlev = Tcl_GetMatrixPtr( interp, argv[7] );
+	if (matlev == NULL) return TCL_ERROR;
+
+	if ( matx->type != TYPE_FLOAT ||
+	     maty->type != TYPE_FLOAT ||
+	     matz->type != TYPE_FLOAT ||
+	     matlev->type != TYPE_FLOAT) {
+	    interp->result = "x y z and clevel must all be float";
+	    return TCL_ERROR;
+	}
+
+	if ( matx->dim != 1 || matx->n[0] != nx ||
+	     maty->dim != 1 || maty->n[0] != ny ||
+	     matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
+	     matlev->dim != 1 || matlev->n[0] != nlev) {
+	    interp->result = "Inconsistent dimensions";
+	    return TCL_ERROR;
+	}
+
+	x = matx->fdata;
+	y = maty->fdata;
+	clev = matlev->fdata;
+	nlev = matlev->n[0];
+
+	z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
+	for( i=0; i < nx; i++ )
+	    z[i] = &matz->fdata[ I2D(i,0) ];
+    }
+
+    else if (argc == 7) {
+	nx   = atoi( argv[4] );
+	ny   = atoi( argv[5] );
+	opt  = atoi( argv[6] );
 
 	matx = Tcl_GetMatrixPtr( interp, argv[1] );
 	if (matx == NULL) return TCL_ERROR;
@@ -1311,7 +1397,7 @@ plotfc3dCmd( ClientData clientData, Tcl_Interp *interp,
 	    z[i] = &matz->fdata[ I2D(i,0) ];
     }
     else if (argc == 5) {
-	side = atoi( argv[4] );
+	opt = atoi( argv[4] );
 
 	matx = Tcl_GetMatrixPtr( interp, argv[1] );
 	if (matx == NULL) return TCL_ERROR;
@@ -1349,131 +1435,13 @@ plotfc3dCmd( ClientData clientData, Tcl_Interp *interp,
 	return TCL_ERROR;
     }
     else {
-	Tcl_AppendResult(interp, "wrong # args: should be \"plotfc3d ",
-			 "x y z nx ny side\", or a valid contraction ",
+	Tcl_AppendResult(interp, "wrong # args: should be \"plsurf3d ",
+			 "x y z nx ny opt clevel nlevel\", or a valid contraction ",
 			 "thereof.", (char *) NULL);
 	return TCL_ERROR;
     }
 
-    plotfc3d( x, y, z, nx, ny, side, NULL, 0);
-
-    if (argc == 7) {
-	free(z);
-    }
-    else if (argc == 5) {
-	free(z);
-    }
-    else {			/* argc == 3 */
-    }
-
-    plflush();
-    return TCL_OK;
-}
-
-/*--------------------------------------------------------------------------*\
- * plotsh3dCmd
- *
- * Processes plotsh3d Tcl command.
- *
- * We support 3 different invocation forms:
- * 1)	plotsh3d x y z nx ny side
- * 2)	plotsh3d x y z side
- * 3)	plotsh3d z side
- *
- * Form 1) is an exact mirror of the usual C API.  In form 2) we infer nx and
- * ny from the input data, and in form 3 we infer nx and ny, and also take
- * the x and y arrays to just be integral spacing.
-\*--------------------------------------------------------------------------*/
-
-static int
-plotsh3dCmd( ClientData clientData, Tcl_Interp *interp,
-	   int argc, char *argv[] )
-{
-    PLINT nx, ny, side;
-    PLFLT *x, *y, **z;
-    tclMatrix *matx, *maty, *matz, *matPtr;
-    int i;
-
-    if (argc == 7) {
-	nx   = atoi( argv[4] );
-	ny   = atoi( argv[5] );
-	side  = atoi( argv[6] );
-
-	matx = Tcl_GetMatrixPtr( interp, argv[1] );
-	if (matx == NULL) return TCL_ERROR;
-	maty = Tcl_GetMatrixPtr( interp, argv[2] );
-	if (maty == NULL) return TCL_ERROR;
-	matz = Tcl_GetMatrixPtr( interp, argv[3] );
-	if (matz == NULL) return TCL_ERROR;
-	matPtr = matz;		/* For dumb indexer macro, grrrr. */
-
-	if ( matx->type != TYPE_FLOAT ||
-	     maty->type != TYPE_FLOAT ||
-	     matz->type != TYPE_FLOAT ) {
-	    interp->result = "x y and z must all be float";
-	    return TCL_ERROR;
-	}
-
-	if ( matx->dim != 1 || matx->n[0] != nx ||
-	     maty->dim != 1 || maty->n[0] != ny ||
-	     matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ) {
-	    interp->result = "Inconsistent dimensions";
-	    return TCL_ERROR;
-	}
-
-	x = matx->fdata;
-	y = maty->fdata;
-
-	z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
-	for( i=0; i < nx; i++ )
-	    z[i] = &matz->fdata[ I2D(i,0) ];
-    }
-    else if (argc == 5) {
-	side = atoi( argv[4] );
-
-	matx = Tcl_GetMatrixPtr( interp, argv[1] );
-	if (matx == NULL) return TCL_ERROR;
-	maty = Tcl_GetMatrixPtr( interp, argv[2] );
-	if (maty == NULL) return TCL_ERROR;
-	matz = Tcl_GetMatrixPtr( interp, argv[3] );
-	if (matz == NULL) return TCL_ERROR;
-	matPtr = matz;		/* For dumb indexer macro, grrrr. */
-
-	if ( matx->type != TYPE_FLOAT ||
-	     maty->type != TYPE_FLOAT ||
-	     matz->type != TYPE_FLOAT ) {
-	    interp->result = "x y and z must all be float";
-	    return TCL_ERROR;
-	}
-
-	nx = matx->n[0]; ny = maty->n[0];
-
-	if ( matx->dim != 1 || matx->n[0] != nx ||
-	     maty->dim != 1 || maty->n[0] != ny ||
-	     matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ) {
-	    interp->result = "Inconsistent dimensions";
-	    return TCL_ERROR;
-	}
-
-	x = matx->fdata;
-	y = maty->fdata;
-
-	z = (PLFLT **) malloc( nx * sizeof(PLFLT *) );
-	for( i=0; i < nx; i++ )
-	    z[i] = &matz->fdata[ I2D(i,0) ];
-    }
-    else if (argc == 3) {
-	interp->result = "unimplemented";
-	return TCL_ERROR;
-    }
-    else {
-	Tcl_AppendResult(interp, "wrong # args: should be \"plotsh3d ",
-			 "x y z nx ny side\", or a valid contraction ",
-			 "thereof.", (char *) NULL);
-	return TCL_ERROR;
-    }
-
-    plotsh3d( x, y, z, nx, ny, side );
+    plsurf3d( x, y, z, nx, ny, opt, clev, nlev);
 
     if (argc == 7) {
 	free(z);
