@@ -12,39 +12,42 @@ changequote({,})dnl
 
 # Some utility macros.
 
-define(if_aix,   {ifdef({AIX},   {$1},{$2})})dnl
-define(if_dgux,  {ifdef({DGUX},  {$1},{$2})})dnl
-define(if_hpux,  {ifdef({HPUX},  {$1},{$2})})dnl
-define(if_sysv,  {ifdef({SYSV},  {$1},{$2})})dnl
-define(if_bsd,   {ifdef({BSD},   {$1},{$2})})dnl
-define(if_unicos,{ifdef({UNICOS},{$1},{$2})})dnl
-define(if_sunos, {ifdef({SUNOS}, {$1},{$2})})dnl
-define(if_ultrix,{ifdef({ULTRIX},{$1},{$2})})dnl
-define(if_next,  {ifdef({NEXT},  {$1},{$2})})dnl
-define(if_linux, {ifdef({LINUX}, {$1},{$2})})dnl
-define(if_sx,    {ifdef({SX},    {$1},{$2})})dnl
+define(if_aix,	    {ifdef({AIX},	{$1},{$2})})dnl
+define(if_dgux,	    {ifdef({DGUX},	{$1},{$2})})dnl
+define(if_hpux,	    {ifdef({HPUX},	{$1},{$2})})dnl
+define(if_sysv,	    {ifdef({SYSV},	{$1},{$2})})dnl
+define(if_bsd,	    {ifdef({BSD},	{$1},{$2})})dnl
+define(if_unicos,   {ifdef({UNICOS},	{$1},{$2})})dnl
+define(if_sunos,    {ifdef({SUNOS},	{$1},{$2})})dnl
+define(if_ultrix,   {ifdef({ULTRIX},	{$1},{$2})})dnl
+define(if_next,	    {ifdef({NEXT},	{$1},{$2})})dnl
+define(if_linux,    {ifdef({LINUX},	{$1},{$2})})dnl
+define(if_sx,	    {ifdef({SX},	{$1},{$2})})dnl
+define(if_alphaosf, {ifdef({ALPHAOSF},	{$1},{$2})})dnl
 
-if_aix(   {define({UNIX})})dnl
-if_hpux(  {define({UNIX})})dnl
-if_dgux(  {define({UNIX})})dnl
-if_sysv(  {define({UNIX})})dnl
-if_bsd(   {define({UNIX})})dnl
-if_unicos({define({UNIX})})dnl
-if_sunos( {define({UNIX})})dnl
-if_next(  {define({UNIX})})dnl
-if_linux( {define({UNIX},)define({NO_FORTRAN},)})dnl
-if_ultrix({define({UNIX})define({SUNOS})})dnl
-if_sx(    {define({UNIX})})dnl
+if_aix(     {define({UNIX},)})dnl
+if_hpux(    {define({UNIX},)})dnl
+if_dgux(    {define({UNIX},)})dnl
+if_sysv(    {define({UNIX},)})dnl
+if_bsd(     {define({UNIX},)})dnl
+if_unicos(  {define({UNIX},)})dnl
+if_sunos(   {define({UNIX},)})dnl
+if_next(    {define({UNIX},)})dnl
+if_linux(   {define({UNIX},)define({NO_FORTRAN},)})dnl
+if_ultrix(  {define({UNIX},)define({SUNOS})})dnl
+if_sx(      {define({UNIX},)})dnl
+if_alphaosf({define({UNIX},)})dnl
 
 define(if_ranlib,{ifdef({RANLIB},{$1},{$2})})dnl
-if_sunos( {define({RANLIB})})dnl
-if_next(  {define({RANLIB})})dnl
-if_bsd(   {define({RANLIB})})dnl
+if_sunos( {define({RANLIB},)})dnl
+if_next(  {define({RANLIB},)})dnl
+if_bsd(   {define({RANLIB},)})dnl
 if_linux( {define({RANLIB},)})dnl
 
 define(if_unix,  {ifdef({UNIX},  {$1},{$2})})dnl
 define(if_amiga, {ifdef({AMIGA}, {$1},{$2})})dnl
 define(if_motif, {ifdef({MOTIF}, {$1},{$2})})dnl
+define(if_tk,    {ifdef({TK},    {$1},{$2})})dnl
 define(if_xwin,	 {ifdef({XWIN},  {$1},{$2})})dnl
 
 define(if_debug,   {ifdef({DEBUG},     {$1},{$2})})dnl
@@ -131,8 +134,11 @@ define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
 #    you stick with the default Fortran precision.)  
 #
 #    Note that there is no good, standard way to convert a Fortran code
-#    to double precision to the command line.  If your system's compiler
-#    has an option to do this, you must set
+#    to double precision to the command line.  Compilers under SunOS,
+#    HPUX, and A/IX do offer a way to do this however, and building
+#    the double precision library including the fortran stubs should
+#    work fine on these platforms.  For other systems, you must add
+#    the appropriate compiler flag.
 #
 # 3. To link the library without the fortran stub routines (in case
 #    you don't have a fortran compiler handy), specify -DNO_FORTRAN
@@ -213,16 +219,16 @@ PLLIB_LDC	= $(PLLIB_C)
 
 if_unix({define({XWIN},)})
 
-CFLAGS_MOTIF = -I/usr/{include}/Motif1.1
-
-LIB_MOTIF = /usr/lib/Motif1.1/libXm.a /usr/lib/X11R4/libXt.a -lPW
+LIB_MOTIF = -lXm -lXt -lPW
 LIB_XWIN  = -lX11
+LIB_TK    = 
 
 define(DEF_MOTIF,{if_motif({-DMOTIF})})
+define(DEF_TK,   {if_tk({-DTK})})
 define(DEF_XWIN, {if_xwin({-DXWIN})})
 
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
-	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_MOTIF()
+	    -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_MOTIF() DEF_TK()
 
 # Compiler/linker macros.
 # These are pretty generic to many unix systems and may work as-is.
@@ -237,7 +243,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
+LIBS	= if_motif({$(LIB_MOTIF)}) if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBS) -lm
@@ -253,14 +259,6 @@ STARTUP =
 ##############################################################################
 #
 # System specific defines.
-#
-# Define appropriate STUB_ flag to enable proper C<->Fortran linkage
-# See plstubs.h, you may have to modify for your system.
-# Current choices:
-#	STUB_LAU	lower-case, append underscore
-#	STUB_L		lower-case
-#
-# If no choice is made, stubs remain unaltered (upper case).
 #
 ##############################################################################
 
@@ -281,8 +279,7 @@ if_sunos({
 CC = gcc
 #CC = acc
 
-#define({MOTIF})
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_MOTIF()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_TK()
 SYS_FLAGS_C =
 
 if_dbl({dnl
@@ -305,7 +302,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
+LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 
@@ -313,8 +310,7 @@ LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 })if_hpux({
 #		HP-UX definitions
 
-#define({MOTIF})
-PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DXFIG  DEF_XWIN() DEF_MOTIF()
+PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DXFIG  DEF_XWIN() DEF_TK()
 
 LIB_XWIN	=
 LIB_MOTIF	=
@@ -342,7 +338,7 @@ CC	= c89
 F77	= fort77
 
 SYS_FLAGS_C	= 
-LIBS		= $(LIB_MOTIF) $(LIB_XWIN)
+LIBS		= $(LIB_TK) $(LIB_XWIN)
 
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
@@ -367,9 +363,9 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBC	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) \
+LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) \
 	 -lsocket -lsockdns -lsockhost -lnsl
-LIBF	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) \
+LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) \
 	 -lsocket -lSOCkdns
 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm
@@ -390,8 +386,8 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBC	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)})
-LIBF	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)})
+LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm
 LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
@@ -400,7 +396,6 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 })if_dgux({
 #		DG/UX definitions
 
-#define({MOTIF})
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_MOTIF()
 SYS_FLAGS_C = -Dunix -DSTUB_LAU -ansi
 SYS_FLAGS_F = -novms
@@ -412,7 +407,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
+LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= -ansi $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBS) -lm
 
@@ -431,7 +426,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
+LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= -ansi $(PROFILE_FLAG_LC) $(LIBS) -lm
 LDFFLAGS= -ansi $(PROFILE_FLAG_LF) $(LIBS) -lm
 
@@ -470,7 +465,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
+LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= $(LIBS) -lm
 LDFFLAGS= $(LIBS) -lm
 
@@ -478,8 +473,7 @@ LDFFLAGS= $(LIBS) -lm
 })if_aix({
 #		A/IX definitions
 
-#define({MOTIF})
-PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_MOTIF()
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_TK()
 SYS_FLAGS_C =
 
 # Note that A/IX 3.0 has a bug in that getenv() calls in a C routine
@@ -500,7 +494,7 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
+LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= $(PROFILE_FLAG_C) $(LIBS) -lm
 LDFFLAGS= $(PROFILE_FLAG_F) $(LIBS) -lm
 
@@ -508,7 +502,6 @@ LDFFLAGS= $(PROFILE_FLAG_F) $(LIBS) -lm
 })if_unicos({
 #	UNICOS defs.
 
-#define({MOTIF})
 SYS_FLAGS_C =
 
 # These settings are appropriate for UNICOS 6.x.
@@ -530,9 +523,51 @@ CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
+LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= $(PROFILE_FLAG_C) $(LIBS) -lm -lnet
 LDFFLAGS= $(PROFILE_FLAG_F) $(LIBS) -lm -lnet
+
+#----------------------------------------------------------------------#
+})if_alphaosf({
+# DEC Alpha AXP OSF/1 (tested on version 1.2).  Note that the c optimize
+# flag is set to -O1, it appears that higher levels of optimization will
+# mess up some diagonal dashed lines.  The double precision flags have not
+# been tested in an actual library build.
+
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_TK()
+
+SYS_FLAGS_C = -std
+
+if_opt({
+OPT_FLAG_C = -O1
+})
+
+if_xwin({
+LIB_XWIN = -lX11
+})
+
+if_motif({
+LIB_MOTIF = -lXm -lXt -lPW
+})
+
+if_dbl({dnl
+DBL_FLAG_F      = -r8
+})dnl
+
+if_profile({
+PROFILE_FLAG_F = -p
+PROFILE_FLAG_LF = -p
+})
+
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
+
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
+
+LIBS	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)}) 
+LDCFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LC) $(LIBS) -lm
+LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 
 #----------------------------------------------------------------------#
 })if_amiga({
@@ -745,7 +780,7 @@ AMIGA_OBJ = \
 
 # Drivers
 
-DRIVERS_OBJ = if_motif({$(MOTIF_OBJ)}) \
+DRIVERS_OBJ = if_tk({$(TK_OBJ)}) \
 	dg300.o \
 	hp7470.o \
 	hp7580.o \
@@ -944,16 +979,10 @@ xwin.o:		plplot.h plstream.h drivers.h xwin.c
 xterm.o:	plplot.h plstream.h drivers.h xterm.c
 	$(CC) $(CFLAGS) $(PLDEVICES) xterm.c
 
-# Motif driver
+# TK driver
 
-xm.o:		plplot.h plstream.h drivers.h xm.h xmMenu.h xmIcon.h xm.c
-	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) $(PLDEVICES) xm.c
-
-xmsupport.o:	plplot.h xm.h xmsupport.c
-	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) xmsupport.c
-
-xmMenu.o: 	plplot.h xm.h xmMenu.h xmMenu.c
-	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) xmMenu.c
+tk.o:		plplot.h plstream.h drivers.h tk.h tk.c
+	$(CC) $(CFLAGS) $(CFLAGS_MOTIF) $(PLDEVICES) tk.c
 
 #----------------------------------------------------------------------#
 # Utility programs.
@@ -1070,7 +1099,7 @@ x13f:	x13f.o $(PLLIB_F)
 
 if_unix({
 links:
-	$(LN) \
+	-$(LN) \
 		../src/*.c \
 		../src/stubc/*.c \
 if_hpux({dnl
