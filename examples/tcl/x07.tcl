@@ -3,7 +3,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.4  1995/04/24 21:28:17  mjl
+# Revision 1.5  1995/05/06 21:34:06  mjl
+# Changed comment syntax to "the one true way".
+#
+# Revision 1.4  1995/04/24  21:28:17  mjl
 # Made the widget name default to "loopback" for easier use from pltcl.
 #
 # Revision 1.3  1995/01/27  02:49:51  mjl
@@ -31,17 +34,17 @@ proc x07 {{w loopback}} {
     for {set l 0} {$l < 17} {incr l} {
 	$w cmd pladv
 
-# Set up viewport and window
+    # Set up viewport and window
 
 	$w cmd plcol 2
 	$w cmd plvpor 0.15 0.95 0.1 0.9
 	$w cmd plwind 0.0 1.0 0.0 1.0
 
-# Draw the grid using plbox
+    # Draw the grid using plbox
 
 	$w cmd plbox "bcgt" 0.1 0 "bcgt" 0.1 0
 
-# Write the digits below the frame
+    # Write the digits below the frame
 
 	$w cmd plcol 15
 	for {set i 0} {$i <= 9} {incr i} {
@@ -51,7 +54,7 @@ proc x07 {{w loopback}} {
 	set k 0
 	for {set i 0} {$i <= 9} {incr i} {
 
-# Write the digits to the left of the frame
+	# Write the digits to the left of the frame
 
 	    $w cmd plmtex "lv" 1.0 [expr (0.95 - 0.1 * $i)] 1.0 \
 		[expr [base $l] + 10*$i]
@@ -60,7 +63,7 @@ proc x07 {{w loopback}} {
 		x 0 = [expr 0.1 * $j + 0.05]
 		y 0 = [expr 0.95 - 0.1 * $i]
 
-# Display the symbols
+	    # Display the symbols
 
 		$w cmd plsym 1 x y [expr [base $l] + $k]
 		incr k

@@ -3,7 +3,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.4  1995/04/24 21:28:16  mjl
+# Revision 1.5  1995/05/06 21:34:06  mjl
+# Changed comment syntax to "the one true way".
+#
+# Revision 1.4  1995/04/24  21:28:16  mjl
 # Made the widget name default to "loopback" for easier use from pltcl.
 #
 # Revision 1.3  1995/01/27  02:49:50  mjl
@@ -46,14 +49,14 @@ proc x06 {{w loopback}} {
     set k 0
     for {set i 0} {$i <= 12} {incr i} {
 
-# Write the digits to the left of the frame
+    # Write the digits to the left of the frame
 
 	$w cmd plmtex "lv" 1.0 [expr 1.0 - (2 * $i + 1)/26.0] 1.0 [expr 10*$i]
 	for {set j 0} {$j <= 9} {incr j} {
 	    x 0 = [expr 0.1 * $j + 0.05]
 	    y 0 = [expr 1.25 - 0.1 * $i]
 
-# Display the symbols
+	# Display the symbols
 
 	    if {$k < 128} {
 		$w cmd plpoin 1 x y $k

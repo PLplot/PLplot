@@ -3,7 +3,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.5  1995/04/24 21:28:13  mjl
+# Revision 1.6  1995/05/06 21:34:05  mjl
+# Changed comment syntax to "the one true way".
+#
+# Revision 1.5  1995/04/24  21:28:13  mjl
 # Made the widget name default to "loopback" for easier use from pltcl.
 #
 # Revision 1.4  1995/01/27  02:49:45  mjl
@@ -107,7 +110,7 @@ proc plot2 {w} {
     $w cmd plcol 2
     $w cmd pllab "(x)" "sin(x)/x" "#frPLplot Example 1 - Sinc Function"
 
-    # Fill up the array
+# Fill up the array
 
     matrix x1 f 101
     matrix y1 f 101
