@@ -28,7 +28,9 @@ if enable_f77
 lib_LTLIBRARIES = libplplotf77c@LIB_TAG@.la libplplotf77@LIB_TAG@.la
 endif
 
-AM_CPPFLAGS = $(INCLTDL)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL)
+AM_FFLAGS = -I$(srcdir)
+
 version = -version-info $(SOVERSION)
 
 # Keep Fortran and C libraries completely separate so libplplot will know how
@@ -36,13 +38,15 @@ version = -version-info $(SOVERSION)
 # FLIBS information detailing how to combine C and fortran source in the
 # same library.
 
-fortran_sources= \
+fortran_sources = \
 	strutil.f \
-	sfstubs.h \
+	sfstubs.h
+
+generated_fortran_sources = \
 	sfstubs.f \
 	configurable.f
 
-c_sources= \
+c_sources = \
 	plstubs.h \
 	sc3d.c \
 	sccont.c \
@@ -50,7 +54,8 @@ c_sources= \
 
 # This creates the fortran source part of the fortran interface to libplplot.
 # It wraps calls to libplplotf77c@LIB_TAG@.la
-libplplotf77@LIB_TAG@_la_SOURCES  = $(fortran_sources)
+libplplotf77@LIB_TAG@_la_SOURCES = $(fortran_sources)
+nodist_libplplotf77@LIB_TAG@_la_SOURCES = $(generated_fortran_sources)
 libplplotf77@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined libplplotf77c@LIB_TAG@.la
 
 # This creates the C source part of the fortran interface to libplplot.
