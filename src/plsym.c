@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/07/20 06:09:50  mjl
+ * Revision 1.12  1994/07/21 10:11:42  mjl
+ * Added a fast point draw capability: if code=-1 is given to plpoin or
+ * plpoin3, instead of drawing a Hershey font character it draws a point
+ * using simply a move and draw.  This is at least 4X faster.
+ *
+ * Revision 1.11  1994/07/20  06:09:50  mjl
  * Changed syntax of the new 3d function plpoin3() to be more like plpoin(),
  * and moved to this file.
  *
@@ -57,6 +62,13 @@ c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
  * void plpoin()
  *
  * Plots array y against x for n points using ASCII code "code".
+ *
+ * code=-1 means try to just draw a point.  Right now it's just a move and
+ * a draw at the same place.  Not ideal, since a sufficiently intelligent
+ * output device may optimize it away, or there may be faster ways of
+ * doing it.  This is OK for now, though, and offers a 4X speedup over
+ * drawing a Hershey font "point" (which is actually diamond shaped and
+ * therefore takes 4 strokes to draw).
 \*----------------------------------------------------------------------*/
 
 void
@@ -68,16 +80,22 @@ c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 	plabort("plpoin: Please set up window first");
 	return;
     }
-    if (code < 0 || code > 127) {
+    if (code < -1 || code > 127) {
 	plabort("plpoin: Invalid code");
 	return;
     }
 
-    plP_gatt(&font, &col);
-    sym = *(fntlkup + (font - 1) * numberchars + code);
+    if (code == -1) {
+	for (i = 0; i < n; i++)
+	    pljoin(x[i], y[i], x[i], y[i]);
+    }
+    else {
+	plP_gatt(&font, &col);
+	sym = *(fntlkup + (font - 1) * numberchars + code);
 
-    for (i = 0; i < n; i++)
-	plhrsh(sym, plP_wcpcx(x[i]), plP_wcpcy(y[i]));
+	for (i = 0; i < n; i++)
+	    plhrsh(sym, plP_wcpcx(x[i]), plP_wcpcy(y[i]));
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -96,20 +114,29 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 	plabort("plpoin3: Please set up window first");
 	return;
     }
-    if (code < 0 || code > 127) {
+    if (code < -1 || code > 127) {
 	plabort("plpoin3: Invalid code");
 	return;
     }
 
-    plP_gatt(&font, &col);
-    sym = *(fntlkup + (font - 1) * numberchars + code);
-
-    for( i=0; i < n; i++ ) {
-	u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
-	v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
-	plhrsh(sym, u, v);
+    if (code == -1) {
+	for (i = 0; i < n; i++) {
+	    u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
+	    v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
+	    plP_movphy(u,v);
+	    plP_draphy(u,v);
+	}
     }
+    else {
+	plP_gatt(&font, &col);
+	sym = *(fntlkup + (font - 1) * numberchars + code);
 
+	for( i=0; i < n; i++ ) {
+	    u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
+	    v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
+	    plhrsh(sym, u, v);
+	}
+    }
     return;
 }
 
