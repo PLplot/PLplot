@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1995/04/12 08:06:15  mjl
+ * Revision 1.35  1995/05/06 17:11:30  mjl
+ * Improved debugging output and fixed a bug in the exit handling.
+ *
+ * Revision 1.34  1995/04/12  08:06:15  mjl
  * Offloaded the C code for cleaning up from plserver.c into the proc
  * plserver_link_end in plserver.tcl.  The Tcl code was modified to better
  * handshake with the client (plplot TK driver) program.
@@ -75,7 +78,6 @@
     command-line option is not supported).  
 */
 /*
-#define DEBUG
 */
 
 #include "plserver.h"
@@ -312,7 +314,7 @@ plExitCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
 /* If client exists, tell it to self destruct */
 
-    Tcl_Eval(interp, "plserver_link_end");
+    Tcl_VarEval(interp, "plserver_link_end", (char **) NULL);
 
 /* Now really exit */
 
@@ -331,9 +333,7 @@ tcl_cmd(Tcl_Interp *interp, char *cmd)
     int result;
 
     dbug_enter("tcl_cmd");
-#ifdef DEBUG_ENTER
-    fprintf(stderr, "plserver: evaluating command %s\n", cmd);
-#endif
+    pldebug("tcl_cmd", "evaluating command %s\n", cmd);
 
     result = Tcl_VarEval(interp, cmd, (char **) NULL);
     if (result != TCL_OK) {
