@@ -30,6 +30,11 @@ C      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 @HAVE_F77PARSE_CL_FALSE@      write(0,'(a)') 'PLPARSEOPTS not implemented on this fortran'//
 @HAVE_F77PARSE_CL_FALSE@     & ' platform because iargc or getarg are not available'
 @HAVE_F77PARSE_CL_TRUE@      numargs = iargc()
+@HAVE_F77PARSE_CL_TRUE@      if(numargs.lt.0) then
+@HAVE_F77PARSE_CL_TRUE@C       This actually happened on badly linked Cygwin platform.
+@HAVE_F77PARSE_CL_TRUE@        write(0,'(a)') 'PLPARSEOPTS: negative number of arguments'
+@HAVE_F77PARSE_CL_TRUE@        return
+@HAVE_F77PARSE_CL_TRUE@      endif
 @HAVE_F77PARSE_CL_TRUE@      if(numargs+1.gt.maxargs) then
 @HAVE_F77PARSE_CL_TRUE@        write(0,'(a)') 'PLPARSEOPTS: too many arguments'
 @HAVE_F77PARSE_CL_TRUE@        return

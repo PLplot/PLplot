@@ -721,6 +721,13 @@ c      returned.  (All we are really interested in is the subsequent
 c      arguments.)
       call getarg(0, command)
       if(narg.gt.0) call getarg(1, command)
+c     ran into one case (Cygwin) where under certain badly linked 
+c     circumstances, iargc() could return -1
+      if(narg.lt.0) then
+        call exit(1)
+      else
+        call exit(0)
+      endif
       stop
       end],
   AC_MSG_RESULT(yes),
