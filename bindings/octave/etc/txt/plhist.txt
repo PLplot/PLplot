@@ -1,0 +1,27 @@
+  plhist(n, data, datmin, datmax, nbin, oldwin)
+  *********************************************
+
+  plhist
+
+  Plots a histogram from n data points stored in the array data. This
+  routine bins the data into nbin bins equally spaced between datmin and
+  datmax, and calls plbin to draw the resulting histogram. Parameter oldwin
+  allows the histogram either to be plotted in an existing window or causes
+  plhist to call plenv with suitable limits before plotting the histogram.
+
+  n (PLINT, input): Number of data points.
+
+  data (PLFLT *, input): Pointer to array with values of the n data
+  points.
+
+  datmin (PLFLT, input): Left-hand edge of lowest-valued bin.
+
+  datmax (PLFLT, input): Right-hand edge of highest-valued bin.
+
+  nbin (PLINT, input): Number of (equal-sized) bins into which to divide
+  the interval xmin to xmax.
+
+  oldwin (PLINT, input): If one, the histogram is plotted in the
+  currently-defined window, and if zero, plenv is called automatically before
+  plotting.
+

@@ -1,0 +1,8 @@
+  plend1()
+  ********
+
+  plend1
+
+  Ends a plotting session for the current output stream only. See plsstrm
+  for more info.
+

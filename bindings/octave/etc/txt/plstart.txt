@@ -1,0 +1,24 @@
+  plstart(device, nx, ny)
+  ***********************
+
+  plstart
+
+  Alternative to plstar for initializing the plotting package. The device
+  name keyword for the desired output device must be supplied as an argument.
+  The device keywords are the same as those printed out by plstar. If the
+  requested device is not available, or if the input string is empty or
+  begins with ``?'', the prompted startup of plstar is used. This routine
+  also divides the output device into nx by ny sub-pages, each of which may
+  be used independently. The subroutine pladv is used to advance from one
+  subpage to the next.
+
+  device (char *, input): Device name (keyword) of the required output
+  device. If NULL or if the first character is a ``?'', the normal (prompted)
+  startup is used.
+
+  nx (PLINT, input): Number of subpages to divide output page in the
+  horizontal direction.
+
+  ny (PLINT, input): Number of subpages to divide output page in the
+  vertical direction.
+

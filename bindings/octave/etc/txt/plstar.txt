@@ -1,0 +1,19 @@
+  plstar(nx, ny)
+  **************
+
+  plstar
+
+  Initializing the plotting package. The program prompts for the device
+  keyword or number of the desired output device. Hitting a RETURN in
+  response to the prompt is the same as selecting the first device. If only
+  one device is enabled when PLplot is installed, plstar will issue no
+  prompt. The output device is divided into nx by ny sub-pages, each of which
+  may be used independently. The subroutine pladv is used to advance from one
+  subpage to the next.
+
+  nx (PLINT, input): Number of subpages to divide output page in the
+  horizontal direction.
+
+  ny (PLINT, input): Number of subpages to divide output page in the
+  vertical direction.
+

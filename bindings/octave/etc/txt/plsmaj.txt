@@ -1,0 +1,14 @@
+  plsmaj(def, scale)
+  ******************
+
+  plsmaj
+
+  This sets up the length of the major ticks. The actual length is the
+  product of the default length and a scaling factor as for character height.
+
+  def (PLFLT, input): The default length of a major tick in millimeters,
+  should be set to zero if the default length is to remain unchanged.
+
+  scale (PLFLT, input): Scale factor to be applied to default to get
+  actual tick length.
+

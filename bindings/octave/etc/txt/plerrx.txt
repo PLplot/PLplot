@@ -1,0 +1,19 @@
+  plerrx(n, xmin, xmax, y)
+  ************************
+
+  plerrx
+
+  Draws a set of n horizontal error bars, the i'th error bar extending from
+  xmin[i] to xmax[i] at y coordinate y[i]. The terminals of the error bar are
+  of length equal to the minor tick length (settable using plsmin).
+
+  n (PLINT, input): Number of error bars to draw.
+
+  xmin (PLFLT *, input): Pointer to array with x coordinates of left-hand
+  endpoint of error bars.
+
+  xmax (PLFLT *, input): Pointer to array with x coordinates of right-hand
+  endpoint of error bars.
+
+  y (PLFLT *, input): Pointer to array with y coordinates of error bar.
+

@@ -1,0 +1,40 @@
+  plot3d(x, y, z, nx, ny, opt, side)
+  **********************************
+
+  plot3d
+
+  Plots a three dimensional surface plot within the environment set up by
+  plw3d. The surface is defined by the two-dimensional array z  , the point
+  z[i][j] being the value of the function at (x[i], y[j]). Note that the
+  points in arrays x and y do not need to be equally spaced, but must be
+  stored in ascending order. The parameter opt controls the way in which the
+  surface is displayed. For further details 3-d Plots.
+
+  x (PLFLT *, input): Pointer to set of x coordinate values at which the
+  function is evaluated.
+
+  y (PLFLT *, input): Pointer to set of y coordinate values at which the
+  function is evaluated.
+
+  z (PLFLT **, input): Pointer to a vectored two-dimensional array with
+  set of function values.
+
+  nx (PLINT, input): Number of x values at which function is evaluated.
+
+  ny (PLINT, input): Number of y values at which function is evaluated.
+
+  opt (PLINT, input): Determines the way in which the surface is
+  represented:
+
+   o 1: Lines are drawn showing z as a function of x for each value of y[j].
+   o 2: Lines are drawn showing z as a function of y for each value of x[i].
+   o 3: Network of lines is drawn connecting points at which function is
+     defined.
+
+  side (PLINT, input): Flag to indicate whether or not ``sides'' should be
+  draw on the figure. If side=0 no sides are drawn, otherwise the sides are
+  drawn.
+
+  mx (PLINT, input): Length of array in x direction, for plotting
+  subarrays (Fortran only).
+

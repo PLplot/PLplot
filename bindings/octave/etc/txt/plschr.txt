@@ -1,0 +1,15 @@
+  plschr(def, scale)
+  ******************
+
+  plschr
+
+  This sets up the size of all subsequent characters drawn. The actual
+  height of a character is the product of the default character size and a
+  scaling factor.
+
+  def (PLFLT, input): The default height of a character in millimeters,
+  should be set to zero if the default height is to remain unchanged.
+
+  scale (PLFLT, input): Scale factor to be applied to default to get
+  actual character height.
+

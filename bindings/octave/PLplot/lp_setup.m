@@ -1,0 +1,35 @@
+## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## 
+## This program is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by the
+## Free Software Foundation; either version 2 of the License, or (at your
+## option) any later version.
+## 
+## This program is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## This file is part of plplot_octave.
+
+# lp_setup(command)
+#
+# set your printer command and options for use with `save_fig'
+# default is "lp -c". In my system, '-c' make a copy of the file.
+# You must specify the lp command also, e.g. `lp_setup("lp -n 2 -d lj3")'
+
+function out = lp_setup(command)
+
+global __lp_options
+
+if (!exist("__lp_options"))
+	__lp_options = "lp -c";
+endif
+
+if (nargin == 1 && isstr(command))
+	__lp_options = command;
+endif
+
+out = __lp_options;
+
+endfunction

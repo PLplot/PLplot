@@ -1,0 +1,37 @@
+  plenv(xmin, xmax, ymin, ymax, just, axis)
+  *****************************************
+
+  plenv
+
+  Sets up plotter environment for simple graphs by calling pladv and
+  setting up viewport and window to sensible default values. plenv leaves
+  enough room around most graphs for axis labels and a title. When these
+  defaults are not suitable, use the individual routines plvspa, plvpor, or
+  plvasp for setting up the viewport, plwind for defining the window, and
+  plbox for drawing the box.
+
+  xmin (PLFLT, input): Value of x at left-hand edge of window.
+
+  xmax (PLFLT, input): Value of x at right-hand edge of window.
+
+  ymin (PLFLT, input): Value of y at bottom edge of window.
+
+  ymax (PLFLT, input): Value of y at top edge of window.
+
+  just (PLINT, input): If just=0, the x and y axes are scaled
+  independently to use as much of the screen as possible, but if just=1, the
+  scales of the x and y axes are made equal.
+
+  axis (PLINT, input): Controls drawing of the box around the plot:
+
+   o -2: No box or annotation.
+   o -1: Draw box only.
+   o 0: Draw box, labelled with coordinate values around edge.
+   o 1: In addition to box and labels, draw the two axes x=0 and y=0.
+   o 2: As for axis=1, but also draw a grid at the major tick interval.
+   o 10: Logarithmic x axis, linear y axis.
+   o 11: Logarithmic x axis, linear y axis and draw line y=0.
+   o 20: Linear x axis, logarithmic y axis.
+   o 21: Linear x axis, logarithmic y axis and draw line x=0.
+   o 30: Logarithmic x and y axes.
+

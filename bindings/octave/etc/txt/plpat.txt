@@ -1,0 +1,20 @@
+  plpat(nlin, inc, del)
+  *********************
+
+  plpat
+
+  Sets the area fill pattern. The pattern consists of 1 or 2 sets of
+  parallel lines with specified inclinations and spacings. The arguments to
+  this routine are the number of sets to use (1 or 2) followed by two
+  pointers to integer arrays (of 1 or 2 elements) specifying the inclinations
+  in tenths of a degree and the spacing in micrometers. (also see plpsty)
+
+   nlin (PLINT, input): Number of sets of lines making up the pattern,
+  either 1 or 2.
+
+   inc (PLINT *, input): Pointer to array with nlin elements. Specifies the
+  line inclination in tenths of a degree. (Should be between -900 and 900).
+
+   del (PLINT *, input): Pointer to array with nlin elements. Specify the
+  spacing in micrometers between the lines making up the pattern.
+

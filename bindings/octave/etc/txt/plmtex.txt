@@ -1,0 +1,37 @@
+  plmtex(side, disp, pos, just, text)
+  ***********************************
+
+  plmtex
+
+  Writes text at a specified position relative to the viewport boundaries.
+  Text may be written inside or outside the viewport, but is clipped at the
+  subpage boundaries. The reference point of a string lies along a line
+  passing through the string at half the height of a capital letter. The
+  position of the reference point along this line is determined by just, and
+  the position of the reference point relative to the viewport is set by disp
+  and pos.
+
+  side (char *, input): Specifies the side of the viewport along which the
+  text is to be written. The string must be one of:
+
+   o b: Bottom of viewport.
+   o l: Left of viewport, text written parallel to edge.
+   o lv: Left of viewport, text written at right angles to edge.
+   o r: Right of viewport, text written parallel to edge.
+   o rv: Right of viewport, text written at right angles to edge.
+   o t: Top of viewport.
+
+  disp (PLFLT, input): Position of the reference point of string, measured
+  outwards from the specified viewport edge in units of the current character
+  height. Use negative disp to write within the viewport.
+
+  pos (PLFLT, input): Position of the reference point of string along the
+  specified edge, expressed as a fraction of the length of the edge.
+
+  just (PLFLT, input): Specifies the position of the string relative to
+  its reference point. If just=0, the reference point is at the left and if
+  just=1, it is at the right of the string. Other values of just give
+  intermediate justifications.
+
+  text (char *, input): The string to be written out.
+

@@ -1,0 +1,10 @@
+  pllsty(n)
+  *********
+
+  pllsty
+
+  This sets the line style according to one of eight predefined patterns
+  (also see plstyl).
+
+  n (PLINT, input): Integer value between 1 and 8.
+

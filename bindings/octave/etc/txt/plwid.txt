@@ -1,0 +1,10 @@
+  plwid(width)
+  ************
+
+  plwid
+
+  Sets the pen width.
+
+  width (PLINT, input): The desired pen width. The pen width must be
+  between 1 and a device dependent maximum value.
+

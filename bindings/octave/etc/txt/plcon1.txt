@@ -1,0 +1,35 @@
+  plcon1(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, xg, yg)
+  *********************************************************
+
+  plcon1
+
+  Draws a contour plot of the data in z[nx][ny], using the nlevel contour
+  levels specified by clevel. Only the region of the array from kx to lx and
+  from ky to ly is plotted out. The arrays xg and yg are used to specify the
+  transformation between array indices and world coordinates. Contour plots
+  for more information.
+
+  z (PLFLT **, input): Pointer to a vectored two-dimensional array
+  containing data to be contoured.
+
+  nx, ny (PLINT, input): Physical dimensions of array z.
+
+  kx, lx (PLINT, input): Range of x indicies to consider.
+
+  ky, ly (PLINT, input): Range of y indicies to consider.
+
+  clevel (PLFLT *, input): Pointer to array specifying levels at which to
+  draw contours.
+
+  nlevel (PLINT, input): Number of contour levels to draw.
+
+  xg, yg (PLFLT *, input): Pointers to arrays which specify the
+  transformation from array indices to world coordinates. These must be
+  one-dimensional arrays, used for a transformation of the form: tx=f(x),
+  ty=f(y). Function values at locations between grid points are obtained via
+  linear interpolation.
+
+  NOTE: this function is intended for use from a Fortran caller only. The C
+  user should instead call plconf using the built-in transformation function
+  pltr1 for the same capability.
+

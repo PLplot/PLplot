@@ -1,0 +1,9 @@
+  plgfnam(fnam)
+  *************
+
+  plgfnam
+
+  Gets the current output file name, if applicable.
+
+  fnam (char *, output): Pointer to file name string.
+

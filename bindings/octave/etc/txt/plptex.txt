@@ -1,0 +1,32 @@
+  plptex(x, y, dx, dy, just, text)
+  ********************************
+
+  plptex
+
+  Writes text at a specified position and inclination within the viewport.
+  Text is clipped at the viewport boundaries. The reference point of a string
+  lies along a line passing through the string at half the height of a
+  capital letter. The position of the reference point along this line is
+  determined by just, the reference point is placed at world coordinates (x,
+  y) within the viewport. The inclination of the string is specified in terms
+  of differences of world coordinates making it easy to write text parallel
+  to a line in a graph.
+
+  x (PLFLT, input): x coordinate of reference point of string.
+
+  y (PLFLT, input): y coordinate of reference point of string.
+
+  dx (PLFLT, input): Together with dy, this specifies the inclination of
+  the string. The baseline of the string is parallel to a line joining (x, y)
+  to (x+dx, y+dy).
+
+  dy (PLFLT, input): Together with dx, this specifies the inclination of
+  the string.
+
+  just (PLFLT, input): Specifies the position of the string relative to
+  its reference point. If just=0, the reference point is at the left and if
+  just=1, it is at the right of the string. Other values of just give
+  intermediate justifications.
+
+  text (char *, input): The string to be written out.
+

@@ -1,0 +1,30 @@
+There must be more... see ToDo, they are mostly there
+
+0-  There is no support for NaNs or Infs
+
+1-	There are problems when plotting negative values with logaritm axis.
+	A possible soluction is the one used: use only positives values.
+	A horrible side effect is that a "baseline" is drawn near zero
+
+	Would't it be better to just plot nothing, and let the 
+		warning: implicit conversion from complex matrix to real matrix
+	message warn the user? Is this message enought?
+
+	The way gnuplot does this is not plotting the negative values, but this
+	in cumbersome to do in the script file. One would just plot with the back
+	ground color the negative values.
+
+	A partial fix is provided in 0.3.1
+
+2-	This is not a bug, but a PLplot feature: there is no autoscale, as
+	in gnuplot. This means that, after the first plot, after executing hold(),
+	further plotting will be clipped to the viewport defined by the first plot.
+	IT IS possible to redefine the viewport, but the previous plots will not 
+	be redrawn to the new viewport. Also, one would have to erase the previous
+	frame box and draw a new one.
+
+4-	`ginput' lets the cross-hair drawn in the plot. Don't know how to avoid it.
+	Issue 'plflush' at the command line as a remedy.
+
+5-	bottom_title and top_title can't be used.
+

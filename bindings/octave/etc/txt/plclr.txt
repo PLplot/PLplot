@@ -1,0 +1,8 @@
+  plclr()
+  *******
+
+  plclr
+
+  Clears the graphics screen of an interactive device, or ejects a page on
+  a plotter. plpage for more information.
+

@@ -1,0 +1,19 @@
+  plgpage(xp, yp, xleng, yleng, xoff, yoff)
+  *****************************************
+
+  plgpage
+
+  Gets the current page configuration.
+
+  xp (PLINT *, output): Pointer to number of pixels in x.
+
+  yp (PLINT *; output): Pointer to number of pixels in y.
+
+  xleng (PLINT *, output): Pointer to x page length value.
+
+  yleng (PLINT *, output): Pointer to y page length value.
+
+  xoff (PLINT *, output): Pointer to x page offset.
+
+  yoff (PLINT *, output): Pointer to y page offset.
+

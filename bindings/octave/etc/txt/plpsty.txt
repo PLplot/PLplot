@@ -1,0 +1,10 @@
+  plpsty(n)
+  *********
+
+  plpsty
+
+  Select one of eight predefined area fill patterns to use (also see
+  plpat).
+
+  n (PLINT *, input): The desired pattern.
+

@@ -1,0 +1,18 @@
+  pladv(sub)
+  **********
+
+  pladv
+
+  Advances to the next subpage if sub=0, performing a page advance if there
+  are no remaining subpages on the current page. If subwindowing isn't being
+  used, pladv(0) will always advance the page. If sub>0, PLplot switches to
+  the specified subpage. Note that this allows you to overwrite a plot on the
+  specified subpage; if this is not what you intended, use plclr followed by
+  plpage to first advance the page. This routine is called automatically
+  (with sub=0) by plenv, but if plenv is not used, pladv must be called after
+  initializing PLplot but before defining the viewport.
+
+  sub (PLINT, input): Specifies the subpage number (starting from 1 in the
+  top left corner and increasing along the rows) to which to advance. Set to
+  zero to advance to the next subpage.
+

@@ -1,0 +1,19 @@
+  plpage()
+  ********
+
+  plpage
+
+  Begins a new page. For a file driver, the output file is opened if
+  necessary. Advancing the page via plclr and plpage is useful when a page
+  break is desired at a particular point when plotting to subpages. Another
+  use for plclr and plpage is when plotting pages to different files, since
+  you can manually set the file name (or file handle) by calling plsfnam or
+  plsfile after the call to plclr (in fact some drivers may only support a
+  single page per file, making this a necessity). One way to handle this case
+  automatically is to page advance via pladv, but enable familying (see
+  plsfam) with a small byte per file limit so that a new family member file
+  will be created on each page break.
+
+  Except for one of these circumstances, it is best to advance the page or
+  subpage simply by the call pladv(0).
+

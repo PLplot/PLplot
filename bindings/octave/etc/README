@@ -1,0 +1,3 @@
+If a file is put in directory po, with the same name as a function and
+extension txt, it is included as the help text for that function.
+

@@ -1,0 +1,19 @@
+  plpoin(n, x, y, code)
+  *********************
+
+  plpoin
+
+  Marks out a set of n points at positions (x(i), y(i)), using the symbol
+  defined by code. If code is between 32 and 127, the symbol is simply the
+  printable ASCII character in the default font.
+
+  n (PLINT, input): Number of points to be marked.
+
+  x (PLFLT *, input): Pointer to array with set of x coordinate values for
+  the points.
+
+  y (PLFLT *, input): Pointer to array with set of y coordinate values for
+  the points.
+
+  code (PLINT, input): Code number for the symbol to be plotted.
+

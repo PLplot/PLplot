@@ -1,0 +1,16 @@
+  plinit()
+  ********
+
+  plinit
+
+  Initializing the plotting package. The program prompts for the device
+  keyword or number of the desired output device. Hitting a RETURN in
+  response to the prompt is the same as selecting the first device. plinit
+  will issue no prompt if either the device was specified previously (via
+  command line flag or the plsdev function), or if only one device is enabled
+  when PLplot is installed. If subpages have been specified, the output
+  device is divided into nx by ny sub-pages, each of which may be used
+  independently. If plinit is called again during a program, the previously
+  opened file will be closed. The subroutine pladv is used to advance from
+  one subpage to the next.
+

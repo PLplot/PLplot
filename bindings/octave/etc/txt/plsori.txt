@@ -1,0 +1,14 @@
+  plsori(ori)
+  ***********
+
+  plsori
+
+  Sets the current orientation. If ori is equal to zero (default) then
+  landscape is used (x axis is parallel to the longest edge of the page),
+  otherwise portrait is used. This option is not supported by all output
+  drivers (in particular, most interactive screen drivers ignore the
+  orientation). This routine, if used, must be called before initializing
+  PLplot.
+
+  ori (PLINT, input): Orientation value.
+
