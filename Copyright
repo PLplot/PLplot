@@ -1,49 +1,16 @@
-The PLPLOT package is freely distributable, but NOT in the public domain.
-The PLPLOT source code, except header files and those files explicitly
-granting permission, may not be used in a commercial software package
-without consent of the authors.  You are allowed and encouraged to include
-the PLPLOT object library and header files in a commercial package provided
-that: (1) it is explicitly and prominently stated that the PLPLOT library
-is freely available, and (2) the full copyrights on the PLPLOT package be
-displayed somewhere in the documentation for the package. 
+The PLplot package may be distributed under the terms of the GNU General
+Public License (GPL), except as noted below.  The text of this license is
+given in the file COPYING in the distribution directory.
 
-The authors disclaim all warranties with regard to this software, including
-all implied warranties of merchantability and fitness, in no event shall
-the authors be liable for any special, indirect or consequential damages or
-any damages whatsoever resulting from loss of use, data or profits, whether
-in an action of contract, negligence or other tortious action, arising out
-of or in connection with the use or performance of this software. 
+The PLplot library may be distributed under the terms of the GNU Library
+General Public License (LGPL), except as noted below.  The text of this
+license is given in the file COPYING.LIB in the distribution directory.
 
-PLPLOT was first derived from the excellent PGPLOT graphics package by T.
-J. Pearson.  All parts of PLPLOT not explicitly marked by a copyright are
-assumed to derive sufficiently from the original to be covered by the
-PGPLOT copyright:
-***********************************************************************
-*                                                                     *
-*  Copyright (c) 1983-1991 by                                         *
-*  California Institute of Technology.                                *
-*  All rights reserved.                                               *
-*                                                                     *
-*  For further information, contact:                                  *
-*     Dr. T. J. Pearson                                               *
-*     105-24 California Institute of Technology,                      *
-*     Pasadena, California 91125, USA                                 *
-*                                                                     *
-***********************************************************************
+The startup code used in argument handling (utils/plrender.c and
+src/plargs.c) is partially derived from "xterm.c" of the X11R5
+distribution, and its copyright is reproduced here:
 
-The code in PLPLOT not derived from PGPLOT is
-
-    Copyright 1992, 1993 by
-
-    Maurice J. LeBrun and Geoff Furnish
-    University of Texas
-
-    Tony Richardson
-    Duke University
-
-The startup code for plrender.c is from 'xterm.c' of the X11R5
-distribution, and we reproduce its copyright here:
-***********************************************************
+******************************************************************************
 Copyright 1987, 1988 by Digital Equipment Corporation, Maynard, Massachusetts,
 and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
@@ -64,4 +31,21 @@ ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
 ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
-*******************************************************************
+******************************************************************************
+
+Any file that is explicitly marked as "public domain" is free from any
+restriction on distribution.  
+
+Any file that has a explicit copyright notice may be distributed under
+the terms of both the GPL and whatever stated conditions accompany the
+copyright.
+
+Notes: the intent behind these licenses is to ensure that PLplot continues
+to evolve in a positive way, while remaining freely distributable.
+Placing the library under the LGPL enables software developers to use the
+PLplot library as an integral part of their product, even a commercial
+product.  Under the conditions of the LGPL, however, the source code to
+the library must remain freely available.  This means that if you modify
+the library to better suit your purposes, you are required to distribute
+those changes freely to the general PLplot user community.
+
