@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/04/08 12:08:21  mjl
+ * Revision 1.3  1994/04/25 19:02:55  mjl
+ * Increased the number of shade regions to make it a bit more interesting
+ * when playing with the palette.
+ *
+ * Revision 1.2  1994/04/08  12:08:21  mjl
  * Cleaned up some, switched to more interesting test function.
  *
  * Revision 1.1  1994/03/30  07:22:55  mjl
@@ -14,7 +18,7 @@
 #include <plplot.h>
 #include <math.h>
 
-#define NCONTR	20
+#define NCONTR	30
 #define XPTS    35
 #define YPTS    46
 #define XSPA    2./(XPTS-1)
