@@ -13,44 +13,42 @@
 ## This file is part of plplot_octave.
 
 ## set_view (alt, az)
-## set_view (script)
+## set_view (script, arg1, ...)
 ## set_view ()
 ##
-## Set up the altitude and azimute in degrees for posterior 3d plots.
+## If called with two numeric arguments, sets up the altitude and azimute
+## in degrees for posterior 3d plots.
 ##
 ## If called without arguments, rotates iteratively a cube using the mouse.
-## If called with one string argument, instead of a cube `script' is evaluated
-## and should do a 3D plot.
 ##
-## button 1 press marks new origin
-## button 1,3 drag, rotate cube
-## button 2 press terminate
-## button 3 press default position
+## If called with one string as the first argument, instead of a cube the string
+## is evaluated as a function and should do a 3D plot, using the remaining arguments.
 ##
-## example of callback `script'. Call as set_view("f")
+##     example of callback `script':
+##      [x, y, z] = rosenbrock; z = log(z);
+##      set_view("surfl", x, y, z);
 ##
-## function f ()
-##  static x, y, z;
-##  if (!exist ("x"))
-##    [x, y, z] = rosenbrock;
-##    z = log (z);
-##  else
-##    mesh (x, y, z) # surfl (x, y, z) 
-##  endif;
-## endfunction
+## To control the view angle, the following mouse buttons can be used:
+##
+##    button 1 press marks new origin
+##    button 1,3 drag, rotate cube
+##    button 2 press terminate
+##    button 3 press default position
 
-function set_view (alt, az)
+function set_view (alt, az, ...)
 
   global __pl 
   __pl_strm = __pl_init;
 
   callback = 0;
-  if (nargin == 2)
+
+  if (nargin == 2 && !isstr(alt))
     __pl.az(__pl_strm) = az;
     __pl.alt(__pl_strm) = alt;
     return
-  elseif (nargin == 1 && isstr(alt))
-    script = alt;
+  elseif (nargin >= 2 && isstr(alt))
+    cmd = alt;
+    arg1 = az;	
     callback = 1;
   endif
 
@@ -80,14 +78,14 @@ function set_view (alt, az)
     xM = yM = zM = 1;
   else
     title(sprintf("Alt=%d   Az=%d", alt, az));
-    eval(script);
+    feval(cmd, arg1, all_va_args);
   endif
   
   odx = ody = 0;
   c_alt = c_az = 0;
   
   while (1)
-    [status, state, keysym, button, string, pX, pY, dX, dY, wX, wY] = plGetCursor;
+    [status, state, keysym, button, string, pX, pY, dX, dY, wX, wY, subwin] = plGetCursor;
 
     if (button == 3) # default position
       az = -60; alt = 30;
@@ -132,7 +130,7 @@ function set_view (alt, az)
       __pl.az(__pl_strm) = az + c_az; 
       __pl.alt(__pl_strm) = alt + c_alt;
       title(sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
-      eval(script);
+      feval(cmd, arg1, all_va_args);
     endif
     
   endwhile
