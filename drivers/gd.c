@@ -36,10 +36,6 @@
 
 #include "gd.h"
 
-#ifndef bzero   /* not standard ANSI (boo hoo) */
-#define bzero(a,b) memset(a,0,b)
-#endif
-
 /* Prototypes for functions in this file. */
 
 static void	fill_polygon	(PLStream *pls);
@@ -49,8 +45,6 @@ static void     plD_init_png_Dev(PLStream *pls);
 /* top level declarations */
 
 #define NCOLOURS 256    /* Hardwire this for now */
-
-
 
 /* Struct to hold device-specific info. */
 
@@ -83,7 +77,8 @@ static void
 plD_init_png_Dev(PLStream *pls)
 {
     png_Dev *dev;
-
+    int i;
+    
 /* Allocate and initialize device-specific data */
 
     if (pls->dev != NULL)
@@ -93,13 +88,19 @@ plD_init_png_Dev(PLStream *pls)
     if (pls->dev == NULL)
 	plexit("plD_init_png_Dev: Out of memory.");
 
-    bzero(pls->dev,sizeof(png_Dev)); /* I'm lazy - quick way of setting everything to 0 */
-
     dev = (png_Dev *) pls->dev;
 
     dev->colour=1;
     dev->totcol=16;
-
+ 
+/*
+ * To try and fix the problem colourmap problems, I will try something new.
+ * The colourmap index will be set to "-8888" and that way I will know when
+ * a colour has been allocated, so I can manually deallocate it.
+ */
+ 
+    for (i=0;i<256;++i) dev->colour_index[i]=-8888;
+    
     if ( (pls->dev_compression<=0)||(pls->dev_compression>99) )
        pls->dev_compression=90;
 
@@ -246,7 +247,23 @@ setcmap(PLStream *pls)
     PLColor cmap1col;
     png_Dev *dev=(png_Dev *)pls->dev;
 
-       ncol0=pls->ncol0;
+/*
+ * In theory when you call "gdImageDestroy()" the colourmap for that image
+ * should be reset. Just to make absolutel sure it dies, and is completely
+ * cleared out, the next bit of code will go through and try to flush out
+ * all the colours, even if they should already have been flushed.
+ */
+ 
+    for (i=0;i<256;++i)
+        {
+         if (dev->colour_index[i]!=-8888)
+            {
+             gdImageColorDeallocate(dev->im_out,dev->colour_index[i]);
+             dev->colour_index[i]=-8888;
+            }
+        }
+        
+    ncol0=pls->ncol0;
 
 /* Initialize cmap 0 colors */
 
@@ -275,16 +292,25 @@ if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
    {
     if (pls->hack!=1)
        {
-        gdImageColorDeallocate(dev->im_out,dev->colour_index[15]);
+       if (dev->colour_index[15]!=-8888)
+            {
+             gdImageColorDeallocate(dev->im_out,dev->colour_index[15]);
+            } 
         dev->colour_index[15]=gdImageColorAllocate(dev->im_out,0, 0, 0);
        }
     else
        {
-        gdImageColorDeallocate(dev->im_out,dev->colour_index[15]);
+       if (dev->colour_index[15]!=-8888)
+            {
+             gdImageColorDeallocate(dev->im_out,dev->colour_index[15]);
+            } 
         dev->colour_index[15]=gdImageColorAllocate(dev->im_out, 
                               pls->cmap0[1].r, pls->cmap0[1].g, pls->cmap0[1].b);
 
-        gdImageColorDeallocate(dev->im_out,dev->colour_index[1]);
+       if (dev->colour_index[1]!=-8888)
+            {
+             gdImageColorDeallocate(dev->im_out,dev->colour_index[1]);
+            } 
         dev->colour_index[1]=gdImageColorAllocate(dev->im_out,0,0,0); 
                               
       }
@@ -350,7 +376,10 @@ png_Dev *dev=(png_Dev *)pls->dev;
          * to have to do it to make things work the way you expect them too.
          */
          
-        gdImageColorDeallocate(dev->im_out,dev->colour_index[icol1]);
+        if (dev->colour_index[icol1]!=-8888)  /* Make sure we are not deallocating */
+            {                                 /* an "unallocated" colour           */
+             gdImageColorDeallocate(dev->im_out,dev->colour_index[icol1]);
+            } 
         dev->colour_index[icol1]=gdImageColorAllocate(dev->im_out,r, g, b);
  	dev->colour = icol1;
 	}
@@ -419,7 +448,6 @@ void plD_tidy_png(PLStream *pls)
    png_Dev *dev=(png_Dev *)pls->dev;
 
    fclose(pls->OutFile);
-   free_mem (pls->dev);
 
 }
 
