@@ -81,7 +81,8 @@ class plstream {
     plstream();
     plstream( PLS::stream_id sid, int strm =0 );
     plstream( int _stream ) : stream(_stream) {}
-    plstream( int nx /*=1*/, int ny /*=1*/, const char *driver =NULL );
+    plstream( int nx /*=1*/, int ny /*=1*/, 
+	      const char *driver =NULL, const char *file =NULL );
 
     ~plstream();
 

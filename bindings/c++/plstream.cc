@@ -229,12 +229,14 @@ plstream::plstream( PLS::stream_id sid, int strm /*=0*/ )
     }
 }
 
-plstream::plstream( int nx, int ny, const char *driver )
+plstream::plstream( int nx, int ny, const char *driver, const char *file )
 {
     ::c_plsstrm(next_stream++);
 
     if (driver)
 	::c_plsdev(driver);
+    if (file)
+	::c_plsfnam(file);
     ::c_plssub( nx, ny );
     ::c_plinit();
 
