@@ -124,10 +124,15 @@ c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
  * here, but our educated guess is this fill should be done via the clipping
  * interface instead as below.
  * No example tests this code so one of our users will end up inadvertently
- * testing this for us.  */
+ * testing this for us. 
+ *
+ * jc: I have checked, and both versions does give the same result, i.e., clipping
+ * to the window boundaries. The reason is that the above plP_clip_poly() does
+ * the clipping. To check this, is enough to diminish the x/y/z min/max arguments in
+ * plw3d() in x08c. But let's keep it, although 10% slower...
+ */
     plP_plfclp(xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
-	       plsc->clpymi, plsc->clpyma, plP_fill);
-   
+           plsc->clpymi, plsc->clpyma, plP_fill);
 }
 
 /*----------------------------------------------------------------------*\
