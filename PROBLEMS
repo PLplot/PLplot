@@ -17,14 +17,6 @@ environment with tcl/tk)
 
 Essential, minor effort required.
 
-* Check that make DESTDIR=/tmp/staging install works so that our package is
-build-relocatable.  This facility is essential so that our rpm and deb
-packages build correctly.  Alan
-
-* Build rpm on RH 7.3.  Alan
-
-* Rebuild documentation on Debian.  Alan
-
 * Document new API (plmesh3[c], plot3d[c], plsurf3d), etc.  Alan
 
 * PLplot documentation of python, java, etc., interfaces.  Alan
@@ -119,10 +111,11 @@ installed versions should have the correct permissions using the autotools
 approach.
 
 * bindings/tk/plcolor.tcl has execute permissions that should be removed.
-examples/tcl/stats.log should be made world-readable.  Both these cvs 
-permission problems need access to the CVS repository to fix. However, under
-autotools you can change the permissions at will in the installed product so
-this issue only affects "make check" for uninstalled testing.
+scripts/make_tarball.sh should be executable and also documents other
+permissions problems such as examples/tcl/stats.log. These cvs permission
+problems need access to the CVS repository to fix. However, under autotools
+you can change the permissions at will in the installed product so this
+issue only affects "make check" for uninstalled testing.
 
 * debian subdirectory made part of HEAD so can build debs directly
 from HEAD.  Careful here! Any further cvs merges should check that repository

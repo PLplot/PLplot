@@ -1,3 +1,13 @@
+2003-01-19  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* scripts/make_tarball.sh: new script for preparing release tarball
+	  tree.
+
+	* rpm/plplot_redhat7.3.spec: update to plplot-5.2.0.
+	
+	* plplot-5.2.0 release!
+
+
 2003-01-15  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Cleaned out hundreds of zombied files that were in the Attic
