@@ -2,7 +2,7 @@
 # Description: Automake template for the PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Thu Nov 30 16:04:10 CET 2000
+# Last modified on: Mon Dec  4 13:39:08 CET 2000
 # $Id$
 
 MASTER_XML = plplotdoc.xml
@@ -37,7 +37,7 @@ EXTRA_DIST = \
 CLEANFILES = \
   *.$(HTML_EXT) $(HTML_MANIFEST) $(INFO_MANIFEST)\
   *.jadetex *.aux *.dvi *.ps* *.pdf* inline.ent *.log *.eps TMP.* \
-  *.out *.info* *.texi *.txml *.xml-info
+  *.out *.info* *.texi *.txml *.xml-info *-tmp
 
 
 JADE = @JADE@
@@ -117,9 +117,13 @@ info: $(PACKAGE).info
 
 %.txml: %.xml-info $(SOURCE_FILES) inline-info.ent
 	ln -fs inline-info.ent inline.ent
-	$(PERL) $(DOCBOOK2X_INC) $(DOCBOOK2TEXIXML) $< > $@
+	if $(PERL) $(DOCBOOK2X_INC) $(DOCBOOK2TEXIXML) $< > $@-tmp ; then \
+	  mv $@-tmp $@ ; \
+	else \
+	  false ; \
+	fi
 
-%.xml-info: %.xml
+%.xml-info: %.xml $(SOURCE_FILES)
 	$(PERL) $(BINDIR)/info-clean.pl $< > $@
 
 .PHONY: all html print info

@@ -1,3 +1,10 @@
+2000-12-04  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Makefile.am (%.xml-info): Added $(SOURCE_FILES) as dependency.
+	(%.txml): More robust rule.  If docbook2texixml script fails, the
+	target file is not generated.
+	(CLEANFILES): Include *-tmp pattern, needed by %.txml rule.
+
 2000-11-30  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Makefile.am ($(BASE).pdf.gz): Implements the recursion trick to
