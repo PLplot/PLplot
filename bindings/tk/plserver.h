@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1994/06/23 22:34:22  mjl
+ * Revision 1.18  1994/06/30 18:47:06  mjl
+ * Restructured, to make Tk driver more independent of plserver (tk.c no
+ * longer includes this file).  Eventually it will be possible to link the
+ * Tk driver with Tcl-DP only, and not X or Tk, and the function of the
+ * header files must be well defined by then.
+ *
+ * Revision 1.17  1994/06/23  22:34:22  mjl
  * Now includes pltcl.h for all Tcl API stuff.
  *
  * Revision 1.16  1994/06/16  19:07:08  mjl
@@ -23,16 +29,8 @@
 #define __PLSERVER_H__
 
 #include <plplotP.h>
-#include <plplotTK.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <math.h>
-#include <ctype.h>
 #include <pltcl.h>
+#include <plplotTK.h>
 
 /* State info for the rendering code */
 
@@ -51,34 +49,11 @@ typedef struct {
 /* Note that tcl command functions are added during Pltk_Init and don't */
 /* need to be called directly by the user */
 
-/* from plframe.c */
+/* From plframe.c */
 
 int
 plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 	   int argc, char **argv);
-
-/* from tkshell.c */
-
-/* Create top level window */
-
-int
-pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
-	      char *display, char *basename, char *classname);
-
-/* Run a script */
-
-int
-pltk_source(Tk_Window w, Tcl_Interp *interp, char *script);
-
-/* Sets up auto_path variable */
-
-int
-pls_auto_path(Tcl_Interp *interp);
-
-/* Tcl command -- wait until the specified condition is satisfied. */
-
-int
-plWait_Until(ClientData, Tcl_Interp *, int, char **);
 
 /* from plr.c */
 
@@ -91,22 +66,5 @@ plr_start(PLRDev *plr);
 
 int
 plr_process(PLRDev *plr);
-
-/* From tcpip.c */
-
-/* Modified version of the "Tdp_PacketReceive" command. */
-
-int
-pl_PacketReceive(Tcl_Interp *interp, PLiodev *iodev, PDFstrm *pdfs);
-
-/* Modified version of the "Tdp_PacketSend" command. */
-
-int
-pl_PacketSend(Tcl_Interp *interp, PLiodev *iodev, PDFstrm *pdfs);
-
-/* Tcl command -- return the IP address for the current host.  */
-
-int
-plHost_ID(ClientData clientData, Tcl_Interp *interp, int argc, char **argv);
 
 #endif	/* __PLSERVER_H__ */
