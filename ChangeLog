@@ -1,8 +1,8 @@
 2002-12-12  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
-	* autotools support for installing java plplot wrapper library,
-	  libplplotjava, java/plplot/core classes, and java source for
-	  examples in java/plplot/examples.
+	* Implement autotools support for building and installing java
+	  plplot wrapper library, libplplotjava, java/plplot/core classes,
+	  and installing java source for examples in java/plplot/examples.
 
 2002-12-13  "[iso-8859-1] João Cardoso" <jcard@fe.up.pt>
 
