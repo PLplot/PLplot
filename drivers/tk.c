@@ -94,6 +94,7 @@ static void  plwindow_init	(PLStream *pls);
 static void  link_init		(PLStream *pls);
 static void  GetCursor		(PLStream *pls, PLGraphicsIn *ptr);
 static void  tk_XorMod          (PLStream *pls, PLINT *ptr);
+static void  set_windowname	(PLStream *pls);
 
 /* performs Tk-driver-specific initialization */
 
@@ -106,9 +107,7 @@ static void  abort_session	(PLStream *pls, char *);
 static void  server_cmd		(PLStream *pls, char *, int);
 static void  tcl_cmd		(PLStream *pls, char *);
 static void  copybuf		(PLStream *pls, char *cmd);
-static int   pltk_toplevel	(Tk_Window *w, Tcl_Interp *interp,
-				 char *display, char *basename,
-				 char *classname);
+static int   pltk_toplevel	(Tk_Window *w, Tcl_Interp *interp);
 
 static void  ProcessKey		(PLStream *pls);
 static void  ProcessButton	(PLStream *pls);
@@ -709,6 +708,8 @@ static void
 tk_start(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
+    char *pname;
+    int i;
 
     dbug_enter("tk_start");
 
@@ -723,23 +724,17 @@ tk_start(PLStream *pls)
 
     tcl_cmd(pls, "rename exec {}");
 
-/* Initialize top level window */
-/* Request a variant on pls->program (if set) for the main window name */
+/* Set top level window name & initialize */
 
-    if (pls->program == NULL)
-	pls->program = "plclient";
-
+    set_windowname(pls);
     if (pls->dp) {
 	Tcl_SetVar(dev->interp, "dp", "1", TCL_GLOBAL_ONLY);
 	dev->updatecmd = "dp_update";
     }
     else {
-	char name[80];
-	sprintf(name, "_%s_%02d", pls->program, pls->ipls); 
 	Tcl_SetVar(dev->interp, "dp", "0", TCL_GLOBAL_ONLY);
 
-    /* tk_init need this. Use pls->FileName first, then DISPLAY, then
-       :0.0 */
+    /* tk_init needs this. Use pls->FileName first, then DISPLAY, then :0.0 */
 
         if (pls->FileName != NULL) 
             Tcl_SetVar2(dev->interp, "env", "DISPLAY", pls->FileName, TCL_GLOBAL_ONLY);
@@ -749,7 +744,7 @@ tk_start(PLStream *pls)
             Tcl_SetVar2(dev->interp, "env", "DISPLAY", "unix:0.0", TCL_GLOBAL_ONLY); /* tk_init need this */
 
 	dev->updatecmd = "update";
-	if (pltk_toplevel(&dev->w, dev->interp, pls->FileName, name, name))
+	if (pltk_toplevel(&dev->w, dev->interp))
 	    abort_session(pls, "Unable to create top-level window");
     }
 
@@ -1302,36 +1297,6 @@ plwindow_init(PLStream *pls)
 
     dbug_enter("plwindow_init");
 
-    if (pls->plwindow == NULL) {
-
-    /* Give window a name */
-    /* Eliminate any leading path specification */
-
-	pls->plwindow = (char *)
-	    malloc(10+(strlen(pls->program)) * sizeof(char));
-
-	pname = strrchr(pls->program, '/');
-	if (pname != NULL) 
-	    pname++;
-	else
-	    pname = pls->program;
-
-    /* Ensure that multiple widgets created by multiple streams have unique */
-    /* names (in case this kind of capability is someday supported) */
-
-	if (pls->ipls == 0)
-	    sprintf(pls->plwindow, ".%s", pname);
-	else
-	    sprintf(pls->plwindow, ".%s_%d", pname, (int) pls->ipls);
-
-    /* Replace any blanks with underscores to avoid quoting problems. */
-
-	for (i = 0; i < strlen(pls->plwindow); i++) {
-	    if (pls->plwindow[i] == ' ')
-		pls->plwindow[i] = '_';
-	}
-    }
-
     Tcl_SetVar(dev->interp, "plwindow", pls->plwindow, 0);
 
 /* Create the plframe widget & anything else you want with it. */
@@ -1384,6 +1349,50 @@ plwindow_init(PLStream *pls)
 
     server_cmd( pls, "$plw_start_proc $plwindow", 1 );
     tk_wait(pls, "[info exists widget_is_ready]" );
+}
+
+/*--------------------------------------------------------------------------*\
+ * set_windowname
+ *
+ * Set up top level window name.  Use pls->program, modified appropriately.
+\*--------------------------------------------------------------------------*/
+
+static void
+set_windowname(PLStream *pls)
+{
+    char *pname;
+    int i;
+
+/* Set to "plclient" if not initialized via plargs or otherwise */
+
+    if (pls->program == NULL)
+	pls->program = "plclient";
+
+/* Eliminate any leading path specification */
+
+    pname = strrchr(pls->program, '/');
+    if (pname) 
+	pname++;
+    else
+	pname = pls->program;
+
+    pls->plwindow = (char *) malloc(10+(strlen(pname)) * sizeof(char));
+
+/* Allow for multiple widgets created by multiple streams */
+
+    if (pls->ipls == 0)
+	sprintf(pls->plwindow, ".%s", pname);
+    else
+	sprintf(pls->plwindow, ".%s_%d", pname, (int) pls->ipls);
+
+/* Replace any ' 's with '_'s to avoid quoting problems. */
+/* Replace any '.'s (except leading) with '_'s to avoid bad window names. */
+
+    for (i = 0; i < strlen(pls->plwindow); i++) {
+	if (pls->plwindow[i] == ' ') pls->plwindow[i] = '_';
+	if (i == 0) continue;
+	if (pls->plwindow[i] == '.') pls->plwindow[i] = '_';
+    }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1445,14 +1454,8 @@ link_init(PLStream *pls)
 	tcl_cmd(pls, "plclient_dp_init");
 	iodev->fileHandle = Tcl_GetVar(dev->interp, "data_sock", 0);
 
-#if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
-#define FILECAST 
-#else 
-#define FILECAST (ClientData)
-#endif
-
 	if (Tcl_GetOpenFile(dev->interp, iodev->fileHandle,
-			    0, 1, FILECAST &iodev->file) != TCL_OK) {
+			    0, 1, (ClientData) &iodev->file) != TCL_OK) {
 
 	    fprintf(stderr, "Cannot get file info:\n\t %s\n",
 		    dev->interp->result);
@@ -1997,41 +2000,16 @@ Locate(PLStream *pls)
 \*--------------------------------------------------------------------------*/
 
 static int
-pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
-	      char *display, char *basename, char *classname)
+pltk_toplevel(Tk_Window *w, Tcl_Interp *interp)
 {
-    char *new_name;
     static char wcmd[] = "wm withdraw .";
-
-/*
- * Determine server name.  If it contains any forward slashes ("/"), only
- * use the part following the last "/" so that name can be loaded with 
- * argv[0] by caller.
- */
-    new_name = strrchr(basename, '/');
-    if (new_name != NULL) 
-	basename = ++new_name;
-
-    new_name = strrchr(classname, '/');
-    if (new_name != NULL) 
-	classname = ++new_name;
 
 /* Create the main window without mapping it */
 
-#if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
-
-    *w = Tk_CreateMainWindow(interp, display, basename, classname);
-
-    if (*w == NULL) {
-	fprintf(stderr, "%s\n", (interp)->result);
-	return 1;
-    }
-#else
     if (Tk_Init( interp )) {
         fprintf(stderr,"tk_init:%s\n", interp->result);
 	return 1;
     }
-#endif
 
     Tcl_VarEval(interp, wcmd, (char *) NULL);
 
