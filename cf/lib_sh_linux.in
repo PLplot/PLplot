@@ -108,7 +108,7 @@ $(PLLIB_SO):	$(BLD_MATLIB_SO) $(LIB_OBJS:%=shared/%) $(STUPIDTK_OBJ)
 	@echo ""
 
 
-$(MATLIB_SO): $(MAT_OBJS)
+$(MATLIB_SO): $(MAT_OBJS:%=shared/%)
 	-$(RM) $(MATLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
@@ -119,7 +119,7 @@ $(MATLIB_SO): $(MAT_OBJS)
 	ln -sf $(MAT_SONAME) $(MAT_LINKNAME)
 	@echo ""
 
-$(CXXLIB_SO): $(CXX_OBJS)
+$(CXXLIB_SO): $(CXX_OBJS:%=shares/%)
 	-$(RM) $(CXXLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
