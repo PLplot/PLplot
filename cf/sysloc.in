@@ -968,7 +968,7 @@ if test "$enable_python" = "yes"; then
 	if test "$enable_python" = "yes"; then
 	    FIND_INC(arrayobject, PYTHON_NUM_DIR, numeric_python)
 	    if test "$numeric_python" = "no"; then
-		AC_MSG_RESULT([plmodule needs Python numeric extension.])
+		AC_MSG_RESULT([plplot module needs Python numeric extension.])
 		AC_MSG_RESULT([Setting enable_python to no])
 		enable_python=no
 	    fi
@@ -1008,7 +1008,7 @@ if test "$enable_python" = "yes"; then
 		AC_MSG_RESULT([PYTHON_MOD_DIR not found, setting enable_python to no])
 		enable_python=no
 	    fi
-	    # for modern (versioned) systems set the plmodule.so install location
+	    # for modern (versioned) systems set the plplotcmodule.so install location
 	    # to be identical to $PYTHON_MACH_DIR except possibly for the prefix
 	    if test -z "$PYTHON_DIR"; then
 	        PYTHON_DIR=$prefix/lib/$python_ver/$MACHDEP
@@ -1018,7 +1018,7 @@ if test "$enable_python" = "yes"; then
 	PYTHON_CFG_DIR=$PYTHON_MOD_DIR/config
     fi
     if test -z "$PYTHON_DIR"; then
-        #default location for installing plmodule.so if versioned logic failed above.
+        #default location for installing plplotcmodule.so if versioned logic failed above.
         PYTHON_DIR=$prefix/python
     fi
 fi

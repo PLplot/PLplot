@@ -977,35 +977,24 @@ if test "$enable_f77" = "yes"; then
 fi
 
 if test "$enable_python" = "yes"; then
-    # Specifically exclude $srcdir/bindings/python/*.py from this list
-    # of symlinks.  setup.py is configured now using cf/setup.py.in.
-    # Plframe.py and TclSup.py are not currently used by standard python
-    # so exclude them, but Geoffrey may need to put them back specifically
-    # for his special build, I (AWI) don't know.
+    # Only symlink required files from bindings/python since there
+    # are extras there that are presently unused.
     ln -s \
-    $srcdir/bindings/python/*.c \
+    $srcdir/bindings/python/plplotcmodule.i \
+    $srcdir/bindings/python/makedocstrings.py \
+    $srcdir/bindings/python/plplot.py \
+    $srcdir/bindings/python/plplotcmodule.c_double \
+    $srcdir/bindings/python/plplotcmodule.c_single \
+    $srcdir/bindings/python/plplot_widgetmodule.c \
     $srcdir/examples/python/*.py \
     $srcdir/examples/python/pytkdemo \
     . 2>/dev/null
-    ln -s \
-    $srcdir/bindings/python/*.h \
-    plplot 2>/dev/null
+    if test "$with_double" = "yes"; then
+      ln -s $srcdir/bindings/python/plplotcmodule.c_double ./plplotcmodule.c 2>/dev/null
+    else
+      ln -s $srcdir/bindings/python/plplotcmodule.c_single ./plplotcmodule.c 2>/dev/null
+    fi
 fi
-
-# Just go ahead and set up the Python stuff needed to do staging.
-# (AWI thinks all the following should be removed since they
-# repeat the previous stuff, but he isn't positive.  Thus,
-# as a compromise he supressed the  error messages by the following
-# stuff by changing ln -s to ln -sf.)
-# The commented out bindings/python/*.py symlinks are because setup.py
-# done elsewhere now, and the other two are not needed.
-
-# ln -sf $srcdir/bindings/python/Plframe.py .
-# ln -sf $srcdir/bindings/python/TclSup.py .
-ln -sf $srcdir/bindings/python/plmodule.c .
-ln -sf $srcdir/bindings/python/pyqt_plmodule.c .
-ln -sf $srcdir/bindings/python/plmodule.h plplot
-# ln -sf $srcdir/bindings/python/setup.py .
 
 # Handle setting up the Java stuff.
 

@@ -8,19 +8,13 @@
 # to build these libraries.  It is claimed this method will work for all
 # Unix systems.  
 #
-# For our implementation of this method, at configuration time we symlink all
-# required files but Setup.in into tmp/python_dynamic, and at build time
-# and install time (where we link differently) we create the required 
-# two-line Setup.in in the same directory and build according to the
-# canonical rules.
-# Note we build in a separate special directory because the build process
-# creates a Makefile which would nameclash with other directories that have a
-# Makefile in them (e.g., tmp).
+# For our implementation of this method, we configure setup.py appropriately
+# to build the plplotc and plplot_widget extension modules.
 # -----------------------------------------------------------------------------
 
 SO		= @SO@
-PYTHON_EXE	= plmodule$(SO)
-PYQT_PYTHON_EXE	= pyqt_plmodule$(SO)
+PYTHON_EXE	= plplotcmodule$(SO)
+PYTHON_WIDGET_EXE = plplot_widgetmodule$(SO)
 PYTHON_INC_DIR	= @PYTHON_INC_DIR@
 PYTHON_NUM_DIR	= @PYTHON_NUM_DIR@
 PYTHON_MOD_DIR	= @PYTHON_MOD_DIR@
@@ -41,7 +35,21 @@ INSTALL_PYTHON	= install_python
 
 PYTHON_INSTDIR = $(PREFIX)/@PYTHON_INSTDIR@
 
-install_python: $(PLLIBS) plmodule.c pyqt_plmodule.c
+# Note that plplotcmodule.c is symlinked to either plplotcmodule.c_double
+# or plplotcmodule.c_single depending on --with-double.
+# Those working with the cvs version are expected to have swig 
+# (version 1.3.11 or later) to generate these two files as below, 
+# but our release tarball will include these two generated files 
+# so that our users can use python with either the double- or 
+# single-precision version of libplplot without having to
+# install swig.
+plplotcmodule.c: plplotcmodule.i makedocstrings.py
+	swig -python -o plplotcmodule_p.c_double -c++ -DPL_DOUBLE plplotcmodule.i
+	python makedocstrings.py plplotcmodule_p.c_double plplotcmodule.c_double
+	swig -python -o plplotcmodule_p.c_single -c++ plplotcmodule.i
+	python makedocstrings.py plplotcmodule_p.c_single plplotcmodule.c_single
+
+install_python: $(PLLIBS) plplotcmodule.c plplot_widgetmodule.c
 	@echo " "
 	@echo "Building and installing Python modules."
 	@echo " "
@@ -51,12 +59,12 @@ install_python: $(PLLIBS) plmodule.c pyqt_plmodule.c
 
 	@-if test ! -d $(PYTHON_INSTDIR); then mkdir -p $(PYTHON_INSTDIR); fi
 	@-$(CP) $(PYTHON_EXE) $(PYTHON_INSTDIR)
-	@-$(CP) $(PYQT_PYTHON_EXE) $(PYTHON_INSTDIR)
+	@-$(CP) $(PYTHON_WIDGET_EXE) $(PYTHON_INSTDIR)
 	@-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
 	  echo "PLplot Python module installation warning:" ; \
 	  echo "" ; \
 	  echo "The install location $(PYTHON_DIR) for"  ; \
-	  echo "plmodule.so is not the same as the expected Python location for"  ; \
+	  echo "plplotcmodule.so is not the same as the expected Python location for"  ; \
 	  echo "dynamic libraries $(PYTHON_MACH_DIR)"  ; \
 	  echo "so you must set the environment variable PYTHONDIR to the install"  ; \
 	  echo "location in order to make the Python PLplot module(s) work." ; \

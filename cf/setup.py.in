@@ -29,7 +29,7 @@ else:
 include_dirs = [include_directory]
 # Only needed because arrayobject.h not necessarily in Numeric subdirectory 
 # in python-1.5.  Once we drop support for python-1.5, then we can change 
-# the plmodule.h include to standard Numeric/ form and drop this append 
+# the include to standard Numeric/ form and drop this append 
 # altogether.
 include_dirs.append("@PYTHON_NUM_DIR@")
 
@@ -54,25 +54,25 @@ for option in ldc_libs_list:
 	raise "bad LDC_LIBS"
 
 #Now get on with usual setup.py stuff.
-module1 = Extension( "plmodule", 
+module1 = Extension( "plplotcmodule", 
 		     extra_link_args = extra_link_args,
                      include_dirs = include_dirs,
 		     library_dirs = library_dirs,
 		     libraries = libraries,
-		     sources = ["plmodule.c"]
+		     sources = ["plplotcmodule.c"]
 		     )
 
-module2 = Extension( "pyqt_plmodule", 
+module2 = Extension( "plplot_widgetmodule", 
 		     extra_link_args = extra_link_args,
                      include_dirs = include_dirs,
 		     library_dirs = library_dirs,
 		     libraries = libraries,
-		     sources = ["pyqt_plmodule.c"]
+		     sources = ["plplot_widgetmodule.c"]
 		     )
 
-setup( name = "pl",
+setup( name = "plplot",
        version = "5.1",
-       description = "PLplot Python extension module",
+       description = "PLplot Python extension modules",
        author = "Alan W. Irwin",
        author_email = "irwin@beluga.phys.uvic.ca",
        url = "http://www.plplot.org",
