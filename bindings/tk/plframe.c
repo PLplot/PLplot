@@ -586,6 +586,8 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	}
     }
 
+/* color-manipulating commands, grouped together for convenience */
+
     else if (((c == 'g') && ((strncmp(argv[1], "gcmap0", length) == 0) ||
 			     (strncmp(argv[1], "gcmap1", length) == 0))) ||
 	     ((c == 's') && ((strncmp(argv[1], "scmap0", length) == 0) ||
@@ -1975,13 +1977,11 @@ static int
 Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int argc, char **argv)
 {
-    PLStream *pls = plFramePtr->pls;
-    int length;
-    char c3;
     int result = TCL_OK;
     char cmdlist[] = "";
 
 #ifdef DEBUG
+    PLStream *pls = plFramePtr->pls;
     if (pls->debug) {
 	int i;
 	fprintf(stderr, "There are %d arguments to Cmd:", argc);
@@ -2007,24 +2007,9 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     plsstrm(plFramePtr->ipls);
 
-    c3 = argv[0][2];
-    length = strlen(argv[0]);
-
 /* Process command */
 
     result = plTclCmd(cmdlist, interp, argc, argv);
-    /*
-
-    if (plFramePtr->bopCmd != NULL) {
-	plFramePtr->page = pls->page;
-	if (Tcl_Eval(interp, plFramePtr->bopCmd) != TCL_OK)
-	    fprintf(stderr, "Command \"%s\" failed:\n\t %s\n",
-		    plFramePtr->bopCmd, interp->result);
-
-	Tcl_DoWhenIdle(proc, clientData);
-	printf("page: %d\n", pls->page);
-    }
-    */
 
     plflush();
     return result;
