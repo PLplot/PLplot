@@ -3,6 +3,65 @@ This file contains a log of all the old NEWS files.
 
 
 **************************************************************************
+Version 4.99i: Summary of major changes
+**************************************************************************
+
+Primarily a bug-fix release.  Major changes:
+
+- Changed distribution status to GPL/LGPL.  See "Copyright".  Other
+  administrative file name changes.
+
+- Various small bugs in configure & build fixed.
+
+- Bug in code to keep track of window world coordinates fixed (symptoms:
+  core dump would occur after the 65th page if pleop() was used to end the
+  page rather than pladv()).  Thanks to Ian Searle for providing a
+  demonstration of the bug.
+
+- Bugs fixed in core routines + TK driver handling of colormap when
+  saturation = 0; i.e. grayscale plots.  Thanks to Radey Shouman for his
+  help.
+
+- Fixed a bug that was preventing the exponential label from showing up
+  under certain circumstances (3-D plots).
+
+- Conex device (tek emulator under DOS) driver support added in tek.c;
+  contributed by Mark Olesen. 
+
+- Bug fixed in X driver that was causing a "Bad Match" error upon startup
+  on some systems.
+
+- Postscript driver:
+    Fixed bug in current point update after state change.
+    Fix to allow cmap1 color selections to appear in grayscale;
+    contributed by Radey Shouman. 
+
+- Tk driver: Fix to allow a TK main window to be associated with each
+  PLStream (so x14c now can use either the TK or DP driver), also fix to
+  properly update plserver's X-driver when cmap state is
+  changed.  Contributed by Radey Shouman.
+
+- pltek: Now checks for the terminal type and provides some rudimentary
+  decisions based on the TERM setting.  The xterm is unaffected, but with
+  a terminal type of "tekterm", the 'Page >' prompt is printed on the
+  graphics screen so that the plot can be seen without having pltek flash
+  back to the text screen immediately.  Contributed by Mark Olesen.
+
+- Updated DOS/EMX driver provided by Mark Olesen; see sys/dos/emx for
+  more detail.
+
+- Amiga driver: Updated to work with new version.  Now has configure
+  script for SKsh users -- is now trivial to configure and build.  A
+  fall-back Makefile is also provided.  Several bugs fixed, notably one in
+  changing the screen mode.  A compiled version of the PLplot library
+  (SAS/C 6.2, IEEE single precision floats, optimized) and plrender are
+  now available in the ~ftp/plplot/amiga directory on dino.ph.utexas.edu.
+
+- The "plpr" script (used when choosing "Print" from Tk driver) now
+  defaults to using color postscript as output.
+
+
+**************************************************************************
 Version 4.99h: Summary of major changes
 **************************************************************************
 
