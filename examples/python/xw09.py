@@ -37,10 +37,10 @@ def polar():
     # create data to be contoured.
     r = arange(RPTS)/float(RPTS-1)
     r.shape = (-1,1)
-    theta = (2.*pi/float(THETAPTS-1))*arange(THETAPTS)
+    theta = (2.*pi/float(THETAPTS-1))*arange(THETAPTS-1)
     xg = r*cos(theta)
     yg = r*sin(theta)
-    zg = r*ones(THETAPTS)
+    zg = r*ones(THETAPTS-1)
 
     lev = 0.05 + 0.10*arange(10)
     
@@ -56,7 +56,7 @@ def potential():
     # create data to be contoured.
     r = 0.5 + arange(PRPTS)
     r.shape = (-1,1)
-    theta = (2.*pi/float(PTHETAPTS))*(0.5+arange(PTHETAPTS))
+    theta = (2.*pi/float(PTHETAPTS-1))*(0.5+arange(PTHETAPTS-1))
     xg = r*cos(theta)
     yg = r*sin(theta)
 
