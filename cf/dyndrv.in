@@ -13,9 +13,7 @@ dynamic_drivers := $(DYNAMIC_DRIVERS:%=drivers/%.drv)
 DYNLOAD_STUFF := dynamic_drivers_target
 
 dynamic_drivers_target: $(dynamic_drivers)
-	@echo "Building dynamic (loadable) drivers database."
-	@echo "dynamic_drivers = $(dynamic_drivers)"
-	@echo "     NOT !!!"
+	@echo "dynamic_drivers built: $(dynamic_drivers)"
 
 drivers/null.drv : shared/null$O
 	$(SHLIB_BUILD) $@ $< -L. -lplplot
