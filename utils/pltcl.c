@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/06/23 22:51:28  mjl
+ * Revision 1.2  1994/06/24 20:41:35  mjl
+ * Added error handler specific to pltcl.  Ensures output device is in text
+ * mode before issuing error message.
+ *
+ * Revision 1.1  1994/06/23  22:51:28  mjl
  * A plotting interpreter that uses Tcl to drive PLplot primitives.  This can
  * be used with virtually any PLplot output driver.  The executable is an
  * extended tclsh that has been embellished with a (soon to be) large set
@@ -27,6 +31,12 @@
 \*----------------------------------------------------------------------*/
 
 #include <pltcl.h>
+
+static void
+plErrorHandler(Tcl_Interp *interp, int code, int tty);
+
+extern void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty);
+
 
 /*----------------------------------------------------------------------*\
  * main --
@@ -137,5 +147,38 @@ Tcl_AppInit(interp)
 
     Tcl_SetVar(interp, "tcl_prompt1", "pltext; puts -nonewline \"% \"", 0);
 
+/* Also before an error is printed.  Can't use normal call mechanism here */
+/* because it trashes the interp->result string. */
+
+    tclErrorHandler = plErrorHandler;
+
     return TCL_OK;
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * plErrorHandler --
+ *
+ *	Handles error conditions while parsing.  Modified from the version
+ *	in tclMain.c to ensure we are on the text screen before issuing
+ *	the error message, otherwise it may disappear.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Error info is printed to stdout, if interactive, otherwise stderr.
+ *
+ *----------------------------------------------------------------------
+ */
+
+static void
+plErrorHandler(Tcl_Interp *interp, int code, int tty)
+{
+    pltext();
+    if (tty)
+	printf("%s\n", interp->result);
+    else
+	fprintf(stderr, "%s\n", interp->result);
 }
