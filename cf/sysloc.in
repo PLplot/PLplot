@@ -132,6 +132,7 @@ fi
 # Default directories to search for include files
 
 incdirs_default="\
+$prefix/include/itcl \
 $prefix/include \
 $HOME/local/include \
 $HOME/include \
@@ -142,6 +143,7 @@ $HOME/include \
 # Default directories to search for library files
 
 libdirs_default="\
+$prefix/lib/itcl \
 $prefix/lib \
 $HOME/local/lib \
 $HOME/lib \
@@ -173,7 +175,7 @@ fi
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
 	FIND_LIB_BEGIN(tcl, TCLLIBDIR)
-	for version in 7.4 7.5 ""; do
+	for version in 7.6i 7.5i 7.6 7.5 7.4 ""; do
 	    if test -n "$TCLLIBDIR"; then
 		break
 	    fi
@@ -204,7 +206,7 @@ fi
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLLIBDIR"; then
 	FIND_LIB_BEGIN(itcl, ITCLLIBDIR)
-	for version in 2.0 ""; do
+	for version in 2.1 2.0 ""; do
 	    if test -n "$ITCLLIBDIR"; then
 		break
 	    fi
@@ -235,7 +237,7 @@ fi
 if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
 	FIND_LIB_BEGIN(tk, TKLIBDIR)
-	for version in 4.0 4.1 ""; do
+	for version in 4.2i 4.1i 4.2 4.1 4.0 ""; do
 	    if test -n "$TKLIBDIR"; then
 		break
 	    fi
@@ -257,7 +259,7 @@ fi
 if test "$enable_itk" = "yes"; then
     if test -z "$ITKLIBDIR"; then
 	FIND_LIB_BEGIN(itk, ITKLIBDIR)
-	for version in 2.0 ""; do
+	for version in 2.1 2.0 ""; do
 	    if test -n "$ITKLIBDIR"; then
 		break
 	    fi
@@ -284,6 +286,7 @@ if test "$enable_tcl" = "no" -o "$enable_tk" = "no"; then
 fi
 
 if test "$enable_dp" = "yes"; then
+
     if test -z "$DPINCDIR"; then
 	FIND_INC(dp, DPINCDIR, enable_dp)
     fi
@@ -450,6 +453,23 @@ AC_SUBST(PYTHON_MOD_DIR)
 if test "$with_f2c" = "yes"; then
     AC_CHECK_LIB(f2c, main, [LIBS="$LIBS -lf2c"],
     AC_MSG_RESULT(warning: libf2c not found))
+fi
+
+# ----------------------------------------------------------------------------
+# linuxvga support
+# ----------------------------------------------------------------------------
+
+if test "$enable_linuxvga" = "yes"; then
+    if test -z "$VGALIBDIR"; then
+	libdirs="\
+	$prefix/lib \
+	/usr/lib"
+
+	FIND_LIB(vga, VGALIBDIR, VGALIBSTR, enable_linuxvga)	
+    fi
+    if test -n "$VGALIBDIR"; then
+	ADD_TO_LIBS($VGALIBDIR, -lvga, LIBS, LIBPATH)
+    fi
 fi
 
 # ----------------------------------------------------------------------------
