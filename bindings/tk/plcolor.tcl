@@ -1,7 +1,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.9  1995/09/01 20:15:23  mjl
+# Revision 1.10  1995/09/18 20:15:00  furnish
+# Move aside the evil class system so it isn't fouling up the new itcl.
+#
+# Revision 1.9  1995/09/01  20:15:23  mjl
 # Removed the +/- buttons to clean up the cmap1 manipulator under Tk 4.0 --
 # this functionality is now available via key bindings.
 #
@@ -114,7 +117,7 @@ proc plfile_open {op} {
 
 set colorSpace hsl
 
-class ColorEditor {
+sclass ColorEditor {
     member r 255
     member g 0
     member b 0
@@ -428,7 +431,7 @@ class ColorEditor {
 # Buttons0 implements the buttons on the main window.
 #
 
-class Buttons0 {
+sclass Buttons0 {
     method create {w plot} {
 	frame $w
 	button $w.savep -text "Save Palette" \
@@ -462,7 +465,7 @@ class Buttons0 {
 # ColorPalette0 implements the color palette.
 #
 
-class ColorPalette0 {
+sclass ColorPalette0 {
     member w {}
     member editor {}
     method create {w plot} {
@@ -606,7 +609,7 @@ proc plcmap0_edit {plot} {
 # Buttons1 implements the buttons on the main window.
 #
 
-class Buttons1 {
+sclass Buttons1 {
     method create {w plot} {
 	frame $w
 	button $w.savep -text "Save Palette" \
@@ -643,7 +646,7 @@ class Buttons1 {
 # The ones at the end must stay fixed.
 #
 
-class ColorPalette1 {
+sclass ColorPalette1 {
     member w {}
     member editor {}
     method create {w plot} {

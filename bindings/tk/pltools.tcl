@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.17  1995/06/01 21:27:51  mjl
+# Revision 1.18  1995/09/18 20:15:01  furnish
+# Move aside the evil class system so it isn't fouling up the new itcl.
+#
+# Revision 1.17  1995/06/01  21:27:51  mjl
 # Added procs getSaveFile and getPaletteFile for retrieving a save or palette
 # file name, respectively.  Checks to see if [incr Tcl] is available and if
 # so, uses the non-sucky file selector.  Otherwise uses the getItem proc.
@@ -629,7 +632,7 @@ or click on "Execute".
 #------------------------------------------------------------------------------
 
 set object_counter 0
-proc class {class_name spec} {
+proc sclass {class_name spec} {
     global class_methods
     set members ""
     for {set i 0} {$i < [llength $spec]} {incr i} {
