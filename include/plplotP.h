@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.38  1995/05/26 20:20:12  mjl
+ * Revision 1.39  1995/06/01 21:44:36  mjl
+ * Repaired some bogus comments.
+ *
+ * Revision 1.38  1995/05/26  20:20:12  mjl
  * Changed plstream.h -> plstrm.h everywhere.
  *
  * Revision 1.37  1995/05/07  02:28:58  mjl
@@ -37,44 +40,6 @@
  * Virtual coordinate space for X-based drivers and metafile increased to
  * 32K by 32K, in order to improve appearance of plots at high levels of
  * magnification.
- *
- * Revision 1.29  1994/08/25  04:03:17  mjl
- * Eliminated an unnecessary header file inclusion.
- *
- * Revision 1.28  1994/08/03  20:12:43  mjl
- * Eliminated #undef of _POSIX_SOURCE on Crays -- no longer needed now that
- * caddr_t is defined in plConfig.h (if not typedef'ed by <sys/types.h>).
- *
- * Revision 1.27  1994/07/29  20:19:31  mjl
- * Added typedef for CWindow -- window coordinate structure, also prototypes
- * for plAddCWindow() and plClrCWindows(void) (contributed by Paul Casteels).
- * Also prototype for new plLibOpen() function.
- *
- * Revision 1.26  1994/07/26  21:14:38  mjl
- * Improvements to the way PLplot looks for various files.  Now more
- * consistent and flexible.  In particular, environmentals can be set for
- * locations of each directory (for Tcl, binary, and library files).
- * Contributed by Mark Olesen.
- *
- * Revision 1.25  1994/07/24  07:41:46  mjl
- * Eliminated some more system-dependent stuff, in view of plConfig.h
- * providing us with the _POSIX_SOURCE define (or not).
- *
- * Revision 1.24  1994/07/23  04:46:26  mjl
- * Decreased the amount of custom system handling due to use of plConfig.h.
- * Need to do some more yet...
- *
- * Revision 1.23  1994/07/22  15:54:09  furnish
- * Fix overaggressive behavior.
- *
- * Revision 1.22  1994/07/19  22:35:04  mjl
- * Added includes for pdf.h and plConfig.h.
- *
- * Revision 1.21  1994/06/30  18:36:06  mjl
- * Removed prototypes for deleted accessor functions.  Inserted an extern
- * PLStream *plsc declaration for easier access to PLplot state info (only
- * plcore.h, which declares the real plsc, doesn't see this declaration).
- * Now includes plstream.h.
 */
 
 /*
@@ -85,7 +50,8 @@
 
     Internal (private) macros and prototypes for the PLplot package.  This
     header file must be included before all others, including system header
-    files.
+    files.  This file is typically needed when including driver specific
+    header files (e.g. pltkd.h).
 
     This software may be freely copied, modified and redistributed without
     fee provided that this copyright notice is preserved intact on all
