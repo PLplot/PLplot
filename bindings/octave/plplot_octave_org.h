@@ -236,7 +236,7 @@ typedef struct {
     unsigned int button;	/* mouse button selected */
     char string[PL_MAXKEY];	/* translated string */
     int pX, pY;			/* absolute device coordinates of pointer */
-    float dX, dY;		/* relative device coordinates of pointer */
+    PLFLT dX, dY;		/* relative device coordinates of pointer */
     PLFLT wX, wY;		/* world coordinates of pointer */
 } PLGraphicsIn;
 
@@ -245,7 +245,7 @@ typedef struct {
 #define PL_MAXWINDOWS	64	/* Max number of windows/page tracked */
 
 typedef struct {
-    float dxmi, dxma, dymi, dyma;	/* min, max window rel dev coords */
+    PLFLT dxmi, dxma, dymi, dyma;	/* min, max window rel dev coords */
     PLFLT wxmi, wxma, wymi, wyma;	/* min, max window world coords */
 } PLWindow;
 
@@ -657,14 +657,12 @@ typedef struct {
 
 #ifndef __PLSTUBS_H__	/* i.e. do not expand this in the stubs */
 
-/* this is giving me problems with my existing scripts...
 #define    plclr	pleop
 #define    plpage	plbop
 #define    plcol	plcol0
 #define    plcontf	plfcont
 #define	   Alloc2dGrid	plAlloc2dGrid
 #define	   Free2dGrid	plFree2dGrid
-*/
 
 #endif /* __PLSTUBS_H__ */
 
@@ -716,23 +714,16 @@ void c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz); //%name plbox3
 
-/*  set xor mode */
+/* Set xor mode; 1-enter, 0-leave */
 
-void c_plxormod(PLINT color);	 
+void c_plxormod(PLINT mode); //%name plxormod
+
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
 void c_plcol0(PLINT icol0); //%name plcol0
 
-/* Set xor mode */
-
-void c_plxormod(PLINT icol0); //%name plxormod
-
 inline void my_plcol(PLINT icol0) {
 	c_plcol0(icol0);} //%name plcol
-
-/* Set color, map 0.  Argument is integer between 0 and 15. */
-
-void c_plcol0(PLINT icol0);
 
 /* Set color, map 1.  Argument is a float between 0. and 1. */
 
@@ -912,7 +903,7 @@ void c_plgcolbg(PLINT *r, PLINT *g, PLINT *b); //%name plgcolbg //%output r, g, 
 
 /* Returns the current compression setting */
 
-void c_plgcompression(PLINT *compression);
+void c_plgcompression(PLINT *compression); //%name plgcompression
 
 /* Get the current device (keyword) name */
 
@@ -1135,7 +1126,7 @@ void c_plscolor(PLINT color); //%name plscolor
 
 /* Set the compression level */
 
-void c_plscompression(PLINT compression);
+void c_plscompression(PLINT compression); //%name plscompression
 
 /* Set the device (keyword) name */
 
@@ -1169,11 +1160,11 @@ void c_plsesc(char esc); //%name plsesc
 
 /* set offset and spacing of contour labels */
 
-void c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active); //%name pl_setcontlabelparam
+void c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active); //%name plclabel_param
 
 /* set the format of the contour labels */
 
-void c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig); //%name pl_setcontlabelformat
+void c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig); //%name plclabel_format
 
 /* Set family file parameters */
 
@@ -1189,20 +1180,18 @@ void c_plsfnam(const char *fnam); //%name plsfnam
 */
 
 /* the simpler plshade() */
-	  
-void my_plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+
+//void my_plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+void my_plshade(PLFLT *a, PLINT nx, PLINT ny, PLFLT *defined,
 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	 PLFLT shade_min, PLFLT shade_max,
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
 	 PLINT min_color, PLINT min_width,
 	 PLINT max_color, PLINT max_width,
 	 PLINT rectangular, PLFLT *tr) {
-/*
-	for (int i=0; i<6; i++)
-		_pl_tr[i]=tr[i];	 	
-*/
+
 	f2c(a,aa,nx,ny);
-	c_plshade(aa, nx, ny, &defined, left, right, bottom, top,
+	c_plshade(aa, nx, ny, NULL, left, right, bottom, top,
 		shade_min, shade_max, sh_cmap, sh_color, sh_width,
 		min_color, min_width, max_color, max_width, 
 		plfill, rectangular, xform, tr);
@@ -1221,7 +1210,7 @@ void my_plshade1(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
 	grid1.nx = nx;	grid1.ny = ny;
 	grid1.xg = xg;	grid1.yg = yg;
 	f2c(a,aa,nx,ny);
-	c_plshade(aa, nx, ny, &defined, left, right, bottom, top,
+	c_plshade(aa, nx, ny, NULL, left, right, bottom, top,
 		shade_min, shade_max, sh_cmap, sh_color, sh_width,
 		min_color, min_width, max_color, max_width, 
 		plfill, rectangular, pltr1, &grid1);
@@ -1241,11 +1230,23 @@ void my_plshade2(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
 	grid2.nx = nx;	grid2.ny = ny;
 	grid2.xg = xgg;	grid2.yg = ygg;
 	f2c(a,aa,nx,ny);
-	c_plshade(aa, nx, ny, &defined, left, right, bottom, top,
+	c_plshade(aa, nx, ny, NULL, left, right, bottom, top,
 		shade_min, shade_max, sh_cmap, sh_color, sh_width,
 		min_color, min_width, max_color, max_width, 
 	 	plfill, rectangular, pltr2, &grid2);
 }  //%name plshade2 //%input a(nx, ny), xg(nx,ny), yg(nx,ny)
+
+void my_plshades(PLFLT *a, PLINT nx, PLINT ny, const char *defined,
+	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+	 PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+	 PLINT cont_color, PLINT cont_width,
+	 PLINT rectangular, PLFLT *tr) {
+
+	f2c(a,aa,nx,ny);
+	c_plshades(aa, nx, ny, NULL, left, right, bottom, top,
+		clevel, nlevel, fill_width, cont_color, cont_width,
+		plfill, rectangular, xform, tr);
+}  //%name plshades //%input a(nx, ny), clevel(nlevel), tr(6)
 
 /* Set up lengths of major tick marks. */
 

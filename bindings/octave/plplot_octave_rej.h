@@ -50,6 +50,16 @@ void c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
 	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
 	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	  PLPointer pltr_data); //%nowrap
+
+/* multiple plshade, specify number of countours to shade */
+
+void c_plshades(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
+	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+	PLFLT *clevel, PLINT nlevel, PLINT fill_width,
+	PLINT cont_color, PLINT cont_width,
+	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	  PLPointer pltr_data); //%nowrap
 		
 /* the next one seems to use the C calling convention,
  *	but did not work at first, so I will use the proven F calling
