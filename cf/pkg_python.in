@@ -20,7 +20,6 @@
 
 SO		= @SO@
 PYTHON_EXE	= plmodule$(SO)
-PYTHON_INSTALL	= install_python
 PYTHON_INC_DIR	= @PYTHON_INC_DIR@
 PYTHON_NUM_DIR	= @PYTHON_NUM_DIR@
 PYTHON_MOD_DIR	= @PYTHON_MOD_DIR@
@@ -34,6 +33,10 @@ PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
 PYTHON_DEMOS	= README pytkdemo *.py
+
+# Variables for use in "make" and "make install".
+
+INSTALL_PYTHON	= install_python
 
 # note this only builds something that can be used if PYTHONPATH is set 
 # to tmp.  Also RPATH puts current directory first.  Therefore only

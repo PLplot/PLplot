@@ -14,21 +14,33 @@ TK_OBJ		= tk$O tkshell$O tcpip$O plframe$O plr$O
 TK_OBJ		= tk$O Pltk_Init$O tcpip$O plframe$O plr$O
 TK_OBJ_SA	= tkMain$O 
 TK_EXE		= plserver$E
-TK_INSTALL	= install_tk
 TK_DEMOS	= tk?? *.tcl *.c
 
-install_tk:
-	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
-	@-if test $(SHARED) = 1; then \
-	  $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
-		-o plserver$E $(LDC_LIBS) $(INSTALL_RPATH); \
-	  fi
-	@-strip plserver$E
-	@-$(CP) plserver$E $(BIN_DIR)
+# Variables for use in "make" and "make install".
+
+INSTALL_TK	= install_tk
+
+# Targets
+
+install_plserver:
+	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi; \
+	  if test $(SHARED) = 1; then \
+	      $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
+		  -o plserver$E $(LDC_LIBS) $(INSTALL_RPATH); \
+	  fi; \
+	  strip plserver$E; \
+	  $(CP) plserver$E $(BIN_DIR)
+
+
+install_tk_scripts:
 	@-cd $(top_srcdir)/bindings/tk; \
 	  $(CP) pltk.h $(INCLUDE_DIR); \
 	  $(CP) *.itk *.tcl *.pal $(TCL_DIR)
-	@-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
-	@-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
-	@-cd $(top_srcdir)/examples/tk; $(CP) $(TK_DEMOS) $(DEMOS_DIR)/tk
+
+install_tk_demos:
+	@-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi; \
+	  $(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk; \
+	  cd $(top_srcdir)/examples/tk; $(CP) $(TK_DEMOS) $(DEMOS_DIR)/tk
+
+install_tk: install_plserver install_tk_scripts install_tk_demos
 

@@ -17,38 +17,41 @@
 # -----------------------------------------------------------------------------
 
 install: install_lib \
-	$(MAT_INSTALL) \
-	$(F77_INSTALL) \
-	$(PYTHON_INSTALL) \
-	$(TCL_INSTALL) \
-	$(TK_INSTALL) \
-	$(CXX_INSTALL) \
+	$(INSTALL_F77) \
+	$(INSTALL_PYTHON) \
+	$(INSTALL_TCL) \
+	$(INSTALL_TK) \
+	$(INSTALL_CXX) \
 	install_demos \
 	install_utils
 
 install_demos:
-	@-if test ! -d $(DEMOS_DIR); then mkdir -p $(DEMOS_DIR); fi
-	@-if test ! -d $(DEMOS_DIR)/c; then mkdir -p $(DEMOS_DIR)/c; fi
-	@-$(CP) Makedemo $(DEMOS_DIR)/Makefile
-	@-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c
-	@-cd $(top_srcdir)/examples/c; \
+	@-if test ! -d $(DEMOS_DIR); then mkdir -p $(DEMOS_DIR); fi; \
+	  if test ! -d $(DEMOS_DIR)/c; then mkdir -p $(DEMOS_DIR)/c; fi; \
+	  $(CP) Makedemo $(DEMOS_DIR)/Makefile; \
+	  $(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c; \
+	  cd $(top_srcdir)/examples/c; \
 	  $(CP) *.c $(DEMOS_DIR)/c; \
 	  $(CP) *.h $(INCLUDE_DIR)
 
-install_utils:
+install_plrender:
 	@-if test $(SHARED) = 1; then \
 	  $(LDC) $(LDC_FLAGS) plrender$O $(LIB_INSTALL) \
 		-o plrender$E $(LDC_LIBS) $(INSTALL_RPATH); \
-	  fi
-	@-if test $(SHARED) = 1; then \
-	  $(LDC) $(LDC_FLAGS) pltek$O \
-		-o pltek$E; \
-	  fi
-	@echo "#!/bin/sh" > plplot_linkage
-	@echo 'echo "$(LDC_FLAGS) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)"' \
-		>> plplot_linkage
-	@chmod +x plplot_linkage
-	@-strip plrender$E pltek$E
-	@-$(CP) plrender$E pltek$E plplot_linkage $(BIN_DIR)
-	@$(RM) plplot_linkage
+	  fi; \
+	  strip plrender$E; \
+	  $(CP) plrender$E $(BIN_DIR)
+
+install_pltek:
+	@-strip pltek$E; $(CP) pltek$E $(BIN_DIR)
+
+install_plplot_linkage:
+	@echo "#!/bin/sh" > plplot_linkage; \
+	 echo 'echo "$(LDC_FLAGS) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)"' \
+		>> plplot_linkage; \
+	 chmod +x plplot_linkage; \
+	 $(CP) plplot_linkage $(BIN_DIR); \
+	 $(RM) plplot_linkage
+
+install_utils: install_plrender install_pltek install_plplot_linkage
 

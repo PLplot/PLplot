@@ -30,6 +30,9 @@
 # Library dependency list and targets
 # -----------------------------------------------------------------------------
 
+# Redefine CP so we preserve symlinks on library installs.
+CP	= cp -p -a
+
 SOVERSION	= @SOVERSION@
 
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
@@ -45,10 +48,11 @@ CXXLIB_SO	= $(PLLIB_PATH)$(CXXLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
 CXX_SONAME	= $(CXXLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
 CXX_LINKNAME	= $(CXXLIB_BASE)$(LIB_TAG).so
 
+# These need to use the BLD_ prefix so they can be left out.
+MATLIBS = $(BLD_MATLIB_AR) $(BLD_MATLIB_SO)
+CXXLIBS = $(BLD_CXXLIB_AR) $(BLD_CXXLIB_SO)
 
 PLLIBS = $(PLLIB_AR) $(PLLIB_SO) $(MATLIBS) $(CXXLIBS)
-MATLIBS = $(MATLIB_AR) $(MATLIB_SO)
-CXXLIBS = $(CXXLIB_AR) $(CXXLIB_SO)
 
 libs:	$(PLLIBS)
 
@@ -85,13 +89,13 @@ $(CXXLIB_AR): $(CXX_OBJS)
 # stupidtk.o handled symbolically for the case where tk is not enabled.
 STUPIDTK_OBJ = @STUPIDTK_OBJ@
 
-$(PLLIB_SO):	$(MATLIB_SO) $(LIB_OBJS) $(STUPIDTK_OBJ)
+$(PLLIB_SO):	$(BLD_MATLIB_SO) $(LIB_OBJS) $(STUPIDTK_OBJ)
 	-$(RM) $(PLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) $(STUPIDTK_OBJ) -L.. -l$(MATLIB_NAME) $(LDC_LIBS)
+		$(LIB_OBJS) $(STUPIDTK_OBJ) -L.. $(MAT_LINK) $(LDC_LIBS)
 	ln -sf $(PLLIB_SO) $(SONAME)
 	ln -sf $(SONAME) $(LINKNAME)
 	@echo ""

@@ -30,10 +30,12 @@
 # -----------------------------------------------------------------------------
 
 PLLIBS = $(PLLIB_AR) $(PLLIB_SO)
-MATLIBS = $(MATLIB_AR) $(MATLIB_SO)
-CPPLIBS = $(CPPLIB_AR) $(CPPLIB_SO)
 
-libs:	$(PLLIBS) $(MATLIBS) $(CPPLIBS)
+# These need to use the BLD_ prefix so they can be left out.
+MATLIBS = $(BLD_MATLIB_AR)
+CXXLIBS = $(BLD_CXXLIB_AR)
+
+libs:	$(PLLIBS) $(MATLIBS) $(CXXLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
 	-$(RM) $(PLLIB_AR)
