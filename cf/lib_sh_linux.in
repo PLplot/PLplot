@@ -36,19 +36,6 @@ CP	= cp -p -a
 SOVERSION	= @SOVERSION@
 
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
-<<<<<<< lib_sh_linux.in
-# Modified by Rafael Laboissiere <rafael@icp.inpg.fr> on 1998/06/13
-# avoid "./" prepended to *.so name
-# PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE).so.$(SOVERSION)
-PLLIB_SO	= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
-# Modified by Rafael Laboissiere <rafael@icp.inpg.fr> 
-# on Thu Nov 12 18:11:45 CET 1998
-# For the Debian plplot pakcage
-# should include $(LIB_TAG) in SONAME and have only $(MAJOR_VERSION) at end
-# SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
-# SONAME		= $(PLLIB_BASE).so.$(SOVERSION)
-SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
-=======
 SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
 LINKNAME	= $(PLLIB_BASE)$(LIB_TAG).so
 
@@ -56,7 +43,6 @@ LINKNAME	= $(PLLIB_BASE)$(LIB_TAG).so
 MATLIB_SO	= $(PLLIB_PATH)$(MATLIB_BASE).so.$(SOVERSION)
 MAT_SONAME     	= $(MATLIB_BASE).so.$(MAJOR_VERSION)
 MAT_LINKNAME   	= $(MATLIB_BASE).so
->>>>>>> 1.16
 
 CXXLIB_SO	= $(PLLIB_PATH)$(CXXLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
 CXX_SONAME	= $(CXXLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
@@ -109,44 +95,21 @@ $(PLLIB_SO):	$(BLD_MATLIB_SO) $(LIB_OBJS) $(STUPIDTK_OBJ)
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO) \
 		-Wl,-soname -Wl,$(SONAME) \
-<<<<<<< lib_sh_linux.in
-		$(LIB_OBJS) stupidtk.o $(LDC_LIBS)
-	ln -sf $(PLLIB_SO).$(LIBVERSION) $(SONAME)
-#       Modified by Rafael Laboissiere <rafael@icp.inpg.fr>
-#       on Thu Nov 12 20:07:46 CET 1998
-#	ln -sf $(SONAME) $(PLLIB_BASE).so
-	ln -sf $(SONAME) $(PLLIB_BASE)$(LIB_TAG).so
-	echo $(LIBVERSION) > version.built
-	./version inc
-=======
 		$(LIB_OBJS) $(STUPIDTK_OBJ) -L.. $(MAT_LINK) $(LDC_LIBS)
 	ln -sf $(PLLIB_SO) $(SONAME)
 	ln -sf $(SONAME) $(LINKNAME)
->>>>>>> 1.16
 	@echo ""
 
 
 $(MATLIB_SO): $(MAT_OBJS)
 	-$(RM) $(MATLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
-#       Modified by Rafael Laboissiere <rafael@icp.inpg.fr>
-#       on Thu Nov 12 20:07:46 CET 1998
-#       When bulding the Python module we will need a shared libs 
-#       libMatrix.so to link against
 	cd shared; \
-<<<<<<< lib_sh_linux.in
-	$(SHLIB_BUILD) ../$(MATLIB_SO) \
-		-Wl,-soname -Wl,libMatrix$(SO).$(MAJOR_VERSION) \
-                $(MAT_OBJS)
-	ln -sf $(MATLIB_SO) libMatrix$(SO).$(MAJOR_VERSION)
-	ln -sf libMatrix$(SO).$(MAJOR_VERSION) libMatrix$(SO)
-=======
 	$(SHLIB_BUILD) ../$(MATLIB_SO) \
 		-Wl,-soname -Wl,$(MAT_SONAME) \
 		$(MAT_OBJS)
 	ln -sf $(MATLIB_SO) $(MAT_SONAME)
 	ln -sf $(MAT_SONAME) $(MAT_LINKNAME)
->>>>>>> 1.16
 	@echo ""
 
 $(CXXLIB_SO): $(CXX_OBJS)
