@@ -106,7 +106,7 @@ x14::x14( int argc, char ** argv ) {
   pls1 = new plstream();
 
   // Parse and process command line arguments.
-  pls1->ParseOpts( &argc, argv, PL_PARSE_FULL );
+  pls1->parseopts( &argc, argv, PL_PARSE_FULL );
 
   pls1->gdev(driver);
 

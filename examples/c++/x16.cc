@@ -159,7 +159,7 @@ x16::x16( int argc, char ** argv ) {
 
   // Parse and process command line arguments.
   pls->MergeOpts(options, "x16c options", notes);
-  pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
+  pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
   // Reduce colors in cmap 0 so that cmap 1 is useful on a
   //16-color display

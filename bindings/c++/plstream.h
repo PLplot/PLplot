@@ -462,6 +462,10 @@ class plstream {
                  PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax);
 
     
+/* Process options list using current options info. */
+
+    int parseopts( int *p_argc, char **argv, PLINT mode );
+
 /* Set fill pattern directly. */
 
 void pat( PLINT nlin, PLINT *inc, PLINT *del );

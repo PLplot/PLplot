@@ -135,7 +135,7 @@ x20::x20( int argc, char ** argv ) {
 
   // Parse and process command line arguments.
   pls->MergeOpts(options, "x20c options", NULL);
-  pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
+  pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
   // Initialize PLplot.
   pls->init();

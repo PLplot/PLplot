@@ -137,7 +137,7 @@ x01::x01( int argc, char ** argv ) {
 
   // Parse and process command line arguments.
   pls->MergeOpts(options, "x01c options", notes);
-  pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
+  pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
   // Print out version number, just for kicks.
   pls->gver(ver);

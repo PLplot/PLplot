@@ -80,7 +80,7 @@ x19::x19( int argc, char ** argv ) {
   pls = new plstream();
 
   // Parse and process command line arguments.
-  pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
+  pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
   // Longitude (x) and latitude (y)
 

@@ -1044,6 +1044,15 @@ void plstream::plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
     ::plot3dcl(x,y,z,nx,ny,opt,clevel,nlevel,ixstart, ixn, indexymin, indexymax);
 }
 
+/* Process options list using current options info. */
+
+int plstream::parseopts( int *p_argc, char **argv, PLINT mode )
+{
+    set_stream();
+
+    return ::plparseopts( p_argc, argv, mode );
+}
+
 /* Set fill pattern directly. */
 
 void plstream::pat( PLINT nlin, PLINT *inc, PLINT *del )

@@ -119,7 +119,7 @@ x09::x09( int argc, char **argv ) {
 
   // Parse and process command line arguments.
 
-  pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
+  pls->parseopts( &argc, argv, PL_PARSE_FULL );
   /* Initialize plplot */
 
   pls->init();

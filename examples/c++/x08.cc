@@ -163,7 +163,7 @@ x08::x08( int argc, char **argv ) {
 
   // Parse and process command line arguments.
   pls->MergeOpts(options, "x08c options",  NULL);
-  pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
+  pls->parseopts( &argc, argv, PL_PARSE_FULL );
   if (sombrero) {
     rosen = false;
   }

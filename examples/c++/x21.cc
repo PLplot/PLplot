@@ -193,7 +193,7 @@ x21::x21( int argc, char ** argv ) {
 
   // Parse and process command line arguments.
   pls->MergeOpts(options, "x21c options", NULL);
-  pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
+  pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
   opt[2] = wmin;
   opt[3] = (PLFLT) knn_order;

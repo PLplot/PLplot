@@ -59,7 +59,7 @@ x06::x06( int argc, char ** argv ) {
   pls = new plstream();
 
   // Parse and process command line arguments.
-  pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
+  pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
   // Initialize PLplot.
   pls->init();

@@ -72,7 +72,7 @@ x17::x17( int argc, char ** argv ) {
   pls = new plstream();
 
   // Parse and process command line arguments.
-  pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
+  pls->parseopts( &argc, argv, PL_PARSE_FULL );
 
   // If db is used the plot is much more smooth. However, because of the
   // async X behaviour, one does not have a real-time scripcharter.
