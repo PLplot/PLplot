@@ -16,7 +16,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.1  1995/01/27 02:52:54  mjl
+# Revision 1.2  1995/06/30 13:48:29  furnish
+# Update loop limit to reflect the two new demo files.
+#
+# Revision 1.1  1995/01/27  02:52:54  mjl
 # New front-end demo file for use from plserver.  It uses the same example
 # program files as pltcl but passes the name of the widget.
 #
@@ -26,7 +29,7 @@ plstdwin .
 plxframe .plw
 pack append . .plw {left expand fill}
 
-for {set i 1} {$i <= 16} {incr i} {
+for {set i 1} {$i <= 18} {incr i} {
     set demo x[format "%02d" $i]
     source $demo.tcl
     proc $i {} "$demo .plw.plwin"
