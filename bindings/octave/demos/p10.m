@@ -18,7 +18,8 @@ function p10
 	title("Comet")
 	xlabel "";
 	ylabel "";
-	comet
+	t = -pi:pi/200:0;
+	comet(t,tan(sin(t))-sin(tan(t)));
 	
 endfunction
 
