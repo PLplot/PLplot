@@ -55,9 +55,31 @@
 
 if test "$0" = "../configure"; then
     cd ..
-    configure
+    configure $*
     exit
 fi
+
+# -----------------------------------------------------------------------
+# Source site-specific variables file, if present.
+# Can be used to dramatically reduce the time spent configuring.
+# Should be done before command-line flags are handled so that the user
+# can override if necessary.
+# -----------------------------------------------------------------------
+
+initfile="$HOME/config/cf_plplot.in"
+if test -f $initfile; then
+    echo "Getting default settings from $initfile."
+    . $initfile
+else
+    echo "No defaults file found, performing full configure."
+fi
+
+LIBS=""
+INCS="-I."
+
+# -----------------------------------------------------------------------
+# Initialize autoconf.
+# -----------------------------------------------------------------------
 
 #!/bin/sh
 # Guess values for system-dependent variables and create Makefiles.
@@ -377,22 +399,6 @@ ac_compile='${CC-cc} $CFLAGS $LDFLAGS conftest.${ac_ext} -o conftest $LIBS >/dev
 
 
 
-
-# -----------------------------------------------------------------------
-# Source site-specific variables file, if present.
-# Can be used to dramatically reduce the time spent configuring.
-# -----------------------------------------------------------------------
-
-initfile="$HOME/config/cf_plplot.in"
-if test -f $initfile; then
-    echo "Getting default settings from $initfile."
-    . $initfile
-else
-    echo "No defaults file found, performing full configure."
-fi
-
-LIBS=""
-INCS="-I."
 
 # -----------------------------------------------------------------------
 # First get system using uname.
@@ -1429,7 +1435,12 @@ else
   
 
 	    places="\
+	    /usr/include \
+	    /usr/include/X11 \
 	    /usr/include/X11R5 \
+	    /usr/include/X11R4 \
+	    /usr/include/X11/X11R5 \
+	    /usr/include/X11/X11R4 \
 	    /usr/X11/include \
 	    /usr/X386/include \
 	    /usr/X11R5/include \
@@ -1438,8 +1449,7 @@ else
 	    /usr/local/X11R4/include \
 	    /usr/include/X11R4 \
 	    /usr/local/include \
-	    /usr/unsupported/include \
-	    /usr/include"
+	    /usr/unsupported/include"
 
 	    for dir in $places; do
 		if test -r $dir/X11/Intrinsic.h; then
@@ -1484,6 +1494,8 @@ else
    :; 
 
 	    places="\
+	    /lib \
+	    /usr/lib \
 	    /usr/lib/X11R5 \
 	    /usr/X11/lib \
 	    /usr/X386/lib \
@@ -1493,9 +1505,7 @@ else
 	    /usr/local/X11R4/lib \
 	    /usr/lib/X11R4 \ 
 	    /usr/local/lib \
-	    /usr/unsupported/lib \
-	    /usr/lib \
-	    /lib"
+	    /usr/unsupported/lib"
 
 	    for dir in $places; do
 		if test -r $dir/libX11.a; then
@@ -1585,12 +1595,14 @@ if test $enable_tcl = "yes"; then
 fi
 
 if test $enable_tcl = "yes"; then
+    
     TCLINCSW=""
     if test "$TCLINCDIR" != "default" ; then
 	TCLINCSW="-I$TCLINCDIR"
     fi
-    
-    INCS="$INCS $TCLINCSW"
+    if test "$TCLINCDIR" != "$XINCDIR" ; then
+	INCS="$INCS $TCLINCSW"
+    fi
 fi
 
 # -----------------------------------------------------------------------
@@ -1640,12 +1652,16 @@ if test $enable_tcl = "yes"; then
 fi
 
 if test $enable_tcl = "yes"; then
+    
     TCLLIBSW=""
     if test "$TCLLIBDIR" != "default" ; then
 	TCLLIBSW="-L$TCLLIBDIR"
     fi
-    
-    LIBS="$LIBS $TCLLIBSW -ltcl"
+    if test $TCLLIBDIR = $XLIBDIR ; then
+	LIBS="$LIBS -ltcl"
+    else
+	LIBS="$LIBS $TCLLIBSW -ltcl"
+    fi
 fi
 
 # -----------------------------------------------------------------------
@@ -1694,11 +1710,11 @@ if test $enable_tk = "yes"; then
 fi
 
 if test $enable_tk = "yes"; then
+    
     TKINCSW=""
     if test "$TKINCDIR" != "default" ; then
 	TKINCSW="-I$TKINCDIR"
     fi
-    
     if test $TKINCDIR != $TCLINCDIR; then
 	INCS="$INCS $TKINCSW"
     fi
@@ -1749,11 +1765,11 @@ if test $enable_tk = "yes"; then
 fi
 
 if test $enable_tk = "yes"; then
+    
     TKLIBSW=""
     if test "$TKLIBDIR" != "default" ; then
 	TKLIBSW="-L$TKLIBDIR"
     fi
-    
     if test $TKLIBDIR = $TCLLIBDIR; then
 	LIBS="$LIBS -ltk"
     else
@@ -1818,11 +1834,11 @@ if test $enable_dp = "yes"; then
 fi
 
 if test $enable_dp = "yes"; then
+    
     DPLIBSW=""
     if test "$DPLIBDIR" != "default" ; then
 	DPLIBSW="-L$DPLIBDIR"
     fi
-    
     if test $DPLIBDIR = $TCLLIBDIR; then
 	LIBS="$LIBS -ldpnetwork"
     else
@@ -1887,11 +1903,11 @@ if test $enable_itcl = "yes"; then
 fi
 
 if test $enable_itcl = "yes"; then
+    
     ITCLLIBSW=""
     if test "$ITCLLIBDIR" != "default" ; then
 	ITCLLIBSW="-L$ITCLLIBDIR"
     fi
-    
     if test $ITCLLIBDIR = $TCLLIBDIR; then
 	LIBS="$LIBS -litcl"
     else
@@ -2366,15 +2382,7 @@ rm -fr conftest*
 # Single precision: tag with "f"
 # Double precision: tag with "d"
 
-with_double="no"
-# check whether --with-double or --without-double was given.
-withval="$with_double"
-if test -n "$withval"; then
-  with_double=$withval
-fi
-
-
-if test $with_double = "yes"; then
+if test "$with_double" = "yes"; then
     TAG_PREC="d"
 else
     TAG_PREC="f"
@@ -2389,10 +2397,10 @@ fi
 # and libplplotd to create the system default.  
 
 TAG_ENABLE="b"
-if test $enable_x11 = "yes"; then
+if test "$enable_x11" = "yes"; then
     TAG_ENABLE="X"
 fi
-if test $enable_tk = "yes"; then
+if test "$enable_tk" = "yes"; then
     TAG_ENABLE="tk"
 fi
 
@@ -2471,7 +2479,6 @@ fi
 cat cf/objs.in		>>tmp/Makefile.in 
 cat cf/lib.in		>>tmp/Makefile.in 
 if test "$with_shlib" = "yes"; then
-    echo "creating shared lib"
     cat cf/shlib.in	>>tmp/Makefile.in
 fi
 cat cf/exes.in		>>tmp/Makefile.in 
@@ -2981,7 +2988,7 @@ ac_sed_defs="${ac_sed_defs}\${ac_dA}TCL_DIR\${ac_dB}TCL_DIR\${ac_dC}\"$TCL_DIR\"
 # it once.
 # --------------------------------------------------------------------
 
-if ! test -f tmp/plcore.c; then
+if test ! -f tmp/plcore.c; then
     echo "Creating links.."
     cd tmp
 

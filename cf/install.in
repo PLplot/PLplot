@@ -34,9 +34,7 @@ install_lib:
 		$(INCLUDE_DIR)
 
 install_examples:
-	cp -r ../examples $(INSTALL_DIR)
-	-rm -r $(INSTALL_DIR)/examples/CVS
-	-rm -r $(INSTALL_DIR)/examples/*/CVS
+	-cp -r ../examples $(DEMOS_DIR)
 
 install_utils:
 	$(LDC) $(LDC_FLAGS) plrender.o $(LIB_INSTALL) \

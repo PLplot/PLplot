@@ -55,16 +55,15 @@
 
 if test "$0" = "../configure"; then
     cd ..
-    configure
+    configure $*
     exit
 fi
-
-AC_INIT(src/plcore.c)
-AC_CONFIG_HEADER(tmp/plConfig.h tmp/plDevs.h)
 
 # -----------------------------------------------------------------------
 # Source site-specific variables file, if present.
 # Can be used to dramatically reduce the time spent configuring.
+# Should be done before command-line flags are handled so that the user
+# can override if necessary.
 # -----------------------------------------------------------------------
 
 initfile="$HOME/config/cf_plplot.in"
@@ -77,6 +76,13 @@ fi
 
 LIBS=""
 INCS="-I."
+
+# -----------------------------------------------------------------------
+# Initialize autoconf.
+# -----------------------------------------------------------------------
+
+AC_INIT(src/plcore.c)
+AC_CONFIG_HEADER(tmp/plConfig.h tmp/plDevs.h)
 
 # -----------------------------------------------------------------------
 # First get system using uname.
@@ -131,10 +137,7 @@ AC_VFORK
 # Single precision: tag with "f"
 # Double precision: tag with "d"
 
-with_double="no"
-AC_WITH(double, with_double=$withval)
-
-if test $with_double = "yes"; then
+if test "$with_double" = "yes"; then
     TAG_PREC="d"
 else
     TAG_PREC="f"
@@ -149,10 +152,10 @@ fi
 # and libplplotd to create the system default.  
 
 TAG_ENABLE="b"
-if test $enable_x11 = "yes"; then
+if test "$enable_x11" = "yes"; then
     TAG_ENABLE="X"
 fi
-if test $enable_tk = "yes"; then
+if test "$enable_tk" = "yes"; then
     TAG_ENABLE="tk"
 fi
 
@@ -199,7 +202,6 @@ fi
 cat cf/objs.in		>>tmp/Makefile.in 
 cat cf/lib.in		>>tmp/Makefile.in 
 if test "$with_shlib" = "yes"; then
-    echo "creating shared lib"
     cat cf/shlib.in	>>tmp/Makefile.in
 fi
 cat cf/exes.in		>>tmp/Makefile.in 
@@ -252,7 +254,7 @@ AC_DEFINE_UNQUOTED(TCL_DIR, \"$TCL_DIR\")
 # it once.
 # --------------------------------------------------------------------
 
-if ! test -f tmp/plcore.c; then
+if test ! -f tmp/plcore.c; then
     echo "Creating links.."
     cd tmp
 

@@ -72,6 +72,7 @@ BIN_DIR		= $(INSTALL_DIR)/bin
 INFO_DIR	= $(INSTALL_DIR)/info
 INCLUDE_DIR	= $(INSTALL_DIR)/include
 TCL_DIR		= $(INSTALL_DIR)/tcl
+DEMOS_DIR	= $(INSTALL_DIR)/examples
 
 # This is used for making the install versions of plrender & plserver
 # (Must relink after installing shared library!)

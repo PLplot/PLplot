@@ -29,7 +29,12 @@ if test $enable_x11 = "yes"; then
 	    AC_TEST_CPP([#include <X11/Intrinsic.h>], [ XINCDIR="default" ], [
 
 	    places="\
+	    /usr/include \
+	    /usr/include/X11 \
 	    /usr/include/X11R5 \
+	    /usr/include/X11R4 \
+	    /usr/include/X11/X11R5 \
+	    /usr/include/X11/X11R4 \
 	    /usr/X11/include \
 	    /usr/X386/include \
 	    /usr/X11R5/include \
@@ -38,8 +43,7 @@ if test $enable_x11 = "yes"; then
 	    /usr/local/X11R4/include \
 	    /usr/include/X11R4 \
 	    /usr/local/include \
-	    /usr/unsupported/include \
-	    /usr/include"
+	    /usr/unsupported/include"
 
 	    for dir in $places; do
 		if test -r $dir/X11/Intrinsic.h; then
@@ -62,6 +66,8 @@ if test $enable_x11 = "yes"; then
 	    AC_HAVE_LIBRARY(X11, [ XLIBDIR="default" ], [
 
 	    places="\
+	    /lib \
+	    /usr/lib \
 	    /usr/lib/X11R5 \
 	    /usr/X11/lib \
 	    /usr/X386/lib \
@@ -71,9 +77,7 @@ if test $enable_x11 = "yes"; then
 	    /usr/local/X11R4/lib \
 	    /usr/lib/X11R4 \ 
 	    /usr/local/lib \
-	    /usr/unsupported/lib \
-	    /usr/lib \
-	    /lib"
+	    /usr/unsupported/lib"
 
 	    for dir in $places; do
 		if test -r $dir/libX11.a; then
@@ -154,12 +158,14 @@ if test $enable_tcl = "yes"; then
 fi
 
 if test $enable_tcl = "yes"; then
+    AC_SUBST(TCLINCDIR)
     TCLINCSW=""
     if test "$TCLINCDIR" != "default" ; then
 	TCLINCSW="-I$TCLINCDIR"
     fi
-    AC_SUBST(TCLINCDIR)
-    INCS="$INCS $TCLINCSW"
+    if test "$TCLINCDIR" != "$XINCDIR" ; then
+	INCS="$INCS $TCLINCSW"
+    fi
 fi
 
 # -----------------------------------------------------------------------
@@ -209,12 +215,16 @@ if test $enable_tcl = "yes"; then
 fi
 
 if test $enable_tcl = "yes"; then
+    AC_SUBST(TCLLIBDIR)
     TCLLIBSW=""
     if test "$TCLLIBDIR" != "default" ; then
 	TCLLIBSW="-L$TCLLIBDIR"
     fi
-    AC_SUBST(TCLLIBDIR)
-    LIBS="$LIBS $TCLLIBSW -ltcl"
+    if test $TCLLIBDIR = $XLIBDIR ; then
+	LIBS="$LIBS -ltcl"
+    else
+	LIBS="$LIBS $TCLLIBSW -ltcl"
+    fi
 fi
 
 # -----------------------------------------------------------------------
@@ -256,11 +266,11 @@ if test $enable_tk = "yes"; then
 fi
 
 if test $enable_tk = "yes"; then
+    AC_SUBST(TKINCDIR)
     TKINCSW=""
     if test "$TKINCDIR" != "default" ; then
 	TKINCSW="-I$TKINCDIR"
     fi
-    AC_SUBST(TKINCDIR)
     if test $TKINCDIR != $TCLINCDIR; then
 	INCS="$INCS $TKINCSW"
     fi
@@ -311,11 +321,11 @@ if test $enable_tk = "yes"; then
 fi
 
 if test $enable_tk = "yes"; then
+    AC_SUBST(TKLIBDIR)
     TKLIBSW=""
     if test "$TKLIBDIR" != "default" ; then
 	TKLIBSW="-L$TKLIBDIR"
     fi
-    AC_SUBST(TKLIBDIR)
     if test $TKLIBDIR = $TCLLIBDIR; then
 	LIBS="$LIBS -ltk"
     else
@@ -373,11 +383,11 @@ if test $enable_dp = "yes"; then
 fi
 
 if test $enable_dp = "yes"; then
+    AC_SUBST(DPLIBDIR)
     DPLIBSW=""
     if test "$DPLIBDIR" != "default" ; then
 	DPLIBSW="-L$DPLIBDIR"
     fi
-    AC_SUBST(DPLIBDIR)
     if test $DPLIBDIR = $TCLLIBDIR; then
 	LIBS="$LIBS -ldpnetwork"
     else
@@ -435,11 +445,11 @@ if test $enable_itcl = "yes"; then
 fi
 
 if test $enable_itcl = "yes"; then
+    AC_SUBST(ITCLLIBDIR)
     ITCLLIBSW=""
     if test "$ITCLLIBDIR" != "default" ; then
 	ITCLLIBSW="-L$ITCLLIBDIR"
     fi
-    AC_SUBST(ITCLLIBDIR)
     if test $ITCLLIBDIR = $TCLLIBDIR; then
 	LIBS="$LIBS -litcl"
     else
