@@ -21,6 +21,8 @@
 
 proc plw_create {w {client_id {}}} {
     plxframe $w $client_id
+# jc: puts name into window decoration frame
+    wm title . [string trim $w .]
 }
 
 #----------------------------------------------------------------------------
@@ -270,8 +272,35 @@ proc plw_create_pmenu {w pmbut} {
     plw_create_pmenu_zoom    $w
     plw_create_pmenu_page    $w
     plw_create_pmenu_options $w
+    plw_create_pmenu_help    $w
+    plw_create_pmenu_exit    $w
 
     return $pmbut
+}
+
+#----------------------------------------------------------------------------
+# plw_create_pmenu_exit
+#----------------------------------------------------------------------------
+
+proc plw_create_pmenu_exit {w} {
+
+    global pmenu
+
+    $pmenu($w) add command -label "Exit" \
+	-command exit
+	
+}
+
+#----------------------------------------------------------------------------
+# plw_create_pmenu_help
+#----------------------------------------------------------------------------
+
+proc plw_create_pmenu_help {w} {
+
+    global pmenu
+
+    $pmenu($w) add command -label "Help" \
+	-command "help_keys"
 }
 
 #----------------------------------------------------------------------------

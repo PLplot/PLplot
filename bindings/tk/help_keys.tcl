@@ -23,8 +23,18 @@ When a plframe widget has the input focus, keyboard input is relayed to
 its remote TK driver.  The default actions of the keyboard handler are as
 follows:
 
-"Q"				Terminate program
+	"Q" | <Ctrl-x>			Terminate program
 <Return> or <Page Down>		Advance to the next page
+	"z"			enter zoom	(Cliking once zooms x 2)
+	"b"			back zoom
+	"f"			forward zoom
+	"r"			reset zoom
+	"P"			print
+	"s"			save again
+	"5"			scroll magnification factor ??
+	"1"			scroll speed	??
+	<left><right><up><down>	scroll after zoom
+	<Alt><key>	increase scroll speed
 
 The user code can supply its own keyboard handler, and thereby add to
 or modify these actions (this is in fact what is done by plrender).

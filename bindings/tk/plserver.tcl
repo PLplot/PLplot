@@ -104,6 +104,9 @@ if $file_menu_on then {
 
     pack append .menu .menu.help {right}
 
+
+    bind . <Control-x> exit
+
 # Set up for keyboard-based menu traversal
 
     tk_menuBar .menu .menu.file .menu.help
