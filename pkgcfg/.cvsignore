@@ -10,3 +10,4 @@ plplotd-tcl.pc
 plplotd.pc
 Makefile.in
 Makefile
+gen-pc-files.pl
