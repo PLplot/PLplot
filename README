@@ -1,5 +1,5 @@
-This is the distribution for PLPLOT, a scientific plotting package.
-PLPLOT is relatively small, portable, freely distributable, and is rich
+This is the distribution for PLplot, a scientific plotting package.
+PLplot is relatively small, portable, freely distributable, and is rich
 enough to satisfy most users.  It has a wide range of plot types including
 line (linear, log), contour, 3D, fill, and almost 1000 characters
 (including Greek and mathematical) in its extended font set.  The package
@@ -7,38 +7,38 @@ is designed to make it easy to quickly get graphical output; only a
 handful of function calls is typically required.  For more advanced use,
 virtually all aspects of plotting are configurable.
 
-The PLPLOT package is freely distributable, but NOT in the public domain.
-The PLPLOT source code, except header files and those files explicitly
+The PLplot package is freely distributable, but NOT in the public domain.
+The PLplot source code, except header files and those files explicitly
 granting permission, may not be used in a commercial software package without
-consent of the authors.  You are allowed and encouraged to include the PLPLOT
+consent of the authors.  You are allowed and encouraged to include the PLplot
 object library and header files in a commercial package provided that: (1) it
-is explicitly and prominently stated that the PLPLOT library is freely
-available, and (2) the full copyrights on the PLPLOT package be displayed
+is explicitly and prominently stated that the PLplot library is freely
+available, and (2) the full copyrights on the PLplot package be displayed
 somewhere in the documentation for the package.
 
 We welcome suggestions on how to improve this code, especially in the form of
-user-contributed enhancements or bug fixes.  If PLPLOT is used in any
+user-contributed enhancements or bug fixes.  If PLplot is used in any
 published papers, please include an acknowledgment or citation of our work,
-which will help us to continue improving PLPLOT.  Also, please remember that
-as PLPLOT is not a commercial product, we cannot be expected to offer the
+which will help us to continue improving PLplot.  Also, please remember that
+as PLplot is not a commercial product, we cannot be expected to offer the
 kind of support that a commercial product may.  There is great interest
-in extending PLPLOT and fixing bugs, but the principal authors can only
+in extending PLplot and fixing bugs, but the principal authors can only
 afford to work on it part time.  Improvements will necessarily focus on
 those which help us get our work done.
 
-PLPLOT is written in C, enabling it to run on many platforms practically
+PLplot is written in C, enabling it to run on many platforms practically
 without modification.  Fortran programs may use it transparently; stub
 routines are provided to handle the C<->Fortran interface without any
 modification of the user program.  C programs are required to include the
 header file "plplot.h"; see the documentation for more details.
 
-The main documentation for PLPLOT is in the doc/ directory in the form of
+The main documentation for PLplot is in the doc/ directory in the form of
 several TeX files; please consult this for additional information ("latex
 plotdoc").  Unfortunately documentation tends to lag actual improvements to
 the code, so don't be surprised if some known features are not explained
 there.  Consult "Changes.log" to see a list of recent changes.  
 
-At present, PLPLOT is known to work on the following systems:
+At present, PLplot is known to work on the following systems:
 
 	Unix:	AIX 		(IBM)
 		ConvexOS	(Convex)
@@ -67,37 +67,36 @@ plots to a specified file and device type.  The metafile renderer
 (plrender) supports seeking backwards or forwards to any specified page
 when interactively viewing metafile output.
 
-For more information on how to get or use PLPLOT on your system, see:
- - appendices to the PLPLOT manual
+For more information on how to get or use PLplot on your system, see:
+ - appendices to the PLplot manual
  - system-specific documentation in the appropriate sys/<system> directory.
 
-To become a subscriber to the PLPLOT mailing list, send a request to
+To become a subscriber to the PLplot mailing list, send a request to
 plplot-request@dino.ph.utexas.edu.
 
 CREDITS
 -------
 
-PLPLOT is the result of the effort of many people, so it is impractical to
-list all the contributors.   Those currently supporting and otherwise
+PLplot is the result of the effort of many people, so it is impractical to
+list all the contributors.  Those currently supporting and otherwise
 responsible for the package in its present form include:
 
-Maurice LeBrun
-Please send all comments, flames, patches, etc, to me.  I am responsible
-for the PLPLOT kernel development as well as work on the Tcl/TK, X-window,
-metafile, postscript, xterm, tektronix, and Amiga drivers.
+	Dr. Maurice LeBrun		mjl@dino.ph.utexas.edu 
+	Institute for Fusion Studies	University of Texas
 
-EMAIL	mjl@dino.ph.utexas.edu 
-USMAIL	Dr. Maurice LeBrun
-	Institute for Fusion Studies
-	University of Texas
-	Austin, TX  78712
+Responsible for the PLplot overall coordination, kernel development, most
+of the Unix related and Amiga drivers.  Send all comments, flames, patches,
+to me.
 
+	Geoffrey Furnish		furnish@dino.ph.utexas.edu
+	Institute for Fusion Studies	University of Texas
 
-Geoff Furnish
 Co-developer.  Can help with C++ and UNIX related questions.
 
-EMAIL	furnish@dino.ph.utexas.edu
-USMAIL	Geoffrey Furnish
-	Institute for Fusion Studies
-	University of Texas
-	Austin, TX  78712
+	Paul Casteels			casteels@uia.ac.be
+
+Responsible for the DOS/BGI (bcc) port.
+
+	John C. Peterson		jcp@trg.saic.com
+
+Responsible for the OS/2 port.
