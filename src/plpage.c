@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1993/08/09 22:15:05  mjl
+ * Revision 1.5  1993/09/08 02:40:34  mjl
+ * Trivial documentation correction.
+ *
+ * Revision 1.4  1993/08/09  22:15:05  mjl
  * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
  *
  * Revision 1.3  1993/07/01  22:13:41  mjl
@@ -9,7 +12,7 @@
  * plplot functions now start with "plP_".
 */
 
-/*	pladv.c
+/*	plpage.c
 
 	Page/subpage handling routines
 */
