@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.13  1993/02/27 01:42:09  mjl
-   Changed from ftell/fseek to fgetpos/fsetpos, also added debugging output.
+   Revision 1.14  1993/02/27 04:53:17  mjl
+   Fixed a bug in seeking that occurred only at the end of a file when
+   displaying packed pages.  Also added lots more diagnostic output, enabled
+   when DEBUG is defined.
 
+ * Revision 1.13  1993/02/27  01:42:09  mjl
+ * Changed from ftell/fseek to fgetpos/fsetpos, also added debugging output.
+ *
  * Revision 1.12  1993/02/26  05:21:35  mjl
  * Changed to a fatal error when unrecognized metafile input is encountered.
  *
@@ -603,6 +608,10 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 * plr_clr()
 *
 * Clear screen.
+* Here we run into a bit of difficulty with packed pages -- at the end
+* there is no "clear" operation done if the page is only partially full.
+* So I peek ahead to see if the next operation is a CLOSE, and if so,
+* push back the CLOSE and issue a page clear regardless.  
 \*----------------------------------------------------------------------*/
 
 static void
@@ -610,11 +619,17 @@ plr_clr(U_CHAR c)
 {
     PLINT cursub, nsubx, nsuby;
 
-    gsub(&nsubx, &nsuby, &cursub);
-    if (cursub == nsubx * nsuby) {
-	grclr();
+    c1 = getcommand();
+    ungetcommand(c1);
+    if (c1 == CLOSE)
 	end_of_page = 1;
-    }
+
+    gsub(&nsubx, &nsuby, &cursub);
+    if (cursub == nsubx * nsuby)
+	end_of_page = 1;
+
+    if (end_of_page == 1)
+	grclr();
 }
 
 /*----------------------------------------------------------------------*\
@@ -1022,6 +1037,11 @@ SeekToPage(long target_page)
     if (curpage_loc == 0) 
 	plexit("curpage_loc is zero");
 
+#ifdef DEBUG
+    grtext();
+    printf("Seeking to: %d\n", curpage_loc);
+    grgra();
+#endif
     if (fsetpos(MetaFile, &curpage_loc))
 	plexit("plrender: fsetpos call failed");
 
@@ -1045,6 +1065,12 @@ SeekToPage(long target_page)
 		    plexit("plrender: fsetpos call failed");
 		break;
 	    }
+
+#ifdef DEBUG
+	    grtext();
+            printf("Seeking to: %d\n", curpage_loc);
+	    grgra();
+#endif
 	    if (fsetpos(MetaFile, &nextpage_loc))
 		plexit("plrender: fsetpos call failed");
 
@@ -1063,6 +1089,11 @@ SeekToPage(long target_page)
 		    plexit("plrender: fsetpos call failed");
 		break;
 	    }
+#ifdef DEBUG
+	    grtext();
+	    printf("Seeking to: %d\n", prevpage_loc);
+	    grgra();
+#endif
 	    if (fsetpos(MetaFile, &prevpage_loc))
 		plexit("plrender: fsetpos call failed");
 
