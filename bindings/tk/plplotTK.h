@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/11/02 19:55:41  mjl
+ * Revision 1.5  1995/03/16 23:42:04  mjl
+ * Old cursorX, cursorY variables replaced with a PLGraphicsIn structure.
+ * Also variables instr, max_instr, and locate_mode added.
+ *
+ * Revision 1.4  1994/11/02  19:55:41  mjl
  * Added cursorX, cursorY for holding coordinates at mouse click.
  *
  * Revision 1.3  1994/07/19  22:34:22  mjl
@@ -46,7 +50,10 @@ typedef struct {
     char	*cmdbuf;		/* Command buffer */
     int		cmdbuf_len;		/* and its length */
     PLiodev	*iodev;			/* I/O device info */
-    float	cursorX, cursorY;	/* coordinates for mouse event */
+    int		instr;			/* Instruction timer */
+    int		max_instr;		/* Limit before issuing an update */
+    int		locate_mode;		/* Set while in locate mode */
+    PLGraphicsIn gin;			/* Graphics input structure */
 } TkDev;
 
 #endif	/* __PLPLOTTK_H__ */
