@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1993/08/26 05:35:54  mjl
+ * Revision 1.36  1993/08/26 21:18:16  mjl
+ * Previous safety check a little too safe -- changed to allow C++ compilers.
+ *
+ * Revision 1.35  1993/08/26  05:35:54  mjl
  * Put in test for __STDC__ defined, for a little added safety.
  *
  * Revision 1.34  1993/08/18  19:09:19  mjl
@@ -121,7 +124,9 @@
 /* This will hopefully catch compilers that don't fully conform */
 
 #ifndef __STDC__
+#ifndef __cplusplus
 #error "Requires a standard-conforming C compiler"
+#endif
 #endif
 
 #ifdef unix			/* the old way */
