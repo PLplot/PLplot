@@ -1574,6 +1574,23 @@ pllib_devinit()
 
 #ifdef ENABLE_DYNDRIVERS
 
+int plInBuildTree()
+{
+  static int inited = 0;
+  static int inBuildTree = 0;
+  
+  if (inited == 0) {
+    char currdir[256];
+
+    if (getcwd(currdir, 256) == NULL) {
+      pldebug("plInBuildTree():", "Not enough buffer space");
+    } else if (strncmp(BUILD_DIR, currdir, strlen(BUILD_DIR)) == 0)
+      inBuildTree = 1;
+    inited = 1;
+  }
+  return inBuildTree;
+}
+
 static char*
 plGetDrvDir ()
 {
@@ -1583,13 +1600,18 @@ plGetDrvDir ()
  *  on this order
  */
  
-    pldebug("plGetDrvDir", "Trying to read env var PLPLOT_DRV_DIR\n");
-    drvdir = getenv ("PLPLOT_DRV_DIR");
+    if (plInBuildTree() == 1) {
+      drvdir = BUILD_DIR "/drivers";
+      pldebug("plGetDrvDir", "Using %s as the driver directory.\n", drvdir);
+    } else {
+      pldebug("plGetDrvDir", "Trying to read env var PLPLOT_DRV_DIR\n");
+      drvdir = getenv ("PLPLOT_DRV_DIR");
 
-    if (drvdir == NULL) {
+      if (drvdir == NULL) {
         pldebug("plGetDrvDir", 
 	        "Will use drivers dir: " DATA_DIR "/" DRV_DIR "\n");
-        drvdir = DATA_DIR "/" DRV_DIR;
+	drvdir = DATA_DIR "/" DRV_DIR;
+      }
     }
     
     return drvdir;

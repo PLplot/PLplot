@@ -1080,6 +1080,10 @@ pl_cmd(PLINT op, void *ptr)
  * char *plFindCommand
  *
  * Looks for the specified executable file.  Search path:
+ *      if command invoked in the build tree:
+ *         build_tree/tk (plserver lies there - needed for the tk driver)
+ *         build_tree/scripts (plpr lies there - needed for the tk driver)
+ *      else
  *	PLPLOT_BIN_ENV = $(PLPLOT_BIN)
  *	current directory
  *	PLPLOT_HOME_ENV/bin = $(PLPLOT_HOME)/bin
@@ -1093,6 +1097,18 @@ char *
 plFindCommand(char *fn)
 {
     char *fs = NULL, *dn;
+
+    /**** see if in build tree ***/
+    if (plInBuildTree() == 1) {
+        plGetName(BUILD_DIR, "bindings/tk", fn, &fs);
+        if ( ! plFindName(fs))
+            return fs;
+	else {
+	  plGetName(BUILD_DIR, "scripts", fn, &fs);
+	  if ( ! plFindName(fs))
+            return fs;
+	}
+    }
 
 /* PLPLOT_BIN_ENV = $(PLPLOT_BIN) */
 
@@ -1175,6 +1191,15 @@ plLibOpenPdfstrm(char *fn)
     PDFstrm *file;
     char *fs = NULL, *dn = NULL;
 
+/****   search build tree               ****/
+
+    if (plInBuildTree() == 1) {
+      plGetName(BUILD_DIR, "data", fn, &fs);
+
+      if ((file = pdf_fopen(fs, "rb")) != NULL)
+        goto done;
+    }
+
 /****	search PLPLOT_LIB_ENV = $(PLPLOT_LIB)	****/
 
 #if defined(PLPLOT_LIB_ENV)
@@ -1237,10 +1262,11 @@ plLibOpenPdfstrm(char *fn)
     }
     
 /**** 	not found, give up 	****/
-
+    pldebug("plLibOpenPdfstr(): File %s not found.\n", fn);
     return NULL;
 
  done:
+    pldebug("plLibOpenPdfstr(): Found file %s\n", fs);
     free_mem(fs);
     return (file);
 }

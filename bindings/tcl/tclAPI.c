@@ -369,7 +369,7 @@ PlbasicInit( Tcl_Interp *interp )
         return TCL_ERROR;
     }
 #else
-    
+
 /* 
  * This code is really designed to be used with a stubified Matrix
  * extension.  It is not well tested under a non-stubs situation
@@ -391,6 +391,18 @@ PlbasicInit( Tcl_Interp *interp )
 /* Begin search for init script */
 /* Each search begins with a test of libDir, so rearrangement is easy. */
 /* If search is successful, both libDir (C) and pllibrary (tcl) are set */
+
+/* if we are in the build tree, search there */
+    if (plInBuildTree()) {
+	if (debug) fprintf(stderr, "trying BUILD_DIR\n");
+	libDir = BUILD_DIR "/bindings/tk";
+	Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
+	if (Tcl_Eval(interp, initScript) != TCL_OK) {
+	    libDir = NULL;
+	    Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+	    Tcl_ResetResult(interp);
+	}
+    }
 
 /* Tcl extension dir and/or PL_LIBRARY */
     if (libDir == NULL) {
@@ -639,6 +651,13 @@ pls_auto_path(Tcl_Interp *interp)
     Tcl_SetVar(interp, "dir", buf, 0);
     if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
 	return TCL_ERROR;
+
+    /*** see if plserver was invoked in the build tree ***/
+    if (plInBuildTree()) {
+      Tcl_SetVar(interp, "dir", BUILD_DIR "/bindings/tk", TCL_GLOBAL_ONLY);
+      if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
+     	return TCL_ERROR; 
+    }
 
 #ifdef DEBUG
     fprintf(stderr, "adding %s to auto_path\n", buf);
