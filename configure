@@ -15,7 +15,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.2  1993/10/04 19:55:57  mjl
+# Revision 1.3  1993/10/06 19:48:03  mjl
+# Got rid of SysV-isms in echo command.  Should work on lots more systems
+# now without resorting to disgusting hacks.
+#
+# Revision 1.2  1993/10/04  19:55:57  mjl
 # Now sets debug=off if optimization level of 1 or greater is selected.
 #
 # Revision 1.1  1993/10/04  17:43:23  mjl
@@ -63,14 +67,9 @@ if [ ! "$no_share" ]; then
 	no_share=off
 fi
 
-# System-specific initializations.
+# Define a symbol for echo to save a little bit of space.
 
-case "$system" in
-
-SunOS)
-	PATH=/usr/5bin:/usr/bin:/bin		# to get the SysV "echo"
-	;;
-esac
+e=echo
 
 # Define some handy functions
 
@@ -80,18 +79,17 @@ esac
 
 Settings () {
 
-	echo \
-"The current settings are:\n\
-\n\
-	system		$system\n\
-	double		$double\n\
-	debug		$debug\n\
-	opt		$opt\n\
-	profile		$profile\n\
-	no_x		$no_x\n\
-	no_tk		$no_tk\n\
-	no_share	$no_share\n\
-"
+$e "The current settings are:"
+$e ""
+$e "	system		$system"
+$e "	double		$double"
+$e "	debug		$debug"
+$e "	opt		$opt"
+$e "	profile		$profile"
+$e "	no_x		$no_x"
+$e "	no_tk		$no_tk"
+$e "	no_share	$no_share"
+$e ""
 }
 
 #****************************************************************************
@@ -109,28 +107,27 @@ Settings () {
 
 Help () {
 
-	echo \
-"Syntax:\n\
-	configure [flags]\n\
-\n\
-where recognized flags include:\n\
-\n\
-	h			help\n\
-	system	  =<name>	specify system name\n\
-	opt	  [=0|1|2]	specify optimization level\n\
-	double	  [=on|off]	specify double precision\n\
-	debug	  [=on|off]	specify debugging\n\
-	profile	  [=on|off]	specify profiling\n\
-	no_x	  [=on|off]	no X linkage\n\
-	no_tk	  [=on|off]	no Tcl/TK linkage\n\
-	no_share  [=on|off]	do not build shared libraries\n\
-\n\
-Options are set via the command line, environment, and internal defaults,\n\
-in that order.  The option value must be specified without spaces, e.g.\n\
-debug=off.  The value can often be omitted, in which case booleans are set\n\
-to \"on\" and multi-state variables are set to some typical \"on\" value.\n\
-Variables can be truncated to their shortest unique length.\n\
-"
+$e "Syntax:"
+$e "	configure [flags]"
+$e ""
+$e "where recognized flags include:"
+$e ""
+$e "	h			help"
+$e "	system	  =<name>	specify system name"
+$e "	opt	  [=0|1|2]	specify optimization level"
+$e "	double	  [=on|off]	specify double precision"
+$e "	debug	  [=on|off]	specify debugging"
+$e "	profile	  [=on|off]	specify profiling"
+$e "	no_x	  [=on|off]	no X linkage"
+$e "	no_tk	  [=on|off]	no Tcl/TK linkage"
+$e "	no_share  [=on|off]	do not build shared libraries"
+$e ""
+$e "Options are set via the command line, environment, and internal defaults,"
+$e "in that order.  The option value must be specified without spaces, e.g."
+$e "debug=off.  The value can often be omitted, in which case booleans are set"
+$e "to \"on\" and multi-state variables are set to some typical \"on\" value."
+$e "Variables can be truncated to their shortest unique length."
+$e ""
 	Settings
 	exit 1
 }
@@ -401,8 +398,10 @@ Configure () {
 
 # Now time to build the makefile.
 
-	echo "Building makefile with command:\n\n\
-m4 $system_flag $machine_flag $double_flag \
+	echo "Building makefile with command:"
+	echo ""
+	echo \
+"m4 $system_flag $machine_flag $double_flag \
 $debug_flag $opt_flag $profile_flag \
 $no_x_flag $no_tk_flag $no_share_flag \
 makefile.m4 >Makefile
