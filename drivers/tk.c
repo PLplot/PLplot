@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.35  1994/05/14 05:43:13  mjl
+ * Revision 1.36  1994/06/09 20:27:02  mjl
+ * Changed direct widget and initialization commands to reflect changes to
+ * plwidget.tcl and plframe.c.
+ *
+ * Revision 1.35  1994/05/14  05:43:13  mjl
  * Additional debug information.
  *
  * Revision 1.34  1994/05/07  03:13:37  mjl
@@ -563,7 +567,7 @@ tk_di(PLStream *pls)
 	sprintf(str, "%f", pls->diorot);
 	Tcl_SetVar(dev->interp, "rot", str, 0);
 
-	server_cmd( pls, "$plwidget cmd setopt -ori $rot", 1 );
+	server_cmd( pls, "$plwidget cmd plsetopt -ori $rot", 1 );
 	pls->difilt &= ~PLDI_ORI;
     }
 
@@ -579,7 +583,7 @@ tk_di(PLStream *pls)
 	sprintf(str, "%f", pls->dipymax);
 	Tcl_SetVar(dev->interp, "yr", str, 0);
 
-	server_cmd( pls, "$plwidget cmd setopt -wplt $xl,$yl,$xr,$yr", 1 );
+	server_cmd( pls, "$plwidget cmd plsetopt -wplt $xl,$yl,$xr,$yr", 1 );
 	pls->difilt &= ~PLDI_PLT;
     }
 
@@ -595,10 +599,10 @@ tk_di(PLStream *pls)
 	sprintf(str, "%f", pls->jy);
 	Tcl_SetVar(dev->interp, "jy", str, 0);
 
-	server_cmd( pls, "$plwidget cmd setopt -mar $mar", 1 );
-	server_cmd( pls, "$plwidget cmd setopt -a $aspect", 1 );
-	server_cmd( pls, "$plwidget cmd setopt -jx $jx", 1 );
-	server_cmd( pls, "$plwidget cmd setopt -jy $jy", 1 );
+	server_cmd( pls, "$plwidget cmd plsetopt -mar $mar", 1 );
+	server_cmd( pls, "$plwidget cmd plsetopt -a $aspect", 1 );
+	server_cmd( pls, "$plwidget cmd plsetopt -jx $jx", 1 );
+	server_cmd( pls, "$plwidget cmd plsetopt -jy $jy", 1 );
 	pls->difilt &= ~PLDI_DEV;
     }
 
@@ -1080,7 +1084,6 @@ launch_server(PLStream *pls)
 * invoked from this driver currently include:
 *
 *    $plw_create_proc		Creates the widget environment
-*    $plw_init_proc		Initializes the widget(s)
 *    $plw_start_proc		Does any remaining startup necessary
 *    $plw_end_proc		Prepares for shutdown
 *    $plw_flash_proc		Invoked when waiting for page advance
@@ -1096,11 +1099,8 @@ launch_server(PLStream *pls)
 * usage in all the TCL procs is consistent.
 *
 * In order that the TK driver be able to invoke the actual plplot
-* widget, the proc "$plw_init_proc" deposits the widget name in the local
+* widget, the proc "$plw_create_proc" deposits the widget name in the local
 * interpreter variable "plwidget".
-*
-* In addition, the name of the client main window is given as (2nd)
-* argument to "$plw_init_proc".  
 \*----------------------------------------------------------------------*/
 
 static void
@@ -1111,8 +1111,6 @@ plwindow_init(PLStream *pls)
     int i;
 
     dbug_enter("plwindow_init");
-
-/* If widget does not exist we must create it */
 
     if (pls->plwindow == NULL) {
 
@@ -1142,22 +1140,15 @@ plwindow_init(PLStream *pls)
 	    if (pls->plwindow[i] == ' ')
 		pls->plwindow[i] = '_';
 	}
+    }
 
-/* Finally, the baby has a name. */
-
-	Tcl_SetVar(dev->interp, "plwindow", pls->plwindow, 0);
+    Tcl_SetVar(dev->interp, "plwindow", pls->plwindow, 0);
 
 /* Create the plframe widget & anything else you want with it. */
 
-	server_cmd( pls, "$plw_create_proc $plwindow", 0 );
-    }
-    else {
-	Tcl_SetVar(dev->interp, "plwindow", pls->plwindow, 0);
-    }
+    server_cmd( pls,
+	"$plw_create_proc $plwindow [list $client]", 1 );
 
-/* Initialize the widget(s) */
-
-    server_cmd( pls, "$plw_init_proc $plwindow [list $client]", 1 );
     tk_wait(pls, "[info exists plwidget]" );
 
 /* Now we should have the actual plplot widget name in $plwidget */
@@ -1180,7 +1171,7 @@ plwindow_init(PLStream *pls)
 /* nopixmap option */
 
     if (pls->nopixmap) 
-	server_cmd( pls, "$plwidget cmd setopt -nopixmap", 0 );
+	server_cmd( pls, "$plwidget cmd plsetopt -nopixmap", 0 );
 
 /* Start up remote plplot */
 
