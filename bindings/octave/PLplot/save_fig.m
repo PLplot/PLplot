@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -43,16 +43,16 @@
 
 function save_fig(file, device, rev)
 
-  global __pl __lp_options FIGDIR
-  __pl_strm = __pl_init;
+  global __pl FIGDIR
+  strm = __pl_init;
   
   if (plglevel != 3)
     warning("Nothing to save");
     return
   endif
 
-  if (!exist("__lp_options"))
-    __lp_options = "lp -c";
+  if (!exist("__pl.lp_options"))
+    __pl.lp_options = "lp -c";
   endif
 
   if (nargin < 3)
@@ -60,7 +60,7 @@ function save_fig(file, device, rev)
   endif
 
   if (nargin < 2 )
-    device = "ps";	
+    device = "psc";	
     ix = rindex(file, '.');
     if (ix)
       device = file(ix+1:length(file));
@@ -71,7 +71,7 @@ function save_fig(file, device, rev)
   vdev = [ "xwin"; "tk"; "xterm"; "tekt"; "tek4107t"; "mskermit"; "versaterm";
 	  "vlt"; "conex"; "dg300"; "plmeta"; "tekf"; "tek4107f"; "ps"; "psc";
 	  "xfig"; "ljiip"; "ljii"; "hp7470"; "hp7580"; "lj_hpgl"; \
-	  "imp"; "pbm"; "png"; "jpeg"];
+	  "imp"; "pbm"; "png"; "jpeg"; "pstex"];
 
   dev = "";
   for i=1:rows(vdev)
@@ -83,8 +83,7 @@ function save_fig(file, device, rev)
 
   if (isempty(dev))
     dev = "psc";
-    ##  file = [file, '.', dev];
-    warning("Using Color Postscript. Valid device types are:\n"); disp(vdev);
+    warning("save_fig: Using Color Postscript.");
   endif
 
   device = dev;
@@ -101,7 +100,12 @@ function save_fig(file, device, rev)
       file = [FIGDIR, '/', file];
     endif
 
-    eval(sprintf("save %s device", file),"error('Can\\'t create file\\n'); return");
+    ## see if it is possible to save the file
+    [a, st] = system(sprintf("touch %s;", file),1);
+    if (st != 0)
+      error("Can't create file %s.\n", file);
+      return;
+    endif
 
     cur_fig = plgstrm;
     f = free_fig; # find new stream and make it default
@@ -137,7 +141,7 @@ function save_fig(file, device, rev)
     plsstrm(cur_fig);	# return to previous stream
 
     if (to_prt == 1)
-      system(sprintf("%s %s;", __lp_options, file));
+      system(sprintf("%s %s;", __pl.lp_options, file));
       unlink(file);
     endif
   else
