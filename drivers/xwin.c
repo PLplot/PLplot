@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.54  1994/10/11 18:43:33  mjl
+ * Revision 1.55  1994/11/02 19:48:06  mjl
+ * Added locator handling.  When escape function is called with a PLESC_GETC
+ * operation, the cursor switches to crosshair and it sits in the X event
+ * loop, waiting for a left mouse click.  The coordinates are stored in the
+ * data structure passed to the escape function, and the cursor reverts to
+ * the default (now unchanged from the system default).
+ *
+ * Revision 1.54  1994/10/11  18:43:33  mjl
  * Restructured X initialization, and added the function plD_open_xw() to
  * allow early access (before calling plinit) to the X driver data
  * structures.  Currently used by the plframe widget to ensure that fg/bg
@@ -148,15 +155,16 @@ static void  FillPolygon	(PLStream *pls);
 static void  GetVisual		(PLStream *pls);
 static void  AllocBGFG		(PLStream *pls);
 
-static void  MasterEH		(PLStream *, XEvent *);
-static void  KeyEH		(PLStream *, XEvent *);
-static void  MouseEH		(PLStream *, XEvent *);
-static void  ExposeEH		(PLStream *, XEvent *);
-static void  ResizeEH		(PLStream *, XEvent *);
+static void  MasterEH		(PLStream *pls, XEvent *event);
+static void  KeyEH		(PLStream *pls, XEvent *event);
+static void  MouseEH		(PLStream *pls, XEvent *event);
+static void  ExposeEH		(PLStream *pls, XEvent *event);
+static void  ResizeEH		(PLStream *pls, XEvent *event);
 
-static void  ExposeCmd		(PLStream *);
-static void  ResizeCmd		(PLStream *, PLWindow *);
-static void  RedrawCmd		(PLStream *);
+static void  ExposeCmd		(PLStream *pls);
+static void  RedrawCmd		(PLStream *pls);
+static void  ResizeCmd		(PLStream *pls, PLWindow *ptr);
+static void  GetCursor		(PLStream *pls, PLCursor *ptr);
 
 /*----------------------------------------------------------------------*\
  * plD_init_xw()
@@ -325,6 +333,10 @@ plD_open_xw(PLStream *pls)
 
 	AllocBGFG(pls);
 	plX_setBGFG(pls);
+
+/* Make a crosshair cursor */
+
+	xwd->cross_cursor = XCreateFontCursor(xwd->display, XC_crosshair);
     }
 
 /* Display matched, so use existing display data */
@@ -576,13 +588,13 @@ plD_state_xw(PLStream *pls, PLINT op)
  *
  * Functions:
  *
+ *	PLESC_EH	Handle pending events
  *	PLESC_EXPOSE	Force an expose
- *	PLESC_RESIZE	Force a resize
- *	PLESC_REDRAW	Force a redraw
- *	PLESC_FLUSH	Flush X event buffer
  *	PLESC_FILL	Fill polygon
- *	PLESC_EH	Handle events only
- *
+ *	PLESC_FLUSH	Flush X event buffer
+ *	PLESC_GETC	Get coordinates upon mouse click
+ *	PLESC_REDRAW	Force a redraw
+ *	PLESC_RESIZE	Force a resize
 \*----------------------------------------------------------------------*/
 
 void
@@ -594,16 +606,16 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
     dbug_enter("plD_esc_xw");
 
     switch (op) {
+    case PLESC_EH:
+	HandleEvents(pls);
+	break;
+
     case PLESC_EXPOSE:
 	ExposeCmd(pls);
 	break;
 
-    case PLESC_RESIZE:
-	ResizeCmd(pls, (PLWindow *) ptr);
-	break;
-
-    case PLESC_REDRAW:
-	RedrawCmd(pls);
+    case PLESC_FILL:
+	FillPolygon(pls);
 	break;
 
     case PLESC_FLUSH:
@@ -611,14 +623,45 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 	XFlush(xwd->display);
 	break;
 
-    case PLESC_FILL:
-	FillPolygon(pls);
+    case PLESC_GETC:
+	GetCursor(pls, (PLCursor *) ptr);
 	break;
 
-    case PLESC_EH:
-	HandleEvents(pls);
+    case PLESC_REDRAW:
+	RedrawCmd(pls);
+	break;
+
+    case PLESC_RESIZE:
+	ResizeCmd(pls, (PLWindow *) ptr);
 	break;
     }
+}
+
+/*----------------------------------------------------------------------*\
+ * GetCursor()
+ *
+ * Waits for a left button mouse event and returns coordinates.
+\*----------------------------------------------------------------------*/
+
+static void
+GetCursor(PLStream *pls, PLCursor *ptr)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    XEvent event;
+
+    dev->cursorX = -1;
+    dev->cursorY = -1;
+    XDefineCursor(xwd->display, dev->window, xwd->cross_cursor);
+
+    while (dev->cursorX < 0) {
+	XNextEvent(xwd->display, &event);
+	MasterEH(pls, &event);
+    }
+
+    ptr->vdX = dev->cursorX;
+    ptr->vdY = dev->cursorY;
+    XUndefineCursor(xwd->display, dev->window);
 }
 
 /*----------------------------------------------------------------------*\
@@ -763,7 +806,6 @@ InitMain(PLStream *pls)
     int x, y;
     U_INT width, height, border, depth;
     char header[80];
-    Cursor cross_cursor;
 
     dbug_enter("InitMain");
 
@@ -821,11 +863,6 @@ InitMain(PLStream *pls)
 
     XSetStandardProperties(xwd->display, dev->window, header, header,
 			   None, 0, 0, &hint);
-
-/* Set cursor to crosshair */
-
-    cross_cursor = XCreateFontCursor(xwd->display, XC_crosshair);
-    XDefineCursor(xwd->display, dev->window, cross_cursor);
 }
 
 /*----------------------------------------------------------------------*\
@@ -1046,6 +1083,8 @@ MouseEH(PLStream *pls, XEvent *event)
 
     switch (mouse.button) {
     case Button1:
+	dev->cursorX = mouse.x;
+	dev->cursorY = mouse.y;
 	break;
 
     case Button2:
