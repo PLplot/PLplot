@@ -50,7 +50,7 @@ noinst_HEADERS = \
 	plunicode-type1.h \
 	plfci-type1.h \
 	plfci-truetype.h \
-	gnome-canvas-hacktext.h
+	plplotcanvas-hacktext.h
 
 BUILT_SOURCES = plhershey-unicode.h
 MAINTAINERCLEANFILES = plhershey-unicode.h
