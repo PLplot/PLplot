@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1993/09/27 20:34:25  mjl
+ * Revision 1.14  1993/11/19 07:31:35  mjl
+ * Updated to new call syntax for tk_toplevel().
+ *
+ * Revision 1.13  1993/09/27  20:34:25  mjl
  * Eliminated some cases of freeing unallocated memory.
  *
  * Revision 1.12  1993/09/08  18:38:24  mjl
@@ -122,7 +125,7 @@ main(int argc, char **argv)
 
 /* Initialize top level window */
 
-    if (tk_toplevel(&w, interp, display, argv[0], 0))
+    if (tk_toplevel(&w, interp, display, argv[0], argv[0], 0))
 	abort_session("");
 
 /* Initialize stuff known to interpreter */

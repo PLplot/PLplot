@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1993/11/15 08:31:16  mjl
+ * Revision 1.17  1993/11/19 07:31:36  mjl
+ * Updated to new call syntax for tk_toplevel().
+ *
+ * Revision 1.16  1993/11/15  08:31:16  mjl
  * Now uses tmpnam() to get temporary file instead of tempnam().  Also,
  * put in rename of dangerous Tcl commands just after startup.
  *
@@ -563,7 +566,8 @@ tk_start(PLStream *pls)
     if (pls->program == NULL)
 	pls->program = "plclient";
 
-    if (tk_toplevel(&dev->w, dev->interp, pls->FileName, pls->program, NOMAP))
+    if (tk_toplevel(&dev->w, dev->interp, pls->FileName, pls->program,
+		    pls->program, NOMAP))
 	abort_session(pls, "Unable to create top-level window");
 
 /* Initialize stuff known to interpreter */
