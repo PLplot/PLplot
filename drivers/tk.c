@@ -1396,7 +1396,7 @@ set_windowname(PLStream *pls)
   /* Set to "plclient" if not initialized via plargs or otherwise */
 
   if (pls->program == NULL)
-    pls->program = "plclient";
+    pls->program = plstrdup("plclient");
 
   /* Eliminate any leading path specification */
 
