@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 2000-2002 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -12,41 +12,28 @@
 ##
 ## This file is part of plplot_octave.
 
-## *very* preliminary! assumes that img is in octave image format, where each
+## Assumes that img is in octave image format, where each
 ## matrix element is an index in the colormap. Slow.
 ##
-## ex: [img, map] = loadimage("default.img");
-## plcolormap(map);
-## plimage(img);
+## ex:
+##  [img, map] = loadimage("default.img"); # "lena.img" can also be used
+##   colormap(map);
+##   plimage(img);
+##
+## 
 
-function plimage(img, levels)
 
-  entries = create_set(img); # this must be faster. use sort()
+function plimage(img)
 
-  cmap = plcolormap;
-  ncol = length(cmap);
-
-  n = length(entries);
-
-  [nr, nc] = size(img);
-
-  [xx, yy] = meshdom(1:nc, 1:nr);
-
-  xxx = reshape(xx, nr*nc, 1);
-  yyy = reshape(yy, nr*nc, 1);
-
-  __pl_plenv(0, nc, 0, nr, 1, -1);
-
-  do_fortran_indexing = 1;
-
-  for i=entries	# sloooow
-
-    plcol1(i/ncol);
-    ix = find(img == i);
-    plpoin(xxx(ix), yyy(ix),1);
-
-  endfor
-
+  global __pl
+  __pl_strm = __pl_init;
+  
+  plenv(0, 1, 0, 1, 1, -2);
+  pplimage (fliplr(img'), 0, 1, 0, 1,
+	    min(min(img)), max(max(img)), 0, 1, 0, 1);
+  pllab(tdeblank(__pl.xlabel(__pl_strm,:)),
+	tdeblank(__pl.ylabel(__pl_strm,:)),
+	tdeblank(__pl.tlabel(__pl_strm,:)));
   plflush;pleop;
 
 endfunction
