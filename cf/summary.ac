@@ -78,7 +78,7 @@ Language Bindings:
 enable_tcl:	$enable_tcl		enable_itcl:	$enable_itcl
 enable_cxx:	$enable_cxx		enable_f77:	$enable_f77
 enable_java:	$enable_java		enable_python:	$enable_python
-enable_octave:	$enable_octave
+enable_octave:	$enable_octave		enable_pdl:	$enable_pdl
 "
 
 cat << EOF > config.summary

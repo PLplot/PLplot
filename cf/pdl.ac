@@ -3,6 +3,7 @@ dnl
 dnl PDL checks
 dnl
 dnl Copyright (C) 2004  Rafael Laboissiere
+dnl Copyright (C) 2004  Alan W. Irwin
 dnl
 dnl This file is part of PLplot.
 dnl
@@ -19,23 +20,30 @@ dnl You should have received a copy of the GNU Library General Public License
 dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+PL_ARG_ENABLE(pdl, [enable perl examples in tests (requires pdl)], no)
+
 AC_CHECK_PROGS(PERL, perl, no)
 
-if test "$PERL" = no ; then
+if test "$enable_pdl" = "no" ; then
 
-    HAS_PDL=no
+# Requires placeholder action like this in order for following elif to work.
+    enable_pdl=no
+
+elif test "$PERL" = no ; then
+
+    enable_pdl=no
     
 else    
 
     AC_MSG_CHECKING([for presence of PDL Perl module])
     if $PERL -e 'use PDL' 2>/dev/null ; then 
-        HAS_PDL=yes
+        enable_pdl=yes
     else 
-        HAS_PDL=no
+        enable_pdl=no
     fi
-    AC_MSG_RESULT([$HAS_PDL])
+    AC_MSG_RESULT([$enable_pdl])
 
-    if test "$HAS_PDL" = yes ; then
+    if test "$enable_pdl" = yes ; then
 
         PDL_MAJOR_VERSION=2
         PDL_MINOR_VERSION=4
@@ -47,16 +55,16 @@ else
 
         PL_COMPARE_VERSIONS([$PDL_VERSION], 
           [$PDL_MAJOR_VERSION.$PDL_MINOR_VERSION.$PDL_MICRO_VERSION],
-          [HAS_PDL=no], [], [])
+          [enable_pdl=no], [], [])
 
-        if test "$HAS_PDL" = no ; then
+        if test "$enable_pdl" = no ; then
             AC_MSG_WARN([Minimal required version of PDL is $PDL_MAJOR_VERSION.$PDL_MINOR_VERSION.$PDL_MICRO_VERSION])
-            AC_MSG_WARN([setting HAS_PDL=no]);
+            AC_MSG_WARN([setting enable_pdl=no]);
         fi
 
     fi
 
 fi    
 
-AC_SUBST(HAS_PDL)
-AM_CONDITIONAL(has_pdl, [test "$HAS_PDL" = yes])
+AC_SUBST(enable_pdl)
+AM_CONDITIONAL(enable_pdl, [test "$enable_pdl" = yes])

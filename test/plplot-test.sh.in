@@ -195,7 +195,7 @@ if test -z "$FRONT_END" ; then
    test @enable_octave@ = yes && FRONT_END="$FRONT_END octave"
    test @enable_python@ = yes && FRONT_END="$FRONT_END python"
    test @enable_tcl@ = yes    && FRONT_END="$FRONT_END tcl"
-   test @HAS_PDL@ = yes       && FRONT_END="$FRONT_END perl"
+   test @enable_pdl@ = yes    && FRONT_END="$FRONT_END perl"
 fi
 
 # Find where the front-end scripts are by looking at the dirname of the

@@ -48,7 +48,7 @@ if enable_tcl
 scripts += test_tcl.sh
 endif
 
-if has_pdl
+if enable_pdl
 scripts += test_perl.sh
 endif
 
