@@ -200,30 +200,100 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 }
 #else
 
+/* clipping helper for 3d polygons */
+
+int plP_clip_poly(int Ni, PLFLT *Vi[3], int axis, PLFLT dir, PLFLT offset)
+{
+  int anyout = 0;
+  PLFLT in[PL_MAXPOLY], T[3][PL_MAXPOLY];
+  int No = 0;
+  int i, j, k;
+
+  for(i=0; i<Ni; i++) {
+    in[i] = Vi[axis][i] * dir + offset;
+    anyout += in[i] < 0;
+  }
+
+  /* none out */
+  if(anyout == 0)
+    return Ni;
+
+  /* all out */
+  if(anyout == Ni) {
+    return 0;
+  }
+
+  /* some out */
+  /* copy over to a temp vector */
+  for(i=0; i<3; i++) {
+    for(j=0; j<Ni; j++) {
+      T[i][j] = Vi[i][j];
+    }
+  }
+  /* copy back selectively */
+  for(i=0; i<Ni; i++) {
+    j = (i+1) % Ni;
+
+    if(in[i]>=0 && in[j]>=0) {
+      for(k=0; k<3; k++)
+	Vi[k][No] = T[k][j];
+      No++;
+    } else if(in[i]>=0 && in[j]<0) {
+      PLFLT u = in[i] / (in[i] - in[j]);
+      for(k = 0; k<3; k++)
+	Vi[k][No] = T[k][i]*(1-u) + T[k][j]*u;
+      No++;
+    } else if(in[i]<0 && in[j]>=0) {
+      PLFLT u = in[i] / (in[i] - in[j]);
+      for(k = 0; k<3; k++)
+	Vi[k][No] = T[k][i]*(1-u) + T[k][j]*u;
+      No++;
+      for(k=0; k<3; k++)
+	Vi[k][No] = T[k][j];
+      No++;
+    }
+  }
+  return No;
+}
+
 /* helper for plotsh3d below */
 static void shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
 			   PLFLT x1, PLFLT y1, PLFLT z1,
 			   PLFLT x2, PLFLT y2, PLFLT z2)
 {
   int i;
+  /* arrays for interface to core functions */
+  PLINT u[6], v[6];
+  PLFLT x[6], y[6], z[6], c;
+  int n;
+  PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
+  PLFLT *V[3];
 
-  /* arrays fro interface to core functions */
-  PLFLT x[3], y[3], z[3], c;
-  PLINT u[4], v[4];
+  plP_gdom(&xmin, &xmax, &ymin, &ymax);
+  plP_grange(&zscale, &zmin, &zmax);
 
   x[0] = x0; x[1] = x1; x[2] = x2;
   y[0] = y0; y[1] = y1; y[2] = y2;
   z[0] = z0; z[1] = z1; z[2] = z2;
+  n = 3;
   c = plGetAngleToLight(x, y, z);
+  V[0] = x; V[1] = y; V[2] = z;
 
-  for(i=0; i<3; i++) {
+  n = plP_clip_poly(n, V, 0,  1, -xmin);
+  n = plP_clip_poly(n, V, 0, -1,  xmax);
+  n = plP_clip_poly(n, V, 1,  1, -ymin);
+  n = plP_clip_poly(n, V, 1, -1,  ymax);
+  n = plP_clip_poly(n, V, 2,  1, -zmin);
+  n = plP_clip_poly(n, V, 2, -1,  zmax);
+
+  for(i=0; i<n; i++) {
     u[i] = plP_wcpcx(plP_w3wcx(x[i], y[i], z[i]));
     v[i] = plP_wcpcy(plP_w3wcy(x[i], y[i], z[i]));
   }
-  u[3] = u[0];
-  v[3] = v[0];
+  u[n] = u[0];
+  v[n] = v[0];
   plcol1(c);
-  plP_plfclp(u, v, 4, plsc->clpxmi, plsc->clpxma, plsc->clpymi, plsc->clpyma, plP_fill);
+  plP_plfclp(u, v, n+1, plsc->clpxmi, plsc->clpxma, plsc->clpymi, plsc->clpyma, plP_fill);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -254,30 +324,48 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
     PLINT iFast, iSlow;
     PLINT iX[2][2], iY[2][2];
     PLFLT xbox[3], ybox[3], zbox[3];
+    PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
+    PLINT ixmin=0, ixmax=nx, iymin=0, iymax=ny;
 
     if (plsc->level < 3) {
-	myabort("plot3d: Please set up window first");
+	myabort("plotsh3d: Please set up window first");
 	return;
     }
     
     if (nx <= 0 || ny <= 0) {
-	myabort("plot3d: Bad array dimensions.");
+	myabort("plotsh3d: Bad array dimensions.");
 	return;
     }
     
-    /* Check that points in x and in y are strictly increasing */
+    plP_gdom(&xmin, &xmax, &ymin, &ymax);
+    plP_grange(&zscale, &zmin, &zmax);
+    if(zmin > zmax) {
+      PLFLT t = zmin;
+      zmin = zmax;
+      zmax = t;
+    }
+
+    /* Check that points in x and in y are strictly increasing  and in range */
 
     for (i = 0; i < nx - 1; i++) {
 	if (x[i] >= x[i + 1]) {
-	    myabort("plot3d: X array must be strictly increasing");
+	    myabort("plotsh3d: X array must be strictly increasing");
 	    return;
 	}
+	if (x[i] < xmin && x[i+1] >= xmin)
+	  ixmin = i;
+	if (x[i+1] > xmax && x[i] <= xmax)
+	  ixmax = i+2;
     }
     for (i = 0; i < ny - 1; i++) {
 	if (y[i] >= y[i + 1]) {
-	    myabort("plot3d: Y array must be strictly increasing");
+	    myabort("plotsh3d: Y array must be strictly increasing");
 	    return;
 	}
+	if (y[i] < ymin && y[i+1] >= ymin)
+	  iymin = i;
+	if (y[i+1] > ymax && y[i] <= ymax)
+	  iymax = i+2;
     }
 
     /* get the viewing parameters */
@@ -294,31 +382,31 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
     /* get direction for X */
     if(cxy >= 0) {
       ixDir = 1;	/* direction in X */
-      ixOrigin = 0;	/* starting point */
+      ixOrigin = ixmin;	/* starting point */
     } else {
       ixDir = -1;
-      ixOrigin = nx - 1;
+      ixOrigin = ixmax - 1;
     }
     /* get direction for Y */
     if(cxx >= 0) {
       iyDir = -1;
-      iyOrigin = ny - 1;
+      iyOrigin = iymax - 1;
     } else {
       iyDir = 1;
-      iyOrigin = 0;
+      iyOrigin = iymin;
     }
 
     /* figure out which dimension is dominant */
     if (fabs(cxx) > fabs(cxy)) {
       /* X is dominant */
-      nFast = nx;	/* samples in the Fast direction */
-      nSlow = ny;	/* samples in the Slow direction */
+      nFast = ixmax - ixmin;	/* samples in the Fast direction */
+      nSlow = iymax - iymin;	/* samples in the Slow direction */
       
       ixFast = ixDir; ixSlow = 0;
       iyFast = 0;     iySlow = iyDir;
     } else {
-      nFast = ny;
-      nSlow = nx;
+      nFast = iymax - iymin;
+      nSlow = ixmax - ixmin;
 
       ixFast = 0;     ixSlow = ixDir;
       iyFast = iyDir; iySlow = 0;
@@ -328,27 +416,19 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
     if (zbflg) {
       PLINT color = plsc->icol0;
       PLFLT bx[3], by[3], bz[3];
-      PLFLT zmin, zmax, zscale, tick=0, tp;
-      PLFLT xmin, xmax, ymin, ymax;
+      PLFLT tick=0, tp;
       PLINT nsub;
 
-      /* get the z range and make sure it is in order, then get the tick spacing */
-      plP_grange(&zscale, &zmin, &zmax);
-      if(zmin > zmax) {
-	PLFLT t = zmin;
-	zmin = zmax;
-	zmax = t;
-      }
+      /* get the tick spacing */
       pldtik(zmin, zmax, &tick, &nsub);
-      plP_gdom(&xmin, &xmax, &ymin, &ymax);
 
       /* determine the vertices for the background grid line */
-      bx[0] = (ixOrigin && ixFast==0) || ixFast > 0 ? xmax : xmin;
-      by[0] = (iyOrigin && iyFast==0) || iyFast > 0 ? ymax : ymin;
-      bx[1] = ixOrigin ? xmax : xmin;
-      by[1] = iyOrigin ? ymax : ymin;
-      bx[2] = (ixOrigin && ixSlow==0) || ixSlow > 0 ? xmax : xmin;
-      by[2] = (iyOrigin && iySlow==0) || iySlow > 0 ? ymax : ymin;
+      bx[0] = (ixOrigin!=ixmin && ixFast==0) || ixFast > 0 ? xmax : xmin;
+      by[0] = (iyOrigin!=iymin && iyFast==0) || iyFast > 0 ? ymax : ymin;
+      bx[1] = ixOrigin!=ixmin ? xmax : xmin;
+      by[1] = iyOrigin!=iymin ? ymax : ymin;
+      bx[2] = (ixOrigin!=ixmin && ixSlow==0) || ixSlow > 0 ? xmax : xmin;
+      by[2] = (iyOrigin!=iymin && iySlow==0) || iySlow > 0 ? ymax : ymin;
 
       plcol(zbcol);
       for(tp = tick * floor(zmin / tick) + tick; tp <= zmax; tp += tick) {
@@ -428,6 +508,9 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT init, i, ix, iy, color;
+    PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
+    PLINT ixmin=0, ixmax=nx-1, iymin=0, iymax=ny-1;
+    PLINT clipped = 0;
 
     if (plsc->level < 3) {
 	myabort("plot3d: Please set up window first");
@@ -444,6 +527,18 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	return;
     }
 
+    plP_gdom(&xmin, &xmax, &ymin, &ymax);
+    plP_grange(&zscale, &zmin, &zmax);
+    if(zmin > zmax) {
+      PLFLT t = zmin;
+      zmin = zmax;
+      zmax = t;
+    }
+    if(xmin < x[0]) xmin = x[0];
+    if(xmax > x[nx-1]) xmax = x[nx-1];
+    if(ymin < y[0]) ymin = y[0];
+    if(ymax > y[ny-1]) ymax = y[ny-1];
+
 /* Check that points in x and in y are strictly increasing */
 
     for (i = 0; i < nx - 1; i++) {
@@ -451,14 +546,84 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	    myabort("plot3d: X array must be strictly increasing");
 	    return;
 	}
+	if (x[i] < xmin)
+	  ixmin = i;
+	if (x[i] < xmax)
+	  ixmax = i+1;
     }
     for (i = 0; i < ny - 1; i++) {
 	if (y[i] >= y[i + 1]) {
 	    myabort("plot3d: Y array must be strictly increasing");
 	    return;
 	}
+	if (y[i] < ymin)
+	  iymin = i;
+	if (y[i] < ymax)
+	  iymax = i+1;
     }
+    /* do we need to clip? */
+    if(ixmin > 0 || ixmax < nx-1 || iymin > 0 || iymax < ny-1) {
+      /* adjust the input so it stays within bounds */
+      int _nx = ixmax - ixmin + 1;
+      int _ny = iymax - iymin + 1;
+      PLFLT *_x = (PLFLT*)malloc(_nx * sizeof(PLFLT));
+      PLFLT *_y = (PLFLT*)malloc(_ny * sizeof(PLFLT));
+      PLFLT **_z = (PLFLT**)malloc(_nx * sizeof(PLFLT*));
+      PLFLT ty0, ty1, tx0, tx1;
+      int i, j;
 
+      clipped = 1;
+
+      _x[0] = xmin;
+      _x[_nx-1] = xmax;
+      for(i=1; i<_nx-1; i++)
+	_x[i] = x[ixmin+i];
+      _y[0] = ymin;
+      _y[_ny-1] = ymax;
+      for(i=1; i<_ny-1; i++)
+	_y[i] = y[iymin+i];
+
+      for(i=0; i<_nx; i++)
+	_z[i] = (PLFLT*)malloc(_ny * sizeof(PLFLT));
+
+      ty0 = (ymin - y[iymin]) / (y[iymin+1] - y[iymin]);
+      ty1 = (ymax - y[iymax-1]) / (y[iymax] - y[iymax-1]);
+      tx0 = (xmin - x[ixmin]) / (x[ixmin+1] - x[ixmin]);
+      tx1 = (xmax - x[ixmax-1]) / (x[ixmax] - x[ixmax-1]);
+      for(i=0; i<_nx; i++) {
+	if(i==0) {
+	  _z[i][0] = z[ixmin][iymin]*(1-ty0)*(1-tx0) + z[ixmin][iymin+1]*(1-tx0)*ty0
+	    + z[ixmin+1][iymin]*tx0*(1-ty0) + z[ixmin+1][iymin+1]*tx0*ty0;
+	  for(j=1; j<_ny-1; j++)
+	    _z[i][j] = z[ixmin][iymin+j]*(1-tx0) + z[ixmin+1][iymin+j]*tx0;
+	  _z[i][_ny-1] = z[ixmin][iymax-1]*(1-tx0)*(1-ty1) + z[ixmin][iymax]*(1-tx0)*ty1
+	    + z[ixmin+1][iymax-1]*tx0*(1-ty1) + z[ixmin+1][iymax]*tx0*ty1;
+	} else if(i==_nx-1) {
+	  _z[i][0] = z[ixmax-1][iymin]*(1-tx1)*(1-ty0) + z[ixmax-1][iymin+1]*(1-tx1)*ty0
+	    + z[ixmax][iymin]*tx1*(1-ty0) + z[ixmax][iymin+1]*tx1*ty0;
+	  for(j=1; j<_ny-1; j++)
+	    _z[i][j] = z[ixmax-1][iymin+j]*(1-tx1) + z[ixmax][iymin+j]*tx1;
+	  _z[i][_ny-1] = z[ixmax-1][iymax-1]*(1-tx1)*(1-ty1) + z[ixmax][iymax]*(1-tx1)*ty1
+	    + z[ixmax][iymax-1]*tx1*(1-ty1) + z[ixmax][iymax]*tx1*ty1;
+	} else {
+	  _z[i][0] = z[ixmin+i][iymin]*(1-ty0) + z[ixmin+i][iymin+1]*ty0;
+	  for(j=1; j<_ny-1; j++)
+	    _z[i][j] = z[ixmin+i][iymin+j];
+	  _z[i][_ny-1] = z[ixmin+i][iymax-1]*(1-ty1) + z[ixmin+i][iymax]*ty1;
+	}
+	for(j=0; j<_ny; j++) {
+	  if(_z[i][j] < zmin)
+	    _z[i][j] = zmin;
+	  else if(_z[i][j] > zmax)
+	    _z[i][j] = zmax;
+	}
+      }
+      x = _x;
+      y = _y;
+      z = _z;
+      nx = _nx;
+      ny = _ny;	  
+    }
 /* Allocate work arrays */
 
     utmp = (PLINT *) malloc((size_t) (2 * MAX(nx, ny) * sizeof(PLINT)));
@@ -550,6 +715,14 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     }
 
     freework();
+
+    if(clipped) {
+      free(x);
+      free(y);
+      for(i=0; i<nx; i++)
+	free(z[i]);
+      free(z);
+    }
 }
 
 /*--------------------------------------------------------------------------*\
