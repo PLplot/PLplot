@@ -327,7 +327,7 @@ AC_REVISION($Revision$)
 ###   version number, otherwise it will fool up the bootstrap.sh script.  By
 ###   the way, the line below can be changed using options --version and
 ###   --date-version of that script. ]
-AC_INIT(plplot, 5.2.1.cvs.20040115, plplot-devel@lists.sourceforge.net)
+AC_INIT(plplot, 5.2.1.rc1.5.3.0, plplot-devel@lists.sourceforge.net)
 AC_CONFIG_SRCDIR(src/plcore.c)
 
 ### Configuration headers
@@ -341,7 +341,7 @@ AM_INIT_AUTOMAKE
 ### is by specifying one of the option --version of --date-version to
 ### bootstrap.sh
 
-RELEASE_DATE=2004-01-15
+RELEASE_DATE=2004-01-18
 AC_SUBST(RELEASE_DATE)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
