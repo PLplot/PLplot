@@ -117,6 +117,7 @@ static int opt_jy		(char *, char *, void *);
 static int opt_mar		(char *, char *, void *);
 static int opt_ori		(char *, char *, void *);
 static int opt_freeaspect	(char *, char *, void *);
+static int opt_portrait		(char *, char *, void *);
 static int opt_width		(char *, char *, void *);
 static int opt_bg		(char *, char *, void *);
 static int opt_ncol0		(char *, char *, void *);
@@ -364,7 +365,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG,
     "-ori orient",
-    "Plot orientation (0,2=landscape, 1,3=portrait)" },
+    "Plot orientation (0,1,2,3=landscape,portrait,seascape,upside-down)" },
 {
     "freeaspect",		/* floating aspect ratio */
     opt_freeaspect,
@@ -372,7 +373,15 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC,
     "-freeaspect",
-    "Do not preserve aspect ratio on orientation swaps" },
+    "Allow aspect ratio to adjust to orientation swaps" },
+{
+    "portrait",			/* floating aspect ratio */
+    opt_portrait,
+    NULL,
+    NULL,
+    PL_OPT_FUNC,
+    "-portrait",
+    "Sets portrait mode (both orientation and aspect ratio)" },
 {
     "width",			/* Pen width */
     opt_width,
@@ -1478,13 +1487,29 @@ opt_ori(char *opt, char *optarg, void *client_data)
  * opt_freeaspect()
  *
  * Performs appropriate action for option "freeaspect":
- * Do not preserve aspect ratio on orientation swaps.
+ * Allow aspect ratio to adjust to orientation swaps.
 \*--------------------------------------------------------------------------*/
 
 static int
 opt_freeaspect(char *opt, char *optarg, void *client_data)
 {
-    plsc->freeaspect = 1;
+    plsfreeaspect(1);
+    return 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * opt_portrait()
+ *
+ * Performs appropriate action for option "portrait":
+ * Sets portrait mode (both orientation and aspect ratio) for those drivers
+ * e.g., (ljii, ljiip, psc, ps, and pstek) which have a 90-deg rotation between
+ * landscape and portrait mode.
+\*--------------------------------------------------------------------------*/
+
+static int
+opt_portrait(char *opt, char *optarg, void *client_data)
+{
+    plsportrait(1);
     return 0;
 }
 
