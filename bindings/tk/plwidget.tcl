@@ -140,6 +140,7 @@ proc plxframe {w {client_id {}}} {
 
 #----------------------------------------------------------------------------
 # plw::setup_defaults
+# plw::set_zoom_handler
 #
 # Set up default settings.
 #----------------------------------------------------------------------------
@@ -213,6 +214,11 @@ proc plw::setup_defaults {w} {
 	
     bind $w.plwin <Any-Enter> \
 	"focus $w.plwin"
+}
+
+proc plw::set_zoom_handler {w zoom_handler} {
+    global user_zoom_handler
+    set user_zoom_handler($w) $zoom_handler
 }
 
 #----------------------------------------------------------------------------
@@ -1067,7 +1073,9 @@ proc plw::zoom_reset {w} {
     global def_button_cmd
 
     plw::label_refresh $w
-    bind $w.plwin <ButtonPress> $def_button_cmd
+    if [info exists def_button_cmd] {
+        bind $w.plwin <ButtonPress> $def_button_cmd
+    }
     $w.plwin view reset
     if { [winfo exists $w.hbar] && [winfo ismapped $w.hbar] } then {
 	pack unpack $w.hbar
@@ -1156,11 +1164,15 @@ proc plw::page_reset {w} {
 proc plw::zoom_start {w wx wy} {
     global def_button_cmd
 
-    bind $w.plwin <ButtonPress> $def_button_cmd
+# Reset ButtonPress binding to the default
+    if [info exists def_button_cmd] {
+        bind $w.plwin <ButtonPress> $def_button_cmd
+    }
 
 # Use a set rather than a push to replace previous zoom message.
     plw::label_set $w "Select zoom region by dragging mouse, then release."
 
+# Initialize plot, set up zoom bindings, and we're done.
     $w.plwin draw init
     bind $w.plwin <B1-Motion>        "plw::zoom_mouse_draw $w $wx $wy %x %y"
     bind $w.plwin <B1-ButtonRelease> "plw::zoom_mouse_end $w $wx $wy %x %y"
@@ -1394,20 +1406,28 @@ proc plw::zoom_mouse_draw {w wx0 wy0 wx1 wy1} {
 #----------------------------------------------------------------------------
 
 proc plw::zoom_mouse_end {w wx0 wy0 wx1 wy1} {
-    
-# Finish rubber band draw
+    global user_zoom_handler
 
+# Remove the zoom box bindings
     bind $w.plwin <B1-ButtonRelease> {}
     bind $w.plwin <B1-Motion> {}
+
+# Reset window label to the default
     plw::label_refresh $w
+
+# Turn off the zoom box
     $w.plwin draw end
 
 # Select new plot region
+    if [info exists user_zoom_handler($w)] {
+        eval $user_zoom_handler($w) $w $wx0 $wy0 $wx1 $wy1
 
-    set coords [plw::zoom_coords $w $wx0 $wy0 $wx1 $wy1 1]
-    unlist $coords xmin ymin xmax ymax
+    } else {
+        set coords [plw::zoom_coords $w $wx0 $wy0 $wx1 $wy1 1]
+        unlist $coords xmin ymin xmax ymax
 
-    plw::view_zoom $w $xmin $ymin $xmax $ymax
+        plw::view_zoom $w $xmin $ymin $xmax $ymax
+    }
 }
 
 #----------------------------------------------------------------------------
