@@ -1209,7 +1209,7 @@ plLibOpenPdfstrm(char *fn)
 
 #if defined (DATA_DIR)
     plGetName(DATA_DIR, "", fn, &fs);
-    printf("pllibopen: %s\n", fs);
+
     if ((file = pdf_fopen(fs, "rb")) != NULL)
         goto done;
 #endif  /* DATA_DIR */
