@@ -41,7 +41,7 @@ import Numeric
 #  plcont( z, clev, pltr, xg, yg, wrap )
 
 # redefine plcont to have the funky interface
-_Cplcont = plcont
+_plcont = plcont
 def plcont(z, *args):
   z = Numeric.asarray(z)
   
@@ -110,10 +110,10 @@ def plcont(z, *args):
     ky = 1
     ly = z.shape[1]
 
-  _Cplcont(z, kx, lx, ky, ly, clev, pltr, (xg, yg))
-plcont.__doc__ = _Cplcont.__doc__
+  _plcont(z, kx, lx, ky, ly, clev, pltr, (xg, yg))
+plcont.__doc__ = _plcont.__doc__
   
-_Cplstyl = plstyl
+_plstyl = plstyl
 def plstyl(*args):
   if len(args) == 3:
     n,m,s = args
@@ -129,10 +129,10 @@ def plstyl(*args):
   if type(s) == types.IntType:
     s = [s]
 
-  _Cplstyl(m,s)
-plstyl.__doc__ = _Cplstyl.__doc__
+  _plstyl(m,s)
+plstyl.__doc__ = _plstyl.__doc__
 
-_Cplshades = plshades
+_plshades = plshades
 def plshades(z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, rect,
              *args):
   pltr = pltr0
@@ -180,7 +180,7 @@ def plshades(z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_wid
   else:
     pltr_data = None
 
-  _Cplshades(z,  xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width,
+  _plshades(z,  xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width,
             rect, pltr, pltr_data)
-plshades.__doc__ = _Cplshades.__doc__
+plshades.__doc__ = _plshades.__doc__
   
