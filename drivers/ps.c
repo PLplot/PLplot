@@ -293,6 +293,7 @@ ps_init(PLStream *pls)
 
     fprintf(OF, "/M {moveto} def\n");
     fprintf(OF, "/D {lineto} def\n");
+    fprintf(OF, "/A {0.5 0 360 arc} def\n");
     fprintf(OF, "/S {stroke} def\n");
     fprintf(OF, "/Z {stroke newpath} def\n");
     fprintf(OF, "/F {fill} def\n");
@@ -356,7 +357,10 @@ plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 	fprintf(OF, " Z\n");
 	pls->linepos = 0;
 
-	sprintf(outbuf, "%d %d M %d %d D", x1, y1, x2, y2);
+	if (x1 == x2 && y1 == y2) /* must be a single dot, draw a circle */
+	  sprintf(outbuf, "%d %d A", x1, y1);
+	else
+	  sprintf(outbuf, "%d %d M %d %d D", x1, y1, x2, y2);
 	dev->llx = MIN(dev->llx, x1);
 	dev->lly = MIN(dev->lly, y1);
 	dev->urx = MAX(dev->urx, x1);
