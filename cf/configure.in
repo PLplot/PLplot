@@ -42,16 +42,16 @@
 #
 # - Faster, site-specific configures.  I have set things up so that most of
 # the configure is skipped if the relevant shell variables are set.  Early
-# on I try to source a defaults file (~/config/cf_plplot.in) which does
-# this.  The point is, for a given site most settings are invariant from one
-# configure to the next, but you might want to change things like what
-# packages are enabled, compilers, precision, profiling, debugging, etc.
-# Very useful for development.  Note: Autoconf 2.0 and later supports cache
-# files, which are similar in some ways but are not really a replacement for
-# this facility.
+# on I try to source a defaults file (cf_plplot.in, both the build directory
+# and ~/config are checked) which does this.  The point is, for a given site
+# most settings are invariant from one configure to the next, but you might
+# want to change things like what packages are enabled, compilers,
+# precision, profiling, debugging, etc.  Very useful for development.  Note:
+# Autoconf 2.0 and later supports cache files, which are similar in some
+# ways but are not really a replacement for this facility.
 # ----------------------------------------------------------------------------
 
-AC_PREREQ(2.3)
+AC_PREREQ(2.4)
 
 # ----------------------------------------------------------------------------
 # Define a macro to source site-specific variables file, if present.
@@ -80,12 +80,18 @@ done
 if test "$with_defaults" = "no"; then
     echo "Performing full configure."
 else
-    initfile="$HOME/config/cf_plplot.in"
+    initfile="./cf_plplot.in"
     if test -f $initfile; then
 	echo "Getting default settings from $initfile."
 	. $initfile
     else
-	echo "No defaults file found, performing full configure."
+	initfile="$HOME/config/cf_plplot.in"
+	if test -f $initfile; then
+	    echo "Getting default settings from $initfile."
+	    . $initfile
+	else
+	    echo "No defaults file found, performing full configure."
+	fi
     fi
 fi
 ])
