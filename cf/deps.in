@@ -280,6 +280,10 @@ x17c:	$(PLLIB) x17c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x17c.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
 
+x18c:	$(PLLIB) x18c.o
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x18c.o \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+
 tutor:	$(PLLIB) tutor.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor.o \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
