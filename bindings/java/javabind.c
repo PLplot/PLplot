@@ -276,6 +276,33 @@ Java_plplot_core_PLStream_col0( JNIEnv *env, jobject jthis, jint icol )
 
 /*
  * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    col1
+ * Signature: (F)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_col1__F( JNIEnv *env, jobject jthis, jfloat col1 )
+{
+    set_PLStream(env,jthis);
+    plcol1(col1);
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    col1
+ * Signature: (D)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_col1__D( JNIEnv *env, jobject jthis, jdouble col1 )
+{
+    set_PLStream(env,jthis);
+    plcol1(col1);
+}
+
+/*
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
  * Method:    end
  * Signature: ()V
  */
@@ -321,6 +348,206 @@ Java_plplot_core_PLStream_env__DDDDII( JNIEnv *env, jobject jthis,
     PLFLT ymin = jymin, ymax = jymax;
     set_PLStream(env,jthis);
     plenv( xmin, xmax, ymin, ymax, just, axis );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    fill
+ * Signature: (I[F[F)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_fill__I_3F_3F( JNIEnv *env, jobject jthis,
+                                         jint n,
+                                         jfloatArray jx, jfloatArray jy )
+{
+    jsize len = (*env)->GetArrayLength( env, jx );
+    jfloat *jxdata = (*env)->GetFloatArrayElements( env, jx, 0 );
+    jfloat *jydata = (*env)->GetFloatArrayElements( env, jy, 0 );
+    PLFLT *x, *y;
+    int must_free_buffers = 0, i;
+
+    if (sizeof(PLFLT) == sizeof(jfloat)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != float, in which case the /other/ branch is the one that is
+     * actually executed. */
+        x = (PLFLT *) jxdata;
+        y = (PLFLT *) jydata;
+    } else {
+        x = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( n * sizeof(PLFLT) );
+
+        for( i=0; i < n; i++ )
+        {
+            x[i] = jxdata[i];
+            y[i] = jydata[i];
+        }
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plfill( n, x, y );
+
+    if (must_free_buffers) {
+        free( x );
+        free( y );
+    }
+
+    (*env)->ReleaseFloatArrayElements( env, jx, jxdata, 0 );
+    (*env)->ReleaseFloatArrayElements( env, jy, jydata, 0 );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    fill
+ * Signature: (I[D[D)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_fill__I_3D_3D( JNIEnv *env, jobject jthis,
+                                         jint n,
+                                         jdoubleArray jx, jdoubleArray jy )
+{
+    jsize len = (*env)->GetArrayLength( env, jx );
+    jdouble *jxdata = (*env)->GetDoubleArrayElements( env, jx, 0 );
+    jdouble *jydata = (*env)->GetDoubleArrayElements( env, jy, 0 );
+    PLFLT *x, *y;
+    int must_free_buffers = 0, i;
+
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != double, in which case the /other/ branch is the one that is
+     * actually executed. */
+        x = (PLFLT *) jxdata;
+        y = (PLFLT *) jydata;
+    } else {
+        x = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( n * sizeof(PLFLT) );
+
+        for( i=0; i < n; i++ )
+        {
+            x[i] = jxdata[i];
+            y[i] = jydata[i];
+        }
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plfill( n, x, y );
+
+    if (must_free_buffers) {
+        free( x );
+        free( y );
+    }
+
+    (*env)->ReleaseDoubleArrayElements( env, jx, jxdata, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, jy, jydata, 0 );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    fill3
+ * Signature: (I[F[F[F)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_fill3__I_3F_3F_3F( JNIEnv *env, jobject jthis,
+                                             jint n, jfloatArray jx,
+                                             jfloatArray jy, jfloatArray jz )
+{
+    jsize len = (*env)->GetArrayLength( env, jx );
+    jfloat *jxdata = (*env)->GetFloatArrayElements( env, jx, 0 );
+    jfloat *jydata = (*env)->GetFloatArrayElements( env, jy, 0 );
+    jfloat *jzdata = (*env)->GetFloatArrayElements( env, jz, 0 );
+    PLFLT *x, *y, *z;
+    int must_free_buffers = 0, i;
+
+    if (sizeof(PLFLT) == sizeof(jfloat)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != float, in which case the /other/ branch is the one that is
+     * actually executed. */
+        x = (PLFLT *) jxdata;
+        y = (PLFLT *) jydata;
+        z = (PLFLT *) jzdata;
+    } else {
+        x = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        z = (PLFLT *) malloc( n * sizeof(PLFLT) );
+
+        for( i=0; i < n; i++ )
+        {
+            x[i] = jxdata[i];
+            y[i] = jydata[i];
+            z[i] = jzdata[i];
+        }
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plfill3( n, x, y, z );
+
+    if (must_free_buffers) {
+        free( x );
+        free( y );
+        free( z );
+    }
+
+    (*env)->ReleaseFloatArrayElements( env, jx, jxdata, 0 );
+    (*env)->ReleaseFloatArrayElements( env, jy, jydata, 0 );
+    (*env)->ReleaseFloatArrayElements( env, jz, jzdata, 0 );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    fill3
+ * Signature: (I[D[D[F)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_fill3__I_3D_3D_3F( JNIEnv *env, jobject jthis,
+                                             jint n, jdoubleArray jx,
+                                             jdoubleArray jy, jfloatArray jz )
+{
+    jsize len = (*env)->GetArrayLength( env, jx );
+    jdouble *jxdata = (*env)->GetDoubleArrayElements( env, jx, 0 );
+    jdouble *jydata = (*env)->GetDoubleArrayElements( env, jy, 0 );
+    jdouble *jzdata = (*env)->GetDoubleArrayElements( env, jz, 0 );
+    PLFLT *x, *y, *z;
+    int must_free_buffers = 0, i;
+
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != double, in which case the /other/ branch is the one that is
+     * actually executed. */
+        x = (PLFLT *) jxdata;
+        y = (PLFLT *) jydata;
+        z = (PLFLT *) jzdata;
+    } else {
+        x = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        z = (PLFLT *) malloc( n * sizeof(PLFLT) );
+
+        for( i=0; i < n; i++ )
+        {
+            x[i] = jxdata[i];
+            y[i] = jydata[i];
+            z[i] = jzdata[i];
+        }
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plfill3( n, x, y, z );
+
+    if (must_free_buffers) {
+        free( x );
+        free( y );
+        free( z );
+    }
+
+    (*env)->ReleaseDoubleArrayElements( env, jx, jxdata, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, jy, jydata, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, jz, jzdata, 0 );
 }
 
 /*
@@ -639,6 +866,125 @@ Java_plplot_core_PLStream_line__I_3D_3D( JNIEnv *env, jobject jthis,
 
     (*env)->ReleaseDoubleArrayElements( env, jx, jxdata, 0 );
     (*env)->ReleaseDoubleArrayElements( env, jy, jydata, 0 );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    line3
+ * Signature: (I[F[F[F)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_line3__I_3F_3F_3F( JNIEnv *env, jobject jthis,
+                                             jint n, jfloatArray jx,
+                                             jfloatArray jy, jfloatArray jz )
+{
+    jsize len = (*env)->GetArrayLength( env, jx );
+    jfloat *jxdata = (*env)->GetFloatArrayElements( env, jx, 0 );
+    jfloat *jydata = (*env)->GetFloatArrayElements( env, jy, 0 );
+    jfloat *jzdata = (*env)->GetFloatArrayElements( env, jz, 0 );
+    PLFLT *x, *y, *z;
+    int must_free_buffers = 0, i;
+
+    if (sizeof(PLFLT) == sizeof(jfloat)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != float, in which case the /other/ branch is the one that is
+     * actually executed. */
+        x = (PLFLT *) jxdata;
+        y = (PLFLT *) jydata;
+        z = (PLFLT *) jzdata;
+    } else {
+        x = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        z = (PLFLT *) malloc( n * sizeof(PLFLT) );
+
+        for( i=0; i < n; i++ )
+        {
+            x[i] = jxdata[i];
+            y[i] = jydata[i];
+            z[i] = jzdata[i];
+        }
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plline3( n, x, y, z );
+
+    if (must_free_buffers) {
+        free( x );
+        free( y );
+        free( z );
+    }
+
+    (*env)->ReleaseFloatArrayElements( env, jx, jxdata, 0 );
+    (*env)->ReleaseFloatArrayElements( env, jy, jydata, 0 );
+    (*env)->ReleaseFloatArrayElements( env, jz, jzdata, 0 );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    line3
+ * Signature: (I[D[D[D)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_line3__I_3D_3D_3D( JNIEnv *env, jobject jthis,
+                                             jint n, jdoubleArray jx,
+                                             jdoubleArray jy, jdoubleArray jz )
+{
+    jsize len = (*env)->GetArrayLength( env, jx );
+    jdouble *jxdata = (*env)->GetDoubleArrayElements( env, jx, 0 );
+    jdouble *jydata = (*env)->GetDoubleArrayElements( env, jy, 0 );
+    jdouble *jzdata = (*env)->GetDoubleArrayElements( env, jz, 0 );
+    PLFLT *x, *y, *z;
+    int must_free_buffers = 0, i;
+
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != double, in which case the /other/ branch is the one that is
+     * actually executed. */
+        x = (PLFLT *) jxdata;
+        y = (PLFLT *) jydata;
+        z = (PLFLT *) jzdata;
+    } else {
+        x = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        y = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        z = (PLFLT *) malloc( n * sizeof(PLFLT) );
+
+        for( i=0; i < n; i++ )
+        {
+            x[i] = jxdata[i];
+            y[i] = jydata[i];
+            z[i] = jzdata[i];
+        }
+        must_free_buffers = 1;
+    }
+
+    set_PLStream(env,jthis);
+    plline3( n, x, y, z );
+
+    if (must_free_buffers) {
+        free( x );
+        free( y );
+        free( z );
+    }
+
+    (*env)->ReleaseDoubleArrayElements( env, jx, jxdata, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, jy, jydata, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, jz, jzdata, 0 );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    lsty
+ * Signature: (I)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_lsty( JNIEnv *env, jobject jthis, jint lin )
+{
+    set_PLStream(env,jthis);
+    pllsty( lin );
 }
 
 /*
@@ -1284,6 +1630,19 @@ Java_plplot_core_PLStream_poin__DDI( JNIEnv *env, jobject jthis,
     PLFLT x = jx, y = jy;
     set_PLStream(env,jthis);
     plpoin( 1, &x, &y, code );
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    psty
+ * Signature: (I)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_psty( JNIEnv *env, jobject jthis, jint patt )
+{
+    set_PLStream(env,jthis);
+    plpsty( patt );
 }
 
 /*
