@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.10  1995/06/09 22:48:47  mjl
+# Revision 1.11  1995/09/18 20:12:17  furnish
+# Conform to new PLXWin semantics.
+#
+# Revision 1.10  1995/06/09  22:48:47  mjl
 # Eliminated old way of referencing tclMatrices.  Should have done this
 # a long time ago but never noticed it was bad until now.
 #
@@ -81,7 +84,7 @@ message .msg \
 	 -width 500 -borderwidth 1 \
 	-text "TK02: Demo \[incr Tcl\] interface to PLplot"
 
-PLXWin .plw -name foo
+PLXWin .plw 
 
 pack append . .menu {top fillx} \
 	.msg {top padx 5 pady 5 fill} \
