@@ -1098,6 +1098,11 @@ pllib_init()
     if (lib_initialized) return;
     lib_initialized = 1;
 
+#ifdef ENABLE_DYNDRIVERS
+/* Create libltdl resources */
+        lt_dlinit();   
+#endif
+
 /* Initialize the dispatch table with the info from the static drivers table
    and the available dynamic drivers. */
 
@@ -1164,16 +1169,13 @@ c_plinit(void)
 
     plsc->ipls = ipls;
 
-/* Auxiliary stream setup */
-/* N.B. This must occur before pllib_devinit call because plstrm_init
- * initializes libltdl (ENABLE_DYNDRIVERS) which is used for dynamic devices.
- */
-
-    plstrm_init();
-
 /* Set up devices */
 
     pllib_devinit();
+
+/* Auxiliary stream setup */
+
+    plstrm_init();
 
 /* Initialize device & first page */
 
@@ -1283,6 +1285,10 @@ c_plend(void)
 	}
     }
     plfontrel();
+#ifdef ENABLE_DYNDRIVERS
+/* Release the libltdl resources */
+    lt_dlexit();   
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1302,10 +1308,6 @@ c_plend1(void)
 	plsc->level = 0;
     }
 
-#ifdef ENABLE_DYNDRIVERS
-/* Release the libltdl resources */
-    lt_dlexit();   
-#endif
 /* Free all malloc'ed stream memory */
 
     free_mem(plsc->cmap0);
@@ -1424,10 +1426,6 @@ plstrm_init(void)
     if ( ! plsc->initialized) {
 	plsc->initialized = 1;
 
-#ifdef ENABLE_DYNDRIVERS
-/* Create libltdl resources */
-        lt_dlinit();   
-#endif
 	if (plsc->cmap0 == NULL)
 	    plscmap0n(0);
 
