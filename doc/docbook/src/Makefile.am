@@ -101,6 +101,8 @@ MAX_TEX_RECURSION = 10
 
 BINDIR = ../bin
 
+if docbook_build
+
 # N.B. $(STYLESHEET_HTML) assures that manifest of generated html files is
 # output to the $(HTML_MANIFEST) file.
 $(HTML_MANIFEST): $(SOURCE_FILES) $(MASTER_XML) $(STYLESHEET_HTML) inline-html.ent
@@ -164,6 +166,8 @@ plplotdoc.xml-info: $(BINDIR)/info-clean.pl $(SOURCE_FILES) $(MASTER_XML) \
 
 $(MAN_MANIFEST): $(BINDIR)/api2man.pl $(MASTER_XML) api.xml
 	$(PERL) $(BINDIR)/api2man.pl $(MASTER_XML) api.xml $(MANVOL) > $@
+
+endif # docbook_build
 
 validate: plplotdoc.xml
 if has_onsgmls

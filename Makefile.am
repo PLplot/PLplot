@@ -50,7 +50,6 @@ doc_DATA = \
 CLEANFILES = plplot_libtool reconfig jadeout.log
 
 EXTRA_DIST = \
-	config.status \
 	debian \
 	fonts \
 	rpm \
