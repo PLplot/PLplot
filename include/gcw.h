@@ -51,7 +51,6 @@ typedef struct {
 
   PLFLT width;
   PLFLT height;
-  PLFLT magnification;
 
   PLINT pen_color;
   PLINT pen_width;
