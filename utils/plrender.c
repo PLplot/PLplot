@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.41  1994/08/25 04:05:36  mjl
+ * Revision 1.42  1994/09/13 22:14:47  mjl
+ * Fixes to allow plrender to work better with old and/or mangled metafiles.
+ *
+ * Revision 1.41  1994/08/25  04:05:36  mjl
  * Eliminated unnecessary header file inclusion.
  *
  * Revision 1.40  1994/07/12  19:22:49  mjl
@@ -43,7 +46,6 @@ char ident[] = "@(#) $Id$";
 static char *program_name = "plrender";
 
 /* Static function prototypes. */
-/* INDENT OFF */
 /* These handle the command loop */
 
 static void	process_next	(U_CHAR c);
@@ -62,6 +64,7 @@ static void	plresc_ancol	(void);
 static U_CHAR	getcommand	(void);
 static void	ungetcommand	(U_CHAR);
 static void	get_ncoords	(PLFLT *x, PLFLT *y, PLINT n);
+static void	plr_exit	(char *errormsg);
 static void	NextFamilyFile	(U_CHAR *);
 static void	ReadPageHeader	(void);
 static void	plr_KeyEH	(PLKey *, void *, int *);
@@ -258,7 +261,6 @@ static char *notes[] = {
 "with all drivers.  Please see the man pages for more detail.",
 NULL};
 
-/* INDENT ON */
 /*----------------------------------------------------------------------*\
  * main()
  *
@@ -361,9 +363,15 @@ process_next(U_CHAR c)
 	break;
 
     case NEW_WIDTH:
+	plr_state(PLSTATE_WIDTH);
+	break;
+
     case NEW_COLOR0:
+	plr_state(PLSTATE_COLOR0);
+	break;
+
     case NEW_COLOR1:
-	plr_state(c);
+	plr_state(PLSTATE_COLOR1);
 	break;
 
     case SWITCH_TO_TEXT:
@@ -371,7 +379,7 @@ process_next(U_CHAR c)
 	break;
 
     default:
-	plexit("process_next: Unrecognized command");
+	plr_exit("process_next: Unrecognized command");
     }
 }
 
@@ -845,7 +853,7 @@ getcommand(void)
 
     c = getc(MetaFile);
     if (c == EOF)
-	plexit("getcommand: Unable to read from MetaFile");
+	plr_exit("getcommand: Unable to read from MetaFile");
 
     return (U_CHAR) c;
 }
@@ -860,7 +868,30 @@ static void
 ungetcommand(U_CHAR c)
 {
     if (ungetc(c, MetaFile) == EOF)
-	plexit("ungetcommand: Unable to push back character");
+	plr_exit("ungetcommand: Unable to push back character");
+}
+
+/*----------------------------------------------------------------------*\
+ * void plr_exit()
+ *
+ * In case of an abort this routine is called.  Unlike plexit(), it does
+ * NOT turn off pause, so that if a problem occurs you can still see what
+ * output remains on the screen before the program terminates.
+\*----------------------------------------------------------------------*/
+
+static void
+plr_exit(char *errormsg)
+{
+    int status = 1;
+
+    plend();
+    if (*errormsg != '\0') {
+	fprintf(stderr, "\n*** PLRENDER ERROR ***\n");
+	fprintf(stderr, "%s\n", errormsg);
+    }
+
+    fprintf(stderr, "Program aborted\n");
+    exit(status);
 }
 
 /*----------------------------------------------------------------------*\
@@ -1133,7 +1164,7 @@ SeekToCurPage(void)
     FPOS_T loc;
 
     if (pl_fgetpos(MetaFile, &loc))
-	plexit("plrender: fgetpos call failed");
+	plr_exit("plrender: fgetpos call failed");
 
     if (loc != curpage_loc) 
 	PageDecr();
@@ -1154,7 +1185,7 @@ SeekToNextPage(void)
     FPOS_T loc;
 
     if (pl_fgetpos(MetaFile, &loc))
-	plexit("plrender: fgetpos call failed");
+	plr_exit("plrender: fgetpos call failed");
 
     if (loc == curpage_loc) 
 	PageIncr();
@@ -1176,7 +1207,7 @@ SeekToPrevPage(void)
     FPOS_T loc;
 
     if (pl_fgetpos(MetaFile, &loc))
-	plexit("plrender: fgetpos call failed");
+	plr_exit("plrender: fgetpos call failed");
 
     if (loc != curpage_loc) 
 	PageDecr();
@@ -1219,7 +1250,7 @@ static void
 doseek(FPOS_T loc)
 {
     if (pl_fsetpos(MetaFile, &loc))
-	plexit("plrender: fsetpos call failed");
+	plr_exit("plrender: fsetpos call failed");
 }
 
 static void
@@ -1267,12 +1298,12 @@ ReadPageHeader(void)
 
     if (input_type == 0) {
 	if (pl_fgetpos(MetaFile, &curpage_loc))
-	    plexit("plrender: fgetpos call failed");
+	    plr_exit("plrender: fgetpos call failed");
     }
 
     c = getcommand();
     if (c != PAGE && c != ADVANCE) 
-	plexit("plrender: page advance expected; none found");
+	plr_exit("plrender: page advance expected; none found");
 
 /* Update page/subpage counters and update page links */
 
