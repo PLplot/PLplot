@@ -1496,7 +1496,6 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 /*static*/ PyObject *pl_cont( PyObject *self, PyObject *args )
 {
     PyObject *zop, *xop, *yop;
-    PLfGrid2 grid;
     PLFLT **z, **zwrapped, **zused, *clev;	
     PLINT nx, ny, nlev;
     char *pltrname = NULL;
@@ -1716,19 +1715,13 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 	return NULL;
     }
 
-    grid.f = zused;
-    grid.nx = nx;
-    grid.ny = ny;
-
     if (ifdefault) {
 	kx = 1; lx = nx;
 	ky = 1; ly = ny;
     }
 /* Now go make the plot. */
 
-/*     plcont( z, nx, ny, kx, lx, ky, ly, clev, nlev, pltr, pltr_data ); */
-    plfcont( pyf2eval2, &grid, nx, ny, kx, lx, ky, ly,
-	     clev, nlev, pltr, pltr_data );
+    plcont( zused, nx, ny, kx, lx, ky, ly, clev, nlev, pltr, pltr_data );
 
 /*
     TRY (PyArg_ParseTuple(args, "OiiiiOO!", &op, &kx, &lx, &ky, &ly, &levelop, 
