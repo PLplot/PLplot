@@ -74,7 +74,7 @@ $(CXXLIB_AR): $(CXX_OBJS)
 # libg++ String class and the DS++ String class.  Oh, but for C++
 # namespace support...
 
-$(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
+$(PLLIB_SO):	$(MATLIB_SO) $(LIB_OBJS) stupidtk.o
 	-$(RM) $(PLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
