@@ -34,6 +34,7 @@ examples_octave = \
 	p19.m \
 	p2.m \
 	p20.m \
+	p21.m \
 	p3.m \
 	p4.m \
 	p5.m \
