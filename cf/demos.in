@@ -308,18 +308,18 @@ xtk01$O: xtk01.c
 
 xtk01$E:  $(PLLIBS) xtk01$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk01$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 xtk02$O: xtk02.c
 	$(CC) $(CC_FLAGS_DEMOS) xtk02.c
 
 xtk02$E:  $(PLLIBS) xtk02$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk02$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 xtk04$E:  $(PLLIBS) xtk04$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk04$O \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS) $(RPATH)
 
 # -----------------------------------------------------------------------------
 # C++ example programs.
