@@ -1,3 +1,17 @@
+2000-11-25  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Changes to allow the web page to show the sizes of the files
+	available for download.  File www/index.html.in is renamed to
+	www/index.html.in.in.  File bin/size-href.pl is included in the
+	package. 
+	* configure.in (AC_OUTPUT): Output www/index.html.in.
+	* Makefile.am (www/index.html): Added rule.
+	($(TARBALL)): Depends only on $(INDEX_HTML).
+
+	* Makefile.am (dist-stamp): New rule for avoiding the repetitive
+	generation of the source tarball.
+	(CLEANFILES): Added *-stamp.
+
 2000-11-24  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Makefile.am (www-install): Broken down into smaller rules.  The

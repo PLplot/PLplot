@@ -1,7 +1,9 @@
 EXTRA_DIST = README.developers bootstrap.sh cnf/* www/index.html.in
-CLEANFILES = $(TARBALL) *.tar.gz
+CLEANFILES = $(TARBALL) *.tar.gz *-stamp
 DISTCLEANFILES = @CONFTEST@.* @JADELOG@ www/index.html
 SUBDIRS = src bin
+
+PERL = @PERL@
 
 RSH_COMMAND = $(RSH) $(WWW_USER)$(WWW_HOST)
 RCP_PREFIX = $(shell if test -z "$(WWW_USER)$(WWW_HOST)" ; then \
@@ -12,6 +14,7 @@ RCP_PREFIX = $(shell if test -z "$(WWW_USER)$(WWW_HOST)" ; then \
 
 TARBALL = tarball.tgz
 HTML_TARBALL = $(BASE_HTML).tar.gz
+INDEX_HTML = www/index.html
 
 $(HTML_TARBALL): src/$(HTML_MANIFEST) src/$(JPEG_MANIFEST)
 	( cd src ; \
@@ -24,7 +27,16 @@ $(HTML_TARBALL): src/$(HTML_MANIFEST) src/$(JPEG_MANIFEST)
 	tar cfz $(HTML_TARBALL) $(BASE_HTML)
 	rm -rf $(BASE_HTML)
 
-$(TARBALL): dist $(HTML_TARBALL) src/$(BASE).ps.gz src/$(BASE).dvi
+$(BASE).tar.gz: dist-stamp
+dist-stamp:
+	$(MAKE) dist
+	touch dist-stamp
+
+$(INDEX_HTML): $(INDEX_HTML).in.in $(BASE).tar.gz $(HTML_TARBALL) \
+                src/$(BASE).ps.gz src/$(BASE).dvi
+	$(PERL) bin/size-href.pl < $(INDEX_HTML).in > $@
+
+$(TARBALL): $(INDEX_HTML)
 	( cd src ; \
           $(MAKE) print )
 	tar cfz $(TARBALL) $(HTML_TARBALL) $(BASE).tar.gz \

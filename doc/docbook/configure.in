@@ -300,4 +300,4 @@ AC_OUTPUT([Makefile
            src/plplotdoc-print.dsl 
            bin/Makefile bin/inline-greek.pl bin/eps2jpeg.pl 
            bin/tex2eps.pl
-           www/index.html])
+           www/index.html.in])
