@@ -26,9 +26,11 @@ MAT_OBJS	= tclMatrix$O matrixInit$O
 MAT_OBJS_SO	=
 MAT_OBJS_SA	=
 MATLIB_AR	= libMatrix.a
-MATLIB_SO	= libMatrix.$(SO)
+MATLIB_SO	= libMatrix$(SO)
 MAT_INSTALL	= install_mat
 MAT_LINK	= -lMatrix
+
+MAT_BUILD	= $(MATLIBS)
 
 tclAPI.c: tclgen.h tclgen_s.h tclgen.c
 
