@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.4  1993/07/31 08:04:31  mjl
+# Revision 1.5  1993/08/09 22:22:18  mjl
+# Added "Close" entry in Plot menu, for closing out save file.
+#
+# Revision 1.4  1993/07/31  08:04:31  mjl
 # Documentation changes only.
 #
 # Revision 1.3  1993/07/28  05:43:41  mjl
@@ -146,6 +149,14 @@ proc plw_create_pmenu {w} {
     $w.ftop.pmenu.m add command \
 	-label "Save" \
 	-command "plw_save $w"
+
+#-------
+# Close
+#-------
+
+    $w.ftop.pmenu.m add command \
+	-label "Close" \
+	-command "plw_close $w"
 
 #----------
 # Save As
@@ -375,6 +386,18 @@ proc plw_save {w} {
 }
 
 #----------------------------------------------------------------------------
+# plw_close
+#
+# Close save file.
+#----------------------------------------------------------------------------
+
+proc plw_close {w} {
+    if { [catch "$w.plwin save close" foo]} {
+	bogon_alert "$foo"
+    }
+}
+
+#----------------------------------------------------------------------------
 # plw_saveas
 #
 # Saves plot to specified device.
@@ -387,7 +410,7 @@ proc plw_saveas {w dev} {
 	    return
 	}
     }
-    $w.plwin save $dev $file
+    $w.plwin save as $dev $file
 }
 
 #----------------------------------------------------------------------------
