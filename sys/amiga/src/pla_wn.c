@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/07/01 21:59:54  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl"; device driver functions start with "plD_".
+   Revision 1.5  1993/07/16 22:18:51  mjl
+   Eliminated obsolete low-level scaling, now done in driver interface.
 
+ * Revision 1.4  1993/07/01  21:59:54  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".
+ *
  * Revision 1.3  1993/03/17  17:01:44  mjl
  * Eliminated some dead assignments that turned up when running with SAS/C's
  * global optimizer enabled on the Amiga.
@@ -204,7 +207,7 @@ plD_init_amiwn(PLStream *pls)
     pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
-    pls->plbuf_enable = 1;
+    pls->plbuf_write = 1;
 
     if (!pls->colorset)
         pls->color = 1;
