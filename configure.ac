@@ -419,17 +419,30 @@ AM_INIT_AUTOMAKE(plplot, 5.2.1.rc1)
 ### start over with 0:0:0 and rigourously enforce number changes whenever
 ### binary compatibility changes.
 
-### N.B. The "secret" libtool code for getting 5.y.x for the library
-### version is 5+y:x:y.  Thus 7:0:2 ==> 5.2.0.
+### N.B. The "secret" libtool code for setting 5.y.x for the numerical
+### suffix of the library version is 5+y:x:y.  Thus 8:0:3 ==> 5.3.0.
 
 SOVERSION=8:0:3
 AC_SUBST(SOVERSION)
+
+### LIBRARY_VERSION must be kept consistent with the libtool SOVERSION so
+### that the various configured pkgIndex.tcl scripts know the numerical
+### suffix of the PLplot libraries.  This may generate cross-platform
+### tcl/tk issues for certain unices which do not have a numerical suffix
+### on their shared libraries, but this should be addressed when the rest
+### of the tcl/tk PLplot configuration is updated to work for the non-Linux 
+### case.
+
+LIBRARY_VERSION=5.3.0
+AC_SUBST(LIBRARY_VERSION)
 
 ### According to man package, PLPLOT_TCL_VERSION (used in the various
 ### pkgIndex.tcl scripts) should be strictly numbers alternativing with
 ### decimal points with the first number (the major number) signifying
 ### incompatible changes in the scripts.  To keep our life simple, let us
-### simply use the major number from the package version for now.
+### use the major number from the package version for now.
+### N.B. both LIBRARY_VERSION and PLPLOT_TCL_VERSION are used for separate
+### purposes in the various configured pkgIndex.tcl scripts.
 
 PLPLOT_TCL_VERSION=5
 AC_SUBST(PLPLOT_TCL_VERSION)

@@ -33,7 +33,7 @@ proc load_pkg_Plplotter {dir} {
 	set stem libplplot
 	set searchdirs ". ..";		# Need ".." for installed image
 	set tags "d {}";		# prefer double precision version
-	set ver @VERSION@
+	set ver @LIBRARY_VERSION@
 	set suf [info sharedlibextension].$ver
 
 	set file ""
