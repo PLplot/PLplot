@@ -1200,6 +1200,32 @@ if test "$with_shlib" = "yes"; then
             # for Linux.)
 	    SHLIB_F77FLAGS=-fPIC
 	;;
+	# Reported to work by Dustin Tang <dustintang2000@yahoo.ca>
+	# in June 2002 for Darwin/MacOS X 
+	Darwin* )
+	    # Assume Darwin version of gcc (which is gcc with "bonus" features)
+	    if test "$with_gcc" = "no"; then
+	       AC_MSG_RESULT([warning: reconfigure with option --with-gcc])
+	    fi
+
+	    # Assume shared libraries
+	    with_shlib=yes
+
+	    # -rpath (or -R. equivalent) does not work with MacOS X ld so turn off this feature
+	    RPATH=
+	    INSTALL_RPATH=
+
+	    # Assume -fPIC still means the same thing for Darwin gcc.
+	    # Essentially no options other than this one for the pure
+	    # compilations.
+	    SHLIB_CCFLAGS=-fPIC
+	    SHLIB_CXXFLAGS=$SHLIB_CCFLAGS
+	    SHLIB_F77FLAGS=$SHLIB_CCFLAGS
+	    # -shared and -fPIC are standard gcc options (which should either be
+	    # supported or noops on MacOS X).  The remainder of these link
+	    # options have been recommended by Robb Brown <brownr@ucalgary.ca>
+	    SHLIB_BUILD="gcc -shared -fPIC -dylib -undefined suppress -flat_namespace -o"
+        ;;
 	HP-UX-* )
 	    SO=".sl"
 	    SHLIB_F77FLAGS="+z"
@@ -1229,16 +1255,6 @@ if test "$with_shlib" = "yes"; then
 		with_shlib=no
 	    fi
 	;;
-	# Reported to work by Dustin Tang <dustintang2000@yahoo.ca>
-	# in June 2002 for Darwin/MacOS X 
-	Darwin* )
-	    with_shlib=yes
-	    SHLIB_BUILD="gcc -bundle -undefined suppress -flat_namespace -o"
-            SHLIB_CCFLAGS="-bundle -undefined suppress -flat_namespace"
-	    SHLIB_CXXFLAGS="-bundle -undefined suppress -flat_namespace"
-	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)'
-	    LD_SHARED='gcc -bundle -undefined suppress -flat_namespace'
-        ;;
 	
 	# The rest are probably broken.  Someone please fix them.
 	# Remove the 'with_shlib=no' line, comments, and go wild.

@@ -15,7 +15,17 @@ else:
     include_directory = "@prefix@/@INCLUDE_DIR@/.."
     library_directory = "@prefix@/@LIB_DIR@"
 
-extra_link_args = ["-Wl,-rpath", "-Wl," + library_directory]
+# Some systems do not accept -rpath option to ld in which case the next
+# two variables will be empty strings
+RPATH = "@RPATH@"
+INSTALL_RPATH = "@INSTALL_RPATH@"
+if RPATH != "" and INSTALL_RPATH != "":
+    extra_link_args = ["-Wl,-rpath", "-Wl," + library_directory]
+else:
+    # Don't worry about bizarre case when RPATH is defined and
+    # INSTALL_RPATH is not or vice versa.  If either undefined, forget
+    # it!
+    extra_link_args = []
 include_dirs = [include_directory]
 # Only needed because arrayobject.h not necessarily in Numeric subdirectory 
 # in python-1.5.  Once we drop support for python-1.5, then we can change 

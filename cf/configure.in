@@ -246,6 +246,10 @@ case "$system" in
     linux*|LINUX*|Linux* ) 
 	with_gcc=yes
     ;;
+    Darwin* ) 
+        # Apparently, this is gcc with some add-ons, ugh!
+	with_gcc=yes
+    ;;
     next*|NeXT*|NEXT* ) 
 	with_gcc=yes
     ;;

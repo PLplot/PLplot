@@ -145,6 +145,10 @@ if test -z "$CC"; then
 	Linux* )
 	    with_gcc=yes
 	;;
+	Darwin* )
+	    # Apparently, this is gcc with some add-ons, ugh!
+	    with_gcc=yes
+	;;
 	SunOS-4* )
 	    CC=acc
 	;;
