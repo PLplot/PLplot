@@ -153,7 +153,7 @@ FILE *tmpfile( void )
    string  = tmpnam( buffer ) ;
    strcpy( buffer2, ptemp ) ;
    strcat( buffer2, string ) ;
-   outfile = fopen( buffer2, "w+" ) ;
+   outfile = fopen( buffer2, "wb+" ) ;
 
    return outfile ;
 }
@@ -857,7 +857,8 @@ LRESULT CALLBACK __declspec(dllexport) PlPlotWndProc (HWND hwnd,UINT message,
 		break;
 	case WM_PAINT :
 		if (dev) {
-			if (dev->rePaint) {
+			/* if (dev->rePaint) { */
+			if (1) {
 			        HDC hdc_old = dev->hdc;
 				dev->rePaint = 0;
 				dev->rePaintBsy = 1;
