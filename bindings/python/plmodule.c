@@ -231,6 +231,18 @@ static PyObject * pl_box(PyObject *self, PyObject *args)
     return Py_None;
 }
 
+static char doc_plcalc_world[]="Calculate world coordinates";
+
+static PyObject * pl_calc_world(PyObject *self, PyObject *args)
+{
+	PLFLT rx, ry, wx, wy;
+        PLINT subpage;
+	TRY (PyArg_ParseTuple(args, PL_ARGS("dd", "ff"), &rx, &ry));
+	plcalc_world(rx, ry, &wx, &wy, &subpage);	
+	return Py_BuildValue(PL_ARGS("(ddi)", "(ffi)"), wx, wy, subpage);
+}
+
+
 static char doc_plbox3[]="This is the 3-d analogue of plbox()";
 
 static PyObject * pl_box3(PyObject *self, PyObject *args)
@@ -2363,6 +2375,7 @@ static PyMethodDef pl_methods[] = {
     {"plbop",			pl_bop, 1, doc_plbop},
     {"plbox",			pl_box, 1, doc_plbox},
     {"plbox3",		pl_box3, 1, doc_plbox3},
+    {"plcalc_world",		pl_calc_world, 1, doc_plcalc_world},
     {"plclr",			pl_eop, 1, doc_pleop},		/* old name for backward compatibility */
     {"plcol",			pl_col0, 1, doc_plcol0}, 		/* old name for backward compatibility */
     {"plcol0",		pl_col0, 1, doc_plcol0},
