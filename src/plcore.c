@@ -1744,6 +1744,7 @@ plLoadDriver(void)
     if (!driver->dlhand)
     {
         fprintf( stderr, "Unable to load driver: %s.\n", driver->drvnam );
+        fprintf( stderr, "Reason: %s\n", dlerror() );
         return;
     }
 
