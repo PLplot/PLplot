@@ -272,7 +272,7 @@ int read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num_col)
 /* save plot */
 void save_plot(char *fname)   
 {
-  int cur_strm, new_strm; 
+  PLINT cur_strm, new_strm; 
 
   plgstrm(&cur_strm); /* get current stream */
   plmkstrm(&new_strm); /* create a new one */ 
@@ -292,7 +292,7 @@ int get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye)
 {
   PLGraphicsIn gin;
   PLFLT xxi=*xi, yyi=*yi, xxe=*xe, yye=*ye, t;
-  int st, start = 0;
+  PLINT st, start = 0;
 
   plxormod(1, &st); /* enter xor mode to draw a selection rectangle */
 

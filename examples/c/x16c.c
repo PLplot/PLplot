@@ -89,7 +89,7 @@ static char *notes[] = {
 "test results from ns around 5 and nx, ny around 25.",
 NULL};
 
-int
+PLINT
 zdefined (PLFLT x, PLFLT y)
 {
   PLFLT z = sqrt(x * x + y * y);
