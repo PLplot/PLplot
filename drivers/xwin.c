@@ -20,7 +20,10 @@ static int synchronize = 0;	/* change to 1 for X synchronized operation */
                                 /* Use "-drvopt sync" cmd line option to set. */
 
 static int nobuffered = 0;      /* make it a buffered device by default */
-                                /* use "-drvopt buffered=0" to make it unbuffered */ 
+                                /* use "-drvopt unbuffered" to make it unbuffered */ 
+
+static int noinitcolors = 0;    /* Call InitColors by default */
+                                /* use "-drvopt noinitcolors" to leave colors uninitialized */ 
 
 /* When USE_DEFAULT_VISUAL is defined, DefaultVisual() is used to get the
  * visual.  Otherwise, the visual is obtained using XGetVisualInfo() to make a
@@ -161,6 +164,7 @@ static void  PLColor_from_XColor(PLColor *plcolor, XColor *xcolor);
 
 static DrvOpt xwin_options[] = {{"sync", DRV_INT, &synchronize, "Synchronized X server operation (0|1)"},
 				{"nobuffered", DRV_INT, &nobuffered, "Sets unbuffered operation (0|1)"},
+				{"noinitcolors", DRV_INT, &noinitcolors, "Sets cmap0 allocation (0|1)"},
 				{NULL, DRV_INT, NULL, NULL}};
 
 void plD_dispatch_init_xw( PLDispatchTable *pdt )
@@ -820,7 +824,7 @@ Init(PLStream *pls)
 
 /* Initialize colors */
 
-    InitColors(pls);
+    if (noinitcolors == 0) InitColors(pls);
     XSetWindowColormap( xwd->display, dev->window, xwd->map );
 
 /* Set up GC for ordinary draws */
