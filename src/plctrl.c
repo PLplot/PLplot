@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1994/05/10 21:52:10  mjl
+ * Revision 1.19  1994/05/24 19:56:47  mjl
+ * Changed INSTALL_DIR to BIN_DIR for locating executables.
+ *
+ * Revision 1.18  1994/05/10  21:52:10  mjl
  * Split off cmap1 calculation into plcmap1_calc() to make it easier to just
  * change a single control point from the plframe widget.
  *
@@ -1011,7 +1014,7 @@ pl_cmd(PLINT op, void *ptr)
 * Looks for the specified executable file.  Search path:
 *	current directory
 *	$(PLPLOT_DIR)
-*	INSTALL_DIR
+*	BIN_DIR
 *
 * The caller must free the returned pointer (points to malloc'ed memory)
 * when finished with it.
@@ -1036,10 +1039,10 @@ plFindCommand(char *fn)
 	    return fs;
     }
 
-/* INSTALL_DIR */
+/* BIN_DIR */
 
-#ifdef INSTALL_DIR
-    plGetName(INSTALL_DIR, "", fn, &fs);
+#ifdef BIN_DIR
+    plGetName(BIN_DIR, "", fn, &fs);
     if ( ! plFindName(fs))
 	return fs;
 #endif
