@@ -1,6 +1,6 @@
 /* $Id$
  
-         PNG device driver.
+         PNG and JPEG device driver based on libgd
 */
 
 /*
@@ -29,7 +29,7 @@
 
 #include "plplot/plDevs.h"
 
-#if defined(PLD_png) || defined(PLD_jpg)
+#if defined(PLD_png) || defined(PLD_jpeg)
 
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"
@@ -442,15 +442,15 @@ png_Dev *dev=(png_Dev *)pls->dev;
 
 #endif
 
-#ifdef PLD_jpg
+#ifdef PLD_jpeg
 
 /*----------------------------------------------------------------------*\
- * plD_eop_jpg()
+ * plD_eop_jpeg()
  *
  * End of page.
 \*----------------------------------------------------------------------*/
 
-void plD_eop_jpg(PLStream *pls)
+void plD_eop_jpeg(PLStream *pls)
 {
 png_Dev *dev=(png_Dev *)pls->dev;
     if (pls->family || pls->page == 1) {
