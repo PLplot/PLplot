@@ -720,6 +720,7 @@ AM_CONDITIONAL(enable_tk, [test "$enable_tk" = yes])
 AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
 AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
 AM_CONDITIONAL(enable_xwin, [test "$enable_xwin" = yes])
+AM_CONDITIONAL(with_qhull, [test "$with_qhull" = yes])
 
 ### Checks for existence of headers
 
