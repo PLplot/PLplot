@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1995/07/19 18:52:52  mjl
+ * Revision 1.35  1995/07/19 20:22:13  mjl
+ * Fixed arglist compression when PL_PARSE_SKIP is specified.
+ *
+ * Revision 1.34  1995/07/19  18:52:52  mjl
  * Added code to handle new parse option, PL_PARSE_SKIP.  Set this to skip over
  * all unrecognized options, quietly and without generating an error.  If used
  * with PL_PARSE_FULL, actual illegal input (say, from a malformed option-arg
@@ -834,7 +837,11 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 	/* No match.  Keep going if mode_skip is set, otherwise abort if
 	   fully parsing, else return without error. */
 
-	    if (mode_skip) continue;
+	    if (mode_skip) {
+		if ( ! mode_nodelete) 
+		    *argsave++ = *argv;
+		continue;
+	    }
 	    if ( ! mode_quiet && mode_full) {
 		fprintf(stderr, "\nBad command line option \"%s\"\n", argv[0]);
 		plOptUsage();
@@ -867,7 +874,7 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 /* Compress and NULL-terminate argv */
 
     if ( ! mode_nodelete) {
-	for (i = 0; i < *p_argc; i++)
+	for (i = 0; i < myargc; i++)
 	    *argsave++ = *argv++;
 
 	if (argsave < argend)
