@@ -2,33 +2,48 @@ The Status of the Python Examples
 
 We have now moved to a new default method of installing python using the
 recommended (by python) dynamic loading procedure.  This dynamically loads
-the wrapper programmes (source = plmodules.c plmodules2.c) but not the
-PLplot library itself which is accessed like any other ordinary run-time
-library.  Thus, when that library trys to access the plframe widget there is
-no way to communicate with python's own widgets so that pytkdemo does not
-work.  pytkdemo has worked well in the past, but that demands a static
-method of loading everything plus much hacking of python itself, and all are
-agreed because of these complications that this is not the way to go in the
-future unless we cannot find a dynamic way to use tk widgets and plplot.
-That will probably require dynamic loading of the PLplot library itself, but
-more investigation is necessary before we adopt that option.
+the wrapper programmes (source = plmodules.c plmodules2.c, and
+pyqt_plmodules.c) but not the PLplot library itself which is accessed like
+any other ordinary run-time library.  Thus, when that library trys to access
+the plframe widget there is no way to communicate with python's own widgets
+so that pytkdemo does not work.  pytkdemo has worked well in the past, but
+that demands a static method of loading everything plus much hacking of
+python itself, and all are agreed because of these complications that this
+is not the way to go in the future unless we cannot find a dynamic way to
+use tk widgets and plplot. That will probably require dynamic loading of the
+PLplot library itself, but more investigation is necessary before we adopt
+that option.
 
 So for now, we are not supporting x??.py examples and pytkdemo which uses
 those examples.  But it is on our, ahem, dynamic agenda for the future.
 
-We *are* however supporting the xw??.py demos which were created
-initially from their x??.py equivalents and modified to work with the dynamic
-loading method.  All ordinary drivers (including the tk one) are available
-with these standalone examples.  Their only limitation is they cannot use
-the plframe widget.  Also, these are no longer meant to be standalone demos.
-Instead, they are designed to be called from pythondemos.py
+We *are* however supporting the xw??.py demos which were created initially
+from their x??.py equivalents and modified to work with the dynamic loading
+method.  All ordinary drivers (including the tk one) are available with
+these standalone examples.  Their only limitation is they cannot use the
+plframe widget.  Also, these are no longer meant to be standalone demos.
+Instead, they are designed to be called from pythondemos.py.
 
-To try out these examples, simply run pythondemos.py. See note below on the
-PYTHONPATH and PLPLOT_LIB variables that may have to be set.
+Furthermore, if you need a widget you might want to try out and possibly
+contribute to the prova.py and qplplot.py examples which are used to create
+a proof-of-concept pyqt widget.  (The pyqt_plmodules.c code mentioned above
+creates some useful widget functions.)
+
+To try out the xw??.py examples without a widget simply run pythondemos.py
+in either the tmp directory or the installed directory.  See note below on
+the PYTHONPATH and PLPLOT_LIB variables that may have to be set if you
+are not in either of those directories.
+
+To try out the xw??.py examples with the pyqt widget simply execute
+./prova.py from the tmp or installed directories and open any one of the
+xw??.py examples and run it. pyqt uses the qt library, but there is a bug in
+that package so that if libqt is in a non-standard place you must use
+LD_LIBRARY_PATH to help pyqt find the qt library.  The bug has been
+reported, and hopefully this issue will disappear in the future.
 
 All these xw??.py examples have been thoroughly tested under Linux and
 should also work under Unix systems according to the python team comments on
-dynamic loading, but that is yet to be tested as of 2001 February 9.
+dynamic loading, but that is yet to be tested as of 2001 November.
 
 PYTHONPATH and PLPLOT_LIB variables
 
