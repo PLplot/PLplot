@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/03/02 19:01:01  mjl
-   Added plgver() for retrieving plplot library version.
+   Revision 1.5  1993/03/03 17:03:52  mjl
+   Added plscolbg() to modify background color.
 
+ * Revision 1.4  1993/03/02  19:01:01  mjl
+ * Added plgver() for retrieving plplot library version.
+ *
  * Revision 1.3  1993/02/25  18:31:36  mjl
  * Changed the order of driver calls on a grclr().  The plot buffer clear
  * must come first.
@@ -856,6 +859,27 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
     pls[ipls].cmap0[icol0].g = g;
     pls[ipls].cmap0[icol0].b = b;
     pls[ipls].cmap0setcol[icol0] = 1;
+}
+
+/* Set the background color by 8 bit RGB value */
+
+void
+c_plscolbg(PLINT r, PLINT g, PLINT b)
+{
+    if (pls[ipls].level > 0) {
+	plwarn("plscolbg: Must becalled before plinit.");
+	return;
+    }
+
+    if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
+	plwarn("plscolbg: Invalid color");
+	return;
+    }
+
+    pls[ipls].bgcolor.r = r;
+    pls[ipls].bgcolor.g = g;
+    pls[ipls].bgcolor.b = b;
+    pls[ipls].bgcolorset = 1;
 }
 
 /* Set color map 1 colors by 8 bit RGB values */
