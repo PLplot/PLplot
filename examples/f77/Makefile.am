@@ -33,7 +33,10 @@ f77_examples = \
 	x11f.f \
 	x12f.f \
 	x13f.f \
-	x16f.f
+	x16f.f \
+	x17f.f \
+	x18f.f \
+	x19f.f
 
 AM_CPPFLAGS = $(INCLTDL)
 
@@ -51,7 +54,10 @@ f77m4_sources = \
 	x11f.fm4 \
 	x12f.fm4 \
 	x13f.fm4 \
-	x16f.fm4
+	x16f.fm4 \
+	x17f.fm4 \
+	x18f.fm4 \
+	x19f.fm4
 
 # Need explicit dependencies for Solaris make.
 x01f.f: x01f.fm4
@@ -82,6 +88,12 @@ x13f.f: x13f.fm4
 
 x16f.f: x16f.fm4
 
+x17f.f: x17f.fm4
+
+x18f.f: x18f.fm4
+
+x19f.f: x19f.fm4
+
 SUFFIXES = .fm4
 
 .fm4.f:
@@ -106,7 +118,10 @@ check_PROGRAMS = \
 	x11f \
 	x12f \
 	x13f \
-	x16f
+	x16f \
+	x17f \
+	x18f \
+	x19f
 
 x01f_SOURCES = x01f.f
 x02f_SOURCES = x02f.f
@@ -122,6 +137,9 @@ x11f_SOURCES = x11f.f
 x12f_SOURCES = x12f.f
 x13f_SOURCES = x13f.f
 x16f_SOURCES = x16f.f
+x17f_SOURCES = x17f.f
+x18f_SOURCES = x18f.f
+x19f_SOURCES = x19f.f
 
 LDADD = $(top_builddir)/bindings/f77/libplplotf77$(LIB_TAG).la
 
