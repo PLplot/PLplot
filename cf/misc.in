@@ -11,7 +11,10 @@
 # Cleanup
 
 clean:
-	-rm * shared/* ../lib/$(PLLIB_BASE)*
+	-$(RM) * shared/* ../lib/$(PLLIB_BASE)*
+
+distclean: clean
+	-$(RM) ../config.status
 
 # Autogeneration of dependencies.  Use gcc -MM because X11's "makedepend"
 # includes system headers, and that really sucks.
