@@ -298,36 +298,41 @@ fi
 # --------------------------------------------------------------------
 # Print out some of the more important settings, then create output
 # files.
+#
+# IMPORTANT: the with_<foo> and enable_<bar> vars are printed as
+# with-<foo> and enable-<bar>.  Yes, this is confusing.  I really wish the
+# same syntax were used for both the command line switch and the variable
+# it is setting.  The possibility for confusion is much higher if I don't
+# write them the same in the status message as they appear in the command
+# line.  The only occasion you will have to set the variable directly is
+# in ~/config/cf_plplot.in if you use it, and just make sure you remember
+# to use an underscore.
 # --------------------------------------------------------------------
 
 echo "
 Configuration results (edit and run ./config.status to modify):
 
 system:		$system
+prefix:		$prefix
 CC:		$CC
-F77:		$F77
 CC_FLAGS:	$CC_FLAGS
-LDC_FLAGS:	$LDC_FLAGS
+F77:		$F77
 F77_FLAGS:	$F77_FLAGS
+LDC_FLAGS:	$LDC_FLAGS
 LDF_FLAGS:	$LDF_FLAGS
 INCS:		$INCS
 LIBS:		$LIBS
 LIB_TAG:	$LIB_TAG
-with_debug:	$with_debug
-with_opt:	$with_opt
-with_double:	$with_double
-with_profile:	$with_profile
-with_shlib:	$with_shlib
-with_f2c:	$with_f2c
-with_warn:	$with_warn
-enable_tcl:	$enable_tcl
-enable_tk:	$enable_tk
-enable_dp:	$enable_dp
-enable_itcl:	$enable_itcl
-enable_f77:	$enable_f77
-prefix:		$prefix
 devices:	$DEVICES
+
+with-debug:	$with_debug		with-opt:	$with_opt
+with-double:	$with_double		with-profile:	$with_profile
+with-shlib:	$with_shlib		with-f2c:	$with_f2c
+with-warn:	$with_warn
+
+enable-tcl:	$enable_tcl		enable-tk:	$enable_tk
+enable-dp:	$enable_dp		enable-itcl:	$enable_itcl
+enable-f77:	$enable_f77
 "
 
 AC_OUTPUT(tmp/Makefile)
-
