@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.17  1993/10/21 19:27:03  mjl
-   Changed all names that ended with an underscore (as part of the C/Fortran
-   linkage) to end with a '7' instead, to avoid problems with f2c.
+   Revision 1.18  1993/11/15 08:35:22  mjl
+   Name definitions added for new stubs -- PLEOP, PLBOP, PLSCOLBG.
 
+ * Revision 1.17  1993/10/21  19:27:03  mjl
+ * Changed all names that ended with an underscore (as part of the C/Fortran
+ * linkage) to end with a '7' instead, to avoid problems with f2c.
+ *
  * Revision 1.16  1993/08/26  19:59:43  mjl
  * Inserted stub name definition for PLINIT().
  *
@@ -154,6 +157,7 @@
 #define    PLADV	FNAME(PLADV,pladv)
 #define    PLAXES7	FNAME(PLAXES7,plaxes7)
 #define    PLBIN	FNAME(PLBIN,plbin)
+#define    PLBOP	FNAME(PLBOP,plbop)
 #define    PLBOX37	FNAME(PLBOX37,plbox37)
 #define    PLBOX7	FNAME(PLBOX7,plbox7)
 #define    PLCLR	FNAME(PLCLR,plclr)
@@ -165,6 +169,7 @@
 #define    PLEND	FNAME(PLEND,plend)
 #define    PLEND1	FNAME(PLEND1,plend1)
 #define    PLENV	FNAME(PLENV,plenv)
+#define    PLEOP	FNAME(PLEOP,pleop)
 #define    PLERRX	FNAME(PLERRX,plerrx)
 #define    PLERRY	FNAME(PLERRY,plerry)
 #define    PLFAMADV	FNAME(PLFAMADV,plfamadv)
@@ -207,6 +212,7 @@
 #define    PLSCM1	FNAME(PLSCM1,plscm1)
 #define    PLSCM1F1	FNAME(PLSCM1F1,plscm1f1)
 #define    PLSCOL0	FNAME(PLSCOL0,plscol0)
+#define    PLSCOLBG	FNAME(PLSCOLBG,plscolbg)
 #define    PLSCOLOR	FNAME(PLSCOLOR,plscolor)
 #define    PLSDEV7	FNAME(PLSDEV7,plsdev7)
 #define    PLSESC	FNAME(PLSESC,plsesc)
