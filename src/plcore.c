@@ -155,8 +155,6 @@ plP_tidy(void)
 
     plsc->OutFile = NULL;
 
-    if (plsc->tcl_cmd) 
-	free_mem(plsc->tcl_cmd);
 }
 
 /* Change state. */

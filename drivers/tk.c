@@ -148,6 +148,11 @@ static int   LookupTkKeyEvent	(PLStream *pls, Tcl_Interp *interp,
 static int   LookupTkButtonEvent(PLStream *pls, Tcl_Interp *interp,
 				 int argc, char **argv);
 
+static char *drvoptcmd = NULL;    /* tcl command from command line option parsing */
+
+static DrvOpt tk_options[] = {{"tcl_cmd", DRV_STR, &drvoptcmd, "Execute tcl command"},
+	                      {NULL,DRV_INT,NULL,NULL}};
+
 void plD_dispatch_init_tk( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
@@ -180,6 +185,7 @@ void
 plD_init_tk(PLStream *pls)
 {
     pls->dp = 0;
+    plParseDrvOpts(tk_options);
     init(pls);
 }
 
@@ -787,8 +793,8 @@ tk_start(PLStream *pls)
 /* A different way to customize the interface. */
 /* E.g. used by plrender to add a back page button. */
 
-    if (pls->tcl_cmd)
-	tcl_cmd(pls, pls->tcl_cmd);
+    if (drvoptcmd)
+	tcl_cmd(pls, drvoptcmd);
 
 /* Initialize server process */
 

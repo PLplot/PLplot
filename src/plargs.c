@@ -550,7 +550,7 @@ static PLOptionTable ploption_table[] = {
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-tcl_cmd command",
-    "TCL command string run at startup" },
+    "Depreciated - use -drvopt tcl_cmd= instead" },
 {
     "auto_path",		/* Additional directory(s) to autoload */
     opt_auto_path,
@@ -1708,7 +1708,7 @@ opt_drvopt(char *opt, char *optarg, void *client_data)
   if (option == NULL)
     plexit("opt_drvopt: Out of memory!?");
 
-  value = (char *) malloc((size_t)(1+1)*sizeof(char));
+  value = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
   if (value == NULL)
     plexit("opt_drvopt: Out of memory!?");
 
@@ -2028,12 +2028,23 @@ opt_plwindow(char *opt, char *optarg, void *client_data)
  *
  * Performs appropriate action for option "tcl_cmd":
  * Sets TCL command(s) to eval on startup
+ * Depreciated - just bounce on to -drvopt tcl_cmd=
 \*--------------------------------------------------------------------------*/
 
 static int
 opt_tcl_cmd(char *opt, char *optarg, void *client_data)
 {
-    plsc->tcl_cmd = plstrdup(optarg);
+    char *newcmd;
+
+    newcmd = (char *) malloc((size_t)(strlen(optarg)+9)*sizeof(char));
+    strcpy(newcmd,"tcl_cmd=");
+    strcat(newcmd,optarg);
+
+    fprintf(stderr,"-tcl_cmd <cmd> is obsolete. Please use -drvopt tcl_cmd=<cmd> instead\n");
+
+    opt_drvopt("drvopt",newcmd,NULL);
+    free(newcmd);
+
     return 0;
 }
 

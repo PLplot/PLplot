@@ -349,6 +349,7 @@ ProcessFile(int argc, char **argv)
 {
     int i;
     U_CHAR c=0;
+    char devname[80];
 
     dbug_enter("ProcessFile");
 
@@ -412,7 +413,10 @@ ProcessFile(int argc, char **argv)
     if (addeof_beg) disp_beg += pages;
     if (addeof_end) disp_end += pages;
 
-    plSetInternalOpt("-tcl_cmd", "set plw_create_proc plr_create");
+    plgdev(devname);
+    if (strncmp(devname,"tk",2)==0) {
+      plSetInternalOpt("-drvopt", "tcl_cmd=set plw_create_proc plr_create");
+    }
 
 /*
  * Read & process metafile commands.

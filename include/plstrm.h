@@ -234,7 +234,6 @@ typedef struct {
  * user		char*	Your user name on remote host (for remsh command)
  * plserver	char*	Name of server
  * plwindow	char*	Name of reference server window (malloc'ed)
- * tcl_cmd	char*	TCL command(s) to eval on startup
  * tk_file	char*   File for plserver use with its -file option
  * auto_path	char*	Additional directories to autoload
  * bufmax	int	Number of bytes sent before output buffer is flushed
@@ -519,7 +518,7 @@ typedef struct {
 
     char *server_name, *server_host, *server_port, *user;
     char *plserver, *plwindow;
-    char *tcl_cmd, *auto_path;
+    char *auto_path;
     char *tk_file;  /* plserver -file option */
     int  bufmax, dp, server_nokill;
 
