@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1994/04/30 16:14:46  mjl
+ * Revision 1.24  1994/05/07 03:00:04  mjl
+ * Changed all occurances of bgcolor to cmap0[0].
+ *
+ * Revision 1.23  1994/04/30  16:14:46  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -234,9 +237,9 @@ ps_init(PLStream *pls)
     if (pls->color) {
 	fprintf(OF, "    Z %d %d M %d %d D %d %d D %d %d D %d %d closepath\n",
 		0, 0, 0, PSY, PSX, PSY, PSX, 0, 0, 0);
-	r = ((float) pls->bgcolor.r) / 255.;
-	g = ((float) pls->bgcolor.g) / 255.;
-	b = ((float) pls->bgcolor.b) / 255.;
+	r = ((float) pls->cmap0[0].r) / 255.;
+	g = ((float) pls->cmap0[0].g) / 255.;
+	b = ((float) pls->cmap0[0].b) / 255.;
 	fprintf(OF, "    %.4f %.4f %.4f setrgbcolor fill\n", r, g, b);
     }
     fprintf(OF, "   } def\n");
