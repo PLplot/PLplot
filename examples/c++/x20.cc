@@ -261,7 +261,7 @@ x20::x20( int argc, char ** argv ) {
     // zoom in selection
     pls->env(xi, xe, ye, yi, 1, -1);
     pls->image(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
-    pladv(0);
+    pls->adv(0);
   }
 
   pls->Free2dGrid(img_f, width, height);
@@ -376,7 +376,7 @@ int x20::get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye) {
 
       if (gin.button == 3 || gin.keysym == PLK_Return || gin.keysym == 'Q') {
 	if (start)
-	  plline(5, sx, sy); /* clear previous rectangle */
+	  pls->line(5, sx, sy); /* clear previous rectangle */
 	break;
       }
     }
