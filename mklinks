@@ -49,6 +49,9 @@
 # a fundamental capability of this script is to allow easy removal of all
 # created softlinks (-r option).
 #
+# Note: the default is to only link librarys under lib into the target
+# dir, since some packages store lots of data files under lib/.
+#
 #*************************************************************************
 
 # Miscellaneous settings
@@ -56,6 +59,7 @@
 NAME=$0			# Name of script
 CWD=`pwd`		# Current directory
 LINK_MAN=1		# Install man pages (set to null to disable)
+LINK_LIB_ALL=0		# Link lib/* rather than just lib/lib*
 
 # Infer package name from directory name
 # Not all systems have "basename" so use sed for this.
@@ -85,9 +89,16 @@ case "$PKG" in
 	REFERENCE_FILE="$INSTALL_DIR/bin/plrender"
     ;;
 
+    python* )
+	PKG_NAME="Python"
+	REFERENCE_FILE="$INSTALL_DIR/bin/python"
+	LINK_LIB_ALL=1
+    ;;
+
     tcl*|tk* )
 	PKG_NAME="Tcl/TK/etc"
 	REFERENCE_FILE="$INSTALL_DIR/bin/tclsh"
+	LINK_LIB_ALL=1
     ;;
 
     * )
@@ -144,7 +155,7 @@ add_link () {
 	# filenames match.
 
 	for file in $CWD/$1/$2; do
-	    if test -f $file; then
+	    if test -r $file; then
 		if test "$DO_NOTHING"; then
 		    echo "ln -s $file  $INSTALL_DIR/$1"
 		else
@@ -200,8 +211,13 @@ Add () {
     echo "Adding links from $CWD to $INSTALL_DIR"
 
     add_link "bin"	"*"
-    add_link "lib"	"lib*"
     add_link "include"	"*.h"
+
+    if test "$LINK_LIB_ALL" = 1; then
+	add_link "lib"	"*"
+    else
+	add_link "lib"	"lib*"
+    fi
 
     if test "$LINK_MAN"; then
 	add_link "man/man1" "*.1"
