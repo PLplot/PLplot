@@ -6,7 +6,7 @@
 #include <time.h>
 
 #if !defined(HAVE_ISNAN)
-  #define isnan(x) ((x) != (x))
+#  define isnan(x) ((x) != (x))
 #endif
 
 /* Options data structure definition. */
