@@ -63,7 +63,8 @@ typedef struct FT_Data
     plD_pixel_fp        pixel;          /* pointer to a function which draws a single pixel */
 
 
-
+    int want_smooth_text; /* flag to request text smoothing (won't */
+                          /* necessarily get it though */
     int smooth_text;      /* Flag to indicate type of anti-aliasing used, if freetype text is active */
 
 
