@@ -53,8 +53,8 @@ for $i (split ("\n\n", `gunzip -c Packages.gz`)) {
     $i =~ /Package:\s*([^\s]+)/;
     $n = $1;
     chomp $n;
-    $i =~ /Version:\s*([^\s]+)/;
-    $v = $1;
+    $i =~ /Version:\s*(\d+:)*([^\s]+)/;
+    $v = $2;
     chomp $v;
     $pkgs{$n} = $v;
     $txt = "$n.txt";
