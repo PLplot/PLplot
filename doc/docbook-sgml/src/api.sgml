@@ -671,6 +671,11 @@ origin
 	      </listitem>
 	      <listitem>
 		<para>
+		  <literal>f</literal>: Always use fixed point numeric labels.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
 		  <literal>i</literal>: Inverts tick marks, so they are
 		  drawn downwards, rather than upwards.
 		</para>
@@ -831,6 +836,11 @@ origin
 		  x-y plane behind the figure.  These lines are not drawn
 		  until after &plot3d; or &plmesh; are called because of
 		  the need for hidden line removal.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>f</literal>: Always use fixed point numeric labels.
 		</para>
 	      </listitem>
 	      <listitem>
