@@ -25,7 +25,7 @@ src_dirs = lib src include data bindings
 
 if enable_dyndrivers
   SUBDIRS =
-if enable_ltdl_convenience
+if !with_ltdlsystem
     SUBDIRS += libltdl
 endif
   SUBDIRS += $(src_dirs) drivers

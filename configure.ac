@@ -383,8 +383,8 @@ fi
 
 plplot_config_invocation="$0 $*"
 if test -n "$*"; then
-    # The following test is a quick hack to avoid garbage being stored in 
-    # the reconfig script when the configure script is called recursively 
+    # The following test is a quick hack to avoid garbage being stored in
+    # the reconfig script when the configure script is called recursively
     # with the --fallback-echo option (for instance, this happens for
     # the checks of maximum command length by the libtool configuration).
     if test "$1" != --fallback-echo ; then
@@ -442,7 +442,7 @@ AC_SUBST(RELEASE_DATE)
 SOVERSION=8:0:3
 AC_SUBST(SOVERSION)
 
-### Version number for the shared C++ library.  After version 5.2.1 was 
+### Version number for the shared C++ library.  After version 5.2.1 was
 ### released, the C++ bindings were changed and backward incompatibilities
 ### were introduced.  Hence the different strings for SOVERSION and
 ### CPP_SOVERSION.
@@ -461,17 +461,33 @@ AC_SUBST(CPP_SOVERSION)
 PLPLOT_TCL_VERSION=5
 AC_SUBST(PLPLOT_TCL_VERSION)
 
+### Libtool settings
+
+with_ltldsystem=no
+MY_ARG_WITH(ltdlsystem,
+  AC_HELP_STRING([--with-ltdlsystem],
+    [Use installed version of libltdl library (if it exists), instead of
+     building the convenience version shipped with the sources]))
+
 if test "$enable_dyndrivers" = "yes"; then
   AC_LIBTOOL_DLOPEN
-  AC_CHECK_LIB(ltdl, lt_dlinit,
-    [ AC_LIBLTDL_INSTALLABLE
-    ],
-    [ AC_LIBLTDL_CONVENIENCE
-      AC_CONFIG_SUBDIRS(libltdl)
-    ])
+  if test "$with_ltdlsystem" = yes ; then
+    AC_CHECK_LIB(ltdl, lt_dlinit, [],
+      [ with_ltdlsystem=no
+        AC_MSG_WARN([libltdl not found in system.  Setting with_ltdlsystem=no.])
+      ])
+  fi
+  if test "$with_ltdlsystem" = no ; then
+    AC_LIBLTDL_CONVENIENCE
+    AC_CONFIG_SUBDIRS(libltdl)
+  else
+    AC_LIBLTDL_INSTALLABLE
+  fi
   AC_SUBST(INCLTDL)
   AC_SUBST(LIBLTDL)
 fi
+
+AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
 
 # This required for dll support under cygwin.  Must occur before
 # AC_PROG_LIBTOOL (AM_PROG_LIBTOOL? FIXME).
@@ -550,7 +566,7 @@ AC_CHECK_LIB(m, sin)
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 
 if test "$enable_python" = "yes"; then
-    ### Redefine AC_MSG_ERROR as AC_MSG_WARN around the call to 
+    ### Redefine AC_MSG_ERROR as AC_MSG_WARN around the call to
     ### AM_PATH_PYTHON, such that if python is not found, configure will
     ### not stop.
     pushdef([AC_MSG_ERROR],defn([AC_MSG_WARN]))
@@ -706,7 +722,7 @@ if test "$enable_java" = yes; then
 ### The symbolic exec_prefix must be replaced by the actual exec_prefix.
    JAVA_INSTDIR=`echo $libdir |sed 's%${exec_prefix}/%%'`
    JAVA_INSTDIR="$exec_prefix/$JAVA_INSTDIR/java/plplot/core"
-### The actual exec_prefix may be the symbolic prefix which must be replaced 
+### The actual exec_prefix may be the symbolic prefix which must be replaced
 ### by its actual value.
    JAVA_INSTDIR=`echo $JAVA_INSTDIR |sed 's%${prefix}/%%'`
    JAVA_INSTDIR="$prefix/$JAVA_INSTDIR"
@@ -733,7 +749,7 @@ AC_SUBST(LIB_TAG)
 
 ### These various DLNAME variables are used to configure the names of
 ### the libplplot and libplplottcltk libraries for use in the various
-### pkgIndex.tcl scripts.  At run time those scripts currently search first 
+### pkgIndex.tcl scripts.  At run time those scripts currently search first
 ### for the double-precision form of DLNAME, and if that does not exist
 ### searches for the single-precision version.  Thus, we must supply both
 ### double- and single-precision names for libplplot and libplplottcltk.
@@ -856,8 +872,6 @@ AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
 AM_CONDITIONAL(enable_xwin, [test "$enable_xwin" = yes])
 AM_CONDITIONAL(with_qhull, [test "$with_qhull" = yes])
 AM_CONDITIONAL(with_csa, [test "$with_csa" = yes])
-AM_CONDITIONAL(enable_ltdl_convenience, 
-               [test "$enable_ltdl_convenience" = yes])
 
 ### Checks for existence of headers
 
@@ -1179,7 +1193,7 @@ AC_CONFIG_FILES([
 	utils/Makefile
 	scripts/Makefile
 	doc/Makefile
-	scripts/plplot-config	
+	scripts/plplot-config
 	pkgcfg/Makefile
 	pkgcfg/plplot-master-pc
 	doc/docbook/Makefile
