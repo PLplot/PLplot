@@ -313,7 +313,17 @@ LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBS) -lm
 
 #define({MOTIF})
 PLDEVICES = -DXTERM -DPLMETA -DNULLDEV -DTEK -DPS -DXFIG  DEF_XWIN() DEF_MOTIF()
-SYS_FLAGS_C =
+
+LIB_XWIN	=
+LIB_MOTIF	=
+
+if_xwin({
+LIB_XWIN = -lX11
+})
+
+if_motif({
+LIB_MOTIF = -lXm -lXt -lPW
+})
 
 if_dbl({dnl
 DBL_FLAG_F      = -R8
@@ -329,17 +339,15 @@ PROFILE_FLAG_LF	= -G
 CC	= c89
 F77	= fort77
 
+SYS_FLAGS_C	= 
+LIBS		= $(LIB_MOTIF) $(LIB_XWIN)
+
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
 
 FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
-CFLAGS_MOTIF = -I/usr/{include}/Motif1.1 #-D_HPUX_SOURCE
-LIB_XWIN = -L/usr/lib/X11R4 -lX11
-LIB_MOTIF = -L/usr/lib/Motif1.1 -lXm -L/usr/lib/X11R4 -lXt -lPW
-
-LIBS	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBS) -lm -g
 LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBS) -lm -g
 
@@ -1078,3 +1086,20 @@ clean:
 realclean:
 	-rm $(CDEMOS) $(FDEMOS) *.o *.c *.h *.f *.plm* *.tek* *.ps makefile
 })
+
+#----------------------------------------------------------------------#
+# "install" target
+# It is usually not difficult to get a system administrator to give you
+# ownership of a directory under /usr/local, such as /usr/local/plplot.
+# Since this is the most common case I make an install target for it.
+# There must also be a directory /usr/local/plplot/include.
+
+INSTALL_DIR = /usr/local/plplot
+
+install:
+	-strip plrender
+	-cp plrender ../lib/libplplot*.a $(INSTALL_DIR)
+	-cd ..; cp README* Changes.log COPYRIGHTS ToDo $(INSTALL_DIR)
+	-cd ../{include}; \
+		cp plplot.h plplotio.h plevent.h plstream.h pdf.h \
+		$(INSTALL_DIR)/{include}
