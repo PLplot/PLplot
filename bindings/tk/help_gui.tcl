@@ -113,12 +113,7 @@ The text widgets used in the help entries can be scrolled by using the
 up and down arrow keys, page up or page down keys, space, backspace, and
 delete keys.
 
-	3. Setting the zoom region via the command line (using the -wplt
-option) does not result in the scroll bars being created.  If you really
-want them, go into choose "Plot/Zoom/Select Bounds" and just hit return.
-This will bring up the scroll bars without changing the plot.
-
-	4. A good way to customize the resources (fonts, colors, etc) used
+	3. A good way to customize the resources (fonts, colors, etc) used
 in the interface is to copy the plconfig.tcl file, modify it according to
 taste, then put it into a directory where it will be found at startup.  Also
 a tclIndex file must be created for it (``plserver -mkidx'' will do this) and
