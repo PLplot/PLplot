@@ -1,6 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.42  1994/09/13 22:14:47  mjl
+ * Revision 1.43  1994/12/28 09:44:49  mjl
+ * Changed to new "merged" style of option table parsing.  Rewired command
+ * line handling so that now any number of metafiles may be specified (note:
+ * driver is reinitialized with each file, however).  Options now only apply
+ * to files they precede on the command line.  Help and usage messages
+ * changed accordingly.  Bug fix: the background color specified from the
+ * command line now properly overrides the setting in the metafile header
+ * (color changes in the body of the metafile not affected).
+ *
+ * Revision 1.42  1994/09/13  22:14:47  mjl
  * Fixes to allow plrender to work better with old and/or mangled metafiles.
  *
  * Revision 1.41  1994/08/25  04:05:36  mjl
@@ -17,7 +26,7 @@
 /*
     plrender.c
 
-    Copyright 1991, 1992, 1993
+    Copyright 1991, 1992, 1993, 1994, 1995
     Geoffrey Furnish
     Maurice LeBrun
 
@@ -32,7 +41,7 @@
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    This file contains the code to render a PLPLOT metafile, written by
+    This file contains the code to render a PLplot metafile, written by
     the metafile driver, plmeta.c.
 */
 
@@ -81,7 +90,8 @@ static void	PageDecr	(void);
 /* Initialization functions */
 
 static void	Init		(int, char **);
-static void	OpenMetaFile	(int *, char **);
+static int	ProcessFile	(int, char **);
+static int	OpenMetaFile	(char *);
 static int	ReadFileHeader	(void);
 static void	Help		(void);
 static void 	Usage		(char *);
@@ -99,9 +109,14 @@ static int Opt_e	(char *, char *, void *);
 static int Opt_p	(char *, char *, void *);
 
 /* Global variables */
+
+/* Copies of argc, argv, for use with multiple files */
+
+static int myargc;
+static char **myargv;
+
 /* Mode flags for argument parsing */
 
-static int mode_plrender = PL_PARSE_OVERRIDE;
 static int mode_plplot = 0;
 static int mode_showall = 0;
 
@@ -255,32 +270,144 @@ static PLOptionTable option_table[] = {
 
 static char *notes[] = {
 "All parameters must be white-space delimited, and plrender options override",
-"any plplot options of the same name.  If the \"-i\" flag is omitted the",
-"filename parameter must come last.  Specifying \"-\" for the input or output",
-"filename means use stdin or stdout, respectively.  Not all options valid",
-"with all drivers.  Please see the man pages for more detail.",
+"PLplot options of the same name.  If the \"-i\" flag is omitted, unrecognized",
+"input will assumed to be filename parameters.  Specifying \"-\" for the input",
+"or output filename means use stdin or stdout, respectively.  Not all options",
+"valid with all drivers.  Please see the manual for more detail.",
 NULL};
 
 /*----------------------------------------------------------------------*\
  * main()
  *
- * plrender -- render a PLPLOT metafile.
+ * plrender -- render a series of PLplot metafiles.
 \*----------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
 {
-    static U_CHAR c;
+    int status = 0;
 
 /* Initialize */
 
     Init(argc, argv);
+
+/* Process first file.  There must be at least one. */
+
+    if (ProcessFile(argc, argv)) {
+	fprintf(stderr, "%s: No filename specified.\n", program_name);
+	Usage("");
+	exit(EX_ARGSBAD);
+    }
+
+/* Process any additional files */
+
+    pltext();
+    while ( ! ProcessFile(argc, argv))
+	;
+
+    plend();
+    exit(EX_SUCCESS);
+}
+
+/*----------------------------------------------------------------------*\
+ * Init()
+ *
+ * Do initialization for main().
+\*----------------------------------------------------------------------*/
+
+static void
+Init(int argc, char **argv)
+{
+    int i, status;
+
+    dbug_enter("Init");
+
+/* Save argv list for future reuse */
+
+    myargv = (char **) malloc(argc * sizeof(char *));
+    myargc = argc;
+    for (i = 0; i < argc; i++) {
+	myargv[i] = argv[i];
+    }
+}
+
+/*----------------------------------------------------------------------*\
+ * ProcessFile()
+ *
+ * Renders a file, using given command flags.
+\*----------------------------------------------------------------------*/
+
+static int
+ProcessFile(int argc, char **argv)
+{
+    int i;
+    U_CHAR c;
+
+    dbug_enter("ProcessFile");
+
+/* Do all rendering in a new plot stream to make cleanup easier. */
+
+    plsstrm(1);
+
+/* Process plrender and PLplot (internal) command line options */
+/* Ignore error return -- it will stop once it hits something unrecognized */
+
+    (void) plParseOpts(&argc, argv, PL_PARSE_MERGE, option_table, Usage);
+
+/* Any remaining flags are illegal. */
+
+    if ((argv)[1][0] == '-')
+	Usage(argv[1]);
+
+/* argv[1] should be a file name.  Try to open it. */
+
+    if (OpenMetaFile(argv[1]))
+	return 1;
+
+/* Initialize file and read header */
+
+    pdfs = pdf_finit(MetaFile);
+
+    if (ReadFileHeader())
+	exit(EX_BADFILE);
+
+/* Read & process any state info before the INITIALIZE */
+
+    for (;;) {
+	c_old = c;
+	c = getcommand();
+
+	if (c == INITIALIZE) {
+	    ungetcommand(c);
+	    break;
+	}
+	process_next(c);
+    }
+
+/*
+ * Reprocess the command line options so that they supercede their possible
+ * counterparts in the metafile header.  
+ */
+
+    argc = myargc;
+    for (i = 0; i < argc; i++) {
+	argv[i] = myargv[i];
+    }
+    (void) plParseOpts(&argc, argv, PL_PARSE_MERGE, option_table, Usage);
+
+/* Miscellaneous housekeeping */
+
+    if (addeof_beg) disp_beg += pages;
+    if (addeof_end) disp_end += pages;
+
+    plSetInternalOpt("-tcl_cmd", "set plw_create_proc plr_create");
 
 /*
  * Read & process metafile commands.
  * If familying is turned on, the end of one member file is just treated as
  * a page break assuming the next member file exists.
  */
+
     for (;;) {
 	c_old = c;
 	c = getcommand();
@@ -298,14 +425,101 @@ main(int argc, char *argv[])
 	process_next(c);
     }
 
-/* Done */
+/* Finish up */
 
     pdf_close(pdfs);
+    *FileName = '\0';
+
+/* A hack for old metafiles */
+
     if (strcmp(mf_version, "1993a") >= 0) 
 	plspause(0);
 
-    plend();
-    exit(EX_SUCCESS);
+    plend1();
+
+/* Restore the old argc/argv except for the processed file */
+
+    argv[1][0] = '\0';
+    argc = myargc;
+    for (i = 0; i < argc; i++) {
+	argv[i] = myargv[i];
+    }
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+ * OpenMetaFile()
+ *
+ * Attempts to open the named file.  If the output file isn't already
+ * determined via the -i or -f flags, we assume it's the second argument in
+ * argv[] (the first should still hold the program name).
+\*----------------------------------------------------------------------*/
+
+static int
+OpenMetaFile(char *filename)
+{
+    char name[70];
+
+    dbug_enter("OpenMetaFile");
+
+    if ( ! strcmp(FileName, "-"))
+	input_type = 1;
+
+    if (input_type == 1)
+	MetaFile = stdin;
+
+    else {
+	if (*FileName == '\0') {
+	    if (filename != NULL && *filename != '\0') {
+		strncpy(FileName, filename, sizeof(FileName) - 1);
+		FileName[sizeof(FileName) - 1] = '\0';
+	    }
+	    else {
+		return 1;
+	    }
+	}
+
+/*
+ * Try to read named Metafile.  The following cases are checked in order:
+ *	<FileName>
+ *	<FileName>.1
+ *	<FileName>.plm
+ *	<FileName>.plm.1
+ */
+#ifdef DEBUG
+	fprintf(stderr, "Trying to open metafile %s.\n", FileName);
+#endif
+	strncpy(name, FileName, sizeof(name) - 1);
+	name[sizeof(name) - 1] = '\0';
+
+	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
+	    return 0;
+	}
+
+	(void) sprintf(FileName, "%s.%i", name, (int) member);
+	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
+	    (void) sprintf(BaseName, "%s", name);
+	    is_family = 1;
+	    return 0;
+	}
+
+	(void) sprintf(FileName, "%s.plm", name);
+	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
+	    return 0;
+	}
+
+	(void) sprintf(FileName, "%s.plm.%i", name, (int) member);
+	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
+	    (void) sprintf(BaseName, "%s.plm", name);
+	    is_family = 1;
+	    return 0;
+	}
+
+	fprintf(stderr, "Unable to open the requested metafile: %s.\n", name);
+	Usage("");
+	exit(EX_BADFILE);
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -316,9 +530,9 @@ main(int argc, char *argv[])
  * process_next()
  *
  * Process a command.
- * Typically plrender issues commands to plplot much like an application
+ * Typically plrender issues commands to PLplot much like an application
  * program would.  This results in a more robust and flexible API.  On the
- * other hand, it is sometimes necessary to directly call low-level plplot
+ * other hand, it is sometimes necessary to directly call low-level PLplot
  * routines to achieve certain special effects, increase performance, or
  * simplify the code.
 \*----------------------------------------------------------------------*/
@@ -400,7 +614,7 @@ plr_init(U_CHAR c)
 
     plsKeyEH(plr_KeyEH, NULL);
 
-/* Start up plplot */
+/* Start up PLplot */
 
     plinit();
     plP_gsub(&nsubx, &nsuby, &cursub);
@@ -751,7 +965,7 @@ plresc_fill(void)
  *
  * Process escape function for RGB color selection.
  * Note that RGB color selection is no longer handled this way by
- * plplot but we must handle it here for old metafiles.
+ * PLplot but we must handle it here for old metafiles.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -898,7 +1112,7 @@ plr_exit(char *errormsg)
  * plr_KeyEH()
  *
  * Keyboard event handler.  For mapping keyboard sequences to commands
- * not usually supported by plplot, such as seeking around in the
+ * not usually supported by PLplot, such as seeking around in the
  * metafile.  Recognized commands:
  *
  * <Backspace>	|
@@ -1329,145 +1543,6 @@ ReadPageHeader(void)
 }
 
 /*----------------------------------------------------------------------*\
- * Init()
- *
- * Do initialization for main().
-\*----------------------------------------------------------------------*/
-
-static void
-Init(int argc, char **argv)
-{
-    int i, status;
-
-    dbug_enter("Init");
-
-/* Process plrender command line options */
-
-    status = plParseOpts(&argc, argv, mode_plrender, option_table, Usage);
-
-/*
- * We want the plplot command line options to supercede their possible
- * counterparts in the metafile header.  So we defer parsing the
- * rest of the command line until after we process the metafile header.
- */
-
-    OpenMetaFile(&argc, argv);
-    pdfs = pdf_finit(MetaFile);
-
-/* Read header */
-
-    if (ReadFileHeader())
-	exit(EX_BADFILE);
-
-/* Other miscellaneous housekeeping */
-
-    if (addeof_beg) disp_beg += pages;
-    if (addeof_end) disp_end += pages;
-
-    plSetInternalOpt("-tcl_cmd", "set plw_create_proc plr_create");
-
-/* Finally, give the rest of the command line to plplot to process. */
-
-    status = plParseInternalOpts(&argc, argv, mode_plplot);
-
-/* 
- * At this point the only remaining argument in argv should be the program
- * name (which should be first).  Anything else is an error.  Handle illegal
- * flags first.
- */
-
-    for (i = 1; i < argc; i++) {
-	if ((argv)[i][0] == '-')
-	    Usage(argv[i]);
-    }
-
-/* These must be extraneous file names */
-
-    if (i > 1) {
-	fprintf(stderr, "Only one filename argument accepted.\n");
-	Usage("");
-    }
-}
-
-/*----------------------------------------------------------------------*\
- * OpenMetaFile()
- *
- * Attempts to open the named file.
- * If the output file isn't already determined via the -i or -f flags, 
- * we assume it's the last argument in argv[]. 
-\*----------------------------------------------------------------------*/
-
-static void
-OpenMetaFile(int *p_argc, char **argv)
-{
-    char name[70];
-
-    dbug_enter("OpenMetaFile");
-
-    if ( ! strcmp(FileName, "-"))
-	input_type = 1;
-
-    if (input_type == 1)
-	MetaFile = stdin;
-
-    else {
-	if (*FileName == '\0') {
-	    if (*p_argc > 1) {
-		strncpy(FileName, argv[*p_argc-1], sizeof(FileName) - 1);
-		FileName[sizeof(FileName) - 1] = '\0';
-		argv[*p_argc] = NULL;
-		(*p_argc)--;
-	    }
-	}
-	if (*FileName == '\0') {
-	    fprintf(stderr, "%s: No filename specified.\n", program_name);
-	    Usage("");
-	    exit(EX_ARGSBAD);
-	}
-
-/*
- * Try to read named Metafile.  The following cases are checked in order:
- *	<FileName>
- *	<FileName>.1
- *	<FileName>.plm
- *	<FileName>.plm.1
- */
-#ifdef DEBUG
-	fprintf(stderr, "Trying to open metafile %s.\n", FileName);
-#endif
-	strncpy(name, FileName, sizeof(name) - 1);
-	name[sizeof(name) - 1] = '\0';
-
-	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
-	    return;
-	}
-
-	(void) sprintf(FileName, "%s.%i", name, (int) member);
-	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
-	    (void) sprintf(BaseName, "%s", name);
-	    is_family = 1;
-	    return;
-	}
-
-	(void) sprintf(FileName, "%s.plm", name);
-	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
-	    return;
-	}
-
-	(void) sprintf(FileName, "%s.plm.%i", name, (int) member);
-	if ((MetaFile = fopen(FileName, "rb")) != NULL) {
-	    (void) sprintf(BaseName, "%s.plm", name);
-	    is_family = 1;
-	    return;
-	}
-
-	fprintf(stderr, "Unable to open the requested metafile.\n");
-	Usage("");
-	exit(EX_BADFILE);
-    }
-}
-
-/*----------------------------------------------------------------------*\
  * ReadFileHeader()
  *
  * Checks file header.  Returns 1 if an error occured.
@@ -1480,11 +1555,11 @@ ReadFileHeader(void)
 
     dbug_enter("ReadFileHeader");
 
-/* Read label field of header to make sure file is a PLPLOT metafile */
+/* Read label field of header to make sure file is a PLplot metafile */
 
     plm_rd( pdf_rd_header(pdfs, mf_magic) );
     if (strcmp(mf_magic, PLMETA_HEADER)) {
-	fprintf(stderr, "Not a PLPLOT metafile!\n");
+	fprintf(stderr, "Not a PLplot metafile!\n");
 	return 1;
     }
 
@@ -1576,7 +1651,7 @@ ReadFileHeader(void)
 	    continue;
 	}
 
-	fprintf(stderr, "Unrecognized PLPLOT metafile header tag.\n");
+	fprintf(stderr, "Unrecognized PLplot metafile header tag.\n");
 	exit(EX_BADFILE);
     }
 
@@ -1595,7 +1670,7 @@ Help(void)
     dbug_enter("Help");
 
     fprintf(stderr,
-	    "\nUsage:\n        %s [%s options] [plplot options] [filename]\n",
+	    "\nUsage:\n        %s [%s options] [PLplot options] [files]\n",
 	    program_name, program_name);
 
     if (mode_showall)
@@ -1672,7 +1747,7 @@ Usage(char *badOption)
 		program_name, badOption);
 
     fprintf(stderr,
-	    "\nUsage:\n        %s [%s options] [plplot options] [filename]\n",
+	    "\nUsage:\n        %s [%s options] [PLplot options] [files]\n",
 	    program_name, program_name);
 
     if (mode_showall)
@@ -1754,8 +1829,8 @@ Opt_v(char *opt, char *optarg, void *client_data)
 {
 /* Version */
 
-    fprintf(stderr, "plplot metafile version: %s\n", PLMETA_VERSION);
-    fprintf(stderr, "plplot library version: %s\n", PLPLOT_VERSION);
+    fprintf(stderr, "PLplot metafile version: %s\n", PLMETA_VERSION);
+    fprintf(stderr, "PLplot library version: %s\n", PLPLOT_VERSION);
     exit(1);
     return 1;		/* This serves a purpose */
 }
