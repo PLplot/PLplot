@@ -1,4 +1,4 @@
-# examples/c/Makefile.am for PLplot
+# examples/c++/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
@@ -25,3 +25,4 @@ examples_cxx_DATA = \
 Makefile.examples \
 x01cc.cc
 EXTRA_DIST = $(examples_cxx_DATA) Makefile.examples.in
+DISTCLEANFILES = Makefile.examples

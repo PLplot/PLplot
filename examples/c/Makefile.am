@@ -47,3 +47,4 @@ examples_c_DATA = \
   x19c.c \
   x20c.c
 EXTRA_DIST = $(examples_c_DATA) Makefile.examples.in
+DISTCLEANFILES = Makefile.examples

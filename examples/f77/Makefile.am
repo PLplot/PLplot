@@ -1,4 +1,4 @@
-# examples/c/Makefile.am for PLplot
+# examples/f77/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
@@ -92,3 +92,4 @@ SUFFIXES = .fm4
 	$(M4) @M4_FLAGS@ $< >$*.f
 
 EXTRA_DIST = $(f77m4_source) Makefile.examples.in
+DISTCLEANFILES = Makefile.examples

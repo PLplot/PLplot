@@ -1,4 +1,4 @@
-# examples/c/Makefile.am for PLplot
+# examples/python/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
@@ -49,4 +49,4 @@ examples_python_DATA = \
 	xw19.py
 
 EXTRA_DIST = $(examples_python_SCRIPTS) $(examples_python_DATA)
-CLEANFILES = plplot_python_start.py
+DISTCLEANFILES = plplot_python_start.py
