@@ -153,6 +153,11 @@ typedef struct {
  * dev_x	short*	Pointer to array of x values 
  * dev_y	short*	Pointer to array of x values 
  *
+ * For images
+ * dev_nptsX	PLINT	Number of points we are plotting in X
+ * dev_nptsY	PLINT	Number of points we are plotting in Y
+ * dev_z	PLFLT*	Pointer to array of z values for the color 
+ *
  * The following pointer is for drivers that require device-specific 
  * data.  At initialization the driver should malloc the necessary
  * space and set pls->dev to point to this area.  This way there can
@@ -431,7 +436,7 @@ typedef struct {
     PLINT device, dev_minor, termin, graphx, nopause;
     PLINT color, colorset;
     PLINT family, member, finc, fflen, bytemax, famadv;
-  PLINT dev_fill0, dev_fill1, dev_dash, dev_di, dev_flush, dev_swin, dev_text;
+    PLINT dev_fill0, dev_fill1, dev_dash, dev_di, dev_flush, dev_swin, dev_text;
 
     char DevName[80];
     FILE *OutFile;
@@ -440,8 +445,23 @@ typedef struct {
     PLINT bytecnt, page, linepos;
     PDFstrm *pdfs;
 
-    PLINT dev_npts;
+  /* variables for plimage() */
+
+    PLINT dev_npts, dev_nptsX, dev_nptsY;
     short *dev_x, *dev_y;
+    int  *dev_ix, *dev_iy;
+    PLFLT *dev_z;
+    PLINT dev_xMI, dev_xMA, dev_yMI, dev_yMA;
+    PLINT Dxmin, Dxmax, Dymin, Dymax;
+    PLFLT offXu;
+    PLFLT offYu;
+    PLINT offXpp;
+    PLINT offYpp;
+    PLINT offXp;
+    PLINT offYp;
+    PLFLT xU, yU;
+
+  /* end of variables for plimage() */
 
     void *dev;
 
@@ -567,8 +587,10 @@ typedef struct {
 
 /* Other variables */
    
-    PLINT dev_compression;
-    PLINT cfont;
+  PLINT dev_compression;
+  PLINT cfont;
+
+  PLINT is_a_fast_image_device;
 
 } PLStream;
 

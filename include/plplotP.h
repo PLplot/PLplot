@@ -711,6 +711,11 @@ plP_polyline(short *x, short *y, PLINT npts);
 void
 plP_fill(short *x, short *y, PLINT npts);
 
+/* draw image */
+
+void
+plP_image(int *x, int *y, PLFLT *z, PLINT nx, PLINT ny);
+
 /* End of page */
 
 void
@@ -760,6 +765,22 @@ plP_getinitdriverlist(char *names);
 
 PLINT 
 plP_checkdriverinit( char *names);
+
+  /* disable writing to plot buffer and pixmap */
+void
+NoBufferNoPixmap( );
+
+  /* restart writing to plot buffer and pixmap */
+void
+RestoreWrite2BufferPixmap();
+
+void
+grimage(int *x, int *y, PLFLT *z, PLINT nx, PLINT ny);
+
+void
+plimage( PLFLT *data, PLINT nx, PLINT ny, 
+	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 
 #ifdef __cplusplus
 }

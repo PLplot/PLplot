@@ -162,6 +162,14 @@ typedef void* PLPointer;
 #define PLESC_CLEAR		18      /* RL: clear graphics region */
 #define PLESC_DASH		19	/* RL: draw dashed line */
 #define PLESC_HAS_TEXT		20	/* driver draws text */
+#define PLESC_IMAGE		21	/* handle image */
+#define PLESC_IMAGEOPS          22      /* plimage related operations */
+
+/* image operations */
+#define ZEROW2B   1
+#define ZEROW2D   2
+#define ONEW2B    3
+#define ONEW2D    4
 
 /* Window parameter tags */
 
