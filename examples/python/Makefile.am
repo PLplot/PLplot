@@ -5,6 +5,7 @@
 # Copyright (C) 2002, 2004  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 # Copyright (C) 2004  Andrew Ross
+# Copyright (C) 2005  Thomas J. Duck
 #
 # This file is part of PLplot.
 #
@@ -27,6 +28,8 @@ examples_pythondir = $(DATA_DIR)/examples/python
 
 # This list contains standalone scripts which are executable.
 dist_examples_python_SCRIPTS = \
+	plplotcanvas_demo.py \
+	plplotcanvas_animation.py \
 	prova.py \
 	pythondemos.py \
 	x01 \
