@@ -8,9 +8,3 @@ TKWIN_C		= Plplotter_Init.c plplotter.c tkwin_common.c
 TKWIN_OBJ	= Plplotter_Init$O plplotter$O tkwin_common$O
 TKWIN_OBJ_SA	=
 TKWIN_EXE	=
-
-# link line for the dynamic driver
-ifneq ($(DYNAMIC_DRIVERS),)
-TKWINDRV_SO = drivers/tkwin$(LIB_TAG)_drv.so
-TKWINDRV_LINK = -lplplot_tkwin_driver$(LIB_TAG)
-endif

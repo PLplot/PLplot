@@ -85,6 +85,8 @@ drivers/tk$(LIB_TAG)_drv.so : shared/tk$O $(TCLLIB_SO)
 drivers/xwin$(LIB_TAG)_drv.so : shared/xwin$O $(TCLLIB_SO)
 	$(SHLIB_BUILD) $@ $< @TKLIBS@ -L. $(TCL_LINK)
 
-drivers/tkwin$(LIB_TAG)_drv.so : shared/tkwin$O $(TCLLIB_SO)
-	$(SHLIB_BUILD) $@ $< @TKLIBS@ -L. $(TCL_LINK)
+# The tkwin shared object includes TKWIN_OBJ (because the tkwin object
+# depends on the functions in TKWIN_OBJ).
+drivers/tkwin$(LIB_TAG)_drv.so : shared/tkwin$O $(TKWIN_OBJ:%=shared/%) $(TCLLIB_SO)
+	$(SHLIB_BUILD) $@ $(TKWIN_OBJ:%=shared/%) $< @TKLIBS@ -L. $(TCL_LINK)
 
