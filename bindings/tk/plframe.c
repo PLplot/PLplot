@@ -354,7 +354,6 @@ int
 plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 	   int argc, char **argv)
 {
-    Tk_Window tkwin = (Tk_Window) clientData;
     Tk_Window new;
     register PlFrame *plFramePtr;
     register PLRDev *plr;
@@ -370,7 +369,8 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Create the window. */
 
-    new = Tk_CreateWindowFromPath(interp, tkwin, argv[1], (char *) NULL);
+    new = Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp), 
+				  argv[1], (char *) NULL);
     if (new == NULL) {
 	return TCL_ERROR;
     }

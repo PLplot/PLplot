@@ -26,36 +26,32 @@ extern int Matrix_Init(Tcl_Interp* interp);
  * Pltk_Init
  *
  * Initialization routine for extended wish'es.
- * Creates the plframe, matrix, wait_until, and host_id (w/Tcl-DP only)
+ * Creates the plframe, matrix, and host_id (w/Tcl-DP only)
  * commands.  Also sets the auto_path variable.
 \*----------------------------------------------------------------------*/
 
 int
 Pltk_Init( Tcl_Interp *interp )
 {
-/*    "if {[catch {source -rsrc plplot.tcl}] != 0} {\n\
- */
-    static char initCmd[] =
-    "if {[catch {source plplot.tcl}] != 0} {\n\
-        if [file exists [file join ${pllibrary} plplot.tcl]] {\n\
-	    source [file join ${pllibrary} plplot.tcl]\n\
-        } else {\n\
-	    set msg \"can't find [file join ${pllibrary} plplot.tcl]\\n\"\n\
-	    append msg \"Perhaps you need to install Plplot \\n\"\n\
-	    append msg \"or set your PL_LIBRARY environment variable?\"\n\
-	    error $msg\n\
-        }\n\
-    }";
+    /* This must be before any other Tcl related calls */
+    if (PlbasicInit(interp) != TCL_OK) {
+	return TCL_ERROR;
+    }
 
-    char *libDir;
-/*     Tcl_DString path; */
-
-    Tk_Window mainWindow = Tk_MainWindow(interp);
+#ifdef USE_TK_STUBS
+    /* 
+     * We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
+     * we really don't mind which version of Tcl, Tk we use as long as it
+     * is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
+     * be loaded into 8.1
+     */
+    Tk_InitStubs(interp,"8.1",0);
+#endif
 
 /* plframe -- PLplot graphing widget */
 
     Tcl_CreateCommand( interp, "plframe", plFrameCmd,
-		       (ClientData) mainWindow, (void (*)(ClientData)) NULL);
+		       (ClientData) NULL, (void (*)(ClientData)) NULL);
 
 /* host_id -- returns host IP number.  Only for use with Tcl-DP */
 
@@ -84,26 +80,7 @@ Pltk_Init( Tcl_Interp *interp )
     }
 #endif
 
-    if ( Matrix_Init(interp) == TCL_ERROR )
-	return TCL_ERROR;
-
-/*     Tcl_PkgRequire(interp,"Matrix","0.1",0); */
-
     Tcl_PkgProvide(interp,"Pltk","4.99");
-/*     libDir = Tcl_GetPkgLibraryPath(interp,&path,"PL_LIBRARY","pltk","4.99"); */
 
-    libDir = NULL;
-
-#ifdef TCL_DIR
-    if (libDir == NULL) {
-    /*	libDir = PL_LIBRARY; */
-	libDir = TCL_DIR;
-    }
-#endif
-
-    Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
-
-/*     Tcl_DStringFree(&path); */
-
-    return Tcl_Eval(interp, initCmd);
+    return TCL_OK;
 }

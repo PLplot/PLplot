@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.5  2002/07/12 09:31:38  vincentdarley
+ * tcl interaction cleanup
+ *
  * Revision 1.4  2002/07/11 08:52:03  vincentdarley
  * resolve name conflict between tk, tk-x-plat
  *
@@ -96,13 +99,6 @@ Plplotter_Init( Tcl_Interp *interp )
 
     Tcl_CreateCommand( interp, "plframe", plPlotterCmd,
 		       (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
-
-/* host_id -- returns host IP number.  Only for use with Tcl-DP */
-
-#ifdef PLD_dp
-    Tcl_CreateCommand(interp, "host_id", plHost_ID,
-	      (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
-#endif
 
     Tcl_PkgProvide(interp,"Plplotter",PLPLOT_VERSION);
     return TCL_OK;
