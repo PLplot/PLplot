@@ -803,8 +803,12 @@ if test "$enable_dynamic_drivers" = "yes"; then
 	    echo "pstex:Postscript/LaTeX file:pstex.drv:41:pstex" >> drivers/drivers.db
 	    ;;
 	    gd)
-	    echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
-	    echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
+	    if test "$enable_png" = "yes"; then
+		echo "png:PNG file:gd.drv:39:png" >> drivers/drivers.db
+	    fi
+	    if test "$enable_jpeg" = "yes"; then
+		echo "jpeg:JPEG file:gd.drv:40:jpeg" >> drivers/drivers.db
+	    fi
 	    ;;
 	    tek)
 	    echo "xterm:Xterm Window:tek.drv:18:xterm" >> drivers/drivers.db
