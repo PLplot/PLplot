@@ -954,23 +954,26 @@ plplot_config_result_msg=\
 LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
 
-Available device drivers
+Available device drivers:
 static:		$STATIC_DRIVERS
 dynamic:	$DYNAMIC_DRIVERS
 
+Compilation options:
 with_debug:	$with_debug		with_opt:	$with_opt
 with_warn:	$with_warn		with_profile:	$with_profile
 
+Library options:
 enable_shared:	$enable_shared		enable_static:	$enable_static
 with_rpath:	$with_rpath		with_double:	$with_double
+
+Optional libraries:
 with_freetype:	$with_freetype		with_qhull:	$with_qhull
 
-enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
-enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
-enable_cxx:	$enable_cxx		enable_python:	$enable_python
-enable_f77:	$enable_f77		enable_java:	$enable_java
-enable_octave:	$enable_octave		enable_gnome:	$enable_gnome
-enable_tkwin:	$enable_tkwin
+Language Bindings:
+enable_tcl:	$enable_tcl		enable_itcl:	$enable_itcl
+enable_cxx:	$enable_cxx		enable_f77:	$enable_f77	
+enable_java:	$enable_java		enable_python:	$enable_python
+enable_octave:	$enable_octave
 "
 
 cat << EOF > config.summary
