@@ -4,6 +4,7 @@
 ###
 # Copyright (C) 2002 Rafael Laboissiere
 # Copyright (C) 2002 Alan W. Irwin
+# Copyright (C) 2005 Thomas J. Duck
 # 
 #This file is part of PLplot.
 #
@@ -31,6 +32,8 @@ dist_pkginclude_HEADERS = \
 	plplotP.h \
 	plstrm.h \
 	plxwd.h
+	gcw.h \
+	plplotcanvas.h
 
 # Installed header files that should not be distributed
 nodist_pkginclude_HEADERS = \
