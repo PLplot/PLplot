@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.6  1993/09/08 18:39:14  mjl
+# Revision 1.7  1993/12/09 20:34:45  mjl
+# Added code to tell client to abort when exit is selected.
+#
+# Revision 1.6  1993/09/08  18:39:14  mjl
 # Added global cascade_arrow variable to fake cascade menu arrows under
 # Tk 3.2 (Tk 3.3 has default ones that are much nicer).
 #
@@ -217,5 +220,10 @@ proc plserver_init {} {
 #----------------------------------------------------------------------------
 
 proc exit_app {} {
+    global client
+    if { [ info exists client ] } {
+	send $client "after 1 abort"
+	unset client
+    }
     destroy .
 }
