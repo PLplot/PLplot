@@ -410,10 +410,16 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->xr = 1.;
     plFramePtr->yr = 1.;
     plFramePtr->SaveFnam = NULL;
+    plFramePtr->pldis.x = 0;
+    plFramePtr->pldis.y = 0;
+    plFramePtr->pldis.width = 0;
+    plFramePtr->pldis.height = 0;
 
     plFramePtr->plr = (PLRDev *) ckalloc(sizeof(PLRDev));
     plr = plFramePtr->plr;
     plr->pdfs = NULL;
+    plr->at_bop = 0;
+    plr->at_eop = 0;
     plr->iodev = (PLiodev *) ckalloc(sizeof(PLiodev));
     plr_start(plr);
 
@@ -2492,7 +2498,7 @@ ReadData(ClientData clientData, int mask)
 	plsstrm(plFramePtr->ipls);
 	if (pl_PacketReceive(interp, iodev, pdfs)) {
 	    Tcl_AppendResult(interp, "Packet receive failed:\n\t %s\n",
-			     interp->result, (char *) NULL);
+			     (char *) NULL);
 	    return TCL_ERROR;
 	}
 
