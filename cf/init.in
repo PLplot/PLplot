@@ -39,6 +39,7 @@ TO		= -o
 O		= .o
 A		= .a
 E		=
+RPATH		= @RPATH@
 
 # Library names
 # (PLLIB_NAME) is for ld/linking
@@ -47,9 +48,7 @@ E		=
 # good for filesystems that truncate names (eg, DOS)
 
 PLLIB_NAME	= plplot
-PLLIB_NAME	= Pltk
 PLLIB_BASE	= libplplot
-PLLIB_BASE	= libPltk
 
 # Install directories
 
