@@ -4,7 +4,7 @@ sub get_size {
   my $f = shift;
   my $s = 0;
   $s = `ls -sh $f`;
-  $s =~ s/\s*(.*)\s/$1/;
+  $s =~ s/([0-9.]+[Mk]).*/$1/;
   chomp $s;
   return $s;
 }
