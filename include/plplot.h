@@ -26,8 +26,6 @@
 
 #include "plplot/plConfig.h"
 
-#define PLPLOT_VERSION "5.0.1"
-
 /*--------------------------------------------------------------------------*\
  *    USING PLplot
  * 

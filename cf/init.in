@@ -66,6 +66,7 @@ MATLIB_BASE	= lib$(MATLIB_NAME)
 # Install directories
 
 LIB_DIR		= @LIB_DIR@
+DATA_DIR	= @DATA_DIR@
 DOC_DIR		= @DOC_DIR@
 BIN_DIR		= @BIN_DIR@
 INFO_DIR	= @INFO_DIR@

@@ -1111,7 +1111,7 @@ plFindCommand(char *fn)
  *	PLPLOT_LIB_ENV = $(PLPLOT_LIB)
  *	current directory
  *	PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib
- *	LIB_DIR
+ *	DATA_DIR
  *	PLLIBDEV
 \*--------------------------------------------------------------------------*/
 
@@ -1153,12 +1153,12 @@ plLibOpen(char *fn)
 
 /**** 	search installed location	****/
 
-#if defined (LIB_DIR)
-    plGetName(LIB_DIR, "", fn, &fs);
+#if defined (DATA_DIR)
+    plGetName(DATA_DIR, "", fn, &fs);
 
     if ((file = fopen(fs, "rb")) != NULL)
         goto done;
-#endif  /* LIB_DIR */
+#endif  /* DATA_DIR */
 
 /**** 	search hardwired location	****/
 
@@ -1179,9 +1179,9 @@ plLibOpen(char *fn)
 
     pltext();
     fprintf(stderr, "\nCannot open library file: %s\n", fn);
-#if defined (LIB_DIR)
-    fprintf(stderr, "lib dir=\"" LIB_DIR "\"\n" );      /* what WAS set? */
-#endif  /* LIB_DIR */
+#if defined (DATA_DIR)
+    fprintf(stderr, "lib dir=\"" DATA_DIR "\"\n" );      /* what WAS set? */
+#endif  /* DATA_DIR */
     plgra();
     return NULL;
 

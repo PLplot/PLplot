@@ -64,7 +64,11 @@
 /* Install directories. */
 
 #undef LIB_DIR
+#undef DATA_DIR
 #undef BIN_DIR
 #undef TCL_DIR
+
+/* Package version */
+#undef PLPLOT_VERSION
 
 #endif	/* __PLCONFIG_H__ */

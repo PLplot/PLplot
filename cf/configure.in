@@ -199,6 +199,13 @@ AC_PREREQ(2.4)
 AC_INIT(src/plcore.c)
 
 # ----------------------------------------------------------------------------
+# Here is the centralized place for defining the release version of the 
+# PLplot package 
+# ----------------------------------------------------------------------------
+
+PACKAGE_VERSION(5,0,1)
+
+# ----------------------------------------------------------------------------
 # The configure script must be run in a separate build directory.  If the
 # user instead runs it from the top-level directory, the code below cd's to
 # tmp and exec's ../configure, in effect running configure from the build
@@ -539,30 +546,35 @@ fi
 if test -z "$LIB_DIR"; then
     LIB_DIR=$prefix/lib
 fi
+if test -z "$DATA_DIR"; then
+    DATA_DIR=$prefix/lib/plplot$MAJOR_VERSION.$MINOR_VERSION.$RELEASE_VERSION
+fi
 if test -z "$BIN_DIR"; then
     BIN_DIR=$prefix/bin
 fi
 if test -z "$TCL_DIR"; then
-    TCL_DIR=$prefix/tcl
+    TCL_DIR=$DATA_DIR/tcl
 fi
 if test -z "$DOC_DIR"; then
-    DOC_DIR=$prefix/doc
+    DOC_DIR=$prefix/share/doc/plplot
 fi
 if test -z "$INFO_DIR"; then
-    INFO_DIR=$prefix/info
+    INFO_DIR=$prefix/share/info
 fi
 if test -z "$INCLUDE_DIR"; then
     INCLUDE_DIR=$prefix/include/plplot
 fi
 if test -z "$DEMOS_DIR"; then
-    DEMOS_DIR=$prefix/examples
+    DEMOS_DIR=$DOC_DIR/examples
 fi
 
 AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR")
+AC_DEFINE_UNQUOTED(DATA_DIR, "$DATA_DIR")
 AC_DEFINE_UNQUOTED(BIN_DIR, "$BIN_DIR")
 AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR")
 
 AC_SUBST(LIB_DIR)
+AC_SUBST(DATA_DIR)
 AC_SUBST(BIN_DIR)
 AC_SUBST(TCL_DIR)
 AC_SUBST(DOC_DIR)

@@ -12,9 +12,9 @@
 # (e.g. Linux).  Warning: apps linked to it may fail on major version
 # changes (depending on OS).
 
-MAJOR_VERSION	= 5
-MINOR_VERSION	= 0
-RELEASE_VERSION	= 1
+MAJOR_VERSION	= @MAJOR_VERSION@
+MINOR_VERSION	= @MINOR_VERSION@
+RELEASE_VERSION	= @RELEASE_VERSION@
 
 # Utilities
 
