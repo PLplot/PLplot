@@ -3,7 +3,7 @@ Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.5.8
-Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev | xlib6g-dev, g77, itk3.1-dev, python2.2-numeric, python2.2-dev, octave2.1-headers | octave2.0-headers, libgd2-dev, libgnome-dev, libfreetype6-dev
+Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev | xlib6g-dev, g77, itk3.1-dev, python2.2-numeric, python2.2-dev, octave2.1-headers, libgd2-dev, libgnome-dev, libfreetype6-dev
 Build-Conflicts: f2c, fort77, python2.1-dev, python2.1
 
 Package: libplplot5
@@ -31,7 +31,7 @@ Description: Scientific plotting library
 
 Package: libplplot-dev
 Architecture: all
-Conflicts: plplot-dev, plplot-c++
+Conflicts: plplot-dev, plplot-c++, libplplot5 (<= 5.2.0.cvs.20030227-2)
 Replaces: plplot-dev
 Suggests: plplot-doc
 Depends: libplplot5
@@ -130,7 +130,7 @@ Description: Python support for PLplot, a plotting library
 
 Package: octave-plplot
 Architecture: any
-Depends: ${shlibs:Depends}, octave2.0 | octave2.1
+Depends: ${shlibs:Depends}, octave2.1
 Description: Octave support for PLplot, a plotting library
  This package contains the Octave bindings for PLplot, a scientific plotting
  library.  It provides an almost drop-in replacement for the traditional

@@ -1,3 +1,15 @@
+plplot (5.2.0.cvs.20030301-1) unstable; urgency=low
+
+  * Built with new CVS sources.  Fixed gnome driver, which was plotting
+    extraneous text on the canvas.  Also, the Octave initalization file is
+    fixed now, and use_plplot really works.
+  * debian/libplplot-dev.files: Added /usr/lib/pkgconfig dir.
+  * debian/control: Removed optional dependencies on octave2.0, since the
+    octave-plplot package is built for Octave 2.1 and the .oct file will not
+    work with 2.0.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri, 28 Feb 2003 19:40:23 +0100
+
 plplot (5.2.0.cvs.20030227-2) unstable; urgency=low
 
   * This is the first release of this cvs snapshot series to the Debian
@@ -19,7 +31,7 @@ plplot (5.2.0.cvs.20030227-2) unstable; urgency=low
     - Dependences on tk8.3-dev have been dropped (closes: #167412).
     - Build failure on sparc, due to bad c++ command line options should
       be fixed now (it was already in David's NMU, closes: #86880).
-    - Packages should be fully installable in unstabel (closes: #161569).
+    - Packages should be fully installable in unstable (closes: #161569).
     - "octave2.1-headers | octave2.0-headers" have been added to
       Build-Depends, so that octave-plplot can be built from source
       (closes: 117708).
