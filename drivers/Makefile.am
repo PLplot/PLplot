@@ -232,7 +232,7 @@ tclcmd.tpl: ../bindings/tcl/tclcmd.tpl
 	cp ../bindings/tcl/tclcmd.tpl tclcmd.tpl
 
 tclgen.h tclgen_s.h tclgen.c : ../bindings/tcl/pltclgen plapi.tpl tclcmd.tpl
-	perl ../bindings/tcl/pltclgen
+	$(PERL) ../bindings/tcl/pltclgen
 
 ../bindings/tcl/tclAPI.c: tclgen.h tclgen_s.h tclgen.c
 

@@ -869,9 +869,10 @@ AM_CONDITIONAL(enable_docbook,
 
 AC_INCLUDE(doc/docbook/docbook.m4)
 
+CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
+
 if test $enable_builddoc = yes -o \
 \( $enable_octave = yes -a $with_prebuiltdoc = no \) ; then
-CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
 CHECK_PM(XML::DOM, xml_dom, [INFO MAN])
 CHECK_PM(XML::Parser, xml_parser, [INFO MAN])
 fi
