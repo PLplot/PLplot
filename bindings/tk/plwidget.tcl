@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.25  1994/07/13 21:40:35  mjl
+# Revision 1.26  1994/08/25 04:01:23  mjl
+# Simplified and sped up eop handling.
+#
+# Revision 1.25  1994/07/13  21:40:35  mjl
 # Put in status message while waiting for plot to be saved.  Reassures the
 # user that the program hasn't crashed, when saving very complicated plots.
 #
@@ -137,8 +140,11 @@ proc plxframe {w {client {}}} {
 # commands.
 
     if { $client != "" } then {
-	$w.plwin configure -bopcmd "plw_bop $w"
-	$w.plwin configure -eopcmd "plw_eop $w"
+	set bop_col [option get $w.ftop.leop off Label]
+	set eop_col [option get $w.ftop.leop on Label]
+
+	$w.plwin configure -bopcmd "plw_flash $w $bop_col"
+	$w.plwin configure -eopcmd "plw_flash $w $eop_col"
 	client_cmd $client "set plwidget $w.plwin"
     }
 
@@ -485,24 +491,13 @@ proc key_filter {w client k n a shift control} {
 }
 
 #----------------------------------------------------------------------------
-# plw_bop
+# plw_flash
 #
-# Set button color to indicate we have started a new page.
+# Set eop button color to indicate page status.
 #----------------------------------------------------------------------------
 
-proc plw_bop {w} {
-    $w.ftop.leop config -bg [option get $w.ftop.leop off Label]
-    update idletasks
-}
-
-#----------------------------------------------------------------------------
-# plw_eop
-#
-# Set button color to indicate we are at the end of a page.
-#----------------------------------------------------------------------------
-
-proc plw_eop {w} {
-    $w.ftop.leop config -bg [option get $w.ftop.leop on Label]
+proc plw_flash {w col} {
+    $w.ftop.leop config -bg $col
     update idletasks
 }
 
