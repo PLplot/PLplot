@@ -53,7 +53,7 @@ sources = \
   plgridd.c \
   plvect.c
 
-AM_CPPFLAGS = $(FREETYPEINCCMD) $(INCLTDL)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(FREETYPEINCCMD) $(INCLTDL)
 
 libplplot@LIB_TAG@_la_SOURCES  = $(sources)
 libplplot@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(FREETYPELIBCMD) $(CSALIBS) $(NNLIBS) -lm
