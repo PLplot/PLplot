@@ -226,7 +226,16 @@ plD_init_xw(PLStream *pls)
     pls->dev_fastimg = 1;       /* is a fast image device */
     pls->dev_xor = 1;           /* device support xor mode */
 
+#ifndef HAVE_PTHREAD
+    usepthreads = 0;
+#endif
+
     plParseDrvOpts(xwin_options);
+
+#ifndef HAVE_PTHREAD
+    if(usepthreads)
+      plwarn("You said you want pthreads, but they are not available.");
+#endif
 
     if (nobuffered)
       pls->plbuf_write = 0;	/* desactivate plot buffer */
@@ -1235,8 +1244,11 @@ events_thread(void *pls)
 
 	dev->instr = 0;
 	while (XCheckWindowEvent(xwd->display, dev->window, event_mask, &event)) {
-	  // as ResizeEH() ends up calling plRemakePlot(), that indirectly uses the current
-	  // stream, one needs to temporarily set plplot current stream to this threads stream
+	  /* As ResizeEH() ends up calling plRemakePlot(), that
+	   * indirectly uses the current stream, one needs to
+	   * temporarily set plplot current stream to this thread's
+	   * stream */
+
 	  oplsc = plsc;
 	  plsc = lpls;
 	  switch (event.type) {
