@@ -687,14 +687,14 @@ void plD_bop_cgm(PLStream *pls)
 cdSetFillStyle(dev->im_out,1);   /* Set solid fills */
 
 /*
- * Due to an apparent bug in libcd, it is necessary to turn ON edges
+ * Due to a border being drawn around the edge of the image, we also
  * manually, then turn them off again to make edges turn off. By
  * default the driver thinks they are off, so when we tell the driver
  * to turn them off it says "they are already off, I wont do anything"
  * but in reality they are on by default. So what we do is turn them ON
  * manually, then turn them OFF later.
  * 
- * Due to a border being drawn around the edge of the image, we also
+ * Due to a boarder being drawn around the edge of the image, we also
  * want the edges turned on so we can lay down a rectangle coloured in
  * the background colour at the start. Once we have drawn our
  * background box, we then turn edges off for the rest of the page.
@@ -754,6 +754,10 @@ int i;
         cdImageCgm(dev->im_out, pls->OutFile);
        }
    for (i=0;i<cdMaxColors;++i) dev->colour_index[i]=-1;
+
+   dev->fill_colour=dev->colour; /* initially set fill and line colour the same */
+   dev->last_fill_colour=-1;  /* set to -1 = unallocated */
+   dev->last_line_colour=-1;  /* set to -1 = unallocated */
 
 }
 
