@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/02/25 18:33:09  mjl
-   Fixed an inconsistency in reading the metafile page headers.
+   Revision 1.10  1993/02/25 19:53:14  mjl
+   Fixed -v (version) option.
 
+ * Revision 1.9  1993/02/25  18:33:09  mjl
+ * Fixed an inconsistency in reading the metafile page headers.
+ *
  * Revision 1.8  1993/02/23  05:54:25  mjl
  * A couple of minor documentation and code changes.
  *
@@ -76,7 +79,6 @@ char ident[] = "@(#) $Id$";
 #include "pdf.h"
 
 static char *program_name = "plrender";
-static char *program_version = PLMETA_VERSION;
 
 /* Static function prototypes. */
 /* INDENT OFF */
@@ -1402,8 +1404,9 @@ HandleOption_v(char *opt, char *optarg)
 
 /* Version */
 
-    fprintf(stderr, "%s version: %s\n", program_name, program_version);
-    return(1);
+    fprintf(stderr, "plplot metafile version: %s\n", PLMETA_VERSION);
+    fprintf(stderr, "plplot library version: %s\n", PLPLOT_VERSION);
+    exit(1);
 }
 
 /*----------------------------------------------------------------------*\
