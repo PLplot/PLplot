@@ -100,7 +100,8 @@ DBL_FLAG_C	= -DDOUBLE
 })
 
 CC_FLAGS	= $(MATHFLAGS) $(DBL_FLAG_C) nover $(DEBUG_FLAG_C) \
-		  $(OPT_FLAG_C) ign=84,88,89,147,161 ifdef({GST},{gst=GST})
+		  idir=$(PLINC_DIR) $(OPT_FLAG_C) ifdef({GST},{gst=GST}) \
+		  ign=84,88,89,147,161 
 
 # Sigh
 

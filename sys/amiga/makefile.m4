@@ -11,7 +11,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1993/10/21 19:31:20  mjl
+# Revision 1.2  1994/05/23 22:11:09  mjl
+# Hack to allow include files to be found.
+#
+# Revision 1.1  1993/10/21  19:31:20  mjl
 # Initial checkin.  Based on the Unix makefile.m4.
 #
 ##############################################################################
@@ -30,7 +33,10 @@ include(cf_amiga.m4)
 ##############################################################################
 
 # Dependent directories
+# Note the include dir should be specified since search path resolution
+# with SAS/C 6.x doesn't seem to work with softlinked files.
 
+PLINC_DIR = /include
 PLLIB_DIR = /lib
 PLFNT_DIR = /lib
 PLLIB_PATH = $(PLLIB_DIR)/
