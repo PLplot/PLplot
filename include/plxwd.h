@@ -99,46 +99,4 @@ typedef struct {
     void (*MasterEH) (PLStream *, XEvent *);	/* Master X event handler */
 } XwDev;
 
-/*--------------------------------------------------------------------------*\
- *		Function Prototypes
-\*--------------------------------------------------------------------------*/
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* Performs basic driver initialization. */
-
-void
-plD_open_xw(PLStream *pls);
-
-/* Copies the supplied PLColor to an XColor */
-
-void
-PLColor_to_XColor(PLColor *plcolor, XColor *xcolor);
-
-/* Copies the supplied XColor to a PLColor */
-
-void
-PLColor_from_XColor(PLColor *plcolor, XColor *xcolor);
-
-/* Determines if we're using a monochrome or grayscale device */
-
-int
-pl_AreWeGrayscale(Display *display);
-
-/* Set background & foreground colors.  */
-
-void
-plX_setBGFG(PLStream *pls);
-
-/* Saves RGB components of given colormap */
-
-void
-PLX_save_colormap(Display *display, Colormap map);
-
-#ifdef __cplusplus
-}
-#endif
-
 #endif	/* __PLXWD_H__ */
