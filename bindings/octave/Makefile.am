@@ -30,7 +30,7 @@ else
 sed_command = 's/REPLACE_ME/typedef float PLFLT;/'
 endif
 
-octave_libs = -lplplot$(LIB_TAG)
+octave_libs = -L../../src/.libs -lplplot$(LIB_TAG)
 
 # If the Makefile changes, because of "configure" beeing rerun, recompile
 plplot_octave.h: plplot_octave_org.h Makefile
@@ -58,7 +58,7 @@ endif
 
 plplot_octave.oct: $(MKOCTFILE_SOURCE)
 	LD_RUN_PATH=`pwd`/../../src/.libs $(MKOCTFILE) -v -I. \
-	   $(MKOCTFILE_SOURCE) -L../../src/.libs $(octave_libs)
+	   $(MKOCTFILE_SOURCE) $(octave_libs)
 
 install-data-hook: plplot_octave-libdir.oct
 	$(mkinstalldirs) $(DESTDIR)$(octavesharedir)
@@ -73,7 +73,7 @@ endif
 
 plplot_octave-libdir.oct: $(MKOCTFILE_SOURCE)
 	$(SET_LDRPATH) $(MKOCTFILE) -v -I. $(MKOCTFILE_SOURCE) \
-	  -o plplot_octave-libdir.oct -L$(libdir) $(octave_libs)
+	  -o plplot_octave-libdir.oct $(octave_libs)
 
 octavesharedir = $(OCTAVE_OCT_DIR)
 
