@@ -407,13 +407,6 @@ if test "$with_nobraindead" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
-# For those systems with busted libc's.
-
-if test "$with_fseek" = "yes"; then
-    AC_DEFINE(USE_FSEEK)
-fi
-
-# ----------------------------------------------------------------------------
 # Set up library names and suffix.
 # ----------------------------------------------------------------------------
 

@@ -49,9 +49,6 @@
 /* If you don't know what this is for, you shouldn't be using it */
 #undef NOBRAINDEAD
 
-/* Define if fgetpos/fsetpos is busted */
-#undef USE_FSEEK
-
 /* Define if [incr Tcl] is available */
 #undef HAVE_ITCL
 
