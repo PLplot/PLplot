@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1994/07/29 20:19:31  mjl
+ * Revision 1.28  1994/08/03 20:12:43  mjl
+ * Eliminated #undef of _POSIX_SOURCE on Crays -- no longer needed now that
+ * caddr_t is defined in plConfig.h (if not typedef'ed by <sys/types.h>).
+ *
+ * Revision 1.27  1994/07/29  20:19:31  mjl
  * Added typedef for CWindow -- window coordinate structure, also prototypes
  * for plAddCWindow() and plClrCWindows(void) (contributed by Paul Casteels).
  * Also prototype for new plLibOpen() function.
@@ -87,10 +91,6 @@
 
 #ifdef _POSIX_SOURCE
 #define POSIX_TTY
-#endif
-
-#ifdef CRAY			/* Cray */
-#undef _POSIX_SOURCE		/* because of moronic broken X headers */
 #endif
 
 /* Hacks to deal with non-ANSI libc */
