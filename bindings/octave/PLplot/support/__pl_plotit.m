@@ -251,18 +251,35 @@ function __pl_plotit
 	  case (1)	## linespoints
 	    plline(x(:,i),y(:,j));
 	    plpoin(x(:,i),y(:,j), symbol);
+
 	  case (2)	## lines
 	    plline(x(:,i),y(:,j));
+
 	    ## case (3) ## boxerrorbars
 	    ## case (4) ## boxes
+
 	  case (5) ## points
 	    plpoin(x(:,i),y(:,j), symbol);
+
 	  case (6) ## dots
 	    plpoin(x(:,i),y(:,j), -1);								
-	    ## case (7) ## impulses
-	    ## case (8) ## steps
-	  case (9) ## errorbars
-	    
+
+	  case (7) ## impulses
+	    for j=1:rows(x)
+	      xs = [x(j,i); x(j,i)];
+	      ys = [0; y(j,i)];
+	      plline(xs,ys);
+	    endfor	
+
+	  case (8) ## steps
+            xs = ys = [];
+	    for j=1:rows(x)-1
+	      xs = [xs; x(j,i); x(j+1,i); x(j+1,i)];
+	      ys = [ys; y(j,i); y(j,i); y(j+1,i)];			
+	    endfor	
+	    plline(xs,ys);	
+
+	  case (9) ## errorbars	    
 	    if ( (xc == 1 && yc == 1) || xc > 3 || yc > 3)
 	      empty_list_elements_ok = old_empty_list_elements_ok;
 	      error("plot with errorbars: either x or y or both must be 2 or 3 columns.\n\

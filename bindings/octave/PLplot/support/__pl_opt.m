@@ -170,7 +170,7 @@ function [style, color, symbol, key_title] = __pl_opt (opt)
       set_points = 1;
     elseif (char == "^")
       set_impulses = 1;
-    elseif (char == "l")
+    elseif (char == "L")
       set_steps = 1;
     elseif (char == "~")
       set_errbars = 1;
