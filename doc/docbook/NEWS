@@ -3,6 +3,22 @@ documentation project. For some background about that project see README.
 Alan W. Irwin (AWI) and Rafael Laboissiere (RL) have been the principal
 contributors to this project so far.
 
+2001 February 8: (Just prior to release of 5.0.2) After those fateful words,
+AWI worked harder than ever on documentation (some of it with an API
+component).  A large source of the additional documentation was all the
+files in the doc directory which were from the 1994 latex effort or even
+before (rather than 1995 latexinfo effort).  After some consultation with
+Maurice these files were transformed (with changes) to DocBook form and were
+gradually removed from the cvs as they were superseded by the docbook form.
+Sections on devices, driver functions, plrender and metafiles, familying,
+interactive output devices, and setting color were added to the advanced
+chapter. Chapters on the C and Fortran Language bindings were added and a
+vacuous scheme binding chapter was removed. A (short) bibliography chapter
+was added as well as chapters on the exclusive (non-common) C and Fortran
+api (most of these transferred from the common-api chapter).  The Reference
+part of the document (including the Bibliography and all the API chapters)
+was put at the back of the document.
+
 2000 November 15: AWI finished documenting the previously undocumented API
 functions by lifting the comments from the code source.  Those comments
 usually did not include anything about the meaning of the function
