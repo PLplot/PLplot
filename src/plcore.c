@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1993/12/06 07:46:52  mjl
+ * Revision 1.25  1994/01/17 21:36:51  mjl
+ * Added function c_plgcol0 for retrieving RGB color values from cmap0
+ * entries.  User-contributed (I lost track of who sent it).
+ *
+ * Revision 1.24  1993/12/06  07:46:52  mjl
  * More modifications to support new color model.
  *
  * Revision 1.23  1993/11/15  08:38:35  mjl
@@ -1978,6 +1982,34 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
     plsc->cmap0[icol0].r = r;
     plsc->cmap0[icol0].g = g;
     plsc->cmap0[icol0].b = b;
+}
+
+/* Returns 8 bit RGB values for given color from color map 0 */
+/* Values are negative if an invalid color id is given */
+
+void
+c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
+{
+    if (icol0 < 0 || icol0 > 15) {
+	plwarn("plgcol0: Invalid color index");
+	goto error;
+    }
+
+    if (plsc[ipls].cmap0setcol[icol0] == 0) {
+	plwarn("plgcol0: Requested color not allocated.");
+	goto error;
+    }
+
+    *r = plsc->cmap0[icol0].r;
+    *g = plsc->cmap0[icol0].g;
+    *b = plsc->cmap0[icol0].b;
+    return;
+
+ error:
+    *r = -1;
+    *g = -1;
+    *b = -1;
+    return;
 }
 
 /* Set color map 0 colors by 8 bit RGB values */
