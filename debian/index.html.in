@@ -39,7 +39,7 @@ while (<>) {
     </table>
 
     <hr>
-    <address><a href="mailto:rafael@icp.inpg.fr">Rafael Laboissiere</a></address>
+    <address><a href="mailto:rafael@debian.org">Rafael Laboissiere</a></address>
 <!-- Created: Thu Feb 15 08:39:05 CET 2001 -->
 <!-- hhmts start -->
 Last modified: <: print `date` :>

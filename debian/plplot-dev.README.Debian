@@ -17,5 +17,5 @@ The package was compiled with floating point type DOUBLE.  You have to use
 PLFLT as floating point type everywhere in your code.
 
 
-Rafael Laboissiere <rafael@icp.inpg.fr>, Tue, 16 Jun 1998 20:14:20 +0200
+Rafael Laboissiere <rafael@debian.org>, Tue, 16 Jun 1998 20:14:20 +0200
 

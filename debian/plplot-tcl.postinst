@@ -2,7 +2,7 @@
 #
 # postinst script for the Debian GNU/Linux plplot-tcl package
 #
-# Written by Rafael Laboissiere <rafael@icp.inpg.fr>
+# Written by Rafael Laboissiere <rafael@debian.org>
 # on Fri Nov 13 02:54:30 CET 1998
 
 #DEBHELPER#

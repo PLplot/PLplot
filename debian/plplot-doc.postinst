@@ -1,7 +1,7 @@
 #!/bin/sh -e
 # File: plplot-doc.postinst
 # Description: Postinst file for the Debian PLplot package
-# Author: Rafael Laboissière <rafael@icp.inpg.fr>
+# Author: Rafael Laboissière <rafael@debian.org>
 # Created on: Thu Mar 22 12:29:22 CET 2001
 # Last modified on: Thu Mar 22 12:29:24 CET 2001
 

@@ -4,7 +4,7 @@
 # Description: Save and restore CVS dirs under current dir.  This is
 #   useful for genrating a Debian package without the CVS
 #   administrative directories, but getting them restored later.
-# Author: Rafael Laboissière <rafael@icp.inpg.fr>
+# Author: Rafael Laboissière <rafael@debian.org>
 # Created on: Mon Feb 12 18:06:37 CET 2001
 # Last modified on: Mon Feb 12 18:07:48 CET 2001
 # $Id$

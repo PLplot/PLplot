@@ -5,7 +5,7 @@
 # This version is for a hypothetical package that builds an
 # architecture-dependant package, as well as an architecture-independant
 # package.
-# Modified by Rafael Laboissiere <rafael@icp.inpg.fr> on 1998/06/12
+# Modified by Rafael Laboissiere <rafael@debian.org> on 1998/06/12
 # for the plplot package
 
 # Uncomment this to turn on verbose mode. 

@@ -1,8 +1,8 @@
 Source: plplot
 Section: math
 Priority: optional
-Maintainer: Rafael Laboissiere <rafael@icp.inpg.fr>
-Standards-Version: 3.5.6
+Maintainer: Rafael Laboissiere <rafael@debian.org>
+Standards-Version: 3.5.8
 Build-Depends: debhelper (>= 2.0.86), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev | xlib6g-dev, autoconf2.13, g77, itk3.1-dev, python-numeric, python2.2-dev
 Build-Conflicts: f2c, fort77
 

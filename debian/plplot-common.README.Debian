@@ -55,7 +55,7 @@ plplot for DEBIAN
     C++ examples are in /usr/share/doc/plplot-dev/README.Debian. 
 
 
-Rafael Laboissiere <rafael@icp.inpg.fr>, Thu Nov 12 16:38:26 CET 1998
+Rafael Laboissiere <rafael@debian.org>, Thu Nov 12 16:38:26 CET 1998
 
 Local Variables:
 mode: indented-text
