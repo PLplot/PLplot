@@ -1,0 +1,18 @@
+#!/bin/sh
+#--------------------------------*- Tcl -*------------------------------------#
+# $Id$
+# Maurice LeBrun
+# Dec 21 2000
+#-----------------------------------------------------------------------------#
+# @> Tcl script to create a TclIndex file.  Imports Itcl so it will pick up
+# @> incr tcl class definitions, but only if they are fully qualified (i.e.
+# @> itcl::class), due to a bug in the incr tcl autoloading extension.
+#-----------------------------------------------------------------------------#
+#\
+exec tclsh "$0" ${1+"$@"}
+package require Itcl
+
+# Think there are enough naming conventions?
+auto_mkindex . *.tcl *.itcl *.itk *.ith *.itm
+
+exit
