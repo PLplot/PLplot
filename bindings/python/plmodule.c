@@ -1497,7 +1497,7 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 {
     PyObject *zop, *xop, *yop;
     PLfGrid2 grid;
-    PLFLT **z, *clev;	
+    PLFLT **z, **zwrapped, **zused, *clev;	
     PLINT nx, ny, nlev;
     char *pltrname = NULL;
     void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
@@ -1508,16 +1508,13 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
     int i=0, j;
 
     PLINT kx=0, lx=0, ky=0, ly=0;
+    int ifdefault=0;
     int argc = PyTuple_Size( args );
     PyObject *o;
 
     PyAssert( i < argc, "Invalid arg list for plcont" );
     zop = PyTuple_GetItem( args, 0 ); i++;
     TRY( pl_PyArray_AsFloatMatrix( &zop, &nx, &ny, &z ) );
-
-    grid.f = z;
-    grid.nx = nx;
-    grid.ny = ny;
 
     PyAssert( i < argc, "Invalid arg list for plcont" );
 
@@ -1526,19 +1523,18 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 /*   printf("printf debug, %d, %d\n", (o)->ob_type, &PyArray_Type);*/
     if ( o && PyArray_Check(o) ) {
     /* They skipped all the way to clev */
-	kx = 1; lx = nx;
-	ky = 1; ly = ny;
+        ifdefault = 1;
     }
     else {
 	PyAssert( i+3 < argc, "Invalid arg list for plcont" );
 /* 	TRY( PyArg_GetLong( args, argc, i++, &kx ) ); */
-	TRY( kx = PyLong_AsLong( PyTuple_GetItem( args, i++ ) ) );
+	kx = PyInt_AsLong( PyTuple_GetItem( args, i++ ) );
 /* 	TRY( PyArg_GetLong( args, argc, i++, &lx ) ); */
-	TRY( lx = PyLong_AsLong( PyTuple_GetItem( args, i++ ) ) );
+	lx = PyInt_AsLong( PyTuple_GetItem( args, i++ ) );
 /* 	TRY( PyArg_GetLong( args, argc, i++, &ky ) ); */
-	TRY( ky = PyLong_AsLong( PyTuple_GetItem( args, i++ ) ) );
+	ky = PyInt_AsLong( PyTuple_GetItem( args, i++ ) );
 /* 	TRY( PyArg_GetLong( args, argc, i++, &ly ) ); */
-	TRY( ly = PyLong_AsLong( PyTuple_GetItem( args, i++ ) ) );
+	ly = PyInt_AsLong( PyTuple_GetItem( args, i++ ) );
 	o = PyTuple_GetItem( args, i );
     }
 
@@ -1558,7 +1554,7 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
     if ( i < argc ) {
 /* 	pltrname = PyArg_GetString( PyTuple_GetItem( args, i++ ) ); */
 /* 	TRY( PyArg_GetString( args, argc, i++, &pltrname ) ); */
-	TRY( pltrname = PyString_AsString( PyTuple_GetItem( args, i++ ) ) );
+	pltrname = PyString_AsString( PyTuple_GetItem( args, i++ ) );
 /*	printf( "pltr=%s\n", pltrname );*/
 	if ( i < argc-1 ) {
 	/* Then there must be at least two args left, which means the xg, yg
@@ -1568,19 +1564,20 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 	    yop = PyTuple_GetItem( args, i++ );
 	}
 
-	if (i == argc) {
+	if (i == argc-1) {
 /* 	    TRY( PyArg_GetLong( args, argc, i, &wrap ) ); */
-            TRY( wrap = PyLong_AsLong( PyTuple_GetItem( args, i ) ) );
+            wrap = PyInt_AsLong( PyTuple_GetItem( args, i ) ) ;
 	}
     }
 
-/*    printf( "wrap=%d\n", wrap );*/
+/*    printf( "wrap=%d\n", wrap ); */
 
 /* Figure out which coordinate transformation model is being used, and setup
    accordingly. */
 
     if (!pltrname || !strcmp( pltrname, "pltr0")) {
 	pltr = pltr0;
+        zused = z;
 
 	if (wrap) {
 	    PyErr_SetString( PyExc_RuntimeError,
@@ -1591,11 +1588,12 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
     else if ( !strcmp( pltrname, "pltr1" ) ) {
 	pltr = pltr1;
 	pltr_data = &cgrid1;
+        zused = z;
 
     /* Check wrap. */
 	if (wrap) {
 	    PyErr_SetString( PyExc_RuntimeError,
-			     "Must not specify wrapping with pltr0." );
+			     "Must not specify wrapping with pltr1." );
 	    return NULL;
 	}
 
@@ -1627,6 +1625,7 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 	    plAlloc2dGrid( &cgrid2.yg, nx, ny );
 	    cgrid2.nx = nx;
 	    cgrid2.ny = ny;
+	    zused = z;
 
 	    for( i=0; i < nx; i++ )
 		for( j=0; j < ny; j++ ) {
@@ -1648,18 +1647,22 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 
 	    plAlloc2dGrid( &cgrid2.xg, nx+1, ny );
 	    plAlloc2dGrid( &cgrid2.yg, nx+1, ny );
+	    plAlloc2dGrid( &zwrapped, nx+1, ny );
 	    cgrid2.nx = nx+1;
 	    cgrid2.ny = ny;
+	    zused = zwrapped;
 
 	    for( i=0; i < nx; i++ )
 		for( j=0; j < ny; j++ ) {
 		    cgrid2.xg[i][j] = xg[i][j];
 		    cgrid2.yg[i][j] = yg[i][j];
+		    zwrapped[i][j] = z[i][j];
 		}
 
 	    for( j=0; j < ny; j++ ) {
 		cgrid2.xg[nx][j] = cgrid2.xg[0][j];
 		cgrid2.yg[nx][j] = cgrid2.yg[0][j];
+		zwrapped[nx][j] = zwrapped[0][j];
 	    }
 
 	    nx++;
@@ -1678,18 +1681,22 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 
 	    plAlloc2dGrid( &cgrid2.xg, nx, ny+1 );
 	    plAlloc2dGrid( &cgrid2.yg, nx, ny+1 );
+	    plAlloc2dGrid( &zwrapped, nx, ny+1 );
 	    cgrid2.nx = nx;
 	    cgrid2.ny = ny+1;
+	    zused = zwrapped;
 
 	    for( i=0; i < nx; i++ )
 		for( j=0; j < ny; j++ ) {
 		    cgrid2.xg[i][j] = xg[i][j];
 		    cgrid2.yg[i][j] = yg[i][j];
+		    zwrapped[i][j] = z[i][j];
 		}
 
 	    for( i=0; i < nx; i++ ) {
 		cgrid2.xg[i][ny] = cgrid2.xg[i][0];
 		cgrid2.yg[i][ny] = cgrid2.yg[i][0];
+	        zwrapped[i][ny] = zwrapped[i][0];
 	    }
 
 	    ny++;
@@ -1709,6 +1716,14 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 	return NULL;
     }
 
+    grid.f = zused;
+    grid.nx = nx;
+    grid.ny = ny;
+
+    if (ifdefault) {
+	kx = 1; lx = nx;
+	ky = 1; ly = ny;
+    }
 /* Now go make the plot. */
 
 /*     plcont( z, nx, ny, kx, lx, ky, ly, clev, nlev, pltr, pltr_data ); */
@@ -1739,6 +1754,8 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
     /* printf( "plcont, freeing space for grids used in pltr2\n" ); */
 	plFree2dGrid( cgrid2.xg, nx, ny );
 	plFree2dGrid( cgrid2.yg, nx, ny );
+        if (wrap != 0)
+	 plFree2dGrid( zwrapped, nx, ny );
     }
 
     plflush();
@@ -1746,7 +1763,228 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
     return Py_None;
 }
 
-/* GMF 8/12/96, this implementation cobbled together from tclAPI.c */
+/* AWI: plshades wrapper is modified version of Geoffrey's plshade wrapper.*/
+/*--------------------------------------------------------------------------*\
+ * plshadesCmd
+ *
+ * Processes plshades command.
+ * C version takes:
+ *    data, nx, ny, defined,
+ *    xmin, xmax, ymin, ymax,
+ *    clevel, nlevel, fill_width, cont_color, cont_width,
+ *    plfill, rect, pltr, pltr_data
+ *
+ * We will be getting data through a 2-d Matrix, which carries along
+ * nx and ny, so no need for those.  Toss defined since it's not supported
+ * anyway.  Toss nlevel since clevel carries it along.
+ * Toss plfill since it is the only valid choice.  Take an optional 
+ * pltr spec just as for plcont, and add a wrapping specifier, also just as
+ * in plcont.  So the new command looks like:
+ * 
+ * plshades(z, xmin, xmax, ymin, ymax,
+ * clevel, fill_width, cont_color, cont_width,
+ * rect, [pltr, x, y,] [wrap])
+\*--------------------------------------------------------------------------*/
+
+static char doc_plshades[] = "Color fill plot";
+
+static PyObject *pl_shades( PyObject *self, PyObject *args )
+{
+    PyObject *zop, *clevelop, *xop=NULL, *yop=NULL;
+    PLFLT **z, **zwrapped, **zused, *clevel;
+    PLINT nx, ny, nlevel;
+    char *pltrname = NULL;
+    void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
+    PLPointer pltr_data = NULL;
+    PLcGrid  cgrid1;
+    PLcGrid2 cgrid2;
+    PLINT wrap = 0;
+    int i, j;
+   
+    PLFLT xmin, xmax, ymin, ymax;
+    PLINT fill_width = 0, cont_color = 0, cont_width =0;
+    PLINT rect =1;
+
+    TRY( PyArg_ParseTuple( args, PL_ARGS( "OddddOiiii|sOOi",
+					  "OffffOiiii|sOOi" ),
+			   &zop, &xmin, &xmax, &ymin, &ymax, 
+			   &clevelop, &fill_width, &cont_color, &cont_width,
+			   &rect, &pltrname, &xop, &yop, &wrap ) );
+
+    TRY( pl_PyArray_AsFloatMatrix( &zop, &nx, &ny, &z ) );
+    TRY( pl_PyArray_AsFloatArray( &clevelop, &clevel, &nlevel ) );
+
+/* Figure out which coordinate transformation model is being used, and setup
+   accordingly. */
+
+    if (!pltrname || !strcmp( pltrname, "pltr0")) {
+	pltr = pltr0;
+        zused = z;
+
+	if (wrap) {
+	    PyErr_SetString( PyExc_RuntimeError,
+			     "Must not specify wrapping with pltr0." );
+	    return NULL;
+	}
+    }
+    else if (!strcmp( pltrname, "pltr1" ) ) {
+	pltr = pltr1;
+        zused = z;
+	pltr_data = &cgrid1;
+
+    /* Check wrap. */
+	if (wrap) {
+	    PyErr_SetString( PyExc_RuntimeError,
+			     "Must not specify wrapping with pltr1." );
+	    return NULL;
+	}
+
+    /* Check dimensionality of xg1 and xg2 */
+	TRY( pl_PyArray_AsFloatArray( &xop, &cgrid1.xg, &cgrid1.nx ) );
+	TRY( pl_PyArray_AsFloatArray( &yop, &cgrid1.yg, &cgrid1.ny ) );
+	if ( (cgrid1.nx != nx) || (cgrid1.ny != ny) ) {
+	    PyErr_SetString( PyExc_RuntimeError,
+			     "Incompatible coord specifiers." );
+	    return NULL;
+	}
+    }
+    else if ( !strcmp( pltrname, "pltr2" ) ) {
+    /* printf( "plshades, setting up for pltr2\n" ); */
+	if (!wrap) {
+ 	/* printf( "plshades, no wrapping is needed.\n" ); */
+	    PLINT xnx, xny, ynx, yny;
+	    PLFLT **xg, **yg;
+	    TRY( pl_PyArray_AsFloatMatrix( &xop, &xnx, &xny, &xg ) );
+	    TRY( pl_PyArray_AsFloatMatrix( &yop, &ynx, &yny, &yg ) );
+
+	    if ( (xnx != nx) || (ynx != nx) || (xny != ny) || (yny != ny) ) {
+		PyErr_SetString( PyExc_RuntimeError,
+				 "Bogus transformation arrays." );
+		return NULL;
+	    }
+
+	    plAlloc2dGrid( &cgrid2.xg, nx, ny );
+	    plAlloc2dGrid( &cgrid2.yg, nx, ny );
+	    cgrid2.nx = nx;
+	    cgrid2.ny = ny;
+	    zused = z;
+
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ ) {
+		    cgrid2.xg[i][j] = xg[i][j];
+		    cgrid2.yg[i][j] = yg[i][j];
+		}
+	}
+	else if (wrap == 1) {
+	    PLINT xnx, xny, ynx, yny;
+	    PLFLT **xg, **yg;
+	    TRY( pl_PyArray_AsFloatMatrix( &xop, &xnx, &xny, &xg ) );
+	    TRY( pl_PyArray_AsFloatMatrix( &yop, &ynx, &yny, &yg ) );
+
+	    if ( (xnx != nx) || (ynx != nx) || (xny != ny) || (yny != ny) ) {
+		PyErr_SetString( PyExc_RuntimeError,
+				 "Bogus transformation arrays." );
+		return NULL;
+	    }
+
+	    plAlloc2dGrid( &cgrid2.xg, nx+1, ny );
+	    plAlloc2dGrid( &cgrid2.yg, nx+1, ny );
+	    plAlloc2dGrid( &zwrapped, nx+1, ny );
+	    cgrid2.nx = nx+1;
+	    cgrid2.ny = ny;
+	    zused = zwrapped;
+
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ ) {
+		    cgrid2.xg[i][j] = xg[i][j];
+		    cgrid2.yg[i][j] = yg[i][j];
+		    zwrapped[i][j] = z[i][j];
+		}
+
+	    for( j=0; j < ny; j++ ) {
+		cgrid2.xg[nx][j] = cgrid2.xg[0][j];
+		cgrid2.yg[nx][j] = cgrid2.yg[0][j];
+		zwrapped[nx][j] = zwrapped[0][j];
+	    }
+
+	    nx++;
+	}
+	else if (wrap == 2) {
+	    PLINT xnx, xny, ynx, yny;
+	    PLFLT **xg, **yg;
+	    TRY( pl_PyArray_AsFloatMatrix( &xop, &xnx, &xny, &xg ) );
+	    TRY( pl_PyArray_AsFloatMatrix( &yop, &ynx, &yny, &yg ) );
+
+	    if ( (xnx != nx) || (ynx != nx) || (xny != ny) || (yny != ny) ) {
+		PyErr_SetString( PyExc_RuntimeError,
+				 "Bogus transformation arrays." );
+		return NULL;
+	    }
+
+	    plAlloc2dGrid( &cgrid2.xg, nx, ny+1 );
+	    plAlloc2dGrid( &cgrid2.yg, nx, ny+1 );
+	    plAlloc2dGrid( &zwrapped, nx, ny+1 );
+	    cgrid2.nx = nx;
+	    cgrid2.ny = ny+1;
+	    zused = zwrapped;
+
+	    for( i=0; i < nx; i++ )
+		for( j=0; j < ny; j++ ) {
+		    cgrid2.xg[i][j] = xg[i][j];
+		    cgrid2.yg[i][j] = yg[i][j];
+		    zwrapped[i][j] = z[i][j];
+		}
+
+	    for( i=0; i < nx; i++ ) {
+		cgrid2.xg[i][ny] = cgrid2.xg[i][0];
+		cgrid2.yg[i][ny] = cgrid2.yg[i][0];
+		zwrapped[i][ny] = zwrapped[i][0];
+	    }
+
+	    ny++;
+	}
+	else {
+	    PyErr_SetString( PyExc_RuntimeError,
+			     "Invalid wrap specifier, must be 0, 1 or 2." );
+	    return NULL;
+	}
+
+	pltr = pltr2;
+	pltr_data = &cgrid2;
+    }
+    else {
+	PyErr_SetString( PyExc_RuntimeError,
+			 "Unrecognized coordinate transformation spec.  Must be pltr0, pltr1 or pltr2." );
+	return NULL;
+    }
+
+/* Now go make the plot. */
+
+    plshades( zused, nx, ny, NULL, xmin, xmax, ymin, ymax,
+	      clevel, nlevel, fill_width, cont_color, cont_width,
+	      plfill, rect, pltr, pltr_data );
+
+/* Now free up any space which got allocated for our coordinate trickery. */
+
+    if (pltr == pltr1) {
+    /* Hmm, actually, nothing to do here currently, since we just used the
+        Python Matrix data directly, rather than allocating private space. */
+    }
+    else if (pltr == pltr2) {
+    /* printf( "plshades, freeing space for grids used in pltr2\n" ); */
+	plFree2dGrid( cgrid2.xg, nx, ny );
+	plFree2dGrid( cgrid2.yg, nx, ny );
+        if (wrap != 0)
+	 plFree2dGrid( zwrapped, nx, ny );
+    }
+
+    plflush();
+    Py_INCREF( Py_None );
+    return Py_None;
+}
+
+/* GMF 8/12/96, this implementation cobbled together from tclAPI.c 
+ * with wrap code subsequently fixed by AWI. */
 /*--------------------------------------------------------------------------*\
  * plshadeCmd
  *
@@ -1776,7 +2014,7 @@ static PyObject *pl_shade( PyObject *self, PyObject *args )
 {
     PyObject *zop, *xop=NULL, *yop=NULL;
     PLfGrid2 grid;
-    PLFLT **z;
+    PLFLT **z, **zwrapped, **zused;
     PLINT nx, ny;
     char *pltrname = NULL;
     void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
@@ -1800,15 +2038,12 @@ static PyObject *pl_shade( PyObject *self, PyObject *args )
 
     TRY( pl_PyArray_AsFloatMatrix( &zop, &nx, &ny, &z ) );
 
-    grid.f = z;
-    grid.nx = nx;
-    grid.ny = ny;
-
 /* Figure out which coordinate transformation model is being used, and setup
    accordingly. */
 
     if (!pltrname || !strcmp( pltrname, "pltr0")) {
 	pltr = pltr0;
+        zused = z;
 
 	if (wrap) {
 	    PyErr_SetString( PyExc_RuntimeError,
@@ -1819,11 +2054,12 @@ static PyObject *pl_shade( PyObject *self, PyObject *args )
     else if (!strcmp( pltrname, "pltr1" ) ) {
 	pltr = pltr1;
 	pltr_data = &cgrid1;
+        zused = z;
 
     /* Check wrap. */
 	if (wrap) {
 	    PyErr_SetString( PyExc_RuntimeError,
-			     "Must not specify wrapping with pltr0." );
+			     "Must not specify wrapping with pltr1." );
 	    return NULL;
 	}
 
@@ -1855,6 +2091,7 @@ static PyObject *pl_shade( PyObject *self, PyObject *args )
 	    plAlloc2dGrid( &cgrid2.yg, nx, ny );
 	    cgrid2.nx = nx;
 	    cgrid2.ny = ny;
+	    zused = z;
 
 	    for( i=0; i < nx; i++ )
 		for( j=0; j < ny; j++ ) {
@@ -1876,18 +2113,22 @@ static PyObject *pl_shade( PyObject *self, PyObject *args )
 
 	    plAlloc2dGrid( &cgrid2.xg, nx+1, ny );
 	    plAlloc2dGrid( &cgrid2.yg, nx+1, ny );
+	    plAlloc2dGrid( &zwrapped, nx+1, ny );
 	    cgrid2.nx = nx+1;
 	    cgrid2.ny = ny;
+	    zused = zwrapped;
 
 	    for( i=0; i < nx; i++ )
 		for( j=0; j < ny; j++ ) {
 		    cgrid2.xg[i][j] = xg[i][j];
 		    cgrid2.yg[i][j] = yg[i][j];
+		    zwrapped[i][j] = z[i][j];
 		}
 
 	    for( j=0; j < ny; j++ ) {
 		cgrid2.xg[nx][j] = cgrid2.xg[0][j];
 		cgrid2.yg[nx][j] = cgrid2.yg[0][j];
+		zwrapped[nx][j] = zwrapped[0][j];
 	    }
 
 	    nx++;
@@ -1906,18 +2147,22 @@ static PyObject *pl_shade( PyObject *self, PyObject *args )
 
 	    plAlloc2dGrid( &cgrid2.xg, nx, ny+1 );
 	    plAlloc2dGrid( &cgrid2.yg, nx, ny+1 );
+	    plAlloc2dGrid( &zwrapped, nx, ny+1 );
 	    cgrid2.nx = nx;
 	    cgrid2.ny = ny+1;
+	    zused = zwrapped;
 
 	    for( i=0; i < nx; i++ )
 		for( j=0; j < ny; j++ ) {
 		    cgrid2.xg[i][j] = xg[i][j];
 		    cgrid2.yg[i][j] = yg[i][j];
+		    zwrapped[i][j] = z[i][j];
 		}
 
 	    for( i=0; i < nx; i++ ) {
 		cgrid2.xg[i][ny] = cgrid2.xg[i][0];
 		cgrid2.yg[i][ny] = cgrid2.yg[i][0];
+		zwrapped[i][ny] = zwrapped[i][0];
 	    }
 
 	    ny++;
@@ -1937,6 +2182,10 @@ static PyObject *pl_shade( PyObject *self, PyObject *args )
 	return NULL;
     }
 
+    grid.f = zused;
+    grid.nx = nx;
+    grid.ny = ny;
+
 /* Now go make the plot. */
 
     plfshade( pyf2eval2, &grid, NULL, NULL, nx, ny,
@@ -1955,6 +2204,8 @@ static PyObject *pl_shade( PyObject *self, PyObject *args )
     /* printf( "plshade, freeing space for grids used in pltr2\n" ); */
 	plFree2dGrid( cgrid2.xg, nx, ny );
 	plFree2dGrid( cgrid2.yg, nx, ny );
+        if (wrap != 0)
+	plFree2dGrid( zwrapped, nx, ny );
     }
 
     plflush();
@@ -2383,129 +2634,130 @@ static PyObject * pl_xormod(PyObject *self, PyObject *args)
 
 
 static PyMethodDef pl_methods[] = {
-    {"pladv",			pl_adv, 1, doc_pladv},
-    {"plarrows",		pl_arrows, 1, doc_plarrows},
-    {"plaxes",		pl_axes, 1, doc_plaxes},
-    {"plbin",			pl_bin, 1, doc_plbin},
-    {"plbop",			pl_bop, 1, doc_plbop},
-    {"plbox",			pl_box, 1, doc_plbox},
-    {"plbox3",		pl_box3, 1, doc_plbox3},
-    {"plcalc_world",		pl_calc_world, 1, doc_plcalc_world},
-    {"plclr",			pl_eop, 1, doc_pleop},		/* old name for backward compatibility */
-    {"plcol",			pl_col0, 1, doc_plcol0}, 		/* old name for backward compatibility */
-    {"plcol0",		pl_col0, 1, doc_plcol0},
-    {"plcol1",		pl_col1, 1, doc_plcol1},
-    {"plcont",		pl_cont, 1, doc_plcont},
-    {"plcont2",		pl_cont2, 1, doc_plcont2},
-    {"plcpstrm",		pl_cpstrm, 1, doc_plcpstrm},
-    {"pldid2pc",		pl_did2pc, 1, doc_pldid2pc},
-    {"pldip2dc",		pl_dip2dc, 1, doc_pldip2dc},
-    {"plend",			pl_end, 1, doc_plend},
-    {"plend1",		pl_end1, 1, doc_plend1},
-    {"plenv",			pl_env, 1, doc_plenv},
-    {"pleop",			pl_eop, 1, doc_pleop},
-    {"plerrx",			pl_errx, 1, doc_plerrx},
-    {"plerry",			pl_erry, 1, doc_plerry},
-    {"plfamadv",		pl_famadv, 1, doc_plfamadv},
-    {"plfill",			pl_fill, 1, doc_plfill},
-    {"plflush",		pl_flush, 1, doc_plflush},
-    {"plfont",			pl_font, 1, doc_plfont},
-    {"plfontld",		pl_fontld, 1, doc_plfontld},
-    {"plgchr",		pl_gchr, 1, doc_plgchr},
-    {"plgcol0",		pl_gcol0, 1, doc_plgcol0},
-    {"plgcolbg",		pl_gcolbg, 1, doc_plgcolbg},
-    {"plgdidev",		pl_gdidev, 1, doc_plgdidev},
-    {"plgdiori",		pl_gdiori, 1, doc_plgdiori},
-    {"plgdiplt",		pl_gdiplt, 1, doc_plgdiplt},
-    {"plgfam",		pl_gfam, 1, doc_plgfam},
-    {"plgfnam",		pl_gfnam, 1, doc_plgfnam},
-    {"plgpage",		pl_gpage, 1, doc_plgpage},
-    {"plgra",			pl_gra, 1, doc_plgra},
-    {"plgspa",		pl_gspa, 1, doc_plgspa},
-    {"plgstrm",		pl_gstrm, 1, doc_plgstrm},
-    {"plgver",		pl_gver, 1, doc_plgver},
-    {"plgvpd",		pl_gvpd, 1, doc_plgvpd},
-    {"plgvpw",		pl_gvpw, 1, doc_plgvpw},
-    {"plPgvpw",		pl_gvpw, 1, doc_plgvpw},  /* old name */
-    {"plgxax",		pl_gxax, 1, doc_plgxax},
-    {"plgyax",		pl_gyax, 1, doc_plgyax},
-    {"plgzax",		pl_gzax, 1, doc_plgzax},
-    {"plhist",			pl_hist, 1, doc_plhist},
-    {"plhls",			pl_hls, 1, doc_plhls},
-    {"plinit",			pl_init, 1, doc_plinit},
-    {"pljoin",			pl_join, 1, doc_pljoin},
-    {"pllab",			pl_lab, 1, doc_pllab},
-    {"pllightsource",		pl_lightsource, 1, doc_pllightsource},
-    {"plline",			pl_line, 1, doc_plline},
-    {"plline3",		pl_line3, 1, doc_plline3},
-    {"pllsty",			pl_lsty, 1, doc_pllsty},
-    {"plmesh",		pl_mesh, 1, doc_plmesh},
-    {"plmkstrm",		pl_mkstrm, 1, doc_plmkstrm},
-    {"plmtex",		pl_mtex, 1, doc_plmtex},
-    {"plot3d",		pl_ot3d, 1, doc_plot3d},
-    {"plotsh3d",	pl_otsh3d, 1, doc_plotsh3d},
-    {"plpage",		pl_bop, 1, doc_plbop},		/* old name for backward compatibility */
-    {"plpat",			pl_pat, 1, doc_plpat},
-    {"plpoin",		pl_poin, 1, doc_plpoin},
-    {"plpoin3",		pl_poin3, 1, doc_plpoin3},
-    {"plpoly3",		pl_poly3, 1, doc_plpoly3},
-    {"plprec",		pl_prec, 1, doc_plprec},
-    {"plpsty",		pl_psty, 1, doc_plpsty},
-    {"plptex",		pl_ptex, 1, doc_plptex},
-    {"plreplot",		pl_replot, 1, doc_plreplot},
-    {"plrgb",			pl_rgb, 1, doc_plrgb},
-    {"plrgb1",		pl_rgb1, 1, doc_plrgb1},
-    {"plschr",		pl_schr, 1, doc_plschr},
-    {"plscmap0n",	pl_scmap0n, 1, doc_plscmap0n},
-    {"plscmap1n",	pl_scmap1n, 1, doc_plscmap1n},
-    {"plscmap0",		pl_scmap0, 1, doc_plscmap0},
-    {"plscmap1",		pl_scmap1, 1, doc_plscmap1},
-    {"plscmap1l",	pl_scmap1l, 1, doc_plscmap1l},
-    {"plscol0",		pl_scol0, 1, doc_plscol0},
-    {"plscolbg",		pl_scolbg, 1, doc_plscolbg},
-    {"plscolor",		pl_scolor, 1, doc_plscolor},
-    {"plsdev",		pl_sdev, 1, doc_plsdev},
-    {"plsdidev",		pl_sdidev, 1, doc_plsdidev},
-    {"plsdimap",		pl_sdimap, 1, doc_plsdimap},
-    {"plsdiori",		pl_sdiori, 1, doc_plsdiori},
-    {"plsdiplt",		pl_sdiplt, 1, doc_plsdiplt},
-    {"plsdiplz",		pl_sdiplz, 1, doc_plsdiplz},
-    {"plsesc",		pl_sesc, 1, doc_plsesc},
-    {"pl_setcontlabelformat", pl__setcontlabelformat, 1, doc_pl_setcontlabelformat},
-    {"pl_setcontlabelparam", pl__setcontlabelparam, 1, doc_pl_setcontlabelparam},
-    {"plsfam",		pl_sfam, 1, doc_plsfam},
-    {"plsfnam",		pl_sfnam, 1, doc_plsfnam},
-    {"plshade",		pl_shade, 1, doc_plshade},
-    {"plsmaj",		pl_smaj, 1, doc_plsmaj},
-    {"plsmin",		pl_smin, 1, doc_plsmin},
-    {"plsori",			pl_sori, 1, doc_plsori},
-    {"plspage",		pl_spage, 1, doc_plspage},
-    {"plspause",		pl_spause, 1, doc_plspause},
-    {"plsstrm",		pl_sstrm, 1, doc_plsstrm},
-    {"plssub",		pl_ssub, 1, doc_plssub},
-    {"plssym",		pl_ssym, 1, doc_plssym},
-    {"plstar",			pl_star, 1, doc_plstar},
-    {"plstart",		pl_start, 1, doc_plstart},
-    {"plstyl",			pl_styl, 1, doc_plstyl},
-    {"plsvpa",		pl_svpa, 1, doc_plsvpa},
-    {"plsxax",		pl_sxax, 1, doc_plsxax},
-    {"plsxwin",		pl_sxwin, 1, doc_plsxwin},
-    {"plsyax",		pl_syax, 1, doc_plsyax},
-    {"plsym",			pl_sym, 1, doc_plsym},
-    {"plszax",		pl_szax, 1, doc_plszax},
-    {"pltext",			pl_text, 1, doc_pltext},
-    {"plvasp",		pl_vasp, 1, doc_plvasp},
-    {"plvpas",		pl_vpas, 1, doc_plvpas},
-    {"plvpor",		pl_vpor, 1, doc_plvpor},
-    {"plvsta",		pl_vsta, 1, doc_plvsta},
-    {"plw3d",		pl_w3d, 1, doc_plw3d},
-    {"plwid",			pl_wid, 1, doc_plwid},
-    {"plwind",		pl_wind, 1, doc_plwind},
-    {"plxormod",	pl_xormod, 1, doc_xormod},
-    {"plParseOpts",	pl_ParseOpts, 1, doc_plParseOpts},
-    {"plsetopt",		pl_setopt, 1, doc_plsetopt},
-    {"plGetCursor",	pl_GetCursor, 1, doc_plGetCursor},
-    {NULL,			NULL}
+    {"pladv",			pl_adv, METH_VARARGS, doc_pladv},
+    {"plarrows",		pl_arrows, METH_VARARGS, doc_plarrows},
+    {"plaxes",		pl_axes, METH_VARARGS, doc_plaxes},
+    {"plbin",			pl_bin, METH_VARARGS, doc_plbin},
+    {"plbop",			pl_bop, METH_VARARGS, doc_plbop},
+    {"plbox",			pl_box, METH_VARARGS, doc_plbox},
+    {"plbox3",		pl_box3, METH_VARARGS, doc_plbox3},
+    {"plcalc_world",		pl_calc_world, METH_VARARGS, doc_plcalc_world},
+    {"plclr",			pl_eop, METH_VARARGS, doc_pleop},		/* old name for backward compatibility */
+    {"plcol",			pl_col0, METH_VARARGS, doc_plcol0}, 		/* old name for backward compatibility */
+    {"plcol0",		pl_col0, METH_VARARGS, doc_plcol0},
+    {"plcol1",		pl_col1, METH_VARARGS, doc_plcol1},
+    {"plcont",		pl_cont, METH_VARARGS, doc_plcont},
+    {"plcont2",		pl_cont2, METH_VARARGS, doc_plcont2},
+    {"plcpstrm",		pl_cpstrm, METH_VARARGS, doc_plcpstrm},
+    {"pldid2pc",		pl_did2pc, METH_VARARGS, doc_pldid2pc},
+    {"pldip2dc",		pl_dip2dc, METH_VARARGS, doc_pldip2dc},
+    {"plend",			pl_end, METH_VARARGS, doc_plend},
+    {"plend1",		pl_end1, METH_VARARGS, doc_plend1},
+    {"plenv",			pl_env, METH_VARARGS, doc_plenv},
+    {"pleop",			pl_eop, METH_VARARGS, doc_pleop},
+    {"plerrx",			pl_errx, METH_VARARGS, doc_plerrx},
+    {"plerry",			pl_erry, METH_VARARGS, doc_plerry},
+    {"plfamadv",		pl_famadv, METH_VARARGS, doc_plfamadv},
+    {"plfill",			pl_fill, METH_VARARGS, doc_plfill},
+    {"plflush",		pl_flush, METH_VARARGS, doc_plflush},
+    {"plfont",			pl_font, METH_VARARGS, doc_plfont},
+    {"plfontld",		pl_fontld, METH_VARARGS, doc_plfontld},
+    {"plgchr",		pl_gchr, METH_VARARGS, doc_plgchr},
+    {"plgcol0",		pl_gcol0, METH_VARARGS, doc_plgcol0},
+    {"plgcolbg",		pl_gcolbg, METH_VARARGS, doc_plgcolbg},
+    {"plgdidev",		pl_gdidev, METH_VARARGS, doc_plgdidev},
+    {"plgdiori",		pl_gdiori, METH_VARARGS, doc_plgdiori},
+    {"plgdiplt",		pl_gdiplt, METH_VARARGS, doc_plgdiplt},
+    {"plgfam",		pl_gfam, METH_VARARGS, doc_plgfam},
+    {"plgfnam",		pl_gfnam, METH_VARARGS, doc_plgfnam},
+    {"plgpage",		pl_gpage, METH_VARARGS, doc_plgpage},
+    {"plgra",			pl_gra, METH_VARARGS, doc_plgra},
+    {"plgspa",		pl_gspa, METH_VARARGS, doc_plgspa},
+    {"plgstrm",		pl_gstrm, METH_VARARGS, doc_plgstrm},
+    {"plgver",		pl_gver, METH_VARARGS, doc_plgver},
+    {"plgvpd",		pl_gvpd, METH_VARARGS, doc_plgvpd},
+    {"plgvpw",		pl_gvpw, METH_VARARGS, doc_plgvpw},
+    {"plPgvpw",		pl_gvpw, METH_VARARGS, doc_plgvpw},  /* old name */
+    {"plgxax",		pl_gxax, METH_VARARGS, doc_plgxax},
+    {"plgyax",		pl_gyax, METH_VARARGS, doc_plgyax},
+    {"plgzax",		pl_gzax, METH_VARARGS, doc_plgzax},
+    {"plhist",			pl_hist, METH_VARARGS, doc_plhist},
+    {"plhls",			pl_hls, METH_VARARGS, doc_plhls},
+    {"plinit",			pl_init, METH_VARARGS, doc_plinit},
+    {"pljoin",			pl_join, METH_VARARGS, doc_pljoin},
+    {"pllab",			pl_lab, METH_VARARGS, doc_pllab},
+    {"pllightsource",		pl_lightsource, METH_VARARGS, doc_pllightsource},
+    {"plline",			pl_line, METH_VARARGS, doc_plline},
+    {"plline3",		pl_line3, METH_VARARGS, doc_plline3},
+    {"pllsty",			pl_lsty, METH_VARARGS, doc_pllsty},
+    {"plmesh",		pl_mesh, METH_VARARGS, doc_plmesh},
+    {"plmkstrm",		pl_mkstrm, METH_VARARGS, doc_plmkstrm},
+    {"plmtex",		pl_mtex, METH_VARARGS, doc_plmtex},
+    {"plot3d",		pl_ot3d, METH_VARARGS, doc_plot3d},
+    {"plotsh3d",	pl_otsh3d, METH_VARARGS, doc_plotsh3d},
+    {"plpage",		pl_bop, METH_VARARGS, doc_plbop},		/* old name for backward compatibility */
+    {"plpat",			pl_pat, METH_VARARGS, doc_plpat},
+    {"plpoin",		pl_poin, METH_VARARGS, doc_plpoin},
+    {"plpoin3",		pl_poin3, METH_VARARGS, doc_plpoin3},
+    {"plpoly3",		pl_poly3, METH_VARARGS, doc_plpoly3},
+    {"plprec",		pl_prec, METH_VARARGS, doc_plprec},
+    {"plpsty",		pl_psty, METH_VARARGS, doc_plpsty},
+    {"plptex",		pl_ptex, METH_VARARGS, doc_plptex},
+    {"plreplot",		pl_replot, METH_VARARGS, doc_plreplot},
+    {"plrgb",			pl_rgb, METH_VARARGS, doc_plrgb},
+    {"plrgb1",		pl_rgb1, METH_VARARGS, doc_plrgb1},
+    {"plschr",		pl_schr, METH_VARARGS, doc_plschr},
+    {"plscmap0n",	pl_scmap0n, METH_VARARGS, doc_plscmap0n},
+    {"plscmap1n",	pl_scmap1n, METH_VARARGS, doc_plscmap1n},
+    {"plscmap0",		pl_scmap0, METH_VARARGS, doc_plscmap0},
+    {"plscmap1",		pl_scmap1, METH_VARARGS, doc_plscmap1},
+    {"plscmap1l",	pl_scmap1l, METH_VARARGS, doc_plscmap1l},
+    {"plscol0",		pl_scol0, METH_VARARGS, doc_plscol0},
+    {"plscolbg",		pl_scolbg, METH_VARARGS, doc_plscolbg},
+    {"plscolor",		pl_scolor, METH_VARARGS, doc_plscolor},
+    {"plsdev",		pl_sdev, METH_VARARGS, doc_plsdev},
+    {"plsdidev",		pl_sdidev, METH_VARARGS, doc_plsdidev},
+    {"plsdimap",		pl_sdimap, METH_VARARGS, doc_plsdimap},
+    {"plsdiori",		pl_sdiori, METH_VARARGS, doc_plsdiori},
+    {"plsdiplt",		pl_sdiplt, METH_VARARGS, doc_plsdiplt},
+    {"plsdiplz",		pl_sdiplz, METH_VARARGS, doc_plsdiplz},
+    {"plsesc",		pl_sesc, METH_VARARGS, doc_plsesc},
+    {"pl_setcontlabelformat", pl__setcontlabelformat, METH_VARARGS, doc_pl_setcontlabelformat},
+    {"pl_setcontlabelparam", pl__setcontlabelparam, METH_VARARGS, doc_pl_setcontlabelparam},
+    {"plsfam",		pl_sfam, METH_VARARGS, doc_plsfam},
+    {"plsfnam",		pl_sfnam, METH_VARARGS, doc_plsfnam},
+    {"plshades",	pl_shades, METH_VARARGS, doc_plshades},
+    {"plshade",		pl_shade, METH_VARARGS, doc_plshade},
+    {"plsmaj",		pl_smaj, METH_VARARGS, doc_plsmaj},
+    {"plsmin",		pl_smin, METH_VARARGS, doc_plsmin},
+    {"plsori",			pl_sori, METH_VARARGS, doc_plsori},
+    {"plspage",		pl_spage, METH_VARARGS, doc_plspage},
+    {"plspause",		pl_spause, METH_VARARGS, doc_plspause},
+    {"plsstrm",		pl_sstrm, METH_VARARGS, doc_plsstrm},
+    {"plssub",		pl_ssub, METH_VARARGS, doc_plssub},
+    {"plssym",		pl_ssym, METH_VARARGS, doc_plssym},
+    {"plstar",			pl_star, METH_VARARGS, doc_plstar},
+    {"plstart",		pl_start, METH_VARARGS, doc_plstart},
+    {"plstyl",			pl_styl, METH_VARARGS, doc_plstyl},
+    {"plsvpa",		pl_svpa, METH_VARARGS, doc_plsvpa},
+    {"plsxax",		pl_sxax, METH_VARARGS, doc_plsxax},
+    {"plsxwin",		pl_sxwin, METH_VARARGS, doc_plsxwin},
+    {"plsyax",		pl_syax, METH_VARARGS, doc_plsyax},
+    {"plsym",			pl_sym, METH_VARARGS, doc_plsym},
+    {"plszax",		pl_szax, METH_VARARGS, doc_plszax},
+    {"pltext",			pl_text, METH_VARARGS, doc_pltext},
+    {"plvasp",		pl_vasp, METH_VARARGS, doc_plvasp},
+    {"plvpas",		pl_vpas, METH_VARARGS, doc_plvpas},
+    {"plvpor",		pl_vpor, METH_VARARGS, doc_plvpor},
+    {"plvsta",		pl_vsta, METH_VARARGS, doc_plvsta},
+    {"plw3d",		pl_w3d, METH_VARARGS, doc_plw3d},
+    {"plwid",			pl_wid, METH_VARARGS, doc_plwid},
+    {"plwind",		pl_wind, METH_VARARGS, doc_plwind},
+    {"plxormod",	pl_xormod, METH_VARARGS, doc_xormod},
+    {"plParseOpts",	pl_ParseOpts, METH_VARARGS, doc_plParseOpts},
+    {"plsetopt",		pl_setopt, METH_VARARGS, doc_plsetopt},
+    {"plGetCursor",	pl_GetCursor, METH_VARARGS, doc_plGetCursor},
+    {NULL, NULL, 0, NULL}
 };
 
 void initpl(void)
