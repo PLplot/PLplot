@@ -197,7 +197,7 @@ contour labelling other than format of numerical label</title>
       Advances to the next subpage if
       <literal><parameter>sub</parameter>=0</literal>, performing a page
       advance if there are no remaining subpages on the current page.  If
-      subwindowing isn't being used, <literal>&pladv;(0)</literal> will
+      subpages aren't being used, <literal>&pladv;(0)</literal> will
       always advance the page.  If
       <literal><parameter>sub</parameter>&gt;0</literal>, PLplot switches
       to the specified subpage.  Note that this allows you to overwrite a
@@ -4487,7 +4487,7 @@ device coordinates
       or the &plsdev; function), or if only one device is
       enabled when PLplot is installed.  If subpages have been specified,
       the output device is divided into <literal>nx</literal> by
-      <literal>ny</literal> sub-pages, each of which may be used
+      <literal>ny</literal> subpages, each of which may be used
       independently.  If &plinit; is called again during a program, the
       previously opened file will be closed.  The subroutine &pladv; is
       used to advance from one subpage to the next.
@@ -9001,7 +9001,7 @@ characters and their corresponding decimal ASCII values:
 
   <sect1 id="plssub" renderas="sect3">
     <title>
-      <function>plssub</function>: Set the number of subwindows in x and y
+      <function>plssub</function>: Set the number of subpages in x and y
     </title>
 
     <para>
@@ -9017,7 +9017,7 @@ characters and their corresponding decimal ASCII values:
     </para>
 
     <para>
-      Set the number of subwindows in x and y.
+      Set the number of subpages in x and y.
     </para>
 
     <variablelist>
@@ -9123,7 +9123,7 @@ characters and their corresponding decimal ASCII values:
       device.  If only one device is enabled when PLplot is installed,
       &plstar; will issue no prompt.  The output device is divided into
       <literal><parameter>nx</parameter></literal> by
-      <literal><parameter>ny</parameter></literal> sub-pages, each of which
+      <literal><parameter>ny</parameter></literal> subpages, each of which
       may be used independently.  The subroutine &pladv; is used to advance
       from one subpage to the next.
     </para>
@@ -9184,7 +9184,7 @@ characters and their corresponding decimal ASCII values:
       begins with ``?'', the prompted startup of &plstar; is used.  This
       routine also divides the output device into
       <literal><parameter>nx</parameter></literal> by
-      <literal><parameter>ny</parameter></literal> sub-pages, each of which
+      <literal><parameter>ny</parameter></literal> subpages, each of which
       may be used independently.  The subroutine &pladv; is used to advance
       from one subpage to the next.
     </para>
