@@ -100,7 +100,6 @@ cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
   && cd .. \
   && echo "CVS distribution tarball: $TARBALL" \
   && test "$do_check" = yes \
-  && tar xfvz $TARBALL \
   && rm -rf $DISTDIR \
   && tar xfz $TARBALL \
   && ( cd $DISTDIR \
