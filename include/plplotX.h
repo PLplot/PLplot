@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/07/01 22:38:09  mjl
+ * Revision 1.10  1994/07/12 19:18:19  mjl
+ * Put CADDR_T_HACK code in proper location.
+ *
+ * Revision 1.9  1994/07/01  22:38:09  mjl
  * All display-dependent data broken off into a separate structure.  The X
  * driver now saves only one of these XwDisplay structs for each physical
  * X display.  These are then shared between all PLplot streams.  This
@@ -57,14 +60,14 @@
 #include <string.h>
 #include <sys/types.h>
 
+#ifdef CADDR_T_HACK
+typedef char * caddr_t;
+#endif
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/cursorfont.h>
 #include <X11/keysym.h>
-
-#ifdef CADDR_T_HACK
-typedef char * caddr_t;
-#endif
 
 /* Specify max number of displays in use */
 
