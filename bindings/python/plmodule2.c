@@ -28,24 +28,24 @@
 
 /*static*/ PyObject *pl_cont( PyObject *self, PyObject *args )
 {
-    PLINT nx, ny, kx=0, lx=0, ky=0, ly=0, nlev;
-    int i=0, j;
-    PLFLT **z, *clev;	
-    PyObject *op, *levelop, *f;
     PyObject *zop, *cop, *xop, *yop;
     PLfGrid2 grid;
-    char *pltrname = "pltr0";
+    PLFLT **z, *clev;	
+    PLINT nx, ny, nlev;
+    char *pltrname = NULL;
     void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
     PLPointer pltr_data = NULL;
     PLcGrid  cgrid1;
     PLcGrid2 cgrid2;
-    int match=0, wrap=0;
+    PLINT wrap = 0;
+    int i=0, j;
 
+    PLINT kx=0, lx=0, ky=0, ly=0;
     int argc = PyTuple_Size( args );
+    PyObject *op, *levelop, *f;
     PyObject *o;
 
     PyAssert( i < argc, "Invalid arg list for plcont" );
-
     zop = PyTuple_GetItem( args, 0 ); i++;
     TRY( pl_PyArray_AsFloatMatrix( &zop, &nx, &ny, &z ) );
 
@@ -75,19 +75,20 @@
 	o = PyTuple_GetItem( args, i );
     }
 
-    printf( "plcont, kx=%d lx=%d ky=%d ly=%d\n", kx, lx, ky, ly );
+/*    printf( "plcont, kx=%d lx=%d ky=%d ly=%d\n", kx, lx, ky, ly );*/
 
 /* Must now be positioned on clev, so pull it out and convert. */
 
     TRY( pl_PyArray_AsFloatArray( &o, &clev, &nlev ) );
 
-    printf( "nlev=%d\n", nlev );
+/*    printf( "nlev=%d\n", nlev );*/
 
     i++;
 
 /* Now parse the pltr stuff. */
 
-    if ( i <= argc ) {
+/*    printf( "i=%d argc=%d\n", i, argc );*/
+    if ( i < argc ) {
 /* 	pltrname = PyArg_GetString( PyTuple_GetItem( args, i++ ) ); */
 /* 	TRY( PyArg_GetString( args, argc, i++, &pltrname ) ); */
 	TRY( pltrname = PyString_AsString( PyTuple_GetItem( args, i++ ) ) );
@@ -106,7 +107,7 @@
 	}
     }
 
-    printf( "wrap=%d\n", wrap );
+/*    printf( "wrap=%d\n", wrap );*/
 
 /* Figure out which coordinate transformation model is being used, and setup
    accordingly. */
@@ -141,9 +142,9 @@
 	}
     }
     else if ( !strcmp( pltrname, "pltr2" ) ) {
-    /* printf( "plshade, setting up for pltr2\n" ); */
+    /* printf( "plcont, setting up for pltr2\n" ); */
 	if (!wrap) {
- 	/* printf( "plshade, no wrapping is needed.\n" ); */
+ 	/* printf( "plcont, no wrapping is needed.\n" ); */
 	    PLINT xnx, xny, ynx, yny;
 	    PLFLT **xg, **yg;
 	    TRY( pl_PyArray_AsFloatMatrix( &xop, &xnx, &xny, &xg ) );
@@ -268,7 +269,7 @@
         Python Matrix data directly, rather than allocating private space. */
     }
     else if (pltr == pltr2) {
-    /* printf( "plshade, freeing space for grids used in pltr2\n" ); */
+    /* printf( "plcont, freeing space for grids used in pltr2\n" ); */
 	plFree2dGrid( cgrid2.xg, nx, ny );
 	plFree2dGrid( cgrid2.yg, nx, ny );
     }
@@ -310,11 +311,6 @@
     PLfGrid2 grid;
     PLFLT **z;
     PLINT nx, ny;
-    PLFLT xmin, xmax, ymin, ymax, sh_min, sh_max, sh_col;
-
-    PLINT sh_cmap =1, sh_wid =2;
-    PLINT min_col =1, min_wid =0, max_col =0, max_wid =0;
-    PLINT rect =1;
     char *pltrname = NULL;
     void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer);
     PLPointer pltr_data = NULL;
@@ -322,6 +318,11 @@
     PLcGrid2 cgrid2;
     PLINT wrap = 0;
     int i, j;
+   
+    PLFLT xmin, xmax, ymin, ymax, sh_min, sh_max, sh_col;
+    PLINT sh_cmap =1, sh_wid =2;
+    PLINT min_col =1, min_wid =0, max_col =0, max_wid =0;
+    PLINT rect =1;
 
     TRY( PyArg_ParseTuple( args, PL_ARGS( "Oddddddidiiiiii|sOOi",
 					  "Offffffifiiiiii|sOOi" ),
