@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.19  1993/03/10 05:02:26  mjl
-   Changed documentation slightly, and inserted #ifndef _POSIX_SOURCE before
-   the define of _POSIX_SOURCE for an eensy weensy little bit of added safety.
+   Revision 1.20  1993/03/15 21:51:24  mjl
+   Bumped version number to 4.99b.
 
+ * Revision 1.19  1993/03/10  05:02:26  mjl
+ * Changed documentation slightly, and inserted #ifndef _POSIX_SOURCE before
+ * the define of _POSIX_SOURCE for an eensy weensy little bit of added safety.
+ *
  * Revision 1.18  1993/03/06  05:06:50  mjl
  * Inserted sick hack so that Suns without an ANSI libc can use fseek/ftell
  * instead of fsetpos/fgetpos.
@@ -95,7 +98,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99a"
+#define PLPLOT_VERSION "4.99b"
 
 /*
 * The define of _POSIX_SOURCE is slightly dangerous.  Should probably be
