@@ -1063,9 +1063,18 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
 /* Plots a 3-d false color (current colormap 1) representation of the function z[x][y]. */
 
+#define DRAW_LINEX 0x01
+#define DRAW_LINEY 0x02
+#define DRAW_LINEXY (DRAW_LINEX | DRAW_LINEY)
+
+#define SURF_CONT 0x10
+#define BASE_CONT 0x20
+
+#define DRAW_SIDE 0x40
+
 void
-c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z,
-	   PLINT nx, PLINT ny, PLINT side);
+c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
+	   PLINT opt, PLFLT *clevel, PLINT nlevel);
   
 /* Set fill pattern directly. */
 
