@@ -72,11 +72,19 @@ class PlXframe(Widget):
 
 	s.setup_defaults()
 
-	s.plf = Plframe( s, kw )
+##	s.plf = Plframe( s, kw )
+	s.f = Frame( s, kw )
+	s.f.rowconfigure( 0, weight=1, minsize=0 )
+	s.f.columnconfigure( 0, weight=1, minsize=0 )
+	s.f.plf = Plframe( s, kw )
+	s.f.plf.grid( row=0, column=0, sticky='nsew' )
+	s.plf = s.f.plf
+
 	s.build_menu_bar()
 
 	#s.plf.pack() 
-	s.plf.grid( row=1, column=0, sticky='nsew' )
+##	s.plf.grid( row=1, column=0, sticky='nsew' )
+	s.f.pack( expand=1, fill=BOTH )
 
 	s.strm = plgstrm()
 
@@ -118,8 +126,8 @@ class PlXframe(Widget):
 
     def build_menu_bar(s):
 	s.ftop = Frame( s )
-	#s.ftop.pack( expand=1, fill=X )
-	s.ftop.grid( row=0, columnspan=2, sticky='ew' )
+	s.ftop.pack( expand=1, fill=X )
+	#s.ftop.grid( row=0, columnspan=2, sticky='ew' )
 
 	s.ftop.plot = Menubutton( s.ftop, text="Plot", underline=0,
 				  relief=RAISED )
@@ -1059,13 +1067,13 @@ class PlXframe(Widget):
 		   zopt, zlabel, ztick, nsubz )
 
     def plcol(s,c):
-	s.tk.call( s.plf._w, CMD, 'plcol', c )
+	s.tk.call( s.f.plf._w, CMD, 'plcol', c )
 
     def plcol0( s, col0 ):
 	s.plcol( col0 )
 
     def plcol1( s, col1 ):
-	s.tk.call( s.plf._w, CMD, 'plcol1', col1 )
+	s.tk.call( s.f.plf._w, CMD, 'plcol1', col1 )
 
 #    def plcont( s ): pass
 
@@ -1081,31 +1089,31 @@ class PlXframe(Widget):
     def plcpstream( s ): pass
     
     def plenv( s, xmin, xmax, ymin, ymax, i, j ):
-	s.tk.call( s.plf._w, 'cmd', 'plenv', xmin, xmax, ymin, ymax, i, j )
+	s.tk.call( s.f.plf._w, 'cmd', 'plenv', xmin, xmax, ymin, ymax, i, j )
 
     def pleop(s):
-	s.tk.call( s.plf._w, 'cmd', 'pleop' )
+	s.tk.call( s.f.plf._w, 'cmd', 'pleop' )
 	#print "should've waited here, but it didn't."
-	s.plf.setvar( 'wv', '0' )
+	s.f.plf.setvar( 'wv', '0' )
 	s.label_set( "Plotting paused ... (Hit Clear to continue)" )
 	#print "preparing to wait for wv to change"
-	s.plf.waitvar( 'wv' )
+	s.f.plf.waitvar( 'wv' )
 	#print "it changed."
 	s.label_reset()
 	s.update()
 
     def clearpage(s):
-	s.plf.setvar( 'wv', 1 )
+	s.f.plf.setvar( 'wv', 1 )
 
     def plfill( s, x, y ):
 	plsstrm( s.strm )
 	plfill( x, y )
 
     def plfont( s, ifnt ):
-	s.tk.call( s.plf._w, CMD, 'plfont', ifnt )
+	s.tk.call( s.f.plf._w, CMD, 'plfont', ifnt )
 
     def plfontld( s, fnt ):
-	s.tk.call( s.plf._w, CMD, 'plfontld', fnt )
+	s.tk.call( s.f.plf._w, CMD, 'plfontld', fnt )
 
     def plhist( s, data, datmin, datmax, nbin, oldwin ):
 	plsstrm( s.strm )
@@ -1114,13 +1122,13 @@ class PlXframe(Widget):
 ##	 PLINT nbin, PLINT oldwin);
 
     def plhls( s, h, l, s ):
-	s.tk.call( s.plf._w, CMD, 'plhls', h, l, s )
+	s.tk.call( s.f.plf._w, CMD, 'plhls', h, l, s )
 
     def pljoin( s, x1, y1, x2, y2 ):
-	s.tk.call( s.plf._w, CMD, 'pljoin', x1, y1, x2, y2 )
+	s.tk.call( s.f.plf._w, CMD, 'pljoin', x1, y1, x2, y2 )
 
     def pllab( s, xlab, ylab, tlab ):
-	s.tk.call( s.plf._w, 'cmd', 'pllab', xlab, ylab, tlab )
+	s.tk.call( s.f.plf._w, 'cmd', 'pllab', xlab, ylab, tlab )
 
     def plline( s, x, y ):
 	plsstrm( s.strm )
@@ -1131,7 +1139,7 @@ class PlXframe(Widget):
 	plline3( x, y, z )
 
     def pllsty( s, lin ):
-	s.tk.call( s.plf._w, CMD, 'pllsty', lin )
+	s.tk.call( s.f.plf._w, CMD, 'pllsty', lin )
 
     # map and merridians ommitted.
 
@@ -1140,7 +1148,7 @@ class PlXframe(Widget):
 	plmesh( x, y, z, opt )
 
     def plmtex( s, side, disp, pos, just, text ):
-	s.tk.call( s.plf._w, CMD, 'plmtex',
+	s.tk.call( s.f.plf._w, CMD, 'plmtex',
 		   side, disp, pos, just, text )
 
     def plot3d( s, x, y, z, opt, side ):
@@ -1164,26 +1172,26 @@ class PlXframe(Widget):
 	plpoly3( x, y, z, draw )
 
     def plprec( s, setp, prec ):
-	s.tk.call( s.plf._w, CMD, 'plprec', setp, prec )
+	s.tk.call( s.f.plf._w, CMD, 'plprec', setp, prec )
 
     def plpsty( s, patt ):
-	s.tk.call( s.plf._w, CMD, 'plpsty', patt )
+	s.tk.call( s.f.plf._w, CMD, 'plpsty', patt )
 
     def plptex( s, x, y, dx, dy, just, text ):
-	s.tk.call( s.plf._w, CMD, 'plptex',
+	s.tk.call( s.f.plf._w, CMD, 'plptex',
 		   x, y, dx, dy, just, text )
 
     def plreplot( s ):
-	s.tk.call( s.plf._w, CMD, 'plreplot' )
+	s.tk.call( s.f.plf._w, CMD, 'plreplot' )
 
     def plrgb( s, r, g, b ):
-	s.tk.call( s.plf._w, CMD, 'plrgb', r, g, b )
+	s.tk.call( s.f.plf._w, CMD, 'plrgb', r, g, b )
 
     def plrgb1( s, r, g, b ):
-	s.tk.call( s.plf._w, CMD, 'plrgb1', r, g, b )
+	s.tk.call( s.f.plf._w, CMD, 'plrgb1', r, g, b )
 
     def plschr( s, dflt, scale ):
-	s.tk.call( s.plf._w, CMD, 'plschr', dflt, scale )
+	s.tk.call( s.f.plf._w, CMD, 'plschr', dflt, scale )
 
     def plshade( s, z, xmin, xmax, ymin, ymax,
 		 sh_min, sh_max, sh_cmap, sh_color, sh_width,
@@ -1211,55 +1219,55 @@ class PlXframe(Widget):
 ##		 pltr, xg, yg, wrap )
 
     def plssub( s, nx, ny ):
-	s.tk.call( s.plf._w, CMD, 'plssub', nx, ny )
+	s.tk.call( s.f.plf._w, CMD, 'plssub', nx, ny )
 
     def plssym( s, dflt, scale ):
-	s.tk.call( s.plf._w, CMD, 'plssym', dflt, scale )
+	s.tk.call( s.f.plf._w, CMD, 'plssym', dflt, scale )
 
     # plstar and plstart not relevant
 
     #def plstyl( s, ...
     
     def plsvpa( s, xmin, xmax, ymin, ymax ):
-	s.tk.call( s.plf._w, CMD, 'plsvpa', xmin, xmax, ymin, ymax )
+	s.tk.call( s.f.plf._w, CMD, 'plsvpa', xmin, xmax, ymin, ymax )
 
     def plsxax( s, digmax, digits ):
-	s.tk.call( s.plf._w, CMD, 'plsxax', digmax, digits )
+	s.tk.call( s.f.plf._w, CMD, 'plsxax', digmax, digits )
 
     def plsyax( s, digmax, digits ):
-	s.tk.call( s.plf._w, CMD, 'plsyax', digmax, digits )
+	s.tk.call( s.f.plf._w, CMD, 'plsyax', digmax, digits )
 
     def plsym( s, x, y, code ):
 	plsstrm( s.strm )
 	plsym( x, y, code )
 
     def plszax( s, digmax, digits ):
-	s.tk.call( s.plf._w, CMD, 'plszax', digmax, digits )
+	s.tk.call( s.f.plf._w, CMD, 'plszax', digmax, digits )
 
     def plvasp( s, aspect ):
-	s.tk.call( s.plf._w, CMD, 'plvasp', aspect )
+	s.tk.call( s.f.plf._w, CMD, 'plvasp', aspect )
 
     def plvpas( s, xmin, xmax, ymin, ymax, aspect ):
-	s.tk.call( s.plf._w, CMD, 'plvpas',
+	s.tk.call( s.f.plf._w, CMD, 'plvpas',
 		   xmin, xmax, ymin, ymax, aspect )
 
     def plvpor( s, xmin, xmax, ymin, ymax ):
-	s.tk.call( s.plf._w, CMD, 'plvpor', xmin, xmax, ymin, ymax )
+	s.tk.call( s.f.plf._w, CMD, 'plvpor', xmin, xmax, ymin, ymax )
 
     def plvsta(s):
-	s.tk.call( s.plf._w, CMD, 'plvsta' )
+	s.tk.call( s.f.plf._w, CMD, 'plvsta' )
 
     def plw3d( s, basex, basey, height, xmin0,
 	       xmax0, ymin0, ymax0, zmin0, zmax0, alt, az):
-	s.tk.call( s.plf._w, CMD, 'plw3d',
+	s.tk.call( s.f.plf._w, CMD, 'plw3d',
 		   basex, basey, height, xmin0,
 		   xmax0, ymin0, ymax0, zmin0, zmax0, alt, az)
 
     def plwid( s, width ):
-	s.tk.call( s.plf._w, CMD, 'plwid', width )
+	s.tk.call( s.f.plf._w, CMD, 'plwid', width )
 
     def plwind( s, xmin, xmax, ymin, ymax ):
-	s.tk.call( s.plf._w, CMD, 'plwind',
+	s.tk.call( s.f.plf._w, CMD, 'plwind',
 		   xmin, xmax, ymin, ymax )
 
     def debug(s):
