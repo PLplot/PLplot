@@ -1063,6 +1063,7 @@ c_plinit(void)
 
 /* Load fonts */
 
+    plsc->cfont = 1;
     plfntld(initfont);
 
 /* Set up subpages */
