@@ -17,8 +17,6 @@ class x02 {
 
     public static void main( String[] args ) 
     {
-        System.out.println( "x02 not implemented yet." );
-
         x02 x = new x02( args );
     }
 
@@ -36,7 +34,7 @@ class x02 {
 
     // Parse and process command line arguments.
 
-//         (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+        pls.ParseOpts( args, pls.PL_PARSE_FULL );
 
     // Initialize plplot.
 
