@@ -6858,7 +6858,7 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            Defines the interval to be shaded. If shade_max <= shade_min,
+            Defines the interval to be shaded. If shade_max &leq; shade_min,
 	    &plshade1; does nothing.
 	  </para>
 	</listitem>
@@ -6870,9 +6870,9 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            Defines the interval to be shaded. If shade_max <= shade_min,
+            Defines the interval to be shaded. If shade_max &leq; shade_min,
 	    &plshade1; does nothing.
-	  </para>
+	  w</para>
 	</listitem>
       </varlistentry>
       <varlistentry>

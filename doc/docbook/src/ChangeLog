@@ -1,5 +1,7 @@
 2000-11-27  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* api.xml: Replace occurrences of "<=" by "&lt;".
+
 	* Info translation works.
 	* Makefile.am: Rules for building the info form of documentation
 	(using package docbook2X).
