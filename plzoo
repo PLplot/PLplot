@@ -38,6 +38,7 @@ find ${pldir}/drivers  ! -path \*CVS\* -type f | zoo aI ${zoofile}
 find ${pldir}/examples ! -path \*CVS\* -type f | zoo aI ${zoofile}
 find ${pldir}/fonts    ! -path \*CVS\* -type f | zoo aI ${zoofile}
 find ${pldir}/include  ! -path \*CVS\* -type f | zoo aI ${zoofile}
+find ${pldir}/m4       ! -path \*CVS\* -type f | zoo aI ${zoofile}
 find ${pldir}/new      ! -path \*CVS\* -type f | zoo aI ${zoofile}
 find ${pldir}/utils    ! -path \*CVS\* -type f | zoo aI ${zoofile}
 find ${pldir}/scripts  ! -path \*CVS\* -type f | zoo aI ${zoofile}

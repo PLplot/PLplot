@@ -38,6 +38,7 @@ find plplot/drivers  -print | zoo aI plplot
 find plplot/examples -print | zoo aI plplot
 find plplot/fonts    -print | zoo aI plplot
 find plplot/include  -print | zoo aI plplot
+find plplot/m4       -print | zoo aI plplot
 find plplot/new      -print | zoo aI plplot
 find plplot/utils    -print | zoo aI plplot
 find plplot/scripts  -print | zoo aI plplot

@@ -35,6 +35,7 @@ tar rf plplot.tar plplot/drivers
 tar rf plplot.tar plplot/examples
 tar rf plplot.tar plplot/fonts
 tar rf plplot.tar plplot/include
+tar rf plplot.tar plplot/m4
 tar rf plplot.tar plplot/new
 tar rf plplot.tar plplot/utils
 tar rf plplot.tar plplot/scripts
