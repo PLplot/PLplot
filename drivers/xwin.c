@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1993/08/11 19:22:23  mjl
+ * Revision 1.23  1993/08/28 06:29:42  mjl
+ * Added a safety check that the escape function pointer for resizes is
+ * initialized, and moved some XSync commands (deep magic, don't ask).
+ *
+ * Revision 1.22  1993/08/11  19:22:23  mjl
  * Fixed warning under Sun's acc.
  *
  * Revision 1.21  1993/07/31  07:58:33  mjl
@@ -860,6 +864,13 @@ ResizeCmd(PLStream *pls, PLWindow *window)
 	return;
     }
 
+/* Return if pointer to window not specified.
+
+    if (window == NULL) {
+	plwarn("ResizeCmd: Illegal call -- window pointer uninitialized");
+	return;
+    }
+
 /* Reset current window bounds */
 
     dev->width = window->width;
@@ -874,6 +885,7 @@ ResizeCmd(PLStream *pls, PLWindow *window)
 /* Need to regenerate pixmap copy of window using new dimensions */
 
     if (dev->write_to_pixmap) {
+	XSync(dev->display, 0);
 	XFreePixmap(dev->display, dev->pixmap);
 	CreatePixmap(dev);
     }
@@ -909,6 +921,7 @@ RedrawCmd(PLStream *pls)
     if (dev->write_to_pixmap)
 	dev->write_to_window = 0;
 
+    XSync(dev->display, 0);
     plD_bop_xw(pls);
     plRemakePlot(pls);
 
@@ -961,11 +974,13 @@ CreatePixmap(XwDev *dev)
 
     oldErrorHandler = XSetErrorHandler(CreatePixmapErrorHandler);
 
-    XSync(dev->display, 0);
     CreatePixmapStatus = Success;
+#ifdef DEBUG
+    fprintf(stderr, "Creating pixmap of width %d, height %d, depth %d\n",
+	    dev->width, dev->height, dev->depth);
+#endif
     dev->pixmap = XCreatePixmap(dev->display, dev->window,
 				dev->width, dev->height, dev->depth);
-    XSync(dev->display, 0);
     if (CreatePixmapStatus != Success) {
 	dev->write_to_pixmap = 0;
 	fprintf(stderr, "\n\
