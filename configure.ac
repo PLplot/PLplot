@@ -116,6 +116,7 @@ with_freetype=yes
 with_pthreads=no
 with_qhull=yes
 with_csa=yes
+with_ltdlsystem=no
 
 enable_drivers=yes
 enable_dyndrivers=yes
@@ -463,7 +464,6 @@ AC_SUBST(PLPLOT_TCL_VERSION)
 
 ### Libtool settings
 
-with_ltldsystem=no
 MY_ARG_WITH(ltdlsystem,
   AC_HELP_STRING([--with-ltdlsystem],
     [Use installed version of libltdl library (if it exists), instead of
@@ -471,13 +471,10 @@ MY_ARG_WITH(ltdlsystem,
 
 if test "$enable_dyndrivers" = "yes"; then
   AC_LIBTOOL_DLOPEN
-  if test "$with_ltdlsystem" = yes ; then
-    AC_CHECK_LIB(ltdl, lt_dlinit, [],
-      [ with_ltdlsystem=no
-        AC_MSG_WARN([libltdl not found in system.  Setting with_ltdlsystem=no.])
-      ])
-  fi
-  if test "$with_ltdlsystem" = no ; then
+  AC_CHECK_LIB(ltdl, lt_dlinit, [libltdl_in_system=yes],
+    [libltdl_in_system=no])
+  if test "$with_ltdlsystem" = no -o "$libltdl_in_system" = no ; then
+    with_ltdlsystem=no
     AC_LIBLTDL_CONVENIENCE
     AC_CONFIG_SUBDIRS(libltdl)
   else
