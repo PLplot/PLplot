@@ -513,6 +513,7 @@ typedef struct {
 #define    plshade	c_plshade
 #define    plshade1	c_plshade1
 #define    plsmaj	c_plsmaj
+#define    plsmem	c_plsmem
 #define    plsmin	c_plsmin
 #define    plsori	c_plsori
 #define    plspage	c_plspage
@@ -1316,6 +1317,11 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
 void
 c_plsmaj(PLFLT def, PLFLT scale);
+
+/* Set the memory area to be plotted (with the 'mem' driver) */
+
+void
+c_plsmem(PLINT maxx, PLINT maxy, void *plotmem);
 
 /* Set up lengths of minor tick marks. */
 

@@ -210,6 +210,9 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_cgm) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_cgm,
 #endif
+#if defined(PLD_mem) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_mem,
+#endif
 #if defined(PLD_null) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_null,
 #endif

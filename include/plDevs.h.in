@@ -46,5 +46,6 @@
 #undef PLD_pstex
 #undef PLD_ntk
 #undef PLD_tkwin
+#undef PLD_mem
 
 #endif	/* __PLDEVS_H__ */

@@ -1573,7 +1573,7 @@ pllib_devinit()
 }
 
 
-char*
+static char*
 plGetDrvDir ()
 {
     char* drvdir;
@@ -1581,9 +1581,15 @@ plGetDrvDir ()
 /* Get drivers directory in PLPLOT_DRV_DIR or DATA_DIR/DRV_DIR, 
  *  on this order
  */
+ 
+    pldebug("plGetDrvDir", "Trying to read env var PLPLOT_DRV_DIR\n");
     drvdir = getenv ("PLPLOT_DRV_DIR");
-    if (drvdir == NULL)
-        drvdir = DATA_DIR "/"DRV_DIR;
+
+    if (drvdir == NULL) {
+        pldebug("plGetDrvDir", 
+	        "Will use drivers dir: " DATA_DIR "/" DRV_DIR "\n");
+        drvdir = DATA_DIR "/" DRV_DIR;
+    }
     
     return drvdir;
 }    
@@ -1632,10 +1638,15 @@ plInitDispatchTable()
       plabort ("plInitDispatchTable: Could not open drivers directory");
 
 /* Loop over each entry in the drivers directory */
+
+    pldebug ("plInitDispatchTable", "Scanning dyndrivers dir\n");
     while ((entry = readdir (dp_drvdir)) != NULL) 
     {
         char* name = entry->d_name;
         int len = strlen (name) - 3;
+
+            pldebug ("plInitDispatchTable", 
+                     "Consider file %s\n", name);
 
 /* Only consider entries that have the ".rc" suffix */
 	if ((len > 0) && (strcmp (name + len, ".rc") == 0)) {
@@ -1648,14 +1659,17 @@ plInitDispatchTable()
             fd = fopen (path, "r");
             if (fd == NULL) {
 	        sprintf (buf,
-                    "plInitDispatchTable: Could not open driver info file %s",
-		    name);
+                  "plInitDispatchTable: Could not open driver info file %s\n",
+                  name);
 	        plabort (buf);
 	    }
 
-/* Each line in the <driver>.rc file corresponds to a specicfic device.
+/* Each line in the <driver>.rc file corresponds to a specific device.
  * Write it to the drivers db file and take care of leading newline 
  * character */
+ 
+            pldebug ("plInitDispatchTable", 
+                     "Opened driver info file %s\n", name);
             while (fgets (buf, 300, fd) != NULL) 
 	    {
                 fprintf (fp_drvdb, "%s", buf);
@@ -2127,6 +2141,22 @@ void
 c_plgdev(char *p_dev)
 {
     strcpy(p_dev, plsc->DevName);
+}
+
+/* Set the memory area to be plotted (with the 'mem' driver) as the 'dev'
+   member of the stream structure.  Also set the number
+   of pixels in the memory passed in in 'plotmem'.
+   Plotmem is a block of memory maxy by maxx by 3 bytes long, say:
+   480 x 640 x 3 (Y, X, RGB)
+
+   This memory will be freed by the user!
+*/
+
+void
+c_plsmem(PLINT maxx, PLINT maxy, void *plotmem)
+{
+    plsc->dev = plotmem;
+    plP_setphy (0, maxx, 0, maxy);
 }
 
 /* Get the current stream pointer */

@@ -132,6 +132,7 @@
 <!ENTITY plshade '<link linkend="plshade"><function>plshade</function></link>'>
 <!ENTITY plshade1 '<link linkend="plshade1"><function>plshade1</function></link>'>
 <!ENTITY plsmaj '<link linkend="plsmaj"><function>plsmaj</function></link>'>
+<!ENTITY plsmem '<link linkend="plsmem"><function>plsmem</function></link>'>
 <!ENTITY plsmin '<link linkend="plsmin"><function>plsmin</function></link>'>
 <!ENTITY plsori '<link linkend="plsori"><function>plsori</function></link>'>
 <!ENTITY plspage '<link linkend="plspage"><function>plspage</function></link>'>

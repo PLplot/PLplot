@@ -32,6 +32,7 @@ EXTRA_LTLIBRARIES = \
 	linuxvga.la \
 	ljii.la \
 	ljiip.la \
+	mem.la \
 	ntk.la \
 	null.la \
 	pbm.la \
@@ -140,6 +141,9 @@ lmflag = -lm
 ljiip_la_SOURCES = ljiip.c
 ljiip_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 endif
+
+mem_la_SOURCES = mem.c
+mem_la_LDFLAGS = $(ldflags) $(libplplot)
 
 ntk_la_SOURCES = ntk.c
 ntk_la_LDFLAGS = $(ldflags) $(libplplot) $(TCLLIBCMD) $(TKLIBCMD)
@@ -278,6 +282,7 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	linuxvga.c \
 	ljii.c \
 	ljiip.c \
+	mem.c \
 	ntk.c \
 	null.c \
 	pbm.c \
