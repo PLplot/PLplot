@@ -1736,7 +1736,6 @@ ResizeEH(PLStream *pls, XEvent *event)
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
     XConfigureEvent *configEvent = (XConfigureEvent *) event;
-    XEvent lastevent;
     PLDisplay pldis;
 
     dbug_enter("ResizeEH");
@@ -1764,18 +1763,8 @@ ResizeEH(PLStream *pls, XEvent *event)
 /* Exposes do not need to be handled since we've redrawn the whole plot */
 
     XFlush(xwd->display);
-    /*
     while (XCheckWindowEvent(xwd->display, dev->window,
 			     ExposureMask | StructureNotifyMask, event));
-    */
-    while (XCheckWindowEvent(xwd->display, dev->window,
-			     StructureNotifyMask, &lastevent));
-
-    while (XCheckWindowEvent(xwd->display, dev->window,
-			     StructureNotifyMask, event));
-
-    /* replay the last event */
-   XPutBackEvent(xwd->display,&lastevent );
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2847,9 +2836,9 @@ DrawImage(PLStream *pls)
  
   CheckForEvents(pls);
   
-  xmin = MAX(dev->xscale * plsc->imclxmin, 1); /* XPutPixel minimum is 1 */
+  xmin = dev->xscale * plsc->imclxmin;
   xmax = dev->xscale * plsc->imclxmax;
-  ymin = MAX(dev->yscale * plsc->imclymin, 1); /* XPutPixel minimum is 1 */
+  ymin = dev->yscale * plsc->imclymin;
   ymax = dev->yscale * plsc->imclymax;
   
   nx = pls->dev_nptsX;
@@ -2862,7 +2851,7 @@ DrawImage(PLStream *pls)
   if (dev->write_to_window)
     ximg =  XGetImage( xwd->display, dev->window, 0, 0, dev->width, dev->height,
 		       AllPlanes, ZPixmap);
-      
+  
   if (xwd->ncol1 == 0)
     AllocCmap1(pls);
   if (xwd->ncol1 < 2)
@@ -2879,6 +2868,20 @@ DrawImage(PLStream *pls)
   case 3:
     r[0]=3; r[1]=0; r[2]=1; r[3]=2;
   }
+
+  /* after rotation and coordinate translation, each fill
+     lozangue will have coordinates, slopes and y intercepts:
+
+           Ppts[3]
+             /\
+    mlr,blt /  \ mtb,brt
+           /    \ 
+   Ppts[0]<      > Ppts[2]
+           \    /
+    mtb,blt \  / mlr,brb
+             \/
+           Ppts[1]
+  */
 
   /* slope of left/right and top/bottom edges */
   mlr = (dev->yscale * (plsc->dev_iy[1] - plsc->dev_iy[0])) /
@@ -2900,15 +2903,14 @@ DrawImage(PLStream *pls)
       }
 
       /* if any corner is inside the draw area */
-      if (Ppts[0].x > xmin || Ppts[2].x < xmax ||
-	  Ppts[1].y > ymin || Ppts[3].y < ymax) {
+      if (Ppts[0].x >= xmin || Ppts[2].x <= xmax ||
+	  Ppts[1].y >= ymin || Ppts[3].y <= ymax) {
 
-	/* try to avoid ragged sides, when clipping a low res. rotated image */
 	Ppts[0].x = MAX(Ppts[0].x, xmin);
 	Ppts[2].x = MIN(Ppts[2].x, xmax);
 	Ppts[1].y = MAX(Ppts[1].y, ymin);
 	Ppts[3].y = MIN(Ppts[3].y, ymax);
-
+	
 	/* the Z array has size (nx-1)*(ny-1) */
 	icol1 = floor( 0.5+plsc->dev_z[ix*(ny-1)+iy] * (xwd->ncol1-1)) ;	  
 	  
@@ -2922,13 +2924,13 @@ DrawImage(PLStream *pls)
 	/* If the fill area is a single dot, accelerate the fill. */	   
 	if (0 /* aliasing? */ && (abs(Ppts[2].x - Ppts[0].x) == 1) &&
 	    (abs(Ppts[3].y - Ppts[1].y) == 1)) {
-	  XPutPixel(ximg, Ppts[0].x, dev->height-Ppts[0].y, curcolor.pixel);
+	  XPutPixel(ximg, Ppts[0].x, dev->height-1 - Ppts[0].y, curcolor.pixel);
 
 	  /* integer rotate, accelerate */
 	} else if (plsc->diorot == floor(plsc->diorot)) {
-	  for( ky = Ppts[1].y; ky <= Ppts[3].y; ky++)
-	    for( kx = Ppts[0].x; kx <= Ppts[2].x; kx++)
-	      XPutPixel(ximg, kx, dev->height-ky, curcolor.pixel);
+	  for( ky = Ppts[1].y; ky < Ppts[3].y; ky++)
+	    for( kx = Ppts[0].x; kx < Ppts[2].x; kx++)
+	      XPutPixel(ximg, kx, dev->height-1 - ky, curcolor.pixel);
 
 	  /* lozangue, scanline fill it */
 	} else {
@@ -2945,7 +2947,7 @@ DrawImage(PLStream *pls)
 	    right = MIN(((ky-brt)/mtb), ((ky-brb)/mlr));
 	    for( kx = Ppts[0].x; kx < Ppts[2].x; kx++) {
 	      if (kx >= rint(left) && kx <= rint(right)) {
-		XPutPixel(ximg, kx, dev->height - ky, curcolor.pixel);
+		XPutPixel(ximg, kx, dev->height-1 - ky, curcolor.pixel);
 	      }
 	    }
 	  }
