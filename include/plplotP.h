@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.32  1995/01/06 07:49:29  mjl
+ * Revision 1.33  1995/01/13 23:24:19  mjl
+ * Now drops down to pre-ANSI-C behavior as regards fpos_t under VMS since
+ * the code in plmeta.c doesn't work under the VMS implementation.
+ *
+ * Revision 1.32  1995/01/06  07:49:29  mjl
  * Moved definition of window coordinate structure into plplot.h since it's
  * now used in the plstream definition.  Also updated prototype for pldtik
  * and added prototype for pldprec.
@@ -112,7 +116,11 @@
 
 /* Hacks to deal with non-ANSI libc */
 
-#ifdef STDC_HEADERS
+#if defined (STDC_HEADERS) && ! defined (VMS)
+#define STDC_FPOS_T
+#endif
+
+#ifdef STDC_FPOS_T
 #define FPOS_T fpos_t
 #define pl_fsetpos(a,b) fsetpos(a, b)
 #define pl_fgetpos(a,b) fgetpos(a, b)
