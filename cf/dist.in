@@ -79,6 +79,7 @@ FONT_OBJ = \
 
 DRIVERS_C = \
 	dg300.c \
+	gd_png.c \
 	hpgl.c \
 	impress.c \
 	linuxvga.c \
@@ -96,6 +97,7 @@ DRIVERS_C = \
 
 DRIVERS_OBJ = \
 	dg300$O \
+	gd_png$O \
 	hpgl$O \
 	impress$O \
 	linuxvga$O \
