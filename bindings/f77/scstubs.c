@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1994/03/23 08:39:10  mjl
+ * Revision 1.19  1994/07/20 06:08:03  mjl
+ * Added Fortran interface routines to handle the new 3d functions plline3(),
+ * plpoin3(), and plpoly3().
+ *
+ * Revision 1.18  1994/03/23  08:39:10  mjl
  * Fixed some stubs to the cmap 1 handlers.
  *
  * Revision 1.17  1993/12/06  07:47:34  mjl
@@ -259,6 +263,12 @@ PLLINE(PLINT *n, PLFLT *x, PLFLT *y)
 }
 
 void
+PLLINE3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z)
+{
+    c_plline3(*n, x, y, z);
+}
+
+void
 PLLSTY(PLINT *lin)
 {
     c_pllsty(*lin);
@@ -280,6 +290,18 @@ void
 PLPOIN(PLINT *n, PLFLT *x, PLFLT *y, PLINT *code)
 {
     c_plpoin(*n, x, y, *code);
+}
+
+void
+PLPOIN3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *code)
+{
+    c_plpoin3(*n, x, y, z, *code);
+}
+
+void
+PLPOLY3(PLINT *n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw)
+{
+    c_plpoly3(*n, x, y, z, draw);
 }
 
 void
