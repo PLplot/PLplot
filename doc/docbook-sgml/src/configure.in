@@ -65,7 +65,7 @@ else
   pldb_cv_$2=no
 fi
 ])
-if test pldb_cv_$2 = no ; then 
+if test $pldb_cv_$2 = no ; then 
   AC_MSG_ERROR([Could not find $1.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:

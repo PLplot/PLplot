@@ -979,7 +979,7 @@ fi
 fi
 
 echo "$ac_t""$pldb_cv_dsssl_dtd" 1>&6
-if test pldb_cv_dsssl_dtd = no ; then 
+if test $pldb_cv_dsssl_dtd = no ; then 
   { echo "configure: error: Could not find DSSSL Style Sheet DTD.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:
@@ -1017,7 +1017,7 @@ fi
 fi
 
 echo "$ac_t""$pldb_cv_html_ss" 1>&6
-if test pldb_cv_html_ss = no ; then 
+if test $pldb_cv_html_ss = no ; then 
   { echo "configure: error: Could not find DocBook HTML Stylesheet.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:
@@ -1055,7 +1055,7 @@ fi
 fi
 
 echo "$ac_t""$pldb_cv_print_ss" 1>&6
-if test pldb_cv_print_ss = no ; then 
+if test $pldb_cv_print_ss = no ; then 
   { echo "configure: error: Could not find DocBook Print Stylesheet.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:
@@ -1093,7 +1093,7 @@ fi
 fi
 
 echo "$ac_t""$pldb_cv_db_dtd" 1>&6
-if test pldb_cv_db_dtd = no ; then 
+if test $pldb_cv_db_dtd = no ; then 
   { echo "configure: error: Could not find DocBook DTD.
     The following SGML public identifier could not be found in any of 
     the default SGML catalogs:
