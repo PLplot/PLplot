@@ -1,5 +1,10 @@
+divert(-1)dnl
+!***********************************************************************
 ! $Id$
 ! $Log$
+! Revision 1.2  2000/12/24 01:39:45  airwin
+! Fix header problem (first two lines were missing)
+!
 ! Revision 1.1  2000/12/23 23:19:24  airwin
 ! Double precision handled by m4. These are the m4 source files for the *.f
 ! files that are compiled for examples.  m4 source is fairly close to
