@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/05/23 22:09:24  mjl
+ * Revision 1.8  1994/06/09 20:30:50  mjl
+ * Changed to storing the Visual instead of VisualInfo pointer.
+ *
+ * Revision 1.7  1994/05/23  22:09:24  mjl
  * Eliminated the "pixels" var as it is no longer being used.
  *
  * Revision 1.6  1994/05/16  21:26:53  mjl
@@ -86,7 +89,7 @@ typedef struct {
     int		screen;			/* X screen */
     Display	*display;		/* X display */
     Window	window;			/* X window id */
-    XVisualInfo *vi;			/* X Visual info */
+    Visual	*visual;		/* X Visual */
     GC		gc;			/* Graphics context */
     Colormap	map;			/* Colormap */
     Pixmap	pixmap;			/* Off-screen pixmap */
