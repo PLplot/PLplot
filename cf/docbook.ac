@@ -36,9 +36,6 @@ if test "$enable_builddoc" = yes -a "$with_prebuiltdoc" = yes ; then
 exclusive and must not be given simultaneously.  Giving up.])
 fi
 
-CHECK_PROG(db2x_texixml, [INFO], [http://docbook2x.sourceforge.net])
-CHECK_PROG(db2x_xsltproc, [INFO], [http://docbook2x.sourceforge.net])
-
 dnl Web site Installation
 
 AC_ARG_WITH(www-user,
@@ -192,6 +189,8 @@ CHECK_GNU_MAKE
 
 dnl Check programs
 
+CHECK_PROG(db2x_texixml, [INFO], [http://docbook2x.sourceforge.net])
+CHECK_PROG(db2x_xsltproc, [INFO], [http://docbook2x.sourceforge.net])
 CHECK_PROG(openjade, [HTML PRINT], http://www.openjade.org)
 CHECK_PROG(jadetex, PRINT, http://jadetex.sourceforge.net/)
 CHECK_PROG(pdfjadetex, PRINT, http://jadetex.sourceforge.net/)
