@@ -32,5 +32,5 @@ install_lib:
 	-cd $(top_srcdir)/scripts; cp pl* $(BIN_DIR)
 	-cd $(top_srcdir)/include; \
 	 cp plplotP.h plplot.h plxwd.h plevent.h plstrm.h pdf.h \
-	    pldebug.h $(INCLUDE_DIR)
-	cp plConfig.h $(INCLUDE_DIR)
+	    pldebug.h drivers.h $(INCLUDE_DIR)
+	cp plConfig.h plDevs.h $(INCLUDE_DIR)
