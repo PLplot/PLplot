@@ -52,7 +52,8 @@
         <listitem>
           <para>
             <function>plsabort</function>: New function.  Similar to
-	    plsexit, should be used to set a handler for the plabort
+	    plsexit, should be used to set a handler for the
+ 	    <function>plabort</function>.
 	    function.
           </para>
         </listitem>
@@ -209,7 +210,7 @@
         </listitem>
         <listitem>
           <para>
-            Checks for C compiler NaN awareness is improved (this is
+            Checks for C compiler NaN awareness are improved (this is
             necessary for compiling the libcsironn/csa libraries).
           </para>
         </listitem>
@@ -234,7 +235,7 @@
         <listitem>
           <para>
             When developing the PLplot library itself, developers do not
-            need to install the whole package in order to text/evaluate the
+            need to install the whole package in order to test/evaluate the
             changes.  This is implemented through the new core function
             <function>plInBuildTree</function>, and the new configuration
             variable <literal>BUILD_DIR</literal>.
@@ -251,14 +252,14 @@
             Memory management fixes: almost all of the memory leaks
             revealed by <ulink
             url="http://valgrind.kde.org">valgrind</ulink> are gone.  There
-            are still some problems under investigation and their fixes
+            are still some problems under investigation and fixes to them
             will be integrated in the next release.
           </para>
         </listitem>
         <listitem>
           <para>
-            The libraries libcsironn and libcsirocsa were updated to
-            versions 1.38 and 0.22, respectively.
+            The third-party libraries libcsironn and libcsirocsa were
+ 	    updated to versions 1.38 and 0.22, respectively.
           </para>
         </listitem>
         <listitem>
@@ -270,7 +271,7 @@
         <listitem>
           <para>
             <function>plOpenFile</function>: sane use of stderr and stdout.
-            This function respects the option -debug now.
+            This function respects the option <literal>-debug</literal> now.
           </para>
         </listitem>
         <listitem>
@@ -289,7 +290,7 @@
         <listitem>
           <para>
             The PLplot Documentation in DocBook format is released now
-            under Free Software terms, with a license similar similar to
+            under Free Software terms, with a license similar to
             the <ulink
             url="http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/ln16.html">FreeBSD
             Documentation License</ulink>.
