@@ -4,9 +4,11 @@ Areas currently under development
 
 o The manual needs to be updated.
 
-o The LJII driver may still have bugs and needs testing.
-
 o Amiga drivers still being revamped.
+
+o Fix the bug that causes no labels in y to appear on a log plot when the min
+and max are both within the same decade.
+
 
 These may make it into 5.0, but it's too early to tell for sure:
 
@@ -39,3 +41,7 @@ line, etc.
 
 o Better use of driver intelligence, esp. for text -- the postscript driver
 should be capable of using postscript fonts instead of the Hershey fonts.
+
+o Explicit support for plotting points, lines in 3d space.
+
+o Vector field plotter.

@@ -275,6 +275,10 @@ Additional changes, listed by file:
  * by plrender.
 
 
+ * ljii.c:
+ * Actually works now.
+
+
  * plbuf.c:
  * Routines for writing to and reading from a plot buffer, as well as
  * recreating an entire plot.  The driver need merely specify

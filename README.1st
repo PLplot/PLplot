@@ -31,9 +31,12 @@ o User-installable keyboard event handler support added, so user codes can
 get and react to user input.  See plrender.c for example usage.
 
 o Plrender now supports page seeks from the xwindow, xterm, and Amiga drivers
-(all except xterm honor backspace as a page-backward key).
+(all except xterm honor backspace as a page-backward key).  Note: as a result
+of this change, old metafiles have all seeking (-b, -e, -p flags) disabled.
+You can render them into new format metafiles to take advantage of the new
+capabilities.
 
-o Font files now system-independent.
+o Font files are now system-independent.
 
 o X-window driver now refreshes and resizes.
 
@@ -41,7 +44,8 @@ o New contour functions (from C) now accept function pointers instead of
 array pointers, allowing the user to determine the memory organization
 of 2-d arrays.
 
-o Bug fixes to various drivers.
+o Bug fixes to various drivers (orientation should always work now, LaserJet
+driver fixed, etc.).
 
 o New driver: null device.
 
@@ -50,3 +54,4 @@ o Now possible to change the string escape character to any of [!#$%&*@^~].
 o Polylines (solid only) now supported by all drivers and line plot commands.
 
 o Support for color postscript added.
+
