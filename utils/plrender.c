@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.25  1993/07/16 22:20:18  mjl
-   Eliminated obsolete flags and processing of metafile tags (still read for
-   backward compatibility).  To be replaced by operations in the driver
-   interface.
+   Revision 1.26  1993/07/31 08:20:53  mjl
+   Removed code that is now handled in the driver interface, also changes
+   to reflect new driver functions.
 
+ * Revision 1.25  1993/07/16  22:20:18  mjl
+ * Eliminated obsolete flags and processing of metafile tags (still read for
+ * backward compatibility).  To be replaced by operations in the driver
+ * interface.
+ *
  * Revision 1.24  1993/07/02  07:19:21  mjl
  * Changed over to new namespace, new options parser.  Some options handlers
  * removed (no longer necessary).
@@ -12,91 +16,6 @@
  * Revision 1.23  1993/04/26  19:58:03  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
- *
- * Revision 1.22  1993/03/28  08:47:36  mjl
- * Changed handling of -mar, -jx, -jy flags to allow zooming.
- *
- * Revision 1.21  1993/03/18  07:05:23  mjl
- * Eliminated SWITCH_TO_TEXT and SWITCH_TO_GRAPH metafile commands from both
- * driver and renderer.  These are really not necessary when a metafile is
- * being used and can be aggravating when using the xterm driver.
- *
- * Revision 1.20  1993/03/16  06:47:43  mjl
- * Made the "sick hack" to enable plplot to work with non-ANSI libc's a bit
- * more robust.
- *
- * Revision 1.19  1993/03/15  21:49:21  mjl
- * Change to allow plrender to abort a plot mid-page in order to respond to
- * a user seek request.  Now it processes <backspace> or <page up> or <delete>
- * (to go backward) and <RET> or <page down> as fast as it can get them.
- *
- * Revision 1.17  1993/03/03  19:43:47  mjl
- * Changed PLSHORT -> short.  Also put in some explicit casts to remove warnings
- * using SUN acc compiler.
- *
- * Revision 1.16  1993/03/03  17:05:27  mjl
- * Changed orient-setting code to switch on the basis of orient%2 and orient%4,
- * so that any value of orient gives valid output.
- *
- * Revision 1.15  1993/02/27  20:38:04  mjl
- * Fixed yet another bug dealing with packed, partially complete pages
- * and seeking.  Who knows, it might actually be right now.
- *
- * Revision 1.14  1993/02/27  04:53:17  mjl
- * Fixed a bug in seeking that occurred only at the end of a file when
- * displaying packed pages.  Also added lots more diagnostic output, enabled
- * when DEBUG is defined.
- *
- * Revision 1.13  1993/02/27  01:42:09  mjl
- * Changed from ftell/fseek to fgetpos/fsetpos, also added debugging output.
- *
- * Revision 1.12  1993/02/26  05:21:35  mjl
- * Changed to a fatal error when unrecognized metafile input is encountered.
- *
- * Revision 1.11  1993/02/26  04:20:14  mjl
- * Made minor change to fix prototype warning.
- *
- * Revision 1.10  1993/02/25  19:53:14  mjl
- * Fixed -v (version) option.
- *
- * Revision 1.9  1993/02/25  18:33:09  mjl
- * Fixed an inconsistency in reading the metafile page headers.
- *
- * Revision 1.8  1993/02/23  05:54:25  mjl
- * A couple of minor documentation and code changes.
- *
- * Revision 1.7  1993/02/23  05:35:47  mjl
- * Converted to new plplot command-line handling functions, resulting in
- * a considerable reduction in the amount of actual code.  Miscellaneous bugs in
- * file seeking fixed.  Extraneous page printed on a -p command eliminated.
- * Many other small improvements.
- *
- * Revision 1.6  1993/01/23  06:16:08  mjl
- * Formatting changes only to pltek.  plrender changes include: support for
- * polylines (even converts connected lines while reading into polylines for
- * better response), new color model support, event handler support.  New
- * events recognized allow seeking to arbitrary locations in the file (absolute
- * or relative), and backward.  Some old capabilities (no longer useful)
- * eliminated.
- *
- * Revision 1.5  1992/11/07  08:08:55  mjl
- * Fixed orientation code, previously it rotated plot in the wrong direction.
- * It now supports 3 different rotations (-ori 1, -ori 2, -ori 3).
- * Also eliminated some redundant code.
- *
- * Revision 1.4  1992/10/29  15:56:16  mjl
- * Gave plrender an ID tag.
- *
- * Revision 1.3  1992/10/12  17:12:58  mjl
- * Rearranged order of header file inclusion.
- * #include "plplotP.h" must come first!!
- *
- * Revision 1.2  1992/09/29  04:46:46  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:35:59  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*
@@ -145,8 +64,7 @@ static void	plr_init	(U_CHAR c);
 static void	plr_line	(U_CHAR c);
 static void	plr_clr		(U_CHAR c);
 static void	plr_page	(U_CHAR c);
-static void	plr_color	(U_CHAR c);
-static void	plr_width	(U_CHAR c);
+static void	plr_state	(U_CHAR c);
 static void	plr_esc		(U_CHAR c);
 static void	plresc_rgb	(void);
 static void	plresc_ancol	(void);
@@ -176,7 +94,7 @@ static int Opt_v	(char *, char *);
 static int Opt_i	(char *, char *);
 static int Opt_p	(char *, char *);
 static int Opt_a	(char *, char *);
-static int Opt_ori	(char *, char *);
+static int Opt_mar	(char *, char *);
 
 /* Global variables */
 
@@ -210,11 +128,6 @@ static U_CHAR	dum_uchar;
 static U_SHORT	dum_ushort;
 static char	dum_char80[80];
 static float	dum_float;
-
-/* Plot parameters */
-
-static int	orient, orientset;
-static PLFLT	mar=0.0, jx=0.5, jy=0.5;
 
 /* Plot dimensions */
 
@@ -301,32 +214,25 @@ static PLOptionTable option_table[] = {
     "Plot given page only" },
 {
     "mar",			/* Margin */
-    NULL,
-    &mar,
-    PL_OPT_FLOAT | PL_OPT_ENABLED | PL_OPT_ARG,
-    "-mar margin",
-    "Total fraction of page to reserve for margins" },
-{
-    "ori",			/* Orientation */
-    Opt_ori,
+    Opt_mar,
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
-    "-ori orient",
-    "Plot orientation (0,2=landscape, 1,3=portrait)" },
+    NULL,
+    NULL },
 {
     "jx",			/* Justification in x */
+    Opt_mar,
     NULL,
-    &jx,
-    PL_OPT_FLOAT | PL_OPT_ENABLED | PL_OPT_ARG,
-    "-jx number",
-    "Justification of plot on page in x (0.0 to 1.0)" },
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    NULL,
+    NULL },
 {
     "jy",			/* Justification in y */
+    Opt_mar,
     NULL,
-    &jy,
-    PL_OPT_FLOAT | PL_OPT_ENABLED | PL_OPT_ARG,
-    "-jy number",
-    "Justification of plot on page in y (0.0 to 1.0)" },
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    NULL,
+    NULL },
 {
     NULL,
     NULL,
@@ -410,6 +316,8 @@ main(int argc, char *argv[])
 static void
 process_next(U_CHAR c)
 {
+    U_CHAR op;
+
     switch ((int) c) {
 
       case INITIALIZE:
@@ -435,17 +343,20 @@ process_next(U_CHAR c)
 	plr_page(c);
 	break;
 
-      case NEW_COLOR0:
-      case NEW_COLOR1:
-	plr_color(c);
+      case CHANGE_STATE:
+	plr_state(getcommand());
 	break;
 
-      case SWITCH_TO_TEXT:
-      case SWITCH_TO_GRAPH:
+      case NEW_COLOR0:
+	plr_state(PLSTATE_COLOR0);
+	break;
+
+      case NEW_COLOR1:
+	plr_state(PLSTATE_COLOR1);
 	break;
 
       case NEW_WIDTH:
-	plr_width(c);
+	plr_state(PLSTATE_WIDTH);
 	break;
 
       case ESCAPE:
@@ -483,8 +394,6 @@ plr_init(U_CHAR c)
     ylen = ymax - ymin;
 
     aspect = (ylen / pxly) / (xlen / pxlx);
-    if (orient%2 == 1)
-	aspect = 1.0 / aspect;
 
 /* Aspect ratio of output device */
 
@@ -502,7 +411,7 @@ plr_init(U_CHAR c)
 
     ratio = aspect / dev_aspect;
 
-/* This is the default case; come back to here if things mess up */
+/* Default relative coordinate space */
 
     vpxlen = 1.0;
     vpylen = 1.0;
@@ -512,13 +421,10 @@ plr_init(U_CHAR c)
     vpymax = vpymin + vpylen;
 
 /*
-* If ratio < 1, you are requesting an aspect ratio (y/x) less than the
-* natural aspect ratio of the output device, and you will need to reduce the
-* length in y correspondingly.  Similarly, for ratio > 1, x must be reduced.
-* 
-* Note that unless the user overrides, the default is to *preserve* the
-* aspect ratio of the original device (plmeta output file).  Thus you
-* automatically get all physical coordinate plots to come out correctly.
+* Construct viewport that preserves the aspect ratio of the original device
+* (plmeta output file).  Thus you automatically get all physical coordinate
+* plots to come out correctly.  Note: this could also be done using the
+* mapping driver interface function.
 */
     if (ratio <= 0)
 	fprintf(stderr, "Error in aspect ratio setting, ratio = %f\n", ratio);
@@ -527,15 +433,10 @@ plr_init(U_CHAR c)
     else
 	vpxlen = 1. / ratio;
 
-    if (mar < 1.0) {
-	vpxlen *= (1.0 - mar);
-	vpylen *= (1.0 - mar);
-    }
-
-    vpxmin = (1. - vpxlen) * jx;
+    vpxmin = (1. - vpxlen) / 2.;
     vpxmax = vpxmin + vpxlen;
 
-    vpymin = (1. - vpylen) * jy;
+    vpymin = (1. - vpylen) / 2.;
     vpymax = vpymin + vpylen;
 
 /* Seek to first page */
@@ -598,8 +499,7 @@ plr_line(U_CHAR c)
 /*----------------------------------------------------------------------*\
 * get_ncoords()
 *
-* Read n coordinate vectors and properly orient.
-* Each time orient is incremented, the plot is rotated 90 deg clockwise.
+* Read n coordinate vectors.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -611,34 +511,9 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
     plm_rd(pdf_rd_2nbytes(MetaFile, (U_SHORT *) xs, n));
     plm_rd(pdf_rd_2nbytes(MetaFile, (U_SHORT *) ys, n));
 
-    switch (orient%4) {
-
-      case 1:
-	for (i = 0; i < n; i++) {
-	    x[i] = xmax - (ymax - ys[i]) * (xlen / ylen);
-	    y[i] = ymax - (xs[i] - xmin) * (ylen / xlen);
-	}
-	return;
-
-      case 2:
-	for (i = 0; i < n; i++) {
-	    x[i] = xmin + (xmax - xs[i]);
-	    y[i] = ymin + (ymax - ys[i]);
-	}
-	return;
-
-      case 3:
-	for (i = 0; i < n; i++) {
-	    x[i] = xmin + (ymax - ys[i]) * (xlen / ylen);
-	    y[i] = ymin + (xs[i] - xmin) * (ylen / xlen);
-	}
-	return;
-
-      default:
-	for (i = 0; i < n; i++) {
-	    x[i] = xs[i];
-	    y[i] = ys[i];
-	}
+    for (i = 0; i < n; i++) {
+	x[i] = xs[i];
+	y[i] = ys[i];
     }
 }
 
@@ -702,54 +577,52 @@ plr_page(U_CHAR c)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_color()
+* plr_state()
 *
-* Change color.
+* Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
-static void
-plr_color(U_CHAR c)
+static void 
+plr_state(U_CHAR op)
 {
-    U_SHORT icol;
-    U_CHAR icol0, r, g, b;
+    switch (op) {
 
-    if (c == NEW_COLOR1) {
-	plwarn("No support for cmap 1 yet");
-	return;
+    case PLSTATE_WIDTH:{
+	U_SHORT width;
+
+	plm_rd(pdf_rd_2bytes(MetaFile, &width));
+
+	plwid(width);
+	break;
     }
-    if (strcmp(mf_version, "1993a") >= 0) {
-	plm_rd(pdf_rd_1byte(MetaFile, &icol0));
 
-	if (icol0 == PL_RGB_COLOR) {
-	    plm_rd(pdf_rd_1byte(MetaFile, &r));
-	    plm_rd(pdf_rd_1byte(MetaFile, &g));
-	    plm_rd(pdf_rd_1byte(MetaFile, &b));
-	    plrgb1(r, g, b);
+    case PLSTATE_COLOR0:{
+	U_SHORT icol;
+	U_CHAR icol0, r, g, b;
+
+	if (strcmp(mf_version, "1993a") >= 0) {
+	    plm_rd(pdf_rd_1byte(MetaFile, &icol0));
+
+	    if (icol0 == PL_RGB_COLOR) {
+		plm_rd(pdf_rd_1byte(MetaFile, &r));
+		plm_rd(pdf_rd_1byte(MetaFile, &g));
+		plm_rd(pdf_rd_1byte(MetaFile, &b));
+		plrgb1(r, g, b);
+	    }
+	    else {
+		plcol(icol0);
+	    }
 	}
 	else {
-	    plcol(icol0);
+	    plm_rd(pdf_rd_2bytes(MetaFile, &icol));
+	    plcol(icol);
 	}
+	break;
     }
-    else {
-	plm_rd(pdf_rd_2bytes(MetaFile, &icol));
-	plcol(icol);
+
+    case PLSTATE_COLOR1:
+	break;
     }
-}
-
-/*----------------------------------------------------------------------*\
-* plr_width()
-*
-* Change pen width.
-\*----------------------------------------------------------------------*/
-
-static void
-plr_width(U_CHAR c)
-{
-    U_SHORT width;
-
-    plm_rd(pdf_rd_2bytes(MetaFile, &width));
-
-    plwid(width);
 }
 
 /*----------------------------------------------------------------------*\
@@ -766,15 +639,15 @@ plr_esc(U_CHAR c)
     plm_rd(pdf_rd_1byte(MetaFile, &op));
     switch (op) {
 
-      case PL_SET_RGB:
+      case PLESC_SET_RGB:	/* Now obsolete */
 	plresc_rgb();
 	return;
 
-      case PL_ALLOC_NCOL:
+      case PLESC_ALLOC_NCOL:	/* Now obsolete */
 	plresc_ancol();
 	return;
 
-      case PL_SET_LPB:
+      case PLESC_SET_LPB:	/* Now obsolete */
 	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
@@ -978,9 +851,9 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 		else if (direction_flag < 0)
 		    target_page = curpage - input_num;
 #ifdef DEBUG
-		plP_text();
+		pltext();
 		printf("seeking to page %d\n", target_page);
-		plP_gra();
+		plgra();
 #endif
 		SeekToPage(target_page);
 	    }
@@ -1054,9 +927,9 @@ SeekToPage(long target_page)
 
     if (curpage_loc != 0) {
 #ifdef DEBUG
-	plP_text();
+	pltext();
 	printf("Seeking to: %d\n", curpage_loc);
-	plP_gra();
+	plgra();
 #endif
 	if (pl_fsetpos(MetaFile, &curpage_loc))
 	    plexit("plrender: fsetpos call failed");
@@ -1087,9 +960,9 @@ SeekToPage(long target_page)
 	    }
 
 #ifdef DEBUG
-	    plP_text();
+	    pltext();
 	    printf("Seeking to: %d\n", nextpage_loc);
-	    plP_gra();
+	    plgra();
 #endif
 	    if (pl_fsetpos(MetaFile, &nextpage_loc))
 		plexit("plrender: fsetpos call failed");
@@ -1112,9 +985,9 @@ SeekToPage(long target_page)
 	    }
 
 #ifdef DEBUG
-	    plP_text();
+	    pltext();
 	    printf("Seeking to: %d\n", prevpage_loc);
-	    plP_gra();
+	    plgra();
 #endif
 	    if (pl_fsetpos(MetaFile, &prevpage_loc))
 		plexit("plrender: fsetpos call failed");
@@ -1128,10 +1001,10 @@ SeekToPage(long target_page)
 	}
     }
 #ifdef DEBUG
-    plP_text();
+    pltext();
     printf("page, subpage after seek: %d, %d\n", curpage, cursub);
     printf("nsubx, nsuby: %d, %d\n", nsubx, nsuby);
-    plP_gra();
+    plgra();
 #endif
 
     end_of_page = 1;
@@ -1390,14 +1263,12 @@ ReadFileHeader(void)
 	    continue;
 	}
 
+/* Obsolete tags */
+
 	if (!strcmp(tag, "orient")) {
 	    plm_rd(pdf_rd_1byte(MetaFile, &dum_uchar));
-	    if (!orientset)
-		orient = dum_uchar;
 	    continue;
 	}
-
-/* Obsolete tags */
 
 	if (!strcmp(tag, "aspect")) {
 	    plm_rd(pdf_rd_ieeef(MetaFile, &dum_float));
@@ -1562,20 +1433,17 @@ Opt_p(char *opt, char *optarg)
 }
 
 /*----------------------------------------------------------------------*\
-* Opt_ori()
+* Opt_mar()
 *
-* Performs appropriate action for option "ori".
+* Obsolete
 \*----------------------------------------------------------------------*/
 
 static int
-Opt_ori(char *opt, char *optarg)
+Opt_mar(char *opt, char *optarg)
 {
+    fprintf(stderr,
+    "-mar, -jx, and -jy options are obsolete -- use -wdev instead\n");
 
-/* Orientation */
-
-    orient = atoi(optarg);
-    orientset = 1;
-
-    return(0);
+    return 1;
 }
 
