@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.94  2000/11/29 00:06:13  airwin
+ * c_plshade defined region functionality and working example.
+ *
  * Revision 1.93  2000/07/19 21:12:26  furnish
  * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
  * surface plotter, contour labelling, and demo updates to show off these
@@ -1256,7 +1259,7 @@ c_plsfnam(const char *fnam);
 /* Shade region. */
 
 void 
-c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
+c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char *defined,
 	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	  PLFLT shade_min, PLFLT shade_max,
 	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,

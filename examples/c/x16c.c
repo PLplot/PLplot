@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.9  2000/11/29 00:06:11  airwin
+ * c_plshade defined region functionality and working example.
+ *
  * Revision 1.8  1995/06/01 21:40:51  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.  Fixed bogus
@@ -124,6 +127,7 @@ main(int argc, char *argv[])
     PLFLT x, y, argx, argy, distort;
 
     PLFLT **z, **w, zmin, zmax;
+    char zdefined[nx][ny];
     PLFLT *clevel, *xg1, *yg1;
     PLcGrid  cgrid1;
     PLcGrid2 cgrid2;
@@ -203,6 +207,12 @@ main(int argc, char *argv[])
 
 	    cgrid2.xg[i][j] = x + distort * cos(argx) * cos(argy);
 	    cgrid2.yg[i][j] = y - distort * cos(argx) * cos(argy);
+	   /* out of laziness reuse this scratch variable*/
+	   argx = sqrt(cgrid2.xg[i][j]*cgrid2.xg[i][j] + cgrid2.yg[i][j]*cgrid2.yg[i][j]);
+	   if(argx < 0.4 || argx > 0.6)
+	     zdefined[i][j] = 1;
+	   else
+	     zdefined[i][j] = 0;
 	}
     }
 
@@ -288,6 +298,31 @@ main(int argc, char *argv[])
     plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);
 
     pllab("distance", "altitude", "Bogon density, with streamlines");
+
+/* Plot using 2d coordinate transform and exclusion*/
+
+    pladv(0);
+    plvpor(0.1, 0.9, 0.1, 0.9);
+    plwind(-1.0, 1.0, -1.0, 1.0);
+
+    for (i = 0; i < ns; i++) {
+	shade_min = zmin + (zmax - zmin) * i / (float) ns;
+	shade_max = zmin + (zmax - zmin) * (i +1) / (float) ns;
+	sh_color = i / (float) (ns-1);
+	sh_width = 2;
+	plpsty(0);
+
+	plshade(z, nx, ny, &zdefined[0][0], -1., 1., -1., 1., 
+		shade_min, shade_max, 
+		sh_cmap, sh_color, sh_width,
+		min_color, min_width, max_color, max_width,
+		plfill, 0, pltr2, (void *) &cgrid2);
+    }
+
+    plcol(1);
+    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+
+    pllab("distance", "altitude", "Bogon density with exclusion");
 
 /* Clean up */
 

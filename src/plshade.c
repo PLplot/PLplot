@@ -208,16 +208,15 @@ plshade_int(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
  * via a (PLFLT **), and is column-dominant (normal C ordering).
 \*----------------------------------------------------------------------*/
 
-void 
-c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
-	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-	  PLFLT shade_min, PLFLT shade_max,
-	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-	  PLINT min_color, PLINT min_width,
-	  PLINT max_color, PLINT max_width,
-	  void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
-	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-	  PLPointer pltr_data)
+void c_plshade( PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+                 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+                 PLFLT shade_min, PLFLT shade_max,
+                 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
+                 PLINT min_color, PLINT min_width,
+                 PLINT max_color, PLINT max_width,
+                 void (*fill) (PLINT, PLFLT *, PLFLT *), PLINT rectangular,
+                 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+                 PLPointer pltr_data )
 {
     PLfGrid2 grid;
 
@@ -225,13 +224,14 @@ c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
     grid.nx = nx;
     grid.ny = ny;
 
-    plfshade(plf2eval2, (PLPointer) &grid,
-	     NULL, NULL,
+    plshade_int( plf2eval2, (PLPointer) &grid,
+                 NULL, NULL,
 /*	     plc2eval, (PLPointer) &cgrid,*/
-	     nx, ny, xmin, xmax, ymin, ymax, shade_min, shade_max,
-	     sh_cmap, sh_color, sh_width,
-	     min_color, min_width, max_color, max_width,
-	     fill, rectangular, pltr, pltr_data);
+                 defined, MISSING_MIN_DEF, MISSING_MAX_DEF, nx, ny, xmin, 
+                 xmax, ymin, ymax, shade_min, shade_max,
+                 sh_cmap, sh_color, sh_width,
+                 min_color, min_width, max_color, max_width,
+                 fill, rectangular, pltr, pltr_data );
 }
 
 /*----------------------------------------------------------------------*\
