@@ -17,16 +17,19 @@ proc x09 {{w loopback}} {
     matrix zz f $xpts $ypts
     matrix ww f $xpts $ypts
 
-# Calculate the data matricies.
+# Calculate the data matrices.
 
     for {set i 0} {$i < $xpts} {incr i} {
-	set xx [expr ($i - ($xpts / 2.)) / ($xpts / 2.) ]
+	set xx [expr ($i - ($xpts / 2)) / double($xpts / 2) ]
 	for {set j 0} {$j < $ypts} {incr j} {
-	    set yy [expr ($j - ($ypts / 2.)) / ($ypts / 2.) - 1.0 ]
+	    set yy [expr ($j - ($ypts / 2)) / double($ypts / 2) - 1.0 ]
 	    zz $i $j = [expr $xx * $xx - $yy * $yy ]
 	    ww $i $j = [expr 2. * $xx * $yy ]
 	}
     }
+
+    matrix xg0 f $xpts
+    matrix yg0 f $ypts
 
     matrix xg1 f $xpts
     matrix yg1 f $ypts
@@ -41,11 +44,13 @@ proc x09 {{w loopback}} {
 
     for {set i 0} {$i < $xpts} {incr i} {
 	set xx [expr -1. + $i * ( 2. / ($xpts-1.) )]
+	xg0 $i = [expr $xx]
 	xg1 $i = [expr $xx + $distort * cos( .5 * $pi * $xx ) ]
     }
 
     for {set j 0} {$j < $ypts} {incr j} {
 	set yy [expr -1. + $j * ( 2. / ($ypts-1.) )]
+	yg0 $j = [expr $yy]
 	yg1 $j = [expr $yy - $distort * cos( .5 * $pi * $yy ) ]
     }
 
@@ -64,52 +69,91 @@ proc x09 {{w loopback}} {
 	}
     }
 
-# No way to make the first plot in x09c.c, b/c can't do the mypltr
-# thing from Tcl.  So here we just do a pltr0 thing, which will be
-# similar except for different bounds in world coordinates.
+# Plot using scaled identity transformation used to create
+# xg0 and yg0.  The implementation is different, but this gives
+# the same results as the mypltr transformation for the first
+# plots in x09c.
 
-    $w cmd plcol0 1
-    $w cmd plenv 0 [expr $xpts-1] 0 [expr $ypts-1] 0 0
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
+    $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
     $w cmd plcol0 2
-    $w cmd plcont zz clevel
-
+    $w cmd plcont zz clevel pltr1 xg0 yg0
     $w cmd plstyl 1 mark space
     $w cmd plcol0 3
-    $w cmd plcont ww clevel
+    $w cmd plcont ww clevel pltr1 xg0 yg0
+    $w cmd plstyl 0 mark space
+    $w cmd plcol0 1
+    $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
+    $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
+    $w cmd plcol0 2
+    $w cmd plcont zz clevel pltr1 xg0 yg0
+    $w cmd plstyl 1 mark space
+    $w cmd plcol0 3
+    $w cmd plcont ww clevel pltr1 xg0 yg0
     $w cmd plstyl 0 mark space
     $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
 # Plot using 1d coordinate transform
 
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
     $w cmd plcol0 2
     $w cmd plcont zz clevel pltr1 xg1 yg1
-
     $w cmd plstyl 1 mark space
     $w cmd plcol0 3
     $w cmd plcont ww clevel pltr1 xg1 yg1
+    $w cmd plstyl 0 mark space
+    $w cmd plcol0 1
+    $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
+    $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
+    $w cmd plcol0 2
+    $w cmd plcont zz clevel pltr1 xg1 yg1
+    $w cmd plstyl 1 mark space
+    $w cmd plcol0 3
+    $w cmd plcont ww clevel pltr1 xg1 yg1
     $w cmd plstyl 0 mark space
     $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
 # Plot using 2d coordinate transform
 
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
     $w cmd plcol0 2
     $w cmd plcont zz clevel pltr2 xg2 yg2
-
     $w cmd plstyl 1 mark space
     $w cmd plcol0 3
     $w cmd plcont ww clevel pltr2 xg2 yg2
-
     $w cmd plstyl 0 mark space
     $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
+    $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
+    $w cmd plcol0 2
+    $w cmd plcont zz clevel pltr2 xg2 yg2
+    $w cmd plstyl 1 mark space
+    $w cmd plcol0 3
+    $w cmd plcont ww clevel pltr2 xg2 yg2
+    $w cmd plstyl 0 mark space
+    $w cmd plcol0 1
+    $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
+
+    #polar contour example.
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
     x09_polar $w
+
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 1
+    x09_polar $w
+
+# Restore defaults
+    $w cmd plcol0 1
+    $w cmd pl_setcontlabelparam 0.006 0.3 0.1 0
 }
 
 # Demonstrate plotting of wrapped data.  What is significant to

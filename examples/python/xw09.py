@@ -5,6 +5,9 @@ XPTS = 35
 YPTS = 46
 XSPA = 2./(XPTS-1)
 YSPA = 2./(YPTS-1)
+PERIMETERPTS = 100
+RPTS = 40
+THETAPTS = 40
 
 tr = array((XSPA, 0.0, -1.0, 0.0, YSPA, -1.0))
 
@@ -13,6 +16,33 @@ def mypltr(x, y):
     result0 = tr[0] * x + tr[1] * y + tr[2]
     result1 = tr[3] * x + tr[4] * y + tr[5]
     return array((result0, result1))
+
+def polar():
+    #polar contour plot example.
+    plenv(-1., 1., -1., 1., 0, -2,)
+    plcol0(1)
+
+    # Perimeter
+    t = (2.*pi/(PERIMETERPTS-1))*arange(PERIMETERPTS)
+    px = cos(t)
+    py = sin(t)
+    plline(px, py)
+    
+    # create data to be contoured.
+    r = arange(RPTS)/float(RPTS-1)
+    r.shape = (-1,1)
+    theta = (2.*pi/float(THETAPTS-1))*arange(RPTS)
+    xg = r*cos(theta)
+    yg = r*sin(theta)
+    zg = r*ones(THETAPTS)
+
+    lev = 0.05 + 0.10*arange(10)
+    
+    plcol0(2)
+    plcont( zg, lev, "pltr2", xg, yg, 2 )
+    #                                 ^-- :-).  Means: "2nd coord is wrapped."
+    plcol0(1)
+    pllab("", "", "Polar Contour Plot")
 
 def main():
 
@@ -121,6 +151,11 @@ def main():
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
+#   polar contours.
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+    polar()
+    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
+    polar()
 # Restore defaults
     plcol0(1)
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
