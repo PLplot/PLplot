@@ -1,12 +1,18 @@
 2002-12-02  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
-	* drivers/Makefile.am: instead of using the concatanation of all
-	  compiler flags for all dynamic drivers, apply only those compiler
-	  flags that are appropriate to each dynamic driver.  This makes a huge
-	  reduction in the command line when gnome driver flags are
-	  involved, and probably saves significant computer time as well
-	  when you avoid searching all those gnome header directories for
-	  each dynamic driver.
+	* drivers/Makefile.am for AT branch: instead of using the
+	  concatanation of all compiler flags for all dynamic drivers, apply
+	  only those compiler flags that are appropriate to each dynamic
+	  driver.  This makes a huge reduction in the command line when
+	  gnome driver flags are involved, and probably saves significant
+	  computer time as well when you avoid searching all those gnome
+	  header directories for each dynamic driver.
+	  
+	* test/Makefile.am, etc for AT branch.  Bring test directory under
+	  autotools control. Result is that plplot-test.sh runs in the
+	  installed examples directory and gives identical results with the
+	  MAIN branch (except in a few cases where there is version skew
+	  between the examples since AT was branched from MAIN).
 
 2002-12-01  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 

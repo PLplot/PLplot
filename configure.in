@@ -469,6 +469,16 @@ AC_INCLUDE(sysloc.in)
 #disable LIBS so we don't have all libraries mentioned
 LIBS=""
 
+# Optional packages
+
+# Need to AC_SUBST some of these for plplot-test.sh script.
+AC_SUBST(enable_cxx)
+AC_SUBST(enable_f77)
+AC_SUBST(enable_python)
+AC_SUBST(enable_java)
+AC_SUBST(enable_tcl)
+AC_SUBST(enable_octave)
+
 ### automake symbols for system-dependent results
 
 if test "$enable_cgm" = yes; then
@@ -845,6 +855,8 @@ AC_OUTPUT([
 	examples/tcl/Makefile
 	examples/tk/Makefile
 	examples/tk/Makefile.examples
+	test/Makefile
+	test/plplot-test.sh
 	utils/Makefile
 	])
 
