@@ -22,7 +22,7 @@
 
 lib_LTLIBRARIES = libcsirocsa.la
 libcsirocsa_la_SOURCES = csa.c
-libcsirocsa_la_LDFLAGS = -version 0:0:0 -lm
+libcsirocsa_la_LDFLAGS = -version 0:0:0 $(RPATH) -no-undefined -lm
 AM_CPPFLAGS = -I.
 
 docdir = $(DOCDIR)
