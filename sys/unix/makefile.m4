@@ -80,11 +80,13 @@ define(if_profile, {ifdef({PROFILE},   {$1},{$2})})dnl
 #    Editors known to work correctly include vi and GNU emacs (18.58 or
 #    later). 
 #
-# 2. Some versions of m4 (like the one distributed with the NeXT) don't
-#    recognize the -D option.  Either get a better version of m4 or use the
-#    following trick
+# 2. Some versions of m4 (like the one distributed with the NeXT, or the
+#    default SunOS version) don't recognize the -D option.  Either get a
+#    better version of m4 or use the following trick
+#
 #      echo 'define(NEXT)' | cat - makefile.m4 | m4 > makefile
-#    to generate the makefile.
+#
+#    to generate the makefile.  On SunOS, use /usr/5bin/m4.
 #
 # 3. Some versions of m4 (e.g. on the Amiga) require both input and output
 #    redirection:
@@ -787,15 +789,15 @@ $(PLLIB_MAIN):	GST $(OBJ) $(DRIVERS_OBJ) $(AMIGA_OBJ)
 
 fonts:	sfont xfont
 
-sfont:	$(PLFNT_DIR)plstnd5.fnt
-xfont:	$(PLFNT_DIR)plxtnd5.fnt
+sfont:	$(PLFNT_PATH)plstnd5.fnt
+xfont:	$(PLFNT_PATH)plxtnd5.fnt
 
-$(PLFNT_DIR)plstnd.fnt: stndfont.o pdfutils.o $(FONT_OBJ)
+$(PLFNT_PATH)plstnd.fnt: stndfont.o pdfutils.o $(FONT_OBJ)
 	$(LDC) -o stndfont stndfont.o pdfutils.o $(FONT_OBJ) $(LDCFLAGS)
 	-./stndfont
 	mv *.fnt $(PLFNT_DIR)
 
-$(PLFNT_DIR)plxtnd.fnt: xtndfont.o pdfutils.o $(FONT_OBJ)
+$(PLFNT_PATH)plxtnd.fnt: xtndfont.o pdfutils.o $(FONT_OBJ)
 	$(LDC) -o xtndfont xtndfont.o pdfutils.o $(FONT_OBJ) $(LDCFLAGS)
 	-./xtndfont
 	mv *.fnt $(PLFNT_DIR)
