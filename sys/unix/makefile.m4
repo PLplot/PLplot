@@ -171,6 +171,9 @@ if_unix({
 # See right before rule declaration for plot library specifications.
 
 INSTALL_DIR	= /usr/local/plplot
+INCLUDE_DIR	= $(INSTALL_DIR)/{include}
+TCL_DIR		= $(INSTALL_DIR)/tcl
+
 PLLIB_DIR	= ../lib
 PLFNT_DIR	= ../lib
 PLLIB_PATH	= $(PLLIB_DIR)/
@@ -1322,18 +1325,25 @@ realclean:
 # /usr/local/plplot/tcl.
 
 install:
+	-if [ ! -d $(INSTALL_DIR) ] ; then mkdir -p $(INSTALL_DIR); fi
+	-if [ ! -d $(INCLUDE_DIR) ] ; then mkdir -p $(INCLUDE_DIR); fi
 	-cp ../lib/libplplot* ../lib/*.fnt $(INSTALL_DIR)
-if_ranlib({	ranlib $(INSTALL_DIR)/*.a
+if_ranlib(dnl
+{	ranlib $(INSTALL_DIR)/*.a
 })	-cd ..; cp README* Changes.log COPYRIGHTS ToDo $(INSTALL_DIR)
 	-cd ../scripts; cp pl* $(INSTALL_DIR)
 	-cd ../{include}; \
-		cp plplotP.h plplot.h plplotio.h plevent.h plstream.h pdf.h \
-		$(INSTALL_DIR)/{include}
-if_shr({	$(LDC) plrender.o $(LIB_INSTALL) -o plrender $(LDCFLAGS)
-if_tk({		$(LDC) $(SERVER_OBJ) $(LIB_INSTALL) -o plserver $(LDCFLAGS)
+	cp plplotP.h plplot.h plplotio.h plevent.h plstream.h pdf.h \
+		$(INCLUDE_DIR)
+if_shr(dnl
+{	$(LDC) plrender.o $(LIB_INSTALL) -o plrender $(LDCFLAGS)
+if_tk(dnl
+{	-if [ ! -d $(TCL_DIR) ] ; then mkdir -p $(TCL_DIR); fi
+	$(LDC) $(SERVER_OBJ) $(LIB_INSTALL) -o plserver $(LDCFLAGS)
 })})	-strip plrender
 	-cp plrender $(INSTALL_DIR)
-if_tk({	-strip plserver
+if_tk(dnl
+{	-strip plserver
 	-cp plserver $(INSTALL_DIR)
-	-cp ../drivers/tk/*.tcl ../drivers/tk/tclIndex $(INSTALL_DIR)/tcl
+	-cp ../drivers/tk/*.tcl ../drivers/tk/tclIndex $(TCL_DIR)
 })
