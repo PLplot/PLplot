@@ -248,18 +248,15 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
 }
 
 /*--------------------------------------------------------------------------*\
- * void plotsurf3d(x, y, z, nx, ny, opt, clevel, nlevel)
+ * void plsurf3d(x, y, z, nx, ny, opt, clevel, nlevel)
  *
  * Plots the 3-d surface representation of the function z[x][y].
  * The x values are stored as x[0..nx-1], the y values as y[0..ny-1],
  *  and the z values are in the 2-d array z[][].
  *
  *
- * DRAW_LINEX   draw lines parallel to the X axis
- * DRAW_LINEY   draw lines parallel to the Y axis
- * DRAW_LINEXY  draw lines parallel to both the X and Y axis
  * BASE_CONT    draw contour plot at bottom xy plane
- * TOP_CONT     draw contour plot at top xy plane
+ * TOP_CONT     draw contour plot at top xy plane (not implemented)
  * SURF_CONT    draw contour at surface
  * FACETED      each square that makes up the surface is faceted
  * DRAW_SIDES   draw sides
