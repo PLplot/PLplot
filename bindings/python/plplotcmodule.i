@@ -1144,6 +1144,10 @@ void
 plot3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
 
+DOC(plotfc3d, "Plot a 3-d false color (current colormap 1) representation of the function z[x][y].")
+void
+plotfc3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
+	 PLINT nx, PLINT ny, PLINT side);
 
 DOC(plotsh3d, "Plot a 3-d shaded representation of the function z[x][y].")
 void
