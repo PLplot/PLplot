@@ -28,7 +28,11 @@
 (put 'descr 'latexinfo-format 'plplot-format-descr)
 (put 'argu 'latexinfo-format 'plplot-format-argu)
 (put 'rou 'latexinfo-format 'plplot-format-rou)
-(put 'addcontentsline 'latexinfo-format 'plplot-format-addcontentsline)
+
+;; These are null.
+
+(put 'addcontentsline 'latexinfo-format 'plplot-format-null)
+(put 'label 'latexinfo-format 'plplot-format-null)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; latexinfo-message
@@ -260,15 +264,13 @@
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; plplot-format-addcontentsline
+;; plplot-format-null
 ;;
-;; Handle the \addcontentsline{arg1}{arg2}{arg3} macro.
+;; Handle a variety of constructs that do nothing on the info side.
 ;; Just a null function to satisfy the latex side.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun plplot-format-addcontentsline ()
+(defun plplot-format-null ()
   (let ((args (latexinfo-format-parse-multiargs)))
     (latexinfo-discard-command)
-    (goto-char latexinfo-command-start)
     ))
-
