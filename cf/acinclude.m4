@@ -365,3 +365,11 @@ AC_DEFUN([PL_OCTAVE_CONFIG_INFO], [
 $1=`$OCTAVE -q -f 2>&1 <<EOF
         printf(octave_config_info("$2"));
 EOF`])
+dnl ------------------------------------------------------------------------
+dnl PL_CONFIG_FILE_EXE(file)
+dnl
+dnl Add file to CONFIG_FILES list and make it executable
+dnl
+AC_DEFUN([PL_CONFIG_FILE_EXE],[
+  AC_CONFIG_FILES([$1], [chmod +x $1])
+])
