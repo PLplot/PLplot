@@ -70,19 +70,21 @@ MAINTAINERCLEANFILES = \
 
 if enable_docbook
 
+# These required so that "wildcard" lists made using $(shell ls ...) will
+# automatically work.
+
+noinst_DATA = $(HTML_MANIFEST) $(MAN_MANIFEST) $(INFO_MANIFEST)
+
 htmldir = $(prefix)/share/doc/$(PACKAGE)/html
 html_DATA = $(shell ls *.html)
-nodist_html_DATA = $(HTML_MANIFEST)
 
 printdir = $(prefix)/share/doc/$(PACKAGE)
 print_DATA = $(BASE).dvi $(BASE).ps.gz $(BASE).pdf
 
 man3_MANS = $(shell ls *.$(MANVOL))
-nodist_man3_MANS = $(MAN_MANIFEST)
 
 geninfodir = $(infodir)
 geninfo_DATA = $(shell ls *.info*)
-nodist_geninfo_DATA = $(INFO_MANIFEST)
 
 MAX_TEX_RECURSION = 10
 
@@ -117,7 +119,8 @@ $(BASE).pdf: $(BASE).jadetex jadetex.cfg
 	fi
 
 
-$(BASE).jadetex: $(SOURCE_FILES) $(MASTER_XML) $(STYLESHEET_PRINT) inline-print.ent
+$(BASE).jadetex: $(SOURCE_FILES) $(MASTER_XML) $(STYLESHEET_PRINT) \
+		 inline-print.ent
 	ln -fs inline-print.ent inline.ent
 	$(OPENJADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex \
 	  -o $@ $(XML_DECL) $(MASTER_XML)
@@ -136,7 +139,8 @@ $(INFO_MANIFEST) plplotdoc.info: plplotdoc.texi
 plplotdoc.texi: plplotdoc.txml
 	$(PERL) $(DOCBOOK2X_INC) $(TEXI_XML) $<
 
-plplotdoc.txml: plplotdoc.xml-info $(SOURCE_FILES) $(MASTER_XML) inline-info.ent
+plplotdoc.txml: plplotdoc.xml-info $(SOURCE_FILES) $(MASTER_XML) \
+		inline-info.ent
 	if $(PERL) $(DOCBOOK2X_INC) $(DOCBOOK2TEXIXML) $< > $@-tmp ; then \
 	  mv $@-tmp $@ ; \
 	else \

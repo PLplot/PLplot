@@ -59,13 +59,13 @@ dist-stamp:
 # prerequisite list consistent with this requirement.
 
 $(INDEX_HTML): bin/size-href.pl $(INDEX_HTML).in \
-	src/$(BASE).ps.gz src/$(BASE).pdf src/$(BASE).dvi \
-	$(INFO_TARBALL) $(MAN_TARBALL) $(HTML_TARBALL)
+	       src/$(BASE).ps.gz src/$(BASE).pdf src/$(BASE).dvi \
+	       $(INFO_TARBALL) $(MAN_TARBALL) $(HTML_TARBALL)
 	$(PERL) bin/size-href.pl < $(INDEX_HTML).in > $@
 
 $(TARBALL): $(INDEX_HTML) \
-	src/$(BASE).ps.gz src/$(BASE).pdf src/$(BASE).dvi \
-	$(INFO_TARBALL) $(MAN_TARBALL) $(HTML_TARBALL)
+	    src/$(BASE).ps.gz src/$(BASE).pdf src/$(BASE).dvi \
+	    $(INFO_TARBALL) $(MAN_TARBALL) $(HTML_TARBALL)
 	tar cfz $(TARBALL) $(HTML_TARBALL) \
                 $(INFO_TARBALL) $(MAN_TARBALL) -C www index.html \
                 -C ../src $(BASE).ps.gz $(BASE).pdf $(BASE).dvi
@@ -73,8 +73,7 @@ $(TARBALL): $(INDEX_HTML) \
 www-uninstall:
 	$(RSH_COMMAND) rm -rf $(WWW_DIR)
 
-www-install: $(TARBALL)
-	$(RSH_COMMAND) rm -rf $(WWW_DIR)
+www-install: $(TARBALL) www-uninstall
 	$(RSH_COMMAND) mkdir -p $(WWW_DIR)
 	$(RCP) $(TARBALL) $(RCP_PREFIX)$(WWW_DIR)
 	$(RSH_COMMAND) tar xfz $(WWW_DIR)/$(TARBALL) -C $(WWW_DIR)
