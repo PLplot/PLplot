@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.2  1993/07/16 22:06:40  mjl
+# Revision 1.3  1993/07/28 05:43:41  mjl
+# Changed << and >> buttons when running plrender to simulate keyboard
+# input, by sending a <Backspace> and <CR>, respectively (works better
+# this way).
+#
+# Revision 1.2  1993/07/16  22:06:40  mjl
 # Changed top row of widgets.  Now most commands accessible through the "plot"
 # menu.  Many additions, including save, save as, orient.., zoom.., page..,
 # and so on.  Procs added to handle the new options as well as support for
@@ -43,7 +48,7 @@ proc plw_create {w {pack {bottom expand fill}}} {
 
 # Make plplot widget.
 
-    plframe $w.plwin -relief sunken -background #000000
+    plframe $w.plwin -relief sunken
     pack append $w \
 	$w.plwin {left expand fill}
 
@@ -257,6 +262,12 @@ proc plw_configure_TopRow {w} {
 #------------------------------------------------------------------------------
 # Proc to initialize the container frame and child widgets.
 # All the bindings as well as communication links to the client are made here.
+#
+# Note: when passing a TCL command as a string argument, it is necessary to
+# protect the $client variable from becoming two tokens if it has embedded
+# spaces (such as occurs when you have multiple copies running).  The [list
+# $client] construct will enclose $client with a pair of braces if necessary
+# (can't do it directly since braces prevent variable expansion).
 #------------------------------------------------------------------------------
 
 proc plw_init {w client} {
@@ -264,13 +275,14 @@ proc plw_init {w client} {
 
 # Configure forward page button
 
-    $w.ftop.fp configure -command "send $client set advance 1"
+    $w.ftop.fp configure -command \
+	"send [list $client] keypress Return"
 
 # Configure back page button, plrender only
 
     if {[info exists is_plrender]} {
 	$w.ftop.bp configure -command \
-	    "send $client {keypress BackSpace}"
+	    "send [list $client] keypress BackSpace"
     }
 
 # Initialize plplot widget
@@ -294,7 +306,7 @@ proc plw_init_plplot {w client} {
 
 # Bindings
 
-    bind $w.plwin <KeyPress> "send $client {keypress %K %N %A}"
+    bind $w.plwin <KeyPress> "send [list $client] keypress %K %N %A"
     bind $w.plwin <Any-Enter> "focus $w.plwin"
 
 # Inform client of plplot widget name for widget commands.
