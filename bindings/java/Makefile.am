@@ -20,8 +20,6 @@
 # along with the file; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-JAVAC = javac
-
 SWIG_SUPPORT_DIR = $(top_srcdir)/bindings/swig-support
 PLPLOTCAPI_I = $(SWIG_SUPPORT_DIR)/plplotcapi.i
 
@@ -48,13 +46,13 @@ javafiles = \
 # Note : the order of these is important since there is no formal 
 # dependency checking.
 javaclasses = \
-	plplot/core/config.class \
-	plplot/core/PLStreamc.class \
-	plplot/core/plplotjavacJNI.class \
-	plplot/core/SWIGTYPE_p_p_char.class\
-	plplot/core/plplotjavacConstants.class \
-	plplot/core/plplotjavac.class \
-	plplot/core/PLplot.class
+	config.class \
+	PLStreamc.class \
+	plplotjavacJNI.class \
+	SWIGTYPE_p_p_char.class\
+	plplotjavacConstants.class \
+	plplotjavac.class \
+	PLplot.class
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
@@ -97,8 +95,15 @@ if enable_java
 # Can't use java support for now since jikes doesn't handle dependencies 
 # properly - instead do it using DATA and with an explicit rule.
 #noinst_JAVA = $(javafiles)
-#plplotjavadir = $(DATA_DIR)/java/
-#plplotjava_DATA = plplot.jar
+
+.java.class: 
+	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath .
+	cp plplot/core/$@ .
+
+noinst_DATA = jar-stamp
+
+jar-stamp: $(javaclasses)
+	touch jar-stamp
 
 ourexecjava_DATA = $(javafiles) $(javaclasses) README.javaAPI
 
@@ -107,10 +112,9 @@ execjavawrapper_LTLIBRARIES = plplotjavac_wrap.la
 # if enable_java
 endif
 
-plplot/core/%.class : %.java
-	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath .
-
 clean-local:
 	rm -rf plplot
+
+CLEANFILES = $(javaclasses) jar-stamp
 
 MAINTAINERCLEANFILES = $(swiggenfiles)

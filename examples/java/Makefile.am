@@ -44,30 +44,29 @@ javafiles = \
 javademos = README.javademos $(javafiles) Makefile.examples
 
 # These are for make check compilation of examples.
-JAVAC = javac
 PLPLOT_CLASSPATH= `pwd`/$(top_builddir)/bindings/java
 
 example_classes = \
-                 plplot/examples/x01.class \
-                 plplot/examples/x02.class \
-                 plplot/examples/x03.class \
-                 plplot/examples/x04.class \
-                 plplot/examples/x05.class \
-                 plplot/examples/x06.class \
-                 plplot/examples/x07.class \
-                 plplot/examples/x08.class \
-                 plplot/examples/x09.class \
-                 plplot/examples/x10.class \
-                 plplot/examples/x11.class \
-                 plplot/examples/x12.class \
-                 plplot/examples/x13.class \
-                 plplot/examples/x14.class \
-                 plplot/examples/x15.class \
-                 plplot/examples/x16.class \
-                 plplot/examples/x17.class \
-                 plplot/examples/x18.class \
-                 plplot/examples/x19.class \
-                 plplot/examples/x22.class
+	x01.class \
+	x02.class \
+	x03.class \
+	x04.class \
+	x05.class \
+	x06.class \
+	x07.class \
+	x08.class \
+	x09.class \
+	x10.class \
+	x11.class \
+	x12.class \
+	x13.class \
+	x14.class \
+	x15.class \
+	x16.class \
+	x17.class \
+	x18.class \
+	x19.class \
+	x22.class
 
 if enable_java
 
@@ -79,19 +78,33 @@ examples_java_DATA = $(javademos)
 examples_execjavadir = $(datadir)/java/plplot/examples
 examples_execjava_DATA = $(javademos) $(example_classes) README.javademos
 
+# Note the Java binding classes are actually generated in the java bindings
+# directory (path = "plplot.core").  Since the examples classes are #
+# generated here (path = "plplot.examples") but both must be included in the
+# jar file, this later is generated here.
+
+plplotjavadir = $(datadir)/java/
+plplotjava_DATA = plplot.jar
+
+$(top_builddir)/bindings/java/jar-stamp:
+	( cd $(top_builddir)/bindings/java ; make jar-stamp )
+
+plplot.jar: $(example_classes) $(top_builddir)/bindings/java/jar-stamp
+	$(JAR) -cf plplot.jar -C $(top_builddir)/bindings/java/ plplot \
+	                      -C . plplot  
+
 endif
 
 install-data-hook:
 if enable_java
 	( cd $(DESTDIR)$(examples_javadir) ; mv -f Makefile.examples Makefile )
-	( cd $(DESTDIR)$(datadir)/java ; jar -cf plplot.jar plplot ; \
-	rm -rf plplot)
 endif
 
-# Note the java package is actually assembled in the java bindings directory.
-# Fastjar doesn't update packages properly so we need to do it all in one go.
-plplot/examples/%.class : %.java
+.java.class:
 	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath $(PLPLOT_CLASSPATH)
+	cp plplot/examples/$@ .
+
+CLEANFILES = $(example_classes) plplot.jar
 
 clean-local:
 	rm -rf plplot

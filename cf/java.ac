@@ -112,6 +112,23 @@ if test "$enable_java" = "yes"; then
          AC_MSG_WARN([setting enable_java=no])
          enable_java=no
     fi
+    
+    # Check if Java compiler is present
+    AC_CHECK_PROGS(JAVAC, javac, no)
+    if test "$JAVAC" = no ; then
+         AC_MSG_WARN([javac command not found,])
+         AC_MSG_WARN([setting enable_java=no])
+         enable_java=no
+    fi
+
+    # Check if jar command is present
+    AC_CHECK_PROGS(JAR, jar, no)
+    if test "$JAR" = no ; then
+         AC_MSG_WARN([jar command not found,])
+         AC_MSG_WARN([setting enable_java=no])
+         enable_java=no
+    fi
+
 fi
 
 if test "$enable_java" = yes; then
