@@ -89,8 +89,11 @@ ps_init(PLStream *pls)
     float pxlx = YPSSIZE/LPAGE_X;
     float pxly = XPSSIZE/LPAGE_Y;
 
-    pls->family = 0;		/* Doesn't support familying for now */
     pls->dev_fill0 = 1;		/* Can do solid fills */
+
+/* Initialize family file info */
+
+    plFamInit(pls);
 
 /* Prompt for a file name if not already set */
 
@@ -355,6 +358,7 @@ plD_eop_ps(PLStream *pls)
  * plD_bop_ps()
  *
  * Set up for the next page.
+ * Advance to next family file if necessary (file output).
 \*--------------------------------------------------------------------------*/
 
 void
@@ -364,6 +368,9 @@ plD_bop_ps(PLStream *pls)
 
     dev->xold = PL_UNDEFINED;
     dev->yold = PL_UNDEFINED;
+
+    if (!pls->termin)
+	plGetFam(pls);
 
     pls->page++;
     fprintf(OF, "%%%%Page: %d %d\n", (int) pls->page, (int) pls->page);
