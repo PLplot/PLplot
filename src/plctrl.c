@@ -1,8 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/02/23 05:12:49  mjl
-   Eliminated plbeg: it is now illegal to specify the device by device number.
+   Revision 1.3  1993/07/01 22:20:19  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".  Moved functions plend() and plend1()
+   to plcore.c.  Added pl_cmd() as a front-end to the driver escape function
+   to allow virtually any command & data be sent to the driver by the calling
+   program.
 
+ * Revision 1.2  1993/02/23  05:12:49  mjl
+ * Eliminated plbeg: it is now illegal to specify the device by device number.
+ *
  * Revision 1.1  1993/01/23  05:51:56  mjl
  * Added for the high level routines that don't result in something being
  * plotted ("control" routines) that don't need direct access to the stream
@@ -16,49 +24,10 @@
 	mode, change color.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
-/*----------------------------------------------------------------------*\
-* void plend()
-*
-* End a plotting session for all open streams.
-\*----------------------------------------------------------------------*/
-
-void
-c_plend()
-{
-    PLINT i;
-
-    for (i = 0; i < PL_NSTREAMS; i++) {
-	plsstrm(i);
-	c_plend1();
-    }
-    plsstrm(0);
-    plfontrel();
-}
-
-/*----------------------------------------------------------------------*\
-* void plend1()
-*
-* End a plotting session for the current stream only.
-\*----------------------------------------------------------------------*/
-
-void
-c_plend1()
-{
-    PLINT level;
-
-    glev(&level);
-    if (level == 0)
-	return;
-
-    grclr();
-    grtidy();
-    slev(0);
-}
 
 /*----------------------------------------------------------------------*\
 * void plexit()
@@ -102,10 +71,10 @@ void
 c_plgra()
 {
     PLINT level;
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("plgra: Please call plinit first.");
-    grgra();
+    plP_gra();
 }
 
 /*----------------------------------------------------------------------*\
@@ -119,11 +88,11 @@ c_pltext()
 {
     PLINT level;
 
-    glev(&level);
+    plP_glev(&level);
     if (level < 1)
 	plexit("pltext: Please call plinit first.");
 
-    grtext();
+    plP_text();
 }
 
 /*----------------------------------------------------------------------*\
@@ -197,4 +166,17 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
     *p_r = value(m1, m2, h + 120.);
     *p_g = value(m1, m2, h);
     *p_b = value(m1, m2, h - 120.);
+}
+
+/*----------------------------------------------------------------------*\
+* void pl_cmd()
+*
+* Front-end to driver escape function.
+* In principle this can be used to pass just about anything directly
+* to the driver.
+\*----------------------------------------------------------------------*/
+
+void pl_cmd(PLINT op, void *ptr)
+{
+    plP_esc(op, ptr);
 }
