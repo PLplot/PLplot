@@ -9,12 +9,13 @@ BuildRoot: /tmp/software/redhat_install_area/plplot
 Summary: PLPlot 2D/3D plotting library
 Packager: Abed M. Hammoud <abed.hammoud@medtronic.com>
 Name: plplot
-Version: 5.0.3
-Release: 4
-Source0: http://prdownloads.sourceforge.net/plplot/plplot-5.0.3.tar.gz
-URL: http://www.plplot.org
+Version: 5.0.4
+Release: 5
+Source0: http://prdownloads.sourceforge.net/plplot/plplot-5.0.4.tar.gz
+URL: http://plplot.sourceforge.net
 Copyright: LGPL with some exceptions, see file "Copyright"
 Group: Applications/Math
+requires: python >= 1.5.2, python-numpy >= 15.3 
 %description
 This is the distribution for PLplot, a scientific plotting package. PLplot
 is relatively small, portable, freely distributable, and is rich enough to
@@ -77,7 +78,8 @@ pushd $RPM_BUILD_ROOT/usr/share/doc/plplot
 # * stands for version number of plplotdoc.
 tar zxf plplotdoc-html-*.tar.gz
 popd
-# install info stuff
+# install info stuff.  This is the correct place for RH 6.2, but may not
+# be the preferred location for modern distributions.
 install -m 755 -d $RPM_BUILD_ROOT/usr/info
 # * stands for version number of plplotdoc.
 tar zxf plplotdoc-info-*.tar.gz
@@ -117,10 +119,12 @@ fi
 %attr(-, root, root) %doc /usr/man/man1/pltcl.1.gz
 %attr(-, root, root) %doc /usr/man/man1/pltek.1.gz 
 %attr(-, root, root) %doc /usr/man/man3/*.3plplot.gz 
+# octave support files for Plplot.
+%attr(-, root, root) /usr/share/plplot-octave
 # python module
 %attr(-, root, root) /usr/lib/python1.5/site-packages/plmodule.so
 # fonts and maps (and tcl data once we move away from RH 6.2)
-%attr(-, root, root) /usr/lib/plplot5.0.3
+%attr(-, root, root) /usr/lib/plplot5.0.4
 # info files
 %attr(-, root, root) /usr/info/plplotdoc.info*.gz
 # headers
@@ -133,6 +137,7 @@ fi
 %attr(-, root, root) /usr/bin/plserver
 %attr(-, root, root) /usr/bin/pltcl
 %attr(-, root, root) /usr/bin/pltek
+%attr(-, root, root) /usr/bin/pstex2eps
 # libraries
 %attr(-, root, root) /usr/lib/libplcxxd.*
 %attr(-, root, root) /usr/lib/libplplotd.*
