@@ -34,8 +34,9 @@ MAT_BUILD	= $(MATLIBS)
 
 tclAPI.c: plplot/tclgen.h plplot/tclgen_s.h tclgen.c
 
-plplot/tclgen.h plplot/tclgen_s.h tclgen.c : plapi.tpl
-	pltclgen
+plplot/tclgen.h plplot/tclgen_s.h tclgen.c : pltclgen plapi.tpl tclcmd.tpl
+	cd $(top_srcdir)/bindings/tcl; \
+	perl pltclgen
 
 #tclIndex:
 #	mktclidx *.tcl
