@@ -57,7 +57,7 @@ config-stamp: autotools-stamp
                     --enable-gnome --with-double --disable-linuxvga    \
                     --infodir=/usr/share/info --with-freetype          \
                     --without-rpath --with-prebuiltdoc                 \
-                    --with-pthread --with-ltdlsystem
+                    --with-pthreads --with-ltdlsystem
 	( octver=`egrep "^OCTAVE_VERSION =" Makefile                   \
               | sed "s/OCTAVE_VERSION = *//" | sed 's/ *$$//'`       ; \
           octpkgver=`echo $$octver | sed 's/\.[0-9]*$$//'`           ; \
