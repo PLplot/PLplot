@@ -1055,6 +1055,13 @@ void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
 
+/* definitions for the opt argument in plot3d() */
+
+#define DRAW_LINEX 0x01 /* draw lines parallel to the X axis */
+#define DRAW_LINEY 0x02 /* draw lines parallel to the Y axis */
+#define DRAW_LINEXY (DRAW_LINEX | DRAW_LINEY) /* draw lines parallel to both the X and Y axis */
+#define MAG_COLOR 0x04 /* draw the mesh with a color dependent of the magnitude */
+
 /* Plots a 3-d shaded representation of the function z[x][y]. */
 
 void
@@ -1063,19 +1070,16 @@ c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
 /* Plots a 3-d false color (current colormap 1) representation of the function z[x][y]. */
 
-#define DRAW_LINEX 0x01
-#define DRAW_LINEY 0x02
-#define DRAW_LINEXY (DRAW_LINEX | DRAW_LINEY)
-
-#define SURF_CONT 0x10
-#define BASE_CONT 0x20
-
-#define DRAW_SIDE 0x40
-
 void
 c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 	   PLINT opt, PLFLT *clevel, PLINT nlevel);
   
+/* definitions for the opt argument in plotfc3d() */
+
+#define SURF_CONT 0x10 /* draw contour plot at surface */
+#define BASE_CONT 0x20 /* draw contour plot at xy plane */
+#define DRAW_SIDE 0x40 /* draw sides (deprecated) */
+
 /* Set fill pattern directly. */
 
 void
