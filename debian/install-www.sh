@@ -70,6 +70,7 @@ rm -rf $tmp_dir
 mkdir -p $tmp_dir
 cp ../*${release}*.{deb,dsc,diff.gz} $tmp_dir
 cp ../*`echo $release | sed 's/-.*//'`.orig.tar.gz $tmp_dir
+cp debian/Release $tmp_dir
 touch $tmp_dir/override
 pwd=`pwd`
 ( cd $tmp_dir 
