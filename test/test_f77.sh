@@ -61,7 +61,15 @@ $f77dir/x13f <<EOF >/dev/null
 $device
 x13f.$dsuffix
 EOF
+$f77dir/x15f <<EOF >/dev/null
+$device
+x15f.$dsuffix
+EOF
 $f77dir/x16f <<EOF >/dev/null
 $device
 x16f.$dsuffix
+EOF
+$f77dir/x16af <<EOF >/dev/null
+$device
+x16af.$dsuffix
 EOF
