@@ -35,9 +35,7 @@ for i=[1:13 15 16 18];
         tt = deblank (t(j,:)); len = length(tt);
 	ix = index(tt," ");
 	if (ix == 0); ix = len; len = 0; endif
-	arg = tt(1:ix)
-	value = tt(ix:len)
-	plSetOpt(tt(1:ix), tt(ix:len));
+	plSetOpt(deblank(tt(1:ix)), tt(ix:len));
     endfor
     device="$driver";
     plSetOpt("dev", device);
