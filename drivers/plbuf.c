@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1994/03/23 06:39:20  mjl
+ * Revision 1.19  1995/03/11 20:29:04  mjl
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.  Added code to write & restore plot window parameters.
+ *
+ * Revision 1.18  1994/03/23  06:39:20  mjl
  * Added support for: color map 1 color selection, color map 0 or color map 1
  * state change (palette change), polygon fills.
  *
@@ -10,49 +14,6 @@
  * driver interface or driver initialization as appropriate).  Special
  * handling for malloc includes eliminated (no longer needed) and malloc
  * prototypes fixed as necessary.
- *
- * Revision 1.17  1994/01/15  17:19:13  mjl
- * Eliminated include of pdf.h (not needed).
- *
- * Revision 1.16  1993/09/28  21:25:08  mjl
- * Now discards the old temp file and opens a new one on each new page.  This
- * avoids a lot of problems redisplaying partially filled pages -- we can
- * just read to EOF without worrying about junk in the file from previous
- * writes.  The old method never did work perfectly.
- *
- * Revision 1.15  1993/09/27  20:33:51  mjl
- * Insignificant change to eliminate a gcc -Wall warning.
- *
- * Revision 1.14  1993/09/08  02:27:11  mjl
- * Inserted change to ensure that streams that do not own the plot buffer
- * cannot write to it (was causing problems on plot saves).
- *
- * Revision 1.13  1993/08/30  19:11:51  mjl
- * Fixed the damage incurred by my previous "fix".  Plot buffer now appears
- * capable of accurately and unobtrusively replaying partially filled pages.
- *
- * Revision 1.12  1993/08/28  06:28:07  mjl
- * Fixed escape function reads & writes to be consistent.  Added plbuf_rewind
- * function, which writes EOP's to the end of file to make sure that dicking
- * around with the window settings before the page is complete doesn't end in
- * a core dump.
- *
- * Revision 1.11  1993/07/31  07:56:40  mjl
- * Several driver functions consolidated, for all drivers.  The width and color
- * commands are now part of a more general "state" command.  The text and
- * graph commands used for switching between modes is now handled by the
- * escape function (very few drivers require it).  The device-specific PLDev
- * structure is now malloc'ed for each driver that requires it, and freed when
- * the stream is terminated.
- *
- * Revision 1.10  1993/07/16  22:12:17  mjl
- * Simplified and slightly changed behavior to support plot dumps to cloned
- * plplot streams.
- *
- * Revision 1.9  1993/07/01  21:59:42  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
- * now start with "pl"; device driver functions start with "plD_".
 */
 
 /*
@@ -69,7 +30,6 @@
     It is provided solely "as is". The author(s) disclaim(s) all
     responsibility and liability with respect to this software's usage or
     its effect upon hardware or computer systems.
-
 */
 
 #include "plplotP.h"
@@ -79,51 +39,48 @@
 #include <string.h>
 
 /* Function prototypes */
-/* INDENT OFF */
 
-static int	rd_command	( PLStream *pls, U_CHAR * );
-static int	wr_command	( PLStream *pls, U_CHAR );
-static void	plbuf_control	( PLStream *pls, U_CHAR );
+static int	rd_command	(PLStream *pls, U_CHAR *p_c);
+static int	wr_command	(PLStream *pls, U_CHAR c);
+static void	plbuf_control	(PLStream *pls, U_CHAR c);
 
-void rdbuf_init		(PLStream *);
-void rdbuf_line		(PLStream *);
-void rdbuf_polyline	(PLStream *);
-void rdbuf_eop		(PLStream *);
-void rdbuf_bop		(PLStream *);
-void rdbuf_tidy		(PLStream *);
-void rdbuf_state	(PLStream *);
-void rdbuf_esc		(PLStream *);
+static void	rdbuf_init	(PLStream *pls);
+static void	rdbuf_line	(PLStream *pls);
+static void	rdbuf_polyline	(PLStream *pls);
+static void	rdbuf_eop	(PLStream *pls);
+static void	rdbuf_bop	(PLStream *pls);
+static void	rdbuf_tidy	(PLStream *pls);
+static void	rdbuf_state	(PLStream *pls);
+static void	rdbuf_esc	(PLStream *pls);
 
-static void plbuf_fill	(PLStream *pls);
-static void rdbuf_fill	(PLStream *pls);
+static void	plbuf_fill	(PLStream *pls);
+static void	rdbuf_fill	(PLStream *pls);
+static void	plbuf_swin	(PLStream *pls, PLWindow *plwin);
+static void	rdbuf_swin	(PLStream *pls);
 
-/* INDENT ON */
-/*----------------------------------------------------------------------*\
-* Routines to write to the plot buffer.
-\*----------------------------------------------------------------------*/
-
-/*----------------------------------------------------------------------*\
-* plbuf_init()
-*
-* Initialize device.
-* Actually just disables writes if plot buffer is already open (occurs
-* when one stream is cloned, as in printing).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_init()
+ *
+ * Initialize device.
+ * Actually just disables writes if plot buffer is already open (occurs
+ * when one stream is cloned, as in printing).
+\*--------------------------------------------------------------------------*/
 
 void
 plbuf_init(PLStream *pls)
 {
     dbug_enter("plbuf_init");
 
+    pls->plbuf_read = FALSE;
     if (pls->plbufFile != NULL) 
-	pls->plbuf_write = 0;
+	pls->plbuf_write = FALSE;
 }
 
-/*----------------------------------------------------------------------*\
-* plbuf_line()
-*
-* Draw a line in the current color from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_line()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
+\*--------------------------------------------------------------------------*/
 
 void
 plbuf_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
@@ -143,11 +100,11 @@ plbuf_line(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     fwrite(ypl, sizeof(short), 2, pls->plbufFile);
 }
 
-/*----------------------------------------------------------------------*\
-* plbuf_polyline()
-*
-* Draw a polyline in the current color.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_polyline()
+ *
+ * Draw a polyline in the current color.
+\*--------------------------------------------------------------------------*/
 
 void
 plbuf_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
@@ -161,11 +118,11 @@ plbuf_polyline(PLStream *pls, short *xa, short *ya, PLINT npts)
     fwrite(ya, sizeof(short), npts, pls->plbufFile);
 }
 
-/*----------------------------------------------------------------------*\
-* plbuf_eop()
-*
-* End of page.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_eop()
+ *
+ * End of page.
+\*--------------------------------------------------------------------------*/
 
 void
 plbuf_eop(PLStream *pls)
@@ -173,16 +130,16 @@ plbuf_eop(PLStream *pls)
     dbug_enter("plbuf_eop");
 }
 
-/*----------------------------------------------------------------------*\
-* plbuf_bop()
-*
-* Set up for the next page.
-* To avoid problems redisplaying partially filled pages, on each BOP the
-* old file is thrown away and a new one is obtained.  This way we can just
-* read up to EOF to get everything on the current page.
-*
-* Also write state information to ensure the next page is correct.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_bop()
+ *
+ * Set up for the next page.
+ * To avoid problems redisplaying partially filled pages, on each BOP the
+ * old file is thrown away and a new one is obtained.  This way we can just
+ * read up to EOF to get everything on the current page.
+ *
+ * Also write state information to ensure the next page is correct.
+\*--------------------------------------------------------------------------*/
 
 void
 plbuf_bop(PLStream *pls)
@@ -195,15 +152,16 @@ plbuf_bop(PLStream *pls)
     if (pls->plbufFile == NULL) 
 	plexit("plbuf_init: Error opening plot data storage file.");
 
-    plP_state(PLSTATE_COLOR0);
-    plP_state(PLSTATE_WIDTH);
+    wr_command(pls, (U_CHAR) BOP);
+    plbuf_state(pls, PLSTATE_COLOR0);
+    plbuf_state(pls, PLSTATE_WIDTH);
 }
 
-/*----------------------------------------------------------------------*\
-* plbuf_tidy()
-*
-* Close graphics file
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_tidy()
+ *
+ * Close graphics file
+\*--------------------------------------------------------------------------*/
 
 void
 plbuf_tidy(PLStream *pls)
@@ -217,11 +175,11 @@ plbuf_tidy(PLStream *pls)
     pls->plbufFile = NULL;
 }
 
-/*----------------------------------------------------------------------*\
-* plbuf_state()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_state()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
+\*--------------------------------------------------------------------------*/
 
 void 
 plbuf_state(PLStream *pls, PLINT op)
@@ -233,14 +191,14 @@ plbuf_state(PLStream *pls, PLINT op)
 
     switch (op) {
 
-      case PLSTATE_WIDTH: {
+    case PLSTATE_WIDTH: {
 	U_CHAR width = pls->width;
 
 	fwrite(&width, sizeof(U_CHAR), 1, pls->plbufFile);
 	break;
-      }
+    }
 
-      case PLSTATE_COLOR0: {
+    case PLSTATE_COLOR0: {
 	U_CHAR icol0 = pls->icol0;
 	U_CHAR r = pls->curcolor.r;
 	U_CHAR g = pls->curcolor.g;
@@ -253,35 +211,35 @@ plbuf_state(PLStream *pls, PLINT op)
 	    fwrite(&b, sizeof(U_CHAR), 1, pls->plbufFile);
 	}
 	break;
-      }
+    }
 
-      case PLSTATE_COLOR1: {
+    case PLSTATE_COLOR1: {
 	U_CHAR icol1 = pls->icol1;
 
 	fwrite(&icol1, sizeof(U_CHAR), 1, pls->plbufFile);
 	break;
-      }
+    }
 
-      case PLSTATE_FILL:{
+    case PLSTATE_FILL:{
 	signed char patt = pls->patt;
 
 	fwrite(&patt, sizeof(signed char), 1, pls->plbufFile);
 	break;
-      }
+    }
     }
 }
 
-/*----------------------------------------------------------------------*\
-* plbuf_esc()
-*
-* Escape function.  Note that any data written must be in device
-* independent form to maintain the transportability of the metafile.
-*
-* Functions:
-*
-*	PLESC_FILL	Fill polygon
-*
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_esc()
+ *
+ * Escape function.  Note that any data written must be in device
+ * independent form to maintain the transportability of the metafile.
+ *
+ * Functions:
+ *
+ *	PLESC_FILL	Fill polygon
+ *
+\*--------------------------------------------------------------------------*/
 
 void
 plbuf_esc(PLStream *pls, PLINT op, void *ptr)
@@ -292,17 +250,20 @@ plbuf_esc(PLStream *pls, PLINT op, void *ptr)
     wr_command(pls, (U_CHAR) op);
 
     switch (op) {
-      case PLESC_FILL:
+    case PLESC_FILL:
 	plbuf_fill(pls);
+	break;
+    case PLESC_SWIN:
+	plbuf_swin(pls, (PLWindow *) ptr);
 	break;
     }
 }
 
-/*----------------------------------------------------------------------*\
-* plbuf_fill()
-*
-* Fill polygon described in points pls->dev_x[] and pls->dev_y[].
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_fill()
+ *
+ * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
+\*--------------------------------------------------------------------------*/
 
 static void
 plbuf_fill(PLStream *pls)
@@ -314,29 +275,49 @@ plbuf_fill(PLStream *pls)
     fwrite(pls->dev_y, sizeof(short), pls->dev_npts, pls->plbufFile);
 }
 
-/*----------------------------------------------------------------------*\
-* Routines to read from & process the plot buffer.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_swin()
+ *
+ * Set up plot window parameters. 
+\*--------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------*\
-* rdbuf_init()
-*
-* Initialize device.
-\*----------------------------------------------------------------------*/
+static void
+plbuf_swin(PLStream *pls, PLWindow *plwin)
+{
+    fwrite(&plwin->dxmi, sizeof(float), 1, pls->plbufFile);
+    fwrite(&plwin->dxma, sizeof(float), 1, pls->plbufFile);
+    fwrite(&plwin->dymi, sizeof(float), 1, pls->plbufFile);
+    fwrite(&plwin->dyma, sizeof(float), 1, pls->plbufFile);
 
-void
+    fwrite(&plwin->wxmi, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->wxma, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->wymi, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->wyma, sizeof(PLFLT), 1, pls->plbufFile);
+}
+
+/*--------------------------------------------------------------------------*\
+ * Routines to read from & process the plot buffer.
+\*--------------------------------------------------------------------------*/
+
+/*--------------------------------------------------------------------------*\
+ * rdbuf_init()
+ *
+ * Initialize device.
+\*--------------------------------------------------------------------------*/
+
+static void
 rdbuf_init(PLStream *pls)
 {
     dbug_enter("rdbuf_init");
 }
 
-/*----------------------------------------------------------------------*\
-* rdbuf_line()
-*
-* Draw a line in the current color from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * rdbuf_line()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
+\*--------------------------------------------------------------------------*/
 
-void
+static void
 rdbuf_line(PLStream *pls)
 {
     short xpl[2], ypl[2];
@@ -350,13 +331,13 @@ rdbuf_line(PLStream *pls)
     plP_line(xpl, ypl);
 }
 
-/*----------------------------------------------------------------------*\
-* rdbuf_polyline()
-*
-* Draw a polyline in the current color.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * rdbuf_polyline()
+ *
+ * Draw a polyline in the current color.
+\*--------------------------------------------------------------------------*/
 
-void
+static void
 rdbuf_polyline(PLStream *pls)
 {
     short xpl[PL_MAXPOLY], ypl[PL_MAXPOLY];
@@ -371,49 +352,51 @@ rdbuf_polyline(PLStream *pls)
     plP_polyline(xpl, ypl, npts);
 }
 
-/*----------------------------------------------------------------------*\
-* rdbuf_eop()
-*
-* End of page.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * rdbuf_eop()
+ *
+ * End of page.
+\*--------------------------------------------------------------------------*/
 
-void
+static void
 rdbuf_eop(PLStream *pls)
 {
     dbug_enter("rdbuf_eop");
 }
 
-/*----------------------------------------------------------------------*\
-* rdbuf_bop()
-*
-* Set up for the next page.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * rdbuf_bop()
+ *
+ * Set up for the next page.
+\*--------------------------------------------------------------------------*/
 
-void
+static void
 rdbuf_bop(PLStream *pls)
 {
     dbug_enter("rdbuf_bop");
+
+    pls->nplwin = 0;
 }
 
-/*----------------------------------------------------------------------*\
-* rdbuf_tidy()
-*
-* Close graphics file
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * rdbuf_tidy()
+ *
+ * Close graphics file
+\*--------------------------------------------------------------------------*/
 
-void
+static void
 rdbuf_tidy(PLStream *pls)
 {
     dbug_enter("rdbuf_tidy");
 }
 
-/*----------------------------------------------------------------------*\
-* rdbuf_state()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * rdbuf_state()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
+\*--------------------------------------------------------------------------*/
 
-void 
+static void 
 rdbuf_state(PLStream *pls)
 {
     U_CHAR op;
@@ -424,7 +407,7 @@ rdbuf_state(PLStream *pls)
 
     switch (op) {
 
-      case PLSTATE_WIDTH:{
+    case PLSTATE_WIDTH:{
 	U_CHAR width;
 
 	fread(&width, sizeof(U_CHAR), 1, pls->plbufFile);
@@ -432,9 +415,9 @@ rdbuf_state(PLStream *pls)
 	plP_state(PLSTATE_WIDTH);
 
 	break;
-      }
+    }
 
-      case PLSTATE_COLOR0:{
+    case PLSTATE_COLOR0:{
 	U_CHAR icol0, r, g, b;
 
 	fread(&icol0, sizeof(U_CHAR), 1, pls->plbufFile);
@@ -459,9 +442,9 @@ rdbuf_state(PLStream *pls)
 
 	plP_state(PLSTATE_COLOR0);
 	break;
-      }
+    }
 
-      case PLSTATE_COLOR1: {
+    case PLSTATE_COLOR1: {
 	U_CHAR icol1;
 
 	fread(&icol1, sizeof(U_CHAR), 1, pls->plbufFile);
@@ -473,9 +456,9 @@ rdbuf_state(PLStream *pls)
 
 	plP_state(PLSTATE_COLOR1);
 	break;
-      }
+    }
 
-      case PLSTATE_FILL: {
+    case PLSTATE_FILL: {
 	signed char patt;
 
 	fread(&patt, sizeof(signed char), 1, pls->plbufFile);
@@ -483,27 +466,27 @@ rdbuf_state(PLStream *pls)
 	pls->patt = patt;
 	plP_state(PLSTATE_FILL);
 	break;
-      }
+    }
     }
 }
 
-/*----------------------------------------------------------------------*\
-* rdbuf_esc()
-*
-* Escape function.
-* Must fill data structure with whatever data that was written,
-* then call escape function.
-*
-* Note: it is best to only call the escape function for op-codes that
-* are known to be supported.
-*
-* Functions:
-*
-*	PLESC_FILL	Fill polygon
-*
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * rdbuf_esc()
+ *
+ * Escape function.
+ * Must fill data structure with whatever data that was written,
+ * then call escape function.
+ *
+ * Note: it is best to only call the escape function for op-codes that
+ * are known to be supported.
+ *
+ * Functions:
+ *
+ *	PLESC_FILL	Fill polygon
+ *
+\*--------------------------------------------------------------------------*/
 
-void
+static void
 rdbuf_esc(PLStream *pls)
 {
     U_CHAR op;
@@ -513,17 +496,20 @@ rdbuf_esc(PLStream *pls)
     fread(&op, sizeof(U_CHAR), 1, pls->plbufFile);
 
     switch (op) {
-      case PLESC_FILL:
+    case PLESC_FILL:
 	rdbuf_fill(pls);
+	break;
+    case PLESC_SWIN:
+	rdbuf_swin(pls);
 	break;
     }
 }
 
-/*----------------------------------------------------------------------*\
-* rdbuf_fill()
-*
-* Fill polygon described by input points.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * rdbuf_fill()
+ *
+ * Fill polygon described by input points.
+\*--------------------------------------------------------------------------*/
 
 static void
 rdbuf_fill(PLStream *pls)
@@ -540,12 +526,36 @@ rdbuf_fill(PLStream *pls)
     plP_fill(xpl, ypl, npts);
 }
 
-/*----------------------------------------------------------------------*\
-* plRemakePlot()
-*
-* Rebuilds plot from plot buffer, usually in response to a window
-* resize or exposure event.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * rdbuf_swin()
+ *
+ * Set up plot window parameters. 
+\*--------------------------------------------------------------------------*/
+
+static void
+rdbuf_swin(PLStream *pls)
+{
+    PLWindow plwin;
+
+    fread(&plwin.dxmi, sizeof(float), 1, pls->plbufFile);
+    fread(&plwin.dxma, sizeof(float), 1, pls->plbufFile);
+    fread(&plwin.dymi, sizeof(float), 1, pls->plbufFile);
+    fread(&plwin.dyma, sizeof(float), 1, pls->plbufFile);
+
+    fread(&plwin.wxmi, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.wxma, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.wymi, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.wyma, sizeof(PLFLT), 1, pls->plbufFile);
+
+    plP_swin(&plwin);
+}
+
+/*--------------------------------------------------------------------------*\
+ * plRemakePlot()
+ *
+ * Rebuilds plot from plot buffer, usually in response to a window
+ * resize or exposure event.
+\*--------------------------------------------------------------------------*/
 
 void
 plRemakePlot(PLStream *pls)
@@ -562,18 +572,20 @@ plRemakePlot(PLStream *pls)
 
     plbuf_status = pls->plbuf_write;
     pls->plbuf_write = FALSE;
+    pls->plbuf_read = TRUE;
     while (rd_command(pls, &c)) {
 	plbuf_control(pls, c);
     }
 
+    pls->plbuf_read = FALSE;
     pls->plbuf_write = plbuf_status;
 }
 
-/*----------------------------------------------------------------------*\
-* plbuf_control()
-*
-* Processes commands read from the plot buffer.
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * plbuf_control()
+ *
+ * Processes commands read from the plot buffer.
+\*--------------------------------------------------------------------------*/
 
 static void
 plbuf_control(PLStream *pls, U_CHAR c)
@@ -584,35 +596,35 @@ plbuf_control(PLStream *pls, U_CHAR c)
 
     switch ((int) c) {
 
-      case INITIALIZE:
+    case INITIALIZE:
 	rdbuf_init(pls);
 	break;
 
-      case EOP:
+    case EOP:
 	rdbuf_eop(pls);
 	break;
 
-      case BOP:
+    case BOP:
 	rdbuf_bop(pls);
 	break;
 
-      case CHANGE_STATE:
+    case CHANGE_STATE:
 	rdbuf_state(pls);
 	break;
 
-      case LINE:
+    case LINE:
 	rdbuf_line(pls);
 	break;
 
-      case POLYLINE:
+    case POLYLINE:
 	rdbuf_polyline(pls);
 	break;
 
-      case ESCAPE:
+    case ESCAPE:
 	rdbuf_esc(pls);
 	break;
 
-      default:
+    default:
 	fprintf(stderr,
 		"plbuf_control: Unrecognized command %d, previous %d\n",
 		c, c_old);
@@ -620,11 +632,11 @@ plbuf_control(PLStream *pls, U_CHAR c)
     c_old = c;
 }
 
-/*----------------------------------------------------------------------*\
-*  rd_command()
-*
-*  Read & return the next command
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * rd_command()
+ *
+ * Read & return the next command
+\*--------------------------------------------------------------------------*/
 
 static int
 rd_command(PLStream *pls, U_CHAR *p_c)
@@ -635,11 +647,11 @@ rd_command(PLStream *pls, U_CHAR *p_c)
     return (count);
 }
 
-/*----------------------------------------------------------------------*\
-*  wr_command()
-*
-*  Write the next command
-\*----------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*\
+ * wr_command()
+ *
+ * Write the next command
+\*--------------------------------------------------------------------------*/
 
 static int
 wr_command(PLStream *pls, U_CHAR c)
