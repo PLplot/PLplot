@@ -2997,6 +2997,26 @@ if test "$enable_dp" = "yes"; then
     lib_path="$lib_path $DPLIBDIR"
 
 fi
+if test "$enable_itcl" = "yes"; then
+    
+    LIBSW=""
+    if test "$ITCLLIBDIR" != "default"; then
+	LIBSW="-L$ITCLLIBDIR"
+    fi
+    for dir in $lib_path; do
+	if test "$ITCLLIBDIR" = "$dir"; then
+	    LIBSW=""
+	    break
+	fi
+    done
+    if test -n "$LIBSW"; then
+	LIBS="$LIBS $LIBSW -litk -litcl"
+    else
+	LIBS="$LIBS -litk -litcl"
+    fi
+    lib_path="$lib_path $ITCLLIBDIR"
+
+fi
 if test "$enable_tk" = "yes"; then
     
     LIBSW=""
@@ -3015,26 +3035,6 @@ if test "$enable_tk" = "yes"; then
 	LIBS="$LIBS -ltk"
     fi
     lib_path="$lib_path $TKLIBDIR"
-
-fi
-if test "$enable_itcl" = "yes"; then
-    
-    LIBSW=""
-    if test "$ITCLLIBDIR" != "default"; then
-	LIBSW="-L$ITCLLIBDIR"
-    fi
-    for dir in $lib_path; do
-	if test "$ITCLLIBDIR" = "$dir"; then
-	    LIBSW=""
-	    break
-	fi
-    done
-    if test -n "$LIBSW"; then
-	LIBS="$LIBS $LIBSW -litcl"
-    else
-	LIBS="$LIBS -litcl"
-    fi
-    lib_path="$lib_path $ITCLLIBDIR"
 
 fi
 if test "$enable_tcl" = "yes"; then
