@@ -113,7 +113,7 @@ xtk01_LDFLAGS = $(libplplottcltk)
 xtk02_LDFLAGS = $(libplplottcltk)
 xtk04_LDFLAGS = $(libplplottcltk)
 
-EXTRA_DIST = $(data_files) $(examples_tk_SCRIPTS) $(mkindex)
+EXTRA_DIST = $(data_files) $(examples_tk_SCRIPTS)
 CLEANFILES = $(generated_files)
 DISTCLEANFILES = Makefile.examples .samename/Makefile
 

@@ -83,7 +83,7 @@ examples_tcl_SCRIPTS = \
 tclIndex:
 	$(mkindex)
 
-EXTRA_DIST = $(examples_tcl_DATA) $(examples_tcl_SCRIPTS) $(mkindex)
+EXTRA_DIST = $(examples_tcl_DATA) $(examples_tcl_SCRIPTS)
 CLEANFILES = tclIndex
 
 endif
