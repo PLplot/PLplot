@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/06/24 20:37:55  mjl
+ * Revision 1.4  1994/06/25 20:35:49  mjl
+ * Changed typedef for Mat_int to long.  Maybe I should have a Mat_long
+ * instead?  Added put/get function handlers to matrix struct (determined
+ * when created, dependent on type).
+ *
+ * Revision 1.3  1994/06/24  20:37:55  mjl
  * Changed name of struct to tclMatrix to avoid conflicts with C++ Matrix
  * classes.  Put in ifdef-ed extern "C" linkage statements for C++.
  *
@@ -33,14 +38,15 @@ typedef double Mat_float;
 typedef float  Mat_float;
 #endif
 
-typedef int    Mat_int;
+typedef long   Mat_int;
+
+enum { TYPE_FLOAT, TYPE_INT };
 
 /* Arrays are column dominant (normal C ordering) */
 /* Array elements are stored contiguously */
 /* Require dimension <= 3, floats for simplicity */
 
 #define MAX_ARRAY_DIM 3
-#define TYPE_FLOAT 1
 
 /* Macros used in index calculations */
 
@@ -64,6 +70,12 @@ typedef struct {
 
     Mat_float *fdata;		/* Floating point data */
     Mat_int   *idata;		/* Integer data */
+
+/* These do the put/get operations for each supported type */
+
+    void (*put) (ClientData clientData, int index, char *string);
+    void (*get) (ClientData clientData, int index, char *string);
+
 } tclMatrix;
 
 /* Function prototypes */
