@@ -165,6 +165,7 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
     PLINT cx, cy, k, penup, style;
     signed char *xygrid;
     PLFLT scale, xscale, yscale;
+    PLINT llx[STLEN], lly[STLEN], l = 0;
 
     penup = 1;
     scale = 0.05 * plsc->symht;
@@ -189,19 +190,31 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 	cx = xygrid[k++];
 	cy = xygrid[k++];
 	if (cx == 64 && cy == 64) {
-	    plP_movphy(x, y);
-	    plsc->nms = style;
-	    return;
+	  if (l) {
+	    plP_draphy_poly(llx, lly, l);
+	    l = 0;
+	  }
+	  plP_movphy(x, y);
+	  plsc->nms = style;
+	  return;
 	}
 	else if (cx == 64 && cy == 0)
 	    penup = 1;
 	else {
-	    if (penup != 0) {
-		plP_movphy(ROUND(x + xscale * cx), ROUND(y + yscale * cy));
-		penup = 0;
+	    if (penup == 1) {
+             if (l) {
+	       plP_draphy_poly(llx, lly, l);
+	       l = 0;
+	     }
+             llx[l] = ROUND(x+ xscale * cx);
+	     lly[l++] = ROUND(y + yscale * cy);
+             plP_movphy(llx[l-1], lly[l-1]);
+	     penup = 0;
 	    }
-	    else
-		plP_draphy(ROUND(x + xscale * cx), ROUND(y + yscale * cy));
+	    else {
+	      llx[l] = ROUND(x+ xscale * cx);
+	      lly[l++] = ROUND(y + yscale * cy);
+	    }
 	}
     }
 }
@@ -562,6 +575,7 @@ plchar(signed char *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
     PLINT xbase, ybase, ydisp, lx, ly, cx, cy;
     PLINT k, penup;
     PLFLT x, y;
+    PLINT llx[STLEN], lly[STLEN], l = 0;
 
     xbase = xygrid[2];
     *p_width = xygrid[3] - xbase;
@@ -575,24 +589,43 @@ plchar(signed char *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
     }
     k = 4;
     penup = 1;
+
     for (;;) {
 	cx = xygrid[k++];
 	cy = xygrid[k++];
-	if (cx == 64 && cy == 64)
-	    break;
-	if (cx == 64 && cy == 0)
-	    penup = 1;
+	if (cx == 64 && cy == 64) {
+	  if (l) {
+	    plP_draphy_poly(llx, lly, l);
+	    l = 0;
+	  }
+	  break;
+	}
+	if (cx == 64 && cy == 0) {
+	  if (l) {
+	    plP_draphy_poly(llx, lly, l);
+	    l = 0;
+	  }
+	  penup = 1;
+	}
 	else {
 	    x = *p_xorg + (cx - xbase) * scale;
 	    y = *p_yorg + (cy - ybase) * scale;
 	    lx = refx + ROUND(xpmm * (xform[0] * x + xform[1] * y));
 	    ly = refy + ROUND(ypmm * (xform[2] * x + xform[3] * y));
-	    if (penup != 0) {
-		plP_movphy(lx, ly);
-		penup = 0;
+	    if (penup == 1) {
+	      if (l) {
+		plP_draphy_poly(llx, lly, l);
+		l = 0;
+	      }
+	      llx[l] = lx;
+	      lly[l++] = ly; /* store 1st point ! */
+	      plP_movphy(lx, ly);
+	      penup = 0;
 	    }
-	    else
-		plP_draphy(lx, ly);
+	    else {
+	      llx[l] = lx;
+	      lly[l++] = ly;
+	    }
 	}
     }
 
