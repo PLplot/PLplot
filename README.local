@@ -6,9 +6,9 @@ To link with plplot, specify:
 These are soft-links to the actual library name (which is named
 differently depending if the X or X & TK drivers are included).  
 
-Also you must include the Tcl/TK libraries:
+Also you must link with the X11 and Tcl/TK libraries:
 
-    -L/usr/local/lib -ltk -ltcl
+    -L/usr/local/lib -ltk -ltcl -lX11
 
 which are used by the plplot tk driver (fully interactive, with zooms,
 saves, etc).  You may need to include the math library (-lm) on the link
