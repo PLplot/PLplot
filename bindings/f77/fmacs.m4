@@ -26,6 +26,12 @@ divert(-1)dnl
 #
 # $Id$
 # $Log$
+# Revision 1.4  2000/12/23 23:09:18  airwin
+# For fortran conversions using m4 define DBLE to be either dble or real
+# depending on whether DOUBLE is set.  Also, for linux attempt to
+# define implicit_none as implicit none, but so far this latter
+# definition does not work.
+#
 # Revision 1.3  1994/07/12 19:21:32  mjl
 # Fixed type definitions to help generated text stay within 72 columns.
 #
@@ -174,6 +180,9 @@ ifdef({INCLUDED_FMACS},,{
     if_hpux({
 	define({implicit_none}, {implicit none})
     })
+    if_linux({
+	define({implicit_none}, {implicit none})
+    })
 
 #----------------------------------------------------------------------------#
 # Define REAL according to the desired floating point precision.  The
@@ -198,11 +207,13 @@ ifdef({INCLUDED_FMACS},,{
 	define(COMPLEX,		{complex*16})
 	define(IMPLICIT_REAL,	{implicit real*8(a-h,o-z)})
 	define(DREAL,		{real*16})
+	define(DBLE,		{dble})
     },{
 	define(REAL,		{real*4})
 	define(COMPLEX,		{complex*8})
 	define(IMPLICIT_REAL,	{implicit real*4(a-h,o-z)})
 	define(DREAL,		{real*8})
+	define(DBLE,		{real})
     })
   })
 
