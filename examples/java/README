@@ -36,5 +36,20 @@ make jdemos
 # notation works for all jdk's.
 java plplot.examples.x01 .....
 
-II. Install location
+II. Install location ($prefix/lib/java/plplot/examples)
+
+(1) Install jdk, see (1) above.
+
+(2) set environment variables.  See (2) above except for the following:
+#Your locations will differ depending on your prefix.
+setenv CLASSPATH /usr/local/plplot/lib/java
+setenv LD_LIBRARY_PATH /usr/local/plplot/lib
+
+(3) Build java demos
+cd /usr/local/plplot/lib/java/plplot/examples
+javac -d ../../../java x01.java ...
+
+(4) Run java demos (just like 5 above).
+
+
 
