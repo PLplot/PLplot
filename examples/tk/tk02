@@ -1,0 +1,127 @@
+#!xtk02 -f
+# Geoffrey Furnish                     -*-tcl-*-
+# 11 April 1994
+#
+# @> A script for using Tk to control xtk01, using the PLplot itcl interface.
+#
+# $Id$
+#
+# $Log$
+# Revision 1.1  1994/05/09 18:01:36  furnish
+# A new Tk demo, combining [incr Tcl] mega widget and the PLplot Tcl
+# extensions.  Much more along these lines should be done.
+#
+###############################################################################
+
+wm title . "x01c -- TK version"
+
+# Set up configuration options.
+# The first is to hold default values of everything, the second is for
+# user customization.  See pldefaults.tcl for more info.
+
+    pldefaults
+    plconfig
+
+# I refuse to allow exec's, ever.
+# Open's have to remain, however, to read/write palette info.
+
+    rename exec {}
+
+# Create the main window
+# Use the default window title.
+
+    set root_width  [winfo vrootwidth .]
+    set root_height [winfo vrootheight .]
+
+    wm minsize . 300 240
+    wm maxsize . [expr "$root_width/64*63"] [expr "$root_height/64*62"]
+
+# Set window geometry if not already set.
+# Depart from square slightly to account for menu bar.
+
+    if { ! [ info exists geometry ] } {
+        set width  [expr "$root_width / 16 * 10"]
+        set height [expr "$root_height / 16 * 11"]
+        set geometry ${width}x${height}
+    }
+    wm geometry . $geometry
+
+
+###############################################################################
+# Set up the menubar and message widgets.
+
+frame .menu -relief raised -borderwidth 3
+
+button .menu.one -text "One" -command "myplot 1"
+pack append .menu .menu.one {left expand fill}
+
+button .menu.two -text "Two" -command "myplot 2"
+pack append .menu .menu.two {left expand fill}
+
+button .menu.three -text "Three" -command "myplot 3"
+pack append .menu .menu.three {left expand fill}
+
+button .menu.four -text "Four" -command "myplot 4"
+pack append .menu .menu.four {left expand fill}
+
+button .menu.five -text "Five" -command "bozoplot"
+pack append .menu .menu.five {left expand fill}
+
+button .menu.exit -text "Exit" -command "quit 0"
+pack append .menu .menu.exit {right expand}
+
+message .msg \
+	-font -Adobe-helvetica-medium-r-normal--*-240* -aspect 200 \
+	 -width 500 -borderwidth 1 \
+	-text "TK02: Demo \[incr Tcl\] interface to PLplot"
+
+option add *plwin.background black
+
+#plw_create .plw
+
+PLWin .plw -name foo
+
+pack append . .menu {top fillx} \
+	.msg {top padx 5 pady 5 fill} \
+    .plw {bottom expand fill}
+
+update
+
+#.plw.plwin cmd init
+
+.plw init
+
+option add "*font" "-Adobe-helvetica-medium-r-normal--*-180*"
+
+tk_menuBar .menu .menu.one .menu.two .menu.three .menu.four .menu.exit
+
+###############################################################################
+# Definitions of procedures used in this script.
+
+proc bozoplot {} {
+    .plw plcol 1
+    .plw plenv 0 1 0 1 0 0
+    .plw plcol 6
+    .plw pllab "(x)" "(y)" "#frPLPLOT Example 1 - y=1-2x+2x#u2"
+
+    for {set x 0} {$x < 1} {set x [expr $x+.01]} {
+	set y [expr 1 - 2 * $x + 2 * $x * $x]
+	lappend pairs [list $x $y]
+    }
+
+    .plw plline $pairs
+}
+
+# Punch eject and hold onto your seat !!!
+
+proc quit a {
+    destroy .
+}
+
+# Utility routine.
+
+proc dpos w {
+    wm geometry $w +300+300
+}
+
+###############################################################################
