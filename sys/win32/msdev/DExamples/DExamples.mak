@@ -4,7 +4,7 @@
 # TARGTYPE "Win32 (x86) Console Application" 0x0103
 
 !IF "$(CFG)" == ""
-CFG=x19d - Win32 Debug
+CFG=x01d - Win32 Release
 !MESSAGE No configuration specified.  Defaulting to x19d - Win32 Debug.
 !ENDIF 
 
@@ -112,7 +112,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE"\
- /Fp"$(INTDIR)/DExamples.pch" /YX /Fo"$(INTDIR)/" /c 
+ /Fp"$(INTDIR)/DExamples.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -157,7 +157,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE"\
- /Fp"$(INTDIR)/DExamples.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c 
+ /Fp"$(INTDIR)/DExamples.pch" /D"__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c
 CPP_OBJS=.\Debug/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -204,7 +204,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "NOBRAINDEAD" /D "WIN32" /D "_CONSOLE" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "NOBRAINDEAD" /D "WIN32" /D\
- "_CONSOLE" /Fp"$(INTDIR)/x01d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "_CONSOLE" /Fp"$(INTDIR)/x01d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x01d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -223,7 +223,7 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  /pdb:"$(OUTDIR)/x01d.pdb" /machine:I386 /out:"$(OUTDIR)/x01d.exe" 
 LINK32_OBJS= \
 	".\x01d\Release\x01c.obj" \
-	"..\..\..\..\lib\plplotd.lib"
+	"..\plpdll\Release\plplotd.lib"
 
 "$(OUTDIR)\x01d.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -261,7 +261,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x01d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x01d.pch"  /D "__PLDLL_H__"/YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c
  
 CPP_OBJS=.\x01d\Debug/
 CPP_SBRS=
@@ -315,7 +315,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x02d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x02d.pch"  /D "__PLDLL_H__"/YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x02d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -372,7 +372,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x02d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x02d.pch"  /D "__PLDLL_H__"/YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x02d\Debug/
 CPP_SBRS=
@@ -426,7 +426,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x03d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x03d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x03d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -483,7 +483,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x03d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x03d.pch"/D "__PLDLL_H__"  /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x03d\Debug/
 CPP_SBRS=
@@ -537,7 +537,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x04d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x04d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x04d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -594,7 +594,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x04d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x04d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x04d\Debug/
 CPP_SBRS=
@@ -648,7 +648,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x05d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x05d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x05d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -705,7 +705,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x05d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x05d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x05d\Debug/
 CPP_SBRS=
@@ -759,7 +759,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x06d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x06d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x06d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -816,7 +816,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x06d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x06d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x06d\Debug/
 CPP_SBRS=
@@ -870,7 +870,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x07d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x07d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x07d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -927,7 +927,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x07d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x07d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x07d\Debug/
 CPP_SBRS=
@@ -981,7 +981,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x08d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x08d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x08d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -1038,7 +1038,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x08d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x08d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x08d\Debug/
 CPP_SBRS=
@@ -1092,7 +1092,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x09d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x09d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x09d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -1149,7 +1149,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x09d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x09d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x09d\Debug/
 CPP_SBRS=
@@ -1260,7 +1260,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x10d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x10d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x10d\Debug/
 CPP_SBRS=
@@ -1314,7 +1314,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x11d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x11d.pch"/D "__PLDLL_H__"  /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x11d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -1371,7 +1371,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x11d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x11d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x11d\Debug/
 CPP_SBRS=
@@ -1425,7 +1425,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x12d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x12d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x12d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -1482,7 +1482,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x12d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x12d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x12d\Debug/
 CPP_SBRS=
@@ -1536,7 +1536,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x13d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x13d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x13d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -1593,7 +1593,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x13d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x13d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x13d\Debug/
 CPP_SBRS=
@@ -1647,7 +1647,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x15d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x15d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x15d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -1704,7 +1704,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x15d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x15d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x15d\Debug/
 CPP_SBRS=
@@ -1758,7 +1758,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x16d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x16d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x16d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -1815,7 +1815,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x16d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x16d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x16d\Debug/
 CPP_SBRS=
@@ -1869,7 +1869,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x18d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /Fp"$(INTDIR)/x18d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x18d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -1926,7 +1926,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x18d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x18d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
  
 CPP_OBJS=.\x18d\Debug/
 CPP_SBRS=
@@ -1980,7 +1980,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /ML /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D\
- "NOBRAINDEAD" /Fp"$(INTDIR)/x19d.pch" /YX /Fo"$(INTDIR)/" /c 
+ "NOBRAINDEAD" /D "__PLDLL_H__" /Fp"$(INTDIR)/x19d.pch" /YX /Fo"$(INTDIR)/" /c
 CPP_OBJS=.\x19d\Release/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -1999,7 +1999,7 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  /pdb:"$(OUTDIR)/x19d.pdb" /machine:I386 /out:"$(OUTDIR)/x19d.exe" 
 LINK32_OBJS= \
 	".\x19d\Release\x19c.obj" \
-	"..\..\..\..\lib\plplotd.lib"
+	"..\plpdll\Release\plplotd.lib"
 
 "$(OUTDIR)\x19d.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -2037,8 +2037,7 @@ CLEAN :
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /YX /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "NOBRAINDEAD" /YX /c
 CPP_PROJ=/nologo /MLd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE"\
- /D "NOBRAINDEAD" /Fp"$(INTDIR)/x19d.pch" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c\
- 
+ /D "NOBRAINDEAD" /Fp"$(INTDIR)/x19d.pch" /D "__PLDLL_H__" /YX /Fo"$(INTDIR)/" /Fd"$(INTDIR)/" /c
 CPP_OBJS=.\x19d\Debug/
 CPP_SBRS=
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -2112,7 +2111,7 @@ LINK32_OBJS= \
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\x01c.cpp
+SOURCE=..\..\..\..\tmp\x01c.c
 DEP_CPP_X01C_=\
 	"..\..\..\..\tmp\plcdemos.h"\
 	"..\..\..\..\tmp\plevent.h"\
@@ -2785,7 +2784,7 @@ SOURCE=\plplot\lib\plplotd.lib
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\tmp\x19c.cpp
+SOURCE=..\..\..\..\tmp\x19c.c
 DEP_CPP_X19C_=\
 	"..\..\..\..\tmp\plcdemos.h"\
 	"..\..\..\..\tmp\plplot.h"\
@@ -2799,7 +2798,7 @@ DEP_CPP_X19C_=\
 ################################################################################
 # Begin Source File
 
-SOURCE=\plplot\lib\plplotd.lib
+SOURCE=..\plpdll\Release\plplotd.lib
 
 !IF  "$(CFG)" == "x19d - Win32 Release"
 

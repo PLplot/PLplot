@@ -105,9 +105,9 @@ EXPORTS
 	plw3d
 	plwid
 	plwind
-	plParseOpts
-	plGetCursor
-	plMergeOpts
+	win_plParseOpts
+	win_plGetCursor
+	win_plMergeOpts
 	plConsole
 	plAlloc2dGrid
 	plFree2dGrid
