@@ -87,7 +87,7 @@ main(int argc, char *argv[])
     PLFLT x, y, argx, argy, distort;
 
     PLFLT **z, **w, zmin, zmax;
-    char* zdefined;
+    char *zdefined;
     PLFLT *clevel, *shedge, *xg1, *yg1;
     PLcGrid  cgrid1;
     PLcGrid2 cgrid2;
@@ -101,7 +101,7 @@ main(int argc, char *argv[])
 
 /* Allocate zdefined */
   
-    zdefined = malloc(nx * ny);
+    zdefined = (char *) malloc(nx * ny * sizeof(char));
   
 /* Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
 
@@ -176,9 +176,9 @@ main(int argc, char *argv[])
 	   /* out of laziness reuse this scratch variable*/
 	   argx = sqrt(cgrid2.xg[i][j]*cgrid2.xg[i][j] + cgrid2.yg[i][j]*cgrid2.yg[i][j]);
 	   if(argx < 0.4 || argx > 0.6)
-	     zdefined[i*nx + j] = 1;
+	     zdefined[i*ny + j] = 1;
 	   else
-	     zdefined[i*nx + j] = 0;
+	     zdefined[i*ny + j] = 0;
 	}
     }
 
@@ -286,6 +286,7 @@ main(int argc, char *argv[])
 
     plend();
 
+   if (zdefined) free(zdefined);
     free((void *) clevel);
     free((void *) shedge);
     free((void *) xg1);
