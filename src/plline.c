@@ -69,30 +69,96 @@ c_plline(PLINT n, PLFLT *x, PLFLT *y)
  * Draws a line in 3 space.  You must first set up the viewport, the
  * 2d viewing window (in world coordinates), and the 3d normalized
  * coordinate box.  See x18c.c for more info.
+ *
+ * This version adds clipping against the 3d bounding box specified in plw3d
 \*----------------------------------------------------------------------*/
-
 void
 c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 {
     int i;
-    PLFLT u, v;
+    PLFLT vmin[3], vmax[3], zscale;
 
     if (plsc->level < 3) {
 	plabort("plline3: Please set up window first");
 	return;
     }
 
-    for( i=0; i < n; i++ ) {
-	u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
-	v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
-	if (i==0)
-	    plP_movphy(u,v);
-	else
-	    plP_draphy(u,v);
+    /* get the bounding box in 3d */
+    plP_gdom(&vmin[0], &vmax[0], &vmin[1], &vmax[1]);
+    plP_grange(&zscale, &vmin[2], &vmax[2]);
+
+    /* interate over the vertices */
+    for( i=0; i < n-1; i++ ) {
+      PLFLT p0[3], p1[3];
+      int axis;
+
+      /* copy the end points of the segment to allow clipping */
+      p0[0] = x[i]; p0[1] = y[i]; p0[2] = z[i];
+      p1[0] = x[i+1]; p1[1] = y[i+1]; p1[2] = z[i+1];
+
+      /* check against each axis of the bounding box */
+      for(axis = 0; axis < 3; axis++) {
+	if(p0[axis] < vmin[axis]) { /* first out */
+	  if(p1[axis] < vmin[axis]) {
+	    break; /* both endpoints out so quit */
+	  } else {
+	    int j;
+	    /* interpolate to find intersection with box */
+	    PLFLT t = (vmin[axis] - p0[axis]) / (p1[axis] - p0[axis]);
+	    p0[axis] = vmin[axis];
+	    for(j = 1; j<3; j++) {
+	      int k = (axis+j)%3;
+	      p0[k] = (1-t)*p0[k] + t*p1[k];
+	    }
+	  }
+	} else if(p1[axis] < vmin[axis]) { /* second out */
+	  int j;
+	  /* interpolate to find intersection with box */
+	  PLFLT t = (vmin[axis] - p0[axis]) / (p1[axis] - p0[axis]);
+	  p1[axis] = vmin[axis];
+	  for(j = 1; j<3; j++) {
+	    int k = (axis+j)%3;
+	    p1[k] = (1-t)*p0[k] + t*p1[k];
+	  }
+	}
+	if(p0[axis] > vmax[axis]) { /* first out */
+	  if(p1[axis] > vmax[axis]) {
+	    break; /* both out so quit */
+	  } else {
+	    int j;
+	    /* interpolate to find intersection with box */
+	    PLFLT t = (vmax[axis] - p0[axis]) / (p1[axis] - p0[axis]);
+	    p0[axis] = vmax[axis];
+	    for(j = 1; j<3; j++) {
+	      int k = (axis+j)%3;
+	      p0[k] = (1-t)*p0[k] + t*p1[k];
+	    }
+	  }
+	} else if(p1[axis] > vmax[axis]) { /* second out */
+	  int j;
+	  /* interpolate to find intersection with box */
+	  PLFLT t = (vmax[axis] - p0[axis]) / (p1[axis] - p0[axis]);
+	  p1[axis] = vmax[axis];
+	  for(j = 1; j<3; j++) {
+	    int k = (axis+j)%3;
+	    p1[k] = (1-t)*p0[k] + t*p1[k];
+	  }
+	}
+      }
+      /* if we made it to here without "break"ing out of the loop, the 
+	 remaining segment is visible */
+      if( axis == 3 ) { /*  not clipped away */
+	PLFLT u0, v0, u1, v1;
+	u0 = plP_wcpcx(plP_w3wcx( p0[0], p0[1], p0[2] ));
+	v0 = plP_wcpcy(plP_w3wcy( p0[0], p0[1], p0[2] ));
+	u1 = plP_wcpcx(plP_w3wcx( p1[0], p1[1], p1[2] ));
+	v1 = plP_wcpcy(plP_w3wcy( p1[0], p1[1], p1[2] ));
+	plP_movphy(u0,v0);
+	plP_draphy(u1,v1);
+      }
     }
     return;
 }
-
 /*----------------------------------------------------------------------*\
  * void plpoly3( n, x, y, z, draw, ifcc )
  *

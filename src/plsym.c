@@ -122,6 +122,7 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 {
     PLINT i, sym, ifont = plsc->cfont;
     PLFLT u, v;
+    PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
 
     if (plsc->level < 3) {
 	plabort("plpoin3: Please set up window first");
@@ -132,12 +133,19 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 	return;
     }
 
+    plP_gdom(&xmin, &xmax, &ymin, &ymax);
+    plP_grange(&zscale, &zmin, &zmax);
+
     if (code == -1) {
 	for (i = 0; i < n; i++) {
+ 	  if(x[i] >= xmin && x[i] <= xmax &&
+ 	     y[i] >= ymin && y[i] <= ymax &&
+	     z[i] >= zmin && z[i] <= zmax) {
 	    u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
 	    v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
 	    plP_movphy(u,v);
 	    plP_draphy(u,v);
+	  }
 	}
     }
     else {
@@ -146,9 +154,13 @@ c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code)
 	sym = *(fntlkup + (ifont - 1) * numberchars + code);
 
 	for( i=0; i < n; i++ ) {
+ 	  if(x[i] >= xmin && x[i] <= xmax &&
+ 	     y[i] >= ymin && y[i] <= ymax &&
+	     z[i] >= zmin && z[i] <= zmax) {
 	    u = plP_wcpcx(plP_w3wcx( x[i], y[i], z[i] ));
 	    v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
 	    plhrsh(sym, u, v);
+	  }
 	}
     }
     return;
