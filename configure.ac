@@ -264,11 +264,9 @@ tkwin:tkwin \
 xfig:xfig \
 xwin:xwin])
 
-# Macro to set one driver enable value
-
 define(PL_ADD_DRIVER,[dnl
-MY_ARG_ENABLE($1, builtin(format,
-[  --enable-%-14s enable %s device driver ($enable_$1)], $1, $1))
+MY_ARG_ENABLE($1, 
+  AC_HELP_STRING([--enable-$1], [enable $1 device driver ($enable_$1)]))
 if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
     enable_$1="yes"
 
@@ -455,13 +453,16 @@ AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
 
 MY_ARG_WITH(freetype,
-  [  --with-freetype         enable driver options for using freetype library for fonts ($with_freetype)])
+  AC_HELP_STRING([--with-freetype], 
+    [enable driver options for using freetype library for fonts ($with_freetype)]))
 
 MY_ARG_ENABLE(drivers,
-  [  --enable-drivers        enable all device drivers ($enable_drivers)])
+  AC_HELP_STRING([--enable-drivers],
+    [enable all device drivers ($enable_drivers)]))
 
 MY_ARG_ENABLE(dyndrivers,
-  [  --enable-dyndrivers     enable dynamic loading of drivers ($enable_dyndrivers)])
+  AC_HELP_STRING([--enable-dyndrivers],
+    [enable dynamic loading of drivers ($enable_dyndrivers)]))
 
 # Set driver enable values
 #
@@ -634,7 +635,8 @@ AC_SUBST(LIB_TAG)
 ### C++ binding
 
 MY_ARG_ENABLE(cxx,
-  [  --enable-cxx            compile C++ interface code ($enable_cxx)])
+  AC_HELP_STRING([--enable-cxx],
+    [compile C++ interface code ($enable_cxx)]))
 if test "$enable_cxx" = yes; then
 
     # If KAI C++ (Kuck and Associates) is available, use that.
@@ -661,7 +663,8 @@ AC_PROG_CXX
 ### Fortran 77 binding
 
 MY_ARG_ENABLE(f77,
-  [  --enable-f77            compile Fortran-77 interface code ($enable_f77)])
+  AC_HELP_STRING([--enable-f77],
+    [compile Fortran-77 interface code ($enable_f77)]))
 if test "$enable_f77" = yes ; then
   AC_PROG_F77
   AC_CHECK_PROGS(M4, m4, "no")
@@ -676,21 +679,26 @@ fi
 ### Python binding
 
 MY_ARG_ENABLE(python,
-  [  --enable-python         compile Python interface code ($enable_python)])
+  AC_HELP_STRING([--enable-python],
+    [compile Python interface code ($enable_python)]))
 
 ### tcl binding
 
 MY_ARG_ENABLE(tcl,
-  [  --enable-tcl            compile Tcl interface code ($enable_tcl)])
+  AC_HELP_STRING([--enable-tcl],
+    [compile Tcl interface code ($enable_tcl)]))
 
 MY_ARG_ENABLE(itcl,
-  [  --enable-itcl           enable incr Tcl interface code ($enable_itcl)])
+  AC_HELP_STRING([--enable-itcl],
+    [enable incr Tcl interface code ($enable_itcl)]))
 
 MY_ARG_ENABLE(java,
-  [  --enable-java           compile Java interface code ($enable_java)])
+  AC_HELP_STRING([--enable-java],
+    [compile Java interface code ($enable_java)]))
 
 MY_ARG_ENABLE(octave,
-  [  --enable-octave         compile Octave interface code ($enable_octave)])
+  AC_HELP_STRING([--enable-octave],
+    [compile Octave interface code ($enable_octave)]))
 
 # Conditionals to control various Makefile.am files.
 
@@ -814,9 +822,9 @@ AC_SUBST(DOCDIR)
 ### DocBook documentation
 
 AC_ARG_ENABLE(docbook,
-    [--enable-docbook          Enable build of DocBook documentation],
-    [enable_docbook="$enableval"],
-    [enable_docbook=no])
+  AC_HELP_STRING([--enable-docbook], [Enable build of DocBook documentation]),
+  [enable_docbook="$enableval"],
+  [enable_docbook=no])
 
 if test $enable_docbook = yes ; then
 AC_INCLUDE(doc/docbook/configure.ac)
