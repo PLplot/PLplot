@@ -5,3 +5,6 @@ stamp-h*
 plConfig.h*
 plDevs.h
 plhershey-unicode.h
+.deps
+.libs
+plhershey-unicode-gen
