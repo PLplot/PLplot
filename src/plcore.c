@@ -1920,8 +1920,9 @@ c_plssub(PLINT nx, PLINT ny)
 /* Force a page advance */
 
     if (plsc->level > 0) {
-	plP_eop();
-	plP_bop();
+        plP_subpInit();
+/*AWI	plP_eop();
+	plP_bop();*/
     }
 }
 
