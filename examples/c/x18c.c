@@ -87,7 +87,6 @@ main(int argc, char *argv[])
 void test_poly(int k)
 {
     PLFLT *x, *y, *z;
-    float theta, phi;
     int i, j;
     float pi, two_pi;
     int draw[][4] = { { 1, 1, 1, 1 },
