@@ -13,7 +13,6 @@
       <li> <a href="@BASE@.dvi">DVI form of documentation @SIZE@</a>
       <li> <a href="@BASE_INFO@.tar.gz">Info form of documentation @SIZE@</a>
       <li> <a href="@BASE_MAN@.tar.gz">Man pages tarball (API chapter in nroff format) @SIZE@</a>
-      <li> <a href="@BASE@.tar.gz">DocBook source tarball @SIZE@</a>
       <li> <a href="@BASE_HTML@.tar.gz">HTML results tarball @SIZE@</a>
     </ul>
     <h2>The Current PLplot Documentation Project</h2>

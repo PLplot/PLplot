@@ -53,14 +53,14 @@ dist-stamp:
 	$(MAKE) dist
 	touch dist-stamp
 
-$(INDEX_HTML): $(INDEX_HTML).in.in $(BASE).tar.gz $(HTML_TARBALL) \
+$(INDEX_HTML): $(INDEX_HTML).in.in $(HTML_TARBALL) \
                $(INFO_TARBALL) $(MAN_TARBALL)
 	( cd src ; \
           $(MAKE) print )	
 	$(PERL) bin/size-href.pl < $(INDEX_HTML).in > $@
 
 $(TARBALL): $(INDEX_HTML)
-	tar cfz $(TARBALL) $(HTML_TARBALL) $(BASE).tar.gz \
+	tar cfz $(TARBALL) $(HTML_TARBALL) \
                 $(INFO_TARBALL) $(MAN_TARBALL) -C www index.html \
                 -C ../src $(BASE).ps.gz $(BASE).pdf.gz $(BASE).dvi
 
