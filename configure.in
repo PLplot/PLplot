@@ -182,10 +182,12 @@ AC_SUBST(LIB_TAG)
 # discussion of this in the FAQ for more info.
 # --------------------------------------------------------------------
 
-AC_PREFIX(plrender)
 if test -z "$prefix"; then
-    prefix="/usr/local/plplot"
-    echo "Unable to determine prefix; using $prefix"
+    AC_PREFIX(plrender)
+    if test -z "$prefix"; then
+	prefix="/usr/local/plplot"
+	echo "Unable to determine prefix; using $prefix"
+    fi
 fi
 
 # -----------------------------------------------------------------------
@@ -261,15 +263,47 @@ versaterm, dg300, ps, xfig, ljii, hp7470, hp7580, imp, xwin, tk, dp)
 
 # --------------------------------------------------------------------
 # Set up variables that specify install directories
+#
+# You can preset these to anything you want if you don't like the default
+# choice.  In particular, if you /don't/ install PLplot under its own
+# directory, the examples, tcl, and doc subdirectories will cause
+# problems.  In this case, set the <whatever>_DIR variables below as
+# desired in ~/config/cf_plplot.in, and you are set.
 # --------------------------------------------------------------------
 
-LIB_DIR=$prefix/lib
-BIN_DIR=$prefix/bin
-TCL_DIR=$prefix/tcl
+if test -z "$LIB_DIR"; then
+    LIB_DIR=$prefix/lib
+fi
+if test -z "$BIN_DIR"; then
+    BIN_DIR=$prefix/bin
+fi
+if test -z "$TCL_DIR"; then
+    TCL_DIR=$prefix/tcl
+fi
+if test -z "$DOC_DIR"; then
+    DOC_DIR=$prefix/doc
+fi
+if test -z "$INFO_DIR"; then
+    INFO_DIR=$prefix/info
+fi
+if test -z "$INCLUDE_DIR"; then
+    INCLUDE_DIR=$prefix/include
+fi
+if test -z "$DEMOS_DIR"; then
+    DEMOS_DIR=$prefix/examples
+fi
 
 AC_DEFINE_UNQUOTED(LIB_DIR, \"$LIB_DIR\")
 AC_DEFINE_UNQUOTED(BIN_DIR, \"$BIN_DIR\")
 AC_DEFINE_UNQUOTED(TCL_DIR, \"$TCL_DIR\")
+
+AC_SUBST(LIB_DIR)
+AC_SUBST(BIN_DIR)
+AC_SUBST(TCL_DIR)
+AC_SUBST(DOC_DIR)
+AC_SUBST(INFO_DIR)
+AC_SUBST(INCLUDE_DIR)
+AC_SUBST(DEMOS_DIR)
 
 # --------------------------------------------------------------------
 # Create links to source code.
