@@ -22,11 +22,19 @@ Japan.  This was an extremely frustrating situation, which had always been
 apparent to me but only then came to a head.  Scientific graphics is an
 utter necessity to anyone doing numerical modeling, and I decided that
 being at the mercy of vendors and computer centers on this issue was
-unacceptable.  I have no objection to commercial software, but to depend
-on it for basic graphics capability is far too limiting.  I was somewhat
-familiar with plplot for the Amiga, and seeing that it was fairly capable
-and portable I decided this would be the "last" major graphics package I
-would develop for.
+unacceptable.  
+
+I have no objection to commercial software, but let's face it.. sometimes
+commercial solutions suck.  This is one of those times.  You don't have
+access to the source code, so you can't improve it to suit your needs
+better, and you certainly can't freely carry it to different machines.
+Software environments on high-performance Unix systems, especially as
+regards commercial software, are VERY variable from machine to machine.
+Regardless of why this situation exists, I decided I could no longer
+depend on commercial software to provide a basic graphics capability.  I
+was somewhat familiar with plplot for the Amiga, and seeing that it was
+fairly capable and portable I decided this would be the "last" graphics
+package I would use and support (for a long while at least).
 
 It turned out that plplot required some substantial investment of my time
 before it satisfied all of my (then) needs, but has nonetheless performed
@@ -45,7 +53,7 @@ code to fix bugs, but it's very reassuring to know that you can if you
 need to.  I can't promise to support the package or make specific
 enhancements as my responsibilities (i.e. funding) lie elsewhere.  But I
 am always interested to hear what people want, since if it's a good idea I
-will benefit too.  User contributions are always welcomed (I have had
+will benefit too.  User-contributed code is always welcomed (I have had
 quite a few).  And backward incompatibilities will be introduced into
 the package sparingly if at all.
 
@@ -74,17 +82,27 @@ and view them using plplot, dumping to disk those pages or plots you want
 to process using a separate package.  This can already be done using the
 XFig driver, for example.  For this to be most effective, plplot should
 have internal knowlege of more varied objects than "line" (currently the
-fundamental unit).
+fundamental unit), and I have some plans in this area.  
 
 I'm always interested in gaining new collaborators and contributors for
 plplot, so feel free to send me email (mjl@dino.ph.utexas.edu) so we can
-discuss additions you'd like to make.
+discuss additions you'd like to make.  Want to help support plplot but
+need suggestions?  I hesitate to recommend anything that will require
+broad changes to the package, but any of the following would be great:
+
+	volunteers for target platform support (I have HPUX covered)
+	output drivers: TIFF, CGM, others?
+	plplot demos?  (especially using Tcl/TK)
+	an improved contour plotter
+	a 2d color palette widget for the TK driver (e.g. see NCSA Image)
+	help rewriting the manual?  (OK, so I'm really reaching here)
 
 ------------------------------------------------------------------------------
 2. I don't have an ANSI compiliant C compiler.  How do I compile plplot?
 
 Get an ANSI C compiler.  The cheap solution is to get gcc up if it has
-been ported to your machine.
+been ported to your machine.  This is not unreasonable IMHO -- the C
+standard was approved in 1989.  Isn't it about time you upgraded?
 
 ------------------------------------------------------------------------------
 3. What about plplot support for VMS?
@@ -132,10 +150,10 @@ in the tcl subdirectory (or from harbor.ecn.purdue.edu in directory
 pub/tcl).  Also consult with the comp.lang.tcl newsgroup on Usenet.  The
 most recent version at the time of this writing is Tcl 7.3 and TK 3.6, and
 if you are just starting out make sure to get that.  Plplot may eventually
-require these versions but for now works with earlier releases (Tcl 6.7,
-TK 3.2 is iffy).  Note: to build, you need to have the Tcl/TK header files
-where they can be found by the C compiler (/usr/local/include is a good
-place).  
+require these versions but for now works with earlier releases (it once
+worked with Tcl 6.7, TK 3.2, but may no longer).  Note: to build, you need
+to have the Tcl/TK header files where they can be found by the C compiler
+(e.g. /usr/local/include, or softlinks to it will work fine).
 
 6b. How do I use "xauth"?
 
@@ -347,5 +365,22 @@ hanging around (say, as a result of some sort of abnormal exit like a core
 dump) you will get the mysterious _#2 appended (and _#3, and so on; note
 there is a utility called delinterp that will delete these zombie
 interpreters).
+
+------------------------------------------------------------------------------
+17.  I don't have a fortran compiler; how do I compile plplot?
+
+The Fortran files are only part of the interface layer for Fortran codes
+that use plplot.  If you don't need this capability the layer can be
+omitted by defining NO_FORTRAN when building the makefile.  I.e. put
+the line:
+
+define({NO_FORTRAN})
+
+somewhere in cf_plplot.m4 and copy this file to a directory ~/config,
+so that from then on it will always be found when the configure
+script is run.
+
+Alternately, you can use 'f2c' (freeware fortran-to-C translator) to
+compile the layer, assuming it (f2c) has been ported to your system.
 
 ------------------------------------------------------------------------------
