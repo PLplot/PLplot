@@ -1,3 +1,10 @@
+/* $Id$
+ * $Log$
+ * Revision 1.6  1993/08/10 04:51:32  mjl
+ * Fixed -mkidx option (broken in last update).
+ *
+*/
+
 /* 
  * plserver.c
  * Maurice LeBrun
@@ -93,14 +100,6 @@ main(int argc, char **argv)
     if (tk_toplevel(&w, interp, display, argv[0], 0))
 	abort_session("");
 
-/* Create new tclIndex file -- a convenience */
-
-    if (mkidx != NULL) {
-	tcl_cmd("auto_mkindex . *.tcl");
-	client = NULL;
-	abort_session("");
-    }
-
 /* Initialize stuff known to interpreter */
 
     configure(argc, argv);
@@ -109,6 +108,14 @@ main(int argc, char **argv)
 
     if (tk_source(w, interp, "$tk_library/wish.tcl"))
 	abort_session("");
+
+/* Create new tclIndex file -- a convenience */
+
+    if (mkidx != NULL) {
+	tcl_cmd("auto_mkindex . *.tcl");
+	client = NULL;
+	abort_session("");
+    }
 
 /* Set up auto_path */
 
