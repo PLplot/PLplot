@@ -1,0 +1,19 @@
+1 - Copy files to tmp with
+    nmake
+2 - create the static and/or dynamic library by opening
+    plplib\plplib.mak and plpdll\plpdll.mak in Microsoft Visual C.
+3 - install the libraries with
+    nmake install
+    Do not forget to do this each time you recreate a library.
+4 - If you use the dynamic library :
+    - \plplot\bin should be in your path.
+    - define NOBRAINDEAD in the preprocessor definitions of the project 
+      settings
+    - plfill is defined as void WINAPI plfill(...) which is incompatible
+      with it's use inside the plplot library.
+      If you pass it as a parameter to e.g. plshade it is necessary to 
+      create a stub :
+        void myfill(PLINT n,PLFLT *x,PLFLT *y) {
+          plfill(n,x,y);
+        }
+      and pass this as an argument to plshade.
