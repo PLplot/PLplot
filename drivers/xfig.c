@@ -23,7 +23,11 @@ static void flushbuffer(PLStream *);
 static short *buffptr, bufflen;
 static short count;
 static int curwid = 1;
+static int curcol0 = 0;
 static int firstline = 1;
+
+/* transformation matrix from plplot *default* colormap0 to xfig colors */
+static int trans[] = {0, 4, 6, 2, 33, 34, 35, 36, 37, 1, 38, 3, 39, 5, 40, 7};
 
 /*--------------------------------------------------------------------------*\
  * plD_init_xfig()
@@ -54,6 +58,7 @@ plD_init_xfig(PLStream *pls)
     dev->xmax = FIGX;
     dev->ymin = 0;
     dev->ymax = FIGY;
+    pls->dev_fill0 = 1;		/* Handle solid fills */
 
     plP_setpxl(3.1496, 3.1496);	/* 80 DPI */
 
@@ -61,9 +66,27 @@ plD_init_xfig(PLStream *pls)
 
 /* Write out header */
 
-    fprintf(pls->OutFile, "#FIG 1.4X\n");
+    /* still much work to do */
+    fprintf(pls->OutFile, "#FIG 3.2\n");
+    fprintf(pls->OutFile, "Landscape\n");
+    fprintf(pls->OutFile, "Center\n");
+    fprintf(pls->OutFile, "Metric\n");
+    fprintf(pls->OutFile, "A4\n");
+    fprintf(pls->OutFile, "100.0\n");
+    fprintf(pls->OutFile, "Single\n");
+    fprintf(pls->OutFile, "-2\n");
     fprintf(pls->OutFile, "%d 2\n", DPI);
 
+    /* user defined colors, for colormap0--xfig only has 8 default colors */
+    fprintf(pls->OutFile, "0 33 #7fffd4\n");
+    fprintf(pls->OutFile, "0 34 #ffc0cb\n");
+    fprintf(pls->OutFile, "0 35 #f5deb3\n");
+    fprintf(pls->OutFile, "0 36 #bebebe\n");
+    fprintf(pls->OutFile, "0 37 #a52a2a\n");
+    fprintf(pls->OutFile, "0 38 #8a2be2\n");
+    fprintf(pls->OutFile, "0 39 #40e0d0\n");
+    fprintf(pls->OutFile, "0 40 #fa8072\n");
+    
     bufflen = 2 * BSIZE;
     buffptr = (short *) malloc(sizeof(short) * bufflen);
     if (buffptr == NULL)
@@ -209,10 +232,13 @@ plD_state_xfig(PLStream *pls, PLINT op)
 	break;
 
     case PLSTATE_COLOR0:
-	break;
+      flushbuffer(pls);
+      curcol0 =  trans[pls->icol0];
+      break;
 
     case PLSTATE_COLOR1:
-	break;
+      fprintf(stderr, "Yeah\n");
+      break;
     }
 }
 
@@ -220,11 +246,33 @@ plD_state_xfig(PLStream *pls, PLINT op)
  * plD_esc_xfig()
  *
  * Escape function.
+ * Preliminary fill support for colormap0
 \*--------------------------------------------------------------------------*/
 
 void
 plD_esc_xfig(PLStream *pls, PLINT op, void *ptr)
 {
+  PLDev *dev = pls->dev;
+  int i, npts;
+ 
+   switch (op) { 
+   case PLESC_FILL:
+
+     npts = pls->dev_npts;
+     if (npts > PL_MAXPOLY)
+       plexit("FillPolygonCmd: Too many points in polygon\n");
+     
+     flushbuffer(pls);
+     fprintf(pls->OutFile, "2 1 0 1 %d %d 50 0 20 0.0 0 0 0 0 0 %d\n",
+	     curcol0, curcol0, npts);
+
+     for (i = 0; i < npts; i++)
+       fprintf(pls->OutFile,"%d %d ",  pls->dev_x[i],
+	        dev->ymax - pls->dev_y[i]);
+
+     fprintf(pls->OutFile, "\n");
+     break;
+   }  
 }
 
 /*--------------------------------------------------------------------------*\
@@ -239,13 +287,14 @@ flushbuffer(PLStream *pls)
     if (count == 0)
 	return;
 
-    fprintf(pls->OutFile, "2 1 0 %d 0 0 0 0 0.000 0 0\n", curwid);
+    fprintf(pls->OutFile, "2 1 0 %d %d 0 50 0 -1 0.0 0 0 0 0 0 %d\n",
+	    curwid, curcol0, count/2);
     while (i < count) {
 	fprintf(pls->OutFile, "%d %d ", *(buffptr + i),
 		FIGY - *(buffptr + i + 1));
 	i += 2;
     }
-    fprintf(pls->OutFile, "9999 9999\n");
+    fprintf(pls->OutFile, "\n");
     count = 0;
 }
 
