@@ -259,7 +259,6 @@ proc plw_create_TopRow {w} {
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu {w pmbut} {
-
     global pmenu; set pmenu($w) $pmbut.m
 
     menubutton $pmbut -text "Plot" -menu $pmenu($w) -relief raised
@@ -270,7 +269,7 @@ proc plw_create_pmenu {w pmbut} {
     plw_create_pmenu_orient  $w
     plw_create_pmenu_zoom    $w
     plw_create_pmenu_page    $w
-    plw_create_pmenu_options $w
+    plw_create_pmenu_palettes $w
     plw_create_pmenu_help    $w
     plw_create_pmenu_exit    $w
 
@@ -282,12 +281,10 @@ proc plw_create_pmenu {w pmbut} {
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu_exit {w} {
-
     global pmenu
 
     $pmenu($w) add command -label "Exit" \
 	-command exit
-	
 }
 
 #----------------------------------------------------------------------------
@@ -295,7 +292,6 @@ proc plw_create_pmenu_exit {w} {
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu_help {w} {
-
     global pmenu
 
     $pmenu($w) add command -label "Help" \
@@ -309,7 +305,6 @@ proc plw_create_pmenu_help {w} {
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu_print {w} {
-
     global pmenu
 
     $pmenu($w) add command -label "Print" \
@@ -323,7 +318,6 @@ proc plw_create_pmenu_print {w} {
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu_save {w} {
-
     global pmenu; set m $pmenu($w).save
 
     $pmenu($w) add cascade -label "Save" -menu $m
@@ -392,7 +386,6 @@ proc plw_create_pmenu_save {w} {
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu_orient {w} {
-
     global pmenu; set m $pmenu($w).orient
 
     $pmenu($w) add cascade -label "Orient" -menu $m 
@@ -428,7 +421,6 @@ proc plw_create_pmenu_orient {w} {
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu_zoom {w} {
-
     global pmenu; set m $pmenu($w).zoom
 
     $pmenu($w) add cascade -label "Zoom" -menu $m
@@ -490,7 +482,6 @@ proc plw_create_pmenu_zoom {w} {
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu_page {w} {
-
     global pmenu; set m $pmenu($w).page
 
     $pmenu($w) add cascade -label "Page" -menu $m
@@ -516,7 +507,6 @@ proc plw_create_pmenu_page {w} {
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu_redraw {w} {
-
     global pmenu
 
     $pmenu($w) add command -label "Redraw" \
@@ -524,23 +514,89 @@ proc plw_create_pmenu_redraw {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_create_pmenu_options
+# plw_create_pmenu_palettes
 #
-# Create plot-options menu (cascade)
+# Create plot-palettes menu (cascade)
 #----------------------------------------------------------------------------
 
-proc plw_create_pmenu_options {w} {
+proc plw_create_pmenu_palettes {w} {
+    global pmenu; set m $pmenu($w).palettes
+    global static_redraw dynamic_redraw
 
-    global pmenu; set m $pmenu($w).options
+# The palette tools require Itcl 3.0 or later.
 
-    $pmenu($w) add cascade -label "Options" -menu $m
+    if [catch {package require Itcl 3.0}] { return }
+
+    $pmenu($w) add cascade -label "Palettes" -menu $m
     menu $m
 
+# Set up redraw variables.  Basically if you have r/w colorcells (e.g.
+# PseudoColor visual, not sure if any others), you don't need either of
+# these -- they are updated automatically.  Otherwise (e.g. TrueColor), you
+# definitely want static_redraw set and probably dynamic_redraw.  The latter is
+# very cpu intensive as it redraws the plot every time you move one of the
+# sliders, similar to a zoom/pan.
+
+# Note: it would be better to reach down to the X driver to get the info on
+# whether we have r/w colorcells to set the default, but this procedure is a
+# lot easier and almost as good.
+
+# See if we have a visual capable of r/w colorcells.
+
+    set rwcolorcells 0
+    set visual [winfo visual $w]
+    if { $visual == "pseudocolor" } {
+	set rwcolorcells 1
+    }
+
+    if $rwcolorcells {
+	set static_redraw 0
+	set dynamic_redraw 0
+    } else {
+	set static_redraw 1
+	set dynamic_redraw 1
+    }
+
+# Set up palette tools
+
     $m add command -label "Palette 0" \
-	-command "plcmap0_edit $w" 
+	-command "plcmap0_edit $w.plwin" 
 
     $m add command -label "Palette 1" \
-	-command "plcmap1_edit $w" 
+	-command "plcmap1_edit $w.plwin" 
+
+# Palettes - options (another cascade)
+
+    $m add cascade -label "Options" -menu $m.options
+    menu $m.options
+
+# Setup checkboxes for dynamic/static redraws.  Eventually a resource setting
+# will be used to allow overrides that way too, but for now this will do.
+
+    $m.options add check -label "Enable static plot redraws" \
+	-variable static_redraw
+
+    $m.options add check -label "Enable dynamic plot redraws" \
+	-variable dynamic_redraw
+
+# Set up traces to force the following logical relationship:
+#
+#  dynamic_redraw ==> static_redraw
+#
+# and its contrapositive.
+
+    trace variable static_redraw w plw_pmenu_palettes_checkvars
+    trace variable dynamic_redraw w plw_pmenu_palettes_checkvars
+}
+
+proc plw_pmenu_palettes_checkvars {n1 n2 op} {
+    global static_redraw dynamic_redraw
+    if { $n1 == "dynamic_redraw" } {
+	if $dynamic_redraw { set static_redraw 1 }
+    }
+    if { $n1 == "static_redraw" } {
+	if !$static_redraw { set dynamic_redraw 0 }
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -552,7 +608,6 @@ proc plw_create_pmenu_options {w} {
 #----------------------------------------------------------------------------
 
 proc plw_entry {entry} {
-
     global tk_version
     if { $tk_version >= 4.0 } then {
 	incr entry
@@ -1321,7 +1376,6 @@ proc plw_view_select {w x0 y0 x1 y1} {
 #----------------------------------------------------------------------------
 
 proc plw_view_zoom {w x0 y0 x1 y1} {
-    
     global xl xr yl yr
 
 # Adjust arguments to be properly ordered (xl < xr, etc)
@@ -1417,7 +1471,6 @@ proc plw_view_zoom {w x0 y0 x1 y1} {
 #----------------------------------------------------------------------------
 
 proc plw_zoom_back {w} {
-    
     global zidx zxl zyl zxr zyr
 
     if { $zidx($w) == 0 } then return
@@ -1441,7 +1494,6 @@ proc plw_zoom_back {w} {
 #----------------------------------------------------------------------------
 
 proc plw_zoom_forward {w} {
-    
     global zidx zidx_max zxl zyl zxr zyr
 
     if { $zidx_max($w) == 0 || $zidx($w) == $zidx_max($w) } then return
@@ -1598,7 +1650,6 @@ proc plw_update_view {w} {
 #----------------------------------------------------------------------------
 
 proc status_msg {w msg} {
-
     plw_label_set $w $msg
     after 2500 plw_label_reset $w
 }
@@ -1638,7 +1689,6 @@ proc plw_label_set {w msg} {
 #----------------------------------------------------------------------------
 
 proc plw_dplink {w client} {
-
     global list_sock data_sock
 
     dp_Host +
