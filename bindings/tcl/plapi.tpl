@@ -16,7 +16,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.6  1995/10/16 18:25:24  mjl
+# Revision 1.7  1995/10/23 07:33:11  mjl
+# Added Tcl binding for plglevel.
+#
+# Revision 1.6  1995/10/16  18:25:24  mjl
 # Much cleaning up.  Changes: input characters strings are now specified as
 # "const char *", output character strings by "char *".  Input single chars
 # are specified as "char" and output chars by "char&" (used in plsesc/plgesc).
@@ -586,6 +589,11 @@ fnam	const char *
 
 pltclcmd plgfnam void
 fnam	char *
+
+# Get the current run level.
+
+pltclcmd plglevel void
+level	PLINT&
 
 # Set up lengths of major tick marks.
 
