@@ -40,20 +40,20 @@
       <itemizedlist>
         <listitem>
           <para>
-            With this release, the ABI (Application Binary Interface)
-            backward compatibility of the PLplot library has been broken,
-            because the libraries libnn and libcsa were renamed to
-            libcsironn and libcsirocsa, respectively.  For this reason, the
-            soversion number had to change.  In Linux, for instance, the
-            libraries are called now
+	    With this release, the ABI (Application Binary Interface)
+	    backward compatibility of the PLplot library has been broken,
+	    because the libraries libnn and libcsa were renamed to
+	    libcsironn and libcsirocsa, respectively.  For this reason, the
+	    soversion number had to change.  In Linux, for instance, the
+	    libraries are called now
             <filename>libplplot*.so.9.0.0</filename>.
-          </para>
+	  </para>
         </listitem>
         <listitem>
           <para>
             <function>plsabort</function>: New function.  Similar to
-            plsexit, should be used to set a handler for the plabort
-            function.
+	    plsexit, should be used to set a handler for the plabort
+	    function.
           </para>
         </listitem>
         <listitem>
@@ -322,7 +322,7 @@
   <sect2>
     <title>Acknowledgments</title>
 
-    <para> 
+    <para>
       The following PLplot core developers actively participated in this
       release: Joao Cardoso, Vincent Darley, Alan W. Irwin, Rafael
       Laboissiere, Maurice LeBrun, Arjen Markus, Andrew Roach, and Andrew
