@@ -38,7 +38,7 @@ libplplot = -L../../src -lplplotd
 ### contents are independent of the single-double question and the
 ### following logic depends on that.
 plplotcmodule_p_double.c plplotc.py: plplotcmodule.i 
-	swig -python -o plplotcmodule_p_double.c -c++ -DPL_DOUBLE \
+	$(SWIG) -python -o plplotcmodule_p_double.c -c++ -DPL_DOUBLE \
 	plplotcmodule.i
 
 # swig-1.3.17+ does not handle documentation strings properly so run this
@@ -51,7 +51,7 @@ nodist__plplotcmodule_la_SOURCES  = plplotcmodule_double.c
 else
 libplplot = -L../../src -lplplot
 plplotcmodule_p_single.c plplotc.py: plplotcmodule.i 
-	swig -python -o plplotcmodule_p_single.c -c++ \
+	$(SWIG) -python -o plplotcmodule_p_single.c -c++ \
 	plplotcmodule.i
 
 plplotcmodule_single.c: plplotcmodule_p_single.c makedocstrings.py

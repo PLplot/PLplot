@@ -36,7 +36,7 @@ version = -version-info @SOVERSION@
 sources = plplotjavac_wrap.c
 
 plplotjavac_wrap.c plplotjavac.java: plplotjavac.i plplotcapi.i
-	swig -java -package plplot.core -DPL_DOUBLE plplotjavac.i
+	$(SWIG) -java -package plplot.core -DPL_DOUBLE plplotjavac.i
 
 nodist_libplplotjava_la_SOURCES  = $(sources)
 libplplotjava_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
