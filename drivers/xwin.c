@@ -1964,10 +1964,8 @@ static unsigned char CreatePixmapStatus;
 static int
 CreatePixmapErrorHandler(Display *display, XErrorEvent *error)
 {
-    if (error->error_code == BadAlloc) {
-	CreatePixmapStatus = error->error_code;
-    }
-    else {
+    CreatePixmapStatus = error->error_code;
+    if (error->error_code != BadAlloc) {
 	char buffer[256];
 	XGetErrorText(display, error->error_code, buffer, 256);
 	fprintf(stderr, "Error in XCreatePixmap: %s.\n", buffer);
