@@ -1,27 +1,15 @@
 # $Id$
 # $Log$
-# Revision 1.6  1993/08/13 04:36:00  mjl
+# Revision 1.7  1993/08/13 06:41:58  mjl
+# Fixed broken font setting in GetItem proc.
+#
+# Revision 1.6  1993/08/13  04:36:00  mjl
 # Previous scheme for scrolling backwards in a text widget help entry didn't
 # work right under SunOS for some reason; now fixed.
 #
 # Revision 1.5  1993/08/09  22:21:49  mjl
 # Removed all absolute references to fonts.  Now only accessed through
 # global variables set in plconfig.tcl, for easier per-user customization.
-#
-# Revision 1.4  1993/08/03  20:30:11  mjl
-# Made min & max procs compatible with the ones used by a different TCL
-# package.
-#
-# Revision 1.3  1993/07/31  08:05:05  mjl
-# Added support procs used in plplot/TK style text windows.
-#
-# Revision 1.2  1993/07/16  22:04:02  mjl
-# Added several utility procs, mostly for getting info or confirmation from
-# the user.
-#
-# Revision 1.1  1993/07/02  06:58:34  mjl
-# The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
-#
 
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer support procs
@@ -230,7 +218,7 @@ proc getItem {item} {
     dpos $w
     wm title $w "Entry"
     wm iconname $w "Entry"
-    message $w.msg -font -$dialog_font -aspect 800 -text $item
+    message $w.msg -font $dialog_font -aspect 800 -text $item
 
     frame $w.frame -borderwidth 10
     pack append $w.frame \
