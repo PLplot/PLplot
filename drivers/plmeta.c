@@ -623,6 +623,7 @@ WriteFileHeader(PLStream *pls)
 {
     PLmDev *dev = (PLmDev *) pls->dev;
     FILE *file = pls->OutFile;
+    int isfile = (pls->output_type == 0);
 
     dbug_enter("WriteFileHeader(PLStream *pls");
 
@@ -632,8 +633,10 @@ WriteFileHeader(PLStream *pls)
 /* Write file index info.  Right now only number of pages. */
 /* The order here is critical */
 
-    if (pl_fgetpos(file, &dev->index_offset))
-	plexit("WriteFileHeader: fgetpos call failed");
+    if (isfile) {
+	if (pl_fgetpos(file, &dev->index_offset))
+	    plexit("WriteFileHeader: fgetpos call failed");
+    }
 
     plm_wr( pdf_wr_header(pls->pdfs, "pages") );
     plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) 0) );
