@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.53  1994/09/18 07:14:01  mjl
+ * Revision 1.54  1994/10/11 18:43:33  mjl
+ * Restructured X initialization, and added the function plD_open_xw() to
+ * allow early access (before calling plinit) to the X driver data
+ * structures.  Currently used by the plframe widget to ensure that fg/bg
+ * colors are consistent in both the widget and the driver.  The fg color is
+ * now set dynamically so that rubber-band drawing will always give a good
+ * contrast to the background color.
+ *
+ * Revision 1.53  1994/09/18  07:14:01  mjl
  * Fixed yet more stupid bugs that cause alloc/free or strcmp problems on
  * some systems.
  *
@@ -137,6 +145,8 @@ static void  StoreCmap0		(PLStream *pls);
 static void  StoreCmap1		(PLStream *pls);
 static void  CreatePixmap	(PLStream *pls);
 static void  FillPolygon	(PLStream *pls);
+static void  GetVisual		(PLStream *pls);
+static void  AllocBGFG		(PLStream *pls);
 
 static void  MasterEH		(PLStream *, XEvent *);
 static void  KeyEH		(PLStream *, XEvent *);
@@ -178,10 +188,52 @@ plD_init_xw(PLStream *pls)
     pls->dev_flush = 1;		/* Want to handle our own flushes */
     pls->dev_fill0 = 1;		/* Can do solid fills */
 
+/* The real meat of the initialization done here */
+
+    if (pls->dev == NULL)
+	plD_open_xw(pls);
+
+    dev = (XwDev *) pls->dev;
+
+    Init(pls);
+
+/* Get ready for plotting */
+
+    dev->xlen = xmax - xmin;
+    dev->ylen = ymax - ymin;
+
+    dev->xscale_init = (double) (dev->init_width-1) / (double) dev->xlen;
+    dev->yscale_init = (double) (dev->init_height-1) / (double) dev->ylen;
+
+    dev->xscale = dev->xscale_init;
+    dev->yscale = dev->yscale_init;
+
+    plP_setpxl(pxlx, pxly);
+    plP_setphy(xmin, xmax, ymin, ymax);
+}
+
+/*----------------------------------------------------------------------*\
+ * plD_open_xw()
+ *
+ * Performs basic driver initialization, without actually opening or
+ * modifying a window.  May be called by the outside world before plinit
+ * in case the caller needs early access to the driver internals (not
+ * very common -- currently only used by the plframe widget).
+\*----------------------------------------------------------------------*/
+
+void
+plD_open_xw(PLStream *pls)
+{
+    XwDev *dev;
+    XwDisplay *xwd;
+    int i;
+
+    dbug_enter("plD_open_xw");
+
 /* Allocate and initialize device-specific data */
 
     if (pls->dev != NULL)
-	free((void *) pls->dev);
+	plwarn("plD_open_xw: device pointer is already set");
 
     pls->dev = calloc(1, (size_t) sizeof(XwDev));
     if (pls->dev == NULL)
@@ -201,23 +253,87 @@ plD_init_xw(PLStream *pls)
 
     dev->write_to_window = ! pls->db;
 
-/* X-specific initialization */
+/* See if display matches any already in use, and if so use that */
 
-    Init(pls);
+    dev->xwd = NULL;
+    for (i = 0; i < PLXDISPLAYS; i++) {
+	if (xwDisplay[i] == NULL) {
+	    continue;
+	}
+	else if (pls->FileName == NULL && xwDisplay[i]->displayName == NULL) {
+	    dev->xwd = xwDisplay[i];
+	    break;
+	}
+	else if (pls->FileName == NULL || xwDisplay[i]->displayName == NULL) {
+	    continue;
+	}
+	else if (strcmp(xwDisplay[i]->displayName, pls->FileName) == 0) {
+	    dev->xwd = xwDisplay[i];
+	    break;
+	}
+    }
 
-/* Get ready for plotting */
+/* If no display matched, create a new one */
 
-    dev->xlen = xmax - xmin;
-    dev->ylen = ymax - ymin;
+    if (dev->xwd == NULL) {
+	dev->xwd = (XwDisplay *) calloc(1, (size_t) sizeof(XwDisplay));
+	if (dev->xwd == NULL)
+	    plexit("Init: Out of memory.");
 
-    dev->xscale_init = (double) (dev->init_width-1) / (double) dev->xlen;
-    dev->yscale_init = (double) (dev->init_height-1) / (double) dev->ylen;
+	for (i = 0; i < PLXDISPLAYS; i++) {
+	    if (xwDisplay[i] == NULL)
+		break;
+	}
+	if (i == PLXDISPLAYS) 
+	    plexit("Init: Out of xwDisplay's.");
 
-    dev->xscale = dev->xscale_init;
-    dev->yscale = dev->yscale_init;
+	xwDisplay[i] = xwd = (XwDisplay *) dev->xwd;
+	xwd->count = 1;
 
-    plP_setpxl(pxlx, pxly);
-    plP_setphy(xmin, xmax, ymin, ymax);
+/* Open display */
+
+	xwd->display = XOpenDisplay(pls->FileName);
+	if (xwd->display == NULL) {
+	    fprintf(stderr, "Can't open display\n");
+	    exit(1);
+	}
+	xwd->displayName = pls->FileName;
+	xwd->screen = DefaultScreen(xwd->display);
+	if (synchronize) 
+	    XSynchronize(xwd->display, 1);
+
+/* Get colormap and visual */
+
+	xwd->map = DefaultColormap(xwd->display, xwd->screen);
+
+	GetVisual(pls);
+
+/*
+ * Figure out if we have a color display or not.
+ * Default is color IF the user hasn't specified and IF the output device is
+ * not grayscale.  
+ */
+
+	if (pls->colorset)
+	    xwd->color = pls->color;
+	else {
+	    pls->color = 1;
+	    xwd->color = ! pl_AreWeGrayscale(xwd->display);
+	}
+
+/* Allocate & set background and foreground colors */
+
+	AllocBGFG(pls);
+	plX_setBGFG(pls);
+    }
+
+/* Display matched, so use existing display data */
+
+    else {
+	xwd = (XwDisplay *) dev->xwd;
+	xwd->count++;
+    }
+    xwd->ixwd = i;
 }
 
 /*----------------------------------------------------------------------*\
@@ -443,6 +559,7 @@ plD_state_xw(PLStream *pls, PLINT op)
     }
 
     case PLSTATE_CMAP0:
+	plX_setBGFG(pls);
 	StoreCmap0(pls);
 	break;
 
@@ -578,71 +695,12 @@ static void
 Init(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
-    XwDisplay *xwd;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
     Window root;
-    int i, x, y;
+    int x, y;
 
     dbug_enter("Init");
-
-/* See if display matches any already in use, and if so use that */
-
-    dev->xwd = NULL;
-    for (i = 0; i < PLXDISPLAYS; i++) {
-	if (xwDisplay[i] == NULL) {
-	    continue;
-	}
-	else if (pls->FileName == NULL && xwDisplay[i]->displayName == NULL) {
-	    dev->xwd = xwDisplay[i];
-	    break;
-	}
-	else if (pls->FileName == NULL || xwDisplay[i]->displayName == NULL) {
-	    continue;
-	}
-	else if (strcmp(xwDisplay[i]->displayName, pls->FileName) == 0) {
-	    dev->xwd = xwDisplay[i];
-	    break;
-	}
-    }
-
-/* If no display matched, create a new one */
-
-    if (dev->xwd == NULL) {
-	dev->xwd = (XwDisplay *) calloc(1, (size_t) sizeof(XwDisplay));
-	if (dev->xwd == NULL)
-	    plexit("Init: Out of memory.");
-
-	for (i = 0; i < PLXDISPLAYS; i++) {
-	    if (xwDisplay[i] == NULL)
-		break;
-	}
-	if (i == PLXDISPLAYS) 
-	    plexit("Init: Out of xwDisplay's.");
-
-	xwDisplay[i] = xwd = (XwDisplay *) dev->xwd;
-	xwd->count = 1;
-    }
-    else {
-	xwd = (XwDisplay *) dev->xwd;
-	xwd->count++;
-    }
-    xwd->ixwd = i;
-	
-/* Open display, initialize color map and color values */
-
-    if (xwd->count == 1) {
-	xwd->display = XOpenDisplay(pls->FileName);
-	if (xwd->display == NULL) {
-	    fprintf(stderr, "Can't open display\n");
-	    exit(1);
-	}
-	xwd->displayName = pls->FileName;
-	xwd->screen = DefaultScreen(xwd->display);
-	if (synchronize) 
-	    XSynchronize(xwd->display, 1);
-
-	InitColors(pls);
-    }
 
 /* If not plotting into a child window, need to create main window now */
 
@@ -654,13 +712,13 @@ Init(PLStream *pls)
 	dev->is_main = FALSE;
 	dev->window = pls->window_id;
     }
+
+/* Initialize colors, create gc */
+
+    InitColors(pls);
     XSetWindowColormap( xwd->display, dev->window, xwd->map );
-
-/* GC creation and initialization */
-
-    if (xwd->count == 1) {
+    if ( ! xwd->gc) 
 	xwd->gc = XCreateGC(xwd->display, dev->window, 0, 0);
-    }
 
 /* Get initial drawing area dimensions */
 
@@ -1196,10 +1254,6 @@ RedrawCmd(PLStream *pls)
 		  dev->width, dev->height, 0, 0);
 	XSync(xwd->display, 0);
     }
-    else {
-	plRemakePlot(pls);
-	XFlush(xwd->display);
-    }
 
     dev->write_to_window = ! pls->db;
 }
@@ -1264,36 +1318,24 @@ Driver will redraw the entire plot to handle expose events.\n");
 }
 
 /*----------------------------------------------------------------------*\
- * InitColors()
+ * GetVisual()
  *
- * Does all color initialization.
+ * Get visual info.  In order to safely use a visual other than that of
+ * the parent (which hopefully is that returned by DefaultVisual), you
+ * must first find (using XGetRGBColormaps) or create a colormap matching
+ * this visual and then set the colormap window attribute in the
+ * XCreateWindow attributes and valuemask arguments.  I don't do this
+ * right now, so this is turned off by default.
 \*----------------------------------------------------------------------*/
 
 static void
-InitColors(PLStream *pls)
+GetVisual(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
-
-    PLColor fgcolor;
-    int gslevbg, gslevfg;
     int visuals_matched = 0;
 
-    dbug_enter("InitColors");
-
-/* Grab default color map.  Can always overwrite it later. */
-
-    xwd->map = DefaultColormap(xwd->display, xwd->screen);
-
-/* Get visual info.
- * 
- * In order to safely use a visual other than that of the parent (which
- * hopefully is that returned by DefaultVisual), you must first find
- * (using XGetRGBColormaps) or create a colormap matching this visual and
- * then set the colormap window attribute in the XCreateWindow attributes
- * and valuemask arguments.  I don't do this right now, so this is turned
- * off by default.
- */
+    dbug_enter("GetVisual");
 
 #if DEFAULT_VISUAL == 0
     {
@@ -1319,19 +1361,87 @@ InitColors(PLStream *pls)
 	xwd->visual = DefaultVisual( xwd->display, xwd->screen );
 	xwd->depth = DefaultDepth( xwd->display, xwd->screen );
     }
+}
 
-/*
- * Figure out if we have a color display or not.
- * Default is color IF the user hasn't specified and IF the output device is
- * not grayscale.  
- */
+/*----------------------------------------------------------------------*\
+ * AllocBGFG()
+ *
+ * Allocate background & foreground colors.  If possible, I choose pixel
+ * values such that the fg pixel is the xor of the bg pixel, to make
+ * rubber-banding easy to see.
+\*----------------------------------------------------------------------*/
 
-    if (pls->colorset)
-	xwd->color = pls->color;
-    else {
-	pls->color = 1;
-	xwd->color = ! pl_AreWeGrayscale(xwd->display);
+static void
+AllocBGFG(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
+    int i, j, k, npixels;
+    unsigned long plane_masks[1], pixels[MAX_COLORS];
+
+    dbug_enter("AllocBGFG");
+
+/* If not on a color system, allocate read-only and return */
+
+    if ( ! xwd->color) {
+	XAllocColor(xwd->display, xwd->map, &xwd->cmap0[0]);
+	XAllocColor(xwd->display, xwd->map, &xwd->fgcolor);
+	return;
     }
+
+/* Allocate r/w color cell for background */
+
+    if (XAllocColorCells(xwd->display, xwd->map, False,
+			 plane_masks, 0, pixels, 1)) {
+	xwd->cmap0[0].pixel = pixels[0];
+    }
+    else {
+	plexit("couldn't allocate background color cell");
+    }
+
+/* Allocate all colors */
+
+    npixels = 256;
+    while(1) {
+	if (XAllocColorCells(xwd->display, xwd->map, False,
+			     plane_masks, 0, pixels, npixels))
+	    break;
+	npixels--;
+	if (npixels == 0)
+	    break;
+    }
+
+    for (i = 0; i < npixels; i++) {
+	if (pixels[i] == (~xwd->cmap0[0].pixel & 0xFF))
+	    break;
+    }
+
+    xwd->fgcolor.pixel = pixels[i];
+
+    for (j = 0; j < npixels; j++) {
+	if (j != i)
+	    XFreeColors(xwd->display, xwd->map, &pixels[j], 1, 0);
+    }
+}
+
+/*----------------------------------------------------------------------*\
+ * plX_setBGFG()
+ *
+ * Set background & foreground colors.  Foreground over background should
+ * have high contrast.
+\*----------------------------------------------------------------------*/
+
+void
+plX_setBGFG(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
+    PLColor fgcolor;
+    int gslevbg, gslevfg;
+
+    dbug_enter("plX_setBGFG");
 
 /*
  * Set background color.
@@ -1346,6 +1456,8 @@ InitColors(PLStream *pls)
     gslevbg = ((long) pls->cmap0[0].r +
 	       (long) pls->cmap0[0].g +
 	       (long) pls->cmap0[0].b) / 3;
+
+    PLColor_to_XColor(&pls->cmap0[0], &xwd->cmap0[0]);
 
 /*
  * Set foreground color.
@@ -1366,23 +1478,36 @@ InitColors(PLStream *pls)
 
     PLColor_to_XColor(&fgcolor, &xwd->fgcolor);
 
-/* If we're not on a color system, just allocate bg & fg then return */
+/* Now store */
 
-    if ( ! xwd->color) {
-	PLColor_to_XColor(&pls->cmap0[0], &xwd->cmap0[0]);
-	XAllocColor(xwd->display, xwd->map, &xwd->cmap0[0]);
-	XAllocColor(xwd->display, xwd->map, &xwd->fgcolor);
-	return;
-    }
+    XStoreColor(xwd->display, xwd->map, &xwd->fgcolor);
+    XStoreColor(xwd->display, xwd->map, &xwd->cmap0[0]);
+}
+
+/*----------------------------------------------------------------------*\
+ * InitColors()
+ *
+ * Does all color initialization.
+\*----------------------------------------------------------------------*/
+
+static void
+InitColors(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
+    dbug_enter("InitColors");
 
 /* Allocate and initialize color maps. */
 /* Defer cmap1 allocation until it's actually used */
 
-    if (plplot_ccmap) {
-	AllocCustomMap(pls);
-    }
-    else {
-	AllocCmap0(pls);
+    if (xwd->color) {
+	if (plplot_ccmap) {
+	    AllocCustomMap(pls);
+	}
+	else {
+	    AllocCmap0(pls);
+	}
     }
 }
 
@@ -1518,18 +1643,18 @@ AllocCmap0(PLStream *pls)
 
 /* Allocate and assign colors in cmap 0 */
 
-    npixels = 16;
+    npixels = 15;
     while(1) {
 	if (XAllocColorCells(xwd->display, xwd->map, False,
-			     plane_masks, 0, pixels, npixels))
+			     plane_masks, 0, &pixels[1], npixels))
 	    break;
 	npixels--;
 	if (npixels == 0)
 	    plexit("couldn't allocate any colors");
     }
 
-    xwd->ncol0 = npixels;
-    for (i = 0; i < xwd->ncol0; i++) {
+    xwd->ncol0 = npixels+1;
+    for (i = 1; i < xwd->ncol0; i++) {
 	xwd->cmap0[i].pixel = pixels[i];
     }
 
@@ -1624,7 +1749,7 @@ StoreCmap0(PLStream *pls)
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
     int i;
 
-    for (i = 0; i < xwd->ncol0; i++) {
+    for (i = 1; i < xwd->ncol0; i++) {
 	PLColor_to_XColor(&pls->cmap0[i], &xwd->cmap0[i]);
 	XStoreColor(xwd->display, xwd->map, &xwd->cmap0[i]);
     }
