@@ -5,9 +5,12 @@
 # IFS, University of Texas at Austin
 # 23-Jun-1994
 #
-# To plot these, start up pltcl and select the desired device type.  Type
+# To plot these, start up pltcl and type plinit to get a selection of
+# device types.  Choose one of the devices then type
 # "source tcldemos.tcl", then type "1" for the first demo, "2" for the
 # second, and so on.  Not all examples are fully implemented yet.
+# Note if you use xwin for the device type, you must type CR in the
+# xwin window to move from one plot to the next.
 #
 # Note: each demo proc is supplied a widget argument if run from a widget,
 # or "loopback" if being run from pltcl.  In the latter case, the
@@ -16,6 +19,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.4  2000/12/19 01:51:51  airwin
+# Improved self documentation of this script.
+#
 # Revision 1.3  1995/06/30 13:48:27  furnish
 # Update loop limit to reflect the two new demo files.
 #
