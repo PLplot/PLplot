@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -41,7 +41,7 @@ function [x1, y1, x2, y2] = plrb(fg)
     [status, state, keysym, button, string, pX, pY, dX, dY, wX, wY, subwin] = plGetCursor;
     if (start)
       plline(x,y); plflush; start = 0;
-    else
+    elseif (state != 0)
       plline(x,y);
       x2 = wX; y2 = wY;
       x = [x1; x2; x2; x1; x1]; y = [y1; y1; y2; y2; y1 ];
@@ -55,7 +55,7 @@ function [x1, y1, x2, y2] = plrb(fg)
 	plline(x,y); plflush;
       endif
       plxormod(0);
-      break
+      break;
     elseif (st == 0 && button == 2) ## restart
       plline(x,y);
       [status, state, keysym, button, string, pX, pY, dX, dY, wX, wY, subwin] = plGetCursor;
