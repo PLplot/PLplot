@@ -1,6 +1,16 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1995/01/10 09:37:39  mjl
+ * Revision 1.37  1995/03/16 23:50:23  mjl
+ * Added variable plbuf_read for use when reading from the plot buffer.  Added
+ * variable dev_swin for drivers that need calls to set plot window parameters
+ * directed their way. Changed the name *MouseEH to *ButtonEH.  Changed event
+ * handler prototypes to accept a (PLGraphicsIn *).  Added a *LocateEH and
+ * *LocateEH_data.  Added the variables phyxlen and phyylen.  Changed name
+ * "nCWindows" to nplwin, "windows" to plwin.  Eliminated obsolete variables
+ * dpxscl, dpxoff, dpyscl, dpyoff, mpxscl, mpxoff, mpyscl, mpyoff.  Added
+ * prototype for plGinInit();
+ *
+ * Revision 1.36  1995/01/10  09:37:39  mjl
  * Fixed some braindamage incurred last update.
  *
  * Revision 1.34  1995/01/06  20:47:29  mjl
@@ -78,12 +88,12 @@
 #ifndef __PLSTREAM_H__
 #define __PLSTREAM_H__
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Define the PLDev data structure.
  *
  * These are all quantities that must be saved on a per-device basis.
  * Some drivers (xwin, tk) allocate structures defined internally.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 typedef struct {
     PLFLT pxlx, pxly;
@@ -98,7 +108,7 @@ typedef struct {
     PLFLT xscale_dev, yscale_dev;
 } PLDev;
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Define the PLStream data structure.
  *
  * This contains a copy of every variable that is stream dependent, which
@@ -121,7 +131,7 @@ typedef struct {
  *
  * The quantities in each stream are as follows:
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Misc control variables
  *
@@ -129,7 +139,7 @@ typedef struct {
  * level	PLINT	Initialization level
  * program	char*	Program name
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Palettes (two of them)
  *
@@ -167,7 +177,7 @@ typedef struct {
  * cmap0setcol	int[]	Set for initialized cmap0 colors.
  * cmap1set	int	Set if cmap 1 has been initialized
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Variables governing pen width 
  *
@@ -175,7 +185,7 @@ typedef struct {
  * widthset	Set if pen width was specified
  * widthlock	Set if pen width is locked
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Variables used to pass information between the core and the driver 
  *
@@ -186,11 +196,13 @@ typedef struct {
  * dev_minor	PLINT	Minor device id (for variations on one type)
  * color	PLINT	Set if color is available
  * colorset	PLINT	Set if "color" was set prior to calling plinit
+ * plbuf_read	PLINT	Set during a plot buffer redraw
  * plbuf_write	PLINT	Set if driver needs to use the plot buffer
  * dev_fill0	PLINT	Set if driver can do solid area fills
  * dev_fill1	PLINT	Set if driver can do pattern area fills
  * dev_di	PLINT	Set if driver wants to handle DI commands
  * dev_flush	PLINT	Set if driver wants to handle flushes itself
+ * dev_swin	PLINT	Set if driver wants to handle 'set window' commands
  * termin	PLINT	Set for interactive devices
  * graphx	PLINT	Set if currently in graphics mode
  * nopause	PLINT	Set if we are skipping the pause between frames
@@ -230,8 +242,8 @@ typedef struct {
  * KeyEH	void*	Keyboard event handler
  * KeyEH_data	void*	Pointer to client data to pass
  *
- * MouseEH	void*	Mouse event handler
- * MouseEH_data	void*	Pointer to client data to pass
+ * ButtonEH	void*	(Mouse) Button event handler
+ * ButtonEH_data void*	Pointer to client data to pass
  *
  * Variables used for direct specification of device characteristics
  * Not supported by all drivers (or even very many)
@@ -242,7 +254,7 @@ typedef struct {
  * pageset	PLINT	Set if page dimensions were specified
  * hack		PLINT	Enables driver-specific hack(s) if set
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * User customization tidy routine.  This is called before closing a stream
  * to do any program specific cleanup.
@@ -250,7 +262,7 @@ typedef struct {
  * tidy		void*   pointer to cleanup routine
  * tidy_data	void*   pointer to client data to pass
  *
- ************************************************************************
+ ****************************************************************************
  *
  * Stuff used by Xlib driver
  *
@@ -260,7 +272,7 @@ typedef struct {
  * db		int	Set if you want to double buffer output
  *			(only pixmap is drawn to directly; it is blitted
  *			to output window on EOP or an Expose)
- ***********************************************************************
+ ***************************************************************************
  *
  * These are for support of the TK driver.
  *
@@ -276,14 +288,14 @@ typedef struct {
  * dp		int	Use Tcl-DP for communication, if set
  * server_nokill int	Don't kill plserver on a ^C if set
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Variables for use by the plot buffer
  *
  * plbufFile	FILE	Plot buffer file pointer
  * plbufOwner	int	Typically set; only zero if current stream is cloned.
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Driver interface (DI)
  *
@@ -337,7 +349,7 @@ typedef struct {
  *
  * page_status	PLINT	Flag to indicate current action
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Fill pattern state information. 
  * patt < 0: Hardware fill, if available (not implemented yet)
@@ -349,7 +361,7 @@ typedef struct {
  * delta	Array of spacings in micrometers between fill lines
  * nps		Number of distinct line styles for fills
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Variables used in line drawing
  *
@@ -363,13 +375,13 @@ typedef struct {
  * pendn	Flag indicating if pen is up or down
  * curel	Current element within broken line
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Variables governing character strings
  *
  * esc		Text string escape character
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Scale factors for characters, symbols, and tick marks.
  *
@@ -379,7 +391,7 @@ typedef struct {
  * maj...	Major tick default height and current (scaled) height
  * min...	Minor tick default height and current (scaled) height
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Variables governing numeric axis label appearance
  *
@@ -388,7 +400,7 @@ typedef struct {
  * xdigmax..	Allowed #digits in axes labels
  * xdigits..	Actual field widths (returned)
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Variables governing physical coordinate system
  *
@@ -399,7 +411,7 @@ typedef struct {
  * um.		Number of micrometers in a pixel
  * pmm		Number of pixels to a millimeter
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * State variables for 3d plots
  *
@@ -410,14 +422,14 @@ typedef struct {
  * ran..	Minimum and maximum z values for 3-d plot
  * c..		Coordinate transformation from 3-d to 2-d
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Variables for keeping track of world coordinate windows on a page.
  *
  * nCWindows	Number of coordinate windows on current page
  * windows	Array of plCWindow's for current page
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Variables governing subpages and viewports.
  *
@@ -427,17 +439,14 @@ typedef struct {
  * vpd...	Viewport boundaries in normalized device coordinates
  * vpw...	Viewport boundaries in world coordinates
  *
- ***********************************************************************
+ ***************************************************************************
  *
  * Transformation variables
  *
  * wp....	Transformation variables for world  to physical conversion
- * dp....	Transformation variables for device to physical conversion
- * mp....	Transformation variables for millimeters from bottom left
- *		hand corner to physical coordinates
  * wm....	Transformation variables for world coordinates to mm
  *
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 typedef struct {
 
@@ -465,11 +474,11 @@ typedef struct {
 
 /* Variables used for interacting with or by device driver */
 
-    PLINT plbuf_write;
+    PLINT plbuf_read, plbuf_write;
     PLINT device, dev_minor, termin, graphx, nopause;
     PLINT color, colorset;
     PLINT family, member, finc, fflen, bytemax, famadv;
-    PLINT dev_fill0, dev_fill1, dev_di, dev_flush;
+    PLINT dev_fill0, dev_fill1, dev_di, dev_flush, dev_swin;
 
     char DevName[80];
     FILE *OutFile;
@@ -483,11 +492,17 @@ typedef struct {
 
     void *dev;
 
-    void (*KeyEH)	(PLKey *, void *, int *);
+    void (*KeyEH)	(PLGraphicsIn *gin, void *KeyEH_data,
+			 int *exit_eventloop);
     void *KeyEH_data;
 
-    void (*MouseEH)	(PLMouse *, void *, int *);
-    void *MouseEH_data;
+    void (*ButtonEH)	(PLGraphicsIn *gin, void *ButtonEH_data,
+			 int *exit_eventloop);
+    void *ButtonEH_data;
+
+    void (*LocateEH)	(PLGraphicsIn *gin, void *LocateEH_data,
+			 int *locate_mode);
+    void *LocateEH_data;
 
     PLFLT xdpi, ydpi;
     PLINT xlength, ylength;
@@ -563,7 +578,7 @@ typedef struct {
     PLINT vppxmi, vppxma, vppymi, vppyma;
     PLINT sppxmi, sppxma, sppymi, sppyma;
     PLINT clpxmi, clpxma, clpymi, clpyma;
-    PLINT phyxmi, phyxma, phyymi, phyyma;
+    PLINT phyxmi, phyxma, phyxlen, phyymi, phyyma, phyylen;
     PLINT umx, umy;
     PLFLT xpmm, ypmm;
 
@@ -574,10 +589,10 @@ typedef struct {
     PLFLT zzscl, ranmi, ranma;
     PLFLT cxx, cxy, cyx, cyy, cyz;
 
-/* Variables for keeping track of world coordinate windows on a page. */
+/* Variables for keeping track of windows on a page. */
 
-    int nCWindows;
-    plCWindow windows[PL_MAXWINDOWS];
+    int nplwin;
+    PLWindow plwin[PL_MAXWINDOWS];
 
 /* Variables governing subpages and viewports. */
 
@@ -589,15 +604,13 @@ typedef struct {
 /* Transformation variables */
 
     PLFLT wpxscl, wpxoff, wpyscl, wpyoff;
-    PLFLT dpxscl, dpxoff, dpyscl, dpyoff;
-    PLFLT mpxscl, mpxoff, mpyscl, mpyoff;
     PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
 
 } PLStream;
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Prototypes for stream & device utility functions.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 /* Get the current stream pointer */
 
@@ -644,5 +657,10 @@ plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
 
 PLDev *
 plAllocDev(PLStream *pls);
+
+/* Just fills in the PLGraphicsIn with appropriate initial values. */
+
+void
+plGinInit(PLGraphicsIn *gin);
 
 #endif	/* __PLSTREAM_H__ */
