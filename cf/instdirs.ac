@@ -36,7 +36,7 @@ test -z "$BIN_DIR" && BIN_DIR='${bindir}'
 test -z "$TCL_DIR" && TCL_DIR="$DATA_DIR/tcl"
 AC_SUBST(TCL_DIR)
 
-test -z "$DRV_DIR" && DRV_DIR="$DATA_DIR/drivers${LIB_TAG}"
+test -z "$DRV_DIR" && DRV_DIR="$LIB_DIR/drivers${LIB_TAG}"
 AC_SUBST(DRV_DIR)
 
 ### Documentation directory
