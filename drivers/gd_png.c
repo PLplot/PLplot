@@ -30,7 +30,7 @@ static void     plD_init_png_Dev(PLStream *pls);
 /* Struct to hold device-specific info. */
 
 typedef struct {
-        PLGraphicsIn gin;                       /* Graphics input structure     */
+
 	gdImagePtr im_out;                      /* Graphics pointer */
         PLINT pngx;               
         PLINT pngy;
@@ -46,9 +46,6 @@ typedef struct {
         int colour;                             /* Current Colour               */
         int totcol;                             /* Total number of colours      */
 
-        int fg;                                 /* Pointer (in colour index) to a */
-                                                /* "safe" foreground colour (unused */
-                                                /* for *now* but maybe not later) */
 } png_Dev;
 
         
@@ -77,8 +74,6 @@ plD_init_png_Dev(PLStream *pls)
 
     dev->colour=1;
     dev->totcol=16;
-    dev->pngx = 1023;
-    dev->pngy = 767;
 
 }
 
@@ -272,7 +267,6 @@ png_Dev *dev=(png_Dev *)pls->dev;
                 dev->colour_index[++dev->totcol]=gdImageColorAllocate(dev->im_out,r, g, b);
 		dev->colour = dev->totcol;
 	       }
-		printf("%d\n",dev->colour);
 
 	}
 	break;
