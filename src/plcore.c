@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/03/17 17:03:12  mjl
-   Fixed some subtle pointer vs pointer-to-pointer bugs in some infrequently
-   used functions.
+   Revision 1.9  1993/03/19 20:58:13  mjl
+   Added code to check if user has passed a NULL to plsdev or plstart.
 
+ * Revision 1.8  1993/03/17  17:03:12  mjl
+ * Fixed some subtle pointer vs pointer-to-pointer bugs in some infrequently
+ * used functions.
+ *
  * Revision 1.7  1993/03/15  21:46:50  mjl
  * Changed _clear/_page driver functions to the names _eop/_bop, to be
  * more representative of what's actually going on.  Users still use
@@ -510,8 +513,10 @@ c_plsdev(char *devname)
 	plwarn("plsdev: Must be called before plinit.");
 	return;
     }
-    strncpy(pls[ipls].DevName, devname, sizeof(pls[ipls].DevName) - 1);
-    pls[ipls].DevName[sizeof(pls[ipls].DevName) - 1] = '\0';
+    if (devname != NULL) {
+	strncpy(pls[ipls].DevName, devname, sizeof(pls[ipls].DevName) - 1);
+	pls[ipls].DevName[sizeof(pls[ipls].DevName) - 1] = '\0';
+    }
 }
 
 void
