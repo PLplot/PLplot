@@ -20,6 +20,8 @@ tar cf $tarfile \
 	`find $pldir \
 	! -path ${pldir}/tmp/\* \
 	! -path ${pldir}/private/\* \
+	! -path ${pldir}/new/\* \
+	! -path ${pldir}/old/\* \
 	! -path \*CVS\* \
 	! -path \*~ \
         -type f`
