@@ -4,9 +4,9 @@
 #
 # Questions or problems, send (e)mail to:
 #
-#	Paul Casteels   casteels@uia.ac.be
-#	University of Antwerp   Dpt Physics
-#	Belgium
+#       Paul Casteels   casteels@uia.ac.be
+#       University of Antwerp   Dpt Physics
+#       Belgium
 
 PLDIR   = c:\plplot\  # 
 PLLIBS  = .  #
@@ -14,6 +14,8 @@ PLFONTS = $(PLDIR)plfonts\  #
 PLFONT_DIR= $(PLDIR)  #
 PLTMP   = $(PLDIR)tmp\  # 
 PLLIBDIR = .  #
+
+BCCINCLUDE = c:\bc4\include
 
 # Windows or DOS
 WIN3 = TRUE
@@ -91,7 +93,7 @@ OBJ =   \
 	plpage.obj \
 	plstream.obj \
 	plstring.obj \
-	plctest.obj \
+	plshade.obj
 
 DRV_OBJ = \
 	pdfutils.obj \
@@ -139,15 +141,6 @@ libs:   libc
 libc:   $(PLLIBS)\plplot.lib
 libf:   $(PLLIBS)\plstub.lib
 
-#$(PLLIBS)\plplot.lib: $(OBJ) $(DRV_OBJ)
-#        @echo Ready to build plplot.lib
-#        -@del plplot.lib
-#        tlib @&&!
-#plplot\
-#+$(OBJ:.o=.o +)\
-#$(DRV_OBJ:.o=.o +)\
-#,plplot.lst
-#!
 
 $(PLLIBS)\plplot.lib: $(OBJ) $(DRV_OBJ)
 	@echo Ready to build plplot.lib
@@ -166,20 +159,23 @@ force: links libs
 # First time only, should be executed from $(PLTMP)
 
 links: linkmain linkstubs
+	@echo Converting from Unix to Dos format
+	crlf -fs *.h *.c *.rc *.def
 
 linkmain:
 	copy ..\src\*.c .
 	copy ..\include\*.h .
 	copy ..\examples\c\*.c .
-	copy ..\examples\f77\*.f .
 	copy ..\drivers\*.* .
 	copy ..\fonts\*.* .
 	copy ..\utils\*.* .
-	ren *.f *.for
 	copy ..\sys\dos\bcc\*.h .
 	copy ..\sys\dos\bcc\*.c .
 	copy ..\sys\dos\bcc\*.rc .
 	copy ..\sys\dos\bcc\*.def .
+	copy ..\sys\dos\bcc\crlf.com .
+	copy plplot.h $(BCCINCLUDE)
+	copy pdf.h $(BCCINCLUDE)
 
 linkstubs:      
 	copy ..\sys\os2\stubf\*.* .
@@ -198,10 +194,10 @@ plrender:
 # xfont - extended fonts
 
 fonts:  sfont xfont
-	echo $(PLDIR)
-	echo $(PLFONT_DIR)
+	@echo $(PLDIR)
+	@echo $(PLFONT_DIR)
 	copy *.fnt $(PLFONT_DIR)
-	echo Put this in autoexec.bat !!
+	@echo Put this in autoexec.bat !!
 	set PLFONTS=$(PLFONT_DIR)
 
 sfont:  $(PLFONT_DIR)plstnd.fnt
@@ -212,7 +208,7 @@ $(PLFONT_DIR)plstnd.fnt:
 	-stndfont
 
 $(PLFONT_DIR)plxtnd.fnt:
-	$(CC) $(CFLAGS:ml=mh) -Ff=16 xtndfont.c font*.obj pdfutils.c
+	$(CC) $(CFLAGS:ml=mh) -Ff=16 xtndfont.c font*.c pdfutils.c 
 	-xtndfont
 
 #----------------------------------------------------------------------#

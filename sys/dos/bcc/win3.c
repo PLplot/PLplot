@@ -48,6 +48,8 @@ typedef struct {
   int rePaint;		// if the background is cleared we need a repaint
   int rePaintBsy;	// if we are repainting block the rest
 						// plRemakePlot is not reentrant (in Windows)?
+  int newCursor;
+  float cursorX,cursorY;
 } WinDev;
 
 MSG msg;
@@ -241,8 +243,8 @@ plD_bop_win3(PLStream *pls)
 
   dev->hdc = GetDC(dev->hwnd);
   GetClientRect(dev->hwnd,&rect);
-  dev->xScale = rect.right / xRes;
-  dev->yScale = rect.bottom / yRes;
+  dev->xScale = rect.right / (xRes + 1);
+  dev->yScale = rect.bottom / (yRes + 1);
 
   dev->rePaint = 0;
   dev->rePaintBsy = 0;
@@ -287,9 +289,27 @@ void plD_state_win3(PLStream *pls,PLINT op) {
 \*----------------------------------------------------------------------*/
 
 void
-//plD_esc_win3(PLStream *pls, PLINT op, void *ptr)
-plD_esc_win3(PLStream *, PLINT , void *)
+plD_esc_win3(PLStream *pls, PLINT op , void *ptr)
 {
+  WinDev *dev = (WinDev *)pls->dev;
+  HCURSOR holdcursor,hnewcursor;
+
+  if (op == PLESC_GETC) {
+	 hnewcursor = LoadCursor(NULL,IDC_CROSS);
+	 holdcursor = GetClassWord(GetActiveWindow(),GCW_HCURSOR);
+	 SetCursor(hnewcursor);
+	 SetClassWord(GetActiveWindow(),
+					  GCW_HCURSOR,
+					  hnewcursor);
+	 dev->newCursor = 0;
+	 while (!dev->newCursor)
+		checkMessage();
+	 ((PLCursor *)ptr)->vpX = dev->cursorX;
+	 ((PLCursor *)ptr)->vpY = dev->cursorY;
+	 SetClassWord(GetActiveWindow(),
+					  GCW_HCURSOR,
+					  holdcursor);
+  }
 }
 
 LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,
@@ -305,6 +325,11 @@ LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,
 	 dev = (WinDev *)pls->dev;
 
   switch (message) {
+	 case WM_RBUTTONDOWN :
+		dev->newCursor = 1;
+		dev->cursorX = LOWORD(lParam) / dev->xScale;
+		dev->cursorY = yRes - HIWORD(lParam) / dev->yScale;
+		return 0;
 	 case WM_ERASEBKGND :
 		if (!dev->rePaintBsy)
 		  dev->rePaint = 1;
@@ -317,8 +342,8 @@ LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,
 			 hcurSave = SetCursor(LoadCursor(NULL,IDC_WAIT));
 			 dev->hdc = GetDC(dev->hwnd);
 			 GetClientRect(dev->hwnd,&rect);
-			 dev->xScale = rect.right / xRes;
-			 dev->yScale = rect.bottom / yRes;
+			 dev->xScale = rect.right / (xRes + 1);
+			 dev->yScale = rect.bottom / (yRes + 1);
 			 plRemakePlot(pls);
 			 dev->rePaintBsy = 0;
 			 SetCursor(hcurSave);
@@ -341,8 +366,8 @@ LRESULT CALLBACK _export PlPlotWndProc (HWND hwnd,UINT message,
 		  case CM_PRINTPLOT :
 			 dev->rePaintBsy = 1;
 			 dev->hdc = GetPrinterDC();
-			 dev->xScale = GetDeviceCaps(dev->hdc,HORZRES) / xRes;
-			 dev->yScale = GetDeviceCaps(dev->hdc,VERTRES) / yRes;
+			 dev->xScale = GetDeviceCaps(dev->hdc,HORZRES) / (xRes + 1);
+			 dev->yScale = GetDeviceCaps(dev->hdc,VERTRES) / (yRes + 1);
 			 Escape(dev->hdc,STARTDOC,0,NULL,NULL);
 			 hcurSave = SetCursor(LoadCursor(NULL,IDC_WAIT));
 			 plRemakePlot(pls);
