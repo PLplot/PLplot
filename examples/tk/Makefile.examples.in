@@ -31,14 +31,7 @@ CC = @CC@
 all: xtk01 xtk02 xtk04
 
 clean:
-	rm xtk??
+	rm -f xtk??
 
-xtk01: xtk01.c
-	plplot_libtool --mode=link $(CC) xtk01.c $(INCLUDEANDLIB) -o xtk01
-
-xtk02: xtk02.c
-	plplot_libtool --mode=link $(CC) xtk02.c $(INCLUDEANDLIB) -o xtk02
-
-xtk04: xtk04.c
-	plplot_libtool --mode=link $(CC) xtk04.c $(INCLUDEANDLIB) -o xtk04
-
+.c:
+	plplot_libtool --mode=link $(CC) $< $(INCLUDEANDLIB) -o $@

@@ -25,8 +25,8 @@ CXX = @CXX@
 all: x01cc
 
 clean:
-	rm x??cc
+	rm -f x??cc
 
-x01cc: x01cc.cc
-	plplot_libtool --mode=link $(CXX) x01cc.cc $(INCLUDEANDLIB) -o x01cc
+.cc:
+	plplot_libtool --mode=link $(CXX) $< $(INCLUDEANDLIB) -o $@
 
