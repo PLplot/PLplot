@@ -5,7 +5,7 @@
 
 include Makefile-vars
 
-WWW_FILES =      \
+FILES =          \
     index.html   \
     credits      \
     demo         \
@@ -15,11 +15,22 @@ WWW_FILES =      \
     resources    \
     source
 
-install: install-announce
-	ssh $(USER_AT_HOST) rm -rf $(patsubst %,$(WWW_DIR)/%,$(WWW_FILES))
-	scp -r $(WWW_FILES) $(USER_AT_HOST):$(WWW_DIR)
-	ssh $(USER_AT_HOST) chgrp -R plplot $(WWW_DIR)/*
-	ssh $(USER_AT_HOST) chmod -R g=u $(WWW_DIR)/*
+WWW_FILES = $(patsubst %,$(WWW_DIR)/%,$(FILES))
+
+all: install install-announce
+
+install:
+	ssh $(USER_AT_HOST) rm -rf $(WWW_FILES)
+	for f in $(FILES) ; do \
+	    if test -d $$f ; then \
+	        dir=$$f ; \
+	    else \
+	        dir=`dirname $$f` ; \
+	    fi ; \
+	    scp -r $$f $(USER_AT_HOST):$(WWW_DIR)/$$dir ; \
+	done
+	ssh $(USER_AT_HOST) chgrp -R plplot $(WWW_FILES)
+	ssh $(USER_AT_HOST) chmod -R g=u $(WWW_FILES)
 
 install-announce:
 	-( cd announce ; $(MAKE) install )
