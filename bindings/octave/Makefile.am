@@ -60,7 +60,7 @@ plplot_octave.oct: $(MKOCTFILE_SOURCE)
 	LD_RUN_PATH=`pwd`/../../src/.libs $(MKOCTFILE) -v -I. \
 	   $(MKOCTFILE_SOURCE) -L../../src/.libs $(octave_libs)
 
-install-exec-hook: plplot_octave-libdir.oct
+install-data-hook: plplot_octave-libdir.oct
 	$(mkinstalldirs) $(DESTDIR)$(octavesharedir)
 	$(INSTALL) plplot_octave-libdir.oct \
 	  $(DESTDIR)$(octavesharedir)/plplot_octave.oct
