@@ -65,8 +65,8 @@ drivers/impress.drv : shared/impress$O
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/gnome.drv : shared/gnome$O
-	$(SHLIB_BUILD) $@ $< @GNOMELIBS@
+	$(SHLIB_BUILD) $@ $< @GNOMELIBS@ $(driverlibs)
 
 drivers/ntk.drv : shared/ntk$O
-	$(SHLIB_BUILD) $@ $< @TKLIBS@
+	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
 
