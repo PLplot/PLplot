@@ -1,11 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.10  1994/03/23 07:54:08  mjl
-   Replaced call to plexit() on simple (recoverable) errors with simply
-   printing the error message (via plabort()) and returning.  Should help
-   avoid loss of computer time in some critical circumstances (during a long
-   batch run, for example).
+   Revision 1.11  1994/04/08 12:29:28  mjl
+   Hack to prevent labels like "-0.0" on some systems, caused by roundoff.
 
+ * Revision 1.10  1994/03/23  07:54:08  mjl
+ * Replaced call to plexit() on simple (recoverable) errors with simply
+ * printing the error message (via plabort()) and returning.  Should help
+ * avoid loss of computer time in some critical circumstances (during a long
+ * batch run, for example).
+ *
  * Revision 1.9  1993/11/19  07:29:18  mjl
  * Changed the minimum distance a grid line must be from the boundary in
  * order for it to be drawn.  It was set before at 0.5 ticks (undocumented
@@ -1401,6 +1404,7 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *result)
 {
     PLINT setpre, precis;
     char form[10], temp[30];
+    double scale2;
 
     plP_gprec(&setpre, &precis);
 
@@ -1409,6 +1413,11 @@ plform(PLFLT value, PLINT scale, PLINT prec, char *result)
 
     if(scale)
 	value /= pow(10.,(double)scale);
+
+/* This is necessary to prevent labels like "-0.0" on some systems */
+
+    scale2 = pow(10., prec);
+    value = floor((value * scale2) + .5) / scale2;
 
     sprintf(form, "%%.%df", prec);
     sprintf(temp, form, value);
