@@ -206,9 +206,10 @@ main(int argc, char *argv[])
       } else if (ifshade == 2) { /*  magnitude colored plot with faceted squares */
 	cmap1_init(0);
 	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0);
-      } else                     /* magnitude colored plot with contours */
+      } else {                    /* magnitude colored plot with contours */
 	cmap1_init(0);
 	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel);
+      }
     }
   }
 
