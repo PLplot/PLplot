@@ -1,7 +1,11 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.6  1994/06/30 05:45:21  furnish
+ * Revision 1.7  1994/06/30 18:38:49  mjl
+ * Changed typedef for Mat_int back to an int, and eliminated M?D macros in
+ * favor of directly addressing the array.
+ *
+ * Revision 1.6  1994/06/30  05:45:21  furnish
  * Cobbled together an extension facility which allows a user to define
  * their own subcommands for tclMatricies.  The idea is that you can use
  * this to implement your own matrix processing commands entirely on the
@@ -50,7 +54,11 @@ typedef double Mat_float;
 typedef float  Mat_float;
 #endif
 
-typedef long   Mat_int;
+#if defined(MSDOS)
+typedef long  Mat_int;
+#else
+typedef int   Mat_int;
+#endif
 
 enum { TYPE_FLOAT, TYPE_INT };
 
@@ -60,15 +68,11 @@ enum { TYPE_FLOAT, TYPE_INT };
 
 #define MAX_ARRAY_DIM 3
 
-/* Macros used in index calculations */
+/* Useful macros for index calculations */
 
 #define I3D(i,j,k)	k + matPtr->n[2] * (I2D(i,j))
 #define I2D(i,j)	j + matPtr->n[1] * (I1D(i))
 #define I1D(i)		i
-
-#define M3D(i,j,k)	matPtr->fdata[I3D(i,j,k)]
-#define M2D(i,j)	matPtr->fdata[I2D(i,j)]
-#define M1D(i)		matPtr->fdata[I1D(i)]
 
 /* Matrix operator data */
 
@@ -161,7 +165,7 @@ class TclMatFloat {
 		    j >= 0 && j < matPtr->n[1],
 		    "Out of bounds reference" );
 		
-	return M2D(i,j);
+	return matPtr->fdata[I2D(i,j)];
     }
 
     Mat_float& operator()( int i, int j, int k )
@@ -172,7 +176,7 @@ class TclMatFloat {
 		    k >= 0 && k < matPtr->n[2],
 		    "Out of bounds reference" );
 
-	return M3D(i,j,k);
+	return matPtr->fdata[I3D(i,j,k)];
     }
 };
 
