@@ -61,5 +61,6 @@ source tcldemos.tcl
 15
 16
 18
+22
 exit
 EOF

@@ -41,7 +41,7 @@ if test "yes@HAVE_F77PARSE_CL_TRUE@" = "yes"; then
 # skip 19 because the fortran API is not available for maps.
 # skip 21 because it delivers variable results depending on computer timing
 # and load (and not implemented yet).
-  for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18; do
+  for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 22; do
     $f77dir/x${index}f -dev $device -o x${index}f.$dsuffix $options
   done
 else
@@ -61,7 +61,7 @@ EOF
 # skip 19 because the fortran API is not available for maps.
 # skip 21 because it delivers variable results depending on computer timing
 # and load (and not implemented yet).
-  for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18; do
+  for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 22; do
      $f77dir/x${index}f <<EOF >/dev/null
 $device
 x${index}f.$dsuffix
