@@ -101,9 +101,9 @@ proc x16 {{w loopback}} {
 	    1
     }
 
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
-    $w cmd plcol 2
+    $w cmd plcol0 2
 
 #    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, mypltr, NULL);
 
@@ -134,9 +134,9 @@ proc x16 {{w loopback}} {
 	    1 pltr1 xg1 yg1
     }
 
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
-    $w cmd plcol 2
+    $w cmd plcol0 2
 
 #    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr1, (void *) &cgrid1);
 
@@ -161,9 +161,9 @@ proc x16 {{w loopback}} {
 	    0 pltr2 xg2 yg2
     }
 
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plbox "bcnst" 0.0 0 "bcnstv" 0.0 0
-    $w cmd plcol 2
+    $w cmd plcol0 2
 #    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr2, (void *) &cgrid2);
     $w cmd plcont ww clevel pltr2 xg2 yg2
 
@@ -234,10 +234,10 @@ proc x16 {{w loopback}} {
     }
 
 # Now we can draw the perimeter.
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plline 100 px py
 
 # And label the plot.
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd pllab "" "" "Tokamak Bogon Instability"
 }

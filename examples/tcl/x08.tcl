@@ -52,19 +52,19 @@ proc x08 {{w loopback}} {
 	$w cmd pladv 0;
 	$w cmd plvpor 0.0 1.0 0.0 0.9
 	$w cmd plwind -1.0 1.0 -0.9 1.1
-	$w cmd plcol 1
+	$w cmd plcol0 1
 	$w cmd plw3d 1.0 1.0 1.0 -1.0 1.0 -1.0 1.0 -1.0 1.0 [alt $k] [az $k]
 	$w cmd plbox3 "bnstu" "x axis" 0.0 0 \
 	    "bnstu" "y axis" 0.0 0 \
 	    "bcdmnstuv" "z axis" 0.0 0
 
-	$w cmd plcol 2
+	$w cmd plcol0 2
 
 # You can use either of these next two lines.
 #	$w cmd plot3d x y z $xpts $ypts [opt $k] 1
 	$w cmd plot3d x y z [opt $k] 1
 
-	$w cmd plcol 3
+	$w cmd plcol0 3
 
 	set title [format "#frPLplot Example 8 - Alt=%f, Az=%f, Opt=%d" \
 		       [alt $k] [az $k] [opt $k] ]

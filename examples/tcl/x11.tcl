@@ -37,7 +37,7 @@ proc x11 {{w loopback}} {
 
     for {set k 0} {$k < 4} {incr k} {
 	$w cmd pladv 0
-	$w cmd plcol 1
+	$w cmd plcol0 1
 	$w cmd plvpor 0.0 1.0 0.0 0.8
 	$w cmd plwind -1.0 1.0 -1.0 1.5
 
@@ -46,13 +46,13 @@ proc x11 {{w loopback}} {
 	    "bnstu" "y axis" 0.0 0 \
 	    "bcdmnstuv" "z axis" 0.0 4
 
-	$w cmd plcol 2
+	$w cmd plcol0 2
 
 # You may use either of the next two lines.
 #	$w cmd plmesh x y z $xpts $ypts [opt $k]
 	$w cmd plmesh x y z [opt $k]
 
-	$w cmd plcol 3
+	$w cmd plcol0 3
 
 	set title [format "#frPLplot Example 11.%d - Alt=%f, Az=%f, Opt=%d" \
 		       $k [alt $k] [az $k] [opt $k] ]

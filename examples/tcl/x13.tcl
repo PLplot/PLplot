@@ -21,7 +21,7 @@ proc x13 {{w loopback}} {
     matrix per f 5 = {10., 32., 12., 30., 16.}
 
     $w cmd plenv 0. 10. 0. 10. 1 -2
-    $w cmd plcol 2
+    $w cmd plcol0 2
 
     set theta0 0.;
     set pi 3.1415927
@@ -45,10 +45,10 @@ proc x13 {{w loopback}} {
 	    incr j
 	}
 
-	$w cmd plcol [expr $i + 1]
+	$w cmd plcol0 [expr $i + 1]
 	$w cmd plpsty [expr (($i + 3) % 8 + 1)]
 	$w cmd plfill $j x y
-	$w cmd plcol 1
+	$w cmd plcol0 1
 	$w cmd plline $j x y
 	set just [expr ($theta0 + $theta1) / 2.]
 	set dx [expr .25 * cos($just)]

@@ -68,45 +68,45 @@ proc x09 {{w loopback}} {
 # thing from Tcl.  So here we just do a pltr0 thing, which will be
 # similar except for different bounds in world coordinates.
 
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plenv 0 [expr $xpts-1] 0 [expr $ypts-1] 0 0
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd plcont zz clevel
 
     $w cmd plstyl 1 mark space
-    $w cmd plcol 3
+    $w cmd plcol0 3
     $w cmd plcont ww clevel
 
     $w cmd plstyl 0 mark space
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
 # Plot using 1d coordinate transform
 
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd plcont zz clevel pltr1 xg1 yg1
 
     $w cmd plstyl 1 mark space
-    $w cmd plcol 3
+    $w cmd plcol0 3
     $w cmd plcont ww clevel pltr1 xg1 yg1
 
     $w cmd plstyl 0 mark space
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
 # Plot using 2d coordinate transform
 
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd plcont zz clevel pltr2 xg2 yg2
 
     $w cmd plstyl 1 mark space
-    $w cmd plcol 3
+    $w cmd plcol0 3
     $w cmd plcont ww clevel pltr2 xg2 yg2
 
     $w cmd plstyl 0 mark space
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
     x09_polar $w
@@ -123,7 +123,7 @@ proc x09 {{w loopback}} {
 proc x09_polar {{w loopback}} {
 
     $w cmd plenv -1 1 -1 1 0 -2
-    $w cmd plcol 1
+    $w cmd plcol0 1
 
 # Hold perimeter
     matrix px f 100; matrix py f 100
@@ -155,10 +155,10 @@ proc x09_polar {{w loopback}} {
 
     matrix lev f 10 = { .05, .15, .25, .35, .45, .55, .65, .75, .85, .95 }
 
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd plcont z lev pltr2 xg yg 2
 #                                   ^-- :-).  Means: "2nd coord is wrapped."
 
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd pllab "" "" "Polar Contour Plot"
 }

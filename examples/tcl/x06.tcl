@@ -12,7 +12,7 @@ proc x06 {{w loopback}} {
 
 # Set up viewport and window
 
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd plvpor 0.1 1.0 0.1 0.9
     $w cmd plwind 0.0 1.0 0.0 1.3
 
@@ -22,7 +22,7 @@ proc x06 {{w loopback}} {
 
 # Write the digits below the frame
 
-    $w cmd plcol 15
+    $w cmd plcol0 15
     for {set i 0} {$i <= 9} {incr i} {
 	$w cmd plmtex "b" 1.5 [expr 0.1 * $i + 0.05] 0.5 $i
     }

@@ -12,7 +12,7 @@ proc x02 {{w loopback}} {
     $w cmd plfont 4
 
     for {set i 0} {$i < 16} {incr i} {
-	$w cmd plcol $i
+	$w cmd plcol0 $i
 	$w cmd pladv
 	set vmin 0.1
 	set vmax 0.9

@@ -8,7 +8,7 @@ proc x03 {{w loopback}} {
 # Set up viewport and window, but do not draw box 
 
     $w cmd plssub 1 1
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plenv -1.3 1.3 -1.3 1.3 1 -2
 
 # Draw circles for polar grid
@@ -35,7 +35,7 @@ proc x03 {{w loopback}} {
 
 # Draw radial spokes for polar grid and write labels for angle
 
-    $w cmd plcol 2
+    $w cmd plcol0 2
     for {set j 0} {$j <= 11} {incr j} {
 	set theta [expr $j * $twopi / 12.]
 	set xg [expr cos($theta)]
@@ -72,10 +72,10 @@ proc x03 {{w loopback}} {
 	x $j = [expr $r * cos($theta)]
 	y $j = [expr $r * sin($theta)]
     }
-    $w cmd plcol 3
+    $w cmd plcol0 3
     $w cmd plline $npts1 x y
 
-    $w cmd plcol 4
+    $w cmd plcol0 4
     $w cmd plmtex "t" 2.0 0.5 0.5 "#frPLplot Example 3 - r(#gh)=sin 5#gh"
 
     $w cmd pleop

@@ -64,28 +64,28 @@ proc plot1 {w} {
 	y1 $i = [y $j]
     }
 
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plenv $xoff $xmax $yoff $ymax 0 0
-    $w cmd plcol 6
+    $w cmd plcol0 6
     $w cmd pllab "(x)" "(y)" "#frPLplot Example 1 - y=x#u2"
 
     # plot the data points
 
-    $w cmd plcol 9
+    $w cmd plcol0 9
     $w cmd plpoin 6 x1 y1 9
 
     # draw the line through the data
 
-    $w cmd plcol 4
+    $w cmd plcol0 4
     $w cmd plline $npts x y
 }
 
 # This is supposed to work just like the plot2() in x01c.c
 
 proc plot2 {w} {
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plenv -2 10 -.4 1.2 0 1
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd pllab "(x)" "sin(x)/x" "#frPLplot Example 1 - Sinc Function"
 
 # Fill up the array
@@ -100,7 +100,7 @@ proc plot2 {w} {
 	if {$x != 0} { y1 $i = [expr sin($x)/$x] }
     }
 
-    $w cmd plcol 3
+    $w cmd plcol0 3
     $w cmd plline 101 x1 y1
 }
 
@@ -114,7 +114,7 @@ proc plot3 {w} {
 
 # Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plbox "bcnst" 60.0 2 "bcnstv" 0.2 2
 
 # Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
@@ -127,14 +127,14 @@ proc plot3 {w} {
     space 0 = 1500
     $w cmd plstyl 1 mark space
 
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd plbox "g" 30.0 0 "g" 0.2 0
 
     mark 0 = 0
     space 0 = 0
     $w cmd plstyl 0 mark space
 
-    $w cmd plcol 3
+    $w cmd plcol0 3
     $w cmd pllab "Angle (degrees)" "sine" "#frPLplot Example 1 - Sine function"
 
     matrix x f 101
@@ -145,6 +145,6 @@ proc plot3 {w} {
 	y $i = [expr sin([x $i] * 3.141592654 / 180.0)]
     }
 
-    $w cmd plcol 4
+    $w cmd plcol0 4
     $w cmd plline 101 x y
 }

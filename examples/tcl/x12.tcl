@@ -12,13 +12,13 @@ proc x12 {{w loopback}} {
     $w cmd pladv 0
     $w cmd plvsta
     $w cmd plwind 1980.0 1990.0 0.0 35.0
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plbox "bc" 1.0 0 "bcnv" 10.0 0
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd pllab "Year" "Widget Sales (millions)" "#frPLplot Example 12"
 
     for {set i 0} {$i < 10} {incr i} {
-	$w cmd plcol [expr $i+1]
+	$w cmd plcol0 [expr $i+1]
 
 #	$w cmd plcol1 [expr ($i + 1.)/10.0 ]
 
@@ -48,7 +48,7 @@ proc plfbox  {w x0 y0} {
     x 3 = [expr $x0 + 1.];
     y 3 = 0.;
     $w cmd plfill 4 x y
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd pllsty 1
     $w cmd plline 4 x y
 }

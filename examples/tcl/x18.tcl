@@ -37,13 +37,13 @@ proc x18 {{w loopback}} {
 	$w cmd pladv 0
 	$w cmd plvpor 0.0 1.0 0.0 0.9
 	$w cmd plwind -1.0 1.0 -0.9 1.1
-	$w cmd plcol 1
+	$w cmd plcol0 1
 	$w cmd plw3d 1.0 1.0 1.0 -1.0 1.0 -1.0 1.0 -1.0 1.0 [alt $k], [az $k]
 	$w cmd plbox3 "bnstu" "x axis" 0.0 0 \
 	    "bnstu" "y axis" 0.0 0 \
 	    "bcdmnstuv" "z axis" 0.0 0
 
-	$w cmd plcol 2
+	$w cmd plcol0 2
 
 	if {[opt $k]} {
 	    $w cmd plline3 $npts x y z
@@ -51,7 +51,7 @@ proc x18 {{w loopback}} {
 	    $w cmd plpoin3 $npts x y z 1
 	}
 
-	$w cmd plcol 3
+	$w cmd plcol0 3
 	set title [format "#frPLplot Example 18 - Alt=%.0f, Az=%.0f" \
 		       [alt $k] [az $k]]
 	$w cmd plmtex t 1.0 0.5 0.5 "$title"
@@ -74,13 +74,13 @@ proc test_poly {{w loopback} k} {
     $w cmd pladv 0
     $w cmd plvpor 0.0 1.0 0.0 0.9
     $w cmd plwind -1.0 1.0 -0.9 1.1
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plw3d 1.0 1.0 1.0 -1.0 1.0 -1.0 1.0 -1.0 1.0 [alt $k] [az $k]
     $w cmd plbox3 "bnstu" "x axis" 0.0 0 \
 	"bnstu" "y axis" 0.0 0 \
 	"bcdmnstuv" "z axis" 0.0 0
 
-    $w cmd plcol 2
+    $w cmd plcol0 2
 
 #define THETA(a) (two_pi * (a) /20.)
 #define PHI(a)    (pi * (a) / 20.1)
@@ -116,6 +116,6 @@ proc test_poly {{w loopback} k} {
 	}
     }
 
-    $w cmd plcol 3
+    $w cmd plcol0 3
     $w cmd plmtex "t" 1.0 0.5 0.5 "unit radius sphere"
 }

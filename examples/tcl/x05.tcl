@@ -16,10 +16,10 @@ proc x05 {{w loopback}} {
 	data $i = [expr sin($i * $delta)]
     }
 
-    $w cmd plcol 1
+    $w cmd plcol0 1
     $w cmd plhist $npts data -1.1 1.1 44 0
 
-    $w cmd plcol 2
+    $w cmd plcol0 2
     $w cmd pllab "#frValue" "#frFrequency" \
 	"#frPLplot Example 5 - Probability function of Oscillator"
 
