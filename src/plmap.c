@@ -147,7 +147,21 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 	wrap = 0;
 	/* check for wrap around problems */
 	for (i = 0; i < n-1; i++) {
-	    test[i] = (fabs(bufx[i]-bufx[i+1]) > fabs(bufy[i]/3)); /* Changed this from 30 degrees so it is now "polar sensitive" */
+
+	  /* jc: this code is wrong, as the bufx/y are floats that are
+	     converted to ints before abs() is called. Thus, small
+	     differences are masked off. The proof that it is wrong is
+	     that when replacing abs() with fabs(), as it should be,
+	     the code works the wrong way. What a proof :-)
+
+	    test[i] = abs((bufx[i]-bufx[i+1])) > abs(bufy[i]/3);
+
+	    If the intended behaviour is *really* that, than an
+	    explicit cast should be used to help other programmers, as
+	    is done bellow!!!
+	  */
+
+	    test[i] = abs((int)(bufx[i]-bufx[i+1])) > abs((int)bufy[i]/3); /* Changed this from 30 degrees so it is now "polar sensitive" */
 	    if (test[i]) wrap = 1;
 	}
 
