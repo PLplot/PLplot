@@ -7,7 +7,11 @@
 # $Id$
 #
 # $Log$
-# Revision 1.12  1996/10/18 20:00:34  furnish
+# Revision 1.13  1996/10/25 19:22:07  furnish
+# Temporarily switch to Vince's new itk widget.  This all needs to be
+# hacked on quit a bit.
+#
+# Revision 1.12  1996/10/18  20:00:34  furnish
 # Use "package require" so that these fail in a reasonable way if
 # itcl/itk not configured.  Prior behavior was uninteligible.  This way
 # the package mechanism is used the way it is supposed to be used.  At
@@ -92,7 +96,8 @@ message .msg \
 	 -width 500 -borderwidth 1 \
 	-text "TK02: Demo \[incr Tcl\] interface to PLplot"
 
-PLXWin .plw 
+#PLXWin .plw
+Pltkwin .plw
 
 pack append . .menu {top fillx} \
 	.msg {top padx 5 pady 5 fill} \
