@@ -1693,7 +1693,7 @@ if test "$enable_tcl" = "yes"; then
 	    enable_tcl="no"
 	fi
 	if test "$TCLINCDIR" = "/usr/include"; then
-	    TCLINCDIR= "default"
+	    TCLINCDIR="default"
 	fi
     fi
 fi
@@ -1731,7 +1731,7 @@ if test "$enable_tcl" = "yes"; then
 	    enable_tcl="no"
 	fi
 	if test "$TCLLIBDIR" = "/usr/lib"; then
-	    TCLLIBDIR= "default"
+	    TCLLIBDIR="default"
 	fi
     fi
 fi
@@ -1784,7 +1784,7 @@ if test "$enable_dp" = "yes"; then
 	    enable_dp="no"
 	fi
 	if test "$DPINCDIR" = "/usr/include"; then
-	    DPINCDIR= "default"
+	    DPINCDIR="default"
 	fi
     fi
 fi
@@ -1872,7 +1872,7 @@ if test "$enable_itcl" = "yes"; then
 	    enable_itcl="no"
 	fi
 	if test "$ITCLINCDIR" = "/usr/include"; then
-	    ITCLINCDIR= "default"
+	    ITCLINCDIR="default"
 	fi
     fi
 fi
@@ -3396,12 +3396,11 @@ if test ! -f tmp/plcore.c; then
     ../src/*.cc \
     ../src/tcl/*.c \
     ../src/stubc/*.c \
-    ../examples/c/*.c \
+    ../examples/c/*.* \
     ../examples/tcl/*.tcl \
     ../examples/tk/*.c \
     ../examples/tk/tk* \
-    ../examples/c++/*.cc \
-    ../examples/c++/*.h \
+    ../examples/c++/*.* \
     ../utils/*.c \
     ../fonts/*.c \
     ../scripts/pl* \
