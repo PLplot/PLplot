@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1994/03/23 09:03:05  mjl
+ * Revision 1.37  1994/04/08 12:37:53  mjl
+ * Fixed initial tcl command that is responsible for the backpage button
+ * appearing.
+ *
+ * Revision 1.36  1994/03/23  09:03:05  mjl
  * Added support for cmap1, color map state changes, hardware polygon fills.
  *
  * Revision 1.35  1994/01/17  20:45:02  mjl
@@ -1367,7 +1371,7 @@ Init(int argc, char **argv)
     if (addeof_beg) disp_beg += pages;
     if (addeof_end) disp_end += pages;
 
-    plSetInternalOpt("-tcl_cmd", "set plw_create plr_create");
+    plSetInternalOpt("-tcl_cmd", "set plw_create_proc plr_create");
 
 /* Finally, give the rest of the command line to plplot to process. */
 
