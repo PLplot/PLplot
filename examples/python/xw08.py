@@ -36,12 +36,12 @@ def restore_cmap1():
     # Saturation is complete for default
     s = array((1., 1., 1., 1., 1., 1.))
     # Integer flag array is zero (no interpolation along far-side of colour
-    # figure.)  Not used in python plplot API, but soon will be changed.
+    # figure.)  
     rev = array((0, 0, 0, 0, 0, 0))
     # Default number of cmap1 colours
     plscmap1n(128)
     # Interpolate between control points to set up default cmap1.
-    plscmap1l(0, i, h, l, s)
+    plscmap1l(0, i, h, l, s, rev)
 
 # Routine for initializing color map 1 in HLS space.
 # Basic grayscale variation from half-dark (which makes more interesting
@@ -56,12 +56,12 @@ def cmap1_init():
     # Gray scale has zero saturation
     s = array((0., 0.))
     # Integer flag array is zero (no interpolation along far-side of colour
-    # figure.)  Not used in python plplot API, but soon will be changed.
+    # figure.)
     rev = array((0, 0))
     # number of cmap1 colours is 256 in this case.
     plscmap1n(256)
     # Interpolate between control points to set up cmap1.
-    plscmap1l(0, i, h, l, s)
+    plscmap1l(0, i, h, l, s, rev)
 
 # main
 #
