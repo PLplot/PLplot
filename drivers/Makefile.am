@@ -48,20 +48,25 @@ else
    drivers_DATA = drivers.db
    libplplot = ../src/libplplotd.la
 endif
-# from
-xwin_drv_la_SOURCES = xwin.c
-xwind_drv_la_SOURCES = xwin.c
-ps_drv_la_SOURCES = ps.c
-psd_drv_la_SOURCES = ps.c
-# how
+
+# All -I compile flags apparently must be lumped together for all source
+# in this directory.
 AM_CPPFLAGS = @X_CFLAGS@ @INCLTDL@
+
+# Single precision versions of everything
+xwin_drv_la_SOURCES = xwin.c
 #xwin_drv_la_INCLUDES = @X_CFLAGS@
 xwin_drv_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
 xwin_drv_la_LIBADD = @X_LIBS@ -lX11
-xwind_drv_la_INCLUDES = @X_CFLAGS@
-xwind_drv_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
-xwind_drv_la_LIBADD = @X_LIBS@ -lX11
+ps_drv_la_SOURCES = ps.c
 ps_drv_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
 ps_drv_la_LIBADD = $(libplplot)
-psd_drv_la_LDFLAGS = -rpath $(pkglibdir) -no-undefined -module -avoid-version 
-psd_drv_la_LIBADD = $(libplplot)
+
+# Double precision versions of everything
+xwind_drv_la_SOURCES = $(xwin_drv_la_SOURCES)
+#xwind_drv_la_INCLUDES = $(xwin_drv_la_INCLUDES)
+xwind_drv_la_LDFLAGS = $(xwin_drv_la_LDFLAGS)
+xwind_drv_la_LIBADD = $(xwin_drv_la_LIBADD)
+psd_drv_la_SOURCES = $(ps_drv_la_SOURCES)
+psd_drv_la_LDFLAGS = $(ps_drv_la_LDFLAGS)
+psd_drv_la_LIBADD = $(ps_drv_la_LIBADD)

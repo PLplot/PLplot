@@ -30,3 +30,5 @@ pkgdata_DATA = \
   usa.map \
   usaglobe.map
 
+# Data to be included in tarball distribution
+EXTRA_DIST = $(pkgdata_DATA)

@@ -47,11 +47,10 @@ libplf77d_la_DEPENDENCIES = sfstubs.lo
 libplf77_la_LDFLAGS  = $(version)
 libplf77d_la_LDFLAGS = $(version)
 
-EXTRA_DIST = sfstubs.fm4
+EXTRA_DIST = fmacs.m4 sfstubs.fm4
 
 .fm4.f:
 	@M4@ @M4_FLAGS@ $< >$*.f
 
 CLEANFILES = sfstubs.f
 SUFFIXES = .fm4
-

@@ -33,3 +33,8 @@ pkginclude_HEADERS = \
   plstrm.h \
   plxwd.h
 
+# Uninstalled header files that should be distributed.
+EXTRA_DIST = \
+  disptab.h \
+  plfreetype.h \
+  ps.h
