@@ -33,12 +33,13 @@ tar rf ${tarfile} ${pldir}/lib/*.fnt
 
 # Subdirectories
 
-tar rf ${tarfile} `find ${pldir}/doc      ! -path \*CVS\* -only -type f`
-tar rf ${tarfile} `find ${pldir}/drivers  ! -path \*CVS\* -only -type f`
-tar rf ${tarfile} `find ${pldir}/examples ! -path \*CVS\* -only -type f`
-tar rf ${tarfile} `find ${pldir}/fonts    ! -path \*CVS\* -only -type f`
-tar rf ${tarfile} `find ${pldir}/include  ! -path \*CVS\* -only -type f`
-tar rf ${tarfile} `find ${pldir}/new      ! -path \*CVS\* -only -type f`
-tar rf ${tarfile} `find ${pldir}/utils    ! -path \*CVS\* -only -type f`
-tar rf ${tarfile} `find ${pldir}/src      ! -path \*CVS\* -only -type f`
-tar rf ${tarfile} `find ${pldir}/sys      ! -path \*CVS\* -only -type f`
+tar rf ${tarfile} `find ${pldir}/doc      ! -path \*CVS\* -type f`
+tar rf ${tarfile} `find ${pldir}/drivers  ! -path \*CVS\* -type f`
+tar rf ${tarfile} `find ${pldir}/examples ! -path \*CVS\* -type f`
+tar rf ${tarfile} `find ${pldir}/fonts    ! -path \*CVS\* -type f`
+tar rf ${tarfile} `find ${pldir}/include  ! -path \*CVS\* -type f`
+tar rf ${tarfile} `find ${pldir}/new      ! -path \*CVS\* -type f`
+tar rf ${tarfile} `find ${pldir}/utils    ! -path \*CVS\* -type f`
+tar rf ${tarfile} `find ${pldir}/scripts  ! -path \*CVS\* -type f`
+tar rf ${tarfile} `find ${pldir}/src      ! -path \*CVS\* -type f`
+tar rf ${tarfile} `find ${pldir}/sys      ! -path \*CVS\* -type f`

@@ -37,5 +37,6 @@ tar rf plplot.tar plplot/fonts
 tar rf plplot.tar plplot/include
 tar rf plplot.tar plplot/new
 tar rf plplot.tar plplot/utils
+tar rf plplot.tar plplot/scripts
 tar rf plplot.tar plplot/src
 tar rf plplot.tar plplot/sys

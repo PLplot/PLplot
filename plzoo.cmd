@@ -40,5 +40,6 @@ find plplot/fonts    -print | zoo aI plplot
 find plplot/include  -print | zoo aI plplot
 find plplot/new      -print | zoo aI plplot
 find plplot/utils    -print | zoo aI plplot
+find plplot/scripts  -print | zoo aI plplot
 find plplot/src      -print | zoo aI plplot
 find plplot/sys      -print | zoo aI plplot

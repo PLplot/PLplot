@@ -33,12 +33,13 @@ zoo a ${zoofile} ${pldir}/lib/*.fnt
 
 # Subdirectories
 
-find ${pldir}/doc      ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
-find ${pldir}/drivers  ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
-find ${pldir}/examples ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
-find ${pldir}/fonts    ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
-find ${pldir}/include  ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
-find ${pldir}/new      ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
-find ${pldir}/utils    ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
-find ${pldir}/src      ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
-find ${pldir}/sys      ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
+find ${pldir}/doc      ! -path \*CVS\* -type f | zoo aI ${zoofile}
+find ${pldir}/drivers  ! -path \*CVS\* -type f | zoo aI ${zoofile}
+find ${pldir}/examples ! -path \*CVS\* -type f | zoo aI ${zoofile}
+find ${pldir}/fonts    ! -path \*CVS\* -type f | zoo aI ${zoofile}
+find ${pldir}/include  ! -path \*CVS\* -type f | zoo aI ${zoofile}
+find ${pldir}/new      ! -path \*CVS\* -type f | zoo aI ${zoofile}
+find ${pldir}/utils    ! -path \*CVS\* -type f | zoo aI ${zoofile}
+find ${pldir}/scripts  ! -path \*CVS\* -type f | zoo aI ${zoofile}
+find ${pldir}/src      ! -path \*CVS\* -type f | zoo aI ${zoofile}
+find ${pldir}/sys      ! -path \*CVS\* -type f | zoo aI ${zoofile}
