@@ -91,7 +91,7 @@ static PLINT
 sigprec = 2;
 
 /* small routine to set offset and spacing of contour labels, see desciption above */
-void pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active)
+void c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active)
 {
     contlabel_offset = offset;
     contlabel_size   = size;
@@ -100,7 +100,7 @@ void pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active)
 }
 
 /* small routine to set the format of the contour labels, description of limexp and prec see above */
-void pl_setcontlabelformat(PLINT lexp, PLINT sigdig)
+void c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig)
 {
     limexp  = lexp;
     sigprec = sigdig;
