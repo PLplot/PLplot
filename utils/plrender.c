@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1993/08/18 19:12:58  mjl
+ * Revision 1.32  1993/08/21 20:52:55  mjl
+ * Deleted old argument handling for -jx, -jy, and -mar, since these are
+ * now handled by plplot itself through the driver interface.
+ *
+ * Revision 1.31  1993/08/18  19:12:58  mjl
  * Minor fixes.
  *
  * Revision 1.30  1993/08/13  04:42:52  mjl
@@ -98,8 +102,8 @@ static void	get_ncoords	(PLFLT *x, PLFLT *y, PLINT n);
 static void	NextFamilyFile	(U_CHAR *);
 static void	ReadPageHeader	(void);
 static void	plr_KeyEH	(PLKey *, void *, int *);
-static int	SeekToDisp	(long);
-static void	SeekOnePage	();
+static void	SeekToDisp	(long);
+static void	SeekOnePage	(void);
 static void	SeekToNextPage	(void);
 static void	SeekToCurPage	(void);
 static void	SeekToPrevPage	(void);
@@ -125,7 +129,6 @@ static int Opt_h	(char *, char *);
 static int Opt_v	(char *, char *);
 static int Opt_i	(char *, char *);
 static int Opt_p	(char *, char *);
-static int Opt_mar	(char *, char *);
 
 /* Global variables */
 /* Mode flags for argument parsing */
@@ -260,27 +263,6 @@ static PLOptionTable option_table[] = {
     "-p page",
     "Plot given page only" },
 {
-    "mar",			/* Margin */
-    Opt_mar,
-    NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
-    NULL,
-    NULL },
-{
-    "jx",			/* Justification in x */
-    Opt_mar,
-    NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
-    NULL,
-    NULL },
-{
-    "jy",			/* Justification in y */
-    Opt_mar,
-    NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
-    NULL,
-    NULL },
-{
     NULL,
     NULL,
     NULL,
@@ -325,7 +307,7 @@ main(int argc, char *argv[])
 	if (c == CLOSE) {
 	    if (is_family)
 		NextFamilyFile(&c);
-	    if (!is_family)
+	    if ( ! is_family)
 		break;
 	}
 
@@ -475,7 +457,7 @@ plr_init(U_CHAR c)
 * Construct viewport that preserves the aspect ratio of the original device
 * (plmeta output file).  Thus you automatically get all physical coordinate
 * plots to come out correctly.  Note: this could also be done using the
-* mapping driver interface function.
+* driver interface function plsdimap.
 */
     if (ratio <= 0)
 	fprintf(stderr, "Aspect ratio error: ratio = %f\n", ratio);
@@ -507,6 +489,7 @@ plr_init(U_CHAR c)
 * plr_line()
 *
 * Draw a line or polyline.
+* Multiple connected lines (i.e. LINETO's) are collapsed into a polyline.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -916,12 +899,14 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 		else if (direction_flag < 0)
 		    target_disp = curdisp - input_num;
 
-		dun_seek = SeekToDisp(target_disp);
+		SeekToDisp(target_disp);
+		dun_seek = 1;
 	    }
 	}
 	else {
 	    target_disp = curdisp + 1;
-	    dun_seek = SeekToDisp(target_disp);
+	    SeekToDisp(target_disp);
+	    dun_seek = 1;
 	}
     }
 
@@ -933,7 +918,8 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
     {
 	terminator_seen = 1;
 	target_disp = curdisp - 1;
-	dun_seek = SeekToDisp(target_disp);
+	SeekToDisp(target_disp);
+	dun_seek = 1;
     }
 
 /* Cleanup */
@@ -974,7 +960,7 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 * "seek_mode" variable was found to be necessary.
 \*----------------------------------------------------------------------*/
 
-static int
+static void
 SeekToDisp(long target_disp)
 {
     dbug_enter("SeekToDisp");
@@ -996,12 +982,12 @@ SeekToDisp(long target_disp)
 /* <Return> at the end of a page */
 
     if ((delta == 0) && at_eop)
-	return 1;
+	return;
 
 /* <Return> while drawing the last page */
 
     if ((delta >= 0) && (nextpage_loc == 0))
-	return 1;
+	return;
 
 /* Anything else requires at least one seek */
 
@@ -1018,7 +1004,7 @@ SeekToDisp(long target_disp)
 	goto done;
     }
 
-/* Prepare for backward seeks by seeking the start of the current page */
+/* Prepare for backward seeks by seeking to the start of the current page */
 /* If on the first page, we're done */
 
     if (delta < 0) {
@@ -1039,7 +1025,7 @@ SeekToDisp(long target_disp)
 #endif
 
     end_of_page = 1;
-    return 1;
+    return;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1047,11 +1033,10 @@ SeekToDisp(long target_disp)
 *
 * Seeks one page in appropriate direction, and updates delta.
 * For out of bounds seeks, just stay on the boundary page (first or last).
-* In the latter case, return 1, otherwise 0.
 \*----------------------------------------------------------------------*/
 
 static void
-SeekOnePage()
+SeekOnePage(void)
 {
     if (delta > 0) {
 	if (nextpage_loc == 0) {
@@ -1324,7 +1309,7 @@ OpenMetaFile(int *p_argc, char **argv)
 {
     dbug_enter("OpenMetaFile");
 
-    if (!strcmp(FileName, "-"))
+    if ( ! strcmp(FileName, "-"))
 	input_type = 1;
 
     if (input_type == 1)
@@ -1405,7 +1390,7 @@ ReadFileHeader(void)
     plm_rd(pdf_rd_header(MetaFile, mf_magic));
     if (strcmp(mf_magic, PLMETA_HEADER)) {
 	fprintf(stderr, "Not a PLPLOT metafile!\n");
-	return (1);
+	return 1;
     }
 
 /* Read version field of header.  We need to check that we can read the
@@ -1416,7 +1401,7 @@ ReadFileHeader(void)
 	fprintf(stderr,
 	    "Error: incapable of reading metafile version %s.\n", mf_version);
 	fprintf(stderr, "Please obtain a newer copy of plrender.\n");
-	return (1);
+	return 1;
     }
 
 /* Disable page seeking on versions without page links */
@@ -1427,7 +1412,7 @@ ReadFileHeader(void)
 /* Return if metafile older than version 1992a (no tagged info). */
 
     if (strcmp(mf_version, "1992a") < 0) {
-	return (0);
+	return 0;
     }
 
 /* Read tagged initialization info. */
@@ -1438,41 +1423,41 @@ ReadFileHeader(void)
 	if (*tag == '\0')
 	    break;
 
-	if (!strcmp(tag, "xmin")) {
+	if ( ! strcmp(tag, "xmin")) {
 	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	    xmin = dum_ushort;
 	    continue;
 	}
 
-	if (!strcmp(tag, "xmax")) {
+	if ( ! strcmp(tag, "xmax")) {
 	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	    xmax = dum_ushort;
 	    continue;
 	}
 
-	if (!strcmp(tag, "ymin")) {
+	if ( ! strcmp(tag, "ymin")) {
 	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	    ymin = dum_ushort;
 	    continue;
 	}
 
-	if (!strcmp(tag, "ymax")) {
+	if ( ! strcmp(tag, "ymax")) {
 	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	    ymax = dum_ushort;
 	    continue;
 	}
 
-	if (!strcmp(tag, "pxlx")) {
+	if ( ! strcmp(tag, "pxlx")) {
 	    plm_rd(pdf_rd_ieeef(MetaFile, &pxlx));
 	    continue;
 	}
 
-	if (!strcmp(tag, "pxly")) {
+	if ( ! strcmp(tag, "pxly")) {
 	    plm_rd(pdf_rd_ieeef(MetaFile, &pxly));
 	    continue;
 	}
 
-	if (!strcmp(tag, "width")) {
+	if ( ! strcmp(tag, "width")) {
 	    plm_rd(pdf_rd_1byte(MetaFile, &dum_uchar));
 	    plwid(dum_uchar);
 	    continue;
@@ -1480,12 +1465,12 @@ ReadFileHeader(void)
 
 /* Obsolete tags */
 
-	if (!strcmp(tag, "orient")) {
+	if ( ! strcmp(tag, "orient")) {
 	    plm_rd(pdf_rd_1byte(MetaFile, &dum_uchar));
 	    continue;
 	}
 
-	if (!strcmp(tag, "aspect")) {
+	if ( ! strcmp(tag, "aspect")) {
 	    plm_rd(pdf_rd_ieeef(MetaFile, &dum_float));
 	    continue;
 	}
@@ -1494,7 +1479,7 @@ ReadFileHeader(void)
 	exit(EX_BADFILE);
     }
 
-    return (0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1656,7 +1641,7 @@ Opt_h(char *opt, char *optarg)
 
     Help();
 
-    return(1);
+    return 1;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1675,7 +1660,7 @@ Opt_v(char *opt, char *optarg)
     fprintf(stderr, "plplot metafile version: %s\n", PLMETA_VERSION);
     fprintf(stderr, "plplot library version: %s\n", PLPLOT_VERSION);
     exit(1);
-    return(1);		/* This serves a purpose */
+    return 1;		/* This serves a purpose */
 }
 
 /*----------------------------------------------------------------------*\
@@ -1694,7 +1679,7 @@ Opt_i(char *opt, char *optarg)
     strncpy(FileName, optarg, sizeof(FileName) - 1);
     FileName[sizeof(FileName) - 1] = '\0';
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1713,23 +1698,5 @@ Opt_p(char *opt, char *optarg)
     disp_begin = atoi(optarg);
     disp_end = disp_begin;
 
-    return(0);
+    return 0;
 }
-
-/*----------------------------------------------------------------------*\
-* Opt_mar()
-*
-* Obsolete
-\*----------------------------------------------------------------------*/
-
-static int
-Opt_mar(char *opt, char *optarg)
-{
-    dbug_enter("Opt_mar");
-
-    fprintf(stderr,
-    "-mar, -jx, and -jy options are obsolete -- use -wdev instead\n");
-
-    return 1;
-}
-
