@@ -6,6 +6,7 @@
 # Copyright (C) 2002, 2003, 2004  Alan W. Irwin
 # Copyright (C) 2003  Joao Cardoso
 # Copyright (C) 2004  Andrew Roach
+# Copyright (C) 2005  Thomas J. Duck
 #
 #
 # This file is part of PLplot.
@@ -34,6 +35,7 @@ EXTRA_LTLIBRARIES = \
 	gnome.la \
 	hpgl.la \
 	impress.la \
+	libgcw.la \
 	linuxvga.la \
 	ljii.la \
 	ljiip.la \
@@ -99,6 +101,7 @@ SUFFIXES = .la .rc
 cgm_la_CFLAGS = $(CDINCCMD)
 gd_la_CFLAGS = $(GDINCCMD)
 gnome_la_CFLAGS = $(GTK_CFLAGS) $(GNOME_INCLUDEDIR)
+libgcw_la_CFLAGS = $(GCW_CFLAGS)
 ntk_la_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
 	-I$(top_srcdir)/bindings/tk \
@@ -154,6 +157,11 @@ hpgl_la_LDFLAGS = $(ldflags) $(libplplot)
 
 impress_la_SOURCES = impress.c
 impress_la_LDFLAGS = $(ldflags) $(libplplot)
+
+if enable_gcw
+libgcw_la_SOURCES = plplotcanvas.c gcw.c
+libgcw_la_LDFLAGS = $(ldflags) $(libplplot) $(GCW_LIBS) $(lmflag)
+endif
 
 linuxvga_la_SOURCES = linuxvga.c
 linuxvga_la_LDFLAGS = $(ldflags) $(libplplot) $(LINUXVGALIBS)
@@ -282,6 +290,8 @@ libplplotdrv_la_SOURCES = $(tksources) $(matrixsources) $(tkwinsources)
 EXTRA_libplplotdrv_la_SOURCES = \
 	cgm.c \
 	dg300.c \
+	gcw.c \
+	plplotcanvas.c \
 	gd.c \
 	gnome.c \
 	hpgl.c \
@@ -320,6 +330,7 @@ EXTRA_libplplotdrv_la_SOURCES = \
 cgm_lo_CFLAGS = $(CDINCCMD)
 gd_lo_CFLAGS = $(GDINCCMD)
 gnome_lo_CFLAGS = $(GTK_CFLAGS) $(GNOME_INCLUDEDIR)
+libgcw_lo_CFLAGS = $(GCW_CFLAGS)
 ntk_lo_CFLAGS = \
 	-I$(top_srcdir)/bindings/tcl \
 	-I$(top_srcdir)/bindings/tk \
@@ -352,6 +363,7 @@ AM_CPPFLAGS = \
 	$(cgm_lo_CFLAGS) \
 	$(gd_lo_CFLAGS) \
 	$(gnome_lo_CFLAGS) \
+	$(libgcw_lo_CFLAGS) \
 	$(tkwin_lo_CFLAGS) \
 	$(wingcc_lo_CFLAGS) \
 	$(xwin_lo_CFLAGS) \
@@ -368,6 +380,7 @@ endif
 ## Library ordering is important here
 libplplotdrv_la_LDFLAGS = \
 	$(CDLIBCMD) \
+	$(GCW_LIBS) \
 	$(GDLIBCMD) \
 	$(GNOMELIBS) \
 	$(LINUXVGALIBS) \
