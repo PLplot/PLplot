@@ -548,7 +548,9 @@ plD_tidy_xw(PLStream *pls)
 	XCloseDisplay(xwd->display);
 	free_mem(xwDisplay[ixwd]);
     }
-    pls->plbuf_write = 0;
+    /* ANR: if we set this here the tmp file will not be closed */
+    /* See also comment in tkwin.c */
+    /*pls->plbuf_write = 0;*/
 }
 
 /*--------------------------------------------------------------------------*\
