@@ -1,42 +1,13 @@
 /* $Id$
-   $Log$
-   Revision 1.12  1993/07/02 07:11:39  mjl
-   Minor change to function name.
-
+ * $Log$
+ * Revision 1.13  1993/08/09 22:15:08  mjl
+ * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
+ *
+ * Revision 1.12  1993/07/02  07:11:39  mjl
+ * Minor change to function name.
+ *
  * Revision 1.11  1993/04/26  20:03:14  mjl
  * Added stub for plgchr().
- *
- * Revision 1.10  1993/03/02  19:02:46  mjl
- * Added stubs for plgver().
- *
- * Revision 1.9  1993/02/23  05:29:34  mjl
- * Added stubs for functions PLSDEV, PLSESC, and PLSSUB, and deleted stub for
- * PLBEG.
- *
- * Revision 1.8  1993/01/23  06:05:28  mjl
- * Stubs for new color functions added.
- *
- * Revision 1.7  1992/10/28  22:20:07  mjl
- * Fixed stupid bug in new plflush() function.
- *
- * Revision 1.6  1992/10/27  22:14:20  mjl
- * Support for plflush() function.
- *
- * Revision 1.5  1992/10/22  17:05:46  mjl
- * Fixed warnings, errors generated when compling with HP C++.
- *
- * Revision 1.4  1992/10/20  20:16:03  mjl
- * Put in stub for plfamadv().
- *
- * Revision 1.3  1992/10/12  17:05:37  mjl
- * Converted to string-integer equivalence method for C-Fortran string passing.
- *
- * Revision 1.2  1992/09/29  04:46:37  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:35:08  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	scstubs.c
@@ -70,6 +41,12 @@ PLBIN(PLINT *nbin, PLFLT *x, PLFLT *y, PLINT *center)
 }
 
 void
+PLBOP()
+{
+    c_plbop();
+}
+
+void
 PLBOX_(char *xopt, PLFLT *xtick, PLINT *nxsub,
        char *yopt, PLFLT *ytick, PLINT *nysub)
 {
@@ -84,12 +61,6 @@ PLBOX3_(char *xopt, char *xlabel, PLFLT *xtick, PLINT *nxsub,
     c_plbox3(xopt, xlabel, *xtick, *nxsub,
 	     yopt, ylabel, *ytick, *nysub,
 	     zopt, zlabel, *ztick, *nzsub);
-}
-
-void
-PLCLR()
-{
-    c_plclr();
 }
 
 void
@@ -115,6 +86,12 @@ PLENV(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
       PLINT *just, PLINT *axis)
 {
     c_plenv(*xmin, *xmax, *ymin, *ymax, *just, *axis);
+}
+
+void
+PLEOP()
+{
+    c_pleop();
 }
 
 void

@@ -1,23 +1,12 @@
 /* $Id$
-   $Log$
-   Revision 1.3  1993/07/01 22:13:41  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
-
- * Revision 1.2  1993/02/23  05:17:53  mjl
- * Changed references in error messages from plstar to plinit.  Also changed
- * pladv to call grclr and grpage (instead of gradv, now gone).
+ * $Log$
+ * Revision 1.4  1993/08/09 22:15:05  mjl
+ * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
  *
- * Revision 1.1  1993/01/23  05:57:59  mjl
- * Now holds all page-related functions.
- *
- * Revision 1.2  1992/09/29  04:45:41  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:34:10  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.3  1993/07/01  22:13:41  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
 */
 
 /*	pladv.c
@@ -48,8 +37,8 @@ c_pladv(PLINT page)
 	cursub = page;
     else if (page == 0) {
 	if (cursub == nsubx * nsuby) {
-	    plP_clr();
-	    plP_page();
+	    plP_eop();
+	    plP_bop();
 	    cursub = 1;
 	}
 	else
@@ -63,32 +52,32 @@ c_pladv(PLINT page)
 }
 
 /*----------------------------------------------------------------------*\
-* void plclr()
+* void pleop()
 *
-* Clear (end) current page.  Should only be used with plpage().
+* End current page.  Should only be used with plbop().
 \*----------------------------------------------------------------------*/
 
 void
-c_plclr()
+c_pleop()
 {
     PLINT level;
     plP_glev(&level);
     if (level < 1)
-	plexit("plclr: Please call plinit first.");
+	plexit("pleop: Please call plinit first.");
 
-    plP_clr();
+    plP_eop();
 }
 
 /*----------------------------------------------------------------------*\
-* void plpage()
+* void plbop()
 *
-* Start new page.  Should only be used with plclr().
+* Start new page.  Should only be used with pleop().
 \*----------------------------------------------------------------------*/
 
 void
-c_plpage()
+c_plbop()
 {
-    plP_page();
+    plP_bop();
 }
 
 /*----------------------------------------------------------------------*\

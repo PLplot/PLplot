@@ -1,8 +1,11 @@
 /* $Id$
-   $Log$
-   Revision 1.27  1993/08/03 01:47:04  mjl
-   Changes to eliminate warnings when compiling with gcc -Wall.
-
+ * $Log$
+ * Revision 1.28  1993/08/09 22:15:11  mjl
+ * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
+ *
+ * Revision 1.27  1993/08/03  01:47:04  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
  * Revision 1.26  1993/07/31  08:20:53  mjl
  * Removed code that is now handled in the driver interface, also changes
  * to reflect new driver functions.
@@ -65,8 +68,8 @@ static char *program_name = "plrender";
 static void	process_next	(U_CHAR c);
 static void	plr_init	(U_CHAR c);
 static void	plr_line	(U_CHAR c);
-static void	plr_clr		(U_CHAR c);
-static void	plr_page	(U_CHAR c);
+static void	plr_eop 	(U_CHAR c);
+static void	plr_bop 	(U_CHAR c);
 static void	plr_state	(U_CHAR c);
 static void	plr_esc		(U_CHAR c);
 static void	plresc_rgb	(void);
@@ -283,7 +286,7 @@ main(int argc, char *argv[])
 		break;
 	}
 
-	if ((c == PAGE || c == ADVANCE) && curpage == page_end)
+	if ((c == BOP || c == ADVANCE) && curpage == page_end)
 	    break;
 
 	process_next(c);
@@ -293,7 +296,7 @@ main(int argc, char *argv[])
 
     (void) fclose(MetaFile);
     if (strcmp(mf_version, "1993a") < 0) 
-	plP_clr();
+	plP_eop();
 
     plP_tidy();
     exit(EX_SUCCESS);
@@ -330,17 +333,17 @@ process_next(U_CHAR c)
 	plr_line(c);
 	break;
 
-      case CLEAR:
-	plr_clr(c);
+      case EOP:
+	plr_eop(c);
 	break;
 
-      case PAGE:
-	plr_page(c);
+      case BOP:
+	plr_bop(c);
 	break;
 
       case ADVANCE:
-	plr_clr(c);
-	plr_page(c);
+	plr_eop(c);
+	plr_bop(c);
 	break;
 
       case CHANGE_STATE:
@@ -357,6 +360,10 @@ process_next(U_CHAR c)
 
       case NEW_WIDTH:
 	plr_state(PLSTATE_WIDTH);
+	break;
+
+      case SWITCH_TO_TEXT:
+      case SWITCH_TO_GRAPH:
 	break;
 
       case ESCAPE:
@@ -378,6 +385,8 @@ static void
 plr_init(U_CHAR c)
 {
     float aspect, dev_aspect, ratio;
+
+    dbug_enter("plr_init");
 
 /* Register event handler */
 
@@ -450,7 +459,6 @@ plr_init(U_CHAR c)
 	    SeekToPage(page_begin);
 	}
     }
-
 }
 
 /*----------------------------------------------------------------------*\
@@ -518,18 +526,20 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
 }
 
 /*----------------------------------------------------------------------*\
-* plr_clr()
+* plr_eop()
 *
-* Clear screen.
+* Handle end of page.
 * Here we run into a bit of difficulty with packed pages -- at the end
-* there is no "clear" operation done if the page is only partially full.
+* there is no EOP operation done if the page is only partially full.
 * So I peek ahead to see if the next operation is a CLOSE, and if so,
-* push back the CLOSE and issue a page clear regardless.  
+* push back the CLOSE and issue an EOP regardless.  
 \*----------------------------------------------------------------------*/
 
 static void
-plr_clr(U_CHAR c)
+plr_eop(U_CHAR c)
 {
+    dbug_enter("plr_eop");
+
     c1 = getcommand();
     ungetcommand(c1);
     if (c1 == CLOSE)
@@ -540,20 +550,22 @@ plr_clr(U_CHAR c)
 
     if (end_of_page == 1) {
 	at_eop = 1;
-	plP_clr();
+	plP_eop();
 	at_eop = 0;
     }
 }
 
 /*----------------------------------------------------------------------*\
-* plr_page()
+* plr_bop()
 *
 * Page/subpage advancement.
 \*----------------------------------------------------------------------*/
 
 static void
-plr_page(U_CHAR c)
+plr_bop(U_CHAR c)
 {
+    dbug_enter("plr_bop");
+
     cursub++;
     if (cursub > nsubx * nsuby) {
 	cursub = 1;
@@ -565,7 +577,7 @@ plr_page(U_CHAR c)
 /* Advance and setup the page or subpage */
 
     if (end_of_page) {
-	plP_page();
+	plP_bop();
 	end_of_page = 0;
     }
 
@@ -573,7 +585,7 @@ plr_page(U_CHAR c)
     plP_setsub();
 
     plvpor(vpxmin, vpxmax, vpymin, vpymax);
-    plwind((PLFLT) xmin, (PLFLT) xmax, (PLFLT) ymin, (PLFLT) ymax);
+    plwind(xmin, xmax, ymin, ymax);
 }
 
 /*----------------------------------------------------------------------*\
@@ -585,6 +597,8 @@ plr_page(U_CHAR c)
 static void 
 plr_state(U_CHAR op)
 {
+    dbug_enter("plr_state");
+
     switch (op) {
 
     case PLSTATE_WIDTH:{
@@ -636,6 +650,8 @@ plr_esc(U_CHAR c)
 {
     U_CHAR op;
 
+    dbug_enter("plr_esc");
+
     plm_rd(pdf_rd_1byte(MetaFile, &op));
     switch (op) {
 
@@ -670,6 +686,8 @@ plresc_rgb(void)
     float red, green, blue;
     U_SHORT ired, igreen, iblue;
 
+    dbug_enter("plresc_rgb");
+
     plm_rd(pdf_rd_2bytes(MetaFile, &ired));
     plm_rd(pdf_rd_2bytes(MetaFile, &igreen));
     plm_rd(pdf_rd_2bytes(MetaFile, &iblue));
@@ -678,7 +696,7 @@ plresc_rgb(void)
     green = (double) igreen / 65535.;
     blue = (double) iblue / 65535.;
 
-    plrgb((PLFLT) red, (PLFLT) green, (PLFLT) blue);
+    plrgb(red, green, blue);
 }
 
 /*----------------------------------------------------------------------*\
@@ -693,6 +711,8 @@ plresc_ancol(void)
 {
     U_CHAR icolor;
     char name[80];
+
+    dbug_enter("plresc_ancol");
 
     plm_rd(pdf_rd_1byte(MetaFile, &icolor));
     plm_rd(pdf_rd_header(MetaFile, name));
@@ -711,6 +731,8 @@ plresc_ancol(void)
 static void
 NextFamilyFile(U_CHAR *c)
 {
+    dbug_enter("NextFamilyFile");
+
     (void) fclose(MetaFile);
     member++;
     (void) sprintf(FileName, "%s.%i", FamilyName, member);
@@ -907,7 +929,7 @@ plr_KeyEH(PLKey *key, void *user_data, int *p_exit_eventloop)
 * be at the end of the file.  So in order to get info on the previous and
 * next page offsets we must backup to the beginning of the current page and
 * start seeking from there.  In addition, we must set end_of_page = 1 to
-* force a clear.
+* force an EOP.
 *
 * The wacky business with cursub is to ensure that when seeking with
 * subpages in effect, the last subpage on the page previous to the target
@@ -918,6 +940,8 @@ static void
 SeekToPage(long target_page)
 {
     long delta;
+
+    dbug_enter("SeekToPage");
 
     if (input_type > 0)
 	return;
@@ -1024,6 +1048,8 @@ ReadPageHeader(void)
     U_SHORT page;
     U_LONG prevpage, nextpage;
 
+    dbug_enter("ReadPageHeader");
+
 /* Read page header */
 
     if (input_type == 0) {
@@ -1060,6 +1086,8 @@ static void
 Init(int argc, char **argv)
 {
     int i, mode, status;
+
+    dbug_enter("Init");
 
 /* Process plrender command line options */
 
@@ -1114,6 +1142,8 @@ Init(int argc, char **argv)
 static void
 OpenMetaFile(int *p_argc, char **argv)
 {
+    dbug_enter("OpenMetaFile");
+
     if (!strcmp(FileName, "-"))
 	input_type = 1;
 
@@ -1184,6 +1214,8 @@ static int
 ReadFileHeader(void)
 {
     char tag[80];
+
+    dbug_enter("ReadFileHeader");
 
 /* Read label field of header to make sure file is a PLPLOT metafile */
 
@@ -1294,6 +1326,8 @@ Help(void)
     PLOptionTable *opt;
     char **cpp;
 
+    dbug_enter("Help");
+
     fprintf(stderr,
 	    "\nUsage:\n        %s [%s options] [plplot options] [filename]\n",
 	    program_name, program_name);
@@ -1326,6 +1360,8 @@ Usage(char *badOption)
 {
     PLOptionTable *opt;
     int col, len;
+
+    dbug_enter("Usage");
 
     if (*badOption != '\0')
 	fprintf(stderr, "\n%s:  bad command line option \"%s\"\r\n",
@@ -1370,6 +1406,7 @@ Usage(char *badOption)
 static int
 Opt_h(char *opt, char *optarg)
 {
+    dbug_enter("Opt_h");
 
 /* Help */
 
@@ -1387,6 +1424,7 @@ Opt_h(char *opt, char *optarg)
 static int
 Opt_v(char *opt, char *optarg)
 {
+    dbug_enter("Opt_v");
 
 /* Version */
 
@@ -1405,6 +1443,7 @@ Opt_v(char *opt, char *optarg)
 static int
 Opt_i(char *opt, char *optarg)
 {
+    dbug_enter("Opt_i");
 
 /* Input file */
 
@@ -1423,6 +1462,7 @@ Opt_i(char *opt, char *optarg)
 static int
 Opt_p(char *opt, char *optarg)
 {
+    dbug_enter("Opt_p");
 
 /* Specified page only */
 
@@ -1441,6 +1481,8 @@ Opt_p(char *opt, char *optarg)
 static int
 Opt_mar(char *opt, char *optarg)
 {
+    dbug_enter("Opt_mar");
+
     fprintf(stderr,
     "-mar, -jx, and -jy options are obsolete -- use -wdev instead\n");
 

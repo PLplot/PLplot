@@ -1,8 +1,11 @@
 /* $Id$
-   $Log$
-   Revision 1.5  1993/08/03 01:46:46  mjl
-   Changes to eliminate warnings when compiling with gcc -Wall.
-
+ * $Log$
+ * Revision 1.6  1993/08/09 22:15:02  mjl
+ * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
+ *
+ * Revision 1.5  1993/08/03  01:46:46  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
  * Revision 1.4  1993/07/31  08:06:54  mjl
  * More consolidation of driver functions.
  *
@@ -15,7 +18,6 @@
  *
  * Revision 1.1  1993/07/02  06:58:30  mjl
  * The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
- *
 */
 
 /*
@@ -347,7 +349,7 @@ plr_eop(PLRDev *plr)
 {
     dbug_enter("plr_eop");
 
-    plclr();
+    pleop();
     return 0;
 }
 
@@ -364,7 +366,7 @@ plr_bop(PLRDev *plr)
 
 /* Advance and setup the page */
 
-    plpage();
+    plbop();
     plvpor(0., 1., 0., 1.);
     plwind(plr->xmin, plr->xmax, plr->ymin, plr->ymax);
 
