@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.91  2000/05/10 20:38:08  furnish
+ * Prototype of plarrows added.  Rob Managan.
+ *
  * Revision 1.90  1999/06/25 04:17:34  furnish
  * plmap and plmeridians got neglected before too.
  *
@@ -739,6 +742,12 @@ extern "C" {
 
 void
 c_pladv(PLINT page);
+
+/* simple arrow plotter. */
+
+void
+plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
+         PLFLT scale, PLFLT dx, PLFLT dy) ;
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
