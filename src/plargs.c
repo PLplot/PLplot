@@ -162,6 +162,11 @@ static int  mode_noprogram;
 static int  mode_nodash;
 static int  mode_skip;
 
+/* Temporary buffer used for parsing */
+
+#define OPTMAX 1024
+static char opttmp[OPTMAX];
+
 /*--------------------------------------------------------------------------*\
  * PLPLOT options data structure definition.
  *
@@ -1655,7 +1660,9 @@ opt_wplt(char *opt, char *optarg, void *client_data)
     char *field;
     PLFLT xl, yl, xr, yr;
 
-    if ((field = strtok(optarg, ",")) == NULL)
+    strncpy(opttmp, optarg, OPTMAX-1);
+
+    if ((field = strtok(opttmp, ",")) == NULL)
 	return 1;
 
     xl = atof(field);
@@ -2085,16 +2092,19 @@ opt_geo(char *opt, char *optarg, void *client_data)
     PLFLT xdpi = 0., ydpi = 0.;
     PLINT xwid = 0, ywid = 0, xoff = 0, yoff = 0;
     
-    /* The TK driver uses the geometry string directly */    
+/* The TK driver uses the geometry string directly */    
 
     plsc->geometry = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
     strcpy (plsc->geometry, optarg);
 
-    if (strchr (optarg, 'x')) {
+/* Set up plplot dimensions */
+
+    strncpy(opttmp, optarg, OPTMAX-1);
+    if (strchr (opttmp, 'x')) {
 
     /* -geometry WxH or -geometry WxH+Xoff+Yoff */
 
-	field = strtok (optarg, "x");
+	field = strtok (opttmp, "x");
 	xwid = atoi (field);
 	if (xwid == 0)
 	    fprintf (stderr, "?invalid xwid\n");
@@ -2112,7 +2122,7 @@ opt_geo(char *opt, char *optarg, void *client_data)
 
     /* -geometry +Xoff or -geometry +Xoff+Yoff only */
 
-	field = strtok (optarg, "+");
+	field = strtok (opttmp, "+");
     }
 
     if (field != NULL) {
@@ -2157,10 +2167,9 @@ opt_dpi(char *opt, char *optarg, void *client_data)
     PLFLT xdpi = 0., ydpi = 0.;
     PLINT xwid = 0, ywid = 0, xoff = 0, yoff = 0;
     
-    if (strchr (optarg, 'x')) 
-       {
-
-	field = strtok (optarg, "x");
+    strncpy(opttmp, optarg, OPTMAX-1);
+    if (strchr (opttmp, 'x')) {
+	field = strtok (opttmp, "x");
 	xdpi = atof (field);
 	if (xdpi == 0)
 	    fprintf (stderr, "?invalid xdpi\n");
@@ -2172,13 +2181,11 @@ opt_dpi(char *opt, char *optarg, void *client_data)
         if (ydpi == 0)
 	   fprintf (stderr, "?invalid ydpi\n");
 
-      }
-    else
-      {
-      xdpi = atof (optarg);
-      ydpi=xdpi;
-      if (xdpi==0) return 1;
-      }
+    } else {
+	xdpi = atof (opttmp);
+	ydpi=xdpi;
+	if (xdpi==0) return 1;
+    }
 
     plspage (xdpi, ydpi, xwid, ywid, xoff, yoff);
     return 0;
