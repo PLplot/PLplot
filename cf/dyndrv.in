@@ -14,66 +14,81 @@ dynamic_drivers_target: $(dynamic_drivers)
 
 # Decause of the bindings to interpreted languages such as Python or Java,
 # dynamically linked drivers need to be linked against libplplot:
-# (AWI not convinced so commented out as an experiment to try and get
+# (AWI believes this is due to the python and java teams forgetting to
+# OR in the RTLD_GLOBAL flag with their dlopen calls.  
+# See http://www.tldp.org/HOWTO/Program-Library-HOWTO/dl-libraries.html
+# for documentation of that flag.  The purpose of that flag is to make 
+# symbols of the dlopened library (e.g. libplplot) available to subsequently
+# dlopened libraries (i.e., one of these dynamic drivers).
+# To work around the problem here we make all drivers **except tk, xwin, and
+# tkwin (which libplplot already links to and which seems to make the
+# symbols available for those drivers)** link to libplplot.  We also arrange
+# the libplplot Makefile dependency appropriately in all cases.
+# 
 # to the real source of the trouble).
-# driverlibs := -L. -l$(PLLIB_NAME)$(LIB_TAG)
+driverlibs := -L. -l$(PLLIB_NAME)$(LIB_TAG)
 
-drivers/null$(LIB_TAG)_drv.so : shared/null$O
+drivers/null$(LIB_TAG)_drv.so : shared/null$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/plmeta$(LIB_TAG)_drv.so : shared/plmeta$O
+drivers/plmeta$(LIB_TAG)_drv.so : shared/plmeta$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/pstex$(LIB_TAG)_drv.so : drivers/ps$(LIB_TAG)_drv.so
 
-drivers/ps$(LIB_TAG)_drv.so : shared/ps$O shared/pstex$O
+drivers/ps$(LIB_TAG)_drv.so : shared/ps$O shared/pstex$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< shared/pstex$O $(driverlibs)
 
-drivers/xfig$(LIB_TAG)_drv.so : shared/xfig$O
+drivers/xfig$(LIB_TAG)_drv.so : shared/xfig$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/gd$(LIB_TAG)_drv.so : shared/gd$O
+drivers/gd$(LIB_TAG)_drv.so : shared/gd$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< @GDLIBS@ $(driverlibs)
 
-drivers/cgm$(LIB_TAG)_drv.so : shared/cgm$O
+drivers/cgm$(LIB_TAG)_drv.so : shared/cgm$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< @CDLIBS@ $(driverlibs)
 
-drivers/tek$(LIB_TAG)_drv.so : shared/tek$O
+drivers/tek$(LIB_TAG)_drv.so : shared/tek$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/pbm$(LIB_TAG)_drv.so : shared/pbm$O
+drivers/pbm$(LIB_TAG)_drv.so : shared/pbm$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/hpgl$(LIB_TAG)_drv.so : shared/hpgl$O
+drivers/hpgl$(LIB_TAG)_drv.so : shared/hpgl$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/dg300$(LIB_TAG)_drv.so : shared/dg300$O
+drivers/dg300$(LIB_TAG)_drv.so : shared/dg300$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/ljii$(LIB_TAG)_drv.so : shared/ljii$O
+drivers/ljii$(LIB_TAG)_drv.so : shared/ljii$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/ljiip$(LIB_TAG)_drv.so : shared/ljiip$O
+drivers/ljiip$(LIB_TAG)_drv.so : shared/ljiip$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/impress$(LIB_TAG)_drv.so : shared/impress$O
+drivers/impress$(LIB_TAG)_drv.so : shared/impress$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/gnome$(LIB_TAG)_drv.so : shared/gnome$O
+drivers/gnome$(LIB_TAG)_drv.so : shared/gnome$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< @GNOMELIBS@ $(driverlibs)
 
-drivers/ntk$(LIB_TAG)_drv.so : shared/ntk$O
+drivers/ntk$(LIB_TAG)_drv.so : shared/ntk$O $(PLLIBS)
 	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
 
-drivers/tkwin$(LIB_TAG)_drv.so : shared/tkwin$O
-	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
+drivers/linuxvga$(LIB_TAG)_drv.so : shared/linuxvga$O $(PLLIBS)
+	$(SHLIB_BUILD) $@ $< @LINUXVGALIBS@ $(driverlibs)
 
+# These last 3 are special because libplplot will eventually be linked to them.
+# So no need to link back (in fact cannot do so since libplplot does not exist
+# [or only an old version exists] when these dynamic drivers are created).  
+# Also remove dependency on libplplot (which would create a circular 
+# Makefile dependency).
 drivers/tk$(LIB_TAG)_drv.so : shared/tk$O
-	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
+	$(SHLIB_BUILD) $@ $< @TKLIBS@
 
 drivers/xwin$(LIB_TAG)_drv.so : shared/xwin$O
-	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
+	$(SHLIB_BUILD) $@ $< @TKLIBS@
 
-drivers/linuxvga$(LIB_TAG)_drv.so : shared/linuxvga$O
-	$(SHLIB_BUILD) $@ $< @LINUXVGALIBS@ $(driverlibs)
+drivers/tkwin$(LIB_TAG)_drv.so : shared/tkwin$O
+	$(SHLIB_BUILD) $@ $< @TKLIBS@
 
