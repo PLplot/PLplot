@@ -687,7 +687,7 @@ void c_pladv(PLINT page); //%name pladv
 /* simple arrow plotter. */
 
 void plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
-         PLFLT scale, PLFLT dx, PLFLT dy) ;
+	      PLFLT scale, PLFLT dx, PLFLT dy) ; //%name plarrows //%input u(n), v(n), x(n), y(n)
 
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
