@@ -119,8 +119,27 @@ define(PL_DRIVER_LIST,
 conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, xfig, ljii, ljiip, hp7470, hp7580,
 lj_hpgl, imp, xwin, tk, pbm, gnome])
 
+# Note specifically which drivers are known to be loadable.
+# Eventually, hopefully, every driver will show up on this list.
+# However, we add them one at a time since each will have its own
+# peculiarities in the build process.
+
 define([PL_DYNAMIC_DRIVER_LIST],
 [null plmeta ps])
+
+# We think of a "device" as the output medium.  Could be a machine
+# style (Tektronix, X11), or a file format (Postscript).
+#
+# A "driver" is the PLplot code that produces the output on the
+# medium.
+#
+# Some drivers support multiple devices.  But we we need to make sure
+# we compile only the selected drivers.  That is, if a driver supports
+# devices not selected, we don't want to compile it at all.  Or if it
+# supports multiple selected devices, we only want to compile it
+# once.  To support this, we build an association list between devices
+# and drivers.  This will be inspected to build up the set of drivers
+# to be compiled based on which devices are selected.
 
 define([PL_device_driver_pair_list],
 [plmeta:plmeta null:null \
@@ -461,6 +480,17 @@ AC_INCLUDE(sysloc.in)
 
 PL_DRIVERS(PL_DRIVER_LIST)
 
+# ----------------------------------------------------------------------------
+# Okay, we're about to start emiting the configuration information.
+# But first start with a bogus file, so we can have a time stamp
+# marking when it all began.  That will let us write a clean target
+# that avoids killing off the CVS files (and the ./CVS control
+# directory), while using only the features of POSIX find.
+# ----------------------------------------------------------------------------
+
+touch .plcfg
+
+# ----------------------------------------------------------------------------
 # Okay, NOW we're done searching for stuff, so all the driver flags
 # and what not will finally be set right.
 
@@ -542,6 +572,9 @@ cat $srcdir/cf/dist.in		>>Makefile.in
 
 # Optional packages
 
+if test "$enable_dynamic_drivers" = "yes"; then
+    cat $srcdir/cf/dyndrv.in    >>Makefile.in
+fi
 if test "$enable_cxx" = "yes"; then
     cat $srcdir/cf/pkg_cxx.in	>>Makefile.in 
 fi
@@ -728,6 +761,12 @@ $srcdir/drivers/*.c \
 ln -s \
 $srcdir/include/*.h \
 plplot 2>/dev/null
+
+# Dynamic (loadable) drivers go in a subdir all their own.
+
+if test ! -d drivers; then
+    mkdir drivers
+fi
 
 # Packages (interfaces) and demos associated with them
 
