@@ -1,0 +1,61 @@
+# bindings/java/Makefile.am for PLplot
+###
+### Process this file with automake to produce Makefile.in
+###
+# Copyright (C) 2002 Alan W. Irwin
+# 
+#This file is part of PLplot.
+#
+#This file is free software; you can redistribute it and/or modify
+#it under the terms of the GNU Library General Public License as published by
+#the Free Software Foundation; version 2 of the License.
+#
+#This file is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU Library General Public License for more details.
+#
+#You should have received a copy of the GNU Library General Public License
+#along with the file; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
+if enable_java
+
+if with_double
+libplplot = -L../../src/ -lplplotd
+lib_LTLIBRARIES = libplplotjavad.la
+else
+libplplot = -L../../src/ -lplplot
+lib_LTLIBRARIES = libplplotjava.la
+endif
+
+
+AM_CPPFLAGS = @INCLTDL@ @JAVAINCCMD@
+version = -version-info @SOVERSION@
+
+sources = javabind.c
+
+libplplotjava_la_SOURCES  = $(sources)
+libplplotjava_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined $(libplplot)
+
+libplplotjavad_la_SOURCES = $(libplplotjava_la_SOURCES)
+libplplotjavad_la_LDFLAGS = $(libplplotjava_la_LDFLAGS)
+
+javadir = $(libdir)/java/plplot/core
+# At some point specify javaJAVA for gcj support when gcc-3.2 becomes
+# widespread.
+java_DATA = \
+	java/plplot/core/PLStream.class \
+	java/plplot/core/config.class \
+	README.javaAPI
+	
+java/plplot/core/PLStream.class java/plplot/core/config.class: \
+	PLStream.java config.java
+	mkdir -p java/plplot/core
+	ln -sf ../../../PLStream.java java/plplot/core
+	ln -sf ../../../config.java java/plplot/core
+	javac -d java config.java
+	javac -d java PLStream.java
+
+# if enable_java
+endif

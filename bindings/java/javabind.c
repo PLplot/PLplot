@@ -20,7 +20,7 @@
 
 #include <jni.h>
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 static jclass cls_PLStream = 0;
 static jfieldID fid_sid = 0;

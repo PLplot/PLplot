@@ -1,4 +1,4 @@
-# bindings/Makefile.am for PLplot
+# examples/java/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
@@ -19,29 +19,34 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-SUBDIRS = c++ f77 python tcl tk octave java
+if enable_java
 
-abovedatadir = ${prefix}/@DATA_DIR@/..
+javadir = $(libdir)/java/plplot/examples
 
-if enable_tcl
-  index_tcl = tcl/pkgIndex.tcl.in
+java_DATA = \
+	README.javademos \
+	x01.java \
+	x02.java \
+	x03.java \
+	x04.java \
+	x05.java \
+	x06.java \
+	x07.java \
+	x08.java \
+	x09.java \
+	x10.java \
+	x11.java \
+	x12.java \
+	x13.java \
+	x14.java \
+	x15.java \
+	x16.java \
+	x17.java \
+	x18.java \
+	x19.java
+
+
+EXTRA_DIST = $(java_DATA)
+
+# enable_java
 endif
-
-if enable_tk
-  index_tk = tk/pkgIndex.tcl.in
-endif
-
-if enable_tkwin
-  index_tkwin = tk-x-plat/pkgIndex.tcl.in
-endif
-
-index = $(index_tcl) $(index_tk) $(index_tkwin)
-
-if enable_tcl
-abovedata_DATA = pkgIndex.tcl
-
-pkgIndex.tcl: $(index)
-	cat $(index) > pkgIndex.tcl
-
-endif
-CLEANFILES = pkgIndex.tcl

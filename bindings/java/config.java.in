@@ -3,5 +3,5 @@
 package plplot.core;
 
 public class config {
-    public static String libname = "@PLLIB_NAME@@LIB_TAG@";
+    public static String libname = "plplotjava@LIB_TAG@";
 };

@@ -579,6 +579,13 @@ if test "$enable_tk" = yes; then
    AC_SUBST(TKLIBCMD)
 fi
 
+# Java stanza completely different from others.  sysloc.in must have 
+# found both $JAVAINCDIR and $JAVAMDINCDIR if $enable_java is still yes.
+if test "$enable_java" = yes; then
+   JAVAINCCMD="-I"$JAVAINCDIR" -I"$JAVAMDINCDIR
+   AC_SUBST(JAVAINCCMD)
+fi
+
 ### Double vs single precison
 
 if test "$with_double" = yes; then
@@ -643,6 +650,7 @@ AM_CONDITIONAL(enable_cxx, [test "$enable_cxx" = yes])
 AM_CONDITIONAL(enable_f77, [test "$enable_f77" = yes])
 AM_CONDITIONAL(enable_gnome, [test "$enable_gnome" = yes])
 AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
+AM_CONDITIONAL(enable_java, [test "$enable_java" = yes])
 AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
 AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])
 AM_CONDITIONAL(enable_octave, [test "$enable_octave" = yes])
@@ -860,6 +868,8 @@ AC_OUTPUT([
 	bindings/octave/PLplot/support/Makefile
 	bindings/octave/demos/Makefile
 	bindings/octave/misc/Makefile
+	bindings/java/Makefile
+	bindings/java/config.java
 	drivers/Makefile
 	examples/Makefile
 	examples/c/Makefile
@@ -873,6 +883,7 @@ AC_OUTPUT([
 	examples/tcl/Makefile
 	examples/tk/Makefile
 	examples/tk/Makefile.examples
+	examples/java/Makefile
 	test/Makefile
 	test/plplot-test.sh
 	utils/Makefile
