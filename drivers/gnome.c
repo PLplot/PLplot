@@ -14,7 +14,7 @@
 
 #include <unistd.h>
 
-//#undef DEBUG
+/*#undef DEBUG*/
 #define DEBUG
 
 #undef ANTIALISED_CANVAS
@@ -706,6 +706,7 @@ plD_init_gnome (PLStream *pls)
   pls->termin = 1;		/* Is an interactive terminal */
   pls->dev_flush = 1;		/* Handle our own flushes */
   pls->dev_fill0 = 1;		/* Handle solid fills */
+  pls->dev_fill1 = 1;		/* Handle pattern fills */
   pls->dev_dash = 1;		/* Handle dashed lines */
   pls->plbuf_write = 0;	        /* No plot buffer */
   pls->width = 1;
@@ -960,7 +961,7 @@ fill_polygon (PLStream* pls)
   /* Experimental stuff for pattern fill */
   GdkPixmap* bitmap;
   char const pattern[8] =   {
-    0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55
+    0x81, 0xc0, 0x60, 0x30, 0x18, 0x0c, 0x06, 0x03
   }; 
   
   dev = pls->dev;
@@ -983,20 +984,29 @@ fill_polygon (PLStream* pls)
   }
 
   /* Experimental stuff for pattern fill */
-  bitmap = gdk_bitmap_create_from_data (NULL, pattern, 8, 8);
+  if (pls->patt < 0) {
+    
+    bitmap = gdk_bitmap_create_from_data (NULL, pattern, 8, 8);
+    
+    item = gnome_canvas_item_new (group,
+				  gnome_canvas_polygon_get_type (),
+				  "points", points,
+				  "fill_stipple", bitmap,
+				  "fill_color_rgba",
+				  plcolor_to_rgba (pls->curcolor, 0xFF),
+				  "width_units", 0.0,
+				  NULL);
 
-  item = gnome_canvas_item_new (group,
-                                gnome_canvas_polygon_get_type (),
-				"points", points,
-				/* Experimental stuff for pattern fill */
-				/* "fill_stipple", bitmap, */
-                                "fill_color_rgba",
- 				plcolor_to_rgba (pls->curcolor, 0xFF),
-                                "width_units", 0.0,
-                                NULL);
-
-  /* Experimental stuff for pattern fill */
-  gdk_pixmap_unref (bitmap);
+    gdk_pixmap_unref (bitmap);
+  }
+  else
+    item = gnome_canvas_item_new (group,
+				  gnome_canvas_polygon_get_type (),
+				  "points", points,
+				  "fill_color_rgba",
+				  plcolor_to_rgba (pls->curcolor, 0xFF),
+				  "width_units", 0.0,
+				  NULL);
 
   set_color (item, 1, ((double) pls->icol1)/pls->ncol1);
 

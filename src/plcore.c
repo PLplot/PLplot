@@ -310,12 +310,8 @@ grfill(short *x, short *y, PLINT npts)
 	plsc->patt = 8;
 	plpsty(plsc->patt);
     }
-    if (plsc->patt < 0 && ! plsc->dev_fill1) {
-	if ( ! foo) {
-	    plwarn("Driver does not support hardware pattern fills, switching to software fill.\n");
-	    foo = 1;
-	}
-	plsc->patt = ABS(plsc->patt) % 8 + 1;
+    if (plsc->dev_fill1) {
+	plsc->patt = -ABS(plsc->patt);
 	plpsty(plsc->patt);
     }
 
