@@ -16,13 +16,15 @@
 # If a shared library was built, rebuild executables before installing.
 # -----------------------------------------------------------------------------
 
-install: install_lib install_demos install_utils \
+install: install_lib \
 	$(F77_INSTALL) \
 	$(PYTHON_INSTALL) \
 	$(TCL_INSTALL) \
 	$(MAT_INSTALL) \
 	$(TK_INSTALL) \
-	$(CXX_INSTALL)
+	$(CXX_INSTALL) \
+	install_demos \
+	install_utils
 
 install_demos:
 	-if test ! -d $(DEMOS_DIR); then mkdir -p $(DEMOS_DIR); fi
@@ -34,7 +36,7 @@ install_demos:
 install_utils:
 	-if test $(SHARED) = 1; then \
 	 $(LDC) $(LDC_FLAGS) plrender$O $(LIB_INSTALL) \
-		-o plrender$E $(LDC_LIBS); \
+		-o plrender$E $(LDC_LIBS) $(INSTALL_RPATH); \
 	 fi
 	-if test $(SHARED) = 1; then \
 	 $(LDC) $(LDC_FLAGS) pltek$O \
