@@ -70,6 +70,7 @@ pdf_fopen(char *filename, char *mode)
     if (pdfs != NULL) {
 	pdfs->buffer = NULL;
 	pdfs->file = NULL;
+	pdfs->bp = 0;
 #ifdef PLPLOT_USE_TCL_CHANNELS
 	pdfs->tclChan = NULL;
 	if (1) {
@@ -106,7 +107,6 @@ pdf_fopen(char *filename, char *mode)
 	    pdfs = NULL;
 	}
 #endif
-	pdfs->bp = 0;
     }
 
     return pdfs;
