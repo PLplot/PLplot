@@ -29,7 +29,7 @@ SA		= @SA@
 SHARED		= @SHARED@
 
 CC_FLAGS	= @CC_FLAGS@ @INCS@
-CXX_FLAGS	= @CXX_FLAGS@
+CXX_FLAGS	= @CXX_FLAGS@ @INCS@
 
 CC_FLAGS_DEMOS	= $(CC_FLAGS)
 CXX_FLAGS_DEMOS	= $(CXX_FLAGS)
@@ -76,7 +76,7 @@ PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 # when installed (since then headers are found by the include search path,
 # and the library can't be rebuilt anyway).
 
-CDEMO_HEADERS	= plcdemos.h plplot.h
+CDEMO_HEADERS	= plplot/plcdemos.h plplot/plplot.h
 
 # Default is to build library(s) and utils.
 
