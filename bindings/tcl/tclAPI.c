@@ -1869,6 +1869,27 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
 }
 
 /*--------------------------------------------------------------------------*\
+ * mapform
+ *
+ * Defines our coordinate transformation.
+ * x[], y[] are the coordinates to be plotted.
+\*--------------------------------------------------------------------------*/
+
+void 
+mapform(PLINT n, PLFLT *x, PLFLT *y) 
+{
+    int i;
+    double xp, yp, radius;
+    for (i = 0; i < n; i++) {
+	radius = 90.0 - y[i];
+	xp = radius * cos(x[i] * PI / 180.0);
+	yp = radius * sin(x[i] * PI / 180.0);
+	x[i] = xp;
+	y[i] = yp;
+    }	
+}
+
+/*--------------------------------------------------------------------------*\
  * plmapCmd
  *
  * Processes plmap Tcl command.
@@ -1883,19 +1904,25 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
 	    int argc, char *argv[] )
 {
     PLFLT minlong, maxlong, minlat, maxlat;
-
-    if (argc < 6 ) {
+    PLINT transform;
+    
+    if (argc < 7 ) {
 	Tcl_AppendResult(interp, "bogus syntax for plmap, see doc.",
 			 (char *) NULL );
 	return TCL_ERROR;
     }
 
-    minlong = atof( argv[2] );
-    maxlong = atof( argv[3] );
-    minlat = atof( argv[4] );
-    maxlat = atof( argv[5] );
+    transform = atoi(argv[2]);
+    minlong = atof( argv[3] );
+    maxlong = atof( argv[4] );
+    minlat = atof( argv[5] );
+    maxlat = atof( argv[6] );
 
-    plmap(NULL, argv[1], minlong, maxlong, minlat, maxlat);
+    if (transform) {
+	plmap(&mapform, argv[1], minlong, maxlong, minlat, maxlat);
+    } else {
+	plmap(NULL, argv[1], minlong, maxlong, minlat, maxlat);
+    }
     
     plflush();
     return TCL_OK;

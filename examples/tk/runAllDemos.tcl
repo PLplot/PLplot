@@ -32,7 +32,9 @@ proc run {demo} {
     setButtonState disabled
     update idletasks
     .p cmd plbop
-    $demo .p
+    if {[catch {$demo .p} err]} {
+	puts stderr $err
+    }
     .p cmd pleop
     focus .p
     .l configure -text "$demo complete"
