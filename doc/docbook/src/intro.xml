@@ -115,55 +115,50 @@
       the form of user-contributed enhancements or bug fixes.  If PLplot
       is used in any published papers, please include an acknowledgment
       or citation of our work, which will help us to continue improving
-      PLplot.  Please direct all communication to:
+      PLplot.  Please direct all communication to the general PLplot
+      mailing list, plplot-general@lists.sourceforge.net.
     </para>
     
   </sect1>
   <sect1 id="acquiring-plplot">
-    <title>Getting a copy of the PLplot package</title>
+    <title>Getting a Copy of the PLplot Package</title>
     <para>
       At present, the only mechanism we are providing for distribution of
       the PLplot is by electronic transmission over the Internet.  We
       encourage others to make it available to users without Internet
-      access.  PLplot may be obtained by <literal>ftp</literal> from
-      <ulink url="ftp://dino.ph.utexas.edu/plplot">
-	dino.ph.utexas.edu</ulink> (128.83.179.86).  Login as user
-      <literal>anonymous</literal>, set file transfer type to
-      binary, and get the newest PLplot archive in the
-      <literal>plplot/</literal> subdirectory.  We will provide
-      PLplot in both <literal>zip</literal> and
-      <literal>tar.gz</literal> archives; get whichever one you
-      prefer.
+      access.  PLplot is a SourceForge project and may be obtained by
+      the usual SourceForge file release and anonymous cvs access that is made
+      available from links at
+      <ulink url="http://sourceforge.net/projects/plplot">http://sourceforge.net/projects/plplot</ulink>.
     </para>
   </sect1>
   <sect1 id="installing">
     <title>Installing and Using the PLplot Library</title>
     <para>
-      OLD DOCS, NEEDS UPDATING!
-    </para>
-    <para>
       The installation procedure is by necessity system specific;
-      installation notes for each system are provided in Appendix
-      \ref{ap:sys}.  The procedure requires that all of the routines be
+      installation notes for each system are provided in
+      <xref linkend="os-notes"/>.
+      The procedure requires that all of the routines be
       compiled and they are then usually placed in a linkable
       library.
     </para>
     <para>
       After the library has been created, you can write your main program
-      to make the desired PLplot calls.  Example programs in both C and
-      Fortran are included as a guide (if calling from C, you must
-      include <filename>plplot.h</filename> into your program; see
-      Appendix \ref{ap:lang} for more details).  Plots generated from the
-      example programs are shown at the end of this work.
+      to make the desired PLplot calls.  Example programs in C, C++, and
+      Fortran are included as a guide.
+      Plots generated from the example programs are shown 
+      <ulink url="http://plplot.org/examples/index.html">here</ulink>.
     </para>
     <para>
       You will then need to compile your program and link it with the
-      PLplot library(s).  Again, please refer to the documentation
-      specific to your system for this.  Note that there may be more than
-      one library available to link with, such as single or double
-      precision, with or without X window libraries, IEEE floating point
-      or Motorola FFP, etc.  Make sure you link to the correct one for
-      your program. 
+      PLplot library(s).  See
+      <xref linkend="os-notes"/> for more details). 
+    </para>
+    <para>
+      You can also use Tcl/Tk scripts or Python scripts to generate plots
+      using the PLplot libraries.  Examples of these possibilities are
+      also included as a guide.
+
     </para>
   </sect1>
   <sect1 id="organization">
