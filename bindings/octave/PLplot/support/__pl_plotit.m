@@ -77,7 +77,7 @@ function __pl_plotit
 	__pl.items = k;
       catch
 	empty_list_elements_ok = old_empty_list_elements_ok;
-	error("FIXME: Logplot of matrices with negative elements is in some cases not allowed.\n");
+	error("__pl_plotit: FIXME. Logplot of matrices with negative elements is in some cases not allowed.\n");
       end
       
     endif
@@ -88,7 +88,7 @@ function __pl_plotit
   ## the last viewport (when not in hold mode) will be used, so plots made in
   ## hold mode can/will be clipped.
 
-  if (ishold == 0) 
+  if (1|| ishold == 0) # change: always start from the beginning!
 
     __pl_lxM = __pl_lyM = -realmax;
     __pl_lxm = __pl_lym = realmax;
@@ -325,8 +325,9 @@ function __pl_plotit
   pllab(tdeblank(__pl.xlabel(__pl_strm,:)), tdeblank(__pl.ylabel(__pl_strm,:)), tdeblank(__pl.tlabel(__pl_strm,:)));
   plflush;
 
+  ## change: 
   ## if (!ishold)
-  __pl.items=1;
+  ##__pl.items=1;
   ## endif
 
   empty_list_elements_ok = old_empty_list_elements_ok;

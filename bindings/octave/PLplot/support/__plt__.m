@@ -38,14 +38,17 @@ function __plt__ (caller, ...)
       error("__plt__: FIXME")
   endswitch
 
+  ## change:
+    if (!ishold)
+      __pl.items = 1;
+    endif
+
   if (nargin == 2)
 
     __plt1__ (va_arg (), "");
 
   elseif (nargin > 2)
-
-    first_plot = 1;
-    __pl.items = 1;
+      
     hold_state = ishold ();
 
     unwind_protect
