@@ -1009,7 +1009,8 @@ c_plflush(void)
 void
 pllib_init()
 {
-    if (lib_initialized++) return;
+    if (lib_initialized) return;
+    lib_initialized = 1;
 
 /* Initialize the dispatch table with the info from the static drivers table
    and the available dynamic drivers. */
@@ -1482,7 +1483,7 @@ static void
 plInitDispatchTable()
 {
     char buf[300];
-    char *devnam, *devdesc, *driver, *tag, *seqstr;
+    char *devnam, *devdesc, *devtype, *driver, *tag, *seqstr;
     int seq;
     int i, j, n, driver_found, done=0;
     FILE *fp_drvdb = 0;
@@ -1552,6 +1553,7 @@ plInitDispatchTable()
 
         devnam  = strtok( buf, ":" );
         devdesc = strtok( 0, ":" );
+        devtype = strtok( 0, ":" );
         driver  = strtok( 0, ":" );
         seqstr  = strtok( 0, ":" );
         tag     = strtok( 0, "\n" );
@@ -1565,7 +1567,7 @@ plInitDispatchTable()
     /* Fill in the dispatch table entries. */
         dispatch_table[n]->pl_MenuStr = plstrdup(devdesc);
         dispatch_table[n]->pl_DevName = plstrdup(devnam);
-        dispatch_table[n]->pl_type = 0;
+        dispatch_table[n]->pl_type = atoi(devtype);
         dispatch_table[n]->pl_seq = seq;
         dispatch_table[n]->pl_init = 0;
         dispatch_table[n]->pl_line = 0;
