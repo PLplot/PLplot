@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1995/10/19 00:03:35  mjl
+ * Revision 1.14  1995/11/29 20:54:25  furnish
+ * Convert to %g instead of %f, to allow small values to be visible.
+ *
+ * Revision 1.13  1995/10/19  00:03:35  mjl
  * Added a "redim" matrix command, only permitted with 1d matrices.  Switched
  * to using standard malloc/free so that they could be used with dbmalloc.
  *
@@ -402,6 +405,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     }
     Tcl_SetHashValue(hPtr, matPtr);
 
+    Tcl_SetResult( interp, matPtr->name, TCL_VOLATILE );
     return TCL_OK;
 }
 
@@ -806,7 +810,7 @@ MatrixGet_f(ClientData clientData, int index, char *string)
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
-    sprintf(string, "%f", matPtr->fdata[index]);
+    sprintf(string, "%g", matPtr->fdata[index]);
 }
 
 static void
