@@ -121,7 +121,7 @@ if test "$enable_xwin" = "yes"; then
 	    /usr/unsupported/lib"
 
 	    for dir in $libdirs; do
-		if test -r "$dir/libX11.a"; then
+		if test -r "$dir/libX11.so" -o -r "$dir/libX11.a"; then
 		    XLIBDIR="$dir"
 		    AC_MSG_RESULT(but found in $dir)
 		    break
@@ -176,7 +176,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 	/usr/local/lib"
 
         for dir in $libdirs; do
-	    if test -r "$dir/libgd.a"; then
+	    if test -r "$dir/libgd.so" -o -r "$dir/libgd.a"; then
 	        GDLIBDIR="$dir"
 		AC_MSG_RESULT(but found in $dir)
 		break
@@ -202,7 +202,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 	/usr/local/lib"
 
         for dir in $libdirs; do
-	    if test -r "$dir/libpng.a"; then
+	    if test -r "$dir/libpng.so" -o -r "$dir/libpng.a"; then
 	        PNGLIBDIR="$dir"
 		AC_MSG_RESULT(but found in $dir)
 		break
@@ -228,7 +228,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 	/usr/local/lib"
 
         for dir in $libdirs; do
-	    if test -r "$dir/libjpeg.a"; then
+	    if test -r "$dir/libjpeg.so" -o -r "$dir/libjpeg.a"; then
 	        JPEGLIBDIR="$dir"
 		AC_MSG_RESULT(but found in $dir)
 		break
@@ -254,7 +254,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 	/usr/local/lib"
 
         for dir in $libdirs; do
-	    if test -r "$dir/libz.a"; then
+	    if test -r "$dir/libz.so" -o -r "$dir/libz.a"; then
 	        ZLIBLIBDIR="$dir"
 		AC_MSG_RESULT(but found in $dir)
 		break
