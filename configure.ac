@@ -696,7 +696,8 @@ MY_ARG_WITH(double,
 
 if test "$with_double" = yes; then
   AC_DEFINE(PL_DOUBLE, [],
-            [Define if you want PLplot's float type to be double])
+            [PLplot's PLFLT floating-point is "double" by default, undefine
+	    PL_DOUBLE if single precision is required])
   DBL_FLAG_M4=-DDOUBLE
   LIB_TAG="d"
 else

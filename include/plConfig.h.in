@@ -47,7 +47,8 @@
 /* Define if usleep is available */
 #undef HAVE_USLEEP
 
-/* Define if you want PLplot's float type to be double */
+/* PLplot's PLFLT floating-point is "double" by default, undefine PL_DOUBLE 
+   if single precision is required */
 #undef PL_DOUBLE
 
 /* Install directories. */
