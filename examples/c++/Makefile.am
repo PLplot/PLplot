@@ -52,12 +52,6 @@ examples_cxx_DATA = \
 	$(sources) \
 	Makefile.examples
 
-install-data-hook:
-	( cd $(DESTDIR)/$(examples_cxxdir) ; \
-	  mv -f Makefile.examples Makefile ; \
-	  rm -f lena.pgm                   ; \
-	  $(LN_S) ../c/lena.pgm lena.pgm )
-
 libplplotcxx = $(top_builddir)/bindings/c++/libplplotcxx$(LIB_TAG).la
 
 check_PROGRAMS = \
@@ -110,6 +104,14 @@ x21_SOURCES = x21.cc
 LDADD = $(libplplotcxx)
 
 # enable_cxx
+endif
+
+install-data-hook:
+if enable_cxx
+	( cd $(DESTDIR)/$(examples_cxxdir) ; \
+	  mv -f Makefile.examples Makefile ; \
+	  rm -f lena.pgm                   ; \
+	  $(LN_S) ../c/lena.pgm lena.pgm )
 endif
 
 EXTRA_DIST = $(sources) Makefile.examples.in
