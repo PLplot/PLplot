@@ -818,9 +818,9 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 
       pl3upv = 0;
 
-      step = (fc_maxz - fc_minz)/nlevel;
+      step = (fc_maxz - fc_minz)/(nlevel+1);
       for (i=0; i<nlevel; i++)
-	clevel[i] = fc_minz + step*i;
+	clevel[i] = fc_minz + step + step*i;
 
       /* get the contour lines */
       cont_store(x, y, z,  nx, ny, 1, nx, 1, ny, clevel, nlevel, &cont);
@@ -830,20 +830,64 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
       do { /* for each contour level */
 	cline = clev->line;
 	do { /* there are several lines that make up each contour */
+	  int cx, i, k, l, m, start, end;
+	  PLFLT tx, ty;
 	  if (cline->npts > np) {
 	    np = cline->npts;
 	    uu = (PLINT *) realloc(uu, np*sizeof(PLINT));
 	    vv = (PLINT *) realloc(vv, np*sizeof(PLINT));
 	  }
 
+	  /* the hidden line plotter plnxtv() only works OK if the x points are in increasing order.
+	     As this does not always happens, the situation must be detected and the line segment
+	     must be reversed before being plotted */
+
 	  plcol1((clev->level-fc_minz)/(fc_maxz-fc_minz));
-	  for (j=0; j<cline->npts; j++) {
-	    uu[j] = plP_wcpcx(plP_w3wcx(cline->x[j],cline->y[j], plsc->ranmi)); 
-	    vv[j] = plP_wcpcy(plP_w3wcy(cline->x[j],cline->y[j], plsc->ranmi)); 
-	  }
-	  plnxtv(uu, vv, NULL, cline->npts, 0); /* Not working 100% OK! */
-	  /* can it be because some contour lines are closed or "turn-back",
-	     i.e., the x coordinate is not always increasing ? */
+ 	  i = 0;
+	  do { 
+	    cx =  plP_wcpcx(plP_w3wcx(cline->x[i],cline->y[i], plsc->ranmi));
+	    for (j=i; j < cline->npts; j++) {  /* convert to 2D coordinates */
+	      uu[j] = plP_wcpcx(plP_w3wcx(cline->x[j],cline->y[j], plsc->ranmi)); 
+	      vv[j] = plP_wcpcy(plP_w3wcy(cline->x[j],cline->y[j], plsc->ranmi)); 
+	      if (uu[j] < cx) /* find turn back point */
+		break;
+	      else
+		cx = uu[j];
+	    }
+	    plnxtv(&uu[i], &vv[i], NULL, j-i, 0); /* plot line with increasing x */
+
+	    if (j < cline->npts) { /* line not yet finished, */
+	      start = j-1;
+	      for (i = start; i < cline->npts; i++) {  /* search turn forward point */
+		uu[i] = plP_wcpcx(plP_w3wcx(cline->x[i],cline->y[i], plsc->ranmi));
+		if (uu[i] > cx)
+		  break;
+		else
+		  cx = uu[i];
+	      }
+	      end = i-1;
+
+	      for (k=0; k < (end-start+1)/2; k++) { /* reverse line segment */
+		l = start+k;
+		m = end-k;
+		tx = cline->x[l];
+		ty = cline->y[l];
+		cline->x[l] = cline->x[m];
+		cline->y[l] = cline->y[m];
+		cline->x[m] = tx;
+		cline->y[m] = ty;
+	      }
+
+	      /* convert to 2D coordinates */
+	      for (j=start; j <= end; j++) {
+		uu[j] = plP_wcpcx(plP_w3wcx(cline->x[j],cline->y[j], plsc->ranmi)); 
+		vv[j] = plP_wcpcy(plP_w3wcy(cline->x[j],cline->y[j], plsc->ranmi)); 
+	      }
+	      plnxtv(&uu[start], &vv[start], NULL, end-start+1, 0); /* and plot it */
+
+	      i = end+1; /* restart where it was left */
+	    }
+	  } while (j < cline->npts && i < cline->npts);
 	  cline = cline->next;
 	}
 	while(cline != NULL);
