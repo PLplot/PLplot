@@ -1350,7 +1350,8 @@ origin
 	  </para>
 	  
 	  
-	  <para><anchor id="pltr"/>
+	  <para>
+	  <anchor id="pltr"/>
 	      <funcsynopsis>
 	      <funcprototype>
 		<funcdef>
@@ -6005,7 +6006,7 @@ incrementally (zoom)
 
   <sect1 id="plsesc" renderas="sect3">
     <title>
-      <function>plsesc</function>: Set the escape character for text strings.
+      <function>plsesc</function>: Set the escape character for text strings
     </title> 
 
     <para>

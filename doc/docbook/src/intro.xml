@@ -23,8 +23,8 @@
       Auckland in Fortran-77.  Many of the underlying concepts used in the
       PLplot package are based on ideas used in Tim Pearson's PGPLOT
       package.  Sze Tan writes:
-    </para>
     <blockquote>
+    <title></title>
       <para>
 	I'm rather amazed how far PLPLOT has traveled given its origins
 	etc. I first used PGPLOT on the Starlink VAX computers while I was
@@ -42,7 +42,9 @@
 	on PGPLOT but the code is not derived from it.
       </para>
     </blockquote>
-    <para>
+    </para>
+
+<para>
       The C version of PLplot was developed by Tony Richardson on a
       Commodore Amiga.  In the process, several of the routines were
       rewritten to improve efficiency and some new features added.  The
