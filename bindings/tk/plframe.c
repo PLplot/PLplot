@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.61  1998/12/01 20:49:20  furnish
+ * Revision 1.62  1999/02/26 19:40:09  furnish
+ * Add widget subcommand "doublebuffering" (or "db" for short) which
+ * allows querying and changing the state of double buffering for output
+ * to the plframe's X window.
+ *
+ * Revision 1.61  1998/12/01  20:49:20  furnish
  * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
  *
  * Revision 1.60  1998/11/18  06:12:36  furnish
@@ -645,6 +650,33 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	    result = ConfigurePlFrame(interp, plFramePtr, argc-2, argv+2,
 		    TK_CONFIG_ARGV_ONLY);
 	}
+    }
+
+/* double buffering */
+
+    else if ((c == 'd') &&
+	     ((strncmp(argv[1], "db", length) == 0) ||
+	      (strncmp(argv[1], "doublebuffering", length == 0)))) {
+
+	PLBufferingCB bcb;
+
+	if (argc == 3) {
+	    if (strcmp(argv[2], "on") == 0) {
+		bcb.cmd = PLESC_DOUBLEBUFFERING_ENABLE;
+		pl_cmd( PLESC_DOUBLEBUFFERING, &bcb );
+	    }
+	    if (strcmp(argv[2], "off") == 0) {
+		bcb.cmd = PLESC_DOUBLEBUFFERING_DISABLE;
+		pl_cmd( PLESC_DOUBLEBUFFERING, &bcb );
+	    }
+	    if (strcmp(argv[2], "query") == 0) {
+		bcb.cmd = PLESC_DOUBLEBUFFERING_QUERY;
+		pl_cmd( PLESC_DOUBLEBUFFERING, &bcb );
+		sprintf( interp->result, "%d", bcb.result );
+	    }
+	}
+
+	result = TCL_OK;
     }
 
 /* closelink -- Close a binary data link previously opened with openlink */
