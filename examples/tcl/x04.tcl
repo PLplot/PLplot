@@ -5,8 +5,8 @@
 proc x04 {{w loopback}} {
 
     $w cmd plfont 2
-    plot1 $w 0
-    plot1 $w 1
+    plot41 $w 0
+    plot41 $w 1
 
     # Restore defaults
     $w cmd plfont 1
@@ -14,7 +14,7 @@ proc x04 {{w loopback}} {
 
 }
 
-proc plot1 {w type} {
+proc plot41 {w type} {
 
     set pi 3.14159265358979323846
     matrix freql f 101
