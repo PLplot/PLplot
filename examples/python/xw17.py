@@ -1,4 +1,6 @@
+#!/usr/bin/env python
 # Copyright 2002 Gary Bishop
+# Copyright 2004 Alan W. Irwin
 # This file is part of PLplot.
 
 # PLplot is free software; you can redistribute it and/or modify
@@ -16,8 +18,19 @@
 
 # Plots a simple stripchart with four pens.
 
-from Numeric import *
+# Append to effective python path so that can find plplot modules.
+from plplot_python_start import *
+
+import sys
 from plplot import *
+
+# Parse and process command line arguments
+plParseOpts(sys.argv, PL_PARSE_FULL)
+
+# Initialize plplot
+plinit()
+
+from Numeric import *
 from random import random
 from time import sleep
 
@@ -123,3 +136,4 @@ def main():
     # No defaults changed so nothing to restore
 
 main()
+plend()
