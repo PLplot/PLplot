@@ -68,7 +68,6 @@ $(swiggenfiles): plplotjavac.i $(PLPLOTCAPI_I)
 	$(SWIG_CMD) -package plplot.core plplotjavac.i
 
 # Must have "exec" in the name.
-ourexecjavadir = $(datadir)/java
 execjavawrapperdir = $(JAVAWRAPPER_DIR)
 
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
@@ -101,10 +100,10 @@ if enable_java
 
 noinst_DATA = jar-stamp
 
-jar-stamp: $(javaclasses) README.javaAPI
+jar-stamp: $(javaclasses) $(javafiles) README.javaAPI
+	$(mkdir_p) plplot/core
+	cp $(javafiles) README.javaAPI plplot/core
 	touch jar-stamp
-
-ourexecjava_DATA = $(javafiles) README.javaAPI
 
 execjavawrapper_LTLIBRARIES = plplotjavac_wrap.la
 

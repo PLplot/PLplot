@@ -75,9 +75,6 @@ if enable_java
 examples_javadir = $(DATA_DIR)/examples/java
 examples_java_DATA = $(javademos)
 
-examples_execjavadir = $(datadir)/java
-examples_execjava_DATA = $(javademos) README.javademos
-
 # Note the Java binding classes are actually generated in the java bindings
 # directory (path = "plplot.core").  Since the examples classes are #
 # generated here (path = "plplot.examples") but both must be included in the
@@ -91,9 +88,11 @@ $(top_builddir)/bindings/java/jar-stamp:
 
 plplot.jar: $(example_classes) $(top_builddir)/bindings/java/jar-stamp \
             README.javademos $(javafiles)
+	$(mkdir_p) plplot/examples
+	cp README.javademos $(javafiles) $(example_classes) plplot/examples
 	$(JAR) -cf plplot.jar \
-	       -C $(top_builddir)/bindings/java/ README.javaAPI plplot \
-	       -C . README.javademos $(javafiles) plplot
+	       -C $(top_builddir)/bindings/java/ plplot \
+	       -C . plplot
 
 endif
 
