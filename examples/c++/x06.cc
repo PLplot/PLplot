@@ -113,6 +113,7 @@ x06::x06( int argc, char ** argv ) {
 int main( int argc, char ** argv ) {
   x06 *x = new x06( argc, argv );
 
+  delete x;
 }
 
 

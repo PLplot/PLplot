@@ -75,6 +75,8 @@ x10::x10( int argc, char **argv ) {
 int main( int argc, char **argv )
 {
   x10 *x = new x10( argc, argv );
+
+  delete x;
 }
 
 

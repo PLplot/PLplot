@@ -192,6 +192,7 @@ void x15::plot2(PLFLT **z, PLFLT zmin, PLFLT zmax)
 int main( int argc, char ** argv ) {
   x15 *x = new x15( argc, argv );
 
+  delete x;
 }
 
 

@@ -80,12 +80,15 @@ x05::x05( int argc, char ** argv ) {
 
   //pls.plend();
 
+  delete[] data;
+
   delete pls;
 }
 
 int main( int argc, char ** argv ) {
   x05 *x = new x05( argc, argv );
 
+  delete x;
 }
 
 

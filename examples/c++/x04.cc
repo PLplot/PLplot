@@ -134,12 +134,16 @@ void x04::plot1( int type ) {
     pls->mtex("r", 5.0, 0.5, 0.5, "Phase shift (degrees)");
   }
 
+  delete[] freql;
+  delete[] ampl;
+  delete[] phase;
 }
 
 
 int main( int argc, char ** argv ) {
   x04 *x = new x04( argc, argv );
 
+  delete x;
 }
 
 

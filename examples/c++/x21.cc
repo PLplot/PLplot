@@ -403,6 +403,7 @@ void x21::free_data(PLFLT *x, PLFLT *y, PLFLT *z) {
 int main( int argc, char ** argv ) {
   x21 *x = new x21( argc, argv );
 
+  delete x;
 }
 
 

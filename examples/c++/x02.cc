@@ -99,6 +99,7 @@ x02::x02( int argc, char ** argv ) {
 int main( int argc, char ** argv ) {
   x02 *x = new x02( argc, argv );
 
+  delete x;
 }
 
 

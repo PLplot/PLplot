@@ -322,6 +322,9 @@ void x09::polar()
   pls->Free2dGrid(cgrid2.yg,RPTS,THETAPTS);
   pls->Free2dGrid(z,RPTS,THETAPTS);
 
+  delete[] px;
+  delete[] py;
+  delete[] lev;
 }
 
 const void x09::potential()
@@ -469,11 +472,17 @@ const void x09::potential()
   pls->Free2dGrid(cgrid2.yg,RPTS,THETAPTS);
   pls->Free2dGrid(z,RPTS,THETAPTS);
 
+  delete[] clevelneg;
+  delete[] clevelpos;
+  delete[] px;
+  delete[] py;
 }
 
 int main( int argc, char **argv )
 {
   x09 *x = new x09( argc, argv );
+
+  delete x;
 }
 
 

@@ -206,8 +206,8 @@ x16::x16( int argc, char ** argv ) {
   cgrid1.nx = nx;
   cgrid1.ny = ny;
 
-  plAlloc2dGrid(&cgrid2.xg, nx, ny);
-  plAlloc2dGrid(&cgrid2.yg, nx, ny);
+  pls->Alloc2dGrid(&cgrid2.xg, nx, ny);
+  pls->Alloc2dGrid(&cgrid2.yg, nx, ny);
   cgrid2.nx = nx;
   cgrid2.ny = ny;
 
@@ -377,7 +377,15 @@ x16::x16( int argc, char ** argv ) {
 
   pls->Free2dGrid(z,nx,ny);
   pls->Free2dGrid(w,nx,ny);
+  pls->Free2dGrid(cgrid2.xg, nx, ny);
+  pls->Free2dGrid(cgrid2.yg, nx, ny);
 
+  delete[] px;
+  delete[] py;
+  delete[] xg1;
+  delete[] yg1;
+  delete[] clevel;
+  delete[] shedge; 
   delete pls;
 
 }
@@ -385,6 +393,7 @@ x16::x16( int argc, char ** argv ) {
 int main( int argc, char ** argv ) {
   x16 *x = new x16( argc, argv );
 
+  delete x;
 }
 
 

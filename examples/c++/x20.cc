@@ -408,6 +408,7 @@ void x20::gray_cmap(PLINT num_col) {
 int main( int argc, char ** argv ) {
   x20 *x = new x20( argc, argv );
 
+  delete x;
 }
 
 

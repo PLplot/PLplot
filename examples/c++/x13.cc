@@ -110,6 +110,8 @@ x13::x13( int argc, char ** argv ) {
   pls->ptex(5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales");
   // pls->end();
 
+  delete[] x;
+  delete[] y;
   delete pls;
 
 }
@@ -117,6 +119,7 @@ x13::x13( int argc, char ** argv ) {
 int main( int argc, char ** argv ) {
   x13 *x = new x13( argc, argv );
 
+  delete x;
 }
 
 

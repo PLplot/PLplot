@@ -126,6 +126,11 @@ x03::x03( int argc, char ** argv ) {
   // Close the plot at end.
 
   // pls->end();
+   
+  delete[] x;
+  delete[] y;
+  delete[] x0;
+  delete[] y0;
 
   delete pls;
 
@@ -134,6 +139,7 @@ x03::x03( int argc, char ** argv ) {
 int main( int argc, char ** argv ) {
   x03 *x = new x03( argc, argv );
 
+  delete x;
 }
 
 

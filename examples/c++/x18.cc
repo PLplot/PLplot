@@ -124,6 +124,9 @@ x18::x18( int argc, char ** argv ) {
 
   //pls->end();
 
+  delete[] x;
+  delete[] y;
+  delete[] z;
   delete pls;
 
 }
@@ -193,11 +196,16 @@ void x18::test_poly(int k) {
 
   pls->col0(3);
   pls->mtex("t", 1.0, 0.5, 0.5, "unit radius sphere" );
+
+  delete[] x;
+  delete[] y;
+  delete[] z;
 }
 
 int main( int argc, char ** argv ) {
   x18 *x = new x18( argc, argv );
 
+  delete x;
 }
 
 

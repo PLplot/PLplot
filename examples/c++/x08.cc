@@ -133,6 +133,12 @@ void x08::cmap1_init(int gray)
 
   pls->scmap1n(256);
   pls->scmap1l(0, 2, i, h, l, s, rev);
+
+  delete[] i;
+  delete[] h;
+  delete[] l;
+  delete[] s;
+  delete[] rev;
 }
 
 // Does a series of 3-d plots for a given data set, with different viewing
@@ -166,14 +172,17 @@ x08::x08( int argc, char **argv ) {
 
   pls->init();
 
-  z = new PLFLT*[XPTS];
+  pls->Alloc2dGrid(&z,XPTS,YPTS);
+  /*z = new PLFLT*[XPTS];*/
 
+  /*
   for (i = 0; i < XPTS; i++) {
     z[i] = new PLFLT [YPTS];
     x[i] = ((double) (i - (XPTS / 2)) / (double) (XPTS / 2));
     if (rosen)
       x[i] *=  1.5;
   }
+  */
 
   for( i=0; i < XPTS; i++ ) {
     x[i] = (PLFLT) (i - (XPTS/2)) / (PLFLT) (XPTS/2);
@@ -256,6 +265,11 @@ x08::x08( int argc, char **argv ) {
 	}
     }
 
+  pls->Free2dGrid(z,XPTS,YPTS);
+
+  delete[] x;
+  delete[] y;
+  delete[] clevel;
   delete pls;
 }
 
@@ -263,6 +277,8 @@ x08::x08( int argc, char **argv ) {
 int main( int argc, char **argv )
 {
   x08 *x = new x08( argc, argv );
+
+  delete x;
 }
 
 

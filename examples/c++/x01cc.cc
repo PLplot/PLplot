@@ -367,6 +367,8 @@ x01cc::x01cc( int argc, char **argv ) {
 int main( int argc, char **argv ) 
 {
    x01cc *x = new x01cc( argc, argv );
+
+   delete x;
 }
 
 //---------------------------------------------------------------------------//

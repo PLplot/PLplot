@@ -125,6 +125,7 @@ x19::x19( int argc, char ** argv ) {
 int main( int argc, char ** argv ) {
   x19 *x = new x19( argc, argv );
 
+  delete x;
 }
 
 

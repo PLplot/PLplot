@@ -95,6 +95,12 @@ void x11::cmap1_init()
 
   pls->scmap1n(256);
   pls->scmap1l(0, 2, i, h, l, s, rev);
+
+  delete[] i;
+  delete[] h;
+  delete[] l;
+  delete[] s;
+  delete[] rev;
 }
 
 
@@ -202,6 +208,10 @@ x11::x11( int argc, char **argv ) {
 
   pls->Free2dGrid(z, XPTS, YPTS);
 
+  delete[] x;
+  delete[] y;
+  delete[] clevel;
+
   delete pls;
 }
 
@@ -212,6 +222,8 @@ x11::x11( int argc, char **argv ) {
 int main( int argc, char **argv )
 {
   x11 *x = new x11( argc, argv );
+
+  delete x;
 }
 
 

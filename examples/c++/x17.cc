@@ -184,6 +184,7 @@ x17::x17( int argc, char ** argv ) {
 int main( int argc, char ** argv ) {
   x17 *x = new x17( argc, argv );
 
+  delete x;
 }
 
 

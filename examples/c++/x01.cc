@@ -285,6 +285,11 @@ void x01::plot1( int do_test )
     cout << "The -xor command line option can only be exercised if your system has usleep(), which does not seems to happen." << endl;
 #endif
   }
+
+  delete[] x;
+  delete[] y;
+  delete[] xs;
+  delete[] ys;
 }
 
 void x01::plot2()
@@ -317,6 +322,9 @@ void x01::plot2()
   pls->wid(2);
   pls->line(100, x, y);
   pls->wid(1);
+
+  delete[] x;
+  delete[] y;
 }
 
 void x01::plot3()
@@ -364,10 +372,14 @@ void x01::plot3()
 
   pls->col0(4);
   pls->line(101, x, y);
+
+  delete[] x;
+  delete[] y;
 }
 
 int main( int argc, char ** argv ) {
   x01 *x = new x01( argc, argv );
+  delete x;
 
 }
 

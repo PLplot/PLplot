@@ -420,6 +420,7 @@ void x14::plot5(plstream *pls)
 int main( int argc, char ** argv ) {
   x14 *x = new x14( argc, argv );
 
+  delete x;
 }
 
 

@@ -119,6 +119,7 @@ x07::x07( int argc, char ** argv ) {
 int main( int argc, char ** argv ) {
   x07 *x = new x07( argc, argv );
 
+  delete x;
 }
 
 

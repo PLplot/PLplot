@@ -104,6 +104,9 @@ void x12::plfbox(PLFLT x0, PLFLT y0) {
   pls->col0(1);
   pls->lsty(1);
   pls->line(4, x, y);
+
+  delete[] x;
+  delete[] y;
 }
 
 
@@ -111,6 +114,8 @@ void x12::plfbox(PLFLT x0, PLFLT y0) {
 int main( int argc, char **argv )
 {
   x12 *x = new x12( argc, argv );
+
+  delete x;
 }
 
 
