@@ -267,8 +267,7 @@ main(int argc, char *argv[])
 
     pllab("distance", "altitude", "Bogon density");
 
-/* Ignore this exclusion part because API will probably change. */
-#if 0
+/* Note this exclusion API will probably change. */
 
 /* Plot using 2d coordinate transform and exclusion*/
 
@@ -287,8 +286,6 @@ main(int argc, char *argv[])
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
 
     pllab("distance", "altitude", "Bogon density with exclusion");
-/* end of ignored page which demonstrates exclusion */
-#endif
 
 /* Example showing wrapping support. */
 
