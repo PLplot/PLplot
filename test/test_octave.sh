@@ -23,4 +23,18 @@ for i=[1:7 8 9 13 15 16];
    feval(sprintf("p%d",i))
    closefig
 endfor
+
+#plot equivalent of x??c examples.
+global device file
+device="$driver"
+#For file output 14 and 17 are not suitable, and 19 is not done
+#(and should probably be dropped anyway since the map stuff is not
+#in the API that is supposed to be common to all front ends.)
+for i=[1:13 15 16 18];
+    cmd = sprintf("x%.2dc",i);
+#o trailer on filename e.g., x01o.ps) to distinguish from other 
+#common examples.
+    file = sprintf("x%.2do.$dsuffix",i)
+    eval(cmd);
+endfor
 EOF
