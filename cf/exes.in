@@ -12,6 +12,7 @@
 #	plrender	Metafile viewer
 #	plserver	Renderer for Tk/DP driver 
 #	pltcl		PLplot tcl interpreter
+#	plmodule$(SO)	Dynamically loaded module for PLplot python scripts
 #	pltek		Renderer for tek files
 #	fonts		font generators and font files
 #
@@ -47,6 +48,12 @@ pltcl$O:	$(PLLIBS) pltcl.c
 pltcl$E:	$(PLLIBS) pltcl$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS)
+
+plmodule$O:	$(PLLIBS) plmodule.c
+	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) -I$(PYTHON_INC_DIR) plmodule.c
+
+plmodule$(SO):	$(PLLIBS) plmodule$O
+	$(LDSHARED) plmodule$O $(PLLIB_LDC) @LIBS@ $(TO) $@
 
 # -----------------------------------------------------------------------
 # Font files.
