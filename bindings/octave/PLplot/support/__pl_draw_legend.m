@@ -21,7 +21,7 @@ function __pl_draw_legend(xm, xM, ym, yM)
   [a, b] = plgchr;
 
   scale = 100; # why 100? look at plplot plpage.c plP_subpInit() and tell me :)
-  ch_height = b/scale * (__pl.multi_col(__pl_strm));
+  ch_height = 1.2 * b/scale * (__pl.multi_col(__pl_strm));
   ch_width = b/scale * (__pl.multi_row(__pl_strm));
 
   ## if (!ishold)
