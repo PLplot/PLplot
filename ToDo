@@ -14,6 +14,25 @@ Areas currently under development
      colors
    . fix cmap0 tool so that setting the background (color 0) works
 
+ - fix additional problems with custom color map support:
+   . Add command line switch to enable it, maybe switches to for all the
+     preprocessor constants in xwin.c controlling cmap allocation.
+   . When a custom colormap is used, it becomes the new top level TK
+     colormap, since the palette modification tools need to be using the
+     same colormap in order for the colors to come out the same.  But
+     there is a minimum of color changing when the colormaps are swapped
+     (i.e. focus goes into or out of the plplot/TK application) because
+     the xwin driver copies as many colors out of the default as is
+     reasonable.  Cases where this still isn't quite good enough include
+     the text widgets (such as help windows), for which the color is not
+     preallocated, and sometimes the TK menu bar, for which I think the
+     color is preallocated but exactly matches one already in use by the
+     window manager and thus does not get copied.  Some strategies in
+     fixing this include: (a) providing a list of colors for the xwin
+     driver to copy and allocate and (b) do not install the xwin colormap
+     in the main window and instead share the colormap with windows that
+     want it through a plframe extension.
+
  - fix 2d function plotter API's: Most general function in each
    category should accept transformer function and transformer data, to work
    with arbitrary data layouts, but there should also be FE's for the
@@ -41,18 +60,11 @@ Areas currently under development
 
  - The color map selection in the versaterm driver still doesn't work
    quite right.  When running x16c, the following happens:
-	o one or more of the early fills is "lost"
-	o using a black background, the background is not set (a bug?),
-	  there is a red band where black should be, and the high end
-	  goes to brown, not red.
-	o with a white background (FFF), it looks almost OK, except for
-	  the lost fill.
-
-   The vlt driver almost always works fine, except when running under
-   amuw, the first time you start up it may lose some of the initial color
-   map select and a fill or more.  This almost never happens if the
-   graphics screen is already up, which tells me it's a timing problem
-   (the info is coming too fast).  But I don't know what to do about it.
+	o color 9 isn't set correctly.  This doesn't make sense -- how
+	  can the driver be messing up just for this one?  Besides, it
+	  works fine on my Amiga's tek4107 driver.  Sounds like a bug
+	  in versaterm.
+	o There is sometimes some garbage at the beginning of the fill.
 
  - implement some sort of raster-oriented output.  GIF might be good since
    it runs on lots of machines (originated with PC's but now supported
@@ -65,7 +77,7 @@ Areas currently under development
 
  - How can I modify the surface plotter to do color overlays?
 
- - Get x14c working, write x14f and x15f?
+ - Write Fortran counterparts to x14c and x15c?
 
  - add more utility functions to make example programs easier to write?  
 
