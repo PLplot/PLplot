@@ -1,6 +1,6 @@
 #!/usr/bin/awk -f
 #
-#	File: fixfile
+#	File: fixfort
 #	Usage: fixfort oldfile.f >newfile.f
 #
 # 	Very simple awk program to remove bang comments from Fortran files.
