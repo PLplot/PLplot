@@ -84,7 +84,7 @@ if enable_docbook
 # These required so that "wildcard" lists made using $(shell ls ...) will
 # automatically work.
 
-noinst_DATA = $(HTML_MANIFEST) $(MAN_MANIFEST) $(INFO_MANIFEST) $(TARBALL)
+noinst_DATA = $(HTML_MANIFEST) $(MAN_MANIFEST) $(INFO_MANIFEST)
 
 htmldir = $(prefix)/share/doc/$(PACKAGE)/html
 html_DATA = $(shell ls *.html)
