@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.40  1994/07/19 22:31:48  mjl
+ * Revision 1.41  1994/07/21 08:43:27  mjl
+ * Eliminated some bogus Tcl-DP initializations when the Tk driver is
+ * being used.
+ *
+ * Revision 1.40  1994/07/19  22:31:48  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
  * inclusion changed to /not/ use a search path so that it will work better
@@ -744,8 +748,10 @@ pltkdriver_Init(PLStream *pls)
     }
 
 #ifdef PLD_dp
-    if (Tdp_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
+    if (pls->dp) {
+	if (Tdp_Init(interp) == TCL_ERROR) {
+	    return TCL_ERROR;
+	}
     }
 #endif
 
@@ -758,8 +764,10 @@ pltkdriver_Init(PLStream *pls)
 		      (ClientData) NULL, (void (*) (ClientData)) NULL);
 
 #ifdef PLD_dp
-    Tcl_CreateCommand(interp, "host_id", plHost_ID,
-		      (ClientData) NULL, (void (*) (ClientData)) NULL);
+    if (pls->dp) {
+	Tcl_CreateCommand(interp, "host_id", plHost_ID,
+			  (ClientData) NULL, (void (*) (ClientData)) NULL);
+    }
 #endif
 
     Tcl_CreateCommand(interp, "abort", Abort,
