@@ -107,7 +107,12 @@ binding_m_files = \
 	zlabel.m \
 	zoom.m
 
-EXTRA_DIST = $(binding_m_files) use_plplot.m
+user_m_files = \
+	use_plplot.m \
+	plplot_octave_path.m \
+	toggle_plplot_use.m
+
+EXTRA_DIST = $(binding_m_files) use_plplot.m toggle_plplot_use.m
 
 if enable_octave
 
@@ -115,8 +120,8 @@ plplot_octavedir = $(PLPLOT_OCTAVE_DIR)
 plplot_octave_DATA = $(binding_m_files)
 
 octave_mdir = $(OCTAVE_M_DIR)/PLplot
-octave_m_DATA = \
-	use_plplot.m \
-	plplot_octave_path.m
+octave_m_DATA = $(user_m_files)
 
 endif
+
+

@@ -95,8 +95,8 @@ You can use the standard Octave plot commands if in the LOADPATH a
 
 LOADPATH=":/usr/share/plplot_octave//:<other path>:<other path>";
 
-You can use the (not yet working) command 'use_plplot("yes"|"no")' to
-change between the two sets of commands.
+You can use the command toggle_plplot_use to change between the two
+sets of commands.
 
 You are done. You can now use almost all the standard Octave plot
 commands plus a hole bunch of new ones.
