@@ -78,6 +78,8 @@ typedef struct {
   GnomeCanvasItem* zoomrect;
   PLGraphicsIn gin;
   guint context;
+  GtkAdjustment* hadj;
+  GtkAdjustment* vadj;
   double width;
   double height;
 } GnomePLdevPage;
@@ -167,8 +169,8 @@ quit_dialog (void)
 
   gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);  
   answer = gnome_dialog_run_and_close (GNOME_DIALOG (dialog));
+
   if (answer == 0) {
-    gtk_main_quit ();
     return TRUE;
   }
   else
@@ -296,9 +298,11 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 static gint 
 delete_event_cb (GtkWidget* widget, GdkEventAny* e, gpointer data)
 {
-  if (quit_dialog () == TRUE) 
+  if (quit_dialog () == TRUE) {
     gtk_widget_destroy (widget);
-  return FALSE;
+    gtk_main_quit ();
+  }
+  return TRUE;
 }
 
 
@@ -354,7 +358,8 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
     ppu *= 1.4142;
     break;
   case GDK_Return:
-    quit_dialog ();
+    if (quit_dialog () == TRUE)
+      gtk_main_quit ();
     break;
   case GDK_l:
     //gdk_threads_enter ();
@@ -366,17 +371,17 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
     change_mode (page, GNOME_PLDEV_ZOOM_MODE);
     //gdk_threads_leave ();
     break;
-  case GDK_Right:
-    //    add_to_adj (page->hadj, 1.0);
+  case GDK_a:
+    add_to_adj (page->hadj, 1.0);
     break;
   case GDK_Left:
-    //add_to_adj (page->hadj, -1.0);
+    add_to_adj (page->hadj, -1.0);
     break;
   case GDK_Up:
-    //add_to_adj (page->vadj, 1.0);
+    add_to_adj (page->vadj, 1.0);
     break;
   case GDK_Down:
-    //add_to_adj (page->vadj, -1.0);
+    add_to_adj (page->vadj, -1.0);
     break;
   default:
     break;
@@ -567,25 +572,15 @@ new_page (PLStream* pls)
   gtk_signal_connect (GTK_OBJECT (canvas), "key_press_event",
 		      GTK_SIGNAL_FUNC (key_cb), pls);
 
-  //  page->hadj = GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 1.0,
-  //					   1.0, 10.0, 1.0)); 
-//  page->vadj = GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 1.0,
-  //					   1.0, 10.0, 1.0)); 
-  //  page->sw = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (page->hadj,
-  //							   page->vadj));
-  page->sw = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (NULL, NULL));
+  page->hadj = GTK_ADJUSTMENT (GTK_LAYOUT (canvas)->hadjustment);
+  page->vadj = GTK_ADJUSTMENT (GTK_LAYOUT (canvas)->vadjustment);
+
+  page->sw = GTK_SCROLLED_WINDOW (gtk_scrolled_window_new (page->hadj,
+							   page->vadj));
 
   gtk_scrolled_window_set_policy (page->sw,
 				  GTK_POLICY_AUTOMATIC,
 				  GTK_POLICY_AUTOMATIC);
-
-  adj = gtk_scrolled_window_get_vadjustment (page->sw);
-  adj->step_increment = 1.0;
-  gtk_scrolled_window_set_vadjustment (page->sw, adj);
-
-  adj = gtk_scrolled_window_get_hadjustment (page->sw);
-  adj->step_increment = 1.0;
-  gtk_scrolled_window_set_hadjustment (page->sw, adj);
 
   gtk_container_add (GTK_CONTAINER (page->sw), GTK_WIDGET (canvas));
 
@@ -603,6 +598,18 @@ new_page (PLStream* pls)
   sprintf (buffer, "Page %d", np+1);
   gtk_notebook_append_page (dev->notebook, GTK_WIDGET (page->sw),
 			    gtk_label_new (buffer));
+
+  adj = gtk_scrolled_window_get_vadjustment (page->sw);
+  adj->value = 0.0;
+  adj->step_increment = 1.0;
+  //  page->vadj = adj;
+  gtk_scrolled_window_set_vadjustment (page->sw, adj);
+
+  adj = gtk_scrolled_window_get_hadjustment (page->sw);
+  adj->value = 0.0;
+  adj->step_increment = 1.0;
+  //  page->hadj = adj;
+  gtk_scrolled_window_set_hadjustment (page->sw, adj);
 
   gtk_widget_show_all (dev->parent);
 
@@ -699,7 +706,7 @@ plD_init_gnome (PLStream *pls)
 			"delete_event",
 			GTK_SIGNAL_FUNC (delete_event_cb),
 			NULL);
-
+    
     gtk_window_set_title (GTK_WINDOW (window), "Gnome PLplot Driver");
 
     gtk_window_set_policy (GTK_WINDOW (window), TRUE, TRUE, TRUE);
