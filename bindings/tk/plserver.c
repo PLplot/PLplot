@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1993/12/15 08:59:03  mjl
+ * Revision 1.18  1993/12/21 10:21:06  mjl
+ * Changed -client arg name to -client_name to be more transparent (stands
+ * for client program main window name).  Substantially rewrote
+ * initialization to be better suited for Tcl-DP or TK style communication.
+ * Created client_cmd function for handling all messages to the client.
+ *
+ * Revision 1.17  1993/12/15  08:59:03  mjl
  * Changes to support Tcl-DP.  Also moved functions Tcl_AppInit() and
  * set_autopath() to tkshell.c so they could be used by the TK driver
  * initialization as well.
@@ -36,11 +42,15 @@
  *
  * Plplot graphics server.
  *
- * Can be run as a child process from the plplot TK driver.
+ * Is typically run as a child process from the plplot TK driver to render
+ * output.  Can use either TK send or Tcl-DP RPC for communication,
+ * depending on how it is invoked.
  *
- * Alternately it can be used as a generic code server (with the appropriate
- * TCL initialization) for launching applications that plot into plplot
- * graphics widgets.
+ * Also plserver can be used the same way as wish or dpwish, as it
+ * contains the functionality of each of these (except the -notk Tcl-DP
+ * command-line option is not supported).  In the source code I've changed
+ * as few lines as possible from the source for "wish" in order to make it
+ * easier to track future changes to Tcl/TK and Tcl-DP.
  */
 
 #include "plserver.h"
@@ -87,8 +97,9 @@ static int child;		/* set if child of TK driver */
 static int mkidx;		/* Create a new tclIndex file */
 static int pass_thru;		/* Skip normal error termination when set */
 
-/* These are only used when Tcl-DP support is present */
+/* These are for supporting Tcl-DP communication */
 
+static int dp;			/* set if using Tcl-DP to communicate */
 static char *client_host;	/* Host id for client */
 static char *client_port;	/* Communications port id for client */
 
@@ -128,6 +139,7 @@ static void  configure		(void);
 static void  InitLink_tk	(ClientData);
 static void  InitLink_dp	(ClientData);
 static void  abort_session	(char *);
+static void  client_cmd		(char *);
 static void  tcl_cmd		(char *);
 static int   tcl_eval		(char *);
 
@@ -536,7 +548,7 @@ abort_session(char *errmsg)
 /* If client exists, tell it to self destruct */
 
     if (client != NULL)
-	tcl_cmd("$plsend $client after 1 abort");
+	client_cmd("abort");
 
     Tcl_Eval(interp, "exit");
 }
@@ -594,8 +606,8 @@ configure(void)
 static void
 InitLink_tk(ClientData clientData)
 {
-    tcl_cmd("after 1 [list $plsend $client [list set plserver $plserver]]");
-    tcl_cmd("after 1 $plsend $client {set server_is_ready 1}");
+    client_cmd("set plserver [list $plserver]");
+    client_cmd("set server_is_ready 1");
 }
 
 /*----------------------------------------------------------------------*\
@@ -612,11 +624,44 @@ InitLink_dp(ClientData clientData)
     tcl_cmd("set client [dp_MakeRPCClient $client_host $client_port]");
     tcl_cmd("set server_host localhost");
     tcl_cmd("set server_port [dp_MakeRPCServer]");
-    tcl_cmd("after 1 $plsend $client [list set client $client]");
-    tcl_cmd("after 1 $plsend $client [list set server_host $server_host]");
-    tcl_cmd("after 1 $plsend $client [list set server_port $server_port]");
-    tcl_cmd("after 1 $plsend $client {set server_is_ready 1}");
+
+    client_cmd("[list set client $client]");
+    client_cmd("[list set server_host $server_host]");
+    client_cmd("[list set server_port $server_port]");
+    client_cmd("set server_is_ready 1");
 #endif
+}
+
+/*----------------------------------------------------------------------*\
+* server_cmd
+*
+* Sends specified command to server, aborting on an error.
+\*----------------------------------------------------------------------*/
+
+static void
+server_cmd(char *cmd)
+{
+    int result;
+
+    dbug_enter("server_cmd");
+#ifdef DEBUG_ENTER
+    fprintf(stderr, "Sending command: %s\n", cmd);
+#endif
+
+    if (tcl_dp)
+	result = Tcl_VarEval(interp,
+			     "dp_RPC $plserver -events all ", cmd,
+			     (char **) NULL);
+    else
+	result = Tcl_VarEval(interp,
+			     "send $plserver after 1 ", cmd,
+			     (char **) NULL);
+
+    if (result) {
+	fprintf(stderr, "Server command \"%s\" failed:\n\t %s\n",
+		cmd, interp->result);
+	abort_session("");
+    }
 }
 
 /*----------------------------------------------------------------------*\
