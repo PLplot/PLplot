@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.42  1994/07/22 10:17:48  mjl
+ * Revision 1.43  1994/07/23 04:45:42  mjl
+ * Added code to start plserver with sigprocmask set so that a ^C doesn't
+ * kill it (enabled if pls->server_nokill is set).  Contributed by Ian
+ * Searle.
+ *
+ * Revision 1.42  1994/07/22  10:17:48  mjl
  * Bug squashed, introduced in last update.  On issuing a "Q", the cleanup
  * was getting hosed, leaving a spurious plserver window hanging around.
  * Works great now.
@@ -61,6 +66,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <signal.h>
 
 #ifdef PLD_dp
 #include <dp.h>
@@ -1065,6 +1071,19 @@ launch_server(PLStream *pls)
 	    abort_session(pls, "Unable to fork server process");
 	}
 	else if (pid == 0) {
+
+/* Don't kill plserver on a ^C if pls->server_nokill is set */
+/* Contributed by Ian Searle */
+
+	    if (pls->server_nokill) {
+		int retv;
+		sigset_t *set;
+		set = (sigset_t *) malloc (sizeof(sigset_t));
+		sigfillset (set);
+		sigaddset (set, SIGINT);
+		if ((retv = sigprocmask (SIG_BLOCK, set, 0)) < 0)
+		    fprintf(stderr, "plplot: sigprocmask failure\n");
+	    }
 	    fprintf(stderr, "Starting up %s\n", plserver_exec);
 	    if (execv(plserver_exec, argv)) {
 		fprintf(stderr, "Unable to exec server process.\n");
