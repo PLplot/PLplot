@@ -18,8 +18,7 @@ rm -rf `find . -name CVS`
 
 VERSION=${1:+--version=$1}
 echo ./bootstrap.sh ${VERSION:---date-version}
-./configure --enable-docbook --enable-python --enable-octave --enable-f77
-( cd doc/docbook ; make )
+./configure --enable-builddoc --enable-python --enable-octave --enable-f77
 make dist
 TARBALL=`ls plplot-*.tar.gz`
 mv $TARBALL ..
