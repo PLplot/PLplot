@@ -49,16 +49,13 @@ pc-stamp: gen-pc-files.pl
 	$(PERL) gen-pc-files.pl
 	touch pc-stamp
 
-install-data-hook:
-	$(mkinstalldirs) $(DESTDIR)$(docdir)
-	$(INSTALL) README $(DESTDIR)$(docdir)/README.pkg-config
-
-else
-
-install-data-hook:
-
 endif
 
+install-data-hook:
+if with_pkg_config
+	$(mkinstalldirs) $(DESTDIR)$(docdir)
+	$(INSTALL) README $(DESTDIR)$(docdir)/README.pkg-config
+endif
 
 EXTRA_DIST = README
 CLEANFILES = *.pc pc-stamp
