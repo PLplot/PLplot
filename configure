@@ -1537,20 +1537,6 @@ fi
 	    XLIBDIR="default"
 	fi
     fi
-
-    XINCSW=""
-    if test "$XINCDIR" != "default"; then
-	XINCSW="-I$XINCDIR"
-    fi
-    XLIBSW=""
-    if test "$XLIBDIR" != "default"; then
-	XLIBSW="-L$XLIBDIR"
-    fi
-
-    INCS="$INCS $XINCSW"
-
-    
-    
 fi
 
 # -----------------------------------------------------------------------
@@ -1558,10 +1544,6 @@ fi
 # Look first in the Tcl/Tk distributions and then move on to the standard
 # include file/library locations.  If it's still not found I assume it's
 # not here.
-#
-# Note the library order CAN be important, depending on the system.  So
-# although we need to check for libtcl first, it needs to be listed after
-# the others.
 # -----------------------------------------------------------------------
 
 # -----------------------------------------------------------------------
@@ -1576,10 +1558,11 @@ else
   enable_tcl=$enable_x11
 fi
 
+header="tcl.h"
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLINCDIR"; then
-	echo "checking for tcl.h"
+	echo "checking for $header"
 	TCLINCDIR=""
 	places="\
 	$prefix/include \
@@ -1588,34 +1571,27 @@ if test "$enable_tcl" = "yes"; then
 	/usr/include \
 	/usr/local/tcl7.3/include \
 	$HOME/local/tcl7.3/include \
+	/usr/local/tk3.6/include \
+	$HOME/local/tk3.6/include \
+	$HOME/local/include \
+	$HOME/include \
 	$PWD/../tcl7.3 \
 	$XINCDIR/tk \
 	$XINCDIR"
 
 	for dir in $places; do
-	    if test -r "$dir/tcl.h"; then
+	    if test -r "$dir/$header"; then
 		TCLINCDIR="$dir"
 		break
 	    fi
 	done
 	if test -z "$TCLINCDIR"; then
-	    echo "can't find tcl.h, disabling Tcl support. "
+	    echo "can't find $header, disabling Tcl support. "
 	    enable_tcl="no"
 	fi
 	if test "$TCLINCDIR" = "/usr/include"; then
 	    TCLINCDIR= "default"
 	fi
-    fi
-fi
-
-if test "$enable_tcl" = "yes"; then
-    
-    TCLINCSW=""
-    if test "$TCLINCDIR" != "default"; then
-	TCLINCSW="-I$TCLINCDIR"
-    fi
-    if test "$TCLINCDIR" != "$XINCDIR"; then
-	INCS="$INCS $TCLINCSW"
     fi
 fi
 
@@ -1634,6 +1610,8 @@ if test "$enable_tcl" = "yes"; then
 	$HOME/local/tk3.6/lib \
 	/usr/local/tcl7.3/lib \
 	$HOME/local/tcl7.3/lib \
+	$HOME/local/lib \
+	$HOME/lib \
 	$XLIBDIR \
 	$PWD/../tcl7.3 \
 	/usr/lib"
@@ -1656,9 +1634,9 @@ if test "$enable_tcl" = "yes"; then
 fi
 
 # -----------------------------------------------------------------------
-# libdpnetwork (Tcl-DP)
+# dp.h
 #
-# I assume the header files can be found with tcl.h.
+# If not in $TCLINCDIR, probably in the user's area.
 # -----------------------------------------------------------------------
 
 # check whether --enable-dp was given
@@ -1671,6 +1649,40 @@ fi
 
 
 if test "$enable_dp" = "yes"; then
+    if test -z "$DPINCDIR"; then
+	echo "checking for dp.h"
+	DPINCDIR=""
+	places="\
+	$prefix/include \
+	$TCLINCDIR \
+	$HOME/local/tcl7.3/include \
+	$HOME/local/tk3.6/include \
+	$HOME/local/include \
+	$HOME/include \
+	$PWD/../tcl-dp3.1 \
+	$PWD/../tcl-dp3.2"
+
+	for dir in $places; do
+	    if test -r "$dir/dp.h"; then
+		DPINCDIR="$dir"
+		break
+	    fi
+	done
+	if test -z "$DPINCDIR"; then
+	    echo "can't find dp.h, disabling Tcl-DP support. "
+	    enable_dp="no"
+	fi
+	if test "$DPINCDIR" = "/usr/include"; then
+	    DPINCDIR= "default"
+	fi
+    fi
+fi
+
+# -----------------------------------------------------------------------
+# libdpnetwork (Tcl-DP)
+# -----------------------------------------------------------------------
+
+if test "$enable_dp" = "yes"; then
     if test -z "$DPLIBDIR"; then
 	echo "checking for -ldpnetwork"
 	DPLIBDIR=""
@@ -1680,8 +1692,11 @@ if test "$enable_dp" = "yes"; then
 	/usr/local/lib \
 	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
+	$HOME/local/lib \
+	$HOME/lib \
 	$XLIBDIR \
 	$PWD/../tcl-dp3.1 \
+	$PWD/../tcl-dp3.2 \
 	/usr/lib"
 
 	for dir in $places; do
@@ -1701,9 +1716,9 @@ if test "$enable_dp" = "yes"; then
 fi
 
 # -----------------------------------------------------------------------
-# libitcl ([incr Tcl])
+# itcl.h
 #
-# I assume the header files can be found with tcl.h.
+# If not in $TCLINCDIR, probably in the user's area.
 # -----------------------------------------------------------------------
 
 # check whether --enable-itcl was given
@@ -1714,6 +1729,40 @@ else
   enable_itcl=$enable_tcl
 fi
 
+header="itcl.h"
+
+if test "$enable_itcl" = "yes"; then
+    if test -z "$ITCLINCDIR"; then
+	echo "checking for $header"
+	ITCLINCDIR=""
+	places="\
+	$prefix/include \
+	$TCLINCDIR \
+	$HOME/local/tcl7.3/include \
+	$HOME/local/tk3.6/include \
+	$HOME/local/include \
+	$HOME/include \
+	$PWD/../itcl-1.5"
+
+	for dir in $places; do
+	    if test -r "$dir/$header"; then
+		ITCLINCDIR="$dir"
+		break
+	    fi
+	done
+	if test -z "$ITCLINCDIR"; then
+	    echo "can't find $header, disabling Itcl support. "
+	    enable_itcl="no"
+	fi
+	if test "$ITCLINCDIR" = "/usr/include"; then
+	    ITCLINCDIR= "default"
+	fi
+    fi
+fi
+
+# -----------------------------------------------------------------------
+# libitcl ([incr Tcl])
+# -----------------------------------------------------------------------
 
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLLIBDIR"; then
@@ -1725,6 +1774,8 @@ if test "$enable_itcl" = "yes"; then
 	/usr/local/lib \
 	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
+	$HOME/local/lib \
+	$HOME/lib \
 	$XLIBDIR \
 	$PWD/../itcl-1.5 \
 	/usr/lib"
@@ -1757,10 +1808,11 @@ else
   enable_tk=$enable_tcl
 fi
 
+header="tk.h"
 
 if test "$enable_tk" = "yes"; then
     if test -z "$TKINCDIR"; then
-	echo "checking for tk.h"
+	echo "checking for $header"
 	TKINCDIR=""
 	places="\
 	$prefix/include \
@@ -1768,35 +1820,26 @@ if test "$enable_tk" = "yes"; then
 	/usr/local/include \
 	/usr/local/tk3.6/include \
 	$HOME/local/tk3.6/include \
+	$HOME/local/include \
+	$HOME/include \
 	$PWD/../tk3.6 \
 	$XINCDIR/tk \
 	$XINCDIR \
 	/usr/include"
 
 	for dir in $places; do
-	    if test -r "$dir/tk.h"; then
+	    if test -r "$dir/$header"; then
 		TKINCDIR="$dir"
 		break
 	    fi
 	done
 	if test -z "$TKINCDIR"; then
-	    echo "can't find tk.h, disabling Tk support. "
+	    echo "can't find $header, disabling Tk support. "
 	    enable_tk="no"
 	fi
 	if test "$TKINCDIR" = "/usr/include"; then
 	    TKINCDIR="default"
 	fi
-    fi
-fi
-
-if test "$enable_tk" = "yes"; then
-    
-    TKINCSW=""
-    if test "$TKINCDIR" != "default"; then
-	TKINCSW="-I$TKINCDIR"
-    fi
-    if test "$TKINCDIR" != "$TCLINCDIR"; then
-	INCS="$INCS $TKINCSW"
     fi
 fi
 
@@ -1814,6 +1857,8 @@ if test "$enable_tk" = "yes"; then
 	/usr/local/lib \
 	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
+	$HOME/local/lib \
+	$HOME/lib \
 	$XLIBDIR \
 	$PWD/../tk3.6 \
 	/usr/lib"
@@ -1835,71 +1880,182 @@ if test "$enable_tk" = "yes"; then
 fi
 
 # -----------------------------------------------------------------------
-# Assemble list of tcl/TK/X libraries.  The library order is usually
-# important.  Also try to eliminate redundant -L specifications to keep
-# the build line concise.
+# Assemble list of tcl/TK/X/whatever include directives.  These can go in
+# any order.
+#
+# I go to a bit of trouble to eliminate redundant -I specifications (to
+# keep the build line concise).
 # -----------------------------------------------------------------------
 
-if test "$enable_tk" = "yes"; then
-    
-    TKLIBSW=""
-    if test "$TKLIBDIR" != "default"; then
-	TKLIBSW="-L$TKLIBDIR"
+inc_path=""
+
+if test "$enable_x11" = "yes"; then
+    XINCSW=""
+    if test "$XINCDIR" != "default"; then
+	XINCSW="-I$XINCDIR"
     fi
-    LIBS="$LIBS $TKLIBSW -ltk"
+    for dir in $inc_path; do
+	if test "$XINCDIR" = "$dir"; then
+	    XINCSW=""
+	    break
+	fi
+    done
+    INCS="$INCS $XINCSW"
+    inc_path="$inc_path $XINCDIR"
 fi
 
-if test "$enable_itcl" = "yes"; then
-    
-    ITCLLIBSW=""
-    if test "$ITCLLIBDIR" != "default"; then
-	ITCLLIBSW="-L$ITCLLIBDIR"
+if test "$enable_tcl" = "yes"; then
+    TCLINCSW=""
+    if test "$TCLINCDIR" != "default"; then
+	TCLINCSW="-I$TCLINCDIR"
     fi
-    if test "$ITCLLIBDIR" = "$TKLIBDIR"; then
-	LIBS="$LIBS -litcl"
-    else
-	LIBS="$LIBS $ITCLLIBSW -litcl"
-    fi
+    for dir in $inc_path; do
+	if test "$TCLINCDIR" = "$dir"; then
+	    TCLINCSW=""
+	    break
+	fi
+    done
+    INCS="$INCS $TCLINCSW"
+    inc_path="$inc_path $TCLINCDIR"
 fi
 
 if test "$enable_dp" = "yes"; then
+    DPINCSW=""
+    if test "$DPINCDIR" != "default"; then
+	DPINCSW="-I$DPINCDIR"
+    fi
+    for dir in $inc_path; do
+	if test "$DPINCDIR" = "$dir"; then
+	    DPINCSW=""
+	    break
+	fi
+    done
+    INCS="$INCS $DPINCSW"
+    inc_path="$inc_path $DPINCDIR"
+fi
+
+if test "$enable_itcl" = "yes"; then
+    ITCLINCSW=""
+    if test "$ITCLINCDIR" != "default"; then
+	ITCLINCSW="-I$ITCLINCDIR"
+    fi
+    for dir in $inc_path; do
+	if test "$ITCLINCDIR" = "$dir"; then
+	    ITCLINCSW=""
+	    break
+	fi
+    done
+    INCS="$INCS $ITCLINCSW"
+    inc_path="$inc_path $ITCLINCDIR"
+fi
+
+if test "$enable_tk" = "yes"; then
     
+    TKINCSW=""
+    if test "$TKINCDIR" != "default"; then
+	TKINCSW="-I$TKINCDIR"
+    fi
+    for dir in $inc_path; do
+	if test "$TKINCDIR" = "$dir"; then
+	    TKINCSW=""
+	    break
+	fi
+    done
+    INCS="$INCS $TKINCSW"
+    inc_path="$inc_path $TKINCDIR"
+fi
+
+# -----------------------------------------------------------------------
+# Assemble list of tcl/TK/X/whatever libraries.
+# Note the library order CAN be important, depending on the system.  
+#
+# I go to a bit of trouble to eliminate redundant -L specifications (to
+# keep the build line concise).
+# -----------------------------------------------------------------------
+
+lib_path=""
+
+# The full Tcl-DP library depends on both Tk and Tcl so must come first.
+
+if test "$enable_dp" = "yes"; then
     DPLIBSW=""
     if test "$DPLIBDIR" != "default"; then
 	DPLIBSW="-L$DPLIBDIR"
     fi
-    if test "$DPLIBDIR" = "$TKLIBDIR" -o \
-	"$DPLIBDIR" = "$ITCLLIBDIR"; then
-	LIBS="$LIBS -ldpnetwork"
-    else
-	LIBS="$LIBS $DPLIBSW -ldpnetwork"
-    fi
+    for dir in $lib_path; do
+	if test "$DPLIBDIR" = "$dir"; then
+	    DPLIBSW=""
+	    break
+	fi
+    done
+    LIBS="$LIBS $DPLIBSW -ldpnetwork"
+    lib_path="$lib_path $DPLIBDIR"
 fi
 
+# Tk depends on Tcl and X11 so must come before both.
+
+if test "$enable_tk" = "yes"; then
+    TKLIBSW=""
+    if test "$TKLIBDIR" != "default"; then
+	TKLIBSW="-L$TKLIBDIR"
+    fi
+    for dir in $lib_path; do
+	if test "$TKLIBDIR" = "$dir"; then
+	    TKLIBSW=""
+	    break
+	fi
+    done
+    LIBS="$LIBS $TKLIBSW -ltk"
+    lib_path="$lib_path $TKLIBDIR"
+fi
+
+# Itcl depends on Tcl so must come before it.
+
+if test "$enable_itcl" = "yes"; then
+    ITCLLIBSW=""
+    if test "$ITCLLIBDIR" != "default"; then
+	ITCLLIBSW="-L$ITCLLIBDIR"
+    fi
+    for dir in $lib_path; do
+	if test "$ITCLLIBDIR" = "$dir"; then
+	    ITCLLIBSW=""
+	    break
+	fi
+    done
+    LIBS="$LIBS $ITCLLIBSW -litcl"
+    lib_path="$lib_path $ITCLLIBDIR"
+fi
+
+# Tcl and X11 can be put in either order.
+
 if test "$enable_tcl" = "yes"; then
-    
     TCLLIBSW=""
     if test "$TCLLIBDIR" != "default"; then
 	TCLLIBSW="-L$TCLLIBDIR"
     fi
-    if test "$TCLLIBDIR" = "$TKLIBDIR" -o \
-	"$TCLLIBDIR" = "$ITCLLIBDIR" -o \
-	"$TCLLIBDIR" = "$DPLIBDIR"; then
-	LIBS="$LIBS -ltcl"
-    else
-	LIBS="$LIBS $TCLLIBSW -ltcl"
-    fi
+    for dir in $lib_path; do
+	if test "$TCLLIBDIR" = "$dir"; then
+	    TCLLIBSW=""
+	    break
+	fi
+    done
+    LIBS="$LIBS $TCLLIBSW -ltcl"
+    lib_path="$lib_path $TCLLIBDIR"
 fi
 
 if test "$enable_x11" = "yes"; then
-    if test "$XLIBDIR" = "$TKLIBDIR" -o \
-	"$XLIBDIR" = "$ITCLLIBDIR" -o \
-	"$XLIBDIR" = "$DPLIBDIR" -o \
-	"$XLIBDIR" = "$TCLLIBDIR"; then
-	LIBS="$LIBS -lX11"
-    else
-	LIBS="$LIBS $XLIBSW -lX11"
+    XLIBSW=""
+    if test "$XLIBDIR" != "default"; then
+	XLIBSW="-L$XLIBDIR"
     fi
+    for dir in $lib_path; do
+	if test "$XLIBDIR" = "$dir"; then
+	    XLIBSW=""
+	    break
+	fi
+    done
+    LIBS="$LIBS $XLIBSW -lX11"
+    lib_path="$lib_path $XLIBDIR"
 fi
 
 #--------------------------------------------------------------------
@@ -3090,6 +3246,7 @@ if test ! -f tmp/plcore.c; then
     ../drivers/tk/*.* \
     ../drivers/tk/tclIndex \
     ../lib/*.fnt \
+    ../lib/*.map \
     .
 
 # Create links to the Fortran files.  
@@ -3232,14 +3389,7 @@ SHLIB_CCFLAGS='$SHLIB_CCFLAGS'
 SHLIB_F77FLAGS='$SHLIB_F77FLAGS'
 CC_FLAGS_XWIN='$CC_FLAGS_XWIN'
 CC_FLAGS_SCCONT='$CC_FLAGS_SCCONT'
-XINCDIR='$XINCDIR'
-XLIBDIR='$XLIBDIR'
-TCLINCDIR='$TCLINCDIR'
 TKINCDIR='$TKINCDIR'
-TKLIBDIR='$TKLIBDIR'
-ITCLLIBDIR='$ITCLLIBDIR'
-DPLIBDIR='$DPLIBDIR'
-TCLLIBDIR='$TCLLIBDIR'
 EXTRA_LIBS='$EXTRA_LIBS'
 LIBS='$LIBS'
 INCS='$INCS'
@@ -3319,14 +3469,7 @@ s%@SHLIB_CCFLAGS@%$SHLIB_CCFLAGS%g
 s%@SHLIB_F77FLAGS@%$SHLIB_F77FLAGS%g
 s%@CC_FLAGS_XWIN@%$CC_FLAGS_XWIN%g
 s%@CC_FLAGS_SCCONT@%$CC_FLAGS_SCCONT%g
-s%@XINCDIR@%$XINCDIR%g
-s%@XLIBDIR@%$XLIBDIR%g
-s%@TCLINCDIR@%$TCLINCDIR%g
 s%@TKINCDIR@%$TKINCDIR%g
-s%@TKLIBDIR@%$TKLIBDIR%g
-s%@ITCLLIBDIR@%$ITCLLIBDIR%g
-s%@DPLIBDIR@%$DPLIBDIR%g
-s%@TCLLIBDIR@%$TCLLIBDIR%g
 s%@EXTRA_LIBS@%$EXTRA_LIBS%g
 s%@LIBS@%$LIBS%g
 s%@INCS@%$INCS%g
