@@ -11,6 +11,7 @@
 
 # Utilities
 
+CXX		= @CXX@
 CC		= @CC@
 LDC		= @LDC@
 OCC		= @OCC@

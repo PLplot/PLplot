@@ -22,6 +22,7 @@
 # The following shell variables are used.  They can be redefined as
 # appropriate for specific systems.
 #
+# CXX		The only compiler worth using.
 # CC		ANSI C compiler
 # OCC		Traditional C compiler
 # F77		Fortran 77 compiler
@@ -174,6 +175,21 @@ if test -z "$OCC"; then
     esac
 fi
 
+# Set up C++ compiler
+
+if test -z "$CXX"; then
+    CXX="CC"
+    case "$system" in
+	linux*|LINUX*|Linux* ) 
+	    with_gcc="yes"
+	    CXX="gcc"
+	;;
+	hp*|HP* ) 
+	    CXX="CC +a1"
+	;;
+    esac
+fi
+
 # Set up Fortran compiler
 
 if test -z "$F77"; then
@@ -216,6 +232,7 @@ fi
 
 if test "$with_gcc" = "yes"; then
     CC="gcc"
+    CXX="gcc"
     OCC="gcc -traditional"
 
     if test "$with_warn" = "yes"; then
@@ -449,11 +466,13 @@ esac
 
 echo "checking how to make shared libraries"
 SHLIB_CCFLAGS=""
+SHLIB_CXXFLAGS=""
 SHLIB_BUILD=""
 SHLIB_SUFFIX=""
 case "$system" in 
     SunOS-4* ) 
 	SHLIB_CCFLAGS="-pic"
+	SHLIB_CXXFLAGS="-pic"
 	SHLIB_F77FLAGS="-pic"
 	SHLIB_BUILD="ld -assert pure-text -o"
 	SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
@@ -461,12 +480,14 @@ case "$system" in
     ;;
     HP-UX-* )
 	SHLIB_CCFLAGS="+z"
+	SHLIB_CXXFLAGS="+z"
 	SHLIB_F77FLAGS="+z"
 	SHLIB_BUILD="ld -b -o"
 	SHLIB_SUFFIX=".sl"
     ;;
     AIX-* )
 	SHLIB_CCFLAGS="-fpic"
+	SHLIB_CXXFLAGS="-fpic"
 	SHLIB_F77FLAGS="-fpic"
 	SHLIB_BUILD="ar q"
 	SHLIB_SUFFIX=".a"
@@ -546,16 +567,19 @@ LDF_FLAGS=\
 M4_FLAGS="-S2000 -B8192"
 
 AC_SUBST(CC)
+AC_SUBST(CXX)
 AC_SUBST(OCC)
 AC_SUBST(F77)
 AC_SUBST(LDC)
 AC_SUBST(LDF)
 
+AC_SUBST(CXX_FLAGS)
 AC_SUBST(CC_FLAGS)
 AC_SUBST(LDC_FLAGS)
 AC_SUBST(F77_FLAGS)
 AC_SUBST(LDF_FLAGS)
 AC_SUBST(SHLIB_CCFLAGS)
+AC_SUBST(SHLIB_CXXFLAGS)
 AC_SUBST(SHLIB_F77FLAGS)
 
 # -----------------------------------------------------------------------

@@ -59,3 +59,5 @@ plframe$O : plframe.c plserver.h plplotP.h plConfig.h plplot.h plstream.h pdf.h 
 tkMain$O : tkMain.c 
 plr$O : plr.c plserver.h plplotP.h plConfig.h plplot.h plstream.h pdf.h pltcl.h \
   tclMatrix.h plplotTK.h plDevs.h plevent.h metadefs.h 
+
+stream$O : stream.cc stream.h plplot.h

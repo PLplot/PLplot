@@ -13,6 +13,10 @@
 # libraries. 
 # -----------------------------------------------------------------------
 
+.cc$O:
+	$(CXX) $(CXX_FLAGS) $*.cc
+	cd shared; $(CXX) $(SHLIB_CXXFLAGS) $(CXX_FLAGS) ../$*.cc
+
 .c$O:
 	$(CC) $(CC_FLAGS) $*.c
 	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../$*.c

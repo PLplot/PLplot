@@ -1,0 +1,14 @@
+# -----------------------------------------------------------------------
+# $Id$
+#
+# Geoffrey Furnish
+# IFS, University of Texas at Austin
+# 6-Oct-1994
+#
+# Make assignments and targets for PLplot/C++ interface layer.
+# -----------------------------------------------------------------------
+
+CXX_C		= stream.cc
+CXX_OBJ		= stream$O
+
+

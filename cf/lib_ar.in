@@ -12,6 +12,9 @@
 # Set up inference rules appropriate for building archive libraries.
 # -----------------------------------------------------------------------
 
+.cc$O:
+	$(CXX) $(CXX_FLAGS) $*.cc
+
 .c$O:
 	$(CC) $(CC_FLAGS) $*.c
 

@@ -129,6 +129,7 @@ AC_WITH(gcc, ,     with_gcc="no")
 AC_WITH(warn, ,    with_warn="no")
 
 AC_ENABLE(f77, , enable_f77="yes")
+AC_ENABLE(CXX, , enable_CXX="yes")
 
 # --------------------------------------------------------------------
 # Set up prefix
@@ -239,6 +240,9 @@ cat cf/dist.in		>>tmp/Makefile.in
 
 # Optional packages
 
+if test "$enable_CXX" = "yes"; then
+    cat cf/pkg_CXX.in	>>tmp/Makefile.in 
+fi
 if test "$enable_f77" = "yes"; then
     cat cf/pkg_f77.in	>>tmp/Makefile.in 
 fi
@@ -381,12 +385,14 @@ if test ! -f tmp/plcore.c; then
 
     ln -s \
     ../src/*.c \
+    ../src/*.cc \
     ../src/tcl/*.c \
     ../src/stubc/*.c \
     ../examples/c/*.c \
     ../examples/tcl/*.tcl \
     ../examples/tk/*.c \
     ../examples/tk/tk* \
+    ../examples/c++/*.cc \
     ../utils/*.c \
     ../fonts/*.c \
     ../scripts/pl* \
@@ -441,6 +447,7 @@ Configuration results (edit and run ./config.status to modify):
 system:		$system
 prefix:		$prefix
 CC:		$CC $CC_FLAGS
+CXX:		$CXX $CXX_FLAGS
 F77:		$F77 $F77_FLAGS
 LDC:		$LDC $LDC_FLAGS
 LDF:		$LDF $LDF_FLAGS
@@ -457,6 +464,7 @@ with-f2c:	$with_f2c		with-gcc:	$with_gcc
 enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
 enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
+enable-CXX:	$enable_CXX
 "
 
 AC_OUTPUT(tmp/Makefile tmp/Makedemo)

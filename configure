@@ -524,6 +524,14 @@ else
   enable_f77="yes"
 fi
 
+# check whether --enable-CXX was given
+enableval="$enable_CXX"
+if test -n "$enableval"; then
+  :
+else
+  enable_CXX="yes"
+fi
+
 
 # --------------------------------------------------------------------
 # Set up prefix
@@ -671,6 +679,7 @@ fi
 # The following shell variables are used.  They can be redefined as
 # appropriate for specific systems.
 #
+# CXX		The only compiler worth using.
 # CC		ANSI C compiler
 # OCC		Traditional C compiler
 # F77		Fortran 77 compiler
@@ -823,6 +832,21 @@ if test -z "$OCC"; then
     esac
 fi
 
+# Set up C++ compiler
+
+if test -z "$CXX"; then
+    CXX="CC"
+    case "$system" in
+	linux*|LINUX*|Linux* ) 
+	    with_gcc="yes"
+	    CXX="gcc"
+	;;
+	hp*|HP* ) 
+	    CXX="CC +a1"
+	;;
+    esac
+fi
+
 # Set up Fortran compiler
 
 if test -z "$F77"; then
@@ -865,6 +889,7 @@ fi
 
 if test "$with_gcc" = "yes"; then
     CC="gcc"
+    CXX="gcc"
     OCC="gcc -traditional"
 
     if test "$with_warn" = "yes"; then
@@ -1130,11 +1155,13 @@ esac
 
 echo "checking how to make shared libraries"
 SHLIB_CCFLAGS=""
+SHLIB_CXXFLAGS=""
 SHLIB_BUILD=""
 SHLIB_SUFFIX=""
 case "$system" in 
     SunOS-4* ) 
 	SHLIB_CCFLAGS="-pic"
+	SHLIB_CXXFLAGS="-pic"
 	SHLIB_F77FLAGS="-pic"
 	SHLIB_BUILD="ld -assert pure-text -o"
 	SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
@@ -1142,12 +1169,14 @@ case "$system" in
     ;;
     HP-UX-* )
 	SHLIB_CCFLAGS="+z"
+	SHLIB_CXXFLAGS="+z"
 	SHLIB_F77FLAGS="+z"
 	SHLIB_BUILD="ld -b -o"
 	SHLIB_SUFFIX=".sl"
     ;;
     AIX-* )
 	SHLIB_CCFLAGS="-fpic"
+	SHLIB_CXXFLAGS="-fpic"
 	SHLIB_F77FLAGS="-fpic"
 	SHLIB_BUILD="ar q"
 	SHLIB_SUFFIX=".a"
@@ -1225,6 +1254,9 @@ LDF_FLAGS=\
 "$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
 
 M4_FLAGS="-S2000 -B8192"
+
+
+
 
 
 
@@ -2695,6 +2727,9 @@ cat cf/dist.in		>>tmp/Makefile.in
 
 # Optional packages
 
+if test "$enable_CXX" = "yes"; then
+    cat cf/pkg_CXX.in	>>tmp/Makefile.in 
+fi
 if test "$enable_f77" = "yes"; then
     cat cf/pkg_f77.in	>>tmp/Makefile.in 
 fi
@@ -3320,12 +3355,14 @@ if test ! -f tmp/plcore.c; then
 
     ln -s \
     ../src/*.c \
+    ../src/*.cc \
     ../src/tcl/*.c \
     ../src/stubc/*.c \
     ../examples/c/*.c \
     ../examples/tcl/*.tcl \
     ../examples/tk/*.c \
     ../examples/tk/tk* \
+    ../examples/c++/*.cc \
     ../utils/*.c \
     ../fonts/*.c \
     ../scripts/pl* \
@@ -3380,6 +3417,7 @@ Configuration results (edit and run ./config.status to modify):
 system:		$system
 prefix:		$prefix
 CC:		$CC $CC_FLAGS
+CXX:		$CXX $CXX_FLAGS
 F77:		$F77 $F77_FLAGS
 LDC:		$LDC $LDC_FLAGS
 LDF:		$LDF $LDF_FLAGS
@@ -3396,6 +3434,7 @@ with-f2c:	$with_f2c		with-gcc:	$with_gcc
 enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
 enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
+enable-CXX:	$enable_CXX
 "
 
 
@@ -3465,15 +3504,18 @@ SHLIB_BUILD='$SHLIB_BUILD'
 SHLIB_SUFFIX='$SHLIB_SUFFIX'
 SALIB_SUFFIX='$SALIB_SUFFIX'
 CC='$CC'
+CXX='$CXX'
 OCC='$OCC'
 F77='$F77'
 LDC='$LDC'
 LDF='$LDF'
+CXX_FLAGS='$CXX_FLAGS'
 CC_FLAGS='$CC_FLAGS'
 LDC_FLAGS='$LDC_FLAGS'
 F77_FLAGS='$F77_FLAGS'
 LDF_FLAGS='$LDF_FLAGS'
 SHLIB_CCFLAGS='$SHLIB_CCFLAGS'
+SHLIB_CXXFLAGS='$SHLIB_CXXFLAGS'
 SHLIB_F77FLAGS='$SHLIB_F77FLAGS'
 CC_FLAGS_XWIN='$CC_FLAGS_XWIN'
 CC_FLAGS_SCCONT='$CC_FLAGS_SCCONT'
@@ -3545,15 +3587,18 @@ s%@SHLIB_BUILD@%$SHLIB_BUILD%g
 s%@SHLIB_SUFFIX@%$SHLIB_SUFFIX%g
 s%@SALIB_SUFFIX@%$SALIB_SUFFIX%g
 s%@CC@%$CC%g
+s%@CXX@%$CXX%g
 s%@OCC@%$OCC%g
 s%@F77@%$F77%g
 s%@LDC@%$LDC%g
 s%@LDF@%$LDF%g
+s%@CXX_FLAGS@%$CXX_FLAGS%g
 s%@CC_FLAGS@%$CC_FLAGS%g
 s%@LDC_FLAGS@%$LDC_FLAGS%g
 s%@F77_FLAGS@%$F77_FLAGS%g
 s%@LDF_FLAGS@%$LDF_FLAGS%g
 s%@SHLIB_CCFLAGS@%$SHLIB_CCFLAGS%g
+s%@SHLIB_CXXFLAGS@%$SHLIB_CXXFLAGS%g
 s%@SHLIB_F77FLAGS@%$SHLIB_F77FLAGS%g
 s%@CC_FLAGS_XWIN@%$CC_FLAGS_XWIN%g
 s%@CC_FLAGS_SCCONT@%$CC_FLAGS_SCCONT%g
