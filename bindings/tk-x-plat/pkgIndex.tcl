@@ -1,9 +1,9 @@
 
 if {$tcl_platform(platform) == "unix"} {
     if {[info exists tcl_platform(debug)]} {
-	set file [file join $dir libplplotd[info sharedlibextension].5.1.0]
+	set file [file join $dir .. drivers libtkwind[info sharedlibextension]]
     } else {
-	set file [file join $dir libplplot[info sharedlibextension].5.1.0]
+	set file [file join $dir .. drivers libtkwin[info sharedlibextension]]
     }
 } else {
     if {[info exists tcl_platform(debug)]} {
