@@ -1,13 +1,13 @@
 <chapter id="API">
   <title>The Common API for PLplot</title>
-  
+
   <para>
   The purpose of this chapter is to document the API for every C function in
   PLplot that should have a counterpart in other PLplot language bindings such as
   Fortran.  These common API routines have a special
-  <quote>c_</quote> prefix name assigned to them in <filename>plplot.h</filename>.  
+  <quote>c_</quote> prefix name assigned to them in <filename>plplot.h</filename>.
   This common API between the various languages constitutes the
-  most important part of the PLplot API that programmers need to know.  
+  most important part of the PLplot API that programmers need to know.
   Additional PLplot API specialized for each language binding is documented
   in <xref linkend="API-C"/> and subsequent chapters.
   </para>
@@ -19,7 +19,7 @@ have at a short description, and all parameters are documented.
   </para>
 
   <sect1 id="pl_setcontlabelformat" renderas="sect3">
-    <title><function>pl_setcontlabelformat</function>: Set 
+    <title><function>pl_setcontlabelformat</function>: Set
 format of numerical label for contours</title>
 
     <para>
@@ -86,7 +86,7 @@ contour labelling other than format of numerical label</title>
     </para>
 
     <para>
-    Set parameters of 
+    Set parameters of
     contour labelling other than those handled by &pl_setcontlabelformat;.
     </para>
 
@@ -193,7 +193,7 @@ contour labelling other than format of numerical label</title>
     <title>
       <function>plaxes</function>: Draw a box with axes, etc. with arbitrary
 origin
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -210,14 +210,14 @@ origin
         <paramdef><parameter>ytick</parameter></paramdef>
         <paramdef><parameter>nysub</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Draws a box around the currently defined viewport with arbitrary
       world-coordinate origin specified by
       <literal><parameter>x0</parameter></literal> and
-      <literal><parameter>y0</parameter></literal> 
+      <literal><parameter>y0</parameter></literal>
       and labels it with world coordinate values appropriate to the
       window.  Thus &plaxes; should only be called after defining both
       viewport and window.  The character strings
@@ -231,7 +231,7 @@ origin
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>x0</parameter> 
+	  <parameter>x0</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -242,7 +242,7 @@ origin
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>y0</parameter> 
+	  <parameter>y0</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -253,7 +253,7 @@ origin
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xopt</parameter> 
+	  <parameter>xopt</parameter>
 	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
@@ -344,7 +344,7 @@ origin
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xtick</parameter> 
+	  <parameter>xtick</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -357,7 +357,7 @@ origin
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>nxsub</parameter> 
+	  <parameter>nxsub</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -370,7 +370,7 @@ origin
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>yopt</parameter> 
+	  <parameter>yopt</parameter>
 	  (<literal>const char *</literal>, input)
 	</term>
 	<listitem>
@@ -394,7 +394,7 @@ origin
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ytick</parameter> 
+	  <parameter>ytick</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -407,7 +407,7 @@ origin
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>nysub</parameter> 
+	  <parameter>nysub</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -425,21 +425,21 @@ origin
   <sect1 id="plbin" renderas="sect3">
     <title>
       <function>plbin</function>: Plot a histogram from binned data
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
       <funcprototype>
         <funcdef>
            <function>plbin</function>
-        </funcdef> 
+        </funcdef>
         <paramdef><parameter>nbin</parameter></paramdef>
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
         <paramdef><parameter>center</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Plots a histogram consisting of
@@ -463,7 +463,7 @@ origin
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>nbin</parameter> 
+	  <parameter>nbin</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -498,10 +498,10 @@ origin
 	    array so as to allow histograms of probabilities, etc.
 	  </para>
 	</listitem>
-      </varlistentry> 
+      </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>center</parameter> 
+	  <parameter>center</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -1081,7 +1081,7 @@ origin
     </variablelist>
 
   </sect1>
-  
+
   <sect1 id="plcalc_world" renderas="sect3">
     <title>
       <function>plcalc_world</function>: Calculate world coordinates and
@@ -1107,7 +1107,7 @@ Calculate world coordinates,
 <literal><parameter>wx</parameter></literal> and
 <literal><parameter>wy</parameter></literal>, and corresponding
 <literal><parameter>window</parameter></literal> index
-from relative device coordinates, 
+from relative device coordinates,
 <literal><parameter>rx</parameter></literal> and
 <literal><parameter>ry</parameter></literal>.
     </para>
@@ -1181,7 +1181,7 @@ from relative device coordinates,
 	    index is incremented.  Thus, for a simple page layout with
 	    non-overlapping viewports and one window per viewport,
 	    <literal><parameter>window</parameter></literal> corresponds to
-	    the viewport index (in the order which the viewport/windows 
+	    the viewport index (in the order which the viewport/windows
 	    were created) of the only viewport/window corresponding to
 	    <literal><parameter>rx</parameter></literal> and
 	    <literal><parameter>ry</parameter></literal>.  However, for
@@ -1189,7 +1189,7 @@ from relative device coordinates,
 	    and possibly more than one window (set of world coordinates) per
 	    viewport, <literal><parameter>window</parameter></literal>
 	    and the corresponding output world coordinates
-	    corresponds to the last window created that fulfils the criterion 
+	    corresponds to the last window created that fulfils the criterion
 	    that the relative device coordinates are inside it.  Finally, in
 	    all cases where the input relative device coordinates are not
 	    inside any viewport/window, then
@@ -1200,7 +1200,7 @@ from relative device coordinates,
     </variablelist>
 
   </sect1>
-  
+
   <sect1 id="plclear" renderas="sect3">
     <title>
       <function>plclear</function>: Clear current (sub)page
@@ -1351,7 +1351,7 @@ from relative device coordinates,
 	      <member>white</member>
 	    </simplelist>
 	    Use &plscmap0; to change the entire map0 color palette and
-	    &plscol0; to change an individual color in the map0 color 
+	    &plscol0; to change an individual color in the map0 color
 	    palette.
 	  </para>
 	</listitem>
@@ -1363,7 +1363,7 @@ from relative device coordinates,
   <sect1 id="plcol1" renderas="sect3">
     <title>
       <function>plcol1</function>: Set color, map1
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -1373,8 +1373,8 @@ from relative device coordinates,
         </funcdef>
         <paramdef><parameter>col1</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para> Sets the color for color map1 (see <xref
       linkend="color-map-1"/>).  </para>
@@ -1382,14 +1382,14 @@ from relative device coordinates,
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>col1</parameter> 
+	  <parameter>col1</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
             This value must be in the range from 0. to 1. and is mapped to
-	    color using the continuous map1 color palette which by default 
-	    ranges from blue to the background color to red.  The map1 
+	    color using the continuous map1 color palette which by default
+	    ranges from blue to the background color to red.  The map1
 	    palette can also be straightforwardly changed by the user with
 	    &plscmap1; or &plscmap1l;.
 	  </para>
@@ -1515,21 +1515,21 @@ from relative device coordinates,
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>pltr</parameter> 
+	  <parameter>pltr</parameter>
 	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
-           </literal>, input) 
+           </literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    Pointer to function that defines transformation between indices
 	    in array <literal><parameter>z</parameter></literal> and the
 	    world coordinates (C only).  Transformation functions are
-	    provided in the PLplot library: 
+	    provided in the PLplot library:
 	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
-	    arbitrary mappings respectively defined by one- and 
+	    arbitrary mappings respectively defined by one- and
 	    two-dimensional arrays.  In addition, user-supplied routines
 	    for the transformation can be used as well.  Examples of
-	    all of these approaches are given in 
+	    all of these approaches are given in
 	    <xref linkend="contour-plots-c"/>.
 	    The transformation function should
 	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
@@ -1557,7 +1557,7 @@ from relative device coordinates,
     <title>
       <function>plcpstrm</function>: Copy state parameters from the
 reference stream to the current stream
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -1568,14 +1568,14 @@ reference stream to the current stream
         <paramdef><parameter>iplsr</parameter></paramdef>
         <paramdef><parameter>flags</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Copies state parameters from the reference stream to the current stream.
       Tell driver interface to map device coordinates unless
 <literal><parameter>flags</parameter> == 1</literal>.
-    </para> 
+    </para>
 
     <para>
       This function is used for making save files of selected plots (e.g.
@@ -1589,7 +1589,7 @@ reference stream to the current stream
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>iplsr</parameter> 
+	  <parameter>iplsr</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -1600,7 +1600,7 @@ reference stream to the current stream
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>flags</parameter> 
+	  <parameter>flags</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -1643,7 +1643,7 @@ reference stream to the current stream
     <title>
       <function>plend1</function>: End plotting session for 1 stream
     </title>
-    
+
     <para>
       <funcsynopsis>
       <funcprototype>
@@ -1779,7 +1779,7 @@ numeric tick labels, no axes.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>1</literal>: also draw coordinate axes at 
+		  <literal>1</literal>: also draw coordinate axes at
 		  <literal>x=0</literal> and <literal>y=0</literal>.
 		</para>
 	      </listitem>
@@ -1791,8 +1791,8 @@ positions in both coordinates.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>10</literal>: same as 0 except logarithmic 
-		  <literal>x</literal> tick marks. (The <literal>x</literal> 
+		  <literal>10</literal>: same as 0 except logarithmic
+		  <literal>x</literal> tick marks. (The <literal>x</literal>
 		  data have to be converted to logarithms separately.)
 		</para>
 	      </listitem>
@@ -1812,8 +1812,8 @@ positions in both coordinates.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>20</literal>: same as 0 except logarithmic 
-		  <literal>y</literal> tick marks. (The <literal>y</literal> 
+		  <literal>20</literal>: same as 0 except logarithmic
+		  <literal>y</literal> tick marks. (The <literal>y</literal>
 		  data have to be converted to logarithms separately.)
 		</para>
 	      </listitem>
@@ -1833,8 +1833,8 @@ positions in both coordinates.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>30</literal>: same as 0 except logarithmic 
-		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal> 
+		  <literal>30</literal>: same as 0 except logarithmic
+		  <literal>x</literal> and <literal>y</literal> tick marks. (The <literal>x</literal> and <literal>y</literal>
 		  data have to be converted to logarithms separately.)
 		</para>
 	      </listitem>
@@ -1903,10 +1903,10 @@ positions in both coordinates.
     </para>
 
     <para>
-      Draws a set of <literal><parameter>n</parameter></literal> 
+      Draws a set of <literal><parameter>n</parameter></literal>
       horizontal error bars, the
 <literal>i</literal>'th error
-bar extending from <literal><parameter>xmin</parameter>[i]</literal> 
+bar extending from <literal><parameter>xmin</parameter>[i]</literal>
 to <literal><parameter>xmax</parameter>[i]</literal> at y coordinate
 <literal><parameter>y</parameter>[i]</literal>.  The terminals of the error bar are of length equal to the
 minor tick length (settable using &plsmin;).
@@ -2048,7 +2048,7 @@ error bar.
     <title>
       <function>plfamadv</function>: Advance to the next family file on the
 next new page
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -2058,8 +2058,8 @@ next new page
         </funcdef>
         <paramdef></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Advance to the next family file on the next new page.
@@ -2221,7 +2221,7 @@ next new page
   <sect1 id="plflush" renderas="sect3">
     <title>
       <function>plflush</function>: Flushes the output stream
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -2231,8 +2231,8 @@ next new page
         </funcdef>
         <paramdef></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Flushes the output stream. Use sparingly, if at all.
@@ -2315,12 +2315,12 @@ next new page
       </funcprototype>
       </funcsynopsis>
     </para>
-    
+
     <para>
       Sets the character set to use for subsequent character drawing.  May
       be called before calling initializing PLplot.
     </para>
-    
+
     <variablelist>
       <varlistentry>
 	<term>
@@ -2353,7 +2353,7 @@ next new page
     <title>
       <function>plgchr</function>: Get character default height and current
 (scaled) height
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -2364,8 +2364,8 @@ next new page
         <paramdef><parameter>p_def</parameter></paramdef>
         <paramdef><parameter>p_ht</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Get character default height and current (scaled) height.
@@ -2374,7 +2374,7 @@ next new page
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>p_def</parameter> 
+	  <parameter>p_def</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2385,7 +2385,7 @@ next new page
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_ht</parameter> 
+	  <parameter>p_ht</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2402,7 +2402,7 @@ next new page
     <title>
       <function>plgcol0</function>: Returns 8-bit RGB values for given color
 from color map0
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -2415,11 +2415,11 @@ from color map0
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
-      Returns 8-bit RGB values for given color from color map0 (see 
+      Returns 8-bit RGB values for given color from color map0 (see
       <xref linkend="color-map-0"/>).  Values are
       negative if an invalid color id is given.
     </para>
@@ -2427,7 +2427,7 @@ from color map0
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>icol0</parameter> 
+	  <parameter>icol0</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -2438,7 +2438,7 @@ from color map0
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>r</parameter> 
+	  <parameter>r</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -2449,7 +2449,7 @@ from color map0
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>g</parameter> 
+	  <parameter>g</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -2460,7 +2460,7 @@ from color map0
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>b</parameter> 
+	  <parameter>b</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -2477,7 +2477,7 @@ from color map0
     <title>
       <function>plgcolbg</function>:  Returns the background color
 (cmap0[0]) by 8-bit RGB value
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -2489,8 +2489,8 @@ from color map0
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
        Returns the background color (cmap0[0]) by 8-bit RGB value.
@@ -2499,36 +2499,36 @@ from color map0
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>r</parameter> 
+	  <parameter>r</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-            Pointer to an unsigned 8-bit integer (0-255) representing 
+            Pointer to an unsigned 8-bit integer (0-255) representing
 	    the degree of red in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>g</parameter> 
+	  <parameter>g</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-            Pointer to an unsigned 8-bit integer (0-255) representing 
+            Pointer to an unsigned 8-bit integer (0-255) representing
 	    the degree of green in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>b</parameter> 
+	  <parameter>b</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-            Pointer to an unsigned 8-bit integer (0-255) representing 
+            Pointer to an unsigned 8-bit integer (0-255) representing
 	    the degree of blue in the color.
 	  </para>
 	</listitem>
@@ -2539,7 +2539,7 @@ from color map0
 
   <sect1 id="plgcompression" renderas="sect3">
     <title>
-      <function>plgcompression</function>: Get the current 
+      <function>plgcompression</function>: Get the current
       device-compression setting
     </title>
 
@@ -2567,7 +2567,7 @@ from color map0
 	</term>
 	<listitem>
 	  <para>
-           Pointer to a variable to be filled with the current 
+           Pointer to a variable to be filled with the current
 	   device-compression setting.
 	  </para>
 	</listitem>
@@ -2579,7 +2579,7 @@ from color map0
   <sect1 id="plgdev" renderas="sect3">
     <title>
       <function>plgdev</function>: Get the current device (keyword) name
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -2589,8 +2589,8 @@ from color map0
         </funcdef>
         <paramdef><parameter>p_dev</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Get the current device (keyword) name.  Note: you
@@ -2601,7 +2601,7 @@ space for this (80 characters is safe).
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>p_dev</parameter> 
+	  <parameter>p_dev</parameter>
 	  (<literal>char *</literal>, output)
 	</term>
 	<listitem>
@@ -2618,7 +2618,7 @@ space for this (80 characters is safe).
     <title>
       <function>plgdidev</function>: Get parameters that define current
       device-space window
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -2631,12 +2631,12 @@ space for this (80 characters is safe).
         <paramdef><parameter>p_jx</parameter></paramdef>
         <paramdef><parameter>p_jy</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Get relative margin width, aspect ratio, and relative justification
-      that define current device-space window. 
+      that define current device-space window.
       If &plsdidev; has not been called the default values pointed to by
       <literal><parameter>p_mar</parameter></literal>,
       <literal><parameter>p_aspect</parameter></literal>,
@@ -2648,7 +2648,7 @@ space for this (80 characters is safe).
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>p_mar</parameter> 
+	  <parameter>p_mar</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2659,7 +2659,7 @@ space for this (80 characters is safe).
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_aspect</parameter> 
+	  <parameter>p_aspect</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2670,7 +2670,7 @@ space for this (80 characters is safe).
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_jx</parameter> 
+	  <parameter>p_jx</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2681,7 +2681,7 @@ space for this (80 characters is safe).
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_jy</parameter> 
+	  <parameter>p_jy</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2697,7 +2697,7 @@ space for this (80 characters is safe).
   <sect1 id="plgdiori" renderas="sect3">
     <title>
       <function>plgdiori</function>: Get plot orientation
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -2707,16 +2707,16 @@ space for this (80 characters is safe).
         </funcdef>
         <paramdef><parameter>p_rot</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
-    <para> 
+    <para>
       Get plot orientation parameter which is multiplied by 90&deg; to
       obtain the angle of rotation.  Note, arbitrary rotation parameters
       such as 0.2 (corresponding to 18&deg;) are possible, but the usual
       values for the rotation parameter are 0., 1., 2., and 3. corresponding
       to 0&deg; (landscape mode), 90&deg; (portrait mode), 180&deg;
-      (seascape mode), and 270&deg; (upside-down mode). 
+      (seascape mode), and 270&deg; (upside-down mode).
       If &plsdiori; has not been called the default value pointed to by
       <literal><parameter>p_rot</parameter></literal>
       will be 0.
@@ -2725,7 +2725,7 @@ space for this (80 characters is safe).
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>p_rot</parameter> 
+	  <parameter>p_rot</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2742,7 +2742,7 @@ space for this (80 characters is safe).
     <title>
       <function>plgdiplt</function>: Get parameters that define current
       plot-space window
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -2755,25 +2755,25 @@ space for this (80 characters is safe).
         <paramdef><parameter>p_xmax</parameter></paramdef>
         <paramdef><parameter>p_ymax</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Get relative minima and maxima that define current
-      plot-space window.  
+      plot-space window.
       If &plsdiplt; has not been called the default values pointed to by
       <literal><parameter>p_xmin</parameter></literal>,
       <literal><parameter>p_ymin</parameter></literal>,
       <literal><parameter>p_xmax</parameter></literal>, and
       <literal><parameter>p_ymax</parameter></literal>
       will be 0., 0., 1., and 1.
-				    
+
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>p_xmin</parameter> 
+	  <parameter>p_xmin</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2784,7 +2784,7 @@ space for this (80 characters is safe).
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_ymin</parameter> 
+	  <parameter>p_ymin</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2795,7 +2795,7 @@ space for this (80 characters is safe).
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_xmax</parameter> 
+	  <parameter>p_xmax</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2806,7 +2806,7 @@ space for this (80 characters is safe).
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_ymax</parameter> 
+	  <parameter>p_ymax</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -2841,7 +2841,7 @@ space for this (80 characters is safe).
       Gets information about current family file, if familying is
       enabled.  See <xref linkend="familying"/> for more information.
     </para>
-    
+
     <variablelist>
       <varlistentry>
 	<term>
@@ -2899,7 +2899,7 @@ space for this (80 characters is safe).
     </para>
 
     <para>
-      Gets the current output file name, if applicable. 
+      Gets the current output file name, if applicable.
     </para>
 
     <variablelist>
@@ -2921,7 +2921,7 @@ space for this (80 characters is safe).
   <sect1 id="plglevel" renderas="sect3">
     <title>
       <function>plglevel</function>: Get the (current) run level
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -2931,8 +2931,8 @@ space for this (80 characters is safe).
         </funcdef>
         <paramdef><parameter>p_level</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Get the (current) run level. Valid settings are:
@@ -2951,20 +2951,20 @@ space for this (80 characters is safe).
     <para>
     2,  viewport defined
     </para>
-    </listitem> 
+    </listitem>
     <listitem>
     <para>
     3,  world coords defined
     </para>
-    </listitem> 
+    </listitem>
     </itemizedlist>
-	     
+
 </para>
 
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>p_level</parameter> 
+	  <parameter>p_level</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -2999,7 +2999,7 @@ space for this (80 characters is safe).
     </para>
 
     <para>
-      Gets the current page configuration. 
+      Gets the current page configuration.
     </para>
 
     <variablelist>
@@ -3098,13 +3098,13 @@ space for this (80 characters is safe).
       devices which only support a single window or use a different method
       for shifting focus.  See also &pltext;.
     </para>
-    
+
   </sect1>
-  
+
   <sect1 id="plgriddata" renderas="sect3">
     <title>
       <function>plgriddata</function>: Grid data from irregularly sampled
-      data  
+      data
     </title>
 
     <para>
@@ -3186,7 +3186,7 @@ space for this (80 characters is safe).
 	<listitem>
 	  <para>
 	    The number of data samples in the <literal>x</literal>,
-            <literal>y</literal> and <literal>z</literal> arrays. 
+            <literal>y</literal> and <literal>z</literal> arrays.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3250,7 +3250,7 @@ space for this (80 characters is safe).
             the <literal>zg</literal> array must exists or be allocated by
             the user prior to the calling, and must have dimension
             <literal>zg[nptsx][xptsy]</literal>.
-          </para> 
+          </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
@@ -3266,7 +3266,7 @@ space for this (80 characters is safe).
             <listitem>
               <para>
                 <literal>GRID_CSA</literal>: Bivariate Cubic Spline
-                approximation 
+                approximation
               </para>
             </listitem>
             <listitem>
@@ -3283,25 +3283,25 @@ space for this (80 characters is safe).
             <listitem>
               <para>
                 <literal>GRID_NNIDW</literal>: Nearest Neighbors Inverse
-                Distance Weighted 
+                Distance Weighted
               </para>
             </listitem>
             <listitem>
               <para>
                 <literal>GRID_NNLI</literal>: Nearest Neighbors Linear
-                Interpolation 
+                Interpolation
               </para>
             </listitem>
             <listitem>
               <para>
                 <literal>GRID_NNAIDW</literal>:  Nearest Neighbors Around
-                Inverse Distance Weighted 
+                Inverse Distance Weighted
               </para>
             </listitem>
           </itemizedlist>
           <para>
             For details on the algorithm read the source file
-            <filename>plgridd.c</filename>. 
+            <filename>plgridd.c</filename>.
           </para>
 	</listitem>
       </varlistentry>
@@ -3343,7 +3343,7 @@ space for this (80 characters is safe).
     <title>
       <function>plgspa</function>: Get current subpage parameters
     </title>
-    
+
     <para>
       <funcsynopsis>
       <funcprototype>
@@ -3457,7 +3457,7 @@ space for this (80 characters is safe).
   <sect1 id="plgver" renderas="sect3">
     <title>
       <function>plgver</function>: Get the current library version number
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -3467,8 +3467,8 @@ space for this (80 characters is safe).
         </funcdef>
         <paramdef><parameter>p_ver</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Get the current library version number.  Note: you <emphasis>must</emphasis>
@@ -3478,7 +3478,7 @@ space for this (80 characters is safe).
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>p_ver</parameter> 
+	  <parameter>p_ver</parameter>
 	  (<literal>char *</literal>, output)
 	</term>
 	<listitem>
@@ -3495,7 +3495,7 @@ space for this (80 characters is safe).
     <title>
       <function>plgvpd</function>: Get viewport limits in normalized
 device coordinates
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -3508,8 +3508,8 @@ device coordinates
         <paramdef><parameter>p_ymin</parameter></paramdef>
         <paramdef><parameter>p_ymax</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Get viewport limits in normalized device coordinates.
@@ -3518,7 +3518,7 @@ device coordinates
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>p_xmin</parameter> 
+	  <parameter>p_xmin</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -3529,7 +3529,7 @@ device coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_xmax</parameter> 
+	  <parameter>p_xmax</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -3540,7 +3540,7 @@ device coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_ymin</parameter> 
+	  <parameter>p_ymin</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -3551,7 +3551,7 @@ device coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_ymax</parameter> 
+	  <parameter>p_ymax</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -3567,7 +3567,7 @@ device coordinates
   <sect1 id="plgvpw" renderas="sect3">
     <title>
       <function>plgvpw</function>: Get viewport limits in world coordinates
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -3580,8 +3580,8 @@ device coordinates
         <paramdef><parameter>p_ymin</parameter></paramdef>
         <paramdef><parameter>p_ymax</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Get viewport limits in world coordinates.
@@ -3590,7 +3590,7 @@ device coordinates
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>p_xmin</parameter> 
+	  <parameter>p_xmin</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -3601,7 +3601,7 @@ device coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_xmax</parameter> 
+	  <parameter>p_xmax</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -3612,7 +3612,7 @@ device coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_ymin</parameter> 
+	  <parameter>p_ymin</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -3623,7 +3623,7 @@ device coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p_ymax</parameter> 
+	  <parameter>p_ymax</parameter>
 	  (<literal>PLFLT *</literal>, output)
 	</term>
 	<listitem>
@@ -3914,7 +3914,7 @@ device coordinates
   <sect1 id="plhls" renderas="sect3">
     <title>
       <function>plhls</function>: Set current color by HLS
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -3926,8 +3926,8 @@ device coordinates
         <paramdef><parameter>l</parameter></paramdef>
         <paramdef><parameter>s</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set current color by hue, lightness, and saturation.
@@ -3938,7 +3938,7 @@ device coordinates
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>h</parameter> 
+	  <parameter>h</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -3949,7 +3949,7 @@ device coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>l</parameter> 
+	  <parameter>l</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -3960,7 +3960,7 @@ device coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>s</parameter> 
+	  <parameter>s</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -4146,7 +4146,7 @@ device coordinates
     <title>
       <function>pllightsource</function>: Sets the 3D position of the light
 source
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -4158,8 +4158,8 @@ source
         <paramdef><parameter>y</parameter></paramdef>
         <paramdef><parameter>z</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
     Sets the 3D position of the light source for use with &plotsh3d;.
@@ -4168,7 +4168,7 @@ source
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>x</parameter> 
+	  <parameter>x</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -4179,7 +4179,7 @@ source
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>y</parameter> 
+	  <parameter>y</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -4190,7 +4190,7 @@ source
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>z</parameter> 
+	  <parameter>z</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -4222,8 +4222,8 @@ source
     </para>
 
     <para>
-      Draws line defined by <literal><parameter>n</parameter></literal> 
-      points in 
+      Draws line defined by <literal><parameter>n</parameter></literal>
+      points in
       <literal><parameter>x</parameter></literal> and
       <literal><parameter>y</parameter></literal>.
     </para>
@@ -4269,7 +4269,7 @@ source
   <sect1 id="plline3" renderas="sect3">
     <title>
       <function>plline3</function>: Draw a line in 3 space
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -4282,12 +4282,12 @@ source
         <paramdef><parameter>y</parameter></paramdef>
         <paramdef><parameter>z</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
-      Draws line in 3 space defined by <literal><parameter>n</parameter></literal> 
-      points in 
+      Draws line in 3 space defined by <literal><parameter>n</parameter></literal>
+      points in
       <literal><parameter>x</parameter></literal>,
       <literal><parameter>y</parameter></literal>, and
       <literal><parameter>z</parameter></literal>.
@@ -4299,7 +4299,7 @@ source
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>n</parameter> 
+	  <parameter>n</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -4310,7 +4310,7 @@ source
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>x</parameter> 
+	  <parameter>x</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -4321,7 +4321,7 @@ source
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>y</parameter> 
+	  <parameter>y</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -4332,7 +4332,7 @@ source
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>z</parameter> 
+	  <parameter>z</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -4384,7 +4384,7 @@ source
 
   <sect1 id="plmesh" renderas="sect3">
     <title>
-      <function>plmesh</function>: Plot surface mesh 
+      <function>plmesh</function>: Plot surface mesh
     </title>
 
     <para>
@@ -4518,14 +4518,14 @@ source
 	</listitem>
       </varlistentry>
     </variablelist>
-    
+
   </sect1>
 
   <sect1 id="plmkstrm" renderas="sect3">
     <title>
       <function>plmkstrm</function>: Creates a new stream and makes it the
 default
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -4535,8 +4535,8 @@ default
         </funcdef>
         <paramdef><parameter>p_strm</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Creates a new stream and makes it the default.  Differs from using
@@ -4551,7 +4551,7 @@ default
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>p_strm</parameter> 
+	  <parameter>p_strm</parameter>
 	  (<literal>PLINT *</literal>, output)
 	</term>
 	<listitem>
@@ -4610,7 +4610,14 @@ default
 	    <itemizedlist>
 	      <listitem>
 		<para>
-		  <literal>b</literal>: Bottom of viewport.
+		  <literal>b</literal>: Bottom of viewport, text written
+		  parallel to edge.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>bv</literal>: Bottom of viewport, text written at
+		  right angles to edge.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -4639,7 +4646,14 @@ default
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>t</literal>: Top of viewport.
+		  <literal>t</literal>: Top of viewport, text written
+		  parallel to edge.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>tv</literal>: Top of viewport, text written at
+		  right angles to edge.
 		</para>
 	      </listitem>
 	    </itemizedlist>
@@ -4888,7 +4902,7 @@ default
       <parameter>y</parameter>[j])</literal>.  Note that the points in
       arrays <literal><parameter>x</parameter></literal> and
       <literal><parameter>y</parameter></literal> do not need to be equally
-      spaced, but must be stored in ascending order.  
+      spaced, but must be stored in ascending order.
       For further details see <xref linkend="tri-d-plots"/>.
     </para>
 
@@ -5083,15 +5097,15 @@ default
     </para>
 
     <para>
-      Marks a set of <literal><parameter>n</parameter></literal> 
-      points in 
+      Marks a set of <literal><parameter>n</parameter></literal>
+      points in
       <literal><parameter>x</parameter></literal> and
       <literal><parameter>y</parameter></literal> using
       the symbol defined by
       <literal><parameter>code</parameter></literal>.
       If
       <literal><parameter>code</parameter></literal> is between 32 and 127,
-      the symbol is simply the corresponding printable ASCII character 
+      the symbol is simply the corresponding printable ASCII character
       in the default font.
     </para>
 
@@ -5148,7 +5162,7 @@ default
     <title>
       <function>plpoin3</function>:  Plots a character at the specified
       points in 3 space
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -5162,12 +5176,12 @@ default
         <paramdef><parameter>z</parameter></paramdef>
         <paramdef><parameter>code</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
-      Marks a set of <literal><parameter>n</parameter></literal> 
-      points in 
+      Marks a set of <literal><parameter>n</parameter></literal>
+      points in
       <literal><parameter>x</parameter></literal>,
       <literal><parameter>y</parameter></literal>, and
       <literal><parameter>z</parameter></literal> using
@@ -5175,7 +5189,7 @@ default
       <literal><parameter>code</parameter></literal>.
       If
       <literal><parameter>code</parameter></literal> is between 32 and 127,
-      the symbol is simply the corresponding printable ASCII character 
+      the symbol is simply the corresponding printable ASCII character
       in the default font.
        Setup similar to &plline3;.
     </para>
@@ -5183,7 +5197,7 @@ default
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>n</parameter> 
+	  <parameter>n</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -5194,7 +5208,7 @@ default
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>x</parameter> 
+	  <parameter>x</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -5205,7 +5219,7 @@ default
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>y</parameter> 
+	  <parameter>y</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -5216,7 +5230,7 @@ default
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>z</parameter> 
+	  <parameter>z</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -5227,7 +5241,7 @@ default
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>code</parameter> 
+	  <parameter>code</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -5243,7 +5257,7 @@ default
   <sect1 id="plpoly3" renderas="sect3">
     <title>
       <function>plpoly3</function>: Draw a polygon in 3 space
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -5258,12 +5272,12 @@ default
         <paramdef><parameter>draw</parameter></paramdef>
         <paramdef><parameter>ifcc</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
-      Draws a polygon in 3 space defined by <literal><parameter>n</parameter></literal> 
-      points in 
+      Draws a polygon in 3 space defined by <literal><parameter>n</parameter></literal>
+      points in
       <literal><parameter>x</parameter></literal>,
       <literal><parameter>y</parameter></literal>, and
       <literal><parameter>z</parameter></literal>.
@@ -5289,14 +5303,14 @@ default
       <emphasis>Bugs</emphasis>:  If one of the first two segments is of
       zero length, or if they are colinear, the calculation of visibility
       has a 50/50 chance of being correct.  Avoid such situations :-).  See
-      <filename>x18c.c</filename> for an example of this problem.  
+      <filename>x18c.c</filename> for an example of this problem.
       (Search for <quote>20.1</quote>).
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>n</parameter> 
+	  <parameter>n</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -5307,7 +5321,7 @@ default
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>x</parameter> 
+	  <parameter>x</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -5318,7 +5332,7 @@ default
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>y</parameter> 
+	  <parameter>y</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -5329,7 +5343,7 @@ default
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>z</parameter> 
+	  <parameter>z</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -5340,7 +5354,7 @@ default
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>draw</parameter> 
+	  <parameter>draw</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
@@ -5348,14 +5362,14 @@ default
             Pointer to array which controls drawing the segments of the
 	    polygon.  If <literal><parameter>draw[i]</parameter></literal> is true,
 	    then the polygon segment from index
-	    <literal><parameter>[i]</parameter></literal> to 
+	    <literal><parameter>[i]</parameter></literal> to
 	    <literal><parameter>[i+1]</parameter></literal> is drawn, otherwise, not.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ifcc</parameter> 
+	  <parameter>ifcc</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -5588,7 +5602,7 @@ default
     <title>
       <function>plreplot</function>: Replays contents of plot buffer to
 current device/file
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -5598,8 +5612,8 @@ current device/file
         </funcdef>
 	<paramdef></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Replays contents of plot buffer to current device/file.
@@ -5610,7 +5624,7 @@ current device/file
   <sect1 id="plrgb" renderas="sect3">
     <title>
       <function>plrgb</function>: Set line color by red, green
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -5622,8 +5636,8 @@ current device/file
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set line color by red, green, blue from  0. to 1.  Do
@@ -5634,7 +5648,7 @@ Only retained for backward compatibility
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>r</parameter> 
+	  <parameter>r</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -5645,7 +5659,7 @@ Only retained for backward compatibility
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>g</parameter> 
+	  <parameter>g</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -5656,7 +5670,7 @@ Only retained for backward compatibility
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>b</parameter> 
+	  <parameter>b</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -5672,7 +5686,7 @@ Only retained for backward compatibility
   <sect1 id="plrgb1" renderas="sect3">
     <title>
       <function>plrgb1</function>: Set line color by 8-bit RGB values
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -5684,8 +5698,8 @@ Only retained for backward compatibility
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set line color by 8-bit RGB values.  Do <emphasis>not</emphasis> use this.  Only retained
@@ -5695,7 +5709,7 @@ for backward compatibility.
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>r</parameter> 
+	  <parameter>r</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -5706,7 +5720,7 @@ for backward compatibility.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>g</parameter> 
+	  <parameter>g</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -5717,7 +5731,7 @@ for backward compatibility.
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>b</parameter> 
+	  <parameter>b</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -5786,7 +5800,7 @@ for backward compatibility.
     <title>
       <function>plscmap0</function>: Set color map0 colors by 8-bit RGB
 values
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -5799,8 +5813,8 @@ values
         <paramdef><parameter>b</parameter></paramdef>
         <paramdef><parameter>ncol0</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set color map0 colors using 8-bit RGB values (see <xref linkend="color-map-0"/>).  This sets the entire color
@@ -5810,43 +5824,43 @@ values
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>r</parameter> 
+	  <parameter>r</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Pointer to array with set of unsigned 8-bit integers (0-255) 
+            Pointer to array with set of unsigned 8-bit integers (0-255)
 	    representing the degree of red in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>g</parameter> 
+	  <parameter>g</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Pointer to array with set of unsigned 8-bit integers (0-255) 
+            Pointer to array with set of unsigned 8-bit integers (0-255)
 	    representing the degree of green in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>b</parameter> 
+	  <parameter>b</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Pointer to array with set of unsigned 8-bit integers (0-255) 
+            Pointer to array with set of unsigned 8-bit integers (0-255)
 	    representing the degree of blue in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ncol0</parameter> 
+	  <parameter>ncol0</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -5865,7 +5879,7 @@ values
   <sect1 id="plscmap0n" renderas="sect3">
     <title>
       <function>plscmap0n</function>: Set number of colors in color map0
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -5875,12 +5889,12 @@ values
         </funcdef>
         <paramdef><parameter>ncol0</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para> Set number of colors in color map0 (see <xref linkend="color-map-0"/>). Allocate (or reallocate) color map0,
       and fill with default values for those colors not previously allocated.
-      The first 16 default colors are given in the &plcol0; documentation. 
+      The first 16 default colors are given in the &plcol0; documentation.
       For larger indices the default color is red. </para>
 
     <para>
@@ -5890,14 +5904,14 @@ values
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>ncol0</parameter> 
+	  <parameter>ncol0</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
             Number of colors that will be allocated in the map0 palette.
-	    If this number is zero or less, then the value from the 
-	    previous call to &plscmap0n; is used and if there is no 
+	    If this number is zero or less, then the value from the
+	    previous call to &plscmap0n; is used and if there is no
 	    previous call, then a default value is used.
 	  </para>
 	</listitem>
@@ -5910,7 +5924,7 @@ values
     <title>
       <function>plscmap1</function>: Set color map1 colors using 8-bit RGB
 values
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -5923,8 +5937,8 @@ values
         <paramdef><parameter>b</parameter></paramdef>
         <paramdef><parameter>ncol1</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para> Set color map1 colors using 8-bit RGB values (see <xref
       linkend="color-map-1"/>).  This also sets the number of colors.
@@ -5933,43 +5947,43 @@ values
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>r</parameter> 
+	  <parameter>r</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Pointer to array with set of unsigned 8-bit integers (0-255) 
+            Pointer to array with set of unsigned 8-bit integers (0-255)
 	    representing the degree of red in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>g</parameter> 
+	  <parameter>g</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Pointer to array with set of unsigned 8-bit integers (0-255) 
+            Pointer to array with set of unsigned 8-bit integers (0-255)
 	    representing the degree of green in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>b</parameter> 
+	  <parameter>b</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Pointer to array with set of unsigned 8-bit integers (0-255) 
+            Pointer to array with set of unsigned 8-bit integers (0-255)
 	    representing the degree of blue in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ncol1</parameter> 
+	  <parameter>ncol1</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -5989,7 +6003,7 @@ values
     <title>
       <function>plscmap1l</function>: Set color map1 colors using a
 piece-wise linear relationship
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6005,8 +6019,8 @@ piece-wise linear relationship
         <paramdef><parameter>coord3</parameter></paramdef>
         <paramdef><parameter>rev</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para> Set color map1 colors using a piece-wise linear relationship
       between position in the color map (from 0 to 1) and position in HLS or
@@ -6034,7 +6048,7 @@ piece-wise linear relationship
     <para>
       Each control point must specify the position in color map1 as well as
       three coordinates in HLS or RGB space.  The first point
-      <emphasis>must</emphasis> correspond to position = 0, and the last to 
+      <emphasis>must</emphasis> correspond to position = 0, and the last to
       position = 1.
     </para>
 
@@ -6063,7 +6077,7 @@ piece-wise linear relationship
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>itype</parameter> 
+	  <parameter>itype</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -6074,7 +6088,7 @@ piece-wise linear relationship
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>npts</parameter> 
+	  <parameter>npts</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -6085,7 +6099,7 @@ piece-wise linear relationship
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>pos</parameter> 
+	  <parameter>pos</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -6096,7 +6110,7 @@ piece-wise linear relationship
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>coord1</parameter> 
+	  <parameter>coord1</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -6107,7 +6121,7 @@ piece-wise linear relationship
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>coord2</parameter> 
+	  <parameter>coord2</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -6118,7 +6132,7 @@ piece-wise linear relationship
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>coord3</parameter> 
+	  <parameter>coord3</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -6129,7 +6143,7 @@ piece-wise linear relationship
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>rev</parameter> 
+	  <parameter>rev</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
@@ -6147,7 +6161,7 @@ piece-wise linear relationship
   <sect1 id="plscmap1n" renderas="sect3">
     <title>
       <function>plscmap1n</function>: Set number of colors in color map1
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6157,8 +6171,8 @@ piece-wise linear relationship
         </funcdef>
         <paramdef><parameter>ncol1</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para> Set number of colors in color map1, (re-)allocate color map1, and
     set default values if this is the first allocation (see <xref
@@ -6167,14 +6181,14 @@ piece-wise linear relationship
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>ncol1</parameter> 
+	  <parameter>ncol1</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
             Number of colors that will be allocated in the map1 palette.
-	    If this number is zero or less, then the value from the 
-	    previous call to &plscmap1n; is used and if there is no 
+	    If this number is zero or less, then the value from the
+	    previous call to &plscmap1n; is used and if there is no
 	    previous call, then a default value is used.
 	  </para>
 	</listitem>
@@ -6187,7 +6201,7 @@ piece-wise linear relationship
     <title>
       <function>plscol0</function>:  Set a given color from color map0 by 8
 bit RGB value
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6200,8 +6214,8 @@ bit RGB value
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para> Set a given color by 8-bit RGB value for color map0 (see <xref linkend="color-map-0"/>).  Overwrites
     the previous (default?) color value for the given index and, thus, does
@@ -6210,7 +6224,7 @@ bit RGB value
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>icol0</parameter> 
+	  <parameter>icol0</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -6222,36 +6236,36 @@ bit RGB value
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>r</parameter> 
+	  <parameter>r</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Unsigned 8-bit integer (0-255) representing 
+            Unsigned 8-bit integer (0-255) representing
 	    the degree of red in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>g</parameter> 
+	  <parameter>g</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Unsigned 8-bit integer (0-255) representing 
+            Unsigned 8-bit integer (0-255) representing
 	    the degree of green in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>b</parameter> 
+	  <parameter>b</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Unsigned 8-bit integer (0-255) representing 
+            Unsigned 8-bit integer (0-255) representing
 	    the degree of blue in the color.
 	  </para>
 	</listitem>
@@ -6264,7 +6278,7 @@ bit RGB value
     <title>
       <function>plscolbg</function>: Set the background color (cmap0[0]) by
 8-bit RGB value
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6276,8 +6290,8 @@ bit RGB value
         <paramdef><parameter>g</parameter></paramdef>
         <paramdef><parameter>b</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set the background color (cmap0[0]) by 8-bit RGB value (see <xref
@@ -6287,36 +6301,36 @@ linkend="color-map-0"/>).
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>r</parameter> 
+	  <parameter>r</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Unsigned 8-bit integer (0-255) representing 
+            Unsigned 8-bit integer (0-255) representing
 	    the degree of red in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>g</parameter> 
+	  <parameter>g</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Unsigned 8-bit integer (0-255) representing 
+            Unsigned 8-bit integer (0-255) representing
 	    the degree of green in the color.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>b</parameter> 
+	  <parameter>b</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-            Unsigned 8-bit integer (0-255) representing 
+            Unsigned 8-bit integer (0-255) representing
 	    the degree of blue in the color.
 	  </para>
 	</listitem>
@@ -6328,7 +6342,7 @@ linkend="color-map-0"/>).
   <sect1 id="plscolor" renderas="sect3">
     <title>
       <function>plscolor</function>: Used to globally turn color output on/off
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6338,8 +6352,8 @@ linkend="color-map-0"/>).
         </funcdef>
         <paramdef><parameter>color</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Used to globally turn color output on/off for those drivers/devices
@@ -6349,7 +6363,7 @@ linkend="color-map-0"/>).
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>color</parameter> 
+	  <parameter>color</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -6393,7 +6407,7 @@ linkend="color-map-0"/>).
 	</term>
 	<listitem>
 	  <para>
-	    The desired compression level. This is a device-dependent 
+	    The desired compression level. This is a device-dependent
 	    value.
 	  </para>
 	</listitem>
@@ -6405,7 +6419,7 @@ linkend="color-map-0"/>).
   <sect1 id="plsdev" renderas="sect3">
     <title>
       <function>plsdev</function>: Set the device (keyword) name
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6415,8 +6429,8 @@ linkend="color-map-0"/>).
         </funcdef>
         <paramdef><parameter>devname</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set the device (keyword) name.
@@ -6425,7 +6439,7 @@ linkend="color-map-0"/>).
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>devname</parameter> 
+	  <parameter>devname</parameter>
 	  (<literal>const char *</literal>, output)
 	</term>
 	<listitem>
@@ -6442,7 +6456,7 @@ linkend="color-map-0"/>).
     <title>
       <function>plsdidev</function>: Set parameters that define current
       device-space window
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6455,8 +6469,8 @@ linkend="color-map-0"/>).
         <paramdef><parameter>jx</parameter></paramdef>
         <paramdef><parameter>jy</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set relative margin width, aspect ratio, and relative
@@ -6475,7 +6489,7 @@ linkend="color-map-0"/>).
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>mar</parameter> 
+	  <parameter>mar</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6486,7 +6500,7 @@ linkend="color-map-0"/>).
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>aspect</parameter> 
+	  <parameter>aspect</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6497,7 +6511,7 @@ linkend="color-map-0"/>).
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>jx</parameter> 
+	  <parameter>jx</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6508,7 +6522,7 @@ linkend="color-map-0"/>).
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>jy</parameter> 
+	  <parameter>jy</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6525,7 +6539,7 @@ linkend="color-map-0"/>).
     <title>
       <function>plsdimap</function>: Set up transformation from metafile
 coordinates
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6540,8 +6554,8 @@ coordinates
         <paramdef><parameter>dimxpmm</parameter></paramdef>
         <paramdef><parameter>dimypmm</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set up transformation from metafile coordinates.  The size of the plot
@@ -6553,7 +6567,7 @@ coordinates
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>dimxmin</parameter> 
+	  <parameter>dimxmin</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -6564,7 +6578,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>dimxmax</parameter> 
+	  <parameter>dimxmax</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -6575,7 +6589,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>dimymin</parameter> 
+	  <parameter>dimymin</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -6586,7 +6600,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>dimymax</parameter> 
+	  <parameter>dimymax</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -6597,7 +6611,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>dimxpmm</parameter> 
+	  <parameter>dimxpmm</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6608,7 +6622,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>dimypmm</parameter> 
+	  <parameter>dimypmm</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6624,7 +6638,7 @@ coordinates
   <sect1 id="plsdiori" renderas="sect3">
     <title>
       <function>plsdiori</function>: Set plot orientation
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6634,8 +6648,8 @@ coordinates
         </funcdef>
         <paramdef><parameter>rot</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set plot orientation parameter which is multiplied by 90&deg; to
@@ -6652,7 +6666,7 @@ coordinates
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>rot</parameter> 
+	  <parameter>rot</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6669,7 +6683,7 @@ coordinates
     <title>
       <function>plsdiplt</function>: Set parameters that define current
       plot-space window
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6682,8 +6696,8 @@ coordinates
         <paramdef><parameter>xmax</parameter></paramdef>
         <paramdef><parameter>ymax</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set relative minima and maxima that define current
@@ -6698,7 +6712,7 @@ coordinates
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>xmin</parameter> 
+	  <parameter>xmin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6709,7 +6723,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymin</parameter> 
+	  <parameter>ymin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6720,7 +6734,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xmax</parameter> 
+	  <parameter>xmax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6731,7 +6745,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymax</parameter> 
+	  <parameter>ymax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6748,7 +6762,7 @@ coordinates
     <title>
       <function>plsdiplz</function>: Set parameters incrementally (zoom mode)
       that define current plot-space window
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6761,25 +6775,25 @@ coordinates
         <paramdef><parameter>xmax</parameter></paramdef>
         <paramdef><parameter>ymax</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set relative minima and maxima incrementally (zoom mode)
       that define the current plot-space window.  This function has
       the same effect as &plsdiplt; if that function has not been previously
       called.  Otherwise, this function implements zoom mode using the
-      transformation <literal>min_used = old_min + old_length*min </literal> 
+      transformation <literal>min_used = old_min + old_length*min </literal>
       and <literal>max_used = old_min + old_length*max </literal> for
-      each axis.  For example, if <literal>min = 0.05</literal> and 
-      <literal>max = 0.95</literal> for each axis, repeated calls to 
+      each axis.  For example, if <literal>min = 0.05</literal> and
+      <literal>max = 0.95</literal> for each axis, repeated calls to
       &plsdiplz; will zoom in by 10 per cent for each call.
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>xmin</parameter> 
+	  <parameter>xmin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6790,7 +6804,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymin</parameter> 
+	  <parameter>ymin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6801,7 +6815,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xmax</parameter> 
+	  <parameter>xmax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6812,7 +6826,7 @@ coordinates
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymax</parameter> 
+	  <parameter>ymax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -6828,7 +6842,7 @@ coordinates
   <sect1 id="plsesc" renderas="sect3">
     <title>
       <function>plsesc</function>: Set the escape character for text strings
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -6838,8 +6852,8 @@ coordinates
         </funcdef>
         <paramdef><parameter>esc</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
     Set the escape character for text strings.  From C (in contrast to
@@ -6901,7 +6915,7 @@ characters and their corresponding decimal ASCII values:
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>esc</parameter> 
+	  <parameter>esc</parameter>
 	  (<literal>char</literal>, input)
 	</term>
 	<listitem>
@@ -7020,7 +7034,7 @@ characters and their corresponding decimal ASCII values:
   <sect1 id="plshades" renderas="sect3">
     <title>
       <function>plshades</function>: Shade regions on the basis of value
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -7046,8 +7060,8 @@ characters and their corresponding decimal ASCII values:
         <paramdef><parameter>pltr</parameter></paramdef>
         <paramdef><parameter>pltr_data</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Shade regions on the basis of value.  This is the high-level routine
@@ -7063,7 +7077,7 @@ characters and their corresponding decimal ASCII values:
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>a</parameter> 
+	  <parameter>a</parameter>
 	  (<literal>PLFLT **</literal>, input)
 	</term>
 	<listitem>
@@ -7075,7 +7089,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>nx</parameter> 
+	  <parameter>nx</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7086,7 +7100,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ny</parameter> 
+	  <parameter>ny</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7097,7 +7111,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>defined</parameter> 
+	  <parameter>defined</parameter>
 	  (<literal>PLINT (*) (PLFLT, PLFLT)</literal>, input)
 	</term>
 	<listitem>
@@ -7106,13 +7120,13 @@ characters and their corresponding decimal ASCII values:
             plot.  This function accepts x and y coordinates as input
             arguments and must return 0 if the point is in the excluded
             region or 1 otherwise. This argument can be NULL if all the
-            values are valid. 
+            values are valid.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xmin</parameter> 
+	  <parameter>xmin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7124,7 +7138,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xmax</parameter> 
+	  <parameter>xmax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7136,7 +7150,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymin</parameter> 
+	  <parameter>ymin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7148,7 +7162,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymax</parameter> 
+	  <parameter>ymax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7160,7 +7174,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>clevel</parameter> 
+	  <parameter>clevel</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -7173,7 +7187,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>nlevel</parameter> 
+	  <parameter>nlevel</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7185,7 +7199,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>fill_width</parameter> 
+	  <parameter>fill_width</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7196,7 +7210,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>cont_color</parameter> 
+	  <parameter>cont_color</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7209,7 +7223,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>cont_width</parameter> 
+	  <parameter>cont_width</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7223,7 +7237,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>fill</parameter> 
+	  <parameter>fill</parameter>
 	  (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
 	</term>
 	<listitem>
@@ -7235,7 +7249,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>rectangular</parameter> 
+	  <parameter>rectangular</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7246,30 +7260,30 @@ characters and their corresponding decimal ASCII values:
 	  set <literal><parameter>rectangular</parameter></literal> to 0.
 	  If <literal><parameter>rectangular</parameter></literal>
 	  is set to 1, plshade tries to save time by
-	  filling large rectangles.  This optimization fails if 
+	  filling large rectangles.  This optimization fails if
 	  the coordinate transformation distorts the shape of rectangles.
-	  For example a plot in polor coordinates has to have rectangular 
+	  For example a plot in polor coordinates has to have rectangular
 	  set to 0.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>pltr</parameter> 
+	  <parameter>pltr</parameter>
 	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
-           </literal>, input) 
+           </literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    Pointer to function that defines transformation between indices
 	    in array <literal><parameter>z</parameter></literal> and the
 	    world coordinates (C only).  Transformation functions are
-	    provided in the PLplot library: 
+	    provided in the PLplot library:
 	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
-	    arbitrary mappings respectively defined by one- and 
+	    arbitrary mappings respectively defined by one- and
 	    two-dimensional arrays.  In addition, user-supplied routines
 	    for the transformation can be used as well.  Examples of
-	    all of these approaches are given in 
+	    all of these approaches are given in
 	    <xref linkend="contour-plots-c"/>.
 	    The transformation function should
 	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
@@ -7296,7 +7310,7 @@ characters and their corresponding decimal ASCII values:
   <sect1 id="plshade" renderas="sect3">
     <title>
       <function>plshade</function>:  Shade individual region on the basis of value
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -7326,13 +7340,13 @@ characters and their corresponding decimal ASCII values:
         <paramdef><parameter>pltr</parameter></paramdef>
         <paramdef><parameter>pltr_data</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
-    <para> 
+    <para>
       Shade individual region on the basis of value.  Use &plshades; if you want to
       shade a number of regions using continuous colors.
-      &plshade; is identical to &plshade1; 
+      &plshade; is identical to &plshade1;
       except for the type of the first parameter.
       See &plshade1; for further discussion.
     </para>
@@ -7340,7 +7354,7 @@ characters and their corresponding decimal ASCII values:
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>a</parameter> 
+	  <parameter>a</parameter>
 	  (<literal>PLFLT **</literal>, input)
 	</term>
 	<listitem>
@@ -7350,7 +7364,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>nx</parameter> 
+	  <parameter>nx</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7360,7 +7374,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ny</parameter> 
+	  <parameter>ny</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7370,7 +7384,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>defined</parameter> 
+	  <parameter>defined</parameter>
 	  (<literal>PLINT (*) (PLFLT, PLFLT)</literal>, input)
 	</term>
 	<listitem>
@@ -7380,7 +7394,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xmin</parameter> 
+	  <parameter>xmin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7390,7 +7404,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xmax</parameter> 
+	  <parameter>xmax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7400,7 +7414,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymin</parameter> 
+	  <parameter>ymin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7410,7 +7424,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymax</parameter> 
+	  <parameter>ymax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7420,7 +7434,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>shade_min</parameter> 
+	  <parameter>shade_min</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7430,7 +7444,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>shade_max</parameter> 
+	  <parameter>shade_max</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7440,7 +7454,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>sh_cmap</parameter> 
+	  <parameter>sh_cmap</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7450,7 +7464,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>sh_color</parameter> 
+	  <parameter>sh_color</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7460,7 +7474,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>sh_width</parameter> 
+	  <parameter>sh_width</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7470,7 +7484,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>min_color</parameter> 
+	  <parameter>min_color</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7480,7 +7494,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>min_width</parameter> 
+	  <parameter>min_width</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7490,7 +7504,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>max_color</parameter> 
+	  <parameter>max_color</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7500,7 +7514,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>max_width</parameter> 
+	  <parameter>max_width</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7510,7 +7524,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>fill</parameter> 
+	  <parameter>fill</parameter>
 	  (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
 	</term>
 	<listitem>
@@ -7520,7 +7534,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>rectangular</parameter> 
+	  <parameter>rectangular</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7530,9 +7544,9 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>pltr</parameter> 
+	  <parameter>pltr</parameter>
 	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
-           </literal>, input) 
+           </literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7541,7 +7555,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>pltr_data</parameter> 
+	  <parameter>pltr_data</parameter>
 	  (<literal>PLPointer</literal>, input)
 	</term>
 	<listitem>
@@ -7556,7 +7570,7 @@ characters and their corresponding decimal ASCII values:
   <sect1 id="plshade1" renderas="sect3">
     <title>
       <function>plshade1</function>: Shade individual region on the basis of value
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -7586,8 +7600,8 @@ characters and their corresponding decimal ASCII values:
         <paramdef><parameter>pltr</parameter></paramdef>
         <paramdef><parameter>pltr_data</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Shade individual region on the basis of value.  Use &plshades; if you want to
@@ -7608,7 +7622,7 @@ characters and their corresponding decimal ASCII values:
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>a</parameter> 
+	  <parameter>a</parameter>
 	  (<literal>PLFLT *</literal>, input)
 	</term>
 	<listitem>
@@ -7620,7 +7634,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>nx</parameter> 
+	  <parameter>nx</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7631,7 +7645,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ny</parameter> 
+	  <parameter>ny</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7642,7 +7656,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>defined</parameter> 
+	  <parameter>defined</parameter>
 	  (<literal>PLINT (*) (PLFLT, PLFLT)</literal>, input)
 	</term>
 	<listitem>
@@ -7651,13 +7665,13 @@ characters and their corresponding decimal ASCII values:
             plot.  This function accepts x and y coordinates as input
             arguments and must return 0 if the point is in the excluded
             region or 1 otherwise. This argument can be NULL if all the
-            values are valid. 
+            values are valid.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xmin</parameter> 
+	  <parameter>xmin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7669,7 +7683,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xmax</parameter> 
+	  <parameter>xmax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7681,7 +7695,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymin</parameter> 
+	  <parameter>ymin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7693,7 +7707,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymax</parameter> 
+	  <parameter>ymax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7705,7 +7719,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>shade_min</parameter> 
+	  <parameter>shade_min</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7717,7 +7731,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>shade_max</parameter> 
+	  <parameter>shade_max</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7729,7 +7743,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>sh_cmap</parameter> 
+	  <parameter>sh_cmap</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7740,7 +7754,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>sh_color</parameter> 
+	  <parameter>sh_color</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -7752,7 +7766,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>sh_width</parameter> 
+	  <parameter>sh_width</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7763,7 +7777,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>min_color</parameter> 
+	  <parameter>min_color</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7777,7 +7791,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>min_width</parameter> 
+	  <parameter>min_width</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7791,7 +7805,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>max_color</parameter> 
+	  <parameter>max_color</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7805,7 +7819,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>max_width</parameter> 
+	  <parameter>max_width</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7819,7 +7833,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>fill</parameter> 
+	  <parameter>fill</parameter>
 	  (<literal>void (*) (PLINT, PLFLT *, PLFLT *)</literal>, input)
 	</term>
 	<listitem>
@@ -7831,7 +7845,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>rectangular</parameter> 
+	  <parameter>rectangular</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -7842,30 +7856,30 @@ characters and their corresponding decimal ASCII values:
 	  set <literal><parameter>rectangular</parameter></literal> to 0.
 	  If <literal><parameter>rectangular</parameter></literal>
 	  is set to 1, plshade tries to save time by
-	  filling large rectangles.  This optimization fails if 
+	  filling large rectangles.  This optimization fails if
 	  the coordinate transformation distorts the shape of rectangles.
-	  For example a plot in polor coordinates has to have rectangular 
+	  For example a plot in polor coordinates has to have rectangular
 	  set to 0.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>pltr</parameter> 
+	  <parameter>pltr</parameter>
 	  (<literal>void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer)
-           </literal>, input) 
+           </literal>, input)
 	</term>
 	<listitem>
 	  <para>
 	    Pointer to function that defines transformation between indices
 	    in array <literal><parameter>z</parameter></literal> and the
 	    world coordinates (C only).  Transformation functions are
-	    provided in the PLplot library: 
+	    provided in the PLplot library:
 	    &pltr0; for identity mapping, and &pltr1; and &pltr2; for
-	    arbitrary mappings respectively defined by one- and 
+	    arbitrary mappings respectively defined by one- and
 	    two-dimensional arrays.  In addition, user-supplied routines
 	    for the transformation can be used as well.  Examples of
-	    all of these approaches are given in 
+	    all of these approaches are given in
 	    <xref linkend="contour-plots-c"/>.
 	    The transformation function should
 	    have the form given by any of &pltr0;, &pltr1;, or &pltr2;.
@@ -7943,7 +7957,7 @@ characters and their corresponding decimal ASCII values:
 
   <sect1 id="plsmem" renderas="sect3">
     <title>
-      <function>plsmem</function>: Set the memory area to be plotted 
+      <function>plsmem</function>: Set the memory area to be plotted
     </title>
 
     <para>
@@ -7959,7 +7973,7 @@ characters and their corresponding decimal ASCII values:
       </funcsynopsis>
     </para>
 
-    <para> 
+    <para>
       Set the memory area to be plotted (with the <quote>mem</quote> driver)
       as the <literal>dev</literal> member of the stream structure.  Also
       set the number of pixels in the memory passed in in
@@ -7970,7 +7984,7 @@ characters and their corresponding decimal ASCII values:
 
     <para>
       This memory will be freed by the user!
-    </para>      
+    </para>
 
     <variablelist>
       <varlistentry>
@@ -8200,13 +8214,13 @@ characters and their corresponding decimal ASCII values:
         </listitem>
        </varlistentry>
      </variablelist>
- 
+
    </sect1>
 
   <sect1 id="plspause" renderas="sect3">
     <title>
       <function>plspause</function>: Set the pause (on end-of-page) status
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -8216,8 +8230,8 @@ characters and their corresponding decimal ASCII values:
         </funcdef>
         <paramdef><parameter>pause</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set the pause (on end-of-page) status.
@@ -8226,7 +8240,7 @@ characters and their corresponding decimal ASCII values:
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>pause</parameter> 
+	  <parameter>pause</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -8283,7 +8297,7 @@ characters and their corresponding decimal ASCII values:
   <sect1 id="plssub" renderas="sect3">
     <title>
       <function>plssub</function>: Set the number of subwindows in x and y
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -8294,8 +8308,8 @@ characters and their corresponding decimal ASCII values:
         <paramdef><parameter>nx</parameter></paramdef>
         <paramdef><parameter>ny</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Set the number of subwindows in x and y.
@@ -8304,7 +8318,7 @@ characters and their corresponding decimal ASCII values:
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>nx</parameter> 
+	  <parameter>nx</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -8315,7 +8329,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ny</parameter> 
+	  <parameter>ny</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -8515,7 +8529,7 @@ characters and their corresponding decimal ASCII values:
   <sect1 id="plstripa" renderas="sect3">
     <title>
       <function>plstripa</function>: Add a point to a stripchart
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -8528,11 +8542,11 @@ characters and their corresponding decimal ASCII values:
         <paramdef><parameter>x</parameter></paramdef>
         <paramdef><parameter>y</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
-      Add a point to a given pen of a given stripchart.  
+      Add a point to a given pen of a given stripchart.
       There is no need for all pens to have the same number of
       points or to be equally sampled in the x coordinate.
       Allocates memory and rescales as
@@ -8542,7 +8556,7 @@ characters and their corresponding decimal ASCII values:
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>id</parameter> 
+	  <parameter>id</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -8553,7 +8567,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>p</parameter> 
+	  <parameter>p</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -8564,7 +8578,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>x</parameter> 
+	  <parameter>x</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -8575,7 +8589,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>y</parameter> 
+	  <parameter>y</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -8591,7 +8605,7 @@ characters and their corresponding decimal ASCII values:
   <sect1 id="plstripc" renderas="sect3">
     <title>
       <function>plstripc</function>: Create a 4-pen stripchart
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -8620,8 +8634,8 @@ characters and their corresponding decimal ASCII values:
         <paramdef><parameter>laby</parameter></paramdef>
         <paramdef><parameter>labtop</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Create a 4-pen stripchart, to be used afterwards by &plstripa;
@@ -8630,7 +8644,7 @@ characters and their corresponding decimal ASCII values:
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>id</parameter> 
+	  <parameter>id</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
@@ -8641,7 +8655,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xspec</parameter> 
+	  <parameter>xspec</parameter>
 	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
@@ -8652,7 +8666,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>yspec</parameter> 
+	  <parameter>yspec</parameter>
 	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
@@ -8663,7 +8677,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xmin</parameter> 
+	  <parameter>xmin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -8675,7 +8689,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xmax</parameter> 
+	  <parameter>xmax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -8687,12 +8701,12 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xjump</parameter> 
+	  <parameter>xjump</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	  When x attains <literal><parameter>xmax</parameter></literal>, 
+	  When x attains <literal><parameter>xmax</parameter></literal>,
 	  the length of the plot is multiplied by the
 	  factor <literal>(1 + <parameter>xjump</parameter>)</literal>.
 	  </para>
@@ -8700,7 +8714,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymin</parameter> 
+	  <parameter>ymin</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -8712,7 +8726,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ymax</parameter> 
+	  <parameter>ymax</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -8724,7 +8738,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>xlpos</parameter> 
+	  <parameter>xlpos</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -8735,7 +8749,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>ylpos</parameter> 
+	  <parameter>ylpos</parameter>
 	  (<literal>PLFLT</literal>, input)
 	</term>
 	<listitem>
@@ -8746,7 +8760,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>y_ascl</parameter> 
+	  <parameter>y_ascl</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -8757,7 +8771,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>acc</parameter> 
+	  <parameter>acc</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -8768,7 +8782,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>colbox</parameter> 
+	  <parameter>colbox</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -8779,7 +8793,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>collab</parameter> 
+	  <parameter>collab</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -8790,7 +8804,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>colline</parameter> 
+	  <parameter>colline</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
@@ -8801,7 +8815,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>styline</parameter> 
+	  <parameter>styline</parameter>
 	  (<literal>PLINT *</literal>, input)
 	</term>
 	<listitem>
@@ -8812,7 +8826,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>legline</parameter> 
+	  <parameter>legline</parameter>
 	  (<literal>char **</literal>, input)
 	</term>
 	<listitem>
@@ -8823,7 +8837,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>labx</parameter> 
+	  <parameter>labx</parameter>
 	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
@@ -8834,7 +8848,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>laby</parameter> 
+	  <parameter>laby</parameter>
 	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
@@ -8845,7 +8859,7 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>labtop</parameter> 
+	  <parameter>labtop</parameter>
 	  (<literal>char *</literal>, input)
 	</term>
 	<listitem>
@@ -8862,7 +8876,7 @@ characters and their corresponding decimal ASCII values:
     <title>
       <function>plstripd</function>: Deletes and releases memory used by a
 stripchart
-    </title> 
+    </title>
 
     <para>
       <funcsynopsis>
@@ -8872,8 +8886,8 @@ stripchart
         </funcdef>
         <paramdef><parameter>id</parameter></paramdef>
       </funcprototype>
-      </funcsynopsis> 
-    </para> 
+      </funcsynopsis>
+    </para>
 
     <para>
       Deletes and releases memory used by a stripchart.
@@ -8882,7 +8896,7 @@ stripchart
     <variablelist>
       <varlistentry>
 	<term>
-	  <parameter>id</parameter> 
+	  <parameter>id</parameter>
 	  (<literal>PLINT</literal>, input)
 	</term>
 	<listitem>
@@ -9782,9 +9796,9 @@ stripchart
 	<listitem>
 	  <para>
 The desired pen width.  If <literal><parameter>width</parameter></literal>
-is negative or the same as the previous value no action is taken. 
+is negative or the same as the previous value no action is taken.
 <literal><parameter>width</parameter> = 0</literal> should be interpreted as
-as the minimum valid pen width for the device.  The interpretation of positive 
+as the minimum valid pen width for the device.  The interpretation of positive
 <literal><parameter>width</parameter></literal> values is also device
 dependent.
 	  </para>
@@ -9883,7 +9897,7 @@ dependent.
     </para>
 
     <para>
-      Enter (mode !=0) or leave (mode == 0) xor mode for those drivers 
+      Enter (mode !=0) or leave (mode == 0) xor mode for those drivers
       (e.g., the xwin driver) that support it.  Enables erasing plots by
       drawing twice the same line, symbol, etc.  If driver is not capable
       of xor operation returns status of 0.

@@ -364,6 +364,8 @@ c_pllab(const char *xlabel, const char *ylabel, const char *tlabel)
  * side	String which is one of the following:
  *	B or b  :  Bottom of viewport
  *	T or t  :  Top of viewport
+ *	BV or bv : Bottom of viewport, vertical text
+ *	TV or tv : Top of viewport, vertical text
  *	L or l  :  Left of viewport
  *	R or r  :  Right of viewport
  *	LV or lv : Left of viewport, vertical text
@@ -404,7 +406,21 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
     plP_gclp(&clpxmi, &clpxma, &clpymi, &clpyma); /* get and store current clip limits */
     plP_sclp(plsc->sppxmi, plsc->sppxma, plsc->sppymi, plsc->sppyma);
 
-    if (plP_stsearch(side, 'b')) {
+    if (plP_stindex(side, "BV") != -1 || plP_stindex(side, "bv") != -1) {
+	vert = 1;
+	xdv  = plsc->vpdxmi + (plsc->vpdxma - plsc->vpdxmi) * pos;
+	ydv  = plsc->vpdymi;
+	dispx = 0;
+	dispy = -disp;
+    }
+    else if (plP_stindex(side, "TV") != -1 || plP_stindex(side, "tv") != -1) {
+	vert = 1;
+	xdv  = plsc->vpdxmi + (plsc->vpdxma - plsc->vpdxmi) * pos;
+	ydv  = plsc->vpdyma;
+	dispx = 0;
+	dispy = disp;
+    }
+    else if (plP_stsearch(side, 'b')) {
 	vert = 0;
 	xdv = plsc->vpdxmi + (plsc->vpdxma - plsc->vpdxmi) * pos;
 	ydv = plsc->vpdymi;
