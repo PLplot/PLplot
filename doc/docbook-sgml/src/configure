@@ -810,7 +810,7 @@ if test x = x$MOGRIFY ; then
  { echo "configure: error: Program mogrify not found.  
     Install the mogrify program in your path or specify its
     location with the option --with-mogrify.  The mogrify package can be 
-    found at Imagemagick." 1>&2; exit 1; }
+    found at ftp://ftp.wizards.dupont.com/pub/ImageMagick/." 1>&2; exit 1; }
 fi
 
 

@@ -80,8 +80,8 @@ install-stamp: version html-stamp ps-stamp index.html
 	touch install-stamp
 
 clean:
-	rm -f *.html $(base).* *-stamp version TMP* \
-              inline.ent *.eps *.jpeg inline.manifest \
+	rm -f *.html $(base).{tex,dvi,aux,log,ps.gz} *-stamp version \
+	      TMP* inline.ent *.eps *.jpeg inline.manifest \
 	      conftest.* config.*
 	rm -rf $(html_destdir)
 
