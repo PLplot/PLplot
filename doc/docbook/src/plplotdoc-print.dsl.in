@@ -39,7 +39,7 @@
     (("presbyopic") 14pt)
     (("large-type") 26`pt)))
 
-(element funcsynopsis 
+(element funcprototype 
   (make paragraph
     first-line-start-indent: %para-indent-firstpara%
     space-before: %para-sep%

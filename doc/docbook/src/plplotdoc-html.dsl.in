@@ -8,7 +8,7 @@
 <style-specification use="docbook">
 <style-specification-body>
 
-(element funcsynopsis
+(element funcprototype
   (make element gi: "TABLE"
 	attributes: '(("BORDER"  "0")
                       ("BGCOLOR" "#D6E8FF")

@@ -2,7 +2,7 @@
 # Description: Automake template for the PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Fri Nov 24 15:01:39 CET 2000
+# Last modified on: Fri Nov 24 18:34:49 CET 2000
 # $Id$
 
 MASTER_XML = plplotdoc.xml
@@ -80,7 +80,7 @@ print: $(BASE).ps.gz $(BASE).dvi
 %.ps.gz: %.dvi
 	$(DVIPS) -f $< | gzip -c > $@
 
-%.dvi: %.jadetex over-under.eps
+$(BASE).dvi: $(BASE).jadetex over-under.eps
 	$(JADETEX) $< 
 	if ! cmp $(shell basename $< .tex).aux prior.aux 2>/dev/null && \
 	   expr $(MAKELEVEL) '<' $(MAX_TEX_RECURSION); then \
@@ -89,7 +89,7 @@ print: $(BASE).ps.gz $(BASE).dvi
 		$(MAKE) $@ ; \
 	fi
 
-%.jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT).in inline-print.ent
+$(BASE).jadetex: $(SOURCE_FILES) $(STYLESHEET_PRINT).in inline-print.ent
 	ln -fs inline-print.ent inline.ent
 	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_PRINT) -t tex \
 	  -o $@ $(XML_DECL) $(MASTER_XML)

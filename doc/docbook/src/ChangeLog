@@ -1,6 +1,13 @@
 2000-11-24  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* plplotdoc-print.dsl.in, plplotdoc-html.dsl.in (element
+	funcprototype): Definition changed from element funcsynopsis to
+	adapt to DocBook XML 4.1.  This fixes the funny looking boxes in
+	the printed version of the manual.
+
 	* Makefile.am (print): Added dvi file as a dependency.
+	($(BASE).dvi, $(BASE).jadetex): These rules are not pattern rules
+	anymore.  Their targets are not erased after completion.
 
 2000-11-24  Alan W, Irwin  <irwin@beluga.phys.uvic.ca>
 
