@@ -56,7 +56,7 @@ $(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO).$(LIBVERSION) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) stupidtk.o
+		$(LIB_OBJS) stupidtk.o -lg++
 	ln -sf $(PLLIB_SO).$(LIBVERSION) $(SONAME)
 	ln -sf $(SONAME) $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so
 	@echo ""
