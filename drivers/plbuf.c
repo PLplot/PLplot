@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1993/08/28 06:28:07  mjl
+ * Revision 1.13  1993/08/30 19:11:51  mjl
+ * Fixed the damage incurred by my previous "fix".  Plot buffer now appears
+ * capable of accurately and unobtrusively replaying partially filled pages.
+ *
+ * Revision 1.12  1993/08/28  06:28:07  mjl
  * Fixed escape function reads & writes to be consistent.  Added plbuf_rewind
  * function, which writes EOP's to the end of file to make sure that dicking
  * around with the window settings before the page is complete doesn't end in
@@ -55,7 +59,6 @@
 static int	rd_command	( PLStream *pls, U_CHAR * );
 static int	wr_command	( PLStream *pls, U_CHAR );
 static void	plbuf_control	( PLStream *pls, U_CHAR );
-static void	plbuf_rewind	(PLStream *pls);
 
 void rdbuf_init		(PLStream *);
 void rdbuf_line		(PLStream *);
@@ -168,7 +171,7 @@ plbuf_bop(PLStream *pls)
 {
     dbug_enter("plbuf_bop");
 
-    plbuf_rewind(pls);
+    rewind(pls->plbufFile);
     wr_command(pls, (U_CHAR) BOP);
     plP_state(PLSTATE_COLOR0);
     plP_state(PLSTATE_WIDTH);
@@ -237,6 +240,7 @@ plbuf_state(PLStream *pls, PLINT op)
 *
 * Escape function.  Note that any data written must be in device
 * independent form to maintain the transportability of the metafile.
+* Don't actually write escape command unless necessary.
 *
 * Functions:
 *
@@ -246,14 +250,14 @@ void
 plbuf_esc(PLStream *pls, PLINT op, void *ptr)
 {
     dbug_enter("plbuf_esc");
-
-    wr_command(pls, (U_CHAR) ESCAPE);
-    wr_command(pls, (U_CHAR) op);
-
+/*
     switch (op) {
-    case 0:
+    case ?:
+	wr_command(pls, (U_CHAR) ESCAPE);
+	wr_command(pls, (U_CHAR) op);
 	break;
     }
+*/
 }
 
 /*----------------------------------------------------------------------*\
@@ -448,6 +452,7 @@ plRemakePlot(PLStream *pls)
 {
     U_CHAR c;
     int plbuf_status;
+    long eofpos;
 
     dbug_enter("plRemakePlot");
 
@@ -455,13 +460,13 @@ plRemakePlot(PLStream *pls)
 	return;
 
     fflush(pls->plbufFile);
-    plbuf_rewind(pls);
+    eofpos = ftell(pls->plbufFile);
+    rewind(pls->plbufFile);
 
     plbuf_status = pls->plbuf_write;
     pls->plbuf_write = FALSE;
-
-    while (rd_command(pls, &c)) {
-	if (c == CLEAR)
+    while ((ftell(pls->plbufFile) <= eofpos) && rd_command(pls, &c)) {
+	if (c == EOP)
 	    break;
 	plbuf_control(pls, c);
     }
@@ -488,11 +493,11 @@ plbuf_control(PLStream *pls, U_CHAR c)
 	rdbuf_init(pls);
 	break;
 
-      case CLEAR:
+      case EOP:
 	rdbuf_eop(pls);
 	break;
 
-      case PAGE:
+      case BOP:
 	rdbuf_bop(pls);
 	break;
 
@@ -518,21 +523,6 @@ plbuf_control(PLStream *pls, U_CHAR c)
 		c, c_old);
     }
     c_old = c;
-}
-
-/*----------------------------------------------------------------------*\
-* plbuf_rewind()
-*
-* Rewind buffer file.  To cover every possibility, need to write EOP
-* commands from the present location to the end-of-file, then rewind.
-\*----------------------------------------------------------------------*/
-
-static void
-plbuf_rewind(PLStream *pls)
-{
-    while (wr_command(pls, (U_CHAR) EOP))
-	;
-    rewind(pls->plbufFile);
 }
 
 /*----------------------------------------------------------------------*\
