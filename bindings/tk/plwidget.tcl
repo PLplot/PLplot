@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.17  1993/12/22 23:09:51  mjl
+# Revision 1.18  1994/01/15 17:41:52  mjl
+# Improved handling of status label widget.  Added proc to handle
+# initialization of data link via socket.
+#
+# Revision 1.17  1993/12/22  23:09:51  mjl
 # Changes so that TK driver no longer times out on slow network connections
 # (it's just rreeaaalllyyyy ssllooowwww).  Where timeouts are a problem,
 # the client must issue the command to the server without waiting for a
@@ -169,8 +173,9 @@ proc plw_create_TopRow {w} {
 
 # Make label widget for status messages.
 
-    pack append $w.ftop \
-	[label $w.ftop.lstat -anchor w -relief raised -text $w] \
+    label $w.ftop.lstat -anchor w -relief raised
+    plw_label_reset $w
+    pack append $w.ftop $w.ftop.lstat \
 	{right expand fill} 
 }
 
@@ -459,7 +464,7 @@ proc plw_flash {w} {
 #----------------------------------------------------------------------------
 
 proc plw_end {w} {
-    destroy .
+    exit
 }
 
 #----------------------------------------------------------------------------
@@ -543,8 +548,7 @@ proc plw_close {w} {
 #----------------------------------------------------------------------------
 
 proc plw_zoom_select {w} {
-    $w.ftop.lstat configure -text \
-	"Zoom: Click on upper left hand corner of zoom region."
+    plw_label_set $w "Zoom: Click on upper left hand corner of zoom region."
     bind $w.plwin <ButtonPress> "pl_zoom_start $w %x %y"
 }
 
@@ -585,7 +589,7 @@ proc plw_zoom_enter {w} {
 #----------------------------------------------------------------------------
 
 proc plw_zoom_reset {w} {
-    $w.ftop.lstat configure -text $w
+    plw_label_reset $w
     bind $w.plwin <ButtonPress> {}
     $w.plwin view reset
     if {[winfo exists $w.hscroll] && [winfo ismapped $w.hscroll]} then {
@@ -652,8 +656,7 @@ proc plw_page_reset {w} {
 
 proc pl_zoom_start {w wx wy} {
     bind $w.plwin <ButtonPress> {}
-    $w.ftop.lstat configure -text \
-	"Select zoom region by dragging mouse, then release."
+    plw_label_set $w "Select zoom region by dragging mouse, then release."
 
     $w.plwin draw init
     bind $w.plwin <B1-ButtonRelease> "pl_zoom_select $w $wx $wy %x %y"
@@ -682,7 +685,7 @@ proc pl_zoom_select {w wx0 wy0 wx1 wy1} {
 
     bind $w.plwin <B1-ButtonRelease> {}
     bind $w.plwin <B1-Motion> {}
-    $w.ftop.lstat configure -text "$w"
+    plw_label_reset $w
 
     set wlx [winfo width $w.plwin]
     set wly [winfo height $w.plwin]
@@ -874,7 +877,47 @@ proc plw_update_view {w} {
 
 proc status_msg {w msg} {
 
-    $w.ftop.lstat configure -text "$msg"
-    after 2500 "$w.ftop.lstat configure -text $w"
+    plw_label_set $w $msg
+    after 2500 plw_label_reset $w
 }
 
+#----------------------------------------------------------------------------
+# plw_label_reset
+#
+# Resets message in status bar to the default.
+#----------------------------------------------------------------------------
+
+proc plw_label_reset {w} {
+
+    $w.ftop.lstat configure -text " [string range $w 1 end]"
+}
+
+#----------------------------------------------------------------------------
+# plw_label_set
+#
+# Sets message in status bar.
+#----------------------------------------------------------------------------
+
+proc plw_label_set {w msg} {
+
+    $w.ftop.lstat configure -text " $msg"
+}
+
+#----------------------------------------------------------------------------
+# plw_dplink
+#
+# Initializes socket data link between widget and client code.
+#----------------------------------------------------------------------------
+
+proc plw_dplink {w client} {
+
+    global list_sock data_sock
+
+    set rv [dp_connect -server 0]
+    set list_sock [lindex $rv 0]
+    set data_port [lindex $rv 1]
+
+    dp_RDO $client set data_port $data_port
+    set data_sock [lindex [dp_accept $list_sock] 0]
+    $w.plwin openlink socket $data_sock
+}
