@@ -190,9 +190,9 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
     U_CHAR c;
     U_SHORT xy[4];
 
-/*//    dbug_enter("plD_line_plm");*/
+    /* dbug_enter("plD_line_plm"); */
 
-/* Failsafe check */
+    /* Failsafe check */
 
 #ifdef DEBUG
     if (x1 < dev->xmin || x1 > dev->xmax ||
