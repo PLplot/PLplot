@@ -122,7 +122,8 @@ typedef struct {
 #endif
 
 #define tMat_Assert(a,b) if (!(a)) \
-{ cerr << "Assertion " << #a << " failed in " << __FILE__ \
+{ using namespace std; \
+  cerr << "Assertion " << #a << " failed in " << __FILE__ \
        << " at line " << __LINE__ << endl << flush; \
   throw(b); }
 
