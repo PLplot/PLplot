@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.53  1996/03/02 10:54:39  shouman
+ * Revision 1.54  1996/03/02 11:48:27  shouman
+ * Fixed botch in previous botch-fix.  Arggh.
+ *
+ * Revision 1.53  1996/03/02  10:54:39  shouman
  * Fixed botch in last commit.
  *
  * Revision 1.52  1996/02/24  05:04:14  shouman
@@ -97,6 +100,7 @@
 	This stuff used to be in "dispatch.h", "dispatch.c", and "base.c".
 */
 
+#define DEBUG
 #include "plcore.h"
 
 /*--------------------------------------------------------------------------*\
@@ -1686,12 +1690,35 @@ c_plsdev(const char *devname)
     }
 }
 
+/* Get the current device (keyword) name */
+/* Note: you MUST have allocated space for this (80 characters is safe) */
+
+void
+c_plgdev(char *p_dev)
+{
+    strcpy(p_dev, plsc->DevName);
+}
+
 /* Get the current stream pointer */
 
 void
 plgpls(PLStream **p_pls)
 {
     *p_pls = plsc;
+}
+
+/* Get the (current) run level. 
+ * Valid settings are:
+ *   0	uninitialized 
+ *   1	initialized
+ *   2	viewport defined
+ *   3	world coords defined 
+ */
+
+void
+c_plglevel(PLINT *p_level)
+{
+    *p_level = plsc->level;
 }
 
 /* Set the function pointer for the keyboard event handler */
@@ -1712,6 +1739,18 @@ plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, int *),
 {
     plsc->ButtonEH = ButtonEH;
     plsc->ButtonEH_data = ButtonEH_data;
+}
+
+/* Set the variables to be used for storing error info */
+
+void
+plsError(PLINT *errcode, char *errmsg)
+{
+    if (errcode != NULL)
+	plsc->errcode = errcode;
+
+    if (errmsg != NULL)
+	plsc->errmsg = errmsg;
 }
 
 /* Set orientation.  Must be done before calling plinit. */
