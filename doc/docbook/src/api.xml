@@ -5458,76 +5458,6 @@ default
 
     </sect1>
 
-  <sect1 id="plpat" renderas="sect3">
-    <title>
-      <function>plpat</function>: Set area fill pattern
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plpat</function>
-	</funcdef>
-        <paramdef><parameter>nlin</parameter></paramdef>
-        <paramdef><parameter>inc</parameter></paramdef>
-        <paramdef><parameter>del</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Sets the area fill pattern.  The pattern consists of 1 or 2 sets of
-      parallel lines with specified inclinations and spacings.  The
-      arguments to this routine are the number of sets to use (1 or 2)
-      followed by two pointers to integer arrays (of 1 or 2 elements)
-      specifying the inclinations in tenths of a degree and the spacing in
-      micrometers.  (also see &plpsty;)
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>nlin</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Number of sets of lines making up the pattern, either 1 or 2.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>inc</parameter>
-	  (<literal>PLINT *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to array with
-	    <literal><parameter>nlin</parameter></literal> elements.
-	    Specifies the line inclination in tenths of a degree.  (Should
-	    be between -900 and 900).
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>del</parameter>
-	  (<literal>PLINT *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to array with
-	    <literal><parameter>nlin</parameter></literal> elements.
-	    Specifies the spacing in micrometers between the lines making
-	    up the pattern.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-    </sect1>
   <sect1 id="plparseopts" renderas="sect3">
     <title>
       <function>plparseopts</function>: Parse command-line arguments
@@ -5630,6 +5560,77 @@ PL_PARSE_SKIP (128) -- Set to quietly skip over any unrecognized args.
     </variablelist>
 
   </sect1>
+
+  <sect1 id="plpat" renderas="sect3">
+    <title>
+      <function>plpat</function>: Set area fill pattern
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plpat</function>
+	</funcdef>
+        <paramdef><parameter>nlin</parameter></paramdef>
+        <paramdef><parameter>inc</parameter></paramdef>
+        <paramdef><parameter>del</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Sets the area fill pattern.  The pattern consists of 1 or 2 sets of
+      parallel lines with specified inclinations and spacings.  The
+      arguments to this routine are the number of sets to use (1 or 2)
+      followed by two pointers to integer arrays (of 1 or 2 elements)
+      specifying the inclinations in tenths of a degree and the spacing in
+      micrometers.  (also see &plpsty;)
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>nlin</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of sets of lines making up the pattern, either 1 or 2.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>inc</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to array with
+	    <literal><parameter>nlin</parameter></literal> elements.
+	    Specifies the line inclination in tenths of a degree.  (Should
+	    be between -900 and 900).
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>del</parameter>
+	  (<literal>PLINT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to array with
+	    <literal><parameter>nlin</parameter></literal> elements.
+	    Specifies the spacing in micrometers between the lines making
+	    up the pattern.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+    </sect1>
 
   <sect1 id="plpoin" renderas="sect3">
     <title>
