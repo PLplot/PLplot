@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1993/12/21 10:35:07  mjl
+ * Revision 1.17  1994/03/23 06:59:00  mjl
+ * Name changes for xterm & mskermit driver functions, addition of versaterm
+ * and vlt driver functions.
+ *
+ * Revision 1.16  1993/12/21  10:35:07  mjl
  * Added entry for new Tcl-DP driver.
  *
  * Revision 1.15  1993/12/08  20:26:22  mjl
@@ -8,37 +12,6 @@
  *
  * Revision 1.14  1993/10/18  19:42:06  mjl
  * Driver vectors for Borland C driver under DOS.
- *
- * Revision 1.13  1993/09/08  02:34:13  mjl
- * Added static function prototype for calc_dimap.
- *
- * Revision 1.12  1993/08/18  19:07:03  mjl
- * Fixed function prototype.
- *
- * Revision 1.11  1993/08/03  03:26:52  mjl
- * Additions to support new MGR and LinuxVGA drivers.
- *
- * Revision 1.10  1993/07/31  07:56:51  mjl
- * Several driver functions consolidated, for all drivers.  The width and color
- * commands are now part of a more general "state" command.  The text and
- * graph commands used for switching between modes is now handled by the
- * escape function (very few drivers require it).  The device-specific PLDev
- * structure is now malloc'ed for each driver that requires it, and freed when
- * the stream is terminated.
- *
- * Revision 1.9  1993/07/28  05:49:10  mjl
- * Modified table entries for xterm driver, added new ones for tek4107
- * terminal & file driver.
- *
- * Revision 1.8  1993/07/16  22:26:14  mjl
- * Added explicit support for color vs monochrome postscript output,
- * arrays and constant definitions used in driver interface.
- *
- * Revision 1.7  1993/07/02  07:22:14  mjl
- * Namespace changes.
- *
- * Revision 1.6  1993/04/26  20:00:10  mjl
- * The beginnings of a TK driver added.
 */
 
 /*	plcore.h
@@ -48,11 +21,11 @@
 */
 
 #include "plplotP.h"
-#include <stdio.h>
+#include "drivers.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "drivers.h"
 
 /* Static function prototypes */
 
@@ -70,8 +43,7 @@ static void	calc_dimap	(void);
 
 /* Static variables */
 
-static PLINT xscl[PL_MAXPOLYLINE], yscl[PL_MAXPOLYLINE];
-static PLINT xscl1[PL_MAXPOLYLINE], yscl1[PL_MAXPOLYLINE];
+static PLINT xscl[PL_MAXPOLY], yscl[PL_MAXPOLY];
 
 static PLINT font, initfont, fontset;	/* font control parameters */
 static PLINT offset;			/* offset for dispatch calls */
@@ -348,7 +320,7 @@ static PLDispatchTable dispatch_table[] = {
 	"Xterm Window",
 	"xterm",
 	1,
-	plD_init_xte,
+	plD_init_xterm,
 	plD_line_tek,
 	plD_polyline_tek,
 	plD_eop_tek,
@@ -378,9 +350,9 @@ static PLDispatchTable dispatch_table[] = {
 #ifdef TEK4107
     {
 	"Tektronix Terminal (4105/4107)",
-	"t4107t",
+	"tek4107t",
 	1,
-	plD_init_t4107t,
+	plD_init_tek4107t,
 	plD_line_tek,
 	plD_polyline_tek,
 	plD_eop_tek,
@@ -402,7 +374,39 @@ static PLDispatchTable dispatch_table[] = {
 	plD_eop_tek,
 	plD_bop_tek,
 	plD_tidy_tek,
-	plD_state_mskermit,
+	plD_state_tek,
+	plD_esc_tek
+    },
+#endif
+
+#ifdef VERSATERM
+    {
+	"Versaterm vt100/tek emulator",
+	"versaterm",
+	1,
+	plD_init_versaterm,
+	plD_line_tek,
+	plD_polyline_tek,
+	plD_eop_tek,
+	plD_bop_tek,
+	plD_tidy_tek,
+	plD_state_tek,
+	plD_esc_tek
+    },
+#endif
+
+#ifdef VLT
+    {
+	"VLT vt100/tek emulator",
+	"vlt",
+	1,
+	plD_init_vlt,
+	plD_line_tek,
+	plD_polyline_tek,
+	plD_eop_tek,
+	plD_bop_tek,
+	plD_tidy_tek,
+	plD_state_tek,
 	plD_esc_tek
     },
 #endif
@@ -460,9 +464,9 @@ static PLDispatchTable dispatch_table[] = {
 #ifdef TEK4107
     {
 	"Tektronix File (4105/4107)",
-	"t4107f",
+	"tek4107f",
 	0,
-	plD_init_t4107f,
+	plD_init_tek4107f,
 	plD_line_tek,
 	plD_polyline_tek,
 	plD_eop_tek,
