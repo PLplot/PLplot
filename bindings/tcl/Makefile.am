@@ -60,7 +60,7 @@ libtclmatrix@LIB_TAG@_la_SOURCES  = \
 	matrixInit.c
 
 libtclmatrix@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined \
-	$(TCLLIBCMD)
+	$(TCLLIBCMD) -lm
 
 if enable_tcl
 tclsources = \
@@ -82,16 +82,18 @@ endif
 
 libplplottcltk@LIB_TAG@_la_SOURCES  = $(tclsources) $(tksources)
 
+## library ordering is important here
 libplplottcltk@LIB_TAG@_la_LDFLAGS  = \
 	$(version) \
 	$(RPATH) \
 	-no-undefined \
-	$(TCLLIBCMD) \
-        $(ITCLLIBCMD) \
+	$(libplplot) \
+	$(libmatrix) \
 	$(ITKLIBCMD) \
 	$(TKLIBCMD) \
-	$(libplplot) \
-	$(libmatrix)
+        $(ITCLLIBCMD) \
+	$(TCLLIBCMD) \
+	$(X_LIBS) -lX11 -lm
 
 tclgenfiles = tclgen.h tclgen_s.h tclgen.c
 
