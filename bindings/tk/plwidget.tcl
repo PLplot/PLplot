@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.32  1995/05/26 20:18:43  mjl
+# Revision 1.33  1995/06/01 21:28:24  mjl
+# Changed to call getSaveFile to retrieve save file name.
+#
+# Revision 1.32  1995/05/26  20:18:43  mjl
 # Split up the plot-menu building code into different procs and rewrote
 # substantially.  Save menu changed: the device is now specified as an option,
 # with all Save-As.. selections going to this device.  A file type option
@@ -759,16 +762,11 @@ proc plw_print {w} {
 # plw_save_as
 #
 # Saves plot to default device, prompting for file name.
-# I have to go through a bit of trickery to get "~" expanded, since the
-# Tcl 7.0 glob no longer expands names if the file doesn't already exist.
 #----------------------------------------------------------------------------
 
 proc plw_save_as {w} {
     global pmenu saveopts
-    set file [getItem "Enter file name"]
-    if { [string index $file 0] == "~" } {
-	set file [glob ~][string trimleft $file ~]
-    }
+    set file [getSaveFile $saveopts($w,0)]
     if { [string length $file] > 0 } {
 	if { [file exists $file] } {
 	    if { ! [confirm "File $file already exists.  Are you sure?"] } {
