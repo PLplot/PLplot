@@ -1,11 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.15  1993/07/01 22:00:51  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl"; device driver functions start with "plD_".  PDF
-   functions start with "pdf_".
+   Revision 1.16  1993/07/16 22:13:48  mjl
+   Switched coordinates to standard meta coords.  Eliminated obsolete low-level
+   operations.  Added write of some state information (colors and pen width)
+   at the beginning of each page to aid seeking while in renderer.
 
+ * Revision 1.15  1993/07/01  22:00:51  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".  PDF
+ * functions start with "pdf_".
+ *
  * Revision 1.14  1993/04/26  19:57:48  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
@@ -100,19 +105,6 @@
 
 static void WriteHeader		(PLStream *);
 
-/* Constants to determine resolution, number of pixels, etc.  Can be
-   changed without affecting ability to read the metafile since they
-   are stored in the header (formats 1992a and later).
-*/
-
-#define PLMETA_MAX	8191		/* About 1K dpi */
-
-#define PLMETA_X	PLMETA_MAX	/* Number of virtual pixels in x */
-#define PLMETA_Y	PLMETA_MAX	/* Number of virtual pixels in y */
-
-static PLFLT lpage_x = 238.0;		/* Page length in x in virtual mm */
-static PLFLT lpage_y = 178.0;		/* Page length in y in virtual mm */
-
 /* top level declarations */
 
 /* (dev) will get passed in eventually, so this looks weird right now */
@@ -131,6 +123,8 @@ void
 plD_init_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) INITIALIZE;
+
+    dbug_enter("plD_init_plm");
 
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
@@ -151,19 +145,15 @@ plD_init_plm(PLStream *pls)
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
+
     dev->xmin = 0;
-    dev->xmax = PLMETA_X;
+    dev->xmax = PIXELS_X - 1;
     dev->ymin = 0;
-    dev->ymax = PLMETA_Y;
+    dev->ymax = PIXELS_Y - 1;
 
-    dev->pxlx = (dev->xmax - dev->xmin) / lpage_x;
-    dev->pxly = (dev->ymax - dev->ymin) / lpage_y;
+    dev->pxlx = (double) PIXELS_X / (double) LPAGE_X;
+    dev->pxly = (double) PIXELS_Y / (double) LPAGE_Y;
 
-/* Forget this for now */
-/*
-    if (pls->pscale)
-	dev->pxly = dev->pxlx * pls->aspect;
-*/
     plP_setpxl(dev->pxlx, dev->pxly);
     plP_setphy(dev->xmin, dev->xmax, dev->ymin, dev->ymax);
 
@@ -188,6 +178,8 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
     U_CHAR c;
     U_SHORT xy[4];
 
+    dbug_enter("plD_line_plm");
+
 /* Failsafe check */
 
 #ifdef DEBUG
@@ -211,10 +203,6 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
    Still not quite as efficient as tektronix format since we also send the
    command each time (so shortest command is 25% larger), but a heck of
    a lot easier to implement than the tek method.
-
-   Note that there is no aspect ratio scaling done here!  That would defeat
-   the purpose totally (it should only be done in the final, *physical*
-   coordinate system).
 */
     if (x1 == dev->xold && y1 == dev->yold) {
 
@@ -253,6 +241,8 @@ void
 plD_polyline_plm(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     U_CHAR c = (U_CHAR) POLYLINE;
+
+    dbug_enter("plD_polyline_plm");
 
     plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
@@ -297,6 +287,8 @@ plD_bop_plm(PLStream *pls)
     U_CHAR c = (U_CHAR) PAGE;
     U_LONG foo;
     FPOS_T cp_offset=0, fwbyte_offset=0, bwbyte_offset=0;
+
+    dbug_enter("plD_bop_plm");
 
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
@@ -356,6 +348,12 @@ plD_bop_plm(PLStream *pls)
 
     pls->bytecnt += 11;
     pls->lp_offset = cp_offset;
+
+/* Write some page state information just to make things nice later on */
+/* Eventually there will be more */
+
+    plD_width_plm(pls);
+    plD_color_plm(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -368,6 +366,8 @@ void
 plD_tidy_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) CLOSE;
+
+    dbug_enter("plD_tidy_plm");
 
     plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
@@ -388,6 +388,8 @@ void
 plD_color_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) NEW_COLOR;
+
+    dbug_enter("plD_color_plm");
 
     plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
@@ -411,6 +413,7 @@ plD_color_plm(PLStream *pls)
 void
 plD_text_plm(PLStream *pls)
 {
+    dbug_enter("plD_text_plm");
 }
 
 /*----------------------------------------------------------------------*\
@@ -422,6 +425,7 @@ plD_text_plm(PLStream *pls)
 void
 plD_graph_plm(PLStream *pls)
 {
+    dbug_enter("plD_graph_plm");
 }
 
 /*----------------------------------------------------------------------*\
@@ -434,6 +438,8 @@ void
 plD_width_plm(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) NEW_WIDTH;
+
+    dbug_enter("plD_width_plm");
 
     plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
@@ -450,7 +456,6 @@ plD_width_plm(PLStream *pls)
 *
 * Functions:
 *
-* PL_SET_LPB	  Writes local plot bounds
 \*----------------------------------------------------------------------*/
 
 void
@@ -458,6 +463,8 @@ plD_esc_plm(PLStream *pls, PLINT op, void *ptr)
 {
     U_CHAR c = (U_CHAR) ESCAPE;
     U_CHAR opc;
+
+    dbug_enter("plD_esc_plm");
 
     plm_wr(pdf_wr_1byte(pls->OutFile, c));
     pls->bytecnt++;
@@ -468,11 +475,7 @@ plD_esc_plm(PLStream *pls, PLINT op, void *ptr)
 
     switch (op) {
 
-      case PL_SET_LPB:
-	plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpxmi)));
-	plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpxma)));
-	plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpymi)));
-	plm_wr(pdf_wr_2bytes(pls->OutFile, (U_SHORT) (pls->lpbpyma)));
+      case 0:
 	break;
     }
 }
@@ -486,6 +489,8 @@ plD_esc_plm(PLStream *pls, PLINT op, void *ptr)
 static void
 WriteHeader(PLStream *pls)
 {
+    dbug_enter("WriteHeader(PLStream *pls");
+
     plm_wr(pdf_wr_header(pls->OutFile, PLMETA_HEADER));
     plm_wr(pdf_wr_header(pls->OutFile, PLMETA_VERSION));
 
@@ -509,12 +514,6 @@ WriteHeader(PLStream *pls)
 
     plm_wr(pdf_wr_header(pls->OutFile, "pxly"));
     plm_wr(pdf_wr_ieeef(pls->OutFile, (float) dev->pxly));
-
-    plm_wr(pdf_wr_header(pls->OutFile, "aspect"));
-    plm_wr(pdf_wr_ieeef(pls->OutFile, (float) pls->aspect));
-
-    plm_wr(pdf_wr_header(pls->OutFile, "orient"));
-    plm_wr(pdf_wr_1byte(pls->OutFile, (U_CHAR) (pls->orient)));
 
     plm_wr(pdf_wr_header(pls->OutFile, ""));
 }
