@@ -99,9 +99,7 @@ fi
 #
 # The actual setup for gcc or f2c is done AFTER the case statements.  Done
 # this way because they're pretty predictable across platforms, and this
-# way we can just override what is set below.  Systems that use gcc or f2c
-# by default should set shell variables as follows: with_gcc=yes (to get
-# gcc), or with_f2c=yes (to get f2c).  IMPORTANT: the command line
+# way we can just override what is set below.  IMPORTANT: the command line
 # argument uses a "-" (dash) to separate words, while the shell variable
 # uses a "_" (underscore).
 # ----------------------------------------------------------------------------
@@ -130,21 +128,12 @@ if test -z "$CC"; then
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
 	    CC="cc -ansi"
 	;;
-	linux*|LINUX*|Linux* ) 
-	    with_gcc=yes
-	;;
-	next*|NeXT*|NEXT* ) 
-	    with_gcc=yes
-	;;
 	SunOS-4* )
 	    CC=acc
 	;;
 	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
 	    CC="cc -hansi"
 	    with_gcc=no
-	;;
-	ultrix*|ULTRIX* ) 
-	    with_gcc=yes
 	;;
 	CRAY* ) 
 	    with_gcc=no
@@ -235,12 +224,6 @@ if test -z "$F77"; then
 
 	    F77=fort77
 	;;
-	linux*|LINUX*|Linux* ) 
-	    with_f2c=yes
-	;;
-	next*|NeXT*|NEXT* ) 
-	    with_f2c=yes
-	;;
 	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
 	    # The f77 front-end uses a cc-like set of command line flags,
 	    # but I've had problems with it, so use f77sx here instead.
@@ -271,7 +254,7 @@ fi
 if test "$with_gcc" = "yes"; then
     CC=gcc
     CXX=gcc
-    OCC="gcc -traditional"
+    OCC=gcc
     CPP="gcc -E"
 
     if test "$with_warn" = "yes"; then
