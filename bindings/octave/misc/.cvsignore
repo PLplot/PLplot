@@ -5,4 +5,3 @@ Makefile.in
 .libs
 *.la
 *.lo
-plplot_stub.m

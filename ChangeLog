@@ -4,6 +4,13 @@
 	  builds and installs, but no other part of octave is done yet.
 	  Note this and all future autotools work is being done on the MAIN
 	  branch.
+	  
+	* plplot_octave.oct build with Joao's recent gcc 3.2.x fix.
+
+	* (mostly) finish configuration of octave using autotools.  Over
+	  to Joao now to sort out why the installed p7.m and p15.m examples
+	  don't work and why none of the x??.m examples work.
+
 
 2002-12-03  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 

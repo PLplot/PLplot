@@ -844,6 +844,10 @@ AC_OUTPUT([
 	bindings/tcl/Makefile
 	bindings/tk/Makefile
 	bindings/octave/Makefile
+	bindings/octave/PLplot/Makefile
+	bindings/octave/PLplot/support/Makefile
+	bindings/octave/demos/Makefile
+	bindings/octave/misc/Makefile
 	drivers/Makefile
 	examples/Makefile
 	examples/c/Makefile

@@ -22,6 +22,8 @@
 
 if enable_octave
 
+SUBDIRS = PLplot demos misc
+
 if with_double
 sed_command = 's/REPLACE_ME/typedef double PLFLT;/'
 octave_libs = -lplplotd
@@ -57,8 +59,23 @@ octavesharedir = $(datadir)/plplot_octave
 # SCRIPTS rather than DATA because you want to preserve the permissions.
 octaveshare_SCRIPTS = plplot_octave.oct
 
-#5 From Joao's notes:
-plplot_stub.m: etc/plplot.doc tmp_stub massage
+noinst_PROGRAMS = massage
+massage_SOURCES = massage.c
+
+# This should be refined with more comprehensive dependencies, a clean
+# target to clean out of all the generated files at clean time, etc.  There
+# are undoubtedly cross-platform issues as well.  But it is good enough for
+# now for a Linux proof-of-concept.
+
+plplot_octave_txt/plplot.doc: etc/plplot.doc
+	mkdir -p plplot_octave_txt
+	cp etc/plplot.doc plplot_octave_txt/plplot.doc
+	cd plplot_octave_txt; \
+	../../../doc/docbook/bin/api2text.pl \
+	../../../doc/docbook/src/plplotdoc.xml.in \
+	../../../doc/docbook/src/api.xml
+	
+plplot_stub.m missing_help: plplot_octave_txt/plplot.doc tmp_stub massage
 	@head -5 tmp_stub > plplot_stub.m
 	@echo "# It was also massaged to add online documentation" >> plplot_stub.m
 	@echo "# extracted from some PLplot distribution files" >> plplot_stub.m
@@ -67,8 +84,11 @@ plplot_stub.m: etc/plplot.doc tmp_stub massage
 	@echo >> plplot_stub.m
 	./massage >> plplot_stub.m 2> missing_help
 
+octaveshare_DATA = plplot_stub.m
+
 CLEANFILES = plplot_octave.h tmp_plplot_octave.cc plplot_octave.cc \
-	plplot_octave.o tmp_stub plplot_octave.oct
+	plplot_octave.o tmp_stub plplot_octave.oct \
+	plplot_stub.m missing_help
 
 #enable_octave
 endif
