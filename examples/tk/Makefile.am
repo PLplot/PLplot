@@ -30,8 +30,7 @@ else
 mkindex = $(top_builddir)/scripts/mktclIndex -tcl
 endif
 
-generated_files = \
-	tclIndex \
+check_DATA = \
 	x01.tcl \
 	x02.tcl \
 	x03.tcl \
@@ -51,27 +50,11 @@ generated_files = \
 	x17.tcl \
 	x18.tcl \
 	x19.tcl
-data_files = \
-	README.tkdemos \
-	runAllDemos.tcl \
-	runExtendedDemos.tcl \
-	tkdemos.tcl \
-	xtk01.c \
-	xtk02.c \
-	xtk04.c
 
-examples_tk_DATA = $(data_files) .samename/Makefile $(generated_files)
-examples_tk_SCRIPTS = \
-	tk01 \
-	tk02 \
-	tk03 \
-	tk04
-
-.samename/Makefile: Makefile.examples
-	mkdir -p .samename
-	cp Makefile.examples .samename/Makefile
-
-$(generated_files): \
+### x01.tcl stands symbolically for x??.tcl.  If specify $(check_DATA)
+### instead, then for loop below is usually incorrectly repeated for each file
+### in check_DATA (depending on coarseness of timer).
+x01.tcl: \
 	../tcl/x01.tcl \
 	../tcl/x02.tcl \
 	../tcl/x03.tcl \
@@ -91,8 +74,32 @@ $(generated_files): \
 	../tcl/x17.tcl \
 	../tcl/x18.tcl \
 	../tcl/x19.tcl
-	cp ../tcl/x??.tcl .
+	( cd ../tcl ; \
+	  for file in x??.tcl ; do \
+	    rm -f ../tk/$$file; $(LN_S) ../tcl/$$file ../tk/$$file ; \
+	  done )
+
+data_files = \
+	README.tkdemos \
+	runAllDemos.tcl \
+	runExtendedDemos.tcl \
+	tkdemos.tcl \
+	xtk01.c \
+	xtk02.c \
+	xtk04.c
+
+dist_examples_tk_DATA = $(data_files)
+
+nodist_examples_tk_DATA = Makefile.examples tclIndex
+
+tclIndex:
 	$(mkindex)
+
+examples_tk_SCRIPTS = \
+	tk01 \
+	tk02 \
+	tk03 \
+	tk04
 
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 
@@ -110,9 +117,18 @@ xtk01_LDFLAGS = $(libplplottcltk)
 xtk02_LDFLAGS = $(libplplottcltk)
 xtk04_LDFLAGS = $(libplplottcltk)
 
-EXTRA_DIST = $(data_files) $(examples_tk_SCRIPTS)
-CLEANFILES = $(generated_files)
-DISTCLEANFILES = .samename/Makefile
+### Assumes tcl install is done before tk install.
+install-data-hook:
+	( cd $(DESTDIR)$(examples_tkdir) ; \
+	  mv -f Makefile.examples Makefile ; \
+	  cd ../tcl ; \
+	  for file in x??.tcl ; do \
+	    rm -f ../tk/$$file; $(LN_S) ../tcl/$$file ../tk/$$file ; \
+	  done )
+
+EXTRA_DIST = $(data_files) Makefile.examples.in $(examples_tk_SCRIPTS)
+CLEANFILES = tclIndex $(check_DATA) check_stamp
+DISTCLEANFILES = Makefile.examples
 
 # enable_tk
 endif
