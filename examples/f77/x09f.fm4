@@ -1,4 +1,4 @@
-! Demonstration of contour plotting      
+! Demonstration of contour plotting
       implicit none
 
       integer i, j, nptsx, nptsy
@@ -43,7 +43,7 @@
       call plcol(3)
       call plcont(w,nptsx,nptsy,1,nptsx,1,nptsy,clevel,11)
       call plcol(1)
-      call pllab('X Coordinate', 'Y Coordinate', 
+      call pllab('X Coordinate', 'Y Coordinate',
      *           'Contour Plots of Saddle Points')
 
       call polar()
@@ -202,12 +202,12 @@
       call plcol(ncollin)
       if(nlevlt .gt. 0) then
          call pllsty(2)
-         call plcon2(ztmp, nx, ny+1, kx, lx, ky, ly+1, clevel(ilevlt), 
+         call plcon2(ztmp, nx, ny+1, kx, lx, ky, ly+1, clevel(ilevlt),
      &     nlevlt, xg, yg)
       endif
       if(nlevgt .gt. 0) then
          call pllsty(1)
-         call plcon2(ztmp, nx, ny+1, kx, lx, ky, ly+1, clevel(ilevgt), 
+         call plcon2(ztmp, nx, ny+1, kx, lx, ky, ly+1, clevel(ilevgt),
      &nlevgt, xg, yg)
       endif
 
@@ -222,7 +222,7 @@
       call plline(NPLT, xtm, ytm)
 
       call plcol(ncollab)
-      call pllab(' ', ' ', 
+      call pllab(' ', ' ',
      &'Shielded potential of charges in a conducting sphere')
 
       return
@@ -249,5 +249,5 @@
 23002    continue
 23000 continue
 
-      return 
+      return
       end

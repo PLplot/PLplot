@@ -1,4 +1,4 @@
-!     Demonstration of mesh plotting 
+!     Demonstration of mesh plotting
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384)
@@ -44,7 +44,7 @@
      &     dble (1.0), dble (-1.0), dble (1.0), dble (-1.0),
      &     dble (1.0), alt(k), az(k) )
 
-         call plbox3( 'bnstu', 'x axis', dble (0.0), 0, 
+         call plbox3( 'bnstu', 'x axis', dble (0.0), 0,
      &                'bnstu', 'y axis', dble (0.0), 0,
      &                'bcdmnstuv', 'z axis', dble (0.0), 0 )
 

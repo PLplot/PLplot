@@ -1,62 +1,62 @@
 
 
-	implicit none
-	real*8 PI
-	parameter (PI = 3.1415926535897932384)
-	real*8	x(101), y(101)
-	real*8	xs(6), ys(6)
-	real*8	xscale, yscale, xoff, yoff
-        character*80 version
-	integer digmax, i
-	common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
+      implicit none
+      real*8 PI
+      parameter (PI = 3.1415926535897932384)
+      real*8  x(101), y(101)
+      real*8  xs(6), ys(6)
+      real*8  xscale, yscale, xoff, yoff
+      character*80 version
+      integer digmax, i
+      common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
 ! Print plplot version
 
-        call plgver(version)
-        write (6,*) 'Plplot version is ', version
+      call plgver(version)
+      write (6,*) 'Plplot version is ', version
 
 ! Ask user to specify the output device
 
-        call plssub(2, 2)
-        call plinit()
+      call plssub(2, 2)
+      call plinit()
 
 ! Set up the data
 ! Original case
 
-	xscale = 6.
-	yscale = 1.
-	xoff = 0.
-	yoff = 0.
+      xscale = 6.
+      yscale = 1.
+      xoff = 0.
+      yoff = 0.
 
 ! Do a plot
 
-	call plot1()
+      call plot1()
 
 ! Set up the data
 
-	xscale = 1.
-	yscale = 0.0014
-	yoff = 0.0185
+      xscale = 1.
+      yscale = 0.0014
+      yoff = 0.0185
 
 ! Do a plot
 
-	digmax = 5
-	call plsyax(digmax,  0)
-	call plot1()
+      digmax = 5
+      call plsyax(digmax,  0)
+      call plot1()
 
 !======================================================================
 !
 ! Set up the viewport and window using PLENV. The range in X is
 !  -2.0 to 10.0, and the range in Y is -0.4 to 2.0. The axes are
-!  scaled separately (just = 0), and we draw a box with axes 
+!  scaled separately (just = 0), and we draw a box with axes
 !  (axis = 1).
 
-        call plcol(1)
-        
-      call plenv( 
+      call plcol(1)
+
+      call plenv(
      & dble (-2.0), dble (10.0), dble (-0.4), dble (1.2), 0, 1 )
       call plcol(2)
-      call pllab( '(x)', 'sin(x)/x', 
+      call pllab( '(x)', 'sin(x)/x',
      &            '#frPLPLOT Example 1 - Sinc Function' )
 
 ! Fill up the arrays
@@ -118,50 +118,50 @@
 
 !======================================================================
 
-	subroutine plot1()
-	implicit none
+      subroutine plot1()
+      implicit none
 
-	real*8 x(101), y(101)
-	real*8 xs(6), ys(6)
-        real*8	xscale, yscale, xoff, yoff,
-     &    xmin, xmax, ymin, ymax
-        integer i
-	common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
+      real*8 x(101), y(101)
+      real*8 xs(6), ys(6)
+      real*8  xscale, yscale, xoff, yoff,
+     &  xmin, xmax, ymin, ymax
+      integer i
+      common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
-	do 10 i = 1, 60
-	    x(i) = xoff + xscale * float(i)/60.0
-	    y(i) = yoff + yscale * x(i)**2
-10	continue
+      do 10 i = 1, 60
+        x(i) = xoff + xscale * float(i)/60.0
+        y(i) = yoff + yscale * x(i)**2
+10    continue
 
-	xmin = x(1)
-	xmax = x(60)
-	ymin = y(1)
-	ymax = y(60)
+      xmin = x(1)
+      xmax = x(60)
+      ymin = y(1)
+      ymax = y(60)
 
-	do 20 i = 1, 6
-	    xs(i) = x((i-1)*10+3)
-	    ys(i) = y((i-1)*10+3)
-20	continue
+      do 20 i = 1, 6
+        xs(i) = x((i-1)*10+3)
+        ys(i) = y((i-1)*10+3)
+20    continue
 
 ! Set up the viewport and window using PLENV. The range in X is
 ! 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
 ! scaled separately (just = 0), and we just draw a labelled
 ! box (axis = 0).
 
-	call plcol(1)
-	call plenv( xmin, xmax, ymin, ymax, 0, 0 )
-	call plcol(6)
-	call pllab( '(x)', '(y)', '#frPLPLOT Example 1 - y=x#u2' )
+      call plcol(1)
+      call plenv( xmin, xmax, ymin, ymax, 0, 0 )
+      call plcol(6)
+      call pllab( '(x)', '(y)', '#frPLPLOT Example 1 - y=x#u2' )
 
 ! Plot the data points
 
-	call plcol(9)
-	call plpoin( 6, xs, ys, 9 )
+      call plcol(9)
+      call plpoin( 6, xs, ys, 9 )
 
 ! Draw the line through the data
 
-	call plcol(4)
-	call plline( 60, x, y )
+      call plcol(4)
+      call plline( 60, x, y )
 
-	return
-	end
+      return
+      end

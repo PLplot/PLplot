@@ -14,8 +14,8 @@
 
 ! Set up viewport and window
 
-      call plvpor(dble (0.1), dble (1.0), dble (0.1), dble (0.9)) 
-      call plwind(dble (0.0), dble (1.0), dble (0.0), dble (1.3)) 
+      call plvpor(dble (0.1), dble (1.0), dble (0.1), dble (0.9))
+      call plwind(dble (0.0), dble (1.0), dble (0.0), dble (1.3))
 
 ! Draw the grid using plbox
 

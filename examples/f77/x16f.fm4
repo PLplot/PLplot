@@ -1,4 +1,4 @@
-! Demonstration of plshade plotting      
+! Demonstration of plshade plotting
 
 ! Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
       implicit none
@@ -25,14 +25,14 @@
       subroutine rect()
 
       implicit none
-      integer	NX, NY, NCONTR
+      integer   NX, NY, NCONTR
       parameter (NX = 35, NY = 46, NCONTR = 14)
 
-      real*8	z(NX, NY), w(NX, NY), clevel(NCONTR)
-      real*8	xmin, xmax, ymin, ymax, zmin, zmax, x, y
-      real*8	shade_min, shade_max, sh_color
-      integer	i, j, sh_cmap, sh_width
-      integer	min_color, min_width, max_color, max_width
+      real*8    z(NX, NY), w(NX, NY), clevel(NCONTR)
+      real*8    xmin, xmax, ymin, ymax, zmin, zmax, x, y
+      real*8    shade_min, shade_max, sh_color
+      integer   i, j, sh_cmap, sh_width
+      integer   min_color, min_width, max_color, max_width
 
       xmin = -1.
       ymin = -1.
@@ -41,7 +41,7 @@
 
 ! Set up for plshade call
 
-      sh_cmap = 1
+      sh_cmap   = 1
       min_color = 1
       min_width = 0
       max_color = 0
@@ -64,7 +64,7 @@
      &    dble (NCONTR)
  20   continue
 
-! Plot using identity transform 
+! Plot using identity transform
 
       call pladv(0)
       call plvpor(dble (0.1), dble (0.9), dble (0.1), dble (0.9))
@@ -79,10 +79,10 @@
          sh_width = 2
          call plpsty(0)
 
-         call plshade0(z, NX, NY, ' ', 
-     &     dble ( -1.), dble (1.0), dble (-1.0), dble (1.0), 
-     &        shade_min, shade_max, 
-     &        sh_cmap, sh_color, sh_width, 
+         call plshade0(z, NX, NY, ' ',
+     &     dble ( -1.), dble (1.0), dble (-1.0), dble (1.0),
+     &        shade_min, shade_max,
+     &        sh_cmap, sh_color, sh_width,
      &        min_color, min_width, max_color, max_width)
 
  100  continue
@@ -101,27 +101,27 @@
       subroutine polar()
 
       implicit none
-      integer	NX, NY, NCONTR, NBDRY
-      real*8	TWOPI
+      integer   NX, NY, NCONTR, NBDRY
+      real*8    TWOPI
       parameter (NX = 40, NY = 64, NCONTR = 14, NBDRY=200)
       parameter (TWOPI=6.2831853071795864768)
 
-      real*8	z(NX, NY), ztmp(NX, NY+1)
-      real*8	xg(NX, NY+1), yg(NX, NY+1), xtm(NBDRY), ytm(NBDRY)
-      real*8	clevel(NCONTR)
-      real*8	xmin, xmax, ymin, ymax, zmin, zmax
-      real*8	xpmin, xpmax, ypmin, ypmax
-      real*8	r, theta, rmax, x0, y0
-      real*8	eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i
-      real*8	div1, div1i, div2, div2i
+      real*8    z(NX, NY), ztmp(NX, NY+1)
+      real*8    xg(NX, NY+1), yg(NX, NY+1), xtm(NBDRY), ytm(NBDRY)
+      real*8    clevel(NCONTR)
+      real*8    xmin, xmax, ymin, ymax, zmin, zmax
+      real*8    xpmin, xpmax, ypmin, ypmax
+      real*8    r, theta, rmax, x0, y0
+      real*8    eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i
+      real*8    div1, div1i, div2, div2i
 
-      real*8	shade_min, shade_max, sh_color
-      real*8	xtick, ytick
-      integer	nxsub, nysub
-      integer	ncolbox, ncollab
-      integer	i, j, kx, lx, ky, ly
-      integer	sh_cmap, sh_width
-      integer	min_color, min_width, max_color, max_width
+      real*8    shade_min, shade_max, sh_color
+      real*8    xtick, ytick
+      integer   nxsub, nysub
+      integer   ncolbox, ncollab
+      integer   i, j, kx, lx, ky, ly
+      integer   sh_cmap, sh_width
+      integer   min_color, min_width, max_color, max_width
       character*8 xopt, yopt
 
 ! Set up for plshade call
@@ -245,10 +245,10 @@
          sh_width = 2
          call plpsty(0)
 
-         call plshade2(z, NX, NY, ' ', 
-     &     dble (-1.0), dble (1.0), dble (-1.0), dble (1.0), 
-     &        shade_min, shade_max, 
-     &        sh_cmap, sh_color, sh_width, 
+         call plshade2(z, NX, NY, ' ',
+     &     dble (-1.0), dble (1.0), dble (-1.0), dble (1.0),
+     &        shade_min, shade_max,
+     &        sh_cmap, sh_color, sh_width,
      &        min_color, min_width, max_color, max_width, xg, yg)
 
  100  continue
@@ -264,7 +264,7 @@
       call plline(NBDRY, xtm, ytm)
 
       call plcol(ncollab)
-      call pllab(' ', ' ', 
+      call pllab(' ', ' ',
      &'Shielded potential of charges in a conducting sphere')
 
       return
@@ -279,8 +279,8 @@
       subroutine a2mnmx(f, nx, ny, fmin, fmax)
       implicit none
 
-      integer	i, j, nx, ny
-      real*8	f(nx, ny), fmin, fmax
+      integer   i, j, nx, ny
+      real*8    f(nx, ny), fmin, fmax
 
       fmax = f(1, 1)
       fmin = fmax
@@ -291,5 +291,5 @@
  10      continue
  12   continue
 
-      return 
+      return
       end

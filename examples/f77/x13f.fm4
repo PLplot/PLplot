@@ -1,4 +1,4 @@
-!     Demonstration program for PLPLOT: 
+!     Demonstration program for PLPLOT:
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384)
@@ -48,7 +48,7 @@
          dy = .25 * sin(just)
          if (just .lt. PI/2 .or. just .gt. 3*PI/2) then
             just = 0.
-         else 
+         else
             just = 1.
          endif
          call plptex( x(j/2)+dx, y(j/2)+dy, dble (1.), dble (0.),

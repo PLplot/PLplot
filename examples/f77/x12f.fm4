@@ -1,6 +1,6 @@
-!     Demonstration program for PLPLOT: Bar chart example. 
+!     Demonstration program for PLPLOT: Bar chart example.
       implicit none
-      
+
       character*20 string
       integer i
       real*8 y0(10)
@@ -12,8 +12,8 @@
       call plwind( dble (1980.), dble (1990.), dble (0.), dble (35.) )
       call plbox( 'bc', dble (1.), 0, 'bcnv', dble (10.), 0 )
       call plcol(2)
-      call pllab( 'Year', 'Widget Sales (millions)', 
-     &		  '#frPLPLOT Example 12' )
+      call pllab( 'Year', 'Widget Sales (millions)',
+     &            '#frPLPLOT Example 12' )
 
       y0(1) = 5
       y0(2) = 15
@@ -51,7 +51,7 @@
       implicit none
       integer i, j, k, max, len
       character*(*) string
-      
+
       max = len(string)
 
       do 1 i = 1, max

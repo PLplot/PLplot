@@ -2,7 +2,7 @@
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384)
-		
+
       real*8 freql(0:100),ampl(0:100),phase(0:100), freq, f0
       integer i
       call plinit()
@@ -17,8 +17,8 @@
         phase(i)=-(180.0/PI)*atan(freq/f0)
     1 continue
 
-      call plvpor(dble (0.15), dble (0.85), dble (0.1), dble (0.9)) 
-      call plwind(dble (1.0), dble (6.0), dble (-80.0), dble (0.0)) 
+      call plvpor(dble (0.15), dble (0.85), dble (0.1), dble (0.9))
+      call plwind(dble (1.0), dble (6.0), dble (-80.0), dble (0.0))
       call plcol(1)
       call plbox('bclnst', dble (0.0), 0, 'bnstv', dble (0.0), 0)
       call plcol(2)
@@ -26,7 +26,7 @@
       call plcol(1)
       call plptex(dble (5.0), dble (-30.0), dble (1.0), dble (-20.0),
      &  dble (0.5), '-20 dB/decade')
-      call plwind(dble (1.0), dble (6.0), dble (-100.0), dble (0.0)) 
+      call plwind(dble (1.0), dble (6.0), dble (-100.0), dble (0.0))
       call plbox(' ', dble (0.0), 0, 'cmstv', dble (30.0), 3)
       call plcol(3)
       call plline(101,freql,phase)
@@ -42,5 +42,5 @@
       call plmtex('r', dble (5.0), dble (0.5), dble (0.5),
      &  'Phase shift (degrees)')
 
-      call plend      
+      call plend
       end
