@@ -38,10 +38,10 @@ plccal(PLFLT (*plf2eval) (PLINT, PLINT, PLPointer),
        PLFLT flev, PLINT ix, PLINT iy,
        PLINT ixg, PLINT iyg, PLFLT *dist);
 
-static void 
+static void
 plr45 (PLINT *ix, PLINT *iy, PLINT isens);
 
-static void 
+static void
 plr135 (PLINT *ix, PLINT *iy, PLINT isens);
 
 static void
@@ -66,7 +66,7 @@ static int error;
 /*                                      */
 /****************************************/
 
-/* Font height for contour labels (normalized)                                         */
+/* Font height for contour labels (normalized) */
 static PLFLT
 contlabel_size = 0.3;
 
@@ -93,125 +93,122 @@ sigprec = 2;
 /* small routine to set offset and spacing of contour labels, see desciption above */
 void pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active)
 {
-   contlabel_offset = offset;
-   contlabel_size   = size;
-   contlabel_space  = spacing;
-   contlabel_active	= active;
+    contlabel_offset = offset;
+    contlabel_size   = size;
+    contlabel_space  = spacing;
+    contlabel_active = active;
 }
 
 /* small routine to set the format of the contour labels, description of limexp and prec see above */
 void pl_setcontlabelformat(PLINT lexp, PLINT sigdig)
 {
-   limexp  = lexp;
-   sigprec = sigdig;
+    limexp  = lexp;
+    sigprec = sigdig;
 }
 
 void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance, PLINT *lastindex)
 {
-   PLFLT scale, currx_old, curry_old,
-         delta_x, delta_y, vec_x, vec_y, mx, my, dev_x, dev_y, off_x, off_y;
-                       
-   delta_x = plP_pcdcx(plsc->currx)-plP_pcdcx(plP_wcpcx(tpx));
-   delta_y = plP_pcdcy(plsc->curry)-plP_pcdcy(plP_wcpcy(tpy));
+    PLFLT currx_old, curry_old,	delta_x, delta_y;
 
-   currx_old = plsc->currx;
-   curry_old = plsc->curry;
-                   
-   *distance += sqrt(delta_x*delta_x + delta_y*delta_y);
-                    
-   plP_drawor(tpx, tpy);
-                    
-   if ((int )(fabs(*distance/contlabel_space)) > *lastindex)
-      {                                                                               
-         vec_x = tpx-plP_pcwcx(currx_old);
-         vec_y = tpy-plP_pcwcy(curry_old);                                                        
-         
-         mx = (double )plsc->wpxscl/(double )plsc->phyxlen;
-         my = (double )plsc->wpyscl/(double )plsc->phyylen;                                           
-                 
-         dev_x = -my*vec_y/mx;
-         dev_y = mx*vec_x/my;                                                         
-                                       
-         scale = sqrt((mx*mx*dev_x*dev_x + my*my*dev_y*dev_y)/
-                         (contlabel_offset*contlabel_offset));                                                   
-         
-         off_x = dev_x/scale;
-         off_y = dev_y/scale;                                                                                                              
-         
-         plptex(tpx+off_x, tpy+off_y, vec_x, vec_y, 0.5, flabel); 
-         plP_movwor(tpx, tpy); 
-         (*lastindex)++;                                                                            
-      }                 
-   else
+    delta_x = plP_pcdcx(plsc->currx)-plP_pcdcx(plP_wcpcx(tpx));
+    delta_y = plP_pcdcy(plsc->curry)-plP_pcdcy(plP_wcpcy(tpy));
+
+    currx_old = plsc->currx;
+    curry_old = plsc->curry;
+
+    *distance += sqrt(delta_x*delta_x + delta_y*delta_y);
+
+    plP_drawor(tpx, tpy);
+
+    if ((int )(fabs(*distance/contlabel_space)) > *lastindex) {
+	PLFLT scale, vec_x, vec_y, mx, my, dev_x, dev_y, off_x, off_y;
+
+	vec_x = tpx-plP_pcwcx(currx_old);
+	vec_y = tpy-plP_pcwcy(curry_old);
+
+	mx = (double )plsc->wpxscl/(double )plsc->phyxlen;
+	my = (double )plsc->wpyscl/(double )plsc->phyylen;
+
+	dev_x = -my*vec_y/mx;
+	dev_y = mx*vec_x/my;
+
+	scale = sqrt((mx*mx*dev_x*dev_x + my*my*dev_y*dev_y)/
+		     (contlabel_offset*contlabel_offset));
+
+	off_x = dev_x/scale;
+	off_y = dev_y/scale;
+
+	plptex(tpx+off_x, tpy+off_y, vec_x, vec_y, 0.5, flabel);
+	plP_movwor(tpx, tpy);
+	(*lastindex)++;
+
+    } else
       plP_movwor(tpx, tpy);
-      
 }
-  
 
-/* Format  contour labels. Arguments:                                                           */
-/* value:  floating point number to be formatted                                               */
-/* string: the formatted label, plptex must be called with it to actually print the label      */
- 
+
+/* Format  contour labels. Arguments:
+ * value:  floating point number to be formatted
+ * string: the formatted label, plptex must be called with it to actually
+ * print the label 
+ */
+
 void plfloatlabel(PLFLT value, char *string)
 {
-   PLINT  setpre, precis;
-   char   form[10];
-   char   tmpstring[10];
-   PLINT  exponent;
-   PLFLT  mant, tmp;
-   
-   PLINT  prec = sigprec;
-   
-   plP_gprec(&setpre, &precis);
+    PLINT  setpre, precis;
+    char   form[10], tmpstring[10];
+    PLINT  exponent = 0;
+    PLFLT  mant, tmp;
 
-   if (setpre)
-      prec = precis;
+    PLINT  prec = sigprec;
 
-   if (value > 0.0)      
-      tmp = log10(value);                     
-   else if (value < 0.0)
-      tmp = log10(-value);
-   else 
-      tmp = 0;
-      
-   if (tmp >= 0.0)
-      exponent = (int )tmp;
-   else if (tmp < 0.0)
-      {
-         tmp = -tmp;
-         if (floor(tmp) < tmp)
+    plP_gprec(&setpre, &precis);
+
+    if (setpre)
+	prec = precis;
+
+    if (value > 0.0)
+	tmp = log10(value);
+    else if (value < 0.0)
+	tmp = log10(-value);
+    else
+	tmp = 0;
+
+    if (tmp >= 0.0)
+	exponent = (int )tmp;
+    else if (tmp < 0.0) {
+	tmp = -tmp;
+	if (floor(tmp) < tmp)
             exponent = -(int )(floor(tmp) + 1.0);
-         else
-            exponent = -(int )(floor(tmp));   
-      }
-      
+	else
+            exponent = -(int )(floor(tmp));
+    }
 
-   mant = value/pow(10.0, exponent);
- 
-   if (mant != 0.0)  
-      mant = (int )(mant*pow(10.0, prec-1) + 0.5*mant/fabs(mant))/pow(10.0, prec-1);
-   
-   sprintf(form, "%%.%df", prec-1);
-   sprintf(string, form, mant);
-   /* sprintf(tmpstring, "#(229)10#u%d", exponent); */
-   sprintf(tmpstring, "#(229)10#u%d", exponent);
-   strcat(string, tmpstring); 
-                       
-   if (abs(exponent) < limexp || value == 0.0)
-      {                   
-         value = pow(10.0, exponent) * mant;
-       
-         if (exponent >= 0)
+    mant = value/pow(10.0, exponent);
+
+    if (mant != 0.0)
+	mant = (int )(mant*pow(10.0, prec-1) + 0.5*mant/fabs(mant))/pow(10.0, prec-1);
+
+    sprintf(form, "%%.%df", prec-1);
+    sprintf(string, form, mant);
+    /* sprintf(tmpstring, "#(229)10#u%d", exponent); */
+    sprintf(tmpstring, "#(229)10#u%d", exponent);
+    strcat(string, tmpstring);
+
+    if (abs(exponent) < limexp || value == 0.0) {
+	value = pow(10.0, exponent) * mant;
+
+	if (exponent >= 0)
             prec = prec - 1 - exponent;
-         else
+	else
             prec = prec - 1 + abs(exponent);
-       
-         if (prec < 0)
+
+	if (prec < 0)
             prec = 0;
-            
-         sprintf(form, "%%.%df", (int) prec);
-	 sprintf(string, form, value);	
-      }      
+
+	sprintf(form, "%%.%df", (int) prec);
+	sprintf(string, form, value);
+    }
 }
 
 /* physical coords (x) to world coords */
@@ -471,9 +468,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     PLFLT f1, f2, f3, f4, fcheck;
 
     PLINT lastindex = 0;
-    PLFLT delta_x = 0.0, delta_y = 0.0, distance = 0.0, currx_old, curry_old;
-    PLFLT norm_device, off_x, off_y, vec_x, vec_y, dev_x, dev_y, mx, my, bx, by, off, scale;
-                    
+    PLFLT distance = 0.0, currx_old, curry_old;
 
 /* Check if a contour has been crossed */
 
@@ -648,10 +643,10 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
 	(*pltr) (xnew, ynew, &tpx, &tpy, pltr_data);
         /* distance = 0.0; */
-        
+
         currx_old = plsc->currx;
         curry_old = plsc->curry;
-        
+
 	plP_drawor(tpx, tpy);
     }
 }
@@ -723,7 +718,7 @@ plccal(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
  * Rotators
 \*--------------------------------------------------------------------------*/
 
-static void 
+static void
 plr45 (PLINT *ix, PLINT *iy, PLINT isens)
 {
     PLINT ixx, iyy;
@@ -734,7 +729,7 @@ plr45 (PLINT *ix, PLINT *iy, PLINT isens)
     *iy = iyy / MAX(1, ABS(iyy));
 }
 
-static void 
+static void
 plr135 (PLINT *ix, PLINT *iy, PLINT isens)
 {
     *ix = -*ix;
@@ -921,7 +916,7 @@ pltr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data)
 /* Normal case.
  * Look up coordinates in row-dominant array.
  * Have to handle right boundary specially -- if at the edge, we'd
- * better not reference the out of bounds point. 
+ * better not reference the out of bounds point.
  */
 
     else {
