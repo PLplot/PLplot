@@ -264,7 +264,7 @@ xfig:xfig \
 xwin:xwin])
 
 define(PL_ADD_DRIVER,[dnl
-MY_ARG_ENABLE($1, 
+MY_ARG_ENABLE($1,
   AC_HELP_STRING([--enable-$1], [enable $1 device driver ($enable_$1)]))
 if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
     enable_$1="yes"
@@ -404,7 +404,7 @@ AC_INIT(src/plcore.c)
 AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 
 ### Package version number
-### [ If changing the line below by hand, 
+### [ If changing the line below by hand,
 ###   please keep the format up to and including the
 ###   version number, otherwise it will fool up the bootstrap.sh script.  By
 ###   the way, the line below can be changed using options --version and
@@ -449,7 +449,7 @@ AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
 
 MY_ARG_WITH(freetype,
-  AC_HELP_STRING([--with-freetype], 
+  AC_HELP_STRING([--with-freetype],
     [enable driver options for using freetype library for fonts ($with_freetype)]))
 
 # use pthreads with the xwin driver
@@ -458,11 +458,11 @@ MY_ARG_WITH(pthreads,
   [  --with-pthreads         Use pthreads with the xwin driver])
 
 MY_ARG_WITH(qhull,
-  AC_HELP_STRING([--with-qhull], 
+  AC_HELP_STRING([--with-qhull],
     [Enable use of the Qhull library ($with_qhull)]))
 
 MY_ARG_WITH(csa,
-  AC_HELP_STRING([--with-csa], 
+  AC_HELP_STRING([--with-csa],
     [Enable use of the csa library ($with_csa)]))
 
 MY_ARG_ENABLE(drivers,
@@ -843,7 +843,7 @@ AC_SUBST(DOCDIR)
 ### DocBook documentation
 
 AC_ARG_ENABLE(builddoc,
-  AC_HELP_STRING([--enable-builddoc], 
+  AC_HELP_STRING([--enable-builddoc],
                  [Enable configuration checks and build of DocBook
 		  documentation.  Default value is "no".]),
   [enable_builddoc="$enableval"],
@@ -851,7 +851,7 @@ AC_ARG_ENABLE(builddoc,
 
 AC_ARG_WITH(prebuiltdoc,
   AC_HELP_STRING([--with-prebuiltdoc],
-                 [Assume that the DocBook documentation is already built 
+                 [Assume that the DocBook documentation is already built
 		  and present in doc/docbook/src, ready to be installed.
 		  This option is useful for package maintainers.
                   Default value is "no".]),
@@ -862,20 +862,17 @@ if test $enable_builddoc = yes -a $with_prebuiltdoc = yes ; then
   AC_MSG_ERROR([Options --enable-builddoc and --with-prebuiltdoc are logically
 exclusive and must not be given simultaneously.  Giving up.])
 fi
-    
+
 AM_CONDITIONAL(docbook_build, [test $with_prebuiltdoc = no])
-AM_CONDITIONAL(enable_docbook, 
+AM_CONDITIONAL(enable_docbook,
                [test $enable_builddoc = yes -o $with_prebuiltdoc = yes])
 
 AC_INCLUDE(doc/docbook/docbook.m4)
 
-if test $enable_builddoc = yes -o $enable_octave = yes ; then
-CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
-CHECK_PM(XML::DOM, xml_dom, [INFO MAN])
-CHECK_PM(XML::Parser, xml_parser, [INFO MAN])
-fi
-
 if test $enable_builddoc = yes ; then
+
+dnl Check for GNU make
+CHECK_GNU_MAKE
 
 dnl Check programs
 
@@ -947,6 +944,12 @@ DOC_OUTPUT_COMMANDS
 
 fi # enable_builddoc
 
+if test $enable_builddoc = yes -o $enable_octave = yes ; then
+CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
+CHECK_PM(XML::DOM, xml_dom, [INFO MAN])
+CHECK_PM(XML::Parser, xml_parser, [INFO MAN])
+fi
+
 AM_CONDITIONAL(has_onsgmls, [test "$has_onsgmls" = found])
 # This is for conditional compilation of plplot_octave_txt in bindings/octave
 AM_CONDITIONAL(has_xml_pm,
@@ -983,7 +986,7 @@ if test "$with_rpath" = yes ; then
   RPATH='-rpath $(libdir)'
 else
   RPATH=
-fi  
+fi
 AC_SUBST(RPATH)
 AM_CONDITIONAL(with_rpath, [test "$with_rpath" = yes])
 
@@ -1033,7 +1036,7 @@ AC_CONFIG_FILES([
 	utils/Makefile
 	scripts/Makefile
 	doc/Makefile
-	pkgcfg/Makefile	
+	pkgcfg/Makefile
 	pkgcfg/plplot.pc
 	pkgcfg/plplot-float.pc
 	doc/docbook/Makefile
@@ -1101,7 +1104,7 @@ with_freetype:	$with_freetype		with_pthreads:	$with_pthreads
 
 Language Bindings:
 enable_tcl:	$enable_tcl		enable_itcl:	$enable_itcl
-enable_cxx:	$enable_cxx		enable_f77:	$enable_f77	
+enable_cxx:	$enable_cxx		enable_f77:	$enable_f77
 enable_java:	$enable_java		enable_python:	$enable_python
 enable_octave:	$enable_octave
 "
