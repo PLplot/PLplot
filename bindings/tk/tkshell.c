@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/05/07 03:14:57  mjl
+ * Revision 1.14  1994/05/09 18:00:05  furnish
+ * Tcl extension code for mirroring the PLplot C API in Tcl.
+ *
+ * Revision 1.13  1994/05/07  03:14:57  mjl
  * Consolidated Tk code by moving Pltk_Init() to this file.  Startup routine
  * now sets auto_path and saves initial color map as well.
  *
@@ -45,6 +48,11 @@
 #ifdef TCL_DP
 extern int Tdp_Init			_ANSI_ARGS_((Tcl_Interp *interp));
 #endif
+
+int   tclplcol( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] );
+int   tclplenv( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] );
+int   tclpllab( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] );
+int   tclplline( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] );
 
 /* Static functions */
 /* Sets up auto_path variable */
@@ -252,6 +260,18 @@ Pltk_Init( Tcl_Interp *interp )
     Tcl_CreateCommand(interp, "plframe", plFrameCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);
 
+    Tcl_CreateCommand(interp, "plcol", tclplcol,
+                      (ClientData) main, (void (*)(ClientData)) NULL);
+
+    Tcl_CreateCommand(interp, "plenv", tclplenv,
+                      (ClientData) main, (void (*)(ClientData)) NULL);
+
+    Tcl_CreateCommand(interp, "pllab", tclpllab,
+                      (ClientData) main, (void (*)(ClientData)) NULL);
+
+    Tcl_CreateCommand(interp, "plline", tclplline,
+                      (ClientData) main, (void (*)(ClientData)) NULL);
+
 /* Set up auto_path */
 
     if ( ! auto_path_set ) {
@@ -440,3 +460,99 @@ plWait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     return TCL_OK;
 }
 
+/* The PLplot TCL extension commands. */
+
+int   tclplcol( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    int col;			/* I HATE Primitive C!!! */
+
+    if (argc != 2) {
+	interp->result = "too many args to plcol";
+	return TCL_ERROR;
+    }
+
+    col = atoi( argv[1] );
+
+    plcol( col );
+
+    return TCL_OK;
+}
+
+int   tclplenv( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    float xmin, xmax, ymin, ymax;
+    int just, axis;
+
+    if (argc != 7 ) {
+	interp->result = "Wrong # args to plenv.";
+	return TCL_ERROR;
+    }
+
+    xmin = atof( argv[1] );
+    xmax = atof( argv[2] );
+    ymin = atof( argv[3] );
+    ymax = atof( argv[4] );
+    just = atoi( argv[5] );
+    axis = atoi( argv[6] );
+
+    plenv( xmin, xmax, ymin, ymax, just, axis );
+    plflush();
+
+    return TCL_OK;
+}
+
+int   tclpllab( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    if (argc != 4) {
+	interp->result = "Wrong # args to pllab.";
+	return TCL_ERROR;
+    }
+
+    pllab( argv[1], argv[2], argv[3] );
+    plflush();
+
+    return TCL_OK;
+}
+
+int   tclplline( ClientData cd, Tcl_Interp *interp, int argc, char *argv[] )
+{
+    int elsc, i;
+    char **elsv;
+    float *x, *y;
+
+    if (argc != 2) {
+	interp->result = "Wrong # args to plline.";
+	return TCL_ERROR;
+    }
+
+    Tcl_SplitList( interp, argv[1], &elsc, &elsv );
+
+    if ( elsc < 2 ) {
+	interp->result = "Malformed list.";
+	return TCL_ERROR;
+    }
+
+    x = (float *) malloc( sizeof(float) * elsc );
+    y = (float *) malloc( sizeof(float) * elsc );
+
+    for( i=0; i < elsc; i++ ) {
+	int xyc;
+	char **xyv;
+
+	Tcl_SplitList( interp, elsv[i], &xyc, &xyv );
+	if ( xyc != 2 ) {
+	    interp->result = "Malformed list.";
+	    return TCL_ERROR;
+	}
+
+	x[i] = atof( xyv[0] );
+	y[i] = atof( xyv[1] );
+    }
+
+    plline( elsc, x, y );
+    plflush();
+
+    free(x), free(y);
+
+    return TCL_OK;
+}
