@@ -1,20 +1,21 @@
 The Status of the Python Examples
 
-We have now moved to a new default method of installing python using the
-recommended (by python) dynamic loading procedure.  For details see
-../../bindings/python/README.pythonbuild.  The principal module is plplot
-which wraps the plplotc extension module to make all the common PLplot API
-available to python in a user-friendly way. The extension module,
-plplot_widget contains some functions that are useful for prova.py, a
-rudimentary pyqt GUI for PLplot, and I am also told that these functions are
-useful in a tkinter environment as well.  
+We have now moved to a new default method of building and installing the
+python interface to PLplot. For details see
+../../bindings/python/README.pythonbuild.  The principal module is
+plplot.py. This make all the common PLplot API available to python in a
+user-friendly way.  plplot.py wraps the swig-generated plplotc.py which in
+turn wraps the _plplotc extension module (built with the aid of swig). The
+extension module, plplot_widget contains some functions that are useful for
+prova.py, a rudimentary pyqt GUI for PLplot, and I am also told that these
+functions are useful in a Tkinter environment as well.  
 
 A drawback of the present approach is we are not supporting x??.py examples
 and pytkdemo which uses those examples because we have not yet figured out a
-way to access plframe from the python tkinter environment.  The stumbling
+way to access plframe from the python Tkinter environment.  The stumbling
 block before was plplot itself was not dynamically loadable from tcl/tk, but
 that option is now available so there is hope that eventually we will be
-able to support x??.py and pytkdemo in the future using tkinter.
+able to support x??.py and pytkdemo in the future using Tkinter.
 
 We *are* however supporting the xw??.py demos which were created initially
 from their x??.py equivalents and modified to work non-interactively from

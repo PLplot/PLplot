@@ -76,7 +76,8 @@ name so he can provide a proper reference to our LGPL licensing.
 * Maurice plans to finish his changes to implement handling strings as
 strings in the metafile format.
 
-* Geoffrey plans to at least evaluate remaining fidelity problems.
+* Geoffrey plans to at least evaluate remaining fidelity problems caused
+by our 16-bit integer approach.
 
 * Make plframe widget work for python/Tkinter front end.
 
@@ -126,9 +127,6 @@ permission problems need access to the CVS repository to fix and should be
 done at the same time as the CVS state changes mentioned above.  However,
 under autotools you can change the permissions at will in the installed
 product so this issue only affects "make check" for uninstalled testing.
-
-* Alan plans to try to adjust our python interface from swig-1.3.1[1-3] to
-swig-2.0 if that is released before the PLplot release.
 
 * debian subdirectory made part of HEAD so can build debs directly
 from HEAD.  Careful here! Any further cvs merges are going to have to
