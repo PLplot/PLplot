@@ -48,15 +48,21 @@ if enable_tcl
 scripts += test_tcl.sh
 endif
 
+if has_pdl
+scripts += test_perl.sh
+endif
+
 examples_SCRIPTS = $(scripts) plplot-test.sh
 
 # The variables below allow "make check" to work from both the build and
-# install trees.  Notice that the evironment variable EXAMPLES_DIR must be
+# install trees.  Notice that the environment variable EXAMPLES_DIR must be
 # absolute, otherwise test_tcl.sh and test_python.sh will fail.  The
 # construct below works because top_builddir is always relative.
 
 TESTS = plplot-test.sh
-TESTS_ENVIRONMENT = EXAMPLES_DIR=`pwd`/$(top_builddir)/examples PLPLOT_LIB=`pwd`/$(top_srcdir)/data
+TESTS_ENVIRONMENT = EXAMPLES_DIR=`pwd`/$(top_builddir)/examples 
+TESTS_ENVIRONMENT += SRC_EXAMPLES_DIR=`pwd`/$(top_srcdir)/examples 
+TESTS_ENVIRONMENT += PLPLOT_LIB=`pwd`/$(top_srcdir)/data
 if enable_java
 TESTS_ENVIRONMENT += PLPLOT_JAVA_WRAP_DIR=`pwd`/$(top_builddir)/bindings/java/.libs/ PLPLOT_CLASSPATH=`pwd`/$(top_builddir)/bindings/java/ 
 endif
