@@ -21,7 +21,7 @@
 /* These are used by the TK driver client/server code */
 
 #define PLSERV_HEADER	"PLPLOT"
-#define PLSERV_VERSION	"2005a"
+#define PLSERV_VERSION	"2005b"
 
 /* Symbolic constants for old metafile versions (prior to 1992a). */
 /* Now these are stored in the metafile header. */
