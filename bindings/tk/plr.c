@@ -1,11 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1994/07/18 20:29:58  mjl
+ * Revision 1.18  1994/08/25 03:59:43  mjl
+ * Fixed to properly update driver when cmap state is changed.  Contributed
+ * by Radey Shouman.
+ *
+ * Revision 1.17  1994/07/18  20:29:58  mjl
  * Fixed the escape function to pass ALL received escape commands.
  *
  * Revision 1.16  1994/06/30  18:43:02  mjl
  * Cleaning up to remove gcc -Wall warnings, and other miscellanea.
- *
 */
 
 /*
@@ -195,8 +198,7 @@ plr_process1(PLRDev *plr, int c)
 static int
 plr_init(PLRDev *plr)
 {
-    char tk_magic[80], tk_version[80];
-    char tag[80];
+    char tk_magic[80], tk_version[80], tag[80];
 
     dbug_enter("plr_init");
 
@@ -445,6 +447,7 @@ plr_state(PLRDev *plr)
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap0[i].g) );
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap0[i].b) );
 	}
+	plP_state(PLSTATE_CMAP0);
 	break;
     }
 
@@ -458,6 +461,7 @@ plr_state(PLRDev *plr)
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap1[i].g) );
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap1[i].b) );
 	}
+	plP_state(PLSTATE_CMAP1);
 	break;
     }
     }
