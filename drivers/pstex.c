@@ -48,7 +48,7 @@ static DrvOpt pstex_options[] = {{"color", DRV_INT, &color,
 
 void plD_dispatch_init_pstex( PLDispatchTable *pdt )
 {
-    pdt->pl_MenuStr  ="Postscript/LaTeX device" ;
+    pdt->pl_MenuStr  ="Postscript/LaTeX file" ;
     pdt->pl_DevName  = "pstex";
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 41;
