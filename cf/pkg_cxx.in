@@ -12,3 +12,10 @@ CXX_C		= plstream.cc
 CXX_OBJ		= plstream$O
 
 CXX_INSTALL	= install_cxx
+
+install_cxx:
+	-cd $(top_srcdir)/bindings/c++; cp plstream.h $(INCLUDE_DIR)
+	-if test ! -d $(DEMOS_DIR)/c++; then mkdir -p $(DEMOS_DIR)/c++; fi
+	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c++
+	-cd $(top_srcdir)/examples/c++; cp * $(DEMOS_DIR)/c++
+
