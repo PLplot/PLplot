@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1993/09/08 02:40:51  mjl
+ * Revision 1.10  1993/09/24 20:33:28  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.9  1993/09/08  02:40:51  mjl
  * Moved some functions to plstream.c.
  *
  * Revision 1.8  1993/08/09  22:12:39  mjl
@@ -177,7 +183,7 @@ plOpenFile(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 void
-plP_sfnam(PLStream *pls, char *fnam)
+plP_sfnam(PLStream *pls, const char *fnam)
 {
     pls->OutFile = NULL;
     pls->fileset = 1;

@@ -1,8 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/09/14 22:25:19  mjl
-   Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
+   Revision 1.10  1993/09/24 20:33:16  furnish
+   Went wild with "const correctness".  Can now pass a C++ String type to
+   most (all that I know of) PLPLOT functions.  This works b/c String has
+   an implicit conversion to const char *.  Now that PLPLOT routines take
+   const char * rather than char *, use from C++ is much easier.
 
+ * Revision 1.9  1993/09/14  22:25:19  mjl
+ * Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
+ *
  * Revision 1.8  1993/08/18  20:29:04  mjl
  * Added utility macro for updating stream variables from input values.
  *
@@ -331,7 +337,7 @@ void  plhrsh		(PLINT, PLINT, PLINT);
 
 void  plstik		(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void  plstr		(PLINT, PLFLT *, PLINT, PLINT, char *);
+void  plstr		(PLINT, PLFLT *, PLINT, PLINT, const char *);
 
 void  plxtik		(PLINT, PLINT, PLINT, PLINT);
 
@@ -483,7 +489,7 @@ void  plP_gprec		(PLINT *, PLINT *);
 
 	/* Functions that return floats */
 
-PLFLT plstrl		(char *);
+PLFLT plstrl		(const char *);
 
 	/* Stuff in convrt.c */
 
@@ -519,11 +525,11 @@ PLINT plctestez		(PLFLT *, PLINT, PLINT, PLINT, PLINT, PLFLT);
 
 PLINT plcvec		(PLINT, SCHAR **);
 
-PLINT plP_stindex	(char *, char *);
+PLINT plP_stindex	(const char *, const char *);
 
 PLINT plP_strpos	(char *, int);
 
-PLINT plP_stsearch	(char *, int);
+PLINT plP_stsearch	(const char *, int);
 
 	/* More stuff from convrt.c */
 

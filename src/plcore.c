@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1993/09/08 02:36:47  mjl
+ * Revision 1.21  1993/09/24 20:33:25  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.20  1993/09/08  02:36:47  mjl
  * Changed mapping driver interface initialization function to not bomb if
  * called before plinit().  Changed plcpstrm to work more robustly (some
  * saves were giving garbage).
@@ -1040,7 +1046,7 @@ c_plstar(PLINT nx, PLINT ny)
 \*----------------------------------------------------------------------*/
 
 void
-c_plstart(char *devname, PLINT nx, PLINT ny)
+c_plstart(const char *devname, PLINT nx, PLINT ny)
 {
     if (plsc->level != 0)
 	plend1();
@@ -1562,7 +1568,7 @@ c_plssub(PLINT nx, PLINT ny)
 }
 
 void
-c_plsdev(char *devname)
+c_plsdev(const char *devname)
 {
     if (plsc->level > 0) {
 	plwarn("plsdev: Must be called before plinit.");
@@ -1682,7 +1688,7 @@ c_plgfnam(char *fnam)
 }
 
 void
-c_plsfnam(char *fnam)
+c_plsfnam(const char *fnam)
 {
     plP_sfnam(plsc, fnam);
 }

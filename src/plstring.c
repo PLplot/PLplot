@@ -1,8 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/08/03 01:47:00  mjl
-   Changes to eliminate warnings when compiling with gcc -Wall.
+   Revision 1.5  1993/09/24 20:33:29  furnish
+   Went wild with "const correctness".  Can now pass a C++ String type to
+   most (all that I know of) PLPLOT functions.  This works b/c String has
+   an implicit conversion to const char *.  Now that PLPLOT routines take
+   const char * rather than char *, use from C++ is much easier.
 
+ * Revision 1.4  1993/08/03  01:47:00  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
  * Revision 1.3  1993/07/01  22:13:44  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
@@ -46,7 +52,7 @@ extern short int numberfonts, numberchars;
 
 /* Static function prototypes */
 
-static void  pldeco	(short **, PLINT *, char *);
+static void  pldeco	(short **, PLINT *, const char *);
 static void  plchar	(SCHAR *, PLFLT *, PLINT, PLINT, PLINT,
 			 PLINT, PLINT, PLFLT, PLFLT, PLFLT, PLFLT, PLFLT,
 			 PLFLT *, PLFLT *, PLFLT *);
@@ -58,7 +64,7 @@ static void  plchar	(SCHAR *, PLFLT *, PLINT, PLINT, PLINT,
 \*----------------------------------------------------------------------*/
 
 void
-c_pllab(char *xlabel, char *ylabel, char *tlabel)
+c_pllab(const char *xlabel, const char *ylabel, const char *tlabel)
 {
     PLINT level;
 
@@ -98,7 +104,8 @@ c_pllab(char *xlabel, char *ylabel, char *tlabel)
 \*----------------------------------------------------------------------*/
 
 void
-c_plmtex(char *side, PLFLT disp, PLFLT pos, PLFLT just, char *text)
+c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
+	 const char *text)
 {
     PLINT clpxmi, clpxma, clpymi, clpyma;
     PLINT sppxmi, sppxma, sppymi, sppyma;
@@ -194,7 +201,7 @@ c_plmtex(char *side, PLFLT disp, PLFLT pos, PLFLT just, char *text)
 \*----------------------------------------------------------------------*/
 
 void
-c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, char *text)
+c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
 {
     PLINT refx, refy;
     PLFLT shift, cc, ss;
@@ -248,7 +255,7 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, char *text)
 \*----------------------------------------------------------------------*/
 
 void
-plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, char *string)
+plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 {
     short int *symbol;
     SCHAR *xygrid;
@@ -383,7 +390,7 @@ plchar(SCHAR *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
 \*----------------------------------------------------------------------*/
 
 PLFLT
-plstrl(char *string)
+plstrl(const char *string)
 {
     short int *symbol;
     SCHAR *xygrid;
@@ -483,7 +490,7 @@ plcvec(PLINT ch, SCHAR ** xygr)
 \*----------------------------------------------------------------------*/
 
 static void
-pldeco(short int **sym, PLINT *length, char *text)
+pldeco(short int **sym, PLINT *length, const char *text)
 {
     PLINT ch, icol, ifont, ig, j, lentxt;
     char test, esc;
@@ -592,7 +599,7 @@ plP_strpos(char *str, int chr)
 \*----------------------------------------------------------------------*/
 
 PLINT
-plP_stindex(char *str1, char *str2)
+plP_stindex(const char *str1, const char *str2)
 {
     PLINT base;
     PLINT str1ind;
@@ -617,7 +624,7 @@ plP_stindex(char *str1, char *str2)
 \*----------------------------------------------------------------------*/
 
 PLINT
-plP_stsearch(char *str, int chr)
+plP_stsearch(const char *str, int chr)
 {
     if (strchr(str, chr))
 	return ((PLINT) 1);

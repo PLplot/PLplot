@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1993/08/31 17:58:06  mjl
+ * Revision 1.4  1993/09/24 20:33:27  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.3  1993/08/31  17:58:06  mjl
  * More cleaning up, merged documentation file into source file.
  *
  * Revision 1.2  1993/08/09  22:18:57  mjl
@@ -136,7 +142,7 @@ static PLINT pen_wd_sh, pen_wd_min, pen_wd_max;
 /* Function prototypes */
 
 static void set_cond	  (register int *, register PLFLT *,
-			   register char *, register PLINT);
+			   register const char *, register PLINT);
 static int  find_interval (PLFLT, PLFLT, PLINT, PLINT, PLFLT *);
 static void poly	  (void (*) (), PLFLT *, PLFLT *, PLINT , PLINT ,
 			   PLINT, PLINT);
@@ -150,7 +156,7 @@ static void draw_boundary (PLINT, PLFLT *, PLFLT *);
 \*----------------------------------------------------------------------*/
 
 void 
-plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined, PLFLT left,
+plshade(PLFLT *a, PLINT nx, PLINT ny, const char *defined, PLFLT left,
 	PLFLT right, PLFLT bottom, PLFLT top, void (*mapform) (),
 	PLFLT shade_min, PLFLT shade_max,
 	PLINT sh_color, PLINT sh_width, PLINT min_color, PLINT min_width,
@@ -359,7 +365,7 @@ plshade(PLFLT *a, PLINT nx, PLINT ny, char *defined, PLFLT left,
 
 static void 
 set_cond(register int *cond, register PLFLT *a,
-	 register char *defined, register PLINT n)
+	 register const char *defined, register PLINT n)
 {
     if (defined) {
 	while (n--) {

@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.39  1993/09/17 06:43:19  mjl
+ * Revision 1.40  1993/09/24 20:33:14  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.39  1993/09/17  06:43:19  mjl
  * Now accepts -DDOUBLE as well as -DPL_DOUBLE for setting double precision
  * floating points.
  *
@@ -590,18 +596,18 @@ extern "C" {
 
 void c_pladv	(PLINT);
 
-void c_plaxes	(PLFLT, PLFLT, char *, PLFLT, PLINT, char *,
+void c_plaxes	(PLFLT, PLFLT, const char *, PLFLT, PLINT, const char *,
 		 PLFLT, PLINT);
 
 void c_plbin	(PLINT, PLFLT *, PLFLT *, PLINT);
 
 void c_plbop	(void);
 
-void c_plbox	(char *, PLFLT, PLINT, char *, PLFLT, PLINT);
+void c_plbox	(const char *, PLFLT, PLINT, const char *, PLFLT, PLINT);
 
-void c_plbox3	(char *, char *, PLFLT, PLINT, 
-		 char *, char *, PLFLT, PLINT, 
-		 char *, char *, PLFLT, PLINT);
+void c_plbox3	(const char *, const char *, PLFLT, PLINT, 
+		 const char *, const char *, PLFLT, PLINT, 
+		 const char *, const char *, PLFLT, PLINT);
 
 void c_plcol	(PLINT);
 
@@ -681,7 +687,7 @@ void c_plinit	(void);
 
 void c_pljoin	(PLFLT, PLFLT, PLFLT, PLFLT);
 
-void c_pllab	(char *, char *, char *);
+void c_pllab	(const char *, const char *, const char *);
 
 void c_plline	(PLINT, PLFLT *, PLFLT *);
 
@@ -692,7 +698,7 @@ void c_plmesh	(PLFLT *, PLFLT *, PLFLT **,
 
 void c_plmkstrm	(PLINT *);
 
-void c_plmtex	(char *, PLFLT, PLFLT, PLFLT, char *);
+void c_plmtex	(const char *, PLFLT, PLFLT, PLFLT, const char *);
 
 void c_plot3d	(PLFLT *, PLFLT *, PLFLT **, 
 		 PLINT, PLINT, PLINT, PLINT);
@@ -705,7 +711,7 @@ void c_plprec	(PLINT, PLINT);
 
 void c_plpsty	(PLINT);
 
-void c_plptex	(PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, char *);
+void c_plptex	(PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, const char *);
 
 void c_plreplot	(void);
 
@@ -731,7 +737,7 @@ void c_plscolbg	(PLINT, PLINT, PLINT);
 
 void c_plscolor	(PLINT);
 
-void c_plsdev	(char *);
+void c_plsdev	(const char *);
 
 void c_plsdidev	(PLFLT, PLFLT, PLFLT, PLFLT);
 
@@ -747,9 +753,9 @@ void c_plsesc	(char);
 
 void c_plsfam	(PLINT, PLINT, PLINT);
 
-void c_plsfnam	(char *);
+void c_plsfnam	(const char *);
 
-void plshade	(PLFLT *, PLINT, PLINT, char *, PLFLT, 
+void plshade	(PLFLT *, PLINT, PLINT, const char *, PLFLT, 
 		 PLFLT, PLFLT, PLFLT, void (*)(), 
 		 PLFLT, PLFLT, PLINT, PLINT, PLINT, PLINT,
 		 PLINT, PLINT, void (*)(), PLINT);
@@ -774,7 +780,7 @@ void c_plssym	(PLFLT, PLFLT);
 
 void c_plstar	(PLINT, PLINT);
 
-void c_plstart	(char *, PLINT, PLINT);
+void c_plstart	(const char *, PLINT, PLINT);
 
 void c_plstyl	(PLINT, PLINT *, PLINT *);
 

@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1993/09/08 02:35:20  mjl
+ * Revision 1.16  1993/09/24 20:33:17  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
+ * Revision 1.15  1993/09/08  02:35:20  mjl
  * Added stream variables for driver interface coordinate mapping settings.
  *
  * Revision 1.14  1993/08/18  20:30:10  mjl
@@ -459,7 +465,7 @@ void  plFamInit		(PLStream *);
 void  plGetFam		(PLStream *);
 void  plRotPhy		(PLINT, PLINT, PLINT, PLINT, PLINT, 
 			 int *, int *, int *, int *);
-void  plP_sfnam		(PLStream *, char *);
+void  plP_sfnam		(PLStream *, const char *);
 PLDev *plAllocDev	(PLStream *pls);
 
 #endif	/* __PLSTREAM_H__ */

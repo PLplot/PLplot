@@ -1,10 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/07/01 22:13:32  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.8  1993/09/24 20:33:23  furnish
+   Went wild with "const correctness".  Can now pass a C++ String type to
+   most (all that I know of) PLPLOT functions.  This works b/c String has
+   an implicit conversion to const char *.  Now that PLPLOT routines take
+   const char * rather than char *, use from C++ is much easier.
 
+ * Revision 1.7  1993/07/01  22:13:32  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+ *
  * Revision 1.6  1993/04/26  20:04:03  mjl
  * Tweaks for placement of exponential label to ensure it doesn't interfere
  * with axes labels.
@@ -47,17 +53,19 @@ static PLFLT xlog[8] =
 /* Static function prototypes */
 /* INDENT OFF */
 
-static void  plxybx	(char *, char *, PLFLT, PLFLT, PLFLT, PLFLT, 
+static void  plxybx	(const char *, const char *,
+			 PLFLT, PLFLT, PLFLT, PLFLT, 
 			 PLFLT, PLFLT, PLFLT, PLINT, PLINT, PLINT *);
 
-static void  plzbx	(char *, char *, PLINT, PLFLT, PLFLT, PLFLT, 
+static void  plzbx	(const char *, const char *,
+			 PLINT, PLFLT, PLFLT, PLFLT, 
 			 PLFLT, PLFLT, PLFLT, PLFLT, PLFLT, PLINT, PLINT *);
 
 static void plxytx	(PLFLT, PLFLT, PLFLT, PLFLT, 
-			 PLFLT, PLFLT, PLFLT, char *);
+			 PLFLT, PLFLT, PLFLT, const char *);
 
-static void plztx	(char *, PLFLT, PLFLT, PLFLT, PLFLT, 
-			 PLFLT, PLFLT, PLFLT, PLFLT, char *);
+static void plztx	(const char *, PLFLT, PLFLT, PLFLT, PLFLT, 
+			 PLFLT, PLFLT, PLFLT, PLFLT, const char *);
 
 static void plform	(PLFLT, PLINT, PLINT, char *);
 
@@ -88,8 +96,8 @@ static void plform	(PLFLT, PLINT, PLINT, char *);
 \*----------------------------------------------------------------------*/
 
 void
-c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
-	char *yopt, PLFLT ytick, PLINT nysub)
+c_plbox(const char *xopt, PLFLT xtick, PLINT nxsub,
+	const char *yopt, PLFLT ytick, PLINT nysub)
 {
     static char string[40];
     PLINT lax, lbx, lcx, lgx, lix, llx, lmx, lnx, lsx, ltx;
@@ -518,8 +526,8 @@ c_plbox(char *xopt, PLFLT xtick, PLINT nxsub,
 \*----------------------------------------------------------------------*/
 
 void
-c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
-	 char *yopt, PLFLT ytick, PLINT nysub)
+c_plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
+	 const char *yopt, PLFLT ytick, PLINT nysub)
 {
     static char string[40];
     PLINT lbx, lcx, lgx, llx, lmx, lnx, lsx, ltx;
@@ -810,9 +818,9 @@ c_plaxes(PLFLT x0, PLFLT y0, char *xopt, PLFLT xtick, PLINT nxsub,
 \*----------------------------------------------------------------------*/
 
 void
-c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx,
-	 char *yopt, char *ylabel, PLFLT ytick, PLINT nsuby,
-	 char *zopt, char *zlabel, PLFLT ztick, PLINT nsubz)
+c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
+	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
+	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz)
 {
     PLFLT dx, dy, tx, ty, ux, uy;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
@@ -983,7 +991,7 @@ c_plbox3(char *xopt, char *xlabel, PLFLT xtick, PLINT nsubx,
 \*----------------------------------------------------------------------*/
 
 static void
-plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
+plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
        PLFLT wx2, PLFLT wy2, PLFLT vmin, PLFLT vmax,
        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits)
 {
@@ -1120,7 +1128,7 @@ plxybx(char *opt, char *label, PLFLT wx1, PLFLT wy1,
 
 static void
 plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
-       PLFLT disp, PLFLT pos, PLFLT just, char *text)
+       PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 {
     PLINT refx, refy;
     PLFLT shift, cc, ss, def, ht;
@@ -1173,7 +1181,7 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
 \*----------------------------------------------------------------------*/
 
 static void
-plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
+plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
       PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin, PLFLT vmax,
       PLFLT tick, PLINT nsub, PLINT *digits)
 {
@@ -1331,8 +1339,8 @@ plzbx(char *opt, char *label, PLINT right, PLFLT dx, PLFLT dy,
 \*----------------------------------------------------------------------*/
 
 static void
-plztx(char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
-      PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, char *text)
+plztx(const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
+      PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text)
 {
     PLINT refx = 0, refy = 0;
     PLINT vert = 0;
