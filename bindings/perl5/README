@@ -11,19 +11,18 @@ The API chapter of the Docbook documentation is parsed for generating the
 function prototypes.
 
 The build process has not yet been integrated into the PLplot package
-coonfiguration scheme.  For now, this is the cookbook:
+configuration scheme.  For now, this is the cookbook:
 
     $ cd bindings/perl5
     $ make -f pkg_perl5.in ln-tmp
     $ cd ../../tmp
-    $ make -f pkg-perl5.in
-
-Then run the x01 demo:
-
-    $ ./x01.pl
 
 You will have to change the $libs variable at the top of api2bind.pl,
 reflecting the configuration results in your system.  This variable will be
 AC_SUBST'ituted in the future.
 
+    $ make -f pkg_perl5.in (which executes api2bind.pl)
 
+Then run the x01 demo:
+
+    $ ./x01.pl
