@@ -280,7 +280,7 @@ flushbuffer(PLStream *pls)
 {
   if (curpts) {
     plD_polyline_ntk(pls, xb, yb, curpts);
-    // if (curpts != 2) fprintf(stderr,"%d ", curpts);
+/* if (curpts != 2) fprintf(stderr,"%d ", curpts); */
     xold = yold = -1; curpts = 0;
   }
 }
@@ -326,7 +326,7 @@ waitforpage(PLStream *pls)
 {
   int key = 0, st = 0;
   /* why can't I bind to the canvas? or even any frame? */
-  //tk_cmd("bind . <KeyPress> {set keypress %N; puts \"\n%k-%A-%K-%N\"}");
+/*tk_cmd("bind . <KeyPress> {set keypress %N; puts \"\n%k-%A-%K-%N\"}"); */
   tk_cmd("bind . <KeyPress> {set keypress %N}");
 
   while ((key & 0xff) != PLK_Return && (key & 0xff) != PLK_Linefeed && key != PLK_Next && key != 'Q') {
@@ -338,7 +338,7 @@ waitforpage(PLStream *pls)
   
     tk_cmd("set keypress");
     sscanf(interp->result,"%d", &key);
-    //fprintf(stderr,"\n%d\n", key);fflush(stderr);
+/*fprintf(stderr,"\n%d\n", key);fflush(stderr);*/
     tk_cmd("unset keypress");
     st = 0;
   }
@@ -505,7 +505,7 @@ plD_esc_ntk(PLStream *pls, PLINT op, void *ptr)
 	sprintf(&cmd[j], " -stipple patt -outline black");
 
       tk_cmd(cmd);
-      //Tk_FreeBitmap(display, bitmap)
+  /*Tk_FreeBitmap(display, bitmap)*/
     }
     break;
   }
