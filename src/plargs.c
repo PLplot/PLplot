@@ -1243,7 +1243,8 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 #ifdef DEBUG
 	  fprintf(stderr,"plParseDrvOpts: %s %s\n", t->opt, *(char**)t->var_ptr);
 #endif
-	  free(drvp->option); /* don't! free(drvp->value); */
+	  /* for familying this should not be free
+	     free(drvp->option); don't free, its needed! free(drvp->value); */
 	  break;
 
 	case DRV_INT:
@@ -1256,11 +1257,11 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 #ifdef DEBUG
 	  fprintf(stderr,"plParseDrvOpts: %s %d\n", t->opt, *(int *) t->var_ptr);
 #endif  
-	  free(drvp->value); free(drvp->option);
+	  /* for familying this should not be free
+	     free(drvp->value); free(drvp->option); */
 	  break;
 
 	case DRV_FLT:
-	  /* *((float *)t->var_ptr) = atof(drvp->value); use sscanf() for error detection */
 
 	  if ((st = sscanf(drvp->value, "%f", (char *)t->var_ptr)) != 1) {
 	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
@@ -1269,7 +1270,8 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 #ifdef DEBUG
 	  fprintf(stderr,"plParseDrvOpts: %s %f\n", t->opt, *(float *) t->var_ptr);
 #endif  
-	  free(drvp->value); free(drvp->option);
+	  /* for familying this should not be free
+	     free(drvp->value); free(drvp->option); */
 	  break;
 	}
       }
