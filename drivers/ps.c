@@ -443,9 +443,11 @@ plD_bop_ps(PLStream *pls)
     }
     pls->linepos = 0;
 
-/* This ensures the color is set correctly at the beginning of each page */
+/* This ensures the color and line width are set correctly at the beginning of
+   each page */
 
     plD_state_ps(pls, PLSTATE_COLOR0);
+    plD_state_ps(pls, PLSTATE_WIDTH);
 }
 
 /*--------------------------------------------------------------------------*\
