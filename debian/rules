@@ -26,9 +26,9 @@ deboct		:= $(debtmp)$(shell octave-config --oct-site-dir)
 
 config:
 	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
-                    --enable-tk --enable-gd --enable-dyndrivers \
-                    --disable-static --enable-python --enable-octave \
-                    --enable-gnome --with-double --disable-linuxvga \
+                    --enable-tk --enable-gd --enable-dyndrivers        \
+                    --disable-static --enable-python --enable-octave   \
+                    --enable-gnome --with-double --disable-linuxvga    \
                     --enable-docbook
 
 build: build-stamp
@@ -49,7 +49,6 @@ install: install-stamp
 install-stamp: build-stamp
 	dh_testdir
 	dh_testroot
-
 
 	make DESTDIR=$(debtmp) install
 

@@ -1,3 +1,11 @@
+plplot (5.2.0.cvs.20030218-2) unstable; urgency=low
+
+  * Something was strangely broken with the inclusion of files in the
+    plplot-doc pacakge, probably related to an extraneous config.cache
+    file.  Fixed now.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 18 Feb 2003 21:37:44 +0100
+
 plplot (5.2.0.cvs.20030218-1) unstable; urgency=low
 
   * Built with new CVS sources, with improved installation of Octave files.
