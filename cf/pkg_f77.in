@@ -8,6 +8,11 @@
 # Make assignments and targets for PLplot/Fortran interface layer.
 # -----------------------------------------------------------------------
 
+FSTUB_C = \
+	sc3d.c \
+	sccont.c \
+	scstubs.c 
+
 FSTUB_OBJ = \
 	sc3d.o \
 	sccont.o \

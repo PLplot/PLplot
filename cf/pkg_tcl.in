@@ -8,6 +8,11 @@
 # Make assignments and targets for PLplot/Tcl support.
 # -----------------------------------------------------------------------
 
+TCL_C = \
+	tclAPI.c \
+	tclMain.c \
+	tclMatrix.c
+
 TCL_OBJ = \
 	tclAPI.o \
 	tclMain.o \

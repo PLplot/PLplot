@@ -8,6 +8,14 @@
 # Make assignments and targets for PLplot/TK driver.
 # -----------------------------------------------------------------------
 
+TK_C = \
+	tk.c \
+	tkshell.c \
+	tcpip.c \
+	plframe.c \
+	tkMain.c \
+	plr.c
+
 TK_OBJ = \
 	tk.o \
 	tkshell.o \
