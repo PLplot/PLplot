@@ -23,6 +23,9 @@ PNGLIBSTR=-lpng
 JPEGLIBSTR=-ljpeg
 ZLIBLIBSTR=-lz
 FREETYPELIBSTR=-lfreetype
+QHULLLIBS=""
+NNLIBS=""
+CSALIBS=-lcsa
 
 # ----------------------------------------------------------------------------
 # Attempt to find jni.h, if java support is enabled.
@@ -898,6 +901,23 @@ if test "$enable_linuxvga" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# Check for QHull
+# ----------------------------------------------------------------------------
+
+if test "$with_qhull" = "yes"; then
+	AC_CHECK_LIB(qhull, qh_new_qhull, [ HAS_QHULL=yes])
+	if test "$HAS_QHULL" = "yes"; then
+		AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
+        	if test "$enable_dyndrivers" = "yes"; then                
+	            QHULLLIBS="-lqhull"
+		    NNLIBS="-lnn"
+        	else
+	            LIBS="$LIBS -lqhull -lnn"
+        	fi
+	fi	
+fi
+
+# ----------------------------------------------------------------------------
 # Now do the variable substitutions.
 # ----------------------------------------------------------------------------
 
@@ -924,3 +944,6 @@ AC_SUBST(SHLIB_LIBS)
 AC_SUBST(LINUXVGALIBS)
 AC_SUBST(GNOMELIBS)
 AC_SUBST(CDLIBS)
+AC_SUBST(QHULLLIBS)
+AC_SUBST(NNLIBS)
+AC_SUBST(CSALIBS)
