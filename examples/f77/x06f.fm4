@@ -6,7 +6,7 @@ divert(-1)dnl
 ! Uses implicit_none, REAL, and REAL_FUN from fmacs.m4.
 divert(1)dnl
 include(fmacs.m4)dnl
-! Displays the plotter symbols for PLPOIN
+! Displays the plotter {symbols} for PLPOIN
       implicit_none
       integer i, j, k
       REAL x, y
@@ -50,7 +50,7 @@ include(fmacs.m4)dnl
           x=0.1*j+0.05
           y=1.25-0.1*i
 
-! Display the symbols
+! Display the {symbols}
 
           if (k.lt.128) call plpoin(1,x,y,k)
           k=k+1
@@ -58,6 +58,6 @@ include(fmacs.m4)dnl
     1 continue
 
       call plmtex('t', REAL_FUN (1.5), REAL_FUN (0.5), REAL_FUN (0.5),
-     &  'PLPLOT Example 6 - PLPOIN symbols')
+     &  'PLPLOT Example 6 - PLPOIN {symbols}')
       call plend
       end

@@ -6,7 +6,7 @@ divert(-1)dnl
 ! Uses implicit_none, REAL, and REAL_FUN from fmacs.m4.
 divert(1)dnl
 include(fmacs.m4)dnl
-! Displays the plotter symbols for PLSYM
+! Displays the plotter {symbols} for PLSYM
       implicit_none
 
       character*4 text
@@ -57,7 +57,7 @@ include(fmacs.m4)dnl
             x=0.1*j+0.05
             y=0.95-0.1*i
 
-! Display the symbols
+! Display the {symbols}
 
             call plsym(1,x,y,base(l)+k)
             k=k+1
@@ -65,7 +65,7 @@ include(fmacs.m4)dnl
     1   continue
 
         call plmtex('t', REAL_FUN (1.5), REAL_FUN (0.5), REAL_FUN (0.5),
-     &    'PLPLOT Example 7 - PLSYM symbols')
+     &    'PLPLOT Example 7 - PLSYM {symbols}')
   100 continue
       call plend
       end
