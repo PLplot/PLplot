@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1994/03/23 06:34:28  mjl
+ * Revision 1.16  1994/04/08 11:34:38  mjl
+ * Fix for DOS machines running DJGPP.
+ *
+ * Revision 1.15  1994/03/23  06:34:28  mjl
  * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
  * stdlib.h now included automatically by plplotP.h), extraneous clears
  * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
@@ -33,6 +36,12 @@
 #include "drivers.h"
 #include <math.h>
 #include <string.h>
+
+#ifdef __GO32__			/* dos386/djgpp */
+#ifdef MSDOS
+#undef MSDOS
+#endif
+#endif
 
 /* Function prototypes */
 
@@ -68,13 +77,13 @@ static char mask[8] =
 static char _HUGE *bitmap;	/* points to memory area NBYTES in size */
 
 /*----------------------------------------------------------------------*\
-* plD_init_jet()
+* plD_init_ljii()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-plD_init_jet(PLStream *pls)
+plD_init_ljii(PLStream *pls)
 {
     PLDev *dev;
 
@@ -131,13 +140,13 @@ plD_init_jet(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_line_jet()
+* plD_line_ljii()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-plD_line_jet(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_ljii(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     PLDev *dev = (PLDev *) pls->dev;
     int i;
@@ -174,28 +183,28 @@ plD_line_jet(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_polyline_jet()
+* plD_polyline_ljii()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-plD_polyline_jet(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_ljii(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	plD_line_jet(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	plD_line_ljii(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* plD_eop_jet()
+* plD_eop_ljii()
 *
 * End of page.(prints it here).
 \*----------------------------------------------------------------------*/
 
 void
-plD_eop_jet(PLStream *pls)
+plD_eop_ljii(PLStream *pls)
 {
     PLINT i, j;
 
@@ -224,14 +233,14 @@ plD_eop_jet(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_bop_jet()
+* plD_bop_ljii()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-plD_bop_jet(PLStream *pls)
+plD_bop_ljii(PLStream *pls)
 {
     if (!pls->termin)
 	plGetFam(pls);
@@ -240,13 +249,13 @@ plD_bop_jet(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_tidy_jet()
+* plD_tidy_ljii()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-plD_tidy_jet(PLStream *pls)
+plD_tidy_ljii(PLStream *pls)
 {
 /* Reset Printer */
 
@@ -256,24 +265,24 @@ plD_tidy_jet(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_state_jet()
+* plD_state_ljii()
 *
 * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
 void 
-plD_state_jet(PLStream *pls, PLINT op)
+plD_state_ljii(PLStream *pls, PLINT op)
 {
 }
 
 /*----------------------------------------------------------------------*\
-* plD_esc_jet()
+* plD_esc_ljii()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-plD_esc_jet(PLStream *pls, PLINT op, void *ptr)
+plD_esc_ljii(PLStream *pls, PLINT op, void *ptr)
 {
 }
 
