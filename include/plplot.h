@@ -602,9 +602,7 @@ typedef struct {
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
-#define    c_plotsh3d	plotsh3d
-#define    c_plotfc3d	plotfc3d
-#define    c_ptsurf3d	c_plsurf3d
+#define    c_plsurf3d	plsurf3d
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
 #define    c_plpoin3	plpoin3
