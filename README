@@ -85,26 +85,24 @@ PLplot is the result of the effort of many people, so it is impractical to
 list all the contributors.  Those currently supporting and otherwise
 responsible for the package in its present form include:
 
-	Dr. Maurice LeBrun		mjl@dino.ph.utexas.edu 
-	Institute for Fusion Studies	University of Texas
+Dr. Maurice LeBrun		PLplot overall coordination, kernel
+mjl@dino.ph.utexas.edu		development, most of the Unix and Amiga
+Institute for Fusion Studies	drivers
+University of Texas
 
-Responsible for the PLplot overall coordination, kernel development, most
-of the Unix related and Amiga drivers.  Send all comments, flames, patches,
-to me.
+Geoffrey Furnish		Co-developer.  Can help with C++ and UNIX
+furnish@dino.ph.utexas.edu	related questions
+Institute for Fusion Studies
+University of Texas
 
-	Geoffrey Furnish		furnish@dino.ph.utexas.edu
-	Institute for Fusion Studies	University of Texas
+Paul Casteels			DOS/BGI (bcc) port
+casteels@uia.ac.be
 
-Co-developer.  Can help with C++ and UNIX related questions.
+John C. Peterson		OS/2 port 
+jcp@trg.saic.com
 
-	Paul Casteels			casteels@uia.ac.be
+Paul Kirschner			DOS/DJGPP port
+pek@logos.res.utc.com
 
-Responsible for the DOS/BGI (bcc) port.
-
-	John C. Peterson		jcp@trg.saic.com
-
-Responsible for the OS/2 port.
-
-	Paul Kirschner			pek@logos.res.utc.com
-
-Responsible for the DOS/DJGPP port.
+Mark Olesen			DOS/EMX port
+olesen@weber.me.queensu.ca
