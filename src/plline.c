@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/07/20 06:09:22  mjl
+ * Revision 1.15  1994/07/20 10:38:57  mjl
+ * Fixed the error return on the two new routines.
+ *
+ * Revision 1.14  1994/07/20  06:09:22  mjl
  * Changed syntax of the new 3d functions plline3() and plpoly3() to be more
  * like plline(), and moved to this file.
  *
@@ -117,7 +120,7 @@ c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
     PLFLT u, v;
 
     if (plsc->level < 3) {
-	myabort("plline3: Please set up window first");
+	plabort("plline3: Please set up window first");
 	return;
     }
 
@@ -168,13 +171,13 @@ c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw)
     PLFLT c;
 
     if (plsc->level < 3) {
-	myabort("plpoly3: Please set up window first");
+	plabort("plpoly3: Please set up window first");
 	return;
     }
 
     nn = abs(n);
     if ( nn < 3 ) {
-	myabort("plpoly3: Must specify at least 3 points");
+	plabort("plpoly3: Must specify at least 3 points");
 	return;
     }
 
