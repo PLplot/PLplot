@@ -1,5 +1,7 @@
 2000-11-27  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* size-href.pl: Fixed parsing of ls command output.
+
 	* info-clean.pl: Added file (it cleans XML file and makes it
 	parseable by docbook2texixml).
 

@@ -3,7 +3,8 @@
 sub get_size {
   my $f = shift;
   my $s = 0;
-  $s = `ls -sh $f | cut -d" "  -f1`;
+  $s = `ls -sh $f`;
+  $s =~ s/\s*(.*)\s/$1/;
   chomp $s;
   return $s;
 }
