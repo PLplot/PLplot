@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -14,10 +14,10 @@
 
 function p7
 
-  [x y z]=rosenbrock;z=log(z);
-
   t = automatic_replot;
   automatic_replot = 0;
+
+  [x y z]=rosenbrock;z=log(z);
 
   title("Shade example");
   colormap('default')
