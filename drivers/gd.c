@@ -96,14 +96,14 @@
  *  plfreetype.c module, and implemented as a driver-specific optional extra
  *  invoked via the -drvopt command line toggle. It uses the
  *  "PLESC_HAS_TEXT" command for rendering within the driver.
- *  
+ *
  *  Freetype support is turned on/off at compile time by defining
  *  "HAVE_FREETYPE".
- *  
+ *
  *  To give the user some level of control over the fonts that are used,
  *  environmental variables can be set to over-ride the definitions used by
  *  the five default plplot fonts.
- *  
+ *
  *  Freetype rendering is used with the command line "-drvopt text".
  *  Anti-aliased fonts can be used by issuing "-drvopt text,smooth"
  */
@@ -389,6 +389,15 @@ void plD_init_png(PLStream *pls)
      plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
 
      plP_setphy(0, dev->scale*dev->pngx, 0, dev->scale*dev->pngy);
+
+#ifdef HAVE_FREETYPE
+
+if (pls->dev_text)
+   {
+    init_freetype_lv2(pls);
+   }
+
+#endif
 
 }
 
@@ -731,15 +740,6 @@ if (dev->red15) plD_red15_gd(pls);
 #endif
 
            dev->im_out = gdImageCreate(pls->xlength, pls->ylength);
-#ifdef HAVE_FREETYPE
-
-if (pls->dev_text)
-   {
-    init_freetype_lv2(pls);
-   }
-
-#endif
-
            setcmap(pls);
 
 #if GD2_VERS >= 2
@@ -747,15 +747,6 @@ if (pls->dev_text)
        else
          {
          dev->im_out = gdImageCreateTrueColor(pls->xlength, pls->ylength);
-#ifdef HAVE_FREETYPE
-
-if (pls->dev_text)
-   {
-    init_freetype_lv2(pls);
-   }
-
-#endif
-
 
 /*
  * In truecolour mode, the background colour GD makes is ALWAYS black, so to
@@ -807,6 +798,7 @@ void plD_tidy_png(PLStream *pls)
 #endif
 
    fclose(pls->OutFile);
+
    free_mem(pls->dev);
 }
 
