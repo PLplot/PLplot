@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1992/05/20 21:34:51  furnish
-   Initial checkin of the whole PLPLOT project.
+   Revision 1.2  1992/06/02 23:27:35  furnish
+   short -> PLINT so can plot more than 32767 points.
 
+ * Revision 1.1  1992/05/20  21:34:51  furnish
+ * Initial checkin of the whole PLPLOT project.
+ *
 */
 
 /*	plsym.c
@@ -27,7 +30,7 @@ c_plsym(n, x, y, code)
 PLINT n, code;
 PLFLT x[], y[];
 {
-    short int i;
+    PLINT i;
     PLINT level;
 
     glev(&level);
@@ -52,7 +55,7 @@ c_plpoin(n, x, y, code)
 PLINT n, code;
 PLFLT *x, *y;
 {
-    short int i;
+    PLINT i;
     PLINT level, sym, font, col;
 
     glev(&level);
