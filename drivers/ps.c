@@ -719,15 +719,15 @@ proc_str (PLStream *pls, EscText *args)
    *  1: Normal font
    *  2: Roman font
    *  3: Italic font
-   *  4: sans serif
+   *  4: cursive
    */
 
   switch (pls->cfont) {
-  case 1: ofont = "Times-Roman"; break;
+  case 1: ofont = "Helvetica"; break;
   case 2: ofont = "Times-Roman"; break;
   case 3: ofont = "Times-Italic"; break;
-  case 4: ofont = "Helvetica"; break;
-  default:  ofont = "Times-Roman";
+  case 4: ofont = "ZapfChancery"; break; /* there is no script (cursive) font in the standard 35 postscript fonts.  ZapfChancery is the fanciest. */
+  default:  ofont = "Helvetica";
   }
 
   plgesc(&esc);
@@ -825,11 +825,11 @@ proc_str (PLStream *pls, EscText *args)
       case 'f':
 	cur_str++;
 	switch (*cur_str) {
-	case 'n': font = "Times-Roman"; break;
+	case 'n': font = "Helvetica"; break;
 	case 'r': font = "Times-Roman"; break;
 	case 'i': font = "Times-Italic"; break;
-	case 's': font = "Helvetica"; break;
-	default:  font = "Times-Roman";
+	case 's': font = "ZapfChancery"; break;  /* there is no script (cursive) font in the standard 35 postscript fonts.  ZapfChancery is the fanciest. */
+	default:  font = "Helvetica";
 	}
 	cur_str++;
 	break;
