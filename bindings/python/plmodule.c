@@ -730,13 +730,23 @@ static PyObject * pl_gver(PyObject *self, PyObject *args)
     return Py_BuildValue("s", p_ver);
 }
 
-static char doc_plPgvpw[]="Get viewport boundaries in world coordinates";
+static char doc_plgvpd[]="Get viewport boundaries in normalized device coordinates";
 
-static PyObject * pl_Pgvpw(PyObject *self, PyObject *args)
+static PyObject * pl_gvpd(PyObject *self, PyObject *args)
 {
     PLFLT xmin, xmax, ymin, ymax;
     TRY (PyArg_ParseTuple(args, ""));
-    plP_gvpw(&xmin, &xmax, &ymin, &ymax);
+    plgvpd(&xmin, &xmax, &ymin, &ymax);
+    return Py_BuildValue(PL_ARGS("(dddd)", "(ffff)"), xmin, xmax, ymin, ymax);
+}
+
+static char doc_plgvpw[]="Get viewport boundaries in world coordinates";
+
+static PyObject * pl_gvpw(PyObject *self, PyObject *args)
+{
+    PLFLT xmin, xmax, ymin, ymax;
+    TRY (PyArg_ParseTuple(args, ""));
+    plgvpw(&xmin, &xmax, &ymin, &ymax);
     return Py_BuildValue(PL_ARGS("(dddd)", "(ffff)"), xmin, xmax, ymin, ymax);
 }
 
@@ -2414,6 +2424,9 @@ static PyMethodDef pl_methods[] = {
     {"plgspa",		pl_gspa, 1, doc_plgspa},
     {"plgstrm",		pl_gstrm, 1, doc_plgstrm},
     {"plgver",		pl_gver, 1, doc_plgver},
+    {"plgvpd",		pl_gvpd, 1, doc_plgvpd},
+    {"plgvpw",		pl_gvpw, 1, doc_plgvpw},
+    {"plPgvpw",		pl_gvpw, 1, doc_plgvpw},  /* old name */
     {"plgxax",		pl_gxax, 1, doc_plgxax},
     {"plgyax",		pl_gyax, 1, doc_plgyax},
     {"plgzax",		pl_gzax, 1, doc_plgzax},
@@ -2492,11 +2505,6 @@ static PyMethodDef pl_methods[] = {
     {"plParseOpts",	pl_ParseOpts, 1, doc_plParseOpts},
     {"plsetopt",		pl_setopt, 1, doc_plsetopt},
     {"plGetCursor",	pl_GetCursor, 1, doc_plGetCursor},
-
-    /* These are a few functions from plplotP.h that I found I needed
-       to call in order to get information about the viewport, etc. */
-
-    {"plPgvpw",		pl_Pgvpw, 1, doc_plPgvpw},
     {NULL,			NULL}
 };
 
