@@ -144,7 +144,8 @@ endif
 
 CLEANFILES = \
 	plplotcmodule_double.c \
-	plplotcmodule_single.c
+	plplotcmodule_single.c \
+	*.pyc
 
 MAINTAINERCLEANFILES = \
 	plplotc.py \
