@@ -12,7 +12,20 @@
 ##
 ## This file is part of plplot_octave.
 
-## set defaults
+## set user defaults
+##
+## Copy this script to your own Octave directory and uncomment/add the desired defaults.
+##
+## The standard defaults, defined elsewhere, are
+##
+## plSetOpt("geometry", "400x400+800+1");
+## plSetOpt("np", "");
+##
+## and will be override by the defaults set here.
+## Also, for special needs, plsetopt() can be used to add more options
+## or override the ones defined here.
+##
+## see also plsetopt() for a complete list of options.
 
 function pldef
   
@@ -22,7 +35,7 @@ function pldef
   ## plSetOpt("display", getenv("DISPLAY"));
 
   ## The window geometry								
-  plSetOpt("geometry", "400x400+800+1");
+  ## plSetOpt("geometry", "400x400+800+1");
 
   ## bytes sent before flushing output
   ## plSetOpt("bufmax", "100000");
@@ -32,7 +45,7 @@ function pldef
   ##  plSetOpt("db", "");
 
   ## Don't wait for keypress to advance plots
-  plSetOpt("np", "");
+  ## plSetOpt("np", "");
 
   ## Start in debug mode
   ## plSetOpt("debug", "");
@@ -56,9 +69,9 @@ function pldef
   ## plscol0(0, 255, 255, 255);
   ## plscol0(15, 0, 0, 0);
 
-  ## init driver
-  plinit
-  pladv(0)
+  ### init driver
+  ### plinit
+  ### pladv(0)
 
   ## Defaults to be done after plinit()
 
@@ -75,6 +88,6 @@ function pldef
   ## plspause(0)
 
   ## Make changes apply now
-  plflush;pleop;
+  ## plflush;pleop;
 
 endfunction 
