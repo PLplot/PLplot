@@ -6,26 +6,52 @@ For non Unix-based systems, refer to the notes in sys/<system name>.
 PLplot building and installation is trivially easy on most Unix systems.
 From the distribution directory, type:
 
-% configure
-% make
-% make install
+./configure
+make
+make install
 
-Make sure you check the "prefix" variable before typing "make install",
-as this determines where the files are installed.  E.g.
+IMPORTANT.  Only the Gnu form of the make command is supported.  This superior
+version of make is documented at http://www.gnu.org/software/make/make.html
+and can be downloaded from ftp://ftp.gnu.org/pub/gnu/make.
 
-% configure --prefix=$HOME/local/plplot
+To find out what options are available for configure type
+./configure --help |less
+
+The most important option is --prefix as this determines where the files are
+installed.  E.g.
+
+./configure --prefix=$HOME/local/plplot
 
 sets up $HOME/local/plplot as the home directory for the installed
-package. 
+package.
+
+Another important option is --with-double, e.g.,
+
+./configure --prefix=$HOME/local/plplot --with-double
+
+This compiles the PLplot libraries with double precision floating point
+rather than single precision.  Note, the python front end (also the
+independent yorick front end, see yplot.sourceforge.net) only works if
+the double precision is turned on.
+
+An important new configure option available for Plplot-5.1.0 is
+"--enable-dyndrivers", e.g.,
+
+./configure --prefix=$HOME/local/plplot --with-double --enable-dyndrivers
+
+which is mostly useful in systems that support shared libraries. Dynamic
+drivers are dynamically loaded at run-time, reducing the PLplot library
+size, easing software updates, and reducing the number of libraries that
+your program and plplot libraries need to link against.
 
 The package is actually built in the tmp directory.  You can build any of
 a number of demo programs and run them from there.  Example:
 
-% configure
-% cd tmp		(also "cd tmp; ../configure" works fine too)
-% make
-% make x01c
-% x01c
+./configure
+cd tmp		(also "cd tmp; ../configure" works fine too)
+make
+make x01c
+x01c
 
 	<program presents you with a driver list, pick one>
 
@@ -103,7 +129,7 @@ enable_octave:  yes             enable_gnome:   yes
 If you want to change to using e.g. double precision with optimization
 turned on and no shared library, you could rerun configure by typing:
 
-% configure --with-double --with-opt --without-shlib
+./configure --with-double --with-opt --without-shlib
 
 Similarly, all device drivers can be enabled/disabled by using
 --enable-<device> or --disable-<device>.  I treat the f77 interface layer
@@ -128,19 +154,12 @@ enable-<...>	Include "..." driver (if present) and all dependent code.
 
 You can specify the installation directory by using the --prefix flag, e.g.:
 
-% configure --prefix=$HOME/tools/plplot
+./configure --prefix=$HOME/tools/plplot
 
 If you want configure to remember certain settings each time it is run
 for your site, you can create a file ~/config/cf_plplot.in.  If found,
 this file is sourced by configure.  An example cf_plplot.in file is
 given in the cf/README file.
-
-A new configure option from Plplot-5.1.0 is "--enable-dyndrivers",
-which is mostly useful in systems that supports shared libraries,
-"--enable-shlib".
-Dynamic drivers are dynamically loaded at run-time, easing software
-updates and reducing the number of libraries that your program and
-plplot libraries needs to link against.
 
 ------------------------------------------------------------------------------
 
