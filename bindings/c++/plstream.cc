@@ -393,6 +393,25 @@ plstream::box3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	    zopt, zlabel, ztick, nsubz );
 }
 
+// Calculate world coordinates and subpage from relative device coordinates.
+
+void plstream::calc_world(PLFLT rx, PLFLT ry, PLFLT& wx, PLFLT& wy, 
+		          PLINT& window) 
+{
+    set_stream();
+    
+    plcalc_world( rx, ry, &wx, &wy, &window ); 
+}
+
+// Clear the current subpage.
+
+void plstream::clear() 
+{
+    set_stream();
+
+    plclear();
+}
+
 // Set color, map 0.  Argument is integer between 0 and 15.
 
 void plstream::col0( PLINT icol0 )
@@ -576,6 +595,15 @@ void plstream::fill( PLINT n, PLFLT *x, PLFLT *y )
     plfill(n, x, y);
 }
 
+// Pattern fills the 3d polygon bounded by the input points.
+
+void plstream::fill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z )
+{
+  //set_stream();
+
+    plfill3(n, x, y, z);
+}
+
 // Flushes the output stream.  Use sparingly, if at all.
 
 void plstream::flush()
@@ -630,6 +658,15 @@ void plstream::gcolbg( PLINT& r, PLINT& g, PLINT& b )
     plgcolbg( &r, &g, &b );
 }
 
+// Returns the current compression setting
+
+void plstream::gcompression(PLINT& compression) 
+{
+    set_stream();
+
+    plgcompression(&compression);
+}
+	    
 // Retrieve current window into device space.
 
 void plstream::gdidev( PLFLT& mar, PLFLT& aspect, PLFLT& jx,
@@ -741,6 +778,15 @@ void plstream::gver( char *p_ver )
     set_stream();
 
     plgver(p_ver);
+}
+
+// Get viewport window in normalized world coordinates
+
+void plstream::gvpd(PLFLT& xmin, PLFLT& xmax, PLFLT& ymin, PLFLT& ymax)
+{
+    set_stream();
+
+    plgvpd(&xmin, &xmax, &ymin, &ymax);
 }
 
 // Get viewport window in world coordinates
@@ -937,7 +983,21 @@ void plstream::surf3d( PLFLT *x, PLFLT *y, PLFLT **z,
 {
     set_stream();
 
-    ::plsurf3d(x,y,z,nx,ny,opt,clevel,nlevel);
+    plsurf3d(x,y,z,nx,ny,opt,clevel,nlevel);
+}
+
+// Plots a 3-d shaded representation of the function z[x][y] with 
+// y index limits
+
+void plstream::surf3dl( PLFLT *x, PLFLT *y, PLFLT **z,
+		        PLINT nx, PLINT ny, PLINT opt,
+		        PLFLT *clevel, PLINT nlevel,
+			PLINT ixstart, PLINT ixn, 
+			PLINT *indexymin, PLINT*indexymax)
+{
+    set_stream();
+
+    plsurf3dl(x,y,z,nx,ny,opt,clevel,nlevel,ixstart, ixn, indexymin, indexymax);
 }
 
 /* Plots a 3-d representation of the function z[x][y]. */
@@ -959,6 +1019,20 @@ void plstream::plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
     set_stream();
 
     ::plot3dc(x,y,z,nx,ny,opt,clevel,nlevel);
+}
+
+// Plots a 3-d representation of the function z[x][y] with contour
+// and y index limits
+
+void plstream::plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z,
+		        PLINT nx, PLINT ny, PLINT opt,
+		        PLFLT *clevel, PLINT nlevel,
+			PLINT ixstart, PLINT ixn, 
+			PLINT *indexymin, PLINT*indexymax)
+{
+    set_stream();
+
+    ::plot3dcl(x,y,z,nx,ny,opt,clevel,nlevel,ixstart, ixn, indexymin, indexymax);
 }
 
 /* Set fill pattern directly. */
@@ -1136,6 +1210,15 @@ void plstream::scolor( PLINT color )
     plscolor(color);
 }
 
+// Sets the compression level
+
+void plstream::scompression(PLINT compression) 
+{
+    set_stream();
+
+    plscompression(compression);
+}
+	    
 /* Set the device (keyword) name */
 
 void plstream::sdev( const char *devname )

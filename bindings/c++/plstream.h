@@ -153,6 +153,14 @@ class plstream {
 	       const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	       const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz );
 
+// Calculate world coordinates and subpage from relative device coordinates.
+    
+    void calc_world(PLFLT rx, PLFLT ry, PLFLT& wx, PLFLT& wy, PLINT& window);
+    
+// Clear the current subpage.
+    
+    void clear();
+
 // Set color, map 0.  Argument is integer between 0 and 15.
 
     void col0( PLINT icol0 );
@@ -243,6 +251,10 @@ class plstream {
 
     static void fill( PLINT n, PLFLT *x, PLFLT *y );
 
+// Pattern fills the 3d polygon bounded by the input points.
+
+    static void fill3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z );
+
 // Flushes the output stream.  Use sparingly, if at all.
 
     void flush();
@@ -267,6 +279,10 @@ class plstream {
 
     void gcolbg( PLINT& r, PLINT& g, PLINT& b );
 
+// Returns the current compression setting
+
+    void gcompression(PLINT& compression);
+    
 // Retrieve current window into device space.
 
     void gdidev( PLFLT& mar, PLFLT& aspect, PLFLT& jx, PLFLT& jy );
@@ -319,6 +335,10 @@ class plstream {
 // Get the current library version number.
 
     void gver( char *p_ver );
+
+// Get the viewport window in normalized device coordinates
+
+    void gvpd( PLFLT& xmin, PLFLT& xmax, PLFLT& ymin, PLFLT& ymax );
 
 // Get the viewport window in world coordinates
 
@@ -414,12 +434,30 @@ class plstream {
                  PLINT nx, PLINT ny, PLINT opt,
                  PLFLT *clevel, PLINT nlevel);
 
+// Plots a 3-d representation of the function z[x][y] with contour
+// and y index limits.
+
+    void plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
+                 PLINT nx, PLINT ny, PLINT opt,
+                 PLFLT *clevel, PLINT nlevel,
+                 PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax);
+
+
 /* Plots a 3-d shaded representation of the function z[x][y]. */
 
     void surf3d( PLFLT *x, PLFLT *y, PLFLT **z,
 		 PLINT nx, PLINT ny, PLINT opt,
 		 PLFLT *clevel, PLINT nlevel);
 
+// Plots a 3-d shaded representation of the function z[x][y] with y 
+// index limits
+
+    void surf3dl( PLFLT *x, PLFLT *y, PLFLT **z,
+		 PLINT nx, PLINT ny, PLINT opt,
+		 PLFLT *clevel, PLINT nlevel,
+                 PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax);
+
+    
 /* Set fill pattern directly. */
 
 void pat( PLINT nlin, PLINT *inc, PLINT *del );
@@ -498,6 +536,10 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 /* Used to globally turn color output on/off */
 
     void scolor( PLINT color );
+
+// Set the compression level
+
+   void scompression(PLINT compression);
 
 /* Set the device (keyword) name */
 
