@@ -15,48 +15,43 @@
 ## arrow (coord, mag, rot, col)
 ## arrow (col)
 ##
-## plot one arrow of color col, magnitude mag, rotation rot
+## plot one arrow of color col, magnitude mag, rotation rot (degrees)
 ## with origin at point coord[2]
 ## magnitude = 1 means arrow lenght = 1 in world coordinates
 ##
 ## with only one argument, uses the mouse to define begin and end points
-##
-## NOTE: preliminary
 
 function arrow (coord, mag, rot, col)
 
-if (nargin == 1)	# col
+  if (nargin == 1)	# col
 
-[x1, y1, b1] = ginput(1);
-if (b1 == 3)
-	axis;
-	return;
-endif
-	
-[x2, y2, b2] = ginput(1);
-	xi = min(x1, x2); yi = min(y1, y2);
-	xf = max(x1, x2); yf = max(y1, y2);
-	mag = sqrt((xf-xi).^2 + (yf-yi).^2);
-	rot = 180*atan((yf-yi)/(xf-xi))/pi;	# FIXME
-	arrow([xi, yi], mag, rot, coord);
-	return
-endif
+    [x1, y1] = ginput(1);
+    [x2, y2] = ginput(1);
+    mag = sqrt((x2-x1).^2 + (y2-y1).^2);
+    rot = 180*atan((y2-y1)/(x2-x1))/pi;
+    if (x2 < x1)
+      rot += 180;
+    endif
+    
+    arrow([x1, y1], mag, rot, coord);
+    return
+  endif
 
-if (nargin == 4)
+  if (nargin == 4)
 
-	x = [0; 1; 0.75; 1; 0.75];
-	y = [0; 0; 0.1; 0; -0.1];
+    x = [0; 1; 0.75; 1; 0.75];
+    y = [0; 0; 0.1; 0; -0.1];
 
-	rot = -rot*pi/180;
-	
-	t = [cos(rot), -sin(rot)
-		sin(rot), cos(rot)];
-	
-	xx = (x .* t(1,1) .+ y .* t(2,1)) .* mag + coord(1);
-	yy = (x .* t(1,2) .+ y .* t(2,2)) .* mag + coord(2);
-	plcol(col);plline(xx,yy);plflush;pleop;
+    rot = -rot*pi/180;
+    
+    t = [cos(rot), -sin(rot)
+	 sin(rot), cos(rot)];
+    
+    xx = (x .* t(1,1) .+ y .* t(2,1)) .* mag + coord(1);
+    yy = (x .* t(1,2) .+ y .* t(2,2)) .* mag + coord(2);
+    plcol(col);plline(xx,yy);
+    plflush; pleop;
 
-endif	
-
+  endif	
 
 endfunction
