@@ -313,6 +313,15 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
 static char defaultLibraryDir[200] = PL_LIBRARY;
 extern char* plplotLibDir;
 
+#if (!defined(MAC_TCL) && !defined(__WIN32__))
+/* 
+ * Use an extended search for installations on Unix where we
+ * have very likely installed plplot so that plplot.tcl is
+ * in  /usr/local/plplot/lib/plplot5.1.0/tcl
+ */
+#define PLPLOT_EXTENDED_SEARCH
+#endif
+
 /*
  * PlbasicInit
  * 
@@ -326,7 +335,11 @@ PlbasicInit( Tcl_Interp *interp )
 {
     static char initScript[] = 
     "tcl_findLibrary plplot 5.1 \"\" plplot.tcl PL_LIBRARY pllibrary";
-    char *libDir;
+#ifdef PLPLOT_EXTENDED_SEARCH
+    static char initScriptExtended[] = 
+    "tcl_findLibrary plplot 5.1 \"\" tcl/plplot.tcl PL_LIBRARY pllibrary";
+#endif
+    char *libDir = NULL;
 #ifdef USE_TCL_STUBS
     /* 
      * We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
@@ -359,16 +372,46 @@ PlbasicInit( Tcl_Interp *interp )
 #endif
     
     Tcl_SetVar(interp, "plversion", "5.1", TCL_GLOBAL_ONLY);
-    if(Tcl_Eval(interp, initScript))
+    if (Tcl_Eval(interp, initScript) != TCL_OK) {
+#ifdef PLPLOT_EXTENDED_SEARCH
+	if (Tcl_Eval(interp, initScriptExtended) != TCL_OK) {
+	    /* Last chance, look in '.' */
+	    Tcl_DString ds;
+	    if (Tcl_Access("plplot.tcl", 0) != 0) {
+		return TCL_ERROR;
+	    }
+	    /* It is in the current directory */
+	    libDir = Tcl_GetCwd(interp, &ds);
+	    if (libDir == NULL) {
+		return TCL_ERROR;
+	    }
+	    libDir = strdup(libDir);
+	    Tcl_DStringFree(&ds);
+	} else {
+	    /* 
+	     * Clear the result so the user isn't confused by an error
+	     * message from the previous failed search
+	     */
+	    Tcl_ResetResult(interp);
+	}
+#else
 	return TCL_ERROR;
-	
-    libDir = Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
-    if (libDir == NULL) {
-	Tcl_SetVar(interp, "pllibrary", defaultLibraryDir, TCL_GLOBAL_ONLY);
-    } else {
-	/* Used by init code in plctrl.c */
-	plplotLibDir = strdup(libDir);
+#endif
     }
+	
+    if (libDir == NULL) {
+	libDir = Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+	if (libDir == NULL) {
+	    /* I don't believe this path can ever be reached now */
+	    Tcl_SetVar(interp, "pllibrary", defaultLibraryDir, TCL_GLOBAL_ONLY);
+	    libDir = defaultLibraryDir;
+	}
+    } else {
+	Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
+    }
+    
+    /* Used by init code in plctrl.c */
+    plplotLibDir = strdup(libDir);
 
 #ifdef TCL_DIR
     if (libDir == NULL) {
