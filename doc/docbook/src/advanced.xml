@@ -1355,7 +1355,7 @@ void plD_tidy_png(PLStream *pls)
     numbers between 0. and 1. which in turn are mapped (using &plcol1;) to
     colors using a default or user-specified map1 color transformation.  Thus,
     there are calls to &plcol1; from within the code for &plshade; (see
-    <filename>src/plshade.c</filename>) and &plotsh3d; (see
+    <filename>src/plshade.c</filename>) and &plsurf3d; (see
     <filename>src/plot3d.c</filename>) to give a continuous range of
     color corresponding to the data being plotted. In addition &plcol1; can
     be used to specify the foreground color using the map1 continuous color
