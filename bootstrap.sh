@@ -7,7 +7,7 @@ function run {
 }
 
 aclocal_opts="$*"
-aclocal_opts=${aclocal_opts:="-I /usr/local/share/libtool/libltdl"}
+aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
 
 run aclocal $aclocal_opts \
   && run autoheader \
