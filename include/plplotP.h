@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.40  1995/06/11 19:22:35  mjl
+ * Revision 1.41  1995/10/13 21:19:09  mjl
+ * Now reverts back to fseek/ftell if the USE_FSEEK macro is define, for
+ * use on systems where libc is busted.
+ *
+ * Revision 1.40  1995/06/11  19:22:35  mjl
  * Changed caddr_t treatment to make bogus cases easier to diagnose.
  *
  * Revision 1.39  1995/06/01  21:44:36  mjl
@@ -114,7 +118,7 @@ typedef char * caddr_t;
 
 /* Hacks to deal with non-ANSI libc */
 
-#if defined (STDC_HEADERS) && ! defined (VMS)
+#if defined (STDC_HEADERS) && ! defined(USE_FSEEK)
 #define STDC_FPOS_T
 #endif
 
