@@ -69,7 +69,7 @@ class x01 {
 //	String version = "5.x.x";
 //	pls.plgver(version);
 
-//	System.out.println("Plplot library version: " + version);
+//	System.out.println("PLplot library version: " + version);
 
 
     // Initialize PLplot.

@@ -44,7 +44,7 @@ def main(w):
 ##
 ##	# Get version number, just for kicks
 ##
-##	print "Plplot library version:", pl.gver()
+##	print "PLplot library version:", pl.gver()
 ##
 ##	# Initialize plplot
 ##

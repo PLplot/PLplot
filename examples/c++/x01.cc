@@ -133,7 +133,7 @@ x01::x01( int argc, char ** argv ) {
   // Print out version number, just for kicks.
   pls->gver(ver);
   
-   cout << "Plplot library version: " <<  ver << endl;
+   cout << "PLplot library version: " <<  ver << endl;
 
 
   // Initialize PLplot.

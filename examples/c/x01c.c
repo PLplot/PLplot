@@ -104,7 +104,7 @@ main(int argc, char *argv[])
 /* Get version number, just for kicks */
 
     plgver(ver);
-    fprintf(stderr, "Plplot library version: %s\n", ver);
+    fprintf(stderr, "PLplot library version: %s\n", ver);
 
 /* Initialize plplot */
 

@@ -3,9 +3,9 @@
  * Tony Richardson
  *
  * This program is intended to be used as a template for creating simple
- * two-dimensional plotting programs which use the Plplot plotting
+ * two-dimensional plotting programs which use the PLplot plotting
  * library.  The program was written with an emphasis on trying to clearly
- * illustrate how to use the Plplot library functions.  
+ * illustrate how to use the PLplot library functions.  
  *
  * This program reads data for M lines with N points each from an input
  * data file and plots them on the same graph using different symbols.  It
@@ -200,7 +200,7 @@ main(int argc, char *argv[])
 /* 
  * Label the axes and title the graph.  The string "#gm" plots the
  * Greek letter mu, all the Greek letters are available, see the
- * Plplot manual.
+ * PLplot manual.
  */
 
     pllab("Time (weeks)", "Height (#gmparsecs)", "Specimen Growth Rate");
