@@ -38,7 +38,6 @@ f77_examples = \
 AM_CPPFLAGS = $(INCLTDL)
 
 f77m4_sources = \
-	fmacs.m4 \
 	x01f.fm4 \
 	x02f.fm4 \
 	x03f.fm4 \
@@ -55,38 +54,38 @@ f77m4_sources = \
 	x16f.fm4
 
 # Need explicit dependencies for Solaris make.
-x01f.f: x01f.fm4 fmacs.m4
+x01f.f: x01f.fm4
 
-x02f.f: x02f.fm4 fmacs.m4
+x02f.f: x02f.fm4
 
-x03f.f: x03f.fm4 fmacs.m4
+x03f.f: x03f.fm4
 
-x04f.f: x04f.fm4 fmacs.m4
+x04f.f: x04f.fm4
 
-x05f.f: x05f.fm4 fmacs.m4
+x05f.f: x05f.fm4
 
-x06f.f: x06f.fm4 fmacs.m4
+x06f.f: x06f.fm4
 
-x07f.f: x07f.fm4 fmacs.m4
+x07f.f: x07f.fm4
 
-x08f.f: x08f.fm4 fmacs.m4
+x08f.f: x08f.fm4
 
-x09f.f: x09f.fm4 fmacs.m4
+x09f.f: x09f.fm4
 
-x10f.f: x10f.fm4 fmacs.m4
+x10f.f: x10f.fm4
 
-x11f.f: x11f.fm4 fmacs.m4
+x11f.f: x11f.fm4
 
-x12f.f: x12f.fm4 fmacs.m4
+x12f.f: x12f.fm4
 
-x13f.f: x13f.fm4 fmacs.m4
+x13f.f: x13f.fm4
 
-x16f.f: x16f.fm4 fmacs.m4
+x16f.f: x16f.fm4
 
 SUFFIXES = .fm4
 
 .fm4.f:
-	$(M4) $(M4_FLAGS) $< >$*.f
+	cp $< $*.f
 
 if enable_f77
 

@@ -1,15 +1,7 @@
-divert(-1)dnl
-!***********************************************************************
-! $Id$
-!
-!***********************************************************************
-! Uses implicit_none, REAL, and REAL_FUN from fmacs.m4.
-divert(1)dnl
-include(fmacs.m4)dnl
 ! Demonstration of plshade plotting      
 
 ! Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
-      implicit_none
+      implicit none
       call plscmap0n(3)
 
 ! Initialize plplot
@@ -32,13 +24,13 @@ include(fmacs.m4)dnl
 
       subroutine rect()
 
-      implicit_none
+      implicit none
       integer	NX, NY, NCONTR
       parameter (NX = 35, NY = 46, NCONTR = 14)
 
-      REAL	z(NX, NY), w(NX, NY), clevel(NCONTR)
-      REAL	xmin, xmax, ymin, ymax, zmin, zmax, x, y
-      REAL	shade_min, shade_max, sh_color
+      real*8	z(NX, NY), w(NX, NY), clevel(NCONTR)
+      real*8	xmin, xmax, ymin, ymax, zmin, zmax, x, y
+      real*8	shade_min, shade_max, sh_color
       integer	i, j, sh_cmap, sh_width
       integer	min_color, min_width, max_color, max_width
 
@@ -58,9 +50,9 @@ include(fmacs.m4)dnl
 ! Set up data arrays
 
       do 12 i = 1, NX
-         x = (i - 1 - (NX/2)) / REAL_FUN (NX/2)
+         x = (i - 1 - (NX/2)) / dble (NX/2)
          do 10 j = 1, NY
-            y = (j - 1 - (NY/2)) / REAL_FUN (NY/2) - 1.0
+            y = (j - 1 - (NY/2)) / dble (NY/2) - 1.0
             z(i,j) = x*x - y*y + (x - y) / (x*x + y*y + 0.1)
             w(i,j) = 2*x*y
  10      continue
@@ -69,26 +61,26 @@ include(fmacs.m4)dnl
       call a2mnmx(z, NX, NY, zmin, zmax)
       do 20 i = 1, NCONTR
         clevel(i) = zmin + (zmax - zmin) * (i + 0.5) /
-     &    REAL_FUN (NCONTR)
+     &    dble (NCONTR)
  20   continue
 
 ! Plot using identity transform 
 
       call pladv(0)
-      call plvpor(REAL_FUN (0.1), REAL_FUN (0.9), REAL_FUN (0.1), REAL_FUN (0.9))
-      call plwind(REAL_FUN (-1.0), REAL_FUN (1.0), REAL_FUN (-1.0), REAL_FUN (1.0))
+      call plvpor(dble (0.1), dble (0.9), dble (0.1), dble (0.9))
+      call plwind(dble (-1.0), dble (1.0), dble (-1.0), dble (1.0))
 
       do 100 i = 1, NCONTR
-        shade_min = zmin + (zmax - zmin) * REAL_FUN (i - 1) /
-     &    REAL_FUN (NCONTR)
-         shade_max = zmin + (zmax - zmin) * REAL_FUN (i)     /
-     &     REAL_FUN (NCONTR)
-         sh_color = REAL_FUN (i - 1) / REAL_FUN (NCONTR - 1)
+        shade_min = zmin + (zmax - zmin) * dble (i - 1) /
+     &    dble (NCONTR)
+         shade_max = zmin + (zmax - zmin) * dble (i)     /
+     &     dble (NCONTR)
+         sh_color = dble (i - 1) / dble (NCONTR - 1)
          sh_width = 2
          call plpsty(0)
 
          call plshade0(z, NX, NY, ' ', 
-     &     REAL_FUN ( -1.), REAL_FUN (1.0), REAL_FUN (-1.0), REAL_FUN (1.0), 
+     &     dble ( -1.), dble (1.0), dble (-1.0), dble (1.0), 
      &        shade_min, shade_max, 
      &        sh_cmap, sh_color, sh_width, 
      &        min_color, min_width, max_color, max_width)
@@ -96,7 +88,7 @@ include(fmacs.m4)dnl
  100  continue
 
       call plcol(1)
-      call plbox('bcnst', REAL_FUN (0.0), 0, 'bcnstv', REAL_FUN (0.0), 0)
+      call plbox('bcnst', dble (0.0), 0, 'bcnstv', dble (0.0), 0)
       call plcol(2)
       call pllab('distance', 'altitude', 'Bogon flux')
 
@@ -108,23 +100,23 @@ include(fmacs.m4)dnl
 
       subroutine polar()
 
-      implicit_none
+      implicit none
       integer	NX, NY, NCONTR, NBDRY
-      REAL	TWOPI
+      real*8	TWOPI
       parameter (NX = 40, NY = 64, NCONTR = 14, NBDRY=200)
       parameter (TWOPI=6.2831853071795864768)
 
-      REAL	z(NX, NY), ztmp(NX, NY+1)
-      REAL	xg(NX, NY+1), yg(NX, NY+1), xtm(NBDRY), ytm(NBDRY)
-      REAL	clevel(NCONTR)
-      REAL	xmin, xmax, ymin, ymax, zmin, zmax
-      REAL	xpmin, xpmax, ypmin, ypmax
-      REAL	r, theta, rmax, x0, y0
-      REAL	eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i
-      REAL	div1, div1i, div2, div2i
+      real*8	z(NX, NY), ztmp(NX, NY+1)
+      real*8	xg(NX, NY+1), yg(NX, NY+1), xtm(NBDRY), ytm(NBDRY)
+      real*8	clevel(NCONTR)
+      real*8	xmin, xmax, ymin, ymax, zmin, zmax
+      real*8	xpmin, xpmax, ypmin, ypmax
+      real*8	r, theta, rmax, x0, y0
+      real*8	eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i
+      real*8	div1, div1i, div2, div2i
 
-      REAL	shade_min, shade_max, sh_color
-      REAL	xtick, ytick
+      real*8	shade_min, shade_max, sh_color
+      real*8	xtick, ytick
       integer	nxsub, nysub
       integer	ncolbox, ncollab
       integer	i, j, kx, lx, ky, ly
@@ -230,7 +222,7 @@ include(fmacs.m4)dnl
       ypmax = ymax + abs(ymax)*eps
 
       call plvpas
-     &  (REAL_FUN (0.1), REAL_FUN (0.9), REAL_FUN (0.1), REAL_FUN (0.9), REAL_FUN (1.0))
+     &  (dble (0.1), dble (0.9), dble (0.1), dble (0.9), dble (1.0))
       call plwind(xpmin, xpmax, ypmin, ypmax)
 
       xopt = ' '
@@ -245,16 +237,16 @@ include(fmacs.m4)dnl
 ! Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
 
       do 100 i = 1, NCONTR
-        shade_min = zmin + (zmax - zmin) * REAL_FUN (i - 1) /
-     &    REAL_FUN (NCONTR)
-         shade_max = zmin + (zmax - zmin) * REAL_FUN (i)     /
-     &     REAL_FUN (NCONTR)
-         sh_color = REAL_FUN (i - 1) / REAL_FUN (NCONTR - 1)
+        shade_min = zmin + (zmax - zmin) * dble (i - 1) /
+     &    dble (NCONTR)
+         shade_max = zmin + (zmax - zmin) * dble (i)     /
+     &     dble (NCONTR)
+         sh_color = dble (i - 1) / dble (NCONTR - 1)
          sh_width = 2
          call plpsty(0)
 
          call plshade2(z, NX, NY, ' ', 
-     &     REAL_FUN (-1.0), REAL_FUN (1.0), REAL_FUN (-1.0), REAL_FUN (1.0), 
+     &     dble (-1.0), dble (1.0), dble (-1.0), dble (1.0), 
      &        shade_min, shade_max, 
      &        sh_cmap, sh_color, sh_width, 
      &        min_color, min_width, max_color, max_width, xg, yg)
@@ -285,10 +277,10 @@ include(fmacs.m4)dnl
 !----------------------------------------------------------------------------!
 
       subroutine a2mnmx(f, nx, ny, fmin, fmax)
-      implicit_none
+      implicit none
 
       integer	i, j, nx, ny
-      REAL	f(nx, ny), fmin, fmax
+      real*8	f(nx, ny), fmin, fmax
 
       fmax = f(1, 1)
       fmin = fmax

@@ -1,28 +1,20 @@
-divert(-1)dnl
-!***********************************************************************
-! $Id$
-!
-!***********************************************************************
-! Uses implicit_none, REAL, and REAL_FUN from fmacs.m4.
-divert(1)dnl
-include(fmacs.m4)dnl
 ! Demonstration program for PLPLOT illustrating absolute positioning
 !  of graphs on a page
-      implicit_none
+      implicit none
 
       call plinit()
 
       call pladv(0)
-      call plvpor(REAL_FUN (0.0), REAL_FUN (1.0), REAL_FUN (0.0), REAL_FUN (1.0) )
-      call plwind(REAL_FUN (0.0), REAL_FUN (1.0), REAL_FUN (0.0), REAL_FUN (1.0) )
-      call plbox('bc', REAL_FUN (0.0), 0, 'bc', REAL_FUN (0.0), 0 )
+      call plvpor(dble (0.0), dble (1.0), dble (0.0), dble (1.0) )
+      call plwind(dble (0.0), dble (1.0), dble (0.0), dble (1.0) )
+      call plbox('bc', dble (0.0), 0, 'bc', dble (0.0), 0 )
 
-      call plsvpa(REAL_FUN (50.0), REAL_FUN (150.0), REAL_FUN (50.0),
-     &  REAL_FUN (100.0) )
-      call plwind(REAL_FUN (0.0), REAL_FUN (1.0), REAL_FUN (0.0), REAL_FUN (1.0) )
-      call plbox('bc', REAL_FUN (0.0), 0, 'bc', REAL_FUN (0.0), 0 )
-      call plptex(REAL_FUN (0.5), REAL_FUN (0.5), REAL_FUN (1.0), REAL_FUN (0.0),
-     &  REAL_FUN (0.5), 'BOX at (50,150,50,100)' )
+      call plsvpa(dble (50.0), dble (150.0), dble (50.0),
+     &  dble (100.0) )
+      call plwind(dble (0.0), dble (1.0), dble (0.0), dble (1.0) )
+      call plbox('bc', dble (0.0), 0, 'bc', dble (0.0), 0 )
+      call plptex(dble (0.5), dble (0.5), dble (1.0), dble (0.0),
+     &  dble (0.5), 'BOX at (50,150,50,100)' )
 
       call plend
 
