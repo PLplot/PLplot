@@ -41,5 +41,6 @@
 #undef PLD_pbm
 #undef PLD_gnome
 #undef PLD_pstex
+#undef PLD_ntk
 
 #endif	/* __PLDEVS_H__ */
