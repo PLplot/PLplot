@@ -13,7 +13,7 @@ CXX_OBJS	= plstream$O
 CXX_OBJS_SO	=
 CXX_OBJS_SA	=
 CXXLIB_AR	= libPLcxx.a
-CXXLIB_SO	= libPLcxx.$(SO)
+CXXLIB_SO	= libPLcxx$(SO)
 
 CXX_INSTALL	= install_cxx
 
