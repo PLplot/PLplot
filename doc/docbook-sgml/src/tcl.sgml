@@ -113,6 +113,7 @@ the program, have all been dropped from the development cycle.  The
 time savings from such a development cycle can be amazing!
 </para>
 
+</sect1>
 <sect1 id="tcl-overview">
   <title>Overview of the Tcl Language Binding</title>
 
@@ -754,6 +755,7 @@ without requiring special data preparation, again just like for
 </para>
 </sect2>
 
+</sect1>
 <sect1 id="tcl-understanding">
   <title>Understanding the Performance Characteristics of Tcl</title>
 
@@ -827,4 +829,5 @@ feel free to use Tcl for the plotting, if you want to.  You can of
 course mix it up so that some plotting is done from Tcl and some from
 a compiled language.  
 </para>
+</sect1>
 </chapter>
