@@ -9,7 +9,7 @@
 # Set up the m4 macros.
 
 changequote({,})dnl
-define(ignore)dnl
+define(ignore,)dnl
 
 # Some utility macros.
 
@@ -32,7 +32,7 @@ if_bsd(   {define({UNIX})})dnl
 if_unicos({define({UNIX})})dnl
 if_sunos( {define({UNIX})})dnl
 if_next(  {define({UNIX})})dnl
-if_linux(  {define({UNIX},)define({NO_FORTRAN},)})dnl
+if_linux(  {define({UNIX},)})dnl
 if_ultrix({define({UNIX})define({SUNOS})})dnl
 
 define(if_ranlib,{ifdef({RANLIB},{$1},{$2})})dnl
@@ -210,7 +210,7 @@ PLLIB_LDC	= $(PLLIB_C)
 
 # Enable X driver by default if a Unix system.
 
-if_unix({define({X11})})
+if_unix({define({X11},)})
 
 CFLAGS_MOTIF = -I/usr/{include}/Motif1.1
 
@@ -392,7 +392,7 @@ PLDEVICES = -DPLMETA -DNULLDEV -DPS -DLJII DEF_X11()
 SYS_FLAGS_C =
 
 CC	= gcc
-F77	= 
+F77	= f77
 CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
 	     $(PROFILE_FLAG_C)
 

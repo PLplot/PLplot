@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/10/27 22:49:49  mjl
-   Reduced stub routine definition to ONE set of defines through a clever
-   macro, FNAME.  Will work in principle for all systems.
+   Revision 1.6  1992/12/02 21:49:54  furnish
+   Better Linux support.  Note that FORTRAN support is now orchestrated
+   through f2c which has funny handling of names with trailing _.
 
+ * Revision 1.5  1992/10/27  22:49:49  mjl
+ * Reduced stub routine definition to ONE set of defines through a clever
+ * macro, FNAME.  Will work in principle for all systems.
+ *
  * Revision 1.4  1992/10/27  22:14:02  mjl
  * Support for plflush() function.
  *
@@ -66,31 +70,41 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 
 #ifdef STUB_LAU
 #define FNAME(x,y)     y##_
+#define FNAME_(x,y)     y##_
 #endif
 
 #ifdef STUB_L
 #define FNAME(x,y)     y
+#define FNAME_(x,y)     y
 #endif
 
 #ifdef MSDOS
 #define FNAME(x,y)     fortran x
+#define FNAME_(x,y)     fortran x
+#endif
+
+#ifdef STUB_F2C
+#ifdef FNAME_
+#undef FNAME_
+#endif
+#define FNAME_(x,y)    y##__
 #endif
 
 #ifdef FNAME
 
 #define    PLADV	FNAME(PLADV,pladv)
-#define    PLANCOL_	FNAME(PLANCOL_,plancol_)
-#define    PLAXES_	FNAME(PLAXES_,plaxes_)
+#define    PLANCOL_	FNAME_(PLANCOL_,plancol_)
+#define    PLAXES_	FNAME_(PLAXES_,plaxes_)
 #define    PLBEG	FNAME(PLBEG,plbeg)
 #define    PLBIN	FNAME(PLBIN,plbin)
-#define    PLBOX3_	FNAME(PLBOX3_,plbox3_)
-#define    PLBOX_	FNAME(PLBOX_,plbox_)
+#define    PLBOX3_	FNAME_(PLBOX3_,plbox3_)
+#define    PLBOX_	FNAME_(PLBOX_,plbox_)
 #define    PLCLR	FNAME(PLCLR,plclr)
 #define    PLCOL	FNAME(PLCOL,plcol)
-#define    PLCON0_	FNAME(PLCON0_,plcon0_)
-#define    PLCON1_	FNAME(PLCON1_,plcon1_)
-#define    PLCON2_	FNAME(PLCON2_,plcon2_)
-#define    PLCONT_	FNAME(PLCONT_,plcont_)
+#define    PLCON0_	FNAME_(PLCON0_,plcon0_)
+#define    PLCON1_	FNAME_(PLCON1_,plcon1_)
+#define    PLCON2_	FNAME_(PLCON2_,plcon2_)
+#define    PLCONT_	FNAME_(PLCONT_,plcont_)
 #define    PLEND	FNAME(PLEND,plend)
 #define    PLEND1	FNAME(PLEND1,plend1)
 #define    PLENV	FNAME(PLENV,plenv)
@@ -102,7 +116,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLFONT	FNAME(PLFONT,plfont)
 #define    PLFONTLD	FNAME(PLFONTLD,plfontld)
 #define    PLGFAM	FNAME(PLGFAM,plgfam)
-#define    PLGFNAM_	FNAME(PLGFNAM_,plgfnam_)
+#define    PLGFNAM_	FNAME_(PLGFNAM_,plgfnam_)
 #define    PLGPAGE	FNAME(PLGPAGE,plgpage)
 #define    PLGRA	FNAME(PLGRA,plgra)
 #define    PLGSPA	FNAME(PLGSPA,plgspa)
@@ -113,22 +127,22 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLHIST	FNAME(PLHIST,plhist)
 #define    PLHLS        FNAME(PLHLS,plhls)
 #define    PLJOIN	FNAME(PLJOIN,pljoin)
-#define    PLLAB_	FNAME(PLLAB_,pllab_)
+#define    PLLAB_	FNAME_(PLLAB_,pllab_)
 #define    PLLINE	FNAME(PLLINE,plline)
 #define    PLLSTY	FNAME(PLLSTY,pllsty)
 #define    PLMESH	FNAME(PLMESH,plmesh)
-#define    PLMTEX_	FNAME(PLMTEX_,plmtex_)
+#define    PLMTEX_	FNAME_(PLMTEX_,plmtex_)
 #define    PLOT3D	FNAME(PLOT3D,plot3d)
 #define    PLPAT	FNAME(PLPAT,plpat)
 #define    PLPOIN	FNAME(PLPOIN,plpoin)
 #define    PLPREC	FNAME(PLPREC,plprec)
 #define    PLPSTY	FNAME(PLPSTY,plpsty)
-#define    PLPTEX_	FNAME(PLPTEX_,plptex_)
+#define    PLPTEX_	FNAME_(PLPTEX_,plptex_)
 #define    PLRGB        FNAME(PLRGB,plrgb)
 #define    PLSASP       FNAME(PLSASP,plsasp)
 #define    PLSCHR	FNAME(PLSCHR,plschr)
 #define    PLSFAM	FNAME(PLSFAM,plsfam)
-#define    PLSFNAM_	FNAME(PLSFNAM_,plsfnam_)
+#define    PLSFNAM_	FNAME_(PLSFNAM_,plsfnam_)
 #define    PLSMAJ	FNAME(PLSMAJ,plsmaj)
 #define    PLSMIN	FNAME(PLSMIN,plsmin)
 #define    PLSORI	FNAME(PLSORI,plsori)
@@ -136,7 +150,7 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLSSTRM	FNAME(PLSSTRM,plsstrm)
 #define    PLSSYM	FNAME(PLSSYM,plssym)
 #define    PLSTAR	FNAME(PLSTAR,plstar)
-#define    PLSTART_	FNAME(PLSTART_,plstart_)
+#define    PLSTART_	FNAME_(PLSTART_,plstart_)
 #define    PLSTYL	FNAME(PLSTYL,plstyl)
 #define    PLSVPA	FNAME(PLSVPA,plsvpa)
 #define    PLSXAX	FNAME(PLSXAX,plsxax)

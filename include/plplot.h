@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.8  1992/11/07 08:03:26  mjl
-   Added prototypes for a couple new set/get routines (gscale/sscale).
+   Revision 1.9  1992/12/02 21:49:53  furnish
+   Better Linux support.  Note that FORTRAN support is now orchestrated
+   through f2c which has funny handling of names with trailing _.
 
+ * Revision 1.8  1992/11/07  08:03:26  mjl
+ * Added prototypes for a couple new set/get routines (gscale/sscale).
+ *
  * Revision 1.7  1992/10/27  22:14:00  mjl
  * Support for plflush() function.
  *
@@ -55,7 +59,9 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
+#ifndef _POSIX_SOURCE
 #define _POSIX_SOURCE
+#endif
 
 /*----------------------------------------------------------------------*\
 *    USING PLPLOT
@@ -165,6 +171,16 @@
 #ifdef AMIGA
 #ifdef PL_NEED_SIZE_T
 #include <stddef.h>
+#endif
+#endif
+
+/* Check for Linux */
+
+#ifdef __linux
+#define STUB_LAU
+#define STUB_F2C
+#ifdef PL_NEED_MALLOC
+#include <malloc.h>
 #endif
 #endif
 
