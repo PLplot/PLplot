@@ -15,8 +15,20 @@ JAVA_OBJ := javabind$O
 
 JAVA_STUFF := java_build_target
 
+# We need to install the compiled Java classes.  I suppose this could
+# be done via some Jar-related mechanism, but I'll have to learn how
+# that works before I can do that.  For now, we just replicate the
+# compiled Java class files into the appropriate structure.
+
 install_java:
-	@echo "Don't know how to install Java yet."
+	-@if test ! -d $(LIB_DIR)/java/plplot/core; \
+		then mkdir -p $(LIB_DIR)/java/plplot/core; fi; \
+	 if test ! -d $(LIB_DIR)/java/plplot/examples; \
+		then mkdir -p $(LIB_DIR)/java/plplot/examples; fi; \
+	 $(CP) java/plplot/core/*.class $(LIB_DIR)/java/plplot/core; \
+	 $(CP) java/plplot/examples/*.class $(LIB_DIR)/java/plplot/examples
+
+#	@echo "Don't know how to install Java yet."
 
 jsrcs := $(wildcard java/plplot/core/*.java)
 jclss := $(jsrcs:.java=.class)
