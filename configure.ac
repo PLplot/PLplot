@@ -409,7 +409,7 @@ AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 ###   version number, otherwise it will fool up the bootstrap.sh script.  By
 ###   the way, the line below can be changed using options --version and
 ###   --date-version of that script. ]
-AM_INIT_AUTOMAKE(plplot, 5.2.0.cvs.20030319)
+AM_INIT_AUTOMAKE(plplot, 5.2.0.cvs)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
 ### library version consistent with the package version in direct
@@ -423,6 +423,15 @@ AM_INIT_AUTOMAKE(plplot, 5.2.0.cvs.20030319)
 
 SOVERSION=8:0:3
 AC_SUBST(SOVERSION)
+
+### According to man package, PLPLOT_TCL_VERSION (used in the various
+### pkgIndex.tcl scripts) should be strictly numbers alternativing with
+### decimal points with the first number (the major number) signifying
+### incompatible changes in the scripts.  To keep our life simple, let us
+### simply use the major number from the package version for now.
+
+PLPLOT_TCL_VERSION=5
+AC_SUBST(PLPLOT_TCL_VERSION)
 
 ### Test for programs
 AC_LIBTOOL_DLOPEN

@@ -68,5 +68,5 @@ proc load_pkg_Plplotter {dir} {
     rename load_pkg_Plplotter {}
 }
 
-package ifneeded Plplotter @VERSION@ [list load_pkg_Plplotter $dir]
+package ifneeded Plplotter @PLPLOT_TCL_VERSION@ [list load_pkg_Plplotter $dir]
 
