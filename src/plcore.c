@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1994/07/12 19:20:31  mjl
+ * Revision 1.38  1994/08/10 05:30:18  mjl
+ * Reversed the order of stream destruction when plend() is called -- now the
+ * last-created stream gets destroyed first.  Makes more sense this way and
+ * works more robustly with the x14c demo.
+ *
+ * Revision 1.37  1994/07/12  19:20:31  mjl
  * Two bugs fixed: cmap1 palette should now "stick" on plots saved from Tk
  * driver, and the code won't complain when a bop isn't preceded by an eop.
  *
@@ -1130,13 +1135,12 @@ c_plend(void)
 {
     PLINT i;
 
-    for (i = 0; i < PL_NSTREAMS; i++) {
+    for (i = PL_NSTREAMS-1; i >= 0; i--) {
 	if (pls[i] != NULL) {
 	    plsstrm(i);
 	    c_plend1();
 	}
     }
-    plsstrm(0);
     plfontrel();
 }
 
