@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1994/11/02 19:54:58  mjl
+ * Revision 1.32  1995/01/06 07:49:29  mjl
+ * Moved definition of window coordinate structure into plplot.h since it's
+ * now used in the plstream definition.  Also updated prototype for pldtik
+ * and added prototype for pldprec.
+ *
+ * Revision 1.31  1994/11/02  19:54:58  mjl
  * Changed stream variables vpx.. to vdx.. since they now hold the relative
  * device coordinates (0 to 1) rather than the physical coordinates.
  *
@@ -122,28 +127,19 @@
 /* plplot.h also includes some handy system header files */
 
 #include "plplot.h"
-#include "plstream.h"
 
+/* plstream definition */
 /* If not including this file from inside of plcore.h, declare plsc */
+
+#include "plstream.h"
 
 #ifndef __PLCORE_H__
 extern PLStream	*plsc;
 #endif
 
-/*----------------------------------------------------------------------*\
- *			Data types
-\*----------------------------------------------------------------------*/
-
 /* Signed char type, for the font tables */
 
 typedef signed char SCHAR;
-
-/* Window coordinate structure */
-
-typedef struct {
-    PLFLT vdx1, vdx2, vdy1, vdy2;
-    PLFLT wx1, wx2, wy1, wy2;
-} CWindow;
 
 /*----------------------------------------------------------------------*\
  *                       Utility macros
@@ -210,7 +206,6 @@ typedef struct {
 
 #define PL_MAXPOLY	256	/* Max segments in polyline or polygon */
 #define PL_NSTREAMS	100	/* Max number of concurrent streams. */
-#define PL_MAXWINDOWS	64	/* Max number of windows/page tracked */
 #define PL_RGB_COLOR	1<<7	/* A hack */
 
 #define TEXT_MODE	0
@@ -318,8 +313,13 @@ extern "C" {
 /* Determines interval between numeric labels */
 
 void
-pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt,
-       PLINT *mode, PLINT *prec, PLINT digmax, PLINT *scale);
+pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt);
+
+/* Determines precision of box labels */
+
+void
+pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf, 
+	PLINT *mode, PLINT *prec, PLINT digmax, PLINT *scale);
 
 /* Draws a polyline within the clip limits. */
 
