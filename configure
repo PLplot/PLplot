@@ -267,6 +267,10 @@ Setup_options () {
 		system="BSD"
 		;;
 
+	ultrix*|ULTRIX*)
+		system="ULTRIX"
+		;;
+
 	dg*|DG*)
 		system="DGUX"
 		;;
