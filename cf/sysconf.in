@@ -1,0 +1,648 @@
+# --*-sh-*---------------------------------------------------------------
+#
+# $Id$
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# This script sets up config variables for a Unix-like system.
+# The stuff set here is very system-specific and not easy to automate.
+# Believe me, I wish it were!  Stuff like compiler names (ANSI C, Fortran)
+# and options are set here.
+#
+# This treatment is a little bit of overkill for PLplot, but some of it
+# comes from other projects, and you never know when it will turn out to
+# be useful..
+# -----------------------------------------------------------------------
+
+# -----------------------------------------------------------------------
+# Compiler/linker variables
+#
+# The following shell variables are used.  They can be redefined as
+# appropriate for specific systems.
+#
+# CC		ANSI C compiler
+# OCC		Traditional C compiler
+# F77		Fortran 77 compiler
+# LDC		Linker for C programs
+# LDF		Linker for Fortran programs
+#
+# The following are only set if the appropriate capability is selected,
+# otherwise are null.  I need to specify one for each compiler used for
+# full generality (on some systems the syntax may differ slightly between
+# them).  Each is tagged with:
+#
+#	_C	for the C compiler
+#	_CXX	for the C++ compiler
+#	_F	for the Fortran 77 compiler
+#	_LC	for the C linker
+#	_LCXX	for the C++ linker
+#	_LF	for the Fortran 77 linker
+#
+# DEBUG_FLAG	Compile with debugging on
+# OPT_FLAG	Compile with optimization on
+# DBL_FLAG	Use double-precision
+# PROF_FLAG	Compile with profiling on
+# SYS_FLAGS	Misc system-specific compiler flags
+# -----------------------------------------------------------------------
+
+# Defaults
+
+CC="cc"
+OCC="cc"
+F77="f77"
+M4="m4"
+
+# Debugging
+
+if test "$with_debug" = "yes"; then
+    with_opt="no"
+    DEBUG_FLAG_C="-g"
+    DEBUG_FLAG_CXX="-g"
+    DEBUG_FLAG_F="-g"
+    DEBUG_FLAG_LC="-g"
+    DEBUG_FLAG_LCXX="-g"
+    DEBUG_FLAG_LF="-g"
+fi
+
+# Optimization
+
+if test "$with_opt" = "yes"; then
+    OPT_FLAG_C="-O"
+    OPT_FLAG_CXX="-O"
+    OPT_FLAG_F="-O"
+fi
+
+# Double precision
+# Note there is no "standard" way to invoke double precision in Fortran
+# from the command line, although several systems do provide a way (see
+# sections for SUNOS, A/IX).
+
+if test "$with_double" = "yes"; then
+    DBL_FLAG_C="-DDOUBLE"
+    DBL_FLAG_CXX="-DDOUBLE"
+    DBL_FLAG_M4="-DDOUBLE"
+    DBL_FLAG_F=""
+fi
+
+# Profiling
+# Not a good default for Fortran here, either.
+
+if test "$with_profile" = "yes"; then
+    PROF_FLAG_C="-p"
+    PROF_FLAG_CXX="-p"
+    PROF_FLAG_LC="-p"
+fi
+
+# -----------------------------------------------------------------------
+# Now get system-specific settings.
+# Notes:
+#
+# - type "configure --with-gcc" to specify gcc from the command line
+# - type "configure --with-f2c" to specify f2c from the command line
+#
+# On some systems, gcc or f2c is the default.  The f2c executable is
+# expected to be "fc" since some systems may have both programs.  If "fc"
+# can't be found, "f77" is tried instead.
+#
+# The actual setup for gcc or f2c is done AFTER the following case
+# statement.  Done this way because they're pretty predictable across
+# platforms, and this way we can just override what is set below.  Systems
+# that use gcc or f2c by default should set shell variables as follows:
+# with_gcc=yes (to get gcc), or with_f2c=yes (to get f2c).  IMPORTANT:
+# the command line argument uses a "-" (dash) to separate words, while
+# the shell variable uses a "_" (underscore).
+#
+# If your Fortran compiler supports auto-promotion to double precision,
+# it is best to set DBL_FLAG_F with the appropriate command option.  This
+# is only used for the PLplot demo programs -- the Fortran interface
+# uses m4 to generate single and double precision versions.  So if your
+# compiler can't do command-line promotion to double precision, the only
+# loss is that you won't be able to run the demos in double precision.
+# -----------------------------------------------------------------------
+
+echo "setting up site-specific compiler options"
+
+case $system in 
+
+    # --------------------------------------------------------
+    #	A/IX definitions
+    # --------------------------------------------------------
+
+    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+
+	CC="xlc"
+	F77="xlf"
+
+	if test "$with_double" = "yes"; then
+	    if test "$with_f2c" = "no"; then
+		DBL_FLAG_F="-qAUTODBL=DBLPAD"
+	    fi
+	fi
+    ;;
+
+    # --------------------------------------------------------
+    #	DEC Alpha AXP OSF/1 (tested on version 1.2).
+    # --------------------------------------------------------
+
+    alpha*|ALPHA*|Alpha*|OSF* ) 
+
+	CC="cc -std"
+
+	# Note that the c optimize flag is set to -O1, as higher levels of
+	# optimization will mess up some diagonal dashed lines.  
+
+	if test "$with_opt" = "yes"; then
+	    OPT_FLAG_C="-O1"
+	fi
+
+	# Double precision -- untested.
+
+	if test "$with_double" = "yes"; then
+	    if test "$with_f2c" = "no"; then
+		DBL_FLAG_F="-r8"
+	    fi
+	fi
+    ;;
+
+    # --------------------------------------------------------
+    #	BSD definitions
+    # --------------------------------------------------------
+
+    bsd*|BSD* ) 
+    ;;
+
+    # --------------------------------------------------------
+    #	Convex definitions
+    # --------------------------------------------------------
+
+    convex*|ConvexOS* ) 
+
+	CC="cc -std"
+
+	if test "$with_opt" = "yes"; then
+	    OPT_FLAG_C="-O3"
+	    OPT_FLAG_F="-O3"
+	fi
+    ;;
+
+    # --------------------------------------------------------
+    #	DG/UX definitions
+    # --------------------------------------------------------
+
+    dg*|DG* ) 
+
+	CC="cc -ansi"
+
+	F77="ghf77"
+	SYS_FLAGS_F77="-novms -f77"
+
+	if test "$with_debug" = "yes"; then
+	    DEBUG_FLAG_F="-g -ga -X18"
+	fi
+    ;;
+
+    # --------------------------------------------------------
+    #	HP-UX definitions
+    # --------------------------------------------------------
+
+    hp*|HP* ) 
+
+	CC="c89"
+
+	# Fortran 77 -- use the front-end that looks like 'cc'
+
+	F77="fort77"
+
+	# I have yet to decide whether it is worth using higher
+	# optimization levels than 1.  Also, HP's optimizing preprocessor
+	# may not alway be reliable, so use at your own risk.
+
+	if test "$with_opt2" = "yes"; then
+	    if test "$with_gcc" = "no"; then
+		OPT_FLAG_C="+O3 +OS"
+	    fi
+	fi
+
+	# When "gcc" is used don't build shared libraries.
+
+	if test "$with_gcc" = "yes"; then
+	    with_shlib="no"
+	fi
+
+	# When with_warn is set, most or all warnings are enabled.
+	# Also use the following:
+	#  -z	  turns off run-time dereferencing of NULL pointers (ld option)
+	#  +ESlit puts const data and strings in read-only memory (c89 option)
+
+	if test "$with_warn" = "yes"; then
+	    SYS_FLAGS_LC="-z"
+	    if test "$with_gcc" = "no"; then
+		SYS_FLAGS_C="-Wall +w1 +ESlit"
+	    fi
+	    SYS_FLAGS_F="-w"
+	fi
+
+	# Profiling
+	# Should not be used with shared libraries.
+
+	if test "$with_profile" = "yes"; then
+	    if test "$with_gcc" = "no"; then
+		with_shlib="no"
+		PROF_FLAG_C="-G"
+		PROF_FLAG_F="-G"
+		PROF_FLAG_LC="-G"
+		PROF_FLAG_LF="-G"
+	    fi
+	fi
+
+	# Shut off shared libraries if debugging.
+
+	if test "$with_debug" = "yes"; then
+	    with_shlib="no"
+	fi
+
+	# Double precision -- use auto promotion from Fortran.  This works
+	# only under 9.x -- the 8.x Fortran compiler only has -R8, which
+	# promotes only constants and not variables.  You can use a macro
+	# for real or different sets of sources to get both single and
+	# double, though, and in fact I do this with the stub interface
+	# (for a bit more portability).  So if your Fortran compiler
+	# doesn't support promotion of real constants AND variables, the
+	# library will still build, but you won't be able to build the
+	# Fortran example programs in double precision.
+
+	if test $with_double = "yes"; then
+	    if test $with_f2c = "no"; then
+		DBL_FLAG_F="+autodblpad"
+	    fi
+	fi
+    ;;
+
+    # --------------------------------------------------------
+    #	IRIX definitions (SGI machines)
+    # --------------------------------------------------------
+
+    irix*|IRIX*|Irix*|sgi*|SGI* ) 
+
+	CC="cc -ansi"
+    ;;
+
+    # --------------------------------------------------------
+    #	LINUX definitions
+    # --------------------------------------------------------
+
+    linux*|LINUX*|Linux* ) 
+
+	CC="gcc -ansi"
+	LDC=$CC
+
+	# script front-end to f2c
+
+	F77="f77"
+
+	# define({FORTRAN_COMP_RULE},{
+	# .f.o:
+	# 	f2c -c ${*}.f
+	# 	$(CC) $(CC_FLAGS) ${*}.c
+	# })
+
+	# define({SYSTEM_AUX_TARGETS},
+	# 
+	# # Beginnings of support for Linux DLL.  This is NOT done yet.  If you
+	# # know what you're doing better than me, you might lend a hand.
+	# 
+	# JUMP_DIR := $(HOME)/pljump
+	# JUMP_LIB := libplplotftk
+	# JIMP	 := $(JUMP_DIR)/jump.import
+	# 
+	# LOAD_ADDR  := -a 0x77000000
+	# DATA_SEG   :=
+	# IMAGE_NAME := -l $(HOME)/lib/libplplotftk
+	# IMAGE_VER  := -v 5.0
+	# JMP_TAB_SZ := -j 0x4000
+	# GOT_SIZE   := -g 0x1000
+	# 
+	# dll:
+	# 	@echo "Building DLL libs for Linux..."
+	# # Start by cleaning the slate
+	# 	-rm *.o
+	# 	-rm -rf $(JUMP_DIR)
+	# 	-mkdir $(JUMP_DIR)
+	# 	$(MAKE) libs "CC_FLAGS=$(CC_FLAGS) -B/usr/dll/jump/"
+	# # Okay, now get the vars and funcs.
+	# 	(cd $(JUMP_DIR); /usr/dll/bin/getvars)
+	# 	(cd $(JUMP_DIR); /usr/dll/bin/getfuncs)
+	# 	-rm $(JUMP_DIR)/jump.log
+	# # Alright, now create the jump.import file  What fun.
+	# 	nm --no-cplus -o /usr/lib/libc.sa | grep __GOT_ | sed 's/__GOT__/_/' > $(JIMP)
+	# 	nm --no-cplus -o /usr/lib/libm.sa | grep __GOT_ | sed 's/__GOT__/_/' >> $(JIMP)
+	# 	nm --no-cplus -o /usr/lib/libtcl.sa | grep __GOT_ | sed 's/__GOT__/_/' >> $(JIMP)
+	# 	nm --no-cplus -o /usr/lib/libtk.sa | grep __GOT_ | sed 's/__GOT__/_/' >> $(JIMP)
+	# 	nm --no-cplus -o /usr/lib/libitcl.sa | grep __GOT_ | sed 's/__GOT__/_/' >> $(JIMP)
+	# 	nm --no-cplus -o /usr/lib/libX11.sa | grep __GOT_ | sed 's/__GOT__/_/' >> $(JIMP)
+	# # Step 5: recompile again..
+	# 	-rm *.o
+	# 	$(MAKE) libs "CC_FLAGS=$(CC_FLAGS) -B/usr/dll/jump/"
+	# 	(cd $(JUMP_DIR); /usr/dll/bin/getsize > jump.vars-new)
+	# # Step 6, build the libs
+	# 	/usr/dll/bin/mkimage $(IMAGE_NAME) $(LOAD_ADDR) $(DATA_SEG) \
+	# 		$(GOT_SIZE) $(JMP_TAB_SZ) -- *.o \
+	# 		-lf2c -ltk -ltcl -litcl -lX11 -lm -lc
+	# 	/usr/dll/bin/mstubs  $(IMAGE_NAME) $(LOAD_ADDR) $(DATA_SEG) \
+	# 		$(GOT_SIZE) $(JMP_TAB_SZ) -- libplplotftk
+	# 
+	# # Unfinished.
+	# 	@echo "Have a happy day."
+
+    ;;
+
+    # --------------------------------------------------------
+    #	NeXT definitions
+    # --------------------------------------------------------
+
+    next*|NeXT*|NEXT* ) 
+	# I've tested Fortran compatibility using f2c only - amr
+
+	with_f2c="yes"
+    ;;
+
+    # --------------------------------------------------------
+    #	SUNOS definitions
+    # --------------------------------------------------------
+
+    SunOS-4* )
+
+	CC="acc"
+
+	if test "$with_opt" = "yes"; then
+	    OPT_FLAG_F="-fast"
+	    OPT_FLAG_LF="-fast"
+	fi
+
+	if test "$with_double" = "yes"; then
+	    DBL_FLAG_F="-r8"
+	fi
+
+	if test "$with_profile" = "yes"; then
+	    PROF_FLAG_LC="-p -static"
+	fi
+    ;;
+
+    # Solaris
+    
+    SunOS-5* )
+
+	CC="acc"
+	OCC="cc -Xs"
+
+	if test "$with_opt" = "yes"; then
+	    OPT_FLAG_F="-fast"
+	    OPT_FLAG_LF="-fast"
+	fi
+
+	if test "$with_double" = "yes"; then
+	    DBL_FLAG_F="-r8"
+	fi
+
+	if test "$with_profile" = "yes"; then
+	    PROF_FLAG_LC="-p -static"
+	fi
+    ;;
+
+    # --------------------------------------------------------
+    #	NEC Super-UX (SX-3) definitions
+    #
+    #	Also used with the Monte-4 supercomputer at JAERI, Tokai
+    # --------------------------------------------------------
+
+    sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
+
+	CC="cc -hansi"
+
+	# Use the f77 compiler to link instead of f77sx, since the
+	# f77sx flags are very nonstandard (-L handles output listing
+	# options, etc).  
+
+	F77="f77sx"
+	LDF="f77 -w"
+
+	# ALWAYS ALWAYS use the -b option otherwise some things get passed by
+	# value instead of by reference (demonstrating once again that truth is
+	# stranger than fiction).
+
+	if test "$with_warn" = "yes"; then
+	    SYS_FLAGS_F="-e1 -pvctl nomsg -b"
+	else
+	    SYS_FLAGS_F="-e2 -pvctl nomsg -b"
+	fi
+
+	if test "$with_opt" = "yes"; then
+	    OPT_FLAG_F="-O nomsg"
+	fi
+
+	if test "$with_double" = "yes"; then
+	    DBL_FLAG_F="-A dbl4"
+	fi
+    ;;
+
+    # --------------------------------------------------------
+    #	Ultrix definitions
+    # --------------------------------------------------------
+
+    ultrix*|ULTRIX* ) 
+
+	with_gcc="yes"
+
+	# Double precision. (needs checking)
+
+	if test "$with_double" = "yes"; then
+	    DBL_FLAG_F="-r8"
+	fi
+
+	# Profiling (needs checking)
+
+	if test "$with_profile" = "yes"; then
+	    PROF_FLAG_LC="-p -static"
+	fi
+    ;;
+
+    # --------------------------------------------------------
+    #	UNICOS defs.
+    # --------------------------------------------------------
+
+    unicos*|Unicos*|UNICOS*|Cray*|cray*|sn* ) 
+
+	# These settings are appropriate under UNICOS 6.x.
+	# Here we assume that 'cc' is the standard C compiler.
+
+	F77="cf77"
+
+	if test "$with_debug" = "yes"; then
+	    DEBUG_FLAG_F="-Wf\"-ez\""
+	fi
+
+	# ifdef({OPT},{
+	# OPT_FLAG_F	= 
+	# })
+
+	# if_prof({
+	# PROF_FLAG_C	=
+	# PROF_FLAG_F	=
+	# PROF_FLAG_LC	=
+	# PROF_FLAG_LF	=
+	# DEBUG_FLAG_C	= -Gp 
+	# DEBUG_FLAG_LC	= -Gp
+	# DEBUG_FLAG_LF	= 
+	# ifelse(MACHINE,CRAY_2,{
+	# LIB_C		= -lprof -lsci -lu
+	# },{
+	# LIB_C		= -lprof -lsci
+	# })
+	# LIB_F		= -lprof
+	# })
+    ;;
+
+    # --------------------------------------------------------
+    #	SYSV definitions
+    #	(also the default)
+    # --------------------------------------------------------
+
+    * ) 	
+    ;;
+
+esac
+
+# -----------------------------------------------------------------------
+# gcc and f2c setup
+# -----------------------------------------------------------------------
+
+if test "$with_gcc" = "yes"; then
+    CC="gcc"
+    OCC="gcc -traditional"
+fi
+
+# Should change this to actually look for fc, and change to f77 if not found.
+
+if test "$with_f2c" = "yes"; then
+    F77="fc"
+fi
+
+# -----------------------------------------------------------------------
+# Set flags to generate shared libraries for systems that we know about.
+# Taken from BLT configure.in with some modifications.
+#
+# To make this as clean as possible, I always compile using PIC on systems
+# that support it.  That way, either an archive or shared version of the
+# library can be built from the same set of object files.  There is a
+# slight performance loss from using PIC in an archive library which can
+# be tolerated.
+# -----------------------------------------------------------------------
+
+echo "checking how to make shared libraries"
+SHLIB_CCFLAGS=""
+SHLIB_BUILD=""
+SHLIB_SUFFIX=""
+case $system in 
+    SunOS-4* ) 
+	SHLIB_CCFLAGS="-pic"
+	SHLIB_BUILD="ld -assert pure-text"
+	SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+    ;;
+    HP-UX-* )
+	SHLIB_CCFLAGS="+z"
+	SHLIB_F77FLAGS="+z"
+	SHLIB_BUILD="ld -b -o"
+	SHLIB_SUFFIX=".sl"
+    ;;
+    SunOS-5* )
+	SHLIB_CCFLAGS="-K pic"
+	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
+	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+    ;;
+    OSF-1.* )
+	SHLIB_CCFLAGS="-fpic"
+	SHLIB_BUILD="$CC -shared"
+	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+    ;;
+    IRIX-5.* )
+	SHLIB_CCFLAGS="-KPIC"
+	SHLIB_BUILD="$CC -shared"
+	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+    ;;
+    * )
+	echo "Don't know how to make shared libraries for $system"
+	with_shlib="no"
+    ;;
+esac
+
+if test ! -z "SHLIB_CCFLAGS" ; then 
+    if test "$compiler" = "gcc" ; then
+	SHLIB_CCFLAGS="-fpic"
+    fi
+fi
+
+AC_SUBST(SHLIB_BUILD)
+AC_SUBST(SHLIB_SUFFIX)
+
+# -----------------------------------------------------------------------
+# Assemble finished compiler flags.
+# -----------------------------------------------------------------------
+
+CC_FLAGS_NOOPT=\
+"-c $SHLIB_CCFLAGS $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C"
+
+CXX_FLAGS_NOOPT=\
+"-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX"
+
+F77_FLAGS_NOOPT=\
+"-c $SHLIB_F77FLAGS $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F"
+
+CC_FLAGS=\
+"$CC_FLAGS_NOOPT $OPT_FLAG_C"
+
+CXX_FLAGS=\
+"$CXX_FLAGS_NOOPT $OPT_FLAG_CXX"
+
+F77_FLAGS=\
+"$F77_FLAGS_NOOPT $OPT_FLAG_F"
+
+LDC_FLAGS=\
+"$PROF_FLAG_LC $SYS_FLAGS_LC $DEBUG_FLAG_LC"
+
+LDCXX_FLAGS=\
+"$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX"
+
+LDF_FLAGS=\
+"$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
+
+M4_FLAGS="-S2000 -B8192 -DSYSTEM=SYSTEM $DBL_FLAG_M4"
+
+AC_SUBST(CC)
+AC_SUBST(OCC)
+AC_SUBST(F77)
+AC_SUBST(CC_FLAGS)
+AC_SUBST(LDC_FLAGS)
+AC_SUBST(F77_FLAGS)
+AC_SUBST(LDF_FLAGS)
+
+# -----------------------------------------------------------------------
+# Hacks to deal with optimizer failures.
+# -----------------------------------------------------------------------
+
+CC_FLAGS_XWIN=$CC_FLAGS
+CC_FLAGS_SCCONT=$CC_FLAGS
+
+case $system in 
+    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+	CC_FLAGS_XWIN=$CC_FLAGS_NOOPT
+    ;;
+
+    sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
+	CC_FLAGS_SCCONT=$CC_FLAGS_NOOPT
+    ;;
+esac
+
+AC_SUBST(CC_FLAGS_XWIN)
+AC_SUBST(CC_FLAGS_SCCONT)
