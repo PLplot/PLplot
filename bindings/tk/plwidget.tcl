@@ -1,6 +1,12 @@
 # $Id$
 # $Log$
-# Revision 1.28  1994/09/27 22:06:11  mjl
+# Revision 1.29  1994/10/11 18:57:58  mjl
+# Default zooming behavior changed -- now it zooms outward from the center
+# (first point clicked on), preserving aspect ratio.  This works correctly
+# even if the orientation or the aspect ratio is changed.  The old behavior
+# can be recovered by setting the global variable "zoomopt" to 1.
+#
+# Revision 1.28  1994/09/27  22:06:11  mjl
 # Several important additions to the zooming capability:
 #  - A double click now zooms by 2X, centered at the mouse cursor.  If the
 #    cursor is too close to the boundary to allow this, an appropriately
@@ -137,8 +143,8 @@ proc plxframe {w {client {}}} {
 # multiple copies running.  The [list $client] construct will enclose
 # $client with a pair of braces if necessary (can't do it directly since
 # braces prevent variable expansion).  The reason this is necessary is
-# because binding the command to a key causes it to be parsed by the
-# interpreter twice -- once during the bind and once during its execution.
+# because binding the command to a key causes variable substitution to be
+# performed twice -- once during the bind and once before execution.
 
     bind $w.plwin <Any-KeyPress> \
 	"key_filter $w [list $client] %K %N %A 0 0"
@@ -241,7 +247,7 @@ proc plw_create_TopRow {w client} {
 # torn off (select menu with middle mouse button and move to where you
 # want it) which makes selecting top-level menu buttons easy.  Finally,
 # certain menu options have keyboard equivalents: zoom-select (z),
-# zoom-reset (r), print (p), and save-again (s).
+# zoom-reset (r), print (P), and save-again (s).
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu {w} {
@@ -623,10 +629,19 @@ proc plw_close {w} {
 #----------------------------------------------------------------------------
 
 proc plw_zoom_select {w} {
-    global def_button_cmd
+    global def_button_cmd zoomopt
 
+    if { ! [info exists zoomopt] } then {
+	set zoomopt 0
+    }
     set def_button_cmd [bind $w.plwin <ButtonPress>]
-    plw_label_set $w "Zoom: Click on upper left hand corner of zoom region."
+
+    if { $zoomopt == 0 } then {
+	plw_label_set $w "Click on center of zoom region."
+    } else {
+	plw_label_set $w "Click on upper left hand corner of zoom region."
+    }
+
     bind $w.plwin <ButtonPress> "plw_zoom_start $w %x %y"
 }
 
@@ -757,13 +772,159 @@ proc plw_zoom_start {w wx wy} {
 }
 
 #----------------------------------------------------------------------------
+# plw_zoom_coords
+#
+# Transforms the initial and final mouse coordinates to either:
+#
+# opt = 0	device coordinates
+# opt = 1	normalized device coordinates
+#
+# The global variable "zoomopt" is used to determine zoom behavior:
+#
+# zoomopt = 0	box is centered about the first point clicked on, 
+#		perimeter follows mouse while preserving aspect ratio. 
+#		(default)
+#
+# zoomopt = 1	first and last points specified determine opposite corners
+#		of zoom box.
+#
+#----------------------------------------------------------------------------
+
+proc plw_zoom_coords {w x0 y0 x1 y1 opt} {
+    global zoomopt
+
+    set Lx [winfo width  $w.plwin]
+    set Ly [winfo height $w.plwin]
+
+# zoomopt == 0: zoom from center out, preserving aspect ratio
+
+    if { $zoomopt == 0 } then {
+
+# Enforce boundaries in device coordinate space
+
+	set bounds [$w.plwin view bounds]
+	set xmin [expr [lindex "$bounds" 0] * $Lx]
+	set ymin [expr [lindex "$bounds" 1] * $Ly]
+	set xmax [expr [lindex "$bounds" 2] * $Lx]
+	set ymax [expr [lindex "$bounds" 3] * $Ly]
+
+	set x1 [max $xmin [min $xmax $x1]]
+	set y1 [max $ymin [min $ymax $y1]]
+
+# Scale factors used to maintain plot aspect ratio
+
+	set xscale [expr $xmax - $xmin]
+	set yscale [expr $ymax - $ymin]
+
+# Get box lengths, adjusting downward if necessary to keep in bounds
+
+	set dx [expr abs($x1 - $x0)]
+	set dy [expr abs($y1 - $y0)]
+
+	set xr [expr $x0 + $dx]
+	set xl [expr $x0 - $dx]
+	set yr [expr $y0 + $dy]
+	set yl [expr $y0 - $dy]
+
+	if { $xl < $xmin } then {
+	    set dx [expr $x0 - $xmin]
+	}
+	if { $xr > $xmax } then {
+	    set dx [expr $xmax - $x0]
+	}
+	if { $yl < $ymin } then {
+	    set dy [expr $y0 - $ymin]
+	}
+	if { $yr > $ymax } then {
+	    set dy [expr $ymax - $y0]
+	}
+
+# Adjust box size for proper aspect ratio
+
+	set rx [expr double($dx) / $xscale]
+	set ry [expr double($dy) / $yscale]
+
+	if { $rx > $ry } then {
+	    set dy [expr $yscale*$rx]
+	} else {
+	    set dx [expr $xscale*$ry]
+	}
+
+	set xr [expr $x0 + $dx]
+	set xl [expr $x0 - $dx]
+	set yr [expr $y0 + $dy]
+	set yl [expr $y0 - $dy]
+
+# Now check again to see if in bounds, and adjust downward if not
+
+	if { $xl < $xmin } then {
+	    set dx [expr $x0 - $xmin]
+	    set rx [expr double($dx) / $xscale]
+	    set dy [expr $yscale*$rx]
+	}
+	if { $xr > $xmax } then {
+	    set dx [expr $xmax - $x0]
+	    set rx [expr double($dx) / $xscale]
+	    set dy [expr $yscale*$rx]
+	}
+	if { $yl < $ymin } then {
+	    set dy [expr $y0 - $ymin]
+	    set ry [expr double($dy) / $yscale]
+	    set dx [expr $xscale*$ry]
+	}
+	if { $yr > $ymax } then {
+	    set dy [expr $ymax - $y0]
+	    set ry [expr double($dy) / $yscale]
+	    set dx [expr $xscale*$ry]
+	}
+
+# Final box coordinates
+
+	set xr [expr $x0 + $dx]
+	set xl [expr $x0 - $dx]
+	set yr [expr $y0 + $dy]
+	set yl [expr $y0 - $dy]
+
+# zoomopt == 1: two-corners zoom.  No boundary handling.
+
+    } else {
+	set xr $x0
+	set xl $x1
+	set yr $y0
+	set yl $y1
+    }
+
+# Optional translation to relative device coordinates.
+
+    if { $opt == 1 } then {
+	set wxl [expr "$xl / double($Lx)" ]
+	set wxr [expr "$xr / double($Lx)" ]
+	set wyl [expr "1.0 - $yr / double($Ly)" ]
+	set wyr [expr "1.0 - $yl / double($Ly)" ]
+
+    } else {
+	set wxr $xl
+	set wxl $xr
+	set wyr $yl
+	set wyl $yr
+    }
+
+    return "$wxl $wyl $wxr $wyr"
+}
+
+#----------------------------------------------------------------------------
 # plw_zoom_mouse_draw
 #
 # Draws zoom box in response to mouse motion (with button held down).
 #----------------------------------------------------------------------------
 
 proc plw_zoom_mouse_draw {w wx0 wy0 wx1 wy1} {
-    $w.plwin draw rect $wx0 $wy0 $wx1 $wy1
+
+    set coords [plw_zoom_coords $w $wx0 $wy0 $wx1 $wy1 0]
+
+    $w.plwin draw rect \
+	[lindex "$coords" 0] [lindex "$coords" 1] \
+	[lindex "$coords" 2] [lindex "$coords" 3] 
 }
 
 #----------------------------------------------------------------------------
@@ -781,16 +942,13 @@ proc plw_zoom_mouse_end {w wx0 wy0 wx1 wy1} {
     plw_label_reset $w
     $w.plwin draw end
 
-    set wlx [winfo width $w.plwin]
-    set wly [winfo height $w.plwin]
-    set xl [expr "$wx0/$wlx."     ]
-    set xr [expr "$wx1/$wlx."     ]
-    set yl [expr "1 - $wy1/$wly." ]
-    set yr [expr "1 - $wy0/$wly." ]
-
 # Select new plot region
 
-    plw_view_zoom $w $xl $yl $xr $yr
+    set coords [plw_zoom_coords $w $wx0 $wy0 $wx1 $wy1 1]
+
+    plw_view_zoom $w \
+	[lindex "$coords" 0] [lindex "$coords" 1] \
+	[lindex "$coords" 2] [lindex "$coords" 3] 
 }
 
 #----------------------------------------------------------------------------
