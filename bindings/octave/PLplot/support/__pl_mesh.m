@@ -106,7 +106,15 @@ function __pl_mesh(caller, ...)
   endif
   
   plcol(15);pllsty(1);
-  __pl_plenv(-1.6, 1.6, -1.6, 2.6, 0, -2);
+  ##__pl_plenv(-1.6, 1.6, -1.6, 2.6, 0, -2);
+  if (__pl.multi(__pl_strm) == 1)	# multiplot, erase current subwindow
+    plclear;
+  else
+    pladv(0);
+  endif
+
+  plvpor(0, 1, 0, 0.95);
+  plwind(-1.6, 1.6, -1.3, 2.2);
   plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM, __pl.alt(__pl_strm), __pl.az(__pl_strm))
   plbox3("bnstu", tdeblank(__pl.xlabel(__pl_strm,:)), 0.0, 0,
 	 "bnstu", tdeblank(__pl.ylabel(__pl_strm,:)), 0.0, 0,
@@ -122,7 +130,7 @@ function __pl_mesh(caller, ...)
     
   switch (type)
     case  0
-      plmesh(x, y, z', LINE_XY);
+      plmesh(x, y, z', LINE_XY + MAG_COLOR);
     case 1
       plmesh(x, y, z', LINE_XY + MAG_COLOR + BASE_CONT);
     case 2
@@ -137,7 +145,8 @@ function __pl_mesh(caller, ...)
  endswitch	
   
   plcol(15);
-  pllab(" ", " ", tdeblank(__pl.tlabel(__pl_strm,:)));
+  ##pllab(" ", " ", tdeblank(__pl.tlabel(__pl_strm,:)));
+  plmtex("t", 1, 0.5,0.5, tdeblank(__pl.tlabel(__pl_strm,:)));
   plflush;
 
 endfunction
