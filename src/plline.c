@@ -1,37 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/07/01 22:18:13  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".  Added new function plP_pllclp()
-   to clip a polyline within input clip limits and using the input function
-   to do the actual draw.  Used from the new driver interface functions.
+   Revision 1.9  1993/07/31 08:18:34  mjl
+   Clipping routine for polygons added (preliminary).
 
- * Revision 1.7  1993/03/28  08:45:53  mjl
- * Minor change to eliminate a warning on some systems.
- *
- * Revision 1.6  1993/03/17  17:01:40  mjl
- * Eliminated some dead assignments that turned up when running with SAS/C's
- * global optimizer enabled on the Amiga.
- *
- * Revision 1.5  1993/03/03  19:42:22  mjl
- * Changed PLSHORT -> short everywhere; now all device coordinates are expected
- * to fit into a 16 bit address space (reasonable, and good for performance).
- *
- * Revision 1.4  1993/02/23  05:16:19  mjl
- * Changed references in error messages from plstar to plinit, and fixed
- * some error messages to be more specific.
- *
- * Revision 1.3  1993/01/23  05:56:03  mjl
- * Now holds all routines dealing with line draws, including clipping and
- * dashed line support.  Polyline capability added.
- *
- * Revision 1.2  1992/09/29  04:46:05  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:34:36  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.8  1993/07/01  22:18:13  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".  Added new function plP_pllclp()
+ * to clip a polyline within input clip limits and using the input function
+ * to do the actual draw.  Used from the new driver interface functions.
 */
 
 /*	plline.c
@@ -265,10 +242,9 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
 	   void (*draw) (short *, short *, PLINT))
 {
     PLINT x1, x2, y1, y2;
-    PLINT i, iclp;
+    PLINT i, iclp = 0;
     int drawable;
 
-    iclp = 0;
     for (i = 0; i < npts - 1; i++) {
 	x1 = x[i];
 	x2 = x[i + 1];
@@ -290,10 +266,10 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
 		xclp[iclp] = x2;
 		yclp[iclp] = y2;
 	    }
-/*
-* Not first point.  Check if first point of this segment matches up to 
-* previous point, and if so, add it to the current polyline buffer.
-*/
+
+/* Not first point.  Check if first point of this segment matches up to 
+   previous point, and if so, add it to the current polyline buffer. */
+
 	    else if (x1 == xclp[iclp] && y1 == yclp[iclp]) {
 		iclp++;
 		xclp[iclp] = x2;
@@ -321,6 +297,73 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
 	(*draw)(xclp, yclp, iclp + 1);
 
     plP_scurr(x[npts-1], y[npts-1]);
+}
+
+/*----------------------------------------------------------------------*\
+* void plP_plfclp()
+*
+* Fills a polygon within the clip limits.
+\*----------------------------------------------------------------------*/
+
+void
+plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
+	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
+	   void (*draw) (short *, short *, PLINT))
+{
+    PLINT x1, x2, y1, y2;
+    PLINT i, iclp = 0;
+    int drawable;
+
+    iclp = 0;
+    for (i = 0; i < npts - 1; i++) {
+	x1 = x[i];
+	x2 = x[i + 1];
+	y1 = y[i];
+	y2 = y[i + 1];
+
+	drawable = (INSIDE(x1, y1) && INSIDE(x2, y2));
+	if (!drawable)
+	    drawable = !clipline(&x1, &y1, &x2, &y2, xmin, xmax, ymin, ymax);
+
+	if (drawable) {
+
+/* First point of polyline. */
+
+	    if (iclp == 0) {
+		xclp[iclp] = x1;
+		yclp[iclp] = y1;
+		iclp++;
+		xclp[iclp] = x2;
+		yclp[iclp] = y2;
+	    }
+
+/* Not first point.  If first point of this segment matches up to the
+   previous point, just add it.  */
+
+	    else if (x1 == xclp[iclp] && y1 == yclp[iclp]) {
+		iclp++;
+		xclp[iclp] = x2;
+		yclp[iclp] = y2;
+	    }
+
+/* If not, we need to add both points, to connect the points in the
+   polygon along the clip boundary.  */
+
+	    else {
+		iclp++;
+		xclp[iclp] = x1;
+		yclp[iclp] = y1;
+		iclp++;
+		xclp[iclp] = x2;
+		yclp[iclp] = y2;
+	    }
+	}
+    }
+
+/* Draw the sucker */
+
+    if (iclp + 1 >= 3)
+	(*draw)(xclp, yclp, iclp + 1);
 }
 
 /*----------------------------------------------------------------------*\
