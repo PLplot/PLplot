@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.24  1993/07/02 07:19:21  mjl
-   Changed over to new namespace, new options parser.  Some options handlers
-   removed (no longer necessary).
+   Revision 1.25  1993/07/16 22:20:18  mjl
+   Eliminated obsolete flags and processing of metafile tags (still read for
+   backward compatibility).  To be replaced by operations in the driver
+   interface.
 
+ * Revision 1.24  1993/07/02  07:19:21  mjl
+ * Changed over to new namespace, new options parser.  Some options handlers
+ * removed (no longer necessary).
+ *
  * Revision 1.23  1993/04/26  19:58:03  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
@@ -208,11 +213,8 @@ static float	dum_float;
 
 /* Plot parameters */
 
-static int	orient;
-static float	aspect;
-static int	orientset, aspectset;
+static int	orient, orientset;
 static PLFLT	mar=0.0, jx=0.5, jy=0.5;
-static U_SHORT	lpbpxmi, lpbpxma, lpbpymi, lpbpyma;
 
 /* Plot dimensions */
 
@@ -297,13 +299,6 @@ static PLOptionTable option_table[] = {
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-p page",
     "Plot given page only" },
-{
-    "a",			/* Aspect ratio */
-    Opt_a,
-    NULL,
-    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
-    "-a aspect",
-    "Plot aspect ratio" },
 {
     "mar",			/* Margin */
     NULL,
@@ -471,7 +466,7 @@ process_next(U_CHAR c)
 static void
 plr_init(U_CHAR c)
 {
-    float dev_aspect, ratio;
+    float aspect, dev_aspect, ratio;
 
 /* Register event handler */
 
@@ -482,23 +477,12 @@ plr_init(U_CHAR c)
     plinit();
     plP_gsub(&nsubx, &nsuby, &cursub);
 
-/*
-* Aspect ratio scaling
-*
-* If the user has not set the aspect ratio in the code via plsasp() it will
-* be zero, and is set to the natural ratio of the metafile coordinate system.
-* The aspect ratio set from the command line overrides this.
-*/
+/* Set aspect ratio to the natural ratio of the metafile coordinate system. */
+
     xlen = xmax - xmin;
     ylen = ymax - ymin;
 
-    if (aspect == 0.0)
-	aspect = (ylen / pxly) / (xlen / pxlx);
-
-    if (aspect <= 0.)
-	fprintf(stderr,
-		"Error in aspect ratio setting, aspect = %f\n", aspect);
-
+    aspect = (ylen / pxly) / (xlen / pxlx);
     if (orient%2 == 1)
 	aspect = 1.0 / aspect;
 
@@ -791,10 +775,10 @@ plr_esc(U_CHAR c)
 	return;
 
       case PL_SET_LPB:
-	plm_rd(pdf_rd_2bytes(MetaFile, &lpbpxmi));
-	plm_rd(pdf_rd_2bytes(MetaFile, &lpbpxma));
-	plm_rd(pdf_rd_2bytes(MetaFile, &lpbpymi));
-	plm_rd(pdf_rd_2bytes(MetaFile, &lpbpyma));
+	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
 	return;
     }
 }
@@ -1204,7 +1188,7 @@ Init(int argc, char **argv)
 {
     int i, mode, status;
 
-/* First process plrender command line options */
+/* Process plrender command line options */
 
     mode = PL_PARSE_OVERRIDE;
     status = plParseOpts(&argc, argv, mode, option_table, Usage);
@@ -1218,6 +1202,10 @@ Init(int argc, char **argv)
     OpenMetaFile(&argc, argv);
     if (ReadFileHeader())
 	exit(EX_BADFILE);
+
+/* Other miscellaneous housekeeping */
+
+    plSetInternalOpt("-tcl_cmd", "set plw_create plr_create");
 
 /* Finally, give the rest of the command line to plplot to process. */
 
@@ -1396,13 +1384,6 @@ ReadFileHeader(void)
 	    continue;
 	}
 
-	if (!strcmp(tag, "aspect")) {
-	    plm_rd(pdf_rd_ieeef(MetaFile, &dum_float));
-	    if (!aspectset)
-		aspect = dum_float;
-	    continue;
-	}
-
 	if (!strcmp(tag, "width")) {
 	    plm_rd(pdf_rd_1byte(MetaFile, &dum_uchar));
 	    plwid(dum_uchar);
@@ -1413,6 +1394,13 @@ ReadFileHeader(void)
 	    plm_rd(pdf_rd_1byte(MetaFile, &dum_uchar));
 	    if (!orientset)
 		orient = dum_uchar;
+	    continue;
+	}
+
+/* Obsolete tags */
+
+	if (!strcmp(tag, "aspect")) {
+	    plm_rd(pdf_rd_ieeef(MetaFile, &dum_float));
 	    continue;
 	}
 
@@ -1569,24 +1557,6 @@ Opt_p(char *opt, char *optarg)
 
     page_begin = atoi(optarg);
     page_end = page_begin;
-
-    return(0);
-}
-
-/*----------------------------------------------------------------------*\
-* Opt_a()
-*
-* Performs appropriate action for option "a".
-\*----------------------------------------------------------------------*/
-
-static int
-Opt_a(char *opt, char *optarg)
-{
-
-/* Aspect ratio */
-
-    aspect = atof(optarg);
-    aspectset = 1;
 
     return(0);
 }
