@@ -219,7 +219,35 @@ void c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
       init_width = plsc->width;
       plcol0(cont_color);
       plwid(cont_width);
-      plcont(a, nx, ny, 1, nx, 1, ny, clevel, nlevel, pltr, pltr_data);
+      if(pltr == NULL) {
+	 /* For this case use the same interpretation that occurs internally
+	  * for plshade.  That is set up x and y grids that map from the
+	  * index ranges to xmin, xmax, ymin, ymax, and use those grids
+	  * for the plfcont call.
+	  */
+	 PLcGrid  cgrid1;
+	 PLFLT *x, *y;
+	 cgrid1.nx = nx;
+	 cgrid1.ny = ny;
+	 x = (PLFLT *) malloc(nx * sizeof(PLFLT));
+	 if (x == NULL)
+	   plexit("plshades: Out of memory for x");
+	 cgrid1.xg = x;
+	 for (i = 0; i < nx; i++)
+	   cgrid1.xg[i] = xmin + (xmax - xmin)*(float)i/(float)(nx-1);
+	 y = (PLFLT *) malloc(ny * sizeof(PLFLT));
+	 if (y == NULL)
+	   plexit("plshades: Out of memory for y");
+	 cgrid1.yg = y;
+	 for (i = 0; i < ny; i++)
+	    cgrid1.yg[i] = ymin + (ymax - ymin)*(float)i/(float)(ny-1);
+	 plcont(a, nx, ny, 1, nx, 1, ny, clevel, nlevel,
+		pltr1, (void *) &cgrid1);
+	 free(x);
+	 free(y);
+      }
+      else
+	plcont(a, nx, ny, 1, nx, 1, ny, clevel, nlevel, pltr, pltr_data);
       plcol0(init_color);
       plwid(init_width);
    }
