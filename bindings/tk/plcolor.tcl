@@ -418,7 +418,7 @@ itcl::class ColorPalette0 {
 	set w $_w
 	global ncol0 plcmap0_col
 	frame $w -bd 2 -relief raised
-	set cmap0 [$plot cmd plgcmap0]
+	set cmap0 [$plot gcmap0]
 	set ncol0 [lindex $cmap0 0]
 	for {set i 0} {$i < $ncol0} {incr i} {
 	    set plcmap0_col($i) [lindex $cmap0 [expr $i+1]]
@@ -498,7 +498,7 @@ itcl::class ColorPalette0 {
 
 	$w.$i.color config -text $color
 	$w.$i.patch config -background $color
-	$plot cmd plscol0 $i $color
+	$plot scol0 $i $color
 	if $static_redraw {
 	    $plot redraw
 	}
@@ -511,7 +511,7 @@ itcl::class ColorPalette0 {
 
 	$w.$i.color config -text $color
 	$w.$i.patch config -background $color
-	$plot cmd plscol0 $i $color
+	$plot scol0 $i $color
 	if $dynamic_redraw {
 	    $plot redraw
 	}
@@ -524,7 +524,7 @@ itcl::class ColorPalette0 {
 	for {set i 0} {$i < $ncol0} {incr i} {
 	    set cmap0 "$cmap0 $plcmap0_col($i)"
 	}
-	$plot cmd plscmap0 $ncol0 $cmap0
+	$plot scmap0 $ncol0 $cmap0
 	if $static_redraw {
 	    $plot redraw
 	}
@@ -632,7 +632,7 @@ itcl::class ColorPalette1 {
 	    $w.lab.pos \
 	    {right padx 200}
 
-	set cmap1 [$plot cmd plgcmap1]
+	set cmap1 [$plot gcmap1]
 	set ncol1 [lindex $cmap1 0]
 	for {set i 0} {$i < $ncol1} {incr i} {
 	    set plcmap1_col($i) [lindex $cmap1 [expr 3*$i+1]]
@@ -804,7 +804,6 @@ itcl::class ColorPalette1 {
 		       [lindex [$w.l.$i.patch config -background] 4] \
 		       $this colChanged $i $plot]
 
-	puts "new color: $color"
 	if {$color != {}} {
 	    set plcmap1_col($i) $color
 	} else {
@@ -813,7 +812,7 @@ itcl::class ColorPalette1 {
 
 	$w.l.$i.color config -text $color
 	$w.l.$i.patch config -background $color
-	$plot cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
+	$plot scol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
 	if $static_redraw {
 	    $plot redraw
 	}
@@ -827,7 +826,7 @@ itcl::class ColorPalette1 {
 
 	$w.l.$i.color config -text $color
 	$w.l.$i.patch config -background $color
-	$plot cmd plscol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
+	$plot scol1 $i $color $plcmap1_pos($i) $plcmap1_rev($i)
 	if $dynamic_redraw {
 	    $plot redraw
 	}
@@ -841,7 +840,7 @@ itcl::class ColorPalette1 {
 	    set cmap1 \
 		"$cmap1 $plcmap1_col($i) $plcmap1_pos($i) $plcmap1_rev($i)"
 	}
-	$plot cmd plscmap1 $ncol1 $cmap1
+	$plot scmap1 $ncol1 $cmap1
 	if { (!$dynamic && $static_redraw) || ($dynamic && $dynamic_redraw) } {
 	    $plot redraw
 	}
