@@ -38,8 +38,6 @@ plstrip_gen(PLStrip *strip);
 static void
 plstrip_legend(PLStrip *strip, int flag);
 
-char *strdup(const char *);
-
 /*--------------------------------------------------------------------------*\
  * plstripc
  *
@@ -92,7 +90,7 @@ c_plstripc( PLINT *id, char *xspec, char *yspec,
 	stripc->nptsmax[i] =  100;
 	stripc->colline[i] = colline[i];
 	stripc->styline[i] = styline[i];
-	stripc->legline[i] = strdup(legline[i]); /* strdup() is needed because value must persist after call has finished */
+	stripc->legline[i] = plstrdup(legline[i]);
 	stripc->x[i] = (PLFLT *) malloc((size_t) sizeof(PLFLT) * stripc->nptsmax[i]);;
 	stripc->y[i] = (PLFLT *) malloc((size_t) sizeof(PLFLT) * stripc->nptsmax[i]);;
 	if (stripc->x[i] == NULL || stripc->y[i] == NULL) {
@@ -113,11 +111,11 @@ c_plstripc( PLINT *id, char *xspec, char *yspec,
     stripc->xlen = xmax - xmin;	/* length of x scale */
     stripc->y_ascl = y_ascl;	/* autoscale y between x jump scale */
     stripc->acc = acc;		/* accumulate plot (not really stripchart) */
-    stripc->xspec = strdup(xspec); /* x axis specification */
-    stripc->yspec = strdup(yspec); /* strdup() is needed because value must persist after call has finished */
-    stripc->labx = strdup(labx); /* x label */
-    stripc->laby = strdup(laby);
-    stripc->labtop = strdup(labtop); /* title */
+    stripc->xspec = plstrdup(xspec); /* x axis specification */
+    stripc->yspec = plstrdup(yspec);
+    stripc->labx = plstrdup(labx); /* x label */
+    stripc->laby = plstrdup(laby);
+    stripc->labtop = plstrdup(labtop); /* title */
     stripc->colbox = colbox;	/* box color */
     stripc->collab = collab;	/* label color */
 
