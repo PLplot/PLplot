@@ -2,11 +2,11 @@ C      3-d plot demo
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
-      integer i, j, k, ifshade, xpts, ypts, xdim
+      integer i, j, k, ifshade, xpts, ypts, xdim, ydim
 C      xdim is the leading dimension of z, xpts <= xdim is the leading
 C      dimension of z that is defined.
-      parameter (xdim=100, xpts=35, ypts=46)
-      real*8 x(xpts), y(ypts), z(xdim,ypts), xx, yy, r
+      parameter (xdim=99, ydim=100, xpts=35, ypts=46)
+      real*8 x(xdim), y(ydim), z(xdim,ypts), xx, yy, r
 
       character*80 title(2)
       real*8 alt(2),az(2)

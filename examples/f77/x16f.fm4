@@ -3,17 +3,16 @@ C      plshades demo, using color fill
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
       real*8 xx, yy, argx, argy, distort, r, t
-      integer NLEVEL, NX, NY, PERIMETERPTS, xdim
+      integer NLEVEL, NX, NY, PERIMETERPTS, xdim, ydim
       parameter(NLEVEL = 20)
-C      NX <= xdim, NY is the defined area of the 2D arrays, xdim is
-C      the leading dimension.
-      parameter(NX = 35)
-      parameter(NY = 46)
-      parameter(xdim = 100)
+C      xdim and ydim are the static dimensions of the 2D arrays while
+C      NX and NY are the defined area.
+      parameter(xdim=99, NX = 35)
+      parameter(ydim=100, NY = 46)
       parameter(PERIMETERPTS = 100)
       real*8 clevel(NLEVEL), shedge(NLEVEL+1),
-     &  z(xdim,NY), w(xdim,NY), xg1(NX), yg1(NY),
-     &  xg2(xdim,NY), yg2(xdim,NY), zmin, zmax,
+     &  z(xdim,ydim), w(xdim,ydim), xg1(xdim), yg1(ydim),
+     &  xg2(xdim,ydim), yg2(xdim,ydim), zmin, zmax,
      &  px(PERIMETERPTS), py(PERIMETERPTS)
       integer fill_width, cont_color, cont_width
       integer i, j

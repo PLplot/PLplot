@@ -3,12 +3,15 @@ C      Does several contour plots using different coordinate mappings.
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
-      integer i, j, nptsx, nptsy
-      parameter (nptsx=35,nptsy=46)
+      integer i, j, nptsx, nptsy, xdim, ydim
+C      xdim and ydim are the absolute static dimensions.
+C      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D 
+C      arrays that is actually used.
+      parameter (xdim=99, ydim=100, nptsx=35,nptsy=46)
 
-      real*8 z(nptsx,nptsy), w(nptsx,nptsy), clevel(11),
-     &  xg1(nptsx), yg1(nptsy),
-     &  xg2(nptsx, nptsy), yg2(nptsx, nptsy)
+      real*8 z(xdim, ydim), w(xdim, ydim), clevel(11),
+     &  xg1(xdim), yg1(ydim),
+     &  xg2(xdim, ydim), yg2(xdim, ydim)
       real*8 tr, xx, yy, argx, argy, distort
 
       common /plplot/ tr(6)
@@ -62,10 +65,10 @@ C      Plot using identity transform
       call pl_setcontlabelparam(0.006d0, 0.3d0, 0.1d0, 1)
       call plenv(-1.0d0, 1.0d0, -1.0d0, 1.0d0, 0, 0)
       call plcol0(2)
-      call plcont(z,nptsx,nptsy,1,nptsx,1,nptsy,clevel,11)
+      call plcont(z,xdim,ydim,1,nptsx,1,nptsy,clevel,11)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcont(w,nptsx,nptsy,1,nptsx,1,nptsy,clevel,11)
+      call plcont(w,xdim,ydim,1,nptsx,1,nptsy,clevel,11)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate',
@@ -75,10 +78,10 @@ C      Plot using identity transform
 C      Plot using 1d coordinate transform
       call plenv(-1.0d0, 1.0d0, -1.0d0, 1.0d0, 0, 0)
       call plcol0(2)
-      call plcon1(z,nptsx,nptsy,1,nptsx,1,nptsy,clevel,11, xg1, yg1)
+      call plcon1(z,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg1, yg1)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcon1(w,nptsx,nptsy,1,nptsx,1,nptsy,clevel,11, xg1, yg1)
+      call plcon1(w,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg1, yg1)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate',
@@ -87,10 +90,10 @@ C      Plot using 1d coordinate transform
 C      Plot using 2d coordinate transform
       call plenv(-1.0d0, 1.0d0, -1.0d0, 1.0d0, 0, 0)
       call plcol0(2)
-      call plcon2(z,nptsx,nptsy,1,nptsx,1,nptsy,clevel,11, xg2, yg2)
+      call plcon2(z,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg2, yg2)
       call plstyl(1,1500,1500)
       call plcol0(3)
-      call plcon2(w,nptsx,nptsy,1,nptsx,1,nptsy,clevel,11, xg2, yg2)
+      call plcon2(w,xdim,ydim,1,nptsx,1,nptsy,clevel,11, xg2, yg2)
       call plstyl(0,1500,1500)
       call plcol0(1)
       call pllab('X Coordinate', 'Y Coordinate',
@@ -107,14 +110,17 @@ C      polar contour plot example.
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
-      integer PERIMETERPTS, RPTS, THETAPTS, NLEVEL
+      integer PERIMETERPTS, RPTS, THETAPTS, NLEVEL, xdim, ydim
       parameter(PERIMETERPTS = 100)
-      parameter(RPTS = 40)
-      parameter(THETAPTS = 40)
+C      xdim and ydim are the absolute static size of the 2D arrays.
+C      RPTS and THETAPTS are associated with the part of the
+C      2D arrays that are defined.
+      parameter(xdim=99, RPTS = 40)
+      parameter(ydim=100, THETAPTS = 40)
       parameter(NLEVEL=10)
       integer i,j
-      real*8 xg(RPTS, THETAPTS),  yg(RPTS, THETAPTS),
-     &  z(RPTS, THETAPTS), px(PERIMETERPTS), py(PERIMETERPTS),
+      real*8 xg(xdim, ydim),  yg(xdim, ydim),
+     &  z(xdim, ydim), px(PERIMETERPTS), py(PERIMETERPTS),
      &  lev(NLEVEL), t, r, theta
       call plenv(-1.d0, 1.d0, -1.d0, 1.d0, 0, -2)
       call plcol0(1)
@@ -144,7 +150,7 @@ C      create contour values.
 
 C      plot the (polar) contours.
       call plcol0(2)
-      call plcon2(z, RPTS, THETAPTS, 1, RPTS, 1, THETAPTS,
+      call plcon2(z, xdim, ydim, 1, RPTS, 1, THETAPTS,
      &  lev, NLEVEL, xg, yg)
       call plcol0(1)
       call pllab('', '', 'Polar Contour Plot')
@@ -157,17 +163,20 @@ C      shielded potential contour plot example
       integer NCX, NCY, NPLT, i, j, nx, ny, kx, lx, ky, ly,
      &  nlevel, ilevgt, ilevlt, nlevlt, nlevgt,
      &  ncollin, ncolbox, ncollab,
-     &  nxsub, nysub
+     &  nxsub, nysub, xdim, ydim
       real*8 TWOPI, r, theta, rmax, x0, y0, xmin, xmax, eps, q1, d1,
      &  ymin, ymax,
      &  q1i, d1i, q2, d2, q2i, d2i, div1, div1i, div2, div2i,
      &  zmin, zmax, dz, xpmin, xpmax, ypmin, ypmax,
      &  xtick, ytick
-      parameter (NCX=40, NCY=64, NPLT=100)
+C      xdim and ydim are the absolute static size of the 2D arrays.
+C      NCX and NCY are associated with the part of the
+C      2D arrays that are defined.
+      parameter (xdim=99, NCX=40, ydim=100, NCY=64, NPLT=100)
       parameter (TWOPI=6.2831853071795864768d0)
 
-      real*8 z(NCX, NCY), ztmp(NCX, NCY+1)
-      real*8 xg(NCX, NCY+1), yg(NCX, NCY+1), xtm(NPLT), ytm(NPLT)
+      real*8 z(xdim, ydim), ztmp(xdim, ydim+1)
+      real*8 xg(xdim, ydim+1), yg(xdim, ydim+1), xtm(NPLT), ytm(NPLT)
 
       real*8 clevel(20)
       character*8 xopt, yopt
@@ -193,8 +202,8 @@ C      Tack on extra cell in theta to handle periodicity.
         xg(i, ny+1) = xg(i, 1)
         yg(i, ny+1) = yg(i, 1)
       enddo
-      call a2mnmx(xg, nx, ny, xmin, xmax)
-      call a2mnmx(yg, nx, ny, ymin, ymax)
+      call a2mnmx(xg, nx, ny, xmin, xmax, xdim)
+      call a2mnmx(yg, nx, ny, ymin, ymax, xdim)
       rmax = r
       x0 = (xmin + xmax)/2.d0
       y0 = (ymin + ymax)/2.d0
@@ -238,7 +247,7 @@ C      Tack on extra cell in theta to handle periodicity.
         enddo
         ztmp(i, ny+1) = z(i, 1)
       enddo
-      call a2mnmx(z, nx, ny, zmin, zmax)
+      call a2mnmx(z, nx, ny, zmin, zmax, xdim)
 
 C      Set up contour levels.
 
@@ -297,13 +306,13 @@ C      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
       call plcol0(ncollin)
       if(nlevlt .gt. 0) then
          call pllsty(2)
-         call plcon2(ztmp, nx, ny+1, kx, lx, ky, ly+1, clevel(ilevlt),
-     &     nlevlt, xg, yg)
+         call plcon2(ztmp, xdim, ydim+1, kx, lx, ky, ly+1,
+     &     clevel(ilevlt), nlevlt, xg, yg)
       endif
       if(nlevgt .gt. 0) then
         call pllsty(1)
-        call plcon2(ztmp, nx, ny+1, kx, lx, ky, ly+1, clevel(ilevgt),
-     &    nlevgt, xg, yg)
+        call plcon2(ztmp, xdim, ydim+1, kx, lx, ky, ly+1,
+     &    clevel(ilevgt), nlevgt, xg, yg)
       endif
 
 C      Draw boundary.
@@ -325,11 +334,11 @@ C----------------------------------------------------------------------------
 C      Subroutine a2mnmx
 C      Minimum and the maximum elements of a 2-d array.
 
-      subroutine a2mnmx(f, nx, ny, fmin, fmax)
+      subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
       implicit none
 
-      integer   i, j, nx, ny
-      real*8    f(nx, ny), fmin, fmax
+      integer   i, j, nx, ny, xdim
+      real*8    f(xdim, ny), fmin, fmax
 
       fmax = f(1, 1)
       fmin = fmax
