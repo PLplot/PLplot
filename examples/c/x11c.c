@@ -7,6 +7,7 @@
 
 #define XPTS    35		/* Data points in x */
 #define YPTS    46		/* Datat points in y */
+#define LEVELS 10 
 
 static int opt[] = { 3, 3};
 
@@ -53,6 +54,9 @@ main(int argc, char *argv[])
   int i, j, k;
   PLFLT *x, *y, **z;
   PLFLT xx, yy;
+  int nlevel = LEVELS;
+  PLFLT clevel[LEVELS];
+  PLFLT zmin, zmax, step;
 
   /* Parse and process command line arguments */
 
@@ -88,6 +92,11 @@ main(int argc, char *argv[])
     }
   }
 
+  plMinMax2dGrid(z, XPTS, YPTS, &zmax, &zmin);  
+  step = (zmax - zmin)/(nlevel+1);
+  for (i=0; i<nlevel; i++)
+    clevel[i] = zmin + step + step*i;
+
   cmap1_init();
   for (k = 0; k < 2; k++) {
     for (i=0; i<4; i++) {
@@ -108,15 +117,16 @@ main(int argc, char *argv[])
 
       /* magnitude colored wireframe plot */
       else if (i==1)
-	plmesh(x, y, z, XPTS, YPTS, opt[k]| MAG_COLOR);
+	plmesh(x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR);
 
       /* magnitude colored wireframe plot with sides */
       else if (i==2)
-	plot3d(x, y, z, XPTS, YPTS, opt[k]| MAG_COLOR , 1);
+	plot3d(x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, 1);
 
       /* magnitude colored wireframe plot with base contour */
       else if (i==3)
-	plmesh(x, y, z, XPTS, YPTS, opt[k]| MAG_COLOR | BASE_CONT);
+	plmeshc(x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR | BASE_CONT,
+		clevel, nlevel);
 
       plcol0(3);
       plmtex("t", 1.0, 0.5, 0.5, title[k]);
