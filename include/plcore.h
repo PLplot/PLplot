@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1994/08/26 19:17:44  mjl
+ * Revision 1.25  1994/09/23 07:49:35  mjl
+ * Changed a PLINT to an int to make a DOS compiler happy about its use as a
+ * for loop index.
+ *
+ * Revision 1.24  1994/08/26  19:17:44  mjl
  * Entries for conex device added; contributed by Mark Olesen.
  *
  * Revision 1.23  1994/07/25  06:05:35  mjl
@@ -732,6 +736,6 @@ static PLDispatchTable dispatch_table[] = {
 #endif
 };
 
-static PLINT npldrivers = (sizeof(dispatch_table)/sizeof(PLDispatchTable));
+static int npldrivers = (sizeof(dispatch_table)/sizeof(PLDispatchTable));
 
 #endif	/* __PLCORE_H__ */
