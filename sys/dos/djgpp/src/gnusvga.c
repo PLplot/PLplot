@@ -12,13 +12,24 @@
 
 #include <grx20.h>
 
+/* In an attempt to fix a problem with the hidden line removal functions
+ * that results in hidden lines *not* being removed from "small" plot
+ * pages (ie, like a normal video screen), a "virtual" page of much
+ * greater size is used to trick the algorithm into working correctly.
+ * If, in future, this gets fixed on its own, then don't define
+ * "use_experimental_hidden_line_hack"
+ */
+ 
+#define use_experimental_hidden_line_hack
+
+
 #ifndef bzero   /* not stanrard ANSI (boo hoo) */
 #define bzero(a,b) memset(a,0,b)
 #endif
 
 #ifdef PLD_gnusvga
 #undef _POSIX_SOURCE    /* Turn off POSIX to get around "problem" with <keys.h> header. 
-                           Ugly, but it works *sigh* */
+			   Ugly, but it works *sigh* */
 #include <keys.h>
 #endif
 
@@ -26,21 +37,21 @@
 #include <strings.h>
 
 
-/* Prototypes:	Since GNU CC, we can rest in the safety of ANSI prototyping. */
+/* Prototypes:  Since GNU CC, we can rest in the safety of ANSI prototyping. */
 
 #ifdef PLD_gnusvga
 
-static void	plpause		(PLStream *);
-static void	svga_text	(PLStream *);
-static void	svga_graph	(PLStream *);
-static void	WaitForPage	(PLStream *pls);
-static void	EventHandler	(PLStream *pls, GrMouseEvent *event);
+static void     plpause         (PLStream *);
+static void     svga_text       (PLStream *);
+static void     svga_graph      (PLStream *);
+static void     WaitForPage     (PLStream *pls);
+static void     EventHandler    (PLStream *pls, GrMouseEvent *event);
 static void     TranslateEvent  (PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin);
 
 #endif
 
-static void	fill_polygon	(PLStream *pls);
-static void	setcmap		(PLStream *pls);
+static void     fill_polygon    (PLStream *pls);
+static void     setcmap         (PLStream *pls);
 static void     plD_init_gnu_grx_dev(PLStream *pls);
 static void     XorMod          (PLStream *pls, PLINT *mod);
  
@@ -68,13 +79,13 @@ typedef struct {
 
 #ifdef PLD_gnusvga
        
-        PLGraphicsIn gin;                       /* Graphics input structure     */
-        GrMouseEvent mevent;                    /* mouse event handler          */
-        GrLineOption gnusvgaline;               /* Line Options                 */
-        GrContext *switch_screen;               /* A copy of the GRX screen in case of switching */
-        GrContext *double_buffer;               /* Screen pointer for double buffering  */
-        GrContext *visual_screen;               /* Screen pointer for visual screen  */
-        GrContext *top_line;                    /* Screen pointer for top line  */
+	PLGraphicsIn gin;                       /* Graphics input structure     */
+	GrMouseEvent mevent;                    /* mouse event handler          */
+	GrLineOption gnusvgaline;               /* Line Options                 */
+	GrContext *switch_screen;               /* A copy of the GRX screen in case of switching */
+	GrContext *double_buffer;               /* Screen pointer for double buffering  */
+	GrContext *visual_screen;               /* Screen pointer for visual screen  */
+	GrContext *top_line;                    /* Screen pointer for top line  */
 
 /*
  *  Originally I didn't realise it was possible to "XOR" a line, so I
@@ -86,44 +97,47 @@ typedef struct {
  */
 
 #ifdef BLIT_CROSSHAIR   
-        GrContext *Xhair_X;                    /* Screen pointer for XhairX line  */
-        GrContext *Xhair_Y;                    /* Screen pointer for XhairY line  */
+	GrContext *Xhair_X;                    /* Screen pointer for XhairX line  */
+	GrContext *Xhair_Y;                    /* Screen pointer for XhairY line  */
 #endif
 
 #endif
-        GrVideoDriver *Old_Driver_Vector;       /* Pointer for old driver      */
+	GrVideoDriver *Old_Driver_Vector;       /* Pointer for old driver      */
  
-        PLINT vgax;               
-        PLINT vgay;
+	PLINT vgax;               
+	PLINT vgay;
 
-        int colour;                             /* Current Colour               */
-        int totcol;                             /* Total number of colours      */
-        int fg;                                 /* Pointer (in colour index) to a "safe" foreground colour */
+	int scale;                              /* scaling factor to "blow up" to */
+	                                        /* the "virtual" page in removing hidden lines*/
 
-        int last_x;                             /* Used to "wipe out" the X-Hair */
-        int last_y;                             /* Used to "wipe out" the X-Hair */
-        int locate_mode;                        /* Set while in locate mode     */
-        int draw_mode;                          /* used by XOR mode                 */
+	int colour;                             /* Current Colour               */
+	int totcol;                             /* Total number of colours      */
+	int fg;                                 /* Pointer (in colour index) to a "safe" foreground colour */
 
-        char dont_copy_screen;                  /* set to non-zero before existing */
-        char Xhair_on;                          /* set if the cross hair is on and displayed */
-        char toggle_xhair;                      /* set if the cross hair is being "toggled" off for fixing top of screen */
-        
-             } gnu_grx_Dev;
+	int last_x;                             /* Used to "wipe out" the X-Hair */
+	int last_y;                             /* Used to "wipe out" the X-Hair */
+	int locate_mode;                        /* Set while in locate mode     */
+	int draw_mode;                          /* used by XOR mode                 */
+
+	char dont_copy_screen;                  /* set to non-zero before existing */
+	char Xhair_on;                          /* set if the cross hair is on and displayed */
+	char toggle_xhair;                      /* set if the cross hair is being "toggled" off for fixing top of screen */
+	
+	     } gnu_grx_Dev;
 
 #ifdef PLD_gnusvga
 
 /* More Prototypes (dependent on  "gnu_grx_Dev") */
 
 static void     init_double_buffer      ( gnu_grx_Dev *dev );
-static void     CreateXhair 	        ( gnu_grx_Dev *dev, GrMouseEvent *event );
+static void     CreateXhair             ( gnu_grx_Dev *dev, GrMouseEvent *event );
 static void     DestroyXhair            ( gnu_grx_Dev *dev );
 static void     SaveTopOfScreen         ( gnu_grx_Dev *dev );
 static void     RestoreTopOfScreen      ( gnu_grx_Dev *dev );
 
 #endif
 
-        
+	
 /*--------------------------------------------------------------------------*\
  * plD_init_gnu_grx_dev()
  *
@@ -193,7 +207,7 @@ plD_init_vga(PLStream *pls)
     gnu_grx_Dev *dev;
 
  
-    pls->termin = 1;		/* is an interactive terminal */
+    pls->termin = 1;            /* is an interactive terminal */
     pls->icol0 = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -210,23 +224,39 @@ plD_init_vga(PLStream *pls)
 
 /* Set up device parameters */
 
-    svga_graph(pls);		/* Can't get current device info unless in
+    svga_graph(pls);            /* Can't get current device info unless in
 				   graphics mode. */
 
-    dev->vgax = GrSizeX() - 1;	/* should I use -1 or not??? */
+    dev->vgax = GrSizeX() - 1;  /* should I use -1 or not??? */
     dev->vgay = GrSizeY() - 1;
 
-    if (pls->xdpi==0) 
-       {
-        plP_setpxl(2.5, 2.5);	/* My best guess.  Seems to work okay. */
+#ifdef use_experimental_hidden_line_hack
+
+    if (dev->vgax>dev->vgay)    /* Work out the scaling factor for the  */
+       {                        /* "virtual" (oversized) page           */
+       dev->scale=PIXELS_X/dev->vgax;
        }
     else
        {
-        pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
-        plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4); /* Convert DPI to pixels/mm */
+       dev->scale=PIXELS_Y/dev->vgay;
+       }
+#else
+
+   dev->scale=1;
+
+#endif   
+
+    if (pls->xdpi==0) 
+       {
+	plP_setpxl(2.5*dev->scale, 2.5*dev->scale);   /* My best guess.  Seems to work okay. */
+       }
+    else
+       {
+	pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
+	plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4); /* Convert DPI to pixels/mm */
        } 
  
-    plP_setphy(0, dev->vgax, 0, dev->vgay);
+    plP_setphy(0, dev->scale*dev->vgax, 0, dev->scale*dev->vgay);
 
     dev->gnusvgaline.lno_width=pls->width;
     dev->gnusvgaline.lno_pattlen=0;
@@ -250,7 +280,8 @@ void
 plD_line_vga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
-    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
+    int x1 = x1a/dev->scale, y1 = y1a/dev->scale, x2 = x2a/dev->scale, y2 = y2a/dev->scale;
+    
     y1 = dev->vgay - y1;
     y2 = dev->vgay - y2;
 
@@ -298,8 +329,8 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 /* Specify boundary */
 
     for (i = 0; i < pls->dev_npts; i++) {
-	points[i][0] = pls->dev_x[i];
-        points[i][1] = dev->vgay - pls->dev_y[i];
+	points[i][0] = pls->dev_x[i]/dev->scale;
+	points[i][1] = dev->vgay - (pls->dev_y[i]/dev->scale);
     }
     GrFilledPolygon(pls->dev_npts, points, dev->colour);
 
@@ -314,9 +345,12 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 static void
 setcmap(PLStream *pls)
 {
-    int i, ncol1, ncol0;
+    int i, ncol1, ncol0, last_col;
     PLColor cmap1col;
+    PLFLT tmp_colour_pos;
     gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
+
+    GrResetColors();
 
     if (GrNumColors()<pls->ncol0)
        ncol0=GrNumColors();
@@ -326,10 +360,11 @@ setcmap(PLStream *pls)
 /* Initialize cmap 0 colors */
        
     for (i = 0; i < ncol0; i++)
-        {
-        GrAllocCell();
+	{
+//_GrAllocCell	GrAllocCell();
 	GrSetColor(i, pls->cmap0[i].r, pls->cmap0[i].g, pls->cmap0[i].b);
-        }
+	}
+
 /* 
  * Do a kludge to add a "black" colour back to the palette if the
  * background isn't black (ie changed through -bg), and at the same time,
@@ -357,13 +392,13 @@ if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
        }
     else
        {
-        GrSetColor(15, pls->cmap0[1].r, pls->cmap0[1].g, pls->cmap0[1].b);
-        GrSetColor(1, 0, 0, 0);
+	GrSetColor(15, pls->cmap0[1].r, pls->cmap0[1].g, pls->cmap0[1].b);
+	GrSetColor(1, 0, 0, 0);
 #ifdef PLD_gnusvga
-        if (pls->termin==1)
-           GrMouseSetColors(0,1);
+	if (pls->termin==1)
+	   GrMouseSetColors(0,1);
 #endif
-        dev->fg=1;
+	dev->fg=1;
       }
    }
 else
@@ -378,10 +413,35 @@ else
 /* Initialize any remaining slots for cmap1 */
 
     ncol1 = GrNumFreeColors();
-    for (i = 0; i < ncol1; i++) {
-	plcol_interp(pls, &cmap1col, i, ncol1);
-	GrAllocCell();
-	GrSetColor(i + pls->ncol0, cmap1col.r, cmap1col.g, cmap1col.b);
+
+    if (pls->ncol1<ncol1) ncol1=pls->ncol1;
+
+    for (i = 0; i < ncol1; i++) 
+	{
+
+	 if (ncol1<pls->ncol1)       /* Check the dynamic range of colours */
+	    {
+
+	     /*
+	      * Ok, now if we have less colour slots available than are being
+	      * defined by pls->ncol1, then we still want to use the full
+	      * dynamic range of cmap1 as best we can, so what we do is work
+	      * out an approximation to the index in the full dynamic range
+	      * in cases when pls->ncol1 exceeds the number of free colours.
+	      */
+
+	     tmp_colour_pos= i>0 ? pls->ncol1*((PLFLT)i/ncol1) : 0;
+	     plcol_interp(pls, &cmap1col, (int) tmp_colour_pos, pls->ncol1);
+            
+	    }
+	else
+	    { 
+	     plcol_interp(pls, &cmap1col, i, ncol1);
+	    }
+
+//_GrAllocCell             GrAllocCell();
+             GrSetColor(i + pls->ncol0, cmap1col.r, cmap1col.g, cmap1col.b);
+
     }
 
 
@@ -414,11 +474,12 @@ void
 plD_state_vga(PLStream *pls, PLINT op)
 {
 gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
+PLFLT tmp_colour_pos;
 
     switch (op) {
 
     case PLSTATE_WIDTH:
-        dev->gnusvgaline.lno_width=pls->width;
+	dev->gnusvgaline.lno_width=pls->width;
 	break;
 
     case PLSTATE_COLOR0:
@@ -429,7 +490,7 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 	    int b = pls->curcolor.b;
 	    if (dev->totcol < GrNumColors()) 
 	       {
-	        GrAllocCell();
+//_GrAllocCell		GrAllocCell();
 		GrSetColor(++dev->totcol, r, g, b);
 		dev->colour = dev->totcol;
 	       }
@@ -437,18 +498,16 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 	break;
 
     case PLSTATE_COLOR1:
-        { int icol1, ncol1, r, g, b;
-        if ((ncol1 = MIN(GrNumColors() - pls->ncol0, pls->ncol1)) < 1)
-            break;
-
-        icol1 = pls->ncol0 + (pls->icol1 * (ncol1-1)) / (pls->ncol1-1);
-
-        r = pls->curcolor.r;
-        g = pls->curcolor.g;
-        b = pls->curcolor.b;
-        GrAllocCell();
-        GrSetColor(icol1, r, g, b);
-        dev->colour = icol1;
+	{ int ncol1=GrNumColors() - pls->ncol0;
+         if (ncol1<pls->ncol1)
+           {
+           tmp_colour_pos=ncol1*((PLFLT)pls->icol1/(pls->ncol1>0 ? pls->ncol1 : 1));
+           dev->colour = pls->ncol0 + (int)tmp_colour_pos;
+           }
+        else
+           {
+           dev->colour = pls->ncol0 + pls->icol1;
+           }
 	}
 	break;
 
@@ -475,16 +534,16 @@ plD_eop_vga(PLStream *pls)
 
     if (page_state == DIRTY) 
        {
-        if ( (dev->double_buffer!=NULL)&&(pls->db!=0)&&(dev->visual_screen!=NULL) ) 
-           {
-            GrSetContext(dev->visual_screen);
-            GrBitBlt(NULL,0,0,dev->double_buffer,0,0,
-                      GrScreenX(), GrScreenY(),GrWRITE);
-           }
-        else if ( (pls->db!=0) && ((dev->double_buffer==NULL)||(dev->visual_screen==NULL)) ) 
-           {
-            plexit("Wacko error with double buffering I think");
-           }
+	if ( (dev->double_buffer!=NULL)&&(pls->db!=0)&&(dev->visual_screen!=NULL) ) 
+	   {
+	    GrSetContext(dev->visual_screen);
+	    GrBitBlt(NULL,0,0,dev->double_buffer,0,0,
+		      GrScreenX(), GrScreenY(),GrWRITE);
+	   }
+	else if ( (pls->db!=0) && ((dev->double_buffer==NULL)||(dev->visual_screen==NULL)) ) 
+	   {
+	    plexit("Wacko error with double buffering I think");
+	   }
 
 	if ( ! pls->nopause ) 
 	    WaitForPage(pls);
@@ -512,11 +571,11 @@ plD_bop_vga(PLStream *pls)
 
     if ( (pls->db==1) && (dev->double_buffer!=NULL) )
        {
-        GrSetContext(dev->double_buffer);
-        GrClearContext(0);
+	GrSetContext(dev->double_buffer);
+	GrClearContext(0);
        }
     else    
-        GrClearScreen(0);
+	GrClearScreen(0);
 
 }
 
@@ -544,26 +603,26 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
     
     if (dev->switch_screen!=NULL) 
        {
-        GrDestroyContext(dev->switch_screen);
-        dev->switch_screen=NULL;
+	GrDestroyContext(dev->switch_screen);
+	dev->switch_screen=NULL;
        } 
 
     if (dev->visual_screen!=NULL) 
        {
-        GrDestroyContext(dev->visual_screen);
-        dev->visual_screen=NULL;
+	GrDestroyContext(dev->visual_screen);
+	dev->visual_screen=NULL;
        }
        
     if (dev->double_buffer!=NULL) 
        {
-        GrDestroyContext(dev->double_buffer);
-        dev->double_buffer=NULL;
+	GrDestroyContext(dev->double_buffer);
+	dev->double_buffer=NULL;
        } 
 
     if (pls->dev!=NULL)
        {
-        free(pls->dev);
-        pls->dev=NULL;
+	free(pls->dev);
+	pls->dev=NULL;
        } 
 }
 
@@ -586,36 +645,36 @@ do {
     if (dev->Xhair_on==1)
        {
 
-        GrMouseGetEvent(flags|GR_M_MOTION,event);
-        
-        if (event->flags & GR_M_MOTION)
-           {
+	GrMouseGetEvent(flags|GR_M_MOTION,event);
+	
+	if (event->flags & GR_M_MOTION)
+	   {
 
 #ifdef BLIT_CROSSHAIR
 
-            GrBitBlt(NULL,0,dev->last_y,dev->Xhair_X,0,0,GrScreenX(), 0,GrXOR);
-            GrBitBlt(NULL,dev->last_x,0,dev->Xhair_Y,0,0,0, GrScreenY(),GrXOR);
-        
-            GrBitBlt(NULL,0,event->y,dev->Xhair_X,0,0,GrScreenX(), 0,GrXOR);
-            GrBitBlt(NULL,event->x,0,dev->Xhair_Y,0,0,0, GrScreenY(),GrXOR);
+	    GrBitBlt(NULL,0,dev->last_y,dev->Xhair_X,0,0,GrScreenX(), 0,GrXOR);
+	    GrBitBlt(NULL,dev->last_x,0,dev->Xhair_Y,0,0,0, GrScreenY(),GrXOR);
+	
+	    GrBitBlt(NULL,0,event->y,dev->Xhair_X,0,0,GrScreenX(), 0,GrXOR);
+	    GrBitBlt(NULL,event->x,0,dev->Xhair_Y,0,0,0, GrScreenY(),GrXOR);
 
 #else
 
-            GrHLine(0,GrScreenX(),dev->last_y,dev->fg|GrXOR);
-            GrVLine(dev->last_x,0,GrScreenY(),dev->fg|GrXOR);
+	    GrHLine(0,GrScreenX(),dev->last_y,dev->fg|GrXOR);
+	    GrVLine(dev->last_x,0,GrScreenY(),dev->fg|GrXOR);
 
-            GrHLine(0,GrScreenX(),event->y,dev->fg|GrXOR);
-            GrVLine(event->x,0,GrScreenY(),dev->fg|GrXOR);
+	    GrHLine(0,GrScreenX(),event->y,dev->fg|GrXOR);
+	    GrVLine(event->x,0,GrScreenY(),dev->fg|GrXOR);
 
 #endif
-            dev->last_x=event->x;
-            dev->last_y=event->y;
-           }
-        if (flags & event->flags)
-           {
-            ret=1;
-           }
-        }
+	    dev->last_x=event->x;
+	    dev->last_y=event->y;
+	   }
+	if (flags & event->flags)
+	   {
+	    ret=1;
+	   }
+	}
     else
        {
        GrMouseGetEvent(flags,event);
@@ -639,8 +698,8 @@ gnusvga_GetCursorCmd(PLStream *pls, PLGraphicsIn *ptr)
     plGinInit(gin);
     dev->locate_mode=1;
     while ( (gin->pX < 0) && (dev->locate_mode) ) {
-        gnusvga_GrMouseGetEvent(GR_M_BUTTON_DOWN+GR_M_KEYPRESS,pls,&dev->mevent);
-        TranslateEvent(pls, &dev->mevent, gin);
+	gnusvga_GrMouseGetEvent(GR_M_BUTTON_DOWN+GR_M_KEYPRESS,pls,&dev->mevent);
+	TranslateEvent(pls, &dev->mevent, gin);
     }
     *ptr = *gin;
 }
@@ -658,30 +717,30 @@ static void ConfigBufferingCmd( PLStream *pls, PLBufferingCB *ptr )
 switch (ptr->cmd) {
 
     case PLESC_DOUBLEBUFFERING_ENABLE:
-            if (pls->db==0)
-               {
-                pls->db = 1;
-                init_double_buffer(dev);
-               }
+	    if (pls->db==0)
+	       {
+		pls->db = 1;
+		init_double_buffer(dev);
+	       }
 	break;
 
     case PLESC_DOUBLEBUFFERING_DISABLE:
-        /*
-         *   First of all make sure that any active double buffer is
-         *   copied across to the visual screen, then clear any memory.
-         */
-        if ( (pls->db==1)  &&
-             (dev->double_buffer!=NULL) &&
-             (dev->visual_screen!=NULL)    )
-           {
-            GrSetContext(dev->visual_screen);
-            GrBitBlt(NULL,0,0,dev->double_buffer,0,0,
-                      GrScreenX(), GrScreenY(),GrWRITE);
-            GrDestroyContext(dev->visual_screen);
-            dev->visual_screen=NULL;
-            GrDestroyContext(dev->double_buffer);
-            dev->double_buffer=NULL;
-            }
+	/*
+	 *   First of all make sure that any active double buffer is
+	 *   copied across to the visual screen, then clear any memory.
+	 */
+	if ( (pls->db==1)  &&
+	     (dev->double_buffer!=NULL) &&
+	     (dev->visual_screen!=NULL)    )
+	   {
+	    GrSetContext(dev->visual_screen);
+	    GrBitBlt(NULL,0,0,dev->double_buffer,0,0,
+		      GrScreenX(), GrScreenY(),GrWRITE);
+	    GrDestroyContext(dev->visual_screen);
+	    dev->visual_screen=NULL;
+	    GrDestroyContext(dev->double_buffer);
+	    dev->double_buffer=NULL;
+	    }
 	pls->db = 0;
 	break;
 
@@ -703,10 +762,10 @@ switch (ptr->cmd) {
  *
  * Functions:
  *
- *	PLESC_FILL	        Fill polygon
- *	PLESC_GETC	        Get coordinates upon mouse click
+ *      PLESC_FILL              Fill polygon
+ *      PLESC_GETC              Get coordinates upon mouse click
  *      PLESC_DOUBLEBUFFERING   Activate double buffering
- * 	PLESC_XORMOD 	        set/reset xor mode
+ *      PLESC_XORMOD            set/reset xor mode
 \*----------------------------------------------------------------------*/
 
 void
@@ -724,7 +783,7 @@ plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
 	break;
 
     case PLESC_GETC:    
-        gnusvga_GetCursorCmd(pls, (PLGraphicsIn *) ptr);
+	gnusvga_GetCursorCmd(pls, (PLGraphicsIn *) ptr);
 	break; 
 
       case PLESC_FILL:  /* fill */
@@ -741,11 +800,11 @@ plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
 
 #ifdef GRX_DO_JPEG
     case PLESC_SET_COMPRESSION:
-         if ( ((int) ptr>0)&&((int) ptr<100) )
-            {
-             pls->dev_compression=(int) ptr;
-            }
-        break;
+	 if ( ((int) ptr>0)&&((int) ptr<100) )
+	    {
+	     pls->dev_compression=(int) ptr;
+	    }
+	break;
 #endif
 
     }
@@ -769,13 +828,13 @@ gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
     if (pls->graphx == GRAPHICS_MODE) 
        {
-        if ( dev->Xhair_on == 1 ) DestroyXhair ( dev );
-           
-        if ( (dev->switch_screen==NULL)&&(dev->dont_copy_screen==0) ) 
-           {
-            dev->switch_screen=GrCreateContext(GrScreenX(), GrScreenY(),NULL,NULL);
-            GrBitBlt(dev->switch_screen,0,0,NULL,0,0,GrScreenX(), GrScreenY(),GrWRITE);               
-           }
+	if ( dev->Xhair_on == 1 ) DestroyXhair ( dev );
+	   
+	if ( (dev->switch_screen==NULL)&&(dev->dont_copy_screen==0) ) 
+	   {
+	    dev->switch_screen=GrCreateContext(GrScreenX(), GrScreenY(),NULL,NULL);
+	    GrBitBlt(dev->switch_screen,0,0,NULL,0,0,GrScreenX(), GrScreenY(),GrWRITE);               
+	   }
 
 	GrSetMode(GR_default_text);
 	pls->graphx = TEXT_MODE;
@@ -797,22 +856,22 @@ svga_graph(PLStream *pls)
 gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
     if (pls->graphx == TEXT_MODE) {
-            if ((pls->xlength!=0)&&(pls->ylength!=0))
-               {
-               GrSetMode(GR_width_height_graphics,pls->xlength,pls->ylength);
-               }
-            else
-               {
-               GrSetMode(GR_default_graphics);
-               }
-            dev->totcol = 16;
-            setcmap(pls);
+	    if ((pls->xlength!=0)&&(pls->ylength!=0))
+	       {
+	       GrSetMode(GR_width_height_graphics,pls->xlength,pls->ylength);
+	       }
+	    else
+	       {
+	       GrSetMode(GR_default_graphics);
+	       }
+	    dev->totcol = 16;
+	    setcmap(pls);
 	if (dev->switch_screen!=NULL) /* Ok, seems like we saved a copy of the screen */
-           {
-            GrBitBlt(NULL,0,0,dev->switch_screen,0,0,GrScreenX(), GrScreenY(),GrWRITE);               
-            GrDestroyContext(dev->switch_screen);
-            dev->switch_screen=NULL;
-           }
+	   {
+	    GrBitBlt(NULL,0,0,dev->switch_screen,0,0,GrScreenX(), GrScreenY(),GrWRITE);               
+	    GrDestroyContext(dev->switch_screen);
+	    dev->switch_screen=NULL;
+	   }
 	pls->graphx = GRAPHICS_MODE;
 	page_state = CLEAN;
     }
@@ -858,10 +917,10 @@ WaitForPage(PLStream *pls)
     gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
     while ( ! exit_eventloop ) 
-          {
-           gnusvga_GrMouseGetEvent(GR_M_LEFT_DOWN+GR_M_KEYPRESS,pls,&dev->mevent);
-  	   EventHandler(pls, &dev->mevent); 
-         }
+	  {
+	   gnusvga_GrMouseGetEvent(GR_M_LEFT_DOWN+GR_M_KEYPRESS,pls,&dev->mevent);
+	   EventHandler(pls, &dev->mevent); 
+	 }
     exit_eventloop = FALSE;
 }
 
@@ -891,35 +950,35 @@ void do_location(PLStream *pls)
 
     else {
     
-          SaveTopOfScreen(dev);
-          
-          for (;;) {
-          	
-          	if (plTranslateCursor(gin)) 
-                     {
-                       sprintf(buf,"Value at cursor is : X = %f, Y = %f   ", gin->wX, gin->wY);
-                       GrTextXY(0, 0, buf, dev->fg, 0);
-                     }
-          	else
-                     {
-                       GrTextXY(0, 0, "Cannot translate                                   ", dev->fg, 0);
-                     }
+	  SaveTopOfScreen(dev);
+	  
+	  for (;;) {
+		
+		if (plTranslateCursor(gin)) 
+		     {
+		       sprintf(buf,"Value at cursor is : X = %f, Y = %f   ", gin->wX, gin->wY);
+		       GrTextXY(0, 0, buf, dev->fg, 0);
+		     }
+		else
+		     {
+		       GrTextXY(0, 0, "Cannot translate                                   ", dev->fg, 0);
+		     }
 
-                 gnusvga_GrMouseGetEvent(GR_M_MOTION+GR_M_LEFT_DOWN+GR_M_KEYPRESS,pls,&event);       /* Wait for a mouse event */
+		 gnusvga_GrMouseGetEvent(GR_M_MOTION+GR_M_LEFT_DOWN+GR_M_KEYPRESS,pls,&event);       /* Wait for a mouse event */
 
-                 if ((event.flags & GR_M_MOTION)!=1)    /* leave on anything *but* a movement */
-                     break;
-                 
-                 gin->pX = event.x;
-                 gin->pY = event.y;
-                 gin->dX = (PLFLT) event.x / dev->vgax;
-                 gin->dY = 1.0 - (PLFLT) event.y / dev->vgay;
+		 if ((event.flags & GR_M_MOTION)!=1)    /* leave on anything *but* a movement */
+		     break;
+		 
+		 gin->pX = event.x;
+		 gin->pY = event.y;
+		 gin->dX = (PLFLT) event.x / dev->vgax;
+		 gin->dY = 1.0 - (PLFLT) event.y / dev->vgay;
     
-                   } /* End loop */
-                   
-           RestoreTopOfScreen( dev );
-         
-          }
+		   } /* End loop */
+		   
+	   RestoreTopOfScreen( dev );
+	 
+	  }
 
 }
 
@@ -958,12 +1017,12 @@ EventHandler(PLStream *pls, GrMouseEvent *event)
    event handling by setting key.code to 0 and key.string to '\0' */
 
     if (dev->gin.button) {
-        if (pls->ButtonEH != NULL)
+	if (pls->ButtonEH != NULL)
 	    (*pls->ButtonEH) (&dev->gin, pls->ButtonEH_data, &exit_eventloop);
     } 
     else {
-        if (pls->KeyEH != NULL)
-            (*pls->KeyEH) (&dev->gin, pls->KeyEH_data, &exit_eventloop);
+	if (pls->KeyEH != NULL)
+	    (*pls->KeyEH) (&dev->gin, pls->KeyEH_data, &exit_eventloop);
     }
 
 /* Handle internal events */
@@ -972,7 +1031,7 @@ EventHandler(PLStream *pls, GrMouseEvent *event)
 /* Advance to next page (i.e. terminate event loop) on a <eol> */
 
     if (dev->gin.button == 1)
-        exit_eventloop = TRUE;
+	exit_eventloop = TRUE;
 
 switch(dev->gin.keysym)
       {
@@ -983,25 +1042,25 @@ switch(dev->gin.keysym)
 	break;
 
     case 'l':
-        dev->gin.pX = event->x;
-        dev->gin.pY = event->y;
-        dev->gin.dX = (PLFLT) event->x / dev->vgax;
-        dev->gin.dY = 1.0 - (PLFLT) event->y / dev->vgay;
-        do_location(pls);
-        break;
+	dev->gin.pX = event->x;
+	dev->gin.pY = event->y;
+	dev->gin.dX = (PLFLT) event->x / dev->vgax;
+	dev->gin.dY = 1.0 - (PLFLT) event->y / dev->vgay;
+	do_location(pls);
+	break;
 
     case 'x':
-        plGinInit(&dev->gin);
-        if (dev->Xhair_on==0)
-           {
-            CreateXhair( dev, event );
-           }
-        else
-           {
-            DestroyXhair( dev );
-           }
-        break;
-        
+	plGinInit(&dev->gin);
+	if (dev->Xhair_on==0)
+	   {
+	    CreateXhair( dev, event );
+	   }
+	else
+	   {
+	    DestroyXhair( dev );
+	   }
+	break;
+	
 #if GRX_VERSION_API >= 0x0229 
 #ifdef GRX_DO_TIFF
        case PLK_F10:  // F10 
@@ -1050,12 +1109,12 @@ TranslateEvent(PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin)
 
     if (event->flags & GR_M_KEYPRESS) 
        {
-        gin->keysym = event->key; 
+	gin->keysym = event->key; 
 	if ((isprint(event->key))&&(event->key<255)) 
 	   {
 	    gin->string[0] = event->key;
 	    gin->string[1] = '\0';
-           }
+	   }
 	else 
 	   {
 	    switch (event->key) {
@@ -1068,15 +1127,15 @@ TranslateEvent(PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin)
 	      break;
 
 	    case K_F11: // F11
-  	         gin->keysym=PLK_F11;
-      	         break;
+		 gin->keysym=PLK_F11;
+		 break;
 
 	    case K_F12: // F12
-  	         gin->keysym=PLK_F12;
-      	         break;
+		 gin->keysym=PLK_F12;
+		 break;
 
 	    case K_Home: 
-            case K_EHome:
+	    case K_EHome:
 	      gin->keysym=PLK_Home;
 	      break;
 
@@ -1118,18 +1177,18 @@ TranslateEvent(PLStream *pls, GrMouseEvent *event, PLGraphicsIn *gin)
 
     else if (event->flags & GR_M_BUTTON_DOWN) 
        {
-         switch (event->flags) 
-                {
-                case GR_M_LEFT_DOWN:
-                     gin->button = 1;
-                     break;
-                case GR_M_MIDDLE_DOWN:
-                     gin->button = 2;
-                     break;
-                case GR_M_RIGHT_DOWN:
-                     gin->button = 3;
-                     break;
-              }
+	 switch (event->flags) 
+		{
+		case GR_M_LEFT_DOWN:
+		     gin->button = 1;
+		     break;
+		case GR_M_MIDDLE_DOWN:
+		     gin->button = 2;
+		     break;
+		case GR_M_RIGHT_DOWN:
+		     gin->button = 3;
+		     break;
+	      }
       gin->keysym = 0x20;
       gin->pX = event->x;
       gin->pY = event->y;
@@ -1262,32 +1321,32 @@ static void DestroyXhair ( gnu_grx_Dev *dev )
 static void SaveTopOfScreen ( gnu_grx_Dev *dev )
 
 {
-          /* Turn off Cross Hairs if they were turned on (nasty if not) 
-           * since it causes problems with the top of the line
-           */
+	  /* Turn off Cross Hairs if they were turned on (nasty if not) 
+	   * since it causes problems with the top of the line
+	   */
 
-          if (dev->Xhair_on==1)
-             {
-             dev->toggle_xhair=1;
-             DestroyXhair(dev);
-             }
+	  if (dev->Xhair_on==1)
+	     {
+	     dev->toggle_xhair=1;
+	     DestroyXhair(dev);
+	     }
 
-          /*  Save the top bit of the screen so we can overwrite
-           *  without too many problems 
-           */
+	  /*  Save the top bit of the screen so we can overwrite
+	   *  without too many problems 
+	   */
 
-          dev->top_line=GrCreateContext(GrScreenX(), 16,NULL,NULL);
-          GrBitBlt(dev->top_line,0,0,NULL,0,0,GrScreenX(), 16,GrWRITE);
-          
-          /*
-           * Turn back on cross hair now if necessary 
-           */
+	  dev->top_line=GrCreateContext(GrScreenX(), 16,NULL,NULL);
+	  GrBitBlt(dev->top_line,0,0,NULL,0,0,GrScreenX(), 16,GrWRITE);
+	  
+	  /*
+	   * Turn back on cross hair now if necessary 
+	   */
 
-          if (dev->toggle_xhair==1)
-             {
-             CreateXhair(dev, NULL);
-             dev->toggle_xhair=0;
-             }
+	  if (dev->toggle_xhair==1)
+	     {
+	     CreateXhair(dev, NULL);
+	     dev->toggle_xhair=0;
+	     }
 
 }
 
@@ -1301,29 +1360,29 @@ static void SaveTopOfScreen ( gnu_grx_Dev *dev )
 static void RestoreTopOfScreen ( gnu_grx_Dev *dev )
 
 {
-            if (dev->top_line!=NULL)    /* Ok, seems like we saved a copy of the top line */
-               {                        
-               
-                if (dev->Xhair_on==1)   /* Turn off cross hair while fixing top */
-                   {
-                    dev->toggle_xhair=1;
-                    DestroyXhair(dev);
-                   }
-               
-                GrBitBlt(NULL,0,0,dev->top_line,0,0,GrScreenX(), 16,GrWRITE); /* So we will restore anything the top line overwrote */
-                GrDestroyContext(dev->top_line);        /* remove copy of original top line */
-                dev->top_line=NULL;
+	    if (dev->top_line!=NULL)    /* Ok, seems like we saved a copy of the top line */
+	       {                        
+	       
+		if (dev->Xhair_on==1)   /* Turn off cross hair while fixing top */
+		   {
+		    dev->toggle_xhair=1;
+		    DestroyXhair(dev);
+		   }
+	       
+		GrBitBlt(NULL,0,0,dev->top_line,0,0,GrScreenX(), 16,GrWRITE); /* So we will restore anything the top line overwrote */
+		GrDestroyContext(dev->top_line);        /* remove copy of original top line */
+		dev->top_line=NULL;
 
-                /*
-                 * Turn back on cross hair now if necessary
-                 */
-               if (dev->toggle_xhair==1)
-                  {
-                   CreateXhair(dev, NULL);
-                   dev->toggle_xhair=0;
-                  }
-                
-               }
+		/*
+		 * Turn back on cross hair now if necessary
+		 */
+	       if (dev->toggle_xhair==1)
+		  {
+		   CreateXhair(dev, NULL);
+		   dev->toggle_xhair=0;
+		  }
+		
+	       }
 }
 
 #endif
@@ -1416,28 +1475,28 @@ int i=0;
        */
        
       if ((pls->BaseName=malloc(80))==NULL)
-         plexit("Could not allocate some memory");
+	 plexit("Could not allocate some memory");
       if ((pls->FileName=malloc(80))==NULL)
-         plexit("Could not allocate some memory");
-         
+	 plexit("Could not allocate some memory");
+	 
       do { /* Continue to ask for the file name until we get an answer we like */
-          fprintf(stderr,"Enter file name (include \"0\" or \"00\" if defining a family, or use \"auto\" to \ndo automatic naming): ");
-          fgets(pls->BaseName, 79, stdin);
-          if (pls->BaseName!=NULL)
-             {
-              while (pls->BaseName[i]!=0)   /* strip off the trailing CR/LF or LF sequence, since we really don't want that stuffing things up */
-                    {
-                     if ((pls->BaseName[i]==10)||(pls->BaseName[i]==13))
-                        pls->BaseName[i]=0;
-                     ++i; 
-                     if (i>79) break;
-                    }
-         
-              strncpy(pls->FileName,pls->BaseName,79); /* Copy BaseName to FileName */
-              if (strchr(pls->BaseName,'0')!=NULL) /* Test to see if we might have Family support */
-                 pls->family=1;
-             }
-          } while (pls->BaseName==NULL);
+	  fprintf(stderr,"Enter file name (include \"0\" or \"00\" if defining a family, or use \"auto\" to \ndo automatic naming): ");
+	  fgets(pls->BaseName, 79, stdin);
+	  if (pls->BaseName!=NULL)
+	     {
+	      while (pls->BaseName[i]!=0)   /* strip off the trailing CR/LF or LF sequence, since we really don't want that stuffing things up */
+		    {
+		     if ((pls->BaseName[i]==10)||(pls->BaseName[i]==13))
+			pls->BaseName[i]=0;
+		     ++i; 
+		     if (i>79) break;
+		    }
+	 
+	      strncpy(pls->FileName,pls->BaseName,79); /* Copy BaseName to FileName */
+	      if (strchr(pls->BaseName,'0')!=NULL) /* Test to see if we might have Family support */
+		 pls->family=1;
+	     }
+	  } while (pls->BaseName==NULL);
      }
 }
 
@@ -1464,45 +1523,45 @@ if (pls->page>1)
    {
     if (pls->family==0) /* See if families aren't specified */
        {
-        if (strchr(pls->BaseName,'0')!=NULL) /* if they gave a name supporting families, then check if they anted them */
-           {
-            do {
-                fprintf(stderr,"Do you want to enable family support (y/n) : ");
-                fgets(yn, sizeof(yn), stdin);
-               } while ((yn[0]=='y')&&(yn[0]=='Y')&&(yn[0]=='n')&&(yn[0]=='N'));
-            if ((yn[0]=='y')||(yn[0]=='Y'))
-               {
-               pls->family=1;
-               }
-           }
+	if (strchr(pls->BaseName,'0')!=NULL) /* if they gave a name supporting families, then check if they anted them */
+	   {
+	    do {
+		fprintf(stderr,"Do you want to enable family support (y/n) : ");
+		fgets(yn, sizeof(yn), stdin);
+	       } while ((yn[0]=='y')&&(yn[0]=='Y')&&(yn[0]=='n')&&(yn[0]=='N'));
+	    if ((yn[0]=='y')||(yn[0]=='Y'))
+	       {
+	       pls->family=1;
+	       }
+	   }
        }
-            
+	    
     if (pls->family==0) /* See if families aren't specified */
        {
-        free(pls->BaseName);
-        pls->BaseName=NULL;
-        free(pls->FileName);
-        gnusvga_get_a_file_name ( pls );
+	free(pls->BaseName);
+	pls->BaseName=NULL;
+	free(pls->FileName);
+	gnusvga_get_a_file_name ( pls );
        }
     else
        {
-        strcpy(pls->FileName,pls->BaseName);
-        zero=(char *)strrchr(pls->FileName,'0');
-        if (zero==NULL)
-           plabort("Incorrect format for family name given (must have a \"0\" or \"00\" in the name)");
-        else
-        {
-        if (zero[-1]=='0')
-           {
-            zero[-1]=gnu_alphabet[(pls->page-1)/36];
-           }
-        else if ((pls->page-1)>35)
-           plabort("Number of files exceeded (next time try \"00\" in filename instead of \"0\")");
+	strcpy(pls->FileName,pls->BaseName);
+	zero=(char *)strrchr(pls->FileName,'0');
+	if (zero==NULL)
+	   plabort("Incorrect format for family name given (must have a \"0\" or \"00\" in the name)");
+	else
+	{
+	if (zero[-1]=='0')
+	   {
+	    zero[-1]=gnu_alphabet[(pls->page-1)/36];
+	   }
+	else if ((pls->page-1)>35)
+	   plabort("Number of files exceeded (next time try \"00\" in filename instead of \"0\")");
    
-        zero[0]=gnu_alphabet[(pls->page-1)%36];
-        }
+	zero[0]=gnu_alphabet[(pls->page-1)%36];
+	}
      }
-                 
+		 
    }
 }
 #endif
@@ -1526,7 +1585,7 @@ void plD_init_tiff(PLStream *pls)
 {
     gnu_grx_Dev *dev=NULL;
 
-    pls->termin = 0;		/* is an interactive terminal */
+    pls->termin = 0;            /* is an interactive terminal */
     pls->icol0 = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -1550,41 +1609,57 @@ void plD_init_tiff(PLStream *pls)
 	 plspage(0., 0., 800, 600, 0, 0);
       }
 
-        if ( (pls->ncol1 < 3) && (pls->ncol0 < 3) )
-           {
-            GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 2);
-           }
-        else if ( (pls->ncol1 > 256) || (pls->ncol0 > 256) )
-           {
-            GrSetMode (GR_width_height_graphics, pls->xlength, pls->ylength);
-           }
-        else
-           {
-            GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 256);
-           }
-           
-        setcmap(pls);
-	dev->totcol = 16;		/* Reset RGB map so we don't run out of
+	if ( (pls->ncol1 < 3) && (pls->ncol0 < 3) )
+	   {
+	    GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 2);
+	   }
+	else if ( (pls->ncol1 > 256) || (pls->ncol0 > 256) )
+	   {
+	    GrSetMode (GR_width_height_graphics, pls->xlength, pls->ylength);
+	   }
+	else
+	   {
+	    GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 256);
+	   }
+	   
+	setcmap(pls);
+	dev->totcol = 16;               /* Reset RGB map so we don't run out of
 				   indicies */
 	pls->graphx = GRAPHICS_MODE;
 	page_state = CLEAN;
 		
 
-    dev->vgax = GrSizeX() - 1;	/* should I use -1 or not??? */
+    dev->vgax = GrSizeX() - 1;  /* should I use -1 or not??? */
     dev->vgay = GrSizeY() - 1;
+
+#ifdef use_experimental_hidden_line_hack
+
+    if (dev->vgax>dev->vgay)    /* Work out the scaling factor for the  */
+       {                        /* "virtual" (oversized) page           */
+       dev->scale=PIXELS_X/dev->vgax;
+       }
+    else
+       {
+       dev->scale=PIXELS_Y/dev->vgay;
+       }
+#else
+
+   dev->scale=1;
+
+#endif   
 
     if (pls->xdpi==0) 
        {
 /* This corresponds to a typical monitor resolution of 4 pixels/mm. */
-	plspage(4.*25.4, 4.*25.4, 0, 0, 0, 0);
+	plspage(4.*25.4*dev->scale, 4.*25.4*dev->scale, 0, 0, 0, 0);
        }
     else
        {
-        pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
+	pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
        } 
 
-    plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4); /* Convert DPI to pixels/mm */
-    plP_setphy(0, dev->vgax, 0, dev->vgay);
+    plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4); /* Convert DPI to pixels/mm */
+    plP_setphy(0, dev->scale*dev->vgax, 0, dev->scale*dev->vgay);
 
 dev->gnusvgaline.lno_width=pls->width;
 dev->gnusvgaline.lno_pattlen=0;
@@ -1624,17 +1699,17 @@ void plD_eop_tiff(PLStream *pls)
     if (page_state == DIRTY) 
        {
   
-        gnusvga_get_a_file_name(pls);
+	gnusvga_get_a_file_name(pls);
 
-        if ( (strncasecmp(pls->FileName,"auto",4)==0) )
-           {
-            SaveContextToTiff(NULL, newname("tif"), 0,"Created by GNUSVGA");
-           }
+	if ( (strncasecmp(pls->FileName,"auto",4)==0) )
+	   {
+	    SaveContextToTiff(NULL, newname("tif"), 0,"Created by GNUSVGA");
+	   }
        else
-           {
-            gnusvga_expand_BaseName(pls);
-            SaveContextToTiff(NULL,pls->FileName, 0,"Created by GNUSVGA");
-           }
+	   {
+	    gnusvga_expand_BaseName(pls);
+	    SaveContextToTiff(NULL,pls->FileName, 0,"Created by GNUSVGA");
+	   }
       }
 
     page_state = CLEAN;
@@ -1665,10 +1740,10 @@ void plD_tidy_tiff(PLStream *pls)
     gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
       if (dev->Old_Driver_Vector) 
-         {
-          GrSetDriver (dev->Old_Driver_Vector->name);
-          dev->Old_Driver_Vector=NULL;
-         }
+	 {
+	  GrSetDriver (dev->Old_Driver_Vector->name);
+	  dev->Old_Driver_Vector=NULL;
+	 }
 
    free (pls->dev);
    pls->dev=NULL;
@@ -1695,7 +1770,7 @@ void plD_eop_jpg(PLStream *pls);
 void plD_init_jpg(PLStream *pls)
 {
     gnu_grx_Dev *dev=NULL;
-    pls->termin = 0;		/* is an interactive terminal */
+    pls->termin = 0;            /* is an interactive terminal */
     pls->icol0 = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -1723,17 +1798,34 @@ void plD_init_jpg(PLStream *pls)
       }
 
 
-        GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 256);
+	GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 256);
 
-        setcmap(pls);
-	dev->totcol = 16;		/* Reset RGB map so we don't run out of
+	setcmap(pls);
+	dev->totcol = 16;               /* Reset RGB map so we don't run out of
 				   indicies */
 	pls->graphx = GRAPHICS_MODE;
 	page_state = CLEAN;
 		
 
-    dev->vgax = GrSizeX() - 1;	/* should I use -1 or not??? */
+    dev->vgax = GrSizeX() - 1;  /* should I use -1 or not??? */
     dev->vgay = GrSizeY() - 1;
+
+#ifdef use_experimental_hidden_line_hack
+
+    if (dev->vgax>dev->vgay)    /* Work out the scaling factor for the  */
+       {                        /* "virtual" (oversized) page           */
+       dev->scale=PIXELS_X/dev->vgax;
+       }
+    else
+       {
+       dev->scale=PIXELS_Y/dev->vgay;
+       }
+#else
+
+   dev->scale=1;
+
+#endif   
+
 
     if (pls->xdpi==0) 
        {
@@ -1742,11 +1834,11 @@ void plD_init_jpg(PLStream *pls)
        }
     else
        {
-        pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
+	pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
        } 
 
-    plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4); /* Convert DPI to pixels/mm */
-    plP_setphy(0, dev->vgax, 0, dev->vgay);
+    plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4); /* Convert DPI to pixels/mm */
+    plP_setphy(0, dev->scale*dev->vgax, 0, dev->scale*dev->vgay);
 
     dev->gnusvgaline.lno_width=pls->width;
     dev->gnusvgaline.lno_pattlen=0;
@@ -1770,11 +1862,11 @@ void plD_esc_jpg(PLStream *pls, PLINT op, void *ptr)
 	break;
 
     case PLESC_SET_COMPRESSION:
-         if ( ((int) ptr>0)&&((int) ptr<100) )
-            {
-             pls->dev_compression=(int) ptr;
-            }
-        break;
+	 if ( ((int) ptr>0)&&((int) ptr<100) )
+	    {
+	     pls->dev_compression=(int) ptr;
+	    }
+	break;
 	
     }
 }
@@ -1792,17 +1884,17 @@ void plD_eop_jpg(PLStream *pls)
     if (page_state == DIRTY) 
        {
   
-        gnusvga_get_a_file_name(pls);
+	gnusvga_get_a_file_name(pls);
 
-        if ( (strncasecmp(pls->FileName,"auto",4)==0) )
-           {
-            SaveContextToJpeg(NULL, newname("jpg"), pls->dev_compression);
-           }
+	if ( (strncasecmp(pls->FileName,"auto",4)==0) )
+	   {
+	    SaveContextToJpeg(NULL, newname("jpg"), pls->dev_compression);
+	   }
        else
-           {
-            gnusvga_expand_BaseName(pls);
-            SaveContextToJpeg(NULL,pls->FileName, pls->dev_compression);
-           }
+	   {
+	    gnusvga_expand_BaseName(pls);
+	    SaveContextToJpeg(NULL,pls->FileName, pls->dev_compression);
+	   }
       }
 
     page_state = CLEAN;
@@ -1833,10 +1925,10 @@ void plD_tidy_jpg(PLStream *pls)
 gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
       if (dev->Old_Driver_Vector) 
-         {
-          GrSetDriver (dev->Old_Driver_Vector->name);
-          dev->Old_Driver_Vector=NULL;
-         }
+	 {
+	  GrSetDriver (dev->Old_Driver_Vector->name);
+	  dev->Old_Driver_Vector=NULL;
+	 }
 free(pls->dev);
 pls->dev=NULL;
 }
@@ -1859,7 +1951,7 @@ void plD_eop_bmp(PLStream *pls);
 void plD_init_bmp(PLStream *pls)
 {
     gnu_grx_Dev *dev=NULL;
-    pls->termin = 0;		/* is an interactive terminal */
+    pls->termin = 0;            /* is an interactive terminal */
     pls->icol0 = 1;
     pls->bytecnt = 0;
     pls->page = 0;
@@ -1886,28 +1978,45 @@ void plD_init_bmp(PLStream *pls)
 	 plspage(0., 0., 800, 600, 0, 0);
       }
        
-        if ( (pls->ncol1 < 3) && (pls->ncol0 < 3) )
-           {
-            GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 2);
-           }
-        else if ( (pls->ncol1 > 256) || (pls->ncol0 > 256) )
-           {
-            GrSetMode (GR_width_height_graphics, pls->xlength, pls->ylength);
-           }
-        else
-           {
-            GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 256);
-           }
+	if ( (pls->ncol1 < 3) && (pls->ncol0 < 3) )
+	   {
+	    GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 2);
+	   }
+	else if ( (pls->ncol1 > 256) || (pls->ncol0 > 256) )
+	   {
+	    GrSetMode (GR_width_height_graphics, pls->xlength, pls->ylength);
+	   }
+	else
+	   {
+	    GrSetMode (GR_width_height_color_graphics, pls->xlength, pls->ylength, 256);
+	   }
 
-        setcmap(pls);
-	dev->totcol = 16;		/* Reset RGB map so we don't run out of
+	setcmap(pls);
+	dev->totcol = 16;               /* Reset RGB map so we don't run out of
 				   indicies */
 	pls->graphx = GRAPHICS_MODE;
 	page_state = CLEAN;
 		
 
-    dev->vgax = GrSizeX() - 1;	/* should I use -1 or not??? */
+    dev->vgax = GrSizeX() - 1;  /* should I use -1 or not??? */
     dev->vgay = GrSizeY() - 1;
+
+#ifdef use_experimental_hidden_line_hack
+
+    if (dev->vgax>dev->vgay)    /* Work out the scaling factor for the  */
+       {                        /* "virtual" (oversized) page           */
+       dev->scale=PIXELS_X/dev->vgax;
+       }
+    else
+       {
+       dev->scale=PIXELS_Y/dev->vgay;
+       }
+#else
+
+   dev->scale=1;
+
+#endif   
+
 
     if (pls->xdpi==0) 
        {
@@ -1916,11 +2025,11 @@ void plD_init_bmp(PLStream *pls)
        }
     else
        {
-        pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
+	pls->ydpi=pls->xdpi;        /* Set X and Y dpi's to the same value */
        } 
 
-    plP_setpxl(pls->xdpi/25.4,pls->ydpi/25.4); /* Convert DPI to pixels/mm */
-    plP_setphy(0, dev->vgax, 0, dev->vgay);
+    plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4); /* Convert DPI to pixels/mm */
+    plP_setphy(0, dev->scale*dev->vgax, 0, dev->scale*dev->vgay);
 
     dev->gnusvgaline.lno_width=pls->width;
     dev->gnusvgaline.lno_pattlen=0;
@@ -1958,17 +2067,17 @@ void plD_eop_bmp(PLStream *pls)
     if (page_state == DIRTY) 
        {
   
-        gnusvga_get_a_file_name(pls);
+	gnusvga_get_a_file_name(pls);
 
-        if ( (strncasecmp(pls->FileName,"auto",4)==0) )
-           {
-            GrSaveBmpImage(newname("bmp"), NULL, 0, 0, GrScreenX(), GrScreenY());
-           }
+	if ( (strncasecmp(pls->FileName,"auto",4)==0) )
+	   {
+	    GrSaveBmpImage(newname("bmp"), NULL, 0, 0, GrScreenX(), GrScreenY());
+	   }
        else
-           {
-            gnusvga_expand_BaseName(pls);
-            GrSaveBmpImage(pls->FileName, NULL, 0, 0, GrScreenX(), GrScreenY());
-           }
+	   {
+	    gnusvga_expand_BaseName(pls);
+	    GrSaveBmpImage(pls->FileName, NULL, 0, 0, GrScreenX(), GrScreenY());
+	   }
       }
 
 
@@ -2000,10 +2109,10 @@ void plD_tidy_bmp(PLStream *pls)
 gnu_grx_Dev *dev=(gnu_grx_Dev *)pls->dev;
 
       if (dev->Old_Driver_Vector) 
-         {
-          GrSetDriver (dev->Old_Driver_Vector->name);
-          dev->Old_Driver_Vector=NULL;
-         }
+	 {
+	  GrSetDriver (dev->Old_Driver_Vector->name);
+	  dev->Old_Driver_Vector=NULL;
+	 }
 free(pls->dev);
 pls->dev=NULL;
 }
@@ -2017,4 +2126,4 @@ pldummy_gnusvga()
     return 0;
 }
 
-#endif				/* GNUSVGA */
+#endif                          /* GNUSVGA */
