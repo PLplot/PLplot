@@ -14,6 +14,19 @@
 
 /* Prototypes for functions in this file. */
 
+void plD_dispatch_init_psm	( PLDispatchTable *pdt );
+void plD_dispatch_init_psc	( PLDispatchTable *pdt );
+
+void plD_init_psm		(PLStream *);
+void plD_init_psc		(PLStream *);
+void plD_line_ps		(PLStream *, short, short, short, short);
+void plD_polyline_ps		(PLStream *, short *, short *, PLINT);
+void plD_eop_ps			(PLStream *);
+void plD_bop_ps			(PLStream *);
+void plD_tidy_ps		(PLStream *);
+void plD_state_ps		(PLStream *, PLINT);
+void plD_esc_ps			(PLStream *, PLINT, void *);
+
 static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);
 static void  fill_polygon	(PLStream *pls);
@@ -62,40 +75,39 @@ typedef struct {
 
 static char outbuf[128];
 
-#ifdef ENABLE_DYNAMIC_DRIVERS
-void plD_line_psm(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+static void ps_dispatch_init_helper( PLDispatchTable *pdt,
+                                     char *menustr, char *devnam,
+                                     int type, int seq, plD_init_fp init )
 {
-    return plD_line_ps( pls, x1a, y1a, x2a, y2a );
+    pdt->pl_MenuStr = menustr;
+    pdt->pl_DevName = devnam;
+    pdt->pl_type = type;
+    pdt->pl_seq = seq;
+    pdt->pl_init     = init;
+    pdt->pl_line     = (plD_line_fp)     plD_line_ps;
+    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_ps;
+    pdt->pl_eop      = (plD_eop_fp)      plD_eop_ps;
+    pdt->pl_bop      = (plD_bop_fp)      plD_bop_ps;
+    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_ps;
+    pdt->pl_state    = (plD_state_fp)    plD_state_ps;
+    pdt->pl_esc      = (plD_esc_fp)      plD_esc_ps;
 }
-void plD_line_psc(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+
+void plD_dispatch_init_psm	( PLDispatchTable *pdt )
 {
-    return plD_line_ps( pls, x1a, y1a, x2a, y2a );
+    ps_dispatch_init_helper( pdt,
+                             "PostScript File (monochrome)", "ps",
+                             plDevType_FileOriented, 29,
+                             (plD_init_fp) plD_init_psm );
 }
 
-void plD_polyline_psm(PLStream *pls, short *xa, short *ya, PLINT npts)
+void plD_dispatch_init_psc	( PLDispatchTable *pdt )
 {
-    return plD_polyline_ps( pls, xa, ya, npts );
+    ps_dispatch_init_helper( pdt,
+                             "PostScript File (color)", "psc",
+                             plDevType_FileOriented, 30,
+                             (plD_init_fp) plD_init_psc );
 }
-void plD_polyline_psc(PLStream *pls, short *xa, short *ya, PLINT npts)
-{
-    return plD_polyline_ps( pls, xa, ya, npts );
-}
-
-void plD_eop_psm(PLStream *pls) { return plD_eop_ps(pls); }
-void plD_eop_psc(PLStream *pls) { return plD_eop_ps(pls); }
-
-void plD_bop_psm(PLStream *pls) { return plD_eop_ps(pls); }
-void plD_bop_psc(PLStream *pls) { return plD_eop_ps(pls); }
-
-void plD_tidy_psm(PLStream *pls) { return plD_eop_ps(pls); }
-void plD_tidy_psc(PLStream *pls) { return plD_eop_ps(pls); }
-
-void plD_state_psm(PLStream *pls, PLINT op) { return plD_state_ps(pls,op); }
-void plD_state_psc(PLStream *pls, PLINT op) { return plD_state_ps(pls,op); }
-
-void plD_esc_psm(PLStream *pls, PLINT op, void *ptr) { return plD_esc_ps(pls,op,ptr); }
-void plD_esc_psc(PLStream *pls, PLINT op, void *ptr) { return plD_esc_ps(pls,op,ptr); }
-#endif
 
 /*--------------------------------------------------------------------------*\
  * plD_init_ps()
