@@ -177,6 +177,12 @@ typedef struct {
  * ButtonEH	void*	(Mouse) Button event handler
  * ButtonEH_data void*	Pointer to client data to pass
  *
+ * bop_handler	void*	bop handler
+ * bop_data	void*	Pointer to client data to pass
+ *
+ * eop_handler	void*	eop handler
+ * eop_data	void*	Pointer to client data to pass
+ *
  * Variables used for direct specification of device characteristics
  * Not supported by all drivers (or even very many)
  *
@@ -473,6 +479,12 @@ typedef struct {
     void (*LocateEH)	(PLGraphicsIn *gin, void *LocateEH_data,
 			 int *locate_mode);
     void *LocateEH_data;
+
+    void (*bop_handler)	(void *bop_data, int *skip_driver_bop);
+    void *bop_data;
+
+    void (*eop_handler)	(void *eop_data, int *skip_driver_eop);
+    void *eop_data;
 
     PLFLT xdpi, ydpi;
     PLINT xlength, ylength;
