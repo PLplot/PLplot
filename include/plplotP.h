@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1994/07/26 21:14:38  mjl
+ * Revision 1.27  1994/07/29 20:19:31  mjl
+ * Added typedef for CWindow -- window coordinate structure, also prototypes
+ * for plAddCWindow() and plClrCWindows(void) (contributed by Paul Casteels).
+ * Also prototype for new plLibOpen() function.
+ *
+ * Revision 1.26  1994/07/26  21:14:38  mjl
  * Improvements to the way PLplot looks for various files.  Now more
  * consistent and flexible.  In particular, environmentals can be set for
  * locations of each directory (for Tcl, binary, and library files).
@@ -122,6 +127,13 @@ extern PLStream	*plsc;
 
 typedef signed char SCHAR;
 
+/* Window coordinate structure */
+
+typedef struct {
+    PLFLT vpx1, vpx2, vpy1, vpy2;
+    PLFLT wx1, wx2, wy1, wy2;
+} CWindow;
+
 /*----------------------------------------------------------------------*\
  *                       Utility macros
 \*----------------------------------------------------------------------*/
@@ -187,6 +199,7 @@ typedef signed char SCHAR;
 
 #define PL_MAXPOLY	256	/* Max segments in polyline or polygon */
 #define PL_NSTREAMS	100	/* Max number of concurrent streams. */
+#define PL_MAXWINDOWS	64	/* Max number of windows/page tracked */
 #define PL_RGB_COLOR	1<<7	/* A hack */
 
 #define TEXT_MODE	0
@@ -241,7 +254,7 @@ typedef signed char SCHAR;
 /* ////////////////////////////////////////////////////////////////
 // The following PLPLOT_xxx environment variables are defined:
 //	PLPLOT_BIN      # where to find executables
-//	PLPLOT_LIB      # where to find font files
+//	PLPLOT_LIB      # where to find library files (fonts, maps, etc)
 //	PLPLOT_TCL      # where to find tcl scripts
 //
 //	PLPLOT_HOME     # basename of plplot hierarchy
@@ -269,7 +282,7 @@ typedef signed char SCHAR;
 //
 // In addition to the directories above, the following are also used:
 //
-// Font search path: PLFONTDEV (see plfont.c).  This is checked last,
+// Lib file search path: PLLIBDEV (see plctrl.c).  This is checked last,
 // and is a system-dependent hardwired location.
 //
 // Tcl search path: $HOME/tcl is searched before the install location,
@@ -456,16 +469,6 @@ plP_ssub(PLINT nx, PLINT ny, PLINT cs);
 void
 plP_subpInit(void);
 
-/* Get number of micrometers in a pixel */
-
-void
-plP_gumpix(PLINT *p_ix, PLINT *p_iy);
-
-/* Set number of micrometers in a pixel */
-
-void
-plP_sumpix(PLINT ix, PLINT iy);
-
 /* Get font and color attributes */
 
 void
@@ -586,6 +589,16 @@ plP_setsub(void);
 
 void
 plP_gprec(PLINT *p_setp, PLINT *p_prec);
+
+/* Adds a window to the window list (called by plwind).  */
+
+void 
+plAddCWindow(CWindow window);
+
+/* Resets all known windows (called by pladv). */
+
+void 
+plClrCWindows(void);
 
 	/* Functions that return floats */
 
@@ -752,6 +765,11 @@ plP_state(PLINT op);
 
 void
 plP_esc(PLINT op, void *ptr);
+
+/* Return file pointer to lib file. */
+
+FILE *
+plLibOpen(char *fn);
 
 #ifdef __cplusplus
 }
