@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.40  1994/09/23 07:52:08  mjl
+ * Revision 1.41  1995/01/06 07:54:50  mjl
+ * Moved a misplaced line of code affecting stream cleanup.
+ *
+ * Revision 1.40  1994/09/23  07:52:08  mjl
  * Changed a PLINT to an int to make a DOS compiler happy about its use as a
  * for loop index.  Now plsc->ipls is set as soon as a new stream is created
  * (by plsstrm).  Last: when stream 0 is ended by plend1() or plend(), the
@@ -1168,9 +1171,9 @@ void
 c_plend1(void)
 {
     if (plsc->level > 0) {
-	plsc->level = 0;
 	plP_eop();
 	plP_tidy();
+	plsc->level = 0;
     }
 
 /* Free all malloc'ed stream memory */
