@@ -1,8 +1,11 @@
 /* $Id$
-   $Log$
-   Revision 1.8  1993/11/15 08:39:37  mjl
-   Documentation changes.
-
+ * $Log$
+ * Revision 1.9  1994/03/23 08:22:00  mjl
+ * Cruft elimination.
+ *
+ * Revision 1.8  1993/11/15  08:39:37  mjl
+ * Documentation changes.
+ *
  * Revision 1.7  1993/07/28  05:54:10  mjl
  * Put in code to ensure all malloc'ed memory is freed upon exit.
  *
@@ -10,28 +13,6 @@
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
  * plplot functions now start with "plP_".
- *
- * Revision 1.5  1993/01/23  05:57:23  mjl
- * Now holds all routines dealing with 3d plots (and hence has become rather
- * large).  A capability similar to that in the contour plotter (passing
- * in function evaluators instead of 2d arrays) is planned but not in this
- * version.
- *
- * Revision 1.4  1992/10/12  17:08:08  mjl
- * Added PL_NEED_SIZE_T define to those files that need to know the value
- * of (size_t) for non-POSIX systems (in this case the Amiga) that require you
- * to include <stddef.h> to get it.
- *
- * Revision 1.3  1992/09/30  18:25:53  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:46:11  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:34:42  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	plot3d.c
@@ -39,12 +20,8 @@
 	3d plot routines.
 */
 
-#define PL_NEED_MALLOC
-#define PL_NEED_SIZE_T
-
 #include "plplotP.h"
 #include <math.h>
-#include <stdlib.h>
 
 /* Internal constants */
 
