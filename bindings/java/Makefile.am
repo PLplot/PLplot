@@ -38,8 +38,8 @@ swigcfiles = plplotjavac_wrap.c
 swiggenfiles = $(swigjavafiles) $(swigcfiles)
 
 javafiles = \
-	PLStreamc.java \
 	config.java \
+	PLStreamc.java \
 	$(swigjavafiles)
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
@@ -79,14 +79,16 @@ if enable_java
 # Use javaJAVA for gcj support once gcc-3.2 use becomes
 # widespread.
 
-JAVAROOT = .
-
-noinst_JAVA = $(javafiles)
+# Can't use java support for now since jikes doesn't handle dependencies 
+# properly - instead do it by hand in plplot.jar
+#noinst_JAVA = $(javafiles)
 plplotjavaexecdir = $(DATA_DIR)/java/
 plplotjavaexec_DATA = plplot.jar
 
 plplot.jar: $(javafiles)
-	jar -cf plplot.jar plplot/core/*.class
+	(CLASSPATH=.:$(CLASSPATH) javac -d . $(JAVACFLAGS) config.java && \
+	CLASSPATH=.:$(CLASSPATH) javac -d . $(JAVACFLAGS) PLStreamc.java $(swigjavafiles) && \
+	jar -cf plplot.jar plplot/core/*.class )
 
 #ourexecjava_DATA = README.javaAPI $(javafiles)
 
@@ -107,5 +109,10 @@ if enable_java
 #	  cd java; jar -c -f plplot.jar plplot/core/*.class)
 
 endif
+
+clean-local:
+	rm -rf plplot
+
+CLEANFILES = plplot.jar
 
 MAINTAINERCLEANFILES = $(swiggenfiles)
