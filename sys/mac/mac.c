@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.1  1995/04/11 09:39:13  mjl
-   Mac port, contributed by Mark Franz.
+   Revision 1.2  2000/05/12 18:05:32  furnish
+   Imported latest Mac port work by Rob Managan.
 
+ * Revision 1.1  1995/04/11  09:39:13  mjl
+ * Mac port, contributed by Mark Franz.
+ *
  *
 */
 
@@ -25,7 +28,7 @@
   	 24-Mar-95
 
   A driver for Macintosh
-  Compile this with MetroWerks C/C++ or ThinkC
+  Compile this with MetroWerks C/C++ 
 
 */
 #include "plplotP.h"
@@ -54,19 +57,22 @@ Str255	tempWTitle;
 
 
 RgnHandle	fillRegion;
+static int			Max_Mac_Windows_Used;
 static WindowPtr	plotWindow[Max_Mac_Windows];
 static PicHandle 	plotPicture[Max_Mac_Windows];
 static Handle 		saveMBar, myMBar;
+static MenuHandle	myMenu;
 RGBColor			rgbColor;
 long 				PICTCount;
 short 				globalRef; 
 short				plotActive = 0;
 PicHandle 			newPICTHand;
-short				plotWidth = MAC_YMAX;
-short				plotHeight = MAC_XMAX;
+short				plotWidth = MAC_XMAX;
+short				plotHeight = MAC_YMAX;
+static	GrafPtr	savedPort;
 
 
-static Rect	boundsRect = {40, 10, MAC_YMAX+40, MAC_YMAX+10};
+static Rect	boundsRect = {40, 10, MAC_YMAX+40, MAC_XMAX+10};
 
 /*----------------------------------------------------------------------*\
 * mac_init()
@@ -75,28 +81,33 @@ static Rect	boundsRect = {40, 10, MAC_YMAX+40, MAC_YMAX+10};
 \*----------------------------------------------------------------------*/
  
 void
-plD_init_mac(PLStream *pls)
+plD_init_mac1(PLStream *pls)
 {	
-int		i;
+	Max_Mac_Windows_Used = 1;
+	init_mac(pls);
+}
+void
+plD_init_mac8(PLStream *pls)
+{	
+	Max_Mac_Windows_Used = 8;
+	init_mac(pls);
+}
+void
+init_mac(PLStream *pls)
+{	
+	int		i;
 
-	for(i = 0; i < Max_Mac_Windows; i++)
+	for(i = 0; i < Max_Mac_Windows_Used; i++)
 	{
 		plotWindow[i] = NULL;
 		plotPicture[i] = NULL;
 	}
 	plotActive = -1;
 
-	fprintf(stderr, "Macintosh Window\n");   // This is here just to
-															// make sure Menus drawn
+	fprintf(stderr, "Macintosh Window\n");  // This is here just to
+											// make sure Menus drawn
 	
-//	plotWindow = NewCWindow(NULL, &boundsRect,MAC_WINDOW_TITLE, FALSE, 
-//							noGrowDocProc, (void *)-1L, FALSE, 0L);
-    
-//	SetPort(plotWindow);
-//    GetPort(&savePort);	
-//	SetPort(plotWindow);
 	SetUpMenu();
-//	SetPort(savePort);
 
 	 pls->termin = 1;            /* is an interactive terminal */
 	 pls->icol0 = 1;
@@ -104,8 +115,9 @@ int		i;
 	 pls->width = 1;
 	 pls->bytecnt = 0;
 	 pls->page = 0;
-	 pls->dev_fill0 = 0;
+	 pls->dev_fill0 = 1;		/* supports hardware solid fills */
 	 pls->dev_fill1 = 0;
+//    pls->plbuf_write = 1;	/* Activate plot buffer */
 	 
 	 pls->graphx = GRAPHICS_MODE;
 
@@ -115,7 +127,7 @@ int		i;
 
 /* Set up device parameters */
 
-	 plP_setpxl(2.8346, 2.8346);           /* Pixels/mm. */
+	 plP_setpxl(2.83465, 2.83465);           /* Pixels/mm. */
 
 	 plP_setphy((PLINT) 0, (PLINT) (boundsRect.right-boundsRect.left), 
 	 			(PLINT) 0, (PLINT) (boundsRect.bottom-boundsRect.top));
@@ -132,13 +144,18 @@ int		i;
 void
 plD_line_mac(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
-int x1, y1, x2, y2 ;
+	int y1, y2 ;
+
+	GetPort(&savedPort);
+	SetPort(plotWindow[plotActive]);
 
 	y1 = (boundsRect.bottom-boundsRect.top) - y1a;
 	y2 = (boundsRect.bottom-boundsRect.top) - y2a;
 
 	 MoveTo(x1a, y1);
 	 LineTo(x2a, y2);
+
+	 SetPort(savedPort);
 }
 
 /*----------------------------------------------------------------------*\
@@ -152,8 +169,13 @@ plD_polyline_mac(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
 	 PLINT i;
 
+	GetPort(&savedPort);
+	SetPort(plotWindow[plotActive]);
+
 	 for (i = 0; i < npts - 1; i++)
 	plD_line_mac(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+
+	 SetPort(savedPort);
 }
 
 /*----------------------------------------------------------------------*\
@@ -167,23 +189,31 @@ plD_eop_mac(PLStream *pls)
 {
 Rect 	myRect;
 	
+	GetPort(&savedPort);
+	SetPort(plotWindow[plotActive]);
+
 	ClosePicture();
+	DrawPicture(plotPicture[plotActive],&plotWindow[plotActive]->portRect);
+
 	if(pls->termin == 1)
 	{
-		if(plotWindow !=NULL)
+		if(plotWindow[plotActive] !=NULL)  // added subscript for current window RAM 10/14/96
 		{
 			GetWTitle(plotWindow[plotActive], tempWTitle);
 			SetWTitle(plotWindow[plotActive], "\pHit any key to continue.");
 			InvalRect(&plotWindow[plotActive]->portRect);
 			AdjustMenu();
-	  		while(!MAC_event());
-			SetWTitle(plotWindow[plotActive], tempWTitle);
+			if (Max_Mac_Windows_Used != 1)
+			{
+		  		while(!MAC_event(pls));
+				SetWTitle(plotWindow[plotActive], tempWTitle);
+			}
 //			RestoreMenu();
 		}
 	}
 	else
 	{
-		if(plotPicture != NULL)
+		if(plotPicture[plotActive] != NULL)
 		{	
 			AdjustMenu();
 			myRect=plotWindow[plotActive]->portRect;
@@ -191,6 +221,8 @@ Rect 	myRect;
 //			RestoreMenu();
 		}
 	}
+
+	 SetPort(savedPort);
 }
 
 /*----------------------------------------------------------------------*\
@@ -205,12 +237,12 @@ plD_bop_mac(PLStream *pls)
 RGBColor	backGround;
 Str255		numberAsString;
 Str255		currentTitle;
-int			i;
 
 	pls->page++;
 
 	plotActive++;
-	if(plotActive == Max_Mac_Windows) 
+	
+	if(plotActive == Max_Mac_Windows_Used) 
 		plotActive =0;
 		
 	if (plotWindow[plotActive] == NULL)					//  Get a window handle
@@ -221,7 +253,7 @@ int			i;
 		boundsRect.bottom = plotHeight+40+plotActive*20;
 		
 		plotWindow[plotActive] = NewCWindow(NULL, &boundsRect,"\p ", FALSE, 
-											noGrowDocProc, (void *)-1L, FALSE, 0L);										
+											documentProc, (void *)-1L, FALSE, 0L);										
 	}
 	currentTitle[0]=0;
 	NumToString(pls->page, numberAsString);
@@ -231,19 +263,20 @@ int			i;
 	
 	boundsRect = plotWindow[plotActive]->portRect;		//  Get current window location
 
+	GetPort(&savedPort);
 	SetPort(plotWindow[plotActive]);
-	SetWRefCon (plotWindow[plotActive], (long)( plotActive ) );  //  Save the window number
+	SetWRefCon(plotWindow[plotActive], (long)( plotActive ) );  //  Save the window number
  	EraseRect(&plotWindow[plotActive]->portRect);
-    ShowWindow (plotWindow[plotActive]);
-    BringToFront (plotWindow[plotActive]);
-    HiliteWindow (plotWindow[plotActive],TRUE);
+    ShowWindow(plotWindow[plotActive]);
+	SelectWindow(plotWindow[plotActive]);	// RAM 10/9/96
 	if(plotPicture[plotActive] != NULL)			//  Make sure the associated Picture is free
 	{
+		SetWindowPic(plotWindow[plotActive], NULL);
 		KillPicture(plotPicture[plotActive]);
 		plotPicture[plotActive]=NULL;
 	}
-	plotPicture[plotActive]=OpenPicture (&(((GrafPtr) plotWindow[plotActive])->portRect));
-	TextFont(monaco);
+	plotPicture[plotActive]=OpenPicture(&(((GrafPtr) plotWindow[plotActive])->portRect));
+	TextFont(kFontIDMonaco);
 	TextSize(9);
 	TextFace(normal);
 	PenNormal();
@@ -263,6 +296,8 @@ int			i;
 	rgbColor.blue = 257*plsc->curcolor.b;
 	RGBForeColor( &rgbColor );
 	
+
+	 SetPort(savedPort);
 }
 
 /*----------------------------------------------------------------------*\
@@ -276,15 +311,20 @@ plD_tidy_mac(PLStream *pls)
 {
 short	i;
 
-	AdjustMenu();
-	while(!MAC_event());			//  Wait for one last time
-	RestoreMenu();
+	GetPort(&savedPort);
+	SetPort(plotWindow[plotActive]);
 
-	for(i = 0; i < Max_Mac_Windows; i++)
+//	AdjustMenu();
+//	while(!MAC_event(pls));			//  Wait for one last time
+//	RestoreMenu();
+
+	for(i = 0; i < Max_Mac_Windows_Used; i++)
 	{
 		if(plotWindow[i] != NULL )
-			CloseWindow(plotWindow[i]);
+			DisposeWindow(plotWindow[i]);
 	}
+
+	 SetPort(savedPort);
 }
 /*----------------------------------------------------------------------*\
 * plD_state_mac()
@@ -295,6 +335,9 @@ short	i;
 void 
 plD_state_mac(PLStream *pls, PLINT op)
 {
+
+	GetPort(&savedPort);
+	SetPort(plotWindow[plotActive]);
 
     switch (op) {
 
@@ -308,7 +351,7 @@ plD_state_mac(PLStream *pls, PLINT op)
 		
     	case PLSTATE_CMAP0:
     	case PLSTATE_CMAP1:
-				;			//  Not sure what to do here since clors are used differently
+				;			//  Not sure what to do here since colors are used differently
 		break;
 
     	case PLSTATE_COLOR1:
@@ -325,6 +368,8 @@ plD_state_mac(PLStream *pls, PLINT op)
 
 
     }
+
+	 SetPort(savedPort);
 }
 
 /*----------------------------------------------------------------------*\
@@ -339,9 +384,19 @@ mac_text(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* mac_esc()
-*
-* Escape function.
+ * mac_esc()
+ *
+ * Escape function.
+ *
+ * Functions:
+ *
+ *	PLESC_EH	Handle pending events
+ *	PLESC_EXPOSE	Force an expose
+ *	PLESC_FILL	Fill polygon
+ *	PLESC_FLUSH	Flush X event buffer
+ *	PLESC_GETC	Get coordinates upon mouse click
+ *	PLESC_REDRAW	Force a redraw
+ *	PLESC_RESIZE	Force a resize
 \*----------------------------------------------------------------------*/
 
 void
@@ -349,9 +404,22 @@ plD_esc_mac(PLStream *pls, PLINT op, void *ptr)
 {
 int		i;
 
+	GetPort(&savedPort);
+	SetPort(plotWindow[plotActive]);
+
 	switch (op) 
 	{
-		case PLESC_FILL:
+	  case PLESC_EXPOSE:	/* handle window expose */
+	    break;
+	  case PLESC_RESIZE:	/* handle window resize */
+	    break;
+	  case PLESC_REDRAW:	/* handle window redraw */
+	    break;
+	  case PLESC_TEXT:		/* switch to text screen */
+	    break;
+	  case PLESC_GRAPH:		/* switch to graphics screen */
+	    break;
+	  case PLESC_FILL:		/* fill polygon */
 			OpenRgn();								//  Start a Region for a fill
 	 		for (i = 0; i < pls->dev_npts - 1; i++)
 	 		{
@@ -362,8 +430,20 @@ int		i;
 			CloseRgn(fillRegion);	//  Close the region
 			
 			PaintRgn(fillRegion);   // Now Paint it
-		break;	
+		break;
+	  case PLESC_DI:		/* handle DI command */
+	    break;
+	  case PLESC_FLUSH:		/* flush output */
+	    break;
+	  case PLESC_EH:        /* handle Window events */
+	    break;
+	  case PLESC_GETC:		/* get cursor position */
+	    break;
+	  case PLESC_SWIN:		/* set window parameters */
+	    break;
 	}
+
+	 SetPort(savedPort);
 }
 /*----------------------------------------------------------------------*\
 * mac_esc()
@@ -374,18 +454,17 @@ int		i;
 
 //private functions
 
-static Boolean MAC_event()
+static unsigned char MAC_event(PLStream *pls)
 {
 	EventRecord	theEvent;
 	WindowPtr	whichWindow;
-	Rect 		dragRect;
-	int 		item,menu, i;
-	Str255		daName;
-	short		daRefNum;
+	Rect 		dragRect, growRect;
+	int 		i, growResult;
+	short		newWidth, newHeight;
 
-	SystemTask ();
+	SystemTask();
 
-	if (GetNextEvent (everyEvent, &theEvent))
+	if (GetNextEvent(everyEvent, &theEvent))
 		switch (theEvent.what)
 	  	{
 		case mouseDown:
@@ -401,7 +480,17 @@ static Boolean MAC_event()
 
 				case inDrag:
 					SetRect(&dragRect,4,24,qd.screenBits.bounds.right-4,qd.screenBits.bounds.bottom-4);
-					DragWindow (whichWindow,theEvent.where, &dragRect);
+					DragWindow(whichWindow,theEvent.where, &dragRect);
+					break;
+				case inGrow:
+					SetRect(&growRect,128,128,32767,32767);
+					growResult = GrowWindow(whichWindow,theEvent.where, &growRect);
+					if (growResult != 0)
+					{
+						newWidth  = LoWord(growResult);
+						newHeight = HiWord(growResult);
+						ResizeWin(pls, whichWindow,newWidth,newHeight);
+					}
 				break;
 
 				case inMenuBar:
@@ -425,31 +514,59 @@ static Boolean MAC_event()
 				return TRUE;
 			break;
 			
-		case updateEvt:   //  Update all windows
-			for(i = 0; i < Max_Mac_Windows; i++)
+		case updateEvt:   //  Update a window
+			whichWindow = (WindowPtr)theEvent.message;
+
+			i = GetWRefCon(whichWindow);
+			if (i >= 0 && i < Max_Mac_Windows_Used)
 			{
-				if(plotWindow[i] != NULL )
-				{
-					BeginUpdate(plotWindow[i]);
-					SetPort(plotWindow[i]);
-					DrawPicture(plotPicture[i],&plotWindow[i]->portRect);
-					EndUpdate(plotWindow[i]);
-				}
+				BeginUpdate(plotWindow[i]);
+				GetPort(&savedPort);
+				SetPort(plotWindow[i]);
+				DrawPicture(plotPicture[i],&plotWindow[i]->portRect);
+				SetPort(savedPort);
+				EndUpdate(plotWindow[i]);
 			}
 		break;
 		    
 		case activateEvt:
-			InvalRect(&plotWindow[plotActive]->portRect);
+//			InvalRect(&plotWindow[plotActive]->portRect);
 			break;
 	    }
 	    return FALSE;
 }
 
-Boolean  doMenuCommand(long mCmd)
+void	ResizeWin(	PLStream *pls,
+					WindowPtr whichWindow,
+					short newWidth,
+					short newHeight)
 {
+	int			i, myWindow = Max_Mac_Windows_Used;
+
+	i = GetWRefCon(whichWindow);
+	if (i >= 0 && i < Max_Mac_Windows_Used)
+	{
+		myWindow = i;
+	}
+	if (Max_Mac_Windows_Used == myWindow)
+		return;
+	SizeWindow(whichWindow, newWidth, newHeight, true);
+	InvalRect(&whichWindow->portRect); // make sure whole window is redrawn in the update
+
+	if (myWindow == plotActive)
+	{
+		plotWidth = newWidth;
+		plotHeight = newHeight;
+		plP_setphy((PLINT) 0, (PLINT) (newWidth), (PLINT) 0, (PLINT) (newHeight));
+	}
+}
+
+unsigned char  doMenuCommand(long mCmd)
+{
+	unsigned char	result=FALSE;
 	int 		item,menu;
-	Str255		daName;
-	short		daRefNum;
+//	Str255		daName;
+//	short		daRefNum;
 
 	item=LoWord(mCmd);
 	menu=HiWord(mCmd);
@@ -460,21 +577,21 @@ Boolean  doMenuCommand(long mCmd)
 			{
 				case PlotCopy:
 					doCopy();
-					return FALSE;
+					result = FALSE;
 				break;
 				case PlotSave:
 					PutPictToFile();
-					return FALSE;
+					result = FALSE;
 				break;
 				case PlotContinue:
-					return TRUE;
+					result = TRUE;
 				break;
 			}
 			break;
 	}
-	return FALSE;
 	HiliteMenu(0);
 	AdjustMenu();
+	return result;
 }
 /**************************** doCopy *************************/
 
@@ -495,31 +612,33 @@ WindowPtr	tempWindow;
 
 void SetUpMenu(void)
 {
-	MenuHandle mh;
 	
 	saveMBar=GetMenuBar();
 //	ClearMenuBar();
-//	mh=NewMenu(appleM,"\p\024");
-//	AppendMenu(mh, "\pAbout\311");
-//	InsertMenu(mh,0);
+//	myMenu=NewMenu(appleM,"\p\024");
+//	AppendMenu(myMenu, "\pAbout\311");
+//	InsertMenu(myMenu,0);
 //	AddResMenu(GetMHandle(appleM), 'DRVR');	/* add DA names to Apple menu */
-	mh=NewMenu(plotM,"\pPLplot");
-	AppendMenu(mh, "\pCopy To Clipboard/C;Save To File/S;(-;Continue/G");
-	InsertMenu(mh,0);
+	myMenu=NewMenu(plotM,"\pPLplot");
+	AppendMenu(myMenu, "\pCopy To Clipboard/C;Save To File/S;(-;Continue/G");
+	InsertMenu(myMenu,0);
 	DrawMenuBar();
 	myMBar=GetMenuBar();
 }
 
- void AdjustMenu(void)
- {
+void AdjustMenu(void)
+{
 	SetMenuBar(myMBar);
 	DrawMenuBar();
 }
 
- void RestoreMenu(void)
- {
+void RestoreMenu(void)
+{
 	SetMenuBar(saveMBar);
 	DrawMenuBar();
+	DisposeMenu(myMenu);
+	DisposeHandle(myMBar);
+	DisposeHandle(saveMBar);
 }
 
 // routines to create PICT file.
@@ -530,17 +649,15 @@ void SetUpMenu(void)
 //void PutPictToFile(PicHandle thePicture)
 void PutPictToFile(void)
 {
-SFReply		tr;
-short		rc, fRefNum, count;
-long 		inOutCount;
-Point		where;
-unsigned char header[512];
-OSErr 		myError;
-short		frontWindow;
-//WindowPtr	tempWindow;
-Str255		tempTitle;
+	SFReply		tr;
+	short		fRefNum, count;
+	long 		inOutCount;
+	Point		where;
+	unsigned char header[512];
+	OSErr 		myError;
+	short		frontWindow;
+	Str255		tempTitle;
 
-//	tempWindow = FrontWindow();
 	frontWindow = (short) GetWRefCon(FrontWindow());  //  Get the window number
 	if(frontWindow != plotActive)
 		GetWTitle(plotWindow[frontWindow], tempTitle);
@@ -556,13 +673,13 @@ Str255		tempTitle;
 	SFPutFile( where, "\pSave PICT as:", tempTitle, NULL, &tr );
 	
 	if ( tr.good ) {
-		myError = Create(tr.fName, tr.vRefNum, '????', 'PICT');
+		myError = Create(tr.fName, tr.vRefNum, 'CDrw', 'PICT');
 		if (myError == dupFNErr) 
 		{
 			myError = FSDelete(tr.fName,tr.vRefNum);
-			myError = Create(tr.fName, tr.vRefNum, '????', 'PICT');
-		}										/* this is quick 'n' dirty or there'd 
-														be more robust handling here */
+			myError = Create(tr.fName, tr.vRefNum, 'CDrw', 'PICT');
+		}							/* this is quick 'n' dirty or there'd 
+										be more robust handling here */
 		
 		myError = FSOpen( tr.fName, tr.vRefNum, &fRefNum );
 		if ( myError == noErr ) 
@@ -571,11 +688,11 @@ Str255		tempTitle;
 			myError = FSWrite(fRefNum, &inOutCount, header);		/* write the header */
 			HLock((Handle)plotPicture[frontWindow]);
 			if (myError == noErr) 
-			{									/* don't write if error the first time */
+			{						/* don't write if error the first time */
 				inOutCount = GetHandleSize((Handle)plotPicture[frontWindow]);
-				myError == FSWrite(fRefNum,&inOutCount,*plotPicture[frontWindow]);
+				myError = FSWrite(fRefNum,&inOutCount,*plotPicture[frontWindow]);
 			}
-			FSClose( fRefNum );					/* close it */
+			FSClose( fRefNum );		/* close it */
 			HUnlock((Handle)plotPicture[frontWindow]);
 		}
 	}
@@ -665,7 +782,7 @@ CatenatePStrings(Str255 targetStr, Str255 appendStr)
 void	
 CopyPStrings(Str255 targetStr, Str255 appendStr)
 {
-	short appendLen;
+//	short appendLen;
 
 	/* Figure out number of bytes to copy, up to 255 */
 
@@ -673,4 +790,53 @@ CopyPStrings(Str255 targetStr, Str255 appendStr)
 //		targetStr[0];
 }
 
+
+/*--------------------------------------------------------------------------*\
+ * FILE *plMacLibOpen(fn)
+ *
+ * Return file pointer to lib file.
+ * Locations checked:
+ *	In the system Preferences folder we check for
+ *  the lib folder or a plplot_lib folder. The latter may be an alias
+\*--------------------------------------------------------------------------*/
+#include <Folders.h>
+#include <Files.h>
+//#include <MoreFilesExtras.h>
+//#include <FSpCompat.h>
+#include <FSp_fopen.h>
+
+FILE *plMacLibOpen(char *fn)
+{
+	FILE	*file;
+	char	*fs = NULL;
+	OSErr	anErr;
+	short	prefVRefNum;
+	long	prefDirID;
+	FSSpec	FSlibFileDir, FSlibFile;
+	Boolean	resolveAliasChains=TRUE, targetIsFolder, wasAliased;
+	
+	/* find the preferences folder */
+	anErr = FindFolder( kOnSystemDisk, 'pref', kDontCreateFolder , &prefVRefNum, &prefDirID);
+	// first see if the plplot_lib folder is here; alias or not
+	anErr = FSMakeFSSpec(prefVRefNum, prefDirID, "\pplplot_lib", &FSlibFileDir);
+	if ( (anErr == noErr) && (FSlibFileDir.parID == 0) )
+		FSlibFileDir.parID = fsRtParID;
+	// if it is an alias get what it points to!
+	anErr = ResolveAliasFile(&FSlibFileDir, resolveAliasChains, &targetIsFolder, &wasAliased);
+	// make FSSpec for file within the directory ; 1st construct the relative filename
+	// then make the FSSpec; then open it!
+	plGetName("", p2cstr(FSlibFileDir.name), fn, &fs);
+	anErr = FSMakeFSSpec(FSlibFileDir.vRefNum, FSlibFileDir.parID, c2pstr(fs), &FSlibFile);
+	if ( (anErr == noErr) && (FSlibFile.parID == 0) )
+		FSlibFile.parID = fsRtParID;
+	file = FSp_fopen(&FSlibFile, "rb");
+/*    if (file != NULL)
+    {
+	    free_mem(fs);
+		return (file);
+	}
+*/	
+    free_mem(fs);
+    return (file);
+}
 

@@ -1,3 +1,24 @@
+I wanted to use PLplot so I updated the driver and associated files. The 
+projects are for CW Pro 5. There are a few customizations that are needed. 
+First you need to edit plconfig.h and set the location of the library 
+folder. Failing this you need to make an alias of the 'lib' folder and 
+place it in your Preferences file; the alias should be renamed to plplot_lib. 
+This allows PLplot to find the fonts and map files. The suggestions made below 
+could still be done, I haven't tried yet.
+
+The project files are in the form of importable .xml files.
+From within Codewarrior use the Import Project menu item to recreate the project file.
+The projects are minimal at this time to keep the size down. The library project is
+set for PPC only at this time. The example project only compile x01c. It is easy to 
+duplicate the target and compile the other examples. 
+
+As far as the CVS archive goes I am having trouble telling it to download the
+.fnt files as binary and not text. Not sure what I am doing wrong.
+
+Rob Managan ,managan@llnl.gov> 5/9/2000
+
+Original README text:
+
 I needed a plotting package for the mac so I bit the bullet and ported 
 PLplot 4.99i to the Macintosh.  PLplot, a scientific plotting package that 
 is relatively small, portable, freely distributable, and is rich enough to 

@@ -1,7 +1,10 @@
 /* -*-C-*- */
 /* $Id$
  * $Log$
- * Revision 1.1  1995/04/11 09:39:15  mjl
+ * Revision 1.2  2000/05/12 18:05:32  furnish
+ * Imported latest Mac port work by Rob Managan.
+ *
+ * Revision 1.1  1995/04/11  09:39:15  mjl
  * Mac port, contributed by Mark Franz.
  *
 */
