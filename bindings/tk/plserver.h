@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1994/07/19 22:31:45  mjl
+ * Revision 1.20  1995/05/06 17:11:55  mjl
+ * Added include of pltk.h.
+ *
+ * Revision 1.19  1994/07/19  22:31:45  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
  * inclusion changed to /not/ use a search path so that it will work better
@@ -33,10 +36,11 @@
 #ifndef __PLSERVER_H__
 #define __PLSERVER_H__
 
+#include "plDevs.h"
 #include "plplotP.h"
 #include "pltcl.h"
+#include "pltk.h"
 #include "plplotTK.h"
-#include "plDevs.h"
 
 /* State info for the rendering code */
 
@@ -55,14 +59,14 @@ typedef struct {
 /* Note that tcl command functions are added during Pltk_Init and don't */
 /* need to be called directly by the user */
 
-/* From plframe.c */
+/* plframe.c */
+/* Invoked to process the "plframe" Tcl command. */
 
 int
 plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 	   int argc, char **argv);
 
-/* from plr.c */
-
+/* plr.c */
 /* Set default state parameters before anyone else has a chance to. */
 
 void
