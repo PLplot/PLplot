@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1995/01/06 07:56:51  mjl
+ * Revision 1.18  1995/03/17 00:11:11  mjl
+ * Eliminated many unnecessary accessor variables.
+ *
+ * Revision 1.17  1995/01/06  07:56:51  mjl
  * Switch to the new syntax for pldtik().
  *
  * Revision 1.16  1994/07/20  06:08:36  mjl
@@ -16,25 +19,6 @@
  * Revision 1.13  1994/07/15  20:37:21  furnish
  * Added routines pl3line and pl3poin for drawing lines and points in 3
  * space.  Added a new example program, and dependency info to build it.
- *
- * Revision 1.12  1994/06/30  18:22:13  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
- *
- * Revision 1.11  1994/05/13  22:56:35  mjl
- * Fixed an old bug -- it was innocuous in the company of the allocation bugs
- * fixed in the last update, which is why it wasn't discovered before now.
- * Now plots correctly as well as frees all memory allocated.
- *
- * Revision 1.10  1994/04/08  12:34:21  mjl
- * Fixed some cases of allocating memory and never freeing it.  Also changed
- * some previously fatal errors into recoverable ones.
- *
- * Revision 1.9  1994/03/23  08:22:00  mjl
- * Cruft elimination.
 */
 
 /*	plot3d.c
@@ -64,7 +48,6 @@ static PLINT mhi, xxhi, newhisize;
 static PLINT mlo, xxlo, newlosize;
 
 /* Prototypes for static functions */
-/* INDENT OFF */
 
 static void plgrid3	(PLFLT);
 static void plnxtv	(PLINT *, PLINT *, PLINT, PLINT);
@@ -84,9 +67,8 @@ static void freework	(void);
 static int  plabv	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT, 
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
-/* INDENT ON */
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plmesh(x, y, z, nx, ny, opt)
  *
  * Plots a mesh representation of the function z[x][y]. The x values
@@ -96,7 +78,7 @@ static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT,
  *  opt = 1:  Draw lines parallel to x-axis
  *  opt = 2:  Draw lines parallel to y-axis
  *  opt = 3:  Draw lines parallel to both axes
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
@@ -107,7 +89,7 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     pl3mode = 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plot3d(x, y, z, nx, ny, opt, side)
  *
  * Plots a 3-d representation of the function z[x][y]. The x values
@@ -117,15 +99,14 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
  *  opt = 1:  Draw lines parallel to x-axis
  *  opt = 2:  Draw lines parallel to y-axis
  *  opt = 3:  Draw lines parallel to both axes
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side)
 {
-    PLINT color, font;
     PLFLT cxx, cxy, cyx, cyy, cyz;
-    PLINT init, i, ix, iy;
+    PLINT init, i, ix, iy, color;
 
     if (plsc->level < 3) {
 	myabort("plot3d: Please set up window first");
@@ -236,7 +217,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	plside3(x, y, z, nx, ny, opt);
 
     if (zbflg) {
-	plP_gatt(&font, &color);
+	color = plsc->icol0;
 	plcol(zbcol);
 	plgrid3(zbtck);
 	plcol(color);
@@ -245,11 +226,11 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
     freework();
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plP_gzback()
  *
  * Get background parameters for 3d plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plP_gzback(PLINT **zbf, PLINT **zbc, PLFLT **zbt)
@@ -259,93 +240,86 @@ plP_gzback(PLINT **zbf, PLINT **zbc, PLFLT **zbt)
     *zbt = &zbtck;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plt3zz()
  *
- * Draws the next zig-zag line for a 3-d plot. The data is stored in array
- * z[][] as a function of x[] and y[]. This is plotted out starting at
- * index (xstar0,ystar0).
+ * Draws the next zig-zag line for a 3-d plot.  The data is stored in array
+ * z[][] as a function of x[] and y[], and is plotted out starting at index
+ * (x0,y0).
  *
- * Depending on the state of "flg0", the sequence of data points sent to
+ * Depending on the state of "flag", the sequence of data points sent to
  * plnxtv is altered so as to allow cross-hatch plotting, or plotting
  * parallel to either the x-axis or the y-axis.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
-plt3zz(PLINT xstar0, PLINT ystar0, PLINT dx, PLINT dy, PLINT flg0, PLINT *init,
+plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
        PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT *u, PLINT *v)
 {
-    PLINT flag;
-    PLINT n;
-    PLINT xstart, ystart;
+    PLINT n = 0;
+    PLFLT x2d, y2d;
 
-    n = 0;
-    xstart = xstar0;
-    ystart = ystar0;
-    flag = flg0;
+    while (1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny) {
+	x2d = plP_w3wcx(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
+	y2d = plP_w3wcy(x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
 
-    while (1 <= xstart && xstart <= nx && 1 <= ystart && ystart <= ny) {
-	u[n] = plP_wcpcx(plP_w3wcx(
-		    x[xstart - 1], y[ystart - 1], z[xstart - 1][ystart - 1]));
+	u[n] = plP_wcpcx(x2d);
+	v[n] = plP_wcpcy(y2d);
 
-	v[n] = plP_wcpcy(plP_w3wcy(
-		    x[xstart - 1], y[ystart - 1], z[xstart - 1][ystart - 1]));
-
-	if (flag == -3) {
-	    ystart = ystart + dy;
+	switch (flag) {
+	case -3:
+	    y0 += dy;
 	    flag = -flag;
-	}
-	else if (flag == -2)
-	    ystart = ystart + dy;
-
-	else if (flag == -1) {
-	    ystart = ystart + dy;
+	    break;
+	case -2:
+	    y0 += dy;
+	    break;
+	case -1:
+	    y0 += dy;
 	    flag = -flag;
-	}
-	else if (flag == 1)
-	    xstart = xstart + dx;
-
-	else if (flag == 2) {
-	    xstart = xstart + dx;
+	    break;
+	case 1:
+	    x0 += dx;
+	    break;
+	case 2:
+	    x0 += dx;
 	    flag = -flag;
-	}
-	else if (flag == 3) {
-	    xstart = xstart + dx;
+	    break;
+	case 3:
+	    x0 += dx;
 	    flag = -flag;
+	    break;
 	}
-	n = n + 1;
+	n++;
     }
 
     if (flag == 1 || flag == -2) {
 	if (flag == 1) {
-	    xstart = xstart - dx;
-	    ystart = ystart + dy;
+	    x0 -= dx;
+	    y0 += dy;
 	}
 	else if (flag == -2) {
-	    ystart = ystart - dy;
-	    xstart = xstart + dx;
+	    y0 -= dy;
+	    x0 += dx;
 	}
-
-	if (1 <= xstart && xstart <= nx && 1 <= ystart && ystart <= ny) {
-	    u[n] = plP_wcpcx(plP_w3wcx(
-		    x[xstart - 1], y[ystart - 1], z[xstart - 1][ystart - 1]));
-
-	    v[n] = plP_wcpcy(plP_w3wcy(
-		    x[xstart - 1], y[ystart - 1], z[xstart - 1][ystart - 1]));
-
-	    n = n + 1;
+	if (1 <= x0 && x0 <= nx && 1 <= y0 && y0 <= ny) {
+	    x2d = plP_w3wcx( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
+	    y2d = plP_w3wcy( x[x0 - 1], y[y0 - 1], z[x0 - 1][y0 - 1]);
+	    u[n] = plP_wcpcx(x2d);
+	    v[n] = plP_wcpcy(y2d);
+	    n++;
 	}
     }
     plnxtv(u, v, n, *init);
     *init = 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plside3()
  *
  * This routine draws sides around the front of the 3d plot so that
  * it does not appear to float.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
@@ -359,8 +333,9 @@ plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     plP_gdom(&xmin, &xmax, &ymin, &ymax);
     plP_grange(&zscale, &zmin, &zmax);
 
+/* Get x, y coordinates of legs and plot */
+
     if (cxx >= 0.0 && cxy <= 0.0) {
-	/* Get x, y coordinates of legs and plot */
 	if (opt != 1) {
 	    for (i = 0; i < nx; i++) {
 		tx = plP_w3wcx(x[i], y[0], zmin);
@@ -370,7 +345,6 @@ plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
-
 	if (opt != 2) {
 	    for (i = 0; i < ny; i++) {
 		tx = plP_w3wcx(x[0], y[i], zmin);
@@ -391,7 +365,6 @@ plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
-
 	if (opt != 2) {
 	    for (i = 0; i < ny; i++) {
 		tx = plP_w3wcx(x[0], y[i], zmin);
@@ -412,7 +385,6 @@ plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
-
 	if (opt != 2) {
 	    for (i = 0; i < ny; i++) {
 		tx = plP_w3wcx(x[nx - 1], y[i], zmin);
@@ -433,7 +405,6 @@ plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
 		pljoin(tx, ty, ux, uy);
 	    }
 	}
-
 	if (opt != 2) {
 	    for (i = 0; i < ny; i++) {
 		tx = plP_w3wcx(x[nx - 1], y[i], zmin);
@@ -446,12 +417,12 @@ plside3(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plgrid3()
  *
  * This routine draws a grid around the back side of the 3d plot with
  * hidden line removal.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plgrid3(PLFLT tick)
@@ -545,7 +516,7 @@ plgrid3(PLFLT tick)
     pl3upv = 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plnxtv()
  *
  * Draw the next view of a 3-d plot. The physical coordinates of the
@@ -558,7 +529,7 @@ plgrid3(PLFLT tick)
  * values of BINC give better performance but also allocate more memory
  * than is needed. If your 3D plots are very "spiky" or you are working
  * with very large matrices then you will probably want to increase BINC.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plnxtv(PLINT *u, PLINT *v, PLINT n, PLINT init)
@@ -569,11 +540,11 @@ plnxtv(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	plnxtvlo(u, v, n, init);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plnxtvhi()
  *
  * Draw the top side of the 3-d plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
@@ -623,8 +594,7 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
  * removal is still done, but the view is not updated.
  */
     xxhi = 0;
-    i = 0;
-    j = 0;
+    i = j = 0;
     if (pl3upv != 0) {
 	newhisize = 2 * (mhi + BINC);
 	if (newhiview != NULL) {
@@ -646,14 +616,14 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
  */
     while (i < mhi || j < n) {
 
-/*
- * The coordinates of the point under consideration are (px,py).  The line
- * segment joins (sx1,sy1) to (sx2,sy2).  "ptold" is true if the point
- * lies in the old array. We set it by comparing the x coordinates of the
- * i'th old point and the j'th new point, being careful if we have fallen
- * past the edges. Having found the point, load up the point and segment
- * coordinates appropriately.
- */
+    /*
+     * The coordinates of the point under consideration are (px,py).  The
+     * line segment joins (sx1,sy1) to (sx2,sy2).  "ptold" is true if the
+     * point lies in the old array. We set it by comparing the x coordinates
+     * of the i'th old point and the j'th new point, being careful if we
+     * have fallen past the edges. Having found the point, load up the point
+     * and segment coordinates appropriately.
+     */
 	ptold = ((oldhiview[2 * i] < u[j] && i < mhi) || j >= n);
 	if (ptold) {
 	    px = oldhiview[2 * i];
@@ -678,12 +648,12 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	    }
 	}
 
-/*
- * Now determine if the point is higher than the segment, using the
- * logical function "above". We also need to know if it is the old view or
- * the new view that is higher. "newhi" is set true if the new view is
- * higher than the old.
- */
+    /*
+     * Now determine if the point is higher than the segment, using the
+     * logical function "above". We also need to know if it is the old view
+     * or the new view that is higher. "newhi" is set true if the new view
+     * is higher than the old.
+     */
 	if (seg)
 	    pthi = plabv(px, py, sx1, sy1, sx2, sy2);
 	else
@@ -692,10 +662,10 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	newhi = (ptold && !pthi) || (!ptold && pthi);
 	change = (newhi && !pnewhi) || (!newhi && pnewhi);
 
-/*
- * There is a new intersection point to put in the peak array if the state
- * of "newhi" changes.
- */
+    /*
+     * There is a new intersection point to put in the peak array if the
+     * state of "newhi" changes.
+     */
 	if (first) {
 	    plP_movphy(px, py);
 	    first = 0;
@@ -706,10 +676,10 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	}
 	else if (change) {
 
-/*
- * Take care of special cases at end of arrays.  If pl3upv is 0 the
- * endpoints are not connected to the old view.
- */
+	/*
+	 * Take care of special cases at end of arrays.  If pl3upv is 0 the
+	 * endpoints are not connected to the old view.
+	 */
 	    if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
 		plP_movphy(px, py);
 		lstold = ptold;
@@ -724,11 +694,11 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 		ochange = 0;
 	    }
 
-/*
- * If pl3upv is not 0 then we do want to connect the current line with the
- * previous view at the endpoints.  Also find intersection point with old
- * view.
- */
+	/*
+	 * If pl3upv is not 0 then we do want to connect the current line
+	 * with the previous view at the endpoints.  Also find intersection
+	 * point with old view.
+	 */
 	    else {
 		if (i == 0) {
 		    sx1 = oldhiview[0];
@@ -768,7 +738,7 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 		    sv2 = v[j];
 		}
 
-/* Determine the intersection */
+	    /* Determine the intersection */
 
 		pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
 		if (cx == px && cy == py) {
@@ -794,7 +764,7 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	    }
 	}
 
-/* If point is high then draw plot to point and update view. */
+    /* If point is high then draw plot to point and update view. */
 
 	if (pthi) {
 	    if (lstold && ptold)
@@ -820,11 +790,11 @@ plnxtvhi(PLINT *u, PLINT *v, PLINT n, PLINT init)
     swaphiview();
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plnxtvlo()
  *
  * Draw the bottom side of the 3-d plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
@@ -897,14 +867,14 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
  */
     while (i < mlo || j < n) {
 
-/*
- * The coordinates of the point under consideration are (px,py).  The line
- * segment joins (sx1,sy1) to (sx2,sy2).  "ptold" is true if the point
- * lies in the old array. We set it by comparing the x coordinates of the
- * i'th old point and the j'th new point, being careful if we have fallen
- * past the edges. Having found the point, load up the point and segment
- * coordinates appropriately.
- */
+    /*
+     * The coordinates of the point under consideration are (px,py).  The
+     * line segment joins (sx1,sy1) to (sx2,sy2).  "ptold" is true if the
+     * point lies in the old array. We set it by comparing the x coordinates
+     * of the i'th old point and the j'th new point, being careful if we
+     * have fallen past the edges. Having found the point, load up the point
+     * and segment coordinates appropriately.
+     */
 	ptold = ((oldloview[2 * i] < u[j] && i < mlo) || j >= n);
 	if (ptold) {
 	    px = oldloview[2 * i];
@@ -929,12 +899,12 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	    }
 	}
 
-/*
- * Now determine if the point is lower than the segment, using the logical
- * function "above". We also need to know if it is the old view or the new
- * view that is lower. "newlo" is set true if the new view is lower than
- * the old.
- */
+    /*
+     * Now determine if the point is lower than the segment, using the
+     * logical function "above". We also need to know if it is the old view
+     * or the new view that is lower. "newlo" is set true if the new view is
+     * lower than the old.
+     */
 	if (seg)
 	    ptlo = !plabv(px, py, sx1, sy1, sx2, sy2);
 	else
@@ -943,10 +913,10 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	newlo = (ptold && !ptlo) || (!ptold && ptlo);
 	change = (newlo && !pnewlo) || (!newlo && pnewlo);
 
-/*
- * There is a new intersection point to put in the peak array if the state
- * of "newlo" changes.
- */
+    /*
+     * There is a new intersection point to put in the peak array if the
+     * state of "newlo" changes.
+     */
 	if (first) {
 	    plP_movphy(px, py);
 	    first = 0;
@@ -957,10 +927,10 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	}
 	else if (change) {
 
-/*
- * Take care of special cases at end of arrays.  If pl3upv is 0 the
- * endpoints are not connected to the old view.
- */
+	/*
+	 * Take care of special cases at end of arrays.  If pl3upv is 0 the
+	 * endpoints are not connected to the old view.
+	 */
 	    if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
 		plP_movphy(px, py);
 		lstold = ptold;
@@ -975,11 +945,11 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 		ochange = 0;
 	    }
 
-/*
- * If pl3upv is not 0 then we do want to connect the current line with the
- * previous view at the endpoints.  Also find intersection point with old
- * view.
- */
+	/*
+	 * If pl3upv is not 0 then we do want to connect the current line
+	 * with the previous view at the endpoints.  Also find intersection
+	 * point with old view.
+	 */
 	    else {
 		if (i == 0) {
 		    sx1 = oldloview[0];
@@ -1019,7 +989,7 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 		    sv2 = v[j];
 		}
 
-/* Determine the intersection */
+	    /* Determine the intersection */
 
 		pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
 		if (cx == px && cy == py) {
@@ -1045,7 +1015,7 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
 	    }
 	}
 
-/* If point is low then draw plot to point and update view. */
+    /* If point is low then draw plot to point and update view. */
 
 	if (ptlo) {
 	    if (lstold && ptold)
@@ -1071,13 +1041,13 @@ plnxtvlo(PLINT *u, PLINT *v, PLINT n, PLINT init)
     swaploview();
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * savehipoint
  * savelopoint
  *
  * Add a point to the list of currently visible peaks/valleys, when
  * drawing the top/bottom surface, respectively.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 savehipoint(PLINT px, PLINT py)
@@ -1119,13 +1089,13 @@ savelopoint(PLINT px, PLINT py)
     xxlo++;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * swaphiview
  * swaploview
  *
  * Swaps the top/bottom views.  Need to do a real swap so that the 
  * memory cleanup routine really frees everything (and only once).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 swaphiview(void)
@@ -1153,11 +1123,11 @@ swaploview(void)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * freework
  *
  * Frees memory associated with work arrays
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 freework(void)
@@ -1170,11 +1140,11 @@ freework(void)
     free_mem(u);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * myexit
  *
  * Calls plexit, cleaning up first.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 myexit(char *msg)
@@ -1183,12 +1153,12 @@ myexit(char *msg)
     plexit(msg);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * myabort
  *
  * Calls plabort, cleaning up first.
  * Caller should return to the user program.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 myabort(char *msg)
@@ -1197,12 +1167,12 @@ myabort(char *msg)
     plabort(msg);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int plabv()
  *
  * Determines if point (px,py) lies above the line joining (sx1,sy1) to
  * (sx2,sy2). It only works correctly if sx1 <= px <= sx2.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static int
 plabv(PLINT px, PLINT py, PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2)
@@ -1222,12 +1192,12 @@ plabv(PLINT px, PLINT py, PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2)
     return ((PLINT) above);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void pl3cut()
  *
  * Determines the point of intersection (cx,cy) between the line joining
  * (sx1,sy1) to (sx2,sy2) and the line joining (su1,sv1) to (su2,sv2).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 pl3cut(PLINT sx1, PLINT sy1, PLINT sx2, PLINT sy2,
