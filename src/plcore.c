@@ -417,9 +417,9 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 
           char greek[] = "ABGDEZYHIKLMNCOPRSTUFXQWabgdezyhiklmncoprstufxqw";
 	  PLINT ig;
-          if (string!=NULL)         /* If the string isn't blank, then we will continute */
+          if (string!=NULL)         /* If the string isn't blank, then we will continue */
           {
-            len=strlen(string);     /* this length is only used in the loop counter, we will work out the lenght of the unicode string as we go */
+            len=strlen(string);     /* this length is only used in the loop counter, we will work out the length of the unicode string as we go */
             plgesc(&esc);
 
           /*  At this stage we will do some translations into unicode, like conversion to
@@ -428,7 +428,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
            * rid of the esc character sequence, just replacing it with unicode.
            */
 
-            for (j=i=0;i<len;i++)     /* Walk through the stings, and convert some stuff to unicode on the fly */
+            for (j=i=0;i<len;i++)     /* Walk through the strings, and convert some stuff to unicode on the fly */
               {
                 skip=0;
 
@@ -445,38 +445,12 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 
 		       case '[':  /* unicode */
 			 i+=2+text2num(&string[i+2],']',&code);
-			 idx=plhershey2unicode(code);
 			 unicode_buffer[j]=code;
 			 skip=1;
 			 break;
 
 		       case 'g':  /* Greek font */
-			 /* Get the index in the lookup table 
-			  * 527 = upper case alpha displacement in Hershey Table
-			  * 627 = lower case alpha displacement in Hershey Table
-			  */
-			 ig = plP_strpos(greek, string[i+2]);
-			 if (ig >= 0) 
-			   {
-			      if (ig >= 24)
-				ig = ig + 100 - 24;
-			      idx=plhershey2unicode(ig+527);
-			      unicode_buffer[j]=(unsigned int)hershey_to_unicode_lookup_table[idx].Unicode;
-			      i+=2;
-			      skip=1;  /* skip is set if we have copied something into the unicode table */
-			   }
-			 else
-			   {
-			      /* Use space unicode character if string[i+2] is not in
-			       * the Greek array.*/
-			      unicode_buffer[j]=(unsigned int)0x20;
-			      i+=2;
-			      skip=1;  /* skip is set if we have copied something into the unicode table */
-			   }
-			 
-			 break;
-
-		       case 'G':   /* Greek font */
+		       case 'G':  /* Greek font */
 			 /* Get the index in the lookup table 
 			  * 527 = upper case alpha displacement in Hershey Table
 			  * 627 = lower case alpha displacement in Hershey Table
@@ -509,7 +483,7 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
                 if (skip==0) unicode_buffer[j]=string[i];
                 j++;
               }
-              args.unicode_array_len=j; /* Much easier to set the lenght than work it out later :-) */
+              args.unicode_array_len=j; /* Much easier to set the length than work it out later :-) */
               args.unicode_array=&unicode_buffer[0];   /* Get address of the unicode buffer (even though it is currently static) */
               args.string=NULL;  /* Since we are using unicode, we want this to be NULL */
 
