@@ -5396,172 +5396,6 @@ default
 
     </sect1>
 
-  <sect1 id="plsurf3d" renderas="sect3">
-    <title>
-      <function>plsurf3d</function>: Plot shaded 3-d surface plot
-    </title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>plsurf3d</function>
-	</funcdef>
-        <paramdef><parameter>x</parameter></paramdef>
-        <paramdef><parameter>y</parameter></paramdef>
-        <paramdef><parameter>z</parameter></paramdef>
-        <paramdef><parameter>nx</parameter></paramdef>
-        <paramdef><parameter>ny</parameter></paramdef>
-        <paramdef><parameter>opt</parameter></paramdef>
-        <paramdef><parameter>clevel</parameter></paramdef>
-        <paramdef><parameter>nlevel</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Plots a three dimensional shaded surface plot within the environment set up
-      by &plw3d;.  The surface is defined by the two-dimensional array
-      <literal><parameter>z</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>]</literal>,
-      the point <literal><parameter>z</parameter>[i][j]</literal> being the
-      value of the function at <literal>(<parameter>x</parameter>[i],
-      <parameter>y</parameter>[j])</literal>.  Note that the points in
-      arrays <literal><parameter>x</parameter></literal> and
-      <literal><parameter>y</parameter></literal> do not need to be equally
-      spaced, but must be stored in ascending order.
-      For further details see <xref linkend="tri-d-plots"/>.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>x</parameter>
-	  (<literal>PLFLT *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to set of x coordinate values at which the function is
-	    evaluated.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>y</parameter>
-	  (<literal>PLFLT *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to set of y coordinate values at which the function is
-	    evaluated.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>z</parameter>
-	  (<literal>PLFLT **</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to a vectored two-dimensional array with set of
-	    function values.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>nx</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Number of <literal><parameter>x</parameter></literal> values at
-	    which function is evaluated.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>ny</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Number of <literal><parameter>y</parameter></literal> values at
-	    which function is evaluated.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>opt</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Determines the way in which the surface is represented. To specify
-            more than one option just add the options, e.g. FACETED + SURF_CONT
-	    <itemizedlist>
-	      <listitem>
-		<para>
-		  <literal><parameter>opt</parameter>=FACETED</literal>: Network
-		  of lines is drawn connecting points at which function is
-		  defined.
-		</para>
-	      </listitem>
-	      <listitem>
-		<para>
-		  <literal><parameter>opt</parameter>=BASE_CONT</literal>: A contour
-                  plot is drawn at the base XY plane using parameters 
-                  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
-		</para>
-	      </listitem>
-	      <listitem>
-		<para>
-		  <literal><parameter>opt</parameter>=SURF_CONT</literal>: A contour
-                  plot is drawn at the surface plane using parameters 
-                  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
-		</para>
-	      </listitem>
-	      <listitem>
-		<para>
-		  <literal><parameter>opt</parameter>=DRAW_SIDES</literal>: draws a curtain
-                  between the base XY plane and the borders of the plotted function.
-		</para>
-	      </listitem>
-	    </itemizedlist>
-	  </para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term>
-	  <parameter>clevel</parameter>
-	  (<literal>PLFLT *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to the array that defines the contour level spacing.
-	    evaluated.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>nlevel</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-          Number of elements in the <literal>clevel</literal> array.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-  </sect1>
-
   <sect1 id="plpage" renderas="sect3">
     <title>
       <function>plpage</function>: Begin a new page
@@ -9556,6 +9390,172 @@ stripchart
 	  <para>
 	    Pointer to array with the lengths of the segments during which
 	    the pen is up, measured in micrometers.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plsurf3d" renderas="sect3">
+    <title>
+      <function>plsurf3d</function>: Plot shaded 3-d surface plot
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plsurf3d</function>
+	</funcdef>
+        <paramdef><parameter>x</parameter></paramdef>
+        <paramdef><parameter>y</parameter></paramdef>
+        <paramdef><parameter>z</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>opt</parameter></paramdef>
+        <paramdef><parameter>clevel</parameter></paramdef>
+        <paramdef><parameter>nlevel</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Plots a three dimensional shaded surface plot within the environment set up
+      by &plw3d;.  The surface is defined by the two-dimensional array
+      <literal><parameter>z</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>]</literal>,
+      the point <literal><parameter>z</parameter>[i][j]</literal> being the
+      value of the function at <literal>(<parameter>x</parameter>[i],
+      <parameter>y</parameter>[j])</literal>.  Note that the points in
+      arrays <literal><parameter>x</parameter></literal> and
+      <literal><parameter>y</parameter></literal> do not need to be equally
+      spaced, but must be stored in ascending order.
+      For further details see <xref linkend="tri-d-plots"/>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>x</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of x coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>y</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to set of y coordinate values at which the function is
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>z</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a vectored two-dimensional array with set of
+	    function values.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>x</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Number of <literal><parameter>y</parameter></literal> values at
+	    which function is evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>opt</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Determines the way in which the surface is represented. To specify
+            more than one option just add the options, e.g. FACETED + SURF_CONT
+	    <itemizedlist>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=FACETED</literal>: Network
+		  of lines is drawn connecting points at which function is
+		  defined.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=BASE_CONT</literal>: A contour
+                  plot is drawn at the base XY plane using parameters 
+                  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=SURF_CONT</literal>: A contour
+                  plot is drawn at the surface plane using parameters 
+                  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal><parameter>opt</parameter>=DRAW_SIDES</literal>: draws a curtain
+                  between the base XY plane and the borders of the plotted function.
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term>
+	  <parameter>clevel</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to the array that defines the contour level spacing.
+	    evaluated.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nlevel</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+          Number of elements in the <literal>clevel</literal> array.
 	  </para>
 	</listitem>
       </varlistentry>
