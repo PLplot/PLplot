@@ -428,6 +428,7 @@ typedef struct {
 #define    plend	c_plend
 #define    plend1	c_plend1
 #define    plenv	c_plenv
+#define    plenv0	c_plenv0
 #define    pleop	c_pleop
 #define    plerrx	c_plerrx
 #define    plerry	c_plerry
@@ -550,6 +551,7 @@ typedef struct {
 #define    c_plend	plend
 #define    c_plend1	plend1
 #define    c_plenv	plenv
+#define    c_plenv0	plenv0
 #define    c_pleop	pleop
 #define    c_plerrx	plerrx
 #define    c_plerry	plerry
@@ -719,6 +721,10 @@ void c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 void c_plxormod(PLINT mode, PLINT *status); //%name plxormod //%output status
 
+/* Clear current subpage. */
+   
+  void c_plclear(void); //%name plclear
+
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
 void c_plcol0(PLINT icol0); //%name plcol0
@@ -853,6 +859,10 @@ void c_plend1(void); //%name plend1
 
 void c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLINT just, PLINT axis); //%name plenv
+
+
+void c_plenv0(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+	PLINT just, PLINT axis); //%name plenv0
 
 /* End current page.  Should only be used with plbop(). */
 
