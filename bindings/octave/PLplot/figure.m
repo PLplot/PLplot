@@ -85,7 +85,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 					error("pldef: `device' must be a string");
 				endif
 			else
-				plsdev("tk"); #plsdev("xwin");
+				plsdev("xwin");
 			endif
 
 			__pl.type = 1;
