@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/10/21 19:28:25  mjl
-   Minor bug fix.
+   Revision 1.9  1993/11/07 09:08:14  mjl
+   Added user-settable exit handler (call plsexit to set).
 
+ * Revision 1.8  1993/10/21  19:28:25  mjl
+ * Minor bug fix.
+ *
  * Revision 1.7  1993/10/18  19:44:50  mjl
  * Added functions to return fully qualified pathnames and/or executable
  * names.
@@ -39,18 +42,20 @@
 #include <stdlib.h>
 #include <string.h>
 #ifdef __unix
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
 #endif
 
 static void	strcat_delim	(char *);
+static void	(*exit_handler) (void);
 
 /*----------------------------------------------------------------------*\
 * void plexit()
 *
 * In case of an abort this routine is called.  It just prints out an
-* error message and trys to clean up as much as possible.
+* error message and tries to clean up as much as possible.
 \*----------------------------------------------------------------------*/
 
 void
@@ -63,19 +68,35 @@ plexit(char *errormsg)
     }
     fprintf(stderr, "Program aborted\n");
     pl_exit();
-    exit(1);
 }
 
 /*----------------------------------------------------------------------*\
 * void pl_exit()
 *
-* A stub.  The user should write his/her own pl_exit() routine, if cleanup
-* needs to be done in the user program.
+* Just a front-end to exit().  If cleanup needs to be done in the main
+* program, the user should write his/her own exit handler and pass it in
+* via plsexit().
 \*----------------------------------------------------------------------*/
 
 void
 pl_exit(void)
 {
+    if (exit_handler != NULL)
+	(*exit_handler)();
+    else
+	exit(1);
+}
+
+/*----------------------------------------------------------------------*\
+* void plsexit()
+*
+* Sets the exit handler to use instead of exit().
+\*----------------------------------------------------------------------*/
+
+void
+plsexit(void (*handler) (void))
+{
+    exit_handler = handler;
 }
 
 /*----------------------------------------------------------------------*\
