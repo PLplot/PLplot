@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1993/11/15 08:42:15  mjl
+ * Revision 1.35  1994/01/17 20:45:02  mjl
+ * Converted to new syntax for PDF function calls.
+ *
+ * Revision 1.34  1993/11/15  08:42:15  mjl
  * Added code to support seeks to the specified number of pages before EOF.
  * Number is specified using "--", i.e. -b --3 to start 3 pages before EOF.
  * Also works while interactively seeking.
@@ -175,7 +178,9 @@ static FPOS_T	nextpage_loc;	/* Byte position of next page header */
 /* File info */
 
 static int	input_type;	/* 0 for file, 1 for stream */
-static FILE	*MetaFile;
+static PDFstrm	*pdfs;		/* PDF stream handle */
+static FILE	*MetaFile;	/* Actual metafile handle, for seeks etc */
+
 static char	BaseName[70] = "", FamilyName[80] = "", FileName[90] = "";
 static PLINT	is_family, member=1;
 static char	mf_magic[40], mf_version[40];
@@ -342,7 +347,7 @@ main(int argc, char *argv[])
 
 /* Done */
 
-    (void) fclose(MetaFile);
+    pdf_close(pdfs);
     if (strcmp(mf_version, "1993a") < 0) 
 	plP_eop();
 
@@ -541,7 +546,7 @@ plr_line(U_CHAR c)
 	break;
 
       case POLYLINE:
-	plm_rd(pdf_rd_2bytes(MetaFile, &npts));
+	plm_rd( pdf_rd_2bytes(pdfs, &npts) );
 	get_ncoords(x, y, npts);
 	break;
     }
@@ -564,8 +569,8 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
     PLINT i;
     short xs[PL_MAXPOLYLINE], ys[PL_MAXPOLYLINE];
 
-    plm_rd(pdf_rd_2nbytes(MetaFile, (U_SHORT *) xs, n));
-    plm_rd(pdf_rd_2nbytes(MetaFile, (U_SHORT *) ys, n));
+    plm_rd( pdf_rd_2nbytes(pdfs, (U_SHORT *) xs, n) );
+    plm_rd( pdf_rd_2nbytes(pdfs, (U_SHORT *) ys, n) );
 
     for (i = 0; i < n; i++) {
 	x[i] = xs[i];
@@ -648,7 +653,7 @@ plr_state(U_CHAR op)
     case PLSTATE_WIDTH:{
 	U_SHORT width;
 
-	plm_rd(pdf_rd_2bytes(MetaFile, &width));
+	plm_rd( pdf_rd_2bytes(pdfs, &width) );
 
 	plwid(width);
 	break;
@@ -659,12 +664,12 @@ plr_state(U_CHAR op)
 	U_CHAR icol0, r, g, b;
 
 	if (strcmp(mf_version, "1993a") >= 0) {
-	    plm_rd(pdf_rd_1byte(MetaFile, &icol0));
+	    plm_rd( pdf_rd_1byte(pdfs, &icol0) );
 
 	    if (icol0 == PL_RGB_COLOR) {
-		plm_rd(pdf_rd_1byte(MetaFile, &r));
-		plm_rd(pdf_rd_1byte(MetaFile, &g));
-		plm_rd(pdf_rd_1byte(MetaFile, &b));
+		plm_rd( pdf_rd_1byte(pdfs, &r) );
+		plm_rd( pdf_rd_1byte(pdfs, &g) );
+		plm_rd( pdf_rd_1byte(pdfs, &b) );
 		plrgb1(r, g, b);
 	    }
 	    else {
@@ -672,7 +677,7 @@ plr_state(U_CHAR op)
 	    }
 	}
 	else {
-	    plm_rd(pdf_rd_2bytes(MetaFile, &icol));
+	    plm_rd( pdf_rd_2bytes(pdfs, &icol) );
 	    plcol(icol);
 	}
 	break;
@@ -696,7 +701,7 @@ plr_esc(U_CHAR c)
 
     dbug_enter("plr_esc");
 
-    plm_rd(pdf_rd_1byte(MetaFile, &op));
+    plm_rd( pdf_rd_1byte(pdfs, &op) );
     switch (op) {
 
       case PLESC_SET_RGB:	/* Now obsolete */
@@ -708,10 +713,10 @@ plr_esc(U_CHAR c)
 	return;
 
       case PLESC_SET_LPB:	/* Now obsolete */
-	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
-	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
-	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
-	plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
+	plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
+	plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
+	plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	return;
     }
 }
@@ -732,9 +737,9 @@ plresc_rgb(void)
 
     dbug_enter("plresc_rgb");
 
-    plm_rd(pdf_rd_2bytes(MetaFile, &ired));
-    plm_rd(pdf_rd_2bytes(MetaFile, &igreen));
-    plm_rd(pdf_rd_2bytes(MetaFile, &iblue));
+    plm_rd( pdf_rd_2bytes(pdfs, &ired) );
+    plm_rd( pdf_rd_2bytes(pdfs, &igreen) );
+    plm_rd( pdf_rd_2bytes(pdfs, &iblue) );
 
     red = (double) ired / 65535.;
     green = (double) igreen / 65535.;
@@ -758,8 +763,8 @@ plresc_ancol(void)
 
     dbug_enter("plresc_ancol");
 
-    plm_rd(pdf_rd_1byte(MetaFile, &icolor));
-    plm_rd(pdf_rd_header(MetaFile, name));
+    plm_rd( pdf_rd_1byte(pdfs, &icolor) );
+    plm_rd( pdf_rd_header(pdfs, name) );
 }
 
 /*----------------------------------------------------------------------*\
@@ -781,7 +786,7 @@ NextFamilyFile(U_CHAR *c)
     member++;
     (void) sprintf(FileName, "%s.%i", FamilyName, member);
 
-    if ((MetaFile = fopen(FileName, BINARY_READ)) == NULL) {
+    if ((MetaFile = fopen(FileName, "rb")) == NULL) {
 	is_family = 0;
 	return;
     }
@@ -789,6 +794,7 @@ NextFamilyFile(U_CHAR *c)
 	is_family = 0;
 	return;
     }
+    pdfs->file = MetaFile;
 
 /*
 * If the family file was created correctly, the first instruction in the
@@ -1251,15 +1257,15 @@ ReadPageHeader(void)
 
     if (strcmp(mf_version, "1992a") >= 0) {
 	if (strcmp(mf_version, "1993a") >= 0) {
-	    plm_rd(pdf_rd_2bytes(MetaFile, &page));
-	    plm_rd(pdf_rd_4bytes(MetaFile, &prevpage));
-	    plm_rd(pdf_rd_4bytes(MetaFile, &nextpage));
+	    plm_rd( pdf_rd_2bytes(pdfs, &page) );
+	    plm_rd( pdf_rd_4bytes(pdfs, &prevpage) );
+	    plm_rd( pdf_rd_4bytes(pdfs, &nextpage) );
 	    prevpage_loc = prevpage;
 	    nextpage_loc = nextpage;
 	}
 	else {
-	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
-	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	}
     }
 
@@ -1292,6 +1298,10 @@ Init(int argc, char **argv)
 */
 
     OpenMetaFile(&argc, argv);
+    pdfs = pdf_finit(MetaFile);
+
+/* Read header */
+
     if (ReadFileHeader())
 	exit(EX_BADFILE);
 
@@ -1416,7 +1426,7 @@ ReadFileHeader(void)
 
 /* Read label field of header to make sure file is a PLPLOT metafile */
 
-    plm_rd(pdf_rd_header(MetaFile, mf_magic));
+    plm_rd( pdf_rd_header(pdfs, mf_magic) );
     if (strcmp(mf_magic, PLMETA_HEADER)) {
 	fprintf(stderr, "Not a PLPLOT metafile!\n");
 	return 1;
@@ -1425,7 +1435,7 @@ ReadFileHeader(void)
 /* Read version field of header.  We need to check that we can read the
    metafile, in case this is an old version of plrender. */
 
-    plm_rd(pdf_rd_header(MetaFile, mf_version));
+    plm_rd( pdf_rd_header(pdfs, mf_version) );
     if (strcmp(mf_version, PLMETA_VERSION) > 0) {
 	fprintf(stderr,
 	    "Error: incapable of reading metafile version %s.\n", mf_version);
@@ -1448,52 +1458,52 @@ ReadFileHeader(void)
 /* This is an easy way to guarantee backward compatibility. */
 
     for (;;) {
-	plm_rd(pdf_rd_header(MetaFile, tag));
+	plm_rd( pdf_rd_header(pdfs, tag) );
 	if (*tag == '\0')
 	    break;
 
 	if ( ! strcmp(tag, "pages")) {
-	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	    pages = dum_ushort;
 	    continue;
 	}
 
 	if ( ! strcmp(tag, "xmin")) {
-	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	    xmin = dum_ushort;
 	    continue;
 	}
 
 	if ( ! strcmp(tag, "xmax")) {
-	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	    xmax = dum_ushort;
 	    continue;
 	}
 
 	if ( ! strcmp(tag, "ymin")) {
-	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	    ymin = dum_ushort;
 	    continue;
 	}
 
 	if ( ! strcmp(tag, "ymax")) {
-	    plm_rd(pdf_rd_2bytes(MetaFile, &dum_ushort));
+	    plm_rd( pdf_rd_2bytes(pdfs, &dum_ushort) );
 	    ymax = dum_ushort;
 	    continue;
 	}
 
 	if ( ! strcmp(tag, "pxlx")) {
-	    plm_rd(pdf_rd_ieeef(MetaFile, &pxlx));
+	    plm_rd( pdf_rd_ieeef(pdfs, &pxlx) );
 	    continue;
 	}
 
 	if ( ! strcmp(tag, "pxly")) {
-	    plm_rd(pdf_rd_ieeef(MetaFile, &pxly));
+	    plm_rd( pdf_rd_ieeef(pdfs, &pxly) );
 	    continue;
 	}
 
 	if ( ! strcmp(tag, "width")) {
-	    plm_rd(pdf_rd_1byte(MetaFile, &dum_uchar));
+	    plm_rd( pdf_rd_1byte(pdfs, &dum_uchar) );
 	    plwid(dum_uchar);
 	    continue;
 	}
@@ -1501,12 +1511,12 @@ ReadFileHeader(void)
 /* Obsolete tags */
 
 	if ( ! strcmp(tag, "orient")) {
-	    plm_rd(pdf_rd_1byte(MetaFile, &dum_uchar));
+	    plm_rd( pdf_rd_1byte(pdfs, &dum_uchar) );
 	    continue;
 	}
 
 	if ( ! strcmp(tag, "aspect")) {
-	    plm_rd(pdf_rd_ieeef(MetaFile, &dum_float));
+	    plm_rd( pdf_rd_ieeef(pdfs, &dum_float) );
 	    continue;
 	}
 
