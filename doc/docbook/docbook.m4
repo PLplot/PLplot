@@ -1,3 +1,24 @@
+dnl doc/docbook/docbook.m4 for PLplot
+dnl
+dnl Autoconf macros for the DocBook documentation of PLplot
+dnl
+dnl Copyright (C) 2002, 2003  Alan W. Irwin
+dnl Copyright (C) 2003  Rafael Laboissiere
+dnl
+dnl This file is part of PLplot.
+dnl 
+dnl This file is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU Library General Public License as published by
+dnl the Free Software Foundation; version 2 of the License.
+dnl 
+dnl This file is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Library General Public License for more details.
+dnl 
+dnl You should have received a copy of the GNU Library General Public License
+dnl along with the file; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 dnl ### AC_INIT(src/plplotdoc.xml.in)
 dnl ### AM_INIT_AUTOMAKE(plplotdoc, 0.4.3)

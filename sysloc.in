@@ -4,6 +4,12 @@
 # IFS, University of Texas at Austin
 # 14-Jul-1994
 #
+# Copyright (C) 2003  Maurice LeBrun
+# Copyright (C) 2003  Rafael Laboissiere
+# Copyright (C) 2003  Alan W. Irwin
+# Copyright (C) 2003  Joao Cardoso
+
+
 # This script sets up config variables for a Unix-like system.
 # The stuff set here is fairly generic and can be automated.
 # This includes how to find required header files and libraries.

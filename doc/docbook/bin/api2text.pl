@@ -6,7 +6,9 @@
 # Created on: Mon Dec  4 16:35:32 CET 2000
 # Last modified on: Thu Mar 20 11:30:25 CET 2003
 # $Id$
-
+#
+# Copyright (C) 2000, 2003  Rafael Laboissiere
+#
 # This script relies on the present structure of the API chapter (file
 # ../src/api.xml), where each API function is documented in its own
 # section.  Here is the typical structure of a section:

@@ -8,7 +8,7 @@
 ## Created on: Sun Oct 18 22:03:10 CEST 1998
 ## Last modified on: Fri Mar  7 09:37:51 CET 2003
 ##
-## Copyright (C) 1998 2003  Rafael Laboissiere
+## Copyright (C) 1998, 2003  Rafael Laboissiere
 ##
 ## This file is free software, distributable under the GPL. No
 ## warranties, use it at your own risk.  It  was originally written for

@@ -226,14 +226,15 @@
       </para>
     </legalnotice>
     <copyright>
-      <year>1999, 2000, 2001</year>
-      <holder>Alan W. Irwin, Rafael Laboissi&egrave;re</holder>
+      <year>1999, 2000, 2001, 2003 </year>
+      <holder>Alan W. Irwin, Rafael Laboissi&egrave;re, Joao Cardoso</holder>
     </copyright>
     <legalnotice>
       <para>
 	<emphasis>
 	  The following terms apply to the LaTeXinfo to DocBook translation
-	  and content added by A. W. Irwin and R. Laboissi&egrave;re:
+	  and content added by A. W. Irwin, R. Laboissi&egrave;re and 
+	  Joao Cardoso:
 	</emphasis>
       </para>	
 

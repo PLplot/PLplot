@@ -2,9 +2,10 @@ dnl configure.in for PLplot
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl Copyright (C) 1994 Maurice LeBrun
-dnl Copyright (C) 2002 Rafael Laboissiere
-dnl Copyright (C) 2002 Alan W. Irwin
+dnl Copyright (C) 1994  Maurice LeBrun
+dnl Copyright (C) 2002, 2003  Rafael Laboissiere
+dnl Copyright (C) 2002, 2003  Alan W. Irwin
+dnl Copyright (C) 2003  Joao Cardoso
 
 dnl This file is part of PLplot.
 
@@ -409,7 +410,7 @@ AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
 ###   version number, otherwise it will fool up the bootstrap.sh script.  By
 ###   the way, the line below can be changed using options --version and
 ###   --date-version of that script. ]
-AM_INIT_AUTOMAKE(plplot, 5.2.0.cvs)
+AM_INIT_AUTOMAKE(plplot, 5.2.1.rc1)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
 ### library version consistent with the package version in direct

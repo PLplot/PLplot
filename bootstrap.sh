@@ -1,4 +1,13 @@
 #! /bin/bash
+#
+# Autootols bootstrap script for PLplot
+#
+# This file is part of PLplot, and is released under the GNU LGPL.
+# No warranties.  
+#
+# Copyright (C) 2003  Alan W. Irwin
+# Copyright (C) 2003  Joao Cardoso
+# Copyright (C) 2003  Rafael Laboissiere
 
 function run {
   echo -n Running `$1 --version | sed q`...

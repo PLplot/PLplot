@@ -6,6 +6,7 @@ dnl
 dnl Maurice LeBrun
 dnl IFS, University of Texas at Austin
 dnl 14-Jul-1994
+dnl Copyright (C) 2003  Rafael Laboissiere
 dnl ------------------------------------------------------------------------
 dnl It's kind of nice to have an include macro.
 dnl 

@@ -2,8 +2,8 @@
 ###
 ### Process this file with automake to produce Makefile.in
 ###
-# Copyright (C) 2002, 2003 Rafael Laboissière
-# Copyright (C) 2002, 2003 Alan W. Irwin
+# Copyright (C) 2002, 2003  Rafael Laboissière
+# Copyright (C) 2002, 2003  Alan W. Irwin
 #
 #This file is part of PLplot.
 #
