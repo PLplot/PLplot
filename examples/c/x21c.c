@@ -257,7 +257,15 @@ main(int argc, char *argv[])
 	cmap1_init();
 	plvpor(0.0, 1.0, 0.0, 0.9);
 	plwind(-1.0, 1.0, -1.0, 1.5);
-	plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
+	/* 
+	 * For the comparition to be fair, all plots should have the
+	 * same z values, but to get the max/min of the data generated
+	 * by all algorithms would imply two passes. Keep it simple.
+	 *
+	 * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60); 
+	 */
+
+	plw3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -60);
 	plbox3("bnstu", ylab, 0.0, 0,
 	       "bnstu", xlab, 0.0, 0,
 	       "bcdmnstuv", "", 0.0, 4);
