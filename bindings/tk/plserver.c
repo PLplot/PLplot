@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1993/12/09 21:29:47  mjl
+ * Revision 1.17  1993/12/15 08:59:03  mjl
+ * Changes to support Tcl-DP.  Also moved functions Tcl_AppInit() and
+ * set_autopath() to tkshell.c so they could be used by the TK driver
+ * initialization as well.
+ *
+ * Revision 1.16  1993/12/09  21:29:47  mjl
  * Fixed another bug generated in the reorganization dealing with cleanup.
  *
  * Revision 1.15  1993/12/09  20:25:57  mjl
@@ -39,9 +44,6 @@
  */
 
 #include "plserver.h"
-#ifdef TCL_DP
-#include "dpInt.h"
-#endif
 
 /* Externals */
 
@@ -85,6 +87,11 @@ static int child;		/* set if child of TK driver */
 static int mkidx;		/* Create a new tclIndex file */
 static int pass_thru;		/* Skip normal error termination when set */
 
+/* These are only used when Tcl-DP support is present */
+
+static char *client_host;	/* Host id for client */
+static char *client_port;	/* Communications port id for client */
+
 static Tk_ArgvInfo argTable[] = {
     {"-file", TK_ARGV_STRING, (char *) NULL, (char *) &fileName,
 	"File from which to read commands"},
@@ -100,7 +107,11 @@ static Tk_ArgvInfo argTable[] = {
 /* plserver additions */
 
     {"-client", TK_ARGV_STRING, (char *) NULL, (char *) &client,
-	 "Client to notify at startup, if any"},
+	 "Client to connect to at startup"},
+    {"-client_host", TK_ARGV_STRING, (char *) NULL, (char *) &client_host,
+	 "Host to connect to at startup"},
+    {"-client_port", TK_ARGV_STRING, (char *) NULL, (char *) &client_port,
+	 "Communications port to connect to at startup"},
     {"-auto_path", TK_ARGV_STRING, (char *) NULL, (char *) &auto_path,
 	 "Additional directory(s) to autoload"},
     {"-mkidx", TK_ARGV_CONSTANT, (char *) 1, (char *) &mkidx,
@@ -114,9 +125,9 @@ static Tk_ArgvInfo argTable[] = {
 /* Support routines for plserver */
 
 static void  configure		(void);
+static void  InitLink_tk	(ClientData);
+static void  InitLink_dp	(ClientData);
 static void  abort_session	(char *);
-static void  set_auto_path	(void);
-static void  NotifyClient	(ClientData);
 static void  tcl_cmd		(char *);
 static int   tcl_eval		(char *);
 
@@ -147,6 +158,8 @@ static void		StdinProc _ANSI_ARGS_((ClientData clientData,
  *----------------------------------------------------------------------
  */
 
+#define DEBUG
+
 int
 main(argc, argv)
     int argc;				/* Number of arguments. */
@@ -156,10 +169,20 @@ main(argc, argv)
     char buf[20];
     int code;
 
+#ifdef DEBUG
+{
+    int i;
+    fprintf(stderr, "Program %s called with arguments :\n", argv[0]);
+    for (i = 1; i < argc; i++) 
+	fprintf(stderr, "%s ", argv[i]);
+    fprintf(stderr, "\n");
+}
+#endif
     interp = Tcl_CreateInterp();
 #ifdef TCL_MEM_DEBUG
     Tcl_InitMemory(interp);
 #endif
+    Tcl_SetVar(interp, "plsend", "send", 0);
 
     /*
      * Parse command-line arguments.
@@ -237,9 +260,19 @@ main(argc, argv)
      * Invoke application-specific initialization.
      */
 
+    configure();
     if (Tcl_AppInit(interp) != TCL_OK) {
 	abort_session(interp->result);
 	Tcl_Eval(interp, "exit");
+    }
+
+/* Create new tclIndex file -- a convenience */
+
+    if (mkidx != 0) {
+	tcl_cmd("auto_mkindex . *.tcl");
+	client = NULL;
+	abort_session("");
+	exit(1);
     }
 
     /*
@@ -256,12 +289,22 @@ main(argc, argv)
     /*
      * Invoke the script specified on the command line, if any.
      * If invoked as a child process of the plplot/tk driver, configure
-     * main window and send notification to client.
+     * main window.
      */
 
-    if (client != NULL) {
+    if (client_port != NULL) {
+#ifdef TCL_DP
 	tcl_cmd("$plserver_init_proc");
-	Tk_DoWhenIdle(NotifyClient, (ClientData) client);
+	Tk_DoWhenIdle(InitLink_dp, (ClientData) client);
+	tty = 0;
+#else
+	abort_session("no Tcl-DP support in this version of plserver");
+	exit(1);
+#endif
+    }
+    else if (client != NULL) {
+	tcl_cmd("$plserver_init_proc");
+	Tk_DoWhenIdle(InitLink_tk, (ClientData) client);
 	tty = 0;
     }
     else if (fileName != NULL) {
@@ -493,103 +536,9 @@ abort_session(char *errmsg)
 /* If client exists, tell it to self destruct */
 
     if (client != NULL)
-	tcl_cmd("send $client after 1 abort");
+	tcl_cmd("$plsend $client after 1 abort");
 
     Tcl_Eval(interp, "exit");
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * Tcl_AppInit --
- *
- *	This procedure performs application-specific initialization.
- *	Most applications, especially those that incorporate additional
- *	packages, will have their own version of this procedure.
- *
- * Results:
- *	Returns a standard Tcl completion code, and leaves an error
- *	message in interp->result if an error occurs.
- *
- * Side effects:
- *	Depends on the startup script.
- *
- *----------------------------------------------------------------------
- */
-
-int
-Tcl_AppInit(interp)
-    Tcl_Interp *interp;		/* Interpreter for application. */
-{
-    Tk_Window main;
-
-    main = Tk_MainWindow(interp);
-
-    /*
-     * Call the init procedures for included packages.  Each call should
-     * look like this:
-     *
-     * if (Mod_Init(interp) == TCL_ERROR) {
-     *     return TCL_ERROR;
-     * }
-     *
-     * where "Mod" is the name of the module.
-     */
-
-#if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 2)
-    if (tk_source(w, interp, "$tk_library/wish.tcl")) {
-	abort_session("");
-	Tcl_Eval(interp, "exit");
-    }
-#else
-    if (Tcl_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-    if (main && Tk_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-#endif
-
-    /*
-     * Call Tcl_CreateCommand for application-specific commands, if
-     * they weren't already created by the init procedures called above.
-     */
-
-#ifdef TCL_DP
-    if (Tdp_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-#endif
-
-    /*
-     * Specify a user-specific startup file to invoke if the application
-     * is run interactively.  Typically the startup file is "~/.apprc"
-     * where "app" is the name of the application.  If this line is deleted
-     * then no user-specific startup file will be run under any conditions.
-     */
-
-
-    /*
-     * Add a few application-specific commands to the application's
-     * interpreter.
-     */
-
-    configure();
-
-/* Create new tclIndex file -- a convenience */
-
-    if (mkidx != 0) {
-	tcl_cmd("auto_mkindex . *.tcl");
-	client = NULL;
-	abort_session("");
-	exit(1);
-    }
-
-/* Set up auto_path */
-
-    set_auto_path();
-
-    return TCL_OK;
 }
 
 /*----------------------------------------------------------------------*\
@@ -615,126 +564,59 @@ configure(void)
 /* Now variable information. */
 /* For uninitialized variables it's better to skip the Tcl_SetVar. */
 
-/* Set program name as main window name */
+/* Set program name as main window name and initialize send command */
 
     Tcl_SetVar(interp, "plserver", Tk_Name(mainWindow), 0);
 
-/* Pass client variable to interpreter if set. */
+/* Pass client, host, port, and child variables to interpreter if set. */
 
     if (client != NULL)
 	Tcl_SetVar(interp, "client", client, 0);
 
-/* Tell interpreter about plserver's ancestry */
+    if (client_host != NULL)
+	Tcl_SetVar(interp, "client_host", client_host, 0);
+    else
+	Tcl_SetVar(interp, "client_host", "localhost", 0);
+
+    if (client_port != NULL)
+	Tcl_SetVar(interp, "client_port", client_port, 0);
 
     if (child != 0)
 	Tcl_SetVar(interp, "child", "1", 0);
 }
 
 /*----------------------------------------------------------------------*\
-* set_autopath
+* InitLink_tk
 *
-* Sets up auto_path variable
-* Note: there is no harm in adding extra directories, even if they don't
-* actually exist (aside from a slight increase in processing time when
-* the autoloaded proc is first found).
+* Sets up link to client program using tk send
 \*----------------------------------------------------------------------*/
 
 static void
-set_auto_path(void)
+InitLink_tk(ClientData clientData)
 {
-    char *buf, *ptr=NULL, *dn;
-#ifdef DEBUG
-    char *path;
-#endif
-
-    dbug_enter("set_auto_path");
-    buf = (char *) malloc(256 * sizeof(char));
-
-/* Add INSTALL_DIR/tcl */
-
-#ifdef INSTALL_DIR
-    plGetName(INSTALL_DIR, "tcl", "", &ptr);
-    Tcl_SetVar(interp, "dir", ptr, TCL_GLOBAL_ONLY);
-    tcl_cmd("set auto_path \"$dir $auto_path\"");
-#ifdef DEBUG
-    fprintf(stderr, "plserver: adding %s to auto_path\n", "/usr/local/plplot");
-    path = Tcl_GetVar(interp, "auto_path", 0);
-    fprintf(stderr, "plserver: auto_path is %s\n", path);
-#endif
-#endif
-
-/* Add $HOME/tcl */
-
-    dn = getenv("HOME");
-    if (dn != NULL) {
-	plGetName(dn, "tcl", "", &ptr);
-	Tcl_SetVar(interp, "dir", ptr, 0);
-	tcl_cmd("set auto_path \"$dir $auto_path\"");
-#ifdef DEBUG
-	fprintf(stderr, "plserver: adding %s to auto_path\n", buf);
-	path = Tcl_GetVar(interp, "auto_path", 0);
-	fprintf(stderr, "plserver: auto_path is %s\n", path);
-#endif
-    }
-
-/* Add $(PLPLOT_DIR)/tcl */
-
-    dn = getenv("PLPLOT_DIR");
-    if (dn != NULL) {
-	plGetName(dn, "tcl", "", &ptr);
-	Tcl_SetVar(interp, "dir", ptr, 0);
-	tcl_cmd("set auto_path \"$dir $auto_path\"");
-#ifdef DEBUG
-	fprintf(stderr, "plserver: adding %s to auto_path\n", ptr);
-	path = Tcl_GetVar(interp, "auto_path", 0);
-	fprintf(stderr, "plserver: auto_path is %s\n", path);
-#endif
-    }
-
-/* Add cwd */
-
-    if (getcwd(buf, 256) == NULL) {
-	abort_session("could not determine cwd");
-	Tcl_Eval(interp, "exit");
-    }
-    Tcl_SetVar(interp, "dir", buf, 0);
-    tcl_cmd("set auto_path \"$dir $auto_path\"");
-
-#ifdef DEBUG
-    fprintf(stderr, "plserver: adding %s to auto_path\n", buf);
-    path = Tcl_GetVar(interp, "auto_path", 0);
-    fprintf(stderr, "plserver: auto_path is %s\n", path);
-#endif
-
-/* Add user-specified directory(s) */
-
-    if (auto_path != NULL) {
-	Tcl_SetVar(interp, "dir", auto_path, 0);
-	tcl_cmd("set auto_path \"$dir $auto_path\"");
-#ifdef DEBUG
-	fprintf(stderr, "plserver: adding %s to auto_path\n", auto_path);
-	path = Tcl_GetVar(interp, "auto_path", 0);
-	fprintf(stderr, "plserver: auto_path is %s\n", path);
-#endif
-
-    }
-
-    free_mem(buf);
-    free_mem(ptr);
+    tcl_cmd("after 1 [list $plsend $client [list set plserver $plserver]]");
+    tcl_cmd("after 1 $plsend $client {set server_is_ready 1}");
 }
 
 /*----------------------------------------------------------------------*\
-* NotifyClient
+* InitLink_dp
 *
-* Sends client program notification
+* Sets up link to client program using Tcl-DP
 \*----------------------------------------------------------------------*/
 
 static void
-NotifyClient(ClientData clientData)
+InitLink_dp(ClientData clientData)
 {
-    char *client = (char *) clientData;
-
-    tcl_cmd("after 1 [list send $client [list set plserver $plserver]]");
+#ifdef TCL_DP
+    tcl_cmd("set plsend dp_RPC");
+    tcl_cmd("set client [dp_MakeRPCClient $client_host $client_port]");
+    tcl_cmd("set server_host localhost");
+    tcl_cmd("set server_port [dp_MakeRPCServer]");
+    tcl_cmd("after 1 $plsend $client [list set client $client]");
+    tcl_cmd("after 1 $plsend $client [list set server_host $server_host]");
+    tcl_cmd("after 1 $plsend $client [list set server_port $server_port]");
+    tcl_cmd("after 1 $plsend $client {set server_is_ready 1}");
+#endif
 }
 
 /*----------------------------------------------------------------------*\
