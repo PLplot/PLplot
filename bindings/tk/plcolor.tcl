@@ -1,7 +1,16 @@
 # $Id$
 #
 # $Log$
-# Revision 1.2  1994/05/10 21:46:51  mjl
+# Revision 1.3  1994/05/10 22:44:57  mjl
+# Changed the way cmap1 position sliders work.  Still a monotonic
+# relationship between control point number and position in cmap1 space is
+# strictly enforced, but now when you try to move one past another, they
+# both get moved.  Any number of control points can be shifted in this way.
+# This is a much more useful way to manipulate the color map as it can be
+# used to "tie" together two control points (as is appropriate for the
+# center two points in the default map).
+#
+# Revision 1.2  1994/05/10  21:46:51  mjl
 # Modified to dynamically alter colormaps.  Color editor now accepts a
 # command argument and instance pointer to handle what should be done when
 # a color is changed.  Hooks to new, more efficient way of setting colors
@@ -637,7 +646,7 @@ class ColorPalette1 {
 # But the sliders themselves are a good visual cue as to what's going on
 # so they get to stay.
 
-	    if {$i == 0 || $i == [expr $ncol1-1]} {
+	    if {$i == 0 || $i == $ncol1-1} {
 		pack append $w.$i \
 		    $w.$i.scale "right expand padx 8 pady 4" \
 		    $w.$i.color "right frame e" \
@@ -728,11 +737,19 @@ class ColorPalette1 {
 	set curr [$w.$i.scale get]
 	set next [$w.$r.scale get]
 	
-	if { $curr < $prev } {
-	    return $prev
+	while { $curr < $prev } {
+	    if { $l == 0 } break
+	    $w.$l.scale set $curr
+	    set plcmap1_pos($l) $curr
+	    incr l -1
+	    set prev [$w.$l.scale get]
 	}
-	if { $curr > $next } {
-	    return $next
+	while { $curr > $next } {
+	    if { $r == $ncol1-1 } break
+	    $w.$r.scale set $curr
+	    set plcmap1_pos($r) $curr
+	    incr r
+	    set next [$w.$r.scale get]
 	}
 	return $curr
     }
