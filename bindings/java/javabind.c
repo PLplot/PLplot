@@ -1,3 +1,23 @@
+/*---------------------------------------------------------------------------//
+ * $Id$
+ *
+ * This file implements the JNI wrappers for the PLplot API functions.  Most
+ * of these show up as public native methods of the PLStream.java class.
+ *
+ * Each of the public methods of PLStream must first set the current PLplot
+ * stream, before invoking its corresponding PLplot API function.  This is
+ * done by fetching the stream_id field from the PLStream object.
+ *
+ * mkstrm() is a private method because a Java language user has no need to
+ * ever call this PLplot API function directly.  When a Java user wants a new
+ * plotting stream, they just instantiate a new PLStream class.  So the
+ * PLStream ctor calls mkstrm(), and thus this is where we fetch the PLplot
+ * stream id and set the object's stream_id member.
+ *
+ * Functions definitions are sorted alphabetically, except for mkstrm which
+ * occurs first since it is special, as described above.
+//---------------------------------------------------------------------------*/
+
 #include <jni.h>
 
 #include "plplot/plplot.h"
@@ -5,7 +25,35 @@
 static jclass cls_PLStream = 0;
 static jfieldID fid_sid = 0;
 
+/* Expand this macro inside each wrapper function, before calling the PLplot
+ * API function. */
 #define set_PLStream(env,obj) plsstrm( (*env)->GetIntField(env,obj,fid_sid) )
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    mkstrm
+ * Signature: ()I
+ */
+
+JNIEXPORT jint JNICALL
+Java_plplot_core_PLStream_mkstrm( JNIEnv *env, jobject jthis )
+{
+    PLINT sid;
+
+/* We have to make sure that the stream_id field id is initialized.  mkstrm
+ * is called by the PLStream ctor, so will be called before any of these
+ * other native wrappers.  So this is the place to fetch this id. */
+    if (cls_PLStream == 0)
+    {
+        jclass cls = (*env)->GetObjectClass( env, jthis );
+        cls_PLStream = (*env)->NewGlobalRef( env, cls );
+        fid_sid = (*env)->GetFieldID( env, cls_PLStream, "stream_id", "I" );
+    /* Shouldda done some error checking there... */
+    }
+
+    plmkstrm( &sid );
+    return sid;
+}
 
 /*
  * Class:     plplot_0002fcore_0002fPLStream
@@ -60,6 +108,7 @@ Java_plplot_core_PLStream_box3( JNIEnv *env, jobject jthis,
  * Method:    col0
  * Signature: (I)V
  */
+
 JNIEXPORT void JNICALL
 Java_plplot_core_PLStream_col0( JNIEnv *env, jobject jthis, jint icol )
 {
@@ -72,6 +121,7 @@ Java_plplot_core_PLStream_col0( JNIEnv *env, jobject jthis, jint icol )
  * Method:    end
  * Signature: ()V
  */
+
 JNIEXPORT void JNICALL
 Java_plplot_core_PLStream_end( JNIEnv *env, jobject jthis )
 {
@@ -131,19 +181,8 @@ Java_plplot_core_PLStream_gstrm( JNIEnv *env, jobject jthis )
 JNIEXPORT void JNICALL
 Java_plplot_core_PLStream_init( JNIEnv *env, jobject jthis )
 {
-    PLINT sid;
-
+    set_PLStream(env,jthis);
     plinit();
-    plgstrm( &sid );
-
-    if (cls_PLStream == 0)
-    {
-        jclass cls = (*env)->GetObjectClass( env, jthis );
-        cls_PLStream = (*env)->NewGlobalRef( env, cls );
-        fid_sid = (*env)->GetFieldID( env, cls_PLStream, "stream_id", "I" );
-    }
-
-    (*env)->SetIntField( env, jthis, fid_sid, sid );
 }
 
 /*
@@ -233,6 +272,20 @@ Java_plplot_core_PLStream_poin( JNIEnv *env, jobject jthis,
 
 /*
  * Class:     plplot_0002fcore_0002fPLStream
+ * Method:    ssub
+ * Signature: (II)V
+ */
+
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_ssub( JNIEnv *env, jobject jthis,
+                                jint nx, jint ny )
+{
+    set_PLStream(env,jthis);
+    plssub(nx,ny);
+}
+
+/*
+ * Class:     plplot_0002fcore_0002fPLStream
  * Method:    styl
  * Signature: (III)V
  */
@@ -287,3 +340,6 @@ Java_plplot_core_PLStream_wind( JNIEnv *env, jobject jthis,
     plwind( xmin, xmax, ymin, ymax );
 }
 
+/*---------------------------------------------------------------------------//
+ *                            End of javabind.c
+//---------------------------------------------------------------------------*/

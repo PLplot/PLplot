@@ -41,10 +41,15 @@ public class PLStream {
     public native void lab( String xlabel, String ylabel, String tlabel );
     public native void line( int n, float[] x, float[] y );
     public native void poin( int n, float[] x, float[] y, int code );
+    public native void ssub( int nx, int ny );
     public native void styl( int nms, int mark, int space );
     public native void syax( int digmax, int digits );
     public native void vsta();
     public native void wind( float xmin, float xmax, float ymin, float ymax );
+
+// Methods needed for the implementation of PLStream, but not suitable for
+// the public interface.
+    native int mkstrm();
 
 // Static code block to get the PLplot dynamic library loaded in.
     static {
@@ -55,7 +60,10 @@ public class PLStream {
     int stream_id;
 
 // Now comes stuff we need done in Java.
-    public PLStream() {}
+    public PLStream() 
+    {
+        stream_id = mkstrm();
+    }
 
     public int get_stream_id() { return stream_id; }
 }
