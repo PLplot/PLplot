@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.88  1999/02/26 19:01:14  furnish
+ * Revision 1.89  1999/06/24 20:50:18  furnish
+ * Remove reference to plgphy.
+ *
+ * Revision 1.88  1999/02/26  19:01:14  furnish
  * Add some macros and a control structure for supporting a new device
  * escape command for configuring double buffering support on drivers
  * that support it.
@@ -508,7 +511,6 @@ typedef struct {
 #define    plgfnam	c_plgfnam
 #define    plglevel	c_plglevel
 #define    plgpage	c_plgpage
-#define    plgphy	c_plgphy
 #define    plgra	c_plgra
 #define    plgspa	c_plgspa
 #define    plgstrm	c_plgstrm
