@@ -64,6 +64,8 @@ ac_help="$ac_help
   --enable-f77            compile Fortran-77 interface code (default: yes)"
 ac_help="$ac_help
   --enable-cxx            compile C++ interface code (default: yes)"
+ac_help="$ac_help
+  --enable-python         compile python interface code (default: yes)"
 ac_default_prefix=/usr/local/plplot
 ac_help="$ac_help
   --enable-xwin           enable X Window System driver"
@@ -767,6 +769,20 @@ if test -n "$withval"; then
 fi
 
 
+# Check whether --enable-python or --disable-python was given.
+enableval="$enable_python"
+if test -n "$enableval"; then
+  :
+else
+  enable_python="yes"
+fi
+# Check whether --with-python or --without-python was given.
+withval="$with_python"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_python" 1>&2; exit 1; }
+fi
+
+
 # ----------------------------------------------------------------------------
 # Set up prefix
 #
@@ -1395,7 +1411,7 @@ esac
 
 # ----------------------------------------------------------------------------
 # Set flags to generate shared libraries for systems that we know about.
-# Taken from BLT configure.in with some modifications.
+# Originally based on BLT's configure.in.
 # ----------------------------------------------------------------------------
 
 echo $ac_n "checking how to make shared libraries""... $ac_c" 1>&6
@@ -1403,43 +1419,56 @@ SHLIB_CCFLAGS=
 SHLIB_CXXFLAGS=
 SHLIB_BUILD=
 SHLIB_SUFFIX=
+SALIB_SUFFIX=""
+SO=""
+LDSHARED="ld"
+
 case "$system" in 
     SunOS-4* ) 
-	SHLIB_CCFLAGS=-pic
-	SHLIB_CXXFLAGS=-pic
-	SHLIB_F77FLAGS=-pic
-	SHLIB_BUILD="ld -assert pure-text -o"
-	SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
-	SALIB_SUFFIX='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	if test "$with_gcc" = "yes"; then
 	    with_shlib=no
 	    echo "$ac_t""unknown" 1>&6
 	else
+	    SHLIB_CCFLAGS=-pic
+	    SHLIB_CXXFLAGS=-pic
+	    SHLIB_F77FLAGS=-pic
+	    SHLIB_BUILD="ld -assert pure-text -o"
+	    SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	    SALIB_SUFFIX='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	    SO=".so"
+	    LDSHARED="ld"
 	    echo "$ac_t""okay" 1>&6
 	fi
     ;;
     HP-UX-* )
-	SHLIB_CCFLAGS=+z
-	SHLIB_CXXFLAGS=+z
-	SHLIB_F77FLAGS=+z
-	SHLIB_BUILD="ld -b -o"
 	SHLIB_SUFFIX=.sl
 	if test "$with_gcc" = "yes"; then
 	    SHLIB_CCFLAGS=-fpic
 	    SHLIB_CXXFLAGS=-fpic
 	    SHLIB_F77FLAGS=+z
 	    SHLIB_BUILD="gcc -shared -fpic -o"
-	    SHLIB_SUFFIX=.sl
+	else
+	    SHLIB_CCFLAGS=+z
+	    SHLIB_CXXFLAGS=+z
+	    SHLIB_F77FLAGS=+z
+	    SHLIB_BUILD="ld -b -o"
 	fi
+	SO=".sl"
+	LDSHARED="ld -b"
 	echo "$ac_t""okay" 1>&6
     ;;
     AIX-* )
-	SHLIB_CCFLAGS=-fpic
-	SHLIB_CXXFLAGS=-fpic
-	SHLIB_F77FLAGS=-fpic
-	SHLIB_BUILD="ar q"
-	SHLIB_SUFFIX=.a
-	echo "$ac_t""okay" 1>&6
+	if test "$with_gcc" = "yes"; then
+	    with_shlib=no
+	    echo "$ac_t""unknown" 1>&6
+	else
+	    SHLIB_CCFLAGS=-fpic
+	    SHLIB_CXXFLAGS=-fpic
+	    SHLIB_F77FLAGS=-fpic
+	    SHLIB_BUILD="ar q"
+	    SHLIB_SUFFIX=.a
+	    echo "$ac_t""okay" 1>&6
+	fi
     ;;
 
     # The rest are probably broken.  Someone please fix them.
@@ -1451,6 +1480,8 @@ case "$system" in
 #	SHLIB_F77FLAGS="-K pic"
 #	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	SO=".so"
+	LDSHARED="ld -G"
 	echo "$ac_t""unknown" 1>&6
     ;;
     OSF-1.* )
@@ -1459,6 +1490,8 @@ case "$system" in
 #	SHLIB_F77FLAGS=-fpic
 #	SHLIB_BUILD="$CC -shared"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	SO=".so"
+	LDSHARED="ld -shared -expect_unresolved \"*\""
 	echo "$ac_t""unknown" 1>&6
     ;;
     IRIX-5.* )
@@ -1467,6 +1500,8 @@ case "$system" in
 #	SHLIB_F77FLAGS=-KPIC
 #	SHLIB_BUILD="$CC -shared"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	SO=".so"
+	LDSHARED="ld -shared"
 	echo "$ac_t""unknown" 1>&6
     ;;
     * )
@@ -1480,6 +1515,8 @@ if test ! -z "SHLIB_CCFLAGS" ; then
 	SHLIB_CCFLAGS=-fpic
     fi
 fi
+
+
 
 
 
@@ -1573,7 +1610,7 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1577 "configure"
+#line 1614 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1587,7 +1624,7 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1591 "configure"
+#line 1628 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1730,7 +1767,7 @@ test -z "$x_direct_test_library" && x_direct_test_library=Xt
 test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
 test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
 cat > conftest.$ac_ext <<EOF
-#line 1734 "configure"
+#line 1771 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
@@ -1793,7 +1830,7 @@ rm -f conftest*
 ac_save_LIBS="$LIBS"
 LIBS="-l$x_direct_test_library $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1797 "configure"
+#line 1834 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -1879,7 +1916,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 1883 "configure"
+#line 1920 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -1936,7 +1973,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1940 "configure"
+#line 1977 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2690,7 +2727,7 @@ if test "$with_dbmalloc" = "yes"; then
 	places="\
 	$prefix/include \
 	$HOME/local/include \
-	$HOME/dbmalloc/include \
+	$HOME/local/dbmalloc/include \
 	$HOME/include \
 	$HOME/debug_include \
 	/usr/local/dbmalloc/include \
@@ -2744,10 +2781,120 @@ EOF
 
 fi
 
+# -----------------------------------------------------------------------
+# Python include and machdep directories
+# -----------------------------------------------------------------------
+
+if test "$enable_python" = "yes"; then
+    if test "$with_shlib" = "no"; then
+	echo "$ac_t""dynamically loaded modules require with_shlib=yes.. disabling python support" 1>&6
+	enable_python=no
+    fi
+fi
+
+if test "$enable_python" = "yes"; then
+    if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
+	places="\
+	$prefix/include/Py \
+	$HOME/local/include/Py \
+	$HOME/local/python/include/Py \
+	$HOME/include/Py \
+	/usr/local/python/include/Py \
+	/usr/local/python-1.2/include/Py \
+	/usr/local/include/Py"
+
+	
+    echo $ac_n "checking for Python.h""... $ac_c" 1>&6
+    PYTHON_INC_DIR=""
+
+    for dir in $places; do
+	if test -r "$dir/Python.h"; then
+	    PYTHON_INC_DIR="$dir"
+	    echo "$ac_t""$dir" 1>&6
+	    break
+	fi
+    done
+    if test -z "$PYTHON_INC_DIR"; then
+	echo "$ac_t""no" 1>&6
+	echo "configure: warning: can't find Python.h, setting enable_python to no" 1>&2
+	enable_python="no"
+    fi
+    if test "$PYTHON_INC_DIR" = "/usr/include"; then
+	PYTHON_INC_DIR="default"
+    fi
+
+    fi
+fi
+
+if test "$enable_python" = "yes"; then
+    if test -z "$PYTHON_MOD_DIR" -o ! -d "$PYTHON_MOD_DIR"; then
+	if test -z "$MACHDEP"; then
+	    ac_sys_system=`uname -s | tr -d ' ' | tr '[A-Z]' '[a-z]'`
+	    ac_sys_release=`uname -r | tr -d ' ' | sed 's/\..*//'`
+	    MACHDEP="$ac_sys_system$ac_sys_release"
+	    case MACHDEP in
+		'')	MACHDEP=unknown;;
+	    esac
+	fi
+
+	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[^/]*/[^/]*$,,'`
+	PYTHON_MOD_DIR=$python_dir/lib/python/$MACHDEP
+	if test ! -d "$PYTHON_MOD_DIR"; then
+	    echo "$ac_t""couldn't find PYTHON_MOD_DIR" 1>&6
+	    enable_python=no
+	fi
+    fi
+fi
+
+
+
+
 # ----------------------------------------------------------------------------
-# Check for the existence of various libraries.  The order here
-# is important, so that then end up in the right order in the
-# command line generated by Make.
+# libf2c
+# ----------------------------------------------------------------------------
+
+if test "$with_f2c" = "yes"; then
+    echo $ac_n "checking for -lf2c""... $ac_c" 1>&6
+if eval "test \"`echo '$''{'ac_cv_lib_f2c'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+LIBS="-lf2c  $LIBS"
+cat > conftest.$ac_ext <<EOF
+#line 2865 "configure"
+#include "confdefs.h"
+
+int main() { return 0; }
+int t() {
+main()
+; return 0; }
+EOF
+if eval $ac_link; then
+  rm -rf conftest*
+  eval "ac_cv_lib_f2c=yes"
+else
+  rm -rf conftest*
+  eval "ac_cv_lib_f2c=no"
+fi
+rm -f conftest*
+LIBS="$ac_save_LIBS"
+
+fi
+if eval "test \"`echo '$ac_cv_lib_'f2c`\" = yes"; then
+  echo "$ac_t""yes" 1>&6
+  LIBS="$LIBS -lf2c"
+else
+  echo "$ac_t""no" 1>&6
+echo "configure: warning: couldn't find libf2c" 1>&2
+fi
+
+fi
+
+# ----------------------------------------------------------------------------
+# Check for the existence of various libraries.  The order here is
+# important, so that then end up in the right order in the command line
+# generated by Make.  I put these in the variable EXTRA_LIBS so that
+# you can set it yourself and leave LIBS up to the script to get right.
 #
 # Most of this is copied from the BLT configure script.  Dunno if the
 # Xbsd library is really needed.  libsocket and libnsl are needed on
@@ -2773,7 +2920,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2777 "configure"
+#line 2924 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2806,7 +2953,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2810 "configure"
+#line 2957 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2839,7 +2986,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2843 "configure"
+#line 2990 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2872,7 +3019,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2876 "configure"
+#line 3023 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2905,7 +3052,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2909 "configure"
+#line 3056 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2939,50 +3086,6 @@ LIBS="$LIBS $EXTRA_LIBS"
 
 
 
-# ----------------------------------------------------------------------------
-# libf2c
-# ----------------------------------------------------------------------------
-
-if test "$with_f2c" = "yes"; then
-    echo $ac_n "checking for -lf2c""... $ac_c" 1>&6
-if eval "test \"`echo '$''{'ac_cv_lib_f2c'+set}'`\" = set"; then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  ac_save_LIBS="$LIBS"
-LIBS="-lf2c  $LIBS"
-cat > conftest.$ac_ext <<EOF
-#line 2955 "configure"
-#include "confdefs.h"
-
-int main() { return 0; }
-int t() {
-main()
-; return 0; }
-EOF
-if eval $ac_link; then
-  rm -rf conftest*
-  eval "ac_cv_lib_f2c=yes"
-else
-  rm -rf conftest*
-  eval "ac_cv_lib_f2c=no"
-fi
-rm -f conftest*
-LIBS="$ac_save_LIBS"
-
-fi
-if eval "test \"`echo '$ac_cv_lib_'f2c`\" = yes"; then
-  echo "$ac_t""yes" 1>&6
-  LIBS="$LIBS -lf2c"
-else
-  echo "$ac_t""no" 1>&6
-echo "configure: warning: couldn't find libf2c" 1>&2
-fi
-
-fi
-
-
-
-
 
 # If we cannot run a trivial program, we must be cross compiling.
 echo $ac_n "checking whether cross-compiling""... $ac_c" 1>&6
@@ -2993,7 +3096,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 2997 "configure"
+#line 3100 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3014,7 +3117,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3018 "configure"
+#line 3121 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3036,7 +3139,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3040 "configure"
+#line 3143 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3054,7 +3157,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3058 "configure"
+#line 3161 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3075,7 +3178,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3079 "configure"
+#line 3182 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3112,7 +3215,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3116 "configure"
+#line 3219 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3244,7 +3347,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3248 "configure"
+#line 3351 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3276,7 +3379,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3280 "configure"
+#line 3383 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -3310,7 +3413,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3314 "configure"
+#line 3417 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -3433,7 +3536,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3437 "configure"
+#line 3540 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3543,6 +3646,9 @@ if test "$enable_cxx" = "yes"; then
 fi
 if test "$enable_f77" = "yes"; then
     cat $srcdir/cf/pkg_f77.in	>>Makefile.in 
+fi
+if test "$enable_python" = "yes"; then
+    cat $srcdir/cf/pkg_python.in >>Makefile.in 
 fi
 if test "$enable_tcl" = "yes"; then
     cat $srcdir/cf/pkg_tcl.in	>>Makefile.in 
@@ -4102,6 +4208,27 @@ if test "$enable_cxx" = "yes"; then
     . 2>/dev/null
 fi
 
+# Note that double precision Fortran files in the stub interface are
+# obtained entirely by m4 macro expansion.  This should work anywhere.
+# Double precision example programs are obtained through automatic compiler
+# promotion, however.  Your compiler needs to be able to automatically
+# promote all real variables and constants for this to work (the HPUX 8.x
+# compiler did not support this, but it's supported under 9.0).
+
+if test "$enable_f77" = "yes"; then
+    ln -s \
+    $srcdir/bindings/f77/*.* \
+    $srcdir/examples/f77/*.* \
+    . 2>/dev/null
+fi
+
+if test "$enable_python" = "yes"; then
+    ln -s \
+    $srcdir/bindings/python/*.* \
+    $srcdir/examples/python/*py \
+    . 2>/dev/null
+fi
+
 if test "$enable_tcl" = "yes"; then
     ln -s \
     $srcdir/bindings/tcl/*.* \
@@ -4115,20 +4242,6 @@ if test "$enable_tk" = "yes"; then
     $srcdir/bindings/tk/tclIndex \
     $srcdir/examples/tk/*.c \
     $srcdir/examples/tk/tk* \
-    . 2>/dev/null
-fi
-
-# Note that double precision Fortran files in the stub interface are
-# obtained entirely by m4 macro expansion.  This should work anywhere.
-# Double precision example programs are obtained through automatic compiler
-# promotion, however.  Your compiler needs to be able to automatically
-# promote all real variables and constants for this to work (the HPUX 8.x
-# compiler did not support this, but it's supported under 9.0).
-
-if test "$enable_f77" = "yes"; then
-    ln -s \
-    $srcdir/bindings/f77/*.* \
-    $srcdir/examples/f77/*.* \
     . 2>/dev/null
 fi
 
@@ -4258,6 +4371,8 @@ s%@found_f77@%$found_f77%g
 s%@SHLIB_BUILD@%$SHLIB_BUILD%g
 s%@SHLIB_SUFFIX@%$SHLIB_SUFFIX%g
 s%@SALIB_SUFFIX@%$SALIB_SUFFIX%g
+s%@SO@%$SO%g
+s%@LDSHARED@%$LDSHARED%g
 s%@CC@%$CC%g
 s%@CXX@%$CXX%g
 s%@OCC@%$OCC%g
@@ -4277,7 +4392,8 @@ s%@SHLIB_F77FLAGS@%$SHLIB_F77FLAGS%g
 s%@CC_FLAGS_XWIN@%$CC_FLAGS_XWIN%g
 s%@CC_FLAGS_SCCONT@%$CC_FLAGS_SCCONT%g
 s%@CPP@%$CPP%g
-s%@EXTRA_LIBS@%$EXTRA_LIBS%g
+s%@PYTHON_INC_DIR@%$PYTHON_INC_DIR%g
+s%@PYTHON_MOD_DIR@%$PYTHON_MOD_DIR%g
 s%@INCS@%$INCS%g
 s%@RANLIB@%$RANLIB%g
 s%@INSTALL_PROGRAM@%$INSTALL_PROGRAM%g
@@ -4492,7 +4608,7 @@ with-f2c:	$with_f2c		with-gcc:	$with_gcc
 enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
 enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
-enable-cxx:	$enable_cxx
+enable-cxx:	$enable_cxx		enable_python:	$enable_python
 "
 
 
