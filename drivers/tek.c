@@ -1,9 +1,20 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1994/06/23 22:32:07  mjl
+ * Revision 1.27  1994/06/24 04:38:35  mjl
+ * Greatly reworked the POSIX_TTY code that puts the terminal into cbreak
+ * mode.  Now, initially both the original and modified terminal states are
+ * saved.  When the terminal goes into graphics mode, it is also put into
+ * cbreak mode.  This ensures that the program gets character-at-a-time
+ * input, which is good for quitting <Q> PLplot or for paging in plrender.
+ * When the terminal goes into text mode, the original terminal state
+ * (canonical input, typically) is restored, which is good for reading user
+ * input or command interpreters.  Just make sure you use plgra() and
+ * pltext() for switching; if you switch the terminal locally it may get
+ * confused until the next plgra() or pltext().
+ *
+ * Revision 1.26  1994/06/23  22:32:07  mjl
  * Now ensures that device is in graphics mode before issuing any graphics
  * instruction.
- *
 */
 
 /*	tek.c
@@ -45,14 +56,13 @@ static void	setcmap		(PLStream *pls);
 #include <termios.h>
 #include <unistd.h>
 
-static struct termios	save_termios;
-static int		ttysavefd = -1;
-static enum { RESET, RAW, CBREAK } ttystate = RESET;
+static struct termios	termios_cbreak, termios_reset;
+static enum { RESET, CBREAK } ttystate = RESET;
 
-int  tty_cbreak		(int);
-int  tty_reset		(int);
-void tty_atexit		(void);
-
+static void tty_atexit	(void);
+static void tty_setup	(void);
+static int  tty_cbreak	(void);
+static int  tty_reset	(void);
 #endif
 
 /* Pixel settings */
@@ -214,23 +224,16 @@ tek_init(PLStream *pls)
 
 /* Terminal/file initialization */
 
-    if (pls->termin) 
+    if (pls->termin) {
 	pls->OutFile = stdout;
+#ifdef POSIX_TTY
+	tty_setup();
+#endif
+    }
     else {
 	plFamInit(pls);
 	plOpenFile(pls);
     }
-
-#ifdef POSIX_TTY
-    if (pls->termin) {
-	if (tty_cbreak(STDIN_FILENO))
-	    fprintf(stderr, "Unable to set up cbreak mode.\n");
-	else {
-	    if (atexit(tty_atexit))
-		fprintf(stderr, "Unable to set up atexit handler.\n");
-	}
-    }
-#endif
 
     switch (pls->dev_minor) {
     case tek4107:
@@ -512,6 +515,8 @@ fill_polygon(PLStream *pls)
 * tek_text()
 *
 * Switch to text screen (or alpha mode, for vanilla tek's).
+* Restore terminal to its original state, to better handle user input if
+* necessary. 
 *
 * Note: xterm behaves strangely in the following circumstance: switch to
 * the text screen, print a string, and switch to the graphics screen, all
@@ -528,6 +533,9 @@ static void
 tek_text(PLStream *pls)
 {
     if (pls->termin && (pls->graphx == GRAPHICS_MODE)) {
+#ifdef POSIX_TTY
+	tty_reset();
+#endif
 	pls->graphx = TEXT_MODE;
 	switch (pls->dev_minor) {
 	case xterm:
@@ -558,12 +566,17 @@ tek_text(PLStream *pls)
 * tek_graph()
 *
 * Switch to graphics screen (or vector mode, for vanilla tek's).
+* Also switch terminal to cbreak mode, to allow single keystrokes to
+* govern actions at end of page.
 \*----------------------------------------------------------------------*/
 
 static void 
 tek_graph(PLStream *pls)
 {
     if (pls->termin && (pls->graphx == TEXT_MODE)) {
+#ifdef POSIX_TTY
+	tty_cbreak();
+#endif
 	pls->graphx = GRAPHICS_MODE;
 	switch (pls->dev_minor) {
 	case xterm:
@@ -811,49 +824,57 @@ EventHandler(PLStream *pls, int input_char)
 
 #ifdef POSIX_TTY
 
-int
-tty_cbreak(int fd)			/* put terminal into a cbreak mode */
+static void
+tty_setup(void)				/* setup for terminal operations */
 {
-    struct termios buf;
+    if (tcgetattr(STDIN_FILENO, &termios_reset) < 0) {
+	fprintf(stderr, "Unable to set up cbreak mode.\n");
+	return;
+    }
 
-    if (tcgetattr(fd, &save_termios) < 0)
-	return -1;
+    termios_cbreak = termios_reset;		/* structure copy */
 
-    buf = save_termios;			/* structure copy */
+    termios_cbreak.c_lflag &= ~(ICANON);	/* canonical mode off */
+    termios_cbreak.c_cc[VMIN] = 1;		/* 1 byte at a time */
+    termios_cbreak.c_cc[VTIME] = 0;		/* no timer */
 
-    buf.c_lflag &= ~(ICANON);		/* canonical mode off */
-    buf.c_cc[VMIN] = 1;			/* 1 byte at a time */
-    buf.c_cc[VTIME] = 0;		/* no timer */
+    if (atexit(tty_atexit))
+	fprintf(stderr, "Unable to set up atexit handler.\n");
 
-    if (tcsetattr(fd, TCSAFLUSH, &buf) < 0)
-	return -1;
+    return;
+}
 
-    ttystate = CBREAK;
-    ttysavefd = fd;
+static int
+tty_cbreak(void)			/* put terminal into a cbreak mode */
+{
+    if (ttystate != CBREAK) {
+	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &termios_cbreak) < 0)
+	    return -1;
+
+	ttystate = CBREAK;
+    }
     return 0;
 }
 
-int
-tty_reset(int fd)			/* restore terminal's mode */
+static int
+tty_reset(void)				/* restore terminal's mode */
 {
-    if (ttystate != CBREAK && ttystate != RAW)
-	return 0;
+    if (ttystate != RESET) {
+	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &termios_reset) < 0)
+	    return -1;
 
-    if (tcsetattr(fd, TCSAFLUSH, &save_termios) < 0)
-	return -1;
-
-    ttystate = RESET;
+	ttystate = RESET;
+    }
     return 0;
 }
 
-void
+static void
 tty_atexit(void)			/* exit handler */
 {
-    if (ttysavefd >=0)
-	tty_reset(ttysavefd);
+    tty_reset();
 }
 
-#endif		/* POSIX_TTY */
+#endif			/* POSIX_TTY */
 
 #else
 int pldummy_tek() {return 0;}
