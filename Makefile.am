@@ -24,12 +24,12 @@
 src_dirs = lib src include data bindings
 
 if enable_dyndrivers
-drivers_src_dirs = $(src_dirs) drivers
+drivers_src_dirs = libltdl $(src_dirs) drivers
 else
 drivers_src_dirs = drivers $(src_dirs)
 endif
 
-SUBDIRS = libltdl $(drivers_src_dirs) examples test utils scripts doc \
+SUBDIRS = $(drivers_src_dirs) examples test utils scripts doc \
           pkgcfg
 
 bin_SCRIPTS = plplot_libtool
