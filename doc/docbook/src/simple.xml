@@ -740,12 +740,19 @@
     </para>
     
   </sect1>
-  
-  <sect1 id="error">
-    <title>In Case of Error</title>
-    <para></para>
+
+  <sect1 id="error"> 
+    <title>In Case of Error</title> 
+    <para> 
+      If a fatal error is encountered during execution of a PLplot routine
+      then &plexit; is called.  This routine prints an error message,
+      does resource recovery, and then exits.  The user may specify an error
+      handler via <function>plsexit</function> that gets called before anything else is
+      done, allowing either the user to abort the error termination, or
+      clean up user-specific data structures before exit.
+    </para> 
   </sect1>
-  
+	
 </chapter>
 
 <!-- Keep this comment at the end of the file
