@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1994/07/20 10:38:57  mjl
+ * Revision 1.16  1994/07/22 15:54:37  furnish
+ * Fix bug in selective segment draw capability of plpoly3().
+ *
+ * Revision 1.15  1994/07/20  10:38:57  mjl
  * Fixed the error return on the two new routines.
  *
  * Revision 1.14  1994/07/20  06:09:22  mjl
@@ -202,7 +205,7 @@ c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw)
 	v = plP_wcpcy(plP_w3wcy( x[i], y[i], z[i] ));
 	if (i==0)
 	    plP_movphy(u,v);
-	else if (draw[i])
+	else if (draw[i-1])
 	    plP_draphy(u,v);
 	else
 	    plP_movphy(u,v);
