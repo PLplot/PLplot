@@ -51,12 +51,12 @@
     There is also a Perl PLplot interface on <ulink
     url="http://www.cpan.org">CPAN</ulink> which is not dependent on PDL.
     The Perl module is called <ulink
-    url="http://search.cpan.org/%7Etjenness/">Graphics::PLplot</ulink> and is
+    url="http://search.cpan.org/%7Etjenness/">Graphics::PLPLOT</ulink> and is
     appropriate for small data arrays.  The API is very similar to the C
     API except that if the number of elements in an array is required by
     the C function the perl interface calculates it automatically.  Also,
     return values are returned and not supplied as arguments.  Here is an
-    example of usage:
+    usage example:
   </para>
 
     <para>
