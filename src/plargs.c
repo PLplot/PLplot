@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/08/03 01:46:56  mjl
-   Changes to eliminate warnings when compiling with gcc -Wall.
+   Revision 1.10  1993/08/04 18:27:03  mjl
+   Modified -bg argument handler to strip leading '#' off hex color value if
+   present, to allow it to deal with TCL-style color values.
 
+ * Revision 1.9  1993/08/03  01:46:56  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
  * Revision 1.8  1993/07/31  08:16:12  mjl
  * Flags added to change plot window (-wplt), device window (-wdev).
  * Orientation flag (-ori) changed to use new driver interface.  Aspect flag
@@ -974,18 +978,31 @@ opt_width(char *opt, char *optarg)
 static int
 opt_bg(char *opt, char *optarg)
 {
+    char *rgb;
     long bgcolor, r, g, b;
 
 /* Background */
-/* Specified as either a 3 or 6 digit hex number */
+/* Always in hex!  Strip off leading "#" (TK-ism) if present. */
 
-    bgcolor = strtol(optarg, NULL, 16);
+    if (*optarg == '#')
+	rgb = optarg + 1;
+    else
+	rgb = optarg;
 
-    switch (strlen(optarg)) {
+/* Must be either a 3 or 6 digit hex number */
+/* If 3 digits, each is "doubled" (i.e. ABC becomes AABBCC). */
+
+    bgcolor = strtol(rgb, NULL, 16);
+
+    switch (strlen(rgb)) {
     case 3:
-	r = (bgcolor & 0xF00) >> 4;
-	g = (bgcolor & 0x0F0);
-	b = (bgcolor & 0x00F) << 4;
+	r = (bgcolor & 0xF00) >> 8;
+	g = (bgcolor & 0x0F0) >> 4;
+	b = (bgcolor & 0x00F);
+
+	r = r | (r << 4);
+	g = g | (g << 4);	/* doubling */
+	b = b | (b << 4);
 	break;
 
     case 6:
@@ -995,7 +1012,7 @@ opt_bg(char *opt, char *optarg)
 	break;
 
     default:
-	fprintf(stderr, "Unrecognized background color value\n");
+	fprintf(stderr, "Unrecognized background color value %s\n", rgb);
 	return 1;
     }
 
