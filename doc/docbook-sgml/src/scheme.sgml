@@ -1,1 +1,6 @@
- 
+<chapter id="scheme">
+  <title>Using PLplot from Scheme</title>
+  <para>
+Documentation for the PLplot Scheme binding goes here.
+  </para>
+</chapter>
