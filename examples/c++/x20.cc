@@ -195,7 +195,7 @@ x20::x20( int argc, char ** argv ) {
 
   /* read Lena image */
   if (read_img("lena.pgm", &img_f, &width, &height, &num_col)) {
-    std::cout << "No such file - aborting" << endl;
+    std::cout << "No such file - aborting" << std::endl;
     delete pls;
     exit(1);
   }
@@ -278,19 +278,19 @@ int x20::read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num
     return 1;
 
   fscanf(fp,"%s\n", ver); /* version */
-  /* std::cout << "version: " << ver << endl;*/
+  /* std::cout << "version: " << ver << std::endl;*/
 
   if (strcmp(ver, "P5")) /* I only understand this! */
     return 1;
 
   while((i=fgetc(fp)) == '#') {
     fgets(ver, 80, fp); /* comments */
-    /* std:;cout << ver << endl; */
+    /* std:;cout << ver << std::endl; */
   }
   ungetc(i, fp);
 
   fscanf(fp,"%d%d%d", &w, &h, num_col); /* width, height num colors */
-  /* std::cout << "width=" << w < " height=" << h << " num_col=" << *numcol << endl; */
+  /* std::cout << "width=" << w < " height=" << h << " num_col=" << *numcol << std::endl; */
 
   img = (unsigned char *) malloc(w*h*sizeof(char));
   pls->Alloc2dGrid(&imf, w, h);

@@ -108,14 +108,14 @@ x14::x14( int argc, char ** argv ) {
 
   pls1->gdev(driver_orig);
   if (strcmp(driver_orig, "tk")) {
-    std::cout << "Demo for TK driver only." << endl;
+    std::cout << "Demo for TK driver only." << std::endl;
     delete pls1;
     exit(1);
   }
   
   std::cout << "Demo of multiple output streams via the " << 
-    driver << " driver." << endl;
-  std::cout << "Running with the second window as slave.\n" << endl;
+    driver << " driver." << std::endl;
+  std::cout << "Running with the second window as slave.\n" << std::endl;
 
   // Set up first stream
   

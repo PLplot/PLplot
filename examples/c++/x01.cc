@@ -131,7 +131,7 @@ x01::x01( int argc, char ** argv ) {
   // Print out version number, just for kicks.
   pls->gver(ver);
   
-  std::cout << "Plplot library version: " <<  ver << endl;
+   std::cout << "Plplot library version: " <<  ver << std::endl;
 
 
   // Initialize PLplot.
@@ -174,7 +174,7 @@ x01::x01( int argc, char ** argv ) {
   
   if (f_name) { // command line option '-save filename'
 
-    std::cout << "The current plot was saved in color Postscript under the name `" <<  f_name << "'" << endl;
+    std::cout << "The current plot was saved in color Postscript under the name `" <<  f_name << "'" << std::endl;
     //    pls->gstrm(&cur_strm);    /* get current stream */
     //      pls->mkstrm(&new_strm);   /* create a new one */
 
@@ -199,11 +199,11 @@ x01::x01( int argc, char ** argv ) {
       if (gin.keysym < 0xFF && isprint(gin.keysym)) 
 	std::cout << "wx = " << gin.wX << ", wy = " << gin.wY << 
 	  ", dx = " << gin.dX << ",  dy = " << gin.dY << 
-	  ",  c = '" << gin.keysym << "'" << endl;
+	  ",  c = '" << gin.keysym << "'" << std::endl;
       else
 	std::cout << "wx = " << gin.wX << ", wy = " << gin.wY << 
 	  ", dx = " << gin.dX << ",  dy = " << gin.dY << 
-	  ",  c = '" << gin.keysym << "'" << endl;
+	  ",  c = '" << gin.keysym << "'" << std::endl;
       //	printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = 0x%02x\n",
       //                              gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
 
@@ -278,7 +278,7 @@ void x01::plot1( int do_test )
       pls->xormod(0, &st);                     /* leave xor mode */
     }
 #else
-    std::cout << "The -xor command line option can only be exercised if your system has usleep(), which does not seems to happen." << endl;
+    std::cout << "The -xor command line option can only be exercised if your system has usleep(), which does not seems to happen." << std::endl;
 #endif
   }
 }
