@@ -287,6 +287,17 @@ Tcl API
 All files here are new, to support the new PLplot Tcl API.
 
 tclMatrix.c:
+ * Revision 1.6  1994/08/09  08:33:35  mjl
+ * Changed the tclMatrix API once again.  The 'matrix' operator now sets up a
+ * command for the actual name used to declare the matrix.  This is faster
+ * than the old way, more intuitive, and less robust (the created matrix is
+ * global).  The last problem can presumably fixed by modifications to the
+ * Tcl kernel to support a matrix type, and is worth sacrificing for now
+ * in favor of a better syntax.  The matrix declarator sets a local variable
+ * of the same name as the created (matrix) command in order to automatically
+ * free locally-declared matrix resources at the end of a proc.  So previous
+ * scripts will still work.
+ *
  * Revision 1.5  1994/06/30  18:55:02  mjl
  * Now accepts an initializer when matrix is declared, for example:
  * matrix base i 4 = {0, 200, 500, 600}.  Only works for 1-d arrays so far.
@@ -518,6 +529,12 @@ tk01:
 #
 # Revision 1.4  1994/06/09  20:28:15  mjl
 # Changed to new improved megawidget instantiation method.
+
+
+x14c.c:
+ * Revision 1.10  1994/08/10  05:28:50  mjl
+ * Ensured that geometry strings are in writable memory as required, and
+ * other minor tweaks to improve the demo.
 
 
 x18c.c: (new)
@@ -1009,11 +1026,14 @@ plrender.c:
 DOS drivers
 -----------------------------------------------------------------------------
 
-Upgraded to work with new configure mechanism, I hope.
+The djgpp driver has been upgraded to work with new configure mechanism.
+The others still need to be updated.
+
 Various bugs fixed.
 
 -----------------------------------------------------------------------------
 Amiga driver
 -----------------------------------------------------------------------------
 
-Upgraded to work with new configure mechanism, I hope.
+Didn't finish upgrading to new configure mechanism, so unfortunately is
+currently unusable.  Will fix ASAP.
