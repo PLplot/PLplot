@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# Parse the input line to echo all the -L and -l options in it.
+# This is meant to be used to process the results of mkoctfile -p commands
+# to pick up all the link line information that libtool needs to know.
+#
+
+OUT=""
+read IN
+# Logic below only works if there is a trailing blank
+# (otherwise there is an infinite loop).
+IN="$IN "
+# Loop over blank-separated options in IN
+while test -n "$IN"; do
+    ADD=""
+    case $IN in
+	-L*)
+	    ADD=`echo "$IN"|sed 's?^\(-L[^ ]*\)  *.*$?\1?'`
+	    ;;
+	-l*)
+	    ADD=`echo "$IN"|sed 's?^\(-l[^ ]*\)  *.*$?\1?'`
+	    ;;
+    esac
+    OUT="$OUT $ADD"
+    IN=`echo "$IN"|sed 's?^[^ ]*  *\(.*$\)?\1?'`
+done
+echo $OUT

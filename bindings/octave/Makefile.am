@@ -61,10 +61,9 @@ else
 	@echo "Perl modules not available: cannot generate full online help for plplot_octave"
 endif
 
-
 if enable_octave
 
-octave_libs = -L../../src/.libs -lplplot$(LIB_TAG)
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
 # Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
 # also still works on gcc 2.95
@@ -74,32 +73,41 @@ plplot_octave.cc tmp_stub: plplot_octave.h
 	mv -f plplot_octave.cc tmp_plplot_octave.cc
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
-plplot_octave.oct plplot_octave.o: plplot_octave.cc
-	LD_RUN_PATH=`pwd`/../../src/.libs $(MKOCTFILE_VARS) \
-	    $(MKOCTFILE) -v -I. plplot_octave.cc $(octave_libs)
+ourexecoctavedir = $(OCTAVE_OCT_DIR)
 
-if with_rpath
-SET_LDRPATH = LD_RUN_PATH=$(libdir)
-else
-SET_LDRPATH =
-endif
+AM_CPPFLAGS = $(INCLTDL) $(OCTAVEINCCMD)
 
-plplot_octave-libdir.oct: plplot_octave.o
-	$(SET_LDRPATH) $(MKOCTFILE_VARS) \
-	    $(MKOCTFILE) -v -I. plplot_octave.o \
-	    -o plplot_octave-libdir.oct $(octave_libs)
+ourexecoctave_LTLIBRARIES = plplot_octave_install.la
+plplot_octave_install_la_SOURCES = plplot_octave.cc
+plplot_octave_install_la_LDFLAGS = \
+				-rpath $(ourexecoctavedir) \
+				-module \
+				-avoid-version \
+				-no-undefined \
+				$(libplplot)
 
-install-data-hook: plplot_octave-libdir.oct
-	$(mkinstalldirs) $(DESTDIR)$(octavesharedir)
-	$(INSTALL) plplot_octave-libdir.oct \
-	  $(DESTDIR)$(octavesharedir)/plplot_octave.oct
+install-data-hook:
+	cd $(DESTDIR)$(ourexecoctavedir) ; \
+	rm -f plplot_octave_install.a plplot_octave_install.la ; \
+	mv plplot_octave_install.so plplot_octave.oct
 	$(mkinstalldirs) $(DESTDIR)$(docdir)
 	for i in $(docfiles) ; do \
 	  $(INSTALL) $$i $(DESTDIR)$(docdir)/$$i.octave ; \
 	done
 
-octavesharedir = $(OCTAVE_OCT_DIR)
-octaveshare_SCRIPTS = plplot_octave.oct
+noinst_LTLIBRARIES = plplot_octave.la
+plplot_octave_la_SOURCES = plplot_octave.cc
+plplot_octave_la_LDFLAGS = \
+			 -rpath $(BUILD_DIR)/bindings/octave \
+			 -module \
+			 -avoid-version \
+			 -no-undefined \
+			 $(libplplot)
+
+noinst_SCRIPTS = plplot_octave.oct
+
+plplot_octave.oct: .libs/plplot_octave.so
+	cp .libs/plplot_octave.so plplot_octave.oct
 
 noinst_PROGRAMS = massage
 massage_SOURCES = massage.c
