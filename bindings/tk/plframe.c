@@ -24,8 +24,6 @@
 \*----------------------------------------------------------------------*/
 
 #include "plserver.h"
-#include "tkConfig.h"
-#include "tk.h"
 #include "xwin.h"
 
 #define NDEV	20		/* Max number of output device types */
@@ -255,7 +253,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
     Tk_Uid screenUid;
     char *className, *screen;
-    int i, src, dst;
+    int src, dst;
 
     XGCValues gcValues;
     unsigned long mask;
@@ -417,17 +415,9 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     register PlFrame *plFramePtr = (PlFrame *) clientData;
     int result = TCL_OK;
     int length;
-    int i;
     char c;
 
     dbug_enter("PlFrameWidgetCmd");
-#ifdef DEBUG_ENTER
-    fprintf(stderr, "Arguments are:");
-    for (i = 0; i < argc; i++) {
-	fprintf(stderr, " %s", argv[i]);
-    }
-    fprintf(stderr, "\n");
-#endif
 
     if (argc < 2) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
@@ -1304,7 +1294,6 @@ static int
 Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
      int argc, char **argv)
 {
-    int result = TCL_OK;
     PLFLT xl, xr, yl, yr;
 
 /* page -- return coordinates of current device window */
@@ -1349,7 +1338,7 @@ ReadData(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	 int argc, char **argv)
 {
     register PLRDev *plr = plFramePtr->plr;
-    int i, nbytes, count;
+    int result = TCL_OK;
 
     plr->nbytes = atoi(argv[0]);
 
@@ -1363,8 +1352,9 @@ ReadData(Tcl_Interp *interp, register PlFrame *plFramePtr,
     if (plr_process(plr) == -1) {
 	Tcl_AppendResult(interp, "unable to read from ", plr->filetype,
 			 (char *) NULL);
-	return TCL_ERROR;
+	result = TCL_ERROR;
     }
+    return result;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1403,7 +1393,7 @@ static int
 Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
      int argc, char **argv)
 {
-    int idev, result = TCL_OK;
+    int idev;
 
 /* save -- save to already open file */
 
@@ -1734,13 +1724,27 @@ client_cmd(register PlFrame *plFramePtr, char *cmd)
 * tcl_eval
 *
 * Evals the specified string, returning the result.
-* A front-end to Tcl_Eval just to make it easier to use here.
+* Use a static string buffer to hold the command, to ensure it's in
+* writable memory (grrr...).
 \*----------------------------------------------------------------------*/
+
+static char *cmdbuf = NULL;
+static int cmdbuf_len = 100;
 
 static int
 tcl_eval(PlFrame *plFramePtr, char *cmd)
 {
-    return(Tcl_Eval(plFramePtr->interp, cmd, 0, (char **) NULL));
+    if (cmdbuf == NULL) 
+	cmdbuf = (char *) malloc(cmdbuf_len);
+
+    if (strlen(cmd) >= cmdbuf_len) {
+	free((void *) cmdbuf);
+	cmdbuf_len = strlen(cmd) + 20;
+	cmdbuf = (char *) malloc(cmdbuf_len);
+    }
+
+    strcpy(cmdbuf, cmd);
+    return(Tcl_Eval(plFramePtr->interp, cmdbuf, 0, (char **) NULL));
 }
 
 /*

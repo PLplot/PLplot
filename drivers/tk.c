@@ -1,13 +1,18 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1993/07/31 08:00:57  mjl
- * Several driver functions consolidated, for all drivers.  The width and color
- * commands are now part of a more general "state" command.  The text and
- * graph commands used for switching between modes is now handled by the
- * escape function (very few drivers require it).  An escape function call
- * was added to handle driver interface commands -- these are much better passed
- * on to the remote plframe widget for handling since then they are modifiable
- * by the user.
+ * Revision 1.5  1993/08/03 01:49:55  mjl
+ * Fixed some code that caused problems with some compilers due to strings
+ * that might be allocated in non-writable memory being passed to Tcl_Eval
+ * (which may modify the string).
+ *
+ * Revision 1.4  1993/07/31  08:00:57  mjl
+ * Several driver functions consolidated, for all drivers.  The width and
+ * color commands are now part of a more general "state" command.  The
+ * text and graph commands used for switching between modes is now handled
+ * by the escape function (very few drivers require it).  An escape
+ * function call was added to handle driver interface commands -- these
+ * are much better passed on to the remote plframe widget for handling
+ * since then they are modifiable by the user.
  *
  * Revision 1.3  1993/07/28  05:46:30  mjl
  * Now explicitly initializes remote plplot by using the "cmd" widget
@@ -319,8 +324,6 @@ plD_bop_tk(PLStream *pls)
 void
 plD_tidy_tk(PLStream *pls)
 {
-    TkDev *dev = (TkDev *) pls->dev;
-
     dbug_enter("plD_tidy_tk");
 
     tk_stop(pls);
@@ -676,10 +679,6 @@ launch_server(PLStream *pls)
 
     argv[i++] = "-child";		/* Tell plserver it's ancestry */
 
-    argv[i++] = "-f";			/* TCL init proc for server */
-    argv[i++] = Tcl_GetVar(dev->interp,
-			   "plserver_init", 0);
-
     if (pls->auto_path != NULL) {
 	argv[i++] = "-auto_path";	/* Additional directory(s) */
 	argv[i++] = pls->auto_path;	/* to autoload */
@@ -763,7 +762,7 @@ static void
 plwindow_init(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char str[10], **argv, *clientvar;
+    char str[10];
     long bg;
     int i;
 
@@ -846,7 +845,7 @@ plwindow_init(PLStream *pls)
 static void
 bgcolor_init(PLStream *pls)
 {
-    int gslevbg, is_color = pls->color;
+    int is_color = pls->color;
 
 /* If the user hasn't forced "color", see if we are grayscale */
 
@@ -953,7 +952,6 @@ static void
 HandleEvents(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char tmp[20];
 
     dbug_enter("HandleEvents");
     Tcl_Eval(dev->interp, "update", 0, (char **) NULL);
@@ -1044,8 +1042,9 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     dbug_enter("KeyEH");
 
     if (argc < 2) {
-	plwarn("KeyEH: Insufficient arguments given");
-	return;
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+		argv[0], " keysym-name ?keysym-value?\"", (char *) NULL);
+	return TCL_ERROR;
     }
     key.code = 0;
     key.string[0] = '\0';
@@ -1081,8 +1080,9 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 	    key.code = PLK_Next;
 	}
 	else {
-	    fprintf(stderr, "Unrecognized keysym %s\n", keysym);
-	    return;
+	    Tcl_AppendResult(interp, "Unrecognized keysym \"",
+		    argv[1], "\"; must specify keycode", (char *) NULL);
+	    return TCL_ERROR;
 	}
     }
 
@@ -1203,15 +1203,29 @@ tcl_cmd(PLStream *pls, char *cmd)
 * tcl_eval
 *
 * Evals the specified string, returning the result.
-* A front-end to Tcl_Eval just to make it easier to use here.
+* Use a static string buffer to hold the command, to ensure it's in
+* writable memory (grrr...).
 \*----------------------------------------------------------------------*/
+
+static char *cmdbuf = NULL;
+static int cmdbuf_len = 100;
 
 static int
 tcl_eval(PLStream *pls, char *cmd)
 {
     TkDev *dev = (TkDev *) pls->dev;
 
-    return(Tcl_Eval(dev->interp, cmd, 0, (char **) NULL));
+    if (cmdbuf == NULL) 
+	cmdbuf = (char *) malloc(cmdbuf_len);
+
+    if (strlen(cmd) >= cmdbuf_len) {
+	free((void *) cmdbuf);
+	cmdbuf_len = strlen(cmd) + 20;
+	cmdbuf = (char *) malloc(cmdbuf_len);
+    }
+
+    strcpy(cmdbuf, cmd);
+    return(Tcl_Eval(dev->interp, cmdbuf, 0, (char **) NULL));
 }
 
 /*----------------------------------------------------------------------*/

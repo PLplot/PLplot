@@ -28,7 +28,7 @@ static char *program;			/* Name of program */
 /* Command line arguments */
 
 static char *client;			/* Name of client main window */
-static char *init;			/* TCL initialization proc */
+static char *file;			/* TCL initialization file name */
 static char *display;			/* X-windows display */
 static char *geometry;			/* x window dimension */
 static char *auto_path;			/* addition to auto_path */
@@ -40,8 +40,8 @@ Tk_ArgvInfo argTable[] = {
      "Client to notify at startup, if any"},
 {"-auto_path", TK_ARGV_STRING, (char *) NULL, (char *) &auto_path,
      "Additional directory(s) to autoload"},
-{"-f", TK_ARGV_STRING, (char *) NULL, (char *) &init,
-     "TCL initialization proc"},
+{"-f", TK_ARGV_STRING, (char *) NULL, (char *) &file,
+     "TCL initialization file name"},
 {"-display", TK_ARGV_STRING, (char *) NULL, (char *) &display,
      "Display to use"},
 {"-geometry", TK_ARGV_STRING, (char *) NULL, (char *) &geometry,
@@ -97,9 +97,14 @@ main(int argc, char **argv)
 
     configure(argc, argv);
 
-/* Run startup code */
+/* Run TK startup code */
 
     if (tk_source(w, interp, "$tk_library/wish.tcl"))
+	abort_session("");
+
+/* Run user startup code */
+
+    if (tk_source(w, interp, file))
 	abort_session("");
 
 /* Create new tclIndex file -- a convenience */
@@ -114,9 +119,9 @@ main(int argc, char **argv)
 
     set_auto_path();
 
-/* Configure main window */
+/* Configure main window, default settings.  Autoloaded. */
 
-    tcl_cmd(init);
+    tcl_cmd("plserver_init");
 
 /* Send notification to client if necessary */
 
@@ -151,12 +156,12 @@ abort_session(char *errmsg)
 /* If client exists, tell it to self destruct */
 
     if (client != NULL)
-	Tcl_Eval(interp, "send $client after 1 abort", 0, (char **) NULL);
+	tcl_cmd("send $client after 1 abort");
 
 /* If main window exists, blow it away */
 
     if (w != NULL)
-	Tcl_Eval(interp, "destroy .", 0, (char **) NULL);
+	tcl_cmd("destroy .");
 
     exit(1);
 }
@@ -182,9 +187,9 @@ parse_cmdline(int *p_argc, char **argv)
 	\n In server, client:   %s\
 	\n            display:  %s\
 	\n            geometry: %s\
-	\n            init:     %s\
+	\n            file:     %s\
 	\n",
-	    client, display, geometry, init);
+	    client, display, geometry, file);
 #endif
 }
 
@@ -247,16 +252,29 @@ configure(int argc, char **argv)
 static void
 set_auto_path(void)
 {
-    char *buf, *ptr, *path;
+    char *buf, *ptr;
+#ifdef DEBUG
+    char *path;
+#endif
 
     dbug_enter("set_auto_path");
     buf = malloc(256 * sizeof(char));
 
 /* Add /usr/local/plplot/tcl */
 
-    Tcl_SetVar(interp, "dir", "/usr/local/plplot/tcl", 0);
-    Tcl_Eval(interp, "set auto_path \"$dir $auto_path\"", 0,
-	     (char **) NULL);
+    Tcl_SetVar(interp, "dir", "/usr/local/plplot/tcl", TCL_GLOBAL_ONLY);
+/*
+    tcl_cmd("set auto_path \"$dir $auto_path\"");
+*/
+    tcl_cmd("puts stderr I_am_a_test");
+
+    tcl_cmd("puts stderr $dir");
+
+    tcl_cmd("puts stderr $auto_path");
+
+    tcl_cmd("puts stderr I_am_a_test_number_2");
+
+    tcl_cmd("set auto_path [list $dir $auto_path]");
 
 #ifdef DEBUG
     fprintf(stderr, "plserver: adding %s to auto_path\n", "/usr/local/plplot");
@@ -271,8 +289,7 @@ set_auto_path(void)
 	strcpy(buf, ptr);
 	strcat(buf, "/bin");
 	Tcl_SetVar(interp, "dir", buf, 0);
-	Tcl_Eval(interp, "set auto_path \"$dir $auto_path\"", 0,
-		 (char **) NULL);
+	tcl_cmd("set auto_path \"$dir $auto_path\"");
 #ifdef DEBUG
 	fprintf(stderr, "plserver: adding %s to auto_path\n", buf);
 	path = Tcl_GetVar(interp, "auto_path", 0);
@@ -286,8 +303,7 @@ set_auto_path(void)
     ptr = getenv("PL_LIBRARY");
     if (ptr != NULL) {
 	Tcl_SetVar(interp, "dir", ptr, 0);
-	Tcl_Eval(interp, "set auto_path \"$dir $auto_path\"", 0,
-		 (char **) NULL);
+	tcl_cmd("set auto_path \"$dir $auto_path\"");
 #ifdef DEBUG
 	fprintf(stderr, "plserver: adding %s to auto_path\n", ptr);
 	path = Tcl_GetVar(interp, "auto_path", 0);
@@ -301,8 +317,7 @@ set_auto_path(void)
 	abort_session("could not determine cwd");
     }
     Tcl_SetVar(interp, "dir", buf, 0);
-    Tcl_Eval(interp, "set auto_path \"$dir $auto_path\"", 0,
-	     (char **) NULL);
+    tcl_cmd("set auto_path \"$dir $auto_path\"");
 
 #ifdef DEBUG
     fprintf(stderr, "plserver: adding %s to auto_path\n", buf);
@@ -314,8 +329,7 @@ set_auto_path(void)
 
     if (auto_path != NULL) {
 	Tcl_SetVar(interp, "dir", auto_path, 0);
-	Tcl_Eval(interp, "set auto_path \"$dir $auto_path\"", 0,
-		 (char **) NULL);
+	tcl_cmd("set auto_path \"$dir $auto_path\"");
 #ifdef DEBUG
 	fprintf(stderr, "plserver: adding %s to auto_path\n", auto_path);
 	path = Tcl_GetVar(interp, "auto_path", 0);
@@ -357,7 +371,6 @@ NotifyClient(ClientData clientData)
 static void
 tcl_cmd(char *cmd)
 {
-
     dbug_enter("tcl_cmd");
 #ifdef DEBUG_ENTER
     fprintf(stderr, "plserver: evaluating command %s\n", cmd);
@@ -374,11 +387,25 @@ tcl_cmd(char *cmd)
 * tcl_eval
 *
 * Evals the specified string, returning the result.
-* A front-end to Tcl_Eval just to make it easier to use here.
+* Use a static string buffer to hold the command, to ensure it's in
+* writable memory (grrr...).
 \*----------------------------------------------------------------------*/
+
+static char *cmdbuf = NULL;
+static int cmdbuf_len = 100;
 
 static int
 tcl_eval(char *cmd)
 {
-    return(Tcl_Eval(interp, cmd, 0, (char **) NULL));
+    if (cmdbuf == NULL) 
+	cmdbuf = (char *) malloc(cmdbuf_len);
+
+    if (strlen(cmd) >= cmdbuf_len) {
+	free((void *) cmdbuf);
+	cmdbuf_len = strlen(cmd) + 20;
+	cmdbuf = (char *) malloc(cmdbuf_len);
+    }
+
+    strcpy(cmdbuf, cmd);
+    return(Tcl_Eval(interp, cmdbuf, 0, (char **) NULL));
 }
