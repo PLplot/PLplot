@@ -90,6 +90,120 @@ limexp = 4;
 static PLINT
 sigprec = 2;
 
+
+typedef struct cont3D {
+    PLFLT level;
+    PLINT npts;
+    PLFLT *x;
+    PLFLT *y;
+} cont3D;
+
+#define MAX_NODE_ITEMS 512
+#define MAX_NODES 5120
+
+cont3D *lev[MAX_NODES];
+static int nlev = -1;
+int cont3d = 0;
+
+cont3D *alloc_cont3d(PLFLT level)
+{
+    cont3D *node;
+    PLFLT *xp, *yp;
+
+    node = (cont3D *) malloc(sizeof(cont3D));
+    xp = (PLFLT *) malloc(MAX_NODE_ITEMS*sizeof(PLFLT));
+    yp = (PLFLT *) malloc(MAX_NODE_ITEMS*sizeof(PLFLT));
+    node->x = xp;
+    node->y = yp;
+    node->level = level;
+    node->npts = 0;
+    return node;
+}
+
+void
+cont_cl_store(void)
+{
+    int i,j,k,n;
+    PLFLT z[1000], x[1000], y[1000];
+
+    if (nlev != -1) {
+	printf("clean store:\n");
+	for (i=0; i<=nlev; i++) {
+	    printf("lev=%d level=%f npts=%d\n", i, lev[i]->level, lev[i]->npts);
+
+	    n = lev[i]->npts;
+
+	    if(0) {
+	    plP_movwor(lev[i]->x[0],lev[i]->y[0]); 
+	    for (j=1; j<n; j++)
+		plP_drawor(lev[i]->x[j],lev[i]->y[j]); 
+	    } else {
+		if (n == 0)
+		    continue;
+		plcol0(0);
+		for (j=0; j<n; j++) {
+		    z[j] = lev[i]->level;
+		    x[j] = lev[i]->x[j];
+		    y[j] = lev[i]->y[j];
+		}
+		plline3(n, x, y, z);plflush();
+	    }
+
+	    free(lev[i]->x);
+	    free(lev[i]->y);
+	    free(lev[i]);
+	}
+	nlev = -1;
+    }
+}
+
+void
+cont_new_store(PLFLT level)
+{
+    if (cont3d) {
+	if (nlev == MAX_NODES)
+	    plexit("cont3D: too many nodes.");
+
+	lev[++nlev] = alloc_cont3d(level);
+	printf("new_store: nlev=%d level=%f\n", nlev, level);
+    }
+}
+
+void
+cont_xy_store(PLFLT xx, PLFLT yy)
+{
+    if (cont3d) {
+	if (lev[nlev]->npts == MAX_NODE_ITEMS)
+	    plexit("cont3D: too items in node.");
+
+	lev[nlev]->x[lev[nlev]->npts] = xx;
+	lev[nlev]->y[lev[nlev]->npts] = yy;
+	lev[nlev]->npts++;
+    } else 
+	plP_drawor(xx, yy);   
+}
+
+void
+cont_mv_store(PLFLT xx, PLFLT yy)
+{
+    if (cont3d) {
+	if (nlev == MAX_NODES)
+	    plexit("cont3D: too many nodes.");
+
+	if (lev[nlev]->npts != 0) { /* not an empty list, alloc new */
+	    lev[nlev+1] = alloc_cont3d(lev[nlev]->level);
+	    nlev++;
+	    printf("mv_store: nlev=%d nptr = %d\n", nlev , lev[nlev]->npts);;
+	}
+    
+	/* and fill first element */
+	lev[nlev]->x[0] = xx;
+	lev[nlev]->y[0] = yy;
+	lev[nlev]->npts = 1;
+    } else 
+	plP_movwor(xx, yy);   
+}
+
 /* small routine to set offset and spacing of contour labels, see desciption above */
 void c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active)
 {
@@ -118,7 +232,7 @@ static void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance
 
     *distance += sqrt(delta_x*delta_x + delta_y*delta_y);
 
-    plP_drawor(tpx, tpy);
+    cont_xy_store(tpx,tpy); //plP_drawor(tpx, tpy);
 
     if ((int )(fabs(*distance/contlabel_space)) > *lastindex) {
 	PLFLT scale, vec_x, vec_y, mx, my, dev_x, dev_y, off_x, off_y;
@@ -139,11 +253,11 @@ static void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance
 	off_y = dev_y/scale;
 
 	plptex(tpx+off_x, tpy+off_y, vec_x, vec_y, 0.5, flabel);
-	plP_movwor(tpx, tpy);
+	cont_mv_store(tpx, tpy); // plP_movwor(tpx, tpy);
 	(*lastindex)++;
 
     } else
-      plP_movwor(tpx, tpy);
+	cont_mv_store(tpx, tpy); // plP_movwor(tpx, tpy);
 }
 
 
@@ -352,6 +466,8 @@ plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	return;
     }
 
+    cont_cl_store();
+
     for (i = 0; i < nlevel; i++) {
 	plcntr(f2eval, f2eval_data,
 	       nx, ny, kx-1, lx-1, ky-1, ly-1, clevel[i], &heapc[0],
@@ -387,12 +503,13 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
     char  flabel[30];
 
+    cont_new_store(flev);
+
     /* format contour label for plptex and define the font height of the labels */
     plfloatlabel(flev, flabel);
     plschr(0.0, contlabel_size);
 
-
-/* Initialize memory pointers */
+    /* Initialize memory pointers */
 
     kstor = 0;
     kscan = 0;
@@ -540,7 +657,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		    if (contlabel_active)
 		      pl_drawcontlabel(tpx, tpy, flabel, &distance, &lastindex);
 		    else
-		      plP_drawor(tpx, tpy);
+		      cont_xy_store(tpx,tpy); //plP_drawor(tpx, tpy);
 
 		    dx = dist * ixg;
 		    dy = dist * iyg;
@@ -563,11 +680,11 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		if (contlabel_active)
 		  pl_drawcontlabel(tpx, tpy, flabel, &distance, &lastindex);
 		else
-		  plP_drawor(tpx, tpy);
+		  cont_xy_store(tpx,tpy); //plP_drawor(tpx, tpy);
 	    }
 	    else {
 		(*pltr) (xnew, ynew, &tpx, &tpy, pltr_data);
-		plP_movwor(tpx, tpy);
+		cont_mv_store(tpx,tpy); //plP_movwor(tpx, tpy);
 	    }
 	    xlas = xnew;
 	    ylas = ynew;
@@ -580,7 +697,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		if (contlabel_active)
 		  pl_drawcontlabel(tpx, tpy, flabel, &distance, &lastindex);
 		else
-		  plP_drawor(tpx, tpy);
+		  cont_xy_store(tpx,tpy); //plP_drawor(tpx, tpy);
 		return;
 	    }
 	    ifirst = 0;
@@ -644,7 +761,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	(*pltr) (xnew, ynew, &tpx, &tpy, pltr_data);
         /* distance = 0.0; */
 
-	plP_drawor(tpx, tpy);
+	cont_xy_store(tpx,tpy); //plP_drawor(tpx, tpy);
     }
 }
 
