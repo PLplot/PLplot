@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1993/12/08 06:08:20  mjl
+ * Revision 1.21  1994/02/07 22:52:11  mjl
+ * Changed the default pen width to 3 so that the default output actually
+ * looks good.
+ *
+ * Revision 1.20  1993/12/08  06:08:20  mjl
  * Fixes to work better with Lucid emacs hilite mode.
  *
  * Revision 1.19  1993/11/19  07:29:50  mjl
@@ -128,7 +132,7 @@ ps_init(PLStream *pls)
 	pls->widthset = 0;
     }
     else
-	pls->width = 1;
+	pls->width = 3;
 
 /* Prompt for a file name if not already set */
 
