@@ -33,7 +33,7 @@ static void  fill_polygon	(PLStream *pls);
 #define PSY             YPSSIZE-1
 #define OF		pls->OutFile
 #define MIN_WIDTH	1		/* Minimum pen width */
-#define MAX_WIDTH	10		/* Maximum pen width */
+#define MAX_WIDTH	30		/* Maximum pen width */
 #define DEF_WIDTH	3		/* Default pen width */
 
 /* These are for covering the page with the background color */
