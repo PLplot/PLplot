@@ -21,4 +21,5 @@
 
 EXTRA_DIST =     \
     acinclude.m4 \
-    bootstrap.sh
+    bootstrap.sh \
+    gtk.m4
