@@ -92,6 +92,7 @@ enable_tcl=yes
 enable_tk=yes
 enable_itcl=yes
 enable_xwin=yes
+enable_gnome=yes
 
 divert(-1)
 
@@ -107,7 +108,7 @@ MY_ARG_ENABLE(drivers,
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4107, mskermit,
 conex, linuxvga, vlt, versaterm, dg300, ps, xfig, ljii, hp7470, hp7580,
-lj_hpgl, imp, xwin, tk, pbm])
+lj_hpgl, imp, xwin, tk, pbm, gnome])
 
 # Macro to set one driver enable value
 
@@ -466,6 +467,9 @@ fi
 if test "$enable_tk" = "yes"; then
     cat $srcdir/cf/pkg_tk.in	>>Makefile.in 
 fi
+if test "$enable_gnome" = "yes"; then
+    cat $srcdir/cf/pkg_gnome.in	>>Makefile.in 
+fi
 
 # Library targets
 
@@ -791,7 +795,7 @@ with_gcc:	$with_gcc		with_rpath:	$with_rpath
 enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
 enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
 enable_cxx:	$enable_cxx		enable_python:	$enable_python
-enable_f77:	$enable_f77
+enable_f77:	$enable_f77             enable_gnome:	$enable_gnome
 "
 
 cat << EOF > config.summary
