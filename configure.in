@@ -25,7 +25,7 @@ AC_REVISION($Revision$)
 AC_INIT(src/plcore.c)
 AM_INIT_AUTOMAKE(plplot, 5.1.0)
 
-### Test for libtool
+### Test for programs
 
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
@@ -33,7 +33,24 @@ AM_PROG_LIBTOOL
 ### Checks for existence of headers
 
 AC_HEADER_STDC
-AC_CHECK_HEADERS(unistd.h)
+AC_CHECK_HEADERS(unistd.h termios.h)
+AC_HEADER_SYS_WAIT
+
+### Check for typedefs
+
+# ----------------------------------------------------------------------------
+# Some X11 headers require "caddr_t" even on systems that claim POSIX.1
+# compliance, which is illegal.  This makes it impossible to compile
+# programs that include X11 headers if _POSIX_SOURCE is defined.  I work
+# around this potential problem by just defining caddr_t to 'char *' on all
+# systems (unless it is set already), whether it will be needed or not.
+
+AC_CHECK_TYPE(caddr_t, char *)
+
+### Check for functions
+
+AC_FUNC_VFORK
+AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN))
 
 ### Directory for PLplot specific data files
 

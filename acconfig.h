@@ -16,18 +16,6 @@
 #ifndef __PLCONFIG_H__
 #define __PLCONFIG_H__
 
-/* Define HAVE_UNISTD_H if unistd.h is available. */
-#undef HAVE_UNISTD_H
-
-/* Define HAVE_TERMIOS_H if termios.h (POSIX terminal I/O) is available. */
-#undef HAVE_TERMIOS_H
-
-/* Define HAVE_SYS_WAIT_H if sys/wait.h is available. */
-#undef HAVE_SYS_WAIT_H
-
-/* Define if you have vfork.h.  */
-#undef HAVE_VFORK_H
-
 /* Define to `int' if <sys/types.h> doesn't define.  */
 #undef pid_t
 
@@ -36,9 +24,6 @@
 
 /* Define as the return type of signal handlers (int or void).  */
 #undef RETSIGTYPE
-
-/* Define if you have the ANSI C header files.  */
-#undef STDC_HEADERS
 
 /* Define vfork as fork if vfork does not work.  */
 #undef vfork
