@@ -105,12 +105,11 @@ def plot2():
 	# Fill up the arrays
 
 	x = (arrayrange(100)-19)/6.0
-	# Numeric doesn't handle floating point exceptions, yet, so this 
-	# creates a Nan for the zero value.
-	y = sin(x)/x
-	# replace Nan by correct value.
 	if 0.0 in x:
-	    y[list(x).index(0.0)] = 1.
+	    #use index method on x if/when Numeric provides it.
+	    #replace 0.0 by small value that gives the same sinc(x) result.
+	    x[list(x).index(0.0)] = 1.e-30
+	y = sin(x)/x
 
 	# Draw the line
 
