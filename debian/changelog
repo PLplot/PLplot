@@ -1,21 +1,26 @@
 plplot (5.2.1.cvs.20031027-4) unstable; urgency=low
 
   * NOT YET RELEASED!
-  * Preparation for the new upstream version, which changed the soversion
+  * Preparation for the next upstream version, which changed the soversion
     of the PLplot library.  Changed all the references to libplplot5 to
     libplplot9.  Affected files:
-    - control
-    - libplplot-dev.files
-    - octave-plplot.files
-    - plplot-doc.doc-base
-    - plplot-doc.files
-    - plplot-tcl-dev.files
-    - python-plplot.files
-    - rules
-    - libplplot9.README.Debian (new)
-    - libplplot9.files (new)
+    - debian/control
+    - debian/libplplot-dev.files
+    - debian/octave-plplot.files
+    - debian/plplot-doc.doc-base
+    - debian/plplot-doc.files
+    - debian/plplot-tcl-dev.files
+    - debian/python-plplot.files
+    - debian/rules
+    - debian/libplplot9.README.Debian (new)
+    - debian/libplplot9.files (new)
+  * In order to avoid backward incompatibilities withe the release of
+    libplplot9, the driver module packages have now versioned names:
+    - plplot9-driver-gd
+    - plplot9-driver-xwin
+    - plplot9-driver-gnome
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Wed, 29 Oct 2003 22:19:08 +0100
 
 plplot (5.2.1.cvs.20031027-3) unstable; urgency=low
 

@@ -89,10 +89,6 @@ install-stamp: build-stamp
 
 	make DESTDIR=$(debtmp) install
 
-	for f in nn csa ; do \
-	  dh_link usr/lib/libcsiro$$f.so.0 usr/lib/lib$$f.so.0 ; \
-	done
-
 	rm -f $(debtmp)/usr/bin/plplot-config
 
 	( cd $(debdoc)/plplot ; \
@@ -101,9 +97,9 @@ install-stamp: build-stamp
 	mv $(debdoc)/plplot $(debdoc)/$(libpkg)
 	mv $(debex) $(debdoc)/$(libpkg)
 
-	for i in libplplot-dev plplot-xwin plplot-tcl plplot-gnome \
-                 $(octave_pkg) python-plplot plplot-gd plplot-doc  \
-                 plplot-tcl-dev ; do \
+	for i in libplplot-dev plplot-tcl plplot-tcl-dev plplot-doc  \
+	         plplot9-driver-gd plplot9-driver-xwin plplot9-driver-gnome \
+                 $(octave_pkg) python-plplot ; do \
 	  ln -s $(libpkg) $(debdoc)/$$i ; \
 	done
 

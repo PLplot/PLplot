@@ -26,19 +26,19 @@ plplot for Debian
 
       * plplot-doc: HTML and PDF formats of the PLplot manual.
 
-      * plplot-xwin: Provides the xwin driver module.
+      * plplot9-driver-xwin: Provides the xwin driver module.
+
+      * plplot9-driver-gd: Provides the GD driver module, which allows
+        direct generation of PNG and JPEG files.
+
+      * plplot9-driver-gnome: Provides the Gnome canvas driver module.  This
+        is highly experimental.
 
       * plplot-tcl: Modules allowing binding of the PLplot functions
         for Tcl/Tk.  Contains also the Tk driver module and some interactive
         programs
 
       * plplot-tcl-dev: Development files for the Tcl/Tk biondings.
-
-      * plplot-gd: Provides the GD driver module, which allows direct
-        generation of PNG and JPEG files.
-
-      * plplot-gnome: Provides the Gnome canvas driver module.  This is
-	highly experimental.
 
       * python-plplot: Glue library with bindings for Python 2.2.
 

@@ -42,7 +42,7 @@ Description: Scientific plotting library (development files)
  .
  Homepage: http://www.plplot.org
 
-Package: plplot-xwin
+Package: plplot9-driver-xwin
 Architecture: any
 Depends: ${shlibs:Depends}
 Conflicts: plplot-lib, plplot (<< 5)
@@ -52,7 +52,7 @@ Description: Scientific plotting library (X11 driver)
  .
  Homepage: http://www.plplot.org
 
-Package: plplot-gnome
+Package: plplot9-driver-gnome
 Architecture: any
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library (Gnome canvas driver)
@@ -64,7 +64,7 @@ Description: Scientific plotting library (Gnome canvas driver)
 Package: plplot-tcl
 Architecture: any
 Priority: extra
-Depends: plplot-xwin, iwidgets4, ${shlibs:Depends}
+Depends: plplot9-driver-xwin, iwidgets4, ${shlibs:Depends}
 Conflicts: plplot-lib, libplplot5 (<< 5.2.0.cvs.20030317)
 Description: Tcl/Tk support for PLplot, a plotting library
  This package contains the Tcl/Tk support for PLplot, a scientific
@@ -87,7 +87,7 @@ Description: Tcl/Tk development support for PLplot, a plotting library
  .
  Homepage: http://www.plplot.org
 
-Package: plplot-gd
+Package: plplot9-driver-gd
 Architecture: any
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library (GD driver)
