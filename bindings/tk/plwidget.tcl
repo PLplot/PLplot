@@ -106,6 +106,7 @@ proc plxframe {w {client_id {}}} {
 
 	    $w.plwin configure -bopcmd "plw_flash $w $bop_col"
 	    $w.plwin configure -eopcmd "plw_flash $w $eop_col"
+
 	} else {
 	    $w.plwin configure -bopcmd {update}
 	    $w.plwin configure -eopcmd {update}
@@ -115,6 +116,14 @@ proc plxframe {w {client_id {}}} {
     #	bind $w.plwin <Configure> "client_cmd \"plfinfo %w %h\""
 
 	client_cmd "set plwidget $w.plwin"
+
+    } else {
+
+# Set up bop/eop handling when running tcl scripts from a plserver
+
+	global plstate_bopseen; set plstate_bopseen($w) 0
+	$w.plwin configure -bopcmd "plw_bop $w"
+	$w.plwin configure -eopcmd "plw_eop $w"
     }
 
     return $w
@@ -239,7 +248,7 @@ proc plw_create_TopRow {w} {
 # Label widget for status messages.
 
     label $w.ftop.lstat -anchor w -relief raised
-    plw_label_reset $w
+    plw_label_push $w "[string range $w 1 end]"
     pack append $w.ftop $w.ftop.lstat \
 	{right expand fill} 
 }
@@ -658,6 +667,7 @@ proc plw_start {w} {
 proc plw_key_filter {w keycode state x y keyname ascii} {
     global user_key_filter
 
+    global key_resume
     global key_zoom_select
     global key_zoom_back
     global key_zoom_forward    
@@ -669,7 +679,9 @@ proc plw_key_filter {w keycode state x y keyname ascii} {
     global key_scroll_up
     global key_scroll_down
 
-#    puts "keypress: $keyname $keycode $ascii $state"
+    global plstate_resume
+
+    #puts "keypress: $keyname $keycode $ascii $state"
 
 # Call user-defined key filter, if one exists
 
@@ -680,6 +692,7 @@ proc plw_key_filter {w keycode state x y keyname ascii} {
 # Interpret keystroke
 
     switch $keyname \
+	$key_resume		"set plstate_resume($w) 1" \
 	$key_zoom_select	"plw_zoom_select $w" \
 	$key_zoom_back		"plw_zoom_back $w" \
 	$key_zoom_forward	"plw_zoom_forward $w" \
@@ -762,6 +775,61 @@ proc plw_user_mouse {w button state x y} {
 }
 
 #----------------------------------------------------------------------------
+# plw_bop
+#
+# Beginning of page handling when running tcl scripts from plserver.
+# To handle multipage plots correctly, we need to pause between plots.
+# But "canonical" gui plots that are single page only should have no
+# pause.  Therefore we pause here only if the bop follows a previous bop
+# without returning to the interpreter's event loop (i.e. the interpreter is
+# kept busy processing a tcl script).
+#
+# Without a visual cue, this feature is probably too confusing, so it's not
+# activated if !plot_menu_on.
+#----------------------------------------------------------------------------
+
+proc plw_bop {w} {
+    global plot_menu_on; if !$plot_menu_on return
+
+    global plstate_resume plstate_bopseen
+
+# There was a previous bop, deal with it.
+
+    if $plstate_bopseen($w) {
+	update idletasks
+	plw_label_push $w "press <Enter> to continue."
+	tkwait variable plstate_resume($w)
+	plw_label_set $w "working..."
+	update idletasks
+	set id1 [after idle "plw_label_pop $w; plw_label_refresh $w"]
+	set plstate_resume($w) 0
+
+    } else {
+	plw_label_set $w "working..."
+	update idletasks
+	set id1 [after idle "plw_label_refresh $w"]
+    }
+
+# Set up for next possible bop, by setting bopseen to 1 but also setting up an
+# idle handler to set it back to 0.  If the idle handler is reached first,
+# i.e. control is returned to the interpreter before the next time this proc
+# is called, there will be no pause.
+
+    set plstate_bopseen($w) 1
+    set id2 [after idle "global plstate_bopseen; set plstate_bopseen($w) 0"]
+}
+
+#----------------------------------------------------------------------------
+# plw_eop
+#
+# End of page handling.
+# Was handy during development but right now does nothing.
+#----------------------------------------------------------------------------
+
+proc plw_eop {w} {
+}
+
+#----------------------------------------------------------------------------
 # plw_flash
 #
 # Set eop button color to indicate page status.
@@ -809,8 +877,9 @@ proc plw_print {w} {
     update
     if { [catch "$w.plwin print" foo] } {
 	bogue_out "$foo"
+	pl_status_reset $w
     } else {
-	status_msg $w "Plot printed."
+	pl_status_msg $w "Plot printed."
     }
 }
 
@@ -833,10 +902,10 @@ proc plw_save_as {w} {
 	plw_label_set $w "Saving plot..."
 	update
 	if { [catch "$w.plwin save as $saveopts($w,0) $file" foo] } {
-	    plw_label_reset $w
 	    bogue_out "$foo"
+	    plw_label_refresh $w
 	} else {
-	    status_msg $w "Plot saved."
+	    pl_status_msg $w "Plot saved."
 	}
 
 	if { $saveopts($w,1) == 0 } then {
@@ -861,7 +930,7 @@ proc plw_save_again {w} {
     if { [catch "$w.plwin save" foo] } {
 	bogue_out "$foo"
     } else {
-	status_msg $w "Plot saved."
+	pl_status_msg $w "Plot saved."
     }
 }
 
@@ -876,7 +945,7 @@ proc plw_save_close {w} {
     if { [catch "$w.plwin save close" foo] } {
 	bogue_out "$foo"
     } else {
-	status_msg $w "Archive file closed."
+	pl_status_msg $w "Archive file closed."
 	$pmenu($w).save entryconfigure Again -state disabled
 	$pmenu($w).save entryconfigure Close -state disabled
     }
@@ -975,7 +1044,7 @@ proc plw_zoom_enter {w} {
 proc plw_zoom_reset {w} {
     global def_button_cmd
 
-    plw_label_reset $w
+    plw_label_refresh $w
     bind $w.plwin <ButtonPress> $def_button_cmd
     $w.plwin view reset
     if { [winfo exists $w.hbar] && [winfo ismapped $w.hbar] } then {
@@ -1070,6 +1139,8 @@ proc plw_zoom_start {w wx wy} {
     global def_button_cmd
 
     bind $w.plwin <ButtonPress> $def_button_cmd
+
+# Use a set rather than a push to replace previous zoom message.
     plw_label_set $w "Select zoom region by dragging mouse, then release."
 
     $w.plwin draw init
@@ -1311,7 +1382,7 @@ proc plw_zoom_mouse_end {w wx0 wy0 wx1 wy1} {
 
     bind $w.plwin <B1-ButtonRelease> {}
     bind $w.plwin <B1-Motion> {}
-    plw_label_reset $w
+    plw_label_refresh $w
     $w.plwin draw end
 
 # Select new plot region
@@ -1643,40 +1714,86 @@ proc plw_update_view {w} {
 }
 
 #----------------------------------------------------------------------------
-# status_msg
+# pl_status_msg
 #
 # Used for temporarily flashing a status message in the status bar.  Better
 # than a dialog because it can be ignored and will go away on its own.
 #----------------------------------------------------------------------------
 
-proc status_msg {w msg} {
+proc pl_status_msg {w msg} {
     plw_label_set $w $msg
-    after 2500 plw_label_reset $w
-}
-
-#----------------------------------------------------------------------------
-# plw_label_reset
-#
-# Resets message in status bar to the default.
-#----------------------------------------------------------------------------
-
-proc plw_label_reset {w} {
-    global plot_menu_on
-    if $plot_menu_on then {
-	$w.ftop.lstat configure -text " [string range $w 1 end]"
-    }
+    after 2500 plw_label_refresh $w
 }
 
 #----------------------------------------------------------------------------
 # plw_label_set
 #
-# Sets message in status bar.
+# Sets message in status bar.  Does not put on stack, so it is transient.
 #----------------------------------------------------------------------------
 
 proc plw_label_set {w msg} {
-    global plot_menu_on
-    if $plot_menu_on then {
-	$w.ftop.lstat configure -text " $msg"
+    global plot_menu_on; if !$plot_menu_on return
+
+    $w.ftop.lstat configure -text "$msg"
+}
+
+#----------------------------------------------------------------------------
+# plw_label_refresh
+#
+# Resets message in status bar to the current default (top one on stack).
+#----------------------------------------------------------------------------
+
+proc plw_label_refresh {w} {
+    global plot_menu_on; if !$plot_menu_on return
+
+    global plmenu_lstat plmenu_lstat_depth
+
+    set msg $plmenu_lstat($w,$plmenu_lstat_depth($w))
+    $w.ftop.lstat configure -text "$msg"
+}
+
+#----------------------------------------------------------------------------
+# plw_label_push
+#
+# Sets message in status bar, pushing it onto the stack.  So it shouldn't
+# be a transient message.  Limit 10 deep to quickly catch recursion errors.
+#----------------------------------------------------------------------------
+
+proc plw_label_push {w msg} {
+    global plot_menu_on; if !$plot_menu_on return
+
+    global plmenu_lstat plmenu_lstat_depth
+    if ![info exists plmenu_lstat_depth] { 
+	set plmenu_lstat_depth($w) -1
+    }
+    if {$plmenu_lstat_depth($w) < 9} {
+	incr plmenu_lstat_depth($w) 
+    } {
+	puts stderr "plw_label_push: you just hit the max stack depth"
+    }
+    set plmenu_lstat($w,$plmenu_lstat_depth($w)) $msg
+    $w.ftop.lstat configure -text "$msg"
+}
+
+#----------------------------------------------------------------------------
+# plw_label_pop
+#
+# Pops the top label off the stack, making the new one on top the default.
+# It doesn't become active until plw_label_refresh is called.
+#----------------------------------------------------------------------------
+
+proc plw_label_pop {w} {
+    global plot_menu_on; if !$plot_menu_on return
+
+    global plmenu_lstat plmenu_lstat_depth
+    if ![info exists plmenu_lstat_depth] { 
+	puts stderr "plw_label_pop: no stack defined yet, strange.."
+	return
+    }
+    if {$plmenu_lstat_depth($w) > 0} {
+	incr plmenu_lstat_depth($w) -1
+    } {
+	puts stderr "plw_label_pop: you just hit the min stack depth"
     }
 }
 
