@@ -88,7 +88,7 @@ cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
   && ./configure $DOC_ARG $config_opt \
   && make dist \
   && TARBALL=`ls plplot-*.tar.gz` \
-  && DISTDIR=`echo $TARBALL | sed /.tar.gz//` \
+  && DISTDIR=`echo $TARBALL | sed s/.tar.gz//` \
   && mv $TARBALL .. \
   && cd .. \
   && echo "CVS distribution tarball: $TARBALL" \
