@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.47  1995/05/07 03:16:24  mjl
+ * Revision 1.48  1995/06/11 20:40:47  mjl
+ * Fixed NULL-pointer dereferencing bug that was causing code death under
+ * Linux and SunOS.  Why does HPUX let me get away with this?  Sigh.
+ *
+ * Revision 1.47  1995/05/07  03:16:24  mjl
  * Changed debugging output to use pldebug().  Updated option tables to
  * eliminate references to PL_OPTION_ENABLE.  Changed some color setting
  * commands to go through API functions plscol0n() and plscol1n() since now
@@ -342,6 +346,11 @@ ProcessFile(int argc, char **argv)
 
     if (plParseOpts(&argc, argv, 0))
 	exit(1);
+
+/* If argv[1] is NULL, we've reached the end of the arglist and can quit */
+
+    if (argv[1] == NULL)
+	return 1;
 
 /* Any remaining flags are illegal. */
 
