@@ -263,7 +263,8 @@ STARTUP =
 
 #----------------------------------------------------------------------#
 if_sunos({
-#	SUNOS definitions, using gcc (also good for Ultrix 4.3)
+#	SUNOS definitions (also good for Ultrix 4.3)
+#	Pick between gcc and acc the old-fashioned way.
 #
 # WARNING!
 # You MUST use /usr/5bin/m4 to create the makefile, and not /usr/bin/m4,
@@ -275,6 +276,7 @@ if_sunos({
 # specify -DNO_OPENWIN when building the makefile with m4.
 
 CC = gcc
+#CC = acc
 
 #define({MOTIF})
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK -DPS -DXFIG DEF_XWIN() DEF_MOTIF()
