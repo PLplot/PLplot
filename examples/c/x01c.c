@@ -252,7 +252,8 @@ plot1(int do_test)
 	  plxormod(0, &st);			/* leave xor mode */
 	}
 #else
-    printf("The -xor command line option can only be exercised if your system has usleep(), which does not seems to happen.\n"); 
+    printf("The -xor command line option can only be exercised if your "
+           "system\nhas usleep(), which does not seem to happen.\n"); 
 #endif
     }
 }
