@@ -1,68 +1,5 @@
 /* $Id$
- * $Log$
- * Revision 1.13  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.12  1995/10/22 17:46:24  mjl
- * Removed call to plParseOpts, as this is now done in pltclMain(), and removed
- * automatic call to plinit().  Now users can/need-to call plinit() as required
- * by the application.  You can use the new plglevel accessor function to
- * determine what state the package is in (e.g. whether plinit has already been
- * called) to build stand-alone plot modules.
- *
- * Revision 1.11  1995/07/27  21:17:06  furnish
- * Improvement of arg parsing for use in extended shells.
- *
- * Revision 1.10  1995/06/01  21:47:10  mjl
- * Now is [incr Tcl] aware, if HAVE_ITCL has been defined (done during
- * configure).
- *
- * Revision 1.9  1995/05/07  03:17:20  mjl
- * Changed to use new name for options-parsing function plParseOpts().
- *
- * Revision 1.8  1994/11/02  19:59:47  mjl
- * Changed prompt.
- *
- * Revision 1.7  1994/09/23  07:54:17  mjl
- * Changed to a more powerful prompt mechanism.  Prompt now gives program
- * name (pltcl) followed by an underscore and the current stream number.
- * Very handy when doing multiple stream work.
- *
- * Revision 1.6  1994/09/18  07:15:42  mjl
- * Changed the syntax for pltclMain() in order for it to work better with
- * shared libraries.  In particular, Tcl_AppInit is no longer external but
- * passed as a function pointer.
- *
- * Revision 1.5  1994/08/25  04:05:16  mjl
- * Fixed error output; removes spurious <RET> at end.
- *
- * Revision 1.4  1994/07/19  22:33:16  mjl
- * Internal header file inclusion changed to /not/ use a search path so that
- * it will work better with makedepend.
- *
- * Revision 1.3  1994/06/30  18:55:50  mjl
- * Minor changes to eliminate gcc -Wall warnings.
- *
- * Revision 1.2  1994/06/24  20:41:35  mjl
- * Added error handler specific to pltcl.  Ensures output device is in text
- * mode before issuing error message.
- *
- * Revision 1.1  1994/06/23  22:51:28  mjl
- * A plotting interpreter that uses Tcl to drive PLplot primitives.  This can
- * be used with virtually any PLplot output driver.  The executable is an
- * extended tclsh that has been embellished with a (soon to be) large set
- * of Tcl commands for executing PLplot graphics calls.  The scripts are not
- * the same as those that plserver can execute, as the latter is object-based
- * and uses widget commands, whereas pltcl uses global commands to drive
- * PLplot.  The two style of commands are similar enough, however (differing
- * only by an introducer) that a text filter could be used to go between
- * them.
- */
-
-/*----------------------------------------------------------------------*\
  * 
- * pltcl.c --
- *
  *	Main program for Tcl-interface to PLplot.  Allows interpretive
  *	execution of plotting primitives without regard to output driver.
  *
@@ -70,7 +7,7 @@
  * IFS, University of Texas at Austin
  * 19-Jun-1994
  *
-\*----------------------------------------------------------------------*/
+ */
 
 #include "plplot/plplotP.h"
 #include "plplot/pltcl.h"
@@ -142,9 +79,9 @@ prPromptCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
     plgpls(&pls);
 
     if (pls->ipls == 0) 
-	sprintf(prompt, "pltext; puts -nonewline \"pltcl> \"");
+	sprintf(prompt, "pltext; puts -nonewline \"pltcl> \"; flush stdout");
     else
-	sprintf(prompt, "pltext; puts -nonewline \"pltcl_%d> \"", pls->ipls);
+	sprintf(prompt, "pltext; puts -nonewline \"pltcl_%d> \"; flush stdout", pls->ipls);
 
     Tcl_VarEval(interp, prompt, 0);
 
