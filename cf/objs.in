@@ -1,10 +1,10 @@
 Pltk_Init$O: Pltk_Init.c plplot/plserver.h plplot/plDevs.h \
  plplot/pltkd.h plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h plplot/pltk.h \
- plplot/pltcl.h plplot/tclMatrix.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h \
+ plplot/pltk.h plplot/pltcl.h plplot/tclMatrix.h
 dg300$O: dg300.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h
 font01$O: font01.c
 font02$O: font02.c
 font03$O: font03.c
@@ -17,132 +17,142 @@ font09$O: font09.c
 font10$O: font10.c
 font11$O: font11.c
 gd$O: gd.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h
 gnome$O: gnome.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h
 hpgl$O: hpgl.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h
 impress$O: impress.c plplot/plDevs.h plplot/plplotP.h \
  plplot/plConfig.h plplot/plplot.h plplot/plstrm.h plplot/pdf.h \
- plplot/pldebug.h plplot/drivers.h
-linuxvga$O: linuxvga.c plplot/plDevs.h plplot/plplotP.h \
- plplot/plConfig.h plplot/plplot.h plplot/plstrm.h plplot/pdf.h \
- plplot/pldebug.h plplot/drivers.h
+ plplot/disptab.h plplot/pldebug.h plplot/drivers.h
+javabind$O: javabind.c plplot/plplotP.h plplot/plConfig.h \
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h
+linuxvga$O: linuxvga.c plplot/plDevs.h
 ljii$O: ljii.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
-ljiip$O: ljiip.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h
+ljiip$O: ljiip.c plplot/plDevs.h
 massage$O: massage.c /usr/include/stdio.h /usr/include/string.h \
  /usr/include/stdlib.h /usr/include/errno.h
 matrixInit$O: matrixInit.c plplot/tclMatrix.h plplot/plplot.h \
  plplot/plConfig.h
 next$O: next.c plplot/plDevs.h
+ntk$O: ntk.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h plplot/plevent.h
 null$O: null.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h
 pbm$O: pbm.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h
 pdfutils$O: pdfutils.c plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h
 plargs$O: plargs.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plbox$O: plbox.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plbuf$O: plbuf.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h plplot/drivers.h \
- plplot/metadefs.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h \
+ plplot/drivers.h plplot/metadefs.h
 plcont$O: plcont.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plcore$O: plcore.c plplot/plcore.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/drivers.h \
- plplot/plDevs.h plplot/pldebug.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/drivers.h plplot/plDevs.h plplot/pldebug.h
 plctrl$O: plctrl.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plcvt$O: plcvt.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 pldtik$O: pldtik.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plfill$O: plfill.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plframe$O: plframe.c plplot/plserver.h plplot/plDevs.h plplot/pltkd.h \
  plplot/plplotP.h plplot/plConfig.h plplot/plplot.h plplot/plstrm.h \
- plplot/pdf.h plplot/pldebug.h plplot/pltk.h plplot/pltcl.h \
- plplot/tclMatrix.h plplot/plxwd.h plplot/tcpip.h
+ plplot/pdf.h plplot/disptab.h plplot/pldebug.h plplot/pltk.h \
+ plplot/pltcl.h plplot/tclMatrix.h plplot/plxwd.h plplot/tcpip.h
 plhist$O: plhist.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plline$O: plline.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plmap$O: plmap.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plmeta$O: plmeta.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h plplot/metadefs.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h plplot/metadefs.h
 plmodule$O: plmodule.c plplot/plmodule.h plplot/plplot.h \
  plplot/plConfig.h plplot/plplotP.h plplot/plstrm.h plplot/pdf.h \
- plplot/pldebug.h
+ plplot/disptab.h plplot/pldebug.h
 plmodule2$O: plmodule2.c plplot/plmodule.h plplot/plplot.h \
  plplot/plConfig.h plplot/plplotP.h plplot/plstrm.h plplot/pdf.h \
- plplot/pldebug.h
+ plplot/disptab.h plplot/pldebug.h
 plot3d$O: plot3d.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plpage$O: plpage.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plr$O: plr.c plplot/plserver.h plplot/plDevs.h plplot/pltkd.h \
  plplot/plplotP.h plplot/plConfig.h plplot/plplot.h plplot/plstrm.h \
- plplot/pdf.h plplot/pldebug.h plplot/pltk.h plplot/pltcl.h \
- plplot/tclMatrix.h plplot/plevent.h plplot/metadefs.h
+ plplot/pdf.h plplot/disptab.h plplot/pldebug.h plplot/pltk.h \
+ plplot/pltcl.h plplot/tclMatrix.h plplot/plevent.h plplot/metadefs.h
 plrender$O: plrender.c plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/plevent.h plplot/metadefs.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/plevent.h plplot/metadefs.h
 plsdef$O: plsdef.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plserver$O: plserver.c plplot/plserver.h plplot/plDevs.h \
  plplot/pltkd.h plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h plplot/pltk.h \
- plplot/pltcl.h plplot/tclMatrix.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h \
+ plplot/pltk.h plplot/pltcl.h plplot/tclMatrix.h
 plshade$O: plshade.c plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h
 plstripc$O: plstripc.c plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h
 plsym$O: plsym.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 pltcl$O: pltcl.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h plplot/pltcl.h \
- plplot/tclMatrix.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h \
+ plplot/pltcl.h plplot/tclMatrix.h
 pltek$O: pltek.c
 pltick$O: pltick.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plvpor$O: plvpor.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 plwind$O: plwind.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 ps$O: ps.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h plplot/ps.h
-ntk$O: ntk.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h plplot/ps.h
 pstex$O: pstex.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h plplot/ps.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h plplot/ps.h
+pyqt_plmodule$O: pyqt_plmodule.c plplot/plmodule.h plplot/plplot.h \
+ plplot/plConfig.h plplot/plplotP.h plplot/plstrm.h plplot/pdf.h \
+ plplot/disptab.h plplot/pldebug.h
 sc3d$O: sc3d.c plplot/plstubs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h
 sccont$O: sccont.c plplot/plstubs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h
 scstubs$O: scstubs.c plplot/plstubs.h plplot/plplotP.h \
  plplot/plConfig.h plplot/plplot.h plplot/plstrm.h plplot/pdf.h \
- plplot/pldebug.h
+ plplot/disptab.h plplot/pldebug.h
 stndfont$O: stndfont.c plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h
+stupidtk$O: stupidtk.c
 tclAPI$O: tclAPI.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h plplot/pltcl.h \
- plplot/tclMatrix.h plplot/tclgen.h plplot/tclgen_s.h tclgen.c
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h \
+ plplot/pltcl.h plplot/tclMatrix.h plplot/tclgen.h plplot/tclgen_s.h \
+ tclgen.c
 tclMain$O: tclMain.c plplot/plplot.h plplot/plConfig.h
 tclMatrix$O: tclMatrix.c plplot/tclMatrix.h plplot/plplot.h \
  plplot/plConfig.h
@@ -150,20 +160,20 @@ tclgen$O: tclgen.c
 tcpip$O: tcpip.c plplot/plDevs.h plplot/plConfig.h plplot/tcpip.h \
  plplot/pdf.h
 tek$O: tek.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h plplot/plevent.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h plplot/plevent.h
 tektest$O: tektest.c
 tk$O: tk.c plplot/plDevs.h plplot/pltkd.h plplot/plplotP.h \
  plplot/plConfig.h plplot/plplot.h plplot/plstrm.h plplot/pdf.h \
- plplot/pldebug.h plplot/pltk.h plplot/pltcl.h plplot/tclMatrix.h \
- plplot/plxwd.h plplot/tcpip.h plplot/drivers.h plplot/metadefs.h \
- plplot/plevent.h
+ plplot/disptab.h plplot/pldebug.h plplot/pltk.h plplot/pltcl.h \
+ plplot/tclMatrix.h plplot/plxwd.h plplot/tcpip.h plplot/drivers.h \
+ plplot/metadefs.h plplot/plevent.h
 tkMain$O: tkMain.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 tkshell$O: tkshell.c plplot/plserver.h plplot/plDevs.h plplot/pltkd.h \
  plplot/plplotP.h plplot/plConfig.h plplot/plplot.h plplot/plstrm.h \
- plplot/pdf.h plplot/pldebug.h plplot/pltk.h plplot/pltcl.h \
- plplot/tclMatrix.h
+ plplot/pdf.h plplot/disptab.h plplot/pldebug.h plplot/pltk.h \
+ plplot/pltcl.h plplot/tclMatrix.h
 tutor$O: tutor.c plplot/plcdemos.h plplot/plConfig.h plplot/plplot.h
 x01c$O: x01c.c plplot/plcdemos.h plplot/plConfig.h plplot/plplot.h \
  plplot/plevent.h
@@ -186,10 +196,10 @@ x17c$O: x17c.c plplot/plcdemos.h plplot/plConfig.h plplot/plplot.h
 x18c$O: x18c.c plplot/plcdemos.h plplot/plConfig.h plplot/plplot.h
 x19c$O: x19c.c plplot/plcdemos.h plplot/plConfig.h plplot/plplot.h
 xfig$O: xfig.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/drivers.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/drivers.h
 xform$O: xform.c plplot/plplotP.h plplot/plConfig.h plplot/plplot.h \
- plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plstrm.h plplot/pdf.h plplot/disptab.h plplot/pldebug.h
 xtk01$O: xtk01.c plplot/pltk.h plplot/pltcl.h plplot/plplot.h \
  plplot/plConfig.h plplot/tclMatrix.h
 xtk02$O: xtk02.c plplot/pltk.h plplot/pltcl.h plplot/plplot.h \
@@ -197,10 +207,11 @@ xtk02$O: xtk02.c plplot/pltk.h plplot/pltcl.h plplot/plplot.h \
 xtk04$O: xtk04.c plplot/pltk.h plplot/pltcl.h plplot/plplot.h \
  plplot/plConfig.h plplot/tclMatrix.h
 xtndfont$O: xtndfont.c plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h
 xwin$O: xwin.c plplot/plDevs.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/pldebug.h \
- plplot/plxwd.h plplot/drivers.h plplot/plevent.h
+ plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/disptab.h \
+ plplot/pldebug.h plplot/plxwd.h plplot/drivers.h plplot/plevent.h
 plstream$O: plstream.cc plplot/plplot.h plplot/plConfig.h \
  plplot/plstream.h
 x01cc$O: x01cc.cc plplot/plstream.h plplot/plplot.h plplot/plConfig.h
