@@ -1,10 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/01/23 06:04:17  mjl
-   New front-end for contours from fortran.  Does amazingly little work now,
-   just defines an appropriate function evaluator and coordinate transformers
-   and calls the main contour function.
+   Revision 1.2  1993/10/21 19:27:06  mjl
+   Changed all names that ended with an underscore (as part of the C/Fortran
+   linkage) to end with a '7' instead, to avoid problems with f2c.
 
+ * Revision 1.1  1993/01/23  06:04:17  mjl
+ * New front-end for contours from fortran.  Does amazingly little work now,
+ * just defines an appropriate function evaluator and coordinate transformers
+ * and calls the main contour function.
+ *
 
  * Old history:
  * Revision 1.7  1992/10/24  05:18:08  mjl
@@ -242,7 +246,7 @@ pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 /* no transformation */
 
 void
-PLCON0_(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+PLCON07(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel)
 {
     PLfGrid fgrid;
@@ -259,7 +263,7 @@ PLCON0_(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 /* 1-d transformation */
 
 void
-PLCON1_(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+PLCON17(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel,
 	PLFLT *xg, PLFLT *yg)
 {
@@ -283,7 +287,7 @@ PLCON1_(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 /* 2-d transformation */
 
 void
-PLCON2_(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+PLCON27(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel,
 	PLFLT *xg, PLFLT *yg)
 {
@@ -318,7 +322,7 @@ pltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 }
 
 void
-PLCONT_(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
+PLCONT7(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 	PLINT *ky, PLINT *ly, PLFLT *clevel, PLINT *nlevel, PLFLT *ftr)
 {
     PLfGrid fgrid;

@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1993/08/26 20:00:17  mjl
+ * Revision 1.15  1993/10/21 19:27:07  mjl
+ * Changed all names that ended with an underscore (as part of the C/Fortran
+ * linkage) to end with a '7' instead, to avoid problems with f2c.
+ *
+ * Revision 1.14  1993/08/26  20:00:17  mjl
  * Inserted stub function PLINIT().
  *
  * Revision 1.13  1993/08/09  22:15:08  mjl
@@ -31,7 +35,7 @@ PLADV(PLINT *sub)
 }
 
 void
-PLAXES_(PLFLT *x0, PLFLT *y0, char *xopt, PLFLT *xtick,
+PLAXES7(PLFLT *x0, PLFLT *y0, char *xopt, PLFLT *xtick,
 	PLINT *nxsub, char *yopt, PLFLT *ytick, PLINT *nysub)
 {
     c_plaxes(*x0, *y0, xopt, *xtick, *nxsub, yopt, *ytick, *nysub);
@@ -50,14 +54,14 @@ PLBOP()
 }
 
 void
-PLBOX_(char *xopt, PLFLT *xtick, PLINT *nxsub,
+PLBOX7(char *xopt, PLFLT *xtick, PLINT *nxsub,
        char *yopt, PLFLT *ytick, PLINT *nysub)
 {
     c_plbox(xopt, *xtick, *nxsub, yopt, *ytick, *nysub);
 }
 
 void
-PLBOX3_(char *xopt, char *xlabel, PLFLT *xtick, PLINT *nxsub,
+PLBOX37(char *xopt, char *xlabel, PLFLT *xtick, PLINT *nxsub,
 	char *yopt, char *ylabel, PLFLT *ytick, PLINT *nysub,
 	char *zopt, char *zlabel, PLFLT *ztick, PLINT *nzsub)
 {
@@ -151,7 +155,7 @@ PLGFAM(PLINT *fam, PLINT *num, PLINT *bmax)
 }
 
 void
-PLGFNAM_(char *fnam)
+PLGFNAM7(char *fnam)
 {
     c_plgfnam(fnam);
 }
@@ -182,7 +186,7 @@ PLGSTRM(PLINT *strm)
 }
 
 void
-PLGVER_(char *ver)
+PLGVER7(char *ver)
 {
     c_plgver(ver);
 }
@@ -231,7 +235,7 @@ PLJOIN(PLFLT *x1, PLFLT *y1, PLFLT *x2, PLFLT *y2)
 }
 
 void
-PLLAB_(char *xlab, char *ylab, char *title)
+PLLAB7(char *xlab, char *ylab, char *title)
 {
     c_pllab(xlab, ylab, title);
 }
@@ -249,7 +253,7 @@ PLLSTY(PLINT *lin)
 }
 
 void
-PLMTEX_(char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, char *text)
+PLMTEX7(char *side, PLFLT *disp, PLFLT *pos, PLFLT *just, char *text)
 {
     c_plmtex(side, *disp, *pos, *just, text);
 }
@@ -279,7 +283,7 @@ PLPSTY(PLINT *patt)
 }
 
 void
-PLPTEX_(PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, char *text)
+PLPTEX7(PLFLT *x, PLFLT *y, PLFLT *dx, PLFLT *dy, PLFLT *just, char *text)
 {
     c_plptex(*x, *y, *dx, *dy, *just, text);
 }
@@ -345,13 +349,13 @@ PLSCOLOR(PLINT *color)
 }
 
 void
-PLSDEV_(char *dev)
+PLSDEV7(char *dev)
 {
     c_plsdev(dev);
 }
 
 void
-PLSESC_(PLINT *esc)
+PLSESC7(PLINT *esc)
 {
     c_plsesc((char) *esc);
 }
@@ -363,7 +367,7 @@ PLSFAM(PLINT *fam, PLINT *num, PLINT *bmax)
 }
 
 void
-PLSFNAM_(char *fnam)
+PLSFNAM7(char *fnam)
 {
     c_plsfnam(fnam);
 }
@@ -430,7 +434,7 @@ PLSTAR(PLINT *nx, PLINT *ny)
 }
 
 void
-PLSTART_(char *devname, PLINT *nx, PLINT *ny)
+PLSTART7(char *devname, PLINT *nx, PLINT *ny)
 {
     c_plstart(devname, *nx, *ny);
 }

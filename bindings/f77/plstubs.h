@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.16  1993/08/26 19:59:43  mjl
-   Inserted stub name definition for PLINIT().
+   Revision 1.17  1993/10/21 19:27:03  mjl
+   Changed all names that ended with an underscore (as part of the C/Fortran
+   linkage) to end with a '7' instead, to avoid problems with f2c.
 
+ * Revision 1.16  1993/08/26  19:59:43  mjl
+ * Inserted stub name definition for PLINIT().
+ *
  * Revision 1.15  1993/08/26  18:29:08  mjl
  * Put in fix for name translation under UNICOS.
  *
@@ -148,16 +152,16 @@
 \*----------------------------------------------------------------------*/
 
 #define    PLADV	FNAME(PLADV,pladv)
-#define    PLAXES_	FNAME(PLAXES_,plaxes_)
+#define    PLAXES7	FNAME(PLAXES7,plaxes7)
 #define    PLBIN	FNAME(PLBIN,plbin)
-#define    PLBOX3_	FNAME(PLBOX3_,plbox3_)
-#define    PLBOX_	FNAME(PLBOX_,plbox_)
+#define    PLBOX37	FNAME(PLBOX37,plbox37)
+#define    PLBOX7	FNAME(PLBOX7,plbox7)
 #define    PLCLR	FNAME(PLCLR,plclr)
 #define    PLCOL	FNAME(PLCOL,plcol)
-#define    PLCON0_	FNAME(PLCON0_,plcon0_)
-#define    PLCON1_	FNAME(PLCON1_,plcon1_)
-#define    PLCON2_	FNAME(PLCON2_,plcon2_)
-#define    PLCONT_	FNAME(PLCONT_,plcont_)
+#define    PLCON07	FNAME(PLCON07,plcon07)
+#define    PLCON17	FNAME(PLCON17,plcon17)
+#define    PLCON27	FNAME(PLCON27,plcon27)
+#define    PLCONT7	FNAME(PLCONT7,plcont7)
 #define    PLEND	FNAME(PLEND,plend)
 #define    PLEND1	FNAME(PLEND1,plend1)
 #define    PLENV	FNAME(PLENV,plenv)
@@ -170,12 +174,12 @@
 #define    PLFONTLD	FNAME(PLFONTLD,plfontld)
 #define    PLGCHR	FNAME(PLGCHR,plgchr)
 #define    PLGFAM	FNAME(PLGFAM,plgfam)
-#define    PLGFNAM_	FNAME(PLGFNAM_,plgfnam_)
+#define    PLGFNAM7	FNAME(PLGFNAM7,plgfnam7)
 #define    PLGPAGE	FNAME(PLGPAGE,plgpage)
 #define    PLGRA	FNAME(PLGRA,plgra)
 #define    PLGSPA	FNAME(PLGSPA,plgspa)
 #define    PLGSTRM	FNAME(PLGSTRM,plgstrm)
-#define    PLGVER_	FNAME(PLGVER_,plgver_)
+#define    PLGVER7	FNAME(PLGVER7,plgver7)
 #define    PLGXAX	FNAME(PLGXAX,plgxax)
 #define    PLGYAX	FNAME(PLGYAX,plgyax)
 #define    PLGZAX	FNAME(PLGZAX,plgzax)
@@ -183,17 +187,17 @@
 #define    PLHLS        FNAME(PLHLS,plhls)
 #define    PLINIT       FNAME(PLINIT,plinit)
 #define    PLJOIN	FNAME(PLJOIN,pljoin)
-#define    PLLAB_	FNAME(PLLAB_,pllab_)
+#define    PLLAB7	FNAME(PLLAB7,pllab7)
 #define    PLLINE	FNAME(PLLINE,plline)
 #define    PLLSTY	FNAME(PLLSTY,pllsty)
 #define    PLMESH	FNAME(PLMESH,plmesh)
-#define    PLMTEX_	FNAME(PLMTEX_,plmtex_)
+#define    PLMTEX7	FNAME(PLMTEX7,plmtex7)
 #define    PLOT3D	FNAME(PLOT3D,plot3d)
 #define    PLPAT	FNAME(PLPAT,plpat)
 #define    PLPOIN	FNAME(PLPOIN,plpoin)
 #define    PLPREC	FNAME(PLPREC,plprec)
 #define    PLPSTY	FNAME(PLPSTY,plpsty)
-#define    PLPTEX_	FNAME(PLPTEX_,plptex_)
+#define    PLPTEX7	FNAME(PLPTEX7,plptex7)
 #define    PLRGB        FNAME(PLRGB,plrgb)
 #define    PLRGB1	FNAME(PLRGB1,plrgb1)
 #define    PLSASP       FNAME(PLSASP,plsasp)
@@ -204,10 +208,10 @@
 #define    PLSCM1F1	FNAME(PLSCM1F1,plscm1f1)
 #define    PLSCOL0	FNAME(PLSCOL0,plscol0)
 #define    PLSCOLOR	FNAME(PLSCOLOR,plscolor)
-#define    PLSDEV_	FNAME(PLSDEV_,plsdev_)
+#define    PLSDEV7	FNAME(PLSDEV7,plsdev7)
 #define    PLSESC	FNAME(PLSESC,plsesc)
 #define    PLSFAM	FNAME(PLSFAM,plsfam)
-#define    PLSFNAM_	FNAME(PLSFNAM_,plsfnam_)
+#define    PLSFNAM7	FNAME(PLSFNAM7,plsfnam7)
 #define    PLSMAJ	FNAME(PLSMAJ,plsmaj)
 #define    PLSMIN	FNAME(PLSMIN,plsmin)
 #define    PLSORI	FNAME(PLSORI,plsori)
@@ -216,7 +220,7 @@
 #define    PLSSUB	FNAME(PLSSUB,plssub)
 #define    PLSSYM	FNAME(PLSSYM,plssym)
 #define    PLSTAR	FNAME(PLSTAR,plstar)
-#define    PLSTART_	FNAME(PLSTART_,plstart_)
+#define    PLSTART7	FNAME(PLSTART7,plstart7)
 #define    PLSTYL	FNAME(PLSTYL,plstyl)
 #define    PLSVPA	FNAME(PLSVPA,plsvpa)
 #define    PLSXAX	FNAME(PLSXAX,plsxax)
