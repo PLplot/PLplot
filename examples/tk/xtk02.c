@@ -1,7 +1,9 @@
-/* 
 /* $Id$
  * $Log$
- * Revision 1.4  1994/06/16 19:30:25  mjl
+ * Revision 1.5  1994/06/23 22:40:29  mjl
+ * Fix to get prototype of pltkMain() correct, and some cleaning up.
+ *
+ * Revision 1.4  1994/06/16  19:30:25  mjl
  * Changes to use pltkMain() for creating extended wish.  Should be more
  * portable and robust than old method.
  *
@@ -12,6 +14,9 @@
  * Added missing CVS Id and Log fields.
  */
 
+/* Before including plplot.h you must define TK to get all prototypes */
+
+#define TK
 #include <plplot.h>
 #include <tk.h>
 #include <itcl.h>
@@ -71,45 +76,6 @@ main(int argc, char **argv)
  * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
-<<<<<<< xtk02.c
-=======
- */
-
-#ifndef lint
-static char rcsid[] = "$Header$ SPRITE (Berkeley)";
-#endif /* not lint */
-
-#include "tk.h"
-#include "itcl.h"
-#include "plplot.h"
-
-/*
- * The following variable is a special hack that allows applications
- * to be linked using the procedure "main" from the Tk library.  The
- * variable generates a reference to "main", which causes main to
- * be brought in from the library (and all of Tk and Tcl with it).
- */
-
-extern int main();
-int *tclDummyMainPtr = (int *) main;
-
-/*
- *----------------------------------------------------------------------
- *
- * Tcl_AppInit --
- *
- *	This procedure performs application-specific initialization.
- *	Most applications, especially those that incorporate additional
- *	packages, will have their own version of this procedure.
- *
- * Results:
- *	Returns a standard Tcl completion code, and leaves an error
- *	message in interp->result if an error occurs.
- *
- * Side effects:
- *	Depends on the startup script.
- *
->>>>>>> 1.3
  *----------------------------------------------------------------------
  */
 
@@ -154,16 +120,6 @@ Tcl_AppInit(interp)
 
     Tcl_CreateCommand(interp, "myplot", myplotCmd,
                       (ClientData) main, (void (*)(ClientData)) NULL);
-
-
-    /*
-     * Specify a user-specific startup file to invoke if the application
-     * is run interactively.  Typically the startup file is "~/.apprc"
-     * where "app" is the name of the application.  If this line is deleted
-     * then no user-specific startup file will be run under any conditions.
-     */
-
-    tcl_RcFileName = "~/.wishrc";
     return TCL_OK;
 }
 
@@ -175,11 +131,6 @@ void myplot4();
 /* Plots several simple functions */
 /* Note the compiler should automatically convert all non-pointer arguments
    to satisfy the prototype, but some have problems with constants. */
-
-#include "plplot.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 
 static PLFLT xs[6] =
 {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
