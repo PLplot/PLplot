@@ -15,3 +15,5 @@
 * Fix all Lintian errors and warnings.
 
 * Remove all the old files from CVS (*.README.Debian, *.files, etc)
+
+* Check all the bugs in the BTS and close those that are fixed.

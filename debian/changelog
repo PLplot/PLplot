@@ -1,4 +1,4 @@
-plplot (5.2.0-1) unstable; urgency=low
+plplot (5.2.0.cvs.20030214-1.testing.0) unstable; urgency=low
 
   * New upstream release.
   * In several files, changed e-mail address of maintainer to his
