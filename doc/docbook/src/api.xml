@@ -1476,7 +1476,7 @@ reference stream to the current stream
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Number of reference stream.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1487,7 +1487,9 @@ reference stream to the current stream
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            If <literal><parameter>flags</parameter></literal> is set to 1
+	    the device coordinates are <emphasis>not</emphasis> copied from the reference to current
+	    stream.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2259,7 +2261,7 @@ next new page
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to default character height.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2270,7 +2272,7 @@ next new page
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to current (scaled) character height.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2312,7 +2314,7 @@ from color map0
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Index of desired cmap0 color.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2323,7 +2325,7 @@ from color map0
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to 8-bit red value.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2334,7 +2336,7 @@ from color map0
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to 8-bit green value.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2345,7 +2347,7 @@ from color map0
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to 8-bit blue value.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2473,7 +2475,8 @@ from color map0
     </para> 
 
     <para>
-      Get the current device (keyword) name.  Note: you MUST have allocated
+      Get the current device (keyword) name.  Note: you
+<emphasis>must</emphasis> have allocated
 space for this (80 characters is safe).
     </para>
 
@@ -2485,7 +2488,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to device (keyword) name string.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2495,7 +2498,7 @@ space for this (80 characters is safe).
 
   <sect1 id="plgdidev" renderas="sect3">
     <title>
-      <function>plgdidev</function>: Retrieve current window into device space
+      <function>plgdidev</function>: Retrieve parameters that define current window
     </title> 
 
     <para>
@@ -2513,7 +2516,8 @@ space for this (80 characters is safe).
     </para> 
 
     <para>
-      Retrieve current window into device space.
+      Retrieve relative margin width, aspect ratio, and relative justification
+      that define current window.
     </para>
 
     <variablelist>
@@ -2524,7 +2528,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to relative margin width.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2535,7 +2539,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to aspect ratio.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2546,7 +2550,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to relative justification in x.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -2557,7 +2561,7 @@ space for this (80 characters is safe).
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to relative justification in y.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5872,8 +5876,7 @@ linkend="color-map-0"/>).
 
   <sect1 id="plsdidev" renderas="sect3">
     <title>
-      <function>plsdidev</function>: Set window into device space using
-margin, aspect ratio, and justification.
+      <function>plsdidev</function>: Set parameters that define current window
     </title> 
 
     <para>
@@ -5891,8 +5894,8 @@ margin, aspect ratio, and justification.
     </para> 
 
     <para>
-      Set window into device space using margin, aspect ratio, and
-      justification.  If you want to just use the previous value for any of
+      Set relative margin width, aspect ratio, and relative
+      justification that define current window.  If you want to just use the previous value for any of
       these, just pass in the magic value PL_NOTSET. It is unlikely that one
       should ever need to change the aspect ratio but it's in there for
       completeness.
@@ -5906,7 +5909,7 @@ margin, aspect ratio, and justification.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative margin width.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5917,7 +5920,7 @@ margin, aspect ratio, and justification.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Aspect ratio.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5928,7 +5931,7 @@ margin, aspect ratio, and justification.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative justification in x.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -5939,7 +5942,7 @@ margin, aspect ratio, and justification.
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Relative justification in y.
 	  </para>
 	</listitem>
       </varlistentry>
