@@ -27,7 +27,7 @@ dnl ------------------------------------------------------------------------
 dnl Configuring the gcw driver and the plplotcanvas support needs the
 dnl pkg-config program
 
-if test "$with_pkg_config" = no ; then
+if test "$with_pkg_config" = no; then
 
   AC_MSG_WARN([pkg-config support is disabled])
   AC_MSG_WARN([Setting enable_gcw and enable_pygcw to no])
@@ -125,6 +125,8 @@ if test "$enable_gcw" = "yes"; then
         fi
       fi
     fi
+  else
+    enable_pygcw=no
   fi
 fi
 
