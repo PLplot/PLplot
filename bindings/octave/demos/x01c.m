@@ -120,11 +120,9 @@ endfunction
 function plot1(xscale, yscale, xoff, yoff)
 
   m=60;
-  
-  for i=1:m
-    x(i) = xoff + xscale * (i + 1) / m;
-    y(i) = yoff + yscale * (x(i).^2.);
-  endfor
+  i=1:m;
+  x = xoff + xscale * (i + 1) / m;
+  y = yoff + yscale * (x(i).^2.);
 
   xmin = min(x);
   xmax = max(x);
@@ -132,11 +130,9 @@ function plot1(xscale, yscale, xoff, yoff)
   ymax = max(y);
 
   n=5;
-  
-  for i=1:n
-    xs(i) = x(i * 10 + 3);
-    ys(i) = y(i * 10 + 3);
-  endfor
+  i=1:n;
+  xs = x(i * 10 + 3);
+  ys = y(i * 10 + 3);
 
   ## Set up the viewport and window using PLENV. The range in X is 
   ## * 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
@@ -151,12 +147,12 @@ function plot1(xscale, yscale, xoff, yoff)
   ## Plot the data points */
 
   plcol0(4);
-  plpoin(xs, ys, 9);
+  plpoin(xs', ys', 9);
 
   ## Draw the line through the data */
 
   plcol0(3);
-  plline(x, y);
+  plline(x', y');
 
 endfunction
 
@@ -174,19 +170,17 @@ function plot2
   ## Fill up the arrays */
 
   m=100;
+  i=1:m;
+  x = (i - 19.0) / 6.0;
+  y = sin(x) ./ x;
+  y(x==0) = 1;
   
-  for i=1:m
-    x(i) = (i - 19.0) / 6.0;
-    y(i) = 1.0;
-    if (x(i) != 0.0)
-      y(i) = sin(x(i)) / x(i);
-    endif
-  endfor
-
   ## Draw the line */
 
   plcol0(3);
-  plline(x, y);
+  plwid(2);
+  plline(x', y');
+  plwid(1);
 
 endfunction
 
@@ -220,13 +214,12 @@ function plot3
   plcol0(3);
   pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
 
-  for i=1:100
-    x(i) = 3.6 * i;
-    y(i) = sin(x(i) * pi / 180.0);
-  endfor
+  i=1:100;
+  x = 3.6 * i;
+  y = sin(x * pi / 180.0);
 
   plcol0(4);
-  plline(x, y);
+  plline(x', y');
   
 endfunction
 

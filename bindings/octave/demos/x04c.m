@@ -52,12 +52,11 @@ function plot1(type)
   ## Set up data for log plot */
 
   f0 = 1.0;
-  for i=1:100
-    freql(i) = -2.0 + i / 20.0;
-    freq = 10.0 .^ freql(i);
-    ampl(i) = 20.0 * log10(1.0 / sqrt(1.0 + (freq / f0).^ 2.));
-    phase(i) = -(180.0 / 3.141592654) * atan(freq / f0);
-  endfor
+  i=1:100;
+  freql = -2.0 + i / 20.0;
+  freq = 10.0 .^ freql;
+  ampl = 20.0 * log10(1.0 ./ sqrt(1.0 + (freq ./ f0).^ 2.));
+  phase = -(180.0 / 3.141592654) * atan(freq ./ f0);
 
   plvpor(0.15, 0.85, 0.1, 0.9);
   plwind(-2.0, 3.0, -80.0, 0.0);
@@ -78,9 +77,9 @@ function plot1(type)
   ## Plot ampl vs freq */
 
   plcol0(2);
-  plline(freql, ampl);
+  plline(freql', ampl');
   plcol0(1);
-  plptex(5.0, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade");
+  plptex(1.6, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade");
 
   ## Put labels on */
 
@@ -97,7 +96,7 @@ function plot1(type)
     plwind(-2.0, 3.0, -100.0, 0.0);
     plbox("", 0.0, 0, "cmstv", 30.0, 3);
     plcol0(3);
-    plline(freql, phase);
+    plline(freql', phase');
     plcol0(3);
     plmtex("r", 5.0, 0.5, 0.5, "Phase shift (degrees)");
   endif

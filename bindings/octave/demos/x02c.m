@@ -38,13 +38,13 @@ function x02c
   plschr(0.0, 3.5);
   plfont(4);
 
-  for i=1:15
+  for i=0:15
     plcol0(i);
     text=sprintf("%d", i);
     pladv(0);
     vmin = 0.1;
     vmax = 0.9;
-    for j=1:2
+    for j=0:2
       plwid(j + 1);
       plvpor(vmin, vmax, vmin, vmax);
       plwind(0.0, 1.0, 0.0, 1.0);

@@ -30,11 +30,10 @@ function x03c
 
   dtr = pi / 180.0;
 
-  for i=1:360
-    x0(i) = cos(dtr * i);
-    y0(i) = sin(dtr * i);
-  endfor
-
+  i=1:360;
+  x0 = cos(dtr * i);
+  y0 = sin(dtr * i);
+  
   ## Parse and process command line arguments */
 
   ##    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
@@ -43,25 +42,15 @@ function x03c
 
   plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
   for i=1:10
-
-    ## Use matrix features of octave. Uncomment next four lines and comment
-    ## the following 2 to watch the difference!
-    
-    ##	for j=1:360
-    ##    x(j) = 0.1 * i * x0(j);
-    ##	  y(j) = 0.1 * i * y0(j);
-    ##	endfor
-
     x(:) = 0.1 * i * x0(:);
     y(:) = 0.1 * i * y0(:);
     
     ## Draw circles for polar grid */
-
     plline(x, y);
   endfor
 
   plcol0(2);
-  for i=1:11
+  for i=0:11
     theta = 30.0 * i;
     dx = cos(dtr * theta);
     dy = sin(dtr * theta);
@@ -82,14 +71,13 @@ function x03c
 
   ## Draw the graph */
 
-  for i=1:360
-    r = sin(dtr * (5 * i));
-    x(i) = x0(i) * r;
-    y(i) = y0(i) * r;
-  endfor
+  i=1:360;
+  r = sin(dtr * (5 * i));
+  x = x0 .* r;
+  y = y0 .* r;
 
   plcol0(3);
-  plline(x, y);
+  plline(x', y');
 
   plcol0(4);
   plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh");

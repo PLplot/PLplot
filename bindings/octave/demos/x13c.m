@@ -26,10 +26,10 @@ function x13c
 
   text =[
 	 "Maurice",
-	 "Randy",
-	 "Mark",
-	 "Steve",
-	 "Warner"
+	 "Geoffrey",
+	 "Alan",
+	 "Rafael",
+	 "Vince"
 	 ];
 
   per(1) = 10.;

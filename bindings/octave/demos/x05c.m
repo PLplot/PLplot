@@ -37,12 +37,11 @@ function x05c
   ## Fill up data points */
 
   delta = 2.0 * pi /  NPTS;
-  for i=1:NPTS
-    data(i) = sin(i * delta);
-  endfor
+  i=1:NPTS;
+  data = sin(i * delta);
   
   plcol0(1);
-  plhist(data, -1.1, 1.1, 44, 0);
+  plhist(data', -1.1, 1.1, 44, 0);
   plcol0(2);
   pllab("#frValue", "#frFrequency",
 	"#frPLplot Example 5 - Probability function of Oscillator");

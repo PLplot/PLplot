@@ -17,10 +17,10 @@
 
 1;
 
-## Set up transformation function */
+## Set up transformation function 
 
-global nx = 35;		## Default number of data points in x */
-global ny = 46;		## Default number of data points in y */
+global nx = 35;	## Default number of data points in x 
+global ny = 46;	## Default number of data points in y 
 global	tr = [2/(nx-1); 0.0; -1.0; 0.0; 2/(ny-1); -1.0];
 
 function  [tx ty] = mypltr( x, y)
@@ -40,9 +40,9 @@ function ix16c
   endif
 
   global tr; global nx; global ny;
-  ## Fundamental settings.  See notes[] for more info. */
+  ## Fundamental settings.  See notes[] for more info. 
 
-  ns = 20;		## Default number of shade levels */
+  ns = 20;		## Default number of shade levels 
 
   notes = [
 	   "To get smoother color variation, increase ns, nx, and ny.  To get faster",
@@ -50,21 +50,22 @@ function ix16c
 	   "test results from ns around 5 and nx, ny around 25."];
 
   sh_cmap = 1;
+  fill_width = 2; cont_color = 0;  cont_width = 0;
   min_color = 1; min_width = 0; max_color = 0; max_width = 0;
 
-  ## Parse and process command line arguments */
+  ## Parse and process command line arguments 
 
   ##    plMergeOpts(options, "x16c options", notes);
   ##    plParseOpts(&argc, argv, PL_PARSE_FULL);
 
-  ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display */
+  ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display 
 
   plscmap0n(3);
 
-  ## Initialize plplot */
+  ## Initialize plplot 
   plinit();
 
-  ## Set up data array */
+  ## Set up data array 
 
   for i = 0:nx-1
     x = (i - (nx / 2)) / (nx / 2);
@@ -80,8 +81,9 @@ function ix16c
 
   i = 0:ns-1;
   clevel = (zmin .+ (zmax - zmin) .* (i + 0.5) ./ ns)';
+  shedge = zmin + (zmax - zmin) * i / ns;
   
-  ## Set up coordinate grids */
+  ## Set up coordinate grids 
 
   for i = 0:nx-1
     j = 0:ny-1;
@@ -91,90 +93,67 @@ function ix16c
     argy = y * pi/2;
     distort = 0.4;
 
-    xg3(i+1,:) = x .+ distort .* cos(argx);
-    yg3(i+1,:) = y .- distort .* cos(argy);
+    xg1(i+1,:) = x .+ distort .* cos(argx);
+    yg1(i+1,:) = y .- distort .* cos(argy);
 
     xg2(i+1,:) = x .+ distort .* cos(argx) .* cos(argy);
     yg2(i+1,:) = y .- distort .* cos(argx) .* cos(argy);
   endfor
 
-  xg1 = xg3(:,1);
-  yg1 = yg3(nx,:)';
-  
-  ## Plot using identity transform */
+  xg1 = xg1(:,1);
+  yg1 = yg1(1,:)';
+
+  ## Plot using identity transform 
 
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
+  plpsty(0);
 
-  for i = 0:ns-1
-    shade_min = zmin + (zmax - zmin) * i / ns;
-    shade_max = zmin + (zmax - zmin) * (i +1) / ns;
-    sh_color = i / (ns-1);
-    sh_width = 2;
-    plpsty(0);
-
-    plshade(z, "0", -1., 1., -1., 1., 
-	    shade_min, shade_max, 
-	    sh_cmap, sh_color, sh_width,
-	    min_color, min_width, max_color, max_width, 1, zeros(6,1));
-  endfor
+  plshades(z, -1., 1., -1., 1., 
+	   shedge', fill_width,
+	   cont_color, cont_width,
+	   1);
 
   plcol(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
   plcol(2);
   
-  plcont(w, 1, nx, 1, ny, clevel, tr);
+  ## plcont(w, 1, nx, 1, ny, clevel, tr);
   
   pllab("distance", "altitude", "Bogon density 1");
 
-  ## Plot using 1d coordinate transform */
+  ## Plot using 1d coordinate transform 
 
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
+  plpsty(0);
 
-  for i = 0:ns-1
-    shade_min = zmin + (zmax - zmin) * i / ns;
-    shade_max = zmin + (zmax - zmin) * (i +1) / ns;
-    sh_color = i / (ns-1);
-    sh_width = 2;
-    plpsty(0);
-
-    plshade1(z, "0", -1., 1., -1., 1., 
-	     shade_min, shade_max, 
-	     sh_cmap, sh_color, sh_width,
-	     min_color, min_width, max_color, max_width,
-	     1, xg1, yg1);
-  endfor
+  plshades1(z, -1., 1., -1., 1., 
+	    shedge', fill_width,
+	    cont_color, cont_width,
+	    1, xg1, yg1);
 
   plcol(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
   plcol(2);
 
-  plcont1(w, 1, nx, 1, ny, clevel, xg1, yg1);
+  ## plcont1(w, 1, nx, 1, ny, clevel, xg1, yg1);
 
   pllab("distance", "altitude", "Bogon density 2");
 
-  ## Plot using 2d coordinate transform */
+  ## Plot using 2d coordinate transform 
 
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
+  plpsty(0);
 
-  for i = 0:ns-1
-    shade_min = zmin + (zmax - zmin) * i /  ns;
-    shade_max = zmin + (zmax - zmin) * (i +1) / ns;
-    sh_color = i / (ns-1);
-    sh_width = 2;
-    plpsty(0);
-
-    plshade2(z, "0", -1., 1., -1., 1., 
-	     shade_min, shade_max, 
-	     sh_cmap, sh_color, sh_width,
-	     min_color, min_width, max_color, max_width,
-	     0, xg2, yg2);
-  endfor
+  plshades2(z, -1., 1., -1., 1., 
+	    shedge', fill_width,
+	    cont_color, cont_width,
+	    0, xg2, yg2);
 
   plcol(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
@@ -183,7 +162,93 @@ function ix16c
 
   pllab("distance", "altitude", "Bogon density, with streamlines");
 
-  ## Clean up */
+  ## Plot using 2d coordinate transform 
+
+  pladv(0);
+  plvpor(0.1, 0.9, 0.1, 0.9);
+  plwind(-1.0, 1.0, -1.0, 1.0);
+  plpsty(0);
+
+  plshades2(z, -1., 1., -1., 1., 
+	    shedge', fill_width,
+	    2, 3,
+	    0, xg2, yg2);
+
+  plcol(1);
+  plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+  plcol(2);
+  ## plcont2(w, 1, nx, 1, ny, clevel, xg2, yg2);
+
+  pllab("distance", "altitude", "Bogon density, with streamlines");
+
+  ## Note this exclusion API will probably change. 
+  
+  ## Plot using 2d coordinate transform and exclusion
+  if (0) ## exclusion not implemented
+    pladv(0);
+    plvpor(0.1, 0.9, 0.1, 0.9);
+    plwind(-1.0, 1.0, -1.0, 1.0);
+    plpsty(0);
+
+    plshades2(z, -1., 1., -1., 1., 
+	      shedge', fill_width,
+	      cont_color, cont_width,
+	      0, xg2, yg2);
+
+    plcol(1);
+    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
+    pllab("distance", "altitude", "Bogon density, with streamlines");
+  endif
+
+### Example with polar coordinates. 
+
+  PERIMETERPTS=100;
+  pladv(0);
+  plvpor( .1, .9, .1, .9 );
+  plwind( -1., 1., -1., 1. );
+
+  plpsty(0);
+
+  ## Build new coordinate matrices. 
+  
+  for i = 0:nx-1;
+    r = i/ (nx-1);
+    j = 0:ny-1;
+    t = (2*pi/(ny-1))*j;
+    xg2(i+1,:) = r.*cos(t);
+    yg2(i+1,:) = r.*sin(t);
+    z(i+1,:) = exp(-r.*r).*cos(5*pi*r).*cos(5*t);
+  endfor
+
+  ## Need a new shedge to go along with the new data set. 
+
+  zmin = min(min(z));
+  zmax = max(max(z));
+
+  i = 0:ns;
+  shedge = zmin + (zmax - zmin) *  i /  ns;
+
+  ##  Now we can shade the interior region. 
+  plshades2(z, -1, 1, -1, 1, 
+	    shedge', fill_width,
+	    cont_color, cont_width,
+	    0, xg2, yg2);
+
+  ## Now we can draw the perimeter.  (If do before, shade stuff may overlap.) 
+  i = 0:PERIMETERPTS-1;
+  t = (2*pi/(PERIMETERPTS-1))*i;
+  px = cos(t);
+  py = sin(t);
+
+  plcol0(1);
+  plline(px', py');
+  
+  ## And label the plot.
+
+  plcol0(2);
+  pllab( "", "",  "Tokamak Bogon Instability" );
+
+  ## Clean up 
 
   plend();
 
