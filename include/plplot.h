@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.53  1994/01/17 21:34:21  mjl
+ * Revision 1.54  1994/03/22 23:18:01  furnish
+ * Include a prototype for plFrameCmd if using Tk.
+ *
+ * Revision 1.53  1994/01/17  21:34:21  mjl
  * Added function prototype for c_plgcol0().
  *
  * Revision 1.52  1994/01/15  17:33:42  mjl
@@ -1282,6 +1285,11 @@ Alloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny);
 
 void
 Free2dGrid(PLFLT **f, PLINT nx, PLINT ny);
+
+#ifdef TK
+#include <tk.h>
+int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
+#endif
 
 #ifdef __cplusplus
 }
