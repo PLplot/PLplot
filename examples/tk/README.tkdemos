@@ -1,22 +1,18 @@
 Running the Tk Demos.
 
-If the PLplot software is not installed, these Tk demos may only be executed
-(with symlinks that have already been set up) from plplot/tmp because of
-hard-linked locations within the source code. Once PLplot has been
-installed, then you should be able to copy these examples to any directory
-(so long as the x??.tcl symlinks still point to a good location) and be able
-to execute them there.
+PLplot must be installed before you can run these demos.
 
 To run the plot.tcl demo follow the directions in that file to run it
 under plserver using the plframe widget.
 
-Once xtk??.c are built into the corresponding executables, then you run
-the examples in the following way (from plplot/tmp if not installed
-or from and arbitrary directory if plplot has been installed).
+Build the xtk?? executables using the 'make' command.
+
+Once the xtk?? executables are built, then you run the examples in the
+following way:
 
 ./xtk01 -f tk01
 ./xtk02 -f tk02
-$prefix/bin/plserver -f tk03
+./tk03
 ./xtk04 -f tk04
 
 There are two ways to run tkdemos.tcl which exercises all the x??.tcl
@@ -34,12 +30,7 @@ plserver -h to find out what they are).
 
 (2)
 wish
-#if trying it in plplot/tmp location
-lappend auto_path .
-
-#if installed
 lappend auto_path $prefix/lib/plplot5.1.0
-
 package require Pltk
 source tkdemos.tcl
 1
@@ -62,11 +53,6 @@ and wish
 source runAllDemos.tcl
 
 wish
-#if trying it in plplot/tmp location
-lappend auto_path .
-
-#if installed
 lappend auto_path $prefix/lib/plplot5.1.0
-
 package require Plplotter
 source runAllDemos.tcl
