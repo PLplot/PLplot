@@ -26,6 +26,8 @@
 */
 #include "plplot/plDevs.h"
 
+/*#define DEBUG*/
+
 #ifdef PLD_plmeta
 
 #include "plplot/plplotP.h"
@@ -42,14 +44,46 @@ typedef struct {
     PLINT xmin, xmax, xlen;
     PLINT ymin, ymax, ylen;
 
-    FPOS_T lp_offset, toc_offset;
+    FPOS_T lp_offset, index_offset;
+
+    int notfirst;
 } PLmDev;
+
+/* Used for constructing error messages */
+
+static char buffer[256];
 
 /* Function prototypes */
 
-static void WriteHeader		(PLStream *pls);
+static void WriteFileHeader	(PLStream *pls);
+static void UpdatePrevPagehdr	(PLStream *pls);
+static void WritePageInfo	(PLStream *pls, FPOS_T pp_offset);
+static void UpdateIndex		(PLStream *pls, FPOS_T cp_offset);
 static void plm_fill		(PLStream *pls);
 static void plm_swin		(PLStream *pls);
+
+/* A little function to help with debugging */
+
+#ifdef DEBUG
+#define DEBUG_PRINT_LOCATION(a) PrintLocation(pls, a)
+
+static void PrintLocation(PLStream *pls, char *tag)
+{
+    int isfile = (pls->output_type == 0);
+    if (isfile) {
+	FILE *file = pls->OutFile;
+	FPOS_T current_offset;
+
+	if (pl_fgetpos(file, &current_offset))
+	    plexit("PrintLocation (plmeta.c): fgetpos call failed");
+
+	pldebug(tag, "at offset %d in file %s\n",
+		(int) current_offset, pls->FileName);
+    }
+}
+#else
+#define DEBUG_PRINT_LOCATION(a)
+#endif
 
 /*--------------------------------------------------------------------------*\
  * plD_init_plm()
@@ -102,7 +136,7 @@ plD_init_plm(PLStream *pls)
 
 /* Write Metafile header. */
 
-    WriteHeader(pls);
+    WriteFileHeader(pls);
 
 /* Write color map state info */
 
@@ -111,6 +145,7 @@ plD_init_plm(PLStream *pls)
 
 /* Write initialization command. */
 
+    DEBUG_PRINT_LOCATION("before init");
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
 }
 
@@ -127,7 +162,7 @@ plD_line_plm(PLStream *pls, short x1, short y1, short x2, short y2)
     U_CHAR c;
     U_SHORT xy[4];
 
-    dbug_enter("plD_line_plm");
+//    dbug_enter("plD_line_plm");
 
 /* Failsafe check */
 
@@ -219,65 +254,34 @@ plD_eop_plm(PLStream *pls)
  * plD_bop_plm()
  *
  * Set up for the next page.
+ *
+ * Page header layout as follows:
+ *
+ * BOP			(U_CHAR)
+ * page number		(U_SHORT)
+ * prev page offset	(U_LONG)
+ * next page offset	(U_LONG)
+ *
+ * Each call after the first is responsible for updating the table of
+ * contents and the next page offset from the previous page.
 \*--------------------------------------------------------------------------*/
 
 void
 plD_bop_plm(PLStream *pls)
 {
     PLmDev *dev = (PLmDev *) pls->dev;
-    U_CHAR c = (U_CHAR) BOP;
-    FPOS_T cp_offset=0, fwbyte_offset=0, bwbyte_offset=0;
-    FILE *file = pls->OutFile;
+    int isfile = (pls->output_type == 0);
+    FPOS_T pp_offset = dev->lp_offset;;
 
     dbug_enter("plD_bop_plm");
 
     dev->xold = PL_UNDEFINED;
     dev->yold = PL_UNDEFINED;
 
-    fflush(file);
+/* Update previous page header */
 
-/* If writing to a file, find out where we are */
-
-    if (pls->output_type == 0) {
-	if (pl_fgetpos(file, &cp_offset))
-	    plexit("plD_bop_plm: fgetpos call failed");
-
-    /* Seek back to previous page header and write forward byte offset. */
-
-	if (dev->lp_offset > 0) {
-#ifdef DEBUG
-	    U_LONG foo;
-#endif
-	    pldebug("plD_bop_plm",
-		    "Location: %d, seeking to: %d\n",
-		    cp_offset, dev->lp_offset);
-	    fwbyte_offset = dev->lp_offset + 7;
-	    if (pl_fsetpos(file, &fwbyte_offset))
-		plexit("plD_bop_plm: fsetpos call failed");
-
-#ifdef DEBUG
-	    if (pl_fgetpos(file, &fwbyte_offset))
-		plexit("plD_bop_plm: fgetpos call failed");
-
-	    pldebug("plD_bop_plm",
-		    "Now at: %d, to write: %d\n", fwbyte_offset, cp_offset);
-#endif
-
-	    plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) cp_offset) );
-	    fflush(file);
-
-#ifdef DEBUG
-	    if (pl_fsetpos(file, &fwbyte_offset))
-		plexit("plD_bop_plm: fsetpos call failed");
-
-	    plm_rd(pdf_rd_4bytes(pls->pdfs, &foo));
-	    pldebug("plD_bop_plm", "Value read as: %d\n", foo);
-#endif
-
-	    if (pl_fsetpos(file, &cp_offset))
-		plexit("plD_bop_plm: fsetpos call failed");
-	}
-    }
+    if (isfile)
+	UpdatePrevPagehdr(pls);
 
 /* Start next family file if necessary. */
 
@@ -288,30 +292,49 @@ plD_bop_plm(PLStream *pls)
 
     pls->page++;
 
-/* Update table of contents info.  Right now only number of pages. */
-/* The order here is critical */
+/* Update table of contents info & write new page header. */
 
-    if (pls->output_type == 0) {
-	if (dev->toc_offset > 0) {
-	    if (pl_fsetpos(file, &dev->toc_offset))
-		plexit("plD_bop_plm: fsetpos call failed");
+    WritePageInfo(pls, pp_offset);
+}
 
-	    plm_wr( pdf_wr_header(pls->pdfs, "pages") );
-	    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->page) );
+/*--------------------------------------------------------------------------*\
+ * WritePageInfo()
+ *
+ * Update table of contents info & write new page header.
+\*--------------------------------------------------------------------------*/
 
-	    if (pl_fsetpos(file, &cp_offset))
-		plexit("plD_bop_plm: fsetpos call failed");
-	}
+static void
+WritePageInfo(PLStream *pls, FPOS_T pp_offset)
+{
+    PLmDev *dev = (PLmDev *) pls->dev;
+    FILE *file = pls->OutFile;
+    int isfile = (pls->output_type == 0);
+    U_CHAR c;
+    FPOS_T cp_offset=0;
+
+/* Update table of contents. */
+
+    if (isfile) {
+	if (pl_fgetpos(file, &cp_offset))
+	    plexit("WritePageInfo (plmeta.c): fgetpos call failed");
+
+	UpdateIndex(pls, cp_offset);
     }
 
 /* Write new page header */
 
-    bwbyte_offset = dev->lp_offset;
-
-    plm_wr( pdf_wr_1byte(pls->pdfs, c) );
+    if (dev->notfirst)
+	c = BOP;
+    else {
+	c = BOP0;
+	dev->notfirst = 1;
+    }
+    plm_wr( pdf_wr_1byte(pls->pdfs,  c) );
     plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->page) );
-    plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) bwbyte_offset) );
+    plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) pp_offset) );
     plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) 0) );
+
+/* Update last page offset with current page value */
 
     dev->lp_offset = cp_offset;
 
@@ -319,6 +342,125 @@ plD_bop_plm(PLStream *pls)
 /* Eventually there will be more */
 
     plD_state_plm(pls, PLSTATE_COLOR0);
+}
+
+/*--------------------------------------------------------------------------*\
+ * UpdatePrevPagehdr()
+ *
+ * Update previous page header.
+\*--------------------------------------------------------------------------*/
+
+static void
+UpdatePrevPagehdr(PLStream *pls)
+{
+    PLmDev *dev = (PLmDev *) pls->dev;
+    FILE *file = pls->OutFile;
+    FPOS_T cp_offset=0;
+
+    fflush(file);
+
+/* Determine where we are */
+
+    if (pl_fgetpos(file, &cp_offset))
+	plexit("plD_bop_plm: fgetpos call failed");
+
+/* Seek back to previous page header. */
+
+    if (dev->lp_offset > 0) {
+	FPOS_T fwbyte_offset=0;
+
+	pldebug("UpdatePrevPagehdr 1 (plmeta.c)",
+		"Location: %d, seeking to: %d\n",
+		(int) cp_offset, (int) dev->lp_offset);
+
+    /* The forward byte offset is located exactly 7 bytes after the BOP */
+	fwbyte_offset = dev->lp_offset + 7;
+	if (pl_fsetpos(file, &fwbyte_offset)) {
+	    sprintf(buffer, "UpdatePrevPagehdr (plmeta.c): fsetpos to fwbyte_offset (%d) failed",
+		    (int) fwbyte_offset);
+	    plexit(buffer);
+	}
+
+    /* DEBUG: verify current location */
+
+#ifdef DEBUG
+	if (pl_fgetpos(file, &fwbyte_offset))
+	    plexit("UpdatePrevPagehdr (plmeta.c): fgetpos call failed");
+
+	pldebug("UpdatePrevPagehdr 2 (plmeta.c)",
+		"Now at: %d, to write: %d\n", 
+		(int) fwbyte_offset, (int) cp_offset);
+#endif
+
+    /* Write forward byte offset into previous page header. */
+
+	plm_wr( pdf_wr_4bytes(pls->pdfs, (U_LONG) cp_offset) );
+	fflush(file);
+
+    /* DEBUG: move back to before the write & read it to verify */
+
+#ifdef DEBUG
+	if (pl_fsetpos(file, &fwbyte_offset)) {
+	    sprintf(buffer, "UpdatePrevPagehdr (plmeta.c): fsetpos to fwbyte_offset (%d) failed",
+		    (int) fwbyte_offset);
+	    plexit(buffer);
+	}
+	{
+	    U_LONG read_offset;
+	    plm_rd(pdf_rd_4bytes(pls->pdfs, &read_offset));
+	    pldebug("UpdatePrevPagehdr 3 (plmeta.c)",
+		    "Value read as: %d\n", read_offset);
+	}
+#endif
+
+    /* Return to current page offset */
+
+	if (pl_fsetpos(file, &cp_offset)) {
+	    sprintf(buffer, "UpdatePrevPagehdr (plmeta.c): fsetpos to cp_offset (%d) failed",
+		    (int) cp_offset);
+	    plexit(buffer);
+	}
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * UpdateIndex()
+ *
+ * Update file index.
+\*--------------------------------------------------------------------------*/
+
+static void
+UpdateIndex(PLStream *pls, FPOS_T cp_offset)
+{
+    PLmDev *dev = (PLmDev *) pls->dev;
+    FILE *file = pls->OutFile;
+
+/* Update file index.  Right now only number of pages. */
+/* The ordering here is critical */
+
+    if (dev->index_offset > 0) {
+	pldebug("UpdateIndex (plmeta.c)",
+		"Location: %d, seeking to: %d\n",
+		(int) cp_offset, (int) dev->lp_offset);
+
+	if (pl_fsetpos(file, &dev->index_offset)) {
+	    sprintf(buffer, "UpdateIndex (plmeta.c): fsetpos to index_offset (%d) failed",
+		    (int) dev->index_offset);
+	    plexit(buffer);
+	}
+	plm_wr( pdf_wr_header(pls->pdfs, "pages") );
+	plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->page) );
+
+	pldebug("UpdateIndex (plmeta.c)",
+		"Location: %d, seeking to: %d\n",
+		(int) dev->lp_offset, (int) cp_offset);
+
+	if (pl_fsetpos(file, &cp_offset)) {
+	    sprintf(buffer, "UpdateIndex (plmeta.c): fsetpos to cp_offset (%d) failed",
+		    (int) cp_offset);
+	    plexit(buffer);
+	}
+    }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -336,6 +478,7 @@ plD_tidy_plm(PLStream *pls)
 
     plm_wr( pdf_wr_1byte(pls->pdfs, c) );
     pdf_close(pls->pdfs);
+    free_mem(pls->dev);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -466,33 +609,31 @@ plm_fill(PLStream *pls)
 static void
 plm_swin(PLStream *pls)
 {
-    PLmDev *dev = (PLmDev *) pls->dev;
-
     dbug_enter("plm_swin");
 }
 
 /*--------------------------------------------------------------------------*\
- * WriteHeader()
+ * WriteFileHeader()
  *
  * Writes Metafile header.
 \*--------------------------------------------------------------------------*/
 
 static void
-WriteHeader(PLStream *pls)
+WriteFileHeader(PLStream *pls)
 {
     PLmDev *dev = (PLmDev *) pls->dev;
     FILE *file = pls->OutFile;
 
-    dbug_enter("WriteHeader(PLStream *pls");
+    dbug_enter("WriteFileHeader(PLStream *pls");
 
     plm_wr( pdf_wr_header(pls->pdfs, PLMETA_HEADER) );
     plm_wr( pdf_wr_header(pls->pdfs, PLMETA_VERSION) );
 
-/* Write table of contents info.  Right now only number of pages. */
+/* Write file index info.  Right now only number of pages. */
 /* The order here is critical */
 
-    if (pl_fgetpos(file, &dev->toc_offset))
-	plexit("WriteHeader: fgetpos call failed");
+    if (pl_fgetpos(file, &dev->index_offset))
+	plexit("WriteFileHeader: fgetpos call failed");
 
     plm_wr( pdf_wr_header(pls->pdfs, "pages") );
     plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) 0) );
