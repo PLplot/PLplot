@@ -1,3 +1,11 @@
+plplot (5.2.1-7) unstable; urgency=low
+
+  * debian/rules: Correctly changed some rule dependencies to *-stamp,
+    since the config target was being unnecessarily executed twice during
+    the package building.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Wed,  7 May 2003 08:42:27 +0200
+
 plplot (5.2.1-6) unstable; urgency=low
 
   * debian/rules: Added conditional exclusion of the octave-plplot package

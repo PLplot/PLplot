@@ -47,7 +47,7 @@ autotools-stamp:
 	touch autotools-stamp
 
 config: config-stamp
-config-stamp: autotools
+config-stamp: autotools-stamp
 	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
                     --enable-tk --enable-gd --enable-dyndrivers        \
                     --disable-static --enable-python $(octave_cfg)     \
@@ -69,7 +69,7 @@ config-stamp: autotools
 	touch config-stamp
 
 build: build-stamp
-build-stamp: config
+build-stamp: config-stamp
 	dh_testdir
 	$(MAKE)
 	touch build-stamp
