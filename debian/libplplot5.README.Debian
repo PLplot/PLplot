@@ -1,4 +1,4 @@
-plplot for DEBIAN
+plplot for Debian
 -----------------
 
 1. INTRODUCTION & ORIGIN
@@ -62,4 +62,4 @@ plplot for DEBIAN
     sources.
 
 
-Rafael Laboissiere <rafael@debian.org>, Sun Feb 16 19:20:58 CET 2003
+ -- Rafael Laboissiere <rafael@debian.org>, Tue Mar  4 17:05:31 2003

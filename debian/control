@@ -145,9 +145,10 @@ Package: plplot-doc
 Architecture: all
 Depends: libplplot5
 Suggests: libplplot-dev
+Conflicts: libplplot5 (<< 5.2.0.cvs.20030305)
 Description: Documentation for PLplot, a plotting library
- This package contains the HTML and PDF forms of the PLplot
- documentation.
+ This package contains the HTML, PDF, PS and info forms of the PLplot
+ documentation.  It also contains the man pages for the API functions.
  .
  See http://www.plplot.org for more information on PLplot.
  .

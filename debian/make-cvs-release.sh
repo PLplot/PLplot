@@ -20,7 +20,7 @@ echo done
 
 if test "$1" != "-u" ; then
   ./bootstrap.sh
-  ./configure --enable-docbook
+  ./configure --enable-docbook --enable-python --enable-octave
   ( cd doc/docbook ; make )
   cp config.status config.status-save
   fakeroot debian/rules clean

@@ -1,3 +1,20 @@
+plplot (5.2.0.cvs.20030306-1) unstable; urgency=low
+
+  * Built with new CVS sources:
+      - The new API plgriddata has been added, as well as the nn and csa
+        libraries.
+      - The pkg-config files changed place.
+      - Xwin driver is now Pthreaded.
+      - Patch to plsym.c allowing vertical text in the bottom and top axes.
+  * debian/rules: Removing debian/files for lintian cleanness.  After
+    installation, the dvi form of the documentation is deleted.
+  * debian/plplot-doc.files: Added the .ps.gz documentation file.
+  * debian/control: For plplot-doc, added Conlicts: relationship to
+    libplplot5, since the .ps.gz have been moved.  Improved description
+    for the plplot-doc package.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Wed,  5 Mar 2003 14:47:07 +0100
+
 plplot (5.2.0.cvs.20030301-1) unstable; urgency=low
 
   * Built with new CVS sources.  Fixed gnome driver, which was plotting

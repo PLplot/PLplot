@@ -43,7 +43,7 @@ build-stamp: config
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp install-stamp config-stamp
+	rm -f build-stamp install-stamp config-stamp debian/files
 	-$(MAKE) clean
 	find . -name config.log -o -name config.status | xargs rm -f
 	dh_clean
@@ -56,7 +56,7 @@ install-stamp: build-stamp
 	make DESTDIR=$(debtmp) install
 
 	( cd $(debdoc)/plplot ; \
-	  rm -f COPYING.LIB ; \
+	  rm -f COPYING.LIB *.dvi ; \
 	  mv ChangeLog changelog )
 	mv $(debdoc)/plplot $(debdoc)/libplplot5
 	mv $(debex) $(debdoc)/libplplot5
