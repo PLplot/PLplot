@@ -54,7 +54,7 @@ tk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 */
     new_name = strrchr(name, '/');
     if (new_name != NULL) {
-	name = new_name++;
+	name = ++new_name;
     }
 
 /* Create the main window */
