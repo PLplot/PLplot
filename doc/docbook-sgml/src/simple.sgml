@@ -193,7 +193,7 @@
 	    
 	    <listitem>
 	      <para>
-		<parameter>axis</parameter> = 0: Draw box, labelled with
+		<parameter>axis</parameter> = 0: Draw box, labeled with
 		coordinate values around edge.
 	      </para>
 	    </listitem>
@@ -265,15 +265,15 @@
     </para>
     
     <para>
-      For greater control over the size of the plots, axis labelling and
+      For greater control over the size of the plots, axis labeling and
       tick intervals, more complex graphs should make use of the functions
       &plvpor;, &plvasp;, &plvpas;, &plwind;, &plbox;, and routines for
-      manipulating axis labelling &plgxax; through &plszax;.
+      manipulating axis labeling &plgxax; through &plszax;.
     </para>
   </sect1>
 
   <sect1 id="labelling">
-    <title>Labelling the Graph</title>
+    <title>Labeling the Graph</title>
     
     <para>
       The function &pllab; may be called after &plenv; to write labels on
