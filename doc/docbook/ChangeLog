@@ -1,5 +1,9 @@
 2000-11-24  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* Makefile.am (www-install): Broken down into smaller rules.  The
+	HTML tarball is now decompacted at the WWW host.  Better
+	CLEANFILES.
+
 	* configure.in (AM_INIT_AUTOMAKE): Bumped package version to
 	0.2.1.
 

@@ -1,5 +1,5 @@
 EXTRA_DIST = README.developers bootstrap.sh cnf/* www/index.html.in
-CLEANFILES = $(TARBALL) $(WWW_BASE)
+CLEANFILES = $(TARBALL) *.tar.gz
 DISTCLEANFILES = @CONFTEST@.* @JADELOG@ www/index.html
 SUBDIRS = src bin
 
@@ -11,28 +11,35 @@ RCP_PREFIX = $(shell if test -z "$(WWW_USER)$(WWW_HOST)" ; then \
                      fi)
 
 TARBALL = tarball.tgz
-WWW_BASE = $(BASE).tar.gz $(BASE_HTML) $(BASE_HTML).tar.gz
+HTML_TARBALL = $(BASE_HTML).tar.gz
 
-www-uninstall:
-	$(RSH_COMMAND) rm -rf $(WWW_DIR)
-
-www-install: dist www-uninstall
+$(HTML_TARBALL): src/$(HTML_MANIFEST) src/$(JPEG_MANIFEST)
 	( cd src ; \
-          $(MAKE) )
+          $(MAKE) html )
 	rm -rf $(BASE_HTML)
 	mkdir $(BASE_HTML)
 	( cd src ; \
           cp `cat $(HTML_MANIFEST)` `cat $(JPEG_MANIFEST)` \
              ../$(BASE_HTML) )
-	tar cfz $(BASE_HTML).tar.gz $(BASE_HTML)
-	tar cfz $(TARBALL) $(WWW_BASE) \
+	tar cfz $(HTML_TARBALL) $(BASE_HTML)
+	rm -rf $(BASE_HTML)
+
+$(TARBALL): dist $(HTML_TARBALL) src/$(BASE).ps.gz src/$(BASE).dvi
+	( cd src ; \
+          $(MAKE) print )
+	tar cfz $(TARBALL) $(HTML_TARBALL) $(BASE).tar.gz \
                 -C www index.html -C ../src $(BASE).ps.gz $(BASE).dvi
+
+www-uninstall:
+	$(RSH_COMMAND) rm -rf $(WWW_DIR)
+
+www-install: $(TARBALL) www-uninstall
 	$(RSH_COMMAND) mkdir -p $(WWW_DIR)
 	$(RCP) $(TARBALL) $(RCP_PREFIX)$(WWW_DIR)
 	$(RSH_COMMAND) tar xfz $(WWW_DIR)/$(TARBALL) -C $(WWW_DIR)
+	$(RSH_COMMAND) tar xfz $(WWW_DIR)/$(HTML_TARBALL) -C $(WWW_DIR)
 	$(RSH_COMMAND) chgrp -R $(WWW_GROUP) $(WWW_DIR)
 	$(RSH_COMMAND) chmod -R g=u $(WWW_DIR)
 	$(RSH_COMMAND) rm -f $(WWW_DIR)/$(TARBALL)
-	rm -rf $(TARBALL) $(WWW_BASE)
 
 .PHONY: www-uninstall www-install 
