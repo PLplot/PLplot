@@ -1,0 +1,6 @@
+Support for VMS has been abandoned.  The makefile stored here is the last
+one to work under VMS, but is incredibly old and guaranteed to be broken
+now.  If anyone wants to take up the job, let me know.
+
+Maurice LeBrun
+mjl@dino.ph.utexas.edu
