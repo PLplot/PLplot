@@ -1,6 +1,16 @@
 /* $Id$
  * $Log$
- * Revision 1.29  1994/05/23 22:09:04  mjl
+ * Revision 1.30  1994/06/09 20:15:30  mjl
+ * Changed plplot direct widget commands ("<widget> cmd <command> <args>") to
+ * begin with a "pl", e.g. scol<?> to plscol<?>, etc.  To make going between
+ * the C and Tcl API's as natural as possible.  Added new direct widget
+ * commands plenv, plcol, pllab, and plline.  These were formerly in
+ * tkshell.c; having them here makes it trivial to associate independent
+ * streams with different widgets without user intervention.  The call to
+ * plinit() now done automatically when the widget is first mapped, and
+ * the "<widget> cmd init" command no longer supported.  Some reorganization.
+ *
+ * Revision 1.29  1994/05/23  22:09:04  mjl
  * Fixed some minor omissions regarding the xorGC.
  *
  * Revision 1.28  1994/05/10  21:49:52  mjl
@@ -91,6 +101,8 @@
 #include "plserver.h"
 #include "plstream.h"
 
+extern int plplot_ccmap;
+
 #define NDEV	20		/* Max number of output device types */
 
 /* If set, BUFFER_FIFO causes FIFO i/o to be buffered */
@@ -149,7 +161,6 @@ typedef struct {
     /* control stuff */
 
     int tkwin_initted;		/* Set first time widget is mapped */
-    int plplot_initted;		/* Set first time PLPlot is initialized */
     PLStream *plsc;		/* PLPlot stream pointer */
     PLINT ipls;			/* PLPlot stream number */
     PLINT ipls_save;		/* PLPlot stream number, save files */
@@ -288,6 +299,7 @@ static void  PlFrameEventProc	(ClientData, XEvent *);
 static int   PlFrameWidgetCmd	(ClientData, Tcl_Interp *, int, char **);
 static void  MapPlFrame 	(ClientData);
 static int   ReadData		(ClientData, int);
+static void  Install_cmap	(PlFrame *plFramePtr);
 
 /* These are invoked by PlFrameWidgetCmd to process widget commands */
 
@@ -344,7 +356,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
     Tk_Uid screenUid;
     char *className, *screen;
-    int src, dst;
+    int src, dst, i, ndev;
 
     XGCValues gcValues;
     unsigned long mask;
@@ -429,7 +441,6 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->ipls = 0;
     plFramePtr->ipls_save = 0;
     plFramePtr->tkwin_initted = 0;
-    plFramePtr->plplot_initted = 0;
     plFramePtr->bgColor = NULL;
     plFramePtr->plpr_cmd = NULL;
     plFramePtr->bopCmd = NULL;
@@ -441,14 +452,17 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->xr = 1.;
     plFramePtr->yr = 1.;
     plFramePtr->SaveFnam = NULL;
-    plFramePtr->devDesc = NULL;
-    plFramePtr->devName = NULL;
 
     plFramePtr->plr = (PLRDev *) ckalloc(sizeof(PLRDev));
     plr = plFramePtr->plr;
     plr->pdfs = NULL;
     plr->iodev = (PLiodev *) ckalloc(sizeof(PLiodev));
     plr_start(plr);
+
+/* Associate new PLplot stream with this widget */
+
+    plmkstrm(&plFramePtr->ipls);
+    plgpls(&plFramePtr->plsc);
 
 /* Set up stuff for rubber-band drawing */
 
@@ -460,6 +474,16 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
     plFramePtr->draw_cursor =
 	Tk_GetCursor(plFramePtr->interp, plFramePtr->tkwin, "crosshair");
+
+/* Create list of valid device names and keywords for page dumps */
+
+    plFramePtr->devDesc = (char **) ckalloc(NDEV * sizeof(char **));
+    plFramePtr->devName = (char **) ckalloc(NDEV * sizeof(char **));
+    for (i = 0; i < NDEV; i++) {
+	plFramePtr->devDesc[i] = NULL;
+	plFramePtr->devName[i] = NULL;
+    }
+    plgFileDevs(&plFramePtr->devDesc, &plFramePtr->devName, &ndev);
 
 /* Start up event handlers */
 
@@ -831,7 +855,6 @@ PlFrameInit(ClientData clientData)
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
     register Tk_Window tkwin = plFramePtr->tkwin;
-    int i, ndev;
 
 /* Set up window parameters and arrange for window to be refreshed */
 
@@ -839,29 +862,25 @@ PlFrameInit(ClientData clientData)
     plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
 
 /* First-time initialization */
-/* PLPlot calls to set driver and related variables are made. */
-/* The call to plinit() must come AFTER this section of code */
-/* This part will require modification to support >1 embedded widgets */
 
     if ( ! plFramePtr->tkwin_initted) {
-	plgpls(&plFramePtr->plsc);
-	plgstrm(&plFramePtr->ipls);
+	XwDev *dev;
+	Window top, parent, colormap_windows[5];
+	int count = 0;
 
+	plsstrm(plFramePtr->ipls);
 	plsdev("xwin");
 	plsxwin(Tk_WindowId(tkwin));
 	plspause(0);
+	plinit();
+	if (plplot_ccmap)
+	    Install_cmap(plFramePtr);
+
+	pladv(0);
 
 	plFramePtr->tkwin_initted = 1;
 	plFramePtr->prevWidth = Tk_Width(tkwin);
 	plFramePtr->prevHeight = Tk_Height(tkwin);
-
-	plFramePtr->devDesc = (char **) ckalloc(NDEV * sizeof(char **));
-	plFramePtr->devName = (char **) ckalloc(NDEV * sizeof(char **));
-	for (i = 0; i < NDEV; i++) {
-	    plFramePtr->devDesc[i] = NULL;
-	    plFramePtr->devName[i] = NULL;
-	}
-	plgFileDevs(&plFramePtr->devDesc, &plFramePtr->devName, &ndev);
     }
     else {
 	plFramePtr->flags |= RESIZE_PENDING;
@@ -870,6 +889,54 @@ PlFrameInit(ClientData clientData)
 /* Draw plframe */
 
     DisplayPlFrame(clientData);
+}
+
+/*
+ *---------------------------------------------------------------------------
+ *
+ * Install_cmap --
+ *
+ *	Installs X driver color map as necessary when custom color maps
+ *	are used. 
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Parent color maps may get changed.
+ *
+ *---------------------------------------------------------------------------
+ */
+
+static void
+Install_cmap(PlFrame *plFramePtr)
+{
+    XwDev *dev;
+    Window top, parent, colormap_windows[5];
+    int count = 0;
+
+#define INSTALL_COLORMAP_IN_TK
+#ifdef  INSTALL_COLORMAP_IN_TK
+	dev = (XwDev *) plFramePtr->plsc->dev;
+	Tk_SetWindowColormap(Tk_MainWindow(plFramePtr->interp), dev->map);
+
+/* If the colormap is local to this widget, the WM must be informed that
+ * it should be installed when the widget gets the focus.  The top level
+ * window must be added to the end of its own list, because otherwise the
+ * window manager adds it to the front (as required by the ICCCM).  Thanks
+ * to Paul Mackerras for providing this info in his TK photo widget.
+ */
+
+#else
+	top = Tk_WindowId(Tk_MainWindow(plFramePtr->interp));
+
+	colormap_windows[count++] = Tk_WindowId(plFramePtr->tkwin);
+	colormap_windows[count++] = top;
+
+	if ( ! XSetWMColormapWindows( plFramePtr->display,
+				      top, colormap_windows, count))
+	    fprintf(stderr, "Unable to set color map property!\n");
+#endif
 }
 
 /*
@@ -931,13 +998,6 @@ DisplayPlFrame(ClientData clientData)
 		plFramePtr->borderWidth, plFramePtr->relief);
     }
 
-/* If PLPlot not initialized yet, return and cancel pending refresh */
-
-    if ( ! plFramePtr->plplot_initted) {
-	plFramePtr->flags &= ~REFRESH_PENDING;
-	return;
-    }
-
 /* All refresh events */
 
     if (plFramePtr->flags & REFRESH_PENDING) {
@@ -957,6 +1017,7 @@ DisplayPlFrame(ClientData clientData)
 
 	if (plFramePtr->flags & REDRAW_PENDING) {
 	    plFramePtr->flags &= ~REDRAW_PENDING;
+	    plsstrm(plFramePtr->ipls);
 	    pl_cmd(PLESC_REDRAW, (void *) NULL);
 	    return;
 	}
@@ -969,6 +1030,7 @@ DisplayPlFrame(ClientData clientData)
 	    window.width = Tk_Width(tkwin);
 	    window.height = Tk_Height(tkwin);
 
+	    plsstrm(plFramePtr->ipls);
 	    pl_cmd(PLESC_RESIZE, (void *) &window);
 	    plFramePtr->prevWidth = Tk_Width(tkwin);
 	    plFramePtr->prevHeight = Tk_Height(tkwin);
@@ -977,6 +1039,7 @@ DisplayPlFrame(ClientData clientData)
 /* Expose -- if window bounds are unchanged */
 
 	else {
+	    plsstrm(plFramePtr->ipls);
 	    pl_cmd(PLESC_EXPOSE, NULL);
 	}
     }
@@ -1001,74 +1064,138 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 {
     PLStream *plsc = plFramePtr->plsc;
     int length;
-    char c;
+    char c, c3;
     int result = TCL_OK;
 
 /* no option -- return list of available PLPlot commands */
 
     if (argc == 0) {
 	Tcl_AppendResult(interp,
-			 "init gcmap0 gcmap1 scmap0 scmap1 scol0 scol1",
-			 "setopt", (char *) NULL);
+	 "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1",
+			 "plsetopt", (char *) NULL);
 	return TCL_OK;
     }
 
     c = argv[0][0];
+    c3 = argv[0][2];
     length = strlen(argv[0]);
+    plsstrm(plFramePtr->ipls);
 
-/* init -- starts the library up and advances to the first page */
+/* plcol0 or plcol -- set color index, map 0 */
 
-    if ((c == 'i') && (strncmp(argv[0], "init", length) == 0)) {
-	if (argc > 1) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		    argv[0], "\"", (char *) NULL);
-	    result = TCL_ERROR;
+    if ((c3 == 'c') &&
+	(strncmp(argv[0], "plcol", length) == 0) ||
+	(strncmp(argv[0], "plcol0", length) == 0)) {
+
+	PLINT col;
+
+	if (argc != 2) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+			     " color-index\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
 	}
-	else if ( ! plFramePtr->tkwin_initted) {
-	    Tcl_AppendResult(interp, "widget creation must precede PLPlot",
-		    "init command", (char *) NULL);
-	    result = TCL_ERROR;
-	}
-	else {
-	    XwDev *dev;
-	    Window top, parent, colormap_windows[5];
-	    int count = 0;
 
-	    plFramePtr->plplot_initted = 1;
-	    plinit();
+	col = atoi( argv[1] );
 
-/* Install custom color map in main window */
+	plcol0( col );
 
-#define INSTALL_COLORMAP_IN_TK
-#ifdef  INSTALL_COLORMAP_IN_TK
-	    dev = (XwDev *) plFramePtr->plsc->dev;
-	    Tk_SetWindowColormap(Tk_MainWindow(plFramePtr->interp), dev->map);
-
-/* If the colormap is local to this widget, the WM must be informed that
- * it should be installed when the widget gets the focus.  The top level
- * window must be added to the end of its own list, because otherwise the
- * window manager adds it to the front (as required by the ICCCM).  Thanks
- * to Paul Mackerras for providing this info in his TK photo widget.
- */
-
-#else
-	    top = Tk_WindowId(Tk_MainWindow(plFramePtr->interp));
-
-	    colormap_windows[count++] = Tk_WindowId(plFramePtr->tkwin);
-	    colormap_windows[count++] = top;
-
-	    if ( ! XSetWMColormapWindows( plFramePtr->display,
-					  top, colormap_windows, count))
-		fprintf(stderr, "Unable to set color map property!\n");
-#endif
-	    pladv(0);
-	}
+	result = TCL_OK;
     }
 
-/* gcmap0 -- get color map 0 */
+/* plenv -- Simple interface for defining viewport and window. */
+
+    else if ((c3 == 'e') && (strncmp(argv[0], "plenv", length) == 0)) {
+
+	PLFLT xmin, xmax, ymin, ymax;
+	PLINT just, axis;
+
+	if (argc != 7 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+			     " xmin xmax ymin ymax just axis\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	xmin = atof( argv[1] );
+	xmax = atof( argv[2] );
+	ymin = atof( argv[3] );
+	ymax = atof( argv[4] );
+	just = atoi( argv[5] );
+	axis = atoi( argv[6] );
+
+	plenv( xmin, xmax, ymin, ymax, just, axis );
+
+	result = TCL_OK;
+    }
+
+/* Simple routine for labelling graphs. */
+
+    else if ((c3 == 'l') && (strncmp(argv[0], "pllab", length) == 0)) {
+
+	if (argc != 4 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"",
+		     argv[0], "  xlabel ylabel tlabel\"",
+		     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	pllab( argv[1], argv[2], argv[3] );
+
+	result = TCL_OK;
+    }
+
+/* Draws line segments connecting a series of points. */
+
+    else if ((c3 == 'l') && (strncmp(argv[0], "plline", length) == 0)) {
+
+	int elsc, i;
+	char **elsv;
+	PLFLT *x, *y;
+
+	if (argc != 2 ) {
+	    Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+			     " pairs-list\"",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	Tcl_SplitList( interp, argv[1], &elsc, &elsv );
+
+	if ( elsc < 2 ) {
+	    Tcl_AppendResult(interp, "Malformed list.",
+			     (char *) NULL);
+	    return TCL_ERROR;
+	}
+
+	x = (float *) malloc( sizeof(float) * elsc );
+	y = (float *) malloc( sizeof(float) * elsc );
+
+	for( i=0; i < elsc; i++ ) {
+	    int xyc;
+	    char **xyv;
+
+	    Tcl_SplitList( interp, elsv[i], &xyc, &xyv );
+	    if ( xyc != 2 ) {
+		interp->result = "Malformed list.";
+		return TCL_ERROR;
+	    }
+
+	    x[i] = atof( xyv[0] );
+	    y[i] = atof( xyv[1] );
+	}
+
+	plline( elsc, x, y );
+	free(x), free(y);
+
+	result = TCL_OK;
+    }
+
+
+/* plgcmap0 -- get color map 0 */
 /* first arg is number of colors, the rest are hex number specifications */
 
-    else if ((c == 'g') && (strncmp(argv[0], "gcmap0", length) == 0)) {
+    else if ((c3 == 'g') && (strncmp(argv[0], "plgcmap0", length) == 0)) {
 	int i;
 	unsigned long plcolor;
 	char str[10];
@@ -1086,11 +1213,11 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	result = TCL_OK;
     }
 
-/* gcmap1 -- get color map 1 */
+/* plgcmap1 -- get color map 1 */
 /* first arg is number of control points */
 /* the rest are hex number specifications followed by positions (0-100) */
 
-    else if ((c == 'g') && (strncmp(argv[0], "gcmap1", length) == 0)) {
+    else if ((c3 == 'g') && (strncmp(argv[0], "plgcmap1", length) == 0)) {
 	int i;
 	unsigned long plcolor;
 	char str[10];
@@ -1121,10 +1248,10 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	result = TCL_OK;
     }
 
-/* scmap0 -- set color map 0 */
+/* plscmap0 -- set color map 0 */
 /* first arg is number of colors, the rest are hex number specifications */
 
-    else if ((c == 's') && (strncmp(argv[0], "scmap0", length) == 0)) {
+    else if ((c3 == 's') && (strncmp(argv[0], "plscmap0", length) == 0)) {
 	int i, j = 1, status, ncol0 = atoi(argv[j]);
 	char *color;
 	XColor xcolor;
@@ -1160,10 +1287,10 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	plP_state(PLSTATE_CMAP0);
     }
 
-/* scmap1 -- set color map 1 */
+/* plscmap1 -- set color map 1 */
 /* first arg is number of colors, the rest are hex number specifications */
 
-    else if ((c == 's') && (strncmp(argv[0], "scmap1", length) == 0)) {
+    else if ((c3 == 's') && (strncmp(argv[0], "plscmap1", length) == 0)) {
 	int i, j = 1, status, ncp1 = atoi(argv[j]);
 	char *color, *pos;
 	XColor xcolor;
@@ -1204,10 +1331,10 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	plscmap1l(1, ncp1, l, r, g, b);
     }
 
-/* scol0 -- set single color in cmap0 */
+/* plscol0 -- set single color in cmap0 */
 /* first arg is the color number, the next is the color in hex */
 
-    else if ((c == 's') && (strncmp(argv[0], "scol0", length) == 0)) {
+    else if ((c3 == 's') && (strncmp(argv[0], "plscol0", length) == 0)) {
 	int i = atoi(argv[1]), status;
 	char *color = argv[2];
 	XColor xcolor;
@@ -1251,10 +1378,10 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
     }
 
-/* scol1 -- set color of control point in cmap1 */
+/* plscol1 -- set color of control point in cmap1 */
 /* first arg is the color number, the next two are the color in hex and pos */
 
-    else if ((c == 's') && (strncmp(argv[0], "scol1", length) == 0)) {
+    else if ((c3 == 's') && (strncmp(argv[0], "plscol1", length) == 0)) {
 	int i = atoi(argv[1]), status;
 	char *color, *pos;
 	XColor xcolor;
@@ -1307,15 +1434,14 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    plsc->cmap1cp[i].p = p;
 
 	    plcmap1_calc();
-
 	    plP_state(PLSTATE_CMAP0);
 	}
     }
 
-/* setopt -- set a PLPlot option (command-line syntax) */
+/* plsetopt -- set a PLPlot option (command-line syntax) */
 /* Just calls plSetInternalOpt() */
 
-    else if ((c == 's') && (strncmp(argv[0], "setopt", length) == 0)) {
+    else if ((c3 == 's') && (strncmp(argv[0], "plsetopt", length) == 0)) {
 	if (argc < 2 || argc > 3) {
 	    Tcl_AppendResult(interp, "wrong # args: should be \"",
 		    argv[0], " option ?argument?\"", (char *) NULL);
@@ -1335,12 +1461,13 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     else {
 	Tcl_AppendResult(interp, "bad option to \"cmd\": must be one of ", 
-			 "init gcmap0 gcmap1 scmap0 scmap1 scol0 scol1",
-			 "setopt", (char *) NULL);
+	 "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1",
+	 "plsetopt", (char *) NULL);
 
 	result = TCL_ERROR;
     }
 
+    plflush();
     return result;
 }
 
@@ -1392,6 +1519,7 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     Tk_SetBackgroundFromBorder(plFramePtr->tkwin, plFramePtr->border);
 
+    plsstrm(plFramePtr->ipls);
     PLColor_from_XColor(&plbg, plFramePtr->bgColor);
     plscolbg(plbg.r, plbg.g, plbg.b);
 
@@ -1528,13 +1656,9 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     if ((c == 'd') && (strncmp(argv[0], "devices", length) == 0)) {
 	int i = 0;
-	while (plFramePtr->devDesc[i] != NULL) {
-#if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 2)
-	    Tcl_AppendElement(interp, plFramePtr->devDesc[i++], 0);
-#else
+	while (plFramePtr->devDesc[i] != NULL) 
 	    Tcl_AppendElement(interp, plFramePtr->devDesc[i++]);
-#endif
-	}
+
 	result = TCL_OK;
     }
 
@@ -1690,6 +1814,7 @@ ReadData(ClientData clientData, int mask)
 
 /* Read from FIFO or socket */
 
+	plsstrm(plFramePtr->ipls);
 	if (pl_PacketReceive(interp, iodev, pdfs)) {
 	    Tcl_AppendResult(interp, "Packet receive failed:\n\t %s\n",
 			     interp->result, (char *) NULL);
@@ -1725,6 +1850,8 @@ Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int result = TCL_OK;
 
 /* orient -- return orientation of current plot window */
+
+    plsstrm(plFramePtr->ipls);
 
     if (argc == 0) {
 	PLFLT rot;
@@ -1842,6 +1969,8 @@ Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
 {
 
 /* page -- return current device window parameters */
+
+    plsstrm(plFramePtr->ipls);
 
     if (argc == 0) {
 	PLFLT mar, aspect, jx, jy;
@@ -2021,6 +2150,8 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 /* view -- return current relative plot window coordinates */
 
+    plsstrm(plFramePtr->ipls);
+
     if (argc == 0) {
 	char result_str[128];
 	plgdiplt(&xl, &yl, &xr, &yr);
@@ -2122,6 +2253,8 @@ xScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
     int x0, width = Tk_Width(plFramePtr->tkwin);
     PLFLT xl, xr, yl, yr, xlen;
 
+    plsstrm(plFramePtr->ipls);
+
     xlen = plFramePtr->xr - plFramePtr->xl;
     x0 = atoi(argv[0]);
     xl = x0 / (double) width;
@@ -2153,6 +2286,8 @@ yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 {
     int y0, height = Tk_Height(plFramePtr->tkwin);
     PLFLT xl, xr, yl, yr, ylen;
+
+    plsstrm(plFramePtr->ipls);
 
     ylen = plFramePtr->yr - plFramePtr->yl;
     y0 = atoi(argv[0]);
