@@ -24,7 +24,7 @@ pltek$O:	pltek.c
 	$(CC) $(CC_FLAGS) pltek.c
 
 pltek$E:	pltek$O
-	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(PLLIB_LDC) $(TO) $@ \
+	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@ \
 		$(LDC_LIBS)
 
 plrender$O:	$(PLLIBS) plrender.c
