@@ -48,4 +48,8 @@ function text = zlabel (text)
     __pl.zlabel = __pl_matstr(__pl.zlabel, text, __pl_strm);
   endif
 
+  if (automatic_replot)
+    __pl_plotit;
+  endif
+
 endfunction

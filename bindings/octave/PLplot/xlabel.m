@@ -46,4 +46,8 @@ function text = xlabel (text)
     __pl.xlabel = __pl_matstr(__pl.xlabel, text, __pl_strm);
   endif
 
+  if (automatic_replot)
+    __pl_plotit;
+  endif
+
 endfunction

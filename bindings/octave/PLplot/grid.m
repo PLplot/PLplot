@@ -57,4 +57,8 @@ function grid (x)
     error ("usage: grid (\"on\" | \"off\")");
   endif
 
+  if (automatic_replot)
+    __pl_plotit;
+  endif
+
 endfunction

@@ -20,9 +20,9 @@
 ## usage: title (text)
 ##
 ## Defines a title for the next plots
-##	 The special character `#' followed by another special character may be
-##   used for special text manipulation, eg ';x#u2#d;' print in `x^2' math,
-##	 and `title("#gS#u5#d#dn=1#u") prints \sum_{n=1}^{5}.
+##   The special character `#' followed by another special character may be
+##   used for special text manipulation, eg ';x#u2#d;' prints `x^2' in math,
+##	 and `title("#gS#u5#b#d#dn=1#u") prints \sum_{n=1}^{5}.
 ##
 ##		#u superscript, end with #d
 ##		#d subscript, end with #u
@@ -39,7 +39,6 @@
 ##
 ##		For special fonts, the extended charset must be loaded first,
 ##	 	use `plfontld(1)' to set, and `plfontld(0)' to return to normal.
-##
 ##
 ## See also: pllab, bottom_title, xlabel, ylabel, zlabel
 
@@ -65,6 +64,10 @@ function text = title (text)
     text = __pl.tlabel(__pl_strm,:);
   else
     __pl.tlabel = __pl_matstr(__pl.tlabel, text, __pl_strm);
+  endif
+
+  if (automatic_replot)
+    __pl_plotit;
   endif
 
 endfunction

@@ -46,4 +46,8 @@ function text = ylabel (text)
     __pl.ylabel = __pl_matstr(__pl.ylabel, text, __pl_strm);
   endif
 
+  if (automatic_replot)
+    __pl_plotit;
+  endif
+
 endfunction

@@ -41,4 +41,8 @@ function xticks (int, num)
     __pl.xticks(__pl_strm,1) = int;
   endif
 
+  if (automatic_replot)
+    __pl_plotit;
+  endif
+
 endfunction

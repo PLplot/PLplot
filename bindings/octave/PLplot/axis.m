@@ -47,7 +47,6 @@ function curr_axis = axis (ax)
     __pl.axis_st(__pl_strm) = 0;
     curr_axis = __pl.axis(__pl_strm,:);
   elseif (is_vector (ax))
-
     len = length (ax);
 
     if (len != 2 && len != 4 && len != 6)
@@ -71,5 +70,9 @@ function curr_axis = axis (ax)
   else
     error ("axis: expecting no args, or a vector with 2, 4, or 6 elements");
   endif
-  
+
+  if (automatic_replot)
+    __pl_plotit;
+  endif
+
 endfunction

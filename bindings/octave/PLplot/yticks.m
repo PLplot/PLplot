@@ -41,4 +41,8 @@ function yticks (int, num)
     __pl.yticks(__pl_strm,1) = int;
   endif
 
+  if (automatic_replot)
+    __pl_plotit;
+  endif
+
 endfunction
