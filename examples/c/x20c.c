@@ -8,12 +8,12 @@
 #include "plplot/plevent.h"
 #include <math.h>
 
-#define XDIM 160
-#define YDIM 120
+#define XDIM 260
+#define YDIM 220
 
 void save_plot(void);
-void gray_cmap(void);
-int read_img(char *, PLFLT ***, int *, int *);
+void gray_cmap(int);
+int read_img(char *, PLFLT ***, int *, int *, int *);
 int get_clip(PLFLT *, PLFLT *, PLFLT *, PLFLT *);
 
 int
@@ -21,7 +21,7 @@ main(int argc, char *argv[])
 {
   PLFLT x[XDIM], y[YDIM], **z, **r;
   PLFLT xi, yi, xe, ye; 
-  int i, j, width, height;
+  int i, j, width, height, num_col;
   PLFLT **img_f;
 
   /*
@@ -46,14 +46,6 @@ main(int argc, char *argv[])
 
   if (1) { /* view image border pixels */
     plenv(1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 1, 1); /* no plot box */
-
-    /* more diags */
-    /*
-    x[0]=-XDIM/2; y[0]=0;
-    x[1]=XDIM/2; y[1]=0;
-    x[2]=XDIM/2; y[2]=YDIM/2;
-    plfill(3,x,y);
-    */
     
     /* build a one pixel square border, for diagnostics */
     for (i=0; i<XDIM; i++)
@@ -69,20 +61,17 @@ main(int argc, char *argv[])
     pllab("...around a blue square."," ","A red border should appear...");
 
     plimage(z, XDIM, YDIM,
-	    1., (PLFLT) XDIM, 1., (PLFLT) YDIM,
+	    1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 0., 0.,
 	    1., (PLFLT) XDIM, 1., (PLFLT) YDIM);
-
-    /* show how to save a plot */
-    save_plot();
 
     pladv(0);
   }
-  /* plend();exit(1); */
+  /* plend();exit(0); */
 
   if (1) { /* sombrero-like demo */
     plAlloc2dGrid(&r, XDIM, YDIM);
     plcol0(2); /* draw a yellow plot box, useful for diagnostics! :( */
-    plenv(0., 2.*PI, 0, 3.*PI, 1, 0);
+    plenv(0., 2.*PI, 0, 3.*PI, 1, -1);
 
     for (i=0; i<XDIM; i++)
       x[i] = i*2.*PI/(XDIM-1);
@@ -95,26 +84,37 @@ main(int argc, char *argv[])
 	z[i][j] = sin(r[i][j]) / (r[i][j]);
       }
 
-    plimage(z, XDIM, YDIM, 0., 2.*PI, 0, 3.*PI, 0., 2.*PI, 0, 3.*PI); 
+    pllab("No, an amplitude clipped \"sombrero\"", "", "Saturn?");
+    plptex(2., 2., 3., 4., 0., "Transparent image");
+    plimage(z, XDIM, YDIM, 0., 2.*PI, 0, 3.*PI, 0.05, 1.,
+	    0., 2.*PI, 0, 3.*PI); 
     plFree2dGrid(r, XDIM, YDIM);
+
+    /* show how to save a plot */
+    save_plot();
+
     pladv(0);
   }
+  /* plend();exit(0); */
 
   plFree2dGrid(z, XDIM, YDIM);
 
-  /* set gray colormap */
-  gray_cmap();
-
   /* read image */
-  if (read_img("lena.pgm", &img_f, &width, &height)) {
+  if (read_img("lena.pgm", &img_f, &width, &height, &num_col)) {
     plabort("No such file");
     plend();
     exit(1);
   }
 
+  /* set gray colormap */
+  gray_cmap(num_col);
+
   plenv(1., width, 1., height, 1, -1);
   pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...");
-  plimage(img_f, width, height, 1., width, 1., height, 1., width, 1., height);
+  plimage(img_f, width, height, 1., width, 1., height, 0., 0.,
+	  1., width, 1., height);
+
+  /* plend();exit(0); */
 
   if (1) { /* selection/expansion demo */
     xi = 200.; xe = 330.;
@@ -148,13 +148,13 @@ main(int argc, char *argv[])
     plspause(0);
     pladv(0);
 
-    plimage(img_f, width, height, 1., width, 1., height, xi, xe, ye, yi);
+    plimage(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
 
     plspause(1);
     pladv(0);
 
     plenv(xi, xe, ye, yi, 1, -1);
-    plimage(img_f, width, height, 1., width, 1., height, xi, xe, ye, yi);
+    plimage(img_f, width, height, 1., width, 1., height, 0., 0., xi, xe, ye, yi);
     pladv(0);
   }
 
@@ -164,12 +164,12 @@ main(int argc, char *argv[])
   exit(0);
 }
 
-int read_img(char *fname, PLFLT ***img_f, int *width, int *height)
+int read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num_col)
 {
   FILE *fp;
   unsigned char *img;
   char ver[80];
-  int num_col, i, j, w, h;
+  int i, j, w, h;
   PLFLT **imf;
 
   /* naive grayscale binary ppm reading. If you know how to, improve it */
@@ -188,8 +188,8 @@ int read_img(char *fname, PLFLT ***img_f, int *width, int *height)
   }
   ungetc(i, fp);
 
-  fscanf(fp,"%d%d%d", &w, &h, &num_col); /* width, height num colors */
-  /* printf("width=%d height=%d\n", w, h); */
+  fscanf(fp,"%d%d%d", &w, &h, num_col); /* width, height num colors */
+  /* printf("width=%d height=%d num_col=%d\n", w, h, *num_col); */
 
   img = (unsigned char *) malloc(w*h*sizeof(char));
   plAlloc2dGrid(&imf, w, h);
@@ -216,14 +216,14 @@ void save_plot()   /* save plot */
   plgstrm(&cur_strm); /* get current stream */
   plmkstrm(&new_strm); /* create a new one */ 
     
+  plsdev("psc"); /* new device type */
   plsfnam("foo.ps"); /* file name */
-  plsdev("psc"); /* device type */
 
   plcpstrm(cur_strm, 0); /* copy old stream parameters to new stream */
   plreplot();	/* do the save */
-  plend1();
+  plend1(); /* close new device */
 
-  plsstrm(cur_strm);	/* return to previous stream */
+  plsstrm(cur_strm);	/* and return to previous one */
 }
 
 int get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye)
@@ -287,7 +287,7 @@ int get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye)
   return (gin.keysym == 'Q');
 }
 
-void gray_cmap(void)
+void gray_cmap(PLINT num_col)
 {
   PLFLT r[2], g[2], b[2], pos[2];
     
@@ -297,6 +297,6 @@ void gray_cmap(void)
   pos[0] = 0.0;
   pos[1] = 1.0;
     
-  plscmap1n(256);
+  plscmap1n(num_col);
   plscmap1l(1, 2, pos, r, g, b, NULL);
 }
