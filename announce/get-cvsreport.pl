@@ -6,7 +6,7 @@
 # Run it like this: get-cvsreport.pl -a -f 2003-04-21 > report
 
 undef $/;
-open (CVSREPORT, "cvsreport " . join (" ", ARGV) . "|");
+open (CVSREPORT, "cvsreport " . join (" ", @ARGV) . "|");
 $delim = "Commit from";
 
 print reverse map { "$delim$_" } split (/$delim/, <CVSREPORT> . "\n\n" );
