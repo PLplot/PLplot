@@ -349,6 +349,10 @@ AC_REVISION($Revision$)
 AC_INIT(plplot, 5.3.0.cvs.20040211, plplot-devel@lists.sourceforge.net)
 AC_CONFIG_SRCDIR(src/plcore.c)
 
+### Use cf dir instead of the top dir for all autotools-related files
+AC_CONFIG_AUX_DIR(cf)
+AC_CONFIG_MACRO_DIR(cf)
+
 ### Configuration headers
 
 AC_CONFIG_HEADERS([config.h include/plConfig.h include/plDevs.h])
@@ -529,7 +533,7 @@ fi
 AC_SUBST(PYTHON_INSTDIR)
 
 ### Modify system-dependent results based on availability
-AC_INCLUDE(sysloc.in)
+PL_INCLUDE(sysloc.in)
 #disable LIBS so we don't have all libraries mentioned
 LIBS=""
 
@@ -953,7 +957,7 @@ AM_CONDITIONAL(docbook_build, [test $with_prebuiltdoc = no])
 AM_CONDITIONAL(enable_docbook,
                [test $enable_builddoc = yes -o $with_prebuiltdoc = yes])
 
-AC_INCLUDE(doc/docbook/docbook.m4)
+PL_INCLUDE(doc/docbook/docbook.m4)
 
 CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
 PERL=${PERL:-"-@echo perl program not available #"}

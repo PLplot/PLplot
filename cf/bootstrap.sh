@@ -107,7 +107,7 @@ fi
 
 aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
 
-run aclocal $aclocal_opts \
+run aclocal -I cf $aclocal_opts \
   && run autoheader \
   && rm -rf libltdl \
   && run libtoolize --force --copy --ltdl --automake \
