@@ -36,18 +36,6 @@
 #include <string.h>
 #include "plplot/drivers.h"
 
-void plD_dispatch_init_hp7470	( PLDispatchTable *pdt );
-void plD_dispatch_init_hp7580	( PLDispatchTable *pdt );
-#ifdef PLD_lj_hpgl
-void plD_dispatch_init_hpgl	( PLDispatchTable *pdt );
-#endif
-
-void plD_init_hp7470		(PLStream *);
-void plD_init_hp7580		(PLStream *);
-#ifdef PLD_lj_hpgl
-void plD_init_lj_hpgl		(PLStream *);
-#endif
-
 void plD_line_hpgl		(PLStream *, short, short, short, short);
 void plD_polyline_hpgl		(PLStream *, short *, short *, PLINT);
 void plD_eop_hpgl		(PLStream *);
@@ -98,33 +86,6 @@ static void hpgl_dispatch_init_helper( PLDispatchTable *pdt,
     pdt->pl_esc      = (plD_esc_fp)      plD_esc_hpgl;
 }
 
-void plD_dispatch_init_hp7470( PLDispatchTable *pdt )
-{
-    hpgl_dispatch_init_helper( pdt,
-                               "HP 7470 Plotter File (HPGL Cartridge, Small Plotter)",
-                               "hp7470",
-                               plDevType_FileOriented, 34,
-                               (plD_init_fp) plD_init_hp7470 );
-}
-
-void plD_dispatch_init_hp7580( PLDispatchTable *pdt )
-{
-    hpgl_dispatch_init_helper( pdt,
-                               "HP 7580 Plotter File (Large Plotter)", "hp7580",
-                               plDevType_FileOriented, 35,
-                               (plD_init_fp) plD_init_hp7580 );
-}
-
-#ifdef PLD_lj_hpgl
-void plD_dispatch_init_hpgl( PLDispatchTable *pdt )
-{
-    hpgl_dispatch_init_helper( pdt,
-                               "HP Laserjet III, HPGL emulation mode", "lj_hpgl",
-                               plDevType_FileOriented, 36,
-                               (plD_init_fp) plD_init_lj_hpgl );
-}
-#endif
-
 /*--------------------------------------------------------------------------*\
  * initialize_hpgl_pls()
  *
@@ -158,6 +119,17 @@ initialize_hpgl_pls(PLStream *pls)
 \*--------------------------------------------------------------------------*/
 
 #ifdef PLD_hp7470
+void plD_init_hp7470		(PLStream *);
+
+void plD_dispatch_init_hp7470( PLDispatchTable *pdt )
+{
+    hpgl_dispatch_init_helper( pdt,
+                               "HP 7470 Plotter File (HPGL Cartridge, Small Plotter)",
+                               "hp7470",
+                               plDevType_FileOriented, 34,
+                               (plD_init_fp) plD_init_hp7470 );
+}
+
 void
 plD_init_hp7470(PLStream *pls)
 {
@@ -183,6 +155,16 @@ plD_init_hp7470(PLStream *pls)
 \*--------------------------------------------------------------------------*/
 
 #ifdef PLD_hp7580
+void plD_init_hp7580		(PLStream *);
+
+void plD_dispatch_init_hp7580( PLDispatchTable *pdt )
+{
+    hpgl_dispatch_init_helper( pdt,
+                               "HP 7580 Plotter File (Large Plotter)", "hp7580",
+                               plDevType_FileOriented, 35,
+                               (plD_init_fp) plD_init_hp7580 );
+}
+
 void
 plD_init_hp7580(PLStream *pls)
 {
@@ -209,6 +191,16 @@ plD_init_hp7580(PLStream *pls)
 \*--------------------------------------------------------------------------*/
 
 #ifdef PLD_lj_hpgl
+void plD_init_lj_hpgl		(PLStream *);
+
+void plD_dispatch_init_hpgl( PLDispatchTable *pdt )
+{
+    hpgl_dispatch_init_helper( pdt,
+                               "HP Laserjet III, HPGL emulation mode", "lj_hpgl",
+                               plDevType_FileOriented, 36,
+                               (plD_init_fp) plD_init_lj_hpgl );
+}
+
 void
 plD_init_lj_hpgl(PLStream *pls)
 {

@@ -19,18 +19,7 @@
 
 #include <ctype.h>
 
-/* Prototype the driver entry points that will be used to initialize the
-   dispatch table entries. */
-
-void plD_init_xterm		(PLStream *);
-void plD_init_tekt		(PLStream *);
-void plD_init_tekf		(PLStream *);
-void plD_init_tek4107t		(PLStream *);
-void plD_init_tek4107f		(PLStream *);
-void plD_init_mskermit		(PLStream *);
-void plD_init_versaterm		(PLStream *);
-void plD_init_vlt		(PLStream *);
-void plD_init_conex		(PLStream *);
+/* External generic entry points */
 
 void plD_line_tek		(PLStream *, short, short, short, short);
 void plD_polyline_tek		(PLStream *, short *, short *, PLINT);
@@ -140,79 +129,10 @@ static void tek_dispatch_init_helper( PLDispatchTable *pdt,
     pdt->pl_esc      = (plD_esc_fp)      plD_esc_tek;
 }
 
-void plD_dispatch_init_xterm	( PLDispatchTable *pdt )
-{
-    tek_dispatch_init_helper( pdt,
-                              "Xterm Window", "xterm",
-                              plDevType_Interactive, 18,
-                              (plD_init_fp) plD_init_xterm );
-}
-
-void plD_dispatch_init_tekt	( PLDispatchTable *pdt )
-{
-    tek_dispatch_init_helper( pdt,
-                              "Tektronix Terminal (4010)", "tekt",
-                              plDevType_Interactive, 19,
-                              (plD_init_fp) plD_init_tekt );
-}
-
-void plD_dispatch_init_tek4107t	( PLDispatchTable *pdt )
-{
-    tek_dispatch_init_helper( pdt,
-                              "Tektronix Terminal (4105/4107)", "tek4107t",
-                              plDevType_Interactive, 20,
-                              (plD_init_fp) plD_init_tek4107t );
-}
-
-void plD_dispatch_init_mskermit	( PLDispatchTable *pdt )
-{
-    tek_dispatch_init_helper( pdt,
-                              "MS-Kermit emulator", "mskermit",
-                              plDevType_Interactive, 21,
-                              (plD_init_fp) plD_init_mskermit );
-}
-
-void plD_dispatch_init_versaterm( PLDispatchTable *pdt )
-{
-    tek_dispatch_init_helper( pdt,
-                              "Versaterm vt100/tek emulator", "versaterm",
-                              plDevType_Interactive, 22,
-                              (plD_init_fp) plD_init_versaterm );
-}
-
-void plD_dispatch_init_vlt	( PLDispatchTable *pdt )
-{
-    tek_dispatch_init_helper( pdt,
-                              "VLT vt100/tek emulator", "vlt",
-                              plDevType_Interactive, 23,
-                              (plD_init_fp) plD_init_vlt );
-}
-
-void plD_dispatch_init_conex	( PLDispatchTable *pdt )
-{
-    tek_dispatch_init_helper( pdt,
-                              "Conex vt320/tek emulator", "conex",
-                              plDevType_Interactive, 24,
-                              (plD_init_fp) plD_init_conex );
-}
-
-void plD_dispatch_init_tekf	( PLDispatchTable *pdt )
-{
-    tek_dispatch_init_helper( pdt,
-                              "Tektronix File (4010)", "tekf",
-                              plDevType_FileOriented, 27,
-                              (plD_init_fp) plD_init_tekf );
-}
-
-void plD_dispatch_init_tek4107f	( PLDispatchTable *pdt )
-{
-    tek_dispatch_init_helper( pdt,
-                              "Tektronix File (4105/4107)", "tek4107f",
-                              plDevType_FileOriented, 28,
-                              (plD_init_fp) plD_init_tek4107f );
-}
-
 /*--------------------------------------------------------------------------*\
+ * Driver entry points that will be used to initialize the dispatch table
+ * entries: 
+ *
  * plD_init_xterm()	xterm 
  * plD_init_tekt()	Tek 4010 terminal
  * plD_init_tekf()	Tek 4010 file
@@ -223,18 +143,26 @@ void plD_dispatch_init_tek4107f	( PLDispatchTable *pdt )
  * plD_init_versaterm()	VersaTerm emulator (Mac)
  * plD_init_conex()	Conex vt320/Tek 4105 emulator (DOS)
  *
- * Initialize device.  These just set attributes for the particular
- * tektronix device, then call tek_init().  The following attributes can
- * be set:
+ * These just set attributes for the particular tektronix device, then call
+ * tek_init().  The following attributes can be set:
  *
  * pls->termin		if a terminal device
  * pls->color		if color (1), if only fixed colors (2)
  * pls->dev_fill0	if can handle solid area fill
  * pls->dev_fill1	if can handle pattern area fill
- *
 \*--------------------------------------------------------------------------*/
 
 #ifdef PLD_xterm
+void plD_init_xterm		(PLStream *);
+
+void plD_dispatch_init_xterm	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Xterm Window", "xterm",
+                              plDevType_Interactive, 18,
+                              (plD_init_fp) plD_init_xterm );
+}
+
 void 
 plD_init_xterm(PLStream *pls)
 {
@@ -244,12 +172,33 @@ plD_init_xterm(PLStream *pls)
 }
 #endif	/* xterm */
 
+/*--------------------------------------------------------------------------*/
+
 #if defined (PLD_tek4010)
+void plD_init_tekt		(PLStream *);
+void plD_init_tekf		(PLStream *);
+
+void plD_dispatch_init_tekt	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Tektronix Terminal (4010)", "tekt",
+                              plDevType_Interactive, 19,
+                              (plD_init_fp) plD_init_tekt );
+}
+
 void
 plD_init_tekt(PLStream *pls)
 {
     pls->termin = 1;
     plD_init_tekf(pls);
+}
+
+void plD_dispatch_init_tekf	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Tektronix File (4010)", "tekf",
+                              plDevType_FileOriented, 27,
+                              (plD_init_fp) plD_init_tekf );
 }
 
 void
@@ -260,8 +209,28 @@ plD_init_tekf(PLStream *pls)
 }
 #endif	/* PLD_tek4010 (term & file) */
 
+/*--------------------------------------------------------------------------*/
 
 #if defined (PLD_tek4107)
+void plD_init_tek4107t		(PLStream *);
+void plD_init_tek4107f		(PLStream *);
+
+void plD_dispatch_init_tek4107t	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Tektronix Terminal (4105/4107)", "tek4107t",
+                              plDevType_Interactive, 20,
+                              (plD_init_fp) plD_init_tek4107t );
+}
+
+void plD_dispatch_init_tek4107f	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Tektronix File (4105/4107)", "tek4107f",
+                              plDevType_FileOriented, 28,
+                              (plD_init_fp) plD_init_tek4107f );
+}
+
 void
 plD_init_tek4107t(PLStream *pls)
 {
@@ -279,7 +248,19 @@ plD_init_tek4107f(PLStream *pls)
 }
 #endif	/* PLD_tek4107 (term & file) */
 
+/*--------------------------------------------------------------------------*/
+
 #ifdef PLD_mskermit
+void plD_init_mskermit		(PLStream *);
+
+void plD_dispatch_init_mskermit	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "MS-Kermit emulator", "mskermit",
+                              plDevType_Interactive, 21,
+                              (plD_init_fp) plD_init_mskermit );
+}
+
 void
 plD_init_mskermit(PLStream *pls)
 {
@@ -291,7 +272,19 @@ plD_init_mskermit(PLStream *pls)
 }
 #endif	/* PLD_mskermit */
 
+/*--------------------------------------------------------------------------*/
+
 #ifdef PLD_vlt
+void plD_init_vlt		(PLStream *);
+
+void plD_dispatch_init_vlt	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "VLT vt100/tek emulator", "vlt",
+                              plDevType_Interactive, 23,
+                              (plD_init_fp) plD_init_vlt );
+}
+
 void
 plD_init_vlt(PLStream *pls)
 {
@@ -303,7 +296,19 @@ plD_init_vlt(PLStream *pls)
 }
 #endif	/* PLD_vlt */
 
+/*--------------------------------------------------------------------------*/
+
 #ifdef PLD_versaterm
+void plD_init_versaterm		(PLStream *);
+
+void plD_dispatch_init_versaterm( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Versaterm vt100/tek emulator", "versaterm",
+                              plDevType_Interactive, 22,
+                              (plD_init_fp) plD_init_versaterm );
+}
+
 void
 plD_init_versaterm(PLStream *pls)
 {
@@ -315,7 +320,19 @@ plD_init_versaterm(PLStream *pls)
 }
 #endif	/* PLD_versaterm */
 
+/*--------------------------------------------------------------------------*/
+
 #ifdef PLD_conex
+void plD_init_conex		(PLStream *);
+
+void plD_dispatch_init_conex	( PLDispatchTable *pdt )
+{
+    tek_dispatch_init_helper( pdt,
+                              "Conex vt320/tek emulator", "conex",
+                              plDevType_Interactive, 24,
+                              (plD_init_fp) plD_init_conex );
+}
+
 void
 plD_init_conex(PLStream *pls)
 {
