@@ -74,19 +74,17 @@ fonts:	sfont xfont
 sfont:	$(PLFNT_PATH)plstnd5.fnt
 xfont:	$(PLFNT_PATH)plxtnd5.fnt
 
-$(PLFNT_PATH)plstnd5.fnt: stndfont$E pdfutils$O $(FONT_OBJ)
+$(PLFNT_PATH)plstnd5.fnt: stndfont$E
 	-./stndfont$E
-	-mv *.fnt $(PLFNT_DIR)
 
-$(PLFNT_PATH)plxtnd5.fnt: xtndfont$E pdfutils$O $(FONT_OBJ)
+$(PLFNT_PATH)plxtnd5.fnt: xtndfont$E
 	-./xtndfont$E
-	-mv *.fnt $(PLFNT_DIR)
 
-stndfont$E:	$(PLLIBS) stndfont$O
+stndfont$E:	$(PLLIBS) stndfont$O pdfutils$O $(FONT_OBJ)
 	$(LDC) $(LDC_FLAGS) $(STARTUP) stndfont$O $(FONT_OBJ) \
 		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-xtndfont$E:	$(PLLIBS) xtndfont$O
+xtndfont$E:	$(PLLIBS) xtndfont$O pdfutils$O $(FONT_OBJ)
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtndfont$O $(FONT_OBJ) \
 		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
