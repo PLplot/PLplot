@@ -1021,7 +1021,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
       when <literal>az = 0</literal>, the observer sees the xz plane face
       on, and as the angle is increased, the observer moves clockwise
       around the box as viewed from above the xy plane.  The azimuth can
-      take on any.
+      take on any value.
     </para>
 
     <para>
@@ -1141,7 +1141,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
     <para>
       Several routines are available in PLplot which perform a contour or
       shade plot of data stored in a two-dimensional array.  The contourer
-      uses a contour following algorithm is used, so that it is possible to
+      uses a contour following algorithm so that it is possible to
       use non-continuous line styles.  Further, one may specify arbitrary
       coordinate mappings from array indices to world coordinates, such as
       for contours in a polar coordinate system.  In this case it is best
@@ -1369,6 +1369,13 @@ pltr2 does linear interpolation in doubly dimensioned coordinate arrays
 
     </sect2>
     
+    <sect2 id="shade-plots-c">
+      <title>Shade Plots from C</title>
+      <para>
+        NEEDS DOCUMENTATION
+      </para>
+    </sect2>
+    
     <sect2 id="contour-plots-fortran">
       <title>Contour Plots from Fortran</title>
 
@@ -1554,6 +1561,13 @@ inflexible, the user is recommended to call either of &plcon0;, &plcon1;, or
 
     </sect2>
 
+    <sect2 id="shade-plots-fortran">
+      <title>Shade Plots from Fortran</title>
+      <para>
+        NEEDS DOCUMENTATION
+      </para>
+    </sect2>
+    
   </sect1>
 
 </chapter>
