@@ -53,3 +53,6 @@ DISTCLEANFILES = $(index)
 EXTRA_DIST =         \
 	tk-x-plat    \
 	swig-support
+
+dist-hook:
+	rm -rf $(distdir)/tk-x-plat/pkgIndex.tcl

@@ -22,18 +22,15 @@
 
 examplesdir = $(DATA_DIR)/examples
 
-scripts = \
+dist_bin_SCRIPTS = \
 	plm2gif \
 	plpr \
-	pstex2eps \
-	plplot-config
-
-bin_SCRIPTS = $(scripts)
+	pstex2eps
+nodist_bin_SCRIPTS = plplot-config
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = \
-	$(scripts) \
 	check-tarball-cvs.sh \
 	check-year-author.pl \
 	fixfort \

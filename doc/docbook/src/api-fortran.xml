@@ -4,6 +4,7 @@
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
     Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
+    Copyright (C) 2004  Andrew Ross
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -482,6 +483,315 @@ fortran
       common block <literal>plplot</literal> (see code). Since this
       approach is somewhat inflexible, the user is recommended to call
       either of &plcon0;, &plcon1;, or &plcon2; instead.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plvec0" renderas="sect3">
+    <title>
+      <function>plvec0</function>: Vector plot, identity mapping for fortran
+    </title>
+    
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plvec0</function>
+	</funcdef>
+        <paramdef><parameter>u</parameter></paramdef>
+        <paramdef><parameter>v</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>scale</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Draws a vector plot of the data in
+      <literal>(<parameter>u</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>], <parameter>v</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>])</literal>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>u, v</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a pair of vectored two-dimensional arrays containing
+	    the x and y components of the vector to be plotted.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx, ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Physical dimensions of the arrays
+	    <literal><parameter>u</parameter></literal> and
+	    <literal><parameter>v</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>scale</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+             Parameter to control the scaling factor of the vectors for plotting.
+             If <literal><parameter>scale</parameter> = 0</literal> then
+	     the scaling factor is automatically calculated for the data.
+	     If <literal><parameter>scale</parameter> &lt; 0</literal> then
+	     the scaling factor is automatically calculated for the data and
+             then multiplied by <literal>-<parameter>scale</parameter></literal>.
+             If <literal><parameter>scale</parameter> &gt; 0</literal> then
+             the scaling factor is set to <literal><parameter>scale</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+    <para>
+      NOTE: this function is intended for use from a Fortran caller only.
+      The C user should instead call &plvect; using the built-in
+      transformation function <function>pltr0</function> for the same
+      capability.
+    </para>
+  </sect1>
+
+  <sect1 id="plvec1" renderas="sect3">
+    <title>
+      <function>plvec1</function>: Vector plot, general 1-d mapping for
+fortran
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plvec1</function>
+	</funcdef>
+        <paramdef><parameter>u</parameter></paramdef>
+        <paramdef><parameter>v</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>scale</parameter></paramdef>
+        <paramdef><parameter>xg</parameter></paramdef>
+        <paramdef><parameter>yg</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Draws a vector plot of the data in
+      <literal>(<parameter>u</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>], <parameter>v</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>])</literal>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>u, v</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a pair of vectored two-dimensional arrays containing
+	    the x and y components of the vector to be plotted.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx, ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Physical dimensions of the arrays
+	    <literal><parameter>u</parameter></literal> and
+	    <literal><parameter>v</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>scale</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+             Parameter to control the scaling factor of the vectors for plotting.
+             If <literal><parameter>scale</parameter> = 0</literal> then
+	     the scaling factor is automatically calculated for the data.
+	     If <literal><parameter>scale</parameter> &lt; 0</literal> then
+	     the scaling factor is automatically calculated for the data and
+             then multiplied by <literal>-<parameter>scale</parameter></literal>.
+             If <literal><parameter>scale</parameter> &gt; 0</literal> then
+             the scaling factor is set to <literal><parameter>scale</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>xg, yg</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointers to arrays which specify the transformation from array
+	    indices to world coordinates.  These must be one-dimensional
+	    arrays, used for a transformation of the form:
+	    <literal>tx</literal> = <literal>f(x)</literal>,
+	    <literal>ty</literal> = <literal>f(y)</literal>.  Function
+	    values at locations between grid points are obtained via linear
+	    interpolation.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+    <para>
+      NOTE: this function is intended for use from a Fortran caller only.
+      The C user should instead call &plvect; using the built-in
+      transformation function <function>pltr1</function> for the same
+      capability.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plvec2" renderas="sect3">
+    <title>
+      <function>plvec2</function>: Vector plot, general 2-d mapping for
+fortran
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plvec2</function>
+	</funcdef>
+        <paramdef><parameter>u</parameter></paramdef>
+        <paramdef><parameter>v</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>scale</parameter></paramdef>
+        <paramdef><parameter>xg</parameter></paramdef>
+        <paramdef><parameter>yg</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+    <para>
+      Draws a vector plot of the data in
+      <literal>(<parameter>u</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>], <parameter>v</parameter>[<parameter>nx</parameter>][<parameter>ny</parameter>])</literal>.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>u, v</parameter>
+	  (<literal>PLFLT **</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to a pair of vectored two-dimensional arrays containing
+	    the x and y components of the vector to be plotted.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>nx, ny</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Physical dimensions of the arrays
+	    <literal><parameter>u</parameter></literal> and
+	    <literal><parameter>v</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>scale</parameter>
+	  (<literal>PLFLT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+             Parameter to control the scaling factor of the vectors for plotting.
+             If <literal><parameter>scale</parameter> = 0</literal> then
+	     the scaling factor is automatically calculated for the data.
+	     If <literal><parameter>scale</parameter> &lt; 0</literal> then
+	     the scaling factor is automatically calculated for the data and
+             then multiplied by <literal>-<parameter>scale</parameter></literal>.
+             If <literal><parameter>scale</parameter> &gt; 0</literal> then
+             the scaling factor is set to <literal><parameter>scale</parameter></literal>.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>xg, yg</parameter>
+	  (<literal>PLFLT *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Pointers to arrays which specify the transformation from array
+	    indices to world coordinates.  These must be two-dimensional
+	    arrays, used for a transformation of the form:
+	    <literal>tx</literal> = <literal>f(x, y)</literal>,
+	    <literal>ty</literal> = <literal>f(x, y)</literal>.  Function
+	    values at locations between grid points are obtained via linear
+	    interpolation.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+    <para>
+      NOTE: this function is intended for use from a Fortran caller only.
+      The C user should instead call &plvect; using the built-in
+      transformation function <function>pltr2</function> for the same
+      capability.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plvectfortran" renderas="sect3">
+    <title>
+      <function>plvect</function>: Vector plot, fixed linear mapping for
+fortran
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plvect</function>
+	</funcdef>
+        <paramdef><parameter>u</parameter></paramdef>
+        <paramdef><parameter>v</parameter></paramdef>
+        <paramdef><parameter>nx</parameter></paramdef>
+        <paramdef><parameter>ny</parameter></paramdef>
+        <paramdef><parameter>scale</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      When called from Fortran, this routine has the same effect as when
+      invoked from C.  The interpretation of all parameters (see &plvect;)
+      is also the same except there is no transformation function supplied
+      as the last parameter.  Instead, a 6-element array specifying
+      coefficients to use in the transformation is supplied via the named
+      common block <literal>plplot</literal> (see code). Since this
+      approach is somewhat inflexible, the user is recommended to call
+      either of &plvec0;, &plvec1;, or &plvec2; instead.
     </para>
 
   </sect1>

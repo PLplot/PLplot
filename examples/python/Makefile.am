@@ -24,16 +24,15 @@ if enable_python
 
 examples_pythondir = $(DATA_DIR)/examples/python
 
-examples_python_SCRIPTS = \
+dist_examples_python_SCRIPTS = \
 	prova.py \
 	pythondemos.py \
 	xw14.py \
 	xw17.py
 
-examples_python_DATA = \
+dist_examples_python_DATA = \
 	README.pythondemos \
 	qplplot.py \
-	plplot_python_start.py \
 	xw01.py \
 	xw02.py \
 	xw03.py \
@@ -52,6 +51,8 @@ examples_python_DATA = \
 	xw18.py \
 	xw19.py
 
+nodist_examples_python_DATA = plplot_python_start.py
+
 CLEANFILES = *.pyc
 
 endif
@@ -59,8 +60,6 @@ endif
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = \
-	$(examples_python_SCRIPTS) \
-	$(examples_python_DATA) \
 	pytkdemo \
 	tutor.py \
 	x01.py \

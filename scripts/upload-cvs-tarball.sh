@@ -5,10 +5,19 @@
 # Copyright (C) 2004  Rafael Laboissiere
 # This script in the public domain
 
+# GPG signing is disabled by setting the environment variable NOGPG
+# If the gpg command fails, then no mention to the detached signature
+# is included in the tarball.
+
 WWW_HOST=${WWW_HOST:-plplot.sf.net}
 WWW_USER=${WWW_USER:-rlaboiss}
 WWW_DIR=${WWW_DIR:-/home/groups/p/pl/plplot/htdocs/cvs-tarball}
 GPGKEY=${GPGKEY:-0x4A5D72FE}
+
+function run () {
+    echo $*
+    $*
+}
 
 if test $# != 1 ; then
     echo "Usage: $0 tarball.tar.gz"
@@ -18,7 +27,10 @@ fi
 TARBALL=$1
 TARBALL_NAME=`basename $TARBALL`
 
-gpg --default-key $GPGKEY --detach-sign --armor $TARBALL
+gpg_successful=no
+test -z "$NOGPG" \
+    && gpg --default-key $GPGKEY --detach-sign --armor $TARBALL \
+    && gpg_successful=yes
 
 INDEX=`tempfile --mode=0644`
 DATE=`date --utc +"%Y-%m-%d %H:%M UTC"`
@@ -32,11 +44,17 @@ cat > $INDEX <<EOF
 <h2>Latest PLplot CVS snapshot distribution</h2>
 
 <p> Tarball: <a href="$TARBALL_NAME">$TARBALL_NAME</a>.</p>
+EOF
+
+test "$gpg_successful" = yes && cat >> $INDEX <<EOF
 <p> Detached GPG signature: <a href="$TARBALL_NAME.asc">$TARBALL_NAME.asc</a>
-(signed with key 
+(signed with key
 <a href="http://wwwkeys.pgp.net:11371/pks/lookup?op=index&search=$GPGKEY">$GPGKEY</a>)
 </p>
-<p> Uploaded by <a href="http://sf.net/users/$WWW_USER">$WWW_USER</a> 
+EOF
+
+cat >> $INDEX <<EOF
+<p> Uploaded by <a href="http://sf.net/users/$WWW_USER">$WWW_USER</a>
 on $DATE</p>
 
 </body>
@@ -45,11 +63,12 @@ EOF
 
 HOST=$WWW_USER@$WWW_HOST
 
-ssh $HOST rm -rf $WWW_DIR
-ssh $HOST mkdir $WWW_DIR
-scp $TARBALL $TARBALL.asc $HOST:$WWW_DIR
-scp $INDEX $HOST:$WWW_DIR/index.html
-ssh $HOST chgrp -R plplot $WWW_DIR
-ssh $HOST chmod -R g=u $WWW_DIR
+run ssh $HOST rm -rf $WWW_DIR
+run ssh $HOST mkdir $WWW_DIR
+run scp $TARBALL $TARBALL.asc $HOST:$WWW_DIR
+test "$gpg_successful" = yes && run scp $TARBALL.asc $HOST:$WWW_DIR
+run scp $INDEX $HOST:$WWW_DIR/index.html
+run ssh $HOST chgrp -R plplot $WWW_DIR
+run ssh $HOST chmod -R g=u $WWW_DIR
 
 rm -f $TARBALL.asc $INDEX

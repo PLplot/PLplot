@@ -290,6 +290,92 @@ PLCON27(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 }
 
 /*----------------------------------------------------------------------*\
+* Vector plotter front-ends.
+* These specify the row-dominant function evaluator in the plvecf_int
+* argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
+*
+* - plvec0	no transformation
+* - plvec1	linear interpolation from singly dimensioned coord arrays
+* - plvec2	linear interpolation from doubly dimensioned coord arrays
+*
+* The latter two work by calling plvecf_int() with the appropriate grid
+* structure for input to pltr2f().
+\*----------------------------------------------------------------------*/
+
+/* no transformation */
+
+void
+PLVEC07(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale)
+{
+    PLfGrid fgrid1, fgrid2;
+
+    fgrid1.nx = *nx;
+    fgrid1.ny = *ny;
+    fgrid1.f = u;
+
+    fgrid2.nx = *nx;
+    fgrid2.ny = *ny;
+    fgrid2.f = v;
+
+    plvecf_int(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
+	    *nx, *ny, *scale, pltr0f, NULL);
+}
+
+/* 1-d transformation */
+
+void
+PLVEC17(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
+	PLFLT *xg, PLFLT *yg)
+{
+    PLfGrid fgrid1;
+    PLfGrid fgrid2;
+    PLcGrid cgrid;
+
+    fgrid1.nx = *nx;
+    fgrid1.ny = *ny;
+    fgrid1.f = u;
+
+    fgrid2.nx = *nx;
+    fgrid2.ny = *ny;
+    fgrid2.f = v;
+
+    cgrid.nx = *nx;
+    cgrid.ny = *ny;
+    cgrid.xg = xg;
+    cgrid.yg = yg;
+
+    plvecf_int(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
+	    *nx, *ny, *scale, pltr1, (void *) &cgrid);
+}
+
+/* 2-d transformation */
+
+void
+PLVEC27(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
+	PLFLT *xg, PLFLT *yg)
+{
+    PLfGrid fgrid1;
+    PLfGrid fgrid2;
+    PLcGrid cgrid;
+
+    fgrid1.nx = *nx;
+    fgrid1.ny = *ny;
+    fgrid1.f = u;
+
+    fgrid2.nx = *nx;
+    fgrid2.ny = *ny;
+    fgrid2.f = v;
+
+    cgrid.nx = *nx;
+    cgrid.ny = *ny;
+    cgrid.xg = xg;
+    cgrid.yg = yg;
+
+    plvecf_int(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
+	    *nx, *ny, *scale, pltr2f, (void *) &cgrid);
+}
+
+/*----------------------------------------------------------------------*\
 * Here are the old contour plotters.
 \*----------------------------------------------------------------------*/
 
@@ -314,6 +400,26 @@ PLCONT7(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 
     plfcont(plf2evalr, (void *) &fgrid,
 	    *nx, *ny, *kx, *lx, *ky, *ly, clevel, *nlevel,
+	    pltr, (void *) ftr);
+}
+
+void
+PLVECT7(PLFLT *u, PLFLT *v, PLINT *nx, PLINT *ny, PLFLT *scale,
+	PLFLT *ftr)
+{
+    PLfGrid fgrid1;
+    PLfGrid fgrid2;
+
+    fgrid1.nx = *nx;
+    fgrid1.ny = *ny;
+    fgrid1.f = u;
+
+    fgrid2.nx = *nx;
+    fgrid2.ny = *ny;
+    fgrid2.f = v;
+
+    plvecf_int(plf2evalr, (void *) &fgrid1, (void *) &fgrid2,
+	    *nx, *ny, *scale,
 	    pltr, (void *) ftr);
 }
 

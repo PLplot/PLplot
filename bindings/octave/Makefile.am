@@ -40,10 +40,8 @@ EXTRA_DIST = \
   plplot_octave_rej.h \
   plplot_octave_def \
   etc \
-  matwrap \
-  doc-stamp \
-  plplot_octave_txt \
-  .octaverc
+  .octaverc \
+  $(MAINTAINERCLEANFILES)
 
 doc-stamp plplot_octave_txt: etc/plplot.doc \
 	   $(top_srcdir)/doc/docbook/bin/api2text.pl \
@@ -58,7 +56,9 @@ if has_xml_pm
 	  ../$(top_srcdir)/doc/docbook/src/api.xml ) \
 	&& touch doc-stamp
 else
-	@echo "Perl modules not available: cannot generate full online help for plplot_octave"
+	@echo "Perl modules not available: cannot generate full online help for plplot_octave" \
+	&& mkdir -p plplot_octave_txt \
+	&& touch doc-stamp
 endif
 
 
@@ -135,7 +135,11 @@ install-data-hook:
 endif
 
 CLEANFILES = tmp_plplot_octave.cc \
-	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave*.oct \
-	plplot_stub.m missing_help
+	plplot_octave.o tmp_stub plplot_octave*.oct \
+	missing_help
 
-MAINTAINERCLEANFILES = doc-stamp plplot_octave_txt/*
+MAINTAINERCLEANFILES = \
+	doc-stamp \
+	plplot_octave_txt \
+	plplot_stub.m \
+	plplot_octave.cc 

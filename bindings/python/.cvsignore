@@ -11,3 +11,4 @@ plplotcmodule_p_single.c
 plplotcmodule_single.c
 plplotcmodule_p_double.c
 plplotcmodule_double.c
+*.pyc

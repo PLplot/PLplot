@@ -24,6 +24,9 @@ EXTRA_DIST = \
   COPYING README.developers \
   bin cnf perl www
 
+dist-hook:
+	rm -f $(distdir)/bin/api2man.pl $(distdir)/www/index.html.in
+
 CLEANFILES = conftest.*
 
 SUBDIRS = src

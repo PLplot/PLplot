@@ -232,6 +232,56 @@
 
 !***********************************************************************
 
+      subroutine plvec0(u, v, nx, ny, scale)
+
+      implicit none
+      integer nx, ny
+      real*8 u(nx, ny), v(nx, ny), scale
+
+      call plvec07(u,v,nx,ny,scale)
+
+      end
+
+!***********************************************************************
+
+      subroutine plvec1(u, v, nx, ny, scale, xg, yg)
+
+      implicit none
+      integer nx, ny
+      real*8 u(nx, ny), v(nx,ny), xg(nx), yg(ny), scale
+
+      call plvec17(u,v,nx,ny,scale,xg,yg)
+
+      end
+
+!***********************************************************************
+
+      subroutine plvec2(u, v, nx, ny, scale, xg, yg)
+
+      implicit none
+      integer nx, ny
+      real*8 u(nx, ny), v(nx,ny), xg(nx, ny), yg(nx, ny), scale
+
+      call plvec27(u,v,nx,ny,scale,xg,yg)
+
+      end
+
+!***********************************************************************
+
+      subroutine plvect(u, v, nx, ny, scale)
+
+      implicit none
+      integer nx, ny
+      real*8 u(nx, ny), v(nx,ny), scale
+      real*8 tr(6)
+      common /plplot/ tr
+
+      call plvect7(u,v,nx,ny,scale,tr)
+
+      end
+
+!***********************************************************************
+
       subroutine plshade0(z, nx, ny, defined,
      &  xmin, xmax, ymin, ymax,
      &  shade_min, shade_max,

@@ -1,6 +1,6 @@
 /* $Id$
 
-    Simple arrow plot example
+    Simple vector plot example
     Copyright (C) 2004 Andrew Ross <andrewross@users.sourceforge.net>
 
     This file is part of PLplot.
@@ -26,14 +26,16 @@
 
 /* Variables and data arrays used by plot generators */
 
-static const int nx = 10;
-static const int ny = 10;
+static const int nx = 20;
+static const int ny = 20;
+static const int nr = 20;
+static const int ntheta = 20;
+static const int nper = 100;
+static const int nlevel = 10;
 
 /* Pairs of points making the line segments used to plot the user defined arrow */
-static PLFLT arrow_x[6] = {-0.5, 0.5, 0.3, 0.5, 0.3, 0.5};
+static PLFLT arrow_x[6] = {-0.5, 0.3, 0.3, 0.5, 0.3, 0.3};
 static PLFLT arrow_y[6] = {0.0, 0.0,   0.2, 0.0, -0.2, 0.0};
-static PLFLT arrow2_x[6] = {-0.5, 0.3, 0.3, 0.5, 0.3, 0.3};
-static PLFLT arrow2_y[6] = {0.0, 0.0,   0.2, 0.0, -0.2, 0.0};
 
 /*--------------------------------------------------------------------------*\
  * main
@@ -41,11 +43,125 @@ static PLFLT arrow2_y[6] = {0.0, 0.0,   0.2, 0.0, -0.2, 0.0};
  * Generates several simple vector plots.  
 \*--------------------------------------------------------------------------*/
 
+f2mnmx(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax)
+{
+    int i, j;
+
+    *fmax = f[0][0];
+    *fmin = *fmax;
+
+    for (i = 0; i < nx; i++) {
+        for (j = 0; j < ny; j++) {
+	    *fmax = MAX(*fmax, f[i][j]);
+	    *fmin = MIN(*fmin, f[i][j]);
+	}
+    }
+}
+
+/* Vector plot of the gradient of a shielded potential (see example 9) */
+void potential() {
+    int i,j;
+    PLcGrid2 cgrid2;
+    PLFLT eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
+    PLFLT div1, div1i, div2, div2i;
+    PLFLT **u, **v, **z, r, theta, x, y, dz;
+    PLFLT xmin, xmax, ymin, ymax, rmax, zmax, zmin;
+    PLFLT px[nper], py[nper], clevel[nlevel];
+
+    /* Create data to be plotted */
+    plAlloc2dGrid(&cgrid2.xg,nr,ntheta);
+    plAlloc2dGrid(&cgrid2.yg,nr,ntheta);
+    plAlloc2dGrid(&z,nr,ntheta);
+    plAlloc2dGrid(&u,nr,ntheta);
+    plAlloc2dGrid(&v,nr,ntheta);
+
+    cgrid2.nx = nr;
+    cgrid2.ny = ntheta;
+
+/* Potential inside a conducting cylinder (or sphere) by method of images.
+ * Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+ * Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+ * Also put in smoothing term at small distances.
+ */
+
+   rmax = (double) nr;
+
+   eps = 2.;
+
+   q1 = 1.;
+   d1 = rmax/4.;
+
+   q1i = - q1*rmax/d1;
+   d1i = pow(rmax, 2.)/d1;
+
+   q2 = -1.;
+   d2 = rmax/4.;
+
+   q2i = - q2*rmax/d2;
+   d2i = pow(rmax, 2.)/d2;
+
+   for (i = 0; i < nr; i++) {
+      r = 0.5 + (double) i;
+      for (j = 0; j < ntheta; j++) {
+	 theta = 2.*PI/(ntheta-1)*(0.5+(double)j);
+	 x = r*cos(theta);
+	 y = r*sin(theta);
+	 cgrid2.xg[i][j] = x;
+	 cgrid2.yg[i][j] = y;
+         div1 = sqrt(pow(x-d1, 2.) + pow(y-d1, 2.) + pow(eps, 2.));
+         div1i = sqrt(pow(x-d1i, 2.) + pow(y-d1i, 2.) + pow(eps, 2.));
+         div2 = sqrt(pow(x-d2, 2.) + pow(y+d2, 2.) + pow(eps, 2.));
+         div2i = sqrt(pow(x-d2i, 2.) + pow(y+d2i, 2.) + pow(eps, 2.));
+	 z[i][j] = q1/div1 + q1i/div1i + q2/div2 + q2i/div2i;
+         u[i][j] = -q1*(x-d1)/pow(div1,3.) - q1i*(x-d1i)/pow(div1i,3.0) 
+		 - q2*(x-d2)/pow(div2,3.) - q2i*(x-d2i)/pow(div2i,3.);
+         v[i][j] = -q1*(y-d1)/pow(div1,3.) - q1i*(y-d1i)/pow(div1i,3.0) 
+		 - q2*(y+d2)/pow(div2,3.) - q2i*(y+d2i)/pow(div2i,3.);
+      }
+   }
+
+    f2mnmx(cgrid2.xg, nr, ntheta, &xmin, &xmax);
+    f2mnmx(cgrid2.yg, nr, ntheta, &ymin, &ymax);
+    f2mnmx(z, nr, ntheta, &zmin, &zmax);
+
+    plenv(xmin, xmax, ymin, ymax, 0, 0);
+    pllab("(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot");
+    /* Plot contours of the potential */
+    dz = (zmax-zmin)/(double) nlevel;
+    for (i = 0; i < nlevel; i++) {
+        clevel[i] = zmin + ((double) i + 0.5)*dz;
+    }
+    plcol(3);
+    pllsty(2);
+    plcont(z,nr,ntheta,1,nr,1,ntheta,clevel,nlevel,pltr2,(void *) &cgrid2);
+    pllsty(1);
+    plcol0(1);
+    
+    /* Plot the vectors of the gradient of the potential */
+    plcol0(2);
+    plvect(u,v,nr,ntheta,25.0,pltr2,(void *)&cgrid2);
+    plcol0(1);
+
+    /* Plot the perimeter of the cylinder */
+    for (i=0;i<nper;i++) {
+	theta = (2.*PI/(nper-1))*(double)i;
+	px[i] = rmax*cos(theta);
+	py[i] = rmax*sin(theta);
+    }
+    plline(nper,px,py);
+    
+    plFree2dGrid(cgrid2.xg,nr,ntheta);
+    plFree2dGrid(cgrid2.yg,nr,ntheta);
+    plFree2dGrid(u,nr,ntheta);
+    plFree2dGrid(v,nr,ntheta);
+
+}
+
 int
 main(int argc, char *argv[])
 {
     int i, j, npts;
-    PLFLT dx, dy, dr;
+    PLFLT x, y;
     PLFLT xmin, xmax, ymin, ymax, r, theta;
     PLINT narr, fill;
     PLcGrid2 cgrid2;
@@ -64,85 +180,50 @@ main(int argc, char *argv[])
     plAlloc2dGrid(&u,nx,ny);
     plAlloc2dGrid(&v,nx,ny);
 
-
     cgrid2.nx = nx;
     cgrid2.ny = ny;
 
-    dx = 1.0;
-    dy = 1.0;
-
     npts = nx*ny;
 
-    xmin = -nx/2*dx;
-    xmax = nx/2*dx;
-    ymin = -ny/2*dy;
-    ymax = ny/2*dy;
+    xmin = -1.6;
+    xmax = 1.6;
+    ymin = -0.55;
+    ymax = 0.55;
 
-/* Create the data to plot */
+/* Create the data to plot  - use the gradient of the rosen function in example 8 */
     for (i = 0; i<nx; i++) {
 	for (j = 0; j<ny; j++) {
-	    cgrid2.xg[i][j] = (i-nx/2+0.5)*dx;
-	    cgrid2.yg[i][j] = (j-ny/2+0.5)*dy;
-	    u[i][j] = cgrid2.yg[i][j];
-	    v[i][j] = -cgrid2.xg[i][j];
+            x = 1.5*((double)(i-nx/2)+0.5)/((double) (nx/2));
+	    y = 0.5*((double)(j-ny/2)+0.5)/((double) (ny/2));
+	    cgrid2.xg[i][j] = x;
+	    cgrid2.yg[i][j] = y;
+	    u[i][j] = -2.0*(1.0-x)-200*(y-x*x);
+	    v[i][j] = 200.0*(y-x*x);
 	}
     }
 
 /* Plot vectors using default arrow style */
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     pllab("(x)", "(y)", "#frPLplot Example 22 - vector plot");
-    plcol(2);
-    plarrows2(u,v,nx,ny,0.0,pltr2,(void *)&cgrid2);
-    plcol(1);
+    plcol0(2);
+    plvect(u,v,nx,ny,-0.5,pltr2,(void *)&cgrid2);
+    plcol0(1);
 
     narr = 6;
-    fill = 0;
-
-/* Create user defined arrow style and plot vectors using new style */
-    plsarrow(arrow_x, arrow_y, narr, fill);
-    plenv(xmin, xmax, ymin, ymax, 0, 0);
-    pllab("(x)", "(y)", "#frPLplot Example 22 - user defined arrow");
-    plcol(2);
-    plarrows2(u,v,nx,ny,-0.5,pltr2,(void *)&cgrid2);
-    plcol(1);
-
     fill = 1;
 	    
 /* Create user defined arrow style and plot vectors using new style */
-    plsarrow(arrow2_x, arrow2_y, narr, fill);
+    plsvect(arrow_x, arrow_y, narr, fill);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     pllab("(x)", "(y)", "#frPLplot Example 22 - filled arrow");
-    plcol(2);
-    plarrows2(u,v,nx,ny,0.3,pltr2,(void *)&cgrid2);
-    plcol(1);
+    plcol0(2);
+    plvect(u,v,nx,ny,0.0005,pltr2,(void *)&cgrid2);
+    plcol0(1);
 
 /* Example of polar plot */
 
-/* Create the data to plot */
-    dr = 0.5;
+    potential();
 
-    for (i = 0; i<nx; i++) {
-        r = i*dr;
-	for (j = 0; j<ny; j++) {
-	    theta = 2.*PI/(ny-1)*(double)j;
-	    cgrid2.xg[i][j] = r*cos(theta);
-	    cgrid2.yg[i][j] = r*sin(theta);
-	    u[i][j] = cgrid2.yg[i][j];
-	    v[i][j] = -cgrid2.xg[i][j];
-	}
-    }
-
-    xmin = -nx*dr;
-    xmax = nx*dr;
-    ymin = -nx*dr;
-    ymax = nx*dr;
-
-    plenv(xmin, xmax, ymin, ymax, 0, 0);
-    pllab("(x)", "(y)", "#frPLplot Example 22 - polar vector plot");
-    plcol(2);
-    plarrows2(u,v,nx,ny,0.5,pltr2,(void *)&cgrid2);
-    plcol(1);
-    
     plFree2dGrid(cgrid2.xg,nx,ny);
     plFree2dGrid(cgrid2.yg,nx,ny);
     plFree2dGrid(u,nx,ny);

@@ -35,7 +35,7 @@ void plD_esc_vga		(PLStream *, PLINT, void *);
 
 static void lxvga_text	(PLStream *pls);
 static void lxvga_graph	(PLStream *pls);
-static void pause	(PLStream *pls);
+static void lxvga_pause	(PLStream *pls);
 
 /* INDENT ON */
 
@@ -158,7 +158,7 @@ void
 plD_eop_vga(PLStream *pls)
 {
     if (page_state == DIRTY)
-	pause(pls);
+	lxvga_pause(pls);
 
     /* vga_setmode(mode); */
     vga_clear();		/* just clean it */
@@ -255,7 +255,7 @@ lxvga_text(PLStream *pls)
 {
     if (pls->graphx == GRAPHICS_MODE) {
 	if (page_state == DIRTY)
-	    pause(pls);
+	    lxvga_pause(pls);
 	vga_setmode(TEXT);
 	pls->graphx = TEXT_MODE;
     }
@@ -278,13 +278,13 @@ lxvga_graph(PLStream *pls)
 }
 
 /*--------------------------------------------------------------------------*\
- * pause()
+ * lxvga_pause()
  *
  * Wait for a keystroke.
 \*--------------------------------------------------------------------------*/
 
 static void
-pause(PLStream *pls)
+lxvga_pause(PLStream *pls)
 {
     if (pls->nopause) 
 	return;

@@ -54,10 +54,11 @@ class x14 {
 
         pls.plParseOpts( args, pls.PL_PARSE_FULL|pls.PL_PARSE_NOPROGRAM );
 
-    // Interface for handling strings does not work yet with swig.
-    // Therefore, driver is unknown.
-    // pls.plgdev(driver);
-	System.out.println("Demo of multiple output streams via the   driver.");
+	StringBuffer driver = new StringBuffer(80);
+	
+	pls.plgdev(driver);
+	String sdriver = new String(driver);
+	System.out.println("Demo of multiple output streams via the " + sdriver +  " driver.");
 	System.out.println("Running with the second stream as slave to the first.");
 	System.out.println("");
 
@@ -65,7 +66,7 @@ class x14 {
 
 	pls.plsetopt("geometry", geometry_master);
 
-	//pls.plsdev(driver);
+	pls.plsdev(sdriver);
 	pls.plssub(2, 2);
 	pls.plinit();
 	
@@ -77,7 +78,7 @@ class x14 {
 	
 	pls.plsetopt("geometry", geometry_slave);
 	pls.plspause(0);
-	//pls.plsdev(driver);
+	pls.plsdev(sdriver);
 	pls.plinit();
 	
 	//Set up the data & plot

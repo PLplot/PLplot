@@ -726,6 +726,12 @@ PLSTYL(PLINT *n, PLINT *mark, PLINT *space)
     c_plstyl(*n, mark, space);
 }
 
+void 
+PLSVECT(PLFLT *arrowx, PLFLT *arrowy, PLINT *npts, PLINT *fill)
+{
+    c_plsvect(arrowx, arrowy, *npts, *fill);
+}
+
 void
 PLSVPA(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
 {

@@ -27,7 +27,7 @@ examples_tkdir = $(DATA_DIR)/examples/tk
 if enable_itcl
 mkindex = $(top_builddir)/scripts/mktclIndex -itcl
 else
-mkindex = $(top_builddir)/scripts/mktclIndex -itcl
+mkindex = $(top_builddir)/scripts/mktclIndex -tcl
 endif
 
 generated_files = \
