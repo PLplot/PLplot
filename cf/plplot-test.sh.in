@@ -39,7 +39,7 @@ pythondir=python
 export pythondir
 tcldir=tcl
 export tcldir
-octavedir=octave
+octavedir=@prefix@/share/plplot_octave//:@prefix@/@DEMOS_DIR@/octave
 export octavedir
 installbindir=@prefix@/@BIN_DIR@
 export installbindir
