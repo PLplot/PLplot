@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.7  1994/02/07 23:02:38  mjl
-   PLiodev struct defined.
+   Revision 1.8  1994/03/23 06:58:11  mjl
+   Minor change to file wrapper to make consistent with rest of package.
 
+ * Revision 1.7  1994/02/07  23:02:38  mjl
+ * PLiodev struct defined.
+ *
  * Revision 1.6  1994/01/15  17:33:16  mjl
  * Added typedef of PDFstrm and wrapped function prototypes in a macro so
  * the header can be read without problems by K&R compilers (cc).
@@ -41,8 +44,8 @@
     its effect upon hardware or computer systems. 
 */
 
-#ifndef _PDF_INCLUDED
-#define _PDF_INCLUDED
+#ifndef __PDF_H__
+#define __PDF_H__
 
 /* PDFstrm definition */
 /* The low level routines use the transfer method appropriate for the */
@@ -101,4 +104,4 @@ int  pdf_rd_4bytes 	PLARGS((PDFstrm *pdfs, U_LONG *ps));
 int  pdf_wr_ieeef	PLARGS((PDFstrm *pdfs, float f));
 int  pdf_rd_ieeef	PLARGS((PDFstrm *pdfs, float *pf));
 
-#endif	/* _PDF_INCLUDED */
+#endif	/* __PDF_H__ */
