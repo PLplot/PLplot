@@ -18,6 +18,55 @@ arguments.  All functions (other than the deprecated ones)
 have at a short description, and all parameters are documented.
   </para>
 
+  <sect1 id="pl_setcontlabelformat" renderas="sect3">
+    <title><function>pl_setcontlabelformat</function>: Set 
+format of numerical label for contours</title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>pl_setcontlabelformat</function>
+	</funcdef>
+        <paramdef><parameter>lexp</parameter></paramdef>
+        <paramdef><parameter>sigdig</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+     Set format of numerical label for contours.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>lexp</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  If the contour numerical label is greater than 10^(lexp) or less
+	  than 10^(-lexp), then the
+	  exponential format is used.  Default value of lexp is 4.
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>sigdig</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	  Number of significant digits.  Default value is 2.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="pl_setcontlabelparam" renderas="sect3">
     <title><function>pl_setcontlabelparam</function>: Set parameters of
 contour labelling other than format of numerical label</title>
@@ -85,55 +134,6 @@ contour labelling other than format of numerical label</title>
 	  <para>
 	  Activate labels.  Set to 1 if you want contour labels on.
 	  Default is off (0).
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-  </sect1>
-
-  <sect1 id="pl_setcontlabelformat" renderas="sect3">
-    <title><function>pl_setcontlabelformat</function>: Set 
-format of numerical label for contours</title>
-
-    <para>
-      <funcsynopsis>
-      <funcprototype>
-	<funcdef>
-	  <function>pl_setcontlabelformat</function>
-	</funcdef>
-        <paramdef><parameter>lexp</parameter></paramdef>
-        <paramdef><parameter>sigdig</parameter></paramdef>
-      </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-     Set format of numerical label for contours.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>lexp</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	  If the contour numerical label is greater than 10^(lexp) or less
-	  than 10^(-lexp), then the
-	  exponential format is used.  Default value of lexp is 4.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>sigdig</parameter>
-	  (<literal>PLINT</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	  Number of significant digits.  Default value is 2.
 	  </para>
 	</listitem>
       </varlistentry>
