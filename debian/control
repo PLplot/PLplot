@@ -3,8 +3,8 @@ Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.5.8
-Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev, g77, itk3.1-dev, python-numeric | python2.2-numeric, python-dev | python2.2-dev, octave2.0-headers | octave2.1-headers, libgd2-dev, libgnome-dev, libfreetype6-dev, m4, perl, libqhull-dev, libpng2-dev | libpng3-dev, libjpeg62-dev
-Build-Conflicts: f2c, fort77
+Build-Depends: debhelper (>= 4.1.4), tcl8.3-dev, tk8.3-dev, itcl3.1-dev, xlibs-dev, g77, itk3.1-dev, python-numeric | python2.2-numeric, python-dev | python2.2-dev, octave2.1-headers | octave2.0-headers, libgd2-dev, libgnome-dev, libfreetype6-dev, m4, perl, libqhull-dev, libpng2-dev | libpng3-dev, libjpeg62-dev
+Build-Conflicts: f2c, fort77b
 
 Package: libplplot5
 Architecture: any
@@ -91,6 +91,7 @@ Description: Tcl/Tk support for PLplot, a plotting library
 
 Package: plplot-tcl-dev
 Architecture: all
+Priority: extra
 Depends: plplot-tcl, libplplot5
 Conflicts: plplot-tcl (<= 5.2.0.cvs.20030224-1)
 Description: Tcl/Tk development support for PLplot, a plotting library

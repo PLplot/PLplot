@@ -1,3 +1,15 @@
+plplot (5.2.0.cvs.20030319-1) unstable; urgency=low
+
+  * Built with new CVS sources: Since my last upload, there has been only
+    improvements in the Octave bindings.
+  * debian/control: Set Priority: extra for plplot-tcl-dev, such that
+    debcheck will not complain.  Also, changed the order of
+    octave2.1-headers and octave2.0-headers in Build-Depends.  This will
+    probably make the autobuilders to install the more recent version of
+    Octave and fix the build problems.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Wed, 19 Mar 2003 08:31:30 +0100
+
 plplot (5.2.0.cvs.20030317-1) unstable; urgency=low
 
   * Built with new CVS sources: fixes in the Octave bindings and in the
@@ -20,6 +32,8 @@ plplot (5.2.0.cvs.20030317-1) unstable; urgency=low
   * The ntk driver is now correctly put in the plplot-tcl package, instead
     of libplplot5.  This was forcing the erroneous dependency of
     libplplot5 on Tcl/Tk 8.3.  Shame on me!
+  * debian/control: Added build-dependencies to libpng3-dev and
+    libjpeg62-dev, such that plplot-gd is built correctly.
 
  -- Rafael Laboissiere <rafael@debian.org>  Sun, 16 Mar 2003 15:09:45 +0100
 
