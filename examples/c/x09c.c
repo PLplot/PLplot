@@ -318,7 +318,7 @@ main(int argc, char *argv[])
     }
 
 /* Plot using identity transform */
-
+/*
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol0(2);
     plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
@@ -328,7 +328,7 @@ main(int argc, char *argv[])
     plstyl(0, &mark, &space);
     plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+*/
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol0(2);
@@ -355,7 +355,7 @@ main(int argc, char *argv[])
     plstyl(0, &mark, &space);
     plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+    /*
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol0(2);
@@ -370,7 +370,7 @@ main(int argc, char *argv[])
     plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
-    
+    */
 /* Plot using 2d coordinate transform */
 
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
@@ -385,7 +385,7 @@ main(int argc, char *argv[])
     plstyl(0, &mark, &space);
     plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+    /*
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol0(2);
@@ -399,17 +399,19 @@ main(int argc, char *argv[])
     plstyl(0, &mark, &space);
     plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-    
+    */
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
     polar();
+    /*
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     polar();
-
+    */
     pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
     potential();
+    /*
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     potential();
-
+    */
     plend();
     free((void *) w);
     free((void *) z);
