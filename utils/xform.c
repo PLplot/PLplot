@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.2  1992/09/29 04:46:49  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.3  1993/07/02 07:17:39  mjl
+   Changed include of plplot.h to plplotP.h.
 
+ * Revision 1.2  1992/09/29  04:46:49  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.1  1992/05/20  21:36:02  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -13,7 +16,7 @@
 	Example linear transformation function for contour plotter.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 
 extern PLFLT tr[];
 
