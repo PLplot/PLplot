@@ -652,6 +652,9 @@ AC_DEFUN([EXPAND_EXPRESSION],[
    $1="$str2"])
 dnl ------------------------------------------------------------------------
 dnl import the whole of SWIG-1.3.21/Tools/config/swig.m4
+dnl subsequently AWI (with ideas from RL) fixed the case where find finds
+dnl multiple files, and also removed some bashism's and extended sed
+dnl constructs so now there is some hope these macros will work cross-platform.
 # Contributed by Sebastian Huber
 
 # SWIG_PROG([required-version = N[.N[.N]]])
@@ -668,15 +671,15 @@ AC_DEFUN([SWIG_PROG],[
 		SWIG='echo "error: SWIG is not installed, you may have a look at http://www.swig.org" ; false'
 	elif test -n "$1" ; then
 		AC_MSG_CHECKING([for SWIG version])
-		[swig_version=`$SWIG -version 2>&1 | grep 'SWIG Version' | sed 's/.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/g'`]
+		[swig_version=`$SWIG -version 2>&1 | grep 'SWIG Version' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]
 		AC_MSG_RESULT([$swig_version])
 		if test -n "$swig_version" ; then
 			# Calculate the required version number
-			[swig_tmp=( `echo $1 | sed 's/[^0-9]\+/ /g'` )]
+			[swig_tmp=( `echo $1 | sed 's/[^0-9][^0-9]*/ /g'` )]
 			[swig_required_version=$(( 1000000 * ${swig_tmp[0]:-0} + 1000 * ${swig_tmp[1]:-0} + ${swig_tmp[2]:-0} ))]
 
 			# Calculate the available version number
-			[swig_tmp=( `echo $swig_version | sed 's/[^0-9]\+/ /g'` )]
+			[swig_tmp=( `echo $swig_version | sed 's/[^0-9][^0-9]*/ /g'` )]
 			[swig_tmp=$(( 1000000 * ${swig_tmp[0]:-0} + 1000 * ${swig_tmp[1]:-0} + ${swig_tmp[2]:-0} ))]
 
 			if test $swig_required_version -gt $swig_tmp ; then
@@ -685,7 +688,7 @@ AC_DEFUN([SWIG_PROG],[
 		else
 			AC_MSG_WARN([cannot determine SWIG version])
 		fi
-		SWIG_RUNTIME_LIBS_DIR="${SWIG%/bin*}/lib"
+		SWIG_RUNTIME_LIBS_DIR=`echo $SWIG | sed "s,/bin.*$,/lib,"`
 		AC_MSG_NOTICE([SWIG runtime library directory is '$SWIG_RUNTIME_LIBS_DIR'])
 	fi
 	AC_SUBST([SWIG_RUNTIME_LIBS_DIR])
@@ -741,16 +744,14 @@ AC_DEFUN([PYTHON_DEVEL],[
 
 	# Check for Python include path
 	AC_MSG_CHECKING([for Python include path])
-	python_path=${PYTHON%/bin*}
+	python_path=`echo $PYTHON | sed "s,/bin.*$,,"`
 	for i in "$python_path/include/python$PYTHON_VERSION/" "$python_path/include/python/" "$python_path/" ; do
-		python_path=`find $i -type f -name Python.h -print`
+		python_path=`find $i -type f -name Python.h -print | sed "1q"`
 		if test -n "$python_path" ; then
 			break
 		fi
 	done
-	while test "$python_path" != "${python_path%/Python.h}"; do
-		python_path=${python_path%/Python.h}
-	done
+	python_path=`echo $python_path | sed "s,/Python.h$,,"`
 	AC_MSG_RESULT([$python_path])
 	if test -z "$python_path" ; then
 		AC_MSG_ERROR([cannot find Python include path])
@@ -759,16 +760,14 @@ AC_DEFUN([PYTHON_DEVEL],[
 
 	# Check for Python library path
 	AC_MSG_CHECKING([for Python library path])
-	python_path=${PYTHON%/bin*}
+	python_path=`echo $PYTHON | sed "s,/bin.*$,,"`
 	for i in "$python_path/lib/python$PYTHON_VERSION/config/" "$python_path/lib/python$PYTHON_VERSION/" "$python_path/lib/python/config/" "$python_path/lib/python/" "$python_path/" ; do
-		python_path=`find $i -type f -name libpython$PYTHON_VERSION.* -print`
+		python_path=`find $i -type f -name libpython$PYTHON_VERSION.* -print | sed "1q"`
 		if test -n "$python_path" ; then
 			break
 		fi
 	done
-	while test "$python_path" != "${python_path%/libpython*}"; do
-		python_path=${python_path%/libpython*}
-	done
+	python_path=`echo $python_path | sed "s,/libpython.*$,,"`
 	AC_MSG_RESULT([$python_path])
 	if test -z "$python_path" ; then
 		AC_MSG_ERROR([cannot find Python library path])
