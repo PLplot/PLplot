@@ -2,29 +2,48 @@
 # Fix up a clean exported plplot tree in order to generate a release tarball.
 # Must be executed from top directory of exported tree, typically a versioned
 # directory such as plplot-5.2.0.
+# Usage:
+# If autotools installed in normal system locations:
+# scripts/make_tarball.sh
+# If, for example, autotools installed in /home/software/autotools/install 
+# scripts/make_tarball.sh -I /home/software/autotools/install/share/libtool/libltdl
+
+# Add in generated documentation from our website.
 cd doc
-#IMPORTANT add in documentation from our website.
 wget -r -l 1 -L -nH --no-parent --cut-dirs=2 \
 http://plplot.sourceforge.net/resources/docbook-manual/
 tar zxf plplotdoc-html-0.4.3.tar.gz
-#IMPORTANT permissions screwup fixed
 cd ..
-chmod a+r examples/tcl/stats.log
+
+# Fix permissions screwup(s) in freshly checked out CVS
 chmod a-x examples/python/xw??.py
-#IMPORTANT prepare tree for configure; make; make install
+
+# Prepare tree for configure; make; make install
+aclocal_opts="$*"
+aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
+./bootstrap.sh $aclocal_opts
+cd doc/docbook
 ./bootstrap.sh
-#IMPORTANT perl-generate the tcl wrapper files.
+cd ../..
+
+# Compensate for autoconf bug which invokes autoheader inappropriately on these
+# files if they are out of date.
+cd include
+touch plConfig.h.in  plDevs.h.in
+cd ..
+
+# Perl-generate the tcl wrapper files.
 cd bindings/tcl 
 perl pltclgen
 cd ../..
 
-#IMPORTANT swig-generate both the single and double-precision wrappers.
+# Swig-generate both the single and double-precision python wrappers.
 cd bindings/python
 swig -python -o plplotcmodule_p_double.c -c++ -DPL_DOUBLE plplotcmodule.i
 swig -python -o plplotcmodule_p_single.c -c++ plplotcmodule.i
 cd ../..
 
-#IMPORTANT swig-generate the java wrapper.
+# Swig-generate the java wrapper.
 cd bindings/java
 swig -java -package plplot.core -DPL_DOUBLE plplotjavac.i
 cd ../..
