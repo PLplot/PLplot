@@ -36,21 +36,22 @@ DESCRIPTION
 DEVELOPMENT NOTES
 
   Truetype text is supplied using the PLPLOT_CANVAS_HACKTEXT item,
-  which was clone from gnome-print.  This text item was chosen because 
-  rotates and scales under a zoom correctly and easily.
+  which was cloned from gnome-print.  This text item was chosen because 
+  it rotates and scales under a zoom correctly and easily.
 
   It would be better to use GNOME_CANVAS_TEXT with pango, but currently 
   (4 March 2005) it doesn't scale under a zoom on the Gnome Canvas,
-  and the bounding box doesn't rotate with the text (!), which results in
-  clipping.  The pango authors have been less than helpful in providing
-  either advice or documentation to address these problems, and so we must
-  wait until the issues sort themselves out.
+  and the bounding box doesn't rotate with the text under the pango 
+  api (!), which results in clipping.  The pango authors have been less
+  than helpful in providing either advice or documentation to address 
+  these problems, and so we must wait until the issues sort themselves 
+  out.
 
   Another problem is that drawing polylines on the Gnome Canvas sometimes
   results in an 'attempt to put segment in horiz list twice' error.
   The workaround here is to plot single line segments only, but this
   results in a performance hit.  This problem will need to be corrected
-  in Gnome Canvas.
+  in the Gnome Canvas.
 
 
 KNOWN BUGS
@@ -133,13 +134,16 @@ static int text = 1;
 static int text = 0;
 #endif
 
+static int hrshsym = 0;
+
 static int fast = 0; 
 
 static DrvOpt gcw_options[] = 
   {
     {"aa", DRV_INT, &aa, "Use antialiased canvas (aa=0|1)"},
     {"text", DRV_INT, &text, "Use truetype fonts (text=0|1)"},
-    {"fast", DRV_INT, &fast, "Use fast rendering [(fast=0|1)"},
+    {"hrshsym", DRV_INT, &hrshsym, "Don't use Hershey symbol set (hrshsym=0|1)"},
+    {"fast", DRV_INT, &fast, "Use fast rendering (fast=0|1)"},
     {NULL, DRV_INT, NULL, NULL}
   };
 
@@ -473,7 +477,6 @@ void gcw_set_canvas_aspect(GnomeCanvas* canvas,PLFLT aspect)
 	       "x2",dev->width,"y2",0.,NULL);
 }
 
-
 /*--------------------------------------------------------------------------*\
  * gcw_set_canvas_zoom()
  *
@@ -784,6 +787,7 @@ void plD_init_gcw(PLStream *pls)
     pls->dev_text = TRUE;
     pls->dev_unicode = TRUE;
     dev->use_text = TRUE;
+    if(hrshsym) pls->dev_hrshsym = 1;
 
     /* Initialize freetype */
     plD_FreeType_init(pls);
