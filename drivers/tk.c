@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.47  1994/11/02 19:51:48  mjl
+ * Revision 1.48  1995/01/13 23:21:52  mjl
+ * Fixed to work with new locator variables.
+ *
+ * Revision 1.47  1994/11/02  19:51:48  mjl
  * Added locator handling.  When escape function is called with a PLESC_GETC
  * operation, the driver simply goes into an event loop, waiting for a mouse
  * event to be reported back from plserver.  The coordinates are stored in
@@ -188,12 +191,14 @@ init(PLStream *pls)
 
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
-    pls->width = 1;
     pls->page = 0;
     pls->dev_di = 1;
     pls->dev_flush = 1;		/* Want to handle our own flushes */
     pls->dev_fill0 = 1;
     pls->dev_fill1 = 1;
+
+    if (pls->width == 0)	/* Is 0 if uninitialized */
+	pls->width = 1;
 
 /* Specify buffer size if not yet set (can be changed by -bufmax option).  */
 /* A small buffer works best for socket communication */
@@ -542,8 +547,8 @@ GetCursor(PLStream *pls, PLCursor *ptr)
 	HandleEvents(pls);
     }
 
-    ptr->vdX = dev->cursorX;
-    ptr->vdY = dev->cursorY;
+    ptr->dX = dev->cursorX;
+    ptr->dY = dev->cursorY;
 }
 
 /*----------------------------------------------------------------------*\
