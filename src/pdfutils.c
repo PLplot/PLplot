@@ -437,7 +437,7 @@ pdf_wr_string(PDFstrm *pdfs, const char *string)
 
     dbug_enter("pdf_wr_string");
 
-    for (i = 0; i <= strlen(string); i++) {
+    for (i = 0; i <= (int) strlen(string); i++) {
 	if (pdf_putc(string[i], pdfs) == EOF)
 	    return PDF_WRERR;
     }

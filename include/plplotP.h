@@ -96,6 +96,7 @@ typedef char * caddr_t;
 #include <string.h>
 #include <limits.h>
 #include <float.h>
+#include <unistd.h>
 
 #if HAVE_DIRENT_H
 /* The following conditional is a workaround for a bug in the MacOSX system.
@@ -862,6 +863,9 @@ RestoreWrite2BufferPixmap(void);
 
 void
 grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny);
+
+int
+plInBuildTree();
 
 void
 plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny, 

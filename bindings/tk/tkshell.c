@@ -25,25 +25,25 @@ Pltk_Init( Tcl_Interp *interp )
 
 /* plframe -- PLplot graphing widget */
 
-    Tcl_CreateCommand(interp, "plframe", plFrameCmd,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
+    Tcl_CreateCommand(interp, "plframe", (Tcl_CmdProc*) plFrameCmd,
+                      (ClientData) main, (Tcl_CmdDeleteProc*) NULL);
 
 /* matrix -- matrix support command */
 
-    Tcl_CreateCommand(interp, "matrix", Tcl_MatrixCmd,
-                      (ClientData) main, (void (*)(ClientData)) NULL);
+    Tcl_CreateCommand(interp, "matrix", (Tcl_CmdProc*) Tcl_MatrixCmd,
+                      (ClientData) main, (Tcl_CmdDeleteProc*) NULL);
 
 /* wait_until -- waits for a specific condition to arise */
 /* Can be used with either Tcl-DP or TK */
 
-    Tcl_CreateCommand(interp, "wait_until", plWait_Until,
-		      (ClientData) NULL, (void (*) (ClientData)) NULL);
+    Tcl_CreateCommand(interp, "wait_until", (Tcl_CmdProc*) plWait_Until,
+		      (ClientData) NULL,  (Tcl_CmdDeleteProc*) NULL);
 
 /* host_id -- returns host IP number.  Only for use with Tcl-DP */
 
 #ifdef PLD_dp
-    Tcl_CreateCommand(interp, "host_id", plHost_ID,
-		      (ClientData) NULL, (void (*) (ClientData)) NULL);
+    Tcl_CreateCommand(interp, "host_id", (Tcl_CmdProc*) plHost_ID,
+		      (ClientData) NULL,  (Tcl_CmdDeleteProc*) NULL);
 #endif
 
 /* Set up auto_path */

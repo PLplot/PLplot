@@ -22,6 +22,7 @@
 #include <ltdl.h>
 #include <stdio.h>
 #include <signal.h>
+#include <stdlib.h>
 #include "plConfig.h"
 
 /* SEGV signal handler */
@@ -39,7 +40,6 @@ main (int argc, char* argv[])
   char sym[300];
   char* drvnam = argv[1];
   char** info;
-  FILE* fd;
 
   /* Establish a handler for SIGSEGV signals. */
   signal (SIGSEGV, catch_segv);

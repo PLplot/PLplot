@@ -227,7 +227,7 @@ pltclMain(int argc, char **argv, char *RcFileName /* OBSOLETE */,
 	    argv++;
 	}
     }
-    args = Tcl_Merge(argc-1, argv+1);
+    args = Tcl_Merge(argc-1, (CONST char * CONST *) argv+1);
     Tcl_ExternalToUtfDString(NULL, args, -1, &argString);
     Tcl_SetVar(interp, "argv", Tcl_DStringValue(&argString), TCL_GLOBAL_ONLY);
     Tcl_DStringFree(&argString);

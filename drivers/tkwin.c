@@ -135,11 +135,13 @@ static int synchronize = 0; /* change to 1 for synchronized operation */
 #define CMAP1_COLORS 50
 #define MAX_COLORS 256
 
+#ifndef USE_TK
 /* Variables to hold RGB components of given colormap. */
 /* Used in an ugly hack to get past some X11R5 and TK limitations. */
 
 static int sxwm_colors_set;
 static XColor sxwm_colors[MAX_COLORS];
+#endif
 
 /* Keep pointers to all the displays in use */
 
@@ -167,9 +169,13 @@ static void AllocBGFG  (PLStream *pls);
 static void ExposeCmd  (PLStream *pls, PLDisplay *ptr);
 static void RedrawCmd  (PLStream *pls);
 static void ResizeCmd  (PLStream *pls, PLDisplay *ptr);
+#ifndef USE_TK
 static void GetCursorCmd (PLStream *pls, PLGraphicsIn *ptr);
+#endif
 static void FillPolygonCmd (PLStream *pls);
+#ifdef USING_PLESC_COPY
 static void CopyCommand (PLStream *pls);
+#endif
 
 /* Miscellaneous */
 
@@ -504,8 +510,7 @@ WaitForPage(PLStream *pls)
 {
     PlPlotter *plf = pls->plPlotterPtr;
     TkwDev *dev = (TkwDev *) pls->dev;
-    TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-
+    
     dbug_enter("WaitForPage");
 
     dev->flags &= 1;
@@ -538,6 +543,7 @@ plD_bop_tkwin(PLStream *pls)
     PlPlotter *plf = pls->plPlotterPtr;
     TkwDev *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
+
     XRectangle xrect;
     xrect.x = 0; xrect.y = 0;
     xrect.width = dev->width; xrect.height = dev->height;
@@ -685,8 +691,9 @@ void
 plD_esc_tkwin(PLStream *pls, PLINT op, void *ptr)
 {
     TkwDev *dev = (TkwDev *) pls->dev;
+#ifndef USE_TK
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
-
+#endif
     dbug_enter("plD_esc_tkw");
     if (dev->flags & 1) return;
 
@@ -735,6 +742,7 @@ plD_esc_tkwin(PLStream *pls, PLINT op, void *ptr)
     }
 }
 
+#ifdef USING_PLESC_COPY
 /*--------------------------------------------------------------------------*\
  * CopyCommand()
  *
@@ -764,6 +772,7 @@ CopyCommand (PLStream *pls)
 	XCopyArea(tkwd->display, dev->pixmap, dev->pixmap, dev->gc,
 		  x0,y0,w,h,x1,y1);
 }
+#endif
 
 /*--------------------------------------------------------------------------*\
  * FillPolygonCmd()

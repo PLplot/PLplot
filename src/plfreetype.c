@@ -381,7 +381,6 @@ FT_PlotChar(PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
     unsigned char bittest;
     short i,k,j;
     int n=slot->bitmap.pitch;
-    FT_Data *FTT=(FT_Data *)pls->FT;
 
     if ((slot->bitmap.pixel_mode==ft_pixel_mode_mono)||(pls->icol0==0)) {
 	x+=slot->bitmap_left;
@@ -498,7 +497,7 @@ void plD_FreeType_init(PLStream *pls)
  *  NOTE WELL - the trailing slash must be added for now !
  */
 
-    if (a = getenv("PLPLOT_FREETYPE_FONT_PATH"))
+    if ((a = getenv("PLPLOT_FREETYPE_FONT_PATH")) != NULL)
         strcpy(font_path,a);
     else
         strcpy(font_path,default_unix_font_path);
@@ -530,7 +529,7 @@ void plD_FreeType_init(PLStream *pls)
  */
 
     for (i=0; i<5; i++) {
-	if (a = getenv(env_var_names[i])) {
+	if ((a = getenv(env_var_names[i])) != NULL) {
 
 /*
  *  Work out if we have been given an absolute path to a font name, or just
@@ -615,7 +614,6 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
     PLFLT *t = args->xform;
     FT_Matrix matrix;
     PLFLT angle=PI*pls->diorot/2;
-    PLFLT a1, alpha;
     PLINT clxmin, clxmax, clymin, clymax;
     PLFLT Sin_A,Cos_A;
     FT_Vector adjust;
@@ -795,6 +793,7 @@ void plD_render_freetype_text (PLStream *pls, EscText *args)
 void plD_FreeType_Destroy(PLStream *pls)
 {
     FT_Data *FT=(FT_Data *)pls->FT;
+    extern int FT_Done_Library( FT_Library  library );
 
     if (FT) {
 	if (FT->smooth_text==1) plscmap0n(FT->ncol0_org);

@@ -169,7 +169,9 @@ static void  StoreCmap0		(PLStream *pls);
 static void  StoreCmap1		(PLStream *pls);
 static void  imageops           (PLStream *pls, int *ptr);
 static void  SetBGFG		(PLStream *pls);
+#ifdef DUMMY
 static void  SaveColormap	(Display *display, Colormap colormap);
+#endif
 static void  PLColor_to_XColor	(PLColor *plcolor, XColor *xcolor);
 static void  PLColor_from_XColor(PLColor *plcolor, XColor *xcolor);
 
@@ -1033,8 +1035,8 @@ InitMain(PLStream *pls)
     if (pls->xlength == 0) pls->xlength = width  * 0.75;
     if (pls->ylength == 0) pls->ylength = height * 0.75;
 
-    if (pls->xlength > width)  pls->xlength = width  - dev->border * 2;
-    if (pls->ylength > height) pls->ylength = height - dev->border * 2;
+    if (pls->xlength > (short) width)  pls->xlength = width  - dev->border * 2;
+    if (pls->ylength > (short) height) pls->ylength = height - dev->border * 2;
 
     hint.width  = (int) pls->xlength;
     hint.height = (int) pls->ylength;
@@ -1821,8 +1823,8 @@ CreateXhairs(PLStream *pls)
     if (XQueryPointer(xwd->display, dev->window, &root, &child,
 		      &root_x, &root_y, &win_x, &win_y, &mask)) {
 
-	if (win_x >= 0 && win_x < dev->width &&
-	    win_y >= 0 && win_y < dev->height) {
+	if (win_x >= 0 && win_x < (int) dev->width &&
+	    win_y >= 0 && win_y < (int) dev->height) {
 	    DrawXhairs(pls, win_x, win_y);
 	    dev->drawing_xhairs = 1;
 	}
@@ -3009,6 +3011,7 @@ AreWeGrayscale(Display *display)
     return (1);
 }
 
+#ifdef DUMMY
 /*--------------------------------------------------------------------------*\
  * SaveColormap()  **** DUMMY, NOT USED ANYMORE ***
  *
@@ -3045,7 +3048,7 @@ SaveColormap(Display *display, Colormap colormap)
     }
  */
 }
-
+#endif
 
 /*--------------------------------------------------------------------------*\
  * GetImageErrorHandler()

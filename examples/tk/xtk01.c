@@ -91,8 +91,8 @@ AppInit(Tcl_Interp *interp)
  * they weren't already created by the init procedures called above.
  */
 
-    Tcl_CreateCommand(interp, "myplot", myplotCmd,
-                      (ClientData) mainWindow, (void (*)(ClientData)) NULL);
+    Tcl_CreateCommand(interp, "myplot", (Tcl_CmdProc*) myplotCmd,
+                      (ClientData) mainWindow, (Tcl_CmdDeleteProc*) NULL);
 
     return TCL_OK;
 }

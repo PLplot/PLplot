@@ -455,7 +455,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->widgetCmd =
 #endif
     Tcl_CreateCommand(interp, Tk_PathName(plFramePtr->tkwin),
-	    PlFrameWidgetCmd, (ClientData) plFramePtr, (void (*)()) NULL);
+	   (Tcl_CmdProc*) PlFrameWidgetCmd, (ClientData) plFramePtr, (Tcl_CmdDeleteProc*) NULL);
 #ifdef HAVE_ITCL
     Itk_SetWidgetCommand( plFramePtr->tkwin, plFramePtr->widgetCmd);
 #endif
@@ -1414,7 +1414,6 @@ PlFrameInit(ClientData clientData)
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
     register Tk_Window tkwin = plFramePtr->tkwin;
-    PLStream *pls = plFramePtr->pls;
 
 /* Set up window parameters and arrange for window to be refreshed */
 
@@ -2065,7 +2064,7 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
     dbug_enter("ConfigurePlFrame");
 
     if (Tk_ConfigureWidget(interp, tkwin, configSpecs,
-	    argc, argv, (char *) plFramePtr, flags) != TCL_OK) {
+	    argc, (CONST char**) argv, (char *) plFramePtr, flags) != TCL_OK) {
 	return TCL_ERROR;
     }
 

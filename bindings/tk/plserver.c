@@ -117,8 +117,8 @@ main(int argc, char **argv)
 /* Parse args */
 /* Examine the result string to see if an error return is really an error */
 
-    if (Tk_ParseArgv(interp, (Tk_Window) NULL, &argc, argv, argTable, 
-		     TK_ARGV_NO_DEFAULTS) != TCL_OK) {
+    if (Tk_ParseArgv(interp, (Tk_Window) NULL, &argc, (CONST char**) argv,
+		     argTable, TK_ARGV_NO_DEFAULTS) != TCL_OK) {
 	fprintf(stderr, "\n(plserver) %s\n\n", interp->result);
 	fprintf(stderr, "\
 The client_<xxx> and -child options should not be used except via the\n\
@@ -221,8 +221,8 @@ AppInit(Tcl_Interp *interp)
 
     tcl_cmd(interp, "rename exit tkexit");
 
-    Tcl_CreateCommand(interp, "exit", plExitCmd,
-                      (ClientData) mainWindow, (void (*)(ClientData)) NULL);
+    Tcl_CreateCommand(interp, "exit", (Tcl_CmdProc *) plExitCmd,
+                      (ClientData) mainWindow, (Tcl_CmdDeleteProc*) NULL);
 
     return TCL_OK;
 }

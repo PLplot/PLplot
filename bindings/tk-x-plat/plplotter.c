@@ -1,5 +1,12 @@
 /* $Id$
  * $Log$
+ * Revision 1.16  2003/10/29 19:40:54  jcard
+ * Mostly cosmetic changes that enable plplot to compiled with (almost) no warnings, even with gcc -Wall.
+ *
+ * Most changes are just casts, and most of them are tcl/tk related. For tcl/tk-8.4, no warnings occurs.
+ * Also tested with tcl/tk-8.3, where some warnings remain.
+ * There are no java/f77/cxx/python/octave changes.
+ *
  * Revision 1.15  2002/12/03 08:39:22  airwin
  * Merged AT branch into MAIN, a new configuration era has started
  *
@@ -559,7 +566,7 @@ plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
     plPlotterPtr->interp = interp;
     plPlotterPtr->widgetCmd = 
       Tcl_CreateCommand(interp, Tk_PathName(plPlotterPtr->tkwin),
-			PlPlotterWidgetCmd, (ClientData) plPlotterPtr, 
+			(Tcl_CmdProc*) PlPlotterWidgetCmd, (ClientData) plPlotterPtr, 
 			(Tcl_CmdDeleteProc*) NULL);
     plPlotterPtr->xorGC = NULL;
     plPlotterPtr->border = NULL;
@@ -635,7 +642,7 @@ plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
 /* for active plot */
     ActiveState(plPlotterPtr, 1);
     
-    if (ConfigurePlPlotter(interp, plPlotterPtr, argc-2, argv+2, 0) != TCL_OK) {
+    if (ConfigurePlPlotter(interp, plPlotterPtr, argc-2, (CONST char**) argv+2, 0) != TCL_OK) {
         Tk_DestroyWindow(plPlotterPtr->tkwin);
         return TCL_ERROR;
     }
@@ -1033,7 +1040,7 @@ PlPlotterConfigureEH(ClientData clientData, register XEvent *eventPtr)
         if (plPlotterPtr->flags & REFRESH_PENDING) {
             Tcl_CancelIdleCall(DisplayPlPlotter, (ClientData) plPlotterPtr);
         }
-        Tk_EventuallyFree((ClientData) plPlotterPtr, DestroyPlPlotter);
+        Tk_EventuallyFree((ClientData) plPlotterPtr, (Tcl_FreeProc*) DestroyPlPlotter);
         break;
 
     case MapNotify:
@@ -1232,7 +1239,7 @@ PlPlotterButtonPressEH(ClientData clientData, register XEvent *eventPtr)
 {
     register PlPlotter *plPlotterPtr = (PlPlotter *) clientData;
     XButtonEvent *event = (XButtonEvent *) eventPtr;
-    register Tk_Window tkwin = plPlotterPtr->tkwin;
+    
     /* Get modifier keys */
     switch (event->state) {
       case 256: /* plain */
@@ -1419,10 +1426,6 @@ DestroyRband(PlPlotter *plPlotterPtr)
 static void
 DrawRband(PlPlotter *plPlotterPtr, int x0, int y0)
 {
-    register Tk_Window tkwin = plPlotterPtr->tkwin;
-    int xmin = 0, xmax = Tk_Width(tkwin) - 1;
-    int ymin = 0, ymax = Tk_Height(tkwin) - 1;
-
 /* If the line is already up, clear it. */
 
     if (plPlotterPtr->drawing_rband)
@@ -1492,7 +1495,6 @@ static void
 PlPlotterInit(ClientData clientData)
 {
     register PlPlotter *plPlotterPtr = (PlPlotter *) clientData;
-    register Tk_Window tkwin = plPlotterPtr->tkwin;
 
 /* Set up window parameters and arrange for window to be refreshed */
 
@@ -1836,7 +1838,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 /* no option -- return list of available PLplot commands */
 
     if (argc == 0) 
-        return plTclCmd(cmdlist, interp, argc, argv);
+        return plTclCmd(cmdlist, interp, argc, (char **) argv);
 
 /* Make sure widget has been initialized before going any further */
 
@@ -1925,7 +1927,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
         pls->ncol0 = ncol0;
         for (i = 0; i < pls->ncol0; i++) {
-            col = strtok(argv[2+i], " ");
+            col = strtok((char *) argv[2+i], " ");
             if ( col == NULL )
                 break;
 
@@ -1952,7 +1954,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
             return TCL_ERROR;
         }
 
-        col = strtok(argv[2], " ");
+        col = strtok((char *) argv[2], " ");
         pos = strtok(NULL, " ");
         rev = strtok(NULL, " ");
         for (i = 0; i < ncp1; i++) {
@@ -2038,7 +2040,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 /* unrecognized, so give it to plTclCmd to take care of */
 
     else 
-        result = plTclCmd(cmdlist, interp, argc, argv);
+        result = plTclCmd(cmdlist, interp, argc, (char **)argv);
 
     plflush();
     return result;
@@ -2425,7 +2427,7 @@ Openlink(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         }
         iodev->type = 1;
         iodev->typeName = "socket";
-        iodev->fileHandle = argv[1];
+        iodev->fileHandle = (char *) argv[1];
 
         if (Tcl_GetOpenFile(interp, iodev->fileHandle,
                             0, 1, (ClientData) &iodev->file) != TCL_OK) {

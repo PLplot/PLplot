@@ -450,7 +450,7 @@ pl_PacketReceive(interp, iodev, pdfs)
      * Expand the size of the buffer, as needed.
      */
 
-    if (header[1] > pdfs->bufmax) {
+    if (header[1] > (unsigned) pdfs->bufmax) {
 	free((void *) pdfs->buffer);
 	pdfs->bufmax = header[1] + 32;
 	pdfs->buffer = (unsigned char *) malloc(pdfs->bufmax);
@@ -485,7 +485,7 @@ pl_PacketReceive(interp, iodev, pdfs)
 	goto readError;
     }
 
-    if (numRead != packetLen) {
+    if ((unsigned) numRead != packetLen) {
 #ifdef DEBUG
 	fprintf(stderr, "Incomplete packet read, numRead = %d\n", numRead);
 #endif
@@ -523,7 +523,7 @@ readError:
 
     /* Record the error before closing the file */
     if (numRead != 0) {
-	errMsg = Tcl_PosixError (interp);
+	errMsg = (char *) Tcl_PosixError (interp);
     } else {
 	errMsg = NULL;	/* Suppresses spurious compiler warning */
     }
@@ -630,7 +630,7 @@ pl_PacketSend(interp, iodev, pdfs)
 
     free(buffer);
 
-    if (numSent != packetLen) {
+    if ((unsigned) numSent != packetLen) {
 
 	if ((errno == 0) || (errno == EWOULDBLOCK || errno == EAGAIN)) {
 	    /*

@@ -1651,7 +1651,7 @@ plInitDispatchTable()
     FILE *fp_drvdb = NULL;
     DIR* dp_drvdir = NULL;
     struct dirent* entry;
-    lt_dlhandle dlhand;
+    /* lt_dlhandle dlhand; */
 
 /* Open a temporary file in which all the plD_DEVICE_INFO_<driver> strings
    will be stored */

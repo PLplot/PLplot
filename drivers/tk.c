@@ -711,8 +711,6 @@ static void
 tk_start(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char *pname;
-    int i;
 
     dbug_enter("tk_start");
 
@@ -909,27 +907,27 @@ pltkdriver_Init(PLStream *pls)
  * they weren't already created by the init procedures called above.
  */
 
-    Tcl_CreateCommand(interp, "wait_until", plWait_Until,
-		      (ClientData) NULL, (void (*) (ClientData)) NULL);
+    Tcl_CreateCommand(interp, "wait_until", (Tcl_CmdProc*) plWait_Until,
+		      (ClientData)  NULL, (Tcl_CmdDeleteProc*) NULL);
 
 #ifdef PLD_dp
     if (pls->dp) {
-	Tcl_CreateCommand(interp, "host_id", plHost_ID,
-			  (ClientData) NULL, (void (*) (ClientData)) NULL);
+	Tcl_CreateCommand(interp, "host_id", (Tcl_CmdProc*) plHost_ID,
+			  (ClientData) NULL,  (Tcl_CmdDeleteProc*) NULL);
     }
 #endif
 
-    Tcl_CreateCommand(interp, "abort", Abort,
-		      (ClientData) pls, (void (*) (ClientData)) NULL);
+    Tcl_CreateCommand(interp, "abort", (Tcl_CmdProc*) Abort,
+		      (ClientData) pls, (Tcl_CmdDeleteProc*) NULL);
 
-    Tcl_CreateCommand(interp, "plfinfo", Plfinfo,
-		      (ClientData) pls, (void (*) (ClientData)) NULL);
+    Tcl_CreateCommand(interp, "plfinfo", (Tcl_CmdProc*) Plfinfo,
+		      (ClientData) pls, (Tcl_CmdDeleteProc*) NULL);
 
-    Tcl_CreateCommand(interp, "keypress", KeyEH,
-		      (ClientData) pls, (void (*) (ClientData)) NULL);
+    Tcl_CreateCommand(interp, "keypress", (Tcl_CmdProc*) KeyEH,
+		      (ClientData) pls, (Tcl_CmdDeleteProc*) NULL);
 
-    Tcl_CreateCommand(interp, "buttonpress", ButtonEH,
-		      (ClientData) pls, (void (*)()) NULL);
+    Tcl_CreateCommand(interp, "buttonpress", (Tcl_CmdProc*) ButtonEH,
+		      (ClientData) pls, (Tcl_CmdDeleteProc*) NULL);
 
 /* Set some relevant interpreter variables */
 
@@ -1165,10 +1163,10 @@ launch_server(PLStream *pls)
 
     if (pls->dp) {
 	argv[i++] = "-client_host";
-	argv[i++] = Tcl_GetVar(dev->interp, "client_host", TCL_GLOBAL_ONLY);
+	argv[i++] = (char *) Tcl_GetVar(dev->interp, "client_host", TCL_GLOBAL_ONLY);
 
 	argv[i++] = "-client_port";
-	argv[i++] = Tcl_GetVar(dev->interp, "client_port", TCL_GLOBAL_ONLY);
+	argv[i++] = (char *) Tcl_GetVar(dev->interp, "client_port", TCL_GLOBAL_ONLY);
 
 	if (pls->user != NULL) {
 	    argv[i++] = "-l";
@@ -1177,7 +1175,7 @@ launch_server(PLStream *pls)
     }
     else {
 	argv[i++] = "-client_name";
-	argv[i++] = Tcl_GetVar(dev->interp, "client_name", TCL_GLOBAL_ONLY);
+	argv[i++] = (char *) Tcl_GetVar(dev->interp, "client_name", TCL_GLOBAL_ONLY);
     }
 
 /* The display absolutely must be set if invoking a remote server (by rsh) */
@@ -1297,8 +1295,7 @@ static void
 plwindow_init(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char command[100], *pname;
-    int i;
+    char command[100];
     unsigned int bg;
 
     dbug_enter("plwindow_init");
@@ -1395,7 +1392,7 @@ set_windowname(PLStream *pls)
     /* Replace any ' 's with '_'s to avoid quoting problems. */
     /* Replace any '.'s (except leading) with '_'s to avoid bad window names. */
 
-    for (i = 0; i < strlen(pls->plwindow); i++) {
+    for (i = 0; i < (int)strlen(pls->plwindow); i++) {
       if (pls->plwindow[i] == ' ') pls->plwindow[i] = '_';
       if (i == 0) continue;
       if (pls->plwindow[i] == '.') pls->plwindow[i] = '_';
@@ -1460,7 +1457,7 @@ link_init(PLStream *pls)
 	iodev->type = 1;
 	iodev->typeName = "socket";
 	tcl_cmd(pls, "plclient_dp_init");
-	iodev->fileHandle = Tcl_GetVar(dev->interp, "data_sock", 0);
+	iodev->fileHandle = (char *) Tcl_GetVar(dev->interp, "data_sock", 0);
 
 	if (Tcl_GetOpenFile(dev->interp, iodev->fileHandle,
 			    0, 1, (ClientData) &iodev->file) != TCL_OK) {
@@ -2147,7 +2144,7 @@ copybuf(PLStream *pls, char *cmd)
 	dev->cmdbuf = (char *) malloc(dev->cmdbuf_len);
     }
 
-    if (strlen(cmd) >= dev->cmdbuf_len) {
+    if ((int) strlen(cmd) >= dev->cmdbuf_len) {
 	free((void *) dev->cmdbuf);
 	dev->cmdbuf_len = strlen(cmd) + 20;
 	dev->cmdbuf = (char *) malloc(dev->cmdbuf_len);

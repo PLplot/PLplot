@@ -79,9 +79,11 @@ EXTERN Tcl_Namespace *	Tcl_GetGlobalNamespace _ANSI_ARGS_((
  * file out of the Tk source directory to make their own modified versions).
  */
 
+/* these are defined in unistd.h, included by plplotP.h
 extern void		exit _ANSI_ARGS_((int status));
 extern int		isatty _ANSI_ARGS_((int fd));
 extern int		read _ANSI_ARGS_((int fd, char *buf, size_t size));
+*/
 extern char *		strrchr _ANSI_ARGS_((CONST char *string, int c));
 
 /*
@@ -169,7 +171,7 @@ pltkMain(int argc, char **argv, char *RcFileName,
      * Parse command-line arguments.
      */
 
-    if (Tk_ParseArgv(interp, (Tk_Window) NULL, &argc, argv, argTable, 0)
+    if (Tk_ParseArgv(interp, (Tk_Window) NULL, &argc, (CONST char**) argv, argTable, 0)
 	    != TCL_OK) {
 	fprintf(stderr, "%s\n", interp->result);
 	exit(1);
@@ -255,7 +257,7 @@ pltkMain(int argc, char **argv, char *RcFileName,
      * specified on the command line.
      */
 
-    args = Tcl_Merge(argc-1, argv+1);
+    args = Tcl_Merge(argc-1, (CONST char * CONST *) argv+1);
     Tcl_SetVar(interp, "argv", args, TCL_GLOBAL_ONLY);
     ckfree(args);
     sprintf(buf, "%d", argc-1);
@@ -373,7 +375,7 @@ pltkMain(int argc, char **argv, char *RcFileName,
     exit(1);
 
 error:
-    msg = Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);
+    msg = (char *) Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);
     if (msg == NULL) {
 	msg = interp->result;
     }
@@ -497,7 +499,7 @@ Prompt(interp, partial)
     char *promptCmd;
     int code;
 
-    promptCmd = Tcl_GetVar(interp,
+    promptCmd = (char *) Tcl_GetVar(interp,
 	partial ? "tcl_prompt2" : "tcl_prompt1", TCL_GLOBAL_ONLY);
     if (promptCmd == NULL) {
 	defaultPrompt:

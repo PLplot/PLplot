@@ -106,7 +106,6 @@ static char errmsg[160];
 #define PL_LIBRARY ""
 #endif
 
-static char defaultLibraryDir[200] = PL_LIBRARY;
 extern char* plplotLibDir;
 
 #if (!defined(MAC_TCL) && !defined(__WIN32__))
@@ -414,7 +413,7 @@ PlbasicInit( Tcl_Interp *interp )
 	    Tcl_ResetResult(interp);
 	}
 	else
-	    libDir = Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+	    libDir = (char*) Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
     }
 
 #ifdef TCL_DIR
@@ -442,7 +441,7 @@ PlbasicInit( Tcl_Interp *interp )
 	    Tcl_ResetResult(interp);
 	}
 	else
-	    libDir = Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
+	    libDir = (char *) Tcl_GetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
     }
 
 /* Last chance, current directory */
@@ -482,7 +481,7 @@ PlbasicInit( Tcl_Interp *interp )
 /* wait_until -- waits for a specific condition to arise */
 /* Can be used with either Tcl-DP or TK */
 
-    Tcl_CreateCommand(interp, "wait_until", plWait_Until,
+    Tcl_CreateCommand(interp, "wait_until", (Tcl_CmdProc *) plWait_Until,
 		      (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
 
     return TCL_OK;
@@ -755,7 +754,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 	   int argc, char *argv[] )
 {
     tclMatrix *matPtr, *matf, *matclev;
-    PLINT nx, ny, kx, lx, ky, ly, nclev;
+    PLINT nx, ny, kx=0, lx=0, ky=0, ly=0, nclev;
     char *pltrname = "pltr0";
     tclMatrix *mattrx = NULL, *mattry = NULL;
     PLFLT **z, **zused, **zwrapped;
@@ -799,7 +798,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 /* Now check the next argument.  If it is all digits, then it must be kx,
    otherwise it is the name of clev. */
 
-    for( i=0; i < strlen( argv[2] ) && arg3_is_kx; i++ )
+    for( i=0; i < (int) strlen( argv[2] ) && arg3_is_kx; i++ )
 	if (!isdigit(argv[2][i]))
 	    arg3_is_kx = 0;
 
@@ -1185,7 +1184,7 @@ static int
 plmeshcCmd( ClientData clientData, Tcl_Interp *interp,
 	   int argc, char *argv[] )
 {
-    PLINT nx, ny, opt, nlev;
+    PLINT nx, ny, opt, nlev=10;
     PLFLT *x, *y, **z;
     PLFLT *clev;
 
@@ -1513,7 +1512,7 @@ static int
 plot3dcCmd( ClientData clientData, Tcl_Interp *interp,
 	   int argc, char *argv[] )
 {
-    PLINT nx, ny, opt, nlev;
+    PLINT nx, ny, opt, nlev=10;
     PLFLT *x, *y, **z;
     PLFLT *clev;
 
@@ -1721,7 +1720,7 @@ static int
 plsurf3dCmd( ClientData clientData, Tcl_Interp *interp,
 	   int argc, char *argv[] )
 {
-    PLINT nx, ny, opt, nlev;
+    PLINT nx, ny, opt, nlev=10;
     PLFLT *x, *y, **z;
     PLFLT *clev;
 

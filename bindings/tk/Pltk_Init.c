@@ -50,14 +50,14 @@ Pltk_Init( Tcl_Interp *interp )
 
 /* plframe -- PLplot graphing widget */
 
-    Tcl_CreateCommand( interp, "plframe", plFrameCmd,
-		       (ClientData) NULL, (void (*)(ClientData)) NULL);
+    Tcl_CreateCommand( interp, "plframe", (Tcl_CmdProc*) plFrameCmd,
+		       (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
 
 /* host_id -- returns host IP number.  Only for use with Tcl-DP */
 
 #ifdef PLD_dp
-    Tcl_CreateCommand(interp, "host_id", plHost_ID,
-	      (ClientData) NULL, (void (*) (ClientData)) NULL);
+    Tcl_CreateCommand(interp, "host_id", (Tcl_CmdProc*) plHost_ID,
+	      (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
 #endif
 
 /* Set up auto_path */

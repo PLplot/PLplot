@@ -1,5 +1,12 @@
 /* $Id$
  * $Log$
+ * Revision 1.7  2003/10/29 19:40:54  jcard
+ * Mostly cosmetic changes that enable plplot to compiled with (almost) no warnings, even with gcc -Wall.
+ *
+ * Most changes are just casts, and most of them are tcl/tk related. For tcl/tk-8.4, no warnings occurs.
+ * Also tested with tcl/tk-8.3, where some warnings remain.
+ * There are no java/f77/cxx/python/octave changes.
+ *
  * Revision 1.6  2002/12/03 08:39:22  airwin
  * Merged AT branch into MAIN, a new configuration era has started
  *
@@ -108,7 +115,7 @@ Plplotter_Init( Tcl_Interp *interp )
 
 /* plframe -- PLplot graphing widget */
 
-    Tcl_CreateCommand( interp, "plframe", plPlotterCmd,
+    Tcl_CreateCommand( interp, "plframe", (Tcl_CmdProc*) plPlotterCmd,
 		       (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
 
     Tcl_PkgProvide(interp,"Plplotter",VERSION);

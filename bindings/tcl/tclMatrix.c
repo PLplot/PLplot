@@ -297,8 +297,8 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	    return TCL_ERROR;
 	}
 	matPtr->tracing = 1;
-	Tcl_TraceVar(interp, matPtr->name, TCL_TRACE_UNSETS, DeleteMatrixVar,
-		     (ClientData) matPtr);
+	Tcl_TraceVar(interp, matPtr->name, TCL_TRACE_UNSETS,
+		     (Tcl_VarTraceProc*) DeleteMatrixVar, (ClientData) matPtr);
     }
 
 /* Create matrix operator */
@@ -306,8 +306,8 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 #ifdef DEBUG
     fprintf(stderr, "Creating Matrix operator of name %s\n", matPtr->name);
 #endif
-    Tcl_CreateCommand(interp, matPtr->name, MatrixCmd, (ClientData) matPtr,
-		      DeleteMatrixCmd);
+    Tcl_CreateCommand(interp, matPtr->name, (Tcl_CmdProc*)  MatrixCmd,
+		      (ClientData) matPtr, (Tcl_CmdDeleteProc*) DeleteMatrixCmd);
 
 /* Store pointer to interpreter to handle bizarre uses of multiple */
 /* interpreters (e.g. as in [incr Tcl]) */ 
@@ -445,7 +445,7 @@ static int matrixInitialize(Tcl_Interp* interp, tclMatrix* m,
 
     if (dim < m->dim) {
 	for (i = 0; i < nargs; i++) {
-	    if (Tcl_SplitList(interp, args[i], &numnewargs, &newargs) 
+	    if (Tcl_SplitList(interp, args[i], &numnewargs, (CONST char ***) &newargs) 
 		!= TCL_OK) {
 		Tcl_AppendResult(interp, "bad matrix initializer list form: ",
 				 args[i], (char *) NULL);
@@ -1006,10 +1006,10 @@ DeleteMatrixCmd(ClientData clientData)
 
     if (matPtr->tracing) {
 	if (Tcl_VarTraceInfo(matPtr->interp, matPtr->name, TCL_TRACE_UNSETS,
-			     DeleteMatrixVar, NULL) != NULL) {
+			     (Tcl_VarTraceProc *) DeleteMatrixVar, NULL) != NULL) {
 	    matPtr->tracing = 0;
 	    Tcl_UntraceVar(matPtr->interp, matPtr->name, TCL_TRACE_UNSETS,
-			   DeleteMatrixVar, (ClientData) matPtr);
+			   (Tcl_VarTraceProc *) DeleteMatrixVar, (ClientData) matPtr);
 	    Tcl_UnsetVar(matPtr->interp, matPtr->name, 0);
 	}
     } 

@@ -258,7 +258,6 @@ static void
 plD_init_png_Dev(PLStream *pls)
 {
     png_Dev *dev;
-    int i;
 
 /*  Stuff for the driver options, these vars are copied into the driver
  *  structure so that everything is thread safe and reenterant.
@@ -768,10 +767,10 @@ if (dev->black15) plD_black15_gd(pls);
 if (dev->red15) plD_red15_gd(pls);
 
 #if GD2_VERS >= 2
-  if ( ( ((dev->truecolour>0) && (dev->palette>0))||     /* In an EXTREMELY convaluted */
-         ((dev->truecolour==0) && (dev->palette==0))&&   /* manner, all this is just   */
-          ((pls->ncol1+pls->ncol0)<=256) )||             /* asking the question, do we */
-       ( ((dev->palette>0)&&(dev->truecolour==0)) )  )   /* want truecolour or not ?   */
+  if ( ( (((dev->truecolour>0) && (dev->palette>0)) ||     /* In an EXTREMELY convaluted */
+         ((dev->truecolour==0) && (dev->palette==0))) &&   /* manner, all this is just   */
+          ((pls->ncol1+pls->ncol0) <= 256) ) ||             /* asking the question, do we */
+       (((dev->palette>0) && (dev->truecolour==0)))  )   /* want truecolour or not ?   */
         {
 #endif
 
@@ -975,16 +974,15 @@ free(bbuf);
 void plD_eop_png(PLStream *pls)
 {
 png_Dev *dev=(png_Dev *)pls->dev;
-int i;
 
     if (pls->family || pls->page == 1) {
 
    if (dev->optimise)
      {
 #if GD2_VERS >= 2
-      if ( ( ((dev->truecolour>0) && (dev->palette>0))||     /* In an EXTREMELY convaluted */
-             ((dev->truecolour==0) && (dev->palette==0))&&   /* manner, all this is just   */
-              ((pls->ncol1+pls->ncol0)<=256) )||             /* asking the question, do we */
+      if ( ( (((dev->truecolour>0) && (dev->palette>0)) ||     /* In an EXTREMELY convaluted */
+             ((dev->truecolour==0) && (dev->palette==0))) &&   /* manner, all this is just   */
+              ((pls->ncol1+pls->ncol0)<=256) ) ||             /* asking the question, do we */
            ( ((dev->palette>0)&&(dev->truecolour==0)) )  )   /* want truecolour or not ?   */
             {
 #endif
@@ -1119,7 +1117,6 @@ if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? 
 void plD_eop_jpeg(PLStream *pls)
 {
 png_Dev *dev=(png_Dev *)pls->dev;
-int i;
 
     if (pls->family || pls->page == 1) {
        gdImageJpeg(dev->im_out, pls->OutFile, pls->dev_compression);

@@ -1246,7 +1246,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 		    plmtex("r", height, pos, 0.5, string);
 		}
 	    }
-	    ydigits = MAX(ydigits, strlen(string));
+	    ydigits = MAX(ydigits, (PLINT) strlen(string));
 	}
 	if (!lvy)
 	    ydigits = 2;

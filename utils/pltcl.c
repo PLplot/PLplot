@@ -140,11 +140,11 @@ AppInit(Tcl_Interp *interp)
 
     Tcl_VarEval(interp, "rename exit tclexit", (char *) NULL);
 
-    Tcl_CreateCommand(interp, "exit", plExitCmd,
-                      (ClientData) NULL, (void (*)(ClientData)) NULL);
+    Tcl_CreateCommand(interp, "exit", (Tcl_CmdProc *) plExitCmd,
+                      (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 
-    Tcl_CreateCommand(interp, "pr_prompt", prPromptCmd,
-                      (ClientData) NULL, (void (*)(ClientData)) NULL);
+    Tcl_CreateCommand(interp, "pr_prompt", (Tcl_CmdProc *) prPromptCmd,
+                      (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
 
 /* Custom prompt, to make sure we are in text mode when entering commands */
 
