@@ -26,18 +26,18 @@ install_lib:
 	-if [ ! -d $(DOC_DIR) ] ; then mkdir -p $(DOC_DIR); fi
 	-if [ ! -d $(BIN_DIR) ] ; then mkdir -p $(BIN_DIR); fi
 	-if [ ! -d $(INFO_DIR) ] ; then mkdir -p $(INFO_DIR); fi
-	-cd ../lib; cp $(PLLIB_BASE)* *.fnt *.map $(LIB_DIR)
-	-$(RANLIB) $(LIB_DIR)/$(PLLIB_BASE)*$A
-	-cd ..; cp README NEWS CHANGES Copyright COPYING.LIB FAQ ToDo mklinks \
-		$(DOC_DIR)
+	-cd ../lib; cp $(PLLIB_BASE)* *.fnt *.map $(LIB_DIR); \
+	 for file in $(PLLIB_BASE)*; do $(RANLIB) $(LIB_DIR)/$$file; done
+	-cd ..; cp README NEWS CHANGES Copyright COPYING.LIB FAQ ToDo \
+		mklinks $(DOC_DIR)
 	-if [ ! -f $(DOC_DIR)/README.local ] ; then \
-		cp ../doc/README.local $(DOC_DIR); fi
+	 cp ../doc/README.local $(DOC_DIR); fi
 	-cp ../doc/*.info $(INFO_DIR)
 	-cd ../scripts; cp pl* $(BIN_DIR)
 	-cd ../include; \
-	cp plplotP.h plplot.h plplotX.h plplotTK.h \
-	   plevent.h plstream.h pdf.h tclMatrix.h \
-		$(INCLUDE_DIR)
+	 cp plplotP.h plplot.h plplotX.h plplotTK.h \
+	    plevent.h plstream.h pdf.h tclMatrix.h \
+	    $(INCLUDE_DIR)
 
 install_demos:
 	-if [ ! -d $(DEMOS_DIR) ] ; then mkdir -p $(DEMOS_DIR); fi
