@@ -67,7 +67,7 @@ def plcont(z, *args):
 	    kx,lx,ky,ly = args[0:4]
 	    args = args[4:]
     else:
-	default_range = 1
+	ifdefault_range = 1
 
     if len(args) > 0:
 	clev = Numeric.asarray(args[0])
@@ -79,6 +79,7 @@ def plcont(z, *args):
 
     if len(args) > 0 and (
     type(args[0]) == types.StringType or
+    type(args[0]) == types.FunctionType or
     type(args[0]) == types.BuiltinFunctionType):
 	pltr = args[0]
 	# Handle the string names for the callbacks though specifying the
@@ -140,7 +141,7 @@ def plcont(z, *args):
 	# default is identity transformation
 	pltr = pltr0
 	pltr_data = None
-    if default_range:
+    if ifdefault_range:
 	# Default is to take full range (still using fortran convention
 	# for indices which is embedded in the PLplot library API)
 	kx = 1
