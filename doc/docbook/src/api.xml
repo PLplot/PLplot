@@ -6454,7 +6454,7 @@ characters and their corresponding decimal ASCII values:
 
   <sect1 id="plshade" renderas="sect3">
     <title>
-      <function>plshade</function>: Shade region
+      <function>plshade</function>:  Shade regions on the basis of value
     </title> 
 
     <para>
@@ -6489,9 +6489,11 @@ characters and their corresponding decimal ASCII values:
       </funcsynopsis> 
     </para> 
 
-    <para>
-      Shade region.  Only differs from &plshade1; by the type of the first
-argument.  NEEDS DOCUMENTATION
+    <para> 
+      Shade regions on the basis of value.  Can be used to shade contour
+      plots or alone. &plshade; is identical to &plshade1; 
+      except for the type of the first and fourth parameters.
+      See &plshade1; for a description of the parameters.
     </para>
 
     <variablelist>
@@ -6502,7 +6504,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6513,7 +6514,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6524,7 +6524,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6535,7 +6534,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6546,7 +6544,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6557,7 +6554,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6568,7 +6564,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6579,7 +6574,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6590,7 +6584,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6601,7 +6594,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6612,7 +6604,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6623,7 +6614,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6634,7 +6624,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6645,7 +6634,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6656,7 +6644,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6667,7 +6654,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6678,7 +6664,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6689,7 +6674,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6700,7 +6684,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6712,7 +6695,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6723,7 +6705,6 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6733,7 +6714,7 @@ argument.  NEEDS DOCUMENTATION
 
   <sect1 id="plshade1" renderas="sect3">
     <title>
-      <function>plshade1</function>: Shade region
+      <function>plshade1</function>: Shade regions on the basis of value
     </title> 
 
     <para>
@@ -6768,8 +6749,9 @@ argument.  NEEDS DOCUMENTATION
     </para> 
 
     <para>
-      Shade region.  Only differs from &plshade; by the type of the first
-      argument.  NEEDS DOCUMENTATION
+      Shade regions on the basis of value.  Can be used to shade contour
+      plots or alone.  Only differs from &plshade; by the type of the first
+      and fourth arguments.
     </para>
 
     <variablelist>
@@ -6780,7 +6762,8 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+             Contains array to be plotted. The array must have been declared
+	     as PLFLT a[nx][ny].  See following note on fortran-style arrays.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6791,7 +6774,7 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            First dimension of arrays "a" and "defined".
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6802,7 +6785,7 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Second dimension of arrays "a" and "defined".
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6813,7 +6796,10 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Contains array of flags, 1 = data is valid, 0 = data is not
+	    valid. This array determines which sections of the data is to be
+	    plotted. This argument can be NULL if all the values are valid.
+	    Must have been declared as char defined[nx][ny].
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6824,7 +6810,8 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+             Defines the "grid" coordinates.  The data a[0][0] has a
+	     position of (xmin,ymin).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6835,7 +6822,8 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+             Defines the "grid" coordinates.  The data a[0][0] has a
+	     position of (xmin,ymin).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6846,7 +6834,8 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+             Defines the "grid" coordinates.  The data a[0][0] has a
+	     position of (xmin,ymin).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6857,7 +6846,8 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+             Defines the "grid" coordinates.  The data a[0][0] has a
+	     position of (xmin,ymin).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6868,7 +6858,8 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Defines the interval to be shaded. If shade_max <= shade_min,
+	    &plshade1; does nothing.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6879,7 +6870,8 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Defines the interval to be shaded. If shade_max <= shade_min,
+	    &plshade1; does nothing.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6890,7 +6882,7 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Defines color map.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6901,7 +6893,7 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Defines color map index.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6912,7 +6904,7 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Defines width used by the fill pattern.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6923,7 +6915,10 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Defines pen color, width used by the boundary of shaded region.
+	    The min values are used for the shade_min boundary, and the max
+	    values are used on the shade_max boundary.  Set color and width
+	    to zero for no plotted boundaries.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6934,7 +6929,10 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Defines pen color, width used by the boundary of shaded region.
+	    The min values are used for the shade_min boundary, and the max
+	    values are used on the shade_max boundary.  Set color and width
+	    to zero for no plotted boundaries.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6945,7 +6943,10 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Defines pen color, width used by the boundary of shaded region.
+	    The min values are used for the shade_min boundary, and the max
+	    values are used on the shade_max boundary.  Set color and width
+	    to zero for no plotted boundaries.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6956,7 +6957,10 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Defines pen color, width used by the boundary of shaded region.
+	    The min values are used for the shade_min boundary, and the max
+	    values are used on the shade_max boundary.  Set color and width
+	    to zero for no plotted boundaries.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6967,7 +6971,8 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Routine used to fill the region.  Use &plfill;.  Future version of
+	    plplot may have other fill routines.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6978,7 +6983,7 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            NEEDS DOCUMENTATION (working example x16c.c sets to 1).
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6990,7 +6995,7 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            NEEDS DOCUMENTATION (working example x16c.c sets to NULL)
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7001,7 +7006,7 @@ argument.  NEEDS DOCUMENTATION
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            NEEDS DOCUMENTATION (working example x16c.c sets to NULL)
 	  </para>
 	</listitem>
       </varlistentry>
