@@ -1,40 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.26  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.25  2000/05/10 20:39:39  furnish
- * Edit to give two macintosh options.  Rob Managan.
- *
- * Revision 1.24  1996/10/08 18:37:46  furnish
- * First cut on a new driver for portable bitmaps.
- *
- * Revision 1.23  1995/05/26  20:20:11  mjl
- * Changed plstream.h -> plstrm.h everywhere.
- *
- * Revision 1.22  1995/04/11  09:40:25  mjl
- * Prototypes for Mac driver.
- *
- * Revision 1.21  1994/08/26  19:17:42  mjl
- * Entries for conex device added; contributed by Mark Olesen.
- *
- * Revision 1.20  1994/07/25  06:04:58  mjl
- * Added prototype for new lj_hpgl driver.
- *
- * Revision 1.19  1994/07/19  22:35:14  mjl
- * Cruft elimination.
- *
- * Revision 1.18  1994/05/25  21:58:25  mjl
- * Function prototypes for Win3 driver, contributed by Paul Casteels.
- *
- * Revision 1.17  1994/05/25  09:36:57  mjl
- * All VGA driver function names now end with "_vga", a nice simplification.
- * Since all are compiler-dependent and mutually exclusive, this should pose
- * no problem.  Also HP pen plotter driver were consolidated.  Both
- * contributions by Mark Olesen (olesen@weber.me.queensu.ca).
-*/
-
-/*	drivers.h
 
 	Contains all prototypes for driver functions.
 */

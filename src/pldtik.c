@@ -1,31 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.11  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.10  2000/05/10 21:27:11  airwin
- * power of 10 scaling of axes has been reworked to provide good results for
- * both negative and positive powers.
- *
- * Revision 1.9  1999/06/25 04:20:23  furnish
- * Install patches from Alan W. Irwin, correcting problems with
- * labelling.
- *
- * Revision 1.8  1995/01/06  07:56:10  mjl
- * Broke pldtik() into two functions -- pldtik(), which handles only tick
- * spacing, and pldprec(), which handles only precision and significant
- * digits settings.  Each substantially clarified in the process.
- *
- * Revision 1.7  1994/06/30  18:22:06  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
- *
-*/
-
-/*	pldtik.c
 
 	Determines tick spacing and mode (fixed or floating) of
 	numeric axis labels.

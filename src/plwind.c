@@ -1,21 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.11  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.10  1995/03/17 00:16:24  mjl
- * Eliminated unnecessary accessor variables and other cleaning up.
- * Added call to plP_swin() to set window parameters.
- *
- * Revision 1.9  1994/11/02  19:58:16  mjl
- * Changed plAddCWindow() call syntax.
- *
- * Revision 1.8  1994/07/29  20:29:24  mjl
- * Change so that window coordinates are added to the window list each time
- * plwind() is called.  Contributed by Paul Casteels.
-*/
-
-/*	plwind.c
 
 	Routines for setting up world coordinates of the current viewport.
 */

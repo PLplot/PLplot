@@ -1,25 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.15  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.14  2000/07/19 21:12:31  furnish
- * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
- * surface plotter, contour labelling, and demo updates to show off these
- * new features.
- *
- * Revision 1.13  1995/03/16 23:59:57  mjl
- * Eliminated a #pragma message() that some people found objectionable :-).
- *
- * Revision 1.12  1994/06/30  18:22:02  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
-*/
-
-/*	plcont.c
 
 	Contour plotter.
 */

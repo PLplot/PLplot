@@ -1,41 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.21  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.20  2000/05/10 21:24:06  airwin
- * Alan W. Irwin.  Logic for changing power of 10 to scale z axes is now
- * consistent between the left and right z axes.
- *
- * Revision 1.19  1999/06/25 04:20:21  furnish
- * Install patches from Alan W. Irwin, correcting problems with
- * labelling.
- *
- * Revision 1.18  1995/03/16  23:59:07  mjl
- * Eliminated some temporary variables and variables not in use.
- *
- * Revision 1.17  1995/01/29  07:04:18  mjl
- * Fix to increase spacing between inverted tics and numeric labels; in some
- * cases they were running into each other.  Contributed by John Interrante.
- *
- * Revision 1.16  1995/01/06  07:54:16  mjl
- * Added new options:
- *   f: Always use fixed point numeric labels
- *   h: Draws a grid at the minor tick interval
- * See x04c for an example of both of these (second plot).
- * Upgraded plaxes() to be a perfect superset of plbox() (now plbox is
- * just a front-end to plaxes).  Substantially improved code structure and
- * eliminated some inconsistencies.
- *
- * Revision 1.15  1995/01/04  06:50:44  mjl
- * Fix for obscure 3d plotting bug, contributed by Bryan Peterson.
- *
- * Revision 1.14  1994/08/29  22:05:19  mjl
- * Fixed a bug that was preventing the exponential label from showing up
- * under certain circumstances.
-*/
-
-/*	plbox.c
 
 	Routines for drawing axes & box around the current viewport.
 */

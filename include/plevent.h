@@ -1,19 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.2  1995/03/16 23:25:57  mjl
- * Changed definitions of control keys with ASCII equivalents to their ASCII
- * value rather than the Xlib value.  These include: PLK_BackSpace, PLK_Tab,
- * PLK_Linefeed, PLK_Return, PLK_Escape, and PLK_Delete.  Using ASCII for
- * these just makes more sense.
- *
- * Revision 1.1  1993/01/23  05:36:01  mjl
- * This file added for inclusion by all user-defined event handlers to be
- * used with plplot.  It contains constant definitions used to transmit
- * info on the event that occurred (e.g. keystroke definitions).
-*/
-
-/*
-    plevent.h
 
     Input event (especially keyboard) definitions for use from plplot
     event handlers.

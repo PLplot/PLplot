@@ -1,46 +1,17 @@
-/* jc: This is a much reworked version of x17c.c, a non-working demo
- * on the distribution.
- *
- * ToDo: better way of clearing plot. search for `plvsta'.
- */
-
 /* $Id$
- * $Log$
- * Revision 1.3  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.2  1999/06/24 20:53:02  furnish
- * Add c_ prefixes to some functions which slipped by unnoticed
- * previously.  The c_ prefixes are needed to keep the C and Fortran
- * linkage namespaces separate, since the various compiler vendors treat
- * this issue nonuniformly.
- *
- * Revision 1.1  1998/12/01  20:46:30  furnish
- * Add a strip chart facility.
- *
- * Revision 1.5  1995/06/01  21:40:14  mjl
- * All C demo files: changed file inclusion to use quotes instead of angle
- * brackets so that dependencies are retained during development.
- *
- * Revision 1.4  1995/04/12  08:19:02  mjl
- * Changes to all C demos: now include "plcdemos.h" to get all startup
- * definitions and includes that are useful to share between them.
- *
- * Revision 1.3  1995/03/16  23:18:59  mjl
- * All example C programs: changed plParseInternalOpts() call to plParseOpts().
- *
- * Revision 1.2  1994/08/05  09:28:42  mjl
- * Put in an early bail-out since it's not working yet.
- *
- * Revision 1.1  1994/04/08  12:08:54  mjl
- * Preliminary stab at a strip chart demo (doesn't work yet).
-*/
 
-/* Plots a simple stripchart.
+ * Plots a simple stripchart.
+
  * Eventually I want a really cool demo here: slowly evolving plots of
  * say density and temperature.  These only need to get updated every so
  * often.  And then at the bottom some strip charts of energy or such
  * that are continually updated.
+ */
+
+/* jc: This is a much reworked version of x17c.c, a non-working demo
+ * on the distribution.
+ *
+ * ToDo: better way of clearing plot. search for `plvsta'.
  */
 
 #include "plplot/plplotP.h"

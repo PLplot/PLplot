@@ -1,31 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.16  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.15  2000/07/19 21:12:31  furnish
- * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
- * surface plotter, contour labelling, and demo updates to show off these
- * new features.
- *
- * Revision 1.14  1994/06/30 18:22:07  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
- *
- * Revision 1.13  1994/04/30  16:15:11  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.12  1994/03/23  08:12:54  mjl
- * Split into two routines, one as a front-end to the driver interface fill
- * routine, and the other as a target of the driver interface when the driver
- * doesn't support the desired fill capability.
-*/
-
-/*	plfill.c
 
 	Polygon pattern fill.
 */

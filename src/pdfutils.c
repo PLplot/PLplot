@@ -1,22 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.15  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.14  1996/04/30 23:08:57  furnish
- * Fix uninitialized data problem turned up by Purify.
- *
- * Revision 1.13  1995/05/07  03:01:43  mjl
- * Changed debug output to use new pldebug() function.
- *
- * Revision 1.12  1995/03/16  23:50:56  mjl
- * Fixed up Copyright message.
- *
- * Revision 1.11  1994/08/25  04:04:06  mjl
- * Eliminated an unnecessary header file inclusion.
-*/
-
-/*--------------------------------------------------------------------------*\
 
     pdf_utils.c
 
@@ -42,7 +24,7 @@
 
     These functions do the low-level reading/writing of portable data files.
     Data can be written to/read from either a file handle or memory buffer.
-\*--------------------------------------------------------------------------*/
+*/
 
 #include "plplot/plplotP.h"
 

@@ -1,22 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.4  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.3  1999/06/25 04:18:47  furnish
- * Add the c_ namespace control thing to plmap and plmeridians, which
- * somehow slipped in without this protection.
- *
- * Revision 1.2  1994/08/25  04:04:49  mjl
- * Eliminated unnecessary variable decls.
- *
- * Revision 1.1  1994/07/29  20:26:10  mjl
- * Function to plot map backgrounds, read from the specified map data file.
- * Contributed by Wesley Ebisuzaki.
- *
-*/
-
-/*	plmap.c
 
 	Continental Outline and Political Boundary Backgrounds
 

@@ -1,23 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.7  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.6  1994/06/30 18:22:22  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
- *
- * Revision 1.5  1994/03/23  08:35:11  mjl
- * All external API source files: replaced call to plexit() on simple
- * (recoverable) errors with simply printing the error message (via
- * plabort()) and returning.  Should help avoid loss of computer time in some
- * critical circumstances (during a long batch run, for example).
-*/
-
-/*	pltick.c
 
 	Routines for drawing error bars and tick marks.
 */

@@ -1,24 +1,5 @@
 /* $Id$
- * $Log$
- * Revision 1.10  1995/03/16 23:23:45  mjl
- * Obsoleted old metafile types and other cleaning up.
- *
- * Revision 1.9  1993/11/15  08:31:37  mjl
- * Bumped metafile version number since now write pages info to header.
- *
- * Revision 1.8  1993/08/09  22:16:39  mjl
- * Miscellaneous cleaning up.
- *
- * Revision 1.7  1993/07/31  08:08:40  mjl
- * Added macro CHANGE_STATE for new state driver function.
- *
- * Revision 1.6  1993/07/02  07:21:12  mjl
- * Added header definitions for use by TK driver.  Also new macros for plplot
- * bop/eop commands.
-*/
 
-/*
-	metadefs.h
 	Geoffrey Furnish
 	5 May 1991
 	

@@ -1,33 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.12  2000/05/10 20:37:07  furnish
- * Prototype of pdf_set added.  Rob Managan.
- *
- * Revision 1.11  1995/09/22 16:03:26  mjl
- * Name changes to members of the PLiodev structure to reduce the chance
- * of collisions with possible new C++ keywords.
- *
- * Revision 1.10  1995/09/18  20:13:34  furnish
- * Crazy hack needed to allow inclusion of this file in C++ programs.
- * Really the structure member name should be changed, and all clients of
- * this struct updated.
- *
- * Revision 1.9  1994/04/08  12:10:08  mjl
- * Moved unsigned type defines to this header file.
- *
- * Revision 1.8  1994/03/23  06:58:11  mjl
- * Minor change to file wrapper to make consistent with rest of package.
- *
- * Revision 1.7  1994/02/07  23:02:38  mjl
- * PLiodev struct defined.
- *
- * Revision 1.6  1994/01/15  17:33:16  mjl
- * Added typedef of PDFstrm and wrapped function prototypes in a macro so
- * the header can be read without problems by K&R compilers (cc).
-*/
-
-/*
-    pdf.h
 
     Copyright (C) 1992 by Maurice J. LeBrun
 

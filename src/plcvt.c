@@ -1,21 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.6  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.5  1995/03/17 00:10:08  mjl
- * Miscellaneous cleaning up, comments added.  Functions added for converting
- * from device coordinates to other coordinates.
- *
- * Revision 1.4  1994/06/30  18:22:05  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
-*/
-
-/*	plcvt.c
 
 	Coordinate transformation routines.
 */

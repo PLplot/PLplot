@@ -1,23 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.12  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.11  1998/12/01 20:51:13  furnish
- * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
- *
- * Revision 1.10  1995/03/17  00:15:33  mjl
- * Eliminated unnecessary accessor variables and other cleaning up.
- *
- * Revision 1.9  1994/06/30  18:22:23  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
-*/
-
-/*	plvpor.c
 
 	Functions dealing with viewports.
 */

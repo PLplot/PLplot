@@ -1,37 +1,4 @@
 /* $Id$
- * $Log: plshade.c,v 
- * Revision 1.12  1995/05/07  03:13:44  mjl
- * Changed debugging output to use new function pldebug().
- *
- * Revision 1.11  1994/10/18  16:05:20  furnish
- * Correct to notice if either pltr or pltr_data is NULL.  Required to
- * make C++ abstraction work correctly.
- *
- * Revision 1.10  1994/07/12  19:20:55  mjl
- * Argument list for plshade() fixed.
- *
- * Revision 1.9  1994/06/30  18:22:16  mjl
- * All core source files: made another pass to eliminate warnings when using
- * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
- * (now included by plplot.h), and other minor changes.  Now each file has
- * global access to the plstream pointer via extern; many accessor functions
- * eliminated as a result.
- *
- * Revision 1.8  1994/04/30  16:15:12  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.7  1994/03/23  08:29:58  mjl
- * Functions from plctest.c moved to this file for clarity and simplicity.
- * Main shade function now accepts a function evaluator and data much like
- * the contour functions.  Front-ends exist (plshade1(), plshade2()) to call
- * it in a simpler fashion, using predefined memory organizations for the
- * array.  Also, main shade function now accepts two arguments for handling
- * color of the shaded region -- the color map (0 or 1) and the index
- * (a float; >1 and integral for cmap0, in range [0,1] for cmap1).
-*/
-
-/*	plshade.c
 
 	Functions to shade regions on the basis of value.
 	Can be used to shade contour plots or alone.

@@ -1,22 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.3  1995/10/19 00:04:00  mjl
- * Fixed a minor bogosity.
- *
- * Revision 1.2  1995/05/15  07:56:43  mjl
- * Include malloc.h (for debugging malloc) if DEBUGGING_MALLOC is defined.
- *
- * Revision 1.1  1995/05/07  02:24:30  mjl
- * Added to help with debugging support.  Includes macros as well as a
- * static function pldebug, which has a stdarg (vargarg) based argument list.
- * Debugging output is only enabled if DEBUG is defined prior to inclusion of
- * this file and the debug stream variable is set (can be set by -debug command
- * line option).
- *
-*/
-
-/*
-    pldebug.h
 
     Copyright (C) 1995 by Maurice J. LeBrun
 

@@ -1,47 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.32  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.31  2000/05/10 20:39:08  furnish
- * Add mac routines to terminal types.  Rob Managan.
- *
- * Revision 1.30  1996/10/08 18:37:47  furnish
- * First cut on a new driver for portable bitmaps.
- *
- * Revision 1.29  1996/02/24  05:09:50  shouman
- * Added declaration for plgdevlst(), now called by both plgFileDevs() and
- * plgDevs().
- *
- * Revision 1.28  1995/06/01  21:44:21  mjl
- * Repaired some bogus comments.
- *
- * Revision 1.27  1995/05/07  02:22:36  mjl
- * Added include of pldebug.h for debugging support.
- *
- * Revision 1.26  1995/04/12  08:21:49  mjl
- * Two font control variables moved elsewhere.
- *
- * Revision 1.25  1994/09/23  07:49:35  mjl
- * Changed a PLINT to an int to make a DOS compiler happy about its use as a
- * for loop index.
- *
- * Revision 1.24  1994/08/26  19:17:44  mjl
- * Entries for conex device added; contributed by Mark Olesen.
- *
- * Revision 1.23  1994/07/25  06:05:35  mjl
- * Added dispatch table entry for new lj_hpgl driver.
- *
- * Revision 1.22  1994/07/19  22:36:10  mjl
- * Included plDevs.h.  Driver enabling macro renamed to PLD_<driver>, where
- * <driver> is xwin, ps, etc.  See plDevs.h for more detail.
- *
- * Revision 1.21  1994/06/30  18:29:21  mjl
- * Include-guards included, and the PLStream pointer made global.  The latter
- * will make access to PLplot state information much easier.
-*/
-
-/*	plcore.h
 
 	Contains declarations for core plplot data structures.  This file
 	should be included only by plcore.c.

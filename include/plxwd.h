@@ -1,40 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.3  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.2  1996/10/31 05:05:08  furnish
- * Add new member for tracking whether the chosen visual supports mutable
- * color cells.
- *
- * Revision 1.1  1995/06/01  21:45:26  mjl
- * Created to hold definitions and prototypes specific to the X-driver.  The
- * user shouldn't need to access this file but it's here just in case.
- *
- *
- * Old entries from plplotX.h:
- *
- * Revision 1.17  1995/05/26  20:20:13  mjl
- * Changed plstream.h -> plstrm.h everywhere.
- *
- * Revision 1.16  1995/04/12  21:10:26  mjl
- * Made the ordinary graphics context and the current color a device-dependent
- * quantity rather than a display-dependent one, to fix problems with color
- * selection when plotting to separate streams/xwindows.  Thanks to Radey
- * Shouman for pointing it out.
- *
- * Revision 1.15  1995/03/16  23:43:46  mjl
- * Old cursorX, cursorY variables replaced with a PLGraphicsIn structure.
- * Also variables added for dealing with graphic crosshairs.
- *
- * Revision 1.14  1994/11/02  19:55:50  mjl
- * Added cursorX, cursorY for holding coordinates at mouse click.
- *
- * Revision 1.13  1994/10/11  18:59:57  mjl
- * Added prototypes for plD_open_xw() and plX_setBGFG().
-*/
-
-/*	plxwd.h
 
 	Holds system header includes, prototypes of xwin driver
 	utility functions, and definition of the state structure.

@@ -1,43 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.22  2000/12/18 21:01:50  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.21  2000/07/19 21:12:31  furnish
- * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
- * surface plotter, contour labelling, and demo updates to show off these
- * new features.
- *
- * Revision 1.20  1999/06/25 04:20:24  furnish
- * Install patches from Alan W. Irwin, correcting problems with
- * labelling.
- *
- * Revision 1.19  1995/04/12  08:24:36  mjl
- * Changed names of some variables defined at file scope to remove a conflict
- * in the Mac port.
- *
- * Revision 1.18  1995/03/17  00:11:11  mjl
- * Eliminated many unnecessary accessor variables.
- *
- * Revision 1.17  1995/01/06  07:56:51  mjl
- * Switch to the new syntax for pldtik().
- *
- * Revision 1.16  1994/07/20  06:08:36  mjl
- * The new 3d functions moved elsewhere.
- *
- * Revision 1.15  1994/07/19  22:13:36  furnish
- * Added new routine pl3poly() for drawing polygons in 3-space, with
- * hidden surface removal.
- *
- * Revision 1.14  1994/07/18  20:33:30  mjl
- * Some more cleaning up.
- *
- * Revision 1.13  1994/07/15  20:37:21  furnish
- * Added routines pl3line and pl3poin for drawing lines and points in 3
- * space.  Added a new example program, and dependency info to build it.
-*/
-
-/*	plot3d.c
 
 	3d plot routines.
 */
