@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.6  1994/10/10 17:22:32  furnish
+# Revision 1.7  1994/10/10 19:44:45  furnish
+# Stub method for plshade.
+#
+# Revision 1.6  1994/10/10  17:22:32  furnish
 # New method, but need many more.
 #
 # Revision 1.5  1994/06/16  18:33:51  mjl
@@ -48,12 +51,9 @@ itcl_class PLWin {
     }
 
     method plcont {data clev} {
-#	uplevel $data
-#	uplevel $clev
 	upvar $data d
 	upvar $clev c
 	$this.plwin cmd plcont d c
-#	$this.plwin cmd plcont $data $clev
     }
 
     method plenv {xmin xmax ymin ymax just axis} {
@@ -70,6 +70,13 @@ itcl_class PLWin {
 
     method plpoin {n x y code} {
 	$this.plwin cmd plpoin $n $x $y $code
+    }
+
+    method plshade {data xmin xmax ymin ymax sh_min sh_max sh_col} {
+	upvar $data d
+
+	$this.plwin cmd plshade d $xmin $xmax $ymin $ymax \
+	    $sh_min $sh_max $sh_col
     }
 
     public name
