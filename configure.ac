@@ -418,7 +418,6 @@ divert(-1)
 
 AC_REVISION($Revision$)
 AC_INIT(src/plcore.c)
-AM_MAINTAINER_MODE
 
 ### Configuration headers
 
