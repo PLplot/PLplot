@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1995/06/01 21:43:24  mjl
+ * Revision 1.10  1995/09/18 20:11:38  furnish
+ * Initialize [incr Tk] extension.
+ *
+ * Revision 1.9  1995/06/01  21:43:24  mjl
  * Change to header file inclusion: to get PLplot/Tk global function
  * prototypes, must now include pltk.h.  Some cleaning up.
  *
@@ -31,6 +34,7 @@
 
 #include "pltk.h"
 #include <itcl.h>
+#include <itk.h>
 #include <math.h>
 
 static int
@@ -149,6 +153,9 @@ AppInit(Tcl_Interp *interp)
 	return TCL_ERROR;
     }
     if (Itcl_Init(interp) == TCL_ERROR) {
+	return TCL_ERROR;
+    }
+    if (Itk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
     if (Pltk_Init(interp) == TCL_ERROR) {
