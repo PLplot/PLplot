@@ -1,3 +1,15 @@
+plplot (5.2.0.cvs.20030307-1) unstable; urgency=low
+
+  * Built with new CVS sources: that are slight improvements in the Octave
+    bindings, regarding the user function toggle_plplot_use.
+  * debian/control:
+      - Changed some Priority and Section headers to match the override
+        file in the Debian repository, such that the package upload will
+        be accepted (hopefully).
+      - Added m4 to Build-Depends.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Fri,  7 Mar 2003 09:47:22 +0100
+
 plplot (5.2.0.cvs.20030306-1) unstable; urgency=low
 
   * Built with new CVS sources:
