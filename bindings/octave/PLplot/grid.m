@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -23,21 +23,23 @@
 function grid (x)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   if (nargin == 0)
-    __pl.grid(__pl_strm) = 1;
+    __pl.grid(strm) = 1;
   elseif (nargin == 1)
     if (isstr (x))
-      if (strcmp ("off", x))
-        __pl.grid(__pl_strm) = 0;
-      elseif (strcmp ("on", x))
-        __pl.grid(__pl_strm) = 1;
-      elseif (strcmp ("minor", x))
-        __pl.grid(__pl_strm) = 2;
-      else
-	help grid
-      endif
+      x(length(x)+1:5) = " "; ## compatibility with 2.0.16.
+      switch (x)
+	case "off  "
+          __pl.grid(strm) = 0;
+	case "on   "   
+          __pl.grid(strm) = 1;
+	case "minor"
+          __pl.grid(strm) = 2;
+	otherwise
+	  help grid
+      endswitch
     else
       error ("grid: argument must be a string");
     endif
