@@ -1,0 +1,43 @@
+From pascal@cnam.cnam.fr Sat Aug  7 02:13 CDT 1993
+Received: from ccwf.cc.utexas.edu by dino.ph.utexas.edu with SMTP
+	(1.37.109.4/16.2) id AA19201; Sat, 7 Aug 93 02:13:09 -0500
+Return-Path: <pascal@cnam.cnam.fr>
+Received: from chenas.inria.fr by ccwf.cc.utexas.edu with SMTP id AA19024
+  (5.65c/IDA-1.4.4 for <mjl@donald.cc.utexas.edu>); Sat, 7 Aug 1993 01:53:50 -0500
+Received: from cnam.cnam.fr by chenas.inria.fr (5.65c8d/92.02.29)
+	via Fnet-EUnet id AA04788; Sat, 7 Aug 1993 08:53:47 +0200 (MET)
+Received: by cnam.cnam.fr id AA21854
+  (5.65c+/IDA-1.4.4 for mjl@donald.cc.utexas.edu); Sat, 7 Aug 1993 08:55:02 +0200
+Date: Sat, 7 Aug 1993 08:55:02 +0200
+From: Pascal Meheut <pascal@cnam.cnam.fr>
+Message-Id: <199308070655.AA21854@cnam.cnam.fr>
+To: mjl@ccwf.cc.utexas.edu
+Subject: Re: Should I use vfork()?
+Newsgroups: comp.unix.aix
+References: <MJL.93Aug6202303@donald.cc.utexas.edu>
+Status: RO
+
+In comp.unix.aix you write:
+
+>Hello all,
+
+>I have a graphics package that forks off a child process to do rendering,
+>so that the user code can continue merrily on its way.  Some of the
+>applications it will be hooked up to might be very large (say, 10's to
+>100's of MBytes), and I am worrying about the overhead of fork().  Should I
+>be using vfork() instead?  (vfork() is in libbsd.a) I don't want to start
+>using vfork() if (a) fork() is just as efficient, or (b) vfork() will be
+>dropped in a future version of A/IX.  Suggestions appreciated.
+
+vfork is in libbsd.a for source compatibility only. It was first introduced 
+in BSD to do a fork with "copy on modifications" of pages, i.d a page in 
+your data-space is really duplicated only when one of the 2 processes modifies
+it.
+
+In AIX, the normal fork does it too. So you can continue to use fork.
+
+
+						Pascal Meheut
+						pascal@cnam.cnam.fr
+
+
