@@ -305,10 +305,10 @@ if test "$enable_tcl" = "yes"; then
 fi
 
 if test "$enable_itcl" = "yes"; then
-    itclbindir="`echo $ITCLLIBDIR | sed 's,/itcl/lib,,'`'/bin'"
+    itclbindir="`echo $ITCLLIBDIR | sed 's,/lib/itcl,,'`/bin"
 #    echo "itclbindir = $itclbindir"
-    if test -r "$itclbindir/ish"; then
-	MAKEINDEX="$itclbindir/ish"
+    if test -r "$itclbindir/itclsh"; then
+	MAKEINDEX="$itclbindir/itclsh"
     fi
     TCL_INDEX_FILES="*.tcl"
 fi
