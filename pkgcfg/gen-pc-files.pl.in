@@ -28,6 +28,7 @@ $pc_file_template = 'prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@/plplot
+drvdir=@DRV_DIR@
 
 Name: PLplot #NAME#
 Description: Scientific plotting library (#DESC#' . $float . ' precision)
