@@ -365,10 +365,10 @@ ProcessFile(int argc, char **argv)
     plsstrm(1);
 
 /* Process plrender and PLplot (internal) command line options */
-/* Since we aren't using full parsing, plParseOpts() will stop when it hits */
+/* Since we aren't using full parsing, plparseopts() will stop when it hits */
 /* a non-flag item */
 
-    if (plParseOpts(&argc, argv, 0))
+    if (plparseopts(&argc, argv, 0))
 	exit(1);
 
 /* Any remaining flags are illegal. */
@@ -413,7 +413,7 @@ ProcessFile(int argc, char **argv)
     for (i = 0; i < argc; i++) {
 	argv[i] = myargv[i];
     }
-    (void) plParseOpts(&argc, argv, 0);
+    (void) plparseopts(&argc, argv, 0);
 
 /* Miscellaneous housekeeping */
 
