@@ -28,8 +28,13 @@ static PyObject * pl_partialInitXw(PyObject *self, PyObject *args)
 
     /* Partially initialize X driver. */
 
-    plD_open_xw(pls);
-    printf("plD_open_xw  OK \n"); 
+    pllib_init();
+
+    plsdev("xwin");
+    pllib_devinit();
+    plP_esc(PLESC_DEVINIT, NULL);
+
+    printf("devinit  OK \n"); 
 
     return Py_BuildValue("i", ipls);
 }
