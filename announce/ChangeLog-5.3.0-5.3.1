@@ -1,3 +1,45 @@
+Commit from rlaboiss (2004-06-14 17:38 CEST)
+--------------------
+
+By popular demand (Alan & Joao :-) the patches that used to be in
+debian/patches/ are applied to HEAD.  This means that the Octave bindings in
+the forthcoming release of PLplot will only be guaranteed to work with
+Octave 2.1.57, which is the recommend version in the unstable branch of
+Octave.
+
+  plplot  bindings/octave/PLplot/shade.m                  1.14
+  plplot  bindings/octave/PLplot/stripc.m                 1.7
+  plplot  bindings/octave/PLplot/support/__pl_contour.m   1.9
+  plplot  bindings/octave/PLplot/support/__pl_matstr.m    1.5
+  plplot  bindings/octave/PLplot/support/__pl_plotit.m    1.11
+  plplot  bindings/octave/demos/x03c.m                    1.7
+  plplot  bindings/octave/demos/x08c.m                    1.11
+  plplot  bindings/octave/demos/x12c.m                    1.6
+  plplot  bindings/octave/demos/x13c.m                    1.8
+  plplot  bindings/octave/demos/x14c.m                    1.10
+  plplot  bindings/octave/demos/x15c.m                    1.6
+  plplot  bindings/octave/demos/x17c.m                    1.6
+  plplot  bindings/octave/demos/x18c.m                    1.7
+  plplot  debian/changelog                                1.90
+  plplot  debian/patches/00list                           1.3
+- plplot  debian/patches/octave-2.1.53-demos.dpatch       1.3
+- plplot  debian/patches/warn-empty-list-elements.dpatch  1.3
+- plplot  debian/patches/warn-fortran-indexing.dpatch     1.2
+
+
+Commit from andrewross (2004-06-14 14:33 CEST)
+----------------------
+
+Add example 22 to the test scripts for C/C++/fortran/java/tcl/python.
+
+  plplot  examples/tcl/tcldemos.tcl  1.8
+  plplot  test/test_c.sh             1.11
+  plplot  test/test_cxx.sh           1.10
+  plplot  test/test_f77.sh.in        1.6
+  plplot  test/test_java.sh          1.7
+  plplot  test/test_tcl.sh           1.9
+
+
 Commit from rlaboiss (2004-06-14 00:57 CEST)
 --------------------
 
