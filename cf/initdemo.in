@@ -13,9 +13,11 @@
 
 CC_FLAGS_DEMOS	= @CC_FLAGS@ -I$(INCLUDE_DIR) @INCS@
 
-# This is intentionally NOT set.
+# These are intentionally NOT set, since we should be dealing with the
+# installed demos here and no library rebuild is possible.
 
 PLLIBS		=
+CDEMO_HEADERS	= 
 
 # These are what we link against.
 

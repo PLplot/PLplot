@@ -67,6 +67,13 @@ LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
 PLLIB_LDC	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
 PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
 
+# Header file dependencies for demos.
+# Done this way to only pick up the dependency during development, and not
+# when installed (since then headers are found by the include search path,
+# and the library can't be rebuilt anyway).
+
+CDEMO_HEADERS	= plcdemos.h plplot.h
+
 # Default is to build library(s) and utils.
 
 everything: libs plrender$E pltek$E $(TCL_EXE) $(TK_EXE)
