@@ -1,91 +1,13 @@
 /* $Id$
- * $Log$
- * Revision 1.11  2002/09/18 01:48:02  jcard
- * Reunify tkwin.c with tkwin_common.c, as per rev. 1.9 of tkwin.c
- * Delay removal of tkwin_common.c a couple of days.
  *
- * Revision 1.10  2002/07/28 22:41:16  airwin
- * Split tkwin.c into tkwin_common.c and tkwin.c to remove cross-linking issue
- * and allow tkwin.c to act like a normal driver.  So the last "special" version
- * of drivers is gone.
+ * PLplot Tk device driver.
  *
- * Reconfigured library dependencies and link lines so that we now have reasonably
- * rational hierarchical dependencies and linking on Linux.
- *
- * Revision 1.9  2002/07/11 08:55:22  vincentdarley
- * abort if no tk widget
- *
- * Revision 1.8  2002/07/10 13:59:25  vincentdarley
- * removing symbols conflict with xwin and use tk.h
- *
- * Revision 1.6  2002/07/10 09:52:38  vincentdarley
- * resolve name clashes, and sync pltools.tcl
- *
- * Revision 1.5  2002/07/09 19:57:59  airwin
- * Change tkwin driver sequence number to 45 (to avoid clash with cgm driver).
- *
- * Revision 1.4  2002/07/05 17:17:46  vincentdarley
- * removed compiler warnings
- *
- * Revision 1.3  2002/07/02 11:09:05  vincentdarley
- * configuration for tkwin driver
- *
- * Revision 1.2  2002/07/02 09:58:28  vincentdarley
- * cross platform tk driver
- *
- * Revision 1.1.2.1  2000/07/28 19:12:22  airwin
- * AWI: added files from pltk patch
- *
- *
- * Revision 1.81 1998/3/10-05/12/2000 vince
+ * This device driver is designed to be used by a PlPlotter, and in fact requires
+ * the existence of an enclosing PlPlotter.
  * 
- * Many fixes to work with Tk versions up to 8.3.
+ * The idea is that this should develop into a completely cross-platform driver
+ * for use by the cross platform Tk system.
  * 
- * My changes are basically to create a driver which will work with
- * Tk on any platform on which Tk runs.  In some places there is
- * a choice (for Unix compilations) between querying the X system
- * or querying Tk.  These are often denoted by '#ifdef USE_TK'.  This
- * define must be set for Mac/Win, and is optional for Unix.
- * 
- * In other locations there are specific #ifdef MAC_TCL or __WIN32__
- * as required
- * 
- * Now works with Windows too.
- * 
- * Revision 1.80 1996/7/10 vince
- * pltk_AreWeGrayScale now takes a pointer to the enclosing PlPlotter, and
- * uses a cross-platform Tk call to work out the result, by querying the
- * 'Visual' of the enclosing window.
- *
- * Revision 1.79 1996/07/06 vince
- * Renamed xwin to tkwin. This is the first attempt at making a cross 
- * platform driver for Tk. The idea is that any system which supports Tk
- * should be able to use the Plframe widget with Tk as a loadable extension
- * to a Tk interpreter. Currently there are various '#ifdef MAC_TCL' etc
- * dotted around. Ultimately everything should become tk-specific, rather
- * than the current 'X or Mac or ...' approach and then no such #ifdef's
- * will be necessary. 
- *
- * Major changes: added 'plPlotterPtr' to the PLStream, since this driver
- * must now get its info from Tk (hence from the PlPlotter) rather than
- * directly from the X system. Removed all top-level win support code --
- * this driver must be inside a PlPlotter or it won't work.  This is simpler
- * than xwin, in that xwin could be either standalone, or inside Tk.  We
- * can only exist inside Tk, but therefore need access to Tk.
- *
- * Old changes see 'xwin.c'
- */
-
-/* tkwin.c
-
- PLplot Tk device driver.
- 
-This device driver is designed to be used by a PlPlotter, and in fact requires
-the existence of an enclosing PlPlotter.
-
-The idea is that this should develop into a completely cross-platform driver
-for use by the cross platform Tk system.
- 
 */
 
 #include "plplot/plDevs.h"
