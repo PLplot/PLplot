@@ -7,7 +7,15 @@
 # $Id$
 #
 # $Log$
-# Revision 1.8  1995/06/09 22:48:07  mjl
+# Revision 1.9  1995/07/04 21:53:43  furnish
+# plcont and plshade now have long, complex argument lists.  Moreover,
+# since they support defaulting of arguments, not all args even have to
+# be specified.  So we convert to using the [incr Tcl] args metaphor so
+# that we don't have to worry about exactly how these shadow methods
+# were called.  Note that this object needs major fleshing out now that
+# the entire Tcl API is implemented.
+#
+# Revision 1.8  1995/06/09  22:48:07  mjl
 # Lots of fleshing out.  Now supports every Tcl API call available so far.
 #
 # Revision 1.7  1994/10/10  19:44:45  furnish
@@ -69,8 +77,8 @@ itcl_class PLWin {
 	$this.plwin cmd plcol0 $col0
     }
 
-    method plcont {data clev} {
-	$this.plwin cmd plcont $data $clev
+    method plcont {args} {
+	eval $this.plwin cmd plcont $args
     }
 
     method plend {} {
@@ -149,9 +157,8 @@ itcl_class PLWin {
 	$this.plwin cmd plsetopt $option $arg
     }
 
-    method plshade {data xmin xmax ymin ymax sh_min sh_max sh_col} {
-	$this.plwin cmd plshade $data $xmin $xmax $ymin $ymax \
-	    $sh_min $sh_max $sh_col
+    method plshade {args} {
+	eval $this.plwin cmd plshade $args
     }
 
     method plsstrm {stream} {
