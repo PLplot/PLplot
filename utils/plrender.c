@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.32  1993/08/21 20:52:55  mjl
+ * Revision 1.33  1993/08/28 06:39:14  mjl
+ * Option table and handlers modified to include & accept new client data
+ * pointer.
+ *
+ * Revision 1.32  1993/08/21  20:52:55  mjl
  * Deleted old argument handling for -jx, -jy, and -mar, since these are
  * now handled by plplot itself through the driver interface.
  *
@@ -125,10 +129,10 @@ static void	myNotes		(void);
 
 /* Option handlers */
 
-static int Opt_h	(char *, char *);
-static int Opt_v	(char *, char *);
-static int Opt_i	(char *, char *);
-static int Opt_p	(char *, char *);
+static int Opt_h	(char *, char *, void *);
+static int Opt_v	(char *, char *, void *);
+static int Opt_i	(char *, char *, void *);
+static int Opt_p	(char *, char *, void *);
 
 /* Global variables */
 /* Mode flags for argument parsing */
@@ -209,6 +213,7 @@ static PLOptionTable option_table[] = {
 {
     "showall",			/* Turns on invisible options */
     NULL,
+    NULL,
     &mode_showall,
     PL_OPT_BOOL | PL_OPT_ENABLED | PL_OPT_INVISIBLE,
     "-showall",
@@ -217,12 +222,14 @@ static PLOptionTable option_table[] = {
     "h",			/* Help */
     Opt_h,
     NULL,
+    NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED,
     "-h",
     "Print out this message" },
 {
     "v",			/* Version */
     Opt_v,
+    NULL,
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED,
     "-v",
@@ -231,11 +238,13 @@ static PLOptionTable option_table[] = {
     "i",			/* Input file */
     Opt_i,
     NULL,
+    NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-i name",
     "Input filename" },
 {
     "f",			/* Filter option */
+    NULL,
     NULL,
     &input_type,
     PL_OPT_BOOL | PL_OPT_ENABLED | PL_OPT_ARG,
@@ -244,12 +253,14 @@ static PLOptionTable option_table[] = {
 {
     "b",			/* Beginning page number */
     NULL,
+    NULL,
     &disp_begin,
     PL_OPT_INT | PL_OPT_ENABLED | PL_OPT_ARG,
     "-b number",
     "Beginning page number" },
 {
     "e",			/* End page number */
+    NULL,
     NULL,
     &disp_end,
     PL_OPT_INT | PL_OPT_ENABLED | PL_OPT_ARG,
@@ -259,16 +270,18 @@ static PLOptionTable option_table[] = {
     "p",			/* Specified page only */
     Opt_p,
     NULL,
+    NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
     "-p page",
     "Plot given page only" },
 {
-    NULL,
-    NULL,
-    NULL,
-    0,
-    NULL,
-    NULL }
+    NULL,			/* option */
+    NULL,			/* handler */
+    NULL,			/* client data */
+    NULL,			/* address of variable to set */
+    0,				/* mode flag */
+    NULL,			/* short syntax */
+    NULL }			/* long syntax */
 };
 
 static char *notes[] = {
@@ -1633,10 +1646,8 @@ mySyntax(void)
 \*----------------------------------------------------------------------*/
 
 static int
-Opt_h(char *opt, char *optarg)
+Opt_h(char *opt, char *optarg, void *client_data)
 {
-    dbug_enter("Opt_h");
-
 /* Help */
 
     Help();
@@ -1651,10 +1662,8 @@ Opt_h(char *opt, char *optarg)
 \*----------------------------------------------------------------------*/
 
 static int
-Opt_v(char *opt, char *optarg)
+Opt_v(char *opt, char *optarg, void *client_data)
 {
-    dbug_enter("Opt_v");
-
 /* Version */
 
     fprintf(stderr, "plplot metafile version: %s\n", PLMETA_VERSION);
@@ -1670,10 +1679,8 @@ Opt_v(char *opt, char *optarg)
 \*----------------------------------------------------------------------*/
 
 static int
-Opt_i(char *opt, char *optarg)
+Opt_i(char *opt, char *optarg, void *client_data)
 {
-    dbug_enter("Opt_i");
-
 /* Input file */
 
     strncpy(FileName, optarg, sizeof(FileName) - 1);
@@ -1689,10 +1696,8 @@ Opt_i(char *opt, char *optarg)
 \*----------------------------------------------------------------------*/
 
 static int
-Opt_p(char *opt, char *optarg)
+Opt_p(char *opt, char *optarg, void *client_data)
 {
-    dbug_enter("Opt_p");
-
 /* Specified page only */
 
     disp_begin = atoi(optarg);
