@@ -11,11 +11,6 @@
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 ## General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with Octave; see the file COPYING.  If not, write to the Free
-## Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-## 02111-1307, USA.
 
 ## usage: fmt = __pl_opt__ (caller, opt)
 ##
@@ -111,14 +106,13 @@
                                          
 ## Author: Rick Niles <niles@axp745.gsfc.nasa.gov>
 ## Adapted-By: jwe
-## Maintainer: jwe
 ## Modified: jc
 
 function [style, color, symbol, key_title] = __pl_opt (opt)
 
   style = 2;
   color = 20;
-  symbol = 2;
+  symbol = 21;
   key_title = "";
   
   set_color = 0;
@@ -142,7 +136,7 @@ function [style, color, symbol, key_title] = __pl_opt (opt)
   endif
 
   if isempty(opt)
-    return
+    return;
   endif
   
   while (more_opts)
