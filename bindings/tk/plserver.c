@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1993/12/22 21:26:32  mjl
+ * Revision 1.20  1994/01/15 17:38:44  mjl
+ * Split off communications link initialization into a Tcl proc, for
+ * flexibility.
+ *
+ * Revision 1.19  1993/12/22  21:26:32  mjl
  * Last commit was botched on this file.
  *
  * Revision 1.18  1993/12/21  10:21:06  mjl
@@ -144,7 +148,6 @@ static Tk_ArgvInfo argTable[] = {
 /* Support routines for plserver */
 
 static void  configure_plserver	(void);
-static void  InitLink		(ClientData);
 static void  abort_session	(char *);
 static void  client_cmd		(char *);
 static void  tcl_cmd		(char *);
@@ -311,7 +314,7 @@ main(argc, argv)
 
     if (client_name != NULL || client_port != NULL) {
 	tcl_cmd("$plserver_init_proc");
-	Tk_DoWhenIdle(InitLink, (ClientData) NULL);
+	tcl_cmd("plserver_link_init");
 	tty = 0;
     }
     else if (fileName != NULL) {
@@ -575,10 +578,6 @@ configure_plserver(void)
 /* Now variable information. */
 /* For uninitialized variables it's better to skip the Tcl_SetVar. */
 
-/* Set program name as main window name and initialize send command */
-
-    Tcl_SetVar(interp, "server", Tk_Name(mainWindow), 0);
-
 /* Pass child variable to interpreter if set. */
 
     if (child != 0)
@@ -588,10 +587,15 @@ configure_plserver(void)
 /* If client_port is set, Tcl-DP RPC is being used to communicate. */
 /* In the latter case, need to create server communications port */
 
-    dp = 0; tcl_cmd("set dp 0");
-
-    if (client_port != NULL) {
+    if (client_name != NULL) {
+	Tcl_SetVar(interp, "client_name", client_name, 0);
+	dp = 0; tcl_cmd("set dp 0");
+    }
+    else if (client_port != NULL) {
 #ifdef TCL_DP
+	Tcl_SetVar(interp, "client_port", client_port, 0);
+	if (client_host != NULL)
+	    Tcl_SetVar(interp, "client_host", client_host, 0);
 	dp = 1; tcl_cmd("set dp 1");
 #else
 	abort_session("no Tcl-DP support in this version of plserver");
@@ -610,39 +614,6 @@ configure_plserver(void)
 	path = Tcl_GetVar(interp, "auto_path", 0);
 	fprintf(stderr, "auto_path is %s\n", path);
 #endif
-    }
-}
-
-/*----------------------------------------------------------------------*\
-* InitLink
-*
-* Sets up link to client program
-\*----------------------------------------------------------------------*/
-
-static void
-InitLink(ClientData clientData)
-{
-    if (dp) {
-	Tcl_SetVar(interp, "client_port", client_port, 0);
-	if (client_host != NULL)
-	    Tcl_SetVar(interp, "client_host", client_host, 0);
-	else
-	    Tcl_SetVar(interp, "client_host", "localhost", 0);
-
-	tcl_cmd("set server_host localhost");
-	tcl_cmd("set server_port [dp_MakeRPCServer]");
-	tcl_cmd("set client [dp_MakeRPCClient $client_host $client_port]");
-
-	client_cmd("set server_host $server_host");
-	client_cmd("set server_port $server_port");
-	client_cmd("set client $client");
-	client_cmd("set server_is_ready 1");
-    }
-    else {
-	Tcl_SetVar(interp, "client", client_name, 0);
-
-	client_cmd("set server [list $server]");
-	client_cmd("set server_is_ready 1");
     }
 }
 
