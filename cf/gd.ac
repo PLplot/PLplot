@@ -1,0 +1,243 @@
+dnl cf/gd.ac for PLplot  -*- autoconf -*-
+dnl
+dnl -------------------------------------------------------------------------
+dnl Find libgd libraries and headers and libpng, libjpeg, and zlib libraries
+dnl required for building png and/or jpeg drivers.
+dnl Written by Alan W. Irwin following what is done for X.
+dnl -------------------------------------------------------------------------
+dnl
+dnl Copyright (C) 1994, 2004  Maurice LeBrun
+dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
+dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
+dnl Copyright (C) 2003, 2004  Joao Cardoso
+dnl
+dnl This file is part of PLplot.
+dnl
+dnl PLplot is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU Library General Public License as published
+dnl by the Free Software Foundation; version 2 of the License.
+dnl
+dnl PLplot is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Library General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Library General Public License
+dnl along with the file PLplot; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
+GDLIBSTR=-lgd
+PNGLIBSTR=-lpng
+JPEGLIBSTR=-ljpeg
+ZLIBLIBSTR=-lz
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+    AC_MSG_CHECKING(for GD header files)
+    if test -z "$GDINCDIR"; then
+        AC_PREPROC_IFELSE([#include <gd.h>],
+	[ GDINCDIR=default
+	  AC_MSG_RESULT([found in $GDINCDIR]) ], [
+        incdirs="\
+        /usr/include \
+        /usr/local/include"
+
+        for dir in $incdirs; do
+            if test -r "$dir/gd.h"; then
+               GDINCDIR="$dir"
+               break
+            fi
+        done
+        if test -z "$GDINCDIR"; then
+	    AC_MSG_RESULT(not found)
+            AC_MSG_WARN([gd header files not found, setting enable_png=no])
+            AC_MSG_WARN([and enable_jpeg=no])
+            GDINCDIR=default
+            enable_png=no
+            enable_jpeg=no
+	else
+	    AC_MSG_RESULT([found in $GDINCDIR])
+        fi ])
+    fi
+    if test "$GDINCDIR" = "/usr/include"; then
+        GDINCDIR=default
+    fi
+    GDINCCMD=""
+    GDINCPATH=""
+    PL_ADD_TO_INCS($GDINCDIR, GDINCCMD, GDINCPATH)
+
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+    if test -z "$GDLIBDIR"; then
+        AC_CHECK_LIB(gd, main, [ GDLIBDIR=default ], [
+        libdirs="\
+        /usr/lib \
+        /usr/local/lib"
+
+        for dir in $libdirs; do
+            if test -r "$dir/libgd.so" -o -r "$dir/libgd.a"; then
+                GDLIBDIR="$dir"
+                break
+            fi
+        done
+        if test -z "$GDLIBDIR"; then
+            AC_MSG_WARN([gd library not found, setting enable_png=no])
+            AC_MSG_WARN([and enable_jpeg=no])
+            GDLIBDIR=default
+            enable_png=no
+            enable_jpeg=no
+        fi ])
+    fi
+    if test "$GDLIBDIR" = "default"; then
+        GDLIBDIR=/usr/lib
+    fi
+    libgdla=no
+    if test -r "$GDLIBDIR/libgd.la"; then
+      libgdla=yes
+    fi
+    if test "$GDLIBDIR" = "/usr/lib"; then
+        GDLIBDIR=default
+    fi
+    GDLIBCMD=""
+    GDLIBPATH=""
+    PL_ADD_TO_LIBS($GDLIBDIR, $GDLIBSTR, GDLIBCMD, GDLIBPATH)
+
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+  if test "$libgdla" = "no"; then
+    if test -z "$PNGLIBDIR"; then
+        AC_CHECK_LIB(png, main, [ PNGLIBDIR=default ], [
+        libdirs="\
+        /usr/lib \
+        /usr/local/lib"
+
+        for dir in $libdirs; do
+            if test -r "$dir/libpng.so" -o -r "$dir/libpng.a"; then
+                PNGLIBDIR="$dir"
+                break
+            fi
+        done
+        if test -z "$PNGLIBDIR"; then
+            AC_MSG_WARN([png library not found, setting enable_png=no])
+            AC_MSG_WARN([and enable_jpeg=no])
+            PNGLIBDIR=default
+            enable_png=no
+            enable_jpeg=no
+        fi ])
+    fi
+    if test "$PNGLIBDIR" = "/usr/lib"; then
+        PNGLIBDIR=default
+    fi
+    PL_ADD_TO_LIBS($PNGLIBDIR, $PNGLIBSTR, GDLIBCMD, GDLIBPATH)
+
+  fi
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+  if test "$libgdla" = "no"; then
+    if test -z "$JPEGLIBDIR"; then
+        AC_CHECK_LIB(jpeg, main, [ JPEGLIBDIR=default ], [
+        libdirs="\
+        /usr/lib \
+        /usr/local/lib"
+
+        for dir in $libdirs; do
+            if test -r "$dir/libjpeg.so" -o -r "$dir/libjpeg.a"; then
+                JPEGLIBDIR="$dir"
+                break
+            fi
+        done
+        if test -z "$JPEGLIBDIR"; then
+            AC_MSG_WARN([jpeg library not found, setting enable_png=no])
+            AC_MSG_WARN([and enable_jpeg=no])
+            JPEGLIBDIR=default
+            enable_png=no
+            enable_jpeg=no
+        fi ])
+    fi
+    if test "$JPEGLIBDIR" = "/usr/lib"; then
+        JPEGLIBDIR=default
+    fi
+    PL_ADD_TO_LIBS($JPEGLIBDIR, $JPEGLIBSTR, GDLIBCMD, GDLIBPATH)
+
+  fi
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+  if test "$libgdla" = "no"; then
+    if test -z "$ZLIBLIBDIR"; then
+        AC_CHECK_LIB(z, main, [ ZLIBLIBDIR=default ], [
+        libdirs="\
+        /usr/lib \
+        /usr/local/lib"
+
+        for dir in $libdirs; do
+            if test -r "$dir/libz.so" -o -r "$dir/libz.a"; then
+                ZLIBLIBDIR="$dir"
+                break
+            fi
+        done
+        if test -z "$ZLIBLIBDIR"; then
+            AC_MSG_WARN([zlib library not found, setting enable_png=no])
+            AC_MSG_WARN([and enable_jpeg=no])
+            ZLIBLIBDIR=default
+            enable_png=no
+            enable_jpeg=no
+        fi ])
+    fi
+    if test "$ZLIBLIBDIR" = "/usr/lib"; then
+        ZLIBLIBDIR=default
+    fi
+    PL_ADD_TO_LIBS($ZLIBLIBDIR, $ZLIBLIBSTR, GDLIBCMD, GDLIBPATH)
+  fi
+fi
+
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
+#next test requires C language
+    AC_LANG_SAVE
+    AC_LANG_C
+
+# All required headers and libraries are present for libgd, libpng, libjpeg,
+# and zlib.  Now check if this version of libgd supports png and/or jpeg.
+
+    CFLAGS_SAVE=$CFLAGS
+    LIBS_SAVE=$LIBS
+    LDFLAGS_SAVE=$LDFLAGS
+
+    CFLAGS="$GDINCCMD"
+    LIBS="$GDLIBCMD"
+    LDFLAGS=
+
+# This test for png support is made in case this is an ancient libgd that
+# only supported giff (e.g., the Redhat 6.2 version).
+    AC_MSG_CHECKING(for png support in libgd)
+    AC_TRY_LINK_FUNC([
+      gdImagePng
+    ], [AC_MSG_RESULT(yes)], [
+      AC_MSG_RESULT(no)
+      AC_MSG_WARN(png driver disabled)
+      enable_png=no
+    ])
+
+    AC_MSG_CHECKING(for jpeg support in libgd)
+    AC_TRY_LINK_FUNC([
+      gdImageJpeg
+    ], [AC_MSG_RESULT(yes)], [
+      AC_MSG_RESULT(no)
+      AC_MSG_WARN(jpeg driver disabled)
+      enable_jpeg=no
+    ])
+
+    CFLAGS=$CFLAGS_SAVE
+    LIBS=$LIBS_SAVE
+    LDFLAGS=$LDFLAGS_SAVE
+
+#restore the language the way it was before this test
+    AC_LANG_RESTORE
+
+fi
+
+AC_SUBST(GDINCCMD)
+AC_SUBST(GDLIBCMD)
+

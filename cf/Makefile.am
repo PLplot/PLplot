@@ -1,9 +1,8 @@
-# doc/docbook/Makefile.am for PLplot
+# Makefile.am for the cf directory of PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
-# Copyright (C) 2002, 2003  Alan W. Irwin
-# Copyright (C) 2003, 2004  Rafael Laboissiere
+# Copyright (C) 2004  Rafael Laboissiere
 #
 # This file is part of PLplot.
 #
@@ -20,13 +19,34 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-EXTRA_DIST = \
-  COPYING README.developers \
-  bin cnf perl www
-
-dist-hook:
-	rm -f $(distdir)/bin/api2man.pl $(distdir)/www/index.html.in
-
-CLEANFILES = conftest.*
-
-SUBDIRS = src
+EXTRA_DIST =      \
+    acinclude.m4  \
+    bootstrap.sh  \
+    c++.ac        \  
+    cgm.ac        \
+    csiro.ac      \
+    docbook.ac    \  
+    docbook.m4    \ 
+    drivers.ac    \
+    f77.ac        \
+    freetype.ac   \
+    gd.ac         \
+    gnome.ac      \  
+    gnome.m4      \ 
+    gnu-make.m4   \
+    gtk.m4        \
+    java.ac       \
+    libtool.ac    \
+    linuxvga.ac   \
+    octave.ac     \
+    pkg-config.ac \
+    pthread.ac    \
+    python.ac     \
+    README        \
+    summary.ac    \
+    swig.ac       \
+    swig.m4       \
+    tcl.ac        \
+    test.ac       \
+    xwin.ac
+    

@@ -26,7 +26,7 @@
 usage () {
   local prog=`basename $0`
   echo "Usage: $prog [-n] [-u user] [-t tmpdir] [-w remote dir] \\"
-  echo "          [-r branch] [-v version]"
+  echo "          [-r branch] [-v version] [-c] [-i prefix]"
   echo "       $prog -d"
   echo "       $prog -h"
   echo
@@ -34,6 +34,8 @@ usage () {
   echo "Option -d prints the default values."
   echo "When option -v is not given, a tarball is produced with version and"
   echo "  label containing today's date string."
+  echo "When option -c is given, the tarball is unpacked and make check"
+  echo "  is run.  For exercising make install, use option -i."
   exit $1
 }
 
@@ -44,6 +46,8 @@ VERSION=${VERSION:+--version=$1}
 BRANCH=${BRANCH:--D now}
 CVSTMPDIR=${CVSTMPDIR:-plplot-cvs-tarball}
 
+config_opt="--enable-octave"
+
 print_defaults () {
   local v
   for v in DOC_ARG WWW_USER CVSROOTDIR VERSION BRANCH CVSTMPDIR ; do
@@ -52,20 +56,28 @@ print_defaults () {
   exit 0
 }
 
-while getopts "dhnv:r:u:t:w:" option
+do_check=no
+prefix=""
+
+while getopts "cdhi:nr:t:u:v:w:" option
 do
   case $option in
+    c) do_check=yes ;;
     d) print_defaults ;;
     h) usage 0 ;;
+    i) test -n "$OPTARG" || usage 1 ; prefix=$OPTARG ;;
     n) DOC_ARG= ;;
     r) test -n "$OPTARG" || usage 1 ; BRANCH="-r $OPTARG" ;;
     t) test -n "$OPTARG" || usage 1 ; CVSTMPDIR=$OPTARG ;;
-    v) test -n "$OPTARG" || usage 1 ; VERSION=$OPTARG ;;
     u) test -n "$OPTARG" || usage 1 ; WWW_USER=$OPTARG ;;
+    v) test -n "$OPTARG" || usage 1 ; VERSION=$OPTARG ;;
     w) test -n "$OPTARG" || usage 1 ; CVSROOTDIR=$OPTARG ;;
     *) usage 1 ;;
   esac
 done
+
+clean_prefix=yes
+test -d "$prefix" && clean_prefix=no
 
 cleanup ( ) {
     rm -rf $CVSTMPDIR
@@ -77,10 +89,22 @@ cleanup
 
 cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
   && cd $CVSTMPDIR \
-  && ./bootstrap.sh ${VERSION:---date-version} \
-  && ./configure $DOC_ARG --enable-octave \
+  && cf/bootstrap.sh ${VERSION:---date-version} \
+  && ./configure $DOC_ARG $config_opt \
   && make dist \
   && TARBALL=`ls plplot-*.tar.gz` \
+  && DISTDIR=`echo $TARBALL | sed s/.tar.gz//` \
   && mv $TARBALL .. \
   && cd .. \
-  && echo "CVS distribution tarball: $TARBALL"
+  && echo "CVS distribution tarball: $TARBALL" \
+  && test "$do_check" = yes \
+  && tar xfvz $TARBALL \
+  && ( rm -rf $DISTDIR \
+       && tar xfz $TARBALL \
+       && cd $DISTDIR \
+       && ./configure ${prefix:+--prefix=$prefix} $config_opt  \
+       && make check \
+       && test -n "$prefix" \
+       && make install \
+       && test "$clean_prefix" = yes \
+       && rm -rf "$prefix" )

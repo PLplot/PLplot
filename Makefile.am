@@ -66,9 +66,7 @@ EXTRA_DIST = \
 	PROBLEMS \
 	SERVICE \
 	TODO.AM-LT \
-	ToDo \
-	bootstrap.sh \
-	sysloc.in
+	ToDo
 
 dist-hook:
 	rm -rf `find $(distdir) -name CVS -o -name .cvsignore`

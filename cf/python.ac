@@ -1,0 +1,105 @@
+dnl cf/python.ac for PLplot  -*- autoconf -*-
+dnl
+dnl Python binding
+dnl
+dnl Copyright (C) 1994, 2004  Maurice LeBrun
+dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
+dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
+dnl Copyright (C) 2003, 2004  Joao Cardoso
+dnl
+dnl This file is part of PLplot.
+dnl
+dnl PLplot is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU Library General Public License as published
+dnl by the Free Software Foundation; version 2 of the License.
+dnl
+dnl PLplot is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Library General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Library General Public License
+dnl along with the file PLplot; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
+PL_ARG_ENABLE(python, [compile Python interface code], yes)
+
+if test "$enable_python" = "yes"; then
+    ### Redefine AC_MSG_ERROR as AC_MSG_WARN around the call to
+    ### AM_PATH_PYTHON, such that if python is not found, configure will
+    ### not stop.
+    pushdef([AC_MSG_ERROR],defn([AC_MSG_WARN]))
+    AM_PATH_PYTHON(1.5)
+    PYTHON_DEVEL
+    popdef([AC_MSG_ERROR])
+    if test -n "$PYTHON_VERSION" ; then
+### PYTHON_INSTDIR is the same as $pythondir except that the
+### symbolic prefix is replaced by the actual prefix.
+### The actual prefix is required in examples/python/plplot_python_start.py
+### (the only place that PYTHON_INSTDIR is used).
+        PL_EXPAND_EXPRESSION(PYTHON_INSTDIR, $pythondir)
+    fi
+fi
+
+AC_SUBST(PYTHON_INSTDIR)
+
+AC_SUBST(enable_python)
+
+# -----------------------------------------------------------------------
+# Python include and machdep directories
+# -----------------------------------------------------------------------
+
+if test "$enable_python" = "yes"; then
+    # Check whether a working Python has been found (by AM_PATH_PYTHON)
+    if test -z "$PYTHON_VERSION" ; then
+        enable_python=no
+	AC_MSG_WARN([Python version not found, setting enable_python=no])
+    else
+        if test "$enable_shared" != "yes"; then
+            AC_MSG_RESULT([warning: python support requires enable_shared=yes, setting enable_python=no])
+            enable_python=no
+        fi
+    fi
+fi
+
+if test "$enable_python" = "yes"; then
+    if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
+        incdirs="$prefix/include/python$PYTHON_VERSION \
+	         /usr/include/python$PYTHON_VERSION"
+        PL_FIND_INC(Python, PYTHON_INC_DIR, enable_python)
+
+	if test "$enable_python" = no ; then
+	    AC_MSG_WARN([Header file for Python version $PYTHON_VERSION has not been found.])
+            AC_MSG_WARN([This probably means that an appropriate Python])
+            AC_MSG_WARN([development package needs to be installed.])
+	fi
+
+    fi
+
+# This needs to be a separate test in case PYTHON_INC_DIR is specified by the
+# user, to pick up a particular version.  Numeric should be either in the same
+# or a subdir of PYTHON_INC_DIR else version mismatch could occur.
+
+    if test "$enable_python" = "yes"; then
+        incdirs="\
+        $PYTHON_INC_DIR \
+        $PYTHON_INC_DIR/Numeric"
+        PL_FIND_INC(arrayobject, PYTHON_NUM_DIR, numeric_python)
+        if test "$numeric_python" = "no"; then
+            AC_MSG_RESULT([plplot module needs Python numeric extension.])
+            AC_MSG_RESULT([Setting enable_python to no])
+            enable_python=no
+        fi
+    fi
+fi
+
+AC_SUBST(PYTHON_INC_DIR)
+AC_SUBST(PYTHON_NUM_DIR)
+
+AM_CONDITIONAL(enable_python, [test "$enable_python" = yes])
+
+AC_CONFIG_FILES([
+    bindings/python/Makefile
+    examples/python/Makefile
+    examples/python/plplot_python_start.py
+])

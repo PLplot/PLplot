@@ -1,0 +1,49 @@
+dnl cf/drivers-post.ac for PLplot  -*- autoconf -*-
+dnl
+dnl Finalize driver initializations
+dnl
+dnl Copyright (C) 1994, 2004  Maurice LeBrun
+dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
+dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
+dnl Copyright (C) 2003, 2004  Joao Cardoso
+dnl
+dnl This file is part of PLplot.
+dnl
+dnl PLplot is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU Library General Public License as published
+dnl by the Free Software Foundation; version 2 of the License.
+dnl
+dnl PLplot is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Library General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Library General Public License
+dnl along with the file PLplot; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
+if test "$enable_dyndrivers" = yes -a "$enable_pstex" = yes ; then
+    enable_ps=yes
+fi
+
+dnl Disable the Tk drivers if Tcl is disabled or system has not X Window
+
+if test "$enable_tcl" = "no" -o "$have_x" != "yes"; then
+    enable_tk=no
+    enable_tkwin=no
+fi
+
+if test "$enable_tk" = "no" -o "$enable_tcl" = "no"; then
+    enable_ntk="no"
+fi
+
+PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
+
+AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
+AM_CONDITIONAL(enable_ljiip, [test "$enable_ljiip" = yes])
+AM_CONDITIONAL(enable_pbm, [test "$enable_pbm" = yes])
+AM_CONDITIONAL(enable_ps, [test "$enable_ps" = yes])
+AM_CONDITIONAL(enable_pstex, [test "$enable_pstex" = yes])
+AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
+AM_CONDITIONAL(enable_dyndrivers, [test "$enable_dyndrivers" = yes])
+

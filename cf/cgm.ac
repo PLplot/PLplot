@@ -1,0 +1,92 @@
+dnl cf/cgm.ac for PLplot  -*- autoconf -*-
+dnl
+dnl ------------------------------------------------------------------------
+dnl Find libcd library and header required for building cgm driver.
+dnl Written by Alan W. Irwin following what is done for gd driver.
+dnl ------------------------------------------------------------------------
+dnl
+dnl Copyright (C) 1994, 2004  Maurice LeBrun
+dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
+dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
+dnl Copyright (C) 2003, 2004  Joao Cardoso
+dnl
+dnl This file is part of PLplot.
+dnl
+dnl PLplot is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU Library General Public License as published
+dnl by the Free Software Foundation; version 2 of the License.
+dnl
+dnl PLplot is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Library General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Library General Public License
+dnl along with the file PLplot; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+
+CDLIBSTR=-lcd
+
+if test "$enable_cgm" = "yes"; then
+    AC_MSG_CHECKING(for libcd header files)
+    if test -z "$CDINCDIR"; then
+        AC_PREPROC_IFELSE([#include <cd.h>],
+	[ CDINCDIR=default
+	  AC_MSG_RESULT([found in $CDINCDIR]) ], [
+        incdirs="\
+        /usr/include \
+        /usr/local/include"
+
+        for dir in $incdirs; do
+            if test -r "$dir/cd.h"; then
+               CDINCDIR="$dir"
+               break
+            fi
+        done
+        if test -z "$CDINCDIR"; then
+            AC_MSG_RESULT(not found)
+            AC_MSG_WARN([libcd header files not found, setting enable_cgm=no])
+            CDINCDIR=default
+            enable_cgm=no
+	else
+	    AC_MSG_RESULT([found in $CDINCDIR])
+        fi ])
+    fi
+    if test "$CDINCDIR" = "/usr/include"; then
+        CDINCDIR=default
+    fi
+
+    if test -z "$CDLIBDIR"; then
+        AC_CHECK_LIB(cd, main, [ CDLIBDIR=default ], [
+        libdirs="\
+        /usr/lib \
+        /usr/local/lib"
+
+        for dir in $libdirs; do
+            if test -r "$dir/libcd.so" -o -r "$dir/libcd.a"; then
+                CDLIBDIR="$dir"
+                break
+            fi
+        done
+        if test -z "$CDLIBDIR"; then
+            AC_MSG_WARN([cd library not found, setting enable_cgm=no])
+            CDLIBDIR=default
+            enable_cgm=no
+        fi ])
+    fi
+    if test "$CDLIBDIR" = "/usr/lib"; then
+        CDLIBDIR=default
+    fi
+fi
+
+CDINCCMD=""
+CDINCPATH=""
+CDLIBCMD=""
+CDLIBPATH=""
+if test "$enable_cgm" = "yes"; then
+    PL_ADD_TO_INCS($CDINCDIR, CDINCCMD, CDINCPATH)
+    PL_ADD_TO_LIBS($CDLIBDIR, $CDLIBSTR, CDLIBCMD, CDLIBPATH)
+fi
+AC_SUBST(CDINCCMD)
+AC_SUBST(CDLIBCMD)
+
