@@ -373,6 +373,7 @@ Configure () {
 		../src/stubc/*.c \
 		../examples/C/*.c \
 		../utils/*.c \
+		../fonts/*.c \
 		../scripts/pl* \
 		../include/*.h \
 		../drivers/*.c \
