@@ -2,7 +2,6 @@
 
 #	Shade plot demo.
 
-import math
 import sys
 import os
 

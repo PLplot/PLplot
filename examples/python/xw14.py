@@ -2,7 +2,6 @@
 
 #	Demo of multiple stream/window capability (requires Tk or Tcl-DP).
 
-import math
 import sys
 import os
 

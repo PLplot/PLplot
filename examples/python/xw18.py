@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-#Have not yet converted to arrays.
 
 #	3-d line and point plot demo.  Adapted from x08c.c.
 
-import math
 import sys
 import os
 
@@ -43,19 +41,11 @@ def main():
 	for k in range(4):
 		test_poly(k)
 
-	x = []
-	y = []
-	z = []
-
 	# From the mind of a sick and twisted physicist...
-
-	for i in range(NPTS):
-		z.append(-1. + 2. * i / NPTS)
-
-		r = z[i]
-
-		x.append(r * math.cos( 2. * math.pi * 6. * i / NPTS ))
-		y.append(r * math.sin( 2. * math.pi * 6. * i / NPTS ))
+	
+	z = -1. + (2./NPTS) * arrayrange(NPTS)
+	x = z*cos((2.*pi*6./NPTS)*arrayrange(NPTS))
+	y = z*sin((2.*pi*6./NPTS)*arrayrange(NPTS))
 
 	for k in range(4):
 		pladv(0)
@@ -82,6 +72,12 @@ def main():
 
 	plend()
 
+def THETA(a):
+    return 2. * pi * (a) / 20.
+
+def PHI(a):
+    return pi * (a) / 20.1
+
 def test_poly(k):
 
 	draw = [ [ 1, 1, 1, 1 ],
@@ -100,42 +96,47 @@ def test_poly(k):
 
 	plcol0(2)
 
-	def THETA(a):
-		return 2. * math.pi * (a) / 20.
-	def PHI(a):
-		return math.pi * (a) / 20.1
-
 ##      x = r sin(phi) cos(theta)
 ##      y = r sin(phi) sin(theta)
 ##      z = r cos(phi)
 ##      r = 1 :=)
 
+	cosi0 = cos(THETA(arrayrange(20)))
+	cosi0expand = transpose(resize(cosi0,(20,20)))
+	cosi1 = cos(THETA(arrayrange(1,21)))
+	cosi1expand = transpose(resize(cosi1,(20,20)))
+	sini0 = sin(THETA(arrayrange(20)))
+	sini0expand = transpose(resize(sini0,(20,20)))
+	sini1 = sin(THETA(arrayrange(1,21)))
+	sini1expand = transpose(resize(sini1,(20,20)))
+	cosj0 = cos(PHI(arrayrange(20)))
+	cosj1 = cos(PHI(arrayrange(1,21)))
+	sinj0 = sin(PHI(arrayrange(20)))
+	sinj1 = sin(PHI(arrayrange(1,21)))
+
+	x0 = cosi0expand*sinj0
+	y0 = sini0expand*sinj0
+	z0 = cosj0
+	
+	x1 = cosi1expand*sinj0
+	y1 = sini1expand*sinj0
+	z1 = cosj0
+	
+	x2 = cosi1expand*sinj1
+	y2 = sini1expand*sinj1
+	z2 = cosj1
+	
+	x3 = cosi0expand*sinj1
+	y3 = sini0expand*sinj1
+	z3 = cosj1
+	
+	x4 = x0
+	y4 = y0
+	z4 = z0
+	
 	for i in range(20):
 		for j in range(20):
-			x = []
-			y = []
-			z = []
-
-			x.append(math.sin( PHI(j) ) * math.cos( THETA(i) ))
-			y.append(math.sin( PHI(j) ) * math.sin( THETA(i) ))
-			z.append(math.cos( PHI(j) ))
-
-			x.append(math.sin( PHI(j) ) * math.cos( THETA(i+1) ))
-			y.append(math.sin( PHI(j) ) * math.sin( THETA(i+1) ))
-			z.append(math.cos( PHI(j) ))
-
-			x.append(math.sin( PHI(j+1) ) * math.cos( THETA(i+1) ))
-			y.append(math.sin( PHI(j+1) ) * math.sin( THETA(i+1) ))
-			z.append(math.cos( PHI(j+1) ))
-
-			x.append(math.sin( PHI(j+1) ) * math.cos( THETA(i) ))
-			y.append(math.sin( PHI(j+1) ) * math.sin( THETA(i) ))
-			z.append(math.cos( PHI(j+1) ))
-
-			x.append(math.sin( PHI(j) ) * math.cos( THETA(i) ))
-			y.append(math.sin( PHI(j) ) * math.sin( THETA(i) ))
-			z.append(math.cos( PHI(j) ))
-
+		    
 			# N.B.: The Python poly3 no longer takes a
 			# (possibly negative) length argument, so if
 			# you want to pass a counterclockwise polygon
@@ -143,6 +144,9 @@ def test_poly(k):
 			# above was rearranged to create a clockwise
 			# polygon instead of a counterclockwise
 			# polygon.
+			x = [x0[i,j],x1[i,j],x2[i,j],x3[i,j],x4[i,j]]
+			y = [y0[i,j],y1[i,j],y2[i,j],y3[i,j],y4[i,j]]
+			z = [z0[j],z1[j],z2[j],z3[j],z4[j]]
 
 			plpoly3(x, y, z, draw[k])
 

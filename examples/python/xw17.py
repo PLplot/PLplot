@@ -3,7 +3,6 @@
 
 #	equivalent to x17.c, but not implemented yet.
 
-import math
 import sys
 import os
 
