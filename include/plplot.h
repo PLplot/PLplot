@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.40  1993/09/24 20:33:14  furnish
+ * Revision 1.41  1993/09/28 21:30:17  mjl
+ * Made the bomb-out for non-ANSI | non-C++ compilers more explicit.
+ *
+ * Revision 1.40  1993/09/24  20:33:14  furnish
  * Went wild with "const correctness".  Can now pass a C++ String type to
  * most (all that I know of) PLPLOT functions.  This works b/c String has
  * an implicit conversion to const char *.  Now that PLPLOT routines take
@@ -143,7 +146,8 @@
 
 #ifndef __STDC__
 #ifndef __cplusplus
-#error "Requires a standard-conforming C compiler"
+If you reach this line, it means your compiler is incapable of building
+plplot (not ANSI-compliant).  Time to get a new one.
 #endif
 #endif
 
