@@ -604,7 +604,6 @@ plD_state_xw(PLStream *pls, PLINT op)
  * 	   ZEROW2B  	disable writing to buffer
  * 	   ONEW2D 	enable  writing to display
  * 	   ONEW2B 	enable  writing to buffer
- * 	   PIXEL2U      get user coordinates corresponding to a device pixel
 \*--------------------------------------------------------------------------*/
 
 void
@@ -2807,6 +2806,24 @@ PLX_save_colormap(Display *display, Colormap colormap)
 
 
 /*--------------------------------------------------------------------------*\
+ * GetImageErrorHandler()
+ *
+ * Error handler used in XGetImage() to catch errors when pixmap or window
+ * are not completely viewable.
+\*--------------------------------------------------------------------------*/
+
+static int
+GetImageErrorHandler(Display *display, XErrorEvent *error)
+{
+    if (error->error_code != BadMatch) {
+	char buffer[256];
+	XGetErrorText(display, error->error_code, buffer, 256);
+	fprintf(stderr, "Error in XGetImage: %s.\n", buffer);
+    }
+    return 1;
+}	
+
+/*--------------------------------------------------------------------------*\
  * DrawImage()
  *
  * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
@@ -2822,6 +2839,8 @@ DrawImage(PLStream *pls)
   XImage *ximg = NULL;
   XColor curcolor;
   PLINT xmin, xmax, ymin, ymax, icol1;
+
+  int (*oldErrorHandler)();
 
   float mlr, mtb;
   float blt, brt, brb, blb;
@@ -2843,15 +2862,27 @@ DrawImage(PLStream *pls)
   
   nx = pls->dev_nptsX;
   ny = pls->dev_nptsY;
-  
+  //printf("%d %d %d %d - %d %d\n", xmin, xmax, ymin, ymax, dev->width, dev->height);
+
   /* the XGetImage() call fails if either the pixmap or window is not fully viewable! */
+  oldErrorHandler = XSetErrorHandler(GetImageErrorHandler);
+
+  XFlush(xwd->display); 
   if (dev->write_to_pixmap)
     ximg =  XGetImage( xwd->display, dev->pixmap, 0, 0, dev->width, dev->height,
-		       AllPlanes, ZPixmap);
+    		       AllPlanes, ZPixmap);
+
   if (dev->write_to_window)
     ximg =  XGetImage( xwd->display, dev->window, 0, 0, dev->width, dev->height,
 		       AllPlanes, ZPixmap);
-  
+
+  XSetErrorHandler(oldErrorHandler);
+
+  if (ximg == NULL) {
+    plabort("Can't get image, it must be partly obscured.");
+    return;
+  }
+
   if (xwd->ncol1 == 0)
     AllocCmap1(pls);
   if (xwd->ncol1 < 2)
@@ -2912,8 +2943,8 @@ DrawImage(PLStream *pls)
 	Ppts[3].y = MIN(Ppts[3].y, ymax);
 	
 	/* the Z array has size (nx-1)*(ny-1) */
-	icol1 = floor( 0.5+plsc->dev_z[ix*(ny-1)+iy] * (xwd->ncol1-1)) ;	  
-	  
+	icol1 = plsc->dev_z[ix*(ny-1)+iy]/65535. * (xwd->ncol1-1);
+
 	if (xwd->color)
 	  curcolor = xwd->cmap1[icol1];
 	else 
@@ -2957,13 +2988,12 @@ DrawImage(PLStream *pls)
   }
 
   if (dev->write_to_pixmap)
-    XPutImage( xwd->display, dev->pixmap, dev->gc, ximg, 0, 0,
-	       0, 0, dev->width, dev->height);
+    XPutImage( xwd->display, dev->pixmap, dev->gc, ximg, 0, 0, 0, 0, dev->width, dev->height);
+    
   if (dev->write_to_window)
     XPutImage( xwd->display, dev->window, dev->gc, ximg, 0, 0,
 	       0, 0, dev->width, dev->height);
 
-  XFlush(xwd->display); 
   XDestroyImage(ximg);
 }
 
