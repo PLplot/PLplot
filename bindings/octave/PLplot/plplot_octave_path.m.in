@@ -21,8 +21,7 @@ function path = plplot_octave_path(path)
   global __pl_plplot_octave_path
 
   if (!exist("__pl_plplot_octave_path"))
-    __pl_plplot_octave_path = "@PLPLOT_OCTAVE_DIR@";
-    __pl_plplot_octave_path = strrep (__pl_plplot_octave_path, "//", "/"); # at install time it can become messed
+    __pl_plplot_octave_path = "@PLPLOT_OCTAVE_DIR@//";
   endif
 
   if (nargin == 0)
