@@ -75,7 +75,7 @@ else
 fi
 
 LIBS=""
-INCS="-I."
+INCS=""
 
 # -----------------------------------------------------------------------
 # Initialize autoconf.
@@ -105,9 +105,13 @@ AC_WITH(debug, ,   with_debug="no")
 AC_WITH(opt, ,     with_opt="yes")
 AC_WITH(double, ,  with_double="no")
 AC_WITH(profile, , with_profile="no")
+AC_WITH(arlib, ,   with_arlib="yes")
 AC_WITH(shlib, ,   with_shlib="yes")
 AC_WITH(f2c, ,     with_f2c="no")
+AC_WITH(gcc, ,     with_gcc="no")
 AC_WITH(warn, ,    with_warn="no")
+
+AC_ENABLE(f77, , enable_f77="yes")
 
 # -----------------------------------------------------------------------
 # This is where the real work is done.
@@ -119,6 +123,10 @@ AC_INCLUDE(cf/sysloc.in)
 AC_STDC_HEADERS
 AC_PROG_RANLIB
 AC_VFORK
+
+if test "$with_shlib" = "no" -a "$with_arlib" = "no"; then
+    with_arlib="yes"
+fi
 
 # -----------------------------------------------------------------------
 # It'd be good to let this be selected too, need to put it in somewhere:
@@ -186,25 +194,44 @@ fi
 
 echo "creating tmp/Makefile.in"
 
+# Add Makefile initialization
+
 cat cf/init.in		>tmp/Makefile.in 
 
-AC_ENABLE(f77, , enable_f77="yes")
+# Add optional packages
+
 if test "$enable_f77" = "yes"; then
     cat cf/pkg_f77.in	>>tmp/Makefile.in 
 fi
-
 if test "$enable_tcl" = "yes"; then
     cat cf/pkg_tcl.in	>>tmp/Makefile.in 
 fi
 if test "$enable_tk" = "yes"; then
     cat cf/pkg_tk.in	>>tmp/Makefile.in 
 fi
+
+# Add object file dependencies, targets
+
 cat cf/objs.in		>>tmp/Makefile.in 
-cat cf/lib.in		>>tmp/Makefile.in 
-if test "$with_shlib" = "yes"; then
-    cat cf/shlib.in	>>tmp/Makefile.in
+
+# Add library targets
+
+if test "$with_shlib" = "yes" -a "$with_arlib" = "yes"; then
+    cat cf/lib_both.in		>>tmp/Makefile.in 
+else
+    if test "$with_shlib" = "yes"; then
+	cat cf/lib_sh.in	>>tmp/Makefile.in
+    else
+	cat cf/lib_ar.in	>>tmp/Makefile.in
+    fi
 fi
+
+# Add program file dependencies, targets
+
 cat cf/exes.in		>>tmp/Makefile.in 
+
+# Installation and cleanup.
+
 cat cf/install.in	>>tmp/Makefile.in 
 cat cf/clean.in		>>tmp/Makefile.in 
 
@@ -295,6 +322,10 @@ if test ! -f tmp/plcore.c; then
     cd ..
 fi
 
+if test ! -d tmp/shared; then
+    mkdir tmp/shared
+fi
+
 # --------------------------------------------------------------------
 # Print out some of the more important settings, then create output
 # files.
@@ -306,7 +337,7 @@ fi
 # write them the same in the status message as they appear in the command
 # line.  The only occasion you will have to set the variable directly is
 # in ~/config/cf_plplot.in if you use it, and just make sure you remember
-# to use an underscore.
+# to use an underscore in that case.
 # --------------------------------------------------------------------
 
 echo "
@@ -314,21 +345,20 @@ Configuration results (edit and run ./config.status to modify):
 
 system:		$system
 prefix:		$prefix
-CC:		$CC
-CC_FLAGS:	$CC_FLAGS
-F77:		$F77
-F77_FLAGS:	$F77_FLAGS
-LDC_FLAGS:	$LDC_FLAGS
-LDF_FLAGS:	$LDF_FLAGS
+CC:		$CC $CC_FLAGS
+F77:		$F77 $F77_FLAGS
+LDC:		$LDC $LDC_FLAGS
+LDF:		$LDF $LDF_FLAGS
 INCS:		$INCS
 LIBS:		$LIBS
 LIB_TAG:	$LIB_TAG
 devices:	$DEVICES
 
+with-arlib:	$with_arlib		with-shlib:	$with_shlib
 with-debug:	$with_debug		with-opt:	$with_opt
-with-double:	$with_double		with-profile:	$with_profile
-with-shlib:	$with_shlib		with-f2c:	$with_f2c
-with-warn:	$with_warn
+with-warn:	$with_warn		with-profile:	$with_profile
+with-f2c:	$with_f2c		with-gcc:	$with_gcc
+with-double:	$with_double
 
 enable-tcl:	$enable_tcl		enable-tk:	$enable_tk
 enable-dp:	$enable_dp		enable-itcl:	$enable_itcl
