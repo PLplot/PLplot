@@ -663,19 +663,23 @@ void plD_bop_cgm(PLStream *pls)
  * bop, and you don't want the familying sequence started until after
  * that first call to bop.*/
 
+    pls->famadv = 1;
+
+    pls->page++;
+
 /* n.b. pls->dev can change because of an indirect call to plD_init_cgm 
  * from plGetFam if familying is enabled.  Thus, wait to define dev until
  * now. */
 
     dev = (cgm_Dev *) pls->dev;
 
-    pls->famadv = 1;
-
-    pls->page++;
-
-    if (pls->page==1)
+    if (pls->page==1) {
         dev->im_out = cdImageCreate(pls->xlength, pls->ylength);
-    
+    }
+    else if (pls->family != 1) {
+        cdCgmNewPic(dev->im_out,0);
+    }
+
     setcmap(pls);
 
 /* Continue to initialise the driver */
@@ -690,7 +694,7 @@ cdSetFillStyle(dev->im_out,1);   /* Set solid fills */
  * but in reality they are on by default. So what we do is turn them ON
  * manually, then turn them OFF later.
  * 
- * Due to a boarder being drawn around the edge of the image, we also
+ * Due to a border being drawn around the edge of the image, we also
  * want the edges turned on so we can lay down a rectangle coloured in
  * the background colour at the start. Once we have drawn our
  * background box, we then turn edges off for the rest of the page.
@@ -730,12 +734,8 @@ void plD_tidy_cgm(PLStream *pls)
        }
 
    cdImageDestroy(dev->im_out);
-   if (dev!=NULL) 
-      { 
-       free(dev);
-       dev=NULL;
-      }
    fclose(pls->OutFile);
+   free_mem(pls->dev);
 }
 
 /*----------------------------------------------------------------------*\
@@ -753,11 +753,6 @@ int i;
        {
         cdImageCgm(dev->im_out, pls->OutFile);
        }
-    else
-       {
-        cdCgmNewPic(dev->im_out,0);
-       }
-
    for (i=0;i<cdMaxColors;++i) dev->colour_index[i]=-1;
 
 }
