@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.31  1994/03/23 06:41:25  mjl
+ * Revision 1.32  1994/04/08 11:43:40  mjl
+ * Some improvements to color map 1 color allocation so that it will fail
+ * less often (temporary, until custom color map support is added).  Master
+ * event handler with user entry point added.  Escape function recognizes
+ * the PLESC_EH command for handling pending events only, and a mouse handler
+ * added (both contributed by Radey Shouman).
+ *
+ * Revision 1.31  1994/03/23  06:41:25  mjl
  * Added support for: color map 1 color selection, color map 0 or color map 1
  * state change (palette change), polygon fills.  Color map 1 allocator tries
  * to allocate as many colors as possible (minus a small number to be
@@ -17,21 +24,6 @@
  *
  * Revision 1.30  1994/01/25  06:18:34  mjl
  * Added double buffering capability.
- *
- * Revision 1.29  1993/12/08  06:17:33  mjl
- * Split off definition of state structure into header file.  Changed end of
- * page handler to check for and process events even if not pausing before
- * the next page.
- *
- * Revision 1.28  1993/12/06  07:42:31  mjl
- * Changed escape flush function to also handle any pending events.
- *
- * Revision 1.27  1993/11/15  08:29:56  mjl
- * Added a cast to eliminate a warning.
- *
- * Revision 1.26  1993/11/07  09:02:33  mjl
- * Some minor optimizations.  Also added escape function handling for dealing
- * with flushes.
 */
 
 /*	xwin.c
@@ -45,7 +37,14 @@
 #include "drivers.h"
 #include "plevent.h"
 
-#define NCOL1_MAX 128
+/* If this is kept small enough the initial allocation will always succeed
+ * Subsequent copies of plplot will allocate the same colors, hopefully,
+ * and the color cells will be shared.  If there is a problem, reduce 
+ * NCOL1_MAX or pls->ncol1.  Will be fixed once I figure out how to
+ * use custom color maps.
+ */
+
+#define NCOL1_MAX 50
 
 /* Function prototypes */
 /* INDENT OFF */
@@ -62,7 +61,7 @@ static void  CreatePixmap	(PLStream *);
 static void  fill_polygon	(PLStream *pls);
 static void  Colorcpy		(XColor *, XColor *);
 
-static void  EventHandler	(PLStream *, XEvent *);
+static void  MasterEH		(PLStream *, XEvent *);
 static void  KeyEH		(PLStream *, XEvent *);
 static void  MouseEH		(PLStream *, XEvent *);
 static void  ExposeEH		(PLStream *, XEvent *);
@@ -238,7 +237,8 @@ plD_eop_xw(PLStream *pls)
     if (pls->db)
 	ExposeCmd(pls);
 	
-    WaitForPage(pls);
+    if ( ! pls->nopause)
+	WaitForPage(pls);
 }
 
 /*----------------------------------------------------------------------*\
@@ -354,6 +354,16 @@ plD_state_xw(PLStream *pls, PLINT op)
 * plD_esc_xw()
 *
 * Escape function.
+*
+* Functions:
+*
+*	PLESC_EXPOSE	Force an expose
+*	PLESC_RESIZE	Force a resize
+*	PLESC_REDRAW	Force a redraw
+*	PLESC_FLUSH	Flush X event buffer
+*	PLESC_FILL	Fill polygon
+*	PLESC_EH	Handle events only
+*
 \*----------------------------------------------------------------------*/
 
 void
@@ -364,25 +374,29 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
     dbug_enter("plD_esc_xw");
 
     switch (op) {
-      case PLESC_EXPOSE:
+    case PLESC_EXPOSE:
 	ExposeCmd(pls);
 	break;
 
-      case PLESC_RESIZE:
+    case PLESC_RESIZE:
 	ResizeCmd(pls, (PLWindow *) ptr);
 	break;
 
-      case PLESC_REDRAW:
+    case PLESC_REDRAW:
 	RedrawCmd(pls);
 	break;
 
-      case PLESC_FLUSH:
-	HandleEvents(pls);	/* Check for events */
+    case PLESC_FLUSH:
+	HandleEvents(pls);
 	XFlush(dev->display);
 	break;
 
-      case PLESC_FILL:
+    case PLESC_FILL:
 	fill_polygon(pls);
+	break;
+
+    case PLESC_EH:
+	HandleEvents(pls);
 	break;
     }
 }
@@ -471,11 +485,6 @@ Init(PLStream *pls)
     }
 
     dev->screen = DefaultScreen(dev->display);
-    dev->map = DefaultColormap(dev->display, dev->screen);
-
-/* Default color values */
-
-    ColorInit(pls);
 
 /* If not plotting into a child window, need to create main window now */
 
@@ -483,6 +492,21 @@ Init(PLStream *pls)
 	Init_main(pls);
     else
 	Init_child(pls);
+
+/* Create color map */
+
+#ifdef CUSTOM_COLOR_MAP
+/* Right now this just results in a core dump somewhere. */
+
+    dev->map = XCreateColormap(dev->display, dev->window,
+			       DirectColor, AllocNone);
+#else
+    dev->map = DefaultColormap(dev->display, dev->screen);
+#endif
+
+/* Default color values */
+
+    ColorInit(pls);
 
 /* Get initial drawing area dimensions */
 
@@ -652,7 +676,7 @@ WaitForPage(PLStream *pls)
 
     while ( ! dev->exit_eventloop) {
 	XNextEvent(dev->display, &event);
-	EventHandler(pls, &event);
+	MasterEH(pls, &event);
     }
     dev->exit_eventloop = FALSE;
 }
@@ -660,7 +684,7 @@ WaitForPage(PLStream *pls)
 /*----------------------------------------------------------------------*\
 * HandleEvents()
 *
-* Just a front-end to EventHandler(), for use when not actually waiting for
+* Just a front-end to MasterEH(), for use when not actually waiting for
 * an event but only checking the event queue.  
 \*----------------------------------------------------------------------*/
 
@@ -672,23 +696,33 @@ HandleEvents(PLStream *pls)
 
     if (XCheckMaskEvent(dev->display, ButtonPressMask | KeyPressMask |
 			ExposureMask | StructureNotifyMask, &event))
-	EventHandler(pls, &event);
+	MasterEH(pls, &event);
 }
 
 /*----------------------------------------------------------------------*\
-* EventHandler()
+* MasterEH()
 *
-* Event handler routine to various X events.
-* Just redirects control to routines to handle:
+* Master X event handler routine.
+* Redirects control to routines to handle:
 *    - keyboard events
 *    - mouse events
 *    - expose events
 *    - resize events
+*
+* By supplying a master event handler, the user can take over all event
+* processing.  If events other than those trapped by plplot need handling,
+* just call XSelectInput with the appropriate flags.  The default PLPlot
+* event handling can be modified arbitrarily by changing the event struct.
 \*----------------------------------------------------------------------*/
 
 static void
-EventHandler(PLStream *pls, XEvent *event)
+MasterEH(PLStream *pls, XEvent *event)
 {
+    XwDev *dev = (XwDev *) pls->dev;
+
+    if (dev->MasterEH != NULL)
+	(*dev->MasterEH) (pls, event);
+
     switch (event->type) {
       case KeyPress:
 	KeyEH(pls, event);
@@ -737,7 +771,7 @@ KeyEH(PLStream *pls, XEvent *event)
     printf("Keysym %x, translation: %s\n", keysym, key.string);
 #endif
 
-/* Call user event handler */
+/* Call user keypress event handler */
 /* Since this is called first, the user can disable all plplot internal
    event handling by setting key.code to 0 and key.string to '\0' */
 
@@ -777,17 +811,31 @@ MouseEH(PLStream *pls, XEvent *event)
 {
     XwDev *dev = (XwDev *) pls->dev;
 
+    PLMouse mouse;
+
     dbug_enter("MouseEH");
 
-    switch (event->xbutton.button) {
-      case Button1:
+    mouse.button = event->xbutton.button;
+    mouse.state = event->xbutton.state;
+    mouse.x = (PLFLT)event->xbutton.x / pls->xlength;
+    mouse.y = 1.0 - (PLFLT)event->xbutton.y / pls->ylength;
+      
+/* Call user event handler */
+/* Since this is called first, the user can disable all plplot internal
+   event handling by setting mouse.button to 0 */
+
+    if (pls->MouseEH != NULL)
+	(*pls->MouseEH) (&mouse, pls->MouseEH_data, &dev->exit_eventloop);
+
+    switch (mouse.button) {
+    case Button1:
 	break;
 
-      case Button2:
-	printf("%d\t%d\n", event->xbutton.x, event->xbutton.y);
+    case Button2:
+	printf("%d\t%d\n", mouse.x, mouse.y);
 	break;
 
-      case Button3:
+    case Button3:
 	dev->exit_eventloop = TRUE;
 	break;
     }
@@ -1179,12 +1227,15 @@ Cmap1Init(PLStream *pls)
     XwDev *dev = (XwDev *) pls->dev;
     PLColor newcolor;
     unsigned long pixels[NCOL1_MAX];
-    int i, itry;
+    int i, itry, ncol1_max;
 
-/* Initialize dev->cmap1 by interpolation, then try to allocate them */
-/* If it fails, reinitialize with the new number of colors and repeat */
+/* Use substantially less than max colors so that TK has some */
 
     dev->ncol1 = MIN(NCOL1_MAX, pls->ncol1);
+    dev->ncol1 = MAX(dev->ncol1, 2);
+
+/* Initialize dev->cmap1 by interpolation, then allocate them for real */
+/* It should NOT fail, but put in failsafe procedure just in case */
 
     for (itry=0;;itry++) {
 	if (itry > 5)
@@ -1193,7 +1244,6 @@ Cmap1Init(PLStream *pls)
 	for (i = 0; i < dev->ncol1; i++) {
 
 	    plcol_interp(pls, &newcolor, i, dev->ncol1);
-
 	    PLColor_to_XColor(&newcolor, &dev->cmap1[i]);
 
 	    if ( ! XAllocColor(dev->display, dev->map, &dev->cmap1[i])) 
