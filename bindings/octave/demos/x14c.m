@@ -24,8 +24,7 @@
 
 function go(arg)
 
-	printf("I don't run the Tk demo(x14c), as you might not have compiled Tk support.\n");
-    return
+printf("If you dont have built PLplot with Tcl/Tk support this demo (x14c) will fail.\n");
 
 xleng0 = 400; yleng0 = 300; xoff0 = 200; yoff0 = 200;
 xleng1 = 400; yleng1 = 300; xoff1 = 500; yoff1 = 500;
@@ -50,7 +49,7 @@ geometry_slave  = "500x410+650+200";
     plSetOpt("geometry", geometry_master);
 
     plsdev(driver);
-    plssub(2, 2);
+    plssub(2,2);
     plinit();
 
 # Start next stream */
@@ -62,7 +61,7 @@ geometry_slave  = "500x410+650+200";
     plSetOpt("geometry", geometry_slave);
     plspause(0);
     plsdev(driver);
-	plsfnam(getenv("DISPLAY"));
+    plsfnam(getenv("DISPLAY"));
     plinit();
 
 # Set up the data & plot */
@@ -166,7 +165,7 @@ function plot1(xoff,xscale,yoff,yscale)
 
     plcol(4);
     plline(x, y);
-    plflush;pleop;();
+    plflush;#pleop();
     
 endfunction
 
@@ -195,7 +194,7 @@ function plot2()
 
     plcol(3);
     plline(x, y);
-    plflush;pleop;();
+    plflush;#pleop();
 endfunction
 
 function plot3()
@@ -235,7 +234,7 @@ space0 = 0; mark0 = 0; space1 = 1500; mark1 = 1500;
 
     plcol(4);
     plline(x, y);
-    plflush;pleop;();
+    plflush;#pleop();
 
     endfunction
 
@@ -293,7 +292,7 @@ function plot4()
     plcol(4);
     plmtex("t", 2.0, 0.5, 0.5,
 	   "#frPLplot Example 3 - r(#gh)=sin 5#gh");
-    plflush;pleop;();
+    plflush;#pleop();
 endfunction
 
 # Demonstration of contour plotting */
@@ -338,7 +337,7 @@ mark = 1500; space = 1500;
     plcont(w, 1, XPTS, 1, YPTS, clevel, tr, 0);
     plcol(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-    plflush;pleop;();
+    plflush;#pleop();
 endfunction
 
 go
