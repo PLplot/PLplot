@@ -555,7 +555,7 @@ plcntr(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     plfloatlabel(flev, flabel);
     plschr(0.0, contlabel_size);
 
-    /* Clear array for traversed triangles */
+    /* Clear array for traversed squares */
     for (kcol = kx; kcol < lx; kcol++) {
         for (krow = ky; krow < ly; krow++) {
 	    ipts[kcol][krow] = 0;
@@ -618,12 +618,17 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
         iedge[i] = (f[i]*f[j]>0.0)?-1:((f[i]*f[j] < 0.0)?1:0);
     }
 
-    /* Mark this triangle as done */
+    /* Mark this square as done */
     ipts[kcol][krow] = 1;
 
     /* Check if no contour has been crossed i.e. iedge[i] = -1 */
     if ((iedge[0] == -1) && (iedge[1] == -1) && (iedge[2] == -1) 
          && (iedge[3] == -1)) return;
+
+    /* Check if this is a completely flat square - in which case 
+       ignore it */
+    if ( (f[0] == 0.0) && (f[1] == 0.0) && (f[2] == 0.0) && 
+	 (f[3] == 0.0) ) return;
 
     /* Calculate intersection points */
     num = 0;
@@ -647,7 +652,9 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	   if (i == 1) krownext--;
 	   if (i == 2) kcolnext++;
 	   if (i == 3) krownext++;
-           if (ipts[kcolnext][krownext] == 1) continue;
+	   if ((kcolnext < kx) || (kcolnext >= lx) ||
+	       (krownext < ky) || (krownext >= ly) ||
+	       (ipts[kcolnext][krownext] == 1)) continue;
       }
       if ((iedge[i] == 1) || (f[i] == 0.0)) {
           j = (i+1)%4;
