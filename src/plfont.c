@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1994/07/29 20:24:42  mjl
+ * Revision 1.17  1994/08/25 04:04:25  mjl
+ * Eliminated unnecessary header file inclusions.
+ *
+ * Revision 1.16  1994/07/29  20:24:42  mjl
  * References to plfontopen() deleted, in favor of using plLibOpen().
  *
  * Revision 1.15  1994/07/26  21:14:44  mjl
@@ -8,26 +11,6 @@
  * consistent and flexible.  In particular, environmentals can be set for
  * locations of each directory (for Tcl, binary, and library files).
  * Contributed by Mark Olesen.
- *
- * Revision 1.12  1994/05/24  19:56:56  mjl
- * Changed INSTALL_DIR to LIB_DIR for locating fonts.
- *
- * Revision 1.11  1994/03/23  08:14:55  mjl
- * Some cruft elimination.
- *
- * All external API source files: replaced call to plexit() on simple
- * (recoverable) errors with simply printing the error message (via
- * plabort()) and returning.  Should help avoid loss of computer time in some
- * critical circumstances (during a long batch run, for example).
- *
- * Revision 1.10  1994/01/15  17:28:45  mjl
- * Changed to new PDF function call syntax.
- *
- * Revision 1.9  1993/09/08  02:40:16  mjl
- * Added search of INSTALL_DIR, passed in from makefile.  Directories
- * now can be specified without the trailing slash, and the path name
- * is built up correctly (I hope) on Unix, Amiga, and MS-DOS (so special
- * handling for passing strings with a trailing backslash is gone).
 */
 
 /*	plfont.c
@@ -38,8 +21,6 @@
 */
 
 #include "plplotP.h"
-#include "pdf.h"
-#include <string.h>
 
 /* Declarations */
 
