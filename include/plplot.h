@@ -958,7 +958,7 @@ c_plgra(void);
   /* grid irregularly sampled data */
 
 void
-plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
+c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
 	   PLFLT **zg, int type, PLFLT data);
 
