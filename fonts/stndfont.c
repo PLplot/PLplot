@@ -1,8 +1,12 @@
 /* $Id$
-   $Log$
-   Revision 1.6  1994/01/15 17:22:17  mjl
-   Changed to new PDF function syntax.
-
+ * $Log$
+ * Revision 1.7  1994/03/23 06:56:23  mjl
+ * Eliminated special handling for malloc includes, and finally tossed the
+ * old BINARY_WRITE etc macros.  This IS ANSI C, you know.
+ *
+ * Revision 1.6  1994/01/15  17:22:17  mjl
+ * Changed to new PDF function syntax.
+ *
  * Revision 1.5  1993/12/08  06:19:04  mjl
  * Fixes so that these correctly build again (neglected to apply some global
  * changes in a previous release).
@@ -17,13 +21,9 @@
 	Utility to generate standard font set.
 */
 
-#define PL_NEED_MALLOC
 #include "plplotP.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "pdf.h"
+#include <string.h>
 
 extern short int *hersh[];
 extern short int *findex[];
@@ -76,7 +76,7 @@ main (int argc, char **argv)
 		break;
 	    }
 
-    pdfs = pdf_fopen(PL_SFONT, BINARY_WRITE);
+    pdfs = pdf_fopen(PL_SFONT, "wb+");
     if ( ! pdfs) {
 	printf("Error opening standard font file.\n");
 	exit(1);
