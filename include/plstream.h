@@ -1,6 +1,16 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/03/23 07:10:51  mjl
+ * Revision 1.26  1994/04/08 12:20:49  mjl
+ * Now includes <plplot.h> in case it hasn't been included yet.  File offset
+ * for metafile removed from state structure (now local to driver).  Added:
+ * * MouseEH	void*	Mouse event handler
+ * * MouseEH_data	void*	Pointer to client data to pass
+ * * tidy          void*   pointer to cleanup routine
+ * * tidy_data     void*   pointer to client data to pass
+ * ("tidy" is a user customization tidy routine, to be called before
+ * closing a stream to do any program specific cleanup.)
+ *
+ * Revision 1.25  1994/03/23  07:10:51  mjl
  * Added documentation for all variables not described yet.  Changed some
  * variables used in color map selection.  Added variables:
  *
@@ -36,44 +46,6 @@
  * Revision 1.17  1993/11/07  09:04:17  mjl
  * Added device variable to specify that driver wants to handle its own
  * flushes.
- *
- * Revision 1.16  1993/09/24  20:33:17  furnish
- * Went wild with "const correctness".  Can now pass a C++ String type to
- * most (all that I know of) PLPLOT functions.  This works b/c String has
- * an implicit conversion to const char *.  Now that PLPLOT routines take
- * const char * rather than char *, use from C++ is much easier.
- *
- * Revision 1.15  1993/09/08  02:35:20  mjl
- * Added stream variables for driver interface coordinate mapping settings.
- *
- * Revision 1.14  1993/08/18  20:30:10  mjl
- * Switched over to new page description variables mar, aspect, jx, and jy,
- * and deleted the old ones.  Added a variable widthlock that is set when
- * -width is used to modify the pen width, so that subsequent plwid() calls
- * are ignored.
- *
- * Revision 1.13  1993/08/09  22:12:36  mjl
- * Changed call syntax to plRotPhy to allow easier usage.
- *
- * Revision 1.12  1993/07/31  08:13:39  mjl
- * Variables added: dev_di - the driver can handle driver interface commands;
- * dev_fill - the driver can handle polygon fill commands (both to be
- * implemented using the escape function).  Also other support variables added.
- *
- * Revision 1.11  1993/07/28  05:51:12  mjl
- * Added stream variables nopixmap (tell driver not to use pixmaps) and
- * dual_screen (set on devices that have dual text/graphics screens).
- *
- * Revision 1.10  1993/07/16  22:30:10  mjl
- * Added many new variables used in driver interface to PLStream definition.
- * Eliminated some obsolete variables and function prototypes.
- *
- * Revision 1.9  1993/07/02  07:25:30  mjl
- * Added variables for dealing with X driver, TK driver, driver interface.
- *
- * Revision 1.8  1993/04/26  19:57:52  mjl
- * Fixes to allow (once again) output to stdout and plrender to function as
- * a filter.  A type flag was added to handle file vs stream differences.
 */
 
 /*	plstream.h
@@ -85,7 +57,8 @@
 #ifndef __PLSTREAM_H__
 #define __PLSTREAM_H__
 
-#include "pdf.h"
+#include <plplot.h>
+#include <pdf.h>
 
 /*----------------------------------------------------------------------*\
 * Define the PLDev data structure.
@@ -219,7 +192,6 @@ typedef struct {
 * bytecnt	PLINT	Byte count for output stream
 * page		PLINT	Page count for output stream
 * linepos	PLINT	Line count for output stream
-* lp_offset	FPOS_T	Byte position for previous page (metafile output)
 * pdfs		PDFstrm* PDF stream pointer
 *
 * These are used by the escape function (for area fill, etc).
@@ -242,6 +214,9 @@ typedef struct {
 * KeyEH		void*	Keyboard event handler
 * KeyEH_data	void*	Pointer to client data to pass
 *
+* MouseEH	void*	Mouse event handler
+* MouseEH_data	void*	Pointer to client data to pass
+*
 * Variables used for direct specification of device characteristics
 * Not supported by all drivers (or even very many)
 *
@@ -252,6 +227,14 @@ typedef struct {
 * hack		PLINT	Enables driver-specific hack(s) if set
 *
 ***********************************************************************
+*
+* User customization tidy routine.  This is called before closing a stream
+* to do any program specific cleanup.
+*
+* tidy          void*   pointer to cleanup routine
+* tidy_data     void*   pointer to client data to pass
+*
+************************************************************************
 *
 * Stuff used by Xlib driver
 *
@@ -466,7 +449,6 @@ typedef struct {
     char *BaseName, *FileName;
     int  output_type;
     PLINT bytecnt, page, linepos;
-    FPOS_T lp_offset;
     PDFstrm *pdfs;
 
     PLINT dev_npts;
@@ -477,10 +459,18 @@ typedef struct {
     void (*KeyEH)	(PLKey *, void *, int *);
     void *KeyEH_data;
 
+    void (*MouseEH)	(PLMouse *, void *, int *);
+    void *MouseEH_data;
+
     PLFLT xdpi, ydpi;
     PLINT xlength, ylength;
     PLINT xoffset, yoffset;
     PLINT pageset, hack;
+
+/* Per stream tidy function. */
+
+    void (*tidy)    (void *);
+    void *tidy_data;
 
 /* Stuff used by Xlib driver */
 
