@@ -243,8 +243,9 @@ if test "$with_gcc" = "yes"; then
     # For now, just disable.
 
     if test "$with_shlib" = "yes"; then
-	echo "Warning: no support for shared libs with gcc yet"
-	with_shlib="no"
+#	echo "Warning: no support for shared libs with gcc yet"
+#	with_shlib="no"
+	echo "Experimental HP support for shared libs with gcc."
     fi
 fi
 
@@ -355,8 +356,10 @@ case "$system" in
 
 	# Handling of C++ exceptions
 
-	SYS_FLAGS_CXX="+eh"
-	SYS_FLAGS_LCXX="+eh"
+	if test "$with_gcc" = "no"; then
+	    SYS_FLAGS_CXX="+eh"
+	    SYS_FLAGS_LCXX="+eh"
+	fi
 
 	# Profiling
 	# Should not be used with shared libraries.
@@ -372,7 +375,9 @@ case "$system" in
 	# Shut off shared libraries if debugging.
 
 	if test "$with_debug" = "yes"; then
-	    with_shlib="no"
+	    if test "$with_gcc" = "no"; then
+		with_shlib="no"
+	    fi
 	fi
 
 	# Double precision -- use auto promotion from Fortran.  This works
@@ -492,6 +497,13 @@ case "$system" in
 	SHLIB_F77FLAGS="+z"
 	SHLIB_BUILD="ld -b -o"
 	SHLIB_SUFFIX=".sl"
+	if test "$with_gcc" = "yes"; then
+	    SHLIB_CCFLAGS="-fpic"
+	    SHLIB_CXXFLAGS="-fpic"
+	    SHLIB_F77FLAGS="+z"
+	    SHLIB_BUILD="gcc -shared -fpic -o"
+	    SHLIB_SUFFIX=".sl"
+	fi
     ;;
     AIX-* )
 	SHLIB_CCFLAGS="-fpic"
