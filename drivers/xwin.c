@@ -1,8 +1,7 @@
 /* $Id$
-   $Log$
-   Revision 1.6  1992/10/22 17:05:01  mjl
-   Fixed warnings, errors generated when compling with HP C++.
-
+ * Revision 1.6  1992/10/22  17:05:01  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.5  1992/10/22  16:07:10  gray
  * added crude support to have mouse button 2 return cursor postition to
  * stdout
@@ -41,6 +40,7 @@
 #else
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/cursorfont.h>
 #endif
 
 /* Function prototypes */
@@ -315,6 +315,7 @@ begplt (PLStream *pls)
     U_INT depth;
     Status status;
     char header[80];
+    Cursor cross_cursor;
 
     xwd->mydisplay = XOpenDisplay(pls->FileName);
     if (xwd->mydisplay == NULL) {
@@ -415,6 +416,11 @@ begplt (PLStream *pls)
 /* GC creation and initialization */
 
     xwd->mygc = XCreateGC(xwd->mydisplay, xwd->mywindow, 0, 0);
+    
+/* set cursor to crosshair */
+ 
+   cross_cursor = XCreateFontCursor(xwd->mydisplay, XC_crosshair);
+   XDefineCursor(xwd->mydisplay, xwd->mywindow, cross_cursor);    
 
 /* input event selection */
 
