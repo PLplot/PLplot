@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1995/03/21 19:43:53  mjl
+ * Revision 1.8  1995/06/02 15:04:22  mjl
+ * Support for N-d initializer lists.  Contributed by Martin L. Smith.
+ *
+ * Revision 1.7  1995/03/21  19:43:53  mjl
  * Added the optional -persist flag to the matrix command line.  If present
  * (can be anywhere on the line), the matrix is not automatically deleted
  * when the scope of the current proc (method) ends.  Instead, you must
@@ -113,6 +116,12 @@ static Tcl_HashTable matTable;	/* Hash table for external access to data */
 
 /* Function prototypes */
 
+/* Handles matrix initialization lists */
+
+static int
+matrixInitialize(Tcl_Interp* interp, tclMatrix* m,
+		 int dim, int offs, int nargs, char** args);
+
 /* Invoked to process the "matrix" Tcl command. */
 
 static  int
@@ -167,7 +176,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     int i, j, length, new, index, persist = 0, initializer = 0;
     Tcl_HashEntry *hPtr;
     Tcl_CmdInfo infoPtr;
-    char c, *value;
+    char c, *value, *varName;
 
     dbug_enter("Tcl_MatrixCmd");
 
@@ -327,27 +336,8 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Process the initializer, if present */
 
-    if (initializer) {
-	if (argc == 0) {
-	    Tcl_AppendResult(interp, 
-		"bad initializer syntax for Matrix operator \"",
-		matPtr->name, "\"", (char *) NULL);
-	    DeleteMatrixCmd((ClientData) matPtr);
-	    return TCL_ERROR;
-	}
-
-	value = strtok(argv[0], " ");
-	for (i = 0; ; i++) {
-	    if ( value == NULL )
-		break;
-
-	    if (i >= matPtr->len)
-		break;
-
-	    (*matPtr->put)((ClientData) matPtr, i, value);
-	    value = strtok(NULL, " ");
-	}
-    }
+    if (initializer) 
+	matrixInitialize(interp, matPtr, 0, 0, 1, &argv[0]);
 
 /* Delete matrix when it goes out of scope unless -persist specified */
 /* Use local variable of same name as matrix and trace it for unsets */
@@ -475,6 +465,62 @@ Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc )
 	
 }
     
+/*--------------------------------------------------------------------------*\
+ *
+ * matrixInitialize --
+ *
+ *	Handles matrix initialization lists.
+ *	Written by Martin L. Smith.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	None.
+ *
+\*--------------------------------------------------------------------------*/
+
+static int matrixInitialize(Tcl_Interp* interp, tclMatrix* m,
+			    int dim, int offs, int nargs, char** args)
+{
+    static int verbose = 0;
+
+    char** newargs;
+    int numnewargs;
+    int newoffs;
+    int i;
+
+    if (verbose)
+	fprintf(stderr, "level %d  offset %d  args %d\n", dim, offs, nargs);
+
+    if (dim < m->dim) {
+	for (i = 0; i < nargs; i++) {
+	    if (Tcl_SplitList(interp, args[i], &numnewargs, &newargs) 
+		!= TCL_OK) {
+		Tcl_AppendResult(interp, "bad matrix initializer list form: ",
+				 args[i], (char *) NULL);
+		return TCL_ERROR;
+	    }
+	    if (dim > 0)
+		newoffs = offs * m->n[dim - 1] + i;
+	    else
+		newoffs = 0;
+
+	    matrixInitialize(interp, m, dim + 1, newoffs, numnewargs, newargs);
+	    free((char *) newargs);
+	}
+	return TCL_OK;
+    }
+    
+    for (i = 0; i < nargs; i++) {
+	newoffs = offs * m->n[dim - 1] + i;
+	(m->put)((ClientData) m, newoffs, args[i]);
+	if (verbose)
+	    fprintf(stderr, "\ta[%d] = %s\n",  newoffs, args[i]);
+    }
+    return TCL_OK;
+}
+
 /*--------------------------------------------------------------------------*\
  *
  * MatrixCmd --
