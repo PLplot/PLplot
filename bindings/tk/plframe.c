@@ -1209,7 +1209,7 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
     if ((c == 'd') && (strncmp(argv[0], "devices", length) == 0)) {
 	int i = 0;
 	while (plFramePtr->devDesc[i] != NULL) {
-#if (TK_MAJOR_VERSION == 3) && (TK_MINOR_VERSION == 2)
+#if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 2)
 	    Tcl_AppendElement(interp, plFramePtr->devDesc[i++], 0);
 #else
 	    Tcl_AppendElement(interp, plFramePtr->devDesc[i++]);

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1993/09/08 02:31:34  mjl
+ * Revision 1.12  1993/09/08 18:38:24  mjl
+ * Changed conditional compile for Tk 3.2 to expand for any pre-3.3 version.
+ *
+ * Revision 1.11  1993/09/08  02:31:34  mjl
  * Fixes to work with TK 3.3b3.  Search path for autoloaded Tcl procs now
  * follows ".", ${PLPLOT_DIR}/tcl, ${HOME}/tcl, INSTALL_DIR/tcl, where
  * INSTALL_DIR is passed in from the makefile.
@@ -125,7 +128,7 @@ main(int argc, char **argv)
 
 /* Run Tcl/TK startup code */
 
-#if (TK_MAJOR_VERSION == 3) && (TK_MINOR_VERSION == 2)
+#if (TK_MAJOR_VERSION <= 3) && (TK_MINOR_VERSION <= 2)
     if (tk_source(w, interp, "$tk_library/wish.tcl"))
 	abort_session("");
 #else
