@@ -1,10 +1,13 @@
 /* Illustration of 1-1 scaling for polar plot */
 /* $Id$
    $Log$
-   Revision 1.5  1993/02/22 23:16:11  mjl
-   Changed over to new style of initialization using plinit(), and added
-   function to parse plplot command line flags.
+   Revision 1.6  1993/07/02 07:06:07  mjl
+   Added definition for ROUND macro.
 
+ * Revision 1.5  1993/02/22  23:16:11  mjl
+ * Changed over to new style of initialization using plinit(), and added
+ * function to parse plplot command line flags.
+ *
  * Revision 1.4  1993/01/23  06:10:23  mjl
  * Instituted exit codes for all example codes.  Also deleted color functions
  * no longer supported (plancol).  Enhanced x09c to exploit new contour
@@ -29,6 +32,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+#ifndef ROUND
+#define ROUND(a)    (PLINT)((a)<0. ? ((a)-.5) : ((a)+.5))
+#endif
 
 int
 main(int argc, char *argv[])
