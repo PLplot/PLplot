@@ -52,14 +52,6 @@
 
 M4=m4
 
-# Optimization
-
-if test "$with_opt" = "yes"; then
-    OPT_FLAG_C=-O
-    OPT_FLAG_CXX=-O
-    OPT_FLAG_F=-O
-fi
-
 # Double precision
 # Note that although there is no truly standard way to invoke double
 # precision in Fortran from the command line, enough of them use -r8
@@ -194,6 +186,7 @@ fi
 
 # ----------------------------------------------------------------------------
 # Debugging
+# Will disable optimization by default unless using gcc.
 
 if test "$with_debug" = "yes"; then
     if test ! "$with_gcc" = "yes"; then
@@ -205,6 +198,14 @@ if test "$with_debug" = "yes"; then
     DEBUG_FLAG_LC=-g
     DEBUG_FLAG_LCXX=-g
     DEBUG_FLAG_LF=-g
+fi
+
+# Optimization
+
+if test "$with_opt" = "yes"; then
+    OPT_FLAG_C=-O
+    OPT_FLAG_CXX=-O
+    OPT_FLAG_F=-O
 fi
 
 # ----------------------------------------------------------------------------
