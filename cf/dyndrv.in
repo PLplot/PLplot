@@ -20,75 +20,71 @@ dynamic_drivers_target: $(dynamic_drivers)
 # for documentation of that flag.  The purpose of that flag is to make 
 # symbols of the dlopened library (e.g. libplplot) available to subsequently
 # dlopened libraries (i.e., one of these dynamic drivers).
-# To work around the problem here we make all drivers **except 
-# tkwin (which libplplot already links to and which seems to make the
-# symbols available for those drivers)** link to libplplot.  We also arrange
+# To work around the problem here we make all drivers
+# link to libplplot or libplplottcltk as appropriate.  We also arrange
 # the libplplot Makefile dependency appropriately in all cases.
-# 
-# to the real source of the trouble).
+
 driverlibs := -L. -l$(PLLIB_NAME)$(LIB_TAG)
 
-drivers/null$(LIB_TAG)_drv.so : shared/null$O $(PLLIBS)
+drivers/null$(LIB_TAG)_drv.so : shared/null$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/plmeta$(LIB_TAG)_drv.so : shared/plmeta$O $(PLLIBS)
+drivers/plmeta$(LIB_TAG)_drv.so : shared/plmeta$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/pstex$(LIB_TAG)_drv.so : drivers/ps$(LIB_TAG)_drv.so
 
-drivers/ps$(LIB_TAG)_drv.so : shared/ps$O shared/pstex$O $(PLLIBS)
+drivers/ps$(LIB_TAG)_drv.so : shared/ps$O shared/pstex$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< shared/pstex$O $(driverlibs)
 
-drivers/xfig$(LIB_TAG)_drv.so : shared/xfig$O $(PLLIBS)
+drivers/xfig$(LIB_TAG)_drv.so : shared/xfig$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/gd$(LIB_TAG)_drv.so : shared/gd$O $(PLLIBS)
+drivers/gd$(LIB_TAG)_drv.so : shared/gd$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< @GDLIBS@ $(driverlibs)
 
-drivers/cgm$(LIB_TAG)_drv.so : shared/cgm$O $(PLLIBS)
+drivers/cgm$(LIB_TAG)_drv.so : shared/cgm$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< @CDLIBS@ $(driverlibs)
 
-drivers/tek$(LIB_TAG)_drv.so : shared/tek$O $(PLLIBS)
+drivers/tek$(LIB_TAG)_drv.so : shared/tek$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/pbm$(LIB_TAG)_drv.so : shared/pbm$O $(PLLIBS)
+drivers/pbm$(LIB_TAG)_drv.so : shared/pbm$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/hpgl$(LIB_TAG)_drv.so : shared/hpgl$O $(PLLIBS)
+drivers/hpgl$(LIB_TAG)_drv.so : shared/hpgl$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/dg300$(LIB_TAG)_drv.so : shared/dg300$O $(PLLIBS)
+drivers/dg300$(LIB_TAG)_drv.so : shared/dg300$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/ljii$(LIB_TAG)_drv.so : shared/ljii$O $(PLLIBS)
+drivers/ljii$(LIB_TAG)_drv.so : shared/ljii$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/ljiip$(LIB_TAG)_drv.so : shared/ljiip$O $(PLLIBS)
+drivers/ljiip$(LIB_TAG)_drv.so : shared/ljiip$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/impress$(LIB_TAG)_drv.so : shared/impress$O $(PLLIBS)
+drivers/impress$(LIB_TAG)_drv.so : shared/impress$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/gnome$(LIB_TAG)_drv.so : shared/gnome$O $(PLLIBS)
+drivers/gnome$(LIB_TAG)_drv.so : shared/gnome$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< @GNOMELIBS@ $(driverlibs)
 
-drivers/ntk$(LIB_TAG)_drv.so : shared/ntk$O $(PLLIBS)
+drivers/ntk$(LIB_TAG)_drv.so : shared/ntk$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
 
-drivers/linuxvga$(LIB_TAG)_drv.so : shared/linuxvga$O $(PLLIBS)
+drivers/linuxvga$(LIB_TAG)_drv.so : shared/linuxvga$O $(PLLIB_SO)
 	$(SHLIB_BUILD) $@ $< @LINUXVGALIBS@ $(driverlibs)
 
-drivers/tk$(LIB_TAG)_drv.so : shared/tk$O $(PLLIBS)
-	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
+# These last three depend on libplplottcltk (and libplplot but libplplottcltk
+# depends on libplplot and also pulls it into the linking chain so we
+# don't have to mention libplplot explicitly here).
+drivers/tk$(LIB_TAG)_drv.so : shared/tk$O $(TCLLIB_SO)
+	$(SHLIB_BUILD) $@ $< @TKLIBS@ -L. $(TCL_LINK)
 
-drivers/xwin$(LIB_TAG)_drv.so : shared/xwin$O $(PLLIBS)
-	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
+drivers/xwin$(LIB_TAG)_drv.so : shared/xwin$O $(TCLLIB_SO)
+	$(SHLIB_BUILD) $@ $< @TKLIBS@ -L. $(TCL_LINK)
 
-# This last one is special because libpltcl currently links to it.
-# So no need to link back (in fact cannot do so since libplplot does not exist
-# [or only an old version exists] when these dynamic drivers are created).  
-# Also remove dependency on libplplot (which would create a circular 
-# Makefile dependency).
-drivers/tkwin$(LIB_TAG)_drv.so : shared/tkwin$O
-	$(SHLIB_BUILD) $@ $< @TKLIBS@
+drivers/tkwin$(LIB_TAG)_drv.so : shared/tkwin$O $(TCLLIB_SO)
+	$(SHLIB_BUILD) $@ $< @TKLIBS@ -L. $(TCL_LINK)
 

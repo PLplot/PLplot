@@ -1,5 +1,13 @@
 /* $Id$
  * $Log$
+ * Revision 1.11  2002/07/28 22:41:15  airwin
+ * Split tkwin.c into tkwin_common.c and tkwin.c to remove cross-linking issue
+ * and allow tkwin.c to act like a normal driver.  So the last "special" version
+ * of drivers is gone.
+ *
+ * Reconfigured library dependencies and link lines so that we now have reasonably
+ * rational hierarchical dependencies and linking on Linux.
+ *
  * Revision 1.10  2002/07/15 18:11:33  vincentdarley
  * plwidget partial merge
  *
@@ -292,7 +300,8 @@ extern void XWarpPointer(
 #endif
 
 
-extern int plplot_tkwin_ccmap;
+/* plplot_tkwin_ccmap is statically defined in pltkwd.h.  Note that
+ * tkwin.c also includes that header and uses that variable. */
 
 #define NDEV    20              /* Max number of output device types */
 

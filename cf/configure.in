@@ -587,7 +587,7 @@ fi
 PLLIB_NAME=plplot
 if test "$enable_tcl" = "yes"; then
     MATLIB_NAME=tclmatrix
-    TCLLIB_NAME=pltcl
+    TCLLIB_NAME=plplottcltk
 else
     MATLIB_NAME=""
     TCLLIB_NAME=""
@@ -929,7 +929,6 @@ if test "$enable_dyndrivers" = "yes"; then
 	    ;;
 	    tkwin )
 	    echo "tkwin:New tk driver:1:tkwin"$LIB_TAG"_drv.so:45:tkwin" >> drivers/$DRIVERS_DB
-	    ln -s drivers/tkwin"$LIB_TAG"_drv.so libplplot_tkwin_driver"$LIB_TAG".so
 	    ;;
 	    ntk )
 	    echo "ntk:New tk driver:1:ntk"$LIB_TAG"_drv.so:43:ntk" >> drivers/$DRIVERS_DB

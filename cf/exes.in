@@ -39,13 +39,13 @@ plrender$E:	$(PLLIBS) plrender$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plrender$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS) $(RPATH)
 
-pltcl$E:	$(PLLIBS) pltcl$O
-	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl$O $(PLLIB_LDC) $(TO) $@ \
-		$(LDC_LIBS)  $(RPATH)
+pltcl$E:	$(TCLLIB_SO) pltcl$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl$O -L$(PLLIB_DIR) $(TCL_LINK) \
+	$(TO) $@ $(LDC_LIBS)  $(RPATH)
 
-plserver$E:	$(PLLIBS) plserver$O
-	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O $(PLLIB_LDC) $(TO) $@ \
-		$(LDC_LIBS) $(RPATH)
+plserver$E:	$(TCLLIB_SO) plserver$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O -L$(PLLIB_DIR) $(TCL_LINK)\
+	$(TO) $@ $(LDC_LIBS) $(RPATH)
 
 # -----------------------------------------------------------------------------
 # note this only builds something that can be used if PYTHONPATH is set 

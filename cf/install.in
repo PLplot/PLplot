@@ -72,10 +72,6 @@ install_drivers:
 	@-if test -d drivers; then \
 	      if test ! -d $(DATA_DIR)/../drivers; then mkdir -p $(DATA_DIR)/../drivers; fi; \
 	      $(CP) drivers/* $(DATA_DIR)/../drivers; \
-	      if test -r $(DATA_DIR)/../drivers/tkwin$(LIB_TAG)_drv.so; then \
-	      	 $(LN) $(DATA_DIR)/../drivers/tkwin$(LIB_TAG)_drv.so \
-	      	 $(LIB_DIR)/libplplot_tkwin_driver$(LIB_TAG).so ; \
-	      fi ; \
 	  fi
 
 install_utils: install_plrender install_pltek install_plplot_config

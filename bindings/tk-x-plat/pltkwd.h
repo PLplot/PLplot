@@ -1,5 +1,13 @@
 /* $Id$
  * $Log$
+ * Revision 1.3  2002/07/28 22:41:15  airwin
+ * Split tkwin.c into tkwin_common.c and tkwin.c to remove cross-linking issue
+ * and allow tkwin.c to act like a normal driver.  So the last "special" version
+ * of drivers is gone.
+ *
+ * Reconfigured library dependencies and link lines so that we now have reasonably
+ * rational hierarchical dependencies and linking on Linux.
+ *
  * Revision 1.2  2002/07/10 09:52:38  vincentdarley
  * resolve name clashes, and sync pltools.tcl
  *
@@ -68,6 +76,16 @@
 /* Specify max number of displays in use */
 
 #define PLTKDISPLAYS 100
+
+/* Set constants for dealing with colormap.  In brief:
+ *
+ * ccmap                When set, turns on custom color map
+ *
+ * See Init_CustomCmap() and  Init_DefaultCmap() for more info.
+ * Set ccmap at your own risk -- still under development.
+ */
+
+static int plplot_tkwin_ccmap = 0;
 
 /* One of these holds the display info, shared by all streams on a given */
 /* display */

@@ -130,36 +130,39 @@ $(CXXLIB_AR): $(CXX_OBJS)
 # The following rules based on discussion in
 # http://www.linuxdoc.org/HOWTO/Program-Library-HOWTO/shared-libraries.html
 
+# $(PLLIB_SO) depends on no other plplot library.
 $(PLLIB_SO):	$(LIB_OBJS:%=shared/%) $(PLLIB_LIBRARIES)
 	-$(RM) $(PLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) -L.. $(PLLIB_LINKS) @PLF77LIBS@
+		$(LIB_OBJS) $(PLLIB_LINKS) @EXTRA_LIBS@
 	ln -sf $(PLLIB_SO) $(SONAME)
 	ln -sf $(SONAME) $(LINKNAME)
 	@echo ""
 
-
+# $(MATLIB_SO) depends on no other plplot library.
 $(MATLIB_SO): $(MAT_OBJS:%=shared/%)
 	-$(RM) $(MATLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(MATLIB_SO) \
 		-Wl,-soname -Wl,$(MAT_SONAME) \
-		$(MAT_OBJS)
+		$(MAT_OBJS) @EXTRA_LIBS@
 	ln -sf $(MATLIB_SO) $(MAT_SONAME)
 	ln -sf $(MAT_SONAME) $(MAT_LINKNAME)
 	@echo ""
 
-$(TCLLIB_SO): $(TCL_OBJS:%=shared/%) $(TKWINDRV_SO)
+# $(TCLLIB_SO) depends on $(PLLIB_SO) $(MATLIB_SO)
+$(TCLLIB_SO): $(TCL_OBJS:%=shared/%) $(PLLIB_SO) $(MATLIB_SO)
 	-$(RM) $(TCLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(TCLLIB_SO) \
 		-Wl,-soname -Wl,$(TCL_SONAME) \
-		$(TCL_OBJS) @PLTCLLIBS@ -L.. $(TKWINDRV_LINK)
+		$(TCL_OBJS) -L.. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) \
+		@PLTCLLIBS@ @EXTRA_LIBS@
 	ln -sf $(TCLLIB_SO) $(TCL_SONAME)
 	ln -sf $(TCL_SONAME) $(TCL_LINKNAME)
 	@echo ""
@@ -170,7 +173,7 @@ $(CXXLIB_SO): $(CXX_OBJS:%=shared/%)
 	cd shared; \
 	$(SHLIB_BUILD_CXX) ../$(CXXLIB_SO) \
 		$(SONAME_FLAGS)$(CXX_SONAME) \
-		$(CXX_OBJS)
+		$(CXX_OBJS) @EXTRA_LIBS@
 	ln -sf $(CXXLIB_SO) $(CXX_SONAME)
 	ln -sf $(CXX_SONAME) $(CXX_LINKNAME)
 	@echo ""

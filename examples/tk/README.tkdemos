@@ -14,7 +14,7 @@ source runAllDemos.tcl
 
 wish
 source pldefaults.tcl
-load libplplotd.so Plplotter
+load libplplottcltkd.so Plplotter
 package provide Plplotter 5.1.0
 source runAllDemos.tcl
 

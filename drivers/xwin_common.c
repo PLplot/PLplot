@@ -1,6 +1,6 @@
 /* $Id$
 
-	functions which are required both by xwin.c and code in libpltcltk.
+	functions which are required both by xwin.c and plframe.c
 */
 #include "plplot/plDevs.h"
 

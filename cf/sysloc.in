@@ -1181,6 +1181,7 @@ done
 
 AC_SUBST(INCS)
 AC_SUBST(LIBS)
+AC_SUBST(EXTRA_LIBS)
 
 # ----------------------------------------------------------------------------
 # Set up shared library support.
