@@ -486,7 +486,7 @@ esac
 
 # ----------------------------------------------------------------------------
 # Set flags to generate shared libraries for systems that we know about.
-# Taken from BLT configure.in with some modifications.
+# Originally based on BLT's configure.in.
 # ----------------------------------------------------------------------------
 
 AC_MSG_CHECKING(how to make shared libraries)
@@ -494,43 +494,56 @@ SHLIB_CCFLAGS=
 SHLIB_CXXFLAGS=
 SHLIB_BUILD=
 SHLIB_SUFFIX=
+SALIB_SUFFIX=""
+SO=""
+LDSHARED="ld"
+
 case "$system" in 
     SunOS-4* ) 
-	SHLIB_CCFLAGS=-pic
-	SHLIB_CXXFLAGS=-pic
-	SHLIB_F77FLAGS=-pic
-	SHLIB_BUILD="ld -assert pure-text -o"
-	SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
-	SALIB_SUFFIX='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	if test "$with_gcc" = "yes"; then
 	    with_shlib=no
 	    AC_MSG_RESULT(unknown)
 	else
+	    SHLIB_CCFLAGS=-pic
+	    SHLIB_CXXFLAGS=-pic
+	    SHLIB_F77FLAGS=-pic
+	    SHLIB_BUILD="ld -assert pure-text -o"
+	    SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	    SALIB_SUFFIX='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
+	    SO=".so"
+	    LDSHARED="ld"
 	    AC_MSG_RESULT(okay)
 	fi
     ;;
     HP-UX-* )
-	SHLIB_CCFLAGS=+z
-	SHLIB_CXXFLAGS=+z
-	SHLIB_F77FLAGS=+z
-	SHLIB_BUILD="ld -b -o"
 	SHLIB_SUFFIX=.sl
 	if test "$with_gcc" = "yes"; then
 	    SHLIB_CCFLAGS=-fpic
 	    SHLIB_CXXFLAGS=-fpic
 	    SHLIB_F77FLAGS=+z
 	    SHLIB_BUILD="gcc -shared -fpic -o"
-	    SHLIB_SUFFIX=.sl
+	else
+	    SHLIB_CCFLAGS=+z
+	    SHLIB_CXXFLAGS=+z
+	    SHLIB_F77FLAGS=+z
+	    SHLIB_BUILD="ld -b -o"
 	fi
+	SO=".sl"
+	LDSHARED="ld -b"
 	AC_MSG_RESULT(okay)
     ;;
     AIX-* )
-	SHLIB_CCFLAGS=-fpic
-	SHLIB_CXXFLAGS=-fpic
-	SHLIB_F77FLAGS=-fpic
-	SHLIB_BUILD="ar q"
-	SHLIB_SUFFIX=.a
-	AC_MSG_RESULT(okay)
+	if test "$with_gcc" = "yes"; then
+	    with_shlib=no
+	    AC_MSG_RESULT(unknown)
+	else
+	    SHLIB_CCFLAGS=-fpic
+	    SHLIB_CXXFLAGS=-fpic
+	    SHLIB_F77FLAGS=-fpic
+	    SHLIB_BUILD="ar q"
+	    SHLIB_SUFFIX=.a
+	    AC_MSG_RESULT(okay)
+	fi
     ;;
 
     # The rest are probably broken.  Someone please fix them.
@@ -542,6 +555,8 @@ case "$system" in
 #	SHLIB_F77FLAGS="-K pic"
 #	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	SO=".so"
+	LDSHARED="ld -G"
 	AC_MSG_RESULT(unknown)
     ;;
     OSF-1.* )
@@ -550,6 +565,8 @@ case "$system" in
 #	SHLIB_F77FLAGS=-fpic
 #	SHLIB_BUILD="$CC -shared"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	SO=".so"
+	LDSHARED="ld -shared -expect_unresolved \"*\""
 	AC_MSG_RESULT(unknown)
     ;;
     IRIX-5.* )
@@ -558,6 +575,8 @@ case "$system" in
 #	SHLIB_F77FLAGS=-KPIC
 #	SHLIB_BUILD="$CC -shared"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	SO=".so"
+	LDSHARED="ld -shared"
 	AC_MSG_RESULT(unknown)
     ;;
     * )
@@ -575,6 +594,8 @@ fi
 AC_SUBST(SHLIB_BUILD)
 AC_SUBST(SHLIB_SUFFIX)
 AC_SUBST(SALIB_SUFFIX)
+AC_SUBST(SO)
+AC_SUBST(LDSHARED)
 
 # ----------------------------------------------------------------------------
 # Assemble finished compiler flags.
