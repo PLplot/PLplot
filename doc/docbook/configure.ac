@@ -151,7 +151,7 @@ sed "s|@DOCBOOK_DTD@|$6|" < doc/docbook/cnf/test.xml.in > $CONFTEST.xml
 
 $prog_jade $SGML_CATALOGS -d $CONFTEST.dsl -t $7 -o $CONFTEST.out \
    $XML_DECL $CONFTEST.xml > $jadelog.x 2>&1
-jade_result=`egrep ":(E|W):" $jadelog.x`
+jade_result=`egrep ":E:" $jadelog.x`
 cat $jadelog.x >> $jadelog
 rm -f $jadelog.x
 if test "$jade_result" = "" ; then 
