@@ -664,6 +664,11 @@ if test "$with_shlib" = "yes"; then
 		SHLIB_CXXFLAGS=-fpic
 		SONAME_FLAGS="--soname "
 	    fi
+
+	    # This is need, otherwise non PIC code would sneak into the 
+            # shared libs (This assumes f77 == g77, which is a valid guess 
+            # for Linux.)
+	    SHLIB_F77FLAGS=-fPIC
 	;;
 	HP-UX-* )
 	    SO=".sl"
