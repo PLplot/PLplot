@@ -96,7 +96,7 @@ enable_octave=no
 #(e.g., enable_tek4010) do not require a default to be specified here.
 enable_gnome=no
 enable_png=yes 
-enable_jpg=yes 
+enable_jpeg=yes 
 enable_tk=yes
 enable_xwin=yes
 
@@ -250,7 +250,7 @@ ac_help="$ac_help
 ac_help="$ac_help
   --enable-png            enable png device driver ($enable_png)"
 ac_help="$ac_help
-  --enable-jpg            enable jpg device driver ($enable_jpg)"
+  --enable-jpeg           enable jpeg device driver ($enable_jpeg)"
 ac_help="$ac_help
   --enable-ps             enable ps device driver ($enable_ps)"
 ac_help="$ac_help
@@ -2436,10 +2436,10 @@ fi
 
 # ----------------------------------------------------------------------------
 # Find libgd, libpng, libjpeg, and zlib libraries and headers required for building 
-# png or jpg drivers.  Written by Alan W. Irwin following what is done for X.
+# png or jpeg drivers.  Written by Alan W. Irwin following what is done for X.
 # ----------------------------------------------------------------------------
 
-if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test -z "$GDINCDIR"; then
         cat > conftest.$ac_ext <<EOF
 #line 2446 "configure"
@@ -2472,7 +2472,7 @@ else
 	    echo "$ac_t""warning: gd header files not found" 1>&6
 	    GDINCDIR=default
 	    enable_png=no
-	    enable_jpg=no
+	    enable_jpeg=no
 	fi 
 fi
 rm -f conftest*
@@ -2531,7 +2531,7 @@ else
 	    echo "$ac_t""warning: gd library not found" 1>&6
 	    GDLIBDIR=default
 	    enable_png=no
-	    enable_jpg=no
+	    enable_jpeg=no
 	fi 
 fi
 
@@ -2541,7 +2541,7 @@ fi
     fi
 fi
 
-if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test -z "$PNGINCDIR"; then
         cat > conftest.$ac_ext <<EOF
 #line 2548 "configure"
@@ -2574,7 +2574,7 @@ else
 	    echo "$ac_t""warning: png header files not found" 1>&6
 	    PNGINCDIR=default
 	    enable_png=no
-	    enable_jpg=no
+	    enable_jpeg=no
 	fi 
 fi
 rm -f conftest*
@@ -2633,7 +2633,7 @@ else
 	    echo "$ac_t""warning: png library not found" 1>&6
 	    PNGLIBDIR=default
 	    enable_png=no
-	    enable_jpg=no
+	    enable_jpeg=no
 	fi 
 fi
 
@@ -2643,7 +2643,7 @@ fi
     fi
 fi
 
-if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test -z "$JPEGINCDIR"; then
         cat > conftest.$ac_ext <<EOF
 #line 2650 "configure"
@@ -2676,7 +2676,7 @@ else
 	    echo "$ac_t""warning: jpeg header files not found" 1>&6
 	    JPEGINCDIR=default
 	    enable_png=no
-	    enable_jpg=no
+	    enable_jpeg=no
 	fi 
 fi
 rm -f conftest*
@@ -2735,7 +2735,7 @@ else
 	    echo "$ac_t""warning: jpeg library not found" 1>&6
 	    JPEGLIBDIR=default
 	    enable_png=no
-	    enable_jpg=no
+	    enable_jpeg=no
 	fi 
 fi
 
@@ -2745,7 +2745,7 @@ fi
     fi
 fi
 
-if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     if test -z "$ZLIBINCDIR"; then
         cat > conftest.$ac_ext <<EOF
 #line 2752 "configure"
@@ -2778,7 +2778,7 @@ else
 	    echo "$ac_t""warning: zlib header files not found" 1>&6
 	    ZLIBINCDIR=default
 	    enable_png=no
-	    enable_jpg=no
+	    enable_jpeg=no
 	fi 
 fi
 rm -f conftest*
@@ -2837,7 +2837,7 @@ else
 	    echo "$ac_t""warning: zlib library not found" 1>&6
 	    ZLIBLIBDIR=default
 	    enable_png=no
-	    enable_jpg=no
+	    enable_jpeg=no
 	fi 
 fi
 
@@ -2856,7 +2856,7 @@ ac_compile='${CC-cc} -c $CFLAGS $CPPFLAGS conftest.$ac_ext 1>&5'
 ac_link='${CC-cc} -o conftest${ac_exeext} $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS 1>&5'
 cross_compiling=$ac_cv_prog_cc_cross
 
-if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 # All required headers and libraries are present for libgd, libpng, libjpeg,
 # and zlib.  Now check if this version of libgd supports jpeg.
 
@@ -2893,8 +2893,8 @@ else
   echo "configure: failed program was:" >&5
   cat conftest.$ac_ext >&5
   rm -rf conftest*
-  echo "$ac_t""no: jpg driver disabled" 1>&6
-      enable_jpg=no
+  echo "$ac_t""no: jpeg driver disabled" 1>&6
+      enable_jpeg=no
     
 fi
 rm -f conftest*
@@ -3333,7 +3333,7 @@ if test "$enable_xwin" = "yes"; then
     INCPATH="$INCPATH $XINCDIR"
 
 fi
-if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     
     INCSW=""
     if test "$GDINCDIR" != "default"; then
@@ -3600,7 +3600,7 @@ if test "$enable_xwin" = "yes"; then
     LIBPATH="$LIBPATH $XLIBDIR"
 
 fi
-if test "$enable_png" = "yes" -o "$enable_jpg" = "yes"; then
+if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     
     LIBSW=""
     if test "$GDLIBDIR" != "default"; then
@@ -5357,26 +5357,26 @@ EOF
 else
     enable_png="no"
 fi
-# Check whether --enable-jpg or --disable-jpg was given.
-enableval="$enable_jpg"
+# Check whether --enable-jpeg or --disable-jpeg was given.
+enableval="$enable_jpeg"
 if test -n "$enableval"; then
   :
 fi
-# Check whether --with-jpg or --without-jpg was given.
-withval="$with_jpg"
+# Check whether --with-jpeg or --without-jpeg was given.
+withval="$with_jpeg"
 if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_jpg" 1>&2; exit 1; }
+  { echo "configure: error: unrecognized variable: with_jpeg" 1>&2; exit 1; }
 fi
 
-if test "$enable_jpg" = "yes" -o "$enable_jpg $enable_drivers" = " yes" ; then
-    enable_jpg="yes"
+if test "$enable_jpeg" = "yes" -o "$enable_jpeg $enable_drivers" = " yes" ; then
+    enable_jpeg="yes"
     cat >> confdefs.h <<\EOF
-#define PLD_jpg 1
+#define PLD_jpeg 1
 EOF
 
-    DEVICES="$DEVICES jpg"
+    DEVICES="$DEVICES jpeg"
 else
-    enable_jpg="no"
+    enable_jpeg="no"
 fi
 # Check whether --enable-ps or --disable-ps was given.
 enableval="$enable_ps"
