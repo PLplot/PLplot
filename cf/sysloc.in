@@ -574,7 +574,11 @@ if test -z "$EXTRA_LIBS"; then
 	    EXTRA_LIBS="-ldld -lm"
 	;;
 	Linux* )
-	    EXTRA_LIBS="-ldl -lm -lg2c"
+	    if test "$enable_f77" = "yes"; then
+		EXTRA_LIBS="-ldl -lm -lg2c"
+	    else
+		EXTRA_LIBS="-ldl -lm"
+	    fi
 	;;
 	* ) 	
 	    AC_CHECK_LIB(Xbsd,   main, [EXTRA_LIBS="$EXTRA_LIBS -lXbsd"])
