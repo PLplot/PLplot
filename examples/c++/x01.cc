@@ -30,6 +30,7 @@
 #include "plevent.h"
 
 #include <iostream>
+#include <cctype>
 
 #ifdef HAVE_CMATH
 #include <cmath>
