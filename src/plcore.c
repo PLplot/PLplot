@@ -1,10 +1,20 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/01/23 05:49:27  mjl
-   Holds "core" routines -- includes routines from what was base.c, plstar.c,
-   some others.  The stream data and dispatch table are now local to this
-   file only.  Also added support for new color model, polyline support.
+   Revision 1.2  1993/02/23 05:11:44  mjl
+   Eliminated gradv driver function.  Completely rewrote initialization
+   routines.  Now plstar and plstart are merely front-ends to plinit, which
+   does all the initialization.  Added plsdev for setting the device name, and
+   plssub for setting the subpages.  Added plgpls for getting the current pls
+   pointer, for offloading stream-dependent code into other files.  Added
+   plsesc/plgesc for setting/getting the escape character for text strings (can
+   be any of [!#$%&*@^~], brackets not included).  Put in some checks for
+   routines that set family file parameters.  Eliminated some unused routines.
 
+ * Revision 1.1  1993/01/23  05:49:27  mjl
+ * Holds "core" routines -- includes routines from what was base.c, plstar.c,
+ * some others.  The stream data and dispatch table are now local to this
+ * file only.  Also added support for new color model, polyline support.
+ *
 
  * Previous history (as base.c):
  *
@@ -51,8 +61,21 @@
 
 #include "plcore.h"
 
+static void	GetDev(void);
+
 /*----------------------------------------------------------------------*\
-*  Driver calls
+* Driver calls
+*
+* Each call is followed by the appropriate plot buffer call.  If the target
+* device has enabled the plot buffer, this will result in a record of the
+* current page being stored in the plot buffer (which can be "replayed" to
+* handle screen refresh, resize, dumps, etc).
+
+* Each call that actually plots something (versus just changing state)
+* is preceded by a test to see if a newpage command has been deferred.
+* This is the only way to prevent extraneous newpage commands while
+* retaining a user-friendly page advance mechanism.
+*
 \*----------------------------------------------------------------------*/
 
 /* Initialize device. */
@@ -103,16 +126,6 @@ grpage(void)
     offset = pls[ipls].device - 1;
     (*dispatch_table[offset].pl_page) (&pls[ipls]);
     plbuf_page(&pls[ipls]);
-}
-
-/* Advance to new page. */
-
-void
-gradv(void)
-{
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_adv) (&pls[ipls]);
-    plbuf_adv(&pls[ipls]);
 }
 
 /* Tidy up device (flush buffers, close file, etc.) */
@@ -176,29 +189,181 @@ gresc(PLINT op, char *ptr)
 }
 
 /*----------------------------------------------------------------------*\
+* Startup routines.  
+\*----------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------*\
 * void plstar(nx, ny)
 *
-* Asks for number of plotting device, and call plbeg to divide the page
-* into nx by ny subpages.  When querying for device, quits after 10 tries
-* in case the user has run program in the background without input.
+* Here we are passing the windows/page in x and y.
 \*----------------------------------------------------------------------*/
 
 void
 c_plstar(PLINT nx, PLINT ny)
 {
-    PLINT dev, i, level, count, length, ipls;
-    char response[10];
-
-    glev(&level);
-    if (level != 0)
+    if (pls[ipls].level != 0)
 	plend1();
+
+    plssub(nx, ny);
+
+    c_plinit();
+}
+
+/*----------------------------------------------------------------------*\
+* void plstart(devname, nx, ny)
+*
+* Here we are passing the device name, and windows/page in x and y.
+\*----------------------------------------------------------------------*/
+
+void
+c_plstart(char *devname, PLINT nx, PLINT ny)
+{
+    if (pls[ipls].level != 0)
+	plend1();
+
+    plssub(nx, ny);
+    plsdev(devname);
+
+    c_plinit();
+}
+
+/*----------------------------------------------------------------------*\
+* void plinit()
+*
+* Checks certain startup parameters for validity, then proceeds with
+* initialization.  Accepts no arguments.
+\*----------------------------------------------------------------------*/
+
+void
+c_plinit()
+{
+    PLFLT gscale, hscale;
+    PLFLT size_chr, size_sym, size_maj, size_min;
+    PLINT mk = 0, sp = 0, inc = 0, del = 2000;
+
+    if (pls[ipls].level != 0)
+	plend1();
+
+/* Set device number */
+
+    GetDev();
+
+/* Subpage checks */
+
+    if (pls[ipls].nsubx <= 0)
+	pls[ipls].nsubx = 1;
+    if (pls[ipls].nsuby <= 0)
+	pls[ipls].nsuby = 1;
+    pls[ipls].cursub = 0;
+
+/* Stream number */
+
+    pls[ipls].ipls = ipls;
+
+/* Initialize color maps */
+
+    plCmaps_init(&pls[ipls]);
+
+/* We're rolling now.. */
+
+    pls[ipls].level = 1;
+
+/* Load fonts */
+
+    font = 1;
+    if (fontset) {
+	plfntld(initfont);
+	fontset = 0;
+    }
+    else
+	plfntld(0);
+
+/* Initialize device */
+
+    grinit();
+    grpage();
+
+/*
+* Set default sizes 
+* Global scaling:  
+*	Normalize to the page length for more uniform results.  
+* 	A virtual page length of 200 mm is assumed.
+* Subpage scaling: 
+*	Reduce sizes with plot area (non-proportional, so that character
+*	size doesn't get too small).
+*/
+    gscale = 0.5 * 
+	((pls[ipls].phyxma - pls[ipls].phyxmi) / pls[ipls].xpmm +
+	 (pls[ipls].phyyma - pls[ipls].phyymi) / pls[ipls].ypmm) / 200.0;
+
+    hscale = gscale / sqrt((double) pls[ipls].nsuby);
+
+    size_chr = 4.0;
+    size_sym = 4.0;		/* All these in virtual plot units */
+    size_maj = 3.0;
+    size_min = 1.5;
+
+    schr((PLFLT) (size_chr * hscale), (PLFLT) (size_chr * hscale));
+    ssym((PLFLT) (size_sym * hscale), (PLFLT) (size_sym * hscale));
+    smaj((PLFLT) (size_maj * hscale), (PLFLT) (size_maj * hscale));
+    smin((PLFLT) (size_min * hscale), (PLFLT) (size_min * hscale));
+
+/* Switch to graphics mode and set color */
+
+    grgra();
+    plcol(1);
+
+    plstyl(0, &mk, &sp);
+    plpat(1, &inc, &del);
+
+/* Set clip limits. */
+
+    pls[ipls].clpxmi = pls[ipls].phyxmi;
+    pls[ipls].clpxma = pls[ipls].phyxma;
+    pls[ipls].clpymi = pls[ipls].phyymi;
+    pls[ipls].clpyma = pls[ipls].phyyma;
+}
+
+/*----------------------------------------------------------------------*\
+* void GetDev()
+*
+* If the the user has not already specified the output device, or the
+* one specified is either: (a) not available, (b) "?", or (c) NULL, the
+* user is prompted for it.  A file name of "-" indicates output to stdout.
+* 
+* Prompting quits after 10 unsuccessful tries in case the user has
+* run the program in the background with insufficient input.
+\*----------------------------------------------------------------------*/
+
+static void
+GetDev()
+{
+    PLINT dev = 0, i, count, length;
+    char response[80];
+
+/* Device name already specified.  See if it is valid. */
+
+    if (*pls[ipls].DevName != '\0' && *pls[ipls].DevName != '?') {
+	for (i = 0; i < npldrivers; i++) {
+	    if (!strcmp(pls[ipls].DevName, dispatch_table[i].pl_DevName))
+		break;
+	}
+	if (i < npldrivers) {
+	    pls[ipls].device = i + 1;
+	    return;
+	}
+	else {
+	    printf("Requested device %s not available\n", pls[ipls].DevName);
+	}
+    }
 
     dev = 0;
     count = 0;
-    plgstrm(&ipls);
 
     if (npldrivers == 1)
 	dev = 1;
+
+/* User hasn't specified it correctly yet, so we prompt */
 
     while (dev < 1 || dev > npldrivers) {
 	printf("\nPlotting Options:\n");
@@ -237,119 +402,7 @@ c_plstar(PLINT nx, PLINT ny)
 	if (count++ > 10)
 	    plexit("Too many tries.");
     }
-    plbeg(dev, nx, ny);
-}
-
-/*----------------------------------------------------------------------*\
-* void plstart(devname, nx, ny)
-*
-* An alternate startup routine, where user supplies the device name (not
-* number).  Superior to 'plbeg' since it is relatively independent of the
-* particular plplot installation.  If the requested device is not
-* available, or if *devname is '?' or devname is NULL, the normal
-* (prompted) startup is used.
-\*----------------------------------------------------------------------*/
-
-void
-c_plstart(char *devname, PLINT nx, PLINT ny)
-{
-    PLINT dev, i, level;
-
-    glev(&level);
-    if (level != 0)
-	plend1();
-
-    if (devname == NULL) {
-	plstar(nx, ny);
-	return;
-    }
-    if (*devname == '?') {
-	plstar(nx, ny);
-	return;
-    }
-    dev = 0;
-    for (i = 0; i < npldrivers; i++) {
-	if (!strcmp(devname, dispatch_table[i].pl_DevName))
-	    break;
-    }
-    if (i < npldrivers) {
-	dev = i + 1;
-	plbeg(dev, nx, ny);
-    }
-    else {
-	printf("Requested device %s not available\n", devname);
-	plstar(nx, ny);
-    }
-}
-
-/*----------------------------------------------------------------------*\
-* Initialize the graphics device "dev".
-\*----------------------------------------------------------------------*/
-
-void
-grbeg(PLINT dev)
-{
-    PLINT mk = 0, sp = 0, inc = 0, del = 2000;
-    PLFLT scale;
-
-/* Set device number, graphics mode and font */
-
-    pls[ipls].ipls = ipls;
     pls[ipls].device = dev;
-    pls[ipls].icol0 = 1;
-    font = 1;
-
-/* Initialize color maps */
-
-    plCmaps_init(&pls[ipls]);
-
-/* We're rolling now.. */
-
-    pls[ipls].level = 1;
-
-/* Load fonts */
-
-    if (fontset) {
-	plfntld(initfont);
-	fontset = 0;
-    }
-    else
-	plfntld(0);
-
-/* Initialize device */
-
-    grinit();
-    grpage();
-
-/* Set default sizes */
-/* These are now normalized to the page length for more uniform results */
-/* A virtual page length of 200 mm is assumed */
-
-    scale = 0.5 *
-	((pls[ipls].phyxma - pls[ipls].phyxmi) / pls[ipls].xpmm +
-	 (pls[ipls].phyyma - pls[ipls].phyymi) / pls[ipls].ypmm) / 200.0;
-
-    sscale(scale);
-
-    plschr((PLFLT) 4.0, (PLFLT) 1.0);
-    plssym((PLFLT) 4.0, (PLFLT) 1.0);
-    plsmaj((PLFLT) 3.0, (PLFLT) 1.0);
-    plsmin((PLFLT) 1.5, (PLFLT) 1.0);
-
-/* Switch to graphics mode and set color */
-
-    grgra();
-    plcol(1);
-
-    plstyl(0, &mk, &sp);
-    plpat(1, &inc, &del);
-
-/* Set clip limits. */
-
-    pls[ipls].clpxmi = pls[ipls].phyxmi;
-    pls[ipls].clpxma = pls[ipls].phyxma;
-    pls[ipls].clpymi = pls[ipls].phyymi;
-    pls[ipls].clpyma = pls[ipls].phyyma;
 }
 
 /*----------------------------------------------------------------------*\
@@ -414,6 +467,30 @@ c_plgpage(PLFLT *p_xp, PLFLT *p_yp,
 }
 
 void
+c_plssub(PLINT nx, PLINT ny)
+{
+    if (pls[ipls].level > 0) {
+	plwarn("plssub: Must be called before plinit.");
+	return;
+    }
+    if (nx > 0)
+	pls[ipls].nsubx = nx;
+    if (ny > 0)
+	pls[ipls].nsuby = ny;
+}
+
+void
+c_plsdev(char *devname)
+{
+    if (pls[ipls].level > 0) {
+	plwarn("plsdev: Must be called before plinit.");
+	return;
+    }
+    strncpy(pls[ipls].DevName, devname, sizeof(pls[ipls].DevName) - 1);
+    pls[ipls].DevName[sizeof(pls[ipls].DevName) - 1] = '\0';
+}
+
+void
 c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
 {
     if (xp)
@@ -432,6 +509,12 @@ c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
 	pls[ipls].yoffset = yoff;
 
     pls[ipls].pageset = 1;
+}
+
+void
+plgpls(PLStream *pls)
+{
+    pls = &pls[ipls];
 }
 
 void
@@ -457,7 +540,7 @@ plsKeyEH(void (*KeyEH)(PLKey *, void *, int *), void *KeyEH_data)
     pls[ipls].KeyEH_data = KeyEH_data;
 }
 
-/* Set orientation.  Must be done before calling plstar(). */
+/* Set orientation.  Must be done before calling plinit. */
 
 void
 c_plsori(PLINT ori)
@@ -466,7 +549,7 @@ c_plsori(PLINT ori)
     pls[ipls].orientset = 1;
 }
 
-/* Set pen width.  Can be done any time, but before calling plstar() is best
+/* Set pen width.  Can be done any time, but before calling plinit is best
    since otherwise it may be volatile (i.e. reset on next page advance). */
 
 void
@@ -480,7 +563,7 @@ c_plwid(PLINT width)
 	pls[ipls].widthset = 1;
 }
 
-/* Set global aspect ratio.  Must be done before calling plstar(). */
+/* Set global aspect ratio.  Must be done before calling plinit. */
 
 void
 c_plsasp(PLFLT asp)
@@ -512,13 +595,13 @@ c_plslpb(PLFLT lpbxmi, PLFLT lpbxma, PLFLT lpbymi, PLFLT lpbyma)
 /* Note these two are only useable from C.. */
 
 void
-plgfile(FILE * file)
+plgfile(FILE *file)
 {
     file = pls[ipls].OutFile;
 }
 
 void
-plsfile(FILE * file)
+plsfile(FILE *file)
 {
     pls[ipls].OutFile = file;
     pls[ipls].fileset = 1;
@@ -575,6 +658,44 @@ gprec(PLINT *p_setp, PLINT *p_prec)
     *p_prec = pls[ipls].precis;
 }
 
+/*
+* Set/get the escape character for text strings 
+* From C you can pass as a character, from Fortran it needs to be the decimal
+* ASCII value.  Only selected characters are allowed to prevent the user from
+* shooting himself in the foot (a '\' isn't allowed since it conflicts with
+* C's use of backslash as a character escape).
+*/
+
+void
+c_plsesc(char esc)
+{
+    switch (esc) {
+    case '!':			/* ASCII 33 */
+    case '#':			/* ASCII 35 */
+    case '$':			/* ASCII 36 */
+    case '%':			/* ASCII 37 */
+    case '&':			/* ASCII 38 */
+    case '*':			/* ASCII 42 */
+    case '@':			/* ASCII 64 */
+    case '^':			/* ASCII 94 */
+    case '~':			/* ASCII 126 */
+	pls[ipls].esc = esc;
+	break;
+
+    default:
+	plwarn("Invalid escape character, ignoring.");
+    }
+}
+
+void
+plgesc(char *p_esc)
+{
+    if (pls[ipls].esc == '\0')
+	pls[ipls].esc = '#';
+
+    *p_esc = pls[ipls].esc;
+}
+
 /*----------------------------------------------------------------------*\
 *  Routines that deal with colors & color maps.
 \*----------------------------------------------------------------------*/
@@ -585,7 +706,7 @@ void
 c_plcol(PLINT icol0)
 {
     if (pls[ipls].level < 1)
-	plexit("plcol: Please call plstar first.");
+	plexit("plcol: Please call plinit first.");
 
     if (icol0 < 0 || icol0 > 15) {
 	plwarn("plcol: Invalid color.");
@@ -611,7 +732,7 @@ void
 c_plrgb(PLFLT r, PLFLT g, PLFLT b)
 {
     if (pls[ipls].level < 1)
-	plexit("plrgb: Please call plstar first.");
+	plexit("plrgb: Please call plinit first.");
 
     if ((r < 0. || r > 1.) || (g < 0. || g > 1.) || (b < 0. || b > 1.)) {
 	plwarn("plrgb: Invalid RGB color value");
@@ -632,7 +753,7 @@ void
 c_plrgb1(PLINT r, PLINT g, PLINT b)
 {
     if (pls[ipls].level < 1)
-	plexit("plrgb1: Please call plstar first.");
+	plexit("plrgb1: Please call plinit first.");
 
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
 	plwarn("plrgb1: Invalid color");
@@ -653,7 +774,7 @@ void
 c_plscm0n(PLINT ncol0)
 {
     if (pls[ipls].level > 0) {
-	plwarn("plscm0: Must be called before plstar.");
+	plwarn("plscm0: Must be called before plinit.");
 	return;
     }
 
@@ -672,7 +793,7 @@ c_plscm0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
     int i;
 
     if (pls[ipls].level > 0) {
-	plwarn("plscm0: Must be called before plstar.");
+	plwarn("plscm0: Must be called before plinit.");
 	return;
     }
 
@@ -703,7 +824,7 @@ void
 c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 {
     if (pls[ipls].level > 0) {
-	plwarn("plscol0: Must becalled before plstar.");
+	plwarn("plscol0: Must becalled before plinit.");
 	return;
     }
 
@@ -730,7 +851,7 @@ c_plscm1(PLINT *r, PLINT *g, PLINT *b)
     int i;
 
     if (pls[ipls].level > 0) {
-	plwarn("plscm1: Must be called before plstar.");
+	plwarn("plscm1: Must be called before plinit.");
 	return;
     }
 
@@ -778,7 +899,7 @@ c_plscm1f1(PLINT itype, PLFLT *param)
     PLFLT h, l, s, r, g, b;
 
     if (pls[ipls].level > 0) {
-	plwarn("plscm1f1: Must be called before plstar.");
+	plwarn("plscm1f1: Must be called before plinit.");
 	return;
     }
     for (i = 0; i < 256; i++) {
@@ -815,7 +936,7 @@ c_plscolor(PLINT color)
 
 /*----------------------------------------------------------------------*\
 *  These set/get information for family files, and may be called prior
-*  to 'plstar' to set up the necessary parameters.  Arguments:
+*  to plinit to set up the necessary parameters.  Arguments:
 *
 *	fam	familying flag (boolean)
 *	num	member number
@@ -834,11 +955,14 @@ void
 c_plsfam(PLINT fam, PLINT num, PLINT bmax)
 {
     if (pls[ipls].level > 0)
-	plwarn("plsfam: Must be called before plstar.");
+	plwarn("plsfam: Must be called before plinit.");
 
-    pls[ipls].family = fam;
-    pls[ipls].member = num;
-    pls[ipls].bytemax = bmax;
+    if (fam >= 0)
+	pls[ipls].family = fam;
+    if (num >= 0)
+	pls[ipls].member = num;
+    if (bmax >= 0)
+	pls[ipls].bytemax = bmax;
 }
 
 void
@@ -938,52 +1062,6 @@ void
 snms(PLINT n)
 {
     pls[ipls].nms = n;
-}
-
-void
-gdev(PLINT *p_dev, PLINT *p_term, PLINT *p_gra)
-{
-    *p_dev = pls[ipls].device;
-    *p_term = pls[ipls].termin;
-    *p_gra = pls[ipls].graphx;
-}
-
-void
-sdev(PLINT dev, PLINT term, PLINT gra)
-{
-    pls[ipls].device = dev;
-    pls[ipls].termin = term;
-    pls[ipls].graphx = gra;
-}
-
-void
-gdevice(PLINT *p_dev)
-{
-    *p_dev = pls[ipls].device;
-}
-
-void
-sdevice(PLINT dev)
-{
-    pls[ipls].device = dev;
-}
-
-void
-ggra(PLINT *p_gra)
-{
-    *p_gra = pls[ipls].graphx;
-}
-
-void
-sgra(PLINT gra)
-{
-    pls[ipls].graphx = gra;
-}
-
-void
-smod(PLINT term)
-{
-    pls[ipls].termin = term;
 }
 
 void
@@ -1381,18 +1459,6 @@ schr(PLFLT def, PLFLT ht)
 {
     pls[ipls].chrdef = def;
     pls[ipls].chrht = ht;
-}
-
-void
-gscale(PLFLT *p_scale)
-{
-    *p_scale = pls[ipls].scale;
-}
-
-void
-sscale(PLFLT scale)
-{
-    pls[ipls].scale = scale;
 }
 
 void
