@@ -32,9 +32,11 @@ ifeq ($(shell if test "$(arch)" = hppa -o "$(arch)" = powerpc ; then \
               fi), no)
 octave_cfg := --enable-octave
 octave_pkg := octave-plplot
+octave_mvf :=
 else
 octave_cfg := --disable-octave
 octave_pkg :=
+octave_mvf := --no-package=octave-plplot
 endif
 
 autotools:
@@ -98,7 +100,7 @@ install-stamp: build-stamp
 	  ln -s libplplot5 $(debdoc)/$$i ; \
 	done
 
-	dh_movefiles -a --no-package=libplplot5
+	dh_movefiles -a --no-package=libplplot5 $(octave_mvf)
 	dh_movefiles -i --no-package=libplplot-dev
 	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=libplplot5

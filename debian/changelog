@@ -1,3 +1,10 @@
+plplot (5.2.1-5) unstable; urgency=low
+
+  * debian/rules: Added variable octave_mvf to control exclusion of
+    package octave-plplot in dh_movefiles command.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue,  6 May 2003 16:59:52 +0200
+
 plplot (5.2.1-4) unstable; urgency=low
 
   * Exclude architectures hppa and powerpc from the building of the
