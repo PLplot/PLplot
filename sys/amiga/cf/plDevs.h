@@ -1,8 +1,8 @@
 /* -*-C-*-
 /* $Id$
  * $Log$
- * Revision 1.1  1994/08/11 15:46:58  mjl
- * Initial stab at Amiga configure files.
+ * Revision 1.2  1994/08/23 16:38:05  mjl
+ * New config files for PLplot Amiga build.
  *
  * Revision 1.2  1994/07/25  05:57:32  mjl
  * Added line for new lj_hpgl driver.

@@ -5,11 +5,11 @@
 # IFS, University of Texas at Austin
 # 14-Jul-1994
 #
-# PLplot build rule for library under Unix.
+# PLplot build rule for library under SAS/C 6.x on the Amiga.
 # -----------------------------------------------------------------------
 
 # -----------------------------------------------------------------------
-# Set up inference rules appropriate for building archive libraries.
+# Set up inference rules appropriate for building library.
 # -----------------------------------------------------------------------
 
 .c$O:
@@ -22,34 +22,14 @@
 # Library dependency list and targets
 # -----------------------------------------------------------------------
 
-PLLIBS = $(PLLIB_AR)
+PLLIB_LDC	= lib $(PLLIB) $(LIBM) $(LIBC) lib:reqtools.lib 
 
-libs:	$(PLLIBS)
+libs:	$(PLLIB)
 
-$(PLLIB_AR):	$(LIB_OBJS)
-	-rm $(PLLIB_AR)
-	@echo ""; echo "Building archive library"; echo ""
-	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
-	$(RANLIB) $(PLLIB_AR)
-	@echo ""
-
-# -----------------------------------------------------------------------
-# Sick hacks.
-# -----------------------------------------------------------------------
-
-# Needs to be compiled using K&R C.
-
-tcpip$O:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
-		plstream.h tcpip.c
-	$(OCC) $(CC_FLAGS) tcpip.c
-
-# Optimizer under AIX 3.2.3 bogues out here.
-
-xwin$O:		plplotP.h plplot.h drivers.h pdf.h plstream.h plplotX.h xwin.c
-	$(CC) $(CC_FLAGS_XWIN) xwin.c
-
-# Optimizer on SX-3 makes bogus code here.
-
-sccont$O:	plstubs.h plplotP.h plplot.h sccont.c
-	$(CC) $(CC_FLAGS_SCCONT) sccont.c
+$(PLLIB):	plplot.gst $(CORE_OBJ) $(DRIVERS_OBJ) $(AMIGA_OBJ)
+	-sksh_join $(CORE_OBJ)    t:plcore.lib
+	-sksh_join $(DRIVERS_OBJ) t:pldrivers.lib
+	-sksh_join $(AMIGA_OBJ)   t:plamiga.lib
+	-sksh_join t:pldrivers.lib t:plcore.lib t:plamiga.lib $(PLLIB)
+	-delete t:plcore.lib t:pldrivers.lib t:plamiga.lib
 

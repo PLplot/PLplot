@@ -5,74 +5,48 @@
 # IFS, University of Texas at Austin
 # 14-Jul-1994
 #
-# Make assignments and targets for installation under Unix.
+# Make assignments and targets for installation on the Amiga.
 #
-# It is recommended that you use a dedicated directory such as
-# /usr/local/plplot (read the FAQ on this topic).  The install directory
-# will be created if necessary, as will subdirectories bin, doc, examples,
-# include, lib, man (eventually), and tcl.
+# Under Unix I typically put plplot in
+# /usr/local/plplot, or $HOME/local/plplot if I cannot get a directory in
+# /usr/local assigned to me.
 #
-# Notes: 
-#	if Tk support is not included, TK_INSTALL will be null.
-#	if Tcl support is not included, TCL_INSTALL will be null.
+# On the Amiga, to keep things simple I also give PLplot it's own distribution
+# directory. This way everything stays together, but unfortunately you have
+# to modify your path and other settings to use it.  It'd be simple enough
+# to have it both ways if the Amiga OS /really/ supported softlinks, sigh.
 #
 # -----------------------------------------------------------------------
 
-install: install_lib install_utils $(TCL_INSTALL) $(TK_INSTALL) install_demos
+install: install_lib install_utils $(TCL_INSTALL) install_demos
 
 install_lib:
-	-if [ ! -d $(INCLUDE_DIR) ] ; then mkdir -p $(INCLUDE_DIR); fi
-	-if [ ! -d $(LIB_DIR) ] ; then mkdir -p $(LIB_DIR); fi
-	-if [ ! -d $(DOC_DIR) ] ; then mkdir -p $(DOC_DIR); fi
-	-if [ ! -d $(BIN_DIR) ] ; then mkdir -p $(BIN_DIR); fi
-	-if [ ! -d $(INFO_DIR) ] ; then mkdir -p $(INFO_DIR); fi
-	-cp ../lib/libplplot* ../lib/*.fnt $(LIB_DIR)
-	-$(RANLIB) $(LIB_DIR)/libplplot*.*
-	-cd ..; cp README README.1st Changes.log COPYRIGHTS FAQ ToDo mklinks \
-		$(DOC_DIR)
-	-if [ ! -f $(DOC_DIR)/README.local ] ; then \
-		cp ../README.local $(DOC_DIR); fi
-	-cp ../doc/*.info $(INFO_DIR)
-	-cd ../scripts; cp pl* $(BIN_DIR)
-	-cd ../include; \
-	cp plplotP.h plplot.h plplotX.h plplotTK.h \
-	   plevent.h plstream.h pdf.h tclMatrix.h \
-		$(INCLUDE_DIR)
+	-makedir $(INCLUDE_DIR) >NIL:
+	-makedir $(LIB_DIR) >NIL:
+	-makedir $(DOC_DIR) >NIL:
+	-makedir $(BIN_DIR) >NIL:
+	-makedir $(INFO_DIR) >NIL:
+	-copy /lib/#?		$(LIB_DIR)
+	-copy /README		$(DOC_DIR)
+	-copy /README.1st	$(DOC_DIR)
+	-copy /Changes.log	$(DOC_DIR)
+	-copy /COPYRIGHTS	$(DOC_DIR)
+	-copy /FAQ		$(DOC_DIR)
+	-copy /ToDo		$(DOC_DIR)
+	-copy /doc/#?.info	$(INFO_DIR)
+	-copy /include/#?.h	$(INCLUDE_DIR)
 
 install_demos:
-	-if [ ! -d $(DEMOS_DIR) ] ; then mkdir -p $(DEMOS_DIR); fi
-	-if [ ! -d $(DEMOS_DIR)/C ] ; then mkdir -p $(DEMOS_DIR)/C; fi
-	-if [ ! -d $(DEMOS_DIR)/f77 ] ; then mkdir -p $(DEMOS_DIR)/f77; fi
-	-if [ ! -d $(DEMOS_DIR)/tcl ] ; then mkdir -p $(DEMOS_DIR)/tcl; fi
-	-if [ ! -d $(DEMOS_DIR)/tk ] ; then mkdir -p $(DEMOS_DIR)/tk; fi
-	-cp Makedemo $(DEMOS_DIR)/Makefile
-	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/C
-	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/f77
-	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
-	-cp ../examples/C/* $(DEMOS_DIR)/C
-	-cp ../examples/f77/* $(DEMOS_DIR)/f77
-	-cp ../examples/tcl/* $(DEMOS_DIR)/tcl
-	-cp ../examples/tk/* $(DEMOS_DIR)/tk
+	-makedir $(DEMOS_DIR) >NIL:
+	-makedir $(DEMOS_DIR)/C >NIL:
+	-copy Makedemo $(DEMOS_DIR)/C/Makefile
+	-copy /examples/C/#? $(DEMOS_DIR)/C
 
 install_utils:
-	$(LDC) $(LDC_FLAGS) plrender$O $(LIB_INSTALL) \
-		-o plrender$E $(LDC_LIBS)
-	$(LDC) $(LDC_FLAGS) pltek$O $(LIB_INSTALL) \
-		-o pltek$E $(LDC_LIBS)
-	-strip plrender$E pltek$E
-	-cp plrender$E pltek$E $(BIN_DIR)
+	-copy plrender$E $(BIN_DIR)
 
 install_tcl:
 	$(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) \
-		-o pltcl$E $(LDC_LIBS)
-	-strip pltcl$E
-	-cp pltcl$E $(BIN_DIR)
-
-install_tk:
-	-if [ ! -d $(TCL_DIR) ] ; then mkdir -p $(TCL_DIR); fi
-	$(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
-		-o plserver$E $(LDC_LIBS)
-	-strip plserver$E
-	-cp plserver$E $(BIN_DIR)
-	-cd ../drivers/tk; cp *.tcl *.pal tclIndex $(TCL_DIR)
+		$(TO) pltcl$E $(LDC_LIBS)
+	-copy pltcl$E $(BIN_DIR)
 

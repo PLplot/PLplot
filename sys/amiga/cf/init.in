@@ -23,11 +23,6 @@ LN		= copy
 # Uncomment this for optimization
 # OPT_FLAG_C	= optimize
 
-LDC_FLAGS	= 
-STARTUP 	= lib:c.o
-TO		= to
-LN		= copy
-
 # Need to fill these in correctly if ever use f2c as a fortran compiler
 
 F77		= f77
@@ -37,16 +32,26 @@ LDF_FLAGS	=
 
 # Flags and other miscellanea
 
-TO		= -o
+LDC_FLAGS	= 
+STARTUP 	= lib:c.o
+TO		= to
 O		= .o
 E		=
 
 # Install directories
 
-LIB_DIR		=
-DOC_DIR		=
-BIN_DIR		=
-INFO_DIR	=
-INCLUDE_DIR	=
-TCL_DIR		=
-DEMOS_DIR	=
+LIB_DIR		= plplot:lib
+DOC_DIR		= plplot:doc
+BIN_DIR		= plplot:bin
+INFO_DIR	= plplot:info
+INCLUDE_DIR	= plplot:include
+DEMOS_DIR	= plplot:demos
+
+# Distribution directories
+
+PLINC_DIR = /include
+PLLIB_DIR = /lib
+PLFNT_DIR = /lib
+PLLIB_PATH = $(PLLIB_DIR)/
+PLFNT_PATH = $(PLFNT_DIR)/
+

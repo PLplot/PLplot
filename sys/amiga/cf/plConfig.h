@@ -1,8 +1,8 @@
 /* -*-C-*-
 /* $Id$
  * $Log$
- * Revision 1.1  1994/08/11 15:46:57  mjl
- * Initial stab at Amiga configure files.
+ * Revision 1.2  1994/08/23 16:38:04  mjl
+ * New config files for PLplot Amiga build.
  *
  * Revision 1.4  1994/07/28  07:40:47  mjl
  * Added define for caddr_t to prevent future problems with broken X11R4
