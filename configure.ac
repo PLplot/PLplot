@@ -492,6 +492,12 @@ LIBS=""
 
 if test "$enable_python" = "yes"; then
    AM_PATH_PYTHON(1.5)
+if test -z "$PYTHON_INSTDIR"; then
+   PYTHON_INSTDIR=`echo $pythondir |sed 's%${prefix}/%%'`
+   PYTHON_INSTDIR="$prefix/$PYTHON_INSTDIR"
+fi
+AC_SUBST(PYTHON_INSTDIR)
+
 fi
 
 # Optional packages

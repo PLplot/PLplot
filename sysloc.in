@@ -1101,32 +1101,12 @@ if test "$enable_python" = "yes"; then
         incdirs="\
         $prefix/include/python2.2 \
         /usr/include/python2.2 \
-        $prefix/include/python2.2/Numeric \
-        /usr/include/python2.2/Numeric \
         $prefix/include/python2.1 \
         /usr/include/python2.1 \
-        $prefix/include/python2.1/Numeric \
-        /usr/include/python2.1/Numeric \
         $prefix/include/python2.0 \
         /usr/include/python2.0 \
-        $prefix/include/python2.0/Numeric \
-        /usr/include/python2.0/Numeric \
         $prefix/include/python1.5 \
-        /usr/include/python1.5 \
-        $prefix/include/python1.5/Numeric \
-        /usr/include/python1.5/Numeric \
-        $prefix/include/python1.4 \
-        /usr/include/python1.4 \
-        $prefix/include/Py \
-        $HOME/local/include/Py \
-        $HOME/local/python/include/Py \
-        $HOME/include/Py \
-        /usr/local/python/include/Py \
-        /usr/local/python-1.2/include/Py \
-        /usr/local/include/Py"
-
-# Should probably just drop everything after /usr/include/python1.4,
-# have to think about it.
+        /usr/include/python1.5"
 
         FIND_INC(Python, PYTHON_INC_DIR, enable_python)
     fi
@@ -1148,64 +1128,9 @@ if test "$enable_python" = "yes"; then
     fi
 fi
 
-if test "$enable_python" = "yes"; then
-    if test -z "$PYTHON_MOD_DIR" -o ! -d "$PYTHON_MOD_DIR"; then
-        if test -z "$MACHDEP"; then
-#            ac_sys_system=`uname -s | tr -d ' ' | tr '[[A-Z]]' '[[a-z]]'`
-#            ac_sys_release=`uname -r | tr -d ' ' | sed 's/\..*//'`
-#            MACHDEP="$ac_sys_system$ac_sys_release"
-#            case MACHDEP in
-#                '')        MACHDEP=unknown;;
-#            esac
-            # Know this is correct for Debian potato and RedHat 6.2
-            # But this comes directly from python Makefile.pre.in for dynamic
-            # loading of packages so my guess is this is now good for all Unix.
-            # This is the sub-directory where dynamically loadable modules reside
-            # (or where a symlink exists to the true location)
-            MACHDEP=site-packages
-        fi
-
-        python_dir=`echo $PYTHON_INC_DIR|sed 's,/[[^/]]*/[[^/]]*$,,'`
-        PYTHON_MOD_DIR=$python_dir/lib/python
-        PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
-        if test ! -d "$PYTHON_MOD_DIR"; then
-            # account for the usual case where python directories 
-            # have a version number now.
-            python_ver=`echo $PYTHON_INC_DIR|sed 's,/.*/,,'`
-            PYTHON_MOD_DIR=$python_dir/lib/$python_ver
-            PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
-            if test ! -d "$PYTHON_MOD_DIR"; then
-                enable_python=no
-
-                AC_MSG_RESULT([PYTHON_MOD_DIR not found, setting enable_python to no])
-                enable_python=no
-            fi
-            # for modern (versioned) systems set the plplotcmodule.so install location
-            # to be identical to $PYTHON_MACH_DIR except possibly for the prefix
-            if test -z "$PYTHON_DIR"; then
-                PYTHON_DIR=$prefix/lib/$python_ver/$MACHDEP
-            fi
-
-        fi
-        PYTHON_CFG_DIR=$PYTHON_MOD_DIR/config
-    fi
-    if test -z "$PYTHON_DIR"; then
-        #default location for installing plplotcmodule.so if versioned logic failed above.
-        PYTHON_DIR=$prefix/python
-    fi
-fi
-
-if test -z "$PYTHON_INSTDIR"; then
-    PYTHON_INSTDIR=`echo $PYTHON_DIR | sed s%$prefix/%%`
-fi
-
 AC_SUBST(PYTHON_INC_DIR)
 AC_SUBST(PYTHON_NUM_DIR)
-AC_SUBST(PYTHON_MOD_DIR)
-AC_SUBST(PYTHON_MACH_DIR)
-AC_SUBST(PYTHON_DIR)
-AC_SUBST(PYTHON_INSTDIR)
-AC_SUBST(PYTHON_CFG_DIR)
+
 
 # ----------------------------------------------------------------------------
 # linuxvga support
