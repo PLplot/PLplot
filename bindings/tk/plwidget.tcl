@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.37  1995/08/22 16:17:53  mjl
+# Revision 1.38  1996/02/23 16:49:29  furnish
+# Some little hacks to make the scroll bars look better during zooms.
+#
+# Revision 1.37  1995/08/22  16:17:53  mjl
 # Inserted a necessary "update".
 #
 # Revision 1.36  1995/06/23  02:54:19  mjl
@@ -952,8 +955,8 @@ proc plw_zoom_reset {w} {
     plw_label_reset $w
     bind $w.plwin <ButtonPress> $def_button_cmd
     $w.plwin view reset
-    if { [winfo exists $w.hscroll] && [winfo ismapped $w.hscroll] } then {
-	pack unpack $w.hscroll
+    if { [winfo exists $w.hbar] && [winfo ismapped $w.hbar] } then {
+	pack unpack $w.hbar
     }
     if { [winfo exists $w.vscroll] && [winfo exists $w.vscroll] } then {
 	pack unpack $w.vscroll
@@ -1518,10 +1521,10 @@ proc plw_view_scroll {w dx dy s} {
 # Now scroll
 
     if {($dx != 0) && \
-	    [winfo exists $w.hscroll] && [winfo ismapped $w.hscroll] } then {
+	    [winfo exists $w.hbar] && [winfo ismapped $w.hbar] } then {
 
 	set dx [expr $dx * $mult]
-	set first  [lindex [$w.hscroll get] 2]
+	set first  [lindex [$w.hbar.hscroll get] 2]
 	$w.plwin xscroll [expr $first+$dx]
     }
     if {($dy != 0) && \
@@ -1544,11 +1547,15 @@ proc plw_fixview {w hscroll vscroll} {
 # Create scrollbars if they don't already exist.
 
     set created_sb 0
-    if { $hscroll && ! [winfo exists $w.hscroll] } then {
+    if { $hscroll && ! [winfo exists $w.hbar] } then {
 	set created_sb 1
-	scrollbar $w.hscroll -relief sunken -orient horiz \
+	frame $w.hbar
+	scrollbar $w.hbar.hscroll -relief sunken -orient horiz \
 	    -command "$w.plwin xscroll"
-	$w.plwin config -xscroll "$w.hscroll set"
+	$w.plwin config -xscroll "$w.hbar.hscroll set"
+	frame $w.hbar.pad
+	pack $w.hbar.hscroll -side left -fill x -expand 1
+	pack $w.hbar.pad -side right
     }
     if { $vscroll && ! [winfo exists $w.vscroll] } then {
 	set created_sb 1
@@ -1570,18 +1577,22 @@ proc plw_fixview {w hscroll vscroll} {
 # To get packing right, need to unmap then remap plot widget.
 # Otherwise need to do explicit redraw.
 
-    if { ($hscroll && ! [winfo ismapped $w.hscroll]) || \
+    if { ($hscroll && ! [winfo ismapped $w.hbar]) || \
          ($vscroll && ! [winfo ismapped $w.vscroll]) } then {
 
 	update
 	pack unpack $w.plwin
 	if { $hscroll } then {
-	    pack append $w $w.hscroll {bottom fillx}
+	    pack append $w $w.hbar {bottom fillx}
 	}
 	if { $vscroll } then {
 	    pack append $w $w.vscroll {right filly}
 	}
 	pack append $w $w.plwin {expand fill}
+
+	if {$hscroll && $vscroll} {
+	    $w.hbar.pad configure -width [winfo reqwidth $w.vscroll]
+	}
 
     } else {
 	$w.plwin redraw
