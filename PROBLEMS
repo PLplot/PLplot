@@ -17,13 +17,23 @@ environment with tcl/tk)
 
 Essential, minor effort required.
 
+* Check that make DESTDIR=/tmp/staging install works so that our package is
+build-relocatable.  This facility is essential so that our rpm and deb
+packages build correctly.  Alan
+
+* Build rpm on RH 7.3.  Alan
+
+* Rebuild documentation on Debian.  Alan
+
+* Document new API (plmesh3[c], plot3d[c], plsurf3d), etc.  Alan
+
+* PLplot documentation of python, java, etc., interfaces.  Alan
+
+* Build our documentation on RedHat.  Alan
+
 * sort out option implications for --disable-shared.  For example, we
 cannot build dynamic drivers in this case, and this also kills python and
 octave so sysloc.in should be adjusted accordingly.
-
-* Check that make DESTDIR=/tmp/staging install works so that our package is
-build-relocatable.  This facility is essential so that our rpm and deb
-packages build correctly.
 
 * http://sourceforge.net/mailarchive/message.php?msg_id=1785861 documents
 the many minor memory leaks found by valgrind throughout the dynloader area.
@@ -39,8 +49,6 @@ should bring this back (including targets for libplplotcxx, f77, and tcltk),
 but to make it cross-platform we should put in a warning that the results
 are meant to be used with plplot_libtool.  Alan
 
-* Alan has some documentation backlog to clear.
-
 * If x08.tcl (or any other multi-page example) is executed first, then the
 first page is skipped.
 
@@ -55,20 +63,12 @@ plenv(...)
 and a tclIndex file is generated. "auto_path" is correctly initialized to
 ~/tcl, pwd/tcl, etc, but plconfig is not executed.  Reported by Joao.  Status?
 
-* Sort out state problems in repository.  These make every merge of two
-different branchs or the -D (date) option on cvs commands problematic since
-deleted files with the wrong state information are brought back like zombies
-rising from the grave.....;-) Note that the cvs permissions problems
-detailed below should also be fixed at the same time.  Maurice.
-
 * Completely remove configure.in and COPYING from the top directory of the
 cvs repository.  (The cf/configure.in file is fine.) It's a long story, but
 topdir configure.in is no longer used by PLplot (configure.ac is used
 instead), and configure.in has a real log mess so AWI want to just get rid
 of it entirely.  COPYING is another long story, but AWI needs to reuse that
 name so he can provide a proper reference to our LGPL licensing.
-
-* Make our documentation buildable on RedHat.  Alan
 
 * Maurice plans to finish his changes to implement handling strings as
 strings in the metafile format.
@@ -120,19 +120,21 @@ approach.
 
 * bindings/tk/plcolor.tcl has execute permissions that should be removed.
 examples/tcl/stats.log should be made world-readable.  Both these cvs 
-permission problems need access to the CVS repository to fix and should be
-done at the same time as the CVS state changes mentioned above.  However,
-under autotools you can change the permissions at will in the installed
-product so this issue only affects "make check" for uninstalled testing.
+permission problems need access to the CVS repository to fix. However, under
+autotools you can change the permissions at will in the installed product so
+this issue only affects "make check" for uninstalled testing.
 
 * debian subdirectory made part of HEAD so can build debs directly
-from HEAD.  Careful here! Any further cvs merges are going to have to
-wait getting the state problems in our cvs repository sorted out.
+from HEAD.  Careful here! Any further cvs merges should check that repository
+fixup for zombied files really worked so that all those old files in
+the top level and doc directories (to name two obvious examples) are
+not resurrected.
 
 * fortran, and C++ examples made consistent with the C, tcl, Java, python,
-and octave examples as a test that the various interfaces to PLplot produce
-the same results.  Those latter interface examples currently need some
-maintenance as well due to the C example changes done recently by Joao.
+and octave examples as a test that the API is implemented correctly
+for each front end and as a teaching device of how to produce *exactly* the
+same plot for each front end.  Java, python, and Tcl are consistent, but
+octave is not (Joao?) and fortran and C++ need a lot of work.
 
 * fortran API used to be our most complete non-C interface, but now it has
 fallen behind python and java (and would also fall behind perl if/when that
@@ -144,4 +146,3 @@ years are implemented in fortran.
 cross-platform issues (especially with fortran) so have it act reasonably
 when, e.g., getarg is not available on some fortran platforms.
 
-* PLplot documentation of python, java, etc., interfaces.
