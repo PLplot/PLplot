@@ -403,20 +403,17 @@ Configure () {
 		.
 
 # Create links to the Fortran files.  
-# I use separate single vs double precision files to handle pre-9.0
-# versions of HP-UX.  May be handy on other systems too.
+# Double precision Fortran files in the stub interface are obtained
+# entirely by m4 macro expansion.  This should work anywhere.  Double
+# precision example programs are obtained through automatic compiler
+# promotion.  Your compiler needs to be able to automatically promote
+# all real variables and constants for this to work (note: the HPUX 8.x
+# compiler did not support this, but it's supported under 9.0).
 
-	if [ "$double" = "on" ] && [ "$system" = "HP" ]; then
-		ln -s \
-			../src/stubf/dbl/*.f \
-			../examples/f77/dbl/*.f \
-			.
-	else
-		ln -s \
-			../src/stubf/sgl/*.f \
-			../examples/f77/sgl/*.f \
-			.
-	fi
+
+	ln -s	../src/stubf/*.* \
+		../examples/f77/*.* \
+		.
 
 # Create links to m4 config files.
 
