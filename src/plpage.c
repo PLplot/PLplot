@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1995/01/06 07:57:24  mjl
+ * Revision 1.14  1995/03/17 00:13:17  mjl
+ * plGetCursor() changed to take a (PLGraphicsIn *).  Now this function is
+ * just a front-end.  plTranslateCursor() added to do the work of looking up
+ * the world coordinates.  Eliminated plClrCWindows().
+ *
+ * Revision 1.13  1995/01/06  07:57:24  mjl
  * Switch to the new syntax for the window structure -- now part of the
  * plstream.
  *
@@ -35,11 +40,11 @@
 
 #include "plplotP.h"
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void pladv()
  *
  * Advance to subpage "page", or to the next one if "page" = 0.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_pladv(PLINT page)
@@ -69,11 +74,11 @@ c_pladv(PLINT page)
     plP_setsub();
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void pleop()
  *
  * End current page.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_pleop(void)
@@ -87,11 +92,11 @@ c_pleop(void)
     plP_eop();
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plbop()
  *
  * Start new page.  Should only be used with pleop().
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plbop(void)
@@ -105,11 +110,11 @@ c_plbop(void)
     plP_setsub();
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plP_subpInit()
  *
  * Set up plot parameters according to the number of subpages.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plP_subpInit(void)
@@ -156,11 +161,11 @@ plP_subpInit(void)
     plsc->mindef = plsc->minht = size_min * hscale;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plP_setsub()
  *
  * Set up the subpage boundaries according to the current subpage selected.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plP_setsub(void)
@@ -183,12 +188,12 @@ plP_setsub(void)
     plP_sclp(plsc->sppxmi, plsc->sppxma, plsc->sppymi, plsc->sppyma);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void plgspa()
  *
  * Get subpage boundaries in absolute coordinates (mm from bottom
  * left-hand corner of page.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
@@ -203,81 +208,52 @@ c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
     *ymax = plP_dcmmy(plsc->spdyma);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int plGetCursor()
  *
- * Wait for left button mouse event and translate to world coordinates.
+ * Wait for graphics input event and translate to world coordinates.
  * Returns 0 if no translation to world coordinates is possible.  
  * Written by Paul Casteels.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
-plGetCursor(PLCursor *cursor)
+plGetCursor(PLGraphicsIn *plg)
+{
+    plP_esc(PLESC_GETC, plg);
+    return plTranslateCursor(plg);
+}
+
+/*--------------------------------------------------------------------------*\
+ * int plTranslateCursor()
+ *
+ * Translates cursor position from relative device coordinates to world
+ * coordinates.  Returns 0 if no translation to world coordinates is
+ * possible.  Written by Paul Casteels.
+\*--------------------------------------------------------------------------*/
+
+int
+plTranslateCursor(PLGraphicsIn *plg)
 {
     int i;
-    plCWindow *w;
+    PLWindow *w;
 
-    plP_esc(PLESC_GETC, cursor);
-    cursor->wX = 0;
-    cursor->wY = 0;
-    for (i = 0; i < plsc->nCWindows; i++) {
-	w = &plsc->windows[i];
-	if ((cursor->dX > w->dxmi) &&
-	    (cursor->dX < w->dxma) &&
-	    (cursor->dY > w->dymi) &&
-	    (cursor->dY < w->dyma) ) {
+    plg->wX = 0;
+    plg->wY = 0;
+    for (i = 0; i < plsc->nplwin; i++) {
+	w = &plsc->plwin[i];
+	if ((plg->dX >= w->dxmi) &&
+	    (plg->dX <= w->dxma) &&
+	    (plg->dY >= w->dymi) &&
+	    (plg->dY <= w->dyma) ) {
 
-	    cursor->wX = w->wxmi +
-		(cursor->dX - w->dxmi) * (w->wxma - w->wxmi) / 
-		    (w->dxma - w->dxmi);
+	    plg->wX = w->wxmi + (plg->dX - w->dxmi) * 
+		(w->wxma - w->wxmi) / (w->dxma - w->dxmi);
 
-	    cursor->wY = w->wymi +
-		(cursor->dY - w->dymi) * (w->wyma - w->wymi) / 
-		    (w->dyma - w->dymi);
+	    plg->wY = w->wymi + (plg->dY - w->dymi) * 
+		(w->wyma - w->wymi) / (w->dyma - w->dymi);
 
 	    return 1;
 	}
     }
     return 0;
-}
-
-/*----------------------------------------------------------------------*\
- * void plAddCWindow()
- *
- * Adds the current window to the window list (called by plwind).
- * Written by Paul Casteels.
-\*----------------------------------------------------------------------*/
-
-void 
-plAddCWindow(void) 
-{
-    plCWindow *w;
-
-    if (plsc->nCWindows >= PL_MAXWINDOWS)
-	return;
-
-    w = &plsc->windows[plsc->nCWindows++];
-
-    w->wxmi = plsc->vpwxmi;
-    w->wxma = plsc->vpwxma;
-    w->wymi = plsc->vpwymi;
-    w->wyma = plsc->vpwyma;
-
-    w->dxmi = plsc->vpdxmi;
-    w->dxma = plsc->vpdxma;
-    w->dymi = plsc->vpdymi;
-    w->dyma = plsc->vpdyma;
-}
-
-/*----------------------------------------------------------------------*\
- * void plClrCWindows()
- *
- * Resets all known windows (called by plP_eop).
- * Written by Paul Casteels.
-\*----------------------------------------------------------------------*/
-
-void 
-plClrCWindows(void) 
-{
-    plsc->nCWindows = 0;
 }
