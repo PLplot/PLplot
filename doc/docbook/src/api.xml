@@ -1151,6 +1151,21 @@ origin
       Deprecated.  Use the new name, &plcol0;, for this function instead.
     </para>
 
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>color</parameter>
+	  (<literal>PLINT</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+            See &plcol0;.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+
   </sect1>
 
   <sect1 id="plcol0" renderas="sect3">
@@ -3172,6 +3187,32 @@ space for this (80 characters is safe).
       See the description of &plgxax; for more detail.
     </para>
 
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>digmax</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    [Needs doc.]
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>digits</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    [Needs doc.]
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+
   </sect1>
 
   <sect1 id="plgzax" renderas="sect3">
@@ -3195,6 +3236,32 @@ space for this (80 characters is safe).
       Identical to &plgxax;, except that arguments are flags for z axis.
       See the description of &plgxax; for more detail.
     </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>digmax</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    [Needs doc.]
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>digits</parameter>
+	  (<literal>PLINT *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    [Needs doc.]
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
 
   </sect1>
 
@@ -8069,8 +8136,8 @@ characters and their corresponding decimal ASCII values:
       </varlistentry>
       <varlistentry>
 	<term>
-	  <parameter>legline[]</parameter> 
-	  (<literal>char *</literal>, input)
+	  <parameter>legline</parameter> 
+	  (<literal>char **</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8389,6 +8456,31 @@ stripchart
       See the description of &plsxax; for more detail.
     </para>
 
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>digmax</parameter>
+	  (<literal>PLINT</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    [Needs doc.]
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>digits</parameter>
+	  (<literal>PLINT</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    [Needs doc.]
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
   </sect1>
 
   <sect1 id="plsym" renderas="sect3">
@@ -8490,6 +8582,32 @@ stripchart
       Identical to &plsxax;, except that arguments are flags for z axis.
       See the description of &plsxax; for more detail.
     </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>digmax</parameter>
+	  (<literal>PLINT</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    [Needs doc.]
+	  </para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term>
+	  <parameter>digits</parameter>
+	  (<literal>PLINT</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    [Needs doc.]
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
 
   </sect1>
 
