@@ -388,11 +388,12 @@ plr_state(PLRDev *plr)
     }
 
     case PLSTATE_COLOR0:{
-	U_CHAR icol0, r, g, b;
+	short icol0;
 
-	plr_rd( pdf_rd_1byte(plr->pdfs, &icol0) );
+	plr_rd( pdf_rd_2bytes(plr->pdfs, &icol0) );
 
 	if (icol0 == PL_RGB_COLOR) {
+            U_CHAR r, g, b;
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &r) );
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &g) );
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &b) );
