@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.20  1995/04/12 08:06:16  mjl
+# Revision 1.21  1995/05/06 17:18:37  mjl
+# Shave and a haircut.
+#
+# Revision 1.20  1995/04/12  08:06:16  mjl
 # Offloaded the C code for cleaning up from plserver.c into the proc
 # plserver_link_end in plserver.tcl.  The Tcl code was modified to better
 # handshake with the client (plplot TK driver) program.
@@ -212,7 +215,7 @@ proc plserver_link_end {} {
 
     if { [info exists client] } then {
 
-	# Tell client we are exiting.
+    # Tell client we are exiting.
 
 	if { $dp } then {
 	    dp_RPC [list $client] set plserver_exiting 1
@@ -220,7 +223,7 @@ proc plserver_link_end {} {
 	    send $client "set plserver_exiting 1"
 	}
 
-	# If the client isn't exiting, cause it to.
+    # If the client isn't exiting, cause it to.
 
 	if { ! [info exists plclient_exiting] } then {
 	    if { $dp } then {
@@ -231,7 +234,7 @@ proc plserver_link_end {} {
 	    wait_until {[info exists plclient_exiting]}
 	}
 
-	# Clean up socket communications if using Tcl-DP.
+    # Clean up socket communications if using Tcl-DP.
 
 	if { $dp } then {
 	    catch dp_CloseRPC [list $client]
