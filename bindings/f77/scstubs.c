@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/04/26 20:03:14  mjl
-   Added stub for plgchr().
+   Revision 1.12  1993/07/02 07:11:39  mjl
+   Minor change to function name.
 
+ * Revision 1.11  1993/04/26  20:03:14  mjl
+ * Added stub for plgchr().
+ *
  * Revision 1.10  1993/03/02  19:02:46  mjl
  * Added stubs for plgver().
  *
@@ -159,7 +162,7 @@ PLFONTLD(PLINT *charset)
 void
 PLGCHR(PLFLT *chrdef, PLFLT *chrht)
 {
-    gchr(chrdef, chrht);
+    c_plgchr(chrdef, chrht);
 }
 void
 PLGFAM(PLINT *fam, PLINT *num, PLINT *bmax)
