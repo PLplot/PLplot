@@ -40,11 +40,12 @@
       <itemizedlist>
         <listitem>
           <para>
-            With this release, the ABI (Application Binary Interface) of
-            the PLplot library has been broken, because the libraries libnn
-            and libcsa were renamed to libcsironn and libcsirocsa,
-            respectively.  For this reason, the soversion number had to
-            change.  In Linux, for instance, the libraries are called now
+            With this release, the ABI (Application Binary Interface)
+            backward compatibility of the PLplot library has been broken,
+            because the libraries libnn and libcsa were renamed to
+            libcsironn and libcsirocsa, respectively.  For this reason, the
+            soversion number had to change.  In Linux, for instance, the
+            libraries are called now
             <filename>libplplot*.so.9.0.0</filename>.
           </para>
         </listitem>
@@ -103,11 +104,12 @@
         </listitem>
         <listitem>
           <para>
-            The Java stubs are put now in a loadable module instead of in a
-            library as before.  Setting <literal>LD_LIBRARY_PATH</literal>
-            is not required anymore.  Also, there is no need for using
-            <literal>CLASSPATH</literal>.  Since the Java interface is now
-            mature, its building is enabled by default.
+            The Java stubs are collected into a loadable module instead of
+            in a library as before.  Setting
+            <literal>LD_LIBRARY_PATH</literal> is not required anymore.
+            Also, there is no need for using <literal>CLASSPATH</literal>.
+            Since the Java interface is now mature, its building is enabled
+            by default.
           </para>
         </listitem>
         <listitem>
@@ -127,7 +129,7 @@
             featuring mouse interactivity.  Although the bindings are still
             compatible with the 2.0 series of Octave, compatibility at the
             script level is only guaranteed for the 2.1 series.  However,
-            there are some issues with the latest version of OCtave
+            there are some issues with the latest version of Octave
             (2.1.53) and, for this reason, Octave bindings build is
             disabled by default in configure.
           </para>
@@ -146,12 +148,6 @@
         </listitem>
         <listitem>
           <para>
-            The ntk driver compiles correctly now with the latest version
-            of gcc.
-          </para>
-        </listitem>
-        <listitem>
-          <para>
             The line width setting in the ps/psc driver is fixed and the
             results are visually equivalent to those obtained with the
             other drivers.
@@ -159,7 +155,7 @@
         </listitem>
         <listitem>
           <para>
-            In the xwin driver, a resizing window bug is fixed.  This bug
+            In the xwin driver, a window resizing bug is fixed.  This bug
             appeared when several windows were used in a pthreaded
             application.  Also, the xwin driver uses now by default
             pthreads and <quote>default visual</quote>.
@@ -173,8 +169,8 @@
       <itemizedlist>
         <listitem>
           <para>
-            The Autotools-based PLplot configuration is much more robust
-            now. The autoconf/automake/libtool constructs have been
+            The Autotools-based PLplot configuration became much more
+            robust.  The autoconf/automake/libtool constructs have been
             modernized and several combinations of configuration options
             work better in this release.
           </para>
@@ -219,9 +215,12 @@
             The <ulink
             url="http://www.freedesktop.org/software/pkgconfig/">pkg-config</ulink>
             support has undergone a total rewrite and should be much more
-            portable now.  We still keep the plplot-config script as an
-            alternative to the pkg-config support.  See the installed
-            <filename>example/&#42;/Makefile</filename> for examples of use.
+            portable with this release.  It is activated with option
+            <literal>--with-pkg-config</literal> to configure.  The
+            plplot-config script is still kept as an alternative to the
+            pkg-config support.  See the installed
+            <filename>example/&#42;/Makefile</filename> for examples of
+            use.
           </para>
         </listitem>
         <listitem>
@@ -251,8 +250,8 @@
       <itemizedlist>
         <listitem>
           <para>
-            Memory management fixes were done and almost all of the memory
-            leaks revealed by <ulink
+            Memory management fixes: almost all of the memory leaks
+            revealed by <ulink
             url="http://valgrind.kde.org">valgrind</ulink> are gone.  There
             are still some problems under investigation and their fixes
             will be integrated in the next release.
