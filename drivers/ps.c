@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1994/08/27 03:40:32  mjl
+ * Revision 1.29  1994/09/01 22:28:09  mjl
+ * Fixed bug in current point update after state change.
+ *
+ * Revision 1.28  1994/08/27  03:40:32  mjl
  * Fix to allow cmap1 color selections to appear in grayscale.  Contributed
  * by Radey Shouman.
  *
@@ -487,9 +490,7 @@ plD_state_ps(PLStream *pls, PLINT op)
 
     case PLSTATE_COLOR0:
  	if (! pls->color) {
-	    fprintf(OF, " S\n%.4f G %d %d M \n", 
-		    (pls->icol0 ? 0.0 : 1.0),
-		    (int)dev->xold, (int)dev->yold);		    
+	    fprintf(OF, " S\n%.4f G", (pls->icol0 ? 0.0 : 1.0));
 	    break;
 	}
 	/* else fallthrough */
@@ -499,15 +500,19 @@ plD_state_ps(PLStream *pls, PLINT op)
 	    float g = ((float) pls->curcolor.g) / 255.0;
 	    float b = ((float) pls->curcolor.b) / 255.0;
 
-	    fprintf(OF, " S\n%.4f %.4f %.4f C %d %d M \n", r, g, b,
-		    (int)dev->xold, (int)dev->yold);
+	    fprintf(OF, " S\n%.4f %.4f %.4f C", r, g, b);
 	}
 	else {
 	    float r = ((float) pls->curcolor.r) / 255.0;
-	    fprintf(OF, " S\n%.4f G %d %d M \n", 1.0 - r,
-		    (int)dev->xold, (int)dev->yold);
+	    fprintf(OF, " S\n%.4f G", 1.0 - r);
 	}
 	break;
+    }
+
+/* Reinitialize current point location. */
+
+    if (dev->xold != UNDEFINED && dev->yold != UNDEFINED) {
+	fprintf(OF, " %d %d M \n", (int)dev->xold, (int)dev->yold);
     }
 }
 
