@@ -60,7 +60,14 @@ drivers_DATA = $(drivers_LTLIBRARIES:.la=.rc)
 
 noinst_PROGRAMS = get-drv-info
 get_drv_info_SOURCES = get-drv-info.c
-get_drv_info_LDADD = $(LIBLTDL)
+get_drv_info_LDADD = $(LIBLTDL) \
+    $(top_builddir)/src/libplplot${LIB_TAG}.la
+if with_csa
+get_drv_info_LDADD += $(top_builddir)/lib/csa/libcsirocsa.la
+endif
+if with_qhull
+get_drv_info_LDADD += $(top_builddir)/lib/nn/libcsironn.la
+endif
 get_drv_info_CFLAGS = $(INCLTDL)
 
 SUFFIXES = .la .rc
