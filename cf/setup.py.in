@@ -6,11 +6,15 @@ from distutils.core import setup, Extension
 # behaviour for tmp location (special *last* option of --flat) and install 
 # location (special *last* option of relocatable PREFIX).
 import sys
+# When drop python-1.5 support this can be dropped since only needed for split which
+# is built-in method for string objects for python2.
+import string
 if sys.argv[-1] == "--flat":
     del sys.argv[-1]
     import os
     include_directory = os.getcwd()
     library_directory = include_directory
+    extra_link_args = string.split("@RPATH@")
 else:
     # We use last argument (which is set to $(PREFIX) in Makefile when
     # building for install) because it is relocatable (which allows
@@ -19,18 +23,8 @@ else:
     include_directory = sys.argv[-1] + "/@INCLUDE_DIR@/.."
     library_directory = sys.argv[-1] + "/@LIB_DIR@"
     del sys.argv[-1]
+    extra_link_args = string.split("@INSTALL_RPATH@")
 
-# Some systems do not accept -rpath option to ld in which case the next
-# two variables will be empty strings
-RPATH = "@RPATH@"
-INSTALL_RPATH = "@INSTALL_RPATH@"
-if RPATH != "" and INSTALL_RPATH != "":
-    extra_link_args = ["-Wl,-rpath", "-Wl," + library_directory]
-else:
-    # Don't worry about bizarre case when RPATH is defined and
-    # INSTALL_RPATH is not or vice versa.  If either undefined, forget
-    # it!
-    extra_link_args = []
 include_dirs = [include_directory]
 # Only needed because arrayobject.h not necessarily in Numeric subdirectory 
 # in python-1.5.  Once we drop support for python-1.5, then we can change 
