@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/07/28 05:54:29  mjl
-   Added support for -nopixmap option.
+   Revision 1.8  1993/07/31 08:16:12  mjl
+   Flags added to change plot window (-wplt), device window (-wdev).
+   Orientation flag (-ori) changed to use new driver interface.  Aspect flag
+   (-a) deleted.
 
+ * Revision 1.7  1993/07/28  05:54:29  mjl
+ * Added support for -nopixmap option.
+ *
  * Revision 1.6  1993/07/16  22:32:35  mjl
  * Fixed bug encountered when setting option via plSetInternalOpt().
  *
@@ -17,27 +22,6 @@
  * Revision 1.4  1993/04/26  19:57:56  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
- *
- * Revision 1.3  1993/03/17  17:01:37  mjl
- * Eliminated some dead assignments that turned up when running with SAS/C's
- * global optimizer enabled on the Amiga.
- *
- * Revision 1.2  1993/03/03  17:03:20  mjl
- * Changed the -bg flag to accept a full-color argument in the form
- * -bg rrggbb, with rr, gg, bb corresponding to the background RGB
- * values in hex.  Example: -bg FFFF00 to get a yellow background.
- *
- * Revision 1.1  1993/02/23  05:28:26  mjl
- * Added code to parse command line arguments.  Accepts a data structure with
- * argument specification, syntax, description, mode flag, and function handler
- * (called if option is found).  Usable both to parse plplot command flags and
- * user command flags.  The latter is facilitated by input of user routines to
- * handle usage and help messages.  The plplot command line parser removes all
- * arguments it recognizes, allowing the user to detect invalid input.  See
- * plrender.c for a working example of usage of the case of user
- * command flags; the simpler case with no user command flags is illustrated
- * by any of the (C) example programs.
- *
 */
 
 /*
@@ -148,7 +132,8 @@ static int opt_nopixmap		(char *, char *);
 static int opt_np		(char *, char *);
 static int opt_px		(char *, char *);
 static int opt_py		(char *, char *);
-static int opt_geo		(char *, char *);
+static int opt_wdev		(char *, char *);
+static int opt_wplt		(char *, char *);
 static int opt_plserver		(char *, char *);
 static int opt_plwindow		(char *, char *);
 static int opt_tcl_cmd		(char *, char *);
@@ -189,6 +174,11 @@ static int	mode_override;
 * mode		governs handling of option (see below)
 * syntax	short syntax description
 * desc		long syntax description
+*
+* The syntax and or desc strings can be NULL if the option is never to be
+* described.  Usually this is only used for obsolete arguments; those we
+* just wish to hide from normal use are better made invisible (which are
+* made visible by either specifying -showall first or PL_PARSE_SHOWALL).
 *
 * The mode bits are:
 *
@@ -282,12 +272,26 @@ static PLOptionTable ploption_table[] = {
     "-geo geom",
     "Window size, in pixels (e.g. -geo 400x300)" },
 {
+    "wplt",			/* Plot window */
+    opt_wplt,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-wplt xl,yl,xr,yr",
+    "Relative coordinates [0-1] of window into plot" },
+{
+    "wdev",			/* Device window */
+    opt_wdev,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
+    "-wdev xl,yl,xr,yr",
+    "Relative coordinates [0-1] of window into device" },
+{
     "a",			/* Aspect ratio */
     opt_a,
     NULL,
     PL_OPT_FUNC | PL_OPT_ENABLED | PL_OPT_ARG,
-    "-a aspect",
-    "Plot aspect ratio" },
+    NULL,
+    NULL },
 {
     "ori",			/* Orientation */
     opt_ori,
@@ -422,11 +426,14 @@ plSyntax()
     fprintf(stderr, "\nplplot options:");
 
     col = 80;
-    for (tab = ploption_table; tab->syntax; tab++) {
+    for (tab = ploption_table; tab->opt; tab++) {
 	if ( ! (tab->mode & PL_OPT_ENABLED))
 	    continue;
 
 	if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
+	    continue;
+
+	if (tab->syntax == NULL)
 	    continue;
 
 	len = 3 + strlen(tab->syntax);		/* space [ string ] */
@@ -459,8 +466,8 @@ plHelp(void)
 	if ( ! mode_showall && (tab->mode & PL_OPT_INVISIBLE))
 	    continue;
 
-	if (tab->desc == NULL)	/* Should never happen but let's */
-	    break;		/* be safe */
+	if (tab->desc == NULL)
+	    continue;
 
 	if (tab->mode & PL_OPT_INVISIBLE) 
 	    fprintf(stderr, " *  %-20s %s\n", tab->syntax, tab->desc);
@@ -592,7 +599,7 @@ plParseOpts(int *p_argc, char **argv, PLINT mode, PLOptionTable *option_table,
     }
 
     if (myargc == 0)
-	return(0);
+	return 0;
 
 /* Process the command line */
 
@@ -666,10 +673,10 @@ ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
     if (mode_full) {
 	if ( ! mode_quiet)
 	    (*UsageH) (**p_argv);
-	return(1);
+	return 1;
     }
     else
-	return(0);
+	return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -691,7 +698,7 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 
     if (tab->mode & need_arg) {
 	if (GetOptarg(&optarg, p_myargc, p_argv, p_argc))
-	    return(1);
+	    return 1;
     }
 
 /* Process argument */
@@ -706,7 +713,7 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	    fprintf(stderr,
 		    "ProcessOpt: no handler specified for option %s\n",
 		    tab->opt);
-	    return(1);
+	    return 1;
 	}
 	return( (*tab->handler) (opt, optarg) );
 
@@ -717,7 +724,7 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	    fprintf(stderr,
 		    "ProcessOpt: no variable specified for option %s\n",
 		    tab->opt);
-	    return(1);
+	    return 1;
 	}
 	*(int *)tab->var = 1;
 	break;
@@ -729,7 +736,7 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	    fprintf(stderr,
 		    "ProcessOpt: no variable specified for option %s\n",
 		    tab->opt);
-	    return(1);
+	    return 1;
 	}
 	*(int *)tab->var = atoi(optarg);
 	break;
@@ -741,7 +748,7 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	    fprintf(stderr,
 		    "ProcessOpt: no variable specified for option %s\n",
 		    tab->opt);
-	    return(1);
+	    return 1;
 	}
 	*(float *)tab->var = atof(optarg);
 	break;
@@ -758,9 +765,9 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	fprintf(stderr,
 		"ProcessOpt: invalid processing mode for option %s\n",
 		tab->opt);
-	return(1);
+	return 1;
     }
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -792,14 +799,14 @@ GetOptarg(char **poptarg, int *p_myargc, char ***p_argv, int *p_argc)
     if ( ! error) {			/* yeah, the user got it right */
 	(*p_argc)--;
 	*poptarg = (*p_argv)[0];
-	return(0);
+	return 0;
     }
     else {
 	if ( ! mode_quiet) {
 	    fprintf(stderr, "Argument missing for %s option.\n",
 		    (*p_argv)[0]); 
 	    (*UsageH) ("");
-	    return(1);
+	    return 1;
 	}
     }
 }
@@ -849,7 +856,7 @@ opt_h(char *opt, char *optarg)
 	plHelp();
 	plNotes();
     }
-    return(1);
+    return 1;
 }
 
 /*----------------------------------------------------------------------*\
@@ -867,7 +874,7 @@ opt_v(char *opt, char *optarg)
     if ( ! mode_quiet) {
 	fprintf(stderr, "\nplplot library version: %s\n", PLPLOT_VERSION);
     }
-    return(1);
+    return 1;
 }
 
 /*----------------------------------------------------------------------*\
@@ -883,7 +890,7 @@ opt_dev(char *opt, char *optarg)
 
     plsdev(optarg);
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -899,13 +906,13 @@ opt_o(char *opt, char *optarg)
 
     plsfnam(optarg);
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
 * opt_a()
 *
-* Performs appropriate action for option "a".
+* Performs appropriate action for option "a".  ** OBSOLETE **
 \*----------------------------------------------------------------------*/
 
 static int
@@ -913,9 +920,9 @@ opt_a(char *opt, char *optarg)
 {
     PLFLT aspect;
 
-/* Override aspect ratio */
+    fprintf(stderr, "-a option obsolete -- use -wdev instead\n");
 
-    return(0);
+    return 1;
 }
 
 /*----------------------------------------------------------------------*\
@@ -927,14 +934,11 @@ opt_a(char *opt, char *optarg)
 static int
 opt_ori(char *opt, char *optarg)
 {
-    int orient;
-
 /* Orientation */
 
-    orient = atoi(optarg);
-    plsori(orient);
+    plsdiori(atof(optarg));
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -953,12 +957,12 @@ opt_width(char *opt, char *optarg)
     width = atoi(optarg);
     if (width == 0) {
 	fprintf(stderr, "?invalid width\n");
-	return(1);
+	return 1;
     }
     else
 	plwid(width);
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -973,14 +977,107 @@ opt_bg(char *opt, char *optarg)
     long bgcolor, r, g, b;
 
 /* Background */
+/* Specified as either a 3 or 6 digit hex number */
 
     bgcolor = strtol(optarg, NULL, 16);
-    r = (bgcolor & 0xFF0000) >> 16;
-    g = (bgcolor & 0x00FF00) >> 8;
-    b = (bgcolor & 0x0000FF);
+
+    switch (strlen(optarg)) {
+    case 3:
+	r = (bgcolor & 0xF00) >> 4;
+	g = (bgcolor & 0x0F0);
+	b = (bgcolor & 0x00F) << 4;
+	break;
+
+    case 6:
+	r = (bgcolor & 0xFF0000) >> 16;
+	g = (bgcolor & 0x00FF00) >> 8;
+	b = (bgcolor & 0x0000FF);
+	break;
+
+    default:
+	fprintf(stderr, "Unrecognized background color value\n");
+	return 1;
+    }
+
     plscolbg(r, g, b);
 
-    return(0);
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* opt_wplt()
+*
+* Performs appropriate action for option "wplt".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_wplt(char *opt, char *optarg)
+{
+    char *field;
+    float xl, yl, xr, yr;
+
+/* Window into plot (e.g. "0,0,0.5,0.5") */
+
+    if ((field = strtok(optarg, ",")) == NULL)
+	return 1;
+
+    xl = atof(field);
+
+    if ((field = strtok(NULL, ",")) == NULL)
+	return 1;
+
+    yl = atof(field);
+
+    if ((field = strtok(NULL, ",")) == NULL)
+	return 1;
+
+    xr = atof(field);
+
+    if ((field = strtok(NULL, ",")) == NULL)
+	return 1;
+
+    yr = atof(field);
+
+    plsdiplt(xl, yl, xr, yr);
+    return 0;
+}
+
+/*----------------------------------------------------------------------*\
+* opt_wdev()
+*
+* Performs appropriate action for option "wdev".
+\*----------------------------------------------------------------------*/
+
+static int
+opt_wdev(char *opt, char *optarg)
+{
+    char *field;
+    float xl, yl, xr, yr;
+
+/* Window into device (e.g. "0,0,0.5,0.5") */
+
+    if ((field = strtok(optarg, ",")) == NULL)
+	return 1;
+
+    xl = atof(field);
+
+    if ((field = strtok(NULL, ",")) == NULL)
+	return 1;
+
+    yl = atof(field);
+
+    if ((field = strtok(NULL, ",")) == NULL)
+	return 1;
+
+    xr = atof(field);
+
+    if ((field = strtok(NULL, ",")) == NULL)
+	return 1;
+
+    yr = atof(field);
+
+    plsdidev(xl, yl, xr, yr);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -997,7 +1094,7 @@ opt_color(char *opt, char *optarg)
 
     plscolor(1);
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1014,7 +1111,7 @@ opt_fam(char *opt, char *optarg)
 
     plsfam(1, -1, -1);
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1033,11 +1130,11 @@ opt_fsiz(char *opt, char *optarg)
     bytemax = 1.0e6 * atof(optarg);
     if (bytemax == 0) {
 	fprintf(stderr, "?invalid bytemax\n");
-	return(1);
+	return 1;
     }
     plsfam(-1, -1, bytemax);
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1054,7 +1151,7 @@ opt_np(char *opt, char *optarg)
 
     plspause(0);
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1073,7 +1170,7 @@ opt_nopixmap(char *opt, char *optarg)
     plgpls(&pls);
     pls->nopixmap = 1;
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1092,7 +1189,7 @@ opt_bufmax(char *opt, char *optarg)
     plgpls(&pls);
     pls->bufmax = atoi(optarg);
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1111,7 +1208,7 @@ opt_plserver(char *opt, char *optarg)
     plgpls(&pls);
     pls->plserver = optarg;
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1130,7 +1227,7 @@ opt_plwindow(char *opt, char *optarg)
     plgpls(&pls);
     pls->plwindow = optarg;
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1149,7 +1246,7 @@ opt_tcl_cmd(char *opt, char *optarg)
     plgpls(&pls);
     pls->tcl_cmd = optarg;
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1168,7 +1265,7 @@ opt_auto_path(char *opt, char *optarg)
     plgpls(&pls);
     pls->auto_path = optarg;
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1185,7 +1282,7 @@ opt_px(char *opt, char *optarg)
 
     plssub(atoi(optarg), -1);
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1202,7 +1299,7 @@ opt_py(char *opt, char *optarg)
 
     plssub(-1, atoi(optarg));
 
-    return(0);
+    return 0;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1225,24 +1322,24 @@ opt_geo(char *opt, char *optarg)
     pls->geometry = malloc((size_t) (1+strlen(optarg)) * sizeof(char));
     strcpy(pls->geometry, optarg);
 
-/* Geometry for output window (e.g. 400x400+100+0) */
+/* Geometry for output window (e.g. "400x400+100+0") */
 
     if ((field = strtok(optarg, "x")) == NULL)
-	return(1);
+	return 1;
 
     xwid = atoi(field);
     if (xwid == 0) {
 	fprintf(stderr, "?invalid xwid\n");
-	return(1);
+	return 1;
     }
 
     if ((field = strtok(NULL, "+")) == NULL)
-	return(1);
+	return 1;
 
     ywid = atoi(field);
     if (ywid == 0) {
 	fprintf(stderr, "?invalid ywid\n");
-	return(1);
+	return 1;
     }
 
     if ((field = strtok(NULL, "+")) != NULL) {
@@ -1254,5 +1351,5 @@ opt_geo(char *opt, char *optarg)
 
     plspage(xdpi, ydpi, xwid, ywid, xoff, yoff);
 
-    return(0);
+    return 0;
 }
