@@ -593,9 +593,8 @@ void plD_bop_png(PLStream *pls)
 
 void plD_tidy_png(PLStream *pls)
 {
-   png_Dev *dev=(png_Dev *)pls->dev;
-
    fclose(pls->OutFile);
+   free_mem(pls->dev);
 }
 
 #ifdef PLD_png
