@@ -1,9 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/03/03 19:42:21  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.7  1993/03/15 21:46:50  mjl
+   Changed _clear/_page driver functions to the names _eop/_bop, to be
+   more representative of what's actually going on.  Users still use
+   plpage/plclr.
 
+ * Revision 1.6  1993/03/03  19:42:21  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.5  1993/03/03  17:03:52  mjl
  * Added plscolbg() to modify background color.
  *
@@ -122,15 +127,15 @@ grpolyline(short *x, short *y, PLINT npts)
     plbuf_polyline(&pls[ipls], x, y, npts);
 }
 
-/* Clear screen (or eject page). */
+/* End of page (used to be "clear screen"). */
 /* Here the plot buffer call must be made first */
 
 void
 grclr(void)
 {
-    plbuf_clear(&pls[ipls]);
+    plbuf_eop(&pls[ipls]);
     offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_clear) (&pls[ipls]);
+    (*dispatch_table[offset].pl_eop) (&pls[ipls]);
 }
 
 /* Set up new page. */
@@ -139,8 +144,8 @@ void
 grpage(void)
 {
     offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_page) (&pls[ipls]);
-    plbuf_page(&pls[ipls]);
+    (*dispatch_table[offset].pl_bop) (&pls[ipls]);
+    plbuf_bop(&pls[ipls]);
 }
 
 /* Tidy up device (flush buffers, close file, etc.) */
