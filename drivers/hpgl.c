@@ -38,11 +38,15 @@
 
 void plD_dispatch_init_hp7470	( PLDispatchTable *pdt );
 void plD_dispatch_init_hp7580	( PLDispatchTable *pdt );
+#ifdef PLD_lj_hpgl
 void plD_dispatch_init_hpgl	( PLDispatchTable *pdt );
+#endif
 
 void plD_init_hp7470		(PLStream *);
 void plD_init_hp7580		(PLStream *);
+#ifdef PLD_lj_hpgl
 void plD_init_lj_hpgl		(PLStream *);
+#endif
 
 void plD_line_hpgl		(PLStream *, short, short, short, short);
 void plD_polyline_hpgl		(PLStream *, short *, short *, PLINT);
@@ -111,6 +115,7 @@ void plD_dispatch_init_hp7580( PLDispatchTable *pdt )
                                (plD_init_fp) plD_init_hp7580 );
 }
 
+#ifdef PLD_lj_hpgl
 void plD_dispatch_init_hpgl( PLDispatchTable *pdt )
 {
     hpgl_dispatch_init_helper( pdt,
@@ -118,6 +123,7 @@ void plD_dispatch_init_hpgl( PLDispatchTable *pdt )
                                plDevType_FileOriented, 36,
                                (plD_init_fp) plD_init_lj_hpgl );
 }
+#endif
 
 /*--------------------------------------------------------------------------*\
  * initialize_hpgl_pls()
