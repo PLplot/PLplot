@@ -443,7 +443,7 @@ fi
 # --------------------------------------------------------------------
 
 echo "
-Configuration results (edit and run ./config.status to modify):
+Configuration results:
 
 system:		$system
 prefix:		$prefix
