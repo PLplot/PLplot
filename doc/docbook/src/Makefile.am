@@ -53,7 +53,7 @@ STYLESHEETS_IN = \
 
 built_files = \
   $(INFO_MANIFEST) $(HTML_MANIFEST) $(MAN_MANIFEST) \
-  $(BASE).jadetex $(BASE).dvi \
+  $(BASE).jadetex \
   $(html_DATA) $(print_DATA) $(man3_MANS) $(geninfo_DATA) \
   plplotdoc.txml plplotdoc.xml-info plplotdoc.texi
 
@@ -73,7 +73,7 @@ htmldir = $(prefix)/share/doc/$(PACKAGE)/html
 html_DATA = $(shell ls *.html)
 
 printdir = $(prefix)/share/doc/$(PACKAGE)
-print_DATA = $(BASE).ps.gz $(BASE).pdf
+print_DATA = $(BASE).dvi $(BASE).ps.gz $(BASE).pdf
 
 man3_MANS = $(shell ls *.$(MANVOL))
 
