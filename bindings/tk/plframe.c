@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1993/12/08 06:18:06  mjl
+ * Revision 1.19  1993/12/15 08:57:36  mjl
+ * Eliminated all direct knowledge plframe widget has of client code.  Now
+ * all interactions to the client code are handled by the wrapper procs only.
+ * Previously the plframe widget notified the client code when it was
+ * destroyed, but this is not only bad at times but is also not necessary
+ * (the same thing can be done in the wrapper procs through event bindings).
+ *
+ * Revision 1.18  1993/12/08  06:18:06  mjl
  * Changed to include new plplotX.h header file.
  *
  * Revision 1.17  1993/12/06  07:43:09  mjl
@@ -88,7 +95,6 @@ typedef struct {
     PLINT ipls;			/* Plplot stream number */
     PLINT ipls_save;		/* Plplot stream number, save files */
 
-    char *client;		/* Client main window.  Malloc'ed. */
     PLRDev *plr;		/* Renderer state information.  Malloc'ed */
     XColor *bgColor;		/* Background color */
     char *plpr_cmd;		/* Holds print command name.  Malloc'ed */
@@ -344,7 +350,6 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->geometry = NULL;
     plFramePtr->cursor = None;
     plFramePtr->flags = 0;
-    plFramePtr->client = NULL;
     plFramePtr->prevWidth = Tk_Width(plFramePtr->tkwin);
     plFramePtr->prevHeight = Tk_Height(plFramePtr->tkwin);
     plFramePtr->continue_draw = 0;
@@ -440,29 +445,9 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     c = argv[1][0];
     length = strlen(argv[1]);
 
-/* attach -- specifies the client main window */
-
-    if ((c == 'a') && (strncmp(argv[1], "attach", length) == 0)) {
-	if (argc == 2 || argc > 3) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		    argv[0], " attach clientname\"", (char *) NULL);
-	    result = TCL_ERROR;
-	    goto done;
-	}
-	else {
-	    if (plFramePtr->client != NULL) {
-		ckfree((char *) plFramePtr->client);
-		plFramePtr->client = NULL;
-	    }
-	    plFramePtr->client = ckalloc(strlen(argv[2]+1) * sizeof(char));
-	    strcpy(plFramePtr->client, argv[2]);
-	    result = TCL_OK;
-	}
-    }
-
 /* cmd -- issue a command to the plplot library */
 
-    else if ((c == 'c') && (strncmp(argv[1], "cmd", length) == 0)) {
+    if ((c == 'c') && (strncmp(argv[1], "cmd", length) == 0)) {
 	result = Cmd(interp, plFramePtr, argc-2, argv+2);
     }
 
@@ -480,24 +465,6 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	else {
 	    result = ConfigurePlFrame(interp, plFramePtr, argc-2, argv+2,
 		    TK_CONFIG_ARGV_ONLY);
-	}
-    }
-
-/* Detach -- eliminates references to "client" */
-
-    else if ((c == 'd') && (strncmp(argv[1], "detach", length) == 0)) {
-	if (argc != 2) {
-	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		    argv[0], " detach\"", (char *) NULL);
-	    result = TCL_ERROR;
-	    goto done;
-	}
-	else {
-	    if (plFramePtr->client != NULL) {
-		ckfree((char *) plFramePtr->client);
-		plFramePtr->client = NULL;
-	    }
-	    result = TCL_OK;
 	}
     }
 
@@ -625,7 +592,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 
     else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
-	 "\":  must be attach, cmd, configure, draw, detach, info, ",
+	 "\":  must be cmd, configure, draw, info, ",
 	 "openfifo, orient, page, print, read, redraw, save, view, ",
 	 "xscroll, or yscroll", (char *) NULL);
 
@@ -700,16 +667,13 @@ DestroyPlFrame(ClientData clientData)
 	ckfree(plFramePtr->devName);
     }
 
-/* Tell client to quit and close fifo */
-
-    client_cmd(plFramePtr, "after 1 abort");
+/* Close fifo */
 
     if (plr->file != NULL) {
 	fclose(plr->file);
     }
-    if (plFramePtr->client != NULL) {
-	ckfree((char *) plFramePtr->client);
-    }
+
+/* Delete main data structures */
 
     ckfree((char *) plFramePtr->plr);
     ckfree((char *) plFramePtr);
@@ -717,8 +681,6 @@ DestroyPlFrame(ClientData clientData)
 /* Tell plplot to clean up */
 
     plend();
-    plFramePtr->tkwin_initted = 0;
-    plFramePtr->plplot_initted = 0;
 }
 
 /*
@@ -1886,34 +1848,6 @@ gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, char **argv)
     *yl = MIN(y0, y1);
     *xr = MAX(x0, x1);
     *yr = MAX(y0, y1);
-}
-
-/*----------------------------------------------------------------------*\
-* client_cmd
-*
-* Sends specified command to client, aborting on an error.
-\*----------------------------------------------------------------------*/
-
-static int
-client_cmd(register PlFrame *plFramePtr, char *cmd)
-{
-    dbug_enter("client_cmd");
-
-    if (plFramePtr->client != NULL) {
-
-	Tcl_SetVar(plFramePtr->interp, "client", plFramePtr->client, 0);
-	if (tcl_eval(plFramePtr, "winfo $client exists")) {
-#ifdef DEBUG_ENTER
-	    fprintf(stderr, "Sending command: %s to %s\n", cmd,
-		    plFramePtr->client);
-#endif
-	    return(Tcl_VarEval(plFramePtr->interp,
-			       "send $client ", cmd, (char **) NULL));
-	}
-    }
-    Tcl_AppendResult(plFramePtr->interp, "client", plFramePtr->client,
-		     " does not exist", (char *) NULL);
-    return TCL_ERROR;
 }
 
 /*----------------------------------------------------------------------*\
