@@ -48,9 +48,18 @@ for the first C demo, or
 
 for the first Fortran demo.
 
-Before running any program that uses plplot, copy the font files plstnd5.fnt
-and plxtnd5.fnt (in the lib directory) to a place where PLPLOT can find them.
-The default search path is:
+The easiest way to install the library is to type "make install".  This
+assumes there exists a directory /usr/local/plplot and
+/usr/local/plplot/include that you can write into.  I've found it is not
+difficult to get the system administrator to give you ownership of such
+a directory on systems that you use.  At the sysadm's option, softlinks
+can be made to /usr/local/lib, /usr/local/bin, /usr/local/include, or
+whatever, leaving you free to install new plplot versions as they become
+available.
+
+The font files will be put into /usr/local/plplot by "make install", but
+there are actually several places where PLPLOT looks for them.  The default
+search path is:
 
        current directory
        $(HOME)/lib/
