@@ -266,10 +266,10 @@ plbuf_fill(PLStream *pls)
 static void
 plbuf_swin(PLStream *pls, PLWindow *plwin)
 {
-    fwrite(&plwin->dxmi, sizeof(float), 1, pls->plbufFile);
-    fwrite(&plwin->dxma, sizeof(float), 1, pls->plbufFile);
-    fwrite(&plwin->dymi, sizeof(float), 1, pls->plbufFile);
-    fwrite(&plwin->dyma, sizeof(float), 1, pls->plbufFile);
+    fwrite(&plwin->dxmi, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->dxma, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->dymi, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&plwin->dyma, sizeof(PLFLT), 1, pls->plbufFile);
 
     fwrite(&plwin->wxmi, sizeof(PLFLT), 1, pls->plbufFile);
     fwrite(&plwin->wxma, sizeof(PLFLT), 1, pls->plbufFile);
@@ -507,10 +507,10 @@ rdbuf_swin(PLStream *pls)
 {
     PLWindow plwin;
 
-    fread(&plwin.dxmi, sizeof(float), 1, pls->plbufFile);
-    fread(&plwin.dxma, sizeof(float), 1, pls->plbufFile);
-    fread(&plwin.dymi, sizeof(float), 1, pls->plbufFile);
-    fread(&plwin.dyma, sizeof(float), 1, pls->plbufFile);
+    fread(&plwin.dxmi, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.dxma, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.dymi, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&plwin.dyma, sizeof(PLFLT), 1, pls->plbufFile);
 
     fread(&plwin.wxmi, sizeof(PLFLT), 1, pls->plbufFile);
     fread(&plwin.wxma, sizeof(PLFLT), 1, pls->plbufFile);

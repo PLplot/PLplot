@@ -86,8 +86,8 @@ static void
 ps_init(PLStream *pls)
 {
     PSDev *dev;
-    float pxlx = YPSSIZE/LPAGE_X;
-    float pxly = XPSSIZE/LPAGE_Y;
+    PLFLT pxlx = YPSSIZE/LPAGE_X;
+    PLFLT pxly = XPSSIZE/LPAGE_Y;
 
     pls->dev_fill0 = 1;		/* Can do solid fills */
 
@@ -381,14 +381,14 @@ plD_bop_ps(PLStream *pls)
 
     fprintf(OF, "bop\n");
     if (pls->color) {
-	float r, g, b;
+	PLFLT r, g, b;
 	if (pls->cmap0[0].r != 0xFF ||
 	    pls->cmap0[0].g != 0xFF ||
 	    pls->cmap0[0].b != 0xFF ) {
 
-	    r = ((float) pls->cmap0[0].r) / 255.;
-	    g = ((float) pls->cmap0[0].g) / 255.;
-	    b = ((float) pls->cmap0[0].b) / 255.;
+	    r = ((PLFLT) pls->cmap0[0].r) / 255.;
+	    g = ((PLFLT) pls->cmap0[0].g) / 255.;
+	    b = ((PLFLT) pls->cmap0[0].b) / 255.;
 
 	    fprintf(OF, "B %.4f %.4f %.4f C F\n", r, g, b);
 	}
@@ -477,14 +477,14 @@ plD_state_ps(PLStream *pls, PLINT op)
 	/* else fallthrough */
     case PLSTATE_COLOR1:
 	if (pls->color) {
-	    float r = ((float) pls->curcolor.r) / 255.0;
-	    float g = ((float) pls->curcolor.g) / 255.0;
-	    float b = ((float) pls->curcolor.b) / 255.0;
+	    PLFLT r = ((PLFLT) pls->curcolor.r) / 255.0;
+	    PLFLT g = ((PLFLT) pls->curcolor.g) / 255.0;
+	    PLFLT b = ((PLFLT) pls->curcolor.b) / 255.0;
 
 	    fprintf(OF, " S\n%.4f %.4f %.4f C", r, g, b);
 	}
 	else {
-	    float r = ((float) pls->curcolor.r) / 255.0;
+	    PLFLT r = ((PLFLT) pls->curcolor.r) / 255.0;
 	    fprintf(OF, " S\n%.4f G", 1.0 - r);
 	}
 	break;

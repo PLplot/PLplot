@@ -970,7 +970,7 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 		    tab->opt);
 	    return 1;
 	}
-	*(float *)tab->var = atof(optarg);
+	*(PLFLT *)tab->var = atof(optarg);
 	break;
 
     case PL_OPT_STRING:
@@ -1500,7 +1500,7 @@ static int
 opt_wplt(char *opt, char *optarg, void *client_data)
 {
     char *field;
-    float xl, yl, xr, yr;
+    PLFLT xl, yl, xr, yr;
 
     if ((field = strtok(optarg, ",")) == NULL)
 	return 1;
@@ -1562,7 +1562,7 @@ opt_fsiz(char *opt, char *optarg, void *client_data)
     PLINT bytemax;
     int len = strlen(optarg);
     char lastchar = optarg[len-1];
-    float multiplier = 1.0e6;
+    PLFLT multiplier = 1.0e6;
     char *spec = malloc(len+1);
 
 /* Interpret optional suffix */
