@@ -34,7 +34,9 @@ static int nobuffered = 0;      /* make it a buffered device by default */
 static int noinitcolors = 0;    /* Call InitColors by default */
                                 /* use "-drvopt noinitcolors" to leave colors uninitialized */
 
-static int defaultvisual = 0;   /* use "-drvopt defvis" to use the default visual */
+static int defaultvisual = 1;   /* use "-drvopt defvis=0" to not use the default visual */
+
+static int usepthreads = 1;     /* use "-drvopt usepth=0" to not use pthreads to redisplay */
 
 /*
  * When -drvopt defvis is defined, DefaultVisual() is used to get the visual.
@@ -179,6 +181,7 @@ static DrvOpt xwin_options[] = {{"sync", DRV_INT, &synchronize, "Synchronized X 
 				{"nobuffered", DRV_INT, &nobuffered, "Sets unbuffered operation (0|1)"},
 				{"noinitcolors", DRV_INT, &noinitcolors, "Sets cmap0 allocation (0|1)"},
 				{"defvis", DRV_INT, &defaultvisual, "Use the Default Visual (0|1)"},
+				{"usepth", DRV_INT, &usepthreads, "Use pthreads (0|1)"},
 				{NULL, DRV_INT, NULL, NULL}};
 
 void plD_dispatch_init_xw( PLDispatchTable *pdt )
@@ -260,7 +263,7 @@ plD_init_xw(PLStream *pls)
     plP_setphy(xmin, xmax, ymin, ymax);
 
 #ifdef HAVE_PTHREAD
-    {
+    if (usepthreads) {
       pthread_mutexattr_t mutexatt;
       pthread_attr_t pthattr;
 
@@ -312,7 +315,8 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     dbug_enter("plD_line_xw");
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_lock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_lock(&events_mutex);
 #endif
 
     CheckForEvents(pls);
@@ -332,7 +336,8 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 	XDrawLine(xwd->display, dev->pixmap, dev->gc, x1, y1, x2, y2);
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_unlock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_unlock(&events_mutex);
 #endif
 }
 
@@ -375,7 +380,8 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
     dbug_enter("plD_polyline_xw");
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_lock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_lock(&events_mutex);
 #endif
 
     CheckForEvents(pls);
@@ -394,7 +400,8 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
 		   CoordModeOrigin);
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_unlock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_unlock(&events_mutex);
 #endif
 }
 
@@ -413,7 +420,8 @@ plD_eop_xw(PLStream *pls)
     dbug_enter("plD_eop_xw");
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_lock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_lock(&events_mutex);
 #endif
 
     XFlush(xwd->display);
@@ -424,7 +432,8 @@ plD_eop_xw(PLStream *pls)
 	WaitForPage(pls);
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_unlock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_unlock(&events_mutex);
 #endif
 }
 
@@ -443,7 +452,8 @@ plD_bop_xw(PLStream *pls)
     dbug_enter("plD_bop_xw");
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_lock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_lock(&events_mutex);
 #endif
 
     if (dev->write_to_window) {
@@ -459,7 +469,8 @@ plD_bop_xw(PLStream *pls)
     pls->page++;
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_unlock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_unlock(&events_mutex);
 #endif
 }
 
@@ -478,13 +489,16 @@ plD_tidy_xw(PLStream *pls)
     dbug_enter("plD_tidy_xw");
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_lock(&events_mutex);
-    if (pthread_cancel(dev->updater) == 0)
-      pthread_join(dev->updater, NULL);
+    if (usepthreads)
+      {
+	pthread_mutex_lock(&events_mutex);
+	if (pthread_cancel(dev->updater) == 0)
+	  pthread_join(dev->updater, NULL);
 
-    pthread_mutex_unlock(&events_mutex);
-    if (--already == 0)
-      pthread_mutex_destroy(&events_mutex);
+	pthread_mutex_unlock(&events_mutex);
+	if (--already == 0)
+	  pthread_mutex_destroy(&events_mutex);
+      }
 #endif
 
     if (dev->is_main) {
@@ -519,7 +533,8 @@ plD_state_xw(PLStream *pls, PLINT op)
     dbug_enter("plD_state_xw");
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_lock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_lock(&events_mutex);
 #endif
 
     CheckForEvents(pls);
@@ -582,7 +597,8 @@ plD_state_xw(PLStream *pls, PLINT op)
     }
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_unlock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_unlock(&events_mutex);
 #endif
 }
 
@@ -622,7 +638,8 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
     dbug_enter("plD_esc_xw");
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_lock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_lock(&events_mutex);
 #endif
 
     switch (op) {
@@ -691,7 +708,8 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
     }
 
 #ifdef HAVE_PTHREAD
-    pthread_mutex_unlock(&events_mutex);
+    if (usepthreads)
+      pthread_mutex_unlock(&events_mutex);
 #endif
 }
 
@@ -854,8 +872,9 @@ OpenXwin(PLStream *pls)
 
 /* Open display */
 #ifdef HAVE_PTHREAD
-	if (! XInitThreads())
-	  plexit("xwin: XInitThreads() not successful.\n");
+	if (usepthreads)
+	  if (! XInitThreads())
+	    plexit("xwin: XInitThreads() not successful.\n");
 #endif
 	xwd->display = XOpenDisplay(pls->FileName);
 	if (xwd->display == NULL) {
@@ -1167,67 +1186,75 @@ WaitForPage(PLStream *pls)
 static void
 events_thread(void *pls)
 {
-  PLStream *lpls = (PLStream *) pls;
-  XwDev *dev = (XwDev *) lpls->dev;
-  XwDisplay *xwd = (XwDisplay *) dev->xwd;
-  struct timespec delay;
-  XEvent event;
-  long event_mask;
-  sigset_t set;
+  if (usepthreads) {
+    PLStream *lpls = (PLStream *) pls;
+    XwDev *dev = (XwDev *) lpls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    PLStream *oplsc;
+    struct timespec delay;
+    XEvent event;
+    long event_mask;
+    sigset_t set;
+    
+    /*
+     * only treats exposures and resizes, but remove usual events from queue,
+     * as it can be disturbing to not have them acknowledged in real time,
+     * because the program is busy, and suddenly all being acknowledged.
+     * Also, the locator ("L" key) is sluggish if driven by the thread.
+     *
+     * But this approach is a problem when the thread removes events
+     * from the queue while the program is responsible! The user hits 'L'
+     * and nothing happens, as the thread removes it.
+     *
+     * Perhaps the "Q" key should have a different treatment, quiting the
+     * program anyway?
+     *
+     * Changed: does not remove non treated events from the queue
+     */
 
-  /*
-   * only treats exposures and resizes, but remove usual events from queue,
-   * as it can be disturbing to not have them acknowledged in real time,
-   * because the program is busy, and suddenly all being acknowledged.
-   * Also, the locator ("L" key) is sluggish if driven by the thread.
-   *
-   * But this approach is a problem when the thread removes events
-   * from the queue while the program is responsible! The user hits 'L'
-   * and nothing happens, as the thread removes it.
-   *
-   * Perhaps the "Q" key should have a different treatment, quiting the
-   * program anyway?
-   *
-   * Changed: does not remove non treated events from the queue
-   */
+    event_mask =  ExposureMask | StructureNotifyMask;
 
-  event_mask =  ExposureMask | StructureNotifyMask;
+    /* block all signal for this thread */
+    sigemptyset(&set);
+    /* sigfillset(&set);  can't be all signals, decide latter */
+    sigaddset(&set, SIGINT);
 
-  /* block all signal for this thread */
-  sigemptyset(&set);
-  /* sigfillset(&set);  can't be all signals, decide latter */
-  sigaddset(&set, SIGINT);
+    sigprocmask(SIG_BLOCK, &set, NULL);
 
-  sigprocmask(SIG_BLOCK, &set, NULL);
+    pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 
-  pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+    delay.tv_sec = 0;
+    delay.tv_nsec = 10000000; /* this thread runs 10 times a second. (1/10 ms) */
 
-  delay.tv_sec = 0;
-  delay.tv_nsec = 10000000; /* this thread runs 10 times a second. (1/10 ms) */
+    while(1) {
+      pthread_mutex_lock(&events_mutex);
 
-  while(1) {
-    pthread_mutex_lock(&events_mutex);
+      if (dev->is_main && !lpls->plbuf_read &&
+	  ++dev->instr % dev->max_instr == 0) {
 
-    if (dev->is_main &&	! lpls->plbuf_read &&
-	++dev->instr % dev->max_instr == 0) {
-
-      dev->instr = 0;
-      while (XCheckWindowEvent(xwd->display, dev->window, event_mask, &event)) {
-	switch (event.type) {
-	case Expose:
-	  ExposeEH(lpls, &event);
-	  break;
-	case ConfigureNotify:
-	  ResizeEH(lpls, &event);
-	  break;
+	dev->instr = 0;
+	while (XCheckWindowEvent(xwd->display, dev->window, event_mask, &event)) {
+	  // as ResizeEH() ends up calling plRemakePlot(), that indirectly uses the current
+	  // stream, one needs to temporarily set plplot current stream to this threads stream
+	  oplsc = plsc;
+	  plsc = lpls;
+	  switch (event.type) {
+	  case Expose:
+	    ExposeEH(lpls, &event);
+	    break;
+	  case ConfigureNotify:
+	    ResizeEH(lpls, &event);
+	    break;
+	  }
+	  plsc = oplsc;
 	}
       }
-    }
 
-    pthread_mutex_unlock(&events_mutex);
-    nanosleep(&delay, NULL); /* 10ms in linux */
-    /* pthread_yield(NULL); */ /* this puts too much load on the CPU */
+      pthread_mutex_unlock(&events_mutex);
+      nanosleep(&delay, NULL); /* 10ms in linux */
+      /* pthread_yield(NULL); */ /* this puts too much load on the CPU */
+    }
   }
 }
 #endif
