@@ -581,10 +581,10 @@ origin
       necessary.  Advancing the page via &pleop; and &plbop; is useful when
       a page break is desired at a particular point when plotting to
       subpages.  Another use for &pleop; and &plbop; is when plotting pages
-      to different files, since you can manually set the file name (or file
-      handle) by calling &plsfnam; or &plsfile; after the call to &pleop;
-      (in fact some drivers may only support a single page per file, making
-      this a necessity).  One way to handle this case automatically is to
+      to different files, since you can manually set the file name
+      by calling &plsfnam; after the call to &pleop;.
+      (In fact some drivers may only support a single page per file, making
+      this a necessity.)  One way to handle this case automatically is to
       page advance via &pladv;, but enable familying (see &plsfam;) with a
       small limit on the file size so that a new family member file will be
       created on each page break.
@@ -3217,6 +3217,43 @@ space for this (80 characters is safe).
 	  <para>
 	    Pointer to variable with the maximum file size (in bytes) for a
 	    family file.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+  <sect1 id="plgfci" renderas="sect3">
+    <title>
+      <function>plgfci</function>: Get FCI (font characterization integer)
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plgfci</function>
+	</funcdef>
+        <paramdef><parameter>fci</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Gets information about the current font using the FCI approach.
+      See <xref linkend="fci"/> for more information.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>fci</parameter>
+	  (<literal>PLUNICODE *</literal>, output)
+	</term>
+	<listitem>
+	  <para>
+	    Pointer to PLUNICODE (unsigned 32-bit integer) variable which
+	    is updated with current FCI value.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7602,6 +7639,44 @@ characters and their corresponding decimal ASCII values:
 	<listitem>
 	  <para>
 	    Maximum file size (in bytes) for a family file.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plsfci" renderas="sect3">
+    <title>
+      <function>plsfci</function>: Set FCI (font characterization integer)
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plsfci</function>
+	</funcdef>
+        <paramdef><parameter>fci</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Sets font characteristics to be used at the start of the next string
+      using the FCI approach.
+      See <xref linkend="fci"/> for more information.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>fci</parameter>
+	  (<literal>PLUNICODE</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    PLUNICODE (unsigned 32-bit integer) value of FCI.
 	  </para>
 	</listitem>
       </varlistentry>

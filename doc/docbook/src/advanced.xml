@@ -2,8 +2,9 @@
     advanced.xml: "Advanced Use of PLplot" chapter
 
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-    Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
-    Copyright (C) 2003  Joao Cardoso
+    Copyright (C) 1999, 2000, 2001, 2002, 2005 Alan W. Irwin
+    Copyright (C) 1999, 2000, 2001, 2002, 2003 Rafael Laboissiere
+    Copyright (C) 2004 Andrew Roach
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -1155,6 +1156,11 @@ void plD_tidy_png(PLStream *pls)
     </para>
 
     <para>
+      The lengths of major and minor ticks on the axes are set up by the
+      routines &plsmaj; and &plsmin;.
+    </para>
+
+    <para>
       Another routine &pllab; provides for text labels for the bottom, left
       hand side and top of the viewport.  These labels are not clipped,
       even though they lie outside the viewport (but they are clipped at
@@ -1577,11 +1583,25 @@ plcmap1_def(void)
   </sect1>
   
   <sect1 id="characters">
-    <title>Setting Character and Symbol Attributes</title>
+    <title>Setting Character Attributes</title>
 
     <para>
-      There are two character sets included with PLplot.  These are known
-      as the standard and extended character sets respectively.  The
+      Plplot uses two separate font systems to display characters. The
+      traditional system uses Hershey fonts which are available for all
+      device drivers, while the recently introduced unicode system is
+      currently available only for the ps, psc, png, jpeg, and gif devices.
+      For details on how to enable the unicode font system for additional
+      device drivers using the FreeType library, see 
+      <xref linkend="FreeType-notes"/>.
+    </para>
+
+  <sect2 id="hersheyfont">
+    <title>Hershey fonts</title>
+
+    <para>
+      There are two Hershey font character sets included with PLplot.
+      These are known
+      as the standard and extended character sets.  The
       standard character set is a subset of the extended set.  It contains
       177 characters including the ascii characters in a normal style font,
       the Greek alphabet and several plotter symbols.  The extended
@@ -1590,8 +1610,8 @@ plcmap1_def(void)
     </para>
 
     <para>
-      The standard character set is loaded into memory automatically when
-      &plstar; or &plstart; is called.  The extended character set is
+      The extended character set is loaded into memory automatically when
+      &plstar; or &plstart; is called.  The standard character set is
       loaded by calling &plfontld;.  The extended character set requires
       about 50 KBytes of memory, versus about 5 KBytes for the standard
       set.  &plfontld; can be used to switch between the extended and
@@ -1602,7 +1622,7 @@ plcmap1_def(void)
     <para>
       When the extended character set is loaded there are four different
       font styles to choose from.  In this case, the routine &plfont; sets
-      up the default font for all character strings.  It may be overridden
+      up the default Hershey font for all character strings.  It may be overridden
       for any portion of a string by using an escape sequence within the
       text, as described below.  This routine has no effect when the
       standard font set is loaded.  The default font (1) is simple and
@@ -1616,12 +1636,12 @@ plcmap1_def(void)
       <itemizedlist>
 	<listitem>
 	  <para>
-	    <literal>font = 1</literal>: normal simple font
+	    <literal>font = 1</literal>: normal (sans-serif) font
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    <literal>font = 2</literal>: roman font
+	    <literal>font = 2</literal>: roman (serif) font
 	  </para>
 	</listitem>
 	<listitem>
@@ -1636,38 +1656,306 @@ plcmap1_def(void)
 	</listitem>
       </itemizedlist>
     </para>
+  </sect2>
 
+  <sect2 id="unicodefont">
+    <title>Unicode fonts</title>
     <para>
-      The routine &plschr; is used to set up the size of subsequent
-      characters drawn.  The actual height of a character is the product of
-      the default character size and a scaling factor.  If no call is made
-      to &plschr;, the default character size is set up depending on the
-      number of subpages defined in the call to &plstar; or &plstart;, and
-      the scale is set to 1.0.  Under normal circumstances, it is
-      recommended that the user does not alter the default height, but
-      simply use the scale parameter.  This can be done by calling &plschr;
-      with <literal>def = 0.0</literal> and <literal>scale</literal> set to
-      the desired multiple of the default height.  If the default height is
-      to be changed, <literal>def</literal> is set to the new default
-      height in millimeters, and the new character height is again set to
-      <literal>def</literal> multiplied by <literal>scale</literal>.
+      The advantages of the unicode fonts over the more traditional PLplot
+      Hershey fonts are the availability of many additional glyphs
+      (including mathematical symbols and glyphs from other than
+      western-European languages) and much better display of characters on
+      computer screens using anti-aliasing and hinting.  Unicode fonts are
+      obtained by specifying a command-line option of -drvopt text for
+      the devices (currently ps, psc, png, jpeg, and gif) where it has
+      been implemented.
+    </para>
+    <para>
+      For the ps and psc devices, there is a fixed relationship between the
+      FCI (font characterization integer, see <xref linkend="fci"/>) 
+      and the actual Type 1
+      fonts that are being used.  This fixed relationship is specified in
+      the Type1Lookup array in include/plfci.h.  This array maps the
+      font-family attributes of sans-serif, serif, monotype, script, and
+      symbol to the standard postscript font families called Helvetica,
+      Times-Roman, Courier, Times-Roman, and Symbol.  (There is no script
+      font family amongst the 35 standard Type 1 postscript fonts so that is
+      why we map the font-family attribute of script to Times-Roman.)
+      Similarly, this array maps the font-style attributes of upright,
+      italic or oblique and the font-weight attributes of medium or bold to
+      the appropriate variety of the Helvetica, Times-Roman, Courier,
+      and Symbol font families that are part of the 
+      35 standard Type 1 postscript fonts.  These standard postscript fonts
+      are normally installed on a user's system using the gsfonts package.
     </para>
 
     <para>
-      The routine &plssym; sets up the size of all subsequent symbols drawn
-      by calls to &plpoin; and &plsym;.  It operates analogously to
-      &plschr; as described above.
+      For the devices handled by the FreeType library (currently png, jpeg,
+      and gif) there is a configurable relationship between the FCI (font
+      characterization integer, see <xref linkend="fci"/>) 
+      and the TrueType fonts that are actually used.  
     </para>
-
     <para>
-      The lengths of major and minor ticks on the axes are set up by the
-      routines &plsmaj; and &plsmin;.
+      On Unix/Linux systems, the TrueType fonts corresponding to the 30 possible
+      valid FCIs can be specified using ./configure options. (Use
+      ./configure --help to see the possibilities and also the default
+      values for the fonts.) These ./configure defaults for the 30
+      possibilites are taken from fonts available from the ttf-freefont font
+      package.  We recommend this font package because it has a rather
+      complete set of glyphs for most unicode blocks.  (We also recommend
+      the gucharmap application for determining other unicode font
+      possibilities on your system that are available via the FreeType
+      library.)
     </para>
+    <para>
+      On Windows systems, the fixed default TrueType fonts are specified in the
+      include/plfci.h file.  (NOT PROGRAMMED YET, so this statement
+      will probably NEED REVISION.)
+    </para>
+    <para>
+      For all systems, the 30 possible TrueType fonts can be specified at run
+      time using the following environment variables:
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SANS_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SERIF_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_MONO_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SCRIPT_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SYMBOL_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SANS_ITALIC_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SERIF_ITALIC_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_MONO_ITALIC_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SCRIPT_ITALIC_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SYMBOL_ITALIC_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SANS_OBLIQUE_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SERIF_OBLIQUE_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_MONO_OBLIQUE_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SCRIPT_OBLIQUE_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SYMBOL_OBLIQUE_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SANS_BOLD_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SERIF_BOLD_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_MONO_BOLD_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SCRIPT_BOLD_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SYMBOL_BOLD_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SANS_BOLD_ITALIC_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SERIF_BOLD_ITALIC_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_MONO_BOLD_ITALIC_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SCRIPT_BOLD_ITALIC_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SYMBOL_BOLD_ITALIC_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SANS_BOLD_OBLIQUE_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SERIF_BOLD_OBLIQUE_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_MONO_BOLD_OBLIQUE_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SCRIPT_BOLD_OBLIQUE_FONT
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    PLPLOT_FREETYPE_SYMBOL_BOLD_OBLIQUE_FONT
+	  </para>
+	</listitem>
+      </itemizedlist>
+      On Unix/Linux systems if these environment variables are not specified
+      with an absolute path starting with "/", then the absolute path is
+      specified by the configured default (see ./configure --help) or at
+      run time with the
+      environment variable PLPLOT_FREETYPE_FONT_DIR.
+    </para>
+  </sect2>
 
-  </sect1>
-  
-  <sect1 id="escape-sequences">
-    <title>Escape Sequences in Text</title>
+  <sect2 id="fci">
+    <title>FCI</title>
+    <para>
+      We specify the properties of unicode fonts with the FCI (font
+      characterization integer).  The FCI is a 32-bit unsigned integer whose
+      left-most hexadecimal digit is marked with an 0x1 to distinguish it
+      from a unicode (UCS4) integer (which is also an unsigned 32-bit
+      integer but with a maximum value of 0x0010ffff). Users obtain the current
+      FCI by calling &plgfci; and store a new FCI to be used at the start
+      of each subsequent string using &plsfci;. Independent
+      hexadecimal values within the FCI are characterized by the
+      hexdigit and hexpower.  The hexpower is defined as the power of 16 or
+      number of hexadecimal places to the left of the "decimal place" in the FCI 
+      where the hexdigit is stored.
+      The interpretation of the hexdigit and hexpower values in the FCI are
+      given in <xref linkend="fci-table"/>.
+    </para>
+    <table frame="all" id="fci-table">
+      <title>FCI interpretation</title>
+      <tgroup cols="7" align="center">
+	<tbody valign="top">
+	  <row>
+	    <entry></entry>
+	    <entry>hexdigit --&gt;</entry>
+	    <entry>0</entry>
+	    <entry>1</entry>
+	    <entry>2</entry>
+	    <entry>3</entry>
+	    <entry>4</entry>
+	  </row>
+	  <row>
+	    <entry>Font attribute</entry>
+	    <entry>hexpower</entry>
+	    <entry></entry>
+	    <entry></entry>
+	    <entry></entry>
+	    <entry></entry>
+	    <entry></entry>
+	  </row>
+	  <row>
+	    <entry>font-family</entry>
+	    <entry>0</entry>
+	    <entry>sans-serif</entry>
+	    <entry>serif</entry>
+	    <entry>monospace</entry>
+	    <entry>script</entry>
+	    <entry>symbol</entry>
+	  </row>
+	  <row>
+	    <entry>font-style</entry>
+	    <entry>1</entry>
+	    <entry>upright</entry>
+	    <entry>italic</entry>
+	    <entry>oblique</entry>
+	    <entry></entry>
+	    <entry></entry>
+	  </row>
+	  <row>
+	    <entry>font-weight</entry>
+	    <entry>2</entry>
+	    <entry>medium</entry>
+	    <entry>bold</entry>
+	    <entry></entry>
+	    <entry></entry>
+	    <entry></entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </table>
+    <para>
+      Note the maximum value of hexdigit is 7 and the maximum value of
+      hexpower is 6 so there is substantial room for expansion of this
+      scheme.  On the other hand, since each font attribute is independent
+      of the rest, what is implemented now gives us a maximum of 30
+      different font possibilities which is probably more than enough for
+      most plotting purposes.
+    </para>
+  </sect2>
+
+  <sect2 id="escape-sequences">
+    <title>Escape sequences in text</title>
 
     <para>
       The routines which draw text all allow you to include escape
@@ -1675,7 +1963,10 @@ plcmap1_def(void)
       that are interpreted as instructions to change fonts, draw
       superscripts and subscripts, draw non-ASCII (e.g. Greek), and so on.
       All escape sequences start with a number symbol
-      (<literal>#</literal>).
+      (<literal>#</literal>) by default.  Some language interfaces have
+      the capability of changing this default, but we will assume
+      (<literal>#</literal>) in the remaining documentation of the escape
+      sequences.
     </para>
 
     <para>
@@ -1722,12 +2013,12 @@ plcmap1_def(void)
 	</listitem>
 	<listitem>
 	  <para>
-	    <literal>#fn</literal>: switch to normal font
+	    <literal>#fn</literal>: switch to normal (sans-serif) font
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    <literal>#fr</literal>: switch to Roman font
+	    <literal>#fr</literal>: switch to Roman (serif) font
 	  </para>
 	</listitem>
 	<listitem>
@@ -1744,6 +2035,39 @@ plcmap1_def(void)
 	  <para>
 	    <literal>#(nnn)</literal>: Hershey character nnn (1 to 4
 	    decimal digits) 
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <literal>#[nnn]</literal>: unicode character nnn (nnn can
+	    be decimal or hexadecimal [e.g., starting with 0x]) (UNICODE ONLY).
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <literal>&lt;0x1nnnnnnn&gt;</literal>: absolute FCI to be used to
+	    change fonts in mid-string.  (nnnnnnn must be exactly 7
+	    digits). (UNICODE ONLY).
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <literal>&lt;0xmn&gt;</literal>: change just one attribute
+	    of the FCI in mid-string where m is the hexdigit and n is
+	    the hexpower.  If more than two digits are given (so long
+	    as the eigth digit does not mark this as an absolute FCI, see
+	    above) they
+	    are ignored. (UNICODE ONLY).
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    <literal>&lt;FCI COMMAND STRING/&gt;</literal>: the FCI COMMAND
+	    STRING is currently one of "sans-serif", "serif", "monospace",
+	    "script", "symbol", "upright", "italic", "oblique" "medium",
+	    or "bold" (without the surrounding quotes).  These FCI
+	    COMMAND STRINGS change one attribute of the FCI according to
+	    their name. (UNICODE ONLY).
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -1905,7 +2229,48 @@ plcmap1_def(void)
       </tgroup>
     </table>
     
+    <para>
+      The escape sequences <literal>#fn</literal>, <literal>#fr</literal>,
+      <literal>#fi</literal>, <literal>#fs</literal>, and 
+      <literal>#(nnn)</literal> are designed for the four Hershey fonts, but
+      an effort has been made to allow some limited forward compatibility so
+      these escape sequences have a reasonable result when unicode
+      fonts are being used.  However, for maximum flexibility when using
+      unicode fonts, these 5 escape sequences should be replaced by using
+      the 4 escape sequences <literal>#[nnn]</literal>,
+      <literal>&lt;0x1nnnnnnn&gt;</literal>,
+      <literal>&lt;0xmn&gt;</literal>, or <literal>&lt;FCI COMMAND
+      STRING/&gt;</literal> as appropriate.
+    </para>
+
+  </sect2>
     
+  <sect2 id="character-size">
+    <title>Character size adjustment</title>
+
+    <para>
+      The routine &plschr; is used to set up the size of subsequent
+      characters drawn.  The actual height of a character is the product of
+      the default character size and a scaling factor.  If no call is made
+      to &plschr;, the default character size is set up depending on the
+      number of subpages defined in the call to &plstar; or &plstart;, and
+      the scale is set to 1.0.  Under normal circumstances, it is
+      recommended that the user does not alter the default height, but
+      simply use the scale parameter.  This can be done by calling &plschr;
+      with <literal>def = 0.0</literal> and <literal>scale</literal> set to
+      the desired multiple of the default height.  If the default height is
+      to be changed, <literal>def</literal> is set to the new default
+      height in millimeters, and the new character height is again set to
+      <literal>def</literal> multiplied by <literal>scale</literal>.
+    </para>
+
+    <para>
+      The routine &plssym; sets up the size of all subsequent characters drawn
+      by calls to &plpoin; and &plsym;.  It operates analogously to
+      &plschr; as described above.
+    </para>
+
+  </sect2>
   </sect1>
 
   <sect1 id="tri-d-plots">

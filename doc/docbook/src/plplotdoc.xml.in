@@ -3,10 +3,12 @@
     plplotdoc.xml.in: Master file for the PLplot documentation
 
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Alan W. Irwin
+    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005  Alan W. Irwin
     Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
+    Copyright (C) 2004  Andrew Roach
     Copyright (C) 2004  Andrew Ross
+    Copyright (C) 2004  Arjen Markus
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -110,7 +112,7 @@
 <!ENTITY plgdiori '<link linkend="plgdiori"><function>plgdiori</function></link>'>
 <!ENTITY plgdiplt '<link linkend="plgdiplt"><function>plgdiplt</function></link>'>
 <!ENTITY plgfam '<link linkend="plgfam"><function>plgfam</function></link>'>
-<!ENTITY plgfile '<link linkend="plgfile"><function>plgfile</function></link>'>
+<!ENTITY plgfci '<link linkend="plgfci"><function>plgfci</function></link>'>
 <!ENTITY plgfnam '<link linkend="plgfnam"><function>plgfnam</function></link>'>
 <!ENTITY plglevel '<link linkend="plglevel"><function>plglevel</function></link>'>
 <!ENTITY plgpage '<link linkend="plgpage"><function>plgpage</function></link>'>
@@ -174,7 +176,7 @@
 <!ENTITY plsetopt '<link linkend="plsetopt"><function>plsetopt</function></link>'>
 <!ENTITY plsexit '<link linkend="plsexit"><function>plsexit</function></link>'>
 <!ENTITY plsfam '<link linkend="plsfam"><function>plsfam</function></link>'>
-<!ENTITY plsfile '<link linkend="plsfile"><function>plsfile</function></link>'>
+<!ENTITY plsfci '<link linkend="plsfci"><function>plsfci</function></link>'>
 <!ENTITY plsfnam '<link linkend="plsfnam"><function>plsfnam</function></link>'>
 <!ENTITY plshades '<link linkend="plshades"><function>plshades</function></link>'>
 <!ENTITY plshade '<link linkend="plshade"><function>plshade</function></link>'>
@@ -258,12 +260,28 @@
       <holder>Geoffrey Furnish, Maurice LeBrun</holder>
     </copyright>
     <copyright>
-      <year>1999, 2000, 2001, 2002, 2003, 2004</year>
-      <holder>Alan W. Irwin, Rafael Laboissi&egrave;re</holder>
+      <year>1999, 2000, 2001, 2002, 2003, 2004, 2005</year>
+      <holder>Alan W. Irwin</holder>
+    </copyright>
+    <copyright>
+      <year>1999, 2000, 2001, 2002, 2003, 2004, 2004</year>
+      <holder>Rafael Laboissi&egrave;re</holder>
     </copyright>
     <copyright>
       <year>2003</year>
       <holder>Joao Cardoso</holder>
+    </copyright>
+    <copyright>
+      <year>2004</year>
+      <holder>Andrew Roach</holder>
+    </copyright>
+    <copyright>
+      <year>2004</year>
+      <holder>Andrew Ross</holder>
+    </copyright>
+    <copyright>
+      <year>2004</year>
+      <holder>Arjen Markus</holder>
     </copyright>
 
     <legalnotice>
