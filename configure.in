@@ -158,20 +158,62 @@ divert(-1)
 # For example, the ps and psc drivers are defined in the ps.c source
 # code file.
 
+# N.B. This is ordered the same as the *driver pair* list below to help
+# humans keep the associations straight, but this is not necessary.
+
 define(PL_DRIVER_LIST,
-[plmeta, null, xterm, tek4010, tek4010f, tek4107, tek4107f, mskermit,
-conex, linuxvga, vlt, versaterm, dg300, png, jpeg, cgm, ps, psc, xfig, ljii,
-hp7470, hp7580, lj_hpgl, ljiip, imp, xwin, tk, pbm, gnome, pstex, ntk, tkwin])
+[cgm, 
+dg300, 
+png, jpeg, 
+gnome, 
+hp7470, hp7580, lj_hpgl, 
+imp, 
+linuxvga, 
+ljii, 
+ljiip, 
+null, 
+pbm, 
+ntk, 
+plmeta, 
+ps, psc, 
+pstex, 
+xterm, tek4010, tek4107, mskermit, 
+versaterm, vlt, conex, tek4010f, tek4107f, 
+tk, 
+tkwin, 
+xfig, 
+xwin])
 
 # Note specifically which drivers are known to be loadable.  Eventually,
 # hopefully, every driver will show up on this list.  However, we add them one
 # at a time since each will have its own peculiarities in the build process
 # (none missing at present).
 
+# N.B. This is ordered the same as the *driver pair* list below to help
+# humans keep the associations straight, but this is not necessary.
+
 define([PL_DYNAMIC_DRIVER_LIST],
-[plmeta null xterm tek4010 tek4010f tek4107 tek4107f mskermit \
-conex linuxvga vlt versaterm dg300 png jpeg cgm ps psc xfig ljii \
-hp7470 hp7580 lj_hpgl ljiip imp xwin tk pbm gnome pstex ntk tkwin])
+[cgm \
+dg300 \
+png jpeg \
+gnome \
+hp7470 hp7580 lj_hpgl \
+imp \
+linuxvga \
+ljii \
+ljiip \
+null \
+pbm \
+ntk \
+plmeta \
+ps psc \
+pstex \
+xterm tek4010 tek4107 mskermit \
+versaterm vlt conex tek4010f tek4107f \
+tk \
+tkwin \
+xfig \
+xwin])
 
 # We think of a "device" as the output medium.  Could be a machine
 # style (Tektronix, X11), or a file format (Postscript).
@@ -187,14 +229,31 @@ hp7470 hp7580 lj_hpgl ljiip imp xwin tk pbm gnome pstex ntk tkwin])
 # and drivers.  This will be inspected to build up the set of drivers
 # to be compiled based on which devices are selected.
 
+# Ordered alphabetically by second in each pair (the driver) for human
+# consumption, but this is not necessary.
+
 define([PL_device_driver_pair_list],
-[plmeta:plmeta null:null \
+[cgm:cgm \
+dg300:dg300 \
+png:gd jpeg:gd \
+gnome:gnome \
+hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
+imp:impress \
+linuxvga:linuxvga \
+ljii:ljii \
+ljiip:ljiip \
+null:null \
+pbm:pbm \
+ntk:ntk \
+plmeta:plmeta \
+ps:ps psc:ps \
+pstex:pstex \
 xterm:tek tek4010:tek tek4107:tek mskermit:tek \
 versaterm:tek vlt:tek conex:tek tek4010f:tek tek4107f:tek \
-linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd cgm:cgm psc:ps ps:ps xfig:xfig \
-ljiip:ljiip ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
-imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome pstex:pstex ntk:ntk \
-tkwin:tkwin])
+tk:tk \
+tkwin:tkwin \
+xfig:xfig \
+xwin:xwin])
 
 # Macro to set one driver enable value
 
@@ -229,13 +288,13 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
     if test $driver_is_dynamic != 0; then
 	found=0
 	for drv in $DYNAMIC_DRIVERS; do
-	    if test "$drv" = "$driver$LIB_TAG"; then
+	    if test "$drv" = "$driver$LIB_TAG""_drv.la"; then
 		found=1
 		break
 	    fi
 	done
 	if test $found = 0; then
-	    DYNAMIC_DRIVERS="$DYNAMIC_DRIVERS $driver$LIB_TAG"
+	    DYNAMIC_DRIVERS="$DYNAMIC_DRIVERS $driver$LIB_TAG""_drv.la"
 	    echo -n $driver ""
 	fi
 
@@ -249,7 +308,7 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 	    fi
 	done
 	if test $found = 0; then
-	    TCL_STATIC_DRIVERS="$TCL_STATIC_DRIVERS $driver"
+	    TCL_STATIC_DRIVERS="$TCL_STATIC_DRIVERS $driver$LIB_TAG"
 	fi
     else
 	found=0
@@ -260,7 +319,7 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
 	    fi
 	done
 	if test $found = 0; then
-	    STATIC_DRIVERS="$STATIC_DRIVERS $driver"
+	    STATIC_DRIVERS="$STATIC_DRIVERS $driver$LIB_TAG"
 	fi
     fi
 
@@ -490,9 +549,13 @@ else
   DRIVERS_DB="drivers.db"
   LIB_TAG=""
 fi
-AM_CONDITIONAL(with_double, test "$with_double" = yes)
+AM_CONDITIONAL(with_double, [test "$with_double" = yes])
 AC_SUBST(LIB_TAG)
 AC_DEFINE_UNQUOTED(DRIVERS_DB, "$DRIVERS_DB")
+
+### Dynamic driver conditional
+AM_CONDITIONAL(enable_dyndrivers, [test "$with_double" = yes])
+
 
 ### C++ binding
 
@@ -507,7 +570,7 @@ fi
 
 MY_ARG_ENABLE(f77,
   [  --enable-f77            compile Fortran-77 interface code ($enable_f77)])
-AM_CONDITIONAL(enable_f77, test "$enable_f77" = yes)
+AM_CONDITIONAL(enable_f77, [test "$enable_f77" = yes])
 if test "$enable_f77" = yes ; then
   AC_PROG_F77
   AC_CHECK_PROGS(M4, m4, "no")
@@ -523,16 +586,16 @@ fi
 
 MY_ARG_ENABLE(python,
   [  --enable-python         compile Python interface code ($enable_python)])
-AM_CONDITIONAL(enable_python, test "$enable_python" = yes)
+AM_CONDITIONAL(enable_python, [test "$enable_python" = yes])
 
 ### tcl binding
 
 MY_ARG_ENABLE(tcl,
   [  --enable-tcl            compile Tcl interface code ($enable_tcl)])
-AM_CONDITIONAL(enable_tcl, test "$enable_tcl" = yes)
-AM_CONDITIONAL(enable_itcl, test "$enable_itcl" = yes)
-AM_CONDITIONAL(enable_tk, test "$enable_tk" = yes)
-AM_CONDITIONAL(enable_tkwin, test "$enable_tkwin" = yes)
+AM_CONDITIONAL(enable_tcl, [test "$enable_tcl" = yes])
+AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
+AM_CONDITIONAL(enable_tk, [test "$enable_tk" = yes])
+AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
 
 MY_ARG_ENABLE(itcl,
   [  --enable-itcl           enable incr Tcl interface code ($enable_itcl)])
@@ -630,56 +693,17 @@ if test "$enable_dyndrivers" = "yes"; then
 
     for drv in $DYNAMIC_DEVICES; do
 	case $drv in
-	    null )
-	    echo "null:Null device:-1:null"$LIB_TAG"_drv.so:42:null" >> drivers/$DRIVERS_DB
-	    ;;
-	    plmeta )
-	    echo "plmeta:PLplot Native Meta-File:0:plmeta"$LIB_TAG"_drv.so:26:plm" >> drivers/$DRIVERS_DB
-	    ;;
-	    xfig )
-	    echo "xfig:Fig file:0:xfig"$LIB_TAG"_drv.so:31:xfig" >> drivers/$DRIVERS_DB
-	    ;;
-	    pstex )
-	    echo "pstex:Combined Postscript/LaTeX files:0:ps"$LIB_TAG"_drv.so:41:pstex" >> drivers/$DRIVERS_DB
-	    ;;
-	    png )
-	    echo "png:PNG file:0:gd"$LIB_TAG"_drv.so:39:png" >> drivers/$DRIVERS_DB
-	    ;;
-	    jpeg )
-	    echo "jpeg:JPEG file:0:gd"$LIB_TAG"_drv.so:40:jpeg" >> drivers/$DRIVERS_DB
-	    ;;
 	    cgm )
 	    echo "cgm:CGM file:0:cgm"$LIB_TAG"_drv.so:44:cgm" >> drivers/$DRIVERS_DB
-	    ;;
-	    xterm )
-	    echo "xterm:Xterm Window:1:tek"$LIB_TAG"_drv.so:18:xterm" >> drivers/$DRIVERS_DB
-	    ;;
-	    tek4010 )
-	    echo "tekt:Tektronix Terminal (4010):1:tek"$LIB_TAG"_drv.so:19:tekt" >> drivers/$DRIVERS_DB
-	    ;;
-	    tek4107 )
-	    echo "tek4107t:Tektronix Terminal (4105/4107):1:tek"$LIB_TAG"_drv.so:20:tek4107t" >> drivers/$DRIVERS_DB
-	    ;;
-	    vlt )
-	    echo "vlt:VLT vt100/tek emulator:1:tek"$LIB_TAG"_drv.so:23:vlt" >> drivers/$DRIVERS_DB
 	    ;;
 	    conex )
 	    echo "conex:Conex vt320/tek emulator:1:tek"$LIB_TAG"_drv.so:24:conex" >> drivers/$DRIVERS_DB
 	    ;;
-	    versaterm )
-	    echo "versaterm:Versaterm vt100/tek emulator:1:tek"$LIB_TAG"_drv.so:22:versaterm" >> drivers/$DRIVERS_DB
+	    dg300 )
+	    echo "dg300:DG300 Terminal:0:dg300"$LIB_TAG"_drv.so:25:dg300" >> drivers/$DRIVERS_DB
 	    ;;
-	    mskermit )
-	    echo "mskermit:MS-Kermit emulator:1:tek"$LIB_TAG"_drv.so:21:mskermit" >> drivers/$DRIVERS_DB
-	    ;;
-	    tek4010f )
-	    echo "tekf:Tektronix File (4010):0:tek"$LIB_TAG"_drv.so:27:tekf" >> drivers/$DRIVERS_DB
-	    ;;
-	    tek4107f )
-	    echo "tek4107f:Tektronix File (4105/4107):0:tek"$LIB_TAG"_drv.so:28:tek4107f" >> drivers/$DRIVERS_DB
-	    ;;
-	    pbm )
-	    echo "pbm:PDB (PPM) Driver:0:pbm"$LIB_TAG"_drv.so:38:pbm" >> drivers/$DRIVERS_DB
+	    gnome )
+	    echo "gnome:Gnome Canvas:1:gnome"$LIB_TAG"_drv.so:6:gnome" >> drivers/$DRIVERS_DB
 	    ;;
 	    hp7470 )
 	    echo "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl"$LIB_TAG"_drv.so:34:hp7470" >> drivers/$DRIVERS_DB
@@ -687,11 +711,17 @@ if test "$enable_dyndrivers" = "yes"; then
 	    hp7580 )
 	    echo "hp7580:HP 7580 Plotter File (Large Plotter):0:hpgl"$LIB_TAG"_drv.so:35:hp7580" >> drivers/$DRIVERS_DB
 	    ;;
+	    imp )
+	    echo "imp:Impress File:0:impress"$LIB_TAG"_drv.so:37:imp" >> drivers/$DRIVERS_DB
+	    ;;
+	    jpeg )
+	    echo "jpeg:JPEG file:0:gd"$LIB_TAG"_drv.so:40:jpeg" >> drivers/$DRIVERS_DB
+	    ;;
+	    linuxvga )
+	    echo "linuxvga:Linux VGA driver:0:linuxvga"$LIB_TAG"_drv.so:8:vga" >> drivers/$DRIVERS_DB
+	    ;;
 	    lj_hpgl )
 	    echo "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl"$LIB_TAG"_drv.so:36:lj_hpgl" >> drivers/$DRIVERS_DB
-	    ;;
-	    dg300 )
-	    echo "dg300:DG300 Terminal:0:dg300"$LIB_TAG"_drv.so:25:dg300" >> drivers/$DRIVERS_DB
 	    ;;
 	    ljii )
 	    echo "ljii:LaserJet II Bitmap File (150 dpi):0:ljii"$LIB_TAG"_drv.so:33:ljii" >> drivers/$DRIVERS_DB
@@ -699,11 +729,23 @@ if test "$enable_dyndrivers" = "yes"; then
 	    ljiip )
 	    echo "ljiip:LaserJet IIp/deskjet compressed graphics:0:ljiip"$LIB_TAG"_drv.so:32:ljiip" >> drivers/$DRIVERS_DB
 	    ;;
-	    imp )
-	    echo "imp:Impress File:0:impress"$LIB_TAG"_drv.so:37:imp" >> drivers/$DRIVERS_DB
+	    mskermit )
+	    echo "mskermit:MS-Kermit emulator:1:tek"$LIB_TAG"_drv.so:21:mskermit" >> drivers/$DRIVERS_DB
 	    ;;
-	    gnome )
-	    echo "gnome:Gnome Canvas:1:gnome"$LIB_TAG"_drv.so:6:gnome" >> drivers/$DRIVERS_DB
+	    ntk )
+	    echo "ntk:New tk driver:1:ntk"$LIB_TAG"_drv.so:43:ntk" >> drivers/$DRIVERS_DB
+	    ;;
+	    null )
+	    echo "null:Null device:-1:null"$LIB_TAG"_drv.so:42:null" >> drivers/$DRIVERS_DB
+	    ;;
+	    pbm )
+	    echo "pbm:PDB (PPM) Driver:0:pbm"$LIB_TAG"_drv.so:38:pbm" >> drivers/$DRIVERS_DB
+	    ;;
+	    plmeta )
+	    echo "plmeta:PLplot Native Meta-File:0:plmeta"$LIB_TAG"_drv.so:26:plm" >> drivers/$DRIVERS_DB
+	    ;;
+	    png )
+	    echo "png:PNG file:0:gd"$LIB_TAG"_drv.so:39:png" >> drivers/$DRIVERS_DB
 	    ;;
 	    ps )
 	    echo "ps:PostScript File (monochrome):0:ps"$LIB_TAG"_drv.so:29:psm" >> drivers/$DRIVERS_DB
@@ -711,8 +753,20 @@ if test "$enable_dyndrivers" = "yes"; then
 	    psc )
 	    echo "psc:PostScript File (color):0:ps"$LIB_TAG"_drv.so:30:psc" >> drivers/$DRIVERS_DB
 	    ;;
-	    xwin )
-	    echo "xwin:X-Window (Xlib):1:xwin"$LIB_TAG"_drv.so:5:xw" >> drivers/$DRIVERS_DB
+	    pstex )
+	    echo "pstex:Combined Postscript/LaTeX files:0:ps"$LIB_TAG"_drv.so:41:pstex" >> drivers/$DRIVERS_DB
+	    ;;
+	    tek4107 )
+	    echo "tek4107t:Tektronix Terminal (4105/4107):1:tek"$LIB_TAG"_drv.so:20:tek4107t" >> drivers/$DRIVERS_DB
+	    ;;
+	    tek4107f )
+	    echo "tek4107f:Tektronix File (4105/4107):0:tek"$LIB_TAG"_drv.so:28:tek4107f" >> drivers/$DRIVERS_DB
+	    ;;
+	    tek4010 )
+	    echo "tekt:Tektronix Terminal (4010):1:tek"$LIB_TAG"_drv.so:19:tekt" >> drivers/$DRIVERS_DB
+	    ;;
+	    tek4010f )
+	    echo "tekf:Tektronix File (4010):0:tek"$LIB_TAG"_drv.so:27:tekf" >> drivers/$DRIVERS_DB
 	    ;;
 	    tk )
 	    echo "tk:Tcl/TK Window:1:tk"$LIB_TAG"_drv.so:7:tk" >> drivers/$DRIVERS_DB
@@ -720,11 +774,20 @@ if test "$enable_dyndrivers" = "yes"; then
 	    tkwin )
 	    echo "tkwin:New tk driver:1:tkwin"$LIB_TAG"_drv.so:45:tkwin" >> drivers/$DRIVERS_DB
 	    ;;
-	    ntk )
-	    echo "ntk:New tk driver:1:ntk"$LIB_TAG"_drv.so:43:ntk" >> drivers/$DRIVERS_DB
+	    versaterm )
+	    echo "versaterm:Versaterm vt100/tek emulator:1:tek"$LIB_TAG"_drv.so:22:versaterm" >> drivers/$DRIVERS_DB
 	    ;;
-	    linuxvga )
-	    echo "linuxvga:Linux VGA driver:0:linuxvga"$LIB_TAG"_drv.so:8:vga" >> drivers/$DRIVERS_DB
+	    vlt )
+	    echo "vlt:VLT vt100/tek emulator:1:tek"$LIB_TAG"_drv.so:23:vlt" >> drivers/$DRIVERS_DB
+	    ;;
+	    xfig )
+	    echo "xfig:Fig file:0:xfig"$LIB_TAG"_drv.so:31:xfig" >> drivers/$DRIVERS_DB
+	    ;;
+	    xterm )
+	    echo "xterm:Xterm Window:1:tek"$LIB_TAG"_drv.so:18:xterm" >> drivers/$DRIVERS_DB
+	    ;;
+	    xwin )
+	    echo "xwin:X-Window (Xlib):1:xwin"$LIB_TAG"_drv.so:5:xw" >> drivers/$DRIVERS_DB
 	    ;;
 	esac
     done
