@@ -189,7 +189,8 @@ fi
 if test "$enable_cxx" = "yes"; then
     if test -z "$CXX"; then
 	if test "$with_gcc" = "yes"; then
-	    CXX=gcc
+	    # Need to use 'g++' with gcc for proper operation
+	    CXX=g++
 	else
 	    CXX=CC
 	    case "$system" in
