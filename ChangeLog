@@ -1,3 +1,10 @@
+2002-12-29   Maurice LeBrun <mlebrun@users.sourceforge.net>
+
+	* bindings/tk: added sample app-defaults files, howto on their
+	  use, and code to suck the app-defaults file "PLplot" into the
+	  options db, which is then used to set geometry, fonts, colors,
+	  etc.
+
 2002-12-29  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* Implement additional 2-d arrays for the swig-based Java API. These
