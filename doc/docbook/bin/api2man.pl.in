@@ -170,7 +170,7 @@ for ($i = 0; $i < $ns; $i++) {
       }
       elsif ($node eq "para") {
         if ($got_synopsis) {
-          $desc .= ".P\n" . $contents;
+          $desc .= "\n.P\n" . $contents;
         }
         else {
           $synopsis = $contents;

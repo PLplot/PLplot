@@ -59,6 +59,7 @@ CLEANFILES = \
   *.jadetex *.aux *.dvi *.ps* *.pdf* inline.ent *.log *.eps TMP.* \
   *.out *.info* *.texi *.txml *.xml-info *-tmp *.$(MANVOL)
 
+info_TEXINFOS = plplotdoc.texi
 
 if enable_docbook
 
@@ -71,6 +72,8 @@ html_DATA = $(shell ls *.html)
 
 pdfdir = $(prefix)/share/doc/$(PACKAGE)
 pdf_DATA = $(BASE).pdf
+
+man3_MANS = $(shell ls *.$(MANVOL))
 
 all: $(TARGETS)
 

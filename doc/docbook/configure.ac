@@ -4,37 +4,37 @@ dnl ### AM_INIT_AUTOMAKE(plplotdoc, 0.4.3)
 
 dnl Web site Installation
 
-AC_ARG_WITH(www-user, 
+AC_ARG_WITH(www-user,
   AC_HELP_STRING([--with-www-user=NAME], [User name at WWW host]),
   [WWW_USER="$withval@"],
   [WWW_USER=""])
 AC_SUBST(WWW_USER)
 
-AC_ARG_WITH(www-group, 
+AC_ARG_WITH(www-group,
   AC_HELP_STRING([--with-www-group=NAME], [Group name at WWW host]),
   [WWW_GROUP="$withval"],
   [WWW_GROUP="plplot"])
 AC_SUBST(WWW_GROUP)
 
-AC_ARG_WITH(www-host, 
+AC_ARG_WITH(www-host,
   AC_HELP_STRING([--with-www-host=NAME], [Host name at WWW host]),
   [WWW_HOST="$withval"],
   [WWW_HOST="shell1.sourceforge.net"])
 AC_SUBST(WWW_HOST)
 
-AC_ARG_WITH(www-dir, 
+AC_ARG_WITH(www-dir,
   AC_HELP_STRING([--with-www-dir=NAME], [Dir name at WWW host]),
   [WWW_DIR="$withval"],
   [WWW_DIR="/home/groups/p/pl/plplot/htdocs/resources/docbook-manual"])
 AC_SUBST(WWW_DIR)
 
-AC_ARG_WITH(rsh-command, 
+AC_ARG_WITH(rsh-command,
   AC_HELP_STRING([--with-rsh-command=NAME], [Remote shell command]),
   [RSH="$withval"],
   [RSH="ssh"])
 AC_SUBST(RSH)
 
-AC_ARG_WITH(rcp-command, 
+AC_ARG_WITH(rcp-command,
   AC_HELP_STRING([--with-rcp-command=NAME], [Remote copy command]),
   [RCP="$withval"],
   [RCP="scp"])
@@ -42,7 +42,7 @@ AC_SUBST(RCP)
 
 dnl Website of the PLplot project
 
-AC_ARG_WITH(plplot-website, 
+AC_ARG_WITH(plplot-website,
   AC_HELP_STRING([--with-plplot-website=NAME], [PLplot web site]),
   [PLPLOT_WEBSITE="$withval"],
   [PLPLOT_WEBSITE="plplot.sf.net"])
@@ -64,10 +64,10 @@ AC_SUBST(BASE_HTML)
 dnl System wide XML declaration
 
 XML_DECL=/usr/lib/sgml/declaration/xml.dcl
-AC_ARG_WITH(xml-declaration, 
-  AC_HELP_STRING([--with-xml-declaration=FILE], 
+AC_ARG_WITH(xml-declaration,
+  AC_HELP_STRING([--with-xml-declaration=FILE],
     [System wide file containing the SGML declaration for XML.
-     Must be a absolute file name. 
+     Must be a absolute file name.
      Default: /usr/lib/sgml/declaration/xml.dcl]),
   [XML_DECL=$withval])
 AC_SUBST(XML_DECL)
@@ -103,7 +103,7 @@ AC_DEFUN(CHECK_PROG, [
 
 pushdef([PROG], translit($1, [a-z], [A-Z]))
 
-AC_ARG_WITH($1, 
+AC_ARG_WITH($1,
   AC_HELP_STRING([--with-$1=PATH/]PROG, [Alternative $1 program]),
   [prog_$1=$withval],
   [prog_$1=$1])
@@ -186,7 +186,7 @@ dtd_$2="$8"
 
 dnl SGML catalogs
 
-AC_ARG_WITH(sgml-catalogs, 
+AC_ARG_WITH(sgml-catalogs,
   AC_HELP_STRING([--with-sgml-catalogs=CATALOGS],
     [SGML catalogs in a colon (:) separated list.
      Must contain only existent files.]),
@@ -213,8 +213,8 @@ dnl File extensions
 AC_DEFUN([FILE_EXT], [
 pushdef([FILE], translit($1, [a-z], [A-Z]))
 FILE[_EXT=$1]
-AC_ARG_WITH($1-extension, 
-  AC_HELP_STRING([--with-$1-extension=EXT], 
+AC_ARG_WITH($1-extension,
+  AC_HELP_STRING([--with-$1-extension=EXT],
     [File extension for the generated FILE files. (Default value: $1)]),
   [FILE[_EXT=$withval]])
 AC_SUBST(FILE[_EXT])
@@ -298,7 +298,7 @@ AC_DEFUN(CHECK_PERL_SCRIPT, [
 
 pushdef([PROG], translit($1, [a-z], [A-Z]))
 
-AC_ARG_WITH($1, 
+AC_ARG_WITH($1,
   AC_HELP_STRING([--with-$1=PATH/]PROG, [Alternative $1 Perl script]),
   [prog_$1=$withval],
   [prog_$1=/usr/bin/$1])
@@ -329,10 +329,11 @@ Program $1 not found.
 popdef([PROG])
 ])
 
-CHECK_PERL_SCRIPT(docbook2texixml, [INFO],
-                  [http://docbook2X.sourceforge.net])
-CHECK_PERL_SCRIPT(texi_xml, [INFO],
-                  [http://docbook2X.sourceforge.net])
+DOCBOOK2TEXIXML=`pwd`/doc/docbook/perl/docbook2texixml
+AC_SUBST(DOCBOOK2TEXIXML)
+TEXI_XML=`pwd`/doc/docbook/perl/db2x_texixml
+AC_SUBST(TEXI_XML)
+
 CHECK_PROG(makeinfo, [INFO], [http://www.gnu.org])
 
 AC_DEFUN(CHECK_PM, [
@@ -361,33 +362,12 @@ pldb_cv_$2=$pldb_cv_$2
 ])
 ])
 
-AC_ARG_WITH(docbook2x_incdir,
-  AC_HELP_STRING([--with-docbook2x-incdir=DIR],
-    [Directory containing the specific Perl module files needed by the 
-     docbook2X tools]),
-  [DOCBOOK2X_INC=-I$withval],
-  [DOCBOOK2X_INC=""])
-
+DOCBOOK2X_INC=-I`pwd`/doc/docbook/perl
 AC_SUBST(DOCBOOK2X_INC)
 
 CHECK_PM(XML::DOM, xml_dom, [INFO])
 CHECK_PM(XML::Parser::PerlSAX, xml_parser_perlsax, [INFO])
 CHECK_PM(XML::Writer, xml_writer, [INFO])
-
-AC_MSG_CHECKING([for docbook2X specific module XML::DOM::Map])
-if test -f ${DOCBOOK2X_INC#-I}/XML/DOM/Map.pm ; then
-  has_db2xpm=yes
-else
-  has_db2xpm=no
-  [INFO=""]
-  AC_OUTPUT_COMMANDS(
-  if test $has_db2xpm = no ; then
-  AC_MSG_WARN([
-Could not find docbook2X specific module XML::DOM::Map.
-    Specify its path using --with-docbook2x-incdir.])
-  fi, [has_db2xpm=$has_db2xpm])
-fi
-AC_MSG_RESULT([$has_db2xpm])
 
 dnl Man pages building
 
@@ -448,7 +428,7 @@ AC_ARG_ENABLE(info,
     AC_MSG_WARN([
 Info pages will not be build at your request.])
    fi])
-AC_ARG_ENABLE(man, 
+AC_ARG_ENABLE(man,
   AC_HELP_STRING([--disable-man], [Disable build of man pages]),
   [if test "$enable_man" = "no" ; then
     MAN=""
