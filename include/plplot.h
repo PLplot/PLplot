@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.25  1993/04/26 20:00:53  mjl
-   Configuration info added for a DEC Alpha-based machine running OSF/1.
+   Revision 1.26  1993/05/08 16:08:30  mjl
+   Bumped version number to 4.99d, but the 4.99d release won't happen for
+   some time yet.
 
+ * Revision 1.25  1993/04/26  20:00:53  mjl
+ * Configuration info added for a DEC Alpha-based machine running OSF/1.
+ *
  * Revision 1.24  1993/03/28  08:45:05  mjl
  * Added support for NEC SX-3.  Also moved determination of stub name handling
  * to plstubs.h (more appropriate).
@@ -115,7 +119,7 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#define PLPLOT_VERSION "4.99c"
+#define PLPLOT_VERSION "4.99d"
 
 /*
 * The define of _POSIX_SOURCE is slightly dangerous.  Should probably be
