@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.56  1995/01/06 07:47:09  mjl
+ * Revision 1.57  1995/03/11 21:41:30  mjl
+ * All drivers: eliminated unnecessary variable initializations, other cleaning
+ * up.  Changed structure for graphics input to a PLGraphicsIn (was PLCursor).
+ * Substantially rewrote input loop to handle new locate mode (type 'L' while
+ * at a page break).  Implemented true graphic crosshairs for use while locate
+ * mode is active.
+ *
+ * Revision 1.56  1995/01/06  07:47:09  mjl
  * Replaced calls to XCheckMaskEvent with calls to XCheckWindowEvent, since
  * there may be more than one event handler active per display (suggested by
  * Radey Shouman).  All drivers: pls->width now more sensibly handled.  If
@@ -45,56 +52,11 @@
  * procedure results in a BadMatch when calling XCreateWindow on some systems
  * (Suns).  To really get it right, XGetRGBColormaps or something similar
  * must be used to pair the visual with a compatible colormap.
- *
- * Revision 1.48  1994/08/05  09:25:05  mjl
- * Added the static variable "synchronize", to be set when you want
- * synchronous X operation.  Only for debugging, otherwise it's too slow.
- *
- * Revision 1.47  1994/07/27  22:18:01  mjl
- * Fixed bug in window cleanup and termination that was causing a core dump
- * for apps using multiple plframe widgets.
- *
- * Revision 1.46  1994/07/22  22:20:36  mjl
- * Fixed bug in WM hints, introduced during the last bug fix.  It was causing
- * the window to come up without user intervention and in a poor location for
- * tvtwm.  Now it should get BOTH the default and the user specified cases
- * right regardless of window manager (I hope).
- *
- * Revision 1.45  1994/07/19  22:30:32  mjl
- * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
- * is xwin, ps, etc.  See plDevs.h for more detail.
- *
- * Revision 1.44  1994/07/18  20:28:46  mjl
- * Fixed a cast.
- *
- * Revision 1.43  1994/07/01  22:38:04  mjl
- * All display-dependent data broken off into a separate structure.  The X
- * driver now saves only one of these XwDisplay structs for each physical
- * X display.  These are then shared between all PLplot streams.  This
- * ensures that using multiple streams -> multiple X windows does not cause
- * abnormal termination due to running out of resources since most are now
- * shared (allocated colors, graphics contexts, etc).  The drawback is that
- * colors are no longer independent between windows, if created by a single
- * process (but this can also be an advantage).
- *
- * Revision 1.42  1994/06/17  21:21:11  mjl
- * Fixed background color for mono displays, should now come up white (much
- * easier to see).  Middle mouse button press now returns world coordinates
- * at cursor, but only correct for last plot on the page (submitted by
- * Mark Glover glover@zombi.res.utc.com).
- *
- * Revision 1.41  1994/06/09  20:05:58  mjl
- * Fixed Visual handling to support grayscale and mono displays.  Enabled
- * exporting of colormap hack flag for other files (plframe.c) that need it.
- *
- * Revision 1.40  1994/05/27  22:19:17  mjl
- * Window now placed properly when offsets (+x+y) are specified.  Thanks
- * to Mark S. Glover (glover@zombi.res.utc.com) for the fix.
 */
 
 /*	xwin.c
 
-	PLPLOT X-windows device driver.
+	PLplot X-windows device driver.
 */
 #include "plDevs.h"
 
@@ -114,6 +76,15 @@ static int synchronize = 0;	/* change to 1 for synchronized operation */
  */
 
 #define DEFAULT_VISUAL 1
+
+/* Number of instructions to skip between querying the X server for events */
+
+#define MAX_INSTR 20
+
+/* These need to be distinguished since the handling is slightly different. */
+
+#define LOCATE_INVOKED_VIA_API		1
+#define LOCATE_INVOKED_VIA_DRIVER	2
 
 /* Set constants for dealing with colormap.  In brief:
  *
@@ -146,6 +117,7 @@ static XColor sxwm_colors[256];
 static XwDisplay *xwDisplay[PLXDISPLAYS];
 
 /* Function prototypes */
+/* Initialization */
 
 static void  Init		(PLStream *pls);
 static void  InitMain		(PLStream *pls);
@@ -154,32 +126,59 @@ static void  AllocCustomMap	(PLStream *pls);
 static void  AllocCmap0		(PLStream *pls);
 static void  AllocCmap1		(PLStream *pls);
 static void  MapMain		(PLStream *pls);
-static void  WaitForPage	(PLStream *pls);
-static void  HandleEvents	(PLStream *pls);
-static void  StoreCmap0		(PLStream *pls);
-static void  StoreCmap1		(PLStream *pls);
 static void  CreatePixmap	(PLStream *pls);
-static void  FillPolygon	(PLStream *pls);
 static void  GetVisual		(PLStream *pls);
 static void  AllocBGFG		(PLStream *pls);
 
+/* Routines to poll the X-server */
+
+static void  WaitForPage	(PLStream *pls);
+static void  CheckForEvents	(PLStream *pls);
+static void  HandleEvents	(PLStream *pls);
+
+/* Event handlers */
+
 static void  MasterEH		(PLStream *pls, XEvent *event);
-static void  KeyEH		(PLStream *pls, XEvent *event);
-static void  MouseEH		(PLStream *pls, XEvent *event);
 static void  ExposeEH		(PLStream *pls, XEvent *event);
 static void  ResizeEH		(PLStream *pls, XEvent *event);
+static void  MotionEH		(PLStream *pls, XEvent *event);
+static void  KeyEH		(PLStream *pls, XEvent *event);
+static void  ButtonEH		(PLStream *pls, XEvent *event);
+static void  LookupXKeyEvent	(PLStream *pls, XEvent *event);
+static void  LookupXButtonEvent	(PLStream *pls, XEvent *event);
 
-static void  ExposeCmd		(PLStream *pls);
+static void  ProcessKey		(PLStream *pls);
+static void  LocateKey		(PLStream *pls);
+static void  ProcessButton	(PLStream *pls);
+static void  LocateButton	(PLStream *pls);
+static void  Locate		(PLStream *pls);
+
+/* Routines for manipulating graphic crosshairs */
+
+static void  CreateXhairs	(PLStream *pls);
+static void  DestroyXhairs	(PLStream *pls);
+static void  DrawXhairs		(PLStream *pls, int x0, int y0);
+static void  UpdateXhairs	(PLStream *pls);
+
+/* Escape function commands */
+
+static void  ExposeCmd		(PLStream *pls, PLDisplay *ptr);
 static void  RedrawCmd		(PLStream *pls);
-static void  ResizeCmd		(PLStream *pls, PLWindow *ptr);
-static void  GetCursor		(PLStream *pls, PLCursor *ptr);
+static void  ResizeCmd		(PLStream *pls, PLDisplay *ptr);
+static void  GetCursorCmd	(PLStream *pls, PLGraphicsIn *ptr);
+static void  FillPolygonCmd	(PLStream *pls);
 
-/*----------------------------------------------------------------------*\
+/* Miscellaneous */
+
+static void  StoreCmap0		(PLStream *pls);
+static void  StoreCmap1		(PLStream *pls);
+
+/*--------------------------------------------------------------------------*\
  * plD_init_xw()
  *
  * Initialize device.
- * X-dependent stuff done in Init().
-\*----------------------------------------------------------------------*/
+ * X-dependent stuff done in plD_open_xw() and Init().
+\*--------------------------------------------------------------------------*/
 
 void
 plD_init_xw(PLStream *pls)
@@ -195,13 +194,10 @@ plD_init_xw(PLStream *pls)
 
     dbug_enter("plD_init_xw");
 
-    pls->termin = 1;		/* is an interactive terminal */
-    pls->icol0 = 1;
-    pls->bytecnt = 0;
-    pls->page = 0;
-    pls->plbuf_write = 1;
-    pls->dev_flush = 1;		/* Want to handle our own flushes */
-    pls->dev_fill0 = 1;		/* Can do solid fills */
+    pls->termin = 1;		/* Is an interactive terminal */
+    pls->dev_flush = 1;		/* Handle our own flushes */
+    pls->dev_fill0 = 1;		/* Handle solid fills */
+    pls->plbuf_write = 1;	/* Activate plot buffer */
 
 /* The real meat of the initialization done here */
 
@@ -217,8 +213,8 @@ plD_init_xw(PLStream *pls)
     dev->xlen = xmax - xmin;
     dev->ylen = ymax - ymin;
 
-    dev->xscale_init = (double) (dev->init_width-1) / (double) dev->xlen;
-    dev->yscale_init = (double) (dev->init_height-1) / (double) dev->ylen;
+    dev->xscale_init = dev->init_width  / (double) dev->xlen;
+    dev->yscale_init = dev->init_height / (double) dev->ylen;
 
     dev->xscale = dev->xscale_init;
     dev->yscale = dev->yscale_init;
@@ -227,14 +223,14 @@ plD_init_xw(PLStream *pls)
     plP_setphy(xmin, xmax, ymin, ymax);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_open_xw()
  *
  * Performs basic driver initialization, without actually opening or
  * modifying a window.  May be called by the outside world before plinit
  * in case the caller needs early access to the driver internals (not
  * very common -- currently only used by the plframe widget).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_open_xw(PLStream *pls)
@@ -255,6 +251,11 @@ plD_open_xw(PLStream *pls)
 	plexit("plD_init_xw: Out of memory.");
 
     dev = (XwDev *) pls->dev;
+
+/* Variables used in querying the X server for events */
+
+    dev->instr = 0;
+    dev->max_instr = MAX_INSTR;
 
 /* Set up flags that determine what we are writing to */
 /* If nopixmap is set, ignore db */
@@ -303,7 +304,7 @@ plD_open_xw(PLStream *pls)
 	    plexit("Init: Out of xwDisplay's.");
 
 	xwDisplay[i] = xwd = (XwDisplay *) dev->xwd;
-	xwd->count = 1;
+	xwd->nstreams = 1;
 
 /* Open display */
 
@@ -340,26 +341,22 @@ plD_open_xw(PLStream *pls)
 
 	AllocBGFG(pls);
 	plX_setBGFG(pls);
-
-/* Make a crosshair cursor */
-
-	xwd->cross_cursor = XCreateFontCursor(xwd->display, XC_crosshair);
     }
 
 /* Display matched, so use existing display data */
 
     else {
 	xwd = (XwDisplay *) dev->xwd;
-	xwd->count++;
+	xwd->nstreams++;
     }
     xwd->ixwd = i;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_line_xw()
  *
  * Draw a line in the current color from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
@@ -368,14 +365,8 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
-    static long count = 0, max_count = 20;
 
-    if (dev->is_main) {
-	if ( (++count/max_count)*max_count == count) {
-	    count = 0;
-	    HandleEvents(pls);	/* Check for events */
-	}
-    }
+    CheckForEvents(pls);
 
     y1 = dev->ylen - y1;
     y2 = dev->ylen - y2;
@@ -392,11 +383,11 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 	XDrawLine(xwd->display, dev->pixmap, xwd->gc, x1, y1, x2, y2);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_polyline_xw()
  *
  * Draw a polyline in the current color from (x1,y1) to (x2,y2).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
@@ -406,17 +397,11 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
 
     PLINT i;
     XPoint pts[PL_MAXPOLY];
-    static long count = 0, max_count = 10;
-
-    if (dev->is_main) {
-	if ( (++count/max_count)*max_count == count) {
-	    count = 0;
-	    HandleEvents(pls);	/* Check for events */
-	}
-    }
 
     if (npts > PL_MAXPOLY)
-	plexit("Error -- too many points in polyline\n");
+	plexit("plD_polyline_xw: Too many points in polyline\n");
+
+    CheckForEvents(pls);
 
     for (i = 0; i < npts; i++) {
 	pts[i].x = dev->xscale * xa[i];
@@ -432,11 +417,11 @@ plD_polyline_xw(PLStream *pls, short *xa, short *ya, PLINT npts)
 		   CoordModeOrigin);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_eop_xw()
  *
- * End of page.  User must click left mouse button to continue.
-\*----------------------------------------------------------------------*/
+ * End of page.  User must hit return (or third mouse button) to continue.
+\*--------------------------------------------------------------------------*/
 
 void
 plD_eop_xw(PLStream *pls)
@@ -448,17 +433,17 @@ plD_eop_xw(PLStream *pls)
 
     XFlush(xwd->display);
     if (pls->db)
-	ExposeCmd(pls);
+	ExposeCmd(pls, NULL);
 	
-    if ( ! pls->nopause)
+    if (dev->is_main && ! pls->nopause)
 	WaitForPage(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_bop_xw()
  *
  * Set up for the next page.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_bop_xw(PLStream *pls)
@@ -481,11 +466,11 @@ plD_bop_xw(PLStream *pls)
     pls->page++;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_tidy_xw()
  *
  * Close graphics file
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_tidy_xw(PLStream *pls)
@@ -501,8 +486,8 @@ plD_tidy_xw(PLStream *pls)
 	    XFreePixmap(xwd->display, dev->pixmap);
     }
 
-    xwd->count--;
-    if (xwd->count == 0) {
+    xwd->nstreams--;
+    if (xwd->nstreams == 0) {
 	int ixwd = xwd->ixwd;
 	XFreeGC(xwd->display, xwd->gc);
 	XCloseDisplay(xwd->display);
@@ -511,11 +496,11 @@ plD_tidy_xw(PLStream *pls)
     pls->plbuf_write = 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_state_xw()
  *
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void 
 plD_state_xw(PLStream *pls, PLINT op)
@@ -525,9 +510,7 @@ plD_state_xw(PLStream *pls, PLINT op)
 
     dbug_enter("plD_state_xw");
 
-    if (dev->is_main) {
-	HandleEvents(pls);	/* Check for events */
-    }
+    CheckForEvents(pls);
 
     switch (op) {
 
@@ -537,22 +520,20 @@ plD_state_xw(PLStream *pls, PLINT op)
     case PLSTATE_COLOR0:{
 	int icol0 = pls->icol0;
 	if ( ! xwd->color) {
-	    xwd->curcolor.pixel = xwd->fgcolor.pixel;
+	    xwd->curcolor = xwd->fgcolor;
 	    XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
 	}
 	else {
 	    if (icol0 == PL_RGB_COLOR) {
 		PLColor_to_XColor(&pls->curcolor, &xwd->curcolor);
-
 		if ( ! XAllocColor(xwd->display, xwd->map, &xwd->curcolor)) {
 		    fprintf(stderr, "Warning: could not allocate color\n");
 		    xwd->curcolor.pixel = xwd->fgcolor.pixel;
 		}
-
-		XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
+	    } else {
+		xwd->curcolor = xwd->cmap0[icol0];
 	    }
-	    else
-		XSetForeground(xwd->display, xwd->gc, xwd->cmap0[icol0].pixel);
+	    XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
 	}
 	break;
     }
@@ -567,13 +548,12 @@ plD_state_xw(PLStream *pls, PLINT op)
 	    break;
 
 	icol1 = (pls->icol1 * (xwd->ncol1-1)) / (pls->ncol1-1);
-	if ( ! xwd->color) {
-	    xwd->curcolor.pixel = xwd->fgcolor.pixel;
-	    XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
-	}
-	else {
-	    XSetForeground(xwd->display, xwd->gc, xwd->cmap1[icol1].pixel);
-	}
+	if ( ! xwd->color) 
+	    xwd->curcolor = xwd->fgcolor;
+	else 
+	    xwd->curcolor = xwd->cmap1[icol1];
+
+	XSetForeground(xwd->display, xwd->gc, xwd->curcolor.pixel);
 	break;
     }
 
@@ -588,7 +568,7 @@ plD_state_xw(PLStream *pls, PLINT op)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plD_esc_xw()
  *
  * Escape function.
@@ -602,7 +582,7 @@ plD_state_xw(PLStream *pls, PLINT op)
  *	PLESC_GETC	Get coordinates upon mouse click
  *	PLESC_REDRAW	Force a redraw
  *	PLESC_RESIZE	Force a resize
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
@@ -618,11 +598,11 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 	break;
 
     case PLESC_EXPOSE:
-	ExposeCmd(pls);
+	ExposeCmd(pls, (PLDisplay *) ptr);
 	break;
 
     case PLESC_FILL:
-	FillPolygon(pls);
+	FillPolygonCmd(pls);
 	break;
 
     case PLESC_FLUSH:
@@ -631,7 +611,7 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 	break;
 
     case PLESC_GETC:
-	GetCursor(pls, (PLCursor *) ptr);
+	GetCursorCmd(pls, (PLGraphicsIn *) ptr);
 	break;
 
     case PLESC_REDRAW:
@@ -639,64 +619,59 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 	break;
 
     case PLESC_RESIZE:
-	ResizeCmd(pls, (PLWindow *) ptr);
+	ResizeCmd(pls, (PLDisplay *) ptr);
 	break;
     }
 }
 
-/*----------------------------------------------------------------------*\
- * GetCursor()
+/*--------------------------------------------------------------------------*\
+ * GetCursorCmd()
  *
- * Waits for a left button mouse event and returns coordinates.
-\*----------------------------------------------------------------------*/
+ * Waits for a graphics input event and returns coordinates.
+\*--------------------------------------------------------------------------*/
 
 static void
-GetCursor(PLStream *pls, PLCursor *ptr)
+GetCursorCmd(PLStream *pls, PLGraphicsIn *ptr)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
     XEvent event;
+    PLGraphicsIn *gin = &(dev->gin);
 
-    dev->cursorX = -1;
-    dev->cursorY = -1;
-    XDefineCursor(xwd->display, dev->window, xwd->cross_cursor);
+/* Initialize */
 
-    while (dev->cursorX < 0) {
-	XNextEvent(xwd->display, &event);
+    plGinInit(gin);
+    dev->locate_mode = LOCATE_INVOKED_VIA_API;
+    CreateXhairs(pls);
+
+/* Run event loop until a point is selected */
+
+    while (gin->pX < 0 && dev->locate_mode) {
+	XWindowEvent(xwd->display, dev->window, dev->event_mask, &event);
 	MasterEH(pls, &event);
     }
-
-    ptr->dX = dev->cursorX;
-    ptr->dY = dev->cursorY;
-    XUndefineCursor(xwd->display, dev->window);
+    *ptr = *gin;
 }
 
-/*----------------------------------------------------------------------*\
- * FillPolygon()
+/*--------------------------------------------------------------------------*\
+ * FillPolygonCmd()
  *
  * Fill polygon described in points pls->dev_x[] and pls->dev_y[].
  * Only solid color fill supported.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
-FillPolygon(PLStream *pls)
+FillPolygonCmd(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
     XPoint pts[PL_MAXPOLY];
-
-    static long count = 0, max_count = 10;
     int i, outline_only=0;
 
-    if (dev->is_main) {
-	if ( (++count/max_count)*max_count == count) {
-	    count = 0;
-	    HandleEvents(pls);	/* Check for events */
-	}
-    }
-
     if (pls->dev_npts > PL_MAXPOLY)
-	plexit("Error -- too many points in polygon\n");
+	plexit("FillPolygonCmd: Too many points in polygon\n");
+
+    CheckForEvents(pls);
 
     for (i = 0; i < pls->dev_npts; i++) {
 	pts[i].x = dev->xscale * pls->dev_x[i];
@@ -728,7 +703,7 @@ FillPolygon(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * Init()
  *
  * Xlib initialization routine.
@@ -739,7 +714,7 @@ FillPolygon(PLStream *pls)
  * display:	pls->OutFile (use plsfnam() or -display option) 
  * size:	pls->xlength, pls->ylength (use plspage() or -geo option)
  * bg color:	pls->cmap0[0] (use plscolbg() or -bg option)
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 Init(PLStream *pls)
@@ -763,19 +738,36 @@ Init(PLStream *pls)
 	dev->window = pls->window_id;
     }
 
-/* Initialize colors, create gc */
+/* Initialize colors */
 
     InitColors(pls);
     XSetWindowColormap( xwd->display, dev->window, xwd->map );
+
+/* Set up GC for ordinary draws */
+
     if ( ! xwd->gc) 
 	xwd->gc = XCreateGC(xwd->display, dev->window, 0, 0);
+
+/* Set up GC for rubber-band draws */
+
+    if ( ! xwd->gcXor) {
+	XGCValues gcValues;
+	unsigned long mask;
+
+	gcValues.background = xwd->cmap0[0].pixel;
+	gcValues.foreground = 0xFF;
+	gcValues.function = GXxor;
+	mask = GCForeground | GCBackground | GCFunction;
+
+	xwd->gcXor = XCreateGC(xwd->display, dev->window, mask, &gcValues);
+    }
 
 /* Get initial drawing area dimensions */
 
     (void) XGetGeometry(xwd->display, dev->window, &root, &x, &y,
 			&dev->width, &dev->height, &dev->border, &xwd->depth);
 
-    dev->init_width = dev->width;
+    dev->init_width  = dev->width;
     dev->init_height = dev->height;
 
 /* Create pixmap for holding plot image (for expose events). */
@@ -796,11 +788,11 @@ Init(PLStream *pls)
 	MapMain(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * InitMain()
  *
  * Create main window using standard Xlib calls.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 InitMain(PLStream *pls)
@@ -832,17 +824,13 @@ InitMain(PLStream *pls)
     else
 	hint.flags |= USSize;
 
-    if (pls->xlength == 0)
-	pls->xlength = width * 0.75;
-    if (pls->ylength == 0)
-	pls->ylength = height * 0.75;
+    if (pls->xlength == 0) pls->xlength = width  * 0.75;
+    if (pls->ylength == 0) pls->ylength = height * 0.75;
 
-    if (pls->xlength > width)
-	pls->xlength = width - dev->border * 2;
-    if (pls->ylength > height)
-	pls->ylength = height - dev->border * 2;
+    if (pls->xlength > width)  pls->xlength = width  - dev->border * 2;
+    if (pls->ylength > height) pls->ylength = height - dev->border * 2;
 
-    hint.width = (int) pls->xlength;
+    hint.width  = (int) pls->xlength;
     hint.height = (int) pls->ylength;
 
 /* Set window position if specified by the user. */
@@ -856,7 +844,7 @@ InitMain(PLStream *pls)
 
 /* Window title */
 
-    sprintf(header, "plplot");
+    sprintf(header, "PLplot");
 
 /* Window creation */
 
@@ -872,29 +860,30 @@ InitMain(PLStream *pls)
 			   None, 0, 0, &hint);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * MapMain()
  *
  * Sets up event handlers, maps main window and waits for exposure.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 MapMain(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
-
-    XEvent the_event;
+    XEvent event;
 
     dbug_enter("MapMain");
 
 /* Input event selection */
 
-    XSelectInput(xwd->display, dev->window,
-		 ButtonPressMask |
-		 KeyPressMask |
-		 ExposureMask |
-		 StructureNotifyMask);
+    dev->event_mask = 
+	ButtonPressMask      |
+	KeyPressMask         |
+	ExposureMask         |
+	StructureNotifyMask;
+
+    XSelectInput(xwd->display, dev->window, dev->event_mask);
 
 /* Window mapping */
 
@@ -904,70 +893,88 @@ MapMain(PLStream *pls)
 /* Remove extraneous expose events from the event queue */
 
     for (;;) {
-	XNextEvent(xwd->display, &the_event);
-	if (the_event.type == Expose) {
+	XWindowEvent(xwd->display, dev->window, dev->event_mask, &event);
+	if (event.type == Expose) {
 	    while (XCheckWindowEvent(xwd->display, dev->window,
-				     ExposureMask, &the_event))
+				     ExposureMask, &event))
 		;
 	    break;
 	}
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * WaitForPage()
  *
  * This routine waits for the user to advance the plot, while handling
  * all other events.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 WaitForPage(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
-
     XEvent event;
 
     dbug_enter("WaitForPage");
 
-    if ( ! dev->is_main) {
-	HandleEvents(pls);	/* Check for events */
-	return;
-    }
-
     while ( ! dev->exit_eventloop) {
-	XNextEvent(xwd->display, &event);
+	XWindowEvent(xwd->display, dev->window, dev->event_mask, &event);
 	MasterEH(pls, &event);
     }
     dev->exit_eventloop = FALSE;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
+ * CheckForEvents()
+ *
+ * A front-end to HandleEvents(), which is only called if certain conditions
+ * are satisfied:
+ *
+ * - must be the creator of the main window (i.e. PLplot is handling the
+ *   X event loop by polling).
+ * - must not be in the middle of a plot redisplay (else the order of event
+ *   handling can become circuitous).
+ * - only query X for events and process them every dev->max_instr times
+ *   this function is called (good for performance since querying X is a
+ *   nontrivial performance hit).
+\*--------------------------------------------------------------------------*/
+
+static void
+CheckForEvents(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+
+    if (dev->is_main &&
+	! pls->plbuf_read &&
+	++dev->instr % dev->max_instr == 0) {
+
+	dev->instr = 0;
+	HandleEvents(pls);
+    }
+}
+
+/*--------------------------------------------------------------------------*\
  * HandleEvents()
  *
- * Just a front-end to MasterEH(), for use when not actually waiting for
- * an event but only checking the event queue.  
-\*----------------------------------------------------------------------*/
+ * Just a front-end to MasterEH(), for use when not actually waiting for an
+ * event but only checking the event queue.  
+\*--------------------------------------------------------------------------*/
 
 static void
 HandleEvents(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
-
     XEvent event;
 
-    if (XCheckWindowEvent(xwd->display, dev->window,
-			  ButtonPressMask |
-			  KeyPressMask |
-			  ExposureMask |
-			  StructureNotifyMask,
-			  &event))
+    while (XCheckWindowEvent(xwd->display, dev->window,
+			     dev->event_mask, &event))
 	MasterEH(pls, &event);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * MasterEH()
  *
  * Master X event handler routine.
@@ -978,10 +985,10 @@ HandleEvents(PLStream *pls)
  *    - resize events
  *
  * By supplying a master event handler, the user can take over all event
- * processing.  If events other than those trapped by plplot need handling,
- * just call XSelectInput with the appropriate flags.  The default PLPlot
+ * processing.  If events other than those trapped by PLplot need handling,
+ * just call XSelectInput with the appropriate flags.  The default PLplot
  * event handling can be modified arbitrarily by changing the event struct.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 MasterEH(PLStream *pls, XEvent *event)
@@ -992,210 +999,671 @@ MasterEH(PLStream *pls, XEvent *event)
 	(*dev->MasterEH) (pls, event);
 
     switch (event->type) {
-      case KeyPress:
+
+    case KeyPress:
 	KeyEH(pls, event);
 	break;
 
-      case ButtonPress:
-	MouseEH(pls, event);
+    case ButtonPress:
+	ButtonEH(pls, event);
 	break;
 
-      case Expose:
+    case Expose:
 	ExposeEH(pls, event);
 	break;
 
-      case ConfigureNotify:
+    case ConfigureNotify:
 	ResizeEH(pls, event);
+	break;
+
+    case MotionNotify:
+	MotionEH(pls, event);
 	break;
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * KeyEH()
  *
  * Event handler routine for keyboard events.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 KeyEH(PLStream *pls, XEvent *event)
 {
     XwDev *dev = (XwDev *) pls->dev;
 
-    KeySym keysym;
-    PLKey key;
-    int count;
-    XComposeStatus cs;
-
     dbug_enter("KeyEH");
 
-/* Translate event into string */
-
-    count = XLookupString((XKeyEvent *) event, key.string, PL_NKEYSTRING,
-			  &keysym, &cs);
-    key.string[count] = '\0';
-    key.code = (U_LONG) keysym;
-
-#ifdef DEBUG
-    printf("Keysym %x, translation: %s\n", keysym, key.string);
-#endif
-
-/* Call user keypress event handler */
-/* Since this is called first, the user can disable all plplot internal
-   event handling by setting key.code to 0 and key.string to '\0' */
-
-    if (pls->KeyEH != NULL)
-	(*pls->KeyEH) (&key, pls->KeyEH_data, &dev->exit_eventloop);
-
-/* Handle internal events */
-
-/* Advance to next page (i.e. terminate event loop) on a <eol> */
-/* Check for both <CR> and <LF> for portability, also a <Page Down> */
-
-    if (key.code == PLK_Return ||
-	key.code == PLK_Linefeed ||
-	key.code == PLK_Next)
-	dev->exit_eventloop = TRUE;
-
-/* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
-
-    if (key.string[0] == 'Q') {
-	pls->nopause = TRUE;
-	plexit("");
-    }
+    LookupXKeyEvent(pls, event);
+    if (dev->locate_mode)
+	LocateKey(pls);
+    else
+	ProcessKey(pls);
 }
 
-/*----------------------------------------------------------------------*\
- * MouseEH()
+/*--------------------------------------------------------------------------*\
+ * ButtonEH()
  *
- * Event handler routine for mouse events.
- * On:
- *   Button1: nothing for now
- *   Button2: spit out device space coordinates
- *   Button3: set page advance flag for later processing
-\*----------------------------------------------------------------------*/
+ * Event handler routine for ButtonPress events.
+\*--------------------------------------------------------------------------*/
 
 static void
-MouseEH(PLStream *pls, XEvent *event)
+ButtonEH(PLStream *pls, XEvent *event)
 {
     XwDev *dev = (XwDev *) pls->dev;
 
-    PLMouse mouse;
-    float xcoord, ycoord;
+    dbug_enter("ButtonEH");
 
-    dbug_enter("MouseEH");
+    LookupXButtonEvent(pls, event);
+    if (dev->locate_mode)
+	LocateButton(pls);
+    else
+	ProcessButton(pls);
+}
 
-    mouse.button = event->xbutton.button;
-    mouse.state = event->xbutton.state;
-    mouse.x = (PLFLT)event->xbutton.x / pls->xlength;
-    mouse.y = 1.0 - (PLFLT)event->xbutton.y / pls->ylength;
-      
-/* Call user event handler */
-/* Since this is called first, the user can disable all plplot internal
-   event handling by setting mouse.button to 0 */
+/*--------------------------------------------------------------------------*\
+ * LookupXKeyEvent()
+ *
+ * Fills in the PLGraphicsIn from an XKeyEvent.  The PLGraphicsIn keysym is
+ * the same as the X keysym for all cases except for control keys that have
+ * ASCII equivalents, i.e.:
+ *
+ * Name		      X-keysym	ASCII	Ctrl-key
+ * ----		      --------	-----	--------
+ * XK_BackSpace        0xFF08   0x08      ^H
+ * XK_Tab              0xFF09   0x09      ^I
+ * XK_Linefeed         0xFF0A   0x0A      ^J
+ * XK_Return           0xFF0D   0x0D      ^M
+ * XK_Escape           0xFF1B   0x1B      ^[
+ * XK_Delete           0xFFFF   0xFF     (none)
+ *
+ * The ASCII representation of these characters is used for the PLGraphicsIn
+ * keysym to simplify code logic.  It turns out that the X keysyms are
+ * identical to the ASCII values with the upper 8 bits set.
+\*--------------------------------------------------------------------------*/
 
-    if (pls->MouseEH != NULL)
-	(*pls->MouseEH) (&mouse, pls->MouseEH_data, &dev->exit_eventloop);
+static void
+LookupXKeyEvent(PLStream *pls, XEvent *event)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+    XKeyEvent *keyEvent = (XKeyEvent *) event;
+    KeySym keysym;
+    int nchars, ncmax = PL_MAXKEY-1;
+    XComposeStatus cs;
 
-    switch (mouse.button) {
-    case Button1:
-	dev->cursorX = mouse.x;
-	dev->cursorY = mouse.y;
-	break;
+    gin->pX = keyEvent->x;
+    gin->pY = keyEvent->y;
+    gin->dX = (PLFLT) keyEvent->x / (dev->width - 1);
+    gin->dY = 1.0 - (PLFLT) keyEvent->y / (dev->height - 1);
 
-    case Button2:
-	printf("%f\t%f\n", mouse.x, mouse.y);
-        xcoord=((event->xbutton.x+1-(pls->vpdxmi)*(pls->xlength))/
-                ((pls->vpdxma-pls->vpdxmi)*pls->xlength))*pls->vpwxma;
-        ycoord=((pls->ylength-event->xbutton.y+1-(pls->vpdymi)*(pls->ylength))/
-                ((pls->vpdyma-pls->vpdymi)*pls->ylength))*pls->vpwyma;
-	printf("%f\t%f\n", xcoord, ycoord);
+    gin->state = keyEvent->state;
+
+    nchars = XLookupString(keyEvent, gin->string, ncmax, &keysym, &cs);
+    gin->string[nchars] = '\0';
+
 #ifdef DEBUG
-        printf("[xwin.c:MouseEH:] world X coord = %f\n",
-               xcoord);
-        printf("[xwin.c:MouseEH:] world Y coord = %f\n",
-               ycoord);
-#endif /* DEBUG */
+    fprintf(stderr, "Keysym %x, translation: %s\n", keysym, gin->string);
+#endif
+
+    switch (keysym) {
+
+    case XK_BackSpace:
+    case XK_Tab:
+    case XK_Linefeed:
+    case XK_Return:
+    case XK_Escape:
+    case XK_Delete:
+	gin->keysym = 0xFF & keysym;
 	break;
 
+    default:
+	gin->keysym = keysym;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * LookupXButtonEvent()
+ *
+ * Fills in the PLGraphicsIn from an XButtonEvent.
+\*--------------------------------------------------------------------------*/
+
+static void
+LookupXButtonEvent(PLStream *pls, XEvent *event)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+    XButtonEvent *buttonEvent = (XButtonEvent *) event;
+
+    gin->pX = buttonEvent->x;
+    gin->pY = buttonEvent->y;
+    gin->dX = (PLFLT) buttonEvent->x / (dev->width - 1);
+    gin->dY = 1.0 - (PLFLT) buttonEvent->y / (dev->height - 1);
+
+    gin->button = buttonEvent->button;
+    gin->state = buttonEvent->state;
+    gin->keysym = 0x20;
+}
+
+/*--------------------------------------------------------------------------*\
+ * ProcessKey()
+ *
+ * Process keyboard events other than locate input.
+\*--------------------------------------------------------------------------*/
+
+static void
+ProcessKey(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+    dbug_enter("ProcessKey");
+
+/* Call user keypress event handler.  Since this is called first, the user
+ * can disable all internal event handling by setting key.keysym to 0.
+*/
+    if (pls->KeyEH != NULL)
+	(*pls->KeyEH) (gin, pls->KeyEH_data, &dev->exit_eventloop);
+
+/* Handle internal events */
+
+    switch (gin->keysym) {
+
+    case PLK_Return:
+    case PLK_Linefeed:
+    case PLK_Next:
+    /* Advance to next page (i.e. terminate event loop) on a <eol> */
+    /* Check for both <CR> and <LF> for portability, also a <Page Down> */
+	dev->exit_eventloop = TRUE;
+	break;
+
+    case 'Q':
+    /* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
+	pls->nopause = TRUE;
+	plexit("");
+	break;
+
+    case 'L':
+    /* Begin locate mode */
+	dev->locate_mode = LOCATE_INVOKED_VIA_DRIVER;
+	CreateXhairs(pls);
+	break;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * ProcessButton()
+ *
+ * Process ButtonPress events other than locate input.
+ * On:
+ *   Button1: nothing (except when in locate mode, see ButtonLocate)
+ *   Button2: nothing
+ *   Button3: set page advance flag
+\*--------------------------------------------------------------------------*/
+
+static void
+ProcessButton(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+    dbug_enter("ProcessButton");
+
+/* Call user event handler.  Since this is called first, the user can
+ * disable all PLplot internal event handling by setting gin->button to 0.
+*/
+    if (pls->ButtonEH != NULL)
+	(*pls->ButtonEH) (gin, pls->ButtonEH_data, &dev->exit_eventloop);
+
+/* Handle internal events */
+
+    switch (gin->button) {
     case Button3:
 	dev->exit_eventloop = TRUE;
 	break;
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
+ * LocateKey()
+ *
+ * Front-end to locate handler for KeyPress events.
+ * Provides for a number of special effects:
+ *
+ *  <Escape>		Ends locate mode
+ *  <Cursor>		Moves cursor one pixel in the specified direction
+ *  <Mod-Cursor>	Accelerated cursor movement (5x for each modifier)
+\*--------------------------------------------------------------------------*/
+
+static void
+LocateKey(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    PLGraphicsIn *gin = &(dev->gin);
+
+/* End locate mode on <Escape> */
+
+    if (gin->keysym == PLK_Escape) {
+	dev->locate_mode = 0;
+	DestroyXhairs(pls);
+	plGinInit(gin);
+    }
+
+/* Ignore modifier keys */
+
+    else if (IsModifierKey(gin->keysym)) {
+	plGinInit(gin);
+    }
+
+/* Now handle cursor keys */
+
+    else if (IsCursorKey(gin->keysym)) {
+	int x1, y1, dx = 0, dy = 0;
+	int xmin = 0, xmax = dev->width - 1, ymin = 0, ymax = dev->height - 1;
+
+	switch (gin->keysym) {
+	case PLK_Left:
+	    dx = -1;
+	    break;
+	case PLK_Right:
+	    dx = 1;
+	    break;
+	case PLK_Up:
+	    dy = -1;
+	    break;
+	case PLK_Down:
+	    dy = 1;
+	    break;
+	}
+
+    /* Each modifier key added increases the multiplication factor by 5 */
+
+    /* Shift */
+
+	if (gin->state & 0x01) {
+	    dx *= 5;
+	    dy *= 5;
+	}
+
+    /* Caps Lock */
+
+	if (gin->state & 0x02) {
+	    dx *= 5;
+	    dy *= 5;
+	}
+
+    /* Control */
+
+	if (gin->state & 0x04) {
+	    dx *= 5;
+	    dy *= 5;
+	}
+
+    /* Alt */
+
+	if (gin->state & 0x08) {
+	    dx *= 5;
+	    dy *= 5;
+	}
+
+    /* Bounds checking so that we don't send cursor out of window */
+
+	x1 = gin->pX + dx;
+	y1 = gin->pY + dy;
+
+	if (x1 < xmin) dx = xmin - gin->pX;
+	if (y1 < ymin) dy = ymin - gin->pY;
+	if (x1 > xmax) dx = xmax - gin->pX;
+	if (y1 > ymax) dy = ymax - gin->pY;
+
+    /* Engage... */
+
+	XWarpPointer(xwd->display, dev->window, None, 0, 0, 0, 0, dx, dy);
+	plGinInit(gin);
+    }
+
+/* Call ordinary locate handler */
+
+    else {
+	Locate(pls);
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * LocateButton()
+ *
+ * Front-end to locate handler for ButtonPress events.
+ * Only passes control to Locate() for Button1 presses.
+\*--------------------------------------------------------------------------*/
+
+static void
+LocateButton(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+    switch (gin->button) {
+
+    case Button1:
+	Locate(pls);
+	break;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * Locate()
+ *
+ * Handles locate mode events.
+ *
+ * In locate mode: move cursor to desired location and select by pressing a
+ * key or by clicking on the mouse (if available).  Typically the world
+ * coordinates of the selected point are reported.
+ *
+ * There are two ways to enter Locate mode -- via the API, or via a driver
+ * command.  The API entry point is the call plGetCursor(), which initiates
+ * locate mode and does not return until input has been obtained.  The
+ * driver entry point is by entering a 'L' while the driver is waiting for
+ * events.  
+ *
+ * Locate mode input is reported in one of three ways:
+ * 1. Through a returned PLGraphicsIn structure, when user has specified a
+ *    locate handler via (*pls->LocateEH).
+ * 2. Through a returned PLGraphicsIn structure, when locate mode is invoked
+ *    by a plGetCursor() call.
+ * 3. Through writes to stdout, when locate mode is invoked by a driver
+ *    command and the user has not supplied a locate handler.
+ *
+ * Hitting <Escape> will at all times end locate mode.  Other keys will
+ * typically be interpreted as locator input.  Selecting a point out of
+ * bounds will end locate mode unless the user overrides with a supplied
+ * Locate handler.
+\*--------------------------------------------------------------------------*/
+
+static void
+Locate(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    PLGraphicsIn *gin = &(dev->gin);
+
+/* Call user locate mode handler if provided */
+
+    if (pls->LocateEH != NULL)
+	(*pls->LocateEH) (gin, pls->LocateEH_data, &dev->locate_mode);
+
+/* Use default procedure */
+
+    else {
+
+    /* Try to locate cursor */
+
+	if (plTranslateCursor(gin)) {
+
+	/* If invoked by the API, we're done */
+	/* Otherwise send report to stdout */
+
+	    if (dev->locate_mode == LOCATE_INVOKED_VIA_DRIVER) {
+		pltext();
+		if (gin->keysym < 0xFF && isprint(gin->keysym)) 
+		    printf("%f %f %c\n", gin->wX, gin->wY, gin->keysym);
+		else
+		    printf("%f %f 0x%02x\n", gin->wX, gin->wY, gin->keysym);
+
+		plgra();
+	    }
+	}
+	else {
+
+	/* Selected point is out of bounds, so end locate mode */
+
+	    dev->locate_mode = 0;
+	    DestroyXhairs(pls);
+	}
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * MotionEH()
+ *
+ * Event handler routine for MotionNotify events.
+ * If drawing crosshairs, the first and last draws must be done "by hand".
+\*--------------------------------------------------------------------------*/
+
+static void
+MotionEH(PLStream *pls, XEvent *event)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XMotionEvent *motionEvent = (XMotionEvent *) event;
+
+    if (dev->drawing_xhairs) {
+	DrawXhairs(pls, motionEvent->x, motionEvent->y);
+    }
+}
+
+/*--------------------------------------------------------------------------*\
+ * CreateXhairs()
+ *
+ * Creates graphic crosshairs at current pointer location.
+\*--------------------------------------------------------------------------*/
+
+static void
+CreateXhairs(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    Window root, child;
+    int root_x, root_y, win_x, win_y;
+    unsigned int mask;
+    XEvent event;
+
+/* Get a crosshair cursor and switch to it. */
+
+    if (!xwd->xhair_cursor)
+	xwd->xhair_cursor = XCreateFontCursor(xwd->display, XC_crosshair);
+
+    XDefineCursor(xwd->display, dev->window, xwd->xhair_cursor);
+
+/* Find current pointer location and draw some graphic crosshairs */
+
+    if (XQueryPointer(xwd->display, dev->window, &root, &child,
+		      &root_x, &root_y, &win_x, &win_y, &mask)) {
+	DrawXhairs(pls, win_x, win_y);
+    }
+
+/* Sync the display and then throw away all pending motion events */
+
+    XSync(xwd->display, 0);
+    while (XCheckWindowEvent(xwd->display, dev->window,
+			     PointerMotionMask, &event))
+	;
+
+/* Catch PointerMotion events so we can update them */
+
+    dev->drawing_xhairs = 1;
+    dev->event_mask |= PointerMotionMask;
+    XSelectInput(xwd->display, dev->window, dev->event_mask);
+}
+
+/*--------------------------------------------------------------------------*\
+ * DestroyXhairs()
+ *
+ * Destroys graphic crosshairs.
+\*--------------------------------------------------------------------------*/
+
+static void
+DestroyXhairs(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
+/* Switch back to boring old pointer */
+
+    XUndefineCursor(xwd->display, dev->window);
+
+/* Don't catch PointerMotion events any more */
+
+    dev->event_mask &= ~PointerMotionMask;
+    XSelectInput(xwd->display, dev->window, dev->event_mask);
+
+/* This draw removes the last set of graphic crosshairs */
+
+    UpdateXhairs(pls);
+    dev->drawing_xhairs = 0;
+}
+
+/*--------------------------------------------------------------------------*\
+ * DrawXhairs()
+ *
+ * Draws graphic crosshairs at (x0, y0).  The first draw erases the old set.
+\*--------------------------------------------------------------------------*/
+
+static void
+DrawXhairs(PLStream *pls, int x0, int y0)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+
+    int xmin = 0, xmax = dev->width - 1;
+    int ymin = 0, ymax = dev->height - 1;
+
+    if (dev->drawing_xhairs) {
+	UpdateXhairs(pls);
+    }
+    dev->xhair_x[0].x = xmin; dev->xhair_x[0].y = y0;
+    dev->xhair_x[1].x = xmax; dev->xhair_x[1].y = y0;
+
+    dev->xhair_y[0].x = x0; dev->xhair_y[0].y = ymin;
+    dev->xhair_y[1].x = x0; dev->xhair_y[1].y = ymax;
+
+    UpdateXhairs(pls);
+}
+
+/*--------------------------------------------------------------------------*\
+ * UpdateXhairs()
+ *
+ * Updates graphic crosshairs.  If already there, they are erased.
+\*--------------------------------------------------------------------------*/
+
+static void
+UpdateXhairs(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
+    XDrawLines(xwd->display, dev->window, xwd->gcXor, dev->xhair_x, 2,
+	       CoordModeOrigin);
+
+    XDrawLines(xwd->display, dev->window, xwd->gcXor, dev->xhair_y, 2,
+	       CoordModeOrigin);
+}
+
+/*--------------------------------------------------------------------------*\
  * ExposeEH()
  *
  * Event handler routine for expose events.
  * Front end to ExposeCmd() to deal with wierdnesses of Xlib.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 ExposeEH(PLStream *pls, XEvent *event)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    XExposeEvent *exposeEvent = (XExposeEvent *) event;
+    PLDisplay pldis;
+    int redrawn;
 
     dbug_enter("ExposeEH");
 
+#ifdef DEBUG
+    fprintf(stderr,
+	    "Expose, x = %d, y = %d, width = %d, height = %d, count = %d, pending = %d\n",
+	    exposeEvent->x, exposeEvent->y,
+	    exposeEvent->width, exposeEvent->height,
+	    exposeEvent->count, XPending(xwd->display));
+#endif
+
 /* Handle expose */
+/* If we have anything overlaid (like crosshairs), we need to refresh the */
+/* entire plot in order to have a predictable outcome. */
 
-    ExposeCmd(pls);
+    if (dev->drawing_xhairs) {
+	ExposeCmd(pls, NULL);
+	UpdateXhairs(pls);
+	redrawn = 1;
+    }
+    else {
+	pldis.x      = exposeEvent->x;
+	pldis.y      = exposeEvent->y;
+	pldis.width  = exposeEvent->width;
+	pldis.height = exposeEvent->height;
 
-/* Remove extraneous expose events from the event queue */
+	ExposeCmd(pls, &pldis);
+	redrawn = ! dev->write_to_pixmap;
+    }
 
-    while (XCheckWindowEvent(xwd->display, dev->window,
-			     ExposureMask, event))
-	;
+/* If entire plot was redrawn, remove extraneous events from the queue */
+
+    if (redrawn)
+	while (XCheckWindowEvent(xwd->display, dev->window,
+				 ExposureMask | StructureNotifyMask, event))
+	    ;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * ResizeEH()
  *
  * Event handler routine for resize events.
  * Front end to ResizeCmd() to deal with wierdnesses of Xlib.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 ResizeEH(PLStream *pls, XEvent *event)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
-
-    PLWindow newwin;
+    PLDisplay pldis;
 
     dbug_enter("ResizeEH");
 
-    newwin.width = event->xconfigure.width;
-    newwin.height = event->xconfigure.height;
+    pldis.width  = event->xconfigure.width;
+    pldis.height = event->xconfigure.height;
 
 /* Only need to resize if size is actually changed */
 
-    if (newwin.width == dev->width && newwin.height == dev->height)
+    if (pldis.width == dev->width && pldis.height == dev->height)
 	return;
 
-    ResizeCmd(pls, &newwin);
+    ResizeCmd(pls, &pldis);
+    if (dev->drawing_xhairs) {
+	UpdateXhairs(pls);
+    }
 
-/* Remove extraneous expose events from the event queue */
-/* These are not needed since we've redrawn the whole plot */
+/* Remove extraneous Expose and ConfigureNotify events from the event queue */
+/* Exposes do not need to be handled since we've redrawn the whole plot */
 
+#ifdef DEBUG
+    fprintf(stderr, "Resize, pending = %d\n", XPending(xwd->display));
+#endif
+    XFlush(xwd->display);
     while (XCheckWindowEvent(xwd->display, dev->window,
-			     ExposureMask, event))
+			     ExposureMask | StructureNotifyMask, event))
 	;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * ExposeCmd()
  *
  * Event handler routine for expose events.
  * These are "pure" exposures (no resize), so don't need to clear window.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
-ExposeCmd(PLStream *pls)
+ExposeCmd(PLStream *pls, PLDisplay *pldis)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
+    int x, y, width, height;
 
     dbug_enter("ExposeCmd");
 
@@ -1206,13 +1674,43 @@ ExposeCmd(PLStream *pls)
 	return;
     }
 
+/* Exposed area.  If unspecified, the entire window is used. */
+
+    if (pldis == NULL) {
+	x      = 0;
+	y      = 0;
+	width  = dev->width;
+	height = dev->height;
+    }
+    else {
+	x      = pldis->x;
+	y      = pldis->y;
+	width  = pldis->width;
+	height = pldis->height;
+    }
+
 /* Usual case: refresh window from pixmap */
+/* DEBUG option: draws rectangle around refreshed region */
 
     XSync(xwd->display, 0);
     if (dev->write_to_pixmap) {
-	XCopyArea(xwd->display, dev->pixmap, dev->window, xwd->gc, 0, 0,
-		  dev->width, dev->height, 0, 0);
+	XCopyArea(xwd->display, dev->pixmap, dev->window, xwd->gc,
+		  x, y, width, height, x, y);
 	XSync(xwd->display, 0);
+#ifdef DEBUG
+	{
+	    XPoint pts[5];
+	    int x0 = x, x1 = x+width, y0 = y, y1 = y+height;
+	    pts[0].x = x0; pts[0].y = y0;
+	    pts[1].x = x1; pts[1].y = y0;
+	    pts[2].x = x1; pts[2].y = y1;
+	    pts[3].x = x0; pts[3].y = y1;
+	    pts[4].x = x0; pts[4].y = y0;
+
+	    XDrawLines(xwd->display, dev->window, xwd->gc, pts, 5,
+		       CoordModeOrigin);
+	}
+#endif
     }
     else {
 	plRemakePlot(pls);
@@ -1220,15 +1718,15 @@ ExposeCmd(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * ResizeCmd()
  *
  * Event handler routine for resize events.
  * Note: this function is callable from the outside world.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
-ResizeCmd(PLStream *pls, PLWindow *window)
+ResizeCmd(PLStream *pls, PLDisplay *pldis)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
@@ -1244,18 +1742,18 @@ ResizeCmd(PLStream *pls, PLWindow *window)
 
 /* Return if pointer to window not specified. */
 
-    if (window == NULL) {
+    if (pldis == NULL) {
 	plwarn("ResizeCmd: Illegal call -- window pointer uninitialized");
 	return;
     }
 
 /* Reset current window bounds */
 
-    dev->width = window->width;
-    dev->height = window->height;
+    dev->width  = pldis->width;
+    dev->height = pldis->height;
 
-    dev->xscale = (double) (dev->width-1) / (double) dev->init_width;
-    dev->yscale = (double) (dev->height-1) / (double) dev->init_height;
+    dev->xscale = dev->width  / (double) dev->init_width;
+    dev->yscale = dev->height / (double) dev->init_height;
 
     dev->xscale = dev->xscale * dev->xscale_init;
     dev->yscale = dev->yscale * dev->yscale_init;
@@ -1273,12 +1771,12 @@ ResizeCmd(PLStream *pls, PLWindow *window)
     RedrawCmd(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * RedrawCmd()
  *
  * Handles page redraw without resize (pixmap does not get reallocated).
  * Calling this makes sure all necessary housekeeping gets done.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 RedrawCmd(PLStream *pls)
@@ -1314,13 +1812,13 @@ RedrawCmd(PLStream *pls)
     dev->write_to_window = ! pls->db;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * CreatePixmapErrorHandler()
  *
  * Error handler used in CreatePixmap() to catch errors in allocating
  * storage for pixmap.  This way we can nicely substitute redraws for
  * pixmap copies if the server has insufficient memory.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static unsigned char CreatePixmapStatus;
 
@@ -1333,15 +1831,15 @@ CreatePixmapErrorHandler(Display *display, XErrorEvent *error)
     else
 	fprintf(stderr, "Something bad just happened.\n");
 
-    return(1);
+    return 1;
 }	
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * CreatePixmap()
  *
  * This routine creates a pixmap, doing error trapping in case there
  * isn't enough memory on the server.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 CreatePixmap(PLStream *pls)
@@ -1373,7 +1871,7 @@ Driver will redraw the entire plot to handle expose events.\n");
     XSetErrorHandler(oldErrorHandler);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * GetVisual()
  *
  * Get visual info.  In order to safely use a visual other than that of
@@ -1382,7 +1880,7 @@ Driver will redraw the entire plot to handle expose events.\n");
  * this visual and then set the colormap window attribute in the
  * XCreateWindow attributes and valuemask arguments.  I don't do this
  * right now, so this is turned off by default.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 GetVisual(PLStream *pls)
@@ -1419,13 +1917,13 @@ GetVisual(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * AllocBGFG()
  *
  * Allocate background & foreground colors.  If possible, I choose pixel
  * values such that the fg pixel is the xor of the bg pixel, to make
  * rubber-banding easy to see.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 AllocBGFG(PLStream *pls)
@@ -1433,7 +1931,7 @@ AllocBGFG(PLStream *pls)
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
 
-    int i, j, k, npixels;
+    int i, j, npixels;
     unsigned long plane_masks[1], pixels[MAX_COLORS];
 
     dbug_enter("AllocBGFG");
@@ -1456,7 +1954,7 @@ AllocBGFG(PLStream *pls)
 	plexit("couldn't allocate background color cell");
     }
 
-/* Allocate all colors */
+/* Allocate as many colors as we can (max of 256) */
 
     npixels = 256;
     while(1) {
@@ -1468,25 +1966,29 @@ AllocBGFG(PLStream *pls)
 	    break;
     }
 
-    for (i = 0; i < npixels; i++) {
+/* Find the color with pixel = xor of the bg color pixel. */
+/* If a match isn't found, the last pixel allocated is used. */
+
+    for (i = 0; i < npixels-1; i++) {
 	if (pixels[i] == (~xwd->cmap0[0].pixel & 0xFF))
 	    break;
     }
 
-    xwd->fgcolor.pixel = pixels[i];
+/* Use this color cell for our foreground color.  Then free the rest. */
 
+    xwd->fgcolor.pixel = pixels[i];
     for (j = 0; j < npixels; j++) {
 	if (j != i)
 	    XFreeColors(xwd->display, xwd->map, &pixels[j], 1, 0);
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plX_setBGFG()
  *
  * Set background & foreground colors.  Foreground over background should
  * have high contrast.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plX_setBGFG(PLStream *pls)
@@ -1540,11 +2042,11 @@ plX_setBGFG(PLStream *pls)
     XStoreColor(xwd->display, xwd->map, &xwd->cmap0[0]);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * InitColors()
  *
  * Does all color initialization.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 InitColors(PLStream *pls)
@@ -1567,7 +2069,7 @@ InitColors(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * AllocCustomMap()
  *
  * Initializes custom color map and all the cruft that goes with it.
@@ -1588,7 +2090,7 @@ InitColors(PLStream *pls)
  * It's important to leave some extra colors unallocated for Tk.  In 
  * particular the palette tools require a fair amount.  I recommend leaving
  * at least 40 or so free.  
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 AllocCustomMap(PLStream *pls)
@@ -1600,7 +2102,7 @@ AllocCustomMap(PLStream *pls)
     int i, npixels;
     unsigned long plane_masks[1], pixels[MAX_COLORS];
 
-    dbug_enter("Init_Colormap");
+    dbug_enter("AllocCustomMap");
 
 /* Determine current default colors */
 
@@ -1680,11 +2182,11 @@ AllocCustomMap(PLStream *pls)
     AllocCmap1(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * AllocCmap0()
  *
  * Allocate & initialize cmap0 entries.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 AllocCmap0(PLStream *pls)
@@ -1717,12 +2219,12 @@ AllocCmap0(PLStream *pls)
     StoreCmap0(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * AllocCmap1()
  *
  * Allocate & initialize cmap1 entries.  If using the default color map,
  * must severely limit number of colors otherwise TK won't have enough.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 AllocCmap1(PLStream *pls)
@@ -1792,11 +2294,11 @@ AllocCmap1(PLStream *pls)
     StoreCmap1(pls);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * StoreCmap0()
  *
  * Stores cmap 0 entries in X-server colormap.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 StoreCmap0(PLStream *pls)
@@ -1811,11 +2313,11 @@ StoreCmap0(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * StoreCmap1()
  *
  * Stores cmap 1 entries in X-server colormap.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 static void
 StoreCmap1(PLStream *pls)
@@ -1833,13 +2335,13 @@ StoreCmap1(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void PLColor_to_XColor()
  *
  * Copies the supplied PLColor to an XColor, padding with bits as necessary
  * (a PLColor uses 8 bits for color storage, while an XColor uses 16 bits).
  * The argument types follow the same order as in the function name.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #define ToXColor(a) (((0xFF & (a)) << 8) | (a))
 #define ToPLColor(a) (((U_LONG) a) >> 8)
@@ -1853,12 +2355,12 @@ PLColor_to_XColor(PLColor *plcolor, XColor *xcolor)
     xcolor->flags = DoRed | DoGreen | DoBlue;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void PLColor_from_XColor()
  *
  * Copies the supplied XColor to a PLColor, stripping off bits as
  * necessary.  See the previous routine for more info.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
@@ -1868,12 +2370,12 @@ PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
     plcolor->b = ToPLColor(xcolor->blue);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * int pl_AreWeGrayscale(Display *display)
  *
  * Determines if we're using a monochrome or grayscale device.
  * gmf 11-8-91; Courtesy of Paul Martz of Evans and Sutherland. 
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 pl_AreWeGrayscale(Display *display)
@@ -1900,7 +2402,7 @@ pl_AreWeGrayscale(Display *display)
     return (1);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * void PLX_save_colormap()
  *
  * Saves RGB components of given colormap.
@@ -1912,7 +2414,7 @@ pl_AreWeGrayscale(Display *display)
  * HPUX 9.01/VUE/X11R5 at least it doesn't preserve the previous read-only
  * color cell allocations made by Tk.  Is this a bug?  Have to look at the
  * source to find out.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 PLX_save_colormap(Display *display, Colormap colormap)
