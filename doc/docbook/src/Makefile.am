@@ -56,7 +56,7 @@ all: html print
 
 html: $(HTML_MANIFEST) $(JPEG_MANIFEST)
 
-$(HTML_MANIFEST): $(SGML_SOURCES) $(STYLESHEET_HTML).in inline-html.ent
+$(HTML_MANIFEST): $(SOURCE_FILES) $(STYLESHEET_HTML).in inline-html.ent
 	ln -fs inline-html.ent inline.ent
 	$(JADE) $(SGML_CATALOGS) -d $(STYLESHEET_HTML) -t sgml \
 	  $(XML_DECL) $(MASTER_XML)
