@@ -88,9 +88,8 @@ static int usepthreads = 1;     /* use "-drvopt usepth=0" to not use pthreads to
  * ccmap		When set, turns on custom color map
  *
  * XWM_COLORS		Number of low "pixel" values to copy.
- * CMAP0_COLORS		Color map 0 entries.
  * CMAP1_COLORS		Color map 1 entries.
- * MAX_COLORS		Maximum colors period.
+ * MAX_COLORS		Maximum colors period (rw colormaps only).
  *
  * See Init_CustomCmap() and  Init_DefaultCmap() for more info.
  * Set ccmap at your own risk -- still under development.
@@ -100,8 +99,9 @@ static int usepthreads = 1;     /* use "-drvopt usepth=0" to not use pthreads to
  * plframe.c also includes that header and uses the variable. */
 
 #define XWM_COLORS 70
-#define CMAP0_COLORS 16
 #define CMAP1_COLORS 50
+
+/* Note: read-only colormaps aren't affected by this. */
 #define MAX_COLORS 256
 
 /* Variables to hold RGB components of given colormap. */
@@ -624,6 +624,9 @@ plD_state_xw(PLStream *pls, PLINT op)
 
     case PLSTATE_CMAP0:
 	SetBGFG(pls);
+    /* If ncol0 has changed, need to reallocate */
+        if (pls->ncol0 != xwd->ncol0)
+            AllocCmap0(pls);
 	StoreCmap0(pls);
 	break;
 
@@ -2665,9 +2668,6 @@ InitColors(PLStream *pls)
  *		allocated first, thus are in use by the window manager. I
  *		copy them to reduce flicker.
  *
- * CMAP0_COLORS	Color map 0 entries.  I allocate these both in the default
- *		colormap and the custom colormap to reduce flicker.
- *
  * CMAP1_COLORS	Color map 1 entries.  There should be as many as practical
  *		available for smooth shading.  On the order of 50-100 is
  *		pretty reasonable.  You don't really need all 256,
@@ -2781,13 +2781,20 @@ AllocCmap0(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
-
-    int i, npixels;
-    unsigned long plane_masks[1], pixels[MAX_COLORS];
+    int i;
 
     dbug_enter("AllocCmap0");
 
+/* Free all previous colors.  This should work for both rw & ro colormaps */ 
+    for (i = 1; i < xwd->ncol0; i++) {
+        unsigned long pixel = xwd->cmap0[i].pixel;
+        XFreeColors(xwd->display, xwd->map, &pixel, 1, 0);
+    }
+
     if (xwd->rw_cmap) {
+        int npixels;
+        unsigned long plane_masks[1], pixels[MAX_COLORS];
+
     /* Allocate and assign colors in cmap 0 */
 
 	npixels = pls->ncol0-1;
@@ -2818,8 +2825,10 @@ AllocCmap0(PLStream *pls)
 	    r = XAllocColor( xwd->display, xwd->map, &c );
 	    if (pls->verbose)
 		fprintf( stderr, "i=%d, r=%d, pixel=%d\n", i, r, (int) c.pixel );
-	    if ( r )
+	    if ( r ) {
 		xwd->cmap0[i] = c;
+		xwd->cmap0[i].pixel = c.pixel; /* needed for deallocation */
+            }
             else
             {
                 XColor screen_def, exact_def;
@@ -2839,13 +2848,18 @@ AllocCmap0(PLStream *pls)
                 if (r) {
                     if (pls->verbose)
                         fprintf( stderr, "yes, got a color by name.\n" );
+
                     xwd->cmap0[i] = screen_def;
-                } else {
+                    xwd->cmap0[i].pixel = screen_def.pixel;
+                } 
+                else {
                     r = XAllocNamedColor( xwd->display, xwd->map,
                                           "white",
                                           &screen_def, &exact_def );
-                    if (r)
+                    if (r) {
                         xwd->cmap0[i] = screen_def;
+                        xwd->cmap0[i].pixel = screen_def.pixel;
+                    }
                     else
                         printf( "Can't find white?! Giving up...\n" );
                 }
