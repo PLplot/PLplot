@@ -1,6 +1,25 @@
 #!/bin/sh
-# Test suite for octave examples.  
-# This is called from plplot-test.sh with $octavedir, $device, 
+# Test suite for octave examples.
+#
+# Copyright (C) 2004  Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Library Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+# This is called from plplot-test.sh with $octavedir, $device,
 # $dsuffix and $options defined.
 # Assumes that $option starts and are '-' separated.
 
@@ -42,7 +61,7 @@ for i=[1:13 15 16 18];
     endfor
     device="$device";
     plSetOpt("dev", device);
-#o trailer on filename e.g., x01o.ps) to distinguish from other 
+#o trailer on filename e.g., x01o.ps) to distinguish from other
 #common examples.
     file = sprintf("x%.2do.$dsuffix",i);
     plSetOpt("o", file);

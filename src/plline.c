@@ -1,6 +1,25 @@
 /* $Id$
 
 	Routines dealing with line generation.
+
+   Copyright (C) 2004  Maurice LeBrun
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU Library General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 */
 
 #include "plplotP.h"
@@ -145,7 +164,7 @@ c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 	  }
 	}
       }
-      /* if we made it to here without "break"ing out of the loop, the 
+      /* if we made it to here without "break"ing out of the loop, the
 	 remaining segment is visible */
       if( axis == 3 ) { /*  not clipped away */
 	PLFLT u0, v0, u1, v1;
@@ -283,7 +302,7 @@ c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT ifcc)
 	  }
 	}
       }
-      /* if we made it to here without "break"ing out of the loop, the 
+      /* if we made it to here without "break"ing out of the loop, the
 	 remaining segment is visible */
       if( axis == 3 && draw[i] ) { /*  not clipped away */
 	PLFLT u0, v0, u1, v1;
@@ -469,7 +488,7 @@ pllclp(PLINT *x, PLINT *y, PLINT npts)
 
 void
 plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
-	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
+	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
 	   void (*draw) (short *, short *, PLINT))
 {
     PLINT x1, x2, y1, y2;
@@ -499,7 +518,7 @@ plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
 		yclp[iclp] = y2;
 	    }
 
-/* Not first point.  Check if first point of this segment matches up to 
+/* Not first point.  Check if first point of this segment matches up to
    previous point, and if so, add it to the current polyline buffer. */
 
 	    else if (x1 == xclp[iclp] && y1 == yclp[iclp]) {
@@ -578,7 +597,7 @@ circulation(PLINT *x, PLINT *y, PLINT npts)
 
 void
 plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
-	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
+	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
 	   void (*draw) (short *, short *, PLINT))
 {
     PLINT i, x1, x2, y1, y2;
@@ -632,32 +651,32 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 		{
 		    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
 		    xclp[iclp] = xmax; yclp[iclp] = ymax; iclp++;
-		} 
+		}
 	    /* Lower two */
 		else if ( (crossed_xmin1 && crossed_xmax2 && y1 <= ymin) )
 		{
 		    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
 		    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
-		} 
+		}
 	    /* Left two */
 		else if ( (crossed_ymin1 && crossed_ymax2 && x1 <= xmin) )
 		{
 		    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
 		    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
-		} 
+		}
 	    /* Right two */
 		else if ( (crossed_ymin1 && crossed_ymax2 && x1 >= xmax) )
 		{
 		    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
 		    xclp[iclp] = xmax; yclp[iclp] = ymin; iclp++;
-		} 
+		}
 	    /* Now the case where we encircled one corner */
 	    /* Lower left */
 		else if ( (crossed_xmin1 && crossed_ymin2) ||
 			  (crossed_ymin1 && crossed_xmin2) )
 		{
 		    xclp[iclp] = xmin; yclp[iclp] = ymin; iclp++;
-		} 
+		}
 	    /* Lower right */
 		else if ( (crossed_xmax1 && crossed_ymin2) ||
 			  (crossed_ymin1 && crossed_xmax2) )
@@ -669,7 +688,7 @@ plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
 			  (crossed_ymax1 && crossed_xmin2) )
 		{
 		    xclp[iclp] = xmin; yclp[iclp] = ymax; iclp++;
-		} 
+		}
 	    /* Upper right */
 		else if ( (crossed_xmax1 && crossed_ymax2) ||
 			  (crossed_ymax1 && crossed_xmax2) )

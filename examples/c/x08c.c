@@ -1,6 +1,26 @@
 /* $Id$
 
 	3-d plot demo.
+
+   Copyright (C) 2004  Alan W. Irwin
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+
 */
 
 #include "plcdemos.h"
@@ -108,7 +128,7 @@ main(int argc, char *argv[])
   (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
   if (sombrero)
     rosen=0;
-  
+
   /* Initialize plplot */
 
   plinit();
@@ -153,9 +173,9 @@ main(int argc, char *argv[])
   step = (zmax-zmin)/(nlevel+1);
   for (i=0; i<nlevel; i++)
     clevel[i] = zmin + step + step*i;
-  
+
   pllightsource(1.,1.,1.);
-    	
+
   for (k = 0; k < 2; k++) {
     for (ifshade = 0; ifshade < 4; ifshade++) {
       pladv(0);
@@ -185,7 +205,7 @@ main(int argc, char *argv[])
       } else                     /* magnitude colored plot with contours */
 	plsurf3d(x, y, z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel);
     }
-  }   
+  }
 
   plend();
   exit(0);

@@ -1,11 +1,29 @@
 /* $Id$
- * 
+ *
  *	Main program for Tcl-interface to PLplot.  Allows interpretive
  *	execution of plotting primitives without regard to output driver.
  *
  * Maurice LeBrun
  * IFS, University of Texas at Austin
  * 19-Jun-1994
+ *
+ * Copyright (C) 2004  Joao Cardoso
+ *
+ * This file is part of PLplot.
+ *
+ * PLplot is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Library Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * PLplot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with PLplot; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  */
 
@@ -79,7 +97,7 @@ prPromptCmd(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 
     plgpls(&pls);
 
-    if (pls->ipls == 0) 
+    if (pls->ipls == 0)
 	sprintf(prompt, "pltext; puts -nonewline \"pltcl> \"; flush stdout");
     else
 	sprintf(prompt, "pltext; puts -nonewline \"pltcl_%d> \"; flush stdout", pls->ipls);

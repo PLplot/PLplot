@@ -4,11 +4,26 @@
 # IFS, University of Texas at Austin
 # 14-Jul-1994
 #
-# Copyright (C) 2003  Maurice LeBrun
-# Copyright (C) 2003  Rafael Laboissiere
-# Copyright (C) 2003  Alan W. Irwin
-# Copyright (C) 2003  Joao Cardoso
-
+# Copyright (C) 2003, 2004  Maurice LeBrun
+# Copyright (C) 2003, 2004  Rafael Laboissiere
+# Copyright (C) 2003, 2004  Alan W. Irwin
+# Copyright (C) 2003, 2004  Joao Cardoso
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Library Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 # This script sets up config variables for a Unix-like system.
 # The stuff set here is fairly generic and can be automated.
@@ -111,7 +126,7 @@ fi
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     AC_MSG_CHECKING(for GD header files)
     if test -z "$GDINCDIR"; then
-        AC_PREPROC_IFELSE([#include <gd.h>], 
+        AC_PREPROC_IFELSE([#include <gd.h>],
 	[ GDINCDIR=default
 	  AC_MSG_RESULT([found in $GDINCDIR]) ], [
         incdirs="\
@@ -125,9 +140,9 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
             fi
         done
         if test -z "$GDINCDIR"; then
-	    AC_MSG_RESULT(not found)	    
+	    AC_MSG_RESULT(not found)
             AC_MSG_WARN([gd header files not found, setting enable_png=no])
-            AC_MSG_WARN([and enable_jpeg=no])	    
+            AC_MSG_WARN([and enable_jpeg=no])
             GDINCDIR=default
             enable_png=no
             enable_jpeg=no
@@ -145,7 +160,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
 fi
 
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
-    if test -z "$GDLIBDIR"; then    
+    if test -z "$GDLIBDIR"; then
         AC_CHECK_LIB(gd, main, [ GDLIBDIR=default ], [
         libdirs="\
         /usr/lib \
@@ -159,7 +174,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         done
         if test -z "$GDLIBDIR"; then
             AC_MSG_WARN([gd library not found, setting enable_png=no])
-            AC_MSG_WARN([and enable_jpeg=no])	    
+            AC_MSG_WARN([and enable_jpeg=no])
             GDLIBDIR=default
             enable_png=no
             enable_jpeg=no
@@ -189,7 +204,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         done
         if test -z "$PNGLIBDIR"; then
             AC_MSG_WARN([png library not found, setting enable_png=no])
-            AC_MSG_WARN([and enable_jpeg=no])	    
+            AC_MSG_WARN([and enable_jpeg=no])
             PNGLIBDIR=default
             enable_png=no
             enable_jpeg=no
@@ -217,7 +232,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         done
         if test -z "$JPEGLIBDIR"; then
             AC_MSG_WARN([jpeg library not found, setting enable_png=no])
-            AC_MSG_WARN([and enable_jpeg=no])	    
+            AC_MSG_WARN([and enable_jpeg=no])
             JPEGLIBDIR=default
             enable_png=no
             enable_jpeg=no
@@ -245,7 +260,7 @@ if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
         done
         if test -z "$ZLIBLIBDIR"; then
             AC_MSG_WARN([zlib library not found, setting enable_png=no])
-            AC_MSG_WARN([and enable_jpeg=no])	    
+            AC_MSG_WARN([and enable_jpeg=no])
             ZLIBLIBDIR=default
             enable_png=no
             enable_jpeg=no
@@ -314,7 +329,7 @@ AC_SUBST(GDLIBCMD)
 if test "$enable_cgm" = "yes"; then
     AC_MSG_CHECKING(for libcd header files)
     if test -z "$CDINCDIR"; then
-        AC_PREPROC_IFELSE([#include <cd.h>], 
+        AC_PREPROC_IFELSE([#include <cd.h>],
 	[ CDINCDIR=default
 	  AC_MSG_RESULT([found in $CDINCDIR]) ], [
         incdirs="\
@@ -403,7 +418,7 @@ if test "$with_freetype" = "yes"; then
             FREETYPEINCDIR=default
             with_freetype=no
 	else
-            AC_MSG_RESULT([found in $FREETYPEINCDIR])	
+            AC_MSG_RESULT([found in $FREETYPEINCDIR])
         fi ])
     fi
     if test "$FREETYPEINCDIR" = "/usr/include"; then
@@ -792,8 +807,8 @@ if test "$enable_octave" = "yes"; then
 
 # check for user supplied mkoctfile
     if test "$enable_octave" = "yes"; then
-        AC_ARG_WITH(mkoctfile, 
-            AC_HELP_STRING([--with-mkoctfile=file], [Specify mkoctfile]), 
+        AC_ARG_WITH(mkoctfile,
+            AC_HELP_STRING([--with-mkoctfile=file], [Specify mkoctfile]),
             MKOCTFILE="$withval", MKOCTFILE="mkoctfile")
         MKOCTFILE=`basename $MKOCTFILE`
         AC_CHECK_PROG(has_mkoctfile, $MKOCTFILE, yes, no)
@@ -805,8 +820,8 @@ if test "$enable_octave" = "yes"; then
 
 # check for user supplied Octave
     if test "$enable_octave" = "yes"; then
-        AC_ARG_WITH(octavex, 
-            AC_HELP_STRING([--with-octavex=file], [Specify Octave]), 
+        AC_ARG_WITH(octavex,
+            AC_HELP_STRING([--with-octavex=file], [Specify Octave]),
             OCTAVE="$withval", OCTAVE="octave")
         OCTAVE=`basename $OCTAVE`
         AC_CHECK_PROG(has_octave, $OCTAVE, yes, no)
@@ -855,14 +870,14 @@ EOF`])
         # with the Octave prefix being replaced by the PLplot one.
 	if test "$OCTAVE_PREFIX" != "$prefix" ; then
             OCTAVE_M_DIR=${prefix}/`echo $OCTAVE_M_DIR \
-                                   | sed "s:$OCTAVE_PREFIX/*::"`	
+                                   | sed "s:$OCTAVE_PREFIX/*::"`
 	fi
         AC_MSG_RESULT($OCTAVE_M_DIR)
 
         AC_MSG_CHECKING([Octave oct dir])
 	if test -n "`echo $OCTAVE_VERSION | sed 's/^2.1//p;d;q'`" ; then
             # Octave version 2.1
-            OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(localoctfiledir)	
+            OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(localoctfiledir)
         else
             # Octave version 2.0
             OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(localoctfilepath)
@@ -891,7 +906,7 @@ if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_VERSION" ; then
         enable_python=no
 	AC_MSG_WARN([Python version not found, setting enable_python=no])
-    else 
+    else
         if test "$enable_shared" != "yes"; then
             AC_MSG_RESULT([warning: python support requires enable_shared=yes, setting enable_python=no])
             enable_python=no
@@ -910,7 +925,7 @@ if test "$enable_python" = "yes"; then
             AC_MSG_WARN([This probably means that an appropriate Python])
             AC_MSG_WARN([development package needs to be installed.])
 	fi
-	
+
     fi
 
 # This needs to be a separate test in case PYTHON_INC_DIR is specified by the
@@ -951,7 +966,7 @@ if test "$enable_python" = "yes" -o "$enable_java" = "yes"; then
                       | sed 's/[0-9]*\.//;s/\..*//'`]
         [SWIG_VERSION_MICRO=`echo $SWIG_VERSION \
                       | sed 's/[0-9]*\.[0-9]*\.//' | sed 's/[^0-9].*//'`]
-	if test "$SWIG_VERSION" ; then 
+	if test "$SWIG_VERSION" ; then
           AC_MSG_RESULT([$SWIG_VERSION])
 	else
 	  AC_MSG_RESULT([not found])
@@ -1001,7 +1016,7 @@ if test "$with_pthreads" = "yes" -a "$enable_xwin" = "yes"; then
         linux*)
             PLPLOT_MUTEX_RECURSIVE=PTHREAD_MUTEX_RECURSIVE_NP
 	;;
-	*)	    
+	*)
             PLPLOT_MUTEX_RECURSIVE=PTHREAD_MUTEX_RECURSIVE
         ;;
     esac
@@ -1086,10 +1101,9 @@ if test "$with_qhull" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
-# Automake conditionals for the qhull and csa libraries (to be used 
-# primarily in bindings/octave/Makefile.am) 
-#
----------------------------------------------------------------------------
+# Automake conditionals for the qhull and csa libraries (to be used
+# primarily in bindings/octave/Makefile.am)
+# ----------------------------------------------------------------------------
 
 AM_CONDITIONAL(with_csa, [test "$with_csa" = yes])
 AM_CONDITIONAL(with_qhull, [test "$with_qhull" = yes])

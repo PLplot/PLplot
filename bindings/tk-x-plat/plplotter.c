@@ -1,5 +1,65 @@
 /* $Id$
  * $Log$
+ * Revision 1.17  2004/01/17 16:41:37  rlaboiss
+ * This jumbo cvs commit is the result of a herculean task to update the
+ * copyright notices of most of the source files of PLplot.
+ *
+ * I hope that I did not introduce any serious breakage.  This seems plausible,
+ * because I did changes only at the beginning of the files and only in
+ * commented lines.  However, I used a semi-automatic procedure for doing that
+ * and some bugs may have slipped into the files.  The sources still build okay
+ * (at least the Debian packages) and I can install the libraries, and compile
+ * and run some C examples.  That is not enough, so PLEASE TEST!
+ *
+ * This is what I did in more detail:
+ *
+ * 1) From the CVS ChangeLog, I considered all the files that changed since the
+ *    last release (5.2.1).  I then added the line:
+ *
+ *        Copyright (C) 2004  Joe C. V. S. Committer
+ *
+ *    where the name of the developper who did the CVS commit is included.
+ *
+ * 2) Notice that the year in the line above should read 2004, even if the
+ *    changes were done last year, since Copyright years refer to when the
+ *    software is released.
+ *
+ * 3) For the same reason, I did not bother adding missing Copyright entries
+ *    for previous authors of each file.  One copyright holder is enough for
+ *    our purposes.
+ *
+ * 4) I also reformatted and reworded the License Conditions text.  This
+ *    included changing things like "This file is free software" to "PLplot is
+ *    free sofware" and so on.
+ *
+ * 5) Finally, some files were lacking License notices, especially the src/*.c.
+ *    I added them and put in the Copyright holder line the name of the
+ *    developer who did the last cvs commit for the file.
+ *
+ * If you wish to know where your name appears, you can run from the
+ * $(top_builddir):
+ *
+ *     grep -ri "copyright.*2004".
+ *
+ *
+ * Copyright (C) 2004  Joao Cardoso
+ *
+ * This file is part of PLplot.
+ *
+ * PLplot is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Library Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * PLplot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with PLplot; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
  * Revision 1.16  2003/10/29 19:40:54  jcard
  * Mostly cosmetic changes that enable plplot to compiled with (almost) no warnings, even with gcc -Wall.
  *
@@ -69,20 +129,20 @@
  * AWI: pltk patch changes to existing files
  *
  * Revision 1.60  1999/09/06 vince
- * 
+ *
  * Simplified things for Tcl/Tk 8.2, streamlined interface between plwidget
  * (Plplotwin) and this widget.  Added optional argument 'wait' to some
  * of the 'view' subcommands so the plot is only ever updated once after
  * zooming/resetting.  Previously it could be updated/redrawn/resized
  * as many as three times, when the user really only carried out one
  * operation.  Plplotwin code updated to use new wait argument.
- * 
+ *
  * Revision 1.59  1998/08/21 21:35:14 vince
- * 
+ *
  * Fixes to compile under Unix with Tcl8.
  *
  * '-background' config option works properly now (with redraw/dbl-buffer etc)
- * 
+ *
  *
  * Scrollbars were having some problems; not sure why, so I rewrote
  * them to use the new syntax for Tk4 and newer.  It's actually much
@@ -90,7 +150,7 @@
  * by one simple 'Scroll'.  Renamed widget commands xscroll and yscroll
  * to xview and yview so (i) they're like the newer Tk widgets and
  * (ii) so they give an obvious error if you try to use the old mechanism.
- * 
+ *
  * Fixed the weird init process in the widget where there were all
  * sorts of problems due to widget not being mapped when desired
  * etc.  These seemed to break with each successive Tk release.
@@ -98,15 +158,15 @@
  * screen, just into existence inside Tk, so Tk_WindowId(tkwin)
  * works) using Tk_MakeWindowExist, then you can continue with
  * the initialisation immediately.
- * 
- * Rearranged a few things to be more like the widgets in 
+ *
+ * Rearranged a few things to be more like the widgets in
  * the Tk 8 distribution.  Works on Windows.  I hope it
  * still works on Unix and MacOS!
- * 
+ *
  * Revision 1.58  1996/07/13 21:35:14 vince
  * Fixed for cross-platform support.  Works on MacOS now.
- * Removed backwards compatibility stuff (for old Tcl/Tk).  
- * This is designed to be a cross-platform widget now, and that 
+ * Removed backwards compatibility stuff (for old Tcl/Tk).
+ * This is designed to be a cross-platform widget now, and that
  * old stuff was just getting in the way.
  * Some stuff like OpenLink, Print don't work on MacOS yet.
  * Uses the new 'tkwin' driver rather than 'xwin'.
@@ -232,7 +292,7 @@
     Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
     Based upon tkFrame.c from the TK 3.2 distribution:
-   
+
     Copyright 1990 Regents of the University of California.
     Permission to use, copy, modify, and distribute this
     software and its documentation for any purpose and without
@@ -243,7 +303,7 @@
     express or implied warranty.
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-        
+
     This module implements "plframe" widgets for the Tk toolkit.  These are
     frames that have extra logic to allow them to be interfaced with the
     PLplot X driver.  These are then drawn into and respond to keyboard and
@@ -331,7 +391,7 @@ typedef struct PlPlotter {
 /* Used to allow active stuff on the plot */
     int active_plot;            /* The plot responds to mouse movement etc. */
     int isActive;               /* Used to turn event handling on and off. */
-    
+
 /* Used to handle resize and expose events */
 
     PLDisplay pldis;            /* Info about the display window */
@@ -342,7 +402,7 @@ typedef struct PlPlotter {
 
     char *SaveFnam;             /* File name we are currently saving to.
                                    Malloc'ed. */
-    char **devDesc;             /* Descriptive names for file-oriented 
+    char **devDesc;             /* Descriptive names for file-oriented
                                  * devices.  Malloc'ed. */
     char **devName;             /* Keyword names of file-oriented devices.
                                  * Malloc'ed. */
@@ -564,9 +624,9 @@ plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
     plPlotterPtr->tkwin = tkwin;
     plPlotterPtr->display = Tk_Display(tkwin);
     plPlotterPtr->interp = interp;
-    plPlotterPtr->widgetCmd = 
+    plPlotterPtr->widgetCmd =
       Tcl_CreateCommand(interp, Tk_PathName(plPlotterPtr->tkwin),
-			(Tcl_CmdProc*) PlPlotterWidgetCmd, (ClientData) plPlotterPtr, 
+			(Tcl_CmdProc*) PlPlotterWidgetCmd, (ClientData) plPlotterPtr,
 			(Tcl_CmdDeleteProc*) NULL);
     plPlotterPtr->xorGC = NULL;
     plPlotterPtr->border = NULL;
@@ -610,7 +670,7 @@ plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
     plgpls(&plPlotterPtr->pls);
     /* Tell the stream about myself */
     plPlotterPtr->pls->plPlotterPtr = plPlotterPtr;
-        
+
 /* Set up stuff for rubber-band drawing */
 
     plPlotterPtr->xhair_cursor =
@@ -641,7 +701,7 @@ plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* for active plot */
     ActiveState(plPlotterPtr, 1);
-    
+
     if (ConfigurePlPlotter(interp, plPlotterPtr, argc-2, (CONST char**) argv+2, 0) != TCL_OK) {
         Tk_DestroyWindow(plPlotterPtr->tkwin);
         return TCL_ERROR;
@@ -649,7 +709,7 @@ plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
     Tk_MakeWindowExist(plPlotterPtr->tkwin);
     PlPlotterFirstInit((ClientData)plPlotterPtr);
     Tk_GeometryRequest(plPlotterPtr->tkwin,200,200);
-    
+
     interp->result = Tk_PathName(plPlotterPtr->tkwin);
 
     return TCL_OK;
@@ -683,7 +743,7 @@ PlPlotterWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     char c;
 
     dbug_enter("PlPlotterWidgetCmd");
-    
+
     if (argc < 2) {
         Tcl_AppendResult(interp, "wrong # args: should be \"",
                 argv[0], " option ?arg arg ...?\"", (char *) NULL);
@@ -836,7 +896,7 @@ PlPlotterWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     else if ((c == 'x') && (strncmp(argv[1], "xview", length) == 0)) {
 	int count, type;
 	double width = (double) (plPlotterPtr->xr - plPlotterPtr->xl);
-	
+
 	double fraction;
 
 	type = Tk_GetScrollInfo(interp, argc, argv, &fraction, &count);
@@ -872,7 +932,7 @@ PlPlotterWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     else if ((c == 'y') && (strncmp(argv[1], "yview", length) == 0)) {
 	int count, type;
 	double height = plPlotterPtr->yr - plPlotterPtr->yl;
-	
+
 	double fraction;
 
 	type = Tk_GetScrollInfo(interp, argc, argv, &fraction, &count);
@@ -999,7 +1059,7 @@ static void DestroyPlPlotter(ClientData clientData)
  *
  * PlPlotterConfigureEH --
  *
- *      Invoked by the Tk dispatcher on structure changes to a plframe. 
+ *      Invoked by the Tk dispatcher on structure changes to a plframe.
  *
  * Results:
  *      None.
@@ -1054,7 +1114,7 @@ PlPlotterConfigureEH(ClientData clientData, register XEvent *eventPtr)
 #if 0
     /* For some reason, "." must be mapped or PlPlotterInit will die (Note:
      * mapped & withdrawn or mapped in the withdrawn state is OK). Issuing
-     * an update fixes this.  I'd love to know why this occurs.  
+     * an update fixes this.  I'd love to know why this occurs.
      */
 
         if (!plPlotterPtr->tkwin_initted) {
@@ -1062,7 +1122,7 @@ PlPlotterConfigureEH(ClientData clientData, register XEvent *eventPtr)
         }
 #endif
 	/* Set up window parameters and arrange for window to be refreshed */
-	
+
 	Tcl_DoWhenIdle(PlPlotterInit, (ClientData) plPlotterPtr);
 	break;
     }
@@ -1073,7 +1133,7 @@ PlPlotterConfigureEH(ClientData clientData, register XEvent *eventPtr)
  *
  * PlPlotterExposeEH --
  *
- *      Invoked by the Tk dispatcher on exposes of a plframe. 
+ *      Invoked by the Tk dispatcher on exposes of a plframe.
  *
  * Results:
  *      None.
@@ -1138,7 +1198,7 @@ PlPlotterExposeEH(ClientData clientData, register XEvent *eventPtr)
  *
  * PlPlotterMotionEH --
  *
- *      Invoked by the Tk dispatcher on MotionNotify events in a plframe. 
+ *      Invoked by the Tk dispatcher on MotionNotify events in a plframe.
  *      Not invoked unless we are drawing graphic crosshairs.
  *
  * Results:
@@ -1239,7 +1299,7 @@ PlPlotterButtonPressEH(ClientData clientData, register XEvent *eventPtr)
 {
     register PlPlotter *plPlotterPtr = (PlPlotter *) clientData;
     XButtonEvent *event = (XButtonEvent *) eventPtr;
-    
+
     /* Get modifier keys */
     switch (event->state) {
       case 256: /* plain */
@@ -1467,7 +1527,7 @@ static void PlPlotterFirstInit(ClientData clientData) {
 	Install_cmap(plPlotterPtr);
     }
     plbop();
-    
+
     plPlotterPtr->tkwin_initted = 1;
     plPlotterPtr->width  = Tk_Width(tkwin);
     plPlotterPtr->height = Tk_Height(tkwin);
@@ -1481,7 +1541,7 @@ static void PlPlotterFirstInit(ClientData clientData) {
  * PlPlotterInit --
  *
  *      Invoked to handle miscellaneous initialization after window gets
- *      mapped.  
+ *      mapped.
  *
  * Results:
  *      None.
@@ -1518,7 +1578,7 @@ PlPlotterInit(ClientData clientData)
  * Install_cmap --
  *
  *      Installs X driver color map as necessary when custom color maps
- *      are used. 
+ *      are used.
  *
  * Results:
  *      None.
@@ -1837,7 +1897,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 /* no option -- return list of available PLplot commands */
 
-    if (argc == 0) 
+    if (argc == 0)
         return plTclCmd(cmdlist, interp, argc, (char **) argv);
 
 /* Make sure widget has been initialized before going any further */
@@ -1864,7 +1924,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         sprintf(str, "%d", (int) pls->ncol0);
         Tcl_AppendElement(interp, str);
         for (i = 0; i < pls->ncol0; i++) {
-            plcolor = ((pls->cmap0[i].r << 16) | 
+            plcolor = ((pls->cmap0[i].r << 16) |
                        (pls->cmap0[i].g << 8) |
                        (pls->cmap0[i].b));
 
@@ -2011,7 +2071,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
                   i, argv[2], argv[3], argv[4], &changed) != TCL_OK)
             return TCL_ERROR;
 
-        if (changed) 
+        if (changed)
             plcmap1_calc();
     }
 
@@ -2039,7 +2099,7 @@ Cmd(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 /* unrecognized, so give it to plTclCmd to take care of */
 
-    else 
+    else
         result = plTclCmd(cmdlist, interp, argc, (char **)argv);
 
     plflush();
@@ -2054,14 +2114,14 @@ static void ActiveState(register PlPlotter *plPlotterPtr, int on) {
 
             Tk_CreateEventHandler(plPlotterPtr->tkwin, PointerMotionMask,
                                   PlPlotterMotionEH, (ClientData) plPlotterPtr);
-        
+
             Tk_CreateEventHandler(plPlotterPtr->tkwin, EnterWindowMask,
                                   PlPlotterEnterEH, (ClientData) plPlotterPtr);
-        
+
             Tk_CreateEventHandler(plPlotterPtr->tkwin, LeaveWindowMask,
                                   PlPlotterLeaveEH, (ClientData) plPlotterPtr);
         /* Switch to crosshair cursor. */
-        
+
             Tk_DefineCursor(plPlotterPtr->tkwin, plPlotterPtr->xhair_cursor);
         }
     } else {
@@ -2070,14 +2130,14 @@ static void ActiveState(register PlPlotter *plPlotterPtr, int on) {
                                   PlPlotterButtonPressEH, (ClientData) plPlotterPtr);
             Tk_DeleteEventHandler(plPlotterPtr->tkwin, PointerMotionMask,
                                   PlPlotterMotionEH, (ClientData) plPlotterPtr);
-    
+
             Tk_DeleteEventHandler(plPlotterPtr->tkwin, EnterWindowMask,
                                   PlPlotterEnterEH, (ClientData) plPlotterPtr);
-    
+
             Tk_DeleteEventHandler(plPlotterPtr->tkwin, LeaveWindowMask,
                                   PlPlotterLeaveEH, (ClientData) plPlotterPtr);
         /* Switch back to boring old pointer */
-        
+
             Tk_DefineCursor(plPlotterPtr->tkwin, plPlotterPtr->cursor);
         }
     }
@@ -2090,7 +2150,7 @@ static void ActiveState(register PlPlotter *plPlotterPtr, int on) {
  * ConfigurePlPlotter --
  *
  *      This procedure is called to process an argv/argc list, plus the Tk
- *      option database, in order to configure (or reconfigure) a 
+ *      option database, in order to configure (or reconfigure) a
  *      plframe widget.
  *
  * Results:
@@ -2142,7 +2202,7 @@ ConfigurePlPlotter(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
  */
 
     plsstrm(plPlotterPtr->ipls);
-    if(PLColor_from_TkColor_Changed(&pls->cmap0[0], 
+    if(PLColor_from_TkColor_Changed(&pls->cmap0[0],
       Tk_3DBorderColor(plPlotterPtr->border))) {
     	need_redisplay = 1;
     	/* need to redraw as well as simply refresh the window */
@@ -2202,7 +2262,7 @@ ConfigurePlPlotter(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     }
 /* Sets or clears events for the plot */
     ActiveState(plPlotterPtr,plPlotterPtr->active_plot);
-        
+
     if (!pls->nopixmap) {
 	/* can only adjust if this flag not set */
 	if(plPlotterPtr->double_buffer != pls->db) {
@@ -2213,7 +2273,7 @@ ConfigurePlPlotter(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     } else {
 	plPlotterPtr->double_buffer = 0;
     }
-	
+
 /* Arrange for window to be refreshed if necessary */
     if (need_redisplay && Tk_IsMapped(tkwin)
             && !(plPlotterPtr->flags & REFRESH_PENDING)) {
@@ -2346,7 +2406,7 @@ Info(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
     if ((c == 'd') && (strncmp(argv[0], "devkeys", length) == 0)) {
         int i = 0;
-        while (plPlotterPtr->devName[i] != NULL) 
+        while (plPlotterPtr->devName[i] != NULL)
             Tcl_AppendElement(interp, plPlotterPtr->devName[i++]);
 
         result = TCL_OK;
@@ -2356,7 +2416,7 @@ Info(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
     else if ((c == 'd') && (strncmp(argv[0], "devnames", length) == 0)) {
         int i = 0;
-        while (plPlotterPtr->devDesc[i] != NULL) 
+        while (plPlotterPtr->devDesc[i] != NULL)
             Tcl_AppendElement(interp, plPlotterPtr->devDesc[i++]);
 
         result = TCL_OK;
@@ -2365,7 +2425,7 @@ Info(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 /* unrecognized */
 
     else {
-        Tcl_AppendResult(interp, "bad option to \"info\": must be ", 
+        Tcl_AppendResult(interp, "bad option to \"info\": must be ",
          "devkeys, devnames", (char *) NULL);
 
         result = TCL_ERROR;
@@ -2439,7 +2499,7 @@ Openlink(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 /* unrecognized */
 
     else {
-        Tcl_AppendResult(interp, "bad option to \"openlink\": must be ", 
+        Tcl_AppendResult(interp, "bad option to \"openlink\": must be ",
          "fifo or socket", (char *) NULL);
 
         return TCL_ERROR;
@@ -2649,11 +2709,11 @@ Print(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 #if !defined(MAC_TCL) && !defined(__WIN32__)
     pid_t pid;
 #endif
-    
+
 /* Make sure widget has been initialized before going any further */
 
     if ( ! plPlotterPtr->tkwin_initted) {
-        Tcl_AppendResult(interp, "Error -- widget not plotted to yet", 
+        Tcl_AppendResult(interp, "Error -- widget not plotted to yet",
                          (char *) NULL);
         return TCL_ERROR;
     }
@@ -2662,7 +2722,7 @@ Print(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
     plmkstrm(&ipls);
     if (ipls < 0) {
-        Tcl_AppendResult(interp, "Error -- cannot create stream", 
+        Tcl_AppendResult(interp, "Error -- cannot create stream",
                          (char *) NULL);
         return TCL_ERROR;
     }
@@ -2672,7 +2732,7 @@ Print(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     sfnam = (char *) tmpnam(NULL);
 
     if ((sfile = fopen(sfnam, "wb+")) == NULL) {
-        Tcl_AppendResult(interp, 
+        Tcl_AppendResult(interp,
                          "Error -- cannot open plot file for writing",
                          (char *) NULL);
         plend1();
@@ -2699,12 +2759,12 @@ Print(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 #if !defined(MAC_TCL) && !defined(__WIN32__)
     if ((plPlotterPtr->plpr_cmd == NULL) || (pid = fork()) < 0) {
-	Tcl_AppendResult(interp, 
+	Tcl_AppendResult(interp,
 			 "Error -- cannot fork print process",
 			 (char *) NULL);
 	result = TCL_ERROR;
     } else if (pid == 0) {
-	if (execl(plPlotterPtr->plpr_cmd, plPlotterPtr->plpr_cmd, sfnam, 
+	if (execl(plPlotterPtr->plpr_cmd, plPlotterPtr->plpr_cmd, sfnam,
 		  (char *) 0)) {
 	    fprintf(stderr, "Unable to exec print command.\n");
 	    _exit(1);
@@ -2720,7 +2780,7 @@ Print(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
  * Tells the tkwin driver to move along to the next page.
 \*--------------------------------------------------------------------------*/
 
-static int 
+static int
 NextPage(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
      int argc, CONST char **argv)
 {
@@ -2768,9 +2828,9 @@ Page(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         Tcl_AppendResult(interp, "wrong # args: should be \"",
                          " page mar aspect jx jy\"", (char *) NULL);
         return TCL_ERROR;
-    } 
+    }
 
-    plsdidev((PLFLT)atof(argv[0]), (PLFLT)atof(argv[1]), 
+    plsdidev((PLFLT)atof(argv[0]), (PLFLT)atof(argv[1]),
 	     (PLFLT)atof(argv[2]), (PLFLT)atof(argv[3]));
     return (Redraw(interp, plPlotterPtr, argc-1, argv+1));
 }
@@ -2818,7 +2878,7 @@ Save(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 /* Make sure widget has been initialized before going any further */
 
     if ( ! plPlotterPtr->tkwin_initted) {
-        Tcl_AppendResult(interp, "Error -- widget not plotted to yet", 
+        Tcl_AppendResult(interp, "Error -- widget not plotted to yet",
                          (char *) NULL);
         return TCL_ERROR;
     }
@@ -2827,7 +2887,7 @@ Save(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
     if (argc == 0) {
         if ( ! plPlotterPtr->ipls_save) {
-            Tcl_AppendResult(interp, "Error -- no current save file", 
+            Tcl_AppendResult(interp, "Error -- no current save file",
                              (char *) NULL);
             return TCL_ERROR;
         }
@@ -2850,7 +2910,7 @@ Save(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
             Tcl_AppendResult(interp, "wrong # args: should be \"",
                              " save as device file\"", (char *) NULL);
             return TCL_ERROR;
-        } 
+        }
 
     /* If save previously in effect, delete old stream */
 
@@ -2863,7 +2923,7 @@ Save(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
         plmkstrm(&plPlotterPtr->ipls_save);
         if (plPlotterPtr->ipls_save < 0) {
-            Tcl_AppendResult(interp, "Error -- cannot create stream", 
+            Tcl_AppendResult(interp, "Error -- cannot create stream",
                              (char *) NULL);
             plPlotterPtr->ipls_save = 0;
             return TCL_ERROR;
@@ -2898,7 +2958,7 @@ Save(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     else if ((c == 'c') && (strncmp(argv[0], "close", length) == 0)) {
 
         if ( ! plPlotterPtr->ipls_save) {
-            Tcl_AppendResult(interp, "Error -- no current save file", 
+            Tcl_AppendResult(interp, "Error -- no current save file",
                              (char *) NULL);
             return TCL_ERROR;
         }
@@ -2912,7 +2972,7 @@ Save(Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 /* unrecognized */
 
     else {
-        Tcl_AppendResult(interp, "bad option to \"save\": must be ", 
+        Tcl_AppendResult(interp, "bad option to \"save\": must be ",
          "as or close", (char *) NULL);
 
         return TCL_ERROR;
@@ -3147,7 +3207,7 @@ UpdateHScrollbar(register PlPlotter *plPlotterPtr)
 {
     char string[60];
 	int result;
-	
+
     if (plPlotterPtr->xScrollCmd == NULL)
         return;
 

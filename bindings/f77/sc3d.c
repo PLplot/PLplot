@@ -1,6 +1,25 @@
 /* $Id$
 
 	Stub routines for 3d plots.
+
+   Copyright (C) 2004  Alan W. Irwin
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 */
 
 #include "plstubs.h"
@@ -12,7 +31,7 @@ PLOT3DC(PLFLT *x, PLFLT *y, PLFLT *z,
 {
    PLFLT ** a;
    int i,j;
-   
+
 /* Create a vectored a array from transpose of the fortran z array. */
    plAlloc2dGrid(&a, *nx, *ny);
    for (i = 0; i < *nx; i++) {
@@ -76,14 +95,14 @@ PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,
 {
    PLINT optlocal, nlevel = 0;
    PLFLT clevel = 0.;
-   
+
    optlocal = *opt | MESH;
    PLOT3DC(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
 }
 
 void
 PLMESHC(PLFLT *x, PLFLT *y, PLFLT *z,
-       PLINT *nx, PLINT *ny, PLINT *opt, 
+       PLINT *nx, PLINT *ny, PLINT *opt,
        PLFLT *clevel, PLINT *nlevel, PLINT *lx)
 {
    PLINT optlocal;
@@ -98,7 +117,7 @@ PLOT3D(PLFLT *x, PLFLT *y, PLFLT *z,
 {
    PLINT optlocal, nlevel = 0;
    PLFLT clevel = 0.;
-   
+
    optlocal = *opt | (*side == 1 ? DRAW_SIDES : 0);
    PLOT3DC(x, y, z, nx, ny, &optlocal, &clevel, &nlevel, lx);
 }

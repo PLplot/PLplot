@@ -1,7 +1,26 @@
 /* $Id$
-
+ *
  * Plots a simple stripchart.
-
+ *
+ * Copyright (C) 2004  Alan W. Irwin
+ *
+ * This file is part of PLplot.
+ *
+ * PLplot is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Library Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * PLplot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with PLplot; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ *
  * ToDo: better way of clearing plot. search for `plvsta'.
  */
 
@@ -102,7 +121,7 @@ c_plstripc( PLINT *id, char *xspec, char *yspec,
     }
 
     stripc->xlpos = xlpos;	/* legend position [0..1] */
-    stripc->ylpos = ylpos;	
+    stripc->ylpos = ylpos;
     stripc->xmin = xmin;	/* initial bounding box */
     stripc->xmax = xmax;
     stripc->ymin = ymin;
@@ -131,7 +150,7 @@ static void plstrip_legend(PLStrip *stripc, int first)
     PLFLT sc, dy;
 
 /* draw legend */
-	
+
     plgchr(&sc, &dy);
     sc = dy = dy/100;
     plwind(-0.01, 1.01, -0.01, 1.01);
@@ -173,14 +192,14 @@ static void plstrip_gen( PLStrip *strip )
     strip->wymin=strip->ymin; strip->wymax=strip->ymax; /* FIXME - can exist some redundancy here */
 
     plwind(strip->xmin, strip->xmax, strip->ymin, strip->ymax);
-    
+
     pllsty(1);
     plcol(strip->colbox);
     plbox(strip->xspec, 0.0, 0, strip->yspec, 0.0, 0);
 
     plcol(strip->collab);
     pllab(strip->labx, strip->laby, strip->labtop);
-	 
+
     for (i=0; i<PEN; i++) {
         if (strip->npts[i] > 0) {
             plcol(strip->colline[i]);pllsty(strip->styline[i]);
@@ -194,7 +213,7 @@ static void plstrip_gen( PLStrip *strip )
 /*--------------------------------------------------------------------------*\
  * plstripa
  *
- * Add a point to a stripchart.  
+ * Add a point to a stripchart.
  * Allocates memory and rescales as necessary.
 \*--------------------------------------------------------------------------*/
 
@@ -207,7 +226,7 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
     	return;
     }
 
-    if ((id < 0) || (id >= MAX_STRIPC) || 
+    if ((id < 0) || (id >= MAX_STRIPC) ||
 	((stripc = strip[id]) == NULL)) {
     	plabort("Non existent stripchart");
     	return;
@@ -225,12 +244,12 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
 	    return;
 	}
     }
-    
+
     stripc->x[p][stripc->npts[p]-1] = x;
     stripc->y[p][stripc->npts[p]-1] = y;
 
     stripc->xmax = x;
-	    
+
     if (stripc->y_ascl == 1 && (y > stripc->ymax || y < stripc->ymin))
 	yasc=1;
 
@@ -268,7 +287,7 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
 		    istart = 0;
 		    while (stripc->x[j][istart] < stripc->xmin + stripc->xlen*stripc->xjump)
 			istart++;
-			
+
 		    stripc->npts[j] = stripc->npts[j] - istart;
 		    memcpy( &stripc->x[j][0], &stripc->x[j][istart], (stripc->npts[j])*sizeof(PLFLT));
 		    memcpy( &stripc->y[j][0], &stripc->y[j][istart], (stripc->npts[j])*sizeof(PLFLT));
@@ -287,14 +306,14 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
 /*--------------------------------------------------------------------------*\
  * plstripd
  *
- * Deletes and releases memory used by a stripchart.  
+ * Deletes and releases memory used by a stripchart.
 \*--------------------------------------------------------------------------*/
 
 void c_plstripd( PLINT id )
 {
     int i;
 
-    if ((id < 0) || (id >= MAX_STRIPC) || 
+    if ((id < 0) || (id >= MAX_STRIPC) ||
 	((stripc = strip[id]) == NULL)) {
     	plabort("Non existent stripchart");
     	return;
@@ -312,7 +331,7 @@ void c_plstripd( PLINT id )
     free(stripc->yspec);
     free(stripc->labx);
     free(stripc->laby);
-    free(stripc->labtop);    
+    free(stripc->labtop);
     free((void *) stripc);
     strip[id] = NULL;
 }

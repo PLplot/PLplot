@@ -1,6 +1,24 @@
 /* $Id$
 
 	Contour plotter.
+
+   Copyright (C) 2004  Alan W. Irwin
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 #include <math.h>
@@ -108,7 +126,7 @@ alloc_line(CONT_LEVEL *node)
   line->y = (PLFLT *) malloc(LINE_ITEMS*sizeof(PLFLT));
   line->npts = 0;
   line->next = NULL;
- 
+
   return line;
 }
 
@@ -128,9 +146,9 @@ alloc_level(PLFLT level)
 static void
 realloc_line(CONT_LINE *line)
 {
-  line->x = (PLFLT *) realloc(line->x, 
+  line->x = (PLFLT *) realloc(line->x,
 			      (line->npts + LINE_ITEMS)*sizeof(PLFLT));
-  line->y = (PLFLT *) realloc(line->y, 
+  line->y = (PLFLT *) realloc(line->y,
 			      (line->npts + LINE_ITEMS)*sizeof(PLFLT));
 }
 
@@ -145,7 +163,7 @@ cont_new_store(PLFLT level)
       currlev = startlev;
     } else {
       currlev->next = alloc_level(level);
-      currlev = currlev->next; 
+      currlev = currlev->next;
     }
     currline = currlev->line;
   }
@@ -164,9 +182,9 @@ cont_clean_store(CONT_LEVEL *ct)
       cline = clevel->line;
       do {
 #ifdef CONT_PLOT_DEBUG /* for 2D plots. For 3D plots look at plot3.c:plotsh3di() */
-	plP_movwor(cline->x[0],cline->y[0]); 
+	plP_movwor(cline->x[0],cline->y[0]);
 	for (j=1; j<cline->npts; j++)
-	  plP_drawor(cline->x[j], cline->y[j]); 
+	  plP_drawor(cline->x[j], cline->y[j]);
 #endif
 	tline = cline->next;
 	free(cline->x);
@@ -196,8 +214,8 @@ cont_xy_store(PLFLT xx, PLFLT yy)
     currline->x[pts] = xx;
     currline->y[pts] = yy;
     currline->npts++;
-  } else 
-    plP_drawor(xx, yy);   
+  } else
+    plP_drawor(xx, yy);
 }
 
 static void
@@ -213,8 +231,8 @@ cont_mv_store(PLFLT xx, PLFLT yy)
     currline->x[0] = xx;
     currline->y[0] = yy;
     currline->npts = 1;
-  } else 
-    plP_movwor(xx, yy);   
+  } else
+    plP_movwor(xx, yy);
 }
 
 /* small routine to set offset and spacing of contour labels, see desciption above */
@@ -277,7 +295,7 @@ static void pl_drawcontlabel(PLFLT tpx, PLFLT tpy, char *flabel, PLFLT *distance
 /* Format  contour labels. Arguments:
  * value:  floating point number to be formatted
  * string: the formatted label, plptex must be called with it to actually
- * print the label 
+ * print the label
  */
 
 static void plfloatlabel(PLFLT value, char *string)
@@ -413,7 +431,7 @@ plf2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data)
 }
 
 /*--------------------------------------------------------------------------*\
- * 
+ *
  * cont_store:
  *
  * Draw contour lines in memory.

@@ -2,6 +2,24 @@
 
 	Determines tick spacing and mode (fixed or floating) of
 	numeric axis labels.
+
+   Copyright (C) 2004  Alan W. Irwin
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 #include "plplotP.h"
@@ -103,7 +121,7 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt)
  * that digfix<=digmax.
  *
  * Finally, if 'digmax' is set, 'prec' is reduced in size if necessary so
- * that the labels fit the requested field length, where prec is the number of 
+ * that the labels fit the requested field length, where prec is the number of
  * places after the decimal place.
 \*----------------------------------------------------------------------*/
 
@@ -113,7 +131,7 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt)
 #define DIGMAX_DEF	5
 
 void
-pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf, 
+pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
 	PLINT *mode, PLINT *prec, PLINT digmax, PLINT *scale)
 {
     PLFLT chosen, notchosen, vmod, t0;
@@ -141,7 +159,7 @@ pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
         t0 = (PLFLT) log10(vmod);
         msd = (PLINT) floor(t0);
     }
-        
+
     if(ABS(notchosen) > 0.)
 	notmsd = (PLINT) floor( (PLFLT) log10(ABS(notchosen)));
     else
@@ -163,7 +181,7 @@ pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
 	if (digmax > 0)
 	    digfix = MIN(digmax, MAX_FIXDIG_NEG);
     }
-/* adjust digmin to account for sign on the chosen end of axis or sign on the 
+/* adjust digmin to account for sign on the chosen end of axis or sign on the
  * nonchosen end of axis if notmsd = msd or (msd <= 0 and notmsd < 0)
  * For the latter case the notchosen label starts with "-0."
  * For checking for the latter case, the notmsd < 0 condition is redundant

@@ -3,21 +3,23 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2003 Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Alan W. Irwin
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -87,13 +89,13 @@ PLOptionTable x08::options[] = {
 int x08::sombrero = 0;
 
 // cmap1_init1
-    
+
 // Initializes color map 1 in HLS space.
 // Basic grayscale variation from half-dark (which makes more interesting
 // looking plot compared to dark) to light.
 // An interesting variation on this:
 // s[1] = 1.0
-    
+
 void x08::cmap1_init(int gray)
 {
   PLFLT *i = new PLFLT[2];
@@ -101,34 +103,34 @@ void x08::cmap1_init(int gray)
   PLFLT *l = new PLFLT[2];
   PLFLT *s = new PLFLT[2];
   int *rev = new int[2];
-	  
+
   i[0] = 0.0;         // left boundary
   i[1] = 1.0;         // right boundary
 
   if (gray==1) {
     h[0] = 0.0;         // hue -- low: red (arbitrary if s=0)
     h[1] = 0.0;         // hue -- high: red (arbitrary if s=0)
-	  
+
     l[0] = 0.5;         // lightness -- low: half-dark
     l[1] = 1.0;         // lightness -- high: light
-	   
+
     s[0] = 0.0;         // minimum saturation
     s[1] = 0.0;         // minimum saturation
   }
   else {
     h[0] = 240; /* blue -> green -> yellow -> */
     h[1] = 0;   /* -> red */
-	   
+
     l[0] = 0.6;
     l[1] = 0.6;
-	   
+
     s[0] = 0.8;
     s[1] = 0.8;
   }
-       
+
   rev[0] = 0;         // interpolate on front side of colour wheel.
   rev[1] = 0;         // interpolate on front side of colour wheel.
-	  
+
   pls->scmap1n(256);
   pls->scmap1l(0, 2, i, h, l, s, rev);
 }
@@ -159,7 +161,7 @@ x08::x08( int argc, char **argv ) {
   if (sombrero) {
     rosen = false;
   }
-  
+
   // Initialize plplot.
 
   pls->init();
@@ -172,7 +174,7 @@ x08::x08( int argc, char **argv ) {
     if (rosen)
       x[i] *=  1.5;
   }
-  
+
   for( i=0; i < XPTS; i++ ) {
     x[i] = (PLFLT) (i - (XPTS/2)) / (PLFLT) (XPTS/2);
     if (rosen)
@@ -258,7 +260,7 @@ x08::x08( int argc, char **argv ) {
 }
 
 
-int main( int argc, char **argv ) 
+int main( int argc, char **argv )
 {
   x08 *x = new x08( argc, argv );
 }

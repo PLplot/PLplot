@@ -1,6 +1,24 @@
 /* $Id$
 
          PNG and JPEG device driver based on libgd
+
+   Copyright (C) 2004  Joao Cardoso
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 /*
@@ -164,7 +182,7 @@ static int NCOLOURS=gdMaxColors;
  * then change it here.
  */
 
-#ifndef max_number_of_grey_levels_used_in_text_smoothing 
+#ifndef max_number_of_grey_levels_used_in_text_smoothing
 #define max_number_of_grey_levels_used_in_text_smoothing 64
 #endif
 
@@ -322,7 +340,7 @@ plD_init_png_Dev(PLStream *pls)
 
     dev->palette=palette;
     dev->truecolour=truecolour;
-    
+
     if ((dev->truecolour>0) && (dev->palette>0))
        plwarn("Selecting both \"truecolor\" AND \"palette\" driver options is contradictory, so\nI will just use my best judgment.\n");
     else if (dev->truecolour>0)
@@ -507,12 +525,12 @@ setcmap(PLStream *pls)
     PLFLT tmp_colour_pos;
 
 /*
- * Yuckky fix to get rid of the previosuly allocated palette from the 
+ * Yuckky fix to get rid of the previosuly allocated palette from the
  * GD image
  */
 
-    for (i=0;i<256;i++) 
-      { 
+    for (i=0;i<256;i++)
+      {
        gdImageColorDeallocate(dev->im_out,i);
       }
 
@@ -1081,7 +1099,7 @@ if (FT->want_smooth_text==1)    /* do we want to at least *try* for smoothing ? 
     FT->ncol0_width=FT->ncol0_xtra/(pls->ncol0-1);              /* find out how many different shades of anti-aliasing we can do */
     if (FT->ncol0_width>4)     /* are there enough colour slots free for text smoothing ? */
        {
-        if (FT->ncol0_width>max_number_of_grey_levels_used_in_text_smoothing) 
+        if (FT->ncol0_width>max_number_of_grey_levels_used_in_text_smoothing)
            FT->ncol0_width=max_number_of_grey_levels_used_in_text_smoothing;                 /* set a maximum number of shades */
         plscmap0n(FT->ncol0_org+(FT->ncol0_width*pls->ncol0));      /* redefine the size of cmap0 */
 /* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)

@@ -1,7 +1,28 @@
 /* $Id$
 
-	PLplot Null device driver.
+   Experimental tk driver using a plain "wish"
+
+   Copyright (C) 2001  Joao Cardoso
+   Copyright (C) 2004  Rafael Laboissiere
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU Library General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 */
+
 #include "plDevs.h"
 
 #ifdef PLD_ntk
@@ -119,7 +140,7 @@ create_canvas(PLStream *pls)
 "$vs set $i $j;}",
 	  ccanv, ccanv, ccanv);
   tk_cmd(cmd);
-  
+
   sprintf(cmd, "set item(%d) 0", ccanv);
   tk_cmd(cmd);
 
@@ -141,7 +162,7 @@ create_canvas(PLStream *pls)
 "}", ccanv);
 
   tk_cmd(cmd);
-  
+
   /* Shif-B3, zooms out */
   sprintf(cmd, "bind $plf.f2.c$ccanv <Shift-Button-3> {\n"
 "set cc %d; set tt $item($cc);\n"
@@ -218,15 +239,15 @@ plD_init_ntk(PLStream *pls)
       strcpy(base, pls->plwindow);
     else
       strcpy(base,".plf"); /* default frame containing the canvas */
-    
+
     interp = Tcl_CreateInterp();
-  
-    if (Tcl_Init(interp) != TCL_OK) 
+
+    if (Tcl_Init(interp) != TCL_OK)
       plexit("Unable to initialize Tcl.");
 
     if (Tk_Init( interp ))
       plexit("Unable to initialize Tk.");
-  
+
     mainw = Tk_MainWindow(interp);
     Tcl_Eval(interp, "rename exec {}");
 
@@ -244,7 +265,7 @@ plD_init_ntk(PLStream *pls)
 
     sprintf(cmd, "set scroll_use 0; set plf %s; set vs $plf.f2.vscroll; set hs $plf.f2.hscroll; set xmax %d; set ymax %d; set ocanvas .;", base, xmax, ymax);
     tk_cmd(cmd);
-      
+
     tk_cmd("catch \"frame $plf\"; pack $plf -fill both -expand 1");
 
     sprintf(cmd, "frame $plf.f1;\n"
@@ -339,7 +360,7 @@ waitforpage(PLStream *pls)
       tk_cmd("info exists keypress");
       sscanf(interp->result,"%d", &st);
     }
-  
+
     tk_cmd("set keypress");
     sscanf(interp->result,"%d", &key);
 /*fprintf(stderr,"\n%d\n", key);fflush(stderr);*/
@@ -372,7 +393,7 @@ plD_tidy_ntk(PLStream *pls)
   tk_cmd("destroy $plf; wm withdraw .");
 }
 
-void 
+void
 plD_state_ntk(PLStream *pls, PLINT op)
 {
     switch (op) {
@@ -448,7 +469,7 @@ plD_esc_ntk(PLStream *pls, PLINT op, void *ptr)
     0x24, 0x01, 0x92, 0x00, 0x49, 0x00, 0x24, 0x00, 0x12, 0x00, 0x09, 0x00,
     0x04, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff};
-  
+
   switch (op) {
 
   case PLESC_DASH:
@@ -494,7 +515,7 @@ plD_esc_ntk(PLStream *pls, PLINT op, void *ptr)
       j += sprintf(&cmd[j]," -fill %s", curcolor);
       tk_cmd(cmd);
     }
-    
+
     if (0) {
       if (pls->patt != 0) {
 	Tk_DefineBitmap(interp, Tk_GetUid("foo"), bit_pat, 16, 16);
@@ -516,7 +537,7 @@ plD_esc_ntk(PLStream *pls, PLINT op, void *ptr)
 }
 
 #else
-int 
+int
 pldummy_ntk()
 {
     return 0;

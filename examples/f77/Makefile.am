@@ -2,26 +2,27 @@
 ###
 ### Process this file with automake to produce Makefile.in
 ###
-# Copyright (C) 2002 Alan W. Irwin
-# 
-#This file is part of PLplot.
+# Copyright (C) 2002, 2004  Alan W. Irwin
+# Copyright (C) 2004  Rafael Laboissiere
 #
-#This file is free software; you can redistribute it and/or modify
-#it under the terms of the GNU Library General Public License as published by
-#the Free Software Foundation; version 2 of the License.
+# This file is part of PLplot.
 #
-#This file is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU Library General Public License for more details.
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
 #
-#You should have received a copy of the GNU Library General Public License
-#along with the file; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 # x19f.f excluded from this list because the plmap and plmeridians fortran
-# API is not implemented as part of the common API (and probably won't be 
-# for a long time because of having to work around the mapform type of 
+# API is not implemented as part of the common API (and probably won't be
+# for a long time because of having to work around the mapform type of
 # argument for these functions).
 
 f77_examples = \
@@ -160,7 +161,7 @@ x18f_SOURCES = x18f.f
 LDADD = $(top_builddir)/bindings/f77/libplplotf77$(LIB_TAG).la
 
 install-data-hook:
-	( cd $(DESTDIR)/$(examples_f77dir) ; mv -f Makefile.examples Makefile ) 
+	( cd $(DESTDIR)/$(examples_f77dir) ; mv -f Makefile.examples Makefile )
 
 else
 

@@ -4,6 +4,25 @@
  * Maurice LeBrun
  * Jan 2 2001
  *
+ * Copyright (C) 2004  Joao Cardoso
+ *
+ * This file is part of PLplot.
+ *
+ * PLplot is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Library Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * PLplot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with PLplot; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ *
  * Based on previous version of tclMain.c, from Tcl 7.3.
  * Modifications include:
  * 1. Tcl_Main() changed to pltclMain().
@@ -73,7 +92,7 @@ plPrepOutputHandler(Tcl_Interp *interp, int code, int tty);
 
 void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty) = NULL;
 
-void (*tclPrepOutputHandler)(Tcl_Interp *interp, int code, int tty) 
+void (*tclPrepOutputHandler)(Tcl_Interp *interp, int code, int tty)
      = plPrepOutputHandler;
 
 /* Options data structure definition. */
@@ -130,7 +149,7 @@ static PLOptionTable options[] = {
  *      command line processing.
  *
  * Results:
- *	None. 
+ *	None.
  *
  * Side effects:
  *	This procedure initializes the file name of the Tcl script to
@@ -252,7 +271,7 @@ pltclMain(int argc, char **argv, char *RcFileName /* OBSOLETE */,
     Tcl_SetVar(interp, "tcl_interactive",
 	    ((tclStartupScriptFileName == NULL) && tty) ? "1" : "0",
 	    TCL_GLOBAL_ONLY);
-    
+
     /*
      * Invoke application-specific initialization.
      */
@@ -438,8 +457,8 @@ pltclMain(int argc, char **argv, char *RcFileName /* OBSOLETE */,
  *
  * plPrepOutputHandler --
  *
- *	Prepares for output during command parsing.  We use it here to 
- *	ensure we are on the text screen before issuing the error message, 
+ *	Prepares for output during command parsing.  We use it here to
+ *	ensure we are on the text screen before issuing the error message,
  *	otherwise it may disappear.
  *
  * Results:

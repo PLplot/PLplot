@@ -5,19 +5,25 @@
     Maurice LeBrun			mjl@dino.ph.utexas.edu
     Institute for Fusion Studies	University of Texas at Austin
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    Copyright (C) 2004  Alan W. Irwin
+    Copyright (C) 2004  Maurice LeBrun
 
-    This library is distributed in the hope that it will be useful,
+    This file is part of PLplot.
+
+    PLplot is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Library General Public License as published
+    by the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    PLplot is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Library General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    You should have received a copy of the GNU Library General Public License
+    along with PLplot; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -350,7 +356,7 @@ ProcessFile(int argc, char **argv)
 
 /* Process plrender and PLplot (internal) command line options */
 /* Since we aren't using full parsing, plParseOpts() will stop when it hits */
-/* a non-flag item */ 
+/* a non-flag item */
 
     if (plParseOpts(&argc, argv, 0))
 	exit(1);
@@ -390,7 +396,7 @@ ProcessFile(int argc, char **argv)
 
 /*
  * Reprocess the command line options so that they supercede their possible
- * counterparts in the metafile header.  
+ * counterparts in the metafile header.
  */
 
     argc = myargc;
@@ -436,7 +442,7 @@ ProcessFile(int argc, char **argv)
 
 /* A hack for old metafiles */
 
-    if (strcmp(mf_version, "1993a") >= 0) 
+    if (strcmp(mf_version, "1993a") >= 0)
 	plspause(0);
 
     plend1();
@@ -458,7 +464,7 @@ ProcessFile(int argc, char **argv)
  * via the -i or -f flags, we assume it's the second argument in argv[] (the
  * first should still hold the program name).  Null out the string after
  * copying it so that it doesn't appear on subsequent passes of the command
- * line. 
+ * line.
 \*--------------------------------------------------------------------------*/
 
 static int
@@ -695,7 +701,7 @@ plr_init(U_CHAR c)
 
     cursub = nsubx*nsuby;
     if (disp_beg > 1) {
-	if (no_pagelinks) 
+	if (no_pagelinks)
 	    plwarn("plrender: Metafile does not support page seeks");
 	else {
 	    ReadPageHeader();
@@ -778,7 +784,7 @@ get_ncoords(PLFLT *x, PLFLT *y, PLINT n)
  * Here we run into a bit of difficulty with packed pages -- at the end
  * there is no EOP operation done if the page is only partially full.
  * So I peek ahead to see if the next operation is a CLOSE, and if so,
- * push back the CLOSE and issue an EOP regardless.  
+ * push back the CLOSE and issue an EOP regardless.
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -854,7 +860,7 @@ plr_bop(U_CHAR c)
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*--------------------------------------------------------------------------*/
 
-static void 
+static void
 plr_state(U_CHAR op)
 {
     int i;
@@ -1241,7 +1247,7 @@ plr_exit(char *errormsg)
  * keyboards (different from keypad key).
  *
  * No user data is passed in this case, although a test case is
- * illustrated. 
+ * illustrated.
  *
  * Illegal input is ignored.
 \*--------------------------------------------------------------------------*/
@@ -1264,7 +1270,7 @@ plr_KeyEH(PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop)
 
 /* The rest deals with seeking only; so we return if it is disabled */
 
-    if (no_pagelinks || !isfile) 
+    if (no_pagelinks || !isfile)
 	return;
 
 /* Forward (+) or backward (-) */
@@ -1282,7 +1288,7 @@ plr_KeyEH(PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop)
 	(void) strncat(num_buffer, gin->string, (20-strlen(num_buffer)));
     }
 
-/* 
+/*
  * Seek to specified page, or page advance.
  * Not done until user hits <return>.
  * Need to check for both <LF> and <CR> for portability.
@@ -1323,7 +1329,7 @@ plr_KeyEH(PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop)
 
     if (gin->keysym == PLK_BackSpace ||
 	gin->keysym == PLK_Delete ||
-	gin->keysym == PLK_Prior) 
+	gin->keysym == PLK_Prior)
     {
 	terminator_seen = 1;
 	target_disp = curdisp - 1;
@@ -1346,7 +1352,7 @@ plr_KeyEH(PLGraphicsIn *gin, void *user_data, int *p_exit_eventloop)
 /*--------------------------------------------------------------------------*\
  * SeekToDisp()
  *
- * Seek to 'target_disp' displayed page.  
+ * Seek to 'target_disp' displayed page.
  *
  * Several things combine to make this much harder than one would think.
  * These include: taking packed pages into account, seeking from mid-plot,
@@ -1484,7 +1490,7 @@ SeekToCurPage(void)
     if (pl_fgetpos(MetaFile, &loc))
 	plr_exit("plrender: fgetpos call failed");
 
-    if (loc != curpage_loc) 
+    if (loc != curpage_loc)
 	PageDecr();
 
     SeekTo(curpage_loc);
@@ -1494,7 +1500,7 @@ SeekToCurPage(void)
  * SeekToNextPage()
  *
  * Seeks to beginning of next page, changing the page counters if
- * we pass a page boundary in the process.  
+ * we pass a page boundary in the process.
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -1505,7 +1511,7 @@ SeekToNextPage(void)
     if (pl_fgetpos(MetaFile, &loc))
 	plr_exit("plrender: fgetpos call failed");
 
-    if (loc == curpage_loc) 
+    if (loc == curpage_loc)
 	PageIncr();
 
     SeekTo(nextpage_loc);
@@ -1529,7 +1535,7 @@ SeekToPrevPage(void)
     if (pl_fgetpos(MetaFile, &loc))
 	plr_exit("plrender: fgetpos call failed");
 
-    if (loc != curpage_loc) 
+    if (loc != curpage_loc)
 	PageDecr();
 
     if (is_family && first_page)
@@ -1595,7 +1601,7 @@ PageIncr(void)
     }
 }
 
-/* Yes, finally done with the seek routines.  
+/* Yes, finally done with the seek routines.
 	"BELIEVE IT!" - John Walker, from "Buckaroo Bonzai" */
 
 /*--------------------------------------------------------------------------*\
@@ -1693,7 +1699,7 @@ ReadFileHeader(void)
 
 /* Disable page seeking on versions without page links */
 
-    if (strcmp(mf_version, "1993a") < 0) 
+    if (strcmp(mf_version, "1993a") < 0)
 	no_pagelinks=1;
 
 /* Return if metafile older than version 1992a (no tagged info). */
@@ -1786,7 +1792,7 @@ ReadFileHeader(void)
 /*--------------------------------------------------------------------------*\
  * Opt_v()
  *
- * Performs appropriate action for option "v".  
+ * Performs appropriate action for option "v".
  *
  * Note: the return code of 1 and the PL_OPT_NODELETE option tag ensures
  * that processing continues after Opt_v() returns, to pick up the internal

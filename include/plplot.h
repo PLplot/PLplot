@@ -1,24 +1,32 @@
 /* $Id$
 
-    Copyright (C) 1992 by 
-    Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
-
     Macros and prototypes for the PLplot package.  This header file must
     be included by all user codes.
-
-    This software may be freely copied, modified and redistributed
-    without fee provided that this copyright notice is preserved intact
-    on all copies and modified copies.
-
-    There is no warranty or other guarantee of fitness of this software.
-    It is provided solely "as is". The author(s) disclaim(s) all
-    responsibility and liability with respect to this software's usage
-    or its effect upon hardware or computer systems.
 
     Note: some systems allow the Fortran & C namespaces to clobber each
     other.  So for PLplot to work from Fortran, we do some rather nasty
     things to the externally callable C function names.  This shouldn't
-    affect any user programs in C as long as this file is included. 
+    affect any user programs in C as long as this file is included.
+
+    Copyright (C) 1992  Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
+    Copyright (C) 2004  Alan W. Irwin
+    Copyright (C) 2004  Rafael Laboissiere
+
+    This file is part of PLplot.
+
+    PLplot is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Library General Public License as published
+    by the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    PLplot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with PLplot; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 #ifndef __PLPLOT_H__
@@ -28,11 +36,11 @@
 
 /*--------------------------------------------------------------------------*\
  *    USING PLplot
- * 
- * To use PLplot from C or C++, it is only necessary to 
- * 
+ *
+ * To use PLplot from C or C++, it is only necessary to
+ *
  *      #include "plplot.h"
- * 
+ *
  * This file does all the necessary setup to make PLplot accessible to
  * your program as documented in the manual.  Additionally, this file
  * allows you to request certain behavior by defining certain symbols
@@ -49,7 +57,7 @@
  * will conform to this rule in order to keep namespace pollution of the
  * user code to a minimum.  All the PLplot source files actually include
  * "plplotP.h", which includes this file as well as all the internally-
- * visible declarations, etc.  
+ * visible declarations, etc.
 \*--------------------------------------------------------------------------*/
 
 /* The majority of PLplot source files require these, so.. */
@@ -378,7 +386,7 @@ typedef struct {
  * best way to handle the situation at present.  If all available
  * compilers offer a way to correct this stupidity, then perhaps we can
  * eventually reverse it.
- * 
+ *
  * If you feel like screaming at someone (I sure do), please
  * direct it at your nearest system vendor who has a braindead shared
  * C/Fortran namespace.  Some vendors do offer compiler switches that
@@ -631,9 +639,9 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 void
 c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window);
-   
+
 /* Clear current subpage. */
-   
+
 void
 c_plclear(void);
 
@@ -648,7 +656,7 @@ void
 c_plcol1(PLFLT col1);
 
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
- * plfcont, with a particular choice for f2eval and f2eval_data. 
+ * plfcont, with a particular choice for f2eval and f2eval_data.
  */
 
 void
@@ -659,7 +667,7 @@ c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 
 /* Draws a contour plot using the function evaluator f2eval and data stored
  * by way of the f2eval_data pointer.  This allows arbitrary organizations
- * of 2d array data to be used. 
+ * of 2d array data to be used.
  */
 
 void
@@ -931,8 +939,8 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 
 /* Plot the latitudes and longitudes on the background. */
 
-void 
-plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+void
+plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
                PLFLT dlong, PLFLT dlat,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
@@ -971,9 +979,9 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt,
 	 PLFLT *clevel, PLINT nlevel);
 
-/* 
+/*
  * definitions for the opt argument in plot3dc() and plsurf3d()
- * 
+ *
  * DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
  */
 
@@ -1150,7 +1158,7 @@ c_plsfnam(const char *fnam);
 
 /* Shade region. */
 
-void 
+void
 c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	  PLFLT shade_min, PLFLT shade_max,
@@ -1161,7 +1169,7 @@ c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	  PLPointer pltr_data);
 
-void 
+void
 c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	 PLFLT shade_min, PLFLT shade_max,
@@ -1172,7 +1180,7 @@ c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	 PLPointer pltr_data);
 
-void 
+void
 c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	  PLFLT *clevel, PLINT nlevel, PLINT fill_width,
@@ -1181,12 +1189,12 @@ c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 	  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 	  PLPointer pltr_data);
 
-void 
+void
 plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	 PLPointer f2eval_data,
 	 PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
 	 PLPointer c2eval_data,
-	 PLINT nx, PLINT ny, 
+	 PLINT nx, PLINT ny,
 	 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	 PLFLT shade_min, PLFLT shade_max,
 	 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -1276,7 +1284,7 @@ c_plstripd(PLINT id);
   /* plots a 2d image (or a matrix too large for plshade() ) */
 
 void
-plimage( PLFLT **data, PLINT nx, PLINT ny, 
+plimage( PLFLT **data, PLINT nx, PLINT ny,
 	 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	 PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
 
@@ -1458,7 +1466,7 @@ pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
 
 /* Example linear transformation function for contour plotter. */
 
-void 
+void
 xform(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty);
 
 	/* Function evaluators */
@@ -1547,7 +1555,7 @@ pl_cmd(PLINT op, void *ptr);
 
 /* Return full pathname for given file if executable */
 
-int 
+int
 plFindName(char *p);
 
 /* Looks for the specified executable file according to usual search path. */

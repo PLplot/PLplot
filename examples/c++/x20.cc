@@ -3,21 +3,23 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2003 Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Alan W. Irwin
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -109,10 +111,10 @@ PLOptionTable x20::options[] = {
     NULL }			/* long syntax */
 };
 
-   
+
 x20::x20( int argc, char ** argv ) {
   PLFLT x[XDIM], y[YDIM], **z, **r;
-  PLFLT xi, yi, xe, ye; 
+  PLFLT xi, yi, xe, ye;
   int i, j, width, height, num_col;
   PLFLT **img_f;
 
@@ -120,16 +122,16 @@ x20::x20( int argc, char ** argv ) {
     Bugs in plimage():
      -at high magnifications, the left and right edge are ragged, try
         ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
-     
+
     Bugs in x20c.c:
      -if the window is resized after a selection is made on "lena", when
       making a new selection the old one will re-appear.
   */
 
   // plplot initialization
-  
+
   pls = new plstream();
-  
+
   // Parse and process command line arguments.
   pls->MergeOpts(options, "x20c options", NULL);
   pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
@@ -140,15 +142,15 @@ x20::x20( int argc, char ** argv ) {
   pls->Alloc2dGrid(&z, XDIM, YDIM);
 
   /* view image border pixels */
-  if (dbg) { 
+  if (dbg) {
     pls->env(1., (PLFLT) XDIM, 1., (PLFLT) YDIM, 1, 1); /* no plot box */
-    
+
     /* build a one pixel square border, for diagnostics */
     for (i=0; i<XDIM; i++)
       z[i][YDIM-1] = 1.; /* right */
     for (i=0; i<XDIM; i++)
       z[i][0] = 1.; /* left */
-  
+
     for (i=0; i<YDIM; i++)
       z[0][i] = 1.; /* top */
     for (i=0; i<YDIM; i++)
@@ -164,7 +166,7 @@ x20::x20( int argc, char ** argv ) {
   }
 
   /* sombrero-like demo */
-  if (!nosombrero) { 
+  if (!nosombrero) {
     pls->Alloc2dGrid(&r, XDIM, YDIM);
     pls->col0(2); /* draw a yellow plot box, useful for diagnostics! :( */
     pls->env(0., 2.*M_PI, 0, 3.*M_PI, 1, -1);
@@ -183,7 +185,7 @@ x20::x20( int argc, char ** argv ) {
     pls->lab("No, an amplitude clipped \"sombrero\"", "", "Saturn?");
     pls->ptex(2., 2., 3., 4., 0., "Transparent image");
     pls->image(z, XDIM, YDIM, 0., 2.*M_PI, 0, 3.*M_PI, 0.05, 1.,
-	    0., 2.*M_PI, 0, 3.*M_PI); 
+	    0., 2.*M_PI, 0, 3.*M_PI);
     pls->Free2dGrid(r, XDIM, YDIM);
 
     /* save the plot */
@@ -217,7 +219,7 @@ x20::x20( int argc, char ** argv ) {
 	  1., width, 1., height);
 
   // selection/expansion demo
-  if (!nointeractive) { 
+  if (!nointeractive) {
     xi = 200.; xe = 330.;
     yi = 280.; ye = 220.;
 
@@ -225,8 +227,8 @@ x20::x20( int argc, char ** argv ) {
       delete pls;
       exit(0);
     }
-  
-    /* 
+
+    /*
        I'm unable to continue, clearing the plot and advancing to the next
        one, without hiting the enter key, or pressing the button... help!
 
@@ -234,12 +236,12 @@ x20::x20( int argc, char ** argv ) {
        xhairs (in GetCursorCmd()) solves some problems, but I still have
        to press the enter key or press Button-2 to go to next plot, even
        if a pladv() is not present!  Using plbop() solves the problem, but
-       it shouldn't be needed! 
+       it shouldn't be needed!
     */
 
     /* pls->bop(); */
 
-    /* 
+    /*
        spause(0), adv(0), spause(1), also works,
        but the above question remains.
        With this approach, the previous pause state is lost,
@@ -303,7 +305,7 @@ int x20::read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num
   for (i=0; i<w; i++)
     for (j=0; j<h; j++)
       imf[i][j] = img[(h-1-j)*w+i]; /* flip image up-down */
-      
+
   free(img);
 
   *width = w;
@@ -312,12 +314,12 @@ int x20::read_img(char *fname, PLFLT ***img_f, int *width, int *height, int *num
   return 0;
 }
 
-// save plot 
+// save plot
 void x20::save_plot(char *fname) {
   plstream *pls2;
 
   pls2 = new plstream(); // create a new one
-    
+
   pls2->sdev("psc"); // new device type. Use a known existing driver
   pls2->sfnam(fname); // file name
 
@@ -361,7 +363,7 @@ int x20::get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye) {
 	  pls->line(5, sx, sy); /* clear previous rectangle */
 
 	start = 1;
-  
+
 	sx[2] = xxe; sy[2] = yye;
 	sx[1] = xxe; sy[1] = yyi;
 	sx[3] = xxi; sy[3] = yye;
@@ -372,7 +374,7 @@ int x20::get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye) {
 	if (start)
 	  plline(5, sx, sy); /* clear previous rectangle */
 	break;
-      }      
+      }
     }
     pls->xormod(0, &st); /* leave xor mod */
   }
@@ -392,13 +394,13 @@ int x20::get_clip(PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye) {
 /* set gray colormap */
 void x20::gray_cmap(PLINT num_col) {
   PLFLT r[2], g[2], b[2], pos[2];
-    
+
   r[0] = g[0] = b[0] = 0.0;
   r[1] = g[1] = b[1] = 1.0;
-    
+
   pos[0] = 0.0;
   pos[1] = 1.0;
-    
+
   pls->scmap1n(num_col);
   pls->scmap1l(1, 2, pos, r, g, b, NULL);
 }

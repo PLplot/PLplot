@@ -1,21 +1,33 @@
 /* $Id$
 
-    Copyright (C) 1993, 1994, 1995  by 
-    Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
-
     Internal (private) macros and prototypes for the PLplot package.  This
     header file must be included before all others, including system header
     files.  This file is typically needed when including driver specific
     header files (e.g. pltkd.h).
 
-    This software may be freely copied, modified and redistributed without
-    fee provided that this copyright notice is preserved intact on all
-    copies and modified copies. 
- 
-    There is no warranty or other guarantee of fitness of this software.
-    It is provided solely "as is". The author(s) disclaim(s) all
-    responsibility and liability with respect to this software's usage or
-    its effect upon hardware or computer systems. 
+    Copyright (C) 1993, 1994, 1995  by
+    Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
+
+    Copyright (C) 2004  Rafael Laboissiere
+    Copyright (C) 2004  Joao Cardoso
+
+    This file is part of PLplot.
+
+    PLplot is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Library Public License as published
+    by the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    PLplot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with PLplot; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+
 */
 
 #ifndef __PLPLOTP_H__
@@ -28,10 +40,10 @@
  * Fortunately on many systems, that is the default.  To get "everything",
  * one of the following must be defined, as appropriate:
  *
- * _GNU_SOURCE     on Linux (default) 
- * _OSF_SOURCE     on OSF1 (default) 
- * _HPUX_SOURCE    on HP (not default) 
- * _ALL_SOURCE     on AIX (no idea) 
+ * _GNU_SOURCE     on Linux (default)
+ * _OSF_SOURCE     on OSF1 (default)
+ * _HPUX_SOURCE    on HP (not default)
+ * _ALL_SOURCE     on AIX (no idea)
  *
  * To see where these are set, do the following:
  *
@@ -60,7 +72,7 @@
 
 /*--------------------------------------------------------------------------*\
  *	Configuration settings
- * 
+ *
  * Some of the macros set during configuration are described here.
  *
  * If HAVE_TERMIOS_H is set, we employ POSIX.1 tty terminal I/O.  One purpose
@@ -129,7 +141,7 @@ typedef char * caddr_t;
  * always a base type (it may be a struct).  This is a problem because the
  * metafile driver needs to write relative offsets into the file itself.  So
  * instead we use f{seek,tell} at a low level but keep the f[sg]etpos
- * semantics using these macros. 
+ * semantics using these macros.
  */
 
 #ifdef STDC_FPOS_T
@@ -235,7 +247,7 @@ extern PLStream	*plsc;
 /* These define the virtual coordinate system used by the metafile driver.
    Others are free to use it, or some variation, or define their own. */
 
-/* Note desktop monitors of reasonable quality typically have 0.25 mm spacing 
+/* Note desktop monitors of reasonable quality typically have 0.25 mm spacing
  * between dots which corresponds to 4.0 dots per mm.  The parameters here
  * roughly correspond to a 14" monitor at 1024x768 resolution, which should
  * work fine at other sizes/resolutions.  The number of virtual dots per mm is
@@ -254,9 +266,9 @@ extern PLStream	*plsc;
  * in a number of device drivers (e.g., found in ljii.c, ljiip.c, ps.c,
  * and pstex.c) to rotate them "permanently" from portrait mode to non-
  * portrait mode.  ORIENTATION of 1 corresponds to seascape mode (90 deg
- * clockwise rotation from portrait).  This is the traditional value 
- * effectively used in all older versions of PLplot. ORIENTATION of 3 
- * corresponds to landscape mode (90 deg *counter*-clockwise rotation from 
+ * clockwise rotation from portrait).  This is the traditional value
+ * effectively used in all older versions of PLplot. ORIENTATION of 3
+ * corresponds to landscape mode (90 deg *counter*-clockwise rotation from
  * portrait) which is the new default non-portrait orientation. */
 
 #define ORIENTATION	3
@@ -297,7 +309,7 @@ extern PLStream	*plsc;
 
 /*--------------------------------------------------------------------------*\
  * The following environment variables are defined:
- * 
+ *
  *	PLPLOT_BIN      # where to find executables
  *	PLPLOT_LIB      # where to find library files (fonts, maps, etc)
  *	PLPLOT_TCL      # where to find tcl scripts
@@ -357,21 +369,21 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt);
 /* Determines precision of box labels */
 
 void
-pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf, 
+pldprec(PLFLT vmin, PLFLT vmax, PLFLT tick, PLINT lf,
 	PLINT *mode, PLINT *prec, PLINT digmax, PLINT *scale);
 
 /* Draws a polyline within the clip limits. */
 
 void
 plP_pllclp(PLINT *x, PLINT *y, PLINT npts,
-	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
+	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
 	   void (*draw) (short *, short *, PLINT));
 
 /* Fills a polygon within the clip limits. */
 
 void
 plP_plfclp(PLINT *x, PLINT *y, PLINT npts,
-	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax, 
+	   PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax,
 	   void (*draw) (short *, short *, PLINT));
 
   /* Clip a polygon to the 3d bounding plane */
@@ -427,7 +439,7 @@ plcmap1_calc(void);
 /* Draws a slanting tick at position (mx,my) (measured in mm) of */
 /* vector length (dx,dy). */
 
-void 
+void
 plstik(PLFLT mx, PLFLT my, PLFLT dx, PLFLT dy);
 
 /* Prints out a "string" at reference position with physical coordinates */
@@ -446,7 +458,7 @@ plxtik(PLINT x, PLINT y, PLINT below, PLINT above);
 void
 plytik(PLINT x, PLINT y, PLINT left, PLINT right);
 
-  /* Driver interface filter -- 
+  /* Driver interface filter --
      passes all coordinates through a variety of filters. */
 
 void
@@ -474,7 +486,7 @@ typedef struct {
   const char *string; /* text to draw */
 }EscText;
 
-/* 
+/*
  * structure that contains driver specific information, to be used by plargs.c and anydriver.c,
  * related to plParseDrvOpts() and plHelpDrvOpts()
  */
@@ -852,7 +864,7 @@ plP_getinitdriverlist(char *names);
 
 /* Checks a give list of device names against active streams and returns the number of matches */
 
-PLINT 
+PLINT
 plP_checkdriverinit( char *names);
 
   /* disable writing to plot buffer and pixmap */
@@ -870,7 +882,7 @@ int
 plInBuildTree();
 
 void
-plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny, 
+plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny,
 	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
 	    unsigned short zmin,  unsigned short zmax);
 

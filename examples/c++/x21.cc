@@ -3,21 +3,23 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2003 Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Alan W. Irwin
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -47,7 +49,7 @@ private:
   void create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts);
   void free_data(PLFLT *x, PLFLT *y, PLFLT *z);
   void create_grid(PLFLT **xi, int px, PLFLT **yi, int py);
-  void free_grid(PLFLT *x, PLFLT *y);  
+  void free_grid(PLFLT *x, PLFLT *y);
   void cmap1_init();
 
   PLFLT MIN(PLFLT x, PLFLT y) { return (x<y?x:y);};
@@ -59,7 +61,7 @@ private:
 
   PLFLT xm, xM, ym, yM;
 
-  // Options data structure definition.  
+  // Options data structure definition.
   static PLINT pts;
   static PLINT xp;
   static PLINT yp;
@@ -69,10 +71,10 @@ private:
   static PLFLT wmin;
   static int randn;
   static int rosen;
-  static PLOptionTable options[]; 
+  static PLOptionTable options[];
 };
 
-  
+
 int x21::pts = 500;
 int x21::xp = 25;
 int x21::yp = 20;
@@ -181,7 +183,7 @@ x21::x21( int argc, char ** argv ) {
   xM = yM = 0.8;
 
   // plplot initialization
-  
+
   pls = new plstream();
 
   // Parse and process command line arguments.
@@ -216,7 +218,7 @@ x21::x21( int argc, char ** argv ) {
   pls->lab(xlab, "", "The original data");
   pls->col0(2);
   pls->poin(pts, x, y, 5);
-  pls->adv(0);  
+  pls->adv(0);
 
   pls->ssub(3,2);
 
@@ -229,7 +231,7 @@ x21::x21( int argc, char ** argv ) {
       sprintf(xlab, "time=%d ms", (clock() - ct)/1000);
       sprintf(ylab, "opt=%.3f", opt[alg-1]);
 
-      /* - CSA can generate NaNs (only interpolates?!). 
+      /* - CSA can generate NaNs (only interpolates?!).
        * - DTLI and NNI can generate NaNs for points outside the convex hull
        *      of the data points.
        * - NNLI can generate NaNs if a sufficiently thick triangle is not found
@@ -239,7 +241,7 @@ x21::x21( int argc, char ** argv ) {
        * the neighbors is done.
        */
 
-      if (alg == GRID_CSA || alg == GRID_DTLI || alg == GRID_NNLI || alg == GRID_NNI) { 
+      if (alg == GRID_CSA || alg == GRID_DTLI || alg == GRID_NNLI || alg == GRID_NNI) {
 	int ii, jj;
 	PLFLT dist, d;
 
@@ -271,8 +273,8 @@ x21::x21( int argc, char ** argv ) {
       pls->MinMax2dGrid(zg, xp, yp, &lzM, &lzm);
 
       pls->col0(1);
-      pls->adv(alg);	
-	
+      pls->adv(alg);
+
       if (k == 0) {
 
 	lzm = MIN(lzm, zmin);
@@ -283,7 +285,7 @@ x21::x21( int argc, char ** argv ) {
 	pls->env0(xm, xM, ym, yM, 2, 0);
 	pls->col0(15);
 	pls->lab(xlab, ylab, title[alg-1]);
-	pls->shades(zg, xp, yp, NULL, xm, xM, ym, yM, 
+	pls->shades(zg, xp, yp, NULL, xm, xM, ym, yM,
 		 clev, nl, 1, 0, 1, plfill, 1, NULL, NULL);
 	pls->col0(2);
       } else {
@@ -294,12 +296,12 @@ x21::x21( int argc, char ** argv ) {
 	cmap1_init();
 	pls->vpor(0.0, 1.0, 0.0, 0.9);
 	pls->wind(-1.0, 1.0, -1.0, 1.5);
-	/* 
+	/*
 	 * For the comparition to be fair, all plots should have the
 	 * same z values, but to get the max/min of the data generated
 	 * by all algorithms would imply two passes. Keep it simple.
 	 *
-	 * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60); 
+	 * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
 	 */
 
 	pls->w3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -60);

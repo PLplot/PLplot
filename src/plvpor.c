@@ -1,6 +1,24 @@
 /* $Id$
 
 	Functions dealing with viewports.
+
+   Copyright (C) 2004  Joao Cardoso
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 #include "plplotP.h"
@@ -12,16 +30,16 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 /*--------------------------------------------------------------------------*\
  * void plenv()
  *
- * Simple interface for defining viewport and window. 
+ * Simple interface for defining viewport and window.
  *
  * The "just" parameter control how the axes will be scaled:
  *
  *       just=-1 : The scales will not be set, the user must set up the scale
  *                   before calling plenv() using plsvpa(), plvasp() or other;
  *       just= 0 : The scales will be set up to optimize plot area;
- *       just= 1 : The scales will be the same; 
+ *       just= 1 : The scales will be the same;
  *       just= 2 : The axes will be equal, the plot box will be square.
- * 
+ *
  * The "axis" parameter is interpreted as follows:
  *
  *	axis=-2 : draw no box, no tick marks, no numeric tick labels, no axes.
@@ -57,7 +75,7 @@ void
 c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLINT just, PLINT axis)
 {
-  c_plenvi(xmin, xmax, ymin, ymax, just, axis, 1); 
+  c_plenvi(xmin, xmax, ymin, ymax, just, axis, 1);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -71,7 +89,7 @@ void
 c_plenv0(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	PLINT just, PLINT axis)
 {
-  c_plenvi(xmin, xmax, ymin, ymax, just, axis, 0); 
+  c_plenvi(xmin, xmax, ymin, ymax, just, axis, 0);
 }
 
 
@@ -106,7 +124,7 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 
     if (old == 1)
       pladv(0);
-    else 
+    else
       plclear();
 
     if (just == 0)
@@ -187,10 +205,10 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	break;
     case 22:
 	plbox("abcgnst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
-	break;	
+	break;
     case 23:
 	plbox("abcgnsth", (PLFLT) 0.0, 0, "abcglnstvh", (PLFLT) 0.0, 0);
-	break;	
+	break;
     case 30:
 	plbox("bclnst", (PLFLT) 0.0, 0, "bclnstv", (PLFLT) 0.0, 0);
 	break;
@@ -199,10 +217,10 @@ c_plenvi(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	break;
     case 32:
 	plbox("abcglnst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
-	break;	
+	break;
     case 33:
 	plbox("abcglnsth", (PLFLT) 0.0, 0, "abcglnstvh", (PLFLT) 0.0, 0);
-	break;	
+	break;
     default:
 	plwarn("plenv: Invalid axis argument");
     }

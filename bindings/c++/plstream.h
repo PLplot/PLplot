@@ -2,6 +2,26 @@
 // $Id$
 // Geoffrey Furnish
 // Sep 21 1994
+//
+// Copyright (C) 2004  Andrew Ross
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 //---------------------------------------------------------------------------//
 // @> Header file plstream.
 //---------------------------------------------------------------------------//
@@ -82,7 +102,7 @@ class plstream {
     plstream( plstream * pls );
     plstream( PLS::stream_id sid, int strm =0 );
     plstream( int _stream ) : stream(_stream) {}
-    plstream( int nx /*=1*/, int ny /*=1*/, 
+    plstream( int nx /*=1*/, int ny /*=1*/,
 	      const char *driver =NULL, const char *file =NULL );
     plstream( int nx /*=1*/, int ny /*=1*/, int r, int g, int b,
 	      const char *driver =NULL, const char *file =NULL );
@@ -98,7 +118,7 @@ class plstream {
     void adv( PLINT page );
 
 // Simple arrow plotter
-    void arrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n, 
+    void arrows( PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
                  PLFLT scale, PLFLT dx, PLFLT dy );
 
 // This functions similarly to plbox() except that the origin of the axes is
@@ -149,7 +169,7 @@ class plstream {
 
 /* Draws a contour plot using the function evaluator f2eval and data stored
  * by way of the f2eval_data pointer.  This allows arbitrary organizations
- * of 2d array data to be used. 
+ * of 2d array data to be used.
  */
 
     void fcont( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
@@ -190,7 +210,7 @@ class plstream {
     void env( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	      PLINT just, PLINT axis );
 
-// similar to env() above, but in multiplot mode does not advance 
+// similar to env() above, but in multiplot mode does not advance
 // the subpage, instead the current subpage is cleared
 
     void env0( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -273,7 +293,7 @@ class plstream {
 
     void gra();
 
-// grid irregularly sampled data 
+// grid irregularly sampled data
 
     void griddata(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
                   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy,
@@ -349,8 +369,8 @@ class plstream {
 
 /* Plot the latitudes and longitudes on the background. */
 
-    void  meridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
-		     PLFLT dlong, PLFLT dlat, PLFLT minlong, PLFLT maxlong, 
+    void  meridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
+		     PLFLT dlong, PLFLT dlat, PLFLT minlong, PLFLT maxlong,
 		     PLFLT minlat, PLFLT maxlat );
 
 /* Plots a mesh representation of the function z[x][y]. */
@@ -567,7 +587,7 @@ void pat( PLINT nlin, PLINT *inc, PLINT *del );
 		 PLPointer f2eval_data,
 		 PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
 		 PLPointer c2eval_data,
-		 PLINT nx, PLINT ny, 
+		 PLINT nx, PLINT ny,
 		 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 		 PLFLT shade_min, PLFLT shade_max,
 		 PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,

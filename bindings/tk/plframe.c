@@ -4,22 +4,27 @@
     Maurice LeBrun			mjl@dino.ph.utexas.edu
     Institute for Fusion Studies	University of Texas at Austin
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    Copyright (C) 2004  Joao Cardoso
 
-    This library is distributed in the hope that it will be useful,
+    This file is part of PLplot.
+
+    PLplot is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Library Public License as published
+    by the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    PLplot is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Library General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    You should have received a copy of the GNU Library General Public License
+    along with PLplot; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 
     Based upon tkFrame.c from the TK 3.2 distribution:
-   
+
     Copyright 1990 Regents of the University of California.
     Permission to use, copy, modify, and distribute this
     software and its documentation for any purpose and without
@@ -30,7 +35,7 @@
     express or implied warranty.
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	
+
     This module implements "plframe" widgets for the Tk toolkit.  These are
     frames that have extra logic to allow them to be interfaced with the
     PLplot X driver.  These are then drawn into and respond to keyboard and
@@ -131,7 +136,7 @@ typedef struct {
 
     char *SaveFnam;		/* File name we are currently saving to.
 				   Malloc'ed. */
-    char **devDesc;		/* Descriptive names for file-oriented 
+    char **devDesc;		/* Descriptive names for file-oriented
 				 * devices.  Malloc'ed. */
     char **devName;		/* Keyword names of file-oriented devices.
 				 * Malloc'ed. */
@@ -211,7 +216,7 @@ static Tk_ConfigSpec configSpecs[] = {
 	(char *) NULL, Tk_Offset(PlFrame, bgColor),
 	TK_CONFIG_COLOR_ONLY},
 	*/
-#ifndef	MAC_TCL	    
+#ifndef	MAC_TCL
     {TK_CONFIG_COLOR, "-plbg", "plbackground", "Plbackground",
 	DEF_PLFRAME_BG_COLOR, Tk_Offset(PlFrame, bgColor),
 	TK_CONFIG_COLOR_ONLY},
@@ -224,7 +229,7 @@ static Tk_ConfigSpec configSpecs[] = {
 	(char *) NULL, Tk_Offset(PlFrame, bgColor),
 	TK_CONFIG_MONO_ONLY},
 	*/
-#ifndef	MAC_TCL	    
+#ifndef	MAC_TCL
     {TK_CONFIG_COLOR, "-plbg", (char *) NULL, (char *) NULL,
 	DEF_PLFRAME_BG_MONO, Tk_Offset(PlFrame,	bgColor),
 	TK_CONFIG_MONO_ONLY},
@@ -263,7 +268,7 @@ static Tk_ConfigSpec configSpecs[] = {
 
 /* Externals */
 
- int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **); 
+ int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
 
 /* These are invoked by the TK dispatcher */
 
@@ -367,7 +372,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
 
 /* Create the window. */
 
-    new = Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp), 
+    new = Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
 				  argv[1], (char *) NULL);
     if (new == NULL) {
 	return TCL_ERROR;
@@ -795,7 +800,7 @@ DestroyPlFrame( FreeProcArg clientData )
  *
  * PlFrameConfigureEH --
  *
- *	Invoked by the Tk dispatcher on structure changes to a plframe. 
+ *	Invoked by the Tk dispatcher on structure changes to a plframe.
  *
  * Results:
  *	None.
@@ -852,7 +857,7 @@ PlFrameConfigureEH(ClientData clientData, register XEvent *eventPtr)
 
     /* For some reason, "." must be mapped or PlFrameInit will die (Note:
      * mapped & withdrawn or mapped in the withdrawn state is OK). Issuing
-     * an update fixes this.  I'd love to know why this occurs.  
+     * an update fixes this.  I'd love to know why this occurs.
      */
 
 	if ( ! plFramePtr->tkwin_initted) {
@@ -868,7 +873,7 @@ PlFrameConfigureEH(ClientData clientData, register XEvent *eventPtr)
  *
  * PlFrameExposeEH --
  *
- *	Invoked by the Tk dispatcher on exposes of a plframe. 
+ *	Invoked by the Tk dispatcher on exposes of a plframe.
  *
  * Results:
  *	None.
@@ -933,7 +938,7 @@ PlFrameExposeEH(ClientData clientData, register XEvent *eventPtr)
  *
  * PlFrameMotionEH --
  *
- *	Invoked by the Tk dispatcher on MotionNotify events in a plframe. 
+ *	Invoked by the Tk dispatcher on MotionNotify events in a plframe.
  *	Not invoked unless we are drawing graphic crosshairs.
  *
  * Results:
@@ -1034,7 +1039,7 @@ PlFrameLeaveEH(ClientData clientData, register XEvent *eventPtr)
  *
  * PlFrameKeyEH --
  *
- *	Invoked by the Tk dispatcher on Keypress events in a plframe. 
+ *	Invoked by the Tk dispatcher on Keypress events in a plframe.
  *	Not invoked unless we are drawing graphic crosshairs.
  *
  * Results:
@@ -1399,7 +1404,7 @@ UpdateRband(PlFrame *plFramePtr)
  * PlFrameInit --
  *
  *	Invoked to handle miscellaneous initialization after window gets
- *	mapped.  
+ *	mapped.
  *
  * Results:
  *	None.
@@ -1463,7 +1468,7 @@ PlFrameInit(ClientData clientData)
  * Install_cmap --
  *
  *	Installs X driver color map as necessary when custom color maps
- *	are used. 
+ *	are used.
  *
  * Results:
  *	None.
@@ -1760,11 +1765,11 @@ scol1(Tcl_Interp *interp, register PlFrame *plFramePtr,
  *
  *  - X11 conventions are used rather than plplot ones.  XParseColor is used
  *    to convert a string into its 3 rgb components.  This lets you use
- *    symbolic names or hex notation for color values.  
+ *    symbolic names or hex notation for color values.
  *
  *  - these expect/emit Tcl array values in lists rather than in tclmatrix
  *    form, like most "normal" Tcl tools.  For usage, see the examples in the
- *    palette tools (plcolor.tcl). 
+ *    palette tools (plcolor.tcl).
 \*--------------------------------------------------------------------------*/
 
 static int
@@ -1811,7 +1816,7 @@ ColorManip(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	sprintf(str, "%d", (int) pls->ncol0);
 	Tcl_AppendElement(interp, str);
 	for (i = 0; i < pls->ncol0; i++) {
-	    plcolor = ((pls->cmap0[i].r << 16) | 
+	    plcolor = ((pls->cmap0[i].r << 16) |
 		       (pls->cmap0[i].g << 8) |
 		       (pls->cmap0[i].b));
 
@@ -1959,7 +1964,7 @@ ColorManip(Tcl_Interp *interp, register PlFrame *plFramePtr,
 		  i, argv[2], argv[3], argv[4], &changed) != TCL_OK)
 	    return TCL_ERROR;
 
-	if (changed) 
+	if (changed)
 	    plcmap1_calc();
     }
 
@@ -1996,7 +2001,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 /* no option -- return list of available PLplot commands */
 
-    if (argc == 0) 
+    if (argc == 0)
 	return plTclCmd(cmdlist, interp, argc, argv);
 
 /* Make sure widget has been initialized before going any further */
@@ -2023,7 +2028,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
  * ConfigurePlFrame --
  *
  *	This procedure is called to process an argv/argc list, plus the Tk
- *	option database, in order to configure (or reconfigure) a 
+ *	option database, in order to configure (or reconfigure) a
  *	plframe widget.
  *
  * Results:
@@ -2263,7 +2268,7 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     if ((c == 'd') && (strncmp(argv[0], "devkeys", length) == 0)) {
 	int i = 0;
-	while (plFramePtr->devName[i] != NULL) 
+	while (plFramePtr->devName[i] != NULL)
 	    Tcl_AppendElement(interp, plFramePtr->devName[i++]);
 
 	result = TCL_OK;
@@ -2273,7 +2278,7 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     else if ((c == 'd') && (strncmp(argv[0], "devnames", length) == 0)) {
 	int i = 0;
-	while (plFramePtr->devDesc[i] != NULL) 
+	while (plFramePtr->devDesc[i] != NULL)
 	    Tcl_AppendElement(interp, plFramePtr->devDesc[i++]);
 
 	result = TCL_OK;
@@ -2282,7 +2287,7 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* unrecognized */
 
     else {
-	Tcl_AppendResult(interp, "bad option to \"info\": must be ", 
+	Tcl_AppendResult(interp, "bad option to \"info\": must be ",
 	 "devkeys, devnames", (char *) NULL);
 
 	result = TCL_ERROR;
@@ -2346,8 +2351,8 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	iodev->fileHandle = argv[1];
 
 #if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION == 4)
-#define FILECAST 
-#else 
+#define FILECAST
+#else
 #define FILECAST (ClientData)
 #endif
 
@@ -2361,7 +2366,7 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* unrecognized */
 
     else {
-	Tcl_AppendResult(interp, "bad option to \"openlink\": must be ", 
+	Tcl_AppendResult(interp, "bad option to \"openlink\": must be ",
 	 "fifo or socket", (char *) NULL);
 
 	return TCL_ERROR;
@@ -2567,7 +2572,7 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* Make sure widget has been initialized before going any further */
 
     if ( ! plFramePtr->tkwin_initted) {
-	Tcl_AppendResult(interp, "Error -- widget not plotted to yet", 
+	Tcl_AppendResult(interp, "Error -- widget not plotted to yet",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
@@ -2576,7 +2581,7 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     plmkstrm(&ipls);
     if (ipls < 0) {
-	Tcl_AppendResult(interp, "Error -- cannot create stream", 
+	Tcl_AppendResult(interp, "Error -- cannot create stream",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
@@ -2586,7 +2591,7 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
     sfnam = (char *) tmpnam(NULL);
 
     if ((sfile = fopen(sfnam, "wb+")) == NULL) {
-	Tcl_AppendResult(interp, 
+	Tcl_AppendResult(interp,
 			 "Error -- cannot open plot file for writing",
 			 (char *) NULL);
 	plend1();
@@ -2612,13 +2617,13 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	plFramePtr->plpr_cmd = plFindCommand("plpr");
 
     if ((plFramePtr->plpr_cmd == NULL) || (pid = fork()) < 0) {
-	Tcl_AppendResult(interp, 
+	Tcl_AppendResult(interp,
 			 "Error -- cannot fork print process",
 			 (char *) NULL);
 	result = TCL_ERROR;
     }
     else if (pid == 0) {
-	if (execl(plFramePtr->plpr_cmd, plFramePtr->plpr_cmd, sfnam, 
+	if (execl(plFramePtr->plpr_cmd, plFramePtr->plpr_cmd, sfnam,
 		  (char *) 0)) {
 	    fprintf(stderr, "Unable to exec print command.\n");
 	    _exit(1);
@@ -2661,7 +2666,7 @@ Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
 			 " page mar aspect jx jy\"", (char *) NULL);
 	return TCL_ERROR;
-    } 
+    }
 
     plsdidev(atof(argv[0]), atof(argv[1]), atof(argv[2]), atof(argv[3]));
     return (Redraw(interp, plFramePtr, argc-1, argv+1));
@@ -2710,7 +2715,7 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* Make sure widget has been initialized before going any further */
 
     if ( ! plFramePtr->tkwin_initted) {
-	Tcl_AppendResult(interp, "Error -- widget not plotted to yet", 
+	Tcl_AppendResult(interp, "Error -- widget not plotted to yet",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
@@ -2719,7 +2724,7 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     if (argc == 0) {
 	if ( ! plFramePtr->ipls_save) {
-	    Tcl_AppendResult(interp, "Error -- no current save file", 
+	    Tcl_AppendResult(interp, "Error -- no current save file",
 			     (char *) NULL);
 	    return TCL_ERROR;
 	}
@@ -2742,7 +2747,7 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    Tcl_AppendResult(interp, "wrong # args: should be \"",
 			     " save as device file\"", (char *) NULL);
 	    return TCL_ERROR;
-	} 
+	}
 
     /* If save previously in effect, delete old stream */
 
@@ -2755,7 +2760,7 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 	plmkstrm(&plFramePtr->ipls_save);
 	if (plFramePtr->ipls_save < 0) {
-	    Tcl_AppendResult(interp, "Error -- cannot create stream", 
+	    Tcl_AppendResult(interp, "Error -- cannot create stream",
 			     (char *) NULL);
 	    plFramePtr->ipls_save = 0;
 	    return TCL_ERROR;
@@ -2790,7 +2795,7 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
     else if ((c == 'c') && (strncmp(argv[0], "close", length) == 0)) {
 
 	if ( ! plFramePtr->ipls_save) {
-	    Tcl_AppendResult(interp, "Error -- no current save file", 
+	    Tcl_AppendResult(interp, "Error -- no current save file",
 			     (char *) NULL);
 	    return TCL_ERROR;
 	}
@@ -2805,7 +2810,7 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* unrecognized */
 
     else {
-	Tcl_AppendResult(interp, "bad option to \"save\": must be ", 
+	Tcl_AppendResult(interp, "bad option to \"save\": must be ",
 	 "as or close", (char *) NULL);
 
 	return TCL_ERROR;

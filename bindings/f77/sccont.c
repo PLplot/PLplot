@@ -1,6 +1,25 @@
 /* $Id$
 
 	Contour plotter front-ends for Fortran.
+
+   Copyright (C) 2004  Alan W. Irwin
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 */
 
 #include "plstubs.h"
@@ -323,7 +342,7 @@ PLSHADE07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
    PLINT rect = 1;
    PLFLT ** a;
    int i,j;
-   
+
 /* Create a vectored a array from transpose of the fortran z array. */
    plAlloc2dGrid(&a, *nx, *ny);
    for (i = 0; i < *nx; i++) {
@@ -331,7 +350,7 @@ PLSHADE07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	 a[i][j] = z[i +j * *lx];
       }
    }
-   
+
    c_plshade( a, *nx, *ny, NULL,
 	      *xmin, *xmax, *ymin, *ymax,
 	      *shade_min, *shade_max,
@@ -359,7 +378,7 @@ PLSHADE17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
    PLFLT ** a;
    int i,j;
    PLcGrid cgrid;
-   
+
 /* Create a vectored a array from transpose of the fortran z array. */
    plAlloc2dGrid(&a, *nx, *ny);
    for (i = 0; i < *nx; i++) {
@@ -367,7 +386,7 @@ PLSHADE17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	 a[i][j] = z[i +j * *lx];
       }
    }
-   
+
    cgrid.nx = *nx;
    cgrid.ny = *ny;
    cgrid.xg = xg1;
@@ -424,7 +443,7 @@ PLSHADE27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
    plFree2dGrid(a, *nx, *ny);
    plFree2dGrid(cgrid2.xg, *nx, *ny);
    plFree2dGrid(cgrid2.yg, *nx, *ny);
-   
+
 }
 
 void
@@ -438,7 +457,7 @@ PLSHADE7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
    PLINT rect = 1;
    PLFLT ** a;
    int i,j;
-   
+
 /* Create a vectored a array from transpose of the fortran z array. */
    plAlloc2dGrid(&a, *nx, *ny);
    for (i = 0; i < *nx; i++) {
@@ -446,7 +465,7 @@ PLSHADE7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	 a[i][j] = z[i +j * *lx];
       }
    }
-   
+
    c_plshade( a, *nx, *ny, NULL,
 	      *xmin, *xmax, *ymin, *ymax,
 	      *shade_min, *shade_max,
@@ -471,13 +490,13 @@ PLSHADE7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 void
 PLSHADES07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width, 
+	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
 	   PLINT *cont_color, PLINT *cont_width, PLINT *lx)
 {
    PLINT rect = 1;
    PLFLT ** a;
    int i,j;
-   
+
 /* Create a vectored a array from transpose of the fortran z array. */
    plAlloc2dGrid(&a, *nx, *ny);
    for (i = 0; i < *nx; i++) {
@@ -485,7 +504,7 @@ PLSHADES07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	 a[i][j] = z[i +j * *lx];
       }
    }
-   
+
    c_plshades( a, *nx, *ny, NULL,
 	       *xmin, *xmax, *ymin, *ymax,
 	       clevel, *nlevel, *fill_width,
@@ -499,7 +518,7 @@ PLSHADES07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 void
 PLSHADES17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width, 
+	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
 	   PLINT *cont_color, PLINT *cont_width,
 	   PLFLT *xg1, PLFLT *yg1, PLINT *lx)
 {
@@ -507,7 +526,7 @@ PLSHADES17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
    PLFLT ** a;
    int i,j;
    PLcGrid cgrid;
-   
+
 /* Create a vectored a array from transpose of the fortran z array. */
    plAlloc2dGrid(&a, *nx, *ny);
    for (i = 0; i < *nx; i++) {
@@ -515,7 +534,7 @@ PLSHADES17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	 a[i][j] = z[i +j * *lx];
       }
    }
-   
+
    cgrid.nx = *nx;
    cgrid.ny = *ny;
    cgrid.xg = xg1;
@@ -534,7 +553,7 @@ PLSHADES17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 void
 PLSHADES27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width, 
+	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
 	   PLINT *cont_color, PLINT *cont_width,
 	   PLFLT *xg2, PLFLT *yg2, PLINT *lx)
 {
@@ -542,7 +561,7 @@ PLSHADES27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
    PLFLT **a;
    int i,j;
    PLcGrid2 cgrid2;
-   
+
 /* Create a vectored a array from transpose of the fortran z array. */
    plAlloc2dGrid(&a, *nx, *ny);
    plAlloc2dGrid(&cgrid2.xg, *nx, *ny);
@@ -556,7 +575,7 @@ PLSHADES27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	 cgrid2.yg[i][j] = yg2[i +j * *lx];
       }
    }
-   
+
    c_plshades( a, *nx, *ny, NULL,
 	     *xmin, *xmax, *ymin, *ymax,
 	     clevel, *nlevel, *fill_width,
@@ -572,13 +591,13 @@ PLSHADES27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 void
 PLSHADES7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
-	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width, 
+	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width,
 	   PLINT *cont_color, PLINT *cont_width, PLFLT *ftr, PLINT *lx)
 {
    PLINT rect = 1;
    PLFLT ** a;
    int i,j;
-   
+
 /* Create a vectored a array from transpose of the fortran z array. */
    plAlloc2dGrid(&a, *nx, *ny);
    for (i = 0; i < *nx; i++) {
@@ -586,7 +605,7 @@ PLSHADES7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	 a[i][j] = z[i +j * *lx];
       }
    }
-   
+
    c_plshades( a, *nx, *ny, NULL,
 	     *xmin, *xmax, *ymin, *ymax,
 	     clevel, *nlevel, *fill_width,

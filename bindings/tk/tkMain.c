@@ -4,16 +4,35 @@
  * Maurice LeBrun
  * 23-Jun-1994
  *
+ * Copyright (C) 2004  Joao Cardoso
+ *
+ * This file is part of PLplot.
+ *
+ * PLplot is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Library Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * PLplot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with PLplot; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ *
  * Modifications include:
  * 1. main() changed to pltkMain().
- * 2. tcl_RcFileName -> RcFileName, now passed in through the argument list. 
+ * 2. tcl_RcFileName -> RcFileName, now passed in through the argument list.
  * 3. Tcl_AppInit -> AppInit, now passed in through the argument list.
  * 4. Support for -e <script> startup option
  *
  * The original notes follow.
  */
 
-/* 
+/*
  * main.c --
  *
  *	This file contains the main program for "wish", a windowing
@@ -29,7 +48,7 @@
  * software and its documentation for any purpose, provided that the
  * above copyright notice and the following two paragraphs appear in
  * all copies of this software.
- * 
+ *
  * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
  * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
  * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
@@ -66,8 +85,8 @@ EXTERN int		Itk_Init _ANSI_ARGS_((Tcl_Interp * interp));
 
 /* From tclIntDecls.h */
 
-EXTERN int		Tcl_Import _ANSI_ARGS_((Tcl_Interp * interp, 
-				Tcl_Namespace * nsPtr, char * pattern, 
+EXTERN int		Tcl_Import _ANSI_ARGS_((Tcl_Interp * interp,
+				Tcl_Namespace * nsPtr, char * pattern,
 				int allowOverwrite));
 
 EXTERN Tcl_Namespace *	Tcl_GetGlobalNamespace _ANSI_ARGS_((
@@ -206,10 +225,10 @@ pltkMain(int argc, char **argv, char *RcFileName,
 
     /*
      * This must be setup *before* calling Tk_Init,
-     * and `name' has already been setup above 
+     * and `name' has already been setup above
      */
 
-    Tcl_SetVar(interp, "argv0", name, TCL_GLOBAL_ONLY);  
+    Tcl_SetVar(interp, "argv0", name, TCL_GLOBAL_ONLY);
 
     if ( Tcl_Init( interp ) == TCL_ERROR ) {
 	return TCL_ERROR;
@@ -334,7 +353,7 @@ pltkMain(int argc, char **argv, char *RcFileName,
 	    Tcl_DString buffer;
 	    char *fullName;
 	    FILE *f;
-    
+
 	    fullName = Tcl_TildeSubst(interp, RcFileName, &buffer);
 	    if (fullName == NULL) {
 		fprintf(stderr, "%s\n", interp->result);

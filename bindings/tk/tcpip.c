@@ -19,22 +19,41 @@
  *
  * Copyright (c) 1993 The Regents of the University of California.
  * All rights reserved.
- * 
+ *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose, without fee, and without written agreement is
  * hereby granted, provided that the above copyright notice and the following
  * two paragraphs appear in all copies of this software.
- * 
+ *
  * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
  * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
  * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
  * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
  * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ *
+ *
+ * Copyright (C) 2004  Joao Cardoso
+ *
+ * This file is part of PLplot.
+ *
+ * PLplot is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Library Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * PLplot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with PLplot; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 /*
@@ -72,7 +91,7 @@
 #include <math.h>
 #include <string.h>
 #if defined(__sgi) && !defined(SVR3)
-#include <sys/select.h> 
+#include <sys/select.h>
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -105,7 +124,7 @@ extern int errno;
  * For TCP, it's possible to get a line in pieces.  In case everything we
  * want isn't there, we need a place to store partial results when we're
  * in non-blocking mode.  The partial buffers below are created
- * dynamically to store incomplete data in these cases. 
+ * dynamically to store incomplete data in these cases.
 */
 
 typedef struct PartialRead {
@@ -272,7 +291,7 @@ pl_Read (fd, buffer, numReq)
     }
 
     /*
-     * Only call read if at the end of a previously incomplete packet. 
+     * Only call read if at the end of a previously incomplete packet.
      */
     if ((numRead < numReq)) {
 	numToCopy = numReq - numRead;
@@ -298,7 +317,7 @@ pl_Read (fd, buffer, numReq)
 /*----------------------------------------------------------------------*\
  * plHost_ID
  *
- * Tcl command -- return the IP address for the current host.  
+ * Tcl command -- return the IP address for the current host.
  *
  * Derived from source code in "UNIX Network Programming" by W. Richard
  * Stevens, Prentice Hall, 1990.
@@ -328,7 +347,7 @@ plHost_ID(clientData, interp, argc, argv)
     char			hostname[100];
 
     if (gethostname(hostname, 100)) {
-	Tcl_AppendResult(interp, "Error -- cannot get host name", 
+	Tcl_AppendResult(interp, "Error -- cannot get host name",
 			 (char *) NULL);
 	return TCL_ERROR;
     }
@@ -528,8 +547,8 @@ readError:
 	errMsg = NULL;	/* Suppresses spurious compiler warning */
     }
 
-    /* 
-     * Remove the file handler and close the file.  
+    /*
+     * Remove the file handler and close the file.
      */
     if (iodev->type == 0) {
 	Tk_DeleteFileHandler(iodev->fd);
@@ -554,7 +573,7 @@ readError:
  *
  *      This procedure is a modified version of Tdp_PacketSend,
  *	from the Tcl-DP distribution.  It writes a complete packet
- *	to a socket or file-oriented device.  
+ *	to a socket or file-oriented device.
  *
  * Results:
  *	A standard tcl result.
@@ -591,7 +610,7 @@ pl_PacketSend(interp, iodev, pdfs)
     header[1] = packetLen;
 
     /*
-     * Convert header ints to character stream.  
+     * Convert header ints to character stream.
      * Network byte ordering (big endian) is used.
      */
 

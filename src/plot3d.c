@@ -1,6 +1,25 @@
 /* $Id$
 
 	3d plot routines.
+
+   Copyright (C) 2004  Alan W. Irwin
+   Copyright (C) 2004  Joao Cardoso
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU Library General Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 #include "plplotP.h"
@@ -36,8 +55,8 @@ static PLFLT fc_minz, fc_maxz;
 static void plgrid3	(PLFLT);
 static void plnxtv (PLINT *, PLINT *, PLFLT*, PLINT, PLINT);
 static void plside3	(PLFLT *, PLFLT *, PLFLT **, PLINT, PLINT, PLINT);
-static void plt3zz	(PLINT, PLINT, PLINT, PLINT, 
-			 PLINT, PLINT *, PLFLT *, PLFLT *, PLFLT **, 
+static void plt3zz	(PLINT, PLINT, PLINT, PLINT,
+			 PLINT, PLINT *, PLFLT *, PLFLT *, PLFLT **,
 			   PLINT, PLINT, PLINT *, PLINT *, PLFLT*);
 static void plnxtvhi (PLINT *, PLINT *, PLFLT*, PLINT, PLINT);
 static void plnxtvlo (PLINT *, PLINT *, PLFLT*, PLINT, PLINT);
@@ -51,7 +70,7 @@ static void myexit	(char *);
 static void myabort	(char *);
 static void freework	(void);
 static int  plabv	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
-static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT, 
+static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT,
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 static PLFLT plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z);
 static void plP_draw3d(PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move);
@@ -107,7 +126,7 @@ c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
  * BASE_CONT    draw contour plot at bottom xy plane
  * TOP_CONT     draw contour plot at top xy plane (not yet)
  * DRAW_SIDES   draw sides
- * 
+ *
  * or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
  *
 \*--------------------------------------------------------------------------*/
@@ -221,7 +240,7 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
 
 #ifdef SHADE_DEBUG /* show triangles */
   plcol0(1);
-  x[3]=x[0]; y[3]=y[0]; z[3]=z[0]; 
+  x[3]=x[0]; y[3]=y[0]; z[3]=z[0];
   plline3(4,x,y,z);
 #else /* fill triangles */
   plP_fill(u, v, n+1);
@@ -258,7 +277,7 @@ shade_triangle(PLFLT x0, PLFLT y0, PLFLT z0,
  * triangles are drawn.
  *
  * There are multitude of ways this code could be optimized. Given the
- * problems with the old code, I tried to focus on clarity here. 
+ * problems with the old code, I tried to focus on clarity here.
 \*--------------------------------------------------------------------------*/
 
 void
@@ -283,13 +302,13 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     myabort("plsurf3d: Please set up window first");
     return;
   }
-    
+
   if (nx <= 0 || ny <= 0) {
     myabort("plsurf3d: Bad array dimensions.");
     return;
   }
 
-  /*  
+  /*
    * Don't use the data z value to scale the color, use the z axis
    * values set by plw3d()
    *
@@ -307,7 +326,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     falsecolor = 1;
   else
     falsecolor = 0;
-    
+
   plP_gdom(&xmin, &xmax, &ymin, &ymax);
   plP_grange(&zscale, &zmin, &zmax);
   if(zmin > zmax) {
@@ -371,7 +390,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     /* X is dominant */
     nFast = ixmax - ixmin;	/* samples in the Fast direction */
     nSlow = iymax - iymin;	/* samples in the Slow direction */
-      
+
     ixFast = ixDir; ixSlow = 0;
     iyFast = 0;     iySlow = iyDir;
   } else {
@@ -403,7 +422,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     plcol(zbcol);
     for(tp = tick * floor(zmin / tick) + tick; tp <= zmax; tp += tick) {
       bz[0] = bz[1] = bz[2] = tp;
-      plline3(3, bx, by, bz);	
+      plline3(3, bx, by, bz);
     }
     /* draw the vertical line at the back corner */
     bx[0] = bx[1];
@@ -419,7 +438,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
    * with c_plcont(). The contour ploted at the surface is simple minded, but
    * can be improved by using the contour data available.
    */
-  
+
   if (clevel != NULL && opt & BASE_CONT) {
 #define NPTS 100
     int np = NPTS;
@@ -447,7 +466,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
       clev = clev->next;
     }
     while(clev != NULL);
-  
+
     cont_clean_store(cont); /* now release the memory */
     free(zz);
   }
@@ -456,7 +475,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
   for(iSlow=0; iSlow < nSlow-1; iSlow++) {
     for(iFast=0; iFast < nFast-1; iFast++) {
       /* get the 4 corners of the Quad, which are
-       *      
+       *
        *       0--2
        *       |  |
        *       1--3
@@ -514,7 +533,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 		  yy[ct] = ((clevel[k] - pz[j])*(ym-py[j]))/(zm-pz[j]) + py[j];
 		  ct++;
 		}
-		
+
 		if (ct == 2) {
 
 		  /* yes, xx and yy are the intersection points of the triangle with
@@ -524,7 +543,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 		  if (opt & SURF_CONT) {
 		    /* surface contour with black color (suggestions?) */
 		    plcol0(0);
-		    zz[0] = zz[1] = clevel[k]; 
+		    zz[0] = zz[1] = clevel[k];
 		    plline3(2, xx, yy, zz);
 		  }
 
@@ -532,7 +551,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
 		} else
 		  plwarn("plot3d.c:plsurf3d() ***ERROR***\n");
-	      } 
+	      }
 	    }
 	  }
 	}
@@ -550,22 +569,22 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     PLFLT zscale, zmin, zmax;
 
     plP_grange(&zscale, &zmin, &zmax);
-    
+
     iSlow = nSlow-1;
     for(iFast=0; iFast < nFast-1; iFast++) {
       for(i=0; i<2; i++) {
 	ix = ixFast * (iFast+i) + ixSlow * iSlow + ixOrigin;
 	iy = iyFast * (iFast+i) + iySlow * iSlow + iyOrigin;
-	px[2*i] = x[ix]; 
+	px[2*i] = x[ix];
 	py[2*i] = y[iy];
 	pz[2*i] = z[ix][iy];
       }
       /* now draw the quad as two triangles (4 might be better) */
-	 
+
       shade_triangle(px[0], py[0], pz[0], px[2], py[2], pz[2], px[0], py[0], zmin);
       shade_triangle(px[2], py[2], pz[2], px[2], py[2], zmin,  px[0], py[0], zmin);
     }
-    
+
     iFast = nFast-1;
     for(iSlow=0; iSlow < nSlow-1; iSlow++) {
       for(i=0; i<2; i++) {
@@ -610,7 +629,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
  *  DRAW_LINEY :  Draw lines parallel to y-axis
  *  DRAW_LINEXY:  Draw lines parallel to both axes
  *  MAG_COLOR:    Magnitude coloring of wire frame
- *  BASE_CONT:    Draw contour at bottom xy plane 
+ *  BASE_CONT:    Draw contour at bottom xy plane
  *  TOP_CONT:     Draw contour at top xy plane (not yet)
  *  DRAW_SIDES:   Draw sides around the plot
  *  MESH:       Draw the "under" side of the plot
@@ -763,32 +782,32 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
       y = _y;
       z = _z;
       nx = _nx;
-      ny = _ny;	  
+      ny = _ny;
     }
 
-   if ((opt & BASE_CONT) || (opt & TOP_CONT) || (opt && MAG_COLOR)) { 
-     /*  
+   if ((opt & BASE_CONT) || (opt & TOP_CONT) || (opt && MAG_COLOR)) {
+     /*
       * Don't use the data z value to scale the color, use the z axis
       * values set by plw3d()
       *
       * plMinMax2dGrid(z, nx, ny, &fc_maxz, &fc_minz);
       */
-     
+
      fc_minz = plsc->ranmi;
-     fc_maxz = plsc->ranma;     
+     fc_maxz = plsc->ranma;
 
      if (fc_maxz == fc_minz) {
        plwarn("plot3dc: Maximum and minimum Z values are equal! \"fixing\"...");
        fc_maxz = fc_minz + 1e-6;
      }
    }
- 
+
    if (opt & BASE_CONT) {     /* If enabled, draw the contour at the base.  */
      if (clevel != NULL && nlevel != 0) {
        base_cont = 1;
        /* even if MESH is not set, "set it",
 	  as the base contour can only be done in this case */
-       pl3mode = 1; 
+       pl3mode = 1;
      }
    }
 
@@ -810,11 +829,11 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     init = 1;
-/* Call 3d line plotter.  Each viewing quadrant 
-   (perpendicular to x-y plane) must be handled separately. */ 
+/* Call 3d line plotter.  Each viewing quadrant
+   (perpendicular to x-y plane) must be handled separately. */
 
     if (cxx >= 0.0 && cxy <= 0.0) {
-	if (opt == DRAW_LINEY) 
+	if (opt == DRAW_LINEY)
 	    plt3zz(1, ny, 1, -1, -opt, &init, x, y, z, nx, ny, utmp, vtmp,ctmp);
 	else {
 	    for (iy = 2; iy <= ny; iy++)
@@ -832,7 +851,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
         if (opt == DRAW_LINEX)
 	    plt3zz(nx, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
-	    for (ix = 2; ix <= nx; ix++) 
+	    for (ix = 2; ix <= nx; ix++)
 		plt3zz(ix, ny, -1, -1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
 	if (opt == DRAW_LINEY)
@@ -844,10 +863,10 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
     }
 
     else if (cxx <= 0.0 && cxy >= 0.0) {
-	if (opt == DRAW_LINEY) 
+	if (opt == DRAW_LINEY)
 	    plt3zz(nx, 1, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
-	    for (iy = ny - 1; iy >= 1; iy--) 
+	    for (iy = ny - 1; iy >= 1; iy--)
 		plt3zz(nx, iy, -1, 1, -opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
 	if (opt == DRAW_LINEX)
@@ -859,10 +878,10 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
     }
 
     else if (cxx >= 0.0 && cxy >= 0.0) {
-	if (opt == DRAW_LINEX) 
+	if (opt == DRAW_LINEX)
 	    plt3zz(1, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	else {
-	    for (ix = nx - 1; ix >= 1; ix--) 
+	    for (ix = nx - 1; ix >= 1; ix--)
 		plt3zz(ix, 1, 1, 1, opt, &init, x, y, z, nx, ny, utmp, vtmp, ctmp);
 	}
 	if (opt == DRAW_LINEY)
@@ -874,7 +893,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
     }
 
     /* draw contour at the base. Not 100%! Why? */
- 
+
     if (base_cont){
       int np = NPTS, j;
       CONT_LEVEL *cont, *clev;
@@ -907,11 +926,11 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 
 	  plcol1((clev->level-fc_minz)/(fc_maxz-fc_minz));
  	  i = 0;
-	  do { 
+	  do {
 	    cx =  plP_wcpcx(plP_w3wcx(cline->x[i],cline->y[i], plsc->ranmi));
 	    for (j=i; j < cline->npts; j++) {  /* convert to 2D coordinates */
-	      uu[j] = plP_wcpcx(plP_w3wcx(cline->x[j],cline->y[j], plsc->ranmi)); 
-	      vv[j] = plP_wcpcy(plP_w3wcy(cline->x[j],cline->y[j], plsc->ranmi)); 
+	      uu[j] = plP_wcpcx(plP_w3wcx(cline->x[j],cline->y[j], plsc->ranmi));
+	      vv[j] = plP_wcpcy(plP_w3wcy(cline->x[j],cline->y[j], plsc->ranmi));
 	      if (uu[j] < cx) /* find turn back point */
 		break;
 	      else
@@ -943,8 +962,8 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 
 	      /* convert to 2D coordinates */
 	      for (j=start; j <= end; j++) {
-		uu[j] = plP_wcpcx(plP_w3wcx(cline->x[j],cline->y[j], plsc->ranmi)); 
-		vv[j] = plP_wcpcy(plP_w3wcy(cline->x[j],cline->y[j], plsc->ranmi)); 
+		uu[j] = plP_wcpcx(plP_w3wcx(cline->x[j],cline->y[j], plsc->ranmi));
+		vv[j] = plP_wcpcy(plP_w3wcy(cline->x[j],cline->y[j], plsc->ranmi));
 	      }
 	      plnxtv(&uu[start], &vv[start], NULL, end-start+1, 0); /* and plot it */
 
@@ -1005,7 +1024,7 @@ plP_gzback(PLINT **zbf, PLINT **zbc, PLFLT **zbt)
  * PLFLT plGetAngleToLight()
  *
  * Gets cos of angle between normal to a polygon and a light source.
- * Requires at least 3 elements, forming non-parallel lines 
+ * Requires at least 3 elements, forming non-parallel lines
  * in the arrays.
 \*--------------------------------------------------------------------------*/
 
@@ -1032,14 +1051,14 @@ plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z)
     mag1 = px*px + py*py + pz*pz;
 
 /* Vectors were parallel! */
-    if (mag1 == 0) 
+    if (mag1 == 0)
 	return 1;
 
     vlx = xlight - x[0];
     vly = ylight - y[0];
     vlz = zlight - z[0];
     mag2 = vlx*vlx + vly*vly + vlz*vlz;
-    if (mag2 ==0) 
+    if (mag2 ==0)
 	return 1;
 
 /* Now have 3 vectors going through the first point on the given surface */
@@ -1064,7 +1083,7 @@ plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z)
 
 static void
 plt3zz(PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
-       PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, 
+       PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
        PLINT *u, PLINT *v, PLFLT* c)
 {
     PLINT n = 0;
@@ -1407,12 +1426,12 @@ plnxtvhi(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
   if (pl3upv != 0) {
     newhisize = 2 * (mhi + BINC);
     if (newhiview != NULL) {
-      newhiview = 
+      newhiview =
 	(PLINT *) realloc((void *) newhiview,
 			  (size_t) (newhisize * sizeof(PLINT)));
     }
     else {
-      newhiview = 
+      newhiview =
 	(PLINT *) malloc((size_t) (newhisize * sizeof(PLINT)));
     }
     if ( ! newhiview)
@@ -1448,7 +1467,7 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
  * (u[j], v[j]) is the j'th point in the new array
  */
 
-/* 
+/*
  * First attempt at 3d shading.  It works ok for simple plots, but
  * will just not draw faces, or draw them overlapping for very
  * jagged plots
@@ -1698,12 +1717,12 @@ plnxtvlo(PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init)
   if (pl3upv != 0) {
     newlosize = 2 * (mlo + BINC);
     if (newloview != NULL) {
-      newloview = 
+      newloview =
 	(PLINT *) realloc((void *) newloview,
 			  (size_t) (newlosize * sizeof(PLINT)));
     }
     else {
-      newloview = 
+      newloview =
 	(PLINT *) malloc((size_t) (newlosize * sizeof(PLINT)));
     }
     if ( ! newloview)
@@ -1908,7 +1927,7 @@ savehipoint(PLINT px, PLINT py)
 	newhisize += 2 * BINC;
 	newhiview = (PLINT *) realloc((void *) newhiview,
 				      (size_t) (newhisize * sizeof(PLINT)));
-	if ( ! newhiview) 
+	if ( ! newhiview)
 	    myexit("savehipoint: Out of memory.");
     }
 
@@ -1942,7 +1961,7 @@ savelopoint(PLINT px, PLINT py)
  * swaphiview
  * swaploview
  *
- * Swaps the top/bottom views.  Need to do a real swap so that the 
+ * Swaps the top/bottom views.  Need to do a real swap so that the
  * memory cleanup routine really frees everything (and only once).
 \*--------------------------------------------------------------------------*/
 

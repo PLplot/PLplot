@@ -2,22 +2,23 @@
 ###
 ### Process this file with automake to produce Makefile.in
 ###
-# Copyright (C) 2002 Alan W. Irwin
-# 
-#This file is part of PLplot.
+# Copyright (C) 2002, 2004  Alan W. Irwin
+# Copyright (C) 2004  Rafael LAbossiere
 #
-#This file is free software; you can redistribute it and/or modify
-#it under the terms of the GNU Library General Public License as published by
-#the Free Software Foundation; version 2 of the License.
+# This file is part of PLplot.
 #
-#This file is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU Library General Public License for more details.
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
 #
-#You should have received a copy of the GNU Library General Public License
-#along with the file; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 sources = \
 	x01cc.cc \
@@ -52,11 +53,11 @@ examples_cxx_DATA = \
 	Makefile.examples
 
 install-data-hook:
-	( cd $(DESTDIR)/$(examples_cxxdir) ;\
-	mv -f Makefile.examples Makefile; \
-	rm -f lena.pgm; \
-	$(LN_S) ../c/lena.pgm lena.pgm)
-	
+	( cd $(DESTDIR)/$(examples_cxxdir) ; \
+	  mv -f Makefile.examples Makefile ; \
+	  rm -f lena.pgm                   ; \
+	  $(LN_S) ../c/lena.pgm lena.pgm )
+
 libplplotcxx = $(top_builddir)/bindings/c++/libplplotcxx$(LIB_TAG).la
 
 check_PROGRAMS = \
@@ -112,4 +113,4 @@ LDADD = $(libplplotcxx)
 endif
 
 EXTRA_DIST = $(sources) Makefile.examples.in
-DISTCLEANFILES = Makefile.examples 
+DISTCLEANFILES = Makefile.examples

@@ -3,21 +3,23 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2003 Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Alan W. Irwin
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -42,7 +44,7 @@ private:
   plstream *pls;
 
   static const PLFLT y0[];
- 
+
 
 };
 
@@ -56,7 +58,7 @@ x12::x12( int argc, char **argv ) {
   pls = new plstream();
 
   // Parse and process command line arguments.
-  
+
   pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
 
 
@@ -89,7 +91,7 @@ x12::x12( int argc, char **argv ) {
 void x12::plfbox(PLFLT x0, PLFLT y0) {
   PLFLT *x = new PLFLT[4];
   PLFLT *y = new PLFLT[4];
-	
+
   x[0] = x0;
   y[0] = 0.;
   x[1] = x0;
@@ -106,7 +108,7 @@ void x12::plfbox(PLFLT x0, PLFLT y0) {
 
 
 
-int main( int argc, char **argv ) 
+int main( int argc, char **argv )
 {
   x12 *x = new x12( argc, argv );
 }

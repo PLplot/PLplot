@@ -1,15 +1,33 @@
 dnl $Id$ --*-Autoconf-*--
-dnl 
+dnl
 dnl Local autoconf extensions.  These are based on the autoconf builtin
 dnl macros, and you can do what you want with them.
-dnl 
+dnl
 dnl Maurice LeBrun
 dnl IFS, University of Texas at Austin
 dnl 14-Jul-1994
-dnl Copyright (C) 2003  Rafael Laboissiere
+dnl
+dnl Copyright (C) 2003, 2004  Rafael Laboissiere
+dnl Copyright (C) 2004  Alan W. Irwin
+dnl
+dnl This file is part of PLplot.
+dnl
+dnl PLplot is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU General Library Public License as published
+dnl by the Free Software Foundation; either version 2 of the License, or
+dnl (at your option) any later version.
+dnl
+dnl PLplot is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Library General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU Library General Public License
+dnl along with PLplot; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 dnl ------------------------------------------------------------------------
 dnl It's kind of nice to have an include macro.
-dnl 
+dnl
 define([AC_INCLUDE],[builtin([include],$*)])dnl
 dnl ------------------------------------------------------------------------
 dnl This quicky is good during development, e.g. AC_IGNORE([ ... ]) to
@@ -39,7 +57,7 @@ dnl
 dnl	dirname=`echo $prefix | sed 's%/.*/%%'`
 dnl
 dnl This strips off the last "/"-delimited field and stores into
-dnl "dirname".  
+dnl "dirname".
 dnl
 dnl	if test $dirname = "bin"; then
 dnl	    prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
@@ -105,7 +123,7 @@ fi
 ])dnl
 dnl ------------------------------------------------------------------------
 dnl Modified versions of two subroutines of AC_OUTPUT from autoconf
-dnl version 2.3. 
+dnl version 2.3.
 dnl
 dnl The only difference is that this version looks for the input file
 dnl in the target directory first, then in the source directory.
@@ -114,9 +132,9 @@ dnl This is a subroutine of AC_OUTPUT.  It is called inside an unquoted
 dnl here document whose contents are going into config.status.
 dnl AC_OUTPUT_FILES(FILE...)
 define([AC_OUTPUT_FILES],
-[# Protect against being on the right side of a sed subst in config.status. 
+[# Protect against being on the right side of a sed subst in config.status.
 changequote(, )dnl
-sed 's/%@/@@/; s/@%/@@/; s/%g$/@g/; /@g$/s/[\\\\&%]/\\\\&/g; 
+sed 's/%@/@@/; s/@%/@@/; s/%g$/@g/; /@g$/s/[\\\\&%]/\\\\&/g;
  s/@@/%@/; s/@@/@%/; s/@g$/%g/' > conftest.subs <<\CEOF
 changequote([, ])dnl
 dnl These here document variables are unquoted when configure runs
@@ -241,7 +259,7 @@ EOF
 
 # Transform confdefs.h into a sed script conftest.vals that substitutes
 # the proper values into config.h.in to produce config.h.  And first:
-# Protect against being on the right side of a sed subst in config.status. 
+# Protect against being on the right side of a sed subst in config.status.
 # Protect against being in an unquoted here document in config.status.
 rm -f conftest.vals
 dnl Using a here document instead of a string reduces the quoting nightmare.
@@ -311,10 +329,10 @@ fi; done
 dnl ------------------------------------------------------------------------
 dnl The following macros search a list of directories for the given
 dnl include file and takes appropriate actions if found or not.
-dnl Arguments: 
+dnl Arguments:
 dnl 	$1 - the include file name, the part before the .h
 dnl	$2 - a variable that holds the matched directory name
-dnl	$3 - a variable indicating if the search succeeded ("yes"/"no") 
+dnl	$3 - a variable indicating if the search succeeded ("yes"/"no")
 dnl	     (if missing, we exit)
 dnl Use just FIND_INC, or the FIND_INC_<...> set for more control.
 dnl
@@ -356,7 +374,7 @@ dnl The following macro searches a list of directories for the given
 dnl library file and takes appropriate actions if found or not.
 dnl Use just FIND_LIB, or the FIND_LIB_<...> set for more control.
 dnl
-dnl Arguments: 
+dnl Arguments:
 dnl 	$1 - the library name, the part after the -l and before the "."
 dnl	$2 - a variable that holds the matched directory name
 dnl
@@ -366,7 +384,7 @@ dnl	     suitable for input to the linker (without the suffix, so that
 dnl	     any shared library form is given preference).
 dnl
 dnl FIND_LIB_END takes:
-dnl	$3 - a variable indicating if the search succeeded ("yes"/"no") 
+dnl	$3 - a variable indicating if the search succeeded ("yes"/"no")
 dnl	     (if missing, we exit)
 dnl
 dnl FIND_LIB takes these as $3 and $4, respectively.
@@ -411,8 +429,8 @@ define(FIND_LIB, [
 ])
 dnl ------------------------------------------------------------------------
 dnl The following macro makes it easier to add includes without adding
-dnl redundant -I specifications (to keep the build line concise).  
-dnl Arguments: 
+dnl redundant -I specifications (to keep the build line concise).
+dnl Arguments:
 dnl 	$1 - the searched directory name
 dnl	$2 - a variable that holds the include specification
 dnl	$3 - a variable that holds all the directories searched so far
@@ -436,7 +454,7 @@ define([ADD_TO_INCS],[
 dnl ------------------------------------------------------------------------
 dnl The following macro makes it easier to add libs without adding
 dnl redundant -L and -l specifications (to keep the build line concise).
-dnl Arguments: 
+dnl Arguments:
 dnl 	$1 - the searched directory name
 dnl	$2 - the command line option to give to the linker (e.g. -lfoo)
 dnl	$3 - a variable that holds the library specification
@@ -511,7 +529,7 @@ dnl AM_PATH_GTK([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MOD
 dnl Test for GTK, and define GTK_CFLAGS and GTK_LIBS
 dnl
 AC_DEFUN(AM_PATH_GTK,
-[dnl 
+[dnl
 dnl Get the cflags and libraries from the gtk-config script
 dnl
 AC_ARG_WITH(gtk-prefix,[  --with-gtk-prefix=PFX   Prefix where GTK is installed (optional)],
@@ -524,7 +542,7 @@ AC_ARG_ENABLE(gtktest, [  --disable-gtktest       Do not try to compile and run 
   for module in . $4
   do
       case "$module" in
-         gthread) 
+         gthread)
              gtk_config_args="$gtk_config_args gthread"
          ;;
       esac
@@ -573,7 +591,7 @@ dnl
 #include <stdio.h>
 #include <stdlib.h>
 
-int 
+int
 main ()
 {
   int major, minor, micro;
@@ -592,7 +610,7 @@ main ()
       (gtk_minor_version != $gtk_config_minor_version) ||
       (gtk_micro_version != $gtk_config_micro_version))
     {
-      printf("\n*** 'gtk-config --version' returned %d.%d.%d, but GTK+ (%d.%d.%d)\n", 
+      printf("\n*** 'gtk-config --version' returned %d.%d.%d, but GTK+ (%d.%d.%d)\n",
              $gtk_config_major_version, $gtk_config_minor_version, $gtk_config_micro_version,
              gtk_major_version, gtk_minor_version, gtk_micro_version);
       printf ("*** was found! If gtk-config was correct, then it is best\n");
@@ -603,7 +621,7 @@ main ()
       printf("*** If gtk-config was wrong, set the environment variable GTK_CONFIG\n");
       printf("*** to point to the correct copy of gtk-config, and remove the file config.cache\n");
       printf("*** before re-running configure\n");
-    } 
+    }
 #if defined (GTK_MAJOR_VERSION) && defined (GTK_MINOR_VERSION) && defined (GTK_MICRO_VERSION)
   else if ((gtk_major_version != GTK_MAJOR_VERSION) ||
 	   (gtk_minor_version != GTK_MINOR_VERSION) ||
@@ -649,7 +667,7 @@ main ()
   fi
   if test "x$no_gtk" = x ; then
      AC_MSG_RESULT(yes)
-     ifelse([$2], , :, [$2])     
+     ifelse([$2], , :, [$2])
   else
      AC_MSG_RESULT(no)
      if test "$GTK_CONFIG" = "no" ; then
@@ -697,7 +715,7 @@ main ()
   AC_SUBST(GTK_CFLAGS)
   AC_SUBST(GTK_LIBS)
   rm -f conf.gtktest
-  
+
 ])
 
 dnl ------------------------------------------------------------------------
@@ -708,7 +726,7 @@ dnl
 dnl GNOME_INIT_HOOK (script-if-gnome-enabled, [failflag], [additional-inits])
 dnl
 dnl if failflag is "fail" then GNOME_INIT_HOOK will abort if gnomeConf.sh
-dnl is not found. 
+dnl is not found.
 dnl
 
 AC_DEFUN([GNOME_INIT_HOOK],[
@@ -724,7 +742,7 @@ dnl	AC_SUBST(ZVT_LIBS)
 	[  --with-gnome-includes   Specify location of GNOME headers],[
 	CFLAGS="$CFLAGS -I$withval"
 	])
-	
+
 	AC_ARG_WITH(gnome-libs,
 	[  --with-gnome-libs       Specify location of GNOME libs],[
 	LDFLAGS="$LDFLAGS -L$withval"
@@ -783,7 +801,7 @@ dnl		ZVT_LIBS="`$GNOME_CONFIG --libs-only-l zvt`"
 	    else
 	        gnome_prefix=`eval echo \`echo $libdir\``
 	    fi
-	
+
 	    if test "$no_gnome_config" = "yes"; then
               AC_MSG_CHECKING(for gnomeConf.sh file in $gnome_prefix)
 	      if test -f $gnome_prefix/gnomeConf.sh; then
@@ -805,7 +823,7 @@ dnl		ZVT_LIBS="`$GNOME_CONFIG --libs-only-l zvt`"
 	  n="$3"
 	  for i in $n; do
 	    AC_MSG_CHECKING(extra library \"$i\")
-	    case $i in 
+	    case $i in
 	      applets)
 		AC_SUBST(GNOME_APPLETS_LIBS)
 		GNOME_APPLETS_LIBS=`$GNOME_CONFIG --libs-only-l applets`
@@ -870,7 +888,7 @@ dnl     GET_DLNAME(STEM,VERSION_INFO,VARIABLE)
 dnl For a given library STEM and a given VERSION_INFO (a la
 dnl -version-info option of libtool), determine the dlname of the
 dnl library in the form lib$STEM.<so_ext>.<so_number>.  Set the
-dnl variable VARIABLE with the resulting value.  This macro should be used 
+dnl variable VARIABLE with the resulting value.  This macro should be used
 dnl only after the call to AM_PROG_LIBTOOL.
 AC_DEFUN([GET_DLNAME],[
   if test -z "$LIBTOOL" -a -z "$CC" ; then
@@ -894,7 +912,7 @@ dnd libraries (DLL's).
 dnl     GET_DLLNAME(STEM,VARIABLE)
 dnl For a given DLL STEM determine the dlname of the
 dnl library in the form $STEM.<so_ext>.  Set the
-dnl variable VARIABLE with the resulting value.  This macro should be used 
+dnl variable VARIABLE with the resulting value.  This macro should be used
 dnl only after the call to AM_PROG_LIBTOOL.
 AC_DEFUN([GET_DLLNAME],[
   if test -z "$LIBTOOL" -a -z "$CC" ; then

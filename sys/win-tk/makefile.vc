@@ -1,13 +1,30 @@
 # Makefile.vc
 #
-# This makefile is suitable for use with 
+# This makefile is suitable for use with
 # Microsoft Visual C++ 5.x
 #
 # This makefile was hacked from Sun's 'example.zip'
-# Copyright (c) 1996 Sun Microsystems, Inc.
-# Copyright 1997 Tom Poindexter.
-# Copyright 2001-2002 Vince Darley.
+# Copyright (C) 1996 Sun Microsystems, Inc.
+# Copyright (C) 1997  Tom Poindexter
+# Copyright (C) 2001, 2002, 2004  Vince Darley
 #
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Library Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+
 MACHINE		= IX86
 
 VERSION = 5.2.1
@@ -33,9 +50,9 @@ NODEBUG=0
 # YOU ARE DOING!
 
 !IF "$(NODEBUG)" == "1"
-DEBUGDEFINES = 
-DBGX     = 
-DBGXMS     = 
+DEBUGDEFINES =
+DBGX     =
+DBGXMS     =
 !ELSE
 DEBUGDEFINES = -DUSE_TCLALLOC=0
 DBGX     = g
@@ -82,7 +99,7 @@ cdebug = -Oti -Gs -GD
 !ELSE IF "$(MACHINE)" == "IA64"
 cdebug = -Od -Zi
 !ELSE
-cdebug = -Z7 -Od 
+cdebug = -Z7 -Od
 # Could add '-WX' to turn warnings into errors.
 !ENDIF
 
@@ -101,7 +118,7 @@ ldebug	= -debug:full -debugtype:cv
 
 # declarations common to all linker options
 lflags	= -nologo -machine:$(MACHINE) $(libpath32)
-    
+
 
 # declarations for use on Intel i386, i486, and Pentium systems
 !IF "$(MACHINE)" == "IX86"
@@ -122,7 +139,7 @@ libc = libc$(DBGXMS).lib
 libcdll = crtdll$(DBGXMS).lib
 !ELSE
 libc = libc$(DBGXMS).lib oldnames.lib
-libcdll = 
+libcdll =
 !ENDIF
 
 baselibs   = kernel32.lib $(optlibs) advapi32.lib user32.lib
@@ -167,7 +184,7 @@ DEFINES = -nologo $(DEBUGDEFINES) -DUSE_TCL_STUBS \
 	-DVERSION=\"$(VERSION)\" -DDATA_DIR=\"data\" \
 	-DDRV_DIR=\"drivers\"
 
-# 
+#
 # Global makefile settings
 #
 
@@ -222,7 +239,7 @@ DLLOBJS = \
 	$(WINDIR)\matrixInit.obj \
 	$(WINDIR)\tclAPI.obj \
 	$(WINDIR)\tclMatrix.obj
-	
+
 # Targets
 
 all: setup $(PROJECT).dll
@@ -239,7 +256,7 @@ setup:
 
 starkit:
 	$(TCL)\bin\tclsh84.exe makePlplotStarkit.tcl
-	
+
 install-examples:
 	-@md $(INSTALLDIR)
 	-@md $(INSTALLDIR)\examples
@@ -250,7 +267,7 @@ install-examples:
 	$(CP) $(ROOT)\examples\tcl\tclIndex $(INSTALLDIR)\examples\tcl
 	$(CP) $(ROOT)\examples\tcl\*.dat $(INSTALLDIR)\examples\tcl
 	$(CP) $(ROOT)\examples\tcl\*.log $(INSTALLDIR)\examples\tcl
-	
+
 install:	$(PROJECT).dll
 	-@md $(INSTALLDIR)
 	$(CP) $(DATADIR)\*.map $(INSTALLDIR)
@@ -288,7 +305,7 @@ $(WINDIR)\plplotter.obj: $(GENERICTKDIR)\plplotter.c
 $(WINDIR)\Plplotter_Init.obj: $(GENERICTKDIR)\Plplotter_Init.c
 	$(cc32) $(cdebug) $(cflags) $(cvarsdll) $(INCLUDES) \
 		$(DEFINES) -Fo$(WINDIR)\ $?
-		
+
 $(WINDIR)\matrixInit.obj: $(GENERICTCLDIR)\matrixInit.c
 	$(cc32) $(cdebug) $(cflags) $(cvarsdll) $(INCLUDES) \
 		$(DEFINES) -Fo$(WINDIR)\ $?
@@ -301,7 +318,7 @@ $(WINDIR)\tclMatrix.obj: $(GENERICTCLDIR)\tclMatrix.c
 	$(cc32) $(cdebug) $(cflags) $(cvarsdll) $(INCLUDES) \
 		$(DEFINES) -Fo$(WINDIR)\ $?
 
-		
+
 $(WINDIR)\cgm.obj: $(GENERICDRIVERDIR)\cgm.c
 	$(cc32) $(cdebug) $(cflags) $(cvarsdll) $(INCLUDES) \
 		$(DEFINES) -Fo$(WINDIR)\ $?
@@ -394,7 +411,7 @@ $(WINDIR)\xwin.obj: $(GENERICDRIVERDIR)\xwin.c
 	$(cc32) $(cdebug) $(cflags) $(cvarsdll) $(INCLUDES) \
 		$(DEFINES) -Fo$(WINDIR)\ $?
 
-		
+
 $(WINDIR)\pdfutils.obj: $(GENERICDIR)\pdfutils.c
 	$(cc32) $(cdebug) $(cflags) $(cvarsdll) $(INCLUDES) \
 		$(DEFINES) -Fo$(WINDIR)\ $?

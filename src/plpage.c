@@ -1,6 +1,24 @@
 /* $Id$
 
 	Page/subpage handling routines
+
+   Copyright (C) 2004  Alan W. Irwin
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 #include "plplotP.h"
@@ -42,7 +60,7 @@ c_pladv(PLINT page)
 /*--------------------------------------------------------------------------*\
  * void plclear()
  *
- * Clear current subpage.  Subpages can be set with pladv before 
+ * Clear current subpage.  Subpages can be set with pladv before
  * calling plclear. Not all drivers support this.
 \*--------------------------------------------------------------------------*/
 
@@ -205,7 +223,7 @@ c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax)
  * int plGetCursor()
  *
  * Wait for graphics input event and translate to world coordinates.
- * Returns 0 if no translation to world coordinates is possible.  
+ * Returns 0 if no translation to world coordinates is possible.
  * Written by Paul Casteels.
 \*--------------------------------------------------------------------------*/
 
@@ -228,9 +246,9 @@ int
 plTranslateCursor(PLGraphicsIn *plg)
 {
     int window;
-    c_plcalc_world(plg->dX, plg->dY, &plg->wX, &plg->wY, 
+    c_plcalc_world(plg->dX, plg->dY, &plg->wX, &plg->wY,
 		   (PLINT *) &window);
-    if ( window >= 0 ) { 
+    if ( window >= 0 ) {
 	plg->subwindow = window;
 	return 1;
     }
@@ -242,8 +260,8 @@ plTranslateCursor(PLGraphicsIn *plg)
  * void c_plcalc_world
  *
  * Calculate world coordinates wx, and wy from relative device coordinates, rx
- * and ry.  Also, return the window index for which the world coordinates 
- * are valid. window is set to -1 and wx and wy to 0. if rx and ry do not 
+ * and ry.  Also, return the window index for which the world coordinates
+ * are valid. window is set to -1 and wx and wy to 0. if rx and ry do not
  * correspond to valid world coordinates for any currently existing window.
  * Originally written by Paul Casteels and modified by Alan W. Irwin.
 \*--------------------------------------------------------------------------*/
@@ -263,12 +281,12 @@ c_plcalc_world(PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window)
 	    (ry >= w->dymi) &&
 	    (ry <= w->dyma) ) {
 
-	    *wx = w->wxmi + (rx - w->dxmi) * 
+	    *wx = w->wxmi + (rx - w->dxmi) *
 		(w->wxma - w->wxmi) / (w->dxma - w->dxmi);
 
-	    *wy = w->wymi + (ry - w->dymi) * 
+	    *wy = w->wymi + (ry - w->dymi) *
 		(w->wyma - w->wymi) / (w->dyma - w->dymi);
-	   
+
 	    *window = i;
 
 	    return;

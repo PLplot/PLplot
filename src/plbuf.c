@@ -2,17 +2,24 @@
 
     Handle plot buffer.
 
-    Copyright 1992
-    Maurice LeBrun
+    Copyright (C) 1992  Maurice LeBrun
+    Copyright (C) 2004  Alan W. Irwin
 
-    This software may be freely copied, modified and redistributed without
-    fee provided that this copyright notice is preserved intact on all
-    copies and modified copies.
+    This file is part of PLplot.
 
-    There is no warranty or other guarantee of fitness of this software.
-    It is provided solely "as is". The author(s) disclaim(s) all
-    responsibility and liability with respect to this software's usage or
-    its effect upon hardware or computer systems.
+    PLplot is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Library Public License as published
+    by the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    PLplot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with PLplot; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 #define NEED_PLDEBUG
@@ -55,7 +62,7 @@ plbuf_init(PLStream *pls)
     dbug_enter("plbuf_init");
 
     pls->plbuf_read = FALSE;
-    if (pls->plbufFile != NULL) 
+    if (pls->plbufFile != NULL)
 	pls->plbuf_write = FALSE;
 }
 
@@ -132,7 +139,7 @@ plbuf_bop(PLStream *pls)
     plbuf_tidy(pls);
 
     pls->plbufFile = tmpfile();
-    if (pls->plbufFile == NULL) 
+    if (pls->plbufFile == NULL)
 	plexit("plbuf_init: Error opening plot data storage file.");
 
     wr_command(pls, (U_CHAR) BOP);
@@ -164,7 +171,7 @@ plbuf_tidy(PLStream *pls)
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*--------------------------------------------------------------------------*/
 
-void 
+void
 plbuf_state(PLStream *pls, PLINT op)
 {
     dbug_enter("plbuf_state");
@@ -296,7 +303,7 @@ plbuf_fill(PLStream *pls)
 /*--------------------------------------------------------------------------*\
  * plbuf_swin()
  *
- * Set up plot window parameters. 
+ * Set up plot window parameters.
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -402,7 +409,7 @@ rdbuf_bop(PLStream *pls)
  * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*--------------------------------------------------------------------------*/
 
-static void 
+static void
 rdbuf_state(PLStream *pls)
 {
     U_CHAR op;
@@ -535,7 +542,7 @@ rdbuf_fill(PLStream *pls)
     fread(&npts, sizeof(PLINT), 1, pls->plbufFile);
     fread(xpl, sizeof(short), npts, pls->plbufFile);
     fread(ypl, sizeof(short), npts, pls->plbufFile);
-    
+
     plP_fill(xpl, ypl, npts);
 }
 
@@ -585,7 +592,7 @@ rdbuf_image(PLStream *pls)
 /*--------------------------------------------------------------------------*\
  * rdbuf_swin()
  *
- * Set up plot window parameters. 
+ * Set up plot window parameters.
 \*--------------------------------------------------------------------------*/
 
 static void
@@ -696,7 +703,7 @@ static int
 rd_command(PLStream *pls, U_CHAR *p_c)
 {
     int count;
-    
+
     count = fread(p_c, sizeof(U_CHAR), 1, pls->plbufFile);
     return (count);
 }

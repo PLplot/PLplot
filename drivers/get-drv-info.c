@@ -1,6 +1,8 @@
 /* Get device info from PLplot driver module
  *
  * Copyright (C) 2003  Rafael Laboissiere
+ * Copyright (C) 2004  Joao Cardoso
+ *
  * This file is part of PLplot.
  *
  * PLplot is free software; you can redistribute it and/or modify it under

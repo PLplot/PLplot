@@ -1,5 +1,24 @@
-/*
+/* $Id$
 	Grid data demo
+
+   Copyright (C) 2004  Joao Cardoso
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 */
 
 #include "plcdemos.h"
@@ -30,7 +49,7 @@ static PLOptionTable options[] = {
     PL_OPT_INT,
     "-npts points",
     "Specify number of random points to generate [500]" },
-  {    
+  {
     "randn",
     NULL,
     NULL,
@@ -39,7 +58,7 @@ static PLOptionTable options[] = {
     "-randn",
     "Normal instead of uniform sampling -- the effective \n\
 \t\t\t  number of points will be smaller than the specified." },
-  { 
+  {
     "rosen",
     NULL,
     NULL,
@@ -113,7 +132,7 @@ cmap1_init()
 
   h[0] = 240; /* blue -> green -> yellow -> */
   h[1] = 0;   /* -> red */
-  
+
   l[0] = 0.6;
   l[1] = 0.6;
 
@@ -156,7 +175,7 @@ main(int argc, char *argv[])
   opt[4] = threshold;
 
   /* Initialize plplot */
-  
+
   plinit();
 
   create_data(&x, &y, &z, pts); /* the sampled data */
@@ -180,7 +199,7 @@ main(int argc, char *argv[])
   pllab(xlab, "", "The original data");
   plcol0(2);
   plpoin(pts, x, y, 5);
-  pladv(0);  
+  pladv(0);
 
   plssub(3,2);
 
@@ -193,7 +212,7 @@ main(int argc, char *argv[])
       sprintf(xlab, "time=%d ms", (clock() - ct)/1000);
       sprintf(ylab, "opt=%.3f", opt[alg-1]);
 
-      /* - CSA can generate NaNs (only interpolates?!). 
+      /* - CSA can generate NaNs (only interpolates?!).
        * - DTLI and NNI can generate NaNs for points outside the convex hull
        *      of the data points.
        * - NNLI can generate NaNs if a sufficiently thick triangle is not found
@@ -203,7 +222,7 @@ main(int argc, char *argv[])
        * the neighbors is done.
        */
 
-      if (alg == GRID_CSA || alg == GRID_DTLI || alg == GRID_NNLI || alg == GRID_NNI) { 
+      if (alg == GRID_CSA || alg == GRID_DTLI || alg == GRID_NNLI || alg == GRID_NNI) {
 	int ii, jj;
 	PLFLT dist, d;
 
@@ -235,8 +254,8 @@ main(int argc, char *argv[])
       plMinMax2dGrid(zg, xp, yp, &lzM, &lzm);
 
       plcol0(1);
-      pladv(alg);	
-	
+      pladv(alg);
+
       if (k == 0) {
 
 	lzm = MIN(lzm, zmin);
@@ -247,7 +266,7 @@ main(int argc, char *argv[])
 	plenv0(xm, xM, ym, yM, 2, 0);
 	plcol0(15);
 	pllab(xlab, ylab, title[alg-1]);
-	plshades(zg, xp, yp, NULL, xm, xM, ym, yM, 
+	plshades(zg, xp, yp, NULL, xm, xM, ym, yM,
 		 clev, nl, 1, 0, 1, plfill, 1, NULL, NULL);
 	plcol0(2);
       } else {
@@ -258,12 +277,12 @@ main(int argc, char *argv[])
 	cmap1_init();
 	plvpor(0.0, 1.0, 0.0, 0.9);
 	plwind(-1.0, 1.0, -1.0, 1.5);
-	/* 
+	/*
 	 * For the comparition to be fair, all plots should have the
 	 * same z values, but to get the max/min of the data generated
 	 * by all algorithms would imply two passes. Keep it simple.
 	 *
-	 * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60); 
+	 * plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
 	 */
 
 	plw3d(1., 1., 1., xm, xM, ym, yM, lzm, lzM, 30, -60);

@@ -1,3 +1,23 @@
+# xw08.py PLplot demo for Python
+#
+# Copyright (C) 2004  Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Library Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 from Numeric import *
 from plplot import *
 
@@ -14,7 +34,7 @@ title = ["#frPLplot Example 8 - Alt=60, Az=30",
 # Routine for restoring colour map1 to default.
 # See static void plcmap1_def(void) in plctrl.c for reference.
 def restore_cmap1():
-    # For center control points, pick black or white, whichever is closer to bg 
+    # For center control points, pick black or white, whichever is closer to bg
     # Be careful to pick just short of top or bottom else hue info is lost
     vertex = sum(array(plgcolbg()))/(3.*255.)
     if vertex < 0.5:
@@ -32,7 +52,7 @@ def restore_cmap1():
     # Saturation is complete for default
     s = array((1., 1., 1., 1., 1., 1.))
     # Integer flag array is zero (no interpolation along far-side of colour
-    # figure.)  
+    # figure.)
     rev = array((0, 0, 0, 0, 0, 0))
     # Default number of cmap1 colours
     plscmap1n(128)
@@ -112,7 +132,7 @@ def main():
 	    plbox3("bnstu", "x axis", 0.0, 0,
 	    "bnstu", "y axis", 0.0, 0,
 	    "bcdmnstuv", "z axis", 0.0, 0)
-	    
+
 	    plcol0(2)
 	    if ifshade == 0:
 		# diffuse light surface plot.
@@ -133,5 +153,5 @@ def main():
     # Restore defaults
     plcol0(1)
     restore_cmap1()
-	
+
 main()

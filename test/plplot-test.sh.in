@@ -1,6 +1,26 @@
 #!/bin/sh
 # $Id$
-# test suite for executing all configured demos (either in plplot/tmp 
+#
+# Copyright (C) 2004  Alan W. Irwin
+# Copyright (C) 2004  Rafael Laboissiere
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Library Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+# test suite for executing all configured demos (either in plplot/tmp
 # or else in the install area) capable of file output.  Our ultimate aim
 # is to compare the generated files with results generated on a system
 # that is known to give good results.  However, single-precision
@@ -9,7 +29,7 @@
 # So for now, this is only a test suite in the sense that it checks the
 # files corresponding to our demo plots can all be generated.  It is
 # up to the user to display those files with the appropriate software
-# (e.g., gv for postscript files and kview or a browser for png 
+# (e.g., gv for postscript files and kview or a browser for png
 # or jpeg files on Linux systems) to make sure they display properly.
 
 version=@VERSION@
@@ -27,13 +47,13 @@ EOF
    exit $1
 }
 
-# This script is only designed to work from a directory named "examples" 
+# This script is only designed to work from a directory named "examples"
 # with a subdirectory called "c".  Check whether those conditions are true.
 
 current=`pwd | sed 's?^..*/\(examples\)$?\1?'`
 if test ! \( "$current" = "examples" -a -d "c" \) ; then
 cat << EOF
-This script is only designed to work from a directory named "examples" 
+This script is only designed to work from a directory named "examples"
 with a subdirectory called "c".  One or both of those conditions has been
 violated.
 EOF

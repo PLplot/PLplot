@@ -1,4 +1,24 @@
+C      $Id$
 C      Pie chart demo.
+C
+C      Copyright (C) 2004  Alan W. Irwin
+C
+C      This file is part of PLplot.
+C
+C      PLplot is free software; you can redistribute it and/or modify
+C      it under the terms of the GNU General Library Public License as
+C      published by the Free Software Foundation; either version 2 of the
+C      License, or (at your option) any later version.
+C
+C      PLplot is distributed in the hope that it will be useful,
+C      but WITHOUT ANY WARRANTY; without even the implied warranty of
+C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C      GNU Library General Public License for more details.
+C
+C      You should have received a copy of the GNU Library General Public
+C      License along with PLplot; if not, write to the Free Software
+C      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
@@ -44,13 +64,13 @@ C        in fact per is interpreted as a percentage.
           y(j+1) = 5 + 3*sin((2.d0*pi/500.d0)*theta)
           j = j + 1
         enddo
-        
+
         call plcol0(i+1)
         call plpsty( mod(i+3, 8) + 1 )
         call plfill( j, x, y )
         call plcol0(1)
         call plline( j, x, y )
-        
+
         just = (2.d0*pi/500.d0)*(theta0 + theta1) / 2.d0
         dx = 0.25d0 * cos(just)
         dy = 0.25d0 * sin(just)
@@ -64,11 +84,11 @@ C        in fact per is interpreted as a percentage.
      &    just, text(i+1) )
         theta0 = theta - dthet
       enddo
-      
+
       call plfont(2)
       call plschr( 0.d0, 1.3d0)
       call plptex( 5.d0, 9.d0, 1.d0, 0.d0,
      &  0.5d0, 'Percentage of Sales' )
-      
+
       call plend
       end

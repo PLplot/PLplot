@@ -2,24 +2,24 @@ dnl configure.ac for PLplot
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl Copyright (C) 1994  Maurice LeBrun
+dnl Copyright (C) 1994, 2004  Maurice LeBrun
 dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
-dnl Copyright (C) 2002, 2003  Alan W. Irwin
-dnl Copyright (C) 2003  Joao Cardoso
+dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
+dnl Copyright (C) 2003, 2004  Joao Cardoso
 
 dnl This file is part of PLplot.
 
-dnl This file is free software; you can redistribute it and/or modify
-dnl it under the terms of the GNU Library General Public License as published by
-dnl the Free Software Foundation; version 2 of the License.
+dnl PLplot is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU Library General Public License as published
+dnl by the Free Software Foundation; version 2 of the License.
 
-dnl This file is distributed in the hope that it will be useful,
+dnl PLplot is distributed in the hope that it will be useful,
 dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl GNU Library General Public License for more details.
 
 dnl You should have received a copy of the GNU Library General Public License
-dnl along with the file; if not, write to the Free Software
+dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 dnl
 dnl -----------------------------------------------------------------------
@@ -47,7 +47,7 @@ divert(0)dnl --*-Autoconf-*--
 # Note: to recover legacy behavior as regards (site-specific) defaults
 # files, configure using:
 #
-# $ CONFIG_SITE=~/config/cf_plplot.in ./configure  
+# $ CONFIG_SITE=~/config/cf_plplot.in ./configure
 #
 # ----------------------------------------------------------------------------
 
@@ -642,7 +642,7 @@ AC_SUBST(LIB_TAG)
 DEFINE_PL_DOUBLE=
 test "$with_double" = yes && DEFINE_PL_DOUBLE="#define PL_DOUBLE"
 AC_SUBST(DEFINE_PL_DOUBLE)
-		  
+
 
 ### These various DLNAME variables are used to configure the names of
 ### the libplplot and libplplottcltk libraries for use in the various
@@ -704,7 +704,7 @@ MY_ARG_ENABLE(f77,
 if test "$enable_f77" = yes ; then
   AC_PROG_F77
 dnl The following call is commented out until it proves to be
-dnl necessary/harmless for proper compilation of F77 bindings 
+dnl necessary/harmless for proper compilation of F77 bindings
 dnl and exmaples(RL)
 dnl AC_F77_LIBRARY_LDFLAGS
   # If no F77 compiler is found, then disable f77 bindings building
@@ -725,7 +725,7 @@ c      get number of command-line arguments
 c      get command name.  Apparently this does not always give back the
 c      command name on all systems, but all that is required for the
 c      getarg(0 call by the interface logic is that a valid string is
-c      returned.  (All we are really interested in is the subsequent 
+c      returned.  (All we are really interested in is the subsequent
 c      arguments.)
       call getarg(0, command)
       if(narg.gt.0) call getarg(1, command)

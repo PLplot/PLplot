@@ -1,11 +1,31 @@
+C      $Id$
 C      Contour plot demo.
+C
+C      Copyright (C) 2004  Alan W. Irwin
+C
+C      This file is part of PLplot.
+C
+C      PLplot is free software; you can redistribute it and/or modify
+C      it under the terms of the GNU General Library Public License as
+C      published by the Free Software Foundation; either version 2 of the
+C      License, or (at your option) any later version.
+C
+C      PLplot is distributed in the hope that it will be useful,
+C      but WITHOUT ANY WARRANTY; without even the implied warranty of
+C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C      GNU Library General Public License for more details.
+C
+C      You should have received a copy of the GNU Library General Public
+C      License along with PLplot; if not, write to the Free Software
+C      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 C      Does several contour plots using different coordinate mappings.
       implicit none
       real*8 PI
       parameter (PI = 3.1415926535897932384d0)
       integer i, j, nptsx, nptsy, xdim, ydim
 C      xdim and ydim are the absolute static dimensions.
-C      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D 
+C      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
 C      arrays that is actually used.
       parameter (xdim=99, ydim=100, nptsx=35,nptsy=46)
 
@@ -236,10 +256,10 @@ C      Also put in smoothing term at small distances.
         do j = 1, ny
           div1 = sqrt((xg(i,j)-d1)**2 + (yg(i,j)-d1)**2 + eps**2)
           div1i = sqrt((xg(i,j)-d1i)**2 + (yg(i,j)-d1i)**2 + eps**2)
-          
+
           div2 = sqrt((xg(i,j)-d2)**2 + (yg(i,j)+d2)**2 + eps**2)
           div2i = sqrt((xg(i,j)-d2i)**2 + (yg(i,j)+d2i)**2 + eps**2)
-          
+
           z(i,j) = q1/div1 + q1i/div1i + q2/div2 + q2i/div2i
         enddo
       enddo

@@ -3,21 +3,23 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2003 Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Alan W. Irwin
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -56,7 +58,7 @@ private:
   static const PLFLT tr[6];
 };
 
-PLINT x14::space0 = 0, x14::mark0 = 0, 
+PLINT x14::space0 = 0, x14::mark0 = 0,
   x14::space1 = 1500, x14::mark1 = 1500;
 
 const int x14::xpts = 35;
@@ -76,7 +78,7 @@ void x14::mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 static PLFLT clevel[11] =
 {-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
 
-   
+
 
 /*--------------------------------------------------------------------------*\
  * x14()
@@ -84,13 +86,13 @@ static PLFLT clevel[11] =
  * Plots several simple functions from other example programs.
  *
  * This version sends the output of the first 4 plots (one page) to two
- * independent streams.  
+ * independent streams.
 \*--------------------------------------------------------------------------*/
 x14::x14( int argc, char ** argv ) {
   int i, digmax;
   int xleng0 = 400, yleng0 = 300, xoff0 = 200, yoff0 = 200;
   int xleng1 = 400, yleng1 = 300, xoff1 = 500, yoff1 = 500;
-  
+
   // Select either TK or DP driver and use a small window
   // Using DP results in a crash at the end due to some odd cleanup problems
   // The geometry strings MUST be in writable memory
@@ -102,9 +104,9 @@ x14::x14( int argc, char ** argv ) {
   char driver_orig[80];
 
   // plplot initialization
-  
+
   pls1 = new plstream();
-  
+
   // Parse and process command line arguments.
   pls1->ParseOpts( &argc, argv, PL_PARSE_FULL );
 
@@ -114,15 +116,15 @@ x14::x14( int argc, char ** argv ) {
     delete pls1;
     exit(1);
   }
-  
-  cout << "Demo of multiple output streams via the " << 
+
+  cout << "Demo of multiple output streams via the " <<
     driver << " driver." << endl;
   cout << "Running with the second window as slave.\n" << endl;
 
   // Set up first stream
-  
+
   pls1->SetOpt("geometry", geometry_master);
-    
+
   pls1->sdev(driver);
   pls1->ssub(2, 2);
 
@@ -147,11 +149,11 @@ x14::x14( int argc, char ** argv ) {
   plot1(pls1);
 
   // Set up the data & plot
-  
+
   xscale = 1.;
   yscale = 1.e+6;
   plot1(pls1);
-  
+
   // Set up the data & plot
 
   xscale = 1.;
@@ -188,7 +190,7 @@ x14::x14( int argc, char ** argv ) {
   // Back to master to wait for user to advance
 
   pls1->eop();
-    
+
   delete pls1;
   delete pls2;
 

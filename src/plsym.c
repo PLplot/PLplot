@@ -3,6 +3,24 @@
 	Point, symbol, and string plotting routines.
 	Also font management code.  See the description of plLibOpen() for
 	the search path used in finding the font files.
+
+   Copyright (C) 2004  Rafael Laboissiere
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 #define NEED_PLDEBUG
@@ -260,9 +278,9 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 static PLFLT arrow_x[4] = {0.5, -0.5, -0.27, -0.5};
 static PLFLT arrow_y[4] = {0.0, 0.0, 0.0, 0.20};
 
-void 
+void
 plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
-	 PLFLT scale, PLFLT dx, PLFLT dy) 
+	 PLFLT scale, PLFLT dx, PLFLT dy)
 {
     PLFLT uu, vv;
     PLINT i, j;
@@ -563,7 +581,7 @@ c_plptex(PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
     refx = plP_mmpcx(refxmm);
     refy = plP_mmpcy(refymm);
 
-    plP_text(0, just, xform, x, y, refx, refy, text);      
+    plP_text(0, just, xform, x, y, refx, refy, text);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -585,7 +603,7 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 {
     short int *symbol;
     signed char *vxygrid = 0;
-    
+
     PLINT ch, i, length, level = 0, style, oline = 0, uline = 0;
     PLFLT width = 0., xorg = 0., yorg = 0., def, ht, dscale, scale;
 
@@ -608,14 +626,14 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string)
 	    scale = dscale * pow(0.75, (double) ABS(level));
 	}
 	else if (ch == -2) { /* sub-script */
-	    level--; 
+	    level--;
 	    scale = dscale * pow(0.75, (double) ABS(level));
 	    yorg -= 16.0 * scale;
 	}
 	else if (ch == -3) /* back-char */
 	    xorg -= width * scale;
 	else if (ch == -4) /* toogle overline */
-	    oline = !oline; 
+	    oline = !oline;
 	else if (ch == -5)  /* toogle underline */
 	    uline = !uline;
 	else {
@@ -795,7 +813,7 @@ plcvec(PLINT ch, signed char **xygr)
 	xygrid[k] = 64;
 	xygrid[k] = 64;
     }
-    
+
     *xygr = xygrid;
     return (PLINT) 1;
 }
@@ -892,7 +910,7 @@ pldeco(short int **symbol, PLINT *length, const char *text)
 	    else if (test == 'g' || test == 'G') {
 		test = text[j++];
 		ig = plP_strpos(greek, test) + 1;
-		sym[(*length)++] = 
+		sym[(*length)++] =
 		    *(fntlkup + (ifont - 1) * numberchars + 127 + ig);
 	    }
 	    else {
@@ -903,7 +921,7 @@ pldeco(short int **symbol, PLINT *length, const char *text)
 
 	/* Decode character. */
 	/* >>PC<< removed increment from following expression to fix */
-	/* compiler bug */ 
+	/* compiler bug */
 
 	    sym[(*length)] = *(fntlkup + (ifont - 1) * numberchars + ch);
 	    (*length)++;

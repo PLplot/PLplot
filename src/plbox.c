@@ -1,6 +1,24 @@
 /* $Id$
 
 	Routines for drawing axes & box around the current viewport.
+
+   Copyright (C) 2004  Joao Cardoso
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 #include "plplotP.h"
@@ -172,10 +190,10 @@ c_plaxes(PLFLT x0, PLFLT y0,
 
 /* Calculate tick spacing */
 
-    if (ltx || lgx) 
+    if (ltx || lgx)
 	pldtik(vpwxmi, vpwxma, &xtick1, &nxsub1);
 
-    if (lty || lgy) 
+    if (lty || lgy)
 	pldtik(vpwymi, vpwyma, &ytick1, &nysub1);
 /* n.b. large change; xtick1, nxsub1, ytick1, nysub1 always positive. */
 
@@ -490,7 +508,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	dx = ux - tx;
 	dy = uy - ty;
 /* restore zdigits to initial value for second call */
-        zdigits = zdigmax;     
+        zdigits = zdigmax;
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
 	      plP_w3wcy(xmin, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
@@ -518,7 +536,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	dx = ux - tx;
 	dy = uy - ty;
 /* restore zdigits to initial value for second call */
-        zdigits = zdigmax;     
+        zdigits = zdigmax;
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
 	      plP_w3wcy(xmax, ymax, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
@@ -546,7 +564,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	dx = ux - tx;
 	dy = uy - ty;
 /* restore zdigits to initial value for second call */
-        zdigits = zdigmax;     
+        zdigits = zdigmax;
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
 	      plP_w3wcy(xmax, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
@@ -574,7 +592,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	dx = ux - tx;
 	dy = uy - ty;
 /* restore zdigits to initial value for second call */
-        zdigits = zdigmax;     
+        zdigits = zdigmax;
 	plzbx(zopt, zlabel, 0, dx, dy, tx, ty,
 	      plP_w3wcy(xmin, ymin, zmax), zmin, zmax, ztick, nsubz, &zdigits);
     }
@@ -620,7 +638,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 /* Note that 'tspace' is the minimim distance away (in fractional number
  * of ticks) from the boundary that an X or Y numerical label can be drawn. */
     PLFLT dwx, dwy, lambda, tcrit, tspace = 0.1;
-   
+
     vmin = (vmax_in > vmin_in) ? vmin_in : vmax_in;
     vmax = (vmax_in > vmin_in) ? vmax_in : vmin_in;
 
@@ -679,7 +697,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 		    for (i = 0; i <= 7; i++) {
 			temp = tp + xlog[i];
 			if (BETW(temp, vmin, vmax)) {
-			    lambda = (vmax_in > vmin_in)? 
+			    lambda = (vmax_in > vmin_in)?
 			       (temp - vmin) / (vmax - vmin):
 			       (vmax - temp) / (vmax - vmin);
 			    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
@@ -692,7 +710,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 		    for (i = 1; i <= nsub1 - 1; i++) {
 			temp = tp + i * (tn - tp) / nsub1;
 			if (BETW(temp, vmin, vmax)) {
-			    lambda = (vmax_in > vmin_in)? 
+			    lambda = (vmax_in > vmin_in)?
 			       (temp - vmin) / (vmax - vmin):
 			       (vmax - temp) / (vmax - vmin);
 			    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
@@ -706,7 +724,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	    if (!BETW(temp, vmin, vmax))
 		break;
 
-	    lambda = (vmax_in > vmin_in)? 
+	    lambda = (vmax_in > vmin_in)?
 	       (temp - vmin) / (vmax - vmin):
 	       (vmax - temp) / (vmax - vmin);
 	    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
@@ -728,7 +746,7 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	for (tn = tp; BETW(tn, vmin, vmax); tn += tick1) {
 	   if(BETW(tn, vmin+tcrit, vmax-tcrit)) {
 	    plform(tn, scale, prec, string, ll, lf);
-	    pos = (vmax_in > vmin_in)? 
+	    pos = (vmax_in > vmin_in)?
 	       (tn - vmin) / (vmax - vmin):
 	       (vmax - tn) / (vmax - vmin);
 	    plxytx(wx1, wy1, wx2, wy2, 1.5, pos, 0.5, string);
@@ -831,7 +849,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     vmin = (vmax_in > vmin_in) ? vmin_in : vmax_in;
     vmax = (vmax_in > vmin_in) ? vmax_in : vmin_in;
-   
+
     dwy = wy2 - wy1;
 
 /* Tick and subtick sizes in device coords */
@@ -859,13 +877,13 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     if (lv && right)
 	plztx("h", dx, dy, wx, wy1, wy2, -5.0, 0.5, 0.5, label);
-    
+
     if (right && !lc)
 	return;
 
     if (!right && !lb)
 	return;
-    
+
     if (ll)
 	tick1 = 1.0;
 
@@ -898,7 +916,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 		    for (i = 0; i <= 7; i++) {
 			temp = tp + xlog[i];
 			if (BETW(temp, vmin, vmax)) {
-			    lambda = (vmax_in > vmin_in)? 
+			    lambda = (vmax_in > vmin_in)?
 			       (temp - vmin) / (vmax - vmin):
 			       (vmax - temp) / (vmax - vmin);
 			    plstik(plP_wcmmx(wx),
@@ -911,7 +929,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 		    for (i = 1; i <= nsub1 - 1; i++) {
 			temp = tp + i * tick1 / nsub1;
 			if (BETW(temp, vmin, vmax)) {
-			    lambda = (vmax_in > vmin_in)? 
+			    lambda = (vmax_in > vmin_in)?
 			       (temp - vmin) / (vmax - vmin):
 			       (vmax - temp) / (vmax - vmin);
 			    plstik(plP_wcmmx(wx),
@@ -924,7 +942,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	    temp = tn;
 	    if (!BETW(temp, vmin, vmax))
 		break;
-	    lambda = (vmax_in > vmin_in)? 
+	    lambda = (vmax_in > vmin_in)?
 	        (temp - vmin) / (vmax - vmin):
 	        (vmax - temp) / (vmax - vmin);
 	    plstik(plP_wcmmx(wx), plP_wcmmy((PLFLT) (wy1 + lambda * dwy)),
@@ -943,7 +961,7 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	tp = tick1 * floor(vmin / tick1);
 	for (tn = tp + tick1; BETW(tn, vmin, vmax); tn += tick1) {
 	    plform(tn, scale, prec, string, ll, lf);
-	    pos = (vmax_in > vmin_in)? 
+	    pos = (vmax_in > vmin_in)?
 	        (tn - vmin) / (vmax - vmin):
 	        (vmax - tn) / (vmax - vmin);
 	    if (ln && !right)
@@ -1189,7 +1207,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
 	    plform(tn, xscale, xprec, string, llx, lfx);
 	    height = lix ? 1.75 : 1.5;
-	    pos = (vpwxmax > vpwxmin)? 
+	    pos = (vpwxmax > vpwxmin)?
 	        (tn - vpwxmi) / (vpwxma - vpwxmi):
 	        (vpwxma - tn) / (vpwxma - vpwxmi);
   	    if (lnx)
@@ -1225,7 +1243,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	tp = ytick1 * (1. + floor(vpwymi / ytick1));
 	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
 	    plform(tn, yscale, yprec, string, lly, lfy);
-	    pos = (vpwymax > vpwymin)? 
+	    pos = (vpwymax > vpwymin)?
 	        (tn - vpwymi) / (vpwyma - vpwymi):
 	        (vpwyma - tn) / (vpwyma - vpwymi);
 	    if (lny) {

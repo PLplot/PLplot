@@ -2,7 +2,27 @@
 
 	Misc. control routines, like begin, end, exit, change graphics/text
 	mode, change color.  Includes some spillage from plcore.c.  If you
-	don't know where it should go, put it here.  
+	don't know where it should go, put it here.
+
+   Copyright (C) 2004  Joao Cardoso
+   Copyright (C) 2004  Rafael Laboissiere
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 */
 
 #define DEBUG
@@ -330,7 +350,7 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
  *
  * Each control point must specify the position in cmap 1 as well as three
  * coordinates in HLS or RGB space.  The first point MUST correspond to
- * position = 0, and the last to position = 1.  
+ * position = 0, and the last to position = 1.
  *
  * The hue is interpolated around the "front" of the color wheel
  * (red<->green<->blue<->red) unless the "rev" flag is set, in which case
@@ -351,7 +371,7 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
  *	pos[]		position for each control point
  *	coord1[]	first coordinate for each control point
  *	coord2[]	second coordinate for each control point
- *	coord3[]	third coordinate for each control point 
+ *	coord3[]	third coordinate for each control point
  *	rev[]		reverse flag for each control point
 \*--------------------------------------------------------------------------*/
 
@@ -568,9 +588,9 @@ c_plscmap1n(PLINT ncol1)
 
 /* Allocate the space */
 
-    if (plsc->ncol1 > 0) 
+    if (plsc->ncol1 > 0)
 	plsc->cmap1 = (PLColor *) realloc(plsc->cmap1, size);
-    else 
+    else
 	plsc->cmap1 = (PLColor *) calloc(ncol, sizeof(PLColor));
 
 /* Fill in default entries */
@@ -602,9 +622,9 @@ color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, char *name )
  *
  * Initializes specified color map 0 color entry to its default.
  *
- * Initial RGB values for color map 0 taken from X11R6 
- * (XFree86-3.3.6) X-windows 
- * rgb.txt file, and may not accurately represent the described colors on 
+ * Initial RGB values for color map 0 taken from X11R6
+ * (XFree86-3.3.6) X-windows
+ * rgb.txt file, and may not accurately represent the described colors on
  * all systems.
 \*--------------------------------------------------------------------------*/
 
@@ -647,7 +667,7 @@ plcmap0_def(int imin, int imax)
  * The default initialization uses 6 control points in HLS space, the inner
  * ones being very close to one of the vertices of the HLS double cone.  The
  * vertex used (black or white) is chosen to be the closer to the background
- * color.  The 6 points were chosen over the older 4 points in order to make 
+ * color.  The 6 points were chosen over the older 4 points in order to make
  * weaker structures more easily visible, and give more control through the
  * palette editor.  If you don't like these settings.. change them!
 \*--------------------------------------------------------------------------*/
@@ -857,7 +877,7 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
  * void plRGB_HLS()
  *
  * Convert RGB color to HLS color.
- * Bounds on RGB (input) is always [0., 1.].  
+ * Bounds on RGB (input) is always [0., 1.].
  * Bounds on HLS (output):
  *	hue		[0., 360.]	degrees
  *	lightness	[0., 1.]	magnitude
@@ -877,12 +897,12 @@ plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
     if (rgb_min == rgb_max) {
 	s = 0;
 	h = 0;
-    } 
+    }
     else {
 	d = rgb_max - rgb_min;
 	if (l < 0.5)
 	    s = 0.5 * d / l;
-	else 
+	else
 	    s = 0.5* d / (1.-l);
 
 	rc = (rgb_max-r) / d;
@@ -941,7 +961,7 @@ plwarn(char *errormsg)
  * Much the same as plwarn(), but appends ", aborting operation" to the
  * error message.  Helps to keep source code uncluttered and provides a
  * convention for error aborts.
- * 
+ *
  * If cleanup needs to be done in the main program, the user should write
  * his/her own exit handler and pass it in via plsabort().
 \*--------------------------------------------------------------------------*/
@@ -952,7 +972,7 @@ plabort(char *errormsg)
 
     if (abort_handler != NULL)
          (*abort_handler)(errormsg);
-  
+
     if (plsc->errcode != NULL)
 	*(plsc->errcode) = 1;
 
@@ -1037,7 +1057,7 @@ plsexit(int (*handler) (char *))
 /*--------------------------------------------------------------------------*\
  * void plgra()
  *
- * Switches to graphics screen.  
+ * Switches to graphics screen.
  *
  * Here and in pltext() it's a good idea to return silently if plinit()
  * hasn't yet been called, since plwarn() calls pltext() and plgra(), and
@@ -1068,7 +1088,7 @@ c_plxormod(PLINT mode, PLINT *status)	/* xor mode */
       plsc->plbuf_write = 0;
     } else
       plsc->plbuf_write = ostate;
-  } 
+  }
   *status = 1;
 }
 
@@ -1195,7 +1215,7 @@ FILE *
 plLibOpen(char *fn)
 {
     FILE *ret = NULL;
-    
+
     PDFstrm *pdfs = plLibOpenPdfstrm(fn);
     if (pdfs == NULL) {
         return NULL;
@@ -1283,7 +1303,7 @@ plLibOpenPdfstrm(char *fn)
 	    goto done;
 
     }
-    
+
 /**** 	not found, give up 	****/
     pldebug("plLibOpenPdfstr", "File %s not found.\n", fn);
     return NULL;
@@ -1313,7 +1333,7 @@ plLibOpenPdfstrm(char *fn)
 \*--------------------------------------------------------------------------*/
 
 #ifdef __unix
-int 
+int
 plFindName(char *p)
 {
     int n;
@@ -1362,7 +1382,7 @@ plFindName(char *p)
 }
 
 #else
-int 
+int
 plFindName(char *p)
 {
     return 1;
@@ -1508,13 +1528,13 @@ plOpenFile(PLStream *pls)
 
 /* Need this here again, for prompted family initialization */
 
-	if (pls->family && pls->BaseName != NULL) 
+	if (pls->family && pls->BaseName != NULL)
 	    plP_getmember(pls);
 
 	if (i++ > 10)
 	    plexit("Too many tries.");
 
-	if ((pls->OutFile = fopen(pls->FileName, "wb+")) == NULL) 
+	if ((pls->OutFile = fopen(pls->FileName, "wb+")) == NULL)
 	    fprintf(stderr, "Can't open %s.\n", pls->FileName);
 	else
 	    pldebug("plOpenFile", "Opened %s\n", pls->FileName);
@@ -1608,11 +1628,11 @@ plGetFam(PLStream *pls)
 	    pls->member += pls->finc;
 	    pls->famadv = 0;
 	    plP_init();
-	   /* Apply compensating factor to original xpmm and ypmm so that 
+	   /* Apply compensating factor to original xpmm and ypmm so that
 	    * character aspect ratio is preserved when overall aspect ratio
 	    * is changed. */
 	    plP_gpixmm(&xpmm_loc, &ypmm_loc);
-	    plP_setpxl(xpmm_loc*plsc->caspfactor, ypmm_loc/plsc->caspfactor); 
+	    plP_setpxl(xpmm_loc*plsc->caspfactor, ypmm_loc/plsc->caspfactor);
 	    return;
 	}
     }

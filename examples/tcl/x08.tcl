@@ -1,5 +1,23 @@
 #----------------------------------------------------------------------------
 # $Id$
+#
+# Copyright (C) 2004  Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Library Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #----------------------------------------------------------------------------
 
 # Does a series of 3-d plots for a given data set, with different
@@ -8,7 +26,7 @@
 # Routine for restoring colour map1 to default.
 # See static void plcmap1_def(void) in plctrl.c for reference.
 proc restore_cmap1_8 {w} {
-   # For center control points, pick black or white, whichever is closer to bg 
+   # For center control points, pick black or white, whichever is closer to bg
    # Be careful to pick just short of top or bottom else hue info is lost
    $w cmd plgcolbg rbg gbg bbg
    set vertex [expr ($rbg + $gbg + $bbg)/(3.*255.)]
@@ -30,7 +48,7 @@ proc restore_cmap1_8 {w} {
    # Saturation is complete for default
    matrix s f 6 = {1., 1., 1., 1., 1., 1.}
    # Integer flag array is zero (no interpolation along far-side of colour
-   # figure) 
+   # figure)
    matrix rev i 6 = {0, 0, 0, 0, 0, 0}
    # Default number of cmap1 colours
    $w cmd plscmap1n 128
@@ -62,7 +80,7 @@ proc cmap1_init_8 {w gray} {
    # Integer flag array is zero (no interpolation along far-side of colour
    # figure
    matrix rev i 2 = {0, 0}
-   # Number of cmap1 colours is 256 in this case. 
+   # Number of cmap1 colours is 256 in this case.
    $w cmd plscmap1n 256
    # Interpolate between control points to set up default cmap1.
    $w cmd plscmap1l 0 2 i h l s rev
@@ -158,11 +176,11 @@ proc x08 {{w loopback}} {
 	    if {$ifshade == 0} {
 	       cmap1_init_8 $w 1
 	       $w cmd plsurf3d x y z 0
-	    # magnitude colored plot 
+	    # magnitude colored plot
 	    } elseif {$ifshade == 1} {
 	       cmap1_init_8 $w 0
 	       $w cmd plsurf3d x y z [expr $MAG_COLOR]
-	    # magnitude colored plot with faceted squares 
+	    # magnitude colored plot with faceted squares
 	    } elseif {$ifshade == 2} {
 	       $w cmd plsurf3d x y z [expr $MAG_COLOR | $FACETED]
 	    # magnitude colored plot with contours.

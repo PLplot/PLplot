@@ -16,7 +16,7 @@
         Copyright (C) 1999  Geoffrey Furnish
         Copyright (C) 2000, 2001, 2002  Alan W. Irwin
         Copyright (C) 2001  Andrew Roach
-        Copyright (C) 2001  Rafael Laboissiere
+        Copyright (C) 2001, 2004  Rafael Laboissiere
         Copyright (C) 2002  Vincent Darley
         Copyright (C) 2003  Joao Cardoso
 
@@ -59,7 +59,7 @@
  * latitudes.  After the call to mapform(), x[] and y[] should be replaced
  * by the corresponding plot coordinates.  If no transform is desired,
  * mapform can be replaced by NULL.
- * 
+ *
  * type is a character string. The value of this parameter determines the
  * type of background. The possible values are,
  *
@@ -67,12 +67,12 @@
  * 	"usa"		USA and state boundaries
  * 	"cglobe"	continental outlines and countries
  * 	"usaglobe"	USA, state boundaries and continental outlines
- * 
+ *
  * minlong, maxlong are the values of the longitude on the left and right
  * side of the plot, respectively. The value of minlong must be less than
  * the values of maxlong, and the values of maxlong-minlong must be less
  * or equal to 360.
- * 
+ *
  * minlat, maxlat are the minimum and maximum latitudes to be plotted on
  * the background.  One can always use -90.0 and 90.0 as the boundary
  * outside the plot window will be automatically eliminated.  However, the
@@ -101,7 +101,7 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
     long int t;
 
     /*
-     * read map outline 
+     * read map outline
      */
     strcpy(filename,type);
     strcat(filename,MAP_FILE);
@@ -138,10 +138,10 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 
 	/* remove last 2 points if both outside of domain and won't plot */
 
-/* AR: 18/11/01 
+/* AR: 18/11/01
 *       I have commented out the next section which supposedly
-*       removes points that do not plot within the domain. 
-*       
+*       removes points that do not plot within the domain.
+*
 *       This code appears at any rate to be superseded by the next
 *       block of code that checks for wrapping problems. Removing
 *       this code seems to have fixed up the problems with mapping
@@ -187,7 +187,7 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 	    if (test[i]) wrap = 1;
 	}
 
-	if (wrap == 0) {	
+	if (wrap == 0) {
 	    plline(n,bufx,bufy);
 	}
 	else {
@@ -217,13 +217,13 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 }
 
 /*----------------------------------------------------------------------*\
- * void plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *), 
- *		    PLFLT dlong, PLFLT dlat, PLFLT minlong, PLFLT maxlong, 
+ * void plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *),
+ *		    PLFLT dlong, PLFLT dlat, PLFLT minlong, PLFLT maxlong,
  *		    PLFLT minlat, PLFLT maxlat);
  *
- * Plot the latitudes and longitudes on the background.  The lines 
+ * Plot the latitudes and longitudes on the background.  The lines
  * are plotted in the current color and line style.
- * 
+ *
  * mapform(PLINT n, PLFLT *x, PLFLT *y) is a routine to transform the
  * coordinate longitudes and latitudes to a plot coordinate system.  By
  * using this transform, we can change from a longitude, latitude
@@ -232,15 +232,15 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
  * latitudes.  After the call to mapform(), x[] and y[] should be replaced
  * by the corresponding plot coordinates.  If no transform is desired,
  * mapform can be replaced by NULL.
- * 
+ *
  * dlat, dlong are the interval in degrees that the latitude and longitude
- * lines are to be plotted. 
- * 
+ * lines are to be plotted.
+ *
  * minlong, maxlong are the values of the longitude on the left and right
  * side of the plot, respectively. The value of minlong must be less than
  * the values of maxlong, and the values of maxlong-minlong must be less
  * or equal to 360.
- * 
+ *
  * minlat, maxlat are the minimum and maximum latitudes to be plotted on
  * the background.  One can always use -90.0 and 90.0 as the boundary
  * outside the plot window will be automatically eliminated.  However, the
@@ -250,8 +250,8 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 
 #define NSEG 100
 
-void 
-plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+void
+plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
                PLFLT dlong, PLFLT dlat,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {
@@ -291,7 +291,7 @@ plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
     }
 
     /* longitudes */
- 
+
     for (xx = dlong * ceil(minlong/dlong); xx <= maxlong; xx += dlong) {
         if (mapform == NULL) {
             x[0] = x[1] = xx;

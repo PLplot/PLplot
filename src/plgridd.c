@@ -1,3 +1,27 @@
+/*
+   plgridd.c: Plot grids data from irregularly sampled data.
+   $Id$
+
+   Copyright (C) 2004  Joao Cardoso
+   Copyright (C) 2004  Alan W. Irwin
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+*/
 
 #include "plplotP.h"
 
@@ -80,7 +104,7 @@ static PT items[KNN_MAX_ORDER];
  *       GRID_NNAIDW: Nearest Neighbors Around Inverse Distance Weighted
  *       GRID_DTLI:   Delaunay Triangulation Linear Interpolation (2)
  *       GRID_NNI:    Natural Neighbors interpolation (2)
- * 
+ *
  * (1): Copyright 2000-2002 CSIRO Marine Research, Pavel Sakov's csa library
  * (2): Copyright 2002 CSIRO Marine Research, Pavel Sakov's nn library
  *
@@ -94,7 +118,7 @@ c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
   int i, j;
 
   if(npts < 1 || nptsx < 1 || nptsy < 1) {
-    plabort("plgriddata: Bad array dimensions"); 
+    plabort("plgriddata: Bad array dimensions");
     return;
   }
 
@@ -119,7 +143,7 @@ c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
       zg[i][j] = 0.; /* NaN signals a not processed grid point */
 
   switch (type) {
-    
+
   case (GRID_CSA):     /*  Bivariate Cubic Spline Approximation */
 #ifdef WITH_CSA
     grid_csa(x, y, z, npts, xg, nptsx, yg, nptsy, zg);
@@ -157,12 +181,12 @@ c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
     break;
 
   default:
-    plabort("plgriddata: unknown algorithm type"); 
+    plabort("plgriddata: unknown algorithm type");
   }
 }
 
 #ifdef WITH_CSA
-/* 
+/*
  * Bivariate Cubic Spline Approximation using Pavel Sakov's csa package
  *
  * NaNs are returned where no interpolation can be done.
@@ -215,7 +239,7 @@ grid_csa (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
   csa_destroy(a);
   free(pin);
-  free(pgrid); 
+  free(pgrid);
 }
 #endif /* WITH_CSA */
 
@@ -292,7 +316,7 @@ grid_nnli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 {
   PLFLT xx[4], yy[4], zz[4], t, A, B, C, D, d1, d2, d3, max_thick;
   int i, j, ii, excl, cnt, excl_item;
-      
+
   if (threshold == 0.) {
     plwarn("plgriddata(): GRID_NNLI: threshold must be specified with 'data' arg. Using 1.001");
     threshold = 1.001;
@@ -317,7 +341,7 @@ grid_nnli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
       d3 = sqrt((xx[0]-xx[2])*(xx[0]-xx[2]) + (yy[0]-yy[2])*(yy[0]-yy[2]));
 
       if (d1 == 0. || d2 == 0. || d3 == 0.) { /* coincident points */
-	zg[i][j] = NaN; 
+	zg[i][j] = NaN;
 	continue;
       }
 
@@ -334,7 +358,7 @@ grid_nnli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
       if ((d1+d2)/d3 < threshold) { /* thin triangle! */
 	zg[i][j] = NaN; /* deal with it latter */
       } else {  /* calculate the plane passing through the three points */
-	 	 
+
 	A = yy[0]*(zz[1]-zz[2]) + yy[1]*(zz[2]-zz[0]) + yy[2]*(zz[0]-zz[1]);
 	B = zz[0]*(xx[1]-xx[2]) + zz[1]*(xx[2]-xx[0]) + zz[2]*(xx[0]-xx[1]);
 	C = xx[0]*(yy[1]-yy[2]) + xx[1]*(yy[2]-yy[0]) + xx[2]*(yy[0]-yy[1]);
@@ -355,14 +379,14 @@ grid_nnli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
    * the candidate triangle... otherwise one is extrapolating
    */
 
-  { 
+  {
     for (i=0; i<nptsx; i++) {
       for (j=0; j<nptsy; j++) {
 
 	if (isnan(zg[i][j])) {
 	  dist1(xg[i], yg[j], x, y, npts, 4);
 
-	  /* sort by distances. Not really needed! 
+	  /* sort by distances. Not really needed!
 	     for (ii=3; ii>0; ii--) {
 	     for (jj=0; jj<ii; jj++) {
 	     if (items[jj].dist > items[jj+1].dist) {
@@ -371,12 +395,12 @@ grid_nnli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	     items[jj+1].dist = t;
 	     }
 	     }
-	     } 	     
+	     }
 	  */
 
 	  max_thick = 0.; excl_item = -1;
 	  for (excl=0; excl<4; excl++) { /* the excluded point */
-	      
+
 	    cnt = 0;
 	    for (ii=0; ii<4; ii++) {
 	      if (ii != excl) {
@@ -420,7 +444,7 @@ grid_nnli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	      cnt++;
 	    }
 	  }
-	 
+
 	  A = yy[0]*(zz[1]-zz[2]) + yy[1]*(zz[2]-zz[0]) + yy[2]*(zz[0]-zz[1]);
 	  B = zz[0]*(xx[1]-xx[2]) + zz[1]*(xx[2]-xx[0]) + zz[2]*(xx[0]-xx[1]);
 	  C = xx[0]*(yy[1]-yy[2]) + xx[1]*(yy[2]-yy[0]) + xx[2]*(yy[0]-yy[1]);
@@ -435,9 +459,9 @@ grid_nnli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 }
 
-/* 
+/*
  * Nearest Neighbors "Around" Inverse Distance Weighted, brute force approach.
- * 
+ *
  * This uses the 1-KNN in each quadrant around the grid point, then
  * Inverse Distance Weighted is used as in GRID_NNIDW.
  */
@@ -527,7 +551,7 @@ grid_dtli(PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 
   free(pin);
-  free(pgrid); 
+  free(pgrid);
 }
 
 /*
@@ -553,7 +577,7 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 
   if (wmin == 0.) {/* only accept weights greater than wmin */
-   plwarn("plgriddata(): GRID_NNI: wmin must be specified with 'data' arg. Using -PLFLT_MAX"); 
+   plwarn("plgriddata(): GRID_NNI: wmin must be specified with 'data' arg. Using -PLFLT_MAX");
     wmin =  -PLFLT_MAX;
   }
 
@@ -590,11 +614,11 @@ grid_nni (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   }
 
   free(pin);
-  free(pgrid); 
+  free(pgrid);
 }
 #endif /* HAVE_QHULL*/
 
-/* 
+/*
  * this function just calculates the K Nearest Neighbors of grid point
  * [gx, gy].
  */
@@ -616,7 +640,7 @@ dist1(PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts, int knn_order)
 
   for (i=0; i<npts; i++) {
     d = ((gx - x[i])*(gx - x[i]) + (gy - y[i])*(gy - y[i])); /* save sqrt() time */
-    
+
     if (d < max_dist) {
       /* found an item with a distance smaller than the
        * maximum distance found so far. Replace.
@@ -681,7 +705,7 @@ dist2(PLFLT gx, PLFLT gy, PLFLT *x, PLFLT *y, int npts)
       items[i].dist = sqrt(items[i].dist); /* now calculate the distance */
 }
 
-#ifdef NONN /* another DTLI, based only on QHULL, not nn */ 
+#ifdef NONN /* another DTLI, based only on QHULL, not nn */
 static void
 grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	   PLFLT *xg, int nptsx, PLFLT *yg,  int nptsy, PLFLT **zg)
@@ -706,13 +730,13 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   realT bestdist;
   int totpart=0;
   int numfacets, numsimplicial, numridges;
-  int totneighbors, numcoplanars, numtricoplanars;	 
-      
+  int totneighbors, numcoplanars, numtricoplanars;
+
   plwarn("plgriddata: GRID_DTLI, If you have QHull knowledge, FIXME.");
 
   /* Could pass extra args to qhull through the 'data' argument of
      plgriddata() */
-  sprintf(flags, "qhull d Qbb Qt"); 
+  sprintf(flags, "qhull d Qbb Qt");
   points = (coordT *) malloc(npts * (dim+1) * sizeof(coordT));
 
   for (i=0; i<npts; i++) {
@@ -722,7 +746,7 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 
 #if 1 /* easy way */
   exitcode = qh_new_qhull (dim, npts, points, ismalloc,
-			   flags, outfile, errfile); 
+			   flags, outfile, errfile);
 #else
   qh_init_A (stdin, stdout, stderr, 0, NULL);
   exitcode = setjmp (qh errexit);
@@ -750,12 +774,12 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
     printf("Neigbors\n");
 
     qh_findgood_all (qh facet_list);
-    qh_countfacets (qh facet_list, NULL, !qh_ALL, &numfacets, &numsimplicial, 
+    qh_countfacets (qh facet_list, NULL, !qh_ALL, &numfacets, &numsimplicial,
 		    &totneighbors, &numridges, &numcoplanars, &numtricoplanars);
 
     FORALLfacets {
       if (!facet->upperdelaunay) {
-	FOREACHneighbor_(facet) 
+	FOREACHneighbor_(facet)
 	  printf (" %d", neighbor->visitid ? neighbor->visitid - 1: - neighbor->id);
 	printf ("\n");
       }
@@ -763,7 +787,7 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 #endif
 
     /* Without the setjmp(), Qhull will exit() after reporting an error */
-    exitcode = setjmp (qh errexit);  
+    exitcode = setjmp (qh errexit);
     if (!exitcode) {
       qh NOerrexit= False;
       for(i=0; i<nptsx; i++)
@@ -785,7 +809,7 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 			       !qh_ISnewfacets, /*qh_ALL*/ qh_NOupper,
 			       &bestdist, &isoutside, &totpart);
 #endif
-	
+
 #if 0
 	  vertex = qh_nearvertex (facet, point, &bestdist);
 #endif
@@ -802,12 +826,12 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	   *
 	   * Another possibility is to implement the 'walking
 	   * triangle algorithm */
-		 
+
 	  facet = qh_findfacet_all( point, &bestdist, &isoutside, &totpart );
 
 	  if (facet->upperdelaunay)
 	    zg[i][j] = NaN;
-	  else {	      
+	  else {
 	    FOREACHvertex_(facet->vertices) {
 	      k = qh_pointid(vertex->point);
 	      xt[l] = x[k];
@@ -826,7 +850,7 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
 	    /* and interpolate */
 	    zg[i][j] = - xg[i]*A/C - yg[j]*B/C - D/C;
 
-	  } 
+	  }
 	}
     }
     qh NOerrexit= True;
@@ -835,7 +859,7 @@ grid_adtli (PLFLT *x, PLFLT *y, PLFLT *z, int npts,
   free(points);
   qh_freeqhull(!qh_ALL);                 /* free long memory */
   qh_memfreeshort (&curlong, &totlong);  /* free short memory and memory allocator */
-  if (curlong || totlong) 
+  if (curlong || totlong)
     fprintf (errfile,
 	     "qhull: did not free %d bytes of long memory (%d pieces)\n",
 	     totlong, curlong);

@@ -3,21 +3,23 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2003 Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Alan W. Irwin
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -48,19 +50,19 @@ private:
 
 };
 
-   
+
 x13::x13( int argc, char ** argv ) {
-  
+
   int i, j, dthet, theta0, theta1, theta;
   PLFLT just, dx, dy;
   PLFLT *x = new PLFLT[ 500 ];
   PLFLT *y = new PLFLT[ 500 ];
-	
+
 
   // plplot initialization
-  
+
   pls = new plstream();
-  
+
   // Parse and process command line arguments.
   pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
 
@@ -94,9 +96,9 @@ x13::x13( int argc, char ** argv ) {
     just = (2.*M_PI/500.)*(theta0 + theta1)/2.;
     dx = .25 * cos(just);
     dy = .25 * sin(just);
-    if ((theta0 + theta1)  < 250 || (theta0 + theta1) > 750) 
+    if ((theta0 + theta1)  < 250 || (theta0 + theta1) > 750)
       just = 0.;
-    else 
+    else
       just = 1.;
 
     pls->ptex((x[j / 2] + dx), (y[j / 2] + dy), 1.0, 0.0, just, text[i]);

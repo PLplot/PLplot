@@ -3,21 +3,23 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2003 Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Alan W. Irwin
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -41,15 +43,15 @@ public:
 private:
   // Class data
   plstream *pls;
-  
-  // number of shade levels, x data points, y data points, 
+
+  // number of shade levels, x data points, y data points,
   // and perimeter points.
   static int ns;
   static int nx;
   static int ny;
   static int exclude;
   const static int PERIMETERPTS;
-  
+
   // calculated constants and array that depends on them
   PLFLT xspa;
   PLFLT ypsa;
@@ -130,7 +132,7 @@ static void mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data) {
 
 int zdefined (PLFLT x, PLFLT y) {
   PLFLT z = sqrt(x * x + y * y);
-  
+
   return z < 0.4 || z > 0.6;
 }
 
@@ -152,14 +154,14 @@ x16::x16( int argc, char ** argv ) {
 
 
   // plplot initialization
-  
+
   pls = new plstream();
-  
+
   // Parse and process command line arguments.
   pls->MergeOpts(options, "x16c options", notes);
   pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
 
-  // Reduce colors in cmap 0 so that cmap 1 is useful on a 
+  // Reduce colors in cmap 0 so that cmap 1 is useful on a
   //16-color display
   pls->scmap0n(3);
 
@@ -190,7 +192,7 @@ x16::x16( int argc, char ** argv ) {
   }
 
   pls->MinMax2dGrid(z, nx, ny, &zmax, &zmin );
-	
+
   for (i = 0; i < ns; i++)
     clevel[i] = zmin + (zmax - zmin) * (i + 0.5) / (PLFLT) ns;
 
@@ -203,7 +205,7 @@ x16::x16( int argc, char ** argv ) {
   cgrid1.yg = yg1;
   cgrid1.nx = nx;
   cgrid1.ny = ny;
-  
+
   plAlloc2dGrid(&cgrid2.xg, nx, ny);
   plAlloc2dGrid(&cgrid2.yg, nx, ny);
   cgrid2.nx = nx;
@@ -212,7 +214,7 @@ x16::x16( int argc, char ** argv ) {
   for (i = 0; i < nx; i++) {
     for (j = 0; j < ny; j++) {
       mypltr((PLFLT) i, (PLFLT) j, &x, &y, NULL);
-      
+
       argx = x * M_PI/2;
       argy = y * M_PI/2;
       distort = 0.4;
@@ -233,7 +235,7 @@ x16::x16( int argc, char ** argv ) {
 
   pls->psty(0);
 
-  pls->shades(z, nx, ny, NULL, -1., 1., -1., 1., 
+  pls->shades(z, nx, ny, NULL, -1., 1., -1., 1.,
 	       shedge, ns+1, fill_width,
 	       cont_color, cont_width,
 	       plfill, 1, NULL, NULL);
@@ -244,14 +246,14 @@ x16::x16( int argc, char ** argv ) {
   pls->lab("distance", "altitude", "Bogon density");
 
   // Plot using 1d coordinate transform
-    
+
   pls->adv(0);
   pls->vpor(0.1, 0.9, 0.1, 0.9);
   pls->wind(-1.0, 1.0, -1.0, 1.0);
 
   pls->psty(0);
 
-  pls->shades(z, nx, ny, NULL, -1., 1., -1., 1., 
+  pls->shades(z, nx, ny, NULL, -1., 1., -1., 1.,
 	       shedge, ns+1, fill_width,
 	       cont_color, cont_width,
 	       plfill, 1, pltr1, (void *) &cgrid1);
@@ -270,7 +272,7 @@ x16::x16( int argc, char ** argv ) {
 
   pls->psty(0);
 
-  pls->shades(z, nx, ny, NULL, -1., 1., -1., 1., 
+  pls->shades(z, nx, ny, NULL, -1., 1., -1., 1.,
 	       shedge, ns+1, fill_width,
 	       cont_color, cont_width,
 	       plfill, 0, pltr2, (void *) &cgrid2);
@@ -290,7 +292,7 @@ x16::x16( int argc, char ** argv ) {
 
   pls->psty(0);
 
-  pls->shades(z, nx, ny, NULL, -1., 1., -1., 1., 
+  pls->shades(z, nx, ny, NULL, -1., 1., -1., 1.,
 	       shedge, ns+1, fill_width,
 	       2, 3,
 	       plfill, 0, pltr2, (void *) &cgrid2);
@@ -332,7 +334,7 @@ x16::x16( int argc, char ** argv ) {
   pls->psty(0);
 
   // Build new coordinate matrices.
-    
+
   for (i = 0; i < nx; i++) {
     r = ((PLFLT) i)/ (nx-1);
     for (j = 0; j < ny; j++) {
@@ -350,7 +352,7 @@ x16::x16( int argc, char ** argv ) {
   for (i = 0; i < ns+1; i++)
     shedge[i] = zmin + (zmax - zmin) * (PLFLT) i / (PLFLT) ns;
 
-  pls->shades(z, nx, ny, NULL, -1., 1., -1., 1., 
+  pls->shades(z, nx, ny, NULL, -1., 1., -1., 1.,
 	       shedge, ns+1, fill_width,
 	       cont_color, cont_width,
 	       plfill, 0, pltr2, (void *) &cgrid2);
@@ -363,13 +365,13 @@ x16::x16( int argc, char ** argv ) {
   }
   pls->col0(1);
   pls->line(PERIMETERPTS, px, py);
-                  
+
   // And label the plot.
 
   pls->col0(2);
   pls->lab( "", "",  "Tokamak Bogon Instability" );
 
-  // Clean up 
+  // Clean up
 
   // pls->end();
 

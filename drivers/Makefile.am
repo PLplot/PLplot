@@ -2,25 +2,25 @@
 ###
 ### Process this file with automake to produce Makefile.in
 ###
-# Copyright (C) 2002, 2003  Rafael Laboissiere
-# Copyright (C) 2002, 2003  Alan W. Irwin
+# Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
+# Copyright (C) 2002, 2003, 2004  Alan W. Irwin
 # Copyright (C) 2003  Joao Cardoso
 #
-# 
-#This file is part of PLplot.
 #
-#This file is free software; you can redistribute it and/or modify
-#it under the terms of the GNU Library General Public License as published by
-#the Free Software Foundation; version 2 of the License.
+# This file is part of PLplot.
 #
-#This file is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU Library General Public License for more details.
+# PLplot file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Library General Public License as published
+# by the Free Software Foundation; version 2 of the License.
 #
-#You should have received a copy of the GNU Library General Public License
-#along with the file; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 if enable_dyndrivers
 
@@ -247,7 +247,7 @@ if enable_tkwin
 
 if enable_tk
 # These additions required for tkwin driver if already have additions for
-# tk driver in place.  These correspond to objects normally included in 
+# tk driver in place.  These correspond to objects normally included in
 # the tkwin driver in any case.
 
 tkwinsources = \
@@ -348,7 +348,7 @@ AM_CPPFLAGS = \
 	$(FREETYPEINCCMD) \
 	$(ITCLINCCMD)
 
-libplplotdrv_la_LIBADD = $(STATIC_DRIVERS) 
+libplplotdrv_la_LIBADD = $(STATIC_DRIVERS)
 # Concatanate all LDFLAGS for individual drivers above together
 
 if enable_gnome

@@ -4,23 +4,24 @@
 
 //---------------------------------------------------------------------------//
 // Copyright (C) 2001  Geoffrey Furnish
-// Copyright (C) 2001, 2002, 2003  Alan W. Irwin
+// Copyright (C) 2001, 2002, 2003, 2004  Alan W. Irwin
 // Copyright (C) 2002  Maurice LeBrun
 // Copyright (C) 2002  Joao Cardoso
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
@@ -43,20 +44,20 @@ class x08 {
 
     static double alt[] = {60.0, 20.0};
     static double az[] = {30.0, 60.0};
-   
+
     static String[] title =
      {
 	"#frPLplot Example 8 - Alt=60, Az=30",
 	"#frPLplot Example 8 - Alt=20, Az=60",
      };
     // cmap1_init1
-    
+
     // Initializes color map 1 in HLS space.
     // Basic grayscale variation from half-dark (which makes more interesting
     // looking plot compared to dark) to light.
     // An interesting variation on this:
     // s[1] = 1.0
-    
+
     void cmap1_init(int gray)
     {
 	double [] i = new double[2];
@@ -64,34 +65,34 @@ class x08 {
 	double [] l = new double[2];
 	double [] s = new double[2];
 	int [] rev = new int[2];
-	  
+
         i[0] = 0.0;         // left boundary
         i[1] = 1.0;         // right boundary
 
         if (gray==1) {
 	   h[0] = 0.0;         // hue -- low: red (arbitrary if s=0)
 	   h[1] = 0.0;         // hue -- high: red (arbitrary if s=0)
-	  
+
 	   l[0] = 0.5;         // lightness -- low: half-dark
 	   l[1] = 1.0;         // lightness -- high: light
-	   
+
 	   s[0] = 0.0;         // minimum saturation
 	   s[1] = 0.0;         // minimum saturation
 	}
         else {
 	   h[0] = 240; /* blue -> green -> yellow -> */
 	   h[1] = 0;   /* -> red */
-	   
+
 	   l[0] = 0.6;
 	   l[1] = 0.6;
-	   
+
 	   s[0] = 0.8;
 	   s[1] = 0.8;
 	}
-       
+
         rev[0] = 0;         // interpolate on front side of colour wheel.
         rev[1] = 0;         // interpolate on front side of colour wheel.
-	  
+
         pls.plscmap1n(256);
         pls.plscmap1l(0, i, h, l, s, rev);
     }
@@ -99,7 +100,7 @@ class x08 {
 // Does a series of 3-d plots for a given data set, with different viewing
 // options in each plot.
 
-    public static void main( String[] args ) 
+    public static void main( String[] args )
     {
         x08 x = new x08( args );
     }
@@ -148,7 +149,7 @@ class x08 {
             {
 	       yy = y[j];
 	       if (rosen) {
-		  z[i][j] = Math.pow(1. - xx,2.) + 100 * 
+		  z[i][j] = Math.pow(1. - xx,2.) + 100 *
 				     Math.pow(yy - Math.pow(xx,2.),2.);
 	          /* The log argument may be zero for just the right grid.  */
 		  if (z[i][j] > 0.)

@@ -5,6 +5,27 @@
 	routines, and initialization calls.
 
 	This stuff used to be in "dispatch.h", "dispatch.c", and "base.c".
+
+
+  Copyright (C) 2004  Joao Cardoso
+  Copyright (C) 2004  Rafael Laboissiere
+
+  This file is part of PLplot.
+
+  PLplot is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Library Public License as published
+  by the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+
+  PLplot is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Library General Public License for more details.
+
+  You should have received a copy of the GNU Library General Public License
+  along with PLplot; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 */
 
 #define DEBUG
@@ -302,7 +323,7 @@ plP_fill(short *x, short *y, PLINT npts)
 
 /* Perform fill.  Here we MUST NOT allow the software fill to pass through the
    driver interface filtering twice, else we get the infamous 2*rotation for
-   software fills on orientation swaps. 
+   software fills on orientation swaps.
 */
 
     if (plsc->patt > 0)
@@ -779,7 +800,7 @@ c_plsdidev(PLFLT mar, PLFLT aspect, PLFLT jx, PLFLT jy)
     plsetvar(plsc->jx, jx);
     plsetvar(plsc->jy, jy);
 
-    if (mar == 0. && aspect == 0. && jx == 0. && jy == 0. && 
+    if (mar == 0. && aspect == 0. && jx == 0. && jy == 0. &&
 	! (plsc->difilt & PLDI_ORI)) {
 	plsc->difilt &= ~PLDI_DEV;
 	return;
@@ -1100,7 +1121,7 @@ pllib_init()
 
 #ifdef ENABLE_DYNDRIVERS
 /* Create libltdl resources */
-        lt_dlinit();   
+        lt_dlinit();
 #endif
 
 /* Initialize the dispatch table with the info from the static drivers table
@@ -1131,7 +1152,7 @@ c_plstar(PLINT nx, PLINT ny)
 /*--------------------------------------------------------------------------*\
  * void plstart(devname, nx, ny)
  *
- * Initialize PLplot, passing the device name and windows/page settings. 
+ * Initialize PLplot, passing the device name and windows/page settings.
 \*--------------------------------------------------------------------------*/
 
 void
@@ -1183,12 +1204,12 @@ c_plinit(void)
     plP_bop();
     plsc->level = 1;
 
-/* Calculate factor such that the character aspect ratio is preserved 
+/* Calculate factor such that the character aspect ratio is preserved
  * when the overall aspect ratio is changed, i.e., if portrait mode is
  * requested (only honored for subset of drivers) or if the aspect ratio
  * is specified in any way, or if a 90 deg rotation occurs with
  * -freeaspect. */
-   
+
 /* Case where plsc->aspect has a value.... (e.g., -a aspect on the
  * command line or 2nd parameter of plsdidev specified) */
     if (plsc->aspect > 0.) {
@@ -1257,14 +1278,14 @@ c_plinit(void)
 
     pldi_ini();
 
-/* Apply compensating factor to original xpmm and ypmm so that 
+/* Apply compensating factor to original xpmm and ypmm so that
  * character aspect ratio is preserved when overall aspect ratio
  * is changed.  This must appear here in the code because previous
  * code in this routine and in routines that it calls must use the original
  * values of xpmm and ypmm before the compensating factor is applied.  */
 
     plP_gpixmm(&xpmm_loc, &ypmm_loc);
-    plP_setpxl(xpmm_loc*plsc->caspfactor, ypmm_loc/plsc->caspfactor); 
+    plP_setpxl(xpmm_loc*plsc->caspfactor, ypmm_loc/plsc->caspfactor);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1486,7 +1507,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 /* Driver interface */
 /* Transformation must be recalculated in current driver coordinates */
 
-    if (plsr->difilt & PLDI_PLT) 
+    if (plsr->difilt & PLDI_PLT)
 	plsdiplt(plsr->dipxmin, plsr->dipymin, plsr->dipxmax, plsr->dipymax);
 
     if (plsr->difilt & PLDI_DEV)
@@ -1528,7 +1549,7 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 	free((void *) plsc->cmap1);
 
     plsc->cmap1 = (PLColor *) calloc(1, plsc->ncol1 * sizeof(PLColor));
-    for (i = 0; i < plsc->ncol1; i++) 
+    for (i = 0; i < plsc->ncol1; i++)
 	pl_cpcolor(&plsc->cmap1[i], &plsr->cmap1[i]);
 
 /* Initialize if it hasn't been done yet. */
@@ -1576,7 +1597,7 @@ int plInBuildTree()
 {
   static int inited = 0;
   static int inBuildTree = 0;
-  
+
   if (inited == 0) {
     char currdir[256];
 
@@ -1599,7 +1620,7 @@ plGetDrvDir ()
 /* Get drivers directory in PLPLOT_DRV_DIR or DRV_DIR,
  *  on this order
  */
- 
+
     if (plInBuildTree() == 1) {
       drvdir = BUILD_DIR "/drivers";
       pldebug("plGetDrvDir", "Using %s as the driver directory.\n", drvdir);
@@ -1608,14 +1629,14 @@ plGetDrvDir ()
       drvdir = getenv ("PLPLOT_DRV_DIR");
 
       if (drvdir == NULL) {
-        pldebug("plGetDrvDir", 
+        pldebug("plGetDrvDir",
 	        "Will use drivers dir: " DRV_DIR "\n");
 	drvdir = DRV_DIR;
       }
     }
-    
+
     return drvdir;
-}    
+}
 
 #endif
 
@@ -1668,12 +1689,12 @@ plInitDispatchTable()
 /* Loop over each entry in the drivers directory */
 
     pldebug ("plInitDispatchTable", "Scanning dyndrivers dir\n");
-    while ((entry = readdir (dp_drvdir)) != NULL) 
+    while ((entry = readdir (dp_drvdir)) != NULL)
     {
         char* name = entry->d_name;
         int len = strlen (name) - 3;
 
-            pldebug ("plInitDispatchTable", 
+            pldebug ("plInitDispatchTable",
                      "Consider file %s\n", name);
 
 /* Only consider entries that have the ".rc" suffix */
@@ -1681,7 +1702,7 @@ plInitDispatchTable()
 	    char path[300];
 	    char buf[300];
             FILE* fd;
-	 
+
 /* Open the driver's info file */
             sprintf (path, "%s/%s", drvdir, name);
             fd = fopen (path, "r");
@@ -1694,12 +1715,12 @@ plInitDispatchTable()
 	    }
 
 /* Each line in the <driver>.rc file corresponds to a specific device.
- * Write it to the drivers db file and take care of leading newline 
+ * Write it to the drivers db file and take care of leading newline
  * character */
- 
-            pldebug ("plInitDispatchTable", 
+
+            pldebug ("plInitDispatchTable",
                      "Opened driver info file %s\n", name);
-            while (fgets (buf, 300, fd) != NULL) 
+            while (fgets (buf, 300, fd) != NULL)
 	    {
                 fprintf (fp_drvdb, "%s", buf);
 		if ( buf [strlen (buf) - 1] != '\n' )
@@ -1709,8 +1730,8 @@ plInitDispatchTable()
 	    fclose (fd);
 	}
     }
-    
-/* Make sure that the temporary file containing the driversr database 
+
+/* Make sure that the temporary file containing the driversr database
  * is ready to read and close the directory handle */
     fflush (fp_drvdb);
     closedir (dp_drvdir);
@@ -1718,7 +1739,7 @@ plInitDispatchTable()
 #endif
 
 /* Allocate space for the dispatch table. */
-    dispatch_table = (PLDispatchTable **) 
+    dispatch_table = (PLDispatchTable **)
 	malloc( (nplstaticdevices + npldynamicdevices) * sizeof(PLDispatchTable *) );
 
 /* Initialize the dispatch table entries for the static devices by calling
@@ -1809,7 +1830,7 @@ plInitDispatchTable()
     /* Get ready for next loadable device spec */
         i++;
     }
-    
+
 /* RML: close fp_drvdb */
     fclose (fp_drvdb);
 
@@ -1958,7 +1979,7 @@ plLoadDriver(void)
     tag = loadable_device_list[i].tag;
     drvidx = loadable_device_list[i].drvidx;
 
-    pldebug("plLoadDriver", "tag=%s, drvidx=%d\n", tag, drvidx ); 
+    pldebug("plLoadDriver", "tag=%s, drvidx=%d\n", tag, drvidx );
 
     driver = &loadable_driver_list[drvidx];
 
@@ -1992,7 +2013,7 @@ plLoadDriver(void)
         if (!dispatch_init)
         {
             fprintf( stderr,
-                     "Unable to locate dispatch table initialization function for driver: %s.\n", 
+                     "Unable to locate dispatch table initialization function for driver: %s.\n",
 		     driver->drvnam );
             return;
         }
@@ -2196,12 +2217,12 @@ plgpls(PLStream **p_pls)
     *p_pls = plsc;
 }
 
-/* Get the (current) run level. 
+/* Get the (current) run level.
  * Valid settings are:
- *   0	uninitialized 
+ *   0	uninitialized
  *   1	initialized
  *   2	viewport defined
- *   3	world coords defined 
+ *   3	world coords defined
  */
 
 void
@@ -2270,7 +2291,7 @@ c_plsori(PLINT ori)
 
 /*
  * Set pen width.  Can be done any time, but before calling plinit is best
- * since otherwise it may be volatile (i.e. reset on next page advance). 
+ * since otherwise it may be volatile (i.e. reset on next page advance).
  * If width < 0 or is unchanged by the call, nothing is done.
  */
 
@@ -2281,7 +2302,7 @@ c_plwid(PLINT width)
 	plsc->width = width;
 
 	if (plsc->level > 0) {
-	    if ( ! plsc->widthlock) 
+	    if ( ! plsc->widthlock)
 		plP_state(PLSTATE_WIDTH);
 	}
     }
@@ -2674,14 +2695,14 @@ plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
 /*--------------------------------------------------------------------------*\
  * void c_plscompression()
  *
- * Set compression. 
+ * Set compression.
  * Has to be done before plinit.
 \*--------------------------------------------------------------------------*/
 
 void
 c_plscompression(PLINT compression)
 {
-  if (plsc->level <= 0) 
+  if (plsc->level <= 0)
      {
       plsc->dev_compression=compression;
      }
@@ -2722,12 +2743,12 @@ for (i=0;i<PL_NSTREAMS;++i)
        if (i==0)
           strcpy(names,pls[i]->DevName);
        else
-          { 
+          {
           strcat(names," ");
           strcat(names,pls[i]->DevName);
           }
        }
-    else 
+    else
        break;
    }
 }
@@ -2747,7 +2768,7 @@ char *buff;
 char *tok=NULL;
 PLINT ret=0;   /* set up return code to 0, the value if no devices match*/
 
-buff=(char *)malloc((size_t) PL_NSTREAMS*8); /* Allocate enough memory for 8 
+buff=(char *)malloc((size_t) PL_NSTREAMS*8); /* Allocate enough memory for 8
                                                 characters for each possible stream */
 
 if (buff!=NULL)
@@ -2761,11 +2782,11 @@ if (buff!=NULL)
         if (strstr(names,tok)!=NULL)  /* Check to see if the device has been initialised */
            {
             ret++;                   /* Bump the return code if it has      */
-           }                    
+           }
         }
     free(buff);                      /* Clear up that memory we allocated   */
     }
-else 
+else
    ret=-1;                           /* Error flag */
 
 return(ret);
@@ -2776,9 +2797,9 @@ return(ret);
  * plP_image
  *
  * Author: Alessandro Mirone, Nov 2001
- * 
- * 
- * 
+ *
+ *
+ *
 \*--------------------------------------------------------------------------*/
 
 void
@@ -2791,7 +2812,7 @@ plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin
   plsc->page_status = DRAWING;
 
   if (plsc->dev_fastimg == 0) {
-    plimageslow(x, y, z, nx-1, ny-1, 
+    plimageslow(x, y, z, nx-1, ny-1,
          xmin, ymin, dx, dy, zmin, zmax);
     return ;
   }
@@ -2817,12 +2838,12 @@ plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin
 
   /* avoid re-saving plot buffer while in plP_esc() */
   plbuf_write = plsc->plbuf_write;
-  plsc->plbuf_write = 0; 
+  plsc->plbuf_write = 0;
 
   npts = nx*ny;
   if (plsc->difilt) { /* isn't this odd? when replaying the plot buffer, e.g., when resizing the window, difilt() is caled again! the plot buffer should already contain the transformed data--it would save a lot of time! (and allow for differently oriented plots when in multiplot mode) */
     PLINT clpxmi, clpxma, clpymi, clpyma;
-    
+
     xscl = (short *) malloc(nx*ny*sizeof(short));
     yscl = (short *) malloc(nx*ny*sizeof(short));
     for (i = 0; i < npts; i++) {
@@ -2834,10 +2855,10 @@ plP_image(short *x, short *y, unsigned short *z , PLINT nx, PLINT ny, PLFLT xmin
     plsc->imclymin = clpymi;
     plsc->imclxmax = clpxma;
     plsc->imclymax = clpyma;
-    grimage(xscl, yscl, z, nx, ny);    
+    grimage(xscl, yscl, z, nx, ny);
     free(xscl);
     free(yscl);
-  } else { 
+  } else {
     plsc->imclxmin = plsc->phyxmi;
     plsc->imclymin = plsc->phyymi;
     plsc->imclxmax = plsc->phyxma;

@@ -1,6 +1,27 @@
 /* $Id$
 
 	PLplot X-windows device driver.
+
+   Copyright (C) 2004  Maurice LeBrun
+   Copyright (C) 2004  Joao Cardoso
+   Copyright (C) 2004  Rafael Laboissiere
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 */
 #include "plDevs.h"
 
@@ -1204,7 +1225,7 @@ events_thread(void *pls)
     XEvent event;
     long event_mask;
     sigset_t set;
-    
+
     /*
      * only treats exposures and resizes, but remove usual events from queue,
      * as it can be disturbing to not have them acknowledged in real time,

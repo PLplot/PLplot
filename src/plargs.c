@@ -4,21 +4,25 @@
     Maurice LeBrun			mjl@dino.ph.utexas.edu
     Institute for Fusion Studies	University of Texas at Austin
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    Copyright (C) 2004  Maurice LeBrun
 
-    This library is distributed in the hope that it will be useful,
+    This file is part of PLplot.
+
+    PLplot is free software; you can redistribute it and/or modify
+    it under the terms of the GNU Library General Public License as published
+    by the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    PLplot is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Library General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    You should have received a copy of the GNU Library General Public License
+    along with PLplot; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-    Some parts of this code were derived from "xterm.c" and "ParseCmd.c" of 
+    Some parts of this code were derived from "xterm.c" and "ParseCmd.c" of
     the X-windows Version 11 distribution.  The copyright notice is
     reproduced here:
 
@@ -34,7 +38,7 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
     This file contains routines to extract & process command flags.  The
     command flags recognized by PLplot are stored in the "ploption_table"
     structure, along with strings giving the syntax, long help message, and
-    option handler.  
+    option handler.
 
     The command line parser -- plParseOpts() -- removes all recognized flags
     (decreasing argc accordingly), so that invalid input may be readily
@@ -42,7 +46,7 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
     user can merge an option table of type PLOptionTable into the internal
     option table info structure using plMergeOpts().  Or, the user can
     specify that ONLY the external table(s) be parsed by calling
-    plClearOpts() before plMergeOpts().  
+    plClearOpts() before plMergeOpts().
 
     The default action taken by plParseOpts() is as follows:
 	- Returns with an error if an unrecognized option or badly formed
@@ -69,7 +73,7 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
     PL_PARSE_NODELETE -- Turns off deletion of processed arguments.
 
-    PL_PARSE_SHOWALL -- Show invisible options 
+    PL_PARSE_SHOWALL -- Show invisible options
 
     PL_PARSE_NOPROGRAM -- Specified if argv[0] is NOT a pointer to the
     program name.
@@ -200,8 +204,8 @@ static char opttmp[OPTMAX];
  *
  * The mode bits are:
  *
- * PL_OPT_ARG		Option has an argment 
- * PL_OPT_NODELETE	Don't delete after processing 
+ * PL_OPT_ARG		Option has an argment
+ * PL_OPT_NODELETE	Don't delete after processing
  * PL_OPT_INVISIBLE	Make invisible (usually for debugging)
  * PL_OPT_DISABLED	Ignore this option
  *
@@ -629,7 +633,7 @@ PLOptionInfo ploption_info_default = {
 };
 
 #define PL_MAX_OPT_TABLES 10
-PLOptionInfo ploption_info[PL_MAX_OPT_TABLES] = { 
+PLOptionInfo ploption_info[PL_MAX_OPT_TABLES] = {
     {
 	ploption_table,
 	"PLplot options",
@@ -647,7 +651,7 @@ typedef struct DrvOptCmd {
 
 /* the variable where opt_drvopt() stores the driver specific command line options */
 static DrvOptCmd drv_opt;
-  
+
 static int  tables = 1;
 
 /*--------------------------------------------------------------------------*\
@@ -785,7 +789,7 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
     drv_opt.option  = drv_opt.value  = NULL;
     drv_opt.next  = NULL;
 
-    myargc = (*p_argc); 
+    myargc = (*p_argc);
     argend = argv + myargc;
 
 /* If program name is first argument, save and advance */
@@ -827,7 +831,7 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 	   fully parsing, else return without error. */
 
 	    if (mode_skip) {
-		if ( ! mode_nodelete) 
+		if ( ! mode_nodelete)
 		    *argsave++ = *argv;
 		continue;
 	    }
@@ -891,14 +895,14 @@ ParseOpt(int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
     if ( mode_nodash || (*p_argv)[0][0] == '-') {
 
 	opt = (*p_argv)[0];
-	if (*opt == '-') 
+	if (*opt == '-')
 	    opt++;
 
 	for (tab = option_table; tab->opt; tab++) {
 
 	/* Skip if option not enabled */
 
-	    if (tab->mode & PL_OPT_DISABLED) 
+	    if (tab->mode & PL_OPT_DISABLED)
 		continue;
 
 	/* Try to match it */
@@ -964,7 +968,7 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
         if (mode_nodelete && optarg) {
 
 	/* Make a copy, since handler may mung optarg with strtok() */
-	    char *copy = 
+	    char *copy =
 	      (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
 	    if (copy == NULL) {
 	        plabort("ProcessOpt: out of memory");
@@ -1214,9 +1218,9 @@ Help(void)
 	    if (tab->desc == NULL)
 		continue;
 
-	    if (tab->mode & PL_OPT_INVISIBLE) 
+	    if (tab->mode & PL_OPT_INVISIBLE)
 		fprintf(outfile, " *  %-20s %s\n", tab->syntax, tab->desc);
-	    else 
+	    else
 		fprintf(outfile, "    %-20s %s\n", tab->syntax, tab->desc);
 	}
 
@@ -1239,7 +1243,7 @@ Help(void)
 
 /*--------------------------------------------------------------------------*\
  * plParseDrvOpts
- * 
+ *
  * Parse driver specific options
 \*--------------------------------------------------------------------------*/
 
@@ -1275,7 +1279,7 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 	  }
 #ifdef DEBUG
 	  fprintf(stderr,"plParseDrvOpts: %s %d\n", t->opt, *(int *) t->var_ptr);
-#endif  
+#endif
 	  break;
 
 	case DRV_FLT:
@@ -1285,7 +1289,7 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 	  }
 #ifdef DEBUG
 	  fprintf(stderr,"plParseDrvOpts: %s %f\n", t->opt, *(float *) t->var_ptr);
-#endif  
+#endif
 	  break;
 	}
       }
@@ -1295,8 +1299,8 @@ plParseDrvOpts(DrvOpt *acc_opt) {
     if (!fl) {
       sprintf(msg, "Option '%s' not recognized.\n\nRecognized options for this driver are:\n", drvp->option);
       plwarn(msg);
-      plHelpDrvOpts(acc_opt);      
-      plexit(""); 
+      plHelpDrvOpts(acc_opt);
+      plexit("");
     }
   }
   while((drvp = drvp->next))
@@ -1307,7 +1311,7 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 
 /*--------------------------------------------------------------------------*\
  * plHelpDrvOpts
- * 
+ *
  * Give driver specific help
 \*--------------------------------------------------------------------------*/
 
@@ -1352,7 +1356,7 @@ opt_h(char *opt, char *optarg, void *client_data)
 static int
 opt_v(char *opt, char *optarg, void *client_data)
 {
-    if ( ! mode_quiet) 
+    if ( ! mode_quiet)
 	fprintf(stderr, "PLplot library version: %s\n", VERSION);
 
     return 2;
@@ -1517,20 +1521,20 @@ opt_freeaspect(char *opt, char *optarg, void *client_data)
  * opt_portrait()
  *
  * Performs appropriate action for option "portrait":
- * Set portrait mode.  If plsc->portrait = 1, then the orientation for certain 
+ * Set portrait mode.  If plsc->portrait = 1, then the orientation for certain
  * drivers is changed by 90 deg to portrait orientation from the default
  * landscape orientation used by PLplot while the  aspect ratio allowed to
  * adjust using freeaspect.
  * N.B. the driver list where this flag is honored is currently limited
  * to ljii, ljiip, psc, ps, and pstex.  A 90 deg rotation is just not
  * appropriate for certain other drivers.  These drivers where portrait
- * mode is ignored include display drivers (e.g., xwin, tk), drivers 
- * which are subequently going to be transformed to another form 
- * (e.g., meta or pbm), or drivers which are normally used for web 
+ * mode is ignored include display drivers (e.g., xwin, tk), drivers
+ * which are subequently going to be transformed to another form
+ * (e.g., meta or pbm), or drivers which are normally used for web
  * publishing (e.g., png, jpeg).  That said, the case is not entirely clear
  * for all drivers so the list of drivers where portrait mode is honored
  * may increase in the future. To add to the list simply copy the small
- * bit of code from  ps.c that has to do with pls->portrait to the 
+ * bit of code from  ps.c that has to do with pls->portrait to the
  * appropriate driver file.
 \*--------------------------------------------------------------------------*/
 
@@ -1720,7 +1724,7 @@ opt_drvopt(char *opt, char *optarg, void *client_data)
 	  value[0] = '1';
 	  value[1] = '\0';
 	}
-	
+
 	*tt = '\0'; tt = option;
 	drvp->option = plstrdup(option); /* it should not be release, because of familying */
 	drvp->value = plstrdup(value); /* don't release */
@@ -1754,7 +1758,7 @@ opt_drvopt(char *opt, char *optarg, void *client_data)
 #ifdef DEBUG
     fprintf(stderr, "\nopt_drvopt: -drvopt parsed options:\n");
     drvp = &drv_opt;
-    do 
+    do
       fprintf(stderr, "%s %s\n", drvp->option, drvp->value);
     while(drvp = drvp->next);
     fprintf(stderr, "\n");
@@ -2091,8 +2095,8 @@ opt_geo(char *opt, char *optarg, void *client_data)
     char *field;
     PLFLT xdpi = 0., ydpi = 0.;
     PLINT xwid = 0, ywid = 0, xoff = 0, yoff = 0;
-    
-/* The TK driver uses the geometry string directly */    
+
+/* The TK driver uses the geometry string directly */
 
     plsc->geometry = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
     strcpy (plsc->geometry, optarg);
@@ -2140,7 +2144,7 @@ opt_geo(char *opt, char *optarg, void *client_data)
  *
  * File name for plserver tk_file option
 \*--------------------------------------------------------------------------*/
-   
+
 static int
 opt_tk_file(char *opt, char *optarg, void *client_data)
 {
@@ -2155,7 +2159,7 @@ opt_tk_file(char *opt, char *optarg, void *client_data)
  * Performs appropriate action for option "dpi":
  * Set dpi resolution for output device
  *   e.g.,  "-dpi 600x300", will set X dpi to 600 and Y dpi to 300
- * 		or 
+ * 		or
  *   e.g., "-dpi 1200"
  * Will set both X and Y dpi to 1200 dpi
 \*--------------------------------------------------------------------------*/
@@ -2166,7 +2170,7 @@ opt_dpi(char *opt, char *optarg, void *client_data)
     char *field;
     PLFLT xdpi = 0., ydpi = 0.;
     PLINT xwid = 0, ywid = 0, xoff = 0, yoff = 0;
-    
+
     strncpy(opttmp, optarg, OPTMAX-1);
     if (strchr (opttmp, 'x')) {
 	field = strtok (opttmp, "x");
@@ -2176,7 +2180,7 @@ opt_dpi(char *opt, char *optarg, void *client_data)
 
 	if ((field = strtok (NULL, " ")) == NULL)
 	   return 1;
-	   
+
         ydpi = atof (field);
         if (ydpi == 0)
 	   fprintf (stderr, "?invalid ydpi\n");
@@ -2201,7 +2205,7 @@ static int
 opt_dev_compression(char *opt, char *optarg, void *client_data)
 {
     PLINT comp = 0;
-   
+
     comp = atoi(optarg);
     if (comp == 0) {
 	fprintf(stderr, "?invalid compression\n");

@@ -2,9 +2,28 @@
 
 	C stub routines.
 
+   Copyright (C) 2004  Alan W. Irwin
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+
 	The stubs contained here are the ones that are relatively simple,
 	i.e. involving only a call convention change or integer-to-string
-	conversion.  Exceptions are plparseopts and  plstripc  which have 
+	conversion.  Exceptions are plparseopts and  plstripc  which have
         a few more complications in them.
 */
 
@@ -676,7 +695,7 @@ PLSTRIPC7(PLINT *id, char *xspec, char *yspec,
 	  PLFLT *xlpos, PLFLT *ylpos,
 	  PLINT *y_ascl, PLINT *acc,
 	  PLINT *colbox, PLINT *collab,
-	  PLINT *colline, PLINT *styline, 
+	  PLINT *colline, PLINT *styline,
 	  char *legline0, char *legline1, char *legline2, char *legline3,
 	  char *labx, char *laby, char *labtop)
 {
@@ -685,7 +704,7 @@ PLSTRIPC7(PLINT *id, char *xspec, char *yspec,
    legline[1] = legline1;
    legline[2] = legline2;
    legline[3] = legline3;
-   
+
    c_plstripc(id, xspec, yspec,
 	      *xmin, *xmax, *xjump, *ymin, *ymax,
 	      *xlpos, *ylpos,

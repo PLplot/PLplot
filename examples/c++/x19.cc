@@ -3,21 +3,23 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2003 Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Alan W. Irwin
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -67,16 +69,16 @@ mapform19(PLINT n, PLFLT *x, PLFLT *y)
     }
 }
 
-   
+
 x19::x19( int argc, char ** argv ) {
 
   PLFLT minx, maxx, miny, maxy;
   int c;
 
   // plplot initialization
-  
+
   pls = new plstream();
-  
+
   // Parse and process command line arguments.
   pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
 
@@ -89,24 +91,24 @@ x19::x19( int argc, char ** argv ) {
   pls->init();
   // Cartesian plots
   // Most of world
-  
+
   minx = 190;
   maxx = 190+360;
-  
+
   pls->col0(1);
   pls->env(minx, maxx, miny, maxy, 1, -1);
   pls->map(NULL, "usaglobe", minx, maxx, miny, maxy);
-  
+
   // The Americas
-  
+
   minx = 190;
   maxx = 340;
 
   pls->col0(1);
   pls->env(minx, maxx, miny, maxy, 1, -1);
   pls->map(NULL, "usaglobe", minx, maxx, miny, maxy);
-  
-  // Polar, Northern hemisphere 
+
+  // Polar, Northern hemisphere
   minx = 0;
   maxx = 360;
 
@@ -115,7 +117,7 @@ x19::x19( int argc, char ** argv ) {
 
   pls->lsty(2);
   pls->meridians(mapform19,10.0, 10.0, 0.0, 360.0, -10.0, 80.0);
-  
+
   delete pls;
 
 }

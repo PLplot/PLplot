@@ -4,22 +4,26 @@
     Maurice LeBrun			mjl@dino.ph.utexas.edu
     Institute for Fusion Studies	University of Texas at Austin
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    Copyright (C) 2004  Joao Cardoso
 
-    This library is distributed in the hope that it will be useful,
+    This file is part of PLplot.
+
+    PLplot is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Library Public License as published
+    by the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    PLplot is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Library General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    You should have received a copy of the GNU Library General Public License
+    along with PLplot; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	
+
     This module implements a Tcl command set for interpretively calling
     PLplot functions.  Each Tcl command is responsible for calling the
     appropriate underlying function in the C API.  Can be used with any
@@ -109,7 +113,7 @@ static char errmsg[160];
 extern char* plplotLibDir;
 
 #if (!defined(MAC_TCL) && !defined(__WIN32__))
-/* 
+/*
  * Use an extended search for installations on Unix where we
  * have very likely installed plplot so that plplot.tcl is
  * in  /usr/local/plplot/lib/plplot5.1.0/tcl
@@ -220,7 +224,7 @@ plTclCmd_Init(Tcl_Interp *interp)
  * case, the "cmd" widget command, after that comes the subcommand)
  * must come first.  The plframe widget checks first for one of its
  * internal subcommands, those specifically designed for use with the
- * plframe widget.  If not found, control comes here. 
+ * plframe widget.  If not found, control comes here.
 \*--------------------------------------------------------------------------*/
 
 int
@@ -333,27 +337,27 @@ loopbackCmd(ClientData clientData, Tcl_Interp *interp,
 
 /*--------------------------------------------------------------------------*\
  * PlbasicInit
- * 
+ *
  * Used by both Pltcl and Pltk.  Ensures we have been correctly loaded
  * into a Tcl/Tk interpreter, that the plplot.tcl startup file can be
  * found and sourced, and that the Matrix library can be found and used,
  * and that it correctly exports a stub table.
 \*--------------------------------------------------------------------------*/
 
-int 
+int
 PlbasicInit( Tcl_Interp *interp )
 {
     int debug = plsc->debug;
     char *libDir = NULL;
-    static char initScript[] = 
+    static char initScript[] =
     "tcl_findLibrary plplot " VERSION " \"\" plplot.tcl PL_LIBRARY pllibrary";
 #ifdef PLPLOT_EXTENDED_SEARCH
-    static char initScriptExtended[] = 
+    static char initScriptExtended[] =
     "tcl_findLibrary plplot " VERSION "/tcl \"\" plplot.tcl PL_LIBRARY pllibrary";
 #endif
 
 #ifdef USE_TCL_STUBS
-/* 
+/*
  * We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
  * we really don't mind which version of Tcl, Tk we use as long as it
  * is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
@@ -369,7 +373,7 @@ PlbasicInit( Tcl_Interp *interp )
     }
 #else
 
-/* 
+/*
  * This code is really designed to be used with a stubified Matrix
  * extension.  It is not well tested under a non-stubs situation
  * (which is in any case inferior).  The USE_MATRIX_STUBS define
@@ -384,7 +388,7 @@ PlbasicInit( Tcl_Interp *interp )
     Tcl_PkgRequire(interp,"Matrix","0.1",0);
 #endif
 #endif
-    
+
     Tcl_SetVar(interp, "plversion", VERSION, TCL_GLOBAL_ONLY);
 
 /* Begin search for init script */
@@ -516,9 +520,9 @@ Pltcl_Init( Tcl_Interp *interp )
 			  (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
     }
 
-/* We really need this so the TEA based 'make install' can 
+/* We really need this so the TEA based 'make install' can
  * properly determine the package we have installed */
-    
+
     Tcl_PkgProvide(interp, "Pltcl", VERSION);
     return TCL_OK;
 }
@@ -562,7 +566,7 @@ plWait_Until(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 /*----------------------------------------------------------------------*\
  * pls_auto_path
  *
- * Sets up auto_path variable.  
+ * Sets up auto_path variable.
  * Directories are added to the FRONT of autopath.  Therefore, they are
  * searched in reverse order of how they are listed below.
  *
@@ -646,7 +650,7 @@ pls_auto_path(Tcl_Interp *interp)
 	Tcl_SetResult(interp, "Problems with getcwd in pls_auto_path", TCL_STATIC);
 	return TCL_ERROR;
     }
-    
+
     Tcl_SetVar(interp, "dir", buf, 0);
     if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
 	return TCL_ERROR;
@@ -655,7 +659,7 @@ pls_auto_path(Tcl_Interp *interp)
     if (plInBuildTree()) {
       Tcl_SetVar(interp, "dir", BUILD_DIR "/bindings/tk", TCL_GLOBAL_ONLY);
       if (tcl_cmd(interp, "set auto_path \"$dir $auto_path\"") == TCL_ERROR)
-     	return TCL_ERROR; 
+     	return TCL_ERROR;
     }
 
 #ifdef DEBUG
@@ -693,7 +697,7 @@ tcl_cmd(Tcl_Interp *interp, char *cmd)
  * PLplot API Calls
  *
  * Any call that results in something actually being plotted must be
- * followed by by a call to plflush(), to make sure all output from 
+ * followed by by a call to plflush(), to make sure all output from
  * that command is finished.  Devices that have text/graphics screens
  * (e.g. Tek4xxx and emulators) implicitly switch to the graphics screen
  * before graphics commands, so a plgra() is not necessary in this case.
@@ -709,14 +713,14 @@ static char buf[200];
  * plcontCmd
  *
  * Processes plcont Tcl command.
- * 
+ *
  * The C function is:
  * void
  * c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
  * 	 PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
  * 	 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
  * 	 PLPointer pltr_data);
- * 
+ *
  * Since f will be specified by a Tcl Matrix, nx and ny are redundant, and
  * are automatically eliminated.  Same for nlevel, since clevel will be a 1-d
  * Tcl Matrix.  Since most people plot the whole data set, we will allow kx,
@@ -728,10 +732,10 @@ static char buf[200];
  * paramater is allowed at the end to specify which, if either, of the
  * coordinates wrap on themselves.  Can be 1 or x, or 2 or y.  Nothing or 0
  * specifies that neither coordinate wraps.
- * 
+ *
  * So, the new call from Tcl is:
  * 	plcont f [kx lx ky ly] clev [pltr x y] [wrap]
- * 
+ *
 \*--------------------------------------------------------------------------*/
 
 static int tclmateval_modx, tclmateval_mody;
@@ -775,7 +779,7 @@ plcontCmd( ClientData clientData, Tcl_Interp *interp,
 
     matf = Tcl_GetMatrixPtr( interp, argv[1] );
     if (matf == NULL) return TCL_ERROR;
-    
+
     if (matf->dim != 2) {
 	interp->result = "Must use 2-d data.";
 	return TCL_ERROR;
@@ -1941,10 +1945,10 @@ plsetoptCmd(ClientData clientData, Tcl_Interp *interp,
  *
  * We will be getting data through a 2-d Matrix, which carries along
  * nx and ny, so no need for those.  Toss defined since it's not supported
- * anyway.  Toss plfill since it is the only valid choice.  Take an optional 
+ * anyway.  Toss plfill since it is the only valid choice.  Take an optional
  * pltr spec just as for plcont, and add a wrapping specifier, also just as
  * in plcont.  So the new command looks like:
- * 
+ *
  * 	plshade z xmin xmax ymin ymax \
  * 	    sh_min sh_max sh_cmap sh_color sh_width \
  * 	    min_col min_wid max_col max_wid \
@@ -2215,11 +2219,11 @@ plshadeCmd( ClientData clientData, Tcl_Interp *interp,
  * We will be getting data through a 2-d Matrix, which carries along
  * nx and ny, so no need for those.  Toss defined since it's not supported
  * anyway.  clevel will be via a 1-d matrix, which carries along nlevel, so
- * no need for that.  Toss plfill since it is the only valid choice.  
- * Take an optional 
+ * no need for that.  Toss plfill since it is the only valid choice.
+ * Take an optional
  * pltr spec just as for plcont, and add a wrapping specifier, also just as
  * in plcont.  So the new command looks like:
- * 
+ *
  * 	plshades z xmin xmax ymin ymax \
  * 	    clevel, fill_width, cont_color, cont_width\
  * 	    rect [pltr x y] [wrap]
@@ -2283,7 +2287,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
        interp->result = "clevel must be 1-d matrix.";
        return TCL_ERROR;
     }
-   
+
     fill_width = atoi( argv[7] );
     cont_color = atoi( argv[8] );
     cont_width = atoi( argv[9] );
@@ -2459,7 +2463,7 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
 
 /* zused points to either z or zwrapped.  In both cases the allocated size
  * was nx by ny.  Now free the allocated space, and note in the case
- * where zused points to zwrapped, the separate z space has been freed by 
+ * where zused points to zwrapped, the separate z space has been freed by
  * previous wrap logic. */
     plFree2dGrid( zused, nx, ny );
 
@@ -2484,8 +2488,8 @@ plshadesCmd( ClientData clientData, Tcl_Interp *interp,
  * x[], y[] are the coordinates to be plotted.
 \*--------------------------------------------------------------------------*/
 
-void 
-mapform(PLINT n, PLFLT *x, PLFLT *y) 
+void
+mapform(PLINT n, PLFLT *x, PLFLT *y)
 {
     int i;
     double xp, yp, radius;
@@ -2495,7 +2499,7 @@ mapform(PLINT n, PLFLT *x, PLFLT *y)
 	yp = radius * sin(x[i] * PI / 180.0);
 	x[i] = xp;
 	y[i] = yp;
-    }	
+    }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -2504,7 +2508,7 @@ mapform(PLINT n, PLFLT *x, PLFLT *y)
  * Processes plmap Tcl command.
  * C version takes:
  *    string, minlong, maxlong, minlat, maxlat
- *    
+ *
  *  e.g. .p cmd plmap globe 0 360 -90 90
 \*--------------------------------------------------------------------------*/
 
@@ -2514,7 +2518,7 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
 {
     PLFLT minlong, maxlong, minlat, maxlat;
     PLINT transform;
-    
+
     if (argc < 7 ) {
 	Tcl_AppendResult(interp, "bogus syntax for plmap, see doc.",
 			 (char *) NULL );
@@ -2532,7 +2536,7 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
     } else {
 	plmap(NULL, argv[1], minlong, maxlong, minlat, maxlat);
     }
-    
+
     plflush();
     return TCL_OK;
 }
@@ -2543,7 +2547,7 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
  * Processes plmeridians Tcl command.
  * C version takes:
  *    dlong, dlat, minlong, maxlong, minlat, maxlat
- *    
+ *
  *  e.g. .p cmd plmeridians 1 ...
 \*--------------------------------------------------------------------------*/
 
@@ -2553,7 +2557,7 @@ plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
 {
     PLFLT dlong, dlat, minlong, maxlong, minlat, maxlat;
     PLINT transform;
-    
+
     if (argc < 8 ) {
 	Tcl_AppendResult(interp, "bogus syntax for plmap, see doc.",
 			 (char *) NULL );
@@ -2573,7 +2577,7 @@ plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
     } else {
 	plmeridians(NULL, dlong, dlat, minlong, maxlong, minlat, maxlat);
     }
-    
+
     plflush();
     return TCL_OK;
 }

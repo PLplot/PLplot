@@ -2,6 +2,26 @@
 // $Id$
 // Geoffrey Furnish
 // Sep 21 1994
+//
+// Copyright (C) 2004  Andrew Ross
+// Copyright (C) 2004  Alan W. Irwin
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Library Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 //---------------------------------------------------------------------------//
 // @> Source file plstream.
 //---------------------------------------------------------------------------//
@@ -77,7 +97,7 @@ void cxx_pltr2::xform( PLFLT x, PLFLT y, PLFLT& tx, PLFLT& ty ) const
 
     if (x < xmin || x > xmax || y < ymin || y > ymax) {
 	cerr << "cxx_pltr2::xform, Invalid coordinates\n";
-	
+
 	if (x < xmin) {
 
 	    if (y < ymin) {
@@ -295,7 +315,7 @@ plstream::arrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
                  PLFLT scale, PLFLT dx, PLFLT dy)
 {
     set_stream();
-    
+
     plarrows( u, v, x, y, n, scale, dx, dy );
 }
 
@@ -396,7 +416,7 @@ void plstream::cont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 
 /* Draws a contour plot using the function evaluator f2eval and data stored
  * by way of the f2eval_data pointer.  This allows arbitrary organizations
- * of 2d array data to be used. 
+ * of 2d array data to be used.
  */
 
 void plstream::fcont( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
@@ -480,8 +500,8 @@ void plstream::env( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     plenv(xmin, xmax, ymin, ymax, just, axis);
 }
 
-// Similar to env() above, but in multiplot mode does not advance 
-// the subpage, instead the current subpage is cleared 
+// Similar to env() above, but in multiplot mode does not advance
+// the subpage, instead the current subpage is cleared
 
 void plstream::env0( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 		    PLINT just, PLINT axis )
@@ -830,7 +850,7 @@ void plstream::map( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 
 /* Plot the latitudes and longitudes on the background. */
 
-void  plstream::meridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+void  plstream::meridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
 			   PLFLT dlong, PLFLT dlat,
 			   PLFLT minlong, PLFLT maxlong,
 			   PLFLT minlat, PLFLT maxlat)
@@ -904,7 +924,7 @@ void plstream::plot3d( PLFLT *x, PLFLT *y, PLFLT **z,
 /* Plots a 3-d representation of the function z[x][y] with contour. */
 
 void plstream::plot3dc( PLFLT *x, PLFLT *y, PLFLT **z,
-		        PLINT nx, PLINT ny, PLINT opt, 
+		        PLINT nx, PLINT ny, PLINT opt,
 		        PLFLT *clevel, PLINT nlevel )
 {
     set_stream();
@@ -1198,7 +1218,7 @@ void plstream::sfnam( const char *fnam )
 
 /* Shade region. */
 
-void 
+void
 plstream::shade( PLFLT **a, PLINT nx, PLINT ny,
 		 PLINT (*defined) (PLFLT, PLFLT),
 		 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
@@ -1218,7 +1238,7 @@ plstream::shade( PLFLT **a, PLINT nx, PLINT ny,
 	     min_color, min_width, max_color, max_width,
 	     fill, rectangular, pltr, pltr_data );
 }
-void 
+void
 plstream::shades( PLFLT **a, PLINT nx, PLINT ny,
 		 PLINT (*defined) (PLFLT, PLFLT),
 		 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -1259,7 +1279,7 @@ plstream::shade( Contourable_Data& d, PLFLT xmin, PLFLT xmax,
 		Coord_Xform_evaluator, pcxf );
 }
 
-void 
+void
 plstream::shade1( PLFLT *a, PLINT nx, PLINT ny,
 		  PLINT (*defined) (PLFLT, PLFLT),
 		  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
@@ -1281,12 +1301,12 @@ plstream::shade1( PLFLT *a, PLINT nx, PLINT ny,
 	      fill, rectangular, pltr, pltr_data );
 }
 
-void 
+void
 plstream::fshade( PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		  PLPointer f2eval_data,
 		  PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
 		  PLPointer c2eval_data,
-		  PLINT nx, PLINT ny, 
+		  PLINT nx, PLINT ny,
 		  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 		  PLFLT shade_min, PLFLT shade_max,
 		  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
@@ -1411,7 +1431,7 @@ void plstream::stripc(PLINT *id, char *xspec, char *yspec,
     set_stream();
 
     plstripc(id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos,
-        y_ascl, acc, colbox, collab, colline, styline, legline, 
+        y_ascl, acc, colbox, collab, colline, styline, legline,
         labx, laby, labtop);
 }
 
@@ -1441,7 +1461,7 @@ void plstream::image( PLFLT **data, PLINT nx, PLINT ny,
 {
     set_stream();
 
-    plimage(data, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, 
+    plimage(data, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
     	Dxmin, Dxmax, Dymin, Dymax);
 }
 
@@ -1821,7 +1841,7 @@ void plstream::gfile(FILE **p_file )
 void plstream::sfile( FILE *file )
 {
     set_stream();
-    
+
     ::plsfile(file);
 }
 

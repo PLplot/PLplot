@@ -1,4 +1,22 @@
 /* $Id$
+
+   Copyright (C) 2004  Joao Cardoso
+
+   This file is part of PLplot.
+
+   PLplot is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Library Public License as published
+   by the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   PLplot is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with PLplot; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 #include "pltk.h"
@@ -42,7 +60,7 @@ int mat_min( tclMatrix *pm, Tcl_Interp *interp,
  * sucking the Tk main out of libtk (which doesn't work correctly on all
  * systems/compilers/linkers/etc).  Hopefully in the future Tk will
  * supply a sufficiently capable tkMain() type function that can be used
- * instead. 
+ * instead.
 \*--------------------------------------------------------------------------*/
 
 int
@@ -77,7 +95,7 @@ main(int argc, char **argv)
  * software and its documentation for any purpose, provided that the
  * above copyright notice and the following two paragraphs appear in
  * all copies of this software.
- * 
+ *
  * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
  * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
  * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF

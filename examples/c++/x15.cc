@@ -3,21 +3,23 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2003 Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Alan W. Irwin
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -62,23 +64,23 @@ const PLFLT x15::XSPA =  2./(XPTS-1);
 const PLFLT x15::YSPA =  2./(YPTS-1);
 const PLFLT x15::tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
-   
+
 x15::x15( int argc, char ** argv ) {
-  
+
   int i, j;
-  
+
   PLFLT xx;
   PLFLT yy;
   PLFLT x;
   PLFLT y;
   PLFLT **z;
   PLFLT zmin, zmax;
-	
+
 
   // plplot initialization
-  
+
   pls = new plstream();
-  
+
   // Parse and process command line arguments.
   pls->ParseOpts( &argc, argv, PL_PARSE_FULL );
 
@@ -102,12 +104,12 @@ x15::x15( int argc, char ** argv ) {
   }
 
   pls->MinMax2dGrid(z,XPTS,YPTS,&zmax,&zmin);
-	
+
   plot1( z, zmin, zmax );
   plot2( z, zmin, zmax );
-	
+
   //pls->end();
-	
+
   // Tidy up allocated grids
   pls->Free2dGrid(z,XPTS,YPTS);
 
@@ -121,11 +123,11 @@ void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax) {
   PLFLT shade_min, shade_max, sh_color;
   int sh_cmap = 0, sh_width;
   int min_color = 0, min_width = 0, max_color = 0, max_width = 0;
-	
+
   pls->adv(0);
   pls->vpor(0.1, 0.9, 0.1, 0.9);
   pls->wind(-1.0, 1.0, -1.0, 1.0);
-	
+
   /* Plot using identity transform */
 
   shade_min = zmin + (zmax-zmin)*0.4;
@@ -136,7 +138,7 @@ void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax) {
   max_color = 2;
   min_width = 2;
   max_width = 2;
-     
+
   pls->psty(8);
 
   pls->shade( z, XPTS, YPTS, NULL, -1., 1., -1., 1.,
@@ -161,11 +163,11 @@ void x15::plot2(PLFLT **z, PLFLT zmin, PLFLT zmax)
   int min_color = 0, min_width = 0, max_color = 0, max_width = 0;
   int i;
   sh_width = 2;
-	
+
   pls->adv(0);
   pls->vpor(0.1, 0.9, 0.1, 0.9);
   pls->wind(-1.0, 1.0, -1.0, 1.0);
-	
+
   /* Plot using identity transform */
 
   for (i = 0; i < 10; i++) {
@@ -173,7 +175,7 @@ void x15::plot2(PLFLT **z, PLFLT zmin, PLFLT zmax)
     shade_max = zmin + (zmax - zmin) * (i +1) / 10.0;
     sh_color = i+6;
     pls->psty((i + 2) % 8 + 1);
-       
+
     pls->shade( z, XPTS, YPTS, NULL, -1., 1., -1., 1.,
 		 shade_min, shade_max,
 		 sh_cmap, sh_color, sh_width,

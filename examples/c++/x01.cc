@@ -3,21 +3,23 @@
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
-// Copyright (C) 2003 Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Andrew Ross <andrewr@coriolis.greenend.org.uk>
+// Copyright (C) 2004  Alan W. Irwin
+//
 // This file is part of PLplot.
 //
-// This file is free software; you can redistribute it and/or modify
+// PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published by
 // the Free Software Foundation; version 2 of the License.
 //
-// This file is distributed in the hope that it will be useful,
+// PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Library General Public License for more details.
 //
 // You should have received a copy of the GNU Library General Public License
-// along with the file; if not, write to the Free Software
-//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 //---------------------------------------------------------------------------//
 //
 //---------------------------------------------------------------------------//
@@ -99,7 +101,7 @@ public:
   void plot1(int);
   void plot2();
   void plot3();
-  
+
 
 private:
   // Class data
@@ -109,7 +111,7 @@ private:
 
 };
 
-   
+
 x01::x01( int argc, char ** argv ) {
 
   PLINT cur_strm, new_strm;
@@ -121,9 +123,9 @@ x01::x01( int argc, char ** argv ) {
 
   // plplot initialization
   // Divide page into 2x2 plots unless user overrides.
-  
+
   pls = new plstream();
-  
+
   pls->ssub(2, 2);
 
   // Parse and process command line arguments.
@@ -132,7 +134,7 @@ x01::x01( int argc, char ** argv ) {
 
   // Print out version number, just for kicks.
   pls->gver(ver);
-  
+
    cout << "PLplot library version: " <<  ver << endl;
 
 
@@ -172,8 +174,8 @@ x01::x01( int argc, char ** argv ) {
 
   // Show how to save a plot:
   // Open a new device, make it current, copy parameters,
-  // and replay the plot buffer       
-  
+  // and replay the plot buffer
+
   if (f_name) { // command line option '-save filename'
 
     cout << "The current plot was saved in color Postscript under the name `" <<  f_name << "'" << endl;
@@ -196,15 +198,15 @@ x01::x01( int argc, char ** argv ) {
     while (1) {
       if (! pls->GetCursor(&gin)) break;
       if (gin.keysym == PLK_Escape) break;
-      
+
       pls->text();
-      if (gin.keysym < 0xFF && isprint(gin.keysym)) 
-	cout << "wx = " << gin.wX << ", wy = " << gin.wY << 
-	  ", dx = " << gin.dX << ",  dy = " << gin.dY << 
+      if (gin.keysym < 0xFF && isprint(gin.keysym))
+	cout << "wx = " << gin.wX << ", wy = " << gin.wY <<
+	  ", dx = " << gin.dX << ",  dy = " << gin.dY <<
 	  ",  c = '" << gin.keysym << "'" << endl;
       else
-	cout << "wx = " << gin.wX << ", wy = " << gin.wY << 
-	  ", dx = " << gin.dX << ",  dy = " << gin.dY << 
+	cout << "wx = " << gin.wX << ", wy = " << gin.wY <<
+	  ", dx = " << gin.dX << ",  dy = " << gin.dY <<
 	  ",  c = '" << gin.keysym << "'" << endl;
       //	printf("wx = %f,  wy = %f, dx = %f,  dy = %f,  c = 0x%02x\n",
       //                              gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym);
@@ -212,8 +214,8 @@ x01::x01( int argc, char ** argv ) {
       pls->gra();
     }
   }
-  
-  // In C++ we don't call plend() to finish off 
+
+  // In C++ we don't call plend() to finish off
   // this is handled by the destructor
   delete pls;
 }
@@ -343,7 +345,7 @@ void x01::plot3()
   pls->col0(1);
   pls->box("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
-  // Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
+  // Superimpose a dashed line grid, with 1.5 mm marks and spaces.
   // plstyl expects a pointer!
 
   pls->styl(1, &mark1, &space1);

@@ -1,10 +1,11 @@
 <!--
     api-c.xml: "The Specialized C API for PLplot" chapter
-        
+
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-    Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboiss
+    Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin
+    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
-     
+
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
     modification, are permitted provided that the following conditions are
@@ -35,9 +36,9 @@
 
 <chapter id="API-C">
   <title>The Specialized C API for PLplot</title>
-  
+
   <para>
-  The purpose of this chapter is to document the API for every C function 
+  The purpose of this chapter is to document the API for every C function
   in PLplot (other than language bindings) that
   is <emphasis>not</emphasis> part of the common API that has already been
   documented in <xref linkend="API"/>.
@@ -52,7 +53,7 @@
 
   <sect1 id="plP_checkdriverinit" renderas="sect3">
     <title>
-      <function>plP_checkdriverinit</function>: Checks to see if any 
+      <function>plP_checkdriverinit</function>: Checks to see if any
       of the specified drivers have been initialized
     </title>
 
@@ -88,7 +89,7 @@
 	</term>
 	<listitem>
 	  <para>
-	   Pointer to character string specifying a space-delimited 
+	   Pointer to character string specifying a space-delimited
 	   list of driver names, e.g., <literal>"bmp jpeg tiff"</literal>.
 	  </para>
 	</listitem>
@@ -114,7 +115,7 @@
       </funcsynopsis>
     </para>
 
-    <para> Get the initialized-driver list. Function returns a 
+    <para> Get the initialized-driver list. Function returns a
     space-delimited list of the currently initialized drivers or streams. If more
     than one stream is using the same driver, then its name will be returned
     more than once. The function can be analogously thought of as also
@@ -129,7 +130,7 @@
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to a user-allocated buffer to hold the result. The user 
+	    Pointer to a user-allocated buffer to hold the result. The user
             must ensure the buffer is big enough to hold the result.
 	  </para>
 	</listitem>
@@ -159,7 +160,7 @@
       require calling &plexit; but for which there is no useful recovery.
       It calls the abort handler defined via &plsabort;, does some cleanup
       and returns. The user can supply his/her own abort handler and pass it
-      in via &plsabort;.  
+      in via &plsabort;.
     </para>
 
     <variablelist>
@@ -201,7 +202,7 @@
       and then exits.  If cleanup needs to be done in the driver program
       then the user may want to supply his/her own exit handler and pass it
       in via &plsexit;.  This function should either call &plend; before
-      exiting, or simply return. 
+      exiting, or simply return.
     </para>
 
     <variablelist>
@@ -224,7 +225,7 @@
     <title>
       <function>plgfile</function>: Get output file handle
     </title>
-    
+
     <para>
       <funcsynopsis>
       <funcprototype>
@@ -235,11 +236,11 @@
       </funcprototype>
       </funcsynopsis>
     </para>
-    
+
     <para>
-      Gets the current output file handle, if applicable. 
+      Gets the current output file handle, if applicable.
     </para>
-    
+
     <variablelist>
       <varlistentry>
 	<term>
@@ -253,7 +254,7 @@
 	</listitem>
       </varlistentry>
     </variablelist>
-    
+
   </sect1>
 
   <sect1 id="plsabort" renderas="sect3">
@@ -391,7 +392,7 @@ mapping
     <para>
     Identity transformation for grid to world mapping.
     This routine can be used both for &plcont; and &plshade;.
-    See also <xref linkend="contour-plots-c"/> and 
+    See also <xref linkend="contour-plots-c"/> and
     <xref linkend="shade-plots-c"/>.
     </para>
 
@@ -478,11 +479,11 @@ mapping using singly dimensioned coord arrays
       </funcsynopsis>
     </para>
 
-    <para> 
+    <para>
     Linear interpolation for grid to world mapping using singly
     dimensioned coord arrays.
     This routine can be used both for &plcont; and &plshade;.
-    See also <xref linkend="contour-plots-c"/> and 
+    See also <xref linkend="contour-plots-c"/> and
     <xref linkend="shade-plots-c"/>.
     </para>
 
@@ -574,7 +575,7 @@ mapping using singly dimensioned coord arrays
     Linear interpolation for grid to world mapping using doubly
     dimensioned coord arrays (column dominant, as per normal C 2d arrays).
     This routine can be used both for &plcont; and &plshade;.
-    See also <xref linkend="contour-plots-c"/> and 
+    See also <xref linkend="contour-plots-c"/> and
     <xref linkend="shade-plots-c"/>.
     </para>
 

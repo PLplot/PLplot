@@ -1,10 +1,29 @@
 #!/bin/sh
-# Test suite for f77 examples.  
-# This is called from plplot-test.sh with $f77dir, $device, $dsuffix, 
+# Test suite for f77 examples.
+#
+# Copyright (C) 2004  Alan W. Irwin
+#
+# This file is part of PLplot.
+#
+# PLplot is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Library Public License as published
+# by the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# PLplot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with PLplot; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+# This is called from plplot-test.sh with $f77dir, $device, $dsuffix,
 # and $options defined.
 
 # To build the f77 examples before running this script do the following:
-# pushd $f77dir; make; popd 
+# pushd $f77dir; make; popd
 
 if test "@F77PARSE_CL@" = ".true."; then
 # This stanza only works if fortran has command-line parsing capability.
@@ -12,12 +31,12 @@ if test "@F77PARSE_CL@" = ".true."; then
 # command-line parsing of the $options (e.g., familying options for png
 # and jpeg devices) that have been passed from plplot-test.sh
 
-# Do non-standard example 16a because it illustrates plshade functionality 
+# Do non-standard example 16a because it illustrates plshade functionality
 # with cmap1 (and also because the result looks nice.)
   $f77dir/x16af -dev $device -o x16af.$dsuffix $options
 
 # Do the standard non-interactive examples.
-# skip 14, 17, and 20 because they are interactive, and 14 and 20 not 
+# skip 14, 17, and 20 because they are interactive, and 14 and 20 not
 # implemented.
 # skip 19 because the fortran API is not available for maps.
 # skip 21 because it delivers variable results depending on computer timing
@@ -27,9 +46,9 @@ if test "@F77PARSE_CL@" = ".true."; then
   done
 else
 # Fall back to this method if this fortran platform does not have
-# command-line parsing capability.  Command-line $options must be ignored 
+# command-line parsing capability.  Command-line $options must be ignored
 # for this method.
-# Do non-standard example 16a because it illustrates plshade functionality 
+# Do non-standard example 16a because it illustrates plshade functionality
 # with cmap1 (and also because the result looks nice.)
   $f77dir/x16af <<EOF >/dev/null
 $device
@@ -37,7 +56,7 @@ x16af.$dsuffix
 EOF
 
 # Do the standard non-interactive examples.
-# skip 14, 17, and 20 because they are interactive, and 14 and 20 not 
+# skip 14, 17, and 20 because they are interactive, and 14 and 20 not
 # implemented.
 # skip 19 because the fortran API is not available for maps.
 # skip 21 because it delivers variable results depending on computer timing

@@ -6,19 +6,23 @@
     Maurice LeBrun			mjl@dino.ph.utexas.edu
     Institute for Fusion Studies	University of Texas at Austin
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    Copyright (C) 2004  Joao Cardoso
 
-    This library is distributed in the hope that it will be useful,
+    This file is part of PLplot.
+
+    PLplot is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Library Public License as published
+    by the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    PLplot is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Library General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    You should have received a copy of the GNU Library General Public License
+    along with PLplot; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -72,7 +76,7 @@ pdf_fopen(char *filename, char *mode)
 	    char new_mode[3];
 	    int binary = 0;
 	    char *m, *p;
-	    
+
 	    /* Copy over the mode, removing 'b' if needed */
 	    for (m = mode, p = new_mode; *m != 0; m++) {
 	        if (*m == 'b') {
@@ -83,14 +87,14 @@ pdf_fopen(char *filename, char *mode)
 	        }
 	    }
 	    *p = 0;
-	    
+
 	    pdfs->tclChan = Tcl_OpenFileChannel(NULL, filename, new_mode, 0);
 	    if (pdfs->tclChan == NULL) {
 		pdf_close(pdfs);
 		pdfs = NULL;
 	    } else {
 		if (binary) {
-		    Tcl_SetChannelOption(NULL, pdfs->tclChan, "-translation", 
+		    Tcl_SetChannelOption(NULL, pdfs->tclChan, "-translation",
 					 "binary");
 		}
 	    }
@@ -284,12 +288,12 @@ pdf_ungetc(int c, PDFstrm *pdfs)
 
     if (pdfs->file != NULL) {
 	result = ungetc(c, pdfs->file);
-	if (pdfs->bp > 0) 
+	if (pdfs->bp > 0)
 	    pdfs->bp--;
 #ifdef PLPLOT_USE_TCL_CHANNELS
     } else if (pdfs->tclChan != NULL) {
 	result = Tcl_Ungets(pdfs->tclChan, &c, 1, 0);
-	if (pdfs->bp > 0) 
+	if (pdfs->bp > 0)
 	    pdfs->bp--;
 #endif
     } else if (pdfs->buffer != NULL) {
@@ -642,55 +646,55 @@ pdf_rd_4bytes(PDFstrm *pdfs, U_LONG *ps)
  * Here is the IEEE floating point specification in both 32 bit and 64 bit
  * precisions, from page 9 of "IEEE Standard for Binary Floating-Point
  * Arithmetic", copyright 1985, IEEE Std 754-1985:
- * 
- * 
+ *
+ *
  *                             Single Format
- * 
+ *
  * msb means most significant bit
  * lsb means least significant bit
- * 
+ *
  *   1         8                                23
  * _____________________________________________________________________
  * |   |                |                                              |
  * | s |       e        |                        f                     |
  * |___|________________|______________________________________________|
  *      msb          lsb msb                                        lsb
- * 
- * 
- * 
+ *
+ *
+ *
  *                             Double Format
- * 
+ *
  * msb means most significant bit
  * lsb means least significant bit
- * 
+ *
  *   1        11                                52
  * _____________________________________________________________________
  * |   |                |                                              |
  * | s |       e        |                        f                     |
  * |___|________________|______________________________________________|
  *      msb          lsb msb                                        lsb
- * 
- * 
+ *
+ *
  * (Thanks to: Andy Mai (mai@ncar.ucar.edu))
- * 
- * 
+ *
+ *
  * According to "inmos: Transputer instruction set" the IEEE standard
  * specifies the floating format as:
- * 
+ *
  *      s exp frac
- * 
+ *
  * Where: s = sign bit  (1 bit)
  *      exp = exponent (8 bits for 32 bit float / 11 bits for 64 bit float)
  *      frac = fraction (23 bits for 32 bit float / 52 bits for 64 bit float)
- * 
+ *
  * value of (s exp frac) = (-1)^s * 1.frac * 2^(exp-bias) ; if exp not 0
  *                         (-1)^s * 0.frac * 2^(1-bias) ; if exp = 0
- * 
+ *
  * where bias = 127 for 32 bit float
  *       bias = 1023 for 64 bit float
- * 
+ *
  * (Thanks to: Tom Bjorkholm(TBJORKHOLM@abo.fi))
- * 
+ *
 \*--------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------*\

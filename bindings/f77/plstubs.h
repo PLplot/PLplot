@@ -6,7 +6,7 @@
    Header file for plplot Fortran interface stubs.
    THIS FILE IS NOT FOR INCLUSION BY USER CODES!!
 
-   The contents of this file are in the public domain. 
+   The contents of this file are in the public domain.
 */
 
 #ifndef __PLSTUBS_H__
@@ -33,7 +33,7 @@
  *	STUB_FORTRAN	use "fortran" keyword (MS-DOS convention)
  *
  * If no choice is made, the default is set to STUB_LAU.  This should
- * handle most generic Unix boxes not already accounted for.  
+ * handle most generic Unix boxes not already accounted for.
  *
  * ** Namespace collision **
  *
@@ -126,7 +126,7 @@
  * Each stub must have an entry here.
 \*----------------------------------------------------------------------*/
 
-/* N.B. By default the g77 compiler appends second underscore to name if 
+/* N.B. By default the g77 compiler appends second underscore to name if
  * the original name contains any underscore at all.  According to info
  * g77, "This is done to ensure compatibility with code produced by many
  * UNIX Fortran compilers."  However, other fortran compilers do not have

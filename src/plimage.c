@@ -1,13 +1,31 @@
-/* plimage() 
+/* plimage()
  *
  * Author: Alessandro Mirone, Nov 2001
  * Adapted: Joao Cardoso
+ *
+ * Copyright (C) 2004  Alan W. Irwin
+ *
+ * This file is part of PLplot.
+ *
+ * PLplot is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Library Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * PLplot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with PLplot; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 #include "plplotP.h"
 
 /* Get better names, those are too criptic!
- * 
+ *
  * ZEROW2B: zero writing to buffer ?
  * ZEROW2D: zero writing to display ?
  * ONEW2B: set writing to buffer ?
@@ -17,7 +35,7 @@
 void
 NoBufferNoPixmap()
 {
-  PLINT op = ZEROW2B; 
+  PLINT op = ZEROW2B;
 
   plsc->plbuf_write = 0; /* TODO: store previous state */
   plP_esc(PLESC_EXPOSE, NULL);
@@ -47,13 +65,13 @@ enabledisplay()
   PLINT op = ONEW2D;
 
   plP_esc(PLESC_IMAGEOPS, &op);
-  plP_esc(PLESC_EXPOSE, NULL); 
+  plP_esc(PLESC_EXPOSE, NULL);
 }
 
 
 
 void
-plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny, 
+plimageslow(short *x, short *y, unsigned short *data, PLINT nx, PLINT ny,
 	    PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
 	    unsigned short zmin, unsigned short zmax)
 {
@@ -123,8 +141,8 @@ grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny)
  *
  * arguments are
  *   data: array containing image data
- *   nx: dimension of the array in the X axis.        
- *   ny: dimension of the  array in the Y axis 
+ *   nx: dimension of the array in the X axis.
+ *   ny: dimension of the  array in the Y axis
  *   The array data is indexed like data[ix][iy]
  *
  *   xmin, xmax, ymin, ymax:
@@ -142,7 +160,7 @@ grimage(short *x, short *y, unsigned short *z, PLINT nx, PLINT ny)
 \*-------------------------------------------------------------------------*/
 
 void
-plimage(PLFLT **idata, PLINT nx, PLINT ny, 
+plimage(PLFLT **idata, PLINT nx, PLINT ny,
 	PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
 	PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax)
 {
@@ -151,7 +169,7 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
   unsigned short *Zf, szmin, szmax;
   short *Xf, *Yf;
   PLFLT lzmin, lzmax, tz;
-  
+
   if (plsc->level < 3) {
     plabort("plimage: window must be set up first");
     return;
@@ -176,7 +194,7 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
 
   xm = floor((Dxmin-xmin)/dx); ym = floor((Dymin-ymin)/dy);
   lzmin = lzmax = idata[xm][ym];
-  
+
   for (ix=xm; ix<xm+nnx; ix++) {
     for (iy=ym; iy<ym+nny; iy++) {
       tz = idata[ix][iy];
@@ -222,7 +240,7 @@ plimage(PLFLT **idata, PLINT nx, PLINT ny,
   dy = dy*(ny-1)/ny;
 
   for (ix = 0; ix < nnx; ix++)
-    for (iy = 0; iy < nny; iy++) {      
+    for (iy = 0; iy < nny; iy++) {
       Xf[ix*nny+iy] =  plP_wcpcx(xmin + ix*dx);
       Yf[ix*nny+iy] =  plP_wcpcy(ymin + iy*dy);
     }

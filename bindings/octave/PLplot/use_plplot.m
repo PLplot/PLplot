@@ -10,7 +10,7 @@
 ##
 ## Copyright (C) 1998, 2003  Rafael Laboissiere
 ##
-## This file is free software, distributable under the GPL. No
+## PLplot is free software, distributable under the GPL. No
 ## warranties, use it at your own risk.  It  was originally written for
 ## inclusion in the Debian octave-plplot package.
 

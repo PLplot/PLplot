@@ -1,8 +1,9 @@
 <!--
     c.xml: "C Language" chapter
-        
+
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-    Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboiss
+    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Alan W. Irwin
+    Copyright (C) 1999, 2000, 2001, 2002, 2003  Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
@@ -77,15 +78,15 @@ This is toggled via the macro PLSTDC, and set automatically if __STDC__
 is defined.  If PLSTDC is defined, all functions are prototyped as allowed
 under Standard C, and arguments passed exactly as specified in the
 prototype.  If PLSTDC is not defined, however, function prototypes are
-turned off and K&amp;R automatic argument promotion will occur, e.g. 
-<literal> float &amp;rarr; double, int &amp;rarr; long</literal>.  
+turned off and K&amp;R automatic argument promotion will occur, e.g.
+<literal> float &amp;rarr; double, int &amp;rarr; long</literal>.
 There is no middle ground!  A PLplot
 library built with PLSTDC defined will not work (in general) with a program
 built with PLSTDC undefined, and vice versa.  It is possible in principle to
 build a library that will work under both Standard C and K&amp;R compilers
 simultaneously (i.e.  by duplicating the K&amp;R promotion with the Standard C
 prototype), but this seems to violate the spirit of the C standard and can
-be confusing.  Eventually we will drop support for non-standard C compilers 
+be confusing.  Eventually we will drop support for non-standard C compilers
 but for now have adopted this compromise.
   </para>
   <para>
@@ -129,7 +130,7 @@ two-dimensional arrays).
 There are several ways to deal with this situation, but the least messy from
 a user's perspective is to redefine those PLplot C function names which
 conflict with the Fortran-interface stub routines.  The actual function
-names are the same as those described in this document, but with a 
+names are the same as those described in this document, but with a
 <quote>c_</quote>
 prepended.  These macro definitions appear in the
 <filename>plplot.h</filename> header file
@@ -140,7 +141,7 @@ of PLplot (previous to 5.0) will require a recompile, however.
   </para>
   <para>
 For more information on calling PLplot from C, please see the example C
-programs (<filename>x01c.c</filename> through <filename>x19c.c</filename>) 
+programs (<filename>x01c.c</filename> through <filename>x19c.c</filename>)
 distributed with PLplot.
   </para>
 

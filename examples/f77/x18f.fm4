@@ -1,3 +1,23 @@
+C      $Id$
+C
+C      Copyright (C) 2004  Alan W. Irwin
+C
+C      This file is part of PLplot.
+C
+C      PLplot is free software; you can redistribute it and/or modify
+C      it under the terms of the GNU General Library Public License as
+C      published by the Free Software Foundation; either version 2 of the
+C      License, or (at your option) any later version.
+C
+C      PLplot is distributed in the hope that it will be useful,
+C      but WITHOUT ANY WARRANTY; without even the implied warranty of
+C      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C      GNU Library General Public License for more details.
+C
+C      You should have received a copy of the GNU Library General Public
+C      License along with PLplot; if not, write to the Free Software
+C      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 C--------------------------------------------------------------------------
 C      main
 C
@@ -71,7 +91,7 @@ C        r = 1. - dble (i-1) / dble (NPTS)
         else
           call plpoin3( NPTS, x, y, z, 1 )
         endif
-        
+
         call plcol0(3)
         write( title, '(a,i2,a,i2)')
      &    '#frPLplot Example 18 - Alt=', nint(alt(k)),
@@ -107,13 +127,13 @@ C        r = 1. - dble (i-1) / dble (NPTS)
       call plvpor(0.0d0, 1.0d0, 0.0d0, 0.9d0)
       call plwind(-1.0d0, 1.0d0, -0.9d0, 1.1d0)
       call plcol0(1)
-      call plw3d(1.0d0, 1.0d0, 1.0d0, 
+      call plw3d(1.0d0, 1.0d0, 1.0d0,
      &  -1.0d0, 1.0d0, -1.0d0, 1.0d0,  -1.0d0, 1.0d0,
      &  alt, az)
       call plbox3('bnstu', 'x axis', 0.0d0, 0,
      &  'bnstu', 'y axis', 0.0d0, 0,
      &  'bcdmnstuv', 'z axis', 0.0d0, 0)
-      
+
       call plcol0(2)
 
 
@@ -127,23 +147,23 @@ C      r = 1 :=)
           x(1) = sin( PHI(j) ) * cos( THETA(i) )
           y(1) = sin( PHI(j) ) * sin( THETA(i) )
           z(1) = cos( PHI(j) )
-          
+
           x(2) = sin( PHI(j+1) ) * cos( THETA(i) )
           y(2) = sin( PHI(j+1) ) * sin( THETA(i) )
           z(2) = cos( PHI(j+1) )
-          
+
           x(3) = sin( PHI(j+1) ) * cos( THETA(i+1) )
           y(3) = sin( PHI(j+1) ) * sin( THETA(i+1) )
           z(3) = cos( PHI(j+1) )
-          
+
           x(4) = sin( PHI(j) ) * cos( THETA(i+1) )
           y(4) = sin( PHI(j) ) * sin( THETA(i+1) )
           z(4) = cos( PHI(j) )
-          
+
           x(5) = sin( PHI(j) ) * cos( THETA(i) )
           y(5) = sin( PHI(j) ) * sin( THETA(i) )
           z(5) = cos( PHI(j) )
-          
+
           call plpoly3( 5, x, y, z, draw(1,k), 1 )
         enddo
       enddo

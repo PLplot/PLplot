@@ -3,33 +3,37 @@
     Copyright 1993, 1994, 1995
     Maurice LeBrun			mjl@dino.ph.utexas.edu
     Institute for Fusion Studies	University of Texas at Austin
- 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
 
-    This library is distributed in the hope that it will be useful,
+    Copyright (C) 2004  Joao Cardoso
+
+    This file is part of PLplot.
+
+    PLplot is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Library Public License as published
+    by the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    PLplot is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Library General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Library General Public License for more details.
 
-    You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free
-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+    You should have received a copy of the GNU Library General Public License
+    along with PLplot; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- 
+
     PLplot graphics server.
- 
+
     Just a front-end to the pltkMain() function.  Structured along the
     preferred lines for extended wish'es.  Is typically run as a child
     process from the PLplot TK driver to render output.  Can use either TK
     send or Tcl-DP RPC for communication, depending on how it is invoked.
- 
+
     Note that plserver can be used the same way as wish or dpwish, as it
     contains the functionality of each of these (except the -notk Tcl-DP
-    command-line option is not supported).  
+    command-line option is not supported).
 */
 
 #define NEED_PLDEBUG
@@ -85,7 +89,7 @@ AppInit(Tcl_Interp *interp);
  * sucking the Tk main out of libtk (which doesn't work correctly on all
  * systems/compilers/linkers/etc).  Hopefully in the future Tk will
  * supply a sufficiently capable tkMain() type function that can be used
- * instead. 
+ * instead.
 \*--------------------------------------------------------------------------*/
 
 int
