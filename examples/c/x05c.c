@@ -1,11 +1,15 @@
 /* Test of drawing a histogram */
 /* $Id$
    $Log$
-   Revision 1.4  1993/01/23 06:10:25  mjl
-   Instituted exit codes for all example codes.  Also deleted color functions
-   no longer supported (plancol).  Enhanced x09c to exploit new contour
-   capabilities.
+   Revision 1.5  1993/02/22 23:16:13  mjl
+   Changed over to new style of initialization using plinit(), and added
+   function to parse plplot command line flags.
 
+ * Revision 1.4  1993/01/23  06:10:25  mjl
+ * Instituted exit codes for all example codes.  Also deleted color functions
+ * no longer supported (plancol).  Enhanced x09c to exploit new contour
+ * capabilities.
+ *
  * Revision 1.3  1992/09/30  18:25:17  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -26,17 +30,24 @@
 #include <math.h>
 
 int
-main(void)
+main(int argc, char *argv[])
 {
     int i;
     static PLFLT data[2048];
 
-    /* Fill up data points */
+/* Parse and process command line arguments */
+
+    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+
+/* Initialize plplot */
+
+    plinit();
+
+/* Fill up data points */
 
     for (i = 0; i < 2048; i++)
 	data[i] = sin(0.01 * (i + 1));
 
-    plstar(1, 1);
     plcol(1);
     plhist(2048, data, (PLFLT) -1.1, (PLFLT) 1.1, 44, 0);
     plcol(2);

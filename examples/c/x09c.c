@@ -1,11 +1,15 @@
 /* Demonstration of contour plotting */
 /* $Id$
    $Log$
-   Revision 1.4  1993/01/23 06:10:30  mjl
-   Instituted exit codes for all example codes.  Also deleted color functions
-   no longer supported (plancol).  Enhanced x09c to exploit new contour
-   capabilities.
+   Revision 1.5  1993/02/22 23:16:17  mjl
+   Changed over to new style of initialization using plinit(), and added
+   function to parse plplot command line flags.
 
+ * Revision 1.4  1993/01/23  06:10:30  mjl
+ * Instituted exit codes for all example codes.  Also deleted color functions
+ * no longer supported (plancol).  Enhanced x09c to exploit new contour
+ * capabilities.
+ *
  * Revision 1.3  1992/09/30  18:25:22  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -46,7 +50,7 @@ static PLFLT clevel[11] =
 {-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
 
 int
-main(void)
+main(int argc, char *argv[])
 {
     int i, j;
     PLFLT xx, yy, argx, argy, distort;
@@ -56,6 +60,14 @@ main(void)
     PLFLT xg1[XPTS], yg1[YPTS];
     PLcGrid  cgrid1;
     PLcGrid2 cgrid2;
+
+/* Parse and process command line arguments */
+
+    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+
+/* Initialize plplot */
+
+    plinit();
 
 /* Set up function arrays */
 
@@ -98,8 +110,6 @@ main(void)
 	    cgrid2.yg[i][j] = yy - distort * cos(argx) * cos(argy);
 	}
     }
-
-    plstar(1, 1);
 
 /* Plot using identity transform */
 

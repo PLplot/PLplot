@@ -1,11 +1,15 @@
 /* $Id$
 
    $Log$
-   Revision 1.4  1993/01/23 06:10:20  mjl
-   Instituted exit codes for all example codes.  Also deleted color functions
-   no longer supported (plancol).  Enhanced x09c to exploit new contour
-   capabilities.
+   Revision 1.5  1993/02/22 23:16:07  mjl
+   Changed over to new style of initialization using plinit(), and added
+   function to parse plplot command line flags.
 
+ * Revision 1.4  1993/01/23  06:10:20  mjl
+ * Instituted exit codes for all example codes.  Also deleted color functions
+ * no longer supported (plancol).  Enhanced x09c to exploit new contour
+ * capabilities.
+ *
  * Revision 1.3  1992/09/30  18:25:12  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -59,7 +63,7 @@
 #define OFFSET  2
 
 int
-main(void)
+main(int argc, char *argv[])
 {
     /* ==============  Begin variable definition section. ============= */
 
@@ -94,6 +98,10 @@ main(void)
 	NULL};			/* Make sure last element is NULL */
 
     /* ==============  Read in data from input file. ============= */
+
+/* Parse and process command line arguments */
+
+    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
 
     /* First prompt the user for the input data file name */
 
@@ -145,12 +153,9 @@ main(void)
 
     plsori(1);
 
-    /* Prompt user for the output device or file type. */
-    /* You may want to use plbeg() instead, if you always use the
-       same graphics file type. (see the Plplot manual) I only want
-       one large subpage here so I use the arguments (1,1). */
+/* Initialize plplot */
 
-    plstar(1, 1);
+    plinit();
 
     /* We must call pladv() to advance to the first (and only)
        subpage.  You might want to use plenv() instead of the

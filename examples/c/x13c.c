@@ -1,11 +1,15 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.4  1993/01/23 06:10:34  mjl
-   Instituted exit codes for all example codes.  Also deleted color functions
-   no longer supported (plancol).  Enhanced x09c to exploit new contour
-   capabilities.
+   Revision 1.5  1993/02/22 23:16:21  mjl
+   Changed over to new style of initialization using plinit(), and added
+   function to parse plplot command line flags.
 
+ * Revision 1.4  1993/01/23  06:10:34  mjl
+ * Instituted exit codes for all example codes.  Also deleted color functions
+ * no longer supported (plancol).  Enhanced x09c to exploit new contour
+ * capabilities.
+ *
  * Revision 1.3  1992/09/30  18:25:25  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -40,7 +44,7 @@ static char *text[] =
 };
 
 int
-main(void)
+main(int argc, char *argv[])
 {
     int i, j;
     PLFLT dthet, theta0, theta1, theta, just, dx, dy;
@@ -52,15 +56,13 @@ main(void)
     per[3] = 30.;
     per[4] = 16.;
 
-/* Ask user to specify the output device */
-/* Note that for this demo, neither the global aspect ratio flag nore
-   the global orientation flag give the desired results, since plenv is told
-   to do scaling based on physical dimensions.
-   Thus we MUST print to a physical device and not globally mess with
-   orientation or aspect ratio (this may be improved in the future).
-*/
+/* Parse and process command line arguments */
 
-    plstar(1, 1);
+    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+
+/* Initialize plplot */
+
+    plinit();
 
     plenv((PLFLT) 0., (PLFLT) 10., (PLFLT) 0., (PLFLT) 10., 1, -2);
     plcol(2);

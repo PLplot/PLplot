@@ -1,11 +1,15 @@
 /* Demonstration of mesh plotting (just like example08 but mesh) */
 /* $Id$
    $Log$
-   Revision 1.5  1993/01/23 06:10:32  mjl
-   Instituted exit codes for all example codes.  Also deleted color functions
-   no longer supported (plancol).  Enhanced x09c to exploit new contour
-   capabilities.
+   Revision 1.6  1993/02/22 23:16:19  mjl
+   Changed over to new style of initialization using plinit(), and added
+   function to parse plplot command line flags.
 
+ * Revision 1.5  1993/01/23  06:10:32  mjl
+ * Instituted exit codes for all example codes.  Also deleted color functions
+ * no longer supported (plancol).  Enhanced x09c to exploit new contour
+ * capabilities.
+ *
  * Revision 1.4  1992/10/12  17:04:16  mjl
  * Minor change to work around some compiler brain damage on the Amiga.
  *
@@ -49,11 +53,19 @@ static char *title[4] =
 };
 
 int
-main(void)
+main(int argc, char *argv[])
 {
     int i, j, k;
     PLFLT *x, *y, **z;
     PLFLT xx, yy;
+
+/* Parse and process command line arguments */
+
+    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+
+/* Initialize plplot */
+
+    plinit();
 
     x = (PLFLT *) malloc(XPTS * sizeof(PLFLT));
     y = (PLFLT *) malloc(YPTS * sizeof(PLFLT));
@@ -73,8 +85,6 @@ main(void)
 	    z[i][j] = cos(2.0 * 3.141592654 * xx) * sin(2.0 * 3.141592654 * yy);
 	}
     }
-
-    plstar(1, 1);
 
     for (k = 0; k < 4; k++) {
 	pladv(0);

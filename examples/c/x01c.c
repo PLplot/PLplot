@@ -1,11 +1,15 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.4  1993/01/23 06:10:21  mjl
-   Instituted exit codes for all example codes.  Also deleted color functions
-   no longer supported (plancol).  Enhanced x09c to exploit new contour
-   capabilities.
+   Revision 1.5  1993/02/22 23:16:09  mjl
+   Changed over to new style of initialization using plinit(), and added
+   function to parse plplot command line flags.
 
+ * Revision 1.4  1993/01/23  06:10:21  mjl
+ * Instituted exit codes for all example codes.  Also deleted color functions
+ * no longer supported (plancol).  Enhanced x09c to exploit new contour
+ * capabilities.
+ *
  * Revision 1.3  1992/09/30  18:25:13  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -40,32 +44,42 @@ void plot2();
 void plot3();
 
 int
-main(void)
+main(int argc, char *argv[])
 {
     PLINT digmax;
 
-    /* Ask user to specify the output device */
-    plstar(2, 2);
+/* plplot initialization */
+/* Divide page into 2x2 plots unless user overrides */
 
-    /* Set up the data */
-    /* Original case */
+    plssub(2, 2);
+
+/* Parse and process command line arguments */
+
+    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+
+/* Initialize plplot */
+
+    plinit();
+
+/* Set up the data */
+/* Original case */
 
     xscale = 6.;
     yscale = 1.;
     xoff = 0.;
     yoff = 0.;
 
-    /* Do a plot */
+/* Do a plot */
 
     plot1();
 
-    /* Set up the data */
+/* Set up the data */
 
     xscale = 1.;
     yscale = 0.0014;
     yoff = 0.0185;
 
-    /* Do a plot */
+/* Do a plot */
 
     digmax = 5;
     plsyax(digmax, 0);
@@ -75,7 +89,7 @@ main(void)
 
     plot3();
 
-    /* Don't forget to call PLEND to finish off! */
+/* Don't forget to call PLEND to finish off! */
 
     plend();
     exit(0);
@@ -104,22 +118,22 @@ plot1(void)
 	ys1[i] = y[i * 10 + 3];
     }
 
-    /* Set up the viewport and window using PLENV. The range in X is */
-    /* 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are */
-    /* scaled separately (just = 0), and we just draw a labelled */
-    /* box (axis = 0). */
+/* Set up the viewport and window using PLENV. The range in X is */
+/* 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are */
+/* scaled separately (just = 0), and we just draw a labelled */
+/* box (axis = 0). */
 
     plrgb((PLFLT) 0.0, (PLFLT) 0.0, (PLFLT) 1.0);
     plenv(xmin, xmax, ymin, ymax, 0, 0);
     plrgb((PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 0.0);
     pllab("(x)", "(y)", "#frPLPLOT Example 1 - y=x#u2");
 
-    /* Plot the data points */
+/* Plot the data points */
 
     plrgb((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0);
     plpoin(6, xs1, ys1, 9);
 
-    /* Draw the line through the data */
+/* Draw the line through the data */
 
     plrgb((PLFLT) 0.5, (PLFLT) 0.5, (PLFLT) 0.5);
     plline(60, x, y);
@@ -132,16 +146,16 @@ plot2(void)
 {
     int i;
 
-    /* Set up the viewport and window using PLENV. The range in X is -2.0 to
-       10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
-       (just = 0), and we draw a box with axes (axis = 1). */
+/* Set up the viewport and window using PLENV. The range in X is -2.0 to
+   10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
+   (just = 0), and we draw a box with axes (axis = 1). */
 
     plcol(1);
     plenv((PLFLT) -2.0, (PLFLT) 10.0, (PLFLT) -0.4, (PLFLT) 1.2, 0, 1);
     plcol(2);
     pllab("(x)", "sin(x)/x", "#frPLPLOT Example 1 - Sinc Function");
 
-    /* Fill up the arrays */
+/* Fill up the arrays */
 
     for (i = 0; i < 100; i++) {
 	x[i] = (i - 19.0) / 6.0;
@@ -150,7 +164,7 @@ plot2(void)
 	    y[i] = sin(x[i]) / x[i];
     }
 
-    /* Draw the line */
+/* Draw the line */
 
     plcol(3);
     plline(100, x, y);
@@ -164,24 +178,24 @@ plot3(void)
 {
     int i;
 
-    /* For the final graph we wish to override the default tick intervals, and
-       so do not use PLENV */
+/* For the final graph we wish to override the default tick intervals, and
+   so do not use PLENV */
 
     pladv(0);
 
-    /* Use standard viewport, and define X range from 0 to 360 degrees, Y range
+/* Use standard viewport, and define X range from 0 to 360 degrees, Y range
        from -1.2 to 1.2. */
 
     plvsta();
     plwind((PLFLT) 0.0, (PLFLT) 360.0, (PLFLT) -1.2, (PLFLT) 1.2);
 
-    /* Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
+/* Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
 
     plcol(1);
     plbox("bcnst", (PLFLT) 60.0, 2, "bcnstv", (PLFLT) 0.2, 2);
 
-    /* Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
-       expects a pointer!! */
+/* Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
+   expects a pointer!! */
 
     plstyl(1, &mark1, &space1);
     plcol(2);

@@ -1,11 +1,15 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.4  1993/01/23 06:10:35  mjl
-   Instituted exit codes for all example codes.  Also deleted color functions
-   no longer supported (plancol).  Enhanced x09c to exploit new contour
-   capabilities.
+   Revision 1.5  1993/02/22 23:16:22  mjl
+   Changed over to new style of initialization using plinit(), and added
+   function to parse plplot command line flags.
 
+ * Revision 1.4  1993/01/23  06:10:35  mjl
+ * Instituted exit codes for all example codes.  Also deleted color functions
+ * no longer supported (plancol).  Enhanced x09c to exploit new contour
+ * capabilities.
+ *
  * Revision 1.3  1992/09/30  18:25:26  furnish
  * Massive cleanup to irradicate garbage code.  Almost everything is now
  * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
@@ -51,25 +55,12 @@ int
 main(void)
 {
     int i, digmax;
-    int xleng0 = 0, yleng0 = 0, xoff0 = 0, yoff0 = 0;
-    int xleng1 = 0, yleng1 = 0, xoff1 = 0, yoff1 = 0;
+    int xleng0 = 400, yleng0 = 300, xoff0 = 200, yoff0 = 200;
+    int xleng1 = 400, yleng1 = 300, xoff1 = 500, yoff1 = 500;
 
     printf("Demo for illustrating multiple output streams via X.\n");
     printf("Running with plplot_1 window as slave.\n");
     printf("\n");
-
-/* Query user for parameters. */
-
-    printf("Enter parameters for window 0\n");
-    xleng0 = plGetInt("Enter x length: ");
-    yleng0 = plGetInt("Enter y length: ");
-
-/* Skip these since they don't work, don't ask me why !*/
-/*
-    xoff0  = plGetInt("Enter x offset: ");
-    yoff0  = plGetInt("Enter y offset: ");
-*/
-    printf("\nPlease move first window out of way before proceeding.\n\n");
 
 /* Select X driver */
 
@@ -79,16 +70,6 @@ main(void)
 /* Start next stream */
 
     plsstrm(1);
-
-    printf("Enter parameters for window 1\n");
-    xleng1 = plGetInt("Enter x length: ");
-    yleng1 = plGetInt("Enter y length: ");
-
-/* Skip these since they don't work, don't ask me why !*/
-/*
-    xoff1  = plGetInt("Enter x offset: ");
-    yoff1  = plGetInt("Enter y offset: ");
-*/
 
 /* Select X driver */
 /* Turn off pause to make this a slave (must follow master) */
