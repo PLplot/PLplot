@@ -390,6 +390,14 @@ typedef void* PLPointer;
 #define ONEW2D    4
 #endif
 
+/* definitions for the opt argument in plsurf3d() */
+
+#define SURF_CONT 0x10 /* draw contour plot at surface */
+#define BASE_CONT 0x20 /* draw contour plot at xy plane */
+#define DRAW_SIDES 0x40 /* draw sides */
+#define FACETED   0x80 /* draw outline for each square that makes up the surface */
+#define MAG_COLOR 0x04 /* draw the mesh with a color dependent of the magnitude */
+
 /* Window parameter tags */
 
 #define PLSWIN_DEVICE		1	/* device coordinates */
@@ -1144,15 +1152,10 @@ void
 plot3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
 
-DOC(plotfc3d, "Plot a 3-d false color (current colormap 1) representation of the function z[x][y].")
+DOC(plsurf3d, "Plot a 3-d surface representation of the function z[x][y].")
 void
-plotfc3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
-	 PLINT nx, PLINT ny, PLINT side);
-
-DOC(plotsh3d, "Plot a 3-d shaded representation of the function z[x][y].")
-void
-plotsh3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
-	 PLINT nx, PLINT ny, PLINT side);
+plsurf3d(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
+	 PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n);
 
 DOC(plpat, "Set fill pattern directly.")
 void
