@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/06/30 17:57:13  mjl
+ * Revision 1.10  1995/03/16 23:18:50  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.9  1994/06/30  17:57:13  mjl
  * All C example programs: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
@@ -19,11 +22,11 @@
 #define ROUND(a)    (PLINT)((a)<0. ? ((a)-.5) : ((a)+.5))
 #endif
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Generates polar plot, with 1-1 scaling.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -42,7 +45,7 @@ main(int argc, char *argv[])
 
 /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
 /* Initialize plplot */
 

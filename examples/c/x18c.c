@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1994/08/10 01:13:12  mjl
+ * Revision 1.7  1995/03/16 23:18:59  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.6  1994/08/10  01:13:12  mjl
  * Put in conditional for PI define.
  *
  * Revision 1.5  1994/07/22  16:03:29  furnish
@@ -44,12 +47,12 @@ static PLFLT az[] =
 
 void test_poly();
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Does a series of 3-d plots for a given data set, with different
  * viewing options in each plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #define NPTS 1000
 
@@ -63,7 +66,7 @@ main(int argc, char *argv[])
 
 /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
 /* Initialize plplot */
 

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/06/30 17:57:41  mjl
+ * Revision 1.11  1995/03/16 23:18:53  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.10  1994/06/30  17:57:41  mjl
  * All C example programs: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
@@ -47,11 +50,11 @@ mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Does several contour plots using different coordinate mappings.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -67,7 +70,7 @@ main(int argc, char *argv[])
 
 /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
 /* Initialize plplot */
 

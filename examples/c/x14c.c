@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/08/25 04:02:32  mjl
+ * Revision 1.12  1995/03/16 23:18:57  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.11  1994/08/25  04:02:32  mjl
  * Now can work with either TK or Tcl-DP.  Changed to use TK by default.
  *
  * Revision 1.10  1994/08/10  05:28:50  mjl
@@ -47,14 +50,14 @@ void plot3();
 void plot4();
 void plot5();
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Plots several simple functions from other example programs.
  *
  * This version sends the output of the first 4 plots (one page) to two
  * independent streams.  
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(void)

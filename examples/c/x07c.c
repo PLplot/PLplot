@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/06/30 17:57:34  mjl
+ * Revision 1.10  1995/03/16 23:18:52  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.9  1994/06/30  17:57:34  mjl
  * All C example programs: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
@@ -28,11 +31,11 @@ static int base[17] =
 {0, 200, 500, 600, 700, 800, 900,
  2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900};
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Displays the entire "plsym" symbol (font) set.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -43,7 +46,7 @@ main(int argc, char *argv[])
 
 /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
 /* Initialize plplot */
 

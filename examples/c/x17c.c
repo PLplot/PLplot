@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/08/05 09:28:42  mjl
+ * Revision 1.3  1995/03/16 23:18:59  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.2  1994/08/05  09:28:42  mjl
  * Put in an early bail-out since it's not working yet.
  *
  * Revision 1.1  1994/04/08  12:08:54  mjl
@@ -67,9 +70,9 @@ plstripd(PLINT id);
 #define MIN(a,b)    (((a) < (b)) ? (a) : (b))
 #endif
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main program
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -85,7 +88,7 @@ main(int argc, char *argv[])
 /* plplot initialization */
 /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
     plSetInternalOpt("db", "");
     plSetInternalOpt("np", "");
@@ -155,11 +158,11 @@ main(int argc, char *argv[])
     exit(0);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plstripc
  *
  * Create 1d stripchart.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plstripc(PLINT *id, char *xspec, char *yspec,
@@ -221,12 +224,12 @@ plstripc(PLINT *id, char *xspec, char *yspec,
     plstrip_gen(stripc);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plstrip_gen
  *
  * Generates a complete stripchart plot.  Used either initially or
  * during rescaling.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plstrip_gen(PLStrip *strip)
@@ -250,12 +253,12 @@ plstrip_gen(PLStrip *strip)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plstripa
  *
  * Add a point to a stripchart.  
  * Allocates memory and rescales as necessary.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plstripa(PLINT id, PLFLT x, PLFLT y)
@@ -310,11 +313,11 @@ plstripa(PLINT id, PLFLT x, PLFLT y)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plstripd
  *
  * Deletes and releases memory used by a stripchart.  
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plstripd(PLINT id)

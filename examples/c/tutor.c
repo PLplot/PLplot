@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/07/12 19:17:31  mjl
+ * Revision 1.8  1995/03/16 23:18:48  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.7  1994/07/12  19:17:31  mjl
  * Minor cleaning up.
  *
  * Revision 1.6  1994/03/30  07:21:43  mjl
@@ -94,7 +97,7 @@ main(int argc, char *argv[])
 
 /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
     /* First prompt the user for the input data file name */
 

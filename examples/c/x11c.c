@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/06/30 17:57:46  mjl
+ * Revision 1.10  1995/03/16 23:18:55  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.9  1994/06/30  17:57:46  mjl
  * All C example programs: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
@@ -46,12 +49,12 @@ static char *title[4] =
 #define PI	3.1415926535897932384
 #endif
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Does a series of mesh plots for a given data set, with different
  * viewing options in each plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -62,7 +65,7 @@ main(int argc, char *argv[])
 
 /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
 /* Initialize plplot */
 

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/06/30 17:57:37  mjl
+ * Revision 1.9  1995/03/16 23:18:53  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.8  1994/06/30  17:57:37  mjl
  * All C example programs: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), eliminated redundant casts, put in more
@@ -40,12 +43,12 @@ static char *title[4] =
     "#frPLplot Example 8 - Alt=60, Az=160, Opt=3"
 };
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Does a series of 3-d plots for a given data set, with different
  * viewing options in each plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
@@ -56,7 +59,7 @@ main(int argc, char *argv[])
 
 /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
 /* Initialize plplot */
 

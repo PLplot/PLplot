@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/07/29 20:14:45  mjl
+ * Revision 1.2  1995/03/16 23:19:00  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.1  1994/07/29  20:14:45  mjl
  * Demo for generating world map backgrounds.
  * Contributed by Wesley Ebisuzaki.
  *
@@ -20,12 +23,12 @@
 #define PI 3.1416
 #endif
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * mapform
  *
  * Defines our coordinate transformation.
  * x[], y[] are the coordinates to be plotted.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void 
 mapform(PLINT n, PLFLT *x, PLFLT *y) 
@@ -41,11 +44,11 @@ mapform(PLINT n, PLFLT *x, PLFLT *y)
     }	
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Shows two views of the world map.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void 
 main(int argc, char **argv) 
@@ -55,7 +58,7 @@ main(int argc, char **argv)
 
     /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
     /* Longitude (x) and latitude (y) */
 

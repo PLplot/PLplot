@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1995/01/06 07:59:17  mjl
+ * Revision 1.9  1995/03/16 23:18:50  mjl
+ * All example C programs: changed plParseInternalOpts() call to plParseOpts().
+ *
+ * Revision 1.8  1995/01/06  07:59:17  mjl
  * Added a second plot which illustrates the new options ('f' -- to force
  * fixed point labels even in a log plot, and 'h' -- to print a grid at the
  * subtick intervals) to plbox.
@@ -27,18 +30,18 @@
 
 void plot1(int type);
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * main
  *
  * Illustration of logarithmic axes, and redefinition of window.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 main(int argc, char *argv[])
 {
 /* Parse and process command line arguments */
 
-    (void) plParseInternalOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
 /* Initialize plplot */
 
@@ -52,11 +55,11 @@ main(int argc, char *argv[])
     exit(0);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plot1
  *
  * Log-linear plot.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plot1(int type)
