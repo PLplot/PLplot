@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1995/06/01 21:47:10  mjl
+ * Revision 1.11  1995/07/27 21:17:06  furnish
+ * Improvement of arg parsing for use in extended shells.
+ *
+ * Revision 1.10  1995/06/01  21:47:10  mjl
  * Now is [incr Tcl] aware, if HAVE_ITCL has been defined (done during
  * configure).
  *
@@ -84,7 +87,7 @@ extern void (*tclErrorHandler)(Tcl_Interp *interp, int code, int tty);
 int
 main(int argc, char **argv)
 {
-    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plParseOpts(&argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
 
     exit(pltclMain(argc, argv, NULL, AppInit));
 }
