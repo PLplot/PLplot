@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1994/05/10 21:51:04  mjl
+ * Revision 1.20  1994/05/20 22:25:14  mjl
+ * Switched order of inclusion of plplot.h with system-specific defines to
+ * ensure that all sick hacks are made before too much damage occurs
+ * (specifically to fix a problem on the Cray, caddr_t again, sigh).
+ *
+ * Revision 1.19  1994/05/10  21:51:04  mjl
  * Added prototype for new function plcmap1_calc().
  *
  * Revision 1.18  1994/04/08  12:13:14  mjl
@@ -61,11 +66,6 @@
 #ifndef _POSIX_SOURCE
 #define _POSIX_SOURCE
 #endif
-
-/* Include all externally-visible definitions and prototypes */
-/* This also includes stdio.h */
-
-#include "plplot.h"
 
 /*----------------------------------------------------------------------*\
 *        SYSTEM-SPECIFIC SETTINGS
@@ -136,6 +136,11 @@
 #define pl_fsetpos(a,b) fsetpos(a, b)
 #define pl_fgetpos(a,b) fgetpos(a, b)
 #endif
+
+/* Include all externally-visible definitions and prototypes */
+/* This also includes stdio.h */
+
+#include "plplot.h"
 
 /*----------------------------------------------------------------------*\
 *			Data types
