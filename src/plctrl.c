@@ -1634,6 +1634,7 @@ PLFLT
 plGetFlt(char *s)
 {
     PLFLT m;
+    double m1;
     int i = 0;
     char line[256];
 
@@ -1644,8 +1645,10 @@ plGetFlt(char *s)
 	m = atof(line);
 	return (m);
 #else
-	if (sscanf(line, "%f", &m) == 1)
+	if (sscanf(line, "%lf", &m1) == 1) {
+	    m = (PLFLT) m1;
 	    return (m);
+	}
 	fprintf(stdout, "No value or value out of range; please try again\n");
 #endif
     }

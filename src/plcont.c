@@ -468,7 +468,7 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     PLFLT f1, f2, f3, f4, fcheck;
 
     PLINT lastindex = 0;
-    PLFLT distance = 0.0, currx_old, curry_old;
+    PLFLT distance = 0.0;
 
 /* Check if a contour has been crossed */
 
@@ -643,9 +643,6 @@ pldrawcn(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
 	(*pltr) (xnew, ynew, &tpx, &tpy, pltr_data);
         /* distance = 0.0; */
-
-        currx_old = plsc->currx;
-        curry_old = plsc->curry;
 
 	plP_drawor(tpx, tpy);
     }
