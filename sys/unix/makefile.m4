@@ -559,7 +559,6 @@ FONT_OBJ = \
 # C language stubs for linking Plplot to Fortran.
 
 CSTUB_OBJ = \
-	long2str.o \
 	sc3d.o \
 	scconf.o \
 	scstubs.o
@@ -567,9 +566,8 @@ CSTUB_OBJ = \
 # Fortran language stubs for linking Plplot to Fortran.
 
 FSTUB_OBJ = \
-	islen.o \
-	sfstubs.o \
-	str2int.o
+	strutil.o \
+	sfstubs.o 
 
 # System-specific files.
 
@@ -633,7 +631,7 @@ $(PLLIB_MAIN):	$(OBJ) $(DRIVERS_OBJ) $(AMIGA_OBJ)
 })
 #----------------------------------------------------------------------#
 # Font files.
-# Note 6 font files actually created.
+# Note 2 font files are created.
 # sfont - standard font
 # xfont - extended fonts
 
@@ -847,6 +845,7 @@ links:
 	copy /fonts/\#?.c ""
 	copy /examples/C/\#?.c ""
 	copy /sys/amiga/src/\#?.c ""
+	copy /sys/amiga/src/\#?.h ""
 })
 
 if_unix({
