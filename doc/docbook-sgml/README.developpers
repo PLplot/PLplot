@@ -1,6 +1,6 @@
 
 		PLPLOT DOCUMENTATION IN THE DOCBOOK FORMAT
-		    (Notes for contributors/developer)
+		    (Notes for contributors/developers)
 
 	      Author: Rafael Laboissière <rafael@icp.inpg.fr>
 		 Created on: Thu May 20 11:14:38 CEST 1999
@@ -41,11 +41,11 @@ If you are a developer, you can make modifications to the src/configure.in
 file.  In this case, you will need to run `autoconf' inside the src/
 directory in order to get the new src/configure script generated.
 
-The configure script checks for the following programs: jade, jadetex, and
-perl.  You should have them installed and present in the path in order to
-build the HTML and PostScript versions of the PLplot manual.  You may also
-specify the locations of these programs with the configure options
---with-<prog>.  Type `./configure --help' for details.
+The configure script checks for the following programs: jade, jadetex, perl,
+latex, dvips, and mogrify.  You should have them installed and present in
+the path in order to build the HTML and PostScript versions of the PLplot
+manual.  You may also specify the locations of these programs with the
+configure options --with-<prog>.  Type `./configure --help' for details.
 
 The jade program needs to access several DTDs (Document Type Definition).
 The availability of the DTDs in the system is checked as well by the
@@ -96,7 +96,8 @@ building the PLplot DocBook documentation:
     jadetex
     docbook
     docbook-stylesheests
-
+    tetex
+    imagemagick
 
 
 Prolog (the settings below are for Emacs)
