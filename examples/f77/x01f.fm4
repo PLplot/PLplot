@@ -2,7 +2,7 @@
 
       implicit none
       real*8 PI
-      parameter (PI = 3.1415926535897932384)
+      parameter (PI = 3.1415926535897932384d0)
       real*8  x(101), y(101)
       real*8  xs(6), ys(6)
       real*8  xscale, yscale, xoff, yoff
@@ -23,10 +23,10 @@
 ! Set up the data
 ! Original case
 
-      xscale = 6.
-      yscale = 1.
-      xoff = 0.
-      yoff = 0.
+      xscale = 6.d0
+      yscale = 1.d0
+      xoff = 0.d0
+      yoff = 0.d0
 
 ! Do a plot
 
@@ -34,9 +34,9 @@
 
 ! Set up the data
 
-      xscale = 1.
-      yscale = 0.0014
-      yoff = 0.0185
+      xscale = 1.d0
+      yscale = 0.0014d0
+      yoff = 0.0185d0
 
 ! Do a plot
 
@@ -54,7 +54,7 @@
       call plcol(1)
 
       call plenv(
-     & dble (-2.0), dble (10.0), dble (-0.4), dble (1.2), 0, 1 )
+     & -2.0d0, 10.0d0, -0.4d0, 1.2d0, 0, 1 )
       call plcol(2)
       call pllab( '(x)', 'sin(x)/x',
      &            '#frPLPLOT Example 1 - Sinc Function' )
@@ -62,9 +62,9 @@
 ! Fill up the arrays
 
       do 2 i = 1, 100
-        x(i) = (i-20.0)/6.0
-        y(i) = 1.0
-        if (x(i) .ne. 0.0) y(i) = sin(x(i)) / x(i)
+        x(i) = (i-20.0d0)/6.0d0
+        y(i) = 1.0d0
+        if (x(i) .ne. 0.0d0) y(i) = sin(x(i)) / x(i)
     2 continue
 
 ! Draw the line
@@ -83,19 +83,19 @@
 !  Y range from -1.2 to 1.2.
 
       call plvsta()
-      call plwind( dble (0.0), dble (360.0), dble (-1.2), dble (1.2) )
+      call plwind( 0.0d0, 360.0d0, -1.2d0, 1.2d0 )
 
 ! Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
       call plcol(1)
-      call plbox( 'bcnst', dble (60.0), 2, 'bcnstv', dble (0.2), 2 )
+      call plbox( 'bcnst', 60.0d0, 2, 'bcnstv', 0.2d0, 2 )
 
 ! Superimpose a dashed line grid, with 1.5 mm marks and spaces. With
 !  only a single mark and space element, we do not need arrays
 
       call plstyl( 1, 1500, 1500 )
       call plcol(2)
-      call plbox( 'g', dble (30.0), 0, 'g', dble (0.2), 0 )
+      call plbox( 'g', 30.0d0, 0, 'g', 0.2d0, 0 )
       call plstyl( 0, 0, 0 )
 
       call plcol(3)
@@ -103,8 +103,8 @@
      &            '#frPLPLOT Example 1 - Sine function' )
 
       do 3 i = 1, 101
-        x(i) = 3.6 * (i-1)
-        y(i) = sin( x(i) * PI/180.0 )
+        x(i) = 3.6d0 * (i-1)
+        y(i) = sin( x(i) * PI/180.0d0 )
     3 continue
 
       call plcol(4)
@@ -129,7 +129,7 @@
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
       do 10 i = 1, 60
-        x(i) = xoff + xscale * float(i)/60.0
+        x(i) = xoff + xscale * float(i)/60.0d0
         y(i) = yoff + yscale * x(i)**2
 10    continue
 

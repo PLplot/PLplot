@@ -21,20 +21,20 @@
 
 ! Set up viewport and window
 
-        call plvpor(dble (0.1), dble (1.0), dble (0.1), dble (0.9))
-        call plwind(dble (0.0), dble (1.0), dble (0.0), dble (1.0))
+        call plvpor(0.1d0, 1.0d0, 0.1d0, 0.9d0)
+        call plwind(0.0d0, 1.0d0, 0.0d0, 1.0d0)
 
 ! Draw the grid using plbox
 
-        call plbox('bcgt', dble (0.1), 0,'bcgt', dble (0.1), 0)
+        call plbox('bcgt', 0.1d0, 0,'bcgt', 0.1d0, 0)
         call plcol(15)
 
 ! Write the digits below the frame
 
         do 5 i=0,9
           write (text,'(i1)') i
-          call plmtex('b', dble (1.5), dble (0.1*i+0.05),
-     &      dble (0.5), text)
+          call plmtex('b', 1.5d0, dble (0.1d0*i+0.05d0),
+     &      0.5d0, text)
     5   continue
 
         k=0
@@ -43,11 +43,11 @@
 ! Write the digits to the left of the frame
 
           write (text,'(i4)') base(l)+10*i
-          call plmtex('lv', dble (1.0), dble (0.95-0.1*i),
-     &      dble (1.0), text)
+          call plmtex('lv', 1.0d0, dble (0.95d0-0.1d0*i),
+     &      1.0d0, text)
           do 2 j=0,9
-            x=0.1*j+0.05
-            y=0.95-0.1*i
+            x=0.1d0*j+0.05d0
+            y=0.95d0-0.1d0*i
 
 ! Display the symbols
 
@@ -56,7 +56,7 @@
     2     continue
     1   continue
 
-        call plmtex('t', dble (1.5), dble (0.5), dble (0.5),
+        call plmtex('t', 1.5d0, 0.5d0, 0.5d0,
      &    'PLPLOT Example 7 - PLSYM symbols')
   100 continue
       call plend

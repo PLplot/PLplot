@@ -34,10 +34,10 @@
       integer   i, j, sh_cmap, sh_width
       integer   min_color, min_width, max_color, max_width
 
-      xmin = -1.
-      ymin = -1.
-      xmax =  1.
-      ymax =  1.
+      xmin = -1.d0
+      ymin = -1.d0
+      xmax =  1.d0
+      ymax =  1.d0
 
 ! Set up for plshade call
 
@@ -52,23 +52,23 @@
       do 12 i = 1, NX
          x = (i - 1 - (NX/2)) / dble (NX/2)
          do 10 j = 1, NY
-            y = (j - 1 - (NY/2)) / dble (NY/2) - 1.0
-            z(i,j) = x*x - y*y + (x - y) / (x*x + y*y + 0.1)
+            y = (j - 1 - (NY/2)) / dble (NY/2) - 1.0d0
+            z(i,j) = x*x - y*y + (x - y) / (x*x + y*y + 0.1d0)
             w(i,j) = 2*x*y
  10      continue
  12   continue
 
       call a2mnmx(z, NX, NY, zmin, zmax)
       do 20 i = 1, NCONTR
-        clevel(i) = zmin + (zmax - zmin) * (i + 0.5) /
+        clevel(i) = zmin + (zmax - zmin) * (i + 0.5d0) /
      &    dble (NCONTR)
  20   continue
 
 ! Plot using identity transform
 
       call pladv(0)
-      call plvpor(dble (0.1), dble (0.9), dble (0.1), dble (0.9))
-      call plwind(dble (-1.0), dble (1.0), dble (-1.0), dble (1.0))
+      call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
+      call plwind(-1.0d0, 1.0d0, -1.0d0, 1.0d0)
 
       do 100 i = 1, NCONTR
         shade_min = zmin + (zmax - zmin) * dble (i - 1) /
@@ -80,7 +80,7 @@
          call plpsty(0)
 
          call plshade0(z, NX, NY, ' ',
-     &     dble ( -1.), dble (1.0), dble (-1.0), dble (1.0),
+     &     dble ( -1.d0), 1.0d0, -1.0d0, 1.0d0,
      &        shade_min, shade_max,
      &        sh_cmap, sh_color, sh_width,
      &        min_color, min_width, max_color, max_width)
@@ -88,7 +88,7 @@
  100  continue
 
       call plcol(1)
-      call plbox('bcnst', dble (0.0), 0, 'bcnstv', dble (0.0), 0)
+      call plbox('bcnst', 0.0d0, 0, 'bcnstv', 0.0d0, 0)
       call plcol(2)
       call pllab('distance', 'altitude', 'Bogon flux')
 
@@ -104,7 +104,7 @@
       integer   NX, NY, NCONTR, NBDRY
       real*8    TWOPI
       parameter (NX = 40, NY = 64, NCONTR = 14, NBDRY=200)
-      parameter (TWOPI=6.2831853071795864768)
+      parameter (TWOPI=6.2831853071795864768d0)
 
       real*8    z(NX, NY), ztmp(NX, NY+1)
       real*8    xg(NX, NY+1), yg(NX, NY+1), xtm(NBDRY), ytm(NBDRY)
@@ -141,9 +141,9 @@
 ! Tack on extra cell in theta to handle periodicity.
 
       do 12 i = 1, NX
-         r = i - 0.5
+         r = i - 0.5d0
          do 10 j = 1, NY
-            theta = TWOPI/float(NY) * (j-0.5)
+            theta = TWOPI/float(NY) * (j-0.5d0)
             xg(i,j) = r * cos(theta)
             yg(i,j) = r * sin(theta)
  10      continue
@@ -154,24 +154,24 @@
       call a2mnmx(yg, NX, NY, ymin, ymax)
 
       rmax = r
-      x0 = (xmin + xmax)/2.
-      y0 = (ymin + ymax)/2.
+      x0 = (xmin + xmax)/2.d0
+      y0 = (ymin + ymax)/2.d0
 
 ! Potential inside a conducting cylinder (or sphere) by method of images.
 ! Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
 ! Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
 ! Also put in smoothing term at small distances.
 
-      eps = 2.
+      eps = 2.d0
 
-      q1 = 1.
-      d1 = r/4.
+      q1 = 1.d0
+      d1 = r/4.d0
 
       q1i = - q1*r/d1
       d1i = r**2/d1
 
-      q2 = -1.
-      d2 = r/4.
+      q2 = -1.d0
+      d2 = r/4.d0
 
       q2i = - q2*r/d2
       d2i = r**2/d2
@@ -201,7 +201,7 @@
 ! Set up contour levels.
 
       do 40 i = 1, NCONTR
-         clevel(i) = zmin + (i-0.5)*abs(zmax - zmin)/float(NCONTR)
+         clevel(i) = zmin + (i-0.5d0)*abs(zmax - zmin)/float(NCONTR)
  40   continue
 
 ! Advance graphics frame and get ready to plot.
@@ -215,21 +215,21 @@
 ! Scale window to user coordinates.
 ! Make a bit larger so the boundary does not get clipped.
 
-      eps = 0.05
+      eps = 0.05d0
       xpmin = xmin - abs(xmin)*eps
       xpmax = xmax + abs(xmax)*eps
       ypmin = ymin - abs(ymin)*eps
       ypmax = ymax + abs(ymax)*eps
 
       call plvpas
-     &  (dble (0.1), dble (0.9), dble (0.1), dble (0.9), dble (1.0))
+     &  (0.1d0, 0.9d0, 0.1d0, 0.9d0, 1.0d0)
       call plwind(xpmin, xpmax, ypmin, ypmax)
 
       xopt = ' '
       yopt = ' '
-      xtick = 0.
+      xtick = 0.d0
       nxsub = 0
-      ytick = 0.
+      ytick = 0.d0
       nysub = 0
 
       call plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
@@ -246,7 +246,7 @@
          call plpsty(0)
 
          call plshade2(z, NX, NY, ' ',
-     &     dble (-1.0), dble (1.0), dble (-1.0), dble (1.0),
+     &     -1.0d0, 1.0d0, -1.0d0, 1.0d0,
      &        shade_min, shade_max,
      &        sh_cmap, sh_color, sh_width,
      &        min_color, min_width, max_color, max_width, xg, yg)

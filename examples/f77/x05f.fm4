@@ -3,7 +3,7 @@
 !
       implicit none
       real*8 PI
-      parameter (PI = 3.1415926535897932384)
+      parameter (PI = 3.1415926535897932384d0)
 
       integer i
       integer NPTS
@@ -18,13 +18,13 @@
       call plinit()
 ! Fill up data points
 
-      delta = 2.0 * PI / dble (NPTS)
+      delta = 2.0d0 * PI / dble (NPTS)
       do 1 i=1,NPTS
         data(i)=sin(delta*dble (i-1))
     1 continue
 
       call plcol0(1)
-      call plhist(NPTS, data, dble (-1.1), dble (1.1), 44, 0)
+      call plhist(NPTS, data, -1.1d0, 1.1d0, 44, 0)
       call plcol0(2)
       call pllab('#frValue','#frFrequency',
      *  '#frPLplot Example 5 - Probability function of Oscillator')

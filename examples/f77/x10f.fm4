@@ -5,16 +5,16 @@
       call plinit()
 
       call pladv(0)
-      call plvpor(dble (0.0), dble (1.0), dble (0.0), dble (1.0) )
-      call plwind(dble (0.0), dble (1.0), dble (0.0), dble (1.0) )
-      call plbox('bc', dble (0.0), 0, 'bc', dble (0.0), 0 )
+      call plvpor(0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+      call plwind(0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+      call plbox('bc', 0.0d0, 0, 'bc', 0.0d0, 0 )
 
-      call plsvpa(dble (50.0), dble (150.0), dble (50.0),
-     &  dble (100.0) )
-      call plwind(dble (0.0), dble (1.0), dble (0.0), dble (1.0) )
-      call plbox('bc', dble (0.0), 0, 'bc', dble (0.0), 0 )
-      call plptex(dble (0.5), dble (0.5), dble (1.0), dble (0.0),
-     &  dble (0.5), 'BOX at (50,150,50,100)' )
+      call plsvpa(50.0d0, 150.0d0, 50.0d0,
+     &  100.0d0 )
+      call plwind(0.0d0, 1.0d0, 0.0d0, 1.0d0 )
+      call plbox('bc', 0.0d0, 0, 'bc', 0.0d0, 0 )
+      call plptex(0.5d0, 0.5d0, 1.0d0, 0.0d0,
+     &  0.5d0, 'BOX at (50,150,50,100)' )
 
       call plend
 

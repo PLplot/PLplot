@@ -9,16 +9,17 @@
 
       common /plplot/ tr(6)
 
-      data clevel /-1.,-.8,-.6,-.4,-.2,0,.2,.4,.6,.8,1./
-      tr(1) = 0.05
-      tr(2) = 0.0
-      tr(3) = -1.0
-      tr(4) = 0.0
-      tr(5) = 0.05
-      tr(6) = -1.0
+      data clevel /-1.d0,-0.8d0,-0.6d0,-0.4d0,-0.2d0,0,0.2d0,0.4d0,0.6d0
+     +,0.8d0,1.d0/
+      tr(1) = 0.05d0
+      tr(2) = 0.0d0
+      tr(3) = -1.0d0
+      tr(4) = 0.0d0
+      tr(5) = 0.05d0
+      tr(6) = -1.0d0
 
-      x = 1.0
-      y = 1.0
+      x = 1.0d0
+      y = 1.0d0
       xmin = tr(1) * (x-1) + tr(2) * (y-1) + tr(3)
       ymin = tr(4) * (x-1) + tr(5) * (y-1) + tr(6)
       x = nptsx
@@ -29,7 +30,7 @@
       do 2 i=1,nptsx
         xx = (i-1-(nptsx/2))/dble (nptsx/2)
         do 3 j=1,nptsy
-          yy = (j-1-(nptsy/2))/dble (nptsy/2) - 1.0
+          yy = (j-1-(nptsy/2))/dble (nptsy/2) - 1.0d0
           z(i,j) = xx*xx - yy*yy
           w(i,j) = 2*xx*yy
     3   continue
@@ -68,7 +69,7 @@
      &  zmin, zmax, dz, xpmin, xpmax, ypmin, ypmax,
      &  xtick, ytick
       parameter (NCX=40, NCY=64, NPLT=200)
-      parameter (TWOPI=6.2831853071795864768)
+      parameter (TWOPI=6.2831853071795864768d0)
 
       real*8 z(NCX, NCY), ztmp(NCX, NCY+1)
       real*8 xg(NCX, NCY+1), yg(NCX, NCY+1), xtm(NPLT), ytm(NPLT)
@@ -88,9 +89,9 @@
 ! Tack on extra cell in theta to handle periodicity.
 
       do 23000 i = 1, nx
-         r = i - 0.5
+         r = i - 0.5d0
          do 23002 j = 1, ny
-            theta = TWOPI/dble (ny) * (j-0.5)
+            theta = TWOPI/dble (ny) * (j-0.5d0)
             xg(i,j) = r * cos(theta)
             yg(i,j) = r * sin(theta)
 23002    continue
@@ -100,24 +101,24 @@
       call a2mnmx(xg, nx, ny, xmin, xmax)
       call a2mnmx(yg, nx, ny, ymin, ymax)
       rmax = r
-      x0 = (xmin + xmax)/2.
-      y0 = (ymin + ymax)/2.
+      x0 = (xmin + xmax)/2.d0
+      y0 = (ymin + ymax)/2.d0
 
 ! Potential inside a conducting cylinder (or sphere) by method of images.
 ! Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
 ! Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
 ! Also put in smoothing term at small distances.
 
-      eps = 2.
+      eps = 2.d0
 
-      q1 = 1.
-      d1 = r/4.
+      q1 = 1.d0
+      d1 = r/4.d0
 
       q1i = - q1*r/d1
       d1i = r**2/d1
 
-      q2 = -1.
-      d2 = r/4.
+      q2 = -1.d0
+      d2 = r/4.d0
 
       q2i = - q2*r/d2
       d2i = r**2/d2
@@ -149,7 +150,7 @@
       nlevel = 20
       dz = abs(zmax - zmin)/dble (nlevel)
       do 23012 i = 1, nlevel
-         clevel(i) = zmin + (i-0.5)*dz
+         clevel(i) = zmin + (i-0.5d0)*dz
 23012 continue
 
 ! Split contours into two parts, z > 0, and z < 0.
@@ -159,7 +160,7 @@
       ilevlt = 1
       nlevlt = 0
       do 23014 i = 1, nlevel
-         if(clevel(i) .gt. 0.) go to 23015
+         if(clevel(i) .gt. 0.d0) go to 23015
          nlevlt = nlevlt + 1
 23014 continue
 23015 continue
@@ -178,21 +179,21 @@
 ! Scale window to user coordinates.
 ! Make a bit larger so the boundary doesn't get clipped.
 
-      eps = 0.05
+      eps = 0.05d0
       xpmin = xmin - abs(xmin)*eps
       xpmax = xmax + abs(xmax)*eps
       ypmin = ymin - abs(ymin)*eps
       ypmax = ymax + abs(ymax)*eps
 
-      call plvpas(dble (0.1), dble (0.9), dble (0.1),
-     &  dble (0.9), dble (1.0) )
+      call plvpas(0.1d0, 0.9d0, 0.1d0,
+     &  0.9d0, 1.0d0 )
       call plwind(xpmin, xpmax, ypmin, ypmax)
 
       xopt = ' '
       yopt = ' '
-      xtick = 0.
+      xtick = 0.d0
       nxsub = 0
-      ytick = 0.
+      ytick = 0.d0
       nysub = 0
 
       call plbox(xopt, xtick, nxsub, yopt, ytick, nysub)

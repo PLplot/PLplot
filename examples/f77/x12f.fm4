@@ -9,8 +9,8 @@
 
       call pladv(0)
       call plvsta
-      call plwind( dble (1980.), dble (1990.), dble (0.), dble (35.) )
-      call plbox( 'bc', dble (1.), 0, 'bcnv', dble (10.), 0 )
+      call plwind( 1980.d0, 1990.d0, 0.d0, 35.d0 )
+      call plbox( 'bc', 1.d0, 0, 'bcnv', 10.d0, 0 )
       call plcol(2)
       call pllab( 'Year', 'Widget Sales (millions)',
      &            '#frPLPLOT Example 12' )
@@ -29,15 +29,15 @@
       do 1 i = 0, 9
          call plcol(i + 1)
          call plpsty(0)
-         call plfbox( dble (1980.+i), y0(i+1) )
+         call plfbox( dble (1980.d0+i), y0(i+1) )
          write (string, '(i8)')int(y0(i+1))
          call lalign(string)
-         call plptex( dble (1980.+i+.5), y0(i+1)+1.,
-     &     dble (1.), dble (0.), dble (.5), string )
+         call plptex( dble (1980.d0+i+0.5d0), y0(i+1)+1.d0,
+     &     1.d0, 0.d0, 0.5d0, string )
          write (string, '(i8)')1980+i
          call lalign(string)
-         call plmtex( 'b', dble (1.), dble ((i+1)*.1-.05),
-     &     dble (.5), string )
+         call plmtex( 'b', 1.d0, dble ((i+1)*0.1d0-0.05d0),
+     &     0.5d0, string )
 1     continue
 
 !     Don't forget to call PLEND to finish off!
@@ -77,13 +77,13 @@
       real*8 x0, y0, x(4), y(4)
 
       x(1) = x0
-      y(1) = 0.
+      y(1) = 0.d0
       x(2) = x0
       y(2) = y0
-      x(3) = x0+1.
+      x(3) = x0+1.d0
       y(3) = y0
-      x(4) = x0+1.
-      y(4) = 0.
+      x(4) = x0+1.d0
+      y(4) = 0.d0
       call plfill( 4, x, y )
       call plcol(1)
       call pllsty(1)
