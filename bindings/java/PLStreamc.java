@@ -26,7 +26,7 @@ public class PLStreamc {
 // Static code block to get the PLplot java wrapper dynamic library loaded in.
    static {
       try {
-	 System.loadLibrary( plplot.core.config.libname );
+	 System.load( plplot.core.config.libname );
       } catch (UnsatisfiedLinkError e) {
 	 System.err.println("Native code library failed to load. See the chapter on Dynamic Linking Problems in the SWIG Java documentation for help.\n" + e);
 	 System.exit(1);
