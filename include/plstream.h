@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1994/04/25 19:05:33  mjl
+ * Revision 1.28  1994/05/07 03:22:08  mjl
+ * Eliminated bgcolor, fgcolor, and bgcolorset.  Now fgcolor is a figment of
+ * the X driver's imagination :-).  bgcolor is identically the same as the
+ * 0th entry of cmap0.  About time I introduced some sanity to these.
+ *
+ * Revision 1.27  1994/04/25  19:05:33  mjl
  * Additional support for cmap1 palette.
  *
  * Revision 1.26  1994/04/08  12:20:49  mjl
@@ -122,9 +127,8 @@ typedef struct {
 * labels, etc.  These should be allocated before calling plinit (else you
 * get all 16 by default, which can be undesirable on some platforms).
 * These are then explicitly selected by number (in order of allocation).
-* The lowest number is 0, but since this is used on some platforms to
-* store the background color, all color drivers start with 1 as the
-* default color.  The user is encouraged to do the same.
+* The lowest number is 0, but this is used for the background color,
+* so all color drivers start with 1 as the default color.  
 *
 * Color map 1 is for continuous-tone plots, where color is used to
 * represent function value or intensity.  These are set in a relative way
@@ -134,10 +138,10 @@ typedef struct {
 * to 1) to get an appropriate color.  Drivers incapable of fine shading
 * will do the best job they can.
 *
-* Eventually a palette selection tool for both palettes will be provided
-* for some drivers (e.g. tk).  Direct writing of RGB values (i.e.  banging
-* on the hardware) is supported but highly discouraged (colors so written
-* will be affected unpredictably by the palette tools).
+* A palette selection tool for both palettes is available for the Tk
+* driver.  Direct writing of RGB values (i.e.  banging on the hardware) is
+* supported but highly discouraged (colors so written will be affected
+* unpredictably by the palette tools).
 *
 * icol0		PLINT	Color map 0 entry, current color (0 <= icol0 <= 15)
 * ncol0		PLINT	Number of colors allocated in color map 0.
@@ -146,15 +150,12 @@ typedef struct {
 * ncol1cp	PLINT	Number of control points in cmap1 allocation (max 32)
 * lcol1cp	PLFLT	Locations of control points in cmap1 [0,1]
 * curcmap	PLINT	Current color map
-* bgcolor	RGB	Background color, if specified
-* fgcolor	RGB	Foreground color, if specified
 * curcolor	RGB[]	Current color
 * cmap0 	RGB[]	Color map 0: maximum of 16 RGB 8-bit values
 * cmap1 	RGB[]	Color map 1: maximum of 256 RGB 8-bit values
 *
 * cmap0setcol	int[]	Set for initialized cmap0 colors.
 * cmap1set	int	Set if cmap 1 has been initialized
-* bgcolorset	PLINT	Set if "bgcolor" was set
 *
 ***********************************************************************
 *
@@ -427,11 +428,9 @@ typedef struct {
 
 /* Colormaps */
 
-    PLINT icol0, ncol0, icol1, ncol1, ncp1, bgcolorset, curcmap;
+    PLINT icol0, ncol0, icol1, ncol1, ncp1, curcmap;
     int   cmap0setcol[16], cmap1set;
 
-    PLColor fgcolor;
-    PLColor bgcolor;
     PLColor curcolor;
     PLColor cmap0[16];
     PLColor cmap1[256];
