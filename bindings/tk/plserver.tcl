@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.17  1994/06/23 22:34:57  mjl
+# Revision 1.18  1994/07/01 20:39:17  mjl
+# Moved "standard" initialization code to proc plstdwin in pltools.tcl,
+# so it can be used by the demos.
+#
+# Revision 1.17  1994/06/23  22:34:57  mjl
 # Removed an unnecessary "update".
 #
 # Revision 1.16  1994/06/16  19:08:22  mjl
@@ -30,37 +34,9 @@
 
 proc plserver_init {} {
 
-# Set up configuration options.
-# The first is to hold default values of everything, the second is for
-# user customization.  See pldefaults.tcl for more info.
+# Set up toplevel
 
-    pldefaults
-    plconfig
-
-# I refuse to allow exec's since there's no need for them now.
-# Open's have to remain, however, to read/write palette info.
-
-    rename exec {}
-
-# Create the main window
-# Use the default window title.
-
-    set root_width  [winfo vrootwidth .] 
-    set root_height [winfo vrootheight .]
-
-    wm minsize . 300 240
-    wm maxsize . [expr "$root_width/64*63"] [expr "$root_height/64*62"]
-
-# Set window geometry if not already set.
-# Depart from square slightly to account for menu bar.
-
-    global geometry
-    if { ! [ info exists geometry ] } then {
-	set width  [expr "$root_width / 16 * 10"]
-	set height [expr "$root_height / 16 * 11"]
-	set geometry ${width}x${height}
-    }
-    wm geometry . $geometry
+    plstdwin .
 
 # Create the window for the menu bar
 
@@ -144,7 +120,7 @@ proc plserver_init {} {
 
 # Set up for keyboard-based menu traversal
 
-    tk_menuBar .menu .menu.file .menu.options .menu.help
+    tk_menuBar .menu .menu.file .menu.help
     tk_bindForTraversal . .menu
 
     focus default .
