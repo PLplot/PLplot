@@ -5,7 +5,6 @@ config.cache
 config.log
 config.status
 config.summary
-reconfig
 Makefile
 Makefile.in
 aclocal.m4
