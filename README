@@ -41,6 +41,7 @@ there.  Consult "Changes.log" to see a list of recent changes.
 At present, PLPLOT is known to work on the following systems:
 
 	Unix:	A/IX 		(IBM)
+		ConvexOS	(Convex)
 		DG/UX		(Data General)
 		HP-UX		(Hewlett-Packard)
 		IRIX		(Silicon Graphics)
@@ -93,7 +94,7 @@ USMAIL	Dr. Maurice LeBrun
 
 
 Geoff Furnish
-Please send questions regarding the OS/2 driver to Geoff.
+Please send questions regarding PLPLOT under Linux or OS/2 to Geoff.
 
 EMAIL	furnish@dino.ph.utexas.edu
 USMAIL	Geoff Furnish
