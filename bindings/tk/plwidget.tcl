@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.36  1995/06/23 02:54:19  mjl
+# Revision 1.37  1995/08/22 16:17:53  mjl
+# Inserted a necessary "update".
+#
+# Revision 1.36  1995/06/23  02:54:19  mjl
 # Added resize binding, just experimental but I may want to mess with it
 # again later.
 #
@@ -166,6 +169,7 @@ proc plxframe {w {client_id {}}} {
     plw_create_TopRow $w
     pack append $w \
 	$w.ftop {top fill}
+    update
 
 # Enable keyboard traversal when widget has the input focus.
 # Also grab the initial input focus.
