@@ -1,5 +1,10 @@
-PLplot Installation Notes: Unix-based systems
----------------------------------------------
+PLplot Installation Notes
+=========================
+
+[For MacOS X specific instructions, see the end of this file.]
+
+Unix-based systems
+------------------
 
 For non Unix-based systems, refer to the notes in sys/<system name>.
 
@@ -99,12 +104,12 @@ Example configuration results (edit and run ./config.status to modify):
 
 system:         Linux-2.2.18
 prefix:         /usr/local/bin
-CC:             gcc -c          -O  
-LDC:            gcc    
-CXX:            g++ -c            -O 
-LDCXX:          g++      
-F77:            g77 -c           -O 
-LDF:            g77    
+CC:             gcc -c          -O
+LDC:            gcc
+CXX:            g++ -c            -O
+LDCXX:          g++
+F77:            g77 -c           -O
+LDF:            g77
 INCS:            -I. -I/usr/lib/java//include -I/usr/lib/java//include/linux -I/opt/gnome/include/gtk-1.2 -I/usr/include/glib-1.2 -I/usr/lib/glib/include -I/usr/X11R6/include -I/opt/gnome/include -I/opt/gnome/lib/gnome-libs/include
 LIBS:            -litk3.1 -ltk8.3 -litcl3.1 -ltcl8.3 -L/usr/X11R6/lib -lX11 -ldl -lm -lg2c
 LIB_TAG:        d
@@ -172,7 +177,7 @@ To compile your own programs, there are two ways possible:
    c++  myprog.cc -o myprog  `plplot-config --cflags --libs --with-c++`
    f77  myprog.c -o myprog  `plplot-config --cflags --libs --with-f77`
    cc  myprog.c -o myprog  `plplot-config --cflags --libs --with-tcl`
-   
+
    The last variation of the cc command is required if you are building your
    own extended wish as in examples/tk/xtk??.c where you need to mention the
    tcl/tk headers for the compile step and libplplottcltk for the link step.
@@ -181,18 +186,65 @@ To compile your own programs, there are two ways possible:
 2) Use the pkg-config support, eg:
 
        cc myprog.c -o myprog `pkg-config --cflags --libs <package>`
-   
+
    where <package> is either "plplot" (for single precision) or "plplotd"
    (for double precision).  For C++, Fortran 77, and Tcl/Tk programs,
    <package> should be respectively plplot-c++, plplot-f77, and plplot-tcl
    (for single precision), or plplotd-c++, plplotd-f77, amd plplotd-tcl (for
    double precision).
-   
+
    For getting the PLplot configuration flags in autoconf scripts, use the
    PKG_CHECK_MODULES macro distributed with pkg-config (usually in
    /usr/share/aclocal/pkg.m4) like this:
-   
+
        PKG_CHECK_MODULES(PLPLOT, plplotd >= 5.3)
-   
+
    and the variables PLPLOT_CFLAGS and PLPLOT_LIBS will be set.
 
+
+
+Build Instructions for the MacOS X
+----------------------------------
+
+
+From: Koen van der Drift <kvddrift@earthlink.net>
+Subject: Re: [Plplot-devel] Positive test on the Mac
+Date: Tue, 20 Jan 2004 17:43:45 -0500
+To: "Alan W. Irwin" <irwin@beluga.phys.uvic.ca>
+Cc: PLplot development list <Plplot-devel@lists.sourceforge.net>
+
+
+On Jan 20, 2004, at 11:35 AM, Alan W. Irwin wrote:
+> Koen, could you also give some input on what belongs in the MacOS X
+> documentation?  A listing of all the environment variables you had
+> to set in order to specify header/library locations would be quite
+> useful.  It would be useful to list any other Mac OS X workarounds
+> you had to make as well.
+
+My instructions are based on the installation through fink, which is
+what I recommend :)
+
+Here are the settings I use for fink (where /sw is the prefix - if
+people don't want to use fink, they need to adjust the paths in
+configure to wherever the corresponding files are located):
+
+
+export CFLAGS=-Wno-long-double
+export FLIBS='-L/sw/lib -lfrtbegin -lSystem'
+
+./configure --mandir=/sw/share/man FREETYPELIBDIR=/usr/X11R6/lib
+FREETYPEINCDIR=/usr/X11R6/include/freetype2 TCLLIBDIR=/sw/lib
+TKLIBDIR=/sw/lib GDLIBDIR=/sw/lib
+JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.4.1/
+Home --with-pthreads --with-pkg-config
+
+make
+make install
+
+> Also, is Michel's use of F77="g77 -lcc_dynamic" really necessary or
+> can -lcc_dynamic be specified with FLIBS? I prefer the latter since
+> FLIBS will ultimately be used to transmit the correct linker flags
+> (presumably including -lcc_dynamic) when the AC_F77_LIBRARY_LDFLAGS
+> macro begins to work as documented for the MacOSX platform.
+
+There is no need on my system to use that flag.
