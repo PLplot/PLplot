@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.65  1994/07/15 20:37:12  furnish
+ * Revision 1.66  1994/07/19 22:14:45  furnish
+ * Stuff for pl3poly().
+ *
+ * Revision 1.65  1994/07/15  20:37:12  furnish
  * Added routines pl3line and pl3poin for drawing lines and points in 3
  * space.  Added a new example program, and dependency info to build it.
  *
@@ -480,6 +483,7 @@ typedef struct {
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
+#define    pl3poly      c_pl3poly
 #define    pl3line      c_pl3line
 #define    pl3poin      c_pl3poin
 #define    plpat	c_plpat
@@ -589,6 +593,7 @@ typedef struct {
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
+#define    c_pl3poly    pl3poly
 #define    c_pl3line    pl3line
 #define    c_pl3poin    pl3poin
 #define    c_plpat	plpat
@@ -950,6 +955,9 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
+
+void
+c_pl3poly(PLFLT *x, PLFLT *y, PLFLT *z, PLINT *draw, PLINT n);
 
 void
 c_pl3line(PLFLT *x, PLFLT *y, PLFLT *z, PLINT n);
