@@ -51,7 +51,7 @@ const int x05::NPTS = 2047;
 x05::x05( int argc, char ** argv ) {
   
   int i;
-  PLFLT *data = new double[NPTS];
+  PLFLT *data = new PLFLT[NPTS];
   PLFLT delta;
 
   // plplot initialization
