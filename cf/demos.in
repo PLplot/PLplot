@@ -329,9 +329,9 @@ CXXDEMOS = x01cc$E
 cxxdemos: $(CXXDEMOS)
 
 x01cc$O: x01cc.cc
-	$(CXX) $(CXX_FLAGS_DEMOS) x01cc.c
+	$(CXX) $(CXX_FLAGS_DEMOS) x01cc.cc
 
 x01cc$E:  $(PLLIBS) x01cc$O
 	$(LDCXX) $(LDCXX_FLAGS) $(STARTUP) x01cc$O \
-	       	$(PLLIB_LDC) $(TO) $@ $(LDCXX_LIBS) $(RPATH)
+	       	$(PLLIB_LDCXX) $(TO) $@ $(LDCXX_LIBS) $(RPATH)
 
