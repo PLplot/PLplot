@@ -1,3 +1,13 @@
+plplot (5.2.1-3) unstable; urgency=low
+
+  * Fixed AC_MSG_CHECKING for the Octave prefix in sysloc.in (upstream
+    file).  Also, added the lacking file doc/docbook/docbook.m4 from
+    upstream CVS and regenerated configure with autoconf.
+  * debian/rules: In clean rule, "make distclean" instead of "make clean".
+  * Copied new top-level Makefile.am and Makefile.in from upstream CVS.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sat,  3 May 2003 08:54:18 +0200
+
 plplot (5.2.1-2) unstable; urgency=low
 
   * debian/control: Removed the explicit build-dependencies on libpng-dev,

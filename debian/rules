@@ -61,8 +61,8 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp install-stamp config-stamp debian/files
-	-$(MAKE) clean
-	rm -f config.sub config.guess	
+	-$(MAKE) distclean
+	rm -f config.sub config.guess
 	find . -name config.log -o -name config.status | xargs rm -f
 	dh_clean
 
