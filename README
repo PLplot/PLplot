@@ -94,7 +94,5 @@ CREDITS
 
 PLplot is the result of the effort of many people, so it is impractical to
 list all the contributors.  Those currently supporting and otherwise
-responsible for the package in its present form include:
-
-Joao Cardoso, Vince Darley, Geoffrey Furnish, Alan W. Irwin, Rafael
-Laboissiere, Maurice LeBrun, and Andrew Roach.
+responsible for the package in its present form are given in the AUTHORS
+file.
