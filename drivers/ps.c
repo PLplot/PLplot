@@ -36,11 +36,11 @@ static char  outbuf[128];
 static int text = 0;
 static int color;
 
-static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=0|1)"},
+static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=0|1|2)"},
 			      {"color", DRV_INT, &color, "Use color (color=0|1)"},
 			      {NULL, DRV_INT, NULL, NULL}};
 
-/* text > 0 uses some postscript tricks, namely a transformation matrix
+/* text > 1 uses some postscript tricks, namely a transformation matrix
    that scales, rotates (with slanting) and offsets text strings.
    It has yet some bugs for 3d plots. */
 
@@ -651,178 +651,128 @@ ps_getdate(void)
     return p;
 }
 
-/* this needs to be splited and beaultified! */
+
+/*--------------------------------------------------------------------------*\
+ * proc_str()
+ *
+ * Prints postscript strings.
+ *
+ * 5 Dec 04: Significantly revised by Tom Duck <tom.duck@dal.ca>.
+ *
+\*--------------------------------------------------------------------------*/
+
 void
 proc_str (PLStream *pls, EscText *args)
 {
-  PLFLT *t = args->xform, tt[4];
-  PLFLT a1, alpha, ft_ht, angle, ref;
+  PLFLT *t = args->xform, tt[4]; /* Transform matrices */
+  PLFLT theta, shear;  /* Rotation angle and shear from the matrix */
+  PLFLT ft_ht, offset; /* Font height and offset */
   PSDev *dev = (PSDev *) pls->dev;
   char *font, *ofont, str[128], esc, *strp;
   const char *cur_str;
-  float font_factor = 1.4, up;
+  float font_factor = 1.4;
   int symbol;
-  PLINT clxmin, clxmax, clymin, clymax;
+  PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
 
-  PLFLT scale; /* TJD: Font size scaling parameter */
+  PLFLT scale = 1., up = 0.; /* Font scaling and shifting parameters */
 
-  int i=0; /* TJD: String index */
+  int i=0; /* String index */
 
   /* finish previous polyline */
 
   dev->xold = PL_UNDEFINED;
   dev->yold = PL_UNDEFINED;
 
-  /* font height */
-
+  /* Determine the font height */
   ft_ht = pls->chrht * 72.0/25.4; /* ft_ht in points, ht is in mm */
 
-  /* correct font size when zooming */
-  /* fprintf(stderr,"%f %f\n", pls->dipxax, pls->dipyay); */
-  
-  /* calculate baseline text angle */
-
-  /* TJD: In the next line I changed the sign from - to + so that text
-   * prints out correctly when in portrait mode.
+  /*
+   * Choose the font family, series and shape. Currently not fully 
+   * supported by plplot
+   *
+   * For plplot:
+   *   1: Normal font
+   *   2: Roman font
+   *   3: Italic font
+   *   4: cursive
    */
-  angle = ((PLFLT)(ORIENTATION-1) + pls->diorot) * 90.; 
-  a1 = acos(t[0]) * 180. / PI;
-  if (t[2] > 0.)
-    alpha = a1 - angle;
-  else
-    alpha = 360. - a1 - angle;
+  switch (pls->cfont) {
+    case 1: ofont = "Helvetica"; break;
+    case 2: ofont = "Times-Roman"; break;
+    case 3: ofont = "Times-Italic"; break;
+    case 4: ofont = "ZapfChancery"; break; /* there is no script (cursive) 
+					    * font in the standard 35 
+					    * postscript fonts.  
+					    * ZapfChancery is the 
+					    * fanciest. 
+					    */
+    default:  ofont = "Helvetica";
+  }
+
+  /* The transform matrix has only rotations and shears; extract them */
+  theta = acos(t[0]) * 180. / PI;  /* Determine the rotation (in degrees)... */
+  if (t[2] < 0.) theta *= -1.;     /* ... and sign ... */
+  if(cos(theta*PI/180.)<0.000001)  /* ... and shear */
+    shear = t[3]/sin(theta*PI/180.);
+  else shear = (t[1]+sin(theta*PI/180.))/cos(theta*PI/180.); 
 
   /* 
-   * Reference point (center baseline of string)
-   *  If base = 0, it is aligned with the center of the text box
-   *  If base = 1, it is aligned with the baseline of the text box
-   *  If base = 2, it is aligned with the top of the text box
-   *  Currently plplot only uses base=0
-   *  postscript use base=1
+   * Reference point conventions:
+   *   If base = 0, it is aligned with the center of the text box
+   *   If base = 1, it is aligned with the baseline of the text box
+   *   If base = 2, it is aligned with the top of the text box
+   *
+   * Currently plplot only uses base=0
+   * Postscript uses base=1
+   *
+   * We must calculate the difference between the two and apply the offset.
    */ 
 
   if (args->base == 2) /* not supported by plplot */
-    ref = ENLARGE * ft_ht / 2.; /* half font height */
+    offset = font_factor*ENLARGE * ft_ht / 2.; /* half font height */
   else if (args->base == 1)
-    ref = 0.;
+    offset = 0.;
   else
-    ref = -ENLARGE * ft_ht / 2.;
+    offset = -font_factor*ENLARGE * ft_ht / 2.;
 
-  /* apply transformations */
+  args->y += offset;
 
+  /* Apply plplot difilt transformations */
   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
 
-  /* check clip limits. For now, only the reference point of the string is checked;
-     but the the whole string should be checked -- using a postscript construct
-     such as gsave/clip/grestore. This method can also be applied to the xfig and
-     pstex drivers. Zoom side effect: the font size must be adjusted! */
+  /* ps driver is rotated by default */
+  plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, 
+	   &(args->x), &(args->y));
 
-  if ( args->x < clxmin || args->x > clxmax || args->y < clymin || args->y > clymax)
-    return;
+  /* Make adjustments for page orientation */
+  if(pls->diorot==0) theta+=90.;
+  if(pls->diorot==2) theta-=90.;
+  if(pls->diorot==3) theta-=180.;
 
-  /* rotate point in postscript is lower left corner, compensate */
-
-  args->y -=  ref * cos(alpha * PI/180.);
-  args->x +=  ref * sin(alpha * PI/180.);
-
-  /* ps driver is rotated by default, compensate */
-
-  plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &(args->x), &(args->y));
-
-  /*
-   *  font family, serie and shape. Currently not fully supported by plplot
-   *
-   *  Use Postscript Times
-   *  1: Normal font
-   *  2: Roman font
-   *  3: Italic font
-   *  4: cursive
-   */
-
-  switch (pls->cfont) {
-  case 1: ofont = "Helvetica"; break;
-  case 2: ofont = "Times-Roman"; break;
-  case 3: ofont = "Times-Italic"; break;
-  case 4: ofont = "ZapfChancery"; break; /* there is no script (cursive) font in the standard 35 postscript fonts.  ZapfChancery is the fanciest. */
-  default:  ofont = "Helvetica";
-  }
+  /* Output */
 
   plgesc(&esc);
 
   cur_str = args->string;
 
   /* move to string reference point */
-
   fprintf(OF, " %d %d M\n", args->x, args->y );
 
-  /* set string rotation */
+  /* Save the current position and set the string rotation */
+  fprintf(OF, "gsave %.3f R\n",theta);
 
-  if (text) 
-    fprintf(OF, "gsave %.3f R\n", alpha - 90.);  
-  else {
-    /* I really don't understand this! The angle should be increased by
-     * 90 degrees, only, as the ps driver has a default orientation of 
-     * landscape, see plRotPhy(ORIENTATION,...) above */
-
-    /* AWI further comment.  Actually, the traditional value of ORIENTATION
-     * was 1 corresponding to seascape which may have contributed to the
-     * confusion.  I have now changed that in plplotP.h
-     * to be 3 corresponding to landscape.  I have proved the above change
-     * to the definition of angle works both with ORIENTATION of 1 and 3
-     * for text == 1 and not.  */
-
-    if (fmod(angle, 180.) == 0.)
-      angle += 90.;
-    else
-      angle -= 90.;
-    
-    angle = angle*PI/180.;
-    tt[0] = t[0]; tt[1] = t[1]; tt[2] = t[2]; tt[3] = t[3];
-    /* fprintf(OF,"%% %.1f %.1f %.1f %.1f:\n", t[0], t[1], t[2], t[3]);*/
-
-    /* add graph orientation angle to rotation matrix */
-
-    t[0] =  tt[0]*cos(angle) + tt[1]*sin(angle);
-    t[1] = -tt[0]*sin(angle) + tt[1]*cos(angle);
-    t[2] =  tt[2]*cos(angle) + tt[3]*sin(angle);
-    t[3] = -tt[2]*sin(angle) + tt[3]*cos(angle);
-
-    /* correct for vertically slanted, but baseline inclined, text
-       (as seen in 3d axis labels/ticks) */
-
-    if (tt[0] == 0. && tt[2] == 1.) {
-      tt[1] = t[1];
-      t[1] = -t[2];
-      t[2] = -tt[1];
-    }
-    else if (tt[1] == 0. && tt[3] == 1.) {
-      tt[0] = t[0];
-      t[0] = t[3];
-      t[3] = tt[0];
-    }
-    fprintf(OF, "gsave\n");
-  }
-
-  /* Purge escape sequences from string, so that postscript can find it's length.
-     The string length is computed with the current font, and can thus be wrong
-     if there are font change escape sequences in the string */
+  /* Purge escape sequences from string, so that postscript can find it's 
+   * length.  The string length is computed with the current font, and can
+   * thus be wrong if there are font change escape sequences in the string 
+   */
 
   esc_purge(str, args->string);
 
-  if (text)
-    fprintf(OF, "/%s %.1f SF\n", ofont, font_factor * ENLARGE * ft_ht);
-  else {
-    fprintf(OF, "/%s [%.3f %.3f %.3f %.3f 0 0] SF\n", ofont,
-	    font_factor * ENLARGE * ft_ht * t[0],
-	    font_factor * ENLARGE * ft_ht * t[2],
-	    font_factor * ENLARGE * ft_ht * t[1],
-	    font_factor * ENLARGE * ft_ht * t[3]);
-  }
+  fprintf(OF, "/%s %.3f SF\n", ofont,font_factor * ENLARGE * ft_ht);    
 
-  /* move to start point, taking justification into account */
-
-  /* TJD: Changed so that brackets are written as \( and \) */
-  /* fprintf(OF, "%.3f (%s) SW\n", - args->just, str); */
+  /* Output string, writing brackets as \( and \); this string is
+   * output for measurement purposes only.
+   */
   fprintf(OF, "%.3f (", - args->just);
   while (str[i]!='\0') {
     if (str[i]=='(') fprintf(OF,"\\(");
@@ -833,18 +783,15 @@ proc_str (PLStream *pls, EscText *args)
     i++;
   }
   fprintf(OF,") SW\n");
-   
 
 
-  /* parse string for escape sequences */
-
-  scale = 1.;  /* TJD: Default scaling parameter */
+  /* Parse string for escape sequences and print everything out */
 
   do {
+
     strp = str;
     font = ofont;
     symbol = 0;
-    up = 0.;
 
     if (*cur_str == esc) {
       cur_str++;
@@ -854,27 +801,34 @@ proc_str (PLStream *pls, EscText *args)
       }
       else switch (*cur_str) {
 
-      case 'f':
+        case 'f':
 	cur_str++;
 	switch (*cur_str) {
 	case 'n': font = "Helvetica"; break;
 	case 'r': font = "Times-Roman"; break;
 	case 'i': font = "Times-Italic"; break;
-	case 's': font = "ZapfChancery"; break;  /* there is no script (cursive) font in the standard 35 postscript fonts.  ZapfChancery is the fanciest. */
+	case 's': font = "ZapfChancery"; break;  /* there is no script
+						  * (cursive) font in the 
+						  * standard 35 postscript 
+						  * fonts.  ZapfChancery is 
+						  * the fanciest. 
+						  */
 	default:  font = "Helvetica";
 	}
 	cur_str++;
 	break;
 
       case 'd':
-	up = - font_factor * ENLARGE * ft_ht / 2.;
-	scale = 0.8;  /* TJD: Subscript scaling parameter */
+	if(up>0.) scale *= 1.25;  /* Subscript scaling parameter */
+	else scale *= 0.8;  /* Subscript scaling parameter */
+	up -= font_factor * ENLARGE * ft_ht / 2.;
 	cur_str++;
 	break;
 
       case 'u':
-	up = font_factor * ENLARGE * ft_ht / 2.;
-	scale = 0.8;  /* TJD: Superscript scaling parameter */
+	if(up<0.) scale *= 1.25;  /* Subscript scaling parameter */
+	else scale *= 0.8;  /* Subscript scaling parameter */
+	up += font_factor * ENLARGE * ft_ht / 2.;
 	cur_str++;
 	break;
 
@@ -902,8 +856,9 @@ proc_str (PLStream *pls, EscText *args)
       }
     }
 
-    /* copy from current to next token, adding a postscript escape char \ if necessary */
-
+    /* copy from current to next token, adding a postscript escape 
+     * char \ if necessary 
+     */
     while(!symbol && *cur_str && *cur_str != esc) {
       if (*cur_str == '(' || *cur_str == ')')
 	*strp++ = '\\';
@@ -911,33 +866,24 @@ proc_str (PLStream *pls, EscText *args)
     }
     *strp = '\0';
 
-    if (text)
+    if(fabs(up)<0.001) up = 0.; /* Watch out for small differences */
 
-      /* TJD: Include font scaling for superscripts and subscripts */
-      fprintf(OF, "/%s %.1f SF\n", font, font_factor * ENLARGE * ft_ht * scale);    
-    else {
-      fprintf(OF, "/%s [%.3f %.3f %.3f %.3f %.3f %.3f] SF\n", font,
-	      font_factor * ENLARGE * ft_ht * t[0],
-	      font_factor * ENLARGE * ft_ht * t[2],
-	      font_factor * ENLARGE * ft_ht * t[1],
-	      font_factor * ENLARGE * ft_ht * t[3],
-	      -fabs(up)*sin(angle), fabs(up)*cos(angle));
-    }
+    /* Apply the scaling and the shear */
+    fprintf(OF, "/%s [%.3f 0 %.3f %.3f 0 0] SF\n",
+	    ofont,
+	    font_factor * ENLARGE * ft_ht * scale,
+	    shear * font_factor * ENLARGE * ft_ht * scale,
+	    font_factor * ENLARGE * ft_ht * scale);
 
     /* if up/down escape sequences, save current point and adjust baseline */
 
-    if (text && up)
-      fprintf(OF, "0 %.3f rmoveto gsave\n", up);
+    if(up!=0.) fprintf(OF, "gsave 0 %.3f rmoveto\n", up);
 
     /* print the string */
-
     fprintf(OF, "(%s) show\n", str);  
 
-
     /* back to baseline */
-
-    if (text && up)
-      fprintf(OF, "grestore (%s) stringwidth rmoveto\n", str);
+    if (up!=0.) fprintf(OF, "grestore (%s) stringwidth rmoveto\n", str);
 
   }while(*cur_str);
 
