@@ -84,6 +84,8 @@ CDEMO_HEADERS	= plplot/plcdemos.h plplot/plplot.h
 
 # Default is to build library(s) and utils.
 
+DYNLOAD_STUFF := dynamic_drivers_target
+
 everything: libs plrender$E pltek$E $(PYTHON_EXE) $(PYQT_PYTHON_EXE) \
 	$(TCL_EXE) $(TK_EXE) $(OCTAVE_EXE) \
 	$(DYNLOAD_STUFF) $(JAVA_STUFF)
