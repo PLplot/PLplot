@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------
 # $Id$
-# 
+#
 # Maurice LeBrun
 # IFS, University of Texas at Austin
 # 14-Jul-1994
@@ -61,13 +61,13 @@ sccont$O:	plstubs.h plplotP.h plplot.h sccont.c
 # Special stuff here to define the "extra" graphics library defines
 # for TIF, bitmap, and JPEG
 
-gnusvga$O:	gnusvga.c plplot/plDevs.h plplot/plplotP.h \
- plplot/plConfig.h plplot/plplot.h plplot/plstrm.h plplot/pdf.h \
- plplot/pldebug.h plplot/drivers.h
+gnusvga$O:	gnusvga.c plDevs.h plplotP.h \
+ plConfig.h plplot.h plstrm.h pdf.h \
+ pldebug.h drivers.h
 	$(CC) $(CC_FLAGS) $(CC_FLAGS_GNUSVGA_BMP) $(CC_FLAGS_GNUSVGA_TIFF) $(CC_FLAGS_GNUSVGA_JPEG) gnusvga.c
 
-plcore$O:	plcore.c plplot/plcore.h plplot/plplotP.h plplot/plConfig.h \
- plplot/plplot.h plplot/plstrm.h plplot/pdf.h plplot/drivers.h \
- plplot/plDevs.h plplot/pldebug.h
+plcore$O:	plcore.c plcore.h plplotP.h plConfig.h \
+ plplot.h plstrm.h pdf.h drivers.h \
+ plDevs.h pldebug.h
 	$(CC) $(CC_FLAGS) $(CC_FLAGS_GNUSVGA_BMP) $(CC_FLAGS_GNUSVGA_TIFF) $(CC_FLAGS_GNUSVGA_JPEG) plcore.c
 

@@ -69,4 +69,4 @@
 #undef BIN_DIR
 #undef TCL_DIR
 
-#ifndef PLPLOT_VERSION
+#ifndef VERSION

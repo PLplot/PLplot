@@ -135,29 +135,29 @@ endif
 links: linkmain
 
 linkmain:
-	mkdir plplot
+#	mkdir plplot
 	copy ..\..\..\..\src\*.c .
-	copy ..\..\..\..\include\*.h .\plplot
+	copy ..\..\..\..\include\*.h .
 	copy ..\..\..\..\drivers\*.c .
 #	copy ..\..\..\..\fonts\*.* .
 	copy ..\..\..\..\utils\*.* .
 	copy ..\..\..\..\lib\*.fnt .
 	copy ..\src\*.* .
-	copy ..\cf\*.h .\plplot
+	copy ..\cf\*.h .
 
-	copy ..\cf\plconfig.in .\plplot\plconfig.h
-	echo >>.\plplot\plconfig.h "#define PLPLOT_VERSION \"$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)\""
-	echo >>.\plplot\plconfig.h "#endif"
-	echo >>.\plplot\plconfig.h "#endif	/* __PLCONFIG_H__ */"
+	copy ..\cf\plconfig.in .\plconfig.h
+	echo >>.\plconfig.h "#define VERSION \"$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)\""
+	echo >>.\plconfig.h "#endif"
+	echo >>.\plconfig.h "#endif	/* __PLCONFIG_H__ */"
 
 	utod *.c
-	utod ./plplot/*.h
+	utod *.h
 
 linkexamples:
 	copy ..\..\..\..\examples\c\*.c .
 	utod x*.c
-	copy ..\..\..\..\examples\c\*.h .\plplot
-	utod ./plplot/*demos.h
+	copy ..\..\..\..\examples\c\*.h .
+	utod *.h
 #	copy ..\..\..\..\examples\f77\*.f .
 
 install_includes:
@@ -167,28 +167,27 @@ install_includes:
 move: movemain
 
 movemain:
-	mkdir plplot
 	move ../../../../src/*.c .
-	copy ..\..\..\..\include\*.h .\plplot
+	copy ..\..\..\..\include\*.h .
 	move ../../../../drivers/*.c .
 	move ../../../../utils/*.* .
 	copy ..\..\..\..\lib\*.fnt .
 	move ../src/*.* .
-	copy ..\cf\*.h .\plplot
+	copy ..\cf\*.h .
 
-	copy ..\cf\plconfig.in .\plplot\plconfig.h
-	echo >>.\plplot\plconfig.h "#define PLPLOT_VERSION \"$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)\""
-	echo >>.\plplot\plconfig.h "#endif"
-	echo >>.\plplot\plconfig.h "#endif	/* __PLCONFIG_H__ */"
+	copy ..\cf\plconfig.in .\plconfig.h
+	echo >>.\plconfig.h "#define VERSION \"$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)\""
+	echo >>.\plconfig.h "#endif"
+	echo >>.\plconfig.h "#endif	/* __PLCONFIG_H__ */"
 
 	utod *.c
-	utod ./plplot/*.h
+	utod *.h
 
 moveexamples:
 	move ../../../../examples/c/*.c .
 	utod x*.c
-	move ../../../../examples/c/*.h ./plplot
-	utod ./plplot/*demos.h
+	move ../../../../examples/c/*.h .
+	utod *.h
 
 ifdef GRX_DO_BMP
 CC_FLAGS_GNUSVGA_BMP =-DGRX_DO_BMP
