@@ -20,10 +20,11 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 if enable_dyndrivers
-SUBDIRS = libltdl src include lib bindings drivers examples test utils scripts
-else
-SUBDIRS = libltdl drivers src include lib bindings examples test utils scripts
+DRIVERSDIR = drivers
 endif
+
+SUBDIRS = libltdl src include lib bindings $(DRIVERSDIR) examples \
+          test utils scripts doc
 
 bin_SCRIPTS = plplot_libtool
 

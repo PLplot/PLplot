@@ -454,6 +454,7 @@ AC_SUBST(LIBLTDL)
 
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
+
 MY_ARG_WITH(freetype,
   [  --with-freetype         enable driver options for using freetype library for fonts ($with_freetype)])
 
@@ -844,6 +845,7 @@ AC_OUTPUT([
 	test/plplot-test.sh
 	utils/Makefile
 	scripts/Makefile
+	doc/Makefile	
 	plplot.pc
 	plplot-double.pc
 	])
