@@ -653,7 +653,7 @@ digits	PLINT
 # Set y axis labeling parameters.
 
 pltclcmd plsyax void
-digmax	PLINT
+digmax	PLINT	Def: 0
 digits	PLINT	Def: 0
 
 # Plots array y against x for n points using Hershey symbol "code".

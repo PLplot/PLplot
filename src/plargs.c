@@ -1242,7 +1242,7 @@ int
 plParseDrvOpts(DrvOpt *acc_opt) {
   DrvOptCmd *drvp;
   DrvOpt *t;
-  int fl, st;
+  int fl;
   char msg[80];
 
   if (!drv_opt.option)
@@ -1264,7 +1264,7 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 	  break;
 
 	case DRV_INT:
-	  if ((st = sscanf(drvp->value, "%d", (char *)t->var_ptr)) != 1) {
+	  if (sscanf(drvp->value, "%d", (int *)t->var_ptr) != 1) {
 	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
 	    plexit(msg);
 	  }
@@ -1274,7 +1274,7 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 	  break;
 
 	case DRV_FLT:
-	  if ((st = sscanf(drvp->value, "%f", (char *)t->var_ptr)) != 1) {
+	  if (sscanf(drvp->value, "%f", (float *)t->var_ptr) != 1) {
 	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
 	    plexit(msg);
 	  }
@@ -1294,7 +1294,8 @@ plParseDrvOpts(DrvOpt *acc_opt) {
       plexit(""); 
     }
   }
-  while(drvp = drvp->next);
+  while((drvp = drvp->next))
+      ;
 
   return 0;
 }
@@ -1703,7 +1704,7 @@ opt_drvopt(char *opt, char *optarg, void *client_data)
   drvp = &drv_opt;
   *option = *value = '\0';
   tt = option;
-    while(t = *optarg++) {
+    while((t = *optarg++)) {
       switch (t) {
       case ',':
 	if (fl)

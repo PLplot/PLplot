@@ -2819,7 +2819,7 @@ DrawImage(PLStream *pls)
 
   XwDev *dev = (XwDev *) pls->dev;
   XwDisplay *xwd = (XwDisplay *) dev->xwd;
-  XImage *ximg;
+  XImage *ximg = NULL;
   XColor curcolor;
   PLINT xmin, xmax, ymin, ymax, icol1;
 
