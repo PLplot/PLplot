@@ -426,7 +426,11 @@ fi
 # ----------------------------------------------------------------------------
 
 PLLIB_NAME=plplot
-MATLIB_NAME=tclmatrix
+if test "$enable_tcl" = "yes"; then
+    MATLIB_NAME=tclmatrix
+else
+    MATLIB_NAME=""
+fi    
 CXXLIB_NAME=plcxx
 
 AC_SUBST(PLLIB_NAME)

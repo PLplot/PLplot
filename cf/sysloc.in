@@ -972,7 +972,7 @@ if test "$with_shlib" = "yes"; then
 	    LDSHARED='gcc -fPIC -shared'
 	    if test "$with_rpath" = "yes" ; then
 	        RPATH="-Wl,-rpath -Wl,$srcdir/tmp"
-	        INSTALL_RPATH="-Wl,-rpath -Wl,$prefix/lib"
+	        INSTALL_RPATH="-Wl,-rpath,$prefix/lib"
 	    else
 	        RPATH=
 	        INSTALL_RPATH=
