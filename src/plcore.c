@@ -1,9 +1,21 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/04/26 19:57:58  mjl
-   Fixes to allow (once again) output to stdout and plrender to function as
-   a filter.  A type flag was added to handle file vs stream differences.
+   Revision 1.11  1993/07/01 22:25:16  mjl
+   Changed all plplot source files to include plplotP.h (private) rather than
+   plplot.h.  Rationalized namespace -- all externally-visible internal
+   plplot functions now start with "plP_".  Moved functions plend() and plend1()
+   to here.  Added driver interface layer -- sits between the plplot library
+   calls and the driver to filter the data in various ways, such as to support
+   zooms, page margins, orientation changes, etc.  Changed line and polyline
+   draw functions to go through this layer.  Changed all references to the
+   current plplot stream to be through "plsc", which is set to the location of
+   the current stream (now dynamically allocated).  A table of stream pointers
+   (max of 100) is kept to allow switching between streams as before.
 
+ * Revision 1.10  1993/04/26  19:57:58  mjl
+ * Fixes to allow (once again) output to stdout and plrender to function as
+ * a filter.  A type flag was added to handle file vs stream differences.
+ *
  * Revision 1.9  1993/03/19  20:58:13  mjl
  * Added code to check if user has passed a NULL to plsdev or plstart.
  *
@@ -27,7 +39,7 @@
  * Added plgver() for retrieving plplot library version.
  *
  * Revision 1.3  1993/02/25  18:31:36  mjl
- * Changed the order of driver calls on a grclr().  The plot buffer clear
+ * Changed the order of driver calls on a plP_clr().  The plot buffer clear
  * must come first.
  *
  * Revision 1.2  1993/02/23  05:11:44  mjl
@@ -91,132 +103,398 @@
 
 #include "plcore.h"
 
-static void	GetDev(void);
+/* Local data */
 
+static PLINT xscl[PL_MAXPOLYLINE], yscl[PL_MAXPOLYLINE];
+static PLINT xscl1[PL_MAXPOLYLINE], yscl1[PL_MAXPOLYLINE];
+
+/* Static function prototypes */
+
+static void	plGetDev	(void);
+static void	grline		(short *, short *, PLINT);
+static void	grpolyline	(short *, short *, PLINT);
+static void	difilt		(PLINT *, PLINT *, PLINT,
+				 PLINT *, PLINT *, PLINT *, PLINT *);
 /*----------------------------------------------------------------------*\
-* Driver calls
+* PLPLOT-Driver interface.
 *
-* Each call is followed by the appropriate plot buffer call.  If the target
-* device has enabled the plot buffer, this will result in a record of the
-* current page being stored in the plot buffer (which can be "replayed" to
-* handle screen refresh, resize, dumps, etc).
-
-* Each call that actually plots something (versus just changing state)
-* is preceded by a test to see if a newpage command has been deferred.
-* This is the only way to prevent extraneous newpage commands while
-* retaining a user-friendly page advance mechanism.
+* These routines are the low-level interface to the driver -- all calls
+* to driver functions must pass through here.  For implementing driver-
+* specific functions, the escape function is provided.  The command stream
+* gets duplicated to the plot buffer here.
+*
+* All functions that result in graphics actually being plotted (rather
+* than just a change of state) are filtered as necessary before being
+* passed on.  The default settings do not require any filtering, i.e.
+* plplot physical coordinates are the same as the device physical
+* coordinates (currently this can't be changed anyway), and a global view
+* equal to the entire page is used.
+*
+* The reason one wants to put view-specific filtering here is that if
+* enabled, the plot buffer should receive the unfiltered data stream.
+* This allows a specific view to be used from an interactive device
+* (e.g. TCL/TK driver) but be restored to the full view at any time
+* merely by reprocessing the contents of the plot buffer.
+*
+* The metafile, on the other hand, *should* be affected by changes in the
+* view, since this is a crucial editing capability.  It is recommended
+* that the initial metafile be created without a restricted global view,
+* and modification of the view done on a per-plot basis as desired during
+* subsequent processing.
 *
 \*----------------------------------------------------------------------*/
 
 /* Initialize device. */
+/* The plot buffer must be called last */
 
 void
-grinit(void)
+plP_init(void)
 {
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_init) (&pls[ipls]);
-    plbuf_init(&pls[ipls]);
-}
-
-/* Draw line between two points */
-
-void
-grline(short x1, short y1, short x2, short y2)
-{
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_line) (&pls[ipls], x1, y1, x2, y2);
-    plbuf_line(&pls[ipls], x1, y1, x2, y2);
-}
-
-/* Draw polyline */
-
-void
-grpolyline(short *x, short *y, PLINT npts)
-{
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_polyline) (&pls[ipls], x, y, npts);
-    plbuf_polyline(&pls[ipls], x, y, npts);
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_init) (plsc);
+    plbuf_init(plsc);
 }
 
 /* End of page (used to be "clear screen"). */
-/* Here the plot buffer call must be made first */
+/* The plot buffer must be called first */
 
 void
-grclr(void)
+plP_clr(void)
 {
-    plbuf_eop(&pls[ipls]);
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_eop) (&pls[ipls]);
+    plbuf_eop(plsc);
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_eop) (plsc);
 }
 
 /* Set up new page. */
+/* The plot buffer must be called last */
 
 void
-grpage(void)
+plP_page(void)
 {
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_bop) (&pls[ipls]);
-    plbuf_bop(&pls[ipls]);
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_bop) (plsc);
+    plbuf_bop(plsc);
 }
 
 /* Tidy up device (flush buffers, close file, etc.) */
 
 void
-grtidy(void)
+plP_tidy(void)
 {
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_tidy) (&pls[ipls]);
-    plbuf_tidy(&pls[ipls]);
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_tidy) (plsc);
+    plbuf_tidy(plsc);
 }
 
 /* Change pen color. */
 
 void
-grcol(void)
+plP_col(void)
 {
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_color) (&pls[ipls]);
-    plbuf_color(&pls[ipls]);
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_color) (plsc);
+    plbuf_color(plsc);
 }
 
 /* Switch to text mode (or screen). */
 
 void
-grtext(void)
+plP_text(void)
 {
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_text) (&pls[ipls]);
-    plbuf_text(&pls[ipls]);
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_text) (plsc);
+    plbuf_text(plsc);
 }
 
 /* Switch to graphics mode (or screen). */
 
 void
-grgra(void)
+plP_gra(void)
 {
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_graph) (&pls[ipls]);
-    plbuf_graph(&pls[ipls]);
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_graph) (plsc);
+    plbuf_graph(plsc);
 }
 
 /* Set pen width. */
 
 void
-grwid(void)
+plP_wid(void)
 {
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_width) (&pls[ipls]);
-    plbuf_width(&pls[ipls]);
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_width) (plsc);
+    plbuf_width(plsc);
 }
 
 /* Escape function, for driver-specific commands. */
 
 void
-gresc(PLINT op, char *ptr)
+plP_esc(PLINT op, void *ptr)
 {
-    offset = pls[ipls].device - 1;
-    (*dispatch_table[offset].pl_esc) (&pls[ipls], op, ptr);
-    plbuf_esc(&pls[ipls], op, ptr);
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_esc) (plsc, op, ptr);
+    plbuf_esc(plsc, op, ptr);
+}
+
+/*----------------------------------------------------------------------*\
+* Line and polyline
+\*----------------------------------------------------------------------*/
+
+/* Draw line between two points */
+/* The plot buffer must be called first */
+
+void
+plP_line(short *x, short *y)
+{
+    PLINT npts = 2;
+    PLINT i, clpxmi, clpxma, clpymi, clpyma;
+
+    plbuf_line(plsc, x[0], y[0], x[1], y[1]);
+    if (plsc->diplt | plsc->didev | plsc->diori) {
+	for (i = 0; i < npts; i++) {
+	    xscl[i] = x[i];
+	    yscl[i] = y[i];
+	}
+	difilt(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma);
+	plP_pllclp(xscl, yscl, npts, clpxmi, clpxma, clpymi, clpyma, grline);
+    }
+    else {
+	grline(x, y, npts);
+    }
+}
+
+/* Draw polyline */
+/* The plot buffer must be called first */
+
+void
+plP_polyline(short *x, short *y, PLINT npts)
+{
+    PLINT i, clpxmi, clpxma, clpymi, clpyma;
+
+    plbuf_polyline(plsc, x, y, npts);
+    if (plsc->diplt | plsc->didev | plsc->diori) {
+	for (i = 0; i < npts; i++) {
+	    xscl[i] = x[i];
+	    yscl[i] = y[i];
+	}
+	difilt(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma);
+	plP_pllclp(xscl, yscl, npts, clpxmi, clpxma, clpymi, clpyma,
+		   grpolyline);
+    }
+    else {
+	grpolyline(x, y, npts);
+    }
+}
+
+static void
+grline(short *x, short *y, PLINT npts)
+{
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_line) (plsc, x[0], y[0], x[1], y[1]);
+}
+
+static void
+grpolyline(short *x, short *y, PLINT npts)
+{
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_polyline) (plsc, x, y, npts);
+}
+
+/*----------------------------------------------------------------------*\
+* Driver interface filters and initialization functions.
+\*----------------------------------------------------------------------*/
+
+static void
+difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
+       PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma)
+{
+    PLINT i;
+    PLINT clpxmi1, clpxma1, clpymi1, clpyma1;
+
+    clpxmi1 = plsc->phyxmi;
+    clpxma1 = plsc->phyxma;
+    clpymi1 = plsc->phyymi;
+    clpyma1 = plsc->phyyma;
+
+    if (plsc->diplt) {
+	for (i = 0; i < npts; i++) {
+	    xscl[i] = plsc->dipxax * xscl[i] + plsc->dipxb;
+	    yscl[i] = plsc->dipyay * yscl[i] + plsc->dipyb;
+	}
+    }
+
+    if (plsc->diori) {
+
+	for (i = 0; i < npts; i++) {
+	    xscl1[i] = plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] +
+		plsc->dioxb;
+	    yscl1[i] = plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] +
+		plsc->dioyb;
+	}
+	for (i = 0; i < npts; i++) {
+	    xscl[i] = xscl1[i];
+	    yscl[i] = yscl1[i];
+	}
+    }
+
+    if (plsc->didev) {
+	clpxmi1 = plsc->didxax * clpxmi1 + plsc->didxb;
+	clpxma1 = plsc->didxax * clpxma1 + plsc->didxb;
+	clpymi1 = plsc->didyay * clpymi1 + plsc->didyb;
+	clpyma1 = plsc->didyay * clpyma1 + plsc->didyb;
+	for (i = 0; i < npts; i++) {
+	    xscl[i] = plsc->didxax * xscl[i] + plsc->didxb;
+	    yscl[i] = plsc->didyay * yscl[i] + plsc->didyb;
+	}
+    }
+
+    *clpxmi = clpxmi1;
+    *clpxma = clpxma1;
+    *clpymi = clpymi1;
+    *clpyma = clpyma1;
+}
+
+/* The following functions initialize the driver interface */
+
+/* Set window into plot space */
+
+void
+c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
+{
+    PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
+
+    if (plsc->level < 1)
+	plexit("plsdiplt: Please call plinit first.");
+
+    if (xmin == 0. && xmax == 1. && ymin == 0. && ymax == 1.) {
+	plsc->diplt = 0;
+	return;
+    }
+
+    plsc->diplt = 1;
+
+    plsc->dipxmin = (xmin < xmax) ? xmin : xmax;
+    plsc->dipxmax = (xmin < xmax) ? xmax : xmin;
+    plsc->dipymin = (ymin < ymax) ? ymin : ymax;
+    plsc->dipymax = (ymin < ymax) ? ymax : ymin;
+
+    pxmin = plsc->dipxmin * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
+    pxmax = plsc->dipxmax * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
+    pymin = plsc->dipymin * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
+    pymax = plsc->dipymax * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
+
+    pxlen = pxmax - pxmin;
+    pylen = pymax - pymin;
+    pxlen = MAX(1, pxlen);
+    pylen = MAX(1, pylen);
+
+    plsc->dipxax = (double) (plsc->phyxma - plsc->phyxmi) / (double) pxlen;
+    plsc->dipyay = (double) (plsc->phyyma - plsc->phyymi) / (double) pylen;
+    plsc->dipxb = plsc->phyxmi - plsc->dipxax * pxmin;
+    plsc->dipyb = plsc->phyymi - plsc->dipyay * pymin;
+}
+
+/* Set window into plot space incrementally (zoom) */
+
+void
+c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
+{
+    if (plsc->level < 1)
+	plexit("plsdiplz: Please call plinit first.");
+
+    if (plsc->diplt != 0) {
+	xmin = plsc->dipxmin + (plsc->dipxmax - plsc->dipxmin) * xmin;
+	ymin = plsc->dipymin + (plsc->dipymax - plsc->dipymin) * ymin;
+	xmax = plsc->dipxmin + (plsc->dipxmax - plsc->dipxmin) * xmax;
+	ymax = plsc->dipymin + (plsc->dipymax - plsc->dipymin) * ymax;
+    }
+
+    plsdiplt(xmin, ymin, xmax, ymax);
+}
+
+/* Set window into device space */
+/* This is precisely the inverse of the last. */
+
+void
+c_plsdidev(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
+{
+    PLFLT wxmin, wxmax, wymin, wymax;
+    PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
+
+    if (plsc->level < 1)
+	plexit("plsdidev: Please call plinit first.");
+
+    if (xmin == 0. && xmax == 1. && ymin == 0. && ymax == 1.) {
+	plsc->didev = 0;
+	return;
+    }
+
+    plsc->didev = 1;
+
+    wxmin = (xmin < xmax) ? xmin : xmax;
+    wxmax = (xmin < xmax) ? xmax : xmin;
+    wymin = (ymin < ymax) ? ymin : ymax;
+    wymax = (ymin < ymax) ? ymax : ymin;
+
+    pxmin = wxmin * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
+    pxmax = wxmax * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
+    pymin = wymin * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
+    pymax = wymax * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
+
+    pxlen = pxmax - pxmin;
+    pylen = pymax - pymin;
+    pxlen = MAX(1, pxlen);
+    pylen = MAX(1, pylen);
+
+    plsc->didxax = (double) pxlen / (double) (plsc->phyxma - plsc->phyxmi);
+    plsc->didyay = (double) pylen / (double) (plsc->phyyma - plsc->phyymi);
+    plsc->didxb = pxmin - plsc->didxax * plsc->phyxmi;
+    plsc->didyb = pymin - plsc->didyay * plsc->phyymi;
+}
+
+/* Set plot orientation */
+/* Input is the multiplier by pi/2 to get the rotation (4 = full rotation). */
+
+#define PI    3.1415926535897932384
+
+void
+c_plsdiori(PLFLT rot)
+{
+    PLFLT r11, r21, r12, r22, x0, y0, lx, ly;
+
+    if (plsc->level < 1)
+	plexit("plsdiori: Please call plinit first.");
+
+    if (rot == 0.) {
+	plsc->diori = 0;
+	return;
+    }
+
+    plsc->diori = 1;
+
+    x0 = (plsc->phyxma + plsc->phyxmi)/2.;
+    y0 = (plsc->phyyma + plsc->phyymi)/2.;
+
+    lx = plsc->phyxma - plsc->phyxmi;
+    ly = plsc->phyyma - plsc->phyymi;
+
+/* Rotation matrix */
+
+    r11 = cos(rot * PI/2.);
+    r21 = sin(rot * PI/2.);
+    r12 = -r21;
+    r22 = r11;
+
+/* Transformation coefficients */
+
+    plsc->dioxax = r11;
+    plsc->dioxay = r21 * lx / ly;
+    plsc->dioxb = (1. - r11) * x0 - r21 * y0 * lx / ly;
+
+    plsc->dioyax = r12 * ly / lx;
+    plsc->dioyay = r22;
+    plsc->dioyb = (1. - r22) * y0 - r12 * x0 * ly / lx;
 }
 
 /*----------------------------------------------------------------------*\
@@ -232,7 +510,7 @@ gresc(PLINT op, char *ptr)
 void
 c_plstar(PLINT nx, PLINT ny)
 {
-    if (pls[ipls].level != 0)
+    if (plsc->level != 0)
 	plend1();
 
     plssub(nx, ny);
@@ -249,7 +527,7 @@ c_plstar(PLINT nx, PLINT ny)
 void
 c_plstart(char *devname, PLINT nx, PLINT ny)
 {
-    if (pls[ipls].level != 0)
+    if (plsc->level != 0)
 	plend1();
 
     plssub(nx, ny);
@@ -272,32 +550,32 @@ c_plinit()
     PLFLT size_chr, size_sym, size_maj, size_min;
     PLINT mk = 0, sp = 0, inc = 0, del = 2000;
 
-    if (pls[ipls].level != 0)
+    if (plsc->level != 0)
 	plend1();
 
 /* Set device number */
 
-    GetDev();
+    plGetDev();
 
 /* Subpage checks */
 
-    if (pls[ipls].nsubx <= 0)
-	pls[ipls].nsubx = 1;
-    if (pls[ipls].nsuby <= 0)
-	pls[ipls].nsuby = 1;
-    pls[ipls].cursub = 0;
+    if (plsc->nsubx <= 0)
+	plsc->nsubx = 1;
+    if (plsc->nsuby <= 0)
+	plsc->nsuby = 1;
+    plsc->cursub = 0;
 
 /* Stream number */
 
-    pls[ipls].ipls = ipls;
+    plsc->ipls = ipls;
 
 /* Initialize color maps */
 
-    plCmaps_init(&pls[ipls]);
+    plCmaps_init(plsc);
 
 /* We're rolling now.. */
 
-    pls[ipls].level = 1;
+    plsc->level = 1;
 
 /* Load fonts */
 
@@ -311,8 +589,8 @@ c_plinit()
 
 /* Initialize device */
 
-    grinit();
-    grpage();
+    plP_init();
+    plP_page();
 
 /*
 * Set default sizes 
@@ -324,24 +602,24 @@ c_plinit()
 *	size doesn't get too small).
 */
     gscale = 0.5 * 
-	((pls[ipls].phyxma - pls[ipls].phyxmi) / pls[ipls].xpmm +
-	 (pls[ipls].phyyma - pls[ipls].phyymi) / pls[ipls].ypmm) / 200.0;
+	((plsc->phyxma - plsc->phyxmi) / plsc->xpmm +
+	 (plsc->phyyma - plsc->phyymi) / plsc->ypmm) / 200.0;
 
-    hscale = gscale / sqrt((double) pls[ipls].nsuby);
+    hscale = gscale / sqrt((double) plsc->nsuby);
 
     size_chr = 4.0;
     size_sym = 4.0;		/* All these in virtual plot units */
     size_maj = 3.0;
     size_min = 1.5;
 
-    schr((PLFLT) (size_chr * hscale), (PLFLT) (size_chr * hscale));
-    ssym((PLFLT) (size_sym * hscale), (PLFLT) (size_sym * hscale));
-    smaj((PLFLT) (size_maj * hscale), (PLFLT) (size_maj * hscale));
-    smin((PLFLT) (size_min * hscale), (PLFLT) (size_min * hscale));
+    plP_schr((PLFLT) (size_chr * hscale), (PLFLT) (size_chr * hscale));
+    plP_ssym((PLFLT) (size_sym * hscale), (PLFLT) (size_sym * hscale));
+    plP_smaj((PLFLT) (size_maj * hscale), (PLFLT) (size_maj * hscale));
+    plP_smin((PLFLT) (size_min * hscale), (PLFLT) (size_min * hscale));
 
 /* Switch to graphics mode and set color */
 
-    grgra();
+    plP_gra();
     plcol(1);
 
     plstyl(0, &mk, &sp);
@@ -349,14 +627,93 @@ c_plinit()
 
 /* Set clip limits. */
 
-    pls[ipls].clpxmi = pls[ipls].phyxmi;
-    pls[ipls].clpxma = pls[ipls].phyxma;
-    pls[ipls].clpymi = pls[ipls].phyymi;
-    pls[ipls].clpyma = pls[ipls].phyyma;
+    plsc->clpxmi = plsc->phyxmi;
+    plsc->clpxma = plsc->phyxma;
+    plsc->clpymi = plsc->phyymi;
+    plsc->clpyma = plsc->phyyma;
 }
 
 /*----------------------------------------------------------------------*\
-* void GetDev()
+* void plend()
+*
+* End a plotting session for all open streams.
+\*----------------------------------------------------------------------*/
+
+void
+c_plend()
+{
+    PLINT i;
+
+    for (i = 0; i < PL_NSTREAMS; i++) {
+	if (pls[i] != NULL) {
+	    plsstrm(i);
+	    c_plend1();
+	}
+    }
+    plsstrm(0);
+    plfontrel();
+}
+
+/*----------------------------------------------------------------------*\
+* void plend1()
+*
+* End a plotting session for the current stream only.
+* After the stream is ended the memory associated with the stream's 
+* PLStream data structure is freed (for stream > 0), and the stream
+* counter is set to 0 (the default).
+\*----------------------------------------------------------------------*/
+
+void
+c_plend1()
+{
+    if ((ipls == 0) && (plsc->level == 0))
+	return;
+
+    plP_clr();
+    plP_tidy();
+    plP_slev(0);
+    if (ipls > 0) {
+	free(pls[ipls]->dev);
+	free(pls[ipls]);
+	pls[ipls] = NULL;
+	plsstrm(0);
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* Routines to manipulate streams.
+*
+* If the data structure for a new stream is unallocated, we allocate
+* it here.
+\*----------------------------------------------------------------------*/
+
+void
+c_plgstrm(PLINT *p_strm)
+{
+    *p_strm = ipls;
+}
+
+void
+c_plsstrm(PLINT strm)
+{
+    if (strm < 0 || strm >= PL_NSTREAMS)
+	printf("plsstrm: Illegal stream number (%d) -- must be in [0, %d]\n",
+	       strm, PL_NSTREAMS);
+    else {
+	ipls = strm;
+	if (pls[ipls] == NULL) {
+	    pls[ipls] = malloc((size_t) sizeof(PLStream));
+	    if (pls[ipls] == NULL)
+		plexit("plsstrm: Out of memory.");
+
+	    memset(pls[ipls], 0, sizeof(PLStream));
+	}
+	plsc = pls[ipls];
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* void plGetDev()
 *
 * If the the user has not already specified the output device, or the
 * one specified is either: (a) not available, (b) "?", or (c) NULL, the
@@ -367,24 +724,24 @@ c_plinit()
 \*----------------------------------------------------------------------*/
 
 static void
-GetDev()
+plGetDev()
 {
     PLINT dev, i, count, length;
     char response[80];
 
 /* Device name already specified.  See if it is valid. */
 
-    if (*pls[ipls].DevName != '\0' && *pls[ipls].DevName != '?') {
+    if (*(plsc->DevName) != '\0' && *(plsc->DevName) != '?') {
 	for (i = 0; i < npldrivers; i++) {
-	    if (!strcmp(pls[ipls].DevName, dispatch_table[i].pl_DevName))
+	    if (!strcmp(plsc->DevName, dispatch_table[i].pl_DevName))
 		break;
 	}
 	if (i < npldrivers) {
-	    pls[ipls].device = i + 1;
+	    plsc->device = i + 1;
 	    return;
 	}
 	else {
-	    printf("Requested device %s not available\n", pls[ipls].DevName);
+	    printf("Requested device %s not available\n", plsc->DevName);
 	}
     }
 
@@ -431,9 +788,9 @@ GetDev()
 	    }
 	}
 	if (count++ > 10)
-	    plexit("Too many tries.");
+	    plexit("plGetDev: Too many tries.");
     }
-    pls[ipls].device = dev;
+    plsc->device = dev;
 }
 
 /*----------------------------------------------------------------------*\
@@ -447,10 +804,10 @@ plwarn(char *errormsg)
 {
     int was_gfx = 0;
 
-    if (pls[ipls].level > 0) {
-	if (pls[ipls].graphx == 1) {
+    if (plsc->level > 0) {
+	if (plsc->graphx == 1) {
 	    was_gfx = 1;
-	    grtext();
+	    plP_text();
 	}
     }
 
@@ -459,7 +816,7 @@ plwarn(char *errormsg)
 	fprintf(stderr, "%s\n", errormsg);
 
     if (was_gfx == 1) {
-	grgra();
+	plP_gra();
     }
 }
 
@@ -473,7 +830,7 @@ c_plfontld(PLINT fnt)
     if (fnt != 0)
 	fnt = 1;
 
-    if (pls[ipls].level > 0)
+    if (plsc->level > 0)
 	plfntld(fnt);
     else {
 	initfont = fnt;
@@ -482,44 +839,44 @@ c_plfontld(PLINT fnt)
 }
 
 /*----------------------------------------------------------------------*\
-*  External access routines.
+*  Various external access routines.
 \*----------------------------------------------------------------------*/
 
 void
 c_plgpage(PLFLT *p_xp, PLFLT *p_yp,
 	  PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT *p_yoff)
 {
-    *p_xp = pls[ipls].xdpi;
-    *p_yp = pls[ipls].ydpi;
-    *p_xleng = pls[ipls].xlength;
-    *p_yleng = pls[ipls].ylength;
-    *p_xoff = pls[ipls].xoffset;
-    *p_yoff = pls[ipls].yoffset;
+    *p_xp = plsc->xdpi;
+    *p_yp = plsc->ydpi;
+    *p_xleng = plsc->xlength;
+    *p_yleng = plsc->ylength;
+    *p_xoff = plsc->xoffset;
+    *p_yoff = plsc->yoffset;
 }
 
 void
 c_plssub(PLINT nx, PLINT ny)
 {
-    if (pls[ipls].level > 0) {
+    if (plsc->level > 0) {
 	plwarn("plssub: Must be called before plinit.");
 	return;
     }
     if (nx > 0)
-	pls[ipls].nsubx = nx;
+	plsc->nsubx = nx;
     if (ny > 0)
-	pls[ipls].nsuby = ny;
+	plsc->nsuby = ny;
 }
 
 void
 c_plsdev(char *devname)
 {
-    if (pls[ipls].level > 0) {
+    if (plsc->level > 0) {
 	plwarn("plsdev: Must be called before plinit.");
 	return;
     }
     if (devname != NULL) {
-	strncpy(pls[ipls].DevName, devname, sizeof(pls[ipls].DevName) - 1);
-	pls[ipls].DevName[sizeof(pls[ipls].DevName) - 1] = '\0';
+	strncpy(plsc->DevName, devname, sizeof(plsc->DevName) - 1);
+	plsc->DevName[sizeof(plsc->DevName) - 1] = '\0';
     }
 }
 
@@ -527,50 +884,34 @@ void
 c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff)
 {
     if (xp)
-	pls[ipls].xdpi = xp;
+	plsc->xdpi = xp;
     if (yp)
-	pls[ipls].ydpi = yp;
+	plsc->ydpi = yp;
 
     if (xleng)
-	pls[ipls].xlength = xleng;
+	plsc->xlength = xleng;
     if (yleng)
-	pls[ipls].ylength = yleng;
+	plsc->ylength = yleng;
 
     if (xoff)
-	pls[ipls].xoffset = xoff;
+	plsc->xoffset = xoff;
     if (yoff)
-	pls[ipls].yoffset = yoff;
+	plsc->yoffset = yoff;
 
-    pls[ipls].pageset = 1;
+    plsc->pageset = 1;
 }
 
 void
 plgpls(PLStream **p_pls)
 {
-    *p_pls = &pls[ipls];
-}
-
-void
-c_plgstrm(PLINT *p_strm)
-{
-    *p_strm = ipls;
-}
-
-void
-c_plsstrm(PLINT strm)
-{
-    if (strm < 0 || strm >= PL_NSTREAMS)
-	printf("plsstrm: Illegal stream number (%d) -- must be in [0, %d]\n",
-	       strm, PL_NSTREAMS);
-    else
-	ipls = strm;
+    *p_pls = plsc;
 }
 
 void
 plsKeyEH(void (*KeyEH)(PLKey *, void *, int *), void *KeyEH_data)
 {
-    pls[ipls].KeyEH = KeyEH;
-    pls[ipls].KeyEH_data = KeyEH_data;
+    plsc->KeyEH = KeyEH;
+    plsc->KeyEH_data = KeyEH_data;
 }
 
 /* Set orientation.  Must be done before calling plinit. */
@@ -578,8 +919,8 @@ plsKeyEH(void (*KeyEH)(PLKey *, void *, int *), void *KeyEH_data)
 void
 c_plsori(PLINT ori)
 {
-    pls[ipls].orient = ori;
-    pls[ipls].orientset = 1;
+    plsc->orient = ori;
+    plsc->orientset = 1;
 }
 
 /* Set pen width.  Can be done any time, but before calling plinit is best
@@ -588,12 +929,12 @@ c_plsori(PLINT ori)
 void
 c_plwid(PLINT width)
 {
-    pls[ipls].width = width;
+    plsc->width = width;
 
-    if (pls[ipls].level > 0)
-	grwid();
+    if (plsc->level > 0)
+	plP_wid();
     else
-	pls[ipls].widthset = 1;
+	plsc->widthset = 1;
 }
 
 /* Set global aspect ratio.  Must be done before calling plinit. */
@@ -601,13 +942,13 @@ c_plwid(PLINT width)
 void
 c_plsasp(PLFLT asp)
 {
-    pls[ipls].aspect = asp;
-    pls[ipls].aspectset = 1;
+    plsc->aspect = asp;
+    plsc->aspectset = 1;
 
-    if (pls[ipls].aspect > 0.0)
-	pls[ipls].pscale = 1;
+    if (plsc->aspect > 0.0)
+	plsc->pscale = 1;
     else
-	pls[ipls].pscale = 0;
+	plsc->pscale = 0;
 }
 
 /* Set local plot bounds.  This is used to 'mark' a window for treatment
@@ -617,12 +958,12 @@ c_plsasp(PLFLT asp)
 void
 c_plslpb(PLFLT lpbxmi, PLFLT lpbxma, PLFLT lpbymi, PLFLT lpbyma)
 {
-    pls[ipls].lpbpxmi = dcpcx(lpbxmi);
-    pls[ipls].lpbpxma = dcpcx(lpbxma);
-    pls[ipls].lpbpymi = dcpcy(lpbymi);
-    pls[ipls].lpbpyma = dcpcy(lpbyma);
+    plsc->lpbpxmi = plP_dcpcx(lpbxmi);
+    plsc->lpbpxma = plP_dcpcx(lpbxma);
+    plsc->lpbpymi = plP_dcpcy(lpbymi);
+    plsc->lpbpyma = plP_dcpcy(lpbyma);
 
-    gresc(PL_SET_LPB, (char *) NULL);
+    plP_esc(PL_SET_LPB, (char *) NULL);
 }
 
 /* Note these two are only useable from C.. */
@@ -630,14 +971,14 @@ c_plslpb(PLFLT lpbxmi, PLFLT lpbxma, PLFLT lpbymi, PLFLT lpbyma)
 void
 plgfile(FILE **p_file)
 {
-    *p_file = pls[ipls].OutFile;
+    *p_file = plsc->OutFile;
 }
 
 void
 plsfile(FILE *file)
 {
-    pls[ipls].OutFile = file;
-    pls[ipls].fileset = 1;
+    plsc->OutFile = file;
+    plsc->fileset = 1;
 }
 
 /* Flush current output file.  Use sparingly, if at all. */
@@ -645,7 +986,7 @@ plsfile(FILE *file)
 void
 plflush(void)
 {
-    fflush(pls[ipls].OutFile);
+    fflush(plsc->OutFile);
 }
 
 /*
@@ -656,24 +997,37 @@ plflush(void)
 void
 c_plgfnam(char *fnam)
 {
-    strncpy(fnam, pls[ipls].FileName, 79);
+    strncpy(fnam, plsc->FileName, 79);
     fnam[79] = '\0';
 }
 
 void
 c_plsfnam(char *fnam)
 {
-    strncpy(pls[ipls].FileName, fnam, sizeof(pls[ipls].FileName) - 1);
-    pls[ipls].FileName[sizeof(pls[ipls].FileName) - 1] = '\0';
-    pls[ipls].OutFile = NULL;
-    pls[ipls].fileset = 1;
-    strcpy(pls[ipls].FamilyName, pls[ipls].FileName);
+    plsc->OutFile = NULL;
+    plsc->fileset = 1;
+
+    if (plsc->FileName != NULL)
+	free((void *) plsc->FileName);
+
+    plsc->FileName = (char *)
+	malloc(1+(strlen(fnam)) * sizeof(char));
+
+    strcpy(plsc->FileName, fnam);
+
+    if (plsc->FamilyName != NULL)
+	free((void *) plsc->FamilyName);
+
+    plsc->FamilyName = (char *)
+	malloc(1+(strlen(fnam)) * sizeof(char));
+
+    strcpy(plsc->FamilyName, fnam);
 }
 
 void
 c_plspause(PLINT pause)
 {
-    pls[ipls].nopause = !pause;
+    plsc->nopause = !pause;
 }
 
 /* Set/get the number of points written after the decimal point in labels. */
@@ -681,15 +1035,15 @@ c_plspause(PLINT pause)
 void
 c_plprec(PLINT setp, PLINT prec)
 {
-    pls[ipls].setpre = setp;
-    pls[ipls].precis = prec;
+    plsc->setpre = setp;
+    plsc->precis = prec;
 }
 
 void
-gprec(PLINT *p_setp, PLINT *p_prec)
+plP_gprec(PLINT *p_setp, PLINT *p_prec)
 {
-    *p_setp = pls[ipls].setpre;
-    *p_prec = pls[ipls].precis;
+    *p_setp = plsc->setpre;
+    *p_prec = plsc->precis;
 }
 
 /*
@@ -713,21 +1067,21 @@ c_plsesc(char esc)
     case '@':			/* ASCII 64 */
     case '^':			/* ASCII 94 */
     case '~':			/* ASCII 126 */
-	pls[ipls].esc = esc;
+	plsc->esc = esc;
 	break;
 
     default:
-	plwarn("Invalid escape character, ignoring.");
+	plwarn("plsesc: Invalid escape character, ignoring.");
     }
 }
 
 void
 plgesc(char *p_esc)
 {
-    if (pls[ipls].esc == '\0')
-	pls[ipls].esc = '#';
+    if (plsc->esc == '\0')
+	plsc->esc = '#';
 
-    *p_esc = pls[ipls].esc;
+    *p_esc = plsc->esc;
 }
 
 /* Note: you MUST have allocated space for this (80 characters is safe) */
@@ -736,6 +1090,14 @@ void
 c_plgver(char *p_ver)
 {
     strcpy(p_ver, PLPLOT_VERSION);
+}
+
+/* For plotting into an inferior X window */
+
+void
+plsxwin(long window_id)
+{
+    plsc->window_id = window_id;
 }
 
 /*----------------------------------------------------------------------*\
@@ -747,7 +1109,7 @@ c_plgver(char *p_ver)
 void
 c_plcol(PLINT icol0)
 {
-    if (pls[ipls].level < 1)
+    if (plsc->level < 1)
 	plexit("plcol: Please call plinit first.");
 
     if (icol0 < 0 || icol0 > 15) {
@@ -755,17 +1117,17 @@ c_plcol(PLINT icol0)
 	return;
     }
 
-    if (pls[ipls].cmap0setcol[icol0] == 0) {
+    if (plsc->cmap0setcol[icol0] == 0) {
 	plwarn("plcol: Requested color not allocated.");
 	return;
     }
 
-    pls[ipls].icol0 = icol0;
-    pls[ipls].curcolor.r = pls[ipls].cmap0[icol0].r;
-    pls[ipls].curcolor.g = pls[ipls].cmap0[icol0].g;
-    pls[ipls].curcolor.b = pls[ipls].cmap0[icol0].b;
+    plsc->icol0 = icol0;
+    plsc->curcolor.r = plsc->cmap0[icol0].r;
+    plsc->curcolor.g = plsc->cmap0[icol0].g;
+    plsc->curcolor.b = plsc->cmap0[icol0].b;
 
-    grcol();
+    plP_col();
 }
 
 /* Set line color by red, green, blue from  0. to 1. */
@@ -773,7 +1135,7 @@ c_plcol(PLINT icol0)
 void
 c_plrgb(PLFLT r, PLFLT g, PLFLT b)
 {
-    if (pls[ipls].level < 1)
+    if (plsc->level < 1)
 	plexit("plrgb: Please call plinit first.");
 
     if ((r < 0. || r > 1.) || (g < 0. || g > 1.) || (b < 0. || b > 1.)) {
@@ -781,12 +1143,12 @@ c_plrgb(PLFLT r, PLFLT g, PLFLT b)
 	return;
     }
 
-    pls[ipls].icol0 = PL_RGB_COLOR;
-    pls[ipls].curcolor.r = MIN(255, (int) (256. * r));
-    pls[ipls].curcolor.g = MIN(255, (int) (256. * g));
-    pls[ipls].curcolor.b = MIN(255, (int) (256. * b));
+    plsc->icol0 = PL_RGB_COLOR;
+    plsc->curcolor.r = MIN(255, (int) (256. * r));
+    plsc->curcolor.g = MIN(255, (int) (256. * g));
+    plsc->curcolor.b = MIN(255, (int) (256. * b));
 
-    grcol();
+    plP_col();
 }
 
 /* Set line color by 8 bit RGB values. */
@@ -794,7 +1156,7 @@ c_plrgb(PLFLT r, PLFLT g, PLFLT b)
 void
 c_plrgb1(PLINT r, PLINT g, PLINT b)
 {
-    if (pls[ipls].level < 1)
+    if (plsc->level < 1)
 	plexit("plrgb1: Please call plinit first.");
 
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
@@ -802,12 +1164,12 @@ c_plrgb1(PLINT r, PLINT g, PLINT b)
 	return;
     }
 
-    pls[ipls].icol0 = PL_RGB_COLOR;
-    pls[ipls].curcolor.r = r;
-    pls[ipls].curcolor.g = g;
-    pls[ipls].curcolor.b = b;
+    plsc->icol0 = PL_RGB_COLOR;
+    plsc->curcolor.r = r;
+    plsc->curcolor.g = g;
+    plsc->curcolor.b = b;
 
-    grcol();
+    plP_col();
 }
 
 /* Set number of colors in color map 0 */
@@ -815,7 +1177,7 @@ c_plrgb1(PLINT r, PLINT g, PLINT b)
 void
 c_plscm0n(PLINT ncol0)
 {
-    if (pls[ipls].level > 0) {
+    if (plsc->level > 0) {
 	plwarn("plscm0: Must be called before plinit.");
 	return;
     }
@@ -823,7 +1185,7 @@ c_plscm0n(PLINT ncol0)
     if (ncol0 < 2 || ncol0 > 16)
 	plexit("plscm0: Number of colors out of range");
 
-    pls[ipls].ncol0 = ncol0;
+    plsc->ncol0 = ncol0;
 }
 
 /* Set color map 0 colors by 8 bit RGB values */
@@ -834,7 +1196,7 @@ c_plscm0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 {
     int i;
 
-    if (pls[ipls].level > 0) {
+    if (plsc->level > 0) {
 	plwarn("plscm0: Must be called before plinit.");
 	return;
     }
@@ -842,7 +1204,7 @@ c_plscm0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
     if (ncol0 > 16)
 	plexit("plscm0: Maximum of 16 colors in color map 0.");
 
-    pls[ipls].ncol0 = ncol0;
+    plsc->ncol0 = ncol0;
 
     for (i = 0; i < ncol0; i++) {
 	if ((r[i] < 0 || r[i] > 255) ||
@@ -853,10 +1215,10 @@ c_plscm0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 	    continue;
 	}
 
-	pls[ipls].cmap0[i].r = r[i];
-	pls[ipls].cmap0[i].g = g[i];
-	pls[ipls].cmap0[i].b = b[i];
-	pls[ipls].cmap0setcol[i] = 1;
+	plsc->cmap0[i].r = r[i];
+	plsc->cmap0[i].g = g[i];
+	plsc->cmap0[i].b = b[i];
+	plsc->cmap0setcol[i] = 1;
     }
 }
 
@@ -865,7 +1227,7 @@ c_plscm0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 void
 c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 {
-    if (pls[ipls].level > 0) {
+    if (plsc->level > 0) {
 	plwarn("plscol0: Must becalled before plinit.");
 	return;
     }
@@ -878,10 +1240,10 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 	return;
     }
 
-    pls[ipls].cmap0[icol0].r = r;
-    pls[ipls].cmap0[icol0].g = g;
-    pls[ipls].cmap0[icol0].b = b;
-    pls[ipls].cmap0setcol[icol0] = 1;
+    plsc->cmap0[icol0].r = r;
+    plsc->cmap0[icol0].g = g;
+    plsc->cmap0[icol0].b = b;
+    plsc->cmap0setcol[icol0] = 1;
 }
 
 /* Set the background color by 8 bit RGB value */
@@ -889,7 +1251,7 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 void
 c_plscolbg(PLINT r, PLINT g, PLINT b)
 {
-    if (pls[ipls].level > 0) {
+    if (plsc->level > 0) {
 	plwarn("plscolbg: Must becalled before plinit.");
 	return;
     }
@@ -899,10 +1261,10 @@ c_plscolbg(PLINT r, PLINT g, PLINT b)
 	return;
     }
 
-    pls[ipls].bgcolor.r = r;
-    pls[ipls].bgcolor.g = g;
-    pls[ipls].bgcolor.b = b;
-    pls[ipls].bgcolorset = 1;
+    plsc->bgcolor.r = r;
+    plsc->bgcolor.g = g;
+    plsc->bgcolor.b = b;
+    plsc->bgcolorset = 1;
 }
 
 /* Set color map 1 colors by 8 bit RGB values */
@@ -913,7 +1275,7 @@ c_plscm1(PLINT *r, PLINT *g, PLINT *b)
 {
     int i;
 
-    if (pls[ipls].level > 0) {
+    if (plsc->level > 0) {
 	plwarn("plscm1: Must be called before plinit.");
 	return;
     }
@@ -926,11 +1288,11 @@ c_plscm1(PLINT *r, PLINT *g, PLINT *b)
 	    printf("plscm1: Invalid RGB color: %d, %d, %d\n", r[i], g[i], b[i]);
 	    plexit("");
 	}
-	pls[ipls].cmap1[i].r = r[i];
-	pls[ipls].cmap1[i].g = g[i];
-	pls[ipls].cmap1[i].b = b[i];
+	plsc->cmap1[i].r = r[i];
+	plsc->cmap1[i].g = g[i];
+	plsc->cmap1[i].b = b[i];
     }
-    pls[ipls].cmap1set = 1;
+    plsc->cmap1set = 1;
 }
 
 /* Set color map 1 colors using a linear relationship between function
@@ -961,7 +1323,7 @@ c_plscm1f1(PLINT itype, PLFLT *param)
     int i;
     PLFLT h, l, s, r, g, b;
 
-    if (pls[ipls].level > 0) {
+    if (plsc->level > 0) {
 	plwarn("plscm1f1: Must be called before plinit.");
 	return;
     }
@@ -981,11 +1343,11 @@ c_plscm1f1(PLINT itype, PLFLT *param)
 	    printf("plscm1f1: Invalid RGB color: %f, %f, %f\n", r, g, b);
 	    plexit("");
 	}
-	pls[ipls].cmap1[i].r = MIN(255, (int) (256. * r));
-	pls[ipls].cmap1[i].g = MIN(255, (int) (256. * g));
-	pls[ipls].cmap1[i].b = MIN(255, (int) (256. * b));
+	plsc->cmap1[i].r = MIN(255, (int) (256. * r));
+	plsc->cmap1[i].g = MIN(255, (int) (256. * g));
+	plsc->cmap1[i].b = MIN(255, (int) (256. * b));
     }
-    pls[ipls].cmap1set = 1;
+    plsc->cmap1set = 1;
 }
 
 /* Used to globally turn color output on/off */
@@ -993,8 +1355,8 @@ c_plscm1f1(PLINT itype, PLFLT *param)
 void
 c_plscolor(PLINT color)
 {
-    pls[ipls].colorset = 1;
-    pls[ipls].color = color;
+    plsc->colorset = 1;
+    plsc->color = color;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1009,29 +1371,29 @@ c_plscolor(PLINT color)
 void
 c_plgfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax)
 {
-    *p_fam = pls[ipls].family;
-    *p_num = pls[ipls].member;
-    *p_bmax = pls[ipls].bytemax;
+    *p_fam = plsc->family;
+    *p_num = plsc->member;
+    *p_bmax = plsc->bytemax;
 }
 
 void
 c_plsfam(PLINT fam, PLINT num, PLINT bmax)
 {
-    if (pls[ipls].level > 0)
+    if (plsc->level > 0)
 	plwarn("plsfam: Must be called before plinit.");
 
     if (fam >= 0)
-	pls[ipls].family = fam;
+	plsc->family = fam;
     if (num >= 0)
-	pls[ipls].member = num;
+	plsc->member = num;
     if (bmax >= 0)
-	pls[ipls].bytemax = bmax;
+	plsc->bytemax = bmax;
 }
 
 void
 c_plfamadv(void)
 {
-    pls[ipls].famadv = 1;
+    plsc->famadv = 1;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1042,43 +1404,43 @@ c_plfamadv(void)
 void
 c_plgxax(PLINT *p_digmax, PLINT *p_digits)
 {
-    *p_digmax = pls[ipls].xdigmax;
-    *p_digits = pls[ipls].xdigits;
+    *p_digmax = plsc->xdigmax;
+    *p_digits = plsc->xdigits;
 }
 
 void
 c_plsxax(PLINT digmax, PLINT digits)
 {
-    pls[ipls].xdigmax = digmax;
-    pls[ipls].xdigits = digits;
+    plsc->xdigmax = digmax;
+    plsc->xdigits = digits;
 }
 
 void
 c_plgyax(PLINT *p_digmax, PLINT *p_digits)
 {
-    *p_digmax = pls[ipls].ydigmax;
-    *p_digits = pls[ipls].ydigits;
+    *p_digmax = plsc->ydigmax;
+    *p_digits = plsc->ydigits;
 }
 
 void
 c_plsyax(PLINT digmax, PLINT digits)
 {
-    pls[ipls].ydigmax = digmax;
-    pls[ipls].ydigits = digits;
+    plsc->ydigmax = digmax;
+    plsc->ydigits = digits;
 }
 
 void
 c_plgzax(PLINT *p_digmax, PLINT *p_digits)
 {
-    *p_digmax = pls[ipls].zdigmax;
-    *p_digits = pls[ipls].zdigits;
+    *p_digmax = plsc->zdigmax;
+    *p_digits = plsc->zdigits;
 }
 
 void
 c_plszax(PLINT digmax, PLINT digits)
 {
-    pls[ipls].zdigmax = digmax;
-    pls[ipls].zdigits = digits;
+    plsc->zdigmax = digmax;
+    plsc->zdigits = digits;
 }
 
 /*----------------------------------------------------------------------*\
@@ -1086,540 +1448,540 @@ c_plszax(PLINT digmax, PLINT digits)
 \*----------------------------------------------------------------------*/
 
 void
-glev(PLINT *p_n)
+plP_glev(PLINT *p_n)
 {
-    *p_n = pls[ipls].level;
+    *p_n = plsc->level;
 }
 
 void
-slev(PLINT n)
+plP_slev(PLINT n)
 {
-    pls[ipls].level = n;
+    plsc->level = n;
 }
 
 void
-gbase(PLFLT *p_x, PLFLT *p_y, PLFLT *p_xc, PLFLT *p_yc)
+plP_gbase(PLFLT *p_x, PLFLT *p_y, PLFLT *p_xc, PLFLT *p_yc)
 {
-    *p_x = pls[ipls].base3x;
-    *p_y = pls[ipls].base3y;
-    *p_xc = pls[ipls].basecx;
-    *p_yc = pls[ipls].basecy;
+    *p_x = plsc->base3x;
+    *p_y = plsc->base3y;
+    *p_xc = plsc->basecx;
+    *p_yc = plsc->basecy;
 }
 
 void
-sbase(PLFLT x, PLFLT y, PLFLT xc, PLFLT yc)
+plP_sbase(PLFLT x, PLFLT y, PLFLT xc, PLFLT yc)
 {
-    pls[ipls].base3x = x;
-    pls[ipls].base3y = y;
-    pls[ipls].basecx = xc;
-    pls[ipls].basecy = yc;
+    plsc->base3x = x;
+    plsc->base3y = y;
+    plsc->basecx = xc;
+    plsc->basecy = yc;
 }
 
 void
-gnms(PLINT *p_n)
+plP_gnms(PLINT *p_n)
 {
-    *p_n = pls[ipls].nms;
+    *p_n = plsc->nms;
 }
 
 void
-snms(PLINT n)
+plP_snms(PLINT n)
 {
-    pls[ipls].nms = n;
+    plsc->nms = n;
 }
 
 void
-gcurr(PLINT *p_ix, PLINT *p_iy)
+plP_gcurr(PLINT *p_ix, PLINT *p_iy)
 {
-    *p_ix = pls[ipls].currx;
-    *p_iy = pls[ipls].curry;
+    *p_ix = plsc->currx;
+    *p_iy = plsc->curry;
 }
 
 void
-scurr(PLINT ix, PLINT iy)
+plP_scurr(PLINT ix, PLINT iy)
 {
-    pls[ipls].currx = ix;
-    pls[ipls].curry = iy;
+    plsc->currx = ix;
+    plsc->curry = iy;
 }
 
 void
-gdom(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
+plP_gdom(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
 {
-    *p_xmin = pls[ipls].domxmi;
-    *p_xmax = pls[ipls].domxma;
-    *p_ymin = pls[ipls].domymi;
-    *p_ymax = pls[ipls].domyma;
+    *p_xmin = plsc->domxmi;
+    *p_xmax = plsc->domxma;
+    *p_ymin = plsc->domymi;
+    *p_ymax = plsc->domyma;
 }
 
 void
-sdom(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
+plP_sdom(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
-    pls[ipls].domxmi = xmin;
-    pls[ipls].domxma = xmax;
-    pls[ipls].domymi = ymin;
-    pls[ipls].domyma = ymax;
+    plsc->domxmi = xmin;
+    plsc->domxma = xmax;
+    plsc->domymi = ymin;
+    plsc->domyma = ymax;
 }
 
 void
-grange(PLFLT *p_zscl, PLFLT *p_zmin, PLFLT *p_zmax)
+plP_grange(PLFLT *p_zscl, PLFLT *p_zmin, PLFLT *p_zmax)
 {
-    *p_zscl = pls[ipls].zzscl;
-    *p_zmin = pls[ipls].ranmi;
-    *p_zmax = pls[ipls].ranma;
+    *p_zscl = plsc->zzscl;
+    *p_zmin = plsc->ranmi;
+    *p_zmax = plsc->ranma;
 }
 
 void
-srange(PLFLT zscl, PLFLT zmin, PLFLT zmax)
+plP_srange(PLFLT zscl, PLFLT zmin, PLFLT zmax)
 {
-    pls[ipls].zzscl = zscl;
-    pls[ipls].ranmi = zmin;
-    pls[ipls].ranma = zmax;
+    plsc->zzscl = zscl;
+    plsc->ranmi = zmin;
+    plsc->ranma = zmax;
 }
 
 void
-gw3wc(PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy, PLFLT *p_dyz)
+plP_gw3wc(PLFLT *p_dxx, PLFLT *p_dxy, PLFLT *p_dyx, PLFLT *p_dyy, PLFLT *p_dyz)
 {
-    *p_dxx = pls[ipls].cxx;
-    *p_dxy = pls[ipls].cxy;
-    *p_dyx = pls[ipls].cyx;
-    *p_dyy = pls[ipls].cyy;
-    *p_dyz = pls[ipls].cyz;
+    *p_dxx = plsc->cxx;
+    *p_dxy = plsc->cxy;
+    *p_dyx = plsc->cyx;
+    *p_dyy = plsc->cyy;
+    *p_dyz = plsc->cyz;
 }
 
 void
-sw3wc(PLFLT dxx, PLFLT dxy, PLFLT dyx, PLFLT dyy, PLFLT dyz)
+plP_sw3wc(PLFLT dxx, PLFLT dxy, PLFLT dyx, PLFLT dyy, PLFLT dyz)
 {
-    pls[ipls].cxx = dxx;
-    pls[ipls].cxy = dxy;
-    pls[ipls].cyx = dyx;
-    pls[ipls].cyy = dyy;
-    pls[ipls].cyz = dyz;
+    plsc->cxx = dxx;
+    plsc->cxy = dxy;
+    plsc->cyx = dyx;
+    plsc->cyy = dyy;
+    plsc->cyz = dyz;
 }
 
 void
-gvpp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
+plP_gvpp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
-    *p_ixmin = pls[ipls].vppxmi;
-    *p_ixmax = pls[ipls].vppxma;
-    *p_iymin = pls[ipls].vppymi;
-    *p_iymax = pls[ipls].vppyma;
+    *p_ixmin = plsc->vppxmi;
+    *p_ixmax = plsc->vppxma;
+    *p_iymin = plsc->vppymi;
+    *p_iymax = plsc->vppyma;
 }
 
 void
-svpp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
+plP_svpp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
 {
-    pls[ipls].vppxmi = ixmin;
-    pls[ipls].vppxma = ixmax;
-    pls[ipls].vppymi = iymin;
-    pls[ipls].vppyma = iymax;
+    plsc->vppxmi = ixmin;
+    plsc->vppxma = ixmax;
+    plsc->vppymi = iymin;
+    plsc->vppyma = iymax;
 }
 
 void
-gspp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
+plP_gspp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
-    *p_ixmin = pls[ipls].sppxmi;
-    *p_ixmax = pls[ipls].sppxma;
-    *p_iymin = pls[ipls].sppymi;
-    *p_iymax = pls[ipls].sppyma;
+    *p_ixmin = plsc->sppxmi;
+    *p_ixmax = plsc->sppxma;
+    *p_iymin = plsc->sppymi;
+    *p_iymax = plsc->sppyma;
 }
 
 void
-sspp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
+plP_sspp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
 {
-    pls[ipls].sppxmi = ixmin;
-    pls[ipls].sppxma = ixmax;
-    pls[ipls].sppymi = iymin;
-    pls[ipls].sppyma = iymax;
+    plsc->sppxmi = ixmin;
+    plsc->sppxma = ixmax;
+    plsc->sppymi = iymin;
+    plsc->sppyma = iymax;
 }
 
 void
-gclp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
+plP_gclp(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
-    *p_ixmin = pls[ipls].clpxmi;
-    *p_ixmax = pls[ipls].clpxma;
-    *p_iymin = pls[ipls].clpymi;
-    *p_iymax = pls[ipls].clpyma;
+    *p_ixmin = plsc->clpxmi;
+    *p_ixmax = plsc->clpxma;
+    *p_iymin = plsc->clpymi;
+    *p_iymax = plsc->clpyma;
 }
 
 void
-sclp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
+plP_sclp(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
 {
-    pls[ipls].clpxmi = ixmin;
-    pls[ipls].clpxma = ixmax;
-    pls[ipls].clpymi = iymin;
-    pls[ipls].clpyma = iymax;
+    plsc->clpxmi = ixmin;
+    plsc->clpxma = ixmax;
+    plsc->clpymi = iymin;
+    plsc->clpyma = iymax;
 }
 
 void
-gphy(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
+plP_gphy(PLINT *p_ixmin, PLINT *p_ixmax, PLINT *p_iymin, PLINT *p_iymax)
 {
-    *p_ixmin = pls[ipls].phyxmi;
-    *p_ixmax = pls[ipls].phyxma;
-    *p_iymin = pls[ipls].phyymi;
-    *p_iymax = pls[ipls].phyyma;
+    *p_ixmin = plsc->phyxmi;
+    *p_ixmax = plsc->phyxma;
+    *p_iymin = plsc->phyymi;
+    *p_iymax = plsc->phyyma;
 }
 
 void
-sphy(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
+plP_sphy(PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax)
 {
-    pls[ipls].phyxmi = ixmin;
-    pls[ipls].phyxma = ixmax;
-    pls[ipls].phyymi = iymin;
-    pls[ipls].phyyma = iymax;
+    plsc->phyxmi = ixmin;
+    plsc->phyxma = ixmax;
+    plsc->phyymi = iymin;
+    plsc->phyyma = iymax;
 }
 
 void
-gsub(PLINT *p_nx, PLINT *p_ny, PLINT *p_cs)
+plP_gsub(PLINT *p_nx, PLINT *p_ny, PLINT *p_cs)
 {
-    *p_nx = pls[ipls].nsubx;
-    *p_ny = pls[ipls].nsuby;
-    *p_cs = pls[ipls].cursub;
+    *p_nx = plsc->nsubx;
+    *p_ny = plsc->nsuby;
+    *p_cs = plsc->cursub;
 }
 
 void
-ssub(PLINT nx, PLINT ny, PLINT cs)
+plP_ssub(PLINT nx, PLINT ny, PLINT cs)
 {
-    pls[ipls].nsubx = nx;
-    pls[ipls].nsuby = ny;
-    pls[ipls].cursub = cs;
+    plsc->nsubx = nx;
+    plsc->nsuby = ny;
+    plsc->cursub = cs;
 }
 
 void
-gumpix(PLINT *p_ix, PLINT *p_iy)
+plP_gumpix(PLINT *p_ix, PLINT *p_iy)
 {
-    *p_ix = pls[ipls].umx;
-    *p_iy = pls[ipls].umy;
+    *p_ix = plsc->umx;
+    *p_iy = plsc->umy;
 }
 
 void
-sumpix(PLINT ix, PLINT iy)
+plP_sumpix(PLINT ix, PLINT iy)
 {
-    pls[ipls].umx = ix;
-    pls[ipls].umy = iy;
+    plsc->umx = ix;
+    plsc->umy = iy;
 }
 
 void
-gatt(PLINT *p_ifnt, PLINT *p_icol0)
+plP_gatt(PLINT *p_ifnt, PLINT *p_icol0)
 {
     *p_ifnt = font;
-    *p_icol0 = pls[ipls].icol0;
+    *p_icol0 = plsc->icol0;
 }
 
 void
-satt(PLINT ifnt, PLINT icol0)
+plP_satt(PLINT ifnt, PLINT icol0)
 {
     font = ifnt;
-    pls[ipls].icol0 = icol0;
+    plsc->icol0 = icol0;
 }
 
 void
-gcol(PLINT *p_icol0)
+plP_gcol(PLINT *p_icol0)
 {
-    *p_icol0 = pls[ipls].icol0;
+    *p_icol0 = plsc->icol0;
 }
 
 void
-scol(PLINT icol0)
+plP_scol(PLINT icol0)
 {
-    pls[ipls].icol0 = icol0;
+    plsc->icol0 = icol0;
 }
 
 void
-gwid(PLINT *p_pwid)
+plP_gwid(PLINT *p_pwid)
 {
-    *p_pwid = pls[ipls].width;
+    *p_pwid = plsc->width;
 }
 
 void
-swid(PLINT pwid)
+plP_swid(PLINT pwid)
 {
-    pls[ipls].width = pwid;
+    plsc->width = pwid;
 }
 
 void
-gspd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
+plP_gspd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
 {
-    *p_xmin = pls[ipls].spdxmi;
-    *p_xmax = pls[ipls].spdxma;
-    *p_ymin = pls[ipls].spdymi;
-    *p_ymax = pls[ipls].spdyma;
+    *p_xmin = plsc->spdxmi;
+    *p_xmax = plsc->spdxma;
+    *p_ymin = plsc->spdymi;
+    *p_ymax = plsc->spdyma;
 }
 
 void
-sspd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
+plP_sspd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
-    pls[ipls].spdxmi = xmin;
-    pls[ipls].spdxma = xmax;
-    pls[ipls].spdymi = ymin;
-    pls[ipls].spdyma = ymax;
+    plsc->spdxmi = xmin;
+    plsc->spdxma = xmax;
+    plsc->spdymi = ymin;
+    plsc->spdyma = ymax;
 }
 
 void
-gvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
+plP_gvpd(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
 {
-    *p_xmin = pls[ipls].vpdxmi;
-    *p_xmax = pls[ipls].vpdxma;
-    *p_ymin = pls[ipls].vpdymi;
-    *p_ymax = pls[ipls].vpdyma;
+    *p_xmin = plsc->vpdxmi;
+    *p_xmax = plsc->vpdxma;
+    *p_ymin = plsc->vpdymi;
+    *p_ymax = plsc->vpdyma;
 }
 
 void
-svpd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
+plP_svpd(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
-    pls[ipls].vpdxmi = xmin;
-    pls[ipls].vpdxma = xmax;
-    pls[ipls].vpdymi = ymin;
-    pls[ipls].vpdyma = ymax;
+    plsc->vpdxmi = xmin;
+    plsc->vpdxma = xmax;
+    plsc->vpdymi = ymin;
+    plsc->vpdyma = ymax;
 }
 
 void
-gvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
+plP_gvpw(PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax)
 {
-    *p_xmin = pls[ipls].vpwxmi;
-    *p_xmax = pls[ipls].vpwxma;
-    *p_ymin = pls[ipls].vpwymi;
-    *p_ymax = pls[ipls].vpwyma;
+    *p_xmin = plsc->vpwxmi;
+    *p_xmax = plsc->vpwxma;
+    *p_ymin = plsc->vpwymi;
+    *p_ymax = plsc->vpwyma;
 }
 
 void
-svpw(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
+plP_svpw(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 {
-    pls[ipls].vpwxmi = xmin;
-    pls[ipls].vpwxma = xmax;
-    pls[ipls].vpwymi = ymin;
-    pls[ipls].vpwyma = ymax;
+    plsc->vpwxmi = xmin;
+    plsc->vpwxma = xmax;
+    plsc->vpwymi = ymin;
+    plsc->vpwyma = ymax;
 }
 
 void
-gpixmm(PLFLT *p_x, PLFLT *p_y)
+plP_gpixmm(PLFLT *p_x, PLFLT *p_y)
 {
-    *p_x = pls[ipls].xpmm;
-    *p_y = pls[ipls].ypmm;
+    *p_x = plsc->xpmm;
+    *p_y = plsc->ypmm;
 }
 
 void
-spixmm(PLFLT x, PLFLT y)
+plP_spixmm(PLFLT x, PLFLT y)
 {
-    pls[ipls].xpmm = x;
-    pls[ipls].ypmm = y;
-    pls[ipls].umx = 1000.0 / pls[ipls].xpmm;
-    pls[ipls].umy = 1000.0 / pls[ipls].ypmm;
+    plsc->xpmm = x;
+    plsc->ypmm = y;
+    plsc->umx = 1000.0 / plsc->xpmm;
+    plsc->umy = 1000.0 / plsc->ypmm;
 }
 
 /* All the drivers call this to set physical pixels/mm. */
 
 void
-setpxl(PLFLT xpmm0, PLFLT ypmm0)
+plP_setpxl(PLFLT xpmm0, PLFLT ypmm0)
 {
-    pls[ipls].xpmm = xpmm0;
-    pls[ipls].ypmm = ypmm0;
-    pls[ipls].umx = 1000.0 / pls[ipls].xpmm;
-    pls[ipls].umy = 1000.0 / pls[ipls].ypmm;
+    plsc->xpmm = xpmm0;
+    plsc->ypmm = ypmm0;
+    plsc->umx = 1000.0 / plsc->xpmm;
+    plsc->umy = 1000.0 / plsc->ypmm;
 }
 
 /* Sets up physical limits of plotting device and the mapping between
    normalized device coordinates and physical coordinates. */
 
 void
-setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
+plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
 {
     PLFLT xpmm, ypmm, mpxscl, mpyscl;
 
-    sphy(xmin, xmax, ymin, ymax);
-    sdp((PLFLT) (xmax - xmin), (PLFLT) (xmin), (PLFLT) (ymax - ymin),
+    plP_sphy(xmin, xmax, ymin, ymax);
+    plP_sdp((PLFLT) (xmax - xmin), (PLFLT) (xmin), (PLFLT) (ymax - ymin),
 	(PLFLT) (ymin));
 
-    gpixmm(&xpmm, &ypmm);
+    plP_gpixmm(&xpmm, &ypmm);
     mpxscl = xpmm;
     if (xmax <= xmin)
 	mpxscl = -xpmm;
     mpyscl = ypmm;
     if (ymax <= ymin)
 	mpyscl = -ypmm;
-    smp(mpxscl, (PLFLT) (xmin), mpyscl, (PLFLT) (ymin));
+    plP_smp(mpxscl, (PLFLT) (xmin), mpyscl, (PLFLT) (ymin));
 }
 
 void
-gwp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
+plP_gwp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
-    *p_xscl = pls[ipls].wpxscl;
-    *p_xoff = pls[ipls].wpxoff;
-    *p_yscl = pls[ipls].wpyscl;
-    *p_yoff = pls[ipls].wpyoff;
+    *p_xscl = plsc->wpxscl;
+    *p_xoff = plsc->wpxoff;
+    *p_yscl = plsc->wpyscl;
+    *p_yoff = plsc->wpyoff;
 }
 
 void
-swp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
+plP_swp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
 {
-    pls[ipls].wpxscl = xscl;
-    pls[ipls].wpxoff = xoff;
-    pls[ipls].wpyscl = yscl;
-    pls[ipls].wpyoff = yoff;
+    plsc->wpxscl = xscl;
+    plsc->wpxoff = xoff;
+    plsc->wpyscl = yscl;
+    plsc->wpyoff = yoff;
 }
 
 void
-gwm(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
+plP_gwm(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
-    *p_xscl = pls[ipls].wmxscl;
-    *p_xoff = pls[ipls].wmxoff;
-    *p_yscl = pls[ipls].wmyscl;
-    *p_yoff = pls[ipls].wmyoff;
+    *p_xscl = plsc->wmxscl;
+    *p_xoff = plsc->wmxoff;
+    *p_yscl = plsc->wmyscl;
+    *p_yoff = plsc->wmyoff;
 }
 
 void
-swm(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
+plP_swm(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
 {
-    pls[ipls].wmxscl = xscl;
-    pls[ipls].wmxoff = xoff;
-    pls[ipls].wmyscl = yscl;
-    pls[ipls].wmyoff = yoff;
+    plsc->wmxscl = xscl;
+    plsc->wmxoff = xoff;
+    plsc->wmyscl = yscl;
+    plsc->wmyoff = yoff;
 }
 
 void
-gdp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
+plP_gdp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
-    *p_xscl = pls[ipls].dpxscl;
-    *p_xoff = pls[ipls].dpxoff;
-    *p_yscl = pls[ipls].dpyscl;
-    *p_yoff = pls[ipls].dpyoff;
+    *p_xscl = plsc->dpxscl;
+    *p_xoff = plsc->dpxoff;
+    *p_yscl = plsc->dpyscl;
+    *p_yoff = plsc->dpyoff;
 }
 
 void
-sdp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
+plP_sdp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
 {
-    pls[ipls].dpxscl = xscl;
-    pls[ipls].dpxoff = xoff;
-    pls[ipls].dpyscl = yscl;
-    pls[ipls].dpyoff = yoff;
+    plsc->dpxscl = xscl;
+    plsc->dpxoff = xoff;
+    plsc->dpyscl = yscl;
+    plsc->dpyoff = yoff;
 }
 
 void
-gmp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
+plP_gmp(PLFLT *p_xscl, PLFLT *p_xoff, PLFLT *p_yscl, PLFLT *p_yoff)
 {
-    *p_xscl = pls[ipls].mpxscl;
-    *p_xoff = pls[ipls].mpxoff;
-    *p_yscl = pls[ipls].mpyscl;
-    *p_yoff = pls[ipls].mpyoff;
+    *p_xscl = plsc->mpxscl;
+    *p_xoff = plsc->mpxoff;
+    *p_yscl = plsc->mpyscl;
+    *p_yoff = plsc->mpyoff;
 }
 
 void
-smp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
+plP_smp(PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff)
 {
-    pls[ipls].mpxscl = xscl;
-    pls[ipls].mpxoff = xoff;
-    pls[ipls].mpyscl = yscl;
-    pls[ipls].mpyoff = yoff;
+    plsc->mpxscl = xscl;
+    plsc->mpxoff = xoff;
+    plsc->mpyscl = yscl;
+    plsc->mpyoff = yoff;
 }
 
 void
-gchr(PLFLT *p_def, PLFLT *p_ht)
+c_plgchr(PLFLT *p_def, PLFLT *p_ht)
 {
-    *p_def = pls[ipls].chrdef;
-    *p_ht = pls[ipls].chrht;
+    *p_def = plsc->chrdef;
+    *p_ht = plsc->chrht;
 }
 
 void
-schr(PLFLT def, PLFLT ht)
+plP_schr(PLFLT def, PLFLT ht)
 {
-    pls[ipls].chrdef = def;
-    pls[ipls].chrht = ht;
+    plsc->chrdef = def;
+    plsc->chrht = ht;
 }
 
 void
-gsym(PLFLT *p_def, PLFLT *p_ht)
+plP_gsym(PLFLT *p_def, PLFLT *p_ht)
 {
-    *p_def = pls[ipls].symdef;
-    *p_ht = pls[ipls].symht;
+    *p_def = plsc->symdef;
+    *p_ht = plsc->symht;
 }
 
 void
-ssym(PLFLT def, PLFLT ht)
+plP_ssym(PLFLT def, PLFLT ht)
 {
-    pls[ipls].symdef = def;
-    pls[ipls].symht = ht;
+    plsc->symdef = def;
+    plsc->symht = ht;
 }
 
 void
-gmaj(PLFLT *p_def, PLFLT *p_ht)
+plP_gmaj(PLFLT *p_def, PLFLT *p_ht)
 {
-    *p_def = pls[ipls].majdef;
-    *p_ht = pls[ipls].majht;
+    *p_def = plsc->majdef;
+    *p_ht = plsc->majht;
 }
 
 void
-smaj(PLFLT def, PLFLT ht)
+plP_smaj(PLFLT def, PLFLT ht)
 {
-    pls[ipls].majdef = def;
-    pls[ipls].majht = ht;
+    plsc->majdef = def;
+    plsc->majht = ht;
 }
 
 void
-gmin(PLFLT *p_def, PLFLT *p_ht)
+plP_gmin(PLFLT *p_def, PLFLT *p_ht)
 {
-    *p_def = pls[ipls].mindef;
-    *p_ht = pls[ipls].minht;
+    *p_def = plsc->mindef;
+    *p_ht = plsc->minht;
 }
 
 void
-smin(PLFLT def, PLFLT ht)
+plP_smin(PLFLT def, PLFLT ht)
 {
-    pls[ipls].mindef = def;
-    pls[ipls].minht = ht;
+    plsc->mindef = def;
+    plsc->minht = ht;
 }
 
 void
-gpat(PLINT *p_inc[], PLINT *p_del[], PLINT *p_nlin)
+plP_gpat(PLINT *p_inc[], PLINT *p_del[], PLINT *p_nlin)
 {
-    *p_inc = pls[ipls].inclin;
-    *p_del = pls[ipls].delta;
-    *p_nlin = pls[ipls].nps;
+    *p_inc = plsc->inclin;
+    *p_del = plsc->delta;
+    *p_nlin = plsc->nps;
 }
 
 void
-spat(PLINT inc[], PLINT del[], PLINT nlin)
+plP_spat(PLINT inc[], PLINT del[], PLINT nlin)
 {
     PLINT i;
 
-    pls[ipls].nps = nlin;
+    plsc->nps = nlin;
     for (i = 0; i < nlin; i++) {
-	pls[ipls].inclin[i] = inc[i];
-	pls[ipls].delta[i] = del[i];
+	plsc->inclin[i] = inc[i];
+	plsc->delta[i] = del[i];
     }
 }
 
 void
-gmark(PLINT *p_mar[], PLINT *p_spa[], PLINT *p_nms)
+plP_gmark(PLINT *p_mar[], PLINT *p_spa[], PLINT *p_nms)
 {
-    *p_mar = pls[ipls].mark;
-    *p_spa = pls[ipls].space;
-    *p_nms = pls[ipls].nms;
+    *p_mar = plsc->mark;
+    *p_spa = plsc->space;
+    *p_nms = plsc->nms;
 }
 
 void
-smark(PLINT mar[], PLINT spa[], PLINT nms)
+plP_smark(PLINT mar[], PLINT spa[], PLINT nms)
 {
     PLINT i;
 
-    pls[ipls].nms = nms;
+    plsc->nms = nms;
     for (i = 0; i < nms; i++) {
-	pls[ipls].mark[i] = mar[i];
-	pls[ipls].space[i] = spa[i];
+	plsc->mark[i] = mar[i];
+	plsc->space[i] = spa[i];
     }
 }
 
 void
-gcure(PLINT **p_cur, PLINT **p_pen, PLINT **p_tim, PLINT **p_ala)
+plP_gcure(PLINT **p_cur, PLINT **p_pen, PLINT **p_tim, PLINT **p_ala)
 {
-    *p_cur = &(pls[ipls].curel);
-    *p_pen = &(pls[ipls].pendn);
-    *p_tim = &(pls[ipls].timecnt);
-    *p_ala = &(pls[ipls].alarm);
+    *p_cur = &(plsc->curel);
+    *p_pen = &(plsc->pendn);
+    *p_tim = &(plsc->timecnt);
+    *p_ala = &(plsc->alarm);
 }
 
 void
-scure(PLINT cur, PLINT pen, PLINT tim, PLINT ala)
+plP_scure(PLINT cur, PLINT pen, PLINT tim, PLINT ala)
 {
-    pls[ipls].curel = cur;
-    pls[ipls].pendn = pen;
-    pls[ipls].timecnt = tim;
-    pls[ipls].alarm = ala;
+    plsc->curel = cur;
+    plsc->pendn = pen;
+    plsc->timecnt = tim;
+    plsc->alarm = ala;
 }
