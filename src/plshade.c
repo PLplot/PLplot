@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1994/07/12 19:20:55  mjl
+ * Revision 1.11  1994/10/18 16:05:20  furnish
+ * Correct to notice if either pltr or pltr_data is NULL.  Required to
+ * make C++ abstraction work correctly.
+ *
+ * Revision 1.10  1994/07/12  19:20:55  mjl
  * Argument list for plshade() fixed.
  *
  * Revision 1.9  1994/06/30  18:22:16  mjl
@@ -285,7 +289,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	return;
     }
 
-    if (pltr == NULL)
+    if (pltr == NULL || pltr_data == NULL)
 	rectangular = 1;
 
     init_width = plsc->width;
@@ -375,7 +379,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		y[0] = y[3] = iy;
 		y[1] = y[2] = iy+j;
 
-		if (pltr) {
+		if (pltr && pltr_data) {
 		    for (i = 0; i < 4; i++) {
 			(*pltr) (x[i], y[i], &tx, &ty, pltr_data);
 			x[i] = tx;
@@ -426,7 +430,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    }
 	    n += i;
 
-	    if (pltr) {
+	    if (pltr && pltr_data) {
 		for (i = 0; i < n; i++) {
 		    (*pltr) (x[i], y[i], &tx, &ty, pltr_data);
 		    x[i] = tx;
