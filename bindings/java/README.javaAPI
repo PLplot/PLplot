@@ -10,12 +10,12 @@ IBMJava2-SDK-14.tgz which is freely downloadable from IBM.  (See
 http://www-106.ibm.com/developerworks/java/jdk/linux/tested.html for product
 description.)
 
-(2) Set environment variables (under tcsh.  For bash use the export
-variable=value syntax.)
-# Your location for the java SDK will vary depending on where you unpack the
-# tarball of the SDK.
-setenv JAVA_HOME /home/software/java/IBMJava2-14/
-setenv PATH $PATH":$JAVA_HOME/bin"
+(2) If the java include files are not in a default include directory then
+you need to tell configure where they are. You can either use the
+--with-java-home option to set the SDK directory e.g.
+./configure --with-java-home=/home/software/java/IBMJava2-14/
+Previously this was done via the environment variables JAVA_HOME, which
+still works for backwards compatibility.
 
 (3) The rest is highly automated.  Move to the top-level PLplot build
 directory and configure, build, and install.
@@ -59,14 +59,19 @@ relevant java files and corresponding class files that are compiled from
 them make up the plplot.core package.
 
 'make install' installs the relevant java and class files that are part of
-the plplot.core package in $prefix/lib/java/plplot/core, installs the 
-shared object module (DLL) plplotjavac_wrap.SOBJEXT for the java PLplot
-interface in the same location, and also installs (from ../../examples/java)
-the example java scripts and corresponding class files that are part of the
-plplot.examples package into $prefix/lib/java/plplot/examples. For
-more details about the examples, please see
-../../examples/java/README.javademos or the installed version of that file
-in /usr/local/plplot/lib/java/plplot/examples.
+the plplot.core package in $prefix/share/plplot5.3.1/java/plplot/core, 
+installs the shared object module (DLL) plplotjavac_wrap.SOBJEXT for the 
+java PLplot interface in the $prefix/lib/plplot5.3.1/java, and also installs 
+(from ../../examples/java) the example java scripts and corresponding class 
+files that are part of the plplot.examples package into 
+$prefix/share/plplot5.3.1/java/plplot/examples. For more details about the 
+examples, please see ../../examples/java/README.javademos or the installed 
+version of that file in $prefix/share/plplot5.3.1/examples/java/. Copies of
+the java files are also in this directory for convenience.
+At the end of the install process all the files in 
+$prefix/share/plplot5.3.1/java/plplot/ are bundled into a jar file
+$prefix/share/plplot5.3.1/java/plplot.jar and the plplot directory is
+deleted.
 
 Here is how to add a new function to the Java API for PLplot:
 
@@ -147,7 +152,8 @@ though, we will be taking a simplified approach to the 3-d API similar to
 what is done for the Tcl interface rather than the preferred complete
 callback approach used for the Python interface.
 
-Alan W. Irwin (last updated on 2004-02-15.)
+Alan W. Irwin 
+Andrew Ross (last updated 2004-07-01)
 _________________________________________________________________
 
 The following notes (written by Geoffrey Furnish with some minor editing

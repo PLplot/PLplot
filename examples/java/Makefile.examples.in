@@ -22,8 +22,6 @@
 JAVAC = javac
 PLPLOT_CLASSPATH = @JAVADATA_HARDDIR@/plplot.jar
 
-examples_jar = plplot-examples.jar
-
 example_classes = \
 		 plplot/examples/x01.class \
 		 plplot/examples/x02.class \
@@ -46,13 +44,10 @@ example_classes = \
 		 plplot/examples/x19.class \
 		 plplot/examples/x22.class
 
-all: $(examples_jar)
-
-$(examples_jar): $(example_classes)
-	jar -cf $(examples_jar) plplot/examples/*.class
+all: $(example_classes)
 
 clean:
-	rm -rf plplot $(examples_jar)
+	rm -rf plplot 
 
 plplot/examples/%.class : %.java
 	$(JAVAC) $(AM_JAVACFLAGS) $(JAVACFLAGS) $< -d . -classpath $(PLPLOT_CLASSPATH)
