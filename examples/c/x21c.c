@@ -186,7 +186,8 @@ main(int argc, char *argv[])
 
       ct = clock();
       plgriddata(x, y, z, pts, xg, xp, yg, yp, zg, alg, opt[alg-1]);
-      sprintf(ylab, "time=%d ms, opt=%.3f", (clock() - ct)/1000, opt[alg-1]);
+      sprintf(xlab, "time=%d ms", (clock() - ct)/1000);
+      sprintf(ylab, "opt=%.3f", opt[alg-1]);
 
       /* CSA can generate NaNs (only interpolates?). 
        * DTLI and NNLI can generate NaNs for points outside the convex hull of the
@@ -232,7 +233,7 @@ main(int argc, char *argv[])
 
 	plenv0(xm, xM, ym, yM, 2, 0);
 	plcol0(15);
-	pllab(ylab, " ", title[alg-1]);
+	pllab(xlab, ylab, title[alg-1]);
 	plshades(zg, xp, yp, NULL, xm, xM, ym, yM, 
 		 clev, nl, 1, 0, 1, plfill, 1, NULL, NULL);
 	plcol0(2);
@@ -242,8 +243,8 @@ main(int argc, char *argv[])
 	plvpor(0.0, 1.0, 0.0, 0.9);
 	plwind(-1.0, 1.0, -1.0, 1.5);
 	plw3d(1., 1., 1., xm, xM, ym, yM, zmin, zmax, 30, -60);
-	plbox3("bnstu", "", 0.0, 0,
-	       "bnstu", ylab, 0.0, 0,
+	plbox3("bnstu", ylab, 0.0, 0,
+	       "bnstu", xlab, 0.0, 0,
 	       "bcdmnstuv", "", 0.0, 4);
 	plcol0(15);
 	pllab("", "", title[alg-1]);
