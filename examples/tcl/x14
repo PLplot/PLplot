@@ -14,6 +14,6 @@ exec pltcl -f "$0" ${1+"$@"}
 
 source x14.tcl
 
-plinit
+# Note, both plinit (twice with potentially two devices) and plend
+# done inside x14 
 x14
-plend
