@@ -4,9 +4,23 @@
 # Demo polar grid plotter
 #
 #
-# To run this demo execute pltcl and type plinit to get a selection of
-# device types.  Choose one of the devices then type
-# "source plgrid.tcl" (this file), then type "plgrid" with no arguments.
+# This programme uses the loopback widget so it can be run from either pltcl 
+# with a choice of the standard drivers or plserver with the plframe widget.
+# (1) pltcl:
+#     execute pltcl and type plinit to get a selection of
+#     device types.  Choose one of the devices then type
+#     "source plgrid.tcl" (this file), then type "plgrid" 
+#     with no arguments.
+# (2) plserver
+#     execute plserver then type the following (see ../tk/tkdemos.tcl for
+#     many other working examples of this method).
+#     plstdwin .
+#     plxframe .plw
+#     pack append . .plw {left expand fill}
+#     source plgrid.tcl
+#     proc 1 {} "plgrid .plw.plwin"
+#     to execute this procedure that you have just created execute the "1"
+#     command.
 #----------------------------------------------------------------------------
 
 proc plgrid {{w loopback}} {
@@ -55,4 +69,5 @@ proc plgrid {{w loopback}} {
 	}
 	$w cmd plline $ni xi yi
     }
+    $w cmd pleop
 }
