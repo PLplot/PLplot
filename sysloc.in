@@ -750,7 +750,7 @@ if test "$enable_octave" = "yes"; then
 
 # Get Octave default *.oct file directory
     if test "$enable_octave" = "yes"; then
-        OCTAVE_DIR='$(PREFIX)'/share/plplot_octave
+        OCTAVE_DIR=${prefix}/share/plplot_octave
         OCTAVE_OCT_DIR=`$OCTAVE -q -f <<EOF
         t = octave_config_info;
         printf("%s", t.octfiledir);
