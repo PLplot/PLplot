@@ -109,6 +109,7 @@ define(if_gcc,	{ifdef({GCC},		{$1},{$2})})dnl
 #	current directory
 #	$(HOME)/lib/
 #	$(PLFONTS)
+#	INSTALL_DIR	(set here)
 #	PLFONTDEV1	(/usr/local/lib/)
 #	PLFONTDEV2	(/usr/local/lib/plplot/)
 #	PLFONTDEV3	(/usr/local/plplot/)
@@ -116,14 +117,10 @@ define(if_gcc,	{ifdef({GCC},		{$1},{$2})})dnl
 #    It is recommended that you store the fonts in a local directory during
 #    installation.  When you have verified the package works as expected,
 #    simply move the fonts to the appropriate system directory and then all
-#    users will have access to the fonts (no recompilation necessary).  If
-#    none of the three given hardwired locations is satisfactory, you can
-#    change it by passing in your desired location on the build line for
-#    plfont.c (done separately for this purpose), e.g.
+#    users will have access to the fonts (no recompilation necessary).  The
+#    install directory is passed as one of the places to look as follows:
 #
-#	FONTFLAG= '-DPLFONTDEV1="/usr/lib/plplot/"'
-#
-#    (quotes and trailing slash required).
+#	DIRFLAG= -DINSTALL_DIR=\"$(INSTALL_DIR)\"
 #
 # 2. To explicitly force the double precision library to be built, create
 #    makefile with:
@@ -174,11 +171,11 @@ INSTALL_DIR	= /usr/local/plplot
 INCLUDE_DIR	= $(INSTALL_DIR)/{include}
 TCL_DIR		= $(INSTALL_DIR)/tcl
 
+DIRFLAG		= -DINSTALL_DIR=\"$(INSTALL_DIR)\"
 PLLIB_DIR	= ../lib
 PLFNT_DIR	= ../lib
 PLLIB_PATH	= $(PLLIB_DIR)/
 PLFNT_PATH	= $(PLFNT_DIR)/
-FONTFLAG	=
 TK_INCDIR	= /usr/local/{include}
 TK_LINKDIR	= /usr/local/lib
 SYS_LIBS	=
@@ -1077,7 +1074,7 @@ GST :		plplotP.h plplot.h plamiga.h
 # plfont.c may have font flags passed in
 
 plfont.o:	plplotP.h plplot.h plfont.c
-	$(CC) $(CFLAGS) $(FONTFLAG) plfont.c
+	$(CC) $(CFLAGS) $(DIRFLAG) plfont.c
 
 # plcore.c and all the drivers need to know $(PLDEVICES).  The guts
 # of the driver routine are not compiled if its name is not present in
@@ -1130,7 +1127,7 @@ xwin.o:		plplotP.h plplot.h plstream.h drivers.h xwin.h xwin.c
 
 tk.o:		plserver.h plplotP.h plplot.h plstream.h \
 		drivers.h metadefs.h pdf.h plevent.h tk.c
-	$(CC) -I$(TK_INCDIR) $(CFLAGS) $(PLDEVICES) tk.c
+	$(CC) -I$(TK_INCDIR) $(CFLAGS) $(DIRFLAG) $(PLDEVICES) tk.c
 
 tkshell.o:	plserver.h plplotP.h plplot.h plstream.h tkshell.c
 	$(CC) -I$(TK_INCDIR) $(CFLAGS) $(PLDEVICES) tkshell.c
@@ -1147,7 +1144,7 @@ plrender:	$(PLLIB_MAIN) plrender.o
 	$(LDC) $(STARTUP) plrender.o $(PLLIB_LDC) $(TO) $@ $(LDCFLAGS)
 
 plserver.o:	plserver.h plplotP.h plplot.h plstream.h plserver.c
-	$(CC) -I$(TK_INCDIR) $(CFLAGS) plserver.c
+	$(CC) -I$(TK_INCDIR) $(CFLAGS) $(DIRFLAG) plserver.c
 
 plframe.o:	plserver.h plplotP.h plplot.h plstream.h xwin.h plframe.c
 	$(CC) -I$(TK_INCDIR) $(CFLAGS) plframe.c
