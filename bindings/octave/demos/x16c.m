@@ -31,22 +31,13 @@ endfunction
 
 function ix16c
 
-  global device file
-
   if (!exist("plinit"))
     plplot_stub
   endif
 
-  if (exist("device"))
-    plsdev(device);
-  else
+  if(isempty(sprintf("%s",plgdev')))
     plsdev("xwin");
   endif
-
-  if (exist("file"))
-    plsfnam(file);
-  endif
-
 
   global tr; global nx; global ny;
   ## Fundamental settings.  See notes[] for more info. */
@@ -135,10 +126,10 @@ function ix16c
   
   plcont(w, 1, nx, 1, ny, clevel, tr);
   
-  pllab("distance", "altitude", "Bogon density");
+  pllab("distance", "altitude", "Bogon density 1");
 
   ## Plot using 1d coordinate transform */
-  
+
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
@@ -163,7 +154,7 @@ function ix16c
 
   plcont1(w, 1, nx, 1, ny, clevel, xg1, yg1);
 
-  pllab("distance", "altitude", "Bogon density");
+  pllab("distance", "altitude", "Bogon density 2");
 
   ## Plot using 2d coordinate transform */
 

@@ -17,22 +17,15 @@
 
 function x05c
 
-  global device file
-
   ## Initialize plplot */
   if (!exist("plinit"))
     plplot_stub
   endif
 
-  if (exist("device"))
-    plsdev(device);
-  else
+  if(isempty(sprintf("%s",plgdev')))
     plsdev("xwin");
   endif
 
-  if (exist("file"))
-    plsfnam(file);
-  endif
   plinit;
 
   NPTS=2047;

@@ -27,16 +27,19 @@ Press any key to continue...\n");
 fflush(stdout);
 kbhit;
 
-global device file
+plplot_stub;
 
-## to use a diferent device/file, set its values, e.g:
-## device = "psc"
-## file = "foo.ps"
+for i=[1:19];
+  ## To set defaults, use plSetOpt, as used in the command line, e.g.
+  ## plSetOpt("dev", "png");
+  ## plSetOpt("o", "foo.ps");
+  ## plSetOpt("fam", "1");
+  
+  plSetOpt("dev", "xwin");
 
-for i=1:19;
-	cmd = sprintf("x%.2dc",i);
-	printf("Demo %s\n", cmd);
-	fflush(stdout);
-	eval(cmd);
+  cmd = sprintf("x%.2dc",i);
+  printf("Demo %s\n", cmd);
+  fflush(stdout);
+  eval(cmd);
 endfor
 

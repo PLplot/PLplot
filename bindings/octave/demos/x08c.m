@@ -12,25 +12,17 @@
 ##
 ## This file is part of plplot_octave.
 ## It is based on the corresponding demo function of PLplot.
-# Does a series of 3-d plots for a given data set, with different
-# viewing options in each plot.
+## Does a series of 3-d plots for a given data set, with different
+## viewing options in each plot.
 
 function x08c
-
-  global device file
 
   if (!exist("plinit"))
     plplot_stub
   endif
 
-  if (exist("device"))
-    plsdev(device);
-  else
+  if(isempty(sprintf("%s",plgdev')))
     plsdev("xwin");
-  endif
-
-  if (exist("file"))
-    plsfnam(file);
   endif
 
   XPTS=35;		## Data points in x */

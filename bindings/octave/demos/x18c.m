@@ -23,20 +23,12 @@ global az = [30.0, 40.0, 50.0, 60.0];
 
 function ix18c
 
-  global device file
-
   if (!exist("plinit"))
     plplot_stub
   endif
 
-  if (exist("device"))
-    plsdev(device);
-  else
+  if(isempty(sprintf("%s",plgdev')))
     plsdev("xwin");
-  endif
-
-  if (exist("file"))
-    plsfnam(file);
   endif
 
   global alt;

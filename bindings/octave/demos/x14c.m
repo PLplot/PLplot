@@ -24,19 +24,14 @@
 
 function ix14c
 
-  global device file
-
   if (!exist("plinit"))
     plplot_stub
   endif
 
-  if (!exist("device"))
-    device="tk";
-  endif
-  plsdev(device);
-
-  if (exist("file"))
-    plsfnam(file);
+  device = sprintf("%s",plgdev');
+  if(isempty(device))
+    device = "xwin";
+    plsdev(device);
   endif
 
   ## printf("If you dont have built PLplot with Tcl/Tk support this demo (x14c) will fail.\n");
@@ -74,12 +69,7 @@ function ix14c
   plSetOpt("geometry", geometry_slave);
   plspause(0);
 
-    plsdev(device);
-    if (exist("file"))
-      plsfnam(file);
-    endif
-
-  ##plsfnam(getenv("DISPLAY"));
+  plsdev(device)
   plinit();
 
   ## Set up the data & plot */

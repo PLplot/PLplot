@@ -20,8 +20,6 @@
 
 function ix04c
 
-  global device file
-
   ## Parse and process command line arguments */
 
   ## (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
@@ -31,14 +29,8 @@ function ix04c
     plplot_stub
   endif
 
-  if (exist("device"))
-    plsdev(device);
-  else
+  if(isempty(sprintf("%s",plgdev')))
     plsdev("xwin");
-  endif
-
-  if (exist("file"))
-    plsfnam(file);
   endif
 
   plinit();

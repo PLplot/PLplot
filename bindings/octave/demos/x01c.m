@@ -19,20 +19,12 @@
 
 function ix01c
 
-global device file
-
   if (!exist("plinit"))
     plplot_stub
   endif
 
-  if (exist("device"))
-    plsdev(device);
-  else
+  if(isempty(sprintf("%s",plgdev')))
     plsdev("xwin");
-  endif
-
-  if (exist("file"))
-    plsfnam(file);
   endif
 
   ## plplot initialization */
