@@ -11,10 +11,9 @@
 #
 #	cdemos		All the C demos
 #	fdemos		All the Fortran demos
-#	x??[cf]		Demo number ??, C or fortran version
-#	xtk??		Extended wish demos
-#
-# I keep these together in one place just for convenience.
+#	tkdemos		All the extended wish (TK) demos
+#	x??[cf]		Demo number ??, C or fortran versions
+#	xtk??		Demo number ??, extended wish versions
 # -----------------------------------------------------------------------
 
 # -----------------------------------------------------------------------
@@ -30,133 +29,133 @@ x01c.o:	x01c.c
 
 x01c:	$(PLLIBS) x01c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x01c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x02c.o:	x02c.c
 	$(CC) $(CC_FLAGS_DEMOS) x02c.c
 
 x02c:	$(PLLIBS) x02c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x02c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x03c.o:	x03c.c
 	$(CC) $(CC_FLAGS_DEMOS) x03c.c
 
 x03c:	$(PLLIBS) x03c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x03c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x04c.o:	x04c.c
 	$(CC) $(CC_FLAGS_DEMOS) x04c.c
 
 x04c:	$(PLLIBS) x04c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x04c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x05c.o:	x05c.c
 	$(CC) $(CC_FLAGS_DEMOS) x05c.c
 
 x05c:	$(PLLIBS) x05c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x05c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x06c.o:	x06c.c
 	$(CC) $(CC_FLAGS_DEMOS) x06c.c
 
 x06c:	$(PLLIBS) x06c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x06c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x07c.o:	x07c.c
 	$(CC) $(CC_FLAGS_DEMOS) x07c.c
 
 x07c:	$(PLLIBS) x07c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x07c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x08c.o:	x08c.c
 	$(CC) $(CC_FLAGS_DEMOS) x08c.c
 
 x08c:	$(PLLIBS) x08c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x08c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x09c.o:	x09c.c
 	$(CC) $(CC_FLAGS_DEMOS) x09c.c
 
 x09c:	$(PLLIBS) x09c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x09c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x10c.o:	x10c.c
 	$(CC) $(CC_FLAGS_DEMOS) x10c.c
 
 x10c:	$(PLLIBS) x10c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x10c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x11c.o:	x11c.c
 	$(CC) $(CC_FLAGS_DEMOS) x11c.c
 
 x11c:	$(PLLIBS) x11c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x11c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x12c.o:	x12c.c
 	$(CC) $(CC_FLAGS_DEMOS) x12c.c
 
 x12c:	$(PLLIBS) x12c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x12c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x13c.o:	x13c.c
 	$(CC) $(CC_FLAGS_DEMOS) x13c.c
 
 x13c:	$(PLLIBS) x13c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x13c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x14c.o:	x14c.c
 	$(CC) $(CC_FLAGS_DEMOS) x14c.c
 
 x14c:	$(PLLIBS) x14c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x14c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x15c.o:	x15c.c
 	$(CC) $(CC_FLAGS_DEMOS) x15c.c
 
 x15c:	$(PLLIBS) x15c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x15c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x16c.o:	x16c.c
 	$(CC) $(CC_FLAGS_DEMOS) x16c.c
 
 x16c:	$(PLLIBS) x16c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x16c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x17c.o:	x17c.c
 	$(CC) $(CC_FLAGS_DEMOS) x17c.c
 
 x17c:	$(PLLIBS) x17c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x17c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 x18c.o:	x18c.c
 	$(CC) $(CC_FLAGS_DEMOS) x18c.c
 
 x18c:	$(PLLIBS) x18c.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x18c.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 tutor.o:	tutor.c
 	$(CC) $(CC_FLAGS_DEMOS) tutor.c
 
 tutor:	$(PLLIBS) tutor.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 # -----------------------------------------------------------------------
 # Example programs, in Fortran.
@@ -232,9 +231,9 @@ tkdemos: $(TKDEMOS)
 
 xtk01:  $(PLLIBS) xtk01.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk01.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 xtk02:  $(PLLIBS) xtk02.o
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk02.o \
-	       $(PLLIB_LDC) $(TO) $@ $(LDC_PATH) $(LDC_LIBS)
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
