@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/11/07 09:08:14  mjl
-   Added user-settable exit handler (call plsexit to set).
+   Revision 1.10  1993/11/15 08:39:05  mjl
+   Removed plexit().
 
+ * Revision 1.9  1993/11/07  09:08:14  mjl
+ * Added user-settable exit handler (call plsexit to set).
+ *
  * Revision 1.8  1993/10/21  19:28:25  mjl
  * Minor bug fix.
  *
@@ -52,25 +55,6 @@ static void	strcat_delim	(char *);
 static void	(*exit_handler) (void);
 
 /*----------------------------------------------------------------------*\
-* void plexit()
-*
-* In case of an abort this routine is called.  It just prints out an
-* error message and tries to clean up as much as possible.
-\*----------------------------------------------------------------------*/
-
-void
-plexit(char *errormsg)
-{
-    plend();
-    if (*errormsg != '\0') {
-	fprintf(stderr, "\n*** PLPLOT ERROR ***\n");
-	fprintf(stderr, "%s\n", errormsg);
-    }
-    fprintf(stderr, "Program aborted\n");
-    pl_exit();
-}
-
-/*----------------------------------------------------------------------*\
 * void pl_exit()
 *
 * Just a front-end to exit().  If cleanup needs to be done in the main
@@ -83,8 +67,10 @@ pl_exit(void)
 {
     if (exit_handler != NULL)
 	(*exit_handler)();
-    else
+    else {
+	fprintf(stderr, "Program aborted\n");
 	exit(1);
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -215,7 +201,8 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 * to the driver.
 \*----------------------------------------------------------------------*/
 
-void pl_cmd(PLINT op, void *ptr)
+void
+pl_cmd(PLINT op, void *ptr)
 {
     plP_esc(op, ptr);
 }
