@@ -65,6 +65,7 @@ struct _PlplotCanvasClass {
 				gdouble* xmin2,gdouble* xmax2,
 				gdouble* ymin2,gdouble* ymax2);
   void (*use_text)(PlplotCanvas* canvas,gboolean use_text);
+  void (*use_fast_rendering)(PlplotCanvas* canvas,gboolean use_fast_rendering);
   void (*use_foreground_group)(PlplotCanvas* canvas);
   void (*use_background_group)(PlplotCanvas* canvas);
   void (*use_default_group)(PlplotCanvas* canvas);
@@ -84,6 +85,8 @@ void plplot_canvas_get_viewport(PlplotCanvas* self,gdouble xmin1,
 				gdouble* xmin2,gdouble* xmax2,
 				gdouble* ymin2,gdouble* ymax2);
 void plplot_canvas_use_text(PlplotCanvas* self,gboolean use_text);
+void plplot_canvas_use_fast_rendering(PlplotCanvas* self,
+				      gboolean use_fast_rendering);
 void plplot_canvas_use_foreground_group(PlplotCanvas* self);
 void plplot_canvas_use_background_group(PlplotCanvas* self);
 void plplot_canvas_use_default_group(PlplotCanvas* self);
