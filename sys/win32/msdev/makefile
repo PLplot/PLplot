@@ -4,6 +4,12 @@
 # file before running nmake.
 #
 # Questions/problems, send email to :
+#
+#       Arjen Markus    arjen.markus@wldelft.nl
+#       WL | Delft Hydraulics
+#       The Netherlands
+#
+# Previous maintainer:
 #       Olof Svensson   svensson@esrf.fr
 #       European Synchrotron Radiation Facility
 #       France
@@ -45,6 +51,7 @@ links:
 #
 # Copy the necessary files to the temp dir
 #
+  @mkdir $(PLTMP)
   @mkdir $(PLTMP)\plplot
   @echo ``
   @echo `Copying source files to $(PLTMP)`
@@ -66,12 +73,15 @@ links:
 #
 #  @copy src\*.c $(PLTMP)\*.cpp
   @copy src\win3.cpp $(PLTMP)
+  @copy src\plconsole.cpp $(PLTMP)
   @copy src\plstub.cpp $(PLTMP)
   @copy src\resource.h $(PLTMP)
+  @copy src\plplot.h $(PLTMP)
+  @copy src\plplotd.dep $(PLTMP)
   @copy src\setup.py $(PLTMP)\setup.py
-#  @copy src\*.rc $(PLTMP)
-#  @copy src\*.ico $(PLTMP)
-#  @copy src\*.def $(PLTMP)
+  @copy src\*.rc $(PLTMP)
+  @copy src\*.ico $(PLTMP)
+  @copy src\*.def $(PLTMP)
 #
 # Convert from Unix -> Dos
 #

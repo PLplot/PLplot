@@ -54,3 +54,28 @@ email: svensson@esrf.fr
 
 
 
+January 2004
+
+I have volunteered to take over the maintenance of this
+port. So, please contact me about problems and suggestions:
+
+Arjen Markus
+WL | Delft Hydraulics
+email: arjen.markus@wldelft.nl
+
+
+Important note regarding the DLL version:
+You must compile with the flag __PLDLL_H__ defined.
+This is necessary to select the correct prototypes.
+It is unfortunate, but there is - currently - no transparant
+way to achieve this.
+
+Some more remarks (running the examples):
+- If an example program can not find the PLplot DLL at run-time,
+  it may display a message box saying so, or it may simply stop without
+  any output. The latter happens if you start it in a DOS-box (at least
+  that is the case on my computer, running Windows XP).
+- If the example program can not find the font files, it will stop
+  after you have selected a device. It will probably display a message
+  to that effect, but unless you run it in a DOS-box, the message will
+  disappear very quickly.

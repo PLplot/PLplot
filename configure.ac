@@ -84,6 +84,7 @@ with_qhull=yes
 with_csa=yes
 with_ltdlsystem=no
 
+enable_shared=yes
 enable_drivers=yes
 enable_dyndrivers=yes
 enable_f77=yes
@@ -327,7 +328,7 @@ AC_REVISION($Revision$)
 ###   version number, otherwise it will fool up the bootstrap.sh script.  By
 ###   the way, the line below can be changed using options --version and
 ###   --date-version of that script. ]
-AC_INIT(plplot, 5.2.1.cvs.20040115, plplot-devel@lists.sourceforge.net)
+AC_INIT(plplot, 5.2.1.rc1.5.3.0, plplot-devel@lists.sourceforge.net)
 AC_CONFIG_SRCDIR(src/plcore.c)
 
 ### Configuration headers
@@ -341,7 +342,7 @@ AM_INIT_AUTOMAKE
 ### is by specifying one of the option --version of --date-version to
 ### bootstrap.sh
 
-RELEASE_DATE=2004-01-15
+RELEASE_DATE=2004-01-19
 AC_SUBST(RELEASE_DATE)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
@@ -382,6 +383,16 @@ AC_SUBST(PLPLOT_TCL_VERSION)
 
 AM_PROG_CC_STDC
 
+### If the user don't want (or the system is not capable of) to build
+### shared libraries, then disable dynamic drivers, as they are
+### dynamically loaded objects.
+
+if test "$enable_shared" != yes; then
+    AC_MSG_WARN([Dynamic drivers require enable-shared=yes,])
+    AC_MSG_WARN([setting enable_dyndrivers=no])
+    enable_dyndrivers=no
+fi
+
 ### Libtool settings
 
 MY_ARG_WITH(ltdlsystem,
@@ -411,16 +422,6 @@ AM_CONDITIONAL(with_ltdlsystem, [test "$with_ltdlsystem" = yes])
 AC_LIBTOOL_WIN32_DLL
 
 AM_PROG_LIBTOOL
-
-### If the user don't want (or the system is not capable of) to build
-### shared libraries, then disable dynamic drivers, as they are
-### dynamically loaded objects.
-
-if test "$enable_shared" != "yes"; then
-    AC_MSG_WARN([Dynamic drivers require enable-shared=yes, setting enable_dyndr
-ivers=no])
-    enable_dyndrivers="no"
-fi
 
 MY_ARG_WITH(freetype,
   AC_HELP_STRING([--with-freetype],

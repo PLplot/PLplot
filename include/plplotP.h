@@ -108,7 +108,11 @@ typedef char * caddr_t;
 #include <string.h>
 #include <limits.h>
 #include <float.h>
-#ifndef PLPLOT_WINTK
+#if defined(PLPLOT_WINTK)
+#elif defined(WIN32)
+/* Redefine tmpfile()! (AM)*/
+#define tmpfile w32_tmpfile
+#else
 #include <unistd.h>
 #endif
 

@@ -35,6 +35,7 @@ OUTDIR=.\Release
 INTDIR=.\Release
 TMPDIR=..\..\..\..\tmp
 LIBDIR=..\..\..\..\lib
+BUILD_DIR="\"tmp\""
 
 ALL : $(LIBDIR)\plplot.lib
 
@@ -77,7 +78,7 @@ CLEAN :
 
 F90_PROJ=/compile_only /include:"$(INTDIR)\\" /nologo /warn:nofileopt /module:"Release/" /object:"Release/" 
 F90_OBJS=.\Release/
-CPP_PROJ=/nologo /Ox /MD /W3 /GX /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_PROJ=/nologo /Ox /MD /W3 /GX /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "BUILD_DIR=$(BUILD_DIR)" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc" 
 BSC32_SBRS= \

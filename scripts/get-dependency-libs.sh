@@ -40,7 +40,7 @@ for lib in `grep ^dependency_libs= $1 \
 
         *.la)
             path=`echo $lib | sed 's:/*lib[^/]*.la::'`
-            libname=`echo $lib | sed 's:^.*lib::' | sed 's/\.la//'`
+            libname=`echo $lib | sed 's:^.*/lib::' | sed 's/\.la//'`
             result="$result -L$path"
             test -d $path/.libs && result="$result -L$path/.libs"
             result="$result -l$libname"
