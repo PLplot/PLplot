@@ -11,6 +11,6 @@
 #	general use.
 #
 
-plrender -i $1 -dev psc -width 3 -o - | lpr
+plrender -i $1 -dev ps -width 3 -o - | lpr
 rm $1
 exit 0
