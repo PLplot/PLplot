@@ -1,10 +1,15 @@
 /* Displays the plotter symbols for PLSYM */
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:19  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1993/01/23 06:10:27  mjl
+   Instituted exit codes for all example codes.  Also deleted color functions
+   no longer supported (plancol).  Enhanced x09c to exploit new contour
+   capabilities.
 
+ * Revision 1.3  1992/09/30  18:25:19  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:15  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -23,12 +28,14 @@
 
 #include "plplot.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-static int base[17] = {0, 200, 500, 600, 700, 800, 900,
-2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900};
+static int base[17] =
+{0, 200, 500, 600, 700, 800, 900,
+ 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900};
 
-int 
-main (void)
+int
+main(void)
 {
     char text[4];
     int i, j, k, l;
@@ -77,8 +84,9 @@ main (void)
 	    }
 	}
 
-	plmtex("t", (PLFLT) 1.5, (PLFLT) 0.5, (PLFLT) 0.5, 
+	plmtex("t", (PLFLT) 1.5, (PLFLT) 0.5, (PLFLT) 0.5,
 	       "PLPLOT Example 7 - PLSYM symbols");
     }
     plend();
+    exit(0);
 }

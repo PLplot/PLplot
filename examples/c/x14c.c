@@ -1,10 +1,15 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:26  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1993/01/23 06:10:35  mjl
+   Instituted exit codes for all example codes.  Also deleted color functions
+   no longer supported (plancol).  Enhanced x09c to exploit new contour
+   capabilities.
 
+ * Revision 1.3  1992/09/30  18:25:26  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:22  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -25,10 +30,13 @@
 
 #include "plplot.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
-static PLFLT xs[6] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-static PLFLT ys[6] = {1.0, 4.0, 9.0, 16.0, 25.0, 36.0};
+static PLFLT xs[6] =
+{1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+static PLFLT ys[6] =
+{1.0, 4.0, 9.0, 16.0, 25.0, 36.0};
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
 static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
@@ -39,12 +47,12 @@ void plot3();
 void plot4();
 void plot5();
 
-int 
-main (void)
+int
+main(void)
 {
     int i, digmax;
-    int xleng0=0, yleng0=0, xoff0=0, yoff0=0;
-    int xleng1=0, yleng1=0, xoff1=0, yoff1=0;
+    int xleng0 = 0, yleng0 = 0, xoff0 = 0, yoff0 = 0;
+    int xleng1 = 0, yleng1 = 0, xoff1 = 0, yoff1 = 0;
 
     printf("Demo for illustrating multiple output streams via X.\n");
     printf("Running with plplot_1 window as slave.\n");
@@ -141,12 +149,13 @@ main (void)
 /* Don't forget to call PLEND to finish off! */
 
     plend();
+    exit(0);
 }
 
  /* =============================================================== */
 
-void 
-plot1 (void)
+void
+plot1(void)
 {
     int i;
     PLFLT xmin, xmax, ymin, ymax;
@@ -190,8 +199,8 @@ plot1 (void)
 
  /* =============================================================== */
 
-void 
-plot2 (void)
+void
+plot2(void)
 {
     int i;
 
@@ -222,8 +231,8 @@ plot2 (void)
 
  /* =============================================================== */
 
-void 
-plot3 (void)
+void
+plot3(void)
 {
     int i;
 
@@ -265,8 +274,8 @@ plot3 (void)
 
  /* =============================================================== */
 
-void 
-plot4 (void)
+void
+plot4(void)
 {
     int i, j;
     PLFLT dtr, theta, dx, dy, r;
@@ -324,7 +333,7 @@ plot4 (void)
     plline(361, x, y);
 
     plcol(4);
-    plmtex("t", (PLFLT) 2.0, (PLFLT) 0.5, (PLFLT) 0.5, 
+    plmtex("t", (PLFLT) 2.0, (PLFLT) 0.5, (PLFLT) 0.5,
 	   "#frPLPLOT Example 3 - r(#gh)=sin 5#gh");
 }
 
@@ -337,31 +346,33 @@ plot4 (void)
 #define XSPA      2./(XPTS-1)
 #define YSPA      2./(YPTS-1)
 
-PLFLT tr[6] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
+PLFLT tr[6] =
+{XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
-void 
-xform(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty)
+void
+mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
 {
     *tx = tr[0] * x + tr[1] * y + tr[2];
     *ty = tr[3] * x + tr[4] * y + tr[5];
 }
 
-static PLFLT clevel[11] = {-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
+static PLFLT clevel[11] =
+{-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
 
-void 
-plot5 (void)
+void
+plot5(void)
 {
     int i, j;
     PLFLT xx, yy;
     PLFLT **z, **w;
     static PLINT mark = 1500, space = 1500;
-    char *malloc();
 
-    z = (PLFLT **) malloc(XPTS * sizeof(PLFLT *));
-    w = (PLFLT **) malloc(XPTS * sizeof(PLFLT *));
+/* Set up function arrays */
+
+    Alloc2dGrid(&z, XPTS, YPTS);
+    Alloc2dGrid(&w, XPTS, YPTS);
+
     for (i = 0; i < XPTS; i++) {
-	z[i] = (PLFLT *) malloc(YPTS * sizeof(PLFLT));
-	w[i] = (PLFLT *) malloc(YPTS * sizeof(PLFLT));
 	xx = (double) (i - (XPTS / 2)) / (double) (XPTS / 2);
 	for (j = 0; j < YPTS; j++) {
 	    yy = (double) (j - (YPTS / 2)) / (double) (YPTS / 2) - 1.0;
@@ -369,12 +380,13 @@ plot5 (void)
 	    w[i][j] = 2 * xx * yy;
 	}
     }
+
     plenv((PLFLT) -1.0, (PLFLT) 1.0, (PLFLT) -1.0, (PLFLT) 1.0, 0, 0);
     plcol(2);
-    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, xform);
+    plcont(z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
     plstyl(1, &mark, &space);
     plcol(3);
-    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, xform);
+    plcont(w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL);
     plcol(1);
-    pllab("X Coordinate", "Y Coordinate", "Contour Plots of Saddle Points");
+    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 }

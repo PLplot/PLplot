@@ -1,10 +1,15 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:25  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1993/01/23 06:10:34  mjl
+   Instituted exit codes for all example codes.  Also deleted color functions
+   no longer supported (plancol).  Enhanced x09c to exploit new contour
+   capabilities.
 
+ * Revision 1.3  1992/09/30  18:25:25  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:21  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -18,13 +23,15 @@
 
 #include "plplot.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 #ifndef PI
 #define PI      3.141592654
 #endif
 
-static char *text[] = {
+static char *text[] =
+{
     "Maurice",
     "Randy",
     "Mark",
@@ -32,8 +39,8 @@ static char *text[] = {
     "Warner"
 };
 
-int 
-main (void)
+int
+main(void)
 {
     int i, j;
     PLFLT dthet, theta0, theta1, theta, just, dx, dy;
@@ -50,7 +57,7 @@ main (void)
    the global orientation flag give the desired results, since plenv is told
    to do scaling based on physical dimensions.
    Thus we MUST print to a physical device and not globally mess with
-   orientation or aspect ratio (this may be improved in the future). 
+   orientation or aspect ratio (this may be improved in the future).
 */
 
     plstar(1, 1);
@@ -97,4 +104,5 @@ main (void)
 /* Don't forget to call PLEND to finish off! */
 
     plend();
+    exit(0);
 }

@@ -1,10 +1,15 @@
 /* Demonstration program for PLPLOT: Bar chart example. */
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:24  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1993/01/23 06:10:33  mjl
+   Instituted exit codes for all example codes.  Also deleted color functions
+   no longer supported (plancol).  Enhanced x09c to exploit new contour
+   capabilities.
 
+ * Revision 1.3  1992/09/30  18:25:24  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:20  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -18,8 +23,9 @@
 
 #include "plplot.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-void 
+void
 plfbox(PLFLT x0, PLFLT y0)
 {
     PLFLT x[4], y[4];
@@ -38,8 +44,8 @@ plfbox(PLFLT x0, PLFLT y0)
     plline(4, x, y);
 }
 
-int 
-main (void)
+int
+main(void)
 {
     int i;
     char string[20];
@@ -80,4 +86,5 @@ main (void)
 
     /* Don't forget to call PLEND to finish off! */
     plend();
+    exit(0);
 }

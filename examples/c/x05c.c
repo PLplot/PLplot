@@ -1,10 +1,15 @@
 /* Test of drawing a histogram */
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:17  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1993/01/23 06:10:25  mjl
+   Instituted exit codes for all example codes.  Also deleted color functions
+   no longer supported (plancol).  Enhanced x09c to exploit new contour
+   capabilities.
 
+ * Revision 1.3  1992/09/30  18:25:17  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:13  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -17,10 +22,11 @@
    to satisfy the prototype, but some have problems with constants. */
 
 #include "plplot.h"
+#include <stdlib.h>
 #include <math.h>
 
-int 
-main (void)
+int
+main(void)
 {
     int i;
     static PLFLT data[2048];
@@ -38,4 +44,5 @@ main (void)
 	  "#frPLPLOT Example 5 - Probability function of Oscillator");
 
     plend();
+    exit(0);
 }

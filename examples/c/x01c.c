@@ -1,10 +1,15 @@
 /* Demonstration program for PLPLOT: */
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:13  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1993/01/23 06:10:21  mjl
+   Instituted exit codes for all example codes.  Also deleted color functions
+   no longer supported (plancol).  Enhanced x09c to exploit new contour
+   capabilities.
 
+ * Revision 1.3  1992/09/30  18:25:13  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:09  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -19,10 +24,13 @@
 
 #include "plplot.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
-static PLFLT xs[6] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-static PLFLT ys[6] = {1.0, 4.0, 9.0, 16.0, 25.0, 36.0};
+static PLFLT xs[6] =
+{1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+static PLFLT ys[6] =
+{1.0, 4.0, 9.0, 16.0, 25.0, 36.0};
 static PLFLT x[101], y[101];
 static PLFLT xscale, yscale, xoff, yoff, xs1[6], ys1[6];
 static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
@@ -31,8 +39,8 @@ void plot1();
 void plot2();
 void plot3();
 
-int 
-main (void)
+int
+main(void)
 {
     PLINT digmax;
 
@@ -70,12 +78,13 @@ main (void)
     /* Don't forget to call PLEND to finish off! */
 
     plend();
+    exit(0);
 }
 
  /* =============================================================== */
 
-void 
-plot1 (void)
+void
+plot1(void)
 {
     int i;
     PLFLT xmin, xmax, ymin, ymax;
@@ -118,8 +127,8 @@ plot1 (void)
 
  /* =============================================================== */
 
-void 
-plot2 (void)
+void
+plot2(void)
 {
     int i;
 
@@ -150,8 +159,8 @@ plot2 (void)
 
  /* =============================================================== */
 
-void 
-plot3 (void)
+void
+plot3(void)
 {
     int i;
 
@@ -165,13 +174,6 @@ plot3 (void)
 
     plvsta();
     plwind((PLFLT) 0.0, (PLFLT) 360.0, (PLFLT) -1.2, (PLFLT) 1.2);
-
-    /* Redefine the colors, just for fun */
-
-    plancol(0, "blue");
-    plancol(1, "yellow");
-    plancol(2, "green");
-    plancol(3, "red");
 
     /* Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. */
 
