@@ -598,8 +598,8 @@ FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
 LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
 
-LDCFLAGS= $(PROFILE_FLAG_C) $(LIBC) -lm -lnet
-LDFFLAGS= $(PROFILE_FLAG_F) $(LIBF) -lm -lnet
+LDCFLAGS= $(PROFILE_FLAG_C) $(LIBC) -lm
+LDFFLAGS= $(PROFILE_FLAG_F) $(LIBF) -lm
 
 #----------------------------------------------------------------------#
 })if_alphaosf({
