@@ -21,20 +21,21 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 pkginclude_HEADERS = \
-  drivers.h \
-  metadefs.h \
-  pdf.h \
-  plConfig.h \
-  plcore.h \
-  pldebug.h \
-  plevent.h \
-  plplot.h \
-  plplotP.h \
-  plstrm.h \
-  plxwd.h
+	disptab.h \
+	drivers.h \
+	pdf.h \
+	plConfig.h \
+	plDevs.h \
+	pldebug.h \
+	plevent.h \
+	plplot.h \
+	plplotP.h \
+	plstrm.h \
+	plxwd.h
 
 # Uninstalled header files that should be distributed.
 EXTRA_DIST = \
-  disptab.h \
-  plfreetype.h \
-  ps.h
+	metadefs.h \
+	plcore.h \
+	plfreetype.h \
+	ps.h
