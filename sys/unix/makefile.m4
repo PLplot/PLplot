@@ -58,6 +58,7 @@ define(if_dbl,	{ifdef({DOUBLE},	{$1},{$2})})dnl
 define(if_opt,	{ifdef({OPT},		{$1},{$2})})dnl
 define(if_prof,	{ifdef({PROFILE},	{$1},{$2})})dnl
 define(if_shr,	{ifdef({NO_SHARE},	{$2},{$1})})dnl
+define(if_gcc,	{ifdef({GCC},		{$1},{$2})})dnl
 
 ##############################################################################
 #
@@ -151,6 +152,9 @@ define(if_shr,	{ifdef({NO_SHARE},	{$2},{$1})})dnl
 # 4. To get debug settings, specify -DDEBUG on the m4 command line.
 #
 # 5. To get profiling, specify -DPROFILE on the m4 command line.
+#
+# 6. To get gcc instead of the native compiler, specify -DGCC on the 
+#    command line. 
 #
 ##############################################################################
 
@@ -266,7 +270,6 @@ STARTUP =
 #----------------------------------------------------------------------#
 if_sunos({
 #	SUNOS definitions (also good for Ultrix 4.3)
-#	Pick between gcc and acc the old-fashioned way.
 #
 # WARNING!
 # You MUST use /usr/5bin/m4 to create the makefile, and not /usr/bin/m4,
@@ -279,8 +282,11 @@ if_sunos({
 
 define({TK},)
 
-#CC = gcc
+if_gcc({
+CC = gcc
+},{
 CC = acc
+})
 
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DPS -DXFIG \
 	    DEF_XWIN() DEF_TK()
@@ -332,11 +338,14 @@ PROFILE_FLAG_LC	= -G
 PROFILE_FLAG_LF	= -G
 })
 
+if_gcc({
+CC	= gcc
+SYS_FLAGS_C	= -Wall
+define({NO_SHARE},)
+},{
 CC	= c89
 SYS_FLAGS_C	= 
-
-#CC	= gcc
-#SYS_FLAGS_C	= -Wall
+})
 
 F77	= fort77
 
@@ -1270,6 +1279,7 @@ if_dbl({dnl
 })dnl
 		../examples/C/*.c \
 		../utils/*.c \
+		../scripts/pl* \
 		../{include}/*.h \
 		../drivers/*.c \
 		../drivers/tk/*.c \
@@ -1289,11 +1299,11 @@ links:
 
 if_unix({
 clean:
-	-rm $(CDEMOS) $(FDEMOS) *.plm* *.tek* *.ps
+	-rm $(CDEMOS) $(FDEMOS) *.plm* *.tek* *.ps 
 
 realclean:
 	-rm $(CDEMOS) $(FDEMOS) *.o *.c *.h *.f *.plm* *.tek* *.ps \
-	*.tcl tclIndex makefile
+	*.tcl tclIndex makefile plpr
 })
 
 #----------------------------------------------------------------------#
