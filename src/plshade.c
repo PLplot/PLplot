@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1994/06/30 18:22:16  mjl
+ * Revision 1.10  1994/07/12 19:20:55  mjl
+ * Argument list for plshade() fixed.
+ *
+ * Revision 1.9  1994/06/30  18:22:16  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -179,7 +182,7 @@ plctestez(PLFLT *a, PLINT nx, PLINT ny, PLINT ix,
 \*----------------------------------------------------------------------*/
 
 void 
-c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char *defined,
+c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
 	  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	  PLFLT shade_min, PLFLT shade_max,
 	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
