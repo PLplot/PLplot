@@ -142,30 +142,34 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	if (! exist("tk_start") && nargin == 6)
 	  error("Can't use this Tk feature of PLplot until tk_octave \
 	      is installed!\n")
-	elseif  (! exist("__tk_name"))
-	  tk_init;
+	elseif (exist("tk_start") && !exist("__tk_name"))
+	  tk_init; 
+
+	  init_file = tmpnam();
+	  fp = fopen (init_file,"w");
+
+	  fprintf(fp, "set octave_interp {%s}\n", __tk_name);
+	  fprintf(fp, "set octave_interp_pid %d\n", getpid);
+	  fprintf(fp, "send -async $octave_interp to_octave intp=\"[tk appname]\"\n");
+
+	  fprintf(fp, "proc to_octave {a args} {\n");
+	  fprintf(fp, "global octave_interp octave_interp_pid;\n");
+	  fprintf(fp, "send -async $octave_interp to_octave \"$a $args\";\n");
+	  fprintf(fp, "#exec kill -16 $octave_interp_pid}\n");
 	endif
-
-	init_file = tmpnam();
-	fp = fopen (init_file,"w");
-
-	fprintf(fp, "set octave_interp {%s}\n", __tk_name);
-	fprintf(fp, "set octave_interp_pid %d\n", getpid);
-	fprintf(fp, "send -async $octave_interp to_octave intp=\"[tk appname]\"\n");
-
-	fprintf(fp, "proc to_octave {a args} {\n");
-	fprintf(fp, "global octave_interp octave_interp_pid;\n");
-	fprintf(fp, "send -async $octave_interp to_octave \"$a $args\";\n");
-	fprintf(fp, "#exec kill -16 $octave_interp_pid}\n");
 	
 	if (nargin == 6)
 	  fprintf(fp, "source {%s}\n", tk_file);
+	  fclose(fp);
 	  plSetOpt ("plwindow", plot_frame);
+	  plSetOpt ("tk_file", init_file);
+	elseif (exist("__tk_name"))
+	  fclose(fp);
+	  plSetOpt ("tk_file", init_file);
+	  plSetOpt("plwindow", sprintf(".figure_%d",n));
 	else
   	  plSetOpt("plwindow", sprintf(".figure_%d",n));
 	endif
-	plSetOpt ("tk_file", init_file);
-	fclose(fp);
 
 	intp = sprintf("figure_%d",n);
 	__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name
@@ -183,7 +187,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       pladv(0)
       plflush;pleop;
       
-      if (strcmp("tk", sprintf("%s",plgdev')))
+      if ( exist("__tk_name") & (strcmp("tk", sprintf("%s",plgdev'))))
 	eval(tk_receive(1));
 	__pl.intp = __pl_matstr(__pl.intp, intp, __pl_strm);	# tk interpreter name					
 	unlink(init_file);
