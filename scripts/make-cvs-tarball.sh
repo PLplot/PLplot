@@ -26,12 +26,15 @@
 usage () {
   local prog=`basename $0`
   echo "Usage: $prog [-n] [-u user] [-t tmpdir] [-w remote dir] \\"
-  echo "          [-r branch] [-v version] [-c] [-i prefix]"
+  echo "          [-r branch] [-v version] [-c] [-i prefix] \\"
+  echo "          [-p config_prefix] [-o config_opts]"
   echo "       $prog -d"
   echo "       $prog -h"
   echo
   echo "Option -n prevents building of the DocBook manual."
   echo "Option -d prints the default values."
+  echo "Option -o allows specifying additional configuration options."
+  echo "Option -p allows specifying the prefix during preparation."
   echo "When option -v is not given, a tarball is produced with version and"
   echo "  label containing today's date string."
   echo "When option -c is given, the tarball is unpacked and make check"
@@ -60,8 +63,9 @@ print_defaults () {
 
 do_check=no
 prefix=""
+preparation_prefix=""
 
-while getopts "cdhi:nr:t:u:v:w:" option
+while getopts "cdhi:no:p:r:t:u:v:w:" option
 do
   case $option in
     c) do_check=yes ;;
@@ -69,6 +73,8 @@ do
     h) usage 0 ;;
     i) test -n "$OPTARG" || usage 1 ; prefix=$OPTARG ;;
     n) DOC_ARG= ;;
+    o) config_opt="$config_opt $OPTARG" ;;
+    p) test -n "$OPTARG" || usage 1 ; preparation_prefix="--prefix $OPTARG" ;;
     r) test -n "$OPTARG" || usage 1 ; BRANCH="-r $OPTARG" ;;
     t) test -n "$OPTARG" || usage 1 ; CVSTMPDIR=$OPTARG ;;
     u) test -n "$OPTARG" || usage 1 ; WWW_USER=$OPTARG ;;
@@ -92,7 +98,8 @@ cleanup
 cvs -d${WWW_USER}@$CVSROOTDIR export -d$CVSTMPDIR $BRANCH plplot \
   && cd $CVSTMPDIR \
   && cf/bootstrap.sh ${VERSION:---date-version} \
-  && ./configure $DOC_ARG $config_opt \
+  && ./configure $preparation_prefix $DOC_ARG $config_opt \
+  && echo "Making distribution." \
   && make dist \
   && TARBALL=`ls plplot-*.tar.gz` \
   && DISTDIR=`echo $TARBALL | sed s/.tar.gz//` \
