@@ -27,11 +27,11 @@ function p7
   pause(1)
   plcolormap(pink)
   axis([0.5 1.2 0 1.3]);
-  hold
-  shade(x,y,z,15,3)
-  hold
+  hold on
+  shade(x,y,z,15,3);
+  hold off
   pause(1)
-  shade(x,y,z,15,3)
+  shade(x,y,z,15,3);
   axis;
 
 endfunction
