@@ -105,7 +105,7 @@ MY_ARG_ENABLE(drivers,
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4107, mskermit,
 conex, linuxvga, vlt, versaterm, dg300, ps, xfig, ljii, hp7470, hp7580,
-lj_hpgl, imp, xwin, tk, dp])
+lj_hpgl, imp, xwin, tk, dp, pbm])
 
 # Macro to set one driver enable value
 
