@@ -221,15 +221,23 @@ plbuf_state(PLStream *pls, PLINT op)
 \*--------------------------------------------------------------------------*/
 
 static void
-plbuf_image(PLStream *pls)
+plbuf_image(PLStream *pls, IMG_DT *img_dt)
 {
+    PLINT npts = pls->dev_nptsX * pls->dev_nptsY;
+
     dbug_enter("plbuf_image");
 
     fwrite(&pls->dev_nptsX, sizeof(PLINT), 1, pls->plbufFile);
     fwrite(&pls->dev_nptsY, sizeof(PLINT), 1, pls->plbufFile);
-    fwrite(pls->dev_ix, sizeof(PLINT), (pls->dev_nptsX)*(pls->dev_nptsY), pls->plbufFile);
-    fwrite(pls->dev_iy, sizeof(PLINT), (pls->dev_nptsX)*(pls->dev_nptsY), pls->plbufFile);
-    fwrite(pls->dev_z, sizeof(PLFLT), (pls->dev_nptsX-1)*(pls->dev_nptsY-1), pls->plbufFile);
+
+    fwrite(&img_dt->xmin, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&img_dt->ymin, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&img_dt->dx, sizeof(PLFLT), 1, pls->plbufFile);
+    fwrite(&img_dt->dy, sizeof(PLFLT), 1, pls->plbufFile);
+
+    fwrite(pls->dev_ix, sizeof(short), npts, pls->plbufFile);
+    fwrite(pls->dev_iy, sizeof(short), npts, pls->plbufFile);
+    fwrite(pls->dev_z, sizeof(unsigned short), (pls->dev_nptsX-1)*(pls->dev_nptsY-1), pls->plbufFile);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -261,7 +269,7 @@ plbuf_esc(PLStream *pls, PLINT op, void *ptr)
 	plbuf_swin(pls, (PLWindow *) ptr);
 	break;
     case PLESC_IMAGE:
-	plbuf_image(pls);
+	plbuf_image(pls, (IMG_DT *) ptr);
 	break;
     }
 }
@@ -524,7 +532,7 @@ rdbuf_fill(PLStream *pls)
     fread(&npts, sizeof(PLINT), 1, pls->plbufFile);
     fread(xpl, sizeof(short), npts, pls->plbufFile);
     fread(ypl, sizeof(short), npts, pls->plbufFile);
-
+    
     plP_fill(xpl, ypl, npts);
 }
 
@@ -537,24 +545,31 @@ rdbuf_fill(PLStream *pls)
 static void
 rdbuf_image(PLStream *pls)
 {
-  int *dev_ix, *dev_iy;
-  PLFLT *dev_z;
+  short *dev_ix, *dev_iy;
+  unsigned short *dev_z;
   PLINT nptsX,nptsY, npts;
+  PLFLT xmin, ymin, dx, dy;
 
     dbug_enter("rdbuf_image");
+
     fread(&nptsX, sizeof(PLINT), 1, pls->plbufFile);
     fread(&nptsY, sizeof(PLINT), 1, pls->plbufFile);
     npts = nptsX*nptsY;
 
-    dev_ix=(PLINT *)malloc(npts*sizeof(PLINT));
-    dev_iy=(PLINT *)malloc(npts*sizeof(PLINT));
-    dev_z=(PLFLT *)malloc((nptsX-1)*(nptsY-1)*sizeof(PLFLT));
+    fread(&xmin, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&ymin, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&dx, sizeof(PLFLT), 1, pls->plbufFile);
+    fread(&dy, sizeof(PLFLT), 1, pls->plbufFile);
 
-    fread(dev_ix, sizeof(PLINT), npts, pls->plbufFile);
-    fread(dev_iy, sizeof(PLINT), npts, pls->plbufFile);
-    fread(dev_z, sizeof(PLFLT), (nptsX-1)*(nptsY-1), pls->plbufFile);
+    dev_ix=(short *)malloc(npts*sizeof(short));
+    dev_iy=(short *)malloc(npts*sizeof(short));
+    dev_z=(unsigned short *)malloc((nptsX-1)*(nptsY-1)*sizeof(unsigned short));
 
-    plP_image(dev_ix, dev_iy, dev_z, nptsX, nptsY);
+    fread(dev_ix, sizeof(short), npts, pls->plbufFile);
+    fread(dev_iy, sizeof(short), npts, pls->plbufFile);
+    fread(dev_z, sizeof(unsigned short), (nptsX-1)*(nptsY-1), pls->plbufFile);
+
+    plP_image(dev_ix, dev_iy, dev_z, nptsX, nptsY, xmin, ymin, dx, dy);
 
     free(dev_ix);
     free(dev_iy);
