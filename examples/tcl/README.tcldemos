@@ -13,14 +13,10 @@ all the x??.tcl demos.  A few of those return the message that they have
 not been implemented, but the rest should work smoothly without problems.
 
 To run the plot.tcl demo follow the directions in that file.  AWI has found
-the X driver does not work very well for that demo (portions that are
-obscured by other screens remain obscured even when the X screen gets the
-focus), but the tk driver does work well.  For some reason for both drivers
-only the stats.log file can be used as input. Clearly, some maintenance
-needs to be done to get plot.tcl working smoothly again, but it is close to
-ready.
+that for some reason only the stats.log file can be used as input at
+this time, and, e.g., r.dat does not work.  So r.dat needs to be upgraded
+or else uses facilities that have bugs that need to be fixed.
 
-To run the plgrid.tcl demo follow the directions in that file.  The same X
-driver problems occur here as well, but the tk drivers works well. Like for
-plot.tcl some maintenance needs to be done, but plgrid.tcl is close to
-ready. 
+To run the plgrid.tcl demo follow the directions in that file to run it
+either under pltcl with the various standard devices or under plserver
+using the plframe widget.
