@@ -1,0 +1,29 @@
+File: README  -*-indented-text-*-
+Description: Perl bindings for PLplot
+Author: Rafael Laboissière <rafael@icp.inpg.fr>
+Created on: Wed Mar  7 17:49:50 CET 2001
+Last modified on: Thu Mar  8 10:01:06 CET 2001
+$Id$
+
+This is still highly experimental.  To compile the Perl5 bindings for
+PLplot, you will need swig and the Perl modules XML::Parser and XML::DOM.
+The API chapter of the Docbook documentation is parsed for generating the
+function prototypes.
+
+The build process has not yet been integrated into the PLplot package
+coonfiguration scheme.  For now, this is the cookbook:
+
+    $ cd bindings/perl5
+    $ make -f pkg_perl5.in ln-tmp
+    $ cd ../../tmp
+    $ make -f pkg-perl5.in
+
+Then run the x01 demo:
+
+    $ ./x01.pl
+
+You will have to change the $libs variable at the top of api2bind.pl,
+reflecting the configuration results in your system.  This variable will be
+AC_SUBST'ituted in the future.
+
+

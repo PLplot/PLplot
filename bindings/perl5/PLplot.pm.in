@@ -1,0 +1,10 @@
+# -*-perl-*-
+package PLplot;
+require Exporter;
+require DynaLoader;
+@ISA = qw(Exporter DynaLoader);
+package PLplot;
+bootstrap PLplot;
+var_PLplot_init();
+@EXPORT = qw(@EXPORTS@);
+1;

@@ -1,0 +1,13 @@
+# -*-Perl -*-
+use ExtUtils::MakeMaker;
+WriteMakefile(
+	      NAME => "PLplot",
+	      AUTHOR => "Rafael Laboissiere <rafael\@laboissiere.net>",
+	      CCFLAGS => "-fvolatile",
+	      INC => "-I.",
+              LIBS => "@LIBS@",
+	      OBJECT => 'PLplot_wrap.o', 
+	      MAKEFILE => "Makeperl",
+	      INST_LIB => '.',
+	      INST_ARCHLIB => '.',
+	     );

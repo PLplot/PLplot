@@ -1,0 +1,165 @@
+// -*- C -*-
+
+//***********************************************************************
+//*  Module name declaration
+//***********************************************************************
+
+%module PLplot
+
+
+//***********************************************************************
+//* Header files (only plplot.h is enough)
+//***********************************************************************
+
+%inline %{
+#include "plplot/plplot.h"
+%}
+
+
+//***********************************************************************
+//* Typedefs for input/output arguments
+//***********************************************************************
+
+%inline %{
+@TYPEDEFS@
+%}
+
+
+//***********************************************************************
+//* Inline and typemaps functions for converting array references into C 
+//* arrays. 
+//***********************************************************************
+
+// Allocate array of PLFLT
+%typemap(perl5,in) PLFLT_p_input* (PLFLT* temp) {
+  int i;
+  svtype type;
+  SV* sv;
+  AV* av;
+  I32 n;
+
+  temp = NULL;
+  sv = SvROK ($source) ?  SvRV ($source) : $source;
+  type = SvTYPE (sv);
+  if (type == SVt_PVAV) {
+    av = (AV*) sv;
+    n = av_len (av);
+    temp = (PLFLT*) malloc ((n+1) * sizeof (PLFLT));
+    for (i = 0; i <= n; i++) {
+      SV* elem = *(av_fetch(av, i, 0));
+      type = SvTYPE (elem);
+      if (type == SVt_NV || type >= SVt_PVNV )
+	temp[i] = (PLFLT) SvNV (elem);
+      else if (type == SVt_IV)
+	temp[i] = (PLFLT) SvIV (elem);
+      else
+	croak ("Element in PLFLT* input is not numerical");
+    }
+  }
+  else if (type == SVt_NV || type == SVt_IV || type >= SVt_PVIV) {
+    temp = (PLFLT*) malloc (sizeof (PLFLT)); 
+    if (type == SVt_NV || type >= SVt_PVNV)
+      *temp = (PLFLT) SvNV (sv);
+    else
+      *temp = (PLFLT) SvIV (sv);
+  }
+  else
+    croak ("Wrong type for PLFLT* input");
+  $target = (PLFLT*) temp;
+}
+
+// Allocate array of PLINT
+%typemap(perl5,in) PLINT_p_input* (PLINT* temp) {
+  int i;
+  svtype type;
+  SV* sv;
+  AV* av;
+  I32 n;
+
+  temp = NULL;
+  sv = SvROK ($source) ?  SvRV ($source) : $source;
+  type = SvTYPE (sv);
+  if (type == SVt_PVAV) {
+    av = (AV*) sv;
+    n = av_len (av);
+    temp = (PLINT*) malloc ((n+1) * sizeof (PLINT));
+    for (i = 0; i <= n; i++) {
+      SV* elem = *(av_fetch(av, i, 0));
+      type = SvTYPE (elem);
+      if (type == SVt_IV || type >= SVt_PVIV)
+	temp[i] = (PLINT) SvIV (elem);
+      else if (type == SVt_NV)
+	temp[i] = (PLINT) SvNV (elem);
+      else
+	croak ("Element in PLINT* input is not numerical");
+    }
+  }
+  else if (type == SVt_NV || type == SVt_IV || type >= SVt_PVIV) {
+    temp = (PLINT*) malloc (sizeof (PLINT)); 
+    if (type == SVt_IV || type >= SVt_PVIV)
+      *temp = (PLINT) SvIV (sv);
+    else
+      *temp = (PLINT) SvNV (sv);
+  }
+  else
+    croak ("Wrong type for PLINT* input");
+  $target = (PLINT*) temp;
+}
+
+// This will free the space malloc'ed above
+%typemap(perl5,freearg) PLFLT_p_input*, PLINT_p_input* {
+  if ($source != NULL)
+      free ($source);
+}
+
+%typemap(perl5,in) char_input* {
+  $target = SvPVX (SvROK ($source) ? SvRV ($source) : $source);
+}
+
+%typemap(perl5,in) char_p_output* (char buf[1024], int count) {
+  count = 0;
+  if (! SvROK($source))
+    croak ("char* output should be a reference");
+  ST(argvi++) = $source;
+  $target = buf;
+}
+%typemap(perl5,argout) char_p_output* {
+  sv_setpv (SvRV(ST(count++)), (char *) $source);
+  argvi--;
+}
+
+%typemap(perl5,in) PLFLT_p_output* (PLFLT fltemp, int count) {
+  count = 0;
+  if (! SvROK($source))
+    croak ("PLFLT* output should be a reference");
+  ST(argvi++) = $source;
+  $target = &fltemp;
+}
+%typemap(perl5,argout) PLFLT_p_output* {
+  sv_setnv (SvRV(ST(count++)), (double) *$source);
+  argvi--;
+}
+
+%typemap(perl5,in) PLINT_input* (PLINT temp) {
+  temp = (PLINT) SvIV ($source);
+  $target = (PLINT*) &temp;
+}
+
+%typemap(perl5,in) PLFLT_input* (PLFLT temp) {
+  temp = (PLFLT) SvNV ($source);
+  $target = (PLFLT*) &temp;
+}
+
+//***********************************************************************
+//* Function pointer stubs
+//***********************************************************************
+
+@FUNCPTR@
+
+
+//***********************************************************************
+//* API prototypes
+//***********************************************************************
+
+@PROTOTYPES@
+

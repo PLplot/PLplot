@@ -1,0 +1,46 @@
+# -*-makefile-*-
+
+API_XML = ../doc/docbook/src/api.xml
+PLPLOT_H = plplot/plplot.h
+PLCONFIG_H = plplot/plConfig.h
+PLPLOT_PM = PLplot.pm
+
+TMP_DIR = ../../tmp
+
+# These must stay in this order (they are arguments for api2bind.pl)
+IN_FILES = \
+  PLplot.i.in \
+  Makefile.PL.in \
+  $(PLPLOT_PM).in
+
+all: PLplot.pm PLplot.so
+
+ln-tmp:
+	for i in $(IN_FILES) api2bind.pl pkg_perl5.in x01.pl ; do \
+	  ln -sf ../bindings/perl5/$$i $(TMP_DIR)/$$i ; \
+	done
+
+interface: interface-stamp
+interface-stamp: api2bind.pl $(API_XML) $(PLPLOT_H) $(PLCONFIG_H) $(IN_FILES)
+	./api2bind.pl $(API_XML) $(IN_FILES:.in=)
+	touch interface-stamp
+
+Makefile.PL PLplot.i PLplot.pm: interface
+
+PLplot_wrap.c: PLplot.i
+	mv $(PLPLOT_PM) $(PLPLOT_PM)-save
+	swig -perl5 PLplot.i
+	mv $(PLPLOT_PM)-save $(PLPLOT_PM)
+
+Makeperl: Makefile.PL
+	perl $<
+
+PLplot.so: PLplot_wrap.c Makeperl
+	$(MAKE) -f Makeperl
+
+clean:
+	-$(MAKE) -f Makeperl clean
+	rm -f Makefile.PL PLplot.i PLplot.pm Makeperl \
+              PLplot_wrap.* interface-stamp
+
+.PHONY: all ln-tmp interface clean 
