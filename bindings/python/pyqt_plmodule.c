@@ -64,14 +64,14 @@ static PyMethodDef pyqt_pl_methods[] = {
     /* These are a few functions  that I found I needed
        to call in order to initialise the pyqt widget  */
 
-    {"plpartialInitXw",	pl_partialInitXw, 1, doc_partialInitXw},
+    {"plpartialInitXw",	pl_partialInitXw, METH_VARARGS, doc_partialInitXw},
 
     /* These are a few functions  that I found I needed
        to filtering events in  pyqt widget  */
 
-    {"plresize",	pl_resize, 1, doc_resize},
-    {"plexpose",	pl_expose, 1, doc_expose},
-    {NULL,			NULL}
+    {"plresize",	pl_resize, METH_VARARGS, doc_resize},
+    {"plexpose",	pl_expose, METH_VARARGS, doc_expose},
+    {NULL, NULL, 0, NULL}
 };
 
 void initpyqt_pl()
