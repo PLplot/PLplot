@@ -246,6 +246,7 @@ m4_include(cf/xwin.ac)
 m4_include(cf/tk.ac)
 m4_include(cf/ps.ac)
 m4_include(cf/wingcc.ac)
+m4_include(cf/aqt.ac)
 m4_include(cf/drivers-finish.ac)
 
 

@@ -35,6 +35,7 @@ extern "C" {
 
 void plD_dispatch_init_mac8	( PLDispatchTable *pdt );
 void plD_dispatch_init_mac1	( PLDispatchTable *pdt );
+void plD_dispatch_init_aqt	( PLDispatchTable *pdt );
 void plD_dispatch_init_nx	( PLDispatchTable *pdt );
 void plD_dispatch_init_os2	( PLDispatchTable *pdt );
 void plD_dispatch_init_xw	( PLDispatchTable *pdt );

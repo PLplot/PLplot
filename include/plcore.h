@@ -248,6 +248,9 @@ static PLDispatchInit static_device_initializers[] = {
 #if defined(PLD_wingcc) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_wingcc,
 #endif
+#if defined(PLD_aqt) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_aqt,
+#endif	
     NULL
 };
 

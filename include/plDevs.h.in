@@ -35,6 +35,7 @@
 #ifndef __PLDEVS_H__
 #define __PLDEVS_H__
 
+#undef PDL_aqt
 #undef PLD_plmeta
 #undef PLD_null
 #undef PLD_xterm

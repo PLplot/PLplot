@@ -60,6 +60,7 @@ dnl Ordered alphabetically by second in each pair (the driver) for human
 dnl consumption, but this is not necessary.
 
 builtin([define], [PL_DRIVERS_DEVICE_LIST], [
+    aqt:aqt:yes,
     cgm:cgm:yes,
     dg300:dg300:no,
     png:gd:yes, jpeg:gd:yes, gif:gd:yes,
