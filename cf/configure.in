@@ -910,7 +910,7 @@ if test "$enable_dyndrivers" = "yes"; then
 	    echo "ntk:New tk driver:1:ntk"$LIB_TAG".drv:43:ntk" >> drivers/$DRIVERS_DB
 	    ;;
 	    tkwin )
-	    echo "tkwin:New tk driver:1:tkwin"$LIB_TAG".drv:44:tkwin" >> drivers/$DRIVERS_DB
+	    echo "tkwin:New tk driver:1:tkwin"$LIB_TAG".drv:45:tkwin" >> drivers/$DRIVERS_DB
 	    ;;
 	    linuxvga )
 	    echo "linuxvga:Linux VGA driver:0:linuxvga"$LIB_TAG".drv:8:vga" >> drivers/$DRIVERS_DB
@@ -1072,6 +1072,15 @@ if test "$enable_tk" = "yes"; then
     . 2>/dev/null
     ln -s \
     $srcdir/bindings/tk/*.h \
+    plplot 2>/dev/null
+    
+    # tkwin stuff (excluding nameclashed pltools.tcl and plwidget.tcl).
+    ln -s \
+    `ls $srcdir/bindings/tk-x-plat/*.* |grep -v '\.h$' \
+    | grep -v 'pltools.tcl' |grep -v 'plwidget.tcl'` \
+    . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/tk-x-plat/*.h \
     plplot 2>/dev/null
 #    #put in symlinks so that tk examples will work from tmp/../examples/tk
 #    #directory (once installation completed) and also from installed 
