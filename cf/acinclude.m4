@@ -370,7 +370,7 @@ dnl
 dnl Get Octave configuration values
 dnl
 AC_DEFUN([PL_OCTAVE_CONFIG_INFO], [
-$1=`$OCTAVE -q -f 2>&1 <<EOF
+$1=`$OCTAVE -q -f <<EOF
         printf(octave_config_info("$2"));
 EOF`])
 dnl ------------------------------------------------------------------------
