@@ -28,8 +28,6 @@
 # include <unistd.h>
 #endif
 
-#include <plstrm.h>
-
 /* Variables and data arrays used by plot generators */
 
 static PLFLT x[101], y[101];
@@ -112,8 +110,6 @@ main(int argc, char *argv[])
     PLINT digmax, cur_strm, new_strm;
     char ver[80];
 
-PLStream *pls;
-  
 /* plplot initialization */
 /* Divide page into 2x2 plots unless user overrides */
 
@@ -134,9 +130,6 @@ PLStream *pls;
     plinit();
 /* Select font set as per input flag */
 
-plgpls(&pls);
-printf ("%d\n", (int)pls->dev);
-  
     if (fontset)
 	plfontld(1);
     else
