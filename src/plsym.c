@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1995/04/12 21:17:54  mjl
+ * Revision 1.15  1995/05/07 03:13:52  mjl
+ * Changed debugging output to use new function pldebug().
+ *
+ * Revision 1.14  1995/04/12  21:17:54  mjl
  * Changed plhrsh() to plot continuous symbols even if the current line style
  * is dashed (symbols plotted in dashed line styles look pretty odd).
  * Contributed by Radey Shouman.
@@ -316,9 +319,7 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 	    scale = t;
 	}
     }
-#ifdef DEBUG
-    fprintf(stderr, "scale factor=%lf n=%d\n", scale,n);
-#endif
+    pldebug("plarrows", "scale factor=%lf n=%d\n", scale,n);
 
     for (i = 0; i < n; i++) {
 	uu = scale * u[i];
@@ -330,9 +331,8 @@ plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 	px0 = plP_wcpcx(x[i]);
 	py0 = plP_wcpcy(y[i]);
 
-#ifdef DEBUG
-	fprintf(stderr, "%f %f %d %d\n",x[i],y[i],px0,py0);
-#endif
+	pldebug("plarrows", "%f %f %d %d\n",x[i],y[i],px0,py0);
+
 	dpx = plP_wcpcx(x[i] + 0.5*uu) - px0;
 	dpy = plP_wcpcy(y[i] + 0.5*vv) - py0;
 

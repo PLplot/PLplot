@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1994/10/18 16:05:20  furnish
+ * Revision 1.12  1995/05/07 03:13:44  mjl
+ * Changed debugging output to use new function pldebug().
+ *
+ * Revision 1.11  1994/10/18  16:05:20  furnish
  * Correct to notice if either pltr or pltr_data is NULL.  Required to
  * make C++ abstraction work correctly.
  *
@@ -315,8 +318,8 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	return;
     }
 
-    /* alloc space for value array, and initialize */
-    /* This is only a temporary kludge */
+/* alloc space for value array, and initialize */
+/* This is only a temporary kludge */
 
     if ((a = (PLFLT *) malloc(nx * ny * sizeof(PLFLT))) == NULL) {
 	plabort("plfshade: unable to allocate memory for value array");
@@ -327,7 +330,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	for (iy = 0; iy < ny; iy++) 
 	    a[iy + ix*ny] = f2eval(ix, iy, f2eval_data);
 
-    /* alloc space for condition codes */
+/* alloc space for condition codes */
 
     if ((c = (int *) malloc(nx * ny * sizeof(int))) == NULL) {
 	plabort("plfshade: unable to allocate memory for condition codes");
@@ -338,7 +341,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
     sh_min = shade_min;
     sh_max = shade_max;
 
-    /* Ignore defined array for now */
+/* Ignore defined array for now */
 
     set_cond(c, a, NULL, nx * ny);
 
@@ -355,7 +358,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 
 	    count = c0[iy] + c0[iy + 1] + c1[iy] + c1[iy + 1];
 
-	    /* No filling needs to be done for these cases */
+	/* No filling needs to be done for these cases */
 
 	    if (count >= UNDEF)
 		continue;
@@ -364,10 +367,10 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    if (count == 4 * NEG)
 		continue;
 
-	    /* Entire rectangle can be filled */
+	/* Entire rectangle can be filled */
 
 	    if (count == 4 * OK) {
-		/* find bigest rectangle that fits */
+	    /* find bigest rectangle that fits */
 		if (rectangular) {
 		    big_recl(c0 + iy, ny, nx - ix, ny - iy, &i, &j);
 		}
@@ -398,7 +401,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		continue;
 	    }
 
-	    /* Only part of rectangle can be filled */
+	/* Only part of rectangle can be filled */
 
 	    n_point = min_points = max_points = 0;
 	    n = find_interval(a0[iy], a0[iy + 1], c0[iy], c0[iy + 1], xp);
@@ -449,7 +452,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 	    if (max_points == 4)
 		slope = plctestez(a, nx, ny, ix, iy, shade_max);
 
-	    /* special cases: check number of times a contour is in a box */
+	/* special cases: check number of times a contour is in a box */
 
 	    switch ((min_points << 3) + max_points) {
 	      case 000:
@@ -497,7 +500,7 @@ plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
 		break;
 	      case 024:
 	      case 042:
-		/* 3 contours */
+	      /* 3 contours */
 		if (max_points == 4)
 		    i = NEG;
 		else
@@ -705,8 +708,8 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
     register int i, x, y;
     register int *cond;
 
-    /* ok_x = ok to expand in x direction */
-    /* x = current number of points in x direction */
+/* ok_x = ok to expand in x direction */
+/* x = current number of points in x direction */
 
     ok_x = ok_y = 1;
     x = y = 2;
@@ -717,7 +720,7 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
 	    break;
 #endif
 	if (ok_y) {
-	    /* expand in vertical */
+	/* expand in vertical */
 	    ok_y = 0;
 	    if (y == dy)
 		continue;
@@ -728,7 +731,7 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
 		cond += ny;
 	    }
 	    if (i == x) {
-		/* row is ok */
+	    /* row is ok */
 		y++;
 		ok_y = 1;
 	    }
@@ -736,7 +739,7 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
 	if (ok_x) {
 	    if (y == 2)
 		break;
-	    /* expand in x direction */
+	/* expand in x direction */
 	    ok_x = 0;
 	    if (x == dx)
 		continue;
@@ -746,18 +749,18 @@ big_recl(int *cond_code, register int ny, int dx, int dy,
 		    break;
 	    }
 	    if (i == y) {
-		/* column is OK */
+	    /* column is OK */
 		x++;
 		ok_x = 1;
 	    }
 	}
     }
 
-    /* found the largest rectangle of 'ix' by 'iy' */
+/* found the largest rectangle of 'ix' by 'iy' */
     *ix = --x;
     *iy = --y;
 
-    /* set condition code to UNDEF in interior of rectangle */
+/* set condition code to UNDEF in interior of rectangle */
 
     for (i = 1; i < x; i++) {
 	cond = &COND(i, 1);
@@ -782,7 +785,7 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
 	plcol0(pen_col_min);
 	plwid(pen_wd_min);
 	if (min_points == 4 && slope == 0) {
-	    /* swap points 1 and 3 */
+	/* swap points 1 and 3 */
 	    i = min_pts[1];
 	    min_pts[1] = min_pts[3];
 	    min_pts[3] = i;
@@ -797,7 +800,7 @@ draw_boundary(PLINT slope, PLFLT *x, PLFLT *y)
 	plcol0(pen_col_max);
 	plwid(pen_wd_max);
 	if (max_points == 4 && slope == 0) {
-	    /* swap points 1 and 3 */
+	/* swap points 1 and 3 */
 	    i = max_pts[1];
 	    max_pts[1] = max_pts[3];
 	    max_pts[3] = i;
@@ -854,28 +857,28 @@ plctest(PLFLT *x, PLFLT level)
     double a, b;
     double positive, negative, left, right, top, bottom;
 
-    /* find positions of lines */
-    /* top = x coor of top intersection */
-    /* bottom = x coor of bottom intersection */
-    /* left = y coor of left intersection */
-    /* right = y coor of right intersection */
+/* find positions of lines */
+/* top = x coor of top intersection */
+/* bottom = x coor of bottom intersection */
+/* left = y coor of left intersection */
+/* right = y coor of right intersection */
 
     left = linear(X(1, 1), X(1, 2), level);
     right = linear(X(2, 1), X(2, 2), level);
     top = linear(X(1, 2), X(2, 2), level);
     bottom = linear(X(1, 1), X(2, 1), level);
 
-    /* positive = sq(length of positive contours) */
-    /* negative = sq(length of negative contours) */
+/* positive = sq(length of positive contours) */
+/* negative = sq(length of negative contours) */
 
     positive = top * top + (1.0 - left) * (1.0 - left) +
 	(1.0 - bottom) * (1.0 - bottom) + right * right;
 
     negative = left * left + bottom * bottom +
 	(1.0 - top) * (1.0 - top) + (1.0 - right) * (1.0 - right);
-#ifdef DEBUG
-    fprintf(stderr, "ctest pos %f neg %f lev %f\n", positive, negative, level);
-#endif
+
+    pldebug("plctest", "pos %f neg %f lev %f\n", positive, negative, level);
+
     if (RATIO_SQ * positive < negative)
 	return POSITIVE_SLOPE;
     if (RATIO_SQ * negative < positive)
@@ -883,9 +886,9 @@ plctest(PLFLT *x, PLFLT level)
 
     a = X(1, 2) - X(2, 1);
     b = X(1, 1) - X(2, 2);
-#ifdef DEBUG
-    fprintf(stderr, "ctest a %f  b %f\n", a, b);
-#endif
+
+    pldebug("plctest", "a %f  b %f\n", a, b);
+
     if (fabs(a) > fabs(b))
 	return NEGATIVE_SLOPE;
     return (PLINT) 0;
