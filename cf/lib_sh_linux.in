@@ -82,13 +82,16 @@ $(CXXLIB_AR): $(CXX_OBJS)
 # libg++ String class and the DS++ String class.  Oh, but for C++
 # namespace support...
 
-$(PLLIB_SO):	$(MATLIB_SO) $(LIB_OBJS) stupidtk.o
+# stupidtk.o handled symbolically for the case where tk is not enabled.
+STUPIDTK_OBJ = @STUPIDTK_OBJ@
+
+$(PLLIB_SO):	$(MATLIB_SO) $(LIB_OBJS) $(STUPIDTK_OBJ)
 	-$(RM) $(PLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) stupidtk.o -L.. -l$(MATLIB_NAME) $(LDC_LIBS)
+		$(LIB_OBJS) $(STUPIDTK_OBJ) -L.. -l$(MATLIB_NAME) $(LDC_LIBS)
 	ln -sf $(PLLIB_SO) $(SONAME)
 	ln -sf $(SONAME) $(LINKNAME)
 	@echo ""
@@ -126,6 +129,8 @@ tcpip.o:
 	$(OCC) $(CC_FLAGS) tcpip.c
 	cd shared; $(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../tcpip.c
 
+# This target not referenced when tk is not enabled.  This is fortunate
+# since I doubt it can be handled symbolically in any case.
 stupidtk.o:
 	$(CC) $(CC_FLAGS) stupidtk.c
 	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../stupidtk.c
