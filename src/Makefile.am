@@ -28,9 +28,6 @@ endif
 
 version = -version-info @SOVERSION@
 
-# Note that we can now include plbuf.c from another directory.  However,
-# ultimately this should be sorted out by moving plbuf.c.
-
 sources = \
   pdfutils.c \
   plargs.c \
@@ -55,7 +52,7 @@ sources = \
   pltick.c \
   plvpor.c \
   plwind.c \
-  ../drivers/plbuf.c
+  plbuf.c
   
 
 AM_CPPFLAGS = @FREETYPEINCCMD@ @INCLTDL@
