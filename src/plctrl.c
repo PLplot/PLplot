@@ -553,6 +553,9 @@ c_plscmap0n(PLINT ncol0)
 
     plsc->ncol0 = ncol;
     plcmap0_def(imin, imax);
+
+    if (plsc->level > 0)
+	plP_state(PLSTATE_CMAP0);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -730,6 +733,9 @@ plcmap1_def(void)
     s[5] = 1;
 
     c_plscmap1l(0, 6, i, h, l, s, NULL);
+
+    if (plsc->level > 0)
+	plP_state(PLSTATE_CMAP1);
 }
 
 /*--------------------------------------------------------------------------*\
