@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/10/22 17:05:18  mjl
-   Fixed warnings, errors generated when compling with HP C++.
+   Revision 1.6  1992/11/07 08:02:36  mjl
+   Added dispatch table entries for Null device driver and Motif driver.
 
+ * Revision 1.5  1992/10/22  17:05:18  mjl
+ * Fixed warnings, errors generated when compling with HP C++.
+ *
  * Revision 1.4  1992/10/20  20:14:09  mjl
  * Added prototypes, definitions for new routine plfamadv(), for advancing
  * to next family member file.
@@ -74,6 +77,7 @@ typedef struct {
 * cursub	Current subpage
 * color		Current default color
 * width		Current pen width
+* scale		Scaling factor for chr, sym, maj, min.
 * chr...	Character default height and current (scaled) height
 * sym...	Symbol    default height and current (scaled) height
 * maj...	Major tick default height and current (scaled) height
@@ -131,6 +135,13 @@ typedef struct {
     FILE *OutFile;
     PLINT orientset, fileset, pageset;
     char FamilyName[80], FileName[90];
+
+    int		plbuf_enable;
+    int		plbuf_read;
+    int		plbuf_write;
+    FILE	*plbufFile;
+    char	plbufFnam[90];
+
     PLINT bytecnt;
     PLINT page;
     PLINT linepos;
@@ -147,6 +158,7 @@ typedef struct {
     PLINT xoffset, yoffset;
     PLINT xdigmax, ydigmax, zdigmax;
     PLINT xdigits, ydigits, zdigits;
+    PLFLT scale;
     PLFLT chrdef, chrht;
     PLFLT symdef, symht;
     PLFLT majdef, majht;
@@ -265,6 +277,18 @@ void xtetext		(PLStream *);
 void xtegraph		(PLStream *);
 void xtewidth		(PLStream *);
 void xteesc		(PLStream *, PLINT, char *);
+
+void xm_init		(PLStream *);
+void xm_line		(PLStream *, PLINT, PLINT, PLINT, PLINT);
+void xm_clear		(PLStream *);
+void xm_page		(PLStream *);
+void xm_adv		(PLStream *);
+void xm_tidy		(PLStream *);
+void xm_color		(PLStream *);
+void xm_text		(PLStream *);
+void xm_graph		(PLStream *);
+void xm_width		(PLStream *);
+void xm_esc		(PLStream *, PLINT, char *);
 
 void xw_init		(PLStream *);
 void xw_line		(PLStream *, PLINT, PLINT, PLINT, PLINT);
@@ -484,6 +508,36 @@ void aegistext		(PLStream *);
 void aegisgraph		(PLStream *);
 void aegiswidth		(PLStream *);
 void aegisesc		(PLStream *, PLINT, char *);
+
+void null_init		(PLStream *);
+void null_line		(PLStream *, PLINT, PLINT, PLINT, PLINT);
+void null_clear		(PLStream *);
+void null_page		(PLStream *);
+void null_adv		(PLStream *);
+void null_tidy		(PLStream *);
+void null_color		(PLStream *);
+void null_text		(PLStream *);
+void null_graph		(PLStream *);
+void null_width		(PLStream *);
+void null_esc		(PLStream *, PLINT, char *);
+
+/*----------------------------------------------------------------------*\
+* Prototypes for plot buffer calls.
+\*----------------------------------------------------------------------*/
+
+void plbuf_init		(PLStream *);
+void plbuf_line		(PLStream *, PLINT, PLINT, PLINT, PLINT);
+void plbuf_clear	(PLStream *);
+void plbuf_page		(PLStream *);
+void plbuf_adv		(PLStream *);
+void plbuf_tidy		(PLStream *);
+void plbuf_color	(PLStream *);
+void plbuf_text		(PLStream *);
+void plbuf_graph	(PLStream *);
+void plbuf_width	(PLStream *);
+void plbuf_esc		(PLStream *, PLINT, char *);
+
+void plRemakePlot	(PLStream *);
 
 /*----------------------------------------------------------------------*\
 * Prototypes for driver utility functions.
