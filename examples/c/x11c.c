@@ -1,28 +1,12 @@
-/* Demonstration of mesh plotting (just like example08 but mesh) */
+/* Demonstration of mesh plotting (just like x08c but mesh) */
 /* $Id$
    $Log$
-   Revision 1.6  1993/02/22 23:16:19  mjl
-   Changed over to new style of initialization using plinit(), and added
-   function to parse plplot command line flags.
+   Revision 1.7  1993/12/08 20:25:58  mjl
+   Eliminated final pltext() call (unnecessary).
 
- * Revision 1.5  1993/01/23  06:10:32  mjl
- * Instituted exit codes for all example codes.  Also deleted color functions
- * no longer supported (plancol).  Enhanced x09c to exploit new contour
- * capabilities.
- *
- * Revision 1.4  1992/10/12  17:04:16  mjl
- * Minor change to work around some compiler brain damage on the Amiga.
- *
- * Revision 1.3  1992/09/30  18:25:23  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:45:19  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:33:00  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.6  1993/02/22  23:16:19  mjl
+ * Changed over to new style of initialization using plinit(), and added
+ * function to parse plplot command line flags.
 */
 
 /* Note the compiler should automatically convert all non-pointer arguments
@@ -104,7 +88,6 @@ main(int argc, char *argv[])
 	plmtex("t", (PLFLT) 1.0, (PLFLT) 0.5, (PLFLT) 0.5, title[k]);
     }
 
-    pltext();
     plend();
     exit(0);
 }
