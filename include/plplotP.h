@@ -473,6 +473,31 @@ plParseDrvOpts(DrvOpt *);
 void
 plHelpDrvOpts(DrvOpt *);
 
+  /*
+   * structures to store contour lines
+   */
+
+#define LINE_ITEMS 20
+
+typedef struct cont_line {
+  PLFLT *x;
+  PLFLT *y;
+  PLINT npts;
+  struct cont_line *next;
+} CONT_LINE;
+
+typedef struct cont_level {
+  PLFLT level;
+  struct cont_line *line; /* contour line */
+  struct cont_level *next; /* contour level */
+} CONT_LEVEL;
+
+void
+cont_store(PLFLT *x, PLFLT *y, PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
+	   PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel, CONT_LEVEL **contour);
+void
+cont_clean_store(CONT_LEVEL *ct);
+
 /* Get x-y domain in world coordinates for 3d plots */
 
 void
