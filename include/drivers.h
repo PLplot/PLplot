@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.25.4.1  2000/07/28 17:48:11  airwin
+ * AWI: pltk patch changes to existing files
+ *
  * Revision 1.25  2000/05/10 20:39:39  furnish
  * Edit to give two macintosh options.  Rob Managan.
  *
@@ -64,6 +67,15 @@ void plD_bop_xw			(PLStream *);
 void plD_tidy_xw		(PLStream *);
 void plD_state_xw		(PLStream *, PLINT);
 void plD_esc_xw			(PLStream *, PLINT, void *);
+
+void plD_init_tkw		(PLStream *);
+void plD_line_tkw		(PLStream *, short, short, short, short);
+void plD_polyline_tkw		(PLStream *, short *, short *, PLINT);
+void plD_eop_tkw		(PLStream *);
+void plD_bop_tkw		(PLStream *);
+void plD_tidy_tkw		(PLStream *);
+void plD_state_tkw		(PLStream *, PLINT);
+void plD_esc_tkw		(PLStream *, PLINT, void *);
 
 void plD_init_xterm		(PLStream *);
 void plD_init_tekt		(PLStream *);

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.33.4.1  2000/07/28 17:48:10  airwin
+ * AWI: pltk patch changes to existing files
+ *
  * Revision 1.33  1995/03/11 20:27:13  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.
@@ -127,7 +130,7 @@ ps_init(PLStream *pls)
     if (pls->dev != NULL)
 	free((void *) pls->dev);
 
-    pls->dev = calloc(1, (size_t) sizeof(PSDev));
+    pls->dev = (PSDev*) calloc(1, (size_t) sizeof(PSDev));
     if (pls->dev == NULL)
 	plexit("ps_init: Out of memory.");
 

@@ -31,7 +31,7 @@ BINARIES=$(lib_BINARIES)
 # This will be used when a dist target is added to the Makefile.
 #========================================================================
 
-Pltcl_SOURCES = ../tcl/tclAPI.c 
+Pltcl_SOURCES = ../tcl/tclAPI.c ../tcl/ckcalloc.c
 
 Pltk_SOURCES = 
 #../tk/plframe.c ../tk/Pltk_Init.c
@@ -65,7 +65,7 @@ $(Pltk_SOURCES) $(Pldriver_SOURCES)
 #========================================================================
 
 Pltcl_OBJECTS =  \
-tclAPI.$(OBJEXT) \
+tclAPI.$(OBJEXT) ckcalloc.$(OBJEXT) \
 pdfutils.$(OBJEXT) plargs.$(OBJEXT) plbox.$(OBJEXT) \
 plcont.$(OBJEXT) plcore.$(OBJEXT) plctrl.$(OBJEXT) \
 plcvt.$(OBJEXT) pldtik.$(OBJEXT) plfill.$(OBJEXT) \
@@ -279,7 +279,7 @@ doc:
 	@echo "xml2nroff exampleA.xml > exampleA.n"
 	@echo "xml2html exampleA.xml > exampleA.html"
 
-install: all install-binaries install-libraries
+install: all install-libraries install-binaries
 # Not used.
 # install-doc
 
@@ -376,6 +376,9 @@ $(Pltcl_LIB_FILE): $(Pltcl_OBJECTS)
 # exampleA.$(OBJEXT): $(srcdir)/src/win/exampleA.c
 # 	$(COMPILE) -c `@CYGPATH@ $(srcdir)/src/win/exampleA.c` -o $@
 #========================================================================
+
+ckcalloc.$(OBJEXT): $(srcdir)/../tcl/ckcalloc.c
+	$(COMPILE) -c `@CYGPATH@ $(srcdir)/../tcl/ckcalloc.c` -o $@
 
 tclAPI.$(OBJEXT): $(srcdir)/../tcl/tclAPI.c
 	$(COMPILE) -c `@CYGPATH@ $(srcdir)/../tcl/tclAPI.c` -o $@

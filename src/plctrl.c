@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.40.2.2  2000/07/28 17:48:12  airwin
+ * AWI: pltk patch changes to existing files
+ *
  * Revision 1.40.2.1  2000/07/27 16:11:05  airwin
  * AWI: apply initial pltcl.patch for TEA-based approach
  *
@@ -1676,7 +1679,7 @@ plAllocDev(PLStream *pls)
     if (pls->dev != NULL)
 	free((void *) pls->dev);
 
-    pls->dev = calloc(1, (size_t) sizeof(PLDev));
+    pls->dev = (PLDev*) calloc(1, (size_t) sizeof(PLDev));
     if (pls->dev == NULL)
 	plexit("plAllocDev: cannot allocate memory\n");
 

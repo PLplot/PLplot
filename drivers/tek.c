@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.38.4.1  2000/07/28 17:48:10  airwin
+ * AWI: pltk patch changes to existing files
+ *
  * Revision 1.38  1995/06/07 20:37:46  mjl
  * Minor fix to function declarations, contributed by Hiromi Kimura.
  *
@@ -267,7 +270,7 @@ tek_init(PLStream *pls)
 
 /* Allocate and initialize device-specific data */
 
-    pls->dev = calloc(1, (size_t) sizeof(TekDev));
+    pls->dev = (TekDev*) calloc(1, (size_t) sizeof(TekDev));
     if (pls->dev == NULL)
 	plexit("tek_init: Out of memory.");
 

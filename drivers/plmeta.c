@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.28.4.2  2000/07/28 17:48:10  airwin
+ * AWI: pltk patch changes to existing files
+ *
  * Revision 1.28.4.1  2000/07/27 16:11:05  airwin
  * AWI: apply initial pltcl.patch for TEA-based approach
  *
@@ -106,7 +109,7 @@ plD_init_plm(PLStream *pls)
 
 /* Allocate and initialize device-specific data */
 
-    pls->dev = calloc(1, (size_t) sizeof(PLmDev));
+    pls->dev = (PLmDev*) calloc(1, (size_t) sizeof(PLmDev));
     if (pls->dev == NULL)
 	plexit("plD_init_plm: Out of memory.");
 

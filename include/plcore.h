@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.31.4.1  2000/07/28 17:48:11  airwin
+ * AWI: pltk patch changes to existing files
+ *
  * Revision 1.31  2000/05/10 20:39:08  furnish
  * Add mac routines to terminal types.  Rob Managan.
  *
@@ -769,6 +772,22 @@ static PLDispatchTable dispatch_table[] = {
 	plD_tidy_imp,
 	plD_state_imp,
 	plD_esc_imp
+    },
+#endif
+
+#ifdef PLD_tkwin
+    {
+	"Tk-Window (tklib)",
+	"tkwin",
+	1,
+	plD_init_tkw,
+	plD_line_tkw,
+	plD_polyline_tkw,
+	plD_eop_tkw,
+	plD_bop_tkw,
+	plD_tidy_tkw,
+	plD_state_tkw,
+	plD_esc_tkw
     },
 #endif
 

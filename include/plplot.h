@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.93.2.1  2000/07/28 17:48:11  airwin
+ * AWI: pltk patch changes to existing files
+ *
  * Revision 1.93  2000/07/19 21:12:26  furnish
  * Jumbo patch by Joao Cardoso.  Adds XOR, a polygon-fill light-shading
  * surface plotter, contour labelling, and demo updates to show off these
@@ -199,6 +202,14 @@
 #endif
 #endif
 
+#ifdef USE_TCL_STUBS
+    #include <tcl.h>
+    #define malloc ckalloc
+    #define free(m) ckfree((char*)m)
+    #define realloc(m,l) ckrealloc((char*)m,l)
+    #define calloc ckcalloc
+#endif
+    
 /* A wrapper used in some header files so they can be compiled with cc */
 
 #define PLARGS(a)	a

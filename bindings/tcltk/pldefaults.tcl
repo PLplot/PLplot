@@ -1,5 +1,8 @@
 # $Id$
 # $Log$
+# Revision 1.1.2.2  2000/07/28 17:48:10  airwin
+# AWI: pltk patch changes to existing files
+#
 # Revision 1.1.2.1  2000/07/27 16:11:05  airwin
 # AWI: apply initial pltcl.patch for TEA-based approach
 #
@@ -223,7 +226,7 @@ proc pldefaults {} {
 
     global tcl_platform
     if {$tcl_platform(platform) == "macintosh"} {
-	package require MacOSdefaults
+	catch {package require MacOSdefaults}
     }
 }
 

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.4.4.1  2000/07/28 17:48:11  airwin
+ * AWI: pltk patch changes to existing files
+ *
  * Revision 1.4  1999/06/19 05:38:31  furnish
  * Integrated patch set from Joao Cardoso.
  *
@@ -305,6 +308,12 @@ typedef struct {
  *			to output window on EOP or an Expose)
  ***************************************************************************
  *
+ * These are for support of the Tkwin driver.
+ *
+ * plFramePtr	PlFrame* Pointer to plframe
+ *
+ ***************************************************************************
+ *
  * These are for support of the TK driver.
  *
  * server_name	char*	Main window name of server
@@ -554,6 +563,9 @@ typedef struct {
     char *geometry;
     long window_id;
     int  nopixmap, db;
+
+/* Stuff used by the Tkwin driver for Plframe */
+    struct PlFrame *plFramePtr;
 
 /* Stuff used by TK, DP drivers */
 

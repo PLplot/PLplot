@@ -6,6 +6,9 @@
 
 /* $Id$
  * $Log$
+ * Revision 1.2.4.2  2000/07/28 17:48:12  airwin
+ * AWI: pltk patch changes to existing files
+ *
  * Revision 1.2.4.1  2000/07/27 16:11:05  airwin
  * AWI: apply initial pltcl.patch for TEA-based approach
  *
@@ -77,7 +80,7 @@ static void
 plstrip_legend(PLStrip *strip, int flag);
 
 #if defined(__WIN32__) && !defined(__MWERKS__)
-char *strdup(char *);
+EXTERN char *strdup(const char *);
 #endif
 /*--------------------------------------------------------------------------*\
  * plstripc

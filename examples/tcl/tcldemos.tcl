@@ -16,6 +16,9 @@
 #
 # $Id$
 # $Log$
+# Revision 1.3.4.1  2000/07/28 17:48:11  airwin
+# AWI: pltk patch changes to existing files
+#
 # Revision 1.3  1995/06/30 13:48:27  furnish
 # Update loop limit to reflect the two new demo files.
 #
@@ -30,6 +33,6 @@
 
 for {set i 1} {$i <= 18} {incr i} {
     set demo x[format "%02d" $i]
-    source $demo.tcl
+    source [file join [file dirname [info script]] $demo.tcl]
     proc $i {} "$demo"
 }

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.2.4.1  2000/07/28 17:48:10  airwin
+ * AWI: pltk patch changes to existing files
+ *
  * Revision 1.2  1998/11/19 04:32:46  furnish
  * Hack out a dumb little diagnostic which has been being printed for a
  * couple of years, but whose utility has long since expired.
@@ -31,44 +34,51 @@
 
 #include "plserver.h"
 
-extern int Matrix_Init(Tcl_Interp* interp);
-
 /*----------------------------------------------------------------------*\
  * Pltk_Init
  *
  * Initialization routine for extended wish'es.
- * Creates the plframe, matrix, wait_until, and host_id (w/Tcl-DP only)
- * commands.  Also sets the auto_path variable.
+ * Creates the plframe, wait_until, and host_id (w/Tcl-DP only)
+ * commands.  The more basic Plplot-Tcl initialization is handled by
+ * the Plbasicinit function called from here.
 \*----------------------------------------------------------------------*/
 
 int
 Pltk_Init( Tcl_Interp *interp )
 {
-/*    "if {[catch {source -rsrc plplot.tcl}] != 0} {\n\
- */
-    static char initCmd[] =
-    "if {[catch {source plplot.tcl}] != 0} {\n\
-        if [file exists [file join ${pllibrary} plplot.tcl]] {\n\
-	    source [file join ${pllibrary} plplot.tcl]\n\
-        } else {\n\
-	    set msg \"can't find [file join ${pllibrary} plplot.tcl]\\n\"\n\
-	    append msg \"Perhaps you need to install Plplot \\n\"\n\
-	    append msg \"or set your PL_LIBRARY environment variable?\"\n\
-	    error $msg\n\
-        }\n\
-    }";
+#ifdef USE_TCL_STUBS
+    /* 
+     * We hard-wire 8.1 here, rather than TCL_VERSION, TK_VERSION because
+     * we really don't mind which version of Tcl, Tk we use as long as it
+     * is 8.1 or newer.  Otherwise if we compiled against 8.2, we couldn't
+     * be loaded into 8.1
+     */
+    Tcl_InitStubs(interp,"8.1",0);
+#endif
+#ifdef USE_TK_STUBS
+    Tk_InitStubs(interp,"8.1",0);
+#endif
+    /* This must be before any other Tcl related calls */
+    if (PlbasicInit(interp) != TCL_OK) {
+	return TCL_ERROR;
+    }
 
-    char *libDir;
-/*     Tcl_DString path; */
-
-    Tk_Window main;
-
-    main = Tk_MainWindow(interp);
+    /* 
+     * Note, the old technique of:
+     *    main = Tk_MainWindow(interp);
+     * and then passing main to 'plframe' as the clientdata can
+     * cause unusual problems, probably due to bugs in Tk on
+     * some platforms, when the 'main window' doesn't yet exist
+     * properly by the time we are called.  Since plframe only
+     * uses the value in one place (each time a new frame is
+     * created), we simply use 'Tk_MainWindow' in plframe, and
+     * avoid the startup problems.
+     */
 
 /* plframe -- PLplot graphing widget */
 
     Tcl_CreateCommand( interp, "plframe", plFrameCmd,
-		       (ClientData) main, (void (*)(ClientData)) NULL);
+		       (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
 
 /* matrix -- matrix support command */
 /* matrix support added in the pltk startup script */
@@ -77,19 +87,14 @@ Pltk_Init( Tcl_Interp *interp )
 /* Can be used with either Tcl-DP or TK */
 
     Tcl_CreateCommand( interp, "wait_until", plWait_Until,
-		       (ClientData) NULL, (void (*) (ClientData)) NULL);
+		       (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
 
 /* host_id -- returns host IP number.  Only for use with Tcl-DP */
 
 #ifdef PLD_dp
     Tcl_CreateCommand(interp, "host_id", plHost_ID,
-	      (ClientData) NULL, (void (*) (ClientData)) NULL);
+	      (ClientData) NULL, (Tcl_CmdDeleteProc*) NULL);
 #endif
-
-/* Set up auto_path */
-
-    if (pls_auto_path(interp) == TCL_ERROR)
-	return TCL_ERROR;
 
 /* Save initial RGB colormap components */
 /* Disabled for now */
@@ -106,29 +111,8 @@ Pltk_Init( Tcl_Interp *interp )
     }
 #endif
 
-    if ( Matrix_Init(interp) == TCL_ERROR )
-	return TCL_ERROR;
-
-/*     Tcl_PkgRequire(interp,"Matrix","0.1",0); */
-
-    Tcl_PkgProvide(interp,"Pltk","4.99");
-/*     libDir = Tcl_GetPkgLibraryPath(interp,&path,"PL_LIBRARY","pltk","4.99"); */
-
-    libDir = NULL;
-
-#ifdef TCL_DIR
-    if (libDir == NULL) {
-    /*	libDir = PL_LIBRARY; */
-	libDir = TCL_DIR;
-    }
-#endif
-
-/*     Tcl_SetVar(interp, "pllibrary", libDir, ITCL_GLOBAL_VAR); */
-    Tcl_SetVar(interp, "pllibrary", libDir, TCL_GLOBAL_ONLY);
-
-/*     Tcl_DStringFree(&path); */
-
-    return Tcl_Eval(interp, initCmd);
+    Tcl_PkgProvide(interp,"Pltk","5.1");
+    return TCL_OK;
 }
 
 /*----------------------------------------------------------------------*\
