@@ -16,7 +16,7 @@ TCL_C		= tclAPI.c tclMain.c
 TCL_OBJ		= tclAPI$O
 TCL_OBJ_SA	= tclMain$O 
 TCL_EXE		= pltcl$E tclIndex
-TCL_DEMOS	= *.tcl *.log *.dat
+TCL_DEMOS	= *.tcl *.log *.dat README.tcldemos
 
 MAKEINDEX	= $(srcdir)/scripts/mktclIndex
 
@@ -41,7 +41,7 @@ BLD_MATLIB_AR	= $(MATLIB_AR)
 BLD_MATLIB_SO	= $(MATLIB_SO)
 BLD_MATLIB_SA	= $(MATLIB_SA)
 INSTALL_TCL	= install_tcl
-INSTALL_MAT	= install_mat
+INSTALL_MAT	= install_mat_includes
 INSTALL_MATLIB	= install_matlib
 
 # Targets
@@ -76,8 +76,9 @@ install_tcl_demos:
 
 install_tcl: install_pltcl install_tcl_index install_tcl_includes install_tcl_demos
 
-install_mat:
-	@$(CP) plplot/tclMatrix.h $(INCLUDE_DIR)
+install_mat_includes:
+	@-cd $(top_srcdir)/bindings/tcl; \
+	  $(CP) tclMatrix.h $(INCLUDE_DIR)
 
 install_matlib:
 	@-$(CP) $(MATLIB_BASE)* $(LIB_DIR); \
