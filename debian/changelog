@@ -1,3 +1,9 @@
+plplot (5.2.1.cvs.20031228-1) unstable; urgency=low
+
+  * New cvs snapshot upstream release
+
+ -- Rafael Laboissiere <rafael@debian.org>  Sun, 28 Dec 2003 22:33:41 +0100
+
 plplot (5.2.1.cvs.20031227-1) unstable; urgency=low
 
   * New cvs snapshot upstream release.
