@@ -1,9 +1,7 @@
 /* $Id$
  * $Log$
- * Revision 1.7  2002/07/10 13:54:22  airwin
- * Remove tkInt.h include for Unix/Linux systems because it appears it is not
- * necessary and many of the Linux distributions do not package this internal
- * Tk header.
+ * Revision 1.8  2002/07/10 13:59:25  vincentdarley
+ * removing symbols conflict with xwin and use tk.h
  *
  * Revision 1.6  2002/07/10 09:52:38  vincentdarley
  * resolve name clashes, and sync pltools.tcl
@@ -89,19 +87,28 @@ for use by the cross platform Tk system.
 #include "plplot/plevent.h"
 
 #define _TCLINT
-
-#if defined(USE_TCL_STUBS) && (defined(MAC_TCL) || defined(__WIN32__))
+#ifdef USE_TCL_STUBS
 /* Unfortunately, tkInt.h ends up loading Malloc.h under Windows */
 /* So we have to deal with this mess */
     #undef malloc 
     #undef free
     #undef realloc
     #undef calloc
+#if defined(__WIN32__) || defined (MAC_TCL)
 #include <tkInt.h>
+#else
+#include <tk.h>
+#endif
     #define malloc ckalloc
     #define free(m) ckfree((char*)m)
     #define realloc ckrealloc
     #define calloc ckcalloc
+#else
+#if defined(__WIN32__) || defined (MAC_TCL)
+#include <tkInt.h>
+#else
+#include <tk.h>
+#endif
 #endif
 
 #ifdef ckalloc
@@ -181,7 +188,7 @@ static int synchronize = 0; /* change to 1 for synchronized operation */
  * Set ccmap at your own risk -- still under development.
  */
 
-int plplot_ccmap = 0;
+int plplot_tkwin_ccmap = 0;
 
 #define XWM_COLORS 70
 #define CMAP0_COLORS 16
@@ -1406,7 +1413,7 @@ InitColors(PLStream *pls)
     /* Defer cmap1 allocation until it's actually used */
     
     if (tkwd->color) {
-	if (plplot_ccmap) {
+	if (plplot_tkwin_ccmap) {
 	    AllocCustomMap(pls);
 	} else {
 	    AllocCmap0(pls);

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.4  2002/07/10 13:59:25  vincentdarley
+ * removing symbols conflict with xwin and use tk.h
+ *
  * Revision 1.3  2002/07/10 09:52:38  vincentdarley
  * resolve name clashes, and sync pltools.tcl
  *
@@ -237,13 +240,21 @@ extern void XWarpPointer(
     #undef free
     #undef realloc
     #undef calloc
+#if defined(__WIN32__) || defined (MAC_TCL)
 #include <tkInt.h>
+#else
+#include <tk.h>
+#endif
     #define malloc ckalloc
     #define free(m) ckfree((char*)m)
     #define realloc ckrealloc
     #define calloc ckcalloc
 #else
+#if defined(__WIN32__) || defined (MAC_TCL)
 #include <tkInt.h>
+#else
+#include <tk.h>
+#endif
 #endif
 
 #ifdef DEBUG_ENTER
@@ -269,7 +280,7 @@ extern void XWarpPointer(
 #endif
 
 
-extern int plplot_ccmap;
+extern int plplot_tkwin_ccmap;
 
 #define NDEV    20              /* Max number of output device types */
 
@@ -1565,7 +1576,7 @@ static void PlPlotterFirstInit(ClientData clientData) {
     plsxwin(Tk_WindowId(tkwin));
     plspause(0);
     plinit();
-    if (plplot_ccmap) {
+    if (plplot_tkwin_ccmap) {
 	Install_cmap(plPlotterPtr);
     }
     plbop();
