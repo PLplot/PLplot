@@ -1,11 +1,11 @@
 #!/bin/sh
 # Test suite for Tcl demos.  
-# This is called from plplot-test.sh with $tcldir, $installbindir, $driver, 
+# This is called from plplot-test.sh with $tcldir, $installbindir, $device, 
 # $dsuffix, and $options defined.
 results=`pwd`
 export results
 cd $tcldir
-$installbindir/pltcl -dev $driver -o $results/plot.$dsuffix $options <<EOF
+$installbindir/pltcl -dev $device -o $results/plot.$dsuffix $options <<EOF
 plinit
 source plot.tcl
 plot stats.log {1 4}
@@ -14,13 +14,13 @@ plot r.dat
 plot plot.dat
 exit
 EOF
-$installbindir/pltcl -dev $driver -o $results/plgrid.$dsuffix $options <<EOF
+$installbindir/pltcl -dev $device -o $results/plgrid.$dsuffix $options <<EOF
 plinit
 source plgrid.tcl
 plgrid
 exit
 EOF
-$installbindir/pltcl -dev $driver -o $results/tcldemos.$dsuffix $options <<EOF
+$installbindir/pltcl -dev $device -o $results/tcldemos.$dsuffix $options <<EOF
 plinit
 source tcldemos.tcl
 1

@@ -20,7 +20,7 @@ usage()
 Usage: plplot-test.sh [OPTIONS]
 Options:
    [--flat] (Use this option when running this script from plplot/tmp)
-   [--driver=DRIVER] (DRIVER = one of psc [default], ps, png, jpeg, cgm, xfig, or plmeta.
+   [--device=DEVICE] (DEVICE = one of psc [default], ps, png, jpeg, cgm, xfig, or plmeta.
    [--version]
    [--help]
 EOF
@@ -68,9 +68,9 @@ while test $# -gt 0; do
 	 installbindir=.
 	 export installbindir
 	 ;;
-      --driver=*)
-         driver=$optarg
-         export driver
+      --device=*)
+         device=$optarg
+         export device
          ;;
       --version)
          echo $version
@@ -86,12 +86,12 @@ while test $# -gt 0; do
    shift
 done
 
-if test -z "$driver"; then
-   driver=psc
-   export driver
+if test -z "$device"; then
+   device=psc
+   export device
 fi
 
-case $driver in
+case $device in
    ps|psc)
       dsuffix=ps
       export dsuffix

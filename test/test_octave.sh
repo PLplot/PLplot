@@ -1,6 +1,6 @@
 #!/bin/sh
 # Test suite for octave demos.  
-# This is called from plplot-test.sh with $octavedir, $driver, 
+# This is called from plplot-test.sh with $octavedir, $device, 
 # $dsuffix and $options defined.
 # Assumes that $option starts and are '-' separated.
 
@@ -19,7 +19,7 @@ endfor
 
 # p7 works OK with plmeta, e.g., but not ps or psc. pleop/plbop issue?
 for i=[1:7 8 9 13 15 16];
-   figure(i,"$driver",sprintf("p%d.$dsuffix",i));
+   figure(i,"$device",sprintf("p%d.$dsuffix",i));
    feval(sprintf("p%d",i))
    closefig
 endfor
@@ -37,7 +37,7 @@ for i=[1:13 15 16 18];
 	if (ix == 0); ix = len; len = 0; endif
 	plSetOpt(deblank(tt(1:ix)), tt(ix:len));
     endfor
-    device="$driver";
+    device="$device";
     plSetOpt("dev", device);
 #o trailer on filename e.g., x01o.ps) to distinguish from other 
 #common examples.
