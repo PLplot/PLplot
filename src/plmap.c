@@ -112,7 +112,12 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 	    while (bufx[i] > maxlong) {
 		bufx[i] -= 360.0;
 	    }
+
 	}
+
+
+       if (mapform != NULL) (*mapform)(n,bufx,bufy); /* moved transformation to here   */
+                                                     /* so bound-checking worked right */
 
 	/* remove last 2 points if both outside of domain and won't plot */
 
@@ -132,12 +137,11 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 	wrap = 0;
 	/* check for wrap around problems */
 	for (i = 0; i < n-1; i++) {
-	    test[i] = (abs(bufx[i]-bufx[i+1]) > 30.0);
+	    test[i] = (abs(bufx[i]-bufx[i+1]) > 30.0); /* AFR: what does THIS do ? */
 	    if (test[i]) wrap = 1;
 	}
 
 	if (wrap == 0) {	
-	    if (mapform != NULL) (*mapform)(n,bufx,bufy);
 	    plline(n,bufx,bufy);
 	}
 	else {
@@ -147,21 +151,18 @@ plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
 		y[0] = bufy[i];
 		y[1] = bufy[i+1];
 		if (test[i] == 0) {
-		    if (mapform != NULL) (*mapform)(2,x,y);
 		    plline(2,x,y);
 		}
 		else {
 		    /* segment goes off the edge */
 		    sign = (x[1] > x[0]) ? 1 : -1;
 		    x[1] -= sign * 360.0;
-		    if (mapform != NULL) (*mapform)(2,x,y);
 		    plline(2,x,y);
 		    x[0] = bufx[i];
 		    x[1] = bufx[i+1];
 		    y[0] = bufy[i];
 		    y[1] = bufy[i+1];
 		    x[0] += sign * 360.0;
-		    if (mapform != NULL) (*mapform)(2,x,y);
 		    plline(2,x,y);
 		}
 	    }
