@@ -983,6 +983,30 @@ c_plfont(PLINT ifont)
     }
 
     plsc->cfont = ifont;
+
+   /* Provide some degree of forward compatibility if dealing with 
+    * unicode font. But better procedure is to call plsfci directly rather
+    * than using this lame Hershey font interface.
+    */
+    switch(ifont)
+     {
+      case 1:
+	/* normal = (sans serif, upright, normal, medium) */
+	plsfci(0x10000000);
+	break;
+	/* roman = (serif, upright, normal, medium) */
+      case 2:
+	plsfci(0x10001000);
+	break;
+	/* italic = (serif, italic, normal, medium) */
+      case 3:
+	plsfci(0x10001100);
+	break;
+	/* script = (script, upright, normal, medium) */
+      case 4:
+	plsfci(0x10003000);
+	break;
+     }
 }
 
 /*--------------------------------------------------------------------------*\
