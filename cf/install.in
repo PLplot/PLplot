@@ -20,6 +20,7 @@ install: install_lib install_demos install_utils \
 	$(F77_INSTALL) \
 	$(PYTHON_INSTALL) \
 	$(TCL_INSTALL) \
+	$(MAT_INSTALL) \
 	$(TK_INSTALL) \
 	$(CXX_INSTALL)
 
