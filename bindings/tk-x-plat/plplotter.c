@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.13  2002/08/05 15:05:02  vincentdarley
+ * removed redundant defintion
+ *
  * Revision 1.12  2002/08/05 14:10:16  vincentdarley
  * removed dependence on tkInt, fixed win-tk compile
  *
@@ -239,26 +242,6 @@
 #define XSynchronize(display, bool) {display->request++;}
 #define XSync(display, bool) {display->request++;}
 #define XFlush(display)
-#endif
-
-#if defined(__MWERKS__) && (defined(__WIN32__) || defined (MAC_TCL))
-/* 
- * For some stupid reason, the Metrowerks Codewarrior compiler
- * wants these stupid parameters 
- */
-extern void XWarpPointer(
-#if NeedFunctionPrototypes
-    Display*        d1/* display */,
-    Window      d2/* src_w */,
-    Window      d3/* dest_w */,
-    int         d4/* src_x */,
-    int         d5/* src_y */,
-    unsigned int   d6 /* src_width */,
-    unsigned int   d7 /* src_height */,
-    int        d8 /* dest_x */,
-    int        d9 /* dest_y */         
-#endif
-);
 #endif
 
 #ifdef DEBUG_ENTER
@@ -3191,27 +3174,6 @@ gbox(PLFLT *xl, PLFLT *yl, PLFLT *xr, PLFLT *yr, CONST char **argv)
     *xr = MAX(x0, x1);
     *yr = MAX(y0, y1);
 }
-
-#if defined(__MWERKS__) && (defined(__WIN32__) || defined (MAC_TCL))
-/* 
- * For some stupid reason, the Metrowerks Codewarrior compiler
- * wants these stupid parameters 
- */
-extern void XWarpPointer(
-#if NeedFunctionPrototypes
-    Display*        d1/* display */,
-    Window      d2/* src_w */,
-    Window      d3/* dest_w */,
-    int         d4/* src_x */,
-    int         d5/* src_y */,
-    unsigned int   d6 /* src_width */,
-    unsigned int   d7 /* src_height */,
-    int        d8 /* dest_x */,
-    int        d9 /* dest_y */         
-#endif
-){
-}
-#endif
 
 
 
