@@ -17,365 +17,476 @@
 !
 !***********************************************************************
 
-	subroutine plsetopt(opt, optarg)
+      subroutine plsetopt(opt, optarg)
 
-        implicit none
-	character*(*) opt, optarg
-        
-	include 'sfstubs.h'
+      implicit none
+      character*(*) opt, optarg
 
+      include 'sfstubs.h'
 
-	call plstrf2c(opt, string1, maxlen)
-	call plstrf2c(optarg, string2, maxlen)
-	call plsetopt7(s1, s2)
+      call plstrf2c(opt, string1, maxlen)
+      call plstrf2c(optarg, string2, maxlen)
+      call plsetopt7(s1, s2)
 
-	end
-
-!***********************************************************************
-
-	subroutine plsdev(dnam)
-
-        implicit none
-	character*(*) dnam
-        
-	include 'sfstubs.h'
-
-
-	call plstrf2c(dnam, string1, maxlen)
-	call plsdev7(s1)
-
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plgdev(dnam)
+      subroutine plsdev(dnam)
 
-        implicit none
-	character*(*) dnam
-        
-	include 'sfstubs.h'
+      implicit none
+      character*(*) dnam
 
+      include 'sfstubs.h'
 
-	call plgdev7(string1)
-        call plstrc2f(string1, dnam)
+      call plstrf2c(dnam, string1, maxlen)
+      call plsdev7(s1)
 
-	end
-
-!***********************************************************************
-
-	subroutine plsfnam(fnam)
-
-        implicit none
-	character*(*) fnam
-        
-	include 'sfstubs.h'
-
-
-	call plstrf2c(fnam, string1, maxlen)
-	call plsfnam7(s1)
-
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plgfnam(fnam)
+      subroutine plgdev(dnam)
 
-        implicit none
-	character*(*) fnam
-        
-	include 'sfstubs.h'
+      implicit none
+      character*(*) dnam
 
+      include 'sfstubs.h'
 
-	call plgfnam7(string1)
-        call plstrc2f(string1, fnam)
+      call plgdev7(string1)
+      call plstrc2f(string1, dnam)
 
-	end
-
-!***********************************************************************
-
-	subroutine plgver(ver)
-
-        implicit none
-	character*(*) ver
-        
-	include 'sfstubs.h'
-
-
-	call plgver7(s1)
-        call plstrc2f(string1, ver)
-
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plaxes(x0,y0,xopt,xtick,nxsub,yopt,ytick,nysub)
+      subroutine plsfnam(fnam)
 
-        implicit none
-	real*8 x0, y0, xtick, ytick
-	integer nxsub, nysub
-	character*(*) xopt,yopt
-        
-	include 'sfstubs.h'
+      implicit none
+      character*(*) fnam
 
+      include 'sfstubs.h'
+     
+      call plstrf2c(fnam, string1, maxlen)
+      call plsfnam7(s1)
 
-	call plstrf2c(xopt, string1, maxlen)
-	call plstrf2c(yopt, string2, maxlen)
-
-	call plaxes7(x0,y0,s1,xtick,nxsub,s2,ytick,nysub)
-
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plbox(xopt,xtick,nxsub,yopt,ytick,nysub)
+      subroutine plgfnam(fnam)
 
-        implicit none
-	real*8 xtick, ytick
-	integer nxsub, nysub
-	character*(*) xopt,yopt
-        
-	include 'sfstubs.h'
+      implicit none
+      character*(*) fnam
 
+      include 'sfstubs.h'
 
-	call plstrf2c(xopt, string1, maxlen)
-	call plstrf2c(yopt, string2, maxlen)
+      call plgfnam7(string1)
+      call plstrc2f(string1, fnam)
 
-	call plbox7(s1,xtick,nxsub,s2,ytick,nysub)
-
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plbox3(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub,
-     &		    zopt,zlabel,ztick,nzsub)
+      subroutine plgver(ver)
 
-        implicit none
-	real*8 xtick, ytick, ztick
-	character*(*) xopt,xlabel,yopt,ylabel,zopt,zlabel
-	integer nxsub, nysub, nzsub
-        
-	include 'sfstubs.h'
+      implicit none
+      character*(*) ver
 
+      include 'sfstubs.h'
 
-	call plstrf2c(xopt, string1, maxlen)
-	call plstrf2c(xlabel, string2, maxlen)
-	call plstrf2c(yopt, string3, maxlen)
-	call plstrf2c(ylabel, string4, maxlen)
-	call plstrf2c(zopt, string5, maxlen)
-	call plstrf2c(zlabel, string6, maxlen)
+      call plgver7(s1)
+      call plstrc2f(string1, ver)
 
-	call plbox37(s1,s2,xtick,nxsub,
-     &               s3,s4,ytick,nysub,
-     &               s5,s6,ztick,nzsub)
-
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plcon0(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
+      subroutine plaxes(x0,y0,xopt,xtick,nxsub,yopt,ytick,nysub)
 
-        implicit none
-	integer nx, ny, kx, lx, ky, ly, nlevel
-	real*8 z(nx, ny), clevel(nlevel)
+      implicit none
+      real*8 x0, y0, xtick, ytick
+      integer nxsub, nysub
+      character*(*) xopt,yopt
 
-	call plcon07(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
+      include 'sfstubs.h'
 
-	end
+      call plstrf2c(xopt, string1, maxlen)
+      call plstrf2c(yopt, string2, maxlen)
 
-!***********************************************************************
+      call plaxes7(x0,y0,s1,xtick,nxsub,s2,ytick,nysub)
 
-	subroutine plcon1(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
-
-        implicit none
-	integer nx, ny, kx, lx, ky, ly, nlevel
-	real*8 z(nx, ny), xg(nx), yg(ny), clevel(nlevel)
-
-	call plcon17(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
-
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plcon2(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
+      subroutine plbox(xopt,xtick,nxsub,yopt,ytick,nysub)
 
-        implicit none
-	integer nx, ny, kx, lx, ky, ly, nlevel
-	real*8 z(nx, ny), xg(nx, ny), yg(nx, ny), clevel(nlevel)
+      implicit none
+      real*8 xtick, ytick
+      integer nxsub, nysub
+      character*(*) xopt,yopt
 
-	call plcon27(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
+      include 'sfstubs.h'
 
-	end
+      call plstrf2c(xopt, string1, maxlen)
+      call plstrf2c(yopt, string2, maxlen)
 
-!***********************************************************************
+      call plbox7(s1,xtick,nxsub,s2,ytick,nysub)
 
-	subroutine plcont(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
-
-        implicit none
-	integer nx, ny, kx, lx, ky, ly, nlevel
-	real*8 z(nx, ny), clevel(nlevel)
-	real*8 tr(6)
-	common /plplot/ tr
-
-	call plcont7(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,tr)
-
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plshade0(z, nx, ny, defined, 
-     &       xmin, xmax, ymin, ymax,
-     &       shade_min, shade_max, 
-     &       sh_cmap, sh_color, sh_width, 
-     &       min_color, min_width, max_color, max_width)
+      subroutine plbox3(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub,
+     &  zopt,zlabel,ztick,nzsub)
 
-        implicit none
-        character defined*(*)
-	integer nx, ny, sh_cmap, sh_width
-        integer min_color, min_width, max_color, max_width
-        real*8 shade_min, shade_max, sh_color
-	real*8 z(nx, ny), xmin, xmax, ymin, ymax
-        
-	include 'sfstubs.h'
+      implicit none
+      real*8 xtick, ytick, ztick
+      character*(*) xopt,xlabel,yopt,ylabel,zopt,zlabel
+      integer nxsub, nysub, nzsub
 
+      include 'sfstubs.h'
+
+      call plstrf2c(xopt, string1, maxlen)
+      call plstrf2c(xlabel, string2, maxlen)
+      call plstrf2c(yopt, string3, maxlen)
+      call plstrf2c(ylabel, string4, maxlen)
+      call plstrf2c(zopt, string5, maxlen)
+      call plstrf2c(zlabel, string6, maxlen)
+
+      call plbox37(s1,s2,xtick,nxsub,
+     &  s3,s4,ytick,nysub,
+     &  s5,s6,ztick,nzsub)
+
+      end
+
+!***********************************************************************
+
+      subroutine plcon0(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
+
+      implicit none
+      integer nx, ny, kx, lx, ky, ly, nlevel
+      real*8 z(nx, ny), clevel(nlevel)
+
+      call plcon07(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
+
+      end
+
+!***********************************************************************
+
+      subroutine plcon1(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
+
+      implicit none
+      integer nx, ny, kx, lx, ky, ly, nlevel
+      real*8 z(nx, ny), xg(nx), yg(ny), clevel(nlevel)
+
+      call plcon17(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
+
+      end
+
+!***********************************************************************
+
+      subroutine plcon2(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
+
+      implicit none
+      integer nx, ny, kx, lx, ky, ly, nlevel
+      real*8 z(nx, ny), xg(nx, ny), yg(nx, ny), clevel(nlevel)
+
+      call plcon27(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,xg,yg)
+
+      end
+
+!***********************************************************************
+
+      subroutine plcont(z,nx,ny,kx,lx,ky,ly,clevel,nlevel)
+
+      implicit none
+      integer nx, ny, kx, lx, ky, ly, nlevel
+      real*8 z(nx, ny), clevel(nlevel)
+      real*8 tr(6)
+      common /plplot/ tr
+
+      call plcont7(z,nx,ny,kx,lx,ky,ly,clevel,nlevel,tr)
+
+      end
+
+!***********************************************************************
+
+      subroutine plshade0(z, nx, ny, defined, 
+     &  xmin, xmax, ymin, ymax,
+     &  shade_min, shade_max, 
+     &  sh_cmap, sh_color, sh_width, 
+     &  min_color, min_width, max_color, max_width)
+
+      implicit none
+      character defined*(*)
+      integer nx, ny, sh_cmap, sh_width
+      integer min_color, min_width, max_color, max_width
+      real*8 shade_min, shade_max, sh_color
+      real*8 z(nx, ny), xmin, xmax, ymin, ymax
+
+      include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-        call plshade07(z, nx, ny, s1, 
-     &       xmin, xmax, ymin, ymax,
-     &       shade_min, shade_max, 
-     &       sh_cmap, sh_color, sh_width, 
-     &       min_color, min_width, max_color, max_width)
+      call plshade07(z, nx, ny, s1, 
+     &  xmin, xmax, ymin, ymax,
+     &  shade_min, shade_max, 
+     &  sh_cmap, sh_color, sh_width, 
+     &  min_color, min_width, max_color, max_width)
 
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plshade1(z, nx, ny, defined, 
-     &       xmin, xmax, ymin, ymax,
-     &       shade_min, shade_max, 
-     &       sh_cmap, sh_color, sh_width, 
-     &       min_color, min_width, max_color, max_width, 
-     &       xg, yg)
+      subroutine plshade1(z, nx, ny, defined, 
+     &  xmin, xmax, ymin, ymax,
+     &  shade_min, shade_max, 
+     &  sh_cmap, sh_color, sh_width, 
+     &  min_color, min_width, max_color, max_width, 
+     &  xg, yg)
 
-        implicit none
-        character defined*(*)
-	integer nx, ny, sh_cmap, sh_width
-        integer min_color, min_width, max_color, max_width
-        real*8 shade_min, shade_max, sh_color
-	real*8 z(nx, ny), xmin, xmax, ymin, ymax, xg(nx), yg(ny)
-        
-	include 'sfstubs.h'
+      implicit none
+      character defined*(*)
+      integer nx, ny, sh_cmap, sh_width
+      integer min_color, min_width, max_color, max_width
+      real*8 shade_min, shade_max, sh_color
+      real*8 z(nx, ny), xmin, xmax, ymin, ymax, xg(nx), yg(ny)
 
+      include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-        call plshade17(z, nx, ny, s1, 
-     &       xmin, xmax, ymin, ymax,
-     &       shade_min, shade_max, 
-     &       sh_cmap, sh_color, sh_width, 
-     &       min_color, min_width, max_color, max_width, 
-     &       xg, yg)
+      call plshade17(z, nx, ny, s1, 
+     &  xmin, xmax, ymin, ymax,
+     &  shade_min, shade_max, 
+     &  sh_cmap, sh_color, sh_width, 
+     &  min_color, min_width, max_color, max_width, 
+     &  xg, yg)
 
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plshade2(z, nx, ny, defined, 
-     &       xmin, xmax, ymin, ymax,
-     &       shade_min, shade_max, 
-     &       sh_cmap, sh_color, sh_width, 
-     &       min_color, min_width, max_color, max_width, 
-     &       xg, yg)
+      subroutine plshade2(z, nx, ny, defined, 
+     &  xmin, xmax, ymin, ymax,
+     &  shade_min, shade_max, 
+     &  sh_cmap, sh_color, sh_width, 
+     &  min_color, min_width, max_color, max_width, 
+     &  xg, yg)
 
-        implicit none
-        character defined*(*)
-	integer nx, ny, sh_cmap, sh_width
-        integer min_color, min_width, max_color, max_width
-        real*8 shade_min, shade_max, sh_color
-	real*8 z(nx, ny), xmin, xmax, ymin, ymax, xg(nx, ny), yg(nx, ny)
-        
-	include 'sfstubs.h'
+      implicit none
+      character defined*(*)
+      integer nx, ny, sh_cmap, sh_width
+      integer min_color, min_width, max_color, max_width
+      real*8 shade_min, shade_max, sh_color
+      real*8 z(nx, ny), xmin, xmax, ymin, ymax, xg(nx, ny), yg(nx, ny)
 
+      include 'sfstubs.h'
 
 !	call plstrf2c(dnam, string1, maxlen)
 
-        call plshade27(z, nx, ny, s1, 
-     &       xmin, xmax, ymin, ymax,
-     &       shade_min, shade_max, 
-     &       sh_cmap, sh_color, sh_width, 
-     &       min_color, min_width, max_color, max_width, 
-     &       xg, yg)
+      call plshade27(z, nx, ny, s1, 
+     &  xmin, xmax, ymin, ymax,
+     &  shade_min, shade_max, 
+     &  sh_cmap, sh_color, sh_width, 
+     &  min_color, min_width, max_color, max_width, 
+     &  xg, yg)
 
-	end
-
-!***********************************************************************
-
-	subroutine pllab(xlab,ylab,title)
-
-        implicit none
-	character*(*) xlab,ylab,title
-        
-	include 'sfstubs.h'
-
-
-	call plstrf2c(xlab, string1, maxlen)
-	call plstrf2c(ylab, string2, maxlen)
-	call plstrf2c(title, string3, maxlen)
-	
-	call pllab7(s1,s2,s3)
-
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plmtex(side,disp,pos,xjust,text)
+      subroutine plshade(z, nx, ny, defined, 
+     &  xmin, xmax, ymin, ymax,
+     &  shade_min, shade_max, 
+     &  sh_cmap, sh_color, sh_width, 
+     &  min_color, min_width, max_color, max_width)
 
-        implicit none
-	real*8 disp, pos, xjust
-	character*(*) side, text
-        
-	include 'sfstubs.h'
+      implicit none
+      character defined*(*)
+      integer nx, ny, sh_cmap, sh_width
+      integer min_color, min_width, max_color, max_width
+      real*8 shade_min, shade_max, sh_color
+      real*8 z(nx, ny), xmin, xmax, ymin, ymax, xg(nx, ny), yg(nx, ny)
+      real*8 tr(6)
+      common /plplot/ tr
 
+      include 'sfstubs.h'
 
-	call plstrf2c(side, string1, maxlen)
-	call plstrf2c(text, string2, maxlen)
+      call plshade7(z, nx, ny, s1, 
+     &  xmin, xmax, ymin, ymax,
+     &  shade_min, shade_max, 
+     &  sh_cmap, sh_color, sh_width, 
+     &  min_color, min_width, max_color, max_width, tr)
 
-	call plmtex7(s1,disp,pos,xjust,s2)
-
-	end
-
-!***********************************************************************
-
-	subroutine plptex(x,y,dx,dy,xjust,text)
-
-        implicit none
-	real*8 x, y, dx, dy, xjust
-	character*(*) text
-        
-	include 'sfstubs.h'
-
-
-	call plstrf2c(text, string1, maxlen)
-
-	call plptex7(x,y,dx,dy,xjust,s1)
-
-	end
+      end
 
 !***********************************************************************
 
-	subroutine plstart(devname, nx, ny)
+      subroutine plshades0(z, nx, ny, defined, 
+     &  xmin, xmax, ymin, ymax,
+     &  clevel, nlevel, fill_width,
+     &  cont_color, cont_width, lx)
 
-        implicit none
-	character*(*) devname
-	integer nx, ny
-        
-	include 'sfstubs.h'
+      implicit none
+      character defined*(*)
+      integer nx, ny, nlevel, fill_width, cont_color, cont_width, lx
+      real*8 clevel(nlevel) 
+      real*8 z(lx, ny), xmin, xmax, ymin, ymax
 
+      include 'sfstubs.h'
 
-	call plstrf2c(devname, string1, maxlen)
+!	call plstrf2c(dnam, string1, maxlen)
 
-	call plstart7(s1, nx, ny)
+      call plshades07(z, nx, ny, s1, 
+     &  xmin, xmax, ymin, ymax,
+     &  clevel, nlevel, fill_width,
+     &  cont_color, cont_width, lx)
 
-	end
+      end
 
 !***********************************************************************
+
+      subroutine plshades1(z, nx, ny, defined, 
+     &  xmin, xmax, ymin, ymax,
+     &  clevel, nlevel, fill_width,
+     &  cont_color, cont_width, xg1, yg1, lx)
+
+      implicit none
+      character defined*(*)
+      integer nx, ny, nlevel, fill_width, cont_color, cont_width, lx
+      real*8 clevel(nlevel) 
+      real*8 z(lx, ny), xmin, xmax, ymin, ymax, xg1(nx), yg1(ny)
+
+      include 'sfstubs.h'
+
+!	call plstrf2c(dnam, string1, maxlen)
+
+      call plshades17(z, nx, ny, s1, 
+     &  xmin, xmax, ymin, ymax,
+     &  clevel, nlevel, fill_width,
+     &  cont_color, cont_width, xg1, yg1, lx)
+
+      end
+
+!***********************************************************************
+
+      subroutine plshades2(z, nx, ny, defined, 
+     &  xmin, xmax, ymin, ymax,
+     &  clevel, nlevel, fill_width,
+     &  cont_color, cont_width, xg2, yg2, lx)
+
+      implicit none
+      character defined*(*)
+      integer nx, ny, nlevel, fill_width, cont_color, cont_width, lx
+      real*8 clevel(nlevel) 
+      real*8 z(lx, ny), xmin, xmax, ymin, ymax,
+     &  xg2(lx, ny), yg2(lx, ny)
+
+      include 'sfstubs.h'
+
+!	call plstrf2c(dnam, string1, maxlen)
+
+      call plshades27(z, nx, ny, s1, 
+     &  xmin, xmax, ymin, ymax,
+     &  clevel, nlevel, fill_width,
+     &  cont_color, cont_width, xg2, yg2, lx)
+
+      end
+
+!***********************************************************************
+
+      subroutine plshades(z, nx, ny, defined, 
+     &  xmin, xmax, ymin, ymax,
+     &  clevel, nlevel, fill_width,
+     &  cont_color, cont_width, lx)
+
+      implicit none
+      character defined*(*)
+      integer nx, ny, nlevel, fill_width, cont_color, cont_width, lx
+      real*8 clevel(nlevel)
+      real*8 z(nx, ny), xmin, xmax, ymin, ymax
+      real*8 tr(6)
+      common /plplot/ tr
+
+      include 'sfstubs.h'
+
+!	call plstrf2c(dnam, string1, maxlen)
+
+      call plshades7(z, nx, ny, s1, 
+     &  xmin, xmax, ymin, ymax,
+     &  clevel, nlevel, fill_width,
+     &  cont_color, cont_width, tr, lx)
+
+      end
+
+!***********************************************************************
+
+      subroutine pllab(xlab,ylab,title)
+
+      implicit none
+      character*(*) xlab,ylab,title
+
+      include 'sfstubs.h'
+
+      call plstrf2c(xlab, string1, maxlen)
+      call plstrf2c(ylab, string2, maxlen)
+      call plstrf2c(title, string3, maxlen)
+
+      call pllab7(s1,s2,s3)
+
+      end
+
+!***********************************************************************
+
+      subroutine plmtex(side,disp,pos,xjust,text)
+
+      implicit none
+      real*8 disp, pos, xjust
+      character*(*) side, text
+
+      include 'sfstubs.h'
+
+      call plstrf2c(side, string1, maxlen)
+      call plstrf2c(text, string2, maxlen)
+
+      call plmtex7(s1,disp,pos,xjust,s2)
+
+      end
+
+!***********************************************************************
+
+      subroutine plptex(x,y,dx,dy,xjust,text)
+
+      implicit none
+      real*8 x, y, dx, dy, xjust
+      character*(*) text
+
+      include 'sfstubs.h'
+
+      call plstrf2c(text, string1, maxlen)
+
+      call plptex7(x,y,dx,dy,xjust,s1)
+
+      end
+
+!***********************************************************************
+
+      subroutine plstart(devname, nx, ny)
+
+      implicit none
+      character*(*) devname
+      integer nx, ny
+
+      include 'sfstubs.h'
+
+      call plstrf2c(devname, string1, maxlen)
+
+      call plstart7(s1, nx, ny)
+
+      end
+
+!***********************************************************************
+

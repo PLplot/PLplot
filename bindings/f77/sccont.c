@@ -299,16 +299,17 @@ PLCONT7(PLFLT *z, PLINT *nx, PLINT *ny, PLINT *kx, PLINT *lx,
 }
 
 /*----------------------------------------------------------------------*\
-* plfshade front-ends.
-* These specify the row-dominant function evaluator in the plfshade
-* argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
-*
-* - plshade0	no transformation
-* - plshade1	linear interpolation from singly dimensioned coord arrays
-* - plshade2	linear interpolation from doubly dimensioned coord arrays
-*
-* The latter two work by calling plfshade() with the appropriate grid
-* structure for input to pltr2f().
+ * plfshade front-ends.
+ * These specify the row-dominant function evaluator in the plfshade
+ * argument list.  NO TRANSPOSE IS NECESSARY.  The routines are as follows:
+ *
+ * - plshade0	map indices to xmin, xmax, ymin, ymax.
+ * The next two work by calling plfshade() with the appropriate grid
+ * structure for input to pltr2f().
+ * - plshade1	linear interpolation from singly dimensioned coord arrays
+ * - plshade2	linear interpolation from doubly dimensioned coord arrays
+ * - plshade    tr array transformation
+ *
 \*----------------------------------------------------------------------*/
 
 void
@@ -402,4 +403,169 @@ PLSHADE27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
 	     *sh_cmap, *sh_color, *sh_width,
 	     *min_color, *min_width, *max_color, *max_width,
 	     c_plfill, rect, pltr2f, (PLPointer) &cgrid);
+}
+
+void
+PLSHADE7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
+	 PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+	 PLFLT *shade_min, PLFLT *shade_max,
+	 PLINT *sh_cmap, PLFLT *sh_color, PLINT *sh_width,
+	 PLINT *min_color, PLINT *min_width,
+	 PLINT *max_color, PLINT *max_width, PLFLT *ftr)
+{
+    PLfGrid fgrid;
+    PLINT rect = 1;
+
+    fgrid.nx = *nx;
+    fgrid.ny = *ny;
+    fgrid.f = z;
+
+    plfshade(plf2evalr, (PLPointer) &fgrid,
+	     NULL, NULL,
+	     *nx, *ny,
+	     *xmin, *xmax, *ymin, *ymax,
+	     *shade_min, *shade_max,
+	     *sh_cmap, *sh_color, *sh_width,
+	     *min_color, *min_width, *max_color, *max_width,
+	     c_plfill, rect, pltr, (void *) ftr);
+}
+
+/*----------------------------------------------------------------------*\
+ * plshades front-ends.
+ *
+ * - plshades0	map indices to xmin, xmax, ymin, ymax
+ * - plshades1	linear interpolation from singly dimensioned coord arrays
+ * - plshades2	linear interpolation from doubly dimensioned coord arrays
+ * - plshades   pass tr information with plplot common block (and
+ *              then pass tr as last argument of PLSHADE7)
+\*----------------------------------------------------------------------*/
+
+void
+PLSHADES07(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
+	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width, 
+	   PLINT *cont_color, PLINT *cont_width, PLINT *lx)
+{
+   PLINT rect = 1;
+   PLFLT ** a;
+   int i,j;
+   
+/* Create a vectored a array from transpose of the fortran z array. */
+   plAlloc2dGrid(&a, *nx, *ny);
+   for (i = 0; i < *nx; i++) {
+      for (j = 0; j < *ny; j++) {
+	 a[i][j] = z[i +j * *lx];
+      }
+   }
+   
+   c_plshades( a, *nx, *ny, NULL,
+	       *xmin, *xmax, *ymin, *ymax,
+	       clevel, *nlevel, *fill_width,
+	       *cont_color, *cont_width,
+	       c_plfill, rect, NULL, NULL);
+
+/* Clean up memory allocated for a */
+   plFree2dGrid(a, *nx, *ny);
+}
+
+void
+PLSHADES17(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
+	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width, 
+	   PLINT *cont_color, PLINT *cont_width,
+	   PLFLT *xg1, PLFLT *yg1, PLINT *lx)
+{
+   PLINT rect = 1;
+   PLFLT ** a;
+   int i,j;
+   PLcGrid cgrid;
+   
+/* Create a vectored a array from transpose of the fortran z array. */
+   plAlloc2dGrid(&a, *nx, *ny);
+   for (i = 0; i < *nx; i++) {
+      for (j = 0; j < *ny; j++) {
+	 a[i][j] = z[i +j * *lx];
+      }
+   }
+   
+   cgrid.nx = *nx;
+   cgrid.ny = *ny;
+   cgrid.xg = xg1;
+   cgrid.yg = yg1;
+
+   c_plshades( a, *nx, *ny, NULL,
+	       *xmin, *xmax, *ymin, *ymax,
+	       clevel, *nlevel, *fill_width,
+	       *cont_color, *cont_width,
+	       c_plfill, rect, pltr1, (PLPointer) &cgrid);
+
+/* Clean up memory allocated for a */
+   plFree2dGrid(a, *nx, *ny);
+}
+
+void
+PLSHADES27(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
+	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width, 
+	   PLINT *cont_color, PLINT *cont_width,
+	   PLFLT *xg2, PLFLT *yg2, PLINT *lx)
+{
+   PLINT rect = 0;
+   PLFLT **a;
+   PLcGrid2 cgrid2;
+   int i,j;
+   
+/* Create a vectored a array from transpose of the fortran z array. */
+   plAlloc2dGrid(&a, *nx, *ny);
+   plAlloc2dGrid(&cgrid2.xg, *nx, *ny);
+   plAlloc2dGrid(&cgrid2.yg, *nx, *ny);
+   cgrid2.nx = *nx;
+   cgrid2.ny = *ny;
+   
+   for (i = 0; i < *nx; i++) {
+      for (j = 0; j < *ny; j++) {
+	 a[i][j] = z[i +j * *lx];
+	 cgrid2.xg[i][j] = xg2[i +j * *lx];
+	 cgrid2.yg[i][j] = yg2[i +j * *lx];
+      }
+   }
+   
+   c_plshades( a, *nx, *ny, NULL,
+	     *xmin, *xmax, *ymin, *ymax,
+	     clevel, *nlevel, *fill_width,
+	     *cont_color, *cont_width,
+	     c_plfill, rect, pltr2, (void *) &cgrid2);
+
+/* Clean up allocated memory */
+   plFree2dGrid(a, *nx, *ny);
+   plFree2dGrid(cgrid2.xg, *nx, *ny);
+   plFree2dGrid(cgrid2.yg, *nx, *ny);
+}
+
+void
+PLSHADES7(PLFLT *z, PLINT *nx, PLINT *ny, char *defined,
+	   PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax,
+	   PLFLT *clevel, PLINT *nlevel, PLINT *fill_width, 
+	   PLINT *cont_color, PLINT *cont_width, PLFLT *ftr, PLINT *lx)
+{
+   PLINT rect = 1;
+   PLFLT ** a;
+   int i,j;
+   
+/* Create a vectored a array from transpose of the fortran z array. */
+   plAlloc2dGrid(&a, *nx, *ny);
+   for (i = 0; i < *nx; i++) {
+      for (j = 0; j < *ny; j++) {
+	 a[i][j] = z[i +j * *lx];
+      }
+   }
+   
+   c_plshades( a, *nx, *ny, NULL,
+	     *xmin, *xmax, *ymin, *ymax,
+	     clevel, *nlevel, *fill_width,
+	     *cont_color, *cont_width,
+	     c_plfill, rect, pltr, (void *) ftr);
+
+/* Clean up memory allocated for a */
+   plFree2dGrid(a, *nx, *ny);
 }
