@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.17  1993/03/03 19:42:18  mjl
-   Changed PLSHORT -> short everywhere; now all device coordinates are expected
-   to fit into a 16 bit address space (reasonable, and good for performance).
+   Revision 1.18  1993/03/06 05:06:50  mjl
+   Inserted sick hack so that Suns without an ANSI libc can use fseek/ftell
+   instead of fsetpos/fgetpos.
 
+ * Revision 1.17  1993/03/03  19:42:18  mjl
+ * Changed PLSHORT -> short everywhere; now all device coordinates are expected
+ * to fit into a 16 bit address space (reasonable, and good for performance).
+ *
  * Revision 1.16  1993/03/03  16:58:19  mjl
  * Added prototype for plscolbg().
  *
@@ -172,6 +176,9 @@
 /* Check for SUN systems */
 
 #ifdef sun
+#ifndef NO_ANSI_LIBC
+#define NO_ANSI_LIBC
+#endif
 #ifndef unix
 #define unix
 #endif
@@ -201,6 +208,14 @@
 #ifdef PL_NEED_SIZE_T
 #include <stddef.h>
 #endif
+#endif
+
+/* A disgusting hack */
+
+#ifdef NO_ANSI_LIBC
+typedef long fpos_t;
+#define fsetpos(a,b) fseek(a, *b, 0)
+#define fgetpos(a,b) (-1L == (*b = ftell(a)))
 #endif
 
 /*----------------------------------------------------------------------*\
