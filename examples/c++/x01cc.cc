@@ -19,18 +19,18 @@
 
 class Matrix {
     int nx, ny;
-    float *v;
+    PLFLT *v;
   public:
-    Matrix( int _nx, int _ny ) : nx(_nx), ny(_ny) { v = new float[nx*ny]; }
+    Matrix( int _nx, int _ny ) : nx(_nx), ny(_ny) { v = new PLFLT[nx*ny]; }
     ~Matrix() { delete[] v; }
 
-    float& operator()( int i, int j )
+    PLFLT& operator()( int i, int j )
     {
 	// Should do bounds checking, pass for now.
 	return v[ j*ny + i ];
     }
 
-    float operator()( int i, int j ) const
+    PLFLT operator()( int i, int j ) const
     {
 	// Should do bounds checking, pass for now.
 	return v[ j*ny + i ];
@@ -40,7 +40,7 @@ class Matrix {
     {
 	delete[] v;
 	nx = i, ny = j;
-	v = new float[nx*ny];
+	v = new PLFLT[nx*ny];
     }
 };
 
@@ -92,13 +92,13 @@ class CoordinateMatrix : public Coord_2d {
 	: nx(_nx), ny(_ny), m(nx,ny), wrapy(wy)
     {}
 
-    float operator() ( int ix, int iy ) const
+    PLFLT operator() ( int ix, int iy ) const
     {
 	if (wrapy) iy %= ny;
 	return m(ix,iy);
     }
 
-    float& operator() ( int ix, int iy )
+    PLFLT& operator() ( int ix, int iy )
     {
 	if (wrapy) iy %= ny;
 	return m(ix,iy);
@@ -113,7 +113,7 @@ class CoordinateMatrix : public Coord_2d {
 	    _ny = ny;
     }
 
-    void min_max( float& _min, float& _max )
+    void min_max( PLFLT& _min, PLFLT& _max )
     {
 	_min = _max = m(0,0);
 	for( int i=0; i < nx; i++ )
@@ -151,7 +151,7 @@ void plot1( plstream& pls )
     pls.col( Yellow );
     pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2");
 
-    float x[6], y[6];
+    PLFLT x[6], y[6];
     for( int i=0; i < 6; i++ ) {
 	x[i] = .2 * i;
 	y[i] = x[i] * x[i];
@@ -195,14 +195,14 @@ void plot2( plstream& pls )
     CoordinateMatrix  xg(64,64,1), yg(64,64,1);
 
     int i, j;
-    float twopi = 2.*3.1415927;
+    PLFLT twopi = 2.*3.1415927;
 
 // Set up the data and coordinate matrices.
 
     for( i=0; i < 64; i++ ) {
-	float r = i/64.;
+	PLFLT r = i/64.;
 	for( j=0; j < 64; j++ ) {
-	    float theta = twopi * j/64.;
+	    PLFLT theta = twopi * j/64.;
 
 	    xg(i,j) = r * cos(theta);
 	    yg(i,j) = r * sin(theta);;
@@ -212,9 +212,9 @@ void plot2( plstream& pls )
 
 // Now draw a normal shaded plot.
 
-    float zmin = -1., zmax = 1.;
+    PLFLT zmin = -1., zmax = 1.;
     int NCONTR = 20;
-    float shade_min, shade_max, sh_color;
+    PLFLT shade_min, shade_max, sh_color;
     int sh_cmap =1, sh_width;
     int min_color = 1, min_width = 0, max_color = 0, max_width = 0;
 
@@ -222,9 +222,9 @@ void plot2( plstream& pls )
     pls.wind( 0., 1., 0., twopi );
 
     for (i = 0; i < NCONTR; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) NCONTR;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) NCONTR;
-	sh_color = i / (float) (NCONTR-1);
+	shade_min = zmin + (zmax - zmin) * i / (PLFLT) NCONTR;
+	shade_max = zmin + (zmax - zmin) * (i +1) / (PLFLT) NCONTR;
+	sh_color = i / (PLFLT) (NCONTR-1);
 	sh_width = 2;
 	plpsty(0);
 
@@ -248,9 +248,9 @@ void plot2( plstream& pls )
     pls.wind( -1., 1., -1., 1. );
 
     for (i = 0; i < NCONTR; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) NCONTR;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) NCONTR;
-	sh_color = i / (float) (NCONTR-1);
+	shade_min = zmin + (zmax - zmin) * i / (PLFLT) NCONTR;
+	shade_max = zmin + (zmax - zmin) * (i +1) / (PLFLT) NCONTR;
+	sh_color = i / (PLFLT) (NCONTR-1);
 	sh_width = 2;
 	plpsty(0);
 
@@ -264,7 +264,7 @@ void plot2( plstream& pls )
 
 // Now draw the border around the drawing region.
 
-    float x[65], y[65];
+    PLFLT x[65], y[65];
 
     for( i=0; i < 65; i++ ) {
 	x[i] = xg(63,i);
@@ -275,12 +275,12 @@ void plot2( plstream& pls )
 
 // Finally, let's "squoosh" the plot, and draw it all again.
 
-    float X1 = 1., X2 = .1, Y1 = 1.2, Y2 = -.2;
+    PLFLT X1 = 1., X2 = .1, Y1 = 1.2, Y2 = -.2;
 
     for( i=0; i < 64; i++ ) {
-	float r = i/64.;
+	PLFLT r = i/64.;
 	for( j=0; j < 64; j++ ) {
-	    float theta = twopi * j / 64.;
+	    PLFLT theta = twopi * j / 64.;
 
 	    xg(i,j) = X1 * r * cos(theta) +
 		X2 * r*r * cos(2*theta);
@@ -290,7 +290,7 @@ void plot2( plstream& pls )
 	}
     }
 
-    float xmin, xmax, ymin, ymax;
+    PLFLT xmin, xmax, ymin, ymax;
     xg.min_max(xmin, xmax), yg.min_max(ymin, ymax);
 
     pls.adv(0);
@@ -299,9 +299,9 @@ void plot2( plstream& pls )
     pls.wind( xmin, xmax, ymin, ymax );
 
     for (i = 0; i < NCONTR; i++) {
-	shade_min = zmin + (zmax - zmin) * i / (float) NCONTR;
-	shade_max = zmin + (zmax - zmin) * (i +1) / (float) NCONTR;
-	sh_color = i / (float) (NCONTR-1);
+	shade_min = zmin + (zmax - zmin) * i / (PLFLT) NCONTR;
+	shade_max = zmin + (zmax - zmin) * (i +1) / (PLFLT) NCONTR;
+	sh_color = i / (PLFLT) (NCONTR-1);
 	sh_width = 2;
 	plpsty(0);
 
