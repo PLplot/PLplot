@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1995/05/08 21:29:47  furnish
+ * Revision 1.3  1995/06/01 21:24:59  mjl
+ * Added include of pltcl.h.
+ *
+ * Revision 1.2  1995/05/08  21:29:47  furnish
  * Fix bogus C++ unfriendly header.
  *
  * Revision 1.1  1995/05/07  03:01:18  mjl
@@ -19,6 +22,7 @@
 #ifndef __PLTK_H__
 #define __PLTK_H__
 
+#include "pltcl.h"
 #include <tk.h>
 
 #ifdef __cplusplus
