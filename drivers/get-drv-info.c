@@ -28,7 +28,7 @@
 RETSIGTYPE
 catch_segv (int sig)
 {
-  printf ("libltdl error: %s\n", lt_dlerror ());
+  fprintf (stderr, "libltdl error: %s\n", lt_dlerror ());
   exit (1);
 }
 
