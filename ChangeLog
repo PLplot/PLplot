@@ -1,3 +1,10 @@
+2003-02-01  Alan W. Irwin <airwin@users.sourceforge.net>
+
+	* sysloc.in: Remove unneeded cruft.  This is a substantial (28 per
+	  cent) reduction in the size of this large file.  The result has
+	  been tested with essentially all drivers both for the dynamic
+	  driver and static driver case. scripts/make_tarball.sh:
+
 2003-01-19  Alan W. Irwin <airwin@users.sourceforge.net>
 
 	* scripts/make_tarball.sh: new script for preparing release tarball
