@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.3  1993/07/31 08:05:05  mjl
+# Revision 1.4  1993/08/03 20:30:11  mjl
+# Made min & max procs compatible with the ones used by a different TCL
+# package.
+#
+# Revision 1.3  1993/07/31  08:05:05  mjl
 # Added support procs used in plplot/TK style text windows.
 #
 # Revision 1.2  1993/07/16  22:04:02  mjl
@@ -176,16 +180,26 @@ proc insertWithTags {w text args} {
 #----------------------------------------------------------------------------
 # Numeric utility procs:
 #
-#    min	returns minimum of two numeric arguments
-#    max	returns maximum of two numeric arguments
+#    min	returns minimum argument
+#    max	returns maximum argument
+#
+# Taken from utils.tcl by Tom Phelps (phelps@cs.Berkeley.EDU)
 #----------------------------------------------------------------------------
 
-proc min {x y} {
-    return [expr "$x < $y ? $x : $y"]
+proc min {args} {
+   set x [lindex $args 0]
+   foreach i $args {
+      if {$i<$x} {set x $i}
+   }
+   return $x
 }
 
-proc max {x y} {
-    return [expr "$x > $y ? $x : $y"]
+proc max {args} {
+   set x [lindex $args 0]
+   foreach i $args {
+      if {$i>$x} {set x $i}
+   }
+   return $x
 }
 
 #----------------------------------------------------------------------------
