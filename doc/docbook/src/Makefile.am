@@ -2,7 +2,7 @@
 # Description: Automake template for the PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Mon Nov 20 01:15:36 CET 2000
+# Last modified on: Fri Nov 24 15:01:39 CET 2000
 # $Id$
 
 MASTER_XML = plplotdoc.xml
@@ -75,7 +75,7 @@ over-under.jpeg: over-under-big.eps $(BINDIR)/eps2jpeg.pl.in
 	$(PERL) $(BINDIR)/eps2jpeg.pl -g 35% -i over-under-big.eps -o $@
 
 
-print: $(BASE).ps.gz
+print: $(BASE).ps.gz $(BASE).dvi
 
 %.ps.gz: %.dvi
 	$(DVIPS) -f $< | gzip -c > $@

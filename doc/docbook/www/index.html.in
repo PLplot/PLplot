@@ -9,6 +9,7 @@
     <ul>
       <li> <a href="@BASE_HTML@">Browse the latest on-line documentation</a>
       <li> <a href="@BASE@.ps.gz">Postscript form of documentation</a>
+      <li> <a href="@BASE@.dvi">DVI form of documentation</a>
       <li> <a href="@BASE@.tar.gz">DocBook source tarball</a>
       <li> <a href="@BASE_HTML@.tar.gz">HTML results tarball</a>
     </ul>

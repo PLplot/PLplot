@@ -1,3 +1,18 @@
+2000-11-24  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* configure.in (AM_INIT_AUTOMAKE): Bumped package version to
+	0.2.0.
+	
+	* Makefile.am (www-install): Added dvi file to web site tarball.
+
+2000-11-24  Alan W, Irwin  <irwin@beluga.phys.uvic.ca>
+
+        * configure.in: Update to docbook 4.1.
+
+2000-11-21  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+        * configure.in: Fixed mess with WWW_USER and WWW_HOST
+
 2000-11-19  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Released overhauled version with Automake support and XML

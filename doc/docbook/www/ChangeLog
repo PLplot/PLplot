@@ -1,0 +1,8 @@
+2000-11-24  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* index.html.in: Added link to DVI form of documentation.
+
+2000-11-19  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Released overhauled version with Automake support and XML
+	translation. 

@@ -26,7 +26,7 @@ www-install: dist www-uninstall
              ../$(BASE_HTML) )
 	tar cfz $(BASE_HTML).tar.gz $(BASE_HTML)
 	tar cfz $(TARBALL) $(WWW_BASE) \
-                -C www index.html -C ../src $(BASE).ps.gz 
+                -C www index.html -C ../src $(BASE).ps.gz $(BASE).dvi
 	$(RSH_COMMAND) mkdir -p $(WWW_DIR)
 	$(RCP) $(TARBALL) $(RCP_PREFIX)$(WWW_DIR)
 	$(RSH_COMMAND) tar xfz $(WWW_DIR)/$(TARBALL) -C $(WWW_DIR)

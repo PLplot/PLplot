@@ -1,3 +1,12 @@
+2000-11-24  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Makefile.am (print): Added dvi file as a dependency.
+
+2000-11-24  Alan W, Irwin  <irwin@beluga.phys.uvic.ca>
+
+        * advanced.xml, api.xml, simple.xml: Source updates to be
+	consistent with docbook 4.1. 
+
 2000-11-19  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Released overhauled version with Automake support and XML
