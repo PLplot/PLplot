@@ -20,10 +20,12 @@
 ## 
 ## If the argument is omitted, "on" is assumed.
 
-function grid (x)
+function st = grid (x)
 
   global __pl
   strm = __pl_init;
+
+  st = __pl.grid(strm);
 
   if (nargin == 0)
     __pl.grid(strm) = 1;
@@ -41,10 +43,19 @@ function grid (x)
 	  help grid
       endswitch
     else
-      error ("grid: argument must be a string");
+      switch (x)
+	case 0
+          __pl.grid(strm) = 0;
+	case 1
+          __pl.grid(strm) = 1;
+	case 2
+          __pl.grid(strm) = 2;
+	otherwise
+	  help grid
+      endswitch
     endif
   else
-    error ("usage: grid (\"on\" | \"off\")");
+    help grid
   endif
 
   if (automatic_replot)
