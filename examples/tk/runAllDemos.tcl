@@ -14,9 +14,11 @@ if {[catch {package require Plplotter}]} {
     plstdwin .
     plxframe .p
     set plwin .p.plwin
+    button .bnextpage -text "Page" -command [list $plwin nextpage]
 } else {
     plframe .p
     set plwin .p
+    button .bnextpage -text "Page" -command [list event generate $plwin <Enter>]
 }
 grid .p -columnspan 5 -sticky news
 grid rowconfigure . 0 -weight 1
@@ -28,11 +30,12 @@ for {set i 0} {$i < 5} {incr i} {
 $plwin cmd plspause 1
 
 button .cexit -text "Quit" -command exit
-button .cshell -text "Shell" -command "console show"
+if {$tcl_platform(platform) != "unix"} {
+    button .cshell -text "Shell" -command "console show"
+}
 button .creload -text "Reload" -command reload
-button .bnextpage -text "Page" -command "$plwin nextpage"
 
-set buttons [list .cexit .cshell .creload .bnextpage]
+set buttons [concat [info commands .c*] .bnextpage]
 
 proc reload {} {
     global demos
