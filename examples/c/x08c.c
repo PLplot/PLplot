@@ -133,12 +133,14 @@ main(int argc, char *argv[])
 
   plinit();
 
-  x = (PLFLT *) malloc(XPTS * sizeof(PLFLT));
-  y = (PLFLT *) malloc(YPTS * sizeof(PLFLT));
-  z = (PLFLT **) malloc(XPTS * sizeof(PLFLT *));
+/* Allocate data structures */
+
+  x = (PLFLT *) calloc(XPTS, sizeof(PLFLT));
+  y = (PLFLT *) calloc(YPTS, sizeof(PLFLT));
+
+  plAlloc2dGrid(&z, XPTS, YPTS);
 
   for (i = 0; i < XPTS; i++) {
-    z[i] = (PLFLT *) malloc(YPTS * sizeof(PLFLT));
     x[i] = ((double) (i - (XPTS / 2)) / (double) (XPTS / 2));
     if (rosen)
       x[i] *=  1.5;
@@ -207,6 +209,13 @@ main(int argc, char *argv[])
     }
   }
 
+/* Clean up */
+
+  free((void *) x);
+  free((void *) y);
+  plFree2dGrid(z, XPTS, YPTS);
+
   plend();
+
   exit(0);
 }

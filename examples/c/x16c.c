@@ -351,8 +351,6 @@ main(int argc, char *argv[])
 
 /* Clean up */
 
-    plend();
-
     free((void *) clevel);
     free((void *) shedge);
     free((void *) xg1);
@@ -361,6 +359,8 @@ main(int argc, char *argv[])
     plFree2dGrid(w, nx, ny);
     plFree2dGrid(cgrid2.xg, nx, ny);
     plFree2dGrid(cgrid2.yg, nx, ny);
+
+    plend();
 
     exit(0);
 }

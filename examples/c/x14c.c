@@ -38,20 +38,19 @@ main(int argc, char *argv[])
 /* Using DP results in a crash at the end due to some odd cleanup problems */
 /* The geometry strings MUST be in writable memory */
 
-    char driver[] = "tk";
     char geometry_master[] = "500x410+100+200";
     char geometry_slave[]  = "500x410+650+200";
 
-    char driver_orig[80];
+    char driver[80];
 
 /* plplot initialization */
 /* Parse and process command line arguments */
 
     (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
 
-    plgdev(driver_orig);
-    if (strcmp(driver_orig, "tk"))
-	plexit("Demo for TK driver only.");
+    plgdev(driver);
+    if (strcmp(driver, "tk") != 0 )
+	plexit("Demo for tk driver only.");
 
     printf("Demo of multiple output streams via the %s driver.\n", driver);
     printf("Running with the second window as slave.\n");
@@ -381,4 +380,9 @@ plot5(void)
     plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
     plflush();
+
+/* Clean up */
+    plFree2dGrid(z, XPTS, YPTS);
+    plFree2dGrid(w, XPTS, YPTS);
+
 }

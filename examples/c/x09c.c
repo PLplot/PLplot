@@ -84,9 +84,9 @@ static void polar()
 	              pltr2, (void *) &cgrid2);
    plcol0(1);
    pllab("", "", "Polar Contour Plot");
-   free((void *) z);
-   free((void *) cgrid2.xg);
-   free((void *) cgrid2.yg);
+   plFree2dGrid(z, RPTS, THETAPTS);
+   plFree2dGrid(cgrid2.xg, RPTS, THETAPTS);
+   plFree2dGrid(cgrid2.yg, RPTS, THETAPTS);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -243,9 +243,9 @@ static void potential()
    plcol0(ncollab);
    pllab("", "", "Shielded potential of charges in a conducting sphere");
 
-   free((void *) z);
-   free((void *) cgrid2.xg);
-   free((void *) cgrid2.yg);
+   plFree2dGrid(z, PRPTS, PTHETAPTS);
+   plFree2dGrid(cgrid2.xg, PRPTS, PTHETAPTS);
+   plFree2dGrid(cgrid2.yg, PRPTS, PTHETAPTS);
 }
   
 
@@ -412,10 +412,15 @@ main(int argc, char *argv[])
     pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
     potential();
     */
+
+/* Clean up */
+           
+    plFree2dGrid(z, XPTS, YPTS);
+    plFree2dGrid(w, XPTS, YPTS);
+    plFree2dGrid(cgrid2.xg, XPTS, YPTS);
+    plFree2dGrid(cgrid2.yg, XPTS, YPTS);
+   
     plend();
-    free((void *) w);
-    free((void *) z);
-    free((void *) cgrid2.xg);
-    free((void *) cgrid2.yg);
+
     exit(0);
 }
