@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -12,24 +12,24 @@
 ##
 ## This file is part of plplot_octave.
 
-function __pl_fill(x, y, c)
+## __pl_fill(x, y, c)
+##
+## Draw filled 2-D polygons.
+##
+## FILL(X,Y,C) fills the 2-D polygon defined by vectors X and Y
+## with the color specified by C.  The vertices of the polygon
+## are specified by pairs of components of X and Y.  If necessary,
+## the polygon is closed by connecting the last vertex to the first.
+##
+## If C is a single character string chosen from the list 'r','g','b',
+## 'c','m','y','w','k', or an RGB row vector triple, [r g b], or a scalar
+## in the range 0-15, the polygon is filled with the constant specified color.
 
-  ## __pl_fill(x, y, c)
-  ##
-  ## Draw filled 2-D polygons.
-  ##
-  ## FILL(X,Y,C) fills the 2-D polygon defined by vectors X and Y
-  ## with the color specified by C.  The vertices of the polygon
-  ## are specified by pairs of components of X and Y.  If necessary,
-  ## the polygon is closed by connecting the last vertex to the first.
-  ##
-  ## If C is a single character string chosen from the list 'r','g','b',
-  ## 'c','m','y','w','k', or an RGB row vector triple, [r g b], or a scalar
-  ## in the range 0-15, the polygon is filled with the constant specified color.
+function __pl_fill(x, y, c)
 
   global __pl
 
-  __pl_strm = plgstrm+1;
+  strm = plgstrm+1;
 
   if (is_vector(x) & is_vector(y))
     if (columns(x) != 1)
@@ -43,9 +43,9 @@ function __pl_fill(x, y, c)
     
     plpsty(0); # solid fill
 
-    if (__pl.axis_st(__pl_strm) == 1)
-      xmin = __pl.axis(__pl_strm,1); xmax = __pl.axis(__pl_strm,2);
-      ymin = __pl.axis(__pl_strm,3); ymin = __pl.axis(__pl_strm,4);
+    if (__pl.axis_st(strm) == 1)
+      xmin = __pl.axis(strm,1); xmax = __pl.axis(strm,2);
+      ymin = __pl.axis(strm,3); ymin = __pl.axis(strm,4);
     else
       xmin=min(x); xmax=max(x); ymin=min(y); ymax=max(y);
     endif
