@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.41  1994/10/11 18:54:50  mjl
+ * Revision 1.42  1995/01/13 23:20:44  mjl
+ * Changed widget commands to set/get the cmap1 palette to handle the new
+ * "rev" cmap1 control point attribute.
+ *
+ * Revision 1.41  1994/10/11  18:54:50  mjl
  * Now uses "early initialization" of PLplot X driver so that the fg/bg
  * colors can be set from the plframe widget.  This ensures that fg/bg colors
  * are consistent in both the widget and the driver, even if the bg color is
@@ -981,6 +985,115 @@ DisplayPlFrame(ClientData clientData)
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
+ * scol0
+ *
+ * Sets a color in cmap0.
+\*----------------------------------------------------------------------*/
+
+static int
+scol0(Tcl_Interp *interp, register PlFrame *plFramePtr,
+      int i, char *col, int *p_changed)
+{
+    PLStream *pls = plFramePtr->pls;
+    XColor xcol;
+    PLINT r, g, b;
+
+    if ( col == NULL ) {
+	Tcl_AppendResult(interp, "color value not specified",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( ! XParseColor(plFramePtr->display,
+		       Tk_Colormap(plFramePtr->tkwin), col, &xcol)) {
+	Tcl_AppendResult(interp, "Couldn't parse color ", col,
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    r = (unsigned) (xcol.red   & 0xFF00) >> 8;
+    g = (unsigned) (xcol.green & 0xFF00) >> 8;
+    b = (unsigned) (xcol.blue  & 0xFF00) >> 8;
+
+    if ( (pls->cmap0[i].r != r) ||
+	 (pls->cmap0[i].g != g) ||
+	 (pls->cmap0[i].b != b) ) {
+
+	pls->cmap0[i].r = r;
+	pls->cmap0[i].g = g;
+	pls->cmap0[i].b = b;
+	*p_changed = 1;
+    }
+
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ * scol1
+ *
+ * Sets a color in cmap1.
+\*----------------------------------------------------------------------*/
+
+static int
+scol1(Tcl_Interp *interp, register PlFrame *plFramePtr,
+      int i, char *col, char *pos, char *rev, int *p_changed)
+{
+    PLStream *pls = plFramePtr->pls;
+    XColor xcol;
+    PLFLT h, l, s, r, g, b, p;
+    int reverse;
+
+    if ( col == NULL ) {
+	Tcl_AppendResult(interp, "color value not specified",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( pos == NULL ) {
+	Tcl_AppendResult(interp, "control point position not specified",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( rev == NULL ) {
+	Tcl_AppendResult(interp, "interpolation sense not specified",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( ! XParseColor(plFramePtr->display,
+		       Tk_Colormap(plFramePtr->tkwin), col, &xcol)) {
+	Tcl_AppendResult(interp, "Couldn't parse color ", col,
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    r = ((unsigned) (xcol.red   & 0xFF00) >> 8) / 255.0;
+    g = ((unsigned) (xcol.green & 0xFF00) >> 8) / 255.0;
+    b = ((unsigned) (xcol.blue  & 0xFF00) >> 8) / 255.0;
+
+    plRGB_HLS(r, g, b, &h, &l, &s);
+
+    p = atof(pos) / 100.0;
+    reverse = atoi(rev);
+
+    if ( (pls->cmap1cp[i].h != h) ||
+	 (pls->cmap1cp[i].l != l) ||
+	 (pls->cmap1cp[i].s != s) ||
+	 (pls->cmap1cp[i].p != p) ||
+	 (pls->cmap1cp[i].rev != reverse) ) {
+
+	pls->cmap1cp[i].h = h;
+	pls->cmap1cp[i].l = l;
+	pls->cmap1cp[i].s = s;
+	pls->cmap1cp[i].p = p;
+	pls->cmap1cp[i].rev = reverse;
+	*p_changed = 1;
+    }
+    return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
  * Cmd
  *
  * Processes "cmd" widget command.
@@ -997,6 +1110,15 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     char c3;
     int result = TCL_OK;
     char cmdlist[] = "plgcmap0 plgcmap1 plscmap0 plscmap1 plscol0 plscol1";
+
+#ifdef DEBUG
+    int i;
+    fprintf(stderr, "There are %d arguments to Cmd:", argc);
+    for (i = 0; i < argc; i++) {
+	fprintf(stderr, " %s", argv[i]);
+    }
+    fprintf(stderr, "\n");
+#endif
 
 /* no option -- return list of available PLplot commands */
 
@@ -1059,6 +1181,9 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 	    sprintf(str, "%02d", (int) (100*pls->cmap1cp[i].p));
 	    Tcl_AppendElement(interp, str);
+
+	    sprintf(str, "%01d", (int) (pls->cmap1cp[i].rev));
+	    Tcl_AppendElement(interp, str);
 	}
 	result = TCL_OK;
     }
@@ -1067,9 +1192,8 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* first arg is number of colors, the rest are hex number specifications */
 
     else if ((c3 == 's') && (strncmp(argv[0], "plscmap0", length) == 0)) {
-	int i, j = 1, status, ncol0 = atoi(argv[j]);
-	char *color;
-	XColor xcolor;
+	int i, changed = 1, ncol0 = atoi(argv[1]);
+	char *col;
 
 	if (ncol0 > 16 || ncol0 < 1) {
 	    Tcl_AppendResult(interp, "illegal number of colors in cmap0: ",
@@ -1078,38 +1202,27 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
 
 	pls->ncol0 = ncol0;
-	color = strtok(argv[2], " ");
+	col = strtok(argv[2], " ");
 	for (i = 0; i < pls->ncol0; i++) {
-	    if ( color == NULL )
+	    if ( col == NULL )
 		break;
 
-	    status = XParseColor(plFramePtr->display,
-				 Tk_Colormap(plFramePtr->tkwin),
-				 color, &xcolor);
+	    if (scol0(interp, plFramePtr, i, col, &changed) != TCL_OK)
+		return TCL_ERROR;
 
-	    if ( ! status) {
-		fprintf(stderr, "Couldn't parse color %s\n", color);
-		break;
-	    }
-
-	    pls->cmap0[i].r = (unsigned) (xcolor.red   & 0xFF00) >> 8;
-	    pls->cmap0[i].g = (unsigned) (xcolor.green & 0xFF00) >> 8;
-	    pls->cmap0[i].b = (unsigned) (xcolor.blue  & 0xFF00) >> 8;
-
-	    color = strtok(NULL, " ");
+	    col = strtok(NULL, " ");
 	}
 
-	plP_state(PLSTATE_CMAP0);
+	if (changed)
+	    plP_state(PLSTATE_CMAP0);
     }
 
 /* plscmap1 -- set color map 1 */
 /* first arg is number of colors, the rest are hex number specifications */
 
     else if ((c3 == 's') && (strncmp(argv[0], "plscmap1", length) == 0)) {
-	int i, j = 1, status, ncp1 = atoi(argv[j]);
-	char *color, *pos;
-	XColor xcolor;
-	PLFLT r[32], g[32], b[32], l[32];
+	int i, changed = 1, ncp1 = atoi(argv[1]);
+	char *col, *pos, *rev;
 
 	if (ncp1 > 32 || ncp1 < 1) {
 	    Tcl_AppendResult(interp,
@@ -1118,42 +1231,33 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 
-	color = strtok(argv[2], " ");
+	col = strtok(argv[2], " ");
 	pos = strtok(NULL, " ");
+	rev = strtok(NULL, " ");
 	for (i = 0; i < ncp1; i++) {
-	    if ( color == NULL )
+	    if ( col == NULL )
 		break;
 
-	    status = XParseColor(plFramePtr->display,
-				 Tk_Colormap(plFramePtr->tkwin),
-				 color, &xcolor);
-
-	    if ( ! status) {
-		Tcl_AppendResult(interp, "Couldn't parse color ", color,
-				 (char *) NULL);
+	    if (scol1(interp, plFramePtr,
+		      i, col, pos, rev, &changed) != TCL_OK)
 		return TCL_ERROR;
-	    }
 
-	    r[i] = ((PLFLT) ((unsigned) (xcolor.red   & 0xFF00) >> 8)) / 255.0;
-	    g[i] = ((PLFLT) ((unsigned) (xcolor.green & 0xFF00) >> 8)) / 255.0;
-	    b[i] = ((PLFLT) ((unsigned) (xcolor.blue  & 0xFF00) >> 8)) / 255.0;
-	    l[i] = atof(pos) / 100.0;
-
-	    color = strtok(NULL, " ");
+	    col = strtok(NULL, " ");
 	    pos = strtok(NULL, " ");
+	    rev = strtok(NULL, " ");
 	}
 
-	plscmap1l(1, ncp1, l, r, g, b);
+	if (changed) {
+	    plsc->ncp1 = ncp1;
+	    plcmap1_calc();
+	}
     }
 
 /* plscol0 -- set single color in cmap0 */
 /* first arg is the color number, the next is the color in hex */
 
     else if ((c3 == 's') && (strncmp(argv[0], "plscol0", length) == 0)) {
-	int i = atoi(argv[1]), status;
-	char *color = argv[2];
-	XColor xcolor;
-	PLINT r, g, b;
+	int i = atoi(argv[1]), changed = 1;
 
 	if (i > pls->ncol0 || i < 0) {
 	    Tcl_AppendResult(interp, "illegal color number in cmap0: ",
@@ -1161,46 +1265,18 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 
-	if ( color == NULL ) {
-	    Tcl_AppendResult(interp, "color value not specified",
-			     (char *) NULL);
+	if (scol0(interp, plFramePtr, i, argv[2], &changed) != TCL_OK)
 	    return TCL_ERROR;
-	}
 
-	status = XParseColor(plFramePtr->display,
-			     Tk_Colormap(plFramePtr->tkwin),
-			     color, &xcolor);
-
-	if ( ! status) {
-	    Tcl_AppendResult(interp, "Couldn't parse color ", color,
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	r = (unsigned) (xcolor.red   & 0xFF00) >> 8;
-	g = (unsigned) (xcolor.green & 0xFF00) >> 8;
-	b = (unsigned) (xcolor.blue  & 0xFF00) >> 8;
-
-	if ( (pls->cmap0[i].r != r) ||
-	     (pls->cmap0[i].g != g) ||
-	     (pls->cmap0[i].b != b) ) {
-
-	    pls->cmap0[i].r = r;
-	    pls->cmap0[i].g = g;
-	    pls->cmap0[i].b = b;
-
+	if (changed)
 	    plP_state(PLSTATE_CMAP0);
-	}
     }
 
 /* plscol1 -- set color of control point in cmap1 */
 /* first arg is the control point, the next two are the color in hex and pos */
 
     else if ((c3 == 's') && (strncmp(argv[0], "plscol1", length) == 0)) {
-	int i = atoi(argv[1]), status;
-	char *color, *pos;
-	XColor xcolor;
-	PLFLT h, l, s, r, g, b, p;
+	int i = atoi(argv[1]), changed = 1;
 
 	if (i > pls->ncp1 || i < 0) {
 	    Tcl_AppendResult(interp, "illegal control point number in cmap1: ",
@@ -1208,49 +1284,12 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    return TCL_ERROR;
 	}
 
-	if ( (color = argv[2]) == NULL ) {
-	    Tcl_AppendResult(interp, "color value not specified",
-			     (char *) NULL);
+	if (scol1(interp, plFramePtr,
+		  i, argv[2], argv[3], argv[4], &changed) != TCL_OK)
 	    return TCL_ERROR;
-	}
 
-	if ( (pos = argv[3]) == NULL ) {
-	    Tcl_AppendResult(interp, "control point position not specified",
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	status = XParseColor(plFramePtr->display,
-			     Tk_Colormap(plFramePtr->tkwin),
-			     color, &xcolor);
-
-	if ( ! status) {
-	    Tcl_AppendResult(interp, "Couldn't parse color ", color,
-			     (char *) NULL);
-	    return TCL_ERROR;
-	}
-
-	r = ((unsigned) (xcolor.red   & 0xFF00) >> 8) / 255.0;
-	g = ((unsigned) (xcolor.green & 0xFF00) >> 8) / 255.0;
-	b = ((unsigned) (xcolor.blue  & 0xFF00) >> 8) / 255.0;
-
-	plRGB_HLS(r, g, b, &h, &l, &s);
-
-	p = atof(pos) / 100.0;
-
-	if ( (pls->cmap1cp[i].h != h) ||
-	     (pls->cmap1cp[i].l != l) ||
-	     (pls->cmap1cp[i].s != s) ||
-	     (pls->cmap1cp[i].p != p) ) {
-	     
-	    pls->cmap1cp[i].h = h;
-	    pls->cmap1cp[i].l = l;
-	    pls->cmap1cp[i].s = s;
-	    pls->cmap1cp[i].p = p;
-
+	if (changed) 
 	    plcmap1_calc();
-	    plP_state(PLSTATE_CMAP0);
-	}
     }
 
 /* unrecognized, so give it to plTclCmd to take care of */
