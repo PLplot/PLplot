@@ -89,7 +89,7 @@ itcl::class Pltkwin {
     public method status_msg {msg}  {}
 }
 
-body Pltkwin::constructor {args} {
+itcl::body Pltkwin::constructor {args} {
 # Set up defaults
 
     setup_defaults 
@@ -144,7 +144,7 @@ body Pltkwin::constructor {args} {
 # Set up default settings.
 #----------------------------------------------------------------------------
 
-body Pltkwin::setup_defaults	{}  {
+itcl::body Pltkwin::setup_defaults	{}  {
 
 # In the two cases below, the options can be specified in advance through
 # the global variables zoomopt_0, etc, and saveopt_0, etc.  Not	a great
@@ -186,10 +186,10 @@ body Pltkwin::setup_defaults	{}  {
 # Bindings
 
     bind [plwin] <Any-KeyPress>	\
-	[code $this key_filter	%N %s %x    %y %K %A]
+	[itcl::code $this key_filter	%N %s %x    %y %K %A]
 
     bind [plwin] <Any-ButtonPress>  \
-	[code $this user_mouse	%b %s %x    %y]
+	[itcl::code $this user_mouse	%b %s %x    %y]
 
     bind [plwin] <Any-Enter> \
 	"focus [plwin]"
@@ -210,7 +210,7 @@ body Pltkwin::setup_defaults	{}  {
 # zoom-reset (r), print	(P), and save-again (s).
 #----------------------------------------------------------------------------
 
-body Pltkwin::create_pmenu {}	{
+itcl::body Pltkwin::create_pmenu {}	{
     create_pmenu_print	 
     create_pmenu_save	 
     create_pmenu_orient	 
@@ -225,9 +225,9 @@ body Pltkwin::create_pmenu {}	{
 # Create plot-print menu
 #----------------------------------------------------------------------------
 
-body Pltkwin::create_pmenu_print    {}	{
+itcl::body Pltkwin::create_pmenu_print    {}	{
     $itk_component(pmenu) add command -label "Print" \
-	-command [code $this print ]
+	-command [itcl::code $this print ]
 }
 
 #----------------------------------------------------------------------------
@@ -236,7 +236,7 @@ body Pltkwin::create_pmenu_print    {}	{
 # Create plot-save menu	(cascade)
 #----------------------------------------------------------------------------
 
-body Pltkwin::create_pmenu_save	{} {
+itcl::body Pltkwin::create_pmenu_save	{} {
     set	m $itk_component(pmenu).save
 
     $itk_component(pmenu) add cascade -label "Save" -menu $m
@@ -245,18 +245,18 @@ body Pltkwin::create_pmenu_save	{} {
 # Save - As
 
     $m add command -label "As" \
-	-command [code $this save_as ]
+	-command [itcl::code $this save_as ]
 
 # Save - Again
 
     $m add command -label "Again" \
-	-command [code $this save_again	] \
+	-command [itcl::code $this save_again	] \
 	-state disabled
 
 # Save - Close
 
     $m add command -label "Close" \
-	-command [code $this save_close	] \
+	-command [itcl::code $this save_close	] \
 	-state disabled
 
     $m add separator
@@ -304,33 +304,33 @@ body Pltkwin::create_pmenu_save	{} {
 # Create plot-orient menu (cascade)
 #----------------------------------------------------------------------------
 
-body Pltkwin::create_pmenu_orient {} {
+itcl::body Pltkwin::create_pmenu_orient {} {
     set	m $itk_component(pmenu).orient
 
     $itk_component(pmenu) add cascade -label "Orient" -menu $m
     menu $m
 
-    $m configure -postcommand [code $this update_orient	]
+    $m configure -postcommand [itcl::code $this update_orient	]
 
 # Orient - 0 degrees
 
     $m add radio -label	"0 degrees" \
-	-command [code $this orient	0]
+	-command [itcl::code $this orient	0]
 
 # Orient - 90 degrees
 
     $m add radio -label	"90 degrees" \
-	-command [code $this orient	1]
+	-command [itcl::code $this orient	1]
 
 # Orient - 180 degrees
 
     $m add radio -label	"180 degrees" \
-	-command [code $this orient	2]
+	-command [itcl::code $this orient	2]
 
 # Orient - 270 degrees
 
     $m add radio -label	"270 degrees" \
-	-command [code $this orient	3]
+	-command [itcl::code $this orient	3]
 }
 
 #----------------------------------------------------------------------------
@@ -339,40 +339,40 @@ body Pltkwin::create_pmenu_orient {} {
 # Create plot-zoom menu	(cascade)
 #----------------------------------------------------------------------------
 
-body Pltkwin::create_pmenu_zoom	{} {
+itcl::body Pltkwin::create_pmenu_zoom	{} {
     set	m $itk_component(pmenu).zoom
 
     $itk_component(pmenu) add cascade -label "Zoom" -menu $m
     menu $m
 
-    $m configure -postcommand [code $this update_zoom ]
+    $m configure -postcommand [itcl::code $this update_zoom ]
 
 # Zoom - select	(by mouse)
 
     $m add command -label "Select" \
-	-command [code $this zoom_select ]
+	-command [itcl::code $this zoom_select ]
 
 # Zoom - back (go back 1 zoom level)
 
     $m add command -label "Back" \
-	-command [code $this zoom_back ]    \
+	-command [itcl::code $this zoom_back ]    \
 	-state disabled
 
 # Zoom - forward (go forward 1 zoom level)
 
     $m add command -label "Forward" \
-	-command [code $this zoom_forward ] \
+	-command [itcl::code $this zoom_forward ] \
 	-state disabled
 
 # Zoom - enter bounds
 
     $m add command -label "Enter bounds.." \
-	-command [code $this zoom_enter	]
+	-command [itcl::code $this zoom_enter	]
 
 # Zoom - reset
 
     $m add command -label "Reset" \
-	-command [code $this zoom_reset	]
+	-command [itcl::code $this zoom_reset	]
 
 # Zoom - options (another cascade)
 
@@ -401,7 +401,7 @@ body Pltkwin::create_pmenu_zoom	{} {
 # Create plot-page menu	(cascade)
 #----------------------------------------------------------------------------
 
-body Pltkwin::create_pmenu_page	{} {
+itcl::body Pltkwin::create_pmenu_page	{} {
     set	m $itk_component(pmenu).page
 
     $itk_component(pmenu) add cascade -label "Page" -menu $m
@@ -410,12 +410,12 @@ body Pltkwin::create_pmenu_page	{} {
 # Page - enter bounds
 
     $m add command -label "Setup.." \
-	-command [code $this page_enter	]
+	-command [itcl::code $this page_enter	]
 
 # Page - reset
 
     $m add command -label "Reset" \
-	-command [code $this page_reset	]
+	-command [itcl::code $this page_reset	]
 }
 
 #----------------------------------------------------------------------------
@@ -426,7 +426,7 @@ body Pltkwin::create_pmenu_page	{} {
 # isn't	working	right.
 #----------------------------------------------------------------------------
 
-body Pltkwin::create_pmenu_redraw {} {
+itcl::body Pltkwin::create_pmenu_redraw {} {
     $itk_component(pmenu) add command -label "Redraw" \
 	-command "[plwin] redraw"
 }
@@ -437,7 +437,7 @@ body Pltkwin::create_pmenu_redraw {} {
 # Create plot-options menu (cascade)
 #----------------------------------------------------------------------------
 
-body Pltkwin::create_pmenu_options {} {
+itcl::body Pltkwin::create_pmenu_options {} {
     set	m $itk_component(pmenu).options
 
     $itk_component(pmenu) add cascade -label "Options" -menu $m
@@ -460,7 +460,7 @@ body Pltkwin::create_pmenu_options {} {
 # the client program waits until the variable widget_is_ready is set.
 #----------------------------------------------------------------------------
 
-body Pltkwin::start {} {
+itcl::body Pltkwin::start {} {
     global client
 
 # Manage widget	hierarchy
@@ -487,7 +487,7 @@ body Pltkwin::start {} {
 # so it	can be added to	the default behavior.
 #----------------------------------------------------------------------------
 
-body Pltkwin::key_filter    {keycode state x y keyname ascii}	{
+itcl::body Pltkwin::key_filter    {keycode state x y keyname ascii}	{
     global user_key_filter
 
     global key_zoom_select
@@ -510,16 +510,16 @@ body Pltkwin::key_filter    {keycode state x y keyname ascii}	{
 # Interpret keystroke
 
     switch $keyname \
-	$key_zoom_select	[code $this zoom_select	] \
-	"b"			[code $this zoom_back ]	\
-	"f"			[code $this zoom_forward ] \
-	$key_zoom_reset		[code $this zoom_reset ]    \
-	$key_print		[code $this print ] \
-	$key_save_again		[code $this save_again ]    \
-	$key_scroll_right	[code $this view_scroll	     1	0 $state] \
-	$key_scroll_left	[code $this view_scroll	    -1	0 $state] \
-	$key_scroll_up		[code $this view_scroll	     0 -1 $state] \
-	$key_scroll_down	[code $this view_scroll	     0	1 $state] 
+	$key_zoom_select	[itcl::code $this zoom_select	] \
+	"b"			[itcl::code $this zoom_back ]	\
+	"f"			[itcl::code $this zoom_forward ] \
+	$key_zoom_reset		[itcl::code $this zoom_reset ]    \
+	$key_print		[itcl::code $this print ] \
+	$key_save_again		[itcl::code $this save_again ]    \
+	$key_scroll_right	[itcl::code $this view_scroll	     1	0 $state] \
+	$key_scroll_left	[itcl::code $this view_scroll	    -1	0 $state] \
+	$key_scroll_up		[itcl::code $this view_scroll	     0 -1 $state] \
+	$key_scroll_down	[itcl::code $this view_scroll	     0	1 $state] 
 
 # Pass keypress	event info back	to client.
 
@@ -533,7 +533,7 @@ body Pltkwin::key_filter    {keycode state x y keyname ascii}	{
 # Based	on user_mouse.
 #----------------------------------------------------------------------------
 
-body Pltkwin::user_key {keycode	state x	y keyname ascii} {
+itcl::body Pltkwin::user_key {keycode	state x	y keyname ascii} {
     global client
 
     if { [info exists client] }	then {
@@ -566,7 +566,7 @@ body Pltkwin::user_key {keycode	state x	y keyname ascii} {
 # Written by Radey Shouman
 #----------------------------------------------------------------------------
 
-body Pltkwin::user_mouse    {button state   x y} {
+itcl::body Pltkwin::user_mouse    {button state   x y} {
     global client
 
     if { [info exists client] }	then {
@@ -597,7 +597,7 @@ body Pltkwin::user_mouse    {button state   x y} {
 # Set eop button color to indicate page	status.
 #----------------------------------------------------------------------------
 
-body Pltkwin::flash {col} {
+itcl::body Pltkwin::flash {col} {
     $itk_component(ftop).leop config -bg $col
     update idletasks
 }
@@ -615,7 +615,7 @@ body Pltkwin::flash {col} {
 # to slow things down quite a bit.  
 #----------------------------------------------------------------------------
 
-body Pltkwin::end {} {
+itcl::body Pltkwin::end {} {
     global dp
 #    [plwin] closelink
     if { $dp } then {
@@ -633,7 +633,7 @@ body Pltkwin::end {} {
 # for now.
 #----------------------------------------------------------------------------
 
-body Pltkwin::print {} {
+itcl::body Pltkwin::print {} {
     label_set "Printing	plot..."
     update
     if { [catch	"[plwin] print"	foo] }	{
@@ -649,7 +649,7 @@ body Pltkwin::print {} {
 # Saves	plot to	default	device,	prompting for file name.
 #----------------------------------------------------------------------------
 
-body Pltkwin::save_as {} {
+itcl::body Pltkwin::save_as {} {
     global pmenu saveopts
     set	file [getSaveFile $saveopts($this,0)]
     if { [string length	$file] > 0 } {
@@ -686,7 +686,7 @@ body Pltkwin::save_as {} {
 # Saves	plot to	an already open	file.
 #----------------------------------------------------------------------------
 
-body Pltkwin::save_again    {}	{
+itcl::body Pltkwin::save_again    {}	{
     if { [catch	"[plwin] save"	foo] } {
 	bogue_out "$foo"
     } else {
@@ -700,7 +700,7 @@ body Pltkwin::save_again    {}	{
 # Close	archive	save file.
 #----------------------------------------------------------------------------
 
-body Pltkwin::save_close    {}	{
+itcl::body Pltkwin::save_close    {}	{
     global pmenu
     if { [catch	"[plwin] save close" foo] } {
 	bogue_out "$foo"
@@ -719,7 +719,7 @@ body Pltkwin::save_close    {}	{
 # if it	is possible to traverse	the zoom windows list in that direction.
 #----------------------------------------------------------------------------
 
-body Pltkwin::update_zoom {} {
+itcl::body Pltkwin::update_zoom {} {
     global zidx	zidx_max zxl zyl zxr zyr
     global pmenu
 
@@ -746,7 +746,7 @@ body Pltkwin::update_zoom {} {
 # Zooms	plot in	response to mouse selection.
 #----------------------------------------------------------------------------
 
-body Pltkwin::zoom_select {} {
+itcl::body Pltkwin::zoom_select {} {
     global def_button_cmd zoomopts
 
     set	def_button_cmd [bind [plwin] <ButtonPress>]
@@ -757,7 +757,7 @@ body Pltkwin::zoom_select {} {
 	label_set "Click on center of zoom region."
     }
 
-    bind [plwin] <ButtonPress>	[code $this zoom_start	%x %y]
+    bind [plwin] <ButtonPress>	[itcl::code $this zoom_start	%x %y]
 }
 
 #----------------------------------------------------------------------------
@@ -766,7 +766,7 @@ body Pltkwin::zoom_select {} {
 # Zooms	plot in	response to text entry.
 #----------------------------------------------------------------------------
 
-body Pltkwin::zoom_enter    {}	{
+itcl::body Pltkwin::zoom_enter    {}	{
     global fv00	fv01 fv10 fv11
     global fn00	fn01 fn10 fn11
 
@@ -796,7 +796,7 @@ body Pltkwin::zoom_enter    {}	{
 # resize after the scrollbars are unmapped.
 #----------------------------------------------------------------------------
 
-body Pltkwin::zoom_reset    {}	{
+itcl::body Pltkwin::zoom_reset    {}	{
     global def_button_cmd
 
     label_reset	
@@ -827,7 +827,7 @@ body Pltkwin::zoom_reset    {}	{
 # Responsible for making sure orientation radio	buttons	are up to date.
 #----------------------------------------------------------------------------
 
-body Pltkwin::update_orient {} {
+itcl::body Pltkwin::update_orient {} {
     set	rot [orient]
     set	entry [expr [format "%.0f" $rot] % 4]
     $itk_component(pmenu).orient invoke	$entry
@@ -839,7 +839,7 @@ body Pltkwin::update_orient {} {
 # Changes plot orientation.
 #----------------------------------------------------------------------------
 
-body Pltkwin::orient	{rot}	{
+itcl::body Pltkwin::orient	{rot}	{
     if { [orient] != $rot}  then {
 	orient	$rot
     }
@@ -851,7 +851,7 @@ body Pltkwin::orient	{rot}	{
 # Changes output page parameters (margins, aspect ratio, justification).
 #----------------------------------------------------------------------------
 
-body Pltkwin::page_enter    {}	{
+itcl::body Pltkwin::page_enter    {}	{
     global fv00	fv01 fv10 fv11
     global fn00	fn01 fn10 fn11
 
@@ -879,7 +879,7 @@ body Pltkwin::page_enter    {}	{
 # Resets page parameters.
 #----------------------------------------------------------------------------
 
-body Pltkwin::page_reset    {}	{
+itcl::body Pltkwin::page_reset    {}	{
     [plwin] page 0. 0.	0. 0.
 }
 
@@ -889,15 +889,15 @@ body Pltkwin::page_reset    {}	{
 # Starts plot zoom.
 #----------------------------------------------------------------------------
 
-body Pltkwin::zoom_start    {wx	wy} {
+itcl::body Pltkwin::zoom_start    {wx	wy} {
     global def_button_cmd
 
     bind [plwin] <ButtonPress>	$def_button_cmd
     label_set "Select zoom region by dragging mouse, then release."
 
     [plwin] draw init
-    bind [plwin] <B1-Motion>	     [code $this zoom_mouse_draw  $wx $wy %x	%y]
-    bind [plwin] <B1-ButtonRelease> [code $this	zoom_mouse_end	$wx $wy	%x %y]
+    bind [plwin] <B1-Motion>	     [itcl::code $this zoom_mouse_draw  $wx $wy %x	%y]
+    bind [plwin] <B1-ButtonRelease> [itcl::code $this	zoom_mouse_end	$wx $wy	%x %y]
 }
 
 #----------------------------------------------------------------------------
@@ -922,7 +922,7 @@ body Pltkwin::zoom_start    {wx	wy} {
 #
 #----------------------------------------------------------------------------
 
-body Pltkwin::zoom_coords {x0 y0 x1 y1	opt} {
+itcl::body Pltkwin::zoom_coords {x0 y0 x1 y1	opt} {
     global zoomopts
 
     set	Lx [winfo width	 [plwin]]
@@ -1113,7 +1113,7 @@ body Pltkwin::zoom_coords {x0 y0 x1 y1	opt} {
 # Draws	zoom box in response to	mouse motion (with button held down).
 #----------------------------------------------------------------------------
 
-body Pltkwin::zoom_mouse_draw {wx0  wy0	wx1 wy1} {
+itcl::body Pltkwin::zoom_mouse_draw {wx0  wy0	wx1 wy1} {
 
     set	coords [zoom_coords $wx0    $wy0 $wx1 $wy1 0]
 
@@ -1128,7 +1128,7 @@ body Pltkwin::zoom_mouse_draw {wx0  wy0	wx1 wy1} {
 # Performs actual zoom,	invoked	when user releases mouse button.
 #----------------------------------------------------------------------------
 
-body Pltkwin::zoom_mouse_end	{wx0 wy0 wx1 wy1}   {
+itcl::body Pltkwin::zoom_mouse_end	{wx0 wy0 wx1 wy1}   {
     
 # Finish rubber	band draw
 
@@ -1152,7 +1152,7 @@ body Pltkwin::zoom_mouse_end	{wx0 wy0 wx1 wy1}   {
 # Given	in relative plot window	coordinates.
 #----------------------------------------------------------------------------
 
-body Pltkwin::view_select {x0 y0 x1 y1}	{
+itcl::body Pltkwin::view_select {x0 y0 x1 y1}	{
     
 # Adjust arguments to be in bounds and properly	ordered	(xl < xr, etc)
 
@@ -1197,7 +1197,7 @@ body Pltkwin::view_select {x0 y0 x1 y1}	{
 # Given	in relative device coordinates.
 #----------------------------------------------------------------------------
 
-body Pltkwin::view_zoom	{x0 y0	x1 y1} {
+itcl::body Pltkwin::view_zoom	{x0 y0	x1 y1} {
     
     global xl xr yl yr
 
@@ -1293,7 +1293,7 @@ body Pltkwin::view_zoom	{x0 y0	x1 y1} {
 # Traverses the	zoom windows list backward.
 #----------------------------------------------------------------------------
 
-body Pltkwin::zoom_back	{} {
+itcl::body Pltkwin::zoom_back	{} {
     
     global zidx	zxl zyl	zxr zyr
 
@@ -1317,7 +1317,7 @@ body Pltkwin::zoom_back	{} {
 # Traverses the	zoom windows list forward.
 #----------------------------------------------------------------------------
 
-body Pltkwin::zoom_forward {} {
+itcl::body Pltkwin::zoom_forward {} {
     
     global zidx	zidx_max zxl zyl zxr zyr
 
@@ -1343,7 +1343,7 @@ body Pltkwin::zoom_forward {} {
 # controllable).
 #----------------------------------------------------------------------------
 
-body Pltkwin::view_scroll {dx dy s} {
+itcl::body Pltkwin::view_scroll {dx dy s} {
     global key_scroll_mag
     global key_scroll_speed
 
@@ -1387,7 +1387,7 @@ body Pltkwin::view_scroll {dx dy s} {
 # Handles updates of scrollbars	& plot after view change.
 #----------------------------------------------------------------------------
 
-body Pltkwin::fixview {hscroll	vscroll} {
+itcl::body Pltkwin::fixview {hscroll	vscroll} {
     
 # Create scrollbars if they don't already exist.
 
@@ -1443,7 +1443,7 @@ body Pltkwin::fixview {hscroll	vscroll} {
 # Does nothing if the plot window is unchanged from the	default.
 #----------------------------------------------------------------------------
 
-body Pltkwin::update_view {} {
+itcl::body Pltkwin::update_view {} {
     set	coords [[plwin]	view]
 
     set	xl [lindex "$coords" 0]
@@ -1461,9 +1461,9 @@ body Pltkwin::update_view {} {
 # than a dialog	because	it can be ignored and will go away on its own.
 #----------------------------------------------------------------------------
 
-body Pltkwin::status_msg {msg}	{
+itcl::body Pltkwin::status_msg {msg}	{
     label_set $msg
-    after 2500 [code $this label_reset]
+    after 2500 [itcl::code $this label_reset]
 }
 
 #----------------------------------------------------------------------------
@@ -1472,7 +1472,7 @@ body Pltkwin::status_msg {msg}	{
 # Resets message in status bar to the default.
 #----------------------------------------------------------------------------
 
-body Pltkwin::label_reset {} {
+itcl::body Pltkwin::label_reset {} {
     $itk_component(lstat) configure -text " [string range $this	1 end]"
 }
 
@@ -1482,7 +1482,7 @@ body Pltkwin::label_reset {} {
 # Sets message in status bar.
 #----------------------------------------------------------------------------
 
-body Pltkwin::label_set	{msg} {
+itcl::body Pltkwin::label_set	{msg} {
     $itk_component(lstat) configure -text " $msg"
 }
 
@@ -1494,7 +1494,7 @@ body Pltkwin::label_set	{msg} {
 # disable further connections.
 #----------------------------------------------------------------------------
 
-body Pltkwin::dplink	{client} {
+itcl::body Pltkwin::dplink	{client} {
 
     global list_sock data_sock
 
