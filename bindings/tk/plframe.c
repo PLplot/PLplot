@@ -978,7 +978,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
     if ((c == 'i') && (strncmp(argv[0], "init", length) == 0)) {
 	if (argc > 1) {
 	    Tcl_AppendResult(interp, "wrong # args: should be \"",
-		    argv[0], (char *) NULL);
+		    argv[0], "\"", (char *) NULL);
 	    result = TCL_ERROR;
 	}
 	else if ( ! plFramePtr->tkwin_initted) {
