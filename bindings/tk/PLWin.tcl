@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1994/05/09 17:59:19  furnish
+# Revision 1.2  1994/05/11 08:07:30  furnish
+# Debugging.  Needs to do own toprow for some reason.
+#
+# Revision 1.1  1994/05/09  17:59:19  furnish
 # The new [incr Tcl] interface to the PLplot Tcl extensions.
 #
 ###############################################################################
@@ -25,11 +28,19 @@ itcl_class PLWin {
 
 #	frame $this
 
+#	puts "did all the renaming stuff"
+
 	plframe $this.plwin -relief sunken
+
+#	puts "made the plframe."
 
 	pack append $this $this.plwin {left expand fill}
 
-	plw_configure_TopRow $this
+	puts "packed it in"
+
+#	plw_configure_TopRow $this
+
+	puts "configured toprow"
     }
 
     method configure {config} {}
