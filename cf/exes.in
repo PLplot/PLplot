@@ -1,4 +1,4 @@
-# -*-makefile-*----------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
@@ -12,16 +12,18 @@
 #	plrender	Metafile viewer
 #	pltek		Renderer for tek files
 #	fonts		font generators and font files
+#	pltcl		PLplot tcl interpreter (i.e. enhanced tclsh)
+#	plserver	PLplot tcl/tk interpreter (i.e. enhanced wish).
+#			Handles plplot Tk/DP driver rendering.
+#	plmodule	Dynamically loaded module for PLplot python scripts
+#
 #
 # All but "fonts" are in the default build rule.
 # Note: the portable font files are supplied in the distribution
 # and normally do not need to be rebuilt.
-# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # Utility programs.
-
-pltek$O:	pltek.c
-	$(CC) $(CC_FLAGS) pltek.c
 
 pltek$E:	pltek$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@
@@ -32,14 +34,22 @@ pltek$E:	pltek$O
 #	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@ \
 #		$(LDC_LIBS)
 
-plrender$O:	$(PLLIBS) plrender.c
-	$(CC) $(CC_FLAGS) plrender.c
-
 plrender$E:	$(PLLIBS) plrender$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plrender$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS)
 
-# -----------------------------------------------------------------------
+pltcl$E:	$(PLLIBS) pltcl$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl$O $(PLLIB_LDC) $(TO) $@ \
+		$(LDC_LIBS)
+
+plserver$E:	$(PLLIBS) plserver$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O $(PLLIB_LDC) $(TO) $@ \
+		$(LDC_LIBS)
+
+plmodule$(SO):	$(PLLIBS) plmodule$O
+	$(LDSHARED) plmodule$O $(PLLIB_LDC) $(TO) $@
+
+# -----------------------------------------------------------------------------
 # Font files.
 # Note it is no longer necessary to actually make these since as of
 # PLPLOT 4.99a the font files are portable.

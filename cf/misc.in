@@ -1,4 +1,4 @@
-# -*-makefile-*----------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
@@ -6,7 +6,7 @@
 # 22-Jul-1994
 #
 # Miscellaneous targets.
-# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # Cleanup
 
@@ -17,14 +17,13 @@ clean:
 distclean: clean
 
 # Autogeneration of dependencies.  Use gcc -MM because X11's "makedepend"
-# includes system headers, and that really sucks.
+# includes system headers, and that really sucks.  Generate dependencies
+# for /all/ files here.
 
 depend:
-	gcc -MM $(CORE_C) $(DRIVERS_C)  $(ADD_DRIVERS_C) \
-	$(UTIL_C) $(FSTUB_C) $(TCL_C) $(TK_C) \
-	| sed 's/\.o/\$$O/' >objs.in
+	gcc -MM *.c | sed 's/\.o/\$$O/' >objs.in
 	@echo "Rerun configure for the new dependencies to take effect"
 
-# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Auto-generated dependency list follows (warning: it's ugly).
 

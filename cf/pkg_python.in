@@ -1,11 +1,7 @@
-# -*-makefile-*----------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------------
 # $Id$
 #
 # Make assignments for PLplot/Python support.
-#
-# Includes build rules for:
-#
-#	plmodule$(SO)	Dynamically loaded module for PLplot python scripts
 #
 # If Python doesn't support dynamically loaded modules on your system,
 # you'll have to link plmodule.o with the Python library to build a
@@ -21,7 +17,7 @@
 # plmodule.c (-I/usr/local/include/Py if the Python header files are
 # installed, -I.../Python-VERSION/Include if not; Solaris 5.x requires
 # ld -G while SunOS 4.x uses just ld, etc.).
-# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 SO		= @SO@
 PYTHON_EXE	= plmodule$(SO)
@@ -31,11 +27,8 @@ PYTHON_MOD_DIR	= @PYTHON_MOD_DIR@
 PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
-plmodule$O:	$(PLLIBS) plmodule.c
+plmodule$O:	plmodule.c
 	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) -I$(PYTHON_INC_DIR) plmodule.c
-
-plmodule$(SO):	$(PLLIBS) plmodule$O
-	$(LDSHARED) plmodule$O $(PLLIB_LDC) @LIBS@ $(TO) $@
 
 install_python:
 	 $(LDSHARED) $(LDC_FLAGS) plmodule$O $(LIB_INSTALL) \

@@ -1,4 +1,4 @@
-# -*-makefile-*----------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
@@ -14,7 +14,7 @@
 # If support for <pkg> is not included, $(<PKG>_INSTALL) will be null.
 #
 # If a shared library was built, rebuild executables before installing.
-# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 install: install_lib install_demos install_utils \
 	$(F77_INSTALL) \

@@ -428,11 +428,9 @@ AC_SUBST(LIB_TAG)
 # ----------------------------------------------------------------------------
 # Now build up Makefile.in, out of all the eensy-weensy little pieces.
 #
-# Note: Make always scans the makefile to resolve all macro definitions
-# before processing any build rules.  Therefore it is allowed to use a macro
-# in a build before it's actually defined.  This feature is important with
-# the pkg_<pkg>.in components since typically they contain macro settings
-# used elsewhere as well as build rules that use macros defined elsewhere.
+# The order here is very important so that variable definitions are made in
+# the right order and all dependencies are preserved.  Change at your own
+# risk!
 # ----------------------------------------------------------------------------
 
 AC_MSG_RESULT(creating Makefile.in)

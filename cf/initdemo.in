@@ -1,4 +1,4 @@
-# -*-makefile-*----------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
@@ -7,23 +7,21 @@
 #
 # Initializations for building PLplot demo programs.
 # Only used in standalone demo Makefile.
-# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 # Miscellaneous variables set by configure.
 
 CC_FLAGS_DEMOS	= @CC_FLAGS@  -I$(INCLUDE_DIR) @INCS@
 CXX_FLAGS_DEMOS	= @CXX_FLAGS@ -I$(INCLUDE_DIR) @INCS@
 
-# These are intentionally NOT set, since we should be dealing with the
-# installed demos here and no library rebuild is possible.
-
-PLLIBS		=
-CDEMO_HEADERS	= 
-
 # These are what we link against.
 
 PLLIB_LDC	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
 PLLIB_LDF	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG)
+
+# Not sure of exact name of library (might be shared).
+
+PLLIBS		=
 
 # Default is to build every demo program.
 
@@ -37,7 +35,10 @@ everything: cdemos fdemos tkdemos
 # Inference rules.
 
 .c$O:
-	$(CC) $(CC_FLAGS) $*.c
+	$(CC) $(CC_FLAGS_DEMOS) $*.c
+
+.cc$O:
+	$(CXX) $(CXX_FLAGS_DEMOS) $<
 
 .f$O:
 	$(F77) $(F77_FLAGS) $*.f
