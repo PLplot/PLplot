@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.7  1993/12/09 20:34:45  mjl
+# Revision 1.8  1993/12/15 09:17:57  mjl
+# Changes to support Tcl-DP and an atexit tweak.
+#
+# Revision 1.7  1993/12/09  20:34:45  mjl
 # Added code to tell client to abort when exit is selected.
 #
 # Revision 1.6  1993/09/08  18:39:14  mjl
@@ -217,12 +220,15 @@ proc plserver_init {} {
 # exit_app
 #
 # Destroys main window and does any other cleanup necessary.
+# Eventually this will have to be completely redone to handle multiple
+# client widgets.
 #----------------------------------------------------------------------------
 
 proc exit_app {} {
-    global client
+    global client plsend
     if { [ info exists client ] } {
-	send $client "after 1 abort"
+	$plsend $client unset plserver
+	$plsend $client after 1 abort
 	unset client
     }
     destroy .
