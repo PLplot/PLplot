@@ -55,4 +55,4 @@ clean:
 	rm -f Makefile.PL PLplot.i PLplot*.pm PLplot.pm-tmp PLplot.pm-add \
 	  Makeperl PLplot_wrap.* *-stamp
 
-.PHONY: all ln-tmp interface swig-run clean 
+.PHONY: all ln-tmp interface swig-run clean

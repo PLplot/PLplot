@@ -31,4 +31,3 @@ function ost = plot_margin(st)
   endif
 
 endfunction
-	
