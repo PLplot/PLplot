@@ -1209,7 +1209,11 @@ Info(Tcl_Interp *interp, register PlFrame *plFramePtr,
     if ((c == 'd') && (strncmp(argv[0], "devices", length) == 0)) {
 	int i = 0;
 	while (plFramePtr->devDesc[i] != NULL) {
+#if (TK_MAJOR_VERSION == 3) && (TK_MINOR_VERSION == 2)
 	    Tcl_AppendElement(interp, plFramePtr->devDesc[i++], 0);
+#else
+	    Tcl_AppendElement(interp, plFramePtr->devDesc[i++]);
+#endif
 	}
 	result = TCL_OK;
     }
@@ -1344,9 +1348,8 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     plsdev("plmeta");
     plsfile(sfile);
-    plinit();
-    pladv(0);
     plcpstrm(plFramePtr->ipls, 0);
+    pladv(0);
 
 /* Remake current plot, close file, and switch back to original stream */
 
@@ -1548,9 +1551,8 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 	plsdev(plFramePtr->devName[idev]);
 	plsfile(sfile);
-	plinit();
-	pladv(0);
 	plcpstrm(plFramePtr->ipls, 0);
+	pladv(0);
 
 /* Remake current plot and then switch back to original stream */
 
@@ -1918,7 +1920,7 @@ tcl_eval(PlFrame *plFramePtr, char *cmd)
     }
 
     strcpy(cmdbuf, cmd);
-    return(Tcl_Eval(plFramePtr->interp, cmdbuf, 0, (char **) NULL));
+    return(Tcl_VarEval(plFramePtr->interp, cmdbuf, (char **) NULL));
 }
 
 /*
