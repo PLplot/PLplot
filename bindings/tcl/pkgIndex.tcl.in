@@ -14,7 +14,13 @@ proc load_pkg_Pltcl {dir} {
     set pllibrary $dir
 
     if {$tcl_platform(platform) == "unix"} {
-	set searchdirs ". ..";		# Need ".." for installed image
+	set thisDir [pwd]
+	set buildDir @BUILD_DIR@
+	set bLen [string length $buildDir] 
+	if {![string compare -length $bLen $buildDir $thisDir]}	then { 
+		set searchdirs ".libs"} else {
+		set searchdirs ". .."}
+	#puts $searchdirs
 	# prefer double precision version
 	set dlnames "@DLNAME_LIBPLPLOTTCLTKD@ @DLNAME_LIBPLPLOTTCLTK@";
 	set file ""

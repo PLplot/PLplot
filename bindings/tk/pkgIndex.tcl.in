@@ -15,7 +15,13 @@ proc load_pkg_Pltk {dir} {
 
     if {$tcl_platform(platform) == "unix"} {
 	set stem tk
-	set searchdirs "driversd drivers"; # prefer double precision version
+	set thisDir [pwd]
+	set buildDir @BUILD_DIR@
+	set bLen [string length $buildDir] 
+	if {![string compare -length $bLen $buildDir $thisDir]}	then { 
+		set searchdirs "../../drivers/.libs"} else {
+		set searchdirs "driversd drivers"}
+	#puts $searchdirs
 	set suf [info sharedlibextension]
 
 	set file ""
