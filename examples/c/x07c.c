@@ -1,10 +1,13 @@
 /* Displays the plotter symbols for PLSYM */
 /* $Id$
    $Log$
-   Revision 1.5  1993/02/22 23:16:15  mjl
-   Changed over to new style of initialization using plinit(), and added
-   function to parse plplot command line flags.
+   Revision 1.6  1993/07/02 07:06:50  mjl
+   Changed window bounds to fit well within the graphics window (page).
 
+ * Revision 1.5  1993/02/22  23:16:15  mjl
+ * Changed over to new style of initialization using plinit(), and added
+ * function to parse plplot command line flags.
+ *
  * Revision 1.4  1993/01/23  06:10:27  mjl
  * Instituted exit codes for all example codes.  Also deleted color functions
  * no longer supported (plancol).  Enhanced x09c to exploit new contour
@@ -60,7 +63,7 @@ main(int argc, char *argv[])
 /* Set up viewport and window */
 
 	plcol(2);
-	plvpor((PLFLT) 0.1, (PLFLT) 1.0, (PLFLT) 0.1, (PLFLT) 0.9);
+	plvpor((PLFLT) 0.1, (PLFLT) 0.95, (PLFLT) 0.1, (PLFLT) 0.9);
 	plwind((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 1.0);
 
 /* Draw the grid using plbox */
