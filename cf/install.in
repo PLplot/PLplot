@@ -31,7 +31,7 @@ install_lib:
 	-cd ..; cp README README.1st Changes.log COPYRIGHTS FAQ ToDo mklinks \
 		$(DOC_DIR)
 	-if [ ! -f $(DOC_DIR)/README.local ] ; then \
-		cp ../README.local $(DOC_DIR); fi
+		cp ../doc/README.local $(DOC_DIR); fi
 	-cp ../doc/*.info $(INFO_DIR)
 	-cd ../scripts; cp pl* $(BIN_DIR)
 	-cd ../include; \
