@@ -98,7 +98,7 @@
     Under Unix (and also under Linux if you would prefer to use a newer
     version of PLplot than is available in the debs or rpms), a good way
     to deploy binary PLplot and applications that depend on that binary PLplot
-    on users machines is as follows:
+    on users' machines is as follows:
     <itemizedlist>
       <listitem>
         <para>
@@ -140,8 +140,8 @@
 
   <para>
     On Windows, and also those rare Linux/Unix cases where you cannot install
-    the PLplot install tree in a consistent location of users's machines, then
-    there are some additional options to consider.
+    the PLplot install tree in a consistent location on users' machines, then
+    there are some additional options you need to consider.
   </para>
 
   <para>
@@ -150,7 +150,7 @@
     <orderedlist>
       <listitem>
         <para>
-          You use the static versions of the PLplot libraries and drivers
+          You use the static versions of the PLplot libraries and devices
 	  which are not dynamically loaded.
           <footnote>
             <para>
@@ -164,13 +164,13 @@
       </listitem>
       <listitem>
         <para>
-          You use the shared versions of the PLplot libraries and drivers
+          You use the shared versions of the PLplot libraries and devices
 	  which are not dynamically loaded.
         </para>
       </listitem>
       <listitem>
         <para>
-          You use the shared versions of the PLplot library and drivers
+          You use the shared versions of the PLplot library and devices
 	  which are dynamically loaded.  This combination is the default
 	  option under Unix/Linux.
         </para>
@@ -179,7 +179,7 @@
   </para>
 
   <para>
-    In the <emphasis>first case</emphasis> the program will contain all the
+    In the <emphasis>first</emphasis> case the program will contain all the
     code it needs to work, but to run successfully, it needs to find the
     font files, <filename>plstnd5.fnt</filename> and
     <filename>plxtnd5.fnt</filename>. The mechanism used in PLplot to find
@@ -245,16 +245,17 @@
   </para>
 
   <para>
-    The <emphasis>second case</emphasis> is this: the PLplot libraries (but
-    not the drivers) need to be loaded via the dynamic loader. The details
-    depend on the system you are working on, but here are some common
-    platforms:
+    In the <emphasis>second </emphasis> case the font and map files are found
+    as in the <emphasis>first</emphasis> case.  In addition, you also
+    require another environment variable so the PLplot shared libraries can
+    be found at run time by the run-time loader.  The details depend on the
+    system you are working on, but here are some common platforms:
     <itemizedlist>
       <listitem>
         <para>
           Most UNIX, BSD and Linux systems use an environment variable
-          <envar>LD_LIBRARY_PATH</envar> which indicates all the
-          directories shared libraries can be found. Some use
+          <envar>LD_LIBRARY_PATH</envar> which indicates 
+          directories where shared libraries can be found. Some use
           <envar>SHLIB_PATH</envar>, like HPUX.
         </para>
       </listitem>
@@ -276,25 +277,26 @@
   </para>
 
   <para>
-    In the <emphasis>third (default) case</emphasis>, the PLplot
+    In the <emphasis>third</emphasis> (default) case, the PLplot fonts and
+    maps are found as in the <emphasis>first</emphasis> case, and the 
     shared libraries are found as in the <emphasis>second</emphasis> case,
-    but in addition the separated dynamic drivers have to be found as well.
+    but in addition the separated dynamic devices have to be found as well.
   </para>
 
   <para>
-    When PLplot uses dynamic drivers, it first builds up a list of them, by
-    examining a directory which contains files describing these drivers:
+    When PLplot uses dynamic devices, it first builds up a list of them, by
+    examining a directory which contains files describing those devices:
     the <filename>*.rc</filename> files. Each of these files indicates what
-    the relevant properties for the driver or drivers. Then when the
-    driver is actually needed, the corresponding shared object (or plug-in
+    the relevant properties for the device or devices. Then when the
+    device is actually needed, the corresponding shared object (or plug-in
     or DLL depending on your terminology) is dynamically loaded.
   </para>
 
   <para>
-    The directory that contains all these files (the driver descriptions as
+    The directory that contains all these files (the device descriptions as
     well as the actual libraries and the description files that libtool
-    uses) is either a directory determined at the time you configured
-    PLplot is typically something like
+    uses) is a directory determined at the time you configured
+    PLplot which is typically something like
     <filename>/usr/local/plplot/lib/plplot5.3.1/driversd</filename>.  This
     directory must be pointed to by the <envar>PLPLOT_DRV_DIR</envar>
     environment variable. Again for deployment, only the environment
@@ -325,7 +327,7 @@
             </listitem>
             <listitem>
               <para>
-                <envar>PLPLOT_DRV_DIR</envar> to find the driver
+                <envar>PLPLOT_DRV_DIR</envar> to find the device
                 descriptions
               </para>
             </listitem>
@@ -346,12 +348,12 @@
             </listitem>
             <listitem>
               <para>
-                The PLplot dynamic/shared library
+                The PLplot shared libraries
               </para>
             </listitem>
             <listitem>
               <para>
-                The driver description files and the driver library files
+                The device description files and the device shared object files
               </para>
             </listitem>
           </itemizedlist>
