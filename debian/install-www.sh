@@ -1,7 +1,7 @@
 #! /bin/sh
 
 www_host=shell1.sourceforge.net
-www_dir=/home/groups/plplot/htdocs/resources/debian
+www_dir=/home/groups/p/pl/plplot/htdocs/resources/debian
 www_user=rlaboiss
 www_group=plplot
 
