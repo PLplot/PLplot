@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1995/06/01 21:43:25  mjl
+ * Revision 1.4  1995/06/09 22:50:19  mjl
+ * Eliminated vestigial lookup of tclMatrix variable (no longer works).
+ *
+ * Revision 1.3  1995/06/01  21:43:25  mjl
  * Change to header file inclusion: to get PLplot/Tk global function
  * prototypes, must now include pltk.h.  Some cleaning up.
  *
@@ -151,14 +154,12 @@ AppInit(Tcl_Interp *interp)
 
 int   get_dataCmd( ClientData cd, Tcl_Interp *interp, int argc, char **argv )
 {
-    char *mat;
     tclMatrix *pm, *matPtr;
     int nx, ny, i, j;
     float pi = 3.1415927;
     int kx = 3, ky = 2;
 
-    mat = Tcl_GetVar( interp, argv[1], 0 );
-    pm = Tcl_GetMatrixPtr( interp, mat );
+    pm = Tcl_GetMatrixPtr( interp, argv[1] );
     matPtr = pm;
 
     if ( pm->dim != 2 ) {
