@@ -47,7 +47,7 @@ doc_DATA = \
 	PROBLEMS \
 	README
 
-CLEANFILES = plplot_libtool reconfig
+CLEANFILES = plplot_libtool reconfig jadeout.log
 
 EXTRA_DIST = debian fonts rpm sys
 
