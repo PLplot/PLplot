@@ -217,7 +217,7 @@ Naming rules:
    return $jnicall;
 }
 
-/* Trailing count */
+/* Trailing count and check consistency with previous*/
 %typemap(in) (PLINT *ArrayCk, PLINT n) {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
@@ -239,7 +239,7 @@ Naming rules:
    return $jnicall;
 }
 
-/* check consistency with previous, but no preceding or trailing count */
+/* no count but check consistency with previous */
 %typemap(in) PLINT *ArrayCk {
    jint *jydata = (*jenv)->GetIntArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
@@ -352,7 +352,29 @@ PyArrayObject* myArray_ContiguousFromObject(PyObject* in, int type, int mindims,
    return $jnicall;
 }
 
-/* check consistency with previous */
+/* trailing count, and check consistency with previous */
+%typemap(in) (PLFLT *ArrayCk, PLINT n) {
+   jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
+   $2 = (*jenv)->GetArrayLength( jenv, $input );
+   if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
+      printf("Vectors must be same length.\n");
+      return;
+   }
+   setup_array_1d_PLFLT( &$1, jydata, Alen );
+   (*jenv)->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
+}
+%typemap(freearg) (PLFLT *ArrayCk, PLINT n) {
+   free($1);
+}
+%typemap(jni) (PLFLT *ArrayCk, PLINT n) jPLFLTArray
+%typemap(jtype) (PLFLT *ArrayCk, PLINT n) jPLFLTbracket
+%typemap(jstype) (PLFLT *ArrayCk, PLINT n) jPLFLTbracket
+%typemap(javain) (PLFLT *ArrayCk, PLINT n) "$javainput"
+%typemap(javaout) (PLFLT *ArrayCk, PLINT n){
+   return $jnicall;
+}
+
+/* no count, but check consistency with previous */
 %typemap(in) PLFLT *ArrayCk {
    jPLFLT *jydata = (*jenv)->GetPLFLTArrayElements( jenv, $input, 0 );
    if((*jenv)->GetArrayLength( jenv, $input ) != Alen) {
