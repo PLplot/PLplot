@@ -1,23 +1,3 @@
-Commit from rlaboiss on branch v5_3_0 (2004-01-19 21:43 CET)
--------------------------------------
-
-Committing the changes to the WIN32 driver done by Arjen Markus to the
-v5_3_0 branch.  This changes should have zero impact in the resulting
-release tarball.
-
-  plplot  include/plplotP.h                        1.74.2.1
-  plplot  sys/win32/msdev/README.TXT               1.2.4.1
-  plplot  sys/win32/msdev/makefile                 1.12.2.1
-  plplot  sys/win32/msdev/DExamples/DExamples.mak  1.1.16.1
-  plplot  sys/win32/msdev/plpdll/plpdll.mak        1.1.16.1
-  plplot  sys/win32/msdev/plplib/plplib.mak        1.5.4.1
-  plplot  sys/win32/msdev/src/plplot.h             1.2.12.1
-  plplot  sys/win32/msdev/src/plplot.rc            1.2.12.1
-  plplot  sys/win32/msdev/src/plplotd.def          1.1.16.1
-  plplot  sys/win32/msdev/src/plstub.cpp           1.2.12.1
-  plplot  sys/win32/msdev/src/win3.cpp             1.7.2.1
-
-
 Commit from rlaboiss on branch v5_3_0 (2004-01-19 21:32 CET)
 -------------------------------------
 
@@ -290,105 +270,10 @@ Added the macro API to the prototypes.
   plplot  sys/win32/msdev/src/plplotd.def    1.2
   plplot  sys/win32/msdev/src/plstub.cpp     1.3
   plplot  sys/win32/msdev/src/win3.cpp       1.8
-
-
-Commit from airwin (2004-01-19 19:09 CET)
-------------------
-
-
-
   plplot  sys/win32/msdev/plpdll/plpdll.mak  1.2
-
-
-Commit from airwin (2004-01-19 19:09 CET)
-------------------
-
-Documentation of the changes to the WIN32 driver
-dd. 16 january 2004, by A. Markus
-
-Note 1:
-The files in this tree are expressly in Windows/DOS format
-The reason is that we are not sure that UNIX/Linux format
-would be acceptable to all compilers.
-
-Note 2:
-Since the changes are legion, I have documented them in detail.
-
-win32/msdev/README.TXT
-Added my name to the file
-
-win32/msdev/makefile
-Small corrections regarding the creation of the tmp directory
-and copying all files to it.
-
-win32/msdev/DExamples/DExamples.mak
-Default target now x01d (release).
-Added the flag __PLDLL_H__ - this must be defined, if the DLL
-is to be used (see README file).
-Path to the source files and the extension changed.
-
-win32/msdev/plpdll/plpdll.mak
-Added the flag "BUILD_DIR" to the compile step.
-Relative path to the tmp directory.
-plimage.c added to the makefile
-Changed the extensions of some source files (from .cpp to .c)
-
-win32/msdev/plplib/plplib.mak
-Added the flag "BUILD_DIR" to the compile step.
-
-win32/msdev/src/win3.cpp
-Added a function w32_tmpfile() to solve the problem of
-opening temporary files on network disk (the main directory
-is often read-only and the version of tmpfile() that comes
-with Windows, ignores the environment variables but simply
-opens in the directory "\").
-Replaced the export keyword by __declspec(dllexport)
-(this seems to be the recommended way).
-
-win32/msdev/src/plplotd.def
-Added the routines plGetCursor, plParseOpts and plMergeOpts.
-
-win32/msdev/src/plplot.rc
-Corrected the path to the include files.
-
-win32/msdev/src/plstub.cpp
-Added stubs for the routines plGetCursor, plParseOpts and plMergeOpts.
-Corrected call to plpoly3()
-Corrected stubs for plshade() and plshade1() (prototypes for the
-function arguments caused trouble)
-
-win32/msdev/src/plplot.h
-Updated the plplot.h file from a previous version.
-Added the flag __PLDLL_H__ to select between three situations:
-- Compiling the generic sources and Windows applications using the
-  static library (neither __PLSTUBS_H__ or __PLDLL_H__ defined):
-  Requires that the names c_plinit() and the like be untouched
-  Define a macro plinit for user-code on non-Windows systems
-- Compiling the Windows stubs (only __PLSTUBS_H__ defined):
-  Requires that the names c_plinit() and the like be untouched
-  Do _not_ define macros like plinit, as there are actual functions
-  by these names. They are undefined at the end
-- Compiling Windows applications that use DLL (only __PLDLL_H__ defined):
-  Requires that the names c_plinit() and the like be turned to
-  WINAPI plinit().
-Added the macro API to the prototypes.
-
   plplot  sys/win32/msdev/README.TXT               1.3
   plplot  sys/win32/msdev/makefile                 1.13
   plplot  sys/win32/msdev/DExamples/DExamples.mak  1.2
-
-
-Commit from rlaboiss (2004-01-18 22:41 CET)
---------------------
-
-Merging last changes from the v5_3_0 branch into HEAD.
-
-  plplot  configure.ac                        1.151
-  plplot  bindings/octave/plplot_octave.h.in  1.3
-  plplot  debian/changelog                    1.70
-  plplot  drivers/Makefile.am                 1.37
-  plplot  scripts/make-cvs-tarball.sh         1.12
-  plplot  test/plplot-test.sh.in              1.11
 
 
 Commit from rlaboiss on branch v5_3_0 (2004-01-18 21:33 CET)
@@ -506,59 +391,7 @@ $(top_builddir):
   plplot  utils/Makefile.am           1.9
   plplot  utils/plrender.c            1.63
   plplot  utils/pltcl.c               1.20
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
-  plplot  test/test_c.sh  1.9
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
+  plplot  test/test_c.sh              1.9
   plplot  src/plgridd.c           1.8
   plplot  src/plhist.c            1.17
   plplot  src/plimage.c           1.10
@@ -576,113 +409,9 @@ $(top_builddir):
   plplot  sys/win-tk/makefile.vc  1.14
   plplot  test/Makefile.am        1.11
   plplot  test/plplot-test.sh.in  1.10
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
-  plplot  src/plfreetype.c  1.15
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
-  plplot  src/plfill.c  1.24
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
-  plplot  src/pldtik.c  1.14
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
+  plplot  src/plfreetype.c        1.15
+  plplot  src/plfill.c            1.24
+  plplot  src/pldtik.c            1.14
   plplot  src/plargs.c  1.65
   plplot  src/plbox.c   1.35
   plplot  src/plbuf.c   1.2
@@ -690,59 +419,7 @@ $(top_builddir):
   plplot  src/plcore.c  1.123
   plplot  src/plctrl.c  1.76
   plplot  src/plcvt.c   1.10
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  src/pdfutils.c  1.26
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  include/plplot.h                1.147
   plplot  include/plplotP.h               1.74
   plplot  lib/Makefile.am                 1.8
@@ -755,115 +432,11 @@ $(top_builddir):
   plplot  scripts/get-dependency-libs.sh  1.4
   plplot  scripts/plplot-config.in        1.4
   plplot  src/Makefile.am                 1.11
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  include/plConfig.h.in  1.9
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  examples/tk/xtk04.c  1.13
   plplot  include/Makefile.am  1.4
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  examples/tk/xtk01.c  1.18
   plplot  examples/tk/xtk02.c  1.18
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  doc/docbook/src/Makefile.am             1.55
   plplot  doc/docbook/src/api-c.xml               1.9
   plplot  doc/docbook/src/api-fortran.xml         1.7
@@ -974,59 +547,7 @@ $(top_builddir):
   plplot  examples/tcl/x08.tcl                    1.21
   plplot  examples/tk/Makefile.am                 1.14
   plplot  examples/tk/Makefile.examples.in        1.15
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  doc/docbook/bin/size-href.pl  1.7
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  bindings/tk/pkgIndex.tcl.in          1.10
   plplot  bindings/tk/pldefaults.tcl           1.24
   plplot  bindings/tk/plframe.c                1.84
@@ -1042,116 +563,12 @@ $(top_builddir):
   plplot  doc/docbook/COPYING                  1.3
   plplot  doc/docbook/Makefile.am              1.29
   plplot  doc/docbook/docbook.m4               1.14
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  bindings/tk/Pltk_Init.c  1.12
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  bindings/tcl/tclMatrix.c  1.24
   plplot  bindings/tcl/tclMatrix.h  1.24
   plplot  bindings/tk/Makefile.am   1.12
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  bindings/tcl/tclAPI.c   1.55
   plplot  bindings/tcl/tclMain.c  1.17
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  bindings/java/PLStreamc.java                1.3
   plplot  bindings/java/config.java.in                1.4
   plplot  bindings/java/plplotcapi.i                  1.10
@@ -1173,292 +590,25 @@ $(top_builddir):
   plplot  bindings/tcl/Makefile.am                    1.20
   plplot  bindings/tcl/matrixInit.c                   1.8
   plplot  bindings/tcl/pkgIndex.tcl.in                1.8
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  bindings/java/Makefile.am  1.23
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  bindings/f77/strutil.f  1.5
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  bindings/f77/sfstubs.h  1.3
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  bindings/f77/scstubs.c    1.34
   plplot  bindings/f77/sfstubs.fm4  1.12
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  bindings/f77/sccont.c  1.9
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  bindings/f77/plstubs.h  1.34
   plplot  bindings/f77/sc3d.c     1.13
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  bindings/f77/double2single.sed  1.2
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  bindings/Makefile.am            1.13
   plplot  bindings/c++/Makefile.am        1.14
   plplot  bindings/c++/plstream.cc        1.19
   plplot  bindings/c++/plstream.h         1.13
   plplot  bindings/f77/Makefile.am        1.17
   plplot  bindings/f77/configurable.f.in  1.2
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  sysloc.in  1.69
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-This jumbo cvs commit is the result of a herculean task to update the
-copyright notices of most of the source files of PLplot.
-
-I hope that I did not introduce any serious breakage.  This seems plausible,
-because I did changes only at the beginning of the files and only in
-commented lines.  However, I used a semi-automatic procedure for doing that
-and some bugs may have slipped into the files.  The sources still build okay
-(at least the Debian packages) and I can install the libraries, and compile
-and run some C examples.  That is not enough, so PLEASE TEST!
-
-This is what I did in more detail:
-
-1) From the CVS ChangeLog, I considered all the files that changed since the
-   last release (5.2.1).  I then added the line:
-
-       Copyright (C) 2004  Joe C. V. S. Committer
-
-   where the name of the developper who did the CVS commit is included.
-
-2) Notice that the year in the line above should read 2004, even if the
-   changes were done last year, since Copyright years refer to when the
-   software is released.
-
-3) For the same reason, I did not bother adding missing Copyright entries
-   for previous authors of each file.  One copyright holder is enough for
-   our purposes.
-
-4) I also reformatted and reworded the License Conditions text.  This
-   included changing things like "This file is free software" to "PLplot is
-   free sofware" and so on.
-
-5) Finally, some files were lacking License notices, especially the src/*.c.
-   I added them and put in the Copyright holder line the name of the
-   developer who did the last cvs commit for the file.
-
-If you wish to know where your name appears, you can run from the
-$(top_builddir):
-
-    grep -ri "copyright.*2004".
-
   plplot  acinclude.m4  1.13
   plplot  bootstrap.sh  1.27
   plplot  configure.ac  1.150
-
-
-Commit from rlaboiss (2004-01-17 17:41 CET)
---------------------
-
-
-
   plplot  Makefile.am  1.32
 
 
@@ -1468,22 +618,8 @@ Commit from rlaboiss (2004-01-17 16:45 CET)
 Replaced all occurrences of "../.." by the robust variable $(top_builddir)
 
   plplot  examples/tk/Makefile.am  1.13
-
-
-Commit from rlaboiss (2004-01-17 16:45 CET)
---------------------
-
-
-
   plplot  bindings/tk/Makefile.am   1.11
   plplot  examples/tcl/Makefile.am  1.8
-
-
-Commit from rlaboiss (2004-01-17 16:45 CET)
---------------------
-
-Replaced all occurrences of "../.." by the robust variable $(top_builddir)
-
   plplot  bindings/c++/Makefile.am     1.13
   plplot  bindings/java/Makefile.am    1.22
   plplot  bindings/python/Makefile.am  1.23
