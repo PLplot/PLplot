@@ -49,8 +49,6 @@
 <!ENTITY omega    "omega">
 <!ENTITY less     "&lt;">
 <!ENTITY leq      "&lt;=">
+<!ENTITY ndash    "--">
 <!ENTITY egrave   "e">
 <!ENTITY over-under "S-freq">
-
-
-
