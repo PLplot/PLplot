@@ -8,12 +8,14 @@ divert(1)dnl
 include(fmacs.m4)dnl
 ! Test of drawing a histogram
       implicit_none
-
+      REAL PI
+      parameter (PI = 3.1415926535897932384)
+		
       integer i
       REAL data(2048), delta
 
 ! Fill up data points
-      delta = 2.0 * 3.141592654 / REAL_FUN (2048)
+      delta = 2.0 * PI / REAL_FUN (2048)
       do 1 i=1,2048
         data(i)=sin(delta*REAL_FUN (i))
     1 continue

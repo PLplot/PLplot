@@ -8,7 +8,9 @@ divert(1)dnl
 include(fmacs.m4)dnl
 !     Demonstration of mesh plotting 
       implicit_none
-      
+      REAL PI
+      parameter (PI = 3.1415926535897932384)
+
       integer opt(4), i, j, k, NPTS
       parameter (NPTS = 41)
       REAL alt(4), az(4)
@@ -34,7 +36,7 @@ include(fmacs.m4)dnl
          do 3 j = 1, NPTS
             yy = y(j)
             r = sqrt(xx*xx + yy*yy)
-            z(i, j) = exp(-r*r) * cos(2.0 * 3.141592654 * r)
+            z(i, j) = exp(-r*r) * cos(2.0 * PI * r)
 3        continue
 2     continue
 

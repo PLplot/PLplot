@@ -9,6 +9,8 @@ include(fmacs.m4)dnl
 ! Demonstration of 3-d plotting      
 !      
       implicit_none
+      REAL PI
+      parameter (PI = 3.1415926535897932384)
       integer i, j, k, opt(4), npts
       parameter (npts=41)
 
@@ -34,7 +36,7 @@ include(fmacs.m4)dnl
         do 3 j=1,npts
           yy = y(j)
           r = sqrt(xx*xx + yy*yy)
-          z(i,j) = exp(-r*r) * cos(2.0*3.141592654*r)
+          z(i,j) = exp(-r*r) * cos(2.0*PI*r)
     3   continue
     2 continue
 

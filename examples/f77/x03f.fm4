@@ -8,13 +8,15 @@ divert(1)dnl
 include(fmacs.m4)dnl
 ! Illustration of 1-1 scaling for polar plot
       implicit_none
-
+      REAL PI
+      parameter (PI = 3.1415926535897932384)
+		
       character*3 text
       REAL x0(0:360), y0(0:360)
       REAL x(0:360), y(0:360), dtr, theta, dx, dy, r
       integer i, j, nsp
 
-      dtr = 3.141592654/180.0
+      dtr = PI/180.0
       do 1 i=0,360
         x0(i) = cos(dtr * REAL_FUN (i))
         y0(i) = sin(dtr * REAL_FUN (i))

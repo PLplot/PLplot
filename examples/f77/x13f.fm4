@@ -8,9 +8,8 @@ divert(1)dnl
 include(fmacs.m4)dnl
 !     Demonstration program for PLPLOT: 
       implicit_none
-
       REAL PI
-      parameter (PI = 3.14156)
+      parameter (PI = 3.1415926535897932384)
       REAL just, dx, dy, x(500), y(500), per(5),
      &  theta, theta0, dthet, theta1
       integer i, j

@@ -12,6 +12,8 @@ include(fmacs.m4)dnl
 
 
 	implicit_none
+	REAL PI
+	parameter (PI = 3.1415926535897932384)
 	REAL	x(101), y(101)
 	REAL	xs(6), ys(6)
 	REAL	xscale, yscale, xoff, yoff
@@ -113,7 +115,7 @@ include(fmacs.m4)dnl
 
       do 3 i = 1, 101
         x(i) = 3.6 * (i-1)
-        y(i) = sin( x(i) * 3.141592654/180.0 )
+        y(i) = sin( x(i) * PI/180.0 )
     3 continue
 
       call plcol(4)

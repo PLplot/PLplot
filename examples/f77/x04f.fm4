@@ -8,7 +8,9 @@ divert(1)dnl
 include(fmacs.m4)dnl
 ! Illustration of logarithmic axes, and redefinition of window
       implicit_none
-
+      REAL PI
+      parameter (PI = 3.1415926535897932384)
+		
       REAL freql(0:100),ampl(0:100),phase(0:100), freq, f0
       integer i
       call plinit()
@@ -20,7 +22,7 @@ include(fmacs.m4)dnl
         freql(i)=1.0+ REAL_FUN (i)/20.0
         freq=10.0**freql(i)
         ampl(i)=20.0*log10(1.0/sqrt(1.0+(freq/f0)**2))
-        phase(i)=-(180.0/3.141592654)*atan(freq/f0)
+        phase(i)=-(180.0/PI)*atan(freq/f0)
     1 continue
 
       call plvpor(REAL_FUN (0.15), REAL_FUN (0.85), REAL_FUN (0.1), REAL_FUN (0.9)) 
