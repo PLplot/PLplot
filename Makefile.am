@@ -5,6 +5,7 @@
 # Copyright (C) 2002, 2003, 2004  Alan W. Irwin
 # Copyright (C) 2003  Joao Cardoso
 # Copyright (C) 2003, 2004  Rafael Laboissiere
+# Copyright (C) 2005  Thomas J. Duck
 #
 # This file is part of PLplot.
 #
@@ -33,8 +34,10 @@ ACLOCAL_AMFLAGS = -I cf 2>&1 | grep -v underquoted
 # automake-1.8 underquoted warning messages quit being such an annoyance.
 #ACLOCAL_AMFLAGS = -I cf
 
+# Note: Must build the python/gcw binding *after* building drivers.  TJD
+
 src_dirs = fonts lib include src data bindings
-other_dirs = examples utils test scripts doc pkgcfg cf
+other_dirs = bindings/python/gcw examples utils test scripts doc pkgcfg cf
 
 if enable_dyndrivers
   SUBDIRS =
