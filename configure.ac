@@ -1064,6 +1064,7 @@ AC_CONFIG_FILES([
 	examples/java/Makefile
 	test/Makefile
 	test/plplot-test.sh
+	test/test_python.sh
 	utils/Makefile
 	scripts/Makefile
 	doc/Makefile

@@ -7,3 +7,4 @@ Makefile.examples
 *.la
 *.lo
 plplot-test.sh
+test_python.sh
