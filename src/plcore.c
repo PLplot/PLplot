@@ -1,6 +1,20 @@
 /* $Id$
  * $Log$
- * Revision 1.27  1994/01/25 06:23:26  mjl
+ * Revision 1.28  1994/03/23 08:02:48  mjl
+ * Provided for handling more basic operations in the driver interface rather
+ * than the drivers themselves (pls->nopause, resetting stream parameters
+ * after a tidy, etc).  Added support for hardware fill -- if the device does
+ * not support the operation, the function plfill_soft is used instead.
+ * Pattern fill number set/get access functions added.
+ *
+ * Many debugging remnants from driver interface development removed.
+ *
+ * Many functions moved elsewhere (this file has gotten too large):
+ *
+ * 	plwarn plexit plcol0 plcol1 plrgb plrgb1 plscolbg plscol0 plgcol0
+ * 	plscmap1 plscmap1f1 plscolor
+ *
+ * Revision 1.27  1994/01/25  06:23:26  mjl
  * Moved default setting of digits variables to the correct location.
  *
  * Revision 1.26  1994/01/18  06:01:38  mjl
@@ -23,75 +37,6 @@
  * Revision 1.22  1993/11/07  09:07:38  mjl
  * Changed plflush() to call escape function if driver wants to handle
  * flushes itself.  Also found & fixed a bug in plcpstrm.
- *
- * Revision 1.21  1993/09/24  20:33:25  furnish
- * Went wild with "const correctness".  Can now pass a C++ String type to
- * most (all that I know of) PLPLOT functions.  This works b/c String has
- * an implicit conversion to const char *.  Now that PLPLOT routines take
- * const char * rather than char *, use from C++ is much easier.
- *
- * Revision 1.20  1993/09/08  02:36:47  mjl
- * Changed mapping driver interface initialization function to not bomb if
- * called before plinit().  Changed plcpstrm to work more robustly (some
- * saves were giving garbage).
- *
- * Revision 1.19  1993/08/31  20:14:30  mjl
- * Fix to plend1() so that prematurely aborted streams do not result in a
- * core dump.  Put font loading code before plsc->level is set to 1, to
- * prevent core dumps when fonts are not found.
- *
- * Revision 1.18  1993/08/18  20:33:22  mjl
- * Many changes to driver interface to properly modify the device window
- * based on orientation and coordinate mapping.  Orientation switches now
- * automatically set the device window so as to preserve the aspect ratio.
- * Ditto for coordinate mapping (only used when copying stream parameters
- * from one to another, such as used when dumping a plot to disk from the TK
- * driver).  Switched over to new page description variables mar, aspect, jx,
- * and jy, and deleted the old ones.  Added a variable widthlock that is set
- * when -width is used to modify the pen width, so that subsequent plwid()
- * calls are ignored.
- *
- * Revision 1.17  1993/08/11  19:19:03  mjl
- * Changed debugging code to print to stderr instead of stdout, fixed
- * up some minor type mismatches.
- *
- * Revision 1.16  1993/08/09  22:20:34  mjl
- * Fixed plcpstrm() so that it no longer sucks.
- *
- * Revision 1.15  1993/08/03  01:46:58  mjl
- * Changes to eliminate warnings when compiling with gcc -Wall.
- *
- * Revision 1.14  1993/07/31  08:17:37  mjl
- * Action for driver interface setup functions now deferred until after
- * plinit() called so that these can be set via command line arguments.
- * Drivers that request it can handle these directly.
- *
- * Revision 1.13  1993/07/28  05:53:23  mjl
- * Put in code to ensure all malloc'ed memory is freed upon exit.
- *
- * Revision 1.12  1993/07/16  22:35:05  mjl
- * Addition of driver interface function for converting between device
- * coordinate systems, functions for retrieving current driver interface
- * parameters.  Also added functions for creating a new stream, copying
- * an existing stream, replaying the current plot, returning a list of
- * file-oriented devices.
- *
- * Revision 1.11  1993/07/01  22:25:16  mjl
- * Changed all plplot source files to include plplotP.h (private) rather
- * than plplot.h.  Rationalized namespace -- all externally-visible
- * internal plplot functions now start with "plP_".  Moved functions
- * plend() and plend1() to here.  Added driver interface -- sits
- * between the plplot library calls and the driver to filter the data in
- * various ways, such as to support zooms, page margins, orientation
- * changes, etc.  Changed line and polyline draw functions to go through
- * this layer.  Changed all references to the current plplot stream to be
- * through "plsc", which is set to the location of the current stream (now
- * dynamically allocated).  A table of stream pointers (max of 100) is
- * kept to allow switching between streams as before.
- *
- * Revision 1.10  1993/04/26  19:57:58  mjl
- * Fixes to allow (once again) output to stdout and plrender to function as
- * a filter.  A type flag was added to handle file vs stream differences.
 */
 
 /*	plcore.c
@@ -149,15 +94,19 @@ plP_init(void)
 
 /* End of page */
 /* The plot buffer must be called first */
+/* Nothing done if nopause is set */
 
 void
 plP_eop(void)
 {
-    if (plsc->plbuf_write)
-	plbuf_eop(plsc);
+    plflush();
+    if ( ! plsc->nopause) {
+	if (plsc->plbuf_write)
+	    plbuf_eop(plsc);
 
-    offset = plsc->device - 1;
-    (*dispatch_table[offset].pl_eop) (plsc);
+	offset = plsc->device - 1;
+	(*dispatch_table[offset].pl_eop) (plsc);
+    }
 }
 
 /* Set up new page. */
@@ -183,6 +132,9 @@ plP_tidy(void)
 
     if (plsc->plbuf_write)
 	plbuf_tidy(plsc);
+
+    plsc->OutFile = NULL;
+    free_mem(plsc->FileName);
 }
 
 /* Change state. */
@@ -270,9 +222,12 @@ plP_fill(short *x, short *y, PLINT npts)
 {
     PLINT i, clpxmi, clpxma, clpymi, clpyma;
 
-/*    if (plsc->plbuf_write)
-	plbuf_fill(plsc, x, y, npts);
-*/
+    if (plsc->plbuf_write) {
+	plsc->dev_npts = npts;
+	plsc->dev_x = x;
+	plsc->dev_y = y;
+	plbuf_esc(plsc, PLESC_FILL, NULL);
+    }
 
     if (plsc->difilt) {
 	for (i = 0; i < npts; i++) {
@@ -302,12 +257,32 @@ grpolyline(short *x, short *y, PLINT npts)
     (*dispatch_table[offset].pl_polyline) (plsc, x, y, npts);
 }
 
-static void	plfill_pat	(short *, short *, PLINT);
+/* Here if the desired area fill capability isn't present, we mock up */
+/* something in software */
+
+static int foo;
 
 static void
 grfill(short *x, short *y, PLINT npts)
 {
-    if (plsc->dev_fill) {
+    if (plsc->patt == 0 && ! plsc->dev_fill0) {
+	if ( ! foo) {
+	    plwarn("Driver does not support hardware solid fills, switching to software fill.\n");
+	    foo = 1;
+	}
+	plsc->patt = 8;
+	plpsty(plsc->patt);
+    }
+    if (plsc->patt < 0 && ! plsc->dev_fill1) {
+	if ( ! foo) {
+	    plwarn("Driver does not support hardware pattern fills, switching to software fill.\n");
+	    foo = 1;
+	}
+	plsc->patt = ABS(plsc->patt) % 8 + 1;
+	plpsty(plsc->patt);
+    }
+
+    if (plsc->patt <= 0) {
 	plsc->dev_npts = npts;
 	plsc->dev_x = x;
 	plsc->dev_y = y;
@@ -316,12 +291,7 @@ grfill(short *x, short *y, PLINT npts)
 	(*dispatch_table[offset].pl_esc) (plsc, PLESC_FILL, NULL);
     }
     else
-	plfill_pat(x, y, npts);
-}
-
-static void
-plfill_pat(short *x, short *y, PLINT npts)
-{
+	plfill_soft(x, y, npts);
 }
 
 /*----------------------------------------------------------------------*\
@@ -348,7 +318,7 @@ static void
 difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
        PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma)
 {
-    PLINT i;
+    PLINT i, x, y;
 
 /* Map meta coordinates to physical coordinates */
 
@@ -363,14 +333,10 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
 
     if (plsc->difilt & PLDI_ORI) {
 	for (i = 0; i < npts; i++) {
-	    xscl1[i] = plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] +
-		plsc->dioxb;
-	    yscl1[i] = plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] +
-		plsc->dioyb;
-	}
-	for (i = 0; i < npts; i++) {
-	    xscl[i] = xscl1[i];
-	    yscl[i] = yscl1[i];
+	    x = plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] + plsc->dioxb;
+	    y = plsc->dioyax * xscl[i] + plsc->dioyay * yscl[i] + plsc->dioyb;
+	    xscl[i] = x;
+	    yscl[i] = y;
 	}
     }
 
@@ -718,12 +684,7 @@ calc_didev(void)
 
     if (aspect <= 0.)
 	aspect = plsc->aspdev;
-/*
-#ifdef DEBUG
-    fprintf(stderr, "Device aspect ratio: %f\n", aspdev);
-    fprintf(stderr, "Specified aspect ratio: %f\n", aspect);
-#endif
-*/
+
 /* Failsafe */
 
     plsc->mar = (plsc->mar > 0.5) ? 0.5 : plsc->mar;
@@ -770,18 +731,6 @@ calc_didev(void)
     plsc->diclpxma = plsc->didxax * plsc->phyxma + plsc->didxb;
     plsc->diclpymi = plsc->didyay * plsc->phyymi + plsc->didyb;
     plsc->diclpyma = plsc->didyay * plsc->phyyma + plsc->didyb;
-
-/* Transformation test */
-/*
-#ifdef DEBUG
-    pxmin = plsc->didxax * plsc->phyxmi + plsc->didxb;
-    pxmax = plsc->didxax * plsc->phyxma + plsc->didxb;
-    pymin = plsc->didyay * plsc->phyymi + plsc->didyb;
-    pymax = plsc->didyay * plsc->phyyma + plsc->didyb;
-    fprintf(stderr, "pxmin, pymin, pxmax, pymax: %d, %d, %d, %d\n",
-	    pxmin, pymin, pxmax, pymax);
-#endif
-*/
 }
 
 /*----------------------------------------------------------------------*\
@@ -883,39 +832,6 @@ calc_diori(void)
     plsc->dioyax = r12 * (ly / lx);
     plsc->dioyay = r22;
     plsc->dioyb = (1. - r22) * y0 - r12 * x0 * (ly / lx);
-
-/* Transformation test */
-
-#ifdef DEBUG
-{
-    PLINT x1, y1, px1, py1;
-    fprintf(stderr, "plsc->phyxmi: %d,  plsc->phyxma: %d\n",
-	    plsc->phyxmi, plsc->phyxma);
-
-    fprintf(stderr, "plsc->phyymi: %d,  plsc->phyyma: %d\n",
-	    plsc->phyymi, plsc->phyyma);
-
-    x1 = plsc->phyxmi; y1 = plsc->phyymi;
-    px1 = plsc->dioxax * x1 + plsc->dioxay * y1 + plsc->dioxb;
-    py1 = plsc->dioyax * x1 + plsc->dioyay * y1 + plsc->dioyb;
-    fprintf(stderr, "Point %d %d is transformed to %d %d\n", x1, y1, px1, py1);
-
-    x1 = plsc->phyxmi; y1 = plsc->phyyma;
-    px1 = plsc->dioxax * x1 + plsc->dioxay * y1 + plsc->dioxb;
-    py1 = plsc->dioyax * x1 + plsc->dioyay * y1 + plsc->dioyb;
-    fprintf(stderr, "Point %d %d is transformed to %d %d\n", x1, y1, px1, py1);
-
-    x1 = plsc->phyxma; y1 = plsc->phyymi;
-    px1 = plsc->dioxax * x1 + plsc->dioxay * y1 + plsc->dioxb;
-    py1 = plsc->dioyax * x1 + plsc->dioyay * y1 + plsc->dioyb;
-    fprintf(stderr, "Point %d %d is transformed to %d %d\n", x1, y1, px1, py1);
-
-    x1 = plsc->phyxma; y1 = plsc->phyyma;
-    px1 = plsc->dioxax * x1 + plsc->dioxay * y1 + plsc->dioxb;
-    py1 = plsc->dioyax * x1 + plsc->dioyay * y1 + plsc->dioyb;
-    fprintf(stderr, "Point %d %d is transformed to %d %d\n", x1, y1, px1, py1);
-}
-#endif
 }
 
 /*----------------------------------------------------------------------*\
@@ -977,26 +893,6 @@ calc_dimap()
 	return;
     }
 
-#ifdef DEBUG
-    fprintf(stderr, "plsc->phyxmi: %d,  plsc->phyxma: %d\n",
-	    plsc->phyxmi, plsc->phyxma);
-
-    fprintf(stderr, "plsc->phyymi: %d,  plsc->phyyma: %d\n",
-	    plsc->phyymi, plsc->phyyma);
-
-    fprintf(stderr, "plsc->xpmm: %f,  plsc->ypmm: %f\n",
-	    plsc->xpmm, plsc->ypmm);
-
-    fprintf(stderr, "plsc->dimxmin: %d,  plsc->dimxmax: %d\n",
-	    plsc->dimxmin, plsc->dimxmax);
-
-    fprintf(stderr, "plsc->dimymin: %d,  plsc->dimymax: %d\n",
-	    plsc->dimymin, plsc->dimymax);
-
-    fprintf(stderr, "plsc->dimxpmm: %f,  plsc->dimypmm: %f\n",
-	    plsc->dimxpmm, plsc->dimypmm);
-#endif
-
 /* Set default aspect ratio */
 
     lx = (plsc->dimxmax - plsc->dimxmin + 1) / plsc->dimxpmm;
@@ -1020,25 +916,6 @@ calc_dimap()
     plsc->dimyay = pylen / dimylen;
     plsc->dimxb = pxmin - pxlen * plsc->dimxmin / dimxlen;
     plsc->dimyb = pymin - pylen * plsc->dimymin / dimylen;
-
-#ifdef DEBUG
-    fprintf(stderr, "pxmin: %d,  pxmax: %d,  pymin: %d,  pymax: %d\n",
-	    pxmin, pxmax, pymin, pymax);
-
-    fprintf(stderr, "dimxax: %f,  dimxb: %f,  dimyay: %f,  dimyb: %f\n",
-	    plsc->dimxax, plsc->dimxb, plsc->dimyay, plsc->dimyb);
-
-    fprintf(stderr, "pxlen: %f,  pylen: %f\n", pxlen, pylen);
-
-    pxmin = plsc->dimxmin * plsc->dimxax + plsc->dimxb;
-    pxmax = plsc->dimxmax * plsc->dimxax + plsc->dimxb;
-    pymin = plsc->dimymin * plsc->dimyay + plsc->dimyb;
-    pymax = plsc->dimymax * plsc->dimyay + plsc->dimyb;
-
-    fprintf(stderr, "Transformation test:\n\
-pxmin: %d,  pxmax: %d,  pymin: %d,  pymax: %d\n",
-	    pxmin, pxmax, pymin, pymax);
-#endif
 }
 
 /*----------------------------------------------------------------------*\
@@ -1131,8 +1008,8 @@ c_plinit(void)
 
 /* Initialize color maps */
 
-    plCmap0_init(plsc);
-    plCmap1_init(plsc);
+    plCmap0_init();
+    plCmap1_init();
 
 /* Load fonts */
 
@@ -1258,8 +1135,7 @@ c_plend1(void)
     free_mem(plsc->plwindow);
     free_mem(plsc->geometry);
     free_mem(plsc->dev);
-    free_mem(plsc->FileName);
-    free_mem(plsc->FamilyName);
+    free_mem(plsc->BaseName);
 
 /* Free malloc'ed stream if not in initial stream */
 
@@ -1404,9 +1280,9 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
     plsc->icol0 = plsr->icol0;
     plsc->ncol0 = plsr->ncol0;
     plsc->icol1 = plsr->icol1;
+    plsc->ncol1 = plsr->ncol1;
     plsc->bgcolorset = plsr->bgcolorset;
 
-    plsc->cmap1set = plsr->cmap1set;
     for (i = 0; i < 16; i++)
 	plsc->cmap0setcol[i] = plsr->cmap0setcol[i];
 
@@ -1468,7 +1344,7 @@ plGetDev()
     while (dev < 1 || dev > npldrivers) {
 	printf("\nPlotting Options:\n");
 	for (i = 0; i < npldrivers; i++) {
-	    printf(" <%2ld> (%s)\t %s\n", i + 1, dispatch_table[i].pl_DevName,
+	    printf(" <%2ld> %-10s %s\n", i + 1, dispatch_table[i].pl_DevName,
 		   dispatch_table[i].pl_MenuStr);
 	}
 	if (ipls == 0)
@@ -1503,58 +1379,6 @@ plGetDev()
 	    plexit("plGetDev: Too many tries.");
     }
     plsc->device = dev;
-}
-
-/*----------------------------------------------------------------------*\
-* void plwarn()
-*
-* A handy way to issue warnings, if need be.
-\*----------------------------------------------------------------------*/
-
-void
-plwarn(char *errormsg)
-{
-    int was_gfx = 0;
-
-    if (plsc->level > 0) {
-	if (plsc->graphx == 1) {
-	    was_gfx = 1;
-	    pltext();
-	}
-    }
-
-    fprintf(stderr, "\n*** PLPLOT WARNING ***\n");
-    if (*errormsg != '\0')
-	fprintf(stderr, "%s\n", errormsg);
-
-    if (was_gfx == 1) {
-	plgra();
-    }
-}
-
-/*----------------------------------------------------------------------*\
-* void plexit()
-*
-* In case of an abort this routine is called.  It just prints out an error
-* message and tries to clean up as much as possible.  It's best to turn
-* off pause and then restore previous setting before returning.
-\*----------------------------------------------------------------------*/
-
-void
-plexit(char *errormsg)
-{
-    PLINT nopause;
-
-    nopause = plsc->nopause;
-    plsc->nopause = 1;
-
-    plend();
-    if (*errormsg != '\0') {
-	fprintf(stderr, "\n*** PLPLOT ERROR ***\n");
-	fprintf(stderr, "%s\n", errormsg);
-    }
-    plsc->nopause = nopause;
-    pl_exit();
 }
 
 /*----------------------------------------------------------------------*\
@@ -1716,20 +1540,23 @@ c_plsori(PLINT ori)
     plsdiori((PLFLT) ori);
 }
 
-/* Set pen width.  Can be done any time, but before calling plinit is best
-   since otherwise it may be volatile (i.e. reset on next page advance). */
+/*
+* Set pen width.  Can be done any time, but before calling plinit is best
+* since otherwise it may be volatile (i.e. reset on next page advance). 
+* If width <= 0 or is unchanged by the call, nothing is done.
+*/
 
 void
 c_plwid(PLINT width)
 {
-    plsc->width = width;
+    if (width != plsc->width && width > 0) {
+	plsc->width = width;
 
-    if (plsc->level > 0) {
-	if ( ! plsc->widthlock) 
-	    plP_state(PLSTATE_WIDTH);
+	if (plsc->level > 0) {
+	    if ( ! plsc->widthlock) 
+		plP_state(PLSTATE_WIDTH);
+	}
     }
-    else
-	plsc->widthset = 1;
 }
 
 /* Obsolete.  Use page driver interface instead. */
@@ -1760,7 +1587,6 @@ void
 plsfile(FILE *file)
 {
     plsc->OutFile = file;
-    plsc->fileset = 1;
 }
 
 /* Get the (current) output file name.  Must be preallocated to >80 bytes */
@@ -1786,7 +1612,7 @@ c_plsfnam(const char *fnam)
 void
 c_plspause(PLINT pause)
 {
-    plsc->nopause = !pause;
+    plsc->nopause = ! pause;
 }
 
 /* Set the floating point precision (in number of places) in numeric labels. */
@@ -1865,302 +1691,6 @@ plsxwin(PLINT window_id)
 }
 
 /*----------------------------------------------------------------------*\
-*  Routines that deal with colors & color maps.
-\*----------------------------------------------------------------------*/
-
-/* Set color, map 0.  Argument is integer between 0 and 15. */
-
-void
-c_plcol0(PLINT icol0)
-{
-    if (plsc->level < 1)
-	plexit("plcol0: Please call plinit first.");
-
-    if (icol0 < 0 || icol0 > 15) {
-	plwarn("plcol0: Invalid color.");
-	return;
-    }
-
-    if (plsc->cmap0setcol[icol0] == 0) {
-	plwarn("plcol0: Requested color not allocated.");
-	return;
-    }
-
-    plsc->icol0 = icol0;
-    plsc->curcolor.r = plsc->cmap0[icol0].r;
-    plsc->curcolor.g = plsc->cmap0[icol0].g;
-    plsc->curcolor.b = plsc->cmap0[icol0].b;
-
-    plP_state(PLSTATE_COLOR0);
-}
-
-/* Set color, map 1.  Argument is a float between 0. and 1. */
-
-void
-c_plcol1(PLFLT col1)
-{
-    if (plsc->level < 1)
-	plexit("plcol1: Please call plinit first.");
-
-    if (col1 < 0 || col1 > 1) {
-	plwarn("plcol1: Invalid color.");
-	return;
-    }
-
-    plsc->icol1 = col1 * 255.9999;
-    plsc->curcolor.r = plsc->cmap1[plsc->icol1].r;
-    plsc->curcolor.g = plsc->cmap1[plsc->icol1].g;
-    plsc->curcolor.b = plsc->cmap1[plsc->icol1].b;
-
-    plP_state(PLSTATE_COLOR1);
-}
-
-/* Set line color by red, green, blue from  0. to 1. */
-/* Do NOT use this.  Only retained for backward compatibility */
-
-void
-c_plrgb(PLFLT r, PLFLT g, PLFLT b)
-{
-    if (plsc->level < 1)
-	plexit("plrgb: Please call plinit first.");
-
-    if ((r < 0. || r > 1.) || (g < 0. || g > 1.) || (b < 0. || b > 1.)) {
-	plwarn("plrgb: Invalid RGB color value");
-	return;
-    }
-
-    plsc->icol0 = PL_RGB_COLOR;
-    plsc->curcolor.r = MIN(255, (int) (256. * r));
-    plsc->curcolor.g = MIN(255, (int) (256. * g));
-    plsc->curcolor.b = MIN(255, (int) (256. * b));
-
-    plP_state(PLSTATE_COLOR0);
-}
-
-/* Set line color by 8 bit RGB values. */
-/* See note to plrgb() */
-
-void
-c_plrgb1(PLINT r, PLINT g, PLINT b)
-{
-    if (plsc->level < 1)
-	plexit("plrgb1: Please call plinit first.");
-
-    if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
-	plwarn("plrgb1: Invalid color");
-	return;
-    }
-
-    plsc->icol0 = PL_RGB_COLOR;
-    plsc->curcolor.r = r;
-    plsc->curcolor.g = g;
-    plsc->curcolor.b = b;
-
-    plP_state(PLSTATE_COLOR0);
-}
-
-/* Set the background color by 8 bit RGB value */
-/* Note: for some drivers this corresponds to a cmap 0 color */
-
-void
-c_plscolbg(PLINT r, PLINT g, PLINT b)
-{
-    if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
-	plwarn("plscolbg: Invalid color");
-	return;
-    }
-
-    plsc->bgcolor.r = r;
-    plsc->bgcolor.g = g;
-    plsc->bgcolor.b = b;
-    plsc->bgcolorset = 1;
-}
-
-/* Set a given color from color map 0 by 8 bit RGB value */
-/* Increments ncol0 if it results in a new color allocation */
-
-void
-c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
-{
-    if (plsc->level > 0) {
-	plwarn("plscol0: Must be called before plinit.");
-	return;
-    }
-
-    if (icol0 < 0 || icol0 > 15)
-	plexit("plscol0: Illegal color table value");
-
-    if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
-	plwarn("plscol0: Invalid color");
-	return;
-    }
-
-    if (plsc->cmap0setcol[icol0] == 0) {
-	plsc->ncol0++;
-	plsc->cmap0setcol[icol0] = 1;
-    }
-    plsc->cmap0[icol0].r = r;
-    plsc->cmap0[icol0].g = g;
-    plsc->cmap0[icol0].b = b;
-}
-
-/* Returns 8 bit RGB values for given color from color map 0 */
-/* Values are negative if an invalid color id is given */
-
-void
-c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
-{
-    if (icol0 < 0 || icol0 > 15) {
-	plwarn("plgcol0: Invalid color index");
-	goto error;
-    }
-
-    if (plsc[ipls].cmap0setcol[icol0] == 0) {
-	plwarn("plgcol0: Requested color not allocated.");
-	goto error;
-    }
-
-    *r = plsc->cmap0[icol0].r;
-    *g = plsc->cmap0[icol0].g;
-    *b = plsc->cmap0[icol0].b;
-    return;
-
- error:
-    *r = -1;
-    *g = -1;
-    *b = -1;
-    return;
-}
-
-/* Set color map 0 colors by 8 bit RGB values */
-/* Note -- this sets the entire map, including ncol0. */
-
-void
-c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
-{
-    int i;
-
-    if (plsc->level > 0) {
-	plwarn("plscmap0: Must be called before plinit.");
-	return;
-    }
-
-    if (ncol0 > 16)
-	plexit("plscmap0: Maximum of 16 colors in color map 0.");
-
-    plsc->ncol0 = ncol0;
-
-    for (i = 0; i < ncol0; i++) {
-	if ((r[i] < 0 || r[i] > 255) ||
-	    (g[i] < 0 || g[i] > 255) ||
-	    (b[i] < 0 || b[i] > 255)) {
-
-	    plwarn("plscmap0: Invalid color");
-	    continue;
-	}
-
-	plsc->cmap0[i].r = r[i];
-	plsc->cmap0[i].g = g[i];
-	plsc->cmap0[i].b = b[i];
-	plsc->cmap0setcol[i] = 1;
-    }
-}
-
-/* Set color map 1 colors by 8 bit RGB values */
-/* You MUST set all 256 colors if you use this */
-
-void
-c_plscmap1(PLINT *r, PLINT *g, PLINT *b)
-{
-    int i;
-
-    if (plsc->level > 0) {
-	plwarn("plscmap1: Must be called before plinit.");
-	return;
-    }
-
-    for (i = 0; i < 256; i++) {
-	if ((r[i] < 0 || r[i] > 255) ||
-	    (g[i] < 0 || g[i] > 255) ||
-	    (b[i] < 0 || b[i] > 255)) {
-
-	    fprintf(stderr, "plscmap1: Invalid RGB color: %d, %d, %d\n",
-		    r[i], g[i], b[i]);
-	    plexit("");
-	}
-	plsc->cmap1[i].r = r[i];
-	plsc->cmap1[i].g = g[i];
-	plsc->cmap1[i].b = b[i];
-    }
-    plsc->cmap1set = 1;
-}
-
-/* Set color map 1 colors using a linear relationship between function
-*  height and position in HLS or RGB color space.
-*  There are 6 parameters pointed to by "param"; these correspond to:
-*
-*   itype=0 (HLS)    itype=1 (RGB)
-*   -------------    -------------
-*	H-min		R-min
-*	H-max		R-max
-*	L-min		G-min
-*	L-max		G-max
-*	S-min		B-min
-*	S-max		B-max
-*
-*  Bounds on RGB coordinates:
-*	R,G,B		[0., 1.]	magnitude
-*
-*  Bounds on HLS coordinates:
-*	hue		[0., 360.]	degrees
-*	lightness	[0., 1.]	magnitude
-*	saturation	[0., 1.]	magnitude
-*/
-
-void
-c_plscmap1f1(PLINT itype, PLFLT *param)
-{
-    int i;
-    PLFLT h, l, s, r, g, b;
-
-    if (plsc->level > 0) {
-	plwarn("plscmap1f1: Must be called before plinit.");
-	return;
-    }
-    for (i = 0; i < 256; i++) {
-	r = param[0] + (param[1] - param[0]) * i / 255.;
-	g = param[2] + (param[3] - param[2]) * i / 255.;
-	b = param[4] + (param[5] - param[4]) * i / 255.;
-
-	if (itype == 0) {
-	    h = r;
-	    l = g;
-	    s = b;
-	    plHLS_RGB(h, l, s, &r, &g, &b);
-	}
-
-	if ((r < 0. || r > 1.) || (g < 0. || g > 1.) || (b < 0. || b > 1.)) {
-	    fprintf(stderr, "plscmap1f1: Invalid RGB color: %f, %f, %f\n",
-		    r, g, b);
-	    plexit("");
-	}
-	plsc->cmap1[i].r = MIN(255, (int) (256. * r));
-	plsc->cmap1[i].g = MIN(255, (int) (256. * g));
-	plsc->cmap1[i].b = MIN(255, (int) (256. * b));
-    }
-    plsc->cmap1set = 1;
-}
-
-/* Used to globally turn color output on/off */
-
-void
-c_plscolor(PLINT color)
-{
-    plsc->colorset = 1;
-    plsc->color = color;
-}
-
-/*----------------------------------------------------------------------*\
 *  These set/get information for family files, and may be called prior
 *  to plinit to set up the necessary parameters.  Arguments:
 *
@@ -2170,7 +1700,6 @@ c_plscolor(PLINT color)
 \*----------------------------------------------------------------------*/
 
 /* Get family file parameters */
-
 
 void
 c_plgfam(PLINT *p_fam, PLINT *p_num, PLINT *p_bmax)
@@ -2881,6 +2410,28 @@ plP_spat(PLINT inc[], PLINT del[], PLINT nlin)
     for (i = 0; i < nlin; i++) {
 	plsc->inclin[i] = inc[i];
 	plsc->delta[i] = del[i];
+    }
+}
+
+/* Get pattern fill number. */
+
+void
+plP_gpsty(PLINT *patt)
+{
+    *patt = plsc->patt;
+}
+
+/* Set pattern fill number */
+
+void
+plP_spsty(PLINT patt)
+{
+    if (patt != plsc->patt) {
+	plsc->patt = patt;
+
+	if (plsc->level > 0) {
+	    plP_state(PLSTATE_FILL);
+	}
     }
 }
 
