@@ -126,7 +126,6 @@ static void potential()
    PLINT ncollin, ncolbox, ncollab;
    PLFLT px[PPERIMETERPTS], py[PPERIMETERPTS];
    PLFLT t, r, theta;
-   PLFLT lev[10];
    
 /*create data to be contoured.*/
    plAlloc2dGrid(&cgrid2.xg, PRPTS, PTHETAPTS);
