@@ -9,12 +9,20 @@ static int
 {
 <argdecls>
 
-    if ( ( %ndefs% && (argc < (1 + %nargs% - %ndefs%))) ||
-         (!%ndefs% && (argc != (%nargs% + 1))) ||
-         ((argc == 2) && (strcmp(argv[1],"-help") == 0)) ) {
+    errcode = 0; errmsg[0] = '\0';
 
+    if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
+	Tcl_AppendResult( interp, "command syntax: \"",
+			  "%cmd% %args%", "\"",
+			  (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    if ( (!%isref% && %ndefs% && (argc < (1 + %nargs% - %ndefs%))) ||
+         (!%isref% && !%ndefs% && (argc != (%nargs% + 1))) ||
+         ( %isref% && (argc != 1) && (argc != (%nargs% + 1))) ) {
 	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "%cmd%%args%", "\"",
+			  "%cmd% %args%", "\"",
 			  (char *) NULL);
 	return TCL_ERROR;
     }
@@ -24,6 +32,11 @@ static int
 <plcmd>
 
 <fetch_result>
+
+    if (errcode != 0) {
+	Tcl_AppendResult(interp, errmsg, (char *) NULL);
+	return TCL_ERROR;
+    }
 
     plflush();
     return TCL_OK;
