@@ -4,9 +4,12 @@
 
   $Id$
   $Log$
-  Revision 1.1  1994/07/15 20:38:09  furnish
-  Example program to show off 3-d line and point plotting.
+  Revision 1.2  1994/07/19 22:14:05  furnish
+  Added new plots for showing hidden surface removal using pl3poly().
 
+ * Revision 1.1  1994/07/15  20:38:09  furnish
+ * Example program to show off 3-d line and point plotting.
+ *
 */
 
 #include <plplot.h>
@@ -27,6 +30,8 @@ static char *title[4] =
     "#frPLplot Example 18 - Alt=60, Az=120, Opt=3",
     "#frPLplot Example 18 - Alt=60, Az=160, Opt=3"
 };
+
+void test_poly();
 
 /*----------------------------------------------------------------------*\
  * main
@@ -52,6 +57,9 @@ main(int argc, char *argv[])
 /* Initialize plplot */
 
     plinit();
+
+    for( k=0; k < 4; k++ )
+	test_poly(k);
 
     x = (PLFLT *) malloc(PTS * sizeof(PLFLT));
     y = (PLFLT *) malloc(PTS * sizeof(PLFLT));
@@ -94,4 +102,69 @@ main(int argc, char *argv[])
 
     plend();
     exit(0);
+}
+
+void test_poly(int k)
+{
+    float *x, *y, *z;
+    float theta, phi;
+    int i, j;
+    float pi, two_pi;
+    int draw[] = { 1, 1, 1, 1, 1 };
+
+    pi = 3.1415927, two_pi = 2. * pi;
+
+    x = (PLFLT *) malloc(5 * sizeof(PLFLT));
+    y = (PLFLT *) malloc(5 * sizeof(PLFLT));
+    z = (PLFLT *) malloc(5 * sizeof(PLFLT));
+
+    pladv(0);
+    plvpor(0.0, 1.0, 0.0, 0.9);
+    plwind(-1.0, 1.0, -0.9, 1.1);
+    plcol(1);
+    plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
+    plbox3("bnstu", "x axis", 0.0, 0,
+	   "bnstu", "y axis", 0.0, 0,
+	   "bcdmnstuv", "z axis", 0.0, 0);
+
+    plcol(2);
+
+#define THETA(a) (two_pi * (a) /20.)
+#define PHI(a)    (pi * (a) / 20.1)
+
+/*
+  x = r sin(phi) cos(theta)
+  y = r sin(phi) sin(theta)
+  z = r cos(phi)
+  r = 1 :=)
+  */
+
+    for( i=0; i < 20; i++ ) {
+	for( j=0; j < 20; j++ ) {
+	    x[0] = sin( PHI(j) ) * cos( THETA(i) );
+	    y[0] = sin( PHI(j) ) * sin( THETA(i) );
+	    z[0] = cos( PHI(j) );
+	    
+	    x[1] = sin( PHI(j+1) ) * cos( THETA(i) );
+	    y[1] = sin( PHI(j+1) ) * sin( THETA(i) );
+	    z[1] = cos( PHI(j+1) );
+	    
+	    x[2] = sin( PHI(j+1) ) * cos( THETA(i+1) );
+	    y[2] = sin( PHI(j+1) ) * sin( THETA(i+1) );
+	    z[2] = cos( PHI(j+1) );
+	    
+	    x[3] = sin( PHI(j) ) * cos( THETA(i+1) );
+	    y[3] = sin( PHI(j) ) * sin( THETA(i+1) );
+	    z[3] = cos( PHI(j) );
+	    
+	    x[4] = sin( PHI(j) ) * cos( THETA(i) );
+	    y[4] = sin( PHI(j) ) * sin( THETA(i) );
+	    z[4] = cos( PHI(j) );
+
+	    pl3poly( x, y, z, draw, -5 );
+	}
+    }
+
+    plcol(3);
+    plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" );
 }
