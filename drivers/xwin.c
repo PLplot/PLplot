@@ -14,7 +14,8 @@
 #include "plplot/plevent.h"
 
 static int synchronize = 0;	/* change to 1 for synchronized operation */
-				/* for debugging only */
+				/* for debugging only. */
+                                /* Use "-drvopt sync" cmd line option to set. */
 
 /* When USE_DEFAULT_VISUAL is defined, DefaultVisual() is used to get the
  * visual.  Otherwise, the visual is obtained using XGetVisualInfo() to make a
@@ -151,6 +152,9 @@ static void  StoreCmap0		(PLStream *pls);
 static void  StoreCmap1		(PLStream *pls);
 static void  imageops           (PLStream *pls, int *ptr);
 
+static DrvOpt xwin_options[] = {{"sync", DRV_INT, &synchronize, "Synchronized X server operation (0|1)"},
+			      {NULL, DRV_INT, NULL, NULL}};
+
 void plD_dispatch_init_xw( PLDispatchTable *pdt )
 {
     pdt->pl_MenuStr  = "X-Window (Xlib)";
@@ -192,6 +196,8 @@ plD_init_xw(PLStream *pls)
     pls->plbuf_write = 1;	/* Activate plot buffer */
     pls->dev_fastimg = 1;       /* is a fast image device */
     pls->dev_xor = 1;           /* device support xor mode */
+
+    plParseDrvOpts(xwin_options);
 
 /* The real meat of the initialization done here */
 
@@ -2821,115 +2827,142 @@ PLX_save_colormap(Display *display, Colormap colormap)
 static void
 DrawImage(PLStream *pls)
 {
+
   XwDev *dev = (XwDev *) pls->dev;
   XwDisplay *xwd = (XwDisplay *) dev->xwd;
-  XPoint Ppts[5];
   XImage *ximg;
-  char *imgdata;
   XColor curcolor;
-  int X0, Y0, WX, WY;
-  int kx, ky;
+  PLINT xmin, xmax, ymin, ymax, icol1;
 
-  int i, npts, nx, ny, ix, iy, corners[5];
-  int clpxmi, clpxma, clpymi, clpyma, icol1;
- 
-  int DefScreen, DefDepth, DefPad;
-  Visual *DefVisual;
+  float mlr, mtb;
+  float blt, brt, brb, blb;
+  float left, right;
+  int kx, ky;
+  int nx, ny, ix, iy;
+  int i, corners[4], r[4];
+
+  struct {
+    float x, y;
+  } Ppts[4];
  
   CheckForEvents(pls);
   
-  clpxmi = plsc->Dxmin;
-  clpxma = plsc->Dxmax;
-  clpymi = plsc->Dymin;
-  clpyma = plsc->Dymax;
-
-#define inside(j)  ( clpxmi <= plsc->dev_ix[j] && \
-                     clpxma >= plsc->dev_ix[j] && \
-                     clpymi <= plsc->dev_iy[j] && \
-                     clpyma >= plsc->dev_iy[j] )
+  xmin = MAX(dev->xscale * plsc->imclxmin, 1); /* XPutPixel minimum is 1 */
+  xmax = dev->xscale * plsc->imclxmax;
+  ymin = MAX(dev->yscale * plsc->imclymin, 1); /* XPutPixel minimum is 1 */
+  ymax = dev->yscale * plsc->imclymax;
   
-    npts = plsc->dev_nptsX*plsc->dev_nptsY;
+  nx = pls->dev_nptsX;
+  ny = pls->dev_nptsY;
   
-    nx = pls->dev_nptsX;
-    ny = pls->dev_nptsY;
-   
-    X0 = dev->xscale * MAX( clpxmi, pls->dev_ix[0]);
-    Y0 = dev->yscale * MAX( clpymi, pls->dev_iy[0]);
+  /* the XGetImage() call fails if either the pixmap or window is not fully viewable! */
+  if (dev->write_to_pixmap)
+    ximg =  XGetImage( xwd->display, dev->pixmap, 0, 0, dev->width, dev->height,
+		       AllPlanes, ZPixmap);
+  if (dev->write_to_window)
+    ximg =  XGetImage( xwd->display, dev->window, 0, 0, dev->width, dev->height,
+		       AllPlanes, ZPixmap);
+      
+  if (xwd->ncol1 == 0)
+    AllocCmap1(pls);
+  if (xwd->ncol1 < 2)
+    return;
 
-    WX = dev->xscale * MIN(clpxma, pls->dev_ix[nx*ny-1]) -X0+1;
-    WY = dev->yscale * MIN(clpyma, pls->dev_iy[nx*ny-1]) -Y0+1;
- 
-    if(WX < 0 || WY < 0){
-      printf("  %d %d %d %d\n", clpxmi,clpymi, clpxma, clpyma);
-      printf("  %d %d %d %d\n", pls->dev_ix[0], pls->dev_iy[0],
-	     pls->dev_ix[nx*ny-1], pls->dev_iy[nx*ny-1]);
-      return;
-    }
+  /* translate array for rotation */
+  switch ((int)(plsc->diorot - 4.*floor(plsc->diorot/4.))) {
+  case 0:
+    r[0]=0; r[1]=1; r[2]=2; r[3]=3; break;
+  case 1:
+    r[0]=1; r[1]=2; r[2]=3; r[3]=0; break;
+  case 2: 
+    r[0]=2; r[1]=3; r[2]=0; r[3]=1; break;
+  case 3:
+    r[0]=3; r[1]=0; r[2]=1; r[3]=2;
+  }
 
-    printf("%d %d %d %d \n", X0,Y0,WX,WY);
+  /* slope of left/right and top/bottom edges */
+  mlr = (dev->yscale * (plsc->dev_iy[1] - plsc->dev_iy[0])) /
+    (dev->xscale * (plsc->dev_ix[1] - plsc->dev_ix[0]));
 
-    DefScreen = DefaultScreen(xwd->display);
-    DefVisual = DefaultVisual(xwd->display, DefScreen);
-    DefDepth = DefaultDepthOfScreen(ScreenOfDisplay(xwd->display,DefScreen));
-    DefPad = BitmapPad(xwd->display);
-  
-    imgdata = malloc(((WX)*(WY)*(xwd->depth))  );
-  
-    ximg = XCreateImage( xwd->display, xwd->visual, xwd->depth, 
-			ZPixmap, 0, imgdata, WX, WY, DefPad, 0);
-  
-    for(ix = 0; ix < nx-1; ix++) {
-      for(iy = 0; iy < ny-1; iy++) {
-	corners[0] = ix*ny+iy;
-	corners[1] = (ix+1)*ny+iy; 
-	corners[2] = (ix+1)*ny+iy+1;
-	corners[3] = ix*ny+iy+1;
-	corners[4] = ix*ny+iy;
+  mtb = (dev->yscale * (plsc->dev_iy[ny] - plsc->dev_iy[0])) /
+    (dev->xscale * (plsc->dev_ix[ny] - plsc->dev_ix[0]));
 
-	for (i = 0; i < 5; i++) {
-	  Ppts[i].x = dev->xscale * (plsc->dev_ix[ corners[i]]);
-	  Ppts[i].y = dev->yscale * (plsc->dev_iy[ corners[i]]);
-	}
-	
-	if( inside(corners[0]) || inside(corners[1]) || 
-	    inside(corners[2]) || inside(corners[3]) ||
-	    ( MAX(Ppts[0].x-X0,0) <= MIN(Ppts[1].x-X0,WX-1)  && 
-	      MAX(Ppts[0].y-Y0,0) <= MIN(Ppts[2].y-Y0,WY-1))
-	    ) {
+  for(ix = 0; ix < nx-1; ix++) {
+    for(iy = 0; iy < ny-1; iy++) {
+      corners[0] = ix*ny+iy; /* [ix][iy] */
+      corners[1] = (ix+1)*ny+iy; /* [ix+1][iy] */
+      corners[2] = (ix+1)*ny+iy+1; /* [ix+1][iy+1] */
+      corners[3] = ix*ny+iy+1; /* [ix][iy+1] */
+
+      for (i=0; i<4; i++) {
+	Ppts[i].x = dev->xscale * (plsc->dev_ix[corners[r[i]]]);
+	Ppts[i].y = dev->yscale * (plsc->dev_iy[corners[r[i]]]);
+      }
+
+      /* if any corner is inside the draw area */
+      if (Ppts[0].x > xmin || Ppts[2].x < xmax ||
+	  Ppts[1].y > ymin || Ppts[3].y < ymax) {
+
+	/* try to avoid ragged sides, when clipping a low res. rotated image */
+	Ppts[0].x = MAX(Ppts[0].x, xmin);
+	Ppts[2].x = MIN(Ppts[2].x, xmax);
+	Ppts[1].y = MAX(Ppts[1].y, ymin);
+	Ppts[3].y = MIN(Ppts[3].y, ymax);
+
+	/* the Z array has size (nx-1)*(ny-1) */
+	icol1 = floor( 0.5+plsc->dev_z[ix*(ny-1)+iy] * (xwd->ncol1-1)) ;	  
 	  
-	  if (xwd->ncol1 == 0)
-	    AllocCmap1(pls);
+	if (xwd->color)
+	  curcolor = xwd->cmap1[icol1];
+	else 
+	  curcolor = xwd->fgcolor;
 
-	  icol1 = floor( 0.5+plsc->dev_z[corners[0]] * (xwd->ncol1-1)) ;	  
-	  if (xwd->ncol1 < 2)
-	    break;
-	  
-	  if (xwd->color) {
-	    curcolor = xwd->cmap1[icol1];
-	  }  else { 
-	    curcolor = xwd->fgcolor;
-	  }  
+	/* Fill square between current and next points. */
 
-          for( kx = MAX(Ppts[0].x-X0,0); kx <= MIN(Ppts[1].x-X0,WX-1); kx++)
-	    for( ky = MAX(Ppts[0].y-Y0,0); ky <= MIN(Ppts[2].y-Y0,WY-1); ky++)
-	      /*  ximg->data[kx*WY+ky]=curcolor.pixel;*/
-	      XPutPixel(ximg, kx, WY-1-ky, curcolor.pixel);
+	/* If the fill area is a single dot, accelerate the fill. */	   
+	if (0 /* aliasing? */ && (abs(Ppts[2].x - Ppts[0].x) == 1) &&
+	    (abs(Ppts[3].y - Ppts[1].y) == 1)) {
+	  XPutPixel(ximg, Ppts[0].x, dev->height-Ppts[0].y, curcolor.pixel);
+
+	  /* integer rotate, accelerate */
+	} else if (plsc->diorot == floor(plsc->diorot)) {
+	  for( ky = Ppts[1].y; ky <= Ppts[3].y; ky++)
+	    for( kx = Ppts[0].x; kx <= Ppts[2].x; kx++)
+	      XPutPixel(ximg, kx, dev->height-ky, curcolor.pixel);
+
+	  /* lozangue, scanline fill it */
+	} else {
+
+	  /* y interception point of left/right top/bottom edges */	    
+	  blt = Ppts[0].y - mlr * Ppts[0].x;
+	  brb = Ppts[2].y - mlr * Ppts[2].x;
+	    
+	  brt = Ppts[2].y - mtb * Ppts[2].x;
+	  blb = Ppts[0].y - mtb * Ppts[0].x;
+
+	  for( ky = Ppts[1].y; ky < Ppts[3].y; ky++) {
+	    left = MAX(((ky-blt)/mlr), ((ky-blb)/mtb));
+	    right = MIN(((ky-brt)/mtb), ((ky-brb)/mlr));
+	    for( kx = Ppts[0].x; kx < Ppts[2].x; kx++) {
+	      if (kx >= rint(left) && kx <= rint(right)) {
+		XPutPixel(ximg, kx, dev->height - ky, curcolor.pixel);
+	      }
+	    }
+	  }
 	}
       }
     }
+  }
 
-    if (dev->write_to_pixmap)
-      XPutImage( xwd->display, dev->pixmap, dev->gc, ximg, 0, 0,
-	       X0, dev->yscale*dev->ylen - Y0-WY, WX, WY );  
-    if (dev->write_to_window)
-      XPutImage( xwd->display, dev->window, dev->gc, ximg, 0, 0,
-	       X0, dev->yscale*dev->ylen - Y0-WY, WX, WY );  
+  if (dev->write_to_pixmap)
+    XPutImage( xwd->display, dev->pixmap, dev->gc, ximg, 0, 0,
+	       0, 0, dev->width, dev->height);
+  if (dev->write_to_window)
+    XPutImage( xwd->display, dev->window, dev->gc, ximg, 0, 0,
+	       0, 0, dev->width, dev->height);
 
-    /* XPutImage(  xwd->display, dev->pixmap, dev->gc, ximg, 0, 0,X0, dev->yscale*dev->ylen-  Y0-WY,WX, WY );  */
-    XFlush(xwd->display); 
-    /* XDestroyImage(ximg); */
-    free(ximg);
-    free(imgdata);
+  XFlush(xwd->display); 
+  XDestroyImage(ximg);
 }
 
 static void
