@@ -16,7 +16,7 @@ tar zxf plplotdoc-html-0.4.3.tar.gz
 cd ..
 
 # Fix permissions screwup(s) in freshly checked out CVS
-chmod a-x examples/python/xw??.py
+# Nothing to do for the moment thanks to Rafael's efforts
 
 # Prepare tree for configure; make; make install
 aclocal_opts="$*"
