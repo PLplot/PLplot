@@ -109,7 +109,6 @@ static int synchronize = 0; /* change to 1 for synchronized operation */
 /* Pixels/mm */
 
 #define PHYSICAL 0  /* Enables physical scaling.. */
-#define DPMM  2.88  /* ..just experimental for now */
 
 /* Set constants for dealing with colormap. In brief:
  *
