@@ -67,8 +67,8 @@ changequote(,)dnl
 	AC_MSG_RESULT($prefix)
       else
 	AC_MSG_RESULT($prefix)
-	AC_MSG_WARN(non-standard installed distribution ($1 not stored under bin))
-	AC_MSG_WARN(please completely delete old files before installation)
+	AC_MSG_RESULT(warning: non-standard installed distribution ($1 not stored under bin))
+	AC_MSG_RESULT(warning: please completely delete old files before installation)
       fi
 changequote([,])dnl
       break
@@ -355,7 +355,7 @@ define(FIND_INC, [
     done
     if test -z "$$2"; then
 	AC_MSG_RESULT(no)
-	AC_MSG_WARN([can't find $1.h, setting $3 to no])
+	AC_MSG_RESULT([warning: can't find $1.h, setting $3 to no])
 	$3="no"
     fi
     if test "$$2" = "/usr/include"; then
@@ -379,7 +379,7 @@ define(FIND_LIB, [
     done
     if test -z "$$2"; then
 	AC_MSG_RESULT(no)
-	AC_MSG_WARN([can't find $1 library, setting $3 to no])
+	AC_MSG_RESULT([warning: can't find $1 library, setting $3 to no])
 	$3="no"
     fi
     if test "$$2" = "/usr/lib"; then
