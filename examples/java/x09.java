@@ -34,21 +34,21 @@ import java.lang.Math;
 
 class x09 {
 
-    final int XPTS = 35;
-    final int YPTS = 46;
-    final double XSPA =  2./(XPTS-1);
-    final double YSPA =  2./(YPTS-1);
+    static final int XPTS = 35;
+    static final int YPTS = 46;
+    static final double XSPA =  2./(XPTS-1);
+    static final double YSPA =  2./(YPTS-1);
 
 // polar plot data
-    final int PERIMETERPTS = 100;
-    final int RPTS = 40;
-    final int THETAPTS = 40;
+    static final int PERIMETERPTS = 100;
+    static final int RPTS = 40;
+    static final int THETAPTS = 40;
    
 // potential plot data
-    final int PPERIMETERPTS = 100;
-    final int PRPTS = 40;
-    final int PTHETAPTS = 64;
-    final int PNLEVEL = 20;
+    static final int PPERIMETERPTS = 100;
+    static final int PRPTS = 40;
+    static final int PTHETAPTS = 64;
+    static final int PNLEVEL = 20;
    
     final double clevel[] = {-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
 // Transformation function

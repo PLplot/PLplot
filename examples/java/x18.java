@@ -35,7 +35,7 @@ import java.text.*;
 class x18 {
 
 
-   final int NPTS = 1000;
+   static final int NPTS = 1000;
    static int opt[] = { 1, 0, 1, 0 };
    static double alt[] = {20.0, 35.0, 50.0, 65.0};
    static double az[] = {30.0, 40.0, 50.0, 60.0};

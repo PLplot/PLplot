@@ -34,11 +34,11 @@ import java.lang.Math;
 
 class x15 {
 
-    final int XPTS = 35;
-    final int YPTS = 46;
+   static final int XPTS = 35;
+   static final int YPTS = 46;
    // calculated constants and array that depends on them
-   final double XSPA =  2./(XPTS-1);
-   final double YSPA =  2./(YPTS-1);
+   static final double XSPA =  2./(XPTS-1);
+   static final double YSPA =  2./(YPTS-1);
    final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
 

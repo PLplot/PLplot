@@ -37,9 +37,9 @@ class x11 {
     PLStreamc plsdummy = new PLStreamc();
     plplotjavac pls = new plplotjavac();
 
-    final int XPTS = 35;
-    final int YPTS = 46;
-    final int LEVELS = 10;
+    static final int XPTS = 35;
+    static final int YPTS = 46;
+    static final int LEVELS = 10;
 
     static int opt[] = {3, 3};
     static double alt[] = {33.0, 17.0};

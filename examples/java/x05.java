@@ -34,7 +34,7 @@ import java.lang.Math;
 
 class x05 {
 
-    final int NPTS = 2047;
+    static final int NPTS = 2047;
 
     public static void main( String[] args ) 
     {

@@ -36,8 +36,8 @@ import java.lang.Math;
 
 class x08 {
 
-    final int XPTS = 35;
-    final int YPTS = 46;
+    static final int XPTS = 35;
+    static final int YPTS = 46;
 
     PLStreamc plsdummy = new PLStreamc();
     plplotjavac pls = new plplotjavac();

@@ -35,14 +35,14 @@ import java.lang.Math;
 class x16 {
 
    // number of shade levels, x data points, y data points, and perimeter points.
-   final int NSHADES = 20;
-   final int XPTS = 35;
-   final int YPTS = 46;
-   final int PERIMETERPTS = 100;
+   static final int NSHADES = 20;
+   static final int XPTS = 35;
+   static final int YPTS = 46;
+   static final int PERIMETERPTS = 100;
 
    // calculated constants and array that depends on them
-   final double XSPA =  2./(XPTS-1);
-   final double YSPA =  2./(YPTS-1);
+   static final double XSPA =  2./(XPTS-1);
+   static final double YSPA =  2./(YPTS-1);
    final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
 
    PLStreamc plsdummy = new PLStreamc();

@@ -339,10 +339,10 @@ class x14 {
         pls.plflush();
     }
 
-    final int XPTS = 35;
-    final int YPTS = 46;
-    final double XSPA =  2./(XPTS-1);
-    final double YSPA =  2./(YPTS-1);
+    static final int XPTS = 35;
+    static final int YPTS = 46;
+    static final double XSPA =  2./(XPTS-1);
+    static final double YSPA =  2./(YPTS-1);
     final double clevel[] = {-1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1.};
 // Transformation function
     final double tr[] = {XSPA, 0.0, -1.0, 0.0, YSPA, -1.0};
