@@ -1,27 +1,5 @@
 /* $Id$
- * $Log$
- * Revision 1.8  1994/09/16 03:45:46  mjl
- * A small patch to remove a "==" assignment introduced last-time and removed
- * an unused variable picked-up by gcc -Wall.  Contributed by Mark Olesen.
  *
- * Revision 1.7  1994/08/26  19:25:40  mjl
- * Now checks for the terminal type and provides some rudimentary decisions
- * based on the TERM setting.  The xterm is unaffected, but with a terminal
- * type of "tekterm", the 'Page >' prompt is printed on the graphics screen
- * so that the plot can be seen without having pltek flash back to the text
- * screen immediately.  Other minor cleaning up as well.  Contributed by Mark
- * Olesen.
- *
- * Revision 1.6  1994/08/10  01:15:11  mjl
- * Changed/improved page prompt, enabled both forward and backward relative
- * seeking, eliminated system dependent input code.
- *
- * Revision 1.5  1994/06/30  18:55:52  mjl
- * Minor changes to eliminate gcc -Wall warnings.
-*/
-
-/*
- *  pltek.c
  *  Review a Tektronix vector file.
  *  from 'scan', by Clair Nielsen, LANL.
  *  Modifications by Maurice LeBrun, IFS.

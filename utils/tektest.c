@@ -1,12 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.1  1995/05/05 08:09:05  mjl
- * Just a quick little Tek test program that I whipped up; it may come in
- * handy again.
- *
- */
-
-/*	tektest.c
 
 	Maurice LeBrun
 	IFS, University of Texas
@@ -32,7 +24,8 @@
 
 	Note: this anomaly has important consequences when doing graphic
 	input, because the reported world coordinates are then
-	systematically off.  */
+	systematically off.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
