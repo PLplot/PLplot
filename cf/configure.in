@@ -94,22 +94,24 @@ enable_itcl=yes
 enable_xwin=yes
 enable_gnome=no
 enable_octave=no
-enable_gd=yes
+enable_png=yes #required for library and header searching to work right.
+enable_jpeg=no #temporary until version logic on gd library is put into configuration
 
 divert(-1)
-
-MY_ARG_ENABLE(drivers,
-  [  --enable-drivers        enable all device drivers ($enable_drivers)])
 
 
 # ------------------------------------------------------------------------
 # Support macros for driver inclusion and help entries.
 
 # Including a driver in the below list includes it by default.
+# Note that "ps" stands for both the ps and psc drivers in ps.c and
+# plcore.h.  Most (all?) other drivers are treated separately (e.g.,
+# tek4010, tek4107) even though they appear in the same source code
+# file (i.e., tek.c in the case of tek4010 and tek4107).
 
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4107, mskermit,
-conex, linuxvga, vlt, versaterm, dg300, png, ps, xfig, ljii, hp7470, hp7580,
+conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, xfig, ljii, hp7470, hp7580,
 lj_hpgl, imp, xwin, tk, pbm, gnome])
 
 # Macro to set one driver enable value
@@ -299,6 +301,9 @@ MY_ARG_WITH(rpath,
   [  --with-rpath            link libraries with -rpath option ($with_rpath)])
 
 MY_ARG_WITH(nobraindead)
+
+MY_ARG_ENABLE(drivers,
+  [  --enable-drivers        enable all device drivers ($enable_drivers)])
 
 MY_ARG_ENABLE(f77,
   [  --enable-f77            compile Fortran-77 interface code ($enable_f77)])
@@ -834,7 +839,7 @@ enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
 enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
 enable_cxx:	$enable_cxx		enable_python:	$enable_python
 enable_f77:	$enable_f77		enable_gnome:	$enable_gnome
-enable_octave:	$enable_octave		enable_gd:	$enable_gd
+enable_octave:	$enable_octave
 "
 
 cat << EOF > config.summary
