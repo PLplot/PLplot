@@ -7,7 +7,10 @@
 # 
 #----------------------------------------------------------------------------
 
-cd [file join [file dirname [info script]] .. tcl]
+if {[catch {file readlink [info script]} path]} {
+    set path [info script]
+}
+cd [file join [file dirname $path] .. tcl]
 lappend auto_path [pwd]
 if {[catch {package require Plplotter}]} {
     # use non shared-lib way e.g. 'plserver'
