@@ -7,7 +7,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.5  1994/06/16 18:33:51  mjl
+# Revision 1.6  1994/10/10 17:22:32  furnish
+# New method, but need many more.
+#
+# Revision 1.5  1994/06/16  18:33:51  mjl
 # Modified argument lists for plline and plpoin methods to use matrix names.
 #
 # Revision 1.4  1994/06/10  20:46:58  furnish
@@ -42,6 +45,15 @@ itcl_class PLWin {
 
     method plcol {color} {
 	$this.plwin cmd plcol0 $color
+    }
+
+    method plcont {data clev} {
+#	uplevel $data
+#	uplevel $clev
+	upvar $data d
+	upvar $clev c
+	$this.plwin cmd plcont d c
+#	$this.plwin cmd plcont $data $clev
     }
 
     method plenv {xmin xmax ymin ymax just axis} {
