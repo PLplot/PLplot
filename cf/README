@@ -25,6 +25,16 @@ miscdemo.in	(misc targets: so far only clean)
 Note that only files beginning with "init" contain macros set by the
 configure script.
 
+In most cases the provided configure script will be sufficient for
+building PLplot.  Developers who wish to make changes and then rebuild the
+configure script will need to obtain the autoconf package and GNU m4, both
+of which are available by anonymous ftp from prep.ai.mit.edu.  To build
+configure, from the distribution directory type:
+
+% cd cf
+% autoconf
+% mv configure ..
+
 The files plConfig.h.in and plDevs.h.in are processed by configure to
 obtain the final plConfig.h and plDevs.h header files.  The former is
 included by plplotP.h and is thus seen by all PLplot source files.  The
