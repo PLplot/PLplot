@@ -10,11 +10,15 @@
 # Generates line plot(s) given a file of ASCII data (similar to the GNUPLOT
 # "plot" command).  Can be easily modified to particular needs.
 #
-# To run this demo execute pltcl.  Then from within that environment
-# execute "plinit" (which gives you a choice of drivers),
-# "source plot.tcl" (this file), then finally "plot" following
-# the usage below.
-
+# To run this demo execute pltcl.  Then simply type 'plot <datafile>'.
+# For other options see the usage section below.
+#
+# Note: this relies on Tcl autoloading to automatically find & source the
+# plot.tcl source file where the Tcl plot proc is contained.  If for some
+# reason autoloading isn't working right, you'll have to run 'source
+# <PATH>plot.tcl' yourself (from pltcl).
+#
+#----------------------------------------------------------------------------
 # Usage:
 #
 #	plot [data file [columns]]
@@ -126,15 +130,20 @@ proc plot {{file {}} {columns {}}} {
     set nfilt	0
     set dx	1
 
-# AWI, comment dp and xwin out since dp doesn't exist and xwin works better
-# without this.  However, Maurice believes tk driver will act better
-# with this configuration change so leave that in as in his original design.
+# If plinit hasn't been called, do it now.
 
     plgdev device
+    if {$device == ""} {
+	plinit
+	plgdev device
+    }
+
+# Turn off pause for tk driver since it is redundant.  For X output, however,
+# if we return control to the interpreter immediately, we will stop processing
+# X events (like expose!) so we keep the pause in.
+
     switch $device {
-#	xwin	-
-	tk	-
-#	dp	{plspause 0}
+	tk	{plspause 0}
     }
 
 # Initialize data arrays
