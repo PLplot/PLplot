@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1995/04/12 08:24:36  mjl
+ * Revision 1.20  1999/06/25 04:20:24  furnish
+ * Install patches from Alan W. Irwin, correcting problems with
+ * labelling.
+ *
+ * Revision 1.19  1995/04/12  08:24:36  mjl
  * Changed names of some variables defined at file scope to remove a conflict
  * in the Mac port.
  *
@@ -432,14 +436,16 @@ static void
 plgrid3(PLFLT tick)
 {
     PLFLT xmin, ymin, zmin, xmax, ymax, zmax, zscale;
-    PLFLT cxx, cxy, cyx, cyy, cyz;
+    PLFLT cxx, cxy, cyx, cyy, cyz, zmin_in, zmax_in;
     PLINT u[3], v[3];
     PLINT nsub = 0;
     PLFLT tp;
 
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     plP_gdom(&xmin, &xmax, &ymin, &ymax);
-    plP_grange(&zscale, &zmin, &zmax);
+    plP_grange(&zscale, &zmin_in, &zmax_in);
+    zmin = (zmax_in > zmin_in) ? zmin_in: zmax_in;
+    zmax = (zmax_in > zmin_in) ? zmax_in: zmin_in;
 
     pldtik(zmin, zmax, &tick, &nsub);
     tp = tick * floor(zmin / tick) + tick;

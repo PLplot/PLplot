@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1995/01/06 07:56:10  mjl
+ * Revision 1.9  1999/06/25 04:20:23  furnish
+ * Install patches from Alan W. Irwin, correcting problems with
+ * labelling.
+ *
+ * Revision 1.8  1995/01/06  07:56:10  mjl
  * Broke pldtik() into two functions -- pldtik(), which handles only tick
  * spacing, and pldprec(), which handles only precision and significant
  * digits settings.  Each substantially clarified in the process.
@@ -29,12 +33,13 @@
  * that there are between 3 and 7.5 major tick intervals in the input
  * range vmin to vmax.  The recommended number of subticks is returned in
  * "nsubt" unless the routine is entered with a non-zero value of "nsubt".
+ * n.b. big change: now returns only positive values of tick and nsubt
 \*----------------------------------------------------------------------*/
 
 void
 pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt)
 {
-    PLFLT t1, t2;
+    PLFLT t1, t2, tick_reasonable;
     PLINT np, ns;
 
 /* Magnitude of min/max difference to get tick spacing */
@@ -64,15 +69,23 @@ pldtik(PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt)
 	np = np - 1;
     }
 
-/* Now compute tick spacing */
+/* Now compute reasonable tick spacing */
 
+    tick_reasonable = t2 * pow(10.0, (double) np);
     if (*tick == 0) {
 	*tick = t2 * pow(10.0, (double) np);
-	if (vmin > vmax)
-	    *tick = -*tick;
+    }
+    else {
+        *tick = ABS(*tick);
+        if(*tick < 1.e-4*tick_reasonable) {
+	   plexit("pldtik: magnitude of specified tick spacing is much too small");
+	   return;
+	}
     }
     if (*nsubt == 0)
 	*nsubt = ns;
+
+    *nsubt = ABS(*nsubt);
 }
 
 /*----------------------------------------------------------------------*\

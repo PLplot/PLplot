@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1995/03/16 23:59:07  mjl
+ * Revision 1.19  1999/06/25 04:20:21  furnish
+ * Install patches from Alan W. Irwin, correcting problems with
+ * labelling.
+ *
+ * Revision 1.18  1995/03/16  23:59:07  mjl
  * Eliminated some temporary variables and variables not in use.
  *
  * Revision 1.17  1995/01/29  07:04:18  mjl
@@ -129,6 +133,7 @@ c_plaxes(PLFLT x0, PLFLT y0,
     PLINT pxmin, pxmax, pymin, pymax;
     PLINT vppxmi, vppxma, vppymi, vppyma;
     PLFLT xtick1, ytick1, vpwxmi, vpwxma, vpwymi, vpwyma;
+    PLFLT vpwxmin, vpwxmax, vpwymin, vpwymax;
     PLFLT xp0, yp0, tn, tp, temp;
 
     if (plsc->level < 3) {
@@ -184,7 +189,13 @@ c_plaxes(PLFLT x0, PLFLT y0,
     xtick1 = llx ? 1.0 : xtick;
     ytick1 = lly ? 1.0 : ytick;
 
-    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
+    plP_gvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
+/* n.b. large change; vpwxmi always numerically less than vpwxma, and
+ * similarly for vpwymi */
+    vpwxmi = (vpwxmax > vpwxmin) ? vpwxmin : vpwxmax;
+    vpwxma = (vpwxmax > vpwxmin) ? vpwxmax : vpwxmin;
+    vpwymi = (vpwymax > vpwymin) ? vpwymin : vpwymax;
+    vpwyma = (vpwymax > vpwymin) ? vpwymax : vpwymin;
 
     lax = lax && (vpwymi * vpwyma < 0.0) && !llx;
     lay = lay && (vpwxmi * vpwxma < 0.0) && !lly;
@@ -196,6 +207,7 @@ c_plaxes(PLFLT x0, PLFLT y0,
 
     if (lty || lgy) 
 	pldtik(vpwymi, vpwyma, &ytick1, &nysub1);
+/* n.b. large change; xtick1, nxsub1, ytick1, nysub1 always positive. */
 
 /* Set up tick variables */
 
@@ -618,7 +630,7 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 
 static void
 plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
-       PLFLT wx2, PLFLT wy2, PLFLT vmin, PLFLT vmax,
+       PLFLT wx2, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
        PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits)
 {
     static char string[40];
@@ -626,8 +638,13 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
     PLINT major, minor, mode, prec, scale;
     PLINT i, i1, i2, i3, i4;
     PLINT nsub1;
-    PLFLT pos, tn, tp, temp, height, tick1;
-    PLFLT dwx, dwy, lambda;
+    PLFLT pos, tn, tp, temp, height, tick1, vmin, vmax;
+/* Note that 'tspace' is the minimim distance away (in fractional number
+ * of ticks) from the boundary that an X or Y numerical label can be drawn. */
+    PLFLT dwx, dwy, lambda, tcrit, tspace = 0.1;
+   
+    vmin = (vmax_in > vmin_in) ? vmin_in : vmax_in;
+    vmax = (vmax_in > vmin_in) ? vmax_in : vmin_in;
 
     dwx = wx2 - wx1;
     dwy = wy2 - wy1;
@@ -684,7 +701,9 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 		    for (i = 0; i <= 7; i++) {
 			temp = tp + xlog[i];
 			if (BETW(temp, vmin, vmax)) {
-			    lambda = (temp - vmin) / (vmax - vmin);
+			    lambda = (vmax_in > vmin_in)? 
+			       (temp - vmin) / (vmax - vmin):
+			       (vmax - temp) / (vmax - vmin);
 			    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
 				   plP_wcpcy((PLFLT) (wy1 + lambda * dwy)),
 				   i1, i2);
@@ -695,7 +714,9 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 		    for (i = 1; i <= nsub1 - 1; i++) {
 			temp = tp + i * (tn - tp) / nsub1;
 			if (BETW(temp, vmin, vmax)) {
-			    lambda = (temp - vmin) / (vmax - vmin);
+			    lambda = (vmax_in > vmin_in)? 
+			       (temp - vmin) / (vmax - vmin):
+			       (vmax - temp) / (vmax - vmin);
 			    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
 				   plP_wcpcy((PLFLT) (wy1 + lambda * dwy)),
 				   i1, i2);
@@ -707,7 +728,9 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	    if (!BETW(temp, vmin, vmax))
 		break;
 
-	    lambda = (temp - vmin) / (vmax - vmin);
+	    lambda = (vmax_in > vmin_in)? 
+	       (temp - vmin) / (vmax - vmin):
+	       (vmax - temp) / (vmax - vmin);
 	    plxtik(plP_wcpcx((PLFLT) (wx1 + lambda * dwx)),
 		   plP_wcpcy((PLFLT) (wy1 + lambda * dwy)), i3, i4);
 	    tp = tn;
@@ -722,20 +745,21 @@ plxybx(const char *opt, const char *label, PLFLT wx1, PLFLT wy1,
 	pldprec(vmin, vmax, tick1, lf, &mode, &prec, *digits, &scale);
 	pos = 1.0;
 	height = 3.2;
+        tcrit = tspace*tick1;
 	tp = tick1 * (1. + floor(vmin / tick1));
 	for (tn = tp; BETW(tn, vmin, vmax); tn += tick1) {
-	    if (nolast && !BETW(tn + tick1, vmin, vmax)) {
-		pos = 0.8;
-		break;
-	    }
+	   if(BETW(tn, vmin+tcrit, vmax-tcrit)) {
 	    plform(tn, scale, prec, string, ll, lf);
-	    pos = (tn - vmin) / (vmax - vmin);
+	    pos = (vmax_in > vmin_in)? 
+	       (tn - vmin) / (vmax - vmin):
+	       (vmax - tn) / (vmax - vmin);
 	    plxytx(wx1, wy1, wx2, wy2, 1.5, pos, 0.5, string);
+	   }
 	}
 	*digits = 2;
 	if (!ll && mode) {
 	    sprintf(string, "(x10#u%d#d)", (int) scale);
-	    plxytx(wx1, wy1, wx2, wy2, height, pos, 0.5, string);
+	    plxytx(wx1, wy1, wx2, wy2, height, 1.0, 0.5, string);
 	}
     }
 }
@@ -802,7 +826,7 @@ plxytx(PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
 
 static void
 plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
-      PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin, PLFLT vmax,
+      PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
       PLFLT tick, PLINT nsub, PLINT *digits)
 {
     static char string[40];
@@ -811,8 +835,11 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
     PLINT nsub1, lstring;
     PLFLT pos, tn, tp, temp, height, tick1;
     PLFLT dwy, lambda, diag, major, minor, xmajor, xminor;
-    PLFLT ymajor, yminor, dxm, dym;
+    PLFLT ymajor, yminor, dxm, dym, vmin, vmax;
 
+    vmin = (vmax_in > vmin_in) ? vmin_in : vmax_in;
+    vmax = (vmax_in > vmin_in) ? vmax_in : vmin_in;
+   
     dwy = wy2 - wy1;
 
 /* Tick and subtick sizes in device coords */
@@ -879,7 +906,9 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 		    for (i = 0; i <= 7; i++) {
 			temp = tp + xlog[i];
 			if (BETW(temp, vmin, vmax)) {
-			    lambda = (temp - vmin) / (vmax - vmin);
+			    lambda = (vmax_in > vmin_in)? 
+			       (temp - vmin) / (vmax - vmin):
+			       (vmax - temp) / (vmax - vmin);
 			    plstik(plP_wcmmx(wx),
 				   plP_wcmmy((PLFLT) (wy1 + lambda * dwy)),
 				   xminor, yminor);
@@ -890,7 +919,9 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 		    for (i = 1; i <= nsub1 - 1; i++) {
 			temp = tp + i * tick1 / nsub1;
 			if (BETW(temp, vmin, vmax)) {
-			    lambda = (temp - vmin) / (vmax - vmin);
+			    lambda = (vmax_in > vmin_in)? 
+			       (temp - vmin) / (vmax - vmin):
+			       (vmax - temp) / (vmax - vmin);
 			    plstik(plP_wcmmx(wx),
 				   plP_wcmmy((PLFLT) (wy1 + lambda * dwy)),
 				   xminor, yminor);
@@ -901,7 +932,9 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	    temp = tn;
 	    if (!BETW(temp, vmin, vmax))
 		break;
-	    lambda = (temp - vmin) / (vmax - vmin);
+	    lambda = (vmax_in > vmin_in)? 
+	        (temp - vmin) / (vmax - vmin):
+	        (vmax - temp) / (vmax - vmin);
 	    plstik(plP_wcmmx(wx), plP_wcmmy((PLFLT) (wy1 + lambda * dwy)),
 		   xmajor, ymajor);
 	    tp = tn;
@@ -918,7 +951,9 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	tp = tick1 * floor(vmin / tick1);
 	for (tn = tp + tick1; BETW(tn, vmin, vmax); tn += tick1) {
 	    plform(tn, scale, prec, string, ll, lf);
-	    pos = (tn - vmin) / (vmax - vmin);
+	    pos = (vmax_in > vmin_in)? 
+	        (tn - vmin) / (vmax - vmin):
+	        (vmax - tn) / (vmax - vmin);
 	    if (ln && !right)
 		plztx("v", dx, dy, wx, wy1, wy2, 0.5, pos, 1.0, string);
 
@@ -933,11 +968,11 @@ plzbx(const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 	    pos = 1.15;
 	    height = 0.5;
 	    if (ln && !right) {
-		plztx("v", dx, dy, wx, wy1, wy2, height, pos, 1.0, string);
+		plztx("v", dx, dy, wx, wy1, wy2, height, pos, 0.5, string);
 	    }
 	    if (lm && right) {
 		plztx("v", dx, dy, wx, wy1, wy2,
-		      (PLFLT) -height, pos, 0.0, string);
+		      (PLFLT) -height, pos, 0.5, string);
 	    }
 	}
     }
@@ -1012,6 +1047,7 @@ grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
     PLINT lgx, lhx, llx;
     PLINT lgy, lhy, lly;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
+    PLFLT vpwxmin, vpwxmax, vpwymin, vpwymax;
     PLFLT tn, temp, tcrit, tspace = 0.1;
     PLINT i;
 
@@ -1025,38 +1061,42 @@ grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
     lhy = plP_stsearch(yopt, 'h');
     lly = plP_stsearch(yopt, 'l');
 
-    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
+    plP_gvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
+/* n.b. large change; vpwxmi always numerically less than vpwxma, and
+ * similarly for vpwymi */
+    vpwxmi = (vpwxmax > vpwxmin) ? vpwxmin : vpwxmax;
+    vpwxma = (vpwxmax > vpwxmin) ? vpwxmax : vpwxmin;
+    vpwymi = (vpwymax > vpwymin) ? vpwymin : vpwymax;
+    vpwyma = (vpwymax > vpwymin) ? vpwymax : vpwymin;
 
 /* Draw grid in x direction. */
 
     if (lgx) {
-	tn = xtick1 * floor(vpwxmi / xtick1 + tspace);
-	for (;;) {
+	for (tn = xtick1 * floor(vpwxmi/xtick1);
+	     tn <= vpwxma; tn += xtick1) {
 	    if (lhx) {
 		if (llx) {
 		    PLFLT otemp = tn;
 		    for (i = 0; i <= 7; i++) {
 			temp = tn + xlog[i];
-			tcrit = temp + (temp - otemp)*tspace;
+			tcrit = (temp - otemp)*tspace;
 			otemp = temp;
-			if (BETW(tcrit, vpwxmi, vpwxma))
+			if (BETW(temp, vpwxmi+tcrit, vpwxma-tcrit))
 			    pljoin(temp, vpwymi, temp, vpwyma);
 		    }
 		}
 		else {
 		    for (i = 1; i <= nxsub1 - 1; i++) {
 			temp = tn + i * xtick1 / nxsub1;
-			tcrit = temp + xtick1 / nxsub1 * tspace;
-			if (BETW(tcrit, vpwxmi, vpwxma))
+			tcrit = xtick1 / nxsub1 * tspace;
+			if (BETW(temp, vpwxmi+tcrit, vpwxma-tcrit))
 			    pljoin(temp, vpwymi, temp, vpwyma);
 		    }
 		}
 	    }
-	    tn += xtick1;
-	    tcrit = tn + xtick1*tspace;
-	    if (!BETW(tcrit, vpwxmi, vpwxma))
-		break;
-	    pljoin(tn, vpwymi, tn, vpwyma);
+	    tcrit = xtick1*tspace;
+	    if (BETW(tn, vpwxmi+tcrit, vpwxma-tcrit))
+	        pljoin(tn, vpwymi, tn, vpwyma);
 	}
     }
 
@@ -1064,31 +1104,30 @@ grid_box(const char *xopt, PLFLT xtick1, PLINT nxsub1,
 
     if (lgy) {
 	tn = ytick1 * floor(vpwymi / ytick1 + tspace);
-	for (;;) {
+	for (tn = ytick1 * floor(vpwymi/ytick1);
+	     tn <= vpwyma; tn += ytick1) {
 	    if (lhy) {
 		if (lly) {
 		    PLFLT otemp = tn;
 		    for (i = 0; i <= 7; i++) {
 			temp = tn + xlog[i];
-			tcrit = temp + (temp - otemp)*tspace;
+			tcrit = (temp - otemp)*tspace;
 			otemp = temp;
-			if (BETW(tcrit, vpwymi, vpwyma))
+			if (BETW(temp, vpwymi+tcrit, vpwyma-tcrit))
 			    pljoin(vpwxmi, temp, vpwxma, temp);
 		    }
 		}
 		else {
 		    for (i = 1; i <= nysub1 - 1; i++) {
 			temp = tn + i * ytick1 / nysub1;
-			tcrit = temp + ytick1 / nysub1 * tspace;
-			if (BETW(tcrit, vpwymi, vpwyma))
+			tcrit = ytick1 / nysub1 * tspace;
+			if (BETW(temp, vpwymi+tcrit, vpwyma-tcrit))
 			    pljoin(vpwxmi, temp, vpwxma, temp);
 		    }
 		}
 	    }
-	    tn += ytick1;
-	    tcrit = tn + ytick1*tspace;
-	    if (!BETW(tcrit, vpwymi, vpwyma))
-		break;
+	    tcrit = ytick1*tspace;
+	    if (BETW(tn, vpwymi+tcrit, vpwyma-tcrit))
 	    pljoin(vpwxmi, tn, vpwxma, tn);
 	}
     }
@@ -1107,6 +1146,7 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     PLINT lfx, lix, llx, lmx, lnx, ltx;
     PLINT lfy, liy, lly, lmy, lny, lty, lvy;
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
+    PLFLT vpwxmin, vpwxmax, vpwymin, vpwymax;
     PLFLT pos, tn, tp, offset, height;
 
 /* Set plot options from input */
@@ -1126,7 +1166,13 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
     lty = plP_stsearch(yopt, 't');
     lvy = plP_stsearch(yopt, 'v');
 
-    plP_gvpw(&vpwxmi, &vpwxma, &vpwymi, &vpwyma);
+    plP_gvpw(&vpwxmin, &vpwxmax, &vpwymin, &vpwymax);
+/* n.b. large change; vpwxmi always numerically less than vpwxma, and
+ * similarly for vpwymi */
+    vpwxmi = (vpwxmax > vpwxmin) ? vpwxmin : vpwxmax;
+    vpwxma = (vpwxmax > vpwxmin) ? vpwxmax : vpwxmin;
+    vpwymi = (vpwymax > vpwymin) ? vpwymin : vpwymax;
+    vpwyma = (vpwymax > vpwymin) ? vpwymax : vpwymin;
 
 /* Write horizontal label(s) */
 
@@ -1140,7 +1186,9 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	for (tn = tp; BETW(tn, vpwxmi, vpwxma); tn += xtick1) {
 	    plform(tn, xscale, xprec, string, llx, lfx);
 	    height = lix ? 1.75 : 1.5;
-	    pos = (tn - vpwxmi) / (vpwxma - vpwxmi);
+	    pos = (vpwxmax > vpwxmin)? 
+	        (tn - vpwxmi) / (vpwxma - vpwxmi):
+	        (vpwxma - tn) / (vpwxma - vpwxmi);
   	    if (lnx)
 		plmtex("b", height, pos, 0.5, string);
 	    if (lmx)
@@ -1174,7 +1222,9 @@ label_box(const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1)
 	tp = ytick1 * (1. + floor(vpwymi / ytick1));
 	for (tn = tp; BETW(tn, vpwymi, vpwyma); tn += ytick1) {
 	    plform(tn, yscale, yprec, string, lly, lfy);
-	    pos = (tn - vpwymi) / (vpwyma - vpwymi);
+	    pos = (vpwymax > vpwymin)? 
+	        (tn - vpwymi) / (vpwyma - vpwymi):
+	        (vpwyma - tn) / (vpwyma - vpwymi);
 	    if (lny) {
 		if (lvy) {
 		    height = liy ? 1.0 : 0.5;
