@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.33  1995/06/01 21:46:31  mjl
+ * Revision 1.34  1995/07/19 18:52:52  mjl
+ * Added code to handle new parse option, PL_PARSE_SKIP.  Set this to skip over
+ * all unrecognized options, quietly and without generating an error.  If used
+ * with PL_PARSE_FULL, actual illegal input (say, from a malformed option-arg
+ * pair) will still be flagged.
+ *
+ * Revision 1.33  1995/06/01  21:46:31  mjl
  * Now only pipes help output through a pager if HAVE_POPEN is defined (done
  * during configure).  Added check in plMergeOpts() to ensure the user isn't
  * passing an improperly-terminated options table.
@@ -150,6 +156,8 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
     PL_PARSE_NODASH -- Set if leading dash is NOT required.
 
+    PL_PARSE_SKIP -- Set to quietly skip over any unrecognized args.
+
     Note: if you want to have both your option and a PLplot option of the
     same name processed (e.g. the -v option in plrender), do the following:
 	1. Tag your option with PL_OPT_NODELETE
@@ -227,6 +235,7 @@ static int  mode_nodelete;
 static int  mode_showall;
 static int  mode_noprogram;
 static int  mode_nodash;
+static int  mode_skip;
 
 /*--------------------------------------------------------------------------*\
  * PLPLOT options data structure definition.
@@ -779,6 +788,7 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
     mode_showall   = mode & PL_PARSE_SHOWALL;
     mode_noprogram = mode & PL_PARSE_NOPROGRAM;
     mode_nodash    = mode & PL_PARSE_NODASH;
+    mode_skip      = mode & PL_PARSE_SKIP;
 
     myargc = (*p_argc); 
     argend = argv + myargc;
@@ -821,9 +831,10 @@ plParseOpts(int *p_argc, char **argv, PLINT mode)
 
 	if (status == -1) {
 
-	/* No match.  Abort if fully parsing, otherwise return without */
-	/* error. */ 
+	/* No match.  Keep going if mode_skip is set, otherwise abort if
+	   fully parsing, else return without error. */
 
+	    if (mode_skip) continue;
 	    if ( ! mode_quiet && mode_full) {
 		fprintf(stderr, "\nBad command line option \"%s\"\n", argv[0]);
 		plOptUsage();
