@@ -2544,20 +2544,29 @@ plP_image(PLINT *x, PLINT *y, PLFLT *z , PLINT nx, PLINT ny)
 
   npts = nx*ny;
   if (plsc->difilt) {
+    PLINT clpxmi, clpxma, clpymi, clpyma;
+    
     xscl = (PLINT *) malloc(nx*ny*sizeof(PLINT));
     yscl = (PLINT *) malloc(nx*ny*sizeof(PLINT));
     for (i = 0; i < npts; i++) {
       xscl[i] = x[i];
       yscl[i] = y[i];
     }
-    printf("plcore.c: plP_image(), FIXME\n");
-    exit(0); /* *** FIXME *** */
+    difilt(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma);
+    plsc->imclxmin = clpxmi;
+    plsc->imclymin = clpymi;
+    plsc->imclxmax = clpxma;
+    plsc->imclymax = clpyma;
 
-    /* difiltShort(xscl, yscl, npts, &clpxmi, &clpxma, &clpymi, &clpyma); */
     grimage(xscl, yscl, z, nx, ny);
+    
     free(xscl);
     free(yscl);
   } else { 
+    plsc->imclxmin = plsc->phyxmi;
+    plsc->imclymin = plsc->phyymi;
+    plsc->imclxmax = plsc->phyxma;
+    plsc->imclymax = plsc->phyyma;
     grimage(x, y, z, nx, ny );
   }
 }
