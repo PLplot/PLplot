@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.58  1996/10/11 23:12:28  furnish
+ * Revision 1.59  1998/01/06 23:45:12  furnish
+ * Would you believe JO changed his mind /again/???
+ *
+ * Revision 1.58  1996/10/11  23:12:28  furnish
  * Fix problem with background configuration, evident with itcl 2.1.  Fix
  * contibuted by Vince Darley.
  *
@@ -2371,7 +2374,9 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
     plr->pdfs = pdf_bopen( NULL, 4200 );
 /* Sheesh, what a mess.  I don't see how Tk4.1's converter macro could
    possibly work.  */
-#if TK_MAJOR_VERSION < 4 || ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0 )
+#if TK_MAJOR_VERSION < 4 || \
+    ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0 ) || \
+	TK_MAJOR_VERSION > 7
     Tk_CreateFileHandler(iodev->fd, TK_READABLE, (Tk_FileProc *) ReadData,
 			 (ClientData) plFramePtr);
 #else
@@ -2404,7 +2409,9 @@ Closelink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	return TCL_ERROR;
     }
 
-#if TK_MAJOR_VERSION < 4 || ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0 )
+#if TK_MAJOR_VERSION < 4 || \
+    ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0 ) || \
+	TK_MAJOR_VERSION > 7
     Tk_DeleteFileHandler(iodev->fd);
 #else
 /*    Tk_DeleteFileHandler( iodev->file );*/
