@@ -66,19 +66,6 @@ ac_help="$ac_help
   --enable-cxx            compile C++ interface code (default: yes)"
 ac_help="$ac_help
   --enable-python         compile python interface code (default: yes)"
-ac_default_prefix=/usr/local/plplot
-ac_help="$ac_help
-  --enable-xwin           enable X Window System driver"
-ac_help="$ac_help
-  --with-x                use the X Window System"
-ac_help="$ac_help
-  --enable-tcl            compile Tcl interface code (default: yes)"
-ac_help="$ac_help
-  --enable-itcl           enable incr Tcl interface code"
-ac_help="$ac_help
-  --enable-tk             enable Tk driver"
-ac_help="$ac_help
-  --enable-dp             enable Tcl-DP driver"
 ac_help="$ac_help
   --enable-plmeta         enable plmeta device driver"
 ac_help="$ac_help
@@ -121,6 +108,19 @@ ac_help="$ac_help
   --enable-tk             enable tk device driver"
 ac_help="$ac_help
   --enable-dp             enable dp device driver"
+ac_default_prefix=/usr/local/plplot
+ac_help="$ac_help
+  --enable-xwin           enable X Window System driver"
+ac_help="$ac_help
+  --with-x                use the X Window System"
+ac_help="$ac_help
+  --enable-tcl            compile Tcl interface code (default: yes)"
+ac_help="$ac_help
+  --enable-itcl           enable incr Tcl interface code"
+ac_help="$ac_help
+  --enable-tk             enable Tk driver"
+ac_help="$ac_help
+  --enable-dp             enable Tcl-DP driver"
 
 # Initialize some variables set by options.
 # The variables have the same names as the options, with
@@ -611,6 +611,8 @@ default_enable_f77=yes
 default_enable_cxx=yes
 default_enable_python=yes
 
+# ----------------------------------------------------------------------------
+
 case "$system" in
     aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
 	default_with_opt=no
@@ -825,6 +827,477 @@ if test -n "$withval"; then
   { echo "configure: error: unrecognized variable: with_python" 1>&2; exit 1; }
 fi
 
+
+# ----------------------------------------------------------------------------
+# Set up variables governing device driver inclusion.
+#
+# You can enable/disable drivers either by the command line
+# (--enable-<driver> or --disable-<driver>) or via the cf_plplot.in file
+# (remember to use underscores instead of dashes here).  You can disable
+# all drivers by default by using --disable-drivers.
+# ----------------------------------------------------------------------------
+
+
+
+
+# Set default driver enable values
+
+default_enable_plmeta=$enable_drivers
+default_enable_null=$enable_drivers
+default_enable_xterm=$enable_drivers
+default_enable_tek4010=$enable_drivers
+default_enable_tek4107=$enable_drivers
+default_enable_mskermit=$enable_drivers
+default_enable_conex=$enable_drivers
+default_enable_linuxvga=$enable_drivers
+default_enable_vlt=$enable_drivers
+default_enable_versaterm=$enable_drivers
+default_enable_dg300=$enable_drivers
+default_enable_ps=$enable_drivers
+default_enable_xfig=$enable_drivers
+default_enable_ljii=$enable_drivers
+default_enable_hp7470=$enable_drivers
+default_enable_hp7580=$enable_drivers
+default_enable_lj_hpgl=$enable_drivers
+default_enable_imp=$enable_drivers
+default_enable_xwin=$enable_drivers
+default_enable_tk=$enable_drivers
+default_enable_dp=$enable_drivers
+
+
+# Special cases
+
+case $system in
+    Linux* )
+	default_enable_linuxvga=$enable_drivers
+    ;;
+    * )
+	default_enable_linuxvga="no"
+    ;;
+esac
+
+# Set final driver enable values
+
+# Check whether --enable-plmeta or --disable-plmeta was given.
+enableval="$enable_plmeta"
+if test -n "$enableval"; then
+  :
+else
+  enable_plmeta=$default_enable_plmeta
+fi
+# Check whether --with-plmeta or --without-plmeta was given.
+withval="$with_plmeta"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_plmeta" 1>&2; exit 1; }
+fi
+
+if test "$enable_plmeta" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_plmeta 1
+EOF
+
+    DEVICES="$DEVICES plmeta"
+fi
+# Check whether --enable-null or --disable-null was given.
+enableval="$enable_null"
+if test -n "$enableval"; then
+  :
+else
+  enable_null=$default_enable_null
+fi
+# Check whether --with-null or --without-null was given.
+withval="$with_null"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_null" 1>&2; exit 1; }
+fi
+
+if test "$enable_null" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_null 1
+EOF
+
+    DEVICES="$DEVICES null"
+fi
+# Check whether --enable-xterm or --disable-xterm was given.
+enableval="$enable_xterm"
+if test -n "$enableval"; then
+  :
+else
+  enable_xterm=$default_enable_xterm
+fi
+# Check whether --with-xterm or --without-xterm was given.
+withval="$with_xterm"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_xterm" 1>&2; exit 1; }
+fi
+
+if test "$enable_xterm" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_xterm 1
+EOF
+
+    DEVICES="$DEVICES xterm"
+fi
+# Check whether --enable-tek4010 or --disable-tek4010 was given.
+enableval="$enable_tek4010"
+if test -n "$enableval"; then
+  :
+else
+  enable_tek4010=$default_enable_tek4010
+fi
+# Check whether --with-tek4010 or --without-tek4010 was given.
+withval="$with_tek4010"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_tek4010" 1>&2; exit 1; }
+fi
+
+if test "$enable_tek4010" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_tek4010 1
+EOF
+
+    DEVICES="$DEVICES tek4010"
+fi
+# Check whether --enable-tek4107 or --disable-tek4107 was given.
+enableval="$enable_tek4107"
+if test -n "$enableval"; then
+  :
+else
+  enable_tek4107=$default_enable_tek4107
+fi
+# Check whether --with-tek4107 or --without-tek4107 was given.
+withval="$with_tek4107"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_tek4107" 1>&2; exit 1; }
+fi
+
+if test "$enable_tek4107" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_tek4107 1
+EOF
+
+    DEVICES="$DEVICES tek4107"
+fi
+# Check whether --enable-mskermit or --disable-mskermit was given.
+enableval="$enable_mskermit"
+if test -n "$enableval"; then
+  :
+else
+  enable_mskermit=$default_enable_mskermit
+fi
+# Check whether --with-mskermit or --without-mskermit was given.
+withval="$with_mskermit"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_mskermit" 1>&2; exit 1; }
+fi
+
+if test "$enable_mskermit" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_mskermit 1
+EOF
+
+    DEVICES="$DEVICES mskermit"
+fi
+# Check whether --enable-conex or --disable-conex was given.
+enableval="$enable_conex"
+if test -n "$enableval"; then
+  :
+else
+  enable_conex=$default_enable_conex
+fi
+# Check whether --with-conex or --without-conex was given.
+withval="$with_conex"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_conex" 1>&2; exit 1; }
+fi
+
+if test "$enable_conex" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_conex 1
+EOF
+
+    DEVICES="$DEVICES conex"
+fi
+# Check whether --enable-linuxvga or --disable-linuxvga was given.
+enableval="$enable_linuxvga"
+if test -n "$enableval"; then
+  :
+else
+  enable_linuxvga=$default_enable_linuxvga
+fi
+# Check whether --with-linuxvga or --without-linuxvga was given.
+withval="$with_linuxvga"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_linuxvga" 1>&2; exit 1; }
+fi
+
+if test "$enable_linuxvga" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_linuxvga 1
+EOF
+
+    DEVICES="$DEVICES linuxvga"
+fi
+# Check whether --enable-vlt or --disable-vlt was given.
+enableval="$enable_vlt"
+if test -n "$enableval"; then
+  :
+else
+  enable_vlt=$default_enable_vlt
+fi
+# Check whether --with-vlt or --without-vlt was given.
+withval="$with_vlt"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_vlt" 1>&2; exit 1; }
+fi
+
+if test "$enable_vlt" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_vlt 1
+EOF
+
+    DEVICES="$DEVICES vlt"
+fi
+# Check whether --enable-versaterm or --disable-versaterm was given.
+enableval="$enable_versaterm"
+if test -n "$enableval"; then
+  :
+else
+  enable_versaterm=$default_enable_versaterm
+fi
+# Check whether --with-versaterm or --without-versaterm was given.
+withval="$with_versaterm"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_versaterm" 1>&2; exit 1; }
+fi
+
+if test "$enable_versaterm" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_versaterm 1
+EOF
+
+    DEVICES="$DEVICES versaterm"
+fi
+# Check whether --enable-dg300 or --disable-dg300 was given.
+enableval="$enable_dg300"
+if test -n "$enableval"; then
+  :
+else
+  enable_dg300=$default_enable_dg300
+fi
+# Check whether --with-dg300 or --without-dg300 was given.
+withval="$with_dg300"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_dg300" 1>&2; exit 1; }
+fi
+
+if test "$enable_dg300" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_dg300 1
+EOF
+
+    DEVICES="$DEVICES dg300"
+fi
+# Check whether --enable-ps or --disable-ps was given.
+enableval="$enable_ps"
+if test -n "$enableval"; then
+  :
+else
+  enable_ps=$default_enable_ps
+fi
+# Check whether --with-ps or --without-ps was given.
+withval="$with_ps"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_ps" 1>&2; exit 1; }
+fi
+
+if test "$enable_ps" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_ps 1
+EOF
+
+    DEVICES="$DEVICES ps"
+fi
+# Check whether --enable-xfig or --disable-xfig was given.
+enableval="$enable_xfig"
+if test -n "$enableval"; then
+  :
+else
+  enable_xfig=$default_enable_xfig
+fi
+# Check whether --with-xfig or --without-xfig was given.
+withval="$with_xfig"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_xfig" 1>&2; exit 1; }
+fi
+
+if test "$enable_xfig" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_xfig 1
+EOF
+
+    DEVICES="$DEVICES xfig"
+fi
+# Check whether --enable-ljii or --disable-ljii was given.
+enableval="$enable_ljii"
+if test -n "$enableval"; then
+  :
+else
+  enable_ljii=$default_enable_ljii
+fi
+# Check whether --with-ljii or --without-ljii was given.
+withval="$with_ljii"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_ljii" 1>&2; exit 1; }
+fi
+
+if test "$enable_ljii" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_ljii 1
+EOF
+
+    DEVICES="$DEVICES ljii"
+fi
+# Check whether --enable-hp7470 or --disable-hp7470 was given.
+enableval="$enable_hp7470"
+if test -n "$enableval"; then
+  :
+else
+  enable_hp7470=$default_enable_hp7470
+fi
+# Check whether --with-hp7470 or --without-hp7470 was given.
+withval="$with_hp7470"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_hp7470" 1>&2; exit 1; }
+fi
+
+if test "$enable_hp7470" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_hp7470 1
+EOF
+
+    DEVICES="$DEVICES hp7470"
+fi
+# Check whether --enable-hp7580 or --disable-hp7580 was given.
+enableval="$enable_hp7580"
+if test -n "$enableval"; then
+  :
+else
+  enable_hp7580=$default_enable_hp7580
+fi
+# Check whether --with-hp7580 or --without-hp7580 was given.
+withval="$with_hp7580"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_hp7580" 1>&2; exit 1; }
+fi
+
+if test "$enable_hp7580" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_hp7580 1
+EOF
+
+    DEVICES="$DEVICES hp7580"
+fi
+# Check whether --enable-lj_hpgl or --disable-lj_hpgl was given.
+enableval="$enable_lj_hpgl"
+if test -n "$enableval"; then
+  :
+else
+  enable_lj_hpgl=$default_enable_lj_hpgl
+fi
+# Check whether --with-lj_hpgl or --without-lj_hpgl was given.
+withval="$with_lj_hpgl"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_lj_hpgl" 1>&2; exit 1; }
+fi
+
+if test "$enable_lj_hpgl" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_lj_hpgl 1
+EOF
+
+    DEVICES="$DEVICES lj_hpgl"
+fi
+# Check whether --enable-imp or --disable-imp was given.
+enableval="$enable_imp"
+if test -n "$enableval"; then
+  :
+else
+  enable_imp=$default_enable_imp
+fi
+# Check whether --with-imp or --without-imp was given.
+withval="$with_imp"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_imp" 1>&2; exit 1; }
+fi
+
+if test "$enable_imp" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_imp 1
+EOF
+
+    DEVICES="$DEVICES imp"
+fi
+# Check whether --enable-xwin or --disable-xwin was given.
+enableval="$enable_xwin"
+if test -n "$enableval"; then
+  :
+else
+  enable_xwin=$default_enable_xwin
+fi
+# Check whether --with-xwin or --without-xwin was given.
+withval="$with_xwin"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_xwin" 1>&2; exit 1; }
+fi
+
+if test "$enable_xwin" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_xwin 1
+EOF
+
+    DEVICES="$DEVICES xwin"
+fi
+# Check whether --enable-tk or --disable-tk was given.
+enableval="$enable_tk"
+if test -n "$enableval"; then
+  :
+else
+  enable_tk=$default_enable_tk
+fi
+# Check whether --with-tk or --without-tk was given.
+withval="$with_tk"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_tk" 1>&2; exit 1; }
+fi
+
+if test "$enable_tk" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_tk 1
+EOF
+
+    DEVICES="$DEVICES tk"
+fi
+# Check whether --enable-dp or --disable-dp was given.
+enableval="$enable_dp"
+if test -n "$enableval"; then
+  :
+else
+  enable_dp=$default_enable_dp
+fi
+# Check whether --with-dp or --without-dp was given.
+withval="$with_dp"
+if test -n "$withval"; then
+  { echo "configure: error: unrecognized variable: with_dp" 1>&2; exit 1; }
+fi
+
+if test "$enable_dp" = "yes"; then
+    cat >> confdefs.h <<\EOF
+#define PLD_dp 1
+EOF
+
+    DEVICES="$DEVICES dp"
+fi
 
 
 
@@ -1541,7 +2014,7 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1545 "configure"
+#line 2018 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1555,7 +2028,7 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1559 "configure"
+#line 2032 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1698,7 +2171,7 @@ test -z "$x_direct_test_library" && x_direct_test_library=Xt
 test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
 test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
 cat > conftest.$ac_ext <<EOF
-#line 1702 "configure"
+#line 2175 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
@@ -1761,7 +2234,7 @@ rm -f conftest*
 ac_save_LIBS="$LIBS"
 LIBS="-l$x_direct_test_library $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1765 "configure"
+#line 2238 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -1847,7 +2320,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 1851 "configure"
+#line 2324 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -1904,7 +2377,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1908 "configure"
+#line 2381 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2804,7 +3277,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lf2c  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2808 "configure"
+#line 3281 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2860,6 +3333,9 @@ if test -z "$EXTRA_LIBS"; then
 	CRAY* ) 
 	    EXTRA_LIBS="$EXTRA_LIBS -lm"
 	;;
+	irix*|IRIX*|Irix*|sgi*|SGI* ) 
+	    EXTRA_LIBS="$EXTRA_LIBS -lm"
+	;;
 	* ) 	
 	    echo $ac_n "checking for -lXbsd""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_lib_Xbsd'+set}'`\" = set"; then
@@ -2868,7 +3344,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2872 "configure"
+#line 3348 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2901,7 +3377,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2905 "configure"
+#line 3381 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2934,7 +3410,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2938 "configure"
+#line 3414 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2967,7 +3443,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2971 "configure"
+#line 3447 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3000,7 +3476,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3004 "configure"
+#line 3480 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3176,7 +3652,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3180 "configure"
+#line 3656 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3197,7 +3673,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3201 "configure"
+#line 3677 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3219,7 +3695,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3223 "configure"
+#line 3699 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3237,7 +3713,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3241 "configure"
+#line 3717 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -3258,7 +3734,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3262 "configure"
+#line 3738 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -3295,7 +3771,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3299 "configure"
+#line 3775 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -3356,7 +3832,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3360 "configure"
+#line 3836 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3388,7 +3864,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3392 "configure"
+#line 3868 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -3422,7 +3898,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 3426 "configure"
+#line 3902 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -3537,7 +4013,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3541 "configure"
+#line 4017 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -3592,7 +4068,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3596 "configure"
+#line 4072 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -3699,11 +4175,7 @@ cat $srcdir/cf/dist.in		>>Makefile.in
 
 case $system in
     Linux* )
-	enable_linuxvga="yes"
 	cat $srcdir/cf/drivers_linux.in	>>Makefile.in
-    ;;
-    * )
-	enable_linuxvga="no"
     ;;
 esac
 
@@ -3789,443 +4261,6 @@ cat $srcdir/cf/init.in		>Makedemo.in
 cat $srcdir/cf/initdemo.in	>>Makedemo.in 
 cat $srcdir/cf/demos.in		>>Makedemo.in 
 cat $srcdir/cf/miscdemo.in	>>Makedemo.in 
-
-# ----------------------------------------------------------------------------
-# Set up variables governing device driver inclusion.
-#
-# You can enable/disable drivers either by the command line
-# (--enable-<driver> or --disable-<driver>) or via the cf_plplot.in file
-# (remember to use underscores instead of dashes here).  You can disable
-# all drivers by default by using --disable-drivers.
-# ----------------------------------------------------------------------------
-
-
-
-
-
-
-
-# Check whether --enable-plmeta or --disable-plmeta was given.
-enableval="$enable_plmeta"
-if test -n "$enableval"; then
-  :
-else
-  enable_plmeta=$enable_drivers
-fi
-# Check whether --with-plmeta or --without-plmeta was given.
-withval="$with_plmeta"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_plmeta" 1>&2; exit 1; }
-fi
-
-if test "$enable_plmeta" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_plmeta 1
-EOF
-
-    DEVICES="$DEVICES plmeta"
-fi
-# Check whether --enable-null or --disable-null was given.
-enableval="$enable_null"
-if test -n "$enableval"; then
-  :
-else
-  enable_null=$enable_drivers
-fi
-# Check whether --with-null or --without-null was given.
-withval="$with_null"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_null" 1>&2; exit 1; }
-fi
-
-if test "$enable_null" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_null 1
-EOF
-
-    DEVICES="$DEVICES null"
-fi
-# Check whether --enable-xterm or --disable-xterm was given.
-enableval="$enable_xterm"
-if test -n "$enableval"; then
-  :
-else
-  enable_xterm=$enable_drivers
-fi
-# Check whether --with-xterm or --without-xterm was given.
-withval="$with_xterm"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_xterm" 1>&2; exit 1; }
-fi
-
-if test "$enable_xterm" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_xterm 1
-EOF
-
-    DEVICES="$DEVICES xterm"
-fi
-# Check whether --enable-tek4010 or --disable-tek4010 was given.
-enableval="$enable_tek4010"
-if test -n "$enableval"; then
-  :
-else
-  enable_tek4010=$enable_drivers
-fi
-# Check whether --with-tek4010 or --without-tek4010 was given.
-withval="$with_tek4010"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_tek4010" 1>&2; exit 1; }
-fi
-
-if test "$enable_tek4010" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_tek4010 1
-EOF
-
-    DEVICES="$DEVICES tek4010"
-fi
-# Check whether --enable-tek4107 or --disable-tek4107 was given.
-enableval="$enable_tek4107"
-if test -n "$enableval"; then
-  :
-else
-  enable_tek4107=$enable_drivers
-fi
-# Check whether --with-tek4107 or --without-tek4107 was given.
-withval="$with_tek4107"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_tek4107" 1>&2; exit 1; }
-fi
-
-if test "$enable_tek4107" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_tek4107 1
-EOF
-
-    DEVICES="$DEVICES tek4107"
-fi
-# Check whether --enable-mskermit or --disable-mskermit was given.
-enableval="$enable_mskermit"
-if test -n "$enableval"; then
-  :
-else
-  enable_mskermit=$enable_drivers
-fi
-# Check whether --with-mskermit or --without-mskermit was given.
-withval="$with_mskermit"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_mskermit" 1>&2; exit 1; }
-fi
-
-if test "$enable_mskermit" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_mskermit 1
-EOF
-
-    DEVICES="$DEVICES mskermit"
-fi
-# Check whether --enable-conex or --disable-conex was given.
-enableval="$enable_conex"
-if test -n "$enableval"; then
-  :
-else
-  enable_conex=$enable_drivers
-fi
-# Check whether --with-conex or --without-conex was given.
-withval="$with_conex"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_conex" 1>&2; exit 1; }
-fi
-
-if test "$enable_conex" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_conex 1
-EOF
-
-    DEVICES="$DEVICES conex"
-fi
-# Check whether --enable-linuxvga or --disable-linuxvga was given.
-enableval="$enable_linuxvga"
-if test -n "$enableval"; then
-  :
-else
-  enable_linuxvga=$enable_drivers
-fi
-# Check whether --with-linuxvga or --without-linuxvga was given.
-withval="$with_linuxvga"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_linuxvga" 1>&2; exit 1; }
-fi
-
-if test "$enable_linuxvga" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_linuxvga 1
-EOF
-
-    DEVICES="$DEVICES linuxvga"
-fi
-# Check whether --enable-vlt or --disable-vlt was given.
-enableval="$enable_vlt"
-if test -n "$enableval"; then
-  :
-else
-  enable_vlt=$enable_drivers
-fi
-# Check whether --with-vlt or --without-vlt was given.
-withval="$with_vlt"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_vlt" 1>&2; exit 1; }
-fi
-
-if test "$enable_vlt" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_vlt 1
-EOF
-
-    DEVICES="$DEVICES vlt"
-fi
-# Check whether --enable-versaterm or --disable-versaterm was given.
-enableval="$enable_versaterm"
-if test -n "$enableval"; then
-  :
-else
-  enable_versaterm=$enable_drivers
-fi
-# Check whether --with-versaterm or --without-versaterm was given.
-withval="$with_versaterm"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_versaterm" 1>&2; exit 1; }
-fi
-
-if test "$enable_versaterm" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_versaterm 1
-EOF
-
-    DEVICES="$DEVICES versaterm"
-fi
-# Check whether --enable-dg300 or --disable-dg300 was given.
-enableval="$enable_dg300"
-if test -n "$enableval"; then
-  :
-else
-  enable_dg300=$enable_drivers
-fi
-# Check whether --with-dg300 or --without-dg300 was given.
-withval="$with_dg300"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_dg300" 1>&2; exit 1; }
-fi
-
-if test "$enable_dg300" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_dg300 1
-EOF
-
-    DEVICES="$DEVICES dg300"
-fi
-# Check whether --enable-ps or --disable-ps was given.
-enableval="$enable_ps"
-if test -n "$enableval"; then
-  :
-else
-  enable_ps=$enable_drivers
-fi
-# Check whether --with-ps or --without-ps was given.
-withval="$with_ps"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_ps" 1>&2; exit 1; }
-fi
-
-if test "$enable_ps" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_ps 1
-EOF
-
-    DEVICES="$DEVICES ps"
-fi
-# Check whether --enable-xfig or --disable-xfig was given.
-enableval="$enable_xfig"
-if test -n "$enableval"; then
-  :
-else
-  enable_xfig=$enable_drivers
-fi
-# Check whether --with-xfig or --without-xfig was given.
-withval="$with_xfig"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_xfig" 1>&2; exit 1; }
-fi
-
-if test "$enable_xfig" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_xfig 1
-EOF
-
-    DEVICES="$DEVICES xfig"
-fi
-# Check whether --enable-ljii or --disable-ljii was given.
-enableval="$enable_ljii"
-if test -n "$enableval"; then
-  :
-else
-  enable_ljii=$enable_drivers
-fi
-# Check whether --with-ljii or --without-ljii was given.
-withval="$with_ljii"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_ljii" 1>&2; exit 1; }
-fi
-
-if test "$enable_ljii" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_ljii 1
-EOF
-
-    DEVICES="$DEVICES ljii"
-fi
-# Check whether --enable-hp7470 or --disable-hp7470 was given.
-enableval="$enable_hp7470"
-if test -n "$enableval"; then
-  :
-else
-  enable_hp7470=$enable_drivers
-fi
-# Check whether --with-hp7470 or --without-hp7470 was given.
-withval="$with_hp7470"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_hp7470" 1>&2; exit 1; }
-fi
-
-if test "$enable_hp7470" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_hp7470 1
-EOF
-
-    DEVICES="$DEVICES hp7470"
-fi
-# Check whether --enable-hp7580 or --disable-hp7580 was given.
-enableval="$enable_hp7580"
-if test -n "$enableval"; then
-  :
-else
-  enable_hp7580=$enable_drivers
-fi
-# Check whether --with-hp7580 or --without-hp7580 was given.
-withval="$with_hp7580"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_hp7580" 1>&2; exit 1; }
-fi
-
-if test "$enable_hp7580" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_hp7580 1
-EOF
-
-    DEVICES="$DEVICES hp7580"
-fi
-# Check whether --enable-lj_hpgl or --disable-lj_hpgl was given.
-enableval="$enable_lj_hpgl"
-if test -n "$enableval"; then
-  :
-else
-  enable_lj_hpgl=$enable_drivers
-fi
-# Check whether --with-lj_hpgl or --without-lj_hpgl was given.
-withval="$with_lj_hpgl"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_lj_hpgl" 1>&2; exit 1; }
-fi
-
-if test "$enable_lj_hpgl" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_lj_hpgl 1
-EOF
-
-    DEVICES="$DEVICES lj_hpgl"
-fi
-# Check whether --enable-imp or --disable-imp was given.
-enableval="$enable_imp"
-if test -n "$enableval"; then
-  :
-else
-  enable_imp=$enable_drivers
-fi
-# Check whether --with-imp or --without-imp was given.
-withval="$with_imp"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_imp" 1>&2; exit 1; }
-fi
-
-if test "$enable_imp" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_imp 1
-EOF
-
-    DEVICES="$DEVICES imp"
-fi
-# Check whether --enable-xwin or --disable-xwin was given.
-enableval="$enable_xwin"
-if test -n "$enableval"; then
-  :
-else
-  enable_xwin=$enable_drivers
-fi
-# Check whether --with-xwin or --without-xwin was given.
-withval="$with_xwin"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_xwin" 1>&2; exit 1; }
-fi
-
-if test "$enable_xwin" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_xwin 1
-EOF
-
-    DEVICES="$DEVICES xwin"
-fi
-# Check whether --enable-tk or --disable-tk was given.
-enableval="$enable_tk"
-if test -n "$enableval"; then
-  :
-else
-  enable_tk=$enable_drivers
-fi
-# Check whether --with-tk or --without-tk was given.
-withval="$with_tk"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_tk" 1>&2; exit 1; }
-fi
-
-if test "$enable_tk" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_tk 1
-EOF
-
-    DEVICES="$DEVICES tk"
-fi
-# Check whether --enable-dp or --disable-dp was given.
-enableval="$enable_dp"
-if test -n "$enableval"; then
-  :
-else
-  enable_dp=$enable_drivers
-fi
-# Check whether --with-dp or --without-dp was given.
-withval="$with_dp"
-if test -n "$withval"; then
-  { echo "configure: error: unrecognized variable: with_dp" 1>&2; exit 1; }
-fi
-
-if test "$enable_dp" = "yes"; then
-    cat >> confdefs.h <<\EOF
-#define PLD_dp 1
-EOF
-
-    DEVICES="$DEVICES dp"
-fi
-
 
 # ----------------------------------------------------------------------------
 # Set up variables that specify install directories
