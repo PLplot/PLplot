@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1995/05/07 02:24:30  mjl
+ * Revision 1.2  1995/05/15 07:56:43  mjl
+ * Include malloc.h (for debugging malloc) if DEBUGGING_MALLOC is defined.
+ *
+ * Revision 1.1  1995/05/07  02:24:30  mjl
  * Added to help with debugging support.  Includes macros as well as a
  * static function pldebug, which has a stdarg (vargarg) based argument list.
  * Debugging output is only enabled if DEBUG is defined prior to inclusion of
@@ -40,6 +43,12 @@ if (plsc->debug) \
 
 #else
 #define dbug_enter(a)
+#endif
+
+/* If we're using a debugging malloc, include the header file here */
+
+#ifdef DEBUGGING_MALLOC
+#include <malloc.h>
 #endif
 
 /*--------------------------------------------------------------------------*\
