@@ -43,8 +43,6 @@ libplplotf77@LIB_TAG@_la_SOURCES  = $(sources)
 libplplotf77@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(libplplot)
 libplplotf77@LIB_TAG@_la_LIBADD  = $(FLIBS)
 
-EXTRA_DIST = fmacs.m4 sfstubs.fm4
-
 # Must be explicit here with dependencies.  Otherwise solaris "make" chokes.
 sfstubs.f: sfstubs.h sfstubs.fm4
 
@@ -56,5 +54,8 @@ sfstubs.f: sfstubs.h sfstubs.fm4
 .fm4.f:
 	cp $< $*.f
 
+EXTRA_DIST = fmacs.m4 sfstubs.fm4 configurable.f.in
 CLEANFILES = sfstubs.f
+DISTCLEANFILES = configurable.f
+
 SUFFIXES = .fm4
