@@ -404,6 +404,11 @@ if enable_dyndrivers
 	rm -f $(DESTDIR)$(driversdir)/*.a
 endif
 
+docdir = $(DOCDIR)
+doc_DATA = README.drivers
+
+EXTRA_DIST = next.c
+
 CLEANFILES = plapi.tpl tclcmd.tpl tclgen.h tclgen_s.h tclgen.c *.rc
 DISTCLEANFILES = $(drivers_DATA)
 
