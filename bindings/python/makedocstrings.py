@@ -47,9 +47,11 @@ def main():
       #print 'here'
       while 1:
         line = infile.readline()
-        m = re.match('[ \t]+\{[ \t]\(char \*\)"([a-zA-Z_0-9]+)"(.*)\},', line)
+        m = re.match('[ \t]+\{[ \t]\(char \*\)"([a-zA-Z_0-9]+)"(.*)\, NULL \},', line)
         if not m:
-          break
+          m = re.match('[ \t]+\{[ \t]\(char \*\)"([a-zA-Z_0-9]+)"(.*)\},', line)
+          if not m:
+            break
         func = m.group(1)
         #print 'look for',func
         if func in docstrings.keys():

@@ -29,7 +29,7 @@ PLPLOTCAPI_I = $(SWIG_SUPPORT_DIR)/plplotcapi.i
 SWIG_PYTHON_DIR = $(top_srcdir)/bindings/python
 MAKEDOCSTRINGS_PY = $(SWIG_PYTHON_DIR)/makedocstrings.py
 
-SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -I$(SWIG_PYTHON_DIR) -c++ -DSWIG_PYTHON -python
+SWIG_CMD = $(SWIG) -I$(SWIG_SUPPORT_DIR) -I$(SWIG_PYTHON_DIR) -DSWIG_PYTHON -python
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
