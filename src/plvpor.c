@@ -16,19 +16,25 @@
  *	axis=-1 : draw box only.
  *	axis= 0 : Draw box, ticks, and numeric tick labels.
  *	axis= 1 : Also draw coordinate axes at X=0, and Y=0.
- *	axis= 2 : Also draw a grid at major tick positions.
+ *	axis= 2 : Also draw a grid at major tick positions in both coordinates.
  *	axis=10 : Same as 0 except Logarithmic X tick marks. (The X data have
  *      to be converted to logarithms separately.)
- *	axis=11 : Same as 10 with addition of Y axis at (log) X=0.
- *	axis=12 : Same as 11 with addition of grid in both coordinates.
+ *	axis=11 : Same as 1 except Logarithmic X tick marks. (The X data have
+ *      to be converted to logarithms separately.)
+ *	axis=12 : Same as 2 except Logarithmic X tick marks. (The X data have
+ *      to be converted to logarithms separately.)
  *	axis=20 : Same as 0 except Logarithmic Y tick marks. (The Y data have
  *      to be converted to logarithms separately.)
- *	axis=21 : Same as 20 with addition of X axis at (log) Y=0.
- *	axis=22 : Same as 21 with addition of grid in both coordinates.
+ *	axis=21 : Same as 1 except Logarithmic Y tick marks. (The Y data have
+ *      to be converted to logarithms separately.)
+ *	axis=22 : Same as 2 except Logarithmic Y tick marks. (The Y data have
+ *      to be converted to logarithms separately.)
  *	axis=30 : Same as 0 except Logarithmic X,Y tick marks. (The X,Y data have
  *      to be converted to logarithms separately.)
- *	axis=31 : Same as 30 (axis option specified but ignored since log in same coordinate).
- *	axis=32 : Same as 31 with addition of grid in both coordinates.
+ *	axis=31 : Same as 1 except Logarithmic X,Y tick marks. (The X,Y data have
+ *      to be converted to logarithms separately.)
+ *	axis=32 : Same as 2 except Logarithmic X,Y tick marks. (The X,Y data have
+ *      to be converted to logarithms separately.)
 \*--------------------------------------------------------------------------*/
 
 void
@@ -103,28 +109,28 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 	plbox("bclnst", (PLFLT) 0.0, 0, "bcnstv", (PLFLT) 0.0, 0);
 	break;
     case 11:
-	plbox("bclnst", (PLFLT) 0.0, 0, "abcnstv", (PLFLT) 0.0, 0);
+	plbox("abclnst", (PLFLT) 0.0, 0, "abcnstv", (PLFLT) 0.0, 0);
 	break;
-    case 12:/* jc: make it regular */
-	plbox("bclgnst", (PLFLT) 0.0, 0, "abcgnstv", (PLFLT) 0.0, 0);
+    case 12:
+	plbox("abcglnst", (PLFLT) 0.0, 0, "abcgnstv", (PLFLT) 0.0, 0);
 	break;
     case 20:
 	plbox("bcnst", (PLFLT) 0.0, 0, "bclnstv", (PLFLT) 0.0, 0);
 	break;
     case 21:
-	plbox("bcnst", (PLFLT) 0.0, 0, "abclnstv", (PLFLT) 0.0, 0);
+	plbox("abcnst", (PLFLT) 0.0, 0, "abclnstv", (PLFLT) 0.0, 0);
 	break;
-    case 22:/* jc: make it regular */
-	plbox("bcngst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
+    case 22:
+	plbox("abcgnst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
 	break;	
     case 30:
 	plbox("bclnst", (PLFLT) 0.0, 0, "bclnstv", (PLFLT) 0.0, 0);
 	break;
-    case 31:/* jc: make it regular */
-	plbox("bclnst", (PLFLT) 0.0, 0, "abclnstv", (PLFLT) 0.0, 0);
+    case 31:
+	plbox("abclnst", (PLFLT) 0.0, 0, "abclnstv", (PLFLT) 0.0, 0);
 	break;
-    case 32:/* jc: make it regular */
-	plbox("bclngst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
+    case 32:
+	plbox("abcglnst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
 	break;	
     default:
 	plwarn("plenv: Invalid axis argument");
