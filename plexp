@@ -16,7 +16,7 @@ if [ -f .import ]; then
         # export files newer than .import.
         echo "Exporting files modified since last import."
 
-        check_new="-newer $pldir/.import"
+	check_new="-newer $pldir/.import"
 
 else
         # Need to export all files.
@@ -28,7 +28,7 @@ fi
 cd ..
 
 tar cvf plplot.tar \
-	`find plplot \
+	`find $pldir \
 	$check_new \
 	! -path \*CVS\* \
 	! -path plplot/tmp\* \
