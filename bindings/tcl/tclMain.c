@@ -1,9 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1994/06/23 22:43:34  mjl
+ * Revision 1.2  1994/06/24 20:40:45  mjl
+ * Created function to handle error condition.  Is handled by indirection
+ * through a global pointer, so can be replaced.  This call has to bypass
+ * the interpreter since it's important that the interp->result string is
+ * not modified.
+ *
+ * Revision 1.1  1994/06/23  22:43:34  mjl
  * Handles nearly all the important setup for extended tclsh's.  Taken from
  * tclMain.c of Tcl 7.3, and modified minimally to support my needs.
- *
 */
 
 /*
@@ -15,6 +20,7 @@
  * 1. main() changed to pltclMain().
  * 2. tcl_RcFileName changed to pltcl_RcFileName.
  * 3. Changes to work with ANSI C
+ * 4. Changes to support user-installable error handler.
  *
  * The original notes follow.
  */
@@ -44,10 +50,6 @@
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
-
-#ifndef lint
-static char rcsid[] = "$Header$ SPRITE (Berkeley)";
-#endif
 
 #define _POSIX_SOURCE
 
@@ -88,6 +90,14 @@ static int quitFlag = 0;	/* 1 means the "checkmem" command was
 
 static int		CheckmemCmd _ANSI_ARGS_((ClientData clientData,
 			    Tcl_Interp *interp, int argc, char *argv[]));
+
+static void
+ErrorHandler _ANSI_ARGS_((Tcl_Interp *interp, int code, int tty));
+
+/* This is globally visible and can be replaced */
+
+void (*tclErrorHandler)
+    _ANSI_ARGS_((Tcl_Interp *interp, int code, int tty)) = ErrorHandler;
 
 /*
  *----------------------------------------------------------------------
@@ -251,11 +261,10 @@ pltclMain(int argc, char **argv)
 	gotPartial = 0;
 	code = Tcl_RecordAndEval(interp, cmd, 0);
 	Tcl_DStringFree(&command);
-	if (code != TCL_OK) {
-	    fprintf(stderr, "%s\n", interp->result);
-	} else if (tty && (*interp->result != 0)) {
-	    printf("%s\n", interp->result);
-	}
+
+	if ((code != TCL_OK) || (tty && (*interp->result != 0)))
+	    (*tclErrorHandler)(interp, code, tty);
+
 #ifdef TCL_MEM_DEBUG
 	if (quitFlag) {
 	    Tcl_DeleteInterp(interp);
@@ -277,6 +286,38 @@ pltclMain(int argc, char **argv)
     return 1;
 }
 
+/*
+ *----------------------------------------------------------------------
+ *
+ * ErrorHandler --
+ *
+ *	Handles error conditions while parsing.  Can be replaced by the
+ *	caller, but only via the C API, as otherwise interp->result will
+ *	get trashed by the call.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Error info is printed to stdout or stderr.
+ *
+ *----------------------------------------------------------------------
+ */
+	/* ARGSUSED */
+static void
+ErrorHandler(interp, code, tty)
+    Tcl_Interp *interp;			/* Interpreter for evaluation. */
+    int code;				/* Error code returned by last cmd. */
+    int tty;				/* Set if connected to a tty. */
+{
+    if (code != TCL_OK) {
+	fprintf(stderr, "%s\n", interp->result);
+
+    } else if (tty && (*interp->result != 0)) {
+	printf("%s\n", interp->result);
+    }
+}
+
 /*
  *----------------------------------------------------------------------
  *
