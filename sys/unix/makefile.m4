@@ -168,16 +168,13 @@ if_unix({
 # See right before rule declaration for plot library specifications.
 
 INSTALL_DIR	= /usr/local/plplot
-INCLUDE_DIR	= $(INSTALL_DIR)/{include}
-TCL_DIR		= $(INSTALL_DIR)/tcl
+TK_INCDIR	= /usr/local/{include}
+TK_LINKDIR	= /usr/local/lib
 
-DIRFLAG		= -DINSTALL_DIR=\"$(INSTALL_DIR)\"
 PLLIB_DIR	= ../lib
 PLFNT_DIR	= ../lib
 PLLIB_PATH	= $(PLLIB_DIR)/
 PLFNT_PATH	= $(PLFNT_DIR)/
-TK_INCDIR	= /usr/local/{include}
-TK_LINKDIR	= /usr/local/lib
 SYS_LIBS	=
 
 # Note there is no "standard" way to invoke double precision in Fortran
@@ -418,8 +415,14 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 #		NEC Super-UX definitions
 
 SYS_FLAGS_C = -hansi
-SYS_FLAGS_F = -e2 -pvctl nomsg
-F77	= f77sx
+SYS_FLAGS_F = -Wf "-e2" -Wf "-pvctl nomsg"
+F77	= f77
+
+# Install under $(HOME) since it's unlikely I have the root password.
+
+INSTALL_DIR	= $(HOME)/local/plplot
+TK_INCDIR	= $(HOME)/local/{include}
+TK_LINKDIR	= $(HOME)/local/lib
 
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DDG300 -DPS \
 	    -DXFIG -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
@@ -431,10 +434,10 @@ FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
 LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
-LIBF	= if_tk({-l-ltk -l-ltcl}) if_xwin({-l-lX11})
+LIBF	= if_tk({-ltk -ltcl}) if_xwin({-lX11})
 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm
-LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -l-lm
+LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 
 #----------------------------------------------------------------------#
 })if_dgux({
@@ -643,6 +646,12 @@ LDFFLAGS= $(OPENWIN_DIR) $(PROFILE_FLAG_LF) $(LIBF) -lm
 # These may depend on system-specific settings.
 
 if_unix({
+
+# Dependent directories
+
+INCLUDE_DIR	= $(INSTALL_DIR)/{include}
+TCL_DIR		= $(INSTALL_DIR)/tcl
+DIRFLAG		= -DINSTALL_DIR=\"$(INSTALL_DIR)\"
 
 # Library names
 #
