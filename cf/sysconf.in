@@ -429,6 +429,7 @@ case "$system" in
 	    SYS_FLAGS_C="-D_BSD_SIGNALS"
     ;;
     linux*|LINUX*|Linux* ) 
+	    SYS_FLAGS_C="-ansi -pedantic -Wall"
     ;;
     next*|NeXT*|NEXT* ) 
     ;;
