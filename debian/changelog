@@ -1,13 +1,16 @@
 plplot (5.0.2-0.potato.3) unstable; urgency=low
 
-  * debian/control: Made plplot-common conflit and replace plplot << 5.0.2,
-    because plplot-common took over plplot's FAQ file.  Thanks to Jim
-    LewisMoss <dres@mindspring.com> (closes: #90846).
-  * REmoved some useless debian/*.dirs files, particularly
+  * debian/control: Made plplot-common conflict and replace plplot <<
+    5.0.2, because plplot-common took over plplot's FAQ file.  Thanks to
+    Jim LewisMoss <dres@mindspring.com> (closes: #90846).
+  * Removed some useless debian/*.dirs files, particularly
     plplot-tcl.dirs, which was creating a wrong directory
-    /usr/lib/plplot5.0.1 (!).
+    /usr/lib/plplot5.0.1 (!). 
+  * Added more build dependencies, based on the buildd report on Sparc.
+    Also, patched cf/sysloc.in to have configure finding the file tcl.h.
+    Thanks to Ben Collins <bcollins@debian.org> (closes: #91228).
 
- -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon, 26 Mar 2001 10:10:59 +0200
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon, 26 Mar 2001 17:34:01 +0200
 
 plplot (5.0.2-0.potato.2) unstable; urgency=low
 

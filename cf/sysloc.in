@@ -147,7 +147,10 @@ fi
 # "/usr" which would give bad result under Linux without this ordering.)
 
 incdirs_default="\
+/usr/include/tcl8.2 \
 /usr/include/tcl8.2/generic \
+/usr/include/tcl8.3 \
+/usr/include/tcl8.3/generic \
 /usr/include/itcl3.1/generic \
 $prefix/include/itcl \
 $prefix/include \

@@ -56,7 +56,8 @@ install-stamp: build-stamp
 
 	(cd tmp; make PREFIX=$(debusr) install)
 # This hack ought to go away when it is fixed upstream
-	chmod -x $(deblib)/plplot$(version)/tcl/plcolor.tcl
+	chmod -x $(deblib)/plplot$(version)/tcl/plcolor.tcl ; \
+
 # Temporary hack
 	rm -f $(debusr)/bin/plplot_linkage
 
