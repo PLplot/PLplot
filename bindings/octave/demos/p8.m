@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -20,6 +20,9 @@ function p8
   xlabel("X"); ylabel("Y");
   title("Mesh example");
   [x y z]=rosenbrock;z=log(z);
+  colormap(pink);
+  mesh(x,y,z)
+  pause(1);
   meshc(x,y,z)
 
   automatic_replot = t;
