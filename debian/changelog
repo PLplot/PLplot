@@ -1,3 +1,11 @@
+plplot (5.2.1.cvs.20031231-2) unstable; urgency=low
+
+  * NOT YET RELEASED!
+  * debian/control: Added pkg-config to build-dependencies and to
+    libplplot-dev Recommends:.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Wed, 31 Dec 2003 19:20:52 +0100
+
 plplot (5.2.1.cvs.20031231-1) unstable; urgency=low
 
   * New cvs snapshot upstream release

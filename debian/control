@@ -3,7 +3,7 @@ Section: math
 Priority: optional
 Maintainer: Rafael Laboissiere <rafael@debian.org>
 Standards-Version: 3.6.1
-Build-Depends: debhelper (>= 4.1.67), tcl8.4-dev, tk8.4-dev, itcl3-dev, xlibs-dev, g77 [!m68k], fort77 [m68k], g++-3.2, itk3-dev, python-numeric | python2.3-numeric, python-dev | python2.3-dev, octave2.1-headers | octave2.0-headers, libgd2-noxpm-dev | libgd2-xpm-dev, libgnome-dev, m4, perl, libqhull-dev, libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev, libltdl3-dev
+Build-Depends: debhelper (>= 4.1.67), tcl8.4-dev, tk8.4-dev, itcl3-dev, xlibs-dev, g77 [!m68k], fort77 [m68k], g++-3.2, itk3-dev, python-numeric | python2.3-numeric, python-dev | python2.3-dev, octave2.1-headers | octave2.0-headers, libgd2-noxpm-dev | libgd2-xpm-dev, libgnome-dev, m4, perl, libqhull-dev, libxml-parser-perl, libxml-dom-perl, matwrap, autotools-dev, libltdl3-dev, pkg-config
 Build-Conflicts: f2c [!m68k], fort77 [!m68k], libplplot5 (>= 5.2.1.cvs.20031027-1)
 
 Package: libplplot9
@@ -33,6 +33,7 @@ Section: libdevel
 Conflicts: plplot-dev, plplot-c++, libplplot5 (<< 5.2.0.cvs.20030317)
 Replaces: plplot-dev
 Suggests: plplot-doc
+Recommends: pkg-config
 Depends: libplplot9, libqhull-dev, libfreetype6-dev
 Description: Scientific plotting library (development files)
  This package contains all that is needed for doing development in C, C++,
