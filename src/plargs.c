@@ -418,8 +418,8 @@ static PLOptionTable ploption_table[] = {
     NULL,
     NULL,
     PL_OPT_FUNC | PL_OPT_ARG,
-    "-fsiz size",
-    "Output family file size in MB (e.g. -fsiz 1.0)" },
+    "-fsiz size[kKmMgG]",
+    "Output family file size (e.g. -fsiz 0.5G, def MB)" },
 {
     "fbeg",			/* Family starting member */
     opt_fbeg,
@@ -1545,20 +1545,51 @@ opt_fam(char *opt, char *optarg, void *client_data)
  *
  * Performs appropriate action for option "fsiz":
  * Sets size of a family member file (may be somewhat larger since eof must
- * occur at a page break).
+ * occur at a page break).  Also turns on familying.  Example usage:
+ *
+ *	-fsiz 5M	(5 MB)
+ *	-fsiz 300K	(300 KB)
+ *	-fsiz .3M	(same)
+ *	-fsiz .5G	(half a GB)
+ *
+ * Note case of the trailing suffix doesn't matter.
+ * If no suffix, defaults to MB.
 \*--------------------------------------------------------------------------*/
 
 static int
 opt_fsiz(char *opt, char *optarg, void *client_data)
 {
     PLINT bytemax;
+    int len = strlen(optarg);
+    char lastchar = optarg[len-1];
+    float multiplier = 1.0e6;
+    char *spec = malloc(len+1);
 
-    bytemax = 1.0e6 * atof(optarg);
+/* Interpret optional suffix */
+
+    switch (lastchar) {
+    case 'k':
+    case 'K':
+	multiplier = 1.0e3; len--;
+	break;
+    case 'm':
+    case 'M':
+	multiplier = 1.0e6; len--;
+	break;
+    case 'g':
+    case 'G':
+	multiplier = 1.0e9; len--;
+	break;
+    }
+    strncpy(spec, optarg, len);
+    spec[len] = '\0';
+
+    bytemax = multiplier * atof(spec);
     if (bytemax == 0) {
 	fprintf(stderr, "?invalid bytemax\n");
 	return 1;
     }
-    plsfam(-1, -1, bytemax);
+    plsfam(1, -1, bytemax);
 
     return 0;
 }
