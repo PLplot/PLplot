@@ -15,7 +15,6 @@ plctrl.o
 plcvt.o
 pldtik.o
 plfill.o
-plfont.o
 plhist.o
 plline.o
 plmap.o
@@ -25,7 +24,6 @@ plpage.o
 plsdef.o
 plshade.o
 plstream.o
-plstring.o
 plsym.o
 pltick.o
 plvpor.o

@@ -74,7 +74,6 @@ OBJ =	\
 	plcvt.o \
 	pldtik.o \
 	plfill.o \
-	plfont.o \
 	plhist.o \
 	plline.o \
 	plot3d.o \
@@ -82,7 +81,6 @@ OBJ =	\
 	plsdef.o \
 	plshade.o \
 	plstream.o \
-	plstring.o \
 	plsym.o \
 	pltick.o \
 	plvpor.o \
@@ -229,19 +227,6 @@ $(PLFNT_DIR)plstnd.fnt:
 $(PLFNT_DIR)plxtnd.fnt:
 	$(CC) $(CFLAGS:AL=AH) /Gt16 xtndfont.c font*.obj pdfutils.obj
 	-xtndfont
-
-#----------------------------------------------------------------------#
-# Explicit rules
-#
-# plfont.c may have font flags passed in
-
-plfont.o: plfont.c
-	$(CC) -c $(CFLAGS) $(FONTFLAG) $(PLDEVICES) /Fo$*.o $*.c
-
-# dispatch.c and all the drivers need to know $(PLDEVICES).  The guts
-# of the driver routine are not compiled if its name is not present in
-# the device list.  You may want to leave drivers for specific systems
-# (Amiga, MS-DOS, OS/2, etc) out of this list.
 
 #----------------------------------------------------------------------#
 # Build all the demos

@@ -87,7 +87,6 @@ CORE_C = \
 	plcvt.c \
 	pldtik.c \
 	plfill.c \
-	plfont.c \
 	plhist.c \
 	plline.c \
 	plmap.c \
@@ -96,7 +95,6 @@ CORE_C = \
 	plsdef.c \
 	plshade.c \
 	plstream.c \
-	plstring.c \
 	plsym.c \
 	pltick.c \
 	plvpor.c \
@@ -112,7 +110,6 @@ CORE_OBJ = \
 	plcvt$O \
 	pldtik$O \
 	plfill$O \
-	plfont$O \
 	plhist$O \
 	plline$O \
 	plmap$O \
@@ -121,7 +118,6 @@ CORE_OBJ = \
 	plsdef$O \
 	plshade$O \
 	plstream$O \
-	plstring$O \
 	plsym$O \
 	pltick$O \
 	plvpor$O \
@@ -751,7 +747,6 @@ plctrl$O : plctrl.c plplotP.h plConfig.h plplot.h pdf.h plstream.h
 plcvt$O : plcvt.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 pldtik$O : pldtik.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plfill$O : plfill.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plfont$O : plfont.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plhist$O : plhist.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plline$O : plline.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plot3d$O : plot3d.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
@@ -759,7 +754,6 @@ plpage$O : plpage.c plplotP.h plConfig.h plplot.h pdf.h plstream.h
 plsdef$O : plsdef.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plshade$O : plshade.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plstream$O : plstream.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plstring$O : plstring.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plsym$O : plsym.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 pltick$O : pltick.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
 plvpor$O : plvpor.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 

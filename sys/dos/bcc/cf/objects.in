@@ -3,7 +3,6 @@ OBJ =   \
 	plcont.obj \
 	pldtik.obj \
 	plfill.obj \
-	plfont.obj \
 	plhist.obj \
 	plline.obj \
 	plot3d.obj \
@@ -19,7 +18,6 @@ OBJ =   \
 	plcvt.obj \
 	plpage.obj \
 	plstream.obj \
-	plstring.obj \
 	plshade.obj
 
 DRV_OBJ = \
