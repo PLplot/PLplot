@@ -64,6 +64,7 @@ typedef struct {
 
         int colour;                             /* Current Colour               */
         int totcol;                             /* Total number of colours      */
+        int ncol1;                              /* Actual size of ncol1 we got  */
 
 } png_Dev;
 
@@ -244,9 +245,11 @@ png_Dev *dev=(png_Dev *)pls->dev;
 static void
 setcmap(PLStream *pls)
 {
-    int i, ncol1=pls->ncol1, ncol0=pls->ncol0, total_colours;
+    int i, ncol1=pls->ncol1, orig_ncol1=pls->ncol1;
+    int ncol0=pls->ncol0, total_colours;
     PLColor cmap1col;
     png_Dev *dev=(png_Dev *)pls->dev;
+    PLFLT tmp_colour_pos;
 
 /*
  * In theory when you call "gdImageDestroy()" the colourmap for that image
@@ -279,7 +282,11 @@ setcmap(PLStream *pls)
            }
        }
  
-    
+ dev->ncol1=ncol1;  /* The actual size of ncol1, regardless of what was asked. 
+                     * This is dependent on colour slots available.
+                     * It might well be the same as ncol1.
+                     */
+ 
 /* Initialize cmap 0 colors */
 
 if (ncol0>0)  /* make sure the program actually asked for cmap0 first */
@@ -341,13 +348,30 @@ if ((pls->cmap0[0].r>227)&&(pls->cmap0[0].g>227)&&(pls->cmap0[0].b>227))
 /* Initialize any remaining slots for cmap1 */
 
 
-//    ncol1 = NCOLOURS-pls->ncol0;
-
 if (ncol1>0)    /* make sure that we want to define cmap1 first */
    {
     for (i = 0; i < ncol1; i++) 
         {
-         plcol_interp(pls, &cmap1col, i, ncol1);
+
+         if (ncol1<pls->ncol1)       /* Check the dynamic range of colours */
+            {
+
+             /*
+              * Ok, now if we have less colour slots available than are being
+              * defined by pls->ncol1, then we still want to use the full
+              * dynamic range of cmap1 as best we can, so what we do is work
+              * out an approximation to the index in the full dynamic range
+              * in cases when pls->ncol1 exceeds the number of free colours.
+              */
+
+             tmp_colour_pos= i>0 ? pls->ncol1*((PLFLT)i/ncol1) : 0;
+             plcol_interp(pls, &cmap1col, (int) tmp_colour_pos, pls->ncol1);
+             
+            }
+         else
+            {
+             plcol_interp(pls, &cmap1col, i, ncol1);
+            }
 
          if (dev->colour_index[i + pls->ncol0]!=-8888) /* Should not be necessary  */
             {                                          /* But won't hurt to be sure */
@@ -360,7 +384,6 @@ if (ncol1>0)    /* make sure that we want to define cmap1 first */
          ++dev->totcol; /* count the number of colours we use as we go */
         }
    }
- 
 }
 
 
@@ -374,6 +397,7 @@ void
 plD_state_png(PLStream *pls, PLINT op)
 {
 png_Dev *dev=(png_Dev *)pls->dev;
+PLFLT tmp_colour_pos;
 
     switch (op) {
 
@@ -399,50 +423,20 @@ png_Dev *dev=(png_Dev *)pls->dev;
 
     case PLSTATE_COLOR1:
         /*
-         *   Estimate which colour we want from CMAP1
+         * Start by checking to see if we have to compensate for cases where
+         * we don't have the full dynamic range of cmap1 at out disposal
          */
-         
-        dev->colour = pls->ncol0 + pls->icol1;
+        if (dev->ncol1<pls->ncol1)   
+           {
+           tmp_colour_pos=dev->ncol1*((PLFLT)pls->icol1/(pls->ncol1>0 ? pls->ncol1 : 1));
+           dev->colour = pls->ncol0 + (int)tmp_colour_pos;
+           }
+        else
+           dev->colour = pls->ncol0 + pls->icol1;
         
-        /*
-         *   Now run the "fall back" code for direct colour setting via RGB.
-         *   This should not trip in a well written program, but is here for
-         *   backwards compatibility, and might be used with GD2+ for 
-         *   supporting millions of colours. This might not work too well
-         *   100% of the time.
-         */
-         
-      	if (dev->colour == PL_RGB_COLOR) {
-            int icol1, ncol1, r, g, b;
-
-        /* Try to work out if there is room for any more colours, and
-         * if so, how many.
-         */
-         
-        if ((ncol1 = MIN( (NCOLOURS-dev->totcol), pls->ncol1)) < 1)
-            break;
-
-        icol1 = pls->ncol0 + (pls->icol1 * (ncol1-1)) / (pls->ncol1-1);
-        r = pls->curcolor.r;
-        g = pls->curcolor.g;
-        b = pls->curcolor.b;
-
-        /* We have to "deallocate" any colour that we want to redefine
-         * I don't know what implications this has all up, but you seem
-         * to have to do it to make things work the way you expect them too.
-         */
-         
-        if (dev->colour_index[icol1]!=-8888)  /* Make sure we are not deallocating */
-            {                                 /* an "unallocated" colour           */
-             gdImageColorDeallocate(dev->im_out,dev->colour_index[icol1]);
-             --dev->totcol;
-            } 
-        dev->colour_index[icol1]=gdImageColorAllocate(dev->im_out,r, g, b);
- 	dev->colour = icol1;
- 	++dev->totcol; /* Add another colour to the heap of already used colours */
-	}
 	break;
-
+	
+	
     case PLSTATE_CMAP0:
     case PLSTATE_CMAP1:
     /*
