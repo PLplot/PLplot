@@ -14,3 +14,20 @@ TK_OBJ_SA	= tkMain$O
 TK_EXE		= plserver$E
 TK_INSTALL	= install_tk
 
+
+install_tk:
+	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
+	-if test $(SHARED) = 1; then \
+	 $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
+		-o plserver$E $(LDC_LIBS); \
+	 fi
+	-strip plserver$E
+	-cp plserver$E $(BIN_DIR)
+	-cd $(top_srcdir)/bindings/tk; \
+	 cp pltk.h $(INCLUDE_DIR); \
+	 cp *.tcl *.pal tclIndex $(TCL_DIR)
+	-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
+	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
+	-cd $(top_srcdir)/examples/tk; cp * $(DEMOS_DIR)/tk
+	-$(LN) $(DEMOS_DIR)/tcl/x??.tcl $(DEMOS_DIR)/tk
+

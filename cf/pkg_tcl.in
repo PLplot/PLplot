@@ -14,3 +14,14 @@ TCL_OBJ_SA	= tclMain$O
 TCL_EXE		= pltcl$E
 TCL_INSTALL	= install_tcl
 
+install_tcl:
+	-if test $(SHARED) = 1; then \
+	   $(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) -o pltcl$E $(LDC_LIBS); \
+	 fi
+	-strip pltcl$E
+	-cp pltcl$E $(BIN_DIR)
+	-cd $(top_srcdir)/bindings/tcl; \
+	 cp pltcl.h tclMatrix.h $(INCLUDE_DIR)
+	-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi
+	-cd $(top_srcdir)/examples/tcl; cp * $(DEMOS_DIR)/tcl
+

@@ -25,3 +25,11 @@ PYTHON_MOD_DIR	= @PYTHON_MOD_DIR@
 PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
+install_python:
+	 $(LDSHARED) $(LDC_FLAGS) plmodule$O $(LIB_INSTALL) \
+		-o $(PYTHON_EXE) $(LDC_LIBS)
+	-if test ! -d $(PYTHON_DIR); then mkdir -p $(PYTHON_DIR); fi
+	-cp $(PYTHON_EXE) $(PYTHON_DIR)
+	-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
+	-cd $(top_srcdir)/examples/python; cp * $(DEMOS_DIR)/python
+
