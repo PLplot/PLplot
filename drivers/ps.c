@@ -18,7 +18,12 @@
 static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);
 static void  fill_polygon	(PLStream *pls);
-static char outbuf[128];
+static void  proc_str           (PLStream *, EscText *);
+
+static char  outbuf[128];
+static int text = 0;
+static DrvOpt driver_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=1|0)"},
+				  {NULL, DRV_INT, NULL, NULL}};
 
 /*--------------------------------------------------------------------------*\
  * plD_init_ps()
@@ -44,8 +49,13 @@ static void
 ps_init(PLStream *pls)
 {
     PSDev *dev;
+
     PLFLT pxlx = YPSSIZE/LPAGE_X;
     PLFLT pxly = XPSSIZE/LPAGE_Y;
+
+    plParseDrvOpts(driver_options);
+    if (text)
+      pls->dev_text = 1; /* want to draw text */
 
     pls->dev_fill0 = 1;		/* Can do solid fills */
 
@@ -465,9 +475,12 @@ void
 plD_esc_ps(PLStream *pls, PLINT op, void *ptr)
 {
     switch (op) {
-      case PLESC_FILL:
-	fill_polygon(pls);
-	break;
+    case PLESC_FILL:
+      fill_polygon(pls);
+      break;
+    case PLESC_HAS_TEXT:
+      proc_str(pls, ptr);
+      break;
     }
 }
 
@@ -551,6 +564,93 @@ ps_getdate(void)
     *(p + len - 1) = '\0';	/* zap the newline character */
     return p;
 }
+
+
+void
+proc_str (PLStream *pls, EscText *args)
+{
+  PLFLT *t = args->xform;
+  PLFLT a1, alpha, ft_ht, angle, ref;
+  PSDev *dev = (PSDev *) pls->dev;
+  char *font;
+  float font_factor = 1.6;
+
+  /* font height */
+  ft_ht = pls->chrht * 72.0/25.4; /* ft_ht in points. ht is in mm */
+
+  /* calculate baseline text angle */
+  angle = pls->diorot * 90.;
+  a1 = acos(t[0]) * 180. / PI;
+  if (t[2] > 0.)
+    alpha = a1 - angle;
+  else
+    alpha = 360. - a1 - angle;
+
+  /* TODO: parse string for format (escape) characters */
+  //parse_str(args->string, return_string);
+
+  /* 
+   * Reference point (center baseline of string)
+   *  If base = 0, it is aligned with the center of the text box
+   *  If base = 1, it is aligned with the baseline of the text box
+   *  If base = 2, it is aligned with the top of the text box
+   *  Currently plplot only uses base=0
+   *  postscript use base=1
+   */ 
+
+  if (args->base == 2) /* not supported by plplot */
+    ref = ENLARGE * ft_ht / 2.; /* half font height */
+  else if (args->base == 1)
+    ref = 0.;
+  else
+    ref = -ENLARGE * ft_ht / 2.;
+
+  /* rotate point in postscript is lower left corner, compensate */
+  args->y = args->y + ref*cos(alpha * PI/180.);
+  args->x = args->x - ref*sin(alpha * PI/180.);
+
+  /*
+   *  font family, serie and shape. Currently not fully supported by plplot
+   *
+   *  Use Postscript Times
+   *  1: Normal font
+   *  2: Roman font
+   *  3: Italic font
+   *  4: sans serif
+   */
+
+  switch (pls->cfont) {
+  case (1): font = "Times-Roman"; break;
+  case (2): font = "Times-Roman"; break;
+  case (3): font = "Times-Italic"; break;
+  case (4): font = "Helvetica"; break;
+  default:  font = "Times-Roman"; break;
+  }
+
+  /* ps driver is rotated by default, compensate */
+  plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &(args->x), &(args->y));
+
+  fprintf(OF, " %d %d moveto\n", args->x, args->y );
+  fprintf(OF, "/%s findfont %f scalefont setfont\n", font, font_factor * ENLARGE * ft_ht);
+  fprintf(OF, "gsave %f rotate ", alpha - 90.);
+  fprintf(OF, "(%s) stringwidth %f mul exch %f mul exch rmoveto ",
+	  args->string, - args->just, - args->just );
+  fprintf(OF, "(%s) show grestore\n", args->string);
+
+  /*
+   * keep driver happy -- needed for background and orientation.
+   * arghhh! can't calculate it, as I only have the string reference
+   * point, not its extent!
+   * Quick (and final?) *hack*, ASSUME that no more than two char height
+   * extents after/before the string reference point.
+   */
+
+  dev->llx = MIN(dev->llx, args->x - 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->lly = MIN(dev->lly, args->y - 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->urx = MAX(dev->urx, args->x + 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
+  dev->ury = MAX(dev->ury, args->y + 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
+}
+
 
 #else
 int 
