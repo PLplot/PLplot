@@ -22,30 +22,6 @@
 
 if enable_dyndrivers
 
-if with_double
-EXTRA_LTLIBRARIES = \
-	cgmd_drv.la \
-	dg300d_drv.la \
-	gdd_drv.la \
-	gnomed_drv.la \
-	hpgld_drv.la \
-	impressd_drv.la \
-	linuxvgad_drv.la \
-	ljiid_drv.la \
-	ljiipd_drv.la \
-	ntkd_drv.la \
-	nulld_drv.la \
-	pbmd_drv.la \
-	plmetad_drv.la \
-	psd_drv.la \
-	pstexd_drv.la \
-	tekd_drv.la \
-	tkd_drv.la \
-	tkwind_drv.la \
-	xfigd_drv.la \
-	xwind_drv.la
-
-else
 EXTRA_LTLIBRARIES = \
 	cgm_drv.la \
 	dg300_drv.la \
@@ -68,17 +44,14 @@ EXTRA_LTLIBRARIES = \
 	xfig_drv.la \
 	xwin_drv.la
 
-endif
-
-driversdir = ${prefix}/@DATA_DIR@/../drivers
+driversdir = ${prefix}/@DATA_DIR@/@DRV_DIR@
 drivers_LTLIBRARIES = @DYNAMIC_DRIVERS@
+drivers_DATA = drivers.db
 
 if with_double
-drivers_DATA = driversd.db
 libplplot = -L../src -lplplotd
 libplplottcltk = -L../bindings/tcl -lplplottcltkd
 else
-drivers_DATA = drivers.db
 libplplot = -L../src -lplplot
 libplplottcltk = -L../bindings/tcl -lplplottcltk
 endif
@@ -217,68 +190,6 @@ lmflag = -lm
 xwin_drv_la_SOURCES = xwin.c
 xwin_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(xflags) $(lmflag)
 endif
-
-# Double precision versions of the dynamic drivers.
-
-cgmd_drv_la_SOURCES = $(cgm_drv_la_SOURCES)
-cgmd_drv_la_LDFLAGS = $(cgm_drv_la_LDFLAGS)
-
-dg300d_drv_la_SOURCES = $(dg300_drv_la_SOURCES)
-dg300d_drv_la_LDFLAGS = $(dg300_drv_la_LDFLAGS)
-
-gdd_drv_la_SOURCES = $(gd_drv_la_SOURCES)
-gdd_drv_la_LDFLAGS = $(gd_drv_la_LDFLAGS)
-
-gnomed_drv_la_SOURCES = $(gnome_drv_la_SOURCES)
-gnomed_drv_la_LDFLAGS = $(gnome_drv_la_LDFLAGS)
-
-hpgld_drv_la_SOURCES = $(hpgl_drv_la_SOURCES)
-hpgld_drv_la_LDFLAGS = $(hpgl_drv_la_LDFLAGS)
-
-impressd_drv_la_SOURCES = $(impress_drv_la_SOURCES)
-impressd_drv_la_LDFLAGS = $(impress_drv_la_LDFLAGS)
-
-linuxvgad_drv_la_SOURCES = $(linuxvga_drv_la_SOURCES)
-linuxvgad_drv_la_LDFLAGS = $(linuxvga_drv_la_LDFLAGS)
-
-ljiid_drv_la_SOURCES = $(ljii_drv_la_SOURCES)
-ljiid_drv_la_LDFLAGS = $(ljii_drv_la_LDFLAGS)
-
-ljiipd_drv_la_SOURCES = $(ljiip_drv_la_SOURCES)
-ljiipd_drv_la_LDFLAGS = $(ljiip_drv_la_LDFLAGS)
-
-ntkd_drv_la_SOURCES = $(ntk_drv_la_SOURCES)
-ntkd_drv_la_LDFLAGS = $(ntk_drv_la_LDFLAGS)
-
-nulld_drv_la_SOURCES = $(null_drv_la_SOURCES)
-nulld_drv_la_LDFLAGS = $(null_drv_la_LDFLAGS)
-
-pbmd_drv_la_SOURCES = $(pbm_drv_la_SOURCES)
-pbmd_drv_la_LDFLAGS = $(pbm_drv_la_LDFLAGS)
-
-plmetad_drv_la_SOURCES = $(plmeta_drv_la_SOURCES)
-plmetad_drv_la_LDFLAGS = $(plmeta_drv_la_LDFLAGS)
-
-psd_drv_la_SOURCES = $(ps_drv_la_SOURCES)
-psd_drv_la_LDFLAGS = $(ps_drv_la_LDFLAGS)
-
-pstexd_drv_la_SOURCES = $(pstex_drv_la_SOURCES)
-pstexd_drv_la_LDFLAGS = $(pstex_drv_la_LDFLAGS)
-
-tekd_drv_la_SOURCES = $(tek_drv_la_SOURCES)
-tekd_drv_la_LDFLAGS = $(tek_drv_la_LDFLAGS)
-
-tkd_drv_la_SOURCES = $(tk_drv_la_SOURCES)
-tkd_drv_la_LDFLAGS = $(tk_drv_la_LDFLAGS)
-
-tkwind_drv_la_SOURCES = $(tkwin_drv_la_SOURCES)
-tkwind_drv_la_LDFLAGS = $(tkwin_drv_la_LDFLAGS)
-
-xfigd_drv_la_SOURCES = $(xfig_drv_la_SOURCES)
-xfigd_drv_la_LDFLAGS = $(xfig_drv_la_LDFLAGS)
-
-xwind_drv_la_SOURCES = $(xwin_drv_la_SOURCES)
-xwind_drv_la_LDFLAGS = $(xwin_drv_la_LDFLAGS)
 
 # end of enable_dyndrivers
 else

@@ -1601,7 +1601,7 @@ plInitDispatchTable()
     int i, j, driver_found, done=0;
     FILE *fp_drvdb = 0;
 
-    fp_drvdb = plLibOpen( "../drivers/" DRIVERS_DB );
+    fp_drvdb = plLibOpen( DRV_DIR "/" DRIVERS_DB );
 
     if (fp_drvdb) {
     /* Count the number of dynamic devices. */
@@ -1616,7 +1616,7 @@ plInitDispatchTable()
             npldynamicdevices++;
         }
     } else {
-        plexit("Can't open drivers/" DRIVERS_DB "\n" );
+        plexit("Can't open " DRV_DIR "/" DRIVERS_DB "\n" );
     }
 #endif
 
@@ -1867,7 +1867,7 @@ plLoadDriver(void)
     {
         char drvspec[ 400 ];
         sprintf( drvspec, "%s/%s/%s",
-		DATA_DIR, "../drivers", driver->drvnam );
+		DATA_DIR, DRV_DIR, driver->drvnam );
 
 	pldebug("plLoadDriver", "Trying to load %s on %s\n",
 		driver->drvnam, drvspec );
