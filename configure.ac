@@ -463,8 +463,12 @@ AC_SUBST(PLPLOT_TCL_VERSION)
 
 if test "$enable_dyndrivers" = "yes"; then
   AC_LIBTOOL_DLOPEN
-  AC_LIBLTDL_CONVENIENCE
-  AC_CONFIG_SUBDIRS(libltdl)
+  AC_CHECK_LIB(ltdl, lt_dlinit,
+    [ AC_LIBLTDL_INSTALLABLE
+    ],
+    [ AC_LIBLTDL_CONVENIENCE
+      AC_CONFIG_SUBDIRS(libltdl)
+    ])
   AC_SUBST(INCLTDL)
   AC_SUBST(LIBLTDL)
 fi
@@ -852,6 +856,8 @@ AM_CONDITIONAL(enable_xfig, [test "$enable_xfig" = yes])
 AM_CONDITIONAL(enable_xwin, [test "$enable_xwin" = yes])
 AM_CONDITIONAL(with_qhull, [test "$with_qhull" = yes])
 AM_CONDITIONAL(with_csa, [test "$with_csa" = yes])
+AM_CONDITIONAL(enable_ltdl_convenience, 
+               [test "$enable_ltdl_convenience" = yes])
 
 ### Checks for existence of headers
 
