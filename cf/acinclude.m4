@@ -294,14 +294,6 @@ define([PL_ADD_TO_LIBS],[
     fi
     $4="$$4 $1"
 ])
-dnl ------------------------------------------------------------------------
-dnl Get rid of caching since it doesn't always work.  I.e. changing the
-dnl compiler from the vendor's to gcc can change all sorts of settings,
-dnl but the autoconf logic isn't set up to handle that.  I'll opt for
-dnl stability over speed any day.
-dnl
-define([AC_CACHE_LOAD],)
-define([AC_CACHE_SAVE],)
 dnl
 dnl ------------------------------------------------------------------------
 dnl Determine the dlname of a library to be installed by libtool
