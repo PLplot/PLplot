@@ -19,11 +19,15 @@ static char  *ps_getdate	(void);
 static void  ps_init		(PLStream *);
 static void  fill_polygon	(PLStream *pls);
 static void  proc_str           (PLStream *, EscText *);
+static void  esc_purge          (char *, const char *);
 
 static char  outbuf[128];
 static int text = 0;
-static DrvOpt driver_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=1|0)"},
-				  {NULL, DRV_INT, NULL, NULL}};
+static int color;
+
+static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=1|0)"},
+			      {"color", DRV_INT, &color, "Use color (color=1|0)"},
+			      {NULL, DRV_INT, NULL, NULL}};
 
 /*--------------------------------------------------------------------------*\
  * plD_init_ps()
@@ -34,15 +38,25 @@ static DrvOpt driver_options[] = {{"text", DRV_INT, &text, "Use Postscript text 
 void
 plD_init_psm(PLStream *pls)
 {
-    pls->color = 0;		/* Not a color device */
-    ps_init(pls);
+  color = 0;
+  pls->color = 0;		/* Not a color device */
+
+  plParseDrvOpts(ps_options);
+  if (color)
+    pls->color = 1;		/* But user wants color */
+  ps_init(pls);
 }
 
 void
 plD_init_psc(PLStream *pls)
 {
-    pls->color = 1;		/* Is a color device */
-    ps_init(pls);
+  color = 1;
+  pls->color = 1;		/* Is a color device */
+  plParseDrvOpts(ps_options);
+
+  if (!color)
+    pls->color = 0;		/* But user dont wants color */
+  ps_init(pls);
 }
 
 static void
@@ -53,7 +67,6 @@ ps_init(PLStream *pls)
     PLFLT pxlx = YPSSIZE/LPAGE_X;
     PLFLT pxly = XPSSIZE/LPAGE_Y;
 
-    plParseDrvOpts(driver_options);
     if (text)
       pls->dev_text = 1; /* want to draw text */
 
@@ -565,21 +578,24 @@ ps_getdate(void)
     return p;
 }
 
-
+/* this needs to be split and beaultified! */
 void
 proc_str (PLStream *pls, EscText *args)
 {
   PLFLT *t = args->xform;
   PLFLT a1, alpha, ft_ht, angle, ref;
   PSDev *dev = (PSDev *) pls->dev;
-  char *font;
-  float font_factor = 1.6;
-  int clxmin, clxmax, clymin, clymax;
+  char *font, *ofont, str[128], esc, *strp;
+  const char *cur_str;
+  float font_factor = 1.4, up;
+  int symbol;
+  PLINT clxmin, clxmax, clymin, clymax;
 
   /* font height */
   ft_ht = pls->chrht * 72.0/25.4; /* ft_ht in points. ht is in mm */
 
-  //fprintf(stderr,"%f %f\n", pls->dipxax, pls->dipyay);
+  /* correct font size when zooming */
+  /* fprintf(stderr,"%f %f\n", pls->dipxax, pls->dipyay); */
   
   /* calculate baseline text angle */
   angle = pls->diorot * 90.;
@@ -588,9 +604,6 @@ proc_str (PLStream *pls, EscText *args)
     alpha = a1 - angle;
   else
     alpha = 360. - a1 - angle;
-
-  /* TODO: parse string for format (escape) characters */
-  //parse_str(args->string, return_string);
 
   /* 
    * Reference point (center baseline of string)
@@ -608,8 +621,7 @@ proc_str (PLStream *pls, EscText *args)
   else
     ref = -ENLARGE * ft_ht / 2.;
 
-
-  /* apply transformations FIXME -- difilt() is static in plcore.c */
+  /* apply transformations FIXME */
   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
 
   /* check clip limits. For now, only the reference point of the string is checked;
@@ -621,8 +633,11 @@ proc_str (PLStream *pls, EscText *args)
     return;
 
   /* rotate point in postscript is lower left corner, compensate */
-  args->y = args->y + ref*cos(alpha * PI/180.);
-  args->x = args->x - ref*sin(alpha * PI/180.);
+  args->y = args->y + ref * cos(alpha * PI/180.);
+  args->x = args->x - ref * sin(alpha * PI/180.);
+
+  /* ps driver is rotated by default, compensate */
+  plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &(args->x), &(args->y));
 
   /*
    *  font family, serie and shape. Currently not fully supported by plplot
@@ -635,23 +650,118 @@ proc_str (PLStream *pls, EscText *args)
    */
 
   switch (pls->cfont) {
-  case (1): font = "Times-Roman"; break;
-  case (2): font = "Times-Roman"; break;
-  case (3): font = "Times-Italic"; break;
-  case (4): font = "Helvetica"; break;
-  default:  font = "Times-Roman"; break;
+  case 1: ofont = "Times-Roman"; break;
+  case 2: ofont = "Times-Roman"; break;
+  case 3: ofont = "Times-Italic"; break;
+  case 4: ofont = "Helvetica"; break;
+  default:  ofont = "Times-Roman";
   }
 
-  /* ps driver is rotated by default, compensate */
-  plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &(args->x), &(args->y));
+  plgesc(&esc);
 
-  /* print the string: set current font, character size, strings rotation and justification */
-  fprintf(OF, " %d %d moveto\n", args->x, args->y );
-  fprintf(OF, "/%s findfont %f scalefont setfont\n", font, font_factor * ENLARGE * ft_ht);
-  fprintf(OF, "gsave %f rotate ", alpha - 90.);
-  fprintf(OF, "(%s) stringwidth %f mul exch %f mul exch rmoveto ",
-	  args->string, - args->just, - args->just );
-  fprintf(OF, "(%s) show grestore\n", args->string);
+  cur_str = args->string;
+  
+  /* move to string reference point */
+  fprintf(OF, "\n%d %d moveto\n", args->x, args->y );
+
+  /* set string rotation */
+  fprintf(OF, "gsave %f rotate\n", alpha - 90.);
+
+  /* Purge escape sequences from string, so that postscript can find it's length
+     The string length is computed with the current font, and can thus be wrong! */
+  esc_purge(str, args->string);
+
+  fprintf(OF, "/%s findfont %f scalefont setfont\n", ofont, font_factor * ENLARGE * ft_ht);
+
+  /* move to start point, taking justification into account */
+  fprintf(OF, "(%s) stringwidth %f mul exch %f mul exch rmoveto\n",
+	  str, - args->just, - args->just );
+
+  /* parse string for escape sequences */
+  do {
+    strp = str;
+    font = ofont;
+    symbol = 0;
+    up = 0.;
+
+    if (*cur_str == esc) {
+      cur_str++;
+
+      /* if (*cur_str == esc) FIXME <esc><esc> */
+	
+      switch (*cur_str) {
+
+      case 'f':
+	cur_str++;
+	switch (*cur_str) {
+	case 'n': font = "Times-Roman"; break;
+	case 'r': font = "Times-Roman"; break;
+	case 'i': font = "Times-Italic"; break;
+	case 's': font = "Helvetica"; break;
+	default:  font = "Times-Roman";
+	}
+	cur_str++;
+	break;
+
+      case 'd':
+	up = - font_factor * ENLARGE * ft_ht / 2.;
+	cur_str++;
+	break;
+
+      case 'u':
+	up = font_factor * ENLARGE * ft_ht / 2.;
+	cur_str++;
+	break;
+
+      case 'g':
+	cur_str++;
+	ofont = font;
+	*strp++ = *cur_str++;
+	symbol = 1;
+	font = "Symbol";
+	break;
+
+	/* ignore the next sequences */
+      case '+':
+      case '-':
+      case 'b':
+	plwarn("'+', '-', and 'b' text escape sequences not processed.");
+	cur_str++;
+	break;
+
+      case '(':
+	plwarn("'g(...)' text escape sequence not processed.");
+	while (*cur_str++ != ')');
+	break;
+      }
+    }
+
+    /* copy from current to next token, adding a postscript escape char \ if necessary */
+    /* FIXME -- <esc><esc> don't work */
+    while(!symbol && *cur_str && *cur_str != esc) {
+      if (*cur_str == '(' || *cur_str == ')')
+	*strp++ = '\\';
+      *strp++ = *cur_str++;
+    }
+    *strp = '\0';
+
+    /* set the font */
+    fprintf(OF, "/%s findfont %f scalefont setfont\n", font, font_factor * ENLARGE * ft_ht);    
+
+    /* if up/down escape sequences, save current point and adjust baseline */
+    if (up)
+      fprintf(OF, "0 %f rmoveto gsave\n", up);
+        
+    /* print the string */
+    fprintf(OF, "(%s) show\n", str);  
+
+    /* back to baseline */
+    if (up)
+      fprintf(OF, "grestore (%s) stringwidth rmoveto\n", str);
+
+  }while(*cur_str);
+
+  fprintf(OF, "grestore\n");
 
   /*
    * keep driver happy -- needed for background and orientation.
@@ -667,6 +777,39 @@ proc_str (PLStream *pls, EscText *args)
   dev->ury = MAX(dev->ury, args->y + 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
 }
 
+static void
+esc_purge(char *dstr, const char *sstr) {
+  char esc;
+
+  plgesc(&esc);
+
+  while(*sstr){
+    if (*sstr != esc) {
+      *dstr++ = *sstr++;
+      continue;
+    }
+
+    sstr++;
+    if (*sstr == esc)
+      continue;
+    else {
+      switch(*sstr++) {
+      case 'g': 
+      case 'f':
+	sstr++;
+	break; /* two chars sequence */
+
+      case '(':
+	while (*sstr++ != ')'); /* multi chars sequence */
+	break;
+
+      default:
+	break;  /* single char escape */
+      }
+    }
+  }
+  *dstr = '\0';
+}
 
 #else
 int 
