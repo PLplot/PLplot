@@ -39,7 +39,7 @@ else
 
         PDL_MAJOR_VERSION=2
         PDL_MINOR_VERSION=4
-        PDL_MICRO_VERSION=2
+        PDL_MICRO_VERSION=1
 
         AC_MSG_CHECKING([version of PDL])
         PDL_VERSION=`$PERL -e 'use PDL; print "$PDL::VERSION"'`
@@ -59,3 +59,4 @@ else
 fi    
 
 AC_SUBST(HAS_PDL)
+AM_CONDITIONAL(has_pdl, [test "$HAS_PDL" = yes])
