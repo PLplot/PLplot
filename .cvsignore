@@ -13,3 +13,7 @@ libtool
 *.tar.gz
 libltdl
 plplot_libtool
+ltmain.sh
+config.sub
+config.guess
+autom4te.cache
