@@ -210,40 +210,42 @@ fi
 # ----------------------------------------------------------------------------
 # Set up Fortran compiler
 
-if test -z "$F77"; then
-    F77=f77
-    case "$system" in 
-	aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
-	    F77=xlf
-	;;
-	dg*|DG* ) 
-	    F77=ghf77
-	;;
-	hp*|HP* ) 
-	    # The fort77 front-end uses a cc-like set of command line flags.
+if test "$enable_f77" = "yes"; then
+    if test -z "$F77"; then
+	F77=f77
+	case "$system" in 
+	    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
+		F77=xlf
+	    ;;
+	    dg*|DG* ) 
+		F77=ghf77
+	    ;;
+	    hp*|HP* ) 
+		# The fort77 front-end uses cc-like command line flags.
 
-	    F77=fort77
-	;;
-	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
-	    # The f77 front-end uses a cc-like set of command line flags,
-	    # but I've had problems with it, so use f77sx here instead.
+		F77=fort77
+	    ;;
+	    sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
+		# The f77 front-end uses cc-like command line flags,
+		# but I've had problems with it, so use f77sx here instead.
 
-	    F77=f77sx
-	    with_f2c=no
-	;;
-	CRAY* ) 
-	    F77=cf77
-	    with_f2c=no
-	;;
-    esac
-fi
+		F77=f77sx
+		with_f2c=no
+	    ;;
+	    CRAY* ) 
+		F77=cf77
+		with_f2c=no
+	    ;;
+	esac
+    fi
 
-# If not using f2c, try locating the executable now.
+    # If not using f2c, try locating the executable now.
 
-if test "$with_f2c" = "no"; then
-    AC_CHECK_PROG(found_F77, $F77, yes, no)
-    if test "$found_F77" = "no" ; then
-	with_f2c=yes
+    if test "$with_f2c" = "no"; then
+	AC_CHECK_PROG(found_F77, $F77, yes, no)
+	if test "$found_F77" = "no" ; then
+	    with_f2c=yes
+	fi
     fi
 fi
 
@@ -272,25 +274,27 @@ fi
 # The only option supported for f2c is --with-double.
 # ----------------------------------------------------------------------------
 
-if test "$with_f2c" = "yes"; then
-    AC_CHECK_PROG(found_fc, fc, yes, no)
-    if test "$found_fc" = "yes" ; then
-	F77=fc
-    else
-	AC_CHECK_PROG(found_f77, f77, yes, no)
-	if test "$found_f77" = "yes" ; then
-	    F77=f77
+if test "$enable_f77" = "yes"; then
+    if test "$with_f2c" = "yes"; then
+	AC_CHECK_PROG(found_fc, fc, yes, no)
+	if test "$found_fc" = "yes" ; then
+	    F77=fc
 	else
-	    AC_MSG_RESULT([warning: cannot find a Fortran compiler, setting enable_f77=no])
-	    with_f2c=no
-	    enable_f77=no
+	    AC_CHECK_PROG(found_f77, f77, yes, no)
+	    if test "$found_f77" = "yes" ; then
+		F77=f77
+	    else
+		AC_MSG_RESULT([warning: cannot find a Fortran compiler, setting enable_f77=no])
+		with_f2c=no
+		enable_f77=no
+	    fi
 	fi
-    fi
 
-    DEBUG_FLAG_F=
-    OPT_FLAG_F=
-    PROF_FLAG_F=
-    SYS_FLAGS_F=
+	DEBUG_FLAG_F=
+	OPT_FLAG_F=
+	PROF_FLAG_F=
+	SYS_FLAGS_F=
+    fi
 fi
 
 # ----------------------------------------------------------------------------
@@ -497,20 +501,24 @@ esac
 CC_FLAGS=\
 "-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C $OPT_FLAG_C"
 
-CXX_FLAGS=\
-"-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX $OPT_FLAG_CXX"
-
-F77_FLAGS=\
-"-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F $OPT_FLAG_F"
-
 LDC_FLAGS=\
 "$PROF_FLAG_LC $SYS_FLAGS_LC $DEBUG_FLAG_LC"
 
-LDCXX_FLAGS=\
-"$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX"
+if test "$enable_cxx" = "yes"; then
+    CXX_FLAGS=\
+    "-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX $OPT_FLAG_CXX"
 
-LDF_FLAGS=\
-"$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
+    LDCXX_FLAGS=\
+    "$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX"
+fi
+
+if test "$enable_f77" = "yes"; then
+    F77_FLAGS=\
+    "-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F $OPT_FLAG_F"
+
+    LDF_FLAGS=\
+    "$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
+fi
 
 M4_FLAGS="-S2000 -B8192"
 
