@@ -57,14 +57,14 @@ if test "$enable_java" = "yes"; then
             JAVAMDINCDIR="$JAVA_HOME/include"
         else
         # Now we need to find the machine dependent directory.
-            case $system in 
+            case $system in
                 Linux* )
                     JAVAMDINCDIR="$JAVAINCDIR/linux"
                 ;;
                 SunOS-5* )
                     JAVAMDINCDIR="$JAVAINCDIR/solaris"
                 ;;
-                * )         
+                * )
                     AC_MSG_RESULT('Can\'t find Java machine dependent includes.')
                 ;;
             esac
@@ -89,7 +89,7 @@ fi
 
 # ----------------------------------------------------------------------------
 # Find libgd libraries and headers and libpng, libjpeg, and zlib libraries
-# required for building png and/or jpeg drivers.  
+# required for building png and/or jpeg drivers.
 # Written by Alan W. Irwin following what is done for X.
 # ----------------------------------------------------------------------------
 
@@ -263,7 +263,7 @@ fi
 AC_LANG_RESTORE
 
 # ----------------------------------------------------------------------------
-# Find libcd library and header required for building cgm driver.  
+# Find libcd library and header required for building cgm driver.
 # Written by Alan W. Irwin following what is done for gd driver.
 # ----------------------------------------------------------------------------
 
@@ -328,7 +328,7 @@ if test "$enable_cgm" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
-# Find freetype 2 library and header required for enabling 
+# Find freetype 2 library and header required for enabling
 # driver options for handling the fonts with the freetype library.
 # Written by Alan W. Irwin.
 # ----------------------------------------------------------------------------
@@ -389,7 +389,7 @@ if test "$with_freetype" = "yes"; then
     ADD_TO_LIBS($FREETYPELIBDIR, $FREETYPELIBSTR, FREETYPELIBS, FREETYPELIBPATH)
     AC_DEFINE(HAVE_FREETYPE, [], [Define if [freetype] is available])
     AC_SUBST(FREETYPELIBS)
-    
+
 fi
 
 # ----------------------------------------------------------------------------
@@ -492,7 +492,7 @@ if test "$enable_tcl" = "yes"; then
         fi
     fi
 fi
-# AWI does not understand the purpose of a distinction between has_tcl and 
+# AWI does not understand the purpose of a distinction between has_tcl and
 # enable_tcl so make them the same for now.
 has_tcl=$enable_tcl
 
@@ -514,10 +514,10 @@ fi
 # This is missing on some distributions, so define HAVE_ITCLDECLS_H if found.
 
 if test "$enable_itcl" = "yes"; then
-    old_CPPFLAGS=$CPPFLAGS 
-    CPPFLAGS=-I$ITCLINCDIR 
-    AC_CHECK_HEADER(itclDecls.h) 
-    CPPFLAGS=$old_CPPFLAGS 
+    old_CPPFLAGS=$CPPFLAGS
+    CPPFLAGS=-I$ITCLINCDIR
+    AC_CHECK_HEADER(itclDecls.h)
+    CPPFLAGS=$old_CPPFLAGS
 fi
 
 # ----------------------------------------------------------------------------
@@ -575,7 +575,7 @@ if test "$enable_tk" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
-# tkInt.h (and indirectly tclInt.h) required by plplotter.c which is 
+# tkInt.h (and indirectly tclInt.h) required by plplotter.c which is
 # required by tkwin device
 # ----------------------------------------------------------------------------
 
@@ -668,9 +668,9 @@ if test "$enable_gnome" = "yes"; then
   AM_PATH_GTK(1.2.7,
     [ GNOME_INIT
       if test "$GNOME_CONFIG" = "no"; then
-        enable_gnome=no 
-      fi ], 
-    [ enable_gnome=no ], 
+        enable_gnome=no
+      fi ],
+    [ enable_gnome=no ],
     gthread)
 
   if test "$enable_gnome" = "yes"; then
@@ -679,7 +679,7 @@ if test "$enable_gnome" = "yes"; then
     GNOMELIBS=""
     GNOMEPATH=""
     for i in $GTK_LIBS $GNOME_LIBDIR $GNOMEUI_LIBS ; do
-        case $i in 
+        case $i in
         -L* )
             d=`echo $i | sed 's/-L//'`
             ADD_TO_LIBS( $d, "", GNOMELIBS, GNOMEPATH)
@@ -695,7 +695,7 @@ if test "$enable_gnome" = "yes"; then
     # Include Gtk and Gnome include dirs
     GNOME_FLAGS=""
     for i in $GTK_CFLAGS $GNOME_INCLUDEDIR ; do
-        case $i in 
+        case $i in
         -I* )
             ;;
         -D* )
@@ -707,7 +707,7 @@ if test "$enable_gnome" = "yes"; then
     done
     AC_LANG_RESTORE
   fi
-fi 
+fi
 
 # ----------------------------------------------------------------------------
 # Octave support
@@ -764,7 +764,8 @@ EOF`])
     if test "$enable_octave" = "yes"; then
 
         # Get Octave version
-        OCTAVE_VERSION=`$OCTAVE --version | sed 's/^.*version // ; q'`
+        OCTAVE_VERSION=`$OCTAVE --version | sed 's/^.*version // ; q' \
+                        | sed 's/ .*$//'`
 
 	# This is the directory for installation of the PLplot_Octave
         # specific m files
@@ -772,11 +773,11 @@ EOF`])
 
 	# Get Configuration default values for Octave
         OCTAVE_PREFIX=OCTAVE_CONFIG_INFO(prefix)
-	if test -n "`echo $OCTAVE_VERSION | sed 's/^2.1//p ; d ; q'`" ; then 
-            # Octave version 2.1 
+	if test -n "`echo $OCTAVE_VERSION | sed 's/^2.1//p ; d ; q'`" ; then
+            # Octave version 2.1
             OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(localoctfiledir)
             OCTAVE_M_DIR=OCTAVE_CONFIG_INFO(localfcnfiledir)
-        else 
+        else
             # Octave version 2.0
             OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(localoctfilepath)
             [OCTAVE_OCT_DIR=`echo $OCTAVE_OCT_DIR | sed 's/[^:]*://g;s://$::'`]
@@ -784,7 +785,7 @@ EOF`])
             [OCTAVE_M_DIR=`echo $OCTAVE_M_DIR | sed 's/[^:]*://g;s://$::'`]
         fi
 
-	# Strip Octave default prefix and prepend the configuration prefix 
+	# Strip Octave default prefix and prepend the configuration prefix
         # currently specified
 	OCTAVE_OCT_DIR=${prefix}/`echo $OCTAVE_OCT_DIR \
                                   | sed "s:$OCTAVE_PREFIX/*::"`
@@ -833,8 +834,8 @@ if test "$enable_python" = "yes"; then
 # or a subdir of PYTHON_INC_DIR else version mismatch could occur.
 
     if test "$enable_python" = "yes"; then
-        incdirs="\ 
-        $PYTHON_INC_DIR \ 
+        incdirs="\
+        $PYTHON_INC_DIR \
         $PYTHON_INC_DIR/Numeric"
         FIND_INC(arrayobject, PYTHON_NUM_DIR, numeric_python)
         if test "$numeric_python" = "no"; then
@@ -888,17 +889,17 @@ if test "$enable_linuxvga" = "yes"; then
         $prefix/lib \
         /usr/lib"
 
-        FIND_LIB(vga, VGALIBDIR, VGALIBSTR, enable_linuxvga)        
+        FIND_LIB(vga, VGALIBDIR, VGALIBSTR, enable_linuxvga)
     fi
     if test -n "$VGALIBDIR"; then
         LINUXVGALIBS=""
         LINUXVGAPATH=""
-        ADD_TO_LIBS($VGALIBDIR, -lvga, LINUXVGALIBS, LINUXVGAPATH)        
+        ADD_TO_LIBS($VGALIBDIR, -lvga, LINUXVGALIBS, LINUXVGAPATH)
     fi
 fi
 
 # ----------------------------------------------------------------------------
-# Check for pthreads 
+# Check for pthreads
 # ----------------------------------------------------------------------------
 
 if test "$with_pthreads" = "yes" -a "$enable_xwin" = "yes"; then
@@ -923,7 +924,7 @@ fi
 
 if test "$with_qhull" = "yes"; then
 # if the above csa test fails, don't use Qhull, as nn can't be used!
-    AC_CHECK_LIB(qhull, qh_new_qhull, [ 
+    AC_CHECK_LIB(qhull, qh_new_qhull, [
         AC_DEFINE(HAVE_QHULL, [], [Define if Qhull is available])
         QHULLLIBS="-lqhull"
         NNLIBS='$(top_builddir)/lib/nn/libnn.la' ], [ with_qhull="no" ])
