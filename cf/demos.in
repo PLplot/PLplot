@@ -21,7 +21,7 @@
 
 CDEMOS= x01c$E x02c$E x03c$E x04c$E x05c$E x06c$E x07c$E x08c$E x09c$E \
 	x10c$E x11c$E x12c$E x13c$E x14c$E x15c$E x16c$E x17c$E x18c$E \
-	tutor$E
+	x19c$E tutor$E
 
 cdemos:	$(CDEMOS)
 
@@ -149,6 +149,13 @@ x18c$O:	x18c.c
 
 x18c$E:	$(PLLIBS) x18c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x18c$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+x19c$O:	x19c.c
+	$(CC) $(CC_FLAGS_DEMOS) x19c.c
+
+x19c$E:	$(PLLIBS) x19c$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) x19c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 tutor$O:	tutor.c
