@@ -6,6 +6,7 @@ function demo_page ($demo, $nfigs, $language) {
 
   $demo_str = sprintf ("%02d", $demo);
   $demo_dir = "../examples-data/demo$demo_str";
+  $ndemos = 22;
 
   print <<<END
 <div ALIGN="CENTER"><b>Select to see the example $demo source code</b></div>
@@ -88,6 +89,21 @@ END;
     </tr>
   </tbody>
 </table>
+</div>
+<hr>
+<div ALIGN="CENTER">
+END;
+
+  for ($i = 1; $i <= $ndemos; ++$i) {
+    $demo_str = sprintf ("%02d", $i);
+    if ($i != $demo) {
+      echo "<A HREF=\"demo$demo_str.php\">x$demo_str</A>\n";
+    } else {
+      echo "<b>x$demo_str\n</b>";
+    }
+  }
+
+  print <<<END
 </div>
 END;
 
