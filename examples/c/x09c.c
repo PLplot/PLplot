@@ -6,7 +6,7 @@
 #include "plcdemos.h"
 
 #define XPTS    35		/* Data points in x */
-#define YPTS    46		/* Datat points in y */
+#define YPTS    46		/* Data points in y */
 
 #define XSPA    2./(XPTS-1)
 #define YSPA    2./(YPTS-1)
