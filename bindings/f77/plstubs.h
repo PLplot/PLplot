@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.4  1992/10/27 22:14:02  mjl
-   Support for plflush() function.
+   Revision 1.5  1992/10/27 22:49:49  mjl
+   Reduced stub routine definition to ONE set of defines through a clever
+   macro, FNAME.  Will work in principle for all systems.
 
+ * Revision 1.4  1992/10/27  22:14:02  mjl
+ * Support for plflush() function.
+ *
  * Revision 1.3  1992/10/22  17:05:19  mjl
  * Fixed warnings, errors generated when compling with HP C++.
  *
@@ -57,238 +61,97 @@
 extern char cstring1[300], cstring2[300], cstring3[300];
 extern char cstring4[300], cstring5[300], cstring6[300];
 
+/* To use, define with x the upper case routine name, y the lower case */
+/* Should be adoptable to virtually any system */
+
 #ifdef STUB_LAU
-
-#define    PLADV	pladv_
-#define    PLANCOL_	plancol__
-#define    PLAXES_	plaxes__
-#define    PLBEG	plbeg_
-#define    PLBIN	plbin_
-#define    PLBOX3_	plbox3__
-#define    PLBOX_	plbox__
-#define    PLCLR	plclr_
-#define    PLCOL	plcol_
-#define    PLCON0_	plcon0__
-#define    PLCON1_	plcon1__
-#define    PLCON2_	plcon2__
-#define    PLCONT_	plcont__
-#define    PLEND	plend_
-#define    PLEND1	plend1_
-#define    PLENV	plenv_
-#define    PLERRX	plerrx_
-#define    PLERRY	plerry_
-#define    PLFAMADV	plfamadv_
-#define    PLFILL	plfill_
-#define    PLFLUSH	plflush_
-#define    PLFONT	plfont_
-#define    PLFONTLD	plfontld_
-#define    PLGFAM	plgfam_
-#define    PLGFNAM_	plgfnam__
-#define    PLGPAGE	plgpage_
-#define    PLGRA	plgra_
-#define    PLGSPA	plgspa_
-#define    PLGSTRM	plgstrm_
-#define    PLGXAX	plgxax_
-#define    PLGYAX	plgyax_
-#define    PLGZAX	plgzax_
-#define    PLHIST	plhist_
-#define    PLHLS        plhls_
-#define    PLJOIN	pljoin_
-#define    PLLAB_	pllab__
-#define    PLLINE	plline_
-#define    PLLSTY	pllsty_
-#define    PLMESH	plmesh_
-#define    PLMTEX_	plmtex__
-#define    PLOT3D	plot3d_
-#define    PLPAT	plpat_
-#define    PLPOIN	plpoin_
-#define    PLPREC	plprec_
-#define    PLPSTY	plpsty_
-#define    PLPTEX_	plptex__
-#define    PLRGB        plrgb_
-#define    PLSASP       plsasp_
-#define    PLSCHR	plschr_
-#define    PLSFAM	plsfam_
-#define    PLSFNAM_	plsfnam__
-#define    PLSMAJ	plsmaj_
-#define    PLSMIN	plsmin_
-#define    PLSORI	plsori_
-#define    PLSPAGE	plspage_
-#define    PLSSTRM	plsstrm_
-#define    PLSSYM	plssym_
-#define    PLSTAR	plstar_
-#define    PLSTART_	plstart__
-#define    PLSTYL	plstyl_
-#define    PLSVPA	plsvpa_
-#define    PLSXAX	plsxax_
-#define    PLSYAX	plsyax_
-#define    PLSYM	plsym_
-#define    PLSZAX	plszax_
-#define    PLTEXT	pltext_
-#define    PLVASP	plvasp_
-#define    PLVPAS	plvpas_
-#define    PLVPOR	plvpor_
-#define    PLVSTA	plvsta_
-#define    PLW3D	plw3d_
-#define    PLWID	plwid_
-#define    PLWIND	plwind_
-
+#define FNAME(x,y)     y##_
 #endif
 
 #ifdef STUB_L
-
-#define    PLADV	pladv
-#define    PLANCOL_	plancol_
-#define    PLAXES_	plaxes_
-#define    PLBEG	plbeg
-#define    PLBIN	plbin
-#define    PLBOX3_	plbox3_
-#define    PLBOX_	plbox_
-#define    PLCLR	plclr
-#define    PLCOL	plcol
-#define    PLCON0_	plcon0_
-#define    PLCON1_	plcon1_
-#define    PLCON2_	plcon2_
-#define    PLCONT_	plcont_
-#define    PLEND	plend
-#define    PLEND1	plend1
-#define    PLENV	plenv
-#define    PLERRX	plerrx
-#define    PLERRY	plerry
-#define    PLFAMADV	plfamadv
-#define    PLFILL	plfill
-#define    PLFLUSH	plflush
-#define    PLFONT	plfont
-#define    PLFONTLD	plfontld
-#define    PLGFAM	plgfam
-#define    PLGFNAM_	plgfnam_
-#define    PLGPAGE	plgpage
-#define    PLGRA	plgra
-#define    PLGSPA	plgspa
-#define    PLGSTRM	plgstrm
-#define    PLGXAX	plgxax
-#define    PLGYAX	plgyax
-#define    PLGZAX	plgzax
-#define    PLHIST	plhist
-#define    PLHLS        plhls
-#define    PLJOIN	pljoin
-#define    PLLAB_	pllab_
-#define    PLLINE	plline
-#define    PLLSTY	pllsty
-#define    PLMESH	plmesh
-#define    PLMTEX_	plmtex_
-#define    PLOT3D	plot3d
-#define    PLPAT	plpat
-#define    PLPOIN	plpoin
-#define    PLPREC	plprec
-#define    PLPSTY	plpsty
-#define    PLPTEX_	plptex_
-#define    PLRGB        plrgb
-#define    PLSASP       plsasp
-#define    PLSCHR	plschr
-#define    PLSFAM	plsfam
-#define    PLSFNAM_	plsfnam_
-#define    PLSMAJ	plsmaj
-#define    PLSMIN	plsmin
-#define    PLSORI	plsori
-#define    PLSPAGE	plspage
-#define    PLSSTRM	plsstrm
-#define    PLSSYM	plssym
-#define    PLSTAR	plstar
-#define    PLSTART_	plstart_
-#define    PLSTYL	plstyl
-#define    PLSVPA	plsvpa
-#define    PLSXAX	plsxax
-#define    PLSYAX	plsyax
-#define    PLSYM	plsym
-#define    PLSZAX	plszax
-#define    PLTEXT	pltext
-#define    PLVASP	plvasp
-#define    PLVPAS	plvpas
-#define    PLVPOR	plvpor
-#define    PLVSTA	plvsta
-#define    PLW3D	plw3d
-#define    PLWID	plwid
-#define    PLWIND	plwind
-
+#define FNAME(x,y)     y
 #endif
 
 #ifdef MSDOS
-
-#define    PLADV	fortran PLADV
-#define    PLANCOL_	fortran PLANCOL_
-#define    PLAXES_	fortran PLAXES_
-#define    PLBEG	fortran PLBEG
-#define    PLBIN	fortran PLBIN
-#define    PLBOX3_	fortran PLBOX3_
-#define    PLBOX_	fortran PLBOX_
-#define    PLCLR	fortran PLCLR
-#define    PLCOL	fortran PLCOL
-#define    PLCON0_	fortran PLCON0_
-#define    PLCON1_	fortran PLCON1_
-#define    PLCON2_	fortran PLCON2_
-#define    PLCONT_	fortran PLCONT_
-#define    PLEND	fortran PLEND
-#define    PLEND1	fortran PLEND1
-#define    PLENV	fortran PLENV
-#define    PLERRX	fortran PLERRX
-#define    PLERRY	fortran PLERRY
-#define    PLFAMADV	fortran PLFAMADV
-#define    PLFILL	fortran PLFILL
-#define    PLFLUSH	fortran PLFLUSH
-#define    PLFONT	fortran PLFONT
-#define    PLFONTLD	fortran PLFONTLD
-#define    PLGFAM	fortran PLGFAM
-#define    PLGFNAM_	fortran PLGFNAM_
-#define    PLGPAGE	fortran PLGPAGE
-#define    PLGRA	fortran PLGRA
-#define    PLGSPA	fortran PLGSPA
-#define    PLGSTRM	fortran PLGSTRM
-#define    PLGXAX	fortran PLGXAX
-#define    PLGYAX	fortran PLGYAX
-#define    PLGZAX	fortran PLGZAX
-#define    PLHIST	fortran PLHIST
-#define    PLHLS	fortran PLHLS
-#define    PLJOIN	fortran PLJOIN
-#define    PLLAB_	fortran PLLAB_
-#define    PLLINE	fortran PLLINE
-#define    PLLSTY	fortran PLLSTY
-#define    PLMESH	fortran PLMESH
-#define    PLMTEX_	fortran PLMTEX_
-#define    PLOT3D	fortran PLOT3D
-#define    PLPAT	fortran PLPAT
-#define    PLPOIN	fortran PLPOIN
-#define    PLPREC	fortran PLPREC
-#define    PLPSTY	fortran PLPSTY
-#define    PLPTEX_	fortran PLPTEX_
-#define    PLRGB	fortran PLRGB
-#define    PLSASP	fortran PLSASP
-#define    PLSCHR	fortran PLSCHR
-#define    PLSFAM	fortran PLSFAM
-#define    PLSFNAM_	fortran PLSFNAM_
-#define    PLSMAJ	fortran PLSMAJ
-#define    PLSMIN	fortran PLSMIN
-#define    PLSORI	fortran PLSORI
-#define    PLSPAGE	fortran PLSPAGE
-#define    PLSSTRM	fortran PLSSTRM
-#define    PLSSYM	fortran PLSSYM
-#define    PLSTAR	fortran PLSTAR
-#define    PLSTART_	fortran PLSTART_
-#define    PLSTYL	fortran PLSTYL
-#define    PLSVPA	fortran PLSVPA
-#define    PLSXAX	fortran PLSXAX
-#define    PLSYAX	fortran PLSYAX
-#define    PLSYM	fortran PLSYM
-#define    PLSZAX	fortran PLSZAX
-#define    PLTEXT	fortran PLTEXT
-#define    PLVASP	fortran PLVASP
-#define    PLVPAS	fortran PLVPAS
-#define    PLVPOR	fortran PLVPOR
-#define    PLVSTA	fortran PLVSTA
-#define    PLW3D	fortran PLW3D
-#define    PLWID	fortran PLWID
-#define    PLWIND	fortran PLWIND
-
+#define FNAME(x,y)     fortran x
 #endif
+
+#ifdef FNAME
+
+#define    PLADV	FNAME(PLADV,pladv)
+#define    PLANCOL_	FNAME(PLANCOL_,plancol_)
+#define    PLAXES_	FNAME(PLAXES_,plaxes_)
+#define    PLBEG	FNAME(PLBEG,plbeg)
+#define    PLBIN	FNAME(PLBIN,plbin)
+#define    PLBOX3_	FNAME(PLBOX3_,plbox3_)
+#define    PLBOX_	FNAME(PLBOX_,plbox_)
+#define    PLCLR	FNAME(PLCLR,plclr)
+#define    PLCOL	FNAME(PLCOL,plcol)
+#define    PLCON0_	FNAME(PLCON0_,plcon0_)
+#define    PLCON1_	FNAME(PLCON1_,plcon1_)
+#define    PLCON2_	FNAME(PLCON2_,plcon2_)
+#define    PLCONT_	FNAME(PLCONT_,plcont_)
+#define    PLEND	FNAME(PLEND,plend)
+#define    PLEND1	FNAME(PLEND1,plend1)
+#define    PLENV	FNAME(PLENV,plenv)
+#define    PLERRX	FNAME(PLERRX,plerrx)
+#define    PLERRY	FNAME(PLERRY,plerry)
+#define    PLFAMADV	FNAME(PLFAMADV,plfamadv)
+#define    PLFILL	FNAME(PLFILL,plfill)
+#define    PLFLUSH	FNAME(PLFLUSH,plflush)
+#define    PLFONT	FNAME(PLFONT,plfont)
+#define    PLFONTLD	FNAME(PLFONTLD,plfontld)
+#define    PLGFAM	FNAME(PLGFAM,plgfam)
+#define    PLGFNAM_	FNAME(PLGFNAM_,plgfnam_)
+#define    PLGPAGE	FNAME(PLGPAGE,plgpage)
+#define    PLGRA	FNAME(PLGRA,plgra)
+#define    PLGSPA	FNAME(PLGSPA,plgspa)
+#define    PLGSTRM	FNAME(PLGSTRM,plgstrm)
+#define    PLGXAX	FNAME(PLGXAX,plgxax)
+#define    PLGYAX	FNAME(PLGYAX,plgyax)
+#define    PLGZAX	FNAME(PLGZAX,plgzax)
+#define    PLHIST	FNAME(PLHIST,plhist)
+#define    PLHLS        FNAME(PLHLS,plhls)
+#define    PLJOIN	FNAME(PLJOIN,pljoin)
+#define    PLLAB_	FNAME(PLLAB_,pllab_)
+#define    PLLINE	FNAME(PLLINE,plline)
+#define    PLLSTY	FNAME(PLLSTY,pllsty)
+#define    PLMESH	FNAME(PLMESH,plmesh)
+#define    PLMTEX_	FNAME(PLMTEX_,plmtex_)
+#define    PLOT3D	FNAME(PLOT3D,plot3d)
+#define    PLPAT	FNAME(PLPAT,plpat)
+#define    PLPOIN	FNAME(PLPOIN,plpoin)
+#define    PLPREC	FNAME(PLPREC,plprec)
+#define    PLPSTY	FNAME(PLPSTY,plpsty)
+#define    PLPTEX_	FNAME(PLPTEX_,plptex_)
+#define    PLRGB        FNAME(PLRGB,plrgb)
+#define    PLSASP       FNAME(PLSASP,plsasp)
+#define    PLSCHR	FNAME(PLSCHR,plschr)
+#define    PLSFAM	FNAME(PLSFAM,plsfam)
+#define    PLSFNAM_	FNAME(PLSFNAM_,plsfnam_)
+#define    PLSMAJ	FNAME(PLSMAJ,plsmaj)
+#define    PLSMIN	FNAME(PLSMIN,plsmin)
+#define    PLSORI	FNAME(PLSORI,plsori)
+#define    PLSPAGE	FNAME(PLSPAGE,plspage)
+#define    PLSSTRM	FNAME(PLSSTRM,plsstrm)
+#define    PLSSYM	FNAME(PLSSYM,plssym)
+#define    PLSTAR	FNAME(PLSTAR,plstar)
+#define    PLSTART_	FNAME(PLSTART_,plstart_)
+#define    PLSTYL	FNAME(PLSTYL,plstyl)
+#define    PLSVPA	FNAME(PLSVPA,plsvpa)
+#define    PLSXAX	FNAME(PLSXAX,plsxax)
+#define    PLSYAX	FNAME(PLSYAX,plsyax)
+#define    PLSYM	FNAME(PLSYM,plsym)
+#define    PLSZAX	FNAME(PLSZAX,plszax)
+#define    PLTEXT	FNAME(PLTEXT,pltext)
+#define    PLVASP	FNAME(PLVASP,plvasp)
+#define    PLVPAS	FNAME(PLVPAS,plvpas)
+#define    PLVPOR	FNAME(PLVPOR,plvpor)
+#define    PLVSTA	FNAME(PLVSTA,plvsta)
+#define    PLW3D	FNAME(PLW3D,plw3d)
+#define    PLWID	FNAME(PLWID,plwid)
+#define    PLWIND	FNAME(PLWIND,plwind)
+
+#endif	/* FNAME */
 
 #endif	/* INCLUDED_PLSTUBS */
