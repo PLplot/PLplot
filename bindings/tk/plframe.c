@@ -213,7 +213,7 @@ static Tk_ConfigSpec configSpecs[] = {
 	TK_CONFIG_COLOR_ONLY},
 	*/
 #ifndef	MAC_TCL	    
-// jc:    {TK_CONFIG_COLOR, "-plbg", (char *) NULL, (char *) NULL,
+/* jc:    {TK_CONFIG_COLOR, "-plbg", (char *) NULL, (char *) NULL, */
     {TK_CONFIG_COLOR, "-plbg", "plbackground", "Plbackground",
 	DEF_PLFRAME_BG_COLOR, Tk_Offset(PlFrame, bgColor),
 	TK_CONFIG_COLOR_ONLY},
