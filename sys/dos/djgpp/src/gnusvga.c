@@ -59,13 +59,14 @@
 #define bzero(a,b) memset(a,0,b)
 #endif
 
+#include <time.h>       /* for the 'newname' funtion */
+
 #ifdef PLD_gnusvga
 #undef _POSIX_SOURCE    /* Turn off POSIX to get around "problem" with <keys.h> header.
 			   Ugly, but it works *sigh* */
 #include <keys.h>
 #endif
 
-#include <time.h>       /* for the 'newname' funtion */
 #include <strings.h>
 
 

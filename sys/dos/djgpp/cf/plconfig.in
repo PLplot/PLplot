@@ -69,4 +69,6 @@
 #undef BIN_DIR
 #undef TCL_DIR
 
+#define BUILD_DIR "."
+
 #ifndef VERSION
