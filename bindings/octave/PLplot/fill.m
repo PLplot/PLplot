@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -39,7 +39,7 @@
 function fill(x, y, c)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   if (nargin != 3)
     error("fill: not yet.\n");
@@ -68,15 +68,15 @@ function fill(x, y, c)
 
       h_st = ishold;
 
-      if (__pl.axis_st(__pl_strm) == 1)
-	xmin = __pl.axis(__pl_strm,1); xmax = __pl.axis(__pl_strm,2);
-	ymin = __pl.axis(__pl_strm,3); ymin = __pl.axis(__pl_strm,4);
+      if (__pl.axis_st(strm) == 1)
+	xmin = __pl.axis(strm,1); xmax = __pl.axis(strm,2);
+	ymin = __pl.axis(strm,3); ymin = __pl.axis(strm,4);
       else
 	xmin=min(min(x)); xmax=max(max(x));
 	ymin=min(min(y)); ymax=max(max(y));
       endif
       
-      ## if (__pl.axis_st(__pl_strm) == 0)
+      ## if (__pl.axis_st(strm) == 0)
       ##   xm = min(min(x)); xM = max(max(x));
       ##   ym = min(min(y)); yM = max(max(y));
       ##   axis([xm xM ym yM]);
@@ -84,7 +84,7 @@ function fill(x, y, c)
       
       if (!ishold)
 	plcol(15);
-	plenv(xmin, xmax, ymin, ymax, 0, -1);
+	__pl_plenv(xmin, xmax, ymin, ymax, 0, -1);
 	hold on;
       endif
 

@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ function text = zlabel (text)
 
   global __pl
 
-  __pl_strm =__pl_init;
+  strm =__pl_init;
 
   if (nargin > 1)
     usage ("zlable (text)");
@@ -33,9 +33,9 @@ function text = zlabel (text)
   endif
   
   if (nargin == 0)
-    text = __pl.zlabel(__pl_strm,:);
+    text = __pl.zlabel(strm,:);
   else
-    __pl.zlabel = __pl_matstr(__pl.zlabel, text, __pl_strm);
+    __pl.zlabel = __pl_matstr(__pl.zlabel, text, strm);
   endif
 
   if (automatic_replot)

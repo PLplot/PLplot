@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -34,7 +34,7 @@
 function id = stripc (xmin, xmax, xjump, ymin, ymax, leg1, leg2, leg3, leg4, acc, autoy)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   colbox =  collab = 15;
   styline(1)  = 1;	# pens line style
@@ -49,11 +49,11 @@ function id = stripc (xmin, xmax, xjump, ymin, ymax, leg1, leg2, leg3, leg4, acc
 
   id = plstripc("bcnst", "bcnstv",
 		xmin, xmax, xjump, ymin, ymax,
-		__pl.legend_xpos(__pl_strm), __pl.legend_ypos(__pl_strm), 
+		__pl.legend_xpos(strm), __pl.legend_ypos(strm), 
 		autoy, acc, 15, 15,
 		colline, styline, leg1, leg2, leg3, leg4,
-		tdeblank(__pl.xlabel(__pl_strm,:)),
-		tdeblank(__pl.ylabel(__pl_strm,:)),
-		tdeblank(__pl.tlabel(__pl_strm,:)));
+		tdeblank(__pl.xlabel(strm,:)),
+		tdeblank(__pl.ylabel(strm,:)),
+		tdeblank(__pl.tlabel(strm,:)));
 
 endfunction

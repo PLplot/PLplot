@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -21,8 +21,8 @@
 function st = axis_set
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
-  st = __pl.axis_st(__pl_strm);
+  st = __pl.axis_st(strm);
 
 endfunction

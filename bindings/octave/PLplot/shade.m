@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -23,7 +23,7 @@
 function shade(x, y, z, levels, cont )
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   old_empty_list_elements_ok = empty_list_elements_ok;
   empty_list_elements_ok = 1;
@@ -66,44 +66,44 @@ function shade(x, y, z, levels, cont )
     ymm = ym = min(min(y)); yM = max(max(y));
     zm = min(min(z)); zM = max(max(z));
     
-    if (__pl.axis_st(__pl_strm))
-      xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);
+    if (__pl.axis_st(strm))
+      xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);
       ix = find(x >= xm & x <= xM); 
       x=x(ix); z=z(:,ix);
       xlen = length (x);
       xmm = min(x); 
 
-      if (length(__pl.axis(__pl_strm,:)) >= 4)	
-	ym = __pl.axis(__pl_strm,3); yM = __pl.axis(__pl_strm,4);
+      if (length(__pl.axis(strm,:)) >= 4)	
+	ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
 	iy = find(y >= ym & y <= yM);
 	y=y(iy); z=z(iy,:);
 	ylen = length (y);
 	ymm = min(y);
       else
-	__pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
+	__pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
       endif
-      if (length(__pl.axis(__pl_strm,:)) == 6)
-	zm = __pl.axis(__pl_strm,5); zM = __pl.axis(__pl_strm,6);
+      if (length(__pl.axis(strm,:)) == 6)
+	zm = __pl.axis(strm,5); zM = __pl.axis(strm,6);
       else
-	__pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;
+	__pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;
       endif
     else	# make axis() return current axis
-      __pl.axis(__pl_strm,1) = xm; __pl.axis(__pl_strm,2) = xM;
-      __pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
-      __pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
+      __pl.axis(strm,1) = xm; __pl.axis(strm,2) = xM;
+      __pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
+      __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
     endif
     
-    __pl.plcol(__pl_strm) = 1;
+    __pl.plcol(strm) = 1;
     plcol(15);pllsty(1);
     __pl_plenv(xm, xM, ym, yM, 0, -2);
   else
-    if (columns(__pl.axis(__pl_strm,:)) != 6)
+    if (columns(__pl.axis(strm,:)) != 6)
       empty_list_elements_ok = old_empty_list_elements_ok;
       error("You must contour/shade plot something before entering hold mode");
     endif
-    xmm = xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);
-    ymm = ym = __pl.axis(__pl_strm,3); yM = __pl.axis(__pl_strm,4);
-    zm = __pl.axis(__pl_strm,5); zM = __pl.axis(__pl_strm,6);
+    xmm = xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);
+    ymm = ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
+    zm = __pl.axis(strm,5); zM = __pl.axis(strm,6);
     z = z( find(y >= ym & y <= yM), find(x >= xm & x <= xM));	
   endif
 
@@ -118,11 +118,11 @@ function shade(x, y, z, levels, cont )
     cclevel = linspace(zm, zM, levels);
   endif
 
-  __pl.type = -2;
+  __pl.type(strm) = -2;
   __pl.lab_str = "";
-  __pl.plcol(__pl_strm) = 1;
-  __pl.pllsty(__pl_strm) = 1;	
-  __pl.lab_pos(__pl_strm) = 1;
+  __pl.plcol(strm) = 1;
+  __pl.pllsty(strm) = 1;	
+  __pl.lab_pos(strm) = 1;
 
   tr = [(maxx-minx)/(xlen-1); 0; xmm; 0; (maxy-miny)/(ylen-1); ymm];
   plpsty(0);
@@ -142,16 +142,16 @@ function shade(x, y, z, levels, cont )
 
   for i = 1:n
     __pl.lab_str = [__pl.lab_str; sprintf("%#+.2G", cclevel(i))];
-    __pl.lab_col(__pl_strm,__pl.lab_pos(__pl_strm)) = __pl.plcol(__pl_strm);
-    __pl.lab_lsty(__pl_strm,__pl.lab_pos(__pl_strm)) = __pl.pllsty(__pl_strm);
-    __pl.lab_pos(__pl_strm) = __pl.lab_pos(__pl_strm) + 1;				
-    __pl.plcol(__pl_strm) = rem(__pl.plcol(__pl_strm), 15)+1;
-    if  (__pl.lstlyle(__pl_strm))
-      __pl.pllsty(__pl_strm) = rem(__pl.pllsty(__pl_strm), 8)+1;
+    __pl.lab_col(strm,__pl.lab_pos(strm)) = __pl.plcol(strm);
+    __pl.lab_lsty(strm,__pl.lab_pos(strm)) = __pl.pllsty(strm);
+    __pl.lab_pos(strm) = __pl.lab_pos(strm) + 1;				
+    __pl.plcol(strm) = rem(__pl.plcol(strm), 15)+1;
+    if  (__pl.line_style(strm))
+      __pl.pllsty(strm) = rem(__pl.pllsty(strm), 8)+1;
     endif
   endfor
 
-  if (__pl.grid(__pl_strm))		# this has to be done after shading
+  if (__pl.grid(strm))		# this has to be done after shading
     plcol(15);
     plbox("bcnsgt",0,0,"bcnsgtv",0,0)
   else
@@ -159,13 +159,15 @@ function shade(x, y, z, levels, cont )
     plbox("bcnst",0,0,"bcnstv",0,0)
   endif
 
-  if (__pl.legend(__pl_strm))
+  if (__pl.legend(strm))
     __pl_draw_legend
   endif
 
   plcol(15);
-  pllab(tdeblank(__pl.xlabel(__pl_strm,:)), tdeblank(__pl.ylabel(__pl_strm,:)), tdeblank(__pl.tlabel(__pl_strm,:)));
+  pllab(tdeblank(__pl.xlabel(strm,:)), tdeblank(__pl.ylabel(strm,:)), tdeblank(__pl.tlabel(strm,:)));
+
   plflush;
+  __pl.items(strm) = 0; # for now!
   empty_list_elements_ok = old_empty_list_elements_ok;
   
 endfunction

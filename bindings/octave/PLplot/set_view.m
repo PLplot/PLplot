@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -25,26 +25,26 @@
 ## is evaluated as a function and should do a 3D plot, using the remaining arguments.
 ##
 ##     example of callback `script':
-##      [x, y, z] = rosenbrock; z = log(z);
+##      [x, y, z] = peaks; z = log(z);
 ##      set_view("surfl", x, y, z);
 ##
 ## To control the view angle, the following mouse buttons can be used:
 ##
-##    button 1 press marks new origin
-##    button 1,3 drag, rotate cube
-##    button 2 press terminate
-##    button 3 press default position
+##    button 1 press: marks new origin
+##    button 1,3 drag: rotate cube
+##    button 2 press: finish
+##    button 3 press: return to default position
 
 function set_view (alt, az, ...)
 
   global __pl 
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   callback = 0;
 
   if (nargin == 2 && !isstr(alt))
-    __pl.az(__pl_strm) = az;
-    __pl.alt(__pl_strm) = alt;
+    __pl.az(strm) = az;
+    __pl.alt(strm) = alt;
     return
   elseif (nargin >= 2 && isstr(alt))
     cmd = alt;
@@ -52,8 +52,8 @@ function set_view (alt, az, ...)
     callback = 1;
   endif
 
-  az = __pl.az(__pl_strm);
-  alt =  __pl.alt(__pl_strm);
+  az = __pl.az(strm);
+  alt =  __pl.alt(strm);
 
   if (!callback)
     x = y = [0; 1];
@@ -71,7 +71,7 @@ function set_view (alt, az, ...)
     plbox3("bnstu", "X axis", 0.0, 0,"bnstu", "Y axis", 0.0, 0,"bdcmnstuv",
 	   "Z axis", 0.0, 0)
 
-    plot3d(x,y,z,3,1);
+    plot3d(x,y,z,1,1);
     plflush;
 
     xm = ym = zm = 0;
@@ -92,7 +92,7 @@ function set_view (alt, az, ...)
       ox = dX; oy = dY;
       c_alt = c_az = 0;
     elseif(button == 2) # stop
-      break
+      break;
     elseif (button == 1) # mark position
       ox = dX; oy = dY;
       alt = alt + c_alt; az = az + c_az;
@@ -108,12 +108,6 @@ function set_view (alt, az, ...)
       c_alt = -alt;
     endif
 
-    ## if (az < -180)
-    ##	az = -180;
-    ## elseif (az > 180)
-    ##	az = 180;
-    ## endif
-
     if (!callback)
       __pl_plenv(-1.5, 1.5, -1.5, 2.5, 0, -2);
 
@@ -124,19 +118,19 @@ function set_view (alt, az, ...)
 
       plmtex("t", 3, 0.5, 0.5, sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
 
-      plot3d(x,y,z,3,1);
+      plot3d(x,y,z,1,1);
       plflush;
     else
-      __pl.az(__pl_strm) = az + c_az; 
-      __pl.alt(__pl_strm) = alt + c_alt;
+      __pl.az(strm) = az + c_az; 
+      __pl.alt(strm) = alt + c_alt;
       title(sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
       feval(cmd, arg1, all_va_args);
     endif
     
   endwhile
 
-  __pl.az(__pl_strm) = az + c_az; 
-  __pl.alt(__pl_strm) = alt + c_alt;
+  __pl.az(strm) = az + c_az; 
+  __pl.alt(strm) = alt + c_alt;
 
   
 endfunction

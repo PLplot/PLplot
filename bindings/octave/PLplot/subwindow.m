@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
 function subwindow (xn, yn)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   if (nargin != 2 && nargin != 0)
     usage ("subwindow (xn, yn)");
   endif
 
   if (nargin == 0)
-    __pl.multi_row(__pl_strm)
-    __pl.multi_col(__pl_strm)
+    __pl.multi_row(strm)
+    __pl.multi_col(strm)
     return
   endif
 
@@ -44,17 +44,17 @@ function subwindow (xn, yn)
   xn = round (xn);
   yn = round (yn);
 
-  if (! __pl.multi(__pl_strm))
+  if (! __pl.multi(strm))
     multiplot (xn, yn);
     return;
   endif
   
-  if (xn < 1 || xn > __pl.multi_row(__pl_strm) ||
-      yn < 1 || yn > __pl.multi_col(__pl_strm))
+  if (xn < 1 || xn > __pl.multi_row(strm) ||
+      yn < 1 || yn > __pl.multi_col(strm))
     error ("subwindow: incorrect xn and yn");
   endif
   
-  __pl.multi_cur(__pl_strm) = (yn-1)*__pl.multi_row(__pl_strm) + xn;
-  pladv(__pl.multi_cur(__pl_strm));
+  __pl.multi_cur(strm) = (yn-1)*__pl.multi_row(strm) + xn;
+  pladv(__pl.multi_cur(strm));
   
 endfunction

@@ -52,7 +52,7 @@
 function subplot (rows, columns, index)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   if (nargin != 3 && nargin != 1)
     usage ("subplot (rows, columns, index) or subplot (rcn)");
@@ -92,11 +92,11 @@ function subplot (rows, columns, index)
   else
     
     ## already in multiplot with same characteristics ?
-    __pl.multi_cur(__pl_strm) = index;
+    __pl.multi_cur(strm) = index;
     
-    if (__pl.multi(__pl_strm) == 1 &&   
-	__pl.multi_col(__pl_strm) == columns &&
-	__pl.multi_row(__pl_strm) == rows)
+    if (__pl.multi(strm) == 1 &&   
+	__pl.multi_col(strm) == columns &&
+	__pl.multi_row(strm) == rows)
       
       pladv(index);
       plvpor(0,1,0,1)
@@ -105,9 +105,9 @@ function subplot (rows, columns, index)
       plfill([0; 1; 1; 0],[0; 0; 1; 1]);
       plflush; pleop;
     else
-      __pl.multi_col(__pl_strm) = columns;
-      __pl.multi_row(__pl_strm) = rows;
-      __pl.multi(__pl_strm) = 1;
+      __pl.multi_col(strm) = columns;
+      __pl.multi_row(strm) = rows;
+      __pl.multi(strm) = 1;
       plssub(columns, rows);
       pladv(index);
     endif

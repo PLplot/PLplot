@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -23,16 +23,18 @@
 ## if class is vector label data(class,:) as points
 ## if class is matrix label only points such that data == class
 ##
-## if names exists, they will be used at the plot legend 
+## if names exists, they will be used at the plot legend
+##
+## too old, needs to be updated. 
 
 function label_plot( data, label, class, names)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
   static j;
 
   set_axis = 0;	# signal that I set the axis
-  if (!__pl.axis_st(__pl_strm))
+  if (!__pl.axis_st(strm))
     axis([min(data(:,1)), max(data(:,1)), min(data(:,2)), max(data(:,2))]);
     set_axis = 1;
   endif

@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -28,16 +28,16 @@
 function mplot (...)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
-  __pl.multi_cur(__pl_strm) = rem(__pl.multi_cur(__pl_strm)+1,
-				  __pl.multi_row(__pl_strm) * 
-				  __pl.multi_col(__pl_strm)+1);
-  if (__pl.multi_cur(__pl_strm) == 0 )
-    __pl.multi_cur(__pl_strm) = 1;
+  __pl.multi_cur(strm) = rem(__pl.multi_cur(strm)+1,
+				  __pl.multi_row(strm) * 
+				  __pl.multi_col(strm)+1);
+  if (__pl.multi_cur(strm) == 0 )
+    __pl.multi_cur(strm) = 1;
   endif
   
-  pladv(__pl.multi_cur(__pl_strm))
+  pladv(__pl.multi_cur(strm))
   __plt__ ("plot", all_va_args);
 
 endfunction

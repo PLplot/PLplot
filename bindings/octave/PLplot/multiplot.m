@@ -28,7 +28,7 @@
 function multiplot (xn, yn)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   if (nargin != 2)
     usage ("multiplot (xn, yn)");
@@ -48,10 +48,10 @@ function multiplot (xn, yn)
       error ("multiplot: xn and yn have to be positive integers");
     endif
 
-    __pl.multi(__pl_strm) = 1;
-    __pl.multi_row(__pl_strm) = xn;
-    __pl.multi_col(__pl_strm) = yn;
-    __pl.multi_cur(__pl_strm) = 1;
+    __pl.multi(strm) = 1;
+    __pl.multi_row(strm) = xn;
+    __pl.multi_col(strm) = yn;
+    __pl.multi_cur(strm) = 1;
     
     plssub(xn, yn);
     pladv(0);

@@ -19,21 +19,22 @@
 function type = shading(type)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   if (nargin == 0)
-    type = __pl.shading(__pl_strm,:);
+    type = __pl.shading(strm,:);
   elseif (nargin == 1)
     if (strcmp(type, "flat") || strcmp(type,"faceted"))
-      __pl.shading = __pl_matstr(__pl.shading, type, __pl_strm);
+      __pl.shading = __pl_matstr(__pl.shading, type, strm);
     else
       usage("shading");
       return;
     endif
-
   else
     usage("shading");
     return;
   endif
+
+  __pl_plotit;
 
 endfunction

@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -30,7 +30,7 @@
 function plot3 (x, y, z, fmt)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   if (nargin != 4 & nargin != 3)
     error("plot3: not yet.\n");
@@ -69,23 +69,23 @@ function plot3 (x, y, z, fmt)
       ym = min(min(y)); yM = max(max(y));
       zm = min(min(z)); zM = max(max(z));
       
-      if (__pl.axis_st(__pl_strm))
-	xm = __pl.axis(__pl_strm,1); xM = __pl.axis(__pl_strm,2);	# at least x always exist
+      if (__pl.axis_st(strm))
+	xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);	# at least x always exist
 	
 	if (length(__pl.axis) >= 4)	
-	  ym = __pl.axis(__pl_strm,3); yM = __pl.axis(__pl_strm,4);
+	  ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
 	else
-	  __pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
+	  __pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
 	endif
 	if (length(__pl.axis) == 6)
-	  zm = __pl.axis(__pl_strm,5); zM = __pl.axis(__pl_strm,6);
+	  zm = __pl.axis(strm,5); zM = __pl.axis(strm,6);
 	else
-	  __pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
+	  __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
 	endif
       else	# make axis() return current axis
-	__pl.axis(__pl_strm,1) = xm; __pl.axis(__pl_strm,2) = xM;
-	__pl.axis(__pl_strm,3) = ym; __pl.axis(__pl_strm,4) = yM;
-	__pl.axis(__pl_strm,5) = zm; __pl.axis(__pl_strm,6) = zM;		
+	__pl.axis(strm,1) = xm; __pl.axis(strm,2) = xM;
+	__pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
+	__pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
       endif
       
       h_st = ishold;
@@ -93,12 +93,12 @@ function plot3 (x, y, z, fmt)
       if (!ishold)
 	plcol(15);
 	__pl_plenv(-1.6, 1.6, -1.6, 2.6, 0, -2);
-	pllab("", "", tdeblank(__pl.tlabel(__pl_strm,:)));
+	pllab("", "", tdeblank(__pl.tlabel(strm,:)));
 	plw3d(2, 2, 2, xm, xM, ym, yM, zm, zM,...
-	      __pl.alt(__pl_strm), __pl.az(__pl_strm))
-	plbox3("bnstu", tdeblank(__pl.xlabel(__pl_strm,:)), 0.0, 0,...
-	       "bnstu",tdeblank(__pl.ylabel(__pl_strm,:)), 0.0, 0,...
-	       "bcmnstuv", tdeblank(__pl.zlabel(__pl_strm,:)), 0.0, 0)
+	      __pl.alt(strm), __pl.az(strm))
+	plbox3("bnstu", tdeblank(__pl.xlabel(strm,:)), 0.0, 0,...
+	       "bnstu",tdeblank(__pl.ylabel(strm,:)), 0.0, 0,...
+	       "bcdmnstuv", tdeblank(__pl.zlabel(strm,:)), 0.0, 0)
 	hold on
       endif
 
