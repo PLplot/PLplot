@@ -115,7 +115,9 @@ EOT
 
   # read Lena image
 
-  my ($img_f, $width, $height, $num_col) = read_img ("../c/lena.pgm");
+  my $lena = "../c/lena.pgm";
+  my ($img_f, $width, $height, $num_col) = read_img ($lena)
+    or die "Cannot find image file $lena";
 
   # set gray colormap
 
