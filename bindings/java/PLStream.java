@@ -446,6 +446,11 @@ public void surf3dl(double[] x, double[] y, double[][] z, int opt,
     plplotjavac.plsurf3dl(x, y, z, opt, clevel, ixstart, indexymin, indexymax);
 }
 
+public void parseopts(String[] argv, int mode) {
+    if (set_stream() == -1) return;
+    plplotjavac.plparseopts(argv, mode);
+}
+
 public void pat(int[] inc, int[] del) {
     if (set_stream() == -1) return;
     plplotjavac.plpat(inc, del);
@@ -781,11 +786,6 @@ public void ResetOpts() {
 public void SetUsage(String program_string, String usage_string) {
     if (set_stream() == -1) return;
     plplotjavac.plSetUsage(program_string, usage_string);
-}
-
-public void ParseOpts(String[] argv, int mode) {
-    if (set_stream() == -1) return;
-    plplotjavac.plParseOpts(argv, mode);
 }
 
 public void OptUsage() {

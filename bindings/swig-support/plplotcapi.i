@@ -454,6 +454,10 @@ plsurf3dl(PLFLT *ArrayX, PLFLT *ArrayY, PLFLT **MatrixCk,
 	 PLINT nx, PLINT ny, PLINT opt, PLFLT *Array, PLINT n, 
 	 PLINT ixstart, PLINT n, PLINT *Array, PLINT *ArrayCk);
 
+DOC(plparseopts, "Process options list using current options info.")
+PLINT
+plparseopts(int *p_argc, char **argv, PLINT mode);
+
 DOC(plpat, "Set fill pattern directly.")
 void
 plpat(PLINT n, PLINT *Array, PLINT *ArrayCk);
@@ -927,10 +931,6 @@ plSetUsage(char *program_string, char *usage_string);
 PLINT
 plSetOpt(char *opt, char *optarg);
 #endif
-
-/* Process options list using current options info. */
-PLINT
-plParseOpts(int *p_argc, char **argv, PLINT mode);
 
 /* Print usage & syntax message. */
 

@@ -115,7 +115,7 @@ main(int argc, char *argv[])
 {
   int i, j;
 
-  plParseOpts (&argc, argv, PL_PARSE_FULL);
+  plparseopts (&argc, argv, PL_PARSE_FULL);
 
   plinit ();
 

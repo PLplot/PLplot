@@ -168,7 +168,7 @@ main(int argc, char *argv[])
   xM = yM = 0.8;
 
   plMergeOpts(options, "x21c options", NULL);
-  plParseOpts(&argc, argv, PL_PARSE_FULL);
+  plparseopts(&argc, argv, PL_PARSE_FULL);
 
   opt[2] = wmin;
   opt[3] = (PLFLT) knn_order;

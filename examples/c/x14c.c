@@ -65,7 +65,7 @@ main(int argc, char *argv[])
 /* plplot initialization */
 /* Parse and process command line arguments */
 
-    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
     plgdev(driver);
 

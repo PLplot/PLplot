@@ -169,7 +169,7 @@ main(int argc, char *argv[])
     int i, j, page, length, slice;
     char cmdString[20];
 
-    plParseOpts(&argc, argv, PL_PARSE_FULL);
+    plparseopts(&argc, argv, PL_PARSE_FULL);
 
     plinit();
     

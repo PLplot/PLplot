@@ -85,7 +85,7 @@ main(int argc, char *argv[])
   /* Parse and process command line arguments */
 
   plMergeOpts(options, "x20c options", NULL);
-  plParseOpts(&argc, argv, PL_PARSE_FULL);
+  plparseopts(&argc, argv, PL_PARSE_FULL);
 
   /* Initialize plplot */
 

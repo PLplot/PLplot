@@ -41,7 +41,7 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
     structure, along with strings giving the syntax, long help message, and
     option handler.
 
-    The command line parser -- plParseOpts() -- removes all recognized flags
+    The command line parser -- plparseopts() -- removes all recognized flags
     (decreasing argc accordingly), so that invalid input may be readily
     detected.  It can also be used to process user command line flags.  The
     user can merge an option table of type PLOptionTable into the internal
@@ -49,7 +49,7 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
     specify that ONLY the external table(s) be parsed by calling
     plClearOpts() before plMergeOpts().
 
-    The default action taken by plParseOpts() is as follows:
+    The default action taken by plparseopts() is as follows:
 	- Returns with an error if an unrecognized option or badly formed
 	  option-value pair are encountered.
 	- Returns immediately (return code 0) when the first non-option
@@ -656,7 +656,7 @@ plSetOpt(char *opt, char *optarg)
 	PL_PARSE_NOPROGRAM |
 	PL_PARSE_NODASH;
 
-    status = plParseOpts(&argc, argv, mode);
+    status = plparseopts(&argc, argv, mode);
     if (status) {
 	fprintf( stderr, "plSetOpt: Unrecognized option %s\n", opt);
     }
@@ -734,7 +734,7 @@ plResetOpts(void)
 }
 
 /*--------------------------------------------------------------------------*\
- * plParseOpts()
+ * plparseopts()
  *
  * Process options list using current ploptions_info structure.
  * An error in parsing the argument list causes a program exit if
@@ -742,7 +742,7 @@ plResetOpts(void)
 \*--------------------------------------------------------------------------*/
 
 int
-plParseOpts(int *p_argc, char **argv, PLINT mode)
+plparseopts(int *p_argc, char **argv, PLINT mode)
 {
     char **argsave, **argend;
     int	i, myargc, status = 0;

@@ -82,7 +82,7 @@ main(int argc, char *argv[])
 
 /* Parse and process command line arguments */
 
-    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
 /* First prompt the user for the input data file name */
 

@@ -33,7 +33,7 @@ def main():
 
 	# Parse and process command line arguments
 
-	pl.ParseOpts(sys.argv, pl.PARSE_FULL)
+	# pl.ParseOpts(sys.argv, pl.PARSE_FULL)
 
 	# Initialize plplot
 

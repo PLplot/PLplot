@@ -28,7 +28,7 @@ import sys
 from plplot import *
 
 # Parse and process command line arguments
-plParseOpts(sys.argv, PL_PARSE_FULL)
+plparseopts(sys.argv, PL_PARSE_FULL)
 
 # Initialize plplot
 plinit()

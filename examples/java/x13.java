@@ -53,7 +53,7 @@ class x13 {
         double[] x = new double[ 500 ];
 	double[] y = new double[ 500 ];
 	
-        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
         pls.init();
 	

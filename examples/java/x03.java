@@ -63,7 +63,7 @@ class x03 {
 
     // Parse and process command line arguments.
 
-        pls.ParseOpts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
     // Initialize plplot.
 

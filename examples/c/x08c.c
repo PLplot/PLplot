@@ -126,7 +126,7 @@ main(int argc, char *argv[])
 
   /* Parse and process command line arguments */
   plMergeOpts(options, "x08c options",  NULL);
-  (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+  (void) plparseopts(&argc, argv, PL_PARSE_FULL);
   if (sombrero)
     rosen=0;
 

@@ -177,7 +177,7 @@ class x23 {
 	int i, j, page, length, slice;
 	String cmdString = null;
 
-	pls.ParseOpts(args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
+	pls.parseopts(args, pls.PL_PARSE_FULL | pls.PL_PARSE_NOPROGRAM );
 
 	pls.init();
     

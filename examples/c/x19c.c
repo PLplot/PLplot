@@ -42,7 +42,7 @@ main(int argc, char **argv)
 
 /* Parse and process command line arguments */
 
-    (void) plParseOpts(&argc, argv, PL_PARSE_FULL);
+    (void) plparseopts(&argc, argv, PL_PARSE_FULL);
 
 /* Longitude (x) and latitude (y) */
 

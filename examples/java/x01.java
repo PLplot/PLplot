@@ -56,7 +56,7 @@ class x01 {
     // Parse and process command line arguments.
 
 //         plMergeOpts(options, "x01c options", notes);
-        pls.ParseOpts( args, pls.PL_PARSE_FULL|pls.PL_PARSE_NOPROGRAM );
+        pls.parseopts( args, pls.PL_PARSE_FULL|pls.PL_PARSE_NOPROGRAM );
 
 // Print out version number.
 
