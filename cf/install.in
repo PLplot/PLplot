@@ -26,7 +26,7 @@ install_lib:
 	-if [ ! -d $(DOC_DIR) ] ; then mkdir -p $(DOC_DIR); fi
 	-if [ ! -d $(BIN_DIR) ] ; then mkdir -p $(BIN_DIR); fi
 	-if [ ! -d $(INFO_DIR) ] ; then mkdir -p $(INFO_DIR); fi
-	-cp ../lib/libplplot* ../lib/*.fnt $(LIB_DIR)
+	-cd ../lib; cp libplplot* *.fnt *.map $(LIB_DIR)
 	-$(RANLIB) $(LIB_DIR)/libplplot*.*
 	-cd ..; cp README README.1st Changes.log COPYRIGHTS FAQ ToDo mklinks \
 		$(DOC_DIR)
