@@ -11,7 +11,7 @@ function demo_page ($demo, $nfigs, $language) {
 <div ALIGN="CENTER"><b>Select to see the example $demo source code</b></div>
 
 <div ALIGN="CENTER">
-<form ACTION="index.php" METHOD="GET">
+<form ACTION="demo$demo_str.php" METHOD="GET">
 
 <input TYPE="submit" NAME="lbind" VALUE="C">
 <input TYPE="submit" NAME="lbind" VALUE="F77">
