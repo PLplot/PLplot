@@ -1,4 +1,10 @@
-2002-12-11  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+2002-12-13  "[iso-8859-1] João Cardoso" <jcard@fe.up.pt>
+
+	* Fixed p7 and p15 problem.  This finishes the last of the problems
+	  with the octave examples.  (x example segfaults solved earlier
+	  by plend ==> plend1 change in those examples.)
+
+2002-12-12  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* configure.ac: Drop ".so" suffix from records in created drivers.db.
 	  Apparently, this makes libtldl work properly on OSF1, and it

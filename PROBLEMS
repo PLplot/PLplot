@@ -11,6 +11,9 @@ Essential, major effort required.
 * The new Unix/Linux configuration scheme must be tested for as wide a
 variety of Unix/Linux platforms as possible.  This is the responsibility of
 everybody on the development team with access to different platforms.
+(Several Linux environments, a limited Solaris environment, and a limited
+OSF1 environment completed, but we need much more especially a Solaris
+environment with tcl/tk)
 
 * -dev tk problem finding the tcl scripts (specifically plclient.tcl).  One
 of Joao, Maurice, or Geoffrey?
@@ -26,10 +29,9 @@ package version 5.2.0 ? and the version of the PLplot libraries 1.0.0 ?
 
 * http://sourceforge.net/mailarchive/message.php?msg_id=1785861 documents
 the many minor memory leaks found by valgrind throughout the dynloader area.
-Anybody with good understanding of that code section?
-
-* Problems with plplot-test.sh and test_octave.sh segfaulting on any
-attempt to run the "x" examples.  Joao.
+Anybody with good understanding of that code section?  Joao is planning to
+make an internal pllib_end function called from plend where overall memory
+that is allocated at pllib_init is released again.
 
 * Linking problems on xtk0[124].  For static devices these work fine, but
   for dynamic devices there are problems.  Alan
@@ -76,7 +78,7 @@ instead), and configure.in has a real log mess so AWI want to just get rid
 of it entirely.  COPYING is another long story, but AWI needs to reuse that
 name so he can provide a proper reference to our LGPL licensing.
 
-* Make our documentation buildable on RH 7.3?  Alan
+* Make our documentation buildable on RedHat.  Alan
 
 * Maurice plans to finish his changes to implement handling strings as
 strings in the metafile format.
