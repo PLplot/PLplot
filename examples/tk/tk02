@@ -7,7 +7,13 @@
 # $Id$
 #
 # $Log$
-# Revision 1.13  1996/10/25 19:22:07  furnish
+# Revision 1.14  1999/01/23 05:13:38  furnish
+# Remove punchy blabber that clutters the screen trying to draw
+# attention to cool "embedded Tcl" programming techniques.  Now we'll
+# just rely on the curiosity of the gifted to take them to the
+# interesting stuff on its own...
+#
+# Revision 1.13  1996/10/25  19:22:07  furnish
 # Temporarily switch to Vince's new itk widget.  This all needs to be
 # hacked on quit a bit.
 #
@@ -209,7 +215,6 @@ proc gumbyplot {} {
 # This proc shows off the use of a matrix extension subcommand.
 
 proc snoopy {} {
-    puts "Inside snoopy"
 
     matrix x float 101
     matrix y float 101

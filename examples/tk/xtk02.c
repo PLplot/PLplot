@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.11  1996/10/18 20:02:03  furnish
+ * Revision 1.12  1999/01/23 05:13:39  furnish
+ * Remove punchy blabber that clutters the screen trying to draw
+ * attention to cool "embedded Tcl" programming techniques.  Now we'll
+ * just rely on the curiosity of the gifted to take them to the
+ * interesting stuff on its own...
+ *
+ * Revision 1.11  1996/10/18  20:02:03  furnish
  * Remove work now handled by pltkMain().
  *
  * Revision 1.10  1995/09/18  20:11:38  furnish
@@ -54,7 +60,6 @@ int stuff( tclMatrix *pm, Tcl_Interp *interp,
 {
     int i;
     float x, y;
-    printf( "made it into stuff, pm->n[0] = %d.\n", pm->n[0] );
 
 /* Should check that matrix is right type, size, etc. */
 
