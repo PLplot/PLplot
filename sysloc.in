@@ -748,17 +748,32 @@ if test "$enable_octave" = "yes"; then
         fi
     fi
 
-# Get Octave default *.oct file directory
+AC_DEFUN(OCTAVE_CONFIG_INFO, [dnl
+`$OCTAVE -q -f <<EOF
+        t = octave_config_info;
+        printf("%s", t.$1);
+EOF`])
+
+
+# Set Octave installation directories
     if test "$enable_octave" = "yes"; then
+
+	# This is the directory for installation of the PLplot_Octave
+        # specific m files
         PLPLOT_OCTAVE_DIR=${prefix}/share/plplot_octave
-        OCTAVE_OCT_DIR=`$OCTAVE -q -f <<EOF
-        t = octave_config_info;
-        printf("%s", t.octfiledir);
-EOF`
-        OCTAVE_M_DIR=`$OCTAVE -q -f <<EOF
-        t = octave_config_info;
-        printf("%s", t.localfcnfiledir);
-EOF`
+
+	# Get Configuration default values for Octave
+        OCTAVE_PREFIX=OCTAVE_CONFIG_INFO(prefix)
+        OCTAVE_OCT_DIR=OCTAVE_CONFIG_INFO(octfiledir)
+        OCTAVE_M_DIR=OCTAVE_CONFIG_INFO(localfcnfiledir)
+
+	# Strip Octave default prefix and prepend the configuration prefix 
+        # currently specified
+	OCTAVE_OCT_DIR=${prefix}/`echo $OCTAVE_OCT_DIR \
+                                  | sed "s:$OCTAVE_PREFIX/*::"`
+	OCTAVE_M_DIR=${prefix}/`echo $OCTAVE_M_DIR \
+                                | sed "s:$OCTAVE_PREFIX/*::"`
+
         AC_SUBST(MATWRAP)
         AC_SUBST(OCTAVE_OCT_DIR)
         AC_SUBST(OCTAVE_M_DIR)
