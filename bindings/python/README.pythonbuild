@@ -47,19 +47,19 @@ module (and we still keep setup.py.in around for reference purposes), but
 our procedure for building the module now is completely autotools based.
 
 The automake/libtool approach for generating _plplotcmodule.so, the
-dynamically loadable python extension module for PLplot, has been thoroughly
-tested under Linux (although we have received no reports for Unix) and works
-well except for the limitation that we have not yet figured out a way to
-access the plframe Tk widget from the python Tkinter environment.  The
-stumbling block before was libplplot itself was not dynamically loadable
-from tcl/tk, but that option is now available so there is hope that
-eventually we will be able to support a Tkinter-based plframe widget in the
-future. Also, there is a beginnings of a pyqt widget (try prova.py from
-examples/python) that does work with the dynamically loadable approach so
-that may eventually get generalized to a clone of our plframe widget (or
-even something more powerful).  Meanwhile, if you absolutely must have
-access to the Tk plframe widget under Tkinter, then you must use the
-approach in the second part of this document below the horizontal line.
+dynamically loadable python extension module for PLplot, has been tested
+under Linux and Mac OS X (and other unices?) and works well except for the
+limitation that we have not yet figured out a way to access the plframe Tk
+widget from the python Tkinter environment.  The stumbling block before was
+libplplot itself was not dynamically loadable from tcl/tk, but that option
+is now available so there is hope that eventually we will be able to support
+a Tkinter-based plframe widget in the future. Also, there is a beginnings of
+a pyqt widget (try prova.py from examples/python) that does work with the
+dynamically loadable approach so that may eventually get generalized to a
+clone of our plframe widget (or even something more powerful).  Meanwhile,
+if you absolutely must have access to the Tk plframe widget under Tkinter,
+then you must use the approach in the second part of this document below the
+horizontal line.
 
 Alan W. Irwin (last updated 2002 December 31).
 _________________________________________________________________________
