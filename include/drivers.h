@@ -27,6 +27,7 @@ void plD_dispatch_init_vga	( PLDispatchTable *pdt );
 void plD_dispatch_init_vga	( PLDispatchTable *pdt );
 void plD_dispatch_init_vga	( PLDispatchTable *pdt );
 void plD_dispatch_init_tiff	( PLDispatchTable *pdt );
+void plD_dispatch_init_jpg	( PLDispatchTable *pdt );
 void plD_dispatch_init_jpeg	( PLDispatchTable *pdt );
 void plD_dispatch_init_bmp	( PLDispatchTable *pdt );
 void plD_dispatch_init_vga	( PLDispatchTable *pdt );
