@@ -118,7 +118,7 @@ x22::x22( int argc, char ** argv ) {
     // plot using these arrows.
     pls->svect(arrow_x, arrow_y, narr, fill);
     pls->env(xmin, xmax, ymin, ymax, 0, 0);
-    pls->lab("(x)", "(y)", "#frPLplot Example 22 - vector plot");
+    pls->lab("(x)", "(y)", "#frPLplot Example 22 - user defined arrow");
     pls->col0(2);
     plvect(u,v,nx,ny,-0.5,pltr2,(void *)&cgrid2);
     pls->col0(1);
@@ -129,7 +129,7 @@ x22::x22( int argc, char ** argv ) {
     // plot using these filled arrows.
     pls->svect(arrow2_x, arrow2_y, narr, fill);
     pls->env(xmin, xmax, ymin, ymax, 0, 0);
-    pls->lab("(x)", "(y)", "#frPLplot Example 22 - vector plot");
+    pls->lab("(x)", "(y)", "#frPLplot Example 22 - filled arrow");
     pls->col0(2);
     plvect(u,v,nx,ny,0.3,pltr2,(void *)&cgrid2);
     pls->col0(1);
