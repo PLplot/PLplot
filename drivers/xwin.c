@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.60  1995/05/06 17:06:07  mjl
+ * Revision 1.61  1995/05/08 20:25:51  mjl
+ * Split the crossing event handler into separate enter and leave event
+ * handlers to better keep track of whether we should be drawing graphic
+ * crosshairs or not.  Now works properly under all combinations of expose,
+ * pointer in or out of window, and with or without a pixmap, as far as I can
+ * tell.  Added more cool stuff to be done when -debug is specified.
+ *
+ * Revision 1.60  1995/05/06  17:06:07  mjl
  * Changed debugging output to use new pldebug() function and improved.
  * Reduced max number of cmap1 colors to try to allocate to reduce conflicts
  * with other programs (like Mosaic).  Added event handling for EnterNotify
@@ -161,7 +168,8 @@ static void  MasterEH		(PLStream *pls, XEvent *event);
 static void  ExposeEH		(PLStream *pls, XEvent *event);
 static void  ResizeEH		(PLStream *pls, XEvent *event);
 static void  MotionEH		(PLStream *pls, XEvent *event);
-static void  CrossingEH		(PLStream *pls, XEvent *event);
+static void  EnterEH		(PLStream *pls, XEvent *event);
+static void  LeaveEH		(PLStream *pls, XEvent *event);
 static void  KeyEH		(PLStream *pls, XEvent *event);
 static void  ButtonEH		(PLStream *pls, XEvent *event);
 static void  LookupXKeyEvent	(PLStream *pls, XEvent *event);
@@ -674,7 +682,7 @@ FillPolygonCmd(PLStream *pls)
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
     XPoint pts[PL_MAXPOLY];
-    int i, outline_only=0;
+    int i;
 
     if (pls->dev_npts > PL_MAXPOLY)
 	plexit("FillPolygonCmd: Too many points in polygon\n");
@@ -686,11 +694,21 @@ FillPolygonCmd(PLStream *pls)
 	pts[i].y = dev->yscale * (dev->ylen - pls->dev_y[i]);
     }
 
-/*
- * For an interesting effect during fills, turn on outline_only.
- * Mostly for debugging.
- */
-    if (outline_only) {
+/* Fill polygons */
+
+    if (dev->write_to_window)
+	XFillPolygon(xwd->display, dev->window, dev->gc,
+		     pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
+
+    if (dev->write_to_pixmap)
+	XFillPolygon(xwd->display, dev->pixmap, dev->gc,
+		     pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
+
+/* If in debug mode, draw outline of boxes being filled */
+
+#ifdef DEBUG
+    if (plsc->debug) {
+	XSetForeground(xwd->display, dev->gc, xwd->fgcolor.pixel);
 	if (dev->write_to_window)
 	    XDrawLines(xwd->display, dev->window, dev->gc, pts, pls->dev_npts,
 		       CoordModeOrigin);
@@ -698,16 +716,10 @@ FillPolygonCmd(PLStream *pls)
 	if (dev->write_to_pixmap)
 	    XDrawLines(xwd->display, dev->pixmap, dev->gc, pts, pls->dev_npts,
 		       CoordModeOrigin);
-    }
-    else {
-	if (dev->write_to_window)
-	    XFillPolygon(xwd->display, dev->window, dev->gc,
-			 pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
 
-	if (dev->write_to_pixmap)
-	    XFillPolygon(xwd->display, dev->pixmap, dev->gc,
-			 pts, pls->dev_npts, Nonconvex, CoordModeOrigin);
+	XSetForeground(xwd->display, dev->gc, dev->curcolor.pixel);
     }
+#endif
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1040,8 +1052,11 @@ MasterEH(PLStream *pls, XEvent *event)
 	break;
 
     case EnterNotify:
+	EnterEH(pls, event);
+	break;
+
     case LeaveNotify:
-	CrossingEH(pls, event);
+	LeaveEH(pls, event);
 	break;
     }
 }
@@ -1469,7 +1484,24 @@ MotionEH(PLStream *pls, XEvent *event)
 }
 
 /*--------------------------------------------------------------------------*\
- * CrossingEH()
+ * EnterEH()
+ *
+ * Event handler routine for EnterNotify events.  Only called if drawing
+ * crosshairs -- a draw must be done here to start off the new set.
+\*--------------------------------------------------------------------------*/
+
+static void
+EnterEH(PLStream *pls, XEvent *event)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XCrossingEvent *crossingEvent = (XCrossingEvent *) event;
+
+    DrawXhairs(pls, crossingEvent->x, crossingEvent->y);
+    dev->drawing_xhairs = 1;
+}
+
+/*--------------------------------------------------------------------------*\
+ * LeaveEH()
  *
  * Event handler routine for EnterNotify or LeaveNotify events.
  * If drawing crosshairs, a draw must be done here to start off the new
@@ -1477,13 +1509,12 @@ MotionEH(PLStream *pls, XEvent *event)
 \*--------------------------------------------------------------------------*/
 
 static void
-CrossingEH(PLStream *pls, XEvent *event)
+LeaveEH(PLStream *pls, XEvent *event)
 {
     XwDev *dev = (XwDev *) pls->dev;
 
-    if (dev->drawing_xhairs) {
-	UpdateXhairs(pls);
-    }
+    UpdateXhairs(pls);
+    dev->drawing_xhairs = 0;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1509,16 +1540,17 @@ CreateXhairs(PLStream *pls)
 
     XDefineCursor(xwd->display, dev->window, xwd->xhair_cursor);
 
-/* Find current pointer location and draw some graphic crosshairs */
+/* Find current pointer location and draw graphic crosshairs if pointer is */
+/* inside our window */
 
     if (XQueryPointer(xwd->display, dev->window, &root, &child,
 		      &root_x, &root_y, &win_x, &win_y, &mask)) {
 
-	fprintf(stderr,
-		"Root: %d, child: %d, root_x: %d, root_y: %d, win_x: %d win_y: %d\n",
-		root, child, root_x, root_y, win_x, win_y); 
-
-	DrawXhairs(pls, win_x, win_y);
+	if (win_x >= 0 && win_x < dev->width &&
+	    win_y >= 0 && win_y < dev->height) {
+	    DrawXhairs(pls, win_x, win_y);
+	    dev->drawing_xhairs = 1;
+	}
     }
 
 /* Sync the display and then throw away all pending motion events */
@@ -1530,7 +1562,6 @@ CreateXhairs(PLStream *pls)
 
 /* Catch PointerMotion and crossing events so we can update them properly */
 
-    dev->drawing_xhairs = 1;
     dev->event_mask |= PointerMotionMask | EnterWindowMask | LeaveWindowMask;
     XSelectInput(xwd->display, dev->window, dev->event_mask);
 }
@@ -1633,9 +1664,12 @@ ExposeEH(PLStream *pls, XEvent *event)
 
 /* Handle expose */
 /* If we have anything overlaid (like crosshairs), we need to refresh the */
-/* entire plot in order to have a predictable outcome. */
+/* entire plot in order to have a predictable outcome.  In this case we */
+/* need to first clear window.  Otherwise it's better to not clear it, for a */
+/* smoother redraw (unobscured regions appear to stay the same). */
 
     if (dev->drawing_xhairs) {
+	XClearWindow(xwd->display, dev->window);
 	ExposeCmd(pls, NULL);
 	UpdateXhairs(pls);
 	redrawn = 1;
@@ -2315,7 +2349,7 @@ AllocCmap1(PLStream *pls)
     else {
 	xwd->ncol1 = npixels;
 	if (pls->verbose)
-	    fprintf(stderr, "xwin.c: Allocated %d colors in cmap1\n", npixels);
+	    fprintf(stderr, "AllocCmap1 (xwin.c): Allocated %d colors in cmap1\n", npixels);
     }
 
 /* Don't assign pixels sequentially, to avoid strange problems with xor GC's */
