@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.13  1993/10/06 19:50:45  mjl
+# Revision 1.14  1993/10/26 21:21:27  mjl
+# Fixed TK send bug that appeared when you had multiple applications with
+# the same name using a plplot/TK driver concurrently (e.g. multiple
+# plrenders).
+#
+# Revision 1.13  1993/10/06  19:50:45  mjl
 # Changed Form2d invocations to include a long description on each call.
 # Fixed the description of page setup parameters (mar, jx, jy, aspect).
 #
@@ -351,12 +356,14 @@ proc plw_init {w client} {
 
 # Configure forward page button
 
-    $w.ftop.fp configure -command "plw_send $client {keypress Return}"
+    $w.ftop.fp configure \
+	-command "plw_send [list $client] {keypress Return}"
 
 # Configure back page button, plrender only
 
     if {[info exists is_plrender]} {
-	$w.ftop.bp configure -command "plw_send $client {keypress BackSpace}"
+	$w.ftop.bp configure \
+	    -command "plw_send [list $client] {keypress BackSpace}"
     }
 
 # Initialize plplot widget
@@ -382,7 +389,7 @@ proc plw_init_plplot {w client} {
 
 # Bindings
 
-    bind $w.plwin <KeyPress> "plw_send $client {keypress %K %N %A}"
+    bind $w.plwin <KeyPress> "plw_send [list $client] {keypress %K %N %A}"
     bind $w.plwin <Any-Enter> "focus $w.plwin"
 
 # Inform client of plplot widget name for widget commands.
