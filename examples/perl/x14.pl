@@ -27,7 +27,7 @@ use PDL::Graphics::PLplot;
 use Math::Trig qw [pi];
 
 my ($xscale, $yscale, $xoff, $yoff, $xs, $ys);
-my $space0 = 0; my $mark0 = 0; my $space1 = 1500; my $mark1 = 1500;
+my $space1 = 1500; my $mark1 = 1500;
 
 #--------------------------------------------------------------------------
 # main
@@ -62,7 +62,7 @@ sub main {
 
   # Set up first stream
 
-  plsetopt ("geometry", geometry_master);
+  plsetopt ("geometry", $geometry_master);
 
   plsdev ($driver);
   plssub (2, 2);
@@ -135,7 +135,6 @@ sub main {
   # Back to master to wait for user to advance
 
   plsstrm (0);
-
   pleop ();
 
   # Call plend to finish off.
@@ -234,7 +233,7 @@ sub plot3 {
   plstyl ($mark1, $space1);
   plcol0 (2);
   plbox (30.0, 0, 0.2, 0, "g", "g");
-  plstyl ($mark0, $space0);
+  plstyl (pdl ([]), pdl ([]));
 
   plcol0 (3);
   pllab ("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
@@ -332,7 +331,7 @@ sub plot5 {
 
   my $xx = ((sequence (XPTS) - (XPTS / 2)) / (XPTS / 2))->dummy (1, YPTS);
   my $yy = ((sequence (YPTS) - (YPTS / 2))
-            / (YPTS / 2) - 1.0)->dummy (1, XPTS);
+            / (YPTS / 2) - 1.0)->dummy (0, XPTS);
   my $z = $xx * $xx - $yy * $yy;
   my $w = 2 * $xx * $yy;
 
