@@ -1,0 +1,58 @@
+The Status of the Python Examples
+
+We have now moved to a new default method of installing python using the
+recommended (by python) dynamic loading procedure.  This dynamically loads
+the wrapper programmes (source = plmodules.c plmodules2.c) but not the
+PLplot library itself which is accessed like any other ordinary run-time
+library.  Thus, when that library trys to access the plframe widget there is
+no way to communicate with python's own widgets so that pytkdemo does not
+work.  pytkdemo has worked well in the past, but that demands a static
+method of loading everything plus much hacking of python itself, and all are
+agreed because of these complications that this is not the way to go in the
+future unless we cannot find a dynamic way to use tk widgets and plplot.
+That will probably require dynamic loading of the PLplot library itself, but
+more investigation is necessary before we adopt that option.
+
+So for now, we are not supporting x??.py examples and pytkdemo which uses
+those examples.  But it is on our, ahem, dynamic agenda for the future.
+
+We *are* however supporting the standalone xw??.py demos which were created
+initially from their x??.py equivalents and modified to work with the dynamic
+loading method.  All ordinary drivers (including the tk one) are available
+with these standalone examples.  Their only limitation is they cannot use
+the plframe widget.
+
+To try out these examples, simply type their names.  See note below on the
+PYTHONPATH and PLLIBDEV variables that may have to be set.
+
+All these xw??.py examples have been thoroughly tested under Linux and
+should also work under Unix systems according to the python team comments on
+dynamic loading, but that is yet to be tested as of 2001 February 4.
+
+PYTHONPATH and PLLIBDEV variables
+
+There are three situations:
+
+(1) The first case is you are just testing it out without installing. In
+order to get dynamic loads to work when plmodule.so and libplplot are in tmp
+and not installed, you have to set PYTHONPATH to tmp (that allows python to
+find plmodule.so) and either be in tmp (plplot fonts are searched for in the
+current directory) or set PLLIBDEV to tmp.  This last condition on the font
+directory is the same for all C, fortran, etc., examples in tmp so you are
+probably already familiar with this.
+
+(2) If you install with a prefix of /usr (usually done for deb or rpm
+installs), then plmodule.so is installed in the correct python location by
+default.  Also, by default all plplot routines are installed with the
+installed location of the fonts hard-coded in (see DATA_DIR) so for the
+installed case you do not have to set PLLIBDEV.  Thus, for installations
+with a prefix of /tmp there is nothing more to be done; it should just work.
+
+(3) If you install with a prefix other than /usr (usually for tarball
+installs), then you can point
+PYTHONPATH to the directory where plmodule.so was installed, or
+alternatively put in a symlink from the python directory where python
+expects to find its dynamic modules. The install messages indicate the exact
+command you should use for this.  For the same reasons as (2), PLLIBDEV
+does not have to be set.
+
