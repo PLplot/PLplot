@@ -4,22 +4,24 @@ plplot (5.2.1-17) unstable; urgency=low
     packages.
   * debian/control:
     - Bumped Standards-Version to 3.6.1.
-    - Bumped build-dependencies from to python2.3, itcl3, and itk3.
+    - Bumped build-dependencies to python2.3, itcl3, and itk3.
     - plplot-tcl depends now on iwidgets4.
   * sysloc.in, configure.ac: Using patched version from CVS upstream with
     fixes in the Python configuration and in the list of include
     directories to find files itcl.h and itk.h.
   * Used new CVS upstream version of the documentation files with
-    legacy license statement removed.  A new .orig.tar.gz was generated,
-    since it was impossible to patch binary files, like plplot-5.2.1.pdf.
-    The plplot-doc package is now DFSG compliant (closes: #202761).
+    legacy license statement removed.  A uuencoded tarball
+    debian/plplot-5.2.1-new-do.tar.gz.uu is included, which forced the
+    inclusion of sharutils in Build-Depends.  Code have been added to
+    debian/rules to unpack the new files in this tarball. The plplot-doc
+    package is now DFSG compliant (closes: #202761).
   * utils/plrender.c: Patched from CVS upstream.  From the commit log:
     Comment out call to plSetInternalOpt which uses the tcl_cmd option
     that has been disabled in plargs.c.  This fix solves the plrender
     memory management problems and the crashes associated with plrender
     and device tk.
 
- -- Rafael Laboissiere <rafael@debian.org>  Sat, 23 Aug 2003 22:32:46 +0200
+ -- Rafael Laboissiere <rafael@debian.org>  Mon, 25 Aug 2003 02:01:19 +0200
 
 plplot (5.2.1-16) unstable; urgency=low
 
