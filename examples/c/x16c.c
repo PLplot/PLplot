@@ -287,7 +287,7 @@ main(int argc, char *argv[])
 
     pllab("distance", "altitude", "Bogon density with exclusion");
 
-/* Example showing wrapping support. */
+/* Example with polar coordinates. */
 
     pladv(0);
     plvpor( .1, .9, .1, .9 );
