@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1995/05/07 03:01:18  mjl
+ * Revision 1.2  1995/05/08 21:29:47  furnish
+ * Fix bogus C++ unfriendly header.
+ *
+ * Revision 1.1  1995/05/07  03:01:18  mjl
  * Added to hold all TK-related PLplot global function prototypes.
  *
  */
@@ -18,6 +21,10 @@
 
 #include <tk.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Generic initialization routine for extended wish'es. */
 
 int
@@ -28,5 +35,9 @@ Pltk_Init( Tcl_Interp *interp );
 int
 pltkMain(int argc, char **argv, char *RcFileName,
 	 int (*AppInit)(Tcl_Interp *interp));
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* __PLTK_H__ */
