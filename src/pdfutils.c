@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/01/15 17:24:59  mjl
+ * Revision 1.8  1994/03/23 07:26:56  mjl
+ * Changed Alloc2dGrid to plAlloc2dGrid, Free2dGrid to plFree2dGrid.
+ * Eliminated special malloc include handling.
+ *
+ * Revision 1.7  1994/01/15  17:24:59  mjl
  * All PDF functions changed to accept a pointer to a PDFstrm instead
  * of a file handle, to enable PDF operations to/from a memory buffer.
  * New PDF front-ends to fopen, fclose, getc, putc added.  pdf_bopen()
@@ -13,15 +17,6 @@
  * Revision 1.5  1993/08/11  19:20:03  mjl
  * Changed debugging code to print to stderr instead of stdout, plugged
  * a hole where possible failure of fwrite went undetected.
- *
- * Revision 1.4  1993/08/03  01:46:55  mjl
- * Changes to eliminate warnings when compiling with gcc -Wall.
- *
- * Revision 1.3  1993/07/01  22:07:38  mjl
- * Changed all plplot source files to include plplotP.h (private) rather
- * than plplot.h.  Rationalized namespace -- all externally-visible plplot
- * functions now start with "pl", device driver functions start with
- * "plD_", PDF functions start with "pdf_".
 */
 
 /*--------------------------------------------------------------------------*\
@@ -42,18 +37,14 @@
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     These functions do the low-level reading/writing of portable data files.
-
+    Data can be written to/read from either a file handle or memory buffer.
 \*--------------------------------------------------------------------------*/
 
-/*#define PL_NEED_MALLOC*/
 #include "plplotP.h"
+#include "pdf.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 #include <string.h>
-
-#include "pdf.h"
 
 static void print_ieeef	(void *, void *);
 static int  pdf_wrx	(const U_CHAR *x, long nitems, PDFstrm *pdfs);
@@ -73,10 +64,6 @@ pdf_set(char *option, int value)
     if ( ! strcmp(option, "debug"))
 	debug = value;
 }
-
-/*----------------------------------------------------------------------*\
-* New syntax routines
-\*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
 * pdf_fopen()
@@ -197,7 +184,7 @@ pdf_close(PDFstrm *pdfs)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_putc ()
+* int pdf_putc()
 *
 * Writes a single character.
 \*----------------------------------------------------------------------*/
@@ -231,7 +218,7 @@ pdf_putc(int c, PDFstrm *pdfs)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_getc ()
+* int pdf_getc()
 *
 * Reads a single character.
 \*----------------------------------------------------------------------*/
@@ -281,7 +268,7 @@ pdf_ungetc(int c, PDFstrm *pdfs)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_wrx ()
+* int pdf_wrx()
 *
 * Writes a record.
 \*----------------------------------------------------------------------*/
@@ -290,7 +277,6 @@ static int
 pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
 {
     int i, result = 0;
-    U_CHAR *newbuf, *oldbuf;
 
     if (pdfs->file != NULL)
 	result = fwrite(x, 1, nitems, pdfs->file);
@@ -316,7 +302,7 @@ pdf_wrx(const U_CHAR *x, long nitems, PDFstrm *pdfs)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_rdx ()
+* int pdf_rdx()
 *
 * Reads a record.
 \*----------------------------------------------------------------------*/
@@ -344,7 +330,7 @@ pdf_rdx(U_CHAR *x, long nitems, PDFstrm *pdfs)
 /*----------------------------------------------------------------------*\
 * pdf_wr_header()
 *
-* Writes a header string to FILE *file.
+* Writes a header string.
 * Input string must be NULL-terminated.
 * The written string is terminated by a new-line, not a NULL.
 * This is done so you can type e.g. "% strings <file> | head" and
@@ -371,7 +357,7 @@ pdf_wr_header(PDFstrm *pdfs, char *header)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_rd_header (file, header)
+* int pdf_rd_header
 *
 * Reads a newline-terminated header string from PDFstrm *pdfs, and converts
 * to a usual NULL-terminated string.  80 chars maximum assumed.
@@ -396,7 +382,7 @@ pdf_rd_header(PDFstrm *pdfs, char *header)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_wr_1byte ()
+* int pdf_wr_1byte()
 *
 * Writes a U_CHAR as a single byte.
 \*----------------------------------------------------------------------*/
@@ -414,7 +400,7 @@ pdf_wr_1byte(PDFstrm *pdfs, U_CHAR s)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_rd_1byte ()
+* int pdf_rd_1byte()
 *
 * Reads a single byte, storing into a U_CHAR.
 \*----------------------------------------------------------------------*/
@@ -518,7 +504,7 @@ pdf_rd_2nbytes(PDFstrm *pdfs, U_SHORT *s, PLINT n)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_wr_4bytes ()
+* pdf_wr_4bytes()
 *
 * Writes an unsigned long as four single bytes, low end first.
 \*----------------------------------------------------------------------*/
@@ -540,7 +526,7 @@ pdf_wr_4bytes(PDFstrm *pdfs, U_LONG s)
 }
 
 /*----------------------------------------------------------------------*\
-* pdf_rd_4bytes ()
+* pdf_rd_4bytes()
 *
 * Reads an unsigned long from 4 single bytes, low end first.
 \*----------------------------------------------------------------------*/
@@ -618,7 +604,7 @@ pdf_rd_4bytes(PDFstrm *pdfs, U_LONG *ps)
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
-* int pdf_wr_ieeef ()
+* int pdf_wr_ieeef()
 *
 * Writes a float in IEEE single precision (32 bit) format.
 \*----------------------------------------------------------------------*/
@@ -681,7 +667,7 @@ pdf_wr_ieeef(PDFstrm *pdfs, float f)
 }
 
 /*----------------------------------------------------------------------*\
-* int pdf_rd_ieeef ()
+* int pdf_rd_ieeef()
 *
 * Reads a float from a IEEE single precision (32 bit) format.
 \*----------------------------------------------------------------------*/
@@ -727,7 +713,7 @@ pdf_rd_ieeef(PDFstrm *pdfs, float *pf)
 }
 
 /*----------------------------------------------------------------------*\
-* print_ieeef ()
+* print_ieeef()
 *
 * Prints binary representation for numbers pointed to by arguments.
 * The first argument is the original float, the second is the
@@ -770,7 +756,7 @@ print_ieeef(void *vx, void *vy)
 }
 
 /*----------------------------------------------------------------------*\
-* Alloc2dGrid ()
+* plAlloc2dGrid()
 *
 * Allocates a block of memory for use as a 2-d grid of PLFLT's.  Resulting
 * array can be indexed as f[i][j] anywhere.  This is to be used instead of
@@ -785,7 +771,7 @@ print_ieeef(void *vx, void *vy)
 \*----------------------------------------------------------------------*/
 
 void
-Alloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
+plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
 {
     PLINT i;
 
@@ -796,13 +782,13 @@ Alloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny)
 }
 
 /*----------------------------------------------------------------------*\
-* Free2dGrid ()
+* Free2dGrid()
 *
 * Frees a block of memory allocated with Alloc2dGrid().
 \*----------------------------------------------------------------------*/
 
 void
-Free2dGrid(PLFLT **f, PLINT nx, PLINT ny)
+plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny)
 {
     PLINT i;
 
