@@ -77,7 +77,10 @@ endfunction
 
     if (rosen)
       z = log((1 - xx) .^ 2 + 100 .* (yy - xx .^ 2) .^ 2);
+      of = do_fortran_indexing;
+      do_fortran_indexing = 1;
       z(isinf(z)) = -5;
+      do_fortran_indexing = of;
     else
       r = sqrt(xx .* xx + yy .* yy);
       z = exp(-r .* r) .* cos(2.0 * 3.141592654 .* r);
