@@ -808,9 +808,9 @@ plD_init_gnome (PLStream *pls)
 
   }
 
-  plP_setpxl (phys2canvas, phys2canvas);
-  plP_setphy (0, MAG_FACTOR * WIDTH/DRAWING_UNIT,
-	      0, MAG_FACTOR * HEIGHT/DRAWING_UNIT);
+  plP_setpxl ((PLFLT) phys2canvas, (PLFLT) phys2canvas);
+  plP_setphy ((PLINT) 0, (PLINT) MAG_FACTOR * WIDTH/DRAWING_UNIT,
+	      (PLINT) 0, (PLINT) MAG_FACTOR * HEIGHT/DRAWING_UNIT);
 
   gnome_is_initialized = TRUE;
 
