@@ -40,8 +40,10 @@ EXTRA_DIST = \
   plplot_octave_rej.h \
   plplot_octave_def \
   etc \
-  .octaverc \
-  $(MAINTAINERCLEANFILES)
+  matwrap \
+  doc-stamp \
+  plplot_octave_txt \
+  .octaverc
 
 doc-stamp plplot_octave_txt: etc/plplot.doc \
 	   $(top_srcdir)/doc/docbook/bin/api2text.pl \
@@ -135,11 +137,7 @@ install-data-hook:
 endif
 
 CLEANFILES = tmp_plplot_octave.cc \
-	plplot_octave.o tmp_stub plplot_octave*.oct \
-	missing_help
+	plplot_octave.cc plplot_octave.o tmp_stub plplot_octave*.oct \
+	plplot_stub.m missing_help
 
-MAINTAINERCLEANFILES = \
-	doc-stamp \
-	plplot_octave_txt \
-	plplot_stub.m \
-	plplot_octave.cc 
+MAINTAINERCLEANFILES = doc-stamp plplot_octave_txt/*

@@ -39,7 +39,8 @@ if test "$enable_octave" = "yes"; then
         if test "$has_matwrap" = "yes"; then
 	    MATWRAP=`which matwrap`
 	else
-            MATWRAP="-e 'print qq{matwrap not available in the system\n}' ; false "
+            MATWRAP=`pwd`"/bindings/octave/matwrap/matwrap"
+            AC_MSG_WARN([Using builtin matwrap.]);
         fi
     fi
 
