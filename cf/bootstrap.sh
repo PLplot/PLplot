@@ -28,10 +28,11 @@
 
 function filter {
   fgrep -v underquoted | fgrep -v "run info" | fgrep -v sources.redhat
+  return 0
 }
 
 function run {
-  echo -n Running `$1 --version | sed q`...
+  echo -n Running `$1 --version | sed 1q`...
   $* 2>&1 | filter
   echo " done"
 }
@@ -48,6 +49,13 @@ aclocal options usually look like:
 EOF
   exit 0
 }
+
+# Check for Automake version >= 1.8.2
+automake --version | sed 1q \
+  | perl -ne '/((\d+)\.(\d+)\.(\d+))/; \
+      die "'$0': Automake version is $1.  Version 1.8.2 or later is needed\n"
+        if $2<1 or ($2==1 and $3<8) or ($2==1 and $3==8 and $4<2); \
+      exit 0' || exit 1
 
 version=""
 aclocal_opts=""
@@ -115,25 +123,24 @@ fi
 aclocal_opts=${aclocal_opts:="-I /usr/share/libtool/libltdl"}
 
 # aclocal -I option below must be given the absolute path of the cf/ dir,
-# otherwise it is not considered as ëxternal"to the project (this is,
-# at least, the case for aclocal-1.8)
-
-export M4PATH=cf
+# otherwise it is not considered as "external" to the project (this is
+# the case for aclocal-1.8, at least)
 
 run aclocal -I `pwd`/cf $aclocal_opts \
   && run autoheader \
-  && rm -rf libltdl \
-  && run libtoolize --force --copy --ltdl --automake \
   && run automake --add-missing --copy \
   && run autoconf \
+  && rm -rf libltdl \
+  && run libtoolize --force --copy --ltdl --automake \
   && ( echo -n "Regenerating libltdl/aclocal+configure..."; \
        cd libltdl ; \
-       aclocal 2>&1 | filter && \
+       aclocal $aclocal_opts 2>&1 | filter && \
+       automake ; \
        if [ ! -e configure.ac ] ; then \
            cp configure.in configure.ac ; \
            autoconf 2>/dev/null ; \
            rm -f configure.ac ; \
        else \
            autoconf 2>/dev/null ; \
-       fi ; \
+       fi && \
        echo " done" )
