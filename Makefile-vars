@@ -1,0 +1,9 @@
+HOST = shell.sourceforge.net
+
+ifdef USER
+    USER_AT_HOST = $(USER)@$(HOST)
+else
+    USER_AT_HOST = $(HOST)
+endif
+
+WWW_DIR = /home/groups/p/pl/plplot/htdocs

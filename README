@@ -1,0 +1,24 @@
+This is a first attempt at a remote installation of the PLplot website at
+SourceForge, with the goal to replace the script replace-htdocs.sh,
+currently in the shell.sf.net host. 
+
+To install the web site, just type:
+
+    USER=joeplplotter make install
+
+and everything will be built and uploaded automatically, including the stuff
+in the announce directory.
+
+Sensible variables are defined in file Makefile-vars, which is included by 
+both Makefile and announce/Makefile.
+
+Needless to say, this only works with GNU make.
+
+Caveat: make install will happily upload the entire contents of the
+subdirectories.  This means that it may upload useless files, most notably
+the CVS directories present when working from a cvs checked out source.
+Using cvs export is more appropriate here, although the useless files will
+not hurt the web site.  I may try to find a fix for this in the future.
+
+ -- Rafael Laboissiere <rlaboiss@users.sf.net> Wed Feb  4 22:22:01 CET 2004
+
