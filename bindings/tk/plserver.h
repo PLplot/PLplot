@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1993/08/03 01:48:08  mjl
+ * Revision 1.4  1993/08/18 19:04:08  mjl
+ * Added include of file "plplotio.h".
+ *
+ * Revision 1.3  1993/08/03  01:48:08  mjl
  * Eliminated dependence on internal Tcl/TK header files.
  *
  * Revision 1.2  1993/07/16  22:01:29  mjl
@@ -49,6 +52,7 @@
 #include <tk.h>
 
 #include "plstream.h"
+#include "plplotio.h"
 
 /* Macro settings */
 
