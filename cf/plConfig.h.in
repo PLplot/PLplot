@@ -1,7 +1,10 @@
 /* -*-C-*- */
 /* $Id$
  * $Log$
- * Revision 1.8  1995/10/13 21:04:07  mjl
+ * Revision 1.9  1996/04/30 23:10:32  furnish
+ * Introduce HAVE_ITK macro.
+ *
+ * Revision 1.8  1995/10/13  21:04:07  mjl
  * Added USE_FSEEK macro.
  *
  * Revision 1.7  1995/06/01  21:35:54  mjl
@@ -85,6 +88,9 @@
 
 /* Define if [incr Tcl] is available */
 #undef HAVE_ITCL
+
+/* Define if [incr Tk] is available */
+#undef HAVE_ITK
 
 /* Install directories. */
 
