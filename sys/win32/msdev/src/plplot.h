@@ -551,6 +551,7 @@ typedef struct {
 #define    plszax       c_plszax
 #define    pltext       c_pltext
 #define    plvasp       c_plvasp
+#define    plvect       c_plvect
 #define    plvpas       c_plvpas
 #define    plvpor       c_plvpor
 #define    plvsta       c_plvsta
@@ -686,6 +687,7 @@ typedef struct {
 #define    c_plszax         plszax
 #define    c_pltext         pltext
 #define    c_plvasp         plvasp
+#define    c_plvect         plvect
 #define    c_plvpas         plvpas
 #define    c_plvpor         plvpor
 #define    c_plvsta         plvsta
@@ -694,6 +696,8 @@ typedef struct {
 #define    c_plwind         plwind
 #define    c_plxormod       plxormod
 
+#define    plAlloc2dGrid    win_plAlloc2dGrid
+#define    plFree2dGrid     win_plFree2dGrid
 #define    plGetCursor      win_plGetCursor
 #define    plParseOpts      win_plParseOpts
 #define    plMergeOpts      win_plMergeOpts
@@ -756,12 +760,12 @@ void API
 plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
          PLFLT scale, PLFLT dx, PLFLT dy) ;
 
-void
+void API
 c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
 void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
               PLPointer pltr_data);
 
-void
+void API
 c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill);
 
 /* This functions similarly to plbox() except that the origin of the axes */
@@ -1620,7 +1624,8 @@ pltr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
 /* Does linear interpolation from doubly dimensioned coord arrays */
 /* (column dominant, as per normal C 2d arrays). */
 
-void API
+/* void API */
+void
 pltr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
 
 /* Just like pltr2() but uses pointer arithmetic to get coordinates from */
@@ -1916,6 +1921,7 @@ plTranslateCursor(PLGraphicsIn *gin);
 #undef    c_plszax
 #undef    c_pltext
 #undef    c_plvasp
+#undef    c_plvect
 #undef    c_plvpas
 #undef    c_plvpor
 #undef    c_plvsta

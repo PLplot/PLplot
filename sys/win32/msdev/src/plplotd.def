@@ -1,5 +1,5 @@
-LIBRARY plplotd 
-EXPORTS 
+LIBRARY plplotd
+EXPORTS
 	pladv
 	plaxes
 	plbin
@@ -38,7 +38,7 @@ EXPORTS
 	plgyax
 	plgzax
 	plhist
-	plhls       
+	plhls
 	plinit
 	pljoin
 	pllab
@@ -90,6 +90,7 @@ EXPORTS
 	plstar
 	plstart
 	plstyl
+	plsvect
 	plsvpa
 	plsxax
 	plsyax
@@ -99,6 +100,7 @@ EXPORTS
 	pltr2
 	pltext
 	plvasp
+	plvect
 	plvpas
 	plvpor
 	plvsta
@@ -109,6 +111,6 @@ EXPORTS
 	win_plGetCursor
 	win_plMergeOpts
 	plConsole
-	plAlloc2dGrid
-	plFree2dGrid
+	win_plAlloc2dGrid
+	win_plFree2dGrid
 

@@ -35,6 +35,20 @@ pladv(PLINT page) {
 	c_pladv(page);
 }
 
+/* Allocate a 2D grid */
+
+void WINAPI
+win_plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny) {
+	plAlloc2dGrid(f, nx, ny);
+}
+
+/* Frees a block of memory allocated with plAlloc2dGrid(). */
+
+void WINAPI
+win_plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny) {
+	plFree2dGrid(f, nx, ny);
+}
+
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
 
@@ -791,7 +805,7 @@ pltext(void) {
 
 void WINAPI plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
               void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-              PLPointer pltr_data);
+              PLPointer pltr_data) {
 	c_plvect(u, v, nx, ny, scale, pltr, pltr_data);
 }
 
