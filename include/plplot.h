@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.34  1993/08/18 19:09:19  mjl
+ * Revision 1.35  1993/08/26 05:35:54  mjl
+ * Put in test for __STDC__ defined, for a little added safety.
+ *
+ * Revision 1.34  1993/08/18  19:09:19  mjl
  * Fixed function prototypes for driver interface functions.  Added macro
  * PL_NOTSET for use in plsdidev() to leave specific variables unaltered by
  * the function call.  May be supported by other functions later.
@@ -114,6 +117,12 @@
 * (others...)
 *
 \*----------------------------------------------------------------------*/
+
+/* This will hopefully catch compilers that don't fully conform */
+
+#ifndef __STDC__
+#error "Requires a standard-conforming C compiler"
+#endif
 
 #ifdef unix			/* the old way */
 #ifndef __unix
