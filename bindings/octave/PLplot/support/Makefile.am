@@ -22,7 +22,7 @@
 
 if enable_octave
 
-plplot_octave_supportdir = $(datadir)/plplot_octave/support
+plplot_octave_supportdir = $(PLPLOT_OCTAVE_DIR)/support
 
 plplot_octave_support_DATA = \
 	__comet.m \

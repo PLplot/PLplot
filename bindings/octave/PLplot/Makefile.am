@@ -24,7 +24,7 @@ if enable_octave
 
 SUBDIRS = support
 
-plplot_octavedir = $(datadir)/plplot_octave
+plplot_octavedir = $(OCTAVE_DIR)
 
 plplot_octave_DATA = \
 	arrow.m \
@@ -77,7 +77,6 @@ plplot_octave_DATA = \
 	plot3.m \
 	plot_border.m \
 	plot_margin.m \
-	plplot_octave_path.m \
 	plrb.m \
 	plsetopt.m \
 	polar.m \
@@ -104,12 +103,17 @@ plplot_octave_DATA = \
 	text.m \
 	title.m \
 	top_title.m \
-	use_plplot.m \
 	xlabel.m \
 	xticks.m \
 	ylabel.m \
 	yticks.m \
 	zlabel.m \
 	zoom.m
+
+octave_mdir = $(OCTAVE_M_DIR)/PLplot
+
+octave_m_DATA = 
+	use_plplot.m \
+	plplot_octave_path.m
 
 endif

@@ -58,7 +58,7 @@ plplot_octave.oct plplot_octave.o: plplot_octave.cc
 	LD_RUN_PATH=$(libdir) @MKOCTFILE@ -v -I.. \
 	-L../../../src/.libs plplot_octave.cc $(octave_libs)
 
-octavesharedir = $(datadir)/plplot_octave
+octavesharedir = $(OCTAVE_OCT_DIR)
 
 # Ultimately, we may want to switch to the normal LT method of building
 # shared objects cross-platform, using 
@@ -71,7 +71,9 @@ octavesharedir = $(datadir)/plplot_octave
 install-exec-local: .samename/plplot_octave.oct
 # NEEDS $(DESTDIR) prepended to keep install relocatibility since this
 # is a local rule.
-	cd .samename; $(INSTALL) plplot_octave.oct $(DESTDIR)$(octavesharedir)
+	cd .samename
+	mkdir -p $(DESTDIR)$(octavesharedir)
+	$(INSTALL) plplot_octave.oct $(DESTDIR)$(octavesharedir)
 
 # build area version
 # SCRIPTS rather than DATA because you want to preserve the permissions.

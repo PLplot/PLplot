@@ -750,22 +750,19 @@ if test "$enable_octave" = "yes"; then
 
 # Get Octave default *.oct file directory
     if test "$enable_octave" = "yes"; then
-        OCTAVE_DIR=${prefix}/share/plplot_octave
+        PLPLOT_OCTAVE_DIR=${prefix}/share/plplot_octave
         OCTAVE_OCT_DIR=`$OCTAVE -q -f <<EOF
         t = octave_config_info;
         printf("%s", t.octfiledir);
 EOF`
-
-# this is dubious. A normal user can have root access.
-# But I don't want to install the oct file in non standard places!
-        if ! test `touch $OCTAVE_OCT_DIR/po 2> /dev/null`; then
-            OCTAVE_OCT_DIR=$OCTAVE_DIR
-        else
-            rm $OCTAVE_OCT_DIR/po
-        fi
+        OCTAVE_M_DIR=`$OCTAVE -q -f <<EOF
+        t = octave_config_info;
+        printf("%s", t.localfcnfiledir);
+EOF`
         AC_SUBST(MATWRAP)
         AC_SUBST(OCTAVE_OCT_DIR)
-        AC_SUBST(OCTAVE_DIR)
+        AC_SUBST(OCTAVE_M_DIR)
+        AC_SUBST(PLPLOT_OCTAVE_DIR)
     fi
 fi
 
