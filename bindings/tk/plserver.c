@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1994/03/22 23:17:34  furnish
+ * Revision 1.23  1994/04/08 11:51:12  mjl
+ * Changed main init function name (for wish builders) from plTcl_AppInit to
+ * pltk_Init, to make it more conventional.
+ *
+ * Revision 1.22  1994/03/22  23:17:34  furnish
  * Avoid collision with user code when he wants to make a custom wish
  * combined with PLPLOT.
  *
@@ -287,7 +291,7 @@ main(argc, argv)
      * Invoke application-specific initialization.
      */
 
-    if (plTcl_AppInit(interp) != TCL_OK) {
+    if (pltk_Init(interp) != TCL_OK) {
 	abort_session(interp->result);
 	Tcl_Eval(interp, "exit");
     }
