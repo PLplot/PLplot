@@ -1,13 +1,16 @@
 /* $Id$
-   $Log$
-   Revision 1.13  1993/07/31 07:56:34  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
-
+ * $Log$
+ * Revision 1.14  1993/08/09 22:12:32  mjl
+ * Changed call syntax to plRotPhy to allow easier usage.
+ *
+ * Revision 1.13  1993/07/31  07:56:34  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.12  1993/07/16  22:11:19  mjl
  * Eliminated low-level coordinate scaling; now done by driver interface.
  *
@@ -152,7 +155,8 @@ plD_line_jet(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
 /* Rotate by 90 degrees */
 
-    plRotPhy(1, dev, &x1, &y1, &x2, &y2);
+    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
+	     &x1, &y1, &x2, &y2);
 
     x1b = x1, x2b = x2, y1b = y1, y2b = y2;
     length = (float) sqrt((double)

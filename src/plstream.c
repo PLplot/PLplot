@@ -1,8 +1,11 @@
 /* $Id$
-   $Log$
-   Revision 1.7  1993/07/31 08:19:25  mjl
-   Utility function added for allocating a PLDev structure.
-
+ * $Log$
+ * Revision 1.8  1993/08/09 22:12:39  mjl
+ * Changed call syntax to plRotPhy to allow easier usage.
+ *
+ * Revision 1.7  1993/07/31  08:19:25  mjl
+ * Utility function added for allocating a PLDev structure.
+ *
  * Revision 1.6  1993/07/16  22:37:04  mjl
  * Eliminated obsolete functions, moved function for setting filename here.
  *
@@ -159,7 +162,7 @@ plOpenFile(PLStream *pls)
 	    pls->fileset = 0;
 	}
 	else
-	    printf("Created %s\n", pls->FileName);
+	    fprintf(stderr, "Created %s\n", pls->FileName);
     }
 }
 
@@ -180,7 +183,7 @@ plP_sfnam(PLStream *pls, char *fnam)
 	free((void *) pls->FileName);
 
     pls->FileName = (char *)
-	malloc(6 + (strlen(fnam)) * sizeof(char));
+	malloc(6 + strlen(fnam));
 
     strcpy(pls->FileName, fnam);
 
@@ -188,7 +191,7 @@ plP_sfnam(PLStream *pls, char *fnam)
 	free((void *) pls->FamilyName);
 
     pls->FamilyName = (char *)
-	malloc(6 + (strlen(fnam)) * sizeof(char));
+	malloc(6 + strlen(fnam));
 
     strcpy(pls->FamilyName, fnam);
 }
@@ -304,7 +307,8 @@ plGetFlt(char *s)
 \*----------------------------------------------------------------------*/
 
 void
-plRotPhy(PLINT orient, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
+plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
+	 int *px1, int *py1, int *px2, int *py2)
 {
     int x1, y1, x2, y2;
 
@@ -316,24 +320,24 @@ plRotPhy(PLINT orient, PLDev *dev, int *px1, int *py1, int *px2, int *py2)
     switch (orient%4) {
 
     case 1:
-	*px1 = dev->xmin + (y1 - dev->ymin);
-	*py1 = dev->ymin + (dev->xmax - x1);
-	*px2 = dev->xmin + (y2 - dev->ymin);
-	*py2 = dev->ymin + (dev->xmax - x2);
+	*px1 = xmin + (y1 - ymin);
+	*py1 = ymin + (xmax - x1);
+	*px2 = xmin + (y2 - ymin);
+	*py2 = ymin + (xmax - x2);
 	break;
 
     case 2:
-	*px1 = dev->xmin + (dev->xmax - x1);
-	*py1 = dev->ymin + (dev->ymax - y1);
-	*px2 = dev->xmin + (dev->xmax - x2);
-	*py2 = dev->ymin + (dev->ymax - y2);
+	*px1 = xmin + (xmax - x1);
+	*py1 = ymin + (ymax - y1);
+	*px2 = xmin + (xmax - x2);
+	*py2 = ymin + (ymax - y2);
 	break;
 
     case 3:
-	*px1 = dev->xmin + (dev->ymax - y1);
-	*py1 = dev->ymin + (x1 - dev->xmin);
-	*px2 = dev->xmin + (dev->ymax - y2);
-	*py2 = dev->ymin + (x2 - dev->xmin);
+	*px1 = xmin + (ymax - y1);
+	*py1 = ymin + (x1 - xmin);
+	*px2 = xmin + (ymax - y2);
+	*py2 = ymin + (x2 - xmin);
 	break;
 
     default:

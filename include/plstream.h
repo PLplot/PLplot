@@ -1,10 +1,13 @@
 /* $Id$
-   $Log$
-   Revision 1.12  1993/07/31 08:13:39  mjl
-   Variables added: dev_di - the driver can handle driver interface commands;
-   dev_fill - the driver can handle polygon fill commands (both to be
-   implemented using the escape function).  Also other support variables added.
-
+ * $Log$
+ * Revision 1.13  1993/08/09 22:12:36  mjl
+ * Changed call syntax to plRotPhy to allow easier usage.
+ *
+ * Revision 1.12  1993/07/31  08:13:39  mjl
+ * Variables added: dev_di - the driver can handle driver interface commands;
+ * dev_fill - the driver can handle polygon fill commands (both to be
+ * implemented using the escape function).  Also other support variables added.
+ *
  * Revision 1.11  1993/07/28  05:51:12  mjl
  * Added stream variables nopixmap (tell driver not to use pixmaps) and
  * dual_screen (set on devices that have dual text/graphics screens).
@@ -436,7 +439,7 @@ void  plFamInit		(PLStream *);
 PLINT plGetInt		(char *);
 PLFLT plGetFlt		(char *);
 void  plGetFam		(PLStream *);
-void  plRotPhy		(PLINT, PLDev *, 
+void  plRotPhy		(PLINT, PLINT, PLINT, PLINT, PLINT, 
 			 int *, int *, int *, int *);
 void  plP_sfnam		(PLStream *, char *);
 PLDev * plAllocDev	(PLStream *pls);
