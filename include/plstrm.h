@@ -246,7 +246,8 @@ typedef struct {
  * aspdev	PLFLT	Original device aspect ratio
  * aspect	PLFLT	Page aspect ratio
  * aspori	PLFLT	Rotation-induced aspect ratio
- * freeaspect	PLINT	Do not preserve aspect ratio on orientation swaps
+ * freeaspect	PLINT	Allow aspect ratio to adjust to orientation swaps
+ * portrait	PLINT	Portrait mode (orientation and aspect ratio)
  * mar		PLFLT	Page margin (minimum)
  * jx		PLFLT	Page justification in x
  * jy		PLFLT	Page justification in y
@@ -493,7 +494,7 @@ typedef struct {
     PLFLT dioxax, dioxay, dioxb, dioyax, dioyay, dioyb;
     PLFLT dimxax, dimxb, dimyay, dimyb;
     PLFLT dimxmin, dimymin, dimxmax, dimymax, dimxpmm, dimypmm;
-    PLINT page_status, freeaspect;
+    PLINT page_status, freeaspect, portrait;
 
 /* Fill pattern info */
 

@@ -490,6 +490,7 @@ typedef struct {
 #define    plsesc	c_plsesc
 #define    plsfam	c_plsfam
 #define    plsfnam	c_plsfnam
+#define    plsfreeaspect	c_plsfreeaspect
 #define    plshades	c_plshades
 #define    plshade	c_plshade
 #define    plshade1	c_plshade1
@@ -498,6 +499,7 @@ typedef struct {
 #define    plsori	c_plsori
 #define    plspage	c_plspage
 #define    plspause	c_plspause
+#define    plsportrait	c_plsportrait
 #define    plsstrm	c_plsstrm
 #define    plssub	c_plssub
 #define    plssym	c_plssym
@@ -612,6 +614,7 @@ typedef struct {
 #define    c_plsesc	plsesc
 #define    c_plsfam	plsfam
 #define    c_plsfnam	plsfnam
+#define    c_plsfreeaspect	plsfreeaspect
 #define    c_plshades	plshades
 #define    c_plshade	plshade
 #define    c_plshade1	plshade1
@@ -620,6 +623,7 @@ typedef struct {
 #define    c_plsori	plsori
 #define    c_plspage	plspage
 #define    c_plspause	plspause
+#define    c_plsportrait	plsportrait
 #define    c_plsstrm	plsstrm
 #define    c_plssub	plssub
 #define    c_plssym	plssym
@@ -1168,6 +1172,11 @@ c_plsfam(PLINT fam, PLINT num, PLINT bmax);
 void
 c_plsfnam(const char *fnam);
 
+/* Set freeaspect mode. */
+
+void
+c_plsfreeaspect(PLINT freeaspect);
+
 /* Shade region. */
 void 
 c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
@@ -1241,6 +1250,11 @@ c_plspage(PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng,
 
 void
 c_plspause(PLINT pause);
+
+/* Set portrait mode */
+
+void
+c_plsportrait(PLINT portrait);
 
 /* Set stream number.  */
 

@@ -1790,6 +1790,36 @@ c_plspause(PLINT pause)
     plsc->nopause = ! pause;
 }
 
+/* Set the freeaspect flag.  If 1 the aspect ratio is adjusted to fit the
+ * size of the physical area for rotations. */
+
+void
+c_plsfreeaspect(PLINT freeaspect)
+{
+    plsc->freeaspect = freeaspect;
+}
+
+/* Set portrait mode.  If portrait = 1, then the orientation for certain 
+ * drivers is changed by 90 deg to portrait orientation from the default
+ * landscape orientation used by PLplot while the  aspect ratio allowed to
+ * adjust using freeaspect.
+ * N.B. the driver list where this flag is honored is currently limited
+ * to ljii, ljiip, psc, ps, and pstex.  A 90 deg rotation is just not
+ * appropriate for certain other drivers.  These drivers where portrait
+ * mode is not honored include display drivers (e.g., xwin, tk), drivers 
+ * which are subequently going to be transformed to another form 
+ * (e.g., meta or pbm), or drivers which are normally used for web 
+ * publishing (e.g., png, jpeg).  That said, the case is not entirely clear
+ * for all drivers so the list of drivers where the portrait mode is honored
+ * may increase in the future.
+ */
+
+void
+c_plsportrait(PLINT portrait)
+{
+    plsc->portrait = portrait;
+}
+
 /* Set the floating point precision (in number of places) in numeric labels. */
 
 void
