@@ -1,6 +1,7 @@
 divert(-1)dnl
 #============================================================================!
-# fmacs.m4
+# $Id$
+#
 # Some utility macros for Fortran m4 hacking.
 # Maurice J. LeBrun
 # IFS, University of Texas at Austin
@@ -23,40 +24,6 @@ divert(-1)dnl
 # The text (comments) in this file are discarded by the divert().
 #
 # At the end of the file the m4 comments are turned off.
-#
-# $Id$
-# $Log$
-# Revision 1.6  2000/12/24 18:54:07  airwin
-# Define SYSTEM so it works under gnu/m4 (and presumably for all other m4's).
-# Remove unicos.
-# Changed DBLE (a poorly chosen name) to REAL_FUN.
-#
-# Revision 1.5  2000/12/24 01:44:52  airwin
-# At end of file turn off m4 commenting.  Before it was set to * to end of
-# line which meant that any fortran line with "*" in it had everything after
-# that "*" ignored for m4 processing.  (Not good! for type conversions that
-# AWI needs in arithmetic statements.)
-#
-# Revision 1.4  2000/12/23 23:09:18  airwin
-# For fortran conversions using m4 define DBLE to be either dble or real
-# depending on whether DOUBLE is set.  Also, for linux attempt to
-# define implicit_none as implicit none, but so far this latter
-# definition does not work.
-#
-# Revision 1.3  1994/07/12 19:21:32  mjl
-# Fixed type definitions to help generated text stay within 72 columns.
-#
-# Revision 1.2  1994/03/30  08:28:56  mjl
-# Fixed broken macro definition.
-#
-# Revision 1.1  1994/03/30  07:29:39  mjl
-# Moved fortran interface files up one level -- no longer separate single
-# and double precision files.  Implemented m4 expansion of REAL into either
-# real*4 or real*8 depending on configure settings, for portable builds
-# of either the single or double precision library without copying files.
-# Files with .fm4 suffix must be run through m4 to become normal fortran
-# files.
-#
 #============================================================================#
 
 changequote({,})

@@ -1,26 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.24  2000/12/18 21:01:48  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.23  1995/10/23 07:23:12  mjl
- * Added glevel() f77 binding.
- *
- * Revision 1.22  1995/10/16  18:22:24  mjl
- * Added support for plgdev API function in fortran bindings.
- *
- * Revision 1.21  1995/03/17  00:17:10  mjl
- * Eliminated obsolete functions PLSASP and PLSLPB.
- *
- * Revision 1.20  1995/01/14  06:04:05  mjl
- * Fixed plscmap1l documentation and changed call syntax to pass "rev" array.
- *
- * Revision 1.19  1994/07/20  06:08:03  mjl
- * Added Fortran interface routines to handle the new 3d functions plline3(),
- * plpoin3(), and plpoly3().
-*/
-
-/*	scstubs.c
 
 	C stub routines.
 

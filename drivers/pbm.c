@@ -1,22 +1,10 @@
 /*
-  pbm.c
+  $Id$
 
   PLplot PBM (PPM) device driver.
 
   Contributed by John C. Atkinson and Zulfi Cumali.
   Slightly modified by Geoffrey Furnish.
-
- * $Log$
- * Revision 1.3  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.2  1996/10/11 23:10:41  furnish
- * Improve performance by writing out data in one shot.
- *
- * Revision 1.1  1996/10/08  18:37:11  furnish
- * First cut on a new driver for portable bitmaps.
- *
-
 */
 #include "plplot/plDevs.h"
 

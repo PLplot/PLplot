@@ -1,32 +1,6 @@
 /* $Id$
- * $Log$
- * Revision 1.22  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.21  1998/12/01 20:50:29  furnish
- * Various fixups contributed by Joao Cardoso <jcardoso@inescn.pt>.
- *
- * Revision 1.20  1995/05/06  16:49:03  mjl
- * Cruft elimination.
- *
- * Revision 1.19  1995/03/11  20:29:04  mjl
- * All drivers: eliminated unnecessary variable initializations, other cleaning
- * up.  Added code to write & restore plot window parameters.
- *
- * Revision 1.18  1994/03/23  06:39:20  mjl
- * Added support for: color map 1 color selection, color map 0 or color map 1
- * state change (palette change), polygon fills.
- *
- * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
- * stdlib.h now included automatically by plplotP.h), extraneous clears
- * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
- * driver interface or driver initialization as appropriate).  Special
- * handling for malloc includes eliminated (no longer needed) and malloc
- * prototypes fixed as necessary.
-*/
 
-/*
-    plbuf.c -- handle plot buffer.
+    Handle plot buffer.
 
     Copyright 1992
     Maurice LeBrun

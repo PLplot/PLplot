@@ -1,23 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.4  2000/12/18 21:01:48  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.3  1994/03/23 08:38:37  mjl
- * Name change for contour plotter base routine; lots of new plfshade
- * front-end functions added.
- *
- * Revision 1.2  1993/10/21  19:27:06  mjl
- * Changed all names that ended with an underscore (as part of the C/Fortran
- * linkage) to end with a '7' instead, to avoid problems with f2c.
- *
- * Revision 1.1  1993/01/23  06:04:17  mjl
- * New front-end for contours from fortran.  Does amazingly little work now,
- * just defines an appropriate function evaluator and coordinate transformers
- * and calls the main contour function.
-*/
-
-/*	sccont.c
 
 	Contour plotter front-ends for Fortran.
 */

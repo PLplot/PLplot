@@ -1,39 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.39  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.38  1995/06/07 20:37:46  mjl
- * Minor fix to function declarations, contributed by Hiromi Kimura.
- *
- * Revision 1.37  1995/05/06  16:50:20  mjl
- * Changed debugging output to use new pldebug() function.
- *
- * Revision 1.36  1995/03/11  21:40:32  mjl
- * All drivers: eliminated unnecessary variable initializations, other cleaning
- * up.  Changed structure for graphics input to a PLGraphicsIn (was PLCursor).
- * Substantially rewrote input loop to handle new locate mode (type 'L' while
- * at a page break).
- *
- * Revision 1.35  1995/01/10  09:37:17  mjl
- * Fixed some braindamage incurred last update.
- *
- * Revision 1.33  1995/01/06  07:44:22  mjl
- * Inserted GIN (Graphics Input) code to handle PLESC_GETC escape command
- * (retrieves cursor position).  Also added "pick" (P) end of page command,
- * which allows you to fetch the world coordinates of arbitrary points based
- * on graphics input (type "P" while at end of page, note: not supported by
- * xterm).  All drivers: pls->width now more sensibly handled.  If the driver
- * supports multiple widths, it first checks to see if it has been
- * initialized already (e.g. from the command line) before initializing it.
- * For drivers that don't support multiple widths, pls->width is ignored.
- *
- * Revision 1.32  1994/08/26  19:21:55  mjl
- * Added support for the Conex vt320 Tek4010/4014/4105 terminal emulator (DOS).
- * Much cleaning up and optimizations.  Contributed by Mark Olesen.
-*/
-
-/*	tek.c
 
 	PLplot tektronix device & emulators driver.
 */

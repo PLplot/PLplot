@@ -1,33 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.34  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.33  1995/03/11 20:27:13  mjl
- * All drivers: eliminated unnecessary variable initializations, other cleaning
- * up.
- *
- * Revision 1.32  1995/01/10  09:37:00  mjl
- * Fixed braindamage incurred last update.  Now switches to transparent
- * background mode (no page fill) automatically if background color is white.
- * Useful for including color EPSF files into TeX or whatever.
- *
- * Revision 1.31  1995/01/09  21:48:34  mjl
- * Fixed background color fill to cover the entire page, including margin
- * area.  
- *
- * Revision 1.30  1994/09/23  07:36:27  mjl
- * Now generates ps files with the correct PLplot version number written.
- *
- * Revision 1.29  1994/09/01  22:28:09  mjl
- * Fixed bug in current point update after state change.
- *
- * Revision 1.28  1994/08/27  03:40:32  mjl
- * Fix to allow cmap1 color selections to appear in grayscale.  Contributed
- * by Radey Shouman.
-*/
-
-/*	ps.c
 
 	PLplot PostScript device driver.
 */

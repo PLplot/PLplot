@@ -1,8 +1,4 @@
 ! $Id$
-! $Log$
-! Revision 1.2  1994/05/26 19:24:47  mjl
-! Inserted missing CVS Id and Log fields.
-!
 
       subroutine plstrf2c(string1, string2, maxlen)
 

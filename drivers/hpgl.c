@@ -1,17 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.7  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.6  1995/03/11 20:27:07  mjl
- * All drivers: eliminated unnecessary variable initializations, other cleaning
- * up.
- *
- * Revision 1.5	 1995/01/06  07:40:28  mjl
- * All drivers: pls->width now more sensibly handled.  If the driver supports
- * multiple widths, it first checks to see if it has been initialized
- * already (e.g. from the command line) before initializing it.	 For drivers
- * that don't support multiple widths, pls->width is ignored.
  *
  *  File:	hpgl.c
  *

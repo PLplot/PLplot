@@ -1,30 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.29  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.28  1995/10/14 17:13:12  mjl
- * Fixed bugs associated with writing the metafile to stdout instad of a file.
- *
- * Revision 1.27  1995/05/06  16:50:19  mjl
- * Changed debugging output to use new pldebug() function.
- *
- * Revision 1.26  1995/03/11  21:38:33  mjl
- * All drivers: eliminated unnecessary variable initializations, other cleaning
- * up.  Added preliminary code to write & restore plot window parameters.
- *
- * Revision 1.25  1994/07/19  22:30:26  mjl
- * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
- * is xwin, ps, etc.  See plDevs.h for more detail.
- *
- * Revision 1.24  1994/04/08  11:38:11  mjl
- * Now allocate a PLmDev in order to keep file offset information local
- * to the driver where it belongs.  No longer keep track of bytes written
- * since the PDF output routines do that automatically.
-*/
-
-/*
-    plmeta.c
 
     Copyright 1991, 1992, 1993, 1994, 1995
     Geoffrey Furnish			furnish@dino.ph.utexas.edu

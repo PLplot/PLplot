@@ -1,20 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.21  2000/12/18 21:01:49  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.20  1995/03/11 20:27:09  mjl
- * All drivers: eliminated unnecessary variable initializations, other cleaning
- * up.
- *
- * Revision 1.19  1995/01/06  07:40:31  mjl
- * All drivers: pls->width now more sensibly handled.  If the driver supports
- * multiple widths, it first checks to see if it has been initialized
- * already (e.g. from the command line) before initializing it.  For drivers
- * that don't support multiple widths, pls->width is ignored.
-*/
-
-/*	ljii.c
 
 	PLplot Laser Jet II device driver.
 

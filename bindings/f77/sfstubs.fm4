@@ -1,30 +1,11 @@
 divert(-1)dnl
 !***********************************************************************
 !
-!  sfstubs.fm4
+! $Id$
 !
 ! This file contains all the fortran stub routines.
 ! It must be passed through m4 before it becomes legal Fortran.
 !
-! $Id$
-!
-! $Log$
-! Revision 1.4  1995/10/16 18:22:25  mjl
-! Added support for plgdev API function in fortran bindings.
-!
-! Revision 1.3  1994/07/12  19:22:10  mjl
-! Various cleaning up and robustifications.
-!
-! Revision 1.2  1994/04/08  12:27:25  mjl
-! Added missing variable declarations.
-!
-! Revision 1.1  1994/03/30  07:29:40  mjl
-! Moved fortran interface files up one level -- no longer separate single
-! and double precision files.  Implemented m4 expansion of REAL into either
-! real*4 or real*8 depending on configure settings, for portable builds
-! of either the single or double precision library without copying files.
-! Files with .fm4 suffix must be run through m4 to become normal fortran
-! files.
 !***********************************************************************
 
 divert(1)dnl

@@ -1,24 +1,4 @@
 /* $Id$
- * $Log$
- * Revision 1.25  2000/12/18 21:01:48  airwin
- * Change to new style plplot/*.h header file locations.
- *
- * Revision 1.24  1995/10/23 07:23:11  mjl
- * Added glevel() f77 binding.
- *
- * Revision 1.23  1995/10/16  18:22:23  mjl
- * Added support for plgdev API function in fortran bindings.
- *
- * Revision 1.22  1994/07/20  06:07:44  mjl
- * Added definitions for Fortran interface routines to handle the new 3d
- * functions plline3(), plpoin3(), and plpoly3().
- *
- * Revision 1.21  1994/03/23  07:11:49  mjl
- * Added stub name definitions for cmap1 selectors and plshade front-ends.
-*/
-
-/*
-   plstubs.h
 
    Maurice LeBrun
    IFS, University of Texas
