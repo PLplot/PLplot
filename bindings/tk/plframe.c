@@ -1339,7 +1339,7 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 /* Open file for writes */
 
-    sfnam = (char *) tempnam((char *) NULL, "pltk");
+    sfnam = (char *) tmpnam("pltk");
 
     if ((sfile = fopen(sfnam, "wb+")) == NULL) {
 	Tcl_AppendResult(interp, 
