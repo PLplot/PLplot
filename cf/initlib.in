@@ -54,8 +54,8 @@ PLFNT_PATH	= $(PLFNT_DIR)/
 LIB_OBJS_SO	= $(CORE_OBJ) $(static_drivers_obj) $(FSTUB_OBJ) $(JAVA_OBJ)
 LIB_OBJS_SA	= $(FSTUB_OBJ_SA)
 LIB_OBJS	= $(LIB_OBJS_SO) $(LIB_OBJS_SA)
-TCL_OBJS_SO	= $(TCL_OBJ) $(TK_OBJ) $(XWIN_OBJ) $(tcl_static_drivers_obj)
-TCL_OBJS_SA	= $(TCL_OBJ_SA) $(TK_OBJ_SA) $(XWIN_OBJ_SA)
+TCL_OBJS_SO	= $(TCL_OBJ) $(TK_OBJ) $(tcl_static_drivers_obj)
+TCL_OBJS_SA	= $(TCL_OBJ_SA) $(TK_OBJ_SA)
 TCL_OBJS	= $(TCL_OBJS_SO) $(TCL_OBJS_SA)
 DEMOS_RPATH	= $(RPATH)
 # Library names
