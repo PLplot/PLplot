@@ -5,6 +5,8 @@ plplot (5.2.1.cvs.20031228-2) unstable; urgency=low
     plplot9-driver-gd, plplot9-driver-gnome, and plplot9-driver-xwin to
     libs (was math before) in order to comply with overrides of
     debian-installer.
+  * debian/plplot-tcl.files: Include file usr/lib/plplot*/pkgIndex.tcl
+  
 
  --
 
