@@ -757,6 +757,16 @@ plLibOpen(char *fn);
 void
 pllib_init(void);
 
+/* Does preliminary setup of device driver. */
+
+void
+pllib_devinit(void);
+
+/* Utility to copy one PLColor to another. */
+
+void
+pl_cpcolor(PLColor *to, PLColor *from);
+
 /* Does required startup initialization of a stream.  */
 
 void
