@@ -859,6 +859,11 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
     adjust.y=0;
 #endif
 
+/* (RL, on 2005-01-24) The code below uses floating point and division 
+ * operations instead of integer shift used before. This is slower but 
+ * gives accurate placement of text in plots.  
+ */
+  
 /* (RL, on 2005-01-21) The hack below is intended to align single
  * glyphs being generated via plpoin.  The way to detect this
  * situation is completely hackish, I must admit, by checking whether the
@@ -875,8 +880,8 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
     if ((args->unicode_array_len == 2) 
       && (args->unicode_array[0] == 0x10000004)) 
     {
-        adjust.x = args->just * (FT->face->glyph->metrics.width >> 6);
-        adjust.y = (FT_Pos) (FT->face->glyph->metrics.height / 2.0) >> 6;
+        adjust.x = args->just * ROUND (FT->face->glyph->metrics.width / 64.0);
+        adjust.y = (FT_Pos) ROUND (FT->face->glyph->metrics.height / 128.0);
     }
     else 
     {
@@ -887,14 +892,12 @@ if ((args->string!=NULL)||(args->unicode_array_len>0))
  * drawn.  Freetype aligns text around the baseline, while PLplot
  * aligns to the center of the ascender portion.  We must then adjust
  * by half of the ascender and this is why there is a division by
- * height_factor below.  The second division by height_factor is here
- * because the adjust vector is later multiplied by FT->matrix, which
- * was previously multiplied by height_factor.
+ * height_factor below. 
  */
 
-    adjust.y = - ((FT_Pos) (h / (height_factor * height_factor) / 2.0) >> 6);
-
-    adjust.x = args->just * (w >> 6);    /* was *-1; but just minus it in a few line time now */
+      adjust.y = (FT_Pos) 
+          ROUND (FT->face->size->metrics.height / height_factor / 128.0);
+      adjust.x = (FT_Pos) (args->just * ROUND (w / 64.0));
 
     }
   
