@@ -1613,7 +1613,6 @@ plInitDispatchTable()
     drvdir = getenv ("PLPLOT_DRV_DIR");
     if (drvdir == NULL)
       drvdir = DATA_DIR "/" DRV_DIR;
-    printf("Got it: %s\n", drvdir);
     dp_drvdir = opendir (drvdir);
     if (dp_drvdir == NULL)
       plabort ("plInitDispatchTable: Could not open drivers directory");
