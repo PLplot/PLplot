@@ -172,7 +172,7 @@ void plD_dispatch_init_wingcc( PLDispatchTable *pdt )
     pdt->pl_DevName  = "wingcc";
 #endif
     pdt->pl_type     = plDevType_Interactive;
-    pdt->pl_seq      = 5;
+    pdt->pl_seq      = 9;
     pdt->pl_init     = (plD_init_fp)     plD_init_wingcc;
     pdt->pl_line     = (plD_line_fp)     plD_line_wingcc;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_wingcc;
