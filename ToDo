@@ -2,15 +2,18 @@
 Areas currently under development
 ---------------------------------
 
- - Need developers!  It is becoming too difficult to support PLplot on
-   all the many platforms it runs on.  If you want it to run correctly
-   on your platform it needs your support.  Current developers include:
+ - Need developers!  It is becoming too difficult to support PLplot on all
+   the many platforms it runs on.  If you want it to run correctly on your
+   platform it needs your support.  Current system supporters include:
 
 	Maurice LeBrun			HP-UX
 	mjl@dino.ph.utexas.edu
 
 	Geoff Furnish			Linux
 	furnish@dino.ph.utexas.edu
+
+	Paul Casteels			DOS/BGI (bcc)
+	casteels@uia.ac.be
 
 	John C. Peterson		OS/2
 	jcp@trg.saic.com
@@ -32,6 +35,7 @@ Areas currently under development
 	AIX
 
     (also VMS, if anyone ever gets the package working there again)
+    (also Macintosh -- there is a very old port for it around somewhere)
 
  - Continue updating the manual.
 
@@ -87,16 +91,17 @@ Areas currently under development
    welcomed.  The tek driver shows how to get the most out of a 16 color
    display.
 
- - Write plcfill() or whatever to cheaply fill 2d functions based
-   on cell value only.  Should be faster than plshade for many grid
-   points (e.g. 128**2).
+ - Write plcfill() or whatever to cheaply fill 2d functions based on cell
+   value only.  Should be much faster than plshade for many grid points
+   (e.g. 128 x 128).
 
  - The color map selection in the versaterm driver still doesn't work
    quite right.  When running x16c, the following happens:
 	o color 9 isn't set correctly.  This doesn't make sense -- how
 	  can the driver be messing up just for this one?  Besides, it
 	  works fine on my Amiga's tek4107 driver.  Sounds like a bug
-	  in versaterm.
+	  in versaterm.  Need to check this code out on other Tek4107
+	  emulators, like mskermit.
 	o There is sometimes some garbage at the beginning of the fill.
 
  - implement some sort of raster-oriented output.  GIF might be good since
