@@ -750,14 +750,14 @@ static PLDispatchTable dispatch_table[] = {
 
 #ifdef PLD_pstex
     {
-	"Postscript/latex device",
+	"Postscript/LaTeX device",
 	"pstex",
 	-1,
 	plD_init_pstex,
 	plD_line_ps,
 	plD_polyline_ps,
 	plD_eop_ps,
-	plD_bop_ps,
+	plD_bop_pstex,
 	plD_tidy_pstex,
 	plD_state_ps,
 	plD_esc_pstex
