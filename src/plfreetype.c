@@ -367,9 +367,9 @@ FT_WriteStr(PLStream *pls, const char *text, int x, int y)
             }
 
 	    if (FT->smooth_text==0)
-		FT_Load_Char( FT->face, FT->textbuf[i], FT_LOAD_MONOCHROME+FT_LOAD_RENDER);
+		FT_Load_Char( FT->face, (FT->textbuf[i] > 0 ? FT->textbuf[i] : FT->textbuf[i] + 255), FT_LOAD_MONOCHROME+FT_LOAD_RENDER);
 	    else
-		FT_Load_Char( FT->face, FT->textbuf[i], FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT);
+		FT_Load_Char( FT->face, (FT->textbuf[i] > 0 ? FT->textbuf[i] : FT->textbuf[i] + 255), FT_LOAD_RENDER|FT_LOAD_FORCE_AUTOHINT);
 
 	    FT_PlotChar(pls,FT, FT->face->glyph,  x, y, 2 ); /* render the text */
 	    x += (FT->face->glyph->advance.x >> 6);
