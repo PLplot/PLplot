@@ -67,3 +67,33 @@ installation (NOTE: currently very out of date).
 
 Finally, there are several shell scripts in the top level directory to
 help you archive all the source files using 'zoo', 'tar', or 'zip'.
+
+System specific notes
+---------------------
+
+SunOS: I now rely on ANSI libc functions both for seeking (fsetpos/fgetpos)
+and for cleanup (atexit).  If you don't have an ANSI libc handy or if it is
+inconvenient to use, you can specify -DNO_ANSI_LIBC when building.  This
+will switch to the older ftell/fseek form of seeking and disable some
+capabilities of the tek/xterm drivers.  Some older versions of Sunos & acc
+require you to link in the ANSI lib explicitly when using from a Fortran
+program, but this appears to be fixed in SunOS 4.1.3.  I haven't tried
+building shared libraries for SunOS yet but hope to get around to it one of
+these days.
+
+HPUX: This is the platform I use every day; you should have no problems.
+One nice thing is that shared libraries are particularly easy to build, and
+the config file (cf_hp.m4) is set up to do that by default (except when gcc
+is being used).
+
+A/IX: I tried building a shared library here but failed due to some missing
+externals, I think from X.  I think I need to specify an import file of
+external symbols or some such, because of the X library being shared.  If
+anyone has success doing this I'd be very interested.
+
+The other platforms on which I know plplot 4.99d works fine includes:
+Unicos, Super-UX (NEC), Linux.  If changes to the config files are required
+to compile it on other platforms, please forward your fixes.
+
+Maurice LeBrun
+mjl@dino.ph.utexas.edu
