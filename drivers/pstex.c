@@ -114,7 +114,7 @@ proc_str (PLStream *pls, EscText *args)
   ft_ht = 1.6 /*!*/ * pls->chrht * 72.0/25.4; /* ft_ht in points. ht is in mm */
 
   /* calculate baseline text angle */
-  angle = pls->diorot * 90.;
+  angle = ((PLFLT)(ORIENTATION-1) + pls->diorot) * 90.;
   a1 = acos(t[0]) * 180. / PI;
   if (t[2] > 0.)
     alpha = a1 - angle - 90.;
@@ -166,7 +166,7 @@ proc_str (PLStream *pls, EscText *args)
   if ( args->x < clxmin || args->x > clxmax || args->y < clymin || args->y > clymax)
     return;
 
-  plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
+  plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
      &(args->x), &(args->y));
 
 #ifdef DEBUG

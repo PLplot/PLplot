@@ -59,7 +59,7 @@ plD_init_psc(PLStream *pls)
   plParseDrvOpts(ps_options);
 
   if (!color)
-    pls->color = 0;		/* But user dont wants color */
+    pls->color = 0;		/* But user does not want color */
   ps_init(pls);
 }
 
@@ -277,8 +277,8 @@ plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
 /* Rotate by 90 degrees */
 
-    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x1, &y1);
-    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x2, &y2);
+    plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x1, &y1);
+    plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x2, &y2);
 
     if (x1 == dev->xold && y1 == dev->yold && dev->ptcnt < 40) {
 	if (pls->linepos + 12 > LINELENGTH) {
@@ -526,7 +526,7 @@ fill_polygon(PLStream *pls)
 
 /* Rotate by 90 degrees */
 
-	plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x, &y);
+	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x, &y);
 
 /* First time through start with a x y moveto */
 
@@ -612,7 +612,7 @@ proc_str (PLStream *pls, EscText *args)
   
   /* calculate baseline text angle */
 
-  angle = pls->diorot * 90.;
+  angle = ((PLFLT)(ORIENTATION-1) + pls->diorot) * 90.;
   a1 = acos(t[0]) * 180. / PI;
   if (t[2] > 0.)
     alpha = a1 - angle;
@@ -654,7 +654,7 @@ proc_str (PLStream *pls, EscText *args)
 
   /* ps driver is rotated by default, compensate */
 
-  plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &(args->x), &(args->y));
+  plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &(args->x), &(args->y));
 
   /*
    *  font family, serie and shape. Currently not fully supported by plplot
@@ -687,8 +687,16 @@ proc_str (PLStream *pls, EscText *args)
   if (text == 1) 
     fprintf(OF, "gsave %.3f R\n", alpha - 90.);  
   else {
-    /* I really don't understand this! The angle should be increased by 90 degrees, only,
-       as the ps driver has a default orientation of landscape, see plRotPhy(1,...) above */
+    /* I really don't understand this! The angle should be increased by
+     * 90 degrees, only, as the ps driver has a default orientation of 
+     * landscape, see plRotPhy(ORIENTATION,...) above */
+
+    /* AWI further comment.  Actually, the traditional value of ORIENTATION
+     * was 1 corresponding to seascape which may have contributed to the
+     * confusion.  I have now changed that in plplotP.h
+     * to be 3 corresponding to landscape.  I have proved the above change
+     * to the definition of angle works both with ORIENTATION of 1 and 3
+     * for text == 1 and not.  */
 
     if (fmod(angle, 180.) == 0.)
       angle -= 90.;

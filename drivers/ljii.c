@@ -133,8 +133,8 @@ plD_line_ljii(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
 /* Rotate by 90 degrees */
 
-    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x1, &y1);
-    plRotPhy(1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x2, &y2);
+    plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x1, &y1);
+    plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &x2, &y2);
 
     x1b = x1, x2b = x2, y1b = y1, y2b = y2;
     length = (PLFLT) sqrt((double)
