@@ -16,7 +16,7 @@
 #ifdef HAVE_PTHREAD
 #include <pthread.h>
 #include <signal.h>
-int    pthread_mutexattr_setkind_np(pthread_mutexattr_t *attr, int kind);
+int    pthread_mutexattr_settype(pthread_mutexattr_t *attr, int kind);
 static void events_thread(void *pls);
 static pthread_mutex_t events_mutex;
 static int already = 0;
@@ -278,8 +278,8 @@ plD_init_xw(PLStream *pls)
 
       if (!already) {
 	pthread_mutexattr_init(&mutexatt);
-	if( pthread_mutexattr_setkind_np(&mutexatt, PTHREAD_MUTEX_RECURSIVE_NP))
-	  plexit("xwin: pthread_mutexattr_setkind_np() failed!\n");
+	if( pthread_mutexattr_settype(&mutexatt, PLPLOT_MUTEX_RECURSIVE) )
+	  plexit("xwin: pthread_mutexattr_settype() failed!\n");
 
 	pthread_mutex_init(&events_mutex, &mutexatt);
 	already = 1;

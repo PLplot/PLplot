@@ -997,6 +997,19 @@ if test "$with_pthreads" = "yes" -a "$enable_xwin" = "yes"; then
     AC_CHECK_LIB(pthread, pthread_create, [
         AC_DEFINE(HAVE_PTHREAD, [], [Define if pthreads is available])
         PTHREADLIBS="-lpthread" ], [ with_pthreads="no"])
+
+    case "$host_os" in
+        darwin*)
+            PLPLOT_MUTEX_RECURSIVE=PTHREAD_MUTEX_RECURSIVE
+	;;
+	*)	    
+            PLPLOT_MUTEX_RECURSIVE=PTHREAD_MUTEX_RECURSIVE_NP
+        ;;
+    esac
+
+    AC_DEFINE_UNQUOTED(PLPLOT_MUTEX_RECURSIVE, $PLPLOT_MUTEX_RECURSIVE,
+              [Portable definition for PTHREAD_MUTEX_RECURSIVE])
+
 fi
 
 # ----------------------------------------------------------------------------
