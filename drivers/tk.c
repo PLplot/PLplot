@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.54  1995/09/22 16:04:16  mjl
+ * Revision 1.55  1996/06/26 21:35:19  furnish
+ * Various hacks to support Tcl 7.5 and Tk 4.1.
+ *
+ * Revision 1.54  1995/09/22  16:04:16  mjl
  * Fixes to names of member variables of PLiodev structs.
  *
  * Revision 1.53  1995/06/23  02:55:35  mjl
@@ -864,9 +867,11 @@ pltkdriver_Init(PLStream *pls)
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
+#if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
     if (main && Tk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
+#endif
 
 #ifdef PLD_dp
     if (pls->dp) {
@@ -1379,8 +1384,14 @@ link_init(PLStream *pls)
 	tcl_cmd(pls, "plclient_dp_init");
 	iodev->fileHandle = Tcl_GetVar(dev->interp, "data_sock", 0);
 
+#if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
+#define FILECAST 
+#else 
+#define FILECAST (ClientData)
+#endif
+
 	if (Tcl_GetOpenFile(dev->interp, iodev->fileHandle,
-			    0, 1, &iodev->file) != TCL_OK) {
+			    0, 1, FILECAST &iodev->file) != TCL_OK) {
 
 	    fprintf(stderr, "Cannot get file info:\n\t %s\n",
 		    dev->interp->result);
@@ -1946,12 +1957,17 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 
 /* Create the main window without mapping it */
 
+#if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
+
     *w = Tk_CreateMainWindow(interp, display, basename, classname);
 
     if (*w == NULL) {
 	fprintf(stderr, "%s\n", (interp)->result);
 	return 1;
     }
+#else
+    Tk_Init( interp );
+#endif
 
     Tcl_VarEval(interp, wcmd, (char *) NULL);
 

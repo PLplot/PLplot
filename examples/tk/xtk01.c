@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1995/06/01 21:43:48  mjl
+ * Revision 1.10  1996/06/26 21:35:21  furnish
+ * Various hacks to support Tcl 7.5 and Tk 4.1.
+ *
+ * Revision 1.9  1995/06/01  21:43:48  mjl
  * Change to header file inclusion: to get PLplot/Tk global function
  * prototypes, must now include pltk.h.  Some cleaning up and resource leaks
  * plugged.
@@ -95,13 +98,14 @@ AppInit(Tcl_Interp *interp)
  *
  * where "Mod" is the name of the module.
  */
-
+/*
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
     if (Tk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
+    */
     if (Pltk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1995/11/30 20:03:04  furnish
+ * Revision 1.7  1996/06/26 21:35:11  furnish
+ * Various hacks to support Tcl 7.5 and Tk 4.1.
+ *
+ * Revision 1.6  1995/11/30  20:03:04  furnish
  * Correct the order of argument processing so that PLplot command line
  * arguments are removed before the argc/argv list is set for Tcl.  This
  * greatly improves the support for building custom pltcl shells.
@@ -315,7 +318,11 @@ pltclMain(int argc, char **argv, char *RcFileName,
 	if (fgets(buffer, 1000, stdin) == NULL) {
 	    if (ferror(stdin)) {
 		if (errno == EINTR) {
+#if TCL_MAJOR_VERSION < 7 || (TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
 		    if (tcl_AsyncReady) {
+#else
+		    if (Tcl_AsyncReady()) {
+#endif
 			(void) Tcl_AsyncInvoke((Tcl_Interp *) NULL, 0);
 		    }
 		    clearerr(stdin);

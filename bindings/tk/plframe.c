@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.56  1996/02/24 05:06:30  shouman
+ * Revision 1.57  1996/06/26 21:35:14  furnish
+ * Various hacks to support Tcl 7.5 and Tk 4.1.
+ *
+ * Revision 1.56  1996/02/24  05:06:30  shouman
  * Added #ifdef to allow compilation without itcl.
  * Set value of ndev on call to plgFileDevs (bounds check).
  *
@@ -163,6 +166,12 @@ extern int plplot_ccmap;
 #define plframe_cmd(code) \
     if ((code) == TCL_ERROR) return (TCL_ERROR);
 
+/* Backward compatibility junk */
+
+#if TCL_MAJOR_VERSION <= 7 && TCL_MINOR_VERSION <= 4
+#define Tk_Cursor Cursor
+#endif
+
 /*
  * A data structure of the following type is kept for each
  * plframe that currently exists for this process:
@@ -193,7 +202,7 @@ typedef struct {
 				 * don't request any size. */
     int height;			/* Height to request for window.  <= 0 means
 				 * don't request any size. */
-    Cursor cursor;		/* Current cursor for window, or None. */
+    Tk_Cursor cursor;		/* Current cursor for window, or None. */
     int flags;			/* Various flags;  see below for
 				 * definitions. */
 
@@ -230,7 +239,7 @@ typedef struct {
     GC xorGC;			/* GC used for rubber-band drawing */
     XPoint pts[5];		/* Points for rubber-band drawing */
     int continue_draw;		/* Set when doing rubber-band draws */
-    Cursor xhair_cursor;	/* cursor used for drawing */
+    Tk_Cursor xhair_cursor;	/* cursor used for drawing */
     PLFLT xl, xr, yl, yr;	/* Bounds on plot viewing area */
     char *xScrollCmd;		/* Command prefix for communicating with
 				 * horizontal scrollbar.  NULL means no
@@ -342,7 +351,13 @@ int   plFrameCmd     	(ClientData, Tcl_Interp *, int, char **);
 
 /* These are invoked by the TK dispatcher */
 
-static void  DestroyPlFrame	(ClientData);
+#if TK_MAJOR_VERSION < 4 || ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0)
+#define FreeProcArg ClientData
+#else
+#define FreeProcArg char *
+#endif
+
+static void  DestroyPlFrame	(FreeProcArg);
 static void  DisplayPlFrame	(ClientData);
 static void  PlFrameInit	(ClientData);
 static void  PlFrameConfigureEH	(ClientData, XEvent *);
@@ -753,7 +768,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
  */
 
 static void
-DestroyPlFrame(ClientData clientData)
+DestroyPlFrame( FreeProcArg clientData )
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
     register PLRDev *plr = plFramePtr->plr;
@@ -2312,8 +2327,15 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	iodev->type = 1;
 	iodev->typeName = "socket";
 	iodev->fileHandle = argv[1];
+
+#if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION == 4)
+#define FILECAST 
+#else 
+#define FILECAST (ClientData)
+#endif
+
 	if (Tcl_GetOpenFile(interp, iodev->fileHandle,
-			    0, 1, &iodev->file) != TCL_OK) {
+			    0, 1, FILECAST &iodev->file) != TCL_OK) {
 	    return TCL_ERROR;
 	}
 	iodev->fd = fileno(iodev->file);
@@ -2329,8 +2351,16 @@ Openlink(Tcl_Interp *interp, register PlFrame *plFramePtr,
     }
 
     plr->pdfs = pdf_bopen( NULL, 4200 );
+/* Sheesh, what a mess.  I don't see how Tk4.1's converter macro could
+   possibly work.  */
+#if TK_MAJOR_VERSION < 4 || ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0 )
     Tk_CreateFileHandler(iodev->fd, TK_READABLE, (Tk_FileProc *) ReadData,
 			 (ClientData) plFramePtr);
+#else
+    Tcl_CreateFileHandler( Tcl_GetFile( (ClientData) iodev->fd, TCL_UNIX_FD ),
+			   TK_READABLE, (Tk_FileProc *) ReadData,
+			   (ClientData) plFramePtr );
+#endif
 
     return TCL_OK;
 }
@@ -2356,7 +2386,13 @@ Closelink(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	return TCL_ERROR;
     }
 
+#if TK_MAJOR_VERSION < 4 || ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0 )
     Tk_DeleteFileHandler(iodev->fd);
+#else
+/*    Tk_DeleteFileHandler( iodev->file );*/
+    Tcl_DeleteFileHandler( Tcl_GetFile( (ClientData) iodev->fd,
+					TCL_UNIX_FD ) );
+#endif
     pdf_close(plr->pdfs);
     iodev->fd = 0;
 

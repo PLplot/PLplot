@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1995/10/22 17:30:35  mjl
+ * Revision 1.5  1996/06/26 21:35:16  furnish
+ * Various hacks to support Tcl 7.5 and Tk 4.1.
+ *
+ * Revision 1.4  1995/10/22  17:30:35  mjl
  * Changed -e option such that -e <script> and -f <file> means to execute
  * <script> then source <file>.  Previously, they were mutually exclusive.
  *
@@ -205,6 +208,7 @@ pltkMain(int argc, char **argv, char *RcFileName,
      * Initialize the Tk application.
      */
 
+#if TCL_MAJOR_VERSION < 7 || (TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
     mainWindow = Tk_CreateMainWindow(interp, display, name, "Tk");
     if (mainWindow == NULL) {
 	fprintf(stderr, "%s\n", interp->result);
@@ -214,6 +218,14 @@ pltkMain(int argc, char **argv, char *RcFileName,
 	XSynchronize(Tk_Display(mainWindow), True);
     }
     Tk_GeometryRequest(mainWindow, 200, 200);
+#else
+    if ( Tcl_Init( interp ) == TCL_ERROR ) {
+	return TCL_ERROR;
+    }
+    if ( Tk_Init( interp ) == TCL_ERROR ) {
+	return TCL_ERROR;
+    }
+#endif
 
     /*
      * Make command-line arguments available in the Tcl variables "argc"

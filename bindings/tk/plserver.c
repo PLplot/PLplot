@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1995/06/01 21:24:27  mjl
+ * Revision 1.37  1996/06/26 21:35:15  furnish
+ * Various hacks to support Tcl 7.5 and Tk 4.1.
+ *
+ * Revision 1.36  1995/06/01  21:24:27  mjl
  * Is now [incr Tcl] aware, if HAVE_ITCL is defined (done during configure).
  *
  * Revision 1.35  1995/05/06  17:11:30  mjl
@@ -177,7 +180,9 @@ PLplot/Tk driver.\n\n(wish) ");
 
 /* No longer need interpreter */
 
+#if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
     Tcl_DeleteInterp(interp);
+#endif
 
 /* Call pltkMain() with original argc/argv list, to make sure -h is seen */
 /* Does not return until program exit */
@@ -223,12 +228,14 @@ AppInit(Tcl_Interp *interp)
  * where "Mod" is the name of the module.
  */
 
+#if TCL_MAJOR_VERSION < 7 || ( TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION < 5 )
     if (Tcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
     if (main && Tk_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
     }
+#endif
 #ifdef HAVE_ITCL
     if (Itcl_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;
