@@ -1,10 +1,14 @@
 /* $Id$
-   $Log$
-   Revision 1.10  1995/09/18 20:13:34  furnish
-   Crazy hack needed to allow inclusion of this file in C++ programs.
-   Really the structure member name should be changed, and all clients of
-   this struct updated.
-
+ * $Log$
+ * Revision 1.11  1995/09/22 16:03:26  mjl
+ * Name changes to members of the PLiodev structure to reduce the chance
+ * of collisions with possible new C++ keywords.
+ *
+ * Revision 1.10  1995/09/18  20:13:34  furnish
+ * Crazy hack needed to allow inclusion of this file in C++ programs.
+ * Really the structure member name should be changed, and all clients of
+ * this struct updated.
+ *
  * Revision 1.9  1994/04/08  12:10:08  mjl
  * Moved unsigned type defines to this header file.
  *
@@ -72,14 +76,10 @@ typedef struct {
 typedef struct {
     int   fd;				/* I/O device file descriptor */
     FILE  *file;			/* File handle */
-    char  *filename;			/* Fifo or socket name (if needed) */
-    char  *filehandle;			/* Handle for use from interpreter */
+    char  *fileName;			/* Fifo or socket name (if needed) */
+    char  *fileHandle;			/* Handle for use from interpreter */
     int   type;				/* Communication channel type */
-#ifndef __cplusplus
-    char  *typename;			/* As above, but in string form */
-#else
-    char  *_typename;			/* As above, but in string form */
-#endif
+    char  *typeName;			/* As above, but in string form */
 } PLiodev;
 
 /* Error numbers */
@@ -94,9 +94,9 @@ typedef struct {
 #define PDF_NOTPDF		8	/* Not a valid PDF file */
 
 /* Prototypes */
-/* Use a wrapper for the prototypes for use from cc */
+/* Use a wrapper for the prototypes for use from K&R C */
 
-PDFstrm *pdf_fopen	PLARGS((char *filename, char *mode));
+PDFstrm *pdf_fopen	PLARGS((char *fileName, char *mode));
 PDFstrm *pdf_bopen	PLARGS((U_CHAR *buffer, long bufmax));
 PDFstrm *pdf_finit	PLARGS((FILE *file));
 int  pdf_close		PLARGS((PDFstrm *pdfs));
