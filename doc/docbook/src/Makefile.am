@@ -58,7 +58,7 @@ built_files = \
   plplotdoc.txml plplotdoc.xml-info plplotdoc.texi
 
 EXTRA_DIST = \
-  $(SOURCE_FILES) $(MASTER_XML_IN) $(STYLESHEETS_IN) \
+  $(SOURCE_FILES) $(MASTER_XML) \
   jadetex.cfg stylesheet.css $(built_files) \
   inline-info.ent pdftex.map
 
