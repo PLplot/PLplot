@@ -7,7 +7,7 @@
   Copyright (C) 2000, 2001, 2002, 2004, 2005  Alan W. Irwin 
   Copyright (C) 2001, 2002  Joao Cardoso  
   Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
-  Copyright (C) 2004  Thomas J. Duck
+  Copyright (C) 2004, 2005  Thomas J. Duck
   Copyright (C) 2005  Andrew Ross
 
   This file is part of PLplot.
@@ -64,9 +64,11 @@ static void  esc_purge          (char *, unsigned char *);
 static char  outbuf[128];
 static int text = 1;
 static int color;
+static int hrshsym = 1;
 
 static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=0|1)"},
 			      {"color", DRV_INT, &color, "Use color (color=0|1)"},
+			      {"hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)"},
 			      {NULL, DRV_INT, NULL, NULL}};
 
 static unsigned char 
@@ -157,6 +159,7 @@ ps_init(PLStream *pls)
      {
 	pls->dev_text = 1; /* want to draw text */
 	pls->dev_unicode = 1; /* want unicode */
+	if(hrshsym) pls->dev_hrshsym = 1; /* want Hershey symbols */
      }
 
     pls->dev_fill0 = 1;		/* Can do solid fills */
