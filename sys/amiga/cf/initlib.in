@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
@@ -6,7 +6,7 @@
 # 24-Jul-1994
 #
 # Initializations for building PLplot library.
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 # Compiler flags
 
@@ -30,9 +30,9 @@ everything: libs plrender$E $(TCL_EXE)
 .fm4.f:
 	$(M4) $(M4_FLAGS) $< >$*.f
 
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Amiga-specific files
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 AMIGA_OBJ = \
 	pla_wn.o \
@@ -41,22 +41,19 @@ AMIGA_OBJ = \
 	pla_menu.o \
 	plsupport.o 
 
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Amiga-specific dependencies
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
-pla_pr.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h plamiga.h \
-		pla_pr.c
-pla_iff.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h plamiga.h \
-		pla_iff.c
+pla_pr.o:	plplotP.h plplot.h drivers.h pdf.h plstrm.h plamiga.h pla_pr.c
+pla_iff.o:	plplotP.h plplot.h drivers.h pdf.h plstrm.h plamiga.h pla_iff.c
 pla_menu.o:	plplotP.h plplot.h plamiga.h pla_menu.c
 plsupport.o:	plplotP.h plplot.h plamiga.h plsupport.c
-pla_wn.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h plamiga.h \
-		pla_wn.c
+pla_wn.o:	plplotP.h plplot.h drivers.h pdf.h plstrm.h plamiga.h pla_wn.c
 
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # This builds a SAS/C 6.x global symbol table to speed up compilation.
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 plplot.gst:	plplotP.h plplot.h plamiga.h
 	gst unload plplot.gst

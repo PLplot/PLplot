@@ -19,12 +19,10 @@
 
 lnsoft ../src/*.c .
 lnsoft ../include/*.h .
-lnsoft ../drivers/*.c .
-lnsoft ../utils/*.c .
-lnsoft ../examples/C/*.c .
-lnsoft ../sys/amiga/*.m4 .
-lnsoft ../sys/amiga/src/*.c .
-lnsoft ../sys/amiga/src/*.h .
+lnsoft ../drivers/*.* .
+lnsoft ../utils/*.* .
+lnsoft ../examples/C/*.* .
+lnsoft ../sys/amiga/src/*.* .
 lnsoft ../sys/amiga/cf/*.h .
 lnsoft ../lib/*.fnt .
 lnsoft ../lib/*.map .

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/08/23 16:39:03  mjl
+ * Revision 1.6  1995/06/13 03:58:11  mjl
+ * Fixes for 4.99j on the Amiga.
+ *
+ * Revision 1.5  1994/08/23  16:39:03  mjl
  * Minor fixes to work with PLplot 4.99h distribution and other cleaning up.
  *
  * Revision 1.4  1994/03/23  08:56:55  mjl
@@ -42,6 +45,8 @@ extern struct IntuiMessage   PlplotMsg;
 typedef struct {
     int			exit_eventloop;
     int			restart;
+    int			locate_mode;	/* Set while in locate (pick) mode */
+    PLGraphicsIn	gin;		/* Graphics input structure */
 
     long		init_width;
     long		init_height;

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1994/08/23 16:39:00  mjl
+ * Revision 1.6  1995/06/13 03:58:10  mjl
+ * Fixes for 4.99j on the Amiga.
+ *
+ * Revision 1.5  1994/08/23  16:39:00  mjl
  * Minor fixes to work with PLplot 4.99h distribution and other cleaning up.
  *
  * Revision 1.4  1994/05/23  22:11:57  mjl
@@ -24,45 +27,45 @@
 
 int saveiff(char *);
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_Open()
  *
  * For opening a file.  User must enable by setting an open-file handler.
  * See plrender.c for more detail.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_Open(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_Save()
  *
  * Save to existing file.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_Save(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_SaveAs_ILBM()
  *
  * Screen dump.  
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_SaveAs_ILBM(void)
 {
     struct rtFileRequester *filereq;
     char filename[34];
-    int status;
+    int status = 1;
 
     if (filereq = rtAllocRequestA (RT_FILEREQ, NULL)) {
 	filename[0] = 0;
@@ -75,14 +78,14 @@ plamiga_SaveAs_ILBM(void)
 	}
     }
 
-    return(1);
+    return status;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_saveiff()
  *
  * Screen dump work routine.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_saveiff(char *filename)
@@ -94,80 +97,80 @@ plamiga_saveiff(char *filename)
     status = saveiff(filename);
     rtUnlockWindow(pla->window, windowlock);
 
-    return(status);
+    return status;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_Print_Bitmap()
  *
  * Self-explanatory.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_Print_Bitmap(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_Print_landscape()
  *
  * Self-explanatory.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_Print_landscape(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_Print_portrait()
  *
  * Self-explanatory.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_Print_portrait(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_About()
  *
  * Self-explanatory.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_About(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_Quit()
  *
  * Self-explanatory.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_Quit(void)
 {
     plspause(0);
     plexit("");
-    return(0);
+    return 0;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_Screenmode()
  *
  * Brings up ReqTools Screenmode requester.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_Screenmode(void)
@@ -212,14 +215,14 @@ plamiga_Screenmode(void)
     else
 	rtEZRequest ("Out of memory!", "Oh boy!", NULL, NULL);
 
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_Palette0()
  *
  * Brings up ReqTools palette requester for setting cmap0.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_Palette0(void)
@@ -227,149 +230,111 @@ plamiga_Palette0(void)
     (void) rtPaletteRequest ("Change Color Map", NULL, RT_LockWindow, 1,
 			     TAG_END); 
 
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_Palette1()
  *
  * Currently unimplemented.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_Palette1(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_LoadConfig()
  *
  * Load configuration.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_LoadConfig(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_SaveConfigAs()
  *
  * Save configuration to specified file.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_SaveConfigAs(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_SaveConfig()
  *
  * Save configuration.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_SaveConfig(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_DUMMY()
  *
  * User menus to go here.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_DUMMY(void)
 {
     rtEZRequest ("Option currently unimplemented.\n", "OK", NULL, NULL);
-    return(1);
+    return 1;
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plamiga_KEY()
  *
  * Keypress handler.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 int
 plamiga_KEY(void)
 {
-    PLKey key;
+    PLGraphicsIn *gin = &(pla->gin);
     int input_char;
 
-/* Defaults */
-
-    input_char = PlplotMsg.Code;
-    key.code = 0;
-    key.string[0] = '\0';
-
-/* Translate keystroke into a PLKey */
-
-    if (isprint(input_char)) {
-	key.string[0] = input_char;
-	key.string[1] = '\0';
-    }
-    else {
-	switch (input_char) {
-	case 0x08:
-	    key.code = PLK_BackSpace;
-	    break;
-
-	case 0x09:
-	    key.code = PLK_Tab;
-	    break;
-
-	case 0x0A:
-	    key.code = PLK_Linefeed;
-	    break;
-
-	case 0x0D:
-	    key.code = PLK_Return;
-	    break;
-
-	case 0x1B:
-	    key.code = PLK_Escape;
-	    break;
-
-	case 0xFF:
-	    key.code = PLK_Delete;
-	    break;
-	}
-    }
-
-#ifdef DEBUG
-    printf("Keycode %x, string: %s\n", key.code, key.string);
-#endif
+    gin->keysym = PlplotMsg.Code;
 
 /* Call user event handler */
 /* Since this is called first, the user can disable all plplot internal
    event handling by setting key.code to 0 and key.string to '\0' */
 
     if (plsc->KeyEH != NULL)
-	(*plsc->KeyEH) (&key, NULL, &pla->exit_eventloop);
+	(*plsc->KeyEH) (gin, plsc->KeyEH_data, &pla->exit_eventloop);
 
-/* Handle internal events */
+/* Remaining internal event handling */
 
-/* Advance to next page (i.e. terminate event loop) on a <eol> */
+    switch (gin->keysym) {
 
-    if (key.code == PLK_Linefeed || key.code == PLK_Return)
+    case PLK_Linefeed:
+    case PLK_Return:
+    /* Advance to next page (i.e. terminate event loop) on a <eol> */
 	pla->exit_eventloop = TRUE;
+	break;
 
-/* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
-
-    if (key.string[0] == 'Q') {
-	plspause(0);
+    case 'Q':
+    /* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
+	plsc->nopause = TRUE;
 	plexit("");
+	break;
     }
-    return(!pla->exit_eventloop);
+
+    return (!pla->exit_eventloop);
 }

@@ -183,7 +183,7 @@ strutil$O:	strutil.f
 sfstubs$O:	sfstubs.f
 sfstubs.f:	sfstubs.fm4 fmacs.m4
 
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
@@ -191,7 +191,7 @@ sfstubs.f:	sfstubs.fm4 fmacs.m4
 # 24-Jul-1994
 #
 # Initializations for building PLplot library.
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 # Compiler flags
 
@@ -215,9 +215,9 @@ everything: libs plrender$E $(TCL_EXE)
 .fm4.f:
 	$(M4) $(M4_FLAGS) $< >$*.f
 
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Amiga-specific files
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 AMIGA_OBJ = \
 	pla_wn.o \
@@ -226,22 +226,19 @@ AMIGA_OBJ = \
 	pla_menu.o \
 	plsupport.o 
 
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Amiga-specific dependencies
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
-pla_pr.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h plamiga.h \
-		pla_pr.c
-pla_iff.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h plamiga.h \
-		pla_iff.c
+pla_pr.o:	plplotP.h plplot.h drivers.h pdf.h plstrm.h plamiga.h pla_pr.c
+pla_iff.o:	plplotP.h plplot.h drivers.h pdf.h plstrm.h plamiga.h pla_iff.c
 pla_menu.o:	plplotP.h plplot.h plamiga.h pla_menu.c
 plsupport.o:	plplotP.h plplot.h plamiga.h plsupport.c
-pla_wn.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h plamiga.h \
-		pla_wn.c
+pla_wn.o:	plplotP.h plplot.h drivers.h pdf.h plstrm.h plamiga.h pla_wn.c
 
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # This builds a SAS/C 6.x global symbol table to speed up compilation.
-# -----------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 plplot.gst:	plplotP.h plplot.h plamiga.h
 	gst unload plplot.gst
@@ -296,6 +293,7 @@ $(PLLIB):	plplot.gst $(CORE_OBJ) $(DRIVERS_OBJ) $(AMIGA_OBJ)
 #	plrender	Metafile viewer
 #	plserver	Renderer for Tk/DP driver 
 #	pltcl		PLplot tcl interpreter
+#	plmodule$(SO)	Dynamically loaded module for PLplot python scripts
 #	pltek		Renderer for tek files
 #	fonts		font generators and font files
 #
@@ -308,8 +306,13 @@ pltek$O:	pltek.c
 	$(CC) $(CC_FLAGS) pltek.c
 
 pltek$E:	pltek$O
-	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@ \
-		$(LDC_LIBS)
+	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@
+
+# This is what the pltek build rule used to be, but it's wrong, b/c
+# pltek doesn't need to link with tk, tcl, X11, etc.  Should make a
+# new macro for libs this thing depends on...
+#	$(LDC) $(LDC_FLAGS) $(STARTUP) pltek$O $(TO) $@ \
+#		$(LDC_LIBS)
 
 plrender$O:	$(PLLIBS) plrender.c
 	$(CC) $(CC_FLAGS) plrender.c
@@ -331,6 +334,12 @@ pltcl$O:	$(PLLIBS) pltcl.c
 pltcl$E:	$(PLLIBS) pltcl$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS)
+
+plmodule$O:	$(PLLIBS) plmodule.c
+	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) -I$(PYTHON_INC_DIR) plmodule.c
+
+plmodule$(SO):	$(PLLIBS) plmodule$O
+	$(LDSHARED) plmodule$O $(PLLIB_LDC) @LIBS@ $(TO) $@
 
 # -----------------------------------------------------------------------
 # Font files.
@@ -355,11 +364,11 @@ $(PLFNT_PATH)plxtnd5.fnt: xtndfont$E pdfutils$O $(FONT_OBJ)
 
 stndfont$E:	$(PLLIBS) stndfont$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) stndfont$O $(FONT_OBJ) \
- 		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 xtndfont$E:	$(PLLIBS) xtndfont$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtndfont$O $(FONT_OBJ) \
- 		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+		$(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 # -----------------------------------------------------------------------
 # $Id$
@@ -388,144 +397,151 @@ CDEMOS= x01c$E x02c$E x03c$E x04c$E x05c$E x06c$E x07c$E x08c$E x09c$E \
 
 cdemos:	$(CDEMOS)
 
-x01c$O:	x01c.c
+x01c$O:	$(CDEMO_HEADERS) x01c.c
 	$(CC) $(CC_FLAGS_DEMOS) x01c.c
 
 x01c$E:	$(PLLIBS) x01c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x01c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x02c$O:	x02c.c
+x02c$O:	$(CDEMO_HEADERS) x02c.c
 	$(CC) $(CC_FLAGS_DEMOS) x02c.c
 
 x02c$E:	$(PLLIBS) x02c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x02c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x03c$O:	x03c.c
+x03c$O:	$(CDEMO_HEADERS) x03c.c
 	$(CC) $(CC_FLAGS_DEMOS) x03c.c
 
 x03c$E:	$(PLLIBS) x03c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x03c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x04c$O:	x04c.c
+x04c$O:	$(CDEMO_HEADERS) x04c.c
 	$(CC) $(CC_FLAGS_DEMOS) x04c.c
 
 x04c$E:	$(PLLIBS) x04c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x04c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x05c$O:	x05c.c
+x05c$O:	$(CDEMO_HEADERS) x05c.c
 	$(CC) $(CC_FLAGS_DEMOS) x05c.c
 
 x05c$E:	$(PLLIBS) x05c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x05c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x06c$O:	x06c.c
+x06c$O:	$(CDEMO_HEADERS) x06c.c
 	$(CC) $(CC_FLAGS_DEMOS) x06c.c
 
 x06c$E:	$(PLLIBS) x06c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x06c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x07c$O:	x07c.c
+x07c$O:	$(CDEMO_HEADERS) x07c.c
 	$(CC) $(CC_FLAGS_DEMOS) x07c.c
 
 x07c$E:	$(PLLIBS) x07c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x07c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x08c$O:	x08c.c
+x08c$O:	$(CDEMO_HEADERS) x08c.c
 	$(CC) $(CC_FLAGS_DEMOS) x08c.c
 
 x08c$E:	$(PLLIBS) x08c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x08c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x09c$O:	x09c.c
+x09c$O:	$(CDEMO_HEADERS) x09c.c
 	$(CC) $(CC_FLAGS_DEMOS) x09c.c
 
 x09c$E:	$(PLLIBS) x09c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x09c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x10c$O:	x10c.c
+x10c$O:	$(CDEMO_HEADERS) x10c.c
 	$(CC) $(CC_FLAGS_DEMOS) x10c.c
 
 x10c$E:	$(PLLIBS) x10c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x10c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x11c$O:	x11c.c
+x11c$O:	$(CDEMO_HEADERS) x11c.c
 	$(CC) $(CC_FLAGS_DEMOS) x11c.c
 
 x11c$E:	$(PLLIBS) x11c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x11c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x12c$O:	x12c.c
+x12c$O:	$(CDEMO_HEADERS) x12c.c
 	$(CC) $(CC_FLAGS_DEMOS) x12c.c
 
 x12c$E:	$(PLLIBS) x12c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x12c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x13c$O:	x13c.c
+x13c$O:	$(CDEMO_HEADERS) x13c.c
 	$(CC) $(CC_FLAGS_DEMOS) x13c.c
 
 x13c$E:	$(PLLIBS) x13c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x13c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x14c$O:	x14c.c
+x14c$O:	$(CDEMO_HEADERS) x14c.c
 	$(CC) $(CC_FLAGS_DEMOS) x14c.c
 
 x14c$E:	$(PLLIBS) x14c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x14c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x15c$O:	x15c.c
+x15c$O:	$(CDEMO_HEADERS) x15c.c
 	$(CC) $(CC_FLAGS_DEMOS) x15c.c
 
 x15c$E:	$(PLLIBS) x15c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x15c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x16c$O:	x16c.c
+x16c$O:	$(CDEMO_HEADERS) x16c.c
 	$(CC) $(CC_FLAGS_DEMOS) x16c.c
 
 x16c$E:	$(PLLIBS) x16c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x16c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x17c$O:	x17c.c
+x17c$O:	$(CDEMO_HEADERS) x17c.c
 	$(CC) $(CC_FLAGS_DEMOS) x17c.c
 
 x17c$E:	$(PLLIBS) x17c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x17c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x18c$O:	x18c.c
+x18c$O:	$(CDEMO_HEADERS) x18c.c
 	$(CC) $(CC_FLAGS_DEMOS) x18c.c
 
 x18c$E:	$(PLLIBS) x18c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x18c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-x19c$O:	x19c.c
+x19c$O:	$(CDEMO_HEADERS) x19c.c
 	$(CC) $(CC_FLAGS_DEMOS) x19c.c
 
 x19c$E:	$(PLLIBS) x19c$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) x19c$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
-tutor$O:	tutor.c
+tutor$O:	$(CDEMO_HEADERS) tutor.c
 	$(CC) $(CC_FLAGS_DEMOS) tutor.c
 
 tutor$E:	$(PLLIBS) tutor$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) tutor$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+bugc$O:	$(CDEMO_HEADERS) bugc.c
+	$(CC) $(CC_FLAGS_DEMOS) bugc.c
+
+bugc$E:	$(PLLIBS) bugc$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) bugc$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
 # -----------------------------------------------------------------------
@@ -537,118 +553,151 @@ FDEMOS= x01f$E x02f$E x03f$E x04f$E x05f$E x06f$E x07f$E x08f$E x09f$E \
 fdemos:	$(FDEMOS)
 
 x01f$O:	x01f.f
-	$(F77) $(LDF_FLAGS) x01f.f
+	$(F77) $(F77_FLAGS) x01f.f
 
 x01f$E:	$(PLLIBS) x01f$O
 	$(LDF) $(LDF_FLAGS) x01f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x02f$O:	x02f.f
-	$(F77) $(LDF_FLAGS) x02f.f
+	$(F77) $(F77_FLAGS) x02f.f
 
 x02f$E:	$(PLLIBS) x02f$O
 	$(LDF) $(LDF_FLAGS) x02f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x03f$O:	x03f.f
-	$(F77) $(LDF_FLAGS) x03f.f
+	$(F77) $(F77_FLAGS) x03f.f
 
 x03f$E:	$(PLLIBS) x03f$O
 	$(LDF) $(LDF_FLAGS) x03f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x04f$O:	x04f.f
-	$(F77) $(LDF_FLAGS) x04f.f
+	$(F77) $(F77_FLAGS) x04f.f
 
 x04f$E:	$(PLLIBS) x04f$O
 	$(LDF) $(LDF_FLAGS) x04f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x05f$O:	x05f.f
-	$(F77) $(LDF_FLAGS) x05f.f
+	$(F77) $(F77_FLAGS) x05f.f
 
 x05f$E:	$(PLLIBS) x05f$O
 	$(LDF) $(LDF_FLAGS) x05f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x06f$O:	x06f.f
-	$(F77) $(LDF_FLAGS) x06f.f
+	$(F77) $(F77_FLAGS) x06f.f
 
 x06f$E:	$(PLLIBS) x06f$O
 	$(LDF) $(LDF_FLAGS) x06f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x07f$O:	x07f.f
-	$(F77) $(LDF_FLAGS) x07f.f
+	$(F77) $(F77_FLAGS) x07f.f
 
 x07f$E:	$(PLLIBS) x07f$O
 	$(LDF) $(LDF_FLAGS) x07f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x08f$O:	x08f.f
-	$(F77) $(LDF_FLAGS) x08f.f
+	$(F77) $(F77_FLAGS) x08f.f
 
 x08f$E:	$(PLLIBS) x08f$O
 	$(LDF) $(LDF_FLAGS) x08f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x09f$O:	x09f.f
-	$(F77) $(LDF_FLAGS) x09f.f
+	$(F77) $(F77_FLAGS) x09f.f
 
 x09f$E:	$(PLLIBS) x09f$O
 	$(LDF) $(LDF_FLAGS) x09f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x10f$O:	x10f.f
-	$(F77) $(LDF_FLAGS) x10f.f
+	$(F77) $(F77_FLAGS) x10f.f
 
 x10f$E:	$(PLLIBS) x10f$O
 	$(LDF) $(LDF_FLAGS) x10f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x11f$O:	x11f.f
-	$(F77) $(LDF_FLAGS) x11f.f
+	$(F77) $(F77_FLAGS) x11f.f
 
 x11f$E:	$(PLLIBS) x11f$O
 	$(LDF) $(LDF_FLAGS) x11f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x12f$O:	x12f.f
-	$(F77) $(LDF_FLAGS) x12f.f
+	$(F77) $(F77_FLAGS) x12f.f
 
 x12f$E:	$(PLLIBS) x12f$O
 	$(LDF) $(LDF_FLAGS) x12f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x13f$O:	x13f.f
-	$(F77) $(LDF_FLAGS) x13f.f
+	$(F77) $(F77_FLAGS) x13f.f
 
 x13f$E:	$(PLLIBS) x13f$O
 	$(LDF) $(LDF_FLAGS) x13f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
 x16f$O:	x16f.f
-	$(F77) $(LDF_FLAGS) x16f.f
+	$(F77) $(F77_FLAGS) x16f.f
 
 x16f$E:	$(PLLIBS) x16f$O
 	$(LDF) $(LDF_FLAGS) x16f$O \
 	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
 
+bugf$O:	bugf.f
+	$(F77) $(F77_FLAGS) bugf.f
+
+bugf$E:	$(PLLIBS) bugf$O
+	$(LDF) $(LDF_FLAGS) bugf$O \
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+
 # -----------------------------------------------------------------------
 # TK example programs.
 
-TKDEMOS = xtk01$E xtk02$E
+TKDEMOS = xtk01$E xtk02$E xtk04$E
 
 tkdemos: $(TKDEMOS)
+
+xtk01$O:	$(CDEMO_HEADERS) xtk01.c
+	$(CC) $(CC_FLAGS_DEMOS) xtk01.c
 
 xtk01$E:  $(PLLIBS) xtk01$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk01$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
+xtk02$O:	$(CDEMO_HEADERS) xtk02.c
+	$(CC) $(CC_FLAGS_DEMOS) xtk02.c
+
 xtk02$E:  $(PLLIBS) xtk02$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk02$O \
 	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
 
+xtk04$O:	$(CDEMO_HEADERS) xtk04.c
+	$(CC) $(CC_FLAGS_DEMOS) xtk04.c
+
+xtk04$E:  $(PLLIBS) xtk04$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) xtk04$O \
+	       $(PLLIB_LDC) $(TO) $@ $(LDC_LIBS)
+
+# -----------------------------------------------------------------------
+# C++ example programs.
+
+CXXDEMOS = x01cc$E
+
+cxxdemos: $(CXXDEMOS)
+
+x01cc$O: x01cc.cc
+	$(CXX) $(CXX_FLAGS_DEMOS) x01cc.cc	
+
+x01cc$E:  $(PLLIBS) x01cc$O
+	$(LDCXX) $(LDCXX_FLAGS) $(STARTUP) x01cc$O \
+	       	$(PLLIB_LDC) $(TO) $@ $(LDCXX_LIBS)
 # -----------------------------------------------------------------------
 # $Id$
 #
@@ -719,60 +768,72 @@ clean:
 # -----------------------------------------------------------------------
 # Auto-generated dependency list follows (warning: it's ugly).
 
-sc3d$O : sc3d.c plstubs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-sccont$O : sccont.c plstubs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-scstubs$O : scstubs.c plstubs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-tclAPI$O : tclAPI.c plplotP.h plConfig.h plplot.h pdf.h plstream.h pltcl.h tclMatrix.h 
-tclMain$O : tclMain.c 
-tclMatrix$O : tclMatrix.c tclMatrix.h 
-tk$O : tk.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h plplotTK.h \
-  plplotX.h pltcl.h tclMatrix.h drivers.h metadefs.h plevent.h 
-tkshell$O : tkshell.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
-  pltcl.h tclMatrix.h plplotTK.h plDevs.h 
-tcpip$O : tcpip.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plframe$O : plframe.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
-  pltcl.h tclMatrix.h plplotTK.h plDevs.h plplotX.h 
-tkMain$O : tkMain.c 
-plr$O : plr.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h pltcl.h \
-  tclMatrix.h plplotTK.h plDevs.h plevent.h metadefs.h 
-pdfutils$O : pdfutils.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plargs$O : plargs.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plbox$O : plbox.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plcont$O : plcont.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plcore$O : plcore.c plcore.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
-  drivers.h plDevs.h 
-plctrl$O : plctrl.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plcvt$O : plcvt.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-pldtik$O : pldtik.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plfill$O : plfill.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plhist$O : plhist.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plline$O : plline.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plot3d$O : plot3d.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plpage$O : plpage.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plsdef$O : plsdef.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plshade$O : plshade.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plsym$O : plsym.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-pltick$O : pltick.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plvpor$O : plvpor.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-plwind$O : plwind.c plplotP.h plConfig.h plplot.h pdf.h plstream.h 
-dg300$O : dg300.c plDevs.h 
-hpgl$O : hpgl.c plDevs.h 
-impress$O : impress.c plDevs.h 
-ljiip$O : ljiip.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
-ljii$O : ljii.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
-next$O : next.c plDevs.h 
-null$O : null.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
-plbuf$O : plbuf.c plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h metadefs.h 
-plmeta$O : plmeta.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
-  drivers.h metadefs.h 
-ps$O : ps.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
-tek$O : tek.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h \
-  plevent.h 
-xfig$O : xfig.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h drivers.h 
-xwin$O : xwin.c plDevs.h plplotP.h plConfig.h plplot.h pdf.h plstream.h plplotX.h \
-  drivers.h plevent.h 
-plrender$O : plrender.c plplotP.h plConfig.h plplot.h pdf.h plstream.h plevent.h \
-  metadefs.h 
-plserver$O : plserver.c plserver.h plplotP.h plConfig.h plplot.h pdf.h plstream.h \
-  pltcl.h tclMatrix.h plplotTK.h plDevs.h 
-pltcl$O : pltcl.c plplotP.h plConfig.h plplot.h pdf.h plstream.h pltcl.h tclMatrix.h 
+pdfutils$O: pdfutils.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plargs$O: plargs.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plbox$O: plbox.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plcont$O: plcont.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plcore$O: plcore.c plcore.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h \
+  drivers.h plDevs.h pldebug.h
+plctrl$O: plctrl.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plcvt$O: plcvt.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+pldtik$O: pldtik.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plfill$O: plfill.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plhist$O: plhist.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plline$O: plline.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plmap$O: plmap.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plot3d$O: plot3d.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plpage$O: plpage.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plsdef$O: plsdef.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plshade$O: plshade.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plsym$O: plsym.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+pltick$O: pltick.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plvpor$O: plvpor.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+plwind$O: plwind.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+dg300$O: dg300.c plDevs.h
+hpgl$O: hpgl.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+impress$O: impress.c plDevs.h
+ljiip$O: ljiip.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+ljii$O: ljii.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+next$O: next.c plDevs.h
+null$O: null.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+plbuf$O: plbuf.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h drivers.h \
+  metadefs.h
+plmeta$O: plmeta.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h \
+  pldebug.h drivers.h metadefs.h
+ps$O: ps.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+tek$O: tek.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h plevent.h
+xfig$O: xfig.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  drivers.h
+xwin$O: xwin.c plDevs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  plxwd.h drivers.h plevent.h
+plrender$O: plrender.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  plevent.h metadefs.h
+plserver$O: plserver.c plserver.h plDevs.h pltkd.h plplotP.h plConfig.h plplot.h \
+  plstrm.h pdf.h pldebug.h pltk.h pltcl.h tclMatrix.h
+pltcl$O: pltcl.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h pltcl.h \
+  tclMatrix.h
+sc3d$O: sc3d.c plstubs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h
+sccont$O: sccont.c plstubs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h \
+  pldebug.h
+scstubs$O: scstubs.c plstubs.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h \
+  pldebug.h
+tclAPI$O: tclAPI.c plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h pltcl.h \
+  tclMatrix.h
+tclMain$O: tclMain.c
+tclMatrix$O: tclMatrix.c tclMatrix.h
+tk$O: tk.c plDevs.h pltkd.h plplotP.h plConfig.h plplot.h plstrm.h pdf.h pldebug.h \
+  pltk.h pltcl.h tclMatrix.h plxwd.h tcpip.h drivers.h metadefs.h plevent.h
+tkshell$O: tkshell.c plserver.h plDevs.h pltkd.h plplotP.h plConfig.h plplot.h \
+  plstrm.h pdf.h pldebug.h pltk.h pltcl.h tclMatrix.h
+tcpip$O: tcpip.c plDevs.h plConfig.h tcpip.h pdf.h
+plframe$O: plframe.c plserver.h plDevs.h pltkd.h plplotP.h plConfig.h plplot.h \
+  plstrm.h pdf.h pldebug.h pltk.h pltcl.h tclMatrix.h plxwd.h tcpip.h
+tkMain$O: tkMain.c
+plr$O: plr.c plserver.h plDevs.h pltkd.h plplotP.h plConfig.h plplot.h plstrm.h \
+  pdf.h pldebug.h pltk.h pltcl.h tclMatrix.h plevent.h metadefs.h
