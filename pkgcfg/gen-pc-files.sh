@@ -11,7 +11,7 @@ MASTER=plplot-master-pc
 for f in $FILE_INFO ; do
     pcext=`echo $f | cut -d: -f1`
     name=`echo $f | cut -d: -f2`
-    desc=`echo $f | cut -d: -f3 | sed "s/_/ /g`
+    desc=`echo $f | cut -d: -f3 | sed "s/_/ /g"`
     lib=`echo $f | cut -d: -f4`
     sed "s:#NAME#:PLplot $name:" < $MASTER \
         | sed "s:#DESC#:Scientific plotting library (${desc}single precision):" \
