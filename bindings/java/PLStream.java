@@ -32,7 +32,12 @@ public class PLStream {
     public native void env( float xmin, float xmax, float ymin, float ymax,
                             int just, int axis );
     public native void fontld( int fnt );
+    public native int gstrm();
     public native void init();
+
+    public native void join( float x1, float y1, float x2, float y2 );
+    public native void join( double x1, double y1, double x2, double y2 );
+
     public native void lab( String xlabel, String ylabel, String tlabel );
     public native void line( int n, float[] x, float[] y );
     public native void poin( int n, float[] x, float[] y, int code );
@@ -46,10 +51,13 @@ public class PLStream {
         System.loadLibrary( "plplot" );
     }
 
+// Class data.
+    int stream_id;
+
 // Now comes stuff we need done in Java.
     public PLStream() {}
 
-    public void xyz() { System.out.println( "In xyz()" ); }
+    public int get_stream_id() { return stream_id; }
 }
 
 //---------------------------------------------------------------------------//
