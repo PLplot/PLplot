@@ -112,7 +112,7 @@ class x09 {
 
 
     // Plot using scaled identity transform used to create xg0 and yg0
-	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+/*	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
         pls.plcont( z, 1, XPTS, 1, YPTS, clevel, xg0, yg0 );
@@ -122,7 +122,7 @@ class x09 {
 	pls.plstyl(mark0, space0);
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+*/
 	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
@@ -133,9 +133,9 @@ class x09 {
 	pls.plstyl(mark0, space0);
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
+	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 
     // Plot using 1d coordinate transform
-	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
         pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
@@ -146,7 +146,7 @@ class x09 {
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+/*	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
         pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg1, yg1 );
@@ -156,9 +156,9 @@ class x09 {
 	pls.plstyl(mark0, space0);
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-
+	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+*/
     // Plot using 2d coordinate transform
-	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
         pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
@@ -169,7 +169,7 @@ class x09 {
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
-	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+/*	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	pls.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
 	pls.plcol0(2);
         pls.plcont(z, 1, XPTS, 1, YPTS, clevel, xg2, yg2 );
@@ -179,17 +179,18 @@ class x09 {
 	pls.plstyl(mark0, space0);
 	pls.plcol0(1);
 	pls.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-    
         pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+*/
 	polar();
-        pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
+/*        pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	polar();
-
 	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+*/
+        potential();
+/*        pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
 	potential();
-        pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 1);
-	potential();
-
+	pls.pl_setcontlabelparam(0.006, 0.3, 0.1, 0);
+*/
 	pls.plend();
     }
 
