@@ -279,6 +279,45 @@ public class PLStream {
 // void
 // c_plsfnam(const char *fnam);
 
+/* Shade region. */
+
+// multi region shade
+    public native void shades( float[][] a,
+			       float left, float right, float bottom, float top,
+			       float[] clevel, float fill_width,
+			       float cont_color, float cont_width,
+			       int rect );
+    public native void shades( double[][] a,
+			       double left, double right, double bottom, double top,
+			       double[] clevel, double fill_width,
+			       double cont_color, double cont_width,
+			       int rect );
+    
+// pltr1
+    public native void shades( float[][] a,
+			       float left, float right, float bottom, float top,
+			       float[] clevel, float fill_width,
+			       float cont_color, float cont_width,
+			       int rect, float[] xg, float[] yg, int wrap );
+    public native void shades( double[][] a,
+			       double left, double right, double bottom, double top,
+			       double[] clevel, double fill_width,
+			       double cont_color, double cont_width,
+			       int rect, double[] xg, double[] yg, int wrap );
+
+// pltr2
+    public native void shades( float[][] a,
+			       float left, float right, float bottom, float top,
+			       float[] clevel, float fill_width,
+			       float cont_color, float cont_width,
+			       int rect, float[][] xg, float[][] yg, int wrap );
+    public native void shades( double[][] a,
+			       double left, double right, double bottom, double top,
+			       double[] clevel, double fill_width,
+			       double cont_color, double cont_width,
+			       int rect, double[][] xg, double[][] yg, int wrap );
+
+// single region shade
     public native void shade( float[][] a,
                               float left, float right, float bottom, float top,
                               float shade_min, float shade_max,
