@@ -1,140 +1,98 @@
 This document is a quick overview of building and configuring drivers from
 the perspective of what system files have to be modified.  (For actual details
 about how to construct a new device driver read the source for some of
-the drivers in this directory.  Also, there are several useful sections in
+the drivers in plplot/drivers.  Also, there are several useful sections in
 the DocBook documentation [see, for example, "Output Devices" and "Driver
 Functions" in Chapter 3] that you should look at.)
 
-Here is the list of PLplot system files, and how they must be modified.  The
-examples here are taken from what was done for the gd driver (with png and
-jpeg devices) and the cgm driver (with cgm device).
+The following is the list of PLplot system files that must be modified if
+you are creating a new PLplot driver:
 
-(1) ../include/drivers.h
+plplot/configure.ac
+plplot/sysloc.in
+plplot/include/plDevs.h.in
+plplot/drivers/Makefile.am
+plplot/include/drivers.h
+plplot/include/plcore.h
+plplot/drivers/*.c
 
-   Put a line such as void plD_dispatch_init_cgm ( PLDispatchTable *pdt );
-   in this file.  The cgm device and driver name are identical for this
-   case. When the two names are different (e.g., png and jpeg are the devices
-   implemented by the gd driver), use the device name here.
+where plplot is the top-level directory for the plplot software tree that is
+created when you unpacked the tarball (or used cvs checkout).
 
-   The point of plD_dispatch_init_??? is to initialize the driver dispatch
-   table with the data it needs to know.  Here is an example from cgm.c
+Do not change anything in the plplot/cf directory if it even exists.  That
+is only being kept around (in cvs, but not in release tarballs) for
+historical reference and is completely ignored now for all builds.
 
-void plD_dispatch_init_cgm( PLDispatchTable *pdt )
-{
-    pdt->pl_MenuStr  = "CGM (Computer Graphics metafile) file";
-    pdt->pl_DevName  = "cgm";
-    pdt->pl_type     = plDevType_FileOriented;
-    pdt->pl_seq      = 44;
-    pdt->pl_init     = (plD_init_fp)     plD_init_cgm;
-    pdt->pl_line     = (plD_line_fp)     plD_line_cgm;
-    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_cgm;
-    pdt->pl_eop      = (plD_eop_fp)      plD_eop_cgm;
-    pdt->pl_bop      = (plD_bop_fp)      plD_bop_cgm;
-    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_cgm;
-    pdt->pl_state    = (plD_state_fp)    plD_state_cgm;
-    pdt->pl_esc      = (plD_esc_fp)      plD_esc_cgm;
-}
+Some short notes follow on what is done for the individual files mentioned
+above. Basically, you should be okay if you just try to follow what is done
+for the gd.c driver, the associated png and jpeg devices, and any additional
+headers or libraries you might require for your driver.  (libgd, libjpeg,
+libpng, and libz are required for the gd driver to work).
 
-The declarations for the plD_*_cgm routines occur right before this
-function, and the definitions of these routines afterwards.
+* plplot/sysloc.in and plplot/configure.ac
 
-(2) ../include/plcore.h
+Locate system resources used by drivers.  If you look for gd, png, and jpeg
+in these files, you will see logic for finding and testing the required
+system headers and include libraries, enabling or disabling the jpeg and png
+devices associated with the gd driver, and ultimately forming GDINCCMD and
+GDLIBCMD which summarizes this information.
 
-   Append lines similar to the following into the static_device_initializers
-   definition part of this file.
+* plplot/include/plDevs.h.in
 
-#if defined(PLD_cgm) && !defined(ENABLE_DYNDRIVERS)
-    plD_dispatch_init_cgm,
-#endif
-
-(3) ../cf/configure.in
-
-   The general idea here is to pick a driver with devices already represented
-   in configure.in and copy the form for your new driver.
-
-   To be specific, put lines similar to the following in this file.
-   
-(Default settings for devices [not drivers])
-enable_jpeg=yes
-enable_png=yes
-enable_cgm=yes
-
-(Default PL_DRIVER_LIST, actually this is a misnomer should be PL_DEVICE_LIST)
-add the device(s) (e.g., jpeg and png for gd.c) for your 
-driver to this static list.
-
-(Default PL_DYNAMIC_DRIVER_LIST, actually this is a misnomer should be 
-PL_DYNAMIC_DEVICE_LIST)
-add the device(s) (e.g., jpeg and png for gd.c) for your 
-driver to this dynamic list.
-
-(Add device driver pairs to PL_device_driver_pair_list, e.g.,
-
-png:gd jpeg:gd
-
-Add a definition for plD_DEVICE_INFO_<file> in the driver source <file>.c:
-
-/* Device info */
-char* plD_DEVICE_INFO_gd = "jpeg:JPEG file:0:gd:40:jpeg\n"
-                           "png:PNG file:0:gd:39:png";
-
-If more than one device is provided in <file>.c, their entries should be
-separated by "\n".  Notice that the last entry has no leading "\n".
-
-Note these entries give the definitive sequence numbers that define the
-order of the drivers presented to the user.  Care should be used to insure
-the sequence numbers are the same in drivers/*.c.  (Confirmed 2002/01/18)
-so there is a uniform look regardless of whether the drivers are statically
-or dynamically loaded.
-
-This is the comment that was in configure.ac and has been deleted (R.
-Laboissiere on 2003-02-04):
-
-    # Now add a line for each supported loadable device.  Format is:
-    #     device name : description : type : driver name : device number: symbol tag
-    #
-    # (type=1 if interactive, 0 if file-oriented, -1 for other).
-    #
-    # Note the device name that appears first in the db line is not
-    # necessarily the same as the device name in the DYNAMIC_DEVICES (or
-    # DEVICES) list!  Rather, it's the name that appears in the old dispatch
-    # table entry (cf. tekt vs tek4010).  Oh well..
-
-
-(3) ../cf/dyndrv.in
-
-This is a fragment of the Makefile that deals with linking dynamic drivers.
-The gd lines are
-
-drivers/gd.drv : shared/gd$O
-        $(SHLIB_BUILD) $@ $< @GDLIBS@ $(driverlibs)
-	
-where GDLIBS is the configured (see sysloc.in discussion below) library link
-string required for the special library used by the gd driver.  (Note cgm
-has a similar special library requirement.)
-
-(4) ../cf/objs.in
-
-This file has the automatically generated dependencies (including those
-for gd.o and cgm.o) that are created by cd tmp; make depend
-
-(5) ../cf/plDevs.h.in
+The entries in this file for the png and jpeg devices associated with the gd
+driver are
 
 #undef PLD_png
 #undef PLD_jpeg
-#undef PLD_cgm
 
-These are turned into defines for plDevs.h by the configuration process and
-setting enable_jpeg=yes, etc., above in configure.in.
+These entries inform the configure script to store the actual configured
+results
 
-(6) ../cf/plplot-test.sh.in
+#define PLD_png 
+#define PLD_jpeg 
 
-jpeg, png, and cgm appear in this configuration file for plplot-test.sh so
-that these drivers can be used for automatic generation and testing of
-non-interactive examples for various front ends.
+(say) in the created file plplot/include/plDevs.h.
 
-(7) ../cf/sysloc.in
+In turn, the information in this header is used in drivers/gd.c to decide
+which of the associated devices to compile.
 
-This file has scripts to find system libraries and headers.  In particular
-the cgm section is programmed to find the special library and header needed
-by that driver, and similarly for gd.
+* plplot/drivers/Makefile.am
+
+This file tells automake and libtool how to build the various drivers, what
+libraries must be linked to them, etc., for the two cases of
+--enable-dyndrivers (where the drivers are built as loadable modules [i.e.,
+plug-ins or DLL's]) and --disable-dyndrivers (where the drivers are built
+and stored in a libtool convenience library which eventually becomes part of
+libplplot).  For the gd driver look for all references to gd.  You will see
+references to GDINCCMD and GDLIBCMD that are set up with sysloc.in and
+configure.ac above.
+
+* plplot/include/drivers.h
+
+This file contains prototype definitions that occur in drivers/*.c.  For the
+gd driver, these prototypes are
+
+void plD_dispatch_init_jpeg	( PLDispatchTable *pdt );
+void plD_dispatch_init_png	( PLDispatchTable *pdt );
+
+The point of plD_dispatch_init_??? is to initialize the driver dispatch
+table with the data it needs to know.  Look for void plD_dispatch_init_jpeg
+and void plD_dispatch_init_png in drivers/gd.c.
+
+* plplot/include/plcore.h
+
+This file contains a definition of the table static_device_initializers.  In
+the jpeg and png case the relevant lines are 
+
+#if defined(PLD_png) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_png,
+#endif
+#if defined(PLD_jpeg) && !defined(ENABLE_DYNDRIVERS)
+    plD_dispatch_init_jpeg,
+endif
+
+* plplot/drivers/*.c
+
+This is where the core of the driver software is defined.  plplot/drivers/gd.c
+contains the software defining the gd driver with the associated png and jpeg 
+devices.
