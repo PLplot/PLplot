@@ -32,17 +32,19 @@ ifeq ($(shell if test "$(arch)" = hppa -o "$(arch)" = powerpc ; then \
               fi), no)
 octave_cfg := --enable-octave
 octave_pkg := octave-plplot
-octave_mvf :=
+octave_xcl :=
 else
 octave_cfg := --disable-octave
 octave_pkg :=
-octave_mvf := --no-package=octave-plplot
+octave_xcl := --no-package=octave-plplot
 endif
 
-autotools:
+autotools: autotools-stamp
+autotools-stamp:
 	-rm -f config.sub config.guess
 	ln -s /usr/share/misc/config.sub config.sub
 	ln -s /usr/share/misc/config.guess config.guess
+	touch autotools-stamp
 
 config: config-stamp
 config-stamp: autotools
@@ -75,7 +77,8 @@ build-stamp: config
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp install-stamp config-stamp debian/files
+	rm -f build-stamp install-stamp config-stamp autotools-stamp \
+              debian/files
 	-$(MAKE) distclean
 	rm -f config.sub config.guess
 	find . -name config.log -o -name config.status | xargs rm -f
@@ -100,7 +103,7 @@ install-stamp: build-stamp
 	  ln -s libplplot5 $(debdoc)/$$i ; \
 	done
 
-	dh_movefiles -a --no-package=libplplot5 $(octave_mvf)
+	dh_movefiles -a --no-package=libplplot5 $(octave_xcl)
 	dh_movefiles -i --no-package=libplplot-dev
 	dh_movefiles --package=libplplot-dev
 	dh_movefiles --package=libplplot5
@@ -136,9 +139,9 @@ binary-arch: build install
 	  -l $(debbase)/libplplot5/usr/lib:$(debbase)/plplot-tcl/usr/lib
 	dh_installdeb -a
 	dh_shlibdeps -a -l$(debbase)/plplot-tcl/usr/lib
-	dh_gencontrol -a
+	dh_gencontrol -a $(octave_xcl)
 	dh_md5sums -a
-	dh_builddeb -a
+	dh_builddeb -a $(octave_xcl)
 
 source diff:
 	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false

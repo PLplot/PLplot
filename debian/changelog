@@ -1,3 +1,10 @@
+plplot (5.2.1-6) unstable; urgency=low
+
+  * debian/rules: Added conditional exclusion of the octave-plplot package
+    to the dh_gencontrol and dh_builddeb commands.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue,  6 May 2003 21:29:56 +0200
+
 plplot (5.2.1-5) unstable; urgency=low
 
   * debian/rules: Added variable octave_mvf to control exclusion of
