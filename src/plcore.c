@@ -1,17 +1,24 @@
 /* $Id$
    $Log$
-   Revision 1.11  1993/07/01 22:25:16  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".  Moved functions plend() and plend1()
-   to here.  Added driver interface layer -- sits between the plplot library
-   calls and the driver to filter the data in various ways, such as to support
-   zooms, page margins, orientation changes, etc.  Changed line and polyline
-   draw functions to go through this layer.  Changed all references to the
-   current plplot stream to be through "plsc", which is set to the location of
-   the current stream (now dynamically allocated).  A table of stream pointers
-   (max of 100) is kept to allow switching between streams as before.
+   Revision 1.12  1993/07/16 22:35:05  mjl
+   Addition of driver interface function for converting between device
+   coordinate systems, functions for retrieving current driver interface
+   parameters.  Also added functions for creating a new stream, copying
+   an existing stream, replaying the current plot, returning a list of
+   file-oriented devices.
 
+ * Revision 1.11  1993/07/01  22:25:16  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".  Moved functions plend() and plend1()
+ * to here.  Added driver interface layer -- sits between the plplot library
+ * calls and the driver to filter the data in various ways, such as to support
+ * zooms, page margins, orientation changes, etc.  Changed line and polyline
+ * draw functions to go through this layer.  Changed all references to the
+ * current plplot stream to be through "plsc", which is set to the location of
+ * the current stream (now dynamically allocated).  A table of stream pointers
+ * (max of 100) is kept to allow switching between streams as before.
+ *
  * Revision 1.10  1993/04/26  19:57:58  mjl
  * Fixes to allow (once again) output to stdout and plrender to function as
  * a filter.  A type flag was added to handle file vs stream differences.
@@ -103,18 +110,6 @@
 
 #include "plcore.h"
 
-/* Local data */
-
-static PLINT xscl[PL_MAXPOLYLINE], yscl[PL_MAXPOLYLINE];
-static PLINT xscl1[PL_MAXPOLYLINE], yscl1[PL_MAXPOLYLINE];
-
-/* Static function prototypes */
-
-static void	plGetDev	(void);
-static void	grline		(short *, short *, PLINT);
-static void	grpolyline	(short *, short *, PLINT);
-static void	difilt		(PLINT *, PLINT *, PLINT,
-				 PLINT *, PLINT *, PLINT *, PLINT *);
 /*----------------------------------------------------------------------*\
 * PLPLOT-Driver interface.
 *
@@ -152,7 +147,9 @@ plP_init(void)
 {
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_init) (plsc);
-    plbuf_init(plsc);
+
+    if (plsc->plbuf_write)
+	plbuf_init(plsc);
 }
 
 /* End of page (used to be "clear screen"). */
@@ -161,7 +158,9 @@ plP_init(void)
 void
 plP_clr(void)
 {
-    plbuf_eop(plsc);
+    if (plsc->plbuf_write)
+	plbuf_eop(plsc);
+
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_eop) (plsc);
 }
@@ -174,7 +173,9 @@ plP_page(void)
 {
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_bop) (plsc);
-    plbuf_bop(plsc);
+
+    if (plsc->plbuf_write)
+	plbuf_bop(plsc);
 }
 
 /* Tidy up device (flush buffers, close file, etc.) */
@@ -184,7 +185,9 @@ plP_tidy(void)
 {
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_tidy) (plsc);
-    plbuf_tidy(plsc);
+
+    if (plsc->plbuf_write)
+	plbuf_tidy(plsc);
 }
 
 /* Change pen color. */
@@ -194,7 +197,9 @@ plP_col(void)
 {
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_color) (plsc);
-    plbuf_color(plsc);
+
+    if (plsc->plbuf_write)
+	plbuf_color(plsc);
 }
 
 /* Switch to text mode (or screen). */
@@ -204,7 +209,9 @@ plP_text(void)
 {
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_text) (plsc);
-    plbuf_text(plsc);
+
+    if (plsc->plbuf_write)
+	plbuf_text(plsc);
 }
 
 /* Switch to graphics mode (or screen). */
@@ -214,7 +221,9 @@ plP_gra(void)
 {
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_graph) (plsc);
-    plbuf_graph(plsc);
+
+    if (plsc->plbuf_write)
+	plbuf_graph(plsc);
 }
 
 /* Set pen width. */
@@ -224,7 +233,9 @@ plP_wid(void)
 {
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_width) (plsc);
-    plbuf_width(plsc);
+
+    if (plsc->plbuf_write)
+	plbuf_width(plsc);
 }
 
 /* Escape function, for driver-specific commands. */
@@ -234,7 +245,9 @@ plP_esc(PLINT op, void *ptr)
 {
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_esc) (plsc, op, ptr);
-    plbuf_esc(plsc, op, ptr);
+
+    if (plsc->plbuf_write)
+	plbuf_esc(plsc, op, ptr);
 }
 
 /*----------------------------------------------------------------------*\
@@ -242,16 +255,17 @@ plP_esc(PLINT op, void *ptr)
 \*----------------------------------------------------------------------*/
 
 /* Draw line between two points */
-/* The plot buffer must be called first */
+/* The plot buffer must be called first so it gets the unfiltered data */
 
 void
 plP_line(short *x, short *y)
 {
-    PLINT npts = 2;
-    PLINT i, clpxmi, clpxma, clpymi, clpyma;
+    PLINT i, npts = 2, clpxmi, clpxma, clpymi, clpyma;
 
-    plbuf_line(plsc, x[0], y[0], x[1], y[1]);
-    if (plsc->diplt | plsc->didev | plsc->diori) {
+    if (plsc->plbuf_write)
+	plbuf_line(plsc, x[0], y[0], x[1], y[1]);
+
+    if (plsc->difilt) {
 	for (i = 0; i < npts; i++) {
 	    xscl[i] = x[i];
 	    yscl[i] = y[i];
@@ -272,8 +286,10 @@ plP_polyline(short *x, short *y, PLINT npts)
 {
     PLINT i, clpxmi, clpxma, clpymi, clpyma;
 
-    plbuf_polyline(plsc, x, y, npts);
-    if (plsc->diplt | plsc->didev | plsc->diori) {
+    if (plsc->plbuf_write)
+	plbuf_polyline(plsc, x, y, npts);
+
+    if (plsc->difilt) {
 	for (i = 0; i < npts; i++) {
 	    xscl[i] = x[i];
 	    yscl[i] = y[i];
@@ -302,7 +318,23 @@ grpolyline(short *x, short *y, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* Driver interface filters and initialization functions.
+* void difilt
+*
+* Driver interface filter -- passes all coordinates through a variety
+* of filters.  These include filters to change :
+*
+*	- mapping of meta to physical coordinates
+*	- plot orientation
+*	- window into plot (zooms)
+*	- window into device (i.e set margins)
+*
+* The filters are applied in the order specified above.  Because the
+* orientation change comes first, subsequent window specifications affect
+* the new coordinates (i.e. after a 90 degree flip, what was x is now y).
+* This is the only way that makes sense from a graphical interface
+* (e.g. TCL/TK driver).
+*
+* Where appropriate, the page clip limits are modified.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -310,22 +342,19 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
        PLINT *clpxmi, PLINT *clpxma, PLINT *clpymi, PLINT *clpyma)
 {
     PLINT i;
-    PLINT clpxmi1, clpxma1, clpymi1, clpyma1;
 
-    clpxmi1 = plsc->phyxmi;
-    clpxma1 = plsc->phyxma;
-    clpymi1 = plsc->phyymi;
-    clpyma1 = plsc->phyyma;
+/* Map meta coordinates to physical coordinates */
 
-    if (plsc->diplt) {
+    if (plsc->difilt & PLDI_MAP) {
 	for (i = 0; i < npts; i++) {
-	    xscl[i] = plsc->dipxax * xscl[i] + plsc->dipxb;
-	    yscl[i] = plsc->dipyay * yscl[i] + plsc->dipyb;
+	    xscl[i] = plsc->dimxax * xscl[i] + plsc->dimxb;
+	    yscl[i] = plsc->dimyay * yscl[i] + plsc->dimyb;
 	}
     }
 
-    if (plsc->diori) {
+/* Change orientation */
 
+    if (plsc->difilt & PLDI_ORI) {
 	for (i = 0; i < npts; i++) {
 	    xscl1[i] = plsc->dioxax * xscl[i] + plsc->dioxay * yscl[i] +
 		plsc->dioxb;
@@ -338,26 +367,41 @@ difilt(PLINT *xscl, PLINT *yscl, PLINT npts,
 	}
     }
 
-    if (plsc->didev) {
-	clpxmi1 = plsc->didxax * clpxmi1 + plsc->didxb;
-	clpxma1 = plsc->didxax * clpxma1 + plsc->didxb;
-	clpymi1 = plsc->didyay * clpymi1 + plsc->didyb;
-	clpyma1 = plsc->didyay * clpyma1 + plsc->didyb;
+/* Change window into plot space */
+
+    if (plsc->difilt & PLDI_PLT) {
+	for (i = 0; i < npts; i++) {
+	    xscl[i] = plsc->dipxax * xscl[i] + plsc->dipxb;
+	    yscl[i] = plsc->dipyay * yscl[i] + plsc->dipyb;
+	}
+    }
+
+/* Change window into device space and set clip limits */
+/* (this is the only filter that modifies them) */
+
+    if (plsc->difilt & PLDI_DEV) {
 	for (i = 0; i < npts; i++) {
 	    xscl[i] = plsc->didxax * xscl[i] + plsc->didxb;
 	    yscl[i] = plsc->didyay * yscl[i] + plsc->didyb;
 	}
+	*clpxmi = plsc->diclpxmi;
+	*clpxma = plsc->diclpxma;
+	*clpymi = plsc->diclpymi;
+	*clpyma = plsc->diclpyma;
     }
-
-    *clpxmi = clpxmi1;
-    *clpxma = clpxma1;
-    *clpymi = clpymi1;
-    *clpyma = clpyma1;
+    else {
+	*clpxmi = plsc->phyxmi;
+	*clpxma = plsc->phyxma;
+	*clpymi = plsc->phyymi;
+	*clpyma = plsc->phyyma;
+    }
 }
 
-/* The following functions initialize the driver interface */
-
-/* Set window into plot space */
+/*----------------------------------------------------------------------*\
+* void plsdiplt
+*
+* Set window into plot space
+\*----------------------------------------------------------------------*/
 
 void
 c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
@@ -368,11 +412,11 @@ c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
 	plexit("plsdiplt: Please call plinit first.");
 
     if (xmin == 0. && xmax == 1. && ymin == 0. && ymax == 1.) {
-	plsc->diplt = 0;
+	plsc->difilt &= ~PLDI_PLT;
 	return;
     }
 
-    plsc->diplt = 1;
+    plsc->difilt |= PLDI_PLT;
 
     plsc->dipxmin = (xmin < xmax) ? xmin : xmax;
     plsc->dipxmax = (xmin < xmax) ? xmax : xmin;
@@ -395,7 +439,37 @@ c_plsdiplt(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
     plsc->dipyb = plsc->phyymi - plsc->dipyay * pymin;
 }
 
-/* Set window into plot space incrementally (zoom) */
+/*----------------------------------------------------------------------*\
+* void plgdiplt
+*
+* Retrieve current window into plot space
+\*----------------------------------------------------------------------*/
+
+void
+plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax)
+{
+    if (plsc->level < 1)
+	plexit("plgdiplt: Please call plinit first.");
+
+    if (plsc->difilt & PLDI_PLT) {
+	*p_xmin = plsc->dipxmin;
+	*p_xmax = plsc->dipxmax;
+	*p_ymin = plsc->dipymin;
+	*p_ymax = plsc->dipymax;
+    }
+    else {
+	*p_xmin = 0.;
+	*p_ymin = 0.;
+	*p_xmax = 1.;
+	*p_ymax = 1.;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* void plsdiplz
+*
+* Set window into plot space incrementally (zoom)
+\*----------------------------------------------------------------------*/
 
 void
 c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
@@ -403,7 +477,7 @@ c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
     if (plsc->level < 1)
 	plexit("plsdiplz: Please call plinit first.");
 
-    if (plsc->diplt != 0) {
+    if (plsc->difilt & PLDI_PLT) {
 	xmin = plsc->dipxmin + (plsc->dipxmax - plsc->dipxmin) * xmin;
 	ymin = plsc->dipymin + (plsc->dipymax - plsc->dipymin) * ymin;
 	xmax = plsc->dipxmin + (plsc->dipxmax - plsc->dipxmin) * xmax;
@@ -413,8 +487,12 @@ c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
     plsdiplt(xmin, ymin, xmax, ymax);
 }
 
-/* Set window into device space */
-/* This is precisely the inverse of the last. */
+/*----------------------------------------------------------------------*\
+* void plsdidev
+*
+* Set window into device space.
+* The transformation here is precisely the inverse of the last. 
+\*----------------------------------------------------------------------*/
 
 void
 c_plsdidev(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
@@ -426,21 +504,21 @@ c_plsdidev(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
 	plexit("plsdidev: Please call plinit first.");
 
     if (xmin == 0. && xmax == 1. && ymin == 0. && ymax == 1.) {
-	plsc->didev = 0;
+	plsc->difilt &= ~PLDI_DEV;
 	return;
     }
 
-    plsc->didev = 1;
+    plsc->difilt |= PLDI_DEV;
 
-    wxmin = (xmin < xmax) ? xmin : xmax;
-    wxmax = (xmin < xmax) ? xmax : xmin;
-    wymin = (ymin < ymax) ? ymin : ymax;
-    wymax = (ymin < ymax) ? ymax : ymin;
+    plsc->didxmin = (xmin < xmax) ? xmin : xmax;
+    plsc->didxmax = (xmin < xmax) ? xmax : xmin;
+    plsc->didymin = (ymin < ymax) ? ymin : ymax;
+    plsc->didymax = (ymin < ymax) ? ymax : ymin;
 
-    pxmin = wxmin * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
-    pxmax = wxmax * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
-    pymin = wymin * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
-    pymax = wymax * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
+    pxmin = plsc->didxmin * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
+    pxmax = plsc->didxmax * (plsc->phyxma - plsc->phyxmi) + plsc->phyxmi;
+    pymin = plsc->didymin * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
+    pymax = plsc->didymax * (plsc->phyyma - plsc->phyymi) + plsc->phyymi;
 
     pxlen = pxmax - pxmin;
     pylen = pymax - pymin;
@@ -451,12 +529,47 @@ c_plsdidev(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax)
     plsc->didyay = (double) pylen / (double) (plsc->phyyma - plsc->phyymi);
     plsc->didxb = pxmin - plsc->didxax * plsc->phyxmi;
     plsc->didyb = pymin - plsc->didyay * plsc->phyymi;
+
+/* Set clip limits to conform to new page size */
+
+    plsc->diclpxmi = plsc->didxax * plsc->phyxmi + plsc->didxb;
+    plsc->diclpxma = plsc->didxax * plsc->phyxma + plsc->didxb;
+    plsc->diclpymi = plsc->didyay * plsc->phyymi + plsc->didyb;
+    plsc->diclpyma = plsc->didyay * plsc->phyyma + plsc->didyb;
 }
 
-/* Set plot orientation */
-/* Input is the multiplier by pi/2 to get the rotation (4 = full rotation). */
+/*----------------------------------------------------------------------*\
+* void plgdidev
+*
+* Retrieve current window into device space
+\*----------------------------------------------------------------------*/
 
-#define PI    3.1415926535897932384
+void
+plgdidev(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax)
+{
+    if (plsc->level < 1)
+	plexit("plgdidev: Please call plinit first.");
+
+    if (plsc->difilt & PLDI_DEV) {
+	*p_xmin = plsc->didxmin;
+	*p_xmax = plsc->didxmax;
+	*p_ymin = plsc->didymin;
+	*p_ymax = plsc->didymax;
+    }
+    else {
+	*p_xmin = 0.;
+	*p_ymin = 0.;
+	*p_xmax = 1.;
+	*p_ymax = 1.;
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* void plsdiori
+*
+* Set plot orientation
+* Input is the rotation in units of pi/2.
+\*----------------------------------------------------------------------*/
 
 void
 c_plsdiori(PLFLT rot)
@@ -467,22 +580,23 @@ c_plsdiori(PLFLT rot)
 	plexit("plsdiori: Please call plinit first.");
 
     if (rot == 0.) {
-	plsc->diori = 0;
+	plsc->difilt &= ~PLDI_ORI;
 	return;
     }
 
-    plsc->diori = 1;
+    plsc->difilt |= PLDI_ORI;
+    plsc->diorot = rot;
 
-    x0 = (plsc->phyxma + plsc->phyxmi)/2.;
-    y0 = (plsc->phyyma + plsc->phyymi)/2.;
+    x0 = (plsc->phyxma + plsc->phyxmi) / 2.;
+    y0 = (plsc->phyyma + plsc->phyymi) / 2.;
 
     lx = plsc->phyxma - plsc->phyxmi;
     ly = plsc->phyyma - plsc->phyymi;
 
 /* Rotation matrix */
 
-    r11 = cos(rot * PI/2.);
-    r21 = sin(rot * PI/2.);
+    r11 = cos(rot * PI / 2.);
+    r21 = sin(rot * PI / 2.);
     r12 = -r21;
     r22 = r11;
 
@@ -498,7 +612,158 @@ c_plsdiori(PLFLT rot)
 }
 
 /*----------------------------------------------------------------------*\
-* Startup routines.  
+* void plgdiori
+*
+* Get plot orientation
+\*----------------------------------------------------------------------*/
+
+void
+plgdiori(PLFLT *p_rot)
+{
+    if (plsc->level < 1)
+	plexit("plgdiori: Please call plinit first.");
+
+    if (plsc->difilt & PLDI_ORI) 
+	*p_rot = plsc->diorot;
+    else 
+	*p_rot = 0.;
+}
+
+/*----------------------------------------------------------------------*\
+* void plsdimap
+*
+* Set up transformation from metafile coordinates
+* The size of the plot is scaled so as to preserve aspect ratio
+\*----------------------------------------------------------------------*/
+
+void
+c_plsdimap(PLINT phyxmi, PLINT phyxma, PLINT phyymi, PLINT phyyma,
+	   PLFLT xpmm, PLFLT ypmm)
+{
+    PLFLT lpage_x, lpage_y, lpage_xdev, lpage_ydev;
+    PLFLT aspect_v, aspect_p, ratio;
+    PLFLT xmin, xmax, xlen, ymin, ymax, ylen;
+    PLINT pxmin, pxmax, pymin, pymax, pxlen, pylen;
+    PLFLT xax, xab, yay, yab;
+    PLFLT pxax, pxab, pyay, pyab;
+
+    if (plsc->level < 1)
+	plexit("plsdimap: Please call plinit first.");
+
+#ifdef DEBUG
+    fprintf(stderr, "plsc->phyxmi: %d,  plsc->phyxma: %d\n",
+	    plsc->phyxmi, plsc->phyxma);
+
+    fprintf(stderr, "plsc->phyymi: %d,  plsc->phyyma: %d\n",
+	    plsc->phyymi, plsc->phyyma);
+
+    fprintf(stderr, "plsc->xpmm: %f,  plsc->ypmm: %f\n",
+	    plsc->xpmm, plsc->ypmm);
+
+    fprintf(stderr, "phyxmi: %d,  phyxma: %d\n",
+	    phyxmi, phyxma);
+
+    fprintf(stderr, "phyymi: %d,  phyyma: %d\n",
+	    phyymi, phyyma);
+
+    fprintf(stderr, "xpmm: %f,  ypmm: %f\n",
+	    xpmm, ypmm);
+#endif
+
+    if ((phyxmi == plsc->phyxmi) && (phyxma == plsc->phyxma) &&
+	(phyymi == plsc->phyymi) && (phyyma == plsc->phyyma) &&
+	(xpmm == plsc->xpmm) && (ypmm == plsc->ypmm)) {
+	plsc->difilt &= ~PLDI_MAP;
+	return;
+    }
+
+/* Calculate physical aspect ratio between systems */
+
+    lpage_x = (phyxma - phyxmi + 1) / xpmm;
+    lpage_y = (phyyma - phyymi + 1) / ypmm;
+
+    lpage_xdev = (plsc->phyxma - plsc->phyxmi + 1) / plsc->xpmm;
+    lpage_ydev = (plsc->phyyma - plsc->phyymi + 1) / plsc->ypmm;
+
+    aspect_v = lpage_y / lpage_x; 
+    aspect_p = lpage_ydev / lpage_xdev;
+
+    ratio = aspect_v / aspect_p;
+    if (ratio <= 0) {
+	fprintf(stderr, "plsdimap: Invalid ratio -- %f\n", ratio);
+	return;
+    }
+    plsc->difilt |= PLDI_MAP;
+
+/* Relative device coordinates that neutralize aspect ratio difference */
+
+    xlen = 1.0;
+    ylen = 1.0;
+    if (ratio < 1)
+	ylen = ratio;
+    else
+	xlen = 1. / ratio;
+
+    xmin = (1. - xlen) * 0.5;
+    xmax = xmin + xlen;
+
+    ymin = (1. - ylen) * 0.5;
+    ymax = ymin + ylen;
+
+#ifdef DEBUG
+    fprintf(stderr, "xmin: %f,  xmax: %f,  ymin: %f,  ymax: %f\n",
+	    xmin, xmax, ymin, ymax);
+#endif
+
+/* Build transformation to relative device coordinates */
+
+    xax = xlen / (phyxma - phyxmi);
+    xab = xmin - xax * phyxmi;
+    yay = ylen / (phyyma - phyymi);
+    yab = ymin - yay * phyymi;
+
+/* Build transformation to correct physical coordinates */
+
+    pxmin = plsc->phyxmi;
+    pxmax = plsc->phyxma;
+    pymin = plsc->phyymi;
+    pymax = plsc->phyyma;
+    pxlen = pxmax - pxmin;
+    pylen = pymax - pymin;
+
+#ifdef DEBUG
+    fprintf(stderr, "pxmin: %d,  pxmax: %d,  pymin: %d,  pymax: %d\n",
+	    pxmin, pxmax, pymin, pymax);
+
+    fprintf(stderr, "pxlen: %d,  pylen: %d\n", pxlen, pylen);
+#endif
+
+    pxax = pxlen / xlen;
+    pxab = pxmin - pxax * xmin;
+    pyay = pylen / ylen;
+    pyab = pymin - pyay * ymin;
+
+/* Merge the two transformations together for the final coefficients */
+
+    plsc->dimxax = pxax * xax;
+    plsc->dimyay = pyay * yay;
+    plsc->dimxb = pxax * xab + pxab;
+    plsc->dimyb = pyay * yab + pyab;
+
+#ifdef DEBUG
+    pxmin = phyxmi * plsc->dimxax + plsc->dimxb;
+    pxmax = phyxma * plsc->dimxax + plsc->dimxb;
+    pymin = phyymi * plsc->dimyay + plsc->dimyb;
+    pymax = phyyma * plsc->dimyay + plsc->dimyb;
+
+    fprintf(stderr, "Transformation test:\n\
+pxmin: %d,  pxmax: %d,  pymin: %d,  pymax: %d\n",
+	    pxmin, pxmax, pymin, pymax);
+#endif
+}
+
+/*----------------------------------------------------------------------*\
+* Startup routines.
 \*----------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------*\
@@ -593,15 +858,15 @@ c_plinit()
     plP_page();
 
 /*
-* Set default sizes 
-* Global scaling:  
-*	Normalize to the page length for more uniform results.  
+* Set default sizes
+* Global scaling:
+*	Normalize to the page length for more uniform results.
 * 	A virtual page length of 200 mm is assumed.
-* Subpage scaling: 
+* Subpage scaling:
 *	Reduce sizes with plot area (non-proportional, so that character
 *	size doesn't get too small).
 */
-    gscale = 0.5 * 
+    gscale = 0.5 *
 	((plsc->phyxma - plsc->phyxmi) / plsc->xpmm +
 	 (plsc->phyyma - plsc->phyymi) / plsc->ypmm) / 200.0;
 
@@ -658,7 +923,7 @@ c_plend()
 * void plend1()
 *
 * End a plotting session for the current stream only.
-* After the stream is ended the memory associated with the stream's 
+* After the stream is ended the memory associated with the stream's
 * PLStream data structure is freed (for stream > 0), and the stream
 * counter is set to 0 (the default).
 \*----------------------------------------------------------------------*/
@@ -681,24 +946,20 @@ c_plend1()
 }
 
 /*----------------------------------------------------------------------*\
-* Routines to manipulate streams.
+* void plsstrm
 *
-* If the data structure for a new stream is unallocated, we allocate
-* it here.
+* Set stream number.  If the data structure for a new stream is
+* unallocated, we allocate it here.
 \*----------------------------------------------------------------------*/
-
-void
-c_plgstrm(PLINT *p_strm)
-{
-    *p_strm = ipls;
-}
 
 void
 c_plsstrm(PLINT strm)
 {
-    if (strm < 0 || strm >= PL_NSTREAMS)
-	printf("plsstrm: Illegal stream number (%d) -- must be in [0, %d]\n",
-	       strm, PL_NSTREAMS);
+    if (strm < 0 || strm >= PL_NSTREAMS) {
+	fprintf(stderr,
+		"plsstrm: Illegal stream number %d, must be in [0, %d]\n",
+		strm, PL_NSTREAMS);
+    }
     else {
 	ipls = strm;
 	if (pls[ipls] == NULL) {
@@ -713,12 +974,125 @@ c_plsstrm(PLINT strm)
 }
 
 /*----------------------------------------------------------------------*\
+* void plgstrm
+*
+* Get current stream number.
+\*----------------------------------------------------------------------*/
+
+void
+c_plgstrm(PLINT *p_strm)
+{
+    *p_strm = ipls;
+}
+
+/*----------------------------------------------------------------------*\
+* void plmkstrm
+*
+* Creates a new stream and makes it the default.  Differs from using
+* plsstrm(), in that a free stream number is found, and returned.
+\*----------------------------------------------------------------------*/
+
+void
+c_plmkstrm(PLINT *p_strm)
+{
+    int i;
+
+    for (i = PL_NSTREAMS - 1; i > 0; i--) {
+	if (pls[i] == NULL)
+	    break;
+    }
+
+    if (i == 0) {
+	fprintf(stderr, "plmkstrm: Cannot create new stream\n");
+	*p_strm = -1;
+    }
+    else {
+	*p_strm = i;
+	plsstrm(i);
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* void plcpstrm
+*
+* Create a new stream, copying as many of the parameters of the current
+* stream as is practical.  The requested device is initialized, and the
+* driver interface is re-initialized.  The new stream number is returned. 
+*
+* This function is used for making save files of selected plots (e.g.
+* from the TK driver).  To get a copy of the current plot to the specified
+* device, it is necessary only to switch to this stream and issue a
+* plreplot() command (with calls to plcrl() and plpage() as appropriate).
+\*----------------------------------------------------------------------*/
+
+void
+c_plcpstrm(PLINT *p_strm, char *dev, char *fnam)
+{
+    int ipls_new, ipls_old;
+    PLINT phyxmi, phyxma, phyymi, phyyma;
+    PLFLT xpmm, ypmm;
+
+/* Start new stream */
+
+    ipls_old = ipls;
+    plmkstrm(p_strm);
+    if (*p_strm == 0) 
+	return;
+
+    ipls_new = *p_strm;
+
+/* Copy parameters from the old stream */
+
+    memcpy(pls[ipls_new], pls[ipls_old], sizeof(PLStream));
+
+/* Now go back and fix up the parameters that aren't supposed to be copied */
+
+    plsc->FamilyName = NULL;
+    plsc->FileName = NULL;
+    plsc->dev = NULL;
+    plsc->level = 0;
+    plsc->device = 0;
+    plsc->family = 0;
+    plsc->plbufOwner = 0;
+    plsc->plbuf_write = 0;
+
+/* Save these for use in the mapping to device space */
+/* Should be in meta coordinates but there's no harm in generality */
+
+    phyxmi = plsc->phyxmi;
+    phyxma = plsc->phyxma;
+    phyymi = plsc->phyymi;
+    phyyma = plsc->phyyma;
+    xpmm = plsc->xpmm;
+    ypmm = plsc->ypmm;
+
+/* Initialize */
+
+    plsdev(dev);
+    plsfnam(fnam);
+    plinit();
+
+/* Reinitialize driver interface to use new device coordinates */
+
+    if (plsc->difilt & PLDI_PLT) 
+	plsdiplt(plsc->dipxmin, plsc->dipymin, plsc->dipxmax, plsc->dipymax);
+
+    if (plsc->difilt & PLDI_DEV)
+	plsdidev(plsc->didxmin, plsc->didymin, plsc->didxmax, plsc->didymax);
+
+    if (plsc->difilt & PLDI_ORI)
+	plsdiori(plsc->diorot);
+
+    plsdimap(phyxmi, phyxma, phyymi, phyyma, xpmm, ypmm);
+}
+
+/*----------------------------------------------------------------------*\
 * void plGetDev()
 *
 * If the the user has not already specified the output device, or the
 * one specified is either: (a) not available, (b) "?", or (c) NULL, the
-* user is prompted for it.  
-* 
+* user is prompted for it.
+*
 * Prompting quits after 10 unsuccessful tries in case the user has
 * run the program in the background with insufficient input.
 \*----------------------------------------------------------------------*/
@@ -732,8 +1106,11 @@ plGetDev()
 /* Device name already specified.  See if it is valid. */
 
     if (*(plsc->DevName) != '\0' && *(plsc->DevName) != '?') {
+	length = strlen(plsc->DevName);
 	for (i = 0; i < npldrivers; i++) {
-	    if (!strcmp(plsc->DevName, dispatch_table[i].pl_DevName))
+	    if ((*plsc->DevName == *dispatch_table[i].pl_DevName) &&
+		(strncmp(plsc->DevName,
+			 dispatch_table[i].pl_DevName, length) == 0))
 		break;
 	}
 	if (i < npldrivers) {
@@ -821,7 +1198,9 @@ plwarn(char *errormsg)
 }
 
 /*----------------------------------------------------------------------*\
-*  Load font.
+* void plfontld()
+*
+* Load specified font set.
 \*----------------------------------------------------------------------*/
 
 void
@@ -836,6 +1215,49 @@ c_plfontld(PLINT fnt)
 	initfont = fnt;
 	fontset = 1;
     }
+}
+
+/*----------------------------------------------------------------------*\
+* void plreplot()
+*
+* Replays contents of plot buffer to current device/file.
+\*----------------------------------------------------------------------*/
+
+void
+c_plreplot()
+{
+    if (plsc->plbufFile != NULL) {
+	plRemakePlot(plsc);
+    }
+    else {
+	plwarn("plreplot: plot buffer not available");
+    }
+}
+
+/*----------------------------------------------------------------------*\
+* void plgFileDevs()
+*
+* Returns a list of file-oriented device names and their menu strings,
+* for use in a graphical interface.  The caller must allocate enough
+* space for (*p_menustr) and (*p_devname) to hold a pointer for each
+* device -- 20 or so is plenty.  E.g. char *menustr[20].
+\*----------------------------------------------------------------------*/
+
+void
+plgFileDevs(char ***p_menustr, char ***p_devname, int *p_ndev)
+{
+    int i, j;
+
+    for (i = j = 0; i < npldrivers; i++) {
+	if (dispatch_table[i].pl_type == 0) {
+	    (*p_menustr)[j] = dispatch_table[i].pl_MenuStr;
+	    (*p_devname)[j] = dispatch_table[i].pl_DevName;
+	    j++;
+	}
+    }
+    (*p_menustr)[j] = NULL;
+    (*p_devname)[j] = NULL;
+    *p_ndev = j;
 }
 
 /*----------------------------------------------------------------------*\
@@ -908,7 +1330,7 @@ plgpls(PLStream **p_pls)
 }
 
 void
-plsKeyEH(void (*KeyEH)(PLKey *, void *, int *), void *KeyEH_data)
+plsKeyEH(void (*KeyEH) (PLKey *, void *, int *), void *KeyEH_data)
 {
     plsc->KeyEH = KeyEH;
     plsc->KeyEH_data = KeyEH_data;
@@ -937,33 +1359,18 @@ c_plwid(PLINT width)
 	plsc->widthset = 1;
 }
 
-/* Set global aspect ratio.  Must be done before calling plinit. */
+/* Obsolete.  Use page driver interface instead. */
 
 void
 c_plsasp(PLFLT asp)
 {
-    plsc->aspect = asp;
-    plsc->aspectset = 1;
-
-    if (plsc->aspect > 0.0)
-	plsc->pscale = 1;
-    else
-	plsc->pscale = 0;
 }
 
-/* Set local plot bounds.  This is used to 'mark' a window for treatment
-   as a separate object by the renderer.  The inputs should be in normalized
-   device coords (they are translated into physical coords before storing. */
+/* I've canned this for now */
 
 void
 c_plslpb(PLFLT lpbxmi, PLFLT lpbxma, PLFLT lpbymi, PLFLT lpbyma)
 {
-    plsc->lpbpxmi = plP_dcpcx(lpbxmi);
-    plsc->lpbpxma = plP_dcpcx(lpbxma);
-    plsc->lpbpymi = plP_dcpcy(lpbymi);
-    plsc->lpbpyma = plP_dcpcy(lpbyma);
-
-    plP_esc(PL_SET_LPB, (char *) NULL);
 }
 
 /* Note these two are only useable from C.. */
@@ -1004,24 +1411,7 @@ c_plgfnam(char *fnam)
 void
 c_plsfnam(char *fnam)
 {
-    plsc->OutFile = NULL;
-    plsc->fileset = 1;
-
-    if (plsc->FileName != NULL)
-	free((void *) plsc->FileName);
-
-    plsc->FileName = (char *)
-	malloc(1+(strlen(fnam)) * sizeof(char));
-
-    strcpy(plsc->FileName, fnam);
-
-    if (plsc->FamilyName != NULL)
-	free((void *) plsc->FamilyName);
-
-    plsc->FamilyName = (char *)
-	malloc(1+(strlen(fnam)) * sizeof(char));
-
-    strcpy(plsc->FamilyName, fnam);
+    plP_sfnam(plsc, fnam);
 }
 
 void
@@ -1058,19 +1448,19 @@ void
 c_plsesc(char esc)
 {
     switch (esc) {
-    case '!':			/* ASCII 33 */
-    case '#':			/* ASCII 35 */
-    case '$':			/* ASCII 36 */
-    case '%':			/* ASCII 37 */
-    case '&':			/* ASCII 38 */
-    case '*':			/* ASCII 42 */
-    case '@':			/* ASCII 64 */
-    case '^':			/* ASCII 94 */
-    case '~':			/* ASCII 126 */
+	case '!':		/* ASCII 33 */
+	case '#':		/* ASCII 35 */
+	case '$':		/* ASCII 36 */
+	case '%':		/* ASCII 37 */
+	case '&':		/* ASCII 38 */
+	case '*':		/* ASCII 42 */
+	case '@':		/* ASCII 64 */
+	case '^':		/* ASCII 94 */
+	case '~':		/* ASCII 126 */
 	plsc->esc = esc;
 	break;
 
-    default:
+      default:
 	plwarn("plsesc: Invalid escape character, ignoring.");
     }
 }
@@ -1228,7 +1618,7 @@ void
 c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 {
     if (plsc->level > 0) {
-	plwarn("plscol0: Must becalled before plinit.");
+	plwarn("plscol0: Must be called before plinit.");
 	return;
     }
 
@@ -1788,7 +2178,7 @@ plP_setphy(PLINT xmin, PLINT xmax, PLINT ymin, PLINT ymax)
 
     plP_sphy(xmin, xmax, ymin, ymax);
     plP_sdp((PLFLT) (xmax - xmin), (PLFLT) (xmin), (PLFLT) (ymax - ymin),
-	(PLFLT) (ymin));
+	    (PLFLT) (ymin));
 
     plP_gpixmm(&xpmm, &ypmm);
     mpxscl = xpmm;
