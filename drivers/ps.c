@@ -915,7 +915,7 @@ proc_str (PLStream *pls, EscText *args)
      * char \ if necessary 
      */
     while(!symbol && *cur_strp && *cur_strp != esc) {
-      if (*cur_strp == '(' || *cur_strp == ')')
+      if (*cur_strp == '(' || *cur_strp == ')' || *cur_strp == '\\')
 	*strp++ = '\\';
       *strp++ = *cur_strp++;
     }
