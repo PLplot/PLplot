@@ -89,6 +89,29 @@
 
 #include <gd.h>
 
+#ifdef HAVE_FREETYPE
+
+/*
+ *  Freetype support has been added to the GD family of drivers using the
+ *  plfreetype.c module, and implemented as a driver-specific optional extra
+ *  invoked via the -drvopt command line toggle. It uses the
+ *  "PLESC_HAS_TEXT" command for rendering within the driver.
+ *  
+ *  Freetype support is turned on/off at compile time by defining
+ *  "HAVE_FREETYPE".
+ *  
+ *  To give the user some level of control over the fonts that are used,
+ *  environmental variables can be set to over-ride the definitions used by
+ *  the five default plplot fonts.
+ *  
+ *  Freetype rendering is used with the command line "-drvopt text".
+ *  Anti-aliased fonts can be used by issuing "-drvopt text,smooth"
+ */
+
+#include "plplot/plfreetype.h"
+
+#endif
+
 /* Prototypes for functions in this file. */
 
 static void	fill_polygon	(PLStream *pls);
@@ -98,6 +121,18 @@ static void     plD_gd_optimise (PLStream *pls);
 static void     plD_black15_gd  (PLStream *pls);
 static void     plD_red15_gd    (PLStream *pls);
 
+#ifdef HAVE_FREETYPE
+
+static void plD_pixel_gd (PLStream *pls, short x, short y);
+static void init_freetype_lv1 (PLStream *pls);
+static void init_freetype_lv2 (PLStream *pls);
+
+extern void plD_FreeType_init(PLStream *pls);
+extern void plD_render_freetype_text (PLStream *pls, EscText *args);
+extern void plD_FreeType_Destroy(PLStream *pls);
+extern void pl_set_extended_cmap0(PLStream *pls, int ncol0_width, int ncol0_org);
+
+#endif
 
 /* top level declarations */
 
@@ -211,6 +246,11 @@ plD_init_png_Dev(PLStream *pls)
     int truecolour=0;
     int palette=0;
 #endif
+#ifdef HAVE_FREETYPE
+    int freetype=0;
+    int smooth_text=0;
+    FT_Data *FT;
+#endif
 
     DrvOpt gd_options[] = {{"optimise", DRV_INT, &optimise, "Optimise PNG palette when possible"},
                               {"def_black15", DRV_INT, &black15, "Define idx 15 as black. If the background is \"whiteish\" (from \"-bg\" option), force index 15 (traditionally white) to be \"black\""},
@@ -218,6 +258,10 @@ plD_init_png_Dev(PLStream *pls)
 #if GD2_VERS >= 2
                               {"8bit", DRV_INT, &palette, "Palette (8 bit) mode"},
                               {"24bit", DRV_INT, &truecolour, "Truecolor (24 bit) mode"},
+#endif
+#ifdef HAVE_FREETYPE
+                              {"text", DRV_INT, &freetype, "Use driver text (FreeType)"},
+                              {"smooth", DRV_INT, &smooth_text, "Turn text smoothing on (1) or off (0)"},
 #endif
 			      {NULL, DRV_INT, NULL, NULL}};
 
@@ -262,6 +306,16 @@ plD_init_png_Dev(PLStream *pls)
 
 #endif
 
+#ifdef HAVE_FREETYPE
+if (freetype)
+   {
+    pls->dev_text = 1; /* want to draw text */
+    init_freetype_lv1(pls);
+    FT=(FT_Data *)pls->FT;
+    FT->smooth_text=smooth_text;
+   }
+
+#endif
 }
 
 /*----------------------------------------------------------------------*\
@@ -321,6 +375,7 @@ void plD_init_png(PLStream *pls)
 
 #endif
 
+
      if (pls->xdpi<=0)
      {
 /* This corresponds to a typical monitor resolution of 4 pixels/mm. */
@@ -334,6 +389,15 @@ void plD_init_png(PLStream *pls)
      plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
 
      plP_setphy(0, dev->scale*dev->pngx, 0, dev->scale*dev->pngy);
+
+#ifdef HAVE_FREETYPE
+
+if (pls->dev_text)
+   {
+    init_freetype_lv2(pls);
+   }
+
+#endif
 
 }
 
@@ -627,6 +691,13 @@ void plD_esc_png(PLStream *pls, PLINT op, void *ptr)
       case PLESC_FILL:  /* fill */
 	fill_polygon(pls);
 	break;
+
+#ifdef HAVE_FREETYPE
+     case PLESC_HAS_TEXT:
+        plD_render_freetype_text(pls, (EscText *)ptr);
+        break;
+#endif
+
     }
 }
 
@@ -720,6 +791,11 @@ if (dev->red15) plD_red15_gd(pls);
 void plD_tidy_png(PLStream *pls)
 {
    fclose(pls->OutFile);
+
+#ifdef HAVE_FREETYPE
+   plD_FreeType_Destroy(pls);
+#endif
+
    free_mem(pls->dev);
 }
 
@@ -884,6 +960,93 @@ int i;
 }
 
 #endif
+
+#ifdef HAVE_FREETYPE
+
+/*----------------------------------------------------------------------*\
+ *  void plD_pixel_gd (PLStream *pls, short x, short y)
+ *
+ *  callback function, of type "plD_pixel_fp", which specifies how a single
+ *  pixel is set in the current colour.
+\*----------------------------------------------------------------------*/
+
+void plD_pixel_gd (PLStream *pls, short x, short y)
+{
+png_Dev *dev=(png_Dev *)pls->dev;
+
+   gdImageSetPixel(dev->im_out, x, y,dev->colour);
+
+}
+
+/*----------------------------------------------------------------------*\
+ *  void init_freetype_lv1 (PLStream *pls)
+ *
+ *  "level 1" initialisation of the freetype library.
+ *  "Level 1" initialisation calls plD_FreeType_init(pls) which allocates
+ *  memory to the pls->FT structure, then sets up the pixel callback
+ *  function.
+\*----------------------------------------------------------------------*/
+
+static void init_freetype_lv1 (PLStream *pls)
+{
+FT_Data *FT;
+
+plD_FreeType_init(pls);
+
+FT=(FT_Data *)pls->FT;
+FT->pixel= (plD_pixel_fp)plD_pixel_gd;
+
+
+}
+
+/*----------------------------------------------------------------------*\
+ *  void init_freetype_lv2 (PLStream *pls)
+ *
+ *  "Level 2" initialisation of the freetype library.
+ *  "Level 2" fills in a few setting that aren't public until after the
+ *  graphics sub-syetm has been initialised.
+ *  The "level 2" initialisation fills in a few things that are defined
+ *  later in the initialisation process for the GD driver.
+ *
+ *  FT->scale is a scaling factor to convert co-ordinates. This is used by
+ *  the GD and other drivers to scale back a larger virtual page and this
+ *  eliminate the "hidden line removal bug". Set it to 1 if your device
+ *  doesn't have scaling.
+ *
+ *  Some coordinate systems have zero on the bottom, others have zero on
+ *  the top. Freetype does it one way, and most everything else does it the
+ *  other. To make sure everything is working ok, we have to "flip" the
+ *  coordinates, and to do this we need to know how big in the Y dimension
+ *  the page is, and whether we have to invert the page or leave it alone.
+ *
+ *  FT->ymax specifies the size of the page FT->invert_y=1 tells us to
+ *  invert the y-coordinates, FT->invert_y=0 will not invert the
+ *  coordinates.
+\*----------------------------------------------------------------------*/
+
+static void init_freetype_lv2 (PLStream *pls)
+{
+png_Dev *dev=(png_Dev *)pls->dev;
+FT_Data *FT=(FT_Data *)pls->FT;
+
+FT->scale=dev->scale;
+FT->ymax=dev->pngy;
+FT->invert_y=1;
+
+if (FT->smooth_text==1)
+   {
+    FT->ncol0_org=pls->ncol0;                                   /* save a copy of the original size of ncol0 */
+    FT->ncol0_xtra=NCOLOURS-(pls->ncol1+pls->ncol0);            /* work out how many free slots we have */
+    FT->ncol0_width=FT->ncol0_xtra/(pls->ncol0-1);              /* find out how many different shades of anti-aliasing we can do */
+    if (FT->ncol0_width>64) FT->ncol0_width=64;                 /* set a maximum number of shades */
+    plscmap0n(FT->ncol0_org+(FT->ncol0_width*pls->ncol0));      /* redefine the size of cmap0 */
+    pl_set_extended_cmap0(pls, FT->ncol0_width, FT->ncol0_org); /* call the function to add the extra cmap0 entries and calculate stuff */
+   }
+
+}
+
+#endif
+
 
 #ifdef PLD_jpeg
 
