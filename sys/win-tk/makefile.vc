@@ -10,8 +10,8 @@
 #
 MACHINE		= IX86
 
-PLPLOT_VERSION = 5.1.0
-DLL_VERSION = 510
+VERSION = 5.1.1
+DLL_VERSION = 511
 
 # Project directories -- these may need to be customized for your site
 #
@@ -67,7 +67,7 @@ include32	= -I"$(TOOLS32)\include"
 
 TCLLIB  = $(TCL)\lib\tclstub$(TCLVERSION).lib
 TKLIB  = $(TCL)\lib\tkstub$(TCLVERSION).lib
-INSTALLDIR = $(TCL)\lib\plplot$(PLPLOT_VERSION)
+INSTALLDIR = $(TCL)\lib\plplot$(VERSION)
 
 ######################################################################
 # Compile flags
@@ -155,11 +155,14 @@ INCLUDES = \
     -I$(TOOLS32)/include	\
     -I$(GENERICDIR)/../include \
     -I$(GENERICDIR) \
+    -I$(GENERICTKDIR) \
+    -I$(OLDTKDIR) \
+    -I$(GENERICTCLDIR) \
     -I$(WINDIR)/..
 
 DEFINES = -nologo $(DEBUGDEFINES) -DUSE_TCL_STUBS \
 	-DUSE_TK_STUBS -DPLPLOT_USE_TCL_CHANNELS \
-	-DPLPLOT_VERSION=\"$(PLPLOT_VERSION)\" 
+	-DVERSION=\"$(VERSION)\" 
 
 # 
 # Global makefile settings
@@ -200,7 +203,6 @@ DLLOBJS = \
 	$(WINDIR)\next.obj \
 	$(WINDIR)\ntk.obj \
 	$(WINDIR)\tkwin.obj \
-	$(WINDIR)\tkwin_common.obj \
 	$(WINDIR)\null.obj \
 	$(WINDIR)\pbm.obj \
 	$(WINDIR)\plbuf.obj \
@@ -241,6 +243,7 @@ install:	$(PROJECT).dll
 	$(CP) $(OLDTKDIR)\pltools.tcl $(INSTALLDIR)
 	$(CP) $(OLDTKDIR)\plwidget.tcl $(INSTALLDIR)
 	$(CP) $(GENERICTKDIR)\*.tcl $(INSTALLDIR)
+	$(CP) pkgIndex.tcl $(INSTALLDIR)
 	$(CP) $(GENERICTKDIR)\tclIndex $(INSTALLDIR)
 	$(CP) $(PROJECT).dll $(INSTALLDIR)\$(PROJECT).dll
 
