@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.57  1995/03/11 21:41:30  mjl
+ * Revision 1.58  1995/03/22 17:46:38  mjl
+ * Moved initialization of the write_to_pixmap and write_to_window vars to the
+ * regular driver initialization part, to give plframe users a way to specify
+ * the nopixmap option and have it actually work.
+ *
+ * Revision 1.57  1995/03/11  21:41:30  mjl
  * All drivers: eliminated unnecessary variable initializations, other cleaning
  * up.  Changed structure for graphics input to a PLGraphicsIn (was PLCursor).
  * Substantially rewrote input loop to handle new locate mode (type 'L' while
@@ -256,18 +261,6 @@ plD_open_xw(PLStream *pls)
 
     dev->instr = 0;
     dev->max_instr = MAX_INSTR;
-
-/* Set up flags that determine what we are writing to */
-/* If nopixmap is set, ignore db */
-
-    if (pls->nopixmap) {
-	dev->write_to_pixmap = 0;
-	pls->db = 0;
-    }
-    else
-	dev->write_to_pixmap = 1;
-
-    dev->write_to_window = ! pls->db;
 
 /* See if display matches any already in use, and if so use that */
 
@@ -769,6 +762,18 @@ Init(PLStream *pls)
 
     dev->init_width  = dev->width;
     dev->init_height = dev->height;
+
+/* Set up flags that determine what we are writing to */
+/* If nopixmap is set, ignore db */
+
+    if (pls->nopixmap) {
+	dev->write_to_pixmap = 0;
+	pls->db = 0;
+    }
+    else
+	dev->write_to_pixmap = 1;
+
+    dev->write_to_window = ! pls->db;
 
 /* Create pixmap for holding plot image (for expose events). */
 
