@@ -1494,8 +1494,8 @@ plInitDispatchTable()
     fp_drvdb = plLibOpen( "drivers/drivers.db" );
 
     if (!fp_drvdb)
-    /* Try to fool plLibOpen into looking under $prefix/lib. */
-        fp_drvdb = plLibOpen( "../../drivers/drivers.db" );
+    /* Try to fool plLibOpen into looking under $prefix/lib/plplot$version. */
+        fp_drvdb = plLibOpen( "../drivers/drivers.db" );
 
     if (fp_drvdb) {
     /* Count the number of dynamic devices. */
@@ -1769,7 +1769,7 @@ plLoadDriver(void)
         if (!driver->dlhand)
         {
             sprintf( drvspec, "%s/%s/%s",
-                     LIB_DIR, "drivers", driver->drvnam );
+                     DATA_DIR, "../drivers", driver->drvnam );
 
 	    pldebug("plLoadDriver", "Trying to load at %s\n", drvspec); 
 

@@ -61,8 +61,8 @@ install_plplot_config:
 # if any.
 install_drivers:
 	@-if test -d drivers; then \
-	      if test ! -d $(LIB_DIR)/drivers; then mkdir -p $(LIB_DIR)/drivers; fi; \
-	      $(CP) drivers/* $(LIB_DIR)/drivers; \
+	      if test ! -d $(DATA_DIR)/../drivers; then mkdir -p $(DATA_DIR)/../drivers; fi; \
+	      $(CP) drivers/* $(DATA_DIR)/../drivers; \
 	  fi
 
 install_utils: install_plrender install_pltek install_plplot_config
