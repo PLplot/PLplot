@@ -17,3 +17,10 @@ ltmain.sh
 config.sub
 config.guess
 autom4te.cache
+COPYING
+compile
+depcomp
+install-sh
+missing
+mkinstalldirs
+py-compile
