@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1993/07/16 22:17:00  mjl
+ * Revision 1.20  1993/07/28 05:34:45  mjl
+ * Added error handler to trap pixmap allocation errors, and switch to a
+ * slower method (redraw) of refreshing window on exposes.  Also added
+ * globally visible utility functions for converting between a PLColor and
+ * an XColor, as well as other minor changes.
+ *
+ * Revision 1.19  1993/07/16  22:17:00  mjl
  * Added escape function to redraw plot (unlike resize, the window size remains
  * unchanged).  Changed draw functions to only draw to the pixmap during page
  * redraws.  Pixmap is then copied to the actual window when done, for faster
@@ -58,7 +64,6 @@
 	PLPLOT X-windows device driver.
 */
 #ifdef XWIN
-#define USE_PIXMAP
 
 #include "plplotP.h"
 #include <stdio.h>
@@ -72,30 +77,10 @@
 
 #include "drivers.h"
 #include "plevent.h"
-
-/* Function prototypes */
-/* INDENT OFF */
-
-static void  xw_Xinit		(PLStream *);
-static void  xw_Xinit_main	(PLStream *);
-static void  xw_Xinit_child	(PLStream *);
-static void  WaitForPage	(PLStream *);
-static void  HandleEvents	(PLStream *);
-static void  xw_colini		(PLStream *);
-static int   AreWeGrayscale	(Display *);
-static void  PLColor_to_XColor	(XColor *, PLColor *);
-static void  XColorcpy		(XColor *, XColor *);
-
-static void  EventHandler	(PLStream *, XEvent *);
-static void  KeyEH		(PLStream *, XEvent *);
-static void  MouseEH		(PLStream *, XEvent *);
-static void  ExposeEH		(PLStream *, XEvent *);
-static void  ResizeEH		(PLStream *, XEvent *);
-static void  xw_expose		(PLStream *);
-static void  xw_resize		(PLStream *, PLWindow *);
-static void  xw_redraw		(PLStream *);
+#include "xwin.h"
 
 /* Struct to hold device-specific info. */
+/* INDENT OFF */
 
 typedef struct {
     int		exit_eventloop;
@@ -131,17 +116,34 @@ typedef struct {
     Pixmap	pixmap;
 } XwDev;
 
-/* Miscellaneous global definitions */
+/* Function prototypes */
 
-static PLFLT lpage_x = 238.0;		/* Page length in x in virtual mm */
-static PLFLT lpage_y = 178.0;		/* Page length in y in virtual mm */
+static void  Init		(PLStream *);
+static void  Init_main		(PLStream *);
+static void  Init_child		(PLStream *);
+static void  WaitForPage	(PLStream *);
+static void  HandleEvents	(PLStream *);
+static void  ColorInit		(PLStream *);
+static void  CreatePixmap	(XwDev *);
+static int   AreWeGrayscale	(Display *);
+static void  Colorcpy		(XColor *, XColor *);
+
+static void  EventHandler	(PLStream *, XEvent *);
+static void  KeyEH		(PLStream *, XEvent *);
+static void  MouseEH		(PLStream *, XEvent *);
+static void  ExposeEH		(PLStream *, XEvent *);
+static void  ResizeEH		(PLStream *, XEvent *);
+
+static void  ExposeCmd		(PLStream *);
+static void  ResizeCmd		(PLStream *, PLWindow *);
+static void  RedrawCmd		(PLStream *);
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
 * plD_init_xw()
 *
 * Initialize device.
-* X-dependent stuff done in one of the xw_Xinit_* routines.
+* X-dependent stuff done in one of the Init_* routines.
 \*----------------------------------------------------------------------*/
 
 void
@@ -167,19 +169,26 @@ plD_init_xw(PLStream *pls)
 
 /* Allocate and initialize device-specific data */
 
-    pls->dev = malloc((size_t) sizeof(XwDev));
+    if (pls->dev != NULL)
+	free((void *) pls->dev);
+
+    pls->dev = calloc(1, (size_t) sizeof(XwDev));
     if (pls->dev == NULL)
 	plexit("plD_init_xw: Out of memory.");
 
-    memset(pls->dev, 0, sizeof(XwDev));
     dev = (XwDev *) pls->dev;
 
+/* Enable/disable writing to pixmap */
+
     dev->write_to_window = 1;
-    dev->write_to_pixmap = 1;
+    if (pls->nopixmap)
+	dev->write_to_pixmap = 0;
+    else
+	dev->write_to_pixmap = 1;
 
 /* X-specific initialization */
 
-    xw_Xinit(pls);
+    Init(pls);
 
 /* Get ready for plotting */
 
@@ -336,7 +345,6 @@ plD_tidy_xw(PLStream *pls)
     pls->page = 0;
     pls->plbuf_write = 0;
     pls->OutFile = NULL;
-    free((void *) pls->dev);
 }
 
 /*----------------------------------------------------------------------*\
@@ -353,17 +361,15 @@ plD_color_xw(PLStream *pls)
 
     HandleEvents(pls);	/* Check for events */
 
-    if (!dev->color) {
+    if ( ! dev->color) {
 	dev->curcolor.pixel = dev->fgcolor.pixel;
 	XSetForeground(dev->display, dev->gc, dev->curcolor.pixel);
     }
     else {
 	if (icol0 == PL_RGB_COLOR) {
-	    dev->curcolor.red = (pls->curcolor.r << 8);
-	    dev->curcolor.green = (pls->curcolor.g << 8);
-	    dev->curcolor.blue = (pls->curcolor.b << 8);
+	    PLColor_to_XColor(&pls->curcolor, &dev->curcolor);
 
-	    if (!XAllocColor(dev->display, dev->map, &dev->curcolor))
+	    if ( ! XAllocColor(dev->display, dev->map, &dev->curcolor))
 		dev->curcolor.pixel = dev->fgcolor.pixel;
 
 	    XSetForeground(dev->display, dev->gc, dev->curcolor.pixel);
@@ -421,21 +427,21 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 
     switch (op) {
       case PL_EXPOSE:
-	xw_expose(pls);
+	ExposeCmd(pls);
 	break;
 
       case PL_RESIZE:
-	xw_resize(pls, (PLWindow *) ptr);
+	ResizeCmd(pls, (PLWindow *) ptr);
 	break;
 
       case PL_REDRAW:
-	xw_redraw(pls);
+	RedrawCmd(pls);
 	break;
     }
 }
 
 /*----------------------------------------------------------------------*\
-* xw_Xinit()
+* Init()
 *
 * Xlib initialization routine.
 *
@@ -444,17 +450,17 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 *
 * display:	pls->OutFile (use plsfnam() or -display option) 
 * size:		pls->xlength, pls->ylength (use plspage() or -geo option)
-* bg color:	pls->bgcol (use plsbgcol() or -bg option)
+* bg color:	pls->bgcolor (use plscolbg() or -bg option)
 \*----------------------------------------------------------------------*/
 
 static void
-xw_Xinit(PLStream *pls)
+Init(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     Window root;
     int x, y;
 
-    dbug_enter("xw_Xinit");
+    dbug_enter("Init");
 
     dev->display = XOpenDisplay(pls->FileName);
     if (dev->display == NULL) {
@@ -467,14 +473,14 @@ xw_Xinit(PLStream *pls)
 
 /* Default color values */
 
-    xw_colini(pls);
+    ColorInit(pls);
 
 /* If not plotting into a child window, need to create main window now */
 
     if (pls->window_id == 0)
-	xw_Xinit_main(pls);
+	Init_main(pls);
     else
-	xw_Xinit_child(pls);
+	Init_child(pls);
 
 /* Get initial drawing area dimensions */
 
@@ -487,8 +493,7 @@ xw_Xinit(PLStream *pls)
 /* Create pixmap for holding plot image (for expose events). */
 
     if (dev->write_to_pixmap) 
-	dev->pixmap = XCreatePixmap(dev->display, dev->window,
-				    dev->width, dev->height, dev->depth);
+	CreatePixmap(dev);
 
 /* Set drawing color */
 
@@ -496,7 +501,7 @@ xw_Xinit(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xw_Xinit_main()
+* Init_main()
 *
 * Xlib initialization routine for main window.
 *
@@ -505,7 +510,7 @@ xw_Xinit(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 static void
-xw_Xinit_main(PLStream *pls)
+Init_main(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
 
@@ -517,7 +522,7 @@ xw_Xinit_main(PLStream *pls)
     Cursor cross_cursor;
     XEvent the_event;
 
-    dbug_enter("xw_Xinit_main");
+    dbug_enter("Init_main");
 
     dev->is_main = TRUE;
 
@@ -600,7 +605,7 @@ xw_Xinit_main(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xw_Xinit_child()
+* Init_child()
 *
 * Xlib initialization routine for child window.
 *
@@ -609,11 +614,11 @@ xw_Xinit_main(PLStream *pls)
 \*----------------------------------------------------------------------*/
 
 static void
-xw_Xinit_child(PLStream *pls)
+Init_child(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
 
-    dbug_enter("xw_Xinit_child");
+    dbug_enter("Init_child");
 
     dev->is_main = FALSE;
     dev->window = pls->window_id;
@@ -641,7 +646,7 @@ WaitForPage(PLStream *pls)
     if (pls->nopause || ! dev->is_main)
 	return;
 
-    while (!dev->exit_eventloop) {
+    while ( ! dev->exit_eventloop) {
 	XNextEvent(dev->display, &event);
 	EventHandler(pls, &event);
     }
@@ -792,7 +797,7 @@ MouseEH(PLStream *pls, XEvent *event)
 * ExposeEH()
 *
 * Event handler routine for expose events.
-* Front end to xw_expose() to deal with wierdnesses of Xlib.
+* Front end to ExposeCmd() to deal with wierdnesses of Xlib.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -804,7 +809,7 @@ ExposeEH(PLStream *pls, XEvent *event)
 
 /* Handle expose */
 
-    xw_expose(pls);
+    ExposeCmd(pls);
 
 /* Remove extraneous expose events from the event queue */
 
@@ -815,7 +820,7 @@ ExposeEH(PLStream *pls, XEvent *event)
 * ResizeEH()
 *
 * Event handler routine for resize events.
-* Front end to xw_resize() to deal with wierdnesses of Xlib.
+* Front end to ResizeCmd() to deal with wierdnesses of Xlib.
 \*----------------------------------------------------------------------*/
 
 static void
@@ -834,7 +839,7 @@ ResizeEH(PLStream *pls, XEvent *event)
     if (newwin.width == dev->width && newwin.height == dev->height)
 	return;
 
-    xw_resize(pls, &newwin);
+    ResizeCmd(pls, &newwin);
 
 /* Remove extraneous expose events from the event queue */
 /* These are not needed since we've redrawn the whole plot */
@@ -843,7 +848,7 @@ ResizeEH(PLStream *pls, XEvent *event)
 }
 
 /*----------------------------------------------------------------------*\
-* xw_expose()
+* ExposeCmd()
 *
 * Event handler routine for expose events.
 * These are "pure" exposures (no resize), so don't need to clear window.
@@ -851,16 +856,16 @@ ResizeEH(PLStream *pls, XEvent *event)
 \*----------------------------------------------------------------------*/
 
 static void
-xw_expose(PLStream *pls)
+ExposeCmd(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
 
-    dbug_enter("xw_expose");
+    dbug_enter("ExposeCmd");
 
 /* Return if plD_init_xw hasn't been called yet */
 
     if (dev == NULL) {
-	plwarn("xw_expose: Illegal call -- driver uninitialized");
+	plwarn("ExposeCmd: Illegal call -- driver uninitialized");
 	return;
     }
 
@@ -879,23 +884,23 @@ xw_expose(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xw_resize()
+* ResizeCmd()
 *
 * Event handler routine for resize events.
 * Note: this function is callable from the outside world.
 \*----------------------------------------------------------------------*/
 
 static void
-xw_resize(PLStream *pls, PLWindow *window)
+ResizeCmd(PLStream *pls, PLWindow *window)
 {
     XwDev *dev = (XwDev *) pls->dev;
 
-    dbug_enter("xw_resize");
+    dbug_enter("ResizeCmd");
 
 /* Return if plD_init_xw hasn't been called yet */
 
     if (dev == NULL) {
-	plwarn("xw_resize: Illegal call -- driver uninitialized");
+	plwarn("ResizeCmd: Illegal call -- driver uninitialized");
 	return;
     }
 
@@ -914,33 +919,32 @@ xw_resize(PLStream *pls, PLWindow *window)
 
     if (dev->write_to_pixmap) {
 	XFreePixmap(dev->display, dev->pixmap);
-	dev->pixmap = XCreatePixmap(dev->display, dev->window,
-				    dev->width, dev->height, dev->depth);
+	CreatePixmap(dev);
     }
 
 /* Now do a redraw using the new size */
 
-    xw_redraw(pls);
+    RedrawCmd(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* xw_redraw()
+* RedrawCmd()
 *
 * Handles page redraw without resize (pixmap does not get reallocated).
 * Calling this makes sure all necessary housekeeping gets done.
 \*----------------------------------------------------------------------*/
 
 static void
-xw_redraw(PLStream *pls)
+RedrawCmd(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
 
-    dbug_enter("xw_redraw");
+    dbug_enter("RedrawCmd");
 
 /* Return if plD_init_xw hasn't been called yet */
 
     if (dev == NULL) {
-	plwarn("xw_redraw: Illegal call -- driver uninitialized");
+	plwarn("RedrawCmd: Illegal call -- driver uninitialized");
 	return;
     }
 
@@ -966,13 +970,61 @@ xw_redraw(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* xw_colini()
+* CreatePixmapErrorHandler()
+*
+* Error handler used in CreatePixmap() to catch errors in allocating
+* storage for pixmap.  This way we can nicely substitute redraws for
+* pixmap copies if the server has insufficient memory.
+\*----------------------------------------------------------------------*/
+
+static unsigned char CreatePixmapStatus;
+
+static int
+CreatePixmapErrorHandler(Display *display, XErrorEvent *error)
+{
+    if (error->error_code == BadAlloc) {
+	CreatePixmapStatus = error->error_code;
+    }
+    return(1);
+}	
+
+/*----------------------------------------------------------------------*\
+* CreatePixmap()
+*
+* This routine creates a pixmap, doing error trapping in case there
+* isn't enough memory on the server.
+\*----------------------------------------------------------------------*/
+
+static void
+CreatePixmap(XwDev *dev)
+{
+    int (*oldErrorHandler)();
+
+    oldErrorHandler = XSetErrorHandler(CreatePixmapErrorHandler);
+
+    XSync(dev->display, 0);
+    CreatePixmapStatus = Success;
+    dev->pixmap = XCreatePixmap(dev->display, dev->window,
+				dev->width, dev->height, dev->depth);
+    XSync(dev->display, 0);
+    if (CreatePixmapStatus != Success) {
+	dev->write_to_pixmap = 0;
+	fprintf(stderr, "\n\
+Warning: pixmap could not be allocated (insufficient memory on server).\n\
+Driver will redraw the entire plot to handle expose events.\n");
+    }
+
+    XSetErrorHandler(oldErrorHandler);
+}
+
+/*----------------------------------------------------------------------*\
+* ColorInit()
 *
 * Does all color initialization.
 \*----------------------------------------------------------------------*/
 
 static void
-xw_colini(PLStream *pls)
+ColorInit(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
     int i, gslevbg, gslevfg;
@@ -986,7 +1038,7 @@ xw_colini(PLStream *pls)
 	dev->color = pls->color;
     else {
 	pls->color = 1;
-	dev->color = !AreWeGrayscale(dev->display);
+	dev->color = ! AreWeGrayscale(dev->display);
     }
 
 /*
@@ -997,7 +1049,7 @@ xw_colini(PLStream *pls)
 * Note that black & white allocations should never fail.
 */
 
-    if (!dev->color && !pls->bgcolorset) {
+    if ( ! dev->color && ! pls->bgcolorset) {
 	pls->bgcolor.r = 255;
 	pls->bgcolor.g = 255;
 	pls->bgcolor.b = 255;
@@ -1007,7 +1059,7 @@ xw_colini(PLStream *pls)
 	       (float) pls->bgcolor.g +
 	       (float) pls->bgcolor.b) / 3.;
 
-    if (!dev->color) {
+    if ( ! dev->color) {
 	if (gslevbg < 128)
 	    gslevbg = 0;
 	else
@@ -1018,9 +1070,9 @@ xw_colini(PLStream *pls)
 	pls->bgcolor.b = gslevbg;
     }
 
-    PLColor_to_XColor(&dev->bgcolor, &pls->bgcolor);
+    PLColor_to_XColor(&pls->bgcolor, &dev->bgcolor);
 
-    if (!XAllocColor(dev->display, dev->map, &dev->bgcolor)) {
+    if ( ! XAllocColor(dev->display, dev->map, &dev->bgcolor)) {
 	fprintf(stderr, "Can't allocate background color\n");
 	exit(1);
     }
@@ -1048,9 +1100,9 @@ xw_colini(PLStream *pls)
     pls->fgcolor.g = gslevfg;
     pls->fgcolor.b = gslevfg;
 
-    PLColor_to_XColor(&dev->fgcolor, &pls->fgcolor);
+    PLColor_to_XColor(&pls->fgcolor, &dev->fgcolor);
 
-    if (!XAllocColor(dev->display, dev->map, &dev->fgcolor)) {
+    if ( ! XAllocColor(dev->display, dev->map, &dev->fgcolor)) {
 	fprintf(stderr, "Can't allocate foreground color\n");
 	exit(1);
     }
@@ -1060,10 +1112,10 @@ xw_colini(PLStream *pls)
     if (dev->color) {
 	for (i = 0; i < pls->ncol0; i++) {
 
-	    PLColor_to_XColor(&dev->cmap0[i], &pls->cmap0[i]);
+	    PLColor_to_XColor(&pls->cmap0[i], &dev->cmap0[i]);
 
-	    if (!XAllocColor(dev->display, dev->map, &dev->cmap0[i]))
-		XColorcpy(&dev->cmap0[i], &dev->fgcolor);
+	    if ( ! XAllocColor(dev->display, dev->map, &dev->cmap0[i]))
+		Colorcpy(&dev->cmap0[i], &dev->fgcolor);
 	}
     }
 }
@@ -1071,25 +1123,47 @@ xw_colini(PLStream *pls)
 /*----------------------------------------------------------------------*\
 * void PLColor_to_XColor()
 *
-* Self-explanatory.
+* Copies the supplied PLColor to an XColor, padding with bits as
+* necessary (a PLColor uses an unsigned char for color storage, while
+* an XColor uses an unsigned short).  On most workstations, nbits = 8.
+* The argument types follow the same order as in the function name.
 \*----------------------------------------------------------------------*/
 
-static void
-PLColor_to_XColor(XColor *xcolor, PLColor *plcolor)
+void
+PLColor_to_XColor(PLColor *plcolor, XColor *xcolor)
 {
-    xcolor->red = plcolor->r << 8;
-    xcolor->green = plcolor->g << 8;
-    xcolor->blue = plcolor->b << 8;
+    short nbits = sizeof(unsigned short) / sizeof(unsigned char);
+
+    xcolor->red = plcolor->r << nbits;
+    xcolor->green = plcolor->g << nbits;
+    xcolor->blue = plcolor->b << nbits;
 }
 
 /*----------------------------------------------------------------------*\
-* void XColorcpy()
+* void PLColor_from_XColor()
+*
+* Copies the supplied XColor to a PLColor, stripping off bits as
+* necessary.  See the previous routine for more info.
+\*----------------------------------------------------------------------*/
+
+void
+PLColor_from_XColor(PLColor *plcolor, XColor *xcolor)
+{
+    short nbits = sizeof(unsigned short) / sizeof(unsigned char);
+
+    plcolor->r = xcolor->red >> nbits;
+    plcolor->g = xcolor->green >> nbits;
+    plcolor->b = xcolor->blue >> nbits;
+}
+
+/*----------------------------------------------------------------------*\
+* void Colorcpy()
 *
 * Self-explanatory.
 \*----------------------------------------------------------------------*/
 
 static void
-XColorcpy(XColor *xcolor1, XColor *xcolor2)
+Colorcpy(XColor *xcolor1, XColor *xcolor2)
 {
     xcolor1->red = xcolor2->red;
     xcolor1->green = xcolor2->green;
