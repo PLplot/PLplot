@@ -8,7 +8,7 @@
 # Make assignments and targets for PLplot/C++ interface layer.
 # -----------------------------------------------------------------------
 
-CXX_C		= stream.cc
-CXX_OBJ		= stream$O
+CXX_C		= plstream.cc
+CXX_OBJ		= plstream$O
 
 CXX_INSTALL	= install_cxx
