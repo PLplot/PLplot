@@ -4,8 +4,8 @@
 #
 # $Id$
 #
-# mklinks - makes (or removes) soft-links from PLplot distribution to
-#           appropriate places under usr/local 
+# mklinks - makes (or removes) soft-links from distribution directory to
+#           more appropriate places (typically under usr/local).
 #
 # Maurice LeBrun (mjl@dino.ph.utexas.edu)
 # IFS, University of Texas at Austin
@@ -17,8 +17,6 @@
 #	-r	Remove soft links
 #
 # Anything else results in a short help message being printed.
-# Has been tested with:
-#	PLplot 4.99g
 #
 # I wrote this script to simplify the business of installing software
 # distributions.  With a lot of packages continuing to evolve at a pretty
@@ -30,12 +28,12 @@
 #
 # The idea is to type "make install" in the build directory, with the
 # install target set to some empty directory.  A good choice is
-# /usr/local/<pkg><ver>, where <pkg> is the software package name (i.e.
-# plplot) and <ver> is the version.  This way you can have multiple
-# versions of the package installed, with only one of them easily
-# accessible.  Or you can leave out the version number.
+# /usr/local/<pkg><ver>, where <pkg> is the software package name and
+# <ver> is the version.  This way you can have multiple versions of the
+# package installed, with only one of them easily accessible.  Or you can
+# leave out the version number.
 #
-# By softlinking the PLplot distribution files into the usual /usr/local
+# By softlinking the package distribution files into the usual /usr/local
 # areas you (a) avoid requiring a change in PATH to get at the binaries,
 # (b) avoid requiring changes to makefiles to get include and lib
 # settings, (c) avoid requiring changes to MANPATH settings to allow
@@ -53,27 +51,59 @@
 #
 #*************************************************************************
 
-# Defaults
+# Miscellaneous settings
 
-NAME=$0
-PKG=PLplot
+NAME=$0			# Name of script
+CWD=`pwd`		# Current directory
+LINK_MAN=1		# Install man pages (set to null to disable)
 
-INSTALL_DIR=/usr/local
+# Infer package name from directory name
+# Not all systems have "basename" so use sed for this.
 
-PWD=`pwd`
+PKG=`echo $CWD | sed 's%/.*/%%'`
 
-LINK_MAN=1		# Install man pages
-#LINK_MAN=		# Do not
+# Get base target directory -- the links will go into $INSTALL_DIR/bin,
+# $INSTALL_DIR/lib, etc.  Since the package is typically in
+# /usr/local/<pkg>, INSTALL_DIR is just one directory up.  Use an absolute
+# path name rather than relative (..) since it's less confusing.
 
-if [ "$1" = "-n" ]; then
-    DO_NOTHING=1
-    shift
-fi
+INSTALL_DIR=`echo $CWD | sed 's%/[^/][^/]*$%%'`
 
-# Need to account for differences in /bin/sh semantics wrt soft links.
+# Per-package defaults:
+#    PKG_NAME		Name of package, for help/error messages
+#    REFERENCE_FILE	Name of an installed file to assist internal logic
+
+case "$PKG" in
+
+    plplot* )
+    
+    # Settings relevant to PLplot
+    # I typically put PLplot in /usr/local/plplot or $HOME/local/plplot.
+
+	PKG_NAME="PLplot"
+	REFERENCE_FILE="$INSTALL_DIR/bin/plrender"
+    ;;
+
+    tcl*|tk* )
+    
+    # Settings relevant to Tcl/TK
+    # I typically put Tcl/TK and related tools in /usr/local/tk<ver> or
+    # $HOME/local/tk<ver>. 
+
+	PKG_NAME="Tcl/TK/etc"
+	REFERENCE_FILE="$INSTALL_DIR/bin/tclsh"
+    ;;
+
+    * )
+	echo "Unrecognized package; aborting"
+	exit
+    ;;
+esac
+
+# Account for differences in /bin/sh semantics wrt soft links.
 
 IF_SOFT="-h"
-if [ `uname` = "AIX" ]; then
+if test `uname` = "AIX"; then
     IF_SOFT="-L"
 fi
 
@@ -88,7 +118,7 @@ e=echo
 help () {
 
 $e "Usage: $NAME [-n] [-a | -r]"
-$e "       Creates (-a) or removes (-r) soft links to $PKG files."
+$e "       Creates (-a) or removes (-r) soft links to $PKG_NAME files."
 $e "       Currently configured to put soft links under $INSTALL_DIR."
 $e ""
 $e "       If -n is specified, commands are printed with no action taken."
@@ -104,18 +134,21 @@ $e "       The -n flag must come first, if specified."
 
 add_link () {
 
-    if [ ! -d ${INSTALL_DIR}/$1 ]; then
-	if [ $DO_NOTHING ]; then
-	    echo "mkdir ${INSTALL_DIR}/$1"
-	else
-	    mkdir ${INSTALL_DIR}/$1
-	fi
-    fi
+    if test -d "$CWD/$1"; then
 
-    if [ $DO_NOTHING ]; then
-	echo "ln -s ${PWD}/$1/$2  ${INSTALL_DIR}/$1"
-    else
-	ln -s ${PWD}/$1/$2  ${INSTALL_DIR}/$1
+	if test ! -d "$INSTALL_DIR/$1"; then
+	    if test "$DO_NOTHING"; then
+		echo "mkdir -p $INSTALL_DIR/$1"
+	    else
+		mkdir -p $INSTALL_DIR/$1
+	    fi
+	fi
+
+	if test "$DO_NOTHING"; then
+	    echo "ln -s $CWD/$1/$2  $INSTALL_DIR/$1"
+	else
+	    ln -s $CWD/$1/$2  $INSTALL_DIR/$1
+	fi
     fi
 }
 
@@ -126,11 +159,11 @@ add_link () {
 
 rm_link () {
 
-    if [ $IF_SOFT "${INSTALL_DIR}/$1" ]; then
-	if [ $DO_NOTHING ]; then
-	    echo "rm ${INSTALL_DIR}/$1"
+    if test $IF_SOFT "$INSTALL_DIR/$1"; then
+	if test "$DO_NOTHING"; then
+	    echo "rm $INSTALL_DIR/$1"
 	else
-	    rm ${INSTALL_DIR}/$1
+	    rm $INSTALL_DIR/$1
 	fi
     fi
 }
@@ -154,36 +187,23 @@ Add () {
 
 # Bomb out if we're not starting clean
 
-    if [ $IF_SOFT "${INSTALL_DIR}/bin/plrender" ]; then
+    if test $IF_SOFT "$REFERENCE_FILE"; then
 	echo "Must remove old links first -- use \"$NAME -r\"."
 	exit 1
     fi
 
 # Set up links
 
-    echo \
-"Adding links from ${PWD} to ${INSTALL_DIR}..."
+    echo "Adding links from $CWD to $INSTALL_DIR"
 
     add_link "bin"	"*"
     add_link "lib"	"*"
     add_link "include"	"*.h"
 
-    if [ "$LINK_MAN" ]; then
-
-	if [ ! -d ${INSTALL_DIR}/man ]; then
-	    if [ $DO_NOTHING ]; then
-		echo "mkdir ${INSTALL_DIR}/man"
-	    else
-		mkdir ${INSTALL_DIR}/man
-	    fi
-	fi
-
-	if [ -d ${PWD}/man/man1 ]; then
-	    add_link "man/man1" "*.1"
-	fi
-	if [ -d ${PWD}/man/man3 ]; then
-	    add_link "man/man3" "*.3"
-	fi
+    if test "$LINK_MAN"; then
+	add_link "man/man1" "*.1"
+	add_link "man/man3" "*.3"
+	add_link "man/mann" "*.n"
     fi
 }
 
@@ -195,30 +215,21 @@ Remove () {
 
 # Bomb out if links already removed.
 
-    if [ ! $IF_SOFT "${INSTALL_DIR}/bin/plrender" ]; then
+    if test ! $IF_SOFT "$REFERENCE_FILE"; then
 	echo 'Soft links already removed.'
 	exit 1
     fi
 
 # Delete links
-# Note that in each case, we check to make sure it really is a soft link
-# before deleting.  
+# Here we reglob to determine what links need deleting.  Note that in each
+# case, we check to make sure it really is a soft link.
 
-    echo \
-"Removing links from ${PWD} to ${INSTALL_DIR}..."
-
-# In cases that we globbed to do the links, we reglob to determine what
-# links need deleting.
+    echo "Removing links from $CWD to $INSTALL_DIR"
 
     rm_links bin/* lib/* include/*.h
 
-    if [ "$LINK_MAN" ]; then
-	if [ -d ${PWD}/man/man1 ]; then
-	    rm_links "man/man1/*.1"
-	fi
-	if [ -d ${PWD}/man/man3 ]; then
-	    rm_links "man/man3/*.3"
-	fi
+    if test "$LINK_MAN"; then
+	rm_links man/man1/*.1 man/man3/*.3 man/mann/*.n
     fi
 }
 
@@ -226,10 +237,15 @@ Remove () {
 
 # Call the necessary function to do the job.
 
-if [ "$1" = '-a' ]; then
+if test "$1" = "-n"; then
+    DO_NOTHING=1
+    shift
+fi
+
+if test "$1" = '-a'; then
     Add
 
-elif [ "$1" = '-r' ]; then
+elif test "$1" = '-r'; then
     Remove
 
 else
