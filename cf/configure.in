@@ -368,12 +368,6 @@ fi
 # Set up defaults and command line args.
 # ----------------------------------------------------------------------------
 
-# Can't really do this yet, b/c if we fail to find something, then
-# enable_xxx will be set to no, but we will have already set it to
-# yes.  So, comment this out and put it down further in the file.
-
-dnl> AC_CONFIG_HEADER(plConfig.h plDevs.h)
-
 if test "$system" ; then
     AC_MSG_RESULT(system is: $system)
 fi
@@ -504,6 +498,15 @@ fi
 # This is where the real work is done.
 # ----------------------------------------------------------------------------
 
+# All the really basic system tests
+
+AC_HEADER_STDC
+AC_CHECK_HEADERS(unistd.h termios.h)
+AC_HEADER_SYS_WAIT
+AC_PROG_RANLIB
+AC_FUNC_VFORK
+AC_CHECK_FUNCS(popen usleep)
+
 # Define tags to be used in multiple-precision library names
 # Must be done right away because these tags used in PL_DRIVERS macro.
 # Double precision: tag with "d"
@@ -549,13 +552,6 @@ touch .plcfg
 # and what not will finally be set right.
 
 AC_CONFIG_HEADER(plConfig.h plDevs.h)
-
-AC_HEADER_STDC
-AC_CHECK_HEADERS(unistd.h termios.h)
-AC_HEADER_SYS_WAIT
-AC_PROG_RANLIB
-AC_FUNC_VFORK
-AC_CHECK_FUNCS(popen usleep)
 
 # ----------------------------------------------------------------------------
 # For some systems the XCreateWindow call in xwin.c needs the default visual.
