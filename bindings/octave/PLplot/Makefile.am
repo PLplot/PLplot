@@ -90,6 +90,7 @@ plplot_octave_DATA = \
 	semilogy.m \
 	set_view.m \
 	shade.m \
+	shading.m \
 	shg.m \
 	stripc.m \
 	stripc_add.m \
