@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/07/21 10:12:10  mjl
+ * Revision 1.5  1994/07/22 16:03:29  furnish
+ * "Little Miss Muffet, sat on a tuffet, eating her curds and whey.
+ * Along came a spider and sat down beside her, and frightened Miss
+ * Muffet away."
+ *
+ * Revision 1.4  1994/07/21  10:12:10  mjl
  * Changed plpoin3 to use fast point draw (code=-1).
  *
  * Revision 1.3  1994/07/20  06:06:12  mjl
@@ -112,7 +117,10 @@ void test_poly(int k)
     float theta, phi;
     int i, j;
     float pi, two_pi;
-    int draw[] = { 1, 1, 1, 1, 1 };
+    int draw[][4] = { { 1, 1, 1, 1 },
+		      { 1, 0, 1, 0 },
+		      { 0, 1, 0, 1 },
+		      { 1, 1, 0, 0 } };
 
     pi = 3.1415927, two_pi = 2. * pi;
 
@@ -163,7 +171,7 @@ void test_poly(int k)
 	    y[4] = sin( PHI(j) ) * sin( THETA(i) );
 	    z[4] = cos( PHI(j) );
 
-	    plpoly3( -5, x, y, z, draw );
+	    plpoly3( -5, x, y, z, draw[k] );
 	}
     }
 
