@@ -7,6 +7,7 @@ dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
 dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
 dnl Copyright (C) 2003, 2004  Joao Cardoso
 dnl Copyright (C) 2004  Andrew Roach
+dnl Copyright (C) 2005  Thomas J. Duck
 dnl
 dnl This file is part of PLplot.
 dnl
@@ -65,6 +66,7 @@ builtin([define], [PL_DRIVERS_DEVICE_LIST], [
     gnome:gnome:no,
     hp7470:hpgl:yes, hp7580:hpgl:yes, lj_hpgl:hpgl:yes,
     imp:impress:no,
+    gcw:libgcw:no,
     linuxvga:linuxvga:yes,
     ljii:ljii:no,
     ljiip:ljiip:no,
