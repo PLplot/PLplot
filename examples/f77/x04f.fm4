@@ -1,5 +1,10 @@
 C      Illustration of logarithmic axes, and redefinition of window
       implicit none
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
       call plinit
       call plfont(2)
 C      Make log plots using two different styles.

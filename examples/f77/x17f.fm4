@@ -18,10 +18,12 @@ C--------------------------------------------------------------------------
       logical      errcode
       character*80 errmsg
 
-C      plplot initialization
-C      Parse and process command line arguments
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
 
-C      TODO: plParseOpts()
+C      plplot initialization
 
 C      If db is used the plot is much more smooth. However, because of the
 C      async X behaviour, one does not have a real-time scripcharter.

@@ -4,6 +4,10 @@ C      Demonstration program for PLplot: Bar chart example.
       character*20 string
       integer i
       real*8 y0(10)
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
 
       call plinit()
 

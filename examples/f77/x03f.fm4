@@ -9,15 +9,17 @@ C
       real*8 x0(0:360), y0(0:360)
       real*8 x(0:360), y(0:360), dtr, theta, dx, dy, r
       integer i, j, nsp
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
 
       dtr = PI/180.0d0
       do i=0,360
         x0(i) = cos(dtr * dble (i))
         y0(i) = sin(dtr * dble (i))
       enddo
-C      Parse and process command line arguments
-
-C      TODO: plParseOpts()
 
 C      Initialize PLplot
 

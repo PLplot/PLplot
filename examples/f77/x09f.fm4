@@ -18,6 +18,11 @@ C      arrays that is actually used.
 
       data clevel /-1.d0, -0.8d0, -0.6d0, -0.4d0, -0.2d0,
      &  0.d0, 0.2d0, 0.4d0, 0.6d0 ,0.8d0, 1.d0/
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
       tr(1) = 2.d0/dble(nptsx-1)
       tr(2) = 0.0d0
       tr(3) = -1.0d0

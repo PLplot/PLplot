@@ -4,6 +4,11 @@ C      Displays the plotter symbols for PLPOIN
       real*8 x, y
 
       character*3 text
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
 
 C      Full sized page for display
 

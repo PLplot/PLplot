@@ -6,6 +6,10 @@ C      Simple line plot and multiple windows demo.
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
       character*80 version
       integer digmax
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
 
 C      Divide page into 2x2 plots
       call plssub(2, 2)

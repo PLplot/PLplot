@@ -10,9 +10,10 @@ C      Does a variety of shade plots.
       real*8  xx, yy
       real*8  z(XPTS,YPTS), zmin, zmax
 
-C      Parse and process command line arguments /
-
-C      TODO: plParseOpts(&argc, argv, PL_PARSE_FULL)
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
 
 C      Set up color map 1 (but comment out because this makes
 C      no difference for the current cmap0 plshade calls in plot1 and plot2.)

@@ -33,6 +33,11 @@ C      of these options.
       parameter(DRAW_SIDES = 64)
       parameter(FACETED = 128)
       parameter(MESH = 256)
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
       
       do i = 1,xpts
         x(i) = 3.d0*dble(i-1-(xpts/2))/dble (xpts/2)

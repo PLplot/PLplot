@@ -1,6 +1,11 @@
 C      Demonstration program for PLplot illustrating absolute positioning
 C      of graphs on a page
       implicit none
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
 
       call plinit()
 

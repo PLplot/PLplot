@@ -25,9 +25,10 @@ C--------------------------------------------------------------------------
       data alt / 20.0d0, 35.0d0, 50.0d0, 65.0d0 /
       data az  / 30.0d0, 40.0d0, 50.0d0, 60.0d0 /
 
-C      Parse and process command line arguments
-
-C      TODO: plParseOpts()
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
 
 C      Initialize plplot
 

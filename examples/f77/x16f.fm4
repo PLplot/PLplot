@@ -21,6 +21,11 @@ C      dummy to fill argument list with something not currently used.
       real*8 tr(6)
       common /plplot/tr
 
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
 C      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
       call plscmap0n(3)
 

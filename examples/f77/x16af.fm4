@@ -2,6 +2,12 @@ C      Demonstration of plshade plotting
 
 C      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
       implicit none
+
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
       call plscmap0n(3)
 
 C      Initialize plplot

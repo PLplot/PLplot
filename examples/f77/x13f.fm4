@@ -7,6 +7,11 @@ C      Pie chart demo.
       character*20 text(5)
       data text / 'Maurice', 'Geoffrey', 'Alan', 'Rafael', 'Vince'/
 
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
+
       per(1) = 10.d0
       per(2) = 32.d0
       per(3) = 12.d0

@@ -8,10 +8,10 @@ C      Draws a histogram from sample data
       integer NPTS
       parameter ( NPTS = 2047 )
       real*8 data(NPTS), delta
-
-C      Parse and process command line arguments
-
-C      TODO: plParseOpts()
+      integer PL_PARSE_FULL
+      parameter(PL_PARSE_FULL = 1)
+C      Process command-line arguments
+      call plparseopts(PL_PARSE_FULL)
 
 C      Initialize plplot
       call plinit()
