@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.33  1995/06/01 21:28:24  mjl
+# Revision 1.34  1995/06/02 20:31:54  mjl
+# Set zoom starting point to default to center.  Better for zooming in on
+# small plot features, although worse for large objects (e.g. entire plots).
+#
+# Revision 1.33  1995/06/01  21:28:24  mjl
 # Changed to call getSaveFile to retrieve save file name.
 #
 # Revision 1.32  1995/05/26  20:18:43  mjl
@@ -196,7 +200,7 @@ proc plw_setup_defaults {w} {
     global zoomopts zoomopt_0 zoomopt_1
 
     set zoomopts($w,0) 1
-    set zoomopts($w,1) 0
+    set zoomopts($w,1) 1
     if { [info exists zoomopt_0] } {set zoomopts($w,0) $zoomopt_0}
     if { [info exists zoomopt_1] } {set zoomopts($w,1) $zoomopt_1}
 

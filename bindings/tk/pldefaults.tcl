@@ -1,6 +1,10 @@
 # $Id$
 # $Log$
-# Revision 1.8  1995/05/26 20:11:10  mjl
+# Revision 1.9  1995/06/02 20:31:53  mjl
+# Set zoom starting point to default to center.  Better for zooming in on
+# small plot features, although worse for large objects (e.g. entire plots).
+#
+# Revision 1.8  1995/05/26  20:11:10  mjl
 # Added global variables for setting defaults for zoom and save options.
 #
 # Revision 1.7  1995/05/19  22:21:26  mjl
@@ -189,7 +193,7 @@ proc pldefaults {} {
 #  1:	0=stretch from corner, 1=stretch from center
 
     global zoomopt_0;		set zoomopt_0 1
-    global zoomopt_1;		set zoomopt_1 0
+    global zoomopt_1;		set zoomopt_1 1
 
 # save options:
 #  0:   name of default save device
