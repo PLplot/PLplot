@@ -2068,7 +2068,7 @@ void plstream::HLS_RGB( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g,
 {
     set_stream();
 
-    plHLS_RGB(h,l,s,p_r,p_g,p_b);
+    ::c_plHLS_RGB(h,l,s,p_r,p_g,p_b);
 }
 
 void plstream::RGB_HLS( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l,
@@ -2076,7 +2076,7 @@ void plstream::RGB_HLS( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l,
 {
     set_stream();
 
-    plRGB_HLS(r,g,b,p_h,p_l,p_s);
+    ::c_plRGB_HLS(r,g,b,p_h,p_l,p_s);
 }
 
 /* Wait for right button mouse event and translate to world coordinates */

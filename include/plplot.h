@@ -508,6 +508,7 @@ typedef struct {
 #define    plgzax	c_plgzax
 #define    plhist	c_plhist
 #define    plhls        c_plhls
+#define    plHLS_RGB    c_plHLS_RGB
 #define    plinit	c_plinit
 #define    pljoin	c_pljoin
 #define    pllab	c_pllab
@@ -532,6 +533,7 @@ typedef struct {
 #define    plreplot	c_plreplot
 #define    plrgb	c_plrgb
 #define    plrgb1	c_plrgb1
+#define    plRGB_HLS    c_plRGB_HLS
 #define    plschr	c_plschr
 #define    plscmap0	c_plscmap0
 #define    plscmap0n	c_plscmap0n
@@ -949,6 +951,11 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 void
 c_plhls(PLFLT h, PLFLT l, PLFLT s);
 
+/* Functions for converting between HLS and RGB color space */
+
+void
+c_plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
+
 /* Initializes PLplot, using preset or default options */
 
 void
@@ -1117,6 +1124,11 @@ c_plrgb(PLFLT r, PLFLT g, PLFLT b);
 
 void
 c_plrgb1(PLINT r, PLINT g, PLINT b);
+
+/* Functions for converting between HLS and RGB color space */
+
+void
+c_plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 
 /* Set character height. */
 
@@ -1669,14 +1681,6 @@ plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
 
 void
 plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
-
-/* Functions for converting between HLS and RGB color space */
-
-void
-plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
-
-void
-plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
 
 /* Wait for graphics input event and translate to world coordinates */
 

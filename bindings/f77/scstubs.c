@@ -363,6 +363,18 @@ PLHLS(PLFLT *hue, PLFLT *light, PLFLT *sat)
 }
 
 void
+PLHLS_RGB(PLFLT *h, PLFLT *l, PLFLT *s, PLFLT *r, PLFLT *g, PLFLT *b)
+{
+    c_plHLS_RGB(*h, *l, *s, r, g, b);
+}
+
+void
+PLHLS_RGBa(PLFLT *h, PLFLT *l, PLFLT *s, PLFLT *r, PLFLT *g, PLFLT *b)
+{
+    c_plHLS_RGB(*h, *l, *s, r, g, b);
+}
+
+void
 PLINIT(void)
 {
     c_plinit();
@@ -491,6 +503,18 @@ void
 PLRGB1(PLINT *r, PLINT *g, PLINT *b)
 {
     c_plrgb1(*r, *g, *b);
+}
+
+void
+PLRGB_HLS(PLFLT *r, PLFLT *g, PLFLT *b, PLFLT *h, PLFLT *l, PLFLT *s)
+{
+    c_plRGB_HLS(*r, *g, *b, h, l, s);
+}
+
+void
+PLRGB_HLSa(PLFLT *r, PLFLT *g, PLFLT *b, PLFLT *h, PLFLT *l, PLFLT *s)
+{
+    c_plRGB_HLS(*r, *g, *b, h, l, s);
 }
 
 void
@@ -819,4 +843,3 @@ PLXORMOD(PLINT *mode, PLINT *status)
 {
     c_plxormod(*mode, status);
 }
-

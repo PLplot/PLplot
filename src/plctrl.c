@@ -417,7 +417,7 @@ c_plscmap1l(PLINT itype, PLINT npts, PLFLT *pos,
 	    r = coord1[n];
 	    g = coord2[n];
 	    b = coord3[n];
-	    plRGB_HLS(r, g, b, &h, &l, &s);
+	    c_plRGB_HLS(r, g, b, &h, &l, &s);
 	}
 
 	plsc->cmap1cp[n].h = h;
@@ -494,7 +494,7 @@ plcmap1_calc(void)
 	    while (h < 0.)
 		h += 360.;
 
-	    plHLS_RGB(h, l, s, &r, &g, &b);
+	    c_plHLS_RGB(h, l, s, &r, &g, &b);
 
 	    plsc->cmap1[i].r = MAX(0, MIN(255, (int) (256. * r)));
 	    plsc->cmap1[i].g = MAX(0, MIN(255, (int) (256. * g)));
@@ -816,14 +816,14 @@ c_plhls(PLFLT h, PLFLT l, PLFLT s)
 {
     PLFLT r, g, b;
 
-    plHLS_RGB(h, l, s, &r, &g, &b);
+    c_plHLS_RGB(h, l, s, &r, &g, &b);
     plrgb(r, g, b);
 }
 
 /*--------------------------------------------------------------------------*\
  * void value()
  *
- * Auxiliary function used by plHLS_RGB().
+ * Auxiliary function used by c_plHLS_RGB().
 \*--------------------------------------------------------------------------*/
 
 static PLFLT
@@ -849,7 +849,7 @@ value(double n1, double n2, double hue)
 }
 
 /*--------------------------------------------------------------------------*\
- * void plHLS_RGB()
+ * void c_plHLS_RGB()
  *
  * Convert HLS color to RGB color.
  * Bounds on HLS (input):
@@ -863,7 +863,7 @@ value(double n1, double n2, double hue)
 \*--------------------------------------------------------------------------*/
 
 void
-plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
+c_plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 {
     PLFLT m1, m2;
 
@@ -880,7 +880,7 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 }
 
 /*--------------------------------------------------------------------------*\
- * void plRGB_HLS()
+ * void c_plRGB_HLS()
  *
  * Convert RGB color to HLS color.
  * Bounds on RGB (input) is always [0., 1.].
@@ -891,7 +891,7 @@ plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b)
 \*--------------------------------------------------------------------------*/
 
 void
-plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
+c_plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s)
 {
     PLFLT h, l, s, d, rc, gc, bc, rgb_min, rgb_max;
 
