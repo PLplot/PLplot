@@ -505,7 +505,8 @@ it to CR/LF yesterday . My Bad - sorry :-(
 Commit from arjenmarkus (2004-06-02 14:26 CEST)
 -----------------------
 
-Fixed problem with updating the screen (corrected option for opening buffer file and made sure the window handler always redraws via the buffer file)
+Fixed problem with updating the screen (corrected option for opening buffer
+file and made sure the window handler always redraws via the buffer file)
 
   plplot  sys/win32/msdev/src/win3.cpp  1.10
 
@@ -604,14 +605,14 @@ Changed some old constructs "plfunc()" into calls to xml entities "&plfunc;".
 Commit from aroach (2004-05-25 08:44 CEST)
 ------------------
 
-The wingcc driver was written so that users of GCC windows compilers
-, such as mingw, could have an interactive terminal. This simple
-driver at present just does the basics, like line drawing, filling,
-and line width changes. Freeetype support is embedded within it but
-is not working 100% correctly yet; however, the driver does perform
-its basic job which is simple interactive displays. No fancy features
-like zooming, cross hairs or double buffering are present yet, but the
-device does support resizing at least.
+The wingcc driver was written so that users of GCC windows compilers, such
+as mingw, could have an interactive terminal. This simple driver at present
+just does the basics, like line drawing, filling, and line width
+changes. Freeetype support is embedded within it but is not working 100%
+correctly yet; however, the driver does perform its basic job which is
+simple interactive displays. No fancy features like zooming, cross hairs or
+double buffering are present yet, but the device does support resizing at
+least.
 
 The driver has only been tested with Mingw + Msys, and builds after
 a configure make.
@@ -2006,14 +2007,6 @@ swig_available_version.
   plplot  cf/swig.m4  1.3
 
 
-Commit from airwin (2004-02-26 19:03 CET)
-------------------
-
-Ignore Makefile, Makefile.in
-
-  plplot  cf/.cvsignore  1.6
-
-
 Commit from andrewross (2004-02-26 18:50 CET)
 ----------------------
 
@@ -2232,7 +2225,7 @@ Commit from rlaboiss on branch CFDIR (2004-02-23 19:32 CET)
 Created macro PL_CONFIG_FILE_EXE in cf/acinclude.m4.  This macro is called
 in ct/test.ac to make the files test_f77.sh, test_python.sh and
 plplot-test.sh executables after AC_SUBSTitution.  The previous method of
-using a second argument in aC_CONFIG_FILES to do the chmod +x was not
+using a second argument in AC_CONFIG_FILES to do the chmod +x was not
 working properly, because the chmod command was being executed for every
 file in the list.  This was harmless, but caused an annoying waring message
 during configure.
@@ -2325,55 +2318,6 @@ to cf/README.  The CFDIR branch is now ready for testing.
   plplot  src/plvect.c                   1.1.2.1
   plplot  test/.cvsignore                1.6.4.1
   plplot  test/plplot-test.sh.in         1.18.2.1
-
-
-Commit from rlaboiss on branch CFDIR (2004-02-22 21:57 CET)
-------------------------------------
-
-Merged with HEAD.  Documentation for the CFDIR branch is extensively added
-to cf/README.  The CFDIR branch is now ready for testing.
-
-  plplot  bindings/python/.cvsignore                 1.6.4.1
-  plplot  bindings/python/Makefile.am                1.27.2.1
-  plplot  bindings/swig-support/plplotcapi.i         1.2.2.1
-  plplot  cf/README                                  1.10.2.3
-  plplot  cf/drivers-pre.ac                          1.1.2.2
-  plplot  doc/docbook/Makefile.am                    1.29.4.2
-  plplot  doc/docbook/src/api-fortran.xml            1.7.4.1
-  plplot  doc/docbook/src/api.xml                    1.62.4.1
-  plplot  doc/docbook/src/plplotdoc.xml.in           1.33.4.1
-  plplot  drivers/linuxvga.c                         1.15.4.1
-  plplot  examples/c/x22c.c                          1.3.2.1
-  plplot  examples/c++/x22.cc                        1.2.2.1
-  plplot  examples/f77/Makefile.am                   1.20.2.1
-  plplot  examples/f77/Makefile.examples.in          1.19.4.1
-+ plplot  examples/f77/x14f.fm4                      1.1.2.1
-+ plplot  examples/f77/x22f.fm4                      1.1.2.1
-  plplot  examples/java/x01.java                     1.14.2.1
-  plplot  examples/java/x14.java                     1.4.2.1
-  plplot  examples/python/Makefile.am                1.11.2.1
-  plplot  examples/tcl/Makefile.am                   1.9.4.1
-  plplot  examples/tk/Makefile.am                    1.14.4.1
-  plplot  include/plplot.h                           1.149.2.1
-  plplot  scripts/Makefile.am  1.9.2.1
-
-
-Commit from rlaboiss (2004-02-22 21:57 CET)
---------------------
-
-Removing all files in the obsolete bindings/perl5 directory.  The canonical
-perl bindings (through PDL) will be exemplified in examples/perl.
-
-- plplot  bindings/perl5/Makefile.PL.in    1.4
-- plplot  bindings/perl5/PLplot.i.in       1.13
-- plplot  bindings/perl5/PLplot.pm-add.in  1.6
-- plplot  bindings/perl5/README            1.6
-- plplot  bindings/perl5/TODO              1.3
-- plplot  bindings/perl5/api2bind.pl       1.6
-- plplot  bindings/perl5/pkg_perl5.in      1.7
-- plplot  bindings/perl5/x01.pl            1.10
-- plplot  bindings/perl5/x02.pl            1.2
-- plplot  bindings/perl5/x09.pl            1.4
 
 
 Commit from rlaboiss on branch CFDIR (2004-02-22 21:56 CET)
@@ -2516,7 +2460,7 @@ Commit from rlaboiss on branch CFDIR (2004-02-21 17:29 CET)
 Final cleanup of configure.ac.  This file is close to release quality now.
 Some of the other cf/*.ac files are still messy, albeit functional.
 
-I finally succeeded to get aroung the nested m4_include calls in
+I finally succeeded to get around the nested m4_include calls in
 cf/drivers.ac, thanks to definition of the environment variable M4PATH in
 cf/bootstrap.sh.
 
@@ -2663,9 +2607,9 @@ Commit from rlaboiss (2004-02-19 22:41 CET)
 --------------------
 
 Added $(top_builddir)/config.status dependencies to all x??f.f files.  This
-means that whenever cofigure is run, the x??f.f files will be generated from
-the x??f.fm4 sources.  This is a brute-force approach to the case where
-PLplot is reconfigured with a chnge in the double precision option.
+means that whenever configure is run, the x??f.f files will be generated
+from the x??f.fm4 sources.  This is a brute-force approach to the case
+where PLplot is reconfigured with a chnge in the double precision option.
 
   plplot  examples/f77/Makefile.am  1.24
 
@@ -2924,22 +2868,6 @@ first place for that case.
 
   plplot  bindings/java/Makefile.am    1.26
   plplot  bindings/python/Makefile.am  1.28
-
-
-Commit from airwin (2004-02-17 04:02 CET)
-------------------
-
-*.ps
-
-  plplot  test/.cvsignore  1.7
-
-
-Commit from airwin (2004-02-17 04:01 CET)
-------------------
-
-*.pyc
-
-  plplot  bindings/python/.cvsignore  1.7
 
 
 Commit from airwin (2004-02-17 03:24 CET)
@@ -3367,27 +3295,6 @@ scattered among other cf/*.ac files.
 
 + plplot  cf/sysloc.in   1.114.2.1
 + plplot  cf/docbook.m4  1.1.2.1
-
-
-Commit from rlaboiss (2004-02-15 16:17 CET)
---------------------
-
-Oops, typo, lib -> sgml
-
-- plplot  doc/docbook/docbook.m4  1.17
-
-
-Commit from rlaboiss (2004-02-15 16:17 CET)
---------------------
-
-Allow the AC_SUBSTITuted variable OCTAVE (defined in sysloc.in) to be used
-in test_octave.sh, instead of the hard coded command name "octave".  It is
-passed from plplot-test.sh to test_octave.sh as the environment variable
-$octave.
-
-Also, removed a comment indicating that this is work in progress.
-
-- plplot  sysloc.in  1.74
 
 
 Commit from rlaboiss on branch CFDIR (2004-02-15 15:03 CET)
@@ -4032,15 +3939,6 @@ Added title to HTML file
   plplot  scripts/upload-cvs-tarball.sh  1.2
 
 
-Commit from rlaboiss (2004-02-09 19:39 CET)
---------------------
-
-Take possession of xw14.py and xw17.py, such that the CVSROOT hack works
-
-  plplot  examples/python/xw14.py  1.10
-  plplot  examples/python/xw17.py  1.12
-
-
 Commit from rlaboiss (2004-02-09 19:05 CET)
 --------------------
 
@@ -4484,14 +4382,6 @@ Make rdbuf_state in plbuf.c handle bad colour index similarly to c_plcol0 in
 plctrl.c.
 
   plplot  src/plbuf.c  1.3
-
-
-Commit from airwin (2004-01-28 19:00 CET)
-------------------
-
-Add plplotjavacConstants.java in anticipation of swig 1.3.21.
-
-  plplot  bindings/java/.cvsignore  1.5
 
 
 Commit from andrewross (2004-01-27 19:50 CET)
