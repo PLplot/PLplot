@@ -1,3 +1,11 @@
+plplot (5.3.0-2) unstable; urgency=low
+
+  * debian/control: Removed build-dependency on libhdf5-serial-dev, since
+    it will be included in the build-dependencies of octave2.1-headers
+    (version 2.1.53-3).
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue,  3 Feb 2004 15:02:04 +0100
+
 plplot (5.3.0-1) unstable; urgency=low
 
   * New upstream release.
