@@ -50,6 +50,7 @@ endfor
 #For file output 14 and 17 are not suitable, and 19 is not done
 #(and should probably be dropped anyway since the map stuff is not
 #in the API that is supposed to be common to all front ends.)
+failed = [];
 for i=[1:13 15 16 18];
     cmd = sprintf("x%.2dc",i);
     t = split("$options", "-"); t(1,:)="";
@@ -65,6 +66,17 @@ for i=[1:13 15 16 18];
 #common examples.
     file = sprintf("x%.2do.$dsuffix",i);
     plSetOpt("o", file);
-    eval(cmd);
+    eval(cmd, "failed = [failed, i];");
 endfor
+if ! isempty (failed)
+    printf ("Failed tests: ");
+    for i = 1 : length (failed)
+        if i != 1
+            printf (", ");
+        endif
+        printf ("x%.2dc.m", failed (i));
+    endfor
+    printf ("\n");
+endif
+exit (1);
 EOF
