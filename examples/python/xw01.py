@@ -15,6 +15,9 @@ from pl import *
 
 def main():
 
+    # Do plots on 4 subwindows of the first page
+    plssub(2, 2)
+
     # Do a plot with one range of data
 
     plot1(6., 1., 0., 0.)
@@ -29,8 +32,10 @@ def main():
     
     plot3()
 
-    #restore defaults
+    # Restore defaults
     plcol0(1)
+    plssub(1, 1)
+    pleop()
 
 # ===============================================================
 
@@ -67,8 +72,6 @@ def plot1(xscale, yscale, xoff, yoff):
     plcol0(3)
     plline(x, y)
     
-    pleop()
-    
 # ===============================================================
 
 def plot2():
@@ -96,8 +99,6 @@ def plot2():
 
     plcol0(3)
     plline(x, y)
-    
-    pleop()
 
 # ===============================================================
 
@@ -122,10 +123,10 @@ def plot3():
     # Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
     # plstyl expects a pointer!! 
 
-    #w.plstyl([1500], [1500])
+    plstyl([1500], [1500])
     plcol0(2)
     plbox("g", 30.0, 0, "g", 0.2, 0)
-    #w.plstyl([], [])
+    plstyl([], [])
 
     plcol0(3)
     pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function")
@@ -135,7 +136,5 @@ def plot3():
 
     plcol0(4)
     plline(x, y)
-
-    pleop()
 
 main()
