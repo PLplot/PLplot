@@ -1084,9 +1084,15 @@ if test "$enable_tk" = "yes"; then
     plplot 2>/dev/null
     
     # tkwin stuff
+    # Exclude headers and plwidget2.tcl from the generic symlinks.
+    # The latter file is not compatible with the tk driver at the moment.  This
+    # problem should be fixed and plwidget2.tcl actually used in the
+    # Linux environment on a time scale of several weeks (according to Vince).
+    # At that point I (AWI) will symlink it again.
     ln -s \
-    `ls $srcdir/bindings/tk-x-plat/*.* |grep -v '\.h$'` \
+    `ls $srcdir/bindings/tk-x-plat/*.* |grep -v '\.h$' | grep -v 'plwidget2.tcl'`\
     . 2>/dev/null
+    # Put header symlinks into usual header directory.
     ln -s \
     $srcdir/bindings/tk-x-plat/*.h \
     plplot 2>/dev/null
