@@ -23,9 +23,7 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include $(INCLTDL)
 examples_cdir = $(DATA_DIR)/examples/c
 sources = \
-	README.plplotcanvas \
 	plcdemos.h \
-	lena.pgm \
 	tutor.c \
 	x01c.c \
 	x02c.c \
@@ -53,8 +51,12 @@ sources = \
 	x24c.c
 
 examples_c_DATA = \
-	$(sources) \
 	Makefile.examples
+
+dist_examples_c_DATA = \
+	README.plplotcanvas \
+	lena.pgm \
+	$(sources)
 
 install-data-hook:
 	( cd $(DESTDIR)$(examples_cdir) ; mv -f Makefile.examples Makefile )
@@ -88,4 +90,4 @@ check_PROGRAMS = \
 
 LDADD = $(libplplot)
 
-EXTRA_DIST = $(sources) Makefile.examples.in
+EXTRA_DIST = Makefile.examples.in
