@@ -47,7 +47,7 @@ javademos = README.javademos $(javafiles)
 if enable_java
 
 # Must have "exec" in the name.
-ourexecjavadir = $(libdir)/java/plplot/examples
+ourexecjavadir = $(DATA_DIR)/java/plplot/examples
 
 ourexecjava_DATA = $(javademos)
 
@@ -57,8 +57,9 @@ endif
 
 install-exec-hook:
 if enable_java
-	( cd $(DESTDIR)$(libdir) ; \
-	  javac -classpath java -d java java/plplot/examples/*.java)
+	( cd $(DESTDIR)$(DATA_DIR) ; \
+	  javac -classpath java -d java java/plplot/examples/*.java; \
+	  cd java; jar -c -f plplot.jar plplot/*; rm -rf plplot )
 endif
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]

@@ -56,7 +56,8 @@ $(swiggenfiles): plplotjavac.i $(PLPLOTCAPI_I)
 	$(SWIG_CMD) -package plplot.core plplotjavac.i
 
 # Must have "exec" in the name.
-ourexecjavadir = $(libdir)/java/plplot/core
+ourexecjavadir = $(DATA_DIR)/java/plplot/core
+execjavawrapperdir = $(JAVAWRAPPER_DIR)
 
 libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
@@ -67,7 +68,7 @@ nodist_plplotjavac_wrap_la_SOURCES  = plplotjavac_wrap.c
 # no-undefined should work on all platforms here since libplplot should
 # resolve all symbols.
 plplotjavac_wrap_la_LDFLAGS = \
-	-rpath $(ourexecjavadir) \
+	-rpath $(execjavawrapperdir) \
 	-module \
 	-avoid-version \
 	-no-undefined \
@@ -79,7 +80,7 @@ if enable_java
 # widespread.
 ourexecjava_DATA = README.javaAPI $(javafiles)
 
-ourexecjava_LTLIBRARIES = plplotjavac_wrap.la
+execjavawrapper_LTLIBRARIES = plplotjavac_wrap.la
 
 # if enable_java
 endif
@@ -89,9 +90,9 @@ endif
 
 install-exec-hook:
 if enable_java
-	( cd $(DESTDIR)$(ourexecjavadir) ; \
+	( cd $(DESTDIR)$(execjavawrapperdir) ; \
 	  rm -f plplotjavac_wrap*.a plplotjavac_wrap*.la ; \
-	  cd $(DESTDIR)$(libdir) ; \
+	  cd $(DESTDIR)$(DATA_DIR) ; \
 	  javac -classpath java -d java java/plplot/core/*.java)
 endif
 
