@@ -244,15 +244,33 @@ PLUNICODE unicode_char;
         }
       else
         {
+	  PLUNICODE  plhrsh_unicode_buffer[3];
+	  PLFLT xform[] = {1.0, 0.0, 0.0, 1.0};
+	  char esc;
           args.unicode_char=unicode_char;
           args.font_face=hershey_to_unicode_lookup_table[idx].Font;
           args.base = 1;
           args.just = .5;
           args.xform = 0;
-          args.string=0;
-          args.unicode_array_len=0;
           args.x = x;
           args.y = y;
+	  args.string=NULL;  /* Since we are using unicode, we want this to be NULL */
+	  /* "array method" */
+	  plgesc(&esc);
+	  args.xform = xform;
+	  args.unicode_array_len=2;
+	  /* Temporary Symbol font for every character. */
+	  plhrsh_unicode_buffer[0] = 0x10000004;
+	  plhrsh_unicode_buffer[1] = unicode_char;
+	  /* watch out for escape character and unescape it by appending
+	   * one extra. */
+	  if (unicode_char == esc) {
+	     args.unicode_array_len=3;
+	     plhrsh_unicode_buffer[2] = unicode_char;
+	  }
+	   
+	  /* No need to change font back since only one character. */
+	  args.unicode_array=&plhrsh_unicode_buffer[0];   /* Get address of the unicode buffer (even though it is currently static) */
 
           plP_esc(PLESC_HAS_TEXT, &args);
         }
