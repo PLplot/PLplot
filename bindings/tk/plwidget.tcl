@@ -1473,15 +1473,20 @@ proc plw_view_scroll {w dx dy s} {
 # Set up multiplication factor
 
     set mult $key_scroll_speed
+
+# shift key
     if { $s & 0x01 } then {
 	set mult [expr $mult * $key_scroll_mag]
     }
+# caps-lock
     if { $s & 0x02 } then {
 	set mult [expr $mult * $key_scroll_mag]
     }
+# control key
     if { $s & 0x04 } then {
 	set mult [expr $mult * $key_scroll_mag]
     }
+# alt key
     if { $s & 0x08 } then {
 	set mult [expr $mult * $key_scroll_mag]
     }
