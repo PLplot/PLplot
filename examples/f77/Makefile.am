@@ -97,7 +97,7 @@ SUFFIXES = .fm4
 .fm4.f:
 	$(M4) $(M4_FLAGS) $< >$*.f
 
-libplplotf77 = -L../../bindings/f77 -lplplotf77$(LIB_TAG)
+libplplotf77 = ../../bindings/f77/libplplotf77$(LIB_TAG).la
 
 check_PROGRAMS = \
 	x01f \

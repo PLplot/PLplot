@@ -21,7 +21,7 @@
 
 if enable_java
 
-libplplot = -L../../src/ -lplplot$(LIB_TAG)
+libplplot = ../../src/libplplot$(LIB_TAG).la
 
 lib_LTLIBRARIES = libplplotjava@LIB_TAG@.la
 

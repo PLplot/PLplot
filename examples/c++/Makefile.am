@@ -31,7 +31,7 @@ examples_cxx_DATA = \
 	mkdir -p .samename
 	cp Makefile.examples .samename/Makefile
 
-libplplotcxx = -L../../bindings/c++ -lplplotcxx$(LIB_TAG)
+libplplotcxx = ../../bindings/c++/libplplotcxx$(LIB_TAG).la
 
 check_PROGRAMS = \
 	x01cc

@@ -51,7 +51,7 @@ examples_c_DATA = \
 	mkdir -p .samename
 	cp Makefile.examples .samename/Makefile
 
-libplplot = -L../../src -lplplot$(LIB_TAG)
+libplplot = ../../src/libplplot$(LIB_TAG).la
 
 check_PROGRAMS = \
 	x01c \

@@ -20,7 +20,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-libplplot = -L../../src -lplplot$(LIB_TAG)
+libplplot = ../../src/libplplot$(LIB_TAG).la
 
 if enable_f77
 lib_LTLIBRARIES = libplplotf77@LIB_TAG@.la

@@ -27,7 +27,7 @@ if enable_python
 
 ourpythondir = $(pythondir)
 
-libplplot = -L../../src -lplplot$(LIB_TAG)
+libplplot = ../../src/libplplot$(LIB_TAG).la
 
 if with_double
 ### Only swig version 1.3.17 (and above?) will work here.
