@@ -7,43 +7,57 @@ from distutils.core import setup, Extension
 # location.
 import sys
 if sys.argv[-1] == "--flat":
-    print "flat"
     del sys.argv[-1]
     import os
     include_directory = os.getcwd()
     library_directory = include_directory
 else:
-    include_directory = '@prefix@/@INCLUDE_DIR@/..'
-    library_directory = '@prefix@/@LIB_DIR@'
+    include_directory = "@prefix@/@INCLUDE_DIR@/.."
+    library_directory = "@prefix@/@LIB_DIR@"
 
-extra_link_args = ['-Wl,-rpath', '-Wl,' + library_directory]
+extra_link_args = ["-Wl,-rpath", "-Wl," + library_directory]
 include_dirs = [include_directory]
 # Only needed because arrayobject.h not necessarily in Numeric subdirectory 
 # in python-1.5.  Once we drop support for python-1.5, then we can change 
 # the plmodule.h include to standard Numeric/ form and drop this append 
 # altogether.
-include_dirs.append('@PYTHON_NUM_DIR@')
+include_dirs.append("@PYTHON_NUM_DIR@")
 
 library_dirs = [library_directory]
-libraries = ['plplotd']
+libraries = ["plplotd"]
 
 # Done with --flat or not plplot logic to decide extra_link_args, include_dirs,
-# library_dirs and libraries.  Now get on with usual setup.py stuff.
+# library_dirs and libraries.
 
-module1 = Extension( 'plmodule', 
+# Now sort out the LDC_LIBS mixture of -l and -L options
+LDC_LIBS = "@LIBS@"
+ldc_libs_list = LDC_LIBS.split(" ")
+for option in ldc_libs_list:
+    if option == "":
+	# Do nothing if any extra blank space makes for empty string
+	continue
+    elif option[0:2] == "-L":
+	library_dirs.append(option[2:len(option)])
+    elif option[0:2] =="-l":
+	libraries.append(option[2:len(option)])
+    else:
+	raise "bad LDC_LIBS"
+
+#Now get on with usual setup.py stuff.
+module1 = Extension( "plmodule", 
 		     extra_link_args = extra_link_args,
                      include_dirs = include_dirs,
 		     library_dirs = library_dirs,
 		     libraries = libraries,
-		     sources = ['plmodule.c']
+		     sources = ["plmodule.c"]
 		     )
 
-module2 = Extension( 'pyqt_plmodule', 
+module2 = Extension( "pyqt_plmodule", 
 		     extra_link_args = extra_link_args,
                      include_dirs = include_dirs,
 		     library_dirs = library_dirs,
 		     libraries = libraries,
-		     sources = ['pyqt_plmodule.c']
+		     sources = ["pyqt_plmodule.c"]
 		     )
 
 setup( name = "pl",
