@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1993/08/09 22:12:39  mjl
+ * Revision 1.9  1993/09/08 02:40:51  mjl
+ * Moved some functions to plstream.c.
+ *
+ * Revision 1.8  1993/08/09  22:12:39  mjl
  * Changed call syntax to plRotPhy to allow easier usage.
  *
  * Revision 1.7  1993/07/31  08:19:25  mjl
@@ -240,64 +243,6 @@ plGetFam(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plGetInt()
-*
-* Prompts human to input an integer in response to given message.
-\*----------------------------------------------------------------------*/
-
-PLINT
-plGetInt(char *s)
-{
-    PLINT m;
-    int i = 0;
-    char line[256];
-
-    while (i++ < 10) {
-	printf(s);
-	fgets(line, sizeof(line), stdin);
-#ifdef MSDOS
-	m = atoi(line);
-	return (m);
-#else
-	if (sscanf(line, "%d", &m) == 1)
-	    return (m);
-	printf("No value or value out of range; please try again\n");
-#endif
-    }
-    plexit("Too many tries.");
-    return (0);
-}
-
-/*----------------------------------------------------------------------*\
-* plGetFlt()
-*
-* Prompts human to input a float in response to given message.
-\*----------------------------------------------------------------------*/
-
-PLFLT
-plGetFlt(char *s)
-{
-    PLFLT m;
-    int i = 0;
-    char line[256];
-
-    while (i++ < 10) {
-	printf(s);
-	fgets(line, sizeof(line), stdin);
-#ifdef MSDOS
-	m = atof(line);
-	return (m);
-#else
-	if (sscanf(line, "%f", &m) == 1)
-	    return (m);
-	printf("No value or value out of range; please try again\n");
-#endif
-    }
-    plexit("Too many tries.");
-    return (0.);
-}
-
-/*----------------------------------------------------------------------*\
 * plRotPhy()
 *
 * Rotates physical coordinates if necessary for given orientation.
@@ -364,3 +309,4 @@ plAllocDev(PLStream *pls)
 
     return (PLDev *) pls->dev;
 }
+
