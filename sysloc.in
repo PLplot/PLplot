@@ -832,6 +832,8 @@ if test "$enable_octave" = "yes"; then
         fi
     fi
 
+AC_SUBST(OCTAVE)
+
 AC_DEFUN(OCTAVE_CONFIG_INFO, [dnl
 `$OCTAVE -q -f 2>&1 <<EOF
         printf(octave_config_info("$1"));

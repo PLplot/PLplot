@@ -2,6 +2,7 @@
 # Test suite for octave examples.
 #
 # Copyright (C) 2004  Alan W. Irwin
+# Copyright (C) 2004  Rafael Laboissiere
 #
 # This file is part of PLplot.
 #
@@ -19,14 +20,12 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-# This is called from plplot-test.sh with $octavedir, $device,
+# This is called from plplot-test.sh with $octave, $octavedir, $device,
 # $dsuffix and $options defined.
 # Assumes that $option starts and are '-' separated.
 
-# WARNING, 'octave' can be defined at 'configure' time, to
-# allow for different installed versions. (work in progress)
-
-octave -f -q -p $octavedir <<EOF
+# Launch an Octave script that exercises all the demos
+$octave -f -q -p $octavedir <<EOF
 plplot_stub;
 t = split("$options", "-"); t(1,:)="";
 for i=1:rows(t)
