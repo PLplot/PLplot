@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1995/06/09 22:46:37  mjl
+ * Revision 1.13  1995/06/22 18:51:53  furnish
+ * Tcl support for plvpas, grrrrrr.
+ *
+ * Revision 1.12  1995/06/09  22:46:37  mjl
  * Eliminated vestigial lookup of TclMatrix variable in favor of new syntax.
  *
  * Revision 1.11  1995/05/07  03:14:26  mjl
@@ -94,6 +97,7 @@ static int plsxaxCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsyaxCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plsymCmd	(ClientData, Tcl_Interp *, int, char **);
 static int pltextCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plvpasCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plvporCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plvstaCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plwidCmd	(ClientData, Tcl_Interp *, int, char **);
@@ -155,6 +159,7 @@ static CmdInfo Cmds[] = {
     {"plsyax",		plsyaxCmd},
     {"plsym",		plsymCmd},
     {"pltext",		pltextCmd},
+    {"plvpas",		plvpasCmd},
     {"plvpor",		plvporCmd},
     {"plvsta",		plvstaCmd},
     {"plwid",		plwidCmd},
@@ -1364,6 +1369,36 @@ pltextCmd(ClientData clientData, Tcl_Interp *interp,
     }
 
     pltext();
+
+    return TCL_OK;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plvpasCmd
+ *
+ * Processes plvpas Tcl command.
+\*--------------------------------------------------------------------------*/
+
+static int
+plvpasCmd( ClientData clientData, Tcl_Interp *interp,
+	   int argc, char **argv)
+{
+    PLFLT xmin, xmax, ymin, ymax, asp;
+
+    if (argc != 6 ) {
+	Tcl_AppendResult(interp, "wrong # args: should be \"",
+			 argv[0], " xmin xmax ymin ymax asp\"",
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+    xmin = atof( argv[1] );
+    xmax = atof( argv[2] );
+    ymin = atof( argv[3] );
+    ymax = atof( argv[4] );
+    asp  = atof( argv[6] );
+
+    plvpas( xmin, xmax, ymin, ymax, asp );
 
     return TCL_OK;
 }
