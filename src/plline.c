@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/01/23 05:56:03  mjl
-   Now holds all routines dealing with line draws, including clipping and
-   dashed line support.  Polyline capability added.
+   Revision 1.4  1993/02/23 05:16:19  mjl
+   Changed references in error messages from plstar to plinit, and fixed
+   some error messages to be more specific.
 
+ * Revision 1.3  1993/01/23  05:56:03  mjl
+ * Now holds all routines dealing with line draws, including clipping and
+ * dashed line support.  Polyline capability added.
+ *
  * Revision 1.2  1992/09/29  04:46:05  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -18,6 +22,7 @@
 */
 
 #include "plplot.h"
+
 #include <math.h>
 
 #define INSIDE(ix,iy) (BETW(ix,clpxmi,clpxma) && BETW(iy,clpymi,clpyma))
@@ -66,7 +71,7 @@ c_plline(PLINT n, PLFLT *x, PLFLT *y)
 
     glev(&level);
     if (level < 3)
-	plexit("Please set up window before calling plline.");
+	plexit("plline: Please set up window first.");
 
     drawor_poly(x, y, n);
 }
@@ -86,14 +91,14 @@ c_plstyl(PLINT nms, PLINT *mark, PLINT *space)
 
     glev(&level);
     if (level < 1)
-	plexit("Please call plstar before calling plstyl.");
+	plexit("plstyl: Please call plinit first.");
 
     if ((nms < 0) || (nms > 10))
-	plexit("Broken lines cannot have <0 or >10 elements");
+	plexit("plstyl: Broken lines cannot have <0 or >10 elements");
 
     for (i = 0; i < nms; i++) {
 	if ((mark[i] < 0) || (space[i] < 0))
-	    plexit("Mark and space lengths must be > 0 in plstyl.");
+	    plexit("plstyl: Mark and space lengths must be > 0.");
     }
 
     smark(mark, space, nms);
