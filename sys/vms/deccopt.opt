@@ -1,4 +1,0 @@
-! Linker option file for C 
-! Use this if the plplot.olb was build by DEC-C
-plplot_lib:plplot.olb/lib
-sys$share:decw$xlibshr/share
