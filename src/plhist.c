@@ -3,7 +3,7 @@
 	Histogram plotter.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /*----------------------------------------------------------------------*\
  * void plhist()

@@ -11,12 +11,12 @@
 		compression can speed up the printing up to 3x
 
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #ifdef PLD_ljiip
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
+#include "plplotP.h"
+#include "drivers.h"
 #include <math.h>
 #include <string.h>
 

@@ -10,7 +10,7 @@
 #define DEBUG
 
 #define NEED_PLDEBUG
-#include "plplot/plcore.h"
+#include "plcore.h"
 
 #ifdef ENABLE_DYNDRIVERS
 #include <dlfcn.h>
@@ -2291,7 +2291,7 @@ plgesc(char *p_esc)
 void
 c_plgver(char *p_ver)
 {
-    strcpy(p_ver, PLPLOT_VERSION);
+    strcpy(p_ver, VERSION);
 }
 
 /* Set inferior X window */

@@ -5,3 +5,8 @@ config.cache
 config.log
 config.status
 reconfig
+Makefile
+Makefile.in
+aclocal.m4
+libtool
+*.tar.gz

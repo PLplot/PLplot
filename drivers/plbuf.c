@@ -16,9 +16,9 @@
 */
 
 #define NEED_PLDEBUG
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
-#include "plplot/metadefs.h"
+#include "plplotP.h"
+#include "drivers.h"
+#include "metadefs.h"
 
 #include <string.h>
 

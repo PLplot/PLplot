@@ -4,7 +4,7 @@
  * Adapted: Joao Cardoso
  */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /* Get better names, those are too criptic!
  * 

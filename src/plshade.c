@@ -102,7 +102,7 @@
  *
 \*----------------------------------------------------------------------*/
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 #include <float.h>
 
 #define MISSING_MIN_DEF (PLFLT) 1.0

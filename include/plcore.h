@@ -7,10 +7,10 @@
 #ifndef __PLCORE_H__
 #define __PLCORE_H__
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
-#include "plplot/plDevs.h"
-#include "plplot/disptab.h"
+#include "plplotP.h"
+#include "drivers.h"
+#include "plDevs.h"
+#include "disptab.h"
 
 
 /* Static function prototypes */
@@ -58,7 +58,7 @@ PLStream *plsc = &pls0;
 
 /* Only now can we include this */
 
-#include "plplot/pldebug.h"
+#include "pldebug.h"
 
 /*--------------------------------------------------------------------------*\
  * Initialize dispatch table.

@@ -2,12 +2,12 @@
 
         PLplot GnomeCanvas device driver.
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #ifdef PLD_gnome
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
+#include "plplotP.h"
+#include "drivers.h"
 
 #include <gtk/gtk.h>                                                       
 #include <glib.h>                                                          

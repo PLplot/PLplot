@@ -27,14 +27,14 @@
  *
 \*--------------------------------------------------------------------------*/
 
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #if defined(PLD_hp7470) || defined(PLD_hp7580) || defined(PLD_lj_hpgl)
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include <string.h>
-#include "plplot/drivers.h"
+#include "drivers.h"
 
 void plD_line_hpgl		(PLStream *, short, short, short, short);
 void plD_polyline_hpgl		(PLStream *, short *, short *, PLINT);

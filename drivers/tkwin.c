@@ -10,7 +10,7 @@
  * 
 */
 
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #define DEBUG
 
@@ -18,10 +18,10 @@
 
 
 #define NEED_PLDEBUG
-#include "plplot/plplotP.h"
-#include "plplot/pltkwd.h"
-#include "plplot/drivers.h"
-#include "plplot/plevent.h"
+#include "plplotP.h"
+#include "pltkwd.h"
+#include "drivers.h"
+#include "plevent.h"
 
 #define _TCLINT
 #ifdef USE_TCL_STUBS

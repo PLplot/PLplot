@@ -8,12 +8,12 @@
 	becoming the official maintainer.  Email mjl@dino.ph.utexas.edu
 	for more info.
 */
-#include "plplot/plDevs.h"
+#include "plDevs.h"
 
 #ifdef PLD_next
 
-#include "plplot/plplotP.h"
-#include "plplot/drivers.h"
+#include "plplotP.h"
+#include "drivers.h"
 
 /* top level declarations */
 

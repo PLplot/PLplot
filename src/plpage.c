@@ -3,7 +3,7 @@
 	Page/subpage handling routines
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /*--------------------------------------------------------------------------*\
  * void pladv()

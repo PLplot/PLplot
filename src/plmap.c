@@ -17,7 +17,7 @@
 	costs is prohibited.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /*----------------------------------------------------------------------*\
  * void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,

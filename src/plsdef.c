@@ -4,7 +4,7 @@
 	symbol size, tick length, line and fill patterns, etc.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /* Line pattern defaults */
 

@@ -3,7 +3,7 @@
 	Routines for drawing error bars and tick marks.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /*----------------------------------------------------------------------*\
  * void plxtik()
