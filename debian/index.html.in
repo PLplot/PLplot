@@ -42,7 +42,7 @@ while (<>) {
     <address><a href="mailto:rafael@icp.inpg.fr">Rafael Laboissiere</a></address>
 <!-- Created: Thu Feb 15 08:39:05 CET 2001 -->
 <!-- hhmts start -->
-Last modified: Thu Feb 15 09:45:12 CET 2001
+Last modified: <: print `date` :>
 <!-- hhmts end -->
   </body>
 </html>
