@@ -4,36 +4,38 @@
 # Usage: pltar
 # 
 # Builds tar archive of plplot files for distribution.
-# No binary files should be included.
+# No binary or CVS files should be included.
 
 # Build archive from parent directory.  It must also be unpacked from there.
 
+pldir="`basename $PWD`"
+tarfile=${pldir}.tar
 cd ..
 
 # top level text files & scripts
 
-tar cf plplot.tar plplot/README
-tar rf plplot.tar plplot/README.1st
-tar rf plplot.tar plplot/COPYRIGHTS
-tar rf plplot.tar plplot/Installation
-tar rf plplot.tar plplot/Changes
-tar rf plplot.tar plplot/pltar*
-tar rf plplot.tar plplot/plzoo*
-tar rf plplot.tar plplot/plzip*
+tar cf ${tarfile} ${pldir}/README
+tar rf ${tarfile} ${pldir}/README.1st
+tar rf ${tarfile} ${pldir}/COPYRIGHTS
+tar rf ${tarfile} ${pldir}/Installation
+tar rf ${tarfile} ${pldir}/Changes
+tar rf ${tarfile} ${pldir}/pltar*
+tar rf ${tarfile} ${pldir}/plzoo*
+tar rf ${tarfile} ${pldir}/plzip*
 
 # Make sure tar creates these subdirectories to make installation easier.
 
-tar rf plplot.tar plplot/tmp/.dummy
-tar rf plplot.tar plplot/lib/.dummy
+tar rf ${tarfile} ${pldir}/tmp/.dummy
+tar rf ${tarfile} ${pldir}/lib/.dummy
 
-# Source code & docs.
+# Subdirectories
 
-tar rf plplot.tar plplot/doc 
-tar rf plplot.tar plplot/drivers
-tar rf plplot.tar plplot/examples
-tar rf plplot.tar plplot/fonts
-tar rf plplot.tar plplot/include
-tar rf plplot.tar plplot/new
-tar rf plplot.tar plplot/utils
-tar rf plplot.tar plplot/src
-tar rf plplot.tar plplot/sys
+tar rf ${tarfile} `find ${pldir}/doc      ! -path \*CVS\* -only -type f`
+tar rf ${tarfile} `find ${pldir}/drivers  ! -path \*CVS\* -only -type f`
+tar rf ${tarfile} `find ${pldir}/examples ! -path \*CVS\* -only -type f`
+tar rf ${tarfile} `find ${pldir}/fonts    ! -path \*CVS\* -only -type f`
+tar rf ${tarfile} `find ${pldir}/include  ! -path \*CVS\* -only -type f`
+tar rf ${tarfile} `find ${pldir}/new      ! -path \*CVS\* -only -type f`
+tar rf ${tarfile} `find ${pldir}/utils    ! -path \*CVS\* -only -type f`
+tar rf ${tarfile} `find ${pldir}/src      ! -path \*CVS\* -only -type f`
+tar rf ${tarfile} `find ${pldir}/sys      ! -path \*CVS\* -only -type f`

@@ -4,36 +4,38 @@
 # Usage: plzoo
 # 
 # Builds zoo archive of plplot files for distribution.
-# No binary files should be included.
+# No binary or CVS files should be included.
 
 # Build archive from parent directory.  It must also be unpacked from there.
 
+pldir="`basename $PWD`"
+zoofile=${pldir}
 cd ..
 
 # top level text files & scripts
 
-zoo a plplot plplot/README
-zoo a plplot plplot/README.1st
-zoo a plplot plplot/COPYRIGHTS
-zoo a plplot plplot/Installation
-zoo a plplot plplot/Changes
-zoo a plplot plplot/pltar*
-zoo a plplot plplot/plzoo*
-zoo a plplot plplot/plzip*
+zoo a ${zoofile} ${pldir}/README
+zoo a ${zoofile} ${pldir}/README.1st
+zoo a ${zoofile} ${pldir}/COPYRIGHTS
+zoo a ${zoofile} ${pldir}/Installation
+zoo a ${zoofile} ${pldir}/Changes
+zoo a ${zoofile} ${pldir}/pltar*
+zoo a ${zoofile} ${pldir}/plzoo*
+zoo a ${zoofile} ${pldir}/plzip*
 
 # Make sure zoo creates these subdirectories to make installation easier.
 
-zoo a plplot plplot/tmp/.dummy
-zoo a plplot plplot/lib/.dummy
+zoo a ${zoofile} ${pldir}/tmp/.dummy
+zoo a ${zoofile} ${pldir}/lib/.dummy
 
-# Source code & docs.
+# Subdirectories
 
-find plplot/doc      -print | zoo aI plplot
-find plplot/drivers  -print | zoo aI plplot
-find plplot/examples -print | zoo aI plplot
-find plplot/fonts    -print | zoo aI plplot
-find plplot/include  -print | zoo aI plplot
-find plplot/new      -print | zoo aI plplot
-find plplot/utils    -print | zoo aI plplot
-find plplot/src      -print | zoo aI plplot
-find plplot/sys      -print | zoo aI plplot
+find ${pldir}/doc      ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
+find ${pldir}/drivers  ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
+find ${pldir}/examples ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
+find ${pldir}/fonts    ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
+find ${pldir}/include  ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
+find ${pldir}/new      ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
+find ${pldir}/utils    ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
+find ${pldir}/src      ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
+find ${pldir}/sys      ! -path \*CVS\* -only -type f | zoo aI ${zoofile}
