@@ -34,7 +34,6 @@ docfiles = \
   USAGE
 
 EXTRA_DIST = \
-  COPYING \
   $(docfiles) \
   globals-in-scripts \
   massage.c \
@@ -44,7 +43,8 @@ EXTRA_DIST = \
   etc \
   matwrap \
   doc-stamp \
-  plplot_octave_txt
+  plplot_octave_txt \
+  .octaverc
 
 doc-stamp plplot_octave_txt: etc/plplot.doc \
 	   $(top_srcdir)/doc/docbook/bin/api2text.pl \
