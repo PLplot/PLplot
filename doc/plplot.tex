@@ -1,4 +1,4 @@
-% -*-latexinfo-*-
+% -*-latex-*-
 % plplot.tex
 % Geoffrey Furnish
 % 9 May 1994
@@ -9,7 +9,11 @@
 %
 % $Id$
 % $Log$
-% Revision 1.8  1995/07/19 15:26:10  furnish
+% Revision 1.9  1995/07/26 21:30:51  furnish
+% Some reorganization of the manual sections into a more sensible
+% presentation format.
+%
+% Revision 1.8  1995/07/19  15:26:10  furnish
 % Fixed up some surrounding links to work with the new C++ chapter.
 %
 % Revision 1.7  1994/10/11  19:00:19  furnish
@@ -108,10 +112,13 @@ This document is still under construction, so please pardon the mess.
 * X Windows Drivers::	Xwin, Tk, Tcl-DP, and all the rest.
 * Other Drivers::	All non-X drivers.
 * API::			C/Fortran API reference.
-* Tcl::			How to use PLplot from Tcl.
-* Extended WISH::	Building customized WISHes.
 * C++ Interface::	Using PLplot from C++.
+* Tcl Interface::	Using PLplot from Tcl.
+* Extended WISH::	Building customized WISHes.
 * GUI Development::	Constructing GUI's with PLplot, Tcl and Tk.
+* Perl Interface::	Using PLplot from Perl.
+* Python Interface::	Using PLplot from Python.
+* Scheme Interface::	Using PLplot from Scheme.
 * Bibliography::	What you don't want to know about refs.
 * Concept Index::	All the stuff you need to know.
 \end{menu}
@@ -134,15 +141,21 @@ This document is still under construction, so please pardon the mess.
 
 \input{api}
 
-\input{tcl}
-
 \part{Advanced Techniques}
-
-\input{wish}
 
 \input{cplus}
 
+\input{tcl}
+
+\input{wish}
+
 \input{gui}
+
+\input{perl}
+
+\input{python}
+
+\input{scheme}
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -150,7 +163,7 @@ This document is still under construction, so please pardon the mess.
 
 \bibliographystyle{plain}
 
-\node Bibliography, Concept Index, GUI Development, Top
+\node Bibliography, Concept Index, Scheme Interface, Top
 
 This is the bibliography.
 
