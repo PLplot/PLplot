@@ -28,7 +28,6 @@
 ### be treated in a different way for installation [RL, 2003-03-06]
 EXTRA_DIST = \
         1.4b3 \
-	setup.py.in \
 	plplotcmodule.i \
 	makedocstrings.py \
 	plplot_widgetmodule.c \
