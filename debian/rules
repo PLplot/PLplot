@@ -43,6 +43,8 @@ octave_pkg :=
 octave_xcl := --no-package=octave-plplot
 endif
 
+include /usr/share/dpatch/dpatch.make
+
 autotools: autotools-stamp
 autotools-stamp:
 	-rm -f config.sub config.guess
@@ -68,16 +70,16 @@ config-stamp: autotools-stamp
 	touch config-stamp
 
 build: build-stamp
-build-stamp: config-stamp
+build-stamp: patch config-stamp
 	dh_testdir
 	$(MAKE)
 	touch build-stamp
 
-clean:
+clean: unpatch
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp install-stamp config-stamp autotools-stamp \
-              debian/files
+              patch-stamp debian/files
 	-$(MAKE) -k distclean
 	rm -f config.sub config.guess
 	find . -name config.log -o -name config.status | xargs rm -f
@@ -149,4 +151,5 @@ source diff:
 	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary config autotools
+.PHONY: build clean binary-indep binary-arch binary config autotools \
+        patch unpatch
