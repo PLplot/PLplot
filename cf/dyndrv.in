@@ -11,7 +11,7 @@
 # libraries are actually built before we need to link against them.
 # This is because without this dependency, SMP builds (make -j #) tend
 # to start linking the drivers before the libs are actually built.
-# Other executables handle this via dependencu upon $(PLLIBS), but
+# Other executables handle this via dependency upon $(PLLIBS), but
 # this isn't defined yet at the point where dyndrv.in is included in
 # the makefile.  And dyndrv.in has to be included high to get
 # DYNLOAD_STUFF defined.  This all should be sorted out more carefully
@@ -27,57 +27,57 @@ dynamic_drivers_target: $(dynamic_drivers)
 	@echo "dynamic_drivers built: $(dynamic_drivers)"
 
 # Decause of the bindings to interpreted languages such as Python or Java,
-# dynamically linked drivers need to be linked againts libplplot:
+# dynamically linked drivers need to be linked against libplplot:
 #driverlibs := -L. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK) $(LDC_LIBS)
 driverlibs := -L. -l$(PLLIB_NAME)$(LIB_TAG)
 
-drivers/null.drv : shared/null$O libs
+drivers/null$(LIB_TAG).drv : shared/null$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/plmeta.drv : shared/plmeta$O libs
+drivers/plmeta$(LIB_TAG).drv : shared/plmeta$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/pstex.drv : drivers/ps.drv
+drivers/pstex$(LIB_TAG).drv : drivers/ps$(LIB_TAG).drv
 
-drivers/ps.drv : shared/ps$O shared/pstex$O libs
+drivers/ps$(LIB_TAG).drv : shared/ps$O shared/pstex$O libs
 	$(SHLIB_BUILD) $@ $< shared/pstex$O $(driverlibs)
 
-drivers/xfig.drv : shared/xfig$O libs
+drivers/xfig$(LIB_TAG).drv : shared/xfig$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/gd.drv : shared/gd$O libs
+drivers/gd$(LIB_TAG).drv : shared/gd$O libs
 	$(SHLIB_BUILD) $@ $< @GDLIBS@ $(driverlibs)
 
-drivers/cgm.drv : shared/cgm$O libs
+drivers/cgm$(LIB_TAG).drv : shared/cgm$O libs
 	$(SHLIB_BUILD) $@ $< @CDLIBS@ $(driverlibs)
 
-drivers/tek.drv : shared/tek$O libs
+drivers/tek$(LIB_TAG).drv : shared/tek$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/pbm.drv : shared/pbm$O libs
+drivers/pbm$(LIB_TAG).drv : shared/pbm$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/hpgl.drv : shared/hpgl$O libs
+drivers/hpgl$(LIB_TAG).drv : shared/hpgl$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/dg300.drv : shared/dg300$O libs
+drivers/dg300$(LIB_TAG).drv : shared/dg300$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/ljii.drv : shared/ljii$O libs
+drivers/ljii$(LIB_TAG).drv : shared/ljii$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/ljiip.drv : shared/ljiip$O libs
+drivers/ljiip$(LIB_TAG).drv : shared/ljiip$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/impress.drv : shared/impress$O libs
+drivers/impress$(LIB_TAG).drv : shared/impress$O libs
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
-drivers/gnome.drv : shared/gnome$O libs
+drivers/gnome$(LIB_TAG).drv : shared/gnome$O libs
 	$(SHLIB_BUILD) $@ $< @GNOMELIBS@ $(driverlibs)
 
-drivers/ntk.drv : shared/ntk$O libs
+drivers/ntk$(LIB_TAG).drv : shared/ntk$O libs
 	$(SHLIB_BUILD) $@ $< @TKLIBS@ $(driverlibs)
 
-drivers/linuxvga.drv : shared/linuxvga$O libs
+drivers/linuxvga$(LIB_TAG).drv : shared/linuxvga$O libs
 	$(SHLIB_BUILD) $@ $< @LINUXVGALIBS@ $(driverlibs)
 

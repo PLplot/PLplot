@@ -194,13 +194,13 @@ if test "$enable_$1" = "yes" -o "$enable_$1 $enable_drivers" = " yes" ; then
     if test $driver_is_dynamic != 0; then
 	found=0
 	for drv in $DYNAMIC_DRIVERS; do
-	    if test "$drv" = "$driver"; then
+	    if test "$drv" = "$driver$LIB_TAG"; then
 		found=1
 		break
 	    fi
 	done
 	if test $found = 0; then
-	    DYNAMIC_DRIVERS="$DYNAMIC_DRIVERS $driver"
+	    DYNAMIC_DRIVERS="$DYNAMIC_DRIVERS $driver$LIB_TAG"
 	    echo -n $driver ""
 	fi
 
@@ -483,6 +483,24 @@ fi
 # This is where the real work is done.
 # ----------------------------------------------------------------------------
 
+# Define tags to be used in multiple-precision library names
+# Must be done right away because these tags used in PL_DRIVERS macro.
+# Double precision: tag with "d"
+# Single precision: tag with no symbol
+# drivers.db name must be tagged as well.
+
+if test "$with_double" = "yes"; then
+    LIB_TAG="d"
+    DRIVERS_DB="driversd.db"
+else
+    LIB_TAG=
+    DRIVERS_DB="drivers.db"
+fi
+
+AC_SUBST(LIB_TAG)
+AC_DEFINE_UNQUOTED(DRIVERS_DB, "$DRIVERS_DB")
+
+
 LIBS=""
 INCS=""
 
@@ -560,19 +578,6 @@ CXXLIB_NAME=plcxx
 AC_SUBST(PLLIB_NAME)
 AC_SUBST(MATLIB_NAME)
 AC_SUBST(CXXLIB_NAME)
-
-# Define tags to be used in multiple-precision library names
-#
-# Double precision: tag with "d"
-# Single precision: tag with no symbol
-
-if test "$with_double" = "yes"; then
-    LIB_TAG="d"
-else
-    LIB_TAG=
-fi
-
-AC_SUBST(LIB_TAG)
 
 # ----------------------------------------------------------------------------
 # Set up library names and suffix.
@@ -782,7 +787,7 @@ AC_SUBST_STRIP(SHARED,prefix)
 
 if test "$enable_dyndrivers" = "yes"; then
 
-    AC_MSG_RESULT(creating drivers/drivers.db)
+    AC_MSG_RESULT(creating drivers/$DRIVERS_DB)
 
     # Dynamic (loadable) drivers go in a subdir all their own.
     if test ! -d drivers; then
@@ -790,10 +795,10 @@ if test "$enable_dyndrivers" = "yes"; then
     fi
 
     # Clear out any prior drivers.
-    if test -e drivers/drivers.db; then
-	rm drivers/drivers.db
+    if test -e drivers/$DRIVERS_DB; then
+	rm drivers/$DRIVERS_DB
     fi
-    touch drivers/drivers.db
+    touch drivers/$DRIVERS_DB
 
     # Now add a line for each supported loadable device.  Format is:
     #     device name : description : type : driver name : device number: symbol tag
@@ -808,97 +813,97 @@ if test "$enable_dyndrivers" = "yes"; then
     for drv in $DYNAMIC_DEVICES; do
 	case $drv in
 	    null )
-	    echo "null:Null device:-1:null.drv:42:null" >> drivers/drivers.db
+	    echo "null:Null device:-1:null"$LIB_TAG".drv:42:null" >> drivers/$DRIVERS_DB
 	    ;;
 	    plmeta )
-	    echo "plmeta:PLplot Native Meta-File:0:plmeta.drv:26:plm" >> drivers/drivers.db
+	    echo "plmeta:PLplot Native Meta-File:0:plmeta"$LIB_TAG".drv:26:plm" >> drivers/$DRIVERS_DB
 	    ;;
 	    xfig )
-	    echo "xfig:Fig file:0:xfig.drv:31:xfig" >> drivers/drivers.db
+	    echo "xfig:Fig file:0:xfig"$LIB_TAG".drv:31:xfig" >> drivers/$DRIVERS_DB
 	    ;;
 	    pstex )
-	    echo "pstex:Combined Postscript/LaTeX files:0:ps.drv:41:pstex" >> drivers/drivers.db
+	    echo "pstex:Combined Postscript/LaTeX files:0:ps"$LIB_TAG".drv:41:pstex" >> drivers/$DRIVERS_DB
 	    ;;
 	    png )
-	    echo "png:PNG file:0:gd.drv:39:png" >> drivers/drivers.db
+	    echo "png:PNG file:0:gd"$LIB_TAG".drv:39:png" >> drivers/$DRIVERS_DB
 	    ;;
 	    jpeg )
-	    echo "jpeg:JPEG file:0:gd.drv:40:jpeg" >> drivers/drivers.db
+	    echo "jpeg:JPEG file:0:gd"$LIB_TAG".drv:40:jpeg" >> drivers/$DRIVERS_DB
 	    ;;
 	    cgm )
-	    echo "cgm:CGM file:0:cgm.drv:44:cgm" >> drivers/drivers.db
+	    echo "cgm:CGM file:0:cgm"$LIB_TAG".drv:44:cgm" >> drivers/$DRIVERS_DB
 	    ;;
 	    xterm )
-	    echo "xterm:Xterm Window:1:tek.drv:18:xterm" >> drivers/drivers.db
+	    echo "xterm:Xterm Window:1:tek"$LIB_TAG".drv:18:xterm" >> drivers/$DRIVERS_DB
 	    ;;
 	    tek4010 )
-	    echo "tekt:Tektronix Terminal (4010):1:tek.drv:19:tekt" >> drivers/drivers.db
+	    echo "tekt:Tektronix Terminal (4010):1:tek"$LIB_TAG".drv:19:tekt" >> drivers/$DRIVERS_DB
 	    ;;
 	    tek4107 )
-	    echo "tek4107t:Tektronix Terminal (4105/4107):1:tek.drv:20:tek4107t" >> drivers/drivers.db
+	    echo "tek4107t:Tektronix Terminal (4105/4107):1:tek"$LIB_TAG".drv:20:tek4107t" >> drivers/$DRIVERS_DB
 	    ;;
 	    vlt )
-	    echo "vlt:VLT vt100/tek emulator:1:tek.drv:23:vlt" >> drivers/drivers.db
+	    echo "vlt:VLT vt100/tek emulator:1:tek"$LIB_TAG".drv:23:vlt" >> drivers/$DRIVERS_DB
 	    ;;
 	    conex )
-	    echo "conex:Conex vt320/tek emulator:1:tek.drv:24:conex" >> drivers/drivers.db
+	    echo "conex:Conex vt320/tek emulator:1:tek"$LIB_TAG".drv:24:conex" >> drivers/$DRIVERS_DB
 	    ;;
 	    versaterm )
-	    echo "versaterm:Versaterm vt100/tek emulator:1:tek.drv:22:versaterm" >> drivers/drivers.db
+	    echo "versaterm:Versaterm vt100/tek emulator:1:tek"$LIB_TAG".drv:22:versaterm" >> drivers/$DRIVERS_DB
 	    ;;
 	    mskermit )
-	    echo "mskermit:MS-Kermit emulator:1:tek.drv:21:mskermit" >> drivers/drivers.db
+	    echo "mskermit:MS-Kermit emulator:1:tek"$LIB_TAG".drv:21:mskermit" >> drivers/$DRIVERS_DB
 	    ;;
 	    tek4010f )
-	    echo "tekf:Tektronix File (4010):0:tek.drv:27:tekf" >> drivers/drivers.db
+	    echo "tekf:Tektronix File (4010):0:tek"$LIB_TAG".drv:27:tekf" >> drivers/$DRIVERS_DB
 	    ;;
 	    tek4107f )
-	    echo "tek4107f:Tektronix File (4105/4107):0:tek.drv:28:tek4107f" >> drivers/drivers.db
+	    echo "tek4107f:Tektronix File (4105/4107):0:tek"$LIB_TAG".drv:28:tek4107f" >> drivers/$DRIVERS_DB
 	    ;;
 	    pbm )
-	    echo "pbm:PDB (PPM) Driver:0:pbm.drv:38:pbm" >> drivers/drivers.db
+	    echo "pbm:PDB (PPM) Driver:0:pbm"$LIB_TAG".drv:38:pbm" >> drivers/$DRIVERS_DB
 	    ;;
 	    hp7470 )
-	    echo "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl.drv:34:hp7470" >> drivers/drivers.db
+	    echo "hp7470:HP 7470 Plotter File (HPGL Cartridge, Small Plotter):0:hpgl"$LIB_TAG".drv:34:hp7470" >> drivers/$DRIVERS_DB
 	    ;;
 	    hp7580 )
-	    echo "hp7580:HP 7580 Plotter File (Large Plotter):0:hpgl.drv:35:hp7580" >> drivers/drivers.db
+	    echo "hp7580:HP 7580 Plotter File (Large Plotter):0:hpgl"$LIB_TAG".drv:35:hp7580" >> drivers/$DRIVERS_DB
 	    ;;
 	    lj_hpgl )
-	    echo "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl.drv:36:lj_hpgl" >> drivers/drivers.db
+	    echo "lj_hpgl:HP Laserjet III, HPGL emulation mode:0:hpgl"$LIB_TAG".drv:36:lj_hpgl" >> drivers/$DRIVERS_DB
 	    ;;
 	    dg300 )
-	    echo "dg300:DG300 Terminal:0:dg300.drv:25:dg300" >> drivers/drivers.db
+	    echo "dg300:DG300 Terminal:0:dg300"$LIB_TAG".drv:25:dg300" >> drivers/$DRIVERS_DB
 	    ;;
 	    ljii )
-	    echo "ljii:LaserJet II Bitmap File (150 dpi):0:ljii.drv:33:ljii" >> drivers/drivers.db
+	    echo "ljii:LaserJet II Bitmap File (150 dpi):0:ljii"$LIB_TAG".drv:33:ljii" >> drivers/$DRIVERS_DB
 	    ;;
 	    ljiip )
-	    echo "ljiip:LaserJet IIp/deskjet compressed graphics:0:ljiip.drv:32:ljiip" >> drivers/drivers.db
+	    echo "ljiip:LaserJet IIp/deskjet compressed graphics:0:ljiip"$LIB_TAG".drv:32:ljiip" >> drivers/$DRIVERS_DB
 	    ;;
 	    imp )
-	    echo "imp:Impress File:0:impress.drv:37:imp" >> drivers/drivers.db
+	    echo "imp:Impress File:0:impress"$LIB_TAG".drv:37:imp" >> drivers/$DRIVERS_DB
 	    ;;
 	    gnome )
-	    echo "gnome:Gnome Canvas:1:gnome.drv:6:gnome" >> drivers/drivers.db
+	    echo "gnome:Gnome Canvas:1:gnome"$LIB_TAG".drv:6:gnome" >> drivers/$DRIVERS_DB
 	    ;;
 	    ps )
-	    echo "ps:PostScript File (monochrome):0:ps.drv:29:psm" >> drivers/drivers.db
+	    echo "ps:PostScript File (monochrome):0:ps"$LIB_TAG".drv:29:psm" >> drivers/$DRIVERS_DB
 	    ;;
 	    psc )
-	    echo "psc:PostScript File (color):0:ps.drv:30:psc" >> drivers/drivers.db
+	    echo "psc:PostScript File (color):0:ps"$LIB_TAG".drv:30:psc" >> drivers/$DRIVERS_DB
 	    ;;
 	    xwin )
-	    echo "xwin:X-Window (Xlib):1:xwin.drv:5:xw" >> drivers/drivers.db
+	    echo "xwin:X-Window (Xlib):1:xwin"$LIB_TAG".drv:5:xw" >> drivers/$DRIVERS_DB
 	    ;;
 	    tk )
-	    echo "tk:Tcl/TK Window:1:tk.drv:7:tk" >> drivers/drivers.db
+	    echo "tk:Tcl/TK Window:1:tk"$LIB_TAG".drv:7:tk" >> drivers/$DRIVERS_DB
 	    ;;
 	    ntk )
-	    echo "ntk:New tk driver:1:ntk.drv:43:ntk" >> drivers/drivers.db
+	    echo "ntk:New tk driver:1:ntk"$LIB_TAG".drv:43:ntk" >> drivers/$DRIVERS_DB
 	    ;;
 	    linuxvga )
-	    echo "linuxvga:Linux VGA driver:0:linuxvga.drv:8:vga" >> drivers/drivers.db
+	    echo "linuxvga:Linux VGA driver:0:linuxvga"$LIB_TAG".drv:8:vga" >> drivers/$DRIVERS_DB
 	    ;;
 	esac
     done

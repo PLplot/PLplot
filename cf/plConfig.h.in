@@ -79,6 +79,7 @@
 #undef DATA_DIR
 #undef BIN_DIR
 #undef TCL_DIR
+#undef DRIVERS_DB
 
 /* Package version */
 #undef PLPLOT_VERSION
