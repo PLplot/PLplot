@@ -99,99 +99,179 @@ if test "$with_freetype" = "yes"; then
     PL_ADD_TO_LIBS($with_freetype2_libdir, $FREETYPELIBSTR, FREETYPELIBCMD, FREETYPELIBPATH)
 fi
 
-PL_ARG_WITH(freetype-font-dir,
-  [user-specified directory for freetype fonts],
-  [/usr/share/fonts/truetype/freefont])
+    PL_ARG_WITH(freetype-font-dir,
+      [user-specified directory for freetype fonts],
+      [])
+
+    case "$host_os" in
+      *msys | *cygwin | *mingw32 | *pw32 )
+        # Windows defines go here
+        with_freetype_font_dir=c:/windows/fonts
+        ;;
+      *)
+        with_freetype_font_dir=/usr/share/fonts/truetype/freefont
+        ;;
+    esac
+
 PL_ARG_WITH(freetype-sans-font,
   [user-specified sans-serif, medium-weight, upright font that is accessible with freetype],
-  [FreeSans.ttf])
-PL_ARG_WITH(freetype-sans-bold-font,
-  [user-specified sans-serif, bold-weight, upright font that is accessible with freetype],
-  [FreeSansBold.ttf])
+  [])
 PL_ARG_WITH(freetype-sans-oblique-font,
   [user-specified sans-serif, medium-weight, oblique font that is accessible with freetype],
-  [FreeSansOblique.ttf])
+  [])
 PL_ARG_WITH(freetype-sans-italic-font,
   [user-specified sans-serif, medium-weight, italic font that is accessible with freetype],
-  [FreeSansOblique.ttf])
+  [])
 PL_ARG_WITH(freetype-sans-bold-oblique-font,
   [user-specified sans-serif, bold-weight, oblique font that is accessible with freetype],
-  [FreeSansBoldOblique.ttf])
+  [])
 PL_ARG_WITH(freetype-sans-bold-italic-font,
   [user-specified sans-serif, bold-weight, italic font that is accessible with freetype],
-  [FreeSansBoldOblique.ttf])
+  [])
 PL_ARG_WITH(freetype-serif-font,
   [user-specified serif, medium-weight, upright font that is accessible with freetype],
-  [FreeSerif.ttf])
+  [])
 PL_ARG_WITH(freetype-serif-bold-font,
   [user-specified serif, bold-weight, upright font that is accessible with freetype],
-  [FreeSerifBold.ttf])
+  [])
 PL_ARG_WITH(freetype-serif-italic-font,
   [user-specified serif, medium-weight, italic font that is accessible with freetype],
-  [FreeSerifItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-serif-oblique-font,
   [user-specified serif, medium-weight, oblique font that is accessible with freetype],
-  [FreeSerifItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-serif-bold-italic-font,
   [user-specified serif, bold-weight, italic font that is accessible with freetype],
-  [FreeSerifBoldItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-serif-bold-oblique-font,
   [user-specified serif, bold-weight, oblique font that is accessible with freetype],
-  [FreeSerifBoldItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-mono-font,
   [user-specified monotype, medium-weight, upright font that is accessible with freetype],
-  [FreeMono.ttf])
+  [])
 PL_ARG_WITH(freetype-mono-bold-font,
   [user-specified monotype, bold-weight, upright font that is accessible with freetype],
-  [FreeMonoBold.ttf])
+  [])
 PL_ARG_WITH(freetype-mono-oblique-font,
   [user-specified monotype, medium-weight, oblique font that is accessible with freetype],
-  [FreeMonoOblique.ttf])
+  [])
 PL_ARG_WITH(freetype-mono-italic-font,
   [user-specified monotype, medium-weight, italic font that is accessible with freetype],
-  [FreeMonoOblique.ttf])
+  [])
 PL_ARG_WITH(freetype-mono-bold-oblique-font,
   [user-specified monotype, bold-weight, oblique font that is accessible with freetype],
-  [FreeMonoBoldOblique.ttf])
+  [])
 PL_ARG_WITH(freetype-mono-bold-italic-font,
   [user-specified monotype, bold-weight, italic font that is accessible with freetype],
-  [FreeMonoBoldOblique.ttf])
+  [])
 PL_ARG_WITH(freetype-script-font,
   [user-specified script, medium-weight, upright font that is accessible with freetype],
-  [FreeSerif.ttf])
+  [])
 PL_ARG_WITH(freetype-script-bold-font,
   [user-specified script, bold-weight, upright font that is accessible with freetype],
-  [FreeSerifBold.ttf])
+  [])
 PL_ARG_WITH(freetype-script-oblique-font,
   [user-specified script, medium-weight, oblique font that is accessible with freetype],
-  [FreeSerifItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-script-italic-font,
   [user-specified script, medium-weight, italic font that is accessible with freetype],
-  [FreeSerifItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-script-bold-oblique-font,
   [user-specified script, bold-weight, oblique font that is accessible with freetype],
-  [FreeSerifBoldItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-script-bold-italic-font,
   [user-specified script, bold-weight, italic font that is accessible with freetype],
-  [FreeSerifBoldItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-symbol-font,
   [user-specified symbol, medium-weight, upright font that is accessible with freetype],
-  [FreeSerif.ttf])
+  [])
 PL_ARG_WITH(freetype-symbol-bold-font,
   [user-specified symbol, bold-weight, upright font that is accessible with freetype],
-  [FreeSerifBold.ttf])
+  [])
 PL_ARG_WITH(freetype-symbol-oblique-font,
   [user-specified symbol, medium-weight, oblique font that is accessible with freetype],
-  [FreeSerifItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-symbol-italic-font,
   [user-specified symbol, medium-weight, italic font that is accessible with freetype],
-  [FreeSerifItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-symbol-bold-oblique-font,
   [user-specified symbol, bold-weight, oblique font that is accessible with freetype],
-  [FreeSerifBoldItalic.ttf])
+  [])
 PL_ARG_WITH(freetype-symbol-bold-italic-font,
   [user-specified symbol, bold-weight, italic font that is accessible with freetype],
-  [FreeSerifBoldItalic.ttf])
+  [])
+
+ case "$host_os" in
+    *msys | *cygwin | *mingw32 | *pw32 )
+     # Windows defines go here
+
+with_freetype_sans_font=arial.ttf
+with_freetype_sans_bold_font=arialbd.ttf
+with_freetype_sans_oblique_font=ariali.ttf
+with_freetype_sans_italic_font=ariali.ttf
+with_freetype_sans_bold_oblique_font=arialbi.ttf
+with_freetype_sans_bold_italic_font=arialbi.ttf
+with_freetype_serif_font=times.ttf
+with_freetype_serif_bold_font=timesbd.ttf
+with_freetype_serif_italic_font=timesi.ttf
+with_freetype_serif_oblique_font=timesi.ttf
+with_freetype_serif_bold_italic_font=timesbi.ttf
+with_freetype_serif_bold_oblique_font=timesbi.ttf
+with_freetype_mono_font=cour.ttf
+with_freetype_mono_bold_font=courbd.ttf
+with_freetype_mono_oblique_font=couri.ttf
+with_freetype_mono_italic_font=couri.ttf
+with_freetype_mono_bold_oblique_font=courbi.ttf
+with_freetype_mono_bold_italic_font=courbi.ttf
+with_freetype_script_font=arial.ttf
+with_freetype_script_bold_font=arialbd.ttf
+with_freetype_script_oblique_font=ariali.ttf
+with_freetype_script_italic_font=ariali.ttf
+with_freetype_script_bold_oblique_font=arialbi.ttf
+with_freetype_script_bold_italic_font=arialbi.ttf
+with_freetype_symbol_font=times.ttf
+with_freetype_symbol_bold_font=timesbd.ttf
+with_freetype_symbol_oblique_font=timesi.ttf
+with_freetype_symbol_italic_font=timesi.ttf
+with_freetype_symbol_bold_oblique_font=timesbi.ttf
+with_freetype_symbol_bold_italic_font=timesbi.ttf
+
+;;
+ *)
+
+with_freetype_sans_font=FreeSans.ttf
+with_freetype_sans_bold_font=FreeSansBold.ttf
+with_freetype_sans_oblique_font=FreeSansOblique.ttf
+with_freetype_sans_italic_font=FreeSansOblique.ttf
+with_freetype_sans_bold_oblique_font=FreeSansBoldOblique.ttf
+with_freetype_sans_bold_italic_font=FreeSansBoldOblique.ttf
+with_freetype_serif_font=FreeSerif.ttf
+with_freetype_serif_bold_font=FreeSerifBold.ttf
+with_freetype_serif_italic_font=FreeSerifItalic.ttf
+with_freetype_serif_oblique_font=FreeSerifItalic.ttf
+with_freetype_serif_bold_italic_font=FreeSerifBoldItalic.ttf
+with_freetype_serif_bold_oblique_font=FreeSerifBoldItalic.ttf
+with_freetype_mono_font=FreeMono.ttf
+with_freetype_mono_bold_font=FreeMonoBold.ttf
+with_freetype_mono_oblique_font=FreeMonoOblique.ttf
+with_freetype_mono_italic_font=FreeMonoOblique.ttf
+with_freetype_mono_bold_oblique_font=FreeMonoBoldOblique.ttf
+with_freetype_mono_bold_italic_font=FreeMonoBoldOblique.ttf
+with_freetype_script_font=FreeSerif.ttf
+with_freetype_script_bold_font=FreeSerifBold.ttf
+with_freetype_script_oblique_font=FreeSerifItalic.ttf
+with_freetype_script_italic_font=FreeSerifItalic.ttf
+with_freetype_script_bold_oblique_font=FreeSerifBoldItalic.ttf
+with_freetype_script_bold_italic_font=FreeSerifBoldItalic.ttf
+with_freetype_symbol_font=FreeSerif.ttf
+with_freetype_symbol_bold_font=FreeSerifBold.ttf
+with_freetype_symbol_oblique_font=FreeSerifItalic.ttf
+with_freetype_symbol_italic_font=FreeSerifItalic.ttf
+with_freetype_symbol_bold_oblique_font=FreeSerifBoldItalic.ttf
+with_freetype_symbol_bold_italic_font=FreeSerifBoldItalic.ttf
+
+;;
+esac
 
 # Check one of the usual fonts and the symbol font.
 # If they are not found, warn and turn off freetype.
