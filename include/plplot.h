@@ -1127,7 +1127,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
    *  DRAW_SIDES, BASE_CONT, TOP_CONT (not yet),
    *  MAG_COLOR, DRAW_LINEX, DRAW_LINEY, DRAW_LINEXY.
    *
-   *  valid options for plsurf3dc():
+   *  valid options for plsurf3d():
    *
    *  MAG_COLOR, BASE_CONT, SURF_CONT, FACETED, DRAW_SIDES.
    */
