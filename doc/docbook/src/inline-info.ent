@@ -50,5 +50,6 @@
 <!ENTITY less     "&lt;">
 <!ENTITY leq      "&lt;=">
 <!ENTITY ndash    "--">
+<!ENTITY mdash    "---">
 <!ENTITY egrave   "e">
 <!ENTITY over-under "S-freq">
