@@ -30,6 +30,7 @@ examples_octave = \
 	p15.m \
 	p16.m \
 	p17.m \
+	p18.m \
 	p19.m \
 	p2.m \
 	p20.m \
