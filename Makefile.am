@@ -68,7 +68,8 @@ doc_DATA = \
 	FAQ \
 	NEWS \
 	PROBLEMS \
-	README
+	README \
+	README.release
 
 CLEANFILES = plplot_libtool jadeout.log config.summary
 
