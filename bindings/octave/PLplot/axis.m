@@ -67,10 +67,10 @@ function curr_axis = axis (ax, opt)
     __pl.axis_st(strm) = 0;
     __pl.aspect(strm) = 0;
     curr_axis = __pl.axis(strm,:);
-  elseif (nargin == 1 && is_vector (ax))
-    opt = "";
   elseif (nargin == 1 && isstr (ax))
     opt = ax; ax = [];
+  elseif (nargin == 1 && is_vector (ax))
+    opt = "";
   else
     usage "axis"
   endif
