@@ -23,7 +23,10 @@
 # $Id$
 #
 # $Log$
-# Revision 1.1  1995/07/19 17:57:00  furnish
+# Revision 1.2  1995/10/19 00:01:50  mjl
+# Got rid of $this and other cleaning up.
+#
+# Revision 1.1  1995/07/19  17:57:00  furnish
 # A Perl script for autogenerating the itcl methods for PLWin.tcl.  This
 # is much easier than what is done in pltclgen.  Note also that many of
 # the PLplot API routines which are useful when used from a global
@@ -55,8 +58,6 @@ open( GENFILE,  ">$genfile" ) || die "Can't open output file.";
 	   "plsfam",
 	   "plsfnam",
 	   "plsstrm",
-	   "plstar",
-	   "plstart",
 	   );
 
 # Scan the PLplot API template specification file looking for function
@@ -86,7 +87,7 @@ while( <SPECFILE> ) {
 	    print "Generating itcl method for $cmd.\n";
 
 	    print GENFILE "    method $cmd {args} {\n";
-	    print GENFILE "        eval \$this.plwin cmd $cmd \$args\n";
+	    print GENFILE "        eval \$plwin cmd $cmd \$args\n";
 	    print GENFILE "    }\n";
 	    print GENFILE "\n";
 	}
