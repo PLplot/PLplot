@@ -3,7 +3,11 @@
 #
 # $Id$
 # $Log$
-# Revision 1.4  1995/07/04 18:58:29  furnish
+# Revision 1.5  1995/07/04 19:40:48  furnish
+# Added plot to demonstrate the Tcl support for contouring of data
+# defined on wrapped coords.
+#
+# Revision 1.4  1995/07/04  18:58:29  furnish
 # First real implementation of this Tcl demo.  No way to exactly
 # reproduce the first plot from x09c.c, since no Tcl support for user
 # defined coordinate transformation functions.  However the second and
@@ -127,4 +131,57 @@ proc x09 {{w loopback}} {
     $w cmd plstyl 0 mark space
     $w cmd plcol 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
+
+    x09_polar $w
+}
+
+# Demonstrate plotting of wrapped data.  What is significant to
+# understand about this example is that for the common case of
+# plotting polar data (or other forms of coordinates that wrap on
+# themselves) you can do it from Tcl /without/ having to go to the
+# trouble to construct a special data plotting matrix with an extra
+# row or column and then copy the data into it, replicating the first
+# row/col into the extra row/col.
+
+proc x09_polar {{w loopback}} {
+
+    $w cmd plenv -1 1 -1 1 0 -2
+    $w cmd plcol 1
+
+# Hold perimeter
+    matrix px f 100; matrix py f 100
+
+    for {set i 0} {$i < 100} {incr i} {
+	set t [expr 2. * 3.1415927 * $i / 99.]
+	px $i = [expr cos($t)]
+	py $i = [expr sin($t)]
+    }
+
+    $w cmd plline 100 px py
+
+    set xpts 40; set ypts 40
+    matrix xg f $xpts $ypts
+    matrix yg f $xpts $ypts
+    matrix z f $xpts $ypts
+
+    for {set i 0} {$i < $xpts} {incr i} {
+	set r [expr $i / ($xpts - 1.)]
+	for {set j 0} {$j < $ypts} {incr j} {
+	    set t [expr 2. * 3.1415927 * $j / ($ypts - 1.)]
+
+	    xg $i $j = [expr $r * cos($t)]
+	    yg $i $j = [expr $r * sin($t)]
+
+	    z $i $j = $r
+	}
+    }
+
+    matrix lev f 10 = { .05, .15, .25, .35, .45, .55, .65, .75, .85, .95 }
+
+    $w cmd plcol 2
+    $w cmd plcont z lev pltr2 xg yg 2
+#                                   ^-- :-).  Means: "2nd coord is wrapped."
+
+    $w cmd plcol 1
+    $w cmd pllab "" "" "Polar Contour Plot"
 }
