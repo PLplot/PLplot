@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.12  1993/07/02 07:26:10  mjl
-   Changed include of plplot.h to plplotP.h.  Also added IRIX support.
+   Revision 1.13  1993/07/16 22:31:41  mjl
+   Changed method for getting stub conversion right.  Now need to define
+   the macro STUB_LINKAGE with any of the supported conversion types.
 
+ * Revision 1.12  1993/07/02  07:26:10  mjl
+ * Changed include of plplot.h to plplotP.h.  Also added IRIX support.
+ *
  * Revision 1.11  1993/04/26  20:00:55  mjl
  * Configuration info added for a DEC Alpha-based machine running OSF/1.
  *
@@ -44,31 +48,6 @@
 
   Header file for plplot Fortran interface stubs.
   THIS FILE IS NOT FOR INCLUSION BY USER CODES!!
-
-  Define one of the STUB_ flags to get proper C<->Fortran linkage
-  on your system.  The STUB_ flag describes what the compiler does to
-  Fortran routine names, which we must duplicate on the C stubs so that
-  the Fortran routines may call them.
-
-  Current choices:
- 	STUB_LAU	lower-case, append underscore
- 	STUB_L		lower-case
-
-  If no choice is made, stubs remain unaltered (upper case).
-
-  ** Namespace collision **
-
-  If you use the STUB_L option, the C & Fortran namespaces will collide if
-  the Fortran compiler does lower case folding (they usually do).  On VMS the
-  C compiler does lower case folding as well (yechh), which means you can
-  just leave the stub routine names alone.  The problem is then that the
-  stub names and actual function names will be exactly the same, if we
-  insist on the Fortran and C bindings to be similar.  The solution is
-  to give the externally callable C routines unique names, and provide
-  macros to turn the documented entry names in to the real ones.  This
-  is a horrible kludge, but the alternatives are worse.  Fortunately it
-  has no effect on the user program, and you can forget that you ever
-  read about it here.
 */
 
 #ifndef INCLUDED_PLSTUBS
@@ -76,58 +55,118 @@
 
 #include "plplotP.h"
 
-/* Select name transformation based on system type */
-
-#if defined(SX)				/* NEC Super-UX */
-#define STUB_LAU
-#endif
-
-#if defined(_IBMR2) && defined(_AIX)	/* AIX */
-#define STUB_L
-#endif
-
-#ifdef __hpux				/* HP/UX */
-#define STUB_L
-#endif
-
-#ifdef __mips				/* IRIX (SGI systems) */
-#define STUB_LAU
-#endif
-
-#ifdef sun				/* SUN systems */
-#define STUB_LAU
-#endif
-
-#ifdef CRAY				/* CRAY's */
-#endif					/* Do nothing -- keep uppercase */
-
-#if defined(__alpha) && defined(__osf__)	/* DEC Alpha AXP/OSF */
-#ifndef STUB_LAU
-#define STUB_LAU
-#endif
-#endif
-
 /* These are needed for system-independent Fortran->C string linkage. */
 
 extern char cstring1[300], cstring2[300], cstring3[300];
 extern char cstring4[300], cstring5[300], cstring6[300];
 
-/* To use, define with x the upper case routine name, y the lower case */
-/* Should be adoptable to virtually any system */
+/*----------------------------------------------------------------------*\
+* Select name transformation based on system type.
+*
+* Define the STUB_LINKAGE flag to get proper C<->Fortran linkage on your
+* system.  This flag describes what the compiler does to Fortran routine
+* names, which we must duplicate on the C stubs so that the Fortran
+* routines may call them.  You can often set STUB_LINKAGE by the
+* construct -DSTUB_LINKAGE=<value> on the C compiler command line, but
+* it is best to either rely on the default or explicitly handle your
+* system below.
+*
+* Current choices for STUB_LINKAGE:
+*
+* 	STUB_LAU	lower-case, append underscore
+* 	STUB_L		lower-case
+*	STUB_U		upper-case
+*	STUB_FORTRAN	use "fortran" keyword (MS-DOS convention)
+*
+* If no choice is made, the default is set to STUB_LAU.  This should
+* handle most generic Unix boxes not already accounted for.  Note that
+* since the stub routine names are uppercase already, the STUB_U option
+* (required only on UNICOS so far) results in nothing being done.
+*
+* ** Namespace collision **
+*
+* If you use the STUB_L option, the C & Fortran namespaces will collide
+* if the Fortran compiler does lower case folding (they usually do).
+* The problem is then that the stub names and actual function names will
+* be exactly the same, if we insist on the Fortran and C bindings to be
+* similar.  The solution is to give the externally callable C routines
+* unique names, and provide macros to turn the documented entry names in
+* to the real ones.  This is a horrible kludge, but the alternatives are
+* worse.  Fortunately it has no effect on the user program, and you can
+* forget that you ever read about it here.
+\*----------------------------------------------------------------------*/
 
-#ifdef STUB_LAU
+#define STUB_LAU	1
+#define STUB_L		2
+#define STUB_U		3
+#define STUB_FORTRAN	4
+
+#ifndef STUB_LINKAGE
+
+#if defined(SX)				/* NEC Super-UX (SX-3) */
+#define STUB_LINKAGE STUB_LAU
+#endif
+
+#if defined(_IBMR2) && defined(_AIX)	/* AIX */
+#define STUB_LINKAGE STUB_L
+#endif
+
+#ifdef __hpux				/* HP/UX */
+#define STUB_LINKAGE STUB_L
+#endif
+
+#ifdef __mips				/* IRIX (SGI systems) */
+#define STUB_LINKAGE STUB_LAU
+#endif
+
+#ifdef sun				/* Suns */
+#define STUB_LINKAGE STUB_LAU
+#endif
+
+#ifdef CRAY				/* Cray/UNICOS */
+#define STUB_LINKAGE STUB_U
+#endif
+
+#if defined(__alpha) && defined(__osf__) /* DEC Alpha AXP/OSF */
+#define STUB_LINKAGE STUB_LAU
+#endif
+
+#ifdef MSDOS				/* MS-DOS based */
+#define STUB_LINKAGE STUB_FORTRAN
+#endif
+
+#ifndef STUB_LINKAGE			/* The default */
+#define STUB_LINKAGE STUB_LAU
+#endif
+
+#endif	/* ifndef STUB_LINKAGE */
+
+/*----------------------------------------------------------------------*\
+* Define name-translation macro.
+* To use, define with x the upper case routine name, y the lower case.
+* Should be adoptable to virtually any system.
+\*----------------------------------------------------------------------*/
+
+#if STUB_LINKAGE==STUB_LAU
 #define FNAME(x,y)     y##_
-#endif
 
-#ifdef STUB_L
+#elif STUB_LINKAGE == STUB_L
 #define FNAME(x,y)     y
-#endif
 
-#ifdef MSDOS
+#elif STUB_LINKAGE == STUB_U
+    /* do nothing */
+
+#elif STUB_LINKAGE == STUB_FORTRAN
 #define FNAME(x,y)     fortran x
+
+#else
+#error "Illegal setting for STUB_LINKAGE"
 #endif
 
-#ifdef FNAME
+/*----------------------------------------------------------------------*\
+* Now to actually define the stub names.
+* Each stub must have an entry here.
+\*----------------------------------------------------------------------*/
 
 #define    PLADV	FNAME(PLADV,pladv)
 #define    PLAXES_	FNAME(PLAXES_,plaxes_)
@@ -212,7 +251,5 @@ extern char cstring4[300], cstring5[300], cstring6[300];
 #define    PLW3D	FNAME(PLW3D,plw3d)
 #define    PLWID	FNAME(PLWID,plwid)
 #define    PLWIND	FNAME(PLWIND,plwind)
-
-#endif	/* FNAME */
 
 #endif	/* INCLUDED_PLSTUBS */
