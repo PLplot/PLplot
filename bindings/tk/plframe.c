@@ -321,6 +321,11 @@ static void  DestroyRband	(PlFrame *);
 static void  DrawRband		(PlFrame *, int, int);
 static void  UpdateRband	(PlFrame *);
 
+/* Callbacks from plplot library */
+
+static void  process_bop	(void *, int *);
+static void  process_eop	(void *, int *);
+
 /* Utility routines */
 
 static void  gbox		(PLFLT *, PLFLT *, PLFLT *, PLFLT *, char **);
@@ -1405,6 +1410,7 @@ PlFrameInit(ClientData clientData)
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
     register Tk_Window tkwin = plFramePtr->tkwin;
+    PLStream *pls = plFramePtr->pls;
 
 /* Set up window parameters and arrange for window to be refreshed */
 
@@ -1422,6 +1428,11 @@ PlFrameInit(ClientData clientData)
 	if (plplot_ccmap) {
 	    Install_cmap(plFramePtr);
 	}
+	if (plFramePtr->bopCmd != NULL)
+	    plsbopH(process_bop, (void *) plFramePtr);
+	if (plFramePtr->eopCmd != NULL)
+	    plseopH(process_eop, (void *) plFramePtr);
+
 	plbop();
 
 	plFramePtr->tkwin_initted = 1;
@@ -1966,7 +1977,7 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 {
     PLStream *pls = plFramePtr->pls;
     int length;
-    char c;
+    char c3;
     int result = TCL_OK;
     char cmdlist[] = "";
 
@@ -1992,11 +2003,28 @@ Cmd(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	Tcl_VarEval(plFramePtr->interp, "update", (char *) NULL);
     }
 
-/* Set stream number and process the command */
+/* Set stream number and get ready to process the command */
 
     plsstrm(plFramePtr->ipls);
 
+    c3 = argv[0][2];
+    length = strlen(argv[0]);
+
+/* Process command */
+
     result = plTclCmd(cmdlist, interp, argc, argv);
+    /*
+
+    if (plFramePtr->bopCmd != NULL) {
+	plFramePtr->page = pls->page;
+	if (Tcl_Eval(interp, plFramePtr->bopCmd) != TCL_OK)
+	    fprintf(stderr, "Command \"%s\" failed:\n\t %s\n",
+		    plFramePtr->bopCmd, interp->result);
+
+	Tcl_DoWhenIdle(proc, clientData);
+	printf("page: %d\n", pls->page);
+    }
+    */
 
     plflush();
     return result;
@@ -3019,6 +3047,36 @@ report( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     interp->result = "nonsensical request.";
     return TCL_ERROR;
+}
+
+/*--------------------------------------------------------------------------*\
+ * Custom bop handler.
+ * Mostly for support of multi-page Tcl scripts from plserver.
+\*--------------------------------------------------------------------------*/
+
+static void
+process_bop(void *clientData, int *skip_driver_bop)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+
+    if (Tcl_Eval(plFramePtr->interp, plFramePtr->bopCmd) != TCL_OK)
+	fprintf(stderr, "Command \"%s\" failed:\n\t %s\n",
+		plFramePtr->bopCmd, plFramePtr->interp->result);
+}
+
+/*--------------------------------------------------------------------------*\
+ * Custom eop handler.
+ * Mostly for support of multi-page Tcl scripts from plserver.
+\*--------------------------------------------------------------------------*/
+
+static void
+process_eop(void *clientData, int *skip_driver_eop)
+{
+    register PlFrame *plFramePtr = (PlFrame *) clientData;
+
+    if (Tcl_Eval(plFramePtr->interp, plFramePtr->eopCmd) != TCL_OK)
+	fprintf(stderr, "Command \"%s\" failed:\n\t %s\n",
+		plFramePtr->eopCmd, plFramePtr->interp->result);
 }
 
 /*--------------------------------------------------------------------------*\
