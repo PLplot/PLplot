@@ -80,7 +80,7 @@ C     Divide screen into 100 regions
       call plssub(10,10)
 
 
-      do i=1,100
+      do i=0,99
 C     Bounds on HLS, from plHLS_RGB() commentary --
 C     hue		[0., 360.]	degrees
 C     lightness	        [0., 1.]	magnitude
@@ -95,9 +95,9 @@ C     Use max saturation
 
          call plHLS_RGB(h, l, s, r1, g1, b1)
          
-         r(i+16) = r1*255
-         g(i+16) = g1*255
-         b(i+16) = b1*255
+         r(i+17) = r1*255
+         g(i+17) = g1*255
+         b(i+17) = b1*255
       enddo
 
       do i=1,16
@@ -129,7 +129,7 @@ C--------------------------------------------------------------------------
       call plfont(4)
 
       do i=0,nw-1
-        call plcol0(i)
+        call plcol0(i+cmap0_offset)
         write (text,'(i3)') i
         if (i .lt. 10) then
            text=text(3:3)
