@@ -74,7 +74,7 @@ deplibs = `$(top_srcdir)/scripts/get-dependency-libs.sh \
 # also still works on gcc 2.95
 plplot_octave.cc tmp_stub: plplot_octave.h
 	$(PERL) $(MATWRAP) -language octave -o plplot_octave.cc	-stub tmp_stub \
-	-cpp_ignore $(srcdir)/plplot_octave_rej.h -cpp $(CC) -E -I$(srcdir) \
+	-cpp_ignore plplot_octave_rej.h -cpp $(CC) -E -I$(srcdir) \
 	-C plplot_octave.h
 	mv -f plplot_octave.cc tmp_plplot_octave.cc
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
