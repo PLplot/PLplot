@@ -509,6 +509,10 @@ fi
 
 AC_PATH_XTRA
 
+### Add libm to LIBS, as some non linux unices might require this.
+### This must be done before sysloc.in is included.
+AC_CHECK_LIB(m, sin)
+
 ### The following seems to be necessary because the replacement of
 ### the default value for prefix only happens in AC_OUTPUT (it would be
 ### already too late)
@@ -792,7 +796,6 @@ AC_CHECK_FUNC(popen, AC_DEFINE(HAVE_POPEN, [],
                                [Define if popen is available]))
 AC_CHECK_FUNC(usleep, AC_DEFINE(HAVE_USLEEP, [],
                                [Define if usleep is available]))
-AC_CHECK_LIB(m, sin)
 AC_CHECK_FUNC(isinf, AC_DEFINE(HAVE_ISINF, [],
                                [Define if isinf is available]))
 AC_CHECK_FUNC(finite, AC_DEFINE(HAVE_FINITE, [],
