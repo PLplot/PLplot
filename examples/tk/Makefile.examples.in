@@ -20,18 +20,13 @@
 # along with the file; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-LIB_TAG = @LIB_TAG@
-TCLTKINCCMD =  @TCLINCCMD@ @TKINCCMD@
-INCLUDEANDLIB = \
-	@INCLUDE_DIR_CMD@ \
-	$(TCLTKINCCMD) \
-	@LIB_DIR_CMD@ \
-	-lplplottcltk$(LIB_TAG)
-
 CC = @CC@
 EXEEXT = @EXEEXT@
-PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-RPATHCMD = @RPATHCMD@
+
+@pkg_config_true@LIB_TAG = @LIB_TAG@
+@pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
+@pkg_config_true@RPATHCMD = @RPATHCMD@
+@pkg_config_true@TCLTKINCCMD =  @TCLINCCMD@ @TKINCCMD@
 
 EXECUTABLES_list = \
 		 xtk01$(EXEEXT) \
@@ -45,6 +40,6 @@ clean:
 
 .c$(EXEEXT):
 @pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) $(TCLTKINCCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-tcl`
-@pkg_config_false@	plplot_libtool --mode=link $(CC) $< $(INCLUDEANDLIB) -o $@
+@pkg_config_false@	$(CC) $< -o $@ `plplot-config --cflags --libs --with-tcl`
 
 .SUFFIXES: .c $(EXEEXT)

@@ -21,12 +21,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 CC = @CC@
-CFLAGS = @CFLAGS@
 EXEEXT = @EXEEXT@
-LIB_TAG = @LIB_TAG@
-INCLUDEANDLIB = @INCLUDE_DIR_CMD@ @LIB_DIR_CMD@ -lplplot$(LIB_TAG)
-PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-RPATHCMD = @RPATHCMD@
+
+@pkg_config_true@LIB_TAG = @LIB_TAG@
+@pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
+@pkg_config_true@RPATHCMD = @RPATHCMD@
 
 EXECUTABLES_list = \
 		 x01c$(EXEEXT) \
@@ -58,6 +57,6 @@ clean:
 
 .c$(EXEEXT):
 @pkg_config_true@	$(CC) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)`
-@pkg_config_false@	plplot_libtool --mode=link $(CC) $(CFLAGS) $< $(INCLUDEANDLIB) -o $@
+@pkg_config_false@	$(CC) $< -o $@ `plplot-config --cflags --libs`
 
 .SUFFIXES: .c $(EXEEXT)

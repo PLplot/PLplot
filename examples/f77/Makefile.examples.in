@@ -22,10 +22,10 @@
 
 F77 = @F77@
 EXEEXT = @EXEEXT@
-LIB_TAG = @LIB_TAG@
-INCLUDEANDLIB = @INCLUDE_DIR_CMD@ @LIB_DIR_CMD@ -lplplotf77$(LIB_TAG)
-PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-RPATHCMD = @RPATHCMD@
+
+@pkg_config_true@LIB_TAG = @LIB_TAG@
+@pkg_config_true@PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
+@pkg_config_true@RPATHCMD = @RPATHCMD@
 
 # x19f excluded from this list because the plmap and plmeridians fortran
 # API is not implemented as part of the common API (and probably won't be 
@@ -59,6 +59,6 @@ clean:
 
 .f$(EXEEXT):
 @pkg_config_true@	$(F77) $< -o $@ $(RPATHCMD) `$(PKG_CONFIG_ENV) pkg-config --cflags --libs plplot$(LIB_TAG)-f77`
-@pkg_config_false@	plplot_libtool --mode=link $(F77) $< $(INCLUDEANDLIB) -o $@
+@pkg_config_false@	$(F77) $< -o $@ `plplot-config --cflags --libs --with-f77`
 
 .SUFFIXES: .f $(EXEEXT)
