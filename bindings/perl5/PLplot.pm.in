@@ -1,10 +1,12 @@
 # -*-perl-*-
 package PLplot;
+use vars qw(@ISA %EXPORT_TAGS @EXPORT_OK);
 require Exporter;
 require DynaLoader;
 @ISA = qw(Exporter DynaLoader);
 package PLplot;
 bootstrap PLplot;
 var_PLplot_init();
-@EXPORT = qw(@EXPORTS@);
+%EXPORT_TAGS = (all => [qw(@EXPORTS@)]);
+Exporter::export_ok_tags('all');
 1;

@@ -3,7 +3,7 @@
 # $Id$
 # Simple line plot and multiple windows demo.  In Perl
 
-use PLplot;
+use PLplot qw(:all);
 
 # plplot initialization
 # Divide page into 2x2 plots
@@ -21,9 +21,6 @@ plinit ();
 
 # Set up the data
 # Original case 
-
-plgchr(\$h,\$w);
-print "h: $h\nw: $w\n";
 
 $xscale = 6.;
 $yscale = 1.;
