@@ -1,0 +1,235 @@
+#!/bin/sh
+
+#*************************************************************************
+#
+# mklinks - makes (or removes) soft-links from PLplot distribution to
+#           appropriate places under usr/local 
+#
+# Maurice LeBrun (mjl@dino.ph.utexas.edu)
+# IFS, University of Texas at Austin
+# May 17, 1994
+#
+# Arguments: 
+#	-a	Add soft links
+#	-n	Print commands without executing
+#	-r	Remove soft links
+#
+# Anything else results in a short help message being printed.
+# Has been tested with:
+#	PLplot 4.99g
+#
+# I wrote this script to simplify the business of installing software
+# distributions.  With a lot of packages continuing to evolve at a pretty
+# good clip, it helps to be able to update without too much hassle.  Also,
+# it is best to provide a fairly consistent organization of the files on
+# disk, one that fits into just about anyone's system management scheme.
+# The method I use works whether you are system manager or just some poor
+# slob user :-).
+#
+# The idea is to type "make install" in the build directory, with the
+# install target set to some empty directory.  A good choice is
+# /usr/local/<pkg><ver>, where <pkg> is the software package name (i.e.
+# plplot) and <ver> is the version.  This way you can have multiple
+# versions of the package installed, with only one of them easily
+# accessible.
+#
+# By softlinking the PLplot distribution files into the usual /usr/local
+# areas you (a) avoid requiring a change in PATH to get at the binaries,
+# (b) avoid requiring changes to makefiles to get include and lib
+# settings, (c) avoid requiring changes to MANPATH settings to allow
+# access to the man pages, and (d) have an easy way to do upgrades or
+# degrades.
+#
+# The main difficulty as I see it with using softlinks from /usr/local
+# areas into /usr/local/bin, /usr/local/lib, /usr/local/include, and
+# /usr/local/man, is that once created, the softlinks are hard to get rid
+# of.  If you decide to delete the package, you must manually delete the
+# softlinks as well.  Switching between versions is an onerous task,
+# especially if you want to back down to a previous revision.  Therefore,
+# a fundamental capability of this script is to allow easy removal of all
+# created softlinks (-r option).
+#
+#*************************************************************************
+
+# Defaults
+
+NAME=$0
+PKG=PLplot
+
+INSTALL_DIR=/usr/local
+
+PWD=`pwd`
+
+LINK_MAN=1		# Install man pages
+#LINK_MAN=		# Do not
+
+if [ "$1" = "-n" ]; then
+    DO_NOTHING=1
+    shift
+fi
+
+# Need to account for differences in /bin/sh semantics wrt soft links.
+
+IF_SOFT="-h"
+if [ `uname` = "AIX" ]; then
+    IF_SOFT="-L"
+fi
+
+#*************************************************************************
+
+# Spits out help message, then exits
+
+help () {
+
+    echo \
+"Usage: $NAME [-n] [-a | -r]"
+    echo \
+"       Creates (-a) or removes (-r) soft links to $PKG files."
+    echo \
+"       Currently configured to put soft links under $INSTALL_DIR."
+    echo ""
+    echo \
+"       If -n is specified, commands are printed with no action taken."
+    echo \
+"       The -n flag must come first, if specified."
+    exit 1
+}
+
+#*************************************************************************
+
+# Adds one or many soft-links.  Creates directory if necessary.
+# $1 - subdir name
+# $2 - file spec
+
+add_link () {
+
+    if [ ! -d ${INSTALL_DIR}/$1 ]; then
+	if [ $DO_NOTHING ]; then
+	    echo "mkdir ${INSTALL_DIR}/$1"
+	else
+	    mkdir ${INSTALL_DIR}/$1
+	fi
+    fi
+
+    if [ $DO_NOTHING ]; then
+	echo "ln -s ${PWD}/$1/$2  ${INSTALL_DIR}/$1"
+    else
+	ln -s ${PWD}/$1/$2  ${INSTALL_DIR}/$1
+    fi
+}
+
+#*************************************************************************
+
+# Removes a single soft-link
+# $1 - link name (relative to $INSTALL_DIR)
+
+rm_link () {
+
+    if [ $IF_SOFT "${INSTALL_DIR}/$1" ]; then
+	if [ $DO_NOTHING ]; then
+	    echo "rm ${INSTALL_DIR}/$1"
+	else
+	    rm ${INSTALL_DIR}/$1
+	fi
+    fi
+}
+
+#*************************************************************************
+
+# Removes multiple soft-links
+# $1 through $# - link specs (relative to $INSTALL_DIR)
+
+rm_links () {
+    for file in $*; do
+	rm_link $file
+    done
+}
+
+#*************************************************************************
+
+# Add links
+
+Add () {
+
+# Bomb out if we're not starting clean
+
+    if [ $IF_SOFT "${INSTALL_DIR}/bin/plrender" ]; then
+	echo 'Must remove old links first -- use "$NAME -r".'
+	exit 1
+    fi
+
+# Set up links
+
+    echo \
+"Adding links from ${PWD} to ${INSTALL_DIR}..."
+
+    add_link "bin"	"*"
+    add_link "lib"	"*"
+    add_link "include"	"*.h"
+
+    if [ "$LINK_MAN" ]; then
+
+	if [ ! -d ${INSTALL_DIR}/man ]; then
+	    if [ $DO_NOTHING ]; then
+		echo "mkdir ${INSTALL_DIR}/man"
+	    else
+		mkdir ${INSTALL_DIR}/man
+	    fi
+	fi
+
+	add_link "man/man1" "*.1"
+	add_link "man/man3" "*.3"
+	add_link "man/mann" "*.n"
+	if [ -d ${PWD}/man/manl ]; then
+	    add_link "man/manl" "*.l"
+	fi
+    fi
+}
+
+#*************************************************************************
+
+# Remove links
+
+Remove () {
+
+# Bomb out if links already removed.
+
+    if [ ! $IF_SOFT "${INSTALL_DIR}/bin/wish" ]; then
+	echo 'Soft links already removed.'
+	exit 1
+    fi
+
+# Delete links
+# Note that in each case, we check to make sure it really is a soft link
+# before deleting.  
+
+    echo \
+"Removing links from ${PWD} to ${INSTALL_DIR}..."
+
+# In cases that we globbed to do the links, we reglob to determine what
+# links need deleting.
+
+    rm_links bin/* lib/* include/*.h
+
+    if [ "$LINK_MAN" ]; then
+	rm_links man/man1/*.1 man/man3/*.3 man/mann/*.n
+	if [ -d ${PWD}/man/manl ]; then
+	    rm_links "man/manl/*.l"
+	fi
+    fi
+}
+
+#*************************************************************************
+
+# Call the necessary function to do the job.
+
+if [ "$1" = '-a' ]; then
+    Add
+
+elif [ "$1" = '-r' ]; then
+    Remove
+
+else
+    help
+fi
+exit 0
