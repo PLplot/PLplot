@@ -1,35 +1,25 @@
 /* $Id$
-   $Log$
-   Revision 1.13  1994/03/23 06:34:20  mjl
-   All drivers: cleaned up by eliminating extraneous includes (stdio.h and
-   stdlib.h now included automatically by plplotP.h), extraneous clears
-   of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
-   driver interface or driver initialization as appropriate).  Special
-   handling for malloc includes eliminated (no longer needed) and malloc
-   prototypes fixed as necessary.
-
- * Revision 1.12  1993/07/31  07:56:27  mjl
- * Several driver functions consolidated, for all drivers.  The width and color
- * commands are now part of a more general "state" command.  The text and
- * graph commands used for switching between modes is now handled by the
- * escape function (very few drivers require it).  The device-specific PLDev
- * structure is now malloc'ed for each driver that requires it, and freed when
- * the stream is terminated.
+ * $Log$
+ * Revision 1.14  1994/07/19 22:30:16  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
  *
- * Revision 1.11  1993/07/16  22:11:13  mjl
- * Eliminated low-level coordinate scaling; now done by driver interface.
- *
- * Revision 1.10  1993/07/01  21:59:31  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
- * now start with "pl"; device driver functions start with "plD_".
+ * Revision 1.13  1994/03/23  06:34:20  mjl
+ * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
+ * stdlib.h now included automatically by plplotP.h), extraneous clears
+ * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
+ * driver interface or driver initialization as appropriate).  Special
+ * handling for malloc includes eliminated (no longer needed) and malloc
+ * prototypes fixed as necessary.
 */
 
 /*	dg300.c
 
 	PLPLOT dg300 device driver.
 */
-#ifdef DG300
+#include "plDevs.h"
+
+#ifdef PLD_dg300
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -180,4 +170,4 @@ pldummy_dg300()
     return 0;
 }
 
-#endif				/* DG300 */
+#endif				/* PLD_dg300 */

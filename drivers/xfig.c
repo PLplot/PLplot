@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1994/03/23 06:34:34  mjl
+ * Revision 1.15  1994/07/19 22:30:30  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
+ *
+ * Revision 1.14  1994/03/23  06:34:34  mjl
  * All drivers: cleaned up by eliminating extraneous includes (stdio.h and
  * stdlib.h now included automatically by plplotP.h), extraneous clears
  * of pls->fileset, pls->page, and pls->OutFile = NULL (now handled in
@@ -24,7 +28,9 @@
 
 	PLPLOT xfig device driver.
 */
-#ifdef XFIG
+#include "plDevs.h"
+
+#ifdef PLD_xfig
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -284,4 +290,4 @@ pldummy_xfig()
     return 0;
 }
 
-#endif				/* XFIG */
+#endif				/* PLD_xfig */

@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1994/04/30 16:14:43  mjl
+ * Revision 1.18  1994/07/19 22:30:20  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
+ *
+ * Revision 1.17  1994/04/30  16:14:43  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -34,7 +38,9 @@
 	should work by just changing the value of DPI and changing the
 	values passed to plP_setphy().
 */
-#ifdef LJII
+#include "plDevs.h"
+
+#ifdef PLD_ljii
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -316,4 +322,4 @@ pldummy_ljii()
     return 0;
 }
 
-#endif				/* LJII */
+#endif				/* PLD_ljii */

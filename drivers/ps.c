@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1994/07/12 19:14:41  mjl
+ * Revision 1.27  1994/07/19 22:30:27  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
+ *
+ * Revision 1.26  1994/07/12  19:14:41  mjl
  * Fix to prevent postscript interpreter from forgetting the current point
  * location after a color change.  I lost track of who contributed this.
  *
@@ -40,7 +44,9 @@
 
 	PLPLOT PostScript device driver.
 */
-#ifdef PS
+#include "plDevs.h"
+
+#ifdef PLD_ps
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -592,4 +598,4 @@ pldummy_ps()
     return 0;
 }
 
-#endif				/* PS */
+#endif				/* PLD_ps */

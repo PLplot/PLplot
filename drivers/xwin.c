@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.44  1994/07/18 20:28:46  mjl
+ * Revision 1.45  1994/07/19 22:30:32  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
+ *
+ * Revision 1.44  1994/07/18  20:28:46  mjl
  * Fixed a cast.
  *
  * Revision 1.43  1994/07/01  22:38:04  mjl
@@ -32,7 +36,9 @@
 
 	PLPLOT X-windows device driver.
 */
-#ifdef XWIN
+#include "plDevs.h"
+
+#ifdef PLD_xwin
 
 #include "plplotP.h"
 #include "plplotX.h"
@@ -1700,4 +1706,4 @@ pldummy_xwin()
     return 0;
 }
 
-#endif				/* XWIN */
+#endif				/* PLD_xwin */

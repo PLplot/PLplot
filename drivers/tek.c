@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1994/06/30 17:52:35  mjl
+ * Revision 1.29  1994/07/19 22:30:29  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
+ *
+ * Revision 1.28  1994/06/30  17:52:35  mjl
  * Made another pass to eliminate warnings when using gcc -Wall, especially
  * those created by changing a PLINT from a long to an int.
  *
@@ -25,12 +29,14 @@
 
 	PLPLOT tektronix device & emulators driver.
 */
-#if defined(XTERM) ||		/* xterm */ \
-    defined(TEK4010) ||		/* TEK 4010 */ \
-    defined(TEK4107) ||		/* TEK 4107 */ \
-    defined(MSKERMIT) ||	/* MS-kermit emulator */ \
-    defined(VERSATERM) ||	/* Versaterm emulator */ \
-    defined(VLT)		/* VLT emulator */
+#include "plDevs.h"
+
+#if defined(PLD_xterm) ||		/* xterm */ \
+    defined(PLD_tek4010) ||		/* TEK 4010 */ \
+    defined(PLD_tek4107) ||		/* TEK 4107 */ \
+    defined(PLD_mskermit) ||		/* MS-kermit emulator */ \
+    defined(PLD_versaterm) ||		/* Versaterm emulator */ \
+    defined(PLD_vlt)			/* VLT emulator */
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -80,6 +86,7 @@ static int  tty_reset	(void);
 #define BEL  7
 #define FF   12
 #define CAN  24
+#define SUB  26
 #define ESC  27
 #define GS   29
 #define US   31
@@ -816,6 +823,15 @@ EventHandler(PLStream *pls, int input_char)
 	pls->nopause = TRUE;
 	plexit("");
     }
+
+    if (key.string[0] == 't') {
+	char tmp[4];
+
+	fprintf(stderr, "Entering GIN mode..\n");
+
+	printf("%c%c", ESC, SUB);	/* Enter GIN mode */
+	fflush(stdout);
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -882,4 +898,4 @@ tty_atexit(void)			/* exit handler */
 #else
 int pldummy_tek() {return 0;}
 
-#endif	/*  defined(XTERM) || ... */
+#endif	/*  defined(PLD_xterm) || ... */

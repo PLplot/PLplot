@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/04/30 16:14:45  mjl
+ * Revision 1.4  1994/07/19 22:30:21  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
+ *
+ * Revision 1.3  1994/04/30  16:14:45  mjl
  * Fixed format field (%ld instead of %d) or introduced casts where
  * appropriate to eliminate warnings given by gcc -Wall.
  *
@@ -26,7 +30,9 @@
 		compression can speed up the printing up to 3x
 
 */
-#ifdef LJII
+#include "plDevs.h"
+
+#ifdef PLD_ljii
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -437,4 +443,4 @@ pldummy_ljiip()
     return 0;
 }
 
-#endif				/* LJII */
+#endif				/* PLD_ljii */

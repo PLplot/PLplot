@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1994/04/08 11:38:11  mjl
+ * Revision 1.25  1994/07/19 22:30:26  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
+ *
+ * Revision 1.24  1994/04/08  11:38:11  mjl
  * Now allocate a PLmDev in order to keep file offset information local
  * to the driver where it belongs.  No longer keep track of bytes written
  * since the PDF output routines do that automatically.
@@ -45,7 +49,9 @@
     This is a metafile writer for plplot.
 
 */
-#ifdef PLMETA
+#include "plDevs.h"
+
+#ifdef PLD_plmeta
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -524,4 +530,4 @@ pldummy_plmeta()
     return 0;
 }
 
-#endif				/* PLMETA */
+#endif				/* PLD_plmeta */

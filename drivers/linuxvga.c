@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.4  1994/05/25 09:36:54  mjl
+ * Revision 1.5  1994/07/19 22:30:19  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
+ *
+ * Revision 1.4  1994/05/25  09:36:54  mjl
  * All VGA driver function names now end with "_vga", a nice simplification.
  * Since all are compiler-dependent and mutually exclusive, this should pose
  * no problem.  Also HP pen plotter driver were consolidated.  Both
@@ -20,7 +24,6 @@
  *
  * Revision 1.1  1993/08/03  03:21:54  mjl
  * Added contributions from Sergio Fanchiotti for use under Linux.
- *
 */
 
 /*
@@ -34,7 +37,9 @@
 	Things to note: NEEDS vgalib to compile!!!!!
 
 */
-#ifdef LINUXVGA			/* Only compile for Linux + Vgalib 1.2 */
+#include "plDevs.h"
+
+#ifdef PLD_linuxvga		/* Only compile for Linux + Vgalib 1.2 */
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -294,4 +299,4 @@ pldummy_vga()
     return 0;
 }
 
-#endif				/* LINUXVGA */
+#endif				/* PLD_linuxvga */

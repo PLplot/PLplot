@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/04/08 11:35:59  mjl
+ * Revision 1.4  1994/07/19 22:30:22  mjl
+ * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+ * is xwin, ps, etc.  See plDevs.h for more detail.
+ *
+ * Revision 1.3  1994/04/08  11:35:59  mjl
  * Put nopause support back into the drivers where it is better off.
  * I don't know WHAT I was thinking.
  *
@@ -30,7 +34,9 @@
 	 codes. In this way no recompilation would be ncessary if other
 	 routines set up messages for the same event.
 */
-#ifdef MGR			/* Only compile if MGR support is needed */
+#include "plDevs.h"
+
+#ifdef PLD_mgr			/* Only compile if MGR support is needed */
 
 #include "plplotP.h"
 #include "drivers.h"
@@ -363,4 +369,4 @@ pldummy_mgr()
     return 0;
 }
 
-#endif				/* MGR */
+#endif				/* PLD_mgr */

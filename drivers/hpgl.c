@@ -1,9 +1,13 @@
 /* ///////////////////////////////////////////////////////////////////
 // $Id$
 // $Log$
-// Revision 1.2  1994/05/26 19:21:45  mjl
-// Minor changes to bring up to spec with the other drivers.
+// Revision 1.3  1994/07/19 22:30:17  mjl
+// All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
+// is xwin, ps, etc.  See plDevs.h for more detail.
 //
+ * Revision 1.2  1994/05/26  19:21:45  mjl
+ * Minor changes to bring up to spec with the other drivers.
+ *
  * Revision 1.1  1994/05/25  09:34:14  mjl
  * Consolidated HP pen plotter driver, contributed by Mark Olesen
  * (olesen@weber.me.queensu.ca).
@@ -39,7 +43,10 @@
 //                      interpreters happier and the plotters don't care
 //
 /////////////////////////////////////////////////////////////////// */
-#if defined ( HP7470 ) || defined ( HP7580 )
+
+#include "plDevs.h"
+
+#if defined(PLD_hp7470) || defined(PLD_hp7580)
 
 #include "plplotP.h"
 #include <stdio.h>
@@ -61,9 +68,9 @@
 #define HP7580_YMAX   2790
 
 /*----------------------------------------------------------------------*\
-* initialize_hpgl_pls()
-*
-* Initialize plot stream
+ * initialize_hpgl_pls()
+ *
+ * Initialize plot stream
 \*----------------------------------------------------------------------*/
 
 static void
@@ -83,12 +90,12 @@ initialize_hpgl_pls(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_init_hp7470()
-*
-* Initialize device.
+ * plD_init_hp7470()
+ *
+ * Initialize device.
 \*----------------------------------------------------------------------*/
 
-#ifdef HP7470
+#ifdef PLD_hp7470
 void
 plD_init_hp7470(PLStream *pls)
 {
@@ -111,15 +118,15 @@ plD_init_hp7470(PLStream *pls)
     plP_setphy( dev->xmin, dev->xmax, dev->ymin, dev->ymax);
     fputs( "\x1b.I200;;17:\x1b.N;19:\x1b.M;;;10:IN;\n", pls->OutFile );
 }
-#endif          /* HP7470 */
+#endif          /* PLD_hp7470 */
 
 /*----------------------------------------------------------------------*\
-* plD_init_hp7580()
-*
-* Initialize device.
+ * plD_init_hp7580()
+ *
+ * Initialize device.
 \*----------------------------------------------------------------------*/
 
-#ifdef HP7580
+#ifdef PLD_hp7580
 void
 plD_init_hp7580(PLStream *pls)
 {
@@ -144,12 +151,12 @@ plD_init_hp7580(PLStream *pls)
     fputs( "\x1b.I200;;17:\x1b.N;19:\x1b.M;;;10:IN;\n", pls->OutFile );
     fputs( "RO90;IP;SP4;PA;\n", pls->OutFile );
 }
-#endif  /* HP7580 */
+#endif  /* PLD_hp7580 */
 
 /*----------------------------------------------------------------------*\
-* plD_line_hpgl()
-*
-* Draw a line in the current color from (x1,y1) to (x2,y2).
+ * plD_line_hpgl()
+ *
+ * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
@@ -170,9 +177,9 @@ plD_line_hpgl(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_polyline_hpgl()
-*
-* Draw a polyline in the current color.
+ * plD_polyline_hpgl()
+ *
+ * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
@@ -193,9 +200,9 @@ plD_polyline_hpgl(PLStream *pls, short *xa, short *ya, PLINT npts)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_eop_hpgl()
-*
-* End of page.
+ * plD_eop_hpgl()
+ *
+ * End of page.
 \*----------------------------------------------------------------------*/
 
 void
@@ -204,10 +211,10 @@ plD_eop_hpgl(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_bop_hpgl()
-*
-* Set up for the next page.
-* Advance to next family file if necessary (file output).
+ * plD_bop_hpgl()
+ *
+ * Set up for the next page.
+ * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
@@ -226,9 +233,9 @@ plD_bop_hpgl(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_tidy_hpgl()
-*
-* Close graphics file or otherwise clean up.
+ * plD_tidy_hpgl()
+ *
+ * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
@@ -239,9 +246,9 @@ plD_tidy_hpgl(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_state_hpgl()
-*
-* Handle change in PLStream state (color, pen width, fill attribute, etc).
+ * plD_state_hpgl()
+ *
+ * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
 void
@@ -265,9 +272,9 @@ plD_state_hpgl(PLStream *pls, PLINT op)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_esc_hpgl()
-*
-* Escape function.
+ * plD_esc_hpgl()
+ *
+ * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
@@ -282,4 +289,4 @@ pldummy_hpgl(void)
     return 0;
 }
 
-#endif                          /* HP7470 || HP7580 */
+#endif                          /* PLD_hp7470 || PLD_hp7580 */
