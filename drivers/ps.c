@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.15  1993/07/01 21:59:43  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible plplot functions
-   now start with "pl"; device driver functions start with "plD_".
+   Revision 1.16  1993/07/16 22:14:18  mjl
+   Simplified and fixed dpi settings.
 
+ * Revision 1.15  1993/07/01  21:59:43  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible plplot functions
+ * now start with "pl"; device driver functions start with "plD_".
+ *
  * Revision 1.14  1993/04/26  20:01:59  mjl
  * Changed time type from long to time_t.
  *
@@ -79,6 +82,7 @@
 /* Prototypes for functions in this file. */
 
 static char *pl_getdate(void);
+static void plD_init_ps(PLStream *);
 
 /* top level declarations */
 
@@ -91,10 +95,6 @@ static char *pl_getdate(void);
 #define YPSSIZE         ENLARGE*YSIZE
 #define XOFFSET         36	/* Offsets are .5" each */
 #define YOFFSET         36
-#define XSCALE          100
-#define YSCALE          100
-#define LINESCALE       100
-#define ANGLE           90
 #define PSX             XPSSIZE-1
 #define PSY             YPSSIZE-1
 
@@ -116,18 +116,32 @@ static PLDev *dev = &device;
 \*----------------------------------------------------------------------*/
 
 void
+plD_init_psm(PLStream *pls)
+{
+    if (!pls->colorset)
+	pls->color = 0;		/* no color by default: user can override */
+    plD_init_ps(pls);
+}
+
+void
+plD_init_psc(PLStream *pls)
+{
+    pls->color = 1;		/* always color */
+    plD_init_ps(pls);
+}
+
+static void
 plD_init_ps(PLStream *pls)
 {
     float r, g, b;
+    float pxlx = YPSSIZE/LPAGE_X;
+    float pxly = XPSSIZE/LPAGE_Y;
 
     pls->termin = 0;		/* not an interactive terminal */
     pls->icol0 = 1;
     pls->bytecnt = 0;
     pls->page = 0;
     pls->family = 0;		/* I don't want to support familying here */
-
-    if (!pls->colorset)
-	pls->color = 0;		/* no color by default: user can override */
 
     if (pls->widthset) {
 	if (pls->width < 1 || pls->width > 10) {
@@ -148,7 +162,7 @@ plD_init_ps(PLStream *pls)
     dev->xold = UNDEFINED;
     dev->yold = UNDEFINED;
 
-    plP_setpxl((PLFLT) 11.81, (PLFLT) 11.81);	/* 300 dpi */
+    plP_setpxl(pxlx, pxly);
 
 /* Because portrait mode addressing is used by postscript, we need to
    rotate by 90 degrees to get the right mapping. */
@@ -266,19 +280,10 @@ plD_init_ps(PLStream *pls)
     fprintf(OF, "/@hoffset {/ho exch def} def\n");
     fprintf(OF, "/@voffset {/vo exch def} def\n");
 
-/* s @hscale - scale factors */
-
-    fprintf(OF, "/@hscale  {100 div /hsc exch def} def\n");
-    fprintf(OF, "/@vscale  {100 div /vsc exch def} def\n");
-
 /* Default line width */
 
     fprintf(OF, "/lw %d def\n", pls->width);
-
-/* s @lscale - linewidth scale factor */
-
-    fprintf(OF, "/@lscale  {100 div /lin exch def} def\n");
-    fprintf(OF, "/@lwidth  {lin lw mul setlinewidth} def\n");
+    fprintf(OF, "/@lwidth  {lw setlinewidth} def\n");
 
 /* Setup user specified offsets, scales, sizes for clipping */
 
@@ -286,18 +291,15 @@ plD_init_ps(PLStream *pls)
     fprintf(OF, "   {\n");
     fprintf(OF, "    ho vo translate\n");
     fprintf(OF, "    XScale YScale scale\n");
-    fprintf(OF, "    lin lw mul setlinewidth\n");
+    fprintf(OF, "    lw setlinewidth\n");
     fprintf(OF, "   } def\n");
 
-/* Setup x scale */
+/* Setup x & y scales */
 
     fprintf(OF, "/XScale\n");
-    fprintf(OF, "   {hsc hs mul %d div} def\n", YPSSIZE);
-
-/* Setup y scale */
-
+    fprintf(OF, "   {hs %d div} def\n", YPSSIZE);
     fprintf(OF, "/YScale\n");
-    fprintf(OF, "   {vsc vs mul %d div} def\n", XPSSIZE);
+    fprintf(OF, "   {vs %d div} def\n", XPSSIZE);
 
 /* Stroke definitions, to keep output file as small as possible */
 
@@ -320,9 +322,6 @@ plD_init_ps(PLStream *pls)
     fprintf(OF, "%d @vsize\n", XSIZE);
     fprintf(OF, "%d @hoffset\n", YOFFSET);
     fprintf(OF, "%d @voffset\n", XOFFSET);
-    fprintf(OF, "%d @hscale\n", YSCALE);
-    fprintf(OF, "%d @vscale\n", XSCALE);
-    fprintf(OF, "%d @lscale\n", LINESCALE);
 
     fprintf(OF, "@SetPlot\n\n");
 }
@@ -352,9 +351,6 @@ plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 
     orient = pls->orient + 1;
     plRotPhy(orient, dev, &x1, &y1, &x2, &y2);
-
-    if (pls->pscale)
-	plSclPhy(pls, dev, &x1, &y1, &x2, &y2);
 
     if (x1 == dev->xold && y1 == dev->yold && ptcnt < 40) {
 	sprintf(outbuf, "%d %d D", x2, y2);
