@@ -3,7 +3,10 @@
 #
 # $Id$
 # $Log$
-# Revision 1.2  1995/01/27 02:49:47  mjl
+# Revision 1.3  1995/04/12 21:12:09  mjl
+# Minor nit.
+#
+# Revision 1.2  1995/01/27  02:49:47  mjl
 # New Tcl example files.  Can now be run from either pltcl -- using the
 # "loopback" command as argument, or from plserver (or other plplot-aware
 # extended wish) -- using the widget name as argument.
@@ -21,7 +24,7 @@ proc x02 {w} {
     $w cmd plschr 0.0 3.5
     $w cmd plfont 4
 
-    for {set i 0} {$i < 15} {incr i} {
+    for {set i 0} {$i < 16} {incr i} {
 	$w cmd plcol $i
 	$w cmd pladv
 	set vmin 0.1
