@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.8  1993/02/27 04:46:42  mjl
-   Fixed errors in ordering of header file inclusion.  "plplot.h" should
-   always be included first.
+   Revision 1.9  1993/02/27 08:44:38  mjl
+   Fixed some long-standing bugs in switching between text and graphics windows
+   (didn't affect xterms, but did affect certain vt100/tek emulators).
 
+ * Revision 1.8  1993/02/27  04:46:42  mjl
+ * Fixed errors in ordering of header file inclusion.  "plplot.h" should
+ * always be included first.
+ *
  * Revision 1.7  1993/02/26  06:23:21  mjl
  * Changed char->int in input parameter to EventHandler.
  *
@@ -208,11 +212,14 @@ xte_page (PLStream *pls)
 void 
 xte_tidy (PLStream *pls)
 {
-    if (pls->graphx == GRAPHICS_MODE) {
-	pls->graphx = TEXT_MODE;
-	printf("%c%c", US, CAN);
-	printf("%c%c", ESC, ETX);
-    }
+    fflush(stdout);
+    xte_graph(pls);
+
+    pls->graphx = TEXT_MODE;
+    printf("%c%c", US, CAN);
+    printf("%c%c", ESC, ETX);
+    printf("%c%c", US, CAN);
+
     fflush(stdout);
     pls->fileset = 0;
     pls->page = 0;
@@ -354,9 +361,7 @@ EventHandler(PLStream *pls, int input_char)
     }
 
 #ifdef DEBUG
-    grtext();
     printf("Keycode %x, string: %s\n", key.code, key.string);
-    grgra();
 #endif
 
 /* Call user event handler */
