@@ -366,10 +366,12 @@ typedef void* PLPointer;
 #define PLESC_IMAGEOPS          22      /* plimage related operations */
 
 /* image operations */
+#if 0
 #define ZEROW2B   1
 #define ZEROW2D   2
 #define ONEW2B    3
 #define ONEW2D    4
+#endif
 
 /* Window parameter tags */
 
@@ -1665,6 +1667,8 @@ plGetCursor(PLGraphicsIn *gin);
 
 /* Translates relative device coordinates to world coordinates.  */
 #endif
+/* Use plcalc_world instead of plTranslateCursor. */
+#if 0
 %typemap(in) PLGraphicsIn *gin (PLGraphicsIn tmp) {
   if(!PySequence_Check($input) || PySequence_Size($input) != 2) {
     PyErr_SetString(PyExc_ValueError, "Expecting a sequence of 2 numbers.");
@@ -1683,3 +1687,4 @@ plGetCursor(PLGraphicsIn *gin);
 }
 int
 plTranslateCursor(PLGraphicsIn *gin);
+#endif
