@@ -26,6 +26,12 @@ def main():
     mark = 1500
     space = 1500
 
+    # Parse and process command line arguments
+
+    plParseOpts(sys.argv, PARSE_FULL)
+
+    # Initialize plplot
+
     plinit()
 
     z = zeros( (xpts, ypts), 'd' )

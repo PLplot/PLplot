@@ -20,6 +20,12 @@ from pl import *
 
 def main():
 
+    # Parse and process command line arguments
+
+    plParseOpts(sys.argv, PARSE_FULL)
+
+    # Initialize plplot
+
     plinit()
     # Divide screen into 16 regions
 

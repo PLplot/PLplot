@@ -76,6 +76,12 @@ def main():
 	    yg2[i,j] = yy - distort * cos(argx) * cos(argy)
 
 
+    # Parse and process command line arguments
+
+    plParseOpts(sys.argv, PARSE_FULL)
+
+    # Initialize plplot
+
     plinit()
     # Plot using identity transform
 

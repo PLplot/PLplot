@@ -29,6 +29,12 @@ text = ["Maurice",
 
 def main():
 
+    # Parse and process command line arguments
+
+    plParseOpts(sys.argv, PARSE_FULL)
+
+    # Initialize plplot
+
     plinit()
 
     plenv(0., 10., 0., 10., 1, -2)

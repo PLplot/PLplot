@@ -37,6 +37,12 @@ title = ["#frPLplot Example 8 - Alt=60, Az=30, Opt=1",
 
 def main():
 
+    # Parse and process command line arguments
+
+    plParseOpts(sys.argv, PARSE_FULL)
+
+    # Initialize plplot
+
     plinit()
 
     x = zeros( XPTS, 'd' ); y = zeros( YPTS, 'd' )

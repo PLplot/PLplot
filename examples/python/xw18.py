@@ -32,6 +32,12 @@ NPTS = 1000
 
 def main():
 
+	# Parse and process command line arguments
+
+	plParseOpts(sys.argv, PARSE_FULL)
+
+	# Initialize plplot
+
 	plinit()
 
 	for k in range(4):

@@ -27,6 +27,12 @@ def main():
 	x0[i] = math.cos(dtr * i)
 	y0[i] = math.sin(dtr * i)
 
+    # Parse and process command line arguments
+
+    plParseOpts(sys.argv, PARSE_FULL)
+
+    # Initialize plplot
+
     plinit()
     plcol(1)
 
