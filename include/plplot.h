@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.31  1993/08/05 22:35:19  mjl
-   Eliminated prototypes for nonexistant functions.
+   Revision 1.32  1993/08/09 22:18:00  mjl
+   Added function prototypes for pleop(), plbop(), eliminated them for plclr()
+   and plpage().  Inserted defines to translate from the latter in case
+   someone actually uses them.  Fixed prototype for plcpstrm().
 
+ * Revision 1.31  1993/08/05  22:35:19  mjl
+ * Eliminated prototypes for nonexistant functions.
+ *
  * Revision 1.30  1993/08/03  01:46:49  mjl
  * Changes to eliminate warnings when compiling with gcc -Wall.
  *
@@ -328,15 +333,16 @@ typedef struct {
 #define    pladv	c_pladv
 #define    plaxes	c_plaxes
 #define    plbin	c_plbin
+#define    plbop	c_plbop
 #define    plbox	c_plbox
 #define    plbox3	c_plbox3
-#define    plclr	c_plclr
 #define    plcol	c_plcol
 #define    plcont	c_plcont
 #define    plcpstrm	c_plcpstrm
 #define    plend	c_plend
 #define    plend1	c_plend1
 #define    plenv	c_plenv
+#define    pleop	c_pleop
 #define    plerrx	c_plerrx
 #define    plerry	c_plerry
 #define    plfamadv	c_plfamadv
@@ -367,7 +373,6 @@ typedef struct {
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
-#define    plpage	c_plpage
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
 #define    plprec	c_plprec
@@ -427,15 +432,16 @@ typedef struct {
 #define    c_pladv	pladv
 #define    c_plaxes	plaxes
 #define    c_plbin	plbin
+#define    c_plbop	plbop
 #define    c_plbox	plbox
 #define    c_plbox3	plbox3
-#define    c_plclr	plclr
 #define    c_plcol	plcol
 #define    c_plcpstrm	plcpstrm
 #define    c_plcont	plcont
 #define    c_plend	plend
 #define    c_plend1	plend1
 #define    c_plenv	plenv
+#define    c_pleop	pleop
 #define    c_plerrx	plerrx
 #define    c_plerry	plerry
 #define    c_plfamadv	plfamadv
@@ -465,7 +471,6 @@ typedef struct {
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
-#define    c_plpage	plpage
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
 #define    c_plprec	plprec
@@ -520,6 +525,11 @@ typedef struct {
 
 #endif	/* BRAINDEAD */
 
+/* Redefine some old function names for backward compatibility */
+
+#define    plclr	pleop
+#define    plpage	plbop
+
 /*----------------------------------------------------------------------*\
 *		Function Prototypes
 \*----------------------------------------------------------------------*/
@@ -539,13 +549,13 @@ void c_plaxes	(PLFLT, PLFLT, char *, PLFLT, PLINT, char *,
 
 void c_plbin	(PLINT, PLFLT *, PLFLT *, PLINT);
 
+void c_plbop	(void);
+
 void c_plbox	(char *, PLFLT, PLINT, char *, PLFLT, PLINT);
 
 void c_plbox3	(char *, char *, PLFLT, PLINT, 
 		 char *, char *, PLFLT, PLINT, 
 		 char *, char *, PLFLT, PLINT);
-
-void c_plclr	(void);
 
 void c_plcol	(PLINT);
 
@@ -561,13 +571,15 @@ void plcontf	(PLFLT (*) (PLINT, PLINT, PLPointer),
 		 void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
 		 PLPointer);
 
-void c_plcpstrm	(PLINT *, char *, char *);
+void c_plcpstrm	(PLINT, PLINT);
 
 void c_plend	(void);
 
 void c_plend1	(void);
 
 void c_plenv	(PLFLT, PLFLT, PLFLT, PLFLT, PLINT, PLINT);
+
+void c_pleop	(void);
 
 void c_plerrx	(PLINT, PLFLT *, PLFLT *, PLFLT *);
 
@@ -628,8 +640,6 @@ void c_plmtex	(char *, PLFLT, PLFLT, PLFLT, char *);
 
 void c_plot3d	(PLFLT *, PLFLT *, PLFLT **, 
 		 PLINT, PLINT, PLINT, PLINT);
-
-void c_plpage	(void);
 
 void c_plpat	(PLINT, PLINT *, PLINT *);
 

@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/08/05 22:35:21  mjl
-   Eliminated prototypes for nonexistant functions.
+   Revision 1.7  1993/08/09 22:18:02  mjl
+   Added function prototypes for pleop(), plbop(), eliminated them for plclr()
+   and plpage().  Inserted defines to translate from the latter in case
+   someone actually uses them.  Fixed prototype for plcpstrm().
 
+ * Revision 1.6  1993/08/05  22:35:21  mjl
+ * Eliminated prototypes for nonexistant functions.
+ *
  * Revision 1.5  1993/08/03  01:46:51  mjl
  * Changes to eliminate warnings when compiling with gcc -Wall.
  *
@@ -167,26 +172,8 @@ typedef signed char SCHAR;
 *                       Utility macros
 \*----------------------------------------------------------------------*/
 
-/*
-* Some systems need the "b" flag when opening binary files.
-* Other systems will choke on it, hence the need for this silliness.
-*/
-
-#ifdef MSDOS
-#define BINARY_FLAG
-#endif
-
-#ifdef GNU386
-#define BINARY_FLAG
-#endif
-
-#ifdef BINARY_FLAG
-#define BINARY_WRITE "wb+"
+#define BINARY_WRITE "wb+"	/* Probably these should be tossed */
 #define BINARY_READ "rb"
-#else
-#define BINARY_WRITE "w+"
-#define BINARY_READ "r"
-#endif
 
 #ifndef TRUE
 #define TRUE  1
@@ -549,9 +536,9 @@ void plP_polyline	(short *, short *, PLINT);
 
 void plP_fill		(short *, short *, PLINT);
 
-void plP_clr		(void);
+void plP_eop		(void);
 
-void plP_page		(void);
+void plP_bop		(void);
 
 void plP_tidy		(void);
 
