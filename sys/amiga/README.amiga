@@ -131,3 +131,30 @@ To build plrender:
 
 Don't forget to copy the font files from the lib directory to a more
 suitable place, preferably fonts:plplot (this is the default).
+
+------------------------------------------------------------------------------
+Miscellaneous notes:
+
+>   Found some time last weekend to build plplot4p99d on my
+> A1200. (Yes, I know it it not the latest release but it was
+> what I had at home.)  Found a few problems that may have
+> been cleared up in the latest release.
+> 
+> 1) Needed to install reqtools, and (new)iff libraries, .h and .lib
+>    files. Add some comments to the readme.amiga file? (fred fish #s?)
+
+Right, that would be good to have.  
+
+> 2) Needed to manually change the makefile to support the fpu.
+
+If you build the makefile with MATH defined to IEEEF (default) or IEEED
+it uses the cbm-supplied IEEE math libraries.  The nice thing about doing
+it this way is that the presence of the FPU is detected at runtime and
+it is used.  So the same executable can be used on machines with and
+without FPU's.  There is a small speed penalty with doing it this way,
+but nothing I felt uncomfortable with when I tested it last (on the order
+of a few percent).
+------------------------------------------------------------------------------
+
+One can get a cheap zoom with the Amiga windows by defining, for example, 
+a 2000x2000 window (in the screen mode requester).  
