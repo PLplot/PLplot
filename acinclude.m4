@@ -888,3 +888,27 @@ AC_DEFUN([GET_DLNAME],[
     rm -rf $TMP_DIR
   fi
 ])
+dnl ------------------------------------------------------------------------
+dnl Determine the dlname of a DLL to be installed by libtool
+dnl This is a usefule variation of GET_DLNAME above for dynamically loaded
+dnd libraries (DLL's).
+dnl     GET_DLLNAME(STEM,VARIABLE)
+dnl For a given DLL STEM determine the dlname of the
+dnl library in the form $STEM.<so_ext>.  Set the
+dnl variable VARIABLE with the resulting value.  This macro should be used 
+dnl only after the call to AM_PROG_LIBTOOL.
+AC_DEFUN([GET_DLLNAME],[
+  if test -z "$LIBTOOL" -a -z "$CC" ; then
+    AC_MSG_ERROR([Dlname guessings can be done only after libtool is initialized])
+  else
+    TMP_DIR=./tmp-cfg
+    rm -rf $TMP_DIR
+    mkdir -p $TMP_DIR
+    cd $TMP_DIR
+    ../libtool --mode=link $CC -rpath /usr/lib -avoid-version -module \
+        -o $1.la > /dev/null
+    $2=`grep ^dlname= $1.la | sed "s/dlname='\(.*\)'/\1/"`
+    cd ..
+    rm -rf $TMP_DIR
+  fi
+])
