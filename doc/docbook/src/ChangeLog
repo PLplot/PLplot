@@ -1,3 +1,7 @@
+2000-11-28  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Makefile.am ($(BASE).pdf.gz): Forcing compression with gzip.
+
 2000-11-27  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Makefile.am (CLEANFILES): Added *.out.
