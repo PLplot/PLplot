@@ -1,13 +1,21 @@
 Here's how to make *everything* conveniently on a unix-like system.
 
-First, edit mf/makefile.m4 if necessary, to add system specific defines
-analogous to the existing ones.  Documentation is inside.  Then:
+The makefile is built by running the file makefile.m4 through the m4 macro
+processor with an appropriate system macro defined.  This allows multiple
+configurations to be easily supported, similar to 'imake'.  Macros for system
+type include: HPUX, SUNOS, AIX, UNICOS, SYSV, DGUX, LINUX, NEXT, ULTRIX, BSD,
+AMIGA.  One of these *must* be specified, or if necessary you can add system
+specific defines analogous to the existing ones.  There are also the macros
+DOUBLE (for double precision), DEBUG (debugging), and OPT (optimization).
+Please look at the comments in makefile.m4 for more info.
+
+To use, from the plplot directory:
 
 	% cd tmp
 	% cp ../sys/unix/makefile.m4 .
-	% m4 -D<sys> makefile.m4 >makefile
+	% m4 -D<sys> <makefile.m4 >makefile
 
-where <sys> is an abbreviation for your system name.
+where <sys> is the appropriate system name.
 Then, while in the tmp directory:
 
 	% make links
@@ -27,9 +35,8 @@ for the first C demo, or
 
 for the first Fortran demo.
 
-You probably should also print & read the TeX documentation (alternately
-the makefile.m4) on the Unix installation.  
+You probably should also print & read the TeX documentation on the Unix
+installation.
 
 Finally, there's a bunch of shell scripts in the plplot directory to help
-you archive all the source files using 'zoo' or 'tar'.  See plzoo and
-pltar (or any of the others).
+you archive all the source files using 'zoo', 'tar', or 'zip'.  
