@@ -12,7 +12,7 @@ static int xp = 25;
 static int yp = 20;
 static int nl = 15;
 static int knn_order = 20;
-static float threshold = 1.001;
+static PLFLT threshold = 1.001;
 static int randn = 0;
 static int rosen = 0;
 
@@ -24,7 +24,7 @@ static PLOptionTable options[] = {
     &pts,
     PL_OPT_INT,
     "-npts points",
-    "Specify number of random points to generate [200]" },
+    "Specify number of random points to generate [500]" },
   {    
     "randn",
     NULL,
@@ -49,7 +49,7 @@ static PLOptionTable options[] = {
     &xp,
     PL_OPT_INT,
     "-nx points",
-    "Specify grid x dimension [20]" },
+    "Specify grid x dimension [25]" },
   {
     "ny",
     NULL,
@@ -57,7 +57,7 @@ static PLOptionTable options[] = {
     &yp,
     PL_OPT_INT,
     "-ny points",
-    "Specify grid y dimension [15]" },
+    "Specify grid y dimension [20]" },
   {
     "nlevel",
     NULL,
@@ -73,7 +73,7 @@ static PLOptionTable options[] = {
     &knn_order,
     PL_OPT_INT,
     "-knn_order order",
-    "Specify the number of neighbors [5]" },
+    "Specify the number of neighbors [20]" },
   {
     "threshold",
     NULL,
@@ -126,7 +126,7 @@ main(int argc, char *argv[])
 {
   PLFLT *x, *y, *z, *clev;
   PLFLT *xg, *yg, **zg, **szg;
-  PLFLT zmin, zmax;
+  PLFLT zmin, zmax, lzm, lzM;
   long ct;
   int i, j, k, alg;
   char ylab[40], xlab[40];
@@ -166,9 +166,6 @@ main(int argc, char *argv[])
   plAlloc2dGrid(&zg, xp, yp); /* the output grided data */
   clev = (PLFLT *) malloc(nl * sizeof(PLFLT));
 
-  for (i=0; i<nl; i++)
-    clev[i] = zmin + (zmax-zmin)/(nl-1)*i;
-
   sprintf(xlab, "Npts=%d gridx=%d gridy=%d", pts, xp, yp);
   plcol0(1);
   plenv(xm, xM, ym, yM, 2, 0);
@@ -189,12 +186,14 @@ main(int argc, char *argv[])
       sprintf(xlab, "time=%d ms", (clock() - ct)/1000);
       sprintf(ylab, "opt=%.3f", opt[alg-1]);
 
-      /* CSA can generate NaNs (only interpolates?). 
-       * DTLI and NNLI can generate NaNs for points outside the convex hull of the
-       * data points.
-       * NNLI can generate NaNs
+      /* - CSA can generate NaNs (only interpolates?!). 
+       * - DTLI and NNI can generate NaNs for points outside the convex hull
+       *      of the data points.
+       * - NNLI can generate NaNs if a sufficiently thick triangle is not found
        *
        * PLplot should be NaN/Inf aware, but changing it now is quite a job...
+       * so, instead of not plotting the NaN regions, a weighted average over
+       * the neighbors is done.
        */
 
       if (alg == GRID_CSA || alg == GRID_DTLI || alg == GRID_NNLI || alg == GRID_NNI) { 
@@ -226,10 +225,17 @@ main(int argc, char *argv[])
 	}
       }
 
+      plMinMax2dGrid(zg, xp, yp, &lzM, &lzm);
+
       plcol0(1);
       pladv(alg);	
-
+	
       if (k == 0) {
+
+	lzm = MIN(lzm, zmin);
+	lzM = MAX(lzM, zmax);
+	for (i=0; i<nl; i++)
+	  clev[i] = lzm + (lzM-lzm)/(nl-1)*i;
 
 	plenv0(xm, xM, ym, yM, 2, 0);
 	plcol0(15);
@@ -238,6 +244,9 @@ main(int argc, char *argv[])
 		 clev, nl, 1, 0, 1, plfill, 1, NULL, NULL);
 	plcol0(2);
       } else {
+
+	for (i=0; i<nl; i++)
+	  clev[i] = lzm + (lzM-lzm)/(nl-1)*i;
 
 	cmap1_init();
 	plvpor(0.0, 1.0, 0.0, 0.9);
@@ -304,7 +313,7 @@ create_data(PLFLT **xi, PLFLT **yi, PLFLT **zi, int pts)
     if (!randn) {
       *x = xt + xm;
       *y = yt + ym;
-    } else { /* std is 1, meaning that many points are outside plot range */
+    } else { /* std=1, meaning that many points are outside the plot range */
       *x = sqrt(-2.*log(xt)) * cos(2.*PI*yt) + xm;
       *y = sqrt(-2.*log(xt)) * sin(2.*PI*yt) + ym;
     }
