@@ -1,8 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.16  1994/04/08 12:09:37  mjl
-   Added prototypes for new ljiip driver.
+   Revision 1.17  1994/05/25 09:36:57  mjl
+   All VGA driver function names now end with "_vga", a nice simplification.
+   Since all are compiler-dependent and mutually exclusive, this should pose
+   no problem.  Also HP pen plotter driver were consolidated.  Both
+   contributions by Mark Olesen (olesen@weber.me.queensu.ca).
 
+ * Revision 1.16  1994/04/08  12:09:37  mjl
+ * Added prototypes for new ljiip driver.
+ *
  * Revision 1.15  1994/03/23  06:57:46  mjl
  * Changed function names in prototypes for xterm, mskermit, and added
  * prototypes for versaterm and vlt drivers (minor tek devices).
@@ -95,15 +101,6 @@ void plD_tidy_tek		(PLStream *);
 void plD_state_tek		(PLStream *, PLINT);
 void plD_esc_tek		(PLStream *, PLINT, void *);
 
-void plD_init_lxvga		(PLStream *);
-void plD_line_lxvga		(PLStream *, short, short, short, short);
-void plD_polyline_lxvga		(PLStream *, short *, short *, PLINT);
-void plD_eop_lxvga		(PLStream *);
-void plD_bop_lxvga		(PLStream *);
-void plD_tidy_lxvga		(PLStream *);
-void plD_state_lxvga		(PLStream *, PLINT);
-void plD_esc_lxvga		(PLStream *, PLINT, void *);
-
 void plD_init_mgr		(PLStream *);
 void plD_line_mgr		(PLStream *, short, short, short, short);
 void plD_polyline_mgr		(PLStream *, short *, short *, PLINT);
@@ -123,22 +120,15 @@ void plD_state_dg		(PLStream *, PLINT);
 void plD_esc_dg			(PLStream *, PLINT, void *);
 
 void plD_init_hp7470		(PLStream *);
-void plD_line_hp7470		(PLStream *, short, short, short, short);
-void plD_polyline_hp7470	(PLStream *, short *, short *, PLINT);
-void plD_eop_hp7470		(PLStream *);
-void plD_bop_hp7470		(PLStream *);
-void plD_tidy_hp7470		(PLStream *);
-void plD_state_hp7470		(PLStream *, PLINT);
-void plD_esc_hp7470		(PLStream *, PLINT, void *);
-
 void plD_init_hp7580		(PLStream *);
-void plD_line_hp7580		(PLStream *, short, short, short, short);
-void plD_polyline_hp7580	(PLStream *, short *, short *, PLINT);
-void plD_eop_hp7580		(PLStream *);
-void plD_bop_hp7580		(PLStream *);
-void plD_tidy_hp7580		(PLStream *);
-void plD_state_hp7580		(PLStream *, PLINT);
-void plD_esc_hp7580		(PLStream *, PLINT, void *);
+
+void plD_line_hpgl		(PLStream *, short, short, short, short);
+void plD_polyline_hpgl		(PLStream *, short *, short *, PLINT);
+void plD_eop_hpgl		(PLStream *);
+void plD_bop_hpgl		(PLStream *);
+void plD_tidy_hpgl		(PLStream *);
+void plD_state_hpgl		(PLStream *, PLINT);
+void plD_esc_hpgl		(PLStream *, PLINT, void *);
 
 void plD_init_imp		(PLStream *);
 void plD_line_imp		(PLStream *, short, short, short, short);
@@ -212,24 +202,6 @@ void plD_bop_vga		(PLStream *);
 void plD_tidy_vga		(PLStream *);
 void plD_state_vga		(PLStream *, PLINT);
 void plD_esc_vga		(PLStream *, PLINT, void *);
-
-void plD_init_svga		(PLStream *);
-void plD_line_svga		(PLStream *, short, short, short, short);
-void plD_polyline_svga		(PLStream *, short *, short *, PLINT);
-void plD_eop_svga		(PLStream *);
-void plD_bop_svga		(PLStream *);
-void plD_tidy_svga		(PLStream *);
-void plD_state_svga		(PLStream *, PLINT);
-void plD_esc_svga		(PLStream *, PLINT, void *);
-
-void plD_init_bgi		(PLStream *);
-void plD_line_bgi		(PLStream *, short, short, short, short);
-void plD_polyline_bgi		(PLStream *, short *, short *, PLINT);
-void plD_eop_bgi		(PLStream *);
-void plD_bop_bgi		(PLStream *);
-void plD_tidy_bgi		(PLStream *);
-void plD_state_bgi		(PLStream *, PLINT);
-void plD_esc_bgi		(PLStream *, PLINT, void *);
 
 void plD_init_os2		(PLStream *);				 
 void plD_line_os2		(PLStream *, short, short, short, short);

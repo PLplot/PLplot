@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1994/04/08 12:10:37  mjl
+ * Revision 1.19  1994/05/25 09:36:58  mjl
+ * All VGA driver function names now end with "_vga", a nice simplification.
+ * Since all are compiler-dependent and mutually exclusive, this should pose
+ * no problem.  Also HP pen plotter driver were consolidated.  Both
+ * contributions by Mark Olesen (olesen@weber.me.queensu.ca).
+ *
+ * Revision 1.18  1994/04/08  12:10:37  mjl
  * Added dispatch table entries for new ljiip driver.
  *
  * Revision 1.17  1994/03/23  06:59:00  mjl
@@ -241,16 +247,16 @@ static PLDispatchTable dispatch_table[] = {
 #ifdef LINUXVGA
     {
 	"Linux console VGA Screen",
-	"lxvga",
+	"vga",
 	1,
-	plD_init_lxvga,
-	plD_line_lxvga,
-	plD_polyline_lxvga,
-	plD_eop_lxvga,
-	plD_bop_lxvga,
-	plD_tidy_lxvga,
-	plD_state_lxvga,
-	plD_esc_lxvga
+	plD_init_vga,
+	plD_line_vga,
+	plD_polyline_vga,
+	plD_eop_vga,
+	plD_bop_vga,
+	plD_tidy_vga,
+	plD_state_vga,
+	plD_esc_vga
     },
 #endif
 
@@ -270,9 +276,9 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef VGA
+#if defined (_MSC_VER) && defined (VGA)         /* graphics for msc */
     {
-	"DOS VGA Screen",
+	"DOS VGA Screen (msc)",
 	"vga",
 	1,
 	plD_init_vga,
@@ -288,33 +294,49 @@ static PLDispatchTable dispatch_table[] = {
 
 #ifdef BGI
     {
-	"DOS BGI Screen Driver",
-	"bgi",
+	"VGA Screen (BGI)",
+	"vga",
 	1,
-	plD_init_bgi,
-	plD_line_bgi,
-	plD_polyline_bgi,
-	plD_eop_bgi,
-	plD_bop_bgi,
-	plD_tidy_bgi,
-	plD_state_bgi,
-	plD_esc_bgi
+	plD_init_vga,
+	plD_line_vga,
+	plD_polyline_vga,
+	plD_eop_vga,
+	plD_bop_vga,
+	plD_tidy_vga,
+	plD_state_vga,
+	plD_esc_vga
     },
 #endif
 
 #ifdef GNUSVGA
     {
-	"DOS SVGA Screen",
-	"svga",
+	"SVGA Screen (djgpp)",
+	"vga",
 	1,
-	plD_init_svga,
-	plD_line_svga,
-	plD_polyline_svga,
-	plD_eop_svga,
-	plD_bop_svga,
-	plD_tidy_svga,
-	plD_state_svga,
-	plD_esc_svga
+	plD_init_vga,
+	plD_line_vga,
+	plD_polyline_vga,
+	plD_eop_vga,
+	plD_bop_vga,
+	plD_tidy_vga,
+	plD_state_vga,
+	plD_esc_vga
+    },
+#endif
+
+#if defined (__EMX__) && defined (EMXVESA)      /* graphics for emx+gcc */
+    {
+	"VGA Screen (emx)",
+	"vga",
+	1,
+	plD_init_vga,
+	plD_line_vga,
+	plD_polyline_vga,
+	plD_eop_vga,
+	plD_bop_vga,
+	plD_tidy_vga,
+	plD_state_vga,
+	plD_esc_vga
     },
 #endif
 
@@ -608,13 +630,13 @@ static PLDispatchTable dispatch_table[] = {
 	"hp7470",
 	0,
 	plD_init_hp7470,
-	plD_line_hp7470,
-	plD_polyline_hp7470,
-	plD_eop_hp7470,
-	plD_bop_hp7470,
-	plD_tidy_hp7470,
-	plD_state_hp7470,
-	plD_esc_hp7470
+	plD_line_hpgl,
+	plD_polyline_hpgl,
+	plD_eop_hpgl,
+	plD_bop_hpgl,
+	plD_tidy_hpgl,
+	plD_state_hpgl,
+	plD_esc_hpgl
     },
 #endif
 
@@ -624,13 +646,13 @@ static PLDispatchTable dispatch_table[] = {
 	"hp7580",
 	0,
 	plD_init_hp7580,
-	plD_line_hp7580,
-	plD_polyline_hp7580,
-	plD_eop_hp7580,
-	plD_bop_hp7580,
-	plD_tidy_hp7580,
-	plD_state_hp7580,
-	plD_esc_hp7580
+	plD_line_hpgl,
+	plD_polyline_hpgl,
+	plD_eop_hpgl,
+	plD_bop_hpgl,
+	plD_tidy_hpgl,
+	plD_state_hpgl,
+	plD_esc_hpgl
     },
 #endif
 

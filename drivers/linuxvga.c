@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/04/08 11:35:58  mjl
+ * Revision 1.4  1994/05/25 09:36:54  mjl
+ * All VGA driver function names now end with "_vga", a nice simplification.
+ * Since all are compiler-dependent and mutually exclusive, this should pose
+ * no problem.  Also HP pen plotter driver were consolidated.  Both
+ * contributions by Mark Olesen (olesen@weber.me.queensu.ca).
+ *
+ * Revision 1.3  1994/04/08  11:35:58  mjl
  * Put nopause support back into the drivers where it is better off.
  * I don't know WHAT I was thinking.
  *
@@ -64,13 +70,13 @@ static int totcol = 16;
 static page_state;
 
 /*----------------------------------------------------------------------*\
-* plD_init_lxvga()
+* plD_init_vga()
 *
 * Initialize device.
 \*----------------------------------------------------------------------*/
 
 void
-plD_init_lxvga(PLStream *pls)
+plD_init_vga(PLStream *pls)
 {
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
@@ -104,13 +110,13 @@ plD_init_lxvga(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_line_lxvga()
+* plD_line_vga()
 *
 * Draw a line in the current color from (x1,y1) to (x2,y2).
 \*----------------------------------------------------------------------*/
 
 void
-plD_line_lxvga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
+plD_line_vga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
@@ -123,28 +129,28 @@ plD_line_lxvga(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_polyline_lxvga()
+* plD_polyline_vga()
 *
 * Draw a polyline in the current color.
 \*----------------------------------------------------------------------*/
 
 void
-plD_polyline_lxvga(PLStream *pls, short *xa, short *ya, PLINT npts)
+plD_polyline_vga(PLStream *pls, short *xa, short *ya, PLINT npts)
 {
     PLINT i;
 
     for (i = 0; i < npts - 1; i++)
-	plD_line_lxvga(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
+	plD_line_vga(pls, xa[i], ya[i], xa[i + 1], ya[i + 1]);
 }
 
 /*----------------------------------------------------------------------*\
-* plD_eop_lxvga()
+* plD_eop_vga()
 *
 * End of page.
 \*----------------------------------------------------------------------*/
 
 void
-plD_eop_lxvga(PLStream *pls)
+plD_eop_vga(PLStream *pls)
 {
     if (page_state == DIRTY)
 	pause(pls);
@@ -156,39 +162,39 @@ plD_eop_lxvga(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_bop_lxvga()
+* plD_bop_vga()
 *
 * Set up for the next page.
 * Advance to next family file if necessary (file output).
 \*----------------------------------------------------------------------*/
 
 void
-plD_bop_lxvga(PLStream *pls)
+plD_bop_vga(PLStream *pls)
 {
     pls->page++;
-    plD_eop_lxvga(pls);
+    plD_eop_vga(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* plD_tidy_lxvga()
+* plD_tidy_vga()
 *
 * Close graphics file or otherwise clean up.
 \*----------------------------------------------------------------------*/
 
 void
-plD_tidy_lxvga(PLStream *pls)
+plD_tidy_vga(PLStream *pls)
 {
     lxvga_text(pls);
 }
 
 /*----------------------------------------------------------------------*\
-* plD_state_lxvga()
+* plD_state_vga()
 *
 * Handle change in PLStream state (color, pen width, fill attribute, etc).
 \*----------------------------------------------------------------------*/
 
 void
-plD_state_lxvga(PLStream *pls, PLINT op)
+plD_state_vga(PLStream *pls, PLINT op)
 {
     switch (op) {
 
@@ -213,13 +219,13 @@ plD_state_lxvga(PLStream *pls, PLINT op)
 }
 
 /*----------------------------------------------------------------------*\
-* plD_esc_lxvga()
+* plD_esc_vga()
 *
 * Escape function.
 \*----------------------------------------------------------------------*/
 
 void
-plD_esc_lxvga(PLStream *pls, PLINT op, void *ptr)
+plD_esc_vga(PLStream *pls, PLINT op, void *ptr)
 {
     switch (op) {
 
@@ -283,7 +289,7 @@ pause(PLStream *pls)
 
 #else
 int
-pldummy_lxvga()
+pldummy_vga()
 {
     return 0;
 }
