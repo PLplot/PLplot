@@ -1,12 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/06/30 18:22:24  mjl
+ * Revision 1.8  1994/07/29 20:29:24  mjl
+ * Change so that window coordinates are added to the window list each time
+ * plwind() is called.  Contributed by Paul Casteels.
+ *
+ * Revision 1.7  1994/06/30  18:22:24  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
  * global access to the plstream pointer via extern; many accessor functions
  * eliminated as a result.
- *
 */
 
 /*	plwind.c
@@ -32,6 +35,7 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT vpxmi, vpxma, vpymi, vpyma;
     PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
+    CWindow w;
 
     if (plsc->level < 2) {
 	plabort("plwind: Please set up viewport first");
@@ -84,6 +88,19 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     wmyoff = (ymax * vpymi - ymin * vpyma) / dy;
 
     plP_swm(wmxscl, wmxoff, wmyscl, wmyoff);
+
+/* Add coordinates of window to windows list */
+/* By Paul Casteels */
+
+    w.wx1 = xmin;
+    w.wx2 = xmax;
+    w.wy1 = ymin;
+    w.wy2 = ymax;
+    w.vpx1 = vppxmi;
+    w.vpx2 = vppxma;
+    w.vpy1 = vppymi;
+    w.vpy2 = vppyma;
+    plAddCWindow(w);
 
     plsc->level = 3;
 }
