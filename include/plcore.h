@@ -78,6 +78,129 @@ PLStream *plsc = &pls0;
 static PLDispatchTable **dispatch_table = 0;
 static int npldrivers = 0;
 
+static PLDispatchInit static_device_initializers[] = {
+#ifdef PLD_mac
+    plD_dispatch_init_mac8,
+    plD_dispatch_init_mac1,
+#endif
+#ifdef PLD_next
+    plD_dispatch_init_nx,
+#endif
+#ifdef PLD_os2pm
+    plD_dispatch_init_os2,
+#endif
+#ifdef PLD_xwin
+    plD_dispatch_init_xw,
+#endif
+#ifdef PLD_gnome  
+    plD_dispatch_init_gnome,
+#endif
+#ifdef PLD_tk
+    plD_dispatch_init_tk,
+#endif
+#ifdef PLD_linuxvga
+    plD_dispatch_init_vga,
+#endif
+#ifdef PLD_mgr
+    plD_dispatch_init_mgr,
+#endif
+#ifdef PLD_win3
+    plD_dispatch_init_win3,
+#endif
+#if defined (_MSC_VER) && defined (VGA)         /* graphics for msc */
+    plD_dispatch_init_vga,
+#endif
+#ifdef PLD_bgi
+    plD_dispatch_init_vga,
+#endif
+#ifdef PLD_gnusvga
+    plD_dispatch_init_vga,
+#endif
+#ifdef PLD_tiff
+    plD_dispatch_init_tiff,
+#endif
+#ifdef PLD_jpg
+    plD_dispatch_init_jpg,
+#endif
+#ifdef PLD_bmp
+    plD_dispatch_init_bmp,
+#endif
+#ifdef PLD_emxvga		       /* graphics for emx+gcc */
+    plD_dispatch_init_vga,
+#endif
+#ifdef PLD_xterm
+    plD_dispatch_init_xterm,
+#endif
+#ifdef PLD_tek4010
+    plD_dispatch_init_tekt,
+#endif
+#ifdef PLD_tek4107
+    plD_dispatch_init_tek4107t,
+#endif
+#ifdef PLD_mskermit
+    plD_dispatch_init_mskermit,
+#endif
+#ifdef PLD_versaterm
+    plD_dispatch_init_versaterm,
+#endif
+#ifdef PLD_vlt
+    plD_dispatch_init_vlt,
+#endif
+#ifdef PLD_conex
+    plD_dispatch_init_conex,
+#endif
+#ifdef PLD_dg300
+    plD_dispatch_init_dg,
+#endif
+#if defined(PLD_plmeta) && !defined(ENABLE_DYNAMIC_DRIVERS)
+    plD_dispatch_init_plm,
+#endif
+#ifdef PLD_tek4010
+    plD_dispatch_init_tekf,
+#endif
+#ifdef PLD_tek4107
+    plD_dispatch_init_tek4107f,
+#endif
+#if defined(PLD_ps) && !defined(ENABLE_DYNAMIC_DRIVERS)
+    plD_dispatch_init_psm,
+    plD_dispatch_init_psc,
+#endif
+#ifdef PLD_xfig
+    plD_dispatch_init_xfig,
+#endif
+#ifdef PLD_ljiip
+    plD_dispatch_init_ljiip,
+#endif
+#ifdef PLD_ljii
+    plD_dispatch_init_ljii,
+#endif
+#ifdef PLD_hp7470
+    plD_dispatch_init_hp7470,
+#endif
+#ifdef PLD_hp7580
+    plD_dispatch_init_hp7580,
+#endif
+#ifdef PLD_lj_hpgl
+    plD_dispatch_init_hpgl,
+#endif
+#ifdef PLD_imp
+    plD_dispatch_init_imp,
+#endif
+#ifdef PLD_pbm
+    plD_dispatch_init_pbm,
+#endif
+#ifdef PLD_png
+    plD_dispatch_init_png,
+#endif
+#ifdef PLD_jpeg
+    plD_dispatch_init_png,
+#endif
+#if defined(PLD_null) && !defined(ENABLE_DYNAMIC_DRIVERS)
+    plD_dispatch_init_null,
+#endif
+};
+
+#if 0
 static PLDispatchTable static_devices[] = {
 
     /* Terminal types */
@@ -777,6 +900,10 @@ static PLDispatchTable static_devices[] = {
 };
 
 static int nplstaticdevices = (sizeof(static_devices)/sizeof(PLDispatchTable));
+#endif
+
+static int nplstaticdevices = ( sizeof(static_device_initializers) /
+                                sizeof(PLDispatchInit) );
 static int npldynamicdevices = 0;
 
 /*--------------------------------------------------------------------------*\
