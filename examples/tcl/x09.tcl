@@ -34,7 +34,7 @@ proc x09 {{w loopback}} {
     matrix xg2 f $xpts $ypts
     matrix yg2 f $xpts $ypts
 
-    set pi 3.1415927
+    set pi 3.1415926535897932384
     set distort .4
 
 # Build the 1-d coord arrays.
@@ -122,6 +122,7 @@ proc x09 {{w loopback}} {
 
 proc x09_polar {{w loopback}} {
 
+    set pi 3.1415926535897932384
     $w cmd plenv -1 1 -1 1 0 -2
     $w cmd plcol0 1
 
@@ -129,7 +130,7 @@ proc x09_polar {{w loopback}} {
     matrix px f 100; matrix py f 100
 
     for {set i 0} {$i < 100} {incr i} {
-	set t [expr 2. * 3.1415927 * $i / 99.]
+	set t [expr 2. * $pi * $i / 99.]
 	px $i = [expr cos($t)]
 	py $i = [expr sin($t)]
     }
@@ -144,7 +145,7 @@ proc x09_polar {{w loopback}} {
     for {set i 0} {$i < $xpts} {incr i} {
 	set r [expr $i / ($xpts - 1.)]
 	for {set j 0} {$j < $ypts} {incr j} {
-	    set t [expr 2. * 3.1415927 * $j / ($ypts - 1.)]
+	    set t [expr 2. * $pi * $j / ($ypts - 1.)]
 
 	    xg $i $j = [expr $r * cos($t)]
 	    yg $i $j = [expr $r * sin($t)]

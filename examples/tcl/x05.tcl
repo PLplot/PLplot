@@ -11,7 +11,7 @@ proc x05 {{w loopback}} {
     $w cmd plssub 1 1
     $w cmd pladv 0
 
-    set delta [expr 2.0 * 3.141592654 / $npts]
+    set delta [expr 2.0 * 3.1415926535897932384 / $npts]
     for {set i 0} {$i < $npts} {incr i} {
 	data $i = [expr sin($i * $delta)]
     }

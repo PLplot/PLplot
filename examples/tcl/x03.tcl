@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------------
 
 proc x03 {{w loopback}} {
-    set twopi  [expr 2. * 3.141592654]
+    set twopi  [expr 2. * 3.1415926535897932384]
 
 # Set up viewport and window, but do not draw box 
 

@@ -24,7 +24,7 @@ proc x08 {{w loopback}} {
 
     set xpts 35
     set ypts 46
-    set two_pi [expr 2.0 * 3.141592654 ]
+    set two_pi [expr 2.0 * 3.1415926535897932384 ]
 
     matrix x f $xpts
     matrix y f $ypts

@@ -10,7 +10,7 @@ proc x16 {{w loopback}} {
     set nx 35
     set ny 46
 
-    set pi 3.1415927
+    set pi 3.1415926535897932384
 
     set sh_cmap 1
     set min_color 1; set min_width 0; set max_color 0; set max_width 0
@@ -179,7 +179,7 @@ proc x16 {{w loopback}} {
     matrix px f 100; matrix py f 100
 
     for {set i 0} {$i < 100} {incr i} {
-	set t [expr 2. * 3.1415927 * $i / 99.]
+	set t [expr 2. * $pi * $i / 99.]
 	px $i = [expr cos($t)]
 	py $i = [expr sin($t)]
     }
@@ -194,7 +194,7 @@ proc x16 {{w loopback}} {
     for {set i 0} {$i < $nx} {incr i} {
 	set r [expr $i / ($nx - 1.)]
 	for {set j 0} {$j < $ny} {incr j} {
-	    set t [expr 2. * 3.1415927 * $j / ($ny - 1.)]
+	    set t [expr 2. * $pi * $j / ($ny - 1.)]
 
 	    xg $i $j = [expr $r * cos($t)]
 	    yg $i $j = [expr $r * sin($t)]

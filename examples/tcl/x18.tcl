@@ -9,7 +9,7 @@ proc x18 {{w loopback}} {
     matrix az  f 4 = {30.0, 40.0, 50.0, 60.0}
 
     set npts 1000
-    set pi 3.1415927
+    set pi 3.1415926535897932384
 
     for {set k 0} {$k < 4} {incr k} {
 	test_poly $w $k
@@ -65,7 +65,7 @@ proc test_poly {{w loopback} k} {
     matrix draw2 i 4 = { 0, 1, 0, 1 }
     matrix draw3 i 4 = { 1, 1, 0, 0 }
 
-    set pi 3.1415927; set two_pi [expr 2. * $pi]
+    set pi 3.1415926535897932384; set two_pi [expr 2. * $pi]
 
     matrix x f 5
     matrix y f 5
