@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.9  1993/02/23 05:29:34  mjl
-   Added stubs for functions PLSDEV, PLSESC, and PLSSUB, and deleted stub for
-   PLBEG.
+   Revision 1.10  1993/03/02 19:02:46  mjl
+   Added stubs for plgver().
 
+ * Revision 1.9  1993/02/23  05:29:34  mjl
+ * Added stubs for functions PLSDEV, PLSESC, and PLSSUB, and deleted stub for
+ * PLBEG.
+ *
  * Revision 1.8  1993/01/23  06:05:28  mjl
  * Stubs for new color functions added.
  *
@@ -185,6 +188,12 @@ void
 PLGSTRM(PLINT *strm)
 {
     c_plgstrm(strm);
+}
+
+void
+PLGVER_(char *ver)
+{
+    c_plgver(ver);
 }
 
 void
