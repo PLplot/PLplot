@@ -21,4 +21,5 @@
 
 # This is called from plplot-test.sh with $pythondir, $device, $dsuffix,
 # and $options defined.
+export PYTHONPATH=$EXAMPLES_DIR/../bindings/python
 @PYTHON@ $pythondir/pythondemos.py -dev $device -o pythondemos.$dsuffix $options

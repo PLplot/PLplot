@@ -86,7 +86,7 @@ export cdir=$EXAMPLES_DIR/c           \
        pythondir=$EXAMPLES_DIR/python \
        tcldir=$EXAMPLES_DIR/tcl       \
        octavedir=@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//: \
-       installbindir=@prefix@/bin
+       PATH=@prefix@/bin:$EXAMPLES_DIR/../utils:$PATH
 
 fe=""
 

@@ -19,12 +19,12 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-# This is called from plplot-test.sh with $tcldir, $installbindir, $device,
-# $dsuffix, and $options defined.
+# This is called from plplot-test.sh with $tcldir, $device, $dsuffix,
+# and $options defined.
 results=`pwd`
 export results
 cd $tcldir
-$installbindir/pltcl -dev $device -o $results/plot.$dsuffix $options <<EOF
+pltcl -dev $device -o $results/plot.$dsuffix $options <<EOF
 plinit
 source plot.tcl
 plot stats.log {1 4}
@@ -33,7 +33,7 @@ plot r.dat
 plot plot.dat
 exit
 EOF
-$installbindir/pltcl -dev $device -o $results/plgrid.$dsuffix $options <<EOF
+pltcl -dev $device -o $results/plgrid.$dsuffix $options <<EOF
 plinit
 source plgrid.tcl
 plgrid
@@ -42,7 +42,7 @@ EOF
 # Skip 14th example because requires two output files.
 # Skip 17th example because it is not implemented (and if it was, it
 # would be interactive only).
-$installbindir/pltcl -dev $device -o $results/tcldemos.$dsuffix $options <<EOF
+pltcl -dev $device -o $results/tcldemos.$dsuffix $options <<EOF
 plinit
 source tcldemos.tcl
 1
