@@ -23,7 +23,8 @@ examples_perldir = $(DATA_DIR)/examples/perl
 
 examples_perl_SCRIPTS = \
 	x01.pl \
-	x02.pl
+	x02.pl \
+	x03.pl
 
 examples_perl_DATA = \
 	README.perldemos
