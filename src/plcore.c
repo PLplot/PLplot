@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.21  1993/09/24 20:33:25  furnish
+ * Revision 1.22  1993/11/07 09:07:38  mjl
+ * Changed plflush() to call escape function if driver wants to handle
+ * flushes itself.  Also found & fixed a bug in plcpstrm.
+ *
+ * Revision 1.21  1993/09/24  20:33:25  furnish
  * Went wild with "const correctness".  Can now pass a C++ String type to
  * most (all that I know of) PLPLOT functions.  This works b/c String has
  * an implicit conversion to const char *.  Now that PLPLOT routines take
@@ -1019,6 +1023,23 @@ pxmin: %d,  pxmax: %d,  pymin: %d,  pymax: %d\n",
 }
 
 /*----------------------------------------------------------------------*\
+* void plflush()
+*
+* Flushes the output stream.  Use sparingly, if at all.
+\*----------------------------------------------------------------------*/
+
+void
+plflush(void)
+{
+    if (plsc->dev_flush) {
+	offset = plsc->device - 1;
+	(*dispatch_table[offset].pl_esc) (plsc, PLESC_FLUSH, NULL);
+    }
+    else
+	fflush(plsc->OutFile);
+}
+
+/*----------------------------------------------------------------------*\
 * Startup routines.
 \*----------------------------------------------------------------------*/
 
@@ -1299,6 +1320,14 @@ c_plmkstrm(PLINT *p_strm)
 * enabled (done automatically by some display drivers, such as X).
 \*----------------------------------------------------------------------*/
 
+static void
+cp_color(PLColor *to, PLColor *from)
+{
+    to->r = from->r;
+    to->g = from->g;
+    to->b = from->b;
+}
+
 void
 c_plcpstrm(PLINT iplsr, PLINT flags)
 {
@@ -1350,18 +1379,15 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
     for (i = 0; i < 16; i++)
 	plsc->cmap0setcol[i] = plsr->cmap0setcol[i];
 
-#define CP_COLOR(color) \
-    plsc->color.r = plsr->color.r; \
-    plsc->color.g = plsr->color.g; \
-    plsc->color.b = plsr->color.b;
-
-    CP_COLOR(fgcolor);
-    CP_COLOR(bgcolor);
-    CP_COLOR(curcolor);
-    for (i = 0; i < 16; i++)
-	CP_COLOR(cmap0[i]);
-    for (i = 0; i < 256; i++)
-	CP_COLOR(cmap1[i]);
+    cp_color(&plsc->fgcolor, &plsr->fgcolor);
+    cp_color(&plsc->bgcolor, &plsr->bgcolor);
+    cp_color(&plsc->curcolor, &plsr->curcolor);
+    for (i = 0; i < 16; i++) {
+	cp_color(&plsc->cmap0[i], &plsr->cmap0[i]);
+    }
+    for (i = 0; i < 256; i++) {
+	cp_color(&plsc->cmap1[i], &plsr->cmap1[i]);
+    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -1665,14 +1691,6 @@ plsfile(FILE *file)
 {
     plsc->OutFile = file;
     plsc->fileset = 1;
-}
-
-/* Flush current output file.  Use sparingly, if at all. */
-
-void
-plflush(void)
-{
-    fflush(plsc->OutFile);
 }
 
 /*
