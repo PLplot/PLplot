@@ -24,12 +24,13 @@ if enable_python
 examples_pythondir = ${prefix}/$(DATA_DIR)/../examples/python
 
 examples_python_SCRIPTS = \
-	plplot_python_start.py \
 	prova.py \
 	pythondemos.py
+
 examples_python_DATA = \
 	README.pythondemos \
 	qplplot.py \
+	plplot_python_start.py \
 	xw01.py \
 	xw02.py \
 	xw03.py \
