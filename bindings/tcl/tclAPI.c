@@ -378,6 +378,7 @@ PlbasicInit( Tcl_Interp *interp )
     Tcl_SetVar(interp, "plversion", "5.1", TCL_GLOBAL_ONLY);
     if (Tcl_Eval(interp, initScript) != TCL_OK) {
 #ifdef PLPLOT_EXTENDED_SEARCH
+	Tcl_UnsetVar(interp, "pllibrary", TCL_GLOBAL_ONLY);
 	if (Tcl_Eval(interp, initScriptExtended) != TCL_OK) {
 	    /* Last chance, look in '.' */
 	    Tcl_DString ds;
