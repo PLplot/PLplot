@@ -17,10 +17,10 @@
 # -----------------------------------------------------------------------------
 
 install: install_lib \
+	$(MAT_INSTALL) \
 	$(F77_INSTALL) \
 	$(PYTHON_INSTALL) \
 	$(TCL_INSTALL) \
-	$(MAT_INSTALL) \
 	$(TK_INSTALL) \
 	$(CXX_INSTALL) \
 	install_demos \
