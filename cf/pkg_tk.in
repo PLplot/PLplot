@@ -12,6 +12,13 @@ TK_C		= Pltk_Init.c tcpip.c plframe.c tkMain.c plr.c
 TK_OBJ		= Pltk_Init$O tcpip$O plframe$O plr$O
 TK_OBJ_SA	= tkMain$O 
 TK_EXE		= plserver$E
+
+# link line for the dynamic driver
+ifneq ($(DYNAMIC_DRIVERS),)
+TKDRV_SO = drivers/tk$(LIB_TAG)_drv.so
+TKDRV_LINK = -lplplot_tk_driver$(LIB_TAG)
+endif
+
 #DO NOT include the symlinks, i.e., x01.tcl, etc.
 TK_DEMOS	= tk?? tkdemos.tcl *.c README.tkdemos
 

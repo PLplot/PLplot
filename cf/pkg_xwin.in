@@ -1,0 +1,11 @@
+# -*-makefile-*----------------------------------------------------------------
+# $Id$
+#
+# Make assignments for xwin driver library support.
+# -----------------------------------------------------------------------------
+
+# link line for the dynamic driver
+ifneq ($(DYNAMIC_DRIVERS),)
+XWINDRV_SO = drivers/xwin$(LIB_TAG)_drv.so
+XWINDRV_LINK = -lplplot_xwin_driver$(LIB_TAG)
+endif

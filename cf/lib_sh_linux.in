@@ -117,13 +117,13 @@ $(CXXLIB_AR): $(CXX_OBJS)
 # The following rules based on discussion in
 # http://www.linuxdoc.org/HOWTO/Program-Library-HOWTO/shared-libraries.html
 
-$(PLLIB_SO):	$(BLD_MATLIB_SO) $(LIB_OBJS:%=shared/%)
+$(PLLIB_SO):	$(LIB_OBJS:%=shared/%) $(PLLIB_LIBRARIES)
 	-$(RM) $(PLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) -L.. $(MAT_LINK) $(LDC_LIBS)
+		$(LIB_OBJS) -L.. $(PLLIB_LINKS) $(LDC_LIBS)
 	ln -sf $(PLLIB_SO) $(SONAME)
 	ln -sf $(SONAME) $(LINKNAME)
 	@echo ""
