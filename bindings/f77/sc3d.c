@@ -1,23 +1,11 @@
 /* $Id$
-   $Log$
-   Revision 1.6  1993/01/23 06:04:56  mjl
-   Indent changes only.
-
- * Revision 1.5  1992/10/24  05:18:07  mjl
- * Added PL_NEED_SIZE_T defines where necessary.
- *
- * Revision 1.4  1992/10/22  17:05:44  mjl
- * Fixed warnings, errors generated when compling with HP C++.
- *
- * Revision 1.3  1992/09/30  18:25:59  furnish
- * Massive cleanup to irradicate garbage code.  Almost everything is now
- * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
- *
- * Revision 1.2  1992/09/29  04:46:34  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:35:06  furnish
- * Initial checkin of the whole PLPLOT project.
+ * $Log$
+ * Revision 1.7  1994/03/23 08:37:18  mjl
+ * Some cruft elimination.
+ * All external API source files: replaced call to plexit() on simple
+ * (recoverable) errors with simply printing the error message (via
+ * plabort()) and returning.  Should help avoid loss of computer time in some
+ * critical circumstances (during a long batch run, for example).
  *
 */
 
@@ -26,11 +14,7 @@
 	Stub routines for 3d plots.
 */
 
-#define PL_NEED_MALLOC
-#define PL_NEED_SIZE_T
-
 #include "plstubs.h"
-#include <stdlib.h>
 
 void
 PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,
@@ -44,12 +28,22 @@ PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (PLFLT **) malloc((size_t) * nx * sizeof(PLFLT *))))
-	plexit("Out of memory");
+    if ( ! (temp = (PLFLT **) malloc((size_t) * nx * sizeof(PLFLT *)))) {
+	plabort("PLMESH: Out of memory");
+	return;
+    }
 
-    for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (PLFLT *) malloc((size_t) * ny * sizeof(PLFLT))))
-	    plexit("Out of memory");
+    for (i = 0; i < *nx; i++) {
+	if ( ! (temp[i] = (PLFLT *) malloc((size_t) * ny * sizeof(PLFLT)))) {
+	    int ii;
+
+	    for (ii = 0; ii < i-1; ii++)
+		free((void *) temp[i]);
+	    free((void *) temp);
+	    plabort("PLMESH: Out of memory");
+	    return;
+	}
+    }
 
     for (i = 0; i < *nx; i++)
 	for (j = 0; j < *ny; j++)
@@ -58,9 +52,9 @@ PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,
     c_plmesh(x, y, temp, *nx, *ny, *opt);
 
     for (i = 0; i < *nx; i++)
-	free((char *) temp[i]);
+	free((void *) temp[i]);
 
-    free((char *) temp);
+    free((void *) temp);
 }
 
 
@@ -76,12 +70,22 @@ PLOT3D(PLFLT *x, PLFLT *y, PLFLT *z,
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (PLFLT **) malloc((size_t) * nx * sizeof(PLFLT *))))
-	plexit("Out of memory");
+    if ( ! (temp = (PLFLT **) malloc((size_t) * nx * sizeof(PLFLT *)))) {
+	plabort("PLOT3D: Out of memory");
+	return;
+    }
 
-    for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (PLFLT *) malloc((size_t) * ny * sizeof(PLFLT))))
-	    plexit("Out of memory");
+    for (i = 0; i < *nx; i++) {
+	if ( ! (temp[i] = (PLFLT *) malloc((size_t) * ny * sizeof(PLFLT)))) {
+	    int ii;
+
+	    for (ii = 0; ii < i-1; ii++)
+		free((void *) temp[i]);
+	    free((void *) temp);
+	    plabort("PLOT3D: Out of memory");
+	    return;
+	}
+    }
 
     for (i = 0; i < *nx; i++)
 	for (j = 0; j < *ny; j++)
@@ -90,7 +94,7 @@ PLOT3D(PLFLT *x, PLFLT *y, PLFLT *z,
     c_plot3d(x, y, temp, *nx, *ny, *opt, *side);
 
     for (i = 0; i < *nx; i++)
-	free((char *) temp[i]);
+	free((void *) temp[i]);
 
-    free((char *) temp);
+    free((void *) temp);
 }
