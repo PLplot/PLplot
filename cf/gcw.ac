@@ -24,6 +24,18 @@ dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 dnl
 dnl ------------------------------------------------------------------------
 
+dnl Configuring the gcw driver and the plplotcanvas support needs the
+dnl pkg-config program
+
+if test "$with_pkg_config" = no ; then
+
+  AC_MSG_WARN([pkg-config support is disabled])
+  AC_MSG_WARN([Setting enable_gcw and enable_pygcw to no])
+  
+  enable_gcw=no
+  enable_pygcw=no
+
+else
 
 dnl Note that Gnome2 uses pkg-config as a key part of the
 dnl configure process; there is no way of getting around it
@@ -118,6 +130,10 @@ fi
 
 #
 # GCW_LIBS all libs needed by the gcw driver.
+
+
+fi # if test "$with_pkg_config""
+
 
 dnl The choice of the names GCW_FLAGS and GCW_LIBS is made by
 dnl the PKG_CHECK_MODULES macro.
