@@ -35,6 +35,6 @@ rm -rf htdocs
 CVS_RSH=ssh CVSROOT=$USER@cvs1:/cvsroot/plplot \
   cvs export -r HEAD -d htdocs www
 test -n "$DOCBOOKDIR" && mv docbook-manual-$$ $DOCBOOKDIR
-test -d $DEBIANDIR && mv $DEBIANDIR debian-$$
+test -n "$DEBIANDIR" && mv debian-$$ $DEBIANDIR
 test -f $PLOTEXAMPLES && tar xzf htdocs_plot_examples.tgz
 chmod -R g=u htdocs
