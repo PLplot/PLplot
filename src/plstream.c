@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1993/09/24 20:33:28  furnish
+ * Revision 1.11  1993/12/06 07:46:54  mjl
+ * More modifications to support new color model.
+ *
+ * Revision 1.10  1993/09/24  20:33:28  furnish
  * Went wild with "const correctness".  Can now pass a C++ String type to
  * most (all that I know of) PLPLOT functions.  This works b/c String has
  * an implicit conversion to const char *.  Now that PLPLOT routines take
@@ -44,14 +47,13 @@
 * color_def()
 *
 * Initializes color table entries by RGB values.
-* Does nothing if: color already set, or palette entry exceeds number
-* of colors in the palette.
+* Does nothing if color already set.
 \*----------------------------------------------------------------------*/
 
 static void
 color_def(PLStream *pls, PLINT i, U_CHAR r, U_CHAR g, U_CHAR b)
 {
-    if (!pls->cmap0setcol[i] && (i < pls->ncol0)) {
+    if ( ! pls->cmap0setcol[i]) {
 	pls->cmap0[i].r = r;
 	pls->cmap0[i].g = g;
 	pls->cmap0[i].b = b;
@@ -60,9 +62,9 @@ color_def(PLStream *pls, PLINT i, U_CHAR r, U_CHAR g, U_CHAR b)
 }
 
 /*----------------------------------------------------------------------*\
-* plCmaps_init()
+* plCmap0_init()
 *
-* Initializes color maps.
+* Initializes color map 0.
 * Do not initialize if already done.
 *
 * Initial RGB values for color map 0 taken from HPUX 8.07 X-windows 
@@ -75,17 +77,17 @@ color_def(PLStream *pls, PLINT i, U_CHAR r, U_CHAR g, U_CHAR b)
 \*----------------------------------------------------------------------*/
 
 void
-plCmaps_init(PLStream *pls)
+plCmap0_init(PLStream *pls)
 {
-    int itype, ihfinit = 0;
-    PLFLT param[6];
+/* Return if the user has already filled color map */
 
-/* If the user hasn't specified, the number of colors default to 16 */
+    if (pls->ncol0 > 0)
+	return;
 
-    if (pls->ncol0 == 0)
-	pls->ncol0 = 16;
+    pls->ncol0 = 16;
 
 /* Color map 0 */
+/* Any entries already filled by user are not touched */
 
     color_def(pls, 0, 255, 114, 86);	/* coral */
     color_def(pls, 1, 255, 0, 0);	/* red */
@@ -103,6 +105,27 @@ plCmaps_init(PLStream *pls)
     color_def(pls, 13, 255, 0, 255);	/* magenta */
     color_def(pls, 14, 233, 150, 122);	/* salmon */
     color_def(pls, 15, 255, 255, 255);	/* white */
+}
+
+/*----------------------------------------------------------------------*\
+* plCmap1_init()
+*
+* Initializes color map 1.
+* Do not initialize if already done.
+\*----------------------------------------------------------------------*/
+
+void
+plCmap1_init(PLStream *pls)
+{
+    int itype, ihfinit = 0;
+    PLFLT param[6];
+
+/* Return if the user has already filled color map */
+
+    if (pls->ncol0 > 0)
+	return;
+
+    pls->ncol0 = 16;
 
 /* Color map 1 */
 
@@ -127,7 +150,7 @@ plCmaps_init(PLStream *pls)
 	    break;
 	}
 
-	plscm1f1(itype, param);
+	plscmap1f1(itype, param);
     }
 }
 

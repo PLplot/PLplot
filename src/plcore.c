@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1993/11/15 08:38:35  mjl
+ * Revision 1.24  1993/12/06 07:46:52  mjl
+ * More modifications to support new color model.
+ *
+ * Revision 1.23  1993/11/15  08:38:35  mjl
  * Added documentation.  Fixed plflush to be callable from Fortran.
  * Moved plexit to this file and changed it to set nopause before issuing the
  * final end-of-page command.
@@ -1116,7 +1119,8 @@ c_plinit(void)
 
 /* Initialize color maps */
 
-    plCmaps_init(plsc);
+    plCmap0_init(plsc);
+    plCmap1_init(plsc);
 
 /* Load fonts */
 
@@ -1375,10 +1379,10 @@ c_plcpstrm(PLINT iplsr, PLINT flags)
 
     plsc->icol0 = plsr->icol0;
     plsc->ncol0 = plsr->ncol0;
+    plsc->icol1 = plsr->icol1;
     plsc->bgcolorset = plsr->bgcolorset;
 
     plsc->cmap1set = plsr->cmap1set;
-    plsc->htlvl = plsr->htlvl;
     for (i = 0; i < 16; i++)
 	plsc->cmap0setcol[i] = plsr->cmap0setcol[i];
 
@@ -1840,21 +1844,21 @@ plsxwin(PLINT window_id)
 *  Routines that deal with colors & color maps.
 \*----------------------------------------------------------------------*/
 
-/* Set color, map 0 */
+/* Set color, map 0.  Argument is integer between 0 and 15. */
 
 void
-c_plcol(PLINT icol0)
+c_plcol0(PLINT icol0)
 {
     if (plsc->level < 1)
-	plexit("plcol: Please call plinit first.");
+	plexit("plcol0: Please call plinit first.");
 
     if (icol0 < 0 || icol0 > 15) {
-	plwarn("plcol: Invalid color.");
+	plwarn("plcol0: Invalid color.");
 	return;
     }
 
     if (plsc->cmap0setcol[icol0] == 0) {
-	plwarn("plcol: Requested color not allocated.");
+	plwarn("plcol0: Requested color not allocated.");
 	return;
     }
 
@@ -1866,7 +1870,29 @@ c_plcol(PLINT icol0)
     plP_state(PLSTATE_COLOR0);
 }
 
+/* Set color, map 1.  Argument is a float between 0. and 1. */
+
+void
+c_plcol1(PLFLT col1)
+{
+    if (plsc->level < 1)
+	plexit("plcol1: Please call plinit first.");
+
+    if (col1 < 0 || col1 > 1) {
+	plwarn("plcol1: Invalid color.");
+	return;
+    }
+
+    plsc->icol1 = col1 * 255.9999;
+    plsc->curcolor.r = plsc->cmap1[plsc->icol1].r;
+    plsc->curcolor.g = plsc->cmap1[plsc->icol1].g;
+    plsc->curcolor.b = plsc->cmap1[plsc->icol1].b;
+
+    plP_state(PLSTATE_COLOR1);
+}
+
 /* Set line color by red, green, blue from  0. to 1. */
+/* Do NOT use this.  Only retained for backward compatibility */
 
 void
 c_plrgb(PLFLT r, PLFLT g, PLFLT b)
@@ -1888,6 +1914,7 @@ c_plrgb(PLFLT r, PLFLT g, PLFLT b)
 }
 
 /* Set line color by 8 bit RGB values. */
+/* See note to plrgb() */
 
 void
 c_plrgb1(PLINT r, PLINT g, PLINT b)
@@ -1908,57 +1935,25 @@ c_plrgb1(PLINT r, PLINT g, PLINT b)
     plP_state(PLSTATE_COLOR0);
 }
 
-/* Set number of colors in color map 0 */
+/* Set the background color by 8 bit RGB value */
+/* Note: for some drivers this corresponds to a cmap 0 color */
 
 void
-c_plscm0n(PLINT ncol0)
+c_plscolbg(PLINT r, PLINT g, PLINT b)
 {
-    if (plsc->level > 0) {
-	plwarn("plscm0: Must be called before plinit.");
+    if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
+	plwarn("plscolbg: Invalid color");
 	return;
     }
 
-    if (ncol0 < 2 || ncol0 > 16)
-	plexit("plscm0: Number of colors out of range");
-
-    plsc->ncol0 = ncol0;
-}
-
-/* Set color map 0 colors by 8 bit RGB values */
-/* WARNING -- This sets ncol0 as well. */
-
-void
-c_plscm0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
-{
-    int i;
-
-    if (plsc->level > 0) {
-	plwarn("plscm0: Must be called before plinit.");
-	return;
-    }
-
-    if (ncol0 > 16)
-	plexit("plscm0: Maximum of 16 colors in color map 0.");
-
-    plsc->ncol0 = ncol0;
-
-    for (i = 0; i < ncol0; i++) {
-	if ((r[i] < 0 || r[i] > 255) ||
-	    (g[i] < 0 || g[i] > 255) ||
-	    (b[i] < 0 || b[i] > 255)) {
-
-	    plwarn("plscm0: Invalid color");
-	    continue;
-	}
-
-	plsc->cmap0[i].r = r[i];
-	plsc->cmap0[i].g = g[i];
-	plsc->cmap0[i].b = b[i];
-	plsc->cmap0setcol[i] = 1;
-    }
+    plsc->bgcolor.r = r;
+    plsc->bgcolor.g = g;
+    plsc->bgcolor.b = b;
+    plsc->bgcolorset = 1;
 }
 
 /* Set a given color from color map 0 by 8 bit RGB value */
+/* Increments ncol0 if it results in a new color allocation */
 
 void
 c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
@@ -1976,38 +1971,59 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 	return;
     }
 
+    if (plsc->cmap0setcol[icol0] == 0) {
+	plsc->ncol0++;
+	plsc->cmap0setcol[icol0] = 1;
+    }
     plsc->cmap0[icol0].r = r;
     plsc->cmap0[icol0].g = g;
     plsc->cmap0[icol0].b = b;
-    plsc->cmap0setcol[icol0] = 1;
 }
 
-/* Set the background color by 8 bit RGB value */
+/* Set color map 0 colors by 8 bit RGB values */
+/* Note -- this sets the entire map, including ncol0. */
 
 void
-c_plscolbg(PLINT r, PLINT g, PLINT b)
+c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 {
-    if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
-	plwarn("plscolbg: Invalid color");
+    int i;
+
+    if (plsc->level > 0) {
+	plwarn("plscmap0: Must be called before plinit.");
 	return;
     }
 
-    plsc->bgcolor.r = r;
-    plsc->bgcolor.g = g;
-    plsc->bgcolor.b = b;
-    plsc->bgcolorset = 1;
+    if (ncol0 > 16)
+	plexit("plscmap0: Maximum of 16 colors in color map 0.");
+
+    plsc->ncol0 = ncol0;
+
+    for (i = 0; i < ncol0; i++) {
+	if ((r[i] < 0 || r[i] > 255) ||
+	    (g[i] < 0 || g[i] > 255) ||
+	    (b[i] < 0 || b[i] > 255)) {
+
+	    plwarn("plscmap0: Invalid color");
+	    continue;
+	}
+
+	plsc->cmap0[i].r = r[i];
+	plsc->cmap0[i].g = g[i];
+	plsc->cmap0[i].b = b[i];
+	plsc->cmap0setcol[i] = 1;
+    }
 }
 
 /* Set color map 1 colors by 8 bit RGB values */
 /* You MUST set all 256 colors if you use this */
 
 void
-c_plscm1(PLINT *r, PLINT *g, PLINT *b)
+c_plscmap1(PLINT *r, PLINT *g, PLINT *b)
 {
     int i;
 
     if (plsc->level > 0) {
-	plwarn("plscm1: Must be called before plinit.");
+	plwarn("plscmap1: Must be called before plinit.");
 	return;
     }
 
@@ -2016,7 +2032,7 @@ c_plscm1(PLINT *r, PLINT *g, PLINT *b)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    fprintf(stderr, "plscm1: Invalid RGB color: %d, %d, %d\n",
+	    fprintf(stderr, "plscmap1: Invalid RGB color: %d, %d, %d\n",
 		    r[i], g[i], b[i]);
 	    plexit("");
 	}
@@ -2050,13 +2066,13 @@ c_plscm1(PLINT *r, PLINT *g, PLINT *b)
 */
 
 void
-c_plscm1f1(PLINT itype, PLFLT *param)
+c_plscmap1f1(PLINT itype, PLFLT *param)
 {
     int i;
     PLFLT h, l, s, r, g, b;
 
     if (plsc->level > 0) {
-	plwarn("plscm1f1: Must be called before plinit.");
+	plwarn("plscmap1f1: Must be called before plinit.");
 	return;
     }
     for (i = 0; i < 256; i++) {
@@ -2072,7 +2088,7 @@ c_plscm1f1(PLINT itype, PLFLT *param)
 	}
 
 	if ((r < 0. || r > 1.) || (g < 0. || g > 1.) || (b < 0. || b > 1.)) {
-	    fprintf(stderr, "plscm1f1: Invalid RGB color: %f, %f, %f\n",
+	    fprintf(stderr, "plscmap1f1: Invalid RGB color: %f, %f, %f\n",
 		    r, g, b);
 	    plexit("");
 	}
