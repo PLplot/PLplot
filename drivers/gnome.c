@@ -791,6 +791,7 @@ plD_init_gnome (PLStream *pls)
   pls->dev_dash = 1;		/* Handle dashed lines */
   pls->plbuf_write = 1;	        /* Use plot buffer to replot to another device */
   pls->width = 1;
+  pls->dev_clear = 1;           /* Handle plclear() */
   
 
   /* The real meat of the initialization done here */
