@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/07/16 22:36:33  mjl
-   Minor change to comments.
+   Revision 1.8  1993/11/15 08:40:21  mjl
+   Comment fix.
 
+ * Revision 1.7  1993/07/16  22:36:33  mjl
+ * Minor change to comments.
+ *
  * Revision 1.6  1993/07/01  22:13:42  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
@@ -261,7 +264,7 @@ c_plsmaj(PLFLT def, PLFLT scale)
 /*----------------------------------------------------------------------*\
 * void plssym()
 *
-* Se symbol height.
+* Set symbol height.
 \*----------------------------------------------------------------------*/
 
 void
