@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.45  1995/03/17 00:24:09  mjl
+ * Revision 1.46  1995/04/14 21:45:45  mjl
+ * Added termination in case of bad arguments.
+ *
+ * Revision 1.45  1995/03/17  00:24:09  mjl
  * Fixed up Copyright and other cleaning up.  Converted to new style argument
  * list merging, resulting in a substantial reduction in lines of code -- the
  * old -h and -showall plrender options and many routines associated with the
@@ -339,6 +342,7 @@ ProcessFile(int argc, char **argv)
     if ((argv)[1][0] == '-') {
 	fprintf(stderr, "\nBad command line option \"%s\"\n", argv[1]);
 	plOptUsage();
+	exit(1);
     }
 
 /* argv[1] should be a file name.  Try to open it. */
