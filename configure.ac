@@ -342,7 +342,7 @@ AM_INIT_AUTOMAKE
 ### is by specifying one of the option --version of --date-version to
 ### bootstrap.sh
 
-RELEASE_DATE=2004-02-01
+RELEASE_DATE=2004-02-02
 AC_SUBST(RELEASE_DATE)
 
 ### Version number for the shared libraries.  Note we are keeping the shared
