@@ -1,6 +1,6 @@
 /* $Id$
 
-	PLplot pstex (Postscript/LaTeX) device driver.
+   PLplot pstex (Postscript/LaTeX) device driver.
 */
 
 #include "plplot/plDevs.h"
@@ -41,17 +41,17 @@ plD_init_pstex(PLStream *pls)
 
   rot_scale = ((int)(pls->diorot) % 2) ? (float)YSIZE/(float)XSIZE : 1.;
 
-  fprintf(fp,"\\begin{picture}(0,0)(0,0)%
-\\includegraphics[scale=%f,clip]{%s}%
-\\end{picture}%
-\\setlength{\\unitlength}{%fbp}%
-\\begingroup\\makeatletter\\ifx\\SetFigFont\\undefined%
-\\gdef\\SetFigFont#1#2#3#4#5{%
-\\reset@font\\fontsize{#1}{#2pt}%
-\\fontfamily{#3}\\fontseries{#4}\\fontshape{#5}%
-\\selectfont}%
-\\fi\\endgroup%\n", 
-	  rot_scale, pls->FileName, 72./25.4/pls->xpmm);
+  fprintf(fp,"\\begin{picture}(0,0)(0,0)%%
+\\includegraphics[scale=%f,clip]{%s}%%
+\\end{picture}%%
+\\setlength{\\unitlength}{%fbp}%%
+\\begingroup\\makeatletter\\ifx\\SetFigFont\\undefined%%
+\\gdef\\SetFigFont#1#2#3#4#5{%%
+\\reset@font\\fontsize{#1}{#2pt}%%
+\\fontfamily{#3}\\fontseries{#4}\\fontshape{#5}%%
+\\selectfont}%%
+\\fi\\endgroup%%\n", 
+     rot_scale, pls->FileName, 72./25.4/pls->xpmm);
 
   /* prevent long text from flowing outside the figure. Don't work!
 fprintf(fp, "\\special{ps: /x1 100 def /x2 6000 def /y1 100 def /y2 2000 def
@@ -59,7 +59,7 @@ x1 y1 moveto x1 y2 lineto x2 y2 lineto x2 x1 lineto closepath gsave stroke
 grestore gsave clip}"); */
 
   cur_pos = ftell(fp);
-  fprintf(fp,"\\begin{picture}(xxxxxx,xxxxxx)(xxxxxx,xxxxxx)%\n");
+  fprintf(fp,"\\begin{picture}(xxxxxx,xxxxxx)(xxxxxx,xxxxxx)%%\n");
 }
 
 void
@@ -95,11 +95,11 @@ plD_tidy_pstex(PLStream *pls)
   fprintf(fp,"\\end{picture}\n");
 
   fseek(fp, cur_pos, SEEK_SET);
-  fprintf(fp,"\\begin{picture}(%d,%d)(%d,%d)%\n%%",
-	  ROUND((dev->urx - dev->llx) * scale * rot_scale),
-	  ROUND((dev->ury - dev->lly) * scale * rot_scale),
-	  ROUND((dev->llx - XOFFSET) * scale * rot_scale),
-	  ROUND((dev->lly - YOFFSET) * scale * rot_scale));
+  fprintf(fp,"\\begin{picture}(%d,%d)(%d,%d)%%\n%%",
+     ROUND((dev->urx - dev->llx) * scale * rot_scale),
+     ROUND((dev->ury - dev->lly) * scale * rot_scale),
+     ROUND((dev->llx - XOFFSET) * scale * rot_scale),
+     ROUND((dev->lly - YOFFSET) * scale * rot_scale));
 
   fclose(fp);
 }
@@ -107,7 +107,6 @@ plD_tidy_pstex(PLStream *pls)
 void
 proc_str (PLStream *pls, EscText *args)
 {
-
   PLFLT *t = args->xform;
   PLFLT a1, alpha, ft_ht, angle;
   char cptr[256], jst, ref;
@@ -118,8 +117,8 @@ proc_str (PLStream *pls, EscText *args)
 
   /* calculate baseline text angle */
   angle = pls->diorot * 90.;
-  a1 = 180. * acos(t[0]) / M_PI;
-  if (t[1] <= 0.)
+  a1 = acos(t[0]) * 180. / PI;
+  if (t[2] > 0.)
     alpha = a1 - angle - 90.;
   else
     alpha = 360. - a1 - angle - 90.;
@@ -163,29 +162,29 @@ proc_str (PLStream *pls, EscText *args)
   fprintf(fp,"\\put(%d,%d){\\rotatebox{%.1f}{\\makebox(0,0)[%c%c]
 {\\SetFigFont{%.1f}{12}",
 	  args->x, args->y, alpha, jst, ref, ft_ht);
-
+  
   /* font family, serie and shape. Currently not supported by plplot */
 
   /* Use current font instead:
-   o 1: Normal font (latex document default font)
-   o 2: Roman font
-   o 3: Italic font (most probably latex slanted)
-   o 4: Script font (latex sans serif)
+     1: Normal font (latex document default font)
+     2: Roman font
+     3: Italic font (most probably latex slanted)
+     4: Script font (latex sans serif)
   */
 
-   switch (pls->cfont) {
-   case (1): fprintf(fp,"{\\familydefault}"); break;
-   case (2): fprintf(fp,"{\\rmdefault}"); break;
-   case (3): fprintf(fp,"{\\itdefault}"); break;
-   case (4): fprintf(fp,"{\\sfdefault}"); break;
-   default:fprintf(fp,"{\\familydefault}");
-   }
+  switch (pls->cfont) {
+  case (1): fprintf(fp, "{\\familydefault}"); break;
+  case (2): fprintf(fp, "{\\rmdefault}"); break;
+  case (3): fprintf(fp, "{\\itdefault}"); break;
+  case (4): fprintf(fp, "{\\sfdefault}"); break;
+  default: fprintf(fp, "{\\familydefault}");
+  }
 
   fprintf(fp,"{\\mddefault}{\\updefault}\n");
 
   /* font color. */
   fprintf(fp,"\\special{ps: %.3f %.3f %.3f setrgbcolor}{
-% Your text follows:
+%% Your text follows:
 %s
 }}}}",
 	  pls->curcolor.r /255., pls->curcolor.g /255.,
@@ -195,28 +194,34 @@ proc_str (PLStream *pls, EscText *args)
      arghhh! can't calculate it, as I only have the string reference
      point, not its extent!
      The solution will be to use the current latex font size in pt?
-     Also need to take into account rotation and justification!
+     Also need to take into account rotation and justification?!
      Quick (and final?) *hack*, ASSUME that no more than a char height
      extents after/before the string reference point. */
 
-  dev->llx = MIN(dev->llx, args->x - ft_ht/2.*10.);
-  dev->lly = MIN(dev->lly, args->y - ft_ht/2.*10.);
-  dev->urx = MAX(dev->urx, args->x + ft_ht/2.*10.);
-  dev->ury = MAX(dev->ury, args->y + ft_ht/2.*10.); 
-
+      dev->llx = MIN(dev->llx, args->x - ft_ht * 25.4 / 72. * pls->xpmm);
+      dev->lly = MIN(dev->lly, args->y - ft_ht * 25.4 / 72. * pls->xpmm);
+      dev->urx = MAX(dev->urx, args->x + ft_ht * 25.4 / 72. * pls->xpmm);
+      dev->ury = MAX(dev->ury, args->y + ft_ht * 25.4 / 72. * pls->xpmm);
 }
 
 void
 parse_str(const char *str, char *dest)
 {
-  int n, opened = 0, raised = 0, overline = 0, underline = 0, fontset = 0, math = 0;
-  char *tp = dest;
-  char esc;
-  char raise_lower[] = "\\raisebox{%.2fex}{";
+int n, opened = 0, raised = 0, overline = 0, underline = 0, fontset = 0, math = 0;
+char *tp = dest;
+char c, esc;
+char raise_lower[] = "\\raisebox{%.2fex}{";
+ static char greek[] = "abgGdDezyhHiklLmncCopPrsStuUfFxqQwW";
+ static char *mathgreek[] = {"alpha", "beta", "gamma", "Gamma", "delta", "Delta", "epsilon",
+				"zeta", "eta", "theta", "Theta", "iota", "kappa", "lambda",
+			       "Lambda", "mu", "nu", "xi", "Xi", "o", "pi", "Pi", "rho",
+			       "sigma", "Sigma", "tau", "upsilon", ",Upsilon", "phi", "Phi",
+			       "chi", "psi", "Psi", "omega", "Omega"};
+ 
+ plgesc(&esc);
 
-  plgesc(&esc);
+ while (*str) {
 
-  while (*str) {
     if (*str != esc) {
       *tp++ = *str++;
       continue;
@@ -225,130 +230,145 @@ parse_str(const char *str, char *dest)
 
     switch (*str++) {
 
-    case 'u': /* up one level */
-      if (raised < 0) {
-	*tp++ = '}';
-	opened--;
-      } else {
-	n = sprintf(tp, raise_lower, 0.6);
-	tp += n; opened++;
-      }
-      raised++;
-      break;
+       case 'u': /* up one level */
+	 if (raised < 0) {
+            *tp++ = '}';
+	    opened--;
+         } else {
+            n = sprintf(tp, raise_lower, 0.6);
+	    tp += n; opened++;
+         }
+	 raised++;
+	 break;
 
-    case 'd': /* down one level */
-      if (raised > 0) {
-	*tp++ = '}';
-	opened--;
-      } else {
-	n = sprintf(tp, raise_lower, -0.6);
-	tp += n; opened++;
-      }
-      raised--;
-      break;
+       case 'd': /* down one level */
+	 if (raised > 0) {
+            *tp++ = '}';
+	    opened--;
+         } else {
+             n = sprintf(tp, raise_lower, -0.6);
+	     tp += n; opened++;
+         }
+	 raised--;
+	 break;
 
-    case 'b': /* backspace */
-      n = sprintf(tp,"\\hspace{-1em}");
-      tp += n;
-      break;
-			 
-    case '+': /* toggles overline mode. Side effect, enter math mode. */
-      if (overline) {
-	if (--math)
-	  *tp++ = '}';
-	else {
-	  n = sprintf(tp, "}$");
+        case 'b': /* backspace */
+	  n = sprintf(tp,"\\hspace{-1em}");
 	  tp += n;
-	}
-	overline--; opened--;
-      } else {
-	if (!math)
-	  *tp++ = '$';
+	  break;
+          
+        case '+': /* toggles overline mode. Side effect, enter math mode. */
+	  if (overline) {
+             if (--math)
+	       *tp++ = '}';
+	     else {
+               n = sprintf(tp, "}$");
+               tp += n;
+             }
+             overline--; opened--;
+          } else {
+             if (!math)
+                *tp++ = '$';
 
-	n = sprintf(tp, "\\overline{");
-	tp += n; overline++; opened++; math++;
-      }
-      break;
+	     n = sprintf(tp, "\\overline{");
+	     tp += n; overline++; opened++; math++;
+          }
+	  break;
 
     case '-': /* toggles underline mode. Side effect, enter math mode. */
       if (underline) {
-	if (--math)
-	  *tp++ = '}';
-	else {
-	  n = sprintf(tp, "}$");
-	  tp += n;
-	}
-	underline--; opened--;
+         if (--math)
+            *tp++ = '}';
+         else {
+            n = sprintf(tp, "}$");
+            tp += n;
+         }
+         underline--; opened--;
       } else {
-	if (!math)
-	  *tp++ = '$';
+         if (!math)
+	   *tp++ = '$';
 
-	n = sprintf(tp, "\\underline{");		
-	tp += n; underline++; opened++; math++;
+         n = sprintf(tp, "\\underline{");      
+	 tp += n; underline++; opened++; math++;
       }
       break;
 
     case 'g': /* greek letter corresponding to roman letter x */
-      str++;
+      c = *str++;
+      n = plP_strpos(greek, c);
+      if (n != -1) {
+         if (!math) 
+	   *tp++ = '$';
+
+	 *tp++ = '\\';
+	 strcpy(tp, mathgreek[n]);
+	 if (isupper(c))
+	   *tp = toupper(*tp);
+	 tp += strlen(mathgreek[n]);
+	 if (!math) 
+	   *tp++ = '$';
+
+       } else
+	 *tp++ = c;
+
       break;
 
     case '(': /* Hershey symbol number (nnn) (any number of digits) FIXME ???*/
-      while (*str++ != ')');
-      break;
+	while (*str++ != ')');
+	break;
 
     case 'f': /* switch font */
-	  
+     
       switch (*str++) {
-      case 'n': /* Normal */
-	while (fontset--) {
-	  *tp++ = '}';
-	  opened--;
-	}
+	 case 'n': /* Normal */
+	   while (fontset--) {
+              *tp++ = '}';
+	      opened--;
+           }
 
-	if (math) {
-	  *tp++ = '$';
-	  math = 0;
-	}		  
+	   if (math) {
+              *tp++ = '$';
+              math = 0;
+           }
 
-	n = sprintf(tp, "\\normalfont ");
-	tp += n;
-	break;
+	   n = sprintf(tp, "\\normalfont ");
+	   tp += n;
+	   break;
 
-      case 'r': /* Roman */
-	if (math)
-	  n = sprintf(tp, "\\mathrm{");
-	else
-	  n = sprintf(tp, "\\textrm{");
+	 case 'r': /* Roman */
+	   if (math)
+	     n = sprintf(tp, "\\mathrm{");
+	   else
+	     n = sprintf(tp, "\\textrm{");
 
-	tp += n; opened++; fontset++;
-	break;
+	   tp += n; opened++; fontset++;
+	   break;
 
-      case 'i': /* Italic */
-	if (math)
-	  n = sprintf(tp, "\\mathit{");
-	else
-	  n = sprintf(tp, "\\textit{");
+	 case 'i': /* Italic */
+	   if (math)
+	     n = sprintf(tp, "\\mathit{");
+	   else
+	     n = sprintf(tp, "\\textit{");
 
-	tp += n; opened++; fontset++;
-	break;
+	   tp += n; opened++; fontset++;
+	   break;
 
-      case 's': /* Script. Don't, use sans serif */
-	if (math)
-	  n = sprintf(tp, "\\mathsf{");
-	else
-	  n = sprintf(tp, "\\textsf{");
+	 case 's': /* Script. Don't, use sans serif */
+	   if (math)
+	     n = sprintf(tp, "\\mathsf{");
+	   else
+	     n = sprintf(tp, "\\textsf{");
 
-	tp += n; opened++; fontset++;
-	break;
+	   tp += n; opened++; fontset++;
+	   break;
+
+	     }
 
       default:
-      }
-
-    default:
-      if (*str == esc)
-	*tp++ = esc;
-    }
-  }
+	if (*str == esc)
+	  *tp++ = esc;
+	     }
+	     }
 
   while(opened--)
     *tp++ = '}';
@@ -363,4 +383,4 @@ pldummy_pstex()
   return 0;
 }
 
-#endif				/* PLD_pstexdev */
+#endif            /* PLD_pstexdev */
