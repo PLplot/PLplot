@@ -16,7 +16,7 @@
 */
 
 #define PLMETA_HEADER	"PLPLOT"
-#define PLMETA_VERSION	"1993c"
+#define PLMETA_VERSION	"2005a"
 
 /* These are used by the TK driver client/server code */
 
