@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1995/05/23 22:08:36  mjl
+ * Revision 1.2  1995/06/11 19:21:35  mjl
+ * Eliminated a redundant header inclusion.
+ *
+ * Revision 1.1  1995/05/23  22:08:36  mjl
  * Files to handle PLplot Python bindings.
  *
 */
@@ -23,7 +26,6 @@
 
 #include <Python.h>
 #include <modsupport.h>
-#include "plplot.h"	/* macros and prototypes for the PLplot package */
 #include "plplotP.h"	/* private macros and prototypes that we also need */
 
 /* We need to know whether PLFLT is a float or double. */
