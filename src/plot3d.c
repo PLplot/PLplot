@@ -40,7 +40,6 @@ static void plt3zz	(PLINT, PLINT, PLINT, PLINT,
 			   PLINT, PLINT, PLINT *, PLINT *, PLFLT*);
 static void plnxtvhi (PLINT *, PLINT *, PLFLT*, PLINT, PLINT);
 static void plnxtvlo (PLINT *, PLINT *, PLFLT*, PLINT, PLINT);
-static void plnxtvhi_shade(PLINT *u, PLINT *v, PLFLT* c, PLINT n);
 static void plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n);
 
 static void savehipoint	(PLINT, PLINT);
@@ -54,7 +53,7 @@ static int  plabv	(PLINT, PLINT, PLINT, PLINT, PLINT, PLINT);
 static void pl3cut	(PLINT, PLINT, PLINT, PLINT, PLINT, 
 				PLINT, PLINT, PLINT, PLINT *, PLINT *);
 static PLFLT plGetAngleToLight(PLFLT* x, PLFLT* y, PLFLT* z);
-static void plP_shfill(PLINT x, PLINT y, PLINT j, PLINT move);
+static void plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move);
 
 /*--------------------------------------------------------------------------*\
  * void plsetlightsource(x, y, z)
@@ -720,24 +719,13 @@ plnxtvhi(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
 	if ( ! oldhiview)
 	    myexit("plnxtvhi: Out of memory.");
 
-	if (threedshading) {
-	    oldhiview[0] = u[0];
-	    oldhiview[1] = v[0];
-	    plP_shfill(u[0],v[0],0,1);
-	    for (i = 1; i < n; i++) {
-		oldhiview[2 * i] = u[i];
-		oldhiview[2 * i + 1] = v[i];
-		plP_shfill(u[i],v[i],i,0);
-	    }
-	} else {
-	    plP_movphy(u[0], v[0]);
-	    oldhiview[0] = u[0];
-	    oldhiview[1] = v[0];
-	    for (i = 1; i < n; i++) {
-		plP_draphy(u[i], v[i]);
-		oldhiview[2 * i] = u[i];
-		oldhiview[2 * i + 1] = v[i];
-	    }
+	oldhiview[0] = u[0];
+	oldhiview[1] = v[0];
+	plP_draw3d(u[0],v[0],0,1);
+	for (i = 1; i < n; i++) {
+	    oldhiview[2 * i] = u[i];
+	    oldhiview[2 * i + 1] = v[i];
+	    plP_draw3d(u[i],v[i],i,0);
 	}
 	mhi = n;
 	return;
@@ -774,10 +762,7 @@ plnxtvhi(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
 
 /* Do the draw or shading with hidden line removal */
 
-    if(threedshading)
-	plnxtvhi_shade(u, v, c, n);
-    else
-	plnxtvhi_draw(u, v, c, n);
+    plnxtvhi_draw(u, v, c, n);
 
 /* Set oldhiview */
 
@@ -785,13 +770,13 @@ plnxtvhi(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
 }
 
 /*--------------------------------------------------------------------------*\
- * void plnxtvhi_shade()
+ * void plnxtvhi_draw()
  *
  * Draw the top side of the 3-d plot.
 \*--------------------------------------------------------------------------*/
 
 static void
-plnxtvhi_shade(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
+plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 {
     PLINT i = 0, j = 0, first = 1;
     PLINT sx1 = 0, sx2 = 0, sy1 = 0, sy2 = 0;
@@ -867,29 +852,31 @@ plnxtvhi_shade(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
      * state of "newhi" changes.
      */
 	if (first) {
-	    plP_shfill(px, py,j,1);
+	    plP_draw3d(px, py, j, 1);
 	    first = 0;
 	    lstold = ptold;
 	    savehipoint(px, py);
 	    pthi = 0;
 	    ochange = 0;
 	} else if (change) {
+
 	/*
 	 * Take care of special cases at end of arrays.  If pl3upv is 0 the
 	 * endpoints are not connected to the old view.
 	 */
 	    if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
-		plP_shfill(px, py,j,1);
+		plP_draw3d(px, py, j, 1);
 		lstold = ptold;
 		pthi = 0;
 		ochange = 0;
 	    } else if (pl3upv == 0 &&
 		       (( ! ptold && i >= mhi) || (ptold && j >= n))) {
-		plP_shfill(px, py,j,1);
+		plP_draw3d(px, py, j, 1);
 		lstold = ptold;
 		pthi = 0;
 		ochange = 0;
 	    } else {
+
 	    /*
 	     * If pl3upv is not 0 then we do want to connect the current line
 	     * with the previous view at the endpoints.  Also find intersection
@@ -934,18 +921,18 @@ plnxtvhi_shade(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 		pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
 		if (cx == px && cy == py) {
 		    if (lstold && !ochange)
-			plP_shfill(px, py,j,1);
+			plP_draw3d(px, py, j, 1);
 		    else
-			plP_shfill(px, py,j,0);
+			plP_draw3d(px, py, j, 0);
 
 		    savehipoint(px, py);
 		    lstold = 1;
 		    pthi = 0;
 		} else {
 		    if (lstold && !ochange)
-			plP_shfill(px, py,j,1);
+			plP_draw3d(cx, cy, j, 1);
 		    else
-			plP_shfill(px, py,j,0);
+			plP_draw3d(cx, cy, j, 0);
 
 		    lstold = 1;
 		    savehipoint(cx, cy);
@@ -958,9 +945,9 @@ plnxtvhi_shade(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 
 	if (pthi) {
 	    if (lstold && ptold)
-		plP_shfill(px, py,j,1);
+		plP_draw3d(px, py, j, 1);
 	    else
-		plP_shfill(px, py,j,0);
+		plP_draw3d(px, py, j, 0);
 
 	    savehipoint(px, py);
 	    lstold = ptold;
@@ -976,227 +963,41 @@ plnxtvhi_shade(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 }
 
 /*--------------------------------------------------------------------------*\
- * void plnxtvhi_draw()
+ * void  plP_draw3d()
  *
- * Draw the top side of the 3-d plot.
+ * If threedshading is set, moves and then fills a series of triangles using
+ * colours previously assigned.  Otherwise does a simple move and line draw.
 \*--------------------------------------------------------------------------*/
 
 static void
-plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
-{
-    PLINT i = 0, j = 0, first = 1;
-    PLINT sx1 = 0, sx2 = 0, sy1 = 0, sy2 = 0;
-    PLINT su1, su2, sv1, sv2;
-    PLINT cx, cy, px, py;
-    PLINT seg, ptold, lstold = 0, pthi, pnewhi = 0, newhi, change, ochange = 0;
-    PLINT threedcount = 0;
-
-/*
- * (oldhiview[2*i], oldhiview[2*i]) is the i'th point in the old array
- * (u[j], v[j]) is the j'th point in the new array
- */
-
-    while (i < mhi || j < n) {
-
-    /*
-     * The coordinates of the point under consideration are (px,py).
-     * The line segment joins (sx1,sy1) to (sx2,sy2).  "ptold" is
-     * true if the point lies in the old array.  We set it by
-     * comparing the x coordinates of the i'th old point and the
-     * j'th new point, being careful if we have fallen past the
-     * edges.  Having found the point, load up the point and segment
-     * coordinates appropriately.
-     */
-	ptold = ((oldhiview[2 * i] < u[j] && i < mhi) || j >= n);
-	if (ptold) {
-	    px = oldhiview[2 * i];
-	    py = oldhiview[2 * i + 1];
-	    seg = j > 0 && j < n;
-	    if (seg) {
-		sx1 = u[j - 1];
-		sy1 = v[j - 1];
-		sx2 = u[j];
-		sy2 = v[j];
-	    }
-	} else {
-	    px = u[j];
-	    py = v[j];
-	    seg = i > 0 && i < mhi;
-	    if (seg) {
-		sx1 = oldhiview[2 * (i - 1)];
-		sy1 = oldhiview[2 * (i - 1) + 1];
-		sx2 = oldhiview[2 * i];
-		sy2 = oldhiview[2 * i + 1];
-	    }
-	}
-
-    /*
-     * Now determine if the point is higher than the segment, using the
-     * logical function "above". We also need to know if it is the old view
-     * or the new view that is higher. "newhi" is set true if the new view
-     * is higher than the old.
-     */
-	if (seg)
-	    pthi = plabv(px, py, sx1, sy1, sx2, sy2);
-	else
-	    pthi = 1;
-
-	newhi = (ptold && !pthi) || (!ptold && pthi);
-    /*
-     * The last point and this point lie on different sides of
-     * the current silouette
-     */
-	change = (newhi && !pnewhi) || (!newhi && pnewhi);
-
-    /*
-     * There is a new intersection point to put in the peak array if the
-     * state of "newhi" changes.
-     */
-	if (first) {
-	    plP_movphy(px, py);
-	    first = 0;
-	    lstold = ptold;
-	    savehipoint(px, py);
-	    pthi = 0;
-	    ochange = 0;
-	}
-	else if (change) {
-
-	/*
-	 * Take care of special cases at end of arrays.  If pl3upv is 0 the
-	 * endpoints are not connected to the old view.
-	 */
-	    if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
-		plP_movphy(px, py);
-		lstold = ptold;
-		pthi = 0;
-		ochange = 0;
-	    }
-	    else if (pl3upv == 0 &&
-		     (( ! ptold && i >= mhi) || (ptold && j >= n))) {
-		plP_movphy(px, py);
-		lstold = ptold;
-		pthi = 0;
-		ochange = 0;
-	    } else {
-	    /*
-	     * If pl3upv is not 0 then we do want to connect the current line
-	     * with the previous view at the endpoints.  Also find intersection
-	     * point with old view.
-	     */
-		if (i == 0) {
-		    sx1 = oldhiview[0];
-		    sy1 = -1;
-		    sx2 = oldhiview[0];
-		    sy2 = oldhiview[1];
-		} else if (i >= mhi) {
-		    sx1 = oldhiview[2 * (mhi - 1)];
-		    sy1 = oldhiview[2 * (mhi - 1) + 1];
-		    sx2 = oldhiview[2 * (mhi - 1)];
-		    sy2 = -1;
-		}
-		else {
-		    sx1 = oldhiview[2 * (i - 1)];
-		    sy1 = oldhiview[2 * (i - 1) + 1];
-		    sx2 = oldhiview[2 * i];
-		    sy2 = oldhiview[2 * i + 1];
-		}
-
-		if (j == 0) {
-		    su1 = u[0];
-		    sv1 = -1;
-		    su2 = u[0];
-		    sv2 = v[0];
-		}
-		else if (j >= n) {
-		    su1 = u[n - 1];
-		    sv1 = v[n - 1];
-		    su2 = u[n];
-		    sv2 = -1;
-		}
-		else {
-		    su1 = u[j - 1];
-		    sv1 = v[j - 1];
-		    su2 = u[j];
-		    sv2 = v[j];
-		}
-
-	    /* Determine the intersection */
-
-		pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
-		if (cx == px && cy == py) {
-		    if (lstold && !ochange)
-			plP_movphy(px, py);
-		    else
-			plP_draphy(px, py);
-
-		    savehipoint(px, py);
-		    lstold = 1;
-		    pthi = 0;
-		}
-		else {
-		    if (lstold && !ochange)
-			plP_movphy(cx, cy);
-		    else
-			plP_draphy(cx, cy);
-
-		    lstold = 1;
-		    savehipoint(cx, cy);
-		}
-		ochange = 1;
-	    }
-	}
-
-    /* If point is high then draw plot to point and update view. */
-
-	if (pthi) {
-	    if (lstold && ptold)
-		plP_movphy(px, py);
-	    else
-		plP_draphy(px, py);
-
-	    savehipoint(px, py);
-	    lstold = ptold;
-	    ochange = 0;
-	}
-
-	pnewhi = newhi;
-
-	if (ptold)
-	    i = i + 1;
-	else
-	    j = j + 1;
-    }
-}
-
-/*--------------------------------------------------------------------------*\
- * void  plP_shfill()
- *
- * move and then fill a series of triangles using colours previously
- * assigned.
-\*--------------------------------------------------------------------------*/
-
-static void
-plP_shfill(PLINT x, PLINT y, PLINT j, PLINT move)
+plP_draw3d(PLINT x, PLINT y, PLINT j, PLINT move)
 {
     static count = 0;
     static vcount = 0;
     static short px[3], py[3];
-    if (move) {
-	count = 0;
-	vcount = 0;
-	px[count] = x;
-	py[count] = y;
-    } else {
-	count++;
-	vcount++;
-	if (vcount==3) vcount = 0;
-	px[vcount] = x;
-        py[vcount] = y;
-	if (count>1) {
-	    plcol1(ctmp[j]);
-	    plP_fill(px,py,3);
+
+    if (threedshading) {
+	if (move) {
+	    count = 0;
+	    vcount = 0;
+	    px[count] = x;
+	    py[count] = y;
+	} else {
+	    count++;
+	    vcount++;
+	    if (vcount==3) vcount = 0;
+	    px[vcount] = x;
+	    py[vcount] = y;
+	    if (count>1) {
+		plcol1(ctmp[j]);
+		plP_fill(px,py,3);
+	    }
 	}
+    } else {
+	if (move)
+	    plP_movphy(x, y);
+	else
+	    plP_draphy(x, y);
     }
 }
 
