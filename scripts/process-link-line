@@ -1,24 +1,33 @@
 #!/bin/sh
 #
-# Parse the input line to echo all the -L and -l options in it.
-# This is meant to be used to process the results of mkoctfile -p commands
-# to pick up all the link line information that libtool needs to know.
-#
+# This script is meant to filter the results of the appropriate
+# mkoctfile -p commands to render them into a form acceptable to
+# libtool.  That happens by default on most platforms (i.e, this
+# filter script effectively just passes on the stdin to stdout, but libtool
+# currently has trouble with the -framework option for Mac OS X linkers
+# so we escape it with -Wl, to pass it through to the linker.
 
 OUT=""
 read IN
-# Logic below only works if there is a trailing blank
+# Logic below only works if there is at least one trailing blank
 # (otherwise there is an infinite loop).
 IN="$IN "
+FRAMEWORK="false"
 # Loop over blank-separated options in IN
 while test -n "$IN"; do
     ADD=""
     case $IN in
-	-L*)
-	    ADD=`echo "$IN"|sed 's?^\(-L[^ ]*\)  *.*$?\1?'`
+	-framework*)
+	    ADD="-Wl,-framework"
+	    FRAMEWORK="true"
 	    ;;
-	-l*)
-	    ADD=`echo "$IN"|sed 's?^\(-l[^ ]*\)  *.*$?\1?'`
+	*)
+	    if test "$FRAMEWORK" = "true"; then
+	       FRAMEWORK="false"
+	       ADD=`echo "-Wl,$IN"|sed 's?^\([^ ]*\)  *.*$?\1?'`
+	    else
+	       ADD=`echo "$IN"|sed 's?^\([^ ]*\)  *.*$?\1?'`
+	    fi
 	    ;;
     esac
     OUT="$OUT $ADD"
