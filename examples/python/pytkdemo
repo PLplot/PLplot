@@ -44,7 +44,6 @@ class DemoApp(Frame):
 	s.f = Frame(s)
 	s.make_demo_bar( s.f )
 
-	#s.plf = Plframe(s, width="18c", height="18c" )
 	s.plf = PlXframe(s, width="17c", height="17c" )
 
 	s.f2 = Frame(s)
@@ -58,7 +57,6 @@ class DemoApp(Frame):
 
 	s.f.pack( side=LEFT, expand=1, fill=Y )
 	s.plf.pack( side=RIGHT )
-#	s.plf.pack( side=RIGHT, expand=1, fill=BOTH )
 
     def make_demo_bar( s, f ):
 	f.x01 = Button( f, text="Example 1", command=s.demo_x01 )
