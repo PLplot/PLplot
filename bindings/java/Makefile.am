@@ -46,11 +46,11 @@ javafiles = \
 
 javaclasses = \
 	plplot/core/config.class \
-	plplot/core/plplotjavacJNI.class \
 	plplot/core/PLStreamc.class \
+	plplot/core/plplotjavacJNI.class \
 	plplot/core/SWIGTYPE_p_p_char.class\
-	plplot/core/plplotjavacConstants.class \
-	plplot/core/plplotjavac.class 
+	plplot/core/plplotjavac.class \
+	plplot/core/plplotjavacConstants.class
 
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
@@ -95,7 +95,7 @@ if enable_java
 #plplotjavadir = $(DATA_DIR)/java/
 #plplotjava_DATA = plplot.jar
 
-ourexecjava_DATA = $(javaclasses) README.javaAPI
+ourexecjava_DATA = $(javafiles) $(javaclasses) README.javaAPI
 
 execjavawrapper_LTLIBRARIES = plplotjavac_wrap.la
 
