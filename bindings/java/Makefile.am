@@ -30,7 +30,7 @@ version = -version-info $(SOVERSION)
 
 sources = plplotjavac_wrap.c
 
-plplotjavac_wrap.c plplotjavac.java: plplotjavac.i plplotcapi.i
+$(MAINTAINERCLEANFILES): plplotjavac.i plplotcapi.i
 	$(SWIG) -java -package plplot.core -DPL_DOUBLE plplotjavac.i
 
 nodist_libplplotjava@LIB_TAG@_la_SOURCES  = $(sources)
