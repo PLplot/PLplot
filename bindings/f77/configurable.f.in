@@ -22,7 +22,7 @@ C      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
       implicit none
       include 'sfstubs.h'
       integer mode
-      integer maxargs, iargs, numargs, index, maxindex
+      integer maxargs, iargs, numargs, index, maxindex, iargc
       parameter(maxindex = maxlen/4)
       parameter (maxargs=20)
       character*(maxlen) arg
