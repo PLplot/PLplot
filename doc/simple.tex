@@ -31,11 +31,11 @@ elements:
 \begin{itemize}
 \item
 A box which defines the ranges of the variables, perhaps with axes
-and numeric labels along its edges, 
+and numeric labels along its edges.
 
 \item
 A set of points or lines within the box showing the functional
-dependence,
+dependence.
 
 \item
 A set of labels for the variables and a title for the graph.
@@ -46,17 +46,17 @@ the PLplot functions:
 
 \begin{enumerate}
 \item
-\code{plstar}, to specify the device you want to plot on, 
+\code{plinit}, to initialize PLplot.
 
 \item
 \code{plenv}, to define the range and scale of the graph, and
-draw labels, axes, etc.,\refill
+draw labels, axes, etc.\refill
 
 \item
 One or more calls to \code{plline} or \code{plpoin} to draw lines or
 points as needed.  Other more complex routines include
 \code{plbin} and \code{plhist} to draw histograms, \code{plerrx} and
-\code{plerry} to draw error-bars, \refill
+\code{plerry} to draw error-bars.\refill
 
 \item
 \code{plend}, to close the plot.
@@ -64,8 +64,7 @@ points as needed.  Other more complex routines include
 
 More than one graph can be drawn on a single set of axes by making
 repeated calls to the routines listed in item 3 above.  PLplot only needs
-to be initialized once (via \code{plstar} or a different startup routine),
-unless it is desired to switch output devices between pages.\refill
+to be initialized once unless plotting to multiple output devices.\refill
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -74,49 +73,24 @@ unless it is desired to switch output devices between pages.\refill
 \cindex{Starting up}
 \cindex{Initialization}
 
-Subroutine \code{plstar} selects a graphics device or opens a disk file
-to receive a plot for later display.  If \code{plstar} is called again
-during a program, the previously opened file will be closed.  When
-called, the user is prompted for a number representing the device on
-which the plot is to appear.  The syntax for \code{plstar} is:\refill
+Before any actual plotting calls are made, a graphics program must call
+\rou{plinit}, is the main initialization routine for PLplot.  It sets up
+all internal data structures necessary for plotting and initializes the
+output device driver.  If the output device has not already
+been specified when \code{plinit} is called, a list of valid output
+devices is given and the user is prompted for a choice.  Either the
+device number or a device keyword is accepted.\refill
 
-\c -------------------------------------------------------------------------
-\name{plstar(nx, ny);}
+There are several routines affecting the initialization that must be
+called \emph{before} \code{plinit}, if they are used.  The function
+\rou{plsdev} allows you to set the device explicitly.  The function
+\rou{plsdev} may be called to divide the output device plotting area
+into several subpages of equal size, each of which can be used
+separately.\refill
 
-\argu{\code{nx}, \code{ny} (PLINT, input)}{
-The number of plots to a page.  The page is divided into \code{nx} by
-\code{ny} subpages, with \code{nx} in the horizontal direction, and
-\code{ny} in the vertical direction.}
-\namend
-\c -------------------------------------------------------------------------
-
-Subpages are useful for placing several graphs on a page, but all subpages
-are constrained to be of the same size.  For greater flexibility, viewports
-can be used (\pxref{Viewports} for more info on viewports).\refill
-
-An alternate startup routine \code{plstart} behaves identically to 
-\code{plstar} except that the device name is input by a keyword argument
-(\pxref{Devices} for a list of output devices and their keywords).  This
-style of call is convenient if the user always outputs to the same device.
-If the requested device is not available, or if the input string is empty
-or begins with ``?'', the prompted startup of \code{plstar} is used.  The
-syntax for \code{plstart} is:\refill
-
-\c -------------------------------------------------------------------------
-\name{plstart(devname, nx, ny);}
-
-\argu{\code{devname} (char *, input)}{
-The device name, in the form of a keyword for that device.} 
-
-\argu{\code{nx}, \code{ny} (PLINT, input)}{
-The number of plots to a page, as in \code{plstar}.}
-\namend
-\c -------------------------------------------------------------------------
-
-The majority of calls to PLplot are made after initializing it by one of the
-routines listed above, however, a few must be made \emph{before} the
-initialization in order to correctly set up the subsequent plots (the
-description in the reference section identifies these setup calls).\refill
+One advances to the next page (or screen) via \rou{pladv}.  If subpages
+are used, this can be used to advance to the next subpage or to a
+particular subpage.\refill
 
 \c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -130,7 +104,7 @@ required.  The routine will also draw a box, axes, and numeric labels if
 requested.  The syntax for \code{plenv} is:\refill
 
 \c -------------------------------------------------------------------------
-\name{plenv(xmin, xmax, ymin, ymax, just, axis);}
+\name{plenv(xmin, xmax, ymin, ymax, just, axis)}
 
 \argu{\code{xmin, xmax} (PLFLT, input)}{
 The left and right limits for the horizontal axis.}
@@ -151,36 +125,36 @@ grid are drawn.
 
 \begin{itemize}
 \item
-\code{axis=-2}: No box or annotation.
+\code{axis = -2}: No box or annotation.
 
 \item
-\code{axis=-1}: Draw box only.
+\code{axis = -1}: Draw box only.
 
 \item
-\code{axis= 0}: Draw box, labelled with coordinate values around edge.
+\code{axis =  0}: Draw box, labelled with coordinate values around edge.
 
 \item
-\code{axis= 1}: In addition to box and labels, draw the two axes X=0 and
-Y=0. \refill
+\code{axis =  1}: In addition to box and labels, draw the two axes X = 0 and
+Y = 0. \refill
 
 \item
-\code{axis= 2}: Same as \code{axis=1}, but also draw a grid at the major
+\code{axis =  2}: Same as \code{axis = 1}, but also draw a grid at the major
 tick interval.\refill
 
 \item
-\code{axis=10}: Logarithmic X axis, linear Y axis.
+\code{axis = 10}: Logarithmic X axis, linear Y axis.
 
 \item
-\code{axis=11}: Logarithmic X axis, linear Y axis and draw line Y=0.
+\code{axis = 11}: Logarithmic X axis, linear Y axis and draw line Y = 0.
 
 \item
-\code{axis=20}: Linear X axis, logarithmic Y axis.
+\code{axis = 20}: Linear X axis, logarithmic Y axis.
 
 \item
-\code{axis=21}: Linear X axis, logarithmic Y axis and draw line X=0.
+\code{axis = 21}: Linear X axis, logarithmic Y axis and draw line X = 0.
 
 \item
-\code{axis=30}: Logarithmic X and Y axes.
+\code{axis = 30}: Logarithmic X and Y axes.
 \end{itemize}
 }
 \namend
@@ -211,7 +185,7 @@ removed and the label is centered in the appropriate field.  The syntax
 for \code{pllab} is:\refill
 
 \c -------------------------------------------------------------------------
-\name{pllab(xlbl, ylbl, toplbl);}
+\name{pllab(xlbl, ylbl, toplbl)}
 
 \argu{\code{xlbl} (char *, input)}{
 Pointer to string with label for the X-axis (bottom of graph).}
@@ -266,8 +240,8 @@ a Hershey font code number.  Example programs are provided which display
 each of the symbols available using these routines.\refill
 
 \c -------------------------------------------------------------------------
-\name{plpoin(n, x, y, code);
-plsym(n, x, y, code);}
+\name{plpoin(n, x, y, code) \\
+plsym(n, x, y, code)}
 
 \argu{\code{n} (PLINT, input)}{
 The number of points to plot.}
@@ -296,7 +270,7 @@ segments joining the \code{n} points in the input arrays.  For single
 line segments, \code{pljoin} is used to join two points.\refill
 
 \c -------------------------------------------------------------------------
-\name{plline(n, x, y);}
+\name{plline(n, x, y)}
 
 \argu{\code{n} (PLINT, input)}{
 The number of points.}
@@ -307,7 +281,7 @@ Pointers to arrays with coordinates of the \code{n} points.}
 \c -------------------------------------------------------------------------
 
 \c -------------------------------------------------------------------------
-\name{pljoin(x1, y1, x2, y2);}
+\name{pljoin(x1, y1, x2, y2)}
 
 \argu{\code{x1, y1} (PLFLT, input)}{
 Coordinates of the first point.}
@@ -334,7 +308,7 @@ becomes parallel to a line joining \code{(x, y)} to \code{(x+dx,
 y+dy)}.\refill
 
 \c -------------------------------------------------------------------------
-\name{plptex(x, y, dx, dy, just, text);}
+\name{plptex(x, y, dx, dy, just, text)}
 
 \argu{\code{x, y} (PLFLT, input)}{
 Coordinates of the reference point.}
@@ -348,8 +322,8 @@ written parallel to a line joining the points \code{(x, y)} to
 Determines justification of the string by specifying which point within
 the string is placed at the reference point \code{(x, y)}.  This
 parameter is a fraction of the distance along the string.  Thus if
-\code{just=0.0}, the reference point is at the left-hand edge of the
-string.  If \code{just=0.5}, it is at the center and if \code{just=1.0},
+\code{just = 0.0}, the reference point is at the left-hand edge of the
+string.  If \code{just = 0.5}, it is at the center and if \code{just = 1.0},
 it is at the right-hand edge.}
 
 \argu{\code{text} (char *, input)}{
@@ -368,7 +342,7 @@ width and pattern style.
 vertices which define the polygon.\refill
 
 \c -------------------------------------------------------------------------
-\name{plfill(n, x, y);}
+\name{plfill(n, x, y)}
 
 \argu{\code{n} (PLINT, input)}{
 The number of vertices.}
@@ -378,8 +352,10 @@ Pointers to arrays with coordinates of the \code{n} vertices.}
 \namend
 \c -------------------------------------------------------------------------
 
+\c %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \node Complex, , Fills, Drawing
-\subsection{More Complex Graphs (Histograms and Error Bars)}
+\subsection{More Complex Graphs}
 \cindex{Complex Graphs}
 
 Functions \rou{plbin} and \rou{plhist} are provided for drawing
@@ -403,6 +379,7 @@ mode.\refill
 
 If a fatal error is encountered during execution of a PLplot routine then
 \rou{plexit} is called.  This routine prints an error message, does resource
-recovery, calls \code{pl\_exit} and then exits.  The default
-\code{pl\_exit} routine does nothing, but the user may wish to supply
-his/her own version of \code{pl\_exit} (for C programs only).\refill
+recovery, and then exits.  The user may specify an error handler via
+\rou{plsexit} that gets called before anything else is done, allowing
+either the user to abort the error termination, or clean up
+user-specific data structures before exit.\refill
