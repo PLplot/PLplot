@@ -2370,6 +2370,79 @@ static PyObject *pl_start(PyObject *self, PyObject *args)
     return Py_None;
 }
 
+static char doc_plstripa[]="Add a point to a stripchart";
+
+static PyObject *pl_stripa(PyObject *self, PyObject *args)
+{
+    PLINT id, p;
+    PLFLT x, y;
+    TRY (PyArg_ParseTuple(args, PL_ARGS("iidd", "iiff"), &id, &p, &x, &y));
+    plstripa(id, p, x, y);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static char doc_plstripc[]="Create a 4-pen stripchart";
+
+static PyObject *pl_stripc(PyObject *self, PyObject *args)
+{
+
+    PyObject *collineop, *stylineop, *leglineop;
+    PLINT id;
+    char *xspec, *yspec;
+    PLFLT xmin, xmax, xjump, ymin, ymax, xlpos, ylpos;
+    PLINT y_ascl, acc, colbox,  collab;
+    PLINT *colline, *styline;
+    char **legline;
+    char *labx, *laby, *labtop ;
+    int ncolline, nstyline, nlegline;
+   
+    TRY (PyArg_ParseTuple(args, 
+			  PL_ARGS("ssdddddddiiiiOOOsss", "ssfffffffiiiiOOOsss"),
+			  &xspec, &yspec, 
+			  &xmin, &xmax, &xjump,
+			  &ymin, &ymax, &xlpos, &ylpos,
+			  &y_ascl, &acc, &colbox, &collab,
+			  &collineop, &stylineop, &leglineop, 
+			  &labx, &laby, &labtop));
+
+    TRY (pl_PyArray_AsIntArray(&collineop, &colline, &ncolline));
+    TRY (pl_PyArray_AsIntArray(&stylineop, &styline, &nstyline));
+    TRY (pl_PyList_AsStringArray(leglineop, &legline, &nlegline));
+    if (ncolline != 4 || nstyline !=4 || nlegline !=4) {
+       PyErr_SetString( PyExc_RuntimeError,
+	 "colline, nstyline, and nlegline must each have 4 components" );
+       Py_DECREF(collineop);
+       Py_DECREF(stylineop);
+       Py_DECREF(leglineop);
+       return NULL;
+    }
+   
+    plstripc(&id, xspec, yspec,
+	     xmin, xmax, xjump, ymin, ymax,
+	     xlpos, ylpos,
+	     y_ascl, acc,
+	     colbox, collab,
+	     colline, styline, legline, 
+	     labx, laby, labtop); 
+   
+    Py_DECREF(collineop);
+    Py_DECREF(stylineop);
+    Py_DECREF(leglineop);
+    return Py_BuildValue("i", id);
+}
+
+static char doc_plstripd[]="Deletes and releases memory used by a stripchart";
+
+static PyObject *pl_stripd(PyObject *self, PyObject *args)
+{
+    PLINT id;
+    TRY (PyArg_ParseTuple(args, "i", &id));
+    plstripd(id);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 static char doc_plstyl[]="Set up a new line style";
 
 static PyObject * pl_styl(PyObject *self, PyObject *args)
@@ -2736,6 +2809,9 @@ static PyMethodDef pl_methods[] = {
     {"plssym",		pl_ssym, METH_VARARGS, doc_plssym},
     {"plstar",			pl_star, METH_VARARGS, doc_plstar},
     {"plstart",		pl_start, METH_VARARGS, doc_plstart},
+    {"plstripa",	pl_stripa, METH_VARARGS, doc_plstripa},
+    {"plstripc",	pl_stripc, METH_VARARGS, doc_plstripc},
+    {"plstripd",	pl_stripd, METH_VARARGS, doc_plstripd},
     {"plstyl",			pl_styl, METH_VARARGS, doc_plstyl},
     {"plsvpa",		pl_svpa, METH_VARARGS, doc_plsvpa},
     {"plsxax",		pl_sxax, METH_VARARGS, doc_plsxax},
