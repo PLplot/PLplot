@@ -1,0 +1,181 @@
+plplot (4.99j-11) frozen unstable; urgency=low
+
+  * Added --disable-linuxvga to configure options fixing an important bug
+    report (closes: #65216).
+  * The lib*tk files are moved to the right package now (plplot-tcl).
+    This fixes the unnecessary dependency of the bare library package
+    (plplot) on the TCl/Tk libraries.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Wed,  7 Jun 2000 18:00:18 +0200
+
+plplot (4.99j-10) unstable; urgency=low
+
+  * debian/rules: 
+    - Using option --without-f2c with ./configure.  This should avoid the
+      build problems when the package f2c (which provides /usr/bin/fc) is 
+      installed (closes: #30944). 
+    - Erase empty dir usr/share/doc/examples after dh_movefiles.  This
+      prevents the plplot from having junk in it.
+  * debian/control: Excluded problematic package python-plplot.  Created
+    file debian/control-pyhton for easy reversal in the future (closes:
+    #33150).
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon,  8 Nov 1999 12:17:27 +0100
+
+plplot (4.99j-9) unstable; urgency=low
+
+  * Added "#define PLPLOT_DOUBLE" to plcdemos.h.  This will allow
+    compilation of the examples, due to the lacking of `PLPLOT_DOUBLE'
+    definition (Closes: #49120, #36993).  Also added a note in
+    plplot-dev.README.Debian indicating how to compile correctly.
+  * FHS compliant.
+  * Upgraded to Standards-Version 3.0.1 (requires debhelper >= 2.0.68).
+  * debian/copyright: Right location for the LGPL.
+  * cf/sysconf.in: Added `SHLIB_F77FLAGS="-fpic -fPIC"'.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Sat,  6 Nov 1999 21:01:13 +0100
+
+plplot (4.99j-8) frozen unstable; urgency=low
+
+  * Recompiled with new release of libc6 (cf discussion in debian-devel
+    starting at
+    http://www.debian.org/Lists-Archives/debian-devel-9812/msg00998.html). 
+  * Changed LDC in cf/sysconf.in to F77 (link with gcc complains because
+    it is lacking symbols from g77).
+  
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Fri, 11 Dec 1998 22:20:08 +0100
+
+plplot (4.99j-7) frozen unstable; urgency=low, closes=29694 29704
+
+  * Set Conflicts relationship because files were moved around in the
+    latest release (Fixes Bug#29694, reported by  Francesco Potorti`
+    <F.Potorti@cnuce.cnr.it>).
+  * Rebuilt to fix bogus dependency on tkstep8.0 (closes Bug#29704
+    reported by Matthias Klose <doko@cs.tu-berlin.de>)
+  
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Thu, 19 Nov 1998 16:33:24 +0100
+
+plplot (4.99j-6) frozen unstable; urgency=low, closes=28534
+
+  * Uploading to frozen and unstable.  (The previous release, 4.99j-5, was
+    rejected and I never reuploaded it.) 
+  * Revamped debian/rules with use of variables for the debian dirs.
+  * Corrected typo in plplot-dev.README (closes Bug#28534).
+  * No compression of executable exemples in package plplot-doc.
+  * Fixed paths only for tk* scripts under /usr/doc/plplot/examples/tk.
+  * Fixed permission for plcolor.tcl and tkdemos.tcl.
+  * Fixed path for script x16.py (in plplot-doc).
+  * Moved library files libMatrix and libplplotdtk from plplot-tcl to
+    plplot. 
+  * Moved info file from the plplot-doc package to the base package
+    plplot: this is the only documentation availalbe for the PLplot API.
+  * Fixed typo ("\*") in debhelper compress files.
+  * Fixed the problem related to the naming of shared libraries.
+  * Improved "Description:" fields in debian/control: 
+    - Added "a scientific library" to first line (as suggested by
+      Christopher J. Fearnley <cjf@I21.com>).
+    - Included URL of PLplot homepage for each package.
+  * dh_shlibdeps does not act on package python-plplot.
+  * postinst and postrm test now for its argument.
+  * Rewrote README.Debian files.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Fri, 13 Nov 1998 03:02:34 +0100
+
+plplot (4.99j-5) unstable; urgency=low
+
+  * Build with patch from Joao Cardoso <jcardoso@inescn.pt> for Octave
+    interface.  The patch file is included in the debian/ directory. 
+  * The orig.tar.gz and the diff.gz files were absent from 4.99j-4
+    upload.  This is corrected now (bug reported by Paul Slootman
+    <paul@wau.mis.ah.nl>).
+  * Corrected sed expression for fixing the #! path in Python scripts
+  * Corrected bug in debian/compress file which was causing compression of
+    executable scripts under usr/doc/plplot/examples.
+  * Created plplot-tcl.postinst with a call to ldconfig, as plplot-tcl
+    includes shared libraries.
+  * Links to the shared library are now Policy compliant, i.e. their names 
+    have only one number after .so.
+  * debain/shlibs.local is renamed to debian/shlibs, and
+    debian/plplot-tcl.shlibs is created.
+  * The scripts installed under usr/lib/tcl8.0/plplot/ should not be
+    executable.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Wed, 14 Oct 1998 16:42:08 +0200
+
+plplot (4.99j-4) unstable; urgency=low
+
+  * debian/fix-tk-path.pl script is chmod'd in debian/rules files: now
+    fixes really first part of Bug#26935.  Fix suggested by Paul Slootman
+    <paul@wau.mis.ah.nl>.
+  * debian/control: plplot-doc architecture is now "all" and is compiled
+    in the binary-indep section of debian/rules (suggested by
+    Paul Slootman <paul@wau.mis.ah.nl>).  In order to do that, big changes 
+    in debian/rules were done.  Hope I did not screw things up.
+  * debian/rules: Corrected hideous bug in chmod mode switches: "chmod -x"
+    should be "chmod +x".
+  * Corrected some typos in debian/control, debian/copyright.
+  * cf/pkg_tcl.in: put number version in libMatrix.so (changed
+    README.Debian to document the fix). 
+  * Moved libMatrix.so and libMatrix.a to plplot-dev package.
+  * Moved libMatrix.so.* and libplplotdtk.so.* to plplot-tcl package, and
+    made plplot-dev depend on plplot-tcl (changed debian/control file to
+    reflect the changes).
+  * I just realized that the upstream Python support works only with
+    python-1.4.  I will fix this in the next release.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Tue, 13 Oct 1998 20:00:06 +0200
+
+plplot (4.99j-3) unstable; urgency=low
+
+  * debian/rules: fixing Python path for python scripts is done now with a 
+    sed command (get rid of debian/fix-python-path.pl).  Suggested by
+    Matthias Klose <doko@cs.tu-berlin.de>.
+  * Change in upstream file utils/pltek.c: gcc 2.7.2.3 deprecates the use
+    of gets  
+  * Corrected file debian/plplot-dev.files, in order to have the files
+    libMatrix.* included in the right package (plplot).
+  * Make plplot conflict with plplot-dev for versions previous to this
+    one, because of the move of libMatrix.*.
+  * Changed mode of debian/fix-tk-path.pl script to executable (fixes
+    first part of Bug#26935).
+  * Building is now done entirely under debian/tmp (fixes second part of
+    Bug#26935).
+  * Buildning now `with double' instead of `with float', as required for
+    the PLplot Octave interface.  Also, all instances of `libplotf*' were
+    changed to `libplotd*' (in debian/rules and in debian/*.files).
+  * /usr/lib/libplplotdtk.so.* files moved to the plplot package (they were
+    in plplot-tcl): this fixes the problem of installing the plplot-dev
+    package with a dangling symlink. 
+  * Removed file debian/dirs, which had no function at all.
+  * Tcl/Tk and Python scripts under /usr/doc/plplot/examples are now
+    executable.
+  * fix-tk-path.pl: corrected "/example/" -> "/examples/"
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon, 12 Oct 1998 15:20:26 +0200
+
+plplot (4.99j-2) unstable; urgency=low
+
+  * Using debhelper 0.93 : README.Debian files are installed automatically
+    by dh_installdocs
+  * Fixed some problems found by Matthias Klose <doko@cs.tu-berlin.de>.
+    Danke Matthias!
+  * Corrected typo in fix-pytho-path.pl, that made all python examples
+    have size equal to zero.
+  * examples/Makefile has now correct references to /usr directories
+  * Scripts under /usr/doc/plplot/examples are no more compressed
+  * Tk scripts under /usr/doc/examples/tk have now the right path after
+    `#!'
+  * Added dependency python-tk to python-plplot
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Mon, 22 Jun 1998 21:53:26 +0200
+
+plplot (4.99j-1) experimental; urgency=low
+
+  * Initial Release.
+
+ -- Rafael Laboissiere <rafael@icp.inpg.fr>  Sat, 13 Jun 1998 00:50:50 +0200
+
+Local variables:
+mode: debian-changelog
+add-log-mailing-address: "rafael@icp.inpg.fr"
+End:

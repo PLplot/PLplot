@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1996/02/27 23:06:35  shouman
+ * Revision 1.36.2.1  2001/01/22 09:05:31  rlaboiss
+ * Debian stuff corresponding to package version 4.99j-11
+ *
+ * Revision 1.36  1996/02/27  23:06:35  shouman
  * Fixed plscmap0n() and plscmap1n(); they were ignoring their arguments
  * when their colormaps were already initialized.
  *
@@ -83,7 +86,7 @@
 	don't know where it should go, put it here.  
 */
 
-#define DEBUG
+int readlink (char *path, char *buf, int bufsiz); // jc:
 
 #include "plplotP.h"
 

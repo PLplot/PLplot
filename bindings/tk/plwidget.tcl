@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.38  1996/02/23 16:49:29  furnish
+# Revision 1.38.2.1  2001/01/22 09:05:11  rlaboiss
+# Debian stuff corresponding to package version 4.99j-11
+#
+# Revision 1.38  1996/02/23  16:49:29  furnish
 # Some little hacks to make the scroll bars look better during zooms.
 #
 # Revision 1.37  1995/08/22  16:17:53  mjl
@@ -111,6 +114,8 @@
 
 proc plw_create {w {client_id {}}} {
     plxframe $w $client_id
+# jc: puts name into window decoration frame
+    wm title . [string trim $w .]
 }
 
 #----------------------------------------------------------------------------
@@ -341,8 +346,35 @@ proc plw_create_pmenu {w pmbut} {
     plw_create_pmenu_zoom    $w
     plw_create_pmenu_page    $w
     plw_create_pmenu_options $w
+    plw_create_pmenu_help    $w
+    plw_create_pmenu_exit    $w
 
     return $pmbut
+}
+
+#----------------------------------------------------------------------------
+# plw_create_pmenu_exit
+#----------------------------------------------------------------------------
+
+proc plw_create_pmenu_exit {w} {
+
+    global pmenu
+
+    $pmenu($w) add command -label "Exit" \
+	-command exit
+	
+}
+
+#----------------------------------------------------------------------------
+# plw_create_pmenu_help
+#----------------------------------------------------------------------------
+
+proc plw_create_pmenu_help {w} {
+
+    global pmenu
+
+    $pmenu($w) add command -label "Help" \
+	-command "help_keys"
 }
 
 #----------------------------------------------------------------------------
@@ -644,6 +676,8 @@ proc plw_key_filter {w keycode state x y keyname ascii} {
     global user_key_filter
 
     global key_zoom_select
+    global key_zoom_back
+    global key_zoom_forward    
     global key_zoom_reset
     global key_print
     global key_save_again
@@ -664,8 +698,8 @@ proc plw_key_filter {w keycode state x y keyname ascii} {
 
     switch $keyname \
 	$key_zoom_select	"plw_zoom_select $w" \
-	"b"			"plw_zoom_back $w" \
-	"f"			"plw_zoom_forward $w" \
+	$key_zoom_back		"plw_zoom_back $w" \
+	$key_zoom_forward	"plw_zoom_forward $w" \
 	$key_zoom_reset		"plw_zoom_reset $w" \
 	$key_print		"plw_print $w" \
 	$key_save_again		"plw_save_again $w" \

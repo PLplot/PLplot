@@ -1,0 +1,9 @@
+Package: python-plplot
+Architecture: any
+Depends: plplot, python-base, python-tk
+Description: Python support for PLplot, a plotting library
+ This package contains the library plmodule.so for gluing the PLplot
+ scientific plotting library into Python applications.
+ .
+ See http://emma.la.asu.edu/plplot for more information on PLplot.
+

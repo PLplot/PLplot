@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.70  1998/01/06 23:44:33  furnish
+ * Revision 1.70.2.1  2001/01/22 09:05:31  rlaboiss
+ * Debian stuff corresponding to package version 4.99j-11
+ *
+ * Revision 1.70  1998/01/06  23:44:33  furnish
  * Fix some stupid little comment syntax nit to shut up SGI cc.
  *
  * Revision 1.69  1996/10/31  05:08:04  furnish
@@ -933,6 +936,10 @@ InitMain(PLStream *pls)
 
 /* Window title */
 
+    if (plsc->plwindow){    // jc:
+      sprintf(header, "%s", plsc->plwindow);
+    }
+    else
     sprintf(header, "PLplot");
 
 /* Window creation */

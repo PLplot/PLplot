@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.22  1995/06/13 21:28:23  mjl
+# Revision 1.22.4.1  2001/01/22 09:05:11  rlaboiss
+# Debian stuff corresponding to package version 4.99j-11
+#
+# Revision 1.22  1995/06/13  21:28:23  mjl
 # Miscellaneous tk4 fixes.
 #
 # Revision 1.21  1995/05/06  17:18:37  mjl
@@ -54,7 +57,9 @@ proc plserver_init {} {
     plstdwin .
 
 # Create the window for the menu bar
+# jc: top menu, with file and help submenus removed to save ploting space
 
+if { 0 } {
     frame .menu -relief raised -borderwidth 1
     pack append . .menu {top fillx}
 
@@ -132,6 +137,9 @@ proc plserver_init {} {
 	-underline 3
 
     pack append .menu .menu.help {right}
+}
+
+    bind . <Control-x> exit
 
 # Set up for keyboard-based menu traversal
 
@@ -170,7 +178,10 @@ proc client_cmd {msg} {
     if { $dp } then {
 	after 1 catch [list "dp_RDO [list $client] $msg"]
     } else {
-	after 1 catch [list "send [list $client] after 1 $msg"]
+# jc:	after 1 catch [list "send [list $client] after 1 $msg"]
+# try to avoid the server hanging; related with zoom/buttonpress problem
+# Side effects ??
+	after 1 catch [list "send -async [list $client] $msg"]
     }
 }
 

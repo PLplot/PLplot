@@ -19,8 +19,8 @@ CXX_INSTALL	= install_cxx
 
 install_cxx:
 	-cd $(top_srcdir)/bindings/c++; cp plstream.h $(INCLUDE_DIR)
-	-cp libPLcxx* $(LIB_DIR)
-	if test -r libPLcxx.a; then $(RANLIB) $(LIB_DIR)/libPLcxx.a; fi
+	-cp libPLcxx* $(LIB_DIR)/..
+	if test -r libPLcxx.a; then $(RANLIB) $(LIB_DIR)/../libPLcxx.a; fi
 	-if test ! -d $(DEMOS_DIR)/c++; then mkdir -p $(DEMOS_DIR)/c++; fi
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c++
 	-cd $(top_srcdir)/examples/c++; cp * $(DEMOS_DIR)/c++

@@ -26,7 +26,7 @@ PYTHON_INC_DIR	= @PYTHON_INC_DIR@
 PYTHON_MOD_DIR	= @PYTHON_MOD_DIR@
 PYTHON_MACH_DIR	= @PYTHON_MACH_DIR@
 PYTHON_CFG_DIR	= @PYTHON_CFG_DIR@
-PYTHON_LIBS	= -L$(PYTHON_CFG_DIR) -lModules -lObjects -lParser -lPython
+PYTHON_LIBS	= -L$(PYTHON_CFG_DIR) -lpython1.5
 PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
@@ -40,11 +40,11 @@ $(PYTHON_EXE): plmodule$O
 	@echo "Building Python module."
 	@echo " "
 	$(LDSHARED) $(LDC_FLAGS) plmodule$O $(PYTHON_LIBS) $(PLLIB_LDC) \
-		-o $(PYTHON_EXE) $(LDC_LIBS)
+		-o $(PYTHON_EXE) -lc $(LDC_LIBS)
 
 install_python:
-	 $(LDSHARED) $(LDC_FLAGS) plmodule$O $(PYTHON_LIBS) $(LIB_INSTALL) \
-		-o $(PYTHON_EXE) $(LDC_LIBS)
+	$(LDSHARED) $(LDC_FLAGS) plmodule$O $(PYTHON_LIBS) $(LIB_INSTALL) \
+		-o $(PYTHON_EXE) -lc $(LDC_LIBS)
 	-if test ! -d $(PYTHON_DIR); then mkdir -p $(PYTHON_DIR); fi
 	-cp $(PYTHON_EXE) $(PYTHON_DIR)
 	-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1995/06/01 21:40:04  mjl
+ * Revision 1.3.2.1  2001/01/22 09:05:31  rlaboiss
+ * Debian stuff corresponding to package version 4.99j-11
+ *
+ * Revision 1.3  1995/06/01  21:40:04  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
  *
@@ -20,6 +23,10 @@
 
 #ifndef __PLCDEMOS_H__
 #define __PLCDEMOS_H__
+
+/* Next line added by Rafael Laboissier <rafael@icp.inpg.fr>
+   on Sat Nov  6 17:35:14 CET 1999  */
+#define PL_DOUBLE
 
 #include "plplot.h"
 #include <math.h>

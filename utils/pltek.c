@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.8  1994/09/16 03:45:46  mjl
+ * Revision 1.8.6.1  2001/01/22 09:05:32  rlaboiss
+ * Debian stuff corresponding to package version 4.99j-11
+ *
+ * Revision 1.8  1994/09/16  03:45:46  mjl
  * A small patch to remove a "==" assignment introduced last-time and removed
  * an unused variable picked-up by gcc -Wall.  Contributed by Mark Olesen.
  *
@@ -110,7 +113,11 @@ main(int argc, char *argv[])
 	oldpage = ipage;
 	printf("Page %d/%d> ", ipage, npage);
 
-	gets(ibuf);
+	/* Changed by Rafael Laboissiere <rafael@icp.inpg.fr> 
+	   on Fri Oct  9 17:13:59 CEST 1998
+	   gcc 2.7.2.3 deprecates the use of gets */
+        /* gets(ibuf); */
+	fgets(ibuf,128,stdin);
 	c = ibuf[0];
 
 /* User input a page number or a return */

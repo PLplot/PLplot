@@ -26,7 +26,11 @@ MAT_OBJS	= tclMatrix$O matrixInit$O
 MAT_OBJS_SO	=
 MAT_OBJS_SA	=
 MATLIB_AR	= libMatrix.a
-MATLIB_SO	= libMatrix$(SO)
+# Changed by Rafael Laboissiere
+# on Tue Oct 13 13:42:54 CEST 1998
+# Numbering the so file for correct library dependency in the Debian package
+# MATLIB_SO	= libMatrix$(SO)
+MATLIB_SO	= libMatrix$(SO).$(SOVERSION)
 MAT_INSTALL	= install_mat
 MAT_LINK	= -lMatrix
 
@@ -35,7 +39,7 @@ MAT_BUILD	= $(MATLIBS)
 tclAPI.c: tclgen.h tclgen_s.h tclgen.c
 
 tclgen.h tclgen_s.h tclgen.c : plapi.tpl
-	pltclgen
+	./pltclgen
 
 #tclIndex:
 #	mktclidx *.tcl
@@ -58,6 +62,6 @@ install_tcl:
 
 install_mat:
 	cp tclMatrix.h $(INCLUDE_DIR)
-	cp libMatrix* $(LIB_DIR)
-	if test -r libMatrix.a; then $(RANLIB) $(LIB_DIR)/libMatrix.a; fi
+	cp libMatrix* $(LIB_DIR)/..
+	if test -r libMatrix.a; then $(RANLIB) $(LIB_DIR)/../libMatrix.a; fi
 

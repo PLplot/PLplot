@@ -1,0 +1,165 @@
+#!/usr/bin/make -f
+# -*- Makefile -*-
+# Made with the aid of dh_make, by Craig Small
+# Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
+# This version is for a hypothetical package that builds an
+# architecture-dependant package, as well as an architecture-independant
+# package.
+# Modified by Rafael Laboissere <rafael@icp.inpg.fr> on 1998/06/12
+# for the plplot package
+
+# Uncomment this to turn on verbose mode. 
+#export DH_VERBOSE=1
+
+major_version=$(shell expr `pwd` : '.*-\([0-9]*\)\.[0-9]*')
+minor_version=$(shell expr `pwd` : '.*-[0-9]*\.\([0-9]*\)')
+version=$(major_version).$(minor_version)
+
+debbase		:= $(shell pwd)/debian
+debtmp		:= $(debbase)/tmp
+debdoc		:= $(debtmp)/usr/share/doc
+cfflags		:= --with-double --without-f2c
+
+build: build-stamp
+build-stamp:
+	dh_testdir
+	( cd cf ; \
+	  autoconf ; \
+	  mv configure .. )
+# Build first bare libraries (no Tcl/Tk) and save them
+	./configure --prefix=/usr --enable-tcl=no --enable-tk=no \
+	                          --enable-cxx=no --enable-python=no \
+                                  --disable-linuxvga \
+                                  $(cfflags)
+	make
+	cp tmp/libplplotdX.{a,so}* debian
+# Now build the normal ones
+	make clean
+	./configure --prefix=/usr --disable-linuxvga $(cfflags)
+# Save the generated Makefile, as it contains the right references to /usr
+	cp tmp/Makefile $(debbase)/Makefile.save
+	make
+	cp tmp/libplplotdtk.{a,so}* debian
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+	-$(MAKE) clean
+	rm -f configure confdefs.h config.log \
+           $(debbase)/libplplot* $(debbase)/Makefile.save
+	dh_clean
+
+install: install-stamp
+install-stamp: build-stamp
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+# The `usr/lib/python1.5' argument to dh_installdirs is necessary
+# because the python installation procedure tests for its existence 
+	dh_installdirs -a -i usr/lib/python1.5
+
+	./configure --prefix=$(debtmp)/usr $(cfflags)
+	cp tmp/libMatrix.so.$(version) $(debtmp)/usr/lib
+	( cd $(debtmp)/usr/lib ; \
+	  ln -fs libMatrix.so.$(version) libMatrix.so.$(major_version) ; \
+	  ln -fs libMatrix.so.$(major_version) libMatrix.so )
+	make install
+
+# FHS compliance
+	mv $(debtmp)/usr/doc $(debtmp)/usr/info $(debtmp)/usr/share
+
+# Replaces the right Makefile in examples directory
+	mv $(debbase)/Makefile.save $(debdoc)/plplot/examples/Makefile
+# Put the right Debian python command in python scripts
+# Suggested by Mathias Klose <doko@cs.tu-berlin.de>
+# Special fix for x16.py (Grmpf...)
+	( cd $(debdoc)/plplot/examples/python ; \
+	  for i in * ; do \
+	    cp $$i TMP ; \
+	    sed -e 's,^#!.*python.*,#! /usr/bin/python,' < TMP > $$i ; \
+	    chmod +x $$i ; \
+	  done ; \
+	  cp x16.py TMP ; \
+          cat $(debbase)/python-exec-header TMP > x16.py ; \
+	  rm TMP )
+# Idem for the Tk scripts
+# Has to make scripts executable, so that permissions are right in the
+# source package (suggested by Paul Slootman <paul@wau.mis.ah.nl> )
+	chmod +x $(debbase)/fix-tk-path.pl
+	( for i in $(debdoc)/plplot/examples/tk/tk* ; do \
+	    cp $$i TMP ; \
+	    $(debbase)/fix-tk-path.pl < TMP > $$i ; \
+	    chmod +x $$i ; \
+	  done ; \
+	  rm TMP )
+# Fix symbolic links in examples directory
+	( cd $(debdoc)/plplot/examples ; \
+	  for i in c c++ f77 python tcl tk ; do \
+	    rm -f $$i/Makefile ; \
+	    ln -fs ../Makefile $$i/Makefile ; \
+	  done )
+# Fix permission for plcolor.tcl and tkdemos.tcl
+	chmod -x $(debtmp)/usr/lib/tcl8.0/plplot/plcolor.tcl \
+	    $(debdoc)/plplot/examples/tk/tkdemos.tcl
+# Move library files and create links
+	mv $(debbase)/libplplot*.{a,so.$(version).0} $(debtmp)/usr/lib
+	( cd $(debtmp)/usr/lib ; \
+	  for lib in libplplotdX libplplotdtk ; do \
+	    rm -f $$lib.so.$(version) ; \
+            ln -fs $$lib.so.$(version).0 $$lib.so.$(major_version) ; \
+	    ln -fs $$lib.so.$(major_version) $$lib.so ; \
+	  done )
+
+	( cd $(debdoc)/plplot ; \
+	  mv CHANGES changelog ; \
+	  rm -f Copyright COPYING.LIB mklinks README.local )
+
+	dh_installmanpages --package=plplot
+	dh_installinfo doc/plplot.info.gz
+
+	touch install-stamp	
+
+# Build architecture-independent files here.
+binary-indep: build install
+	dh_testversion ge 2.0.68
+	dh_testdir -i
+	dh_testroot -i
+	dh_installdocs -i
+	dh_installchangelogs -i 
+	dh_movefiles -i
+	dh_compress -i
+	dh_fixperms -i
+	dh_suidregister -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
+
+binary-arch: build install
+	dh_testversion ge 2.0.68
+	dh_testdir -a
+	dh_testroot -a
+	dh_installdocs -a
+	dh_installchangelogs -a 
+	dh_movefiles -a
+# Why do not dh_movefiles remove empty dirs? Grumpf...
+	( cd $(debtmp) ; rm -rf usr/lib/python1.5 usr/lib/tcl8.0 \
+           usr/share/doc/examples )
+	dh_strip -a
+	dh_compress -a
+	dh_fixperms -a
+	dh_suidregister -a
+	dh_installdeb -a
+	dh_shlibdeps -a --no-package=python-plplot
+	dh_gencontrol -a
+	dh_makeshlibs -a
+	dh_md5sums -a
+	dh_builddeb -a --no-package=python-plplot
+
+source diff:                                                                  
+	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1995/06/01 21:40:15  mjl
+ * Revision 1.9.2.1  2001/01/22 09:05:31  rlaboiss
+ * Debian stuff corresponding to package version 4.99j-11
+ *
+ * Revision 1.9  1995/06/01  21:40:15  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
  *
@@ -121,8 +124,8 @@ main(int argc, char *argv[])
 
 void test_poly(int k)
 {
-    float *x, *y, *z;
-    float theta, phi;
+    PLFLT *x, *y, *z;
+    PLFLT theta, phi;
     int i, j;
     float pi, two_pi;
     int draw[][4] = { { 1, 1, 1, 1 },

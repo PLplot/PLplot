@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.59  1998/01/06 23:45:12  furnish
+ * Revision 1.59.2.1  2001/01/22 09:05:11  rlaboiss
+ * Debian stuff corresponding to package version 4.99j-11
+ *
+ * Revision 1.59  1998/01/06  23:45:12  furnish
  * Would you believe JO changed his mind /again/???
  *
  * Revision 1.58  1996/10/11  23:12:28  furnish
@@ -317,7 +320,8 @@ static Tk_ConfigSpec configSpecs[] = {
 	TK_CONFIG_COLOR_ONLY},
 	*/
 #ifndef	MAC_TCL	    
-    {TK_CONFIG_COLOR, "-plbg", (char *) NULL, (char *) NULL,
+// jc:    {TK_CONFIG_COLOR, "-plbg", (char *) NULL, (char *) NULL,
+    {TK_CONFIG_COLOR, "-plbg", "plbackground", "Plbackground",
 	DEF_PLFRAME_BG_COLOR, Tk_Offset(PlFrame, bgColor),
 	TK_CONFIG_COLOR_ONLY},
 #endif

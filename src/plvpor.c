@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.10  1995/03/17 00:15:33  mjl
+ * Revision 1.10.2.1  2001/01/22 09:05:31  rlaboiss
+ * Debian stuff corresponding to package version 4.99j-11
+ *
+ * Revision 1.10  1995/03/17  00:15:33  mjl
  * Eliminated unnecessary accessor variables and other cleaning up.
  *
  * Revision 1.9  1994/06/30  18:22:23  mjl
@@ -111,15 +114,27 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     case 11:
 	plbox("bclnst", (PLFLT) 0.0, 0, "abcnstv", (PLFLT) 0.0, 0);
 	break;
+    case 12:
+	plbox("bclgnst", (PLFLT) 0.0, 0, "abcgnstv", (PLFLT) 0.0, 0);
+	break;
     case 20:
 	plbox("bcnst", (PLFLT) 0.0, 0, "bclnstv", (PLFLT) 0.0, 0);
 	break;
     case 21:
 	plbox("bcnst", (PLFLT) 0.0, 0, "abclnstv", (PLFLT) 0.0, 0);
 	break;
+    case 22:
+	plbox("bcngst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
+	break;	
     case 30:
 	plbox("bclnst", (PLFLT) 0.0, 0, "bclnstv", (PLFLT) 0.0, 0);
 	break;
+    case 31:
+	plbox("bclnst", (PLFLT) 0.0, 0, "abclnstv", (PLFLT) 0.0, 0);
+	break;
+    case 32:
+	plbox("bclngst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
+	break;	
     default:
 	plwarn("plenv: Invalid axis argument");
     }

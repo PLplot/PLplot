@@ -34,9 +34,17 @@ SOVERSION	= @SOVERSION@
 LIBVERSION	:= $(shell ./version)
 
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
-PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE).so.$(SOVERSION)
-SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
-SONAME		= $(PLLIB_BASE).so.$(SOVERSION)
+# Modified by Rafael Laboissiere <rafael@icp.inpg.fr> on 1998/06/13
+# avoid "./" prepended to *.so name
+# PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE).so.$(SOVERSION)
+PLLIB_SO	= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+# Modified by Rafael Laboissiere <rafael@icp.inpg.fr> 
+# on Thu Nov 12 18:11:45 CET 1998
+# For the Debian plplot pakcage
+# should include $(LIB_TAG) in SONAME and have only $(MAJOR_VERSION) at end
+# SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+# SONAME		= $(PLLIB_BASE).so.$(SOVERSION)
+SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
 
 
 PLLIBS = $(PLLIB_AR) $(PLLIB_SO)
@@ -80,9 +88,12 @@ $(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
 	cd shared; \
 	$(SHLIB_BUILD) ../$(PLLIB_SO).$(LIBVERSION) \
 		-Wl,-soname -Wl,$(SONAME) \
-		$(LIB_OBJS) stupidtk.o -L.. -lMatrix $(LDC_LIBS)
+		$(LIB_OBJS) stupidtk.o $(LDC_LIBS)
 	ln -sf $(PLLIB_SO).$(LIBVERSION) $(SONAME)
-	ln -sf $(SONAME) $(PLLIB_BASE).so
+#       Modified by Rafael Laboissiere <rafael@icp.inpg.fr>
+#       on Thu Nov 12 20:07:46 CET 1998
+#	ln -sf $(SONAME) $(PLLIB_BASE).so
+	ln -sf $(SONAME) $(PLLIB_BASE)$(LIB_TAG).so
 	echo $(LIBVERSION) > version.built
 	./version inc
 	@echo ""
@@ -92,8 +103,16 @@ $(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
 $(MATLIB_SO): $(MAT_OBJS)
 	-$(RM) $(MATLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
+#       Modified by Rafael Laboissiere <rafael@icp.inpg.fr>
+#       on Thu Nov 12 20:07:46 CET 1998
+#       When bulding the Python module we will need a shared libs 
+#       libMatrix.so to link against
 	cd shared; \
-	$(SHLIB_BUILD) ../$(MATLIB_SO) $(MAT_OBJS)
+	$(SHLIB_BUILD) ../$(MATLIB_SO) \
+		-Wl,-soname -Wl,libMatrix$(SO).$(MAJOR_VERSION) \
+                $(MAT_OBJS)
+	ln -sf $(MATLIB_SO) libMatrix$(SO).$(MAJOR_VERSION)
+	ln -sf libMatrix$(SO).$(MAJOR_VERSION) libMatrix$(SO)
 	@echo ""
 
 $(CXXLIB_SO): $(CXX_OBJS)

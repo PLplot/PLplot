@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.36  1995/10/22 17:41:33  mjl
+ * Revision 1.36.2.1  2001/01/22 09:05:31  rlaboiss
+ * Debian stuff corresponding to package version 4.99j-11
+ *
+ * Revision 1.36  1995/10/22  17:41:33  mjl
  * Fixed PL_OPT_STRING arg handling -- should actually work now.
  *
  * Revision 1.35  1995/07/19  20:22:13  mjl
@@ -176,6 +179,8 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
     See plrender.c for examples of actual usage.  */
 
+#include <stdio.h>		// jc: popen
+#include  <string.h>	// jc: strdup
 #include "plplotP.h"
 #include <ctype.h>
 
@@ -1803,7 +1808,9 @@ opt_plserver(char *opt, char *optarg, void *client_data)
 static int
 opt_plwindow(char *opt, char *optarg, void *client_data)
 {
-    plsc->plwindow = optarg;
+
+// jc:    plsc->plwindow = optarg;
+    plsc->plwindow = strdup(optarg);	// jc: somehow the original string is lost
     return 0;
 }
 

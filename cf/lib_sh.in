@@ -55,7 +55,7 @@ $(MATLIB_AR):	$(MAT_OBJS)
 	$(RANLIB) $(MATLIB_AR)
 
 $(MATLIB_SO):	$(MAT_OBJS)
-	-$(RM) $(PLLIB_SO)
+	-$(RM) $(MATLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
 	$(SHLIB_BUILD) ../$(MATLIB_SO) $(MAT_OBJS)

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.55  1996/06/26 21:35:19  furnish
+ * Revision 1.55.2.1  2001/01/22 09:05:31  rlaboiss
+ * Debian stuff corresponding to package version 4.99j-11
+ *
+ * Revision 1.55  1996/06/26  21:35:19  furnish
  * Various hacks to support Tcl 7.5 and Tk 4.1.
  *
  * Revision 1.54  1995/09/22  16:04:16  mjl
@@ -94,7 +97,8 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
-
+#include <sys/wait.h>	// jc: waitpid
+extern pid_t    vfork(void);	// jc:
 #ifdef PLD_dp
 #include <dp.h>
 #endif
@@ -224,6 +228,7 @@ init(PLStream *pls)
     pls->dev_flush = 1;		/* Handle our own flushes */
     pls->dev_fill0 = 1;		/* Handle solid fills */
     pls->dev_fill1 = 1;		/* Handle pattern fills */
+    pls->server_nokill = 1; /* jc: dont kill if ^C */
 
 /* Specify buffer size if not yet set (can be changed by -bufmax option).  */
 /* A small buffer works best for socket communication */
@@ -704,6 +709,12 @@ tk_start(PLStream *pls)
 /* Instantiate a TCL interpreter, and get rid of the exec command */
 
     dev->interp = Tcl_CreateInterp();
+#if (TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION > 4 )    
+    if (Tcl_Init(dev->interp) != TCL_OK) {	// jc:
+    fprintf(stderr, "%s\n", dev->interp->result);
+    abort_session(pls, "Unable to initialize Tcl");
+    }
+#endif
     tcl_cmd(pls, "rename exec {}");
 
 /* Initialize top level window */
@@ -720,6 +731,7 @@ tk_start(PLStream *pls)
 	char name[80];
 	sprintf(name, "_%s_%02d", pls->program, pls->ipls); 
 	Tcl_SetVar(dev->interp, "dp", "0", TCL_GLOBAL_ONLY);
+	Tcl_SetVar2(dev->interp, "env", "DISPLAY", getenv("DISPLAY"), TCL_GLOBAL_ONLY); // jc: tk_init need this
 	dev->updatecmd = "update";
 	if (pltk_toplevel(&dev->w, dev->interp, pls->FileName, name, name))
 	    abort_session(pls, "Unable to create top-level window");
@@ -1092,6 +1104,19 @@ launch_server(PLStream *pls)
     argv[i++] = "-e";			/* Startup script */
     argv[i++] = "plserver_init";
 
+/* jc: Haaaaa. This is it! Without the next two statements, control is either
+ * in tk or octave, because tcl/tk was in interative mode (I think).
+ * This had the inconvenient of having to press the enter key or cliking a
+ * mouse button in the plot window after every plot.
+ *
+ * This couldn't be done with
+ *	Tcl_SetVar(dev->interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
+ * after plserver has been launched? It doesnt work, hoewever.
+ */
+
+    argv[i++] = "-file";			/* Startup file */
+    argv[i++] = "/dev/null";
+
     if (pls->auto_path != NULL) {
 	argv[i++] = "-auto_path";	/* Additional directory(s) */
 	argv[i++] = pls->auto_path;	/* to autoload */
@@ -1294,6 +1319,7 @@ plwindow_init(PLStream *pls)
     bg = pls->cmap0[0].b | (pls->cmap0[0].g << 8) | (pls->cmap0[0].r << 16);
     if (bg > 0) {
 	sprintf(command, "$plwidget configure -bg #%06x", bg);
+	sprintf(command, "$plwidget configure -plbg #%06x", bg);	// jc:
 	server_cmd( pls, command, 0 );
     }
 
@@ -1966,7 +1992,10 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 	return 1;
     }
 #else
-    Tk_Init( interp );
+    if (Tk_Init( interp )) {	// jc: if added
+    fprintf(stderr,"tk_init:%s\n", interp->result); // jc:
+    return 1;
+    }
 #endif
 
     Tcl_VarEval(interp, wcmd, (char *) NULL);

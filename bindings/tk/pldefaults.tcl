@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.10  1995/09/01 20:19:58  mjl
+# Revision 1.10.2.1  2001/01/22 09:05:11  rlaboiss
+# Debian stuff corresponding to package version 4.99j-11
+#
+# Revision 1.10  1995/09/01  20:19:58  mjl
 # Run tk_focusFollowsMouse under Tk 4.0 to ensure that the new scale keypress
 # bindings are active.  Added bindings for scale focus in/out under Tk 3.6 and
 # keypress bindings to emulate the Tk 4.0 behavior.  Changed button 1 binding
@@ -239,6 +242,8 @@ proc pldefaults {} {
 # Turn them into an empty string to disable.
 
     global key_zoom_select;	set key_zoom_select	"z"
+    global key_zoom_back;	set key_zoom_back	"b"
+    global key_zoom_forward;	set key_zoom_forward	"f"    
     global key_zoom_reset;	set key_zoom_reset	"r"
     global key_print;		set key_print		"P"
     global key_save_again;	set key_save_again	"s"

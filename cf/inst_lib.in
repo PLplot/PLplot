@@ -15,11 +15,11 @@ install_lib:
 	-if test ! -d $(INFO_DIR); then mkdir -p $(INFO_DIR); fi
 	-cd $(top_srcdir)/lib; cp *.fnt *.map $(LIB_DIR)
 	-cp $(PLLIB_BASE)* $(LIB_DIR); \
-	 for file in $(PLLIB_BASE)*; do $(RANLIB) $(LIB_DIR)/$$file; done
+	 for file in $(PLLIB_BASE)*.a; do $(RANLIB) $(LIB_DIR)/$$file; done
 	-cp libMatrix.* $(LIB_DIR); \
-	 if test -r libMatrix.a; then $(RANLIB)) $(LIB_DIR)/libMatrix.a; done
+	 if test -r libMatrix.a; then $(RANLIB) $(LIB_DIR)/libMatrix.a; fi
 	-cp libPLcxx.* $(LIB_DIR); \
-	 if test -r libPLcxx.a; then $(RANLIB)) $(LIB_DIR)/libPLcxx.a; done
+	 if test -r libPLcxx.a; then $(RANLIB) $(LIB_DIR)/libPLcxx.a; fi
 	-cd $(top_srcdir); \
 	 cp README NEWS CHANGES Copyright COPYING.LIB FAQ ToDo \
 	    mklinks $(DOC_DIR)

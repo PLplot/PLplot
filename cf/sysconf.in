@@ -194,7 +194,7 @@ fi
 if test "$enable_cxx" = "yes"; then
     if test -z "$CXX"; then
 	if test "$with_gcc" = "yes"; then
-	    CXX=gcc
+	    CXX=g++
 	else
 	    CXX=CC
 	    case "$system" in
@@ -252,7 +252,7 @@ fi
 # Optimization
 
 if test "$with_opt" = "yes"; then
-    OPT_FLAG_C=-O
+    OPT_FLAG_C=-O2
     OPT_FLAG_CXX=-O
     OPT_FLAG_F=-O
 fi
@@ -305,7 +305,7 @@ fi
 
 if test "$with_gcc" = "yes"; then
     CC=gcc
-    CXX=gcc
+    CXX=g++
     OCC=gcc
     CPP="gcc -E"
 
@@ -328,7 +328,7 @@ if test "$enable_f77" = "yes"; then
     if test "$with_f2c" = "yes"; then
 	AC_CHECK_PROG(found_fc, fc, yes, no)
 	if test "$found_fc" = "yes" ; then
-	    F77=fc
+	    F77=/usr/bin/fc
 	else
 	    AC_CHECK_PROG(found_f77, f77, yes, no)
 	    if test "$found_f77" = "yes" ; then
@@ -352,7 +352,7 @@ fi
 # ----------------------------------------------------------------------------
 
 if test -z "$LDC"; then
-    LDC="$CC"
+    LDC="$F77"
 fi
 if test -z "$LDCXX"; then
     LDCXX="$CXX"
