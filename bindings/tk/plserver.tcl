@@ -1,6 +1,14 @@
 # $Id$
 # $Log$
-# Revision 1.11  1994/04/08 11:57:12  mjl
+# Revision 1.12  1994/04/25 18:57:07  mjl
+# Removed the rename of open since now we need it for reading/writing
+# palette files (I hope everyone's security is up to par by now).  Deleted
+# options menu -- now these are associated with the plframe widget.  Added
+# shift and control attributes to key_filter as well as speeded up
+# scrolling.  Shift+cursor gives the fast setting and Shift+Control+cursor
+# gives the faster setting.
+#
+# Revision 1.11  1994/04/08  11:57:12  mjl
 # Now the default resources are first loaded, then the user's customizations,
 # if present.  A keystroke filtering proc was added to allow binding useful
 # GUI operations to keystrokes.  The defaults are pretty reasonable, set
@@ -56,7 +64,7 @@ proc plserver_init {} {
 # before this point is reached.
 
     rename exec {}
-    rename open {}
+#    rename open {}
 
 # Create the main window
 # Use the default window title.
@@ -124,42 +132,6 @@ proc plserver_init {} {
     bind . <Control-x> {exit_app}
 
     pack append .menu .menu.file {left}
-
-#--------------
-# Options menu
-#--------------
-
-    menubutton .menu.options -text "Options" -menu .menu.options.m -underline 0
-    menu .menu.options.m
-
-    .menu.options.m add command \
-	-label "Palette 0" \
-	-command {null_command "Palette 0"} \
-	-underline 8
-
-    .menu.options.m add command \
-	-label "Palette 1" \
-	-command {null_command "Palette 1"} \
-	-underline 8
-
-    .menu.options.m add separator
-
-    .menu.options.m add command \
-	-label "Load Configuration" \
-	-command {null_command "Load Configuration"} \
-	-underline 0
-
-    .menu.options.m add command \
-	-label "Save Configuration" \
-	-command {null_command "Save Configuration"} \
-	-underline 0
-
-    .menu.options.m add command \
-	-label "Save Configuration As..." \
-	-command {null_command "Save Configuration As..."} \
-	-underline 19
-
-    pack append .menu .menu.options {left}
 
 #--------------
 # Debug menu
@@ -239,7 +211,7 @@ proc exit_app {} {
 # so it can be added to the default behavior.
 #----------------------------------------------------------------------------
 
-proc key_filter {w client k n a} {
+proc key_filter {w client k n a shift control} {
     global user_key_filter
 
     global key_zoom_select
@@ -250,7 +222,9 @@ proc key_filter {w client k n a} {
     global key_scroll_left
     global key_scroll_up
     global key_scroll_down
-    global key_scroll_speed
+    global key_scroll_slow
+    global key_scroll_fast
+    global key_scroll_faster
 
 #    puts "keypress: $k $n $a"
 
@@ -258,15 +232,25 @@ proc key_filter {w client k n a} {
 	$user_key_filter $w $client $k $n $a
     }
 
+    if {$shift} then {
+	if {$control} then {
+	    set s $key_scroll_faster
+	} else {
+	    set s $key_scroll_fast
+	}
+    } else {
+	set s $key_scroll_slow
+    }
+
     switch $k \
 	$key_zoom_select	"plw_zoom_select $w" \
 	$key_zoom_reset		"plw_zoom_reset $w" \
 	$key_print		"plw_print $w" \
 	$key_save_again		"plw_save $w" \
-	$key_scroll_right	"plw_view_scroll $w  $key_scroll_speed  0" \
-	$key_scroll_left	"plw_view_scroll $w -$key_scroll_speed  0" \
-	$key_scroll_up		"plw_view_scroll $w  0 -$key_scroll_speed" \
-	$key_scroll_down	"plw_view_scroll $w  0  $key_scroll_speed" 
+	$key_scroll_right	"plw_view_scroll $w  $s  0" \
+	$key_scroll_left	"plw_view_scroll $w -$s  0" \
+	$key_scroll_up		"plw_view_scroll $w  0 -$s" \
+	$key_scroll_down	"plw_view_scroll $w  0  $s" 
 
     client_cmd [list $client] "keypress $k $n $a"
 }
