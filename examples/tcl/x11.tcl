@@ -11,17 +11,6 @@ proc x11 {{w loopback}} {
     matrix alt f 4 = {60.0, 20.0, 60.0, 60.0}
     matrix az  f 4 = {30.0, 60.0, 120.0, 160.0}
 
-# Fix the [format ...] below to recover the precision used in the C
-# title strings.  Then delete these next few lines.
-
-#static char *title[4] =
-#{
-#    "#frPLplot Example 11 - Alt=60, Az=30, Opt=1",
-#    "#frPLplot Example 11 - Alt=20, Az=60, Opt=2",
-#    "#frPLplot Example 11 - Alt=60, Az=120, Opt=3",
-#    "#frPLplot Example 11 - Alt=60, Az=160, Opt=3"
-#};
-
     set xpts 35
     set ypts 46
     set two_pi [expr 2.0 * 3.141592654 ]
@@ -46,7 +35,7 @@ proc x11 {{w loopback}} {
 	}
     }
 
-    for {set k -} {$k < 4} {incr k} {
+    for {set k 0} {$k < 4} {incr k} {
 	$w cmd pladv 0
 	$w cmd plcol 1
 	$w cmd plvpor 0.0 1.0 0.0 0.8
@@ -65,8 +54,8 @@ proc x11 {{w loopback}} {
 
 	$w cmd plcol 3
 
-	set title [format "#frPLplot Example 11 - Alt=%f, Az=%f, Opt=%d" \
-		       [alt $k] [az $k] [opt $k] ]
+	set title [format "#frPLplot Example 11.%d - Alt=%f, Az=%f, Opt=%d" \
+		       $k [alt $k] [az $k] [opt $k] ]
 	$w cmd plmtex "t" 1.0 0.5 0.5 $title
     }
 }
