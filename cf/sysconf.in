@@ -150,6 +150,7 @@ if test -z "$CC"; then
 	;;
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
 	    CC="cc"
+	    OCC='$(CC)'
 	;;
 	Linux* )
 	    with_gcc=yes
