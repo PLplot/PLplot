@@ -1,4 +1,4 @@
-## Copyright (C) 1998-2002 Joao Cardoso.
+## Copyright (C) 1998-2003 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -21,22 +21,22 @@
 function st = autostyle(x)
 
   global __pl
-  __pl_strm = __pl_init;
+  strm = __pl_init;
 
   if (nargin == 1)
     if (isstr (x))
       if (strcmp ("off", x))
-        __pl.lstlyle(__pl_strm) = 0;
+        __pl.line_style(strm) = 0;
       elseif (strcmp ("on", x))
-        __pl.lstlyle(__pl_strm) = 1;
+        __pl.line_style(strm) = 1;
       else
 	help autostyle
       endif
     elseif (is_scalar(x))
       if (x == 0)
-	__pl.lstlyle(__pl_strm) = 0;
+	__pl.line_style(strm) = 0;
       elseif (x == 1)
-	__pl.lstlyle(__pl_strm) = 1;
+	__pl.line_style(strm) = 1;
       endif
     else
       help autostyle
@@ -47,7 +47,11 @@ function st = autostyle(x)
     return;
   endif
 
-  st = __pl.lstlyle(__pl_strm);
+  st = __pl.line_style(strm);
+
+  if (automatic_replot)
+    __pl_plotit;
+  endif
 
 endfunction
 
