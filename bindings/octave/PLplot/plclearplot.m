@@ -1,4 +1,4 @@
-## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
+## Copyright (C) 1998-2002 Joao Cardoso.
 ## 
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
@@ -16,7 +16,13 @@
 
 function plclearplot
 
-  plbop;
-  plflush;pleop;
+  global __pl
+
+  if (!exist("__pl") || !struct_contains (__pl,"inited"))
+    plplot_stub;
+  endif
+
+  plclear;
+  plflush;
 
 endfunction                
