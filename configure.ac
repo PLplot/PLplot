@@ -397,6 +397,17 @@ else
     fi
 fi
 
+# Set up mjl's pet command for doing reconfigures.  This ensures whatever
+# switches have been thrown previously are used again.
+ 
+plplot_config_invocation="$0 $*"
+if test -n "$*"; then
+    echo "$plplot_config_invocation" >reconfig
+    chmod +x reconfig 
+else
+    rm -f reconfig >/dev/null 2>&1
+fi 
+
 divert(-1)
 
 # ----------------------------------------------------------------------------
