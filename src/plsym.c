@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/29 04:46:21  furnish
-   Massive clean up effort to remove support for garbage compilers (K&R).
+   Revision 1.4  1993/01/23 06:01:36  mjl
+   Now holds all routines dealing with PLPLOT symbols.
 
+ * Revision 1.3  1992/09/29  04:46:21  furnish
+ * Massive clean up effort to remove support for garbage compilers (K&R).
+ *
  * Revision 1.2  1992/06/02  23:27:35  furnish
  * short -> PLINT so can plot more than 32767 points.
  *
@@ -24,21 +27,22 @@ extern short int numberfonts, numberchars;
 /*----------------------------------------------------------------------*\
 * void plsym()
 *
-* Plots single precision array y against x for n points using 
+* Plots single precision array y against x for n points using
 * Hershey symbol "code".
 \*----------------------------------------------------------------------*/
 
-void 
-c_plsym( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
+void
+c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 {
     PLINT i;
     PLINT level;
 
     glev(&level);
     if (level < 3)
-	plexit("Please set up window before calling plsym.");
+	plexit("plsym: Please set up window first.");
+
     if (code < 0)
-	plexit("Invalid code in plsym.");
+	plexit("plsym: Invalid code.");
 
     for (i = 0; i < n; i++)
 	plhrsh(code, wcpcx(x[i]), wcpcy(y[i]));
@@ -47,21 +51,22 @@ c_plsym( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 /*----------------------------------------------------------------------*\
 * void plpoin()
 *
-* Plots single precision array y against x for n points using 
+* Plots single precision array y against x for n points using
 * ASCII code "code".
 \*----------------------------------------------------------------------*/
 
-void 
-c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
+void
+c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 {
     PLINT i;
     PLINT level, sym, font, col;
 
     glev(&level);
     if (level < 3)
-	plexit("Please set up window before calling plpoin.");
+	plexit("plpoin: Please set up window first.");
+
     if (code < 0 || code > 127)
-	plexit("Invalid code in plpoin.");
+	plexit("plpoin: Invalid code.");
 
     gatt(&font, &col);
     sym = *(fntlkup + (font - 1) * numberchars + code);
@@ -73,12 +78,12 @@ c_plpoin( PLINT n, PLFLT *x, PLFLT *y, PLINT code )
 /*----------------------------------------------------------------------*\
 * void plhrsh()
 *
-* Writes the Hershey symbol "ch" centred at the physical 
+* Writes the Hershey symbol "ch" centred at the physical
 * coordinate (x,y).
 \*----------------------------------------------------------------------*/
 
-void 
-plhrsh (PLINT ch, PLINT x, PLINT y)
+void
+plhrsh(PLINT ch, PLINT x, PLINT y)
 {
     PLINT cx, cy, k, penup;
     SCHAR *xygrid;
