@@ -1,11 +1,16 @@
 /* $Id$
    $Log$
-   Revision 1.10  1993/09/24 20:33:16  furnish
-   Went wild with "const correctness".  Can now pass a C++ String type to
-   most (all that I know of) PLPLOT functions.  This works b/c String has
-   an implicit conversion to const char *.  Now that PLPLOT routines take
-   const char * rather than char *, use from C++ is much easier.
+   Revision 1.11  1993/10/06 19:52:57  mjl
+   Disabled the POSIX_TTY stuff (because it requires ANSI atexit()) when
+   NO_ANSI_LIBC is defined, and no longer define this by default for SunOS.
+   May require linking with -lansi on some systems (using acc).
 
+ * Revision 1.10  1993/09/24  20:33:16  furnish
+ * Went wild with "const correctness".  Can now pass a C++ String type to
+ * most (all that I know of) PLPLOT functions.  This works b/c String has
+ * an implicit conversion to const char *.  Now that PLPLOT routines take
+ * const char * rather than char *, use from C++ is much easier.
+ *
  * Revision 1.9  1993/09/14  22:25:19  mjl
  * Moved define of POSIX_TTY to plplotP.h since the SX-3 isn't POSIX-compliant.
  *
@@ -106,11 +111,8 @@
 #endif
 #endif
 
-#ifdef sun
-#ifndef NO_ANSI_LIBC		/* Handles Suns without an ansi libc */
-#define NO_ANSI_LIBC
-#endif
-#ifndef NULL
+#ifdef sun			/* Now assumes an ANSI libc */
+#ifndef NULL			/* If you don't have one, use -DNO_ANSI_LIBC */
 #define NULL	0
 #endif
 #ifdef PL_NEED_MALLOC
@@ -150,6 +152,9 @@
 #define FPOS_T long
 #define pl_fsetpos(a,b) fseek(a, *b, 0)
 #define pl_fgetpos(a,b) (-1L == (*b = ftell(a)))
+#ifdef POSIX_TTY
+#undef POSIX_TTY		/* Requires ANSI atexit() */
+#endif
 
 #else
 #define FPOS_T fpos_t
