@@ -68,10 +68,19 @@ diff -u -w -r1.5 x12c.m
    
  endfunction
  
-diff -u -w -r1.6 x13c.m
+diff -u -r1.6 x13c.m
 --- plplot-orig/bindings/octave/demos/x13c.m	11 Dec 2002 17:12:28 -0000	1.6
-+++ plplot/bindings/octave/demos/x13c.m	14 Feb 2004 13:35:25 -0000
-@@ -68,9 +68,9 @@
++++ plplot/bindings/octave/demos/x13c.m	11 May 2004 07:37:09 -0000
+@@ -51,6 +51,8 @@
+   theta0 = 0.;
+   dthet = 2 * pi / 500;
+   for i=0:4
++    x = [];
++    y = [];
+     j = 0;
+     x(j+1) = 5.;
+     y(j+1) = 5.;
+@@ -68,9 +70,9 @@
      plpsty(rem((i + 3), 8) + 1);
      x(j+1:rows(x))=[];
      y(j+1:rows(y))=[];
@@ -83,6 +92,42 @@ diff -u -w -r1.6 x13c.m
      just = (theta0 + theta1) / 2.;
      dx = .25 * cos(just); dy = .25 * sin(just);
      if ((just < pi / 2) || (just > 3 * pi / 2) )
+diff -u -r1.9 x14c.m
+--- plplot-orig/bindings/octave/demos/x14c.m	28 Jan 2004 17:39:29 -0000	1.9
++++ plplot/bindings/octave/demos/x14c.m	11 May 2004 07:37:09 -0000
+@@ -166,12 +166,12 @@
+   ## Plot the data points */
+ 
+   plcol(9);
+-  plpoin(xs, ys, 9);
++  plpoin(xs', ys', 9);
+ 
+   ## Draw the line through the data */
+ 
+   plcol(4);
+-  plline(x, y);
++  plline(x', y');
+   plflush;#pleop();
+   
+ endfunction
+@@ -200,7 +200,7 @@
+   ## Draw the line */
+ 
+   plcol(3);
+-  plline(x, y);
++  plline(x', y');
+   plflush;#pleop();
+ endfunction
+ 
+@@ -240,7 +240,7 @@
+   endfor
+ 
+   plcol(4);
+-  plline(x, y);
++  plline(x', y');
+   plflush;#pleop();
+ 
+ endfunction
 diff -u -w -r1.5 x15c.m
 --- plplot-orig/bindings/octave/demos/x15c.m	11 Dec 2002 17:12:28 -0000	1.5
 +++ plplot/bindings/octave/demos/x15c.m	14 Feb 2004 13:35:25 -0000
@@ -122,6 +167,18 @@ diff -u -w -r1.5 x15c.m
  	    shade_min, shade_max, 
  	    sh_cmap, sh_color, sh_width,
  	    min_color, min_width, max_color, max_width,1,tr);
+diff -u -r1.5 x17c.m
+--- plplot-orig/bindings/octave/demos/x17c.m	11 Dec 2002 17:12:30 -0000	1.5
++++ plplot/bindings/octave/demos/x17c.m	11 May 2004 07:37:09 -0000
+@@ -71,7 +71,7 @@
+ 		xlab, ylab,
+ 		autoy, acc,
+ 		colbox, collab,
+-		colline, styline, "sum", "sin", "sin*noi", "sin+noi",
++		colline', styline', "sum", "sin", "sin*noi", "sin+noi",
+ 		"t", "pois", "Strip chart demo");
+ 
+   ## This is to represent a loop over time */
 diff -u -w -r1.6 x18c.m
 --- plplot-orig/bindings/octave/demos/x18c.m	11 Dec 2002 17:12:30 -0000	1.6
 +++ plplot/bindings/octave/demos/x18c.m	14 Feb 2004 13:35:25 -0000
@@ -146,3 +203,15 @@ diff -u -w -r1.6 x18c.m
      endfor
    endfor
  
+diff -u -r1.6 stripc.m
+--- plplot-orig/bindings/octave/PLplot/stripc.m	19 Mar 2003 19:20:20 -0000	1.6
++++ plplot/bindings/octave/PLplot/stripc.m	11 May 2004 11:52:18 -0000
+@@ -51,7 +51,7 @@
+ 		xmin, xmax, xjump, ymin, ymax,
+ 		__pl.legend_xpos(strm), __pl.legend_ypos(strm), 
+ 		autoy, acc, 15, 15,
+-		colline, styline, leg1, leg2, leg3, leg4,
++		colline', styline', leg1, leg2, leg3, leg4,
+ 		tdeblank(__pl.xlabel(strm,:)),
+ 		tdeblank(__pl.ylabel(strm,:)),
+ 		tdeblank(__pl.tlabel(strm,:)));

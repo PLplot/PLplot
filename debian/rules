@@ -108,15 +108,15 @@ install-stamp: build-stamp
 	  ln -s $(libpkg) $(debdoc)/$$i ; \
 	done
 
+	install --mode=644 $(debbase)/struct_contains.m \
+	  $(debshr)/plplot_octave
+
 	dh_movefiles -a --no-package=$(libpkg) --no-package=libplplot-dev \
 	                --no-package=plplot-bin $(octave_xcl)
 	dh_movefiles -i
 	dh_movefiles --package=libplplot-dev
-	dh_movefiles --package=plplot-bin	
+	dh_movefiles --package=plplot-bin
 	dh_movefiles --package=$(libpkg)
-
-	install --mode=644 $(debbase)/struct_contains.m \
-	  $(debshr)/plplot_octave
 
 	touch install-stamp
 

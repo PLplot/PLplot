@@ -1,3 +1,17 @@
+plplot (5.3.0.cvs.20040430-3) unstable; urgency=low
+
+  * debian/patches/octave-2.1.53-demos.dpatch: Added patches for Octave
+    demos x13c.m, x14c.m, and x17c.m.  The whole set of examples for
+    the Octave bindings work now with Octave version 2.1.57.
+  * debian/patches/warn-empty-list-elements.dpatch: Added patches for
+    shade.m and __pl_contour.m.  The demos p*.m work now with Octave
+    version 2.1.57 (except demos p6.m, p17.m, and p20.m).
+  * debian/rules (install-stamp): Install the file
+    debian/struct_contains.m before the calls to dh_movefiles, such that
+    struct_contains.m really goes into the octave-plplot package.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Tue, 11 May 2004 10:08:11 +0200
+
 plplot (5.3.0.cvs.20040430-2) unstable; urgency=low
 
   * debian/patches/warn-empty-list-elements.dpatch,
