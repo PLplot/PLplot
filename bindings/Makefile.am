@@ -39,7 +39,14 @@ index = $(index_tcl) $(index_tk) $(index_tkwin)
 
 abovedata_DATA = pkgIndex.tcl
 
+# FIXME.  This is not quite right.  Should use has_tcl instead, but AWI 
+# believes that is currently broken, and this will usually work, i.e., the
+# user will only want the tkwin driver or the tk driver, if he has enabled 
+# tcl.
+
+if enable_tcl
 pkgIndex.tcl: $(index)
 	cat $(index) > pkgIndex.tcl
 
+endif
 CLEANFILES = pkgIndex.tcl
