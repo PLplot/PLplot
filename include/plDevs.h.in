@@ -12,6 +12,7 @@
     system-specific files.
 
     Copyright (C) 2004  Andrew Roach
+    Copyright (C) 2005  Thomas J. Duck
 
     This file is part of PLplot.
 
@@ -62,6 +63,7 @@
 #undef PLD_xwin
 #undef PLD_tk
 #undef PLD_pbm
+#undef PLD_gcw
 #undef PLD_gnome
 #undef PLD_pstex
 #undef PLD_ntk

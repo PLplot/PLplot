@@ -3,6 +3,7 @@
 	Contains all prototypes for driver functions.
 
     Copyright (C) 2004  Andrew Roach
+    Copyright (C) 2005  Thomas J. Duck
 
     This file is part of PLplot.
 
@@ -37,6 +38,7 @@ void plD_dispatch_init_mac1	( PLDispatchTable *pdt );
 void plD_dispatch_init_nx	( PLDispatchTable *pdt );
 void plD_dispatch_init_os2	( PLDispatchTable *pdt );
 void plD_dispatch_init_xw	( PLDispatchTable *pdt );
+void plD_dispatch_init_gcw	( PLDispatchTable *pdt );
 void plD_dispatch_init_gnome	( PLDispatchTable *pdt );
 void plD_dispatch_init_tk	( PLDispatchTable *pdt );
 void plD_dispatch_init_vga	( PLDispatchTable *pdt );
