@@ -216,15 +216,17 @@ AC_INIT(src/plcore.c)
 # can always use copy.  At least you will only have to do it once.
 # ----------------------------------------------------------------------------
 
+# Fix up srcdir to be absolute to prevent problems later
+srcdir=`(cd $srcdir; pwd)`
+
 plplot_config_invocation="$0 $*"
-if test `pwd` = `(cd $srcdir; pwd)`; then
+if test `pwd` = "$srcdir"; then
     echo "setting up to configure in tmp directory -- hold on..."
     if test ! -d tmp; then
 	mkdir tmp
     fi
     cd tmp
-    exec ../configure "$@"
-    plplot_config_invocation="$0 $*"
+    exec $srcdir/configure "$@"
 fi
 
 # ----------------------------------------------------------------------------
