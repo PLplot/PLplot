@@ -87,16 +87,16 @@ DeleteMatrixCmd(ClientData clientData);
 /* These do the put/get operations for each supported type */
 
 static void
-MatrixPut_f(ClientData clientData, int index, char *string);
+MatrixPut_f(ClientData clientData, Tcl_Interp* interp, int index, char *string);
 
 static void
-MatrixGet_f(ClientData clientData, int index, char *string);
+MatrixGet_f(ClientData clientData, Tcl_Interp* interp, int index, char *string);
 
 static void
-MatrixPut_i(ClientData clientData, int index, char *string);
+MatrixPut_i(ClientData clientData, Tcl_Interp* interp, int index, char *string);
 
 static void
-MatrixGet_i(ClientData clientData, int index, char *string);
+MatrixGet_i(ClientData clientData, Tcl_Interp* interp, int index, char *string);
 
 /*--------------------------------------------------------------------------*\
  *
@@ -462,7 +462,7 @@ static int matrixInitialize(Tcl_Interp* interp, tclMatrix* m,
     
     for (i = 0; i < nargs; i++) {
 	newoffs = offs * m->n[dim - 1] + i;
-	(m->put)((ClientData) m, newoffs, args[i]);
+	(m->put)((ClientData) m, interp, newoffs, args[i]);
 	if (verbose)
 	    fprintf(stderr, "\ta[%d] = %s\n",  newoffs, args[i]);
     }
@@ -522,7 +522,7 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	for (i = nmin[0]; i <= nmax[0]; i++) {
 	    for (j = nmin[1]; j <= nmax[1]; j++) {
 		for (k = nmin[2]; k <= nmax[2]; k++) {
-		    (*matPtr->get)((ClientData) matPtr, I3D(i,j,k), tmp);
+		    (*matPtr->get)((ClientData) matPtr, interp, I3D(i,j,k), tmp);
 		    printf("%s ", tmp);
 		}
 		if (matPtr->dim > 2)
@@ -839,9 +839,9 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	for (j = nmin[1]; j <= nmax[1]; j++) {
 	    for (k = nmin[2]; k <= nmax[2]; k++) {
 		if (put) 
-		    (*matPtr->put)((ClientData) matPtr, I3D(i,j,k), argv[0]);
+		    (*matPtr->put)((ClientData) matPtr, interp, I3D(i,j,k), argv[0]);
 		else {
-		    (*matPtr->get)((ClientData) matPtr, I3D(i,j,k), tmp);
+		    (*matPtr->get)((ClientData) matPtr, interp, I3D(i,j,k), tmp);
 		    if (i == nmax[0] && j == nmax[1] && k == nmax[2])
 			Tcl_AppendResult(interp, tmp, (char *) NULL);
 		    else
@@ -870,7 +870,7 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 \*--------------------------------------------------------------------------*/
 
 static void
-MatrixPut_f(ClientData clientData, int index, char *string)
+MatrixPut_f(ClientData clientData, Tcl_Interp* interp, int index, char *string)
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
@@ -878,15 +878,16 @@ MatrixPut_f(ClientData clientData, int index, char *string)
 }
 
 static void
-MatrixGet_f(ClientData clientData, int index, char *string)
+MatrixGet_f(ClientData clientData, Tcl_Interp* interp, int index, char *string)
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
+    double value = matPtr->fdata[index];
 
-    sprintf(string, "%g", matPtr->fdata[index]);
+    Tcl_PrintDouble(interp, value, string);
 }
 
 static void
-MatrixPut_i(ClientData clientData, int index, char *string)
+MatrixPut_i(ClientData clientData, Tcl_Interp* interp, int index, char *string)
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 
@@ -894,7 +895,7 @@ MatrixPut_i(ClientData clientData, int index, char *string)
 }
 
 static void
-MatrixGet_i(ClientData clientData, int index, char *string)
+MatrixGet_i(ClientData clientData, Tcl_Interp* interp, int index, char *string)
 {
     tclMatrix *matPtr = (tclMatrix *) clientData;
 

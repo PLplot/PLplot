@@ -72,8 +72,8 @@ typedef struct {
 
 /* These do the put/get operations for each supported type */
 
-    void (*put) (ClientData clientData, int index, char *string);
-    void (*get) (ClientData clientData, int index, char *string);
+    void (*put) (ClientData clientData, Tcl_Interp* interp, int index, char *string);
+    void (*get) (ClientData clientData, Tcl_Interp* interp, int index, char *string);
 
 } tclMatrix;
 
