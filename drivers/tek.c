@@ -1,6 +1,16 @@
 /* $Id$
  * $Log$
- * Revision 1.32  1994/08/26 19:21:55  mjl
+ * Revision 1.33  1995/01/06 07:44:22  mjl
+ * Inserted GIN (Graphics Input) code to handle PLESC_GETC escape command
+ * (retrieves cursor position).  Also added "pick" (P) end of page command,
+ * which allows you to fetch the world coordinates of arbitrary points based
+ * on graphics input (type "P" while at end of page, note: not supported by
+ * xterm).  All drivers: pls->width now more sensibly handled.  If the driver
+ * supports multiple widths, it first checks to see if it has been
+ * initialized already (e.g. from the command line) before initializing it.
+ * For drivers that don't support multiple widths, pls->width is ignored.
+ *
+ * Revision 1.32  1994/08/26  19:21:55  mjl
  * Added support for the Conex vt320 Tek4010/4014/4105 terminal emulator (DOS).
  * Much cleaning up and optimizations.  Contributed by Mark Olesen.
  *
@@ -63,8 +73,10 @@ static void	tek_init	(PLStream *pls);
 static void	tek_text	(PLStream *pls);
 static void	tek_graph	(PLStream *pls);
 static void	fill_polygon	(PLStream *pls);
+static void	GetCursor	(PLStream *pls, PLCursor *ptr);
 static void	encode_int	(char *c, int i);
 static void	encode_vector	(char *c, int x, int y);
+static void	decode_gin	(char *c, PLFLT *px, PLFLT *py);
 static void	tek_vector	(PLStream *pls, int x, int y);
 static void	scolor		(int icol, int r, int g, int b);
 static void	setcmap		(PLStream *pls);
@@ -246,7 +258,6 @@ tek_init(PLStream *pls)
     PLDev *dev;
 
     pls->icol0 = 1;
-    pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
     pls->graphx = TEXT_MODE;
@@ -535,7 +546,48 @@ plD_esc_tek(PLStream *pls, PLINT op, void *ptr)
     case PLESC_FILL:
 	fill_polygon(pls);
 	break;
+
+    case PLESC_GETC:
+	GetCursor(pls, (PLCursor *) ptr);
+	break;
     }
+}
+
+/*----------------------------------------------------------------------*\
+ * GetCursor()
+ *
+ * Waits for a left button mouse event and returns coordinates.
+\*----------------------------------------------------------------------*/
+
+static void
+GetCursor(PLStream *pls, PLCursor *ptr)
+{
+    int i = 0;
+    char input_string[10];
+
+/* xterm doesn't handle GIN. I think all the rest do. */
+
+    if (pls->dev_minor == xterm) {
+	ptr->dX = ptr->dY = -1;
+	return;
+    }
+
+/* Enter GIN mode */
+
+    printf(GIN_MODE);
+    fflush(stdout);
+
+/* Read report */
+
+    while ((input_string[i++] = getchar()) != '\n')
+	;
+    input_string[i-1] = '\0';
+    ptr->c = input_string[0];
+    decode_gin(&input_string[1], &ptr->dX, &ptr->dY);
+
+/* Return to vector mode */
+
+    printf(VECTOR_MODE);
 }
 
 /*----------------------------------------------------------------------*\
@@ -724,6 +776,52 @@ encode_vector(char *c, int x, int y)
 }
 
 /*----------------------------------------------------------------------*\
+ * decode_gin()
+ *
+ * Decodes a GIN tek vector string into an xy pair of relative device
+ * coordinates.  I don't use absolute device coordinates since the
+ * coordinate bounds are different depending on the report encoding used.
+ *
+ * Standard:	<HiX><LoX><HiY><LoY>
+ * Extended:	<HiY><Extra><LoY><HiX><LoX>
+ * 
+ * where <Extra> holds the two low order bits for each coordinate.
+\*----------------------------------------------------------------------*/
+
+static void
+decode_gin(char *c, PLFLT *px, PLFLT *py)
+{
+    int x, y, lc = strlen(c);
+
+    if (lc == 4) {
+	x = ((c[0] & 0x1f) << 5) +
+	    ((c[1] & 0x1f)     );
+
+	y = ((c[2] & 0x1f) << 5) +
+	    ((c[3] & 0x1f)     );
+
+	*px = (double) x / (double) TEKX;
+	*py = (double) y / (double) TEKY;
+    }
+    else if (lc == 5) {
+	y = ((c[0] & 0x1f) << 7) +
+	    ((c[2] & 0x1f) << 2) +
+	    ((c[1] & 0x06) >> 2);
+
+	x = ((c[3] & 0x1f) << 7) +
+	    ((c[4] & 0x1f) << 2) +
+	    ((c[1] & 0x03)     );
+
+	*px = (double) x / (double) (TEKX << 2);
+	*py = (double) y / (double) (TEKY << 2);
+    }
+    else {
+	*py = 0;		/* Illegal encoding */
+	*px = 0;
+    }
+}
+
+/*----------------------------------------------------------------------*\
  * tek_vector()
  *
  * Issues a vector draw command, assuming we are in vector plot mode.  XY
@@ -733,15 +831,15 @@ encode_vector(char *c, int x, int y)
 static void
 tek_vector(PLStream *pls, int x, int y)
 {
-   char c[5];
-   c[0] = (y >> 5)   + 0x20;		/* hy */
-   c[1] = (y & 0x1f) + 0x60;		/* ly */
-   c[2] = (x >> 5)   + 0x20;		/* hx */
-   c[3] = (x & 0x1f) + 0x40;		/* lx */
-   c[4] = '\0';				/* NULL */
+    char c[5];
+    c[0] = (y >> 5)   + 0x20;		/* hy */
+    c[1] = (y & 0x1f) + 0x60;		/* ly */
+    c[2] = (x >> 5)   + 0x20;		/* hx */
+    c[3] = (x & 0x1f) + 0x40;		/* lx */
+    c[4] = '\0';			/* NULL */
 
-   fprintf( pls->OutFile, "%s", c );
-   pls->bytecnt += 4;
+    fprintf( pls->OutFile, "%s", c );
+    pls->bytecnt += 4;
 }
 
 /*----------------------------------------------------------------------*\
@@ -881,13 +979,27 @@ EventHandler(PLStream *pls, int input_char)
 	plexit("");
     }
 
-/* Some test code, don't rely on it. */
+/* Pick points.  Terminate by picking a point out of bounds. */
+/* If you want to customize this, write an event handler to do it */
+/* The bare numbers are presented, to make it easiest to process */
 
-    if (key.string[0] == 't') {
-	fprintf(stderr, "Entering GIN mode..\n");
+    if (key.string[0] == 'P') {
+	PLCursor plc;
+	int co;
 
-	printf(GIN_MODE);			/* Enter GIN mode */
-	fflush(stdout);
+	do {
+	    co = 0;
+	    if (plGetCursor(&plc)) {
+		pltext();
+		if (isprint(plc.c)) 
+		    printf("%f %f %c\n", plc.wX, plc.wY, plc.c);
+		else
+		    printf("%f %f\n", plc.wX, plc.wY);
+
+		plgra();
+		co = 1;
+	    }
+	} while (co);
     }
 }
 
