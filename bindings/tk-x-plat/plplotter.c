@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.14  2002/08/05 17:21:15  vincentdarley
+ * compile fix
+ *
  * Revision 1.13  2002/08/05 15:05:02  vincentdarley
  * removed redundant defintion
  *
@@ -437,7 +440,7 @@ static Tk_ConfigSpec configSpecs[] = {
 
 /* Externals */
 
-int   plPlotterCmd        (ClientData, Tcl_Interp *, int, CONST char **);
+int   plPlotterCmd        (ClientData, Tcl_Interp *, int, char **);
 void PlplotterAtEop(Tcl_Interp *interp, register PlPlotter *plPlotterPtr);
 void PlplotterAtBop(Tcl_Interp *interp, register PlPlotter *plPlotterPtr);
 
@@ -516,7 +519,7 @@ static void  UpdateHScrollbar   (register PlPlotter *);
 
 int
 plPlotterCmd(ClientData clientData, Tcl_Interp *interp,
-           int argc, CONST char **argv)
+           int argc, char **argv)
 {
     Tk_Window tkwin;
     register PlPlotter *plPlotterPtr;
