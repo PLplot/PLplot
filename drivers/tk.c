@@ -489,7 +489,7 @@ plD_state_tk(PLStream *pls, PLINT op)
 	break;
 
     case PLSTATE_CMAP0:
-	tk_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->ncol0) );
+	tk_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->ncol0) );
 	for (i = 0; i < pls->ncol0; i++) {
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].r) );
 	    tk_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].g) );
