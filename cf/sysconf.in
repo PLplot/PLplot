@@ -547,7 +547,8 @@ SHLIB_SUFFIX=""
 case $system in 
     SunOS-4* ) 
 	SHLIB_CCFLAGS="-pic"
-	SHLIB_BUILD="ld -assert pure-text"
+	SHLIB_F77FLAGS="-pic"
+	SHLIB_BUILD="ld -assert pure-text -o"
 	SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
     ;;
     HP-UX-* )
@@ -558,16 +559,19 @@ case $system in
     ;;
     SunOS-5* )
 	SHLIB_CCFLAGS="-K pic"
+	SHLIB_F77FLAGS="-K pic"
 	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
 	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
     ;;
     OSF-1.* )
 	SHLIB_CCFLAGS="-fpic"
+	SHLIB_F77FLAGS="-fpic"
 	SHLIB_BUILD="$CC -shared"
 	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
     ;;
     IRIX-5.* )
 	SHLIB_CCFLAGS="-KPIC"
+	SHLIB_F77FLAGS="-KPIC"
 	SHLIB_BUILD="$CC -shared"
 	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
     ;;
@@ -628,7 +632,7 @@ AC_SUBST(F77_FLAGS)
 AC_SUBST(LDF_FLAGS)
 
 # -----------------------------------------------------------------------
-# Hacks to deal with optimizer failures.
+# Hacks to deal with optimizer bogosities.
 # -----------------------------------------------------------------------
 
 CC_FLAGS_XWIN=$CC_FLAGS
