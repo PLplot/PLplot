@@ -1,13 +1,19 @@
 /* $Id$
-   $Log$
-   Revision 1.11  1993/07/31 07:56:40  mjl
-   Several driver functions consolidated, for all drivers.  The width and color
-   commands are now part of a more general "state" command.  The text and
-   graph commands used for switching between modes is now handled by the
-   escape function (very few drivers require it).  The device-specific PLDev
-   structure is now malloc'ed for each driver that requires it, and freed when
-   the stream is terminated.
-
+ * $Log$
+ * Revision 1.12  1993/08/28 06:28:07  mjl
+ * Fixed escape function reads & writes to be consistent.  Added plbuf_rewind
+ * function, which writes EOP's to the end of file to make sure that dicking
+ * around with the window settings before the page is complete doesn't end in
+ * a core dump.
+ *
+ * Revision 1.11  1993/07/31  07:56:40  mjl
+ * Several driver functions consolidated, for all drivers.  The width and color
+ * commands are now part of a more general "state" command.  The text and
+ * graph commands used for switching between modes is now handled by the
+ * escape function (very few drivers require it).  The device-specific PLDev
+ * structure is now malloc'ed for each driver that requires it, and freed when
+ * the stream is terminated.
+ *
  * Revision 1.10  1993/07/16  22:12:17  mjl
  * Simplified and slightly changed behavior to support plot dumps to cloned
  * plplot streams.
@@ -48,7 +54,8 @@
 
 static int	rd_command	( PLStream *pls, U_CHAR * );
 static int	wr_command	( PLStream *pls, U_CHAR );
-static void	process_next	( PLStream *pls, U_CHAR );
+static void	plbuf_control	( PLStream *pls, U_CHAR );
+static void	plbuf_rewind	(PLStream *pls);
 
 void rdbuf_init		(PLStream *);
 void rdbuf_line		(PLStream *);
@@ -146,7 +153,7 @@ plbuf_eop(PLStream *pls)
 {
     dbug_enter("plbuf_eop");
 
-    wr_command(pls, (U_CHAR) CLEAR);
+    wr_command(pls, (U_CHAR) EOP);
 }
 
 /*----------------------------------------------------------------------*\
@@ -161,8 +168,8 @@ plbuf_bop(PLStream *pls)
 {
     dbug_enter("plbuf_bop");
 
-    rewind(pls->plbufFile);
-    wr_command(pls, (U_CHAR) PAGE);
+    plbuf_rewind(pls);
+    wr_command(pls, (U_CHAR) BOP);
     plP_state(PLSTATE_COLOR0);
     plP_state(PLSTATE_WIDTH);
 }
@@ -194,15 +201,14 @@ plbuf_state(PLStream *pls, PLINT op)
     dbug_enter("plbuf_state");
 
     wr_command(pls, (U_CHAR) CHANGE_STATE);
+    wr_command(pls, (U_CHAR) op);
 
     switch (op) {
 
     case PLSTATE_WIDTH:{
 	U_CHAR width = pls->width;
 
-	wr_command(pls, op);
 	fwrite(&width, sizeof(U_CHAR), 1, pls->plbufFile);
-
 	break;
     }
 
@@ -212,7 +218,6 @@ plbuf_state(PLStream *pls, PLINT op)
 	U_CHAR g = pls->curcolor.g;
 	U_CHAR b = pls->curcolor.b;
 
-	wr_command(pls, op);
 	fwrite(&icol0, sizeof(U_CHAR), 1, pls->plbufFile);
 	if (icol0 == PL_RGB_COLOR) {
 	    fwrite(&r, sizeof(U_CHAR), 1, pls->plbufFile);
@@ -406,6 +411,9 @@ rdbuf_state(PLStream *pls)
 * Must fill data structure with whatever data that was written,
 * then call escape function.
 *
+* Note: it is best to only call the escape function for op-codes that
+* are known to be supported.
+*
 * Functions:
 *
 \*----------------------------------------------------------------------*/
@@ -419,13 +427,13 @@ rdbuf_esc(PLStream *pls)
     dbug_enter("rdbuf_esc");
 
     fread(&op, sizeof(U_CHAR), 1, pls->plbufFile);
-
+/* None are currently supported!
     switch (op) {
-      case 0:
+      case ?:
+	plP_esc(op, ptr);
 	break;
     }
-
-    plP_esc(op, ptr);
+*/
 }
 
 /*----------------------------------------------------------------------*\
@@ -447,7 +455,7 @@ plRemakePlot(PLStream *pls)
 	return;
 
     fflush(pls->plbufFile);
-    rewind(pls->plbufFile);
+    plbuf_rewind(pls);
 
     plbuf_status = pls->plbuf_write;
     pls->plbuf_write = FALSE;
@@ -455,22 +463,24 @@ plRemakePlot(PLStream *pls)
     while (rd_command(pls, &c)) {
 	if (c == CLEAR)
 	    break;
-	process_next(pls, c);
+	plbuf_control(pls, c);
     }
 
     pls->plbuf_write = plbuf_status;
 }
 
 /*----------------------------------------------------------------------*\
-* process_next()
+* plbuf_control()
 *
 * Processes commands read from the plot buffer.
 \*----------------------------------------------------------------------*/
 
 static void
-process_next(PLStream *pls, U_CHAR c)
+plbuf_control(PLStream *pls, U_CHAR c)
 {
-    dbug_enter("process_next");
+    static U_CHAR c_old = 0;
+
+    dbug_enter("plbuf_control");
 
     switch ((int) c) {
 
@@ -503,8 +513,26 @@ process_next(PLStream *pls, U_CHAR c)
 	break;
 
       default:
-	plwarn("process_next: Unrecognized plot buffer command\n");
+	fprintf(stderr,
+		"plbuf_control: Unrecognized command %d, previous %d\n",
+		c, c_old);
     }
+    c_old = c;
+}
+
+/*----------------------------------------------------------------------*\
+* plbuf_rewind()
+*
+* Rewind buffer file.  To cover every possibility, need to write EOP
+* commands from the present location to the end-of-file, then rewind.
+\*----------------------------------------------------------------------*/
+
+static void
+plbuf_rewind(PLStream *pls)
+{
+    while (wr_command(pls, (U_CHAR) EOP))
+	;
+    rewind(pls->plbufFile);
 }
 
 /*----------------------------------------------------------------------*\
@@ -521,7 +549,7 @@ rd_command(PLStream *pls, U_CHAR *p_c)
     count = fread(p_c, sizeof(U_CHAR), 1, pls->plbufFile);
 #ifdef DEBUG
     if (count == 0) 
-	fprintf(stderr, "Cannot read from plot buffer\n");
+	fprintf(stderr, "Cannot read from plot buffer, char: %d\n", *p_c);
 #endif
     return (count);
 }
