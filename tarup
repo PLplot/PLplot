@@ -19,14 +19,12 @@ echo "Creating ../${tarfile}..."
 tar cf $tarfile \
 	`find $pldir \
 	! -path ${pldir}/tmp/\* \
-	! -path ${pldir}/lib/\* \
 	! -path ${pldir}/private/\* \
 	! -path \*CVS\* \
 	! -path \*~ \
         -type f`
 
-tar rf $tarfile ${pldir}/lib/*.fnt ${pldir}/lib/*.map \
-	${pldir}/tmp/.dummy ${pldir}/private/.dummy
+tar rf $tarfile ${pldir}/tmp/.dummy ${pldir}/private/.dummy
 
 echo "Compressing..."
 gzip ${tarfile}

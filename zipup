@@ -15,8 +15,7 @@ cd ..
 # Store files, leaving out contents of certain directories as well as all
 # CVS-related junk.
 
-zip ${zipfile} ${pldir}/lib/*.fnt ${pldir}/lib/*.map \
-		${pldir}/tmp/.dummy ${pldir}/private/.dummy
+zip ${zipfile} ${pldir}/tmp/.dummy ${pldir}/private/.dummy
 
 zip -ru ${zipfile} ${pldir}/* \
-	-x ${pldir}/tmp ${pldir}/lib ${pldir}/private "*/CVS/*" "*~"
+	-x ${pldir}/tmp ${pldir}/private "*/CVS/*" "*~"
