@@ -1,10 +1,13 @@
 /* Demonstration of 3-d plotting */
 /* $Id$
    $Log$
-   Revision 1.5  1993/02/22 23:16:16  mjl
-   Changed over to new style of initialization using plinit(), and added
-   function to parse plplot command line flags.
+   Revision 1.6  1993/07/28 05:47:24  mjl
+   Some minor desuckification.
 
+ * Revision 1.5  1993/02/22  23:16:16  mjl
+ * Changed over to new style of initialization using plinit(), and added
+ * function to parse plplot command line flags.
+ *
  * Revision 1.4  1993/01/23  06:10:28  mjl
  * Instituted exit codes for all example codes.  Also deleted color functions
  * no longer supported (plancol).  Enhanced x09c to exploit new contour
@@ -87,20 +90,18 @@ main(int argc, char *argv[])
 
     for (k = 0; k < 4; k++) {
 	pladv(0);
-	plvpor((PLFLT) 0.0, (PLFLT) 1.0, (PLFLT) 0.0, (PLFLT) 0.9);
-	plwind((PLFLT) -1.0, (PLFLT) 1.0, (PLFLT) -0.9, (PLFLT) 1.1);
+	plvpor(0.0, 1.0, 0.0, 0.9);
+	plwind(-1.0, 1.0, -0.9, 1.1);
 	plcol(1);
-	plw3d((PLFLT) 1.0, (PLFLT) 1.0, (PLFLT) 1.0, (PLFLT) -1.0, (PLFLT) 1.0,
-	 (PLFLT) -1.0, (PLFLT) 1.0, (PLFLT) -1.0, (PLFLT) 1.0, alt[k], az[k]);
-	plbox3("bnstu", "x axis", (PLFLT) 0.0, 0, "bnstu", "y axis", (PLFLT) 0.0, 0,
-	       "bcdmnstuv", "z axis", (PLFLT) 0.0, 0);
+	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k]);
+	plbox3("bnstu", "x axis", 0.0, 0, "bnstu", "y axis", 0.0, 0,
+	       "bcdmnstuv", "z axis", 0.0, 0);
 	plcol(2);
 	plot3d(x, y, z, XPTS, YPTS, opt[k], 1);
 	plcol(3);
-	plmtex("t", (PLFLT) 1.0, (PLFLT) 0.5, (PLFLT) 0.5, title[k]);
+	plmtex("t", 1.0, 0.5, 0.5, title[k]);
     }
 
-    pltext();
     plend();
     exit(0);
 }
