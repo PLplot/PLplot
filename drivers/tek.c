@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.19  1993/12/08 20:25:34  mjl
-   Added changes for MS-Kermit emulator (submitted by Paul Kirschner).
+   Revision 1.20  1993/12/15 08:53:23  mjl
+   Fixed mskermit driver initialization.
 
+ * Revision 1.19  1993/12/08  20:25:34  mjl
+ * Added changes for MS-Kermit emulator (submitted by Paul Kirschner).
+ *
  * Revision 1.18  1993/12/08  06:14:43  mjl
  * Now send an initial page clear (tek devices only) on a beginning of page.
  * This helps when there is only one graphics/alpha screen, otherwise is
@@ -164,6 +167,8 @@ plD_init_t4107f(PLStream *pls)
 void
 plD_init_mskermit(PLStream *pls)
 {
+    pls->termin = 1;
+    pls->dev_dual = 1;
     pls->color = 1;
     tek_init(pls);
 }
