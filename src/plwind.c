@@ -1,23 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.5  1993/09/17 06:44:40  mjl
-   Eliminated abort on bad window bounds; now issues a warning and attempts
-   to recover.
+   Revision 1.6  1994/03/23 08:35:41  mjl
+   All external API source files: replaced call to plexit() on simple
+   (recoverable) errors with simply printing the error message (via
+   plabort()) and returning.  Should help avoid loss of computer time in some
+   critical circumstances (during a long batch run, for example).
 
- * Revision 1.4  1993/07/01  22:13:48  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
- *
- * Revision 1.3  1993/01/23  06:02:52  mjl
- * Now holds all routines dealing with window specification.
- *
- * Revision 1.2  1992/09/29  04:46:29  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:35:01  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.5  1993/09/17  06:44:40  mjl
+ * Eliminated abort on bad window bounds; now issues a warning and attempts
+ * to recover.
 */
 
 /*	plwind.c
@@ -48,8 +39,10 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 2)
-	plexit("plwind: Please set up viewport first.");
+    if (level < 2) {
+	plabort("plwind: Please set up viewport first");
+	return;
+    }
 
     plP_gvpp(&vppxmi, &vppxma, &vppymi, &vppyma);
     plP_gvpd(&vpxmi, &vpxma, &vpymi, &vpyma);
@@ -130,17 +123,22 @@ c_plw3d(PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin0,
     PLINT level;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plw3d: Please set up 2-d window first.");
-
-    if (basex <= 0.0 || basey <= 0.0 || height <= 0.0)
-	plexit("plw3d: Invalid world coordinate boxsize.");
-
-    if (xmin0 == xmax0 || ymin0 == ymax0 || zmin0 == zmax0)
-	plexit("plw3d: Invalid axis range.");
-
-    if (alt < 0.0 || alt > 90.0)
-	plexit("plw3d: Altitude must be between 0 and 90 degrees.");
+    if (level < 3) {
+	plabort("plw3d: Please set up 2-d window first");
+	return;
+    }
+    if (basex <= 0.0 || basey <= 0.0 || height <= 0.0) {
+	plabort("plw3d: Invalid world coordinate boxsize");
+	return;
+    }
+    if (xmin0 == xmax0 || ymin0 == ymax0 || zmin0 == zmax0) {
+	plabort("plw3d: Invalid axis range");
+	return;
+    }
+    if (alt < 0.0 || alt > 90.0) {
+	plabort("plw3d: Altitude must be between 0 and 90 degrees");
+	return;
+    }
 
     d = 1.0e-5 * (xmax0 - xmin0);
     xmax = xmax0 + d;

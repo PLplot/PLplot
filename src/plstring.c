@@ -1,8 +1,14 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/10/18 19:45:25  mjl
-   User-contributed workaround for Borland C compiler bug.
+   Revision 1.7  1994/03/23 08:34:00  mjl
+   All external API source files: replaced call to plexit() on simple
+   (recoverable) errors with simply printing the error message (via
+   plabort()) and returning.  Should help avoid loss of computer time in some
+   critical circumstances (during a long batch run, for example).
 
+ * Revision 1.6  1993/10/18  19:45:25  mjl
+ * User-contributed workaround for Borland C compiler bug.
+ *
  * Revision 1.5  1993/09/24  20:33:29  furnish
  * Went wild with "const correctness".  Can now pass a C++ String type to
  * most (all that I know of) PLPLOT functions.  This works b/c String has
@@ -11,20 +17,6 @@
  *
  * Revision 1.4  1993/08/03  01:47:00  mjl
  * Changes to eliminate warnings when compiling with gcc -Wall.
- *
- * Revision 1.3  1993/07/01  22:13:44  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
- *
- * Revision 1.2  1993/02/23  05:22:44  mjl
- * Split off code to write a stroke font character into its own function for
- * clarity.  Changed character-decoding routine to use stream-dependent escape
- * character in text strings.
- *
- * Revision 1.1  1993/01/23  06:01:04  mjl
- * Added to hold all functions that deal with PLPLOT strings.
- *
 */
 
 /*	plstring.c
@@ -34,7 +26,6 @@
 
 #include "plplotP.h"
 
-#include <stdio.h>
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
@@ -72,8 +63,10 @@ c_pllab(const char *xlabel, const char *ylabel, const char *tlabel)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 2)
-	plexit("pllab: Please set up viewport first.");
+    if (level < 2) {
+	plabort("pllab: Please set up viewport first");
+	return;
+    }
 
     plmtex("t", (PLFLT) 2.0, (PLFLT) 0.5, (PLFLT) 0.5, tlabel);
     plmtex("b", (PLFLT) 3.2, (PLFLT) 0.5, (PLFLT) 0.5, xlabel);
@@ -120,8 +113,10 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
     PLINT level;
 
     plP_glev(&level);
-    if (level < 2)
-	plexit("plmtex: Please set up viewport first.");
+    if (level < 2) {
+	plabort("plmtex: Please set up viewport first");
+	return;
+    }
 
     /* Open clip limits to subpage limits */
 
@@ -213,8 +208,10 @@ c_plptex(PLFLT x, PLFLT y, PLFLT dx, PLFLT dy, PLFLT just, const char *text)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plptex: Please set up window first.");
+    if (level < 3) {
+	plabort("plptex: Please set up window first");
+	return;
+    }
 
     plP_gwm(&xscl, &xoff, &yscl, &yoff);
 

@@ -1,29 +1,18 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/11/15 08:40:42  mjl
-   Comment fixes.
+   Revision 1.8  1994/03/23 08:35:28  mjl
+   All external API source files: replaced call to plexit() on simple
+   (recoverable) errors with simply printing the error message (via
+   plabort()) and returning.  Should help avoid loss of computer time in some
+   critical circumstances (during a long batch run, for example).
 
+ * Revision 1.7  1993/11/15  08:40:42  mjl
+ * Comment fixes.
+ *
  * Revision 1.6  1993/07/01  22:13:47  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
  * plplot functions now start with "plP_".
- *
- * Revision 1.5  1993/03/28  08:46:25  mjl
- * Changes to allow viewports bigger than display area.  This allows enlargement
- * of plots.
- *
- * Revision 1.4  1993/02/23  05:23:11  mjl
- * Changed references in error messages from plstar to plinit.
- *
- * Revision 1.3  1993/01/23  06:02:29  mjl
- * Now holds all routines dealing with viewport generation.
- *
- * Revision 1.2  1992/09/29  04:46:26  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:34:56  furnish
- * Initial checkin of the whole PLPLOT project.
- *
 */
 
 /*	plvpor.c
@@ -64,17 +53,22 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     PLFLT vpxmin, vpxmax, vpymin, vpymax;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plenv: Please call plinit first.");
-
-    if (xmin == xmax)
-	plexit("plenv: Invalid xmin and xmax arguments");
-
-    if (ymin == ymax)
-	plexit("plenv: Invalid ymin and ymax arguments");
-
-    if ((just != 0) && (just != 1))
-	plexit("plenv: Invalid just option");
+    if (level < 1) {
+	plabort("plenv: Please call plinit first");
+	return;
+    }
+    if (xmin == xmax) {
+	plabort("plenv: Invalid xmin and xmax arguments");
+	return;
+    }
+    if (ymin == ymax) {
+	plabort("plenv: Invalid ymin and ymax arguments");
+	return;
+    }
+    if ((just != 0) && (just != 1)) {
+	plabort("plenv: Invalid just option");
+	return;
+    }
 
     pladv(0);
     if (just == 0)
@@ -139,8 +133,10 @@ c_plvsta(void)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plvsta: Please call plinit first.");
+    if (level < 1) {
+	plabort("plvsta: Please call plinit first");
+	return;
+    }
 
     plgchr(&chrdef, &chrht);
     plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
@@ -175,15 +171,19 @@ c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plvpor: Please call plinit first.");
-
-    if ((xmin >= xmax) || (ymin >= ymax))
-	plexit("plvpor: Invalid limits.");
-
+    if (level < 1) {
+	plabort("plvpor: Please call plinit first");
+	return;
+    }
+    if ((xmin >= xmax) || (ymin >= ymax)) {
+	plabort("plvpor: Invalid limits");
+	return;
+    }
     plP_gsub(&nx, &ny, &cs);
-    if ((cs <= 0) || (cs > (nx * ny)))
-	plexit("plvpor: Please call pladv or plenv to go to a subpage.");
+    if ((cs <= 0) || (cs > (nx * ny))) {
+	plabort("plvpor: Please call pladv or plenv to go to a subpage");
+	return;
+    }
 
     plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
     vpdxmi = spdxmi + (spdxma - spdxmi) * xmin;
@@ -223,11 +223,14 @@ c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
     PLFLT vpxmid, vpymid, vpxlen, vpylen, w_aspect, ratio;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plvpas: Please call plinit first.");
-
-    if ((xmin >= xmax) || (ymin >= ymax))
-	plexit("plvpas: Invalid limits.");
+    if (level < 1) {
+	plabort("plvpas: Please call plinit first");
+	return;
+    }
+    if ((xmin >= xmax) || (ymin >= ymax)) {
+	plabort("plvpas: Invalid limits");
+	return;
+    }
 
     if (aspect <= 0.0) {
 	c_plvpor(xmin, xmax, ymin, ymax);
@@ -254,8 +257,10 @@ c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
 * in y correspondingly.  Similarly, for ratio > 1, x length must be reduced.
 */
 
-    if (ratio <= 0.)
-	plexit("plvpas: Error in aspect ratio setting");
+    if (ratio <= 0.) {
+	plabort("plvpas: Error in aspect ratio setting");
+	return;
+    }
     else if (ratio < 1.)
 	vpylen = vpylen * ratio;
     else
@@ -286,8 +291,10 @@ c_plvasp(PLFLT aspect)
     PLFLT lb, rb, tb, bb;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plvasp: Please call plinit first.");
+    if (level < 1) {
+	plabort("plvasp: Please call plinit first");
+	return;
+    }
 
     plgchr(&chrdef, &chrht);
     lb = 8.0 * chrht;
@@ -335,15 +342,19 @@ c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 1)
-	plexit("plsvpa: Please call plinit first.");
-
-    if ((xmin >= xmax) || (ymin >= ymax))
-	plexit("plsvpa: Invalid limits.");
-
+    if (level < 1) {
+	plabort("plsvpa: Please call plinit first");
+	return;
+    }
+    if ((xmin >= xmax) || (ymin >= ymax)) {
+	plabort("plsvpa: Invalid limits");
+	return;
+    }
     plP_gsub(&nx, &ny, &cs);
-    if ((cs <= 0) || (cs > (nx * ny)))
-	plexit("plsvpa: Please call pladv or plenv to go to a subpage.");
+    if ((cs <= 0) || (cs > (nx * ny))) {
+	plabort("plsvpa: Please call pladv or plenv to go to a subpage");
+	return;
+    }
 
     plP_gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
     sxmin = plP_dcmmx(spdxmi);

@@ -1,20 +1,15 @@
 /* $Id$
    $Log$
-   Revision 1.4  1993/07/01 22:13:46  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.5  1994/03/23 08:35:11  mjl
+   All external API source files: replaced call to plexit() on simple
+   (recoverable) errors with simply printing the error message (via
+   plabort()) and returning.  Should help avoid loss of computer time in some
+   critical circumstances (during a long batch run, for example).
 
- * Revision 1.3  1993/01/23  06:02:04  mjl
- * Now holds all functions dealing with tick generation, including error
- * bars.
- *
- * Revision 1.2  1992/09/29  04:46:23  furnish
- * Massive clean up effort to remove support for garbage compilers (K&R).
- *
- * Revision 1.1  1992/05/20  21:34:53  furnish
- * Initial checkin of the whole PLPLOT project.
- *
+ * Revision 1.4  1993/07/01  22:13:46  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
 */
 
 /*	pltick.c
@@ -128,8 +123,10 @@ c_plerrx(PLINT n, PLFLT *xmin, PLFLT *xmax, PLFLT *y)
     short i;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plerrx: Please set up window first.");
+    if (level < 3) {
+	plabort("plerrx: Please set up window first");
+	return;
+    }
 
     for (i = 0; i < n; i++)
 	plerx1(xmin[i], xmax[i], y[i]);
@@ -148,8 +145,10 @@ c_plerry(PLINT n, PLFLT *x, PLFLT *ymin, PLFLT *ymax)
     short i;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plerry: Please set up window first.");
+    if (level < 3) {
+	plabort("plerry: Please set up window first");
+	return;
+    }
 
     for (i = 0; i < n; i++)
 	plery1(x[i], ymin[i], ymax[i]);

@@ -1,19 +1,20 @@
 /* $Id$
-   $Log$
-   Revision 1.8  1993/11/15 08:40:33  mjl
-   Comment fixes.
-
+ * $Log$
+ * Revision 1.9  1994/03/23 08:34:53  mjl
+ * All external API source files: replaced call to plexit() on simple
+ * (recoverable) errors with simply printing the error message (via
+ * plabort()) and returning.  Should help avoid loss of computer time in some
+ * critical circumstances (during a long batch run, for example).
+ *
+ * Revision 1.8  1993/11/15  08:40:33  mjl
+ * Comment fixes.
+ *
  * Revision 1.7  1993/10/21  19:30:25  mjl
  * Updated calls to private plplot utility functions (these now begin
  * with "plP_").
  *
  * Revision 1.6  1993/10/18  19:45:50  mjl
  * Added user-contributed plarrows function.
- *
- * Revision 1.5  1993/07/01  22:13:45  mjl
- * Changed all plplot source files to include plplotP.h (private) rather than
- * plplot.h.  Rationalized namespace -- all externally-visible internal
- * plplot functions now start with "plP_".
 */
 
 /*	plsym.c
@@ -22,9 +23,6 @@
 */
 
 #include "plplotP.h"
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
 #include <math.h>
 #include <float.h>
 
@@ -44,11 +42,14 @@ c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
     PLINT level;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plsym: Please set up window first.");
-
-    if (code < 0)
-	plexit("plsym: Invalid code.");
+    if (level < 3) {
+	plabort("plsym: Please set up window first");
+	return;
+    }
+    if (code < 0) {
+	plabort("plsym: Invalid code");
+	return;
+    }
 
     for (i = 0; i < n; i++)
 	plhrsh(code, plP_wcpcx(x[i]), plP_wcpcy(y[i]));
@@ -67,11 +68,14 @@ c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
     PLINT level, sym, font, col;
 
     plP_glev(&level);
-    if (level < 3)
-	plexit("plpoin: Please set up window first.");
-
-    if (code < 0 || code > 127)
-	plexit("plpoin: Invalid code.");
+    if (level < 3) {
+	plabort("plpoin: Please set up window first");
+	return;
+    }
+    if (code < 0 || code > 127) {
+	plabort("plpoin: Invalid code");
+	return;
+    }
 
     plP_gatt(&font, &col);
     sym = *(fntlkup + (font - 1) * numberchars + code);
@@ -99,7 +103,7 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
     penup = 1;
     scale = 0.05 * symht;
 
-    if (!plcvec(ch, &xygrid)) {
+    if ( ! plcvec(ch, &xygrid)) {
 	plP_movphy(x, y);
 	return;
     }
@@ -158,73 +162,74 @@ plhrsh(PLINT ch, PLINT x, PLINT y)
 static PLFLT arrow_x[4] = {0.5, -0.5, -0.27, -0.5};
 static PLFLT arrow_y[4] = {0.0, 0.0, 0.0, 0.20};
 
-void plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
-	PLFLT scale, PLFLT dx, PLFLT dy) {
+void 
+plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
+	 PLFLT scale, PLFLT dx, PLFLT dy) 
+{
+    PLFLT uu, vv;
+    PLINT i, j;
+    PLINT px0, py0, dpx, dpy;
+    PLINT a_x[4], a_y[4];
+    PLFLT max_u, max_v;
+    double t;
 
-	PLFLT uu, vv;
-	PLINT i, j;
-	PLINT px0, py0, dpx, dpy;
-	PLINT a_x[4], a_y[4];
-	PLFLT max_u, max_v;
-	double t;
+    if (n <= 0) return;
 
-	if (n <= 0) return;
-
-	if (scale <= 0.0) {
-		/* automatic scaling */
-		/* find max / min values of data */
-		max_u = u[0];
-		max_v = v[0];
-		for (i = 1; i < n; i++) {
-			t = fabs((double) u[i]);
-			max_u = t > max_u ? t : max_u;
-			t = fabs((double) v[i]);
-			max_v = t > max_v ? t : max_v;
-		}
-
-		/* measure distance in grid boxs */
-		max_u = max_u / fabs( (double) dx);
-		max_v = max_v / fabs( (double) dy);
-
-		t = (max_u > max_v ? max_u : max_v);
-		t = SCALE0 / t;
-		if (scale < 0) {
-			scale = -scale * t;
-		}
-		else {
-			scale = t;
-		}
+    if (scale <= 0.0) {
+	/* automatic scaling */
+	/* find max / min values of data */
+	max_u = u[0];
+	max_v = v[0];
+	for (i = 1; i < n; i++) {
+	    t = fabs((double) u[i]);
+	    max_u = t > max_u ? t : max_u;
+	    t = fabs((double) v[i]);
+	    max_v = t > max_v ? t : max_v;
 	}
+
+	/* measure distance in grid boxs */
+	max_u = max_u / fabs( (double) dx);
+	max_v = max_v / fabs( (double) dy);
+
+	t = (max_u > max_v ? max_u : max_v);
+	t = SCALE0 / t;
+	if (scale < 0) {
+	    scale = -scale * t;
+	}
+	else {
+	    scale = t;
+	}
+    }
 #ifdef DEBUG
-	printf("scale factor=%lf n=%d\n", scale,n);
+    fprintf(stderr, "scale factor=%lf n=%d\n", scale,n);
 #endif
 
-	for (i = 0; i < n; i++) {
-		uu = scale * u[i];
-		vv = scale * v[i];
-		if (uu == 0.0 && uu == 0.0) continue;
+    for (i = 0; i < n; i++) {
+	uu = scale * u[i];
+	vv = scale * v[i];
+	if (uu == 0.0 && uu == 0.0) continue;
 
-		/* conversion to physical coordinates */
-		px0 = plP_wcpcx(x[i]);
-		py0 = plP_wcpcy(y[i]);
+	/* conversion to physical coordinates */
+	px0 = plP_wcpcx(x[i]);
+	py0 = plP_wcpcy(y[i]);
 
 #ifdef DEBUG
-	printf("%f %f %d %d\n",x[i],y[i],px0,py0);
+	fprintf(stderr, "%f %f %d %d\n",x[i],y[i],px0,py0);
 #endif
-		dpx = plP_wcpcx(x[i] + 0.5*uu) - px0;
-		dpy = plP_wcpcy(y[i] + 0.5*vv) - py0;
+	dpx = plP_wcpcx(x[i] + 0.5*uu) - px0;
+	dpy = plP_wcpcy(y[i] + 0.5*vv) - py0;
 
-		/* tranform arrow -> a */
-		for (j = 0; j < 4; j++) {
-			a_x[j] = arrow_x[j] * dpx -
-				arrow_y[j] * dpy + px0;
-			a_y[j] = arrow_x[j] * dpy +
-				arrow_y[j] * dpx + py0;
-		}
-		/* draw the arrow */
-		plP_movphy(a_x[0], a_y[0]);
-		plP_draphy(a_x[1], a_y[1]);
-		plP_movphy(a_x[2], a_y[2]);
-		plP_draphy(a_x[3], a_y[3]);
+	/* tranform arrow -> a */
+	for (j = 0; j < 4; j++) {
+	    a_x[j] = arrow_x[j] * dpx -
+		arrow_y[j] * dpy + px0;
+	    a_y[j] = arrow_x[j] * dpy +
+		arrow_y[j] * dpx + py0;
 	}
+	/* draw the arrow */
+	plP_movphy(a_x[0], a_y[0]);
+	plP_draphy(a_x[1], a_y[1]);
+	plP_movphy(a_x[2], a_y[2]);
+	plP_draphy(a_x[3], a_y[3]);
+    }
 }
