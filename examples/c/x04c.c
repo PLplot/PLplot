@@ -79,7 +79,7 @@ plot1(int type)
     plcol0(2);
     plline(101, freql, ampl);
     plcol0(1);
-    plptex(5.0, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade");
+    plptex(1.6, -30.0, 1.0, -20.0, 0.5, "-20 dB/decade");
 
 /* Put labels on */
 
