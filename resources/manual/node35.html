@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Escape Sequences in Text</TITLE>
+<META NAME="description" CONTENT="Escape Sequences in Text">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node36.html">
+<LINK REL="previous" HREF="node34.html">
+<LINK REL="up" HREF="node24.html">
+<LINK REL="next" HREF="node36.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html645"
+ HREF="node36.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html641"
+ HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html635"
+ HREF="node34.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html643"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html644"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html646"
+ HREF="node36.html">Three Dimensional Surface Plots</A>
+<B> Up:</B> <A NAME="tex2html642"
+ HREF="node24.html">Advanced Use of PLplot</A>
+<B> Previous:</B> <A NAME="tex2html636"
+ HREF="node34.html">Setting Character and Symbol</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION032110000000000000000">
+Escape Sequences in Text</A>
+</H1>
+Escape sequences
+
+<P>
+The routines which draw text all allow you to include escape sequences
+in the text to be plotted.  These are character sequences that are
+interpreted as instructions to change fonts, draw superscripts and
+subscripts, draw non-ASCII (e.g. Greek), and so on.  All escape
+sequences start with a number symbol (#).
+
+<P>
+The following escape sequences are defined:
+<UL>
+<LI>#u: move up to the superscript position
+    (ended with #d)
+<LI>#d: move down to subscript position
+    (ended with #u)
+<LI>#b: backspace (to allow overprinting)
+<LI>##: number symbol
+<LI>#+: toggle overline mode
+<LI>#-: toggle underline mode
+<LI>#gx: Greek letter corresponding to Roman letter x
+                     (see below)
+<LI>#fn: switch to normal font
+<LI>#fr: switch to Roman font
+<LI>#fi: switch to italic font
+<LI>#fs: switch to script font
+<LI>#(nnn): Hershey character nnn (1 to 4 decimal digits)
+</UL>
+<P>
+Sections of text can have an underline or overline appended.  For
+example, the string
+<BR>
+<IMG
+ WIDTH="42" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img12.gif"
+ ALT="\begin{tex}\begin{displaymath}
+{\rm\overline{S}(\underline{freq})}
+\end{displaymath}
+\end{tex}">
+<BR>
+<BR>
+<IMG
+ WIDTH="302" HEIGHT="30" ALIGN="BOTTOM" BORDER="0"
+ SRC="img13.gif"
+ ALT="\begin{ifinfo}_
+S(freq)
+----
+\end{ifinfo}">
+<BR>
+is obtained by specifying "#+S#+(#-freq#-)".
+
+<P>
+Greek letters are obtained by #g followed by a Roman letter.
+Table <A HREF="#greek"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="icons.gif/cross_ref_motif.gif"></A> shows how these letters map into Greek
+characters.
+table
+
+<P>
+3-d Plots, Contour Plots, Escape Sequences, Advanced Use
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html645"
+ HREF="node36.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html641"
+ HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html635"
+ HREF="node34.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html643"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html644"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html646"
+ HREF="node36.html">Three Dimensional Surface Plots</A>
+<B> Up:</B> <A NAME="tex2html642"
+ HREF="node24.html">Advanced Use of PLplot</A>
+<B> Previous:</B> <A NAME="tex2html636"
+ HREF="node34.html">Setting Character and Symbol</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Defining the Window</TITLE>
+<META NAME="description" CONTENT="Defining the Window">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node30.html">
+<LINK REL="previous" HREF="node28.html">
+<LINK REL="up" HREF="node24.html">
+<LINK REL="next" HREF="node30.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html573"
+ HREF="node30.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html569"
+ HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html563"
+ HREF="node28.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html571"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html572"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html574"
+ HREF="node30.html">Annotating the Viewport</A>
+<B> Up:</B> <A NAME="tex2html570"
+ HREF="node24.html">Advanced Use of PLplot</A>
+<B> Previous:</B> <A NAME="tex2html564"
+ HREF="node28.html">Defining the Viewport</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION03250000000000000000">
+Defining the Window</A>
+</H1>
+Windows
+
+<P>
+The window must be defined after the viewport in order to map the world
+coordinate rectangle into the viewport rectangle.  The routine
+plwind is used to specify the rectangle in world-coordinate space.
+For example, if we wish to plot a graph showing the collector current
+<BR>
+<IMG
+ WIDTH="42" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img10.gif"
+ ALT="\begin{tex}$I_C$\space as a function of the collector to emitter voltage $V_{CE}...
+...I_C\le 10.0\mbox{\, mA}$\space and $0\le V_{CE}\le
+12.0\mbox{\, V}$ ,
+\end{tex}">
+<BR>
+<BR>
+<IMG
+ WIDTH="554" HEIGHT="30" ALIGN="BOTTOM" BORDER="0"
+ SRC="img11.gif"
+ ALT="\begin{ifinfo}\code{I_C} as a function of the collector to emitter voltage \code...
+...or where \code{0 <= I_C <= 10.0 mA} and \code{0 <= V_CE <=
+12.0 V},
+\end{ifinfo}">
+<BR>
+we would call the function plwind as follows:
+
+<P>
+<PRE>
+    plwind(0.0, 12.0, 0.0, 10.0);
+</PRE>
+<P>
+Note that each of the arguments is a floating point number, and so the
+decimal points are required.  If the order of either the X limits or
+Y limits is reversed, the corresponding axis will point in the opposite
+sense, (i.e., right to left for X and top to bottom for Y).  The window
+must be defined before any calls to the routines which actually draw the
+data points.  Note however that plwind may also be called to
+change the window at any time.  This will affect the appearance of
+objects drawn later in the program, and is useful for drawing two or
+more graphs with different axes on the same piece of paper.
+
+<P>
+Annotation, Standard Window, Windows, Advanced Use
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html573"
+ HREF="node30.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html569"
+ HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html563"
+ HREF="node28.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html571"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html572"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html574"
+ HREF="node30.html">Annotating the Viewport</A>
+<B> Up:</B> <A NAME="tex2html570"
+ HREF="node24.html">Advanced Use of PLplot</A>
+<B> Previous:</B> <A NAME="tex2html564"
+ HREF="node28.html">Defining the Viewport</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

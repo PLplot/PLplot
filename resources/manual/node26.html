@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Specifying the Output Device</TITLE>
+<META NAME="description" CONTENT="Specifying the Output Device">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node27.html">
+<LINK REL="previous" HREF="node25.html">
+<LINK REL="up" HREF="node24.html">
+<LINK REL="next" HREF="node27.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html537"
+ HREF="node27.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html533"
+ HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html527"
+ HREF="node25.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html535"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html536"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html538"
+ HREF="node27.html">Command line arguments</A>
+<B> Up:</B> <A NAME="tex2html534"
+ HREF="node24.html">Advanced Use of PLplot</A>
+<B> Previous:</B> <A NAME="tex2html528"
+ HREF="node25.html">Basic PLplot Concepts</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION03220000000000000000">
+Specifying the Output Device</A>
+</H1>
+Output device
+
+<P>
+The main initialization routine for PLplot is plinit, which sets
+up all internal data structures necessary for plotting and initializes
+the output device driver.  The output device can be a terminal, disk
+file, window system, pipe, or socket.  If the output device has not
+already been specified when plinit is called, a list of valid
+output devices is given and the user is prompted for a choice.  For
+example:
+
+<P>
+<PRE>
+% x01c
+
+Plotting Options:
+ &lt; 1&gt; xwin       X-Window (Xlib)
+ &lt; 2&gt; dp         Tcl-DP/TK Window
+ &lt; 3&gt; tk         Tcl/TK Window
+ &lt; 4&gt; xterm      Xterm Window
+ &lt; 5&gt; tekt       Tektronix Terminal (4010)
+ &lt; 6&gt; tek4107t   Tektronix Terminal (4105/4107)
+ &lt; 7&gt; mskermit   MS-Kermit emulator
+ &lt; 8&gt; versaterm  Versaterm vt100/tek emulator
+ &lt; 9&gt; vlt        VLT vt100/tek emulator
+ &lt;10&gt; plmeta     PLPLOT Native Meta-File
+ &lt;11&gt; tekf       Tektronix File (4010)
+ &lt;12&gt; tek4107f   Tektronix File (4105/4107)
+ &lt;13&gt; ps         PostScript File (monochrome)
+ &lt;14&gt; psc        PostScript File (color)
+ &lt;15&gt; xfig       Xfig file
+ &lt;16&gt; ljiip      LaserJet IIp/deskjet compressed graphics
+ &lt;17&gt; ljii       LaserJet II Bitmap File (150 dpi)
+ &lt;18&gt; null       Null device
+
+Enter device number or keyword:
+</PRE>
+<P>
+Either the device number or a device keyword is accepted.  Specifying
+the device by keyword is preferable in aliases or scripts since the
+device number is dependent on the install procedure (the installer can
+choose which device drivers to include).  The device can be specified
+prior to the call to plinit by:
+
+<P>
+<UL>
+<LI>
+A call to plsdev.
+
+<P>
+<LI>
+The -dev device command line argument, if the program's
+command line arguments are being passed to the PLplot function
+plParseInternalOpts.
+</UL>
+<P>
+Additional startup routines plstar and plstart are available
+but these are simply front-ends to plinit, and should be avoided.
+It is preferable to call plinit directly, along with the
+appropriate setup calls, for the greater amount of control this
+provides (see the example programs for more info).
+
+<P>
+Before plinit is called, you may modify the number of subpages
+the output device is divided into via a call to plssub.  Subpages
+are useful for placing several graphs on a page, but all subpages are
+constrained to be of the same size.  For greater flexibility, viewports
+can be used (Viewports for more info on viewports).  The routine
+pladv is used to advance to a particular subpage or to the next
+subpage.  The screen is cleared (or a new piece of paper loaded) if a
+new subpage is requested when there are no subpages left on the current
+page.  When a page is divided into subpages, the default character,
+symbol and tick sizes are scaled inversely as the square root of the
+number of subpages in the vertical direction.  This is designed to
+improve readability of plot labels as the plot size shrinks.
+
+<P>
+PLplot has the ability to write to multiple output streams.  An output
+stream corresponds to a single logical device to which one plots
+independent of all other streams.  The function plsstrm is used to
+switch between streams - you may only write to one output stream at
+a time.  At present, an output stream is not limited by the type of
+device, however, it may not be wise to attempt opening two terminal
+devices.  An example usage for the creation of multiple streams is as
+follows:
+
+<P>
+<PRE>
+#include "plplot.h"
+
+main()
+{
+    int nx = 2, ny = 2;
+
+    plssub(nx, ny);
+    plsdev("xwin");
+    plinit();
+
+    &lt;plots for stream 0&gt;
+
+    plsstrm(1);
+    plssub(nx, ny);
+    plsdev("plmeta");
+    plsfnam("tst.plm");
+    plinit();
+
+    &lt;plots for stream 1&gt;
+
+    plsstrm(0);
+
+    &lt;plots for stream 0&gt;
+</PRE>
+<P>
+and so on, for sending output simultaneously to an X-window and a metafile.
+The default stream corresponds to stream number zero.  At present, the
+majority of output drivers can only be used by a single stream
+(exceptions include the metafile driver and X-window driver).  Also see
+example program 14 (note: only the C version is available, although it
+can be done equally well from Fortran).
+
+<P>
+At the end of a plotting program, it is important to close the plotting
+device by calling plend.  This flushes any internal buffers and
+frees any memory that may have been allocated, for all open output
+streams.  You may call plend1 to close the plotting device for the
+current output stream only.  Note that if PLplot is initialized more
+than once during a program to change the output device, an automatic
+call to plend1 is made before the new device is opened for the
+given stream.
+
+<P>
+Arguments, Viewports, Output Device, Advanced Use    
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html537"
+ HREF="node27.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html533"
+ HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html527"
+ HREF="node25.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html535"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html536"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html538"
+ HREF="node27.html">Command line arguments</A>
+<B> Up:</B> <A NAME="tex2html534"
+ HREF="node24.html">Advanced Use of PLplot</A>
+<B> Previous:</B> <A NAME="tex2html528"
+ HREF="node25.html">Basic PLplot Concepts</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

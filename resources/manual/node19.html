@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Writing Text on a Graph</TITLE>
+<META NAME="description" CONTENT="Writing Text on a Graph">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node20.html">
+<LINK REL="previous" HREF="node18.html">
+<LINK REL="up" HREF="node16.html">
+<LINK REL="next" HREF="node20.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html442"
+ HREF="node20.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html438"
+ HREF="node16.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html432"
+ HREF="node18.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html440"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html441"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html443"
+ HREF="node20.html">Area Fills</A>
+<B> Up:</B> <A NAME="tex2html439"
+ HREF="node16.html">Drawing the Graph</A>
+<B> Previous:</B> <A NAME="tex2html433"
+ HREF="node18.html">Drawing Lines or Curves</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION03153000000000000000">
+Writing Text on a Graph</A>
+</H2>
+Annotation
+Writing Text
+Labels
+
+<P>
+plptex allows text to be written within the limits set by
+plenv.  The reference point of a text string may be located
+anywhere along an imaginary horizontal line passing through the string
+at half the height of a capital letter.  The parameter just
+specifies where along this line the reference point is located.  The
+string is then rotated about the reference point through an angle
+specified by the parameters dx and dy, so that the string
+becomes parallel to a line joining (x, y) to (x+dx,
+y+dy).
+
+<P>
+plptex(x, y, dx, dy, just, text)
+
+<P>
+x, y (PLFLT, input)
+Coordinates of the reference point.
+
+<P>
+dx, dy (PLFLT, input)
+These specify the angle at which the text is to be printed.  The text is
+written parallel to a line joining the points (x, y) to
+(x+dx, y+dy) on the graph.
+
+<P>
+just (PLFLT, input)
+Determines justification of the string by specifying which point within
+the string is placed at the reference point (x, y).  This
+parameter is a fraction of the distance along the string.  Thus if
+just = 0.0, the reference point is at the left-hand edge of the
+string.  If just = 0.5, it is at the center and if just = 1.0,
+it is at the right-hand edge.
+
+<P>
+text (char *, input)
+Pointer to the string of characters to be written.
+
+<P>
+Fills, Complex, Text, Drawing
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html442"
+ HREF="node20.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html438"
+ HREF="node16.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html432"
+ HREF="node18.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html440"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html441"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html443"
+ HREF="node20.html">Area Fills</A>
+<B> Up:</B> <A NAME="tex2html439"
+ HREF="node16.html">Drawing the Graph</A>
+<B> Previous:</B> <A NAME="tex2html433"
+ HREF="node18.html">Drawing Lines or Curves</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

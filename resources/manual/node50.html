@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Motivation for the C++ interface</TITLE>
+<META NAME="description" CONTENT="Motivation for the C++ interface">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node51.html">
+<LINK REL="previous" HREF="node49.html">
+<LINK REL="up" HREF="node49.html">
+<LINK REL="next" HREF="node51.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html855"
+ HREF="node51.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html851"
+ HREF="node49.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html845"
+ HREF="node49.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html853"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html854"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html856"
+ HREF="node51.html">Design of the PLplot</A>
+<B> Up:</B> <A NAME="tex2html852"
+ HREF="node49.html">A C++ Interface for</A>
+<B> Previous:</B> <A NAME="tex2html846"
+ HREF="node49.html">A C++ Interface for</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION05110000000000000000">
+Motivation for the C++ interface</A>
+</H1>
+Why C++?
+
+<P>
+PLplot has a fairly complex C API.  There are lots of functions, and
+several facilities have multiple entry points with similar names but
+different argument lists.  (Think contouring, shading).  Often these
+differing argument lists are to accomodate a variety of data storage
+paradigms, one of which you are expected to be using!
+
+<P>
+Especially in the case of the 2-d API's for contouring and shading,
+sophisticated C++ users may feel a special sense of exasperation with
+the data layout prescriptions, since they are extremely primitive,
+pointer rich, and prone to a wide class of memory leaks and other
+sorts of programming errors.  Many C++ users know good and well that
+better ways exist (templated matrix classes, etc), but historically
+have not been able to use these more sophisticated techniques if the
+contained data ever needed to get plotted.
+
+<P>
+Besides the 2-d API functions, there is also the multiple output
+stream capability of PLplot.  Anyone who knows C++ well, and who has
+used multple output streams in PLplot, has probably noticed striking
+similarities between the PLplot PLStream pointer and the C++ 
+this pointer.  Although multiple output streams have not been 
+widely used in PLplot applications in the past, the availability of
+the plframe Tk widget, and the extended wish concept, is making it
+much more attractive to use multiple output streams.
+
+<P>
+Unfortunately, if you do write a Tk extended wish application, and
+endow your interface with multiple plframes, the event driven
+character of X applications makes it difficult to ensure that PLplot
+output shows up in the right plframe window.  If a plot is generated
+to one plframe, the PLplot PLStream pointer is directed to that
+stream.  If a user then pushes a Tk button which should generate a
+plot to a different plframe, the plot goes to the old plframe instead!
+Schemes for controlling this can be imagined, but the logic can be
+complex, especially in the face of the ability to /also/ make plots to
+the same plframe from either Tcl or C++.
+
+<P>
+Beyond this, the C API is downright "ugly" for a significant number of
+the functions, particularly those which return values by accepting
+pointers to variables in their argument lists, and then changing them
+in that way.  Sophisticated C++ users generally take considerable
+pride in bannishing the offensive bare pointer from their code, and
+consider it disgusting to have to insert &amp;'s just in order to make a
+call to an API function.
+
+<P>
+In order to address these issues (and more), I have begun constructing
+a C++ interface to PLplot.  The purpose of this missive is to describe
+its architecture and usage.
+
+<P>
+C++ Design, C++ Specialization, C++ Motivation, C++ Interface
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html855"
+ HREF="node51.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html851"
+ HREF="node49.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html845"
+ HREF="node49.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html853"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html854"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html856"
+ HREF="node51.html">Design of the PLplot</A>
+<B> Up:</B> <A NAME="tex2html852"
+ HREF="node49.html">A C++ Interface for</A>
+<B> Previous:</B> <A NAME="tex2html846"
+ HREF="node49.html">A C++ Interface for</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

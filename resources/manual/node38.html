@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Contour Plots from C</TITLE>
+<META NAME="description" CONTENT="Contour Plots from C">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node39.html">
+<LINK REL="previous" HREF="node37.html">
+<LINK REL="up" HREF="node37.html">
+<LINK REL="next" HREF="node39.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html681"
+ HREF="node39.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html677"
+ HREF="node37.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html671"
+ HREF="node37.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html679"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html680"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html682"
+ HREF="node39.html">Contour Plots from Fortran</A>
+<B> Up:</B> <A NAME="tex2html678"
+ HREF="node37.html">Contour and Shade Plots</A>
+<B> Previous:</B> <A NAME="tex2html672"
+ HREF="node37.html">Contour and Shade Plots</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION032131000000000000000">
+Contour Plots from C</A>
+</H2>
+Contour Plots - C
+
+<P>
+There are two routines callable from C for plotting contours,
+plcont and plconf.  Routine plcont has the
+form:
+
+<P>
+plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr)
+
+<P>
+where z is the two-dimensional array of size
+nx by ny containing samples of the function to be
+contoured.  (z is a vectored two-dimensional array as described
+in the previous section.  It is <EM>not</EM> a fixed-size two-dimensional
+array.) The parameters kx, lx, ky and ly
+specify the portion of z that is to be considered.  The array
+clevel of length nlevel is a list of the desired contour
+levels.  Routine plconf has the form:
+
+<P>
+plconf(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr, xg, yg)
+
+<P>
+with all arguments identical to those in plcont except for the
+pointers to transformation arrays xg and yg.  These are
+used as input to the transformation function pltr.
+
+<P>
+The path of each contour is initially computed in terms of the values of
+the array indicies which range from 0 to nx-1 in the first
+index and from 0 to ny-1 in the second index.  Before
+these can be drawn in the current window (Windows), it is
+necessary to convert from these array indicies into world coordinates.
+This is done by passing a pointer to a user-defined function to
+plcont (the case for plconf is slightly different and
+discussed below).  This function pointer is the last argument
+pltr.  This function must be declared as type void in the
+module which calls plcont.  This transformation function must
+have the parameter list:
+
+<P>
+void pltr(x, y, tx, ty);
+
+<P>
+where (x, y) is the point through which the contour runs
+expressed in terms of array indicies, and (tx, ty) are pointers
+to float variables which are the world coordinates of the point which
+corresponds to these indicies.
+
+<P>
+Often, the transformation between array indices and world coordinates can be
+expressed as a linear transformation.  A routine is provided within the
+library which can be passed to plcont as pltr.  This
+transformation routine is:
+
+<P>
+<PRE>
+#include "plplot.h"
+
+#ifdef PLSTDC
+void 
+xform(PLFLT x, PLFLT y, PLFLT * tx, PLFLT * ty)
+#else
+void 
+xform(x, y, tx, ty)
+PLFLT x, y, *tx, *ty;
+#endif
+{
+    *tx = tr[0] * x + tr[1] * y + tr[2];
+    *ty = tr[3] * x + tr[4] * y + tr[5];
+}
+</PRE>
+<P>
+and should be compiled as part of the user's code (it is <EM>not</EM>
+normally linked in with the PLplot library since the tr data
+array is unspecified).
+
+<P>
+Thus by setting up the values in the array tr[], we can apply an
+arbitrary translation, rotation and/or shear to the array before drawing
+out the contours.  By defining other transformation subroutines, it is
+possible to draw contours wrapped around polar grids etc.  If no
+transformation is required, you can simply set tr[0] = tr[4] =
+1., with other entries set to 0..  Alternately you can pass the
+built-in function pltr0 to plcont; this function merely
+sets *tx to x and *ty to y, resulting in no net
+transformation.
+
+<P>
+As an example in setting up tr[], suppose that the array z
+is of size 21 by 41 and contains the values of the function
+z[x][y], where x ranges from 0.0 to 4.0 and y
+ranges from -8.0 to 8.0.  Furthermore, let us also suppose that the
+window (as defined using
+plenv or plwind) covers this range of world coordinates.
+Since we wish the index (0, 0) in array z to map to (0.0, -8.0)
+and the index (20, 40) to map to (4.0, 8.0), and for there to be no skew
+in the axes, we should choose elements of tr[] so that
+<BR>
+<IMG
+ WIDTH="42" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img19.gif"
+ ALT="\begin{tex}\begin{displaymath}
+\begin{array}{l@{\; = \;}l}
+tx & 0.2x \\
+ty & 0.4y - 8.
+\end{array}\end{displaymath}
+\end{tex}">
+<BR>
+<BR>
+<IMG
+ WIDTH="296" HEIGHT="30" ALIGN="BOTTOM" BORDER="0"
+ SRC="img20.gif"
+ ALT="\begin{ifinfo}\par (omitted in info version)
+\par\end{ifinfo}">
+<BR>
+and so tr[0] = 0.2, tr[1] = 0.0, tr[2] = 0.0, 
+tr[3] = 0.0, tr[4] = 0.4, tr[5] = -8..
+
+<P>
+For routine plconf, the user must pass pointers to transformation
+arrays as well as the function pointer.  The use of transformation
+arrays is generally the most convenient and flexible way to map
+coordinates, since the mapping function (which only handles
+interpolation) need not change from one problem to the next.  In this
+case there are two built-in transformation functions to assist the user;
+these are:
+
+<P>
+void pltr1(x, y, tx, ty, xg, yg, nx, ny);
+void pltr2(x, y, tx, ty, xg, yg, nx, ny);
+
+<P>
+where (xg, yg) are pointers to the transformation arrays and
+(nx, ny) are the number of gridpoints in each dimension.  These
+functions handle all necessary interpolations to calculate coordinate
+values between grid points.  The transformation arrays passed to
+pltr1 must be functions of a single variable only (xg[i],
+yg[i]), while those passed to pltr2 must be functions of two
+variables (xg[i, j], yg[i, j]).  This is further discussed in the
+following section.
+
+<P>
+Contour Plots - Fortran, , Contour Plots - C, Advanced Use
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html681"
+ HREF="node39.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html677"
+ HREF="node37.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html671"
+ HREF="node37.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html679"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html680"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html682"
+ HREF="node39.html">Contour Plots from Fortran</A>
+<B> Up:</B> <A NAME="tex2html678"
+ HREF="node37.html">Contour and Shade Plots</A>
+<B> Previous:</B> <A NAME="tex2html672"
+ HREF="node37.html">Contour and Shade Plots</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

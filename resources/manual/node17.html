@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Drawing Points</TITLE>
+<META NAME="description" CONTENT="Drawing Points">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node18.html">
+<LINK REL="previous" HREF="node16.html">
+<LINK REL="up" HREF="node16.html">
+<LINK REL="next" HREF="node18.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html418"
+ HREF="node18.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html414"
+ HREF="node16.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html408"
+ HREF="node16.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html416"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html417"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html419"
+ HREF="node18.html">Drawing Lines or Curves</A>
+<B> Up:</B> <A NAME="tex2html415"
+ HREF="node16.html">Drawing the Graph</A>
+<B> Previous:</B> <A NAME="tex2html409"
+ HREF="node16.html">Drawing the Graph</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION03151000000000000000">
+Drawing Points</A>
+</H2>
+Point plotting
+
+<P>
+plpoin and plsym mark out n points (x[i],
+y[i]) with the specified symbol.  The routines differ only in the
+interpretation of the symbol codes.  plpoin uses an extended
+ASCII representation, with the printable ASCII codes mapping to the
+respective characters in the current font, and the codes from 0-31
+mapping to various useful symbols.  In plsym however, the code is
+a Hershey font code number.  Example programs are provided which display
+each of the symbols available using these routines.
+
+<P>
+plpoin(n, x, y, code) <BR>
+plsym(n, x, y, code)
+
+<P>
+n (PLINT, input)
+The number of points to plot.
+
+<P>
+x, y (PLFLT *, input)
+Pointers to arrays of the coordinates of the n points.
+
+<P>
+code (PLINT, input)
+Code number of symbol to draw.
+
+<P>
+Lines, Text, Points, Drawing
+<BR><HR>
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

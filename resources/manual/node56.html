@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Specializing the PLplot C++ Interface</TITLE>
+<META NAME="description" CONTENT="Specializing the PLplot C++ Interface">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node57.html">
+<LINK REL="previous" HREF="node51.html">
+<LINK REL="up" HREF="node49.html">
+<LINK REL="next" HREF="node57.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html929"
+ HREF="node57.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html925"
+ HREF="node49.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html919"
+ HREF="node55.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html927"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html928"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html930"
+ HREF="node57.html">Status of the C++</A>
+<B> Up:</B> <A NAME="tex2html926"
+ HREF="node49.html">A C++ Interface for</A>
+<B> Previous:</B> <A NAME="tex2html920"
+ HREF="node55.html">Collapsing the API</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION05130000000000000000">
+Specializing the PLplot C++ Interface</A>
+</H1>
+
+<P>
+The plstream class is an ideal candidate for derivation.  By
+inheriting from plstream, the user can construct a new class
+which is automatically endowed with the ability to plot to a specific
+PLplot output stream in a coherent manner without having to worry
+about interplay with other plstream (or derived type) objects.
+Moreover, new, higher level, plotting functionality can be constructed
+to provide even more simplicity and ease of use than the PLplot API.
+
+<P>
+The PLplot maintainers (Geoff and Maurice) expect to introduce a class
+plxstream in the future which provides superior support for
+constructing graphics with multiple plots per page, easier
+specification of plot adornments, etc.  This should significantly ease
+one aspect of PLplot usage which we regard as being clumsy at this
+time.
+
+<P>
+Beyond that, users may find it useful to derive from plstream
+(or later plxstream whenever it finally makes its appearance) for the
+purpose of making "application specific" output streams.  For example,
+a C++ program will normally have a variety of objects which constitute
+the fundamental entities in the code.  These could all be made to be
+"atomically plotted" by providing suitable methods.  For example:
+<BR>
+<IMG
+ WIDTH="573" HEIGHT="360" ALIGN="BOTTOM" BORDER="0"
+ SRC="img27.gif"
+ ALT="\begin{example}class Cat { ... };
+class Dog { ... };
+class Bear { ... };
+class F...
+...ot( const Bear& b ) { ... }
+void plot( const Fish& f ) { ... }
+};
+\end{example}">
+<BR>
+<P>
+Presumably the PLplot user community can think of even more
+immaginative uses...  :-).
+
+<P>
+C++ Status, , C++ Specialization, C++ Interface
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html929"
+ HREF="node57.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html925"
+ HREF="node49.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html919"
+ HREF="node55.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html927"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html928"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html930"
+ HREF="node57.html">Status of the C++</A>
+<B> Up:</B> <A NAME="tex2html926"
+ HREF="node49.html">A C++ Interface for</A>
+<B> Previous:</B> <A NAME="tex2html920"
+ HREF="node55.html">Collapsing the API</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

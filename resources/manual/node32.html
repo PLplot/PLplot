@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Setting Line Attributes</TITLE>
+<META NAME="description" CONTENT="Setting Line Attributes">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node33.html">
+<LINK REL="previous" HREF="node31.html">
+<LINK REL="up" HREF="node24.html">
+<LINK REL="next" HREF="node33.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html609"
+ HREF="node33.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html605"
+ HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html599"
+ HREF="node31.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html607"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html608"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html610"
+ HREF="node33.html">Setting the Area Fill</A>
+<B> Up:</B> <A NAME="tex2html606"
+ HREF="node24.html">Advanced Use of PLplot</A>
+<B> Previous:</B> <A NAME="tex2html600"
+ HREF="node31.html">Setting up a Standard</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION03280000000000000000">
+Setting Line Attributes</A>
+</H1>
+Line attributes
+
+<P>
+The graph drawing routines may be freely mixed with those described in
+this section, allowing the user to control line color, width and styles.
+The attributes set up by these routines apply modally, i.e, all
+subsequent objects (lines, characters and symbols) plotted until the
+next change in attributes are affected in the same way.  The only
+exception to this rule is that characters and symbols are not affected
+by a change in the line style, but are always drawn using a continuous
+line.
+
+<P>
+Line color is set using the routine plcol.  The argument
+is ignored for devices which can only plot in one color, although some
+terminals support line erasure by plotting in color zero.
+
+<P>
+Line width is set using plwid.  This option is not supported by
+all devices.
+
+<P>
+Line style is set using the routine plstyl or pllsty.  A
+broken line is specified in terms of a repeated pattern consisting of
+marks (pen down) and spaces (pen up).  The arguments to this routine are
+the number of elements in the line, followed by two pointers to integer
+arrays specifying the mark and space lengths in micrometers.  Thus a
+line consisting of long and short dashes of lengths 4 mm and 2 mm,
+separated by spaces of length 1.5 mm is specified by:
+
+<P>
+<PRE>
+    mark[0] = 4000;
+    mark[1] = 2000;
+    space[0] = 1500;
+    space[1] = 1500;
+    plstyl(2, mark, space);
+</PRE>
+<P>
+To return to a continuous line, just call plstyl with first
+argument set to zero.  You can use pllsty to choose between 8
+different predefined styles.
+
+<P>
+Fill Pattern, Characters, Line Attributes, Advanced Use
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html609"
+ HREF="node33.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html605"
+ HREF="node24.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html599"
+ HREF="node31.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html607"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html608"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html610"
+ HREF="node33.html">Setting the Area Fill</A>
+<B> Up:</B> <A NAME="tex2html606"
+ HREF="node24.html">Advanced Use of PLplot</A>
+<B> Previous:</B> <A NAME="tex2html600"
+ HREF="node31.html">Setting up a Standard</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

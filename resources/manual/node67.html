@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>WISH Construction</TITLE>
+<META NAME="description" CONTENT="WISH Construction">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node68.html">
+<LINK REL="previous" HREF="node66.html">
+<LINK REL="up" HREF="node66.html">
+<LINK REL="next" HREF="node68.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1072"
+ HREF="node68.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html1068"
+ HREF="node66.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html1062"
+ HREF="node66.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html1070"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html1071"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html1073"
+ HREF="node68.html">WISH Linking</A>
+<B> Up:</B> <A NAME="tex2html1069"
+ HREF="node66.html">Custom Extensions to Tcl</A>
+<B> Previous:</B> <A NAME="tex2html1063"
+ HREF="node66.html">Custom Extensions to Tcl</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION05251000000000000000">
+WISH Construction</A>
+</H2>
+making a wish
+
+<P>
+The standard way to make your own WISH, as supported by the Tcl/Tk
+system, is to take a boilerplate file, tkAppInit.c, edit to
+reflect the Tcl/Tk extensions you will be requiring, add some commands
+to the interpretter, and link it all together.
+
+<P>
+Here for example is the important part of the tk02 demo,
+extracted from the file xtk02.c, which is effectively the
+extended WISH definition file for the tk02 demo.  Comments and
+other miscelany are omitted.
+<BR>
+<IMG
+ WIDTH="42" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img32.gif"
+ ALT="\begin{example} ...">
+<BR>
+<P>
+The calls to Tcl_Init() and Tk_Init() are in every WISH.
+To make an extended WISH, you add calls to the initialization routines
+for any extension packages you want to use, in this [incr Tcl]
+(Itcl_Init()) and PLplot (Pltk_Init()).  Finally you add
+keywords to the interpretter, associating them with functions in your
+code using Tcl_CreateCommand() as shown.
+
+<P>
+In particular, PLplot has a number of [incr Tcl] classes in its Tcl
+library.  If you want to be able to use those in your WISH, you need
+to include the initialization of [incr Tcl].
+
+<P>
+WISH linking, WISH programming, WISH construction, Custom Extensions
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1072"
+ HREF="node68.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html1068"
+ HREF="node66.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html1062"
+ HREF="node66.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html1070"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html1071"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html1073"
+ HREF="node68.html">WISH Linking</A>
+<B> Up:</B> <A NAME="tex2html1069"
+ HREF="node66.html">Custom Extensions to Tcl</A>
+<B> Previous:</B> <A NAME="tex2html1063"
+ HREF="node66.html">Custom Extensions to Tcl</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

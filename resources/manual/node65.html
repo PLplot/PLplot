@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>PLplot Extensions to Tcl</TITLE>
+<META NAME="description" CONTENT="PLplot Extensions to Tcl">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node66.html">
+<LINK REL="previous" HREF="node64.html">
+<LINK REL="up" HREF="node58.html">
+<LINK REL="next" HREF="node66.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1047"
+ HREF="node66.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html1043"
+ HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html1037"
+ HREF="node64.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html1045"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html1046"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html1048"
+ HREF="node66.html">Custom Extensions to Tcl</A>
+<B> Up:</B> <A NAME="tex2html1044"
+ HREF="node58.html">Building an Extended WISH</A>
+<B> Previous:</B> <A NAME="tex2html1038"
+ HREF="node64.html">Introduction to [incr Tcl]</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION05240000000000000000">
+PLplot Extensions to Tcl</A>
+</H1>
+PLplot Tcl extension
+Tcl extension
+
+<P>
+Following the paradigm described above, PLplot provides extensions to
+Tcl as well, designed to allow the use of PLplot from Tcl/Tk programs.
+Essentially the idea here is to allow PLplot programmers to achieve
+two goals:
+<UL>
+<LI>To access PLplot facilties from their own extended WISH and/or
+Tcl/Tk user interface scripts.
+
+<P>
+<LI>To have PLplot display its output in a window integrated
+directly into the rest of their Tcl/Tk interface.
+</UL>
+<P>
+For instance, prior to PLplot 5.0, if a programmer wanted to use
+PLplot in a Tcl/Tk application, the best he could manage was to call
+the PLplot C api from compiled C code, and get the output via the Xwin
+driver, which would display in it's own toplevel window.  In other
+words, there was no integration, and the result was pretty sloppy.
+
+<P>
+With PLplot 5.0, there is now a supported Tcl interface to PLplot
+functionality.  This is provided through a ``family'' of PLplot
+megawidgets implemented in [incr Tcl].  Using this interface, a
+programmer can get a PLplot window/widget into a Tk interface as
+easily as:
+<BR>
+<IMG
+ WIDTH="42" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img30.gif"
+ ALT="\begin{example}PLWin .plw
+pack .plw
+\end{example}">
+<BR>
+Actually, there's the update/init business-need to clear that up.
+
+<P>
+The PLWin class then mirrors much of the PLplot C API, so that
+a user can generate plots in the PLplot widget entirely from Tcl.
+This is demonstrated in the tk02 demo,
+
+<P>
+Custom Extensions, , PLplot Extensions, Extended WISH
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1047"
+ HREF="node66.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html1043"
+ HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html1037"
+ HREF="node64.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html1045"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html1046"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html1048"
+ HREF="node66.html">Custom Extensions to Tcl</A>
+<B> Up:</B> <A NAME="tex2html1044"
+ HREF="node58.html">Building an Extended WISH</A>
+<B> Previous:</B> <A NAME="tex2html1038"
+ HREF="node64.html">Introduction to [incr Tcl]</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Defining Plot Scales and Axes</TITLE>
+<META NAME="description" CONTENT="Defining Plot Scales and Axes">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node15.html">
+<LINK REL="previous" HREF="node13.html">
+<LINK REL="up" HREF="node11.html">
+<LINK REL="next" HREF="node15.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html377"
+ HREF="node15.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html373"
+ HREF="node11.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html367"
+ HREF="node13.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html375"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html376"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html378"
+ HREF="node15.html">Labelling the Graph</A>
+<B> Up:</B> <A NAME="tex2html374"
+ HREF="node11.html">Simple Use of PLplot</A>
+<B> Previous:</B> <A NAME="tex2html368"
+ HREF="node13.html">Initializing PLplot</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION03130000000000000000">
+Defining Plot Scales and Axes</A>
+</H1>
+
+<P>
+The function plenv is used to define the scales and axes for
+simple graphs.  plenv starts a new picture on the next subpage
+(or a new page if necessary), and defines the ranges of the variables
+required.  The routine will also draw a box, axes, and numeric labels if
+requested.  The syntax for plenv is:
+
+<P>
+plenv(xmin, xmax, ymin, ymax, just, axis)
+
+<P>
+xmin, xmax (PLFLT, input)
+The left and right limits for the horizontal axis.
+
+<P>
+ymin, ymax (PLFLT, input)
+The bottom and top limits for the vertical axis.
+
+<P>
+just (PLINT, input)
+This should be zero or one.  If just is one, the scales of the
+x-axis and y-axis will be the same (in units per millimeter); otherwise
+the axes are scaled independently.  This parameter is useful for
+ensuring that objects such as circles have the correct aspect ratio in
+the final plot.
+
+<P>
+axis (PLINT, input)
+axis controls whether a box, tick marks, labels, axes, and/or a
+grid are drawn.
+
+<P>
+<UL>
+<LI>
+axis = -2: No box or annotation.
+
+<P>
+<LI>
+axis = -1: Draw box only.
+
+<P>
+<LI>
+axis =  0: Draw box, labelled with coordinate values around edge.
+
+<P>
+<LI>
+axis =  1: In addition to box and labels, draw the two axes X = 0 and
+Y = 0. 
+
+<P>
+<LI>
+axis =  2: Same as axis = 1, but also draw a grid at the major
+tick interval.
+
+<P>
+<LI>
+axis = 10: Logarithmic X axis, linear Y axis.
+
+<P>
+<LI>
+axis = 11: Logarithmic X axis, linear Y axis and draw line Y = 0.
+
+<P>
+<LI>
+axis = 20: Linear X axis, logarithmic Y axis.
+
+<P>
+<LI>
+axis = 21: Linear X axis, logarithmic Y axis and draw line X = 0.
+
+<P>
+<LI>
+axis = 30: Logarithmic X and Y axes.
+</UL>
+
+<P>
+Note: Logarithmic axes only affect the appearance of the axes and their
+labels, so it is up to the user to compute the logarithms prior to
+passing them to plenv and any of the other routines.  Thus, if a
+graph has a 3-cycle logarithmic axis from 1 to 1000, we need to set
+xmin = &lt;og10(1) = 0.0, and xmax = &lt;og10(1000) =
+3.0.
+
+<P>
+For greater control over the size of the plots, axis labelling and tick
+intervals, more complex graphs should make use of the functions
+plvpor, plvasp, plvpas, plwind, plbox, and
+routines for manipulating axis labelling plgxax through
+plszax.
+
+<P>
+Labelling, Drawing, Scales, Simple Use
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html377"
+ HREF="node15.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html373"
+ HREF="node11.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html367"
+ HREF="node13.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html375"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html376"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html378"
+ HREF="node15.html">Labelling the Graph</A>
+<B> Up:</B> <A NAME="tex2html374"
+ HREF="node11.html">Simple Use of PLplot</A>
+<B> Previous:</B> <A NAME="tex2html368"
+ HREF="node13.html">Initializing PLplot</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Organization of this Manual</TITLE>
+<META NAME="description" CONTENT="Organization of this Manual">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node8.html">
+<LINK REL="previous" HREF="node6.html">
+<LINK REL="up" HREF="node3.html">
+<LINK REL="next" HREF="node8.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html248"
+ HREF="node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html244"
+ HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html238"
+ HREF="node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html246"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html247"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html249"
+ HREF="node8.html">Copyrights</A>
+<B> Up:</B> <A NAME="tex2html245"
+ HREF="node3.html">Introduction</A>
+<B> Previous:</B> <A NAME="tex2html239"
+ HREF="node6.html">Installing and Using the</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION02140000000000000000">
+Organization of this Manual</A>
+</H1>
+
+<P>
+OLD DOCS, NEEDS UPDATING!
+
+<P>
+The PLplot library has been designed so that it is easy to write programs
+producing graphical output without having to set up large numbers of
+parameters.  However, more precise control of the results may be
+necessary, and these are accomodated by providing lower-level routines
+which change the system defaults.  The manual first describs the overall
+process of producing a graph using the high-level routines (Simple
+Plot).  For a discussion of the underlying concepts of the plotting
+process and an introduction to some of the more complex routines
+Advanced Use.  An alphabetical list of the user-accessible PLplot
+functions with detailed descriptions is given in the reference section of
+the manual (API).
+
+<P>
+Because the PLplot kernel is written in C, standard C syntax is used
+in the description of each PLplot function.  The C and Fortran
+language interfaces are discussed in Appendix <A HREF="#ap:lang"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="icons.gif/cross_ref_motif.gif"></A>; look
+there if you have difficulty interpreting the call syntax as described
+in this manual.  The meaning of function (subroutine) arguments is
+typically the same regardless of whether you are calling from C or
+Fortran (but there are some exceptions to this).  The arguments for
+each function are usually specified in terms of PLFLT and PLINT --
+these are the internal PLplot representations for integer and floating
+point, and are typically a long and a float (or an INTEGER and a REAL,
+for Fortran programmers).  See Appendix <A HREF="#ap:lang"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="icons.gif/cross_ref_motif.gif"></A> for more detail.
+
+<P>
+Also, you can use PLplot from C++ just as you would from C.  No
+special classes are available at this time, just use it as any other
+procedural type library.  Simply include plplot.h, and invoke as
+you would from C.
+
+<P>
+The output devices supported by PLplot are listed in Appendix
+<A HREF="#ap:dev"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="icons.gif/cross_ref_motif.gif"></A>, along with description of the device driver-PLplot
+interface, metafile output, family files, and vt100/tek4010 emulators.
+In Appendix<A HREF="#ap:sys"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="icons.gif/cross_ref_motif.gif"></A> the usage and installation for each system
+supported by PLplot is described (not guaranteed to be entirely
+up-to-date; check the release notes to be sure).
+
+<P>
+Copyrights, Credits, Organization, Introduction
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html248"
+ HREF="node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html244"
+ HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html238"
+ HREF="node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html246"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html247"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html249"
+ HREF="node8.html">Copyrights</A>
+<B> Up:</B> <A NAME="tex2html245"
+ HREF="node3.html">Introduction</A>
+<B> Previous:</B> <A NAME="tex2html239"
+ HREF="node6.html">Installing and Using the</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

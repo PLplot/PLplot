@@ -1,0 +1,2294 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>The PLplot Applications Programming Interface</TITLE>
+<META NAME="description" CONTENT="The PLplot Applications Programming Interface">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="previous" HREF="node46.html">
+<LINK REL="up" HREF="node46.html">
+<LINK REL="next" HREF="node48.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html786"
+ HREF="node48.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html782"
+ HREF="node46.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html778"
+ HREF="node46.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html784"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html785"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html787"
+ HREF="node48.html">Advanced Techniques</A>
+<B> Up:</B> <A NAME="tex2html783"
+ HREF="node46.html">Reference</A>
+<B> Previous:</B> <A NAME="tex2html779"
+ HREF="node46.html">Reference</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION04100000000000000000">
+The PLplot Applications Programming Interface</A>
+</H1>
+
+<P>
+Documentation of each PLplot function.
+
+<P>
+Many new ones are still missing.
+
+<P>
+<BR>
+<IMG
+ WIDTH="42" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img22.gif"
+ ALT="\begin{menu}* pladv:: Advance the (sub-)page
+* plbin:: Plot a histogram from bin...
+...pen width
+* plwind:: Specify world coordinates of viewport boundaries
+\end{menu}">
+<BR>
+<P>
+&#184;&#184;
+
+<P>
+pladv, plbin, API, API
+
+<P>
+pladv(sub)
+<A NAME="pladv">&#160;</A>pladv
+
+<P>
+Advances to the next subpage if sub=0, performing a page
+advance if there are no remaining subpages on the current page.  If
+subwindowing isn't being used, pladv(0) will always advance the
+page.  If sub&gt;0, PLplot switches to the specified subpage.  Note
+that this allows you to overwrite a plot on the specified subpage; if this
+is not what you intended, use plclr followed by plpage to
+first advance the page.  This routine is called automatically (with
+sub=0) by plenv, but if plenv is not used,
+pladv must be called after initializing PLplot but before defining
+the viewport.
+
+<P>
+sub (PLINT, input)Specifies the subpage number (starting from
+1 in the top left corner and increasing along the rows) to which to advance.
+Set to zero to advance to the next subpage.
+
+<P>
+plbin, plbox, pladv, API
+
+<P>
+plbin(nbin, x, y, cen)
+<A NAME="plbin">&#160;</A>plbin
+
+<P>
+Plots a histogram consisting of n bins.  The value associated
+with the i'th bin is placed in x[i], and the number of points in
+the bin is placed in y[i].  For proper operation, the values in
+x[i] must form a strictly increasing sequence.  If center is
+false,  x[i] is the left-hand edge of the i'th bin, and if
+center is true, the bin boundaries are placed midway between the
+values in the x array.  Also see plhist for drawing
+histograms from unbinned data.
+
+<P>
+nbin (PLINT, input)Number of bins (i.e., number of values in
+<I>x</I> and <I>y</I> arrays.)
+
+<P>
+x (PLFLT *, input)Pointer to array containing values
+associated with bins.  These must form a strictly increasing sequence.
+
+<P>
+y (PLFLT *, input)Pointer to array containing number of
+points in bin.  This is a PLFLT (instead of PLINT) array so as to allow
+histograms of probabilities, etc.
+
+<P>
+cen (PLINT, input)Indicates whether the values in x
+represent the lower bin boundaries (cen=0) or whether the bin
+boundaries are to be midway between the x values (cen=1).  If
+the values in x are equally spaced and cen=1, the values in
+x are the center values of the bins.
+
+<P>
+plbox, plbox3, plbin, API
+
+<P>
+plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
+<A NAME="plbox">&#160;</A>plbox
+
+<P>
+Draws a box around the currently defined viewport, and labels it
+with world coordinate values appropriate to the window.  Thus plbox
+should only be called after defining both viewport and window.  The
+character strings xopt and yopt specify how the box should be
+drawn as described below.  If ticks and/or subticks are to be drawn for a
+particular axis, the tick intervals and number of subintervals may be
+specified explicitly, or they may be defaulted by setting the appropriate
+arguments to zero.
+
+<P>
+xopt (char *, input)Pointer to character string specifying
+options for horizontal axis.  The string can include any combination of the
+following letters (upper or lower case) in any order:
+
+<P>
+<UL>
+<LI>
+a: Draws axis, X-axis is horizontal line y=0, and Y-axis
+is vertical line x=0.
+
+<P>
+<LI>
+b: Draws bottom (X) or left (Y) edge of frame.
+
+<P>
+<LI>
+c: Draws top (X) or right (Y) edge of frame.
+
+<P>
+<LI>
+g: Draws a grid at the major tick interval.
+
+<P>
+<LI>
+i: Inverts tick marks, so they are drawn outwards, rather than
+inwards.
+
+<P>
+<LI>
+l: Labels axis logarithmically.  This only affects the labels,
+not the data, and so it is necessary to compute the logarithms of data
+points before passing them to any of the drawing routines.
+
+<P>
+<LI>
+m: Writes numeric labels at major tick intervals in the
+unconventional location (above box for X, right of box for Y).
+
+<P>
+<LI>
+n: Writes numeric labels at major tick intervals in the
+conventional location (below box for X, left of box for Y).
+
+<P>
+<LI>
+s: Enables subticks between major ticks, only valid if t is
+also specified.
+
+<P>
+<LI>
+t: Draws major ticks.
+</UL>
+
+<P>
+xtick (PLFLT, input)World coordinate interval between major
+ticks on the x axis.  If it is set to zero, PLplot automatically generates a
+suitable tick interval.
+
+<P>
+nxsub (PLINT, input)Number of subintervals between major
+x axis ticks for minor ticks.  If it is set to zero, PLplot automatically
+generates a suitable minor tick interval.
+
+<P>
+yopt (char *, input)Pointer to character string specifying
+options for vertical axis.  The string can include any combination of the
+letters defined above for xopt, and in addition may contain:
+
+<P>
+<UL>
+<LI>
+v: Write numeric labels for vertical axis
+parallel to the base of the graph, rather than parallel to the axis.
+</UL>
+
+<P>
+ytick (real, input)World coordinate interval between major
+ticks on the y axis.  If it is set to zero, PLplot automatically generates a
+suitable tick interval.
+
+<P>
+nysub (PLINT, input)Number of subintervals between major
+y axis ticks for minor ticks.  If it is set to zero, PLplot automatically
+generates a suitable minor tick interval.
+
+<P>
+plbox3, plclr, plbox, API
+
+<P>
+plbox3(xopt, xlabel, xtick, nxsub, yopt, ylabel, ytick, nysub, <BR>
+zopt, zlabel, ztick, nzsub) 
+<A NAME="plbox3">&#160;</A>plbox3
+
+&#184;
+
+<P>
+Draws axes, numeric and text labels for a three-dimensional surface
+plot.  For a more complete description of three-dimensional plotting
+3-d Plots.
+
+<P>
+xopt (char *, input)Pointer to character string specifying
+options for the x axis.  The string can include any combination of the
+following letters (upper or lower case) in any order:
+
+<P>
+<UL>
+<LI>
+b: Draws axis at base, at height z=zmin where zmin
+is defined by call to plw3d.  This character must be specified in
+order to use any of the other options.
+
+<P>
+<LI>
+i: Inverts tick marks, so they are drawn downwards, rather than
+upwards.
+
+<P>
+<LI>
+l: Labels axis logarithmically.  This only affects the labels, 
+not the data, and so it is necessary to compute the logarithms of data
+points before passing them to any of the drawing routines.
+
+<P>
+<LI>
+n: Writes numeric labels at major tick intervals.
+
+<P>
+<LI>
+s: Enables subticks between major ticks, only valid if t is
+also specified.
+
+<P>
+<LI>
+t: Draws major ticks.
+
+<P>
+<LI>
+u: If this is specified, the text label for the axis is written
+under the axis.
+</UL>
+
+<P>
+xlabel (char *, input)Pointer to character string specifying
+text label for the x axis.  It is only drawn if u is in the xopt
+string.
+
+<P>
+xtick (PLFLT, input)World coordinate interval between major
+ticks on the x axis.  If it is set to zero, PLplot automatically generates a
+suitable tick interval.
+
+<P>
+nxsub (PLINT, input)Number of subintervals between major
+x axis ticks for minor ticks.  If it is set to zero, PLplot automatically
+generates a suitable minor tick interval.
+
+<P>
+yopt (char *, input)Pointer to character string specifying
+options for the y axis.  The string is interpreted in the same way as
+xopt.
+
+<P>
+ylabel (char *, input)Pointer to character string specifying
+text label for the y axis.  It is only drawn if u is in the yopt
+string.
+
+<P>
+ytick (PLFLT, input)World coordinate interval between major
+ticks on the y axis.  If it is set to zero, PLplot automatically generates a
+suitable tick interval.
+
+<P>
+nysub (PLINT, input)Number of subintervals between major
+y axis ticks for minor ticks.  If it is set to zero, PLplot automatically
+generates a suitable minor tick interval.
+
+<P>
+zopt (char *, input)Pointer to character string specifying
+options for the z axis.  The string can include any combination of the
+following letters (upper or lower case) in any order:
+
+<P>
+<UL>
+<LI>
+b: Draws z axis to the left of the surface plot.
+
+<P>
+<LI>
+c: Draws z axis to the right of the surface plot.
+
+<P>
+<LI>
+d: Draws grid lines parallel to the x-y plane behind the figure.
+These lines are not drawn until after plot3d or plmesh are called
+because of the need for hidden line removal.
+
+<P>
+<LI>
+i: Inverts tick marks, so they are drawn away from the center.
+
+<P>
+<LI>
+l: Labels axis logarithmically.  This only affects the labels, 
+not the data, and so it is necessary to compute the logarithms of data
+points before passing them to any of the drawing routines.
+
+<P>
+<LI>
+m: Writes numeric labels at major tick intervals on the right-hand
+verical axis.
+
+<P>
+<LI>
+n: Writes numeric labels at major tick intervals on the left-hand
+verical axis.
+
+<P>
+<LI>
+s: Enables subticks between major ticks, only valid if t is
+also specified.
+
+<P>
+<LI>
+t: Draws major ticks.
+
+<P>
+<LI>
+u: If this is specified, the text label is written beside the
+left-hand axis.
+
+<P>
+<LI>
+v: If this is specified, the text label is written beside the
+right-hand axis.
+</UL>
+
+<P>
+zlabel (char *, input)Pointer to character string specifying
+text label for the z axis.  It is only drawn if u or v are in
+the zopt string.
+
+<P>
+ztick (PLFLT, input)World coordinate interval between major
+ticks on the z axis.  If it is set to zero, PLplot automatically generates a
+suitable tick interval.
+
+<P>
+nzsub (PLINT, input)Number of subintervals between major
+z axis ticks for minor ticks.  If it is set to zero, PLplot automatically
+generates a suitable minor tick interval.
+
+<P>
+plclr, plcol, plbox3, API
+
+<P>
+plclr()
+<A NAME="bname">&#160;</A>plclr
+
+<P>
+Clears the graphics screen of an interactive device, or ejects a
+page on a plotter.  plpage for more information.
+
+<P>
+plcol, plcon0, plclr, API
+
+<P>
+plcol(color)
+<A NAME="plcol">&#160;</A>plcol
+
+<P>
+Sets the color for subsequent lines.
+
+<P>
+color (PLINT, input)Integer representing the color.  The
+defaults at present are (these may change):
+
+<P>
+<DL COMPACT>
+<DT>1.
+<DD>black (default background)
+<DT>2.
+<DD>red
+<DT>3.
+<DD>yellow
+<DT>4.
+<DD>green
+<DT>5.
+<DD>aquamarine
+<DT>6.
+<DD>pink
+<DT>7.
+<DD>wheat
+<DT>8.
+<DD>grey
+<DT>9.
+<DD>brown
+<DT>10.
+<DD>blue
+<DT>11.
+<DD>BlueViolet
+<DT>12.
+<DD>cyan
+<DT>13.
+<DD>turquoise
+<DT>14.
+<DD>magenta
+<DT>15.
+<DD>salmon
+<DT>16.
+<DD>white (default foreground)
+</DL>
+
+<P>
+plcon0, plcon1, plcol, API
+
+<P>
+plcon0(z, nx, ny, kx, lx, ky, ly, clevel, nlevel)
+<A NAME="plcon0">&#160;</A>plcon0
+
+<P>
+Draws a contour plot of the data in z[nx][ny], using the
+nlevel contour levels specified by clevel.  Only the region
+of the array from kx to lx and from ky to ly
+is plotted out.  Contour plots for more information.
+
+<P>
+z (PLFLT **, input)Pointer to a vectored two-dimensional array
+containing data to be contoured.
+
+<P>
+nx, ny (PLINT, input)Physical dimensions of array z.
+
+<P>
+kx, lx (PLINT, input)Range of x indicies to consider.
+
+<P>
+ky, ly (PLINT, input)Range of y indicies to consider.
+
+<P>
+clevel (PLFLT *, input)Pointer to array specifying
+    levels at which to draw contours.
+
+<P>
+nlevel (PLINT, input)Number of contour levels to draw.
+
+<P>
+NOTE: this function is intended for use from a Fortran caller only.  The C
+user should instead call plcont using the built-in transformation
+function pltr0 for the same capability. 
+
+<P>
+plcon1, plcon2, plcon0, API
+
+<P>
+plcon1(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, xg, yg)
+<A NAME="plcon1">&#160;</A>plcon1
+
+<P>
+Draws a contour plot of the data in z[nx][ny], using the
+nlevel contour levels specified by clevel.  Only the region
+of the array from kx to lx and from ky to ly
+is plotted out.  The arrays xg and yg are used to specify
+the transformation between array indices and world coordinates.  
+Contour plots for more information.
+
+<P>
+z (PLFLT **, input)Pointer to a vectored two-dimensional array
+containing data to be contoured.
+
+<P>
+nx, ny (PLINT, input)Physical dimensions of array z.
+
+<P>
+kx, lx (PLINT, input)Range of x indicies to consider.
+
+<P>
+ky, ly (PLINT, input)Range of y indicies to consider.
+
+<P>
+clevel (PLFLT *, input)Pointer to array specifying
+levels at which to draw contours.
+
+<P>
+nlevel (PLINT, input)Number of contour levels to draw.
+
+<P>
+xg, yg (PLFLT *, input)Pointers to arrays which specify the
+transformation from array indices to world coordinates.  These must be
+one-dimensional arrays, used for a transformation of the form:
+tx=f(x), ty=f(y).  Function values at locations between grid
+points are obtained via linear interpolation. 
+
+<P>
+NOTE: this function is intended for use from a Fortran caller only.  The C
+user should instead call plconf using the built-in transformation
+function pltr1 for the same capability. 
+
+<P>
+plcon2, plconf, plcon1, API
+
+<P>
+plcon2(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, xg, yg)
+<A NAME="plcon2">&#160;</A>plcon2
+
+<P>
+Draws a contour plot of the data in z[nx][ny], using the
+nlevel contour levels specified by clevel.  Only the region
+of the array from kx to lx and from ky to ly
+is plotted out.  The arrays xg and yg are used to specify
+the transformation between array indices and world coordinates.  
+Contour plots for more information.
+
+<P>
+z (PLFLT **, input)Pointer to a vectored two-dimensional array
+containing data to be contoured.
+
+<P>
+nx, ny (PLINT, input)Physical dimensions of array z.
+
+<P>
+kx, lx (PLINT, input)Range of x indicies to consider.
+
+<P>
+ky, ly (PLINT, input)Range of y indicies to consider.
+
+<P>
+clevel (PLFLT *, input)Pointer to array specifying
+    levels at which to draw contours.
+
+<P>
+nlevel (PLINT, input)Number of contour levels to draw.
+
+<P>
+xg, yg (PLFLT *, input)Pointers to arrays which specify the
+transformation from array indices to world coordinates.  These must be
+two-dimensional arrays, used for a transformation of the form:
+tx=f(x, y), ty=f(x, y).  Function values at locations between
+grid points are obtained via linear interpolation.
+
+<P>
+NOTE: this function is intended for use from a Fortran caller only.  The C
+user should instead call plconf using the built-in transformation
+function pltr2 for the same capability. 
+
+<P>
+plconf, plcont, plcon2, API
+
+<P>
+plconf(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr, xg, yg)
+<A NAME="plconf">&#160;</A>plconf
+
+<P>
+Draws a contour plot of the data in z[nx][ny], using the
+nlevel contour levels specified by clevel.  Only the region
+of the array from kx to lx and from ky to ly
+is plotted out.  A transformation routine pltr is used to map
+indicies within the array to the world coordinates, using the
+transformation arrays xg and yg.  Contour plots for
+more information.
+
+<P>
+z (PLFLT **, input)Pointer to a vectored two-dimensional array
+containing data to be contoured.
+
+<P>
+nx, ny (PLINT, input)Physical dimensions of array z.
+
+<P>
+kx, lx (PLINT, input)Range of x indicies to consider.
+
+<P>
+ky, ly (PLINT, input)Range of y indicies to consider.
+
+<P>
+clevel (PLFLT *, input)Pointer to array specifying
+    levels at which to draw contours.
+
+<P>
+nlevel (PLINT, input)Number of contour levels to draw.
+
+<P>
+pltr (void *, input)Pointer to function that defines
+transformation between indicies in array z and the world coordinates.
+The function should have the form pltr(x, y, tx, ty, xg, yg, nx, ny)
+
+<P>
+x, y (PLFLT, input) Specifies the position in the array through
+which the contour runs in terms of the array indicies.
+
+<P>
+tx, ty (PLFLT *, output)Pointers to the
+world coordinates corresponding to the point (x, y).
+
+<P>
+xg, yg (PLFLT *, input)Pointers to transformation arrays.
+
+<P>
+nx, ny (PLINT, input)Array dimensions in x and
+y, respectively.
+
+<P>
+xg, yg (PLFLT *, input)Pointers to arrays which define the
+transformation from (x, y) to (tx, ty), used as input to the
+transformation function pltr.
+
+
+<P>
+Two transformation functions are provided: pltr1, for one
+dimensional mappings (i.e. tx = f(x), ty = f(y)), and
+pltr2, for two dimensional mappings (i.e. tx = f(x, y), ty
+= f(x, y)).  Function values at locations between grid points are
+obtained via linear interpolation.
+
+<P>
+NOTE:  this routine cannot be called directly from Fortran.  Use
+plcon0, plcon1, or plcon2 instead.
+
+<P>
+plcont, plend, plconf, API
+
+<P>
+plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr)(C)
+plcont(z, nx, ny, kx, lx, ky, ly, clevel, nlevel, tr)  (Fortran)
+
+<P>
+<A NAME="plcont">&#160;</A>plcont
+
+<P>
+Draws a contour plot of the data in z[nx][ny], using the
+nlevel contour levels specified by clevel.  Only the region
+of the array from kx to lx and from ky to ly
+is plotted out.  A transformation routine pltr is used to map
+indicies within the array to the world coordinates.  Contour
+plots for more information.
+
+<P>
+z (PLFLT **, input)Pointer to a vectored two-dimensional array
+containing data to be contoured.
+
+<P>
+nx, ny (PLINT, input)Physical dimensions of array z.
+
+<P>
+kx, lx (PLINT, input)Range of x indicies to consider.
+
+<P>
+ky, ly (PLINT, input)Range of y indicies to consider.
+
+<P>
+clevel (PLFLT *, input)Pointer to array specifying
+    levels at which to draw contours.
+
+<P>
+nlevel (PLINT, input)Number of contour levels to draw.
+
+<P>
+pltr (void *, input)Pointer to function that defines
+transformation between indicies in array z and the world coordinates
+(C only).  Two transformation functions are provided:  xform, for
+simple linear mappings, and pltr0, if no mapping is required.
+xform is not actually compiled into the PLplot library due to the
+need for external data; instead you must include it as part of your
+program.  The function should have the form:
+
+<P>
+pltr(x, y, tx, ty)
+
+<P>
+x, y (PLFLT, input) Specifies the position in the array
+through which the contour runs in terms of the array indicies. 
+
+<P>
+tx, ty (PLFLT *, output)Pointers to the world coordinates
+corresponding to the point (x, y). 
+
+<P>
+tr (PLFLT *, input)Pointer to 6-element array specifying
+coefficients to use in the xform transformation function (Fortran
+only).  Since this is somewhat inflexible, the user is recommended to call
+either of plcon0, plcon1, or plcon2 instead.
+
+<P>
+plend, plend1, plcont, API
+
+<P>
+plend()
+<A NAME="plend">&#160;</A>plend
+
+<P>
+Ends a plotting session, tidies up all the output files, switches
+interactive devices back into text mode and frees up any memory that was
+allocated.  Must be called before end of program.
+
+<P>
+plend1, plenv, plend, API
+
+<P>
+plend1()
+<A NAME="plend1">&#160;</A>plend1
+
+<P>
+Ends a plotting session for the current output stream only.
+See plsstrm for more info.
+
+<P>
+plenv, plerrx, plend1, API
+
+<P>
+plenv(xmin, xmax, ymin, ymax, just, axis)
+<A NAME="plenv">&#160;</A>plenv
+
+<P>
+Sets up plotter environment for simple graphs by calling pladv
+and setting up viewport and window to sensible default values.  plenv
+leaves enough room around most graphs for axis labels and a title.  When
+these defaults are not suitable, use the individual routines plvspa, 
+plvpor, or plvasp for setting up the viewport, plwind for
+defining the window, and plbox for drawing the box.
+
+<P>
+xmin (PLFLT, input)Value of x at left-hand edge of window.
+
+<P>
+xmax (PLFLT, input)Value of x at right-hand edge of window.
+
+<P>
+ymin (PLFLT, input)Value of y at bottom edge of window.
+
+<P>
+ymax (PLFLT, input)Value of y at top edge of window.
+
+<P>
+just (PLINT, input)If just=0, the x and y axes are
+scaled independently to use as much of the screen as possible, but if
+just=1, the scales of the x and y axes are made equal.
+
+<P>
+axis (PLINT, input)Controls drawing of the box around the plot:
+
+<P>
+<UL>
+<LI>
+-2: No box or annotation.
+
+<P>
+<LI>
+-1: Draw box only.
+
+<P>
+<LI>
+0: Draw box, labelled with coordinate values around edge.
+
+<P>
+<LI>
+1: In addition to box and labels, draw the two axes x=0
+and y=0. 
+
+<P>
+<LI>
+2: As for axis=1, but also draw a grid at the major tick
+interval. 
+
+<P>
+<LI>
+10: Logarithmic x axis, linear y axis.
+
+<P>
+<LI>
+11: Logarithmic x axis, linear y axis and draw line y=0.
+
+<P>
+<LI>
+20: Linear x axis, logarithmic y axis.
+
+<P>
+<LI>
+21: Linear x axis, logarithmic y axis and draw line x=0.
+
+<P>
+<LI>
+30: Logarithmic x and y axes.
+</UL>
+
+<P>
+plerrx, plerry, plenv, API
+
+<P>
+plerrx(n, xmin, xmax, y)
+<A NAME="plerrx">&#160;</A>plerrx
+
+<P>
+Draws a set of n horizontal error bars, the i'th error
+bar extending from xmin[i] to xmax[i] at y coordinate
+y[i].  The terminals of the error bar are of length equal to the
+minor tick length (settable using plsmin).
+
+<P>
+n (PLINT, input)Number of error bars to draw.
+
+<P>
+xmin (PLFLT *, input)Pointer to array with x coordinates of
+left-hand endpoint of error bars.
+
+<P>
+xmax (PLFLT *, input)Pointer to array with x coordinates of
+right-hand endpoint of error bars.
+
+<P>
+y (PLFLT *, input)Pointer to array with y coordinates of
+error bar.
+
+<P>
+plerry, plexit, plerrx, API
+
+<P>
+plerry(n, x, ymin, ymax)
+<A NAME="plerry">&#160;</A>plerry
+
+<P>
+Draws a set of n vertical error bars, the i'th error bar
+extending from ymin[i] to ymax[i] at x coordinate x[i].
+The terminals of the error bar are of length equal to the minor tick length
+(settable using plsmin).
+
+<P>
+n (PLINT, input)Number of error bars to draw.
+
+<P>
+x (PLFLT *, input)Pointer to array with x coordinates of
+error bars.
+
+<P>
+ymin (PLFLT *, input)Pointer to array with y coordinates of
+lower endpoint of error bars.
+
+<P>
+ymax (PLFLT *, input)Pointer to array with y coordinate of
+upper endpoint of error bar.
+
+<P>
+plexit, plfill, plerry, API
+
+<P>
+plexit(message)
+<A NAME="plexit">&#160;</A>plexit
+
+<P>
+This routine is called in case an error is encountered during
+execution of a PLplot routine.  It prints the error message, tries to
+release allocated resources, calls pl_exit and then exits.  If
+cleanup needs to be done in the driver program then the user may want to
+supply his/her own version of pl_exit.
+
+<P>
+message (char *, input)Error message.
+
+<P>
+plfill, plfont, plexit, API
+
+<P>
+plfill(n, x, y)
+<A NAME="plfill">&#160;</A>plfill
+
+<P>
+Fills the polygon defined by the n points (x[i], y[i])
+using the pattern defined by plpsty or plpat.  The routine will
+automatically close the polygon between the last and first vertices.  If
+multiple closed polygons are passed in x and y then plfill
+will fill in between them.
+
+<P>
+n (PLINT, input)Number of vertices in polygon.
+
+<P>
+x (PLFLT *, input)Pointer to array with x coordinates of
+vertices.
+
+<P>
+y (PLFLT *, input)Pointer to array with y coordinates of
+vertices.
+
+<P>
+plfont, plfontld, plfill, API
+
+<P>
+plfont(font)
+<A NAME="plfont">&#160;</A>plfont
+
+<P>
+Sets the default character font for subsequent character drawing.
+Also affects symbols produced by plpoin.  This routine has no effect
+unless the extended character set is loaded (see plfontld).
+
+<P>
+font (PLINT, input)Specifies the font:
+
+<P>
+<UL>
+<LI>
+1: Normal font (simplest and fastest)
+
+<P>
+<LI>
+2: Roman font
+
+<P>
+<LI>
+3: Italic font
+
+<P>
+<LI>
+4: Script font
+</UL>
+
+<P>
+plfontld, plgfam, plfont, API
+
+<P>
+plfontld(set)
+<A NAME="plfontld">&#160;</A>plfontld
+
+<P>
+Sets the character set to use for subsequent character drawing.
+May be called before calling initializing PLplot.
+
+<P>
+set (PLINT, input)Specifies the character set to load:
+<UL>
+<LI>
+0: Standard character set
+
+<P>
+<LI>
+1: Extended character set
+</UL>
+
+<P>
+plgfam, plgfile, plfontld, API
+
+<P>
+plgfam(fam, num, bmax)
+<A NAME="plgfam">&#160;</A>plgfam
+
+<P>
+Gets information about current family file, if familying is
+enabled.  See Section <A HREF="#sec:family"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="icons.gif/cross_ref_motif.gif"></A> for more information.
+
+<P>
+fam (PLINT *, output)Pointer to variable with the boolean
+family flag value.   If nonzero, familying is enabled.
+
+<P>
+num (PLINT *, output)Pointer to variable with the current 
+family file number.
+
+<P>
+bmax (PLINT *, output)Pointer to variable with the maximum
+file size (in bytes) for a family file.
+
+<P>
+plgfile, plgfnam, plgfam, API
+
+<P>
+plgfile(file)
+<A NAME="plgfile">&#160;</A>plgfile
+
+<P>
+Gets the current output file handle, if applicable. 
+
+<P>
+file (FILE *, output)File pointer to current output file.
+
+<P>
+NOTE: cannot be called from Fortran.
+
+<P>
+plgfnam, plgpage, plgfile, API
+
+<P>
+plgfnam(fnam)
+<A NAME="plgfnam">&#160;</A>plgfnam
+
+<P>
+Gets the current output file name, if applicable. 
+
+<P>
+fnam (char *, output)Pointer to file name string.
+
+<P>
+plgpage, plgra, plgfnam, API
+
+<P>
+plgpage(xp, yp, xleng, yleng, xoff, yoff)
+<A NAME="plgpage">&#160;</A>plgpage
+
+<P>
+Gets the current page configuration. 
+
+<P>
+xp (PLINT *, output)Pointer to number of pixels in x.
+
+<P>
+yp (PLINT *; output)Pointer to number of pixels in y.
+
+<P>
+xleng (PLINT *, output)Pointer to x page length value.
+
+<P>
+yleng (PLINT *, output)Pointer to y page length value.
+
+<P>
+xoff (PLINT *, output)Pointer to x page offset.
+
+<P>
+yoff (PLINT *, output)Pointer to y page offset.
+
+<P>
+plgra, plgspa, plgpage, API
+
+<P>
+plgra()
+<A NAME="plgra">&#160;</A>plgra
+
+<P>
+Sets an interactive device to graphics mode, used in conjunction
+with pltext to allow graphics and text to be interspersed.  On a
+device which supports separate text and graphics windows, this command
+causes control to be switched to the graphics window.  If already in
+graphics mode, this command is ignored.  It is also ignored on devices which
+only support a single window or use a different method for shifting focus.  
+See also pltext.
+
+<P>
+plgspa, plgstrm, plgra, API
+
+<P>
+plgspa(xmin, xmax, ymin, ymax)
+<A NAME="plgspa">&#160;</A>plgspa
+
+<P>
+Gets the size of the current subpage in millimeters measured from
+the bottom left hand corner of the output device page or screen.  Can be
+used in conjunction with plsvpa for setting the size of a viewport in
+absolute coordinates (millimeters).
+
+<P>
+xmin (PLFLT *, output)Pointer to variable with position of
+left hand edge of subpage in millimeters.
+
+<P>
+xmax (PLFLT *, output)Pointer to variable with position of
+right hand edge of subpage in millimeters.
+
+<P>
+ymin (PLFLT *, output)Pointer to variable with position of
+bottom edge of subpage in millimeters.
+
+<P>
+ymax (PLFLT *, output)Pointer to variable with position of
+top edge of subpage in millimeters.
+
+<P>
+plgstrm, plgxax, plgspa, API
+
+<P>
+plgstrm(strm)
+<A NAME="plgstrm">&#160;</A>plgstrm
+
+<P>
+Gets the number of the current output stream. See also
+plsstrm.
+
+<P>
+strm (PLINT *, output)Pointer to current stream value.
+
+<P>
+plgxax, plgyax, plgstrm, API
+
+<P>
+plgxax(digmax, digits)
+<A NAME="plgxax">&#160;</A>plgxax
+
+<P>
+Returns current values of the digmax and digits flags
+for the x axis.  digits is updated after the plot is drawn, so so
+this routine should only be called <EM>after</EM> the call to plbox
+(or plbox3) is complete.  Annotation for more information.
+
+<P>
+digmax (PLINT *, output)Pointer to variable with the maximum
+number of digits.  If nonzero, the printed label will be switched to a
+floating point representation when the number of digits exceeds
+digmax.
+
+<P>
+digits (PLINT *, output)Pointer to variable with the actual
+number of digits for the numeric labels (x axis) from the last plot.
+
+<P>
+plgyax, plgzax, plgxax, API
+
+<P>
+plgyax(digmax, digits)
+<A NAME="plgyax">&#160;</A>plgyax
+
+<P>
+Identical to plgxax, except that arguments are flags for 
+y axis.  See the description of plgxax for more detail.
+
+<P>
+plgzax, plhist, plgyax, API
+
+<P>
+plgzax(digmax, digits)
+<A NAME="plgzax">&#160;</A>plgzax
+
+<P>
+Identical to plgxax, except that arguments are flags for 
+z axis.  See the description of plgxax for more detail.
+
+<P>
+plhist, pljoin, plgzax, API
+
+<P>
+plhist(n, data, datmin, datmax, nbin, oldwin)
+<A NAME="plhist">&#160;</A>plhist
+
+<P>
+Plots a histogram from n data points stored in the array
+data.  This routine bins the data into nbin bins equally spaced
+between datmin and datmax, and calls plbin to draw the
+resulting histogram.  Parameter oldwin allows the histogram either to
+be plotted in an existing window or causes plhist to call plenv
+with suitable limits before plotting the histogram.
+
+<P>
+n (PLINT, input)Number of data points.
+
+<P>
+data (PLFLT *, input)Pointer to array with values of the
+n data points.
+
+<P>
+datmin (PLFLT, input)Left-hand edge of lowest-valued bin.
+
+<P>
+datmax (PLFLT, input)Right-hand edge of highest-valued bin.
+
+<P>
+nbin (PLINT, input)Number of (equal-sized) bins into which
+to divide the interval xmin to xmax.
+
+<P>
+oldwin (PLINT, input)If one, the histogram is plotted in the
+currently-defined window, and if zero, plenv is called automatically
+before plotting.
+
+<P>
+plinit, pljoin, plhist, API
+
+<P>
+plinit()
+<A NAME="plinit">&#160;</A>plinit
+
+<P>
+Initializing the plotting package.  The program prompts for the
+device keyword or number of the desired output device.  Hitting a RETURN in
+response to the prompt is the same as selecting the first device.  
+plinit will issue no prompt if either the device was specified
+previously (via command line flag or the plsdev function), or if
+only one device is enabled when PLplot is installed.  If subpages have
+been specified, the output device is divided into nx by ny
+sub-pages, each of which may be used independently.  If plinit is
+called again during a program, the previously opened file will be
+closed.  The subroutine pladv is used to advance from one subpage
+to the next.
+
+<P>
+pljoin, pllab, plhist, API
+
+<P>
+pljoin(x1, y1, x2, y2)
+<A NAME="pljoin">&#160;</A>pljoin
+
+<P>
+Joins the point (x1, y1) to (x2, y2).
+
+<P>
+x1 (PLFLT, input)x coordinate of first point.
+
+<P>
+y1 (PLFLT, input)y coordinate of first point.
+
+<P>
+x2 (PLFLT, input)x coordinate of second point.
+
+<P>
+y2 (PLFLT, input)y coordinate of second point.
+
+<P>
+pllab, plline, pljoin, API
+
+<P>
+pllab(xlabel, ylabel, tlabel)
+<A NAME="pllab">&#160;</A>pllab
+
+<P>
+Routine for writing simple labels. Use plmtex for more complex
+labels.
+
+<P>
+xlabel (char *, input)Label for horizontal axis.
+
+<P>
+ylabel (char *, input)Label for vertical axis.
+
+<P>
+tlabel (char *, input)Title of graph.
+
+<P>
+plline, pllsty, pllab, API
+
+<P>
+plline(n, x, y)
+<A NAME="plline">&#160;</A>plline
+
+<P>
+Draws n-1 line segments joining points (x[i], y[i]).
+
+<P>
+n (PLINT, input)Number of points to join.
+
+<P>
+x (PLFLT *, input)Pointer to array with x coordinates of
+points.
+
+<P>
+y (PLFLT *, input)Pointer to array with y coordinates of
+points.
+
+<P>
+pllsty, plmesh, plline, API
+
+<P>
+pllsty(n)
+<A NAME="pllsty">&#160;</A>pllsty
+
+<P>
+This sets the line style according to one of eight predefined patterns
+(also see plstyl).
+
+<P>
+n (PLINT, input)Integer value between 1 and 8.
+
+<P>
+plmesh, plmtex, pllsty, API
+
+<P>
+plmesh(x, y, z, nx, ny, opt)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(C)
+plmesh(x, y, z, nx, ny, opt, mx)(Fortran)
+
+<P>
+<A NAME="plmesh">&#160;</A>plmesh
+
+<P>
+Plots a surface mesh within the environment set up by plw3d.
+The surface is defined by the two-dimensional array z[][], the point
+z[i][j] being the value of the function at (x[i], y[j]).  Note
+that the points in arrays x and y do not need to be equally
+spaced, but must be stored in ascending order.  The parameter opt
+controls the way in which the surface is displayed.  For further details
+3-d Plots.
+
+<P>
+x (PLFLT *, input)Pointer to set of x coordinate values at
+which the function is evaluated.
+
+<P>
+y (PLFLT *, input)Pointer to set of y coordinate values at
+which the function is evaluated.
+
+<P>
+z (PLFLT **, input)Pointer to a vectored two-dimensional
+array with set of function values.
+
+<P>
+nx (PLINT, input)Number of x values at which function is
+evaluated.
+
+<P>
+ny (PLINT, input)Number of y values at which function is
+evaluated.
+
+<P>
+opt (PLINT, input)Determines the way in which the surface
+is represented:
+
+<P>
+<UL>
+<LI>
+1: Lines are drawn showing z as a function of x for
+each value of y[j].
+
+<P>
+<LI>
+2: Lines are drawn showing z as a function of y for
+each value of x[i].
+
+<P>
+<LI>
+3: Network of lines is drawn connecting points at which function
+is defined.
+</UL>
+
+<P>
+mx (PLINT, input)Length of array in x direction, for plotting
+subarrays (Fortran only).
+
+<P>
+plmtex, plot3d, plmesh, API
+
+<P>
+plmtex(side, disp, pos, just, text)
+<A NAME="plmtex">&#160;</A>plmtex
+
+<P>
+Writes text at a specified position relative to the viewport
+boundaries.  Text may be written inside or outside the viewport, but is
+clipped at the subpage boundaries.  The reference point of a string lies
+along a line passing through the string at half the height of a capital
+letter.  The position of the reference point along this line is determined
+by just, and the position of the reference point relative to the
+viewport is set by disp and pos.
+
+<P>
+side (char *, input)Specifies the side of the viewport along
+which the text is to be written. The string must be one of:
+
+<P>
+<UL>
+<LI>
+b: Bottom of viewport.
+
+<P>
+<LI>
+l: Left of viewport, text written parallel to edge.
+
+<P>
+<LI>
+lv: Left of viewport, text written at right angles to edge.
+
+<P>
+<LI>
+r: Right of viewport, text written parallel to edge.
+
+<P>
+<LI>
+rv: Right of viewport, text written at right angles to edge.
+
+<P>
+<LI>
+t: Top of viewport.
+</UL>
+
+<P>
+disp (PLFLT, input)Position of the reference point of string, 
+measured outwards from the specified viewport edge in units of the current
+character height.  Use negative disp to write within the viewport.
+
+<P>
+pos (PLFLT, input)Position of the reference point of string
+along the specified edge, expressed as a fraction of the length of the edge.
+
+<P>
+just (PLFLT, input)Specifies the position of the string
+relative to its reference point.  If just=0, the reference point is at
+the left and if just=1, it is at the right of the string.  Other
+values of just give intermediate justifications.
+
+<P>
+text (char *, input)The string to be written out.
+
+<P>
+plot3d, plpage, plmtex, API
+
+<P>
+plot3d(x, y, z, nx, ny, opt, side)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(C)
+plot3d(x, y, z, nx, ny, opt, side, mx)(Fortran)
+
+<P>
+<A NAME="plot3d">&#160;</A>plot3d
+
+<P>
+Plots a three dimensional surface plot within the environment set up
+by plw3d.  The surface is defined by the two-dimensional array
+z[][], the point z[i][j] being the value of the function at
+(x[i], y[j]).  Note that the points in arrays x and y
+do not need to be equally spaced, but must be stored in ascending order.
+The parameter opt controls the way in which the surface is
+displayed.  For further details 3-d Plots. 
+
+<P>
+x (PLFLT *, input)Pointer to set of x coordinate values at
+which the function is evaluated.
+
+<P>
+y (PLFLT *, input)Pointer to set of y coordinate values at
+which the function is evaluated.
+
+<P>
+z (PLFLT **, input)Pointer to a vectored two-dimensional
+array with set of function values.
+
+<P>
+nx (PLINT, input)Number of x values at which function
+is evaluated.
+
+<P>
+ny (PLINT, input)Number of y values at which function
+is evaluated.
+
+<P>
+opt (PLINT, input)Determines the way in which the surface
+is represented:
+
+<P>
+<UL>
+<LI>
+1: Lines are drawn showing z as a function of x for
+each value of y[j].
+
+<P>
+<LI>
+2: Lines are drawn showing z as a function of y for
+each value of x[i].
+
+<P>
+<LI>
+3: Network of lines is drawn connecting points at which function
+is defined.
+</UL>
+
+<P>
+side (PLINT, input)Flag to indicate whether or not ``sides''
+should be draw on the figure.  If side=0 no sides are drawn, otherwise
+the sides are drawn.
+
+<P>
+mx (PLINT, input)Length of array in x direction, for plotting
+subarrays (Fortran only).
+
+<P>
+plpage, plpat, plot3d, API
+
+<P>
+plpage()
+<A NAME="plpage">&#160;</A>plpage
+
+<P>
+Begins a new page.  For a file driver, the output file is opened if
+necessary.  Advancing the page via plclr and plpage is useful
+when a page break is desired at a particular point when plotting to
+subpages.  Another use for plclr and plpage is when plotting
+pages to different files, since you can manually set the file name (or file
+handle) by calling plsfnam or plsfile after the call to
+plclr (in fact some drivers may only support a single page per
+file, making this a necessity).  One way to handle this case automatically
+is to page advance via pladv, but enable familying (see
+plsfam) with a small byte per file limit so that a new family
+member file will be created on each page break.
+
+<P>
+Except for one of these circumstances, it is best to advance the page or
+subpage simply by the call pladv(0).
+
+<P>
+plpat, plpoin, plpage, API
+
+<P>
+plpat(nlin, inc, del)
+<A NAME="plpat">&#160;</A>plpat
+
+<P>
+Sets the area fill pattern.  The pattern consists of 1 or 2 sets of
+parallel lines with specified inclinations and spacings.  The arguments to
+this routine are the number of sets to use (1 or 2) followed by two pointers
+to integer arrays (of 1 or 2 elements) specifying the inclinations in tenths
+of a degree and the spacing in micrometers.  (also see plpsty)
+
+<P>
+nlin (PLINT, input)Number of sets of lines making up the
+pattern, either 1 or 2.
+
+<P>
+inc (PLINT *, input)Pointer to array with nlin elements.
+Specifies the line inclination in tenths of a degree.  (Should be between
+-900 and 900).
+
+<P>
+del (PLINT *, input)Pointer to array with nlin elements.
+Specify the spacing in micrometers between the lines making up the pattern.
+
+<P>
+plpoin, plprec, plpat, API
+
+<P>
+plpoin(n, x, y, code)
+<A NAME="plpoin">&#160;</A>plpoin
+
+<P>
+Marks out a set of n points at positions (x(i), y(i)), 
+using the symbol defined by code.  If code is between 32 and
+127, the symbol is simply the printable ASCII character in the default
+font.
+
+<P>
+n (PLINT, input)Number of points to be marked.
+
+<P>
+x (PLFLT *, input)Pointer to array with set of x coordinate
+values for the points.
+
+<P>
+y (PLFLT *, input)Pointer to array with set of y coordinate
+values for the points.
+
+<P>
+code (PLINT, input)Code number for the symbol to be plotted.
+
+<P>
+plprec, plpsty, plpoin, API
+
+<P>
+plprec(set, prec)
+<A NAME="plprec">&#160;</A>plprec
+
+<P>
+Sets the number of places after the decimal point in numeric labels.
+
+<P>
+set (PLINT, input) If set is equal to 0 then PLplot
+automatically determines the number of places to use after the decimal point
+in numeric labels (like those used to label axes).  If set is 1 then
+prec sets the number of places.
+
+<P>
+prec (PLINT, input)The number of characters to draw after the
+decimal point in numeric labels.
+
+<P>
+plpsty, plptex, plprec, API
+
+<P>
+plpsty(n)
+<A NAME="plpsty">&#160;</A>plpsty
+
+<P>
+Select one of eight predefined area fill patterns to use (also see
+plpat).
+
+<P>
+n (PLINT *, input)The desired pattern.
+
+<P>
+plptex, plschr, plpsty, API
+
+<P>
+plptex(x, y, dx, dy, just, text)
+<A NAME="plptex">&#160;</A>plptex
+
+<P>
+Writes text at a specified position and inclination within the
+viewport.  Text is clipped at the viewport boundaries.  The reference point
+of a string lies along a line passing through the string at half the height
+of a capital letter.  The position of the reference point along this line is
+determined by just, the reference point is placed at world coordinates
+(x, y) within the viewport.  The inclination of the string is specified
+in terms of differences of world coordinates making it easy to write text
+parallel to a line in a graph.
+
+<P>
+x (PLFLT, input)x coordinate of reference point of string.
+
+<P>
+y (PLFLT, input)y coordinate of reference point of string.
+
+<P>
+dx (PLFLT, input)Together with dy, this specifies the
+inclination of the string.  The baseline of the string is parallel to a line
+joining (x, y) to (x+dx, y+dy).
+
+<P>
+dy (PLFLT, input)Together with dx, this specifies the
+inclination of the string.
+
+<P>
+just (PLFLT, input)Specifies the position of the string
+relative to its reference point.  If just=0, the reference point is at
+the left and if just=1, it is at the right of the string.  Other
+values of just give intermediate justifications.
+
+<P>
+text (char *, input)The string to be written out.
+
+<P>
+plschr, plsfam, plptex, API
+
+<P>
+plschr(def, scale)
+<A NAME="plschr">&#160;</A>plschr
+
+<P>
+This sets up the size of all subsequent characters drawn.  The
+actual height of a character is the product of the default character size
+and a scaling factor.
+
+<P>
+def (PLFLT, input)The default height of a character in
+millimeters, should be set to zero if the default height is to remain
+unchanged.
+
+<P>
+scale (PLFLT, input)Scale factor to be applied to default to
+get actual character height.
+
+<P>
+plsfam, plsfile, plschr, API
+
+<P>
+plsfam(fam, num, bmax)
+<A NAME="plsfam">&#160;</A>plsfam
+
+<P>
+Sets variables dealing with output file familying.  Does nothing if
+familying not supported by the driver.  This routine, if used, must be
+called before initializing PLplot.  See Section <A HREF="#sec:family"><IMG  ALIGN="BOTTOM" BORDER="1" ALT="[*]"
+ SRC="icons.gif/cross_ref_motif.gif"></A> for more
+information.
+
+<P>
+fam (PLINT, input)Family flag (boolean).  If nonzero, 
+familying is enabled.
+
+<P>
+num (PLINT, input)Current family file number.
+
+<P>
+bmax (PLINT, input)Maximum file size (in bytes) 
+for a family file.
+
+<P>
+plsfile, plsfnam, plsfam, API
+
+<P>
+plsfile(file)
+<A NAME="plsfile">&#160;</A>plsfile
+
+<P>
+Sets the current output file handle, if applicable.  If the file has
+has not been previously opened and is required by the driver, the user will
+be prompted for the file name.  This routine, if used, must be called before
+initializing PLplot.
+
+<P>
+file (FILE *, input)File pointer.
+
+<P>
+NOTE: cannot be called from Fortran.
+
+<P>
+plsfnam, plsmaj, plsfile, API
+
+<P>
+plsfnam(fnam)
+<A NAME="plsfnam">&#160;</A>plsfnam
+
+<P>
+Sets the current output file name, if applicable.  If the file name
+has not been specified and is required by the driver, the user will be
+prompted for it.  If using the X-windows output driver, this sets the
+display name.  This routine, if used, must be called before initializing
+PLplot.
+
+<P>
+fnam (char *, input)Pointer to file name string.
+
+<P>
+plsmaj, plsmin, plsfnam, API
+
+<P>
+plsmaj(def, scale)
+<A NAME="plsmaj">&#160;</A>plsmaj
+
+<P>
+This sets up the length of the major ticks.  The actual length is
+the product of the default length and a scaling factor as for character
+height.
+
+<P>
+def (PLFLT, input)The default length of a major tick in
+millimeters, should be set to zero if the default length is to remain
+unchanged.
+
+<P>
+scale (PLFLT, input)Scale factor to be applied to default to
+get actual tick length.
+
+<P>
+plsmin, plsori, plsmaj, API
+
+<P>
+plsmin(def, scale)
+<A NAME="plsmin">&#160;</A>plsmin
+
+<P>
+This sets up the length of the minor ticks and the length of the
+terminals on error bars.  The actual length is the product of the default
+length and a scaling factor as for character height.
+
+<P>
+def (PLFLT, input)The default length of a minor tick in
+millimeters, should be set to zero if the default length is to remain
+unchanged.
+
+<P>
+scale (PLFLT, input)Scale factor to be applied to default to
+get actual tick length.
+
+<P>
+plsori, plspage, plsmin, API
+
+<P>
+plsori(ori)
+<A NAME="plsori">&#160;</A>plsori
+
+<P>
+Sets the current orientation.  If ori is equal to zero
+(default) then landscape is used (x axis is parallel to the longest edge of
+the page), otherwise portrait is used.  This option is not supported by all
+output drivers (in particular, most interactive screen drivers ignore the
+orientation).  This routine, if used, must be called before initializing
+PLplot.
+
+<P>
+ori (PLINT, input)Orientation value.
+
+<P>
+plspage, plsstrm, plsori, API
+
+<P>
+plspage(xp, yp, xleng, yleng, xoff, yoff)
+<A NAME="plspage">&#160;</A>plspage
+
+<P>
+Sets the page configuration (optional).  Not all parameters
+recognized by all drivers.  The X-window driver uses the length and offset
+parameters to determine the window size and location.  This routine, if
+used, must be called before initializing PLplot.
+
+<P>
+xp (PLINT *, output) Number of pixels, x.
+ yp (PLINT *; output) Number of pixels, y.
+ xleng (PLINT *, output) Page length, x.
+ yleng (PLINT *, output) Page length, y.
+ xoff (PLINT *, output) Page offset, x.
+ yoff (PLINT *, output) Page offset, y.
+
+<P>
+plsstrm, plssym, plspage, API
+
+<P>
+plsstrm(strm)
+<A NAME="plsstrm">&#160;</A>plsstrm
+
+<P>
+Sets the number of the current output stream.  The stream number
+defaults to 0 unless changed by this routine.  The first use of this routine
+must be followed by a call initializing PLplot (e.g. plstar).
+
+<P>
+strm (PLINT *, output)Pointer to current stream number.
+
+<P>
+plssym, plstar, plsstrm, API
+
+<P>
+plssym(def, scale)
+<A NAME="plssym">&#160;</A>plssym
+
+<P>
+This sets up the size of all subsequent symbols drawn by
+plpoin and plsym.  The actual height of a symbol is the
+product of the default symbol size and a scaling factor as for the
+character height.
+
+<P>
+def (PLFLT, input)The default height of a symbol in
+millimeters, should be set to zero if the default height is to remain
+unchanged.
+
+<P>
+scale (PLFLT, input)Scale factor to be applied to default to
+get actual symbol height.
+
+<P>
+plstar, plstart, plssym, API
+
+<P>
+plstar(nx, ny)
+<A NAME="plstar">&#160;</A>plstar
+
+<P>
+Initializing the plotting package.  The program prompts for the
+device keyword or number of the desired output device.  Hitting a RETURN in
+response to the prompt is the same as selecting the first device.  If only
+one device is enabled when PLplot is installed, plstar will issue no
+prompt.  The output device is divided into nx by ny sub-pages,
+each of which may be used independently.  The subroutine pladv is used
+to advance from one subpage to the next.
+
+<P>
+nx (PLINT, input)Number of subpages to divide output page in
+the horizontal direction.
+
+<P>
+ny (PLINT, input)Number of subpages to divide output page in
+the vertical direction.
+
+<P>
+plstart, plstyl, plstar, API
+
+<P>
+plstart(device, nx, ny)
+<A NAME="plstart">&#160;</A>plstart
+
+<P>
+Alternative to plstar for initializing the plotting package.
+The device name keyword for the desired output device must be supplied as an
+argument.  The device keywords are the same as those printed out by
+plstar.  If the requested device is not available, or if the input
+string is empty or begins with ``?'', the prompted startup of
+plstar is used.  This routine also divides the output device into
+nx by ny sub-pages, each of which may be used independently.  The
+subroutine pladv is used to advance from one subpage to the next.
+
+<P>
+device (char *, input)Device name (keyword) of the required
+output device.  If NULL or if the first character is a ``?'', the normal
+(prompted) startup is used.
+
+<P>
+nx (PLINT, input)Number of subpages to divide output page in
+the horizontal direction.
+
+<P>
+ny (PLINT, input)Number of subpages to divide output page in
+the vertical direction.
+
+<P>
+plstyl, plsvpa, plstart, API
+
+<P>
+plstyl(nels, mark, space)
+<A NAME="plstyl">&#160;</A>plstyl
+
+<P>
+This sets up the line style for all lines subsequently drawn.  A
+line consists of segments in which the pen is alternately down and up.
+The lengths of these segments are passed in the arrays mark and
+space respectively.  The number of mark-space pairs is specified by
+nels.  In order to return the line style to the default continuous
+line,  plstyl should be called with nels=0.(also see
+pllsty) 
+
+<P>
+nels (PLINT, input)The number of mark and space
+elements in a line.  Thus a simple broken line can be obtained by setting
+nels=1.  A continuous line is specified by setting nels=0.
+
+<P>
+mark (PLINT *, input)Pointer to array with the lengths of
+the segments during which the pen is down, measured in micrometers.
+
+<P>
+space (PLINT *, input)Pointer to array with the lengths of
+the segments during which the pen is up, measured in micrometers.
+
+<P>
+plsvpa, plsxax, plstyl, API
+
+<P>
+plsvpa(xmin, xmax, ymin, ymax)
+<A NAME="plsvpa">&#160;</A>plsvpa
+
+<P>
+Alternate routine to plvpor for setting up the viewport.  This
+routine should be used only if the viewport is required to have a definite
+size in millimeters.  The routine plgspa is useful for finding out the
+size of the current subpage.  
+
+<P>
+xmin (PLFLT, input)The distance of the left-hand edge of the
+viewport from the left-hand edge of the subpage in millimeters.
+
+<P>
+xmax (PLFLT, input)The distance of the right-hand edge of the
+viewport from the left-hand edge of the subpage in millimeters.
+
+<P>
+ymin (PLFLT, input)The distance of the bottom edge of the
+viewport from the bottom edge of the subpage in millimeters.
+
+<P>
+ymax (PLFLT, input)The distance of the top edge of the
+viewport from the top edge of the subpage in millimeters.
+
+<P>
+plsxax, plsyax, plsvpa, API
+
+<P>
+plsxax(digmax, digits)
+<A NAME="plsxax">&#160;</A>plsxax
+
+<P>
+Returns current values of the digmax and digits flags
+for the x axis.  digits is updated after the plot is drawn, so so this
+routine should only be called <EM>after</EM> the call to plbox 
+(or plbox3) is complete.  Annotation for more information.
+
+<P>
+digmax (PLINT, output)Variable to set the maximum
+number of digits.  If nonzero, the printed label will be switched to a
+floating point representation when the number of digits exceeds
+digmax.
+
+<P>
+digits (PLINT, input)Field digits value.  Currently, changing
+its value here has no effect since it is set only by plbox or
+plbox3.  However, the user may obtain its value after a call to
+plbox by calling plgxax.
+
+<P>
+plsyax, plsym, plsxax, API
+
+<P>
+plsyax(digmax, digits)
+<A NAME="plsyax">&#160;</A>plsyax
+
+<P>
+Identical to plsxax, except that arguments are flags for 
+y axis.  See the description of plsxax for more detail.
+
+<P>
+plsym, plszax, plsyax, API
+
+<P>
+plsym(n, x, y, code)
+<A NAME="plsym">&#160;</A>plsym
+
+<P>
+Marks out a set of n points at positions (x[i], y[i]), 
+using the symbol defined by code.  The code is interpreted as an index
+in the Hershey font tables.
+
+<P>
+n (PLINT, input)Number of points to be marked.
+
+<P>
+x (PLFLT *, input)Pointer to array with set of x coordinate
+values for the points.
+
+<P>
+y (PLFLT *, input)Pointer to array with set of y coordinate
+values for the points.
+
+<P>
+code (PLINT, input)Code number for the symbol to be plotted.
+
+<P>
+plszax, pltext, plsym, API
+
+<P>
+plszax(digmax, digits)
+<A NAME="plszax">&#160;</A>plszax
+
+<P>
+Identical to plsxax, except that arguments are flags for 
+z axis.  See the description of plsxax for more detail.
+
+<P>
+pltext, plvasp, plszax, API
+
+<P>
+pltext()
+<A NAME="pltext">&#160;</A>pltext
+
+<P>
+Sets an interactive device to text mode, used in conjunction with
+plgra to allow graphics and text to be interspersed.  On a device
+which supports separate text and graphics windows, this command causes
+control to be switched to the text window.  This can be useful for printing
+diagnostic messages or getting user input, which would otherwise interfere
+with the plots.  The user <EM>must</EM> switch back to the graphics window
+before issuing plot commands, as the text (or console) device will probably
+become quite confused otherwise.  If already in text mode, this command is
+ignored.  It is also ignored on devices which only support a single window
+or use a different method for shifting focus (also plgra).
+
+<P>
+plvasp, plvpas, pltext, API
+
+<P>
+plvasp(aspect)
+<A NAME="plvasp">&#160;</A>plvasp
+
+<P>
+Sets the viewport so that the ratio of the length of the y axis to
+that of the x axis is equal to aspect.
+
+<P>
+aspect (PLFLT, input)Ratio of length of y axis to length of x
+axis.
+
+<P>
+plvpas, plvpor, plvasp, API
+
+<P>
+plvpas(xmin, xmax, ymin, ymax, aspect)
+<A NAME="plvpas">&#160;</A>plvpas
+
+<P>
+Device-independent routine for setting up the viewport.  The
+viewport is chosen to be the largest with the given aspect ratio that fits
+within the specified region (in terms of normalized subpage coordinates).
+This routine is functionally equivalent to plvpor when a ``natural''
+aspect ratio (0.0) is chosen.  Unlike plvasp, this routine reserves
+no extra space at the edges for labels.
+
+<P>
+xmin (PLFLT, input)The normalized subpage coordinate of the
+left-hand edge of the viewport.
+
+<P>
+xmax (PLFLT, input)The normalized subpage coordinate of the
+right-hand edge of the viewport.
+
+<P>
+ymin (PLFLT, input)The normalized subpage coordinate of the
+bottom edge of the viewport.
+
+<P>
+ymax (PLFLT, input)The normalized subpage coordinate of the
+top edge of the viewport.
+
+<P>
+aspect (PLFLT, input)Ratio of length of y axis to length of x
+axis.
+
+<P>
+plvpor, plvsta, plvpas, API
+
+<P>
+plvpor(xmin, xmax, ymin, ymax)
+<A NAME="plvpor">&#160;</A>plvpor
+
+<P>
+Device-independent routine for setting up the viewport.  This
+defines the viewport in terms of normalized subpage coordinates which run
+from 0.0 to 1.0 (left to right and bottom to top) along each edge of the
+current subpage.  Use the alternate routine plsvpa in order to create
+a viewport of a definite size.
+
+<P>
+xmin (PLFLT, input)The normalized subpage coordinate of the
+left-hand edge of the viewport.
+
+<P>
+xmax (PLFLT, input)The normalized subpage coordinate of the
+right-hand edge of the viewport.
+
+<P>
+ymin (PLFLT, input)The normalized subpage coordinate of the
+bottom edge of the viewport.
+
+<P>
+ymax (PLFLT, input)The normalized subpage coordinate of the
+top edge of the viewport.
+
+<P>
+plvsta, plw3d, plvpor, API
+
+<P>
+plvsta()
+<A NAME="plvsta">&#160;</A>plvsta
+
+<P>
+Sets up a standard viewport, leaving a left-hand margin of seven
+character heights, and four character heights around the other three sides.
+
+<P>
+plw3d, plwid, plvsta, API
+
+<P>
+plw3d(basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az)
+<A NAME="plw3d">&#160;</A>plw3d
+
+<P>
+Sets up a window for a three-dimensional surface plot within the
+currently defined two-dimensional window.  The enclosing box for the surface
+plot defined by xmin, xmax, ymin, ymax, zmin
+and zmax in user-coordinate space is mapped into a box of world
+coordinate size basex by basey by height so that
+xmin maps to -basex/2, xmax maps to basex/2,
+ymin maps to -basey/2, ymax maps to basey/2,
+zmin maps to 0 and zmax maps to height.  The
+resulting world-coordinate box is then viewed by an observer at altitude
+alt and azimuth az.  This routine must be called before
+plbox3 or plot3d.  For a more complete description of
+three-dimensional plotting 3-d Plots.
+
+<P>
+basex (PLFLT, input)The x coordinate size of the
+world-coordinate box.
+
+<P>
+basey (PLFLT, input)The y coordinate size of the
+world-coordinate box.
+
+<P>
+height (PLFLT, input)The z coordinate size of the
+world-coordinate box.
+
+<P>
+xmin (PLFLT, input)The minimum user x coordinate value.
+
+<P>
+xmax (PLFLT, input)The maximum user x coordinate value.
+
+<P>
+ymin (PLFLT, input)The minimum user y coordinate value.
+
+<P>
+ymax (PLFLT, input)The maximum user y coordinate value.
+
+<P>
+zmin (PLFLT, input)The minimum user z coordinate value.
+
+<P>
+zmax (PLFLT, input)The maximum user z coordinate value.
+
+<P>
+alt (PLFLT, input)The viewing altitude in degrees above the
+xy plane.
+
+<P>
+az (PLFLT, input)The viewing azimuth in degrees.  When
+az=0, the observer is looking face onto the zx plane, and as
+az is increased, the observer moves clockwise around the box when
+viewed from above the xy plane.
+
+<P>
+plwid, plwind, plw3d, API
+
+<P>
+plwid(width)
+<A NAME="plwid">&#160;</A>plwid
+
+<P>
+Sets the pen width.
+
+<P>
+width (PLINT, input)The desired pen width.  The pen width
+must be between 1 and a device dependent maximum value.
+
+<P>
+plwind, , plwid, API
+
+<P>
+plwind(xmin, xmax, ymin, ymax)
+<A NAME="plwind">&#160;</A>plwind
+
+<P>
+Sets up the world coordinates of the edges of the viewport.
+
+<P>
+xmin (PLFLT, input)The world x coordinate of the
+left-hand edge of the viewport.
+
+<P>
+xmax (PLFLT, input)The world x coordinate of the
+right-hand edge of the viewport.
+
+<P>
+ymin (PLFLT, input)The world y coordinate of the
+bottom edge of the viewport.
+
+<P>
+ymax (PLFLT, input)The world y coordinate of the
+top edge of the viewport.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html786"
+ HREF="node48.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html782"
+ HREF="node46.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html778"
+ HREF="node46.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html784"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html785"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html787"
+ HREF="node48.html">Advanced Techniques</A>
+<B> Up:</B> <A NAME="tex2html783"
+ HREF="node46.html">Reference</A>
+<B> Previous:</B> <A NAME="tex2html779"
+ HREF="node46.html">Reference</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>

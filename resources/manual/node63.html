@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Introduction to Tk</TITLE>
+<META NAME="description" CONTENT="Introduction to Tk">
+<META NAME="keywords" CONTENT="plplot">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="plplot.css">
+<LINK REL="next" HREF="node64.html">
+<LINK REL="previous" HREF="node59.html">
+<LINK REL="up" HREF="node58.html">
+<LINK REL="next" HREF="node64.html">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html1023"
+ HREF="node64.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html1019"
+ HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html1013"
+ HREF="node62.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html1021"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html1022"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html1024"
+ HREF="node64.html">Introduction to [incr Tcl]</A>
+<B> Up:</B> <A NAME="tex2html1020"
+ HREF="node58.html">Building an Extended WISH</A>
+<B> Previous:</B> <A NAME="tex2html1014"
+ HREF="node62.html">Acquiring Tcl</A>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION05220000000000000000">
+Introduction to Tk</A>
+</H1>
+Tk
+Programming Tk
+
+<P>
+As mentioned above, Tcl is designed to be extensible.  The first and
+most basic Tcl extension is Tk, an X11 toolkit.  Tk provides the same
+basic facilities that you may be familiar with from other X11 toolkits
+such as Athena and Motif, except that they are provided in the context
+of the Tcl language.  There are C bindings too, but these are seldom
+needed-the vast majority of useful Tk applications can be coded using
+Tcl scripts.
+
+<P>
+If it has not become obvious already, it is worth noting at this point
+that Tcl is one example of a family of languages known generally as
+``Very High Level Languages'', or VHLL's.  Essentially a VHLL raises
+the level of programming to a very high level, allowing very short
+token streams to accomplish as much as would be required by many
+scores of the more primitive actions available in a basic HLL.
+Consider, for example, the basic ``Hello World!'' application written
+in Tcl/Tk.
+<PRE>
+#!/usr/local/bin/wish -f
+
+button .hello -text "Hello World!"  -command "destroy ."
+pack .hello
+</PRE>
+<P>
+That's it!  That's all there is to it.  If you have ever programmed X
+using a traditional toolkit such as Athena or Motif, you can
+appreciate how amazingly much more convenient this is.  If not, you
+can either take our word for it that this is 20 times less code than
+you would need to use a standard toolkit, or you can go write the same
+program in one of the usual toolkits and see for yourself...
+
+<P>
+We cannot hope to provide a thorough introduction to Tk programming in
+this section.  Instead, we will just say that immensely complex
+applications can be constructed merely by programming in exactly the
+way shown in the above script.  By writing more complex scripts, and
+by utilizing the additional widggets provided by Tk, one can create
+beautiful, extensive user interfaces.  Moreover, this can be done in a
+tiny fraction of the time it takes to do the same work in a
+conventional toolkit.  Literally minutes versus days.
+
+<P>
+Tk provides widgets for labels, buttons, radio buttons, frames with or
+without borders, menubars, pull downs, toplevels, canvases, edit
+boxes, scroll bars, etc.
+
+<P>
+A look at the interface provided by the PLplot Tk and Tcl-DP drivers
+should help give you a better idea of what you can do with this
+paradigm.  Also check out some of the contributed Tcl/Tk packages
+available at harbor.  There are high quality Tk interfaces to a great
+many familiar unix utilites ranging from mail to info, to SQL, to
+news, etc.  The list is endless and growing fast...
+
+<P>
+Itcl Intro, PLplot Extensions, Tk Intro, Extended WISH
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html1023"
+ HREF="node64.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons.gif/next_motif.gif"></A> 
+<A NAME="tex2html1019"
+ HREF="node58.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons.gif/up_motif.gif"></A> 
+<A NAME="tex2html1013"
+ HREF="node62.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons.gif/previous_motif.gif"></A> 
+<A NAME="tex2html1021"
+ HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons.gif/contents_motif.gif"></A> 
+<A NAME="tex2html1022"
+ HREF="node75.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index"
+ SRC="icons.gif/index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html1024"
+ HREF="node64.html">Introduction to [incr Tcl]</A>
+<B> Up:</B> <A NAME="tex2html1020"
+ HREF="node58.html">Building an Extended WISH</A>
+<B> Previous:</B> <A NAME="tex2html1014"
+ HREF="node62.html">Acquiring Tcl</A>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Noel Gorelick</I>
+<BR><I>1998-04-02</I>
+</ADDRESS>
+</BODY>
+</HTML>
