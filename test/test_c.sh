@@ -6,25 +6,10 @@
 # To build the c examples before running this script do the following:
 # pushd $cdir; make; popd 
 
-$cdir/x01c -dev $device -o x01c.$dsuffix $options
-$cdir/x02c -dev $device -o x02c.$dsuffix $options
-$cdir/x03c -dev $device -o x03c.$dsuffix $options
-$cdir/x04c -dev $device -o x04c.$dsuffix $options
-$cdir/x05c -dev $device -o x05c.$dsuffix $options
-$cdir/x06c -dev $device -o x06c.$dsuffix $options
-$cdir/x07c -dev $device -o x07c.$dsuffix $options
-$cdir/x08c -dev $device -o x08c.$dsuffix $options
-$cdir/x09c -dev $device -o x09c.$dsuffix $options
-$cdir/x10c -dev $device -o x10c.$dsuffix $options
-$cdir/x11c -dev $device -o x11c.$dsuffix $options
-$cdir/x12c -dev $device -o x12c.$dsuffix $options
-$cdir/x13c -dev $device -o x13c.$dsuffix $options
-#skip x14c since uses tk device.
-$cdir/x15c -dev $device -o x15c.$dsuffix $options
-$cdir/x16c -dev $device -o x16c.$dsuffix $options
-#skip x17c which is only meant for interactive execution
-$cdir/x18c -dev $device -o x18c.$dsuffix $options
-$cdir/x19c -dev $device -o x19c.$dsuffix $options
-#skip x20c which is only meant for interactive execution
-#skip x21c which has variable time results printed on axis 
-#depending on computer load
+# Do the standard non-interactive examples.
+# skip 14, 17, and 20 because they are interactive.
+# skip 21 because it delivers variable results depending on computer timing
+# and load.
+for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 19; do
+  $cdir/x${index}c -dev $device -o x${index}c.$dsuffix $options
+done
