@@ -19,7 +19,7 @@ for lib in `grep ^dependency_libs= $1 \
         *.la)
 	    path=`echo $lib | sed 's:/*lib[^/]*.la::'`
 	    libname=`echo $lib | sed 's:^.*lib::' | sed 's/\.la//'`
-	    result="$result -L$path -l$libname"
+	    result="$result -L$path -L$path/.libs -l$libname"
         ;;
 	    
     esac
