@@ -1,24 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.20  1995/01/14 06:04:05  mjl
+ * Revision 1.21  1995/03/17 00:17:10  mjl
+ * Eliminated obsolete functions PLSASP and PLSLPB.
+ *
+ * Revision 1.20  1995/01/14  06:04:05  mjl
  * Fixed plscmap1l documentation and changed call syntax to pass "rev" array.
  *
  * Revision 1.19  1994/07/20  06:08:03  mjl
  * Added Fortran interface routines to handle the new 3d functions plline3(),
  * plpoin3(), and plpoly3().
- *
- * Revision 1.18  1994/03/23  08:39:10  mjl
- * Fixed some stubs to the cmap 1 handlers.
- *
- * Revision 1.17  1993/12/06  07:47:34  mjl
- * Changed routine names used in new color model.
- *
- * Revision 1.16  1993/11/15  08:40:57  mjl
- * Added stub for PLSCOLBG.
- *
- * Revision 1.15  1993/10/21  19:27:07  mjl
- * Changed all names that ended with an underscore (as part of the C/Fortran
- * linkage) to end with a '7' instead, to avoid problems with f2c.
 */
 
 /*	scstubs.c
@@ -338,12 +328,6 @@ PLRGB1(PLINT *r, PLINT *g, PLINT *b)
 }
 
 void
-PLSASP(PLFLT *aspect)
-{
-    c_plsasp(*aspect);
-}
-
-void
 PLSCHR(PLFLT *def, PLFLT *scale)
 {
     c_plschr(*def, *scale);
@@ -414,12 +398,6 @@ void
 PLSFNAM7(char *fnam)
 {
     c_plsfnam(fnam);
-}
-
-void
-PLSLPB(PLINT *xmi, PLINT *xma, PLINT *ymi, PLINT *yma)
-{
-    c_plslpb(*xmi, *xma, *ymi, *yma);
 }
 
 void
