@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.5  1995/06/01 21:40:14  mjl
+ * Revision 1.6  1998/04/07 17:34:52  furnish
+ * Fixed comment bug which annoyed fussy C compiler.
+ *
+ * Revision 1.5  1995/06/01  21:40:14  mjl
  * All C demo files: changed file inclusion to use quotes instead of angle
  * brackets so that dependencies are retained during development.
  *
@@ -112,7 +115,7 @@ main(int argc, char *argv[])
     ymin = -1.0;
     ymax =  1.0;
 
-/* Specify initial tmin and tmax -- this determines length of window.
+/* Specify initial tmin and tmax -- this determines length of window. */
 /* Also specify maximum jump in t */
 /* This can accomodate adaptive timesteps */
 
