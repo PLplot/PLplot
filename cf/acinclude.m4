@@ -443,3 +443,8 @@ AC_DEFUN([PL_EXPAND_EXPRESSION],[
    done
    $1="$str2"
 ])
+dnl ------------------------------------------------------------------------
+dnl Include third-party files containing m4 macros
+dnl (This should not be here once aclocal know how to follow files 
+dnl included from configure.ac)
+PL_INCLUDE(gtk.m4)

@@ -532,8 +532,6 @@ if test "$enable_python" = "yes"; then
 fi
 AC_SUBST(PYTHON_INSTDIR)
 
-AC_REQUIRE([AM_PATH_GTK])
-
 ### Modify system-dependent results based on availability
 PL_INCLUDE(sysloc.in)
 #disable LIBS so we don't have all libraries mentioned
