@@ -15,6 +15,13 @@ Also there is system-specific documentation under sys/<system-name>, and
 a PLPLOT manual in the doc directory (not necessarily up-to-date, however).
 
 **************************************************************************
+Version 4.99b: Summary of major changes (minor update only)
+**************************************************************************
+
+Improvements to plrender and near-completion of Amiga drivers.  See
+Changes.log for details.
+
+**************************************************************************
 Version 4.99a: Summary of major changes
 **************************************************************************
 
