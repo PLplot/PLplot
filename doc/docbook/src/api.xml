@@ -8367,7 +8367,7 @@ stripchart
 	</term>
 	<listitem>
 	  <para>
-	    The distance of the top edge of the viewport from the top edge
+	    The distance of the top edge of the viewport from the bottom edge
 	    of the subpage in millimeters.
 	  </para>
 	</listitem>

@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.10.2.1  2001/04/19 12:31:46  rlaboiss
+   First merge against MAIN
+
    Revision 1.10  1992/11/07 08:04:27  mjl
    Fixed a problem encountered when a user tried to change the default
    character/symbol scale heights.

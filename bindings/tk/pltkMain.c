@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.1.2.1  2001/04/19 12:31:45  rlaboiss
+ * First merge against MAIN
+ *
  * Revision 1.1  1994/06/16 19:27:09  mjl
  * Guts of the PLplot extended wish.  It can be called by any user wanting an
  * extended wish by pltkMain(argc, argv).  This is hopefully similar to how

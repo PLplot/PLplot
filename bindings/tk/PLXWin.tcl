@@ -7,6 +7,9 @@
 # $Id$
 #
 # $Log$
+# Revision 1.7.2.1  2001/04/19 12:31:45  rlaboiss
+# First merge against MAIN
+#
 # Revision 1.7  1995/06/01 21:22:22  mjl
 # Removed a lot of the miscellaneous init garbage, now handled by
 # plw_setup_defaults.

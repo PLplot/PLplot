@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.6.2.1  2001/04/19 12:31:46  rlaboiss
+   First merge against MAIN
+
    Revision 1.6  1992/11/07 08:02:36  mjl
    Added dispatch table entries for Null device driver and Motif driver.
 

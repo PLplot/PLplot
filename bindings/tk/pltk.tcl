@@ -1,5 +1,8 @@
 # $Id$
 # $Log$
+# Revision 1.1.2.1  2001/04/19 12:31:45  rlaboiss
+# First merge against MAIN
+#
 # Revision 1.1  1993/12/21 10:34:17  mjl
 # Added to be a customizable initialization proc for the TK driver.
 # Represents a much simpler way to change the behavior than the previous

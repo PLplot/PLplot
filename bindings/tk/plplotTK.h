@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.6.2.1  2001/04/19 12:31:45  rlaboiss
+ * First merge against MAIN
+ *
  * Revision 1.6  1995/05/07 02:29:59  mjl
  * Added include of pltk.h, dp.h (if DP extensions requested), and added new
  * variables updatecmd and child_pid to state structure.

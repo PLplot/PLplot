@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.2.2.1  2001/04/19 12:31:45  rlaboiss
+ * First merge against MAIN
+ *
  * Revision 1.2  1994/06/16 21:55:54  mjl
  * Changed to new declaration syntax.  Now declaration must specify variable
  * that holds matrix operator name.  This allows matrix command to place a

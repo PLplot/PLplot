@@ -8,4 +8,8 @@ function strm = __pl_init
   endif
 
   strm = plgstrm+1;
+  if (!__pl.open(strm))
+    figure(strm);
+  endif
+
 endfunction

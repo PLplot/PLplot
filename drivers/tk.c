@@ -1199,11 +1199,10 @@ launch_server(PLStream *pls)
 	/* Don't kill plserver on a ^C if pls->server_nokill is set */
 
 	    if (pls->server_nokill) {
-		int retv;
 		sigset_t set;
 		sigemptyset(&set);
 		sigaddset (&set, SIGINT);
-		if ((retv = sigprocmask (SIG_BLOCK, &set, 0)) < 0)
+		if (sigprocmask (SIG_BLOCK, &set, 0) < 0)
 		    fprintf(stderr, "PLplot: sigprocmask failure\n");
 	    }
 	    /* jc:	    fprintf(stderr, "Starting up %s\n", plserver_exec); */

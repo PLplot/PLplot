@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.1.2.1  2001/04/19 12:31:46  rlaboiss
+   First merge against MAIN
+
    Revision 1.1  1992/05/20 21:34:58  furnish
    Initial checkin of the whole PLPLOT project.
 

@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.13.2.1  2001/04/19 12:31:45  rlaboiss
+   First merge against MAIN
+
    Revision 1.13  1994/03/23 06:34:25  mjl
    All drivers: cleaned up by eliminating extraneous includes (stdio.h and
    stdlib.h now included automatically by plplotP.h), extraneous clears

@@ -348,14 +348,15 @@ pdf_wr_header(PDFstrm *pdfs, char *header)
 int
 pdf_rd_header(PDFstrm *pdfs, char *header)
 {
-    int i;
+    int i, c;
 
     dbug_enter("pdf_rd_header");
 
     for (i = 0; i < 79; i++) {
-	if ((header[i] = pdf_getc(pdfs)) == EOF)
+	if ((c = pdf_getc(pdfs)) == EOF)
 	    return PDF_RDERR;
 
+	header[i] = c;
 	if (header[i] == '\n')
 	    break;
     }

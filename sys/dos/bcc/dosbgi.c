@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.3.2.1  2001/04/19 12:31:46  rlaboiss
+   First merge against MAIN
+
    Revision 1.3  1994/08/10 01:16:36  mjl
    Updates to the DOS BGI (BCC) driver, submitted by Paul Casteels.
 

@@ -17,12 +17,12 @@ include(fmacs.m4)dnl
       call plwind(REAL_FUN (0.0), REAL_FUN (1.0), REAL_FUN (0.0), REAL_FUN (1.0) )
       call plbox('bc', REAL_FUN (0.0), 0, 'bc', REAL_FUN (0.0), 0 )
 
-      call plsvpa(REAL_FUN (50.0), REAL_FUN (150.0), REAL_FUN (100.0),
-     &  REAL_FUN (150.0) )
+      call plsvpa(REAL_FUN (50.0), REAL_FUN (150.0), REAL_FUN (50.0),
+     &  REAL_FUN (100.0) )
       call plwind(REAL_FUN (0.0), REAL_FUN (1.0), REAL_FUN (0.0), REAL_FUN (1.0) )
       call plbox('bc', REAL_FUN (0.0), 0, 'bc', REAL_FUN (0.0), 0 )
       call plptex(REAL_FUN (0.5), REAL_FUN (0.5), REAL_FUN (1.0), REAL_FUN (0.0),
-     &  REAL_FUN (0.5), 'BOX at (50,150,100,150)' )
+     &  REAL_FUN (0.5), 'BOX at (50,150,50,100)' )
 
       call plend
 

@@ -20,12 +20,9 @@ function __pl_draw_legend(xm, xM, ym, yM)
 
   [a, b] = plgchr;
 
-  ## why 100? it works with me... docs say its units are mm,
-  ## my monitor has ~100 dpi!?
-  ## Fonts are of proportional width!
-
-  ch_height = (b * __pl.multi_row(__pl_strm)) / 100;
-  ch_width = (b * __pl.multi_col(__pl_strm)) / 100;	# FIXME! not always OK.
+  scale = 100; # why 100? look at plplot plpage.c plP_subpInit() and tell me :)
+  ch_height = b/scale * (__pl.multi_col(__pl_strm));
+  ch_width = b/scale * (__pl.multi_row(__pl_strm));
 
   ## if (!ishold)
   ##	__pl.lab_str(1,:) = "";

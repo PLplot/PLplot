@@ -5,6 +5,9 @@
 # $Id$
 #
 # $Log$
+# Revision 1.1.2.1  2001/04/19 12:31:45  rlaboiss
+# First merge against MAIN
+#
 # Revision 1.1  1994/04/08 12:06:29  mjl
 # Prototype cmap1 selector.
 #

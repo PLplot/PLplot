@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.6.2.1  2001/04/19 12:31:45  rlaboiss
+   First merge against MAIN
+
    Revision 1.6  1992/11/07 07:48:36  mjl
    Fixed orientation operation in several files and standardized certain startup
    operations. Fixed bugs in various drivers.

@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.15.2.1  2001/04/19 12:31:45  rlaboiss
+   First merge against MAIN
+
    Revision 1.15  1993/07/16 22:11:25  mjl
    Eliminated low-level coordinate scaling; now done by driver interface.
 

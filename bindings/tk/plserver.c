@@ -41,7 +41,9 @@
 static char *client_name;	/* Name of client main window */
 static char *auto_path;		/* addition to auto_path */
 static int child;		/* set if child of TK driver */
+#ifdef PLD_dp
 static int dp;			/* set if using Tcl-DP to communicate */
+#endif
 static char *client_host;	/* Host id for client */
 static char *client_port;	/* Communications port id for client */
 
@@ -189,7 +191,10 @@ AppInit(Tcl_Interp *interp)
 
     if (client_name != NULL) {
 	Tcl_SetVar(interp, "client_name", client_name, 0);
-	dp = 0; tcl_cmd(interp, "set dp 0");
+	tcl_cmd(interp, "set dp 0");
+#ifdef PLD_dp
+	dp = 0;
+#endif
     }
     else if (client_port != NULL) {
 #ifdef PLD_dp

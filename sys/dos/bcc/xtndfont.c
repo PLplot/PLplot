@@ -1,5 +1,8 @@
 /* $Id$
    $Log$
+   Revision 1.2.2.1  2001/04/19 12:31:46  rlaboiss
+   First merge against MAIN
+
    Revision 1.2  1994/05/25 22:08:25  mjl
    Win3 driver added, other changes to bring DOS/BGI (bcc) support
    up to date, contributed by Paul Casteels.

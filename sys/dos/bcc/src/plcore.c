@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.1.2.1  2001/04/19 12:31:46  rlaboiss
+ * First merge against MAIN
+ *
  * Revision 1.1  1994/09/19 18:53:58  mjl
  * New DOS/BGI (bcc) PLplot driver files, from Paul Casteels.
  *

@@ -1,5 +1,8 @@
 /* $Id$
  * $Log$
+ * Revision 1.19.2.1  2001/04/19 12:31:46  rlaboiss
+ * First merge against MAIN
+ *
  * Revision 1.19  1995/03/17 00:14:25  mjl
  * Changed printf's to fprintf's to stdout or stderr.  Added plGinInit()
  * to fill in a PLGraphicsIn with appropriate initial values.
