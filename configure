@@ -3472,7 +3472,9 @@ enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
 enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
 enable-cxx:	$enable_cxx
-" | tee >config.log
+" >plconfig.log
+
+cat plconfig.log
 
 
 # The preferred way to propogate these variables is regular @ substitutions.
