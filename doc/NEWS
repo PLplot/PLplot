@@ -2,6 +2,101 @@ This file is a concatanation of Major PLplot announcements (mostly about
 releases) in reverse chronological order.
 
 **************************************************************************
+Version 5.0.2: Release announcement
+**************************************************************************
+
+From irwin@uvastro.phys.uvic.ca Thu Feb 15 09:40:02 2001
+Date: Sat, 10 Feb 2001 14:22:30 -0800 (PST)
+From: Alan W. Irwin <irwin@uvastro.phys.uvic.ca>
+To: plplot_general <plplot-general@lists.sourceforge.net>
+Subject: [Plplot-general] plplot-5.0.2 has been released
+
+It has been a month since PLplot-5.0.1, and we thought another stable
+release was appropriate at this time.
+
+Get this new PLplot-5.0.2 as a tarball file release at
+http://sourceforge.net/projects/plplot.  It was created from the current CVS
+head which has benefited quite a lot from steady bug fixing over the last
+month (for example, file familying now works, and the plmeta now properly
+outputs to pipes).
+
+Version 5.0.2 supersedes all previous versions. Please note that for
+improved stability you should use the tarball release and not the CVS HEAD.
+(We try things on the HEAD which might momentarily break plplot from time to
+time.)
+
+Note we also have some innovation in the new release as well as bug fixing.
+
+(1) The python xw??.py examples should now work right out of the box without
+fooling around with PYTHONPATH.
+
+(2) Install file locations now conform to the FHS.  So, for example, you
+will find the examples installed at $prefix/share/doc/plplot/examples.
+
+(3) The content of the documentation source has been greatly improved from
+5.0.1.  We have now completely finished going through the doc directory for
+several generations of notes on various topics and incorporated all this
+material (with substantial updates and expansions) into our docbook source.
+The result is new docbook sections/chapters on devices, driver functions,
+plrender and metafiles, familying, interactive output devices, color, and C
+and fortran bindings. We have added API sections that are specialized to C
+and fortran.  We have also added a bibliography and reorganized the material
+so that all the reference material (bibliography and API sections) appear at
+the back of the document.  We have now removed virtually all the old files
+in doc so there is no longer the potential of getting confused with these
+older generations of documentation.
+
+We don't anticipate the addition of too many more chapters or sections to
+the documentation, but some refinement of the existing chapters/sections
+still needs to be done.  If you are interested in helping with this effort,
+please contact yours truly (irwin@beluga.phys.uvic.ca).
+
+(4) Our DocBook source can be built into PLplot documentation in a variety
+of formats (currently html, dvi, postscript, pdf, info, and man).  Our CVS
+does not have these files because they are generated rather than source
+files.  However, you can always get the latest forms of these results from
+http://www.plplot.org/resources/docbook-manual/, and for your convenience we
+have also bundled these results into the doc directory of the 5.0.2 tarball.
+
+Tests:
+
+Release version 5.0.2 has been extensively tested on Debian potato with
+double precision configured. The cdemos, cxxdemos (c++), fdemos (fortran),
+tcldemos, tkdemos, and the new standalone xw??.py python demos all now work
+well on potato. Similar tests show good results on RedHat 6.2 except for
+Tcl/Tk whose 8.0 version on RH 6.2 is too old for us to support. We have not
+yet upgraded our test box to RedHat 7.0 (which does include a Tcl/Tk/iTcl
+version that we support), and until we do this upgrade, we would appreciate
+any RedHat 7.0 reports our users could give us. Similar tests (excluding
+Tcl/Tk and python because we would have had to download configure, build,
+and install these packages ourselves) show good results on solaris (SunOS
+5.6 Generic_105181-23 sun4u sparc SUNW,Ultra-2 = solaris 2.6).
+
+Putting on my yplot (http://sourceforge.net/projects/yplot) hat momentarily,
+I have also rebuilt yplot, the convenient yorick front end to plplot. The
+new yplot version (to be released soon) is based on plplot-5.0.2 libraries,
+and I have just confirmed it gives excellent results for a wide variety of
+36 different scientific plots from my present research.
+
+Please send bug reports, comments, and questions to this list, and
+have fun (and profit) with the new 5.0.2 release of plplot!
+
+Alan W. Irwin
+
+email: irwin@beluga.phys.uvic.ca
+phone: 250-727-2902	FAX: 250-721-7715
+snail-mail:
+Dr. Alan W. Irwin
+Department of Physics and Astronomy,
+University of Victoria, P.O. Box 3055,
+Victoria, British Columbia, Canada, V8W 3P6 
+__________________________
+
+Linux-powered astrophysics
+__________________________
+
+
+**************************************************************************
 Version 5.0.1: Release announcement
 **************************************************************************
 
