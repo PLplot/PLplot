@@ -62,7 +62,11 @@ static void  proc_str           (PLStream *, EscText *);
 static void  esc_purge          (char *, unsigned char *);
 
 static char  outbuf[128];
+#ifdef HAVE_FREETYPE
+static int text = 1;
+#else
 static int text = 0;
+#endif
 static int color;
 
 static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (text=0|1)"},
