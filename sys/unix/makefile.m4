@@ -22,6 +22,7 @@ define(if_sunos, {ifdef({SUNOS}, {$1},{$2})})dnl
 define(if_ultrix,{ifdef({ULTRIX},{$1},{$2})})dnl
 define(if_next,  {ifdef({NEXT},  {$1},{$2})})dnl
 define(if_linux, {ifdef({LINUX}, {$1},{$2})})dnl
+define(if_sx,    {ifdef({SX},    {$1},{$2})})dnl
 
 if_aix(   {define({UNIX})})dnl
 if_hpux(  {define({UNIX})})dnl
@@ -33,6 +34,7 @@ if_sunos( {define({UNIX})})dnl
 if_next(  {define({UNIX})})dnl
 if_linux( {define({UNIX},)define({NO_FORTRAN},)})dnl
 if_ultrix({define({UNIX})define({SUNOS})})dnl
+if_sx(    {define({UNIX})})dnl
 
 define(if_ranlib,{ifdef({RANLIB},{$1},{$2})})dnl
 if_sunos( {define({RANLIB})})dnl
@@ -369,6 +371,27 @@ LIBC	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) \
 	 -lsocket -lsockdns -lsockhost -lnsl
 LIBF	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)}) \
 	 -lsocket -lSOCkdns
+
+LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm
+LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
+
+#----------------------------------------------------------------------#
+})if_sx({
+#		NEC Super-UX definitions
+
+SYS_FLAGS_C = -hansi
+
+PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DXWIN -DTEK -DDG300 -DPS -DXFIG \
+	    -DLJII -DHP7470 -DHP7580 -DIMP
+
+CFLAGS	= -c $(DBL_FLAG_C) $(DEBUG_FLAG_C) $(OPT_FLAG_C) $(SYS_FLAGS_C) \
+	     $(PROFILE_FLAG_C)
+
+FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
+	     $(PROFILE_FLAG_F)
+
+LIBC	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_motif({$(LIB_MOTIF)}) if_xwin({$(LIB_XWIN)})
 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm
 LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
@@ -1098,7 +1121,7 @@ INSTALL_DIR = /usr/local/plplot
 
 install:
 	-strip plrender
-	-cp plrender ../lib/libplplot*.a $(INSTALL_DIR)
+	-cp plrender ../lib/libplplot*.a ../lib/*.fnt $(INSTALL_DIR)
 	-cd ..; cp README* Changes.log COPYRIGHTS ToDo $(INSTALL_DIR)
 	-cd ../{include}; \
 		cp plplot.h plplotio.h plevent.h plstream.h pdf.h \
