@@ -421,6 +421,18 @@ if test "$enable_gnome" = "yes"; then
 fi 
 
 # ----------------------------------------------------------------------------
+# Octave support
+# ----------------------------------------------------------------------------
+
+if test "$enable_octave" = "yes"; then
+    AC_CHECK_PROG(has_octave, mkoctfile, yes, no)
+    if test "$has_octave" = "no"; then
+	AC_MSG_RESULT([warning: 'mkoctfile' was not found, disabling Octave support])
+	enable_octave=no
+    fi
+fi
+
+# ----------------------------------------------------------------------------
 # Debugging malloc
 # Even with debugging on, is off by default, because it can dramatically
 # slow down program execution (particularly in combination with Tcl/Tk).

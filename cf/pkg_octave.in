@@ -1,0 +1,36 @@
+# -*-makefile-*----------------------------------------------------------------
+#
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 14-Jul-1994
+#
+# Make assignments for PLplot/Octave support.
+# -----------------------------------------------------------------------------
+
+OCTAVE_C	= plplot_octave.cc
+OCTAVE_EXE	= plplot_octave.oct$E
+OCTAVE_DEMOS	= demos/*.m misc/*.m
+OCTAVE_LIBS	= $(LDC_LIBS) -l$(MATLIB_NAME) -l$(PLLIB_NAME)$(LIB_TAG)
+OCTAVE_DIR	= $(PREFIX)/share/plplot_octave
+MKOCTFILE	= mkoctfile
+
+# Variables for use in "make" and "make install".
+
+INSTALL_OCTAVE	= install_octave
+
+# Targets
+
+# 'mkoctfile' does not accept -rpath, use LD_RUN_PATH
+
+plplot_octave.oct$E: plplot_octave.cc
+	LD_RUN_PATH=`pwd` $(MKOCTFILE) -v -I. -L. plplot_octave.cc $(OCTAVE_LIBS)
+
+install_octave: install_octave_demos
+	@-if test ! -d $(OCTAVE_DIR); then mkdir -p $(OCTAVE_DIR); fi; \
+	LD_RUN_PATH=$(LIB_DIR) $(MKOCTFILE) -v -I. -L. plplot_octave.cc $(OCTAVE_LIBS); \
+	$(CP) $(OCTAVE_EXE) $(OCTAVE_DIR);\
+	(cd $(srcdir)/bindings/octave/PLplot; $(CP) -r * $(OCTAVE_DIR))
+
+install_octave_demos:
+	@-if test ! -d $(DEMOS_DIR)/octave; then mkdir -p $(DEMOS_DIR)/octave; fi; \
+	(cd $(srcdir)/bindings/octave; $(CP) $(OCTAVE_DEMOS) $(DEMOS_DIR)/octave;)

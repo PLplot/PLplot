@@ -25,6 +25,7 @@ install: install_lib \
 	$(INSTALL_TCL) \
 	$(INSTALL_TK) \
 	$(INSTALL_CXX) \
+	$(INSTALL_OCTAVE) \
 	install_demos \
 	install_utils
 

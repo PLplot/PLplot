@@ -93,6 +93,7 @@ enable_tk=yes
 enable_itcl=yes
 enable_xwin=yes
 enable_gnome=no
+enable_octave=no
 
 divert(-1)
 
@@ -307,6 +308,9 @@ MY_ARG_ENABLE(cxx,
 MY_ARG_ENABLE(python,
   [  --enable-python         compile python interface code ($enable_python)])
 
+MY_ARG_ENABLE(octave,
+  [  --enable-octave         compile Octave interface code ($enable_octave)])
+
 MY_ARG_ENABLE(tcl,
   [  --enable-tcl            compile Tcl interface code ($enable_tcl)])
 
@@ -469,6 +473,9 @@ if test "$enable_tk" = "yes"; then
 fi
 if test "$enable_gnome" = "yes"; then
     cat $srcdir/cf/pkg_gnome.in	>>Makefile.in 
+fi
+if test "$enable_octave" = "yes"; then
+    cat $srcdir/cf/pkg_octave.in >>Makefile.in 
 fi
 
 # Library targets
@@ -744,6 +751,17 @@ fi
 
 #    $srcdir/bindings/tk/tclIndex 
 
+if test "$enable_octave" = "yes"; then
+    if test "$with_double" = "yes"; then
+	ln -s $srcdir/bindings/octave/plplot_octave_d.cc plplot_octave.cc 2>/dev/null
+	ln -s $srcdir/bindings/octave/plplot_octave_d.h plplot_octave.h 2>/dev/null
+    else
+	ln -s $srcdir/bindings/octave/plplot_octave_f.cc plplot_octave.cc 2>/dev/null
+	ln -s $srcdir/bindings/octave/plplot_octave_f.h  plplot_octave.h 2>/dev/null
+    fi
+
+    ln -s $srcdir/bindings/octave/plplot_octave_rej.h . 2>/dev/null
+fi
 
 # Miscellaneous
 
@@ -815,6 +833,7 @@ enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
 enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
 enable_cxx:	$enable_cxx		enable_python:	$enable_python
 enable_f77:	$enable_f77             enable_gnome:	$enable_gnome
+enable_octave:	$enable_octave
 "
 
 cat << EOF > config.summary
