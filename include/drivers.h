@@ -1,8 +1,11 @@
 /* $Id$
-   $Log$
-   Revision 1.18  1994/05/25 21:58:25  mjl
-   Function prototypes for Win3 driver, contributed by Paul Casteels.
-
+ * $Log$
+ * Revision 1.19  1994/07/19 22:35:14  mjl
+ * Cruft elimination.
+ *
+ * Revision 1.18  1994/05/25  21:58:25  mjl
+ * Function prototypes for Win3 driver, contributed by Paul Casteels.
+ *
  * Revision 1.17  1994/05/25  09:36:57  mjl
  * All VGA driver function names now end with "_vga", a nice simplification.
  * Since all are compiler-dependent and mutually exclusive, this should pose
@@ -24,33 +27,6 @@
  *
  * Revision 1.12  1993/12/08  20:26:21  mjl
  * Changes to support MS-Kermit output device.
- *
- * Revision 1.11  1993/10/18  19:41:49  mjl
- * Prototypes for Borland C driver under DOS.
- *
- * Revision 1.10  1993/08/03  03:26:51  mjl
- * Additions to support new MGR and LinuxVGA drivers.
- *
- * Revision 1.9  1993/07/31  07:56:50  mjl
- * Several driver functions consolidated, for all drivers.  The width and color
- * commands are now part of a more general "state" command.  The text and
- * graph commands used for switching between modes is now handled by the
- * escape function (very few drivers require it).  The device-specific PLDev
- * structure is now malloc'ed for each driver that requires it, and freed when
- * the stream is terminated.
- *
- * Revision 1.8  1993/07/28  05:48:24  mjl
- * Removed unnecessary function prototypes for old xterm driver, added new
- * ones for tek4107 terminal & file driver.
- *
- * Revision 1.7  1993/07/16  22:25:12  mjl
- * Added explicit support for color vs monochrome postscript output.
- *
- * Revision 1.6  1993/07/02  07:19:58  mjl
- * Changed over to new namespace.
- *
- * Revision 1.5  1993/04/26  20:00:09  mjl
- * The beginnings of a TK driver added.
 */
 
 /*	drivers.h
