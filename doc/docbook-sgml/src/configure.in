@@ -69,7 +69,7 @@ else
         $7
     Its system identifier, i.e., a file usually called 
         \"$8\" 
-    is distributed with the $8 package.  Install it in your 
+    is distributed with the $9 package.  Install it in your 
     system and put the correct entry in the catalog file.
     You might also use the configure option --with-sgml-catalog to specify 
     alternative SGML catalogs.])
