@@ -132,7 +132,13 @@ typedef char * caddr_t;
 /* If not including this file from inside of plcore.h, declare plsc */
 
 #ifndef __PLCORE_H__
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern PLStream	*plsc;
+#ifdef __cplusplus
+}
+#endif
 #include "plplot/pldebug.h"
 #endif
 
