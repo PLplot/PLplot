@@ -36,7 +36,7 @@ META = PLD_plmeta
 PS   = PLD_ps
 PSTEX = PLD_pstex
 CPS  = PLD_cps
-PNG  = PLD_png
+#PNG  = PLD_png
 MEM  = PLD_mem
 NULL = PLD_null
 PBM  = PLD_pbm
@@ -108,7 +108,7 @@ common:
 #define BIN_DIR "$(PLBIN:\=\\)"
 #define DATA_DIR "$(PLLIB:\=\\)"
 #define DRV_DIR "$(PLLIB:\=\\)"
-#define VERSION "5.2.1"
+#define VERSION "5.5.0"
 #define PL_DOUBLE
 #endif
 <<keep

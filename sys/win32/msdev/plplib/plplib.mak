@@ -69,12 +69,10 @@ CLEAN :
 	-@erase "$(INTDIR)\plvpor.obj"
 	-@erase "$(INTDIR)\plwind.obj"
 	-@erase "$(INTDIR)\ps.obj"
-	-@erase "$(INTDIR)\gd.obj"
 	-@erase "$(INTDIR)\xfig.obj"
 	-@erase "$(INTDIR)\mem.obj"
 	-@erase "$(INTDIR)\hpgl.obj"
 	-@erase "$(INTDIR)\pstex.obj"
-	-@erase "$(INTDIR)\plfreetype.obj"
 	-@erase "$(INTDIR)\vc60.idb"
 	-@erase "$(INTDIR)\win3.obj"
 	-@erase ".\plplot.lib"
@@ -84,13 +82,14 @@ CLEAN :
 
 F90_PROJ=/compile_only /include:"$(INTDIR)\\" /nologo /warn:nofileopt /module:"Release/" /object:"Release/"
 F90_OBJS=.\Release/
-CPP_PROJ=/nologo /Ox /MD /W3 /GX /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "BUILD_DIR=$(BUILD_DIR)" /D "HAVE_FREETYPE" /I..\..\..\..\..\freetype\freetype-2.1.9\include /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c
+CPP_PROJ=/nologo /Ox /MD /W3 /GX /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "BUILD_DIR=$(BUILD_DIR)" /D "HAVE_FREETYPE=0" /I..\..\..\..\..\freetype\freetype-2.1.9\include /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c
 BSC32=bscmake.exe
 BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc"
 BSC32_SBRS= \
 	
 LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"plplot.lib" "$(TMPDIR)\freetype.lib"
+#LIB32_FLAGS=/nologo /out:"plplot.lib" "$(TMPDIR)\freetype.lib"
+LIB32_FLAGS=/nologo /out:"plplot.lib"
 LIB32_OBJS= \
 	"$(INTDIR)\plcore.obj" \
 	"$(INTDIR)\win3.obj" \
@@ -98,7 +97,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\pbm.obj" \
 	"$(INTDIR)\null.obj" \
 	"$(INTDIR)\ps.obj" \
-	"$(INTDIR)\gd.obj" \
 	"$(INTDIR)\hpgl.obj" \
 	"$(INTDIR)\mem.obj" \
 	"$(INTDIR)\xfig.obj" \
@@ -125,7 +123,6 @@ LIB32_OBJS= \
 	"$(INTDIR)\pltick.obj" \
 	"$(INTDIR)\plwind.obj" \
 	"$(INTDIR)\pdfutils.obj" \
-	"$(INTDIR)\plfreetype.obj" \
 	"$(INTDIR)\plvect.obj" \
 	"$(INTDIR)\pldtik.obj"
 
@@ -176,7 +173,6 @@ CLEAN :
 	-@erase "$(INTDIR)\plvect.obj"
 	-@erase "$(INTDIR)\plwind.obj"
 	-@erase "$(INTDIR)\ps.obj"
-	-@erase "$(INTDIR)\gd.obj"
 	-@erase "$(INTDIR)\hpgl.obj"
 	-@erase "$(INTDIR)\mem.obj"
 	-@erase "$(INTDIR)\xfig.obj"
@@ -205,12 +201,10 @@ LIB32_OBJS= \
 	"$(INTDIR)\pbm.obj" \
 	"$(INTDIR)\null.obj" \
 	"$(INTDIR)\ps.obj" \
-	"$(INTDIR)\gd.obj" \
 	"$(INTDIR)\hpgl.obj" \
 	"$(INTDIR)\mem.obj" \
 	"$(INTDIR)\xfig.obj" \
 	"$(INTDIR)\pstex.obj" \
-	"$(INTDIR)\plfreetype.obj" \
 	"$(INTDIR)\plbuf.obj" \
 	"$(INTDIR)\plcont.obj" \
 	"$(INTDIR)\plctrl.obj" \

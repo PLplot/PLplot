@@ -56,7 +56,7 @@ void plD_state_win3(PLStream *pls, PLINT op);
 void plD_esc_win3(PLStream *pls, PLINT op , void *ptr);
 void FillPolygonCmd (PLStream *pls);
 void plD_DrawImage_win3(PLStream *pls);
-void imageops(PLStream *pls, int *ptr);
+static void imageops(PLStream *pls, PLINT *ptr);
 /* BOOL CALLBACK AbortProc( HDC hDC, int Error ); */
 
 void plD_dispatch_init_win3	( PLDispatchTable *pdt )
@@ -786,7 +786,7 @@ void plD_DrawImage_win3(PLStream *pls)
   free(byteArray);
 }
 
-void imageops(PLStream *pls, int *ptr)
+static void imageops(PLStream *pls, PLINT *ptr)
 {
 
   WinDev *dev = (WinDev *) pls->dev;

@@ -106,16 +106,19 @@
  * Only those that are necessary for function prototypes are defined here.
  * Notes:
  *
- * PLINT is typedef'd to an int by default.  This is a change from some
- * previous versions, where a long was used.  Under MSDOS, a PLINT is
- * typedef'd to a long, since 16 bits is too inaccurate for some PLplot
- * functions.  So under MSDOS you must use type PLINT for integer array
- * arguments to PLplot functions, but on other systems you can just use
- * an int.
+ * PLINT is typedef'd to a long by default.  This is a change from some
+ * previous versions, where a int was used.  However, so long as you have
+ * used type PLINT for integer array arguments as specified by the API,
+ * this change will be transparent for you.
  *
  * short is currently used for device page coordinates, so they are
  * bounded by (-32767, 32767).  This gives a max resolution of about 3000
  * dpi, and improves performance in some areas over using a PLINT.
+ *
+ * PLUNICODE should be a 32-bit unsigned integer on all platforms.
+ * For now, we are using unsigned int for our Linux ix86 unicode experiments,
+ * but that doesn't guarantee 32 bits exactly on all platforms so this will
+ * be subject to change.
 \*--------------------------------------------------------------------------*/
 
 #if defined(PL_DOUBLE) || defined(DOUBLE)
@@ -128,11 +131,7 @@ typedef float PLFLT;
 #define PLFLT_MIN  FLT_MIN
 #endif
 
-#if defined(MSDOS) && !defined(__WIN32__)
 typedef long PLINT;
-#else
-typedef int PLINT;
-#endif
 
 #if defined(WIN32)
 #if defined(__PLSTUBS_H__)
@@ -145,6 +144,15 @@ typedef int PLINT;
 #define API
 #endif
 
+
+/* Subject to change. */
+#if defined(HAVE_STDINT_H)
+#include <stdint.h>
+/* This is apparently portable if stdint.h exists. */
+typedef uint32_t PLUNICODE;
+#else
+typedef unsigned int PLUNICODE;
+#endif
 
 
 /* For passing user data, as with X's XtPointer */
@@ -228,6 +236,30 @@ typedef void* PLPointer;
 #define PL_PARSE_NOPROGRAM      0x0020  /* Program name NOT in *argv[0].. */
 #define PL_PARSE_NODASH         0x0040  /* Set if leading dash NOT required */
 #define PL_PARSE_SKIP           0x0080  /* Skip over unrecognized args */
+
+/* FCI (font characterization integer) related constants. */
+#define PL_FCI_MARK 0x10000000
+#define PL_FCI_IMPOSSIBLE 0x00000000
+#define PL_FCI_HEXDIGIT_MASK 0xf
+#define PL_FCI_HEXPOWER_MASK 0x7
+#define PL_FCI_HEXPOWER_IMPOSSIBLE 0xf
+/* These define hexpower values corresponding to each font attribute. */
+#define PL_FCI_FAMILY  0x0
+#define PL_FCI_STYLE  0x1
+#define PL_FCI_WEIGHT  0x2
+/* These are legal values for font family attribute */
+#define PL_FCI_SANS 0x0
+#define PL_FCI_SERIF 0x1
+#define PL_FCI_MONO 0x2
+#define PL_FCI_SCRIPT 0x3
+#define PL_FCI_SYMBOL 0x4
+/* These are legal values for font style attribute */
+#define PL_FCI_UPRIGHT 0x0
+#define PL_FCI_ITALIC 0x1
+#define PL_FCI_OBLIQUE 0x2
+/* These are legal values for font weight attribute */
+#define PL_FCI_MEDIUM 0x0
+#define PL_FCI_BOLD 0x1
 
 /* Obsolete names */
 
@@ -464,6 +496,7 @@ typedef struct {
 #define    plgdiori     c_plgdiori
 #define    plgdiplt     c_plgdiplt
 #define    plgfam       c_plgfam
+#define    plgfci       c_plgfci
 #define    plgfnam      c_plgfnam
 #define    plglevel     c_plglevel
 #define    plgpage      c_plgpage
@@ -479,6 +512,7 @@ typedef struct {
 #define    plgzax       c_plgzax
 #define    plhist       c_plhist
 #define    plhls        c_plhls
+#define    plhlsrgb     c_plhlsrgb
 #define    plinit       c_plinit
 #define    pljoin       c_pljoin
 #define    pllab        c_pllab
@@ -503,6 +537,7 @@ typedef struct {
 #define    plreplot     c_plreplot
 #define    plrgb        c_plrgb
 #define    plrgb1       c_plrgb1
+#define    plrgbhls     c_plrgbhls
 #define    plschr       c_plschr
 #define    plscmap0     c_plscmap0
 #define    plscmap0n    c_plscmap0n
@@ -522,6 +557,7 @@ typedef struct {
 #define    plsesc       c_plsesc
 #define    plsetopt	c_plsetopt
 #define    plsfam       c_plsfam
+#define    plsfci       c_plsfci
 #define    plsfnam      c_plsfnam
 #define    plshade      c_plshade
 #define    plshade1     c_plshade1
@@ -600,6 +636,7 @@ typedef struct {
 #define    c_plgdiori       plgdiori
 #define    c_plgdiplt       plgdiplt
 #define    c_plgfam         plgfam
+#define    c_plgfci         plgfci
 #define    c_plgfnam        plgfnam
 #define    c_plglevel       plglevel
 #define    c_plgpage        plgpage
@@ -615,6 +652,7 @@ typedef struct {
 #define    c_plgzax         plgzax
 #define    c_plhist         plhist
 #define    c_plhls          plhls
+#define    c_plhlsrgb       plhlsrgb
 #define    c_plinit         plinit
 #define    c_pljoin         pljoin
 #define    c_pllab          pllab
@@ -639,6 +677,7 @@ typedef struct {
 #define    c_plreplot       plreplot
 #define    c_plrgb          plrgb
 #define    c_plrgb1         plrgb1
+#define    c_plrgbhls       plrgbhls
 #define    c_plschr         plschr
 #define    c_plscmap0       plscmap0
 #define    c_plscmap0n      plscmap0n
@@ -658,6 +697,7 @@ typedef struct {
 #define    c_plsesc         plsesc
 #define    c_plsetopt       plsetopt
 #define    c_plsfam         plsfam
+#define    c_plsfci         plsfci
 #define    c_plsfnam        plsfnam
 #define    c_plshade        plshade
 #define    c_plshade1       plshade1
@@ -724,6 +764,8 @@ typedef struct {
 #define    plP_gvpd	plgvpd
 #define    plP_gvpw	plgvpw
 #define    plotsh3d(x,y,z,nx,ny,opt)     plsurf3d(x,y,z,nx,ny,opt, NULL, 0)
+#define    plHLS_RGB    plhlsrgb
+#define    plRGB_HLS    plrgbhls
 
 #endif /* __PLSTUBS_H__ */
 
@@ -967,6 +1009,11 @@ c_plgdiori(PLFLT *p_rot);
 void API
 c_plgdiplt(PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax);
 
+/* Get FCI (font characterization integer) */
+
+void API
+c_plgfci(PLUNICODE *pfci);
+
 /* Get family file parameters */
 
 void API
@@ -1059,6 +1106,11 @@ c_plhist(PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax,
 
 void API
 c_plhls(PLFLT h, PLFLT l, PLFLT s);
+
+/* Functions for converting between HLS and RGB color space */
+
+void API
+c_plhlsrgb(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
 
 /* Initializes PLplot, using preset or default options */
 
@@ -1229,6 +1281,11 @@ c_plrgb(PLFLT r, PLFLT g, PLFLT b);
 void API
 c_plrgb1(PLINT r, PLINT g, PLINT b);
 
+/* Functions for converting between HLS and RGB color space */
+
+void API
+c_plrgbhls(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
+
 /* Set character height. */
 
 void API
@@ -1322,6 +1379,10 @@ c_plsesc(char esc);
 
 void API
 c_plsfam(PLINT fam, PLINT num, PLINT bmax);
+/* Set FCI (font characterization integer) */
+
+void API
+c_plsfci(PLUNICODE fci);
 
 /* Set the output file name. */
 
@@ -1777,14 +1838,6 @@ plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
 void API
 plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
 
-/* Functions for converting between HLS and RGB color space */
-
-void API
-plHLS_RGB(PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b);
-
-void API
-plRGB_HLS(PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s);
-
 /* Wait for graphics input event and translate to world coordinates */
 
 int API
@@ -1834,6 +1887,7 @@ plTranslateCursor(PLGraphicsIn *gin);
 #undef    c_plgdiori
 #undef    c_plgdiplt
 #undef    c_plgfam
+#undef    c_plgfci
 #undef    c_plgfnam
 #undef    c_plglevel
 #undef    c_plgpage
@@ -1849,6 +1903,7 @@ plTranslateCursor(PLGraphicsIn *gin);
 #undef    c_plgzax
 #undef    c_plhist
 #undef    c_plhls
+#undef    c_plhlsrgb
 #undef    c_plinit
 #undef    c_pljoin
 #undef    c_pllab
@@ -1873,6 +1928,7 @@ plTranslateCursor(PLGraphicsIn *gin);
 #undef    c_plreplot
 #undef    c_plrgb
 #undef    c_plrgb1
+#undef    c_plrgbhls
 #undef    c_plschr
 #undef    c_plscmap0
 #undef    c_plscmap0n
@@ -1892,6 +1948,7 @@ plTranslateCursor(PLGraphicsIn *gin);
 #undef    c_plsesc
 #undef    c_plsetopt
 #undef    c_plsfam
+#undef    c_plsfci
 #undef    c_plsfnam
 #undef    c_plshade
 #undef    c_plshade1
