@@ -21,35 +21,38 @@
 ## warranties, use it at your own risk.  It  was originally written for
 ## inclusion in the Debian octave-plplot package.
 
-function use_plplot(action)
+1;
 
-  if (nargin == 0)
-    action = "on";
-  endif
-
-  path = plplot_octave_path;
-  ix = findstr( LOADPATH, path);
-  if (!isempty(ix))
-    LOADPATH(ix(1):ix(1)+length( path)-1)= "";
-    LOADPATH = strrep (LOADPATH, "::", ":");
-  endif
-
-  ## don't work! Octave docs say that clear() can't be used inside a function
-  lcd = pwd;
-  cd (path);
-  t = glob("*.m");
-  for i = t'; clear(deblank(i')); end
-  cd (lcd);
-
-  if (strcmp(action, "on"))
-    LOADPATH = [path, ":", LOADPATH];
-    plplot_stub;
-  elseif (strcmp(action, "off"))
-    LOADPATH = [LOADPATH, ":", path];
+if ! exist ("use_plplot_state")
+  global use_plplot_state
+  use_plplot_state = "on";
+else
+  if strcmp (use_plplot_state, "on")
+    use_plplot_state = "off";
   else
-    help "use_plplot"
+    use_plplot_state = "on";
   endif
-  
-endfunction
+endif
 
+path = plplot_octave_path;
+ix = findstr (LOADPATH, path);
+if (!isempty (ix))
+  LOADPATH (ix(1):ix(1)+length( path)-1)= "";
+  LOADPATH = strrep (LOADPATH, "::", ":");
+endif
 
+if (strcmp (use_plplot_state, "on"))
+  LOADPATH = [path, ":", LOADPATH];
+  plplot_stub;
+elseif (strcmp (use_plplot_state, "off"))
+  LOADPATH = [LOADPATH, ":", path];
+endif
+
+lcd = pwd;
+cd (path);
+t = [ glob ("*.m "); glob ("support/*.m ") ];
+for i = t' 
+  clear (strrep (strrep (deblank(i'), ".m", ""), "support/", ""));
+end
+
+printf ("Use PLplot: %s\n", use_plplot_state);
