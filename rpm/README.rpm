@@ -7,10 +7,7 @@ Every different rpm-based distribution (or version of RedHat) requires its
 own spec file which will differ in some small details from
 plplot_redhat6.2.spec.  So the plan is to build up a suite of these spec
 files in this directory as we get access to various distributions.
-plplot_redhat7.1.spec is the second example of this plan.  It is based
-mostly on plplot_redhat6.2.spec but with some variations required for RH 7.1
-that were kindly determined by the efforts of Abed M. Hammoud
-<abed.hammoud@medtronic.com>.
+plplot_redhat7.1.spec is the second example of this plan.
 
 plplot_redhat6.2.spec is the prototype of such spec files and must be
 considered experimental.  It has been used to build source and binary rpms

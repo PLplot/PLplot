@@ -7,7 +7,7 @@ BuildRoot: /tmp/software/redhat_install_area/plplot
 # %prep and %install areas, and explicit removal of this location in 
 # %install area before actual install to this location occurs.
 Summary: PLPlot 2D/3D plotting library
-Packager: Abed M. Hammoud <abed.hammoud@medtronic.com>
+Packager: Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 Name: plplot
 Version: 5.0.4
 Release: 5
@@ -15,7 +15,7 @@ Source0: http://prdownloads.sourceforge.net/plplot/plplot-5.0.4.tar.gz
 URL: http://plplot.sourceforge.net
 Copyright: LGPL with some exceptions, see file "Copyright"
 Group: Applications/Math
-requires: python >= 1.5.2, python-numpy >= 15.3 
+requires: python >= 1.5.2-30, python-numpy >= 15.3 
 %description
 This is the distribution for PLplot, a scientific plotting package. PLplot
 is relatively small, portable, freely distributable, and is rich enough to
@@ -27,29 +27,24 @@ calls is typically required.  For more advanced use, virtually all aspects
 of plotting are configurable.
 
 Notes on the plplot configuration underlying this package for the
-RH 6.2 build environment: 
+RH 7.1 build environment: 
 
 (i) We use --with-double=yes to give double precision.
 
-(ii) A large number of drivers are configured by default including tk, png
-and jpeg, and we also explicitly configure --enable-gnome to include the
-gnome driver. But on RH 6.2, libtcl, libgd, and libgtk+ are too old so these
-mentioned drivers are automatically eliminated from the drivers list by the
-configure script.  On RH 7.x it will be a different story.
+(ii) A large number of drivers are configured by default including tk, ps,
+psc, png and jpeg, and we also explicitly configure --enable-gnome to
+include the experimental gnome driver.
 
 (iii) We explicitly configure --enable-octave, but octave is not supported
-on RedHat 6.2 (7.x may be different, we don't know) so the configure script
-automatically disables it.
+on RedHat 7.1 because of a missing matwrap package.  Thus, the configure
+script automatically disables it, and to be consistent with that result we
+must comment out the octave files from the file list.  To get around this
+problem we will some day make a matwrap rpm (which should be easy to do
+since no compilation is involved).  But not today!
 
-(iv) On RedHat 6.2 (but not 7.x) tcl is too old for PLplot to support it so
-the configuration automatically disables it.
-
-Note that when crippled/ancient RH 6.2 is replaced by a more modern
-distribution for the build there are going to be lots of additional
-dependency issues to deal with.  You have been warned.
-
-(v) itcl support does not work with RH7.1 so we disable that. It complains
-about a header file.
+(iv) itcl support does not work with RH7.1 so we disable that.  There is
+a bug in the RH7.1 itcl package; it should include the itclDecls.h file
+and does not.  A bug report has been sent, but so far no action.
 
 %prep
 %setup
@@ -78,13 +73,12 @@ pushd $RPM_BUILD_ROOT/usr/share/doc/plplot
 # * stands for version number of plplotdoc.
 tar zxf plplotdoc-html-*.tar.gz
 popd
-# install info stuff.  This is the correct place for RH 6.2, but may not
-# be the preferred location for modern distributions.
-install -m 755 -d $RPM_BUILD_ROOT/usr/info
+# install info stuff.
+install -m 755 -d $RPM_BUILD_ROOT/usr/share/info
 # * stands for version number of plplotdoc.
 tar zxf plplotdoc-info-*.tar.gz
 gzip plplotdoc-info-*/*
-cp plplotdoc-info-*/* $RPM_BUILD_ROOT/usr/info
+cp plplotdoc-info-*/* $RPM_BUILD_ROOT/usr/share/info
 # make sure can redo this script in case of --short-circuit
 rm -f plplotdoc-info-*/*
 # install man pages
@@ -102,10 +96,10 @@ rm -f plplotdoc-man-*/*
 cd ..
 %post
 /sbin/ldconfig
-/sbin/install-info --entry="* PLplot: (plplotdoc).  PLplot plotting suite." /usr/info/plplotdoc.info.gz /usr/info/dir
+/sbin/install-info --entry="* PLplot: (plplotdoc).  PLplot plotting suite." /usr/share/info/plplotdoc.info.gz /usr/share/info/dir
 %preun
 if [ $1 = 0 ]; then
-   /sbin/install-info --delete /usr/info/plplotdoc.info.gz /usr/info/dir
+   /sbin/install-info --delete /usr/share/info/plplotdoc.info.gz /usr/share/info/dir
 fi
 %postun
 /sbin/ldconfig
@@ -120,13 +114,13 @@ fi
 %attr(-, root, root) %doc /usr/man/man1/pltek.1.gz 
 %attr(-, root, root) %doc /usr/man/man3/*.3plplot.gz 
 # octave support files for Plplot.
-%attr(-, root, root) /usr/share/plplot-octave
+# Not available because of matwrap%attr(-, root, root) /usr/share/plplot-octave
 # python module
 %attr(-, root, root) /usr/lib/python1.5/site-packages/plmodule.so
 # fonts and maps (and tcl data once we move away from RH 6.2)
 %attr(-, root, root) /usr/lib/plplot5.0.4
 # info files
-%attr(-, root, root) /usr/info/plplotdoc.info*.gz
+%attr(-, root, root) /usr/share/info/plplotdoc.info*.gz
 # headers
 %attr(-, root, root) /usr/include/plplot
 # executables
