@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.48  1995/06/23 02:57:08  mjl
+ * Revision 1.49  1995/06/29 18:10:44  mjl
+ * Moved invocation of plP_subpInit() to a less bogus place in plP_bop().
+ *
+ * Revision 1.48  1995/06/23  02:57:08  mjl
  * Moved call to plP_subpInit() to bop, to make sure device dimensions are
  * calculated properly.
  *
@@ -155,12 +158,12 @@ plP_eop(void)
 void
 plP_bop(void)
 {
+    plP_subpInit();
     if (plsc->page_status == AT_BOP)
 	return;
 
     plsc->page_status = AT_BOP;
     plsc->nplwin = 0;
-    plP_subpInit();
 
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_bop) (plsc);
