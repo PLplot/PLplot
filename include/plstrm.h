@@ -64,6 +64,7 @@ typedef struct {
  * verbose	PLINT	Be more verbose than usual
  * debug	PLINT	Generate debugging output
  * initialized	PLINT	Set if the stream has been initialized
+ * dev_initialized PLINT Set if the device driver has been loaded
  *
  ***************************************************************************
  *
@@ -97,6 +98,7 @@ typedef struct {
  * lcol1cp	PLFLT	Locations of control points in cmap1 [0,1]
  * curcmap	PLINT	Current color map
  * curcolor	RGB[]	Current color
+ * tmpcolor	RGB[]	Temporary color storage
  * cmap0 	RGB[]	Color map 0: maximum of ncol0 RGB 8-bit values
  * cmap1 	RGB[]	Color map 1: maximum of ncol1 RGB 8-bit values
  *
@@ -420,14 +422,14 @@ typedef struct {
 
 /* Misc control information */
 
-    PLINT ipls, level, verbose, debug, initialized;
+    PLINT ipls, level, verbose, debug, initialized, dev_initialized;
     char *program;
 
 /* Colormaps */
 
     PLINT icol0, ncol0, icol1, ncol1, ncp1, curcmap;
 
-    PLColor curcolor;
+    PLColor curcolor, tmpcolor;
     PLColor *cmap0;
     PLColor *cmap1;
 
