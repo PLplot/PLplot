@@ -102,7 +102,15 @@ c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z)
 	ypoly[n-1] = ypoly[0];
     }
 
-    plP_fill(xpoly, ypoly, n);
+/* AWI: in the past we have used
+ *  plP_fill(xpoly, ypoly, n);
+ * here, but our educated guess is this fill should be done via the clipping
+ * interface instead as below.
+ * No example tests this code so one of our users will end up inadvertently
+ * testing this for us.  */
+    plP_plfclp(xpoly, ypoly, n, plsc->clpxmi, plsc->clpxma,
+	       plsc->clpymi, plsc->clpyma, plP_fill);
+   
 }
 
 /*----------------------------------------------------------------------*\
