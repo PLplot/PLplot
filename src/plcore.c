@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.43  1995/03/17 00:07:33  mjl
+ * Revision 1.44  1995/04/12 08:23:18  mjl
+ * Moved font-related code into plsym.c.
+ *
+ * Revision 1.43  1995/03/17  00:07:33  mjl
  * Added plP_swin to set up plot window parameters.  Changed driver
  * transformation code to make calls to plP_dcpcx, plP_dcpcy, plP_pcdcx,
  * plP_pcdcy where appropriate.  Changed to use new variables plsc->phyxlen,
@@ -1084,11 +1087,11 @@ c_plinit(void)
     if (plsc->level != 0)
 	plend1();
 
-/* Stream number */
+/* Set stream number */
 
     plsc->ipls = ipls;
 
-/* Set device number */
+/* If device isn't set, prompt for it */
 
     plGetDev();
 
@@ -1097,22 +1100,15 @@ c_plinit(void)
     plCmap0_init();
     plCmap1_init();
 
-/* Load fonts */
-
-    font = 1;
-    if (fontset) {
-	plfntld(initfont);
-	fontset = 0;
-    }
-    else
-	plfntld(0);
-
 /* Initialize device & first page */
 
     plP_init();
+    plP_bop();
     plsc->level = 1;
 
-    plP_bop();
+/* Load fonts */
+
+    plfntld(initfont);
 
 /* Set up subpages */
 
@@ -1456,44 +1452,21 @@ plGetDev()
 }
 
 /*--------------------------------------------------------------------------*\
- * void c_plfont(ifont)
- *
- * Sets the global font flag to 'ifont'.
-\*--------------------------------------------------------------------------*/
-
-void
-c_plfont(PLINT ifont)
-{
-    if (plsc->level < 1) {
-	plabort("plfont: Please call plinit first");
-	return;
-    }
-    if (ifont < 1 || ifont > 4) {
-	plabort("plfont: Invalid font");
-	return;
-    }
-
-    font = ifont;
-}
-
-/*--------------------------------------------------------------------------*\
  * void plfontld()
  *
  * Load specified font set.
 \*--------------------------------------------------------------------------*/
 
 void
-c_plfontld(PLINT fnt)
+c_plfontld(PLINT ifont)
 {
-    if (fnt != 0)
-	fnt = 1;
+    if (ifont != 0)
+	ifont = 1;
 
     if (plsc->level > 0)
-	plfntld(fnt);
-    else {
-	initfont = fnt;
-	fontset = 1;
-    }
+	plfntld(ifont);
+    else
+	initfont = ifont;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1980,15 +1953,6 @@ plP_ssub(PLINT nx, PLINT ny, PLINT cs)
     plsc->nsubx = nx;
     plsc->nsuby = ny;
     plsc->cursub = cs;
-}
-
-/* Get font and color attributes */
-
-void
-plP_gatt(PLINT *p_ifnt, PLINT *p_icol0)
-{
-    *p_ifnt = font;
-    *p_icol0 = plsc->icol0;
 }
 
 /* Get viewport boundaries in normalized device coordinates */
