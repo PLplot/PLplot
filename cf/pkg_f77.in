@@ -11,4 +11,5 @@
 FSTUB_C		= sc3d.c sccont.c scstubs.c 
 FSTUB_OBJ	= sc3d$O sccont$O scstubs$O 
 FSTUB_OBJ_SA	= strutil$O sfstubs$O 
+F77_INSTALL	= install_f77
 

@@ -9,21 +9,19 @@
 #
 # It is recommended that you use a dedicated directory such as
 # /usr/local/plplot (read the FAQ on this topic).  The install directory
-# will be created if necessary, as will subdirectories bin, doc, examples,
-# include, lib, man (eventually), and tcl.
+# will be created if necessary, as will all required subdirectories.
 #
-# Notes: 
-#	if Tk support is not included, TK_INSTALL will be null.
-#	if Tcl support is not included, TCL_INSTALL will be null.
-#	if C++ support is not included, CXX_INSTALL will be null.
-#	if Python support is not included, PYTHON_INSTALL will be null.
+# If support for <pkg> is not included, $(<PKG>_INSTALL) will be null.
 #
 # If a shared library was built, rebuild executables before installing.
 # -----------------------------------------------------------------------
 
-install: install_lib install_utils \
-	$(PYTHON_INSTALL) $(TCL_INSTALL) $(TK_INSTALL) $(CXX_INSTALL) \
-	install_demos
+install: install_lib install_demos install_utils \
+	$(F77_INSTALL) \
+	$(PYTHON_INSTALL) \
+	$(TCL_INSTALL) \
+	$(TK_INSTALL) \
+	$(CXX_INSTALL)
 
 install_lib:
 	-if test ! -d $(INCLUDE_DIR); then mkdir -p $(INCLUDE_DIR); fi
@@ -48,20 +46,9 @@ install_lib:
 install_demos:
 	-if test ! -d $(DEMOS_DIR); then mkdir -p $(DEMOS_DIR); fi
 	-if test ! -d $(DEMOS_DIR)/c; then mkdir -p $(DEMOS_DIR)/c; fi
-	-if test ! -d $(DEMOS_DIR)/f77; then mkdir -p $(DEMOS_DIR)/f77; fi
-	-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
-	-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi
-	-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
 	-cp Makedemo $(DEMOS_DIR)/Makefile
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c
-	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/f77
-	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
 	-cd $(top_srcdir)/examples/c; cp * $(DEMOS_DIR)/c
-	-cd $(top_srcdir)/examples/f77; cp * $(DEMOS_DIR)/f77
-	-cd $(top_srcdir)/examples/python; cp * $(DEMOS_DIR)/python
-	-cd $(top_srcdir)/examples/tcl; cp * $(DEMOS_DIR)/tcl
-	-cd $(top_srcdir)/examples/tk; cp * $(DEMOS_DIR)/tk
-	-$(LN) $(DEMOS_DIR)/tcl/x??.tcl $(DEMOS_DIR)/tk
 
 install_utils:
 	-if test $(SHARED) = 1; then \
@@ -75,15 +62,18 @@ install_utils:
 	-strip plrender$E pltek$E
 	-cp plrender$E pltek$E $(BIN_DIR)
 
-# Remember, this is bogus...
-#	 $(LDC) $(LDC_FLAGS) pltek$O $(LIB_INSTALL) \
-#		-o pltek$E $(LDC_LIBS); \
-
-install_plmodule:
+install_python:
 	 $(LDSHARED) $(LDC_FLAGS) plmodule$O $(LIB_INSTALL) \
 		-o $(PYTHON_EXE) $(LDC_LIBS)
 	-if test ! -d $(PYTHON_DIR); then mkdir -p $(PYTHON_DIR); fi
 	-cp $(PYTHON_EXE) $(PYTHON_DIR)
+	-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
+	-cd $(top_srcdir)/examples/python; cp * $(DEMOS_DIR)/python
+
+install_f77:
+	-if test ! -d $(DEMOS_DIR)/f77; then mkdir -p $(DEMOS_DIR)/f77; fi
+	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/f77
+	-cd $(top_srcdir)/examples/f77; cp * $(DEMOS_DIR)/f77
 
 install_tcl:
 	-if test $(SHARED) = 1; then \
@@ -94,6 +84,8 @@ install_tcl:
 	-cp pltcl$E $(BIN_DIR)
 	-cd $(top_srcdir)/bindings/tcl; \
 	 cp pltcl.h tclMatrix.h $(INCLUDE_DIR)
+	-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi
+	-cd $(top_srcdir)/examples/tcl; cp * $(DEMOS_DIR)/tcl
 
 install_tk:
 	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
@@ -106,6 +98,13 @@ install_tk:
 	-cd $(top_srcdir)/bindings/tk; \
 	 cp pltk.h $(INCLUDE_DIR); \
 	 cp *.tcl *.pal tclIndex $(TCL_DIR)
+	-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
+	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
+	-cd $(top_srcdir)/examples/tk; cp * $(DEMOS_DIR)/tk
+	-$(LN) $(DEMOS_DIR)/tcl/x??.tcl $(DEMOS_DIR)/tk
 
 install_cxx:
 	-cd $(top_srcdir)/bindings/c++; cp plstream.h $(INCLUDE_DIR)
+	-if test ! -d $(DEMOS_DIR)/cxx; then mkdir -p $(DEMOS_DIR)/cxx; fi
+	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/cxx
+	-cd $(top_srcdir)/examples/cxx; cp * $(DEMOS_DIR)/cxx
