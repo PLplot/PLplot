@@ -75,6 +75,7 @@ nsubz	PLINT
 
 pltclcmd plxormod void
 mod PLINT
+st  PLINT&
 
 # Set color, map 0.  Argument is integer between 0 and 15.
 

@@ -322,29 +322,38 @@ static int
 plxormodCmd( ClientData clientData, Tcl_Interp *interp, int argc, char *argv[] )
 {
     PLINT mod;
+    PLINT st;
 
     errcode = 0; errmsg[0] = '\0';
 
     if ( (argc == 2) && (strncmp(argv[1],"-help",strlen(argv[1])) == 0) ) {
 	Tcl_AppendResult( interp, "command syntax: \"",
-			  "plxormod mod", "\"",
+			  "plxormod ?mod st?", "\"",
 			  (char *) NULL);
 	return TCL_ERROR;
     }
 
-    if ( (!0 && 0 && (argc < (1 + 1 - 0))) ||
-         (!0 && !0 && (argc != (1 + 1))) ||
-         ( 0 && (argc != 1) && (argc != (1 + 1))) ) {
+    if ( (!1 && 0 && (argc < (1 + 2 - 0))) ||
+         (!1 && !0 && (argc != (2 + 1))) ||
+         ( 1 && (argc != 1) && (argc != (2 + 1))) ) {
 	Tcl_AppendResult( interp, "wrong # args: should be \"",
-			  "plxormod mod", "\"",
+			  "plxormod ?mod st?", "\"",
 			  (char *) NULL);
 	return TCL_ERROR;
     }
 
     mod = atoi(argv[1+0]);
+/* st is for output. */
 
-    plxormod ( mod );
+    plxormod ( mod, &st );
 
+    if (argc == 1)
+        Tcl_AppendResult( interp, " ", (char *) NULL );
+    sprintf( buf, "%d", st );
+    if (argc > 1)
+        Tcl_SetVar( interp, argv[1+1], buf, 0 );
+    else
+        Tcl_AppendResult( interp, buf, (char *) NULL );
 
     if (errcode != 0) {
 	Tcl_AppendResult(interp, errmsg, (char *) NULL);

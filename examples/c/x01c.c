@@ -138,8 +138,8 @@ main(int argc, char *argv[])
 
     if (locate_mode) {
 	for (;;) {
-	    if (! plGetCursor(&gin)) break;
-	    if (gin.keysym == PLK_Escape) break;
+	  if (! plGetCursor(&gin)) break;
+	  if (gin.keysym == PLK_Escape) break;
 
 	    pltext();
 	    if (gin.keysym < 0xFF && isprint(gin.keysym)) 
@@ -164,7 +164,7 @@ main(int argc, char *argv[])
 void
 plot1(int do_test)
 {
-    int i;
+  int i, st;
     PLFLT xmin, xmax, ymin, ymax;
 
     for (i = 0; i < 60; i++) {
@@ -206,14 +206,16 @@ plot1(int do_test)
 /* it does not work in double buffering mode, however */
 
     if (do_test && test_xor) {
-	plxormod(1);			/* enter xor mode */
-	for (i=0; i<60; i++) {
+	plxormod(1, &st); /* enter xor mode */
+	if (st) {
+	  for (i=0; i<60; i++) {
 	    plpoin(1, x+i, y+i,9);	/* draw a point */
 	    usleep(50000);		/* wait a little */
 	    plflush();			/* force an update of the tk driver */
 	    plpoin(1, x+i, y+i,9);	/* erase point */
+	  }
+	  plxormod(0, &st);			/* leave xor mode */
 	}
-	plxormod(0);			/* leave xor mode */
     }
 }
  

@@ -198,6 +198,7 @@ init(PLStream *pls)
     pls->dev_fill0 = 1;		/* Handle solid fills */
     pls->dev_fill1 = 1;		/* Handle pattern fills */
     pls->server_nokill = 1;     /* don't kill if ^C */ 
+    pls->dev_xor = 1;           /* device support xor mode */
     pls->plbuf_write = 1;       /* Activate plot buffer. To
     programmatically save a file we can't call plreplot(), but instead
     one must send a command to plserver. As there is no API call for
@@ -553,9 +554,9 @@ static void
 tk_XorMod(PLStream *pls, PLINT *ptr)
 {
   if (*ptr != 0)
-    server_cmd( pls, "$plwidget cmd plxormod 1", 1 );
+    server_cmd( pls, "$plwidget cmd plxormod 1 st", 1 );
   else
-    server_cmd( pls, "$plwidget cmd plxormod 0", 1 );
+    server_cmd( pls, "$plwidget cmd plxormod 0 st", 1 );
 }
 
 

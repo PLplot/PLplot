@@ -1014,9 +1014,14 @@ c_plgra(void)
 }
 
 void
-c_plxormod(PLINT mode)	/* xor mode */
+c_plxormod(PLINT mode, PLINT *status)	/* xor mode */
 {
   static int ostate = 0;
+
+  if (!plsc->dev_xor) {
+    *status = 0;
+    return;
+  }
 
   if (plsc->level > 0) {
     plP_esc(PLESC_XORMOD, &mode);
@@ -1025,7 +1030,8 @@ c_plxormod(PLINT mode)	/* xor mode */
       plsc->plbuf_write = 0;
     } else
       plsc->plbuf_write = ostate;
-  }
+  } 
+  *status = 1;
 }
 
 /*--------------------------------------------------------------------------*\
