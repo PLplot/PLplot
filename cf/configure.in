@@ -1,6 +1,7 @@
 #!/bin/sh
 # -----------------------------------------------------------------------
-# $Id$
+#
+# configure.in
 #
 # Maurice LeBrun
 # IFS, University of Texas at Austin
