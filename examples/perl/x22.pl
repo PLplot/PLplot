@@ -74,9 +74,7 @@ sub potential {
                (0.5 + sequence (ntheta)))->dummy (0, nr);
   my $x = $r * cos ($theta);
   my $y = $r * sin ($theta);
-  my $cgrid2 = zeroes (nr, ntheta, 2);
-  $cgrid2->slice (':,:,0') .= $x;
-  $cgrid2->slice (':,:,1') .= $y;
+  my $cgrid2 = plAlloc2dGrid ($x, $y);
   my $div1 = sqrt (($x - $d1) ** 2 + ($y - $d1) ** 2 + $eps * $eps);
   my $div1i = sqrt (($x - $d1i) ** 2 + ($y - $d1i) ** 2 + $eps * $eps);
   my $div2 = sqrt (($x - $d2) ** 2 + ($y + $d2) ** 2 + $eps * $eps);
@@ -115,6 +113,8 @@ sub potential {
   my $px = $rmax * cos ($theta);
   my $py = $rmax * sin ($theta);
   plline ($px , $py);
+
+  plFree2dGrid ($cgrid2);
 }
 
 #--------------------------------------------------------------------------
@@ -143,9 +143,7 @@ my $ymax = 0.55;
 
 my $x = (1.5 * ((sequence (nx) - nx / 2) + 0.5)/(nx / 2))->dummy (1, ny);
 my $y = (0.5 * ((sequence (ny) - ny / 2) + 0.5)/(ny / 2))->dummy (0, nx);
-my $cgrid2 = zeroes (nx, ny, 2);
-$cgrid2->slice (':,:,0') .= $x;
-$cgrid2->slice (':,:,1') .= $y;
+my $cgrid2 = plAlloc2dGrid ($x, $y);
 my $u = -2 * (1 - $x) - 200 * ($y - $x ** 2);
 my $v = 200 * ($y - $x * $x);
 
@@ -172,3 +170,4 @@ potential ();
 
 plend ();
 
+plFree2dGrid ($cgrid2);
