@@ -995,6 +995,10 @@ fi
 if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
 	incdirs="\
+	$prefix/include/python2.2 \
+	/usr/include/python2.2 \
+	$prefix/include/python2.2/Numeric \
+	/usr/include/python2.2/Numeric \
 	$prefix/include/python2.1 \
 	/usr/include/python2.1 \
 	$prefix/include/python2.1/Numeric \
