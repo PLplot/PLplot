@@ -162,7 +162,7 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
 %typemap(perl5,in) char_p_output* (char buf[1024], int count) {
   count = 0;
   if (! SvROK($source))
-    croak ("char* output should be a reference");
+    croak ("char* output must be a reference");
   ST(argvi++) = $source;
   $target = buf;
 }
@@ -174,7 +174,7 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
 %typemap(perl5,in) PLFLT_p_output* (PLFLT fltemp, int count) {
   count = 0;
   if (! SvROK($source))
-    croak ("PLFLT* output should be a reference");
+    croak ("PLFLT* output must be a reference");
   ST(argvi++) = $source;
   $target = &fltemp;
 }
@@ -186,7 +186,7 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
 %typemap(perl5,in) PLINT_p_output* (PLINT fltemp, int count) {
   count = 0;
   if (! SvROK($source))
-    croak ("PLINT* output should be a reference");
+    croak ("PLINT* output must be a reference");
   ST(argvi++) = $source;
   $target = &fltemp;
 }
@@ -205,6 +205,11 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
   $target = (PLFLT*) &temp;
 }
 
+%typemap(perl5,in) PLPointer_input* {
+  $target = (PLPointer*) $source;
+}
+
+
 //***********************************************************************
 //* Function pointer stubs
 //***********************************************************************
@@ -217,4 +222,14 @@ PLplot_perl_get_array_of_double (SV* sv, I32* n, PLFLT** ptr)
 //***********************************************************************
 
 @PROTOTYPES@
+
+// The following  decalarations are in api-c.xml
+
+extern void pltr0 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
+                   PLPointer_input);
+extern void pltr1 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
+                   PLPointer_input);
+extern void pltr2 (PLFLT_input, PLFLT_input, PLFLT_p_output*, PLFLT_p_output*, 
+                   PLPointer_input);
+
 
