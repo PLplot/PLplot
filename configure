@@ -3378,7 +3378,7 @@ if test -z "$EXTRA_LIBS"; then
 	    EXTRA_LIBS="-ldld -lm"
 	;;
 	Linux* )
-	    EXTRA_LIBS="-ldl -lm"
+	    EXTRA_LIBS="-ldl -lm -lg2c"
 	;;
 	* ) 	
 	    echo $ac_n "checking for main in -lXbsd""... $ac_c" 1>&6

@@ -572,7 +572,7 @@ if test -z "$EXTRA_LIBS"; then
 	    EXTRA_LIBS="-ldld -lm"
 	;;
 	Linux* )
-	    EXTRA_LIBS="-ldl -lm"
+	    EXTRA_LIBS="-ldl -lm -lg2c"
 	;;
 	* ) 	
 	    AC_CHECK_LIB(Xbsd,   main, [EXTRA_LIBS="$EXTRA_LIBS -lXbsd"])
