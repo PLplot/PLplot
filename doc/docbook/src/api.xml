@@ -4055,7 +4055,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to stream number of the created stream.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4582,13 +4582,16 @@ default
     </para>
 
     <para>
-      Marks out a set of <literal><parameter>n</parameter></literal> points
-      at positions <literal>(<parameter>x</parameter>(i),
-      <parameter>y</parameter>(i))</literal>, using the symbol defined by
-      <literal><parameter>code</parameter></literal>.  If
+      Marks a set of <literal><parameter>n</parameter></literal> 
+      points in 
+      <literal><parameter>x</parameter></literal> and
+      <literal><parameter>y</parameter></literal> using
+      the symbol defined by
+      <literal><parameter>code</parameter></literal>.
+      If
       <literal><parameter>code</parameter></literal> is between 32 and 127,
-      the symbol is simply the printable ASCII character in the default
-      font.
+      the symbol is simply the corresponding printable ASCII character 
+      in the default font.
     </para>
 
     <variablelist>
@@ -4610,8 +4613,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with set of x coordinate values for the
-	    points.
+	    Pointer to array with x coordinates of the points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4622,8 +4624,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with set of y coordinate values for the
-	    points.
+	    Pointer to array with y coordinates of the points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4644,7 +4645,8 @@ default
 
   <sect1 id="plpoin3" renderas="sect3">
     <title>
-      <function>plpoin3</function>:  Draw a series of points in 3 space
+      <function>plpoin3</function>:  Plots a character at the specified
+      points in 3 space
     </title> 
 
     <para>
@@ -4663,7 +4665,18 @@ default
     </para> 
 
     <para>
-       Draws a series of points in 3 space.  Setup similar to &plline3;.
+      Marks a set of <literal><parameter>n</parameter></literal> 
+      points in 
+      <literal><parameter>x</parameter></literal>,
+      <literal><parameter>y</parameter></literal>, and
+      <literal><parameter>z</parameter></literal> using
+      the symbol defined by
+      <literal><parameter>code</parameter></literal>.
+      If
+      <literal><parameter>code</parameter></literal> is between 32 and 127,
+      the symbol is simply the corresponding printable ASCII character 
+      in the default font.
+       Setup similar to &plline3;.
     </para>
 
     <variablelist>
@@ -4674,7 +4687,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Number of points to be marked.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4685,7 +4698,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Pointer to array with x coordinates of the points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4696,7 +4709,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Pointer to array with y coordinates of the points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4707,7 +4720,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Pointer to array with z coordinates of the points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4718,7 +4731,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Code number for the symbol to be plotted.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4747,15 +4760,19 @@ default
     </para> 
 
     <para>
-      Draws a polygon in 3 space.  This differs from &plline3; in that this
+      Draws a polygon in 3 space defined by <literal><parameter>n</parameter></literal> 
+      points in 
+      <literal><parameter>x</parameter></literal>,
+      <literal><parameter>y</parameter></literal>, and
+      <literal><parameter>z</parameter></literal>.
+      Setup like &plline3;, but differs from that function in that &plpoly3;
       attempts to determine if the polygon is viewable.  If the back of
       polygon is facing the viewer, then it isn't drawn.  If this isn't what
       you want, then use &plline3; instead.
     </para>
 
     <para>
-      <literal><parameter>n</parameter></literal> specifies the number of
-      points.  They are assumed to be in a plane, and the directionality of
+      The points are assumed to be in a plane, and the directionality of
       the plane is determined from the first three points.  Additional
       points do not <emphasis>have</emphasis> to lie on the plane defined
       by the first three, but if they do not, then the determination of
@@ -4787,7 +4804,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Number of points defining line.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4798,7 +4815,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Pointer to array with x coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4809,7 +4826,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Pointer to array with y coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4820,7 +4837,7 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+	    Pointer to array with z coordinates of points.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4831,7 +4848,11 @@ default
 	</term>
 	<listitem>
 	  <para>
-            NEEDS DOCUMENTATION
+            Pointer to array which controls drawing the segments of the
+	    polygon.  If <literal><parameter>draw[i]</parameter></literal> is true,
+	    then the polygon segment from index
+	    <literal><parameter>[i]</parameter></literal> to 
+	    <literal><parameter>[i+1]</parameter></literal> is drawn, otherwise, not.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8181,7 +8202,7 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            Pointer to array of color indices (cmap0) for the 4 pens.
+            Pointer to array with color indices (cmap0) for the 4 pens.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -8192,7 +8213,7 @@ characters and their corresponding decimal ASCII values:
 	</term>
 	<listitem>
 	  <para>
-            Pointer to array of line styles for the 4 pens.
+            Pointer to array with line styles for the 4 pens.
 	  </para>
 	</listitem>
       </varlistentry>
