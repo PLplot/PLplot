@@ -37,7 +37,7 @@ function label_plot( data, label, class, names)
     set_axis = 1;
   endif
 
-  margin_st =  plot_margin (1);
+  margin_st =  plot_margin(1);
   was_hold = 0;
   if (ishold)
     was_hold = 1;
@@ -69,7 +69,7 @@ function label_plot( data, label, class, names)
     
     for i=cla
       j = rem(j,9)+1; fmt = sprintf("@%d%d;%s;", j-1, j, names(i,:));
-      plot(data (find(label==i),1), data (find(label==i),2), fmt);hold on
+      plot(data(find(label==i),1), data(find(label==i),2), fmt);hold on
     endfor
     hold off
   endif
