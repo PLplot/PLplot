@@ -53,9 +53,9 @@ install_octave: install_octave_demos
 	$(CP) $(OCTAVE_EXE) $(OCTAVE_DIR);\
 	(cd $(srcdir)/bindings/octave/PLplot; $(CP) -r * $(OCTAVE_DIR));\
 	(cd $(OCTAVE_DIR);\
-	sed -e 's\PLPLOT_OCTAVE_PATH\$(OCTAVE_DIR)\' plplot_octave_path.m > po;\
+	sed -e 's\PLPLOT_OCTAVE_PATH\$(OCTAVE_DIR)//\' plplot_octave_path.m > po;\
 	mv po plplot_octave_path.m;\
-	sed -e 's\PLPLOT_OCTAVE_PATH\$(OCTAVE_DIR)\' use_plplot.m > po;\
+	sed -e 's\PLPLOT_OCTAVE_PATH\$(OCTAVE_DIR)//\' use_plplot.m > po;\
 	mv po use_plplot.m;)
 
 install_octave_demos:
