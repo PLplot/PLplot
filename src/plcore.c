@@ -1,8 +1,11 @@
 /* $Id$
-   $Log$
-   Revision 1.15  1993/08/03 01:46:58  mjl
-   Changes to eliminate warnings when compiling with gcc -Wall.
-
+ * $Log$
+ * Revision 1.16  1993/08/09 22:20:34  mjl
+ * Fixed plcpstrm() so that it no longer sucks.
+ *
+ * Revision 1.15  1993/08/03  01:46:58  mjl
+ * Changes to eliminate warnings when compiling with gcc -Wall.
+ *
  * Revision 1.14  1993/07/31  08:17:37  mjl
  * Action for driver interface setup functions now deferred until after
  * plinit() called so that these can be set via command line arguments.
@@ -89,11 +92,11 @@ plP_init(void)
 	plbuf_init(plsc);
 }
 
-/* End of page (used to be "clear screen"). */
+/* End of page */
 /* The plot buffer must be called first */
 
 void
-plP_clr(void)
+plP_eop(void)
 {
     if (plsc->plbuf_write)
 	plbuf_eop(plsc);
@@ -106,7 +109,7 @@ plP_clr(void)
 /* The plot buffer must be called last */
 
 void
-plP_page(void)
+plP_bop(void)
 {
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_bop) (plsc);
@@ -850,7 +853,7 @@ c_plinit()
 /* Initialize device */
 
     plP_init();
-    plP_page();
+    plP_bop();
 
 /*
 * Set default sizes
@@ -940,7 +943,7 @@ c_plend1()
     if ((ipls == 0) && (plsc->level == 0))
 	return;
 
-    plP_clr();
+    plP_eop();
     plP_tidy();
     plP_slev(0);
 
@@ -1031,66 +1034,79 @@ c_plmkstrm(PLINT *p_strm)
 /*----------------------------------------------------------------------*\
 * void plcpstrm
 *
-* Create a new stream, copying as many of the parameters of the current
-* stream as is practical.  The requested device is initialized, and the
-* driver interface is re-initialized.  The new stream number is returned. 
+* Copies state parameters from the reference stream to the current stream.
+* Tell driver interface to map device coordinates unless flags == 1.
 *
 * This function is used for making save files of selected plots (e.g.
-* from the TK driver).  To get a copy of the current plot to the specified
-* device, it is necessary only to switch to this stream and issue a
-* plreplot() command (with calls to plcrl() and plpage() as appropriate).
+* from the TK driver).  After initializing, you can get a copy of the
+* current plot to the specified device by switching to this stream and
+* issuing a plcpstrm() and a plreplot(), with calls to plbop() and
+* pleop() as appropriate.  The plot buffer must have previously been
+* enabled (done automatically by some display drivers, such as X).
 \*----------------------------------------------------------------------*/
 
 void
-c_plcpstrm(PLINT *p_strm, char *dev, char *fnam)
+c_plcpstrm(PLINT iplsr, PLINT flags)
 {
-    int ipls_new, ipls_old;
-    PLINT phyxmi, phyxma, phyymi, phyyma;
-    PLFLT xpmm, ypmm;
+    int i;
+    PLStream *plsr;
 
-/* Start new stream */
-
-    ipls_old = ipls;
-    plmkstrm(p_strm);
-    if (*p_strm == 0) 
+    plsr = pls[iplsr];
+    if (plsr == NULL) {
+	fprintf(stderr, "plcpstrm: stream %d not in use\n", iplsr);
 	return;
+    }
 
-    ipls_new = *p_strm;
+/* Copy state parameters from the reference stream */
+/* Can't just copy entire stream unfortunately */
 
-/* Copy parameters from the old stream */
+/* Palettes */
 
-    memcpy(pls[ipls_new], pls[ipls_old], sizeof(PLStream));
+    plsc->icol0 = plsr->icol0;
+    plsc->ncol0 = plsr->ncol0;
+    plsc->bgcolorset = plsr->bgcolorset;
 
-/* Now go back and fix up the parameters that aren't supposed to be copied */
+    plsc->cmap1set = plsr->cmap1set;
+    plsc->htlvl = plsr->htlvl;
+    for (i = 0; i < 16; i++)
+	plsc->cmap0setcol[i] = plsr->cmap0setcol[i];
 
-    plsc->FamilyName = NULL;
-    plsc->FileName = NULL;
-    plsc->dev = NULL;
-    plsc->level = 0;
-    plsc->device = 0;
-    plsc->family = 0;
+#define CP_COLOR(color) \
+    plsc->color.r = plsr->color.r; \
+    plsc->color.g = plsr->color.g; \
+    plsc->color.b = plsr->color.b;
+
+    CP_COLOR(fgcolor);
+    CP_COLOR(bgcolor);
+    CP_COLOR(curcolor);
+    for (i = 0; i < 16; i++)
+	CP_COLOR(cmap0[i]);
+    for (i = 0; i < 256; i++)
+	CP_COLOR(cmap1[i]);
+
+/* Plot buffer -- need to copy file pointer so that plreplot() works */
+
+    plsc->plbufFile = plsr->plbufFile;
     plsc->plbufOwner = 0;
-    plsc->plbuf_write = 0;
+    plsc->plbuf_write = plsr->plbuf_write;
 
-/* Save these for use in the mapping to device space */
-/* Should be in meta coordinates but there's no harm in generality */
+/* Driver interface */
+/* Transformation must be recalculated in current driver coordinates */
 
-    phyxmi = plsc->phyxmi;
-    phyxma = plsc->phyxma;
-    phyymi = plsc->phyymi;
-    phyyma = plsc->phyyma;
-    xpmm = plsc->xpmm;
-    ypmm = plsc->ypmm;
+    if (plsr->difilt & PLDI_PLT) 
+	plsdiplt(plsr->dipxmin, plsr->dipymin, plsr->dipxmax, plsr->dipymax);
 
-/* Initialize */
+    if (plsr->difilt & PLDI_DEV)
+	plsdidev(plsr->didxmin, plsr->didymin, plsr->didxmax, plsr->didymax);
 
-    plsdev(dev);
-    plsfnam(fnam);
-    plinit();
+    if (plsr->difilt & PLDI_ORI)
+	plsdiori(plsr->diorot);
 
-/* Reinitialize driver interface to use new device coordinates */
+/* Map device coordinates */
 
-    plsdimap(phyxmi, phyxma, phyymi, phyyma, xpmm, ypmm);
+    if ( ! (flags & 0x01))
+	plsdimap(plsr->phyxmi, plsr->phyxma, plsr->phyymi, plsr->phyyma,
+		 plsr->xpmm, plsr->ypmm);
 }
 
 /*----------------------------------------------------------------------*\
