@@ -26,6 +26,11 @@ divert(-1)dnl
 #
 # $Id$
 # $Log$
+# Revision 1.6  2000/12/24 18:54:07  airwin
+# Define SYSTEM so it works under gnu/m4 (and presumably for all other m4's).
+# Remove unicos.
+# Changed DBLE (a poorly chosen name) to REAL_FUN.
+#
 # Revision 1.5  2000/12/24 01:44:52  airwin
 # At end of file turn off m4 commenting.  Before it was set to * to end of
 # line which meant that any fortran line with "*" in it had everything after
@@ -144,11 +149,13 @@ ifdef({INCLUDED_FMACS},,{
 #----------------------------------------------------------------------------#
 # Define some system macros
 
+# screw around with all the substr and decr stuff because esyscmd returns
+# an extra character (a linefeed) at the end.
+    define({SYSTEM},substr(esyscmd(uname),0,decr(len(esyscmd(uname)))))
     define(if_aix,	{ifelse(SYSTEM,AIX, {$1},{$2})})
     define(if_dgux,	{ifelse(SYSTEM,DGUX,{$1},{$2})})
     define(if_sysv,	{ifelse(SYSTEM,SYSV,{$1},{$2})})
     define(if_bsd,	{ifelse(SYSTEM,BSD, {$1},{$2})})
-    define(if_unicos,	{ifelse(SYSTEM,UNICOS,{$1},{$2})})
     define(if_sunos,	{ifelse(SYSTEM,SUNOS,{$1},{$2})})
     define(if_ultrix,	{ifelse(SYSTEM,ULTRIX,{$1},{$2})})
     define(if_hpux,	{ifelse(SYSTEM,HPUX,{$1},{$2})})
@@ -179,10 +186,6 @@ ifdef({INCLUDED_FMACS},,{
 	define({implicit_none}, {implicit none})
     })
 
-    if_unicos({
-	define({implicit_none}, {implicit none})
-    })
-
     if_hpux({
 	define({implicit_none}, {implicit none})
     })
@@ -195,33 +198,27 @@ ifdef({INCLUDED_FMACS},,{
 # compiler should AT LEAST support automatic promotion of constants via a
 # command line flag.  Most can promote variables as well, but this way is
 # a bit more portable.
+# AWI needed a way to make constants or expressions either single or 
+# double precision.  REAL was already taken so used REAL_FUN instead.
 
     define(if_dbl,	{ifdef({DOUBLE}, {$1},{$2})})
 
 # There should be a better way..
 
-  if_unicos({
-	define(REAL,		{real})
-	define(COMPLEX,		{complex})
-	define(IMPLICIT_REAL,	{implicit real(a-h,o-z)})
-	define(DREAL,		{real})
-	define(IMAG,		{aimag {} ifelse({$*},,,{($*)})})
-  },{
-	define(IMAG,		{imag {} ifelse({$*},,,{($*)})})
+    define(IMAG,		{imag {} ifelse({$*},,,{($*)})})
     if_dbl({
 	define(REAL,		{real*8})
 	define(COMPLEX,		{complex*16})
 	define(IMPLICIT_REAL,	{implicit real*8(a-h,o-z)})
 	define(DREAL,		{real*16})
-	define(DBLE,		{dble})
+	define(REAL_FUN,	{dble})
     },{
 	define(REAL,		{real*4})
 	define(COMPLEX,		{complex*8})
 	define(IMPLICIT_REAL,	{implicit real*4(a-h,o-z)})
 	define(DREAL,		{real*8})
-	define(DBLE,		{real})
+	define(REAL_FUN,	{real})
     })
-  })
 
 #============================================================================#
 
