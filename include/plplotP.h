@@ -751,6 +751,11 @@ plP_swin(PLWindow *plwin);
 FILE *
 plLibOpen(char *fn);
 
+/* Does required startup initialization of library.  */
+
+void
+pllib_init(void);
+
 /* Does required startup initialization of a stream.  */
 
 void
