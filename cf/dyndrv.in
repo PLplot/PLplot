@@ -33,7 +33,7 @@ drivers/xfig.drv : shared/xfig$O
 	$(SHLIB_BUILD) $@ $< $(driverlibs)
 
 drivers/gd.drv : shared/gd$O
-	$(SHLIB_BUILD) $@ $< @GDLIBS@
+	$(SHLIB_BUILD) $@ $< @GDLIBS@ $(driverlibs)
 
 # drivers/ps.drv behaves as a dynamic library, and so this target
 # need rebuilt at install time, pointing, through rpath,
