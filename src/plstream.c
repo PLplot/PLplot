@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.16  1994/06/30 18:22:17  mjl
+ * Revision 1.17  1994/07/26 09:00:46  mjl
+ * Added a quick fix so that hitting a carriage return when prompted for
+ * a filename no longer aborts the program.  Contributed by Mark Olesen.
+ *
+ * Revision 1.16  1994/06/30  18:22:17  mjl
  * All core source files: made another pass to eliminate warnings when using
  * gcc -Wall.  Lots of cleaning up: got rid of includes of math.h or string.h
  * (now included by plplot.h), and other minor changes.  Now each file has
@@ -72,10 +76,12 @@ plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
  * A file name of "-" indicates output to stdout.
 \*----------------------------------------------------------------------*/
 
+#define MAX_NUM_TRIES	10
 void
 plOpenFile(PLStream *pls)
 {
-    int i = 0;
+    int count = 0;
+    size_t len;
     char line[256];
 
     while (pls->OutFile == NULL) {
@@ -83,16 +89,21 @@ plOpenFile(PLStream *pls)
 /* Setting pls->FileName = NULL forces creation of a new family member */
 /* You should also free the memory associated with it if you do this */
 
-	if (pls->family && pls->BaseName != NULL) 
+	if (pls->family && pls->BaseName != NULL)
 	    plP_getmember(pls);
 
 /* Prompt if filename still not known */
 
 	if (pls->FileName == NULL) {
-	    printf("Enter desired name for graphics output file: ");
-	    fgets(line, sizeof(line), stdin);
-	    line[strlen(line) - 1] = '\0';
-
+	    do {
+		printf("Enter desired name for graphics output file: ");
+		fgets(line, sizeof(line), stdin);
+		len = strlen(line);
+		if (len)
+		    len--;
+		line[len] = '\0';	/* strip new-line */
+		count++;		/* count zero entries */
+	    } while (!len && count < MAX_NUM_TRIES);
 	    plP_sfnam(pls, line);
 	}
 
