@@ -8,6 +8,7 @@ Build-Conflicts: f2c [!m68k], fort77 [!m68k], libplplot5 (>= 5.2.1.cvs.20031027-
 
 Package: libplplot9
 Architecture: any
+Section: libs
 Conflicts: plplot, plplot-xwin (<= 5.1.0), plplot-tcl (<= 5.1.0), plplot-bin, plplot-c++, plplot-common, libplplot5 (>= 5.2.1.cvs.20031027-1)
 Replaces: plplot, plplot-bin, plplot-c++, plplot-common
 Provides: plplot
@@ -44,6 +45,7 @@ Description: Scientific plotting library (development files)
 
 Package: plplot9-driver-xwin
 Architecture: any
+Section: libs
 Depends: ${shlibs:Depends}
 Conflicts: plplot-lib, plplot (<< 5)
 Description: Scientific plotting library (X11 driver)
@@ -54,6 +56,7 @@ Description: Scientific plotting library (X11 driver)
 
 Package: plplot9-driver-gnome
 Architecture: any
+Section: libs
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library (Gnome canvas driver)
  This package provides the Gnome canvas driver module for PLplot, a
@@ -89,6 +92,7 @@ Description: Tcl/Tk development support for PLplot, a plotting library
 
 Package: plplot9-driver-gd
 Architecture: any
+Section: libs
 Depends: ${shlibs:Depends}
 Description: Scientific plotting library (GD driver)
  This package provides the GD driver module for PLplot, a scientific plotting

@@ -1,3 +1,13 @@
+plplot (5.2.1.cvs.20031228-2) unstable; urgency=low
+
+  * NOT YET RELEASED!
+  * debian/control: Changed section of packages libplplot9,
+    plplot9-driver-gd, plplot9-driver-gnome, and plplot9-driver-xwin to
+    libs (was math before) in order to comply with overrides of
+    debian-installer.
+
+ --
+
 plplot (5.2.1.cvs.20031228-1) unstable; urgency=low
 
   * New cvs snapshot upstream release
