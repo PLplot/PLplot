@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1994/02/07 22:55:21  mjl
+ * Revision 1.24  1994/04/08 11:47:41  mjl
+ * Fixed some casts.
+ *
+ * Revision 1.23  1994/02/07  22:55:21  mjl
  * Data read is now done by a file handler for both FIFO or socket reads.
  * This has much better performance than the old way since no communication
  * between interpreters is needed.  The end of page indicator is now lit by
@@ -666,10 +669,10 @@ DestroyPlFrame(ClientData clientData)
 	Tk_FreeColor(plFramePtr->bgColor);
     }
     if (plFramePtr->plpr_cmd != NULL) {
-	ckfree(plFramePtr->plpr_cmd);
+	ckfree((char *) plFramePtr->plpr_cmd);
     }
     if (plFramePtr->geometry != NULL) {
-	ckfree(plFramePtr->geometry);
+	ckfree((char *) plFramePtr->geometry);
     }
     if (plFramePtr->cursor != None) {
 	Tk_FreeCursor(plFramePtr->display, plFramePtr->cursor);
@@ -681,19 +684,19 @@ DestroyPlFrame(ClientData clientData)
 	Tk_FreeGC(plFramePtr->display, plFramePtr->xorGC);
     }
     if (plFramePtr->yScrollCmd != NULL) {
-	ckfree(plFramePtr->yScrollCmd);
+	ckfree((char *) plFramePtr->yScrollCmd);
     }
     if (plFramePtr->xScrollCmd != NULL) {
-	ckfree(plFramePtr->xScrollCmd);
+	ckfree((char *) plFramePtr->xScrollCmd);
     }
     if (plFramePtr->SaveFnam != NULL) {
-	ckfree(plFramePtr->devDesc);
+	ckfree((char *) plFramePtr->devDesc);
     }
     if (plFramePtr->devDesc != NULL) {
-	ckfree(plFramePtr->devDesc);
+	ckfree((char *) plFramePtr->devDesc);
     }
     if (plFramePtr->devName != NULL) {
-	ckfree(plFramePtr->devName);
+	ckfree((char *) plFramePtr->devName);
     }
 
 /* Clean up data connection */
