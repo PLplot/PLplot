@@ -973,8 +973,12 @@ if test "$enable_f77" = "yes"; then
 fi
 
 if test "$enable_python" = "yes"; then
+    # Specifically exclude $srcdir/bindings/python/*.py from this list
+    # of symlinks.  setup.py is configured now using cf/setup.py.in.
+    # Plframe.py and TclSup.py are not currently used by standard python
+    # so exclude them, but Geoffrey may need to put them back specifically
+    # for his special build, I (AWI) don't know.
     ln -s \
-    $srcdir/bindings/python/*.py \
     $srcdir/bindings/python/*.c \
     $srcdir/examples/python/*.py \
     $srcdir/examples/python/pytkdemo \
@@ -982,20 +986,6 @@ if test "$enable_python" = "yes"; then
     ln -s \
     $srcdir/bindings/python/*.h \
     plplot 2>/dev/null
-    if test ! -d python_dynamic; then
-	# Create special directory where plmodule.so is dynamically built
-	# Symlink everything required in directory except for
-	# Setup.in file which is created at build time and (differently) at
-	# install time.
-	mkdir python_dynamic
-	cd python_dynamic
-	ln -s ../plmodule.c
-	ln -s ../pyqt_plmodule.c
-	ln -s $PYTHON_CFG_DIR/Makefile.pre.in
-	# Following needed for includes to work properly with new plplot/*.h style.
-	ln -s ../plplot
-	cd ..
-    fi
 fi
 
 # Just go ahead and set up the Python stuff needed to do staging.
@@ -1003,13 +993,15 @@ fi
 # repeat the previous stuff, but he isn't positive.  Thus,
 # as a compromise he supressed the  error messages by the following
 # stuff by changing ln -s to ln -sf.)
+# The commented out bindings/python/*.py symlinks are because setup.py
+# done elsewhere now, and the other two are not needed.
 
-ln -sf $srcdir/bindings/python/Plframe.py .
-ln -sf $srcdir/bindings/python/TclSup.py .
+# ln -sf $srcdir/bindings/python/Plframe.py .
+# ln -sf $srcdir/bindings/python/TclSup.py .
 ln -sf $srcdir/bindings/python/plmodule.c .
 ln -sf $srcdir/bindings/python/pyqt_plmodule.c .
 ln -sf $srcdir/bindings/python/plmodule.h plplot
-ln -sf $srcdir/bindings/python/setup.py .
+# ln -sf $srcdir/bindings/python/setup.py .
 
 # Handle setting up the Java stuff.
 
@@ -1133,7 +1125,7 @@ plplot 2>/dev/null
 # Create output files.
 # ----------------------------------------------------------------------------
 
-AC_OUTPUT(Makefile Makedemo plplot-config plplot-test.sh $javaconfig)
+AC_OUTPUT(Makefile Makedemo plplot-config plplot-test.sh setup.py $javaconfig)
 
 # ----------------------------------------------------------------------------
 # Print out some of the more important settings.
