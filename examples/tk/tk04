@@ -105,8 +105,8 @@ proc shade {} {
     set ymax 1
 
     for {set i 0} {$i < 20} {incr i} {
-	set sh_min [expr $min + ($max-$min)*$i/20]
-	set sh_max [expr $min + ($max-$min)*($i+1)/20]
+	set sh_min [expr $min + ($max-$min)*$i/20.]
+	set sh_max [expr $min + ($max-$min)*($i+1)/20.]
 	set sh_col [expr $i/20.]
 
 	.plw plshade x $xmin $xmax $ymin $ymax $sh_min $sh_max 1 $sh_col 0 \
