@@ -1,5 +1,14 @@
 2000-12-04  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* Makefile.am (all): Added dependency on man.
+	(man): New rule.
+	($(MAN_MANIFEST)): New rule for building man pages from the API
+	chapter. 
+	(.PHONY): Added man.
+	(CLEANFILES): Added $(MAN_MANIFEST) and *.$(MANVOL).
+	* api.xml: Replace "--" by "&ndash;", as api2man.pl was choking on
+	that.
+
 	* Makefile.am (%.xml-info): Added $(SOURCE_FILES) as dependency.
 	(%.txml): More robust rule.  If docbook2texixml script fails, the
 	target file is not generated.

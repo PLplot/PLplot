@@ -5291,7 +5291,7 @@ values
 
     <para>
       Set color map 0 colors by 8 bit RGB values.  This sets the entire color
-       * map -- only as many colors as specified will be allocated.
+       * map &ndash; only as many colors as specified will be allocated.
     </para>
 
     <variablelist>

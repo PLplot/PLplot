@@ -15,6 +15,7 @@ RCP_PREFIX = $(shell if test -z "$(WWW_USER)$(WWW_HOST)" ; then \
 TARBALL = tarball.tgz
 HTML_TARBALL = $(BASE_HTML).tar.gz
 INFO_TARBALL = $(BASE_INFO).tar.gz
+MAN_TARBALL = $(BASE_MAN).tar.gz
 INDEX_HTML = www/index.html
 
 $(HTML_TARBALL):
@@ -36,20 +37,29 @@ $(INFO_TARBALL):
 	tar cfz $(INFO_TARBALL) $(BASE_INFO)
 	rm -rf $(BASE_INFO)
 
+$(MAN_TARBALL):
+	rm -rf $(BASE_MAN)
+	mkdir $(BASE_MAN)
+	( cd src ; \
+	  $(MAKE) man ; \
+          cp `cat $(MAN_MANIFEST)` ../$(BASE_MAN) )
+	tar cfz $(MAN_TARBALL) $(BASE_MAN)
+	rm -rf $(BASE_MAN)
+
 $(BASE).tar.gz: dist-stamp
 dist-stamp:
 	$(MAKE) dist
 	touch dist-stamp
 
 $(INDEX_HTML): $(INDEX_HTML).in.in $(BASE).tar.gz $(HTML_TARBALL) \
-               $(INFO_TARBALL)
+               $(INFO_TARBALL) $(MAN_TARBALL)
 	( cd src ; \
           $(MAKE) print )	
 	$(PERL) bin/size-href.pl < $(INDEX_HTML).in > $@
 
 $(TARBALL): $(INDEX_HTML)
 	tar cfz $(TARBALL) $(HTML_TARBALL) $(BASE).tar.gz \
-                $(INFO_TARBALL) -C www index.html \
+                $(INFO_TARBALL) $(MAN_TARBALL) -C www index.html \
                 -C ../src $(BASE).ps.gz $(BASE).pdf.gz $(BASE).dvi
 
 www-uninstall:

@@ -1,3 +1,7 @@
+2000-12-04  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* index.html.in.in: Added link to man pages tarball.
+
 2000-11-27  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* index.html.in.in: Added link to Info form of documentation.

@@ -1,3 +1,10 @@
+2000-12-04  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* size-href.pl (get_size): Chop spaces at beginning of size string
+	given by ls -sh.
+
+	* api2man.pl: New file.
+
 2000-11-29  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* eps2jpeg.pl.in, inline-greek.pl.in, tex2eps.pl.in: Removed files.

@@ -1,6 +1,6 @@
 
 AC_INIT(src/plplotdoc.xml.in)
-AM_INIT_AUTOMAKE(plplotdoc, 0.3.2)
+AM_INIT_AUTOMAKE(plplotdoc, 0.4.0)
 
 dnl Web site Installation
 
@@ -123,6 +123,7 @@ popdef(PROG)
 PRINT=print
 HTML=html
 INFO=info
+MAN=man
 
 dnl CHECK_DTD(title, cache-id, dsssl_dtd, docbookb_ss_dtd, style_spec_use,
 dnl           external_specification, docbook_dtd, jade_output_type, 
@@ -216,7 +217,7 @@ CHECK_PROG(jade, [HTML PRINT], http://www.jclark.com/jade/)
 CHECK_PROG(jadetex, PRINT, http://www.tug.org/applications/jadetex/)
 CHECK_PROG(pdfjadetex, PRINT, http://www.tug.org/applications/jadetex/)
 CHECK_PROG(dvips, PRINT, http://www.ctan.org)
-CHECK_PROG(perl, INFO, http://www.perl.com)
+CHECK_PROG(perl, [INFO MAN], http://www.perl.com)
 
 dnl Check public identifiers
 
@@ -375,6 +376,18 @@ Could not find docbook2X specific module XML::DOM::Map.
 fi
 AC_MSG_RESULT([$has_db2xpm])
 
+dnl Man pages building
+
+MAN_MANIFEST=MAN-MANIFEST
+AC_SUBST(MAN_MANIFEST)
+
+BASE_MAN=$PACKAGE-man-$VERSION
+AC_SUBST(BASE_MAN)
+
+MANVOL=3plplot
+AC_SUBST(MANVOL)
+
+dnl Output commands
 
 AC_OUTPUT_COMMANDS( [
 if test "$print" = "" ; then
@@ -400,8 +413,16 @@ if test "$info" = "" ; then
   echo '  * it will not be possible to build an info version of the        *'
   echo '  * documentation.                                                 *'
   echo '  ******************************************************************'
+fi
+if test "$man" = "" ; then
+  echo
+  echo '  ******************************************************************'
+  echo '  * Due to some lacking dependencies (see warning messages above), *'
+  echo '  * it will not be possible to build the man pages of the API      *'
+  echo '  * chapter.                                                       *'
+  echo '  ******************************************************************'
 fi], [
-print=$PRINT; html=$HTML; info=$INFO
+print=$PRINT; html=$HTML; info=$INFO; man=$MAN
 ])
 
 AC_OUTPUT([Makefile

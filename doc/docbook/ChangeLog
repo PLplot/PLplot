@@ -1,5 +1,17 @@
 2000-12-04  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
+	* configure.in (MAN_MANIFEST): Added new AC_SUBST variables for
+	man pages building.
+	(AC_INIT) Bumped release version to 0.4.0.
+	(MAN): Created variable, also updated the message at AC_OUTPUT to
+	include the warning message regarding man pages building.
+
+	* Makefile.am ($(MAN_TARBALL)): New rule for building man pages
+	(nroff format) from the API chapter.
+	($(INDEX_HTML)): Added dependency on $(MAN_TARBALL).
+	($(TARBALL)): Added $(MAN_TARBALL).
+
+
 	* configure.in: Only INFO build depends on Perl.  Check also for
 	Perl module XML::DOM. 
 

@@ -2,7 +2,7 @@
 # Description: Automake template for the PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Mon Dec  4 13:40:37 CET 2000
+# Last modified on: Mon Dec  4 17:18:04 CET 2000
 # $Id$
 
 MASTER_XML = plplotdoc.xml
@@ -35,9 +35,9 @@ EXTRA_DIST = \
   $(SOURCE_FILES) $(STYLESHEETS_IN) \
   jadetex.cfg stylesheet.css
 CLEANFILES = \
-  *.$(HTML_EXT) $(HTML_MANIFEST) $(INFO_MANIFEST)\
+  *.$(HTML_EXT) $(HTML_MANIFEST) $(INFO_MANIFEST) $(MAN_MANIFEST) \
   *.jadetex *.aux *.dvi *.ps* *.pdf* inline.ent *.log *.eps TMP.* \
-  *.out *.info* *.texi *.txml *.xml-info *-tmp
+  *.out *.info* *.texi *.txml *.xml-info *-tmp *.$(MANVOL)
 
 
 JADE = @JADE@
@@ -48,13 +48,14 @@ LATEX = @LATEX@
 DVIPS = @DVIPS@
 MAKEINFO = @MAKEINFO@
 HTML_EXT = @HTML_EXT@
+MANVOL = @MANVOL@
 
 MAX_TEX_RECURSION = 4
 
 BINDIR = ../bin
 
 
-all: html print info
+all: html print info man
 
 
 html: $(HTML_MANIFEST)
@@ -127,6 +128,12 @@ info: $(PACKAGE).info
 %.xml-info: %.xml $(SOURCE_FILES)
 	$(PERL) $(BINDIR)/info-clean.pl $< > $@
 
-.PHONY: all html print info
+man: $(MAN_MANIFEST)
+
+$(MAN_MANIFEST): $(MASTER_XML_IN) api.xml
+	$(PERL) $(BINDIR)/api2man.pl $(MASTER_XML) api.xml $(MANVOL) > $@
+
+
+.PHONY: all html print info man
 .PRECIOUS: %.info %.texi %.txml %.xml-info %.pdf
 
