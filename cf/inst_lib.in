@@ -40,7 +40,7 @@ install_includes:
 	@-$(CP) plConfig.h plDevs.h $(INCLUDE_DIR); \
 	  cd $(top_srcdir)/include; \
 	  $(CP) plplotP.h plplot.h plxwd.h plevent.h plstrm.h pdf.h \
-	     pldebug.h drivers.h dispatch.h $(INCLUDE_DIR)
+	     pldebug.h drivers.h disptab.h $(INCLUDE_DIR)
 
 install_lib: install_dirs install_fonts install_libbase \
 	$(INSTALL_MATLIB) $(INSTALL_CXXLIB) \
