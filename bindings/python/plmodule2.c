@@ -64,10 +64,14 @@
     }
     else {
 	PyAssert( i+3 < argc, "Invalid arg list for plcont" );
-	TRY( PyArg_GetLong( args, argc, i++, &kx ) );
-	TRY( PyArg_GetLong( args, argc, i++, &lx ) );
-	TRY( PyArg_GetLong( args, argc, i++, &ky ) );
-	TRY( PyArg_GetLong( args, argc, i++, &ly ) );
+/* 	TRY( PyArg_GetLong( args, argc, i++, &kx ) ); */
+	TRY( kx = PyLong_AsLong( PyTuple_GetItem( args, i++ ) ) );
+/* 	TRY( PyArg_GetLong( args, argc, i++, &lx ) ); */
+	TRY( lx = PyLong_AsLong( PyTuple_GetItem( args, i++ ) ) );
+/* 	TRY( PyArg_GetLong( args, argc, i++, &ky ) ); */
+	TRY( ky = PyLong_AsLong( PyTuple_GetItem( args, i++ ) ) );
+/* 	TRY( PyArg_GetLong( args, argc, i++, &ly ) ); */
+	TRY( ly = PyLong_AsLong( PyTuple_GetItem( args, i++ ) ) );
 	o = PyTuple_GetItem( args, i );
     }
 
@@ -85,7 +89,8 @@
 
     if ( i <= argc ) {
 /* 	pltrname = PyArg_GetString( PyTuple_GetItem( args, i++ ) ); */
-	TRY( PyArg_GetString( args, argc, i++, &pltrname ) );
+/* 	TRY( PyArg_GetString( args, argc, i++, &pltrname ) ); */
+	TRY( pltrname = PyString_AsString( PyTuple_GetItem( args, i++ ) ) );
 	printf( "pltr=%s\n", pltrname );
 	if ( i < argc-1 ) {
 	/* Then there must be at least two args left, which means the xg, yg
@@ -96,7 +101,8 @@
 	}
 
 	if (i == argc) {
-	    TRY( PyArg_GetLong( args, argc, i, &wrap ) );
+/* 	    TRY( PyArg_GetLong( args, argc, i, &wrap ) ); */
+            TRY( wrap = PyLong_AsLong( PyTuple_GetItem( args, i ) ) );
 	}
     }
 
