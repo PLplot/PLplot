@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.37  1994/05/10 21:44:22  mjl
+ * Revision 1.38  1994/05/16 21:26:29  mjl
+ * The default has been reset to use the default colormap.  The constant
+ * ccmap at the head of xwin.c must be set to 1 to get a custom colormap.
+ * This should really be a command line switch, except now I'm having no
+ * problem with using the default colormap under HPUX.  Go figure.
+ *
+ * Revision 1.37  1994/05/10  21:44:22  mjl
  * Some cleaning up after previous development.
  *
  * Revision 1.36  1994/05/09  19:54:53  mjl
@@ -62,6 +68,25 @@
 #include "drivers.h"
 #include "plevent.h"
 
+/* Set constants for dealing with colormap.  In brief:
+ *
+ * ccmap		When set, turns on custom color map
+ *
+ * XWM_COLORS		Number of low "pixel" values to copy.  
+ * CMAP0_COLORS		Color map 0 entries.  
+ * CMAP1_COLORS		Color map 1 entries.  
+ * MAX_COLORS		Maximum colors period.
+ *
+ * See Init_CustomCmap() and  Init_DefaultCmap() for more info.
+ */
+
+static int ccmap = 0;
+
+#define XWM_COLORS 70
+#define CMAP0_COLORS 16
+#define CMAP1_COLORS 100
+#define MAX_COLORS 256
+
 /* Variables to hold RGB components of given colormap. */
 /* Used in an ugly hack to get past some X11R5 and TK limitations. */
 
@@ -73,7 +98,9 @@ static XColor sxwm_colors[256];
 
 static void  Init		(PLStream *pls);
 static void  Init_main		(PLStream *pls);
-static void  Init_Colormap	(PLStream *pls);
+static void  Init_Colors	(PLStream *pls);
+static void  Init_CustomCmap	(PLStream *pls);
+static void  Init_DefaultCmap	(PLStream *pls);
 static void  Map_main		(PLStream *pls);
 static void  WaitForPage	(PLStream *pls);
 static void  HandleEvents	(PLStream *pls);
@@ -515,9 +542,9 @@ Init(PLStream *pls)
 
     dev->screen = DefaultScreen(dev->display);
 
-/* Create color map and load default color values */
+/* Initialize color map and color values */
 
-    Init_Colormap(pls);
+    Init_Colors(pls);
 
 /* If not plotting into a child window, need to create main window now */
 
@@ -1101,51 +1128,22 @@ Driver will redraw the entire plot to handle expose events.\n");
 }
 
 /*----------------------------------------------------------------------*\
-* Init_Colormap()
+* Init_Colors()
 *
 * Does all color initialization.
-*
-* Assuming all color X displays do 256 colors, the breakdown is as follows:
-*
-* XWM_COLORS	Number of low "pixel" values to copy.  These are typically
-*		allocated first, thus are in use by the window manager. I
-*		copy them to reduce flicker.
-*
-* CMAP0_COLORS	Color map 0 entries.  I allocate these both in the default
-*		colormap and the custom colormap to reduce flicker.
-*
-* CMAP1_COLORS	Color map 1 entries.  There should be as many as practical
-*		available for smooth shading.  On the order of 100 is 
-*		pretty reasonable.  You don't really need all 256.  These
-*		are allocated only in the custom colormap.
-*
-* It's important to leave some extra colors unallocated for Tk.  In 
-* particular the palette tools require a fair amount.  I recommend leaving
-* at least 40 or so free.
 \*----------------------------------------------------------------------*/
 
-#define XWM_COLORS 70
-#define CMAP0_COLORS 16
-#define CMAP1_COLORS 100
-
-#define MAX_COLORS 256
-
 static void
-Init_Colormap(PLStream *pls)
+Init_Colors(PLStream *pls)
 {
     XwDev *dev = (XwDev *) pls->dev;
 
     Colormap default_map;
-    XColor xwm_colors[MAX_COLORS];
-    PLColor fgcolor, cmap1color;
-    XVisualInfo vTemplate, *visualList;
-    int visuals_matched;
+    PLColor fgcolor;
     int i, j, npixels;
-    unsigned long plane_masks[1];
-    unsigned long pixel, pixels[MAX_COLORS];
     int gslevbg, gslevfg;
 
-    dbug_enter("Init_Colormap");
+    dbug_enter("Init_Colors");
 
 /* Grab default color map */
 
@@ -1206,6 +1204,56 @@ Init_Colormap(PLStream *pls)
 	return;
     }
 
+/* Create custom color map and initialize cmap0 */
+
+    if (ccmap) 
+	Init_CustomCmap(pls);
+    else 
+	Init_DefaultCmap(pls);
+}
+
+/*----------------------------------------------------------------------*\
+* Init_CustomCmap()
+*
+* Initializes custom color map and all the cruft that goes with it.
+*
+* Assuming all color X displays do 256 colors, the breakdown is as follows:
+*
+* XWM_COLORS	Number of low "pixel" values to copy.  These are typically
+*		allocated first, thus are in use by the window manager. I
+*		copy them to reduce flicker.
+*
+* CMAP0_COLORS	Color map 0 entries.  I allocate these both in the default
+*		colormap and the custom colormap to reduce flicker.
+*
+* CMAP1_COLORS	Color map 1 entries.  There should be as many as practical
+*		available for smooth shading.  On the order of 100 is 
+*		pretty reasonable.  You don't really need all 256.  
+*
+* It's important to leave some extra colors unallocated for Tk.  In 
+* particular the palette tools require a fair amount.  I recommend leaving
+* at least 40 or so free.  
+\*----------------------------------------------------------------------*/
+
+static void
+Init_CustomCmap(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+
+    Colormap default_map;
+    XColor xwm_colors[MAX_COLORS];
+    XVisualInfo vTemplate, *visualList;
+    int visuals_matched;
+    int i, j, npixels;
+    unsigned long plane_masks[1];
+    unsigned long pixel, pixels[MAX_COLORS];
+
+    dbug_enter("Init_Colormap");
+
+/* Grab default color map */
+
+    default_map = DefaultColormap(dev->display, dev->screen);
+
 /* Determine current default colors */
 
     for (i = 0; i < MAX_COLORS; i++) {
@@ -1228,7 +1276,8 @@ Init_Colormap(PLStream *pls)
 	    plexit("couldn't allocate any colors");
     }
 
-    for (i = 0; i < pls->ncol0; i++) {
+    dev->ncol0 = npixels;
+    for (i = 0; i < dev->ncol0; i++) {
 
 	PLColor_to_XColor(&pls->cmap0[i], &dev->cmap0[i]);
 
@@ -1278,7 +1327,7 @@ Init_Colormap(PLStream *pls)
 
 /* Fill the ones we will use in cmap0 */
 
-    for (i = 0; i < pls->ncol0; i++) {
+    for (i = 0; i < dev->ncol0; i++) {
 	XStoreColor(dev->display, dev->map, &dev->cmap0[i]);
 	pixels[dev->cmap0[i].pixel] = 0;
     }
@@ -1312,8 +1361,7 @@ Init_Colormap(PLStream *pls)
 
 /* Allocate colors in cmap 1 */
 
-    dev->ncol1 = MAX(2, MIN(CMAP1_COLORS, pls->ncol1));
-    npixels = dev->ncol1;
+    npixels = MAX(2, MIN(CMAP1_COLORS, pls->ncol1));
     while(1) {
 	if (XAllocColorCells(dev->display, dev->map, False,
 			     plane_masks, 0, pixels, npixels))
@@ -1323,6 +1371,86 @@ Init_Colormap(PLStream *pls)
 	    plexit("couldn't allocate any colors");
     }
 
+    fprintf(stderr, "Allocated %d colors in cmap1\n", npixels);
+    dev->ncol1 = npixels;
+    for (i = 0; i < dev->ncol1; i++) {
+	dev->cmap1[i].pixel = pixels[i];
+    }
+
+    Cmap1Init(pls);
+}
+
+/*----------------------------------------------------------------------*\
+* Init_DefaultCmap()
+*
+* Initializes default color map and all the cruft that goes with it.
+* Have to severely limit number of colors in cmap1 otherwise TK won't
+* have enough.
+\*----------------------------------------------------------------------*/
+
+static void
+Init_DefaultCmap(PLStream *pls)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+
+    Colormap default_map;
+    int i, j, npixels;
+    unsigned long plane_masks[1];
+    unsigned long pixel, pixels[MAX_COLORS];
+
+    dbug_enter("Init_DefaultCmap");
+
+/* Grab default color map */
+
+    dev->map = DefaultColormap(dev->display, dev->screen);
+
+/* Allocate and assign colors in cmap 0 */
+
+    npixels = 16;
+    while(1) {
+	if (XAllocColorCells(dev->display, dev->map, False,
+			     plane_masks, 0, pixels, npixels))
+	    break;
+	npixels--;
+	if (npixels == 0)
+	    plexit("couldn't allocate any colors");
+    }
+
+    dev->ncol0 = npixels;
+    for (i = 0; i < dev->ncol0; i++) {
+	dev->cmap0[i].pixel = pixels[i];
+    }
+
+    Cmap0Init(pls);
+
+/* Allocate colors in cmap 1 */
+
+    npixels = MAX(2, MIN(CMAP1_COLORS, pls->ncol1));
+    while(1) {
+	if (XAllocColorCells(dev->display, dev->map, False,
+			     plane_masks, 0, pixels, npixels))
+	    break;
+	npixels--;
+	if (npixels == 0)
+	    plexit("couldn't allocate any colors");
+    }
+
+/* Now free them all and start with a reduced number */
+
+    XFreeColors(dev->display, dev->map, pixels, npixels, 0);
+
+    npixels = MAX(npixels - 30, 10);
+    while(1) {
+	if (XAllocColorCells(dev->display, dev->map, False,
+			     plane_masks, 0, pixels, npixels))
+	    break;
+	npixels--;
+	if (npixels == 0)
+	    plexit("couldn't allocate any colors");
+    }
+
+    fprintf(stderr, "Allocated %d colors in cmap1\n", npixels);
+    dev->ncol1 = npixels;
     for (i = 0; i < dev->ncol1; i++) {
 	dev->cmap1[i].pixel = pixels[i];
     }
@@ -1342,7 +1470,7 @@ Cmap0Init(PLStream *pls)
     XwDev *dev = (XwDev *) pls->dev;
     int i;
 
-    for (i = 0; i < pls->ncol0; i++) {
+    for (i = 0; i < dev->ncol0; i++) {
 	PLColor_to_XColor(&pls->cmap0[i], &dev->cmap0[i]);
 	XStoreColor(dev->display, dev->map, &dev->cmap0[i]);
     }
