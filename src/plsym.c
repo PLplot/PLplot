@@ -1,9 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/10/21 19:30:25  mjl
-   Updated calls to private plplot utility functions (these now begin
-   with "plP_").
+   Revision 1.8  1993/11/15 08:40:33  mjl
+   Comment fixes.
 
+ * Revision 1.7  1993/10/21  19:30:25  mjl
+ * Updated calls to private plplot utility functions (these now begin
+ * with "plP_").
+ *
  * Revision 1.6  1993/10/18  19:45:50  mjl
  * Added user-contributed plarrows function.
  *
@@ -31,8 +34,7 @@ extern short int numberfonts, numberchars;
 /*----------------------------------------------------------------------*\
 * void plsym()
 *
-* Plots single precision array y against x for n points using
-* Hershey symbol "code".
+* Plots array y against x for n points using Hershey symbol "code".
 \*----------------------------------------------------------------------*/
 
 void
@@ -55,8 +57,7 @@ c_plsym(PLINT n, PLFLT *x, PLFLT *y, PLINT code)
 /*----------------------------------------------------------------------*\
 * void plpoin()
 *
-* Plots single precision array y against x for n points using
-* ASCII code "code".
+* Plots array y against x for n points using ASCII code "code".
 \*----------------------------------------------------------------------*/
 
 void

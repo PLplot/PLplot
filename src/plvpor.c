@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/07/01 22:13:47  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.7  1993/11/15 08:40:42  mjl
+   Comment fixes.
 
+ * Revision 1.6  1993/07/01  22:13:47  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+ *
  * Revision 1.5  1993/03/28  08:46:25  mjl
  * Changes to allow viewports bigger than display area.  This allows enlargement
  * of plots.
@@ -129,7 +132,7 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 \*----------------------------------------------------------------------*/
 
 void
-c_plvsta()
+c_plvsta(void)
 {
     PLFLT xmin, xmax, ymin, ymax;
     PLFLT chrdef, chrht, spdxmi, spdxma, spdymi, spdyma;
@@ -157,8 +160,7 @@ c_plvsta()
 /*----------------------------------------------------------------------*\
 * void plvpor()
 *
-* Sets the edges of the viewport to the specified normalized subpage
-* coordinates.
+* Creates a viewport with the specified normalized subpage coordinates.
 \*----------------------------------------------------------------------*/
 
 void
@@ -209,9 +211,8 @@ c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 /*----------------------------------------------------------------------*\
 * void plvpas()
 *
-* Sets the edges of the viewport to that of the largest window at the
-* given aspect ratio that fits within the specified normalized subpage
-* coordinates.
+* Creates the largest viewport of the specified aspect ratio that fits
+* within the specified normalized subpage coordinates.
 \*----------------------------------------------------------------------*/
 
 void
