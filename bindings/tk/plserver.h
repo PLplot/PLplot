@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.13  1994/03/22 23:17:35  furnish
+ * Revision 1.14  1994/03/23 06:54:14  mjl
+ * Include of "plplotio.h" (no longer existant) eliminated.
+ *
+ * Revision 1.13  1994/03/22  23:17:35  furnish
  * Avoid collision with user code when he wants to make a custom wish
  * combined with PLPLOT.
  *
@@ -37,7 +40,6 @@
 
 #include "plplotP.h"
 #include "plplotX.h"
-#include "plplotio.h"
 #include "pdf.h"
 #include "plstream.h"
 
