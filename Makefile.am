@@ -3,7 +3,7 @@
 ### Process this file with automake to produce Makefile.in
 ###
 # Copyright (C) 2002 Alan W. Irwin
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -54,3 +54,8 @@ doc_DATA = \
 	README
 
 CLEANFILES = plplot_libtool reconfig
+
+EXTRA_DIST = fonts rpm sys
+
+dist-hook:
+	rm -rf `find $(distdir) -name CVS -o -name .cvsignore`
