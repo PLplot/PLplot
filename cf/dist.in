@@ -36,7 +36,8 @@ CORE_C = \
 	pltick.c \
 	plvpor.c \
 	plwind.c \
-	plstripc.c
+	plstripc.c \
+	plimage.c
 
 CORE_OBJ = \
 	pdfutils$O \
@@ -60,7 +61,8 @@ CORE_OBJ = \
 	pltick$O \
 	plvpor$O \
 	plwind$O \
-	plstripc$O
+	plstripc$O \
+	plimage$O
 
 # Support files for font generators.
 

@@ -1052,6 +1052,7 @@ fi
 
 ln -s \
 `ls $srcdir/examples/c/*.* |grep -v '\.h$'` \
+$srcdir/examples/c/lena.pgm \
 $srcdir/test/test_*.sh \
 $srcdir/utils/*.c \
 $srcdir/fonts/*.c \
