@@ -33,6 +33,7 @@
 
 <chapter id="gui">
 <title>Embedding Plots in Graphical User Interfaces</title>
+
 <para>
 This chapter shows how to use PLplot to embed plots in graphical user 
 interfaces.
@@ -359,6 +360,51 @@ Set use_fast_rendering to TRUE for fast rendering on the Canvas (default FALSE).
       <parameter>use_fast_rendering</parameter> (<literal>gboolean</literal>, input)
     </term>
     <listitem><para>TRUE for fast rendering, FALSE for slow.</para></listitem>
+  </varlistentry>
+</variablelist>
+
+</sect3>
+
+
+<!-- gcw_use_pixmap =================================================== -->
+
+
+<sect3 id="gcw_use_pixmap">
+
+<title><function>gcw_use_pixmap</function>: Use a pixmap for shade rendering.</title>
+
+<para>
+  <funcsynopsis>
+  <funcprototype>
+    <funcdef>
+      <function>void gcw_use_pixmap</function>
+    </funcdef>
+    <paramdef><parameter>canvas</parameter></paramdef>
+    <paramdef><parameter>use_pixmap</parameter></paramdef>
+  </funcprototype>
+  </funcsynopsis>
+</para>
+
+<para>
+Set use_pixmap to TRUE to render shades using a pixmap (default FALSE).  This is useful for contour plots, which display much faster and have a smaller memory footprint when a pixmap is used.
+</para>
+
+<para>
+The drawback of the pixmap approach is that lines and text cannot be drawn with antialiasing to the pixmap.  Instead, the pixmap is moved to the back of the current group, and all lines on the canvas are drawn over top.  For this reason, use of the pixmap is usually appropriate for contour plots, but not for 3D plots.
+</para>
+
+<variablelist>
+  <varlistentry>
+    <term>
+      <parameter>canvas</parameter> (<literal>GnomeCanvas*</literal>, input)
+    </term>
+    <listitem><para>The GnomeCanvas.</para></listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>
+      <parameter>use_pixmap</parameter> (<literal>gboolean</literal>, input)
+    </term>
+    <listitem><para>TRUE to use pixmap, FALSE for normal polygon rendering.</para></listitem>
   </varlistentry>
 </variablelist>
 
