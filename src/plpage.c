@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.6  1993/11/15 08:40:09  mjl
+ * Revision 1.7  1993/12/08 06:22:58  mjl
+ * Fix to plbop() so that the user can just use plbop/pleop if desired and
+ * never need to call pladv().
+ *
+ * Revision 1.6  1993/11/15  08:40:09  mjl
  * Changed some empty argument lists to be explicitly void.
  *
  * Revision 1.5  1993/09/08  02:40:34  mjl
@@ -83,7 +87,19 @@ c_pleop(void)
 void
 c_plbop(void)
 {
+    PLINT cursub, nsubx, nsuby;
+    PLINT level;
+
+    plP_glev(&level);
+    if (level < 1)
+	plexit("pladv: Please call plinit first.");
+
+    plP_gsub(&nsubx, &nsuby, &cursub);
     plP_bop();
+    cursub = 1;
+
+    plP_ssub(nsubx, nsuby, cursub);
+    plP_setsub();
 }
 
 /*----------------------------------------------------------------------*\
