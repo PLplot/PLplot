@@ -1010,6 +1010,9 @@ case "$system" in
 #    irix*|IRIX*|Irix*|sgi*|SGI* ) 
 #	CC="cc -ansi"
 #    ;;
+    Linux* )
+	LIBEXTNS="so a"
+    ;;
 #    SunOS-4* )
 #	CC=acc
 #    ;;
@@ -1125,6 +1128,9 @@ if test -z "$CC"; then
 	;;
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
 	    CC="cc -ansi"
+	;;
+	Linux* )
+	    with_gcc=yes
 	;;
 	SunOS-4* )
 	    CC=acc
@@ -1705,7 +1711,7 @@ else
   # On the NeXT, cc -E runs the code through the compiler's parser,
   # not just through cpp.
   cat > conftest.$ac_ext <<EOF
-#line 1709 "configure"
+#line 1715 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1719,7 +1725,7 @@ else
   rm -rf conftest*
   CPP="${CC-cc} -E -traditional-cpp"
   cat > conftest.$ac_ext <<EOF
-#line 1723 "configure"
+#line 1729 "configure"
 #include "confdefs.h"
 #include <assert.h>
 Syntax Error
@@ -1866,7 +1872,7 @@ test -z "$x_direct_test_library" && x_direct_test_library=Xt
 test -z "$x_direct_test_function" && x_direct_test_function=XtMalloc
 test -z "$x_direct_test_include" && x_direct_test_include=X11/Intrinsic.h
 cat > conftest.$ac_ext <<EOF
-#line 1870 "configure"
+#line 1876 "configure"
 #include "confdefs.h"
 #include <$x_direct_test_include>
 EOF
@@ -1929,7 +1935,7 @@ rm -f conftest*
 ac_save_LIBS="$LIBS"
 LIBS="-l$x_direct_test_library $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 1933 "configure"
+#line 1939 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2015,7 +2021,7 @@ fi
 	XINCDIR="$x_includes"
 	if test -z "$XINCDIR"; then
 	    cat > conftest.$ac_ext <<EOF
-#line 2019 "configure"
+#line 2025 "configure"
 #include "confdefs.h"
 #include <X11/Intrinsic.h>
 EOF
@@ -2072,7 +2078,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lX11  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 2076 "configure"
+#line 2082 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -2252,6 +2258,11 @@ if test "$enable_tcl" = "yes"; then
 	TCLLIBDIR="default"
     fi
 
+    fi
+    if test "$enable_tcl" = "yes"; then
+	if test -r $TCLLIBDIR/tclConfig.sh; then
+	    . $TCLLIBDIR/tclConfig.sh
+	fi
     fi
 fi
 
@@ -2488,6 +2499,44 @@ if test "$enable_itk" = "yes"; then
 EOF
 
 fi
+
+# ----------------------------------------------------------------------------
+# makeindex - figure out how we're gonna generate tclIndex
+# ----------------------------------------------------------------------------
+
+if test -z "$MAKEINDEX"; then
+    MAKEINDEX='BOGUS'
+fi
+
+if test "$enable_tcl" = "yes"; then
+    if test "$TCLLIBDIR" = "default"; then
+	MAKEINDEX="/usr/bin/tclsh$TCL_VERSION"
+    else
+	tclbindir="`echo $TCLLIBDIR | sed 's,/lib,,'`/bin"
+#	echo "tclbindir = $tclbindir"
+	if test -r "$tclbindir/tclsh$TCL_VERSION"; then
+	    MAKEINDEX="$tclbindir/tclsh$TCL_VERSION"
+#	    echo "setting MAKEINDEX to $MAKEINDEX"
+	fi
+    fi
+    TCL_INDEX_FILES="*.tcl"
+fi
+
+if test "$enable_itcl" = "yes"; then
+    itclbindir="`echo $ITCLLIBDIR | sed 's,/itcl/lib,,'`'/bin'"
+#    echo "itclbindir = $itclbindir"
+    if test -r "$itclbindir/ish"; then
+	MAKEINDEX="$itclbindir/ish"
+    fi
+    TCL_INDEX_FILES="*.tcl"
+fi
+
+if test "$enable_tcl" = "yes" -a "$MAKEINDEX" = "BOGUS"; then
+    echo "$ac_t""warning: you must edit Makefile to fix MAKEINDEX." 1>&6
+fi
+
+
+
 
 # ----------------------------------------------------------------------------
 # dp.h
@@ -2797,6 +2846,26 @@ if test "$enable_xwin" = "yes"; then
     LIBPATH="$LIBPATH $XLIBDIR"
 
 fi
+if test ! -z "$TCL_DL_LIBS"; then
+    
+    LIBSW=""
+    if test "default" != "default"; then
+	LIBSW="-Ldefault"
+    fi
+    for dir in $LIBPATH; do
+	if test "default" = "$dir"; then
+	    LIBSW=""
+	    break
+	fi
+    done
+    if test -n "$LIBSW"; then
+	LIBS="$LIBS $LIBSW $TCL_DL_LIBS"
+    else
+	LIBS="$LIBS $TCL_DL_LIBS"
+    fi
+    LIBPATH="$LIBPATH default"
+
+fi
 
 # ----------------------------------------------------------------------------
 # Debugging malloc
@@ -2950,6 +3019,7 @@ fi
 if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
 	incdirs="\
+	$prefix/include/python1.4 \
 	$prefix/include/Py \
 	$HOME/local/include/Py \
 	$HOME/local/python/include/Py \
@@ -2985,6 +3055,41 @@ if test "$enable_python" = "yes"; then
     fi
 
 
+
+	if test "$enable_python" = "yes"; then
+	    
+    
+    echo $ac_n "checking for arrayobject.h""... $ac_c" 1>&6
+    PYTHON_INC_DIR=""
+
+    
+    for dir in $incdirs; do
+	if test -r "$dir/arrayobject.h"; then
+	    PYTHON_INC_DIR="$dir"
+	    echo "$ac_t""$dir/arrayobject.h" 1>&6
+	    break
+	fi
+    done
+
+    
+    if test -z "$PYTHON_INC_DIR"; then
+	
+	    echo "$ac_t""no" 1>&6
+	    echo "$ac_t""warning: can't find arrayobject.h, setting numeric_python to no" 1>&6
+	    numeric_python="no"
+	
+    fi
+    if test "$PYTHON_INC_DIR" = "/usr/include"; then
+	PYTHON_INC_DIR="default"
+    fi
+
+
+	    if test "$numeric_python" = "no"; then
+		echo "$ac_t""plmodule needs Python numeric extension." 1>&6
+		echo "$ac_t""Setting enable_python to no" 1>&6
+		enable_python=no
+	    fi
+	fi
     fi
 fi
 
@@ -3000,13 +3105,26 @@ if test "$enable_python" = "yes"; then
 	fi
 
 	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[^/]*/[^/]*$,,'`
-	PYTHON_MOD_DIR=$python_dir/lib/python/$MACHDEP
+	PYTHON_MOD_DIR=$python_dir/lib/python
+	PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
 	if test ! -d "$PYTHON_MOD_DIR"; then
-	    echo "$ac_t""PYTHON_MOD_DIR not found, setting enable_python to no" 1>&6
-	    enable_python=no
+	    # tricky, must be a new style
+	    python_ver=`echo $PYTHON_INC_DIR|sed 's,/.*/,,'`
+	    PYTHON_MOD_DIR=$python_dir/lib/$python_ver
+	    PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
+	    if test ! -d "$PYTHON_MOD_DIR"; then
+		enable_python=no
+
+		echo "$ac_t""PYTHON_MOD_DIR not found, setting enable_python to no" 1>&6
+		enable_python=no
+	    fi
+
 	fi
+	PYTHON_CFG_DIR=$PYTHON_MOD_DIR/config
     fi
 fi
+
+
 
 
 
@@ -3023,7 +3141,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lf2c  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3027 "configure"
+#line 3145 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3151,6 +3269,9 @@ if test -z "$EXTRA_LIBS"; then
 	HP-UX* )
 	    EXTRA_LIBS="-ldld -lm"
 	;;
+	Linux* )
+	    EXTRA_LIBS="-ldl -lm"
+	;;
 	* ) 	
 	    echo $ac_n "checking for -lXbsd""... $ac_c" 1>&6
 if eval "test \"`echo '$''{'ac_cv_lib_Xbsd'+set}'`\" = set"; then
@@ -3159,7 +3280,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lXbsd  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3163 "configure"
+#line 3284 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3192,7 +3313,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lsocket  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3196 "configure"
+#line 3317 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3225,7 +3346,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lnsl  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3229 "configure"
+#line 3350 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3258,7 +3379,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lieee  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3262 "configure"
+#line 3383 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3291,7 +3412,7 @@ else
   ac_save_LIBS="$LIBS"
 LIBS="-lm  $LIBS"
 cat > conftest.$ac_ext <<EOF
-#line 3295 "configure"
+#line 3416 "configure"
 #include "confdefs.h"
 
 int main() { return 0; }
@@ -3369,13 +3490,15 @@ if test "$with_shlib" = "yes"; then
 	    # Should do something to make sure this is an ELF system, as
 	    # don't have patience for DLL...
 	    echo "$ac_t""Assuming Linux ELF.  Otherwise, reconfigure --without-shlib" 1>&6
-	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+#	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	    SHLIB_BUILD="gcc -shared -fpic -o"
 
 	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
 
 	    # Hmm, would be good to replace that trailing .0 with the
 	    # compilation number or some such.  Have to think about that.
+
+	    LDSHARED='gcc -fpic -shared'
 	;;
 	HP-UX-* )
 	    SO=".sl"
@@ -3938,7 +4061,7 @@ else
   ac_cv_c_cross=yes
 else
 cat > conftest.$ac_ext <<EOF
-#line 3942 "configure"
+#line 4065 "configure"
 #include "confdefs.h"
 main(){return(0);}
 EOF
@@ -3959,7 +4082,7 @@ if eval "test \"`echo '$''{'ac_cv_header_stdc'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 3963 "configure"
+#line 4086 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 #include <stdarg.h>
@@ -3981,7 +4104,7 @@ rm -f conftest*
 if test $ac_cv_header_stdc = yes; then
   # SunOS 4.x string.h does not declare mem*, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 3985 "configure"
+#line 4108 "configure"
 #include "confdefs.h"
 #include <string.h>
 EOF
@@ -3999,7 +4122,7 @@ fi
 if test $ac_cv_header_stdc = yes; then
   # ISC 2.0.2 stdlib.h does not declare free, contrary to ANSI.
 cat > conftest.$ac_ext <<EOF
-#line 4003 "configure"
+#line 4126 "configure"
 #include "confdefs.h"
 #include <stdlib.h>
 EOF
@@ -4020,7 +4143,7 @@ if test "$cross_compiling" = yes; then
   ac_cv_header_stdc=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 4024 "configure"
+#line 4147 "configure"
 #include "confdefs.h"
 #include <ctype.h>
 #define ISLOWER(c) ('a' <= (c) && (c) <= 'z')
@@ -4057,7 +4180,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4061 "configure"
+#line 4184 "configure"
 #include "confdefs.h"
 #include <$ac_hdr>
 EOF
@@ -4118,7 +4241,7 @@ if eval "test \"`echo '$''{'ac_cv_type_pid_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4122 "configure"
+#line 4245 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -4150,7 +4273,7 @@ if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4154 "configure"
+#line 4277 "configure"
 #include "confdefs.h"
 #include <vfork.h>
 EOF
@@ -4184,7 +4307,7 @@ else
   ac_cv_func_vfork=no
 else
 cat > conftest.$ac_ext <<EOF
-#line 4188 "configure"
+#line 4311 "configure"
 #include "confdefs.h"
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -4299,7 +4422,7 @@ if eval "test \"`echo '$''{'ac_cv_func_popen'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4303 "configure"
+#line 4426 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char popen(); below.  */
@@ -4354,7 +4477,7 @@ if eval "test \"`echo '$''{'ac_cv_type_caddr_t'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 4358 "configure"
+#line 4481 "configure"
 #include "confdefs.h"
 #include <sys/types.h>
 #if STDC_HEADERS
@@ -4566,9 +4689,9 @@ if test -z "$PYTHON_DIR"; then
     PYTHON_DIR=$prefix/python
 fi
 if test "$enable_python" = "yes"; then
-    if test "$PYTHON_DIR" != "$PYTHON_MOD_DIR"; then
+    if test "$PYTHON_DIR" != "$PYTHON_MACH_DIR"; then
 	echo "$ac_t""note: python module will be installed in $PYTHON_DIR" 1>&6;
-	echo "$ac_t""note: it should be soft-linked to $PYTHON_MOD_DIR" 1>&6;
+	echo "$ac_t""note: it should be soft-linked to $PYTHON_MACH_DIR" 1>&6;
     fi
 fi
 if test -z "$DOC_DIR"; then
@@ -4649,7 +4772,8 @@ fi
 if test "$enable_python" = "yes"; then
     ln -s \
     $srcdir/bindings/python/*.* \
-    $srcdir/examples/python/*py \
+    $srcdir/examples/python/*.py \
+    $srcdir/examples/python/pytkdemo \
     . 2>/dev/null
 fi
 
@@ -4664,11 +4788,13 @@ fi
 if test "$enable_tk" = "yes"; then
     ln -s \
     $srcdir/bindings/tk/*.* \
-    $srcdir/bindings/tk/tclIndex \
     $srcdir/examples/tk/*.c \
     $srcdir/examples/tk/tk* \
     . 2>/dev/null
 fi
+
+#    $srcdir/bindings/tk/tclIndex 
+
 
 # Miscellaneous
 
@@ -4776,8 +4902,12 @@ s%@LDCXX_FLAGS@%$LDCXX_FLAGS%g
 s%@F77_FLAGS@%$F77_FLAGS%g
 s%@LDF_FLAGS@%$LDF_FLAGS%g
 s%@CPP@%$CPP%g
+s%@MAKEINDEX@%$MAKEINDEX%g
+s%@TCL_INDEX_FILES@%$TCL_INDEX_FILES%g
 s%@PYTHON_INC_DIR@%$PYTHON_INC_DIR%g
 s%@PYTHON_MOD_DIR@%$PYTHON_MOD_DIR%g
+s%@PYTHON_MACH_DIR@%$PYTHON_MACH_DIR%g
+s%@PYTHON_CFG_DIR@%$PYTHON_CFG_DIR%g
 s%@INCS@%$INCS%g
 s%@SHLIB_BUILD@%$SHLIB_BUILD%g
 s%@SA@%$SA%g
