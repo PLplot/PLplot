@@ -12,7 +12,7 @@ ecti1000 "TeXBase1Encoding ReEncodeFont"<EC.enc <cmti10.pfb
 ecbx1000 "TeXBase1Encoding ReEncodeFont"<EC.enc <cmbx10.pfb
 ecrb1000 "TeXBase1Encoding ReEncodeFont"<EC.enc <cmbx10.pfb
 ecrm0800 "TeXBase1Encoding ReEncodeFont"<EC.enc <cmr8.pfb
-ecti0800 "0.8 ExtendFont" "TeXBase1Encoding ReEncodeFont"<EC.enc <cmitt10.pfb
+ecti0800 "TeXBase1Encoding ReEncodeFont"<EC.enc <cmti8.pfb
 tcrm1000 "TeXBase1Encoding ReEncodeFont"<EC.enc <cmr10.pfb
 ecrm1000 "TeXBase1Encoding ReEncodeFont"<EC.enc <cmr10.pfb
 ecrm0900 "TeXBase1Encoding ReEncodeFont"<EC.enc <cmr10.pfb
