@@ -47,6 +47,7 @@ static int plsetoptCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plshadeCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plshadesCmd	(ClientData, Tcl_Interp *, int, char **);
 static int plmapCmd	(ClientData, Tcl_Interp *, int, char **);
+static int plmeridiansCmd (ClientData, Tcl_Interp *, int, char **);
 
 /*
  * The following structure defines all of the commands in the PLplot/Tcl
@@ -75,6 +76,7 @@ static CmdInfo Cmds[] = {
     {"plcol",		plcol0Cmd},
     {"plcont",		plcontCmd},
     {"plmap",		plmapCmd},
+    {"plmeridians",	plmeridiansCmd},
     {"plmesh",		plmeshCmd},
     {"plot3d",		plot3dCmd},
     {"plotsh3d",	plotsh3dCmd},
@@ -1928,3 +1930,43 @@ plmapCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
 }
 
+/*--------------------------------------------------------------------------*\
+ * plmeridiansCmd
+ *
+ * Processes plmeridians Tcl command.
+ * C version takes:
+ *    dlong, dlat, minlong, maxlong, minlat, maxlat
+ *    
+ *  e.g. .p cmd plmeridians 1 ...
+\*--------------------------------------------------------------------------*/
+
+static int
+plmeridiansCmd( ClientData clientData, Tcl_Interp *interp,
+	    int argc, char *argv[] )
+{
+    PLFLT dlong, dlat, minlong, maxlong, minlat, maxlat;
+    PLINT transform;
+    
+    if (argc < 8 ) {
+	Tcl_AppendResult(interp, "bogus syntax for plmap, see doc.",
+			 (char *) NULL );
+	return TCL_ERROR;
+    }
+
+    transform = atoi(argv[1]);
+    dlong = atof( argv[2] );
+    dlat = atof( argv[3] );
+    minlong = atof( argv[4] );
+    maxlong = atof( argv[5] );
+    minlat = atof( argv[6] );
+    maxlat = atof( argv[7] );
+
+    if (transform) {
+	plmeridians(&mapform, dlong, dlat, minlong, maxlong, minlat, maxlat);
+    } else {
+	plmeridians(NULL, dlong, dlat, minlong, maxlong, minlat, maxlat);
+    }
+    
+    plflush();
+    return TCL_OK;
+}

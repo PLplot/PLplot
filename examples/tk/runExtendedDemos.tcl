@@ -26,14 +26,25 @@ for {set i 0} {$i < 5} {incr i} {
 
 button .cexit -text "Quit" -command exit
 button .cshell -text "Shell" -command "console show"
+button .creload -text "Reload" -command reload
 
 set buttons [list .cexit .cshell]
+
+proc reload {} {
+    global demos
+    foreach demo $demos {
+	catch {rename $demo {}}
+    }
+    auto_reset
+}
 
 proc run {demo} {
     setButtonState disabled
     .p bop
     update idletasks
-    $demo .p
+    if {[catch {$demo .p} err]} {
+	puts stderr $err
+    }
     .p bop
     setButtonState normal
 }
@@ -47,6 +58,7 @@ proc setButtonState {state} {
 for {set i 1} {$i <= [llength [glob x*.tcl]]} {incr i} {
     set demo x[format "%02d" $i]
     button .b$i -text "Demo $i" -command [list run $demo]
+    lappend demos $demo
     lappend buttons .b$i
     if {[llength $buttons] == 5} {
 	eval grid $buttons -sticky ew

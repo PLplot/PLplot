@@ -5,6 +5,7 @@
 proc x01 {{w loopback}} {
     global xscale yscale xoff yoff
 
+    $w cmd pladv 0
     $w cmd plssub 2 2
 
 # First plot

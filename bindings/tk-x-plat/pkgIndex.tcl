@@ -1,8 +1,12 @@
 
 if {[info exists tcl_platform(debug)]} {
-    package ifneeded Plplotter 5.1 \
-      [list load [file join $dir plplot51d[info sharedlibextension]] Plplotter]
+    set file [file join $dir plplot51d[info sharedlibextension]]
 } else {
-    package ifneeded Plplotter 5.1 \
-      [list load [file join $dir plplot51[info sharedlibextension]] Plplotter]
+    set file [file join $dir plplot51[info sharedlibextension]]
 }
+
+package ifneeded Plplotter 5.1 "
+    set pllibrary $dir
+    load $file Plplotter
+"
+unset file
