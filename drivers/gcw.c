@@ -101,19 +101,23 @@ char* plD_DEVICE_INFO_libgcw = "gcw:Gnome Canvas Widget:1:gcw:10:gcw";
 /* The scale factor for line widths */
 #define WSCALE 3
 
-/* Globals */
+/* Global driver options */
+
+static int aa = 1;
+
 #ifdef HAVE_FREETYPE
 static int text = 1;
 #else
 static int text = 0;
 #endif
 
-static int aa = 1;
+static int fast = 0; 
 
 static DrvOpt gcw_options[] = 
   {
+    {"aa", DRV_INT, &aa, "Use antialiased canvas (aa=0|1)"},
     {"text", DRV_INT, &text, "Use truetype fonts (text=0|1)"},
-    {"aa", DRV_INT, &aa, "Use antialiasing (aa=0|1)"},
+    {"fast", DRV_INT, &fast, "Use fast rendering [(fast=0|1)"},
     {NULL, DRV_INT, NULL, NULL}
   };
 
@@ -581,6 +585,32 @@ void gcw_use_text(GnomeCanvas* canvas,gboolean use_text)
 }
 
 /*--------------------------------------------------------------------------*\
+ * gcw_use_fast_rendering()
+ *
+ * Used to turn fast rendering on and off.  This matters in 
+ * plD_polyline_gcw, where fast rendering can cause errors on the
+ * GnomeCanvas.
+\*--------------------------------------------------------------------------*/
+void gcw_use_fast_rendering(GnomeCanvas* canvas,gboolean use_fast_rendering)
+{
+  GcwPLdev* dev;
+
+#ifdef DEBUG_GCW
+  debug("<gcw_use_fast_rendering>\n");
+#endif
+
+  if(!GNOME_IS_CANVAS(canvas)) {
+    fprintf(stderr,"\n\n*** GCW driver error: canvas not found.\n");
+    return;
+  }
+
+  /* Retrieve the device */
+  dev = g_object_get_data(G_OBJECT(canvas),"dev");
+
+  dev->use_fast_rendering = use_fast_rendering;
+}
+
+/*--------------------------------------------------------------------------*\
  * gcw_use_*_group()
  *
  * Used to switch which groups plplot is writing to.  The choices are:
@@ -652,18 +682,25 @@ void plD_esc_gcw(PLStream *, PLINT, void *);
 
 void plD_dispatch_init_gcw( PLDispatchTable *pdt )
 {
-    pdt->pl_MenuStr  = "Gnome Canvas Widget";
-    pdt->pl_DevName  = "gcw";
-    pdt->pl_type     = plDevType_Interactive;
-    pdt->pl_seq      = 1;
-    pdt->pl_init     = (plD_init_fp)     plD_init_gcw;
-    pdt->pl_line     = (plD_line_fp)     plD_line_gcw;
-    pdt->pl_polyline = (plD_polyline_fp) plD_polyline_gcw;
-    pdt->pl_eop      = (plD_eop_fp)      plD_eop_gcw;
-    pdt->pl_bop      = (plD_bop_fp)      plD_bop_gcw;
-    pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_gcw;
-    pdt->pl_state    = (plD_state_fp)    plD_state_gcw;
-    pdt->pl_esc      = (plD_esc_fp)      plD_esc_gcw;
+
+#ifdef DEBUG_GCW
+  debug("<plD_dispatch_init_gcw>\n");
+#endif
+
+#ifndef ENABLE_DYNDRIVERS
+  pdt->pl_MenuStr  = "Gnome Canvas Widget";
+  pdt->pl_DevName  = "gcw";
+#endif
+  pdt->pl_type     = plDevType_Interactive;
+  pdt->pl_seq      = 1;
+  pdt->pl_init     = (plD_init_fp)     plD_init_gcw;
+  pdt->pl_line     = (plD_line_fp)     plD_line_gcw;
+  pdt->pl_polyline = (plD_polyline_fp) plD_polyline_gcw;
+  pdt->pl_eop      = (plD_eop_fp)      plD_eop_gcw;
+  pdt->pl_bop      = (plD_bop_fp)      plD_bop_gcw;
+  pdt->pl_tidy     = (plD_tidy_fp)     plD_tidy_gcw;
+  pdt->pl_state    = (plD_state_fp)    plD_state_gcw;
+  pdt->pl_esc      = (plD_esc_fp)      plD_esc_gcw;
 }
 
 
@@ -692,6 +729,7 @@ void plD_init_gcw(PLStream *pls)
   /* Parse the driver options */
   plParseDrvOpts(gcw_options);
 
+  /* Set up the stream */
   pls->termin = 1;      /* Is an interactive terminal */
   pls->dev_flush = 1;   /* Handle our own flushes */
   pls->plbuf_write = 1; /* Use plot buffer to replot to another device */
@@ -730,6 +768,7 @@ void plD_init_gcw(PLStream *pls)
   }
   else {
     pls->dev_text = FALSE;
+    pls->dev_unicode = FALSE;
     dev->use_text = FALSE;
   }
 #else
@@ -738,6 +777,8 @@ void plD_init_gcw(PLStream *pls)
   dev->use_text = FALSE;
 #endif
 
+  /* Set fast rendering for polylines */
+  dev->use_fast_rendering = fast;
 
   /* Only initialize the zoom after all other initialization is complete */
   dev->zoom_is_initialized = FALSE;
@@ -794,41 +835,57 @@ void plD_polyline_gcw(PLStream *pls, short *x, short *y, PLINT npts)
     points->coords[2*i + 1] = ((double) -y[i]) * PIXELS_PER_DU;
   }
 
-  /* Workaround for the 'attempt to put segment in horiz list twice'
-   * from libgnomecanvas:
-   *
-   *   Plot a series of line segments rather than a single polyline.
-   *
-   * This slows rendering down a considerable amount.  However, it is 
-   * unclear what else can be done.  Libgnomecanvas should be able to 
-   * deal with all valid data; bizarre plotting errors happen along with
-   * this error.
-   *
-   * Note that instead of allocating a series of points structures, 
-   * we just refer to the original one from a separate struct 
-   * (GnomeCanvas does not hold a reference to the points structure).
-   */
-
-  pts.num_points = 2;
-  pts.ref_count = 1;
-  pts.coords = points->coords;
-
-  for(i=0;i<npts-1;i++) {
-    pts.coords=&(points->coords[2*i]);
-
+  if(dev->use_fast_rendering) {
     item=gnome_canvas_item_new(group,
 			       gnome_canvas_line_get_type (),
 			       "cap_style", GDK_CAP_ROUND,
 			       "join-style", GDK_JOIN_ROUND,
-			       "points", &pts,
+			       "points", points,
 			       "fill-color-rgba",dev->color,
 			       "width-units",pls->width*PIXELS_PER_DU*WSCALE,
 			       NULL);
 
+    /* Free the points structure */
+    gnome_canvas_points_free(points);
   }
+  else {
 
-  /* Free the points structure */
-  gnome_canvas_points_free(points);
+    /* Workaround for the 'attempt to put segment in horiz list twice'
+     * from libgnomecanvas:
+     *
+     *   Plot a series of line segments rather than a single polyline.
+     *
+     * This slows rendering down a considerable amount.  However, it is 
+     * unclear what else can be done.  Libgnomecanvas should be able to 
+     * deal with all valid data; bizarre plotting errors happen along with
+     * this error.
+     *
+     * Note that instead of allocating a series of points structures, 
+     * we just refer to the original one from a separate struct 
+     * (GnomeCanvas does not hold a reference to the points structure).
+     */
+
+    pts.num_points = 2;
+    pts.ref_count = 1;
+    pts.coords = points->coords;
+
+    for(i=0;i<npts-1;i++) {
+      pts.coords=&(points->coords[2*i]);
+
+      item=gnome_canvas_item_new(group,
+				 gnome_canvas_line_get_type (),
+				 "cap_style", GDK_CAP_ROUND,
+				 "join-style", GDK_JOIN_ROUND,
+				 "points", &pts,
+				 "fill-color-rgba",dev->color,
+				 "width-units",pls->width*PIXELS_PER_DU*WSCALE,
+				 NULL);
+
+    }
+
+    /* Free the points structure */
+    gnome_canvas_points_free(points);
+  }
 }
 
 
@@ -991,7 +1048,6 @@ void plD_tidy_gcw(PLStream *pls)
 
   if(dev->window!=NULL) {
     gtk_main ();
-    exit(0); /* Terrible hack to avoid segfault - why does it happen? */
   }
 }
 
@@ -1509,13 +1565,9 @@ void plD_esc_gcw(PLStream *pls, PLINT op, void *ptr)
     break;
 
   case PLESC_HAS_TEXT:
-    if(ptr!=NULL) 
-#ifdef HAVE_FREETYPE
+    if(ptr!=NULL) {
       proc_str(pls, ptr); /* Draw the text */
-#else
-      fprintf(stderr,"\n\nPLplot GCW driver error: Freetype not enabled; " \
-	             "please disable text handling.\n\n");
-#endif
+    }
     else { /* Assume this was a request to change the text handling */
       if(dev->use_text) pls->dev_text = 1; /* Allow text handling */
       else pls->dev_text = 0; /* Disallow text handling */
