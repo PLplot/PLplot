@@ -427,6 +427,12 @@ AC_SUBST(LIB_TAG)
 
 # ----------------------------------------------------------------------------
 # Now build up Makefile.in, out of all the eensy-weensy little pieces.
+#
+# Note: Make always scans the makefile to resolve all macro definitions
+# before processing any build rules.  Therefore it is allowed to use a macro
+# in a build before it's actually defined.  This feature is important with
+# the pkg_<pkg>.in components since typically they contain macro settings
+# used elsewhere as well as build rules that use macros defined elsewhere.
 # ----------------------------------------------------------------------------
 
 AC_MSG_RESULT(creating Makefile.in)
@@ -438,14 +444,6 @@ cat $srcdir/cf/init.in		>Makefile.in
 # Default target, core source and object file lists
 
 cat $srcdir/cf/dist.in		>>Makefile.in 
-
-# Additional drivers per system
-
-case $system in
-    Linux* )
-	cat $srcdir/cf/drivers_linux.in	>>Makefile.in
-    ;;
-esac
 
 # Optional packages
 

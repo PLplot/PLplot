@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
@@ -6,13 +6,33 @@
 # 14-Jul-1994
 #
 # Make assignments for PLplot/Tcl support.
+# Includes build rules for:
+#
+#	pltcl		PLplot tcl interpreter (i.e. enhanced tclsh)
+#	tclIndex	auto-load index
+#
 # -----------------------------------------------------------------------
 
 TCL_C		= tclAPI.c tclMain.c tclMatrix.c
 TCL_OBJ		= tclAPI$O tclMatrix$O
 TCL_OBJ_SA	= tclMain$O 
-TCL_EXE		= pltcl$E
+TCL_EXE		= pltcl$E tclIndex
 TCL_INSTALL	= install_tcl
+
+tclAPI.c: tclgen.h tclgen_s.h tclgen.c
+
+tclgen.h tclgen_s.h tclgen.c : plapi.tpl
+	pltclgen
+
+tclIndex:
+	mktclidx *.tcl
+
+pltcl$O:	$(PLLIBS) pltcl.c
+	$(CC) $(CC_FLAGS) pltcl.c
+
+pltcl$E:	$(PLLIBS) pltcl$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl$O $(PLLIB_LDC) $(TO) $@ \
+		$(LDC_LIBS)
 
 install_tcl:
 	-if test $(SHARED) = 1; then \
@@ -20,6 +40,7 @@ install_tcl:
 	 fi
 	-strip pltcl$E
 	-cp pltcl$E $(BIN_DIR)
+	-cp tclIndex $(TCL_DIR)
 	-cd $(top_srcdir)/bindings/tcl; \
 	 cp pltcl.h tclMatrix.h $(INCLUDE_DIR)
 	-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi

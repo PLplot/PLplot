@@ -1,3 +1,12 @@
+# -*-makefile-*----------------------------------------------------------
+# $Id$
+# Maurice LeBrun
+# IFS, University of Texas at Austin
+# 24-Jul-1994
+#
+# Install procedure for PLplot library.
+# -----------------------------------------------------------------------
+
 install_lib:
 	-if test ! -d $(INCLUDE_DIR); then mkdir -p $(INCLUDE_DIR); fi
 	-if test ! -d $(LIB_DIR); then mkdir -p $(LIB_DIR); fi

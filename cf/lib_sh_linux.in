@@ -1,4 +1,4 @@
-# ---------------------------*-Makefile-*--------------------------------
+# -*-makefile-*----------------------------------------------------------
 # $Id$
 #
 # Geoffrey Furnish
@@ -82,3 +82,4 @@ tcpip.o:
 stupidtk.o:
 	$(CC) $(CC_FLAGS) stupidtk.c
 	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../stupidtk.c
+

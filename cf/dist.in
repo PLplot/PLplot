@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
@@ -79,6 +79,7 @@ DRIVERS_C = \
 	dg300.c \
 	hpgl.c \
 	impress.c \
+	linuxvga.c \
 	ljiip.c \
 	ljii.c \
 	next.c \
@@ -94,6 +95,7 @@ DRIVERS_OBJ = \
 	dg300$O \
 	hpgl$O \
 	impress$O \
+	linuxvga$O \
 	ljiip$O \
 	ljii$O \
 	next$O \

@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
@@ -58,3 +58,4 @@ INFO_DIR	= @INFO_DIR@
 INCLUDE_DIR	= @INCLUDE_DIR@
 TCL_DIR		= @TCL_DIR@
 DEMOS_DIR	= @DEMOS_DIR@
+

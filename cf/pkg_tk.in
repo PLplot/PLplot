@@ -1,11 +1,16 @@
-# -----------------------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
 # IFS, University of Texas at Austin
 # 14-Jul-1994
 #
-# Make assignments for PLplot/TK driver.
+# Make assignments for PLplot/TK support.
+# Includes build rules for:
+#
+#	plserver	PLplot tcl/tk interpreter (i.e. enhanced wish).
+#			Handles plplot Tk/DP driver rendering.
+#
 # -----------------------------------------------------------------------
 
 TK_C		= tk.c tkshell.c tcpip.c plframe.c tkMain.c plr.c
@@ -14,7 +19,12 @@ TK_OBJ_SA	= tkMain$O
 TK_EXE		= plserver$E
 TK_INSTALL	= install_tk
 
+plserver$O:	$(PLLIBS) plserver.c
+	$(CC) $(CC_FLAGS) plserver.c
 
+plserver$E:	$(PLLIBS) plserver$O
+	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O $(PLLIB_LDC) $(TO) $@ \
+		$(LDC_LIBS)
 install_tk:
 	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
 	-if test $(SHARED) = 1; then \
@@ -25,7 +35,7 @@ install_tk:
 	-cp plserver$E $(BIN_DIR)
 	-cd $(top_srcdir)/bindings/tk; \
 	 cp pltk.h $(INCLUDE_DIR); \
-	 cp *.itk *.tcl *.pal tclIndex $(TCL_DIR)
+	 cp *.itk *.tcl *.pal $(TCL_DIR)
 	-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
 	-cd $(top_srcdir)/examples/tk; cp * $(DEMOS_DIR)/tk

@@ -1,4 +1,5 @@
-# inst_lib_linux.in            -*- Makefile -*-
+# -*-makefile-*----------------------------------------------------------
+# $Id$
 # Geoffrey Furnish
 # 14 June 1995
 # 

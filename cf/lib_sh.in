@@ -1,4 +1,4 @@
-# -----------------------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
@@ -55,3 +55,4 @@ $(PLLIB_SO):	$(LIB_OBJS)
 tcpip.o:
 	$(OCC) $(CC_FLAGS) tcpip.c
 	cd shared; $(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../tcpip.c
+

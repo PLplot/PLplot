@@ -1,22 +1,21 @@
-# -----------------------------------------------------------------------
+# -*-makefile-*----------------------------------------------------------
 # $Id$
 #
 # Maurice LeBrun
 # IFS, University of Texas at Austin
 # 19-Jul-1994
 #
-# PLplot program file dependencies and targets.
+# PLplot generic program file dependencies and targets.
 # 
 # Targets supported here include: 
 #
 #	plrender	Metafile viewer
-#	plserver	Renderer for Tk/DP driver 
-#	pltcl		PLplot tcl interpreter
-#	plmodule$(SO)	Dynamically loaded module for PLplot python scripts
 #	pltek		Renderer for tek files
 #	fonts		font generators and font files
 #
 # All but "fonts" are in the default build rule.
+# Note: the portable font files are supplied in the distribution
+# and normally do not need to be rebuilt.
 # -----------------------------------------------------------------------
 
 # Utility programs.
@@ -39,26 +38,6 @@ plrender$O:	$(PLLIBS) plrender.c
 plrender$E:	$(PLLIBS) plrender$O
 	$(LDC) $(LDC_FLAGS) $(STARTUP) plrender$O $(PLLIB_LDC) $(TO) $@ \
 		$(LDC_LIBS)
-
-plserver$O:	$(PLLIBS) plserver.c
-	$(CC) $(CC_FLAGS) plserver.c
-
-plserver$E:	$(PLLIBS) plserver$O
-	$(LDC) $(LDC_FLAGS) $(STARTUP) plserver$O $(PLLIB_LDC) $(TO) $@ \
-		$(LDC_LIBS)
-
-pltcl$O:	$(PLLIBS) pltcl.c
-	$(CC) $(CC_FLAGS) pltcl.c
-
-pltcl$E:	$(PLLIBS) pltcl$O
-	$(LDC) $(LDC_FLAGS) $(STARTUP) pltcl$O $(PLLIB_LDC) $(TO) $@ \
-		$(LDC_LIBS)
-
-plmodule$O:	$(PLLIBS) plmodule.c
-	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) -I$(PYTHON_INC_DIR) plmodule.c
-
-plmodule$(SO):	$(PLLIBS) plmodule$O
-	$(LDSHARED) plmodule$O $(PLLIB_LDC) @LIBS@ $(TO) $@
 
 # -----------------------------------------------------------------------
 # Font files.
