@@ -1,4 +1,4 @@
-# bindings/Makefile.am for PLplot
+# examples/tcl/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
@@ -19,27 +19,50 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-SUBDIRS = c++ f77 python tcl
-
-abovedatadir = ${prefix}/@DATA_DIR@/..
+examples_tcldir = ${prefix}/@DATA_DIR@/../examples/tcl
 
 if enable_tcl
-  index_tcl = tcl/pkgIndex.tcl.in
+
+if enable_itcl
+  mkindex = ../../scripts/mktclIndex -itcl
+else
+  mkindex = ../../scripts/mktclIndex -itcl
 endif
 
-if enable_tk
-  index_tk = tk/pkgIndex.tcl.in
+examples_tcl_DATA = \
+	README.tcldemos \
+	plgrid.tcl \
+	plot.dat \
+	plot.tcl \
+	r.dat \
+	stats.log \
+	tclIndex \
+	tcldemos.tcl \
+	x01.tcl \
+	x02.tcl \
+	x03.tcl \
+	x04.tcl \
+	x05.tcl \
+	x06.tcl \
+	x07.tcl \
+	x08.tcl \
+	x09.tcl \
+	x10.tcl \
+	x11.tcl \
+	x12.tcl \
+	x13.tcl \
+	x14.tcl \
+	x15.tcl \
+	x16.tcl \
+	x17.tcl \
+	x18.tcl \
+	x19.tcl \
+	tclIndex
+
 endif
 
-if enable_tkwin
-  index_tkwin = tkwin/pkgIndex.tcl.in
-endif
+tclIndex:
+	$(mkindex)
 
-index = $(index_tcl) $(index_tk) $(index_tkwin)
-
-abovedata_DATA = pkgIndex.tcl
-
-pkgIndex.tcl: $(index)
-	cat $(index) > pkgIndex.tcl
-
-CLEANFILES = pkgIndex.tcl
+EXTRA_DIST = $(examples_tcl_DATA) $(mkindex)
+CLEANFILES = tclIndex

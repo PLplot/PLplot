@@ -138,7 +138,7 @@ enable_tkwin=no
 enable_png=yes
 enable_jpeg=yes
 enable_cgm=yes
-enable_tk=no
+enable_tk=yes
 enable_xwin=yes
 
 # separate the concept of desiring a driver (above) with
@@ -438,6 +438,19 @@ if test "$enable_tcl" = yes; then
    AC_SUBST(TCLLIBCMD)
 fi
 
+if test "$enable_tk" = yes; then
+   if test "$TKINCDIR" != default; then
+      TKINCCMD="-I"$TKINCDIR
+      AC_SUBST(TKINCCMD)
+   fi
+   if test "$TKLIBDIR" = default; then
+      TKLIBCMD=$TKLIBSTR
+   else
+      TKLIBCMD="-L "$TKLIBDIR" "$TKLIBSTR
+   fi
+   AC_SUBST(TKLIBCMD)
+fi
+
 if test "$enable_itcl" = yes; then
    if test "$ITCLINCDIR" != default; then
       ITCLINCCMD="-I"$ITCLINCDIR
@@ -502,6 +515,9 @@ AM_CONDITIONAL(enable_python, test "$enable_python" = yes)
 MY_ARG_ENABLE(tcl,
   [  --enable-tcl            compile Tcl interface code ($enable_tcl)])
 AM_CONDITIONAL(enable_tcl, test "$enable_tcl" = yes)
+AM_CONDITIONAL(enable_itcl, test "$enable_itcl" = yes)
+AM_CONDITIONAL(enable_tk, test "$enable_tk" = yes)
+AM_CONDITIONAL(enable_tkwin, test "$enable_tkwin" = yes)
 
 MY_ARG_ENABLE(itcl,
   [  --enable-itcl           enable incr Tcl interface code ($enable_itcl)])
@@ -721,6 +737,7 @@ AC_OUTPUT([
 	examples/f77/Makefile.examples
 	examples/python/Makefile
 	examples/python/plplot_python_start.py
+	examples/tcl/Makefile
 	utils/Makefile
 	])
 

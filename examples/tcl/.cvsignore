@@ -1,11 +1,7 @@
 *.flc
-tclgen.c
-tclgen.h
-tclgen_s.h
-plplot.tcl
-tclIndex
 Makefile
 Makefile.in
+Makefile.examples
 .deps
 .libs
 *.la

@@ -61,7 +61,7 @@ sources = \
 AM_CPPFLAGS = @FREETYPEINCCMD@ @INCLTDL@
 
 libplplot_la_SOURCES  = $(sources)
-libplplot_la_LDFLAGS  = $(version) -no-undefined @FREETYPELIBCMD@ -lm
+libplplot_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined @FREETYPELIBCMD@ -lm
 ##libdrv = ../drivers/libpldrv.la
 ##libplplot_la_LIBADD  = $(libdrv)
 libplplot_la_LIBADD  = @LIBLTDL@

@@ -21,10 +21,10 @@
 
 if with_double
    libplplot = ../src/libplplotd.la
-   libplplottcl = ../bindings/tcl/libplplottcld.la
+   libplplottcltk = ../bindings/tcl/libplplottcltkd.la
 else
    libplplot = ../src/libplplot.la
-   libplplottcl = ../bindings/tcl/libplplottcl.la
+   libplplottcltk = ../bindings/tcl/libplplottcltk.la
 endif
 
 AM_CPPFLAGS = @INCLTDL@ -I../bindings/tcl @TCLINCCMD@ @ITCLINCCMD@
@@ -41,4 +41,4 @@ pltek_LDADD = $(libplplot)
 
 pltcl_SOURCES = pltcl.c
 pltcl_LDFLAGS = -rpath $(libdir) -no-undefined @TCLLIBCMD@ @ITCLLIBCMD@
-pltcl_LDADD = $(libplplottcl)
+pltcl_LDADD = $(libplplottcltk)

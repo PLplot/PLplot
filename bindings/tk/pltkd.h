@@ -12,9 +12,9 @@
 #ifndef __PLTKD_H__
 #define __PLTKD_H__
 
-#include "plplot/plplotP.h"
-#include "plplot/pltk.h"
-#include "plplot/pdf.h"
+#include "plplotP.h"
+#include "pltk.h"
+#include "pdf.h"
 
 #include <tk.h>
 #ifdef PLD_dp

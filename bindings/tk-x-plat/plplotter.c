@@ -1,5 +1,13 @@
 /* $Id$
  * $Log$
+ * Revision 1.14.2.1  2002/11/29 22:58:14  airwin
+ * Finish AT tcl binding.  These are only small fairly non-consequential
+ * refinements that I did while trying to debug the extended search problem
+ * (which had a simple solution which I will discuss on list).
+ *
+ * Prepare the start of the tk and tk-x-plat bindings by dropping "plplot/"
+ * from the #include statements in the source files.
+ *
  * Revision 1.14  2002/08/05 17:21:15  vincentdarley
  * compile fix
  *
@@ -237,9 +245,9 @@
 */
 
 #define NEED_PLDEBUG
-#include "plplot/plserver.h"
-#include "plplot/pltkwd.h"
-#include "plplot/tcpip.h"
+#include "plserver.h"
+#include "pltkwd.h"
+#include "tcpip.h"
 
 #ifdef __WIN32__
 #define XSynchronize(display, bool) {display->request++;}

@@ -42,7 +42,7 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-# bindings/c++/Makefile.am for PLplot
+# bindings/tcl/Makefile.am for PLplot
 ###
 ### Process this file with automake to produce Makefile.in
 ###
@@ -19,6 +19,8 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+tcldir = ${prefix}/@DATA_DIR@/../tcl
+
 if with_double
   libplplot = ../../src/libplplotd.la
   libmatrix = libtclmatrixd.la
@@ -28,41 +30,58 @@ else
 endif
 
 if enable_tcl
-if with_double
-    lib_LTLIBRARIES = libtclmatrixd.la libplplottcld.la 
+generated_scripts = plplot.tcl
+tcl_DATA = $(generated_scripts) tclIndex
+
+if enable_itcl
+  mkindex = ../../scripts/mktclIndex -itcl
 else
-    lib_LTLIBRARIES = libtclmatrix.la libplplottcl.la
+  mkindex = ../../scripts/mktclIndex -tcl
 endif
+
+if with_double
+    lib_LTLIBRARIES = libtclmatrixd.la libplplottcltkd.la 
+else
+    lib_LTLIBRARIES = libtclmatrix.la libplplottcltk.la
 endif
+
+endif
+
+plplot.tcl: ../tk/plplot.tcl
+	rm -f plplot.tcl
+	cp ../tk/plplot.tcl plplot.tcl
+
+tclIndex: $(generated_scripts)
+	$(mkindex)
 
 pkginclude_HEADERS = pltcl.h tclMatrix.h
-
-AM_CPPFLAGS = @TCLINCCMD@ @INCLTDL@
-version = -version-info @SOVERSION@
-
-libtclmatrix_la_SOURCES  = tclMatrix.c matrixInit.c
-libtclmatrix_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined @TCLLIBCMD@
-libtclmatrix_la_LIBADD = $(libplplot)
-
-libplplottcl_la_SOURCES  = \
-	tclAPI.c \
-	tclMain.c
-
-tclAPI.c: tclgen.h tclgen_s.h tclgen.c
 
 tclgen.h tclgen_s.h tclgen.c : pltclgen plapi.tpl tclcmd.tpl
 	perl pltclgen
 
-EXTRA_DIST = pltclgen plapi.tpl tclcmd.tpl
-CLEANFILES = tclgen.h tclgen_s.h tclgen.c
+EXTRA_DIST = pltclgen plapi.tpl tclcmd.tpl ../tk/plplot.tcl $(mkindex)
+CLEANFILES = tclgen.h tclgen_s.h tclgen.c $(generated_scripts) tclIndex
 
-libplplottcl_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined @TCLLIBCMD@
-libplplottcl_la_LIBADD = $(libplplot) $(libmatrix)
+AM_CPPFLAGS = @INCLTDL@ @TCLINCCMD@
+version = -version-info @SOVERSION@
+
+libtclmatrix_la_SOURCES  = \
+	tclMatrix.c \
+	matrixInit.c
+
+libtclmatrix_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined \
+	@TCLLIBCMD@ @TKLIBCMD@
+
+libplplottcltk_la_SOURCES  = \
+	tclAPI.c \
+	tclMain.c
+
+libplplottcltk_la_LDFLAGS  = $(version) -rpath $(libdir) -no-undefined -module @TCLLIBCMD@
+libplplottcltk_la_LIBADD = $(libplplot) $(libmatrix)
 
 libtclmatrixd_la_SOURCES = $(libtclmatrix_la_SOURCES)
 libtclmatrixd_la_LDFLAGS = $(libtclmatrix_la_LDFLAGS)
-libtclmatrixd_la_LIBADD  = $(libtclmatrix_la_LIBADD)
 
-libplplottcld_la_SOURCES = $(libplplottcl_la_SOURCES)
-libplplottcld_la_LDFLAGS = $(libplplottcl_la_LDFLAGS)
-libplplottcld_la_LIBADD  = $(libplplottcl_la_LIBADD)
+libplplottcltkd_la_SOURCES = $(libplplottcltk_la_SOURCES)
+libplplottcltkd_la_LDFLAGS = $(libplplottcltk_la_LDFLAGS)
+libplplottcltkd_la_LIBADD  = $(libplplottcltk_la_LIBADD)
