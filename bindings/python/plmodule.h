@@ -19,9 +19,4 @@ int pl_PyArray_AsFloatMatrix (PyObject **, PLINT*, PLINT*, PLFLT ***);
 int pl_PyList_AsStringArray (PyObject *, char ***, int *);
 int pl_PyList_SetFromStringArray (PyObject *, char **, int);
 
-/*extern char doc_plcont[];
-PyObject *pl_cont( PyObject *self, PyObject *args );
-extern char doc_plshade[];
-PyObject *pl_shade( PyObject *self, PyObject *args );*/
-
 PLFLT pyf2eval2( PLINT ix, PLINT iy, PLPointer plf2eval_data );

@@ -51,7 +51,7 @@ plserver$E:	$(PLLIBS) plserver$O
 # to tmp.  Also RPATH puts current directory first.  Therefore only
 # really useful for temporary tests in tmp until it is decided to
 # do the install.
-plmodule$(SO): $(PLLIBS) python_dynamic/plmodule.c python_dynamic/plmodule2.c
+plmodule$(SO): $(PLLIBS) python_dynamic/plmodule.c
 	@echo " "
 	@echo "Building Python module."
 	@echo " "
