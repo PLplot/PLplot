@@ -1,8 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.1  1993/01/23 06:01:04  mjl
-   Added to hold all functions that deal with PLPLOT strings.
+   Revision 1.2  1993/02/23 05:22:44  mjl
+   Split off code to write a stroke font character into its own function for
+   clarity.  Changed character-decoding routine to use stream-dependent escape
+   character in text strings.
 
+ * Revision 1.1  1993/01/23  06:01:04  mjl
+ * Added to hold all functions that deal with PLPLOT strings.
+ *
 */
 
 /*	plstring.c
@@ -11,8 +16,9 @@
 */
 
 #include "plplot.h"
-#include <math.h>
+
 #include <stdio.h>
+#include <math.h>
 #include <ctype.h>
 #include <string.h>
 
@@ -33,6 +39,9 @@ extern short int numberfonts, numberchars;
 /* Static function prototypes */
 
 static void  pldeco	(short **, PLINT *, char *);
+static void  plchar	(SCHAR *, PLFLT *, PLINT, PLINT, PLINT,
+			 PLINT, PLINT, PLFLT, PLFLT, PLFLT, PLFLT, PLFLT,
+			 PLFLT *, PLFLT *, PLFLT *);
 
 /*----------------------------------------------------------------------*\
 * void pllab()
@@ -231,10 +240,8 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, char *string)
 {
     short int *symbol;
     SCHAR *xygrid;
-    PLINT ch, cx, cy, i, k, length, level, penup;
-    PLINT xbase, ybase, ydisp, lx, ly, style;
-    PLINT oline, uline;
-    PLFLT width, xorg, yorg, x, y, def, ht, dscale, scale;
+    PLINT ch, i, length, level, style, oline, uline;
+    PLFLT width, xorg, yorg, def, ht, dscale, scale;
     PLFLT xscl, xoff, yscl, yoff;
 
     width = 0.0;
@@ -246,7 +253,7 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, char *string)
     scale = dscale;
     gmp(&xscl, &xoff, &yscl, &yoff);
 
-    /* Line style must be continuous */
+/* Line style must be continuous */
 
     gnms(&style);
     snms(0);
@@ -275,67 +282,86 @@ plstr(PLINT base, PLFLT *xform, PLINT refx, PLINT refy, char *string)
 	else if (ch == -5)
 	    uline = !uline;
 	else {
-	    if (plcvec(ch, &xygrid)) {
-		xbase = xygrid[2];
-		width = xygrid[3] - xbase;
-		if (base == 0) {
-		    ybase = 0;
-		    ydisp = xygrid[0];
-		}
-		else {
-		    ybase = xygrid[0];
-		    ydisp = 0;
-		}
-		k = 4;
-		penup = 1;
-		while (1) {
-		    cx = xygrid[k++];
-		    cy = xygrid[k++];
-		    if (cx == 64 && cy == 64)
-			break;
-		    if (cx == 64 && cy == 0)
-			penup = 1;
-		    else {
-			x = xorg + (cx - xbase) * scale;
-			y = yorg + (cy - ybase) * scale;
-			lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
-			ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
-			if (penup != 0) {
-			    movphy(lx, ly);
-			    penup = 0;
-			}
-			else
-			    draphy(lx, ly);
-		    }
-		}
-
-		if (oline) {
-		    x = xorg;
-		    y = yorg + (30 + ydisp) * scale;
-		    lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
-		    ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
-		    movphy(lx, ly);
-		    x = xorg + width * scale;
-		    lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
-		    ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
-		    draphy(lx, ly);
-		}
-		if (uline) {
-		    x = xorg;
-		    y = yorg + (-5 + ydisp) * scale;
-		    lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
-		    ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
-		    movphy(lx, ly);
-		    x = xorg + width * scale;
-		    lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
-		    ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
-		    draphy(lx, ly);
-		}
-		xorg = xorg + width * scale;
-	    }
+	    if (plcvec(ch, &xygrid))
+		plchar(xygrid, xform, base, oline, uline, refx, refy, scale,
+		       xscl, xoff, yscl, yoff, &xorg, &yorg, &width);
 	}
     }
     snms(style);
+}
+
+/*----------------------------------------------------------------------*\
+* plchar()
+*
+* Plots out a given stroke font character.
+\*----------------------------------------------------------------------*/
+
+static void
+plchar(SCHAR *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline, 
+       PLINT refx, PLINT refy, PLFLT scale,
+       PLFLT xscl, PLFLT xoff, PLFLT yscl, PLFLT yoff,
+       PLFLT *p_xorg, PLFLT *p_yorg, PLFLT *p_width)
+{
+    PLINT xbase, ybase, ydisp, lx, ly, cx, cy;
+    PLINT k, penup;
+    PLFLT x, y;
+
+    xbase = xygrid[2];
+    *p_width = xygrid[3] - xbase;
+    if (base == 0) {
+	ybase = 0;
+	ydisp = xygrid[0];
+    }
+    else {
+	ybase = xygrid[0];
+	ydisp = 0;
+    }
+    k = 4;
+    penup = 1;
+    for (;;) {
+	cx = xygrid[k++];
+	cy = xygrid[k++];
+	if (cx == 64 && cy == 64)
+	    break;
+	if (cx == 64 && cy == 0)
+	    penup = 1;
+	else {
+	    x = *p_xorg + (cx - xbase) * scale;
+	    y = *p_yorg + (cy - ybase) * scale;
+	    lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
+	    ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
+	    if (penup != 0) {
+		movphy(lx, ly);
+		penup = 0;
+	    }
+	    else
+		draphy(lx, ly);
+	}
+    }
+
+    if (oline) {
+	x = *p_xorg;
+	y = *p_yorg + (30 + ydisp) * scale;
+	lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
+	ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
+	movphy(lx, ly);
+	x = *p_xorg + *p_width * scale;
+	lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
+	ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
+	draphy(lx, ly);
+    }
+    if (uline) {
+	x = *p_xorg;
+	y = *p_yorg + (-5 + ydisp) * scale;
+	lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
+	ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
+	movphy(lx, ly);
+	x = *p_xorg + *p_width * scale;
+	lx = refx + ROUND(xscl * (xform[0] * x + xform[1] * y));
+	ly = refy + ROUND(yscl * (xform[2] * x + xform[3] * y));
+	draphy(lx, ly);
+    }
+    *p_xorg = *p_xorg + *p_width * scale;
 }
 
 /*----------------------------------------------------------------------*\
@@ -423,39 +449,45 @@ plcvec(PLINT ch, SCHAR ** xygr)
 * void pldeco()
 *
 * Decode a character string, and return an array of float integer symbol
-* numbers. This routine is responsible for interpreting all escape
-* sequences. At present the following escape sequences are defined
-* (the letter following the # may be either upper or lower case):
+* numbers. This routine is responsible for interpreting all escape sequences.
+* At present the following escape sequences are defined (the letter following
+* the <esc> may be either upper or lower case):
 *
-* #u       :      up one level (returns -1)
-* #d       :      down one level (returns -2)
-* #b       :      backspace (returns -3)
-* #+       :      toggles overline mode (returns -4)
-* #-       :      toggles underline mode (returns -5)
-* ##       :      #
-* #gx      :      greek letter corresponding to roman letter x
-* #fn      :      switch to Normal font
-* #fr      :      switch to Roman font
-* #fi      :      switch to Italic font
-* #fs      :      switch to Script font
-* #(nnn)   :      Hershey symbol number nnn (any number of digits)
+* <esc>u	: up one level (returns -1)
+* <esc>d	: down one level (returns -2)
+* <esc>b	: backspace (returns -3)
+* <esc>+	: toggles overline mode (returns -4)
+* <esc>-	: toggles underline mode (returns -5)
+* <esc><esc>	: <esc>
+* <esc>gx	: greek letter corresponding to roman letter x
+* <esc>fn	: switch to Normal font
+* <esc>fr	: switch to Roman font
+* <esc>fi	: switch to Italic font
+* <esc>fs	: switch to Script font
+* <esc>(nnn)	: Hershey symbol number nnn (any number of digits)
+*
+* The escape character defaults to '#', but can be changed to any of
+* [!#$%&*@^~] via a call to plsesc.
 \*----------------------------------------------------------------------*/
 
 static void
 pldeco(short int **sym, PLINT *length, char *text)
 {
     PLINT ch, icol, ifont, ig, j, lentxt;
-    char test;
+    char test, esc;
 
-    /* Initialize parameters. */
+/* Initialize parameters. */
+
     lentxt = strlen(text);
     *length = 0;
     *sym = symbol;
     gatt(&ifont, &icol);
+    plgesc(&esc);
     if (ifont > numberfonts)
 	ifont = 1;
 
-    /* Get next character; treat non-printing characters as spaces. */
+/* Get next character; treat non-printing characters as spaces. */
+
     j = 0;
     while (j < lentxt) {
 	if (*length >= PLMAXSTR)
@@ -465,10 +497,11 @@ pldeco(short int **sym, PLINT *length, char *text)
 	if (ch < 0 || ch > 175)
 	    ch = 32;
 
-	/* Test for escape sequence (#) */
-	if (ch == '#' && (lentxt - j) >= 1) {
+/* Test for escape sequence (#) */
+
+	if (ch == esc && (lentxt - j) >= 1) {
 	    test = text[j++];
-	    if (test == '#')
+	    if (test == esc)
 		symbol[(*length)++] = *(fntlkup + (ifont - 1) * numberchars + ch);
 
 	    else if (test == 'u' || test == 'U')
@@ -513,7 +546,9 @@ pldeco(short int **sym, PLINT *length, char *text)
 	    }
 	}
 	else
-	    /* Decode character. */
+
+/* Decode character. */
+
 	    symbol[(*length)++] = *(fntlkup + (ifont - 1) * numberchars + ch);
     }
 }
