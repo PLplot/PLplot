@@ -31,8 +31,7 @@
 <!DOCTYPE book PUBLIC "@DOCBOOK_DTD_PUBID@" [
 
 <!ENTITY Project-Version "@VERSION@">
-<!-- $Format: "<!ENTITY Project-Date \"$Date$\">"$ -->
-<!ENTITY Project-Date "Tue, 21 Nov 2000 11:02:16 +0100">
+<!ENTITY Project-Date "$Date$">
 
 <!ENTITY chap-intro SYSTEM "intro.xml">
 <!ENTITY chap-simple SYSTEM "simple.xml">
@@ -203,7 +202,6 @@
 
 <book id="plplot-docbook">
   <bookinfo>
-    <date>199?-??-??</date>
     <title>The PLplot Plotting Library</title>
     <abbrev>DocBook</abbrev>
     <subtitle>Programmer's Reference Manual</subtitle>
@@ -235,7 +233,7 @@
       <holder>Geoffrey Furnish, Maurice LeBrun</holder>
     </copyright>
     <copyright>
-      <year>1999, 2000, 2001, 2003</year>
+      <year>1999, 2000, 2001, 2002, 2003</year>
       <holder>Alan W. Irwin, Rafael Laboissi&egrave;re</holder>
     </copyright>
     <copyright>
