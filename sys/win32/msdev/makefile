@@ -50,9 +50,9 @@ links:
   @echo `Copying source files to $(PLTMP)`
   @echo ``
   @copy $(PLDIR)\src\*.c $(PLTMP)\*.c
-  @copy $(PLDIR)\include\*.h $(PLTMP)\plplot
+  @copy $(PLDIR)\include\*.h $(PLTMP)\*.h
   @copy $(PLDIR)\examples\c\*.c $(PLTMP)\*.c
-  @copy $(PLDIR)\examples\c\*.h $(PLTMP)\plplot
+  @copy $(PLDIR)\examples\c\*.h $(PLTMP)\*.h
   @copy $(PLDIR)\examples\c\lena.pgm $(PLTMP)\lena.pgm
   @copy $(PLDIR)\drivers\*.c $(PLTMP)\*.c
   @copy $(PLDIR)\utils\*.c $(PLTMP)\*.c
@@ -87,21 +87,21 @@ common:
 # Create plconfig.h file
 #
   @echo ``
-  @echo `Creating $(PLTMP)\plplot\plconfig.h`
-  @echo <<$(PLTMP)\plplot\plconfig.h
+  @echo `Creating $(PLTMP)\plconfig.h`
+  @echo <<$(PLTMP)\plconfig.h
 #ifndef __PLCONFIG_H__
 #define __PLCONFIG_H__
 #define LIB_DIR "$(PLLIB:\=\\)"
 #define BIN_DIR "$(PLBIN:\=\\)"
-#define PLPLOT_VERSION "5.1.0"
+#define VERSION "5.2.0"
 #define PL_DOUBLE
 #endif
 <<keep
 # Create pldevs.h file
 #
   @echo ``
-  @echo `Creating $(PLTMP)\plplot\pldevs.h`
-  @echo <<$(PLTMP)\plplot\pldevs.h
+  @echo `Creating $(PLTMP)\pldevs.h`
+  @echo <<$(PLTMP)\pldevs.h
 !ifdef META
 #define PLD_plmeta
 !endif
