@@ -34,7 +34,7 @@ SOVERSION	= @SOVERSION@
 LIBVERSION	:= $(shell ./version)
 
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
-SONAME		= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
 
 
 PLLIBS = $(PLLIB_AR) $(PLLIB_SO)
@@ -58,7 +58,9 @@ $(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
 		-Wl,-soname -Wl,$(SONAME) \
 		$(LIB_OBJS) stupidtk.o -lg++
 	ln -sf $(PLLIB_SO).$(LIBVERSION) $(SONAME)
-	ln -sf $(SONAME) $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so
+	ln -sf $(SONAME) $(PLLIB_BASE)$(LIB_TAG).so
+	echo $(LIBVERSION) > version.built
+	./version inc
 	@echo ""
 
 # -----------------------------------------------------------------------
