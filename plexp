@@ -27,43 +27,21 @@ fi
 
 cd ..
 
-# top level text files & scripts
-
-tar cf ${tarfile} ${pldir}/README
-tar rf ${tarfile} ${pldir}/README.1st
-tar rf ${tarfile} ${pldir}/README.local
-tar rf ${tarfile} ${pldir}/COPYRIGHTS
-tar rf ${tarfile} ${pldir}/Changes.log
-tar rf ${tarfile} ${pldir}/ToDo
-tar rf ${tarfile} ${pldir}/configure
-tar rf ${tarfile} ${pldir}/tarup
-tar rf ${tarfile} ${pldir}/zooup
-tar rf ${tarfile} ${pldir}/zipup
-tar rf ${tarfile} ${pldir}/plexp
-tar rf ${tarfile} ${pldir}/plimp
-
-# Make sure tar creates these subdirectories to make installation easier.
-
-tar rf ${tarfile} ${pldir}/tmp/.dummy
-
-# Font files
-
-tar rf ${tarfile} ${pldir}/lib/*.fnt
-
-# Subdirectories
-
-filt="! -path \*CVS\* -type f"
-
-tar rf ${tarfile} `find ${pldir}/doc      $check_new $filt`
-tar rf ${tarfile} `find ${pldir}/drivers  $check_new $filt`
-tar rf ${tarfile} `find ${pldir}/examples $check_new $filt`
-tar rf ${tarfile} `find ${pldir}/fonts    $check_new $filt`
-tar rf ${tarfile} `find ${pldir}/include  $check_new $filt`
-tar rf ${tarfile} `find ${pldir}/m4       $check_new $filt`
-tar rf ${tarfile} `find ${pldir}/new      $check_new $filt`
-tar rf ${tarfile} `find ${pldir}/utils    $check_new $filt`
-tar rf ${tarfile} `find ${pldir}/scripts  $check_new $filt`
-tar rf ${tarfile} `find ${pldir}/src      $check_new $filt`
-tar rf ${tarfile} `find ${pldir}/sys      $check_new $filt`
+tar cvf plplot.tar \
+	`find plplot \
+	$check_new \
+	! -path \*CVS\* \
+	! -path plplot/tmp\* \
+	! -path \*repository\* \
+	! -path \*.depend \
+	! -path \*~ \
+	! -path \*.o \
+	! -path \*.a \
+	! -path \*.dat \
+        -type f`
 
 gzip ${tarfile}
+
+echo "The resulting file is:"
+ls -l plplot.tar.gz
+echo "You may now download plplot.tar.gz to the remote site."
