@@ -94,6 +94,11 @@ typedef struct {
   double width;
   double height;
   double ppu;
+  short bufx[1024];
+  short bufy[1024];
+  guint bufc;
+  PLINT curcolor;
+  PLINT curwidth;
 } GnomePLdevPage;
 
 typedef struct {
@@ -520,6 +525,8 @@ new_page (PLStream* pls)
   page->mode = GNOME_PLDEV_LOCATE_MODE;
   page->ppu = 1.0;
 
+  page->bufc = 0;
+
   np = dev->npages;
 
   //  gdk_threads_enter ();
@@ -580,7 +587,7 @@ new_page (PLStream* pls)
 			   gnome_canvas_line_get_type(),
 			   "points", points,
 			   "fill_color_rgba", loclinecolor,
-			   "width_units", 1.0,
+			   "width_pixels", 1,
 			   NULL);
   gnome_canvas_item_hide (page->hlocline);
 
@@ -598,7 +605,7 @@ new_page (PLStream* pls)
 			   gnome_canvas_line_get_type(),
 			   "points", points,
 			   "fill_color_rgba", loclinecolor,
-			   "width_units", 1.0,
+			   "width_pixels", 1,
 			   NULL);
   gnome_canvas_item_hide (page->vlocline);
 
@@ -821,6 +828,8 @@ plD_init_gnome (PLStream *pls)
  *
  * Draw a polyline in the current color from (x1,y1) to (x2,y2).
 \*--------------------------------------------------------------------------*/
+static 
+int count[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 void
 plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
@@ -832,6 +841,8 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
   GnomeCanvasItem* item;
   GnomeCanvas* canvas;
   guint i;
+  short* xp;
+  short* yp;
 
   //  gdk_threads_enter ();
 
@@ -839,15 +850,27 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
   
   page = dev->page[dev->npages-1];
 
+  //  debug ("Before if\n");
+
+  if ( page->bufc > 0
+       && ((npts == 0)
+	   || (page->curcolor != pls->icol0)
+	   || (page->curwidth != pls->width)
+	   || (*x != page->bufx[page->bufc - 1])
+	   || (*y != page->bufy[page->bufc - 1])) ) {
+
+    //       printf("bufc = %d\tnpts = %d\n", page->bufc, npts);
+    //q        fflush(stdout);
+
   canvas = page->canvas;
 
   group = gnome_canvas_root (canvas);
 
-  points = gnome_canvas_points_new (npts);
+  points = gnome_canvas_points_new (page->bufc);
 
-  for ( i = 0; i < npts; i++ ) {
-    points->coords[2*i] = ((double) x[i]/MAG_FACTOR) * PIXELS_PER_DU;
-    points->coords[2*i + 1] = ((double) -y[i]/MAG_FACTOR) * PIXELS_PER_DU;;
+  for ( i = 0; i < page->bufc; i++ ) {
+    points->coords[2*i] = ((double) page->bufx[i]/MAG_FACTOR) * PIXELS_PER_DU;
+    points->coords[2*i + 1] = ((double) -page->bufy[i]/MAG_FACTOR) * PIXELS_PER_DU;;
   }
 
   item = gnome_canvas_item_new (group,
@@ -856,20 +879,41 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
 				"join_style", GDK_JOIN_ROUND,
                                 "points", points,
 				"fill_color_rgba",
-				plcolor_to_rgba (pls->curcolor, 0xFF),
+				plcolor_to_rgba (pls->cmap0[page->curcolor], 0xFF),
                                 "width_units",
-				MAX ((double) pls->width, 3.0) * PIXELS_PER_DU,
+				MAX ((double) page->curwidth, 3.0) * PIXELS_PER_DU,
                                 NULL);
 
   timeout_register (canvas, dev);
 
-  set_color (item, 0, pls->icol0);
+  set_color (item, 0, page->curcolor);
 
   gtk_signal_connect (GTK_OBJECT (item), "event",
                       (GtkSignalFunc) canvas_pressed_cb,
                       page);
 
   gnome_canvas_points_unref (points);
+
+  count[pls->icol0]++;
+
+    page->bufc = 0;
+
+  }
+
+  //  debug ("Got here\n");
+
+  xp = &(page->bufx[page->bufc]);
+  yp = &(page->bufy[page->bufc]);
+
+  page->bufc += npts;
+
+  while (npts--) {
+    *(xp++) = *(x++);
+    *(yp++) = *(y++);
+  }
+
+  page->curcolor = pls->icol0;
+  page->curwidth = pls->width;
 
   //  gdk_threads_leave ();
 
@@ -908,10 +952,14 @@ plD_eop_gnome(PLStream *pls)
   GnomePLdev* dev;
   GnomePLdevPage* page;
   GnomeCanvas* canvas;
+  int i;
+  short x, y;
 
   //  static int i;
 
   dev = pls->dev;
+
+  plD_polyline_gnome(pls, NULL, NULL, 0);
 
   //  gdk_threads_enter ();
 
@@ -922,6 +970,10 @@ plD_eop_gnome(PLStream *pls)
   gnome_canvas_update_now (canvas);
 
   gdk_threads_leave ();
+
+  //  for (i=0;i<16;i++)
+  //    printf("count[%d] = %d\n", i, count[i]);
+  //  fflush (stdout);
 
   //  printf("eop #%d\n", i++);
   //  fflush (stdout);
@@ -942,14 +994,14 @@ plD_bop_gnome(PLStream *pls)
   GnomePLdevPage* page;
   GnomeCanvas* canvas;
 
+  gdk_threads_enter ();
+
   new_page (pls);
   
   dev = pls->dev;
 
   //  printf("npages = %d\n", dev->npages);
   //  fflush (stdout);
-
-  gdk_threads_enter ();
   
   page = dev->page[dev->npages-1];
   canvas = page->canvas;
@@ -1173,7 +1225,7 @@ fill_polygon (PLStream* pls)
 
   timeout_register (canvas, dev);
 
-  set_color (item, 0, (double) pls->icol0);
+  set_color (item, 1, (double) pls->icol1);
 
   gtk_signal_connect (GTK_OBJECT (item), "event",
                       (GtkSignalFunc) canvas_pressed_cb,
