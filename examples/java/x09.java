@@ -264,8 +264,6 @@ class x09 {
 	double dz, clevel;
 	double [] clevelneg_store = new double[PNLEVEL];
 	double [] clevelpos_store = new double[PNLEVEL];
-	double [] clevelneg = new double[PNLEVEL/2];
-	double [] clevelpos = new double[PNLEVEL/2];
 	int  ncollin, ncolbox, ncollab;
 	double [] px = new double[PPERIMETERPTS];
 	double [] py = new double[PPERIMETERPTS];
@@ -357,16 +355,6 @@ class x09 {
             else
                 clevelpos_store[nlevelpos++] = clevel;
 	}
-       // The point here is to copy results into an array of the correct size.
-       // This only works if nlevelneg = nlevelpos = PNLEVEL/2, the size
-       // of the pre-allocated space for clevelpos and clevelneg.  A much
-       // better approach would be to use a dynamic object such as a vector,
-       // but AWI cannot find a clear tutorial about using them, and it is
-       // also not clear (to AWI) whether vectors would work as plcont
-       // arguments.  Over to you Geoffrey!
-	System.arraycopy(clevelneg_store, 0, clevelneg, 0, nlevelneg);
-	System.arraycopy(clevelpos_store, 0, clevelpos, 0, nlevelpos);
-
     // Colours!
 	ncollin = 11;
 	ncolbox = 1;
@@ -382,15 +370,23 @@ class x09 {
 
 	pls.col0(ncollin);
 	if(nlevelneg >0) {
-        // Negative contours
-            pls.lsty(2);
-            pls.cont( z, clevelneg, xg, yg, 2 );
+	   // Negative contours
+	   pls.lsty(2);
+	   // The point here is to copy results into an array of the correct size
+	   // which is essential for the java wrapper of plplot to work correctly.
+	   double [] clevelneg = new double[nlevelneg];
+	   System.arraycopy(clevelneg_store, 0, clevelneg, 0, nlevelneg);
+	   pls.cont( z, clevelneg, xg, yg, 2 );
 	}
 
 	if(nlevelpos >0) {
-        // Positive contours
-            pls.lsty(1);
-            pls.cont( z, clevelpos, xg, yg, 2 );
+	   // Positive contours
+	   pls.lsty(1);
+	   double [] clevelpos = new double[nlevelpos];
+	   // The point here is to copy results into an array of the correct size
+	   // which is essential for the java wrapper of plplot to work correctly.
+	   System.arraycopy(clevelpos_store, 0, clevelpos, 0, nlevelpos);
+	   pls.cont( z, clevelpos, xg, yg, 2 );
 	}
 		 
     // Draw outer boundary
