@@ -5,7 +5,7 @@
 
 #include <math.h>
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 #ifdef MSDOS
 #pragma optimize("",off)

@@ -3,7 +3,7 @@
 	Functions dealing with viewports.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /*--------------------------------------------------------------------------*\
  * void plenv()

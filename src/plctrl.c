@@ -8,9 +8,9 @@
 #define DEBUG
 
 #define NEED_PLDEBUG
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 #ifdef macintosh
-#include "plplot/mac.h"
+#include "mac.h"
 /* for plMacLibOpen prototype; used in plLibOpen */
 #endif
 

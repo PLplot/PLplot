@@ -10,7 +10,7 @@
 #define DEBUG
 
 #define NEED_PLDEBUG
-#include "plplot/plcore.h"
+#include "plcore.h"
 
 /*--------------------------------------------------------------------------*\
  * Driver Interface

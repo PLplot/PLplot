@@ -90,7 +90,7 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
     See plrender.c for examples of actual usage.  */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 #include <ctype.h>
 
 /* Support functions */

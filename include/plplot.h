@@ -24,14 +24,14 @@
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
 
-#include "plplot/plConfig.h"
+#include "plConfig.h"
 
 /*--------------------------------------------------------------------------*\
  *    USING PLplot
  * 
  * To use PLplot from C or C++, it is only necessary to 
  * 
- *      #include "plplot/plplot.h"
+ *      #include "plplot.h"
  * 
  * This file does all the necessary setup to make PLplot accessible to
  * your program as documented in the manual.  Additionally, this file

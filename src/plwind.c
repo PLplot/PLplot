@@ -3,7 +3,7 @@
 	Routines for setting up world coordinates of the current viewport.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 #define  dtr   0.01745329252
 

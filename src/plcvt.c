@@ -3,7 +3,7 @@
 	Coordinate transformation routines.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 /*--------------------------------------------------------------------------*\
  * Transformations returning physical coordinates.

@@ -4,7 +4,7 @@
  *	Also prototypes for stream & device utility functions.
 */
 
-#include "plplot/pdf.h"
+#include "pdf.h"
 
 #ifndef __PLSTRM_H__
 #define __PLSTRM_H__

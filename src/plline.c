@@ -3,7 +3,7 @@
 	Routines dealing with line generation.
 */
 
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 
 #define INSIDE(ix,iy) (BETW(ix,xmin,xmax) && BETW(iy,ymin,ymax))
 

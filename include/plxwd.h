@@ -7,8 +7,8 @@
 #ifndef __PLXWD_H__
 #define __PLXWD_H__
 
-#include "plplot/plplot.h"
-#include "plplot/plstrm.h"
+#include "plplot.h"
+#include "plstrm.h"
 
 /* System headers */
 

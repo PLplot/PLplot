@@ -6,7 +6,7 @@
 */
 
 #define NEED_PLDEBUG
-#include "plplot/plplotP.h"
+#include "plplotP.h"
 #include <float.h>
 #include <ctype.h>
 
