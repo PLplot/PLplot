@@ -1,6 +1,13 @@
 # $Id$
 # $Log$
-# Revision 1.30  1995/03/16 23:17:01  mjl
+# Revision 1.31  1995/04/12 08:15:46  mjl
+# Changed the way the client variable is treated.  If specified, enables
+# settings relevant to working with the plplot/TK driver.  To simplify the
+# code, the client variable is now kept globally and not passed as an argument
+# so some proc syntaxes were changed.  Also, this forces only 1 plplot stream
+# per plserver process (I doubt anyone has tried to do otherwise anyway).
+#
+# Revision 1.30  1995/03/16  23:17:01  mjl
 # Key filtering changed to new modifier magnification scheme.  Changed style
 # of reports (of keypress or mouse events) back to client code in order to be
 # more complete.
@@ -69,8 +76,8 @@
 # driver.  Right now does nothing special.
 #----------------------------------------------------------------------------
 
-proc plw_create {w {client {}}} {
-    plxframe $w $client
+proc plw_create {w {client_id {}}} {
+    plxframe $w $client_id
 }
 
 #----------------------------------------------------------------------------
@@ -79,9 +86,9 @@ proc plw_create {w {client {}}} {
 # A front-end to plw_create, used by plrender.
 #----------------------------------------------------------------------------
 
-proc plr_create {w {client {}}} {
+proc plr_create {w {client_id {}}} {
     global is_plrender; set is_plrender 1
-    plw_create $w $client
+    plw_create $w $client_id
 }
 
 #----------------------------------------------------------------------------
@@ -96,14 +103,20 @@ proc plr_create {w {client {}}} {
 #
 # The PLplot/TK (or DP) driver works by fork/exec of a plserver (an
 # extended wish), and subsequent communication of graphics instructions
-# data from the driver via a FIFO or socket.  In this case the client
+# data from the driver via a FIFO or socket.  In this case the client_id
 # variable must be specified in the call.  In direct widget instantiation
-# the client variable should not be used.
+# the client_id variable should not be used.
 #----------------------------------------------------------------------------
 
-proc plxframe {w {client {}}} {
+proc plxframe {w {client_id {}}} {
 
-    global is_plrender
+    global client
+
+# Save client name
+
+    if {$client_id != ""} then {
+	set client $client_id
+    }
 
 # Make container frame.  It is mapped later.
 
@@ -119,7 +132,7 @@ proc plxframe {w {client {}}} {
 # plframe widget must already have been created (the plframe is queried
 # for a list of the valid output devices for page dumps).
 
-    plw_create_TopRow $w $client
+    plw_create_TopRow $w
     pack append $w \
 	$w.ftop {top fill}
 
@@ -142,20 +155,12 @@ proc plxframe {w {client {}}} {
     set zyr($w,0) 1.0
 
 # Bindings
-#
-# Note: it is necessary here to protect the $client variable from becoming
-# two tokens if it has embedded spaces, such as occurs when you have
-# multiple copies running.  The [list $client] construct will enclose
-# $client with a pair of braces if necessary (can't do it directly since
-# braces prevent variable expansion).  The reason this is necessary is
-# because binding the command to a key causes variable substitution to be
-# performed twice -- once during the bind and once before execution.
 
     bind $w.plwin <Any-KeyPress> \
-	"plw_key_filter $w [list $client] %N %s %x %y %K %A"
+	"plw_key_filter $w %N %s %x %y %K %A"
 
     bind $w.plwin <Any-ButtonPress> \
-	"plw_user_mouse $w [list $client] %b %s %x %y"
+	"plw_user_mouse $w %b %s %x %y"
 
     bind $w.plwin <Any-Enter> \
 	"focus $w.plwin"
@@ -163,13 +168,13 @@ proc plxframe {w {client {}}} {
 # Set up bop/eop signal and inform client of plplot widget name for widget
 # commands.
 
-    if { $client != "" } then {
+    if { [info exists client] } then {
 	set bop_col [option get $w.ftop.leop off Label]
 	set eop_col [option get $w.ftop.leop on Label]
 
 	$w.plwin configure -bopcmd "plw_flash $w $bop_col"
 	$w.plwin configure -eopcmd "plw_flash $w $eop_col"
-	client_cmd $client "set plwidget $w.plwin"
+	client_cmd "set plwidget $w.plwin"
     }
 
     return $w
@@ -179,18 +184,18 @@ proc plxframe {w {client {}}} {
 # plw_create_TopRow
 #
 # Create top row widgets.  Page-oriented widgets only have a meaning in
-# the context of the PLplot driver, so don't create them if $client is the
-# empty string (as occurs for direct widget instantiation).
+# the context of the PLplot driver, so don't create them if there is no
+# client (as occurs for direct widget instantiation).
 #----------------------------------------------------------------------------
 
-proc plw_create_TopRow {w client} {
-    global is_plrender
+proc plw_create_TopRow {w} {
+    global is_plrender client
 
     frame $w.ftop
 
 # End of page indicator
 
-    if { $client != "" } then {
+    if { [info exists client] } then {
 	pack append $w.ftop \
 	    [label $w.ftop.leop -relief raised] \
 	    {left fill padx 12}
@@ -205,23 +210,24 @@ proc plw_create_TopRow {w client} {
 	{left fill padx 12}
 
 # Forward and backward (plrender only) page buttons.
+# Just a hack until I get around to doing it right.
 
-    if { $client != "" } then {
+    if { [info exists client] } then {
 	if { [info exists is_plrender] } {
 	    pack append $w.ftop \
 		[button $w.ftop.bp -text "<<" -relief raised] \
 		{left fill padx 10}
 
-	    $w.ftop.bp configure \
-		-command "client_cmd [list $client] {keypress BackSpace}"
+	    $w.ftop.bp configure -command \
+		"client_cmd {keypress 65288 0 0 0 0. 0. BackSpace}"
 	}
 
 	pack append $w.ftop \
 	    [button $w.ftop.fp -text ">>" -relief raised] \
 	    {left fill padx 10}
 
-	$w.ftop.fp configure \
-	    -command "client_cmd [list $client] {keypress Return}"
+	$w.ftop.fp configure -command \
+	    "client_cmd {keypress 65293 0 0 0 0. 0. Return}"
     }
 
 # Label widget for status messages.
@@ -442,7 +448,8 @@ proc plw_create_pmenu {w} {
 # the client program waits until the variable widget_is_ready is set.
 #----------------------------------------------------------------------------
 
-proc plw_start {w {client {}}} {
+proc plw_start {w} {
+    global client
 
 # Manage widget hierarchy
 
@@ -453,8 +460,8 @@ proc plw_start {w {client {}}} {
 
 # Inform client that we're done.
 
-    if { $client != "" } then {
-	client_cmd $client "set widget_is_ready 1"
+    if { [info exists client] } then {
+	client_cmd "set widget_is_ready 1"
     }
 }
 
@@ -468,7 +475,7 @@ proc plw_start {w {client {}}} {
 # so it can be added to the default behavior.
 #----------------------------------------------------------------------------
 
-proc plw_key_filter {w client keycode state x y keyname ascii} {
+proc plw_key_filter {w keycode state x y keyname ascii} {
     global user_key_filter
 
     global key_zoom_select
@@ -485,7 +492,7 @@ proc plw_key_filter {w client keycode state x y keyname ascii} {
 # Call user-defined key filter, if one exists
 
     if { [info exists user_key_filter] } then {
-	$user_key_filter $w $client $keyname $keycode $ascii
+	$user_key_filter $w $keyname $keycode $ascii
     }
 
 # Interpret keystroke
@@ -504,7 +511,7 @@ proc plw_key_filter {w client keycode state x y keyname ascii} {
 
 # Pass keypress event info back to client.
 
-    plw_user_key $w [list $client] $keycode $state $x $y $keyname $ascii
+    plw_user_key $w $keycode $state $x $y $keyname $ascii
 }
 
 #----------------------------------------------------------------------------
@@ -514,8 +521,10 @@ proc plw_key_filter {w client keycode state x y keyname ascii} {
 # Based on plw_user_mouse.
 #----------------------------------------------------------------------------
 
-proc plw_user_key {w client keycode state x y keyname ascii} {
-    if { $client != "" } then {
+proc plw_user_key {w keycode state x y keyname ascii} {
+    global client
+
+    if { [info exists client] } then {
 
     # calculate relative window coordinates.
 
@@ -532,7 +541,8 @@ proc plw_user_key {w client keycode state x y keyname ascii} {
 
     # send them back to the client.
 
-	client_cmd [list $client] \
+#	puts "keypress $keycode $state $x $y $xnd $ynd $keyname $ascii"
+	client_cmd \
 	    [list keypress $keycode $state $x $y $xnd $ynd $keyname $ascii]
     }
 }
@@ -544,8 +554,10 @@ proc plw_user_key {w client keycode state x y keyname ascii} {
 # Written by Radey Shouman
 #----------------------------------------------------------------------------
 
-proc plw_user_mouse {w client button state x y} {
-    if { $client != "" } then {
+proc plw_user_mouse {w button state x y} {
+    global client
+
+    if { [info exists client] } then {
 
     # calculate relative window coordinates.
 
@@ -562,7 +574,8 @@ proc plw_user_mouse {w client button state x y} {
 
     # send them back to the client.
 
-	client_cmd [list $client] [list button $button $state $x $y $xnd $ynd]
+	client_cmd \
+	    [list buttonpress $button $state $x $y $xnd $ynd]
     }
 }
 
@@ -583,10 +596,20 @@ proc plw_flash {w col} {
 # Executed as part of orderly shutdown procedure.  Eventually will just
 # destroy the plframe and surrounding widgets, and server will exit only
 # if all plotting widgets have been destroyed and it is a child of the
-# plplot/TK driver.
+# plplot/TK driver.  Maybe.
+#
+# The closelink command was added in the hopes of making the dp driver
+# cleanup a bit more robust, but doesn't seem to have any effect except
+# to slow things down quite a bit.  
 #----------------------------------------------------------------------------
 
 proc plw_end {w} {
+    global dp
+#    $w.plwin closelink
+    if { $dp } then {
+	global list_sock
+	close $list_sock
+    }
     exit
 }
 
