@@ -15,7 +15,7 @@
 function p13
 
   legend("opaque");
-  title("Matrix with individual line atributes");
+  title("Matrix with individual line attributes");
   fmt=["bo-;elf dist;"; "-15;norm porc;"; "@-g;cat peroi;"];
 
   g = [ 1.0026965  -0.7056316   0.5318182
