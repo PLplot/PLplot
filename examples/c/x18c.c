@@ -1,48 +1,4 @@
 /* $Id$
-<<<<<<< x18c.c
- * $Log$
- * Revision 1.9.2.2  2001/01/22 09:09:02  rlaboiss
- * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
- *
- * Revision 1.9.2.1  2001/01/22 09:05:31  rlaboiss
- * Debian stuff corresponding to package version 4.99j-11
- *
- * Revision 1.9  1995/06/01  21:40:15  mjl
- * All C demo files: changed file inclusion to use quotes instead of angle
- * brackets so that dependencies are retained during development.
- *
- * Revision 1.8  1995/04/12  08:19:03  mjl
- * Changes to all C demos: now include "plcdemos.h" to get all startup
- * definitions and includes that are useful to share between them.
- *
- * Revision 1.7  1995/03/16  23:18:59  mjl
- * All example C programs: changed plParseInternalOpts() call to plParseOpts().
- *
- * Revision 1.6  1994/08/10  01:13:12  mjl
- * Put in conditional for PI define.
- *
- * Revision 1.5  1994/07/22  16:03:29  furnish
- * "Little Miss Muffet, sat on a tuffet, eating her curds and whey.
- * Along came a spider and sat down beside her, and frightened Miss
- * Muffet away."
- *
- * Revision 1.4  1994/07/21  10:12:10  mjl
- * Changed plpoin3 to use fast point draw (code=-1).
- *
- * Revision 1.3  1994/07/20  06:06:12  mjl
- * Minor changes to make it easier to play with the altitude/azimuth
- * settings.  Changed to the new API calls for the 3d functions.
- *
- * Revision 1.2  1994/07/19  22:14:05  furnish
- * Added new plots for showing hidden surface removal using pl3poly().
- *
- * Revision 1.1  1994/07/15  20:38:09  furnish
- * Example program to show off 3-d line and point plotting.
-*/
-
-/*	x18c.c
-=======
->>>>>>> 1.12
 
 	3-d line and point plot demo.  Adapted from x08c.c.
 */
@@ -130,13 +86,7 @@ main(int argc, char *argv[])
 
 void test_poly(int k)
 {
-<<<<<<< x18c.c
     PLFLT *x, *y, *z;
-    PLFLT theta, phi;
-=======
-    PLFLT *x, *y, *z;
-    float theta, phi;
->>>>>>> 1.12
     int i, j;
     float pi, two_pi;
     int draw[][4] = { { 1, 1, 1, 1 },
