@@ -14,16 +14,13 @@ proc load_pkg_Pltcl {dir} {
     set pllibrary $dir
 
     if {$tcl_platform(platform) == "unix"} {
-	set stem libplplottcltk
 	set searchdirs ". ..";		# Need ".." for installed image
-	set tags "d {}";		# prefer double precision version
-	set ver @LIBRARY_VERSION@
-	set suf [info sharedlibextension].$ver
-
+	# prefer double precision version
+	set dlnames "@DLNAME_LIBPLPLOTTCLTKD@ @DLNAME_LIBPLPLOTTCLTK@";
 	set file ""
 	foreach reldir $searchdirs {
-	    foreach tag $tags {
-		set driver [file join $dir $reldir $stem$tag$suf]
+	    foreach dlname $dlnames {
+		set driver [file join $dir $reldir $dlname]
 		#puts "looking for driver file: $driver"
 		if [file exists $driver] {
 		    set file $driver
