@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.55  1994/11/02 19:48:06  mjl
+ * Revision 1.56  1995/01/06 07:47:09  mjl
+ * Replaced calls to XCheckMaskEvent with calls to XCheckWindowEvent, since
+ * there may be more than one event handler active per display (suggested by
+ * Radey Shouman).  All drivers: pls->width now more sensibly handled.  If
+ * the driver supports multiple widths, it first checks to see if it has been
+ * initialized already (e.g. from the command line) before initializing it.
+ * For drivers that don't support multiple widths, pls->width is ignored.
+ *
+ * Revision 1.55  1994/11/02  19:48:06  mjl
  * Added locator handling.  When escape function is called with a PLESC_GETC
  * operation, the cursor switches to crosshair and it sits in the X event
  * loop, waiting for a left mouse click.  The coordinates are stored in the
@@ -189,7 +197,6 @@ plD_init_xw(PLStream *pls)
 
     pls->termin = 1;		/* is an interactive terminal */
     pls->icol0 = 1;
-    pls->width = 1;
     pls->bytecnt = 0;
     pls->page = 0;
     pls->plbuf_write = 1;
@@ -659,8 +666,8 @@ GetCursor(PLStream *pls, PLCursor *ptr)
 	MasterEH(pls, &event);
     }
 
-    ptr->vdX = dev->cursorX;
-    ptr->vdY = dev->cursorY;
+    ptr->dX = dev->cursorX;
+    ptr->dY = dev->cursorY;
     XUndefineCursor(xwd->display, dev->window);
 }
 
@@ -884,8 +891,10 @@ MapMain(PLStream *pls)
 /* Input event selection */
 
     XSelectInput(xwd->display, dev->window,
-		 ButtonPressMask | KeyPressMask |
-		 ExposureMask | StructureNotifyMask);
+		 ButtonPressMask |
+		 KeyPressMask |
+		 ExposureMask |
+		 StructureNotifyMask);
 
 /* Window mapping */
 
@@ -897,7 +906,9 @@ MapMain(PLStream *pls)
     for (;;) {
 	XNextEvent(xwd->display, &the_event);
 	if (the_event.type == Expose) {
-	    while (XCheckMaskEvent(xwd->display, ExposureMask, &the_event));
+	    while (XCheckWindowEvent(xwd->display, dev->window,
+				     ExposureMask, &the_event))
+		;
 	    break;
 	}
     }
@@ -947,8 +958,12 @@ HandleEvents(PLStream *pls)
 
     XEvent event;
 
-    if (XCheckMaskEvent(xwd->display, ButtonPressMask | KeyPressMask |
-			ExposureMask | StructureNotifyMask, &event))
+    if (XCheckWindowEvent(xwd->display, dev->window,
+			  ButtonPressMask |
+			  KeyPressMask |
+			  ExposureMask |
+			  StructureNotifyMask,
+			  &event))
 	MasterEH(pls, &event);
 }
 
@@ -1129,7 +1144,8 @@ ExposeEH(PLStream *pls, XEvent *event)
 
 /* Remove extraneous expose events from the event queue */
 
-    while (XCheckMaskEvent(xwd->display, ExposureMask, event))
+    while (XCheckWindowEvent(xwd->display, dev->window,
+			     ExposureMask, event))
 	;
 }
 
@@ -1163,7 +1179,8 @@ ResizeEH(PLStream *pls, XEvent *event)
 /* Remove extraneous expose events from the event queue */
 /* These are not needed since we've redrawn the whole plot */
 
-    while (XCheckMaskEvent(xwd->display, ExposureMask, event))
+    while (XCheckWindowEvent(xwd->display, dev->window,
+			     ExposureMask, event))
 	;
 }
 
