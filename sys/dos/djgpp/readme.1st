@@ -1,0 +1,138 @@
+README.1st file for DOS 386 port of PLPLOT
+Geoffrey Furnish
+20 March 1992
+
+This directory contains the makefile for building PLPLOT using the
+DOS 386 port of GNU CC by DJ Delorie.  I include an excerpt from his
+README file for reference.  It explains what the package does and how to 
+get it.
+
+More details relating to PLPLO|T follow after this excerpt.
+============================================================================
+This is the README file for DJ's GCC port to DOS ("djgpp")
+
+Contents:
+    * Overview
+    * What's available
+    * How to install
+    * Common questions
+    * Deviations and Caveats
+    * Copyright information
+
+Disclaimer: This software is distributed WITHOUT ANY WARRANTY; without
+even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.
+
+DJ Delorie
+USmail: 24 Kirsten Ave, Rochester, NH 03867-2954, USA
+email:  dj@ctron.com
+
+
+
+
+
+Overview:
+
+This package contains a 32-bit 80386 DOS extender with symbolic
+debugger, a C/C++ compiler with utilities, development libraries, and
+source code.  It generates full 32-bit programs and supports full
+virtual memory with paging to disk. 
+
+Requirements:
+
+A 80386-based IBM compatible PC or PS/2, approximately 4-5Mb of hard
+drive space, and 512K RAM. 
+
+Supported Wares:
+
+* Up to 128M of extended memory (expanded under VCPI)
+* Up to 128M of disk space used for swapping
+* SuperVGA 256-color mode up to 1024x768
+* 80387
+* XMS & VDISK memory allocation strategies
+* VCPI programs, such as QEMM and 386MAX
+
+Unsupported:
+
+* DPMI programs, such as Windows 3.0
+* Multiprocessing (fork())
+
+
+
+
+File location:
+
+    host:      grape.ecs.clarkson.edu
+    login:     ftp
+    password:  send your e-mail address
+    directory: ~ftp/pub/msdos/djgpp
+
+Many thanks to the sysops at Clarkson for providing a home to djgpp!
+
+As a convenience to non-FTP users, djgpp is also stored on Clarkson's
+archive server, sun.soe.clarkson.edu.  To access the archive server,
+do this:
+   % mail archive-server@sun.soe.clarkson.edu
+   Subject: <none>
+   help
+   index msdos/djgpp
+   ^D
+
+NOTE: In accordance with FSF CopyLeft, you are not allowed to upload
+this program to a distribution site unless that site also makes the FSF
+sources for these programs available.  Please read the file COPYING for
+more details.  FSF sources are available on prep.ai.mit.edu, and on
+either grape.ecs.clarkson.edu or sun.soe.clarkson.edu
+
+NOTE: If your application links in object modules that were written
+by FSF, your application counts as a "derived work" and must obey
+the provisions of the FSF Copyrights.  See the file COPYING for
+details.  Specifically, the C++ classes in libc.a and obstacks are
+FSF works that are covered by the GNU GPL.  The mere act of compiling
+does not affect the copyright status of your program.
+
+...
+============================================================================
+
+In order to use GNU CC 386, you will need to have the NDMAKE utility, 
+a PD MAKE for DOS.  The GNU CC package is set up to use this particular
+version of make for DOS, and the PLPLOT package conforms to this standard.
+
+To build PLPLOT using this package, copy the makefile in this directory
+to the plplot\tmp directory, and type:
+
+make links
+make
+make cdemos
+make fonts
+make plrender
+
+etc., which is basically the same build procedure as for DOS and all the
+others.
+
+Note that due to various quirks, it was necessary to hardwire the font
+path inside the plfont.c file.	It is currently set as c:/lib/, which 
+GNU CC translates to c:\lib\ as needed.  If this is not acceptable on your
+system, change it.  Look for #ifdef GNU386 and edit to your content.
+
+Note also that the DOS extender with GNU CC is VCPI, which means it won't
+work with most multitasking environments.  This is really too bad, since
+GNU CC is so much better than all the other C and C++ compilers on the
+market, in terms of 32 bitness, etc.  This may change eventually--there
+was some rumor that a DPMI version was forthcoming, which would allow
+using it under the OS/2 2.0 DOS box, etc.
+
+Note also that although PLPLOT is usable from C++, there is no direct
+C++ support for PLPLOT at this time.  That is, there are no classes to 
+encapsulate PLPLOT functionality, etc.	This may change, but it won't happen
+overnight.  In any event, you can use PLPLOT from C++ just as you would
+from C.
+
+Finally note that at this time there is no Fortran support for this port
+of PLPLOT.  This is because there is not yet a GNU Fortran, although 
+one is due in a few months.  If you want, you could try to use f2c.  I
+have compiled f2c using GCC, so I know this could in principle be done.
+I have not gone to the trouble to provide Fortran bindings for this port
+mainly because I doubt there is much demand.  If you have f2c up with GCC
+and you wish to use PLPLOT form f2c flavored fortran, you might take a look
+at the unix stubs for starters.  
