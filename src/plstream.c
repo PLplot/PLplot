@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.18  1994/07/26 18:17:24  mjl
+ * Revision 1.19  1995/03/17 00:14:25  mjl
+ * Changed printf's to fprintf's to stdout or stderr.  Added plGinInit()
+ * to fill in a PLGraphicsIn with appropriate initial values.
+ *
+ * Revision 1.18  1994/07/26  18:17:24  mjl
  * Added missing variable declaration and initializer.
  *
  * Revision 1.17  1994/07/26  09:00:46  mjl
@@ -13,37 +17,22 @@
  * (now included by plplot.h), and other minor changes.  Now each file has
  * global access to the plstream pointer via extern; many accessor functions
  * eliminated as a result.
- *
- * Revision 1.15  1994/05/10  21:52:45  mjl
- * Put in a slight optimization in cmap1 color interpolation.
- *
- * Revision 1.14  1994/04/30  16:15:13  mjl
- * Fixed format field (%ld instead of %d) or introduced casts where
- * appropriate to eliminate warnings given by gcc -Wall.
- *
- * Revision 1.13  1994/03/23  08:32:34  mjl
- * Moved color and color map handling functions into plctrl.c.
- * Changed file open routine to support new options for sequencing family
- * member files.
- *
- * Revision 1.12  1994/01/15  17:28:59  mjl
- * Added include of pdf.h.
 */
 
 /*	plstream.c
 
-	Stream & device support functions.
+	Miscellaneous stream & device support functions.
 */
 
 #include "plplotP.h"
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plcol_interp()
  *
  * Initializes device cmap 1 entry by interpolation from pls->cmap1
  * entries.  Returned PLColor is supposed to represent the i_th color
  * out of a total of ncol colors in the current color scheme.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
@@ -71,13 +60,13 @@ plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plOpenFile()
  *
  * Opens file for output, prompting if not set.
  * Prints extra newline at end to make output look better in batch runs.
  * A file name of "-" indicates output to stdout.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 #define MAX_NUM_TRIES	10
 void
@@ -99,7 +88,7 @@ plOpenFile(PLStream *pls)
 
 	if (pls->FileName == NULL) {
 	    do {
-		printf("Enter desired name for graphics output file: ");
+		fprintf(stdout, "Enter graphics output file name: ");
 		fgets(line, sizeof(line), stdin);
 		len = strlen(line);
 		if (len)
@@ -127,17 +116,17 @@ plOpenFile(PLStream *pls)
 	    plexit("Too many tries.");
 
 	if ((pls->OutFile = fopen(pls->FileName, "wb+")) == NULL) 
-	    printf("Can't open %s.\n", pls->FileName);
+	    fprintf(stdout, "Can't open %s.\n", pls->FileName);
 	else
 	    fprintf(stderr, "Created %s\n", pls->FileName);
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plP_getmember()
  *
  * Sets up next file member name (in pls->FileName), but does not open it.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plP_getmember(PLStream *pls)
@@ -151,12 +140,12 @@ plP_getmember(PLStream *pls)
     sprintf(pls->FileName, tmp, pls->member);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plP_sfnam()
  *
  * Sets up file name & family stem name.
  * Reserve some extra space (5 chars) to hold an optional member number.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plP_sfnam(PLStream *pls, const char *fnam)
@@ -178,11 +167,11 @@ plP_sfnam(PLStream *pls, const char *fnam)
     strcpy(pls->BaseName, fnam);
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plFamInit()
  *
  * Initializes family file parameters.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plFamInit(PLStream *pls)
@@ -200,7 +189,7 @@ plFamInit(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plGetFam()
  *
  * Starts new member file of family file set if necessary.
@@ -208,7 +197,7 @@ plFamInit(PLStream *pls)
  * Note each member file is a complete graphics file (can be printed
  * individually), although 'plrender' will treat a family as a single
  * logical file if given the family name instead of the member name.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plGetFam(PLStream *pls)
@@ -224,14 +213,14 @@ plGetFam(PLStream *pls)
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plRotPhy()
  *
  * Rotates physical coordinates if necessary for given orientation.
  * Each time orient is incremented, the plot is rotated 90 deg clockwise.
  * Note: this is now used only to rotate by 90 degrees for devices that
  * expect portrait mode.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 void
 plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
@@ -264,12 +253,12 @@ plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
     }
 }
 
-/*----------------------------------------------------------------------*\
+/*--------------------------------------------------------------------------*\
  * plAllocDev()
  *
  * Allocates a standard PLDev structure for device-specific data, stores
  * the address in pls->dev, and returns the address as well.
-\*----------------------------------------------------------------------*/
+\*--------------------------------------------------------------------------*/
 
 PLDev *
 plAllocDev(PLStream *pls)
@@ -282,5 +271,24 @@ plAllocDev(PLStream *pls)
 	plexit("plAllocDev: cannot allocate memory\n");
 
     return (PLDev *) pls->dev;
+}
+
+/*--------------------------------------------------------------------------*\
+ * plGinInit()
+ *
+ * Just fills in the PLGraphicsIn with appropriate initial values.
+\*--------------------------------------------------------------------------*/
+
+void
+plGinInit(PLGraphicsIn *gin)
+{
+    gin->type = 0;
+    gin->state = 0;
+    gin->keysym = 0;
+    gin->button = 0;
+    gin->string[0] = '\0';
+    gin->pX = gin->pY = -1;
+    gin->dX = gin->dY = 0.;
+    gin->wX = gin->wY = 0.;
 }
 
