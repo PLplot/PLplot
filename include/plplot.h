@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.76  1995/01/06 07:50:56  mjl
+ * Revision 1.77  1995/01/13 23:22:18  mjl
+ * Changed prototype for plscmap1l().
+ *
+ * Revision 1.76  1995/01/06  07:50:56  mjl
  * Moved definition of window coordinate structure into here.  Also changed
  * window relative device coordinate names to something more appropriate
  * (this is the last time I will change this, I promise).
@@ -140,15 +143,6 @@
  * (others...)
  *
 \*----------------------------------------------------------------------*/
-
-/* This will hopefully catch compilers that don't fully conform */
-
-#ifndef __STDC__
-#ifndef __cplusplus
-If you reach this line, it means your compiler is incapable of building
-PLplot (not ANSI-compliant).  Time to get a new one.
-#endif
-#endif
 
 #ifdef unix			/* the old way */
 #ifndef __unix
@@ -1081,7 +1075,7 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1);
 
 void
 c_plscmap1l(PLINT itype, PLINT npts, PLFLT *intensity,
-	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3);
+	    PLFLT *coord1, PLFLT *coord2, PLFLT *coord3, PLINT *rev);
 
 /* Set a given color from color map 0 by 8 bit RGB value */
 
