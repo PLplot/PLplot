@@ -149,7 +149,7 @@ if test -z "$CC"; then
 	    CC=c89
 	;;
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
-	    CC="cc -ansi"
+	    CC="cc"
 	;;
 	Linux* )
 	    with_gcc=yes
