@@ -1,6 +1,7 @@
 #!/bin/sh
 # Test suite for f77demos.  
-# This is called from test.sh with $f77dir, $driver, and $dsuffix defined.
+# This is called from plplot-test.sh with $f77dir, $driver, and 
+# $dsuffix defined.
 # Eventually, argument parsing will be added to the f77 api, and this
 # file will be greatly simplified after that while allowing additional $options
 # (such as familying for the png driver) to be enabled.

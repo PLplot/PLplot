@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test suite for Python demos.  
-# This is called from test.sh with $pythondir, $driver, $dsuffix, and $options 
-# defined.
+# This is called from plplot-test.sh with $pythondir, $driver, $dsuffix, 
+# and $options defined.
 $pythondir/xw01.py -dev $driver -o xw01.$dsuffix $options
 $pythondir/xw02.py -dev $driver -o xw02.$dsuffix $options
 $pythondir/xw03.py -dev $driver -o xw03.$dsuffix $options

@@ -1,6 +1,6 @@
 #!/bin/sh
 # Test suite for Tcl demos.  
-# This is called from test.sh with $tcldir, $installbindir, $driver, 
+# This is called from plplot-test.sh with $tcldir, $installbindir, $driver, 
 # $dsuffix, and $options defined.
 export results=`pwd`
 cd $tcldir

@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test suite for cdemos.  
-# This is called from test.sh with $cdir, $driver, $dsuffix, and $options 
-# defined.
+# This is called from plplot-test.sh with $cdir, $driver, $dsuffix, 
+# and $options defined.
 $cdir/x01c -dev $driver -o x01c.$dsuffix $options
 $cdir/x02c -dev $driver -o x02c.$dsuffix $options
 $cdir/x03c -dev $driver -o x03c.$dsuffix $options
