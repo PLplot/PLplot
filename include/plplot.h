@@ -710,10 +710,10 @@ c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz);
 
-/*  set xor mode */
+/*  set xor mode; 1-enter, 0-leave  */
 
 void
-c_plxormod(PLINT color);
+c_plxormod(PLINT mode);
 
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
