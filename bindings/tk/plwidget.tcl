@@ -1,44 +1,24 @@
 # $Id$
 # $Log$
-# Revision 1.23  1994/05/07 03:13:11  mjl
-# Minor improvements to work better with new extended wish model and custom
-# color map capability.
+# Revision 1.24  1994/06/09 20:24:57  mjl
+# Massive reorganization and cleaning up.  Main result is that the plplot
+# "megawidget" acts much more like a normal Tk widget.  Still not
+# configurable; this will require extending it using itcl.  But now,
+# creation and mapping is much more straightforward, both directly (from
+# plserver or an extended wish) and from the plplot/tk driver.  You can do
+# simply:
 #
-# Revision 1.22  1994/04/25  19:00:34  mjl
-# Added "Options" cascade menu, along with "Palette 0" and "Palette 1"
-# entries.  Added shift and control modifiers to the key bindings
-# responsible for calling the key_filter proc.
+#     plxframe .plw
+#     pack append . .plw {bottom fill expand}
 #
-# Revision 1.21  1994/04/08  11:58:50  mjl
-# Changes to support new mouse handler, keyboard filter, scrolling using
-# cursor keys.  eop label should now flash correctly.
+# and you get a plframe "megawidget", complete with plot menu (with dump,
+# zoom, etc) and status label.  Support widgets relevant for the plplot/tk
+# driver do not come up unless invoked from the tk driver (by specifying
+# a client to connect to).  The main drawback at this point with this method
+# is that direct plotting commands in Tcl must be specified using the syntax
+# (for the above example) ".plw.plwin cmd <command> <args>", whereas in
+# itcl is simply ".plw <command> <args>".
 #
-# Revision 1.20  1994/02/07  22:58:11  mjl
-# Eliminated plw_flash in favor of plw_bop and plw_eop.  Added widget
-# configure commands to set bop/eop behavior.
-#
-# Revision 1.19  1994/01/17  21:30:24  mjl
-# Improved security for Tcl-DP communication by disabling any further
-# connections after the initial client/server handshaking is finished.
-#
-# Revision 1.18  1994/01/15  17:41:52  mjl
-# Improved handling of status label widget.  Added proc to handle
-# initialization of data link via socket.
-#
-# Revision 1.17  1993/12/22  23:09:51  mjl
-# Changes so that TK driver no longer times out on slow network connections
-# (it's just rreeaaalllyyyy ssllooowwww).  Where timeouts are a problem,
-# the client must issue the command to the server without waiting for a
-# reply, and then sit in TK wait loop until some specified condition is
-# met (usually the server sets a client interpreter variable when done).
-#
-# Revision 1.16  1993/12/21  10:22:44  mjl
-# Now route ALL communication to the client through the client_cmd proc.
-# This part reworked to not suck when using Tcl-DP.
-#
-# Revision 1.15  1993/12/15  09:02:13  mjl
-# Changes to support Tcl-DP style communication; eliminated plframe
-# widget attach and detach commands (no longer supported).
 
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer
@@ -56,33 +36,12 @@
 #----------------------------------------------------------------------------
 # plw_create
 #
-# Create the plplot widget container frame as well as the plplot widget
-# and any desired siblings.  Note the client may modify widget parameters
-# using configure.
+# Front-end routine to create plplot megawidget for use from PLplot tk
+# driver.  Right now does nothing special.
 #----------------------------------------------------------------------------
 
-proc plw_create {w {pack {bottom expand fill}}} {
-    
-# Make container frame & map into the server window.
-
-    frame $w
-    pack append [winfo parent $w] $w $pack
-
-# Make frame for top row widgets.
-
-    plw_create_TopRow $w
-    pack append $w \
-	$w.ftop {top fill}
-
-# Make plplot widget.
-
-    plframe $w.plwin -relief sunken
-    pack append $w \
-	$w.plwin {left expand fill}
-
-# Do remaining configure of top row.
-
-    plw_configure_TopRow $w
+proc plw_create {w {client {}}} {
+    plxframe $w $client
 }
 
 #----------------------------------------------------------------------------
@@ -91,31 +50,119 @@ proc plw_create {w {pack {bottom expand fill}}} {
 # A front-end to plw_create, used by plrender.
 #----------------------------------------------------------------------------
 
-proc plr_create {w {pack {bottom expand fill}}} {
+proc plr_create {w {client {}}} {
+    global is_plrender; set is_plrender 1
+    plw_create $w $client
+}
+
+#----------------------------------------------------------------------------
+# plxframe
+#
+# Creates the "extended" plframe widget.  Eventually may be replaced with
+# a real megawidget capability, using itcl.  The actual plframe widget
+# is named $w.plwin.  Example usage:
+#
+# plxframe .plw
+# pack append . .plw {bottom fill expand}
+#
+# The PLplot/TK (or DP) driver works by fork/exec of a plserver (an
+# extended wish), and subsequent communication of graphics instructions
+# data from the driver via a FIFO or socket.  In this case the client
+# variable must be specified in the call.  In direct widget instantiation
+# the client variable should not be used.
+#----------------------------------------------------------------------------
+
+proc plxframe {w {client {}}} {
+
     global is_plrender
 
-    set is_plrender 1
-    plw_create $w $pack
+# Make container frame.  It is mapped later.
+
+    frame $w
+
+# Create child plplot widget (plframe), and pack into parent.
+
+    plframe $w.plwin -relief sunken
+    pack append $w \
+	$w.plwin {bottom expand fill}
+
+# Make frame for top row widgets.
+# plframe widget must already have been created (the plframe is queried
+# for a list of the valid output devices for page dumps).
+
+    plw_create_TopRow $w $client
+    pack append $w \
+	$w.ftop {top fill}
+
+# Initialize plplot widget
+# Enable keyboard traversal when widget has the input focus.
+# Also grab the initial input focus.
+
+    tk_bindForTraversal $w.plwin
+    focus $w.plwin
+
+# Bindings
+#
+# Note: it is necessary here to protect the $client variable from becoming
+# two tokens if it has embedded spaces, such as occurs when you have
+# multiple copies running.  The [list $client] construct will enclose
+# $client with a pair of braces if necessary (can't do it directly since
+# braces prevent variable expansion).  The reason this is necessary is
+# because binding the command to a key causes it to be parsed by the
+# interpreter twice -- once during the bind and once during its execution.
+
+    bind $w.plwin <Any-KeyPress> \
+	"key_filter $w [list $client] %K %N %A 0 0"
+
+    bind $w.plwin <Shift-KeyPress> \
+	"key_filter $w [list $client] %K %N %A 1 0"
+
+    bind $w.plwin <Control-KeyPress> \
+	"key_filter $w [list $client] %K %N %A 0 1"
+
+    bind $w.plwin <Shift-Control-KeyPress> \
+	"key_filter $w [list $client] %K %N %A 1 1"
+
+    bind $w.plwin <Any-ButtonPress> \
+	"plw_user_mouse $w [list $client] %b %s %x %y"
+
+    bind $w.plwin <Any-Enter> \
+	"focus $w.plwin"
+
+# Set up bop/eop signal and inform client of plplot widget name for widget
+# commands.
+
+    if { $client != "" } then {
+	$w.plwin configure -bopcmd "plw_bop $w"
+	$w.plwin configure -eopcmd "plw_eop $w"
+	client_cmd $client "set plwidget $w.plwin"
+    }
+
+    return $w
 }
 
 #----------------------------------------------------------------------------
 # plw_create_TopRow
 #
-# Create top row widgets.
+# Create top row widgets.  Page-oriented widgets only have a meaning in
+# the context of the PLplot driver, so don't create them if $client is the
+# empty string (as occurs for direct widget instantiation).
 #----------------------------------------------------------------------------
 
-proc plw_create_TopRow {w} {
+proc plw_create_TopRow {w client} {
     global is_plrender
 
     frame $w.ftop
 
 # End of page indicator
 
-    pack append $w.ftop \
-	[label $w.ftop.leop -relief raised] \
-	{left fill padx 12}
+    if { $client != "" } then {
+	pack append $w.ftop \
+	    [label $w.ftop.leop -relief raised] \
+	    {left fill padx 12}
 
-    $w.ftop.leop config -bg [option get $w.ftop.leop on Label]
+	$w.ftop.leop config -bg [option get $w.ftop.leop on Label]
+    }
 
 # Plot menu
 
@@ -123,21 +170,27 @@ proc plw_create_TopRow {w} {
 	[plw_create_pmenu $w] \
 	{left fill padx 12}
 
-# Backward page button, plrender only.
+# Forward and backward (plrender only) page buttons.
 
-    if {[info exists is_plrender]} {
+    if { $client != "" } then {
+	if { [info exists is_plrender] } {
+	    pack append $w.ftop \
+		[button $w.ftop.bp -text "<<" -relief raised] \
+		{left fill padx 10}
+
+	    $w.ftop.bp configure \
+		-command "client_cmd [list $client] {keypress BackSpace}"
+	}
+
 	pack append $w.ftop \
-	    [button $w.ftop.bp -text "<<" -relief raised] \
+	    [button $w.ftop.fp -text ">>" -relief raised] \
 	    {left fill padx 10}
+
+	$w.ftop.fp configure \
+	    -command "client_cmd [list $client] {keypress Return}"
     }
 
-# Forward page button
-
-    pack append $w.ftop \
-	[button $w.ftop.fp -text ">>" -relief raised] \
-	{left fill padx 10}
-
-# Make label widget for status messages.
+# Label widget for status messages.
 
     label $w.ftop.lstat -anchor w -relief raised
     plw_label_reset $w
@@ -150,11 +203,13 @@ proc plw_create_TopRow {w} {
 #
 # Create plot menu.
 #
-# It is tempting to create buttons for some of these options, but buttons are
-# difficult to effectively place and extend.  Menus have a clear placement
-# mechanism and are easy to add to.  Further, TK menus can be torn off
-# (select menu with middle mouse button and move to where you want it) which
-# makes selecting top-level menu buttons easy.
+# It is tempting to create buttons for some of these options, but buttons
+# are difficult to effectively place and extend.  Menus have a clear
+# placement mechanism and are easy to add to.  Further, TK menus can be
+# torn off (select menu with middle mouse button and move to where you
+# want it) which makes selecting top-level menu buttons easy.  Finally,
+# certain menu options have keyboard equivalents: zoom-select (z),
+# zoom-reset (r), print (p), and save-again (s).
 #----------------------------------------------------------------------------
 
 proc plw_create_pmenu {w} {
@@ -184,16 +239,23 @@ proc plw_create_pmenu {w} {
     menu $w.ftop.pmenu.m.save
 
 # Save - As.. (another cascade)
-#
-# This cascade menubutton doesn't have its entries filled in until the
-# plframe is initialized, because we need to query the widget to find out
-# the available output devices (which are listed).
 
     $w.ftop.pmenu.m.save add cascade \
 	-label "As" \
 	-menu $w.ftop.pmenu.m.save.as
 
     menu $w.ftop.pmenu.m.save.as
+
+# Generate the device list in the "Save/As" widget menu, by querying the
+# plframe widget for the available output devices (which are listed).
+
+    set j 0
+    foreach i [$w.plwin info devices] {
+	$w.ftop.pmenu.m.save.as add command \
+	    -label $i \
+	    -command "plw_saveas $w $j"
+	set j [expr "$j + 1"]
+    }
 
 # Save - Again
 
@@ -337,120 +399,85 @@ proc plw_create_pmenu {w} {
 }
 
 #----------------------------------------------------------------------------
-# plw_configure_TopRow
-#
-# Finish configuration of top row widgets.
-# Right now it just generates the device list in the "Save/As" widget menu.
-#----------------------------------------------------------------------------
-
-proc plw_configure_TopRow {w} {
-    update
-    set j 0
-    foreach i [$w.plwin info devices] {
-	$w.ftop.pmenu.m.save.as add command \
-	    -label $i \
-	    -command "plw_saveas $w $j"
-	set j [expr "$j + 1"]
-    }
-}
-
-#----------------------------------------------------------------------------
-# plw_init
-#
-# Initialize the container frame and child widgets.
-# All the bindings as well as communication links to the client are made here.
-#
-# Note: when passing a TCL command as a string argument, it is necessary to
-# protect the $client variable from becoming two tokens if it has embedded
-# spaces (such as occurs when you have multiple copies running).  The [list
-# $client] construct will enclose $client with a pair of braces if necessary
-# (can't do it directly since braces prevent variable expansion).
-#----------------------------------------------------------------------------
-
-proc plw_init {w client} {
-    global is_plrender
-
-# Configure forward page button
-
-    $w.ftop.fp configure \
-	-command "client_cmd [list $client] {keypress Return}"
-
-# Configure back page button, plrender only
-
-    if {[info exists is_plrender]} {
-	$w.ftop.bp configure \
-	    -command "client_cmd [list $client] {keypress BackSpace}"
-    }
-
-# Initialize plplot widget
-
-    plw_init_plplot $w $client
-}
-
-#----------------------------------------------------------------------------
-# plw_init_plplot
-#
-# Initialize plplot widget.
-#----------------------------------------------------------------------------
-
-proc plw_init_plplot {w client} {
-    
-# Enable keyboard traversal when widget has the input focus.
-
-    tk_bindForTraversal $w.plwin
-
-# Bindings
-
-    bind $w.plwin <Any-KeyPress> \
-	"key_filter $w [list $client] %K %N %A 0 0"
-
-    bind $w.plwin <Shift-KeyPress> \
-	"key_filter $w [list $client] %K %N %A 1 0"
-
-    bind $w.plwin <Control-KeyPress> \
-	"key_filter $w [list $client] %K %N %A 0 1"
-
-    bind $w.plwin <Shift-Control-KeyPress> \
-	"key_filter $w [list $client] %K %N %A 1 1"
-
-    bind $w.plwin <Any-ButtonPress> \
-	"plw_user_mouse $w [list $client] %b %s %x %y"
-
-    bind $w.plwin <Any-Enter> \
-	"focus $w.plwin"
-
-# Inform client of plplot widget name for widget commands.
-
-    client_cmd $client "set plwidget $w.plwin"
-
-# Set up bop/eop signal.
-
-    $w.plwin configure -bopcmd "plw_bop $w"
-    $w.plwin configure -eopcmd "plw_eop $w"
-
-# I want the focus
-
-    focus $w.plwin
-}
-
-#----------------------------------------------------------------------------
 # plw_start
 #
 # Responsible for plplot graphics package initialization on the widget.
+# People driving the widget directly should just use pack themselves.
 #
 # Put here to reduce the possibility of a time out over a slow network --
 # the client program waits until the variable widget_is_ready is set.
 #----------------------------------------------------------------------------
 
-proc plw_start {w client} {
+proc plw_start {w {client {}}} {
 
-# Crank up graphics package
+# Manage widget hierarchy
 
-    $w.plwin cmd init
+    pack append [winfo parent $w] $w \
+	{bottom expand fill}
+
+    update
 
 # Inform client that we're done.
 
-    client_cmd $client "set widget_is_ready 1"
+    if { $client != "" } then {
+	client_cmd $client "set widget_is_ready 1"
+    }
+}
+
+#----------------------------------------------------------------------------
+# key_filter
+#
+# Front-end to key handler.
+# For supported operations it's best to modify the global key variables
+# to get the desired action.  More advanced stuff can be done with the
+# $user_key_filter proc.  Find anything particularly useful?  Let me know,
+# so it can be added to the default behavior.
+#----------------------------------------------------------------------------
+
+proc key_filter {w client k n a shift control} {
+    global user_key_filter
+
+    global key_zoom_select
+    global key_zoom_reset
+    global key_print
+    global key_save_again
+    global key_scroll_right
+    global key_scroll_left
+    global key_scroll_up
+    global key_scroll_down
+    global key_scroll_slow
+    global key_scroll_fast
+    global key_scroll_faster
+
+#    puts "keypress: $k $n $a"
+
+    if { [info exists user_key_filter] } then {
+	$user_key_filter $w $client $k $n $a
+    }
+
+    if { $shift } then {
+	if { $control } then {
+	    set s $key_scroll_faster
+	} else {
+	    set s $key_scroll_fast
+	}
+    } else {
+	set s $key_scroll_slow
+    }
+
+    switch $k \
+	$key_zoom_select	"plw_zoom_select $w" \
+	$key_zoom_reset		"plw_zoom_reset $w" \
+	$key_print		"plw_print $w" \
+	$key_save_again		"plw_save $w" \
+	$key_scroll_right	"plw_view_scroll $w  $s  0" \
+	$key_scroll_left	"plw_view_scroll $w -$s  0" \
+	$key_scroll_up		"plw_view_scroll $w  0 -$s" \
+	$key_scroll_down	"plw_view_scroll $w  0  $s" 
+
+    if { $client != "" } then {
+	client_cmd [list $client] "keypress $k $n $a"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -492,13 +519,12 @@ proc plw_end {w} {
 # plw_print
 #
 # Prints plot.  Uses the "plpr" script, which must be set up for your site
-# as appropriate.  There are better ways to do this but all are too
-# dangerous IMO until Tcl/TK gets some adequate security safeguards in
-# place.
+# as appropriate.  There are better ways to do it but this way is safest
+# for now.
 #----------------------------------------------------------------------------
 
 proc plw_print {w} {
-    if { [catch "$w.plwin print" foo]} {
+    if { [catch "$w.plwin print" foo] } {
 	bogue_out "$foo"
     } else {
 	status_msg $w "Plot printed."
@@ -524,7 +550,7 @@ proc plw_saveas {w dev} {
 		return
 	    }
 	}
-	if { [catch "$w.plwin save as $dev $file" foo]} {
+	if { [catch "$w.plwin save as $dev $file" foo] } {
 	    bogue_out "$foo"
 	} else {
 	    status_msg $w "Plot saved."
@@ -541,7 +567,7 @@ proc plw_saveas {w dev} {
 #----------------------------------------------------------------------------
 
 proc plw_save {w} {
-    if { [catch "$w.plwin save" foo]} {
+    if { [catch "$w.plwin save" foo] } {
 	bogue_out "$foo"
     } else {
 	status_msg $w "Plot saved."
@@ -555,7 +581,7 @@ proc plw_save {w} {
 #----------------------------------------------------------------------------
 
 proc plw_close {w} {
-    if { [catch "$w.plwin save close" foo]} {
+    if { [catch "$w.plwin save close" foo] } {
 	bogue_out "$foo"
     } else {
 	status_msg $w "Plot file closed."
@@ -618,10 +644,10 @@ proc plw_zoom_reset {w} {
     plw_label_reset $w
     bind $w.plwin <ButtonPress> $def_button_cmd
     $w.plwin view reset
-    if {[winfo exists $w.hscroll] && [winfo ismapped $w.hscroll]} then {
+    if { [winfo exists $w.hscroll] && [winfo ismapped $w.hscroll] } then {
 	pack unpack $w.hscroll
     }
-    if {[winfo exists $w.vscroll] && [winfo exists $w.vscroll]} then {
+    if { [winfo exists $w.vscroll] && [winfo exists $w.vscroll] } then {
 	pack unpack $w.vscroll
     }
 }
@@ -803,11 +829,8 @@ proc plw_view_zoom {w x0 y0 x1 y1} {
 
 # Only create scrollbars if really needed.
 
-    if {($xl == $xmin) && ($xr == $xmax)} \
-    then {set hscroll 0} else {set hscroll 1}
-
-    if {($yl == $xmin) && ($yr == $xmax)} \
-    then {set vscroll 0} else {set vscroll 1}
+    set hscroll [expr ($xl != $xmin) || ($xr != $xmax)]
+    set vscroll [expr ($yl != $ymin) || ($yr != $ymax)]
 
     if { ! ($hscroll || $vscroll)} then {
 	$w.plwin redraw
@@ -834,13 +857,13 @@ proc plw_view_zoom {w x0 y0 x1 y1} {
 proc plw_view_scroll {w dx dy} {
     
     if {($dx != 0) && \
-	    [winfo exists $w.hscroll] && [winfo ismapped $w.hscroll]} then {
+	    [winfo exists $w.hscroll] && [winfo ismapped $w.hscroll] } then {
 
 	set first  [lindex [$w.hscroll get] 2]
 	$w.plwin xscroll [expr $first+$dx]
     }
     if {($dy != 0) && \
-	    [winfo exists $w.vscroll] && [winfo ismapped $w.vscroll]} then {
+	    [winfo exists $w.vscroll] && [winfo ismapped $w.vscroll] } then {
 
 	set first  [lindex [$w.vscroll get] 2]
 	$w.plwin yscroll [expr $first+$dy]
@@ -858,13 +881,13 @@ proc plw_fixview {w hscroll vscroll} {
 # Create scrollbars if they don't already exist.
 
     set created_sb 0
-    if {$hscroll && ! [winfo exists $w.hscroll]} then {
+    if { $hscroll && ! [winfo exists $w.hscroll] } then {
 	set created_sb 1
 	scrollbar $w.hscroll -relief sunken -orient horiz \
 	    -command "$w.plwin xscroll"
 	$w.plwin config -xscroll "$w.hscroll set"
     }
-    if {$vscroll && ! [winfo exists $w.vscroll]} then {
+    if { $vscroll && ! [winfo exists $w.vscroll] } then {
 	set created_sb 1
 	scrollbar $w.vscroll -relief sunken \
 	    -command "$w.plwin yscroll"
@@ -875,7 +898,7 @@ proc plw_fixview {w hscroll vscroll} {
 # the plframe widget so that it has a chance to initialize the scrollbars
 # before they are mapped.
 
-    if {$created_sb} then {
+    if { $created_sb } then {
 	pack unpack $w.plwin
 	pack append $w $w.plwin {left expand fill}
     }
@@ -884,15 +907,15 @@ proc plw_fixview {w hscroll vscroll} {
 # To get packing right, need to unmap then remap plot widget.
 # Otherwise need to do explicit redraw.
 
-    if {($hscroll && ! [winfo ismapped $w.hscroll]) || \
-        ($vscroll && ! [winfo ismapped $w.vscroll]) } then {
+    if { ($hscroll && ! [winfo ismapped $w.hscroll]) || \
+         ($vscroll && ! [winfo ismapped $w.vscroll]) } then {
 
 	update
 	pack unpack $w.plwin
-	if {$hscroll} {
+	if { $hscroll } then {
 	    pack append $w $w.hscroll {bottom fillx}
 	}
-	if {$vscroll} {
+	if { $vscroll } then {
 	    pack append $w $w.vscroll {right filly}
 	}
 	pack append $w $w.plwin {expand fill}
@@ -979,7 +1002,9 @@ proc plw_user_mouse {w client button state x y} {
 	
 # send them back to the client.
 
-    client_cmd [list $client] [list mouse $button $state $xnd $ynd]
+    if { $client != "" } then {
+	client_cmd [list $client] [list mouse $button $state $xnd $ynd]
+    }
 }
 
 #----------------------------------------------------------------------------
