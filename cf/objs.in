@@ -110,11 +110,7 @@ pdfutils.o:	plplotP.h plplot.h pdf.h pdfutils.c
 
 sc3d.o:		plstubs.h plplotP.h plplot.h sc3d.c
 scstubs.o:	plstubs.h plplotP.h plplot.h scstubs.c
-
-# Optimizer on SX-3 makes bogus code here.
-
 sccont.o:	plstubs.h plplotP.h plplot.h sccont.c
-	$(CC) $(CC_FLAGS_SCCONT) sccont.c
 
 # Fortran language stubs for linking Plplot to Fortran.
 
@@ -138,11 +134,7 @@ plbuf.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h metadefs.h \
 plmeta.o:	plplotP.h plplot.h drivers.h pdf.h plstream.h metadefs.h \
 		plmeta.c
 xfig.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h xfig.c
-
-# Optimizer under AIX 3.2.3 bogues out here.
-
 xwin.o:		plplotP.h plplot.h drivers.h pdf.h plstream.h plplotX.h xwin.c
-	$(CC) $(CC_FLAGS_XWIN) xwin.c
 
 # TK driver.
 
@@ -150,10 +142,6 @@ tk.o:		plserver.h plplotTK.h plplotX.h plplotP.h plplot.h drivers.h \
 		pdf.h plstream.h metadefs.h plevent.h tk.c
 tkshell.o:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
 		plstream.h tkshell.c
-
-tcpip.o:	plserver.h plplotTK.h plplotX.h plplotP.h plplot.h pdf.h \
-		plstream.h tcpip.c
-	$(OCC) $(CC_FLAGS) tcpip.c
 
 # Support files for extended Wish'es like plserver.
 
