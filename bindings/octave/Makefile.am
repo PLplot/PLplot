@@ -34,6 +34,7 @@ EXTRA_DIST = \
   massage.c \
   plplot_octave_org.h \
   plplot_octave_rej.h \
+  plplot_octave_def \
   etc \
   matwrap
 
@@ -46,9 +47,10 @@ octave_libs = -L../../src/.libs -lplplot$(LIB_TAG)
 # Extra sed step is a correction to allow gcc 3.2 to compile.  This correction
 # also still works on gcc 2.95
 plplot_octave.cc tmp_stub: plplot_octave_org.h ${top_builddir}/config.h
-	$(MATWRAP) -language octave -o tmp_plplot_octave.cc	-stub tmp_stub \
+	$(MATWRAP) -language octave -o plplot_octave.cc	-stub tmp_stub \
 	-cpp_ignore plplot_octave_rej.h ${top_builddir}/config.h \
 	-cpp c++ -E -C plplot_octave_org.h
+	mv -f plplot_octave.cc tmp_plplot_octave.cc
 	sed 's/ string / std::string /' tmp_plplot_octave.cc > plplot_octave.cc
 
 plplot_octave.oct plplot_octave.o: plplot_octave.cc
@@ -94,7 +96,7 @@ if has_xml_pm
 	  ../$(top_srcdir)/doc/docbook/src/api.xml ) \
 	&& touch doc-stamp
 else
-	@echo "Perl modules not available: cannot generate plplot_octave_txt/*.txt"
+	@echo "Perl modules not available: cannot generate full online help for plplot_octave"
 endif
 
 plplot_stub.m: doc-stamp tmp_stub massage
