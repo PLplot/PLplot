@@ -1,10 +1,7 @@
 #include <Python.h>
 #include "plplot.h"	
 #include "plplotP.h"
-#include "arrayobject.h"	
-
-extern void plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
-	                             PLFLT scale, PLFLT dx, PLFLT dy);
+#include "Numeric/arrayobject.h"	
 
 #if defined(PL_DOUBLE) || defined(DOUBLE)
 #define PL_ARGS(a, b) (a)
