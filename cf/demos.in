@@ -186,98 +186,98 @@ x01f$O: x01f.f
 
 x01f$E:	$(PLLIBS) x01f$O
 	$(LDF) $(LDF_FLAGS) x01f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x02f$O: x02f.f
 	$(F77) $(F77_FLAGS) x02f.f
 
 x02f$E:	$(PLLIBS) x02f$O
 	$(LDF) $(LDF_FLAGS) x02f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x03f$O: x03f.f
 	$(F77) $(F77_FLAGS) x03f.f
 
 x03f$E:	$(PLLIBS) x03f$O
 	$(LDF) $(LDF_FLAGS) x03f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x04f$O: x04f.f
 	$(F77) $(F77_FLAGS) x04f.f
 
 x04f$E:	$(PLLIBS) x04f$O
 	$(LDF) $(LDF_FLAGS) x04f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x05f$O: x05f.f
 	$(F77) $(F77_FLAGS) x05f.f
 
 x05f$E:	$(PLLIBS) x05f$O
 	$(LDF) $(LDF_FLAGS) x05f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x06f$O: x06f.f
 	$(F77) $(F77_FLAGS) x06f.f
 
 x06f$E:	$(PLLIBS) x06f$O
 	$(LDF) $(LDF_FLAGS) x06f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x07f$O: x07f.f
 	$(F77) $(F77_FLAGS) x07f.f
 
 x07f$E:	$(PLLIBS) x07f$O
 	$(LDF) $(LDF_FLAGS) x07f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x08f$O: x08f.f
 	$(F77) $(F77_FLAGS) x08f.f
 
 x08f$E:	$(PLLIBS) x08f$O
 	$(LDF) $(LDF_FLAGS) x08f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x09f$O: x09f.f
 	$(F77) $(F77_FLAGS) x09f.f
 
 x09f$E:	$(PLLIBS) x09f$O
 	$(LDF) $(LDF_FLAGS) x09f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x10f$O: x10f.f
 	$(F77) $(F77_FLAGS) x10f.f
 
 x10f$E:	$(PLLIBS) x10f$O
 	$(LDF) $(LDF_FLAGS) x10f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x11f$O: x11f.f
 	$(F77) $(F77_FLAGS) x11f.f
 
 x11f$E:	$(PLLIBS) x11f$O
 	$(LDF) $(LDF_FLAGS) x11f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x12f$O: x12f.f
 	$(F77) $(F77_FLAGS) x12f.f
 
 x12f$E:	$(PLLIBS) x12f$O
 	$(LDF) $(LDF_FLAGS) x12f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x13f$O: x13f.f
 	$(F77) $(F77_FLAGS) x13f.f
 
 x13f$E:	$(PLLIBS) x13f$O
 	$(LDF) $(LDF_FLAGS) x13f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 x16f$O: x16f.f
 	$(F77) $(F77_FLAGS) x16f.f
 
 x16f$E:	$(PLLIBS) x16f$O
 	$(LDF) $(LDF_FLAGS) x16f$O \
-	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS)
+	       $(PLLIB_LDF) $(TO) $@ $(LDF_PATH) $(LDF_LIBS) $(RPATH)
 
 # -----------------------------------------------------------------------------
 # Convenience rules for testing.
