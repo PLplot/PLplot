@@ -14,8 +14,7 @@ fi
 ./bootstrap.sh $optver
 rm -f config.status
 fakeroot debian/rules clean
-./configure --enable-docbook --enable-python --enable-octave --enable-f77 \
-            --enable-smart-ac-output
+./configure --enable-builddoc --enable-python --enable-octave --enable-f77
 make dist
 version=`debian/get-upstream-version.pl < configure.ac`
 mv plplot-$version.tar.gz ../plplot_$version.orig.tar.gz

@@ -1,3 +1,14 @@
+plplot (5.2.0.cvs.20030320-1) unstable; urgency=low
+
+  * Built with new CVS sources: configure has now new options for
+    controlling configuration and building of the Docbook documentation.
+    This should generated less warning messages in the autobuilders.
+  * debian/control: Bumped Standards-Version to 3.5.9.  Added
+    libxml-parser-perl and libxml-dom-perl to Build-Depends, since these
+    Perl modules are needed for the Octave bindings.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 20 Mar 2003 09:27:35 +0100
+
 plplot (5.2.0.cvs.20030319-1) unstable; urgency=low
 
   * Built with new CVS sources: Since my last upload, there has been only

@@ -31,8 +31,7 @@ config-stamp:
                     --disable-static --enable-python --enable-octave   \
                     --enable-gnome --with-double --disable-linuxvga    \
                     --infodir=/usr/share/info --with-freetype          \
-                    --without-rpath --enable-docbook                   \
-                    --disable-docbook-build
+                    --without-rpath --with-prebuiltdoc
 	( python_version=`egrep "^PYTHON_VERSION =" Makefile           \
 	      | sed "s/PYTHON_VERSION = *//" | sed 's/ *$$//'`       ; \
 	  echo "python:Depends=python$$python_version"                 \
