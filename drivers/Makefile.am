@@ -238,7 +238,7 @@ endif
 
 $(top_builddir)/bindings/tcl/tclAPI.c: tclapi
 tclapi:
-	( cd $(top_builddir)/bindings/tcl ; $(MAKE) tclAPI.c )
+	( cd $(top_builddir)/bindings/tcl ; $(MAKE) tclgen.h )
 .PHONY: tclapi
 
 if enable_tcl
