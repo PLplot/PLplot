@@ -1,16 +1,76 @@
 #!/bin/sh
+#
+# plplot-config
+#
+# Utility to help building projects against plplot
 
-matrix_lib="@MATLIB_NAME@"
-#plplot_libs="@LDC_FLAGS@ -L@LIB_DIR@ -l@PLLIB_NAME@@LIB_TAG@ ${matrix_lib:+-l${matrix_lib}@LIB_TAG@} @LIBS@ @INSTALL_RPATH@"
-plplot_libs="@LDC_FLAGS@ -L@LIB_DIR@ -l@PLLIB_NAME@@LIB_TAG@ @INSTALL_RPATH@"
-plplot_cflags="@INCS@"
-plplot_cxx_lib="-l@CXXLIB_NAME@@LIB_TAG@"
+#----------------------------------------------------------------------------
+# Spits out cflags
 
-prefix=@prefix@
-version=@PLPLOT_VERSION@
+output_cflags () {
+    if test ${prefix}/include != /usr/include ; then
+	includes=-I${prefix}/include
+	for i in $plplot_cflags ; do
+	    if test $i = -I${prefix}/include ; then
+		includes=""
+	    fi
+	done
+    fi
+    echo $includes $plplot_cflags -I/usr/X11R6/include 
+}
 
-usage()
-{
+#----------------------------------------------------------------------------
+# Spits out libs
+
+output_libs () {
+    # Set up library spec
+    plplot_libspec="-L${prefix}/lib -lplplot@LIB_TAG@"
+    if test "$with_cxx" = "yes" -a "$enable_cxx" = "yes" ; then
+	plplot_libspec="$plplot_libspec -lplcxx@LIB_TAG@"
+    fi
+    if test "$enable_tcl" = "yes"; then
+	plplot_libspec="$plplot_libspec -lplplottcltk@LIB_TAG@"
+    fi
+
+    # Snarf libs from plplot_libtool output & process
+    process_libtool_output \
+     `plplot_libtool -n --mode=link LINKER ${plplot_libspec} -o OUTPUT`
+}
+
+#----------------------------------------------------------------------------
+# Throw away anything we don't want from plplot_libtool output
+
+process_libtool_output () {
+    for i in $*; do
+	case $i in
+	    -L*) emit_lib_output $*; return;;
+	    * )  shift;;
+	esac
+    done
+}
+
+#----------------------------------------------------------------------------
+# Output filtered linker args
+# Filter out /usr/lib and all but one $prefix/lib.
+# Todo: should filter out all duplicates.
+
+emit_lib_output () {
+    libs=""
+    if test ${prefix}/lib != /usr/lib ; then
+	libs=-L${prefix}/lib
+    fi
+    for i in $* ; do
+	if test $i != -L${prefix}/lib ; then
+	    libs="$libs $i"
+	fi
+    done
+    echo $libs
+}
+
+#----------------------------------------------------------------------------
+# Spits out usage message & exits
+
+usage () {
 	cat <<EOF
 Usage: plplot-config [OPTIONS]
 Options:
@@ -24,73 +84,57 @@ EOF
 	exit $1
 }
 
+#----------------------------------------------------------------------------
+# Set up config/control variables
+
+plplot_cflags=""
+prefix=@prefix@
+version=@VERSION@
+enable_tcl=@enable_tcl@
+enable_cxx=@enable_cxx@
+
 if test $# -eq 0; then
-	usage 1 1>&2
+    usage 1 1>&2
 fi
 
+# Loop over command line args
+# Don't abort for unrecognized arg to allow for future extension!
 while test $# -gt 0; do
-  case "$1" in
-  -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
-  *) optarg= ;;
-  esac
+    case "$1" in
+	-*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+	*) optarg= ;;
+    esac
 
-  case $1 in
-    --prefix=*)
-      prefix=$optarg
-      ;;
-    --prefix)
-      echo_prefix=yes
-      ;;
-    --version)
-      echo $version
-      ;;
-    --cflags)
-      echo_cflags=yes
-      ;;
-    --libs)
-      echo_libs=yes
-      ;;
-    --with-c++)
-      echo_cxx=yes
-      ;;
-    --help|*)
-      usage 1 1>&2
-      ;;
-  esac
-  shift
+    case $1 in
+	--prefix=*)
+	    prefix=$optarg
+	    ;;
+	--prefix)
+	    echo $prefix
+	    ;;
+	--version)
+	    echo $version
+	    ;;
+	--cflags)
+	    echo_cflags=yes
+	    ;;
+	--libs)
+	    echo_libs=yes
+	    ;;
+	--with-c++)
+	    with_cxx=yes
+	    ;;
+	--help)
+	    usage 1 1>&2
+	    ;;
+    esac
+    shift
 done
 
-if test "$echo_prefix" = "yes"; then
-  echo $prefix
-fi
-
 if test "$echo_cflags" = "yes"; then
-  if test ${prefix}/include != /usr/include ; then
-    includes=-I${prefix}/include
-    for i in $plplot_cflags ; do
-      if test $i = -I${prefix}/include ; then
-        includes=""
-      fi
-    done
-  fi
-  echo $includes $plplot_cflags -I/usr/X11R6/include 
+    output_cflags
 fi
 
 if test "$echo_libs" = "yes"; then
-  libdirs=-L${prefix}/lib
-  my_plplot_libs=
-  # plcxx must be first in the list (if required) since library order matters.
-  if test "$echo_cxx" = "yes" ; then
-    my_plplot_libs="$my_plplot_libs $plplot_cxx_lib"
-  fi
-  for i in $plplot_libs ; do
-    if test $i != -L${prefix}/lib ; then
-      if test -z "$my_plplot_libs" ; then
-        my_plplot_libs="$i"
-      else
-        my_plplot_libs="$my_plplot_libs $i"
-      fi
-    fi
-  done
-  echo $libdirs $my_plplot_libs
+    output_libs
 fi
