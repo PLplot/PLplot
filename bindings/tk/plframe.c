@@ -1347,7 +1347,7 @@ Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
     plinit();
     pladv(0);
     plcpstrm(plFramePtr->ipls, 0);
-    
+
 /* Remake current plot, close file, and switch back to original stream */
 
     plreplot();
@@ -1537,8 +1537,8 @@ Save(Tcl_Interp *interp, register PlFrame *plFramePtr,
 /* Open file for writes */
 
 	if ((sfile = fopen(argv[2], "wb+")) == NULL) {
-	    Tcl_AppendResult(interp, "Error -- cannot open file", argv[1],
-			     "for writing", (char *) NULL);
+	    Tcl_AppendResult(interp, "Error -- cannot open file ", argv[2],
+			     " for writing", (char *) NULL);
 	    plFramePtr->ipls_save = 0;
 	    plend1();
 	    return TCL_ERROR;
