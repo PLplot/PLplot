@@ -215,10 +215,10 @@ def main():
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
     plcont(z, clevel, mypltr, tr)
-    plstyl( 1, mark, space )
+    plstyl([mark], [space])
     plcol0(3)
     plcont(w, clevel, mypltr, tr)
-    plstyl( 0, mark, space )
+    plstyl([], [])
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
@@ -226,10 +226,10 @@ def main():
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
     plcont(z, clevel, mypltr, tr)
-    plstyl( 1, mark, space )
+    plstyl([mark], [space])
     plcol0(3)
     plcont(w, clevel, mypltr, tr)
-    plstyl( 0, mark, space )
+    plstyl([], [])
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
@@ -238,10 +238,10 @@ def main():
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
     plcont(z, clevel, pltr1, xg1, yg1)
-    plstyl( 1, mark, space )
+    plstyl([mark], [space])
     plcol0(3)
     plcont(w, clevel, pltr1, xg1, yg1)
-    plstyl( 0, mark, space )
+    plstyl([], [])
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
@@ -249,10 +249,10 @@ def main():
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
     plcont(z, clevel, pltr1, xg1, yg1)
-    plstyl( 1, mark, space )
+    plstyl([mark], [space])
     plcol0(3)
     plcont(w, clevel, pltr1, xg1, yg1)
-    plstyl( 0, mark, space )
+    plstyl([], [])
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
@@ -261,10 +261,10 @@ def main():
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
     plcont(z, clevel, pltr2, xg2, yg2)
-    plstyl( 1, mark, space )
+    plstyl([mark], [space])
     plcol0(3)
     plcont(w, clevel, pltr2, xg2, yg2)
-    plstyl( 0, mark, space )
+    plstyl([], [])
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 
@@ -272,10 +272,10 @@ def main():
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
     plcol0(2)
     plcont(z, clevel, pltr2, xg2, yg2)
-    plstyl( 1, mark, space )
+    plstyl([mark], [space])
     plcol0(3)
     plcont(w, clevel, pltr2, xg2, yg2)
-    plstyl( 0, mark, space )
+    plstyl([], [])
     plcol0(1)
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
 

@@ -151,25 +151,6 @@ def plcont(z, *args):
     _plcont(z, kx, lx, ky, ly, clev, pltr, pltr_data)
 plcont.__doc__ = _plcont.__doc__
   
-_plstyl = plstyl
-def plstyl(*args):
-  if len(args) == 3:
-    n,m,s = args
-  else:
-    m,s = args
-    n = 1
-
-  if n == 0:
-    m = []
-    s = []
-  if type(m) == types.IntType:
-    m = [m]
-  if type(s) == types.IntType:
-    s = [s]
-
-  _plstyl(m,s)
-plstyl.__doc__ = _plstyl.__doc__
-
 _plshades = plshades
 def plshades(z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, rect,
              *args):
