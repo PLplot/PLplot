@@ -1,6 +1,5 @@
-plplot (5.2.1.cvs.20031027-4) unstable; urgency=low
+plplot (5.2.1.cvs.20031030-1) unstable; urgency=low
 
-  * NOT YET RELEASED!
   * Preparation for the next upstream version, which changed the soversion
     of the PLplot library.  Changed all the references to libplplot5 to
     libplplot9.  Affected files:
@@ -20,7 +19,7 @@ plplot (5.2.1.cvs.20031027-4) unstable; urgency=low
     - plplot9-driver-xwin
     - plplot9-driver-gnome
 
- -- Rafael Laboissiere <rafael@debian.org>  Wed, 29 Oct 2003 22:19:08 +0100
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 30 Oct 2003 09:37:15 +0100
 
 plplot (5.2.1.cvs.20031027-3) unstable; urgency=low
 
