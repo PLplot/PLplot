@@ -55,7 +55,7 @@ MAX_TEX_RECURSION = 4
 BINDIR = ../bin
 
 
-all: html print info man
+all: @TARGETS@
 
 
 html: $(HTML_MANIFEST)

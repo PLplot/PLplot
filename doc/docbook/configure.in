@@ -425,6 +425,28 @@ fi], [
 print=$PRINT; html=$HTML; info=$INFO; man=$MAN
 ])
 
+
+dnl Control build of man and info pages
+
+AC_ARG_ENABLE(info, [
+  --disable-info                        Disable build of info pages],
+  [if test "$enable_info" = "no" ; then 
+    INFO=""
+    AC_MSG_WARN([
+Info pages will not be build at your request.])
+   fi])
+AC_ARG_ENABLE(man, [
+  --disable-man                         Disable build of man pages],
+  [if test "$enable_man" = "no" ; then 
+    MAN=""
+    AC_MSG_WARN([
+Man pages will not be build at your request.])    
+    fi])
+
+TARGETS="$PRINT $HTML $INFO $MAN"
+AC_SUBST(TARGETS)
+
+
 AC_OUTPUT([Makefile
            src/Makefile src/plplotdoc.xml src/plplotdoc-html.dsl 
            src/plplotdoc-print.dsl 

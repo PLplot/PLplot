@@ -1,3 +1,8 @@
+2001-01-15  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Makefile.am: Dependencies for "all" rule come now from
+	AC_SUBSTituted variable TARGETS.
+
 2000-12-10  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* plplotdoc-print.dsl.in: The brackets around lineannotations are
