@@ -90,7 +90,7 @@ c_pllightsource(PLFLT x, PLFLT y, PLFLT z)
 void
 c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt)
 {
-  c_plot3dc(x, y, z, nx, ny, opt | PLMESH, NULL, 0);
+  c_plot3dc(x, y, z, nx, ny, opt | MESH, NULL, 0);
 }
 
 /*--------------------------------------------------------------------------*\
@@ -116,7 +116,7 @@ void
 c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
 	 PLFLT *clevel, PLINT nlevel)
 {
-    plot3dc(x, y, z, nx, ny, opt | PLMESH, clevel, nlevel);
+    plot3dc(x, y, z, nx, ny, opt | MESH, clevel, nlevel);
 }
 
 /* clipping helper for 3d polygons */
@@ -534,7 +534,7 @@ plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 
   if (opt & FACETED) {
     plcol0(0);
-    plot3dc(x, y, z, nx, ny, PLMESH | DRAW_LINEXY, NULL, 0);
+    plot3dc(x, y, z, nx, ny, MESH | DRAW_LINEXY, NULL, 0);
   }
 
   if (opt & DRAW_SIDES) { /* the sides look ugly !!! */
@@ -605,7 +605,7 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
  *  BASE_CONT:    Draw contour at bottom xy plane 
  *  TOP_CONT:     Draw contour at top xy plane (not yet)
  *  DRAW_SIDES:   Draw sides around the plot
- *  PLMESH:       Draw the "under" side of the plot
+ *  MESH:       Draw the "under" side of the plot
  *
  * or any bitwise combination, e.g. "MAG_COLOR | DRAW_LINEX"
  *
@@ -662,7 +662,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 	}
     }
 
-    if (opt & PLMESH)
+    if (opt & MESH)
       pl3mode = 1;
 
     if (opt & DRAW_SIDES)
@@ -769,7 +769,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
    if (opt & BASE_CONT) {     /* If enabled, draw the contour at the base.  */
      if (clevel != NULL && nlevel != 0) {
        base_cont = 1;
-       /* even if PLMESH is not set, "set it",
+       /* even if MESH is not set, "set it",
 	  as the base contour can only be done in this case */
        pl3mode = 1; 
      }

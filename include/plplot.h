@@ -1084,7 +1084,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 /* 
  * definitions for the opt argument in plot3dc() and plsurf3d()
  * 
- * DRAW_LINEX must be 1 and DRAW_LINEY must be 2, because of legacy code!
+ * DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
  */
 
 #define DRAW_LINEX  (1 << 0) /* draw lines parallel to the X axis */
@@ -1096,7 +1096,7 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
 #define SURF_CONT   (1 << 5) /* draw contour plot at surface */
 #define DRAW_SIDES  (1 << 6) /* draw sides */
 #define FACETED     (1 << 7) /* draw outline for each square that makes up the surface */
-#define PLMESH      (1 << 8) /* draw mesh */
+#define MESH        (1 << 8) /* draw mesh */
 
   /*
    *  valid options for plot3dc():
