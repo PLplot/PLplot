@@ -84,7 +84,8 @@ install-exec-hook:
 if enable_java
 	( cd $(DESTDIR)$(ourexecjavadir) ; \
 	  rm -f plplotjavac_wrap*.a plplotjavac_wrap*.la ; \
-	  javac -d ../../../java $(javafiles))
+	  cd $(DESTDIR)$(libdir) ; \
+	  javac -classpath java -d java java/plplot/core/*.java)
 endif
 
 MAINTAINERCLEANFILES = $(swiggenfiles)

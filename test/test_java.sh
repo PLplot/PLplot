@@ -6,7 +6,12 @@
 # to the java and javac commands for this to work.
 
 # The java examples were automatically built in the make install step
-# by javac -d $CLASSPATH $CLASSPATH/plplot/examples/x??.java
+# by cd $prefix/lib
+# javac -d java java/plplot/examples/*.java.
+# This is equivalent to
+# javac -d $CLASSPATH $CLASSPATH/plplot/examples/*.java
+# but means that $CLASSPATH does not have to be set at build
+# or install time like it does to execute these pre-compiled examples.
 
 java plplot.examples.x01 -dev $device -o x01j.$dsuffix $options
 java plplot.examples.x02 -dev $device -o x02j.$dsuffix $options

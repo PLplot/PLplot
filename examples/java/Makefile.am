@@ -55,8 +55,8 @@ endif
 
 install-exec-hook:
 if enable_java
-	( cd $(DESTDIR)$(ourexecjavadir) ; \
-	  javac -d ../../../java $(javafiles))
+	( cd $(DESTDIR)$(libdir) ; \
+	  javac -classpath java -d java java/plplot/examples/*.java)
 endif
 ### FIXME: Brute force inclusion in dist tarball.  The files below may
 ### be treated in a different way for installation [RL, 2003-03-06]
