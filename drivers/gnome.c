@@ -3,7 +3,11 @@
         PLplot GnomeCanvas device driver.
 */
 #include "plplot/plDevs.h"
+
+#ifdef PLD_gnome
+
 #include "plplot/plplotP.h"
+#include "plplot/drivers.h"
 
 #include <gtk/gtk.h>                                                       
 #include <glib.h>                                                          
@@ -46,8 +50,6 @@
 #ifndef ABS
 #define ABS(x) ((x < 0) ? (-(x)) : (x))
 #endif
-
-#ifdef PLD_gnome
 
 void
 debug (char* msg)
