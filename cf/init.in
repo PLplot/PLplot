@@ -47,7 +47,9 @@ E		=
 # good for filesystems that truncate names (eg, DOS)
 
 PLLIB_NAME	= plplot
+PLLIB_NAME	= Pltk
 PLLIB_BASE	= libplplot
+PLLIB_BASE	= libPltk
 
 # Install directories
 

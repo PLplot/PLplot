@@ -55,18 +55,24 @@ LIB_OBJS	= $(LIB_OBJS_SO) $(LIB_OBJS_SA)
 # Library names
 
 PLLIB_AR	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$A
+PLLIB_AR	= $(PLLIB_PATH)$(PLLIB_BASE)$A
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
 PLLIB_SA	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SA)
+
+PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(SO)
 
 # This is used for making the install versions of plrender & plserver
 # (Must relink after installing shared library!)
 
 LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
+LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME) $(MAT_LINK)
 
 # These are what we link against.
 
 PLLIB_LDC	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
+PLLIB_LDC	= -L$(PLLIB_DIR) -l$(PLLIB_NAME) $(MAT_LINK)
+PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME) $(MAT_LINK)
 
 # Header file dependencies for demos.
 # Done this way to only pick up the dependency during development, and not
