@@ -1,0 +1,94 @@
+divert(-1)dnl
+!***********************************************************************
+! $Id$
+! $Log$
+! Revision 1.1  2000/12/23 23:19:24  airwin
+! Double precision handled by m4. These are the m4 source files for the *.f
+! files that are compiled for examples.  m4 source is fairly close to
+! old version of the *.f file, but with a header prepended, and REAL,
+! implicit_none, and DBLE translated appropriately.  In particular the
+! implicit_none demanded a lot of changes in these examples, and
+! single-precision arguments to plplot routines were converted using
+! DBLE (which translates to dble or real depending on DOUBLE).
+!
+! Revision 1.3  1994/09/27 22:07:16  mjl
+! All use of double quotes for Fortran strings (not strictly legal)
+! eliminated in favor of single quotes.
+!
+! Revision 1.2  1994/05/26  19:34:27  mjl
+! Inserted missing CVS Id and Log fields for all Fortran demos.  Comment
+! character changed to "!" everywhere, to work well with font-lock in Lucid
+! emacs (requires a small change to fortran-mode.el).
+!
+!
+!***********************************************************************
+! Uses implicit_none, REAL, and DBLE from fmacs.m4.
+divert(1)dnl
+include(fmacs.m4)dnl
+!     Demonstration program for PLPLOT: 
+      implicit_none
+
+      REAL PI
+      parameter (PI = 3.14156)
+      REAL just, dx, dy, x(500), y(500), per(5),
+     &  theta, theta0, dthet, theta1
+      integer i, j
+      character*20 text(5)
+      data text / 'Maurice', 'Randy', 'Mark', 'Steve', 'Warner'/
+
+      per(1) = 10.
+      per(2) = 32.
+      per(3) = 12.
+      per(4) = 30.
+      per(5) = 16.
+
+! Ask user to specify the output device.
+
+      call plinit()
+
+      call plenv( DBLE (0.), DBLE (10.), DBLE (0.), DBLE (10.), 1, -2 )
+      call plcol(2)
+
+      theta0 = 0.
+      dthet = 2*PI/500
+
+      do 1 i = 1, 5
+         x(1) = 5.
+         y(1) = 5.
+         j = 1
+         theta1 = theta0 + 2 * PI * per(i) / 100.
+         if (i .eq. 5) theta1 = 2 * PI
+
+         do 2 theta = theta0, theta1, dthet
+            j = j + 1
+            x(j) = 5 + 3*cos(theta)
+            y(j) = 5 + 3*sin(theta)
+2        continue
+
+         call plcol(i)
+         call plpsty( mod(i+3, 8) + 1 )
+         call plfill( j, x, y )
+         call plcol(1)
+         call plline( j, x, y )
+
+         just = (theta0 + theta1) / 2.
+         dx = .25 * cos(just)
+         dy = .25 * sin(just)
+         if (just .lt. PI/2 .or. just .gt. 3*PI/2) then
+            just = 0.
+         else 
+            just = 1.
+         endif
+         call plptex( x(j/2)+dx, y(j/2)+dy, DBLE (1.), DBLE (0.),
+     &     just, text(i) )
+         theta0 = theta - dthet
+1     continue
+
+      call plfont(2)
+      call plschr( DBLE (0.), DBLE (1.3))
+      call plptex( DBLE (5.), DBLE (9.), DBLE (1.), DBLE (0.),
+     &  DBLE (.5), 'Percentage of Sales' )
+
+      call plend
+
+      end
