@@ -670,7 +670,6 @@ AC_DEFUN([SWIG_PROG],[
 	if test -z "$SWIG" ; then
 		AC_MSG_WARN([cannot find 'swig' program. You should look at http://www.swig.org])
 		SWIG='echo "Error: SWIG is not installed. You should look at http://www.swig.org" ; false'
-		AC_MSG_NOTICE([SWIG executable is '$SWIG'])
 	elif test -n "$1" ; then
 		AC_MSG_CHECKING([for SWIG version])
 		[swig_version=`$SWIG -version 2>&1 | grep 'SWIG Version' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]
@@ -687,14 +686,15 @@ AC_DEFUN([SWIG_PROG],[
 			if test $swig_required_version -gt $swig_tmp ; then
 				AC_MSG_WARN([SWIG version >= $1 is required.  You have $swig_version.  You should look at http://www.swig.org])
 				SWIG='echo "Error: SWIG version >= $1 is required.  You have '"$swig_version"'.  You should look at http://www.swig.org" ; false'
+			else
+				AC_MSG_NOTICE([SWIG executable is '$SWIG'])
+				SWIG_RUNTIME_LIBS_DIR=`echo $SWIG | sed "s,/bin.*$,/lib,"`
+				AC_MSG_NOTICE([SWIG runtime library directory is '$SWIG_RUNTIME_LIBS_DIR'])
 			fi
 		else
 			AC_MSG_WARN([cannot determine SWIG version])
 			SWIG='echo "Error: Cannot determine SWIG version.  You should look at http://www.swig.org" ; false'
 		fi
-		AC_MSG_NOTICE([SWIG executable is '$SWIG'])
-		SWIG_RUNTIME_LIBS_DIR=`echo $SWIG | sed "s,/bin.*$,/lib,"`
-		AC_MSG_NOTICE([SWIG runtime library directory is '$SWIG_RUNTIME_LIBS_DIR'])
 	fi
 	AC_SUBST([SWIG_RUNTIME_LIBS_DIR])
 ])
