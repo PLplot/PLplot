@@ -655,6 +655,7 @@ dnl import the whole of SWIG-1.3.21/Tools/config/swig.m4
 dnl subsequently AWI (with ideas from RL) fixed the case where find finds
 dnl multiple files, and also removed some bashism's and extended sed
 dnl constructs so now there is some hope these macros will work cross-platform.
+dnl also, disabled SWIG when version check does not succeed
 # Contributed by Sebastian Huber
 
 # SWIG_PROG([required-version = N[.N[.N]]])
@@ -667,8 +668,9 @@ dnl constructs so now there is some hope these macros will work cross-platform.
 AC_DEFUN([SWIG_PROG],[
 	AC_PATH_PROG([SWIG],[swig])
 	if test -z "$SWIG" ; then
-		AC_MSG_WARN([cannot find 'swig' program, you may have a look at http://www.swig.org])
-		SWIG='echo "error: SWIG is not installed, you may have a look at http://www.swig.org" ; false'
+		AC_MSG_WARN([cannot find 'swig' program. You should look at http://www.swig.org])
+		SWIG='echo "Error: SWIG is not installed. You should look at http://www.swig.org" ; false'
+		AC_MSG_NOTICE([SWIG executable is '$SWIG'])
 	elif test -n "$1" ; then
 		AC_MSG_CHECKING([for SWIG version])
 		[swig_version=`$SWIG -version 2>&1 | grep 'SWIG Version' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]
@@ -683,11 +685,14 @@ AC_DEFUN([SWIG_PROG],[
 			[swig_tmp=$(( 1000000 * ${swig_tmp[0]:-0} + 1000 * ${swig_tmp[1]:-0} + ${swig_tmp[2]:-0} ))]
 
 			if test $swig_required_version -gt $swig_tmp ; then
-				AC_MSG_WARN([SWIG version $1 is required, you have $swig_version])
+				AC_MSG_WARN([SWIG version >= $1 is required.  You have $swig_version.  You should look at http://www.swig.org])
+				SWIG='echo "Error: SWIG version >= $1 is required.  You have '"$swig_version"'.  You should look at http://www.swig.org" ; false'
 			fi
 		else
 			AC_MSG_WARN([cannot determine SWIG version])
+			SWIG='echo "Error: Cannot determine SWIG version.  You should look at http://www.swig.org" ; false'
 		fi
+		AC_MSG_NOTICE([SWIG executable is '$SWIG'])
 		SWIG_RUNTIME_LIBS_DIR=`echo $SWIG | sed "s,/bin.*$,/lib,"`
 		AC_MSG_NOTICE([SWIG runtime library directory is '$SWIG_RUNTIME_LIBS_DIR'])
 	fi
@@ -696,7 +701,7 @@ AC_DEFUN([SWIG_PROG],[
 
 # SWIG_ENABLE_CXX()
 #
-# Enable SWIG C++ support.  This effects all invocations of $(SWIG).
+# Enable SWIG C++ support.  This affects all invocations of $(SWIG).
 AC_DEFUN([SWIG_ENABLE_CXX],[
 	AC_REQUIRE([SWIG_PROG])
 	AC_REQUIRE([AC_PROG_CXX])
