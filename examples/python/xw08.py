@@ -49,7 +49,7 @@ def restore_cmap1():
 def cmap1_init():
     # Independent variable of control points.
     i = array((0., 1.))
-    # Hue for control points.  Blue-violet to red
+    # Hue for control points.  Doesn't matter since saturation is zero.
     h = array((0., 0.))
     # Lightness ranging from half-dark (for interest) to light.
     l = array((0.5, 1.))
@@ -58,7 +58,7 @@ def cmap1_init():
     # Integer flag array is zero (no interpolation along far-side of colour
     # figure.)  Not used in python plplot API, but soon will be changed.
     rev = array((0, 0))
-    # number of cmap1 colours is 256
+    # number of cmap1 colours is 256 in this case.
     plscmap1n(256)
     # Interpolate between control points to set up cmap1.
     plscmap1l(0, i, h, l, s)
