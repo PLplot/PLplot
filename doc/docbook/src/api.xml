@@ -5426,7 +5426,7 @@ default
     the plotted function border and the base XY plane.
     The arguments are identical to <function>plmeshc</function>. The only difference between
     plmeshc() and plot3dc() is that plmeshc() draws the botton side of the surface, while
-    plot3dc() only draws the surface as view from the top.
+    plot3dc() only draws the surface as viewed from the top.
     </para>
 
     </sect1>
