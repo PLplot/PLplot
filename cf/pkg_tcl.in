@@ -28,12 +28,10 @@ MAT_OBJS_SA	=
 # Variables used in accessing libraries.
 # These can be overridden in system-dependent files.
 
-# Note no LIB_TAG appended because the matrix library only comes in one
-# version, not single- and double-precision versions.
-MATLIB_AR        = $(PLLIB_PATH)$(MATLIB_BASE)$A
-MATLIB_SO        = $(PLLIB_PATH)$(MATLIB_BASE)$(SO)
-MATLIB_SA        = $(PLLIB_PATH)$(MATLIB_BASE)$(SA)
-MAT_LINK	= -l$(MATLIB_NAME)
+MATLIB_AR        = $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$A
+MATLIB_SO        = $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$(SO)
+MATLIB_SA        = $(PLLIB_PATH)$(MATLIB_BASE)$(LIB_TAG)$(SA)
+MAT_LINK	= -l$(MATLIB_NAME)$(LIB_TAG)
 
 # Variables for use in "make" and "make install".
 
@@ -82,6 +80,6 @@ install_mat_includes:
 
 install_matlib:
 	@-$(CP) $(MATLIB_BASE)* $(LIB_DIR); \
-	  if test -r $(MATLIB_BASE)$A; then \
-	      $(RANLIB) $(LIB_DIR)/$(MATLIB_BASE)$A; \
+	  if test -r $(MATLIB_BASE)$(LIB_TAG)$A; then \
+	      $(RANLIB) $(LIB_DIR)/$(MATLIB_BASE)$(LIB_TAG)$A; \
 	  fi
