@@ -25,11 +25,12 @@
 
 #ifdef PLD_wingcc
 
+#include <string.h>
+#include <windows.h>
+
 #include "plplotP.h"
 #include "drivers.h"
 #include "plevent.h"
-#include <string.h>
-#include <windows.h>
 
 #ifdef HAVE_FREETYPE
 
@@ -61,7 +62,7 @@
 
 /* Device info */
 
-char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:47:wingcc";
+char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:5:wingcc";
 
 /* Struct to hold device-specific info. */
 
@@ -334,9 +335,16 @@ plD_init_wingcc(PLStream *pls)
 {
     wingcc_Dev *dev;
 #ifdef HAVE_FREETYPE
-    int freetype=0;
-    int smooth_text=0;
+    static int freetype=0;
+    static int smooth_text=0;
     FT_Data *FT;
+
+    char key_name[]="Software\\PLplot\\wingcc";
+    char Keyword_text[]="freetype";
+    char Keyword_smooth[]="smooth";
+    char reg_text=0;
+    char reg_smooth=0;
+
 #endif
 
     DrvOpt wingcc_options[] = {
@@ -369,6 +377,21 @@ plD_init_wingcc(PLStream *pls)
 
     if (!pls->colorset)
 	pls->color = 1;
+
+
+#ifdef HAVE_FREETYPE
+
+/*
+ *  Read registry to see if the user has set up default values
+ *  for text and smoothing. These will over ride anything that
+ *  might be given on the command line, so we will load the 
+ *  values right into the same memory slots we pass to plParseDrvOpts
+ */
+
+    GetRegIntValue(key_name, Keyword_text, &freetype);
+    GetRegIntValue(key_name, Keyword_smooth, &smooth_text);
+
+#endif
 
 /* Check for and set up driver options */
 
@@ -696,7 +719,6 @@ plD_bop_wingcc(PLStream *pls)
 void
 plD_tidy_wingcc(PLStream *pls)
 {
-  wingcc_Dev *dev=(wingcc_Dev *)pls->dev;
 
 #ifdef HAVE_FREETYPE
   if (pls->dev_text)
