@@ -50,10 +50,9 @@ dnl> This tests to see if the immediate parent of the file is named "bin"
 dnl> as is customary.  If so, the "bin" is stripped off to get the actual
 dnl> prefix.  If not, the prefix is left alone, and a warning is issued.
 dnl>
-define([AC_PREFIX],
-[if test -z "$prefix"
-then
-  AC_CHECKING([for $1 to derive installation directory prefix])
+define([AC_PREFIX_PROGRAM],
+[if test "$prefix" = NONE; then
+  AC_MSG_CHECKING(for prefix by location of $1)
   IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS="$IFS:"
   for ac_dir in $PATH; do
     test -z "$ac_dir" && ac_dir=.
@@ -65,18 +64,20 @@ changequote(,)dnl
       dirname=`echo $prefix | sed 's%/.*/%%'`
       if test $dirname = "bin"; then
         prefix=`echo $prefix | sed 's%/[^/][^/]*$%%'`
+	AC_MSG_RESULT($prefix)
       else
-        echo ""
-	echo "dirname is: $dirname"
-        echo "Warning: Non-standard installed distribution ($1 not stored under bin)."
-        echo "Please completely delete old files before installation."
+	AC_MSG_RESULT($prefix)
+	AC_MSG_WARN(non-standard installed distribution ($1 not stored under bin))
+	AC_MSG_WARN(please completely delete old files before installation)
       fi
 changequote([,])dnl
       break
     fi
   done
+  if test "$prefix" = NONE; then
+    AC_MSG_RESULT(not found -- using default)
+  fi
   IFS="$ac_save_ifs"
-  AC_VERBOSE(chose installation directory prefix ${prefix})
 fi
 ])dnl
 dnl> ------------------------------------------------------------------------
@@ -88,26 +89,410 @@ dnl> which is a bad idea: these choices are not particularly portable and
 dnl> it overrides whatever the user may have set for CC.
 dnl>
 define([AC_ISC_POSIX],
-[AC_PROVIDE([$0])AC_BEFORE([$0], [AC_COMPILE_CHECK])AC_BEFORE([$0], [AC_TEST_PROGRAM])AC_BEFORE([$0], [AC_HEADER_EGREP])AC_BEFORE([$0], [AC_TEST_CPP])AC_CHECKING(for POSIXized ISC)
+[AC_PROVIDE([$0])AC_BEFORE([$0], dnl
+[AC_COMPILE_CHECK])AC_BEFORE([$0], [AC_TEST_PROGRAM])AC_BEFORE([$0], dnl
+[AC_HEADER_EGREP])AC_BEFORE([$0], [AC_TEST_CPP])dnl
+AC_MSG_CHECKING(for POSIXized ISC)
 if \
      grep _POSIX_VERSION [/usr/include/unistd.h] >/dev/null 2>&1 ||
      grep _POSIX_VERSION [/usr/include/sys/unistd.h] >/dev/null 2>&1
 then
-  echo "yup, it's POSIX"
+  AC_MSG_RESULT([yes])
   ISC=1 # If later tests want to check for ISC.
   AC_DEFINE(_POSIX_SOURCE)
 else
- echo "nope, not POSIX"
+  AC_MSG_RESULT([no])
 fi
 ])dnl
 dnl> ------------------------------------------------------------------------
-dnl> Some X11 headers require "caddr_t" even though on a POSIX.1 system
-dnl> this is illegal.  This macro defines it if not already typedef'ed.
+dnl> Modified versions of two subroutines of AC_OUTPUT from autoconf
+dnl> version 2.3. 
 dnl>
-define(AC_CADDR_T,
-[AC_PROVIDE([$0])AC_CHECKING(for caddr_t in sys/types.h)
-AC_TEST_PROGRAM([
-#define caddr_t char *
-#include <sys/types.h>
-],AC_DEFINE(caddr_t, char *))])dnl
+dnl> The only difference is that this version looks for the input file
+dnl> in the in the target directory first, then in the source directory.
+
+dnl This is a subroutine of AC_OUTPUT.  It is called inside an unquoted
+dnl here document whose contents are going into config.status.
+dnl AC_OUTPUT_FILES(FILE...)
+define([AC_OUTPUT_FILES],
+[# Protect against being on the right side of a sed subst in config.status. 
+changequote(, )dnl
+sed 's/%@/@@/; s/@%/@@/; s/%g$/@g/; /@g$/s/[\\\\&%]/\\\\&/g; 
+ s/@@/%@/; s/@@/@%/; s/@g$/%g/' > conftest.subs <<\CEOF
+changequote([, ])dnl
+dnl These here document variables are unquoted when configure runs
+dnl but quoted when config.status runs, so variables are expanded once.
+$ac_vpsub
+dnl Shell code in configure.in might set extrasub.
+$extrasub
+dnl Insert the sed substitutions of variables.
+undivert(AC_DIVERSION_SED)
+CEOF
+EOF
+cat >> $CONFIG_STATUS <<EOF
+
+CONFIG_FILES=\${CONFIG_FILES-"$1"}
+EOF
+cat >> $CONFIG_STATUS <<\EOF
+for ac_file in .. $CONFIG_FILES; do if test "x$ac_file" != x..; then
+dnl Specifying an input file breaks the trap to clean up on interrupt,
+dnl but that's not a huge problem.
+  # Support "outfile[:infile]", defaulting infile="outfile.in".
+  case "$ac_file" in
+  *:*) ac_file_in=`echo "$ac_file"|sed 's%.*:%%'`
+       ac_file=`echo "$ac_file"|sed 's%:.*%%'` ;;
+  *) ac_file_in="${ac_file}.in" ;;
+  esac
+
+  # Adjust relative srcdir, etc. for subdirectories.
+
+  # Remove last slash and all that follows it.  Not all systems have dirname.
+changequote(, )dnl
+  ac_dir=`echo $ac_file|sed 's%/[^/][^/]*$%%'`
+changequote([, ])dnl
+  if test "$ac_dir" != "$ac_file" && test "$ac_dir" != .; then
+    # The file is in a subdirectory.
+    test ! -d "$ac_dir" && mkdir "$ac_dir"
+    ac_dir_suffix="/`echo $ac_dir|sed 's%^\./%%'`"
+    # A "../" for each directory in $ac_dir_suffix.
+changequote(, )dnl
+    ac_dots=`echo $ac_dir_suffix|sed 's%/[^/]*%../%g'`
+changequote([, ])dnl
+  else
+    ac_dir_suffix= ac_dots=
+  fi
+
+  case "$ac_given_srcdir" in
+  .)  srcdir=.
+      if test -z "$ac_dots"; then top_srcdir=.
+      else top_srcdir=`echo $ac_dots|sed 's%/$%%'`; fi ;;
+  /*) srcdir="$ac_given_srcdir$ac_dir_suffix"; top_srcdir="$ac_given_srcdir" ;;
+  *) # Relative path.
+    srcdir="$ac_dots$ac_given_srcdir$ac_dir_suffix"
+    top_srcdir="$ac_dots$ac_given_srcdir" ;;
+  esac
+
+ifdef([AC_PROVIDE_AC_PROG_INSTALL],
+[  case "$ac_given_INSTALL" in
+changequote(, )dnl
+  [/$]*) INSTALL="$ac_given_INSTALL" ;;
+changequote([, ])dnl
+  *) INSTALL="$ac_dots$ac_given_INSTALL" ;;
+  esac
+])dnl
+  echo creating "$ac_file"
+  rm -f "$ac_file"
+  configure_input="Generated automatically from `echo $ac_file_in|sed 's%.*/%%'` by configure."
+  case "$ac_file" in
+  *Makefile*) ac_comsub="1i\\
+# $configure_input" ;;
+  *) ac_comsub= ;;
+  esac
+  sed -e "$ac_comsub
+s%@configure_input@%$configure_input%g
+s%@srcdir@%$srcdir%g
+s%@top_srcdir@%$top_srcdir%g
+ifdef([AC_PROVIDE_AC_PROG_INSTALL], [s%@INSTALL@%$INSTALL%g
+])dnl
+" -f conftest.subs `if test -f $ac_file_in; then echo $ac_file_in; else echo $ac_given_srcdir/$ac_file_in; fi` > $ac_file
+fi; done
+rm -f conftest.subs
+])
+
+dnl This is a subroutine of AC_OUTPUT.  It is called inside a quoted
+dnl here document whose contents are going into config.status.
+dnl AC_OUTPUT_HEADER(HEADER-FILE...)
+define([AC_OUTPUT_HEADER],
+[changequote(<<, >>)dnl
+# These sed commands are passed to sed as "A NAME B NAME C VALUE D", where
+# NAME is the cpp macro being defined and VALUE is the value it is being given.
+#
+# ac_d sets the value in "#define NAME VALUE" lines.
+ac_dA='s%^\([ 	]*\)#\([ 	]*define[ 	][ 	]*\)'
+ac_dB='\([ 	][ 	]*\)[^ 	]*%\1#\2'
+ac_dC='\3'
+ac_dD='%g'
+# ac_u turns "#undef NAME" with trailing blanks into "#define NAME VALUE".
+ac_uA='s%^\([ 	]*\)#\([ 	]*\)undef\([ 	][ 	]*\)'
+ac_uB='\([ 	]\)%\1#\2define\3'
+ac_uC=' '
+ac_uD='\4%g'
+# ac_e turns "#undef NAME" without trailing blanks into "#define NAME VALUE".
+ac_eA='s%^\([ 	]*\)#\([ 	]*\)undef\([ 	][ 	]*\)'
+ac_eB='<<$>>%\1#\2define\3'
+ac_eC=' '
+ac_eD='%g'
+changequote([, ])dnl
+
+CONFIG_HEADERS=${CONFIG_HEADERS-"$1"}
+for ac_file in .. $CONFIG_HEADERS; do if test "x$ac_file" != x..; then
+  # Support "outfile[:infile]", defaulting infile="outfile.in".
+  case "$ac_file" in
+  *:*) ac_file_in=`echo "$ac_file"|sed 's%.*:%%'`
+       ac_file=`echo "$ac_file"|sed 's%:.*%%'` ;;
+  *) ac_file_in="${ac_file}.in" ;;
+  esac
+
+  echo creating $ac_file
+
+  rm -f conftest.frag conftest.in conftest.out
+  cp `if test -f $ac_file_in; then echo $ac_file_in; else echo $ac_given_srcdir/$ac_file_in; fi` conftest.in
+
+EOF
+
+# Transform confdefs.h into a sed script conftest.vals that substitutes
+# the proper values into config.h.in to produce config.h.  And first:
+# Protect against being on the right side of a sed subst in config.status. 
+# Protect against being in an unquoted here document in config.status.
+rm -f conftest.vals
+dnl Using a here document instead of a string reduces the quoting nightmare.
+dnl Putting comments in sed scripts is not portable.
+cat > conftest.hdr <<\EOF
+changequote(<<, >>)dnl
+s/[\\&%]/\\&/g
+s%[\\$`]%\\&%g
+s%<<#define>> \([A-Za-z_][A-Za-z0-9_]*\) \(.*\)%${ac_dA}\1${ac_dB}\1${ac_dC}\2${ac_dD}%gp
+s%ac_d%ac_u%gp
+s%ac_u%ac_e%gp
+changequote([, ])dnl
+EOF
+sed -n -f conftest.hdr confdefs.h > conftest.vals
+rm -f conftest.hdr
+
+# This sed command replaces #undef with comments.  This is necessary, for
+# example, in the case of _POSIX_SOURCE, which is predefined and required
+# on some systems where configure will not decide to define it.
+cat >> conftest.vals <<\EOF
+changequote(, )dnl
+s%^[ 	]*#[ 	]*undef[ 	][ 	]*[a-zA-Z_][a-zA-Z_0-9]*%/* & */%
+changequote([, ])dnl
+EOF
+
+# Break up conftest.vals because some shells have a limit on
+# the size of here documents, and old seds have small limits too.
+# Maximum number of lines to put in a single here document.
+ac_max_here_lines=12
+
+rm -f conftest.tail
+while :
+do
+  ac_lines=`grep -c . conftest.vals`
+  # grep -c gives empty output for an empty file on some AIX systems.
+  if test -z "$ac_lines" || test "$ac_lines" -eq 0; then break; fi
+  # Write a limited-size here document to conftest.frag.
+  echo '  cat > conftest.frag <<CEOF' >> $CONFIG_STATUS
+  sed ${ac_max_here_lines}q conftest.vals >> $CONFIG_STATUS
+  echo 'CEOF
+  sed -f conftest.frag conftest.in > conftest.out
+  rm -f conftest.in
+  mv conftest.out conftest.in
+' >> $CONFIG_STATUS
+  sed 1,${ac_max_here_lines}d conftest.vals > conftest.tail
+  rm -f conftest.vals
+  mv conftest.tail conftest.vals
+done
+rm -f conftest.vals
+
+dnl Now back to your regularly scheduled config.status.
+cat >> $CONFIG_STATUS <<\EOF
+  rm -f conftest.frag conftest.h
+  echo "/* $ac_file.  Generated automatically by configure.  */" > conftest.h
+  cat conftest.in >> conftest.h
+  rm -f conftest.in
+  if cmp -s $ac_file conftest.h 2>/dev/null; then
+    echo "$ac_file is unchanged"
+    rm -f conftest.h
+  else
+    rm -f $ac_file
+    mv conftest.h $ac_file
+  fi
+fi; done
+
+])
+dnl> ------------------------------------------------------------------------
+dnl> Bug fix to Autoconf 2.3
+undefine([AC_PROG_CPP])dnl
+AC_DEFUN([AC_PROG_CPP],
+[AC_MSG_CHECKING(how to run the C preprocessor)
+# On Suns, sometimes $CPP names a directory.
+if test -n "$CPP" && test -d "$CPP"; then
+  CPP=
+fi
+if test -z "$CPP"; then
+AC_CACHE_VAL(ac_cv_prog_CPP,
+[  # This must be in double quotes, not single quotes, because CPP may get
+  # substituted into the Makefile and "${CC-cc}" will confuse make.
+  CPP="${CC-cc} -E"
+  # On the NeXT, cc -E runs the code through the compiler's parser,
+  # not just through cpp.
+dnl Use a header file that comes with gcc, so configuring glibc
+dnl with a fresh cross-compiler works.
+  AC_TRY_CPP([#include <assert.h>
+Syntax Error], ,
+  CPP="${CC-cc} -E -traditional-cpp"
+  AC_TRY_CPP([#include <assert.h>
+Syntax Error], , CPP=/lib/cpp))
+  ac_cv_prog_CPP="$CPP"])dnl
+  CPP="$ac_cv_prog_CPP"
+fi
+AC_MSG_RESULT($CPP)
+AC_SUBST(CPP)dnl
+])
+dnl> ------------------------------------------------------------------------
+dnl> The following macro searches a list of directories for the given
+dnl> include file and takes appropriate actions if found or not.
 dnl
+define(FIND_INC, [
+    AC_MSG_CHECKING(for $1.h)
+    $2=""
+
+    for dir in $places; do
+	if test -r "$dir/$1.h"; then
+	    $2="$dir"
+	    AC_MSG_RESULT($dir)
+	    break
+	fi
+    done
+    if test -z "$$2"; then
+	AC_MSG_RESULT(no)
+	AC_MSG_WARN([can't find $1.h, setting $3 to no])
+	$3="no"
+    fi
+    if test "$$2" = "/usr/include"; then
+	$2="default"
+    fi
+])
+dnl> ------------------------------------------------------------------------
+dnl> The following macro searches a list of directories for the given
+dnl> library file and takes appropriate actions if found or not.
+dnl
+define(FIND_LIB, [
+    AC_MSG_CHECKING(for -l$1)
+    $2=""
+
+    for dir in $places; do
+	if test -r "$dir/lib$1.a" -o -r "$dir/lib$1.sl"; then
+	    $2="$dir"
+	    AC_MSG_RESULT($dir)
+	    break
+	fi
+    done
+    if test -z "$$2"; then
+	AC_MSG_RESULT(no)
+	AC_MSG_WARN([can't find $1 library, setting $3 to no])
+	$3="no"
+    fi
+    if test "$$2" = "/usr/lib"; then
+	$2="default"
+    fi
+])
+dnl> ------------------------------------------------------------------------
+dnl> The following macro makes it easier to add includes without adding
+dnl> redundant -I specifications (to keep the build line concise).  
+dnl
+define([ADD_TO_INCS],[
+    INCSW=""
+    if test "$1" != "default"; then
+	INCSW="-I$1"
+    fi
+    for dir in $inc_path; do
+	if test "$1" = "$dir"; then
+	    INCSW=""
+	    break
+	fi
+    done
+    if test -n "$INCSW"; then
+	INCS="$INCS $INCSW"
+    fi
+    inc_path="$inc_path $1"
+])
+dnl> ------------------------------------------------------------------------
+dnl> The following macro makes it easier to add libs without adding
+dnl> redundant -L specifications (to keep the build line concise).
+dnl
+define([ADD_TO_LIBS],[
+    LIBSW=""
+    if test "$1" != "default"; then
+	LIBSW="-L$1"
+    fi
+    for dir in $lib_path; do
+	if test "$1" = "$dir"; then
+	    LIBSW=""
+	    break
+	fi
+    done
+    if test -n "$LIBSW"; then
+	LIBS="$LIBS $LIBSW $2"
+    else
+	LIBS="$LIBS $2"
+    fi
+    lib_path="$lib_path $1"
+])
+dnl> ------------------------------------------------------------------------
+dnl ### Selecting optional features
+dnl AC_ARG_ENABLE(FEATURE, HELP-STRING, ACTION-IF-TRUE [, ACTION-IF-FALSE])
+undefine([AC_ARG_ENABLE])
+AC_DEFUN(AC_ARG_ENABLE,
+[ifelse([$2],,,[AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
+ac_help="$ac_help
+[$2]"
+AC_DIVERT_POP()])dnl
+[#] Check whether --enable-[$1] or --disable-[$1] was given.
+enableval="[$enable_]patsubst([$1], -, _)"
+if test -n "$enableval"; then
+  ifelse([$3], , :, [$3])
+ifelse([$4], , , [else
+  $4
+])dnl
+fi
+])
+dnl
+dnl ### Working with optional software
+dnl AC_ARG_WITH(PACKAGE, HELP-STRING, ACTION-IF-TRUE [, ACTION-IF-FALSE])
+undefine([AC_ARG_WITH])
+AC_DEFUN(AC_ARG_WITH,
+[ifelse([$2],,,[AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
+ac_help="$ac_help
+[$2]"
+AC_DIVERT_POP()])dnl
+[#] Check whether --with-[$1] or --without-[$1] was given.
+withval="[$with_]patsubst([$1], -, _)"
+if test -n "$withval"; then
+  ifelse([$3], , :, [$3])
+ifelse([$4], , , [else
+  $4
+])dnl
+fi
+])
+dnl> ------------------------------------------------------------------------
+dnl> Front-end macros to the above, which when:
+dnl>  - a with-<opt> is registered, the corresponding enable-<opt> is
+dnl>	registered as bogus
+dnl>  - an enable-<opt> is registered, the corresponding with-<opt> is
+dnl>	registered as bogus
+dnl
+AC_DEFUN([MY_ARG_WITH],
+[AC_ARG_WITH($@)dnl
+AC_ARG_ENABLE([$1],[],[AC_MSG_ERROR([unrecognized variable: enable_$1])])])
+dnl
+AC_DEFUN([MY_ARG_ENABLE],
+[AC_ARG_ENABLE($@)dnl
+AC_ARG_WITH([$1],[],[AC_MSG_ERROR([unrecognized variable: with_$1])])])
+dnl> ------------------------------------------------------------------------
+dnl> Hack the AC_INIT_NOTICE macro to get around AC_INIT fascism.
+dnl
+undefine([AC_INIT_NOTICE])
+AC_DEFUN(AC_INIT_NOTICE,
+[# Guess values for system-dependent variables and create Makefiles.
+# Generated automatically using autoconf version] AC_ACVERSION [
+# Copyright (C) 1992, 1993, 1994 Free Software Foundation, Inc.
+#
+# This configure script is free software; the Free Software Foundation
+# gives unlimited permission to copy, distribute and modify it.
+
+# Defaults:
+ac_help=
+ac_default_prefix=/usr/local
+[#] Any additions from configure.in:
+USER_STARTUP
+])

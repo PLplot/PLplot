@@ -25,69 +25,71 @@ install: install_lib install_utils \
 	install_demos
 
 install_lib:
-	-if [ ! -d $(INCLUDE_DIR) ] ; then mkdir -p $(INCLUDE_DIR); fi
-	-if [ ! -d $(LIB_DIR) ] ; then mkdir -p $(LIB_DIR); fi
-	-if [ ! -d $(DOC_DIR) ] ; then mkdir -p $(DOC_DIR); fi
-	-if [ ! -d $(BIN_DIR) ] ; then mkdir -p $(BIN_DIR); fi
-	-if [ ! -d $(INFO_DIR) ] ; then mkdir -p $(INFO_DIR); fi
-	-cd ../lib; cp $(PLLIB_BASE)* *.fnt *.map $(LIB_DIR); \
+	-if test ! -d $(INCLUDE_DIR); then mkdir -p $(INCLUDE_DIR); fi
+	-if test ! -d $(LIB_DIR); then mkdir -p $(LIB_DIR); fi
+	-if test ! -d $(DOC_DIR); then mkdir -p $(DOC_DIR); fi
+	-if test ! -d $(BIN_DIR); then mkdir -p $(BIN_DIR); fi
+	-if test ! -d $(INFO_DIR); then mkdir -p $(INFO_DIR); fi
+	-cd $(top_srcdir)/lib; cp *.fnt *.map $(LIB_DIR)
+	-cp $(PLLIB_BASE)* $(LIB_DIR); \
 	 for file in $(PLLIB_BASE)*; do $(RANLIB) $(LIB_DIR)/$$file; done
-	-cd ..; cp README NEWS CHANGES Copyright COPYING.LIB FAQ ToDo \
-		mklinks $(DOC_DIR)
-	-if [ ! -f $(DOC_DIR)/README.local ] ; then \
-	 cp ../doc/README.local $(DOC_DIR); fi
-	-cp ../doc/*.info $(INFO_DIR)
-	-cd ../scripts; cp pl* $(BIN_DIR)
-	-cd ../include; \
-	 cp plplotP.h plplot.h plplotX.h plplotTK.h \
+	-cd $(top_srcdir); \
+	 cp README NEWS CHANGES Copyright COPYING.LIB FAQ ToDo \
+	    mklinks $(DOC_DIR)
+	-if test ! -f $(DOC_DIR)/README.local; then \
+	 cp $(top_srcdir)/doc/README.local $(DOC_DIR); fi
+	-cp $(top_srcdir)/doc/*.info $(INFO_DIR)
+	-cd $(top_srcdir)/scripts; cp pl* $(BIN_DIR)
+	-cd $(top_srcdir)/include; \
+	 cp plplotP.h plplot.h plplotX.h pltk.h pltcl.h plplotTK.h \
 	    plevent.h plstream.h pdf.h tclMatrix.h plcdemos.h \
 	    $(INCLUDE_DIR)
 
 install_demos:
-	-if [ ! -d $(DEMOS_DIR) ] ; then mkdir -p $(DEMOS_DIR); fi
-	-if [ ! -d $(DEMOS_DIR)/c ] ; then mkdir -p $(DEMOS_DIR)/c; fi
-	-if [ ! -d $(DEMOS_DIR)/f77 ] ; then mkdir -p $(DEMOS_DIR)/f77; fi
-	-if [ ! -d $(DEMOS_DIR)/tcl ] ; then mkdir -p $(DEMOS_DIR)/tcl; fi
-	-if [ ! -d $(DEMOS_DIR)/tk ] ; then mkdir -p $(DEMOS_DIR)/tk; fi
+	-if test ! -d $(DEMOS_DIR); then mkdir -p $(DEMOS_DIR); fi
+	-if test ! -d $(DEMOS_DIR)/c; then mkdir -p $(DEMOS_DIR)/c; fi
+	-if test ! -d $(DEMOS_DIR)/f77; then mkdir -p $(DEMOS_DIR)/f77; fi
+	-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi
+	-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi
 	-cp Makedemo $(DEMOS_DIR)/Makefile
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/f77
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
-	-cp ../examples/c/* $(DEMOS_DIR)/c
-	-cp ../examples/f77/* $(DEMOS_DIR)/f77
-	-cp ../examples/tcl/* $(DEMOS_DIR)/tcl
-	-cp ../examples/tk/* $(DEMOS_DIR)/tk
+	-cd $(top_srcdir)/examples/c; cp * $(DEMOS_DIR)/c
+	-cd $(top_srcdir)/examples/f77; cp * $(DEMOS_DIR)/f77
+	-cd $(top_srcdir)/examples/tcl; cp * $(DEMOS_DIR)/tcl
+	-cd $(top_srcdir)/examples/tk; cp * $(DEMOS_DIR)/tk
 	-$(LN) $(DEMOS_DIR)/tcl/x??.tcl $(DEMOS_DIR)/tk
 
 install_utils:
-	-if [ -d shared ] ; then \
-		 $(LDC) $(LDC_FLAGS) plrender$O $(LIB_INSTALL) \
-			-o plrender$E $(LDC_LIBS); \
+	-if test $(SHARED) = 1; then \
+	 $(LDC) $(LDC_FLAGS) plrender$O $(LIB_INSTALL) \
+		-o plrender$E $(LDC_LIBS); \
 	 fi
-	-if [ -d shared ] ; then \
-		 $(LDC) $(LDC_FLAGS) pltek$O $(LIB_INSTALL) \
-			-o pltek$E $(LDC_LIBS); \
+	-if test $(SHARED) = 1; then \
+	 $(LDC) $(LDC_FLAGS) pltek$O $(LIB_INSTALL) \
+		-o pltek$E $(LDC_LIBS); \
 	 fi
 	-strip plrender$E pltek$E
 	-cp plrender$E pltek$E $(BIN_DIR)
 
 install_tcl:
-	-if [ -d shared ] ; then \
-		 $(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) \
-			-o pltcl$E $(LDC_LIBS); \
+	-if test $(SHARED) = 1; then \
+	 $(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) \
+		-o pltcl$E $(LDC_LIBS); \
 	 fi
 	-strip pltcl$E
 	-cp pltcl$E $(BIN_DIR)
 
 install_tk:
-	-if [ ! -d $(TCL_DIR) ] ; then mkdir -p $(TCL_DIR); fi
-	-if [ -d shared ] ; then \
-		 $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
-			-o plserver$E $(LDC_LIBS); \
+	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
+	-if test $(SHARED) = 1; then \
+	 $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
+		-o plserver$E $(LDC_LIBS); \
 	 fi
 	-strip plserver$E
 	-cp plserver$E $(BIN_DIR)
-	-cd ../drivers/tk; cp *.tcl *.pal tclIndex $(TCL_DIR)
+	-cd $(top_srcdir)/drivers/tk; cp *.tcl *.pal tclIndex $(TCL_DIR)
 
 install_cxx:
-	-cd ../include; cp stream.h $(INCLUDE_DIR)
+	-cd $(top_srcdir)/include; cp stream.h $(INCLUDE_DIR)

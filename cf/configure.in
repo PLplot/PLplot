@@ -1,6 +1,5 @@
-#!/bin/sh
-# -----------------------------------------------------------------------
-#
+# --*-sh-*--------------------------------------------------------------------
+# 
 # configure.in
 #
 # Maurice LeBrun
@@ -9,69 +8,76 @@
 #
 # PLplot configure script input
 #
-# This script does a few things that most autoconf-generated scripts do
-# not.  I resisted going with autoconf for a long time, in favor of a
-# home-rolled solution because of (a) certain needs that autoconf didn't
-# appear to meet, and (b) PLplot started out as a package with much less
-# demanding needs than today.  Eventually the build situation got out of
-# hand, and I took the plunge -- all those nice features in autoconf were
-# just too hard to resist any longer.  Those areas where I needed to be a
-# bit inventive include:
+# This script does a few things that most autoconf-generated scripts do not.
+# I resisted going with autoconf for a long time, in favor of a home-rolled
+# solution because of (a) certain needs that autoconf didn't appear to meet,
+# and (b) PLplot started out as a package with much less demanding needs
+# than today.  Eventually the build situation got out of hand, and I took
+# the plunge -- all those nice features in autoconf were just too hard to
+# resist any longer.  Those areas where I needed to be a bit inventive
+# include:
 #
-# - makefile control flow and file inclusion.  Standard make is braindead
-# in this regard.  The problem is how to conditionally enable/disable
-# packages in the makefile itself.  GNU make appears to handle this quite
-# well, but I have concerns about portability -- I've heard of (and had)
-# problems porting it to old versions of Unix, and it's not available
-# under some non-Unix systems (notably MSDOS).  Anyhow, there are several
-# ways one can simulate active control, and the route I've gone is to
-# include a separate file for each capability.  Makefile.in is created by
-# the configure script by concatenating the right pieces together.  Not
-# only is this very portable, but keeping the target/dependency portion
-# separate allows (a) this to be generated automatically e.g. by
-# makedepend without changing any other file, and (b) non-Unix ports to
-# share it (important because the target/dependency list tends to change a
-# lot).  Since these Makefile fragments are just text files, it should
-# be simple enough to string them together as desired.
+# - makefile control flow and file inclusion.  Standard make is braindead in
+# this regard.  The problem is how to conditionally enable/disable packages
+# in the makefile itself.  GNU make appears to handle this quite well, but I
+# have concerns about portability -- I've heard of (and had) problems
+# porting it to old versions of Unix, and it's not available under some
+# non-Unix systems (notably MSDOS).  Anyhow, there are several ways one can
+# simulate active control, and the route I've gone is to include a separate
+# file for each capability.  Makefile.in is created by the configure script
+# by concatenating the right pieces together.  Not only is this very
+# portable, but keeping the target/dependency portion separate allows (a)
+# this to be generated automatically e.g. by makedepend without changing any
+# other file, and (b) non-Unix ports to share it (important because the
+# target/dependency list tends to change a lot).  Since these Makefile
+# fragments are just text files, it should be simple enough to string them
+# together as desired.
 #
 # - System-specific settings for ANSI C compiler, Fortran compiler, and
 # other non-standard switches (profiling, auto promotion in Fortran,
 # optimization levels).  This is handled by a largish case statement over
 # system type that I snarfed from my previous configure utils.  A similar
-# case statement for building shared libraries was snarfed from the BLT
-# (Tk extension package) configure script.
+# case statement for building shared libraries was snarfed from the BLT (Tk
+# extension package) configure script.
 #
-# - Fast, site-specific configures.  I have set things up so that most of
+# - Faster, site-specific configures.  I have set things up so that most of
 # the configure is skipped if the relevant shell variables are set.  Early
 # on I try to source a defaults file (~/config/cf_plplot.in) which does
-# this.  The point is, for a given site most settings are invariant from
-# one configure to the next, but you might want to change things like what
+# this.  The point is, for a given site most settings are invariant from one
+# configure to the next, but you might want to change things like what
 # packages are enabled, compilers, precision, profiling, debugging, etc.
-# Very useful for development.
+# Very useful for development.  Note: Autoconf 2.0 and later supports cache
+# files, which are similar in some ways but are not really a replacement for
+# this facility.
+# ----------------------------------------------------------------------------
+
+AC_PREREQ(2.3)
+
+# ----------------------------------------------------------------------------
+# Define a macro to source site-specific variables file, if present.
+# Very nice for setting up site-specific defaults or for reducing the time
+# spent configuring. 
 #
-# -----------------------------------------------------------------------
+# This MUST MUST MUST be done before command-line flags are handled (i.e.
+# before expanding AC_INIT) so that the user can override if necessary.
+# Autoconf does not make this easy.  In fact, I'm about ready to barf.
+# ----------------------------------------------------------------------------
 
-# Running configure from a subdirectory doesn't work quite right.
-# This is a lot easier than trying to fix it.
+define([USER_STARTUP], [
+with_defaults=yes
+for option
+    do
+    case "$option" in
+	-with-defaults | --with-defaults | -with-defaults=yes | --with-defaults=yes )
+	    with_defaults=yes
+	;;
+	-without-defaults | --without-defaults | -with-defaults=no | --with-defaults=no )
+	    with_defaults=no
+	;;
+    esac
+done
 
-if test "$0" = "../configure"; then
-    cd ..
-    configure $*
-    exit
-fi
-
-# -----------------------------------------------------------------------
-# Source site-specific variables file, if present.
-# Can be used to dramatically reduce the time spent configuring.
-# Should be done before command-line flags are handled so that the user
-# can override if necessary.
-#
-# The special command line flag --nodefaults (must come first) can be used
-# to skip sourcing the defaults file.
-# -----------------------------------------------------------------------
-
-if test "$1" = "--nodefaults"; then
-    shift
+if test "$with_defaults" = "no"; then
     echo "Performing full configure."
 else
     initfile="$HOME/config/cf_plplot.in"
@@ -82,22 +88,42 @@ else
 	echo "No defaults file found, performing full configure."
     fi
 fi
-
-LIBS=""
-INCS=""
-
-# -----------------------------------------------------------------------
-# Initialize autoconf.
-# -----------------------------------------------------------------------
+])
 
 AC_INIT(src/plcore.c)
-AC_CONFIG_HEADER(tmp/plConfig.h tmp/plDevs.h)
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# The configure script must be run in a separate build directory.  If the
+# user instead runs it from the top-level directory, the code below cd's to
+# tmp and exec's ../configure, in effect running configure from the build
+# directory after all.
+#
+# In fact, configure can be run from a separate build directory anywhere,
+# leaving the original source tree untouched if that is so desired.  This
+# allows one to build from Read-Only media (e.g. CDROM) or create multiple
+# build directories at once, each with different options.  Softlinks to all
+# source files are used to create the "monolithic build directory".  With
+# the PLplot distribution spread out over so many directories, I've found
+# this paradigm to be the easiest for me to use during development while
+# remaining widely portable.  On systems that don't support softlinks, you
+# can always use copy.  At least you will only have to do it once.
+# ----------------------------------------------------------------------------
+
+if test `pwd` = `(cd $srcdir; pwd)`; then
+    AC_MSG_RESULT(setting up to configure in tmp directory -- hold on...)
+    if test ! -d tmp; then
+	mkdir tmp
+    fi
+    cd tmp
+    exec ../configure "$@"
+fi
+AC_CONFIG_HEADER(plConfig.h plDevs.h)
+
+# ----------------------------------------------------------------------------
 # First get system using uname.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-AC_PROGRAM_CHECK(uname_found, uname, 1, 0)
+AC_CHECK_PROG(uname_found, uname, 1, 0)
 [ if test $uname_found -eq 1 ; then
     system=`uname -s`-`uname -r`
 
@@ -112,33 +138,73 @@ AC_PROGRAM_CHECK(uname_found, uname, 1, 0)
 fi ]
 
 if test "$system" ; then
-    echo "system is: $system"
+    AC_MSG_RESULT(system is: $system)
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Some defaults
-# -----------------------------------------------------------------------
+# Note: the --with-defaults entry is only used to set up its help entry; the
+# actual handling is done before any args are parsed.
+# ----------------------------------------------------------------------------
 
-AC_WITH(debug, ,   with_debug="no")
-AC_WITH(opt, ,     with_opt="yes")
-AC_WITH(double, ,  with_double="no")
-AC_WITH(profile, , with_profile="no")
-AC_WITH(shlib, ,   with_shlib="yes")
-AC_WITH(f2c, ,     with_f2c="no")
-AC_WITH(gcc, ,     with_gcc="no")
-AC_WITH(warn, ,    with_warn="no")
+MY_ARG_WITH(defaults,   
+  [  --with-defaults         source defaults file at startup (default: yes)],
+  [])
 
-AC_ENABLE(drivers, , enable_drivers="yes")
-AC_ENABLE(f77, ,     enable_f77="yes")
-AC_ENABLE(cxx, ,     enable_cxx="yes")
-AC_ENABLE(tcl, ,     enable_tcl="yes")
+MY_ARG_WITH(debug,   
+  [  --with-debug            compile with debugging (default: no)],
+  [], with_debug="no")
 
-# --------------------------------------------------------------------
+MY_ARG_WITH(opt,
+  [  --with-opt              compile with optimization (default: yes)],
+  [], with_opt="yes")
+
+MY_ARG_WITH(double,
+  [  --with-double           use double precision floats (default: no)],
+  [], with_double="no")
+
+MY_ARG_WITH(profile,
+  [  --with-profile          turn on profiling option (defualt: no)],
+  [], with_profile="no")
+
+MY_ARG_WITH(shlib,
+  [  --with-shlib            build shared libraries (not all systems)],
+  [], with_shlib="yes")
+
+MY_ARG_WITH(f2c,
+  [  --with-f2c              use f2c to compile Fortran code (default: no)],
+  [], with_f2c="no")
+
+MY_ARG_WITH(gcc,
+  [  --with-gcc              use gcc to compile C and C++ code (default: no)],
+  [], with_gcc="no")
+
+MY_ARG_WITH(warn,
+  [  --with-warn             enable all compilation warnings (default: no)],
+  [], with_warn="no")
+
+MY_ARG_WITH(dbmalloc,
+  [  --with-dbmalloc         link with libdbmalloc (default: no)],
+  [], with_dbmalloc="no")
+
+MY_ARG_ENABLE(drivers,
+  [  --enable-drivers        enable all device drivers (default: yes)],
+  [], enable_drivers="yes")
+
+MY_ARG_ENABLE(f77,
+  [  --enable-f77            compile Fortran-77 interface code (default: yes)],
+  [], enable_f77="yes")
+
+MY_ARG_ENABLE(cxx,
+  [  --enable-cxx            compile C++ interface code (default: yes)],
+  [], enable_cxx="yes")
+
+# ----------------------------------------------------------------------------
 # Set up prefix
 #
 # The prefix is set using the following algorithm:
 #
-#	via the command line --prefix flag
+#	via the command line: --prefix=<value>
 #	via the shell variable "pl_prefix", set in the defaults file
 #	via the directory "plrender" currently is located in
 #
@@ -148,47 +214,60 @@ AC_ENABLE(tcl, ,     enable_tcl="yes")
 # use the "mklinks" script for soft-linking the bin, lib, and include
 # files to the usual places under /usr/local or /usr.  See the discussion
 # of this in the FAQ for more info.
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-if test -z "$prefix"; then
+AC_PREFIX_DEFAULT(/usr/local/plplot)
+if test "$prefix" = NONE; then
     if test -z "$pl_prefix"; then
-	AC_PREFIX(plrender)
-	if test -z "$prefix"; then
-	    prefix="/usr/local/plplot"
-	    echo "Unable to determine prefix; using $prefix"
-	fi
+	AC_PREFIX_PROGRAM(plrender)
     else
 	prefix="$pl_prefix"
     fi
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # This is where the real work is done.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+
+LIBS=""
+INCS=""
+
+AC_INCLUDE(sysconf.in)
 
 AC_REQUIRE_CPP
 AC_ISC_POSIX
 
-AC_INCLUDE(sysconf.in)
 AC_INCLUDE(sysloc.in)
 
-AC_STDC_HEADERS
-AC_HAVE_HEADERS(unistd.h)
+AC_HEADER_STDC
+AC_CHECK_HEADERS(unistd.h)
 AC_PROG_RANLIB
-AC_CADDR_T
-AC_VFORK
+AC_PROG_INSTALL
+AC_FUNC_VFORK
 
-# -----------------------------------------------------------------------
-# It'd be good to let this be selected too, need to put it in somewhere:
-# You can use the NOBRAINDEAD option here if you wish
-# If you use it, you may want to define NOBRAINDEAD in plplot.h
-# before moving it to it's permanent location.
+# ----------------------------------------------------------------------------
+# Some X11 headers require "caddr_t" even on systems that claim POSIX.1
+# compliance, which is illegal.  This makes it impossible to compile
+# programs that include X11 headers if _POSIX_SOURCE is defined.  I work
+# around this potential problem by just defining caddr_t to 'char *' on all
+# systems (unless it is set already), whether it will be needed or not.
 
-#CC="$CC -DNOBRAINDEAD"
+AC_CHECK_TYPE(caddr_t, char *)
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# If you don't know what this is for you shouldn't be using it.
+# An invisible option for now.
+
+MY_ARG_WITH(nobraindead,
+  [], [], with_nobraindead="no")
+
+if test "with_nobraindead" = "yes"; then
+    AC_DEFINE(NOBRAINDEAD)
+fi
+
+# ----------------------------------------------------------------------------
 # Set up library suffix.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 # Define tags to be used in multiple-precision library names
 #
@@ -223,101 +302,102 @@ LIB_TAG="$TAG_PREC$TAG_ENABLE"
 
 AC_SUBST(LIB_TAG)
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Now build up Makefile.in, out of all the eensy-weensy little pieces.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-if test ! -d tmp; then
-    mkdir tmp
-fi
-echo "creating tmp/Makefile.in"
+AC_MSG_RESULT(creating Makefile.in)
 
 # Makefile initialization
 
-cat cf/init.in		>tmp/Makefile.in 
+cat $srcdir/cf/init.in		>Makefile.in 
 
 # Default target, core source and object file lists
 
-cat cf/dist.in		>>tmp/Makefile.in 
+cat $srcdir/cf/dist.in		>>Makefile.in 
 
 # Optional packages
 
 if test "$enable_cxx" = "yes"; then
-    cat cf/pkg_cxx.in	>>tmp/Makefile.in 
+    cat $srcdir/cf/pkg_cxx.in	>>Makefile.in 
 fi
 if test "$enable_f77" = "yes"; then
-    cat cf/pkg_f77.in	>>tmp/Makefile.in 
+    cat $srcdir/cf/pkg_f77.in	>>Makefile.in 
 fi
 if test "$enable_tcl" = "yes"; then
-    cat cf/pkg_tcl.in	>>tmp/Makefile.in 
+    cat $srcdir/cf/pkg_tcl.in	>>Makefile.in 
 fi
 if test "$enable_tk" = "yes"; then
-    cat cf/pkg_tk.in	>>tmp/Makefile.in 
+    cat $srcdir/cf/pkg_tk.in	>>Makefile.in 
 fi
 
 # Library targets
 
-cat cf/initlib.in	>>tmp/Makefile.in
+cat $srcdir/cf/initlib.in	>>Makefile.in
 
 if test "$with_shlib" = "yes"; then
-    if test ! -d tmp/shared; then
-	mkdir tmp/shared
+    SHARED=1
+    if test ! -d shared; then
+	mkdir shared
     fi
     case $system in 
 	SunOS-4* ) 
-	    cat cf/lib_sh_sun.in	>>tmp/Makefile.in
+	    cat $srcdir/cf/lib_sh_sun.in	>>Makefile.in
 	;;
 	AIX-* ) 
-	    cat cf/lib_sh_aix.in	>>tmp/Makefile.in
+	    cat $srcdir/cf/lib_sh_aix.in	>>Makefile.in
 	;;
 	* )
-	    cat cf/lib_sh.in	>>tmp/Makefile.in
+	    cat $srcdir/cf/lib_sh.in	>>Makefile.in
 	;;
     esac
 else
-    cat cf/lib_ar.in	>>tmp/Makefile.in
+    SHARED=0
+    cat $srcdir/cf/lib_ar.in	>>Makefile.in
 fi
 
 # Program and demo file dependencies, targets
 
-cat cf/exes.in		>>tmp/Makefile.in 
-cat cf/demos.in		>>tmp/Makefile.in 
+cat $srcdir/cf/exes.in		>>Makefile.in 
+cat $srcdir/cf/demos.in		>>Makefile.in 
 
 # Installation and miscellaneous.
 
-cat cf/install.in	>>tmp/Makefile.in 
-cat cf/misc.in		>>tmp/Makefile.in 
+cat $srcdir/cf/install.in	>>Makefile.in 
+cat $srcdir/cf/misc.in		>>Makefile.in 
 
 # Object file dependencies
 
-cat cf/objs.in		>>tmp/Makefile.in 
+cat $srcdir/cf/objs.in		>>Makefile.in 
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Now build Makedemo.in.
 # Makedemo is a stand-alone makefile for the demo programs.
 # Note: it links against the installed PLplot library.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-echo "creating tmp/Makedemo.in"
+AC_MSG_RESULT(creating Makedemo.in)
 
-cat cf/init.in		>tmp/Makedemo.in 
-cat cf/initdemo.in	>>tmp/Makedemo.in 
-cat cf/demos.in		>>tmp/Makedemo.in 
-cat cf/miscdemo.in	>>tmp/Makedemo.in 
+cat $srcdir/cf/init.in		>Makedemo.in 
+cat $srcdir/cf/initdemo.in	>>Makedemo.in 
+cat $srcdir/cf/demos.in		>>Makedemo.in 
+cat $srcdir/cf/miscdemo.in	>>Makedemo.in 
 
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Set up variables governing device driver inclusion.
 #
 # You can enable/disable drivers either by the command line
 # (--enable-<driver> or --disable-<driver>) or via the cf_plplot.in file
 # (remember to use underscores instead of dashes here).  You can disable
 # all drivers by default by using --disable-drivers.
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 dnl> This macro holds the driver selection code.
 
 define(PL_ADD_DRIVER,[dnl
-AC_ENABLE($1, , enable_$1=$enable_drivers)
+MY_ARG_ENABLE($1,
+  builtin(format, [  --enable-%-14s enable %s device driver], $1, $1),
+  [], enable_$1=$enable_drivers)
 if test "$enable_$1" = "yes"; then
     AC_DEFINE(PLD_$1)
     DEVICES="$DEVICES $1"
@@ -337,7 +417,7 @@ PL_DRIVERS(plmeta, null, xterm, tek4010, tek4107, mskermit, conex,
 vlt, versaterm, dg300, ps, xfig, ljii, hp7470, hp7580, lj_hpgl, imp,
 xwin, tk, dp)
 
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Set up variables that specify install directories
 #
 # You can preset these to anything you want if you don't like the default
@@ -345,8 +425,11 @@ xwin, tk, dp)
 # directory, the examples, tcl, and doc subdirectories will cause
 # problems.  In this case, set the <whatever>_DIR variables below as
 # desired in ~/config/cf_plplot.in, and you are set.
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
+if test "$prefix" = NONE; then
+    prefix=$ac_default_prefix
+fi
 if test -z "$LIB_DIR"; then
     LIB_DIR=$prefix/lib
 fi
@@ -369,9 +452,9 @@ if test -z "$DEMOS_DIR"; then
     DEMOS_DIR=$prefix/examples
 fi
 
-AC_DEFINE_UNQUOTED(LIB_DIR, \"$LIB_DIR\")
-AC_DEFINE_UNQUOTED(BIN_DIR, \"$BIN_DIR\")
-AC_DEFINE_UNQUOTED(TCL_DIR, \"$TCL_DIR\")
+AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR")
+AC_DEFINE_UNQUOTED(BIN_DIR, "$BIN_DIR")
+AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR")
 
 AC_SUBST(LIB_DIR)
 AC_SUBST(BIN_DIR)
@@ -380,43 +463,46 @@ AC_SUBST(DOC_DIR)
 AC_SUBST(INFO_DIR)
 AC_SUBST(INCLUDE_DIR)
 AC_SUBST(DEMOS_DIR)
+AC_SUBST(SHARED)
 
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Create links to source code.
-#
-# I've found that with the PLplot distribution spread out over so many
-# directories, the "monolithic build directory" paradigm is the easiest
-# for me to use during development.  On systems that don't support
-# softlinks, you can always use copy.  At least you will only have to do
-# it once.
-# --------------------------------------------------------------------
+# I do this every time and just send the output to /dev/null to make sure
+# we never miss any.  This should keep Geoff happy (for a while at least).
+# ----------------------------------------------------------------------------
 
-if test ! -f tmp/plcore.c; then
-    echo "Creating links.."
-    cd tmp
+AC_MSG_RESULT(creating links...)
 
-    ln -s \
-    ../src/*.c \
-    ../src/*.cc \
-    ../src/tcl/*.c \
-    ../src/stubc/*.c \
-    ../examples/c/*.* \
-    ../examples/tcl/*.tcl \
-    ../examples/tk/*.c \
-    ../examples/tk/tk* \
-    ../examples/c++/*.* \
-    ../utils/*.c \
-    ../fonts/*.c \
-    ../scripts/pl* \
-    ../include/*.h \
-    ../drivers/*.c \
-    ../drivers/tk/*.* \
-    ../drivers/tk/tclIndex \
-    ../lib/*.fnt \
-    ../lib/*.map \
-    .
+# Source, driver, interface files
+    
+ln -s \
+$srcdir/src/*.c \
+$srcdir/src/*.cc \
+$srcdir/src/tcl/*.c \
+$srcdir/src/stubc/*.c \
+$srcdir/drivers/*.c \
+$srcdir/drivers/tk/*.* \
+$srcdir/drivers/tk/tclIndex \
+$srcdir/include/*.h \
+. 2>/dev/null
 
-# Create links to the Fortran files.  
+# Demos, miscellaneous
+
+ln -s \
+$srcdir/examples/c/*.* \
+$srcdir/examples/tcl/*.tcl \
+$srcdir/examples/tk/*.c \
+$srcdir/examples/tk/tk* \
+$srcdir/examples/c++/*.* \
+$srcdir/utils/*.c \
+$srcdir/fonts/*.c \
+$srcdir/scripts/pl* \
+$srcdir/lib/*.fnt \
+$srcdir/lib/*.map \
+$srcdir/cf/*.in \
+. 2>/dev/null
+
+# Fortran files.  
 # Double precision Fortran files in the stub interface are obtained
 # entirely by m4 macro expansion.  This should work anywhere.  Double
 # precision example programs are obtained through automatic compiler
@@ -424,20 +510,19 @@ if test ! -f tmp/plcore.c; then
 # all real variables and constants for this to work (note: the HPUX 8.x
 # compiler did not support this, but it's supported under 9.0).
 
-    ln -s \
-    ../src/stubf/*.* \
-    ../examples/f77/*.* \
-    .
+ln -s \
+$srcdir/src/stubf/*.* \
+$srcdir/examples/f77/*.* \
+. 2>/dev/null
 
-# Create links to config files.
+# ----------------------------------------------------------------------------
+# Create output files.
+# ----------------------------------------------------------------------------
 
-    ln -s ../cf/*.in .
-    cd ..
-fi
+AC_OUTPUT(Makefile Makedemo)
 
-# --------------------------------------------------------------------
-# Print out some of the more important settings, then create output
-# files.
+# ----------------------------------------------------------------------------
+# Print out some of the more important settings.
 #
 # IMPORTANT: the with_<foo> and enable_<bar> vars are printed as
 # with-<foo> and enable-<bar>.  Yes, this is confusing.  I really wish the
@@ -447,10 +532,9 @@ fi
 # line.  The only occasion you will have to set the variable directly is
 # in ~/config/cf_plplot.in if you use it, and just make sure you remember
 # to use an underscore in that case.
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-echo "
-Configuration results:
+plplot_config_result_msg="Configuration results:
 
 system:		$system
 prefix:		$prefix
@@ -473,8 +557,11 @@ enable-xwin:	$enable_xwin		enable-tcl:	$enable_tcl
 enable-tk:	$enable_tk		enable-dp:	$enable_dp
 enable-itcl:	$enable_itcl		enable-f77:	$enable_f77
 enable-cxx:	$enable_cxx
-" >plconfig.log
+"
 
-cat plconfig.log
 
-AC_OUTPUT(tmp/Makefile tmp/Makedemo)
+cat << EOF > config.summary
+$plplot_config_result_msg
+EOF
+
+AC_MSG_RESULT($plplot_config_result_msg)

@@ -1,4 +1,4 @@
-# --*-sh-*---------------------------------------------------------------
+# --*-sh-*--------------------------------------------------------------------
 #
 # sysconf.in
 #
@@ -14,9 +14,9 @@
 # This treatment is a little bit of overkill for PLplot, but some of it
 # comes from other projects, and you never know when it will turn out to
 # be useful..
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Compiler/linker variables
 #
 # The following shell variables are used.  They can be redefined as
@@ -46,54 +46,54 @@
 # DBL_FLAG	Use double-precision
 # PROF_FLAG	Compile with profiling on
 # SYS_FLAGS	Misc system-specific compiler flags
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 # Defaults
 
-M4="m4"
+M4=m4
 
 # Debugging
 
 if test "$with_debug" = "yes"; then
-    with_opt="no"
-    DEBUG_FLAG_C="-g"
-    DEBUG_FLAG_CXX="-g"
-    DEBUG_FLAG_F="-g"
-    DEBUG_FLAG_LC="-g"
-    DEBUG_FLAG_LCXX="-g"
-    DEBUG_FLAG_LF="-g"
+    with_opt=no
+    DEBUG_FLAG_C=-g
+    DEBUG_FLAG_CXX=-g
+    DEBUG_FLAG_F=-g
+    DEBUG_FLAG_LC=-g
+    DEBUG_FLAG_LCXX=-g
+    DEBUG_FLAG_LF=-g
 fi
 
 # Optimization
 
 if test "$with_opt" = "yes"; then
-    OPT_FLAG_C="-O"
-    OPT_FLAG_CXX="-O"
-    OPT_FLAG_F="-O"
+    OPT_FLAG_C=-O
+    OPT_FLAG_CXX=-O
+    OPT_FLAG_F=-O
 fi
 
 # Double precision
 # Note that although there is no truly standard way to invoke double
-# precision in Fortran from the command line, enough of them use "-r8"
+# precision in Fortran from the command line, enough of them use -r8
 # that I've decided to make it the default.  
 
 if test "$with_double" = "yes"; then
-    DBL_FLAG_C="-DDOUBLE"
-    DBL_FLAG_CXX="-DDOUBLE"
-    DBL_FLAG_M4="-DDOUBLE"
-    DBL_FLAG_F="-r8"
+    DBL_FLAG_C=-DDOUBLE
+    DBL_FLAG_CXX=-DDOUBLE
+    DBL_FLAG_M4=-DDOUBLE
+    DBL_FLAG_F=-r8
 fi
 
 # Profiling
 # Not a good default for Fortran here, either.
 
 if test "$with_profile" = "yes"; then
-    PROF_FLAG_C="-p"
-    PROF_FLAG_CXX="-p"
-    PROF_FLAG_LC="-p"
+    PROF_FLAG_C=-p
+    PROF_FLAG_CXX=-p
+    PROF_FLAG_LC=-p
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Set compiler on a system-dependent basis.
 # Notes:
 #
@@ -116,58 +116,59 @@ fi
 # gcc), or with_f2c=yes (to get f2c).  IMPORTANT: the command line
 # argument uses a "-" (dash) to separate words, while the shell variable
 # uses a "_" (underscore).
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 # Set up ANSI C compiler
 
 if test -z "$CC"; then
-    CC="cc"
+    CC=cc
     case "$system" in 
 	aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
-	    CC="xlc"
+	    CC=xlc
 	;;
 	alpha*|ALPHA*|Alpha*|OSF* ) 
 	    CC="cc -std"
 	;;
 	convex*|ConvexOS* ) 
 	    CC="cc -std"
-	    with_gcc="no"
+	    with_gcc=no
 	;;
 	dg*|DG* ) 
 	    CC="cc -ansi"
 	;;
 	hp*|HP* ) 
-	    CC="c89"
+	    CC=c89
 	;;
 	irix*|IRIX*|Irix*|sgi*|SGI* ) 
 	    CC="cc -ansi"
 	;;
 	linux*|LINUX*|Linux* ) 
-	    with_gcc="yes"
+	    with_gcc=yes
 	;;
 	next*|NeXT*|NEXT* ) 
-	    with_gcc="yes"
+	    with_gcc=yes
 	;;
 	SunOS-4* )
-	    CC="acc"
+	    CC=acc
 	;;
 	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
 	    CC="cc -hansi"
-	    with_gcc="no"
+	    with_gcc=no
 	;;
 	ultrix*|ULTRIX* ) 
-	    with_gcc="yes"
+	    with_gcc=yes
 	;;
 	CRAY* ) 
-	    with_gcc="no"
+	    with_gcc=no
 	;;
     esac
 fi
 
+# ----------------------------------------------------------------------------
 # Set up K&R C compiler
 
 if test -z "$OCC"; then
-    OCC="cc"
+    OCC=cc
     case "$system" in 
 	SunOS-5.* )
 	    OCC="cc -Xs"
@@ -175,14 +176,15 @@ if test -z "$OCC"; then
     esac
 fi
 
+# ----------------------------------------------------------------------------
 # Set up C++ compiler
 
 if test -z "$CXX"; then
-    CXX="CC"
+    CXX=CC
     case "$system" in
 	linux*|LINUX*|Linux* ) 
-	    with_gcc="yes"
-	    CXX="gcc"
+	    with_gcc=yes
+	    CXX=gcc
 	;;
 	hp*|HP* ) 
 	    CXX="CC +a1"
@@ -190,66 +192,75 @@ if test -z "$CXX"; then
     esac
 fi
 
+# ----------------------------------------------------------------------------
 # Set up Fortran compiler
 
 if test -z "$F77"; then
-    F77="f77"
+    F77=f77
     case "$system" in 
 	aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
-	    F77="xlf"
+	    F77=xlf
 	;;
 	dg*|DG* ) 
-	    F77="ghf77"
+	    F77=ghf77
 	;;
 	hp*|HP* ) 
 	    # The fort77 front-end uses a cc-like set of command line flags.
 
-	    F77="fort77"
+	    F77=fort77
 	;;
 	linux*|LINUX*|Linux* ) 
-	    with_f2c="yes"
+	    with_f2c=yes
 	;;
 	next*|NeXT*|NEXT* ) 
-	    with_f2c="yes"
+	    with_f2c=yes
 	;;
 	sx*|Sx*|SX*|monte*|Monte*|MONTE* ) 
 	    # The f77 front-end uses a cc-like set of command line flags,
 	    # but I've had problems with it, so use f77sx here instead.
 
-	    F77="f77sx"
-	    with_f2c="no"
+	    F77=f77sx
+	    with_f2c=no
 	;;
 	CRAY* ) 
-	    F77="cf77"
-	    with_f2c="no"
+	    F77=cf77
+	    with_f2c=no
 	;;
     esac
 fi
 
-# -----------------------------------------------------------------------
-# gcc
-# -----------------------------------------------------------------------
+# If not using f2c, try locating the executable now.
 
-if test "$with_gcc" = "yes"; then
-    CC="gcc"
-    CXX="gcc"
-    OCC="gcc -traditional"
-
-    if test "$with_warn" = "yes"; then
-	SYS_FLAGS_C="-Wall"
-    fi
-
-    # There are very few platforms on which gcc supports shared libs
-    # For now, just disable.
-
-    if test "$with_shlib" = "yes"; then
-#	echo "Warning: no support for shared libs with gcc yet"
-#	with_shlib="no"
-	echo "Experimental HP support for shared libs with gcc."
+if test "$with_f2c" = "no"; then
+    AC_CHECK_PROG(found_F77, $F77, yes, no)
+    if test "$found_F77" = "no" ; then
+	with_f2c=yes
     fi
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# gcc
+# ----------------------------------------------------------------------------
+
+if test "$with_gcc" = "yes"; then
+    CC=gcc
+    CXX=gcc
+    OCC="gcc -traditional"
+
+    if test "$with_warn" = "yes"; then
+	SYS_FLAGS_C=-Wall
+    fi
+
+    if test "$with_shlib" = "yes"; then
+	case "$system" in
+	    hp*|HP* ) 
+		AC_MSG_WARN(shared libs on HP with gcc is experimental)
+	    ;;
+	esac
+    fi
+fi
+
+# ----------------------------------------------------------------------------
 # f2c
 #
 # I give preference to the program "fc" for invoking f2c, since there may
@@ -257,19 +268,20 @@ fi
 # do I fall back to "f77".
 #
 # The only option supported for f2c is --with-double.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 if test "$with_f2c" = "yes"; then
-    AC_PROGRAM_CHECK(found_fc, fc, "yes", "no")
+    AC_CHECK_PROG(found_fc, fc, yes, no)
     if test "$found_fc" = "yes" ; then
-	F77="fc"
+	F77=fc
     else
-	AC_PROGRAM_CHECK(found_f77, f77, "yes", "no")
+	AC_CHECK_PROG(found_f77, f77, yes, no)
 	if test "$found_f77" = "yes" ; then
-	    F77="f77"
+	    F77=f77
 	else
-	    echo "Warning: could not find \"fc\" or \"f77\""
-	    with_f2c="no"
+	    AC_MSG_WARN(cannot find a Fortran compiler.. disabling Fortran interface)
+	    with_f2c=no
+	    enable_f77=no
 	fi
     fi
 
@@ -279,9 +291,9 @@ if test "$with_f2c" = "yes"; then
     SYS_FLAGS_F=
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Can finally set linker defaults.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 if test -z "$LDC"; then
     LDC="$CC"
@@ -293,7 +305,7 @@ if test -z "$LDF"; then
     LDF="$F77"
 fi
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Now get system-specific compiler flags.
 #
 # If your Fortran compiler supports auto-promotion to double precision, it
@@ -302,7 +314,7 @@ fi
 # to generate single and double precision versions.  So if your compiler
 # can't do command-line promotion to double precision, the only loss is
 # that you won't be able to run the Fortran demos in double precision.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 case "$system" in 
     aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
@@ -316,13 +328,13 @@ case "$system" in
 	# optimization will mess up some diagonal dashed lines.  
 
 	if test "$with_opt" = "yes"; then
-	    OPT_FLAG_C="-O1"
+	    OPT_FLAG_C=-O1
 	fi
     ;;
     convex*|ConvexOS* ) 
 	if test "$with_opt" = "yes"; then
-	    OPT_FLAG_C="-O3"
-	    OPT_FLAG_F="-O3"
+	    OPT_FLAG_C=-O3
+	    OPT_FLAG_F=-O3
 	fi
     ;;
     dg*|DG* ) 
@@ -349,34 +361,34 @@ case "$system" in
 	#  +ESlit puts const data and strings in read-only memory (c89 option)
 
 	if test "$with_warn" = "yes" -a "$with_gcc" = "no"; then
-	    SYS_FLAGS_LC="-z"
+	    SYS_FLAGS_LC=-z
 	    SYS_FLAGS_C="+w1 +ESlit"
-	    SYS_FLAGS_F="-w"
+	    SYS_FLAGS_F=-w
 	fi
 
 	# Handling of C++ exceptions
 
 	if test "$with_gcc" = "no"; then
-	    SYS_FLAGS_CXX="+eh"
-	    SYS_FLAGS_LCXX="+eh"
+	    SYS_FLAGS_CXX=+eh
+	    SYS_FLAGS_LCXX=+eh
 	fi
 
 	# Profiling
 	# Should not be used with shared libraries.
 
 	if test "$with_profile" = "yes" -a "$with_gcc" = "no"; then
-	    with_shlib="no"
-	    PROF_FLAG_C="-G"
-	    PROF_FLAG_F="-G"
-	    PROF_FLAG_LC="-G"
-	    PROF_FLAG_LF="-G"
+	    with_shlib=no
+	    PROF_FLAG_C=-G
+	    PROF_FLAG_F=-G
+	    PROF_FLAG_LC=-G
+	    PROF_FLAG_LF=-G
 	fi
 
 	# Shut off shared libraries if debugging.
 
 	if test "$with_debug" = "yes"; then
 	    if test "$with_gcc" = "no"; then
-		with_shlib="no"
+		with_shlib=no
 	    fi
 	fi
 
@@ -391,7 +403,7 @@ case "$system" in
 	# Fortran example programs in double precision.
 
 	if test $with_double = "yes" -a "$with_f2c" = "no"; then
-	    DBL_FLAG_F="+autodblpad"
+	    DBL_FLAG_F=+autodblpad
 	fi
     ;;
     irix*|IRIX*|Irix*|sgi*|SGI* ) 
@@ -454,8 +466,8 @@ case "$system" in
 	    PROF_FLAG_F=
 	    PROF_FLAG_LC=
 	    PROF_FLAG_LF=
-	    DEBUG_FLAG_C="-Gp"
-	    DEBUG_FLAG_LC="-Gp"
+	    DEBUG_FLAG_C=-Gp
+	    DEBUG_FLAG_LC=-Gp
 	    DEBUG_FLAG_LF= 
 
 	    case "$machine" in
@@ -472,80 +484,91 @@ case "$system" in
     ;;
 esac
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Set flags to generate shared libraries for systems that we know about.
 # Taken from BLT configure.in with some modifications.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-echo "checking how to make shared libraries"
-SHLIB_CCFLAGS=""
-SHLIB_CXXFLAGS=""
-SHLIB_BUILD=""
-SHLIB_SUFFIX=""
+AC_MSG_CHECKING(how to make shared libraries)
+SHLIB_CCFLAGS=
+SHLIB_CXXFLAGS=
+SHLIB_BUILD=
+SHLIB_SUFFIX=
 case "$system" in 
     SunOS-4* ) 
-	SHLIB_CCFLAGS="-pic"
-	SHLIB_CXXFLAGS="-pic"
-	SHLIB_F77FLAGS="-pic"
+	SHLIB_CCFLAGS=-pic
+	SHLIB_CXXFLAGS=-pic
+	SHLIB_F77FLAGS=-pic
 	SHLIB_BUILD="ld -assert pure-text -o"
 	SHLIB_SUFFIX='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	SALIB_SUFFIX='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
-    ;;
-    HP-UX-* )
-	SHLIB_CCFLAGS="+z"
-	SHLIB_CXXFLAGS="+z"
-	SHLIB_F77FLAGS="+z"
-	SHLIB_BUILD="ld -b -o"
-	SHLIB_SUFFIX=".sl"
 	if test "$with_gcc" = "yes"; then
-	    SHLIB_CCFLAGS="-fpic"
-	    SHLIB_CXXFLAGS="-fpic"
-	    SHLIB_F77FLAGS="+z"
-	    SHLIB_BUILD="gcc -shared -fpic -o"
-	    SHLIB_SUFFIX=".sl"
+	    with_shlib=no
+	    AC_MSG_RESULT(unknown)
+	else
+	    AC_MSG_RESULT(okay)
 	fi
     ;;
+    HP-UX-* )
+	SHLIB_CCFLAGS=+z
+	SHLIB_CXXFLAGS=+z
+	SHLIB_F77FLAGS=+z
+	SHLIB_BUILD="ld -b -o"
+	SHLIB_SUFFIX=.sl
+	if test "$with_gcc" = "yes"; then
+	    SHLIB_CCFLAGS=-fpic
+	    SHLIB_CXXFLAGS=-fpic
+	    SHLIB_F77FLAGS=+z
+	    SHLIB_BUILD="gcc -shared -fpic -o"
+	    SHLIB_SUFFIX=.sl
+	fi
+	AC_MSG_RESULT(okay)
+    ;;
     AIX-* )
-	SHLIB_CCFLAGS="-fpic"
-	SHLIB_CXXFLAGS="-fpic"
-	SHLIB_F77FLAGS="-fpic"
+	SHLIB_CCFLAGS=-fpic
+	SHLIB_CXXFLAGS=-fpic
+	SHLIB_F77FLAGS=-fpic
 	SHLIB_BUILD="ar q"
-	SHLIB_SUFFIX=".a"
+	SHLIB_SUFFIX=.a
+	AC_MSG_RESULT(okay)
     ;;
 
     # The rest are probably broken.  Someone please fix them.
-    # Remove the 'with_shlib="no"' line, comments, and go wild.
+    # Remove the 'with_shlib=no' line, comments, and go wild.
 
     SunOS-5* )
-	with_shlib="no"
+	with_shlib=no
 #	SHLIB_CCFLAGS="-K pic"
 #	SHLIB_F77FLAGS="-K pic"
 #	SHLIB_BUILD="$CC '-G -ztext -h $(SHARED_LIBRARY)'"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	AC_MSG_RESULT(unknown)
     ;;
     OSF-1.* )
-	with_shlib="no"
-#	SHLIB_CCFLAGS="-fpic"
-#	SHLIB_F77FLAGS="-fpic"
+	with_shlib=no
+#	SHLIB_CCFLAGS=-fpic
+#	SHLIB_F77FLAGS=-fpic
 #	SHLIB_BUILD="$CC -shared"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	AC_MSG_RESULT(unknown)
     ;;
     IRIX-5.* )
-	with_shlib="no"
-#	SHLIB_CCFLAGS="-KPIC"
-#	SHLIB_F77FLAGS="-KPIC"
+	with_shlib=no
+#	SHLIB_CCFLAGS=-KPIC
+#	SHLIB_F77FLAGS=-KPIC
 #	SHLIB_BUILD="$CC -shared"
 #	SHLIB_SUFFIX='.so.$(MAJOR_VERSION)'
+	AC_MSG_RESULT(unknown)
     ;;
     * )
-	echo "Don't know how to make shared libraries for $system"
-	with_shlib="no"
+	with_shlib=no
+	AC_MSG_RESULT(unknown)
     ;;
 esac
 
 if test ! -z "SHLIB_CCFLAGS" ; then 
     if test "$compiler" = "gcc" ; then
-	SHLIB_CCFLAGS="-fpic"
+	SHLIB_CCFLAGS=-fpic
     fi
 fi
 
@@ -553,9 +576,9 @@ AC_SUBST(SHLIB_BUILD)
 AC_SUBST(SHLIB_SUFFIX)
 AC_SUBST(SALIB_SUFFIX)
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Assemble finished compiler flags.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 CC_FLAGS_NOOPT=\
 "-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C"
@@ -604,9 +627,9 @@ AC_SUBST(SHLIB_CCFLAGS)
 AC_SUBST(SHLIB_CXXFLAGS)
 AC_SUBST(SHLIB_F77FLAGS)
 
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Hacks to deal with optimizer failures.
-# -----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 CC_FLAGS_XWIN=$CC_FLAGS
 CC_FLAGS_SCCONT=$CC_FLAGS

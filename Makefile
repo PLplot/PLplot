@@ -14,7 +14,7 @@
 #
 ##############################################################################
 
-default:	tmp/Makefile
+all default:	tmp/Makefile
 	cd tmp; $(MAKE) default
 
 libs:		tmp/Makefile
