@@ -47,9 +47,11 @@
 <!ENTITY chi      "chi">
 <!ENTITY psi      "psi">
 <!ENTITY omega    "omega">
+<!ENTITY deg      "degrees ">
 <!ENTITY less     "&lt;">
 <!ENTITY leq      "&lt;=">
 <!ENTITY ndash    "--">
+<!ENTITY nbsp     " ">
 <!ENTITY mdash    "---">
 <!ENTITY egrave   "e">
 <!ENTITY over-under "S-freq">
