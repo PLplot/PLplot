@@ -187,6 +187,22 @@ proc pldefaults {} {
 
     global file_menu_on;	set file_menu_on "1"
     global plot_menu_on;	set plot_menu_on "1"
+    
+    bind . <m> {toggle_menus %W}
+}
+
+proc toggle_menus {w} {
+    global file_menu_on plot_menu_on
+
+    if {$file_menu_on} {
+	pack forget .menu
+	pack forget [winfo parent $w].ftop
+	set file_menu_on 0
+    } else {
+	pack .menu -fill x
+	pack [winfo parent $w].ftop -fill x -before [winfo parent $w].plwin
+	set file_menu_on 1
+    }
 }
 
 proc plw_moveCursor {w x y xd yd} {
