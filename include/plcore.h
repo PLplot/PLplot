@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/04/26 20:00:10  mjl
-   The beginnings of a TK driver added.
+   Revision 1.7  1993/07/02 07:22:14  mjl
+   Namespace changes.
 
+ * Revision 1.6  1993/04/26  20:00:10  mjl
+ * The beginnings of a TK driver added.
+ *
  * Revision 1.5  1993/03/15  21:45:18  mjl
  * Changed _clear/_page driver functions to the names _eop/_bop, to be
  * more representative of what's actually going on.
@@ -31,7 +34,7 @@
 	should be included only by plcore.c.
 */
 
-#include "plplot.h"
+#include "plplotP.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,9 +55,15 @@ static PLINT offset;			/* offset for dispatch calls */
 /*
 * PLStream data structure (defined in plstream.h).
 * It contains a copy of every variable that is stream dependent.
+* Only the first [index=0] stream is statically allocated; the rest
+* are dynamically allocated when you switch streams.  Yes, it is legal
+* to only initialize the first element of the array of pointers.
 */
 
-static PLStream pls[PL_NSTREAMS];
+static PLStream pls0;			/* preallocated stream */
+static PLStream *plsc = &pls0;		/* current stream pointer */
+
+static PLStream *pls[PL_NSTREAMS] = {&pls0};	/* Array of stream pointers */
 
 /*----------------------------------------------------------------------*\
 * Define structure containing pointers to device dependent functions.
@@ -125,7 +134,7 @@ typedef struct {
    void (*pl_text)	(PLStream *);
    void (*pl_graph)	(PLStream *);
    void (*pl_width)	(PLStream *);
-   void (*pl_esc)	(PLStream *, PLINT, char *);
+   void (*pl_esc)	(PLStream *, PLINT, void *);
 } PLDispatchTable;
 
 /*----------------------------------------------------------------------*\
@@ -150,17 +159,17 @@ static PLDispatchTable dispatch_table[] = {
         "NeXT Display",
         "next",
 	1,
-        nx_init,
-        nx_line,
-        nx_polyline,
-        nx_eop,
-        nx_bop,
-        nx_tidy,
-        nx_color,
-        nx_text,
-        nx_graph,
-        nx_width,
-        nx_esc
+        plD_init_nx,
+        plD_line_nx,
+        plD_polyline_nx,
+        plD_eop_nx,
+        plD_bop_nx,
+        plD_tidy_nx,
+        plD_color_nx,
+        plD_text_nx,
+        plD_graph_nx,
+        plD_width_nx,
+        plD_esc_nx
     },
 #endif
 
@@ -169,17 +178,17 @@ static PLDispatchTable dispatch_table[] = {
 	"Amiga Window",
 	"amiwn",
 	1,
-	amiwn_init,
-	amiwn_line,
-	amiwn_polyline,
-	amiwn_eop,
-	amiwn_bop,
-	amiwn_tidy,
-	amiwn_color,
-	amiwn_text,
-	amiwn_graph,
-	amiwn_width,
-	amiwn_esc
+	plD_init_amiwn,
+	plD_line_amiwn,
+	plD_polyline_amiwn,
+	plD_eop_amiwn,
+	plD_bop_amiwn,
+	plD_tidy_amiwn,
+	plD_color_amiwn,
+	plD_text_amiwn,
+	plD_graph_amiwn,
+	plD_width_amiwn,
+	plD_esc_amiwn
    },
 #endif
 
@@ -188,55 +197,55 @@ static PLDispatchTable dispatch_table[] = {
 	"OS/2 PM Screen",
 	"os2",
 	1,
-	os2_init,
-	os2_line,
-	os2_polyline,
-	os2_eop,
-	os2_bop,
-	os2_tidy,
-	os2_color,
-	os2_text,
-	os2_graph,
-	os2_width,
-	os2_esc
-    },
-#endif
-
-#ifdef TK
-    {
-	"TCL/TK Screen",
-	"tk",
-	1,
-	tk_init,
-	tk_line,
-	tk_polyline,
-	tk_eop,
-	tk_bop,
-	tk_tidy,
-	tk_color,
-	tk_text,
-	tk_graph,
-	tk_width,
-	tk_esc
+	plD_init_os2,
+	plD_line_os2,
+	plD_polyline_os2,
+	plD_eop_os2,
+	plD_bop_os2,
+	plD_tidy_os2,
+	plD_color_os2,
+	plD_text_os2,
+	plD_graph_os2,
+	plD_width_os2,
+	plD_esc_os2
     },
 #endif
 
 #ifdef XWIN
     {
-	"X-Window Screen (Xlib)",
+	"X-Window (Xlib)",
 	"xwin",
 	1,
-	xw_init,
-	xw_line,
-	xw_polyline,
-	xw_eop,
-	xw_bop,
-	xw_tidy,
-	xw_color,
-	xw_text,
-	xw_graph,
-	xw_width,
-	xw_esc
+	plD_init_xw,
+	plD_line_xw,
+	plD_polyline_xw,
+	plD_eop_xw,
+	plD_bop_xw,
+	plD_tidy_xw,
+	plD_color_xw,
+	plD_text_xw,
+	plD_graph_xw,
+	plD_width_xw,
+	plD_esc_xw
+    },
+#endif
+
+#ifdef TK
+    {
+	"TCL/TK Window",
+	"tk",
+	1,
+	plD_init_tk,
+	plD_line_tk,
+	plD_polyline_tk,
+	plD_eop_tk,
+	plD_bop_tk,
+	plD_tidy_tk,
+	plD_color_tk,
+	plD_text_tk,
+	plD_graph_tk,
+	plD_width_tk,
+	plD_esc_tk
     },
 #endif
 
@@ -245,17 +254,17 @@ static PLDispatchTable dispatch_table[] = {
 	"DOS VGA Screen",
 	"vga",
 	1,
-	vga_init,
-	vga_line,
-	vga_polyline,
-	vga_eop,
-	vga_bop,
-	vga_tidy,
-	vga_color,
-	vga_text,
-	vga_graph,
-	vga_width,
-	vga_esc
+	plD_init_vga,
+	plD_line_vga,
+	plD_polyline_vga,
+	plD_eop_vga,
+	plD_bop_vga,
+	plD_tidy_vga,
+	plD_color_vga,
+	plD_text_vga,
+	plD_graph_vga,
+	plD_width_vga,
+	plD_esc_vga
     },
 #endif
 
@@ -264,17 +273,17 @@ static PLDispatchTable dispatch_table[] = {
 	"DOS SVGA Screen",
 	"svga",
 	1,
-	svga_init,
-	svga_line,
-	svga_polyline,
-	svga_eop,
-	svga_bop,
-	svga_tidy,
-	svga_color,
-	svga_text,
-	svga_graph,
-	svga_width,
-	svga_esc
+	splD_init_vga,
+	splD_line_vga,
+	splD_polyline_vga,
+	splD_eop_vga,
+	splD_bop_vga,
+	splD_tidy_vga,
+	splD_color_vga,
+	splD_text_vga,
+	splD_graph_vga,
+	splD_width_vga,
+	splD_esc_vga
     },
 #endif
 
@@ -283,17 +292,17 @@ static PLDispatchTable dispatch_table[] = {
 	"Xterm Window",
 	"xterm",
 	1,
-	xte_init,
-	xte_line,
-	xte_polyline,
-	xte_eop,
-	xte_bop,
-	xte_tidy,
-	xte_color,
-	xte_text,
-	xte_graph,
-	xte_width,
-	xte_esc
+	plD_init_xte,
+	plD_line_xte,
+	plD_polyline_xte,
+	plD_eop_xte,
+	plD_bop_xte,
+	plD_tidy_xte,
+	plD_color_xte,
+	plD_text_xte,
+	plD_graph_xte,
+	plD_width_xte,
+	plD_esc_xte
     },
 #endif
 
@@ -302,17 +311,17 @@ static PLDispatchTable dispatch_table[] = {
 	"Tektronix Terminal",
 	"tekt",
 	1,
-	tekt_init,
-	tek_line,
-	tek_polyline,
-	tek_eop,
-	tek_bop,
-	tek_tidy,
-	tek_color,
-	tek_text,
-	tek_graph,
-	tek_width,
-	tek_esc
+	plD_init_tekt,
+	plD_line_tek,
+	plD_polyline_tek,
+	plD_eop_tek,
+	plD_bop_tek,
+	plD_tidy_tek,
+	plD_color_tek,
+	plD_text_tek,
+	plD_graph_tek,
+	plD_width_tek,
+	plD_esc_tek
     },
 #endif
 
@@ -321,17 +330,17 @@ static PLDispatchTable dispatch_table[] = {
 	"DG300 Terminal",
 	"dg300",
 	1,
-	dg_init,
-	dg_line,
-	dg_polyline,
-	dg_eop,
-	dg_bop,
-	dg_tidy,
-	dg_color,
-	dg_text,
-	dg_graph,
-	dg_width,
-	dg_esc
+	plD_init_dg,
+	plD_line_dg,
+	plD_polyline_dg,
+	plD_eop_dg,
+	plD_bop_dg,
+	plD_tidy_dg,
+	plD_color_dg,
+	plD_text_dg,
+	plD_graph_dg,
+	plD_width_dg,
+	plD_esc_dg
     },
 #endif
 
@@ -342,17 +351,17 @@ static PLDispatchTable dispatch_table[] = {
 	"PLPLOT Native Meta-File",
 	"plmeta",
 	0,
-	plm_init,
-	plm_line,
-	plm_polyline,
-	plm_eop,
-	plm_bop,
-	plm_tidy,
-	plm_color,
-	plm_text,
-	plm_graph,
-	plm_width,
-	plm_esc
+	plD_init_plm,
+	plD_line_plm,
+	plD_polyline_plm,
+	plD_eop_plm,
+	plD_bop_plm,
+	plD_tidy_plm,
+	plD_color_plm,
+	plD_text_plm,
+	plD_graph_plm,
+	plD_width_plm,
+	plD_esc_plm
     },
 #endif
 
@@ -361,17 +370,17 @@ static PLDispatchTable dispatch_table[] = {
 	"Tektronix File",
 	"tekf",
 	0,
-	tekf_init,
-	tek_line,
-	tek_polyline,
-	tek_eop,
-	tek_bop,
-	tek_tidy,
-	tek_color,
-	tek_text,
-	tek_graph,
-	tek_width,
-	tek_esc
+	plD_init_tekf,
+	plD_line_tek,
+	plD_polyline_tek,
+	plD_eop_tek,
+	plD_bop_tek,
+	plD_tidy_tek,
+	plD_color_tek,
+	plD_text_tek,
+	plD_graph_tek,
+	plD_width_tek,
+	plD_esc_tek
     },
 #endif
 
@@ -380,17 +389,17 @@ static PLDispatchTable dispatch_table[] = {
 	"PostScript File",
 	"ps",
 	0,
-	ps_init,
-	ps_line,
-	ps_polyline,
-	ps_eop,
-	ps_bop,
-	ps_tidy,
-	ps_color,
-	ps_text,
-	ps_graph,
-	ps_width,
-	ps_esc
+	plD_init_ps,
+	plD_line_ps,
+	plD_polyline_ps,
+	plD_eop_ps,
+	plD_bop_ps,
+	plD_tidy_ps,
+	plD_color_ps,
+	plD_text_ps,
+	plD_graph_ps,
+	plD_width_ps,
+	plD_esc_ps
     },
 #endif
 
@@ -399,17 +408,17 @@ static PLDispatchTable dispatch_table[] = {
 	"Xfig file",
 	"xfig",
 	0,
-	xfig_init,
-	xfig_line,
-	xfig_polyline,
-	xfig_eop,
-	xfig_bop,
-	xfig_tidy,
-	xfig_color,
-	xfig_text,
-	xfig_graph,
-	xfig_width,
-	xfig_esc
+	plD_init_xfig,
+	plD_line_xfig,
+	plD_polyline_xfig,
+	plD_eop_xfig,
+	plD_bop_xfig,
+	plD_tidy_xfig,
+	plD_color_xfig,
+	plD_text_xfig,
+	plD_graph_xfig,
+	plD_width_xfig,
+	plD_esc_xfig
     },
 #endif
 
@@ -418,17 +427,17 @@ static PLDispatchTable dispatch_table[] = {
 	"LaserJet II Bitmap File (150 dpi)",
 	"ljii",
 	0,
-	jet_init,
-	jet_line,
-	jet_polyline,
-	jet_eop,
-	jet_bop,
-	jet_tidy,
-	jet_color,
-	jet_text,
-	jet_graph,
-	jet_width,
-	jet_esc
+	plD_init_jet,
+	plD_line_jet,
+	plD_polyline_jet,
+	plD_eop_jet,
+	plD_bop_jet,
+	plD_tidy_jet,
+	plD_color_jet,
+	plD_text_jet,
+	plD_graph_jet,
+	plD_width_jet,
+	plD_esc_jet
     },
 #endif
 
@@ -437,17 +446,17 @@ static PLDispatchTable dispatch_table[] = {
 	"Amiga Printer (prefs settings)",
 	"amipr",
 	0,
-	amipr_init,
-	amipr_line,
-	amipr_polyline,
-	amipr_eop,
-	amipr_bop,
-	amipr_tidy,
-	amipr_color,
-	amipr_text,
-	amipr_graph,
-	amipr_width,
-	amipr_esc
+	plD_init_amipr,
+	plD_line_amipr,
+	plD_polyline_amipr,
+	plD_eop_amipr,
+	plD_bop_amipr,
+	plD_tidy_amipr,
+	plD_color_amipr,
+	plD_text_amipr,
+	plD_graph_amipr,
+	plD_width_amipr,
+	plD_esc_amipr
     },
 #endif
 
@@ -456,17 +465,17 @@ static PLDispatchTable dispatch_table[] = {
 	"IFF Graphics File",
 	"iff",
 	0,
-	iff_init,
-	iff_line,
-	iff_polyline,
-	iff_eop,
-	iff_bop,
-	iff_tidy,
-	iff_color,
-	iff_text,
-	iff_graph,
-	iff_width,
-	iff_esc
+	plD_init_iff,
+	plD_line_iff,
+	plD_polyline_iff,
+	plD_eop_iff,
+	plD_bop_iff,
+	plD_tidy_iff,
+	plD_color_iff,
+	plD_text_iff,
+	plD_graph_iff,
+	plD_width_iff,
+	plD_esc_iff
    },
 #endif
 
@@ -475,17 +484,17 @@ static PLDispatchTable dispatch_table[] = {
 	"Aegis Draw File",
 	"aegis",
 	0,
-	aegis_init,
-	aegis_line,
-	aegis_polyline,
-	aegis_eop,
-	aegis_bop,
-	aegis_tidy,
-	aegis_color,
-	aegis_text,
-	aegis_graph,
-	aegis_width,
-	aegis_esc
+	plD_init_aegis,
+	plD_line_aegis,
+	plD_polyline_aegis,
+	plD_eop_aegis,
+	plD_bop_aegis,
+	plD_tidy_aegis,
+	plD_color_aegis,
+	plD_text_aegis,
+	plD_graph_aegis,
+	plD_width_aegis,
+	plD_esc_aegis
    },
 #endif
 
@@ -494,17 +503,17 @@ static PLDispatchTable dispatch_table[] = {
 	"HP 7470 Plotter File (HPGL Cartridge, Small Plotter)",
 	"hp7470",
 	0,
-	hp7470_init,
-	hp7470_line,
-	hp7470_polyline,
-	hp7470_eop,
-	hp7470_bop,
-	hp7470_tidy,
-	hp7470_color,
-	hp7470_text,
-	hp7470_graph,
-	hp7470_width,
-	hp7470_esc
+	plD_init_hp7470,
+	plD_line_hp7470,
+	plD_polyline_hp7470,
+	plD_eop_hp7470,
+	plD_bop_hp7470,
+	plD_tidy_hp7470,
+	plD_color_hp7470,
+	plD_text_hp7470,
+	plD_graph_hp7470,
+	plD_width_hp7470,
+	plD_esc_hp7470
     },
 #endif
 
@@ -513,17 +522,17 @@ static PLDispatchTable dispatch_table[] = {
 	"HP 7580 Plotter File (Large Plotter)",
 	"hp7580",
 	0,
-	hp7580_init,
-	hp7580_line,
-	hp7580_polyline,
-	hp7580_eop,
-	hp7580_bop,
-	hp7580_tidy,
-	hp7580_color,
-	hp7580_text,
-	hp7580_graph,
-	hp7580_width,
-	hp7580_esc
+	plD_init_hp7580,
+	plD_line_hp7580,
+	plD_polyline_hp7580,
+	plD_eop_hp7580,
+	plD_bop_hp7580,
+	plD_tidy_hp7580,
+	plD_color_hp7580,
+	plD_text_hp7580,
+	plD_graph_hp7580,
+	plD_width_hp7580,
+	plD_esc_hp7580
     },
 #endif
 
@@ -532,17 +541,17 @@ static PLDispatchTable dispatch_table[] = {
 	"Impress File",
 	"imp",
 	0,
-	imp_init,
-	imp_line,
-	imp_polyline,
-	imp_eop,
-	imp_bop,
-	imp_tidy,
-	imp_color,
-	imp_text,
-	imp_graph,
-	imp_width,
-	imp_esc
+	plD_init_imp,
+	plD_line_imp,
+	plD_polyline_imp,
+	plD_eop_imp,
+	plD_bop_imp,
+	plD_tidy_imp,
+	plD_color_imp,
+	plD_text_imp,
+	plD_graph_imp,
+	plD_width_imp,
+	plD_esc_imp
     },
 #endif
 
@@ -551,17 +560,17 @@ static PLDispatchTable dispatch_table[] = {
 	"Null device",
 	"null",
 	-1,
-	null_init,
-	null_line,
-	null_polyline,
-	null_eop,
-	null_bop,
-	null_tidy,
-	null_color,
-	null_text,
-	null_graph,
-	null_width,
-	null_esc
+	plD_init_null,
+	plD_line_null,
+	plD_polyline_null,
+	plD_eop_null,
+	plD_bop_null,
+	plD_tidy_null,
+	plD_color_null,
+	plD_text_null,
+	plD_graph_null,
+	plD_width_null,
+	plD_esc_null
     }
 #endif
 };
