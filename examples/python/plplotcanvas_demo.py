@@ -58,7 +58,6 @@ y = x**2/10.
 # Create the canvas and set its size; during the creation process,
 # the gcw driver is loaded into plplot, and plinit() is invoked.
 canvas=plplotcanvas.Canvas(aa=True)  
-canvas.use_text(True)
 canvas.set_size(WIDTH,HEIGHT)
 
 # Determine the viewport so that everything is drawn on the canvas
