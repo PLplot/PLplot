@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.23  1994/07/29 20:23:53  mjl
+ * Revision 1.24  1994/08/10 01:13:57  mjl
+ * Fixed hardwired DOS/GNUSVGA directory location.
+ *
+ * Revision 1.23  1994/07/29  20:23:53  mjl
  * Added new function plLibOpen(), used for opening and returning the file
  * handle for "library" files -- font files, map files, etc.  These are all
  * located by the same search path.
@@ -115,7 +118,7 @@ static int
 
 #elif defined(GNU386)
 #ifndef PLLIBDEV
-#define PLLIBDEV "c:plplot/lib"
+#define PLLIBDEV "c:/plplot/lib"
 #endif
 
 #elif defined(MSDOS)
