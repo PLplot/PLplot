@@ -99,6 +99,12 @@ fi
 # Look first in the Tcl/Tk distributions and then move on to the standard
 # include file/library locations.  If it's still not found I assume it's
 # not here.
+#
+# Note: it is important to check in user directories _before_ checking
+# anywhere else.  That way you can easily compile custom versions (of Tcl,
+# Tk, etc), put them in your file space, and have them be found first.
+# Some examples: libraries compiled with debugging turned on, or from a
+# different revision of the (Tcl, Tk, etc) package.
 # -----------------------------------------------------------------------
 
 # -----------------------------------------------------------------------
@@ -114,18 +120,18 @@ if test "$enable_tcl" = "yes"; then
 	TCLINCDIR=""
 	places="\
 	$prefix/include \
-	/usr/local/include \
-	/usr/include/tcl \
-	/usr/include \
-	/usr/local/tcl7.3/include \
 	$HOME/local/tcl7.3/include \
-	/usr/local/tk3.6/include \
 	$HOME/local/tk3.6/include \
 	$HOME/local/include \
 	$HOME/include \
 	$PWD/../tcl7.3 \
+	/usr/local/include \
+	/usr/include/tcl \
+	/usr/local/tcl7.3/include \
+	/usr/local/tk3.6/include \
 	$XINCDIR/tk \
-	$XINCDIR"
+	$XINCDIR \
+	/usr/include"
 
 	for dir in $places; do
 	    if test -r "$dir/$header"; then
@@ -153,15 +159,15 @@ if test "$enable_tcl" = "yes"; then
 	TCLLIBDIR=""
 	places="\
 	$prefix/lib \
-	/usr/local/lib \
-	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
-	/usr/local/tcl7.3/lib \
 	$HOME/local/tcl7.3/lib \
 	$HOME/local/lib \
 	$HOME/lib \
-	$XLIBDIR \
 	$PWD/../tcl7.3 \
+	/usr/local/lib \
+	/usr/local/tk3.6/lib \
+	/usr/local/tcl7.3/lib \
+	$XLIBDIR \
 	/usr/lib"
 
 	for dir in $places; do
@@ -201,7 +207,12 @@ if test "$enable_dp" = "yes"; then
 	$HOME/local/include \
 	$HOME/include \
 	$PWD/../tcl-dp3.1 \
-	$PWD/../tcl-dp3.2"
+	$PWD/../tcl-dp3.2 \
+	/usr/local/include \
+	/usr/include/tcl \
+	/usr/local/tcl7.3/include \
+	/usr/local/tk3.6/include \
+	/usr/include"
 
 	for dir in $places; do
 	    if test -r "$dir/dp.h"; then
@@ -230,14 +241,15 @@ if test "$enable_dp" = "yes"; then
 	places="\
 	$prefix/lib \
 	$TCLLIBDIR \
-	/usr/local/lib \
-	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
 	$HOME/local/lib \
 	$HOME/lib \
-	$XLIBDIR \
 	$PWD/../tcl-dp3.1 \
 	$PWD/../tcl-dp3.2 \
+	/usr/local/lib \
+	/usr/local/tcl7.0/lib \
+	/usr/local/tk3.6/lib \
+	$XLIBDIR \
 	/usr/lib"
 
 	for dir in $places; do
@@ -276,7 +288,12 @@ if test "$enable_itcl" = "yes"; then
 	$HOME/local/tk3.6/include \
 	$HOME/local/include \
 	$HOME/include \
-	$PWD/../itcl-1.5"
+	$PWD/../itcl-1.5
+	/usr/local/include \
+	/usr/include/tcl \
+	/usr/local/tcl7.3/include \
+	/usr/local/tk3.6/include \
+	/usr/include"
 
 	for dir in $places; do
 	    if test -r "$dir/$header"; then
@@ -305,13 +322,14 @@ if test "$enable_itcl" = "yes"; then
 	places="\
 	$prefix/lib \
 	$TCLLIBDIR \
-	/usr/local/lib \
-	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
 	$HOME/local/lib \
 	$HOME/lib \
-	$XLIBDIR \
 	$PWD/../itcl-1.5 \
+	/usr/local/lib \
+	/usr/local/tcl7.0/lib \
+	/usr/local/tk3.6/lib \
+	$XLIBDIR \
 	/usr/lib"
 
 	for dir in $places; do
@@ -344,14 +362,16 @@ if test "$enable_tk" = "yes"; then
 	places="\
 	$prefix/include \
 	$TCLINCDIR \
-	/usr/local/include \
-	/usr/local/tk3.6/include \
 	$HOME/local/tk3.6/include \
 	$HOME/local/include \
 	$HOME/include \
 	$PWD/../tk3.6 \
 	$XINCDIR/tk \
 	$XINCDIR \
+	/usr/local/include \
+	/usr/include/tcl \
+	/usr/local/tcl7.3/include \
+	/usr/local/tk3.6/include \
 	/usr/include"
 
 	for dir in $places; do
@@ -381,13 +401,14 @@ if test "$enable_tk" = "yes"; then
 	places="\
 	$prefix/lib \
 	$TCLLIBDIR \
-	/usr/local/lib \
-	/usr/local/tk3.6/lib \
 	$HOME/local/tk3.6/lib \
 	$HOME/local/lib \
 	$HOME/lib \
-	$XLIBDIR \
 	$PWD/../tk3.6 \
+	/usr/local/lib \
+	/usr/local/tcl7.0/lib \
+	/usr/local/tk3.6/lib \
+	$XLIBDIR \
 	/usr/lib"
 
 	for dir in $places; do
