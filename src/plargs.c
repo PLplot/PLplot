@@ -1239,17 +1239,12 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 
 	case DRV_STR:
 	  *(char **)(t->var_ptr) = (drvp->value);
-
 #ifdef DEBUG
 	  fprintf(stderr,"plParseDrvOpts: %s %s\n", t->opt, *(char**)t->var_ptr);
 #endif
-	  /* for familying this should not be free
-	     free(drvp->option); don't free, its needed! free(drvp->value); */
 	  break;
 
 	case DRV_INT:
-	  /* *((int *)t->var_ptr) = atoi(drvp->value);  use sscanf() for error detection */
-
 	  if ((st = sscanf(drvp->value, "%d", (char *)t->var_ptr)) != 1) {
 	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
 	    plexit(msg);
@@ -1257,12 +1252,9 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 #ifdef DEBUG
 	  fprintf(stderr,"plParseDrvOpts: %s %d\n", t->opt, *(int *) t->var_ptr);
 #endif  
-	  /* for familying this should not be free
-	     free(drvp->value); free(drvp->option); */
 	  break;
 
 	case DRV_FLT:
-
 	  if ((st = sscanf(drvp->value, "%f", (char *)t->var_ptr)) != 1) {
 	    sprintf(msg,"Incorrect argument to '%s' option", drvp->option);
 	    plexit(msg);
@@ -1270,8 +1262,6 @@ plParseDrvOpts(DrvOpt *acc_opt) {
 #ifdef DEBUG
 	  fprintf(stderr,"plParseDrvOpts: %s %f\n", t->opt, *(float *) t->var_ptr);
 #endif  
-	  /* for familying this should not be free
-	     free(drvp->value); free(drvp->option); */
 	  break;
 	}
       }
@@ -1655,7 +1645,7 @@ opt_drvopt(char *opt, char *optarg, void *client_data)
   int fl = 0;
   DrvOptCmd *drvp;
 
-  option = (char *) malloc(strlen(optarg));
+  option = (char *) malloc(strlen(optarg)); 
   if (option == NULL)
     plexit("opt_drvopt: Out of memory!?");
 
@@ -1677,9 +1667,9 @@ opt_drvopt(char *opt, char *optarg, void *client_data)
 	}
 	
 	*tt = '\0'; tt = option;
-	drvp->option = plstrdup(option);
-	drvp->value = plstrdup(value);
-	drvp->next = (DrvOptCmd *) malloc(sizeof(DrvOptCmd));
+	drvp->option = plstrdup(option); /* it should not be release, because of familying */
+	drvp->value = plstrdup(value); /* don't release */
+	drvp->next = (DrvOptCmd *) malloc(sizeof(DrvOptCmd)); /* don't release */
 	if (drvp->next == NULL)
 	  plexit("opt_drvopt: Out of memory!?\n");
 
@@ -1702,8 +1692,8 @@ opt_drvopt(char *opt, char *optarg, void *client_data)
       value[1] = '\0';
     }
 
-    drvp->option = plstrdup(option);
-    drvp->value = plstrdup(value);
+    drvp->option = plstrdup(option); /* don't release */
+    drvp->value = plstrdup(value); /* don't release */
     drvp->next = NULL;
 
 #ifdef DEBUG
