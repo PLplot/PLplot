@@ -38,7 +38,10 @@ typedef lt_ptr (*PLDispatchInit)( PLDispatchTable *pdt );
 #else
 typedef void (*PLDispatchInit)( PLDispatchTable *pdt );
 #endif
-    
+
+#ifdef HAVE_LIBUNICODE
+#include <unicode.h>
+#endif
 
 
 /* Static function prototypes */
@@ -92,7 +95,7 @@ PLStream *plsc = &pls0;
  * Initialize dispatch table.
  *
  * Each device is selected by the appropriate define, passed in from the
- * makefile.  When installing plplot you may wish to exclude devices not 
+ * makefile.  When installing plplot you may wish to exclude devices not
  * present on your system in order to reduce screen clutter.
  *
  * If you hit a <CR> in response to the plinit() prompt, you get the FIRST
@@ -250,7 +253,7 @@ static PLDispatchInit static_device_initializers[] = {
 #endif
 #if defined(PLD_aqt) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_aqt,
-#endif	
+#endif
     NULL
 };
 
@@ -274,7 +277,7 @@ typedef struct {
 typedef struct {
     char *drvnam;
     lt_dlhandle dlhand;
-    
+
 } PLLoadableDriver;
 
 static PLLoadableDevice *loadable_device_list;

@@ -639,7 +639,22 @@ plP_text(PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 	       }
 	       
 	       if (skip==0) {
+#ifdef HAVE_LIBUNICODE
+                  unicode_char_t unichar;
+		  char* ptr = 
+		    unicode_get_utf8 (string + i, &unichar);
+                  if (ptr == NULL) {
+                    char buf[80];
+                    strncpy (buf, string, 30);
+                    sprintf (buf, "UTF-8 string is malformed: %s%s", 
+                             buf, strlen (string) > 30 ? "[...]" : "");
+                    plabort (buf);
+                  }
+                  unicode_buffer [j] = (PLUNICODE) unichar;
+                  i += ptr - (string + i) - 1;
+#else
 		  unicode_buffer[j]=string[i];
+#endif
 		  /* Search for escesc (an unescaped escape) in the input string
 		   * and adjust unicode_buffer accordingly).
 		   */

@@ -145,6 +145,7 @@ AC_CHECK_LIB(m, sin)
 
 m4_include(cf/pthread.ac)
 m4_include(cf/freetype.ac)
+m4_include(cf/unicode.ac)
 m4_include(cf/csiro.ac)
 
 

@@ -53,10 +53,12 @@ sources = \
   plgridd.c \
   plvect.c
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(FREETYPEINCCMD) $(INCLTDL)
+AM_CPPFLAGS = -I$(top_srcdir)/include $(FREETYPEINCCMD) $(INCLTDL) \
+  $(UNICODEINCS)
 
 libplplot@LIB_TAG@_la_SOURCES  = $(sources)
-libplplot@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined $(FREETYPELIBCMD) $(CSALIBS) $(NNLIBS) -lm
+libplplot@LIB_TAG@_la_LDFLAGS  = $(version) $(RPATH) -no-undefined \
+  $(FREETYPELIBCMD) $(CSALIBS) $(NNLIBS) -lm $(UNICODELIBS)
 if !enable_dyndrivers
 libplplot@LIB_TAG@_la_LIBADD = $(top_builddir)/drivers/libplplotdrv.la
 else
