@@ -1,8 +1,13 @@
 # $Id$
 # $Log$
-# Revision 1.1  1993/07/02 06:58:35  mjl
-# The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
+# Revision 1.2  1993/07/16 22:06:40  mjl
+# Changed top row of widgets.  Now most commands accessible through the "plot"
+# menu.  Many additions, including save, save as, orient.., zoom.., page..,
+# and so on.  Procs added to handle the new options as well as support for
+# scrollbars on zooms.
 #
+# Revision 1.1  1993/07/02  06:58:35  mjl
+# The new TCL/TK driver!  Yes it's finally here!  YAAAAAAAAYYYYYYY!!!
 
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer
@@ -12,9 +17,9 @@
 # IFS, University of Texas at Austin
 # 29-May-1993
 #
-# Note: to keep namespace wholesome, all procs defined here begin with
-# "plwindow_" for button- or menu-accessible commands, or "pl_" for
-# utility commands.
+# Note: to keep namespace problems to a minimum, all procs defined here begin
+# with "pl".  These are further subdivided into "plw_" for button- or
+# menu-accessible commands, or "pl_" for utility commands.
 #----------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -23,7 +28,7 @@
 # parameters using configure.
 #------------------------------------------------------------------------------
 
-proc plwindow_create {w {pack {bottom expand fill}}} {
+proc plw_create {w {pack {bottom expand fill}}} {
     
 # Make container frame & map into the server window.
 
@@ -32,40 +37,40 @@ proc plwindow_create {w {pack {bottom expand fill}}} {
 
 # Make frame for top row widgets.
 
-    plwindow_create_TopRow $w
+    plw_create_TopRow $w
+    pack append $w \
+	$w.ftop {top fill}
 
 # Make plplot widget.
 
     plframe $w.plwin -relief sunken -background #000000
-
-# Map child widgets into container frame.
-
     pack append $w \
-	$w.ftop {top fill} \
 	$w.plwin {left expand fill}
+
+# Do remaining configure of top row.
+
+    plw_configure_TopRow $w
+}
+
+#------------------------------------------------------------------------------
+# This is just a front-end to plw_create, used by plrender.
+#------------------------------------------------------------------------------
+
+proc plr_create {w {pack {bottom expand fill}}} {
+    global is_plrender
+
+    set is_plrender 1
+    plw_create $w $pack
 }
 
 #------------------------------------------------------------------------------
 # Proc to create top row widgets.
 #------------------------------------------------------------------------------
 
-proc plwindow_create_TopRow {w} {
+proc plw_create_TopRow {w} {
+    global is_plrender
 
     frame $w.ftop
-
-# Make label widget for status messages.
-
-    pack append $w.ftop \
-	[label $w.ftop.lstat -anchor w -relief raised -text $w] \
-	{right expand fill} 
-
-# Make widget selector (for global operations).
-#
-#    pack append $w.ftop \
-#	[radiobutton $w.ftop.select \
-#	    -relief raised -variable $w.active_widget -value $w.plwin] {left}
-#
-#    $w.ftop.select invoke
 
 # End of page indicator
 
@@ -73,29 +78,180 @@ proc plwindow_create_TopRow {w} {
 	[label $w.ftop.leop -relief raised] \
 	{left fill padx 12}
 
+# Plot menu
+
+    pack append $w.ftop \
+	[plw_create_pmenu $w] \
+	{left fill padx 12}
+
+# Backward page button, plrender only.
+
+    if {[info exists is_plrender]} {
+	pack append $w.ftop \
+	    [button $w.ftop.bp -text "<<" -relief raised] \
+	    {left fill padx 10}
+    }
+
 # Forward page button
 
     pack append $w.ftop \
 	[button $w.ftop.fp -text ">>" -relief raised] \
 	{left fill padx 10}
 
-# Make radio buttons for zoom/pan/reset.
+# Make label widget for status messages.
 
     pack append $w.ftop \
-	[button $w.ftop.save -text "S" -relief raised] \
-	{left fill padx 10} \
-	[button $w.ftop.saveas -text "A" -relief raised] \
-	{left fill padx 10} 
+	[label $w.ftop.lstat -anchor w -relief raised -text $w] \
+	{right expand fill} 
+}
 
-# Make radio buttons for zoom/pan/reset.
+#------------------------------------------------------------------------------
+# Proc to create plot menu.
+#
+# It is tempting to create buttons for some of these options, but buttons are
+# difficult to effectively place and extend.  Menus have a clear placement
+# mechanism and are easy to add to.  Further, TK menus can be torn off
+# (select menu with middle mouse button and move to where you want it) which
+# makes selecting top-level menu buttons easy.
+#------------------------------------------------------------------------------
 
-    pack append $w.ftop \
-	[radiobutton $w.ftop.bz -text "Z" \
-	 -relief raised -command "plwindow_zoom $w"] {left} \
-	[radiobutton $w.ftop.br -text "R" \
-	 -relief raised -command "plwindow_reset $w"] {left}
+proc plw_create_pmenu {w} {
 
-    $w.ftop.br select
+    menubutton $w.ftop.pmenu -menu $w.ftop.pmenu.m \
+	-text "Plot" \
+	-relief raised
+
+    menu $w.ftop.pmenu.m
+
+#-------
+# Save
+#-------
+
+    $w.ftop.pmenu.m add command \
+	-label "Save" \
+	-command "plw_save $w"
+
+#----------
+# Save As
+#----------
+
+    $w.ftop.pmenu.m add cascade \
+	-label "Save As  =>" \
+	-menu $w.ftop.pmenu.m.saveas
+
+    menu $w.ftop.pmenu.m.saveas
+
+#-----------------
+# Orient (cascade)
+#-----------------
+
+    $w.ftop.pmenu.m add cascade \
+	-label "Orient  =>" \
+	-menu $w.ftop.pmenu.m.orient
+
+    menu $w.ftop.pmenu.m.orient
+
+# Orient - 0 degrees
+
+    $w.ftop.pmenu.m.orient add radio \
+	-label "0 degrees" \
+	-command "plw_orient $w 0"
+
+# Orient - 90 degrees
+
+    $w.ftop.pmenu.m.orient add radio \
+	-label "90 degrees" \
+	-command "plw_orient $w 1"
+
+# Orient - 180 degrees
+
+    $w.ftop.pmenu.m.orient add radio \
+	-label "180 degrees" \
+	-command "plw_orient $w 2"
+
+# Orient - 270 degrees
+
+    $w.ftop.pmenu.m.orient add radio \
+	-label "270 degrees" \
+	-command "plw_orient $w 3"
+
+#-----------------
+# Zoom (cascade)
+#-----------------
+
+    $w.ftop.pmenu.m add cascade \
+	-label "Zoom  =>" \
+	-menu $w.ftop.pmenu.m.zoom
+
+    menu $w.ftop.pmenu.m.zoom
+
+# Zoom - select (by mouse)
+
+    $w.ftop.pmenu.m.zoom add command \
+	-label "Select" \
+	-command "plw_zoom_select $w"
+
+# Zoom - enter bounds
+
+    $w.ftop.pmenu.m.zoom add command \
+	-label "Enter bounds.." \
+	-command "plw_zoom_enter $w"
+
+# Zoom - reset
+
+    $w.ftop.pmenu.m.zoom add command \
+	-label "Reset" \
+	-command "plw_zoom_reset $w"
+
+#------------------------
+# Set up page (cascade)
+#------------------------
+
+    $w.ftop.pmenu.m add cascade \
+	-label "Page   =>" \
+	-menu $w.ftop.pmenu.m.page
+
+    menu $w.ftop.pmenu.m.page
+
+# Page - enter bounds
+
+    $w.ftop.pmenu.m.page add command \
+	-label "Enter bounds.." \
+	-command "plw_page_enter $w"
+
+# Page - reset
+
+    $w.ftop.pmenu.m.page add command \
+	-label "Reset" \
+	-command "plw_page_reset $w"
+
+#---------
+# Redraw 
+#---------
+
+    $w.ftop.pmenu.m add command \
+	-label "Redraw" \
+	-command "$w.plwin redraw"
+
+# The end
+
+    return $w.ftop.pmenu
+}
+
+#------------------------------------------------------------------------------
+# Proc to finish configuration of top row widgets.
+# Right now it just generates the device list in the "Save As" widget menu.
+#------------------------------------------------------------------------------
+
+proc plw_configure_TopRow {w} {
+    update
+    set j 0
+    foreach i [$w.plwin info devices] {
+	$w.ftop.pmenu.m.saveas add command \
+	    -label $i \
+	    -command "plw_saveas $w $j"
+	set j [expr "$j + 1"]
+    }
 }
 
 #------------------------------------------------------------------------------
@@ -103,22 +259,30 @@ proc plwindow_create_TopRow {w} {
 # All the bindings as well as communication links to the client are made here.
 #------------------------------------------------------------------------------
 
-proc plwindow_init {w client} {
-    
+proc plw_init {w client} {
+    global is_plrender
+
 # Configure forward page button
 
     $w.ftop.fp configure -command "send $client set advance 1"
 
+# Configure back page button, plrender only
+
+    if {[info exists is_plrender]} {
+	$w.ftop.bp configure -command \
+	    "send $client {keypress BackSpace}"
+    }
+
 # Initialize plplot widget
 
-    plwindow_init_plplot $w $client
+    plw_init_plplot $w $client
 }
 
 #------------------------------------------------------------------------------
 # Proc to initialize plplot widget.
 #------------------------------------------------------------------------------
 
-proc plwindow_init_plplot {w client} {
+proc plw_init_plplot {w client} {
     
 # Give client name to plplot widget.
 
@@ -130,7 +294,7 @@ proc plwindow_init_plplot {w client} {
 
 # Bindings
 
-    bind $w.plwin <KeyPress> "send $client {keypress %N %K %A}"
+    bind $w.plwin <KeyPress> "send $client {keypress %K %N %A}"
     bind $w.plwin <Any-Enter> "focus $w.plwin"
 
 # Inform client of plplot widget name for widget commands.
@@ -146,7 +310,7 @@ proc plwindow_init_plplot {w client} {
 # Proc to set end-of-page indicator to help user out.
 #------------------------------------------------------------------------------
 
-proc plwindow_flash {w} {
+proc plw_flash {w} {
 
     set bg [lindex [$w.ftop.leop config -bg] 4]
     if {$bg == "gray"} {
@@ -161,44 +325,130 @@ proc plwindow_flash {w} {
 # Executed as part of orderly shutdown procedure.
 #------------------------------------------------------------------------------
 
-proc plwindow_end {w} {
+proc plw_end {w} {
     $w.plwin detach
 }
 
 #----------------------------------------------------------------------------
-# plwindow_zoom
+# plw_save
 #
-# Zooms plot in response to user input.
+# Saves plot to an already open file.  If none open, issues an error dialog.
 #----------------------------------------------------------------------------
 
-proc plwindow_zoom {w} {
+proc plw_save {w} {
+    if { [catch "$w.plwin save" foo]} {
+	bogon_alert "$foo"
+    }
+}
+
+#----------------------------------------------------------------------------
+# plw_saveas
+#
+# Saves plot to specified device.
+#----------------------------------------------------------------------------
+
+proc plw_saveas {w dev} {
+    set file [getItem "Enter file name"]
+    if { [file exists $file] } {
+	if { ! [confirm "File $file already exists.  Are you sure?"] } {
+	    return
+	}
+    }
+    $w.plwin save $dev $file
+}
+
+#----------------------------------------------------------------------------
+# plw_zoom_select
+#
+# Zooms plot in response to mouse selection.
+#----------------------------------------------------------------------------
+
+proc plw_zoom_select {w} {
     $w.ftop.lstat configure -text \
 	"Zoom: Click on upper left hand corner of zoom region."
     bind $w.plwin <ButtonPress> "pl_zoom_start $w %x %y"
 }
 
 #----------------------------------------------------------------------------
-# plwindow_pan
+# plw_zoom_enter
 #
-# Pans plot in response to user input.
+# Zooms plot in response to text entry.
 #----------------------------------------------------------------------------
 
-proc plwindow_pan {w} {
-    $w.ftop.lstat configure -text \
-	"Pan: Click in center of plot and drag."
-    bind $w.plwin <ButtonPress> "pl_pan_start $w %x %y"
+proc plw_zoom_enter {w} {
+    global xmin ymin xmax ymax
+
+    set coords [$w.plwin view]
+    set xmin [lindex "$coords" 0]
+    set ymin [lindex "$coords" 1]
+    set xmax [lindex "$coords" 2]
+    set ymax [lindex "$coords" 3]
+
+    EnterCoords .e "window coordinates for zoom"
+    tkwait window .e
+
+    pl_view $w select $xmin $ymin $xmax $ymax
 }
 
 #----------------------------------------------------------------------------
-# plwindow_reset
+# plw_zoom_reset
 #
-# Resets after zoom/pan.
+# Resets after zoom.
+# Note that an explicit redraw is not necessary since the packer issues a
+# resize after the scrollbars are unmapped.
 #----------------------------------------------------------------------------
 
-proc plwindow_reset {w} {
+proc plw_zoom_reset {w} {
     $w.ftop.lstat configure -text $w
     bind $w.plwin <ButtonPress> {}
     $w.plwin view reset
+    if {[winfo ismapped $w.hscroll]} then {
+	pack unpack $w.hscroll
+    }
+    if {[winfo exists $w.vscroll]} then {
+	pack unpack $w.vscroll
+    }
+}
+
+#----------------------------------------------------------------------------
+# plw_orient
+#
+# Changes plot orientation.
+#----------------------------------------------------------------------------
+
+proc plw_orient {w rot} {
+    $w.plwin orient $rot
+}
+
+#----------------------------------------------------------------------------
+# plw_page_enter
+#
+# Changes window into device space.
+#----------------------------------------------------------------------------
+
+proc plw_page_enter {w} {
+    global xmin ymin xmax ymax
+
+    set coords [$w.plwin page]
+    set xmin [lindex "$coords" 0]
+    set ymin [lindex "$coords" 1]
+    set xmax [lindex "$coords" 2]
+    set ymax [lindex "$coords" 3]
+
+    EnterCoords .e "area of page to use for plotting"
+    tkwait window .e
+
+    $w.plwin page $xmin $ymin $xmax $ymax
+}
+
+#----------------------------------------------------------------------------
+# plw_page_reset
+#
+# Resets window into device space.
+#----------------------------------------------------------------------------
+
+proc plw_page_reset {w} {
+    $w.plwin page 0. 0. 1. 1.
 }
 
 #----------------------------------------------------------------------------
@@ -207,33 +457,14 @@ proc plwindow_reset {w} {
 # Starts plot zoom.
 #----------------------------------------------------------------------------
 
-proc pl_zoom_start {w x y} {
+proc pl_zoom_start {w wx wy} {
     bind $w.plwin <ButtonPress> {}
     $w.ftop.lstat configure -text \
 	"Select zoom region by dragging mouse, then release."
 
-    $w.plwin view init
-    bind $w.plwin <B1-ButtonRelease> "pl_zoom_select $w $x $y %x %y"
-    bind $w.plwin <B1-Motion> "pl_zoom_draw $w $x $y %x %y"
-}
-
-#----------------------------------------------------------------------------
-# pl_pan_start
-#
-# Starts plot pan.
-#----------------------------------------------------------------------------
-
-proc pl_pan_start {w x y} {
-    bind $w.plwin <ButtonPress> {}
-    $w.ftop.lstat configure -text \
-	"Drag plot to new location, then release button."
-
-    set lx [winfo width $w.plwin]
-    set ly [winfo height $w.plwin]
-
-    $w.plwin view init
-    bind $w.plwin <B1-ButtonRelease> "pl_pan_select $w $x $y %x %y $lx $ly"
-    bind $w.plwin <B1-Motion> "pl_pan_draw $w $x $y %x %y $lx $ly"
+    $w.plwin draw init
+    bind $w.plwin <B1-ButtonRelease> "pl_zoom_select $w $wx $wy %x %y"
+    bind $w.plwin <B1-Motion> "pl_zoom_draw $w $wx $wy %x %y"
 }
 
 #----------------------------------------------------------------------------
@@ -242,8 +473,8 @@ proc pl_pan_start {w x y} {
 # Draws zoom box.
 #----------------------------------------------------------------------------
 
-proc pl_zoom_draw {w x0 y0 x1 y1} {
-    $w.plwin view draw $x0 $y0 $x1 $y1
+proc pl_zoom_draw {w wx0 wy0 wx1 wy1} {
+    $w.plwin draw rect $wx0 $wy0 $wx1 $wy1
 }
 
 #----------------------------------------------------------------------------
@@ -252,50 +483,94 @@ proc pl_zoom_draw {w x0 y0 x1 y1} {
 # Selects region for zoom.
 #----------------------------------------------------------------------------
 
-proc pl_zoom_select {w x0 y0 x1 y1} {
+proc pl_zoom_select {w wx0 wy0 wx1 wy1} {
+    
+# Finish rubber band draw
+
     bind $w.plwin <B1-ButtonRelease> {}
     bind $w.plwin <B1-Motion> {}
     $w.ftop.lstat configure -text "$w"
-    $w.plwin view select $x0 $y0 $x1 $y1
+
+    set wlx [winfo width $w.plwin]
+    set wly [winfo height $w.plwin]
+    set xmin [expr "$wx0/$wlx."     ]
+    set xmax [expr "$wx1/$wlx."     ]
+    set ymin [expr "1 - $wy1/$wly." ]
+    set ymax [expr "1 - $wy0/$wly." ]
+
+    $w.plwin draw end
+
+# Select new plot region
+
+    pl_view $w zoom $xmin $ymin $xmax $ymax
 }
 
 #----------------------------------------------------------------------------
-# pl_pan_draw
+# pl_view
 #
-# Draws pan box.
+# Handles change of view into plot.
 #----------------------------------------------------------------------------
 
-proc pl_pan_draw {w x0 y0 x1 y1 lx ly} {
-    $w.plwin view draw \
-	[expr $x1-$x0] [expr $y1-$y0] [expr $lx+$x1-$x0] [expr $ly+$y1-$y0]
+proc pl_view {w op x0 y0 x1 y1} {
+    
+# Adjust arguments to be in bounds and properly ordered (xmin < xmax, etc)
+
+    set xmin [min $x0 $x1]
+    set ymin [min $y0 $y1]
+    set xmax [max $x0 $x1]
+    set ymax [max $y0 $y1]
+
+    set xmin [max 0. [min 1. $xmin]]
+    set ymin [max 0. [min 1. $ymin]]
+    set xmax [max 0. [min 1. $xmax]]
+    set ymax [max 0. [min 1. $ymax]]
+
+# If bounds are (0,0) (1,1), just return.
+
+    if {($xmin == 0) && ($xmax == 1)} \
+    then {set hscroll 0} else {set hscroll 1}
+
+    if {($ymin == 0) && ($ymax == 1)} \
+    then {set vscroll 0} else {set vscroll 1}
+
+    if { ! ($hscroll || $vscroll)} {return}
+
+# Select plot region
+
+    $w.plwin view $op $xmin $ymin $xmax $ymax
+
+# Create scrollbars if they don't already exist.
+
+    if {$hscroll && ! [winfo exists $w.hscroll]} then {
+	scrollbar $w.hscroll -relief sunken -orient horiz \
+	    -command "$w.plwin xscroll"
+	$w.plwin config -xscroll "$w.hscroll set"
+    }
+    if {$vscroll && ! [winfo exists $w.vscroll]} then {
+	scrollbar $w.vscroll -relief sunken \
+	    -command "$w.plwin yscroll"
+	$w.plwin config -yscroll "$w.vscroll set"
+    }
+
+# Map scrollbars if not already mapped.
+# To get packing right, need to unmap then remap plot widget.
+# Otherwise need to do explicit redraw.
+
+    if {($hscroll && ! [winfo ismapped $w.hscroll]) || \
+        ($vscroll && ! [winfo ismapped $w.vscroll]) } then {
+
+	update
+	pack unpack $w.plwin
+	if {$hscroll} {
+	    pack append $w $w.hscroll {bottom fillx}
+	}
+	if {$vscroll} {
+	    pack append $w $w.vscroll {right filly}
+	}
+	pack append $w $w.plwin {expand fill}
+
+    } else {
+	$w.plwin redraw
+    }
 }
-
-#----------------------------------------------------------------------------
-# pl_pan_select
-#
-# Selects region for pan.
-#----------------------------------------------------------------------------
-
-proc pl_pan_select {w x0 y0 x1 y1 lx ly} {
-    bind $w.plwin <B1-ButtonRelease> {}
-    bind $w.plwin <B1-Motion> {}
-    $w.ftop.lstat configure -text "$w"
-    $w.plwin view select \
-	[expr $x1-$x0] [expr $y1-$y0] [expr $lx+$x1-$x0] [expr $ly+$y1-$y0]
-}
-
-#.menu.file.m add command \
-#    -label "Print" \
-#    -command {null_command "Print"} \
-#    -underline 0
-#
-#.menu.file.m add command \
-#    -label "Save..." \
-#    -command {null_command "Save..."} \
-#    -underline 0
-#
-#.menu.file.m add command \
-#    -label "Save As..." \
-#    -command {null_command "Save As..."} \
-#    -underline 5
 
