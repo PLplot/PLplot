@@ -1532,7 +1532,7 @@ static char doc_plcont[] = "Draws a contour plot from data in z(x,y)";
 /* 	pltrname = PyArg_GetString( PyTuple_GetItem( args, i++ ) ); */
 /* 	TRY( PyArg_GetString( args, argc, i++, &pltrname ) ); */
 	TRY( pltrname = PyString_AsString( PyTuple_GetItem( args, i++ ) ) );
-	printf( "pltr=%s\n", pltrname );
+/*	printf( "pltr=%s\n", pltrname );*/
 	if ( i < argc-1 ) {
 	/* Then there must be at least two args left, which means the xg, yg
            stuff has been specified. */
