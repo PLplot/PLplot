@@ -27,7 +27,7 @@ To obtain a fresh CVS tree:
 To install the whole web site, just type:
 
     cd www
-    USER=joeplplotter make
+    SF_USER=joeplplotter make
 
 and everything will be built and uploaded automatically, including the
 stuff in the announce directory.  Sensible variables are defined in file
@@ -61,7 +61,7 @@ obtain it from CVS, do:
 
 Then go to the plplot directory and type:
 
-    USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
+    SF_USER=joeplplotter scripts/htdocs-gen_plot-examples.sh
 
 This will build the PNG files and upload everything to the
 htdocs/examples-data directory in the SF shell server.
@@ -88,7 +88,7 @@ See doc/docbook/README.developers for details.
 
 To install the DocBook area in the web site, do:
 
-    USER=joeplplotter make www-install
+    WWW_USER=joeplplotter make www-install
 
 
 CVS snapshot tarballs area
@@ -97,7 +97,7 @@ CVS snapshot tarballs area
 To generate a cvs snapshot tarball, use the make-cvs-tarball.sh in the
 directory scripts.  This script accepts two arguments:
 
-    USER=joeplplotter make-cvs-tarball.sh 5.3.0.cvs v5_3_0
+    SF_USER=joeplplotter make-cvs-tarball.sh 5.3.0.cvs v5_3_0
 
 The second argument is the CVS branch label from which the tarball is
 built. It default to HEAD.  The first argument is the version string that
@@ -108,7 +108,7 @@ from the current date, like 5.3.0.cvs.20040207.
 The resulting tarball can be uploaded to htdocs/cvs-tarball in the web site
 with the upload-cvs-tarball.sh, like this:
 
-    USER=joeplplotter upload-cvs-tarball.sh plplot-5.3.0.cvs.20040207.tar.gz
+    SF_USER=joeplplotter upload-cvs-tarball.sh plplot-5.3.0.cvs.20040207.tar.gz
 
 A file called <tarball>.asc containing the detached GPG signature will also
 be generated and uploaded.  To override the default GPG key, use the
@@ -121,8 +121,18 @@ Debian area
 -----------
 
 This area is maintained by the Debian maintainer of the PLplot packages.
-The scripts and instructions for updating it will be shortly made
-available here.
+To generate the Debian package, install the devscripts packages, go to the
+top_scrdir directory and type:
+
+    debuild -us -uc -i
+    
+Go then to the upper directory and launch the uplaod-debs.pl script:
+
+    cd ..
+    SF_USER=joeplplotter plplot/debian/upload-debs.pl
+    
+The packages, as well as an automatically generated index.html will be
+uploaded to htdocs/debian.
 
 
  -- Rafael Laboissiere <rlaboiss@users.sf.net>
