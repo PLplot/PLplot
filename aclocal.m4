@@ -82,8 +82,10 @@ fi
 dnl> ------------------------------------------------------------------------
 dnl> Fixed version of AC_ISC_POSIX: /etc/conf/kconfig.d doesn't need to
 dnl> exist for it to be POSIX.  Furthermore, unistd.h is in /usr/include
-dnl> on some systems, not /usr/include/sys.  The redefinition of CC is not
-dnl> important, since I #define _POSIX_SOURCE in the code.
+dnl> on some systems, not /usr/include/sys.  Also, the distributed version
+dnl> of AC_ISC_POSIX sets the value of CC (to be $CC -posix or $CC -Xp,
+dnl> which is a bad idea: these choices are not particularly portable and
+dnl> it overrides whatever the user may have set for CC.
 dnl>
 define([AC_ISC_POSIX],
 [AC_PROVIDE([$0])AC_BEFORE([$0], [AC_COMPILE_CHECK])AC_BEFORE([$0], [AC_TEST_PROGRAM])AC_BEFORE([$0], [AC_HEADER_EGREP])AC_BEFORE([$0], [AC_TEST_CPP])AC_CHECKING(for POSIXized ISC)
@@ -94,11 +96,6 @@ then
   echo "yup, it's POSIX"
   ISC=1 # If later tests want to check for ISC.
   AC_DEFINE(_POSIX_SOURCE)
-  if test -n "$GCC"; then
-    CC="$CC -posix"
-  else
-    CC="$CC -Xp"
-  fi
 else
  echo "nope, not POSIX"
 fi
