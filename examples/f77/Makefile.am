@@ -105,8 +105,13 @@ x18f.f: x18f.fm4
 
 SUFFIXES = .fm4
 
+if with_double
 .fm4.f:
 	cp $< $*.f
+else
+.fm4.f:
+	sed -f double2single.sed $< > $*.f
+endif
 
 if enable_f77
 
@@ -167,4 +172,4 @@ install-data-hook:
 endif
 
 MAINTAINERCLEANFILES = $(f77_examples)
-EXTRA_DIST = $(f77m4_sources)
+EXTRA_DIST = $(f77m4_sources) double2single.sed
