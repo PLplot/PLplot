@@ -6,6 +6,16 @@
 
 proc plot {file {title {}}} {
 
+# Turn off pause on xwin devices since it's really not necessary for a
+# single plot application.
+
+    plgdev device
+    switch $device {
+	xwin	-
+	tk	-
+	dp	{plspause 0}
+    }
+
 # Open and read file
 
     set fileid [open $file]
@@ -46,7 +56,7 @@ proc plot {file {title {}}} {
     plcol 3
     plline $n x y
 
-# An eop is nice here.
+# End the page (see note about pause above).
 
     pleop
 }
