@@ -9,7 +9,7 @@ proc x05 {{w loopback}} {
 # Fill up data points
 
     $w cmd plssub 1 1
-    $w cmd plbop
+    $w cmd pladv 0
 
     set delta [expr 2.0 * 3.141592654 / $npts]
     for {set i 0} {$i < $npts} {incr i} {
@@ -22,6 +22,4 @@ proc x05 {{w loopback}} {
     $w cmd plcol0 2
     $w cmd pllab "#frValue" "#frFrequency" \
 	"#frPLplot Example 5 - Probability function of Oscillator"
-
-    $w cmd pleop
 }

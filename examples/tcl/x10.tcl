@@ -15,5 +15,4 @@ proc x10 {{w loopback}} {
   $w cmd plwind 0.0 1.0 0.0 1.0
   $w cmd plbox bc 0.0 0 bc 0.0 0
   $w cmd plptex 0.5 0.5 1.0 0.0 0.5 "BOX at (50,150,100,150)"
-  $w cmd pleop
 }

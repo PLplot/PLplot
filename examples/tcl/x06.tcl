@@ -7,7 +7,7 @@ proc x06 {{w loopback}} {
     matrix x f 1
     matrix y f 1
 
-    $w cmd pladv
+    $w cmd pladv 0
     $w cmd plfont 1
 
 # Set up viewport and window
@@ -47,6 +47,4 @@ proc x06 {{w loopback}} {
     }
 
     $w cmd plmtex "t" 1.5 0.5 0.5 "PLplot Example 6 - PLPOIN symbols"
-
-    $w cmd pleop
 }

@@ -77,6 +77,4 @@ proc x03 {{w loopback}} {
 
     $w cmd plcol0 4
     $w cmd plmtex "t" 2.0 0.5 0.5 "#frPLplot Example 3 - r(#gh)=sin 5#gh"
-
-    $w cmd pleop
 }

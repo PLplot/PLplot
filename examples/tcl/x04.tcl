@@ -8,7 +8,7 @@ proc x04 {{w loopback}} {
     matrix phase f 101
 
     $w cmd plssub 1 1
-    $w cmd plbop
+    $w cmd pladv 0
     $w cmd plfont 2
 
     set f0 1000.0
@@ -45,6 +45,4 @@ proc x04 {{w loopback}} {
 
     $w cmd plcol0 3
     $w cmd plmtex "r" 5.0 0.5 0.5 "Phase shift (degrees)"
-
-    $w cmd pleop
 }

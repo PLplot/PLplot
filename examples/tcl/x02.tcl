@@ -3,7 +3,6 @@
 #----------------------------------------------------------------------------
 
 proc x02 {{w loopback}} {
-    $w cmd plbop
 
 # Divide screen into 16 regions
 
@@ -13,7 +12,7 @@ proc x02 {{w loopback}} {
 
     for {set i 0} {$i < 16} {incr i} {
 	$w cmd plcol0 $i
-	$w cmd pladv
+	$w cmd pladv 0
 	set vmin 0.1
 	set vmax 0.9
 	for {set j 0} {$j <= 2} {incr j} {
@@ -27,5 +26,4 @@ proc x02 {{w loopback}} {
 	$w cmd plwid 1
 	$w cmd plptex 0.5 0.5 1.0 0.0 0.5 $i
     }
-    $w cmd pleop
 }

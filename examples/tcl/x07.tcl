@@ -13,7 +13,7 @@ proc x07 {{w loopback}} {
 
     $w cmd plfontld 1
     for {set l 0} {$l < 17} {incr l} {
-	$w cmd pladv
+	$w cmd pladv 0
 
     # Set up viewport and window
 

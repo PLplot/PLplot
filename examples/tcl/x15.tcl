@@ -31,7 +31,6 @@ proc x15 {{w loopback}} {
   }
   plot151 $w $z $zmin $zmax
   plot152 $w $z $zmin $zmax
-  $w cmd pleop
   
 }
 

@@ -32,10 +32,6 @@ proc x01 {{w loopback}} {
 # Fourth
 
     plot3 $w
-
-# An eop is nice here.
-
-    $w cmd pleop
 }
 
 # This is supposed to work just like the plot1() in x01c.c
@@ -108,7 +104,7 @@ proc plot2 {w} {
 
 proc plot3 {w} {
 
-    $w cmd pladv
+    $w cmd pladv 0
     $w cmd plvsta
     $w cmd plwind 0.0 360.0 -1.2 1.2
 
