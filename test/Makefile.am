@@ -72,4 +72,4 @@ TESTS_ENVIRONMENT += $(SHELL)
 EXTRA_DIST = test_single_python.sh \
              test_single_tcl.sh
 
-CLEANFILES = *.ps *.png *.jpeg *.cgm *.fig *.plmeta
+CLEANFILES = *.ps *.png* *.jpeg* *.gif* *.cgm *.fig* *.plmeta
