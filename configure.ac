@@ -203,14 +203,15 @@ m4_include(cf/f77.ac)
 
 
 dnl =======================================================================
-dnl PLplot drivers
+dnl Device drivers
 dnl =======================================================================
 
 m4_include(cf/drivers-pre.ac)
-m4_include(cf/gd.ac)
 m4_include(cf/cgm.ac)
+m4_include(cf/gd.ac)
 m4_include(cf/gnome.ac)
 m4_include(cf/linuxvga.ac)
+m4_include(cf/tk.ac)
 m4_include(cf/xwin.ac)
 m4_include(cf/drivers-post.ac)
 

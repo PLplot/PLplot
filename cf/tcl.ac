@@ -199,78 +199,8 @@ fi
 
 AC_SUBST(MKINDEX)
 
-# ----------------------------------------------------------------------------
-# tk.h
-# ----------------------------------------------------------------------------
-
-if test "$enable_tk" = "yes"; then
-    if test -z "$TKINCDIR"; then
-        PL_FIND_INC(tk, TKINCDIR, enable_tk)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# tkInt.h (and indirectly tclInt.h) required by plplotter.c which is
-# required by tkwin device
-# ----------------------------------------------------------------------------
-
-if test "$enable_tkwin" = "yes"; then
-    if test -z "$TKPRIVATEINCDIR"; then
-        PL_FIND_INC(tkInt, TKPRIVATEINCDIR, enable_tkwin)
-    fi
-fi
-
-if test "$enable_tkwin" = "yes"; then
-    if test -z "$TCLPRIVATEINCDIR"; then
-        PL_FIND_INC(tclInt, TCLPRIVATEINCDIR, enable_tkwin)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# libtk
-# ----------------------------------------------------------------------------
-
-if test "$enable_tk" = "yes"; then
-    if test -z "$TKLIBDIR"; then
-        PL_FIND_LIB_BEGIN(tk, TKLIBDIR)
-        for version in 8.4 8.3 8.2 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
-            if test -n "$TKLIBDIR"; then
-                break
-            fi
-            PL_FIND_LIB_SET(tk$version, TKLIBDIR, TKLIBSTR)
-        done
-        PL_FIND_LIB_END(tk, TKLIBDIR, enable_tk)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# libitk
-# ----------------------------------------------------------------------------
-
-enable_itk="yes"
-if test "$enable_tk" = "no" -o "$enable_itcl" = "no"; then
-    enable_itk="no"
-fi
-
-if test "$enable_itk" = "yes"; then
-    if test -z "$ITKLIBDIR"; then
-        PL_FIND_LIB_BEGIN(itk, ITKLIBDIR)
-        for version in 3.3 3.2 3.1 3.0 2.1 2.0 ""; do
-            if test -n "$ITKLIBDIR"; then
-                break
-            fi
-            PL_FIND_LIB_SET(itk$version, ITKLIBDIR, ITKLIBSTR)
-        done
-        PL_FIND_LIB_END(itk, ITKLIBDIR, enable_itk)
-    fi
-fi
-
 if test "$enable_itcl" = "yes"; then
     AC_DEFINE(HAVE_ITCL, [], [Define if [incr Tcl] is available])
-fi
-
-if test "$enable_itk" = "yes"; then
-    AC_DEFINE(HAVE_ITK, [], [Define if [incr Tk] is available])
 fi
 
 ### automake symbols for system-dependent results
@@ -288,21 +218,6 @@ fi
 AC_SUBST(ITCLINCCMD)
 AC_SUBST(ITCLLIBCMD)
 
-###sysloc.in doesn't define all itk related symbols so this stanza changed
-###accordingly
-if test "$enable_itk" = yes; then
-#   if test "$ITKINCDIR" != default; then
-#      ITKINCCMD="-I"$ITKINCDIR
-#   fi
-   if test "$ITKLIBDIR" = default; then
-      ITKLIBCMD="$ITKLIBSTR"
-   else
-      ITKLIBCMD="-L$ITKLIBDIR $ITKLIBSTR"
-   fi
-fi
-#AC_SUBST(ITKINCCMD)
-AC_SUBST(ITKLIBCMD)
-
 if test "$enable_tcl" = yes; then
    if test "$TCLINCDIR" != default; then
       TCLINCCMD="-I$TCLINCDIR"
@@ -315,22 +230,6 @@ if test "$enable_tcl" = yes; then
 fi
 AC_SUBST(TCLINCCMD)
 AC_SUBST(TCLLIBCMD)
-
-if test "$enable_tk" = yes; then
-# Must add in X_CFLAGS for some platforms to work.
-   if test "$TKINCDIR" = default; then
-      TKINCCMD="$X_CFLAGS"
-   else
-      TKINCCMD="-I$TKINCDIR $X_CFLAGS"
-   fi
-   if test "$TKLIBDIR" = default; then
-      TKLIBCMD="$TKLIBSTR"
-   else
-      TKLIBCMD="-L$TKLIBDIR $TKLIBSTR"
-   fi
-fi
-AC_SUBST(TKINCCMD)
-AC_SUBST(TKLIBCMD)
 
 AC_SUBST(enable_tcl)
 
@@ -356,16 +255,9 @@ AC_SUBST(DLNAME_LIBPLPLOTTCLTKD)
 
 AM_CONDITIONAL(enable_itcl, [test "$enable_itcl" = yes])
 AM_CONDITIONAL(enable_tcl, [test "$enable_tcl" = yes])
-AM_CONDITIONAL(enable_tk, [test "$enable_tk" = yes])
-AM_CONDITIONAL(enable_tkwin, [test "$enable_tkwin" = yes])
 
 AC_CONFIG_FILES([
     bindings/tcl/Makefile
     bindings/tcl/pkgIndex.tcl
-    bindings/tk/Makefile
-    bindings/tk/pkgIndex.tcl
-    bindings/tk-x-plat/pkgIndex.tcl
     examples/tcl/Makefile
-    examples/tk/Makefile
-    examples/tk/Makefile.examples
 ])

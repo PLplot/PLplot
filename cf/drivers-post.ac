@@ -26,17 +26,6 @@ if test "$enable_dyndrivers" = yes -a "$enable_pstex" = yes ; then
     enable_ps=yes
 fi
 
-dnl Disable the Tk drivers if Tcl is disabled or system has not X Window
-
-if test "$enable_tcl" = "no" -o "$have_x" != "yes"; then
-    enable_tk=no
-    enable_tkwin=no
-fi
-
-if test "$enable_tk" = "no" -o "$enable_tcl" = "no"; then
-    enable_ntk="no"
-fi
-
 PL_ADD_DRIVERS(PL_DRIVERS_DEVICE_LIST)
 
 AM_CONDITIONAL(enable_ljii, [test "$enable_ljii" = yes])
