@@ -164,7 +164,7 @@ impress_la_SOURCES = impress.c
 impress_la_LDFLAGS = $(ldflags) $(libplplot)
 
 if enable_gcw
-libgcw_la_SOURCES = plplotcanvas.c gcw.c
+libgcw_la_SOURCES = gcw.c plplotcanvas.c plplotcanvas-hacktext.c
 libgcw_la_LDFLAGS = $(ldflags) $(libplplot) $(GCW_LIBS) $(lmflag)
 endif
 
@@ -298,6 +298,7 @@ EXTRA_libplplotdrv_la_SOURCES = \
 	dg300.c \
 	gcw.c \
 	plplotcanvas.c \
+	plplotcanvas-hacktext.c \
 	gd.c \
 	gnome.c \
 	hpgl.c \
