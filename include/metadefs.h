@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/01/23 05:29:18  mjl
-   Added support for polylines and new color model.
+   Revision 1.3  1993/02/23 04:51:08  mjl
+   Changed PLPLOT_HEADER and PLPLOT_VERSION to PLMETA_HEADER and PLMETA_VERSION
+   so that plplot could have its own distinct version number.
 
+ * Revision 1.2  1993/01/23  05:29:18  mjl
+ * Added support for polylines and new color model.
+ *
  * Revision 1.1  1992/05/20  21:33:39  furnish
  * Initial checkin of the whole PLPLOT project.
  *
@@ -16,14 +20,14 @@
 	This file contains definitions of constants and structures which
 	are need by the PLPLOT metafile writer and renderer.
 
-	PLPLOT_HEADER holds the magic string at head of metafile.
-	PLPLOT_VERSION holds the version number (year & letter).
+	PLMETA_HEADER holds the magic string at head of metafile.
+	PLMETA_VERSION holds the version number (year & letter).
 	All strings written into the file header are limited to a maximum
 	of 80 characters.
 */
 
-#define PLPLOT_HEADER	"PLPLOT"
-#define PLPLOT_VERSION	"1993a"
+#define PLMETA_HEADER	"PLPLOT"
+#define PLMETA_VERSION	"1993a"
 
 /* Symbolic constants for old metafile versions (prior to 1992a).
    Now these are stored in the metafile header. */
