@@ -1,9 +1,13 @@
 /* Illustration of 1-1 scaling for polar plot */
 /* $Id$
    $Log$
-   Revision 1.6  1993/07/02 07:06:07  mjl
-   Added definition for ROUND macro.
+   Revision 1.7  1993/08/23 19:34:04  mjl
+   Fixed a bug that caused polar axis labels to be messed up.  Only showed
+   up for some compilers & flag combinations.
 
+ * Revision 1.6  1993/07/02  07:06:07  mjl
+ * Added definition for ROUND macro.
+ *
  * Revision 1.5  1993/02/22  23:16:11  mjl
  * Changed over to new style of initialization using plinit(), and added
  * function to parse plplot command line flags.
@@ -42,7 +46,7 @@ main(int argc, char *argv[])
 {
     int i, j;
     PLFLT dtr, theta, dx, dy, r;
-    char text[3];
+    char text[4];
     static PLFLT x0[361], y0[361];
     static PLFLT x[361], y[361];
 
@@ -88,9 +92,10 @@ main(int argc, char *argv[])
 /* Write labels for angle */
 
 	if (dx >= 0)
-	    plptex(dx, dy, dx, dy, (PLFLT) -0.15, text);
-	else
-	    plptex(dx, dy, -dx, -dy, (PLFLT) 1.15, text);
+	    plptex(dx, dy, dx, dy, -0.15, text);
+	else {
+	    plptex(dx, dy, -dx, -dy, 1.15, text);
+	}
     }
 
 /* Draw the graph */
