@@ -300,7 +300,7 @@ main(int argc, char *argv[])
 
   free_data(x, y, z);
   free_grid(xg, yg);
-  free(clev);
+  free((void *)clev);
   plFree2dGrid(zg, xp, yp);
 }
 
@@ -325,8 +325,8 @@ create_grid(PLFLT **xi, int px, PLFLT **yi, int py)
 void
 free_grid(PLFLT *xi, PLFLT *yi)
 {
-  free(xi);
-  free(yi);
+  free((void *)xi);
+  free((void *)yi);
 }
 
 void

@@ -80,7 +80,13 @@ main(int argc, char *argv[])
 	plmtex("t", 1.0, 0.5, 0.5, title);
     }
 
+    /* Clean up */
+    free((void *) x);
+    free((void *) y);
+    free((void *) z);
+
     plend();
+
     exit(0);
 }
 
@@ -149,4 +155,10 @@ void test_poly(int k)
 
     plcol0(3);
     plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" );
+
+    /* Clean up */
+    free((void *) x);
+    free((void *) y);
+    free((void *) z);
+
 }
