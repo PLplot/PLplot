@@ -52,6 +52,16 @@ CC_FLAGS_XWIN	= @CC_FLAGS_XWIN@   @INCS@
 
 .SUFFIXES:
 
+# Install directories
+
+LIB_DIR		= @LIB_DIR@
+DOC_DIR		= @DOC_DIR@
+BIN_DIR		= @BIN_DIR@
+INFO_DIR	= @INFO_DIR@
+INCLUDE_DIR	= @INCLUDE_DIR@
+TCL_DIR		= @TCL_DIR@
+DEMOS_DIR	= @DEMOS_DIR@
+
 # -----------------------------------------------------------------------
 # Dependent directories
 # -----------------------------------------------------------------------
@@ -60,14 +70,6 @@ PLLIB_DIR	= ../lib
 PLFNT_DIR	= ../lib
 PLLIB_PATH	= $(PLLIB_DIR)/
 PLFNT_PATH	= $(PLFNT_DIR)/
-
-LIB_DIR		= $(INSTALL_DIR)/lib
-DOC_DIR		= $(INSTALL_DIR)/doc
-BIN_DIR		= $(INSTALL_DIR)/bin
-INFO_DIR	= $(INSTALL_DIR)/info
-INCLUDE_DIR	= $(INSTALL_DIR)/include
-TCL_DIR		= $(INSTALL_DIR)/tcl
-DEMOS_DIR	= $(INSTALL_DIR)/examples
 
 # This is used for making the install versions of plrender & plserver
 # (Must relink after installing shared library!)
