@@ -63,7 +63,7 @@ get_drv_info_CFLAGS = $(INCLTDL)
 
 %.rc: %.la get-drv-info
 	./get-drv-info $(<:.la=) > $@
-		
+
 libplplot = -L../src -lplplot$(LIB_TAG)
 libplplottcltk = -L../bindings/tcl -lplplottcltk$(LIB_TAG)
 
@@ -98,9 +98,10 @@ tkwin_la_CFLAGS = \
 xwin_la_CFLAGS = $(X_CFLAGS)
 
 # Set overall preprocessor options
-AM_CPPFLAGS = $(INCLTDL)
+AM_CPPFLAGS = $(FREETYPEINCCMD) $(INCLTDL)
 
-ldflags = -rpath $(driversdir) -no-undefined -module -avoid-version 
+ldflags = -rpath $(driversdir) -no-undefined -module -avoid-version \
+          $(FREETYPELIBCMD)
 
 # Single precision versions of the dynamic drivers.
 # The LDFLAGS variables have been set very carefully for each driver
@@ -215,7 +216,7 @@ tksources = \
 	../bindings/tk/plr.c \
 	../bindings/tk/tcpip.c \
 	../bindings/tk/tkMain.c
-							
+
 endif
 
 # This is an effective duplicate of what occurs in bindings/tcl to generate
