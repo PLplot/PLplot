@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.3  1994/06/25 20:38:59  mjl
+ * Revision 1.4  1994/06/30 05:45:24  furnish
+ * Cobbled together an extension facility which allows a user to define
+ * their own subcommands for tclMatricies.  The idea is that you can use
+ * this to implement your own matrix processing commands entirely on the
+ * compiled side.  fft's, matrix multiplication, inversion, etc.
+ *
+ * Revision 1.3  1994/06/25  20:38:59  mjl
  * Added support for integer matrix data.  Substantially rewrote and improved
  * code in the process.  Extension to handle other types or higher
  * dimensionality arrays should now be straightforward.
@@ -276,6 +282,56 @@ Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName)
 
 /*----------------------------------------------------------------------*\
  *
+ *  Tcl_MatrixInstallXtnsn --
+ *
+ *	Install a tclMatrix extension subcommand.
+ *
+ * Results:
+ *	Should be 1.  Have to think about error results.
+ *
+ * Side effects:
+ *	Enables you to install special purpose compiled code to handle 
+ *	custom operations on a tclMatrix.
+ *
+\*----------------------------------------------------------------------*/
+
+static tclMatrixXtnsnDescr *head = (tclMatrixXtnsnDescr *) NULL;
+static tclMatrixXtnsnDescr *tail = (tclMatrixXtnsnDescr *) NULL;
+
+int Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc )
+{
+#ifdef DEBUG
+    fprintf(stderr, "Installing a tclMatrix extension -> %s\n", cmd );
+#endif
+
+/*
+ * My goodness how I hate primitive/pathetic C.  With C++ this
+ * could've been as easy as:
+ *     List<TclMatrixXtnsnDescr> xtnlist;
+ *     xtnlist.append( tclMatrixXtnsnDescr(cmd,proc) );
+ * grrrrr.
+ */
+
+    tclMatrixXtnsnDescr *new =
+	(tclMatrixXtnsnDescr *) malloc(sizeof(tclMatrixXtnsnDescr));
+
+    new->cmd = malloc( strlen(cmd)+1 );
+    strcpy( new->cmd, cmd );
+    new->cmdproc = proc;
+    new->next = (tclMatrixXtnsnDescr *) NULL;
+
+    if (!head) {
+	tail = head = new;
+	return 1;
+    } else {
+	tail = tail->next = new;
+	return 1;
+    }
+	
+}
+    
+/*----------------------------------------------------------------------*\
+ *
  * MatrixCmd --
  *
  *	When a Tcl matrix command is invoked, this routine is called.
@@ -355,6 +411,17 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     else if ((c == 'r') && (strncmp(argv[0], "redim", length) == 0)) {
 	fprintf(stderr, "Redimensioning array %s... NOT!\n", name);
 	return TCL_OK;
+    }
+
+/* Not a "standard" command, check the extension commands. */
+
+    {
+	tclMatrixXtnsnDescr *p = head;
+	for( ; p; p=p->next )
+	    if ((c == p->cmd[0]) && (strncmp(argv[0],p->cmd,length) == 0)) {
+/*		printf( "found a match, invoking %s\n", p->cmd );*/
+		return (*(p->cmdproc))( matPtr, interp, --argc, ++argv );
+	    }
     }
 
 /* Must be a put or get.  Get array indices.  */

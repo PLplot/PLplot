@@ -1,7 +1,13 @@
 /* -*-C++-*-
  * $Id$
  * $Log$
- * Revision 1.5  1994/06/26 05:16:15  furnish
+ * Revision 1.6  1994/06/30 05:45:21  furnish
+ * Cobbled together an extension facility which allows a user to define
+ * their own subcommands for tclMatricies.  The idea is that you can use
+ * this to implement your own matrix processing commands entirely on the
+ * compiled side.  fft's, matrix multiplication, inversion, etc.
+ *
+ * Revision 1.5  1994/06/26  05:16:15  furnish
  * Implemented C++ wrapper class for tclMatrix, enabling easy use of a
  * tclMatrix from compiled extension commands.  Needs to have sibling
  * classes created by someone who cares.
@@ -200,6 +206,19 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
 tclMatrix *
 Tcl_GetMatrixPtr(Tcl_Interp *interp, char *matName);
+
+/* Some stuff for handling extension subcommands. */
+
+typedef int (*tclMatrixXtnsnProc) ( tclMatrix *pm, Tcl_Interp *interp,
+				    int argc, char *argv[] );
+
+typedef struct tclMatrixXtnsnDescr {
+    char *cmd;
+    tclMatrixXtnsnProc cmdproc;
+    struct tclMatrixXtnsnDescr *next;
+} tclMatrixXtnsnDescr;
+
+int Tcl_MatrixInstallXtnsn( char *cmd, tclMatrixXtnsnProc proc );
 
 #ifdef __cplusplus
 }
