@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1993/08/28 06:30:29  mjl
+ * Revision 1.10  1993/08/30 19:13:06  mjl
+ * Send command modified in last updated enclosed in a [list ...] to undo
+ * the tokenization done by the "after 1".
+ *
+ * Revision 1.9  1993/08/28  06:30:29  mjl
  * Put one of the send commands into the background.  May help over a slow
  * network.
  *
@@ -375,7 +379,7 @@ NotifyClient(ClientData clientData)
 	    Tcl_GetVar(interp, "plserver", 0),
 	    Tcl_GetVar(interp, "client", 0));
 #endif
-    tcl_cmd("send $client after 1 [list set plserver $plserver]");
+    tcl_cmd("after 1 [list send $client [list set plserver $plserver]]");
 }
 
 /*----------------------------------------------------------------------*\
