@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/01/23 06:02:29  mjl
-   Now holds all routines dealing with viewport generation.
+   Revision 1.4  1993/02/23 05:23:11  mjl
+   Changed references in error messages from plstar to plinit.
 
+ * Revision 1.3  1993/01/23  06:02:29  mjl
+ * Now holds all routines dealing with viewport generation.
+ *
  * Revision 1.2  1992/09/29  04:46:26  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -50,7 +53,7 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 
     glev(&level);
     if (level < 1)
-	plexit("plenv: Please call plstar first.");
+	plexit("plenv: Please call plinit first.");
 
     if (xmin == xmax)
 	plexit("plenv: Invalid xmin and xmax arguments");
@@ -125,7 +128,7 @@ c_plvsta()
 
     glev(&level);
     if (level < 1)
-	plexit("plvsta: Please call plstar first.");
+	plexit("plvsta: Please call plinit first.");
 
     gchr(&chrdef, &chrht);
     gspd(&spdxmi, &spdxma, &spdymi, &spdyma);
@@ -160,7 +163,7 @@ c_plvpor(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 
     glev(&level);
     if (level < 1)
-	plexit("plvpor: Please call plstar first.");
+	plexit("plvpor: Please call plinit first.");
 
     if ((xmin >= xmax) || (ymin >= ymax) || (xmin < 0.) ||
 	(ymin < 0.) || (xmax > 1.) || (ymax > 1.))
@@ -203,7 +206,7 @@ c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect)
 
     glev(&level);
     if (level < 1)
-	plexit("plvpas: Please call plstar first.");
+	plexit("plvpas: Please call plinit first.");
 
     if ((xmin >= xmax) || (ymin >= ymax) || (xmin < 0.) ||
 	(ymin < 0.) || (xmax > 1.) || (ymax > 1.))
@@ -267,7 +270,7 @@ c_plvasp(PLFLT aspect)
 
     glev(&level);
     if (level < 1)
-	plexit("plvasp: Please call plstar first.");
+	plexit("plvasp: Please call plinit first.");
 
     gchr(&chrdef, &chrht);
     lb = 8.0 * chrht;
@@ -316,7 +319,7 @@ c_plsvpa(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax)
 
     glev(&level);
     if (level < 1)
-	plexit("plsvpa: Please call plstar first.");
+	plexit("plsvpa: Please call plinit first.");
 
     if ((xmin >= xmax) || (ymin >= ymax) || (xmin < 0.) || (ymin < 0.))
 	plexit("plsvpa: Invalid limits.");
