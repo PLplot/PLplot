@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.19  1993/12/15 08:57:36  mjl
+ * Revision 1.20  1993/12/21 10:19:01  mjl
+ * Added some debugging output.
+ *
+ * Revision 1.19  1993/12/15  08:57:36  mjl
  * Eliminated all direct knowledge plframe widget has of client code.  Now
  * all interactions to the client code are handled by the wrapper procs only.
  * Previously the plframe widget notified the client code when it was
@@ -1422,6 +1425,11 @@ ReadData(Tcl_Interp *interp, register PlFrame *plFramePtr,
 			 (char *) NULL);
 	result = TCL_ERROR;
     }
+#ifdef DEBUG
+    fprintf(stderr, "%s: Done with read\n", __FILE__);
+    fflush(stderr);
+#endif
+
     return result;
 }
 
