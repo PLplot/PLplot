@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1994/07/19 22:31:46  mjl
+ * Revision 1.8  1994/07/21 08:41:56  mjl
+ * Introduced some casts to satisfy the IRIX compiler.
+ *
+ * Revision 1.7  1994/07/19  22:31:46  mjl
  * All device drivers: enabling macro renamed to PLD_<driver>, where <driver>
  * is xwin, ps, etc.  See plDevs.h for more detail.  All internal header file
  * inclusion changed to /not/ use a search path so that it will work better
@@ -403,7 +406,7 @@ pl_PacketReceive(interp, iodev, pdfs)
      * Read in the header (8 bytes)
      */
     headerSize = 8;
-    numRead = pl_Read (iodev->fd, hbuf, headerSize);
+    numRead = pl_Read (iodev->fd, (char *) hbuf, headerSize);
 
     if (numRead <= 0) {
 	goto readError;
@@ -413,7 +416,7 @@ pl_PacketReceive(interp, iodev, pdfs)
      * Check for incomplete read.  If so, put it back and return.
      */
     if (numRead < headerSize) {
-	pl_Unread (iodev->fd, hbuf, numRead, 1);
+	pl_Unread (iodev->fd, (char *) hbuf, numRead, 1);
 	Tcl_ResetResult(interp);
 	return TCL_OK;
     }
@@ -480,7 +483,7 @@ pl_PacketReceive(interp, iodev, pdfs)
 	if (Tdp_FDIsReady(iodev->fd) & TCL_FILE_READABLE) {
 	    numRead = pl_Read (iodev->fd, (char *) pdfs->buffer, packetLen);
 	} else {
-	    pl_Unread (iodev->fd, hbuf, headerSize, 1);
+	    pl_Unread (iodev->fd, (char *) hbuf, headerSize, 1);
 	    Tcl_ResetResult(interp);
 	    return TCL_OK;
 	}
@@ -493,7 +496,7 @@ pl_PacketReceive(interp, iodev, pdfs)
 
     if (numRead != packetLen) {
 	pl_Unread (iodev->fd, (char *) pdfs->buffer, numRead, 1);
-	pl_Unread (iodev->fd, hbuf, headerSize, 1);
+	pl_Unread (iodev->fd, (char *) hbuf, headerSize, 1);
 	return TCL_OK;
     }
 
