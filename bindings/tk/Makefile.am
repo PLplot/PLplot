@@ -21,11 +21,7 @@
 
 tcldir = ${prefix}/$(DATA_DIR)/../tcl
 
-if with_double
-libplplottcltk = ../tcl/libplplottcltkd.la
-else
-libplplottcltk = ../tcl/libplplottcltk.la
-endif
+libplplottcltk = ../tcl/libplplottcltk$(LIB_TAG).la
 
 if enable_tk
 

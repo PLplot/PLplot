@@ -97,11 +97,7 @@ SUFFIXES = .fm4
 .fm4.f:
 	$(M4) $(M4_FLAGS) $< >$*.f
 
-if with_double
-libplplotf77 = -L../../bindings/f77 -lplplotf77d
-else
-libplplotf77 = -L../../bindings/f77 -lplplotf77
-endif
+libplplotf77 = -L../../bindings/f77 -lplplotf77$(LIB_TAG)
 
 check_PROGRAMS = \
 	x01f \

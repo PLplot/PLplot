@@ -93,11 +93,7 @@ $(generated_files): \
 	cp ../tcl/x??.tcl .
 	$(mkindex)
 
-if with_double
-libplplottcltk = -L../../bindings/tcl -lplplottcltkd
-else
-libplplottcltk = -L../../bindings/tcl -lplplottcltk
-endif
+libplplottcltk = -L../../bindings/tcl -lplplottcltk$(LIB_TAG)
 
 check_PROGRAMS = \
 	xtk01 \

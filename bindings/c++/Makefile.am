@@ -20,11 +20,7 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if with_double
-libplplot = -L../../src/ -lplplotd
-else
-libplplot = -L../../src/ -lplplot
-endif
+libplplot = -L../../src/ -lplplot$(LIB_TAG)
 
 if enable_cxx
 

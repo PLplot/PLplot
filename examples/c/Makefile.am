@@ -51,11 +51,7 @@ examples_c_DATA = \
 	mkdir -p .samename
 	cp Makefile.examples .samename/Makefile
 
-if with_double
-libplplot = -L../../src -lplplotd
-else
-libplplot = -L../../src -lplplot
-endif
+libplplot = -L../../src -lplplot$(LIB_TAG)
 
 check_PROGRAMS = \
 	x01c \

@@ -19,13 +19,8 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if with_double
-   libplplot = ../src/libplplotd.la
-   libplplottcltk = ../bindings/tcl/libplplottcltkd.la
-else
-   libplplot = ../src/libplplot.la
-   libplplottcltk = ../bindings/tcl/libplplottcltk.la
-endif
+libplplot = ../src/libplplot$(LIB_TAG).la
+libplplottcltk = ../bindings/tcl/libplplottcltk$(LIB_TAG).la
 
 AM_CPPFLAGS = $(INCLTDL) -I../bindings/tcl $(TCLINCCMD) $(ITCLINCCMD)
 

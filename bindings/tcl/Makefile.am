@@ -21,13 +21,8 @@
 
 tcldir = ${prefix}/$(DATA_DIR)/../tcl
 
-if with_double
-libplplot = -L../../src -lplplotd
-libmatrix = -L. -ltclmatrixd
-else
-libplplot = -L../../src -lplplot
-libmatrix = -L. -ltclmatrix
-endif
+libplplot = -L../../src -lplplot$(LIB_TAG)
+libmatrix = -L. -ltclmatrix$(LIB_TAG)
 
 if enable_tcl
 generated_scripts = plplot.tcl

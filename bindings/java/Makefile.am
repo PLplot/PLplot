@@ -21,11 +21,11 @@
 
 if enable_java
 
+libplplot = -L../../src/ -lplplot$(LIB_TAG)
+
 if with_double
-libplplot = -L../../src/ -lplplotd
 lib_LTLIBRARIES = libplplotjavad.la
 else
-libplplot = -L../../src/ -lplplot
 lib_LTLIBRARIES = libplplotjava.la
 endif
 

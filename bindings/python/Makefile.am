@@ -27,9 +27,9 @@ if enable_python
 
 ourpythondir = $(pythondir)
 
-if with_double
-libplplot = -L../../src -lplplotd
+libplplot = -L../../src -lplplot$(LIB_TAG)
 
+if with_double
 ### Only swig version 1.3.17 (and above?) will work here.
 ### Ordinarily this detail only matters for CVS users because the tarball
 ### version of PLplot always has both plplotcmodule_p_double.c and
@@ -49,7 +49,6 @@ plplotcmodule_double.c: plplotcmodule_p_double.c makedocstrings.py
 nodist__plplotcmodule_la_SOURCES  = plplotcmodule_double.c
 
 else
-libplplot = -L../../src -lplplot
 plplotcmodule_p_single.c plplotc.py: plplotcmodule.i 
 	$(SWIG) -python -o plplotcmodule_p_single.c -c++ \
 	plplotcmodule.i

@@ -26,11 +26,11 @@ SUBDIRS = PLplot demos misc
 
 if with_double
 sed_command = 's/REPLACE_ME/typedef double PLFLT;/'
-octave_libs = -lplplotd
 else
 sed_command = 's/REPLACE_ME/typedef float PLFLT;/'
-octave_libs = -lplplot
 endif
+
+octave_libs = -lplplot$(LIB_TAG)
 
 # If the Makefile changes, because of "configure" beeing rerun, recompile
 plplot_octave.h: plplot_octave_org.h Makefile
