@@ -9,33 +9,53 @@ The following is the list of PLplot system files that must be modified if
 you are creating a new PLplot driver:
 
 plplot/configure.ac
-plplot/sysloc.in
+plplot/cf/*.ac  (e.g., plplot/cf/gd.ac)
+plplot/cf/drivers-pre.ac
+plplot/cf/drivers-post.ac
 plplot/include/plDevs.h.in
 plplot/drivers/Makefile.am
 plplot/include/drivers.h
 plplot/include/plcore.h
-plplot/drivers/*.c
+plplot/drivers/*.c (e.g., plplot/drivers/gd.c)
 
 where plplot is the top-level directory for the plplot software tree that is
 created when you unpacked the tarball (or used cvs checkout).
-
-Do not change anything in the plplot/cf directory if it even exists.  That
-is only being kept around (in cvs, but not in release tarballs) for
-historical reference and is completely ignored now for all builds.
 
 Some short notes follow on what is done for the individual files mentioned
 above. Basically, you should be okay if you just try to follow what is done
 for the gd.c driver, the associated png and jpeg devices, and any additional
 headers or libraries you might require for your driver.  (libgd, libjpeg,
-libpng, and libz are required for the gd driver to work).
+libpng, and libz are required for the gd driver to work and are found on
+the user's system with the aid of the macros in the cf/gd.ac file.).
 
-* plplot/sysloc.in and plplot/configure.ac
+* plplot/configure.ac with plplotcf/gd.ac as an example of what is required
+for the gd device driver (which could be used as a template for other new
+devices).
 
-Locate system resources used by drivers.  If you look for gd, png, and jpeg
-in these files, you will see logic for finding and testing the required
-system headers and include libraries, enabling or disabling the jpeg and png
-devices associated with the gd driver, and ultimately forming GDINCCMD and
-GDLIBCMD which summarizes this information.
+Note, configure.ac has the line
+
+m4_include(cf/gd.ac)
+
+that includes the gd.ac file.  That latter file is used to find the system
+resources used by the gd device. If you look in that file you will see logic
+for finding and testing the required system headers and include libraries,
+enabling or disabling the jpeg and png devices associated with the gd
+driver, and ultimately forming GDINCCMD and GDLIBCMD which summarizes this
+information.  For your new driver, follow this same paradigm, i.e. include
+command in configure.ac, and the corresponding cf/*.ac for your particular
+device driver.  For more details see plplot/cf/README.
+
+* Some additional setup of the png and jpeg devices for the gd driver is
+done in plplot/cf/drivers-pre.ac with the line
+
+png:gd:yes, jpeg:gd:yes,
+
+Add in a similar line for your own list of devices for your driver.
+
+* Some additional setup of devices is done in  plplot/cf/drivers-post.ac.
+I have no idea why that is separated from plplot/cf/drivers-pre.ac, but
+there is nothing relevant to gd there, and probably not for your device driver
+as well.
 
 * plplot/include/plDevs.h.in
 
