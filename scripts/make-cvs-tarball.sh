@@ -32,7 +32,8 @@ usage () {
   echo
   echo "Option -n prevents building of the DocBook manual."
   echo "Option -d prints the default values."
-  echo "When option -v is not given, a dated tarball is produced."
+  echo "When option -v is not given, a tarball is produced with version and"
+  echo "  label containing today's date string."
   exit $1
 }
 
