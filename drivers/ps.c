@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.25  1994/06/30 17:52:25  mjl
+ * Revision 1.26  1994/07/12 19:14:41  mjl
+ * Fix to prevent postscript interpreter from forgetting the current point
+ * location after a color change.  I lost track of who contributed this.
+ *
+ * Revision 1.25  1994/06/30  17:52:25  mjl
  * Made another pass to eliminate warnings when using gcc -Wall, especially
  * those created by changing a PLINT from a long to an int.
  *
@@ -67,7 +71,6 @@ static void  fill_polygon	(PLStream *pls);
 #define OF		pls->OutFile
 
 /* Struct to hold device-specific info. */
-/* INDENT OFF */
 
 typedef struct {
     PLFLT pxlx, pxly;
@@ -478,7 +481,8 @@ plD_state_ps(PLStream *pls, PLINT op)
 	    float g = ((float) pls->curcolor.g) / 255.0;
 	    float b = ((float) pls->curcolor.b) / 255.0;
 
-	    fprintf(OF, " S\n%.4f %.4f %.4f C", r, g, b);
+	    fprintf(OF, " S\n%.4f %.4f %.4f C %d %d M \n", r, g, b,
+		    (int)dev->xold, (int)dev->yold);
 	}
 	break;
     }
