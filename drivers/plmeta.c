@@ -696,6 +696,28 @@ WriteFileHeader(PLStream *pls)
     plm_wr( pdf_wr_header(pls->pdfs, "pxly") );
     plm_wr( pdf_wr_ieeef(pls->pdfs, (float) dev->pxly) );
 
+/* Geometry info, needed to properly transmit e.g. aspect ratio, via the
+   length params.  Not sure if the others are useful, but they're included for
+   completeness. */ 
+
+    plm_wr( pdf_wr_header(pls->pdfs, "xdpi") );
+    plm_wr( pdf_wr_ieeef(pls->pdfs, (float) pls->xdpi) );
+
+    plm_wr( pdf_wr_header(pls->pdfs, "ydpi") );
+    plm_wr( pdf_wr_ieeef(pls->pdfs, (float) pls->ydpi) );
+
+    plm_wr( pdf_wr_header(pls->pdfs, "xlength") );
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->xlength) );
+
+    plm_wr( pdf_wr_header(pls->pdfs, "ylength") );
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->ylength) );
+
+    plm_wr( pdf_wr_header(pls->pdfs, "xoffset") );
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->xoffset) );
+
+    plm_wr( pdf_wr_header(pls->pdfs, "yoffset") );
+    plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->yoffset) );
+
     plm_wr( pdf_wr_header(pls->pdfs, "") );
 }
 
