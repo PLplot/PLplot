@@ -1,6 +1,13 @@
 /* $Id$
  * $Log$
- * Revision 1.51  1995/06/02 20:32:58  mjl
+ * Revision 1.52  1995/08/22 16:17:22  mjl
+ * Widget configure command now only calls for a refresh when required (i.e.
+ * when geometry is changed).  Bug in ConfigureNotify event handling fixed
+ * (first seen under Tk4 for some reason).  Locator report changed to be
+ * of the form "<x> <y>", where <x> is the floating point representation
+ * of the x coordinate, etc.
+ *
+ * Revision 1.51  1995/06/02  20:32:58  mjl
  * Fixed obscure bug that was causing the plframe to not be properly
  * redisplayed after a zoom in some cases.
  *
@@ -106,9 +113,10 @@
     mouse events.
 */
 /*
-#define DEBUG
 #define DEBUG_ENTER
+#define DEBUG
 */
+
 #include "plserver.h"
 #include "plxwd.h"
 #include "tcpip.h"
@@ -399,8 +407,10 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->cursor = None;
     plFramePtr->xhair_cursor = None;
     plFramePtr->flags = 0;
-    plFramePtr->prevWidth = Tk_Width(plFramePtr->tkwin);
-    plFramePtr->prevHeight = Tk_Height(plFramePtr->tkwin);
+    plFramePtr->width  = Tk_Width(plFramePtr->tkwin);
+    plFramePtr->height = Tk_Height(plFramePtr->tkwin);
+    plFramePtr->prevWidth = 0;
+    plFramePtr->prevHeight = 0;
     plFramePtr->continue_draw = 0;
     plFramePtr->ipls = 0;
     plFramePtr->ipls_save = 0;
@@ -771,16 +781,18 @@ static void
 PlFrameConfigureEH(ClientData clientData, register XEvent *eventPtr)
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
+    register Tk_Window tkwin = plFramePtr->tkwin;
 
     dbug_enter("PlFrameConfigureEH");
 
     switch (eventPtr->type) {
 
     case ConfigureNotify:
+	pldebug("PLFrameConfigureEH", "ConfigureNotify\n");
 	plFramePtr->flags |= RESIZE_PENDING;
-	if ((plFramePtr->tkwin != NULL) &&
-	    !(plFramePtr->flags & REFRESH_PENDING)) {
-
+	plFramePtr->width  = Tk_Width(tkwin);
+	plFramePtr->height = Tk_Height(tkwin);
+	if ((tkwin != NULL) && !(plFramePtr->flags & REFRESH_PENDING)) {
 	    Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
 	    plFramePtr->flags |= REFRESH_PENDING;
 	    plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
@@ -788,7 +800,8 @@ PlFrameConfigureEH(ClientData clientData, register XEvent *eventPtr)
 	break;
 
     case DestroyNotify:
-	Tcl_DeleteCommand(plFramePtr->interp, Tk_PathName(plFramePtr->tkwin));
+	pldebug("PLFrameConfigureEH", "DestroyNotify\n");
+	Tcl_DeleteCommand(plFramePtr->interp, Tk_PathName(tkwin));
 	plFramePtr->tkwin = NULL;
 	if (plFramePtr->flags & REFRESH_PENDING) {
 	    Tk_CancelIdleCall(DisplayPlFrame, (ClientData) plFramePtr);
@@ -797,6 +810,7 @@ PlFrameConfigureEH(ClientData clientData, register XEvent *eventPtr)
 	break;
 
     case MapNotify:
+	pldebug("PLFrameConfigureEH", "MapNotify\n");
 	if (plFramePtr->flags & REFRESH_PENDING) {
 	    Tk_CancelIdleCall(DisplayPlFrame, (ClientData) plFramePtr);
 	}
@@ -840,8 +854,11 @@ PlFrameExposeEH(ClientData clientData, register XEvent *eventPtr)
 {
     register PlFrame *plFramePtr = (PlFrame *) clientData;
     XExposeEvent *event = (XExposeEvent *) eventPtr;
+    register Tk_Window tkwin = plFramePtr->tkwin;
 
     dbug_enter("PlFrameExposeEH");
+
+    pldebug("PLFrameExposeEH", "Expose\n");
 
 /* Set up the area to refresh */
 
@@ -867,10 +884,10 @@ PlFrameExposeEH(ClientData clientData, register XEvent *eventPtr)
 /* Invoke DoWhenIdle handler to redisplay widget. */
 
     if (event->count == 0) {
-	if ((plFramePtr->tkwin != NULL) &&
-	    !(plFramePtr->flags & REFRESH_PENDING)) {
-
+	if ((tkwin != NULL) && !(plFramePtr->flags & REFRESH_PENDING)) {
 	    Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
+	    plFramePtr->width  = Tk_Width(tkwin);
+	    plFramePtr->height = Tk_Height(tkwin);
 	    plFramePtr->flags |= REFRESH_PENDING;
 	}
     }
@@ -1241,8 +1258,10 @@ PlFrameInit(ClientData clientData)
 	plbop();
 
 	plFramePtr->tkwin_initted = 1;
-	plFramePtr->prevWidth = Tk_Width(tkwin);
-	plFramePtr->prevHeight = Tk_Height(tkwin);
+	plFramePtr->width  = Tk_Width(tkwin);
+	plFramePtr->height = Tk_Height(tkwin);
+	plFramePtr->prevWidth = plFramePtr->width;
+	plFramePtr->prevHeight = plFramePtr->height;
     }
 
 /* Draw plframe */
@@ -1385,16 +1404,16 @@ DisplayPlFrame(ClientData clientData)
 
     /* Resize -- if window bounds have changed */
 
-	else if ((plFramePtr->prevWidth != Tk_Width(tkwin)) ||
-	    (plFramePtr->prevHeight != Tk_Height(tkwin))) {
+	else if ((plFramePtr->width != plFramePtr->prevWidth) ||
+		 (plFramePtr->height != plFramePtr->prevHeight)) {
 
-	    plFramePtr->pldis.width = Tk_Width(tkwin);
-	    plFramePtr->pldis.height = Tk_Height(tkwin);
+	    plFramePtr->pldis.width = plFramePtr->width;
+	    plFramePtr->pldis.height = plFramePtr->height;
 
 	    plsstrm(plFramePtr->ipls);
 	    pl_cmd(PLESC_RESIZE, (void *) &(plFramePtr->pldis));
-	    plFramePtr->prevWidth = Tk_Width(tkwin);
-	    plFramePtr->prevHeight = Tk_Height(tkwin);
+	    plFramePtr->prevWidth = plFramePtr->width;
+	    plFramePtr->prevHeight = plFramePtr->height;
 	}
 
     /* Expose -- if window bounds are unchanged */
@@ -1789,6 +1808,7 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
     XwDisplay *xwd = (XwDisplay *) dev->xwd;
     XGCValues gcValues;
     unsigned long mask;
+    int need_redisplay = 0;
 
 #ifdef DEBUG
     if (pls->debug) {
@@ -1838,6 +1858,9 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
     Tk_SetInternalBorder(tkwin, plFramePtr->borderWidth);
     if ((plFramePtr->width > 0) || (plFramePtr->height > 0)) {
 	Tk_GeometryRequest(tkwin, plFramePtr->width, plFramePtr->height);
+	if ((plFramePtr->width != plFramePtr->prevWidth) ||
+	    (plFramePtr->height != plFramePtr->prevHeight))
+	    need_redisplay = 1;
     }
 
 /* Create or destroy graphic crosshairs as specified */
@@ -1855,7 +1878,7 @@ ConfigurePlFrame(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 /* Arrange for window to be refreshed if necessary */
 
-    if (Tk_IsMapped(tkwin)
+    if (need_redisplay && Tk_IsMapped(tkwin)
 	    && !(plFramePtr->flags & REFRESH_PENDING)) {
 	Tk_DoWhenIdle(DisplayPlFrame, (ClientData) plFramePtr);
 	plFramePtr->flags |= REFRESH_PENDING;
@@ -2723,7 +2746,7 @@ report( Tcl_Interp *interp, register PlFrame *plFramePtr,
     /* Try to locate cursor */
 
 	if (plTranslateCursor(gin)) {
-	    sprintf( interp->result, "wx=%f wy=%f", gin->wX, gin->wY );
+	    sprintf( interp->result, "%f %f", gin->wX, gin->wY );
 	    return TCL_OK;
 	}
 
