@@ -199,12 +199,7 @@ AC_PREREQ(2.4)
 
 AC_INIT(src/plcore.c)
 
-# ----------------------------------------------------------------------------
-# Here is the centralized place for defining the release version of the 
-# PLplot package 
-# ----------------------------------------------------------------------------
-
-PACKAGE_VERSION(5,0,2)
+PACKAGE_VERSION
 
 # ----------------------------------------------------------------------------
 # The configure script must be run in a separate build directory.  If the

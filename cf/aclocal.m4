@@ -522,12 +522,8 @@ define([AC_CACHE_LOAD],)
 define([AC_CACHE_SAVE],)
 dnl> ------------------------------------------------------------------------
 dnl> Define the package version
-dnl> Arguments: major, minor, release
-dnl> This macro should be called after 
 AC_DEFUN([PACKAGE_VERSION],
-[MAJOR_VERSION=$1
-MINOR_VERSION=$2
-RELEASE_VERSION=$3
+[builtin(include, version.in)
 PLPLOT_VERSION=$MAJOR_VERSION.$MINOR_VERSION.$RELEASE_VERSION
 AC_SUBST(MAJOR_VERSION)
 AC_SUBST(MINOR_VERSION)
