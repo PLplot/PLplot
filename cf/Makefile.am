@@ -27,5 +27,6 @@ EXTRA_DIST =      \
     gnome.m4      \
     gnu-make.m4   \
     gtk.m4        \
-    swig.m4
+    ac_pkg_swig.m4 \
+    ac_python_devel.m4
     

@@ -26,6 +26,6 @@ dnl swig only used by python and java so far....
 
 if test "$enable_python" = "yes" -o "$enable_java" = "yes"; then
   pushdef([AC_MSG_WARN],[true])
-  SWIG_PROG(1.3.21)
+  AC_PROG_SWIG(1.3.21)
   popdef([AC_MSG_WARN])
 fi

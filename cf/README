@@ -65,8 +65,9 @@ cf. In the tarball, all the files that used to be in the top dir
 are now in cf.
 
 Also in cf are files *.m4 which contain only calls to the AC_DEFUN macro.
-There are both imported files from third party projects (like gtk.m4 and
-swig.m4) and our own files (like acinclude.m4 and docbook.m4). They are
+There are both imported files from third party projects (such as
+ac_pkg_swig.m4 and ac_python_devel.m4 from the GNU Autoconf Macro Archive
+and gtk.m4) and our own files (like acinclude.m4 and docbook.m4). They are
 scanned by aclocal and the needed macros are included in aclocal.m4.
 
 The configure.ac script is quite clean and small now.  It contains

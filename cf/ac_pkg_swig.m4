@@ -1,22 +1,27 @@
-dnl import the whole of SWIG-1.3.21/Tools/config/swig.m4
-dnl subsequently AWI (with help from RL) fixed the case where find finds
-dnl multiple files, and also removed some bashism's and extended sed
-dnl constructs so now there is some hope these macros will work cross-platform.
-dnl also, disabled SWIG when version check does not succeed
-# Contributed by Sebastian Huber with improvements from Alan W. Irwin and
-# Rafael Laboissiere to remove non-portable shell constructs and deal with
-# a logic issue when more than one header file or Python library is found.
-# They also changed the logic so that swig is always disabled (with
-# appropriate message) unless the version check is passed.
-
-# SWIG_PROG([required-version = N[.N[.N]]])
-#
-# Checks for the SWIG program.  If found you can (and should) call
-# SWIG via $(SWIG).  You can use the optional first argument to check
-# if the version of the available SWIG is greater than or equal to the
-# value of the argument.  It should have the format: N[.N[.N]] (N is a
-# number between 0 and 999.  Only the first N is mandatory.)
-AC_DEFUN([SWIG_PROG],[
+dnl @synopsis AC_PROG_SWIG([major.minor.micro])
+dnl
+dnl This macro searches for a SWIG installation on your system. If found you
+dnl should) SWIG via $(SWIG).  You can use the optional first argument to check
+dnl if the version of the available SWIG is greater than or equal to the
+dnl value of the argument.  It should have the format: N[.N[.N]] (N is a
+dnl number between 0 and 999.  Only the first N is mandatory.)
+dnl
+dnl If the version argument is given (e.g. 1.3.17), AC_PROG_SWIG checks that the
+dnl swig package is this version number or higher.
+dnl
+dnl In configure.in, use as:
+dnl
+dnl		AC_PROG_SWIG(1.3.17)
+dnl		SWIG_ENABLE_CXX
+dnl		SWIG_MULTI_MODULE_SUPPORT
+dnl		SWIG_PYTHON
+dnl
+dnl @authors Sebastian Huber <sebastian-huber@web.de>, Alan W. Irwin
+dnl <irwin@beluga.phys.uvic.ca>, Rafael Laboissiere <laboissiere@psy.mpg.de> and
+dnl Andrew Collier <colliera@nu.ac.za>.
+dnl
+dnl
+AC_DEFUN([AC_PROG_SWIG],[
 	AC_PATH_PROG([SWIG],[swig])
 	if test -z "$SWIG" ; then
 		AC_MSG_WARN([cannot find 'swig' program. You should look at http://www.swig.org])
@@ -65,22 +70,22 @@ AC_DEFUN([SWIG_PROG],[
 				SWIG='echo "Error: SWIG version >= $1 is required.  You have '"$swig_version"'.  You should look at http://www.swig.org" ; false'
 			else
 				AC_MSG_NOTICE([SWIG executable is '$SWIG'])
-				SWIG_RUNTIME_LIBS_DIR=`echo $SWIG | sed "s,/bin.*$,/lib,"`
-				AC_MSG_NOTICE([SWIG runtime library directory is '$SWIG_RUNTIME_LIBS_DIR'])
+				SWIG_LIB=`$SWIG -swiglib`
+				AC_MSG_NOTICE([SWIG runtime library directory is '$SWIG_LIB'])
 			fi
 		else
 			AC_MSG_WARN([cannot determine SWIG version])
 			SWIG='echo "Error: Cannot determine SWIG version.  You should look at http://www.swig.org" ; false'
 		fi
 	fi
-	AC_SUBST([SWIG_RUNTIME_LIBS_DIR])
+	AC_SUBST([SWIG_LIB])
 ])
 
 # SWIG_ENABLE_CXX()
 #
 # Enable SWIG C++ support.  This affects all invocations of $(SWIG).
 AC_DEFUN([SWIG_ENABLE_CXX],[
-	AC_REQUIRE([SWIG_PROG])
+	AC_REQUIRE([AC_PROG_SWIG])
 	AC_REQUIRE([AC_PROG_CXX])
 	SWIG="$SWIG -c++"
 ])
@@ -93,7 +98,7 @@ AC_DEFUN([SWIG_ENABLE_CXX],[
 # modules for example, use the SWIG_PYTHON() macro and link the
 # modules against $(SWIG_PYTHON_LIBS).
 AC_DEFUN([SWIG_MULTI_MODULE_SUPPORT],[
-	AC_REQUIRE([SWIG_PROG])
+	AC_REQUIRE([AC_PROG_SWIG])
 	SWIG="$SWIG -c"
 ])
 
@@ -109,50 +114,37 @@ AC_DEFUN([SWIG_MULTI_MODULE_SUPPORT],[
 # contains the SWIG Python runtime library that is needed by the type
 # check system for example.
 AC_DEFUN([SWIG_PYTHON],[
-	AC_REQUIRE([SWIG_PROG])
-	AC_REQUIRE([PYTHON_DEVEL])
+	AC_REQUIRE([AC_PROG_SWIG])
+	AC_REQUIRE([AC_PYTHON_DEVEL])
 	test "x$1" != "xno" || swig_shadow=" -noproxy"
 	AC_SUBST([SWIG_PYTHON_OPT],[-python$swig_shadow])
 	AC_SUBST([SWIG_PYTHON_CPPFLAGS],[$PYTHON_CPPFLAGS])
-	AC_SUBST([SWIG_PYTHON_LIBS],["$SWIG_RUNTIME_LIBS_DIR -lswigpy"])
+	AC_SUBST([SWIG_PYTHON_LIBS],["-L$SWIG_LIB -lswigpy"])
 ])
 
-# PYTHON_DEVEL()
-#
-# Checks for Python and tries to get the include path to 'Python.h'.
-# It provides the $(PYTHON_CPPFLAGS) and $(PYTHON_LDFLAGS) output variable.
-AC_DEFUN([PYTHON_DEVEL],[
-	AC_REQUIRE([AM_PATH_PYTHON])
 
-	# Check for Python include path
-	AC_MSG_CHECKING([for Python include path])
-	python_path=`echo $PYTHON | sed "s,/bin.*$,,"`
-	for i in "$python_path/include/python$PYTHON_VERSION/" "$python_path/include/python/" "$python_path/" ; do
-		python_path=`find $i -type f -name Python.h -print | sed "1q"`
-		if test -n "$python_path" ; then
-			break
-		fi
-	done
-	python_path=`echo $python_path | sed "s,/Python.h$,,"`
-	AC_MSG_RESULT([$python_path])
-	if test -z "$python_path" ; then
-		AC_MSG_ERROR([cannot find Python include path])
-	fi
-	AC_SUBST([PYTHON_CPPFLAGS],[-I$python_path])
+dnl @synopsis AC_LIB_WAD
+dnl
+dnl This macro searches for installed WAD library.
+dnl
+AC_DEFUN([AC_LIB_WAD],
+[
+	AC_REQUIRE([AC_PYTHON_DEVEL])
+	AC_ARG_ENABLE(wad,
+	AC_HELP_STRING([--enable-wad], [enable wad module]),
+	[
+		case "${enableval}" in
+			no)	;;
+			*)	if test "x${enableval}" = xyes;
+				then
+					check_wad="yes"
+				fi ;;
+		esac
+	], [])
 
-	# Check for Python library path
-	AC_MSG_CHECKING([for Python library path])
-	python_path=`echo $PYTHON | sed "s,/bin.*$,,"`
-	for i in "$python_path/lib/python$PYTHON_VERSION/config/" "$python_path/lib/python$PYTHON_VERSION/" "$python_path/lib/python/config/" "$python_path/lib/python/" "$python_path/" ; do
-		python_path=`find $i -type f -name libpython$PYTHON_VERSION.* -print | sed "1q"`
-		if test -n "$python_path" ; then
-			break
-		fi
-	done
-	python_path=`echo $python_path | sed "s,/libpython.*$,,"`
-	AC_MSG_RESULT([$python_path])
-	if test -z "$python_path" ; then
-		AC_MSG_ERROR([cannot find Python library path])
+	if test -n "$check_wad";
+	then
+		AC_CHECK_LIB(wadpy, _init, [WADPY=-lwadpy], [], $PYTHON_LDFLAGS $PYTHON_EXTRA_LIBS)
+		AC_SUBST(WADPY)
 	fi
-	AC_SUBST([PYTHON_LDFLAGS],["-L$python_path -lpython$PYTHON_VERSION"])
 ])
