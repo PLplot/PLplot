@@ -710,7 +710,6 @@ proc_str (PLStream *pls, EscText *args)
   unsigned char *strp, str[PROC_STR_STRING_LENGTH], *cur_strp, 
      cur_str[PROC_STR_STRING_LENGTH];
   float font_factor = 1.4;
-  int symbol;
   PLINT clxmin, clxmax, clymin, clymax; /* Clip limits */
 
   PLFLT scale = 1., up = 0.; /* Font scaling and shifting parameters */
@@ -788,192 +787,186 @@ proc_str (PLStream *pls, EscText *args)
 	   }
 	}
 	cur_str[s] = '\0';
-	  
-  /* finish previous polyline */
-
-  dev->xold = PL_UNDEFINED;
-  dev->yold = PL_UNDEFINED;
-
-  /* Determine the font height */
-  ft_ht = pls->chrht * 72.0/25.4; /* ft_ht in points, ht is in mm */
-
-
-  /* The transform matrix has only rotations and shears; extract them */
-  theta = acos(t[0]) * 180. / PI;  /* Determine the rotation (in degrees)... */
-  if (t[2] < 0.) theta *= -1.;     /* ... and sign ... */
-  if(cos(theta*PI/180.)<0.000001)  /* ... and shear */
-    shear = t[3]/sin(theta*PI/180.);
-  else shear = (t[1]+sin(theta*PI/180.))/cos(theta*PI/180.); 
-
-  /* 
-   * Reference point conventions:
-   *   If base = 0, it is aligned with the center of the text box
-   *   If base = 1, it is aligned with the baseline of the text box
-   *   If base = 2, it is aligned with the top of the text box
-   *
-   * Currently plplot only uses base=0
-   * Postscript uses base=1
-   *
-   * We must calculate the difference between the two and apply the offset.
-   */ 
-
-  if (args->base == 2) /* not supported by plplot */
-    offset = ENLARGE * ft_ht / 2.; /* half font height */
-  else if (args->base == 1)
-    offset = 0.;
-  else
-    offset = -ENLARGE * ft_ht / 2.;
-
-  args->y += offset*cos(theta*PI/180.);
-  args->x -= offset*sin(theta*PI/180.);
-
-  /* Apply plplot difilt transformations */
-  difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
-
-  /* ps driver is rotated by default */
-  plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, 
-	   &(args->x), &(args->y));
-
-  /* Determine the adjustment for page orientation */
-  theta += 90. - 90.*pls->diorot;
-   
-
-  /* Output */
-
-  /* move to string reference point */
-  fprintf(OF, " %d %d M\n", args->x, args->y );
-
-  /* Save the current position and set the string rotation */
-  fprintf(OF, "gsave %.3f R\n",theta);
-
-  /* Purge escape sequences from string, so that postscript can find it's 
-   * length.  The string length is computed with the current font, and can
-   * thus be wrong if there are font change escape sequences in the string 
-   */
-
-  esc_purge(str, cur_str);
-
-  fprintf(OF, "/%s %.3f SF\n", font,font_factor * ENLARGE * ft_ht);    
-
-  /* Output string, writing brackets as \( and \); this string is
-   * output for measurement purposes only.
-   */
-  fprintf(OF, "%.3f (", - args->just);
-  while (str[i]!='\0') {
-    if (str[i]=='(') fprintf(OF,"\\(");
-    else {
-      if (str[i]==')') fprintf(OF,"\\)");
-      else fprintf(OF,"%c",str[i]);
-    }
-    i++;
-  }
-  fprintf(OF,") SW\n");
-
-
-  /* Parse string for escape sequences and print everything out */
-
-  cur_strp = cur_str;
-  f = 0;
-  do {
-
-    strp = str;
-    symbol = 0;
-
-    if (*cur_strp == esc) {
-      cur_strp++;
-
-      if (*cur_strp == esc) { /* <esc><esc> */
-	*strp++ = *cur_strp++;
-      }
-      else switch (*cur_strp) {
-
-      case 'f':
-	 cur_strp++;
-	 if (*cur_strp++ != 'f') {
-	    /* escff occurs because of logic above. But any suffix
-	     * other than "f" should never happen. */
-	    plabort("proc_str, internal PLplot logic error;"
-		    "wrong escape sequence");
-	    return;
-	 }
-	 font = fonts[f++];
-	 /*pldebug("proc_str", "string-specified fci = 0x%x, font name = %s\n", fci, font);*/
-	 break;
-      case 'd':
-	if(up>0.) scale *= 1.25;  /* Subscript scaling parameter */
-	else scale *= 0.8;  /* Subscript scaling parameter */
-	up -= font_factor * ENLARGE * ft_ht / 2.;
-	cur_strp++;
-	break;
-
-      case 'u':
-	if(up<0.) scale *= 1.25;  /* Subscript scaling parameter */
-	else scale *= 0.8;  /* Subscript scaling parameter */
-	up += font_factor * ENLARGE * ft_ht / 2.;
-	cur_strp++;
-	break;
-
-	/* ignore the next sequences */
-
-      case '+':
-      case '-':
-      case 'b':
-	plwarn("'+', '-', and 'b' text escape sequences not processed.");
-	cur_strp++;
-	break;
-
-      case '(':
-	plwarn("'(...)' text escape sequence not processed.");
-	while (*cur_strp++ != ')');
-	break;
-      }
-    }
-
-    /* copy from current to next token, adding a postscript escape 
-     * char \ if necessary 
-     */
-    while(!symbol && *cur_strp && *cur_strp != esc) {
-      if (*cur_strp == '(' || *cur_strp == ')' || *cur_strp == '\\')
-	*strp++ = '\\';
-      *strp++ = *cur_strp++;
-    }
-    *strp = '\0';
-
-    if(fabs(up)<0.001) up = 0.; /* Watch out for small differences */
-
-    /* Apply the scaling and the shear */
-    fprintf(OF, "/%s [%.3f 0 %.3f %.3f 0 0] SF\n",
-	    font,
-	    font_factor * ENLARGE * ft_ht * scale,
-	    shear * font_factor * ENLARGE * ft_ht * scale,
-	    font_factor * ENLARGE * ft_ht * scale);
-
-    /* if up/down escape sequences, save current point and adjust baseline;
-     * take the shear into account */
-    if(up!=0.) fprintf(OF, "gsave %.3f %.3f rmoveto\n",up*shear,up);
-
-    /* print the string */
-    fprintf(OF, "(%s) show\n", str);  
-
-    /* back to baseline */
-    if (up!=0.) fprintf(OF, "grestore (%s) stringwidth rmoveto\n", str);
-
-  }while(*cur_strp);
-
-  fprintf(OF, "grestore\n");
-
-  /*
-   * keep driver happy -- needed for background and orientation.
-   * arghhh! can't calculate it, as I only have the string reference
-   * point, not its extent!
-   * Quick (and final?) *hack*, ASSUME that no more than two char height
-   * extents after/before the string reference point.
-   */
-
-  dev->llx = MIN(dev->llx, args->x - 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
-  dev->lly = MIN(dev->lly, args->y - 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
-  dev->urx = MAX(dev->urx, args->x + 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
-  dev->ury = MAX(dev->ury, args->y + 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
+	
+	/* finish previous polyline */
+	
+	dev->xold = PL_UNDEFINED;
+	dev->yold = PL_UNDEFINED;
+	
+	/* Determine the font height */
+	ft_ht = pls->chrht * 72.0/25.4; /* ft_ht in points, ht is in mm */
+	
+	
+	/* The transform matrix has only rotations and shears; extract them */
+	theta = acos(t[0]) * 180. / PI;  /* Determine the rotation (in degrees)... */
+	if (t[2] < 0.) theta *= -1.;     /* ... and sign ... */
+	if(cos(theta*PI/180.)<0.000001)  /* ... and shear */
+	  shear = t[3]/sin(theta*PI/180.);
+	else shear = (t[1]+sin(theta*PI/180.))/cos(theta*PI/180.); 
+	
+	/* 
+	 * Reference point conventions:
+	 *   If base = 0, it is aligned with the center of the text box
+	 *   If base = 1, it is aligned with the baseline of the text box
+	 *   If base = 2, it is aligned with the top of the text box
+	 *
+	 * Currently plplot only uses base=0
+	 * Postscript uses base=1
+	 *
+	 * We must calculate the difference between the two and apply the offset.
+	 */ 
+	
+	if (args->base == 2) /* not supported by plplot */
+	  offset = ENLARGE * ft_ht / 2.; /* half font height */
+	else if (args->base == 1)
+	  offset = 0.;
+	else
+	  offset = -ENLARGE * ft_ht / 2.;
+	
+	args->y += offset*cos(theta*PI/180.);
+	args->x -= offset*sin(theta*PI/180.);
+	
+	/* Apply plplot difilt transformations */
+	difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
+	
+	/* ps driver is rotated by default */
+	plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, 
+		 &(args->x), &(args->y));
+	
+	/* Determine the adjustment for page orientation */
+	theta += 90. - 90.*pls->diorot;
+	
+	
+	/* Output */
+	
+	/* move to string reference point */
+	fprintf(OF, " %d %d M\n", args->x, args->y );
+	
+	/* Save the current position and set the string rotation */
+	fprintf(OF, "gsave %.3f R\n",theta);
+	
+	/* Purge escape sequences from string, so that postscript can find it's 
+	 * length.  The string length is computed with the current font, and can
+	 * thus be wrong if there are font change escape sequences in the string 
+	 */
+	
+	esc_purge(str, cur_str);
+	
+	fprintf(OF, "/%s %.3f SF\n", font,font_factor * ENLARGE * ft_ht);    
+	
+	/* Output string, while escaping the '(', ')' and '\' characters.
+	 * this string is output for measurement purposes only.
+	 */
+	fprintf(OF, "%.3f (", - args->just);
+	while (str[i]!='\0') {
+	   if (str[i]=='(' || str[i]==')' || str[i]=='\\')
+	     fprintf(OF,"\\%c",str[i]);
+	   else
+	     fprintf(OF,"%c",str[i]);
+	   i++;
+	}
+	fprintf(OF,") SW\n");
+	
+	
+	/* Parse string for PLplot escape sequences and print everything out */
+	
+	cur_strp = cur_str;
+	f = 0;
+	do {
+	   
+	   strp = str;
+	   
+	   if (*cur_strp == esc) {
+	      cur_strp++;
+	      
+	      if (*cur_strp == esc) { /* <esc><esc> */
+		 *strp++ = *cur_strp++;
+	      }
+	      else if (*cur_strp == 'f') {
+		 cur_strp++;
+		 if (*cur_strp++ != 'f') {
+		    /* escff occurs because of logic above. But any suffix
+		     * other than "f" should never happen. */
+		    plabort("proc_str, internal PLplot logic error;"
+			    "wrong escf escape sequence");
+		    return;
+		 }
+		 font = fonts[f++];
+		 /*pldebug("proc_str", "string-specified fci = 0x%x, font name = %s\n", fci, font);*/
+		 continue;
+	      }
+	      else switch (*cur_strp++) {
+		 
+	       case 'd':
+	       case 'D':
+		 if(up>0.) scale *= 1.25;  /* Subscript scaling parameter */
+		 else scale *= 0.8;  /* Subscript scaling parameter */
+		 up -= font_factor * ENLARGE * ft_ht / 2.;
+		 break;
+		 
+	       case 'u':
+	       case 'U':
+		 if(up<0.) scale *= 1.25;  /* Subscript scaling parameter */
+		 else scale *= 0.8;  /* Subscript scaling parameter */
+		 up += font_factor * ENLARGE * ft_ht / 2.;
+		 break;
+		 
+		 /* ignore the next sequences */
+		 
+	       case '+':
+	       case '-':
+	       case 'b':
+	       case 'B':
+		 plwarn("'+', '-', and 'b/B' text escape sequences not processed.");
+		 break;
+	      }
+	   }
+	   
+	   /* copy from current to next token, adding a postscript escape 
+	    * char '\' if necessary 
+	    */
+	   while(*cur_strp && *cur_strp != esc) {
+	      if (*cur_strp == '(' || *cur_strp == ')' || *cur_strp == '\\')
+		*strp++ = '\\';
+	      *strp++ = *cur_strp++;
+	   }
+	   *strp = '\0';
+	   
+	   if(fabs(up)<0.001) up = 0.; /* Watch out for small differences */
+	   
+	   /* Apply the scaling and the shear */
+	   fprintf(OF, "/%s [%.3f 0 %.3f %.3f 0 0] SF\n",
+		   font,
+		   font_factor * ENLARGE * ft_ht * scale,
+		   shear * font_factor * ENLARGE * ft_ht * scale,
+		   font_factor * ENLARGE * ft_ht * scale);
+	   
+	   /* if up/down escape sequences, save current point and adjust baseline;
+	    * take the shear into account */
+	   if(up!=0.) fprintf(OF, "gsave %.3f %.3f rmoveto\n",up*shear,up);
+	   
+	   /* print the string */
+	   fprintf(OF, "(%s) show\n", str);  
+	   
+	   /* back to baseline */
+	   if (up!=0.) fprintf(OF, "grestore (%s) stringwidth rmoveto\n", str);
+	   
+	}while(*cur_strp);
+	
+	fprintf(OF, "grestore\n");
+	
+	/*
+	 * keep driver happy -- needed for background and orientation.
+	 * arghhh! can't calculate it, as I only have the string reference
+	 * point, not its extent!
+	 * Quick (and final?) *hack*, ASSUME that no more than two char height
+	 * extents after/before the string reference point.
+	 */
+	
+	dev->llx = MIN(dev->llx, args->x - 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
+	dev->lly = MIN(dev->lly, args->y - 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
+	dev->urx = MAX(dev->urx, args->x + 2. * font_factor * ft_ht * 25.4 / 72. * pls->xpmm);
+	dev->ury = MAX(dev->ury, args->y + 2. * font_factor * ft_ht * 25.4 / 72. * pls->ypmm);
      }
 }
 
@@ -990,18 +983,16 @@ esc_purge(char *dstr, unsigned char *sstr) {
     }
 
     sstr++;
-    if (*sstr == esc)
+    if (*sstr == esc) {
+      *dstr++ = *sstr++;
       continue;
+    }
+     
     else {
       switch(*sstr++) {
-      case 'g': 
       case 'f':
 	sstr++;
 	break; /* two chars sequence */
-
-      case '(':
-	while (*sstr++ != ')'); /* multi chars sequence */
-	break;
 
       default:
 	break;  /* single char escape */
@@ -1018,9 +1009,8 @@ esc_purge(char *dstr, unsigned char *sstr) {
  *  Function takes an input unicode index, looks through the lookup
  *  table (which must be sorted by PLUNICODE Unicode), then returns the 
  *  corresponding Type1 code in the lookup table.  If the Unicode index is
- *  not present the returned value is 0 (which is normally undefined
- *  for Type 1 fonts and thus results in a blank character being printed
- *  according to p. 201 of BLUEBOOK.PDF.
+ *  not present the returned value is 32 (which is normally a blank
+ *  for Type 1 fonts).
 \*--------------------------------------------------------------------------*/
 
 static unsigned char 
@@ -1049,10 +1039,9 @@ plunicode2type1 (const PLUNICODE index,
    /* jlo is invalid or it is valid and index > lookup[jlo].Unicode.
     * jhi is invalid or it is valid and index < lookup[jhi].Unicode.
     * All these conditions together imply index cannot be found in lookup.
-    * Mark with 1 (which is usually not defined in type 1 fonts) since 0
-    * implies end of string.
+    * Mark with 32 (which is normally a blank in type 1 fonts).
     */
-   return(1);
+   return(32);
 }
 
 
