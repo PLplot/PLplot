@@ -27,9 +27,12 @@ source tcldemos.tcl
 Note the pltcl command has normal PLplot command-line options (run pltcl -h
 to find out what they are).
 
-(2)
+(2) Note, fill in $prefix below with whatever you configured for the install
+prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION 
+you are running at this time (5.2.0 or whatever).
+
 tclsh
-lappend auto_path $prefix/lib/plplot5.1.0
+lappend auto_path $prefix/lib/plplot$VERSION
 
 package require Pltcl
 plinit

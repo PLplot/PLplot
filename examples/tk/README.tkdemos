@@ -28,9 +28,12 @@ source tkdemos.tcl
 Note the plserver command has normal PLplot command-line options (run
 plserver -h to find out what they are).
 
-(2)
+(2) Note, fill in $prefix below with whatever you configured for the install
+prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION
+you are running at this time (5.2.0 or whatever).
+
 wish
-lappend auto_path $prefix/lib/plplot5.1.0
+lappend auto_path $prefix/lib/plplot$VERSION
 package require Pltk
 source tkdemos.tcl
 1
@@ -53,6 +56,6 @@ and wish
 source runAllDemos.tcl
 
 wish
-lappend auto_path $prefix/lib/plplot5.1.0
+lappend auto_path $prefix/lib/plplot$VERSION
 package require Plplotter
 source runAllDemos.tcl
