@@ -18,12 +18,13 @@ cd ..
 echo "Creating ../${tarfile}..."
 tar cf $tarfile \
 	`find $pldir \
-	! -path ${pldir}/tmp/\* \
+	! -path ${pldir}/tmp*/\* \
 	! -path ${pldir}/private/\* \
 	! -path ${pldir}/new/\* \
 	! -path ${pldir}/old/\* \
 	! -path \*CVS\* \
 	! -path \*~ \
+	! -path ${pldir}/PROBLEMS \
         -type f`
 
 tar rf $tarfile ${pldir}/tmp/.dummy ${pldir}/private/.dummy

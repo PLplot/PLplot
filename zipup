@@ -17,5 +17,5 @@ cd ..
 
 zip ${zipfile} ${pldir}/tmp/.dummy ${pldir}/private/.dummy
 
-zip -ru ${zipfile} ${pldir}/* -x ${pldir}/tmp ${pldir}/private \
-	${pldir}/new  ${pldir}/old "*/CVS/*" "*~"
+zip -ru ${zipfile} ${pldir}/* -x ${pldir}/tmp* ${pldir}/PROBLEMS \
+	${pldir}/private ${pldir}/new  ${pldir}/old "*/CVS/*" "*~"
