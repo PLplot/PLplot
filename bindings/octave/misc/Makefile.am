@@ -4,7 +4,7 @@
 ###
 # Copyright (C) 2002 Alan W. Irwin
 # Copyright (C) 2002 Joao Cardoso
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -20,13 +20,16 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
-if enable_octave
-
-examples_octavedir = ${prefix}/$(DATA_DIR)/../examples/octave
-
-examples_octave_DATA = \
+examples = \
 	diffn.m \
 	gradn.m \
 	rosenbrock.m
+
+EXTRA_DIST = $(examples)
+
+if enable_octave
+
+examples_octavedir = ${prefix}/$(DATA_DIR)/../examples/octave
+examples_octave_DATA = $(examples)
 
 endif

@@ -4,7 +4,7 @@
 ###
 # Copyright (C) 2002 Alan W. Irwin
 # Copyright (C) 2002 Joao Cardoso
-# 
+#
 #This file is part of PLplot.
 #
 #This file is free software; you can redistribute it and/or modify
@@ -67,7 +67,6 @@ EXTRA_DIST = $(examples_octave)
 if enable_octave
 
 examples_octavedir = ${prefix}/$(DATA_DIR)/../examples/octave
-
 examples_octave_DATA = $(examples_octave)
 
 endif
