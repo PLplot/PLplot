@@ -66,7 +66,7 @@ static pthread_t tid;
 
 static guint gnome_is_initialized = FALSE;
 
-// FIXME : Terrible global variable hack
+/*// FIXME : Terrible global variable hack*/
 static GtkStatusbar* sb;
 
 typedef enum {
@@ -149,9 +149,9 @@ canvas_timeout (gpointer dev)
 static void
 timeout_register (GnomeCanvas* canvas, GnomePLdev* dev)
 {
-  //  gtk_timeout_remove (timeout_id);
-  //  canvas->need_update = FALSE;
-  //  timeout_id = gtk_timeout_add (100, canvas_timeout, dev);
+  /*//  gtk_timeout_remove (timeout_id);*/
+  /*//  canvas->need_update = FALSE;*/
+  /*//  timeout_id = gtk_timeout_add (100, canvas_timeout, dev);*/
 }
 
 static
@@ -163,15 +163,15 @@ void change_mode (GnomePLdevPage* page, GnomePLdevCanvasMode mode)
 
   switch (mode) {
   case GNOME_PLDEV_LOCATE_MODE:
-    // FIXME : Terrible global variable hack
+    /*// FIXME : Terrible global variable hack*/
     gtk_statusbar_pop (sb, context);
-    // FIXME : Terrible global variable hack
+    /*// FIXME : Terrible global variable hack*/
     gtk_statusbar_push (sb, context, "Locate Mode");
     break;
   case GNOME_PLDEV_ZOOM_MODE:
-    // FIXME : Terrible global variable hack
+    /*// FIXME : Terrible global variable hack*/
     gtk_statusbar_pop (sb, context);
-    // FIXME : Terrible global variable hack
+    /*// FIXME : Terrible global variable hack*/
     gtk_statusbar_push (sb, context, "Zoom Mode");
     break;
   default:
@@ -258,7 +258,7 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 			     event->button.time);
       gdk_cursor_destroy(cursor);
       
-      // FIXME : Terrible global variable hack
+      /*// FIXME : Terrible global variable hack*/
       gtk_statusbar_push (sb, page->context, "");
 
       dragging = TRUE;
@@ -276,16 +276,16 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
       dragging = FALSE;
       gnome_canvas_item_hide (page->hlocline);
       gnome_canvas_item_hide (page->vlocline);
-      // FIXME : Terrible global variable hack
+      /*// FIXME : Terrible global variable hack*/
       gtk_statusbar_pop (sb, page->context);
-      //      printf ("Button release\n");
-      //      fflush (stdout);
+      /*//      printf ("Button release\n");*/
+      /*//      fflush (stdout);*/
     }
     break;
     
   default:
-    //    printf ("Other event\n");
-    //    fflush (stdout);
+    /*//    printf ("Other event\n");*/
+    /*//    fflush (stdout);*/
     break;
     
   }
@@ -331,9 +331,9 @@ canvas_pressed_cb(GnomeCanvasItem *item, GdkEvent *event,
 	sprintf (buffer, "   x = %f   y = %f   color = %f (cmap1)",
 		 gin->wX, gin->wY, color->color);
 
-    // FIXME : Terrible global variable hack
+    /*// FIXME : Terrible global variable hack*/
     gtk_statusbar_pop (sb, page->context);
-    // FIXME : Terrible global variable hack
+    /*// FIXME : Terrible global variable hack*/
     gtk_statusbar_push (sb, page->context, buffer);
 
   }
@@ -418,14 +418,14 @@ key_cb (GtkWidget* widget, GdkEventKey* event, PLStream* pls)
       gtk_main_quit ();
     break;
   case GDK_l:
-    //gdk_threads_enter ();
+    /*//gdk_threads_enter ();*/
     change_mode (page, GNOME_PLDEV_LOCATE_MODE);
-    //gdk_threads_leave ();
+    /*//gdk_threads_leave ();*/
     break;
   case GDK_z:
-    //gdk_threads_enter ();
+    /*//gdk_threads_enter ();*/
     change_mode (page, GNOME_PLDEV_ZOOM_MODE);
-    //gdk_threads_leave ();
+    /*//gdk_threads_leave ();*/
     break;
   case GDK_Page_Up:
     if (curpage != 0)
@@ -531,7 +531,7 @@ new_page (PLStream* pls)
 
   np = dev->npages;
 
-  //  gdk_threads_enter ();
+  /*//  gdk_threads_enter ();*/
 
 #ifdef ANTIALISED_CANVAS
 
@@ -684,23 +684,23 @@ new_page (PLStream* pls)
   gtk_notebook_append_page (dev->notebook, GTK_WIDGET (page->sw),
 			    gtk_label_new (buffer));
 
-  //  adj = gtk_scrolled_window_get_vadjustment (page->hadj);
-  //  page->hadj->value = 0.0;
-  //page->hadj->step_increment = 1.0;
-  //  page->vadj = adj;
-  //gtk_scrolled_window_set_vadjustment (page->sw, adj);
+  /*//  adj = gtk_scrolled_window_get_vadjustment (page->hadj);*/
+  /*//  page->hadj->value = 0.0;*/
+  /*//page->hadj->step_increment = 1.0;*/
+  /*//  page->vadj = adj;*/
+  /*//gtk_scrolled_window_set_vadjustment (page->sw, adj);*/
 
-  //adj = gtk_scrolled_window_get_hadjustment (page->sw);
-  //page->vadj->value = 0.0;
-  //page->vadj->step_increment = 1.0;
-  //  page->hadj = adj;
-  //gtk_scrolled_window_set_hadjustment (page->sw, adj);
+  /*//adj = gtk_scrolled_window_get_hadjustment (page->sw);*/
+  /*//page->vadj->value = 0.0;*/
+  /*//page->vadj->step_increment = 1.0;*/
+  /*//  page->hadj = adj;*/
+  /*//gtk_scrolled_window_set_hadjustment (page->sw, adj);*/
 
   gtk_widget_show_all (dev->parent);
 
   gtk_notebook_set_page (dev->notebook, -1);
 
-  //  gdk_threads_leave ();
+  /*//  gdk_threads_leave ();*/
 
   dev->npages++;
 
@@ -795,7 +795,7 @@ plD_init_gnome (PLStream *pls)
 
   /* The real meat of the initialization done here */
 
-  //  atexit (do_quit);
+  /*//  atexit (do_quit);*/
 
   /* init threads */                                                       
   g_thread_init (NULL);                                                     
@@ -871,13 +871,13 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
   short* xp;
   short* yp;
 
-  //  gdk_threads_enter ();
+  /*//  gdk_threads_enter ();*/
 
   dev = pls->dev;
   
   page = dev->page[dev->npages-1];
 
-  //  debug ("Before if\n");
+  /*//  debug ("Before if\n");*/
 
   if ( page->bufc > 0
        && ((npts == 0)
@@ -886,8 +886,8 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
 	   || (*x != page->bufx[page->bufc - 1])
 	   || (*y != page->bufy[page->bufc - 1])) ) {
 
-    //       printf("bufc = %d\tnpts = %d\n", page->bufc, npts);
-    //q        fflush(stdout);
+    /*//       printf("bufc = %d\tnpts = %d\n", page->bufc, npts);*/
+    /*//q        fflush(stdout);*/
 
   canvas = page->canvas;
 
@@ -927,7 +927,7 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
 
   }
 
-  //  debug ("Got here\n");
+  /*//  debug ("Got here\n");*/
 
   xp = &(page->bufx[page->bufc]);
   yp = &(page->bufy[page->bufc]);
@@ -942,7 +942,7 @@ plD_polyline_gnome(PLStream *pls, short *x, short *y, PLINT npts)
   page->curcolor = pls->icol0;
   page->curwidth = pls->width;
 
-  //  gdk_threads_leave ();
+  /*//  gdk_threads_leave ();*/
 
 }
 
@@ -982,13 +982,13 @@ plD_eop_gnome(PLStream *pls)
   int i;
   short x, y;
 
-  //  static int i;
+  /*//  static int i;*/
 
   dev = pls->dev;
 
   plD_polyline_gnome(pls, NULL, NULL, 0);
 
-  //  gdk_threads_enter ();
+  /*//  gdk_threads_enter ();*/
 
   page = dev->page[dev->npages-1];
   canvas = page->canvas;
@@ -998,14 +998,14 @@ plD_eop_gnome(PLStream *pls)
 
   gdk_threads_leave ();
 
-  //  for (i=0;i<16;i++)
-  //    printf("count[%d] = %d\n", i, count[i]);
-  //  fflush (stdout);
+  /*//  for (i=0;i<16;i++)*/
+  /*//    printf("count[%d] = %d\n", i, count[i]);*/
+  /*//  fflush (stdout);*/
 
-  //  printf("eop #%d\n", i++);
-  //  fflush (stdout);
+  /*//  printf("eop #%d\n", i++);*/
+  /*//  fflush (stdout);*/
 
-  //  getchar();
+  /*//  getchar();*/
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1027,8 +1027,8 @@ plD_bop_gnome(PLStream *pls)
   
   dev = pls->dev;
 
-  //  printf("npages = %d\n", dev->npages);
-  //  fflush (stdout);
+  /*//  printf("npages = %d\n", dev->npages);*/
+  /*//  fflush (stdout);*/
   
   page = dev->page[dev->npages-1];
   canvas = page->canvas;
@@ -1036,7 +1036,7 @@ plD_bop_gnome(PLStream *pls)
   canvas->need_update = 1;
   gnome_canvas_update_now (canvas);
   
-  //  gdk_threads_leave ();
+  /*//  gdk_threads_leave ();*/
   
   pls->page++;
 }
@@ -1208,7 +1208,7 @@ fill_polygon (PLStream* pls)
 
   dev = pls->dev;
 
-  //  gdk_threads_enter ();
+  /*//  gdk_threads_enter ();*/
 
   page = dev->page[dev->npages-1];
 
@@ -1260,7 +1260,7 @@ fill_polygon (PLStream* pls)
 
   gnome_canvas_points_unref (points);
 
-  //  gdk_threads_leave ();
+  /*//  gdk_threads_leave ();*/
 
 }  
 
@@ -1278,7 +1278,7 @@ dashed_line (PLStream* pls)
 
   dev = pls->dev;
 
-  //  gdk_threads_enter ();
+  /*//  gdk_threads_enter ();*/
 
   page = dev->page[dev->npages-1];
 
@@ -1328,7 +1328,7 @@ dashed_line (PLStream* pls)
 
   gnome_canvas_points_unref (points);
 
-  //  gdk_threads_leave ();
+  /*//  gdk_threads_leave ();*/
 
 }  
 

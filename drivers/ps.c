@@ -765,7 +765,7 @@ proc_str (PLStream *pls, EscText *args)
     
     angle = angle*PI/180.;
     tt[0] = t[0]; tt[1] = t[1]; tt[2] = t[2]; tt[3] = t[3];
-    // fprintf(OF,"%% %.1f %.1f %.1f %.1f:\n", t[0], t[1], t[2], t[3]);
+    /*// fprintf(OF,"%% %.1f %.1f %.1f %.1f:\n", t[0], t[1], t[2], t[3]);*/
 
     /* add graph orientation angle to rotation matrix */
 

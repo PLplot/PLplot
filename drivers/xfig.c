@@ -450,7 +450,7 @@ proc_str (PLStream *pls, EscText *args)
   alpha = alpha * PI / 180.;
 
   /* TODO: parse string for format (escape) characters */
-  //parse_str(args->string, return_string);
+  /*//parse_str(args->string, return_string);*/
 
   /* apply transformations */
   difilt(&args->x, &args->y, 1, &clxmin, &clxmax, &clymin, &clymax);
