@@ -74,4 +74,8 @@
 /* Define if C++ compiler accepts using namespace */
 #undef USE_NAMESPACE
 
+/* Define if isnan is present in <math.h> but not in <cmath> 
+ * - broken Mac OSX systems */
+#undef BROKEN_ISNAN_CXX
+
 #endif	/* __PLCONFIG_H__ */

@@ -60,6 +60,27 @@ using namespace std;
 	 AC_MSG_RESULT(yes)],
         [AC_MSG_RESULT(no)])
 
+    if test HAVE_ISNAN ; then
+      AC_MSG_CHECKING([for broken <cmath> missing definition of isnan])
+      AC_COMPILE_IFELSE([
+#include <cmath>
+
+#ifdef USE_NAMESPACE
+using namespace std;
+#endif
+
+int
+main()
+{
+  isnan(1.0);
+  return 0;
+}
+],
+      [AC_MSG_RESULT(ok)],
+      [AC_DEFINE(BROKEN_ISNAN_CXX,[],[isnan is in math.h but not cmath])
+       AC_MSG_RESULT(broken)])
+    fi
+
     AC_LANG_POP([C++])
 
 fi

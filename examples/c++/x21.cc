@@ -36,6 +36,11 @@
   #define isnan(x) ((x) != (x))
 #endif
 
+// Need for some Mac OSX systems with broken <cmath> header
+#ifdef BROKEN_ISNAN_CXX
+extern "C" int isnan (double);
+#endif
+
 #ifdef USE_NAMESPACE
 using namespace std;
 #endif
