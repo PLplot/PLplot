@@ -86,7 +86,7 @@ def potential():
     # Create data to be contoured
     r = 0.5+arange(nr)
     r.shape = (-1,1)
-    theta = (2.*pi/float(ntheta-1))*(0.5+arange(ntheta-1))
+    theta = (2.*pi/float(ntheta-1))*(0.5+arange(ntheta))
     xg = r*cos(theta)
     yg = r*sin(theta)
 
@@ -140,11 +140,11 @@ def potential():
     pllab("(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot")
     # Plot contours of the potential
     dz = (zmax-zmin)/float(nlevel)
-    clevel = zmin + (arange(20)+0.5)*dz
+    clevel = zmin + (arange(nlevel)+0.5)*dz
     du = (umax-umin)/float(nlevel)
-    clevelu = umin + (arange(20)+0.5)*du
+    clevelu = umin + (arange(nlevel)+0.5)*du
     dv = (vmax-vmin)/float(nlevel)
-    clevelv = vmin + (arange(20)+0.5)*dv
+    clevelv = vmin + (arange(nlevel)+0.5)*dv
 
     plcol0(3)
     pllsty(2)
