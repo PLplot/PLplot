@@ -82,7 +82,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	if (isstr(device))
 	  plsdev(device);
 	else
-	  error("pldef: `device' must be a string");
+	  error("plsdev: `device' must be a string");
 	endif
       else
 	plsdev("xwin");
@@ -170,8 +170,16 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	endif
       endif
 
-      pldef	# defaults/init
+      plSetOpt("geometry", "400x400+800+1");
+      plSetOpt("np", "");
+      pldef	# user can override above defaults or add other options
+      plsetopt("apply"); # override/add momentary options.
 
+      ## init driver and make changes apply
+      plinit
+      pladv(0)
+      plflush;pleop;
+      
       if (nargin == 6 && strcmp("tk", sprintf("%s",plgdev')))
 	## a=[];while(isempty(a)); a=tk_receive(0),sleep(1);fflush(stdout);endwhile
 	eval(tk_receive(1));
