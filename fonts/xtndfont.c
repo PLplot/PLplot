@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:29  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1993/01/23 06:11:31  mjl
+   Added code to make generated font files device-independent.  No longer
+   any endian problem.
 
+ * Revision 1.3  1992/09/30  18:25:29  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:26  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -22,6 +26,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "pdf.h"
 
 extern short int *hersh[];
 extern short int *findex[];
@@ -51,23 +56,40 @@ main (void)
     }
 
     htab = 4 * 256 + 176;	/* # of fonts in upper byte # of chars in lower */
+#ifdef PLPLOT5_FONTS
+    write_2bytes(fontfile, htab);
+    write_2nbytes(fontfile, (U_SHORT *) hrshlst, 4 * 176);
+#else
     fwrite((char *) &htab, sizeof(short), 1, fontfile);
     fwrite((char *) hrshlst, sizeof(short), 4 * 176, fontfile);
+#endif
 
     nleng = 1;
     zero = 0;
     nindx = 0;
     fpos = ftell(fontfile);
+#ifdef PLPLOT5_FONTS
+    write_2bytes(fontfile, nindx);
+#else
     fwrite((char *) &nindx, sizeof(short), 1, fontfile);
+#endif
     for (j = 0; j < 30; j++) {
 	for (k = 0; k < 100; k++) {
 	    ib = *(findex[j] + k);
 	    if (ib == 0) {
+#ifdef PLPLOT5_FONTS
+		write_2bytes(fontfile, zero);
+#else
 		fwrite((char *) &zero, sizeof(short), 1, fontfile);
+#endif
 		nindx++;
 	    }
 	    else {
+#ifdef PLPLOT5_FONTS
+		write_2bytes(fontfile, nleng);
+#else
 		fwrite((char *) &nleng, sizeof(short), 1, fontfile);
+#endif
 		nindx++;
 		for (;;) {
 		    ix = *(buffer[ib / 100] + ib % 100) / 128 - 64;
@@ -85,13 +107,21 @@ main (void)
 	}
     }
     fseek(fontfile, fpos, 0);
+#ifdef PLPLOT5_FONTS
+    write_2bytes(fontfile, nindx);
+#else
     fwrite((char *) &nindx, sizeof(short), 1, fontfile);
+#endif
 
     fseek(fontfile, 0, 2);
     fpos = ftell(fontfile);
     nleng = 1;
     nchars = 0;
+#ifdef PLPLOT5_FONTS
+    write_2bytes(fontfile, nleng);
+#else
     fwrite((char *) &nleng, sizeof(short), 1, fontfile);
+#endif
     for (j = 0; j < 30; j++) {
 	for (k = 0; k < 100; k++) {
 	    ib = *(findex[j] + k);
@@ -116,7 +146,11 @@ main (void)
     }
     nleng--;
     fseek(fontfile, fpos, 0);
+#ifdef PLPLOT5_FONTS
+    write_2bytes(fontfile, nleng);
+#else
     fwrite((char *) &nleng, sizeof(short), 1, fontfile);
+#endif
     fclose(fontfile);
     printf("There are %d characters in font set.\n", nchars - 1);
     exit(0);

@@ -1,9 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.3  1992/09/30 18:25:28  furnish
-   Massive cleanup to irradicate garbage code.  Almost everything is now
-   prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+   Revision 1.4  1993/01/23 06:11:30  mjl
+   Added code to make generated font files device-independent.  No longer
+   any endian problem.
 
+ * Revision 1.3  1992/09/30  18:25:28  furnish
+ * Massive cleanup to irradicate garbage code.  Almost everything is now
+ * prototyped correctly.  Builds on HPUX, SUNOS (gcc), AIX, and UNICOS.
+ *
  * Revision 1.2  1992/09/29  04:45:25  furnish
  * Massive clean up effort to remove support for garbage compilers (K&R).
  *
@@ -17,12 +21,13 @@
 	Utility to generate standard font set.
 */
 
+#define PL_NEED_MALLOC
+#include "plplot.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-#define PL_NEED_MALLOC
-#include "plplot.h"
+#include "pdf.h"
 
 extern short int *hersh[];
 extern short int *findex[];
@@ -91,8 +96,13 @@ for( k=0; k < 176; k++ )
     }
 
     htab = 1 * 256 + 176;	/* # of fonts in upper byte # of chars in lower */
+#ifdef PLPLOT5_FONTS
+    write_2bytes(fontfile, htab);
+    write_2nbytes(fontfile, (U_SHORT *) hrshidx, 176);
+#else
     fwrite((char *) &htab, sizeof(short), 1, fontfile);
     fwrite((char *) hrshidx, sizeof(short), 176, fontfile);
+#endif
 
     zero = 0;
     nindx = 0;
@@ -101,18 +111,30 @@ for( k=0; k < 176; k++ )
 #if DEBUG
 	printf( "\n fpos = %d\n", fpos );
 #endif
+#ifdef PLPLOT5_FONTS
+    write_2bytes(fontfile, nindx);
+#else
     fwrite((char *) &nindx, sizeof(short), 1, fontfile);
+#endif
     for (j = 0; j < nstd; j++) {
 	ib = *(findex[(hrshlst[j] - 1) / 100] + (hrshlst[j] - 1) % 100);
 	if (ib == 0) {
+#ifdef PLPLOT5_FONTS
+	    write_2bytes(fontfile, zero);
+#else
 	    fwrite((char *) &zero, sizeof(short), 1, fontfile);
+#endif
 	    nindx++;
 #if DEBUG
 	printf(  "Wrote 0\n" );
 #endif
 	}
 	else {
+#ifdef PLPLOT5_FONTS
+	    write_2bytes(fontfile, nleng);
+#else
 	    fwrite((char *) &nleng, sizeof(short), 1, fontfile);
+#endif
 #if DEBUG
 	printf( "wrote %d ", nleng );
 #endif
@@ -132,7 +154,11 @@ for( k=0; k < 176; k++ )
 	}
     }
     fseek(fontfile, fpos, 0);
+#ifdef PLPLOT5_FONTS
+    write_2bytes(fontfile, nindx);
+#else
     fwrite((char *) &nindx, sizeof(short), 1, fontfile);
+#endif
 
     nchars = 0;
     nleng = 1;
@@ -141,7 +167,11 @@ for( k=0; k < 176; k++ )
 #if DEBUG
 	printf( "fpos = %d\n", fpos );
 #endif
+#ifdef PLPLOT5_FONTS
+    write_2bytes(fontfile, nleng);
+#else
     fwrite((char *) &nleng, sizeof(short), 1, fontfile);
+#endif
 
 #if DEBUG
 	printf( "\nstarting next suite at %d\n", ftell(fontfile) );
@@ -174,7 +204,11 @@ for( k=0; k < 176; k++ )
 #endif
     nleng--;
     fseek(fontfile, fpos, 0);
+#ifdef PLPLOT5_FONTS
+    write_2bytes(fontfile, nleng);
+#else
     fwrite((char *) &nleng, sizeof(short), 1, fontfile);
+#endif
     fclose(fontfile);
 #if DEBUG
 	printf( "nleng=%d\n", nleng );
