@@ -20,6 +20,13 @@ package plplot.core;
 public class PLStream {
 
 // The PLplot core API function calls.
+    public native void adv( int page );
+    public native void box( String xopt, float xtick, int nxsub,
+                            String yopt, float ytick, int nysub );
+    public native void box3(
+        String xopt, String xlabel, float xtick, int nsubx,
+        String yopt, String ylabel, float ytick, int nsuby,
+        String zopt, String zlabel, float ztick, int nsubz );
     public native void col0( int icol );
     public native void end();
     public native void env( float xmin, float xmax, float ymin, float ymax,
@@ -29,6 +36,10 @@ public class PLStream {
     public native void lab( String xlabel, String ylabel, String tlabel );
     public native void line( int n, float[] x, float[] y );
     public native void poin( int n, float[] x, float[] y, int code );
+    public native void styl( int nms, int mark, int space );
+    public native void syax( int digmax, int digits );
+    public native void vsta();
+    public native void wind( float xmin, float xmax, float ymin, float ymax );
 
 // Static code block to get the PLplot dynamic library loaded in.
     static {

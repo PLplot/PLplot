@@ -18,10 +18,10 @@ dynamic_drivers_target: $(dynamic_drivers)
 	@echo "     NOT !!!"
 
 drivers/null.drv : shared/null$O
-	$(SHLIB_BUILD) $@ $<
+	$(SHLIB_BUILD) $@ $< -L. -lplplot
 
 drivers/plmeta.drv : shared/plmeta$O
-	$(SHLIB_BUILD) $@ $<
+	$(SHLIB_BUILD) $@ $< -L. -lplplot
 
 drivers/ps.drv : shared/ps$O
-	$(SHLIB_BUILD) $@ $<
+	$(SHLIB_BUILD) $@ $< -L. -lplplot
