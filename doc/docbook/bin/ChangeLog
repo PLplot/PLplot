@@ -1,0 +1,14 @@
+2000-11-26  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* inline-greek.pl.in: Call to "system" does not eat backslashes in
+	$i variables anymore.  This fixes the broken generation of jpeg
+	files in html rendering.
+
+2000-11-25  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* size-href.pl: Added file.
+
+2000-11-19  Rafael Laboissiere  <rafael@icp.inpg.fr>
+
+	* Released overhauled version with Automake support and XML
+	translation. 
