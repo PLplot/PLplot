@@ -424,9 +424,9 @@ plr_state(PLRDev *plr)
     }
 
     case PLSTATE_CMAP0:{
-	U_CHAR ncol0;
+	U_SHORT ncol0;
 
-	plr_rd( pdf_rd_1byte(plr->pdfs, &ncol0) );
+	plr_rd( pdf_rd_2bytes(plr->pdfs, &ncol0) );
 	plscmap0n((PLINT) ncol0);
 	for (i = 0; i < plsc->ncol0; i++) {
 	    plr_rd( pdf_rd_1byte(plr->pdfs, &plsc->cmap0[i].r) );
