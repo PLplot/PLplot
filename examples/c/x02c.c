@@ -46,7 +46,7 @@ void demo1()
 /* Divide screen into 16 regions */
     plssub(4, 4);
 
-    draw_windows( 15, 0 );
+    draw_windows( 16, 0 );
 
     pleop();
 }
@@ -105,7 +105,7 @@ void demo2()
 /* Now set cmap0 all at once (faster, since fewer driver calls) */
     plscmap0(r, g, b, 116);
 
-    draw_windows( 99, 16 );
+    draw_windows( 100, 16 );
 
     pleop();
 }
@@ -125,7 +125,7 @@ void draw_windows(int nw, int cmap0_offset)
     plschr(0.0, 3.5);
     plfont(4);
 
-    for (i = 0; i <= nw; i++) {
+    for (i = 0; i < nw; i++) {
 	plcol0(i+cmap0_offset);
 	sprintf(text, "%d", i);
 	pladv(0);
