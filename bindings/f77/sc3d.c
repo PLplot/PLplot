@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.5  1992/10/24 05:18:07  mjl
-   Added PL_NEED_SIZE_T defines where necessary.
+   Revision 1.6  1993/01/23 06:04:56  mjl
+   Indent changes only.
 
+ * Revision 1.5  1992/10/24  05:18:07  mjl
+ * Added PL_NEED_SIZE_T defines where necessary.
+ *
  * Revision 1.4  1992/10/22  17:05:44  mjl
  * Fixed warnings, errors generated when compling with HP C++.
  *
@@ -30,8 +33,8 @@
 #include <stdlib.h>
 
 void
-PLMESH( PLFLT *x, PLFLT *y, PLFLT *z,
-       PLINT *nx, PLINT *ny, PLINT *opt, PLINT *lx )
+PLMESH(PLFLT *x, PLFLT *y, PLFLT *z,
+       PLINT *nx, PLINT *ny, PLINT *opt, PLINT *lx)
 {
     int i, j;
     PLFLT **temp;
@@ -41,11 +44,11 @@ PLMESH( PLFLT *x, PLFLT *y, PLFLT *z,
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (PLFLT **) malloc((size_t)*nx * sizeof(PLFLT *))))
+    if (!(temp = (PLFLT **) malloc((size_t) * nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (PLFLT *) malloc((size_t)*ny * sizeof(PLFLT))))
+	if (!(temp[i] = (PLFLT *) malloc((size_t) * ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
@@ -62,8 +65,8 @@ PLMESH( PLFLT *x, PLFLT *y, PLFLT *z,
 
 
 void
-PLOT3D( PLFLT *x, PLFLT *y, PLFLT *z,
-       PLINT *nx, PLINT *ny, PLINT *opt, PLINT *side, PLINT *lx )
+PLOT3D(PLFLT *x, PLFLT *y, PLFLT *z,
+       PLINT *nx, PLINT *ny, PLINT *opt, PLINT *side, PLINT *lx)
 {
     int i, j;
     PLFLT **temp;
@@ -73,11 +76,11 @@ PLOT3D( PLFLT *x, PLFLT *y, PLFLT *z,
        Fortran matrix, so that the first dimension of z corresponds to the x
        direction. */
 
-    if (!(temp = (PLFLT **) malloc((size_t)*nx * sizeof(PLFLT *))))
+    if (!(temp = (PLFLT **) malloc((size_t) * nx * sizeof(PLFLT *))))
 	plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
-	if (!(temp[i] = (PLFLT *) malloc((size_t)*ny * sizeof(PLFLT))))
+	if (!(temp[i] = (PLFLT *) malloc((size_t) * ny * sizeof(PLFLT))))
 	    plexit("Out of memory");
 
     for (i = 0; i < *nx; i++)
