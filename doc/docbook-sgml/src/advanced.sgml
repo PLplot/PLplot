@@ -483,7 +483,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
       floating point.  There is some compensation for this effect built
       into PLplot, thus the internal representation for number of digits
       kept (<literal>digfix</literal>) may not always match the user's
-      specfication (via <literal>digmax</literal>).  However, it will
+      specification (via <literal>digmax</literal>).  However, it will
       always be true that <literal>digfix &leq; digmax</literal>.  The
       PLplot defaults are set up such that good results are usually
       obtained without user intervention.
@@ -648,7 +648,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
       as the standard and extended character sets respectively.  The
       standard character set is a subset of the extended set.  It contains
       177 characters including the ascii characters in a normal style font,
-      the greek alphabet and several plotter symbols.  The extended
+      the Greek alphabet and several plotter symbols.  The extended
       character set contains almost 1000 characters, including four font
       styles, and several math, musical and plotter symbols.
     </para>
@@ -657,7 +657,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
       The standard character set is loaded into memory automatically when
       &plstar; or &plstart; is called.  The extended character set is
       loaded by calling &plfontld;.  The extended character set requires
-      about 50 kbytes of memory, versus about 5 kbytes for the standard
+      about 50 KBytes of memory, versus about 5 KBytes for the standard
       set.  &plfontld; can be used to switch between the extended and
       standard sets (one set is unloaded before the next is loaded).
       &plfontld; can be called before &plstar;.
@@ -1097,7 +1097,7 @@ dependent.  Please see the plplot reference document for more detail.<!--
       point x<subscript>i</subscript>, y<subscript>j</subscript>.  (The
       two-dimensional array <literal>z</literal> is a vectored array
       instead of a fixed size array.  <literal>z</literal> points to an
-      array of pointers which each point to a rwo of the matrix.)  Note
+      array of pointers which each point to a row of the matrix.)  Note
       that the values of the independent variables
       x<subscript>i</subscript> and y<subscript>j</subscript> do not need
       to be equally spaced, but they must lie on a rectangular grid.  Thus
@@ -1126,11 +1126,11 @@ dependent.  Please see the plplot reference document for more detail.<!--
     </para>
 
     <para>
-      Labelling a three-dimensional or mesh plot is somewhat more
+      Labeling a three-dimensional or mesh plot is somewhat more
       complicated than a two dimensional plot due to the need for skewing
       the characters in the label so that they are parallel to the
       coordinate axes.  The routine &plbox3; thus combines the functions of
-      box drawing and labelling.
+      box drawing and labeling.
     </para>
     
   </sect1>
