@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1993/12/06 07:47:34  mjl
+ * Revision 1.18  1994/03/23 08:39:10  mjl
+ * Fixed some stubs to the cmap 1 handlers.
+ *
+ * Revision 1.17  1993/12/06  07:47:34  mjl
  * Changed routine names used in new color model.
  *
  * Revision 1.16  1993/11/15  08:40:57  mjl
@@ -9,18 +12,6 @@
  * Revision 1.15  1993/10/21  19:27:07  mjl
  * Changed all names that ended with an underscore (as part of the C/Fortran
  * linkage) to end with a '7' instead, to avoid problems with f2c.
- *
- * Revision 1.14  1993/08/26  20:00:17  mjl
- * Inserted stub function PLINIT().
- *
- * Revision 1.13  1993/08/09  22:15:08  mjl
- * Eliminated all vestiges of old clr/page syntax, in favor of eop/bop.
- *
- * Revision 1.12  1993/07/02  07:11:39  mjl
- * Minor change to function name.
- *
- * Revision 1.11  1993/04/26  20:03:14  mjl
- * Added stub for plgchr().
 */
 
 /*	scstubs.c
@@ -340,15 +331,22 @@ PLSCMAP0(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol0)
 }
 
 void
-PLSCMAP1(PLINT *r, PLINT *g, PLINT *b)
+PLSCMAP1(PLINT *r, PLINT *g, PLINT *b, PLINT *ncol1)
 {
-    c_plscmap1(r, g, b);
+    c_plscmap1(r, g, b, *ncol1);
 }
 
 void
-PLSCMAP1F1(PLINT *itype, PLFLT *param)
+PLSCMAP0N(PLINT *n)
 {
-    c_plscmap1f1(*itype, param);
+    c_plscmap0n(*n);
+}
+
+void
+PLSCMAP1L(PLINT *itype, PLINT *npts, PLFLT *intensity,
+	  PLFLT *coord1, PLFLT *coord2, PLFLT *coord3)
+{
+    c_plscmap1l(*itype, *npts, intensity, coord1, coord2, coord3);
 }
 
 void
