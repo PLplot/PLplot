@@ -1,3 +1,7 @@
+2002-12-09  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
+
+	* configure.ac: only run AM_PATH_PYTHON(1.5) if python is enabled.
+
 2002-12-07  Alan W. Irwin <irwin@beluga.phys.uvic.ca>
 
 	* drivers/Makefile.am: Make tk and tkwin static drivers work. This

@@ -414,8 +414,6 @@ AC_SUBST(LIBLTDL)
 
 AM_PROG_CC_STDC
 AM_PROG_LIBTOOL
-AM_PATH_PYTHON(1.5)
-
 MY_ARG_WITH(freetype,
   [  --with-freetype         enable driver options for using freetype library for fonts ($with_freetype)])
 
@@ -457,6 +455,10 @@ fi
 AC_INCLUDE(sysloc.in)
 #disable LIBS so we don't have all libraries mentioned
 LIBS=""
+
+if test "$enable_python" = "yes"; then
+   AM_PATH_PYTHON(1.5)
+fi
 
 # Optional packages
 
