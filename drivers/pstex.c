@@ -2,6 +2,7 @@
 
 	PLplot pstex device driver.
 */
+
 #include "plplot/plDevs.h"
 
 #ifdef PLD_pstex
@@ -35,9 +36,8 @@ plD_init_pstex(PLStream *pls)
   strcat(ofile, "_t");
   fp = fopen(ofile, "w");
 
-  /* Shouldn't these be set? I have to calculate rot_scale instead
-  fprintf(stderr,"%f %f\n", pls->aspdev, pls->aspori);
-  */
+  /* Shouldn't these be set? I have to calculate rot_scale instead */
+  /* fprintf(stderr,"%f %f\n", pls->aspdev, pls->aspori); */
 
   rot_scale = ((int)(pls->diorot) % 2) ? (float)YSIZE/(float)XSIZE : 1.;
 
@@ -71,19 +71,29 @@ plD_esc_pstex(PLStream *pls, PLINT op, void *ptr)
 }
 
 void
+plD_bop_pstex(PLStream *pls)
+{
+	plD_bop_ps(pls);
+
+    if (!pls->termin)
+	  plGetFam(pls);
+}
+
+void
 plD_tidy_pstex(PLStream *pls)
 {
   PSDev *dev = (PSDev *) pls->dev;
   float rot_scale, scale;
+
+  plD_tidy_ps(pls);
   
   scale = pls->xpmm * 25.4 / 72.;
   rot_scale = ((int)(pls->diorot) % 2) ? (float)YSIZE/(float)XSIZE : 1.;
 
-  plD_tidy_ps(pls);
   fprintf(fp,"\\end{picture}\n");
 
   fseek(fp, cur_pos, SEEK_SET);
-  fprintf(fp,"\\begin{picture}(%d,%d)(%d,%d)%\n%",
+  fprintf(fp,"\\begin{picture}(%d,%d)(%d,%d)%\n%%",
 		  ROUND((dev->urx - dev->llx) * scale * rot_scale),
 		  ROUND((dev->ury - dev->lly) * scale * rot_scale),
 		  ROUND((dev->llx - XOFFSET) * scale * rot_scale),
@@ -96,10 +106,8 @@ void
 proc_str (PLStream *pls, EscText *args) {
 
   PLFLT *t = args->xform;
-  PLFLT a1, alpha, width = 0., xorg = 0., yorg = 0., def, ht, dscale, scale, ft_ht, depth, angle;
-  char cptr[128], *tp, jst, ref;
-  const char *str;
-  int i,len;
+  PLFLT a1, alpha, ft_ht, angle;
+  char cptr[128], jst, ref;
   PSDev *dev = (PSDev *) pls->dev;
 
   /* font height */
@@ -143,11 +151,12 @@ proc_str (PLStream *pls, EscText *args) {
     args->y = args->refy;
   }
 
-  plRotPhy(pls->diorot+1, dev->xmin, dev->ymin, dev->xmax, dev->ymax, &(args->x), &(args->y));
-
+  plRotPhy(pls->diorot+1, dev->xmin, dev->ymin, dev->xmax, dev->ymax,
+		   &(args->x), &(args->y));
+#ifdef DEBUG
   fprintf(fp,"\\put(%d,%d){\\circle{10}}\n",
 		  args->x, args->y);
-
+#endif
   fprintf(fp,"\\put(%d,%d){\\rotatebox{%.1f}{\\makebox(0,0)[%c%c]{\\SetFigFont{%.1f}{10}",
 		  args->x, args->y, alpha, jst, ref, ft_ht);
 
@@ -156,20 +165,23 @@ proc_str (PLStream *pls, EscText *args) {
   fprintf(fp,"{\\familydefault}{\\mddefault}{\\updefault}");
 
   /* string color. FIXME */
-  fprintf(fp,"\\special{ps: gsave %d %d %d setrgbcolor}{%s }\\special{ps: grestore}}}}\n",
-		  pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, cptr);
+  fprintf(fp,"\\special{ps: gsave %.3f %.3f %.3f setrgbcolor}{%s}\\special{ps: grestore}}}}\n",
+		  pls->curcolor.r /255., pls->curcolor.g /255., pls->curcolor.b /255., cptr);
 
   /* keep ps driver happy -- needed for background and orientation.
-	 arghhh! can't calculate it, as I only have the string start
+	 arghhh! can't calculate it, as I only have the string reference
 	 point, not its extent!
 	 The solution will be to use the current latex font size in pt?
-	 Also need to take into account rotation and justification! */
- /*	 
-	dev->llx = MIN(dev->llx, args->x);
-	dev->lly = MIN(dev->lly, args->y);
-	dev->urx = MAX(dev->urx, args->x);
-	dev->ury = MAX(dev->ury, args->y); 
- */
+	 Also need to take into account rotation and justification!
+	 Quick (and final?) hack, ASSUME that no more than a char height
+	 extents after/before the string reference point. */
+  
+
+	dev->llx = MIN(dev->llx, args->x - ft_ht/2.*10.);
+	dev->lly = MIN(dev->lly, args->y - ft_ht/2.*10.);
+	dev->urx = MAX(dev->urx, args->x + ft_ht/2.*10.);
+	dev->ury = MAX(dev->ury, args->y + ft_ht/2.*10.); 
+
 }
 
 void
@@ -179,7 +191,7 @@ parse_str(const char *str, char *dest)
   char *tp = dest;
   char esc;
   char raise_lower[] = "\\raisebox{%.2fex}{";
-  fprintf(stderr,"%s\n", str);  
+
   plgesc(&esc);
 
   while (*str) {
@@ -192,25 +204,23 @@ parse_str(const char *str, char *dest)
 	switch (*str++) {
 
 	case 'u': /* up one level */
-	  if (raised<0) {
+	  if (raised < 0) {
 		*tp++ = '}';
 		opened--;
 	  } else {
 	  n = sprintf(tp, raise_lower, 0.6);
-	  tp += n;
-	  opened++;
+	  tp += n; opened++;
 	  }
 	  raised++;
 	  break;
 
 	case 'd': /* down one level */
-	  if (raised>0) {
+	  if (raised > 0) {
 		*tp++ = '}';
 		opened--;
 	  } else {
 		n = sprintf(tp, raise_lower, -0.6);
-		tp += n;
-		opened++;
+		tp += n; opened++;
 	  }
 	  raised--;
 	  break;
@@ -223,39 +233,41 @@ parse_str(const char *str, char *dest)
 	case '+': /* toggles overline mode. Side effect, enter math mode. */
 	  if (overline) {
 		if (--math)
-		  n = sprintf(tp, "}$");
-		else
 		  *tp++ = '}';
-		tp += n;
+		else {
+		  n = sprintf(tp, "}$");
+		  tp += n;
+		}
 		overline--; opened--;
 	  } else {
 		if (!math)
 		  *tp++ = '$';
 
 		n = sprintf(tp, "\\overline{");
-		tp += n;
-		overline++; opened++; math++;
+		tp += n; overline++; opened++; math++;
 	  }
 	  break;
 
 	case '-': /* toggles underline mode. Side effect, enter math mode. */
 	  if (underline) {
 		if (--math)
-		  n = sprintf(tp, "}$");
-		else
 		  *tp++ = '}';
+		else {
+		  n = sprintf(tp, "}$");
+		  tp += n;
+		}
 		underline--; opened--;
 	  } else {
 		if (!math)
 		  *tp++ = '$';
 
 		n = sprintf(tp, "\\underline{");		
-		tp += n;
-		underline++; opened++; math++;
+		tp += n; underline++; opened++; math++;
 	  }
 	  break;
 
 	case 'g': /* greek letter corresponding to roman letter x */
+	  str++;
 	  break;
 
 	case '(': /* Hershey symbol number (nnn) (any number of digits) FIXME ???*/
@@ -266,15 +278,15 @@ parse_str(const char *str, char *dest)
 	  
 	  switch (*str++) {
 	  case 'n': /* Normal */
-		if (math) {
-		  *tp++ = '$';
-		  math = 0;
-		}		  
-
 		while (fontset--) {
 		  *tp++ = '}';
 		  opened--;
 		}
+
+		if (math) {
+		  *tp++ = '$';
+		  math = 0;
+		}		  
 
 		n = sprintf(tp, "\\normalfont ");
 		tp += n;
@@ -299,12 +311,11 @@ parse_str(const char *str, char *dest)
 		break;
 
 	  case 's': /* Script */
-		if (math)
-		  n = sprintf(tp, "\\mathcal{");
-		else
-		  n = sprintf(tp, "\\textsf{");
+		if (!math)
+		  *tp++ = '$';
 
-		tp += n; opened++; fontset++;
+		  n = sprintf(tp, "\\mathcal{");
+		  tp += n; opened++; fontset++; math++;
 		break;
 
 	  default:
