@@ -1,10 +1,13 @@
 /* $Id$
    $Log$
-   Revision 1.2  1993/07/01 22:13:35  mjl
-   Changed all plplot source files to include plplotP.h (private) rather than
-   plplot.h.  Rationalized namespace -- all externally-visible internal
-   plplot functions now start with "plP_".
+   Revision 1.3  1993/11/15 08:39:23  mjl
+   Documentation changes.
 
+ * Revision 1.2  1993/07/01  22:13:35  mjl
+ * Changed all plplot source files to include plplotP.h (private) rather than
+ * plplot.h.  Rationalized namespace -- all externally-visible internal
+ * plplot functions now start with "plP_".
+ *
  * Revision 1.1  1993/01/23  05:52:53  mjl
  * File for holding coordinate transformers (was: convert.c).
  *
@@ -33,7 +36,7 @@ static PLFLT cxx, cxy, cyx, cyy, cyz;
 *  Conversion routines yielding an integer result.
 \*----------------------------------------------------------------------*/
 
-/* dcpc. converts device coordinates to physical coordinates */
+/* device coords to physical coords (x) */
 
 PLINT
 plP_dcpcx(PLFLT x)
@@ -42,6 +45,8 @@ plP_dcpcx(PLFLT x)
     return (ROUND(dpxoff + dpxscl * x));
 }
 
+/* device coords to physical coords (y) */
+
 PLINT
 plP_dcpcy(PLFLT y)
 {
@@ -49,8 +54,7 @@ plP_dcpcy(PLFLT y)
     return (ROUND(dpyoff + dpyscl * y));
 }
 
-/* mmpc. converts millimetres from bottom left-hand corner to physical */
-/* coordinates */
+/* millimeters from bottom left-hand corner to physical coords (x) */
 
 PLINT
 plP_mmpcx(PLFLT x)
@@ -59,6 +63,8 @@ plP_mmpcx(PLFLT x)
     return (ROUND(mpxoff + mpxscl * x));
 }
 
+/* millimeters from bottom left-hand corner to physical coords (y) */
+
 PLINT
 plP_mmpcy(PLFLT y)
 {
@@ -66,7 +72,7 @@ plP_mmpcy(PLFLT y)
     return (ROUND(mpyoff + mpyscl * y));
 }
 
-/* wcpc. converts world coordinates to physical coordinates */
+/* world coords to physical coords (x) */
 
 PLINT
 plP_wcpcx(PLFLT x)
@@ -74,6 +80,8 @@ plP_wcpcx(PLFLT x)
     plP_gwp(&wpxscl, &wpxoff, &wpyscl, &wpyoff);
     return (ROUND(wpxoff + wpxscl * x));
 }
+
+/* world coords to physical coords (y) */
 
 PLINT
 plP_wcpcy(PLFLT y)
@@ -87,8 +95,7 @@ plP_wcpcy(PLFLT y)
 *  Conversion routines yielding an floating result.
 \*----------------------------------------------------------------------*/
 
-/* dcmm. converts from device coordinates to millimetres from bottom */
-/* left-hand corner */
+/* device coords to millimeters from bottom left-hand corner (x) */
 
 PLFLT
 plP_dcmmx(PLFLT x)
@@ -98,6 +105,8 @@ plP_dcmmx(PLFLT x)
     return ((PLFLT) (x * ABS(phyxma - phyxmi) / xpmm));
 }
 
+/* device coords to millimeters from bottom left-hand corner (y) */
+
 PLFLT
 plP_dcmmy(PLFLT y)
 {
@@ -106,8 +115,7 @@ plP_dcmmy(PLFLT y)
     return ((PLFLT) (y * ABS(phyyma - phyymi) / ypmm));
 }
 
-/* dcsc. define transformations between device coordinates and subpage */
-/* coordinates */
+/* define transformations between device coords and subpage coords (x) */
 
 PLFLT
 plP_dcscx(PLFLT x)
@@ -116,6 +124,8 @@ plP_dcscx(PLFLT x)
     return ((PLFLT) ((x - spdxmi) / (spdxma - spdxmi)));
 }
 
+/* define transformations between device coords and subpage coords (y) */
+
 PLFLT
 plP_dcscy(PLFLT y)
 {
@@ -123,8 +133,7 @@ plP_dcscy(PLFLT y)
     return ((PLFLT) ((y - spdymi) / (spdyma - spdymi)));
 }
 
-/* mmdc. converts millimetres from bottom left corner into device */
-/* coordinates */
+/* millimeters from bottom left corner into device coords (x) */
 
 PLFLT
 plP_mmdcx(PLFLT x)
@@ -134,6 +143,8 @@ plP_mmdcx(PLFLT x)
     return ((PLFLT) (x * xpmm / ABS(phyxma - phyxmi)));
 }
 
+/* millimeters from bottom left corner into device coords (y) */
+
 PLFLT
 plP_mmdcy(PLFLT y)
 {
@@ -142,7 +153,7 @@ plP_mmdcy(PLFLT y)
     return ((PLFLT) (y * ypmm / ABS(phyyma - phyymi)));
 }
 
-/* scdc. converts subpage coordinates to device coordinates */
+/* subpage coords to device coords (x) */
 
 PLFLT
 plP_scdcx(PLFLT x)
@@ -151,6 +162,8 @@ plP_scdcx(PLFLT x)
     return ((PLFLT) (spdxmi + (spdxma - spdxmi) * x));
 }
 
+/* subpage coords to device coords (y) */
+
 PLFLT
 plP_scdcy(PLFLT y)
 {
@@ -158,7 +171,7 @@ plP_scdcy(PLFLT y)
     return ((PLFLT) (spdymi + (spdyma - spdymi) * y));
 }
 
-/* wcmm. converts world coordinates into millimetres */
+/* world coords into millimeters (x) */
 
 PLFLT
 plP_wcmmx(PLFLT x)
@@ -167,12 +180,16 @@ plP_wcmmx(PLFLT x)
     return ((PLFLT) (wmxoff + wmxscl * x));
 }
 
+/* world coords into millimeters (y) */
+
 PLFLT
 plP_wcmmy(PLFLT y)
 {
     plP_gwm(&wmxscl, &wmxoff, &wmyscl, &wmyoff);
     return ((PLFLT) (wmyoff + wmyscl * y));
 }
+
+/* undocumented transformation for 3d plot routines (x) */
 
 PLFLT
 plP_w3wcx(PLFLT x, PLFLT y, PLFLT z)
@@ -182,11 +199,14 @@ plP_w3wcx(PLFLT x, PLFLT y, PLFLT z)
     return ((PLFLT) ((x - basecx) * cxx + (y - basecy) * cxy));
 }
 
+/* undocumented transformation for 3d plot routines (y) */
+
 PLFLT
 plP_w3wcy(PLFLT x, PLFLT y, PLFLT z)
 {
     plP_gw3wc(&cxx, &cxy, &cyx, &cyy, &cyz);
     plP_gbase(&base3x, &base3y, &basecx, &basecy);
     plP_grange(&zzscl, &ranmi, &ranma);
-    return ((PLFLT) ((x - basecx) * cyx + (y - basecy) * cyy + (z - ranmi) * cyz));
+    return ((PLFLT) ((x - basecx) * cyx + (y - basecy) * cyy +
+		     (z - ranmi) * cyz));
 }

@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.17  1993/11/07 09:04:17  mjl
+ * Revision 1.18  1993/11/15 08:34:43  mjl
+ * Documentation changes.
+ *
+ * Revision 1.17  1993/11/07  09:04:17  mjl
  * Added device variable to specify that driver wants to handle its own
  * flushes.
  *
@@ -298,12 +301,12 @@ typedef struct {
 * spp..		Subpage  boundaries in physical coordinates
 * clp..		Clip     boundaries in physical coordinates
 * phy...	Physical device limits in physical coordinates
-* um.		Number of micrometres in a pixel
+* um.		Number of micrometers in a pixel
 *
 * currx		Physical x-coordinate of current point
 * curry		Physical y-coordinate of current point
-* mark		Array of mark lengths in micrometres for broken lines
-* space		Array of space lengths in micrometres for broken lines
+* mark		Array of mark lengths in micrometers for broken lines
+* space		Array of space lengths in micrometers for broken lines
 * nms		Number of elements for current broken line style
 * timecnt	Timer for broken lines
 * alarm		Alarm indicating change of broken line status
@@ -320,10 +323,10 @@ typedef struct {
 * spd...	Subpage  boundaries in normalized device coordinates
 * vpd...	Viewport boundaries in normalized device coordinates
 * vpw...	Viewport boundaries in world coordinates
-* pmm		Number of pixels to a millimetre
+* pmm		Number of pixels to a millimeter
 * wp....	Transformation variables for world  to physical conversion
 * dp....	Transformation variables for device to physical conversion
-* mp....	Transformation variables for millimetres from bottom left
+* mp....	Transformation variables for millimeters from bottom left
 *		hand corner to physical coordinates
 * wm....	Transformation variables for world coordinates to mm
 * base3.	World coordinate size of base for 3-d plot

@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.7  1993/07/28 05:54:10  mjl
-   Put in code to ensure all malloc'ed memory is freed upon exit.
+   Revision 1.8  1993/11/15 08:39:37  mjl
+   Documentation changes.
 
+ * Revision 1.7  1993/07/28  05:54:10  mjl
+ * Put in code to ensure all malloc'ed memory is freed upon exit.
+ *
  * Revision 1.6  1993/07/01  22:13:39  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
@@ -256,7 +259,9 @@ c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 }
 
 /*----------------------------------------------------------------------*\
-* External access routines.
+* void plP_gzback()
+*
+* Get background parameters for 3d plot.
 \*----------------------------------------------------------------------*/
 
 void
