@@ -65,6 +65,34 @@ static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (tex
 			      {"color", DRV_INT, &color, "Use color (color=0|1)"},
 			      {NULL, DRV_INT, NULL, NULL}};
 
+/*--------------------------------------------------------------------------*\
+ * adobe_symbol_enc (in)
+ *
+ * Trnasforms the character in from the PLplot Greek convention into the
+ * Adobe encoding for the Symbol font.
+\*--------------------------------------------------------------------------*/
+
+static char adobe_symbol_enc (char in) 
+{
+  char retval = in;
+  
+  switch (in) {
+  case 'C': retval = 'X'; break;
+  case 'Y': retval = 'H'; break;
+  case 'H': retval = 'Q'; break;
+  case 'Q': retval = 'Y'; break;
+  case 'X': retval = 'C'; break;
+  case 'c': retval = 'x'; break;    
+  case 'y': retval = 'h'; break;
+  case 'h': retval = 'q'; break;
+  case 'q': retval = 'y'; break;
+  case 'x': retval = 'c'; break;
+  }
+    
+  return retval;
+}
+
+
 /* text > 0 uses some postscript tricks, namely a transformation matrix
    that scales, rotates (with slanting) and offsets text strings.
    It has yet some bugs for 3d plots. */
@@ -860,7 +888,7 @@ proc_str (PLStream *pls, EscText *args)
       case 'g':
 	cur_str++;
 	ofont = font;
-	*strp++ = *cur_str++;
+	*strp++ = adobe_symbol_enc (*cur_str++);
 	symbol = 1;
 	font = "Symbol";
 	break;
