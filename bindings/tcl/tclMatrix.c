@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.2  1994/06/24 20:38:23  mjl
+ * Revision 1.3  1994/06/25 20:38:59  mjl
+ * Added support for integer matrix data.  Substantially rewrote and improved
+ * code in the process.  Extension to handle other types or higher
+ * dimensionality arrays should now be straightforward.
+ *
+ * Revision 1.2  1994/06/24  20:38:23  mjl
  * Changed name of struct to tclMatrix to avoid conflicts with C++ Matrix
  * classes.
  *
@@ -70,6 +75,20 @@ DeleteMatrixVar(ClientData clientData,
 static void
 DeleteMatrixCmd(ClientData clientData);
 
+/* These do the put/get operations for each supported type */
+
+static void
+MatrixPut_f(ClientData clientData, int index, char *string);
+
+static void
+MatrixGet_f(ClientData clientData, int index, char *string);
+
+static void
+MatrixPut_i(ClientData clientData, int index, char *string);
+
+static void
+MatrixGet_i(ClientData clientData, int index, char *string);
+
 /*----------------------------------------------------------------------*\
  *
  * Tcl_MatCmd --
@@ -92,9 +111,9 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	      int argc, char **argv)
 {
     register tclMatrix *matPtr;
-    int i, new;
+    int i, length, new;
     Tcl_HashEntry *hPtr;
-    char *varName;
+    char c, *varName;
 
     if (argc < 3) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
@@ -118,8 +137,10 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 /* Create matrix data structure */
 
     matPtr = (tclMatrix *) ckalloc(sizeof(tclMatrix));
+    matPtr->fdata = NULL;
+    matPtr->idata = NULL;
     for (i = 0; i < MAX_ARRAY_DIM; i++)
-	matPtr->n[i] = 0;
+	matPtr->n[i] = 1;
 
 /* Create name */
 
@@ -149,8 +170,18 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 
     argc--; argv++;
 
-    if (strcmp(argv[0], "float") == 0) {
+    c = argv[0][0];
+    length = strlen(argv[0]);
+
+    if ((c == 'f') && (strncmp(argv[0], "float", length) == 0)) {
 	matPtr->type = TYPE_FLOAT;
+	matPtr->put = MatrixPut_f;
+	matPtr->get = MatrixGet_f;
+    }
+    else if ((c == 'i') && (strncmp(argv[0], "int", length) == 0)) {
+	matPtr->type = TYPE_INT;
+	matPtr->put = MatrixPut_i;
+	matPtr->get = MatrixGet_i;
     }
     else {
 	Tcl_AppendResult(interp, "Matrix type \"", argv[0],
@@ -170,7 +201,7 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     for (i = 0; i < matPtr->dim; i++) {
 	matPtr->n[i] = atoi(argv[i]);
 
-	if (matPtr->n[i] <= 0) {
+	if (matPtr->n[i] < 1) {
 	    Tcl_AppendResult(interp, "invalid matrix dimension \"", argv[i],
 			     "\"", (char *) NULL);
 
@@ -187,6 +218,12 @@ Tcl_MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	matPtr->fdata = (Mat_float *) ckalloc(matPtr->len * sizeof(Mat_float));
 	for (i = 0; i < matPtr->len; i++)
 	    matPtr->fdata[i] = 0.0;
+	break;
+
+    case TYPE_INT:
+	matPtr->idata = (Mat_int *) ckalloc(matPtr->len * sizeof(Mat_int));
+	for (i = 0; i < matPtr->len; i++)
+	    matPtr->idata[i] = 0;
 	break;
     }
 
@@ -262,12 +299,11 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     char c, tmp[80];
     char* name = argv[0];
     int nmin[MAX_ARRAY_DIM], nmax[MAX_ARRAY_DIM];
-    Mat_float fvalue;
-    int i, j, k;
+    int i, j, k, index;
 
     for (i = 0; i < MAX_ARRAY_DIM; i++) {
 	nmin[i] = 0;
-	nmax[i] = 0;
+	nmax[i] = matPtr->n[i]-1;
     }
 
 /* First check for a matrix command */
@@ -285,36 +321,22 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
     }
 
 /* dump -- send a nicely formatted listing of the array contents to stdout */
-/* (mostly for debugging) */
+/* (very helpful for debugging) */
 
     else if ((c == 'd') && (strncmp(argv[0], "dump", length) == 0)) {
-	if (matPtr->dim == 1) {
-	    for (i = 0; i < matPtr->n[0]; i++) {
-		printf("%f ", M1D(i));
-	    }
-	    printf("\n");
-	}
-	else if (matPtr->dim == 2) {
-	    for (i = 0; i < matPtr->n[0]; i++) {
-		for (j = 0; j < matPtr->n[1]; j++) {
-		    printf("%f ", M2D(i,j));
+	for (i = nmin[0]; i <= nmax[0]; i++) {
+	    for (j = nmin[1]; j <= nmax[1]; j++) {
+		for (k = nmin[2]; k <= nmax[2]; k++) {
+		    (*matPtr->get)((ClientData) matPtr, I3D(i,j,k), tmp);
+		    printf(tmp);
 		}
-		printf("\n");
-	    }
-	    printf("\n");
-	}
-	else if (matPtr->dim == 3) {
-	    for (i = 0; i < matPtr->n[0]; i++) {
-		for (j = 0; j < matPtr->n[1]; j++) {
-		    for (k = 0; k < matPtr->n[2]; k++) {
-			printf("%f ", M3D(i,j,k));
-		    }
+		if (matPtr->dim > 2)
 		    printf("\n");
-		}
-		printf("\n");
 	    }
-	    printf("\n");
+	    if (matPtr->dim > 1)
+		printf("\n");
 	}
+	printf("\n");
 	return TCL_OK;
     }
 
@@ -360,7 +382,7 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 	argc--; argv++;
     }
 
-/* If there is an "=" after indicies, it's a put.  Get value to put. */
+/* If there is an "=" after indicies, it's a put.  Do error checking. */
 
     if (argc > 0) {
 	put = 1;
@@ -376,9 +398,6 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 				 argv[1], "\"", (char *) NULL);
 		return TCL_ERROR;
 	    }
-	    else {
-		fvalue = atof(argv[0]);
-	    }
 	}
 	else {
 	    Tcl_AppendResult(interp, "extra characters after indices: \"",
@@ -390,47 +409,63 @@ MatrixCmd(ClientData clientData, Tcl_Interp *interp,
 /* Do the get/put. */
 /* The loop over all elements takes care of the multi-element cases. */
 
-    if (matPtr->dim == 1) {
-	for (i = nmin[0]; i <= nmax[0]; i++) {
-	    if (put) {
-		M1D(i) = fvalue;
-	    }
-	    else {
-		sprintf(tmp, "%f ", M1D(i));
-		Tcl_AppendResult(interp, tmp, (char *) NULL);
-	    }
-	}
-    }
-    else if (matPtr->dim == 2) {
-	for (i = nmin[0]; i <= nmax[0]; i++) {
-	    for (j = nmin[1]; j <= nmax[1]; j++) {
-		if (put) {
-		    M2D(i,j) = fvalue;
-		}
+    for (i = nmin[0]; i <= nmax[0]; i++) {
+	for (j = nmin[1]; j <= nmax[1]; j++) {
+	    for (k = nmin[2]; k <= nmax[2]; k++) {
+		if (put) 
+		    (*matPtr->put)((ClientData) matPtr, I3D(i,j,k), argv[0]);
 		else {
-		    sprintf(tmp, "%f ", M2D(i,j));
+		    (*matPtr->get)((ClientData) matPtr, I3D(i,j,k), tmp);
 		    Tcl_AppendResult(interp, tmp, (char *) NULL);
-		}
-	    }
-	}
-    }
-    else if (matPtr->dim == 3) {
-	for (i = nmin[0]; i <= nmax[0]; i++) {
-	    for (j = nmin[1]; j <= nmax[1]; j++) {
-		for (k = nmin[2]; k <= nmax[2]; k++) {
-		    if (put) {
-			M3D(i,j,k) = fvalue;
-		    }
-		    else {
-			sprintf(tmp, "%f ", M3D(i,j,k));
-			Tcl_AppendResult(interp, tmp, (char *) NULL);
-		    }
 		}
 	    }
 	}
     }
 
     return TCL_OK;
+}
+
+/*----------------------------------------------------------------------*\
+ *
+ * Routines to handle Matrix get/put dependent on type:
+ *
+ * MatrixPut_f	MatrixGet_f
+ * MatrixPut_i	MatrixGet_i
+ *
+ * Each routine translates and stores string appropriately.
+ *
+\*----------------------------------------------------------------------*/
+
+static void
+MatrixPut_f(ClientData clientData, int index, char *string)
+{
+    tclMatrix *matPtr = (tclMatrix *) clientData;
+
+    matPtr->fdata[index] = atof(string);
+}
+
+static void
+MatrixGet_f(ClientData clientData, int index, char *string)
+{
+    tclMatrix *matPtr = (tclMatrix *) clientData;
+
+    sprintf(string, "%f ", matPtr->fdata[index]);
+}
+
+static void
+MatrixPut_i(ClientData clientData, int index, char *string)
+{
+    tclMatrix *matPtr = (tclMatrix *) clientData;
+
+    matPtr->idata[index] = atoi(string);
+}
+
+static void
+MatrixGet_i(ClientData clientData, int index, char *string)
+{
+    tclMatrix *matPtr = (tclMatrix *) clientData;
+
+    sprintf(string, "%d ", matPtr->idata[index]);
 }
 
 /*----------------------------------------------------------------------*\
@@ -489,6 +524,10 @@ DeleteMatrixCmd(ClientData clientData)
 #endif
     if (matPtr->fdata != NULL) 
 	ckfree((char *) matPtr->fdata);
+
+    if (matPtr->idata != NULL) 
+	ckfree((char *) matPtr->idata);
+
     ckfree((char *) matPtr);
 }
 
