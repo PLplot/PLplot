@@ -1,6 +1,10 @@
 /* $Id$
  * $Log$
- * Revision 1.15  1993/11/07 09:02:52  mjl
+ * Revision 1.16  1993/11/15 08:31:16  mjl
+ * Now uses tmpnam() to get temporary file instead of tempnam().  Also,
+ * put in rename of dangerous Tcl commands just after startup.
+ *
+ * Revision 1.15  1993/11/07  09:02:52  mjl
  * Added escape function handling for dealing with flushes.
  *
  * Revision 1.14  1993/10/18  19:41:15  mjl
@@ -685,6 +689,12 @@ tk_configure(PLStream *pls)
     Tcl_CreateCommand(dev->interp, "keypress", KeyEH,
 		      (ClientData) pls, (void (*)()) NULL);
 
+/* Blow away exec and open commands for some additional security */
+
+    tcl_cmd(pls, "rename exec {}");
+    tcl_cmd(pls, "rename open {}");
+    tcl_cmd(pls, "rename rename {}");
+
 /* Set default names for server widget procs */
 
     Tcl_SetVar(dev->interp, "plserver_init", "plserver_init", 0);
@@ -969,7 +979,7 @@ link_init(PLStream *pls)
 /* Create the fifo for data transfer to the plframe widget */
 
     dev->filetype = "fifo";
-    dev->filename = (char *) tempnam((char *) NULL, "pltk");
+    dev->filename = (char *) tmpnam("pltk");
 
     if (mkfifo(dev->filename, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) {
 	abort_session(pls, "mkfifo error");
