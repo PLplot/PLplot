@@ -6,28 +6,28 @@
 !IF "$(CFG)" == ""
 CFG=plpdll - Win32 Release
 !MESSAGE No configuration specified.  Defaulting to plpdll - Win32 Release.
-!ENDIF 
+!ENDIF
 
 !IF "$(CFG)" != "plpdll - Win32 Release" && "$(CFG)" != "plpdll - Win32 Debug"
 !MESSAGE Invalid configuration "$(CFG)" specified.
 !MESSAGE You can specify a configuration when running NMAKE on this makefile
 !MESSAGE by defining the macro CFG on the command line.  For example:
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "plpdll.mak" CFG="plpdll - Win32 Release"
-!MESSAGE 
+!MESSAGE
 !MESSAGE Possible choices for configuration are:
-!MESSAGE 
+!MESSAGE
 !MESSAGE "plpdll - Win32 Release" (based on "Win32 (x86) Dynamic-Link Library")
 !MESSAGE "plpdll - Win32 Debug" (based on "Win32 (x86) Dynamic-Link Library")
-!MESSAGE 
+!MESSAGE
 !ERROR An invalid configuration is specified.
-!ENDIF 
+!ENDIF
 
 !IF "$(OS)" == "Windows_NT"
 NULL=
-!ELSE 
+!ELSE
 NULL=nul
-!ENDIF 
+!ENDIF
 ################################################################################
 # Begin Project
 # PROP Target_Last_Scanned "plpdll - Win32 Debug"
@@ -53,7 +53,7 @@ BUILD_DIR=\"tmp\"
 
 ALL : "$(OUTDIR)\plplotd.dll"
 
-CLEAN : 
+CLEAN :
 	-@erase ".\plplotd.dll"
 	-@erase ".\Release\plconsole.obj"
 	-@erase ".\Release\plctrl.obj"
@@ -77,6 +77,7 @@ CLEAN :
 	-@erase ".\Release\plargs.obj"
 	-@erase ".\Release\plline.obj"
 	-@erase ".\Release\plhist.obj"
+	-@erase ".\Release\plvect.obj"
 	-@erase ".\Release\plvpor.obj"
 	-@erase ".\Release\plcont.obj"
 	-@erase ".\Release\plimage.obj"
@@ -100,14 +101,14 @@ CPP_OBJS=.\Release/
 CPP_SBRS=
 # ADD BASE MTL /nologo /D "NDEBUG" /win32
 # ADD MTL /nologo /D "NDEBUG" /win32
-MTL_PROJ=/nologo /D "NDEBUG" /win32 
+MTL_PROJ=/nologo /D "NDEBUG" /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
-RSC_PROJ=/l 0x409 /fo"$(INTDIR)/plplot.res" /d "NDEBUG" 
+RSC_PROJ=/l 0x409 /fo"$(INTDIR)/plplot.res" /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-BSC32_FLAGS=/nologo /o"$(OUTDIR)/plpdll.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)/plpdll.bsc"
 BSC32_SBRS=
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /machine:I386
@@ -116,7 +117,7 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib\
  odbccp32.lib /nologo /subsystem:windows /dll /incremental:no\
  /pdb:"$(OUTDIR)/plplotd.pdb" /machine:I386 /def:"..\..\..\..\tmp\plplotd.def"\
- /out:"plplotd.dll" /implib:"$(OUTDIR)/plplotd.lib" 
+ /out:"plplotd.dll" /implib:"$(OUTDIR)/plplotd.lib"
 DEF_FILE= \
 	"..\..\..\..\tmp\plplotd.def"
 LINK32_OBJS= \
@@ -142,6 +143,7 @@ LINK32_OBJS= \
 	".\Release\plargs.obj" \
 	".\Release\plline.obj" \
 	".\Release\plhist.obj" \
+	".\Release\plvect.obj" \
 	".\Release\plvpor.obj" \
 	".\Release\plcont.obj" \
 	".\Release\plimage.obj" \
@@ -175,7 +177,7 @@ BUILD_DIR=\"tmp\"
 
 ALL : "$(OUTDIR)\plplotd.dll"
 
-CLEAN : 
+CLEAN :
 	-@erase ".\Debug\vc40.pdb"
 	-@erase ".\Debug\vc40.idb"
 	-@erase ".\plplotd.dll"
@@ -208,6 +210,7 @@ CLEAN :
 	-@erase ".\Debug\win3.obj"
 	-@erase ".\Debug\plline.obj"
 	-@erase ".\Debug\plhist.obj"
+	-@erase ".\Debug\plvect.obj"
 	-@erase ".\Debug\plvpor.obj"
 	-@erase ".\Debug\plplot.res"
 	-@erase ".\plplotd.ilk"
@@ -227,14 +230,14 @@ CPP_PROJ=/nologo /MTd /W3 /Gm /GX /Zi /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS"\
 CPP_SBRS=
 # ADD BASE MTL /nologo /D "_DEBUG" /win32
 # ADD MTL /nologo /D "_DEBUG" /win32
-MTL_PROJ=/nologo /D "_DEBUG" /win32 
+MTL_PROJ=/nologo /D "_DEBUG" /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
-RSC_PROJ=/l 0x409 /fo"$(INTDIR)/plplot.res" /d "_DEBUG" 
+RSC_PROJ=/l 0x409 /fo"$(INTDIR)/plplot.res" /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-BSC32_FLAGS=/nologo /o"$(OUTDIR)/plpdll.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)/plpdll.bsc"
 BSC32_SBRS=
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /debug /machine:I386
@@ -244,7 +247,7 @@ LINK32_FLAGS=kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib\
  odbccp32.lib /nologo /subsystem:windows /dll /incremental:yes\
  /pdb:"$(OUTDIR)/plplotd.pdb" /debug /machine:I386\
  /def:"..\..\..\..\tmp\plplotd.def" /out:"plplotd.dll"\
- /implib:"$(OUTDIR)/plplotd.lib" 
+ /implib:"$(OUTDIR)/plplotd.lib"
 DEF_FILE= \
 	"..\..\..\..\tmp\plplotd.def"
 LINK32_OBJS= \
@@ -277,6 +280,7 @@ LINK32_OBJS= \
 	".\Debug\win3.obj" \
 	".\Debug\plline.obj" \
 	".\Debug\plhist.obj" \
+	".\Debug\plvect.obj" \
 	".\Debug\plvpor.obj" \
 	".\Debug\plplot.res"
 
@@ -285,25 +289,25 @@ LINK32_OBJS= \
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
 
-!ENDIF 
+!ENDIF
 
 .c{$(CPP_OBJS)}.obj:
-   $(CPP) $(CPP_PROJ) $<  
+   $(CPP) $(CPP_PROJ) $<
 
 .cpp{$(CPP_OBJS)}.obj:
-   $(CPP) $(CPP_PROJ) $<  
+   $(CPP) $(CPP_PROJ) $<
 
 .cxx{$(CPP_OBJS)}.obj:
-   $(CPP) $(CPP_PROJ) $<  
+   $(CPP) $(CPP_PROJ) $<
 
 .c{$(CPP_SBRS)}.sbr:
-   $(CPP) $(CPP_PROJ) $<  
+   $(CPP) $(CPP_PROJ) $<
 
 .cpp{$(CPP_SBRS)}.sbr:
-   $(CPP) $(CPP_PROJ) $<  
+   $(CPP) $(CPP_PROJ) $<
 
 .cxx{$(CPP_SBRS)}.sbr:
-   $(CPP) $(CPP_PROJ) $<  
+   $(CPP) $(CPP_PROJ) $<
 
 ################################################################################
 # Begin Target
@@ -315,7 +319,7 @@ LINK32_OBJS= \
 
 !ELSEIF  "$(CFG)" == "plpdll - Win32 Debug"
 
-!ENDIF 
+!ENDIF
 
 ################################################################################
 # Begin Source File
@@ -346,7 +350,7 @@ DEP_CPP_XFIG_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-!ENDIF 
+!ENDIF
 
 # End Source File
 ################################################################################
@@ -393,7 +397,7 @@ NODEP_CPP_WIN3_=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-!ENDIF 
+!ENDIF
 
 # End Source File
 ################################################################################
@@ -448,6 +452,24 @@ DEP_CPP_PLVPO=\
 	
 
 "$(INTDIR)\plvpor.obj" : $(SOURCE) $(DEP_CPP_PLVPO) "$(INTDIR)"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=..\..\..\..\tmp\plvect.c
+DEP_CPP_PLVEO=\
+	".\..\..\..\..\tmp\plplotP.h"\
+	".\..\..\..\..\tmp\plConfig.h"\
+	".\..\..\..\..\tmp\plplot.h"\
+	".\..\..\..\..\tmp\plstrm.h"\
+	".\..\..\..\..\tmp\pldebug.h"\
+	".\..\..\..\..\tmp\pdf.h"\
+	
+
+"$(INTDIR)\plvect.obj" : $(SOURCE) $(DEP_CPP_PLVPO) "$(INTDIR)"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -708,7 +730,7 @@ NODEP_CPP_PLFIL=\
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
 
-!ENDIF 
+!ENDIF
 
 # End Source File
 ################################################################################
@@ -939,7 +961,7 @@ SOURCE=..\..\..\..\tmp\plplotd.def
 
 !ELSEIF  "$(CFG)" == "plpdll - Win32 Debug"
 
-!ENDIF 
+!ENDIF
 
 # End Source File
 ################################################################################
@@ -966,7 +988,7 @@ DEP_RSC_PLPLO=\
  $(SOURCE)
 
 
-!ENDIF 
+!ENDIF
 
 # End Source File
 # End Target

@@ -7,7 +7,7 @@ void *h_pldll;
 
 extern "C" int APIENTRY
   DllMain(HINSTANCE hInstance,DWORD dwReason,LPVOID lpReserved) {
-  
+
   if (dwReason == DLL_PROCESS_ATTACH) {
 //          MessageBox(NULL,"dll init","TDLL",MB_OK);
 	  h_pldll = hInstance;
@@ -30,7 +30,7 @@ extern "C" {
 
 /* Advance to subpage "page", or to the next one if "page" = 0. */
 
-void WINAPI 
+void WINAPI
 pladv(PLINT page) {
 	c_pladv(page);
 }
@@ -39,8 +39,8 @@ pladv(PLINT page) {
 /* is placed at the user-specified point (x0, y0). */
 
 void WINAPI
-plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, 
-	   PLINT nxsub, const char *yopt, PLFLT ytick, 
+plaxes(PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick,
+	   PLINT nxsub, const char *yopt, PLFLT ytick,
 	   PLINT nysub) {
 	c_plaxes(x0,y0,xopt,xtick,nxsub,yopt,ytick,nysub);
 }
@@ -93,7 +93,7 @@ plcol1(PLFLT col1) {
 }
 
 /* Draws a contour plot from data in f(nx,ny).  Is just a front-end to
- * plfcont, with a particular choice for f2eval and f2eval_data. 
+ * plfcont, with a particular choice for f2eval and f2eval_data.
  */
 
 void WINAPI
@@ -629,7 +629,7 @@ plshade(PLFLT **a, PLINT nx, PLINT ny, DefineFuncPtr defined,
 	  PLINT min_color, PLINT min_width,
 	  PLINT max_color, PLINT max_width,
 	  FillFuncPtr fill, PLINT rectangular, PlotFuncPtr pltr,
-	  PLPointer pltr_data) { 
+	  PLPointer pltr_data) {
 	c_plshade(a,nx,ny,defined,
 		left,right,bottom,top,
 		shade_min,shade_max,
@@ -742,6 +742,11 @@ plstyl(PLINT nms, PLINT *mark, PLINT *space) {
 	c_plstyl(nms,mark,space);
 }
 
+void WINAPI
+plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLINT fill) {
+	c_plsvect(arrowx, arrowy, npts, fill);
+}
+
 /* Sets the edges of the viewport to the specified absolute coordinates */
 
 void WINAPI
@@ -782,6 +787,12 @@ plszax(PLINT digmax, PLINT digits) {
 void WINAPI
 pltext(void) {
 	c_pltext();
+}
+
+void WINAPI plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
+              void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+              PLPointer pltr_data);
+	c_plvect(u, v, nx, ny, scale, pltr, pltr_data);
 }
 
 /* Sets the edges of the viewport with the given aspect ratio, leaving */

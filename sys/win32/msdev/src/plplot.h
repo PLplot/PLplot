@@ -543,6 +543,7 @@ typedef struct {
 #define    plstyl       c_plstyl
 #define    plsurf3d	c_plsurf3d
 #define    plsurf3dl    c_plsurf3dl
+#define    plsvect      c_plsvect
 #define    plsvpa       c_plsvpa
 #define    plsxax       c_plsxax
 #define    plsyax       c_plsyax
@@ -677,6 +678,7 @@ typedef struct {
 #define    c_plstyl         plstyl
 #define    c_plsurf3d       plsurf3d
 #define    c_plsurf3dl      plsurf3dl
+#define    c_plsvect        plsvect
 #define    c_plsvpa         plsvpa
 #define    c_plsxax         plsxax
 #define    c_plsyax         plsyax
@@ -1906,6 +1908,7 @@ plTranslateCursor(PLGraphicsIn *gin);
 #undef    c_plstyl
 #undef    c_plsurf3d
 #undef    c_plsurf3dl
+#undef    c_plsvect
 #undef    c_plsvpa
 #undef    c_plsxax
 #undef    c_plsyax

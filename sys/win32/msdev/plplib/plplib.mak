@@ -2,28 +2,28 @@
 !IF "$(CFG)" == ""
 CFG=plplib - Win32 Release
 !MESSAGE No configuration specified. Defaulting to plplib - Win32 Debug.
-!ENDIF 
+!ENDIF
 
 !IF "$(CFG)" != "plplib - Win32 Release" && "$(CFG)" != "plplib - Win32 Debug"
 !MESSAGE Invalid configuration "$(CFG)" specified.
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
-!MESSAGE 
+!MESSAGE
 !MESSAGE NMAKE /f "plplib.mak" CFG="plplib - Win32 Debug"
-!MESSAGE 
+!MESSAGE
 !MESSAGE Possible choices for configuration are:
-!MESSAGE 
+!MESSAGE
 !MESSAGE "plplib - Win32 Release" (based on "Win32 (x86) Static Library")
 !MESSAGE "plplib - Win32 Debug" (based on "Win32 (x86) Static Library")
-!MESSAGE 
+!MESSAGE
 !ERROR An invalid configuration is specified.
-!ENDIF 
+!ENDIF
 
 !IF "$(OS)" == "Windows_NT"
 NULL=
-!ELSE 
+!ELSE
 NULL=nul
-!ENDIF 
+!ENDIF
 
 CPP=cl.exe
 F90=df.exe
@@ -76,15 +76,15 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-F90_PROJ=/compile_only /include:"$(INTDIR)\\" /nologo /warn:nofileopt /module:"Release/" /object:"Release/" 
+F90_PROJ=/compile_only /include:"$(INTDIR)\\" /nologo /warn:nofileopt /module:"Release/" /object:"Release/"
 F90_OBJS=.\Release/
 CPP_PROJ=/nologo /Ox /MD /W3 /GX /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "BUILD_DIR=$(BUILD_DIR)" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c
 BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc"
 BSC32_SBRS= \
 	
 LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"plplot.lib" 
+LIB32_FLAGS=/nologo /out:"plplot.lib"
 LIB32_OBJS= \
 	"$(INTDIR)\plcore.obj" \
 	"$(INTDIR)\win3.obj" \
@@ -114,6 +114,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\pltick.obj" \
 	"$(INTDIR)\plwind.obj" \
 	"$(INTDIR)\pdfutils.obj" \
+	"$(INTDIR)\plvect.obj" \
 	"$(INTDIR)\pldtik.obj"
 
 $(LIBDIR)\plplot.lib : "$(OUTDIR)" $(DEF_FILE) $(LIB32_OBJS)
@@ -160,6 +161,7 @@ CLEAN :
 	-@erase "$(INTDIR)\plsym.obj"
 	-@erase "$(INTDIR)\pltick.obj"
 	-@erase "$(INTDIR)\plvpor.obj"
+	-@erase "$(INTDIR)\plvect.obj"
 	-@erase "$(INTDIR)\plwind.obj"
 	-@erase "$(INTDIR)\ps.obj"
 	-@erase "$(INTDIR)\vc60.idb"
@@ -170,15 +172,15 @@ CLEAN :
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
 
-F90_PROJ=/check:bounds /compile_only /debug:full /include:"$(INTDIR)\\" /nologo /traceback /warn:argument_checking /warn:nofileopt /module:"Debug/" /object:"Debug/" /pdbfile:"Debug/DF60.PDB" 
+F90_PROJ=/check:bounds /compile_only /debug:full /include:"$(INTDIR)\\" /nologo /traceback /warn:argument_checking /warn:nofileopt /module:"Debug/" /object:"Debug/" /pdbfile:"Debug/DF60.PDB"
 F90_OBJS=.\Debug/
-CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"$(INTDIR)\plplib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ  /c 
+CPP_PROJ=/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"$(INTDIR)\plplib.pch" /YX /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ  /c
 BSC32=bscmake.exe
-BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc" 
+BSC32_FLAGS=/nologo /o"$(OUTDIR)\plplib.bsc"
 BSC32_SBRS= \
 	
 LIB32=link.exe -lib
-LIB32_FLAGS=/nologo /out:"$(OUTDIR)\plplib.lib" 
+LIB32_FLAGS=/nologo /out:"$(OUTDIR)\plplib.lib"
 LIB32_OBJS= \
 	"$(INTDIR)\plcore.obj" \
 	"$(INTDIR)\win3.obj" \
@@ -205,6 +207,7 @@ LIB32_OBJS= \
 	"$(INTDIR)\plsym.obj" \
 	"$(INTDIR)\plbox.obj" \
 	"$(INTDIR)\plvpor.obj" \
+	"$(INTDIR)\plvect.obj" \
 	"$(INTDIR)\pltick.obj" \
 	"$(INTDIR)\plwind.obj" \
 	"$(INTDIR)\pdfutils.obj" \
@@ -215,60 +218,60 @@ LIB32_OBJS= \
   $(LIB32_FLAGS) $(DEF_FLAGS) $(LIB32_OBJS)
 <<
 
-!ENDIF 
+!ENDIF
 
 .c{$(INTDIR)}.obj::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .cpp{$(INTDIR)}.obj::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .cxx{$(INTDIR)}.obj::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .c{$(INTDIR)}.sbr::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .cpp{$(INTDIR)}.sbr::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .cxx{$(INTDIR)}.sbr::
    $(CPP) @<<
-   $(CPP_PROJ) $< 
+   $(CPP_PROJ) $<
 <<
 
 .SUFFIXES: .fpp
 
 .for{$(F90_OBJS)}.obj:
-   $(F90) $(F90_PROJ) $<  
+   $(F90) $(F90_PROJ) $<
 
 .f{$(F90_OBJS)}.obj:
-   $(F90) $(F90_PROJ) $<  
+   $(F90) $(F90_PROJ) $<
 
 .f90{$(F90_OBJS)}.obj:
-   $(F90) $(F90_PROJ) $<  
+   $(F90) $(F90_PROJ) $<
 
 .fpp{$(F90_OBJS)}.obj:
-   $(F90) $(F90_PROJ) $<  
+   $(F90) $(F90_PROJ) $<
 
 
 !IF "$(NO_EXTERNAL_DEPS)" != "1"
 !IF EXISTS("plplib.dep")
 !INCLUDE "plplib.dep"
-!ELSE 
+!ELSE
 !MESSAGE Warning: cannot find "plplib.dep"
-!ENDIF 
-!ENDIF 
+!ENDIF
+!ENDIF
 
 
 !IF "$(CFG)" == "plplib - Win32 Release" || "$(CFG)" == "plplib - Win32 Debug"
@@ -422,6 +425,12 @@ SOURCE=$(TMPDIR)\pltick.c
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
+SOURCE=$(TMPDIR)\plvect.c
+
+"$(INTDIR)\plvect.obj" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
+
+
 SOURCE=$(TMPDIR)\plvpor.c
 
 "$(INTDIR)\plvpor.obj" : $(SOURCE) "$(INTDIR)"
@@ -447,5 +456,5 @@ SOURCE=$(TMPDIR)\win3.cpp
 
 
 
-!ENDIF 
+!ENDIF
 
