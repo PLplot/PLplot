@@ -23,5 +23,5 @@ package plplot.core;
 public class config {
 // Must be installed absolute path name of generated DLL
     public static String libname = "@PLPLOTJAVAC_WRAP_DLL@";
-    public static String libdir = "@JAVAWRAPPER_HARDDIR@/";
+    public static String libdir = "@JAVAWRAPPER_HARDDIR@";
 };
