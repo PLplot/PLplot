@@ -1,9 +1,13 @@
-plplot (5.2.1.cvs.20040104-2) unstable; urgency=low
+plplot (5.2.1.cvs.20040115-1) unstable; urgency=low
 
-  * NOT YET RELEASED!
-  * debian/control: Made Build-Conflicts on libplplot5 unversioned.
+  * debian/control:
+    - Made Build-Conflicts on libplplot5 unversioned.
+    - Removed from Build-Depends and Build-Conflicts the m68k specificities
+      related to g77, fort77, and f2c.  This is a try to get around a
+      FTBFS on the m68k architecture.  Also, requires g++-3.3 | g++-3.2
+      instead of only g++-3.2.
 
- --
+ -- Rafael Laboissiere <rafael@debian.org>  Thu, 15 Jan 2004 06:30:51 +0100
 
 plplot (5.2.1.cvs.20040104-1) unstable; urgency=low
 
