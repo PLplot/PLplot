@@ -1,8 +1,12 @@
 /* $Id$
    $Log$
-   Revision 1.6  1993/10/18 19:45:50  mjl
-   Added user-contributed plarrows function.
+   Revision 1.7  1993/10/21 19:30:25  mjl
+   Updated calls to private plplot utility functions (these now begin
+   with "plP_").
 
+ * Revision 1.6  1993/10/18  19:45:50  mjl
+ * Added user-contributed plarrows function.
+ *
  * Revision 1.5  1993/07/01  22:13:45  mjl
  * Changed all plplot source files to include plplotP.h (private) rather than
  * plplot.h.  Rationalized namespace -- all externally-visible internal
@@ -200,14 +204,14 @@ void plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 		if (uu == 0.0 && uu == 0.0) continue;
 
 		/* conversion to physical coordinates */
-		px0 = wcpcx(x[i]);
-		py0 = wcpcy(y[i]);
+		px0 = plP_wcpcx(x[i]);
+		py0 = plP_wcpcy(y[i]);
 
 #ifdef DEBUG
 	printf("%f %f %d %d\n",x[i],y[i],px0,py0);
 #endif
-		dpx = wcpcx(x[i] + 0.5*uu) - px0;
-		dpy = wcpcy(y[i] + 0.5*vv) - py0;
+		dpx = plP_wcpcx(x[i] + 0.5*uu) - px0;
+		dpy = plP_wcpcy(y[i] + 0.5*vv) - py0;
 
 		/* tranform arrow -> a */
 		for (j = 0; j < 4; j++) {
@@ -217,9 +221,9 @@ void plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
 				arrow_y[j] * dpx + py0;
 		}
 		/* draw the arrow */
-		movphy(a_x[0], a_y[0]);
-		draphy(a_x[1], a_y[1]);
-		movphy(a_x[2], a_y[2]);
-		draphy(a_x[3], a_y[3]);
+		plP_movphy(a_x[0], a_y[0]);
+		plP_draphy(a_x[1], a_y[1]);
+		plP_movphy(a_x[2], a_y[2]);
+		plP_draphy(a_x[3], a_y[3]);
 	}
 }
