@@ -8,7 +8,7 @@ dnl ------------------------------------------------------------------------
 dnl
 dnl Copyright (C) 1994, 2004  Maurice LeBrun
 dnl Copyright (C) 2002, 2003, 2004  Rafael Laboissiere
-dnl Copyright (C) 2002, 2003, 2004  Alan W. Irwin
+dnl Copyright (C) 2002, 2003, 2004, 2005  Alan W. Irwin
 dnl Copyright (C) 2003, 2004  Joao Cardoso
 dnl Copyright (C) 2004  Andrew Ross
 dnl
@@ -99,121 +99,147 @@ if test "$with_freetype" = "yes"; then
     PL_ADD_TO_LIBS($with_freetype2_libdir, $FREETYPELIBSTR, FREETYPELIBCMD, FREETYPELIBPATH)
 fi
 
-PL_ARG_WITH(freefont,
-  [use free fonts rather than MS fonts],
-  yes)
 PL_ARG_WITH(freetype-font-dir,
   [user-specified directory for freetype fonts],
-  [])
-PL_ARG_WITH(freetype-normal-font,
-  [user-specified normal freetype font],
-  [])
-PL_ARG_WITH(freetype-roman-font,
-  [user-specified roman freetype font],
-  [])
-PL_ARG_WITH(freetype-italic-font,
-  [user-specified italic freetype font],
-  [])
+  [/usr/share/fonts/truetype/freefont])
+PL_ARG_WITH(freetype-sans-font,
+  [user-specified sans-serif, medium-weight, upright font that is accessible with freetype],
+  [FreeSans.ttf])
+PL_ARG_WITH(freetype-sans-bold-font,
+  [user-specified sans-serif, bold-weight, upright font that is accessible with freetype],
+  [FreeSansBold.ttf])
+PL_ARG_WITH(freetype-sans-oblique-font,
+  [user-specified sans-serif, medium-weight, oblique font that is accessible with freetype],
+  [FreeSansOblique.ttf])
+PL_ARG_WITH(freetype-sans-italic-font,
+  [user-specified sans-serif, medium-weight, italic font that is accessible with freetype],
+  [FreeSansOblique.ttf])
+PL_ARG_WITH(freetype-sans-bold-oblique-font,
+  [user-specified sans-serif, bold-weight, oblique font that is accessible with freetype],
+  [FreeSansBoldOblique.ttf])
+PL_ARG_WITH(freetype-sans-bold-italic-font,
+  [user-specified sans-serif, bold-weight, italic font that is accessible with freetype],
+  [FreeSansBoldOblique.ttf])
+PL_ARG_WITH(freetype-serif-font,
+  [user-specified serif, medium-weight, upright font that is accessible with freetype],
+  [FreeSerif.ttf])
+PL_ARG_WITH(freetype-serif-bold-font,
+  [user-specified serif, bold-weight, upright font that is accessible with freetype],
+  [FreeSerifBold.ttf])
+PL_ARG_WITH(freetype-serif-italic-font,
+  [user-specified serif, medium-weight, italic font that is accessible with freetype],
+  [FreeSerifItalic.ttf])
+PL_ARG_WITH(freetype-serif-oblique-font,
+  [user-specified serif, medium-weight, oblique font that is accessible with freetype],
+  [FreeSerifItalic.ttf])
+PL_ARG_WITH(freetype-serif-bold-italic-font,
+  [user-specified serif, bold-weight, italic font that is accessible with freetype],
+  [FreeSerifBoldItalic.ttf])
+PL_ARG_WITH(freetype-serif-bold-oblique-font,
+  [user-specified serif, bold-weight, oblique font that is accessible with freetype],
+  [FreeSerifBoldItalic.ttf])
+PL_ARG_WITH(freetype-mono-font,
+  [user-specified monotype, medium-weight, upright font that is accessible with freetype],
+  [FreeMono.ttf])
+PL_ARG_WITH(freetype-mono-bold-font,
+  [user-specified monotype, bold-weight, upright font that is accessible with freetype],
+  [FreeMonoBold.ttf])
+PL_ARG_WITH(freetype-mono-oblique-font,
+  [user-specified monotype, medium-weight, oblique font that is accessible with freetype],
+  [FreeMonoOblique.ttf])
+PL_ARG_WITH(freetype-mono-italic-font,
+  [user-specified monotype, medium-weight, italic font that is accessible with freetype],
+  [FreeMonoOblique.ttf])
+PL_ARG_WITH(freetype-mono-bold-oblique-font,
+  [user-specified monotype, bold-weight, oblique font that is accessible with freetype],
+  [FreeMonoBoldOblique.ttf])
+PL_ARG_WITH(freetype-mono-bold-italic-font,
+  [user-specified monotype, bold-weight, italic font that is accessible with freetype],
+  [FreeMonoBoldOblique.ttf])
 PL_ARG_WITH(freetype-script-font,
-  [user-specified script freetype font],
-  [])
+  [user-specified script, medium-weight, upright font that is accessible with freetype],
+  [FreeSerif.ttf])
+PL_ARG_WITH(freetype-script-bold-font,
+  [user-specified script, bold-weight, upright font that is accessible with freetype],
+  [FreeSerifBold.ttf])
+PL_ARG_WITH(freetype-script-oblique-font,
+  [user-specified script, medium-weight, oblique font that is accessible with freetype],
+  [FreeSerifItalic.ttf])
+PL_ARG_WITH(freetype-script-italic-font,
+  [user-specified script, medium-weight, italic font that is accessible with freetype],
+  [FreeSerifItalic.ttf])
+PL_ARG_WITH(freetype-script-bold-oblique-font,
+  [user-specified script, bold-weight, oblique font that is accessible with freetype],
+  [FreeSerifBoldItalic.ttf])
+PL_ARG_WITH(freetype-script-bold-italic-font,
+  [user-specified script, bold-weight, italic font that is accessible with freetype],
+  [FreeSerifBoldItalic.ttf])
 PL_ARG_WITH(freetype-symbol-font,
-  [user-specified symbol freetype font],
-  [])
+  [user-specified symbol, medium-weight, upright font that is accessible with freetype],
+  [FreeSerif.ttf])
+PL_ARG_WITH(freetype-symbol-bold-font,
+  [user-specified symbol, bold-weight, upright font that is accessible with freetype],
+  [FreeSerifBold.ttf])
+PL_ARG_WITH(freetype-symbol-oblique-font,
+  [user-specified symbol, medium-weight, oblique font that is accessible with freetype],
+  [FreeSerifItalic.ttf])
+PL_ARG_WITH(freetype-symbol-italic-font,
+  [user-specified symbol, medium-weight, italic font that is accessible with freetype],
+  [FreeSerifItalic.ttf])
+PL_ARG_WITH(freetype-symbol-bold-oblique-font,
+  [user-specified symbol, bold-weight, oblique font that is accessible with freetype],
+  [FreeSerifBoldItalic.ttf])
+PL_ARG_WITH(freetype-symbol-bold-italic-font,
+  [user-specified symbol, bold-weight, italic font that is accessible with freetype],
+  [FreeSerifBoldItalic.ttf])
 
-# Check which fonts to use and warn if they are not found
+# Check one of the usual fonts and the symbol font.
+# If they are not found, warn and turn off freetype.
 if test "$with_freetype" = "yes"; then
-    AC_MSG_CHECKING(for freetype fonts)
-    if test -z "$with_freetype_normal_font" ; then
-        if test "$with_freefont" = "yes" ; then
-            freetype_normal="FreeSans.ttf"
-	else
-	    freetype_normal="Arial.ttf"
-	fi
-    else
-        freetype_normal="$with_freetype_normal_font"
+    if test -r "$with_freetype_font_dir/$with_freetype_sans_font" -o -r "$with_freetype_font_dir/$with_symbol_font" ; then
+       freetype_font_dir="$with_freetype_font_dir"
     fi
-    if test -z "$with_freetype_roman_font" ; then
-        if test "$with_freefont" = "yes" ; then
-            freetype_roman="FreeSerif.ttf"
-	else
-	    freetype_roman="Times_New_Roman.ttf"
-	fi
-    else
-        freetype_roman="$with_freetype_roman_font"
-    fi
-    if test -z "$with_freetype_italic_font" ; then
-        if test "$with_freefont" = "yes" ; then
-            freetype_italic="FreeSerifItalic.ttf"
-	else
-	    freetype_italic="Times_New_Roman_Italic.ttf"
-	fi
-    else
-        freetype_italic="$with_freetype_roman_font"
-    fi
-    if test -z "$with_freetype_script_font" ; then
-        if test "$with_freefont" = "yes" ; then
-            freetype_script="FreeSerif.ttf"
-	else
-	    freetype_script="Comic_Sans_MS.ttf"
-	fi
-    else
-        freetype_script="$with_freetype_script_font"
-    fi
-    if test -z "$with_freetype_symbol_font" ; then
-        if test "$with_freefont" = "yes" ; then
-            freetype_symbol="FreeSans.ttf"
-	else
-	    freetype_symbol="Arial.ttf"
-	fi
-    else
-        freetype_symbol="$with_freetype_symbol_font"
-    fi
-	    
-    if test -z "$with_freetype_font_dir" ; then
-        if test "$with_freefont" = "yes"; then
-            fontdirs="/usr/share/fonts/truetype/freefont" 
-	else
-            fontdirs="\
-      	        /usr/share/fonts/truetype \
-    	        /usr/share/fonts/truetype/msttcorefonts"
-	fi
-    else
-       fontdirs="$with_freetype_font_dir"
-    fi
-    
-    for dir in $fontdirs ; do
-        if test -e "$dir/$freetype_normal"; then
-	     freetype_font_dir="$dir"
-             break
-        fi
-    done
     if test -z "$freetype_font_dir" ; then
-        AC_MSG_WARN(["freetype fonts not found - please check fonts",])
-	if test "$with_freefont" = "yes" ; then
-	    freetype_font_dir="/usr/share/fonts/truetype/freefont"
-        else 
-	    freetype_font_dir="/usr/share/fonts/truetype/msttcorefonts"
-        fi 
+        AC_MSG_WARN(["freetype fonts not found - please check fonts.  Freetype font support is disabled.",])
+	with_freetype=no
     else
         AC_MSG_RESULT([fonts found in $freetype_font_dir])
     fi
-    AC_DEFINE_UNQUOTED(PL_FREETYPE_FONT_DIR, "$freetype_font_dir/", [Directory containing freetype fonts])
-    AC_DEFINE_UNQUOTED(PL_FREETYPE_NORMAL, "$freetype_normal", [Normal freetype font])
-    AC_DEFINE_UNQUOTED(PL_FREETYPE_ROMAN, "$freetype_roman", [Roman freetype font])
-    AC_DEFINE_UNQUOTED(PL_FREETYPE_ITALIC, "$freetype_italic", [Italic freetype font])
-    AC_DEFINE_UNQUOTED(PL_FREETYPE_SCRIPT, "$freetype_script", [Script freetype font])
-    AC_DEFINE_UNQUOTED(PL_FREETYPE_SYMBOL, "$freetype_symbol", [Symbol freetype font])
 fi
 
 if test "$with_freetype" = "yes"; then
     AC_DEFINE(HAVE_FREETYPE, [], [Define if [freetype] is available])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_FONT_DIR, "$freetype_font_dir/", [Directory containing fonts that are accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SANS, "$with_freetype_sans_font", [SANS font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SANS_BOLD, "$with_freetype_sans_bold_font", [SANS_BOLD font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SANS_OBLIQUE, "$with_freetype_sans_oblique_font", [SANS_OBLIQUE font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SANS_ITALIC, "$with_freetype_sans_italic_font", [SANS_ITALIC font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SANS_BOLD_OBLIQUE, "$with_freetype_sans_bold_oblique_font", [SANS_BOLD_OBLIQUE font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SANS_BOLD_ITALIC, "$with_freetype_sans_bold_italic_font", [SANS_BOLD_ITALIC font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SCRIPT, "$with_freetype_script_font", [SCRIPT font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SCRIPT_BOLD, "$with_freetype_script_bold_font", [SCRIPT_BOLD font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SCRIPT_ITALIC, "$with_freetype_script_italic_font", [SCRIPT_ITALIC font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SCRIPT_OBLIQUE, "$with_freetype_script_oblique_font", [SCRIPT_OBLIQUE font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SCRIPT_BOLD_ITALIC, "$with_freetype_script_bold_italic_font", [SCRIPT_BOLD_ITALIC font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SCRIPT_BOLD_OBLIQUE, "$with_freetype_script_bold_oblique_font", [SCRIPT_BOLD_OBLIQUE font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SERIF, "$with_freetype_serif_font", [SERIF font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SERIF_BOLD, "$with_freetype_serif_bold_font", [SERIF_BOLD font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SERIF_ITALIC, "$with_freetype_serif_italic_font", [SERIF_ITALIC font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SERIF_OBLIQUE, "$with_freetype_serif_oblique_font", [SERIF_OBLIQUE font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SERIF_BOLD_ITALIC, "$with_freetype_serif_bold_italic_font", [SERIF_BOLD_ITALIC font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SERIF_BOLD_OBLIQUE, "$with_freetype_serif_bold_oblique_font", [SERIF_BOLD_OBLIQUE font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_MONO, "$with_freetype_mono_font", [MONO font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_MONO_BOLD, "$with_freetype_mono_bold_font", [MONO_BOLD font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_MONO_OBLIQUE, "$with_freetype_mono_oblique_font", [MONO_OBLIQUE font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_MONO_ITALIC, "$with_freetype_mono_italic_font", [MONO_ITALIC font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_MONO_BOLD_OBLIQUE, "$with_freetype_mono_bold_oblique_font", [MONO_BOLD_OBLIQUE font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_MONO_BOLD_ITALIC, "$with_freetype_mono_bold_italic_font", [MONO_BOLD_ITALIC font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SYMBOL, "$with_freetype_symbol_font", [Symbol font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SYMBOL_BOLD, "$with_freetype_symbol_bold_font", [SYMBOL_BOLD font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SYMBOL_OBLIQUE, "$with_freetype_symbol_oblique_font", [SYMBOL_OBLIQUE font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SYMBOL_ITALIC, "$with_freetype_symbol_italic_font", [SYMBOL_ITALIC font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SYMBOL_BOLD_OBLIQUE, "$with_freetype_symbol_bold_oblique_font", [SYMBOL_BOLD_OBLIQUE font accessible from freetype])
+    AC_DEFINE_UNQUOTED(PL_FREETYPE_SYMBOL_BOLD_ITALIC, "$with_freetype_symbol_bold_italic_font", [SYMBOL_BOLD_ITALIC font accessible from freetype])
 fi
 AC_SUBST(FREETYPEINCCMD)
 AC_SUBST(FREETYPELIBCMD)
-
-AC_SUBST(PL_FREETYPE_NORMAL)
-AC_SUBST(PL_FREETYPE_ROMAN)
-AC_SUBST(PL_FREETYPE_ITALIC)
-AC_SUBST(PL_FREETYPE_SCRIPT)
-AC_SUBST(PL_FREETYPE_SYMBOL)
