@@ -1253,23 +1253,23 @@ plnxtvhi(PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init)
 static void
 plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
 {
-    PLINT i = 0, j = 0, first = 1;
-    PLINT sx1 = 0, sx2 = 0, sy1 = 0, sy2 = 0;
-    PLINT su1, su2, sv1, sv2;
-    PLINT cx, cy, px, py;
-    PLINT seg, ptold, lstold = 0, pthi, pnewhi = 0, newhi, change, ochange = 0;
+  PLINT i = 0, j = 0, first = 1;
+  PLINT sx1 = 0, sx2 = 0, sy1 = 0, sy2 = 0;
+  PLINT su1, su2, sv1, sv2;
+  PLINT cx, cy, px, py;
+  PLINT seg, ptold, lstold = 0, pthi, pnewhi = 0, newhi, change, ochange = 0;
 
-/*
- * (oldhiview[2*i], oldhiview[2*i]) is the i'th point in the old array
- * (u[j], v[j]) is the j'th point in the new array
- */
+  /*
+   * (oldhiview[2*i], oldhiview[2*i]) is the i'th point in the old array
+   * (u[j], v[j]) is the j'th point in the new array
+   */
 
-/* 
- * First attempt at 3d shading.  It works ok for simple plots, but
- * will just not draw faces, or draw them overlapping for very
- * jagged plots
- */
-    while (i < mhi || j < n) {
+  /* 
+   * First attempt at 3d shading.  It works ok for simple plots, but
+   * will just not draw faces, or draw them overlapping for very
+   * jagged plots
+   */
+  while (i < mhi || j < n) {
 
     /*
      * The coordinates of the point under consideration are (px,py).  The
@@ -1280,28 +1280,28 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
      * and segment coordinates appropriately.
      */
 
-	ptold = (j >= n || (i < mhi && oldhiview[2 * i] < u[j]));
-	if (ptold) {
-	    px = oldhiview[2 * i];
-	    py = oldhiview[2 * i + 1];
-	    seg = j > 0 && j < n;
-	    if (seg) {
-		sx1 = u[j - 1];
-		sy1 = v[j - 1];
-		sx2 = u[j];
-		sy2 = v[j];
-	    }
-	} else {
-	    px = u[j];
-	    py = v[j];
-	    seg = i > 0 && i < mhi;
-	    if (seg) {
-		sx1 = oldhiview[2 * (i - 1)];
-		sy1 = oldhiview[2 * (i - 1) + 1];
-		sx2 = oldhiview[2 * i];
-		sy2 = oldhiview[2 * i + 1];
-	    }
-	}
+    ptold = (j >= n || (i < mhi && oldhiview[2 * i] < u[j]));
+    if (ptold) {
+      px = oldhiview[2 * i];
+      py = oldhiview[2 * i + 1];
+      seg = j > 0 && j < n;
+      if (seg) {
+	sx1 = u[j - 1];
+	sy1 = v[j - 1];
+	sx2 = u[j];
+	sy2 = v[j];
+      }
+    } else {
+      px = u[j];
+      py = v[j];
+      seg = i > 0 && i < mhi;
+      if (seg) {
+	sx1 = oldhiview[2 * (i - 1)];
+	sy1 = oldhiview[2 * (i - 1) + 1];
+	sx2 = oldhiview[2 * i];
+	sy2 = oldhiview[2 * i + 1];
+      }
+    }
 
     /*
      * Now determine if the point is higher than the segment, using the
@@ -1309,131 +1309,131 @@ plnxtvhi_draw(PLINT *u, PLINT *v, PLFLT* c, PLINT n)
      * or the new view that is higher. "newhi" is set true if the new view
      * is higher than the old.
      */
-	if (seg)
-	    pthi = plabv(px, py, sx1, sy1, sx2, sy2);
-	else
-	    pthi = 1;
+    if (seg)
+      pthi = plabv(px, py, sx1, sy1, sx2, sy2);
+    else
+      pthi = 1;
 
-	newhi = (ptold && !pthi) || (!ptold && pthi);
+    newhi = (ptold && !pthi) || (!ptold && pthi);
     /*
      * The last point and this point lie on different sides of
      * the current silouette
      */
-	change = (newhi && !pnewhi) || (!newhi && pnewhi);
+    change = (newhi && !pnewhi) || (!newhi && pnewhi);
 
     /*
      * There is a new intersection point to put in the peak array if the
      * state of "newhi" changes.
      */
-	if (first) {
-	    plP_draw3d(px, py, c, j, 1);
-	    first = 0;
-	    lstold = ptold;
-	    savehipoint(px, py);
-	    pthi = 0;
-	    ochange = 0;
-	} else if (change) {
+    if (first) {
+      plP_draw3d(px, py, c, j, 1);
+      first = 0;
+      lstold = ptold;
+      savehipoint(px, py);
+      pthi = 0;
+      ochange = 0;
+    } else if (change) {
+
+      /*
+       * Take care of special cases at end of arrays.  If pl3upv is 0 the
+       * endpoints are not connected to the old view.
+       */
+      if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
+	plP_draw3d(px, py, c, j, 1);
+	lstold = ptold;
+	pthi = 0;
+	ochange = 0;
+      } else if (pl3upv == 0 &&
+		 (( ! ptold && i >= mhi) || (ptold && j >= n))) {
+	plP_draw3d(px, py, c, j, 1);
+	lstold = ptold;
+	pthi = 0;
+	ochange = 0;
+      } else {
 
 	/*
-	 * Take care of special cases at end of arrays.  If pl3upv is 0 the
-	 * endpoints are not connected to the old view.
+	 * If pl3upv is not 0 then we do want to connect the current line
+	 * with the previous view at the endpoints.  Also find intersection
+	 * point with old view.
 	 */
-	    if (pl3upv == 0 && ((!ptold && j == 0) || (ptold && i == 0))) {
-		plP_draw3d(px, py, c, j, 1);
-		lstold = ptold;
-		pthi = 0;
-		ochange = 0;
-	    } else if (pl3upv == 0 &&
-		       (( ! ptold && i >= mhi) || (ptold && j >= n))) {
-		plP_draw3d(px, py, c, j, 1);
-		lstold = ptold;
-		pthi = 0;
-		ochange = 0;
-	    } else {
-
-	    /*
-	     * If pl3upv is not 0 then we do want to connect the current line
-	     * with the previous view at the endpoints.  Also find intersection
-	     * point with old view.
-	     */
-		if (i == 0) {
-		    sx1 = oldhiview[0];
-		    sy1 = -1;
-		    sx2 = oldhiview[0];
-		    sy2 = oldhiview[1];
-		} else if (i >= mhi) {
-		    sx1 = oldhiview[2 * (mhi - 1)];
-		    sy1 = oldhiview[2 * (mhi - 1) + 1];
-		    sx2 = oldhiview[2 * (mhi - 1)];
-		    sy2 = -1;
-		} else {
-		    sx1 = oldhiview[2 * (i - 1)];
-		    sy1 = oldhiview[2 * (i - 1) + 1];
-		    sx2 = oldhiview[2 * i];
-		    sy2 = oldhiview[2 * i + 1];
-		}
-
-		if (j == 0) {
-		    su1 = u[0];
-		    sv1 = -1;
-		    su2 = u[0];
-		    sv2 = v[0];
-		} else if (j >= n) {
-		    su1 = u[n - 1];
-		    sv1 = v[n - 1];
-		    su2 = u[n - 1];
-		    sv2 = -1;
-		} else {
-		    su1 = u[j - 1];
-		    sv1 = v[j - 1];
-		    su2 = u[j];
-		    sv2 = v[j];
-		}
-
-	    /* Determine the intersection */
-
-		pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
-		if (cx == px && cy == py) {
-		    if (lstold && !ochange)
-			plP_draw3d(px, py, c, j, 1);
-		    else
-			plP_draw3d(px, py, c, j, 0);
-
-		    savehipoint(px, py);
-		    lstold = 1;
-		    pthi = 0;
-		} else {
-		    if (lstold && !ochange)
-			plP_draw3d(cx, cy, c, j, 1);
-		    else
-			plP_draw3d(cx, cy, c, j, 0);
-
-		    lstold = 1;
-		    savehipoint(cx, cy);
-		}
-		ochange = 1;
-	    }
+	if (i == 0) {
+	  sx1 = oldhiview[0];
+	  sy1 = -1;
+	  sx2 = oldhiview[0];
+	  sy2 = oldhiview[1];
+	} else if (i >= mhi) {
+	  sx1 = oldhiview[2 * (mhi - 1)];
+	  sy1 = oldhiview[2 * (mhi - 1) + 1];
+	  sx2 = oldhiview[2 * (mhi - 1)];
+	  sy2 = -1;
+	} else {
+	  sx1 = oldhiview[2 * (i - 1)];
+	  sy1 = oldhiview[2 * (i - 1) + 1];
+	  sx2 = oldhiview[2 * i];
+	  sy2 = oldhiview[2 * i + 1];
 	}
+
+	if (j == 0) {
+	  su1 = u[0];
+	  sv1 = -1;
+	  su2 = u[0];
+	  sv2 = v[0];
+	} else if (j >= n) {
+	  su1 = u[n - 1];
+	  sv1 = v[n - 1];
+	  su2 = u[n - 1];
+	  sv2 = -1;
+	} else {
+	  su1 = u[j - 1];
+	  sv1 = v[j - 1];
+	  su2 = u[j];
+	  sv2 = v[j];
+	}
+
+	/* Determine the intersection */
+
+	pl3cut(sx1, sy1, sx2, sy2, su1, sv1, su2, sv2, &cx, &cy);
+	if (cx == px && cy == py) {
+	  if (lstold && !ochange)
+	    plP_draw3d(px, py, c, j, 1);
+	  else
+	    plP_draw3d(px, py, c, j, 0);
+
+	  savehipoint(px, py);
+	  lstold = 1;
+	  pthi = 0;
+	} else {
+	  if (lstold && !ochange)
+	    plP_draw3d(cx, cy, c, j, 1);
+	  else
+	    plP_draw3d(cx, cy, c, j, 0);
+
+	  lstold = 1;
+	  savehipoint(cx, cy);
+	}
+	ochange = 1;
+      }
+    }
 
     /* If point is high then draw plot to point and update view. */
 
-	if (pthi) {
-	    if (lstold && ptold)
-		plP_draw3d(px, py, c, j, 1);
-	    else
-		plP_draw3d(px, py, c, j, 0);
+    if (pthi) {
+      if (lstold && ptold)
+	plP_draw3d(px, py, c, j, 1);
+      else
+	plP_draw3d(px, py, c, j, 0);
 
-	    savehipoint(px, py);
-	    lstold = ptold;
-	    ochange = 0;
-	}
-	pnewhi = newhi;
-
-	if (ptold)
-	    i++;
-	else
-	    j++;
+      savehipoint(px, py);
+      lstold = ptold;
+      ochange = 0;
     }
+    pnewhi = newhi;
+
+    if (ptold)
+      i++;
+    else
+      j++;
+  }
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1448,7 +1448,7 @@ plP_draw3d(PLINT x, PLINT y, PLFLT *c, PLINT j, PLINT move)
     if (move)
       plP_movphy(x, y);
     else {
-      if (c != NULL && c[j] >= 0. && c[j] <= 1.)
+      if (c != NULL && c[--j] >= 0. && c[j] <= 1.)
 	plcol1(c[j]);
       plP_draphy(x, y);
     }
@@ -1582,7 +1582,7 @@ plnxtvlo(PLINT *u, PLINT *v, PLFLT*c, PLINT n, PLINT init)
      * state of "newlo" changes.
      */
     if (first) {
-      plP_draw3d(px, py, c, j, 1); plP_movphy(px, py);
+      plP_draw3d(px, py, c, j, 1);
       first = 0;
       lstold = ptold;
       savelopoint(px, py);
