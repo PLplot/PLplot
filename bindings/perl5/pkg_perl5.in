@@ -19,8 +19,7 @@ DEMOS = \
   x09.pl
 
 SCRIPTS = \
-  api2bind.pl \
-  addpm.pl
+  api2bind.pl 
 
 all: PLplot.pm PLplot.so
 
