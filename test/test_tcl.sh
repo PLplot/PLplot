@@ -44,25 +44,6 @@ EOF
 # Skip 14th example because requires two output files.
 # Skip 17th example because it is not implemented (and if it was, it
 # would be interactive only).
-pltcl -dev $device -o $results/tcldemos.$dsuffix $options <<EOF
-plinit
-source tcldemos.tcl
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-15
-16
-18
-22
-exit
-EOF
+for index in 01 02 03 04 05 06 07 08 09 10 11 12 13 15 16 18 22; do
+  ./x${index} -dev $device -o $results/x${index}t.$dsuffix $options
+done
