@@ -1,6 +1,11 @@
 # $Id$
 # $Log$
-# Revision 1.9  1993/08/28 06:33:08  mjl
+# Revision 1.10  1993/08/31 20:12:45  mjl
+# Added file name globbing to save file name retrieval.  Can now save to
+# ~/blob or whatever.  Using a wildcard will result in the first matching
+# name to be used.
+#
+# Revision 1.9  1993/08/28  06:33:08  mjl
 # Changed all send commands to go through the plw_send proc, which (a) puts
 # send commands in background (to speed interpretation) and (b) catches any
 # errors encountered (such as a lack of response by the remote interpreter).
@@ -437,7 +442,7 @@ proc plw_print {w} {
 #----------------------------------------------------------------------------
 
 proc plw_saveas {w dev} {
-    set file [getItem "Enter file name"]
+    set file [lindex [glob -nocomplain [getItem "Enter file name"]] 0]
     if { [string length $file] > 0 } {
 	if { [file exists $file] } {
 	    if { ! [confirm "File $file already exists.  Are you sure?"] } {
@@ -449,6 +454,8 @@ proc plw_saveas {w dev} {
 	} else {
 	    status_msg $w "Plot saved."
 	}
+    } else {
+	bogue_out "No file specified"
     }
 }
 
