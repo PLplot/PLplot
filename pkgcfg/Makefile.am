@@ -22,6 +22,7 @@
 ### Where?
 
 pkgconfigdir = $(libdir)/pkgconfig
+docdir = $(DOCDIR)
 
 ### What?
 
@@ -51,6 +52,9 @@ pc-stamp: gen-pc-files.sh plplot-master-pc
 	touch pc-stamp
 
 install-data-hook:
+	$(mkinstalldirs) $(DESTDIR)$(docdir)
+	$(INSTALL) README $(DESTDIR)$(docdir)/README.pkg-config
+
 	for i in $(INSTALL_LIBS) ; do \
 	    pcfile=`echo $$i | sed "s/:.*$$//"` ; \
 	    laifile=$(top_builddir)/`echo $$i | sed "s/^.*://"`.lai ; \
