@@ -623,7 +623,7 @@ static PLDispatchTable dispatch_table[] = {
     },
 #endif
 
-#ifdef PLD_ljii
+#ifdef PLD_ljiip
     {
 	"LaserJet IIp/deskjet compressed graphics",
 	"ljiip",
@@ -637,6 +637,9 @@ static PLDispatchTable dispatch_table[] = {
 	plD_state_ljiip,
 	plD_esc_ljiip
     },
+#endif
+    
+#ifdef PLD_ljii
     {
 	"LaserJet II Bitmap File (150 dpi)",
 	"ljii",

@@ -30,6 +30,7 @@
 #undef PLD_jpeg
 #undef PLD_ps
 #undef PLD_xfig
+#undef PLD_ljiip
 #undef PLD_ljii
 #undef PLD_lj_hpgl
 #undef PLD_hp7470

@@ -13,7 +13,7 @@
 */
 #include "plplot/plDevs.h"
 
-#ifdef PLD_ljii
+#ifdef PLD_ljiip
 
 #include "plplot/plplotP.h"
 #include "plplot/drivers.h"

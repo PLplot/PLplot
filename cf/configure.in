@@ -116,7 +116,7 @@ divert(-1)
 
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4107, mskermit,
-conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, xfig, ljii, hp7470, hp7580,
+conex, linuxvga, vlt, versaterm, dg300, png, jpeg, ps, xfig, ljii, ljiip, hp7470, hp7580,
 lj_hpgl, imp, xwin, tk, pbm, gnome])
 
 define([PL_DYNAMIC_DRIVER_LIST],
@@ -127,7 +127,7 @@ define([PL_device_driver_pair_list],
 xterm:tek tek4010:tek tek4107:tek mskermit:tek \
 versaterm:tek vlt:tek conex:tek \
 linuxvga:linuxvga dg300:dg300 png:gd jpeg:gd ps:ps xfig:xfig \
-ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
+ljiip:ljiip ljii:ljii hp7470:hpgl hp7580:hpgl lj_hpgl:hpgl \
 imp:impress xwin:xwin tk:tk pbm:pbm gnome:gnome ])
 
 # Macro to set one driver enable value
