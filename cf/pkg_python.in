@@ -60,7 +60,7 @@ install_python: $(PLLIBS) plplotcmodule.c plplot_widgetmodule.c plplot.py
 	@-if test ! -d $(PYTHON_INSTDIR); then mkdir -p $(PYTHON_INSTDIR); fi
 	@-$(CP) $(PYTHON_EXE) $(PYTHON_INSTDIR)
 	@-$(CP) $(PYTHON_WIDGET_EXE) $(PYTHON_INSTDIR)
-	@-$(CP) plplot.py $(PYTHON_INSTDIR)
+	@-$(CP) ../bindings/python/plplot.py $(PYTHON_INSTDIR)
 	@-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
 	  echo "PLplot Python module installation warning:" ; \
 	  echo "" ; \
