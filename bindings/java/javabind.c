@@ -56,6 +56,47 @@ Java_plplot_core_PLStream_mkstrm( JNIEnv *env, jobject jthis )
 }
 
 /*---------------------------------------------------------------------------//
+// Data allocation & copy helper routines.  Caller must free memory if
+// *must_free_buffers is set.
+//---------------------------------------------------------------------------*/
+
+static void 
+setup_data_f( PLFLT **px, jfloat *jxdata, int n, int *must_free_buffers )
+{
+    if (sizeof(PLFLT) == sizeof(jfloat)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != float, in which case the /other/ branch is the one that is
+     * actually executed. */
+        *px = (PLFLT *) jxdata;
+    } else {
+	int i;
+        *px = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        for( i=0; i < n; i++ ) {
+            (*px)[i] = jxdata[i];
+        }
+        *must_free_buffers = 1;
+    }
+}
+
+static void
+setup_data_d( PLFLT **px, jdouble *jxdata, int n, int *must_free_buffers )
+{
+    if (sizeof(PLFLT) == sizeof(jdouble)) {
+    /* Trick: The cast is here to shut up the compiler in the case where
+     * PLFLT != double, in which case the /other/ branch is the one that is
+     * actually executed. */
+        *px = (PLFLT *) jxdata;
+    } else {
+	int i;
+        *px = (PLFLT *) malloc( n * sizeof(PLFLT) );
+        for( i=0; i < n; i++ ) {
+            (*px)[i] = jxdata[i];
+        }
+        *must_free_buffers = 1;
+    }
+}
+
+/*---------------------------------------------------------------------------//
 // First the arg parsing support routines.
 //---------------------------------------------------------------------------*/
 
@@ -3006,6 +3047,86 @@ Java_plplot_core_PLStream_scmap1( JNIEnv *env, jobject jthis,
     (*env)->ReleaseIntArrayElements( env, rarr, r, 0 );
     (*env)->ReleaseIntArrayElements( env, garr, g, 0 );
     (*env)->ReleaseIntArrayElements( env, barr, b, 0 );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    scmap1l
+ * Signature: (II[F[F[F[F[I)V
+ */
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_scmap1l__II_3F_3F_3F_3F_3I(
+  JNIEnv *env, jobject jthis, jint itype, jint npts, jfloatArray ji,
+  jfloatArray jc1, jfloatArray jc2, jfloatArray jc3, jintArray jrev )
+{
+    int must_free_buffers = 0;
+    jfloat *jidata = (*env)->GetFloatArrayElements( env, ji, 0 );
+    jfloat *jc1data = (*env)->GetFloatArrayElements( env, jc1, 0 );
+    jfloat *jc2data = (*env)->GetFloatArrayElements( env, jc2, 0 );
+    jfloat *jc3data = (*env)->GetFloatArrayElements( env, jc3, 0 );
+    jint *rev = (*env)->GetIntArrayElements( env, jrev, 0 );
+    PLFLT *i, *c1, *c2, *c3;
+
+    setup_data_f( &i, jidata, npts, &must_free_buffers );
+    setup_data_f( &c1, jc1data, npts, &must_free_buffers );
+    setup_data_f( &c2, jc2data, npts, &must_free_buffers );
+    setup_data_f( &c3, jc3data, npts, &must_free_buffers );
+
+    set_PLStream(env,jthis);
+    plscmap1l(itype, npts, i, c1, c2, c3, (PLINT *) rev);
+
+    if (must_free_buffers) {
+	free(i);
+	free(c1);
+	free(c2);
+	free(c3);
+    }
+
+    (*env)->ReleaseFloatArrayElements( env, ji, jidata, 0 );
+    (*env)->ReleaseFloatArrayElements( env, jc1, jc1data, 0 );
+    (*env)->ReleaseFloatArrayElements( env, jc2, jc2data, 0 );
+    (*env)->ReleaseFloatArrayElements( env, jc3, jc3data, 0 );
+    (*env)->ReleaseIntArrayElements( env, jrev, rev, 0 );
+}
+
+/*
+ * Class:     plplot_core_PLStream
+ * Method:    scmap1l
+ * Signature: (II[D[D[D[D[I)V
+ */
+JNIEXPORT void JNICALL
+Java_plplot_core_PLStream_scmap1l__II_3D_3D_3D_3D_3I(
+  JNIEnv *env, jobject jthis, jint itype, jint npts, jdoubleArray ji,
+  jdoubleArray jc1, jdoubleArray jc2, jdoubleArray jc3, jintArray jrev )
+{
+    int must_free_buffers = 0;
+    jdouble *jidata = (*env)->GetDoubleArrayElements( env, ji, 0 );
+    jdouble *jc1data = (*env)->GetDoubleArrayElements( env, jc1, 0 );
+    jdouble *jc2data = (*env)->GetDoubleArrayElements( env, jc2, 0 );
+    jdouble *jc3data = (*env)->GetDoubleArrayElements( env, jc3, 0 );
+    jint *rev = (*env)->GetIntArrayElements( env, jrev, 0 );
+    PLFLT *i, *c1, *c2, *c3;
+
+    setup_data_d( &i, jidata, npts, &must_free_buffers );
+    setup_data_d( &c1, jc1data, npts, &must_free_buffers );
+    setup_data_d( &c2, jc2data, npts, &must_free_buffers );
+    setup_data_d( &c3, jc3data, npts, &must_free_buffers );
+
+    set_PLStream(env,jthis);
+    plscmap1l(itype, npts, i, c1, c2, c3, (PLINT *) rev);
+
+    if (must_free_buffers) {
+	free(i);
+	free(c1);
+	free(c2);
+	free(c3);
+    }
+
+    (*env)->ReleaseDoubleArrayElements( env, ji, jidata, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, jc1, jc1data, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, jc2, jc2data, 0 );
+    (*env)->ReleaseDoubleArrayElements( env, jc3, jc3data, 0 );
+    (*env)->ReleaseIntArrayElements( env, jrev, rev, 0 );
 }
 
 /*
