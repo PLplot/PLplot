@@ -26,7 +26,10 @@ divert(-1)dnl
 #
 # $Id$
 # $Log$
-# Revision 1.1  1994/03/30 07:29:39  mjl
+# Revision 1.2  1994/03/30 08:28:56  mjl
+# Fixed broken macro definition.
+#
+# Revision 1.1  1994/03/30  07:29:39  mjl
 # Moved fortran interface files up one level -- no longer separate single
 # and double precision files.  Implemented m4 expansion of REAL into either
 # real*4 or real*8 depending on configure settings, for portable builds
@@ -148,25 +151,25 @@ ifdef({INCLUDED_FMACS},,{
 # "implicit undefined" is used in many "f77" compatible compilers
 
     if_sunos({
-	define(implicit_none, {implicit undefined(a-z)})
+	define({implicit_none}, {implicit undefined(a-z)})
     })
 
     if_aix({
-	define(implicit_none, {implicit undefined(a-z)})
+	define({implicit_none}, {implicit undefined(a-z)})
     })
 
 # "implicit none" is F90 and Mil Std...
 
     if_sx({
-	define(implicit_none, {implicit none})
+	define({implicit_none}, {implicit none})
     })
 
     if_unicos({
-	define(implicit_none, {implicit none})
+	define({implicit_none}, {implicit none})
     })
 
     if_hpux({
-	define(implicit_none, {implicit none})
+	define({implicit_none}, {implicit none})
     })
 
 #----------------------------------------------------------------------------#
