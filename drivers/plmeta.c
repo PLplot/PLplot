@@ -539,7 +539,7 @@ plD_state_plm(PLStream *pls, PLINT op)
 	break;
 
     case PLSTATE_COLOR0:
-	plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->icol0) );
+	plm_wr( pdf_wr_2bytes(pls->pdfs, (short) pls->icol0) );
 
 	if (pls->icol0 == PL_RGB_COLOR) {
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->curcolor.r) );
@@ -557,7 +557,7 @@ plD_state_plm(PLStream *pls, PLINT op)
 	break;
 
     case PLSTATE_CMAP0:
-	plm_wr( pdf_wr_1byte(pls->pdfs, (U_CHAR) pls->ncol0) );
+	plm_wr( pdf_wr_2bytes(pls->pdfs, (U_SHORT) pls->ncol0) );
 	for (i = 0; i < pls->ncol0; i++) {
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].r) );
 	    plm_wr( pdf_wr_1byte(pls->pdfs, pls->cmap0[i].g) );
