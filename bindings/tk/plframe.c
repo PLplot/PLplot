@@ -101,7 +101,7 @@ typedef struct {
     XPoint pts[5];		/* Points for rubber-band drawing */
     int continue_draw;		/* Set when doing rubber-band draws */
     Cursor draw_cursor;		/* cursor used for drawing */
-    PLFLT pxl, pxr, pyl, pyr;	/* Bounds on plot viewing area */
+    PLFLT xl, xr, yl, yr;	/* Bounds on plot viewing area */
     char *yScrollCmd;		/* Command prefix for communicating with
 				 * vertical scrollbar.  NULL means no
 				 * command to issue.  Malloc'ed. */
@@ -343,10 +343,10 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->bgColor = NULL;
     plFramePtr->yScrollCmd = NULL;
     plFramePtr->xScrollCmd = NULL;
-    plFramePtr->pxl = 0.;
-    plFramePtr->pyl = 0.;
-    plFramePtr->pxr = 1.;
-    plFramePtr->pyr = 1.;
+    plFramePtr->xl = 0.;
+    plFramePtr->yl = 0.;
+    plFramePtr->xr = 1.;
+    plFramePtr->yr = 1.;
     plFramePtr->SaveFnam = NULL;
     plFramePtr->devDesc = NULL;
     plFramePtr->devName = NULL;
@@ -1616,12 +1616,11 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
     char c;
     PLFLT xl, xr, yl, yr;
 
-/* view -- return coordinates of current plot window */
+/* view -- return current relative plot window coordinates */
 
     if (argc == 0) {
 	char result_str[128];
 	plgdiplt(&xl, &yl, &xr, &yr);
-	pldip2dc(&xl, &yl, &xr, &yr);
 	sprintf(result_str, "%g %g %g %g", xl, yl, xr, yr);
 	Tcl_SetResult(interp, result_str, TCL_VOLATILE);
 	return TCL_OK;
@@ -1630,17 +1629,29 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
     c = argv[0][0];
     length = strlen(argv[0]);
 
+/* view bounds -- return relative device coordinates of bounds on current */
+/* plot window */
+
+    if ((c == 'b') && (strncmp(argv[0], "bounds", length) == 0)) {
+	char result_str[128];
+	xl = 0.; yl = 0.;
+	xr = 1.; yr = 1.;
+	pldip2dc(&xl, &yl, &xr, &yr);
+	sprintf(result_str, "%g %g %g %g", xl, yl, xr, yr);
+	Tcl_SetResult(interp, result_str, TCL_VOLATILE);
+	return TCL_OK;
+    }
+
 /* view reset -- Resets plot */
 
     if ((c == 'r') && (strncmp(argv[0], "reset", length) == 0)) {
-	xl = 0.;
-	yl = 0.;
-	xr = 1.;
-	yr = 1.;
+	xl = 0.; yl = 0.;
+	xr = 1.; yr = 1.;
 	plsdiplt(xl, yl, xr, yr);
     }
 
 /* view select -- set window into plot space */
+/* Specifies in terms of plot window coordinates, not device coordinates */
 
     else if ((c == 's') && (strncmp(argv[0], "select", length) == 0)) {
 	if (argc < 5) {
@@ -1651,10 +1662,7 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
 	else {
 	    gbox(&xl, &yl, &xr, &yr, argv+1);
-	    pldid2pc(&xl, &yl, &xr, &yr);
 	    plsdiplt(xl, yl, xr, yr);
-	    plgdiplt(&xl, &yl, &xr, &yr);
-	    pldip2dc(&xl, &yl, &xr, &yr);
 	}
     }
 
@@ -1672,8 +1680,6 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	    gbox(&xl, &yl, &xr, &yr, argv+1);
 	    pldid2pc(&xl, &yl, &xr, &yr);
 	    plsdiplz(xl, yl, xr, yr);
-	    plgdiplt(&xl, &yl, &xr, &yr);
-	    pldip2dc(&xl, &yl, &xr, &yr);
 	}
     }
 
@@ -1681,7 +1687,7 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
     else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
-	 "\":  options to \"view\" are: reset, select, or zoom",
+	 "\":  options to \"view\" are: bounds, reset, select, or zoom",
 	 (char *) NULL);
 
 	return TCL_ERROR;
@@ -1689,10 +1695,11 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 /* Update plot window bounds and arrange for plot to be updated */
 
-    plFramePtr->pxl = xl;
-    plFramePtr->pyl = yl;
-    plFramePtr->pxr = xr;
-    plFramePtr->pyr = yr;
+    plgdiplt(&xl, &yl, &xr, &yr);
+    plFramePtr->xl = xl;
+    plFramePtr->yl = yl;
+    plFramePtr->xr = xr;
+    plFramePtr->yr = yr;
     plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
 
     return(Redraw(interp, plFramePtr, argc, argv));
@@ -1711,22 +1718,19 @@ xScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 {
     int x0, width = Tk_Width(plFramePtr->tkwin);
     PLFLT xl, xr, yl, yr, xlen;
-    PLFLT xmin = 0., ymin = 0., xmax = 1., ymax = 1.;
 
-    pldip2dc(&xmin, &ymin, &xmax, &ymax);
-
-    xlen = plFramePtr->pxr - plFramePtr->pxl;
+    xlen = plFramePtr->xr - plFramePtr->xl;
     x0 = atoi(argv[0]);
     xl = x0 / (double) width;
-    xl = MAX( xmin, MIN((xmax - xlen), xl));
+    xl = MAX( 0., MIN((1. - xlen), xl));
     xr = xl + xlen;
-    plFramePtr->pxl = xl;
-    plFramePtr->pxr = xr;
 
-    yl = plFramePtr->pyl;
-    yr = plFramePtr->pyr;
+    yl = plFramePtr->yl;
+    yr = plFramePtr->yr;
 
-    pldid2pc(&xl, &yl, &xr, &yr);
+    plFramePtr->xl = xl;
+    plFramePtr->xr = xr;
+
     plsdiplt(xl, yl, xr, yr);
 
     plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
@@ -1746,22 +1750,19 @@ yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 {
     int y0, height = Tk_Height(plFramePtr->tkwin);
     PLFLT xl, xr, yl, yr, ylen;
-    PLFLT xmin = 0., ymin = 0., xmax = 1., ymax = 1.;
 
-    pldip2dc(&xmin, &ymin, &xmax, &ymax);
-
-    ylen = plFramePtr->pyr - plFramePtr->pyl;
+    ylen = plFramePtr->yr - plFramePtr->yl;
     y0 = atoi(argv[0]);
     yr = 1. - y0 / (double) height;
-    yr = MAX( ymin+ylen, MIN(ymax, yr));
+    yr = MAX( 0.+ylen, MIN(1., yr));
     yl = yr - ylen;
-    plFramePtr->pyl = yl;
-    plFramePtr->pyr = yr;
 
-    xl = plFramePtr->pxl;
-    xr = plFramePtr->pxr;
+    xl = plFramePtr->xl;
+    xr = plFramePtr->xr;
 
-    pldid2pc(&xl, &yl, &xr, &yr);
+    plFramePtr->yl = yl;
+    plFramePtr->yr = yr;
+
     plsdiplt(xl, yl, xr, yr);
 
     plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
@@ -1789,8 +1790,8 @@ UpdateVScrollbar(register PlFrame *plFramePtr)
 	return;
 
     totalUnits  = height;
-    firstUnit   = 0.5 + (float) height * (1. - plFramePtr->pyr);
-    lastUnit    = 0.5 + (float) height * (1. - plFramePtr->pyl);
+    firstUnit   = 0.5 + (float) height * (1. - plFramePtr->yr);
+    lastUnit    = 0.5 + (float) height * (1. - plFramePtr->yl);
     windowUnits = lastUnit - firstUnit;
     sprintf(string, " %d %d %d %d",
 	    totalUnits, windowUnits, firstUnit, lastUnit);
@@ -1820,8 +1821,8 @@ UpdateHScrollbar(register PlFrame *plFramePtr)
 	return;
 
     totalUnits  = width;
-    firstUnit   = 0.5 + (float) width * plFramePtr->pxl;
-    lastUnit    = 0.5 + (float) width * plFramePtr->pxr;
+    firstUnit   = 0.5 + (float) width * plFramePtr->xl;
+    lastUnit    = 0.5 + (float) width * plFramePtr->xr;
     windowUnits = lastUnit - firstUnit;
     sprintf(string, " %d %d %d %d",
 	    totalUnits, windowUnits, firstUnit, lastUnit);
@@ -1838,8 +1839,8 @@ UpdateHScrollbar(register PlFrame *plFramePtr)
 * gbox
 *
 * Returns selection box coordinates.
-* It's best if the TCL script does bounds checking on the input but I do it
-* here as well just to be safe.
+* It's best if the TCL script does bounds checking on the input but I do
+* it here as well just to be safe.
 \*----------------------------------------------------------------------*/
 
 static void
