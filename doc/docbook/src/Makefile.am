@@ -2,7 +2,7 @@
 # Description: Automake template for the PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Sat Nov 18 16:36:10 CET 2000
-# Last modified on: Mon Nov 27 01:07:24 CET 2000
+# Last modified on: Mon Nov 27 16:07:18 CET 2000
 # $Id$
 
 MASTER_XML = plplotdoc.xml
@@ -37,7 +37,7 @@ EXTRA_DIST = $(SOURCE_FILES) $(STYLESHEETS_IN)
 CLEANFILES = \
   *.$(HTML_EXT) *.$(JPEG_EXT) $(HTML_MANIFEST) $(JPEG_MANIFEST) \
   *.jadetex *.aux *.dvi *.ps.gz *.pdf* inline.ent *.log *.eps TMP.* \
-  *.info* *.texi *.txml *.xml-info
+  *.out *.info* *.texi *.txml *.xml-info
 
 
 JADE = @JADE@
