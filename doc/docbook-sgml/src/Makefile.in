@@ -2,7 +2,7 @@
 # Description: Makefile template for PLplot-DocBook project
 # Author: Rafael Laboissière <rafael@icp.inpg.fr>
 # Created on: Thu May 20 11:14:38 CEST 1999
-# Last modified on: Fri Nov 17 00:13:49 CET 2000
+# Last modified on: Fri Nov 17 11:02:46 CET 2000
 # $Id$
 
 VERSION = @VERSION@
@@ -132,6 +132,7 @@ install-stamp: all
 	cp -p $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)
 	ln -fs $(PLPLOTDOC_HTML)-$(VERSION).tar.gz $(HTML_DESTDIR)/$(PLPLOTDOC_HTML).tar.gz
 	cp -p $(BASE).dvi $(BASE).ps.gz $(HTML_DESTDIR)
+	ln -fs $(BASE).$(HTML_EXT) $(HTML_DESTDIR)/index.$(HTML_EXT)
 	touch install-stamp
 
 uninstall: 
