@@ -184,9 +184,6 @@ xwin_drv_la_SOURCES = xwin.c
 xwin_drv_la_LDFLAGS = $(ldflags) $(libplplot) $(xflags) $(lmflag)
 endif
 
-install-data-hook:
-	rm -f $(driversdir)/*.a
-
 # end of enable_dyndrivers
 else
 # start of static driver alternative which is implemented using
@@ -385,5 +382,12 @@ libplplotdrv_la_DEPENDENCIES = $(libplplotdrv_la_LIBADD)
 
 # end of static driver case.
 endif
+
+install-data-hook:
+if enable_dyndrivers
+	rm -f $(driversdir)/*.a
+endif
+
+
 CLEANFILES = plapi.tpl tclcmd.tpl tclgen.h tclgen_s.h tclgen.c 
 DISTCLEANFILES = $(drivers_DATA)
