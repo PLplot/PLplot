@@ -1,3 +1,61 @@
+Commit from rlaboiss (2004-01-04 18:45 CET)
+--------------------
+
+Change the logic of setting PLPLOT_MUTEX_RECURSIVE, by making $host_os =
+linex* the special case, and not $host_os = darwin
+
+  plplot  configure.ac  1.140
+  plplot  sysloc.in     1.64
+
+
+Commit from rlaboiss (2004-01-04 13:20 CET)
+--------------------
+
+Preparation for Debian release 5.2.1.cvs.20040104-1
+
+  plplot  debian/changelog  1.65
+
+
+Commit from rlaboiss (2004-01-04 13:18 CET)
+--------------------
+
+Improve portability of libpthread-related code
+
+In sysloc.in, a new AC_DEFINE macro is created: PLPLOT_MUTEX_RECURSIVE.  In
+darwin systems it will expand to PTHREAD_MUTEX_RECURSIVE, otherwise to
+PTHREAD_MUTEX_RECURSIVE_NP.
+
+Also, in xwin.c, pthread_mutexattr_setkind_np() was changed to
+pthread_mutexattr_settype(), since this should work in all systems.
+
+  plplot  sysloc.in       1.63
+  plplot  drivers/xwin.c  1.115
+
+
+Commit from airwin (2004-01-04 04:06 CET)
+------------------
+
+Eliminate "p" examples from test because they user higher-level octave
+programming that demands octave-2.1.50 or better (which not all users have).
+
+We have kept the remaining "x" examples for this test.  They are worth
+having since they directly test the octave interface to libplplot and they
+work for octave-2.0.x or later.
+
+  plplot  test/test_octave.sh  1.12
+
+
+Commit from airwin (2004-01-04 02:13 CET)
+------------------
+
+Took Rafael's advice and moved all AC_SUBST macros out of conditionals
+(since apparently they are executed regardless, and they can lead to
+shell problems if they are the only macro inside the conditional).
+
+  plplot  configure.ac  1.139
+  plplot  sysloc.in     1.62
+
+
 Commit from rlaboiss (2004-01-04 01:09 CET)
 --------------------
 
@@ -39,7 +97,6 @@ Fixed continuation issue.
 
 Commit from rlaboiss (2004-01-03 20:22 CET)
 --------------------
-
 
 * Created the AC_SUBSTituted variable PKG_CONFIG_ENV. This variable replaces
   the previous PKG_CONFIG_PATH.  It defaults to the usual
