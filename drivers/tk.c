@@ -1,6 +1,15 @@
 /* $Id$
  * $Log$
- * Revision 1.22  1993/12/15 09:04:31  mjl
+ * Revision 1.23  1993/12/21 10:30:24  mjl
+ * Changed to separate initialization routines for dp vs tk drivers.
+ * Reworked server_cmd function to work well with both Tcl-DP and TK send;
+ * also method for putting commands in the background is better thought out
+ * (and works better).  When using Tcl-DP for communication, the TK main
+ * window is NOT created now.  This is a bit tricky since certain commands
+ * no longer work if you don't have a main window -- like "tkwait", "update",
+ * and "after", and alternate methods must be used to get the same effects.
+ *
+ * Revision 1.22  1993/12/15  09:04:31  mjl
  * Added support for Tcl-DP style communication.  Many small tweaks to
  * driver-plserver interactions made.  server_cmdbg() added for sending
  * commands to the server in the background (infrequently used because it
@@ -39,7 +48,10 @@
 *	Passes graphics commands to renderer and certain X
 *	events back to user if requested.
 */
-
+/*
+#define DEBUG
+#define DEBUG_ENTER
+*/
 #ifdef TK
 
 #include "plserver.h"
@@ -84,6 +96,7 @@ typedef struct {
 
 /* Function prototypes */
 
+static void  init		(PLStream *);
 static void  tk_start		(PLStream *);
 static void  tk_stop		(PLStream *);
 static void  tk_di		(PLStream *);
@@ -100,8 +113,7 @@ static void  bgcolor_init	(PLStream *);
 
 static void  tk_wait		(PLStream *, char *);
 static void  abort_session	(PLStream *, char *);
-static void  server_cmd		(PLStream *, char *);
-static void  server_cmdbg	(PLStream *, char *);
+static void  server_cmd		(PLStream *, char *, int);
 static void  tcl_cmd		(PLStream *, char *);
 static int   tcl_eval		(PLStream *, char *);
 static void  copybuf		(PLStream *pls, char *cmd);
@@ -113,7 +125,9 @@ static int   KeyEH		(ClientData, Tcl_Interp *, int, char **);
 
 /* INDENT ON */
 /*----------------------------------------------------------------------*\
+* plD_init_dp()
 * plD_init_tk()
+* init_tk()
 *
 * Initialize device.
 * TK-dependent stuff done in tk_start().  You can set the display by
@@ -122,6 +136,25 @@ static int   KeyEH		(ClientData, Tcl_Interp *, int, char **);
 
 void
 plD_init_tk(PLStream *pls)
+{
+    pls->dp = 0;
+    init(pls);
+}
+
+void
+plD_init_dp(PLStream *pls)
+{
+#ifdef TCL_DP
+    pls->dp = 1;
+#else
+    fprintf(stderr, "The Tcl-DP driver hasn't been installed!\n");
+    pls->dp = 0;
+#endif
+    init(pls);
+}
+
+static void
+init(PLStream *pls)
 {
     U_CHAR c = (U_CHAR) INITIALIZE;
     TkDev *dev;
@@ -159,6 +192,10 @@ plD_init_tk(PLStream *pls)
 	plexit("plD_init_tk: Out of memory.");
 
     dev = (TkDev *) pls->dev;
+    dev->exit_eventloop = 0;
+
+    if (dev->program == NULL)
+	dev->program = "client";
 
 /* Start interpreter and spawn server process */
 
@@ -452,7 +489,7 @@ tk_di(PLStream *pls)
 	sprintf(str, "%f", pls->diorot);
 	Tcl_SetVar(dev->interp, "rot", str, 0);
 
-	server_cmd( pls, "$plwidget cmd setopt -ori $rot" );
+	server_cmd( pls, "$plwidget cmd setopt -ori $rot", 1 );
 	pls->difilt &= ~PLDI_ORI;
     }
 
@@ -468,7 +505,7 @@ tk_di(PLStream *pls)
 	sprintf(str, "%f", pls->dipymax);
 	Tcl_SetVar(dev->interp, "yr", str, 0);
 
-	server_cmd( pls, "$plwidget cmd setopt -wplt $xl,$yl,$xr,$yr" );
+	server_cmd( pls, "$plwidget cmd setopt -wplt $xl,$yl,$xr,$yr", 1 );
 	pls->difilt &= ~PLDI_PLT;
     }
 
@@ -484,17 +521,17 @@ tk_di(PLStream *pls)
 	sprintf(str, "%f", pls->jy);
 	Tcl_SetVar(dev->interp, "jy", str, 0);
 
-	server_cmd( pls, "$plwidget cmd setopt -mar $mar" );
-	server_cmd( pls, "$plwidget cmd setopt -a $aspect" );
-	server_cmd( pls, "$plwidget cmd setopt -jx $jx" );
-	server_cmd( pls, "$plwidget cmd setopt -jy $jy" );
+	server_cmd( pls, "$plwidget cmd setopt -mar $mar", 1 );
+	server_cmd( pls, "$plwidget cmd setopt -a $aspect", 1 );
+	server_cmd( pls, "$plwidget cmd setopt -jx $jx", 1 );
+	server_cmd( pls, "$plwidget cmd setopt -jy $jy", 1 );
 	pls->difilt &= ~PLDI_DEV;
     }
 
 /* Update view */
 
-    server_cmd( pls, "update" );
-    server_cmd( pls, "plw_update_view $plwindow" );
+    server_cmd( pls, "update", 1 );
+    server_cmd( pls, "plw_update_view $plwindow", 1 );
 }
 
 /*----------------------------------------------------------------------*\
@@ -515,7 +552,6 @@ tk_start(PLStream *pls)
 
     dev->interp = Tcl_CreateInterp();
     tcl_cmd(pls, "rename exec {}");
-    tcl_cmd(pls, "set plsend send");
 
 /* Initialize top level window */
 /* Request pls->program (if set) for the main window name */
@@ -523,9 +559,11 @@ tk_start(PLStream *pls)
     if (pls->program == NULL)
 	pls->program = "plclient";
 
-    if (tk_toplevel(&dev->w, dev->interp, pls->FileName, pls->program,
-		    pls->program))
-	abort_session(pls, "Unable to create top-level window");
+    if (! pls->dp) {
+	if (tk_toplevel(&dev->w, dev->interp, pls->FileName, pls->program,
+			pls->program))
+	    abort_session(pls, "Unable to create top-level window");
+    }
 
 /* Initialize interpreter */
 /* pltk_init_proc is autoloaded, so the user can customize if desired */
@@ -538,21 +576,24 @@ tk_start(PLStream *pls)
     tcl_cmd(pls, "set plw_flash_proc plw_flash");
     tcl_cmd(pls, "set plw_end_proc plw_end");
 
+    Tcl_SetVar(dev->interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
+
 /* Eval startup procs */
 
     if (Tcl_AppInit(dev->interp) != TCL_OK) {
 	abort_session(pls, "");
     }
 
-/* If we are using Tcl-DP, set up communications port */
+/* If we are using Tcl-DP, set up communications port and other junk */
 
-#ifdef TCL_DP
     if (pls->dp) {
-	tcl_cmd(pls, "set plsend dp_RPC");
 	tcl_cmd(pls, "set client_host localhost");
 	tcl_cmd(pls, "set client_port [dp_MakeRPCServer]");
+	tcl_cmd(pls, "set update_proc dp_update");
     }
-#endif
+    else {
+	tcl_cmd(pls, "set update_proc update");
+    }
 
 /* Launch server process if necessary */
 
@@ -571,9 +612,10 @@ tk_start(PLStream *pls)
 /* Initialize data link */
 
     link_init(pls);
-
-    server_cmd( pls, "update" );
-
+/*
+    server_cmd( pls, "$update_proc", 1 );
+    tcl_cmd(pls, "$update_proc");
+*/
     return;
 }
 
@@ -601,21 +643,22 @@ tk_stop(PLStream *pls)
 
     if (dev->file != NULL) {
 	if (fclose(dev->file)) {
-	    fprintf(stderr, "%s: Error closing fifo\n", dev->program);
+	    fprintf(stderr, "tk_stop: Error closing fifo\n");
 	}
 	dev->file = NULL;
     }
 
 /* Kill plserver */
 
-    if (Tcl_GetVar(dev->interp, "plserver", TCL_GLOBAL_ONLY) != NULL) {
-	server_cmd( pls, "after 1 $plw_end_proc $plwindow" );
-	tcl_cmd(pls, "unset plserver");
+    if (Tcl_GetVar(dev->interp, "server", TCL_GLOBAL_ONLY) != NULL) {
+	server_cmd( pls, "$plw_end_proc $plwindow", 1 );
+	tcl_cmd(pls, "unset server");
     }
 
 /* Blow away main window */
 
-    tcl_cmd(pls, "destroy .");
+    if ( ! pls->dp)
+	tcl_cmd(pls, "destroy .");
 
 /* Blow away interpreter if it exists */
 
@@ -658,8 +701,10 @@ tk_configure(PLStream *pls)
 
 /* Use main window name as program name, now that we have it */
 
-    dev->program = Tk_Name(dev->w);
-    Tcl_SetVar(dev->interp, "client", dev->program, 0);
+    if (! pls->dp) {
+	dev->program = Tk_Name(dev->w);
+	Tcl_SetVar(dev->interp, "client", dev->program, 0);
+    }
 
 /* Tell interpreter about commands. */
 
@@ -710,11 +755,11 @@ launch_server(PLStream *pls)
 /* This sucks and will have to be fixed for remote servers */
 
     if (pls->plserver != NULL) {
-	Tcl_SetVar(dev->interp, "plserver", pls->plserver, 0);
-	if (tcl_eval(pls, "winfo $plserver exists")) {
+	Tcl_SetVar(dev->interp, "server", pls->plserver, 0);
+	if (tcl_eval(pls, "winfo $server exists")) {
 	    return;
 	}
-	Tcl_UnsetVar(dev->interp, "plserver", 0);
+	Tcl_UnsetVar(dev->interp, "server", 0);
     }
     else {
 	pls->plserver = "plserver";
@@ -724,9 +769,6 @@ launch_server(PLStream *pls)
 
     i = 0;
     argv[i++] = pls->plserver;		/* Name of server */
-
-    argv[i++] = "-client";		/* Name of client */
-    argv[i++] = dev->program;
 
     argv[i++] = "-child";		/* Tell plserver its ancestry */
 
@@ -745,9 +787,9 @@ launch_server(PLStream *pls)
 	argv[i++] = pls->geometry;
     }
 
-/* If communicating via Tcl-DP, send communications port id */
+/* If communicating via Tcl-DP, specify communications port id */
+/* If communicating via TK send, specify main window name */
 
-#ifdef TCL_DP
     if (pls->dp) {
 	argv[i++] = "-client_host";
 	argv[i++] = Tcl_GetVar(dev->interp, "client_host", TCL_GLOBAL_ONLY);
@@ -755,7 +797,10 @@ launch_server(PLStream *pls)
 	argv[i++] = "-client_port";
 	argv[i++] = Tcl_GetVar(dev->interp, "client_port", TCL_GLOBAL_ONLY);
     }
-#endif
+    else {
+	argv[i++] = "-client_name";
+	argv[i++] = dev->program;
+    }
 
 /* Start server process */
 
@@ -781,7 +826,7 @@ launch_server(PLStream *pls)
 * communication.  
 *
 * When TK send's are being used to communicate, the true server main
-* window name is stored in $plserver.  This is not always the same as the
+* window name is stored in $server.  This is not always the same as the
 * name of the application since you could have multiple copies running on
 * the display (resulting in names of the form "plserver #2", etc).
 *
@@ -789,12 +834,12 @@ launch_server(PLStream *pls)
 * in $server_host and $server_port, respectively.
 */
 
-    tcl_cmd(pls, "tkwait variable server_is_ready");
+    tk_wait(pls, "[info exists server_is_ready]" );
 
 #ifdef TCL_DP
     if (pls->dp) {
 	tcl_cmd(pls,
-		"set plserver [dp_MakeRPCClient $server_host $server_port]");
+		"set server [dp_MakeRPCClient $server_host $server_port]");
     }
 #endif
 
@@ -869,8 +914,8 @@ plwindow_init(PLStream *pls)
 
 /* Create the plframe widget & anything else you want with it. */
 
-	server_cmd( pls, "update" );
-	server_cmd( pls, "$plw_create_proc $plwindow" );
+/*	server_cmd( pls, "update", 0 );*/
+	server_cmd( pls, "$plw_create_proc $plwindow", 0 );
     }
     else {
 	Tcl_SetVar(dev->interp, "plwindow", pls->plwindow, 0);
@@ -878,9 +923,9 @@ plwindow_init(PLStream *pls)
 
 /* Initialize the widget(s) */
 
-    server_cmd( pls, "update" );
-    server_cmdbg( pls, "$plw_init_proc $plwindow [list $client]" );
-    tcl_cmd(pls, "tkwait variable plwidget");
+/*    server_cmd( pls, "update", 0 );*/
+    server_cmd( pls, "$plw_init_proc $plwindow [list $client]", 1 );
+    tk_wait(pls, "[info exists plwidget]" );
 
 /* Now we should have the actual plplot widget name in $plwidget */
 /* Configure remote plplot stream. */
@@ -890,18 +935,18 @@ plwindow_init(PLStream *pls)
     bg = (((pls->bgcolor.r << 8) | pls->bgcolor.g) << 8) | pls->bgcolor.b;
     sprintf(str, "#%06x", (bg & 0xFFFFFF));
     Tcl_SetVar(dev->interp, "bg", str, 0);
-    server_cmd( pls, "$plwidget configure -bg $bg" );
+    server_cmd( pls, "$plwidget configure -bg $bg", 0 );
 
 /* nopixmap option */
 
     if (pls->nopixmap) {
-	server_cmd( pls, "$plwidget cmd setopt -nopixmap" );
+	server_cmd( pls, "$plwidget cmd setopt -nopixmap", 0 );
     }
 
 /* Start up remote plplot */
 
-    server_cmd( pls, "update" );
-    server_cmd( pls, "$plwidget cmd init" );
+/*    server_cmd( pls, "update", 0 );*/
+    server_cmd( pls, "$plwidget cmd init", 0 );
 }
 
 /*----------------------------------------------------------------------*\
@@ -975,8 +1020,7 @@ link_init(PLStream *pls)
 /* Tell plframe widget to open fifo (for reading). */
 
     Tcl_SetVar(dev->interp, "fifoname", dev->filename, 0);
-    server_cmd( pls, "update" );
-    server_cmd( pls, "after 1 $plwidget openfifo $fifoname" );
+    server_cmd( pls, "$plwidget openfifo $fifoname", 1 );
 
 /* Open the fifo for writing */
 /* This will block until the server opens it for reading */
@@ -1011,14 +1055,14 @@ WaitForPage(PLStream *pls)
     if (pls->bytecnt > 0) 
 	flush_output(pls);
 
-    server_cmd( pls, "after 1 $plw_flash_proc $plwindow" );
+    server_cmd( pls, "$plw_flash_proc $plwindow", 1 );
 
-    tcl_cmd(pls, "tkwait variable advance");
-    tcl_cmd(pls, "unset advance");
+    while ( ! dev->exit_eventloop) 
+	Tk_DoOneEvent(0);
 
-    server_cmd( pls, "after 1 $plw_flash_proc $plwindow" );
+    dev->exit_eventloop = 0;
 
-    HandleEvents(pls);
+    server_cmd( pls, "$plw_flash_proc $plwindow", 1 );
 }
 
 /*----------------------------------------------------------------------*\
@@ -1033,16 +1077,15 @@ HandleEvents(PLStream *pls)
 {
     dbug_enter("HandleEvents");
 
-    tcl_eval(pls, "update");
+    tcl_cmd(pls, "$update_proc");
 }
 
 /*----------------------------------------------------------------------*\
 * flush_output()
 *
 * Flushes output and sends command to the server to read from the pipe.
-* Best to let server process the commands asynchronously by putting in
-* the "after 1" -- the send command then returns immediately and the
-* process can continue.  
+* Best to let the server process the commands asynchronously by issuing
+* them in the background.
 *
 * Note: the flush actually takes place after the send command.  This
 * way bigger buffers can be used since both processes can work on it
@@ -1073,9 +1116,11 @@ flush_output(PLStream *pls)
 
     sprintf(tmp, "%d", pls->bytecnt);
     Tcl_SetVar(dev->interp, "nbytes", tmp, 0);
-    server_cmd( pls, "after 1 $plwidget read $nbytes" );
 
+    tcl_cmd(pls, "$update_proc");
+    server_cmd( pls, "$plwidget read $nbytes", 1 );
     tk_wr(fflush(dev->file));
+
     pls->bytecnt = 0;
 }
 
@@ -1200,13 +1245,13 @@ KeyEH(ClientData clientData, Tcl_Interp *interp, int argc, char **argv)
 	key.code == PLK_Next)
 	advance = TRUE;
 
-    if (advance)
-	tcl_cmd(pls, "set advance 1");
+    if (advance) 
+	dev->exit_eventloop = 1;
 
 /* Terminate on a 'Q' (not 'q', since it's too easy to hit by mistake) */
 
     if (key.string[0] == 'Q') 
-	tcl_cmd(pls, "after 1 abort");
+	tcl_cmd(pls, "abort");
 
     return TCL_OK;
 }
@@ -1231,12 +1276,15 @@ tk_wait(PLStream *pls, char *cmd)
     dbug_enter("tk_wait");
 
     copybuf(pls, cmd);
-    while ( ! result) {
+    for (;;) {
 	if (Tcl_ExprBoolean(dev->interp, dev->cmdbuf, &result)) {
 	    fprintf(stderr, "tk_wait command \"%s\" failed:\n\t %s\n",
 		    cmd, dev->interp->result);
 	    break;
 	}
+	if (result)
+	    break;
+
 	Tk_DoOneEvent(0);
     }
 }
@@ -1245,57 +1293,48 @@ tk_wait(PLStream *pls, char *cmd)
 * server_cmd
 *
 * Sends specified command to server, aborting on an error.
+* If nowait is set, the command is issued in the background.
+*
+* If commands MUST proceed in a certain order (e.g. initialization), it
+* is safest to NOT run them in the background.
 \*----------------------------------------------------------------------*/
 
 static void
-server_cmd(PLStream *pls, char *cmd)
+server_cmd(PLStream *pls, char *cmd, int nowait)
 {
     TkDev *dev = (TkDev *) pls->dev;
+    static char dpsend_cmd0[] = "dp_RPC $server ";
+    static char dpsend_cmd1[] = "dp_RDO $server ";
+    static char tksend_cmd0[] = "send $server ";
+    static char tksend_cmd1[] = "send $server after 1 ";
+    int result;
 
     dbug_enter("server_cmd");
 #ifdef DEBUG_ENTER
     fprintf(stderr, "Sending command: %s\n", cmd);
 #endif
 
-    if (Tcl_VarEval(dev->interp, "$plsend $plserver ", cmd, (char **) NULL)) {
+    copybuf(pls, cmd);
+    if (pls->dp) {
+	if (nowait) 
+	    result = Tcl_VarEval(dev->interp, dpsend_cmd1, dev->cmdbuf,
+				 (char **) NULL);
+	else
+	    result = Tcl_VarEval(dev->interp, dpsend_cmd0, dev->cmdbuf,
+				 (char **) NULL);
+    } 
+    else {
+	if (nowait) 
+	    result = Tcl_VarEval(dev->interp, tksend_cmd1, dev->cmdbuf,
+				 (char **) NULL);
+	else
+	    result = Tcl_VarEval(dev->interp, tksend_cmd0, dev->cmdbuf,
+				 (char **) NULL);
+    }
+
+    if (result) {
 	fprintf(stderr, "Server command \"%s\" failed:\n\t %s\n",
 		cmd, dev->interp->result);
-	abort_session(pls, "");
-    }
-}
-
-/*----------------------------------------------------------------------*\
-* server_cmdbg
-*
-* Sends specified command to server in the background.
-* I don't think an abort is possible here, but I left the test in
-* nevertheless.  This routine should be used with caution since it doesn't
-* verify the remote command is actually successful.  Some cases where
-* you may want to use it include:
-*
-*  - When issuing a command to the server right before a tkwait.
-*    Otherwise, the server could satisfy the tkwait'ed condition too
-*    quickly, causing a hang!  (E.g. when waiting for a variable to
-*    change.) 
-*
-*  - When high performance is the most important thing and the chances
-*    of failure are deemed to be small.
-\*----------------------------------------------------------------------*/
-
-static void
-server_cmdbg(PLStream *pls, char *cmdbg)
-{
-    TkDev *dev = (TkDev *) pls->dev;
-
-    dbug_enter("server_cmdbg");
-#ifdef DEBUG_ENTER
-    fprintf(stderr, "Sending command: %s\n", cmdbg);
-#endif
-
-    if (Tcl_VarEval(dev->interp, "after 1 [list $plsend [list $plserver] ",
-		    cmdbg, "]", (char **) NULL)) {
-	fprintf(stderr, "Server command \"%s\" failed:\n\t %s\n",
-		cmdbg, dev->interp->result);
 	abort_session(pls, "");
     }
 }
