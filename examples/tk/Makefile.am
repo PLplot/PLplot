@@ -103,6 +103,7 @@ examples_tk_SCRIPTS = \
 	tk03 \
 	tk04
 
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
 
 check_PROGRAMS = \
@@ -115,9 +116,9 @@ xtk01_CFLAGS = $(cflags)
 xtk02_CFLAGS = $(cflags)
 xtk04_CFLAGS = $(cflags)
 
-xtk01_LDFLAGS = $(libplplottcltk)
-xtk02_LDFLAGS = $(libplplottcltk)
-xtk04_LDFLAGS = $(libplplottcltk)
+xtk01_LDFLAGS = $(libplplot) $(libplplottcltk)
+xtk02_LDFLAGS = $(libplplot) $(libplplottcltk)
+xtk04_LDFLAGS = $(libplplot) $(libplplottcltk)
 
 # enable_tk
 endif

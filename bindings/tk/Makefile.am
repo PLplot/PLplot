@@ -22,7 +22,8 @@
 
 tcldir = $(TCL_DIR)
 
-libplplottcltk = ../tcl/libplplottcltk$(LIB_TAG).la
+libplplottcltk = $(top_builddir)/bindings/tcl/libplplottcltk$(LIB_TAG).la
+libplplot = $(top_builddir)/src/libplplot$(LIB_TAG).la
 
 if enable_tk
 
@@ -38,7 +39,7 @@ pkginclude_HEADERS = pltk.h
 bin_PROGRAMS = plserver
 plserver_SOURCES = plserver.c
 plserver_LDFLAGS = $(RPATH) -no-undefined
-plserver_LDADD = $(libplplottcltk)
+plserver_LDADD = $(libplplot) $(libplplottcltk)
 
 tcldata = \
 	FileSelector.tcl \

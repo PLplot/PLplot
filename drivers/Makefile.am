@@ -205,20 +205,23 @@ pstex_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)
 tek_la_SOURCES = tek.c
 tek_la_LDFLAGS = $(ldflags) $(libplplot)
 
-## tk.c has direct calls to Tcl and Tk library functions but not X libraries.
+## tk.c has direct calls to libplplot, libplplottcltk,
+## Tcl and Tk library functions but not X libraries.
 ## However, specify X and math libraries as well since libtk depends on them.
 tk_la_SOURCES = tk.c
-tk_la_LDFLAGS = $(ldflags) $(libplplottcltk) $(TKLIBCMD) $(TCLLIBCMD) \
-	       $(X_LIBS) -lX11 -lm
+tk_la_LDFLAGS = $(ldflags) $(libplplot) $(libplplottcltk) \
+	      $(TKLIBCMD) $(TCLLIBCMD) $(X_LIBS) -lX11 -lm
 
-## tkwin.c has direct calls to Tk, Tcl, and X libraries.
 tkwin_la_SOURCES = \
 	tkwin.c \
 	$(top_srcdir)/bindings/tk-x-plat/Plplotter_Init.c \
 	$(top_srcdir)/bindings/tk-x-plat/plplotter.c
 
-tkwin_la_LDFLAGS = $(ldflags) $(libplplottcltk) $(TKLIBCMD) $(TCLLIBCMD) \
-	       $(X_LIBS) -lX11 -lm
+## tkwin.c has direct calls to libplplot, libplplottcltk,
+## Tcl and Tk library functions but not X libraries.
+## However, specify X and math libraries as well since libtk depends on them.
+tkwin_la_LDFLAGS = $(ldflags) $(libplplot) $(libplplottcltk) \
+		 $(TKLIBCMD) $(TCLLIBCMD) $(X_LIBS) -lX11 -lm
 
 xfig_la_SOURCES = xfig.c
 xfig_la_LDFLAGS = $(ldflags) $(libplplot) $(lmflag)

@@ -23,9 +23,9 @@ dnl along with the file PLplot; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
 
-PL_ARG_ENABLE(tcl, [compile Tcl interface code], no)
+PL_ARG_ENABLE(tcl, [compile Tcl interface code], yes)
 
-PL_ARG_ENABLE(itcl, [enable incr Tcl interface code], no)
+PL_ARG_ENABLE(itcl, [enable incr Tcl interface code], yes)
 
 ITKLIBSTR=-litk
 TKLIBSTR=-ltk
