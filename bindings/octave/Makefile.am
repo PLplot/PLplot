@@ -49,9 +49,9 @@ doc-stamp plplot_octave_txt: etc/plplot.doc \
 	   $(top_srcdir)/doc/docbook/bin/api2text.pl \
 	   $(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
 	   $(top_srcdir)/doc/docbook/src/api.xml
-if has_xml_pm
 	mkdir -p plplot_octave_txt
 	cp etc/plplot.doc plplot_octave_txt/plplot.doc
+if has_xml_pm
 	( cd plplot_octave_txt ; \
 	  $(PERL) ../$(top_srcdir)/doc/docbook/bin/api2text.pl \
 	  ../$(top_srcdir)/doc/docbook/src/plplotdoc.xml.in \
@@ -59,7 +59,6 @@ if has_xml_pm
 	&& touch doc-stamp
 else
 	@echo "Perl modules not available: cannot generate full online help for plplot_octave" \
-	&& mkdir -p plplot_octave_txt \
 	&& touch doc-stamp
 endif
 
