@@ -552,8 +552,9 @@ void delaunay_destroy(delaunay* d)
     if (d->nedges > 0)
         free(d->edges);
 #ifdef USE_QHULL
-    /* This is a shallow copy if we're not using qhull so we don't need to free it */
-    if (d->npoints != NULL)
+    /* This is a shallow copy if we're not using qhull so we don't
+     * need to free it */
+    if (d->points != NULL)
         free(d->points);
 #endif
     if (d->n_point_triangles != NULL)
