@@ -5,7 +5,7 @@ function demo_page ($demo, $nfigs, $language) {
   include ("example_head.html");
 
   $demo_str = sprintf ("%02d", $demo);
-  $demo_dir = "../../examples-data/demo$demo_str";
+  $demo_dir = "../examples-data/demo$demo_str";
 
   print <<<END
 <div ALIGN="CENTER"><b>Select to see the example $demo source code</b></div>
