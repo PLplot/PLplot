@@ -68,7 +68,7 @@ static DrvOpt ps_options[] = {{"text", DRV_INT, &text, "Use Postscript text (tex
 /*--------------------------------------------------------------------------*\
  * adobe_symbol_enc (in)
  *
- * Trnasforms the character in from the PLplot Greek convention into the
+ * Transforms the character in from the PLplot Greek convention into the
  * Adobe encoding for the Symbol font.
 \*--------------------------------------------------------------------------*/
 
@@ -710,8 +710,6 @@ ps_getdate(void)
  *
  * Prints postscript strings.
  *
- * 5 Dec 04: Significantly revised by Tom Duck <tom.duck@dal.ca>.
- *
 \*--------------------------------------------------------------------------*/
 
 void
@@ -798,8 +796,8 @@ proc_str (PLStream *pls, EscText *args)
   plRotPhy(ORIENTATION, dev->xmin, dev->ymin, dev->xmax, dev->ymax, 
 	   &(args->x), &(args->y));
 
-  /* Make adjustments for page orientation */
-  theta+=90. - 90.*pls->diorot;
+  /* Determine the adjustment for page orientation */
+  theta += 90. - 90.*pls->diorot;
    
 
   /* Output */
@@ -928,9 +926,9 @@ proc_str (PLStream *pls, EscText *args)
 	    shear * font_factor * ENLARGE * ft_ht * scale,
 	    font_factor * ENLARGE * ft_ht * scale);
 
-    /* if up/down escape sequences, save current point and adjust baseline */
-
-    if(up!=0.) fprintf(OF, "gsave 0 %.3f rmoveto\n", up);
+    /* if up/down escape sequences, save current point and adjust baseline;
+     * take the shear into account */
+    if(up!=0.) fprintf(OF, "gsave %.3f %.3f rmoveto\n",up*shear,up);
 
     /* print the string */
     fprintf(OF, "(%s) show\n", str);  
