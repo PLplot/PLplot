@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.26  1994/01/17 21:33:28  mjl
+ * Revision 1.27  1994/01/25 06:21:34  mjl
+ * Removed code for default selection of background color based on display
+ * type -- now handled entirely in the server.  Fixed default name for
+ * container window to work when program name has a leading path
+ * specification.
+ *
+ * Revision 1.26  1994/01/17  21:33:28  mjl
  * Robustified send commands for when interpreter name has embedded blanks
  * (as occurs when the same application is started several times, each
  * creating its own main window).
@@ -127,7 +133,6 @@ static void  launch_server	(PLStream *);
 static void  flush_output	(PLStream *);
 static void  plwindow_init	(PLStream *);
 static void  link_init		(PLStream *);
-static void  bgcolor_init	(PLStream *);
 
 /* Tcl/TK utility commands */
 
@@ -202,9 +207,6 @@ init(PLStream *pls)
     pls->page = 0;
     pls->dev_di = 1;
     pls->dev_flush = 1;		/* Want to handle our own flushes */
-
-    if ( ! pls->bgcolorset) 
-	bgcolor_init(pls);
 
 /* Specify buffer size if not yet set (can be changed by -bufmax option).  */
 /* A small buffer works best for socket communication */
@@ -864,7 +866,7 @@ static void
 launch_server(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char *argv[20], *plserver_cmd;
+    char *argv[20], *plserver_exec, *ptr;
     int i;
     pid_t pid;
 
@@ -909,15 +911,18 @@ launch_server(PLStream *pls)
     }
 
 /* The display absolutely must be set if invoking a remote server (by remsh) */
-/* In this case it defaults to the same host as you are running the server */
+/* Use the DISPLAY environmental, if set.  Otherwise use the remote host. */
 
     if (pls->FileName != NULL) {
-	argv[i++] = "-display";		/* X display */
+	argv[i++] = "-display";
 	argv[i++] = pls->FileName;
     }
     else if ( pls->dp && pls->server_host != NULL ) {
-	argv[i++] = "-display";		/* X display */
-	argv[i++] = pls->server_host;
+	argv[i++] = "-display";
+	if ((ptr = getenv("DISPLAY")) != NULL)
+	    argv[i++] = ptr;
+	else
+	    argv[i++] = "unix:0.0";
     }
 
 /* Add terminating null */
@@ -954,18 +959,18 @@ launch_server(PLStream *pls)
 /* Running locally, so its a fork/exec */
 
     else {
-	plserver_cmd = plFindCommand(pls->plserver);
-	if ( (plserver_cmd == NULL) || (pid = FORK()) < 0) {
+	plserver_exec = plFindCommand(pls->plserver);
+	if ( (plserver_exec == NULL) || (pid = FORK()) < 0) {
 	    abort_session(pls, "Unable to fork server process");
 	}
 	else if (pid == 0) {
-	    fprintf(stderr, "Starting up %s\n", plserver_cmd);
-	    if (execv(plserver_cmd, argv)) {
+	    fprintf(stderr, "Starting up %s\n", plserver_exec);
+	    if (execv(plserver_exec, argv)) {
 		fprintf(stderr, "Unable to exec server process.\n");
 		_exit(1);
 	    }
 	}
-	free_mem(plserver_cmd);
+	free_mem(plserver_exec);
     }
 
 /* Wait for server to set up return communication channel */
@@ -1014,8 +1019,7 @@ static void
 plwindow_init(PLStream *pls)
 {
     TkDev *dev = (TkDev *) pls->dev;
-    char str[10];
-    long bg;
+    char str[10], *pname;
     int i;
 
     dbug_enter("plwindow_init");
@@ -1024,22 +1028,34 @@ plwindow_init(PLStream *pls)
 
     if (pls->plwindow == NULL) {
 
-/* Give it a name */
-/* To make sure it's unique, use the main window id (replace blanks */
-/* with underscores to avoid quoting problems) */
+/* Give window a name */
+/* Eliminate any leading path specification */
 
 	pls->plwindow = (char *)
 	    malloc(10+(strlen(pls->program)) * sizeof(char));
 
-	if (pls->ipls == 0)
-	    sprintf(pls->plwindow, ".%s", pls->program, pls->ipls);
+	pname = strrchr(pls->program, '/');
+	if (pname != NULL) 
+	    pname++;
 	else
-	    sprintf(pls->plwindow, ".%s_%d", pls->program, pls->ipls);
+	    pname = pls->program;
+
+/* Ensure that multiple widgets created by multiple streams have unique */
+/* names (in case this kind of capability is someday supported) */
+
+	if (pls->ipls == 0)
+	    sprintf(pls->plwindow, ".%s", pname, pls->ipls);
+	else
+	    sprintf(pls->plwindow, ".%s_%d", pname, pls->ipls);
+
+/* Replace any blanks with underscores to avoid quoting problems. */
 
 	for (i = 0; i < strlen(pls->plwindow); i++) {
 	    if (pls->plwindow[i] == ' ')
 		pls->plwindow[i] = '_';
 	}
+
+/* Finally, the baby has a name. */
 
 	Tcl_SetVar(dev->interp, "plwindow", pls->plwindow, 0);
 
@@ -1059,12 +1075,17 @@ plwindow_init(PLStream *pls)
 /* Now we should have the actual plplot widget name in $plwidget */
 /* Configure remote plplot stream. */
 
-/* Send background command */
+/* Configure background color if set */
+/* The default color is handled from a resource setting in plconfig.tcl */
 
-    bg = (((pls->bgcolor.r << 8) | pls->bgcolor.g) << 8) | pls->bgcolor.b;
-    sprintf(str, "#%06x", (bg & 0xFFFFFF));
-    Tcl_SetVar(dev->interp, "bg", str, 0);
-    server_cmd( pls, "$plwidget configure -bg $bg", 0 );
+    if (pls->bgcolorset) {
+	long bg;
+
+	bg = (((pls->bgcolor.r << 8) | pls->bgcolor.g) << 8) | pls->bgcolor.b;
+	sprintf(str, "#%06x", (bg & 0xFFFFFF));
+	Tcl_SetVar(dev->interp, "bg", str, 0);
+	server_cmd( pls, "$plwidget configure -bg $bg", 0 );
+    }
 
 /* nopixmap option */
 
@@ -1075,50 +1096,6 @@ plwindow_init(PLStream *pls)
 
     server_cmd( pls, "$plw_start_proc $plwindow [list $client]", 1 );
     tk_wait(pls, "[info exists widget_is_ready]" );
-}
-
-/*----------------------------------------------------------------------*\
-* bgcolor_init
-*
-* Sets up the background color in the remote window.
-*
-* Since background color is a very TK-ish thing, I support it in plframe
-* widgets in the normal TK-ish way, then pass the relevant info down to
-* plplot.  Setting the background color directly from plplot does not
-* give the right results.
-*
-* Also: while TK has the facility to choose color defaults on the basis of
-* whether the display device is color or monochrome, at present there is no
-* method particular to grayscale devices.  On these, I a white background
-* looks best, so I set the background (if not already set) from here to
-* white.  The result is the following set of contortions.
-\*----------------------------------------------------------------------*/
-
-static void
-bgcolor_init(PLStream *pls)
-{
-    int is_color = pls->color;
-
-/* If the user hasn't forced "color", see if we are grayscale */
-
-    if ( ! pls->colorset) {
-	Display *display;
-
-	display = XOpenDisplay(pls->FileName);
-	if (display != NULL) {
-	    is_color = ! pl_AreWeGrayscale(display);
-	    XCloseDisplay(display);
-	}
-    }
-
-/* Default is white if grayscale and no explicit color commands given */
-
-    if ( ! is_color) {
-	pls->bgcolorset = 1;
-	pls->bgcolor.r = 0xFF;
-	pls->bgcolor.g = 0xFF;
-	pls->bgcolor.b = 0xFF;
-    }
 }
 
 /*----------------------------------------------------------------------*\
@@ -1503,7 +1480,7 @@ server_cmd(PLStream *pls, char *cmd, int nowait)
     int result;
 
     dbug_enter("server_cmd");
-#ifdef DEBUG_ENTER
+#ifdef DEBUG
     fprintf(stderr, "Sending command: %s\n", cmd);
 #endif
 
