@@ -1,9 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.1  1995/04/12 08:21:11  mjl
+ * Revision 1.2  1995/05/07 02:22:20  mjl
+ * Added include of ctype.h for the demos that need it.
+ *
+ * Revision 1.1  1995/04/12  08:21:11  mjl
  * Created to keep all the junk common to the C demos.  Helps to keep me
  * from cluttering up plplot.h.
- *
 */
 
 /*	plcdemos.h
@@ -18,8 +20,9 @@
 #include <plplot.h>
 #include <math.h>
 #include <string.h>
+#include <ctype.h>
 
-/* define pi if not defined by math.h */
+/* define PI if not defined by math.h */
 
 #ifndef PI
 #define PI 3.1415926535897932384
