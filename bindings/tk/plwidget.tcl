@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.26  1994/08/25 04:01:23  mjl
+# Revision 1.27  1994/09/23 07:42:01  mjl
+# Added a status message while waiting for plot to print.
+#
+# Revision 1.26  1994/08/25  04:01:23  mjl
 # Simplified and sped up eop handling.
 #
 # Revision 1.25  1994/07/13  21:40:35  mjl
@@ -523,6 +526,8 @@ proc plw_end {w} {
 #----------------------------------------------------------------------------
 
 proc plw_print {w} {
+    plw_label_set $w "Printing plot..."
+    update
     if { [catch "$w.plwin print" foo] } {
 	bogue_out "$foo"
     } else {
