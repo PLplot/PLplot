@@ -1,6 +1,12 @@
 /* $Id$
  * $Log$
- * Revision 1.28  1994/03/23 08:02:48  mjl
+ * Revision 1.29  1994/04/08 12:31:39  mjl
+ * Removed driver interface handling of nopause (it was a bad idea).  Added
+ * call to (*plsc->tidy) [if defined] in plP_tidy.  Added a function
+ * plsMouseEH for setting the mouse event handler (contributed by Radey
+ * Shouman).
+ *
+ * Revision 1.28  1994/03/23  08:02:48  mjl
  * Provided for handling more basic operations in the driver interface rather
  * than the drivers themselves (pls->nopause, resetting stream parameters
  * after a tidy, etc).  Added support for hardware fill -- if the device does
@@ -94,19 +100,15 @@ plP_init(void)
 
 /* End of page */
 /* The plot buffer must be called first */
-/* Nothing done if nopause is set */
 
 void
 plP_eop(void)
 {
-    plflush();
-    if ( ! plsc->nopause) {
-	if (plsc->plbuf_write)
-	    plbuf_eop(plsc);
+    if (plsc->plbuf_write)
+	plbuf_eop(plsc);
 
-	offset = plsc->device - 1;
-	(*dispatch_table[offset].pl_eop) (plsc);
-    }
+    offset = plsc->device - 1;
+    (*dispatch_table[offset].pl_eop) (plsc);
 }
 
 /* Set up new page. */
@@ -127,6 +129,12 @@ plP_bop(void)
 void
 plP_tidy(void)
 {
+    if (plsc->tidy) {
+	(*plsc->tidy) (plsc->tidy_data);
+	plsc->tidy = NULL;
+	plsc->tidy_data = NULL;
+    }
+
     offset = plsc->device - 1;
     (*dispatch_table[offset].pl_tidy) (plsc);
 
@@ -1379,6 +1387,7 @@ plGetDev()
 	    plexit("plGetDev: Too many tries.");
     }
     plsc->device = dev;
+    strcpy(plsc->DevName, dispatch_table[dev - 1].pl_DevName);
 }
 
 /*----------------------------------------------------------------------*\
@@ -1530,6 +1539,15 @@ plsKeyEH(void (*KeyEH) (PLKey *, void *, int *), void *KeyEH_data)
 {
     plsc->KeyEH = KeyEH;
     plsc->KeyEH_data = KeyEH_data;
+}
+
+/* Set the function pointer for the mouse event handler */
+
+void
+plsMouseEH(void (*MouseEH) (PLMouse *, void *, int *), void *MouseEH_data)
+{
+    plsc->MouseEH = MouseEH;
+    plsc->MouseEH_data = MouseEH_data;
 }
 
 /* Set orientation.  Must be done before calling plinit. */
