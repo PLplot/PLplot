@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='us-ascii'?>
+<!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY examples '<ulink
+   url="http://plplot.sourceforge.net/examples/index.html">example
+   web page</ulink>'>
+]>
+
+<sect1>
+<title>Announcement of PLplot-5.2.2 (NOT YET RELEASED!)</title>
+<para>
+(Intro)
+</para>
+<itemizedlist>
+  <listitem>
+    <para>
+      What: (version)
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      Where: <ulink
+url="http://sourceforge.net/project/showfiles.php?group_id=2915">(tarball)</ulink>.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      When: (date)
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      Why: (reasons)
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      Who: The PLplot core development team with additional help from (someone)
+    </para>
+  </listitem>
+</itemizedlist>
+
+<para>
+(comments)
+</para>
+
+<sect2>
+<title>API Additions</title>
+<itemizedlist>
+  <listitem>
+    <para>
+      (changes)
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      (more changes)
+    </para>
+  </listitem>
+</itemizedlist>
+</sect2>
+
+
+<sect2>
+<title>Paradigm Shifts</title>
+
+<para>
+(if there are any)
+</para>
+</sect2>
+
+<sect2>
+<title>5.2.2 Improvements</title>
+<itemizedlist>
+  <listitem>
+    <para>
+      (improvement)
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      (other improvement)
+    </para>
+  </listitem>
+</itemizedlist>
+</sect2>
+
+<sect2>
+<title>Configuring, Building, Installing, and Testing PLplot</title>
+
+<sect3>
+<title>Configuring</title>
+
+<para>
+(comments)
+</para>
+
+</sect3>
+
+<sect3>
+<title>Building and installing</title>
+<para>
+The usual make; make install.
+</para>
+</sect3>
+
+<sect3>
+<title>Testing</title>
+
+<para>
+(comments)
+</para>
+
+<para>
+<programlisting># Script example
+</programlisting>
+</para>
+
+</sect3>
+</sect2>
+
+<sect2>
+<title>The Future</title>
+
+<para>
+(comments)
+</para>
+</sect2>
+
+<sect2>
+<title>Thanks</title>
+
+<para>
+(acknowledgements)
+</para>
+
+</sect2>
+
+<sect2>
+
+<title></title>
+<para>
+(developer), (date)
+</para>
+
+</sect2>
+
+</sect1>
