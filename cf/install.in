@@ -22,6 +22,7 @@
 install: install_lib \
 	$(INSTALL_F77) \
 	$(INSTALL_PYTHON) \
+	$(INSTALL_JAVA) \
 	$(INSTALL_TCL) \
 	$(INSTALL_TK) \
 	$(INSTALL_CXX) \

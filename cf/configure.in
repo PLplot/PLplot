@@ -89,6 +89,7 @@ enable_dynamic_drivers=no
 enable_f77=yes
 enable_cxx=yes
 enable_python=yes
+enable_java=no
 enable_tcl=yes
 enable_itcl=yes
 enable_octave=no
@@ -403,7 +404,10 @@ MY_ARG_ENABLE(cxx,
   [  --enable-cxx            compile C++ interface code ($enable_cxx)])
 
 MY_ARG_ENABLE(python,
-  [  --enable-python         compile python interface code ($enable_python)])
+  [  --enable-python         compile Python interface code ($enable_python)])
+
+MY_ARG_ENABLE(java,
+  [  --enable-java           compile Java interface code ($enable_java)])
 
 MY_ARG_ENABLE(octave,
   [  --enable-octave         compile Octave interface code ($enable_octave)])
@@ -587,6 +591,7 @@ cat $srcdir/cf/dist.in		>>Makefile.in
 AC_SUBST(enable_cxx)
 AC_SUBST(enable_f77)
 AC_SUBST(enable_python)
+AC_SUBST(enable_java)
 AC_SUBST(enable_tcl)
 AC_SUBST(enable_octave)
 
@@ -601,6 +606,9 @@ if test "$enable_f77" = "yes"; then
 fi
 if test "$enable_python" = "yes"; then
     cat $srcdir/cf/pkg_python.in >>Makefile.in 
+fi
+if test "$enable_java" = "yes"; then
+    cat $srcdir/cf/pkg_java.in >>Makefile.in 
 fi
 if test "$enable_tcl" = "yes"; then
     cat $srcdir/cf/pkg_tcl.in	>>Makefile.in 
@@ -893,6 +901,41 @@ ln -sf $srcdir/bindings/python/plmodule2.c .
 ln -sf $srcdir/bindings/python/plmodule.h plplot
 ln -sf $srcdir/bindings/python/setup.py .
 
+# Handle setting up the Java stuff.
+
+if test "$enable_java" = "yes"; then
+    # Set up the Java tree in the build dir.
+    if test ! -d java; then
+	mkdir java
+    fi
+    if test ! -d java/plplot; then
+	mkdir java/plplot
+    fi
+    if test ! -d java/plplot/core; then
+	mkdir java/plplot/core
+    fi
+    if test ! -d java/plplot/examples; then
+	mkdir java/plplot/examples
+    fi
+    
+    ln -s \
+    $srcdir/bindings/java/*.java \
+    ./java/plplot/core 2>/dev/null
+
+    ln -s \
+    $srcdir/bindings/java/*.java \
+    $srcdir/bindings/java/*.c \
+    . 2>/dev/null
+
+    ln -s \
+    $srcdir/examples/java/*.java \
+    ./java/plplot/examples 2>/dev/null
+
+    ln -s \
+    $srcdir/examples/java/*.java \
+    . 2>/dev/null
+fi
+
 if test "$enable_tcl" = "yes"; then
     ln -s \
     `ls $srcdir/bindings/tcl/*.* |grep -v '\.h$'` \
@@ -1010,8 +1053,8 @@ with_gcc:	$with_gcc		with_rpath:	$with_rpath
 enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
 enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
 enable_cxx:	$enable_cxx		enable_python:	$enable_python
-enable_f77:	$enable_f77		enable_gnome:	$enable_gnome
-enable_octave:	$enable_octave
+enable_f77:	$enable_f77		enable_java:	$enable_java
+enable_octave:	$enable_octave		enable_gnome:	$enable_gnome
 "
 
 cat << EOF > config.summary

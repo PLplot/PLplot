@@ -1,0 +1,28 @@
+# -*-makefile-*----------------------------------------------------------------
+# $Id$
+#
+# Make support for the PLplot Java interface.
+#
+# Java support is provided in PLplot by using JNI to vector from Java
+# over to the PLplot C library.  Java classes provide a wrapper for
+# the PLplot API.
+# -----------------------------------------------------------------------------
+
+# Variables for use in "make" and "make install".
+
+INSTALL_JAVA	= install_java
+JAVA_OBJ := javabind$O
+
+JAVA_STUFF := java_build_target
+
+install_java:
+	@echo "Don't know how to install Java yet."
+
+jsrcs := $(wildcard java/plplot/examples/*.java java/plplot/core/*.java)
+jclss := $(jsrcs:.java=.class)
+
+%.class : %.java
+	javac $<
+
+java_build_target: $(jclss)
+	@echo "Java targets rebuilt -- NOT!!!"

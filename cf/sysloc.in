@@ -140,6 +140,47 @@ if test "$enable_xwin" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+# Attempt to find jni.h, if java support is enabled.
+# ----------------------------------------------------------------------------
+
+if test "$enable_xwin" = "yes"; then
+    if test -n "$JAVA_HOME"; then
+	if test -r "$JAVA_HOME/include/jni.h"; then
+	    JAVAINCDIR="$JAVA_HOME/include"
+	fi
+    else
+	# Should make token effort to find jni.h anyway, presumably
+	# employing AC_TRY_CPP.  Later...
+	AC_MSG_RESULT( "Uhhh." )
+    fi
+
+    if test -n "$JAVAINCDIR"; then
+	# Now we need to find the machine dependent directory.
+	case $system in 
+	    Linux* )
+		JAVAMDINCDIR="$JAVAINCDIR/linux"
+	    ;;
+	    * ) 	
+		AC_MSG_RESULT(Can't find Java machine dependent includes.)
+	    ;;
+	esac
+
+	if ! test -r "$JAVAMDINCDIR/jni_md.h"; then
+	    JAVAMDINCDIR=""
+	fi
+
+	if test -z "$JAVAMDINCDIR"; then
+	    AC_MSG_RESULT(Missing jni_md.h, disabling Java support.)
+	    enable_java=no
+	fi
+
+    else
+	AC_MSG_RESULT(warning: Java Native Interface include file not found)
+	enable_java=no
+    fi
+fi
+
+# ----------------------------------------------------------------------------
 # Find libgd libraries and headers and libpng, libjpeg, and zlib libraries
 # required for building png and/or jpeg drivers.  
 # Written by Alan W. Irwin following what is done for X.
@@ -517,6 +558,10 @@ if test "$enable_xwin" = "yes"; then
 fi
 if test "$enable_png" = "yes" -o "$enable_jpeg" = "yes"; then
     ADD_TO_INCS($GDINCDIR, INCS, INCPATH)
+fi
+if test "$enable_java" = "yes"; then
+    ADD_TO_INCS($JAVAINCDIR, INCS, INCPATH)
+    ADD_TO_INCS($JAVAMDINCDIR, INCS, INCPATH)
 fi
 if test "$enable_tcl" = "yes"; then
     ADD_TO_INCS($TCLINCDIR, INCS, INCPATH)

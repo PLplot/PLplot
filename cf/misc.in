@@ -13,7 +13,7 @@
 # configure-time generated symlinks in tk/examples.
 
 clean:
-	-$(RM) -rf shared plplot drivers ti_files python_dynamic
+	-$(RM) -rf shared plplot java drivers ti_files python_dynamic
 	find . ! -name . \( -newer .plcfg -o -type l \) -exec rm {} \;
 	for filename in $(top_srcdir)/bindings/f77/*.fm4; \
 	do  \
