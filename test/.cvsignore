@@ -10,4 +10,9 @@ plplot-test.sh
 test_python.sh
 test_f77.sh
 test_java.sh
+test_c.sh
+test_cxx.sh
+test_octave.sh
+test_tcl.sh
+test_perl.sh
 *.ps
