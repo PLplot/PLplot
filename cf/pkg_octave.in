@@ -22,8 +22,11 @@ INSTALL_OCTAVE	= install_octave
 
 # 'mkoctfile' does not accept -rpath, use LD_RUN_PATH
 
-plplot_octave.oct: plplot_octave.cc
-	LD_RUN_PATH=`pwd` $(MKOCTFILE) -v -I. -L. plplot_octave.cc $(OCTAVE_LIBS)
+plplot_octave.oct: plplot_octave.o
+	LD_RUN_PATH=`pwd` $(MKOCTFILE) -v -I. -L. plplot_octave.o $(OCTAVE_LIBS)
+
+plplot_octave.o: plplot_octave.cc
+	$(MKOCTFILE) -c -v -I. -L. plplot_octave.cc $(OCTAVE_LIBS)
 
 plplot_octave.cc tmp_stub: plplot/plplot_octave.h
 	$(MATWRAP) -language octave plplot/plplot_octave.h -o plplot_octave.cc \
@@ -47,17 +50,15 @@ plplot_stub.m: etc/plplot.doc tmp_stub massage
 massage: massage.c
 	$(CC) $^ -o $@
 
-install_octave: install_octave_demos
+install_octave: plplot_octave.o install_octave_demos
 	@-if test ! -d $(OCTAVE_DIR)/support; then mkdir -p $(OCTAVE_DIR)/support; fi; \
-	LD_RUN_PATH=$(LIB_DIR) $(MKOCTFILE) -v -I. -L. plplot_octave.cc $(OCTAVE_LIBS); \
+	LD_RUN_PATH=$(LIB_DIR) $(MKOCTFILE) -v -I. -L. plplot_octave.o $(OCTAVE_LIBS); \
 	$(CP) $(OCTAVE_EXE) $(OCTAVE_DIR);\
 	(cd $(srcdir)/bindings/octave/PLplot; $(CP) *.m $(OCTAVE_DIR);\
 	$(CP) support/*.m $(OCTAVE_DIR)/support);\
 	(cd $(OCTAVE_DIR);\
 	sed -e 's\PLPLOT_OCTAVE_PATH\$(OCTAVE_DIR)//\' plplot_octave_path.m > po;\
-	mv po plplot_octave_path.m;\
-	sed -e 's\PLPLOT_OCTAVE_PATH\$(OCTAVE_DIR)//\' use_plplot.m > po;\
-	mv po use_plplot.m;)
+	mv po plplot_octave_path.m;)
 
 install_octave_demos:
 	@-if test ! -d $(DEMOS_DIR)/octave; then mkdir -p $(DEMOS_DIR)/octave; fi; \
