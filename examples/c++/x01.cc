@@ -179,17 +179,18 @@ x01::x01( int argc, char ** argv ) {
   if (f_name) { // command line option '-save filename'
 
     cout << "The current plot was saved in color Postscript under the name `" <<  f_name << "'" << endl;
-    //    pls->gstrm(&cur_strm);    /* get current stream */
-    //      pls->mkstrm(&new_strm);   /* create a new one */
+    plstream *pls2;
+    
+    pls2 = new plstream();     /* create a new one */
 
-    //      pls->sfnam(f_name);       /* file name */
-    //      pls->sdev("psc");         /* device type */
+    pls2->sfnam(f_name);       /* file name */
+    pls2->sdev("psc");         /* device type */
 
-    //      pls->cpstrm(cur_strm, 0); /* copy old stream parameters to new stream */
-    //      pls->replot();            /* do the save by replaying the plot buffer */
-    //      pls->end1();              /* finish the device */
+    pls2->cpstrm(*pls, 0);     /* copy old stream parameters to new stream */
+    pls2->replot();            /* do the save by replaying the plot buffer */
+    
+    delete pls2;
 
-    //      pls->sstrm(cur_strm);     /* return to previous stream */
     }
 
   // Let's get some user input
