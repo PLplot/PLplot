@@ -188,12 +188,6 @@ void plD_init_png(PLStream *pls)
     pls->page = 0;
     pls->dev_fill0 = 1;         /* Can do solid fills */
 
-   /*temporary override until the width stuff is debugged */
-#define GD2_VERS 1
-#if GD2_VERS < 2 
-    pls->width = 1;
-#endif
-
     if (!pls->colorset)
 	pls->color = 1;         /* Is a color device */
 
@@ -248,10 +242,6 @@ void plD_init_png(PLStream *pls)
      plP_setpxl(dev->scale*pls->xdpi/25.4,dev->scale*pls->ydpi/25.4);
 
      plP_setphy(0, dev->scale*dev->pngx, 0, dev->scale*dev->pngy);
-
-#if GD2_VERS >= 2 
-    gdImageSetThickness(dev->im_out, pls->width);
-#endif
 
 }
 
@@ -487,8 +477,8 @@ PLFLT tmp_colour_pos;
 
     switch (op) {
 
-#if GD2_VERS >= 2 
     case PLSTATE_WIDTH:
+#if GD2_VERS >= 2 
         gdImageSetThickness(dev->im_out, pls->width);
 	break;
 #endif
@@ -516,7 +506,7 @@ PLFLT tmp_colour_pos;
     case PLSTATE_COLOR1:
         /*
          * Start by checking to see if we have to compensate for cases where
-         * we don't have the full dynamic range of cmap1 at out disposal
+         * we don't have the full dynamic range of cmap1 at our disposal
          */
         if (dev->ncol1<pls->ncol1)   
            {
@@ -532,7 +522,7 @@ PLFLT tmp_colour_pos;
     case PLSTATE_CMAP0:
     case PLSTATE_CMAP1:
     /*
-     *  Code to redfeine the entire palette
+     *  Code to redefine the entire palette
      */
 	if (pls->color)
 	    setcmap(pls);
@@ -587,10 +577,11 @@ void plD_bop_png(PLStream *pls)
     dev->im_out = gdImageCreate(pls->xlength, pls->ylength);
     setcmap(pls);
 
-#if GD2_VERS >= 2 
-    gdImageSetThickness(dev->im_out, pls->width);
-#endif
-
+/* This ensures the line width is set correctly at the beginning of
+ *    each page */
+   
+   plD_state_png(pls, PLSTATE_WIDTH);
+   
 
 }
 
