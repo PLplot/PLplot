@@ -287,10 +287,13 @@ if test "$enable_f77" = "yes"; then
     # Try to locate the executable now.  If it can't be found, look
     # for g77.
 
-    AC_CHECK_PROG(found_F77, $F77, yes, no)
+    found_f77=""; AC_CHECK_PROG(found_F77, $F77, yes, no)
     if test "$found_F77" = "no"; then
-	AC_CHECK_PROG(found_g77, g77, yes, no)
-	if test "$found_g77" = "yes"; then
+	found_g77=""; AC_CHECK_PROG(found_g77, g77, yes, no)
+	if test "$found_g77" = "no"; then
+	    AC_MSG_RESULT([warning: cannot find Fortran compiler, setting enable_f77=no])
+	    enable_f77=no
+	else
 	    F77=g77
 	fi
     fi
