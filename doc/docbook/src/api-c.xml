@@ -138,9 +138,49 @@
 
   </sect1>
 
+  <sect1 id="plabort" renderas="sect3">
+    <title>
+      <function>plabort</function>: Error abort
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plabort</function>
+	</funcdef>
+        <paramdef><parameter>message</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      This routine is to be used when something goes wrong that doesn't
+      require calling &plexit; but for which there is no useful recovery.
+      It calls the abort handler defined via &plsabort;, does some cleanup
+      and returns. The user can supply his/her own abort handler and pass it
+      in via &plsabort;.  
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>message</parameter>
+	  (<literal>char *</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Abort message.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
   <sect1 id="plexit" renderas="sect3">
     <title>
-      <function>plexit</function>: Error abort
+      <function>plexit</function>: Error exit
     </title>
 
     <para>
@@ -157,10 +197,11 @@
     <para>
       This routine is called in case an error is encountered during
       execution of a PLplot routine.  It prints the error message, tries to
-      release allocated resources, calls <function>plsexit</function> and
-      then exits.  If cleanup needs to be done in the driver program then
-      the user may want to supply his/her own version of
-      <function>plsexit</function>.
+      release allocated resources, calls the handler prvided by &plsexit;
+      and then exits.  If cleanup needs to be done in the driver program
+      then the user may want to supply his/her own exit handler and pass it
+      in via &plsexit;.  This function should either call &plend; before
+      exiting, or simply return. 
     </para>
 
     <variablelist>
@@ -213,6 +254,78 @@
       </varlistentry>
     </variablelist>
     
+  </sect1>
+
+  <sect1 id="plsabort" renderas="sect3">
+    <title>
+      <function>plsabort</function>: Set abort handler
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plsabort</function>
+	</funcdef>
+        <paramdef><parameter>handler</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Sets an optional user abort handler.  See &plabort; for details.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>handler</parameter>
+	  (<literal>void (*) (char *)</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Error abort handler.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
+  </sect1>
+
+  <sect1 id="plsexit" renderas="sect3">
+    <title>
+      <function>plsexit</function>: Set exit handler
+    </title>
+
+    <para>
+      <funcsynopsis>
+      <funcprototype>
+	<funcdef>
+	  <function>plsexit</function>
+	</funcdef>
+        <paramdef><parameter>handler</parameter></paramdef>
+      </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Sets an optional user exit handler.  See &plexit; for details.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+	<term>
+	  <parameter>handler</parameter>
+	  (<literal>int (*) (char *)</literal>, input)
+	</term>
+	<listitem>
+	  <para>
+	    Error exit handler.
+	  </para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+
   </sect1>
 
   <sect1 id="plsfile" renderas="sect3">

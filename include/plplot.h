@@ -1416,6 +1416,11 @@ plsError(PLINT *errcode, char *errmsg);
 void
 plsexit(int (*handler) (char *));
 
+/* Sets an optional user abort handler. */
+
+void
+plsabort(void (*handler) (char *));
+
 	/* Transformation routines */
 
 /* Identity transformation. */

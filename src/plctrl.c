@@ -43,6 +43,9 @@ strcat_delim(char *dirspec);
 static int
 (*exit_handler) (char *errormsg);
 
+void
+(*abort_handler) (char *errormsg);
+
 static void
 plcmap0_def(int imin, int imax);
 
@@ -938,11 +941,18 @@ plwarn(char *errormsg)
  * Much the same as plwarn(), but appends ", aborting operation" to the
  * error message.  Helps to keep source code uncluttered and provides a
  * convention for error aborts.
+ * 
+ * If cleanup needs to be done in the main program, the user should write
+ * his/her own exit handler and pass it in via plsabort().
 \*--------------------------------------------------------------------------*/
 
 void
 plabort(char *errormsg)
 {
+
+    if (abort_handler != NULL)
+         (*abort_handler)(errormsg);
+  
     if (plsc->errcode != NULL)
 	*(plsc->errcode) = 1;
 
@@ -966,6 +976,19 @@ plabort(char *errormsg)
 	if (was_gfx == 1)
 	    plgra();
     }
+}
+
+
+/*--------------------------------------------------------------------------*\
+ * void plsabort()
+ *
+ * Sets an optional user abort handler.
+\*--------------------------------------------------------------------------*/
+
+void
+plsabort(void (*handler) (char *))
+{
+    abort_handler = handler;
 }
 
 /*--------------------------------------------------------------------------*\
