@@ -40,7 +40,7 @@
 #include <string.h>
 #include <time.h>
 #include "plunicode-type1.h"
-#include "plfci.h"
+#include "plfci-type1.h"
 
 /* Device info */
 
