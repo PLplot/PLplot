@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.14  1993/08/18 20:30:10  mjl
+ * Revision 1.15  1993/09/08 02:35:20  mjl
+ * Added stream variables for driver interface coordinate mapping settings.
+ *
+ * Revision 1.14  1993/08/18  20:30:10  mjl
  * Switched over to new page description variables mar, aspect, jx, and jy,
  * and deleted the old ones.  Added a variable widthlock that is set when
  * -width is used to modify the pen width, so that subsequent plwid() calls
@@ -218,6 +221,12 @@ typedef struct {
 * dioyay	PLFLT
 * dioyb 	PLFLT
 *
+* dimxmin	PLFLT	
+* dimymin	PLFLT	Target coordinate system parameters.
+* dimxmax	PLFLT
+* dimymax	PLFLT	
+* dimxpmm	PLFLT
+* dimypmm	PLFLT
 * dimxax 	PLFLT	Map meta to physical coordinates:
 * dimxb 	PLFLT	  x' = dimxax * x + dimxb
 * dimyay 	PLFLT
@@ -380,6 +389,7 @@ typedef struct {
     PLFLT diorot;
     PLFLT dioxax, dioxay, dioxb, dioyax, dioyay, dioyb;
     PLFLT dimxax, dimxb, dimyay, dimyb;
+    PLFLT dimxmin, dimymin, dimxmax, dimymax, dimxpmm, dimypmm;
 
 /* Driver settings */
 
@@ -446,12 +456,10 @@ void  plgpls		(PLStream **);
 void  plCmaps_init	(PLStream *);
 void  plOpenFile	(PLStream *);
 void  plFamInit		(PLStream *);
-PLINT plGetInt		(char *);
-PLFLT plGetFlt		(char *);
 void  plGetFam		(PLStream *);
 void  plRotPhy		(PLINT, PLINT, PLINT, PLINT, PLINT, 
 			 int *, int *, int *, int *);
 void  plP_sfnam		(PLStream *, char *);
-PLDev * plAllocDev	(PLStream *pls);
+PLDev *plAllocDev	(PLStream *pls);
 
 #endif	/* __PLSTREAM_H__ */
