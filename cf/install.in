@@ -28,7 +28,7 @@ install_lib:
 	-if [ ! -d $(INFO_DIR) ] ; then mkdir -p $(INFO_DIR); fi
 	-cd ../lib; cp $(PLLIB_BASE)* *.fnt *.map $(LIB_DIR)
 	-$(RANLIB) $(LIB_DIR)/$(PLLIB_BASE)*$A
-	-cd ..; cp README README.1st Changes.log COPYRIGHTS FAQ ToDo mklinks \
+	-cd ..; cp README NEWS CHANGES Copyright COPYING.LIB FAQ ToDo mklinks \
 		$(DOC_DIR)
 	-if [ ! -f $(DOC_DIR)/README.local ] ; then \
 		cp ../doc/README.local $(DOC_DIR); fi
@@ -41,15 +41,15 @@ install_lib:
 
 install_demos:
 	-if [ ! -d $(DEMOS_DIR) ] ; then mkdir -p $(DEMOS_DIR); fi
-	-if [ ! -d $(DEMOS_DIR)/C ] ; then mkdir -p $(DEMOS_DIR)/C; fi
+	-if [ ! -d $(DEMOS_DIR)/c ] ; then mkdir -p $(DEMOS_DIR)/c; fi
 	-if [ ! -d $(DEMOS_DIR)/f77 ] ; then mkdir -p $(DEMOS_DIR)/f77; fi
 	-if [ ! -d $(DEMOS_DIR)/tcl ] ; then mkdir -p $(DEMOS_DIR)/tcl; fi
 	-if [ ! -d $(DEMOS_DIR)/tk ] ; then mkdir -p $(DEMOS_DIR)/tk; fi
 	-cp Makedemo $(DEMOS_DIR)/Makefile
-	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/C
+	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/c
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/f77
 	-$(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk
-	-cp ../examples/C/* $(DEMOS_DIR)/C
+	-cp ../examples/c/* $(DEMOS_DIR)/c
 	-cp ../examples/f77/* $(DEMOS_DIR)/f77
 	-cp ../examples/tcl/* $(DEMOS_DIR)/tcl
 	-cp ../examples/tk/* $(DEMOS_DIR)/tk

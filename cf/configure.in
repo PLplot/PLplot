@@ -380,7 +380,7 @@ if test ! -f tmp/plcore.c; then
     ../src/*.c \
     ../src/tcl/*.c \
     ../src/stubc/*.c \
-    ../examples/C/*.c \
+    ../examples/c/*.c \
     ../examples/tcl/*.tcl \
     ../examples/tk/*.c \
     ../examples/tk/tk* \
