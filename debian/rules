@@ -24,7 +24,6 @@ debdoc		:= $(debshr)/doc
 debinfo		:= $(debshr)/info
 debex		:= $(deblib)/plplot$(version)/examples
 deboct		:= $(debtmp)$(shell octave-config --oct-site-dir)
-cfflags		:= --with-double --disable-linuxvga
 
 export DEMOS_DIR = /usr/share/doc/plplot/examples
 
@@ -38,7 +37,8 @@ config:
 	./configure --prefix=/usr --mandir=/usr/share/man --enable-tcl \
                     --enable-tk --enable-gd --enable-dyndrivers \
                     --disable-static --enable-python --enable-octave \
-                    --enable-gnome $(cfflags)
+                    --enable-gnome --with-double --disable-linuxvga \
+                    --enable-docbook
 
 build: build-stamp
 build-stamp: config
@@ -168,7 +168,7 @@ binary-arch: build install
 	dh_fixperms -a
 	#dh_suidregister -a
 	DH_COMPAT=3 dh_makeshlibs -a
-	dh_makeshlibs -V -a 
+	dh_makeshlibs -V -a
 	dh_shlibdeps -L libplplot5 -l debian/libplplot5/usr/lib
 	dh_installdeb -a
 	dh_shlibdeps -a -l$(debbase)/plplot-tcl/usr/lib
