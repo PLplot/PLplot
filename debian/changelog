@@ -1,3 +1,10 @@
+plplot (5.2.1-14) unstable; urgency=low
+
+  * Rebuilt with new octave2.1 package (2.1.50-1), such that the
+    octave-plplot has the correct dependencies in unstable.
+
+ -- Rafael Laboissiere <rafael@debian.org>  Thu,  3 Jul 2003 11:01:24 +0200
+
 plplot (5.2.1-13) unstable; urgency=low
 
   * Use new upstream version of sysloc.in, with better
