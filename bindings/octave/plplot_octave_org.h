@@ -469,8 +469,7 @@ typedef struct {
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
-#define    plotsh3d	c_plotsh3d
-#define    plotfc3d	c_plotfc3d
+#define    plsurf3d	c_plsurf3d
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
 #define    plpoin3	c_plpoin3
@@ -592,8 +591,7 @@ typedef struct {
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
-#define    c_plotsh3d	plotsh3d
-#define    c_plotfc3d	plotfc3d
+#define    c_plsurf3d	plsurf3d
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
 #define    c_plpoin3	plpoin3
@@ -1034,27 +1032,16 @@ void my_plot3d(PLFLT *x, PLFLT *y, PLFLT *z,
 	c_plot3d(x, y, zz, nx, ny, opt, side);
 } //%name plot3d //%input x(nx), y(ny), z(nx,ny)
 
-/* Plots a 3-d shaded representation of the function z[x][y]. */
+/* Plots the 3-d surface representation of the function z[x][y]. */
 
-void c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
-	PLINT nx, PLINT ny, PLINT side); //%nowrap
+void c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z,
+	PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel); //%nowrap
 
-void my_plotsh3d(PLFLT *x, PLFLT *y, PLFLT *z,
-	PLINT nx, PLINT ny, PLINT side) {
+void my_plsurf3d(PLFLT *x, PLFLT *y, PLFLT *z,
+	PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel) {
 	f2c(z, zz, nx, ny)
-	c_plotsh3d(x, y, zz, nx, ny, side);
-} //%name plotsh3d //%input x(nx), y(ny), z(nx,ny)
-
-/* Plots a 3-d magnitude colored representation of the function z[x][y]. */
-
-void c_plotfc3d(PLFLT *x, PLFLT *y, PLFLT **z,
-	PLINT nx, PLINT ny, PLINT side); //%nowrap
-
-void my_plotfc3d(PLFLT *x, PLFLT *y, PLFLT *z,
-	PLINT nx, PLINT ny, PLINT side) {
-	f2c(z, zz, nx, ny)
-	c_plotfc3d(x, y, zz, nx, ny, side);
-} //%name plotfc3d //%input x(nx), y(ny), z(nx,ny)
+	c_plsurf3d(x, y, zz, nx, ny, opt, clevel, nlevel);
+} //%name plsurf3d //%input x(nx), y(ny), z(nx,ny), clevel(nlevel)
 	
 /* Set fill pattern directly. */
 
