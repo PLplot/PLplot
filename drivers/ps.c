@@ -668,7 +668,7 @@ proc_str (PLStream *pls, EscText *args)
   
   /* calculate baseline text angle */
 
-  angle = ((PLFLT)(ORIENTATION-1) + pls->diorot) * 90.;
+  angle = ((PLFLT)(ORIENTATION-1) - pls->diorot) * 90.;
   a1 = acos(t[0]) * 180. / PI;
   if (t[2] > 0.)
     alpha = a1 - angle;
@@ -755,9 +755,9 @@ proc_str (PLStream *pls, EscText *args)
      * for text == 1 and not.  */
 
     if (fmod(angle, 180.) == 0.)
-      angle -= 90.;
-    else
       angle += 90.;
+    else
+      angle -= 90.;
     
     angle = angle*PI/180.;
     tt[0] = t[0]; tt[1] = t[1]; tt[2] = t[2]; tt[3] = t[3];
