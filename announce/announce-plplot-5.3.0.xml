@@ -163,7 +163,10 @@
 	    as well as <quote>default visual</quote>.  To disable them, the
 	    user has to use <quote><literal>-drvopt
 	    usepth=0</literal></quote> and <quote><literal>-drvopt
-	    defvis=0</literal></quote>. 
+	    defvis=0</literal></quote>.  Note that the
+	    <literal>usepth</literal> option is only effective when PLplot
+	    is configured <literal>--with-pthreads</literal> (which is now
+	    disabled by default).
           </para>
         </listitem>
       </itemizedlist>
