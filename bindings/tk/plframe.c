@@ -102,7 +102,6 @@ typedef struct {
     int continue_draw;		/* Set when doing rubber-band draws */
     Cursor draw_cursor;		/* cursor used for drawing */
     PLFLT pxl, pxr, pyl, pyr;	/* Bounds on plot viewing area */
-    PLFLT dxl, dxr, dyl, dyr;	/* Bounds on device viewing area */
     char *yScrollCmd;		/* Command prefix for communicating with
 				 * vertical scrollbar.  NULL means no
 				 * command to issue.  Malloc'ed. */
@@ -211,6 +210,7 @@ static int   Info		(Tcl_Interp *, PlFrame *, int, char **);
 static int   OpenFifo		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Orient		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Page		(Tcl_Interp *, PlFrame *, int, char **);
+static int   Print		(Tcl_Interp *, PlFrame *, int, char **);
 static int   ReadData		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Redraw		(Tcl_Interp *, PlFrame *, int, char **);
 static int   Save		(Tcl_Interp *, PlFrame *, int, char **);
@@ -347,10 +347,6 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     plFramePtr->pyl = 0.;
     plFramePtr->pxr = 1.;
     plFramePtr->pyr = 1.;
-    plFramePtr->dxl = 0.;
-    plFramePtr->dyl = 0.;
-    plFramePtr->dxr = 1.;
-    plFramePtr->dyr = 1.;
     plFramePtr->SaveFnam = NULL;
     plFramePtr->devDesc = NULL;
     plFramePtr->devName = NULL;
@@ -532,10 +528,16 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	}
     }
 
-/* page -- change or return window into device space */
+/* page -- change or return output page setup */
 
     else if ((c == 'p') && (strncmp(argv[1], "page", length) == 0)) {
 	result = Page(interp, plFramePtr, argc-2, argv+2);
+    }
+
+/* print -- prints plot */
+
+    else if ((c == 'p') && (strncmp(argv[1], "print", length) == 0)) {
+	result = Print(interp, plFramePtr, argc-2, argv+2);
     }
 
 /* read -- read <nbytes> of data from fifo or socket */
@@ -611,7 +613,7 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
     else {
 	Tcl_AppendResult(interp, "bad option \"", argv[1],
 	 "\":  must be attach, cmd, configure, draw, detach, info, ",
-	 "openfifo, orient, page, read, redraw, save, view, ",
+	 "openfifo, orient, page, print, read, redraw, save, view, ",
 	 "xscroll, or yscroll", (char *) NULL);
 
 	result = TCL_ERROR;
@@ -1290,45 +1292,120 @@ Orient(Tcl_Interp *interp, register PlFrame *plFramePtr,
 }
 
 /*----------------------------------------------------------------------*\
+* Print
+*
+* Processes "print" widget command.
+* Handles printing of plot, duh.
+*
+* Creates a temporary file, dumps the current plot to it in metafile form,
+* and then execs the "plpr" script to actually print it.  Since we output
+* it in metafile form here, plpr must invoke plrender to drive the output
+* to the appropriate file type.  The script is responsible for the deletion
+* of the plot metafile.
+*
+* This way of printing is reasonably flexible while retaining a measure
+* of security.  Methods involving setting up the command to print from
+* the Tcl side are not recommended at present since the print command
+* could be changed to something dangerous (like an rm *).
+\*----------------------------------------------------------------------*/
+
+static int
+Print(Tcl_Interp *interp, register PlFrame *plFramePtr,
+       int argc, char **argv)
+{
+    PLINT ipls;
+    int result = TCL_OK;
+    char *sfnam;
+    FILE *sfile;
+    pid_t pid;
+
+/* Create stream for save */
+
+    plmkstrm(&ipls);
+    if (ipls < 0) {
+	Tcl_AppendResult(interp, "Error -- cannot create stream", 
+			 (char *) NULL);
+	return TCL_ERROR;
+    }
+
+/* Open file for writes */
+
+    sfnam = (char *) tempnam((char *) NULL, "pltk");
+
+    if ((sfile = fopen(sfnam, "wb+")) == NULL) {
+	Tcl_AppendResult(interp, 
+			 "Error -- cannot plot file for writing",
+			 (char *) NULL);
+	plend1();
+	return TCL_ERROR;
+    }
+
+/* Initialize stream */
+
+    plsdev("plmeta");
+    plsfile(sfile);
+    plinit();
+    pladv(0);
+    plcpstrm(plFramePtr->ipls, 0);
+    
+/* Remake current plot, close file, and switch back to original stream */
+
+    plreplot();
+    plend1();
+    plsstrm(plFramePtr->ipls);
+
+/* So far so good.  Time to exec the print script. */
+
+    if ( (pid = fork()) < 0) {
+	Tcl_AppendResult(interp, 
+			 "Error -- cannot fork print process",
+			 (char *) NULL);
+	result = TCL_ERROR;
+    }
+    else if (pid == 0) {
+	if (execlp("plpr", "plpr", sfnam, (char *) 0)) {
+	    fprintf(stderr, "execlp error.\n");
+	    _exit(1);
+	}
+    }
+
+    return result;
+}
+
+/*----------------------------------------------------------------------*\
 * Page
 *
 * Processes "page" widget command.
-* Handles selection of page area in which to plot.
+* Handles parameters such as margin, aspect ratio, and justification
+* of final plot.
 \*----------------------------------------------------------------------*/
 
 static int
 Page(Tcl_Interp *interp, register PlFrame *plFramePtr,
      int argc, char **argv)
 {
-    PLFLT xl, xr, yl, yr;
 
-/* page -- return coordinates of current device window */
+/* page -- return current device window parameters */
 
     if (argc == 0) {
+	PLFLT mar, aspect, jx, jy;
 	char result_str[128];
-	plgdidev(&xl, &yl, &xr, &yr);
-	sprintf(result_str, "%g %g %g %g", xl, yl, xr, yr);
+
+	plgdidev(&mar, &aspect, &jx, &jy);
+	sprintf(result_str, "%g %g %g %g", mar, aspect, jx, jy);
 	Tcl_SetResult(interp, result_str, TCL_VOLATILE);
 	return TCL_OK;
     }
 
-/* page <xmin> <ymin> <xmax> <ymax> -- set window into device space */
+/* page <mar> <aspect> <jx> <jy> -- set up page */
 
     if (argc < 4) {
 	Tcl_AppendResult(interp, "wrong # args: should be \"",
-			 " page xmin ymin xmax ymax\"", (char *) NULL);
+			 " page mar aspect jx jy\"", (char *) NULL);
 	return TCL_ERROR;
     } 
-    else {
-	gbox(&xl, &yl, &xr, &yr, argv);
-	plsdidev(xl, yl, xr, yr);
-    }
 
-    plFramePtr->dxl = xl;
-    plFramePtr->dyl = yl;
-    plFramePtr->dxr = xr;
-    plFramePtr->dyr = yr;
-
+    plsdidev(atof(argv[0]), atof(argv[1]), atof(argv[2]), atof(argv[3]));
     return(Redraw(interp, plFramePtr, argc-1, argv+1));
 }
 
@@ -1544,6 +1621,7 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
     if (argc == 0) {
 	char result_str[128];
 	plgdiplt(&xl, &yl, &xr, &yr);
+	pldip2dc(&xl, &yl, &xr, &yr);
 	sprintf(result_str, "%g %g %g %g", xl, yl, xr, yr);
 	Tcl_SetResult(interp, result_str, TCL_VOLATILE);
 	return TCL_OK;
@@ -1573,7 +1651,10 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
 	else {
 	    gbox(&xl, &yl, &xr, &yr, argv+1);
+	    pldid2pc(&xl, &yl, &xr, &yr);
 	    plsdiplt(xl, yl, xr, yr);
+	    plgdiplt(&xl, &yl, &xr, &yr);
+	    pldip2dc(&xl, &yl, &xr, &yr);
 	}
     }
 
@@ -1589,16 +1670,10 @@ View(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	}
 	else {
 	    gbox(&xl, &yl, &xr, &yr, argv+1);
-	    xl = (xl - plFramePtr->dxl) / (plFramePtr->dxr - plFramePtr->dxl);
-	    xr = (xr - plFramePtr->dxl) / (plFramePtr->dxr - plFramePtr->dxl);
-	    yl = (yl - plFramePtr->dyl) / (plFramePtr->dyr - plFramePtr->dyl);
-	    yr = (yr - plFramePtr->dyl) / (plFramePtr->dyr - plFramePtr->dyl);
-	    xl = MAX(0., MIN(1., xl));
-	    yl = MAX(0., MIN(1., yl));
-	    xr = MAX(0., MIN(1., xr));
-	    yr = MAX(0., MIN(1., yr));
+	    pldid2pc(&xl, &yl, &xr, &yr);
 	    plsdiplz(xl, yl, xr, yr);
 	    plgdiplt(&xl, &yl, &xr, &yr);
+	    pldip2dc(&xl, &yl, &xr, &yr);
 	}
     }
 
@@ -1635,19 +1710,24 @@ xScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	int argc, char **argv)
 {
     int x0, width = Tk_Width(plFramePtr->tkwin);
-    PLFLT xl, xr, xlen;
+    PLFLT xl, xr, yl, yr, xlen;
+    PLFLT xmin = 0., ymin = 0., xmax = 1., ymax = 1.;
+
+    pldip2dc(&xmin, &ymin, &xmax, &ymax);
 
     xlen = plFramePtr->pxr - plFramePtr->pxl;
     x0 = atoi(argv[0]);
     xl = x0 / (double) width;
-    xl = MAX( 0., MIN((1. - xlen), xl));
+    xl = MAX( xmin, MIN((xmax - xlen), xl));
     xr = xl + xlen;
-
     plFramePtr->pxl = xl;
     plFramePtr->pxr = xr;
 
-    plsdiplt(plFramePtr->pxl, plFramePtr->pyl,
-	     plFramePtr->pxr, plFramePtr->pyr);
+    yl = plFramePtr->pyl;
+    yr = plFramePtr->pyr;
+
+    pldid2pc(&xl, &yl, &xr, &yr);
+    plsdiplt(xl, yl, xr, yr);
 
     plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
     return(Redraw(interp, plFramePtr, argc, argv));
@@ -1665,19 +1745,24 @@ yScroll(Tcl_Interp *interp, register PlFrame *plFramePtr,
 	int argc, char **argv)
 {
     int y0, height = Tk_Height(plFramePtr->tkwin);
-    PLFLT yl, yr, ylen;
+    PLFLT xl, xr, yl, yr, ylen;
+    PLFLT xmin = 0., ymin = 0., xmax = 1., ymax = 1.;
+
+    pldip2dc(&xmin, &ymin, &xmax, &ymax);
 
     ylen = plFramePtr->pyr - plFramePtr->pyl;
     y0 = atoi(argv[0]);
     yr = 1. - y0 / (double) height;
-    yr = MAX( ylen, MIN(1., yr));
+    yr = MAX( ymin+ylen, MIN(ymax, yr));
     yl = yr - ylen;
-
     plFramePtr->pyl = yl;
     plFramePtr->pyr = yr;
 
-    plsdiplt(plFramePtr->pxl, plFramePtr->pyl,
-	     plFramePtr->pxr, plFramePtr->pyr);
+    xl = plFramePtr->pxl;
+    xr = plFramePtr->pxr;
+
+    pldid2pc(&xl, &yl, &xr, &yr);
+    plsdiplt(xl, yl, xr, yr);
 
     plFramePtr->flags |= UPDATE_V_SCROLLBAR|UPDATE_H_SCROLLBAR;
     return(Redraw(interp, plFramePtr, argc, argv));
