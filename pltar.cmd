@@ -15,8 +15,7 @@ cd ..
 tar cf plplot.tar plplot/README
 tar rf plplot.tar plplot/README.1st
 tar rf plplot.tar plplot/COPYRIGHTS
-tar rf plplot.tar plplot/Changes
-tar rf plplot.tar plplot/Changes.old
+tar rf plplot.tar plplot/Changes.log
 tar rf plplot.tar plplot/ToDo
 tar rf plplot.tar plplot/pltar*
 tar rf plplot.tar plplot/plzoo*

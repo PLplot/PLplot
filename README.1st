@@ -7,8 +7,7 @@ Please refer to the following files for more information:
 
 README		General introduction, where to get more information, etc.
 README.1st	This file
-Changes		Describes the most recent changes to plplot.
-Changes.old	Archive of previous Changes files.
+Changes.log	Log of changes to plplot in reverse chronological order.
 ToDo		Describes what's on the agenda (no promises, however :-).
 
 Also there is system-specific documentation under sys/<system-name>, and

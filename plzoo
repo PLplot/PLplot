@@ -17,8 +17,7 @@ cd ..
 zoo a ${zoofile} ${pldir}/README
 zoo a ${zoofile} ${pldir}/README.1st
 zoo a ${zoofile} ${pldir}/COPYRIGHTS
-zoo a ${zoofile} ${pldir}/Changes
-zoo a ${zoofile} ${pldir}/Changes.old
+zoo a ${zoofile} ${pldir}/Changes.log
 zoo a ${zoofile} ${pldir}/ToDo
 zoo a ${zoofile} ${pldir}/pltar*
 zoo a ${zoofile} ${pldir}/plzoo*
