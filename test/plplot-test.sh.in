@@ -140,14 +140,13 @@ cdir=$EXAMPLES_DIR/c
 cxxdir=$EXAMPLES_DIR/c++
 f77dir=$EXAMPLES_DIR/f77
 pythondir=$EXAMPLES_DIR/python
-pythonsrcdir=$SRC_EXAMPLES_DIR/python
 tcldir=$SRC_EXAMPLES_DIR/tcl
 perldir=$SRC_EXAMPLES_DIR/perl
 javadir=$EXAMPLES_DIR/java
 octave=@OCTAVE@
 octavedir=$EXAMPLES_DIR/../bindings/octave//:$EXAMPLES_DIR/octave//:@PLPLOT_OCTAVE_DIR@//:@OCTAVE_M_DIR@//:@OCTAVE_OCT_DIR@//:
 PATH=$EXAMPLES_DIR/../utils:@exec_prefix@/bin:$PATH
-export cdir cxxdir f77dir pythondir pythonsrcdir javadir octave octavedir tcldir perldir PATH
+export cdir cxxdir f77dir pythondir javadir octave octavedir tcldir perldir PATH
 
 fe=""
 
