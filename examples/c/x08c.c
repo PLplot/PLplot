@@ -86,7 +86,7 @@ static int sombrero;
 
 static PLOptionTable options[] = {
   {
-    "sombrero",			/* Turns on test of API locate function */
+    "sombrero",			/* Turns on use of Sombrero function */
     NULL,
     NULL,
     &sombrero,
