@@ -19,6 +19,11 @@
 #along with the file; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 
+# x19f.f excluded from this list because the plmap and plmeridians fortran
+# API is not implemented as part of the common API (and probably won't be 
+# for a long time because of having to work around the mapform type of 
+# argument for these functions).
+
 f77_examples = \
 	x01f.f \
 	x02f.f \
@@ -36,8 +41,7 @@ f77_examples = \
 	x15f.f \
 	x16f.f \
 	x17f.f \
-	x18f.f \
-	x19f.f
+	x18f.f
 
 AM_CPPFLAGS = $(INCLTDL)
 
@@ -58,8 +62,7 @@ f77m4_sources = \
 	x15f.fm4 \
 	x16f.fm4 \
 	x17f.fm4 \
-	x18f.fm4 \
-	x19f.fm4
+	x18f.fm4
 
 # Need explicit dependencies for Solaris make.
 x01f.f: x01f.fm4
@@ -96,8 +99,6 @@ x17f.f: x17f.fm4
 
 x18f.f: x18f.fm4
 
-x19f.f: x19f.fm4
-
 SUFFIXES = .fm4
 
 .fm4.f:
@@ -125,8 +126,7 @@ check_PROGRAMS = \
 	x15f \
 	x16f \
 	x17f \
-	x18f \
-	x19f
+	x18f
 
 x01f_SOURCES = x01f.f
 x02f_SOURCES = x02f.f
@@ -145,7 +145,6 @@ x15f_SOURCES = x15f.f
 x16f_SOURCES = x16f.f
 x17f_SOURCES = x17f.f
 x18f_SOURCES = x18f.f
-x19f_SOURCES = x19f.f
 
 LDADD = $(top_builddir)/bindings/f77/libplplotf77$(LIB_TAG).la
 

@@ -24,6 +24,11 @@ INCLUDEANDLIB = -I@INCLUDE_DIR@ -L@LIB_DIR@ -lplplotf77@LIB_TAG@
 F77 = @F77@
 EXEEXT = @EXEEXT@
 
+# x19f excluded from this list because the plmap and plmeridians fortran
+# API is not implemented as part of the common API (and probably won't be 
+# for a long time because of having to work around the mapform type of 
+# argument for these functions).
+
 EXECUTABLES_list = \
 		 x01f$(EXEEXT) \
 		 x02f$(EXEEXT) \
@@ -41,8 +46,7 @@ EXECUTABLES_list = \
 		 x15f$(EXEEXT) \
 		 x16f$(EXEEXT) \
 		 x17f$(EXEEXT) \
-		 x18f$(EXEEXT) \
-		 x19f$(EXEEXT)
+		 x18f$(EXEEXT)
 
 all: $(EXECUTABLES_list)
 
