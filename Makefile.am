@@ -22,4 +22,4 @@ doc_DATA = \
 	PROBLEMS \
 	README
 
-CLEANFILES = plplot_libtool
+CLEANFILES = plplot_libtool reconfig
