@@ -1,6 +1,9 @@
 /* $Id$
  * $Log$
- * Revision 1.9  1993/11/15 08:31:37  mjl
+ * Revision 1.10  1995/03/16 23:23:45  mjl
+ * Obsoleted old metafile types and other cleaning up.
+ *
+ * Revision 1.9  1993/11/15  08:31:37  mjl
  * Bumped metafile version number since now write pages info to header.
  *
  * Revision 1.8  1993/08/09  22:16:39  mjl
@@ -20,7 +23,7 @@
 	5 May 1991
 	
 	This file contains definitions of constants and structures which
-	are needed by the PLPLOT metafile writer and renderer.
+	are needed by the PLplot metafile writer and renderer.
 */
 
 /*
@@ -39,14 +42,13 @@
 #define PLSERV_HEADER	"PLPLOT"
 #define PLSERV_VERSION	"1993b"
 
-/* Symbolic constants for old metafile versions (prior to 1992a).
-   Now these are stored in the metafile header. */
+/* Symbolic constants for old metafile versions (prior to 1992a). */
+/* Now these are stored in the metafile header. */
 
 #define PLMETA_X_OLD	10000
 #define PLMETA_Y_OLD	10000
 
-/* These numbers are supposed to be in dots/mm.  Since I am using a very
-   large virtual display space, these need to be pretty big. */
+/* Virtual dots/mm for our virtual display space. */
 
 #define PIXEL_RES_X_OLD		42
 #define PIXEL_RES_Y_OLD		56
@@ -61,7 +63,7 @@
     if (code) plexit( "Unable to read from MetaFile" )
 
 /*
-   The available commands are as follows.
+   Metafile commands.
 
    *** NOTICE !!! ***
    If you change ANY of the following, you will wreck backward
@@ -71,21 +73,18 @@
 
 #define INITIALIZE	1
 #define CLOSE		2
-#define SWITCH_TO_TEXT	3
-#define SWITCH_TO_GRAPH	4
+#define SWITCH_TO_TEXT	3	/* Obsolete, replaced by ESCAPE */
+#define SWITCH_TO_GRAPH	4	/* Obsolete, replaced by ESCAPE */
 #define EOP		5
-#define CLEAR		5	/* deprecated */
 #define BOP		6
-#define PAGE		6	/* deprecated */
-#define NEW_COLOR	7
-#define NEW_WIDTH	8
+#define NEW_COLOR	7	/* Obsolete, replaced by CHANGE_STATE */
+#define NEW_WIDTH	8	/* Obsolete, replaced by CHANGE_STATE */
 #define LINE		9
 #define LINETO		10
 #define ESCAPE		11
-#define ADVANCE		12
+#define ADVANCE		12	/* Obsolete, BOP/EOP used instead */
 #define POLYLINE	13
 #define NEW_COLOR0 	NEW_COLOR
 #define NEW_COLOR1	14
 #define CHANGE_STATE	15
-
-#define END_OF_FIELD 255
+#define END_OF_FIELD	255
