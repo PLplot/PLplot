@@ -1,5 +1,10 @@
 /* $Id$
  * $Log$
+ * Revision 1.7  2002/07/10 13:54:22  airwin
+ * Remove tkInt.h include for Unix/Linux systems because it appears it is not
+ * necessary and many of the Linux distributions do not package this internal
+ * Tk header.
+ *
  * Revision 1.6  2002/07/10 09:52:38  vincentdarley
  * resolve name clashes, and sync pltools.tcl
  *
@@ -84,7 +89,8 @@ for use by the cross platform Tk system.
 #include "plplot/plevent.h"
 
 #define _TCLINT
-#ifdef USE_TCL_STUBS
+
+#if defined(USE_TCL_STUBS) && (defined(MAC_TCL) || defined(__WIN32__))
 /* Unfortunately, tkInt.h ends up loading Malloc.h under Windows */
 /* So we have to deal with this mess */
     #undef malloc 
@@ -96,8 +102,6 @@ for use by the cross platform Tk system.
     #define free(m) ckfree((char*)m)
     #define realloc ckrealloc
     #define calloc ckcalloc
-#else
-#include <tkInt.h>
 #endif
 
 #ifdef ckalloc
