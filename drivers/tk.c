@@ -1,6 +1,11 @@
 /* $Id$
  * $Log$
- * Revision 1.12  1993/09/27 20:34:26  mjl
+ * Revision 1.13  1993/09/28 21:29:40  mjl
+ * Fixed some inconsistencies in the byte count.  Now prints a status message
+ * prior to forking plserver, and executes the copy in the current directory
+ * if present.
+ *
+ * Revision 1.12  1993/09/27  20:34:26  mjl
  * Eliminated some cases of freeing unallocated memory.
  *
  * Revision 1.11  1993/09/08  04:52:23  mjl
@@ -251,24 +256,24 @@ plD_line_tk(PLStream *pls, short x1, short y1, short x2, short y2)
     if (x1 == dev->xold && y1 == dev->yold) {
 	c = (U_CHAR) LINETO;
 	tk_wr(pdf_wr_1byte(dev->file, c));
+	pls->bytecnt += 1;
 
 	xy[0] = x2;
 	xy[1] = y2;
 	tk_wr(pdf_wr_2nbytes(dev->file, xy, 2));
-
-	pls->bytecnt += 5;
+	pls->bytecnt += 4;
     }
     else {
 	c = (U_CHAR) LINE;
 	tk_wr(pdf_wr_1byte(dev->file, c));
+	pls->bytecnt += 1;
 
 	xy[0] = x1;
 	xy[1] = y1;
 	xy[2] = x2;
 	xy[3] = y2;
 	tk_wr(pdf_wr_2nbytes(dev->file, xy, 4));
-
-	pls->bytecnt += 9;
+	pls->bytecnt += 8;
     }
     dev->xold = x2;
     dev->yold = y2;
@@ -297,9 +302,11 @@ plD_polyline_tk(PLStream *pls, short *xa, short *ya, PLINT npts)
 
     tk_wr(pdf_wr_1byte(dev->file, c));
     tk_wr(pdf_wr_2bytes(dev->file, (U_SHORT) npts));
+    pls->bytecnt += 3;
+
     tk_wr(pdf_wr_2nbytes(dev->file, (U_SHORT *) xa, npts));
     tk_wr(pdf_wr_2nbytes(dev->file, (U_SHORT *) ya, npts));
-    pls->bytecnt += (3 + 4 * npts);
+    pls->bytecnt += 4*npts;
 
     dev->xold = xa[npts - 1];
     dev->yold = ya[npts - 1];
@@ -386,6 +393,7 @@ plD_state_tk(PLStream *pls, PLINT op)
     dbug_enter("plD_state_tk");
 
     tk_wr(pdf_wr_1byte(dev->file, c));
+    pls->bytecnt += 1;
 
     switch (op) {
 
@@ -424,7 +432,16 @@ plD_state_tk(PLStream *pls, PLINT op)
 void
 plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
 {
+    U_CHAR c = (U_CHAR) ESCAPE;
+    TkDev *dev = (TkDev *) pls->dev;
+
     dbug_enter("plD_esc_tk");
+
+    tk_wr(pdf_wr_1byte(dev->file, c));
+    pls->bytecnt += 1;
+
+    tk_wr(pdf_wr_1byte(dev->file, op));
+    pls->bytecnt += 1;
 
     switch (op) {
 
@@ -453,6 +470,10 @@ tk_di(PLStream *pls)
 
     if (dev == NULL) 
 	plexit("tk_di: Illegal call to driver (not yet initialized)");
+
+/* Flush the buffer before proceeding */
+
+    flush_output(pls);
 
 /* Change orientation */
 
@@ -746,6 +767,7 @@ launch_server(PLStream *pls)
 /* Start server process */
 
     plserver_cmd = find_plserver(pls->plserver);
+    printf("Starting up %s\n", plserver_cmd);
     if ( (pid = FORK()) < 0) {
 	abort_session(pls, "fork error");
     }
@@ -1319,7 +1341,7 @@ find_plserver(char *fn)
 
 /* Current directory */
 
-    plGetName("", "", fn, &fs);
+    plGetName(".", "", fn, &fs);
     if ( ! findname(fs))
 	return fs;
 
