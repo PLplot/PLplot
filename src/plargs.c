@@ -1,14 +1,11 @@
-<<<<<<< plargs.c
 /* $Id$
-=======
-/* $Id$
->>>>>>> 1.30
  * $Log$
- * Revision 1.31  1995/05/08 16:44:38  shouman
+ * Revision 1.32  1995/05/08 18:12:58  mjl
+ * Fixed problem with file header.
+ *
+ * Revision 1.31  1995/05/08  16:44:38  shouman
  * Protect against NULL pointer dereference.
  *
-<<<<<<< plargs.c
-=======
  * Revision 1.30  1995/05/07  03:05:45  mjl
  * Added handling for new flags: -verbose, -debug, -ncol0, -ncol1.  Eliminated
  * all uses of PL_OPT_ENABLED in favor of PL_OPT_DISABLED (applied in reverse).
@@ -21,7 +18,6 @@
  * it to a handler function if PL_PARSE_NODELETE is specified.  Some of the
  * handlers call strtok(), altering the option they are handed.
  *
->>>>>>> 1.30
  * Revision 1.28  1995/04/14  21:45:26  mjl
  * Fixed plParseOpts() to correctly remove recognized arguments from argv[].
  *
@@ -930,8 +926,10 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 		    tab->opt);
 	    return 1;
 	}
-				/* handler may mung optarg with strtok() */
+
         if (mode_nodelete && optarg) {
+
+	/* Make a copy, since handler may mung optarg with strtok() */
 	    char *copy = 
 	      (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
 	    if (copy == NULL) {
@@ -940,11 +938,12 @@ ProcessOpt(char *opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 	    }
 	    strcpy(copy, optarg);
 	    res = ((*tab->handler) (opt, copy, tab->client_data));
-	    free(copy);
+	    free((void *) copy);
 	    return res;
 	}
-	else
+	else {
 	  return ((*tab->handler) (opt, optarg, tab->client_data));
+	}
 
     case PL_OPT_BOOL:
 
