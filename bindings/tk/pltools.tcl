@@ -1,6 +1,9 @@
 # $Id$
 # $Log$
-# Revision 1.10  1993/09/08 02:33:18  mjl
+# Revision 1.11  1993/10/06 19:49:06  mjl
+# Made Form2d proc more general.
+#
+# Revision 1.10  1993/09/08  02:33:18  mjl
 # Folded window positioning for dialogs (dpos $w) into the mkDialog proc,
 # since these are easy to forget (and I missed one last time).
 #
@@ -378,7 +381,7 @@ proc Form2d {w desc} {
     message $w.msg \
 	-font $dialog_font \
 	-aspect 700 \
-	-text "Enter $desc.  Each coordinate should range from 0 to 1, with (0,0) corresponding to the lower left hand corner.  Click \"OK\" button when finished."
+	-text "$desc  Click \"OK\" button when finished."
 
     pack append $w \
 	$w.msg {top fill}
