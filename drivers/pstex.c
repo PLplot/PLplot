@@ -159,10 +159,27 @@ proc_str (PLStream *pls, EscText *args)
 	  args->x, args->y, alpha, jst, ref, ft_ht);
 
   /* font family, serie and shape. Currently not supported by plplot */
-  fprintf(fp,"{\\familydefault}{\\mddefault}{\\updefault}");
+  /* use current font instead
+   o 1: Normal font (simplest and fastest)
+   o 2: Roman font
+   o 3: Italic font
+   o 4: Script font (use sans serif instead)
+  */
+
+   switch (pls->cfont) {
+   case (1): fprintf(fp,"{\\familydefault}"); break;
+   case (2): fprintf(fp,"{\\rmdefault}"); break;
+   case (3): fprintf(fp,"{\\itdefault}"); break;
+   case (4): fprintf(fp,"{\\sfdefault}"); break;
+   default:fprintf(fp,"{\\familydefault}");
+   }
+
+  fprintf(fp,"{\\mddefault}{\\updefault}");
 
   /* font color. */
-  fprintf(fp,"\\special{ps: gsave %.3f %.3f %.3f setrgbcolor}{%s}%
+  fprintf(fp,"\\special{ps: gsave %.3f %.3f %.3f setrgbcolor}%
+% Your text follows:
+{%s}%
 \\special{ps: grestore}}}}\n",
 	  pls->curcolor.r /255., pls->curcolor.g /255.,
 	  pls->curcolor.b /255., cptr);
@@ -308,12 +325,13 @@ parse_str(const char *str, char *dest)
 	tp += n; opened++; fontset++;
 	break;
 
-      case 's': /* Script */
-	if (!math)
-	  *tp++ = '$';
+      case 's': /* Script. Don't, use sans serif */
+	if (math)
+	  n = sprintf(tp, "\\mathsf{");
+	else
+	  n = sprintf(tp, "\\textsf{");
 
-	n = sprintf(tp, "\\mathcal{");
-	tp += n; opened++; fontset++; math++;
+	tp += n; opened++; fontset++;
 	break;
 
       default:
