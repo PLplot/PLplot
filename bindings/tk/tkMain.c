@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.7  1996/10/25 19:16:43  furnish
+ * Revision 1.8  1998/11/18 06:12:39  furnish
+ * Grotesque hacks to omit old Itcl support code from the compiled side.
+ * Not really sure what to do just yet.  The old Itcl support required
+ * various and assundry hacks on the compiled side to register things
+ * with the Itk system.  It seems superficially, that these requirements
+ * have been lifted, but I don't yet have enough comprehension of the
+ * issues to be 100% certain.
+ *
+ * Revision 1.7  1996/10/25  19:16:43  furnish
  * Pick up private header so we can see if configured for itcl, etc.
  *
  * Revision 1.6  1996/10/18  19:56:43  furnish
@@ -79,9 +87,9 @@
 #ifdef HAVE_ITCL
 #include <itcl.h>
 #endif
-#ifdef HAVE_ITK
-#include <itk.h>
-#endif
+/* #ifdef HAVE_ITK */
+/* #include <itk.h> */
+/* #endif */
 
 /*
  * Declarations for various library procedures and variables (don't want

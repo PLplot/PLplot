@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.38  1996/10/18 19:59:11  furnish
+ * Revision 1.39  1998/11/18 06:12:38  furnish
+ * Grotesque hacks to omit old Itcl support code from the compiled side.
+ * Not really sure what to do just yet.  The old Itcl support required
+ * various and assundry hacks on the compiled side to register things
+ * with the Itk system.  It seems superficially, that these requirements
+ * have been lifted, but I don't yet have enough comprehension of the
+ * issues to be 100% certain.
+ *
+ * Revision 1.38  1996/10/18  19:59:11  furnish
  * Remember to initialize Itk if so configured.
  *
  * Revision 1.37  1996/06/26  21:35:15  furnish
@@ -239,16 +247,16 @@ AppInit(Tcl_Interp *interp)
 	return TCL_ERROR;
     }
 #endif
-#ifdef HAVE_ITCL
-    if (Itcl_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-#endif
-#ifdef HAVE_ITK
-    if (Itk_Init(interp) == TCL_ERROR) {
-	return TCL_ERROR;
-    }
-#endif
+/* #ifdef HAVE_ITCL */
+/*     if (Itcl_Init(interp) == TCL_ERROR) { */
+/* 	return TCL_ERROR; */
+/*     } */
+/* #endif */
+/* #ifdef HAVE_ITK */
+/*     if (Itk_Init(interp) == TCL_ERROR) { */
+/* 	return TCL_ERROR; */
+/*     } */
+/* #endif */
 #ifdef PLD_dp
     if (Tdp_Init(interp) == TCL_ERROR) {
 	return TCL_ERROR;

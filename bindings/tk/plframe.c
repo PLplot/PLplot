@@ -1,6 +1,14 @@
 /* $Id$
  * $Log$
- * Revision 1.59  1998/01/06 23:45:12  furnish
+ * Revision 1.60  1998/11/18 06:12:36  furnish
+ * Grotesque hacks to omit old Itcl support code from the compiled side.
+ * Not really sure what to do just yet.  The old Itcl support required
+ * various and assundry hacks on the compiled side to register things
+ * with the Itk system.  It seems superficially, that these requirements
+ * have been lifted, but I don't yet have enough comprehension of the
+ * issues to be 100% certain.
+ *
+ * Revision 1.59  1998/01/06  23:45:12  furnish
  * Would you believe JO changed his mind /again/???
  *
  * Revision 1.58  1996/10/11  23:12:28  furnish
@@ -155,6 +163,8 @@
 #include <unistd.h>
 #endif
 #include <fcntl.h>
+
+#undef HAVE_ITCL
 
 extern int plplot_ccmap;
 
