@@ -236,6 +236,9 @@ if test `pwd` = "$srcdir"; then
 	mkdir tmp
     fi
     cd tmp
+    if test -f $srcdir/cf_plplot.in ; then
+        ln -s $srcdir/cf_plplot.in . 2>/dev/null
+    fi
     exec $srcdir/configure "$@"
 fi
 
@@ -540,7 +543,7 @@ if test -z "$BIN_DIR"; then
     BIN_DIR=$prefix/bin
 fi
 if test -z "$TCL_DIR"; then
-    TCL_DIR=$prefix/lib/tcl8.0/plplot
+    TCL_DIR=$prefix/lib/plplot/tcl
 fi
 if test -z "$PYTHON_DIR"; then
     PYTHON_DIR=$prefix/lib/python1.5/site-packages
@@ -552,16 +555,16 @@ if test "$enable_python" = "yes"; then
     fi
 fi
 if test -z "$DOC_DIR"; then
-    DOC_DIR=$prefix/doc/plplot
+    DOC_DIR=$prefix/share/doc/plplot
 fi
 if test -z "$INFO_DIR"; then
-    INFO_DIR=$prefix/info
+    INFO_DIR=$prefix/share/info
 fi
 if test -z "$INCLUDE_DIR"; then
     INCLUDE_DIR=$prefix/include/plplot
 fi
 if test -z "$DEMOS_DIR"; then
-    DEMOS_DIR=$prefix/doc/plplot/examples
+    DEMOS_DIR=$prefix/share/doc/plplot/examples
 fi
 
 AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR")
