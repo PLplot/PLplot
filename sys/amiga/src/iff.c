@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/01/23 06:12:45  mjl
-   Preliminary work on new graphical interface (2.04-specific) for the Amiga.
+   Revision 1.4  1993/02/23 05:31:59  mjl
+   Eliminated xxx_adv driver function.
 
+ * Revision 1.3  1993/01/23  06:12:45  mjl
+ * Preliminary work on new graphical interface (2.04-specific) for the Amiga.
+ *
  * Revision 1.2  1992/10/12  17:11:22  mjl
  * Amiga-specific mods, including ANSI-fication.
  *
@@ -176,19 +179,6 @@ iff_page(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* iff_adv()
-*
-* Advance to the next page.
-\*----------------------------------------------------------------------*/
-
-void 
-iff_adv(PLStream *pls)
-{
-    iff_clear(pls);
-    iff_page(pls);
-}
-
-/*----------------------------------------------------------------------*\
 * iff_tidy()
 *
 * Close graphics file or otherwise clean up.
@@ -197,7 +187,6 @@ iff_adv(PLStream *pls)
 void 
 iff_tidy(PLStream *pls)
 {
-    iff_clear(pls);
     mapfree();
     pls->fileset = 0;
     pls->page = 0;

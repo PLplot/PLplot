@@ -1,8 +1,11 @@
 /* $Id$
    $Log$
-   Revision 1.3  1993/01/23 06:12:43  mjl
-   Preliminary work on new graphical interface (2.04-specific) for the Amiga.
+   Revision 1.4  1993/02/23 05:31:57  mjl
+   Eliminated xxx_adv driver function.
 
+ * Revision 1.3  1993/01/23  06:12:43  mjl
+ * Preliminary work on new graphical interface (2.04-specific) for the Amiga.
+ *
  * Revision 1.2  1992/10/12  17:11:20  mjl
  * Amiga-specific mods, including ANSI-fication.
  *
@@ -213,19 +216,6 @@ amiwn_page(PLStream *pls)
 }
 
 /*----------------------------------------------------------------------*\
-* amiwn_adv()
-*
-* Advance to the next page.
-\*----------------------------------------------------------------------*/
-
-void 
-amiwn_adv(PLStream *pls)
-{
-    amiwn_clear(pls);
-    amiwn_page(pls);
-}
-
-/*----------------------------------------------------------------------*\
 * amiwn_tidy()
 *
 * Close graphics file or otherwise clean up.
@@ -234,13 +224,8 @@ amiwn_adv(PLStream *pls)
 void 
 amiwn_tidy(PLStream *pls)
 {
-    beepw();
     ClosePLWind();
     CloseLibs();
-    if (fbuffer) {
-	fclose(PlotFile);
-	remove(PLOTBFFR);
-    }
     pls->page = 0;
     pls->OutFile = NULL;
 }
