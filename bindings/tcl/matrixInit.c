@@ -1,4 +1,4 @@
-#include "tclMatrix.h"
+#include "plplot/tclMatrix.h"
 
 int Matrix_Init	(Tcl_Interp*);
 

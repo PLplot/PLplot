@@ -30,10 +30,13 @@
 # Library dependency list and targets
 # -----------------------------------------------------------------------------
 
+# Redefine CP so we preserve symlinks on library installs.
+CP	= cp -p -a
+
 SOVERSION	= @SOVERSION@
-LIBVERSION	:= $(shell ./version)
 
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+<<<<<<< lib_sh_linux.in
 # Modified by Rafael Laboissiere <rafael@icp.inpg.fr> on 1998/06/13
 # avoid "./" prepended to *.so name
 # PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE).so.$(SOVERSION)
@@ -45,19 +48,34 @@ PLLIB_SO	= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
 # SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
 # SONAME		= $(PLLIB_BASE).so.$(SOVERSION)
 SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
+=======
+SONAME		= $(PLLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
+LINKNAME	= $(PLLIB_BASE)$(LIB_TAG).so
 
+#No LIB_TAG for matrix library!
+MATLIB_SO	= $(PLLIB_PATH)$(MATLIB_BASE).so.$(SOVERSION)
+MAT_SONAME     	= $(MATLIB_BASE).so.$(MAJOR_VERSION)
+MAT_LINKNAME   	= $(MATLIB_BASE).so
+>>>>>>> 1.16
 
-PLLIBS = $(PLLIB_AR) $(PLLIB_SO)
-MATLIBS = $(MATLIB_AR) $(MATLIB_SO)
-CXXLIBS = $(CXXLIB_AR) $(CXXLIB_SO)
+CXXLIB_SO	= $(PLLIB_PATH)$(CXXLIB_BASE)$(LIB_TAG).so.$(SOVERSION)
+CXX_SONAME	= $(CXXLIB_BASE)$(LIB_TAG).so.$(MAJOR_VERSION)
+CXX_LINKNAME	= $(CXXLIB_BASE)$(LIB_TAG).so
 
-libs:	$(MATLIBS) $(PLLIBS) $(CXXLIBS)
+# These need to use the BLD_ prefix so they can be left out.
+MATLIBS = $(BLD_MATLIB_AR) $(BLD_MATLIB_SO)
+CXXLIBS = $(BLD_CXXLIB_AR) $(BLD_CXXLIB_SO)
+
+PLLIBS = $(PLLIB_AR) $(PLLIB_SO) $(MATLIBS) $(CXXLIBS)
+
+libs:	$(PLLIBS)
 
 $(PLLIB_AR):	$(LIB_OBJS)
 	-$(RM) $(PLLIB_AR)
 	@echo ""; echo "Building archive library"; echo ""
 	$(ARLIB_BUILD) $(PLLIB_AR) $(LIB_OBJS)
 	$(RANLIB) $(PLLIB_AR)
+	@echo ""
 
 $(MATLIB_AR): $(MAT_OBJS)
 	-$(RM) $(MATLIB_AR)
@@ -73,8 +91,8 @@ $(CXXLIB_AR): $(CXX_OBJS)
 	$(RANLIB) $(CXXLIB_AR)
 	@echo ""
 
-# The following rule based (very) loosely on what I see David Engel
-# did in his Linux Tcl/Tk port.  
+# The following rules based on discussion in
+# http://www.linuxdoc.org/HOWTO/Program-Library-HOWTO/shared-libraries.html
 
 # NOTE: We have to link with iostream in order to satisfy the
 # references to cout and friends in the C++ interface class.  And we
@@ -82,12 +100,16 @@ $(CXXLIB_AR): $(CXX_OBJS)
 # libg++ String class and the DS++ String class.  Oh, but for C++
 # namespace support...
 
-$(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
+# stupidtk.o handled symbolically for the case where tk is not enabled.
+STUPIDTK_OBJ = @STUPIDTK_OBJ@
+
+$(PLLIB_SO):	$(BLD_MATLIB_SO) $(LIB_OBJS) $(STUPIDTK_OBJ)
 	-$(RM) $(PLLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
-	$(SHLIB_BUILD) ../$(PLLIB_SO).$(LIBVERSION) \
+	$(SHLIB_BUILD) ../$(PLLIB_SO) \
 		-Wl,-soname -Wl,$(SONAME) \
+<<<<<<< lib_sh_linux.in
 		$(LIB_OBJS) stupidtk.o $(LDC_LIBS)
 	ln -sf $(PLLIB_SO).$(LIBVERSION) $(SONAME)
 #       Modified by Rafael Laboissiere <rafael@icp.inpg.fr>
@@ -96,9 +118,13 @@ $(PLLIB_SO):	$(LIB_OBJS) stupidtk.o
 	ln -sf $(SONAME) $(PLLIB_BASE)$(LIB_TAG).so
 	echo $(LIBVERSION) > version.built
 	./version inc
+=======
+		$(LIB_OBJS) $(STUPIDTK_OBJ) -L.. $(MAT_LINK) $(LDC_LIBS)
+	ln -sf $(PLLIB_SO) $(SONAME)
+	ln -sf $(SONAME) $(LINKNAME)
+>>>>>>> 1.16
 	@echo ""
 
-#	ln -sf $(SONAME) $(PLLIB_BASE)$(LIB_TAG).so
 
 $(MATLIB_SO): $(MAT_OBJS)
 	-$(RM) $(MATLIB_SO)
@@ -108,30 +134,38 @@ $(MATLIB_SO): $(MAT_OBJS)
 #       When bulding the Python module we will need a shared libs 
 #       libMatrix.so to link against
 	cd shared; \
+<<<<<<< lib_sh_linux.in
 	$(SHLIB_BUILD) ../$(MATLIB_SO) \
 		-Wl,-soname -Wl,libMatrix$(SO).$(MAJOR_VERSION) \
                 $(MAT_OBJS)
 	ln -sf $(MATLIB_SO) libMatrix$(SO).$(MAJOR_VERSION)
 	ln -sf libMatrix$(SO).$(MAJOR_VERSION) libMatrix$(SO)
+=======
+	$(SHLIB_BUILD) ../$(MATLIB_SO) \
+		-Wl,-soname -Wl,$(MAT_SONAME) \
+		$(MAT_OBJS)
+	ln -sf $(MATLIB_SO) $(MAT_SONAME)
+	ln -sf $(MAT_SONAME) $(MAT_LINKNAME)
+>>>>>>> 1.16
 	@echo ""
 
 $(CXXLIB_SO): $(CXX_OBJS)
 	-$(RM) $(CXXLIB_SO)
 	@echo ""; echo "Building shared library"; echo ""
 	cd shared; \
-	$(SHLIB_BUILD) ../$(CXXLIB_SO) $(CXX_OBJS)
+	$(SHLIB_BUILD_CXX) ../$(CXXLIB_SO) \
+		$(SONAME_FLAGS)$(CXX_SONAME) \
+		$(CXX_OBJS)
+	ln -sf $(CXXLIB_SO) $(CXX_SONAME)
+	ln -sf $(CXX_SONAME) $(CXX_LINKNAME)
 	@echo ""
 
 # -----------------------------------------------------------------------------
 # Sick hacks.
 # -----------------------------------------------------------------------------
 
-# Needs to be compiled using K&R C.
-
-tcpip.o:
-	$(OCC) $(CC_FLAGS) tcpip.c
-	cd shared; $(OCC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../tcpip.c
-
+# This target not referenced when tk is not enabled.  This is fortunate
+# since I doubt it can be handled symbolically in any case.
 stupidtk.o:
 	$(CC) $(CC_FLAGS) stupidtk.c
 	cd shared; $(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) ../stupidtk.c

@@ -1,5 +1,9 @@
 /* $Id$
+<<<<<<< tk.c
  * $Log$
+ * Revision 1.55.2.2  2001/01/22 09:09:02  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.55.2.1  2001/01/22 09:05:31  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
  *
@@ -64,6 +68,8 @@
 */
 
 /*	tk.c
+=======
+>>>>>>> 1.62
  *
  *	Maurice LeBrun
  *	30-Apr-93
@@ -78,17 +84,17 @@
 
 #define DEBUG
 
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #ifdef PLD_tk
 
-#include "pltkd.h"
-#include "plxwd.h"
-#include "pltcl.h"
-#include "tcpip.h"
-#include "drivers.h"
-#include "metadefs.h"
-#include "plevent.h"
+#include "plplot/pltkd.h"
+#include "plplot/plxwd.h"
+#include "plplot/pltcl.h"
+#include "plplot/tcpip.h"
+#include "plplot/drivers.h"
+#include "plplot/metadefs.h"
+#include "plplot/plevent.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -141,6 +147,7 @@ static void  flush_output	(PLStream *pls);
 static void  plwindow_init	(PLStream *pls);
 static void  link_init		(PLStream *pls);
 static void  GetCursor		(PLStream *pls, PLGraphicsIn *ptr);
+static void  tk_XorMod          (PLStream *pls, PLINT *ptr);
 
 /* performs Tk-driver-specific initialization */
 
@@ -268,8 +275,8 @@ init(PLStream *pls)
 
 /* Get ready for plotting */
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 
 #if PHYSICAL
     pxlx = (double) PIXELS_X / dev->width  * DPMM;
@@ -418,8 +425,8 @@ plD_bop_tk(PLStream *pls)
 
     dbug_enter("plD_bop_tk");
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
     pls->page++;
     tk_wr( pdf_wr_1byte(pls->pdfs, c) );
 }
@@ -516,6 +523,7 @@ plD_state_tk(PLStream *pls, PLINT op)
  *	PLESC_FLUSH	Flush X event buffer
  *	PLESC_FILL	Fill polygon
  *	PLESC_EH	Handle events only
+ *	PLESC_XORMOD	Xor mode
  *
 \*--------------------------------------------------------------------------*/
 
@@ -556,11 +564,32 @@ plD_esc_tk(PLStream *pls, PLINT op, void *ptr)
 	GetCursor(pls, (PLGraphicsIn *) ptr);
 	break;
 
+    case PLESC_XORMOD:
+	tk_XorMod(pls, (PLINT *) ptr);
+	break;
+
     default:
 	tk_wr( pdf_wr_1byte(pls->pdfs, c) );
 	tk_wr( pdf_wr_1byte(pls->pdfs, op) );
     }
 }
+
+/*--------------------------------------------------------------------------*\
+ * tk_XorMod()
+ *
+ * enter (mod = 1) or leave (mod = 0) xor mode
+ *
+\*--------------------------------------------------------------------------*/
+
+static void
+tk_XorMod(PLStream *pls, PLINT *ptr)
+{
+  if (*ptr != 0)
+    server_cmd( pls, "$plwidget cmd plxormod 1", 1 );
+  else
+    server_cmd( pls, "$plwidget cmd plxormod 0", 1 );
+}
+
 
 /*--------------------------------------------------------------------------*\
  * GetCursor()
@@ -688,8 +717,8 @@ tk_fill(PLStream *pls)
     tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_x, pls->dev_npts) );
     tk_wr( pdf_wr_2nbytes(pls->pdfs, (U_SHORT *) pls->dev_y, pls->dev_npts) );
 
-    dev->xold = UNDEFINED;
-    dev->yold = UNDEFINED;
+    dev->xold = PL_UNDEFINED;
+    dev->yold = PL_UNDEFINED;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -709,12 +738,21 @@ tk_start(PLStream *pls)
 /* Instantiate a TCL interpreter, and get rid of the exec command */
 
     dev->interp = Tcl_CreateInterp();
+<<<<<<< tk.c
 #if (TCL_MAJOR_VERSION == 7 && TCL_MINOR_VERSION > 4 )    
     if (Tcl_Init(dev->interp) != TCL_OK) {	// jc:
     fprintf(stderr, "%s\n", dev->interp->result);
     abort_session(pls, "Unable to initialize Tcl");
     }
 #endif
+=======
+
+    if (Tcl_Init(dev->interp) != TCL_OK) {	/* jc: */
+	fprintf(stderr, "%s\n", dev->interp->result);
+	abort_session(pls, "Unable to initialize Tcl");
+    }
+
+>>>>>>> 1.62
     tcl_cmd(pls, "rename exec {}");
 
 /* Initialize top level window */
@@ -731,7 +769,21 @@ tk_start(PLStream *pls)
 	char name[80];
 	sprintf(name, "_%s_%02d", pls->program, pls->ipls); 
 	Tcl_SetVar(dev->interp, "dp", "0", TCL_GLOBAL_ONLY);
+<<<<<<< tk.c
 	Tcl_SetVar2(dev->interp, "env", "DISPLAY", getenv("DISPLAY"), TCL_GLOBAL_ONLY); // jc: tk_init need this
+=======
+
+    /* jc: tk_init need this. Use pls->FileName first, then DISPLAY, then
+       :0.0 */
+
+        if (pls->FileName != NULL) 
+            Tcl_SetVar2(dev->interp, "env", "DISPLAY", pls->FileName, TCL_GLOBAL_ONLY);
+	else if (getenv("DISPLAY") != NULL)
+            Tcl_SetVar2(dev->interp, "env", "DISPLAY", getenv("DISPLAY"), TCL_GLOBAL_ONLY); /* jc: tk_init need this */
+	else
+            Tcl_SetVar2(dev->interp, "env", "DISPLAY", "unix:0.0", TCL_GLOBAL_ONLY); /* jc: tk_init need this */
+
+>>>>>>> 1.62
 	dev->updatecmd = "update";
 	if (pltk_toplevel(&dev->w, dev->interp, pls->FileName, name, name))
 	    abort_session(pls, "Unable to create top-level window");
@@ -802,8 +854,12 @@ tk_stop(PLStream *pls)
 /* Wait for child process to complete */
 
     if (dev->child_pid) {
+    	waitpid(dev->child_pid, NULL, 0);
+/*
+	jc: problems if parent has not caught/ignore SIGCHLD. Returns -1 and errno=EINTR    	
 	if (waitpid(dev->child_pid, NULL, 0) != dev->child_pid)
 	    fprintf(stderr, "tk_stop: waidpid error");
+*/	    
     }
 
 /* Blow away interpreter */
@@ -1069,6 +1125,8 @@ init_server(PLStream *pls)
 static void
 launch_server(PLStream *pls)
 {
+    extern char *strdup( const char * );
+
     TkDev *dev = (TkDev *) pls->dev;
     char *argv[20], *plserver_exec, *ptr;
     int i;
@@ -1104,6 +1162,7 @@ launch_server(PLStream *pls)
     argv[i++] = "-e";			/* Startup script */
     argv[i++] = "plserver_init";
 
+<<<<<<< tk.c
 /* jc: Haaaaa. This is it! Without the next two statements, control is either
  * in tk or octave, because tcl/tk was in interative mode (I think).
  * This had the inconvenient of having to press the enter key or cliking a
@@ -1117,6 +1176,43 @@ launch_server(PLStream *pls)
     argv[i++] = "-file";			/* Startup file */
     argv[i++] = "/dev/null";
 
+=======
+/* jc: Haaaaa. This is it! Without the next statements, control is either
+ * in tk or octave, because tcl/tk was in interative mode (I think).
+ * This had the inconvenient of having to press the enter key or cliking a
+ * mouse button in the plot window after every plot.
+ *
+ * This couldn't be done with
+ *	Tcl_SetVar(dev->interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
+ * after plserver has been launched? It doesnt work, hoewever.
+ * Tk_CreateFileHandler (0, TK_READABLE, NULL, 0) doesnt work also
+ */
+
+    argv[i++] = "-file";			/* Startup file */
+    if (pls->tk_file) 
+        argv[i++] = pls->tk_file;
+    else
+    argv[i++] = "/dev/null";
+
+
+/*
+   jc: give interpreter the base name of the plwindow.
+   Usefull to know the interpreter name
+*/
+ 
+    if (plsc->plwindow != NULL) {	/* jc: */
+        char *t, *tmp;
+        argv[i++] = "-name";            /* plserver name */
+	tmp = strdup(plsc->plwindow + 1); /* get rid of the initial dot */ /* warning: memory leak, should free(tmp) */
+        argv[i++] = tmp;	
+        if ((t = strchr(tmp, '.')) != NULL)
+            *t = '\0';		/* and keep only the base name */
+    } else {
+        argv[i++] = "-name";            /* plserver name */
+        argv[i++] = pls->program;	
+    }
+
+>>>>>>> 1.62
     if (pls->auto_path != NULL) {
 	argv[i++] = "-auto_path";	/* Additional directory(s) */
 	argv[i++] = pls->auto_path;	/* to autoload */
@@ -1207,14 +1303,19 @@ launch_server(PLStream *pls)
 
 	    if (pls->server_nokill) {
 		int retv;
+/* jc:	this was reversed: *all* signals were blocked!
 		sigset_t *set;
 		set = (sigset_t *) malloc (sizeof(sigset_t));
 		sigfillset (set);
-		sigaddset (set, SIGINT);
-		if ((retv = sigprocmask (SIG_BLOCK, set, 0)) < 0)
+*/
+		sigset_t set;
+		sigemptyset(&set);
+		sigaddset (&set, SIGINT);
+		if ((retv = sigprocmask (SIG_BLOCK, &set, 0)) < 0)
 		    fprintf(stderr, "PLplot: sigprocmask failure\n");
 	    }
-	    fprintf(stderr, "Starting up %s\n", plserver_exec);
+	    /* jc:	    fprintf(stderr, "Starting up %s\n", plserver_exec); */
+	    pldebug("launch_server", "Starting up %s\n", plserver_exec);
 	    if (execv(plserver_exec, argv)) {
 		fprintf(stderr, "Unable to exec server process.\n");
 		_exit(1);
@@ -1318,8 +1419,12 @@ plwindow_init(PLStream *pls)
 
     bg = pls->cmap0[0].b | (pls->cmap0[0].g << 8) | (pls->cmap0[0].r << 16);
     if (bg > 0) {
+<<<<<<< tk.c
 	sprintf(command, "$plwidget configure -bg #%06x", bg);
 	sprintf(command, "$plwidget configure -plbg #%06x", bg);	// jc:
+=======
+	sprintf(command, "$plwidget configure -plbg #%06x", bg);
+>>>>>>> 1.62
 	server_cmd( pls, command, 0 );
     }
 
@@ -1332,6 +1437,11 @@ plwindow_init(PLStream *pls)
 
     if (pls->debug)
 	server_cmd( pls, "$plwidget cmd plsetopt -debug", 0 );
+
+/* double buffering */
+
+    if (pls->db)
+	server_cmd( pls, "$plwidget cmd plsetopt -db", 0 );
 
 /* color map options */
 
@@ -1992,10 +2102,17 @@ pltk_toplevel(Tk_Window *w, Tcl_Interp *interp,
 	return 1;
     }
 #else
+<<<<<<< tk.c
     if (Tk_Init( interp )) {	// jc: if added
     fprintf(stderr,"tk_init:%s\n", interp->result); // jc:
     return 1;
     }
+=======
+    if (Tk_Init( interp )) {	/* jc: if added */
+        fprintf(stderr,"tk_init:%s\n", interp->result); /* jc: */
+	return 1;
+    }
+>>>>>>> 1.62
 #endif
 
     Tcl_VarEval(interp, wcmd, (char *) NULL);

@@ -1,5 +1,9 @@
 /* $Id$
+<<<<<<< plargs.c
  * $Log$
+ * Revision 1.36.2.2  2001/01/22 09:09:01  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.36.2.1  2001/01/22 09:05:31  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
  *
@@ -88,6 +92,8 @@
 
 /*
     plargs.c
+=======
+>>>>>>> 1.41
 
     Copyright 1993, 1994, 1995
     Maurice LeBrun			mjl@dino.ph.utexas.edu
@@ -179,9 +185,13 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
     See plrender.c for examples of actual usage.  */
 
+<<<<<<< plargs.c
 #include <stdio.h>		// jc: popen
 #include  <string.h>	// jc: strdup
 #include "plplotP.h"
+=======
+#include "plplot/plplotP.h"
+>>>>>>> 1.41
 #include <ctype.h>
 
 /* Support functions */
@@ -234,6 +244,7 @@ static int opt_server_name	(char *, char *, void *);
 static int opt_server_host	(char *, char *, void *);
 static int opt_server_port	(char *, char *, void *);
 static int opt_user		(char *, char *, void *);
+static int opt_tk_file          (char *, char *, void *); /* jc: name of file to plserver -file option */
 
 /* Global variables */
 
@@ -628,6 +639,14 @@ static PLOptionTable ploption_table[] = {
     PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
     "-auto_path dir",
     "Additional directory(s) to autoload (tk or dp driver)" },
+{
+    "tk_file",      /* jc: -file option for plserver */
+    opt_tk_file,
+    NULL,
+    NULL,
+    PL_OPT_FUNC | PL_OPT_ARG | PL_OPT_INVISIBLE,
+    "-tk_file file",
+    "file for plserver (tk or dp driver)" },
 {
     NULL,			/* option */
     NULL,			/* handler */
@@ -1808,9 +1827,18 @@ opt_plserver(char *opt, char *optarg, void *client_data)
 static int
 opt_plwindow(char *opt, char *optarg, void *client_data)
 {
+<<<<<<< plargs.c
 
 // jc:    plsc->plwindow = optarg;
     plsc->plwindow = strdup(optarg);	// jc: somehow the original string is lost
+=======
+#ifndef macintosh
+    char *strdup();
+
+/* jc:    plsc->plwindow = optarg; */
+    plsc->plwindow = strdup(optarg);	/* jc: somehow the original string is lost */
+#endif
+>>>>>>> 1.41
     return 0;
 }
 
@@ -1927,3 +1955,13 @@ opt_geo(char *opt, char *optarg, void *client_data)
     return 0;
 }
 
+/*
+ * jc: file name  for plserver -file option
+*/
+   
+static int opt_tk_file(char *opt, char *optarg, void *client_data)
+{
+    plsc->tk_file = (char *) malloc((size_t)(1+strlen(optarg))*sizeof(char));
+    strcpy (plsc->tk_file, optarg);
+    return 0;
+}

@@ -1,5 +1,9 @@
 /* $Id$
+<<<<<<< plbuf.c
  * $Log$
+ * Revision 1.20.2.2  2001/01/22 09:09:02  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.20.2.1  2001/01/22 09:05:31  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
  *
@@ -21,9 +25,10 @@
  * handling for malloc includes eliminated (no longer needed) and malloc
  * prototypes fixed as necessary.
 */
+=======
+>>>>>>> 1.23
 
-/*
-    plbuf.c -- handle plot buffer.
+    Handle plot buffer.
 
     Copyright 1992
     Maurice LeBrun
@@ -38,9 +43,9 @@
     its effect upon hardware or computer systems.
 */
 
-#include "plplotP.h"
-#include "drivers.h"
-#include "metadefs.h"
+#include "plplot/plplotP.h"
+#include "plplot/drivers.h"
+#include "plplot/metadefs.h"
 
 #include <string.h>
 
@@ -618,12 +623,21 @@ plbuf_control(PLStream *pls, U_CHAR c)
 	break;
 
     default:
+<<<<<<< plbuf.c
 	pldebug("plbuf_control", "Unrecognized command %d, previous %d\n", c, c_old);
 /* jc: modified for pldebug
+=======
+      pldebug("plbuf_control", "Unrecognized command %d, previous %d\n", c, c_old);
+/* jc: modified for pldebug
+>>>>>>> 1.23
 	fprintf(stderr,
 		"plbuf_control: Unrecognized command %d, previous %d\n",
 		c, c_old);
+<<<<<<< plbuf.c
 */		
+=======
+*/
+>>>>>>> 1.23
     }
     c_old = c;
 }

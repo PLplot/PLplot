@@ -1,5 +1,9 @@
 /* $Id$
+<<<<<<< plcdemos.h
  * $Log$
+ * Revision 1.3.2.2  2001/01/22 09:09:02  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.3.2.1  2001/01/22 09:05:31  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
  *
@@ -16,6 +20,8 @@
 */
 
 /*	plcdemos.h
+=======
+>>>>>>> 1.6
 
 	Everything needed by the C demo programs.
 	Created to avoid junking up plplot.h with this stuff.
@@ -28,7 +34,8 @@
    on Sat Nov  6 17:35:14 CET 1999  */
 #define PL_DOUBLE
 
-#include "plplot.h"
+#include "plplot/plConfig.h"
+#include "plplot/plplot.h"
 #include <math.h>
 #include <string.h>
 #include <ctype.h>

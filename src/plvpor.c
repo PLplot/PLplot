@@ -1,5 +1,9 @@
 /* $Id$
+<<<<<<< plvpor.c
  * $Log$
+ * Revision 1.10.2.2  2001/01/22 09:09:01  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.10.2.1  2001/01/22 09:05:31  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
  *
@@ -15,11 +19,13 @@
 */
 
 /*	plvpor.c
+=======
+>>>>>>> 1.13
 
 	Functions dealing with viewports.
 */
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
 
 /*--------------------------------------------------------------------------*\
  * void plenv()
@@ -114,27 +120,48 @@ c_plenv(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     case 11:
 	plbox("bclnst", (PLFLT) 0.0, 0, "abcnstv", (PLFLT) 0.0, 0);
 	break;
+<<<<<<< plvpor.c
     case 12:
 	plbox("bclgnst", (PLFLT) 0.0, 0, "abcgnstv", (PLFLT) 0.0, 0);
 	break;
+=======
+    case 12:/* jc: make it regular */
+	plbox("bclgnst", (PLFLT) 0.0, 0, "abcgnstv", (PLFLT) 0.0, 0);
+	break;
+>>>>>>> 1.13
     case 20:
 	plbox("bcnst", (PLFLT) 0.0, 0, "bclnstv", (PLFLT) 0.0, 0);
 	break;
     case 21:
 	plbox("bcnst", (PLFLT) 0.0, 0, "abclnstv", (PLFLT) 0.0, 0);
 	break;
+<<<<<<< plvpor.c
     case 22:
 	plbox("bcngst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
 	break;	
+=======
+    case 22:/* jc: make it regular */
+	plbox("bcngst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
+	break;	
+>>>>>>> 1.13
     case 30:
 	plbox("bclnst", (PLFLT) 0.0, 0, "bclnstv", (PLFLT) 0.0, 0);
 	break;
+<<<<<<< plvpor.c
     case 31:
 	plbox("bclnst", (PLFLT) 0.0, 0, "abclnstv", (PLFLT) 0.0, 0);
 	break;
     case 32:
 	plbox("bclngst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
 	break;	
+=======
+    case 31:/* jc: make it regular */
+	plbox("bclnst", (PLFLT) 0.0, 0, "abclnstv", (PLFLT) 0.0, 0);
+	break;
+    case 32:/* jc: make it regular */
+	plbox("bclngst", (PLFLT) 0.0, 0, "abcglnstv", (PLFLT) 0.0, 0);
+	break;	
+>>>>>>> 1.13
     default:
 	plwarn("plenv: Invalid axis argument");
     }

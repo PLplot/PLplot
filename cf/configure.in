@@ -76,7 +76,6 @@ with_opt=yes
 with_double=no
 with_profile=no
 with_shlib=yes
-with_f2c=no
 with_gcc=no
 with_warn=no
 with_dbmalloc=no
@@ -91,7 +90,6 @@ enable_python=yes
 enable_tcl=yes
 enable_tk=yes
 enable_itcl=yes
-enable_dp=yes
 enable_xwin=yes
 
 divert(-1)
@@ -108,7 +106,7 @@ MY_ARG_ENABLE(drivers,
 define(PL_DRIVER_LIST,
 [plmeta, null, xterm, tek4010, tek4107, mskermit,
 conex, linuxvga, vlt, versaterm, dg300, ps, xfig, ljii, hp7470, hp7580,
-lj_hpgl, imp, xwin, tk, dp, pbm])
+lj_hpgl, imp, xwin, tk, pbm])
 
 # Macro to set one driver enable value
 
@@ -144,11 +142,9 @@ case "$system" in
     ;;
     linux*|LINUX*|Linux* ) 
 	with_gcc=yes
-	with_f2c=yes
     ;;
     next*|NeXT*|NEXT* ) 
 	with_gcc=yes
-	with_f2c=yes
     ;;
     ultrix*|ULTRIX* ) 
 	with_gcc=yes
@@ -219,15 +215,28 @@ AC_INIT(src/plcore.c)
 # can always use copy.  At least you will only have to do it once.
 # ----------------------------------------------------------------------------
 
+# Fix up srcdir to be absolute to prevent problems later
+srcdir=`(cd $srcdir; pwd)`
+
 plplot_config_invocation="$0 $*"
-if test `pwd` = `(cd $srcdir; pwd)`; then
+
+# Set up a command for automatic reconfigures.  This ensures whatever 
+# switches have been thrown previously are used again. 
+ 
+if test -n "$*"; then 
+    echo "$plplot_config_invocation" >$srcdir/reconfig
+    chmod +x $srcdir/reconfig 
+else 
+    rm -f $srcdir/reconfig >/dev/null 2>&1 
+fi 
+
+if test `pwd` = "$srcdir"; then
     echo "setting up to configure in tmp directory -- hold on..."
     if test ! -d tmp; then
 	mkdir tmp
     fi
     cd tmp
-    exec ../configure "$@"
-    plplot_config_invocation="$0 $*"
+    exec $srcdir/configure "$@"
 fi
 
 # ----------------------------------------------------------------------------
@@ -261,9 +270,6 @@ MY_ARG_WITH(profile,
 
 MY_ARG_WITH(shlib,
   [  --with-shlib            build shared libraries ($with_shlib)])
-
-MY_ARG_WITH(f2c,
-  [  --with-f2c              use f2c to compile Fortran code ($with_f2c)])
 
 MY_ARG_WITH(gcc,
   [  --with-gcc              use gcc to compile C and C++ code ($with_gcc)])
@@ -404,34 +410,14 @@ fi
 
 # Define tags to be used in multiple-precision library names
 #
-# Single precision: tag with "f"
 # Double precision: tag with "d"
+# Single precision: tag with no symbol
 
 if test "$with_double" = "yes"; then
-    TAG_PREC="d"
+    LIB_TAG="d"
 else
-    TAG_PREC="f"
+    LIB_TAG=
 fi
-
-# Add suffix of:
-#	b	for baseline library (no X or TK)
-#	X	with X support enabled
-#	tk	with X, TK, and/or Tcl-DP support enabled
-#
-# Build those best suited to your system and softlink to libplplotf
-# and libplplotd to create the system default.  
-
-TAG_ENABLE="b"
-if test "$enable_xwin" = "yes"; then
-    TAG_ENABLE="X"
-fi
-if test "$enable_tk" = "yes"; then
-    TAG_ENABLE="tk"
-fi
-
-# Put them together
-
-LIB_TAG="$TAG_PREC$TAG_ENABLE"
 
 AC_SUBST(LIB_TAG)
 
@@ -479,6 +465,10 @@ if test "$with_shlib" = "yes"; then
     SHARED=1
     if test ! -d shared; then
 	mkdir shared
+	#following needed for includes to work properly with new plplot/*.h style
+	cd shared
+	ln -s ../plplot
+	cd ..
     fi
     case $system in 
 	SunOS-4* ) 
@@ -490,9 +480,15 @@ if test "$with_shlib" = "yes"; then
 	Linux* )
 	    cat $srcdir/cf/lib_sh_linux.in	>>Makefile.in
 	;;
+<<<<<<< configure.in
 	SCO* )
 	    cat $srcdir/cf/lib_sh_sco.in	>>Makefile.in
 	;;
+=======
+    SCO* )
+        cat $srcdir/cf/lib_sh_sco.in    >>Makefile.in
+	;;
+>>>>>>> 1.56
 	* )
 	    cat $srcdir/cf/lib_sh.in	>>Makefile.in
 	;;
@@ -510,16 +506,7 @@ cat $srcdir/cf/demos.in		>>Makefile.in
 # Installation and miscellaneous.
 
 cat $srcdir/cf/install.in	>>Makefile.in 
-
-case $system in
-    Linux* )
-	cat $srcdir/cf/inst_lib_linux.in	>>Makefile.in
-    ;;
-    * )
-	cat $srcdir/cf/inst_lib.in		>>Makefile.in
-    ;;
-esac
-
+cat $srcdir/cf/inst_lib.in		>>Makefile.in
 cat $srcdir/cf/misc.in		>>Makefile.in 
 
 # Object file dependencies
@@ -577,7 +564,7 @@ if test -z "$INFO_DIR"; then
     INFO_DIR=$prefix/info
 fi
 if test -z "$INCLUDE_DIR"; then
-    INCLUDE_DIR=$prefix/include
+    INCLUDE_DIR=$prefix/include/plplot
 fi
 if test -z "$DEMOS_DIR"; then
     DEMOS_DIR=$prefix/doc/plplot/examples
@@ -590,7 +577,6 @@ AC_DEFINE_UNQUOTED(TCL_DIR, "$TCL_DIR")
 AC_SUBST(LIB_DIR)
 AC_SUBST(BIN_DIR)
 AC_SUBST(TCL_DIR)
-AC_SUBST(PYTHON_DIR)
 AC_SUBST(DOC_DIR)
 AC_SUBST(INFO_DIR)
 AC_SUBST(INCLUDE_DIR)
@@ -607,58 +593,127 @@ AC_MSG_RESULT(creating links...)
 
 # Source, driver, and include files
     
+# All header files have to be in plplot as symlinks
+if test ! -d plplot; then
+    mkdir plplot
+fi
+ln -s \
+../plConfig.h ../plDevs.h \
+plplot 2>/dev/null
+
 ln -s \
 $srcdir/src/*.c \
 $srcdir/bindings/tk/stupidtk.c \
 $srcdir/drivers/*.c \
-$srcdir/include/*.h \
 . 2>/dev/null
+ln -s \
+$srcdir/include/*.h \
+plplot 2>/dev/null
 
 # Packages (interfaces) and demos associated with them
 
 if test "$enable_cxx" = "yes"; then
     ln -s \
-    $srcdir/bindings/c++/*.* \
+    `ls $srcdir/bindings/c++/*.* |grep -v '\.h$'` \
     $srcdir/examples/c++/*.* \
     . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/c++/*.h \
+    plplot 2>/dev/null
 fi
 
-# Note that double precision Fortran files in the stub interface are
-# obtained entirely by m4 macro expansion.  This should work anywhere.
-# Double precision example programs are obtained through automatic compiler
-# promotion, however.  Your compiler needs to be able to automatically
-# promote all real variables and constants for this to work (the HPUX 8.x
-# compiler did not support this, but it's supported under 9.0).
+# Note that double precision Fortran files in the stub interface 
+# and examples are obtained entirely by m4 macro expansion.  This should 
+# work anywhere.
 
 if test "$enable_f77" = "yes"; then
     ln -s \
-    $srcdir/bindings/f77/*.* \
+    `ls $srcdir/bindings/f77/*.* |grep -v '\.h$'` \
     $srcdir/examples/f77/*.* \
     . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/f77/*.h \
+    plplot 2>/dev/null
+    for filename in $srcdir/examples/f77/*.fm4
+    do 
+      ffilename=`echo $filename | sed 's/\.fm4$/.f/'`
+      ln -s $ffilename . 2>/dev/null
+    done
+    for filename in $srcdir/bindings/f77/*.fm4
+    do 
+      ffilename=`echo $filename | sed 's/\.fm4$/.f/'`
+      ln -s $ffilename . 2>/dev/null
+    done
 fi
 
 if test "$enable_python" = "yes"; then
     ln -s \
-    $srcdir/bindings/python/*.* \
+    $srcdir/bindings/python/*.py \
+    $srcdir/bindings/python/*.c \
     $srcdir/examples/python/*.py \
     $srcdir/examples/python/pytkdemo \
     . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/python/*.h \
+    plplot 2>/dev/null
+    if test ! -d python_dynamic; then
+	# Create special directory where plmodule.so is dynamically built
+	# Symlink everything required in directory except for
+	# Setup.in file which is created at build time and (differently) at
+	# install time.
+	mkdir python_dynamic
+	cd python_dynamic
+	ln -s ../plmodule.c
+	ln -s ../plmodule2.c
+	ln -s $PYTHON_CFG_DIR/Makefile.pre.in
+	# Following needed for includes to work properly with new plplot/*.h style.
+	ln -s ../plplot
+	cd ..
+    fi
 fi
+
+# Just go ahead and set up the Python stuff needed to do staging.
+# (AWI thinks all the following should be removed since they
+# repeat the previous stuff, but he isn't positive.  Thus,
+# as a compromise he supressed the  error messages by the following
+# stuff by changing ln -s to ln -sf.)
+
+ln -sf $srcdir/bindings/python/Plframe.py .
+ln -sf $srcdir/bindings/python/TclSup.py .
+ln -sf $srcdir/bindings/python/plmodule.c .
+ln -sf $srcdir/bindings/python/plmodule2.c .
+ln -sf $srcdir/bindings/python/plmodule.h plplot
+ln -sf $srcdir/bindings/python/setup.py .
 
 if test "$enable_tcl" = "yes"; then
     ln -s \
-    $srcdir/bindings/tcl/*.* \
+    `ls $srcdir/bindings/tcl/*.* |grep -v '\.h$'` \
     $srcdir/bindings/tcl/pltclgen \
     $srcdir/examples/tcl/*.* \
     . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/tcl/*.h \
+    plplot 2>/dev/null
 fi
 
 if test "$enable_tk" = "yes"; then
     ln -s \
-    $srcdir/bindings/tk/*.* \
+    `ls $srcdir/bindings/tk/*.* |grep -v '\.h$'` \
     $srcdir/examples/tk/*.c \
     $srcdir/examples/tk/tk* \
     . 2>/dev/null
+    ln -s \
+    $srcdir/bindings/tk/*.h \
+    plplot 2>/dev/null
+    #put in symlinks so that tk examples will work from tmp/../examples/tk
+    #directory (once installation completed) and also from installed 
+    #examples/tk directory
+    cd $srcdir/examples/tk
+    for filename in ../tcl/x??.tcl
+    do 
+      ln -s $filename . 2>/dev/null
+    done
+    cd $srcdir/tmp
 fi
 
 #    $srcdir/bindings/tk/tclIndex 
@@ -667,7 +722,7 @@ fi
 # Miscellaneous
 
 ln -s \
-$srcdir/examples/c/*.* \
+`ls $srcdir/examples/c/*.* |grep -v '\.h$'` \
 $srcdir/utils/*.c \
 $srcdir/fonts/*.c \
 $srcdir/scripts/pl* \
@@ -676,6 +731,9 @@ $srcdir/lib/*.map \
 $srcdir/cf/*.in \
 $srcdir/sys/unix/version \
 . 2>/dev/null
+ln -s \
+$srcdir/examples/c/*.h \
+plplot 2>/dev/null
 
 # ----------------------------------------------------------------------------
 # Create output files.
@@ -725,12 +783,12 @@ devices:	$DEVICES
 with_shlib:	$with_shlib		with_double:	$with_double
 with_debug:	$with_debug		with_opt:	$with_opt
 with_warn:	$with_warn		with_profile:	$with_profile
-with_f2c:	$with_f2c		with_gcc:	$with_gcc
+with_gcc:	$with_gcc
 
 enable_xwin:	$enable_xwin		enable_tcl:	$enable_tcl
-enable_tk:	$enable_tk		enable_dp:	$enable_dp
-enable_itcl:	$enable_itcl		enable_f77:	$enable_f77
+enable_tk:	$enable_tk		enable_itcl:	$enable_itcl
 enable_cxx:	$enable_cxx		enable_python:	$enable_python
+enable_f77:	$enable_f77
 "
 
 cat << EOF > config.summary

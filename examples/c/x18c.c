@@ -1,5 +1,9 @@
 /* $Id$
+<<<<<<< x18c.c
  * $Log$
+ * Revision 1.9.2.2  2001/01/22 09:09:02  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.9.2.1  2001/01/22 09:05:31  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
  *
@@ -37,11 +41,13 @@
 */
 
 /*	x18c.c
+=======
+>>>>>>> 1.12
 
 	3-d line and point plot demo.  Adapted from x08c.c.
 */
 
-#include "plcdemos.h"
+#include "plplot/plcdemos.h"
 
 static int opt[] = { 1, 0, 1, 0 };
 static PLFLT alt[] = {20.0, 35.0, 50.0, 65.0};
@@ -124,8 +130,13 @@ main(int argc, char *argv[])
 
 void test_poly(int k)
 {
+<<<<<<< x18c.c
     PLFLT *x, *y, *z;
     PLFLT theta, phi;
+=======
+    PLFLT *x, *y, *z;
+    float theta, phi;
+>>>>>>> 1.12
     int i, j;
     float pi, two_pi;
     int draw[][4] = { { 1, 1, 1, 1 },

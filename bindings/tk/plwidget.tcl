@@ -1,5 +1,9 @@
 # $Id$
+<<<<<<< plwidget.tcl
 # $Log$
+# Revision 1.38.2.2  2001/01/22 09:09:01  rlaboiss
+# Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+#
 # Revision 1.38.2.1  2001/01/22 09:05:11  rlaboiss
 # Debian stuff corresponding to package version 4.99j-11
 #
@@ -92,6 +96,8 @@
 # itcl is simply ".plw <command> <args>".
 #
 
+=======
+>>>>>>> 1.42
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer
 # plplot window initialization procs
@@ -148,7 +154,8 @@ proc plr_create {w {client_id {}}} {
 
 proc plxframe {w {client_id {}}} {
 
-    global client
+# Note the window name w must never be a global.
+    global client plot_menu_on
 
 # Save client name
 
@@ -158,7 +165,9 @@ proc plxframe {w {client_id {}}} {
 
 # Make container frame.  It is mapped later.
 
-    frame $w
+# jc: if the container already exists, don't exit (catch added)
+
+    catch "frame $w"
 
 # Create child plplot widget (plframe), and pack into parent.
 
@@ -174,10 +183,12 @@ proc plxframe {w {client_id {}}} {
 # plframe widget must already have been created (the plframe is queried
 # for a list of the valid output devices for page dumps).
 
-    plw_create_TopRow $w
-    pack append $w \
-	$w.ftop {top fill}
-    update
+    if $plot_menu_on then {
+	plw_create_TopRow $w
+	pack append $w \
+	    $w.ftop {top fill}
+	update
+    }
 
 # Enable keyboard traversal when widget has the input focus.
 # Also grab the initial input focus.
@@ -189,11 +200,16 @@ proc plxframe {w {client_id {}}} {
 # commands.
 
     if { [info exists client] } then {
-	set bop_col [option get $w.ftop.leop off Label]
-	set eop_col [option get $w.ftop.leop on Label]
+	if $plot_menu_on then {
+	    set bop_col [option get $w.ftop.leop off Label]
+	    set eop_col [option get $w.ftop.leop on Label]
 
-	$w.plwin configure -bopcmd "plw_flash $w $bop_col"
-	$w.plwin configure -eopcmd "plw_flash $w $eop_col"
+	    $w.plwin configure -bopcmd "plw_flash $w $bop_col"
+	    $w.plwin configure -eopcmd "plw_flash $w $eop_col"
+	} else {
+	    $w.plwin configure -bopcmd {update}
+	    $w.plwin configure -eopcmd {update}
+	}
 
     # Resize binding -- just experimental for now.
     #	bind $w.plwin <Configure> "client_cmd \"plfinfo %w %h\""
@@ -257,6 +273,15 @@ proc plw_setup_defaults {w} {
     bind $w.plwin <Any-ButtonPress> \
 	"plw_user_mouse $w %b %s %x %y"
 
+    bind $w.plwin <B1-Motion> \
+	"plw_user_mouse $w %b %s %x %y"
+
+    bind $w.plwin <B2-Motion> \
+	"plw_user_mouse $w %b %s %x %y"
+
+    bind $w.plwin <B3-Motion> \
+	"plw_user_mouse $w %b %s %x %y"
+	
     bind $w.plwin <Any-Enter> \
 	"focus $w.plwin"
 }
@@ -660,6 +685,9 @@ proc plw_start {w} {
     if { [info exists client] } then {
 	client_cmd "set widget_is_ready 1"
     }
+
+# jc: call a user supplied routine to do any necessary post initialization
+   catch after_plw_start
 }
 
 #----------------------------------------------------------------------------
@@ -904,6 +932,11 @@ proc plw_save_close {w} {
 # Responsible for making sure zoom menu entries are normal or disabled as
 # appropriate.  In particular, that "Back" or "Forward" are only displayed
 # if it is possible to traverse the zoom windows list in that direction.
+#
+# Note you should use the entry name as argument to entryconfigure to guard
+# against problems in using the numerical index.  This caused problems going
+# from Tcl 7.x -> 8.x (I think in 8.x the tear off entry became numbered where
+# previously it wasn't).
 #----------------------------------------------------------------------------
 
 proc plw_update_zoom {w} {
@@ -913,17 +946,17 @@ proc plw_update_zoom {w} {
 # Back
 
     if { $zidx($w) == 0 } then {
-	$pmenu($w).zoom entryconfigure 1 -state disabled
+	$pmenu($w).zoom entryconfigure Back -state disabled
     } else {
-	$pmenu($w).zoom entryconfigure 1 -state normal
+	$pmenu($w).zoom entryconfigure Back -state normal
     }
 
 # Forward
 
     if { $zidx_max($w) == 0 || $zidx($w) == $zidx_max($w) } then {
-	$pmenu($w).zoom entryconfigure 2 -state disabled
+	$pmenu($w).zoom entryconfigure Forward -state disabled
     } else {
-	$pmenu($w).zoom entryconfigure 2 -state normal
+	$pmenu($w).zoom entryconfigure Forward -state normal
     }
 }
 
@@ -1671,8 +1704,11 @@ proc status_msg {w msg} {
 #----------------------------------------------------------------------------
 
 proc plw_label_reset {w} {
-
-    $w.ftop.lstat configure -text " [string range $w 1 end]"
+    global plot_menu_on
+    if $plot_menu_on then {
+	# jc:
+	$w.ftop.lstat configure -text " [string range $w 1 end]"
+    }
 }
 
 #----------------------------------------------------------------------------
@@ -1682,8 +1718,11 @@ proc plw_label_reset {w} {
 #----------------------------------------------------------------------------
 
 proc plw_label_set {w msg} {
-
-    $w.ftop.lstat configure -text " $msg"
+    global plot_menu_on
+    if $plot_menu_on then {
+	# jc:
+	$w.ftop.lstat configure -text " $msg"
+    }
 }
 
 #----------------------------------------------------------------------------

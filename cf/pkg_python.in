@@ -3,33 +3,46 @@
 #
 # Make assignments for PLplot/Python support.
 #
-# If Python doesn't support dynamically loaded modules on your system,
-# you'll have to link plmodule.o with the Python library to build a
-# new Python executable.  Copy plmodule.c into Python's Modules
-# subdirectory, add something like the following to Modules/Setup,
+# Python supports dynamically loaded libraries, and we use the canonical
+# method recommended at http://www.python.org/doc/current/ext/building-on-unix.html
+# to build these libraries.  It is claimed this method will work for all
+# Unix systems.  
 #
-# pl plmodule.c -I<PLplot include directory> -L<PLplot lib directory>
-# -lplplotfX -L<X11 lib directory> -lX11
-#
-# and rebuild python.  If Python supports dynamically loaded modules,
-# then all you have to worry about is passing the right flags to the
-# compiler and linker to build a dynamically loaded module from
-# plmodule.c (-I/usr/local/include/Py if the Python header files are
-# installed, -I.../Python-VERSION/Include if not; Solaris 5.x requires
-# ld -G while SunOS 4.x uses just ld, etc.).
+# For our implementation of this method, at configuration time we symlink all
+# required files but Setup.in into tmp/python_dynamic, and at build time
+# and install time (where we link differently) we create the required 
+# two-line Setup.in in the same directory and build according to the
+# canonical rules.
+# Note we build in a separate special directory because the build process
+# creates a Makefile which would nameclash with other directories that have a
+# Makefile in them (e.g., tmp).
 # -----------------------------------------------------------------------------
 
 SO		= @SO@
 PYTHON_EXE	= plmodule$(SO)
-PYTHON_INSTALL	= install_python
 PYTHON_INC_DIR	= @PYTHON_INC_DIR@
+PYTHON_NUM_DIR	= @PYTHON_NUM_DIR@
 PYTHON_MOD_DIR	= @PYTHON_MOD_DIR@
 PYTHON_MACH_DIR	= @PYTHON_MACH_DIR@
 PYTHON_CFG_DIR	= @PYTHON_CFG_DIR@
+<<<<<<< pkg_python.in
 PYTHON_LIBS	= -L$(PYTHON_CFG_DIR) -lpython1.5
+=======
+#These libraries do not exist on Linux systems (at least for python-1.5) so
+#must comment out.  If required on other systems, must do something fancy.
+#PYTHON_LIBS	= -L$(PYTHON_CFG_DIR) -lModules -lObjects -lParser -lPython
+PYTHON_LIBS=
+>>>>>>> 1.14
 PYTHON_DIR	= @PYTHON_DIR@
 LDSHARED	= @LDSHARED@
 
+PYTHON_DEMOS	= README pytkdemo *.py
+
+# Variables for use in "make" and "make install".
+
+INSTALL_PYTHON	= install_python
+
+<<<<<<< pkg_python.in
 plmodule$O:	plmodule.c plmodule2.c plmodule.h
 	$(CC) $(SHLIB_CCFLAGS) $(CC_FLAGS) \
 		-I$(PYTHON_INC_DIR) -I$(PYTHON_CFG_DIR) \
@@ -52,4 +65,26 @@ install_python:
 	-if test ! -d $(PYTHON_MOD_DIR)/plplot; then \
 		mkdir -p $(PYTHON_MOD_DIR)/plplot; fi
 	-cd $(top_srcdir)/bindings/python; cp *.py $(PYTHON_MOD_DIR)/plplot
+=======
+install_python: python_dynamic/plmodule.c python_dynamic/plmodule2.c
+	@cd python_dynamic ; make -s distclean
+	@echo '*shared*' > python_dynamic/Setup.in
+	@echo 'pl plmodule.c plmodule2.c -I$(INCLUDE_DIR)/.. -I$(PYTHON_INC_DIR) -I$(PYTHON_NUM_DIR) $(LIB_INSTALL) $(LDC_LIBS) $(INSTALL_RPATH)' >> python_dynamic/Setup.in
+	@cd python_dynamic ; make -s -f Makefile.pre.in boot ; make -s ; \
+	 $(MV) $(PYTHON_EXE) ..
+	@-if test ! -d $(PYTHON_DIR); then mkdir -p $(PYTHON_DIR); fi
+	@-$(CP) $(PYTHON_EXE) $(PYTHON_DIR)
+	@-if test "$(PYTHON_DIR)" != "$(PYTHON_MACH_DIR)"; then \
+	  echo "If the following symlink creation fails (perhaps because you are not root)" ; \
+	  echo "then you must set PYTHONPATH to $(PYTHON_DIR) in order to run" ; \
+	  echo "the python demos, xw??.py" ; \
+	  echo "$(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR)" ; \
+	  $(LN) $(PYTHON_DIR)/$(PYTHON_EXE) $(PYTHON_MACH_DIR) ; \
+	  fi
+	@-if test ! -d $(DEMOS_DIR)/python; then mkdir -p $(DEMOS_DIR)/python; fi
+	@-cd $(top_srcdir)/examples/python; $(CP) $(PYTHON_DEMOS) $(DEMOS_DIR)/python
+#	-if test ! -d $(PYTHON_MOD_DIR)/plplot; then \
+#		mkdir -p $(PYTHON_MOD_DIR)/plplot; fi
+#	-cd $(top_srcdir)/bindings/python; $(CP) *.py $(PYTHON_MOD_DIR)/plplot
+>>>>>>> 1.14
 

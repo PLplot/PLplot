@@ -1,5 +1,9 @@
 # $Id$
+<<<<<<< plserver.tcl
 # $Log$
+# Revision 1.22.4.2  2001/01/22 09:09:01  rlaboiss
+# Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+#
 # Revision 1.22.4.1  2001/01/22 09:05:11  rlaboiss
 # Debian stuff corresponding to package version 4.99j-11
 #
@@ -34,6 +38,8 @@
 # Some cleaning up also.
 #
 
+=======
+>>>>>>> 1.24
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer menu procs
 # Maurice LeBrun
@@ -51,6 +57,7 @@
 #----------------------------------------------------------------------------
 
 proc plserver_init {} {
+global file_menu_on
 
 # Set up toplevel
 
@@ -59,7 +66,12 @@ proc plserver_init {} {
 # Create the window for the menu bar
 # jc: top menu, with file and help submenus removed to save ploting space
 
+<<<<<<< plserver.tcl
 if { 0 } {
+=======
+# jc: no File/Help menu! save plot area!
+if $file_menu_on then {
+>>>>>>> 1.24
     frame .menu -relief raised -borderwidth 1
     pack append . .menu {top fillx}
 
@@ -150,7 +162,7 @@ if { 0 } {
     if {$tk_version < 4.0} then {
 	focus default .
     }
-
+}
 # Set up initial link to client.
 
     plserver_link_init
@@ -178,10 +190,15 @@ proc client_cmd {msg} {
     if { $dp } then {
 	after 1 catch [list "dp_RDO [list $client] $msg"]
     } else {
+<<<<<<< plserver.tcl
 # jc:	after 1 catch [list "send [list $client] after 1 $msg"]
 # try to avoid the server hanging; related with zoom/buttonpress problem
 # Side effects ??
 	after 1 catch [list "send -async [list $client] $msg"]
+=======
+#jc:	after 1 catch [list "send [list $client] after 1 $msg"]
+	after 1 catch [list "send -async [list $client] $msg"]
+>>>>>>> 1.24
     }
 }
 

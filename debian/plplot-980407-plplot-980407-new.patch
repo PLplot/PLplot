@@ -1091,6 +1091,9 @@ diff -cbNr plplot-980407/examples/c/x17c.c plplot-980407-new/examples/c/x17c.c
 *** 1,8 ****
 ! /* $Id$
    * $Log$
+   * Revision 1.1.2.2  2001/01/22 09:09:02  rlaboiss
+   * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+   *
    * Revision 1.1.2.1  2001/01/22 09:05:31  rlaboiss
    * Debian stuff corresponding to package version 4.99j-11
    *
@@ -1107,6 +1110,9 @@ diff -cbNr plplot-980407/examples/c/x17c.c plplot-980407-new/examples/c/x17c.c
 ! 
 ! /* $Id$
    * $Log$
+   * Revision 1.1.2.2  2001/01/22 09:09:02  rlaboiss
+   * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+   *
    * Revision 1.1.2.1  2001/01/22 09:05:31  rlaboiss
    * Debian stuff corresponding to package version 4.99j-11
    *
@@ -1690,6 +1696,9 @@ diff -cbNr plplot-980407/src/plstripc.c plplot-980407-new/src/plstripc.c
 + 
 + /* $Id$
 +  * $Log$
++  * Revision 1.1.2.2  2001/01/22 09:09:02  rlaboiss
++  * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
++  *
 +  * Revision 1.1.2.1  2001/01/22 09:05:31  rlaboiss
 +  * Debian stuff corresponding to package version 4.99j-11
 +  *

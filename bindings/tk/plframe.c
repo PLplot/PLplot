@@ -1,5 +1,9 @@
 /* $Id$
+<<<<<<< plframe.c
  * $Log$
+ * Revision 1.59.2.2  2001/01/22 09:09:01  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.59.2.1  2001/01/22 09:05:11  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
  *
@@ -108,6 +112,8 @@
 
 /*
     plframe.c
+=======
+>>>>>>> 1.64
 
     Copyright 1993, 1994, 1995
     Maurice LeBrun			mjl@dino.ph.utexas.edu
@@ -150,14 +156,16 @@
 #define DEBUG
 */
 
-#include "plserver.h"
-#include "plxwd.h"
-#include "tcpip.h"
+#include "plplot/plserver.h"
+#include "plplot/plxwd.h"
+#include "plplot/tcpip.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <fcntl.h>
+
+#undef HAVE_ITCL
 
 extern int plplot_ccmap;
 
@@ -460,6 +468,7 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     register PlFrame *plFramePtr;
     register PLRDev *plr;
     int i, ndev;
+    extern int XErrorProc(); /* jc: storecolor */
 
     dbug_enter("plFrameCmd");
 
@@ -550,6 +559,11 @@ plFrameCmd(ClientData clientData, Tcl_Interp *interp,
     Tk_CreateEventHandler(plFramePtr->tkwin, ExposureMask,
 			  PlFrameExposeEH, (ClientData) plFramePtr);
 
+    /* jc: try to catch XStoreColor bug on True Color Display
+     * by setting up a X error handler
+     */
+    XSetErrorHandler(XErrorProc);
+
 #ifdef HAVE_ITCL
     plFramePtr->widgetCmd =
 #endif
@@ -630,6 +644,33 @@ PlFrameWidgetCmd(ClientData clientData, Tcl_Interp *interp,
 	    result = ConfigurePlFrame(interp, plFramePtr, argc-2, argv+2,
 		    TK_CONFIG_ARGV_ONLY);
 	}
+    }
+
+/* double buffering */
+
+    else if ((c == 'd') &&
+	     ((strncmp(argv[1], "db", length) == 0) ||
+	      (strncmp(argv[1], "doublebuffering", length == 0)))) {
+
+	PLBufferingCB bcb;
+
+	if (argc == 3) {
+	    if (strcmp(argv[2], "on") == 0) {
+		bcb.cmd = PLESC_DOUBLEBUFFERING_ENABLE;
+		pl_cmd( PLESC_DOUBLEBUFFERING, &bcb );
+	    }
+	    if (strcmp(argv[2], "off") == 0) {
+		bcb.cmd = PLESC_DOUBLEBUFFERING_DISABLE;
+		pl_cmd( PLESC_DOUBLEBUFFERING, &bcb );
+	    }
+	    if (strcmp(argv[2], "query") == 0) {
+		bcb.cmd = PLESC_DOUBLEBUFFERING_QUERY;
+		pl_cmd( PLESC_DOUBLEBUFFERING, &bcb );
+		sprintf( interp->result, "%d", bcb.result );
+	    }
+	}
+
+	result = TCL_OK;
     }
 
 /* closelink -- Close a binary data link previously opened with openlink */

@@ -8,19 +8,20 @@
 # Initializations for building PLplot library.
 # -----------------------------------------------------------------------------
 
-# Package major/minor version number, for shared libraries on some systems
-# (e.g. SunOS).  Warning: apps linked to it may fail on major version
-# changes (depending on OS), and right now this doesn't mean much, so
-# by default these are not yet used.
+# Package major/minor/release version number, for shared libraries on some systems
+# (e.g. Linux).  Warning: apps linked to it may fail on major version
+# changes (depending on OS).
 
-MAJOR_VERSION	= 4
-MINOR_VERSION	= 99
+MAJOR_VERSION	= 5
+MINOR_VERSION	= 0
+RELEASE_VERSION	= 1
 
 # Utilities
 
 RANLIB		= @RANLIB@
 ARLIB_BUILD	= ar q
 SHLIB_BUILD	= @SHLIB_BUILD@
+SHLIB_BUILD_CXX	= @SHLIB_BUILD_CXX@
 
 # Flags and other miscellanea
 
@@ -29,7 +30,7 @@ SA		= @SA@
 SHARED		= @SHARED@
 
 CC_FLAGS	= @CC_FLAGS@ @INCS@
-CXX_FLAGS	= @CXX_FLAGS@
+CXX_FLAGS	= @CXX_FLAGS@ @INCS@
 
 CC_FLAGS_DEMOS	= $(CC_FLAGS)
 CXX_FLAGS_DEMOS	= $(CXX_FLAGS)
@@ -38,6 +39,7 @@ SHLIB_CCFLAGS	= @SHLIB_CCFLAGS@
 SHLIB_CXXFLAGS	= @SHLIB_CXXFLAGS@
 SHLIB_F77FLAGS	= @SHLIB_F77FLAGS@
 SHLIB_LIBS	= @SHLIB_LIBS@
+SONAME_FLAGS	= @SONAME_FLAGS@
 
 # Dependent directories
 
@@ -58,20 +60,29 @@ PLLIB_AR	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$A
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
 PLLIB_SA	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SA)
 
+<<<<<<< initlib.in
 # The following corrects error detected by Lintian
 # ldconfig-symlink-referencing-wrong-file (should not link to ./*
 # file)
 PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
+=======
+PLLIB_SO	= $(PLLIB_PATH)$(PLLIB_BASE)$(LIB_TAG)$(SO)
+>>>>>>> 1.23
 
 # This is used for making the install versions of plrender & plserver
 # (Must relink after installing shared library!)
 
+<<<<<<< initlib.in
 LIB_INSTALL	= -L$(LIB_DIR)/.. -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 #LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME) $(MAT_LINK)
+=======
+LIB_INSTALL	= -L$(LIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
+>>>>>>> 1.23
 
 # These are what we link against.
 
 PLLIB_LDC	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
+PLLIB_LDCXX	= -L$(PLLIB_DIR) $(CXX_LINK) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 
 # Header file dependencies for demos.
@@ -79,7 +90,7 @@ PLLIB_LDF	= -L$(PLLIB_DIR) -l$(PLLIB_NAME)$(LIB_TAG) $(MAT_LINK)
 # when installed (since then headers are found by the include search path,
 # and the library can't be rebuilt anyway).
 
-CDEMO_HEADERS	= plcdemos.h plplot.h
+CDEMO_HEADERS	= plplot/plcdemos.h plplot/plplot.h
 
 # Default is to build library(s) and utils.
 
@@ -93,5 +104,5 @@ everything: libs plrender$E pltek$E $(PYTHON_EXE) $(TCL_EXE) $(TK_EXE)
 # Inference rules, not specific to archive or shared libraries.
 
 .fm4.f:
-	$(M4) $(M4_FLAGS) $< >$*.f
+	$(M4) @M4_FLAGS@ $< >$*.f
 

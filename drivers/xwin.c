@@ -1,5 +1,9 @@
 /* $Id$
+<<<<<<< xwin.c
  * $Log$
+ * Revision 1.70.2.2  2001/01/22 09:09:02  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.70.2.1  2001/01/22 09:05:31  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
  *
@@ -129,18 +133,20 @@
 */
 
 /*	xwin.c
+=======
+>>>>>>> 1.78
 
 	PLplot X-windows device driver.
 */
-#include "plDevs.h"
+#include "plplot/plDevs.h"
 
 #define DEBUG
 
 #ifdef PLD_xwin
-#include "plplotP.h"
-#include "plxwd.h"
-#include "drivers.h"
-#include "plevent.h"
+#include "plplot/plplotP.h"
+#include "plplot/plxwd.h"
+#include "plplot/drivers.h"
+#include "plplot/plevent.h"
 
 static int synchronize = 0;	/* change to 1 for synchronized operation */
 				/* for debugging only */
@@ -248,13 +254,32 @@ static void  UpdateXhairs	(PLStream *pls);
 static void  ExposeCmd		(PLStream *pls, PLDisplay *ptr);
 static void  RedrawCmd		(PLStream *pls);
 static void  ResizeCmd		(PLStream *pls, PLDisplay *ptr);
+static void  ConfigBufferingCmd (PLStream *pls, PLBufferingCB *ptr );
 static void  GetCursorCmd	(PLStream *pls, PLGraphicsIn *ptr);
 static void  FillPolygonCmd	(PLStream *pls);
+static void  XorMod		(PLStream *pls, PLINT *mod);
 
 /* Miscellaneous */
 
 static void  StoreCmap0		(PLStream *pls);
 static void  StoreCmap1		(PLStream *pls);
+
+/* jc: X protocol error caused by trying to stop color on True Color*/
+#include <X11/Xproto.h>
+
+int XErrorProc(Display *dpy, XErrorEvent *errEventPtr)
+{
+  if ( errEventPtr->error_code == BadAccess && errEventPtr->request_code == X_StoreColors) {
+    
+      fprintf(stderr,"Can't change colormap on True Color Display. Plplot bug!\n");
+    return 0;
+  }
+    fprintf(stderr, "X protocol error: ");
+    fprintf(stderr, "error=%d request=%d minor=%d\n",
+        errEventPtr->error_code, errEventPtr->request_code,
+        errEventPtr->minor_code);
+    return 1;
+}
 
 /*--------------------------------------------------------------------------*\
  * plD_init_xw()
@@ -461,6 +486,24 @@ plD_line_xw(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 }
 
 /*--------------------------------------------------------------------------*\
+ * XorMod()
+ *
+ * Enter xor mode ( mod != 0) or leave it ( mode = 0)
+\*--------------------------------------------------------------------------*/
+
+static void
+XorMod(PLStream *pls, PLINT *mod)
+{
+    XwDev *dev = (XwDev *) pls->dev;
+    XwDisplay *xwd = (XwDisplay *) dev->xwd;
+
+    if (*mod == 0)
+      XSetFunction(xwd->display, dev->gc, GXcopy);
+    else
+      XSetFunction(xwd->display, dev->gc, GXxor);
+}
+
+/*--------------------------------------------------------------------------*\
  * plD_polyline_xw()
  *
  * Draw a polyline in the current color from (x1,y1) to (x2,y2).
@@ -660,6 +703,7 @@ plD_state_xw(PLStream *pls, PLINT op)
  *	PLESC_GETC	Get coordinates upon mouse click
  *	PLESC_REDRAW	Force a redraw
  *	PLESC_RESIZE	Force a resize
+ * 	PLESC_XORMOD 	set/reset xor mode
 \*--------------------------------------------------------------------------*/
 
 void
@@ -698,6 +742,14 @@ plD_esc_xw(PLStream *pls, PLINT op, void *ptr)
 
     case PLESC_RESIZE:
 	ResizeCmd(pls, (PLDisplay *) ptr);
+	break;
+
+    case PLESC_XORMOD:
+	XorMod(pls, (PLINT *) ptr);
+	break;
+
+    case PLESC_DOUBLEBUFFERING:
+	ConfigBufferingCmd(pls, (PLBufferingCB *) ptr );
 	break;
     }
 }
@@ -936,11 +988,19 @@ InitMain(PLStream *pls)
 
 /* Window title */
 
+<<<<<<< xwin.c
     if (plsc->plwindow){    // jc:
       sprintf(header, "%s", plsc->plwindow);
     }
     else
     sprintf(header, "PLplot");
+=======
+    if (plsc->plwindow){    /* jc: allow -plwindow to specify wm decoration name*/
+      sprintf(header, "%s", plsc->plwindow);
+    }
+    else
+        sprintf(header, "%s", plsc->program); /* jc: else program name*/
+>>>>>>> 1.78
 
 /* Window creation */
 
@@ -954,6 +1014,7 @@ InitMain(PLStream *pls)
 
     XSetStandardProperties(xwd->display, dev->window, header, header,
 			   None, 0, 0, &hint);
+    XSetErrorHandler(XErrorProc); /* jc: */ 
 }
 
 /*--------------------------------------------------------------------------*\
@@ -977,6 +1038,7 @@ MapMain(PLStream *pls)
 	ButtonPressMask      |
 	KeyPressMask         |
 	ExposureMask         |
+	ButtonMotionMask     | /* jc: drag */
 	StructureNotifyMask;
 
     XSelectInput(xwd->display, dev->window, dev->event_mask);
@@ -1113,6 +1175,7 @@ MasterEH(PLStream *pls, XEvent *event)
 	break;
 
     case MotionNotify:
+	if (event->xmotion.state) ButtonEH(pls, event); /* jc: drag */
 	MotionEH(pls, event);
 	break;
 
@@ -1949,6 +2012,39 @@ ResizeCmd(PLStream *pls, PLDisplay *pldis)
 }
 
 /*--------------------------------------------------------------------------*\
+ * ConfigBufferingCmd()
+ *
+ * Allows a widget to manipulate the double buffering support in the
+ * xwin dirver.
+\*--------------------------------------------------------------------------*/
+
+static void ConfigBufferingCmd( PLStream *pls, PLBufferingCB *ptr )
+{
+    XwDev *dev = (XwDev *) pls->dev;
+
+    switch (ptr->cmd) {
+
+    case PLESC_DOUBLEBUFFERING_ENABLE:
+	dev->write_to_window = 0;
+	pls->db = 1;
+	break;
+
+    case PLESC_DOUBLEBUFFERING_DISABLE:
+	dev->write_to_window = 1;
+	pls->db = 0;
+	break;
+
+    case PLESC_DOUBLEBUFFERING_QUERY:
+	ptr->result = pls->db;
+	break;
+
+    default:
+	printf( "Unrecognized buffering request ignored.\n" );
+	break;
+    }
+}
+
+/*--------------------------------------------------------------------------*\
  * RedrawCmd()
  *
  * Handles page redraw without resize (pixmap does not get reallocated).
@@ -2132,9 +2228,9 @@ GetVisual(PLStream *pls)
 	    xwd->visual = visualList->visual;	/* Choose first match. */
 	    xwd->depth = vTemplate.depth;
 	}
-#endif
+#endif /* HACK_STATICCOLOR */
     }
-#endif
+#endif /* DEFAULT_VISUAL == 0 */
 
     if ( ! visuals_matched) {
 	xwd->visual = DefaultVisual( xwd->display, xwd->screen );
@@ -2148,6 +2244,7 @@ GetVisual(PLStream *pls)
     case StaticColor:
     case StaticGray:
 	xwd->rw_cmap = 0;
+	break; /* jc: */
     default:
 	xwd->rw_cmap = 1;
     }
@@ -2480,7 +2577,7 @@ AllocCmap0(PLStream *pls)
 
     if (xwd->rw_cmap) {
     /* Allocate and assign colors in cmap 0 */
-
+        
 	npixels = pls->ncol0-1;
 	for (;;) {
 	    if (XAllocColorCells(xwd->display, xwd->map, False,
@@ -2511,8 +2608,36 @@ AllocCmap0(PLStream *pls)
 		fprintf( stderr, "i=%d, r=%d, pixel=%d\n", i, r, c.pixel );
 	    if ( r )
 		xwd->cmap0[i] = c;
-	    else
-		break;
+            else
+            {
+                XColor screen_def, exact_def;
+
+                if (pls->verbose)
+                    fprintf( stderr,
+                             "color alloc failed, trying by name: %s.\n",
+                             pls->cmap0[i].name );
+
+            /* Hmm, didn't work, try another approach. */
+                r = XAllocNamedColor( xwd->display, xwd->map,
+                                      pls->cmap0[i].name,
+                                      &screen_def, &exact_def );
+
+/*                 xwd->cmap0[i] = screen_def; */
+
+                if (r) {
+                    if (pls->verbose)
+                        fprintf( stderr, "yes, got a color by name.\n" );
+                    xwd->cmap0[i] = screen_def;
+                } else {
+                    r = XAllocNamedColor( xwd->display, xwd->map,
+                                          "white",
+                                          &screen_def, &exact_def );
+                    if (r)
+                        xwd->cmap0[i] = screen_def;
+                    else
+                        printf( "Can't find white?! Giving up...\n" );
+                }
+            }
 	}
 	xwd->ncol0 = i;
 
@@ -2642,7 +2767,10 @@ StoreCmap0(PLStream *pls)
 
     for (i = 1; i < xwd->ncol0; i++) {
 	PLColor_to_XColor(&pls->cmap0[i], &xwd->cmap0[i]);
-	XStoreColor(xwd->display, xwd->map, &xwd->cmap0[i]);
+	if (xwd->rw_cmap)
+	  XStoreColor(xwd->display, xwd->map, &xwd->cmap0[i]);
+	else
+	  XAllocColor( xwd->display, xwd->map, &xwd->cmap0[i]);
     }
 }
 
@@ -2667,7 +2795,10 @@ StoreCmap1(PLStream *pls)
     for (i = 0; i < xwd->ncol1; i++) {
 	plcol_interp(pls, &cmap1color, i, xwd->ncol1);
 	PLColor_to_XColor(&cmap1color, &xwd->cmap1[i]);
-	XStoreColor(xwd->display, xwd->map, &xwd->cmap1[i]);
+	if (xwd->rw_cmap)
+	  XStoreColor(xwd->display, xwd->map, &xwd->cmap1[i]);
+	else 
+	  XAllocColor(xwd->display, xwd->map, &xwd->cmap1[i]);
     }
 }
 

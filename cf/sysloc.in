@@ -18,12 +18,21 @@ LIBPATH=
 # Default linker library commands.  These may need version numbers
 # appended to them though.
 
-DPLIBSTR=-ldpnetwork
 ITKLIBSTR=-litk
 TKLIBSTR=-ltk
 ITCLLIBSTR=-litcl
 TCLLIBSTR=-ltcl
 XLIBSTR=-lX11
+
+# Add the current directory to the include path.  This must occur
+# first in the list, before we add the directories for any auxilliary
+# packages, in order to ensure that the build dir takes precedence
+# over anything that may be just lying around in the environment.  For
+# example, we don't want the files from a previous version of PLplot
+# which may be left in $prefix/include/plplot/*.h to take precedence
+# over the files from the current build.
+
+ADD_TO_INCS(., INCS, INCPATH)
 
 # ----------------------------------------------------------------------------
 # Run xmkmf to check for location of X libraries and includes.  If not
@@ -131,7 +140,14 @@ fi
 
 # Default directories to search for include files
 
+# In Linux have a peculiar ambiguity where identical tcl.h files are found
+# both in /usr/include and /usr/include/tcl8.2/generic.  The latter is *much*
+# preferred because has everything else as well having to do with tcl.  Thus,
+# AWI puts the generic include site first on the list (note that prefix can be
+# "/usr" which would give bad result under Linux without this ordering.)
+
 incdirs_default="\
+/usr/include/tcl8.2/generic \
 $prefix/include/itcl \
 $prefix/include \
 $HOME/local/include \
@@ -170,17 +186,33 @@ fi
 
 # ----------------------------------------------------------------------------
 # libtcl
+#
+# Includes checks against old versions of tcl no longer supported.
+# But you can *try* linking against ANY non-versioned tcl.
 # ----------------------------------------------------------------------------
 
 if test "$enable_tcl" = "yes"; then
     if test -z "$TCLLIBDIR"; then
 	FIND_LIB_BEGIN(tcl, TCLLIBDIR)
+<<<<<<< sysloc.in
 	for version in 8.1 8.0 7.6i 7.5i 7.6 7.5 7.4 ""; do
+=======
+	for version in 8.3 8.2 8.1 8.0 ""; do
+	    FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
+>>>>>>> 1.56
 	    if test -n "$TCLLIBDIR"; then
 		break
 	    fi
-	    FIND_LIB_SET(tcl$version, TCLLIBDIR, TCLLIBSTR)
 	done
+	if test -n "$version"; then
+	    for oldversion in 8.1 8.0; do
+		if test "$version" = "$oldversion"; then
+		    echo "Tcl version $oldversion not supported.. please upgrade!"
+		    enable_tcl="no"
+		    break
+		fi
+	    done
+	fi
 	FIND_LIB_END(tcl, TCLLIBDIR, enable_tcl)
     fi
     if test "$enable_tcl" = "yes"; then
@@ -211,13 +243,18 @@ fi
 if test "$enable_itcl" = "yes"; then
     if test -z "$ITCLLIBDIR"; then
 	FIND_LIB_BEGIN(itcl, ITCLLIBDIR)
-	for version in 2.1 2.0 ""; do
+	for version in 3.2 3.1 3.0 2.1 2.0 ""; do
 	    if test -n "$ITCLLIBDIR"; then
 		break
 	    fi
 	    FIND_LIB_SET(itcl$version, ITCLLIBDIR, ITCLLIBSTR)
 	done
 	FIND_LIB_END(itcl, ITCLLIBDIR, enable_itcl)
+    fi
+    if test "$enable_itcl" = "yes"; then
+	if test -r $ITCLLIBDIR/itclConfig.sh; then
+	    . $ITCLLIBDIR/itclConfig.sh
+	fi
     fi
 fi
 
@@ -242,7 +279,11 @@ fi
 if test "$enable_tk" = "yes"; then
     if test -z "$TKLIBDIR"; then
 	FIND_LIB_BEGIN(tk, TKLIBDIR)
+<<<<<<< sysloc.in
 	for version in 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
+=======
+	for version in 8.3 8.2 8.1 8.0 4.2i 4.1i 4.2 4.1 4.0 ""; do
+>>>>>>> 1.56
 	    if test -n "$TKLIBDIR"; then
 		break
 	    fi
@@ -264,7 +305,7 @@ fi
 if test "$enable_itk" = "yes"; then
     if test -z "$ITKLIBDIR"; then
 	FIND_LIB_BEGIN(itk, ITKLIBDIR)
-	for version in 2.1 2.0 ""; do
+	for version in 3.2 3.1 3.0 2.1 2.0 ""; do
 	    if test -n "$ITKLIBDIR"; then
 		break
 	    fi
@@ -283,71 +324,9 @@ if test "$enable_itk" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
-# makeindex - figure out how we're gonna generate tclIndex
-# ----------------------------------------------------------------------------
-
-if test -z "$MAKEINDEX"; then
-    MAKEINDEX='BOGUS'
-fi
-
-if test "$enable_tcl" = "yes"; then
-    if test "$TCLLIBDIR" = "default"; then
-	MAKEINDEX="/usr/bin/tclsh$TCL_VERSION"
-    else
-	tclbindir="`echo $TCLLIBDIR | sed 's,/lib,,'`/bin"
-#	echo "tclbindir = $tclbindir"
-	if test -r "$tclbindir/tclsh$TCL_VERSION"; then
-	    MAKEINDEX="$tclbindir/tclsh$TCL_VERSION"
-#	    echo "setting MAKEINDEX to $MAKEINDEX"
-	fi
-    fi
-    TCL_INDEX_FILES="*.tcl"
-fi
-
-if test "$enable_itcl" = "yes"; then
-    itclbindir="`echo $ITCLLIBDIR | sed 's,/lib/itcl,,'`/bin"
-#    echo "itclbindir = $itclbindir"
-    if test -r "$itclbindir/itclsh"; then
-	MAKEINDEX="$itclbindir/itclsh"
-    fi
-    TCL_INDEX_FILES="*.tcl"
-fi
-
-if test "$enable_tcl" = "yes" -a "$MAKEINDEX" = "BOGUS"; then
-    AC_MSG_RESULT([warning: you must edit Makefile to fix MAKEINDEX.])
-fi
-
-AC_SUBST(MAKEINDEX)
-AC_SUBST(TCL_INDEX_FILES)
-
-# ----------------------------------------------------------------------------
-# dp.h
-# ----------------------------------------------------------------------------
-
-if test "$enable_tcl" = "no" -o "$enable_tk" = "no"; then
-    enable_dp=no
-fi
-
-if test "$enable_dp" = "yes"; then
-
-    if test -z "$DPINCDIR"; then
-	FIND_INC(dp, DPINCDIR, enable_dp)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
-# libdpnetwork (Tcl-DP)
-# ----------------------------------------------------------------------------
-
-if test "$enable_dp" = "yes"; then
-    if test -z "$DPLIBDIR"; then
-	FIND_LIB(dpnetwork, DPLIBDIR, DPLIBSTR, enable_dp)
-    fi
-fi
-
-# ----------------------------------------------------------------------------
 # Assemble list of tcl/TK/X/whatever include directives.  These can go in
-# any order.
+# any order, except the first, which supports the 'include "plplot/<header>"'
+# syntax.
 # ----------------------------------------------------------------------------
 
 if test "$enable_xwin" = "yes"; then
@@ -355,9 +334,6 @@ if test "$enable_xwin" = "yes"; then
 fi
 if test "$enable_tcl" = "yes"; then
     ADD_TO_INCS($TCLINCDIR, INCS, INCPATH)
-fi
-if test "$enable_dp" = "yes"; then
-    ADD_TO_INCS($DPINCDIR, INCS, INCPATH)
 fi
 if test "$enable_itcl" = "yes"; then
     ADD_TO_INCS($ITCLINCDIR, INCS, INCPATH)
@@ -369,21 +345,20 @@ fi
 # ----------------------------------------------------------------------------
 # Assemble list of tcl/TK/X/whatever libraries.
 # Note the library order CAN be important, depending on the system:
-# The full Tcl-DP library depends on both Tk and Tcl so must come first.
 # Tk depends on Tcl and X11 so must come before both.
 # Itcl depends on Tcl so must come before it.
 # Tcl and X11 can be put in either order.
 # ----------------------------------------------------------------------------
 
-if test "$enable_dp" = "yes"; then
-    ADD_TO_LIBS($DPLIBDIR, $DPLIBSTR, LIBS, LIBPATH)
-fi
 if test "$enable_itk" = "yes"; then
     ADD_TO_LIBS($ITKLIBDIR, $ITKLIBSTR, LIBS, LIBPATH)
 fi
 if test "$enable_tk" = "yes"; then
     ADD_TO_LIBS($TKLIBDIR, $TKLIBSTR, LIBS, LIBPATH)
+    #needed in Linux case (and SCO eventually?)
+    STUPIDTK_OBJ=stupidtk.o
 fi
+AC_SUBST(STUPIDTK_OBJ)
 if test "$enable_itcl" = "yes"; then
     ADD_TO_LIBS($ITCLLIBDIR, $ITCLLIBSTR, LIBS, LIBPATH)
 fi
@@ -457,8 +432,17 @@ fi
 if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_INC_DIR" -o ! -d "$PYTHON_INC_DIR"; then
 	incdirs="\
+<<<<<<< sysloc.in
 	$prefix/include/python1.5 \
 	/usr/include/python1.5 \
+=======
+	$prefix/include/python1.5 \
+	/usr/include/python1.5 \
+	$prefix/include/python1.5/Numeric \
+	/usr/include/python1.5/Numeric \
+	$prefix/include/python1.4 \
+	/usr/include/python1.4 \
+>>>>>>> 1.56
 	$prefix/include/Py \
 	$HOME/local/include/Py \
 	$HOME/local/python/include/Py \
@@ -473,7 +457,7 @@ if test "$enable_python" = "yes"; then
 	FIND_INC(Python, PYTHON_INC_DIR, enable_python)
 
 	if test "$enable_python" = "yes"; then
-	    FIND_INC(arrayobject, PYTHON_INC_DIR, numeric_python)
+	    FIND_INC(arrayobject, PYTHON_NUM_DIR, numeric_python)
 	    if test "$numeric_python" = "no"; then
 		AC_MSG_RESULT([plmodule needs Python numeric extension.])
 		AC_MSG_RESULT([Setting enable_python to no])
@@ -486,12 +470,18 @@ fi
 if test "$enable_python" = "yes"; then
     if test -z "$PYTHON_MOD_DIR" -o ! -d "$PYTHON_MOD_DIR"; then
 	if test -z "$MACHDEP"; then
-	    ac_sys_system=`uname -s | tr -d ' ' | tr '[[A-Z]]' '[[a-z]]'`
-	    ac_sys_release=`uname -r | tr -d ' ' | sed 's/\..*//'`
-	    MACHDEP="$ac_sys_system$ac_sys_release"
-	    case MACHDEP in
-		'')	MACHDEP=unknown;;
-	    esac
+#	    ac_sys_system=`uname -s | tr -d ' ' | tr '[[A-Z]]' '[[a-z]]'`
+#	    ac_sys_release=`uname -r | tr -d ' ' | sed 's/\..*//'`
+#	    MACHDEP="$ac_sys_system$ac_sys_release"
+#	    case MACHDEP in
+#		'')	MACHDEP=unknown;;
+#	    esac
+	    # Know this is correct for Debian potato and RedHat 6.2
+	    # But this comes directly from python Makefile.pre.in for dynamic
+	    # loading of packages so my guess is this is now good for all Unix.
+	    # This is the sub-directory where dynamically loadable modules reside
+	    # (or where a symlink exists to the true location)
+	    MACHDEP=site-packages
 	fi
 
 	python_dir=`echo $PYTHON_INC_DIR|sed 's,/[[^/]]*/[[^/]]*$,,'`
@@ -502,7 +492,8 @@ if test "$enable_python" = "yes"; then
         PYTHON_MOD_DIR=$prefix/lib/python
 	PYTHON_MACH_DIR=$PYTHON_MOD_DIR/$MACHDEP
 	if test ! -d "$PYTHON_MOD_DIR"; then
-	    # tricky, must be a new style
+	    # account for the usual case where python directories 
+	    # have a version number now.
 	    python_ver=`echo $PYTHON_INC_DIR|sed 's,/.*/,,'`
             # Changed by Rafael Laboissiere <rafael@icp.inpg.fr>
 	    # on Mon Oct 12 11:12:00 CEST 1998
@@ -516,29 +507,36 @@ if test "$enable_python" = "yes"; then
 		AC_MSG_RESULT([PYTHON_MOD_DIR not found, setting enable_python to no])
 		enable_python=no
 	    fi
+	    # for modern (versioned) systems set the plmodule.so install location
+	    # to be identical to $PYTHON_MACH_DIR except possibly for the prefix
+	    if test -z "$PYTHON_DIR"; then
+	        PYTHON_DIR=$prefix/lib/$python_ver/$MACHDEP
+	    fi
 
 	fi
+<<<<<<< sysloc.in
 	# Changed by Rafael Laboissiere <rafael@icp.inpg.fr>
         # on Mon Oct 12 11:12:00 CEST 1998
 	# (For the Debian plplot package).
 	# PYTHON_CFG_DIR=$PYTHON_MOD_DIR/config
         PYTHON_CFG_DIR=$python_dir/lib/$python_ver/config
     fi
+=======
+	PYTHON_CFG_DIR=$PYTHON_MOD_DIR/config
+    fi
+    if test -z "$PYTHON_DIR"; then
+        #default location for installing plmodule.so if versioned logic failed above.
+        PYTHON_DIR=$prefix/python
+    fi
+>>>>>>> 1.56
 fi
 
 AC_SUBST(PYTHON_INC_DIR)
+AC_SUBST(PYTHON_NUM_DIR)
 AC_SUBST(PYTHON_MOD_DIR)
 AC_SUBST(PYTHON_MACH_DIR)
+AC_SUBST(PYTHON_DIR)
 AC_SUBST(PYTHON_CFG_DIR)
-
-# ----------------------------------------------------------------------------
-# libf2c
-# ----------------------------------------------------------------------------
-
-if test "$with_f2c" = "yes"; then
-    AC_CHECK_LIB(f2c, main, [LIBS="$LIBS -lf2c"],
-    AC_MSG_RESULT(warning: libf2c not found))
-fi
 
 # ----------------------------------------------------------------------------
 # linuxvga support
@@ -591,7 +589,11 @@ if test -z "$EXTRA_LIBS"; then
 	    EXTRA_LIBS="-ldld -lm"
 	;;
 	Linux* )
-	    EXTRA_LIBS="-ldl -lm"
+	    if test "$enable_f77" = "yes"; then
+		EXTRA_LIBS="-ldl -lm -lg2c"
+	    else
+		EXTRA_LIBS="-ldl -lm"
+	    fi
 	;;
 	* ) 	
 	    AC_CHECK_LIB(Xbsd,   main, [EXTRA_LIBS="$EXTRA_LIBS -lXbsd"])
@@ -604,7 +606,21 @@ if test -z "$EXTRA_LIBS"; then
     LIBS=$SAVE_LIBS
 fi
 
-LIBS="$LIBS $EXTRA_LIBS"
+# Now add EXTRA_LIBS to LIBS, but don't introduce duplicates.
+# Used to be: LIBS="$LIBS $EXTRA_LIBS"
+
+for lib in $EXTRA_LIBS; do
+    sw=$lib
+    for token in $LIBS; do
+	if test $token = $lib; then
+	    sw=""
+	    break
+	fi
+    done
+    if test -n "$sw"; then
+	LIBS="$LIBS $sw"
+    fi
+done
 
 AC_SUBST(INCS)
 AC_SUBST(LIBS)
@@ -647,6 +663,7 @@ if test "$with_shlib" = "yes"; then
 		SHLIB_BUILD="ld -assert pure-text -o"
 	    fi
 	;;
+<<<<<<< sysloc.in
 	SCO* ) 
 #	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
 #	    SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
@@ -655,6 +672,16 @@ if test "$with_shlib" = "yes"; then
 		LDSHARED='gcc -fpic -shared'
 		SHLIB_BUILD="gcc -shared -fpic -o"
 	;;
+=======
+    SCO* )
+#       SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
+#       SA='.sa.$(MAJOR_VERSION).$(MINOR_VERSION)'
+        AC_MSG_RESULT([Assuming sco-3.2v5 with gcc. Otherwise, reconfigure --without-shlib])
+        SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
+        LDSHARED='gcc -fpic -shared'
+        SHLIB_BUILD="gcc -shared -fpic -o"
+    ;;
+>>>>>>> 1.56
 	Linux* )
             # Added by Rafael Laboissiere <rafael@icp.inpg.fr>
             # on Sat Nov  6 20:57:55 CET 1999  
@@ -663,15 +690,25 @@ if test "$with_shlib" = "yes"; then
 	    # Should do something to make sure this is an ELF system, as
 	    # don't have patience for DLL...
 	    AC_MSG_RESULT([Assuming Linux ELF.  Otherwise, reconfigure --without-shlib])
+<<<<<<< sysloc.in
 #	    SO='.so.$(MAJOR_VERSION).$(MINOR_VERSION)'
 	    SHLIB_BUILD="gcc -shared -fpic -fPIC -lc -o"
+=======
+	    SHLIB_BUILD="gcc -shared -fpic -o"
+>>>>>>> 1.56
 
-	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION)'
-
-	    # Hmm, would be good to replace that trailing .0 with the
-	    # compilation number or some such.  Have to think about that.
+	    SOVERSION='$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)'
 
 	    LDSHARED='gcc -fpic -shared'
+	    RPATH="-Wl,-rpath -Wl,.:$prefix/lib"
+	    INSTALL_RPATH="-Wl,-rpath -Wl,$prefix/lib"
+	    SONAME_FLAGS="-Wl,-soname -Wl,"
+
+	    if test "$CXX" = "KCC"; then
+		SHLIB_BUILD_CXX="KCC --thread_safe -o"
+		SHLIB_CXXFLAGS=-fpic
+		SONAME_FLAGS="--soname "
+	    fi
 	;;
 	HP-UX-* )
 	    SO=".sl"
@@ -735,13 +772,26 @@ if test "$with_shlib" = "yes"; then
 	    AC_MSG_RESULT(unknown)
 	;;
     esac
+
+    # Finally, if SHLIB_BUILD_CXX isn't set already, it defaults to
+    # SHLIB_BUILD. 
+    if test -z "$SHLIB_BUILD_CXX"; then
+	SHLIB_BUILD_CXX=$SHLIB_BUILD
+    fi
 fi
 
 AC_SUBST(SHLIB_BUILD)
+AC_SUBST(SHLIB_BUILD_CXX)
+AC_SUBST(SONAME_FLAGS)
 AC_SUBST(SA)
 AC_SUBST(SO)
 AC_SUBST(LDSHARED)
+<<<<<<< sysloc.in
 AC_SUBST(RPATH)
+=======
+AC_SUBST(RPATH)
+AC_SUBST(INSTALL_RPATH)
+>>>>>>> 1.56
 
 AC_SUBST(SOVERSION)
 

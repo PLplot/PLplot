@@ -8,14 +8,14 @@
 # Make assignments for PLplot/TK support.
 # -----------------------------------------------------------------------------
 
-TK_C		= tk.c tkshell.c tcpip.c plframe.c tkMain.c plr.c
 TK_C		= tk.c Pltk_Init.c tcpip.c plframe.c tkMain.c plr.c
-TK_OBJ		= tk$O tkshell$O tcpip$O plframe$O plr$O
 TK_OBJ		= tk$O Pltk_Init$O tcpip$O plframe$O plr$O
 TK_OBJ_SA	= tkMain$O 
 TK_EXE		= plserver$E
-TK_INSTALL	= install_tk
+#DO NOT include the symlinks, i.e., x01.tcl, etc.
+TK_DEMOS	= tk?? tkdemos.tcl *.c README.tkdemos
 
+<<<<<<< pkg_tk.in
 install_tk:
 	-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi
 	-if test $(SHARED) = 1; then \
@@ -34,5 +34,46 @@ install_tk:
 # on Fri Nov 13 03:37:04 CET 1998
 #	-$(LN) $(DEMOS_DIR)/tcl/x??.tcl $(DEMOS_DIR)/tk
 	( cd $(DEMOS_DIR)/tk ; $(LN) ../tcl/x??.tcl $(DEMOS_DIR)/tk )
+=======
+# Variables for use in "make" and "make install".
+>>>>>>> 1.17
+
+<<<<<<< pkg_tk.in
+
+=======
+INSTALL_TK	= install_tk
+
+# Targets
+
+install_plserver:
+	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi; \
+	  if test $(SHARED) = 1; then \
+	      $(LDC) $(LDC_FLAGS) plserver$O $(LIB_INSTALL) \
+		  -o plserver$E $(LDC_LIBS) $(INSTALL_RPATH); \
+	  fi; \
+	  strip plserver$E; \
+	  $(CP) plserver$E $(BIN_DIR)
 
 
+install_tk_scripts:
+	@-cd $(top_srcdir)/bindings/tk; \
+	  $(CP) pltk.h $(INCLUDE_DIR); \
+	  $(CP) *.itk *.tcl *.pal $(TCL_DIR)
+
+# N.B. this target depends on install_tcl_demos to work properly because the
+# symbolic links below are set up by real files in tcl/x??.tcl that must
+# exist.  However, AWI hesitates to put in the dependence because it might
+# just simply mean the rules for install_tcl_demos got executed twice.
+install_tk_demos:
+	@-if test ! -d $(DEMOS_DIR)/tk; then mkdir -p $(DEMOS_DIR)/tk; fi; \
+	  $(LN) $(DEMOS_DIR)/Makefile $(DEMOS_DIR)/tk; \
+	  cd $(top_srcdir)/examples/tk; $(CP) $(TK_DEMOS) $(DEMOS_DIR)/tk ; \
+	  cd $(DEMOS_DIR)/tk ; \
+	  for filename in ../tcl/x??.tcl ; \
+	  do  \
+	  $(LN) $$filename . ; \
+	  done
+
+install_tk: install_plserver install_tk_scripts install_tk_demos
+
+>>>>>>> 1.17

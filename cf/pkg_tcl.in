@@ -16,15 +16,15 @@ TCL_C		= tclAPI.c tclMain.c
 TCL_OBJ		= tclAPI$O
 TCL_OBJ_SA	= tclMain$O 
 TCL_EXE		= pltcl$E tclIndex
-TCL_INSTALL	= install_tcl
+TCL_DEMOS	= *.tcl *.log *.dat README.tcldemos
 
-MAKEINDEX	= @MAKEINDEX@
-TCL_INDEX_FILES = @TCL_INDEX_FILES@
+MAKEINDEX	= $(srcdir)/scripts/mktclIndex
 
 MAT_C		= tclMatrix.c matrixInit.c
 MAT_OBJS	= tclMatrix$O matrixInit$O
 MAT_OBJS_SO	=
 MAT_OBJS_SA	=
+<<<<<<< pkg_tcl.in
 MATLIB_AR	= libMatrix.a
 # Changed by Rafael Laboissiere
 # on Tue Oct 13 13:42:54 CEST 1998
@@ -35,16 +35,53 @@ MAT_INSTALL	= install_mat
 MAT_LINK	= -lMatrix
 
 MAT_BUILD	= $(MATLIBS)
+=======
+>>>>>>> 1.20
 
+<<<<<<< pkg_tcl.in
 tclAPI.c: tclgen.h tclgen_s.h tclgen.c
+=======
+# Variables used in accessing libraries.
+# These can be overridden in system-dependent files.
+>>>>>>> 1.20
 
+<<<<<<< pkg_tcl.in
 tclgen.h tclgen_s.h tclgen.c : plapi.tpl
 	./pltclgen
+=======
+# Note no LIB_TAG appended because the matrix library only comes in one
+# version, not single- and double-precision versions.
+MATLIB_AR        = $(PLLIB_PATH)$(MATLIB_BASE)$A
+MATLIB_SO        = $(PLLIB_PATH)$(MATLIB_BASE)$(SO)
+MATLIB_SA        = $(PLLIB_PATH)$(MATLIB_BASE)$(SA)
+MAT_LINK	= -l$(MATLIB_NAME)
 
+# Variables for use in "make" and "make install".
+
+BLD_MATLIB_AR	= $(MATLIB_AR)
+BLD_MATLIB_SO	= $(MATLIB_SO)
+BLD_MATLIB_SA	= $(MATLIB_SA)
+INSTALL_TCL	= install_tcl
+INSTALL_MAT	= install_mat_includes
+INSTALL_MATLIB	= install_matlib
+
+# Targets
+
+tclAPI.c: plplot/tclgen.h plplot/tclgen_s.h tclgen.c
+
+plplot/tclgen.h plplot/tclgen_s.h tclgen.c : pltclgen plapi.tpl tclcmd.tpl
+	cd $(top_srcdir)/bindings/tcl; \
+	perl pltclgen
+>>>>>>> 1.20
+
+<<<<<<< pkg_tcl.in
 #tclIndex:
 #	mktclidx *.tcl
 
+=======
+>>>>>>> 1.20
 tclIndex:
+<<<<<<< pkg_tcl.in
 	(echo "auto_mkindex . $(TCL_INDEX_FILES)" | $(MAKEINDEX) )
 
 install_tcl:
@@ -64,4 +101,37 @@ install_mat:
 	cp tclMatrix.h $(INCLUDE_DIR)
 	cp libMatrix* $(LIB_DIR)/..
 	if test -r libMatrix.a; then $(RANLIB) $(LIB_DIR)/../libMatrix.a; fi
+=======
+	@$(MAKEINDEX)
+>>>>>>> 1.20
 
+install_pltcl:
+	@-if test $(SHARED) = 1; then \
+	     $(LDC) $(LDC_FLAGS) pltcl$O $(LIB_INSTALL) \
+		-o pltcl$E $(LDC_LIBS) $(INSTALL_RPATH); \
+	  fi; \
+	  strip pltcl$E; $(CP) pltcl$E $(BIN_DIR)
+
+install_tcl_index:
+	@-if test ! -d $(TCL_DIR); then mkdir -p $(TCL_DIR); fi; \
+	  $(CP) tclIndex $(TCL_DIR)
+
+install_tcl_includes:
+	@-cd $(top_srcdir)/bindings/tcl; \
+	  $(CP) pltcl.h $(INCLUDE_DIR)
+
+install_tcl_demos:
+	@-if test ! -d $(DEMOS_DIR)/tcl; then mkdir -p $(DEMOS_DIR)/tcl; fi; \
+	  cd $(top_srcdir)/examples/tcl; $(CP) $(TCL_DEMOS) $(DEMOS_DIR)/tcl
+
+install_tcl: install_pltcl install_tcl_index install_tcl_includes install_tcl_demos
+
+install_mat_includes:
+	@-cd $(top_srcdir)/bindings/tcl; \
+	  $(CP) tclMatrix.h $(INCLUDE_DIR)
+
+install_matlib:
+	@-$(CP) $(MATLIB_BASE)* $(LIB_DIR); \
+	  if test -r $(MATLIB_BASE)$A; then \
+	      $(RANLIB) $(LIB_DIR)/$(MATLIB_BASE)$A; \
+	  fi

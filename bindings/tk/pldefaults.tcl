@@ -1,5 +1,9 @@
 # $Id$
+<<<<<<< pldefaults.tcl
 # $Log$
+# Revision 1.10.2.2  2001/01/22 09:09:01  rlaboiss
+# Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+#
 # Revision 1.10.2.1  2001/01/22 09:05:11  rlaboiss
 # Debian stuff corresponding to package version 4.99j-11
 #
@@ -54,8 +58,9 @@
 # Proc to set up defaults.  Should not be modified by the user (use
 # plconfig instead).
 #
+=======
+>>>>>>> 1.13
 #----------------------------------------------------------------------------
-# pldefaults.tcl
 #
 # Sets default configuration options for plplot/TK driver.
 # Maurice LeBrun
@@ -253,4 +258,9 @@ proc pldefaults {} {
     global key_scroll_down;	set key_scroll_down	"Down"
     global key_scroll_mag;	set key_scroll_mag	"5"
     global key_scroll_speed;	set key_scroll_speed	"1"
+
+# enable/disable top plot and file menu
+
+    global file_menu_on;	set file_menu_on "1"
+    global plot_menu_on;	set plot_menu_on "1"
 }

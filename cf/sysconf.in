@@ -20,28 +20,25 @@
 # Configure library recognition for various systems.
 # ----------------------------------------------------------------------------
 
-LIBEXTNS="a"
+LIBEXTNS="so a"
 
 case "$system" in 
 #    aix*|AIX*|rs*|RS*|ibm*|IBM* ) 
 #	CC=xlc
 #    ;;
-    alpha*|ALPHA*|Alpha*|OSF* ) 
-	LIBEXTNS="so a"
-    ;;
-#    convex*|ConvexOS* ) 
-#	CC="cc -std"
-#	with_gcc=no
+#    alpha*|ALPHA*|Alpha*|OSF* ) 
+#	LIBEXTNS="so a"
+#    ;;
 #    ;;
     hp*|HP* ) 
 	LIBEXTNS="sl a"
     ;;
-    irix*|IRIX*|Irix*|sgi*|SGI* ) 
-	LIBEXTNS="so a"
-    ;;
-    Linux* )
-	LIBEXTNS="so a"
-    ;;
+#    irix*|IRIX*|Irix*|sgi*|SGI* ) 
+#	LIBEXTNS="so a"
+#    ;;
+#    Linux* )
+#	LIBEXTNS="so a"
+#    ;;
 #    SunOS-4* )
 #	CC=acc
 #    ;;
@@ -84,15 +81,16 @@ esac
 M4=m4
 
 # Double precision
-# Note that although there is no truly standard way to invoke double
-# precision in Fortran from the command line, enough of them use -r8
-# that I've decided to make it the default.  
+# Note that because there is no standard way to invoke double
+# precision in Fortran from the command line we use m4 preprocessing
+# to do it for all systems.
 
 if test "$with_double" = "yes"; then
-    DBL_FLAG_C=-DDOUBLE
-    DBL_FLAG_CXX=-DDOUBLE
+#    DBL_FLAG_C=-DDOUBLE
+#    DBL_FLAG_CXX=-DDOUBLE
     DBL_FLAG_M4=-DDOUBLE
-    DBL_FLAG_F=-r8
+    AC_DEFINE(PL_DOUBLE)
+#    DBL_FLAG_F=-r8
 fi
 
 # Profiling
@@ -109,18 +107,12 @@ fi
 # Notes:
 #
 # - type "configure --with-gcc" to specify gcc from the command line
-# - type "configure --with-f2c" to specify f2c from the command line
 #
-# On some systems, gcc or f2c is the default.  On others, they are not
-# supported (e.g. UNICOS, Convex).  The f2c executable is expected to be
-# "fc" since some systems may have both programs.  If "fc" can't be found,
-# "f77" is tried instead.
+# On some systems, gcc is the default.  Some systems, however, do not
+# support gcc, or for some other reason, the vendor compiler is
+# preferred. 
 #
-# On systems where gcc or f2c are actually undesirable (e.g. on Crays --
-# gcc isn't ported and why would you want to use f2c?), I set with_gcc
-# and/or with_f2c to "no" to prevent their use.
-#
-# The actual setup for gcc or f2c is done AFTER the case statements.  Done
+# The actual setup for gcc is done AFTER the case statements.  Done
 # this way because they're pretty predictable across platforms, and this
 # way we can just override what is set below.  IMPORTANT: the command line
 # argument uses a "-" (dash) to separate words, while the shell variable
@@ -182,19 +174,38 @@ fi
 
 # ----------------------------------------------------------------------------
 # Set up C++ compiler
-# If gcc has been specified, use that.  Otherwise do NOT use gcc.
-# Mixing/matching compilers is best left to the experts.
-
-if test "$with_gcc" = "yes"; then
-    if test ! "$enable_cxx" = "no"; then
-	enable_cxx=yes
-    fi
-fi
 
 if test "$enable_cxx" = "yes"; then
+
+    # If KAI C++ (Kuck and Associates) is available, use that.
+    
+    found_cxx=no
+    if test -z "$CXX" -o "$CXX" = "KCC"; then
+	found_kcc=
+	AC_CHECK_PROG(found_kcc, KCC, yes, no)
+	if test "$found_kcc" = "yes" ; then
+	    found_cxx=yes
+	    AC_MSG_RESULT([Found KAI C++, using that!])
+	    CXX=KCC
+	    # Thread-safety is probably best.  It must be supplied when both
+	    # compiling and linking.  Note thread-safe C++ is not
+	    # link-compatible with (the default) non-thread-safe C++.
+	    SYS_FLAGS_CXX=--thread_safe
+	    SYS_FLAGS_LCXX=--thread_safe
+	fi
+    fi
+
+    # If gcc has been specified, use that.  Otherwise do NOT use gcc.
+    # Mixing/matching compilers is best left to the experts.
+
     if test -z "$CXX"; then
 	if test "$with_gcc" = "yes"; then
+<<<<<<< sysconf.in
 	    CXX=g++
+=======
+	    # Need to use 'g++' with gcc for proper operation
+	    CXX=g++
+>>>>>>> 1.44
 	else
 	    CXX=CC
 	    case "$system" in
@@ -207,29 +218,16 @@ if test "$enable_cxx" = "yes"; then
 	    esac
 	fi
     fi
-fi
 
-found_cxx=no
+    # Try to find C++ compiler.  If not found, switch enable_cxx to "no".
 
-# If Kuck and Associates, Inc, Photon C++ is available, use that.
-
-if test "$enable_cxx" = "yes"; then
-    AC_CHECK_PROG(found_photon, KCC, yes, no)
-    if test "$found_photon" = "yes" ; then
-	AC_MSG_RESULT([Found butt-kicking Photon C++, using that!])
-	CXX=KCC
-	found_cxx=yes
-    fi
-fi
-
-# Try to find C++ compiler.  If not found, switch enable_cxx to "no".
-
-if test "$enable_cxx" = "yes" -a "$found_cxx" = "no"; then
-    found_cxx=""
-    AC_CHECK_PROG(found_cxx, $CXX, yes, no)
-    if test "$found_cxx" = "no" ; then
-	AC_MSG_RESULT([warning: cannot find C++ compiler, setting enable_cxx=no])
-	enable_cxx=no
+    if test ! "$found_cxx" = "yes"; then
+	found_cxx=
+	AC_CHECK_PROG(found_cxx, $CXX, yes, no)
+	if test "$found_cxx" = "no" ; then
+	    AC_MSG_RESULT([warning: cannot find C++ compiler, setting enable_cxx=no])
+	    enable_cxx=no
+	fi
     fi
 fi
 
@@ -280,21 +278,24 @@ if test "$enable_f77" = "yes"; then
 		# but I've had problems with it, so use f77sx here instead.
 
 		F77=f77sx
-		with_f2c=no
 	    ;;
 	    CRAY* ) 
 		F77=cf77
-		with_f2c=no
 	    ;;
 	esac
     fi
 
-    # If not using f2c, try locating the executable now.
+    # Try to locate the executable now.  If it can't be found, look
+    # for g77.
 
-    if test "$with_f2c" = "no"; then
-	AC_CHECK_PROG(found_F77, $F77, yes, no)
-	if test "$found_F77" = "no" ; then
-	    with_f2c=yes
+    found_f77=""; AC_CHECK_PROG(found_F77, $F77, yes, no)
+    if test "$found_F77" = "no"; then
+	found_g77=""; AC_CHECK_PROG(found_g77, g77, yes, no)
+	if test "$found_g77" = "no"; then
+	    AC_MSG_RESULT([warning: cannot find Fortran compiler, setting enable_f77=no])
+	    enable_f77=no
+	else
+	    F77=g77
 	fi
     fi
 fi
@@ -305,7 +306,13 @@ fi
 
 if test "$with_gcc" = "yes"; then
     CC=gcc
+<<<<<<< sysconf.in
     CXX=g++
+=======
+    if test -z "$CXX"; then
+	CXX=gcc
+    fi
+>>>>>>> 1.44
     OCC=gcc
     CPP="gcc -E"
 
@@ -315,6 +322,7 @@ if test "$with_gcc" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+<<<<<<< sysconf.in
 # f2c
 #
 # I give preference to the program "fc" for invoking f2c, since there may
@@ -348,6 +356,8 @@ if test "$enable_f77" = "yes"; then
 fi
 
 # ----------------------------------------------------------------------------
+=======
+>>>>>>> 1.44
 # Can finally set linker defaults.
 # ----------------------------------------------------------------------------
 
@@ -363,13 +373,6 @@ fi
 
 # ----------------------------------------------------------------------------
 # Now get system-specific compiler flags.
-#
-# If your Fortran compiler supports auto-promotion to double precision, it
-# is best to set DBL_FLAG_F with the appropriate command option.  This is
-# only used for the PLplot demo programs -- the Fortran interface uses m4
-# to generate single and double precision versions.  So if your compiler
-# can't do command-line promotion to double precision, the only loss is
-# that you won't be able to run the Fortran demos in double precision.
 # ----------------------------------------------------------------------------
 
 case "$system" in 
@@ -377,8 +380,9 @@ case "$system" in
 	if test "$with_gcc" = "no"; then
 	    SYS_FLAGS_CXX=-+
 	fi
-	if test "$with_double" = "yes" -a "$with_f2c" = "no"; then
-	    DBL_FLAG_F="-qAUTODBL=DBLPAD"
+	if test "$with_double" = "yes"; then
+#	    DBL_FLAG_F="-qAUTODBL=DBLPAD"
+	    DBL_FLAG_F=
 	fi
     ;;
     alpha*|ALPHA*|Alpha*|OSF* ) 
@@ -397,11 +401,9 @@ case "$system" in
 	fi
     ;;
     dg*|DG* ) 
-	if test "$with_f2c" = "no"; then
-	    SYS_FLAGS_F77="-novms -f77"
-	    if test "$with_debug" = "yes"; then
-		DEBUG_FLAG_F="-g -ga -X18"
-	    fi
+	SYS_FLAGS_F77="-novms -f77"
+	if test "$with_debug" = "yes"; then
+	    DEBUG_FLAG_F="-g -ga -X18"
 	fi
     ;;
     hp*|HP* ) 
@@ -457,18 +459,9 @@ case "$system" in
 	    fi
 	fi
 
-	# Double precision -- use auto promotion from Fortran.  This works
-	# only under 9.x -- the 8.x Fortran compiler only has -R8, which
-	# promotes only constants and not variables.  You can use a macro
-	# for real or different sets of sources to get both single and
-	# double, though, and in fact I do this with the stub interface
-	# (for a bit more portability).  So if your Fortran compiler
-	# doesn't support promotion of real constants AND variables, the
-	# library will still build, but you won't be able to build the
-	# Fortran example programs in double precision.
-
-	if test $with_double = "yes" -a "$with_f2c" = "no"; then
-	    DBL_FLAG_F=+autodblpad
+	if test $with_double = "yes"; then
+#	    DBL_FLAG_F=+autodblpad
+	    DBL_FLAG_F=
 	fi
     ;;
     irix*|IRIX*|Irix*|sgi*|SGI* ) 
@@ -504,7 +497,8 @@ case "$system" in
 	fi
 
 	if test "$with_double" = "yes"; then
-	    DBL_FLAG_F="-A dbl4"
+#	    DBL_FLAG_F="-A dbl4"
+	    DBL_FLAG_F=
 	fi
     ;;
     ultrix*|ULTRIX* ) 
@@ -554,22 +548,46 @@ esac
 
 # ----------------------------------------------------------------------------
 # Assemble finished compiler flags.
+#
+# There are two ways to modify this list:
+#  - set USER_FLAGS_<whatever> to taste
+#  - override <whatever>_FLAGS ahead of time
 # ----------------------------------------------------------------------------
 
-CC_FLAGS="-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C $OPT_FLAG_C"
-LDC_FLAGS="$PROF_FLAG_LC $SYS_FLAGS_LC $DEBUG_FLAG_LC"
+if test -z "$CC_FLAGS"; then
+    CC_FLAGS="-c $DBL_FLAG_C $DEBUG_FLAG_C $SYS_FLAGS_C $PROF_FLAG_C \
+     $OPT_FLAG_C $USER_FLAGS_C"
+fi
+if test -z "$LDC_FLAGS"; then
+    LDC_FLAGS="$PROF_FLAG_LC $SYS_FLAGS_LC $DEBUG_FLAG_LC $USER_FLAGS_LC"
+fi
 
 if test "$enable_cxx" = "yes"; then
-    CXX_FLAGS="-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX $PROF_FLAG_CXX $OPT_FLAG_CXX"
-    LDCXX_FLAGS="$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX"
+    if test -z "$CXX_FLAGS"; then
+	CXX_FLAGS="-c $DBL_FLAG_CXX $DEBUG_FLAG_CXX $SYS_FLAGS_CXX \
+	 $PROF_FLAG_CXX $OPT_FLAG_CXX $USER_FLAGS_CXX"
+    fi
+    if test -z "$LDCXX_FLAGS"; then
+	LDCXX_FLAGS="$PROF_FLAG_LCXX $SYS_FLAGS_LCXX $DEBUG_FLAG_LCXX \
+	 $USER_FLAGS_LDCXX"
+    fi
 fi
 
 if test "$enable_f77" = "yes"; then
-    F77_FLAGS="-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F $OPT_FLAG_F"
-    LDF_FLAGS="$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF"
+    if test -z "$F77_FLAGS"; then
+	F77_FLAGS="-c $DBL_FLAG_F $DEBUG_FLAG_F $SYS_FLAGS_F $PROF_FLAG_F \
+	 $OPT_FLAG_F $USER_FLAGS_F"
+    fi
+    if test -z "$LDF_FLAGS"; then
+	LDF_FLAGS="$PROF_FLAG_LF $SYS_FLAGS_LF $DEBUG_FLAG_LF $USER_FLAGS_LF"
+    fi
 fi
 
-M4_FLAGS="-S2000 -B8192"
+# The -S2000 -B8192 flags are apparently useful for System V, but are
+# definitely ignored on GNU/Linux according to that system's info
+# documentation of m4.  If those flags mess up other non-System V systems,
+# then something special will have to be done.
+M4_FLAGS="-S2000 -B8192 $DBL_FLAG_M4" 
 
 AC_SUBST(CC)
 AC_SUBST(CXX)
@@ -585,3 +603,4 @@ AC_SUBST(LDC_FLAGS)
 AC_SUBST(LDCXX_FLAGS)
 AC_SUBST(F77_FLAGS)
 AC_SUBST(LDF_FLAGS)
+AC_SUBST(M4_FLAGS)

@@ -1,5 +1,9 @@
 /* $Id$
+<<<<<<< plctrl.c
  * $Log$
+ * Revision 1.36.2.2  2001/01/22 09:09:01  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.36.2.1  2001/01/22 09:05:31  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
  *
@@ -80,6 +84,8 @@
 */
 
 /*	plctrl.c
+=======
+>>>>>>> 1.44
 
 	Misc. control routines, like begin, end, exit, change graphics/text
 	mode, change color.  Includes some spillage from plcore.c.  If you
@@ -88,7 +94,11 @@
 
 int readlink (char *path, char *buf, int bufsiz); // jc:
 
-#include "plplotP.h"
+#include "plplot/plplotP.h"
+#ifdef macintosh
+#include "plplot/mac.h"
+/* for plMacLibOpen prototype; used in plLibOpen */
+#endif
 
 #ifdef __GO32__			/* dos386/djgpp */
 #ifdef __unix
@@ -165,7 +175,9 @@ c_plcol0(PLINT icol0)
 	return;
     }
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
-	plabort("plcol0: Invalid color.");
+	char buffer[256];
+	sprintf(buffer, "plcol0: Invalid color map entry: %d", (int) icol0);
+	plabort(buffer);
 	return;
     }
 
@@ -194,7 +206,9 @@ c_plcol1(PLFLT col1)
 	return;
     }
     if (col1 < 0 || col1 > 1) {
-	plabort("plcol1: Invalid color.");
+	char buffer[256];
+	sprintf(buffer, "plcol1: Invalid color map position: %f", (float) col1);
+	plabort(buffer);
 	return;
     }
 
@@ -248,11 +262,16 @@ c_plscol0(PLINT icol0, PLINT r, PLINT g, PLINT b)
 	plscmap0n(0);
 
     if (icol0 < 0 || icol0 >= plsc->ncol0) {
-	plabort("plscol0: Illegal color table value");
+	char buffer[256];
+	sprintf(buffer, "plscol0: Illegal color table value: %d", (int) icol0);
+	plabort(buffer);
 	return;
     }
     if ((r < 0 || r > 255) || (g < 0 || g > 255) || (b < 0 || b > 255)) {
-	plabort("plscol0: Invalid color");
+	char buffer[256];
+	sprintf(buffer, "plscol0: Invalid RGB color: %d, %d, %d",
+		(int) r, (int) g, (int) b);
+	plabort(buffer);
 	return;
     }
 
@@ -282,7 +301,9 @@ c_plgcol0(PLINT icol0, PLINT *r, PLINT *g, PLINT *b)
     *b = -1;
 
     if (icol0 < 0 || icol0 > plsc->ncol0) {
-	plabort("plgcol0: Invalid color index");
+	char buffer[256];
+	sprintf(buffer, "plgcol0: Invalid color index: %d", (int) icol0);
+	plabort(buffer);
 	return;
     }
 
@@ -312,10 +333,10 @@ c_plscmap0(PLINT *r, PLINT *g, PLINT *b, PLINT ncol0)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    fprintf(stderr, "plscmap0: Invalid RGB color: %d, %d, %d\n",
+	    char buffer[256];
+	    sprintf(buffer, "plscmap0: Invalid RGB color: %d, %d, %d",
 		    (int) r[i], (int) g[i], (int) b[i]);
-
-	    plabort("plscmap0: Invalid color");
+	    plabort(buffer);
 	    return;
 	}
 
@@ -347,10 +368,10 @@ c_plscmap1(PLINT *r, PLINT *g, PLINT *b, PLINT ncol1)
 	    (g[i] < 0 || g[i] > 255) ||
 	    (b[i] < 0 || b[i] > 255)) {
 
-	    fprintf(stderr, "plscmap1: Invalid RGB color: %d, %d, %d\n",
+	    char buffer[256];
+	    sprintf(buffer, "plscmap1: Invalid RGB color: %d, %d, %d",
 		    (int) r[i], (int) g[i], (int) b[i]);
-
-	    plabort("plscmap1: Invalid color");
+	    plabort(buffer);
 	    return;
 	}
 	plsc->cmap1[i].r = r[i];
@@ -647,11 +668,12 @@ c_plscmap1n(PLINT ncol1)
 \*--------------------------------------------------------------------------*/
 
 static void
-color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b)
+color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, char *name )
 {
     plsc->cmap0[i].r = r;
     plsc->cmap0[i].g = g;
     plsc->cmap0[i].b = b;
+    plsc->cmap0[i].name = name;
 }
 
 /*--------------------------------------------------------------------------*\
@@ -664,35 +686,36 @@ color_set(PLINT i, U_CHAR r, U_CHAR g, U_CHAR b)
  * all systems.
 \*--------------------------------------------------------------------------*/
 
-#define color_def(i, r, g, b) \
-if (i >= imin && i <= imax) color_set(i, r, g, b);
+#define color_def(i, r, g, b, n) \
+if (i >= imin && i <= imax) color_set(i, r, g, b, n);
 
 static void
 plcmap0_def(int imin, int imax)
 {
     int i;
 
-    color_def(0,    0,   0,   0);	/* black */
-    color_def(1,  255,   0,   0);	/* red */
-    color_def(2,  255, 255,   0);	/* yellow */
-    color_def(3,    0, 255,   0);	/* green */
-    color_def(4,   50, 191, 193);	/* aquamarine */
-    color_def(5,  255, 181, 197);	/* pink */
-    color_def(6,  245, 222, 179);	/* wheat */
-    color_def(7,  126, 126, 126);	/* grey */
-    color_def(8,  165,  42,  42);	/* brown */
-    color_def(9,    0,   0, 255);	/* blue */
-    color_def(10, 138,  43, 226);	/* Blue Violet */
-    color_def(11,   0, 255, 255);	/* cyan */
-    color_def(12,  25, 204, 223);	/* turquoise */
-    color_def(13, 255,   0, 255);	/* magenta */
-    color_def(14, 233, 150, 122);	/* salmon */
-    color_def(15, 255, 255, 255);	/* white */
+    color_def(0,    0,   0,   0, "black" );	/* black */
+    color_def(1,  255,   0,   0, "red");	/* red */
+    color_def(2,  255, 255,   0, "yellow" );	/* yellow */
+    color_def(3,    0, 255,   0, "green" );	/* green */
+     color_def(4,   50, 191, 193, "aquamarine" );	/* aquamarine */
+/*    color_def(4,  127, 255, 212, "aquamarine" );	/* aquamarine */
+    color_def(5,  255, 181, 197, "pink" );	/* pink */
+    color_def(6,  245, 222, 179, "wheat" );	/* wheat */
+    color_def(7,  126, 126, 126, "grey" );	/* grey */
+    color_def(8,  165,  42,  42, "brown" );	/* brown */
+    color_def(9,    0,   0, 255, "blue" );	/* blue */
+    color_def(10, 138,  43, 226, "BlueViolet" );	/* Blue Violet */
+    color_def(11,   0, 255, 255, "cyan" );	/* cyan */
+    color_def(12,  25, 204, 223, "turquoise" );	/* turquoise */
+    color_def(13, 255,   0, 255, "magenta" );	/* magenta */
+    color_def(14, 233, 150, 122, "salmon" );	/* salmon */
+    color_def(15, 255, 255, 255, "white" );	/* white */
 
 /* Any others are just arbitrarily set */
 
     for (i = 16; i <= imax; i++)
-	color_def(i, 255, 0, 0); 	/* red */
+	color_def(i, 255, 0, 0, "red"); 	/* red */
 }
 
 /*--------------------------------------------------------------------------*\
@@ -1075,6 +1098,13 @@ c_plgra(void)
 	plP_esc(PLESC_GRAPH, NULL);
 }
 
+void
+c_plxormod(PLINT color)	/* jc: xor */
+{
+    if (plsc->level > 0)
+	plP_esc(PLESC_XORMOD, &color);
+}
+
 /*--------------------------------------------------------------------------*\
  * void pltext()
  *
@@ -1232,6 +1262,12 @@ plLibOpen(char *fn)
 	goto done;
 #endif	/* PLLIBDEV */
 
+#ifdef macintosh
+    file = plMacLibOpen(fn);
+    if (file != NULL)
+        goto done;
+#endif /* macintosh */
+
 /**** 	not found, give up 	****/
 
     pltext();
@@ -1373,6 +1409,9 @@ strcat_delim(char *dirspec)
 #elif defined (AMIGA)
     if (dirspec[ldirspec-1] != '/' && dirspec[ldirspec-1] != ':')
 	strcat(dirspec, "/");
+#elif defined (macintosh)
+    if (dirspec[ldirspec-1] != ':')
+        strcat(dirspec, ":");
 #elif defined (VMS)
 
 #else           /* unix is the default */

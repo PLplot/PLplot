@@ -1,5 +1,9 @@
 /* $Id$
+<<<<<<< plplot.h
  * $Log$
+ * Revision 1.86.2.2  2001/01/22 09:09:01  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.86.2.1  2001/01/22 09:05:31  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
  *
@@ -71,6 +75,8 @@
  * Revision 1.72  1994/09/23  07:48:24  mjl
  * Fixed prototype for pltkMain().
 */
+=======
+>>>>>>> 1.98
 
 /*
     plplot.h
@@ -98,15 +104,25 @@
 
 #ifndef __PLPLOT_H__
 #define __PLPLOT_H__
+<<<<<<< plplot.h
+=======
 
+#include "plplot/plConfig.h"
+>>>>>>> 1.98
+
+<<<<<<< plplot.h
 #define PLPLOT_VERSION "4.99-ss961011"
 
+=======
+#define PLPLOT_VERSION "5.0.1"
+
+>>>>>>> 1.98
 /*--------------------------------------------------------------------------*\
  *    USING PLplot
  * 
  * To use PLplot from C or C++, it is only necessary to 
  * 
- *      #include "plplot.h"
+ *      #include "plplot/plplot.h"
  * 
  * This file does all the necessary setup to make PLplot accessible to
  * your program as documented in the manual.  Additionally, this file
@@ -231,6 +247,8 @@ typedef void* PLPointer;
 #define PLESC_EH		12      /* handle Window events */
 #define PLESC_GETC		13	/* get cursor position */
 #define PLESC_SWIN		14	/* set window parameters */
+#define PLESC_DOUBLEBUFFERING	15	/* configure double buffering */
+#define PLESC_XORMOD		16	/* jc: set xor mode */
 
 /* Window parameter tags */
 
@@ -384,6 +402,7 @@ typedef struct {
     unsigned char r;		/* red */
     unsigned char g;		/* green */
     unsigned char b;		/* blue */
+    char *name;
 } PLColor;
 
 /* PLControlPt is how cmap1 control points are represented. */
@@ -395,6 +414,19 @@ typedef struct {
     PLFLT p;			/* position */
     int rev;			/* if set, interpolate through h=0 */
 } PLControlPt;
+
+/* A PLBufferingCB is a control block for interacting with devices
+   that support double buffering. */
+
+typedef struct {
+    PLINT cmd;
+    PLINT result;
+} PLBufferingCB;
+
+#define PLESC_DOUBLEBUFFERING_ENABLE     1
+#define PLESC_DOUBLEBUFFERING_DISABLE    2
+#define PLESC_DOUBLEBUFFERING_QUERY      3
+
 
 /*--------------------------------------------------------------------------*\
  *		BRAINDEAD-ness
@@ -465,8 +497,11 @@ typedef struct {
 #define    plbox3	c_plbox3
 #define    plcol0	c_plcol0
 #define    plcol1	c_plcol1
+#define    plxormod	c_plxormod
 #define    plcont	c_plcont
 #define    plcpstrm	c_plcpstrm
+#define    pl_setcontlabelparam c_pl_setcontlabelparam
+#define    pl_setcontlabelformat c_pl_setcontlabelformat
 #define    plend	c_plend
 #define    plend1	c_plend1
 #define    plenv	c_plenv
@@ -475,6 +510,7 @@ typedef struct {
 #define    plerry	c_plerry
 #define    plfamadv	c_plfamadv
 #define    plfill	c_plfill
+#define    plfill3	c_plfill3
 #define    plflush	c_plflush
 #define    plfont	c_plfont
 #define    plfontld	c_plfontld
@@ -489,7 +525,6 @@ typedef struct {
 #define    plgfnam	c_plgfnam
 #define    plglevel	c_plglevel
 #define    plgpage	c_plgpage
-#define    plgphy	c_plgphy
 #define    plgra	c_plgra
 #define    plgspa	c_plgspa
 #define    plgstrm	c_plgstrm
@@ -502,13 +537,17 @@ typedef struct {
 #define    plinit	c_plinit
 #define    pljoin	c_pljoin
 #define    pllab	c_pllab
+#define    pllightsource	c_pllightsource
 #define    plline	c_plline
 #define    plline3	c_plline3
 #define    pllsty	c_pllsty
+#define    plmap	c_plmap
+#define    plmeridians	c_plmeridians
 #define    plmesh	c_plmesh
 #define    plmkstrm	c_plmkstrm
 #define    plmtex	c_plmtex
 #define    plot3d	c_plot3d
+#define    plotsh3d	c_plotsh3d
 #define    plpat	c_plpat
 #define    plpoin	c_plpoin
 #define    plpoin3	c_plpoin3
@@ -579,8 +618,11 @@ typedef struct {
 #define    c_plbox3	plbox3
 #define    c_plcol0	plcol0
 #define    c_plcol1	plcol1
+#define    c_plxormod	plxormod
 #define    c_plcpstrm	plcpstrm
 #define    c_plcont	plcont
+#define    c_pl_setcontlabelparam pl_setcontlabelparam
+#define    c_pl_setcontlabelformat pl_setcontlabelformat
 #define    c_plend	plend
 #define    c_plend1	plend1
 #define    c_plenv	plenv
@@ -589,6 +631,7 @@ typedef struct {
 #define    c_plerry	plerry
 #define    c_plfamadv	plfamadv
 #define    c_plfill	plfill
+#define    c_plfill3	plfill3
 #define    c_plflush	plflush
 #define    c_plfont	plfont
 #define    c_plfontld	plfontld
@@ -615,13 +658,17 @@ typedef struct {
 #define    c_plinit	plinit
 #define    c_pljoin	pljoin
 #define    c_pllab	pllab
+#define    c_pllightsource pllightsource
 #define    c_plline	plline
 #define    c_plline3	plline3
 #define    c_pllsty	pllsty
+#define    c_plmap	plmap
+#define    c_plmeridians	plmeridians
 #define    c_plmesh	plmesh
 #define    c_plmkstrm	plmkstrm
 #define    c_plmtex	plmtex
 #define    c_plot3d	plot3d
+#define    c_plotsh3d	plotsh3d
 #define    c_plpat	plpat
 #define    c_plpoin	plpoin
 #define    c_plpoin3	plpoin3
@@ -712,6 +759,12 @@ extern "C" {
 void
 c_pladv(PLINT page);
 
+/* simple arrow plotter. */
+
+void
+plarrows(PLFLT *u, PLFLT *v, PLFLT *x, PLFLT *y, PLINT n,
+         PLFLT scale, PLFLT dx, PLFLT dy) ;
+
 /* This functions similarly to plbox() except that the origin of the axes */
 /* is placed at the user-specified point (x0, y0). */
 
@@ -741,6 +794,11 @@ void
 c_plbox3(const char *xopt, const char *xlabel, PLFLT xtick, PLINT nsubx,
 	 const char *yopt, const char *ylabel, PLFLT ytick, PLINT nsuby,
 	 const char *zopt, const char *zlabel, PLFLT ztick, PLINT nsubz);
+
+/*  set xor mode */
+
+void
+c_plxormod(PLINT color);
 
 /* Set color, map 0.  Argument is integer between 0 and 15. */
 
@@ -832,6 +890,11 @@ c_plfamadv(void);
 
 void
 c_plfill(PLINT n, PLFLT *x, PLFLT *y);
+
+/* Pattern fills the 3d polygon bounded by the input points. */
+
+void
+c_plfill3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
 
 /* Flushes the output stream.  Use sparingly, if at all. */
 
@@ -965,6 +1028,10 @@ c_pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2);
 void
 c_pllab(const char *xlabel, const char *ylabel, const char *tlabel);
 
+/* Sets position of the light source */
+void
+c_pllightsource(PLFLT x, PLFLT y, PLFLT z);
+
 /* Draws line segments connecting a series of points. */
 
 void
@@ -983,15 +1050,15 @@ c_pllsty(PLINT lin);
 /* plot continental outline in world coordinates */
 
 void
-plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
-      PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), char *type,
+         PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 /* Plot the latitudes and longitudes on the background. */
 
 void 
-plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *), 
-	    PLFLT dlong, PLFLT dlat,
-	    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+c_plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *), 
+               PLFLT dlong, PLFLT dlat,
+               PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
 /* Plots a mesh representation of the function z[x][y]. */
 
@@ -1014,6 +1081,12 @@ c_plmtex(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 void
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
 	 PLINT nx, PLINT ny, PLINT opt, PLINT side);
+
+/* Plots a 3-d shaded representation of the function z[x][y]. */
+
+void
+c_plotsh3d(PLFLT *x, PLFLT *y, PLFLT **z,
+	 PLINT nx, PLINT ny, PLINT side);
 
 /* Set fill pattern directly. */
 
@@ -1149,6 +1222,16 @@ c_plsdiplz(PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax);
 void
 c_plsesc(char esc);
 
+/* set offset and spacing of contour labels */
+
+void
+c_pl_setcontlabelparam(PLFLT offset, PLFLT size, PLFLT spacing, PLINT active);
+
+/* set the format of the contour labels */
+
+void
+c_pl_setcontlabelformat(PLINT lexp, PLINT sigdig);
+
 /* Set family file parameters */
 
 void
@@ -1162,7 +1245,7 @@ c_plsfnam(const char *fnam);
 /* Shade region. */
 
 void 
-c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char **defined,
+c_plshade(PLFLT **a, PLINT nx, PLINT ny, const char *defined,
 	  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
 	  PLFLT shade_min, PLFLT shade_max,
 	  PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,

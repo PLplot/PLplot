@@ -7,6 +7,7 @@
 # Install procedure for PLplot library.
 # -----------------------------------------------------------------------------
 
+<<<<<<< inst_lib.in
 install_lib:
 	-if test ! -d $(INCLUDE_DIR); then mkdir -p $(INCLUDE_DIR); fi
 	-if test ! -d $(LIB_DIR); then mkdir -p $(LIB_DIR); fi
@@ -31,3 +32,43 @@ install_lib:
 	 cp plplotP.h plplot.h plxwd.h plevent.h plstrm.h pdf.h \
 		pldebug.h $(INCLUDE_DIR)
 	-cp plConfig.h $(INCLUDE_DIR)
+=======
+install_dirs:
+	@-if test ! -d $(INCLUDE_DIR); then mkdir -p $(INCLUDE_DIR); fi; \
+	  if test ! -d $(LIB_DIR); then mkdir -p $(LIB_DIR); fi; \
+	  if test ! -d $(DOC_DIR); then mkdir -p $(DOC_DIR); fi; \
+	  if test ! -d $(BIN_DIR); then mkdir -p $(BIN_DIR); fi; \
+	  if test ! -d $(INFO_DIR); then mkdir -p $(INFO_DIR); fi
+
+install_fonts:
+	@-cd $(top_srcdir)/lib; $(CP) *.fnt *.map $(LIB_DIR)
+
+install_libbase:
+	@-$(CP) $(PLLIB_BASE)* $(LIB_DIR); \
+	  if test -r $(PLLIB_BASE)$(LIB_TAG)$A; then \
+	     $(RANLIB) $(LIB_DIR)/$(PLLIB_BASE)$(LIB_TAG)$A; \
+	  fi
+
+install_textfiles:
+	@-cd $(top_srcdir); \
+	  $(CP) README NEWS CHANGES Copyright COPYING.LIB FAQ ToDo mklinks \
+		$(DOC_DIR); \
+	  if test ! -f $(DOC_DIR)/README.local; then \
+	      $(CP) $(top_srcdir)/doc/README.local $(DOC_DIR); \
+	  fi
+
+install_scriptfiles:
+	@-cd $(top_srcdir)/scripts; $(CP) pl* $(BIN_DIR)
+
+install_includes:
+	@-$(CP) plConfig.h plDevs.h $(INCLUDE_DIR); \
+	  cd $(top_srcdir)/include; \
+	  $(CP) plplotP.h plplot.h plxwd.h plevent.h plstrm.h pdf.h \
+	     pldebug.h drivers.h $(INCLUDE_DIR)
+
+install_lib: install_dirs install_fonts install_libbase \
+	$(INSTALL_MATLIB) $(INSTALL_CXXLIB) \
+	install_textfiles install_scriptfiles install_includes \
+	$(INSTALL_MAT)
+
+>>>>>>> 1.15

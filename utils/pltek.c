@@ -1,8 +1,15 @@
 /* $Id$
+<<<<<<< pltek.c
  * $Log$
+ * Revision 1.8.6.2  2001/01/22 09:09:01  rlaboiss
+ * Merge of DEBIAN and v5_0_1 branches (conflicts are still to be solved)
+ *
  * Revision 1.8.6.1  2001/01/22 09:05:32  rlaboiss
  * Debian stuff corresponding to package version 4.99j-11
+=======
+>>>>>>> 1.10
  *
+<<<<<<< pltek.c
  * Revision 1.8  1994/09/16  03:45:46  mjl
  * A small patch to remove a "==" assignment introduced last-time and removed
  * an unused variable picked-up by gcc -Wall.  Contributed by Mark Olesen.
@@ -25,6 +32,8 @@
 
 /*
  *  pltek.c
+=======
+>>>>>>> 1.10
  *  Review a Tektronix vector file.
  *  from 'scan', by Clair Nielsen, LANL.
  *  Modifications by Maurice LeBrun, IFS.
@@ -113,17 +122,23 @@ main(int argc, char *argv[])
 	oldpage = ipage;
 	printf("Page %d/%d> ", ipage, npage);
 
+	if (!fgets(ibuf, 128, stdin))
+	    break;
+
+<<<<<<< pltek.c
 	/* Changed by Rafael Laboissiere <rafael@icp.inpg.fr> 
 	   on Fri Oct  9 17:13:59 CEST 1998
 	   gcc 2.7.2.3 deprecates the use of gets */
         /* gets(ibuf); */
 	fgets(ibuf,128,stdin);
+=======
+>>>>>>> 1.10
 	c = ibuf[0];
 
 /* User input a page number or a return */
 /* A carriage return in response to the prompt proceeds to the next page. */
 
-	if (c == '\0') {	 	/* CR = increment by one page */
+	if (c == '\n') {	 	/* CR = increment by one page */
 	    ipage++;
 	} else if (c == '+') {		/* +<n> = increment by <n> pages */
 	    ipage += atoi(ibuf+1);
