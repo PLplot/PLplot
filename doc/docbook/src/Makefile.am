@@ -150,15 +150,15 @@ $(INFO_MANIFEST) plplotdoc.info: plplotdoc.texi
 plplotdoc.texi: plplotdoc.txml
 	$(PERL) $(DOCBOOK2X_INC) $(TEXI_XML) $<
 
-plplotdoc.txml: plplotdoc.xml-info $(SOURCE_FILES) $(MASTER_XML) \
-		inline-info.ent
+plplotdoc.txml: plplotdoc.xml-info
 	if $(PERL) $(DOCBOOK2X_INC) $(DOCBOOK2TEXIXML) $< > $@-tmp ; then \
 	  mv $@-tmp $@ ; \
 	else \
 	  false ; \
 	fi
 
-plplotdoc.xml-info: $(BINDIR)/info-clean.pl $(SOURCE_FILES) $(MASTER_XML)
+plplotdoc.xml-info: $(BINDIR)/info-clean.pl $(SOURCE_FILES) $(MASTER_XML) \
+		inline-info.ent
 	ln -fs inline-info.ent inline.ent
 	$(PERL) $(BINDIR)/info-clean.pl plplotdoc.xml > $@
 
@@ -206,7 +206,7 @@ $(MAN_TARBALL): $(MAN_MANIFEST)
 	rm -rf $(BASE_MAN)
 
 # size-href.pl requires as input (for size) every file mentioned as
-# an href in $(INDEX_HTML).in with a @SIZE@ attribute.  Make the 
+# an href in $(INDEX_HTML).in with a @SIZE@ attribute.  Make the
 # prerequisite list consistent with this requirement.
 
 $(INDEX_HTML): $(BINDIR)/size-href.pl $(INDEX_HTML).in \
