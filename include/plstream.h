@@ -1,6 +1,16 @@
 /* $Id$
  * $Log$
- * Revision 1.24  1994/02/01 22:46:55  mjl
+ * Revision 1.25  1994/03/23 07:10:51  mjl
+ * Added documentation for all variables not described yet.  Changed some
+ * variables used in color map selection.  Added variables:
+ *
+ *  dev_minor	Minor device id (for variations on one type)
+ *  dev_fill0	Set if driver can do solid area fills
+ *  dev_fill1	Set if driver can do pattern area fills
+ *  finc		Number to increment between member files
+ *  fflen		Minimum field length to use in member file number
+ *
+ * Revision 1.24  1994/02/01  22:46:55  mjl
  * Added pls->user (char *).
  *
  * Revision 1.23  1994/01/25  06:22:17  mjl
@@ -75,6 +85,8 @@
 #ifndef __PLSTREAM_H__
 #define __PLSTREAM_H__
 
+#include "pdf.h"
+
 /*----------------------------------------------------------------------*\
 * Define the PLDev data structure.
 *
@@ -118,24 +130,17 @@ typedef struct {
 *
 * The quantities in each stream are as follows:
 *
+***********************************************************************
+*
+* Misc control variables
+*
 * ipls		Stream number
-*
-* DevName	Device name
-* OutFile	Output file pointer
-* FamilyName	Output family name (i.e. stem)
-* FileName	Output file name
-* output_type	0 for file, 1 for stream
-* pdfs		PDF stream pointer, for filtering output data through PDF.
-*
-* fileset	Set if file name or file pointer was specified
-*
-* bytecnt	Byte count for output stream
-* page		Page count for output stream
-* linepos	Line count for output stream
-* lp_offset	Byte position for previous page (metafile output)
+* level		Initialization level
+* program	char*	Program name
 *
 ***********************************************************************
-* PLPLOT uses two user-alterable palettes:
+*
+* Palettes (two of them)
 *
 * Color map 0 is intended for static objects, such as boxes, lines, points,
 * labels, etc.  These should be allocated before calling plinit (else you
@@ -145,13 +150,13 @@ typedef struct {
 * store the background color, all color drivers start with 1 as the
 * default color.  The user is encouraged to do the same.
 *
-* Color map 1 is for height-field plots, where color is used to represent
-* function height (intensity).  These are set in a relative way only, 
-* for increased portability and flexibility.  The actual number of colors
-* used to represent height levels is determined by the driver.  Note that
-* it is only necessary to specify height (on a scale from 0 to 1) to get
-* an appropriate color.  Drivers capable of finer shading can interpolate
-* RGB values to precisely map height to color.
+* Color map 1 is for continuous-tone plots, where color is used to
+* represent function value or intensity.  These are set in a relative way
+* only, for increased portability and flexibility.  The actual number of
+* colors used to represent intensity levels is determined by the driver.
+* Note that it is only necessary to specify intensity (on a scale from 0
+* to 1) to get an appropriate color.  Drivers incapable of fine shading
+* will do the best job they can.
 *
 * Eventually a palette selection tool for both palettes will be provided
 * for some drivers (e.g. tk).  Direct writing of RGB values (i.e.  banging
@@ -161,17 +166,67 @@ typedef struct {
 * icol0		PLINT	Color map 0 entry, current color (0 <= icol0 <= 15)
 * ncol0		PLINT	Number of colors allocated in color map 0.
 * icol1		PLINT	Color map 1 entry, current color (0 <= icol1 <= 255)
+* ncol1		PLINT	Number of colors allocated in color map 1.
+* curcmap	PLINT	Current color map
 * bgcolor	RGB	Background color, if specified
 * fgcolor	RGB	Foreground color, if specified
-* curcolor	RGB[]	Current color, for convenience
+* curcolor	RGB[]	Current color
 * cmap0 	RGB[]	Color map 0: maximum of 16 RGB 8-bit values
 * cmap1 	RGB[]	Color map 1: maximum of 256 RGB 8-bit values
 *
-* cmap0setcol	int[]	Set for every color allocated in cmap0.
-* cmap1set	PLINT	Set if cmap1 allocated.
+* cmap0setcol	int[]	Set for initialized cmap0 colors.
+* cmap1set	int	Set if cmap 1 has been initialized
 * bgcolorset	PLINT	Set if "bgcolor" was set
 *
 ***********************************************************************
+*
+* Variables governing pen width 
+*
+* width		Current pen width
+* widthset	Set if pen width was specified
+* widthlock	Set if pen width is locked
+*
+***********************************************************************
+*
+* Variables used to pass information between the core and the driver 
+*
+* It would be nice to use the "dev_" prefix uniformly but changing
+* all that old code would be quite a lot of work..
+*
+* device	PLINT	Graphics device id number
+* dev_minor	PLINT	Minor device id (for variations on one type)
+* color		PLINT	Set if color is available
+* colorset	PLINT	Set if "color" was set prior to calling plinit
+* plbuf_write	PLINT	Set if driver needs to use the plot buffer
+* dev_fill0	PLINT	Set if driver can do solid area fills
+* dev_fill1	PLINT	Set if driver can do pattern area fills
+* dev_di	PLINT	Set if driver wants to handle DI commands
+* dev_flush	PLINT	Set if driver wants to handle flushes itself
+* termin	PLINT	Set for interactive devices
+* graphx	PLINT	Set if currently in graphics mode
+* nopause	PLINT	Set if we are skipping the pause between frames
+* family	PLINT	Set if familying is enabled
+* member	PLINT	Number of current family member file open
+* finc		PLINT	Number to increment between member files
+* fflen		PLINT	Minimum field length to use in member file number
+* bytemax	PLINT	Number of bytes maximum per member file
+* famadv	PLINT	Set to advance to the next family member
+* DevName	char*	Device name
+* OutFile	FILE	Output file pointer
+* BaseName	char*	Output base name (i.e. family)
+* FileName	char*	Output file name
+* output_type	int	0 for file, 1 for stream
+* bytecnt	PLINT	Byte count for output stream
+* page		PLINT	Page count for output stream
+* linepos	PLINT	Line count for output stream
+* lp_offset	FPOS_T	Byte position for previous page (metafile output)
+* pdfs		PDFstrm* PDF stream pointer
+*
+* These are used by the escape function (for area fill, etc).
+*
+* dev_npts	PLINT	Number of points we are plotting
+* dev_x		short*	Pointer to array of x values 
+* dev_y		short*	Pointer to array of x values 
 *
 * The following pointer is for drivers that require device-specific 
 * data.  At initialization the driver should malloc the necessary
@@ -180,14 +235,21 @@ typedef struct {
 *
 * dev		void*	pointer to device-specific data (malloc'ed)
 *
-***********************************************************************
-*
 * User-supplied event handlers for use by interactive drivers (e.g. X).
 * Can be used to take various actions depending on input.  Currently
 * only a keyboard event handler is supported.
 *
 * KeyEH		void*	Keyboard event handler
 * KeyEH_data	void*	Pointer to client data to pass
+*
+* Variables used for direct specification of device characteristics
+* Not supported by all drivers (or even very many)
+*
+* xdpi..	PLFLT	Device DPI settings in x and y
+* xlength..	PLINT	Device output lengths in x and y
+* xoffset..	PLINT	Device offsets from upper left hand corner
+* pageset	PLINT	Set if page dimensions were specified
+* hack		PLINT	Enables driver-specific hack(s) if set
 *
 ***********************************************************************
 *
@@ -274,61 +336,19 @@ typedef struct {
 *
 ***********************************************************************
 *
-* Stuff used by the driver.
-* It would be nice to use the "dev_" prefix uniformly but changing
-* all that old code would be quite a lot of work..
+* Fill pattern state information. 
+* patt < 0: Hardware fill, if available (not implemented yet)
+* patt ==0: Hardware fill, if available, solid
+* patt > 0: Software fill
 *
-* device	PLINT	Graphics device id number
-* color		PLINT	Set if color is available
-* colorset	PLINT	Set if "color" was set prior to calling plinit
-* plbuf_write	PLINT	Set if driver needs to use the plot buffer
-* dev_fill	PLINT	Set if driver can do area fills
-* dev_di	PLINT	Set if driver wants to handle DI commands
-* dev_dual	PLINT	Set if device supports dual text/graphics screens
-* dev_flush	PLINT	Set if driver wants to handle flushes itself
-* termin	PLINT	Set for interactive devices
-* graphx	PLINT	Set if currently in graphics mode
-* nopause	PLINT	Set if we are skipping the pause between frames
-* family	PLINT	Set if familying is enabled
-* member	PLINT	Number of current family member file open
-* bytemax	PLINT	Number of bytes maximum per member file
-* famadv	PLINT	Set to advance to the next family member
-*
-* These are used by the escape function in some circumstances.
-*
-* dev_npts	PLINT	Number of points we are plotting
-* dev_x		short*	Pointer to array of x values 
-* dev_y		short*	Pointer to array of x values 
+* patt		Fill pattern number
+* inclin	Array of inclinations in tenths of degree for fill lines
+* delta		Array of spacings in micrometers between fill lines
+* nps		Number of distinct line styles for fills
 *
 ***********************************************************************
 *
-* Everything else
-*
-* program	char*	Program name
-*
-* level		Initialization level
-* nsub...	Number of subpages on physical device
-* cursub	Current subpage
-* width		Current pen width
-* widthset	Set if pen width was specified
-* widthlock	Set if pen width is locked
-* esc		Text string escape character
-* scale		Scaling factor for chr, sym, maj, min.
-* chr...	Character default height and current (scaled) height
-* sym...	Symbol    default height and current (scaled) height
-* maj...	Major tick default height and current (scaled) height
-* min...	Minor tick default height and current (scaled) height
-* setpre	Non-zero to set precision using "prec"
-* precis	User-specified precision
-* xdigmax..	Allowed #digits in axes labels
-* xdigits..	Actual field widths (returned)
-*
-* pageset	Set if page dimensions were specified
-* vpp..		Viewport boundaries in physical coordinates
-* spp..		Subpage  boundaries in physical coordinates
-* clp..		Clip     boundaries in physical coordinates
-* phy...	Physical device limits in physical coordinates
-* um.		Number of micrometers in a pixel
+* Variables used in line drawing
 *
 * currx		Physical x-coordinate of current point
 * curry		Physical y-coordinate of current point
@@ -339,23 +359,47 @@ typedef struct {
 * alarm		Alarm indicating change of broken line status
 * pendn		Flag indicating if pen is up or down
 * curel		Current element within broken line
-* inclin	Array of inclinations in tenths of degree for fill lines
-* delta		Array of spacings in micrometers between fill lines
-* nps		Number of distinct line styles for fills
 *
-* xdpi..	Device DPI settings in x and y (if supported)
-* xlength..	Device output lengths in x and y (if supported)
-* xoffset..	Device offsets from upper left hand corner (if supported)
+***********************************************************************
 *
-* spd...	Subpage  boundaries in normalized device coordinates
-* vpd...	Viewport boundaries in normalized device coordinates
-* vpw...	Viewport boundaries in world coordinates
+* Variables governing character strings
+*
+* esc		Text string escape character
+*
+***********************************************************************
+*
+* Scale factors for characters, symbols, and tick marks.
+*
+* scale		Scaling factor for chr, sym, maj, min.
+* chr...	Character default height and current (scaled) height
+* sym...	Symbol    default height and current (scaled) height
+* maj...	Major tick default height and current (scaled) height
+* min...	Minor tick default height and current (scaled) height
+*
+***********************************************************************
+*
+* Variables governing numeric axis label appearance
+*
+* setpre	Non-zero to set precision using "prec"
+* precis	User-specified precision
+* xdigmax..	Allowed #digits in axes labels
+* xdigits..	Actual field widths (returned)
+*
+***********************************************************************
+*
+* Variables governing physical coordinate system
+*
+* vpp..		Viewport boundaries in physical coordinates
+* spp..		Subpage  boundaries in physical coordinates
+* clp..		Clip     boundaries in physical coordinates
+* phy...	Physical device limits in physical coordinates
+* um.		Number of micrometers in a pixel
 * pmm		Number of pixels to a millimeter
-* wp....	Transformation variables for world  to physical conversion
-* dp....	Transformation variables for device to physical conversion
-* mp....	Transformation variables for millimeters from bottom left
-*		hand corner to physical coordinates
-* wm....	Transformation variables for world coordinates to mm
+*
+***********************************************************************
+*
+* State variables for 3d plots
+*
 * base3.	World coordinate size of base for 3-d plot
 * basec.	Position of centre of base for 3-d plot
 * dom...	Minimum and maximum values for domain
@@ -363,27 +407,39 @@ typedef struct {
 * ran..		Minimum and maximum z values for 3-d plot
 * c..		Coordinate transformation from 3-d to 2-d
 *
+***********************************************************************
+*
+* Variables governing subpages and viewports.
+*
+* nsub...	Number of subpages on physical device
+* cursub	Current subpage
+* spd...	Subpage  boundaries in normalized device coordinates
+* vpd...	Viewport boundaries in normalized device coordinates
+* vpw...	Viewport boundaries in world coordinates
+*
+***********************************************************************
+*
+* Transformation variables
+*
+* wp....	Transformation variables for world  to physical conversion
+* dp....	Transformation variables for device to physical conversion
+* mp....	Transformation variables for millimeters from bottom left
+*		hand corner to physical coordinates
+* wm....	Transformation variables for world coordinates to mm
+*
 \*----------------------------------------------------------------------*/
 
 typedef struct {
+
+/* Misc control information */
+
     PLINT ipls;
-    char DevName[80];
-
-    FILE *OutFile;
-    PDFstrm *pdfs;
-    char *FamilyName, *FileName;
-    int  output_type;
-
-    PLINT fileset;
-
-    PLINT bytecnt;
-    PLINT page;
-    PLINT linepos;
-    FPOS_T lp_offset;
+    PLINT level;
+    char *program;
 
 /* Colormaps */
 
-    PLINT icol0, ncol0, icol1, bgcolorset;
+    PLINT icol0, ncol0, icol1, ncol1, bgcolorset, curcmap;
     int   cmap0setcol[16], cmap1set;
 
     PLColor fgcolor;
@@ -392,10 +448,39 @@ typedef struct {
     PLColor cmap0[16];
     PLColor cmap1[256];
 
-/* Driver event handler */
+/* Variables governing pen width */
+
+    PLINT width;
+    PLINT widthset, widthlock;
+
+/* Variables used for interacting with or by device driver */
+
+    PLINT plbuf_write;
+    PLINT device, dev_minor, termin, graphx, nopause;
+    PLINT color, colorset;
+    PLINT family, member, finc, fflen, bytemax, famadv;
+    PLINT dev_fill0, dev_fill1, dev_di, dev_flush;
+
+    char DevName[80];
+    FILE *OutFile;
+    char *BaseName, *FileName;
+    int  output_type;
+    PLINT bytecnt, page, linepos;
+    FPOS_T lp_offset;
+    PDFstrm *pdfs;
+
+    PLINT dev_npts;
+    short *dev_x, *dev_y;
+
+    void *dev;
 
     void (*KeyEH)	(PLKey *, void *, int *);
     void *KeyEH_data;
+
+    PLFLT xdpi, ydpi;
+    PLINT xlength, ylength;
+    PLINT xoffset, yoffset;
+    PLINT pageset, hack;
 
 /* Stuff used by Xlib driver */
 
@@ -409,10 +494,6 @@ typedef struct {
     char *plserver, *plwindow;
     char *tcl_cmd, *auto_path;
     int  bufmax, dp;
-
-/* Driver-specific data */
-
-    void *dev;
 
 /* Plot buffer settings */
 
@@ -431,77 +512,114 @@ typedef struct {
     PLFLT dimxax, dimxb, dimyay, dimyb;
     PLFLT dimxmin, dimymin, dimxmax, dimymax, dimxpmm, dimypmm;
 
-/* Driver settings */
+/* Fill pattern info */
 
-    PLINT plbuf_write;
-    PLINT color, colorset;
-    PLINT device, termin, graphx, nopause;
-    PLINT family, member, bytemax, famadv;
-    PLINT dev_fill, dev_dual, dev_di, dev_flush;
-    PLINT dev_npts;
-    short *dev_x, *dev_y;
+    PLINT patt, inclin[2], delta[2], nps;
 
-/* Everything else */
-/* Could use some better grouping */
+/* Variables used in line drawing */
 
-    char *program;
+    PLINT currx, curry;
+    PLINT mark[10], space[10], nms;
+    PLINT timecnt, alarm, pendn, curel;
 
-    PLINT level;
-    PLFLT sclx, scly;
-    PLINT nsubx, nsuby, cursub;
-    PLINT width, style;
-    PLINT widthset, widthlock;
+/* Variables governing character strings */
+
     char  esc;
-    PLFLT xdpi, ydpi;
-    PLINT xlength, ylength;
-    PLINT xoffset, yoffset;
-    PLINT setpre, precis;
-    PLINT xdigmax, ydigmax, zdigmax;
-    PLINT xdigits, ydigits, zdigits;
+
+/* Scale factors for characters, symbols, and tick marks. */
+
     PLFLT scale;
     PLFLT chrdef, chrht;
     PLFLT symdef, symht;
     PLFLT majdef, majht;
     PLFLT mindef, minht;
-    PLINT pageset;
+
+/* Variables governing numeric axis label appearance */
+
+    PLINT setpre, precis;
+    PLINT xdigmax, ydigmax, zdigmax;
+    PLINT xdigits, ydigits, zdigits;
+
+/* Variables governing physical coordinate system */
+
     PLINT vppxmi, vppxma, vppymi, vppyma;
     PLINT sppxmi, sppxma, sppymi, sppyma;
     PLINT clpxmi, clpxma, clpymi, clpyma;
     PLINT phyxmi, phyxma, phyymi, phyyma;
     PLINT umx, umy;
-    PLINT currx, curry;
-    PLINT mark[10], space[10], nms;
-    PLINT timecnt, alarm, pendn, curel;
-    PLINT inclin[2], delta[2], nps;
-
-    PLFLT spdxmi, spdxma, spdymi, spdyma;
-    PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;
-    PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
     PLFLT xpmm, ypmm;
-    PLFLT wpxscl, wpxoff, wpyscl, wpyoff;
-    PLFLT dpxscl, dpxoff, dpyscl, dpyoff;
-    PLFLT mpxscl, mpxoff, mpyscl, mpyoff;
-    PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
+
+/* State variables for 3d plots */
+
     PLFLT base3x, base3y, basecx, basecy;
     PLFLT domxmi, domxma, domymi, domyma;
     PLFLT zzscl, ranmi, ranma;
     PLFLT cxx, cxy, cyx, cyy, cyz;
+
+/* Transformation variables */
+
+    PLFLT wpxscl, wpxoff, wpyscl, wpyoff;
+    PLFLT dpxscl, dpxoff, dpyscl, dpyoff;
+    PLFLT mpxscl, mpxoff, mpyscl, mpyoff;
+    PLFLT wmxscl, wmxoff, wmyscl, wmyoff;
+
+/* Variables governing subpages and viewports. */
+
+    PLINT nsubx, nsuby, cursub;
+    PLFLT spdxmi, spdxma, spdymi, spdyma;
+    PLFLT vpdxmi, vpdxma, vpdymi, vpdyma;
+    PLFLT vpwxmi, vpwxma, vpwymi, vpwyma;
+
 } PLStream;
 
 /*----------------------------------------------------------------------*\
 * Prototypes for stream & device utility functions.
 \*----------------------------------------------------------------------*/
 
-void  plgpls		(PLStream **);
-void  plCmap0_init	(PLStream *);
-void  plCmap1_init	(PLStream *);
-void  plCmaps_init	(PLStream *);
-void  plOpenFile	(PLStream *);
-void  plFamInit		(PLStream *);
-void  plGetFam		(PLStream *);
-void  plRotPhy		(PLINT, PLINT, PLINT, PLINT, PLINT, 
-			 int *, int *, int *, int *);
-void  plP_sfnam		(PLStream *, const char *);
-PLDev *plAllocDev	(PLStream *pls);
+/* Get the current stream pointer */
+
+void
+plgpls(PLStream **p_pls);
+
+/* Initializes device cmap 1 entry by interpolation from pls->cmap1 entries */
+
+void
+plcol_interp(PLStream *pls, PLColor *newcolor, int i, int ncol);
+
+/* Opens file for output, prompting if not set. */
+
+void
+plOpenFile(PLStream *pls);
+
+/* Sets up next file member name (in pls->FileName), but does not open it. */
+
+void
+plP_getmember(PLStream *pls);
+
+/* Sets up file name & family stem name. */
+
+void
+plP_sfnam(PLStream *pls, const char *fnam);
+
+/* Initializes family file parameters. */
+
+void
+plFamInit(PLStream *pls);
+
+/* Starts new member file of family file set if necessary. */
+
+void
+plGetFam(PLStream *pls);
+
+/* Rotates physical coordinates if necessary for given orientation. */
+
+void
+plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
+	 int *px, int *py);
+
+/* Allocates a standard PLDev structure for device-specific data */
+
+PLDev *
+plAllocDev(PLStream *pls);
 
 #endif	/* __PLSTREAM_H__ */
