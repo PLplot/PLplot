@@ -418,6 +418,8 @@ LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
 #		NEC Super-UX definitions
 
 SYS_FLAGS_C = -hansi
+SYS_FLAGS_F = -e2 -pvctl nomsg
+F77	= f77sx
 
 PLDEVICES = -DPLMETA -DNULLDEV -DXTERM -DTEK4010 -DTEK4107 -DDG300 -DPS \
 	    -DXFIG -DLJII -DHP7470 -DHP7580 -DIMP DEF_XWIN() DEF_TK()
@@ -429,10 +431,10 @@ FFLAGS	= -c $(DBL_FLAG_F) $(DEBUG_FLAG_F) $(OPT_FLAG_F) $(SYS_FLAGS_F) \
 	     $(PROFILE_FLAG_F)
 
 LIBC	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
-LIBF	= if_tk({$(LIB_TK)}) if_xwin({$(LIB_XWIN)})
+LIBF	= if_tk({-l-ltk -l-ltcl}) if_xwin({-l-lX11})
 
 LDCFLAGS= $(PROFILE_FLAG_LC) $(LIBC) -lm
-LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -lm
+LDFFLAGS= $(PROFILE_FLAG_LF) $(LIBF) -l-lm
 
 #----------------------------------------------------------------------#
 })if_dgux({
