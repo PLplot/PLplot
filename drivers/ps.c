@@ -387,7 +387,7 @@ void
 plD_line_ps(PLStream *pls, short x1a, short y1a, short x2a, short y2a)
 {
     PSDev *dev = (PSDev *) pls->dev;
-    int x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
+    PLINT x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
 /* Rotate by 90 degrees */
 
@@ -635,7 +635,7 @@ fill_polygon(PLStream *pls)
 {
     PSDev *dev = (PSDev *) pls->dev;
     PLINT n, ix = 0, iy = 0;
-    int x, y;
+    PLINT x, y;
 
     fprintf(OF, " Z\n");
 

@@ -191,7 +191,7 @@ static void  DrawImage          (PLStream *pls);
 
 static void  StoreCmap0		(PLStream *pls);
 static void  StoreCmap1		(PLStream *pls);
-static void  imageops           (PLStream *pls, int *ptr);
+static void  imageops           (PLStream *pls, PLINT *ptr);
 static void  SetBGFG		(PLStream *pls);
 #ifdef DUMMY
 static void  SaveColormap	(Display *display, Colormap colormap);
@@ -3322,7 +3322,7 @@ DrawImage(PLStream *pls)
 }
 
 static void
-imageops(PLStream *pls, int *ptr)
+imageops(PLStream *pls, PLINT *ptr)
 {
     XwDev *dev = (XwDev *) pls->dev;
     XwDisplay *xwd = (XwDisplay *) dev->xwd;

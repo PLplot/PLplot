@@ -1649,7 +1649,7 @@ plGetFam(PLStream *pls)
 
 void
 plRotPhy(PLINT orient, PLINT xmin, PLINT ymin, PLINT xmax, PLINT ymax,
-	 int *px, int *py)
+	 PLINT *px, PLINT *py)
 {
     int x, y;
 
